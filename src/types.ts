@@ -307,6 +307,13 @@ export interface CalloutDefinition {
 	 * deletes the key rather than writing `false`.
 	 */
 	externalStyle?: true;
+	/**
+	 * Push harder than usual, because the active theme is winning. Absent is
+	 * the default. Deliberately cannot spell `"theme"` — that state is
+	 * {@link externalStyle}, and one spelling per state is what keeps the pair
+	 * unambiguous. `manager/styleMode.ts` has the rest.
+	 */
+	styleMode?: "force";
 	metadata?: Record<string, string>;
 }
 

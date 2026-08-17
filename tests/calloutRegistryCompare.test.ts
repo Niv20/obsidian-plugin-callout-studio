@@ -69,6 +69,7 @@ const CHANGED: Record<string, Partial<CalloutDefinition>> = {
 	paletteId: { paletteId: "cp-zzz" },
 	customized: { customized: true },
 	externalStyle: { externalStyle: true },
+	styleMode: { styleMode: "force" },
 	metadata: { metadata: { k: "v" } },
 };
 
@@ -101,8 +102,16 @@ describe("the field tables themselves", () => {
 		}
 	});
 
-	it("declares hideIcon, and only hideIcon, as colour-neutral", () => {
-		assert.deepStrictEqual([...TABLES.COLOUR_NEUTRAL_FIELDS], ["hideIcon"]);
+	it("declares exactly hideIcon and styleMode as colour-neutral", () => {
+		// Both are edits the user can see that say nothing about what colour the
+		// callout should be. `styleMode` is the sharper case: forcing an
+		// untouched `[!info]` asks for core's own blue at a weight the theme
+		// cannot reach, so counting it here would bake a literal hex and drop
+		// the deference the request depends on.
+		assert.deepStrictEqual(
+			[...TABLES.COLOUR_NEUTRAL_FIELDS].sort(),
+			["hideIcon", "styleMode"],
+		);
 	});
 
 	it("keeps every colour-neutral field inside the compared set", () => {

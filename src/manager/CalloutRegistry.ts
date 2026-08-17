@@ -16,13 +16,15 @@ import type {
 	UserImageIcon,
 } from "../types";
 import { CALLOUT_RENDER_ROLES } from "../types";
-import { DEFAULT_CALLOUTS, DEFAULT_SETTINGS, FALLBACK_ICON } from "../constants";
+import {
+	DEFAULT_CALLOUTS,
+	DEFAULT_SETTINGS,
+	FALLBACK_ICON,
+} from "../constants";
 import { iconCacheKey, packFor } from "../icons/registry";
 import { resolveLucideId } from "../icons/lucideId";
-import {
-	COLOUR_NEUTRAL_FIELDS,
-	isCalloutModified,
-} from "./calloutCompare";
+import { COLOUR_NEUTRAL_FIELDS, isCalloutModified } from "./calloutCompare";
+import { applyStyleMode, type CalloutStyleMode } from "./styleMode";
 import { materialPack } from "../icons/packs/material";
 import type {
 	CalloutManagerEntry,
@@ -540,19 +542,15 @@ export class CalloutRegistry {
 			this.releaseFallbackTarget(def.id, base);
 		}
 
-		if (
-			removed.length === 0 &&
-			renamed.length === 0 &&
-			!aliasesChanged
-		) {
+		if (removed.length === 0 && renamed.length === 0 && !aliasesChanged) {
 			return;
 		}
 		this.pendingLoadMigrationSave = true;
 		if (removed.length > 0 || renamed.length > 0) {
-			console.debug(
-				"[CalloutStudio] callout metadata migration:",
-				{ removed, renamed },
-			);
+			console.debug("[CalloutStudio] callout metadata migration:", {
+				removed,
+				renamed,
+			});
 		}
 	}
 
@@ -945,7 +943,10 @@ export class CalloutRegistry {
 	 * written there. That makes this the *committed* count, which is the one the
 	 * user is being told.
 	 */
-	countPaletteLinks(paletteId: string, exceptCalloutId?: string | null): number {
+	countPaletteLinks(
+		paletteId: string,
+		exceptCalloutId?: string | null,
+	): number {
 		let count = 0;
 		for (const def of this.realDefinitions()) {
 			if (def.paletteId !== paletteId) continue;
@@ -1037,9 +1038,11 @@ export class CalloutRegistry {
 					// callout matches all three variants of the same colour
 					// and can be adopted by the wrong one. Same test the
 					// editor's dropdown uses (`matchesPalette`).
-					(p.transparentBg === true) === (def.transparentBg === true) &&
+					(p.transparentBg === true) ===
+						(def.transparentBg === true) &&
 					bgGradientsEqual(p.bgGradient, def.bgGradient) &&
-					p.colorLight.toLowerCase() === def.colorLight.toLowerCase() &&
+					p.colorLight.toLowerCase() ===
+						def.colorLight.toLowerCase() &&
 					p.colorDark.toLowerCase() === def.colorDark.toLowerCase() &&
 					p.bgColorLight.toLowerCase() ===
 						(def.bgColorLight ?? "").toLowerCase() &&
@@ -1153,35 +1156,37 @@ export class CalloutRegistry {
 	}
 
 	/**
-	 * Turn {@link CalloutDefinition.externalStyle} on or off — the only writer
-	 * of that field, so the two rules below can't drift to a call site.
+	 * Move a callout between style modes — the only writer of either field.
+	 * `applyStyleMode` (`manager/styleMode.ts`) owns the field juggling; the
+	 * one rule that belongs here is the refusal.
 	 *
-	 * Turning it off *deletes* the key rather than writing `false`, because
-	 * `isCalloutModified` compares `JSON.stringify(value ?? null)` and an
-	 * explicit `false` would leave a built-in nobody edited looking customized
-	 * forever.
-	 *
-	 * Refuses on the active Default fallback callout: `CSSInjector.generateFallbackCSS`
-	 * paints every unknown callout *from* that definition, so a fallback target
-	 * that styles nothing is self-contradictory — it would silently keep
-	 * imposing its colours on the rest of the vault while claiming to be
-	 * hands-off. The caller disables the menu item for the same reason.
+	 * `"theme"` is refused on the active Default fallback callout:
+	 * `generateFallbackCSS` paints every unknown callout *from* that
+	 * definition, so a fallback target that styles nothing is
+	 * self-contradictory — it would silently keep imposing its colours on the
+	 * rest of the vault while claiming to be hands-off. The caller disables the
+	 * menu item for the same reason. `"force"` carries no such conflict: the
+	 * fallback block already outranks everything, so forcing that template
+	 * changes only the callout's own rules.
 	 *
 	 * Returns `true` when the row actually changed.
 	 */
-	setExternalStyle(id: string, on: boolean): boolean {
+	setStyleMode(id: string, mode: CalloutStyleMode): boolean {
 		const existing = this.callouts.get(id);
 		if (!existing) return false;
-		if (on && id === this.settings.fallbackCalloutId) return false;
-		if ((existing.externalStyle === true) === on) return false;
-
-		const next: CalloutDefinition = { ...existing };
-		if (on) next.externalStyle = true;
-		else delete next.externalStyle;
-
+		if (mode === "theme" && id === this.settings.fallbackCalloutId) {
+			return false;
+		}
+		const next = applyStyleMode(existing, mode);
+		if (!next) return false;
 		this.setCallout(id, next);
 		this.notifyChange();
 		return true;
+	}
+
+	/** The pre-ladder spelling, kept because it is what the public API says. */
+	setExternalStyle(id: string, on: boolean): boolean {
+		return this.setStyleMode(id, on ? "theme" : "standard");
 	}
 
 	isBuiltInModified(id: string): boolean {
@@ -1496,7 +1501,8 @@ export class CalloutRegistry {
 		// definitionsForLists), so only a NON-demo preview — the in-progress
 		// edit of a real callout — can change what those lists render. Capture
 		// the outgoing state before the bookkeeping below clears it.
-		const wasListVisible = this.previewActiveId !== null && !this.previewIsDemo;
+		const wasListVisible =
+			this.previewActiveId !== null && !this.previewIsDemo;
 
 		// Undo the previous transient registration first, restoring any real
 		// callout it shadowed.
@@ -1712,7 +1718,10 @@ export class CalloutRegistry {
 						entry.colorDark,
 						this.settings.customPalettes,
 					)
-				: resolveCalloutManagerColor(light, this.settings.customPalettes);
+				: resolveCalloutManagerColor(
+						light,
+						this.settings.customPalettes,
+					);
 			if (resolved.createdPalette) {
 				this.settings.customPalettes.push(resolved.createdPalette);
 				paletteCreated = true;
@@ -1830,7 +1839,8 @@ export class CalloutRegistry {
 					// Only what the admonition actually stated. An entry with no
 					// title must not rename the callout, and one whose icon named
 					// nothing must not blank the icon it already has.
-					if (entry.displayName) partial.displayName = entry.displayName;
+					if (entry.displayName)
+						partial.displayName = entry.displayName;
 					if (entry.icon) partial.icon = entry.icon;
 					if (entry.color) {
 						const resolved = resolveColor(entry.color);
@@ -1852,7 +1862,8 @@ export class CalloutRegistry {
 				const resolved = resolveColor(entry.color);
 				const def: CalloutDefinition = {
 					id: entry.id,
-					displayName: entry.displayName ?? obsidianDefaultTitle(entry.id),
+					displayName:
+						entry.displayName ?? obsidianDefaultTitle(entry.id),
 					// No icon in the file, or one naming a drawing that exists in
 					// no library — either way there is nothing to keep, so take
 					// the shared import fallback.

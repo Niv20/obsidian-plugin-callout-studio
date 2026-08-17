@@ -49,6 +49,7 @@ const KNOWN_FIELD_MAP: Record<keyof CalloutDefinition, true> = {
 	paletteId: true,
 	customized: true,
 	externalStyle: true,
+	styleMode: true,
 	metadata: true,
 };
 

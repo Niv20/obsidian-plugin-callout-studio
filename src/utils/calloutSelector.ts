@@ -66,7 +66,27 @@ export const cssAttrValue = (raw: string): string =>
  * {@link tokenAttrSel}, which escapes the same way.
  */
 export const calloutSel = (id: string, themePrefix = ""): string =>
-	`${themePrefix}.callout[data-callout="${cssAttrValue(obsidianCalloutAttrId(id))}"]`;
+	calloutSelAt(id, 1, themePrefix);
+
+/**
+ * {@link calloutSel} at a chosen specificity, by repeating `.callout`.
+ *
+ * `weight` is the number of `.callout` classes, so the rule lands at
+ * `(0, weight + 1, 0)` — one for each class plus the attribute. Weight 1 is
+ * the normal selector, which is why `calloutSel` is just an alias: everything
+ * not in force mode emits **byte-identical** text to before this existed, and
+ * a test asserts exactly that.
+ *
+ * See `manager/styleMode.ts` for the weight force uses and why repetition beat
+ * `:is()` and `:not()`.
+ */
+export const calloutSelAt = (
+	id: string,
+	weight: number,
+	themePrefix = "",
+): string =>
+	`${themePrefix}${".callout".repeat(Math.max(1, weight))}` +
+	`[data-callout="${cssAttrValue(obsidianCalloutAttrId(id))}"]`;
 
 /**
  * The `[data-callout=…]` attribute selector for the plugin's OWN token DOM —

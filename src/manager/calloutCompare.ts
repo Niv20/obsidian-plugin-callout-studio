@@ -52,6 +52,7 @@ export const COMPARED_FIELDS: Record<
 	paletteId: true,
 	customized: true,
 	externalStyle: true,
+	styleMode: true,
 	metadata: true,
 };
 
@@ -60,14 +61,21 @@ export const COMPARED_FIELDS: Record<
  * callout's colour — so `CalloutRegistry.isUnmodifiedBuiltIn` skips them while
  * `toSaveData` still counts them.
  *
- * Only `hideIcon` so far. Dropping the icon from `[!note]` has to be
- * persisted, or it vanishes on the next reload; but it says nothing about
- * what colour the callout should be, and letting it count here would swap
- * core's `--callout-note` for a hard-coded hex — silently ending the
- * built-in's deference to whatever the theme says blue is.
+ * Dropping the icon from `[!note]` has to be persisted, or it vanishes on the
+ * next reload; but it says nothing about what colour the callout should be,
+ * and letting it count here would swap core's `--callout-note` for a
+ * hard-coded hex — silently ending the built-in's deference to whatever the
+ * theme says blue is.
+ *
+ * `styleMode` is here for the same reason, and the consequence is sharper.
+ * Forcing an untouched `[!info]` means "give me Obsidian's own blue at a
+ * weight this theme cannot reach" — the point is the *weight*, not a new
+ * colour. Counting it as a modification would drop the built-in's deference
+ * and bake a literal hex at high specificity, which is close to the opposite
+ * of what the user asked for.
  */
 export const COLOUR_NEUTRAL_FIELDS: ReadonlySet<keyof CalloutDefinition> =
-	new Set(["hideIcon"]);
+	new Set(["hideIcon", "styleMode"]);
 
 /**
  * Structural diff over {@link COMPARED_FIELDS}, optionally ignoring a set of

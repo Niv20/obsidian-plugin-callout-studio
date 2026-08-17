@@ -740,13 +740,14 @@ describe("no new oversized files", () => {
 
 	const FROZEN: Record<string, number> = {
 		"src/settings/CalloutEditor.ts": 2328,
-		// Lowered twice, per this ratchet's own ask: `bgAlphaFor`'s solve moved to
-		// utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the many that
-		// render the callout identically, and `generateFallbackCSS` to
+		// Lowered repeatedly, per this ratchet's own ask: `bgAlphaFor`'s solve moved
+		// to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the many
+		// that render the callout identically; `generateFallbackCSS` to
 		// manager/css/fallbackCSS.ts, taking the icon-box width the two now share
-		// with it to manager/css/iconBox.ts.
-		"src/manager/CSSInjector.ts": 1967,
-		"src/manager/CalloutRegistry.ts": 2003,
+		// with it to manager/css/iconBox.ts; and core's own icon reader to
+		// manager/css/coreIcon.ts.
+		"src/manager/CSSInjector.ts": 1937,
+		"src/manager/CalloutRegistry.ts": 2014,
 		"src/utils/importValidator.ts": 1190,
 		// Lowered from 1106: the Base color row moved to
 		// settings/paletteBaseColorRow.ts (which also owns seedBaseColor, the
@@ -759,9 +760,10 @@ describe("no new oversized files", () => {
 		// member of `PluginSettings` has no sibling module to be moved into, so
 		// the remedy this list asks for is structurally unavailable to it. Raise
 		// it only for a settings field; anything else here still splits.
-		// Raised from 803 for `CustomPalette.baseColor`, then lowered again when
-		// `externalStyle`'s cascade derivation moved to internals-docs.
-		"src/types.ts": 807,
+		// Raised from 803 for `CustomPalette.baseColor`, lowered again when
+		// `externalStyle`'s cascade derivation moved to internals-docs, and raised
+		// for the style-mode field that replaced it.
+		"src/types.ts": 814,
 		"src/editor/livepreview/widgets.ts": 793,
 		"src/reading/calloutPostProcessor.ts": 781,
 		"src/settings/iconpicker/PackPanel.ts": 736,

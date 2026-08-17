@@ -62,9 +62,11 @@ import {
 } from "../editor/renderShared";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { obsidianCalloutAttrId } from "../utils/calloutId";
+import { coreIconValue, importCoreIconSvg } from "./css/coreIcon";
+import { emitWeightFor, styleModeOf } from "./styleMode";
 import { generateFallbackCSS } from "./css/fallbackCSS";
 import { iconBoxWidth } from "./css/iconBox";
-import { calloutSel, tokenAttrSel } from "../utils/calloutSelector";
+import { calloutSelAt, tokenAttrSel } from "../utils/calloutSelector";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import { StartupStyleCache } from "./StartupStyleCache";
 
@@ -74,67 +76,6 @@ type RegistryWindow = Window & {
 };
 
 const STYLE_EL_ID = "callout-studio-dynamic-css";
-
-/**
- * The icon Obsidian itself would draw in a callout, read the way core reads it:
- * the `data-callout-icon` attribute the renderer stamps from the callout node,
- * and failing that the computed `--callout-icon`.
- *
- * The unwrapping matches core's because a custom property keeps its CSS quoting
- * through the computed value — a theme writing `--callout-icon: 'lucide-star'`
- * hands back the apostrophes as well, and `setIcon` would look up an icon by
- * that name and find none. The double-quoted form goes through `JSON.parse`
- * for the escapes; a malformed one is used verbatim, which is also what core
- * does with it.
- */
-function coreIconValue(calloutEl: HTMLElement): string {
-	const attr = calloutEl.getAttribute("data-callout-icon")?.trim() ?? "";
-	const raw =
-		attr.length > 0
-			? attr
-			: calloutEl.getCssPropertyValue("--callout-icon").trim();
-	if (raw.startsWith("'") && raw.endsWith("'")) {
-		return raw.slice(1, -1).replace(/\\'/g, "'");
-	}
-	if (raw.startsWith('"')) {
-		try {
-			const parsed: unknown = JSON.parse(raw);
-			if (typeof parsed === "string") return parsed;
-		} catch {
-			// Fall through to the raw value, as core does.
-		}
-	}
-	return raw;
-}
-
-/**
- * A theme may write its icon as literal markup — `--callout-icon: '<svg …>'` —
- * and Obsidian honours that, so a faithful restore has to as well. Sized and
- * painted exactly as core's reader does it: 16px, `currentColor` for both fill
- * and stroke, so the drawing tracks whatever colour the theme gives the callout.
- *
- * Parsed as `image/svg+xml`, which builds no scripting context, and the markup
- * can only have come from a stylesheet the user installed — the same trust
- * boundary as the `background-image` any theme is already free to put here.
- * (Separate from `icons/svg.ts`, whose two sanitizers guard artwork arriving
- * over the network and artwork the user uploaded; neither describes this.)
- */
-function importCoreIconSvg(markup: string, doc: Document): Element | null {
-	const parsed = new DOMParser().parseFromString(markup, "image/svg+xml");
-	const root = parsed.documentElement;
-	if (
-		parsed.querySelector("parsererror") ||
-		root.nodeName.toLowerCase() !== "svg"
-	) {
-		return null;
-	}
-	const copy = doc.importNode(root, true);
-	copy.setAttribute("width", "16");
-	copy.setAttribute("height", "16");
-	copy.setAttribute("fill", "currentColor");
-	copy.setAttribute("stroke", "currentColor");
-	return copy;
-}
 
 /** One `background-image` layer: a gradient sweep. */
 interface BgLayer {
@@ -163,6 +104,28 @@ export class CSSInjector {
 	 * Must be nulled whenever a style target is (re)bound — see ensureStyleEl.
 	 */
 	private lastCssText: string | null = null;
+
+	/**
+	 * How many times `.callout` is repeated in the selectors emitted for the
+	 * callout currently being written — 1 for everything except force mode.
+	 *
+	 * Ambient rather than a parameter because the selector is built in a dozen
+	 * helpers below (`iconHiddenCSS`, the three icon overrides, the transform,
+	 * the title sweep, the fold arrow, `printGradientCSS`), and threading a
+	 * number through all of them would cost more than the feature buys. Safe
+	 * because `generateCalloutCSS` is synchronous and one callout finishes
+	 * before the next begins; it sets this on entry and puts it back before
+	 * returning.
+	 */
+	private emitWeight = 1;
+
+	/**
+	 * The per-callout selector base, at whatever weight is currently in force.
+	 * Every emitter goes through this rather than `calloutSelAt` directly.
+	 */
+	private sel(id: string, themePrefix = ""): string {
+		return calloutSelAt(id, this.emitWeight, themePrefix);
+	}
 	private injecting = false;
 	private registry: CalloutRegistry;
 	private app: App;
@@ -726,7 +689,13 @@ export class CSSInjector {
 		// the single `display: none` it takes cannot fight the theme over any of
 		// the things this flag exists to protect.
 		const hidesIcon = def.hideIcon === true;
-		if (def.externalStyle === true) {
+		const mode = styleModeOf(def);
+		// Force changes nothing about *what* is emitted, only how hard the
+		// selectors push — so it is one number. Set unconditionally and before
+		// the early return, so a leftover value can never reach the next
+		// callout even if something below throws.
+		this.emitWeight = emitWeightFor(mode);
+		if (mode === "theme") {
 			return hidesIcon ? this.iconHiddenCSS(def) : "";
 		}
 
@@ -750,28 +719,28 @@ export class CSSInjector {
 		if (def.transparentBg) {
 			lightProps.push(...this.transparentBorderProps());
 		}
-		parts.push(`${calloutSel(def.id)} {\n${lightProps.join("\n")}\n}`);
+		parts.push(`${this.sel(def.id)} {\n${lightProps.join("\n")}\n}`);
 
 		// Dark mode override
 		if (this.needsDarkBlock(def)) {
 			const darkProps: string[] = [...this.accentProps(def, "dark")];
 			darkProps.push(...this.bgProps(def, "dark"));
 			parts.push(
-				`${calloutSel(def.id, ".theme-dark ")} {\n${darkProps.join("\n")}\n}`,
+				`${this.sel(def.id, ".theme-dark ")} {\n${darkProps.join("\n")}\n}`,
 			);
 		}
 
 		// Content text color overrides
 		if (def.textColorLight) {
 			parts.push(
-				`${calloutSel(def.id)} > .callout-content {\n` +
+				`${this.sel(def.id)} > .callout-content {\n` +
 					`  color: ${def.textColorLight};\n` +
 					`}`,
 			);
 		}
 		if (def.textColorDark && def.textColorDark !== def.textColorLight) {
 			parts.push(
-				`${calloutSel(def.id, ".theme-dark ")} > .callout-content {\n` +
+				`${this.sel(def.id, ".theme-dark ")} > .callout-content {\n` +
 					`  color: ${def.textColorDark};\n` +
 					`}`,
 			);
@@ -812,7 +781,7 @@ export class CSSInjector {
 					[def.id, ...(def.aliases ?? [])]
 						.map(
 							(id) =>
-								`${calloutSel(id, themePrefix)} > ` +
+								`${this.sel(id, themePrefix)} > ` +
 								`.callout-title > .callout-title-inner`,
 						)
 						.join(",\n"),
@@ -834,7 +803,7 @@ export class CSSInjector {
 			def,
 			(themePrefix, suffix) =>
 				[def.id, ...(def.aliases ?? [])]
-					.map((id) => `${calloutSel(id, themePrefix)}${suffix}`)
+					.map((id) => `${this.sel(id, themePrefix)}${suffix}`)
 					.join(",\n"),
 			false,
 		);
@@ -845,7 +814,7 @@ export class CSSInjector {
 			for (const alias of def.aliases) {
 				parts.push(
 					`/* alias: ${alias} → ${def.id} */\n` +
-						`${calloutSel(alias)} {\n${lightProps.join("\n")}\n}`,
+						`${this.sel(alias)} {\n${lightProps.join("\n")}\n}`,
 				);
 				if (this.needsDarkBlock(def)) {
 					const aliasDarkProps: string[] = [
@@ -853,12 +822,12 @@ export class CSSInjector {
 					];
 					aliasDarkProps.push(...this.bgProps(def, "dark"));
 					parts.push(
-						`${calloutSel(alias, ".theme-dark ")} {\n${aliasDarkProps.join("\n")}\n}`,
+						`${this.sel(alias, ".theme-dark ")} {\n${aliasDarkProps.join("\n")}\n}`,
 					);
 				}
 				if (def.textColorLight) {
 					parts.push(
-						`${calloutSel(alias)} > .callout-content {\n  color: ${def.textColorLight};\n}`,
+						`${this.sel(alias)} > .callout-content {\n  color: ${def.textColorLight};\n}`,
 					);
 				}
 				if (
@@ -866,7 +835,7 @@ export class CSSInjector {
 					def.textColorDark !== def.textColorLight
 				) {
 					parts.push(
-						`${calloutSel(alias, ".theme-dark ")} > .callout-content {\n  color: ${def.textColorDark};\n}`,
+						`${this.sel(alias, ".theme-dark ")} > .callout-content {\n  color: ${def.textColorDark};\n}`,
 					);
 				}
 				if (iconSvg) {
@@ -891,6 +860,7 @@ export class CSSInjector {
 			}
 		}
 
+		this.emitWeight = 1;
 		return parts.join("\n\n");
 	}
 
@@ -932,7 +902,7 @@ export class CSSInjector {
 						// Obsidian's own DOM → dasherized attr (calloutSel).
 						// Our heading-bar DOM → space-form attr (the two below).
 						// The two conventions are deliberate — do not unify them.
-						`${calloutSel(id, themePrefix)} > ` +
+						`${this.sel(id, themePrefix)} > ` +
 						`.callout-title > .callout-fold, ` +
 						`${themePrefix}.${CSS_HEADING_LINE}${tokenAttrSel(id)} ` +
 						`.${CSS_FOLD_ARROW}, ` +
@@ -1160,7 +1130,7 @@ export class CSSInjector {
 		switch (role) {
 			case "regular":
 				// Obsidian's own DOM → dasherized attr; the two tokens are ours.
-				return `${calloutSel(id)} > .callout-title > .callout-icon`;
+				return `${this.sel(id)} > .callout-title > .callout-icon`;
 			case "heading":
 				return `.${CSS_HEADING_TOKEN}${tokenAttrSel(id)} > .${CSS_TOKEN_ICON}`;
 			case "inline":
@@ -1260,13 +1230,13 @@ export class CSSInjector {
 		const parts: string[] = [];
 		for (const id of [def.id, ...(def.aliases ?? [])]) {
 			parts.push(
-				`${calloutSel(id)} > .callout-title > .callout-icon {\n` +
+				`${this.sel(id)} > .callout-title > .callout-icon {\n` +
 					`  display: none;\n` +
 					`}`,
 			);
 			if (aligned) {
 				parts.push(
-					`${calloutSel(id)} > .callout-content {\n` +
+					`${this.sel(id)} > .callout-content {\n` +
 						`  padding-inline-start: 0;\n` +
 						`}`,
 				);
@@ -1335,7 +1305,7 @@ export class CSSInjector {
 		picture?: UserImageIcon,
 	): string {
 		const dataUri = svgToDataUri(svg);
-		const sel = calloutSel(calloutId);
+		const sel = this.sel(calloutId);
 		return (
 			`@media screen {\n` +
 			`${sel} > .callout-title > .callout-icon > svg {\n` +
@@ -1373,7 +1343,7 @@ export class CSSInjector {
 		picture: UserImageIcon,
 	): string {
 		const dataUri = svgToDataUri(svg);
-		const sel = calloutSel(calloutId);
+		const sel = this.sel(calloutId);
 		return (
 			`@media screen {\n` +
 			`${sel} > .callout-title > .callout-icon > svg {\n` +
@@ -1403,7 +1373,7 @@ export class CSSInjector {
 		// Defensive escaping for the CSS string literal (emojis contain neither
 		// backslashes nor quotes, but keep it safe against future data changes).
 		const safe = emoji.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-		const sel = calloutSel(calloutId);
+		const sel = this.sel(calloutId);
 		return (
 			`@media screen {\n` +
 			`${sel} > .callout-title > .callout-icon > svg {\n` +
