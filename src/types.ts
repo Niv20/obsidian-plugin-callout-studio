@@ -295,29 +295,13 @@ export interface CalloutDefinition {
 	 * Hand this callout to the active theme, a CSS snippet, or Obsidian's own
 	 * defaults: Callout Studio emits no CSS for it and renders no DOM for it.
 	 *
-	 * It exists because the plugin otherwise always wins. The generated CSS is
-	 * written to `document.adoptedStyleSheets`, which the cascade orders *after*
-	 * every `<link>`/`<style>` in the document tree — and a theme and a snippet
-	 * are both ordinary document stylesheets. So at the equal specificity both
-	 * sides naturally write (`.callout[data-callout="x"]`, `(0,2,0)`), we win
-	 * every tie and load order cannot save them. This flag is the only opt-out.
-	 *
-	 * "No styling" is broader than dropping the per-callout block, so three
-	 * other paths check it too: the id-blind global rules exclude it by selector
-	 * (`CSSInjector.externalExclusion`), `CSSInjector.paintIcons` skips it (for
-	 * a Lucide icon it would otherwise replace the SVG Obsidian itself
-	 * rendered), and the heading-bar / inline-pill / ref-token surfaces render
-	 * nothing at all (`resolveCalloutDef`'s `external` flag) — those are the
-	 * plugin's own syntax, so there is no external styling for them to fall back
-	 * to and a half-painted token would just look broken.
-	 *
-	 * The row deliberately stays in the registry. `CSSInjector.generateFallbackCSS`
-	 * builds its `:not()` chain from every *known* id, so dropping this one from
-	 * the registry would hand it to a rule carrying `!important` at a
-	 * specificity no theme can beat — the exact opposite of the intent.
+	 * "No styling" is broader than dropping the per-callout block, so several
+	 * paths check it, and `internals-docs/06-css-generation.md` derives why
+	 * each is needed — along with the measurement that the plugin does *not*
+	 * simply out-rank a theme, which is what makes this flag worth having.
 	 *
 	 * Typed `true` rather than `boolean` for the same reason as
-	 * {@link transparentBg}: `CalloutRegistry.isModified` compares
+	 * {@link transparentBg}: `isCalloutModified` compares
 	 * `JSON.stringify(value ?? null)`, so an explicit `false` would read as a
 	 * modification. `CalloutRegistry.setExternalStyle` is the only writer and
 	 * deletes the key rather than writing `false`.

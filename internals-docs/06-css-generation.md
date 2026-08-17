@@ -244,6 +244,59 @@ itself when the decoration set changes (see
 > Live Preview's native callout widget has no forced-rebuild hook this plugin
 > can reach, so re-deriving and comparing is cheaper than tracking state.
 
+## Where the generated CSS actually lands in the cascade
+
+Worth getting exactly right, because the answer is more interesting than
+"plugins lose to themes" *and* more interesting than "we always win".
+
+Obsidian orders `document.head` deliberately. `Plugin.prototype.loadCSS` does
+`document.head.insertBefore(styleEl, app.customCss.styleEl)` — so a plugin's
+static `styles.css` is inserted **before** the theme, and loses every tie to
+it by design. Snippets go the other way: `loadSnippets` does
+`insertAfter(previous)` starting from the theme's own element, so they cluster
+immediately behind it and beat it. The full order, later winning ties:
+
+1. `app.css`
+2. every plugin's `styles.css`
+3. the theme (`app.customCss.styleEl`)
+4. enabled snippets (`app.customCss.extraStyleEls`)
+5. `document.adoptedStyleSheets` — per CSSOM, after *all* document stylesheets
+
+This plugin's generated CSS is (5), so it beats a theme **and** a snippet at
+equal specificity. That is the whole reason `externalStyle` has to exist: load
+order cannot save a theme, so something else has to.
+
+**But source order only breaks ties at equal specificity, and the themes that
+motivate this flag do not write at equal specificity.** Measured against ITS
+Theme (14,856 lines, 718 selectors mentioning callouts), against this plugin's
+per-callout `.callout[data-callout="x"]` at `(0,2,0)`:
+
+| ITS selector specificity | count |
+| ------------------------ | ----- |
+| higher than `(0,2,0)`    | 450 (63%) |
+| equal                    | 70 |
+| lower                    | 198 |
+
+ITS routinely writes `.callout.callout[data-callout=recite]` `(0,3,0)`,
+`.callout.callout.callout.callout:is(…)` `(0,4,0)`, and
+`body:not(.default-callout-quote, .callout-no-quote) .callout.callout[data-callout=quote]`
+≈ `(0,4,1)`. So against such a theme the outcome is neither side winning
+cleanly — it is a **split render**, this plugin carrying the properties the
+theme did not escalate and the theme carrying the rest. That is why the
+symptom reads as broken rather than merely overridden.
+
+Two consequences worth keeping in mind before touching any of this:
+
+- A rule emitted here is *not* guaranteed to apply. Anything that must hold
+  needs either specificity above what the active theme writes, or the
+  `!important` register `generateFallbackCSS` speaks in.
+- Core's own contract is the cheapest thing to win, because core declares at
+  `(0,2,0)` and derives everything else from two custom properties. On
+  Obsidian 1.13+, `--callout-color` alone drives the accent, the border, the
+  title colour, the icon colour **and** the background
+  (`background-color: color-mix(in oklch, var(--callout-color) 10%, transparent)`),
+  so deferring to it is both the most compatible and the least code.
+
 ## `externalStyle` — the opt-out, and why it needs three separate exclusion mechanisms
 
 A callout marked `externalStyle: true` is meant to be invisible to this

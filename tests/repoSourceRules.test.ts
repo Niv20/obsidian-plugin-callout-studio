@@ -759,8 +759,9 @@ describe("no new oversized files", () => {
 		// member of `PluginSettings` has no sibling module to be moved into, so
 		// the remedy this list asks for is structurally unavailable to it. Raise
 		// it only for a settings field; anything else here still splits.
-		// Raised from 803 for `CustomPalette.baseColor`.
-		"src/types.ts": 823,
+		// Raised from 803 for `CustomPalette.baseColor`, then lowered again when
+		// `externalStyle`'s cascade derivation moved to internals-docs.
+		"src/types.ts": 807,
 		"src/editor/livepreview/widgets.ts": 793,
 		"src/reading/calloutPostProcessor.ts": 781,
 		"src/settings/iconpicker/PackPanel.ts": 736,
