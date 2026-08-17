@@ -179,15 +179,17 @@ describe("calloutSelAt — the weighted selector", () => {
 		assert.strictEqual(emitWeightFor("theme"), 1);
 	});
 
-	it("clears ITS Theme's heaviest measured callout selector", () => {
-		// The whole point of the number. ITS writes
-		// `body:not(.default-callout-quote, .callout-no-quote) .callout.callout[data-callout=quote]`
-		// — (0,4,1) — and class count is compared before element count, so the
-		// forced rule needs more than four classes. Its dark twin adds one more.
-		const ITS_WORST_CLASSES = 4;
+	it("clears the heaviest class-count measured in a real theme", () => {
+		// The whole point of the number, and the reason it is 8 rather than the
+		// 6 first drafted. `themeCalloutScan` over the themes on hand reports a
+		// worst case of 7 class-units (ITS Theme, `[!quote]` and `[!recite]`);
+		// Baseline and Cupertino peak at 6. The forced light rule is weight + 1,
+		// so it must clear 7 outright rather than tie it — a tie only wins on
+		// source order, which is not something to design a feature around.
+		const WORST_OBSERVED = 7;
 		assert.ok(
-			FORCE_WEIGHT_DEFAULT + 1 > ITS_WORST_CLASSES,
-			`weight ${FORCE_WEIGHT_DEFAULT} does not outrank a (0,${ITS_WORST_CLASSES},1) theme rule`,
+			FORCE_WEIGHT_DEFAULT + 1 > WORST_OBSERVED,
+			`weight ${FORCE_WEIGHT_DEFAULT} does not outrank a (0,${WORST_OBSERVED},x) theme rule`,
 		);
 	});
 });

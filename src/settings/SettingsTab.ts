@@ -26,6 +26,7 @@ import {
 	renderContextMenuSettingsSection,
 } from "./sections/EditorFeaturesSection";
 import { renderFallbackSection } from "./sections/FallbackSection";
+import { renderThemeCoexistenceSection } from "./sections/ThemeCoexistenceSection";
 import { renderLanguageSection } from "./sections/LanguageSection";
 import { renderCustomPalettesSection } from "./sections/CustomPalettesSection";
 import { renderGlobalSettingsSection } from "./sections/GlobalSettingsSection";
@@ -39,11 +40,6 @@ import type {
 	SettingsSectionContext,
 	SettingsTabPlugin,
 } from "./sections/types";
-
-const scanUnknownCalloutsInBuffer = (
-	content: string,
-	knownIds: Set<string>,
-): string[] => scanStringForUnknownCallouts(content, knownIds);
 
 export class CalloutStudioSettingsTab extends PluginSettingTab {
 	plugin: SettingsTabPlugin;
@@ -159,6 +155,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		});
 		this.calloutLists.render(containerEl);
 
+		renderThemeCoexistenceSection(sectionCtx, containerEl);
 		renderFallbackSection(sectionCtx, containerEl);
 		renderCustomPalettesSection(sectionCtx, containerEl);
 		renderGlobalSettingsSection(sectionCtx, containerEl);
@@ -283,7 +280,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 			if (!(view instanceof MarkdownView)) continue;
 			const content = view.editor.getValue();
 			if (!content) continue;
-			for (const id of scanUnknownCalloutsInBuffer(content, known)) {
+			for (const id of scanStringForUnknownCallouts(content, known)) {
 				seen.add(id);
 			}
 		}

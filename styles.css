@@ -5023,3 +5023,51 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	font-size: var(--font-ui-smaller);
 	text-align: center;
 }
+
+/* ── Theme coexistence report ───────────────────────────────────────────────
+ * One row per callout the active theme also styles. Deliberately quiet: this
+ * is a diagnostic the user reads once when something looks wrong, not a
+ * control surface, so it borrows the row metrics next door rather than
+ * inventing its own.
+ */
+.cs-theme-conflict-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-2);
+	margin-bottom: var(--size-4-4);
+}
+
+.cs-theme-conflict-row {
+	padding: var(--size-4-2) var(--size-4-3);
+	border-radius: var(--radius-s);
+	background-color: var(--cs-surface-raised, var(--background-secondary));
+}
+
+.cs-theme-conflict-name-line {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-2);
+	flex-wrap: wrap;
+}
+
+.cs-theme-conflict-name {
+	font-weight: var(--font-medium);
+}
+
+.cs-theme-conflict-id {
+	font-family: var(--font-monospace);
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+}
+
+.cs-theme-conflict-props {
+	margin-top: var(--size-2-1);
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+}
+
+.cs-theme-conflict-warning {
+	margin-top: var(--size-2-1);
+	font-size: var(--font-ui-smaller);
+	color: var(--text-warning);
+}

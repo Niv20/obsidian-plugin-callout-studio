@@ -77,13 +77,18 @@ export function applyStyleMode(
 }
 
 /**
- * How many times `.callout` is repeated in a forced selector.
+* How many times `.callout` is repeated in a forced selector.
  *
  * At weight *w* the per-callout rule is `(0,w+1,0)` and its `.theme-dark` twin
- * is `(0,w+2,0)`. Class count is compared before element count, so `(0,6,0)`
- * already outranks the worst thing measured in the field — ITS's
- * `body:not(.default-callout-quote, .callout-no-quote) .callout.callout[data-callout=quote]`
- * at roughly `(0,4,1)`. Six leaves two units of margin over that.
+ * is `(0,w+2,0)`. Class count is compared before element count, so this number
+ * alone decides whether a theme's rule or ours applies.
+ *
+ * Eight is measured, not guessed. `themeCalloutScan` reports the heaviest
+ * class-count any selector uses per callout id, and across the themes on hand
+ * that is 7 (ITS Theme, on `[!quote]` and `[!recite]`), 6 (Baseline) and 6
+ * (Cupertino). Weight 8 puts the light rule at 9 and the dark one at 10 — two
+ * units clear of the worst observed. An earlier draft used 6, which merely
+ * *tied* ITS and would have relied on source order to break it.
  *
  * Repeating the one class every callout is guaranteed to carry is deliberate,
  * and the alternatives were worse: `:not()` changes *what matches* (that is
@@ -93,7 +98,7 @@ export function applyStyleMode(
  * right-to-left off the attribute so the extra class tests cost nothing, and
  * its weight is obvious to anyone reading the emitted CSS.
  */
-export const FORCE_WEIGHT_DEFAULT = 6;
+export const FORCE_WEIGHT_DEFAULT = 8;
 
 /**
  * The ceiling, for when the weight is later derived from the active theme

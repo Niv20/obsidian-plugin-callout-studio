@@ -129,6 +129,19 @@ export const en: Record<string, string> = {
 	"settings.colorSwatchAria": "Accent: {{accent}} · Background: {{bg}}",
 	"settings.externalStyleTag": "External style",
 	"settings.forceStyleTag": "Overriding theme",
+	// Theme coexistence — the report of what the active theme also styles
+	"settings.themeCoexistence": "Theme coexistence",
+	"settings.themeConflictDefaultTheme": "Your theme",
+	"settings.themeConflictRow":
+		"{{theme}} also styles {{count}} of your callouts",
+	"settings.themeConflictLosing":
+		"{{count}} of them are written strongly enough to beat Callout Studio. Open a callout's ⋯ menu to hand it to the theme, or to override the theme.",
+	"settings.themeConflictWinning":
+		"Callout Studio is winning all of them. Hand one to the theme from its ⋯ menu if you prefer the theme's version.",
+	"settings.themeConflictThemeWins": "Theme wins",
+	"settings.themeConflictSets": "Your theme also sets: {{props}}",
+	"settings.themeConflictImportant":
+		"Marked !important by your theme, so overriding cannot reach it: {{props}}",
 	"settings.externalStyleAction": "Use external style (theme or CSS)",
 	"settings.externalStyleBlocked":
 		"this is the default fallback callout, pick a different one first",
