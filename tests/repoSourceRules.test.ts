@@ -745,7 +745,7 @@ describe("no new oversized files", () => {
 		// many that render the callout identically.
 		"src/manager/CSSInjector.ts": 2205,
 		"src/manager/CalloutRegistry.ts": 2086,
-		"src/utils/importValidator.ts": 1249,
+		"src/utils/importValidator.ts": 1190,
 		// Lowered from 1106: the Base color row moved to
 		// settings/paletteBaseColorRow.ts (which also owns seedBaseColor, the
 		// reason CustomPalette.baseColor exists), and the gradient's arrow
