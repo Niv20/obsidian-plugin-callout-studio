@@ -56,12 +56,21 @@ export function renderCalloutRow(
 		attr: { "aria-label": def.displayName },
 	});
 	if (external) {
-		// First branch on purpose: it outranks both badges below, because
-		// "the theme styles this" is the only one of the three that says the
-		// plugin is not painting the callout at all.
+		// First branch on purpose: it outranks every badge below, because
+		// "the theme styles this" is the only one that says the plugin is not
+		// painting the callout at all.
 		nameLine.createSpan({
 			cls: "cs-fallback-tag",
 			text: t("settings.externalStyleTag"),
+		});
+	} else if (def.styleMode === "force") {
+		// Second, and above the fallback badges for the same reason in reverse:
+		// this row is the one place the user can see that a callout is being
+		// pushed harder than the rest, which is what they will look for when a
+		// theme conflict turns out to be fixed on some rows and not others.
+		nameLine.createSpan({
+			cls: "cs-fallback-tag",
+			text: t("settings.forceStyleTag"),
 		});
 	} else if (def.id === ctx.plugin.settings.fallbackCalloutId) {
 		nameLine.createSpan({

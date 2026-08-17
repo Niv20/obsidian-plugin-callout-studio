@@ -128,9 +128,13 @@ export const en: Record<string, string> = {
 	"settings.makeFallbackAction": "Use default fallback style",
 	"settings.colorSwatchAria": "Accent: {{accent}} · Background: {{bg}}",
 	"settings.externalStyleTag": "External style",
+	"settings.forceStyleTag": "Overriding theme",
 	"settings.externalStyleAction": "Use external style (theme or CSS)",
 	"settings.externalStyleBlocked":
 		"this is the default fallback callout, pick a different one first",
+	"settings.forceStyleAction": "Override the theme",
+	"settings.forceStyleDesc":
+		"Raise the strength of Callout Studio's rules so an assertive theme stops winning. It cannot undo layout the theme adds, and cannot beat a theme that uses !important.",
 
 	// Settings — Fallback callout
 	"settings.fallbackCallout": "Default fallback callout",
@@ -292,6 +296,9 @@ export const en: Record<string, string> = {
 	"notice.externalStyleOn":
 		'"{{name}}" is now styled by your theme or CSS snippet.',
 	"notice.externalStyleOff": 'Callout Studio styles "{{name}}" again.',
+	"notice.forceStyleOn": '"{{name}}" now overrides your theme.',
+	"notice.forceStyleOff":
+		'Callout Studio styles "{{name}}" at normal strength again.',
 	"notice.nothingToWrap": "Nothing to wrap.",
 	"notice.cursorNotInsideCallout": "Cursor is not inside a callout.",
 	"notice.autocompleteTargetMoved":

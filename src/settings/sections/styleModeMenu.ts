@@ -12,6 +12,11 @@
  */
 import { Menu, Notice } from "obsidian";
 import { t } from "../../i18n";
+import type { LocaleKey } from "../../i18n";
+import {
+	type CalloutStyleMode,
+	styleModeOf,
+} from "../../manager/styleMode";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
 
@@ -32,30 +37,61 @@ export function addExternalStyleMenuItem(
 	 * this item sits under would land directly on another one. */
 	separate: boolean,
 ): void {
-	const external = def.externalStyle === true;
+	const mode = styleModeOf(def);
 	const isFallbackTarget = def.id === ctx.plugin.settings.fallbackCalloutId;
 	if (separate) menu.addSeparator();
+
+	// Two checkable items rather than a three-way submenu: `MenuItem.setSubmenu`
+	// is absent from the pinned typings and this plugin's minAppVersion is
+	// 1.7.2, so the portable shape is flat. Neither one checked *is* the third
+	// state (normal), which reads correctly without having to be listed, and
+	// this stays a strictly additive change to a menu people already know.
 	menu.addItem((item) => {
 		item.setTitle(t("settings.externalStyleAction"))
 			.setIcon("paintbrush")
-			.setChecked(external)
+			.setChecked(mode === "theme")
 			.onClick(() => {
-				void handleToggleExternalStyle(ctx, def, !external);
+				void applyMode(ctx, def, mode === "theme" ? "standard" : "theme");
 			});
-		if (isFallbackTarget && !external) {
+		if (isFallbackTarget && mode !== "theme") {
 			item.setDisabled(true).setTitle(
 				`${t("settings.externalStyleAction")} — ${t("settings.externalStyleBlocked")}`,
 			);
 		}
 	});
+
+	menu.addItem((item) =>
+		item
+			.setTitle(t("settings.forceStyleAction"))
+			.setIcon("shield")
+			.setChecked(mode === "force")
+			.onClick(() => {
+				void applyMode(ctx, def, mode === "force" ? "standard" : "force");
+			}),
+	);
 }
 
-async function handleToggleExternalStyle(
+/**
+ * Which notice each landing state gets. `"standard"` is reachable from either
+ * direction, so the key is chosen by the mode arrived *at*, not the one left.
+ */
+const NOTICE_KEY: Record<CalloutStyleMode, LocaleKey> = {
+	theme: "notice.externalStyleOn",
+	standard: "notice.externalStyleOff",
+	force: "notice.forceStyleOn",
+};
+
+/**
+ * The write, and everything that has to be repainted after it. Shared by both
+ * items so they cannot fall out of step — the mutual exclusion itself is
+ * `CalloutRegistry.setStyleMode`'s job, not this one's.
+ */
+async function applyMode(
 	ctx: SettingsSectionContext,
 	def: CalloutDefinition,
-	on: boolean,
+	mode: CalloutStyleMode,
 ): Promise<void> {
-	if (!ctx.plugin.registry.setExternalStyle(def.id, on)) return;
+	if (!ctx.plugin.registry.setStyleMode(def.id, mode)) return;
 	await ctx.plugin.saveSettings();
 	ctx.plugin.refreshCallouts();
 	// And the reading view on top of it. refreshCallouts rebuilds Live
@@ -65,9 +101,5 @@ async function handleToggleExternalStyle(
 	// Same call, and the same reason, as a render-role toggle.
 	ctx.plugin.refreshRenderModes();
 	ctx.display();
-	new Notice(
-		t(on ? "notice.externalStyleOn" : "notice.externalStyleOff", {
-			name: def.displayName,
-		}),
-	);
+	new Notice(t(NOTICE_KEY[mode], { name: def.displayName }));
 }
