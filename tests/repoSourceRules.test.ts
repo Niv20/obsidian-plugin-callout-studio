@@ -740,10 +740,12 @@ describe("no new oversized files", () => {
 
 	const FROZEN: Record<string, number> = {
 		"src/settings/CalloutEditor.ts": 2328,
-		// Lowered from 2253, per this ratchet's own ask: `bgAlphaFor`'s solve
-		// moved to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the
-		// many that render the callout identically.
-		"src/manager/CSSInjector.ts": 2205,
+		// Lowered twice, per this ratchet's own ask: `bgAlphaFor`'s solve moved to
+		// utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the many that
+		// render the callout identically, and `generateFallbackCSS` to
+		// manager/css/fallbackCSS.ts, taking the icon-box width the two now share
+		// with it to manager/css/iconBox.ts.
+		"src/manager/CSSInjector.ts": 1967,
 		"src/manager/CalloutRegistry.ts": 2003,
 		"src/utils/importValidator.ts": 1190,
 		// Lowered from 1106: the Base color row moved to
