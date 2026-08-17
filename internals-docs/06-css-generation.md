@@ -1,6 +1,6 @@
 # CSS generation
 
-[`src/manager/CSSInjector.ts`](../src/manager/CSSInjector.ts) (~2,240 lines,
+[`src/manager/CSSInjector.ts`](../src/manager/CSSInjector.ts) (~1,950 lines,
 one of the frozen oversized-file exceptions) reads every `CalloutDefinition`
 from the registry and writes one CSS stylesheet that restyles Obsidian's block
 callouts and paints the plugin's own heading/inline DOM. It also paints icon
@@ -296,6 +296,80 @@ Two consequences worth keeping in mind before touching any of this:
   title colour, the icon colour **and** the background
   (`background-color: color-mix(in oklch, var(--callout-color) 10%, transparent)`),
   so deferring to it is both the most compatible and the least code.
+
+## The style-mode ladder
+
+`externalStyle` alone could only say "all or nothing", which is the wrong shape
+for the split-render problem above. [`src/manager/styleMode.ts`](../src/manager/styleMode.ts)
+resolves three states out of two persisted fields:
+
+| Mode | Persisted as | Emits |
+| ---- | ------------ | ----- |
+| `theme` | `externalStyle: true` | nothing (except `hideIcon`) |
+| `standard` | neither field | everything, at `(0,2,0)` — unchanged |
+| `force` | `styleMode: "force"` | everything, at `(0,9,0)` |
+
+**Two fields rather than one, deliberately.** `data.json` syncs between devices
+that may run different builds. A build too old to know `styleMode` ignores it —
+and ignoring `"force"` costs nothing (the callout renders as it always did),
+while ignoring a hypothetical `styleMode: "theme"` would mean *restyling a
+callout its owner handed to their theme*. Keeping the old spelling for the old
+state also means zero migration: every existing row already reads correctly.
+
+`applyStyleMode` writes at most one field and deletes the other, so no row can
+claim two states; `styleModeOf` resolves `externalStyle` first if hand-edited
+data manages both.
+
+### How force escalates
+
+`calloutSelAt(id, weight)` repeats `.callout`, so weight *w* lands the rule at
+`(0, w+1, 0)`. Everything routes through `CSSInjector.sel()`, which reads an
+ambient `emitWeight` set once per callout — a parameter would have had to thread
+through a dozen emitters. `calloutSel` is now `calloutSelAt(id, 1, …)`, which is
+why standard-mode output is **byte-identical** to what shipped; `tests/styleMode.test.ts`
+asserts exactly that, and it is the property that made this safe to land.
+
+`FORCE_WEIGHT_DEFAULT` is 8 because it was measured, not guessed:
+`themeCalloutScan` reports a worst case of 7 class-units across the themes on
+hand (ITS Theme on `[!quote]` and `[!recite]`; Baseline and Cupertino peak at
+6). Weight 8 puts the light rule at 9. An earlier draft used 6, which merely
+*tied* ITS.
+
+**Force never reaches for `!important`,** and the reason is not squeamishness.
+This plugin's CSS already cascades after every snippet, so at equal importance
+it beats the user's own CSS too. Adding `!important` would leave a user wanting
+to correct one property in their own snippet unable to — they could only answer
+with `!important` and would still lose on source order. A high-specificity rule
+always leaves one more class as an escape hatch. The corollary is that force
+cannot beat a theme that shipped `!important`, and the report says so out loud
+rather than letting the user discover it by trying.
+
+## Detecting what the theme claims
+
+[`src/manager/theme/`](../src/manager/theme/) answers "which callouts does the
+active styling also style?" — three small modules, no network, no disk.
+
+- **`customCssApi.ts`** is the only place `app.customCss` is named. None of it
+  is in `obsidian.d.ts`, so every field is optional and every reader degrades to
+  "no theme information" instead of throwing. Note `extraStyleEls` is index-
+  aligned to the *enabled* snippet subset, not to `snippets`.
+- **`themeCalloutScan.ts`** is a pure text scanner: no DOM, no `CSSStyleSheet`.
+  The tempting implementation is `replaceSync()` into an unadopted sheet and a
+  `cssRules` walk — but that type does not exist in this repo's test DOM, and a
+  scanner nobody can test is how a false conflict badge ships. It counts only
+  `=` and `^=` matchers; `*=` would read ITS's `[data-callout*=column]` as a
+  callout named "column" that nobody has, and `^=` is a *prefix*, matched with
+  `startsWith` rather than treated as an id. Blocks are found by depth-matched
+  braces so a rule inside `@media` is not swallowed. ~7 ms over ITS's 846 KB.
+- **`ThemeConflictStore.ts`** caches by theme name + version + enabled snippet
+  names, and is created by the **settings tab**, not by `main.ts`. The report is
+  only ever shown in settings, and hanging an 850 KB parse off `css-change` —
+  an event that already costs a full editor rebuild — would tax every user to
+  populate something almost none of them are looking at.
+
+A claim is "the theme is winning" when its class count exceeds 2, the weight of
+a standard per-callout rule. Strictly greater: an equal count is a tie, and a
+tie is one this plugin wins on source order.
 
 ## `externalStyle` — the opt-out, and why it needs three separate exclusion mechanisms
 
