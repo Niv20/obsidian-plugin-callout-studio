@@ -21,16 +21,22 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
+import {
+	COLOUR_NEUTRAL_FIELDS,
+	COMPARED_FIELDS,
+} from "../src/manager/calloutCompare";
 import type { CalloutDefinition } from "../src/types";
 
 /**
- * The two private field tables. Read (never written) through one cast in one
- * place, so the production declarations stay `private static readonly`.
+ * The two field tables. They used to be `private static` on the registry and
+ * were read here through a cast; since they moved to `manager/calloutCompare`
+ * they are ordinary exports and the cast is gone. The indirection stays so the
+ * assertions below read the same either way.
  */
-const TABLES = CalloutRegistry as unknown as {
+const TABLES: {
 	COMPARED_FIELDS: Record<string, true>;
 	COLOUR_NEUTRAL_FIELDS: ReadonlySet<string>;
-};
+} = { COMPARED_FIELDS, COLOUR_NEUTRAL_FIELDS };
 
 /**
  * A value for each compared field that differs from what `[!note]` ships with.

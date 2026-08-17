@@ -744,7 +744,7 @@ describe("no new oversized files", () => {
 		// moved to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the
 		// many that render the callout identically.
 		"src/manager/CSSInjector.ts": 2205,
-		"src/manager/CalloutRegistry.ts": 2086,
+		"src/manager/CalloutRegistry.ts": 2003,
 		"src/utils/importValidator.ts": 1190,
 		// Lowered from 1106: the Base color row moved to
 		// settings/paletteBaseColorRow.ts (which also owns seedBaseColor, the

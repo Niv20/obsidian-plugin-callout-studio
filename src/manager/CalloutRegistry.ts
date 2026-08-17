@@ -18,7 +18,11 @@ import type {
 import { CALLOUT_RENDER_ROLES } from "../types";
 import { DEFAULT_CALLOUTS, DEFAULT_SETTINGS, FALLBACK_ICON } from "../constants";
 import { iconCacheKey, packFor } from "../icons/registry";
-import { iconsEqual, resolveLucideId } from "../icons/lucideId";
+import { resolveLucideId } from "../icons/lucideId";
+import {
+	COLOUR_NEUTRAL_FIELDS,
+	isCalloutModified,
+} from "./calloutCompare";
 import { materialPack } from "../icons/packs/material";
 import type {
 	CalloutManagerEntry,
@@ -161,7 +165,7 @@ export class CalloutRegistry {
 	 * It deliberately does **not** touch the icon on the way through. v2.7.0 had
 	 * it rewrite every bare Lucide value to the `lucide-` spelling so the two
 	 * things that compare icons by string equality (the picker's selection
-	 * match, {@link isModified}) would stop seeing one icon as two — but that
+	 * match, `isCalloutModified`) would stop seeing one icon as two — but that
 	 * prefix is a lookup instruction to Obsidian, not a synonym, and forcing it
 	 * onto ids that are not core Lucide unnamed them entirely. See
 	 * `icons/lucideId.ts`. Those two comparisons normalize themselves now; the
@@ -673,7 +677,7 @@ export class CalloutRegistry {
 			if (def.builtIn) {
 				// Only save built-in if it was modified from default
 				const original = this.builtInDefaults.get(id);
-				if (original && this.isModified(def, original)) {
+				if (original && isCalloutModified(def, original)) {
 					calloutsToSave.push(def);
 				}
 			} else {
@@ -692,89 +696,6 @@ export class CalloutRegistry {
 			iconSvgCache:
 				this.iconSvgCache.length > 0 ? this.iconSvgCache : undefined,
 		};
-	}
-
-	/**
-	 * Whether a built-in still matches the default it shipped with.
-	 *
-	 * This is the gate on {@link toSaveData} persisting a built-in at all, so a
-	 * field missing here is not a cosmetic gap: a built-in the user customized
-	 * *only* through that field reads as pristine and is never written to
-	 * `data.json` — the edit survives until the next reload and then vanishes.
-	 * Hence the total `Record`, which makes adding a field to
-	 * `CalloutDefinition` without deciding its place here a compile error.
-	 *
-	 * `id` identifies the pair rather than distinguishing it; `builtIn` and
-	 * `source` are what makes this a built-in in the first place. Everything
-	 * else is a difference the user can see.
-	 */
-	private static readonly COMPARED_FIELDS: Record<
-		Exclude<keyof CalloutDefinition, "id" | "builtIn" | "source">,
-		true
-	> = {
-		displayName: true,
-		icon: true,
-		hideIcon: true,
-		colorLight: true,
-		colorDark: true,
-		foldable: true,
-		defaultFolded: true,
-		iconAdjust: true,
-		iconOffsetX: true,
-		iconOffsetY: true,
-		iconSize: true,
-		bgColorLight: true,
-		bgColorDark: true,
-		bgGradient: true,
-		transparentBg: true,
-		textColorLight: true,
-		textColorDark: true,
-		aliases: true,
-		paletteId: true,
-		customized: true,
-		externalStyle: true,
-		metadata: true,
-	};
-
-	/**
-	 * Fields that are a difference the user can see but *not* a claim on the
-	 * callout's colour — so {@link isUnmodifiedBuiltIn} skips them while
-	 * {@link toSaveData} still counts them.
-	 *
-	 * Only `hideIcon` so far. Dropping the icon from `[!note]` has to be
-	 * persisted, or it vanishes on the next reload; but it says nothing about
-	 * what colour the callout should be, and letting it count here would swap
-	 * core's `--callout-note` for a hard-coded hex — silently ending the
-	 * built-in's deference to whatever the theme says blue is.
-	 */
-	private static readonly COLOUR_NEUTRAL_FIELDS: ReadonlySet<
-		keyof CalloutDefinition
-	> = new Set(["hideIcon"]);
-
-	private isModified(
-		current: CalloutDefinition,
-		original: CalloutDefinition,
-		ignore?: ReadonlySet<keyof CalloutDefinition>,
-	): boolean {
-		// Structural compare, so nested values (`bgGradient`, `aliases`,
-		// `metadata`) are covered without a per-field spelling of each one.
-		// `?? null` keeps "absent" and "explicitly undefined" equal, which is
-		// what a JSON round-trip through data.json produces anyway.
-		//
-		// `icon` is the one field a raw string diff gets wrong: `constants.ts`
-		// spells a built-in's icon bare (`pencil`) and the picker spells the
-		// same drawing `lucide-pencil`, so an untouched built-in would read as
-		// customized the moment its owner opened the picker. `iconsEqual` knows
-		// the two spellings are one icon.
-		return Object.keys(CalloutRegistry.COMPARED_FIELDS).some((field) => {
-			const key = field as keyof CalloutDefinition;
-			if (ignore?.has(key)) return false;
-			if (key === "icon") return !iconsEqual(current.icon, original.icon);
-			return (
-				JSON.stringify(current[key] ?? null) !==
-				JSON.stringify(original[key] ?? null)
-			);
-		});
 	}
 
 	add(def: CalloutDefinition): boolean {
@@ -1236,7 +1157,7 @@ export class CalloutRegistry {
 	 * of that field, so the two rules below can't drift to a call site.
 	 *
 	 * Turning it off *deletes* the key rather than writing `false`, because
-	 * {@link isModified} compares `JSON.stringify(value ?? null)` and an
+	 * `isCalloutModified` compares `JSON.stringify(value ?? null)` and an
 	 * explicit `false` would leave a built-in nobody edited looking customized
 	 * forever.
 	 *
@@ -1267,7 +1188,7 @@ export class CalloutRegistry {
 		const current = this.callouts.get(id);
 		const original = this.builtInDefaults.get(id);
 		if (!current || !original) return false;
-		return this.isModified(current, original);
+		return isCalloutModified(current, original);
 	}
 
 	/**
@@ -1287,18 +1208,14 @@ export class CalloutRegistry {
 	 * would drop the very colours the preview exists to show.
 	 *
 	 * Deliberately a *narrower* question than {@link isBuiltInModified}: see
-	 * {@link COLOUR_NEUTRAL_FIELDS} for the edits that are real edits without
-	 * being a claim on the colour.
+	 * `COLOUR_NEUTRAL_FIELDS` (`manager/calloutCompare.ts`) for the edits that
+	 * are real edits without being a claim on the colour.
 	 */
 	isUnmodifiedBuiltIn(def: CalloutDefinition): boolean {
 		if (!def.builtIn) return false;
 		const original = this.builtInDefaults.get(def.id);
 		if (!original) return false;
-		return !this.isModified(
-			def,
-			original,
-			CalloutRegistry.COLOUR_NEUTRAL_FIELDS,
-		);
+		return !isCalloutModified(def, original, COLOUR_NEUTRAL_FIELDS);
 	}
 
 	resetBuiltIn(id: string): boolean {
