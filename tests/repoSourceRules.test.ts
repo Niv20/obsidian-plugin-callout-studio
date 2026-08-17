@@ -788,7 +788,7 @@ describe("no new oversized files", () => {
 		"src/settings/editor/CalloutEditorSave.ts": 410,
 		"src/icons/isolateSvg.ts": 402,
 		"src/icons/packs/materialFont.ts": 398,
-		"src/settings/sections/CalloutRowActions.ts": 396,
+		"src/settings/sections/CalloutRowActions.ts": 340,
 		"src/outline/OutlineDecorator.ts": 382,
 		"src/settings/EmbeddableMarkdownEditor.ts": 357,
 		"src/icons/svg.ts": 367,
