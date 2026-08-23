@@ -32,8 +32,6 @@ import {
 	bgGradientsEqual,
 	bgTintFor,
 	blendHex,
-	calloutAccentVarRef,
-	calloutColorValue,
 	clampBgIntensity,
 	contrastRatio,
 	derivedBgAmount,
@@ -57,6 +55,10 @@ import {
 	tintCss,
 	translucentTintFor,
 } from "../src/utils/colorUtils";
+import {
+	calloutAccentVarRef,
+	calloutColorValue,
+} from "../src/utils/calloutColorFormat";
 import type { BgGradient } from "../src/types";
 
 /** A spread wide enough that a per-channel bug cannot hide in it. */

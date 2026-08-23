@@ -6,7 +6,6 @@
  * Used by CSSInjector (for dynamic CSS generation), colorPalettes (for
  * auto-computed backgrounds), and CalloutEditor (for color field handling).
  */
-import { requireApiVersion } from "obsidian";
 import type { BgGradient } from "../types";
 
 export interface RGB {
@@ -70,47 +69,6 @@ export function hslToRgb(h: number, s: number, l: number): RGB {
 export function hexToRgbString(hex: string): string {
 	const { r, g, b } = hexToRgb(hex);
 	return `${r}, ${g}, ${b}`;
-}
-
-/**
- * Cached result of the Obsidian version check used by `calloutColorValue`.
- * `null` until first computed; avoids calling `requireApiVersion` for every
- * callout on every CSS inject.
- */
-let calloutColorIsRaw: boolean | null = null;
-
-/**
- * Returns the value to assign to Obsidian's `--callout-color` variable for the
- * current Obsidian version.
- *
- * Obsidian 1.13 changed `--callout-color` from a raw RGB triplet
- * (`255, 0, 0`, wrapped by Obsidian in `rgb(...)`) to a full CSS color
- * (`#ff0000`, used directly). We emit the right format for the running version
- * so a single release works on both ≤1.12 and 1.13+.
- */
-export function calloutColorValue(hex: string): string {
-	if (calloutColorIsRaw === null) {
-		calloutColorIsRaw = !requireApiVersion("1.13.0");
-	}
-	return calloutColorIsRaw ? hexToRgbString(hex) : hex;
-}
-
-/**
- * Read one of Obsidian's own `--callout-*` variables as a real CSS color.
- *
- * Same ≤1.12 / 1.13+ split as {@link calloutColorValue}, from the other side:
- * on 1.13+ `--callout-info` already holds a color and can be used as-is, while
- * on ≤1.12 it holds a bare `8, 109, 221` triplet that only means anything
- * inside `rgb()`. This is what lets an untouched built-in leave
- * `--callout-color` alone — so core's own rule, and any theme that overrides
- * it, decides the accent — while `--cs-accent` still resolves to something the
- * plugin's `color-mix()` calls can consume.
- */
-export function calloutAccentVarRef(cssVar: string): string {
-	if (calloutColorIsRaw === null) {
-		calloutColorIsRaw = !requireApiVersion("1.13.0");
-	}
-	return calloutColorIsRaw ? `rgb(var(${cssVar}))` : `var(${cssVar})`;
 }
 
 function rgbTripletToHex(r: string, g: string, b: string): string {

@@ -2,6 +2,36 @@
    Callout Studio — Plugin Styles
    ═══════════════════════════════════════════════════════════════ */
 
+/* ─── Typed accent hand-off ───────────────────────────────────────
+   The one place an *unvalidated* colour enters this plugin: an
+   unmodified built-in defers to Obsidian's own `--callout-info` &c,
+   and a theme is free to redefine those. Obsidian 1.13 changed their
+   format from a bare `8, 109, 221` triplet to a full colour, so a
+   theme written for ≤1.12 still hands us a triplet on 1.13+ — which is
+   not a colour, and poisons every `color-mix()` that consumes it: the
+   whole declaration is dropped and the surface renders as nothing.
+
+   Registering the hand-off as `<color>` makes the CSS engine do that
+   validation for us. A value that is not a colour is invalid at
+   computed-value time and falls back to `initial-value` here, instead
+   of propagating into the declarations downstream. No theme sniffing
+   and no getComputedStyle — the engine already knows the answer.
+
+   Deliberately a *separate* property from `--cs-accent` rather than a
+   registration of it: a registered property is never "undefined", so
+   registering `--cs-accent` itself would kill the `var(--cs-accent,
+   currentColor)` fallback the global border rule depends on to draw no
+   border rather than a wrong-coloured one.
+
+   Grey, not a callout hue, on purpose: it is only ever seen on a theme
+   we could not read, where guessing blue would misreport a `danger`
+   callout as an informational one. */
+@property --cs-accent-theme {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: #7d7d7d;
+}
+
 /* ─── Settings Panel ──────────────────────────────────────────── */
 
 .callout-studio-settings {

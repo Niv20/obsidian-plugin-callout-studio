@@ -208,11 +208,14 @@ describe("generateCalloutCSS — structural snapshot", () => {
 				}
 			).generateCalloutCSS(note),
 		);
+		// --cs-accent-theme rides along wherever the accent is a theme variable
+		// rather than our own hex: it is the `<color>`-typed hand-off that keeps
+		// a malformed theme value out of the color-mix() calls downstream.
 		assert.deepStrictEqual(got, [
-			'.callout[data-callout="note"] { --cs-accent, --cs-color-rgb, --callout-icon }',
-			'.theme-dark .callout[data-callout="note"] { --cs-accent, --cs-color-rgb }',
-			'.cs-inline-callout[data-callout="note"], .cs-heading-callout[data-callout="note"], .cs-ref-token[data-callout="note"] { --cs-accent, --cs-color-rgb }',
-			'.theme-dark .cs-inline-callout[data-callout="note"], .theme-dark .cs-heading-callout[data-callout="note"], .theme-dark .cs-ref-token[data-callout="note"] { --cs-accent, --cs-color-rgb }',
+			'.callout[data-callout="note"] { --cs-accent-theme, --cs-accent, --cs-color-rgb, --callout-icon }',
+			'.theme-dark .callout[data-callout="note"] { --cs-accent-theme, --cs-accent, --cs-color-rgb }',
+			'.cs-inline-callout[data-callout="note"], .cs-heading-callout[data-callout="note"], .cs-ref-token[data-callout="note"] { --cs-accent-theme, --cs-accent, --cs-color-rgb }',
+			'.theme-dark .cs-inline-callout[data-callout="note"], .theme-dark .cs-heading-callout[data-callout="note"], .theme-dark .cs-ref-token[data-callout="note"] { --cs-accent-theme, --cs-accent, --cs-color-rgb }',
 		]);
 	});
 

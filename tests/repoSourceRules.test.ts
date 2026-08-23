@@ -743,7 +743,7 @@ describe("no new oversized files", () => {
 		// Lowered from 2253, per this ratchet's own ask: `bgAlphaFor`'s solve
 		// moved to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the
 		// many that render the callout identically.
-		"src/manager/CSSInjector.ts": 2238,
+		"src/manager/CSSInjector.ts": 2205,
 		"src/manager/CalloutRegistry.ts": 2086,
 		"src/utils/importValidator.ts": 1249,
 		// Lowered from 1106: the Base color row moved to
@@ -762,7 +762,7 @@ describe("no new oversized files", () => {
 		"src/editor/livepreview/widgets.ts": 793,
 		"src/reading/calloutPostProcessor.ts": 781,
 		"src/settings/iconpicker/PackPanel.ts": 736,
-		"src/utils/colorUtils.ts": 727,
+		"src/utils/colorUtils.ts": 685,
 		"src/settings/iconpicker/IconPickerModal.ts": 681,
 		"src/editor/livepreview/calloutViewPlugin.ts": 676,
 		// Lowered from 666: sanitizeCustomPalettes — the untrusted-data gate,

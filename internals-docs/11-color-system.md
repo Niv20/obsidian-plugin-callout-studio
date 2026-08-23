@@ -138,10 +138,13 @@ leave `--callout-color` **entirely unset** for a built-in the user hasn't
 touched, so core's own rule (and any theme overriding it) keeps deciding the
 accent. `--cs-accent` — the plugin's own variable, always a real colour on
 every Obsidian version — is what the plugin's own `color-mix()` calls read
-instead. For an untouched built-in it points at Obsidian's own variable
+instead. For an untouched built-in it follows Obsidian's own variable
 (`OBSIDIAN_CALLOUT_VAR[def.id]`, e.g. `--callout-info`) rather than a baked
-hex. The moment the user edits the callout — even just a colour tweak — the
-hex wins from then on. See
+hex, by way of the `<color>`-typed `--cs-accent-theme` — which is what keeps a
+theme that still writes ≤1.12 bare triplets from resolving `--cs-accent` to a
+non-colour and taking every `color-mix()` reading it down at once. The moment
+the user edits the callout — even just a colour tweak — the hex wins from then
+on. See
 [CSS generation § the three accent variables](06-css-generation.md#the-three-accent-variables-accentprops).
 
 The fallback CSS block deliberately passes `imposed: true`, which **does**

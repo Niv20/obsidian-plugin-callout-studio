@@ -34,12 +34,13 @@ import { packFor } from "../icons/registry";
 import type { IconResolver } from "../icons/types";
 import {
 	bgGradientCss,
-	calloutAccentVarRef,
-	calloutColorValue,
-	hexToRgbString,
 	tintColorAt,
 	tintCss,
 } from "../utils/colorUtils";
+import {
+	accentDeclarations,
+	ownAccentDeclarations,
+} from "./accentDeclarations";
 import { resolveBgAlpha } from "../utils/bgTintAlpha";
 import { OBSIDIAN_CALLOUT_VAR } from "../constants";
 import { svgToDataUri } from "../icons/svg";
@@ -414,35 +415,8 @@ export class CSSInjector {
 
 	/**
 	 * The accent declarations for one theme mode, for any surface that carries
-	 * a callout's colors.
-	 *
-	 * Three variables, and the reason there are three is version drift plus one
-	 * deliberate hand-off:
-	 *
-	 * - `--callout-color` is Obsidian's own, consumed by its callout chrome. Its
-	 *   format changed in 1.13 (full color; a bare RGB triplet before), which
-	 *   `calloutColorValue` resolves. **Omitted entirely for a built-in the user
-	 *   has not modified** — that is what lets core's own rule, and any theme
-	 *   that overrides it, keep deciding the accent, instead of this plugin
-	 *   pinning its own hex over a theme the user chose.
-	 * - `--cs-accent` is ours, and is always a real color on every version, so
-	 *   it can be fed to `color-mix()`. For an untouched built-in it points at
-	 *   the same Obsidian variable core is using, so our surfaces follow the
-	 *   theme in lockstep with the callout itself.
-	 * - `--cs-color-rgb` is the legacy bare triplet, kept for one release for
-	 *   anything outside this plugin still reading it. It cannot follow a theme
-	 *   — a triplet cannot be derived from a `var()` — so on an untouched
-	 *   built-in it carries the shipped default as a best effort. Nothing in
-	 *   this plugin depends on it any more.
-	 *
-	 * `imposed` is for the fallback block, which paints callouts that are NOT
-	 * the one it took its style from. Dropping `--callout-color` there would
-	 * leave an unrecognized callout on its own core default rather than on the
-	 * fallback's colour — i.e. quietly break the setting. It gets the variable
-	 * spelled out instead, which still follows the theme AND still imposes the
-	 * right hue. Referencing the variable raw is correct on both Obsidian
-	 * generations precisely because it is core's own: whichever format that
-	 * version expects, `--callout-error` is already in it.
+	 * a callout's colors — see `manager/accentDeclarations.ts` for which
+	 * variables those are and why.
 	 */
 	private accentProps(
 		def: CalloutDefinition,
@@ -450,17 +424,12 @@ export class CSSInjector {
 		important = false,
 		imposed = false,
 	): string[] {
-		const imp = important ? " !important" : "";
-		const hex = mode === "dark" ? def.colorDark : def.colorLight;
-		const themeVar = this.themeAccentVar(def);
-		const props: string[] = [];
-		if (!themeVar) {
-			props.push(`  --callout-color: ${calloutColorValue(hex)}${imp};`);
-		} else if (imposed) {
-			props.push(`  --callout-color: var(${themeVar})${imp};`);
-		}
-		props.push(...this.ownAccentProps(def, mode, important));
-		return props;
+		return accentDeclarations(
+			mode === "dark" ? def.colorDark : def.colorLight,
+			this.themeAccentVar(def),
+			important ? " !important" : "",
+			imposed,
+		);
 	}
 
 	/**
@@ -474,22 +443,20 @@ export class CSSInjector {
 	}
 
 	/**
-	 * The two variables this plugin owns (see {@link accentProps}), without
-	 * Obsidian's `--callout-color`. Used on the heading-bar / inline-pill / ref
-	 * token DOM, which is ours and where core's variable would go unread.
+	 * The subset this plugin owns, without Obsidian's `--callout-color`. Used on
+	 * the heading-bar / inline-pill / ref token DOM, which is ours and where
+	 * core's variable would go unread.
 	 */
 	ownAccentProps(
 		def: CalloutDefinition,
 		mode: "light" | "dark",
 		important = false,
 	): string[] {
-		const imp = important ? " !important" : "";
-		const hex = mode === "dark" ? def.colorDark : def.colorLight;
-		const themeVar = this.themeAccentVar(def);
-		return [
-			`  --cs-accent: ${themeVar ? calloutAccentVarRef(themeVar) : hex}${imp};`,
-			`  --cs-color-rgb: ${hexToRgbString(hex)}${imp};`,
-		];
+		return ownAccentDeclarations(
+			mode === "dark" ? def.colorDark : def.colorLight,
+			this.themeAccentVar(def),
+			important ? " !important" : "",
+		);
 	}
 
 	/**

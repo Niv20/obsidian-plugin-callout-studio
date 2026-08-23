@@ -20,6 +20,11 @@
  *   dropStaleTransparencyFlags → consolidateDuplicatePalettes →
  *   adoptOrphansMatchingPalettes → dropDerivedBackgrounds →
  *   dropSolidBackgroundFlags → stripMetadataFromIds → reconcileAttrIdCollisions
+ *
+ * The colour normalization at the end of the file is the odd one out: it runs
+ * per row inside `reconcileSavedRow` rather than as a pass over the finished
+ * map, so it is already done by the time any of the above reads a hex. Same two
+ * properties though, and pinned the same way.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
@@ -713,6 +718,63 @@ describe("needsSaveAfterLoad()", () => {
 		assert.strictEqual(second.getAll().length, 14, "still the one merged row");
 		assert.deepStrictEqual(second.get("c d")?.aliases, ["c-d"]);
 		assert.strictEqual(second.needsSaveAfterLoad(), false);
+	});
+});
+
+describe("stored colours are normalized to hex on the way in", () => {
+	it("reads the pre-1.13 bare triplet an older build could have written", () => {
+		const registry = load(saved([def({ colorLight: "8, 109, 221" })]));
+		// Not a colour, so every declaration reading it would be dropped and the
+		// callout would render with no background and no border.
+		assert.strictEqual(registry.get("x")?.colorLight, "#086ddd");
+	});
+
+	it("normalizes the other spellings without changing the colour", () => {
+		const registry = load(
+			saved([def({ colorLight: "rgb(255, 0, 0)", colorDark: "#0f0" })]),
+		);
+		assert.strictEqual(registry.get("x")?.colorLight, "#ff0000");
+		assert.strictEqual(registry.get("x")?.colorDark, "#00ff00");
+	});
+
+	it("falls back to the shipped default when nothing can read the value", () => {
+		const shipped = load(null).get("info");
+		assert.ok(shipped);
+		const registry = load(
+			saved([
+				{ ...shipped, colorLight: "var(--some-theme-thing)" },
+			] as CalloutDefinition[]),
+		);
+		assert.strictEqual(registry.get("info")?.colorLight, shipped.colorLight);
+	});
+
+	it("falls back to grey for a user row, which has no default behind it", () => {
+		const registry = load(saved([def({ colorDark: "chartreuse" })]));
+		assert.strictEqual(registry.get("x")?.colorDark, "#7d7d7d");
+	});
+
+	it("drops an unreadable text colour rather than inventing one", () => {
+		// Absent already means "inherit the theme's", so there is a correct
+		// answer here that does not exist for the accent.
+		const registry = load(saved([def({ textColorLight: "not a colour" })]));
+		assert.ok(registry.get("x"));
+		assert.strictEqual(registry.get("x")?.textColorLight, undefined);
+	});
+
+	it("writes the repair back, and settles rather than re-arming", () => {
+		const first = load(saved([def({ colorLight: "8, 109, 221" })]));
+		assert.strictEqual(first.needsSaveAfterLoad(), true);
+
+		const second = load(first.toSaveData());
+		assert.strictEqual(second.get("x")?.colorLight, "#086ddd");
+		assert.strictEqual(second.needsSaveAfterLoad(), false);
+	});
+
+	it("leaves a row that needs nothing completely alone", () => {
+		const clean = def({ textColorDark: "#eeeeee" });
+		const registry = load(saved([clean]));
+		assert.deepStrictEqual(registry.get("x"), clean);
+		assert.strictEqual(registry.needsSaveAfterLoad(), false);
 	});
 });
 

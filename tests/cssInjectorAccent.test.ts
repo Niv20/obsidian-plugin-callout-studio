@@ -86,10 +86,18 @@ describe("accentProps — the three colour variables", () => {
 			!props.some((p) => p.includes("--callout-color")),
 			`core's variable must be left alone, got:\n${props.join("\n")}`,
 		);
-		// …but ours still resolves, by pointing at the same variable core is
-		// using, so color-mix() surfaces follow the theme in lockstep.
+		// …but ours still resolves, by following the same variable core is
+		// using, so color-mix() surfaces move with the theme in lockstep. It
+		// goes through the `<color>`-typed hand-off rather than naming that
+		// variable directly, so a theme still writing ≤1.12 bare triplets
+		// degrades to grey instead of poisoning every color-mix() downstream.
 		assert.ok(
-			props.some((p) => p.includes("--cs-accent: var(--callout-default)")),
+			props.some((p) =>
+				p.includes("--cs-accent-theme: var(--callout-default)"),
+			),
+		);
+		assert.ok(
+			props.some((p) => p.includes("--cs-accent: var(--cs-accent-theme)")),
 		);
 	});
 
@@ -129,13 +137,22 @@ describe("accentProps — the three colour variables", () => {
 
 		// The fallback block's call: `important` AND `imposed`. Dropping
 		// --callout-color here would leave an unrecognized callout on core's own
-		// default rather than on the fallback's colour.
+		// default rather than on the fallback's colour. On 1.13+ (which the
+		// stub reports) it is spelled as the typed hand-off, so this block
+		// cannot forward core a value core is unable to parse.
 		const props = css.accentProps(note, "light", true, true);
 		assert.ok(
 			props.some(
-				(p) => p === "  --callout-color: var(--callout-default) !important;",
+				(p) => p === "  --callout-color: var(--cs-accent-theme) !important;",
 			),
 			`imposed accent missing, got:\n${props.join("\n")}`,
+		);
+		assert.ok(
+			props.some(
+				(p) =>
+					p === "  --cs-accent-theme: var(--callout-default) !important;",
+			),
+			`the hand-off must be declared in the same rule, got:\n${props.join("\n")}`,
 		);
 		assert.ok(props.every((p) => p.endsWith(" !important;")));
 	});
@@ -370,7 +387,11 @@ describe("generateTokenColorCSS — the accent on this plugin's own DOM", () => 
 		const info = registry.get("info");
 		assert.ok(info);
 		const rule = firstRule(css.generateTokenColorCSS(info));
-		assert.strictEqual(valueOf(rule, "--cs-accent"), "var(--callout-info)");
+		assert.strictEqual(
+			valueOf(rule, "--cs-accent-theme"),
+			"var(--callout-info)",
+		);
+		assert.strictEqual(valueOf(rule, "--cs-accent"), "var(--cs-accent-theme)");
 	});
 });
 
@@ -385,6 +406,10 @@ describe("generateFallbackCSS — the accent for ids nobody defined", () => {
 		assert.ok(rule);
 		assert.strictEqual(
 			valueOf(rule, "--callout-color"),
+			"var(--cs-accent-theme) !important",
+		);
+		assert.strictEqual(
+			valueOf(rule, "--cs-accent-theme"),
 			"var(--callout-default) !important",
 		);
 	});
@@ -444,7 +469,11 @@ describe("generateFallbackCSS — the accent for ids nobody defined", () => {
 			out,
 			".cs-inline-callout.cs-unknown, .cs-heading-callout.cs-unknown, .cs-ref-token.cs-unknown",
 		);
-		assert.deepStrictEqual(rule.props, ["--cs-accent", "--cs-color-rgb"]);
+		assert.deepStrictEqual(rule.props, [
+			"--cs-accent-theme",
+			"--cs-accent",
+			"--cs-color-rgb",
+		]);
 	});
 });
 
