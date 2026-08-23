@@ -3,8 +3,9 @@
  *
  * Contains pure functions that operate on an Obsidian Editor instance:
  * wrapping a text selection inside a new callout block, and unwrapping an
- * existing callout back to plain text. Also handles nested quote depths and
- * fenced code/math blocks so edits stay structurally correct.
+ * existing callout back to plain text. The two structural questions it leans on
+ * live next door — `quotePrefix.ts` for nested quote depths, `fenceBlocks.ts`
+ * for the code/math ranges an expansion must not cut through.
  * Used by editor/commands.ts (keyboard commands) and editor/ContextMenu.ts.
  */
 import { Editor, Notice } from "obsidian";
@@ -18,19 +19,15 @@ import {
 	buildInlineToken,
 } from "./calloutWriter";
 import { HEADING_CALLOUT_RE } from "./calloutTokens";
-
-interface QuoteStripResult {
-	text: string;
-	removedLength: number;
-	removedUnits: number;
-}
-
-interface FenceBlock {
-	startLine: number;
-	endLine: number;
-	kind: "code" | "math";
-	marker?: "```" | "~~~";
-}
+import { collectFenceBlocks, findFenceBlockAtLine } from "./fenceBlocks";
+import type { FenceBlock } from "./fenceBlocks";
+import {
+	buildPrefix,
+	countLeadingQuoteTokens,
+	isBlankCalloutLine,
+	stripLeadingQuoteTokens,
+} from "./quotePrefix";
+import type { QuoteStripResult } from "./quotePrefix";
 
 interface CalloutBlockInfo {
 	headerLine: number;
@@ -38,131 +35,10 @@ interface CalloutBlockInfo {
 	calloutLevel: number;
 }
 
-const LEADING_QUOTE_TOKEN_REGEX = /^(?:\s*> ?|\t)/;
 const CALLOUT_HEADER_REGEX = /^\[![^\]]*\]/;
 
 const arePositionsEqual = (a: EditorPosition, b: EditorPosition): boolean =>
 	a.line === b.line && a.ch === b.ch;
-
-const stripLeadingQuoteTokens = (
-	line: string,
-	maxTokens = Number.POSITIVE_INFINITY,
-): QuoteStripResult => {
-	let remaining = line;
-	let removedLength = 0;
-	let removedUnits = 0;
-
-	while (removedUnits < maxTokens) {
-		const match = LEADING_QUOTE_TOKEN_REGEX.exec(remaining);
-		if (!match?.[0]) break;
-		remaining = remaining.slice(match[0].length);
-		removedLength += match[0].length;
-		removedUnits += 1;
-	}
-
-	return {
-		text: remaining,
-		removedLength,
-		removedUnits,
-	};
-};
-
-const countLeadingQuoteTokens = (line: string): number =>
-	stripLeadingQuoteTokens(line).removedUnits;
-
-const isBlankCalloutLine = (line: string): boolean =>
-	stripLeadingQuoteTokens(line).text.trim() === "";
-
-const getFenceToken = (
-	line: string,
-): { kind: "code"; marker: "```" | "~~~" } | { kind: "math" } | null => {
-	const normalized = stripLeadingQuoteTokens(line).text.trimStart();
-	if (normalized.trim() === "$$") {
-		return { kind: "math" };
-	}
-	if (normalized.startsWith("```")) {
-		return { kind: "code", marker: "```" };
-	}
-	if (normalized.startsWith("~~~")) {
-		return { kind: "code", marker: "~~~" };
-	}
-
-	return null;
-};
-
-const collectFenceBlocks = (editor: Editor): FenceBlock[] => {
-	const fenceBlocks: FenceBlock[] = [];
-	const lineCount = editor.lineCount();
-	let openFence: {
-		startLine: number;
-		kind: "code" | "math";
-		marker?: "```" | "~~~";
-	} | null = null;
-
-	for (let line = 0; line < lineCount; line++) {
-		const token = getFenceToken(editor.getLine(line));
-		if (!token) continue;
-
-		if (!openFence) {
-			openFence = {
-				startLine: line,
-				kind: token.kind,
-				...(token.kind === "code" ? { marker: token.marker } : {}),
-			};
-			continue;
-		}
-
-		if (openFence.kind === "math" && token.kind === "math") {
-			fenceBlocks.push({
-				startLine: openFence.startLine,
-				endLine: line,
-				kind: "math",
-			});
-			openFence = null;
-			continue;
-		}
-
-		if (
-			openFence.kind === "code" &&
-			token.kind === "code" &&
-			openFence.marker === token.marker
-		) {
-			fenceBlocks.push({
-				startLine: openFence.startLine,
-				endLine: line,
-				kind: "code",
-				marker: openFence.marker,
-			});
-			openFence = null;
-		}
-	}
-
-	if (openFence && lineCount > 0) {
-		fenceBlocks.push({
-			startLine: openFence.startLine,
-			endLine: lineCount - 1,
-			kind: openFence.kind,
-			...(openFence.kind === "code" && openFence.marker
-				? { marker: openFence.marker }
-				: {}),
-		});
-	}
-
-	return fenceBlocks;
-};
-
-const findFenceBlockAtLine = (
-	fenceBlocks: FenceBlock[],
-	line: number,
-): FenceBlock | null => {
-	for (const block of fenceBlocks) {
-		if (line >= block.startLine && line <= block.endLine) {
-			return block;
-		}
-	}
-
-	return null;
-};
 
 const findFrontmatterEnd = (editor: Editor): number => {
 	if (editor.lineCount() === 0) return -1;
@@ -245,8 +121,6 @@ const findFirstNonEmptyLine = (
 
 	return -1;
 };
-
-const buildPrefix = (nestLevel: number): string => "> ".repeat(nestLevel);
 
 const isCalloutHeaderLine = (line: string): boolean => {
 	const stripped = stripLeadingQuoteTokens(line);
@@ -344,6 +218,21 @@ const getOrderedCursorLines = (
 const openingHeaderToken = (def?: CalloutDefinition): string =>
 	def ? buildBlockHeaderToken(def) : "[!";
 
+/**
+ * The blank quoted line a finished, empty block callout opens with — `> ` at
+ * the callout's own depth — or `null` when the header itself is unfinished.
+ *
+ * A callout that already knows its type has nothing left to say on the header
+ * line, so the next thing the user types is body text; writing the line for
+ * them and landing the cursor after its `> ` is what makes the Quick insert
+ * window and a user-built `Insert X callout` command leave the same thing
+ * behind. With no type the header is still the bare `[!` that the autocomplete
+ * is about to finish, so the cursor belongs up there and there is no body line
+ * to write.
+ */
+const emptyBodyLine = (prefix: string, def?: CalloutDefinition): string | null =>
+	def ? `${prefix}> ` : null;
+
 export const wrapSelectionInCallout = (
 	editor: Editor,
 	options?: { requireSelection?: boolean; def?: CalloutDefinition },
@@ -408,21 +297,32 @@ export const wrapSelectionInCallout = (
 	const headerLine = `${headerPrefix}> ${openingHeaderToken(options?.def)}`;
 	const replacementLines: string[] = [headerLine];
 
-	for (let line = contentStartLine; line <= endLine; line++) {
-		const current = editor.getLine(line);
-		if (isBlankCalloutLine(current)) {
-			const existingRelativeDepth = Math.max(
-				countLeadingQuoteTokens(current) - nestLevel,
-				0,
-			);
-			replacementLines.push(
-				`${buildPrefix(nestLevel + existingRelativeDepth)}>`,
-			);
-			continue;
-		}
+	// Nothing was found to wrap, so the callout is born empty and its body is
+	// the one line the user is about to type into rather than a requoting of
+	// what was there. Every other case keeps the cursor on the header, where
+	// the title is.
+	const emptyBody =
+		foundContentLine < 0 ? emptyBodyLine(prefix, options?.def) : null;
 
-		const stripped = stripLeadingQuoteTokens(current, nestLevel);
-		replacementLines.push(`${prefix}> ${stripped.text}`);
+	if (emptyBody !== null) {
+		replacementLines.push(emptyBody);
+	} else {
+		for (let line = contentStartLine; line <= endLine; line++) {
+			const current = editor.getLine(line);
+			if (isBlankCalloutLine(current)) {
+				const existingRelativeDepth = Math.max(
+					countLeadingQuoteTokens(current) - nestLevel,
+					0,
+				);
+				replacementLines.push(
+					`${buildPrefix(nestLevel + existingRelativeDepth)}>`,
+				);
+				continue;
+			}
+
+			const stripped = stripLeadingQuoteTokens(current, nestLevel);
+			replacementLines.push(`${prefix}> ${stripped.text}`);
+		}
 	}
 
 	const replacement = replacementLines.join("\n");
@@ -431,7 +331,11 @@ export const wrapSelectionInCallout = (
 		{ line: startLine, ch: 0 },
 		{ line: endLine, ch: editor.getLine(endLine).length },
 	);
-	editor.setCursor({ line: startLine, ch: headerLine.length });
+	editor.setCursor(
+		emptyBody === null
+			? { line: startLine, ch: headerLine.length }
+			: { line: startLine + 1, ch: emptyBody.length },
+	);
 
 	return true;
 };
@@ -445,17 +349,25 @@ export const insertEmptyCallout = (
 	const nestLevel = countLeadingQuoteTokens(lineText);
 	const prefix = buildPrefix(nestLevel);
 	const header = `${prefix}> ${openingHeaderToken(options?.def)}`;
+	const body = emptyBodyLine(prefix, options?.def);
+	const block = body === null ? header : `${header}\n${body}`;
+	/** Where the cursor goes, given the line the header landed on. */
+	const cursorFor = (headerLine: number): EditorPosition =>
+		body === null
+			? { line: headerLine, ch: header.length }
+			: { line: headerLine + 1, ch: body.length };
 
 	if (isBlankCalloutLine(lineText)) {
-		// Blank line (or blank callout line): drop the header in place. With no
+		// Blank line (or blank callout line): drop the callout in place. With no
 		// type chosen that lands the user right after `[!`, where the
-		// autocomplete opens; with one, it lands after the finished title.
+		// autocomplete opens; with one, it lands in the empty body below the
+		// finished title.
 		editor.replaceRange(
-			header,
+			block,
 			{ line: head.line, ch: 0 },
 			{ line: head.line, ch: lineText.length },
 		);
-		editor.setCursor({ line: head.line, ch: header.length });
+		editor.setCursor(cursorFor(head.line));
 		return true;
 	}
 
@@ -471,9 +383,8 @@ export const insertEmptyCallout = (
 		editor.getLine(nextLine).trim() !== "";
 	const trailing = nextHasContent ? `\n${separator}` : "";
 	const lineEnd = { line: head.line, ch: lineText.length };
-	editor.replaceRange(`\n${separator}\n${header}${trailing}`, lineEnd);
-	const headerLine = head.line + 2;
-	editor.setCursor({ line: headerLine, ch: header.length });
+	editor.replaceRange(`\n${separator}\n${block}${trailing}`, lineEnd);
+	editor.setCursor(cursorFor(head.line + 2));
 
 	return true;
 };

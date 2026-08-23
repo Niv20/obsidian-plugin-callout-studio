@@ -174,6 +174,34 @@ describe("wrapSelectionInCallout", () => {
 		);
 	});
 
+	it("opens an empty callout with a body line the cursor sits in", () => {
+		// Nothing to wrap, so there is no content line to requote: the callout
+		// is born with the line the first word goes on, and the cursor is
+		// already there rather than behind the title.
+		const e = editor("|");
+		wrapSelectionInCallout(asEditor(e), { def: def() });
+		assert.strictEqual(e.valueWithCursor(), "> [!warning] Warning\n> |");
+	});
+
+	it("keeps the cursor on an unfinished header, body line and all", () => {
+		// The `[!` form has no type yet, so the autocomplete still needs the
+		// cursor up on the header — and there is nothing to open a body for.
+		const e = editor("|");
+		wrapSelectionInCallout(asEditor(e));
+		assert.strictEqual(e.valueWithCursor(), "> [!|\n>");
+	});
+
+	it("opens the body at the callout's own depth when nested", () => {
+		// The blank line is inside an existing callout, so the new one is built
+		// one level deeper and its body line is quoted to match.
+		const e = editor("> [!note] Note\n>\n> |");
+		wrapSelectionInCallout(asEditor(e), { def: def() });
+		assert.strictEqual(
+			e.valueWithCursor(),
+			"> [!note] Note\n>\n> > [!warning] Warning\n> > |",
+		);
+	});
+
 	it("does not wrap into the frontmatter block", () => {
 		const e = editor("---\ntitle: x\n---\nbody|");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
@@ -192,9 +220,12 @@ describe("insertEmptyCallout", () => {
 	});
 
 	it("drops a finished callout onto a blank line", () => {
+		// A finished header has nothing left to type into, so the callout comes
+		// with the empty body line and the cursor lands after its `> ` — the
+		// same thing the quick-insert window leaves behind.
 		const e = editor("|");
 		insertEmptyCallout(asEditor(e), { def: def() });
-		assert.strictEqual(e.valueWithCursor(), "> [!warning] Warning|");
+		assert.strictEqual(e.valueWithCursor(), "> [!warning] Warning\n> |");
 	});
 
 	it("adds the callout below a line that has content", () => {
@@ -202,7 +233,18 @@ describe("insertEmptyCallout", () => {
 		insertEmptyCallout(asEditor(e), { def: def() });
 		assert.strictEqual(
 			e.valueWithCursor(),
-			"some text\n\n> [!warning] Warning|",
+			"some text\n\n> [!warning] Warning\n> |",
+		);
+	});
+
+	it("keeps the following line out of the new callout", () => {
+		// The body line is a lazy blockquote continuation waiting to happen:
+		// without the separator the paragraph below would be swallowed into it.
+		const e = editor("some text|\nnext paragraph");
+		insertEmptyCallout(asEditor(e), { def: def() });
+		assert.strictEqual(
+			e.value(),
+			"some text\n\n> [!warning] Warning\n> \n\nnext paragraph",
 		);
 	});
 
@@ -210,8 +252,8 @@ describe("insertEmptyCallout", () => {
 		const e = editor("> [!note] Note\n> body|");
 		insertEmptyCallout(asEditor(e), { def: def() });
 		assert.strictEqual(
-			e.value(),
-			"> [!note] Note\n> body\n>\n> > [!warning] Warning",
+			e.valueWithCursor(),
+			"> [!note] Note\n> body\n>\n> > [!warning] Warning\n> > |",
 		);
 	});
 });

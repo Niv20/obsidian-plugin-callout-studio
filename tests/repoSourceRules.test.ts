@@ -769,7 +769,11 @@ describe("no new oversized files", () => {
 		// the opposite job to the rest of this file — moved to
 		// utils/paletteSanitize.ts, taking its three colorUtils imports with it.
 		"src/utils/colorPalettes.ts": 612,
-		"src/editor/CalloutBlockTools.ts": 666,
+		// Lowered from 666: the two structural questions the transforms only
+		// consult — blockquote prefix arithmetic and the fenced code/math
+		// ranges an expansion must not cut through — moved to
+		// editor/quotePrefix.ts and editor/fenceBlocks.ts.
+		"src/editor/CalloutBlockTools.ts": 577,
 		"src/utils/vaultCalloutScanner.ts": 595,
 		"src/editor/AutoComplete.ts": 593,
 		"src/main.ts": 537,

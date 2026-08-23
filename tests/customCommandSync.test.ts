@@ -561,7 +561,7 @@ describe("the registered editorCallback", () => {
 			role: "regular",
 			action: "insert",
 		});
-		assert.strictEqual(run(h, ""), "> [!quiet] Quiet");
+		assert.strictEqual(run(h, ""), "> [!quiet] Quiet\n> ");
 
 		// Same rendered name is impossible across insert/wrap, so edit to another
 		// callout with the same name instead — no re-registration happens.
@@ -582,8 +582,11 @@ describe("the registered editorCallback", () => {
 		const h = harness();
 		addCallout(h.registry);
 
+		// An `insert` command opens the callout the way a user continues one:
+		// the header, then an empty quoted line to type into. `wrap` has real
+		// content to put there instead, so it writes no such line.
 		await h.manager.add({ calloutId: "quiet", role: "regular", action: "insert" });
-		assert.strictEqual(run(h, ""), "> [!quiet] Quiet");
+		assert.strictEqual(run(h, ""), "> [!quiet] Quiet\n> ");
 
 		await h.manager.add({ calloutId: "quiet", role: "regular", action: "wrap" });
 		assert.strictEqual(run(h, "hello"), "> [!quiet] Quiet\n> hello");

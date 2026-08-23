@@ -399,12 +399,15 @@ describe("the Insert button writes block callouts", () => {
 	});
 
 	it("builds an empty callout on a blank line, cursor ready to type", () => {
+		// "Ready to type" is inside the callout, not after its title: the row
+		// already named the type, so the next keystroke is body text. A
+		// user-built `Insert X callout` command leaves exactly this behind.
 		const b = buffer("before\n\n|\n\nafter");
 		insert(b);
 
 		assert.strictEqual(
 			b.valueWithCursor(),
-			"before\n\n> [!warning] Warning|\n>\n\nafter",
+			"before\n\n> [!warning] Warning\n> |\n\nafter",
 		);
 	});
 
@@ -412,7 +415,19 @@ describe("the Insert button writes block callouts", () => {
 		const b = buffer("   |   ");
 		insert(b);
 
-		assert.strictEqual(b.value(), "> [!warning] Warning\n>");
+		assert.strictEqual(b.value(), "> [!warning] Warning\n> ");
+	});
+
+	it("leaves the cursor on the header when there was content to wrap", () => {
+		// The body line belongs to the empty case alone — here the callout
+		// already has its content, and the title is the only thing left to edit.
+		const b = buffer("para|graph");
+		insert(b);
+
+		assert.strictEqual(
+			b.valueWithCursor(),
+			"> [!warning] Warning|\n> paragraph",
+		);
 	});
 
 	it("carries several paragraphs into one callout, blank lines and all", () => {
