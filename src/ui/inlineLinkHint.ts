@@ -13,9 +13,11 @@
  * the screen-reader role that an anchor would otherwise have to fake with
  * `role="button"` plus `tabindex` plus a keydown handler.
  *
- * Styling lives in `styles.css` under `.setting-item .cs-link-btn` (and the
- * `.cs-link-btn-inline` override that keeps it on the same line), so every
- * caller gets the same low-emphasis accent-coloured link for free.
+ * Styling lives in `styles.css` under `.cs-inline-hint .cs-link-btn` (and the
+ * `.cs-link-btn-inline` override that keeps it on the same line), scoped to
+ * this function's own wrapper div rather than `.setting-item` so the hint
+ * still gets the low-emphasis look when rendered outside a Setting — see
+ * PaletteEditorModal.renderColorError.
  */
 import { t } from "../i18n";
 

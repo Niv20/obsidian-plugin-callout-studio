@@ -12,9 +12,10 @@
  * `mix-blend-mode: darken` a colour over itself is `min(x, x) = x`, a step of
  * exactly zero. The callout looks unchanged on its own; only what shows
  * *through* it changes, which is why the old `solidBackground` flag was retired
- * rather than kept as a toggle. `translucentTintFor` does the alpha-solving; the
- * tests here are about the injector's use of it, not the maths (see
- * tests/colorUtils.test.ts for that).
+ * rather than kept as a toggle. colorUtils.ts solves the tint itself and
+ * utils/bgTintAlpha.ts picks WHICH of the many viable alphas to solve at; the
+ * tests here are about the injector's use of both, not their maths (see
+ * tests/colorUtils.test.ts and tests/bgTintAlpha.test.ts for that).
  *
  * The two structural consequences, both easy to break by accident:
  *
@@ -34,6 +35,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
+import { hexToRgb } from "../src/utils/colorUtils";
 import {
 	definition,
 	harness,
@@ -98,8 +100,8 @@ describe("bgAlphaFor — one alpha per mode", () => {
 					// Much further from the page than the base stop, so it is the
 					// binding constraint — but still inside the ceiling, so the
 					// pair resolves rather than falling back to opaque.
-					toColorLight: "#9ab8d4",
-					toColorDark: "#9ab8d4",
+					toColorLight: "#7fa8cc",
+					toColorDark: "#7fa8cc",
 				},
 			}),
 			"light",
@@ -129,6 +131,158 @@ describe("bgAlphaFor — one alpha per mode", () => {
 			),
 			null,
 		);
+	});
+});
+
+describe("bgAlphaFor — the cap on how far a nested stack may drift", () => {
+	// The nested-callout readability investigation's own worked example:
+	// bgTintFor("#e93147", false, 0.18). Solving from the background alone needs
+	// only ~0.15, and that reverse-solves a source far more saturated than the
+	// accent — which is what a deep stack converges toward. See
+	// `utils/bgTintAlpha.ts` for the cap that raises it, and
+	// tests/bgTintAlpha.test.ts for its maths; what is pinned here is the numbers
+	// the injector actually emits.
+	const ACCENT = "#e93147";
+	const DERIVED_BG = "#fbdade";
+	/** The same accent at 45% — bold enough that its own cap binds hard. */
+	const BOLD_BG = "#f5a2ac";
+
+	it("raises the alpha to the accent's own intensity", () => {
+		const { css } = harness();
+		const def = definition({
+			colorLight: ACCENT,
+			bgColorLight: DERIVED_BG,
+		});
+		// 0.18 — the amount this background really is its accent at — plus the
+		// solve's rounding headroom. Solving from the colour alone asks 0.15.
+		assert.strictEqual(css.bgAlphaFor(def, "light"), 0.19);
+	});
+
+	it("still recomposites to the exact authored colour — the outer callout is unchanged", () => {
+		const { css } = harness();
+		const def = definition({
+			colorLight: ACCENT,
+			bgColorLight: DERIVED_BG,
+		});
+		const value = must(css.bgProps(def, "light")[0], "declaration");
+		const match =
+			/color-mix\(in oklch, (#[0-9a-f]{6}) ([\d.]+)%, transparent\)/.exec(
+				value,
+			);
+		assert.ok(match, `expected a color-mix() declaration, got: ${value}`);
+		const [, source, pct] = match as unknown as [string, string, string];
+		const alpha = Number(pct) / 100;
+		const src = hexToRgb(source);
+		const want = hexToRgb(DERIVED_BG);
+		for (const ch of ["r", "g", "b"] as const) {
+			const recomposited = alpha * src[ch] + (1 - alpha) * 255;
+			assert.ok(
+				Math.abs(recomposited - want[ch]) <= 1,
+				`${ch}: recomposited ${recomposited}, wanted ${want[ch]}`,
+			);
+		}
+	});
+
+	it("scales with how bold the background really is", () => {
+		const { css } = harness();
+		const alpha = css.bgAlphaFor(
+			definition({ colorLight: ACCENT, bgColorLight: BOLD_BG }),
+			"light",
+		);
+		// The same accent at 45% rather than 18%, and the cap tracks it.
+		assert.strictEqual(alpha, 0.47);
+	});
+
+	it("anchors a gradient's far stop against its own textToColor", () => {
+		const { css } = harness();
+		// The BASE stop here is mild — its own cap sits well under its bare
+		// minTintAlpha, so without a `textToColor*` the pair lands on the FAR
+		// stop's own minimum. That stop is bold enough that its OWN accent asks
+		// for more than either minimum does, so this is the one arrangement where
+		// `textToColor*` is the deciding input.
+		const base = {
+			colorLight: "#336699",
+			bgColorLight: PALE_LIGHT,
+			bgGradient: {
+				angleDeg: 90,
+				toColorLight: BOLD_BG,
+				toColorDark: BOLD_BG,
+			},
+		};
+		const withoutOwnAnchor = css.bgAlphaFor(definition(base), "light");
+		const withOwnAnchor = css.bgAlphaFor(
+			definition({
+				...base,
+				bgGradient: { ...base.bgGradient, textToColorLight: ACCENT },
+			}),
+			"light",
+		);
+		assert.strictEqual(withoutOwnAnchor, 0.38);
+		assert.strictEqual(withOwnAnchor, 0.47);
+	});
+
+	it("leaves a far stop with no textToColor of its own uncapped", () => {
+		const { css } = harness();
+		// A far stop is deliberately a DIFFERENT hue from the primary accent (the
+		// palette editor's suggested default rotates it — see `rotateHue`), so
+		// the primary accent says nothing about how intense that stop may be.
+		// These colours are chosen so the difference shows: capping this far stop
+		// against this primary accent would ask 0.55.
+		const alpha = css.bgAlphaFor(
+			definition({
+				colorLight: "#5a7d9a",
+				bgColorLight: PALE_LIGHT,
+				bgGradient: {
+					angleDeg: 90,
+					toColorLight: BOLD_BG,
+					toColorDark: BOLD_BG,
+				},
+			}),
+			"light",
+		);
+		assert.strictEqual(alpha, 0.38);
+	});
+
+	it("leaves the colour's own minimum standing where the cap asks for less", () => {
+		const { css } = harness();
+		// The accent sits well ABOVE the dark backdrop on every channel and the
+		// background well below it — a pairing reachable through the palette
+		// editor's advanced per-channel mode, where the background is nobody's
+		// tint. Its accent cap lands UNDER the minimum, and a cap may only ever
+		// raise, so the minimum is the answer: (28 − 20) / 28 with 2% headroom.
+		const def = definition({
+			colorDark: "#ff8a65",
+			bgColorDark: "#141414",
+		});
+		assert.strictEqual(css.bgAlphaFor(def, "dark"), 0.3);
+	});
+
+	it("drops a cap it cannot meet rather than paint the callout opaque", () => {
+		const { css } = harness();
+		// `#cccccc` really is `#bbbbbb` at 75%, so the accent cap is
+		// arithmetically right and unreachable — 0.75 is past MAX_TINT_ALPHA.
+		// Handed to the solve as if it were a constraint it returns null, which
+		// paints the background OPAQUE: a callout that nested fine loses its
+		// nesting to a fix meant to help it. The colour's own minimum stands
+		// instead, and it is satisfiable by construction.
+		const def = definition({
+			colorLight: "#bbbbbb",
+			bgColorLight: "#cccccc",
+		});
+		assert.strictEqual(css.bgAlphaFor(def, "light"), 0.21);
+	});
+
+	it("emits no alpha at all for a background that is not a hex", () => {
+		const { css } = harness();
+		// Only hand-edited data reaches this state — `sanitizeBgGradient` and the
+		// import validator reject the rest — and null is what makes `bgProps`
+		// pass the value through untouched. Solving it would emit
+		// `color-mix(in oklch, #NaNNaNNaN …)`, which the parser drops.
+		const def = definition({ bgColorLight: "transparent" });
+		assert.strictEqual(css.bgAlphaFor(def, "light"), null);
+		assert.deepStrictEqual(css.bgProps(def, "light"), [
+			"  background-color: transparent;",
+		]);
 	});
 });
 
@@ -177,7 +331,10 @@ describe("bgProps — the background is always a tint", () => {
 
 	it("adds print-color-adjust only alongside a gradient image", () => {
 		const { css } = harness();
-		const flat = css.bgProps(definition({ bgColorLight: PALE_LIGHT }), "light");
+		const flat = css.bgProps(
+			definition({ bgColorLight: PALE_LIGHT }),
+			"light",
+		);
 		assert.deepStrictEqual(flat.length, 1);
 
 		const swept = css.bgProps(
@@ -226,10 +383,10 @@ describe("bgProps — transparentBg", () => {
 		// A transparent def carries no bg hex, so without the early check it
 		// would fall out of `if (!bg) return []` emitting nothing — and nothing
 		// is not transparent, it is core's own default tint.
-		assert.deepStrictEqual(css.bgProps(definition({ transparentBg: true }), "light"), [
-			"  background-color: transparent;",
-			"  background-image: none;",
-		]);
+		assert.deepStrictEqual(
+			css.bgProps(definition({ transparentBg: true }), "light"),
+			["  background-color: transparent;", "  background-image: none;"],
+		);
 	});
 
 	it("wins over a gradient left behind by hand-edited data", () => {
@@ -279,7 +436,9 @@ describe("transparentBorderProps — the outline half", () => {
 	it("never touches border-width, so the box keeps its place in the flow", () => {
 		const { css } = harness();
 		assert.ok(
-			css.transparentBorderProps().every((p) => !p.includes("border-width")),
+			css
+				.transparentBorderProps()
+				.every((p) => !p.includes("border-width")),
 		);
 	});
 
@@ -299,7 +458,11 @@ describe("transparentBorderProps — the outline half", () => {
 	it("reaches the fallback block too, with !important", () => {
 		const { registry, css } = harness();
 		registry.add(
-			definition({ id: "ghost", transparentBg: true, colorDark: "#336699" }),
+			definition({
+				id: "ghost",
+				transparentBg: true,
+				colorDark: "#336699",
+			}),
 		);
 		registry.settings.fallbackCalloutId = "ghost";
 		const out = css.generateFallbackCSS(registry.getAll());
@@ -344,10 +507,14 @@ describe("bgImageFor — the gradient layer", () => {
 		});
 		const layer = css.bgImageFor(def, "light");
 		assert.ok(layer);
-		const alphas = [...layer.image.matchAll(/ ([\d.]+)%, transparent\)/g)].map(
-			(m) => m[1],
+		const alphas = [
+			...layer.image.matchAll(/ ([\d.]+)%, transparent\)/g),
+		].map((m) => m[1]);
+		assert.strictEqual(
+			alphas.length,
+			2,
+			`expected two tinted stops: ${layer.image}`,
 		);
-		assert.strictEqual(alphas.length, 2, `expected two tinted stops: ${layer.image}`);
 		assert.strictEqual(
 			alphas[0],
 			alphas[1],
@@ -411,12 +578,19 @@ describe("the tint reaches every surface that paints a callout", () => {
 	it("never emits an opaque authored hex as any background, anywhere", () => {
 		const { css } = harness();
 		const out =
-			css.generateCalloutCSS(swept()) + "\n" + css.generateTokenColorCSS(swept());
+			css.generateCalloutCSS(swept()) +
+			"\n" +
+			css.generateTokenColorCSS(swept());
 		for (const rule of parseRules(out)) {
 			for (const prop of ["background-color", "background-image"]) {
 				const value = valueOf(rule, prop);
 				if (!value) continue;
-				for (const hex of [PALE_LIGHT, PALE_DARK, "#fdf0e6", "#2b1f16"]) {
+				for (const hex of [
+					PALE_LIGHT,
+					PALE_DARK,
+					"#fdf0e6",
+					"#2b1f16",
+				]) {
 					assert.ok(
 						!value.includes(hex),
 						`${rule.selector} paints ${hex} opaque via ${prop}: ${value}`,
@@ -461,7 +635,10 @@ describe("the tint reaches every surface that paints a callout", () => {
 		assert.strictEqual(
 			darkBgRules(
 				css.generateTokenColorCSS(
-					definition({ bgColorLight: PALE_LIGHT, bgColorDark: PALE_LIGHT }),
+					definition({
+						bgColorLight: PALE_LIGHT,
+						bgColorDark: PALE_LIGHT,
+					}),
 				),
 			).length,
 			1,

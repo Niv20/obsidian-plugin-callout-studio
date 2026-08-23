@@ -35,7 +35,7 @@ import type {
 	PluginSettings,
 } from "../types";
 import { DEFAULT_CONTEXT_MENU_ITEMS, DEFAULT_SETTINGS } from "../constants";
-import { sanitizeCustomPalettes } from "./colorPalettes";
+import { sanitizeCustomPalettes } from "./paletteSanitize";
 import { mergeGlobalStyle } from "./globalStyleMerge";
 import { isCalloutSourceFilter } from "./calloutSearch";
 import { clampGlobalStyle, localePreference } from "./settingsGuards";

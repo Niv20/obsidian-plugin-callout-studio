@@ -3427,11 +3427,13 @@ input.cs-input-invalid:focus {
    and `button:not(.clickable-icon)` (1 class + 1 type) rules dress it as a
    full grey button unless every box property is reset. The class is repeated
    to 3 so that reset wins outright — comfortably above those, and above a
-   theme restating them under a `.modal`/`.setting-item` scope. Obsidian's
-   heavier `.is-phone .setting-item-control button` rules never reach it: the
-   button is built inside a Setting's descEl (.setting-item-description), not
-   its control column — see PaletteEditorModal.renderInlineLinkHint. */
-.setting-item .cs-link-btn.cs-link-btn {
+   theme restating them under a `.modal`/`.setting-item` scope. Scoped by
+   `.cs-inline-hint` (renderInlineLinkHint's own wrapper) rather than
+   `.setting-item`: the duplicate-colour error in PaletteEditorModal renders
+   its hint into a bare div outside any Setting, where a `.setting-item`
+   ancestor requirement never matches and the button falls through to
+   Obsidian's full grey style — see renderColorError. */
+.cs-inline-hint .cs-link-btn.cs-link-btn {
 	display: block;
 	appearance: none;
 	width: auto;
@@ -3450,21 +3452,25 @@ input.cs-input-invalid:focus {
 	height: auto;
 	cursor: pointer;
 }
-.setting-item .cs-link-btn.cs-link-btn:hover {
+.cs-inline-hint .cs-link-btn.cs-link-btn:hover {
 	color: var(--text-accent-hover);
 	background: none;
 	text-decoration: underline;
 }
 
-/* Sentence + inline link inside a setting's description (e.g. the palette
-   editor's auto-background hint and "revert to a single color" hint) */
+/* Sentence + inline link, e.g. the palette editor's auto-background hint,
+   "revert to a single color" hint, and duplicate-colour "use it instead"
+   link. Lives inside a setting's description for most callers, but the
+   duplicate-colour error stands alone outside any Setting — see the
+   .cs-link-btn scoping above, which is why it keys off this wrapper and not
+   `.setting-item`. */
 .cs-inline-hint {
 	margin-top: 4px;
 }
 /* Inline variant of the button above, so it must outweigh it — one more class
    (4). Otherwise the base rule's `display: block` wins and the link breaks out
    of the sentence onto its own line. */
-.setting-item .cs-link-btn.cs-link-btn.cs-link-btn-inline {
+.cs-inline-hint .cs-link-btn.cs-link-btn.cs-link-btn-inline {
 	display: inline;
 	margin: 0;
 	font-size: inherit;
