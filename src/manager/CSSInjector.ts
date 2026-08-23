@@ -37,11 +37,10 @@ import {
 	calloutAccentVarRef,
 	calloutColorValue,
 	hexToRgbString,
-	minTintAlpha,
-	resolveTintAlpha,
 	tintColorAt,
 	tintCss,
 } from "../utils/colorUtils";
+import { resolveBgAlpha } from "../utils/bgTintAlpha";
 import { OBSIDIAN_CALLOUT_VAR } from "../constants";
 import { svgToDataUri } from "../icons/svg";
 import {
@@ -495,30 +494,16 @@ export class CSSInjector {
 
 	/**
 	 * The alpha this def's background is painted at in one mode, or null when it
-	 * is painted opaque.
-	 *
-	 * A gradient's two stops share one alpha: they are a single
-	 * `linear-gradient`, and ramping the alpha across it would tilt the sweep,
-	 * so the shared value has to clear whichever stop sits further from the
-	 * page. Null means no alpha at or below the ceiling can reproduce the
-	 * colour — see `translucentTintFor`.
+	 * is painted opaque — see `resolveBgAlpha` (utils/bgTintAlpha.ts), which owns
+	 * the solve and the cap that keeps a nested stack inside this callout's own
+	 * accent. Its own module per `tests/repoSourceRules.test.ts`, this file being
+	 * one of the oversized ones that ratchet asks to shrink rather than grow.
 	 */
 	private bgAlphaFor(
 		def: CalloutDefinition,
 		mode: "light" | "dark",
 	): number | null {
-		const bg = mode === "dark" ? def.bgColorDark : def.bgColorLight;
-		if (!bg) return null;
-		const isDark = mode === "dark";
-		const minima = [minTintAlpha(bg, isDark)];
-		if (def.bgGradient) {
-			const to =
-				mode === "dark"
-					? def.bgGradient.toColorDark
-					: def.bgGradient.toColorLight;
-			minima.push(minTintAlpha(to, isDark));
-		}
-		return resolveTintAlpha(...minima);
+		return resolveBgAlpha(def, mode);
 	}
 
 	/**

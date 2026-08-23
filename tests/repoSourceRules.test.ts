@@ -740,7 +740,10 @@ describe("no new oversized files", () => {
 
 	const FROZEN: Record<string, number> = {
 		"src/settings/CalloutEditor.ts": 2328,
-		"src/manager/CSSInjector.ts": 2253,
+		// Lowered from 2253, per this ratchet's own ask: `bgAlphaFor`'s solve
+		// moved to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the
+		// many that render the callout identically.
+		"src/manager/CSSInjector.ts": 2238,
 		"src/manager/CalloutRegistry.ts": 2086,
 		"src/utils/importValidator.ts": 1249,
 		"src/settings/PaletteEditorModal.ts": 1106,

@@ -284,7 +284,7 @@ export function translucentTintFor(
 }
 
 /** The theme mode's backdrop, as the tint solve sees it. */
-function tintBackdrop(isDark: boolean): RGB {
+export function tintBackdrop(isDark: boolean): RGB {
 	return hexToRgb(isDark ? BG_PRIMARY_DARK : BG_PRIMARY_LIGHT);
 }
 

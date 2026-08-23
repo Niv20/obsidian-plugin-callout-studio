@@ -49,7 +49,7 @@ in both themes despite the blend-mode difference: over white, `darken` gives
 tint at least as light as the page — which a callout background always is,
 since `lighten` forbids painting darker than the page.
 
-`alpha` is chosen as the **smallest** value that keeps every solved channel
+`minTintAlpha` is the **smallest** alpha that keeps every solved channel
 inside `[0, 255]` (plus 2% headroom for hex-rounding), clamped to
 `[MIN_TINT_ALPHA = 0.1, MAX_TINT_ALPHA = 0.6]`. A colour closer to the page
 background needs a smaller alpha (a fainter wash still reproduces it); a
@@ -60,6 +60,68 @@ opaque, accepting no nesting step for it rather than distorting the colour.
 A gradient's two stops **share one alpha** (`resolveTintAlpha` takes the max
 of both stops' minima) — ramping alpha across a gradient sweep would visibly
 tilt it.
+
+### Which alpha, and why it isn't simply the smallest
+
+[`src/utils/bgTintAlpha.ts`](../src/utils/bgTintAlpha.ts) picks the alpha a
+callout's background is actually painted at. It is a separate file, and a
+separate decision, because the minimum above is a *floor*, not an answer:
+
+**Every alpha at or above `minTintAlpha` renders the callout identically.**
+The source colour `S` is re-solved along with the alpha, so `alpha·S +
+(1 − alpha)·backdrop` stays pinned to the authored hex whichever one is
+picked. What moves is everything stacked *inside* it — nesting depth `n`
+renders
+
+```text
+S + (1 - alpha)ⁿ · (backdrop - S)
+```
+
+which converges on `S`, and `‖S − backdrop‖` is `‖bg − backdrop‖ / alpha`.
+So the alpha is one knob between two things wanted at once: a **low** alpha
+gives the boldest step per level, exactly `(1 − alpha)·(bg − backdrop)`, at
+the cost of a wildly saturated `S` that a deep stack drifts toward; a **high**
+alpha keeps a deep stack near the colour that was actually authored, at a
+smaller step per level. Taking the smallest viable alpha unconditionally — all
+this plugin used to do — is what made a red callout's nested levels pile up
+into a red nobody picked.
+
+`accentAnchorAlpha(accent, bg, isDark)` raises the floor: it returns the
+blend strength `bg` would have been derived at *if it were a tint of the
+accent*, so solving at that alpha lands `S` exactly as far from the page as
+the accent itself, and the stack can converge no further than the colour the
+user chose. Intensity is measured as **one straight-line distance** in sRGB,
+never per channel — a tint is a straight line toward the backdrop, so the
+distance scales by exactly the blend amount, while a channel where the accent
+sits a few levels from the page has a near-zero denominator and turns one hex
+level of rounding into a demand for alpha 1.5. (`#4287f5` sits 10 levels below
+white on blue; a background nudged 3 levels there asked 0.51 in place of 0.14.)
+
+> [!IMPORTANT]
+> **The cap is a preference, not a constraint, and `resolveBgAlpha` applies it
+> *over* the un-capped answer rather than alongside the minima.** Handed to
+> `resolveTintAlpha` as if it were a minimum, a cap past `MAX_TINT_ALPHA`
+> returns `null` — and `null` is the opaque fallback, so a cap that exists to
+> protect nesting would be destroying it. A background genuinely bolder than
+> its own accent (a grey accent over a darker grey fill) asks for 0.75 and
+> simply cannot have it; the cap is dropped and the colour's own minimum
+> stands. Caps are applied one at a time for the same reason: an unsatisfiable
+> cap on one gradient stop must not take the other's down with it.
+
+A gradient's far stop is anchored against its own `textToColor*` — the second
+colour the title sweep runs to — and never against the primary accent as a
+stand-in. That stop is deliberately a *different* hue (the palette editor's
+suggested default rotates it), so the primary accent says nothing about how
+intense it is allowed to be; with no `textToColor*` it carries no cap at all.
+
+Nothing here bounds nesting **depth**, and that is deliberate. The alpha can
+only act through a `background-color` this plugin emits, and it emits none for
+an untouched built-in — deferring to the theme is the point — so core's
+`1 - 0.9ⁿ` ladder still runs there. Bounding it would need a `.callout
+.callout` rule restating core's tint with `--background-primary` pre-mixed in,
+which is dilution by construction: the stack stops piling up and every level
+comes out desaturated instead of staying itself. Fixing the colour the ladder
+converges *on* leaves core's compositing untouched.
 
 > [!CAUTION]
 > **There is no opt-out.** The `solidBackground` flag that used to offer one

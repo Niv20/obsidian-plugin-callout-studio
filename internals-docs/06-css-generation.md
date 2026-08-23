@@ -1,6 +1,6 @@
 # CSS generation
 
-[`src/manager/CSSInjector.ts`](../src/manager/CSSInjector.ts) (~2,250 lines,
+[`src/manager/CSSInjector.ts`](../src/manager/CSSInjector.ts) (~2,240 lines,
 one of the frozen oversized-file exceptions) reads every `CalloutDefinition`
 from the registry and writes one CSS stylesheet that restyles Obsidian's block
 callouts and paints the plugin's own heading/inline DOM. It also paints icon
@@ -148,6 +148,15 @@ own background it *renders as* the authored hex. See
 [Colour system](11-color-system.md#the-nesting-invariant-in-full)
 for the actual alpha math (`translucentTintFor` / `minTintAlpha` /
 `resolveTintAlpha`) and why this is not optional (the nesting invariant).
+
+`bgAlphaFor()` is a one-line delegation to `resolveBgAlpha()`
+([`utils/bgTintAlpha.ts`](../src/utils/bgTintAlpha.ts)), which owns the
+*choice* of alpha rather than the maths of the tint: every alpha at or above
+the minimum renders this callout identically, so what it decides is how
+saturated a colour anything nested inside converges toward. It caps that at
+the callout's own accent — and drops a cap it cannot meet rather than let the
+background fall back to an opaque fill. See
+[Which alpha, and why it isn't simply the smallest](11-color-system.md#which-alpha-and-why-it-isnt-simply-the-smallest).
 
 `transparentBg` short-circuits this entirely: `background-color: transparent`
 + `background-image: none`, checked **before** the "no background hex → emit
