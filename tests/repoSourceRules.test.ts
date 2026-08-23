@@ -746,20 +746,29 @@ describe("no new oversized files", () => {
 		"src/manager/CSSInjector.ts": 2238,
 		"src/manager/CalloutRegistry.ts": 2086,
 		"src/utils/importValidator.ts": 1249,
-		"src/settings/PaletteEditorModal.ts": 1106,
+		// Lowered from 1106: the Base color row moved to
+		// settings/paletteBaseColorRow.ts (which also owns seedBaseColor, the
+		// reason CustomPalette.baseColor exists), and the gradient's arrow
+		// direction picker — a pure function of its arguments — to
+		// settings/paletteDirectionPicker.ts.
+		"src/settings/PaletteEditorModal.ts": 1070,
 		"src/editor/calloutTokens.ts": 840,
 		// The one entry that is allowed to move, and only for this reason: a
 		// member of `PluginSettings` has no sibling module to be moved into, so
 		// the remedy this list asks for is structurally unavailable to it. Raise
 		// it only for a settings field; anything else here still splits.
-		"src/types.ts": 803,
+		// Raised from 803 for `CustomPalette.baseColor`.
+		"src/types.ts": 823,
 		"src/editor/livepreview/widgets.ts": 793,
 		"src/reading/calloutPostProcessor.ts": 781,
 		"src/settings/iconpicker/PackPanel.ts": 736,
 		"src/utils/colorUtils.ts": 727,
 		"src/settings/iconpicker/IconPickerModal.ts": 681,
 		"src/editor/livepreview/calloutViewPlugin.ts": 676,
-		"src/utils/colorPalettes.ts": 666,
+		// Lowered from 666: sanitizeCustomPalettes — the untrusted-data gate,
+		// the opposite job to the rest of this file — moved to
+		// utils/paletteSanitize.ts, taking its three colorUtils imports with it.
+		"src/utils/colorPalettes.ts": 612,
 		"src/editor/CalloutBlockTools.ts": 666,
 		"src/utils/vaultCalloutScanner.ts": 595,
 		"src/editor/AutoComplete.ts": 593,

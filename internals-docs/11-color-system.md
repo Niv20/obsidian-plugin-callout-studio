@@ -189,6 +189,42 @@ a single user-picked base — this is what powers the palette editor's "Simple"
 mode: pick one colour, get a full six-value palette with auto-corrected
 contrast.
 
+**The derivation is not idempotent, and `CustomPalette.baseColor` is what
+keeps that from mattering.** The backgrounds are tints of the *original* hex,
+but the accents are then run through `ensureContrast` against those tints, so
+`colorLight` is the function's **output**, not something you can feed back in:
+`#ffff00` scores 1.06:1 on its own pale tint and comes back `#8c8c00`. The
+palette editor used to seed its Base colour swatch from the saved
+`colorLight`, having nowhere else to look — so reopening a palette and nudging
+the Intensity slider one step re-derived all six colours from a colour the
+user never picked, collapsing a yellow palette's dark accent to olive and
+draining the hue out of both backgrounds. It read as the slider jumping.
+
+`baseColor` stores the pick itself. Nothing paints it —
+`bakePaletteColors` never looks at it, `palettesVisuallyEqual` ignores it (two
+palettes that render identically are duplicates however they were reached) —
+it exists purely so re-deriving starts where the user did.
+`seedBaseColor` (`settings/paletteBaseColorRow.ts`) owns the fallback ladder:
+a palette saved before the field existed, or a seed built by
+`paletteSeedFromDefinition` from a baked callout, has nothing better than
+`colorLight`, because the correction is not invertible.
+
+The correction itself stays **silent**, and that is a deliberate call rather
+than an oversight. Simple mode is the "pick one colour and let us handle it"
+route, so it auto-fixes and says nothing; the advanced per-channel grid — one
+link away, from the hint already on this row — stores what you pick verbatim
+and shows a warning badge instead. The way to see and override the correction
+therefore exists and is reachable; it just isn't volunteered.
+
+A version that announced it in the row was built and then withdrawn. It is
+worth knowing why, because the reasoning is about *how* and not *whether*: a
+disclosure that rewrites the standing hint in place is worse than none, since
+text mutating under the cursor while the user drags the Intensity slider gives
+no clue which words moved or why, and reads as a rendering glitch. If this is
+ever revisited, the shape to use is an added sentence that fades in beside the
+hint, never a swapped one — and the swatch showing `#ffff00` while titles paint
+`#8c8c00` is the fact any such sentence would have to state.
+
 ### `bakePaletteColors` — the one place a palette becomes callout fields
 
 ```ts

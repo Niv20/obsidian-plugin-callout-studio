@@ -10,12 +10,9 @@
 import {
 	bgTintFor,
 	bgGradientsEqual,
-	clampBgIntensity,
 	DEFAULT_TEXT_COLOR_DARK,
 	DEFAULT_TEXT_COLOR_LIGHT,
 	derivePaletteFromColors,
-	isValidHexColor,
-	sanitizeBgGradient,
 } from "./colorUtils";
 import { dedupeColorName, normalizeName, suggestColorName } from "./colorNames";
 import type { BgGradient, CalloutDefinition, CustomPalette } from "../types";
@@ -283,69 +280,18 @@ export function generatePaletteId(): string {
 }
 
 /**
- * Validates untrusted saved/imported palette data: keeps only entries with a
- * non-empty string id + name and six valid `#rrggbb` colors, deduped by id
- * (first wins). Invalid entries are dropped silently, matching the tolerance
- * of the rest of the settings loader.
- */
-export function sanitizeCustomPalettes(raw: unknown): CustomPalette[] {
-	if (!Array.isArray(raw)) return [];
-	const result: CustomPalette[] = [];
-	const seenIds = new Set<string>();
-	for (const entry of raw) {
-		if (!entry || typeof entry !== "object") continue;
-		const p = entry as Partial<CustomPalette>;
-		if (typeof p.id !== "string" || p.id.length === 0) continue;
-		if (typeof p.name !== "string" || p.name.length === 0) continue;
-		if (seenIds.has(p.id)) continue;
-		if (
-			!isValidHexColor(p.colorLight) ||
-			!isValidHexColor(p.colorDark) ||
-			!isValidHexColor(p.bgColorLight) ||
-			!isValidHexColor(p.bgColorDark) ||
-			!isValidHexColor(p.textColorLight) ||
-			!isValidHexColor(p.textColorDark)
-		) {
-			continue;
-		}
-		seenIds.add(p.id);
-		// A malformed gradient degrades the palette to solid instead of
-		// dropping it — the six colors are still perfectly usable.
-		const bgGradient = sanitizeBgGradient(p.bgGradient);
-		// A bad intensity is dropped (undefined), not fatal: the baked bg colors
-		// already carry the palette's look; the editor then shows the default.
-		const bgIntensity = clampBgIntensity(p.bgIntensity);
-		result.push({
-			id: p.id,
-			name: p.name,
-			colorLight: p.colorLight,
-			colorDark: p.colorDark,
-			bgColorLight: p.bgColorLight,
-			bgColorDark: p.bgColorDark,
-			textColorLight: p.textColorLight,
-			textColorDark: p.textColorDark,
-			...(bgGradient ? { bgGradient } : {}),
-			// Only `true` survives, the same normalization the import validator
-			// applies to a definition's copy of this flag: the field is `?: true`,
-			// where "off" is an absent key rather than `false`.
-			...(p.transparentBg === true ? { transparentBg: true as const } : {}),
-			...(bgIntensity !== undefined ? { bgIntensity } : {}),
-			...(p.colorMode === "advanced" ? { colorMode: "advanced" as const } : {}),
-		});
-	}
-	return result;
-}
-
-/**
  * Whether two palettes are the same *color* — the equality behind the rule that
  * a vault may not hold two palettes with identical colors, the color-side twin
  * of the duplicate-name block the palette editor already applies.
  *
- * Deliberately ignores `id`, `name`, `bgIntensity` and `colorMode`. The first
- * two are identity rather than color; the last two are pure editor state that
- * is already baked into the six hexes, so a palette built with the Simple
- * base-color slider and one assembled channel-by-channel in Advanced DO collide
- * when they land on the same colors. That is the honest reading of "the same
+ * Deliberately ignores `id`, `name`, `bgIntensity`, `baseColor` and
+ * `colorMode`. The first two are identity rather than color; the rest are pure
+ * editor state that is already baked into the six hexes, so a palette built
+ * with the Simple base-color slider and one assembled channel-by-channel in
+ * Advanced DO collide when they land on the same colors. `baseColor` in
+ * particular must not count: two users picking `#ffff00` and `#f5f500` both get
+ * the same corrected accent, and a pair of palettes that render identically are
+ * duplicates however they were reached. That is the honest reading of "the same
  * color", and the palette editor's error text has to say so.
  *
  * Absent backgrounds and text colors fall back exactly the way

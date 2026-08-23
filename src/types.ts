@@ -376,6 +376,26 @@ export interface CustomPalette {
 	 */
 	bgIntensity?: number;
 	/**
+	 * The color the user actually picked in the palette editor's Base color
+	 * swatch, BEFORE the readability correction. Nothing paints it —
+	 * `colorLight`/`colorDark` are what render, and `bakePaletteColors` never
+	 * looks at it.
+	 *
+	 * It exists so that re-deriving is idempotent. `derivePaletteFromColors`
+	 * contrast-corrects the accent against its own tint (a pure `#ffff00` scores
+	 * 1.06:1 and comes back `#8c8c00`), so seeding the editor's base from
+	 * `colorLight` seeds it from that function's OUTPUT — and the first touch of
+	 * the Intensity slider then re-derives all six colors from a base the user
+	 * never picked, collapsing the dark accent and draining the hue out of both
+	 * backgrounds. Storing the pick keeps the slider a slider.
+	 *
+	 * Absent on palettes saved before this field existed, and on a seed built by
+	 * `paletteSeedFromDefinition` (a baked callout carries no record of a base).
+	 * Both fall back to `colorLight`, which is the old behaviour and the best
+	 * guess available — the correction is not invertible.
+	 */
+	baseColor?: string;
+	/**
 	 * Which color-editing view the Palette Editor should open in. `"advanced"`
 	 * shows independent Accent/Background/Text rows for the current theme mode
 	 * (each edit infers the opposite mode's value); absent/`"simple"` shows the

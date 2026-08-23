@@ -16,7 +16,7 @@
  * render roles. Resolves the palette (without id) on save, or null on
  * cancel/close.
  */
-import { Modal, Setting, setIcon } from "obsidian";
+import { Modal, Setting } from "obsidian";
 import type { App } from "obsidian";
 import type { BgGradient, CalloutDefinition, CustomPalette } from "../types";
 import {
@@ -36,6 +36,8 @@ import {
 	setContrastWarning,
 } from "../ui/ColorSwatchInput";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
+import { renderBaseColorRow, seedBaseColor } from "./paletteBaseColorRow";
+import { renderDirectionPicker } from "./paletteDirectionPicker";
 import { LiveCalloutPreview } from "./LiveCalloutPreview";
 import {
 	dedupeColorName,
@@ -89,12 +91,6 @@ const DEFAULT_BASE_COLOR = "#448aff";
 /** Keeps the name readable in the dropdown/list rows, which truncate past this. */
 const MAX_NAME_LENGTH = 30;
 
-/** The preset linear-gradient directions, clockwise from "to top" (0°). */
-const GRADIENT_DIRECTIONS: { deg: number; icon: string }[] = [
-	{ deg: 45, icon: "arrow-up-right" },
-	{ deg: 90, icon: "arrow-right" },
-	{ deg: 135, icon: "arrow-down-right" },
-];
 /** Top-left → bottom-right, the classic presentation-software default. */
 const DEFAULT_GRADIENT_ANGLE = 135;
 /** Hue offset for the auto-suggested gradient second color. */
@@ -255,7 +251,9 @@ export class PaletteEditorModal extends Modal {
 			...getAllColorPalettes(),
 		];
 		this.name = this.existing?.name ?? "";
-		this.baseColor = base?.colorLight ?? DEFAULT_BASE_COLOR;
+		// Prefers the user's stored pick over the derivation's own output; see
+		// seedBaseColor for why that ordering is load-bearing.
+		this.baseColor = seedBaseColor(base, DEFAULT_BASE_COLOR);
 		const g = base?.bgGradient;
 		// Transparency is checked first: a palette can carry a stale gradient
 		// beside the flag (nothing clears it when the style switches, so a
@@ -721,33 +719,24 @@ export class PaletteEditorModal extends Modal {
 
 	/**
 	 * The default color control: one Base color swatch that derives all six
-	 * colors (see applyDerived). While Solid, an inline hint explains the
-	 * auto-matched background and offers the advanced per-color grid via a
-	 * short link — hidden in Gradient mode, which has no advanced view
-	 * (requirement: Gradient is never affected by this feature).
+	 * colors (see applyDerived). The row itself lives in
+	 * `paletteBaseColorRow.ts`.
 	 */
 	private buildSimpleColorRow(parent: HTMLElement): void {
-		// Every colour row in this card carries `cs-row-inline`: the control is
-		// one small swatch, which the phone would otherwise park on a full-width
-		// row of its own under the label. See the class in styles.css.
-		const baseSetting = new Setting(parent)
-			.setName(t("palette.baseColor"))
-			.setClass("cs-row-inline");
-		this.colorCardRows.push(baseSetting.settingEl);
-		createColorSwatchInput(baseSetting.controlEl, this.baseColor, (hex) => {
-			this.baseColor = hex;
-			this.applyDerived();
+		const settingEl = renderBaseColorRow(parent, {
+			base: this.baseColor,
+			// Gradient has no advanced per-channel view for the link to reach.
+			showHint: this.bgStyle === "solid",
+			onPick: (hex) => {
+				this.baseColor = hex;
+				this.applyDerived();
+			},
+			onAdvanced: () => {
+				this.advancedColors = true;
+				this.renderColorSection();
+			},
 		});
-		if (this.bgStyle === "solid") {
-			renderInlineLinkHint(baseSetting.descEl, {
-				textKey: "palette.baseColorHint",
-				linkKey: "palette.baseColorHintLink",
-				onClick: () => {
-					this.advancedColors = true;
-					this.renderColorSection();
-				},
-			});
-		}
+		this.colorCardRows.push(settingEl);
 	}
 
 	/**
@@ -933,7 +922,7 @@ export class PaletteEditorModal extends Modal {
 			.setName(t("palette.gradientDirection"))
 			.setClass("cs-row-inline");
 		this.colorCardRows.push(dirSetting.settingEl);
-		this.buildDirectionPicker(dirSetting.controlEl, this.angleDeg, (deg) => {
+		renderDirectionPicker(dirSetting.controlEl, this.angleDeg, (deg) => {
 			this.angleDeg = deg;
 			this.preview?.refresh();
 		});
@@ -947,36 +936,6 @@ export class PaletteEditorModal extends Modal {
 				});
 			});
 		this.colorCardRows.push(textSetting.settingEl);
-	}
-
-	/**
-	 * Arrow direction picker for the linear gradient's angle. Manages its
-	 * own active-button state.
-	 */
-	private buildDirectionPicker(
-		parent: HTMLElement,
-		initialDeg: number,
-		onPick: (deg: number) => void,
-	): void {
-		const dirWrap = parent.createDiv({
-			cls: "cs-gradient-dir-row",
-		});
-		const dirBtns = new Map<number, HTMLButtonElement>();
-		for (const { deg, icon } of GRADIENT_DIRECTIONS) {
-			const btn = dirWrap.createEl("button", {
-				cls: "cs-gradient-dir-btn",
-				attr: { "aria-label": `${deg}°`, title: `${deg}°` },
-			});
-			setIcon(btn, icon);
-			if (deg === initialDeg) btn.addClass("is-active");
-			btn.addEventListener("click", (e) => {
-				e.preventDefault();
-				for (const b of dirBtns.values()) b.removeClass("is-active");
-				btn.addClass("is-active");
-				onPick(deg);
-			});
-			dirBtns.set(deg, btn);
-		}
 	}
 
 	/**
@@ -1067,6 +1026,11 @@ export class PaletteEditorModal extends Modal {
 				name,
 				...this.colors,
 				bgIntensity: this.bgIntensity,
+				// The pick itself, so reopening this palette derives from what
+				// the user chose rather than from what the contrast fix returned.
+				// Saved in advanced mode too: the grid's hand-edited channels win
+				// while they last, but "Revert" goes back to deriving from here.
+				baseColor: this.baseColor,
 				...(gradient ? { bgGradient: gradient } : {}),
 				// The six colors above are saved unchanged under None: the
 				// backgrounds among them are what a later switch back to Solid
