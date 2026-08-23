@@ -15,7 +15,15 @@ npm install
 npm run dev     # watch build, esbuild with inline sourcemaps
 ```
 
-You'll need a current Node LTS. There's no automated test suite, so testing is manual: build, copy `main.js`, `manifest.json`, and `styles.css` into `<Vault>/.obsidian/plugins/callout-studio/`, and reload Obsidian.
+You'll need a current Node LTS.
+
+```bash
+npm test        # every tests/*.test.ts, bundled by esbuild and run by node:test
+```
+
+The suite covers the pure utilities, the registry, the CSS it generates, both editor surfaces, the public API and the repo's own rules. It runs in CI on every push and PR, so a failure there is a failure here. `tsconfig.json` includes `tests/` as well as `src/`, so `npm run build` typechecks the suites too — a test that no longer compiles fails the build.
+
+What it deliberately cannot see is Obsidian: the DOM is a stand-in (`tests/support/fakeDom.ts`) and the `obsidian` module is a stub (`tests/support/obsidianStub.ts`). So anything that has to *look* right is still checked by hand — build, copy `main.js`, `manifest.json`, and `styles.css` into `<Vault>/.obsidian/plugins/callout-studio/`, and reload Obsidian.
 
 ## Reporting a bug
 
@@ -33,8 +41,8 @@ Describe the problem you're trying to solve rather than a finished spec. There's
 
 1. Fork the repo, branch off `master` (`feature/short-description` or `fix/short-description`).
 2. Make your change. [CLAUDE.md](CLAUDE.md) has the architecture overview — read the "Data flow" section before touching anything under `src/manager/`. A couple of real bugs here have come from missing one of the registry → CSS injector → re-render steps. For the full internals — how a subsystem actually works, not just the summary, and step-by-step checklists for adding a setting/command/callout field/icon source — see [`internals-docs/00-index.md`](internals-docs/00-index.md).
-3. Run `npm run lint` and `npm run build` before pushing. CI runs the same two commands on every push and PR, so anything that fails locally will fail there too.
-4. Test the change in Obsidian (see Setup above), and say how you tested it in the PR description — with no test suite, that's the only signal a reviewer has.
+3. Run `npm run lint`, `npm run build` and `npm test` before pushing. CI runs the same three commands on every push and PR, so anything that fails locally will fail there too. A `todo` entry in a suite is a known bug someone wrote down, not a test that's allowed to stay red.
+4. Add or extend a test where the change is testable without Obsidian — that's the first place a change is proved. Then check it in Obsidian too (see Setup above), and say how you tested it in the PR description; for anything visual that's the only signal a reviewer has.
 
 Keep PRs to one change. A fix bundled with an unrelated refactor just makes both harder to review. A husky pre-commit hook also lints staged files automatically, so most style issues get caught before you even push.
 
