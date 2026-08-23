@@ -4,8 +4,8 @@ export const el: Record<string, string> = {
 	"cmd.insertEmptyCallout": "Εισαγωγή κενού callout",
 	"cmd.calloutWrap": "Αναδίπλωση σε callout",
 	"cmd.calloutUnwrap": "Αφαίρεση callout",
-	"cmd.customWrapBlock": "Αναδίπλωση σε callout {{name}}",
-	"cmd.customInsertBlock": "Εισαγωγή callout {{name}}",
+	"cmd.customWrapBlock": "Αναδίπλωση σε callout μπλοκ {{name}}",
+	"cmd.customInsertBlock": "Εισαγωγή callout μπλοκ {{name}}",
 	"cmd.customInsertHeading":
 		"Εισαγωγή callout επικεφαλίδας H{{level}} {{name}}",
 	"cmd.customInsertInline": "Εισαγωγή ενσωματωμένου callout {{name}}",

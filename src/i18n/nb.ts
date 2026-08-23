@@ -4,8 +4,8 @@ export const nb: Record<string, string> = {
 	"cmd.insertEmptyCallout": "Sett inn tom callout",
 	"cmd.calloutWrap": "Pakk inn i callout",
 	"cmd.calloutUnwrap": "Fjern callout",
-	"cmd.customWrapBlock": "Pakk inn i {{name}}-callout",
-	"cmd.customInsertBlock": "Sett inn {{name}}-callout",
+	"cmd.customWrapBlock": "Pakk inn i {{name}}-blokk-callout",
+	"cmd.customInsertBlock": "Sett inn {{name}}-blokk-callout",
 	"cmd.customInsertHeading":
 		"Sett inn H{{level}} {{name}}-overskriftscallout",
 	"cmd.customInsertInline": "Sett inn {{name}}-inline-callout",

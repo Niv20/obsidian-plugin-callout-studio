@@ -5,8 +5,8 @@ export const uk: Record<string, string> = {
 	"cmd.calloutWrap": "Обгорнути в callout",
 	"cmd.calloutUnwrap": "Видалити callout",
 
-	"cmd.customWrapBlock": "Обгорнути в callout {{name}}",
-	"cmd.customInsertBlock": "Вставити callout {{name}}",
+	"cmd.customWrapBlock": "Обгорнути в блоковий callout {{name}}",
+	"cmd.customInsertBlock": "Вставити блоковий callout {{name}}",
 	"cmd.customInsertHeading": "Вставити заголовок H{{level}} callout {{name}}",
 	"cmd.customInsertInline": "Вставити вбудований callout {{name}}",
 	"cmd.openQuickInsert": "Швидка вставка блокового callout",

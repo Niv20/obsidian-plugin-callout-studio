@@ -5,8 +5,8 @@ export const ro: Record<string, string> = {
 	"cmd.calloutWrap": "Înfășoară în callout",
 	"cmd.calloutUnwrap": "Elimină callout",
 
-	"cmd.customWrapBlock": "Înfășoară în callout {{name}}",
-	"cmd.customInsertBlock": "Inserează callout {{name}}",
+	"cmd.customWrapBlock": "Înfășoară în callout bloc {{name}}",
+	"cmd.customInsertBlock": "Inserează callout bloc {{name}}",
 	"cmd.customInsertHeading": "Inserează titlu H{{level}} callout {{name}}",
 	"cmd.customInsertInline": "Inserează callout inline {{name}}",
 	"cmd.openQuickInsert": "Inserare rapidă de callout bloc",

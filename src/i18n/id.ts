@@ -5,8 +5,8 @@ export const id: Record<string, string> = {
 	"cmd.calloutWrap": "Bungkus dalam callout",
 	"cmd.calloutUnwrap": "Hapus callout",
 
-	"cmd.customWrapBlock": "Bungkus dalam callout {{name}}",
-	"cmd.customInsertBlock": "Sisipkan callout {{name}}",
+	"cmd.customWrapBlock": "Bungkus dalam callout blok {{name}}",
+	"cmd.customInsertBlock": "Sisipkan callout blok {{name}}",
 	"cmd.customInsertHeading": "Sisipkan heading callout {{name}} H{{level}}",
 	"cmd.customInsertInline": "Sisipkan inline callout {{name}}",
 	"cmd.openQuickInsert": "Sisipan cepat callout blok",

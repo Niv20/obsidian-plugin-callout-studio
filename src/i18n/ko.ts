@@ -5,8 +5,8 @@ export const ko: Record<string, string> = {
 	"cmd.calloutWrap": "callout으로 감싸기",
 	"cmd.calloutUnwrap": "callout 제거",
 
-	"cmd.customWrapBlock": "{{name}} callout으로 감싸기",
-	"cmd.customInsertBlock": "{{name}} callout 삽입",
+	"cmd.customWrapBlock": "{{name}} 블록 callout으로 감싸기",
+	"cmd.customInsertBlock": "{{name}} 블록 callout 삽입",
 	"cmd.customInsertHeading": "H{{level}} {{name}} 제목 callout 삽입",
 	"cmd.customInsertInline": "{{name}} 인라인 callout 삽입",
 	"cmd.openQuickInsert": "블록 callout 빠른 삽입",

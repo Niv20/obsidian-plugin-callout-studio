@@ -5,8 +5,8 @@ export const ja: Record<string, string> = {
 	"cmd.calloutWrap": "calloutで囲む",
 	"cmd.calloutUnwrap": "calloutを解除",
 
-	"cmd.customWrapBlock": "{{name}}calloutで囲む",
-	"cmd.customInsertBlock": "{{name}}calloutを挿入",
+	"cmd.customWrapBlock": "{{name}}ブロックcalloutで囲む",
+	"cmd.customInsertBlock": "{{name}}ブロックcalloutを挿入",
 	"cmd.customInsertHeading": "H{{level}} {{name}}見出しcalloutを挿入",
 	"cmd.customInsertInline": "{{name}}インラインcalloutを挿入",
 	"cmd.openQuickInsert": "ブロックcalloutをクイック挿入",

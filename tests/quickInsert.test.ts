@@ -401,7 +401,7 @@ describe("the Insert button writes block callouts", () => {
 	it("builds an empty callout on a blank line, cursor ready to type", () => {
 		// "Ready to type" is inside the callout, not after its title: the row
 		// already named the type, so the next keystroke is body text. A
-		// user-built `Insert X callout` command leaves exactly this behind.
+		// user-built `Insert X block callout` command leaves exactly this behind.
 		const b = buffer("before\n\n|\n\nafter");
 		insert(b);
 

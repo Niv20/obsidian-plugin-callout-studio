@@ -538,6 +538,192 @@ describe("add / update / remove", () => {
 });
 
 /* -------------------------------------------------------------------------- */
+/* Renaming the block commands, on data that predates the new wording          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Block commands were renamed to say which format they write — `Wrap in X
+ * callout` became `Wrap in X block callout` — after users already had them
+ * saved, and with hotkeys already hanging off them.
+ *
+ * There is deliberately no migration, and this section is the argument for why
+ * one would be wrong rather than merely unnecessary. A stored command carries
+ * no name: `CustomCommand` is identity plus configuration, and `describeCommand`
+ * renders the label fresh on every sweep — the same mechanism that already made
+ * a callout rename reach the palette. The Obsidian id is built from the *minted*
+ * `id` alone, and Obsidian keys the user's hotkey off that id. So the upgrade is
+ * nothing more than the ordinary startup sweep rendering a different string at
+ * an unchanged id, and a migration that re-minted ids is the one thing that
+ * would actually cost someone their shortcut.
+ *
+ * `seed()` is exactly the pre-upgrade on-disk shape — pushed straight into
+ * settings, never through `add()`.
+ */
+describe("upgrading commands saved before block callouts named their format", () => {
+	it("renames a stored wrap command in place, at the same id", () => {
+		const h = harness();
+		addCallout(h.registry);
+		seed(h, { action: "wrap" });
+
+		h.manager.syncAll(); // the sweep a restart runs
+
+		assert.strictEqual(h.added.length, 1, "registered once, not duplicated");
+		assert.strictEqual(h.added[0]?.name, "Wrap in Quiet block callout");
+		// The unchanged id is the whole backward-compatibility story: Obsidian's
+		// hotkey table is keyed by it, so the same id is the kept shortcut. The
+		// stub models no hotkeys, which makes the id the only evidence there is.
+		assert.strictEqual(h.added[0]?.id, obsidianCommandId("cc-1"));
+		assert.deepStrictEqual(h.removed, [], "nothing unregistered");
+	});
+
+	it("renames a stored insert command the same way", () => {
+		const h = harness();
+		addCallout(h.registry);
+		seed(h, { action: "insert" });
+
+		h.manager.syncAll();
+
+		assert.strictEqual(h.added.length, 1);
+		assert.strictEqual(h.added[0]?.name, "Insert Quiet block callout");
+		assert.strictEqual(h.added[0]?.id, obsidianCommandId("cc-1"));
+	});
+
+	it("rewrites nothing on disk", () => {
+		// A migration would rewrite the stored records; there is nothing in them
+		// to migrate. The entry must come back out untouched, and unsaved — a
+		// vault write is a sync event, and this one would buy nothing.
+		const h = harness();
+		addCallout(h.registry);
+		seed(h, { action: "wrap" });
+
+		h.manager.syncAll();
+
+		assert.deepStrictEqual(h.registry.settings.customCommands, [
+			{ id: "cc-1", calloutId: "quiet", role: "regular", action: "wrap" },
+		]);
+		assert.strictEqual(h.saves, 0);
+	});
+
+	it("leaves no duplicate behind on later sweeps", () => {
+		const h = harness();
+		addCallout(h.registry);
+		seed(h, { action: "wrap" });
+		h.manager.syncAll();
+		h.clear();
+
+		h.manager.syncAll();
+		h.manager.syncAll();
+
+		assert.deepStrictEqual(h.added, [], "already converged");
+		assert.deepStrictEqual(h.removed, []);
+	});
+
+	it("upgrades every stored block command, not just the first", () => {
+		const h = harness();
+		addCallout(h.registry);
+		addCallout(h.registry, { id: "loud", displayName: "Loud" });
+		seed(h, { id: "cc-1", calloutId: "quiet", action: "wrap" });
+		seed(h, { id: "cc-2", calloutId: "loud", action: "insert" });
+
+		h.manager.syncAll();
+
+		assert.deepStrictEqual(
+			h.added.map((command) => command.name),
+			["Wrap in Quiet block callout", "Insert Loud block callout"],
+		);
+		assert.deepStrictEqual(idsOf(h.added), [
+			obsidianCommandId("cc-1"),
+			obsidianCommandId("cc-2"),
+		]);
+	});
+
+	it("leaves heading and inline commands where they were", () => {
+		// Those two already named their format, so the rename must not reach
+		// them — and a name that did not move must not cost a re-registration,
+		// which is what the second sweep here checks.
+		const h = harness();
+		addCallout(h.registry);
+		seed(h, { id: "cc-h", role: "heading", headingLevel: 3 });
+		seed(h, { id: "cc-i", role: "inline" });
+
+		h.manager.syncAll();
+
+		assert.deepStrictEqual(
+			h.added.map((command) => command.name),
+			["Insert H3 Quiet heading callout", "Insert Quiet inline callout"],
+		);
+
+		h.clear();
+		h.manager.syncAll();
+		assert.deepStrictEqual(h.added, []);
+		assert.deepStrictEqual(h.removed, []);
+	});
+
+	it("still re-registers a renamed callout at the same id", () => {
+		// The hotkey-preserving path, re-checked with the new wording in place:
+		// the name moves, the id does not.
+		const h = harness();
+		addCallout(h.registry);
+		seed(h, { action: "wrap" });
+		h.manager.syncAll();
+		h.clear();
+
+		h.registry.update("quiet", { displayName: "Hush" });
+		h.manager.syncAll();
+
+		assert.deepStrictEqual(h.removed, [obsidianCommandId("cc-1")]);
+		assert.deepStrictEqual(idsOf(h.added), [obsidianCommandId("cc-1")]);
+		assert.strictEqual(h.added[0]?.name, "Wrap in Hush block callout");
+	});
+});
+
+describe("a newly created block command", () => {
+	it("is named for the block format from the start", async () => {
+		const h = harness();
+		addCallout(h.registry);
+
+		const wrap = await h.manager.add({
+			calloutId: "quiet",
+			role: "regular",
+			action: "wrap",
+		});
+
+		assert.strictEqual(h.added.at(-1)?.name, "Wrap in Quiet block callout");
+		assert.strictEqual(h.added.at(-1)?.id, obsidianCommandId(wrap.id));
+
+		const insert = await h.manager.add({
+			calloutId: "quiet",
+			role: "regular",
+			action: "insert",
+		});
+
+		assert.strictEqual(h.added.at(-1)?.name, "Insert Quiet block callout");
+		assert.strictEqual(h.added.at(-1)?.id, obsidianCommandId(insert.id));
+	});
+
+	it("reads the same as one saved by an older version", async () => {
+		// Nothing distinguishes a freshly built command from an upgraded one —
+		// the record shape is identical, so the name has to be identical too.
+		const h = harness();
+		addCallout(h.registry);
+		const created = await h.manager.add({
+			calloutId: "quiet",
+			role: "regular",
+			action: "wrap",
+		});
+		const fresh = h.added.at(-1)?.name;
+
+		const legacy = harness();
+		addCallout(legacy.registry);
+		seed(legacy, { id: created.id, action: "wrap" });
+		legacy.manager.syncAll();
+
+		assert.strictEqual(legacy.added[0]?.name, fresh);
+		assert.strictEqual(legacy.added[0]?.id, obsidianCommandId(created.id));
+	});
+});
+
+/* -------------------------------------------------------------------------- */
 /* Running one                                                                 */
 /* -------------------------------------------------------------------------- */
 

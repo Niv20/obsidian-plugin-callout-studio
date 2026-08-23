@@ -5,8 +5,8 @@ export const nl: Record<string, string> = {
 	"cmd.calloutWrap": "In callout inpakken",
 	"cmd.calloutUnwrap": "Callout verwijderen",
 
-	"cmd.customWrapBlock": "In {{name}}-callout inpakken",
-	"cmd.customInsertBlock": "{{name}}-callout invoegen",
+	"cmd.customWrapBlock": "In {{name}}-blokcallout inpakken",
+	"cmd.customInsertBlock": "{{name}}-blokcallout invoegen",
 	"cmd.customInsertHeading": "H{{level}} {{name}}-kopcallout invoegen",
 	"cmd.customInsertInline": "Inline {{name}}-callout invoegen",
 	"cmd.openQuickInsert": "Blok-callout snel invoegen",

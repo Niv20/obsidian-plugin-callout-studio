@@ -5,8 +5,8 @@ export const tr: Record<string, string> = {
 	"cmd.calloutWrap": "Callout'a sar",
 	"cmd.calloutUnwrap": "Callout'u kaldır",
 
-	"cmd.customWrapBlock": "{{name}} callout'una sar",
-	"cmd.customInsertBlock": "{{name}} callout'u ekle",
+	"cmd.customWrapBlock": "{{name}} blok callout'una sar",
+	"cmd.customInsertBlock": "{{name}} blok callout'u ekle",
 	"cmd.customInsertHeading": "H{{level}} {{name}} başlık callout'u ekle",
 	"cmd.customInsertInline": "{{name}} satır içi callout'u ekle",
 	"cmd.openQuickInsert": "Blok callout'u hızlı ekle",

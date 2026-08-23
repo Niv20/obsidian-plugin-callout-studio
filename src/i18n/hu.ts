@@ -5,8 +5,8 @@ export const hu: Record<string, string> = {
 	"cmd.calloutWrap": "Callout-ba csomagolás",
 	"cmd.calloutUnwrap": "Callout eltávolítása",
 
-	"cmd.customWrapBlock": "Becsomagolás {{name}} callout-ba",
-	"cmd.customInsertBlock": "{{name}} callout beszúrása",
+	"cmd.customWrapBlock": "Becsomagolás {{name}} blokk callout-ba",
+	"cmd.customInsertBlock": "{{name}} blokk callout beszúrása",
 	"cmd.customInsertHeading": "H{{level}} {{name}} címsor callout beszúrása",
 	"cmd.customInsertInline": "{{name}} beágyazott callout beszúrása",
 	"cmd.openQuickInsert": "Blokk callout gyors beszúrása",

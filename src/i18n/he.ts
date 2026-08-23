@@ -14,8 +14,8 @@ export const he: Record<string, string> = {
 	"cmd.calloutUnwrap": "חילוץ מתוך callout",
 
 	// Commands — names generated for the user's own commands
-	"cmd.customWrapBlock": "עטיפה בתיבת־הבלטה {{name}}",
-	"cmd.customInsertBlock": "הוספת תיבת־הבלטה {{name}}",
+	"cmd.customWrapBlock": "עטיפה בתיבת־הבלטה בלוקית {{name}}",
+	"cmd.customInsertBlock": "הוספת תיבת־הבלטה בלוקית {{name}}",
 	"cmd.customInsertHeading": "הוספת כותרת H{{level}} מסוג {{name}}",
 	"cmd.customInsertInline": "הוספת תיבת־הבלטה מוטבעת {{name}}",
 	"cmd.openQuickInsert": "הוספה מהירה של תיבת־הבלטה מסוג בלוק",

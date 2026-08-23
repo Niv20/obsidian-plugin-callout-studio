@@ -5,8 +5,8 @@ export const vi: Record<string, string> = {
 	"cmd.calloutWrap": "Bọc trong callout",
 	"cmd.calloutUnwrap": "Bỏ callout",
 
-	"cmd.customWrapBlock": "Bọc trong callout {{name}}",
-	"cmd.customInsertBlock": "Chèn callout {{name}}",
+	"cmd.customWrapBlock": "Bọc trong callout khối {{name}}",
+	"cmd.customInsertBlock": "Chèn callout khối {{name}}",
 	"cmd.customInsertHeading": "Chèn tiêu đề callout H{{level}} {{name}}",
 	"cmd.customInsertInline": "Chèn callout nội dòng {{name}}",
 	"cmd.openQuickInsert": "Chèn nhanh callout khối",

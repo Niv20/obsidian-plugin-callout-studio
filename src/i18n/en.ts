@@ -16,8 +16,8 @@ export const en: Record<string, string> = {
 
 	// Commands — names generated for the user's own commands. Obsidian adds
 	// the "Callout Studio: " prefix itself, so these must not repeat it.
-	"cmd.customWrapBlock": "Wrap in {{name}} callout",
-	"cmd.customInsertBlock": "Insert {{name}} callout",
+	"cmd.customWrapBlock": "Wrap in {{name}} block callout",
+	"cmd.customInsertBlock": "Insert {{name}} block callout",
 	"cmd.customInsertHeading": "Insert H{{level}} {{name}} heading callout",
 	"cmd.customInsertInline": "Insert {{name}} inline callout",
 

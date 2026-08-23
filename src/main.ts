@@ -368,17 +368,17 @@ export default class CalloutStudioPlugin extends Plugin {
 	 * Re-render the surfaces that snapshot translated text.
 	 *
 	 * Most of the UI calls `t()` as it draws, so it picks up a new locale for
-	 * free. These three do not: the settings tab is already on screen, the
-	 * heading fold chevron bakes its tooltip into a CodeMirror widget, and
-	 * Obsidian keeps a command's name from the moment it was added. Called both
-	 * when the user picks a language and when a download lands mid-session.
+	 * free. These do not: the settings tab is already on screen, the heading
+	 * fold chevron bakes its tooltip into a CodeMirror widget, and Obsidian
+	 * keeps a command's name — the user's own too, rendered by `describeCommand`
+	 * — from when it was added. Called when a language is picked or lands late.
 	 */
 	applyLocaleChange(): void {
-		// Only when the tab is actually on screen: re-rendering a detached
-		// container would throw away work no one is looking at, and the picker
-		// re-renders itself on the path where the user chose the language.
+		// Only while on screen: re-rendering a detached container wastes work,
+		// and the picker re-renders itself when the user picked the language.
 		if (this.settingsTab?.containerEl.isConnected) this.settingsTab.display();
 		refreshFixedCommandNames(this, this.commandDeps());
+		this.customCommands.syncAll();
 		this.refreshRenderModes();
 	}
 

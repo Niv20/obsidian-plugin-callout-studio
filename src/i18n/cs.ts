@@ -5,8 +5,8 @@ export const cs: Record<string, string> = {
 	"cmd.calloutWrap": "Zabalit do callout",
 	"cmd.calloutUnwrap": "Odebrat callout",
 
-	"cmd.customWrapBlock": "Zabalit do callout {{name}}",
-	"cmd.customInsertBlock": "Vložit callout {{name}}",
+	"cmd.customWrapBlock": "Zabalit do blokového callout {{name}}",
+	"cmd.customInsertBlock": "Vložit blokový callout {{name}}",
 	"cmd.customInsertHeading": "Vložit nadpisový callout {{name}} (H{{level}})",
 	"cmd.customInsertInline": "Vložit vložený callout {{name}}",
 	"cmd.openQuickInsert": "Rychlé vložení blokového callout",

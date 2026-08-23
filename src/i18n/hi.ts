@@ -5,8 +5,8 @@ export const hi: Record<string, string> = {
 	"cmd.calloutWrap": "callout में लपेटें",
 	"cmd.calloutUnwrap": "callout हटाएँ",
 
-	"cmd.customWrapBlock": "{{name}} callout में लपेटें",
-	"cmd.customInsertBlock": "{{name}} callout डालें",
+	"cmd.customWrapBlock": "{{name}} ब्लॉक callout में लपेटें",
+	"cmd.customInsertBlock": "{{name}} ब्लॉक callout डालें",
 	"cmd.customInsertHeading": "H{{level}} {{name}} हेडिंग callout डालें",
 	"cmd.customInsertInline": "{{name}} इनलाइन callout डालें",
 	"cmd.openQuickInsert": "ब्लॉक callout जल्दी डालें",

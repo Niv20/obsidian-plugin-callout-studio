@@ -4,8 +4,8 @@ export const bg: Record<string, string> = {
 	"cmd.insertEmptyCallout": "Вмъкване на празен callout",
 	"cmd.calloutWrap": "Обвиване в callout",
 	"cmd.calloutUnwrap": "Премахване на callout",
-	"cmd.customWrapBlock": "Обвиване в callout {{name}}",
-	"cmd.customInsertBlock": "Вмъкване на callout {{name}}",
+	"cmd.customWrapBlock": "Обвиване в блоков callout {{name}}",
+	"cmd.customInsertBlock": "Вмъкване на блоков callout {{name}}",
 	"cmd.customInsertHeading":
 		"Вмъкване на заглавен callout {{name}} (H{{level}})",
 	"cmd.customInsertInline": "Вмъкване на вграден callout {{name}}",

@@ -5,8 +5,8 @@ export const sv: Record<string, string> = {
 	"cmd.calloutWrap": "Lägg i callout",
 	"cmd.calloutUnwrap": "Ta bort callout",
 
-	"cmd.customWrapBlock": "Lägg i callout {{name}}",
-	"cmd.customInsertBlock": "Infoga callout {{name}}",
+	"cmd.customWrapBlock": "Lägg i blockcallout {{name}}",
+	"cmd.customInsertBlock": "Infoga blockcallout {{name}}",
 	"cmd.customInsertHeading": "Infoga H{{level}}-rubrikcallout {{name}}",
 	"cmd.customInsertInline": "Infoga infogad callout {{name}}",
 	"cmd.openQuickInsert": "Snabbinfoga block-callout",

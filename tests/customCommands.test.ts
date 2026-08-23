@@ -178,20 +178,28 @@ describe("commandSignature", () => {
 	});
 });
 
+/** One draft per (role, action) the builder can produce. */
+const EVERY_SHAPE: Omit<CustomCommand, "id">[] = [
+	{ calloutId: "warning", role: "regular", action: "wrap" },
+	{ calloutId: "warning", role: "regular", action: "insert" },
+	{ calloutId: "warning", role: "heading", headingLevel: 3 },
+	{ calloutId: "warning", role: "inline" },
+];
+
 describe("describeCommand", () => {
 	// The English table is the fallback for every locale, so these are the
 	// strings a user sees unless a translation overrides them.
 	it("names each role and action", () => {
 		assert.strictEqual(
 			describeCommand({ calloutId: "warning", role: "regular", action: "wrap" }, def()),
-			"Wrap in Warning callout",
+			"Wrap in Warning block callout",
 		);
 		assert.strictEqual(
 			describeCommand(
 				{ calloutId: "warning", role: "regular", action: "insert" },
 				def(),
 			),
-			"Insert Warning callout",
+			"Insert Warning block callout",
 		);
 		assert.strictEqual(
 			describeCommand({ calloutId: "warning", role: "inline" }, def()),
@@ -204,6 +212,22 @@ describe("describeCommand", () => {
 			),
 			"Insert H3 Warning heading callout",
 		);
+	});
+
+	it("says which format every command writes", () => {
+		// The point of the wording: one callout can carry a command in all
+		// three formats at once, so a name that omits its own format reads as
+		// the generic option rather than as the block one. Asserted over the
+		// whole set rather than per string, so a fourth render role cannot be
+		// added with an unqualified name.
+		const named = EVERY_SHAPE.map((shape) => describeCommand(shape, def()));
+		for (const name of named) {
+			assert.ok(
+				/ (block|heading|inline) callout$/.test(name),
+				`${name} does not name its format`,
+			);
+		}
+		assert.strictEqual(new Set(named).size, named.length);
 	});
 
 	it("follows the callout's current display name", () => {

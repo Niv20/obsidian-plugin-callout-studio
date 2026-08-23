@@ -5,8 +5,8 @@ export const fa: Record<string, string> = {
 	"cmd.calloutWrap": "پیچیدن در callout",
 	"cmd.calloutUnwrap": "حذف callout",
 
-	"cmd.customWrapBlock": "پیچیدن در callout {{name}}",
-	"cmd.customInsertBlock": "درج callout {{name}}",
+	"cmd.customWrapBlock": "پیچیدن در callout بلوکی {{name}}",
+	"cmd.customInsertBlock": "درج callout بلوکی {{name}}",
 	"cmd.customInsertHeading": "درج سرتیتر H{{level}} از نوع callout {{name}}",
 	"cmd.customInsertInline": "درج callout درون‌خطی {{name}}",
 	"cmd.openQuickInsert": "درج سریع callout بلوکی",

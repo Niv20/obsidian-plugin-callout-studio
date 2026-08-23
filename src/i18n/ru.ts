@@ -5,8 +5,8 @@ export const ru: Record<string, string> = {
 	"cmd.calloutWrap": "Обернуть в callout",
 	"cmd.calloutUnwrap": "Убрать callout",
 
-	"cmd.customWrapBlock": "Обернуть в callout «{{name}}»",
-	"cmd.customInsertBlock": "Вставить callout «{{name}}»",
+	"cmd.customWrapBlock": "Обернуть в блочный callout «{{name}}»",
+	"cmd.customInsertBlock": "Вставить блочный callout «{{name}}»",
 	"cmd.customInsertHeading":
 		"Вставить заголовок H{{level}} callout «{{name}}»",
 	"cmd.customInsertInline": "Вставить встроенный callout «{{name}}»",

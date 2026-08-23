@@ -5,8 +5,8 @@ export const ms: Record<string, string> = {
 	"cmd.calloutWrap": "Balut dalam callout",
 	"cmd.calloutUnwrap": "Buang callout",
 
-	"cmd.customWrapBlock": "Balut dalam callout {{name}}",
-	"cmd.customInsertBlock": "Masukkan callout {{name}}",
+	"cmd.customWrapBlock": "Balut dalam callout blok {{name}}",
+	"cmd.customInsertBlock": "Masukkan callout blok {{name}}",
 	"cmd.customInsertHeading": "Masukkan callout tajuk H{{level}} {{name}}",
 	"cmd.customInsertInline": "Masukkan callout sebaris {{name}}",
 	"cmd.openQuickInsert": "Sisipan pantas callout blok",

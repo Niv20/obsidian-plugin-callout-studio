@@ -225,10 +225,10 @@ const openingHeaderToken = (def?: CalloutDefinition): string =>
  * A callout that already knows its type has nothing left to say on the header
  * line, so the next thing the user types is body text; writing the line for
  * them and landing the cursor after its `> ` is what makes the Quick insert
- * window and a user-built `Insert X callout` command leave the same thing
- * behind. With no type the header is still the bare `[!` that the autocomplete
- * is about to finish, so the cursor belongs up there and there is no body line
- * to write.
+ * window and a user-built `Insert X block callout` command leave the same
+ * thing behind. With no type the header is still the bare `[!` that the
+ * autocomplete is about to finish, so the cursor belongs up there and there is
+ * no body line to write.
  */
 const emptyBodyLine = (prefix: string, def?: CalloutDefinition): string | null =>
 	def ? `${prefix}> ` : null;

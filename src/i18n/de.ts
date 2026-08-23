@@ -5,8 +5,8 @@ export const de: Record<string, string> = {
 	"cmd.calloutWrap": "In Callout einbetten",
 	"cmd.calloutUnwrap": "Aus Callout entfernen",
 
-	"cmd.customWrapBlock": "In {{name}}-Callout einbetten",
-	"cmd.customInsertBlock": "{{name}}-Callout einfügen",
+	"cmd.customWrapBlock": "In {{name}}-Block-Callout einbetten",
+	"cmd.customInsertBlock": "{{name}}-Block-Callout einfügen",
 	"cmd.customInsertHeading":
 		"H{{level}}-{{name}}-Überschrift-Callout einfügen",
 	"cmd.customInsertInline": "{{name}}-Inline-Callout einfügen",

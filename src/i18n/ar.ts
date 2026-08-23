@@ -5,8 +5,8 @@ export const ar: Record<string, string> = {
 	"cmd.calloutWrap": "التفاف في callout",
 	"cmd.calloutUnwrap": "إزالة callout",
 
-	"cmd.customWrapBlock": "التفاف في callout {{name}}",
-	"cmd.customInsertBlock": "إدراج callout {{name}}",
+	"cmd.customWrapBlock": "التفاف في callout الكتلي {{name}}",
+	"cmd.customInsertBlock": "إدراج callout الكتلي {{name}}",
 	"cmd.customInsertHeading":
 		"إدراج عنوان callout {{name}} من المستوى H{{level}}",
 	"cmd.customInsertInline": "إدراج callout {{name}} ضمن السطر",

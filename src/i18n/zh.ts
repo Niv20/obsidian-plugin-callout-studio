@@ -5,8 +5,8 @@ export const zh: Record<string, string> = {
 	"cmd.calloutWrap": "用 callout 包裹",
 	"cmd.calloutUnwrap": "从 callout 中解包",
 
-	"cmd.customWrapBlock": "用 {{name}} callout 包裹",
-	"cmd.customInsertBlock": "插入 {{name}} callout",
+	"cmd.customWrapBlock": "用 {{name}} 块 callout 包裹",
+	"cmd.customInsertBlock": "插入 {{name}} 块 callout",
 	"cmd.customInsertHeading": "插入 H{{level}} {{name}} 标题 callout",
 	"cmd.customInsertInline": "插入 {{name}} 行内 callout",
 	"cmd.openQuickInsert": "快速插入块级 callout",

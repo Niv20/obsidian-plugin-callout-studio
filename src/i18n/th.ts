@@ -5,8 +5,8 @@ export const th: Record<string, string> = {
 	"cmd.calloutWrap": "ห่อใน callout",
 	"cmd.calloutUnwrap": "นำ callout ออก",
 
-	"cmd.customWrapBlock": "ห่อใน callout {{name}}",
-	"cmd.customInsertBlock": "แทรก callout {{name}}",
+	"cmd.customWrapBlock": "ห่อใน callout แบบบล็อก {{name}}",
+	"cmd.customInsertBlock": "แทรก callout แบบบล็อก {{name}}",
 	"cmd.customInsertHeading": "แทรกหัวข้อ callout H{{level}} {{name}}",
 	"cmd.customInsertInline": "แทรก callout แบบอินไลน์ {{name}}",
 	"cmd.openQuickInsert": "แทรก callout แบบบล็อกอย่างรวดเร็ว",

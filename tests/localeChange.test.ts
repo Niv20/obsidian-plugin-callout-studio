@@ -12,9 +12,11 @@
  * - the **fold chevron's tooltip**, baked into a CodeMirror widget when the
  *   decoration was built (`refreshRenderModes`);
  * - a **command's name**, which Obsidian copies out of the object handed to
- *   `addCommand` and never reads again.
+ *   `addCommand` and never reads again — true of the six fixed commands and of
+ *   the user's own alike, since `describeCommand` renders those through `t()`
+ *   too, which is why the manager's sweep is on the list.
  *
- * `applyLocaleChange()` is the one place that re-renders all three, and this
+ * `applyLocaleChange()` is the one place that re-renders all of them, and this
  * file is about it. Two things are easy to get wrong and both are covered:
  * re-registering a command must reuse its **id**, or the user's hotkey is
  * silently unbound — and `ensureLocale()` must only call it when the locale
@@ -74,6 +76,8 @@ interface Host {
 	displays: () => number;
 	/** How many times the two preview modes were rebuilt. */
 	renders: () => number;
+	/** How many times the user's own commands were swept. */
+	sweeps: () => number;
 	settings: PluginSettings;
 	/** Detach the settings tab, as Obsidian does when the pane is closed. */
 	closeSettings: () => void;
@@ -85,6 +89,7 @@ function host(): Host {
 	const added: Command[] = [];
 	let displays = 0;
 	let renders = 0;
+	let sweeps = 0;
 	const settings = structuredClone(DEFAULT_SETTINGS);
 
 	const self = {
@@ -101,6 +106,14 @@ function host(): Host {
 		},
 		refreshRenderModes: () => {
 			renders++;
+		},
+		// The user's own command names are rendered through `t()` too, so the
+		// manager's sweep is the fourth surface a locale change has to reach.
+		// Counted rather than exercised: what it does is customCommandSync's.
+		customCommands: {
+			syncAll: () => {
+				sweeps++;
+			},
 		},
 		// The windows the fixed commands open. Both throw: re-registering a
 		// command must never construct one — `addCommand` only ever stores the
@@ -120,6 +133,7 @@ function host(): Host {
 		added,
 		displays: () => displays,
 		renders: () => renders,
+		sweeps: () => sweeps,
 		settings,
 		closeSettings: () => {
 			self.settingsTab.containerEl.isConnected = false;
@@ -149,11 +163,11 @@ const currentNames = (): string[] =>
 	FIXED_COMMAND_IDS.map((id) => t(FIXED_COMMAND_NAME_KEYS[id]));
 
 /* -------------------------------------------------------------------------- */
-/* The three surfaces                                                         */
+/* The surfaces                                                               */
 /* -------------------------------------------------------------------------- */
 
 describe("applyLocaleChange re-renders what snapshots translated text", () => {
-	it("re-renders all three in one call", () => {
+	it("re-renders all of them in one call", () => {
 		useCommandLocale("surface");
 		const h = host();
 
@@ -161,11 +175,26 @@ describe("applyLocaleChange re-renders what snapshots translated text", () => {
 
 		assert.strictEqual(h.displays(), 1, "the settings tab was not re-rendered");
 		assert.strictEqual(h.renders(), 1, "the preview modes were not rebuilt");
+		assert.strictEqual(h.sweeps(), 1, "the user's own commands were not swept");
 		assert.deepStrictEqual(
 			h.added.map((c) => c.name),
 			currentNames(),
 			"the commands kept their old names",
 		);
+	});
+
+	it("sweeps the user's own commands once per call", () => {
+		// Their names come from `t()` by way of `describeCommand`, so a
+		// translation landing mid-session has to reach them too — otherwise a
+		// user-built command sits in the palette in the old language until the
+		// next restart. The sweep is idempotent and keyed on the rendered name,
+		// so calling it here costs nothing when nothing moved.
+		const h = host();
+
+		applyLocaleChange(h.self);
+		applyLocaleChange(h.self);
+
+		assert.strictEqual(h.sweeps(), 2);
 	});
 
 	it("names commands through t(), so English is what an untranslated build shows", () => {
@@ -186,7 +215,8 @@ describe("applyLocaleChange re-renders what snapshots translated text", () => {
 		applyLocaleChange(h.self);
 
 		assert.strictEqual(h.displays(), 0);
-		assert.strictEqual(h.renders(), 1, "the other two surfaces still run");
+		assert.strictEqual(h.renders(), 1, "the other surfaces still run");
+		assert.strictEqual(h.sweeps(), 1, "the other surfaces still run");
 	});
 
 	it("survives being called before the settings tab exists", () => {
@@ -199,6 +229,7 @@ describe("applyLocaleChange re-renders what snapshots translated text", () => {
 			applyLocaleChange(h.self);
 		});
 		assert.strictEqual(h.renders(), 1);
+		assert.strictEqual(h.sweeps(), 1);
 	});
 
 	it("rebuilds the preview modes every time, translated text or not", () => {
