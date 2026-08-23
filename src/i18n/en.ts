@@ -241,6 +241,14 @@ export const en: Record<string, string> = {
 	"quickInsert.noEditorHint":
 		"No note is open in editing mode, so nothing can be inserted.",
 	"quickInsert.noEditor": "Open a note in editing mode to insert a callout.",
+	"quickInsert.readingViewHint":
+		"This note is open in Reading view, so nothing can be inserted.",
+	"quickInsert.readingView":
+		"Switch to Source mode or Live Preview to insert a callout.",
+	"quickInsert.noCursorHint":
+		"There is no cursor in this note, so there is nowhere to insert.",
+	"quickInsert.noCursor":
+		"Place the cursor in the note where you want to insert the callout, then try again.",
 
 	// Settings — Reset
 	"settings.vaultMaintenance": "Vault insights & maintenance",

@@ -24,7 +24,7 @@ import { wrapSelectionInCallout } from "../editor/CalloutBlockTools";
 import {
 	currentTargetEditor,
 	resolveTargetEditor,
-	type TargetEditor,
+	type TargetEditorResult,
 } from "../editor/targetMarkdownEditor";
 import { getLocale, t } from "../i18n";
 import type { CalloutDefinition } from "../types";
@@ -36,6 +36,7 @@ import {
 import { filterUsableCallouts } from "../utils/usableCallouts";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
 import { openCalloutEditorFor } from "./openCalloutEditor";
+import { quickInsertHint, quickInsertNotice } from "./quickInsertMessages";
 import { QuickInsertPreviews } from "./quickInsertPreview";
 import { buildQuickInsertToolbar } from "./quickInsertToolbar";
 import { renderQuickInsertRow } from "./quickInsertRow";
@@ -48,8 +49,12 @@ export class QuickInsertModal extends Modal {
 	/**
 	 * The editor this window was opened beside, resolved once, before any modal
 	 * has taken focus. Re-checked rather than trusted at insert time.
+	 *
+	 * Kept as the whole result rather than just the editor: when there isn't
+	 * one, *which* of the three reasons it is is what the hint at the top of the
+	 * window has to say.
 	 */
-	private readonly captured: TargetEditor | null;
+	private readonly captured: TargetEditorResult;
 
 	private listEl: HTMLElement | null = null;
 	private searchEl: HTMLInputElement | null = null;
@@ -87,10 +92,10 @@ export class QuickInsertModal extends Modal {
 		});
 
 		this.buildToolbar(contentEl);
-		if (!this.captured) {
+		if (!this.captured.ok) {
 			contentEl.createDiv({
 				cls: "cs-quick-insert-hint",
-				text: t("quickInsert.noEditorHint"),
+				text: quickInsertHint(this.captured.problem),
 			});
 		}
 
@@ -230,7 +235,7 @@ export class QuickInsertModal extends Modal {
 
 		for (const def of visible) {
 			const el = renderQuickInsertRow(listEl, def, {
-				canInsert: this.captured !== null,
+				canInsert: this.captured.ok,
 				preview: (target) => this.previews?.get(target.id) ?? null,
 				onEdit: (target) => void this.edit(target),
 				onInsert: (target) => this.insert(target),
@@ -261,13 +266,28 @@ export class QuickInsertModal extends Modal {
 	 * Resolved again here rather than trusting the capture: the note may have
 	 * been closed, its leaf re-used, or flipped into Reading view since the
 	 * window opened.
+	 *
+	 * A refusal carries the reason it was refused. "Nothing to insert into" is
+	 * three situations and only one of them is fixed by opening a note, so the
+	 * notice names the one the user is actually in — see
+	 * {@link quickInsertNotice}.
 	 */
 	private insert(def: CalloutDefinition): void {
-		const target = currentTargetEditor(this.plugin.app, this.captured);
-		if (!target) {
-			new Notice(t("quickInsert.noEditor"));
+		const result = currentTargetEditor(
+			this.plugin.app,
+			this.captured.ok ? this.captured.target : null,
+		);
+		if (!result.ok) {
+			// The window stays open on a refusal. It is a modal, so the note
+			// behind it cannot be touched until it closes — but closing on the
+			// user's behalf would discard the query and the filter they typed
+			// to find this row, and the notice already says what to do next.
+			// The same state is on screen before the button is ever pressed:
+			// the hint at the top, and every Insert dimmed.
+			new Notice(quickInsertNotice(result.problem));
 			return;
 		}
+		const { target } = result;
 		this.close();
 		// Focus first, so the edit lands in a view that is already scrolled to
 		// the cursor. The write itself is a single `replaceRange`, which is what
