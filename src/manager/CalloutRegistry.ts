@@ -24,7 +24,14 @@ import {
 import { iconCacheKey, packFor } from "../icons/registry";
 import { resolveLucideId } from "../icons/lucideId";
 import { COLOUR_NEUTRAL_FIELDS, isCalloutModified } from "./calloutCompare";
-import { applyStyleMode, type CalloutStyleMode } from "./styleMode";
+import { migrateStyleModes } from "./styleModeMigration";
+import {
+	findAttrIdConflict,
+	vaultIdFormsFor,
+} from "./calloutIdForms";
+import { ThemeFacts } from "./theme/ThemeFacts";
+import type { ThemeAppearance } from "./theme/themeAppearance";
+import { mirroredFallbackRow } from "./discoveredRow";
 import { materialPack } from "../icons/packs/material";
 import type {
 	CalloutManagerEntry,
@@ -57,7 +64,14 @@ import { sortCalloutsByDisplayName } from "../utils/sorting";
  *
  * 3: `materialSvgCache` → `iconSvgCache` (generic across icon packs).
  */
-const CURRENT_DATA_VERSION = 3;
+/**
+ * Bumped to 4 when the manual style mode was retired. Unlike the migrations
+ * around it — which key on content, because an imported or hand-edited file can
+ * carry any version it likes — the `source: "theme"` re-home in
+ * `styleModeMigration.ts` genuinely cannot be told from its own result, so it
+ * needs a durable "already done" marker and this is the one.
+ */
+const CURRENT_DATA_VERSION = 4;
 const SORTED_DEFAULT_CALLOUTS = sortCalloutsByDisplayName(DEFAULT_CALLOUTS);
 
 /** Identifier stamped into v2 export files so the importer can recognize them. */
@@ -214,6 +228,12 @@ export class CalloutRegistry {
 		if (data.settings) {
 			this.settings = mergeSavedSettings(data.settings);
 			this.syncUserImages();
+		}
+
+		// Retire the fields of the removed manual style-mode model. Ownership is
+		// derived from the active theme now. See manager/styleModeMigration.
+		if (migrateStyleModes(this.callouts, this.settings, data)) {
+			this.pendingLoadMigrationSave = true;
 		}
 
 		// Restore cached artwork for the icons the vault actually uses.
@@ -672,6 +692,8 @@ export class CalloutRegistry {
 				if (!this.previewShadowedDef) continue;
 				def = this.previewShadowedDef;
 			}
+			// An overlay, re-derived per launch — see themeProvidedRows.ts.
+			if (def.source === "theme") continue;
 			if (def.builtIn) {
 				// Only save built-in if it was modified from default
 				const original = this.builtInDefaults.get(id);
@@ -787,22 +809,14 @@ export class CalloutRegistry {
 	}
 
 	/**
-	 * Re-style every uncustomized `source: "fallback"` row to mirror the
-	 * current fallback callout's icon, colors, and icon transform. Called
-	 * whenever the fallback selection changes (user-driven via the settings
-	 * dropdown, or implicitly when the active fallback row is deleted and
-	 * resets to the default) or when the fallback callout itself is edited.
-	 * Returns the number of rows that actually changed. Callers decide whether
-	 * to flush (`notifyChange`) afterwards — we emit a notification only when at
-	 * least one row actually changed so settings UI re-renders to reflect
-	 * the new mirror style.
+	 * Re-style every uncustomized `source: "fallback"` row to mirror the current
+	 * fallback callout. Called whenever the fallback selection changes (the
+	 * settings dropdown, or implicitly when the active fallback row is deleted)
+	 * or when the fallback callout itself is edited. `mirroredFallbackRow`
+	 * (`./discoveredRow`) owns what "mirror" means; the skip list is this
+	 * function's own, and every entry in it is a row somebody else owns.
 	 *
-	 * "Actually changed" is a content test, not a visit count. The pass runs on
-	 * every fallback edit, every fallback-target delete and every discovery
-	 * sweep, so most of its work lands on rows already wearing exactly this
-	 * style; writing those back unconditionally reported them as updated and
-	 * fired the change event anyway — a full stylesheet regeneration, an icon
-	 * repaint and a `data.json` write for a no-op.
+	 * Returns the number of rows that actually changed, and notifies only then.
 	 */
 	restyleUncustomizedFallbackRows(): number {
 		const fallbackId =
@@ -818,50 +832,10 @@ export class CalloutRegistry {
 			// Nothing reads this row's colours while the theme owns it, so
 			// mirroring onto it would only churn data.json on every fallback
 			// change and make the row look edited in an export.
-			if (def.externalStyle === true) continue;
+			if (this.standsDown(def)) continue;
 			if (def.id === fallbackId) continue;
-			const next: CalloutDefinition = {
-				...def,
-				icon: { ...fallback.icon },
-				// Spelled out (`undefined` included) for the same reason
-				// `transparentBg` below is: this spread merges onto the row, so
-				// omitting the key would let a mirrored row keep its own stale
-				// flag while taking the fallback's icon.
-				hideIcon: fallback.hideIcon,
-				colorLight: fallback.colorLight,
-				colorDark: fallback.colorDark,
-				bgColorLight: fallback.bgColorLight,
-				bgColorDark: fallback.bgColorDark,
-				bgGradient: fallback.bgGradient
-					? { ...fallback.bgGradient }
-					: undefined,
-				// Transparency travels with the backgrounds it replaces, and is
-				// spelled out (`undefined` included) like they are — this spread
-				// merges onto the row, so a key that isn't there leaves the old
-				// value standing. Omitting it meant a mirrored row could receive
-				// the fallback's hexes while keeping its own stale flag, which is
-				// the contradiction `dropStaleTransparencyFlags` exists to repair,
-				// and meant a transparent fallback was never mirrored as
-				// transparent at all.
-				transparentBg: fallback.transparentBg,
-				textColorLight: fallback.textColorLight,
-				textColorDark: fallback.textColorDark,
-				// Both layers travel together: the per-role map alone would be
-				// read against *this* row's stale legacy trio wherever a role
-				// leaves a field unset (see resolveIconAdjust).
-				iconAdjust: fallback.iconAdjust
-					? structuredClone(fallback.iconAdjust)
-					: undefined,
-				iconOffsetX: fallback.iconOffsetX,
-				iconOffsetY: fallback.iconOffsetY,
-				iconSize: fallback.iconSize,
-			};
-			// A structural compare, and sound precisely because `next` is a
-			// spread of `def`: the keys they share keep their order, and a
-			// mirrored key the row lacks is either `undefined` — which
-			// stringify drops on both sides, so the absent-vs-explicitly-absent
-			// pair reads as equal — or a value the row genuinely did not have.
-			if (JSON.stringify(next) === JSON.stringify(def)) continue;
+			const next = mirroredFallbackRow(def, fallback);
+			if (!next) continue;
 			this.setCallout(def.id, next);
 			updated++;
 		}
@@ -1156,37 +1130,72 @@ export class CalloutRegistry {
 	}
 
 	/**
-	 * Move a callout between style modes — the only writer of either field.
-	 * `applyStyleMode` (`manager/styleMode.ts`) owns the field juggling; the
-	 * one rule that belongs here is the refusal.
+	 * Hand a callout to the user's own CSS, or take it back — the only writer of
+	 * {@link CalloutDefinition.externalStyle}, and not a statement about the
+	 * theme, which {@link themeOwns} derives and nobody sets.
 	 *
-	 * `"theme"` is refused on the active Default fallback callout:
-	 * `generateFallbackCSS` paints every unknown callout *from* that
-	 * definition, so a fallback target that styles nothing is
-	 * self-contradictory — it would silently keep imposing its colours on the
-	 * rest of the vault while claiming to be hands-off. The caller disables the
-	 * menu item for the same reason. `"force"` carries no such conflict: the
-	 * fallback block already outranks everything, so forcing that template
-	 * changes only the callout's own rules.
-	 *
-	 * Returns `true` when the row actually changed.
+	 * Writes `true` or **deletes** the key, never `false`: `isCalloutModified`
+	 * compares `JSON.stringify(value ?? null)`, so an explicit falsy value would
+	 * leave a built-in nobody edited reading as customized forever.
 	 */
-	setStyleMode(id: string, mode: CalloutStyleMode): boolean {
+	setExternalStyle(id: string, external: boolean): boolean {
 		const existing = this.callouts.get(id);
 		if (!existing) return false;
-		if (mode === "theme" && id === this.settings.fallbackCalloutId) {
-			return false;
-		}
-		const next = applyStyleMode(existing, mode);
-		if (!next) return false;
+		if ((existing.externalStyle === true) === external) return false;
+		const next: CalloutDefinition = { ...existing };
+		if (external) next.externalStyle = true;
+		else delete next.externalStyle;
 		this.setCallout(id, next);
 		this.notifyChange();
 		return true;
 	}
 
-	/** The pre-ladder spelling, kept because it is what the public API says. */
-	setExternalStyle(id: string, on: boolean): boolean {
-		return this.setStyleMode(id, on ? "theme" : "standard");
+	/** What the theme claims and draws. Derived, never stored: {@link ThemeFacts}. */
+	private readonly themeFacts = new ThemeFacts();
+
+	/**
+	 * The two derived theme facts, published to {@link ThemeFacts}. Both
+	 * announce a move like any other registry change — ownership decides who
+	 * paints, and the probe's readings land *after* the settings tab drew its
+	 * rows — and neither announces a no-op. Call the first inside `batch()`.
+	 */
+	setThemeOwnedIds(ids: ReadonlySet<string>): boolean {
+		const moved = this.themeFacts.setOwnedIds(ids);
+		if (moved) this.notifyChange();
+		return moved;
+	}
+
+	setThemeAppearances(map: ReadonlyMap<string, ThemeAppearance>): boolean {
+		const moved = this.themeFacts.setAppearances(map);
+		if (moved) this.notifyChange();
+		return moved;
+	}
+
+	/**
+	 * Does the active theme supply or style this callout? The whole ownership
+	 * model — **derived, never stored**; `ThemeFacts` argues why, and why a
+	 * stored flip would quietly drop the row from the user's backups.
+	 */
+	themeOwns(def: CalloutDefinition): boolean {
+		return this.themeFacts.owns(def, this.vaultIdFormsFor(def));
+	}
+
+	/** How the theme paints `def`. See {@link ThemeFacts.appearanceOf}. */
+	themeAppearanceOf(def: CalloutDefinition): ThemeAppearance {
+		return this.themeFacts.appearanceOf(this.vaultIdFormsFor(def));
+	}
+
+	/**
+	 * True when this plugin emits no CSS at all for `def` — the one question
+	 * every CSS path asks. Two quite different reasons land here, and emitters
+	 * are right not to distinguish them: the theme owns the callout
+	 * ({@link themeOwns}), or the user has handed this one to their own snippet
+	 * ({@link setExternalStyle}). Callers deciding where a row is *listed*, or
+	 * whether it is read-only, must ask `themeOwns` — an External CSS row is
+	 * still the user's.
+	 */
+	standsDown(def: CalloutDefinition): boolean {
+		return def.externalStyle === true || this.themeOwns(def);
 	}
 
 	isBuiltInModified(id: string): boolean {
@@ -1239,9 +1248,27 @@ export class CalloutRegistry {
 		return Array.from(this.callouts.values());
 	}
 
+	/**
+	 * The user's own callouts — neither a built-in nor a row minted from the
+	 * active theme's stylesheet. Theme rows are excluded here rather than only
+	 * in the settings list because this also feeds `getExportableDefinitions`,
+	 * `exportToJSON()` and the *Reset everything* sweep. What may be *written*
+	 * in a note is a different question — see
+	 * `utils/usableCallouts.committedDefinitions`.
+	 */
 	getUserDefined(): CalloutDefinition[] {
 		return this.definitionsForLists().filter(
-			(d) => !d.builtIn && !this.isUnshadowedPreview(d.id),
+			(d) =>
+				!d.builtIn &&
+				d.source !== "theme" &&
+				!this.isUnshadowedPreview(d.id),
+		);
+	}
+
+	/** Rows minted from the active theme's stylesheet — see `getUserDefined`. */
+	getThemeProvided(): CalloutDefinition[] {
+		return this.definitionsForLists().filter(
+			(d) => d.source === "theme" && !this.isUnshadowedPreview(d.id),
 		);
 	}
 
@@ -1365,73 +1392,22 @@ export class CalloutRegistry {
 		return undefined;
 	}
 
-	/**
-	 * The OTHER definition that already owns `rawId`'s `data-callout` attribute
-	 * form, or undefined when the form is free. Validation-only counterpart to
-	 * {@link findByAttrId}, and deliberately different from it in two ways:
-	 *
-	 * - It asks "does anyone else own this form?" rather than "who wins the
-	 *   lookup race", so there is no precedence ladder — the first other owner
-	 *   is reported. That keeps the answer symmetric: `a b` sees `a-b` and
-	 *   `a-b` sees `a b`, where a precedence-ordered search would let the
-	 *   literal ID win and hide the conflict in one of the two directions.
-	 * - It sees through the live-preview shadow exactly as {@link getReal}
-	 *   does. The callout editor registers its in-progress draft in this very
-	 *   map under the ID being typed (see setPreviewDefinition), so a raw scan
-	 *   finds the draft and reports it as its own conflict.
-	 *
-	 * `excludeId` is the definition being edited — it can never conflict with
-	 * itself, and skipping it wholesale also stops one of its own aliases from
-	 * conflicting with its ID.
-	 */
+	/** See `manager/calloutIdForms.ts`, which owns this arithmetic. */
 	findAttrIdConflict(
 		rawId: string,
 		excludeId: string | null,
 	): CalloutDefinition | undefined {
-		const key = obsidianCalloutAttrId(rawId);
-		if (!key) return undefined;
-		for (const def of this.realDefinitions()) {
-			if (def.id === excludeId) continue;
-			if (obsidianCalloutAttrId(def.id) === key) return def;
-			if (def.aliases?.some((a) => obsidianCalloutAttrId(a) === key)) {
-				return def;
-			}
-		}
-		return undefined;
+		return findAttrIdConflict(this.definitionSource, rawId, excludeId);
 	}
 
-	/**
-	 * Every raw ID form that may appear in the vault for `def` and belongs to
-	 * `def` alone: its ID and aliases, plus each one's `data-callout` attribute
-	 * form when that differs and no OTHER definition owns it.
-	 *
-	 * Callers that rewrite or count usages across the vault (rename, delete,
-	 * usage counts, the discovery prune pass) must use this rather than
-	 * `[def.id, ...aliases]`, or `> [!a-b]` written by hand is orphaned when the
-	 * `a b` row is renamed away — the same class of bug as leaving heading and
-	 * inline usages behind.
-	 *
-	 * The "no other owner" condition is what keeps a legacy vault safe: where
-	 * `a b` and `a-b` both exist as separate rows, neither claims the other's
-	 * usages.
-	 *
-	 * `forms` narrows the question to a subset of what `def` owns — the
-	 * built-in reset flow asks only about the aliases it is about to drop.
-	 */
-	vaultIdFormsFor(
-		def: CalloutDefinition,
-		forms: string[] = [def.id, ...(def.aliases ?? [])],
-	): string[] {
-		const out = [...forms];
-		for (const form of forms) {
-			const attrForm = obsidianCalloutAttrId(form);
-			if (!attrForm || attrForm === form) continue;
-			if (out.includes(attrForm)) continue;
-			if (this.findAttrIdConflict(attrForm, def.id)) continue;
-			out.push(attrForm);
-		}
-		return out;
+	/** See `manager/calloutIdForms.ts`, which owns this arithmetic. */
+	vaultIdFormsFor(def: CalloutDefinition, forms?: string[]): string[] {
+		return vaultIdFormsFor(this.definitionSource, def, forms);
 	}
+
+	/** Bound once so the two above are not re-closing over `this` per call. */
+	private readonly definitionSource = (): Iterable<CalloutDefinition> =>
+		this.realDefinitions();
 
 	/**
 	 * The committed definitions, with the transient live-preview entry replaced

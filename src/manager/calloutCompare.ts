@@ -52,7 +52,6 @@ export const COMPARED_FIELDS: Record<
 	paletteId: true,
 	customized: true,
 	externalStyle: true,
-	styleMode: true,
 	metadata: true,
 };
 
@@ -67,15 +66,12 @@ export const COMPARED_FIELDS: Record<
  * hard-coded hex — silently ending the built-in's deference to whatever the
  * theme says blue is.
  *
- * `styleMode` is here for the same reason, and the consequence is sharper.
- * Forcing an untouched `[!info]` means "give me Obsidian's own blue at a
- * weight this theme cannot reach" — the point is the *weight*, not a new
- * colour. Counting it as a modification would drop the built-in's deference
- * and bake a literal hex at high specificity, which is close to the opposite
- * of what the user asked for.
+ * It is the only such field. `externalStyle` deliberately is *not* one: it
+ * is a real decision about the callout, and a built-in the user handed to
+ * their own CSS should read as edited.
  */
 export const COLOUR_NEUTRAL_FIELDS: ReadonlySet<keyof CalloutDefinition> =
-	new Set(["hideIcon", "styleMode"]);
+	new Set(["hideIcon"]);
 
 /**
  * Structural diff over {@link COMPARED_FIELDS}, optionally ignoring a set of

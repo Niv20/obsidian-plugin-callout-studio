@@ -292,13 +292,19 @@ export interface CalloutDefinition {
 	 */
 	customized?: boolean;
 	/**
-	 * Hand this callout to the active theme, a CSS snippet, or Obsidian's own
-	 * defaults: Callout Studio emits no CSS for it and renders no DOM for it.
+	 * Style this callout with your own CSS: Callout Studio emits nothing for it
+	 * and the user's snippet, or plain Obsidian, decides how it looks.
+	 *
+	 * Deliberately **not** a statement about the theme. Whether the active theme
+	 * owns a callout is derived by `CalloutRegistry.themeOwns` from the theme's
+	 * own stylesheet and is not the user's to set; this flag is the separate,
+	 * user-chosen "I handle this one myself" that keeps such a row in the user's
+	 * own section wearing an *External CSS* label.
 	 *
 	 * "No styling" is broader than dropping the per-callout block, so several
-	 * paths check it, and `internals-docs/06-css-generation.md` derives why
-	 * each is needed — along with the measurement that the plugin does *not*
-	 * simply out-rank a theme, which is what makes this flag worth having.
+	 * paths check it — always through `CalloutRegistry.standsDown`, never off
+	 * this field, because a theme-owned callout gets no CSS either without ever
+	 * carrying it.
 	 *
 	 * Typed `true` rather than `boolean` for the same reason as
 	 * {@link transparentBg}: `isCalloutModified` compares
@@ -307,13 +313,6 @@ export interface CalloutDefinition {
 	 * deletes the key rather than writing `false`.
 	 */
 	externalStyle?: true;
-	/**
-	 * Push harder than usual, because the active theme is winning. Absent is
-	 * the default. Deliberately cannot spell `"theme"` — that state is
-	 * {@link externalStyle}, and one spelling per state is what keeps the pair
-	 * unambiguous. `manager/styleMode.ts` has the rest.
-	 */
-	styleMode?: "force";
 	metadata?: Record<string, string>;
 }
 
@@ -727,6 +726,16 @@ export interface PluginSettings {
 	inlineCallouts: InlineCalloutSettings;
 	/** Has the first-run vault scan been completed? */
 	firstRunCompleted?: boolean;
+	/**
+	 * Callout IDs that were supplied by a theme which no longer supplies them.
+	 *
+	 * Vault-local bookkeeping, not a preference: it stops automatic discovery
+	 * re-creating a theme's callout type as a fallback row the moment the theme
+	 * is switched away from, just because notes still use the ID. Explicit
+	 * creation is unaffected, and a user-requested vault scan clears it. See
+	 * `manager/theme/retiredThemeIds.ts`.
+	 */
+	retiredThemeIds: string[];
 	/** Has the welcome/splash screen been shown at least once? */
 	welcomeSeen?: boolean;
 	/** Callout ID to use as fallback for unrecognized callout types. Empty = Obsidian default */
