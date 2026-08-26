@@ -23,8 +23,16 @@
  *
  * Both are dropped by {@link RediscoveryHold.clear}, which a user-requested
  * vault scan calls: the user asking for these rows outranks either reason.
+ *
+ * Both are also keyed by `calloutIdentity` — one key per callout, never one per
+ * spelling. Keying by the space-preserving form made `a b` and `a-b` two
+ * separate holds, so deleting a row and then opening a note that spelled it the
+ * other way handed the row straight back: the exact resurrection above, one
+ * spelling out of reach. Callers still pass every form the row owned
+ * (`CalloutRegistry.vaultIdFormsFor`), which costs nothing and keeps the hold
+ * right for an alias that is not a dash/space variant of the id.
  */
-import { normalizeCalloutId } from "../utils/calloutId";
+import { calloutIdentity } from "../utils/calloutId";
 import { isRetiredThemeId } from "./theme/retiredThemeIds";
 
 /**
@@ -48,7 +56,7 @@ export class RediscoveryHold {
 	suppress(ids: string[]): void {
 		const until = Date.now() + SUPPRESS_MS;
 		for (const id of ids) {
-			const normalized = normalizeCalloutId(id);
+			const normalized = calloutIdentity(id);
 			if (normalized) this.deleted.set(normalized, until);
 		}
 	}
@@ -62,7 +70,7 @@ export class RediscoveryHold {
 	/** Whether automatic discovery must not create a row for this id. */
 	holds(id: string): boolean {
 		if (isRetiredThemeId(this.settings.retiredThemeIds, id)) return true;
-		const normalized = normalizeCalloutId(id);
+		const normalized = calloutIdentity(id);
 		const until = this.deleted.get(normalized);
 		if (until === undefined) return false;
 		if (Date.now() < until) return true;

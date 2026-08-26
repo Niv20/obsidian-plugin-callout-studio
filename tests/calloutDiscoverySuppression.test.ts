@@ -16,10 +16,11 @@
  *   `addUnknownCalloutsAsFallback`, which is what makes it cover the incremental
  *   file scan, the settings tab's open-buffer scan and the first-run modal
  *   alike.
- * - **keyed per spelling.** `normalizeCalloutId` lowercases and collapses
- *   whitespace; it does *not* dasherize. A leftover `[!my-id]` is therefore a
- *   different key from `my id`, which is precisely why the doc tells callers to
- *   pass `CalloutRegistry.vaultIdFormsFor`.
+ * - **keyed per callout, not per spelling.** `calloutIdentity` collapses case,
+ *   whitespace runs and the dash alike, so a leftover `[!my-id]` is the same key
+ *   as `my id` and cannot walk past a hold placed on the other one. Callers
+ *   still pass `CalloutRegistry.vaultIdFormsFor`, which now costs nothing and
+ *   keeps a real alias held too.
  * - **time-bounded, not permanent.** It answers a race, not a policy: an id the
  *   user genuinely writes again later deserves its row back, because that is
  *   discovery's whole job.
@@ -82,7 +83,7 @@ describe("suppressRediscovery — holding a just-deleted id off", () => {
 		assert.strictEqual(h.internals.hold.holds("   "), false);
 	});
 
-	it("keys the hold on the normalized id, on write and on read alike", () => {
+	it("keys the hold on the canonical id, on write and on read alike", () => {
 		const h = discoveryHarness();
 		h.discovery.suppressRediscovery(["  GONE  "]);
 		assert.strictEqual(h.internals.hold.holds("gone"), true);
@@ -96,17 +97,19 @@ describe("suppressRediscovery — holding a just-deleted id off", () => {
 		assert.strictEqual(h.internals.hold.holds("a b"), true);
 	});
 
-	it("does NOT cover the dash spelling — which is why callers pass every form", () => {
-		// normalizeCalloutId does not dasherize, so `a b` and `a-b` are two keys.
-		// A leftover `[!a-b]` in an open buffer would otherwise walk straight
-		// past the hold and re-create the row under the dash form.
+	it("covers the dash spelling too, from the one form alone", () => {
+		// The hold is keyed by `calloutIdentity`, so `a b` and `a-b` are ONE key.
+		// Keyed per spelling, a leftover `[!a-b]` in an open buffer walked
+		// straight past a hold placed on `a b` and re-created the row under the
+		// dash form — the delete reading as a style reset, which is the exact
+		// failure the hold exists to prevent.
 		const h = discoveryHarness();
 		h.discovery.suppressRediscovery(["a b"]);
-		assert.strictEqual(h.internals.hold.holds("a-b"), false);
-		assert.strictEqual(h.discovery.addUnknownCalloutsAsFallback(["a-b"]), 1);
+		assert.strictEqual(h.internals.hold.holds("a-b"), true);
+		assert.strictEqual(h.discovery.addUnknownCalloutsAsFallback(["a-b"]), 0);
 	});
 
-	it("covers both once the caller passes what vaultIdFormsFor returns", () => {
+	it("still covers both when the caller passes what vaultIdFormsFor returns", () => {
 		const h = discoveryHarness();
 		const def = definition({ id: "a b" });
 		h.registry.add(def);

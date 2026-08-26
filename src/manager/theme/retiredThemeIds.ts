@@ -23,9 +23,14 @@
  *   active theme declares again, is not retired any more — so the list
  *   self-cleans instead of growing with every theme the user tries.
  *
- * Ids are held in `normalizeCalloutId` form, which is what discovery compares.
+ * Ids are held in `calloutIdentity` form, the plugin's one canonicalization —
+ * which matters here more than most places: a theme declares its callouts in
+ * CSS, where the id is always the dasherized `data-callout` spelling, while the
+ * notes that still say `> [!recite]` may spell it with spaces. Keyed by the
+ * space-preserving form, a retirement recorded as `banner-icon` did not hold
+ * back a note writing `[!banner icon]`.
  */
-import { normalizeCalloutId } from "../../utils/calloutId";
+import { calloutIdentity } from "../../utils/calloutId";
 
 /**
  * How many retired ids are worth remembering.
@@ -45,7 +50,7 @@ export function sanitizeRetiredThemeIds(raw: unknown): string[] {
 	const seen = new Set<string>();
 	for (const entry of raw) {
 		if (typeof entry !== "string") continue;
-		const id = normalizeCalloutId(entry);
+		const id = calloutIdentity(entry);
 		if (!id || seen.has(id)) continue;
 		seen.add(id);
 		out.push(id);
@@ -59,7 +64,7 @@ export function recordRetiredThemeIds(
 	ids: readonly string[],
 ): string[] {
 	const added = ids
-		.map((id) => normalizeCalloutId(id))
+		.map((id) => calloutIdentity(id))
 		.filter((id) => id.length > 0);
 	if (added.length === 0) return [...list];
 	const fresh = new Set(added);
@@ -86,6 +91,6 @@ export function isRetiredThemeId(
 	list: readonly string[],
 	id: string,
 ): boolean {
-	const normalized = normalizeCalloutId(id);
+	const normalized = calloutIdentity(id);
 	return normalized.length > 0 && list.includes(normalized);
 }
