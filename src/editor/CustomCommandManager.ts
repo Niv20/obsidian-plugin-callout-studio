@@ -23,6 +23,7 @@ import type { CustomCommand, PluginSettings } from "../types";
 import {
 	describeCommand,
 	generateCommandId,
+	isSuspendedByTheme,
 	obsidianCommandId,
 	resolveAction,
 	resolveHeadingLevel,
@@ -152,6 +153,13 @@ export class CustomCommandManager {
 		for (const command of kept) {
 			const def = this.plugin.registry.get(command.calloutId);
 			if (!def) continue;
+			// Suspended, not dropped — and the distinction is why this gate is
+			// here rather than in `kept` above, which is written back to
+			// `settings.customCommands` and would delete the command for good.
+			// A theme claiming the callout is temporary; the command has to come
+			// back, at the same id, when the theme lets go, so that the user's
+			// own hotkey still fires it.
+			if (isSuspendedByTheme(this.plugin.registry, command)) continue;
 			desiredNames.set(command.id, describeCommand(command, def));
 		}
 

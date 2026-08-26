@@ -13,8 +13,6 @@
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { normalizeCalloutId } from "../utils/calloutId";
-import { iconRenderKey, renderIconInto } from "../icons/renderIcon";
-import { createIconResolver } from "../icons/resolver";
 
 /** Class names shared between Live Preview widgets and reading-view DOM. */
 export const CSS_INLINE_TOKEN = "cs-inline-callout";
@@ -190,33 +188,40 @@ export interface ResolvedCalloutDef {
 	/** True when the id matched neither a definition nor an alias. */
 	unknown: boolean;
 	/**
-	 * True when the id resolved to a callout marked
-	 * {@link CalloutDefinition.externalStyle} — render nothing at all for it
-	 * (see {@link shouldRenderToken}).
+	 * True when the user has handed this callout to their own CSS — render
+	 * nothing at all for it (see {@link shouldRenderToken}). Read off
+	 * `externalStyle`, not `standsDown`: the two suppress the same DOM here but
+	 * are different facts, and a row can be one without being the other.
 	 *
 	 * Deliberately separate from `unknown`, which stays false: an unknown token
-	 * gets `.cs-unknown` styling and keeps the raw id as its label, and both of
-	 * those are still this plugin painting something.
+	 * gets `.cs-unknown` styling and keeps the raw id as its label — both of
+	 * which are still this plugin painting something.
 	 */
 	external: boolean;
+	/** True when the active theme owns this callout. See {@link shouldRenderToken}. */
+	themeOwned: boolean;
 }
 
 /**
- * Whether the heading-callout / inline-callout / ref-token DOM should be built for a
- * resolved token at all.
+ * Whether the heading-callout / inline-callout / ref-token DOM should be built
+ * for a resolved token at all.
  *
- * These three surfaces are the plugin's own invented syntax — no theme and no
- * CSS snippet styles a `## [!id]` heading callout, so unlike a block callout
- * there is nothing for "external style" to hand them *to*. Rendering them
- * anyway would leave the callout drawn in the fallback accent from styles.css,
- * which is this plugin very visibly still deciding how the callout looks. So
- * the token is not built and the `[!id]` stays as the literal text the user
- * typed.
+ * These three surfaces are Callout Studio's own invented syntax, and neither
+ * kind of stand-down gets them. **The user's own CSS** (`external`): there is
+ * nothing here for them to style. **The theme** (`themeOwned`): a theme callout
+ * is Block only. The plugin could paint `.cs-heading-token` — no theme selector
+ * can match it, and an earlier version did — but that offers two formats the
+ * theme has no design for beside a Block callout it draws itself, three
+ * renderings of one callout with two invented. Literal text is the honest
+ * answer, and it makes "nothing is emitted for a theme callout" literal.
+ *
+ * A pre-existing callout that becomes theme-owned loses the two formats for as
+ * long as the theme claims it, then gets them back with no migration.
  *
  * Every consumer of {@link resolveCalloutDef} that builds DOM calls this first.
  */
 export function shouldRenderToken(resolved: ResolvedCalloutDef): boolean {
-	return !resolved.external;
+	return !resolved.external && !resolved.themeOwned;
 }
 
 /**
@@ -243,15 +248,15 @@ export function resolveCalloutDef(
 			def: direct,
 			unknown: false,
 			external: direct.externalStyle === true,
+			themeOwned: registry.themeOwns(direct),
 		};
 	// An unrecognized id is NOT external even when the fallback callout it
-	// borrows happens to be: `external` describes the token's own callout, and
-	// the fallback's own flag is refused by CalloutRegistry.setExternalStyle
-	// anyway.
+	// borrows happens to be: `external` describes the token's own callout.
 	return {
 		def: registry.get(registry.settings.fallbackCalloutId),
 		unknown: true,
 		external: false,
+		themeOwned: false,
 	};
 }
 
@@ -284,42 +289,14 @@ export function calloutDomId(
 }
 
 /**
- * Paint a definition's icon into `iconEl` as visible, self-contained DOM, so
- * the glyph follows the surrounding element's CSS `color` in both themes.
- * Artwork that is not downloaded yet gets a pencil placeholder; the finished
- * download triggers a CSS re-inject whose paintIcons sweep repaints it.
+ * The two role-icon helpers live in `./roleIcon.ts` — they are the one place
+ * that has to know a theme-owned callout wears the theme's own artwork, and
+ * that belongs beside the theme icon renderer rather than in the middle of the
+ * token DOM builder. Re-exported because eight consumers already import them
+ * from here, and one import point for the token surfaces is worth keeping.
  */
-export function paintRoleIcon(
-	iconEl: HTMLElement,
-	def: CalloutDefinition,
-	registry: CalloutRegistry,
-	role: CalloutRenderRole,
-): void {
-	renderIconInto(iconEl, def.icon, createIconResolver(registry), {
-		role,
-		fill: "currentColor",
-		missing: { kind: "placeholder", lucideId: "pencil" },
-		errorText: "•",
-	});
-}
-
-/**
- * The icon half of a Live Preview widget's `eq()` snapshot.
- *
- * `iconRenderKey` alone is not enough: `hideIcon` changes the DOM this module
- * builds — no icon span at all — without changing the icon it would have drawn,
- * so two widgets either side of the toggle would compare equal and CodeMirror
- * would keep the stale one until the line was edited.
- */
-export function tokenIconKey(
-	def: CalloutDefinition | undefined,
-	registry: CalloutRegistry,
-	role: CalloutRenderRole,
-): string {
-	if (!def) return "";
-	if (def.hideIcon === true) return "none";
-	return iconRenderKey(def.icon, createIconResolver(registry), role);
-}
+export { paintRoleIcon, tokenIconKey } from "./roleIcon";
+import { paintRoleIcon } from "./roleIcon";
 
 /** Where a callout token DOM is rendered — decides its root class. */
 export type CalloutTokenVariant = "inline" | "heading" | "ref";
