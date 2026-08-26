@@ -11,8 +11,9 @@ import { Platform, TFile } from "obsidian";
 import type { App, EventRef } from "obsidian";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import type { PluginSettings } from "../types";
-import { normalizeCalloutId, obsidianCalloutAttrId } from "../utils/calloutId";
+import { calloutIdentity, normalizeCalloutId } from "../utils/calloutId";
 import { buildDiscoveredRow, fallbackSourceFor } from "./discoveredRow";
+import { buildKnownCalloutIds } from "./knownCalloutIds";
 import { RediscoveryHold } from "./rediscoveryHold";
 import { scanLineForCalloutTokens } from "../editor/calloutTokens";
 import {
@@ -44,8 +45,9 @@ export class CalloutDiscovery {
 	/** Debounce timer for {@link pruneUnused}. */
 	private pruneTimer: number | undefined;
 	/**
-	 * Normalized ids of uncustomized fallback rows the last prune scan
-	 * confirmed have zero usages anywhere in the vault. Kept in sync by
+	 * Canonical ids ({@link calloutIdentity}) of uncustomized fallback rows the
+	 * last prune scan confirmed have zero usages anywhere in the vault — one key
+	 * per callout, never one per spelling. Kept in sync by
 	 * {@link pruneUnused} and {@link addUnknownCalloutsAsFallback}; consulted
 	 * by autocomplete so it can hide only *confirmed-gone* fallback rows
 	 * instead of every unadopted one, without re-scanning the vault on every
@@ -79,7 +81,7 @@ export class CalloutDiscovery {
 	 * real" rather than excluding it.
 	 */
 	isKnownZeroUsageFallback(id: string): boolean {
-		return this.zeroUsageFallbackIds.has(normalizeCalloutId(id));
+		return this.zeroUsageFallbackIds.has(calloutIdentity(id));
 	}
 
 	/** @see RediscoveryHold.suppress */
@@ -92,27 +94,9 @@ export class CalloutDiscovery {
 		this.hold.clear();
 	}
 
-	/**
-	 * Build a Set of all callout IDs and aliases currently known to the
-	 * registry.
-	 *
-	 * Each one is registered under both its own spelling and its `data-callout`
-	 * attribute form, so a note that writes `[!a-b]` by hand does not count as
-	 * unknown while `a b` is defined — Obsidian renders the two identically, so
-	 * discovering a second row for the dash spelling would only produce a row
-	 * that fights the first one over a single CSS rule.
-	 */
+	/** @see buildKnownCalloutIds — the one implementation. */
 	buildKnownIds(): Set<string> {
-		const known = new Set<string>();
-		const addBothForms = (id: string): void => {
-			known.add(normalizeCalloutId(id));
-			known.add(obsidianCalloutAttrId(id));
-		};
-		for (const def of this.host.registry.getAll()) {
-			addBothForms(def.id);
-			for (const a of def.aliases ?? []) addBothForms(a);
-		}
-		return known;
+		return buildKnownCalloutIds(this.host.registry);
 	}
 
 	/**
@@ -163,7 +147,7 @@ export class CalloutDiscovery {
 					// Being (re)discovered means it currently appears in file
 					// content — any stale "confirmed zero usage" verdict from an
 					// earlier scan no longer applies.
-					this.zeroUsageFallbackIds.delete(normalizeCalloutId(id));
+					this.zeroUsageFallbackIds.delete(calloutIdentity(id));
 				}
 			}
 			return added;
@@ -245,9 +229,11 @@ export class CalloutDiscovery {
 		const removed = this.host.registry.batch(() => {
 			let count = 0;
 			for (const { id } of candidates) {
-				const normalized = normalizeCalloutId(id);
+				const normalized = calloutIdentity(id);
 				const hasUsage = (formsById.get(id) ?? [id]).some((form) => {
-					const stat = usage.get(normalizeCalloutId(form));
+						// countCalloutUsagesMap keys by identity, so read it back
+					// with the same function.
+					const stat = usage.get(calloutIdentity(form));
 					return stat !== undefined && stat.fileCount > 0;
 				});
 				if (hasUsage) {

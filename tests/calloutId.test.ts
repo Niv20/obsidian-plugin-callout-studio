@@ -18,6 +18,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import {
+	calloutIdentity,
 	mergeDashSpaceVariants,
 	normalizeCalloutId,
 	obsidianCalloutAttrId,
@@ -219,6 +220,72 @@ describe("obsidianCalloutAttrId", () => {
 		// Stripping here would let a stray piped id collapse onto a real
 		// callout's selector and hijack its CSS rule.
 		assert.equal(obsidianCalloutAttrId("note|purple"), "note|purple");
+	});
+});
+
+describe("calloutIdentity", () => {
+	it("is Obsidian's own rule: trim, lowercase, whitespace runs to one dash", () => {
+		// Its blockquote tokenizer runs exactly this on the bracket body, and
+		// the result is what lands in `data-callout`.
+		assert.equal(calloutIdentity("  Banner   Icon  "), "banner-icon");
+		assert.equal(calloutIdentity("My\tMulti\nWord"), "my-multi-word");
+	});
+
+	it("makes every spelling of one callout the same string", () => {
+		const forms = [
+			"banner icon",
+			"banner   icon",
+			"Banner Icon",
+			"BANNER-ICON",
+			"  banner-icon  ",
+			"banner\ticon",
+		];
+		for (const form of forms) {
+			assert.equal(calloutIdentity(form), "banner-icon", form);
+		}
+	});
+
+	it("leaves an id with no whitespace and no pipe exactly as it is", () => {
+		assert.equal(calloutIdentity("note"), "note");
+		assert.equal(calloutIdentity("banner-icon"), "banner-icon");
+		assert.equal(calloutIdentity("café_2"), "café_2");
+		assert.equal(calloutIdentity("שָׁלוֹם"), "שָׁלוֹם");
+	});
+
+	it("drops `|metadata`, unlike obsidianCalloutAttrId", () => {
+		// The difference is deliberate. Identity has to fold a stray stored pipe
+		// onto its base; a CSS selector must not, or it hijacks a real callout's
+		// rule. See both functions' docs.
+		assert.equal(calloutIdentity("note|purple"), "note");
+		assert.equal(obsidianCalloutAttrId("note|purple"), "note|purple");
+	});
+
+	it("is empty only when there is nothing to name", () => {
+		assert.equal(calloutIdentity(""), "");
+		assert.equal(calloutIdentity("   "), "");
+		assert.equal(calloutIdentity("|purple"), "");
+	});
+
+	it("is idempotent", () => {
+		for (const raw of ["  A  B ", "a-b", "note|x", "a   b", ""]) {
+			const once = calloutIdentity(raw);
+			assert.equal(calloutIdentity(once), once, raw);
+		}
+	});
+
+	it("agrees with obsidianCalloutAttrId on everything the editor can produce", () => {
+		// `sanitizeCalloutIdInput` never emits a pipe and never emits a
+		// whitespace run, so the two are the same function over stored ids —
+		// which is why swapping the comparison to identity changed no behaviour
+		// for an ordinary vault.
+		for (const raw of ["my note", "note", "tip 1 best", "שלום עולם"]) {
+			const stored = sanitizeCalloutIdInput(raw);
+			assert.equal(
+				calloutIdentity(stored),
+				obsidianCalloutAttrId(stored),
+				stored,
+			);
+		}
 	});
 });
 

@@ -27,7 +27,7 @@
  *
  * The individual repair passes (`dropSolidBackgroundFlags`,
  * `dropStaleTransparencyFlags`, `stripMetadataFromIds`,
- * `reconcileAttrIdCollisions`, the palette passes) have their own suite in
+ * `reconcileIdCollisions`, the palette passes) have their own suite in
  * `calloutRegistryMigrations.test.ts`, including their idempotence. This file is
  * about whole saved *files*: the shapes, the fields that were retired between
  * them, and what a load leaves behind for the next save.

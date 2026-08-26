@@ -660,16 +660,18 @@ describe("isKnownZeroUsageFallback", () => {
 		assert.strictEqual(h.discovery.isKnownZeroUsageFallback("orphan"), false);
 	});
 
-	it("answers on the normalized id, whatever spelling the caller has", async () => {
+	it("answers on the canonical id, whatever spelling the caller has", async () => {
 		const h = discoveryHarness({ "note.md": "plain" });
 		h.registry.add(discovered("a b"));
 		await h.discovery.pruneUnused();
 		assert.strictEqual(h.discovery.isKnownZeroUsageFallback("a b"), true);
 		assert.strictEqual(h.discovery.isKnownZeroUsageFallback("  A   B "), true);
-		// Normalization collapses whitespace and case — it does NOT dasherize, so
-		// the attribute spelling is a different key. That is deliberate: the
-		// callers hand it `def.id`, which is always the stored spelling.
-		assert.strictEqual(h.discovery.isKnownZeroUsageFallback("a-b"), false);
+		// Including the dash spelling. The verdict is about a CALLOUT, and `a b`
+		// and `a-b` are one callout — Obsidian renders both as
+		// `data-callout="a-b"` — so a per-spelling key would let autocomplete
+		// answer "confirmed gone" and "might be real" about the same row
+		// depending on which way the caller happened to spell it.
+		assert.strictEqual(h.discovery.isKnownZeroUsageFallback("a-b"), true);
 	});
 });
 

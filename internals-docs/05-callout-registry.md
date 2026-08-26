@@ -66,7 +66,7 @@ Order matters here — every step depends on the ones before it:
 13. dropDerivedBackgrounds()
 14. dropSolidBackgroundFlags()
 15. stripMetadataFromIds()                 — BEFORE step 16
-16. reconcileAttrIdCollisions()
+16. reconcileIdCollisions()               — manager/idCollisionMigration.ts
 ```
 
 > [!IMPORTANT]
@@ -130,7 +130,7 @@ and every JSON import.
 | `dropDerivedBackgrounds` | Drops a background the plugin *derived* rather than the user *chose* — see below |
 | `dropSolidBackgroundFlags` | Removes the retired `solidBackground` field entirely (nesting invariant) |
 | `stripMetadataFromIds` | Retires rows whose stored id itself carries `\|metadata` — see below |
-| `reconcileAttrIdCollisions` | Merges rows that differ only by dash/space spelling of the same `data-callout` attribute |
+| `reconcileIdCollisions` | Merges rows that are one callout in two spellings — dash/space, repeated whitespace, case. Lives in `manager/idCollisionMigration.ts`; see below |
 
 Three of these are worth understanding in more depth because the reasoning is
 genuinely non-obvious:
@@ -201,17 +201,42 @@ vault would silently lose its styling.
 > already swept up by `pruneUnused`, and a customized one is the user's own to
 > delete.
 
-### `reconcileAttrIdCollisions` — dash/space fights over one selector
+### `reconcileIdCollisions` — two rows that are one callout
 
-Obsidian renders `a-b` and `a b` identically (both dasherize to
-`data-callout="a-b"`). If a vault ever ended up with two separate rows for
-that pair — an old discovery bug could auto-create the dash form alongside an
-already-defined space form — they'd forever fight over one CSS rule. The
-migration groups definitions by attribute form and merges each group: a
-built-in always survives; otherwise an uncustomized `fallback` row always
-loses (disposable auto-junk); between two "real" rows the dash-free spelling
-wins (matches the editor's own convention). The losing row's id is folded into
-the survivor's `aliases` so nothing customized or usage-matching is lost.
+Obsidian reduces a callout header to
+`type.trim().toLowerCase().replace(/\s+/g, "-")` before a plugin sees it, so
+`[!banner icon]`, `[!banner   icon]`, `[!Banner Icon]` and `[!banner-icon]` all
+render as `data-callout="banner-icon"`. Two rows for that one callout would
+forever fight over a single CSS rule, split the usage count and appear twice in
+every list.
+
+Creating the pair is refused at the seam now — `add()` and the rename branch of
+`update()` both consult `findAttrIdConflict`, so no caller can forget (the JSON
+backup importer was the one that did). This migration is the other half: the
+pairs already sitting in `data.json`.
+
+The whole rule, and the reasoning behind each clause, is in
+[`manager/idCollisionMigration.ts`](../src/manager/idCollisionMigration.ts).
+In short:
+
+- **Survivor**, first match wins: a built-in → a real row spelled without a dash
+  (the spelling the editor's own ID field produces) → any real row → the first.
+  "Real" means not an uncustomized `source: "fallback"` row, which is disposable
+  auto-junk discovery would re-create anyway.
+- **Merge**: survivor wins, loser fills gaps. The survivor keeps every field it
+  authored; a field it never set is taken from the loser. `id`, `aliases`,
+  `builtIn` and `source` are never taken — the first two are the identity being
+  merged, the last two are provenance.
+- **The loser's id and aliases** become aliases of the survivor, so no vault
+  usage is orphaned. A disposable loser is dropped outright instead.
+- **What else names an id by string moves too**: `settings.fallbackCalloutId`
+  (dangling, `generateFallbackCSS` bails and every unrecognized callout loses its
+  styling) and `settings.customCommands[].calloutId` (`syncAll()` drops a command
+  whose callout `has()` cannot find, taking the user's hotkey with it).
+
+Silent apart from a `console.debug`, like every other pass here, and a fixed
+point once `needsSaveAfterLoad` flushes it: the loser survives only as an alias,
+so the next load's grouping names one definition and nothing changes.
 
 ## `isModified` and the built-in-deference mechanism
 

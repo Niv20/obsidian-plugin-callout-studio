@@ -19,7 +19,7 @@
  * Order matters between them and is asserted where it does:
  *   dropStaleTransparencyFlags → consolidateDuplicatePalettes →
  *   adoptOrphansMatchingPalettes → dropDerivedBackgrounds →
- *   dropSolidBackgroundFlags → stripMetadataFromIds → reconcileAttrIdCollisions
+ *   dropSolidBackgroundFlags → stripMetadataFromIds → reconcileIdCollisions
  *
  * Each round trip feeds back the WHOLE `toSaveData()` envelope rather than just
  * its `callouts`, because that is what a relaunch actually reads — and because
@@ -485,7 +485,7 @@ describe("stripMetadataFromIds", () => {
 	});
 });
 
-describe("reconcileAttrIdCollisions", () => {
+describe("reconcileIdCollisions", () => {
 	it("folds a dash/space pair down to one row", () => {
 		// Obsidian dasherizes `data-callout`, so `a b` and `a-b` are one
 		// selector. Two surviving rows would forever fight over it.
@@ -709,7 +709,7 @@ describe("needsSaveAfterLoad()", () => {
 		assert.strictEqual(registry.needsSaveAfterLoad(), false);
 	});
 
-	it("is raised by reconcileAttrIdCollisions, which DELETES a row", () => {
+	it("is raised by reconcileIdCollisions, which DELETES a row", () => {
 		// The merge deletes a definition and rewrites the survivor's aliases, so
 		// it has to be written back like any other rewrite. Un-flushed,
 		// `data.json` kept both rows and the merge was simply redone on every

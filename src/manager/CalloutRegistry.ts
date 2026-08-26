@@ -25,6 +25,7 @@ import { iconCacheKey, packFor } from "../icons/registry";
 import { resolveLucideId } from "../icons/lucideId";
 import { COLOUR_NEUTRAL_FIELDS, isCalloutModified } from "./calloutCompare";
 import { migrateStyleModes } from "./styleModeMigration";
+import { reconcileIdCollisions } from "./idCollisionMigration";
 import {
 	findAttrIdConflict,
 	vaultIdFormsFor,
@@ -40,7 +41,7 @@ import type {
 import type { AdmonitionPlan } from "../utils/admonitionImport";
 import {
 	normalizeCalloutId,
-	obsidianCalloutAttrId,
+	calloutIdentity,
 	obsidianDefaultTitle,
 } from "../utils/calloutId";
 import {
@@ -333,10 +334,12 @@ export class CalloutRegistry {
 		}
 		this.dropDerivedBackgrounds();
 		this.dropSolidBackgroundFlags();
-		// Before reconcileAttrIdCollisions: a row this pass renames back to its
+		// Before reconcileIdCollisions: a row this pass renames back to its
 		// base ID has to go through the dash/space reconcile like any other.
 		this.stripMetadataFromIds();
-		this.reconcileAttrIdCollisions();
+		// Last: every pass above can rename a row onto an id another row
+		// already answers to, so the collision fold has to see the final map.
+		this.reconcileIdCollisions();
 	}
 
 	/**
@@ -607,76 +610,20 @@ export class CalloutRegistry {
 	}
 
 	/**
-	 * Migration: merge any pre-existing definitions that only differ by a
-	 * dash/space spelling of the same `data-callout` attribute form. Obsidian
-	 * renders both spellings identically (see obsidianCalloutAttrId's doc), so
-	 * two surviving rows would forever fight over one CSS selector. This can
-	 * happen on a vault saved before findByAttrId/findAttrIdConflict existed,
-	 * when discovery could auto-create a dash-form fallback row alongside an
-	 * already-defined space-form callout.
-	 *
-	 * A built-in always survives (its id can't realistically collide, but never
-	 * risk dropping one). Otherwise an uncustomized `fallback` row always
-	 * loses — it's disposable auto-junk — and between two real rows the
-	 * dash-free spelling wins, per the user's stated preference. A losing real
-	 * row's id is folded in as an alias of the survivor so no customization or
-	 * usage-matching is lost.
-	 *
-	 * A merge deletes a definition and rewrites the survivor's aliases, so it
-	 * raises {@link needsSaveAfterLoad} like every other pass here. Un-flushed,
-	 * `data.json` kept both rows and the merge was simply redone on every launch
-	 * — the user saw one row, the file held two — the same failure the flag was
-	 * added for and the {@link stripMetadataFromIds} alias branch was fixed for.
-	 * Once written back the pass is a fixed point: the loser's id survives only
-	 * as an alias of the survivor, so the group it forms next load names a single
-	 * definition and nothing changes.
+	 * Migration: fold rows that are one callout in two spellings.
+	 * `manager/idCollisionMigration.ts` owns the merge rule and the reasoning.
 	 */
-	private reconcileAttrIdCollisions(): void {
-		const groups = new Map<string, Set<string>>();
-		const addForm = (form: string, defId: string): void => {
-			const attrForm = obsidianCalloutAttrId(form);
-			if (!attrForm) return;
-			let set = groups.get(attrForm);
-			if (!set) groups.set(attrForm, (set = new Set()));
-			set.add(defId);
-		};
-		for (const def of this.callouts.values()) {
-			addForm(def.id, def.id);
-			for (const alias of def.aliases ?? []) addForm(alias, def.id);
-		}
-
-		const isDisposable = (d: CalloutDefinition): boolean =>
-			d.source === "fallback" && d.customized !== true;
-
-		let merged = 0;
-		for (const defIds of groups.values()) {
-			if (defIds.size < 2) continue;
-			const defs = Array.from(defIds)
-				.map((id) => this.callouts.get(id))
-				.filter((d): d is CalloutDefinition => d !== undefined);
-			// An earlier group in this same pass may already have resolved
-			// (deleted) one side of this collision.
-			if (defs.length < 2) continue;
-
-			const survivor =
-				defs.find((d) => d.builtIn) ??
-				defs.find((d) => !isDisposable(d) && !d.id.includes("-")) ??
-				defs.find((d) => !isDisposable(d)) ??
-				defs[0]!;
-
-			for (const loser of defs) {
-				if (loser.id === survivor.id || loser.builtIn) continue;
-				this.callouts.delete(loser.id);
-				merged++;
-				if (isDisposable(loser)) continue;
-				const aliases = new Set(survivor.aliases ?? []);
-				aliases.add(loser.id);
-				for (const a of loser.aliases ?? []) aliases.add(a);
-				aliases.delete(survivor.id);
-				survivor.aliases = Array.from(aliases);
-			}
-		}
-		if (merged > 0) this.pendingLoadMigrationSave = true;
+	private reconcileIdCollisions(): void {
+		const { merged } = reconcileIdCollisions(
+			this.callouts,
+			this.settings,
+			DEFAULT_SETTINGS.fallbackCalloutId,
+		);
+		if (merged.length === 0) return;
+		this.pendingLoadMigrationSave = true;
+		console.debug("[CalloutStudio] callout id collision migration:", {
+			merged,
+		});
 	}
 
 	toSaveData(): PluginData {
@@ -726,10 +673,24 @@ export class CalloutRegistry {
 		if (this.findByAlias(def.id)) {
 			return false;
 		}
+		// The same question one spelling further out. Obsidian renders `a b` and
+		// `a-b` as one callout, so a row for the second spelling could only ever
+		// fight the first over a single CSS rule, split its usage count and show
+		// up twice in every list.
+		//
+		// Asked HERE rather than only at the call sites, which is the whole fix:
+		// the editor, discovery and the theme sweep each pre-checked and the JSON
+		// backup importer did not, so a duplicate row reached `data.json` through
+		// the one caller that forgot. A guard at the seam cannot be forgotten.
+		// See manager/calloutIdForms.ts for the arithmetic.
+		if (this.findAttrIdConflict(def.id, null)) return false;
 		// Check if any of this callout's aliases conflict with existing IDs or aliases
 		for (const alias of def.aliases ?? []) {
 			if (this.callouts.has(alias)) return false;
 			if (this.findByAlias(alias)) return false;
+			// `def` is not on the map yet, so `excludeId` cannot match it; it is
+			// passed to say which row the alias belongs to, not to skip a check.
+			if (this.findAttrIdConflict(alias, def.id)) return false;
 		}
 		this.setCallout(def.id, def);
 		this.notifyChange();
@@ -753,6 +714,11 @@ export class CalloutRegistry {
 			// being renamed is what still lets it take one of its own aliases.
 			const aliasOwner = this.findByAlias(partial.id);
 			if (aliasOwner && aliasOwner.id !== id) return false;
+			// And the dash/space identity rule {@link add} enforces: a rename is
+			// just as able to create the second spelling as a create is.
+			// `excludeId` is what still lets a row rename onto one of its own
+			// aliases.
+			if (this.findAttrIdConflict(partial.id, id)) return false;
 		}
 
 		// Batched because the mirror pass below announces itself: see the note
@@ -1369,7 +1335,15 @@ export class CalloutRegistry {
 	 *
 	 * This is the RENDERING lookup, so it deliberately sees the callout editor's
 	 * live-preview draft. Validation wants the opposite and asks a different
-	 * question — see {@link findAttrIdConflict}.
+	 * question — see {@link findAttrIdConflict} and {@link findByIdentity}.
+	 *
+	 * Compares through `calloutIdentity`, the plugin's one canonicalization, so
+	 * this ladder cannot disagree with the guards in {@link add} about which
+	 * spellings are the same callout. That it also folds a stray `|metadata` is
+	 * the intended direction here: `obsidianCalloutAttrId` withholds that only so
+	 * an emitted `.callout[data-callout=…]` rule can never hijack a real
+	 * callout's selector, which is a question about writing CSS, not reading a
+	 * lookup.
 	 *
 	 * Returns undefined when nothing matches — callers decide whether to fall
 	 * back. A linear scan rather than a maintained index: `findByAlias` above
@@ -1378,14 +1352,14 @@ export class CalloutRegistry {
 	 * notifyChange), so an index would have no safe invalidation point.
 	 */
 	findByAttrId(rawAttr: string): CalloutDefinition | undefined {
-		const key = obsidianCalloutAttrId(rawAttr);
+		const key = calloutIdentity(rawAttr);
 		const exact = this.callouts.get(key) ?? this.findByAlias(key);
 		if (exact) return exact;
 		for (const def of this.callouts.values()) {
-			if (obsidianCalloutAttrId(def.id) === key) return def;
+			if (calloutIdentity(def.id) === key) return def;
 		}
 		for (const def of this.callouts.values()) {
-			if (def.aliases?.some((a) => obsidianCalloutAttrId(a) === key)) {
+			if (def.aliases?.some((a) => calloutIdentity(a) === key)) {
 				return def;
 			}
 		}
@@ -1398,6 +1372,25 @@ export class CalloutRegistry {
 		excludeId: string | null,
 	): CalloutDefinition | undefined {
 		return findAttrIdConflict(this.definitionSource, rawId, excludeId);
+	}
+
+	/**
+	 * The definition that already IS this callout, whatever spelling `rawId`
+	 * arrived in — the same question {@link findAttrIdConflict} answers, named
+	 * for the ingestion side that asks it.
+	 *
+	 * An importer asking "do I already have this?" and a validator asking "would
+	 * this collide?" are one question with two readings, and keeping them one
+	 * function is what stops the two from drifting. Use this rather than
+	 * {@link get} or {@link has} anywhere an id arrives from outside the plugin:
+	 * those are exact-string and so cannot see `banner-icon` in a `banner icon`.
+	 *
+	 * Reads committed state ({@link realDefinitions}), never the callout
+	 * editor's live-preview draft — the opposite of {@link findByAttrId}, which
+	 * is the RENDERING lookup and deliberately does see it.
+	 */
+	findByIdentity(rawId: string): CalloutDefinition | undefined {
+		return this.findAttrIdConflict(rawId, null);
 	}
 
 	/** See `manager/calloutIdForms.ts`, which owns this arithmetic. */

@@ -181,6 +181,7 @@ function fakeRegistry(): CalloutRegistry {
 	return {
 		getUserImages: () => [],
 		findByAlias: () => undefined,
+		findByIdentity: () => undefined,
 		get: () => undefined,
 		// The reader's own default decides whether an imported row needs its
 		// style mode spelled out at all — see utils/importStyleMode.ts.

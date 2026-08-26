@@ -25,7 +25,7 @@ import {
 import { FALLBACK_ICON, MAX_TAG_LENGTH, MAX_TAGS_COUNT } from "../constants";
 import { createIconNameCheck } from "../icons/nameCheck";
 import { ICON_PACK_IDS } from "../icons/registry";
-import { normalizeCalloutId } from "./calloutId";
+import { calloutIdentity, normalizeCalloutId } from "./calloutId";
 import {
 	KNOWN_FIELDS,
 	KNOWN_ICON_FIELDS,
@@ -851,7 +851,7 @@ function validateCalloutArray(
 				entryOk = false;
 			} else {
 				const seenAlias = new Set<string>();
-				if (idRaw) seenAlias.add(idRaw.toLowerCase());
+				if (idRaw) seenAlias.add(calloutIdentity(idRaw));
 				entry.aliases.forEach((alias, ai) => {
 					if (typeof alias !== "string") {
 						push({
@@ -869,7 +869,7 @@ function validateCalloutArray(
 						entryOk = false;
 						return;
 					}
-					const key = trimmed.toLowerCase();
+					const key = calloutIdentity(trimmed);
 					if (seenAlias.has(key)) {
 						push({
 							field: `aliases[${ai}]`,
@@ -1000,8 +1000,9 @@ function validateCalloutArray(
 		if (entryOk && idRaw) {
 			const allIds = [idRaw, ...aliasesClean];
 			let dupHit = false;
+			// By identity: `banner icon` and `banner-icon` are one callout.
 			for (const candidate of allIds) {
-				const key = candidate.toLowerCase();
+				const key = calloutIdentity(candidate);
 				const previousIndex = seenInFile.get(key);
 				if (previousIndex !== undefined) {
 					push({
@@ -1019,16 +1020,20 @@ function validateCalloutArray(
 			}
 			if (!dupHit) {
 				for (const candidate of allIds) {
-					seenInFile.set(candidate.toLowerCase(), index);
+					seenInFile.set(calloutIdentity(candidate), index);
 				}
 			}
 		}
 
 		// ── cross-registry alias conflict ────────────────────
 		if (entryOk && idRaw) {
+			// One canonical lookup where there were two exact-string ones:
+			// `findByIdentity` walks ids and aliases together, so an imported
+			// alias `banner-icon` collides with an existing `banner icon`.
+			const identity = calloutIdentity(idRaw);
 			for (const alias of aliasesClean) {
-				const conflict = registry.findByAlias(alias);
-				if (conflict && conflict.id !== idRaw) {
+				const conflict = registry.findByIdentity(alias);
+				if (conflict && calloutIdentity(conflict.id) !== identity) {
 					push({
 						field: "aliases",
 						level: "error",
@@ -1036,19 +1041,6 @@ function validateCalloutArray(
 						params: {
 							value: alias,
 							other: conflict.id,
-						},
-					});
-					entryOk = false;
-				}
-				const idMatch = registry.get(alias);
-				if (idMatch && idMatch.id !== idRaw) {
-					push({
-						field: "aliases",
-						level: "error",
-						messageKey: "import.err.aliasConflict",
-						params: {
-							value: alias,
-							other: idMatch.id,
 						},
 					});
 					entryOk = false;
@@ -1085,11 +1077,19 @@ function validateCalloutArray(
 			// `getExportableDefinitions`). Landing that as a new user callout
 			// would leave the real built-in untouched and put a duplicate row
 			// beside it, so keep the identity the registry already has.
-			const target = registry.get(idRaw);
+			// By identity, so a backup from a vault that spelled the type
+			// `banner-icon` stops landing as a second row. ID matches only: a
+			// row merely carrying this spelling as an ALIAS is another callout.
+			const found = registry.findByIdentity(idRaw);
+			const target =
+				found && calloutIdentity(found.id) === calloutIdentity(idRaw)
+					? found
+					: undefined;
 			const isBuiltIn = target?.builtIn === true;
 
 			const def: CalloutDefinition = {
-				id: idRaw,
+				// The existing row keeps its spelling; an import renames nothing.
+				id: target?.id ?? idRaw,
 				displayName: displayNameRaw,
 				icon: cleanIcon,
 				colorLight: entry.colorLight as string,

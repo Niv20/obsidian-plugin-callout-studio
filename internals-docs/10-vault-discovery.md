@@ -50,7 +50,8 @@ addUnknownCalloutsAsFallback(unknownIds: string[]): number
 
 For each id, in order: skip if already registered; skip if
 **rediscovery-suppressed** (see below); skip if it collides with an existing
-callout's `data-callout` attribute form (`findAttrIdConflict`); otherwise
+callout under `calloutIdentity` (`findAttrIdConflict` — `registry.add()` refuses
+such a row anyway, this only keeps the count honest); otherwise
 build a row via `discoveredRow.ts`'s `buildDiscoveredRow(id, fallback)` and
 `registry.add()` it. The whole batch is wrapped in `registry.batch()` — one
 `onChange` for the entire set of new rows, not one per id, which matters a
@@ -92,9 +93,12 @@ private isRediscoverySuppressed(id: string): boolean
 > they'd carefully customized appears to instead reset it to default styling.
 >
 > The fix: `suppressCalloutRediscovery(allIds)` is called **before**
-> `registry.remove()`, using every id form the row owns
-> (`vaultIdFormsFor` — not just the primary id, or a leftover `[!my-id]`
-> spelling in some open buffer would recreate the row under the dash form).
+> `registry.remove()`, using every id form the row owns (`vaultIdFormsFor`).
+> The hold itself is keyed by `calloutIdentity`, so a leftover `[!my-id]` in
+> some open buffer is the *same* key as `my id` and cannot walk past a hold
+> placed on the other spelling — keyed per spelling, it did exactly that and
+> re-created the row under the dash form. Passing every form still matters for
+> a real alias, which is not a dash/space variant of the id.
 > The suppression window is `REDISCOVERY_SUPPRESS_MS = 5000` — just long
 > enough to outlast the async catch-up, not a permanent block. It answers a
 > **race**, not a policy: typing that same id again a minute later gets a

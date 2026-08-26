@@ -8,7 +8,7 @@
  * settings/sections/CalloutRowRenderer against its list.
  *
  * **Resolution goes through `resolveCalloutDef`, never a map built from
- * `def.id`.** A scanned id keeps its dashes (`normalizeCalloutId`) while a
+ * `def.id`.** A scanned id keeps its dashes while a
  * stored id has them folded to spaces (`sanitizeCalloutIdInput`), so a note
  * written `> [!ep-ep]` and the callout stored as `ep ep` are the same callout in
  * two spellings — and matching by string equality reported the user's own
@@ -19,7 +19,7 @@
  */
 import { setIcon } from "obsidian";
 import { t } from "../i18n";
-import { normalizeCalloutId } from "./calloutId";
+import { calloutIdentity } from "./calloutId";
 import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import { resolveCalloutDef } from "../editor/renderShared";
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
@@ -67,11 +67,12 @@ export function resolveStatsRows(
 		// A match through the attribute form (`ep-ep` finding `ep ep`) is the
 		// same callout in another spelling, not an alias of it — only a real
 		// alias hit earns the "Alias of …" label.
+		const identity = calloutIdentity(entry.id);
 		const isAlias =
 			!unknown &&
 			def !== undefined &&
-			normalizeCalloutId(def.id) !== entry.id &&
-			(def.aliases ?? []).some((a) => normalizeCalloutId(a) === entry.id);
+			calloutIdentity(def.id) !== identity &&
+			(def.aliases ?? []).some((a) => calloutIdentity(a) === identity);
 		return { entry, def, undefinedId: unknown, isAlias };
 	});
 }
