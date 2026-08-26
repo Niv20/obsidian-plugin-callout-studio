@@ -11,7 +11,8 @@
  * launch and then written over the user's real value by `toSaveData()`. It
  * looks like the setting simply does not stick.
  *
- * So a new field needs THREE places, and CLAUDE.md says so:
+ * So a new field needs THREE places, and internals-docs/04-data-model.md
+ * says so:
  *
  *   1. the `PluginSettings` interface   2. `DEFAULT_SETTINGS`   3. this merge
  *

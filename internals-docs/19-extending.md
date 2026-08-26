@@ -116,8 +116,8 @@ command and any custom command sharing the same operation can't drift apart.
    locale files for a routine addition — `t()` already falls back to
    English for any key missing elsewhere, by design.
 2. Wait until the English wording is settled before offering to translate
-   into other locales — per `CLAUDE.md`'s explicit instruction, don't
-   re-translate on every small edit.
+   into other locales — see [Localization](16-i18n.md), don't re-translate
+   on every small edit.
 3. `npm run i18n:generate` runs automatically as `prebuild` — you don't need
    to run it by hand, but if you do touch a *non-English* locale file, run
    it and commit the regenerated `locales/*.json` +

@@ -225,9 +225,8 @@ sufficient**. Common cases that also need an explicit follow-up call:
 - **A settings-level list that merges by id must actually merge, never
   `Object.assign`** — see
   [Import and export § the three exceptions](14-import-export.md#settings-import-replace-wholesale-except-three-lists-that-merge-by-id).
-  This is the single most-cited rule in `CLAUDE.md` for a reason: it's easy
-  to add a new list field and forget this step, and the failure mode
-  (silent data loss on import) is severe and easy to miss in testing.
+  It's easy to add a new list field and forget this step, and the failure
+  mode (silent data loss on import) is severe and easy to miss in testing.
 
 ## Behaviours that look redundant but are intentionally defensive
 

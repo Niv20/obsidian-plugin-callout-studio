@@ -23,9 +23,9 @@
  * debounce was removed. What collapses repeat work now is `lastCssText`: every
  * change injects, and every inject whose output is byte-identical stops before
  * the stylesheet swap, the localStorage write and the `css-change`. That is the
- * property pinned below — and, since the two docs that still named the removed
- * method were what made this look like a missing feature rather than a decision,
- * the last describe block keeps them honest as text.
+ * property pinned below — and, since a doc and a source comment that still
+ * named the removed method were what made this look like a missing feature
+ * rather than a decision, the last describe block keeps them honest as text.
  *
  * **A callout id is interpolated into a CSS selector unescaped.** See the last
  * describe block. Its tests are `todo`, so they report without failing the
@@ -758,10 +758,11 @@ describe("SECURITY — a callout id in a selector is escaped, not concatenated",
 /**
  * A text check rather than a behavioural one, because the defect is textual:
  * `scheduleInject` was removed from the injector, and two documents kept
- * naming it — `CLAUDE.md`'s data-flow step 2 and the header of
- * `settings/styleControls.ts`. Both read as a promise of a debounce that no
- * caller can get, which is exactly how the absence of one came to look like an
- * oversight instead of the deliberate reversal `main.ts` records.
+ * naming it — internals-docs' description of the mutate → CSS → repaint loop
+ * and the header of `settings/styleControls.ts`. Both read as a promise of a
+ * debounce that no caller can get, which is exactly how the absence of one
+ * came to look like an oversight instead of the deliberate reversal `main.ts`
+ * records.
  *
  * Scoped to the identifier alone: prose may (and now does) say there *is* no
  * `scheduleInject`, so the rule is about naming it as something the code
@@ -795,15 +796,26 @@ describe("nothing documents a scheduleInject the injector does not have", () => 
 		);
 	});
 
-	it("CLAUDE.md's data-flow step names inject() instead", () => {
-		const doc = readRepoFile("CLAUDE.md");
+	it("internals-docs names inject() instead — CLAUDE.md is a short entry point and states neither", () => {
+		// CLAUDE.md deliberately carries no implementation detail (see its
+		// "Documentation maintenance" section), so the mutate → CSS → repaint
+		// loop is documented in internals-docs, not there.
+		const docs = [
+			"internals-docs/03-plugin-lifecycle.md",
+			"internals-docs/06-css-generation.md",
+			"internals-docs/20-common-pitfalls.md",
+		].map(readRepoFile);
 		assert.ok(
-			!NAMED_AS_API.test(doc),
-			"CLAUDE.md still documents cssInjector.scheduleInject()",
+			docs.every((doc) => !NAMED_AS_API.test(doc)),
+			"internals-docs still documents cssInjector.scheduleInject()",
 		);
 		assert.ok(
-			/`cssInjector\.inject\(\)`/.test(doc),
-			"CLAUDE.md's data flow no longer names the method that does exist",
+			docs.some((doc) => /`cssInjector\.inject\(\)`/.test(doc)),
+			"internals-docs no longer names the method that does exist",
+		);
+		assert.ok(
+			!NAMED_AS_API.test(readRepoFile("CLAUDE.md")),
+			"CLAUDE.md still documents cssInjector.scheduleInject()",
 		);
 	});
 });

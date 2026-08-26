@@ -8,8 +8,8 @@
  * and has no idea what the vault already holds. Deciding that is the importer's
  * job, and there is one right answer — merge by id. Assigning the sanitized
  * settings wholesale would hand a user's own palettes, pictures and commands to
- * a file that never mentioned them, which is the failure CLAUDE.md warns about
- * for every new list.
+ * a file that never mentioned them, which is the failure
+ * internals-docs/14-import-export.md warns about for every new list.
  *
  * Lifted out of `DataManagementSection.applyImport`, which needs a live
  * registry, a live plugin and a modal before a single line of it runs, so the

@@ -27,10 +27,11 @@ repo:
 - **[`API.md`](../API.md)** — the public plugin API contract for other
   Obsidian plugins. [18-public-api.md](18-public-api.md) explains how the
   implementation enforces what that document promises.
-- **`CLAUDE.md`** (repo root) — a dense architectural summary written for AI
-  coding assistants. This guide expands on it with full derivations, edge
-  cases, and cross-links; where the two disagree on a fine point, this guide
-  reflects what the current code actually does.
+- **`CLAUDE.md`** (repo root) — a short entry point for AI coding assistants:
+  a one-paragraph project summary, essential project-level conventions, and
+  pointers into this guide and into [`user-guide/`](../user-guide/README.md).
+  It deliberately carries none of the architectural detail itself — this
+  guide is that detail, and is the one to trust and to update.
 
 ## Reading order
 
