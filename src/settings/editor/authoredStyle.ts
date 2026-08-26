@@ -113,3 +113,53 @@ export function hasAuthoredIconAdjust(
 	}
 	return !isDefaultIconAdjust(regular);
 }
+
+/**
+ * The `externalStyle` field a save should carry, given whether the user
+ * authored anything in this pass.
+ *
+ * Authoring a style is an answer to "who paints this callout": picking a colour
+ * or an icon while the row still says *External CSS* would collect settings
+ * that never reach the screen. So a real style change clears the flag, and the
+ * label disappearing from the row is the feedback that it did. Gated on the
+ * same `hasStyleChanges` the live preview uses, so renaming a callout or giving
+ * it an alias is not a claim on its appearance and leaves the flag alone.
+ *
+ * It says nothing about the *theme*, and cannot: theme ownership is derived
+ * from the theme's stylesheet, not stored, so there is no field here to clear.
+ * A theme-owned callout does not reach this code at all — `openCalloutEditor`
+ * sends it to the preview window instead.
+ *
+ * Spelled `undefined` rather than deleted for the same reason `transparentBg`
+ * is: `registry.update()` merges this onto the existing row, so a key left out
+ * would clear nothing, while `JSON.stringify` drops an explicit `undefined` on
+ * save and `isCalloutModified` compares `value ?? null`.
+ */
+export function authoredStyleMode(hasStyleChanges: boolean): {
+	externalStyle?: undefined;
+} {
+	return hasStyleChanges ? { externalStyle: undefined } : {};
+}
+
+/**
+ * The `customized` flag a save should carry — "the user adopted this row".
+ *
+ * Lives beside {@link authoredStyleMode} because it answers the same question
+ * from the other end: that one records who *styles* the callout, this one
+ * records whether it is the user's to keep. Both turn on authorship, and
+ * keeping them apart is how they drifted before.
+ *
+ * `undefined` for a built-in: they are never auto-prunable, so the flag would
+ * mean nothing, and writing it would make an untouched one read as edited.
+ */
+export function authoredCustomizedFlag(
+	isBuiltIn: boolean,
+	isNew: boolean,
+	wasCustomized: boolean,
+	hasStyleChanges: boolean,
+	saveAsFallback: boolean,
+): boolean | undefined {
+	if (isBuiltIn) return undefined;
+	if (isNew) return !saveAsFallback;
+	return wasCustomized || hasStyleChanges;
+}

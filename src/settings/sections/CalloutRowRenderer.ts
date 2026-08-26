@@ -4,7 +4,20 @@
  * Builds the DOM for one row in the callout lists: icon, display name, ID
  * badges, color circles, and action buttons. Calls back into CalloutRowActions
  * for the three-dot menu and into CalloutEditor for the edit flow.
- * Used by CalloutListsSection for both the user list and the built-in list.
+ *
+ * ## The `kind` decides the row, and it is not `def.builtIn`
+ *
+ * Which list a row is being drawn in is a *different* question from what the
+ * callout is, and the two came apart when the theme group started meaning "the
+ * theme paints this": a built-in handed to the theme is drawn as a theme row,
+ * while an adopted theme callout is drawn as one of the user's. So `kind` says
+ * where the row is and `def.builtIn` says what it is, and both are consulted.
+ *
+ * A theme row carries no pencil and no `⋯` — see `themeRowActions.ts` for why
+ * each of those would be a lie — and nothing on any row labels who paints it,
+ * because the group already did. Its icon and swatches are real, but they come
+ * from `registry.themeAppearanceOf(def)` rather than from the row: what the
+ * theme was measured drawing, never what the row stores.
  */
 import { setIcon } from "obsidian";
 import { getLocale, t } from "../../i18n";
@@ -17,6 +30,9 @@ import type { CalloutDefinition } from "../../types";
 import { renderIconInto, renderNoIcon } from "../../icons/renderIcon";
 import { createStatusIconResolver } from "../../icons/resolver";
 import type { SettingsSectionContext } from "./types";
+import type { RowKind } from "./rowOwnership";
+import { renderThemeRowControls } from "./themeRowActions";
+import { renderThemeIconInto } from "../../manager/theme/renderThemeIcon";
 
 type RowRendererHandlers = {
 	onEdit: (def: CalloutDefinition, isBuiltIn: boolean) => void;
@@ -28,21 +44,26 @@ export function renderCalloutRow(
 	ctx: SettingsSectionContext,
 	containerEl: HTMLElement,
 	def: CalloutDefinition,
-	isBuiltIn: boolean,
+	kind: RowKind,
 	handlers: RowRendererHandlers,
 ): void {
-	const external = def.externalStyle === true;
+	const fromTheme = kind === "theme";
+	// The user handed this one to their own snippet. Unlike a theme row there
+	// is nothing to read back — a snippet can style the callout, or not, and
+	// either way the plugin has no rendered element of its own to measure — so
+	// the slot stays empty and the label carries the explanation.
+	const ownCss = !fromTheme && def.externalStyle === true;
 	const row = containerEl.createDiv({ cls: "callout-studio-row" });
-	if (external) row.addClass("is-external-style");
 
 	const iconEl = row.createDiv({ cls: "callout-studio-row-icon" });
-	if (external) {
-		// The stored icon and colours are still on disk, but nothing renders
-		// them while the theme owns the callout — showing them would advertise
-		// an appearance the reader will never see. Left empty rather than
-		// standing in with a placeholder glyph; the slot's fixed width/height
-		// (see styles.css) keeps the row lined up with its neighbours either way.
-	} else {
+	if (fromTheme) {
+		// The theme's real icon, measured off a rendered callout. The stored
+		// `def.icon` is still on disk but nothing draws it while the theme owns
+		// the id, so showing it would advertise an appearance the reader will
+		// never see. An unmeasured row gets the neutral dashed ring rather than
+		// a guess.
+		renderThemeIconInto(iconEl, ctx.plugin.registry.themeAppearanceOf(def).icon);
+	} else if (!ownCss) {
 		renderRowIcon(ctx, iconEl, def);
 	}
 
@@ -55,32 +76,34 @@ export function renderCalloutRow(
 		text: def.displayName,
 		attr: { "aria-label": def.displayName },
 	});
-	if (external) {
-		// First branch on purpose: it outranks every badge below, because
-		// "the theme styles this" is the only one that says the plugin is not
-		// painting the callout at all.
+	// Both labels describe how Callout Studio would *style* the callout, so
+	// neither says anything true under *Callouts from your theme*: the theme
+	// styles those, and the fallback they refer to is never consulted for one.
+	// The guard is more than tidying — a pre-existing discovered row the active
+	// theme has temporarily taken over still carries `source: "fallback"`, and
+	// so wore *Default fallback* while sitting in the theme's section.
+	if (!fromTheme) {
+		if (def.id === ctx.plugin.settings.fallbackCalloutId) {
+			nameLine.createSpan({
+				cls: "cs-fallback-tag",
+				text: t("settings.fallbackTag"),
+			});
+		} else if (def.source === "fallback" && def.customized !== true) {
+			nameLine.createSpan({
+				cls: "cs-fallback-tag",
+				text: t("settings.fallbackTagAuto"),
+			});
+		}
+	}
+	// The one label on any row, and the only state the list's own structure
+	// cannot express. Theme ownership is spelled by the section a row is in;
+	// this is a callout sitting among the user's own, in their own section,
+	// that Callout Studio has nonetheless stopped painting — and unexplained,
+	// that is the most confusing row in the tab.
+	if (ownCss) {
 		nameLine.createSpan({
-			cls: "cs-fallback-tag",
-			text: t("settings.externalStyleTag"),
-		});
-	} else if (def.styleMode === "force") {
-		// Second, and above the fallback badges for the same reason in reverse:
-		// this row is the one place the user can see that a callout is being
-		// pushed harder than the rest, which is what they will look for when a
-		// theme conflict turns out to be fixed on some rows and not others.
-		nameLine.createSpan({
-			cls: "cs-fallback-tag",
-			text: t("settings.forceStyleTag"),
-		});
-	} else if (def.id === ctx.plugin.settings.fallbackCalloutId) {
-		nameLine.createSpan({
-			cls: "cs-fallback-tag",
-			text: t("settings.fallbackTag"),
-		});
-	} else if (def.source === "fallback" && def.customized !== true) {
-		nameLine.createSpan({
-			cls: "cs-fallback-tag",
-			text: t("settings.fallbackTagAuto"),
+			cls: "cs-fallback-tag cs-external-tag",
+			text: t("settings.externalCssTag"),
 		});
 	}
 	const syntaxLine = infoEl.createDiv({
@@ -94,12 +117,33 @@ export function renderCalloutRow(
 		});
 	}
 
-	// Swatches are omitted entirely for an external row rather than dimmed: the
-	// theme's real colours can't be read back honestly (a nested `.theme-dark`
-	// wrapper misses a theme that writes `body.theme-dark …`, so only the
-	// current mode could ever be probed), and showing the stored pair would
-	// name two colours that are not in effect.
-	if (!external) {
+	// Three sources, three answers. A Studio row shows its own stored colours.
+	// A theme row shows the two the probe actually measured off the rendered
+	// callout — the accent and the surface behind it — which are real used
+	// values rather than a reading of the theme's CSS, and so are right however
+	// the theme arrived at them. A row the user handed to their own CSS shows
+	// none: there is no rendered element of ours to measure, and the stored pair
+	// would name colours that are not in effect.
+	if (fromTheme) {
+		const { accent, background } =
+			ctx.plugin.registry.themeAppearanceOf(def);
+		if (accent) {
+			const colorsEl = row.createDiv({
+				cls: "callout-studio-row-colors",
+			});
+			renderColorCircles(
+				colorsEl,
+				{ accent, bg: background ?? accent },
+				{
+					size: 18,
+					ariaLabel: t("settings.colorSwatchAria", {
+						accent,
+						bg: background ?? accent,
+					}),
+				},
+			);
+		}
+	} else if (!ownCss) {
 		const colorsEl = row.createDiv({ cls: "callout-studio-row-colors" });
 		const colors = resolveCurrentModeColors(def);
 		renderColorCircles(colorsEl, colors, {
@@ -113,6 +157,11 @@ export function renderCalloutRow(
 
 	const buttonsEl = row.createDiv({ cls: "callout-studio-row-buttons" });
 
+	if (fromTheme) {
+		renderThemeRowControls(ctx, buttonsEl, def);
+		return;
+	}
+
 	const editBtn = buttonsEl.createEl("button", {
 		attr: {
 			"aria-label": t("settings.editAria", { name: def.displayName }),
@@ -120,7 +169,7 @@ export function renderCalloutRow(
 	});
 	setIcon(editBtn, "pencil");
 	editBtn.addEventListener("click", () => {
-		handlers.onEdit(def, isBuiltIn);
+		handlers.onEdit(def, def.builtIn);
 	});
 
 	const moreBtn = buttonsEl.createEl("button", {
@@ -133,7 +182,7 @@ export function renderCalloutRow(
 	});
 	setIcon(moreBtn, "more-horizontal");
 	moreBtn.addEventListener("click", (event) => {
-		if (isBuiltIn) {
+		if (def.builtIn) {
 			handlers.onOpenBuiltInMenu(event, def);
 			return;
 		}

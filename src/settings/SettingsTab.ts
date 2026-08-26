@@ -26,7 +26,6 @@ import {
 	renderContextMenuSettingsSection,
 } from "./sections/EditorFeaturesSection";
 import { renderFallbackSection } from "./sections/FallbackSection";
-import { renderThemeCoexistenceSection } from "./sections/ThemeCoexistenceSection";
 import { renderLanguageSection } from "./sections/LanguageSection";
 import { renderCustomPalettesSection } from "./sections/CustomPalettesSection";
 import { renderGlobalSettingsSection } from "./sections/GlobalSettingsSection";
@@ -36,6 +35,7 @@ import {
 } from "./sections/CalloutListsSection";
 import { renderCalloutRow as renderCalloutRowSection } from "./sections/CalloutRowRenderer";
 import { openBuiltInRowMenu, openRowMenu } from "./sections/CalloutRowActions";
+import { invalidateThemeRowUsage } from "./sections/themeRowUsage";
 import type {
 	SettingsSectionContext,
 	SettingsTabPlugin,
@@ -126,12 +126,12 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 				await editor.openAndWait();
 				this.display();
 			},
-			renderRow: (rowContainerEl, def, isBuiltIn) => {
+			renderRow: (rowContainerEl, def, kind) => {
 				renderCalloutRowSection(
 					sectionCtx,
 					rowContainerEl,
 					def,
-					isBuiltIn,
+					kind,
 					{
 						onEdit: (targetDef, targetIsBuiltIn) => {
 							void this.handleRowEdit(
@@ -155,7 +155,6 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		});
 		this.calloutLists.render(containerEl);
 
-		renderThemeCoexistenceSection(sectionCtx, containerEl);
 		renderFallbackSection(sectionCtx, containerEl);
 		renderCustomPalettesSection(sectionCtx, containerEl);
 		renderGlobalSettingsSection(sectionCtx, containerEl);
@@ -212,6 +211,8 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 			this.refreshFrame = null;
 		}
 		this.calloutLists = null;
+		// One whole-vault usage pass per visit to this tab, not per repaint.
+		invalidateThemeRowUsage();
 		super.hide();
 	}
 

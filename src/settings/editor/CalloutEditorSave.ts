@@ -12,6 +12,8 @@ import type { App } from "obsidian";
 import type { CalloutDefinition } from "../../types";
 import { packFor } from "../../icons/registry";
 import {
+	authoredCustomizedFlag,
+	authoredStyleMode,
 	hasAuthoredBackground,
 	hasAuthoredIconAdjust,
 	hasAuthoredTextColors,
@@ -159,16 +161,13 @@ export async function performCalloutEditorSave(
 		nextSource = saveAsFallback ? "fallback" : "user";
 	}
 
-	let customized: boolean | undefined;
-	if (!isBuiltIn) {
-		if (existingId === null) {
-			customized = !saveAsFallback;
-		} else {
-			const wasCustomized = existingDef?.customized === true;
-			customized = wasCustomized || hasStyleChanges;
-		}
-	}
-
+	const customized = authoredCustomizedFlag(
+		isBuiltIn,
+		existingId === null,
+		existingDef?.customized === true,
+		hasStyleChanges,
+		saveAsFallback,
+	);
 	const fallbackBase = saveAsFallback ? getFallbackBase() : undefined;
 
 	// Three of the style groups below — background, text colour, icon
@@ -296,6 +295,7 @@ export async function performCalloutEditorSave(
 		aliases: state.aliases.length > 0 ? [...state.aliases] : undefined,
 		paletteId: fallbackBase ? fallbackBase.paletteId : state.paletteId,
 		...(customized === true ? { customized: true } : {}),
+		...authoredStyleMode(hasStyleChanges),
 	};
 
 	let saved = false;

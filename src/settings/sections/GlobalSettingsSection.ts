@@ -38,7 +38,16 @@ export function renderGlobalSettingsSection(
 	ctx: SettingsSectionContext,
 	containerEl: HTMLElement,
 ): void {
-	new Setting(containerEl).setName(t("settings.globalSettings")).setHeading();
+	// Named and described for its *scope*, not its reach. "Global settings"
+	// read as "settings for everything", which stopped being true the moment
+	// callouts the theme paints got a list of their own: none of this touches
+	// them, because in theme mode the plugin emits nothing at all. The heading
+	// says whose style it is and the description says who it misses, so a user
+	// looking at an unchanged theme callout is not left hunting for a bug.
+	new Setting(containerEl)
+		.setName(t("settings.globalSettings"))
+		.setDesc(t("settings.globalSettingsScope"))
+		.setHeading();
 
 	const roles: { role: CalloutRenderRole; label: string; desc: string }[] = [
 		{

@@ -33,7 +33,7 @@ import {
 	isCalloutSourceFilter,
 	type CalloutSourceFilter,
 } from "../utils/calloutSearch";
-import { filterUsableCallouts } from "../utils/usableCallouts";
+import { committedDefinitions, filterUsableCallouts } from "../utils/usableCallouts";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
 import { openCalloutEditorFor } from "./openCalloutEditor";
 import { quickInsertHint, quickInsertNotice } from "./quickInsertMessages";
@@ -187,7 +187,7 @@ export class QuickInsertModal extends Modal {
 	 */
 	private usableCallouts(): CalloutDefinition[] {
 		const { registry } = this.plugin;
-		const committed = [...registry.getBuiltIn(), ...registry.getUserDefined()].map(
+		const committed = committedDefinitions(registry).map(
 			(def) => registry.getReal(def.id) ?? def,
 		);
 		return filterUsableCallouts(committed, (id) =>

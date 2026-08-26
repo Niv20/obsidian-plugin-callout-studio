@@ -1,14 +1,36 @@
 /**
- * settings/sections/CalloutListsSection.ts — Renders the user and built-in callout lists.
+ * settings/sections/CalloutListsSection.ts — Renders the three callout lists.
  *
  * Creates a controller object with render() and refresh() methods used by
- * SettingsTab to display two separate lists: user-created callouts and
- * Obsidian's built-in callouts. Each row is rendered via CalloutRowRenderer;
- * row-level actions are handled by CalloutRowActions.
+ * SettingsTab to display, in order: the callouts the active theme styles, the
+ * user's own callouts, and Obsidian's built-ins. Each row is rendered via
+ * CalloutRowRenderer; row-level actions are handled by CalloutRowActions.
+ *
+ * ## The three groups answer one question: who paints this?
+ *
+ * Grouping used to be by *origin* — where a callout came from — which meant a
+ * row also had to carry a `Theme` / `Studio` pill to say who was painting it.
+ * Two facts on one row, and the second one only existed because the first was
+ * answering the wrong question.
+ *
+ * Now the group *is* the answer (see `rowOwnership.isThemeStyled`), so no row
+ * is labelled. Taking a theme callout over moves it into *My callout types*;
+ * handing one back moves it up. Every row appears exactly once because the
+ * split is one pass over one combined list, not three filters that have to
+ * agree with each other.
+ *
+ * Both lists that can empty say so in words rather than vanishing silently,
+ * and the built-in one has to: with a callout-styling theme and a fresh
+ * install, every built-in starts out the theme's, and an unexplained empty
+ * heading reads as a bug.
  */
 import { Setting } from "obsidian";
 import { getLocale, t } from "../../i18n";
 import { sortCalloutsByDisplayName } from "../../utils/sorting";
+import { activeThemeName } from "../../manager/theme/customCssApi";
+import { partitionByStyleOwner, styleOwnerFacts } from "./rowOwnership";
+import type { RowKind } from "./rowOwnership";
+import { ensureThemeRowUsage } from "./themeRowUsage";
 import { WelcomeModal } from "../WelcomeModal";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
@@ -23,7 +45,7 @@ type CreateCalloutListsControllerOptions = {
 	renderRow: (
 		containerEl: HTMLElement,
 		def: CalloutDefinition,
-		isBuiltIn: boolean,
+		kind: RowKind,
 	) => void;
 };
 
@@ -31,50 +53,102 @@ export function createCalloutListsController(
 	ctx: SettingsSectionContext,
 	options: CreateCalloutListsControllerOptions,
 ): CalloutListsController {
+	let themeSetting: Setting | null = null;
+	let themeSectionEl: HTMLElement | null = null;
+	let themeListEl: HTMLElement | null = null;
 	let userListEl: HTMLElement | null = null;
 	let builtInListEl: HTMLElement | null = null;
 
-	const renderUserList = (): void => {
-		if (!userListEl) return;
-		userListEl.empty();
+	const themeLabel = (): string =>
+		activeThemeName(ctx.app) ?? t("settings.themeCalloutsDefaultTheme");
 
-		const locale = getLocale();
-		const userCallouts = sortCalloutsByDisplayName(
-			ctx.plugin.registry.getUserDefined(),
-			locale,
-		);
-		if (userCallouts.length === 0) {
-			userListEl.createDiv({
-				cls: "callout-studio-empty-state",
-				text: t("settings.noCalloutsNow"),
-			});
-			return;
-		}
+	/** See `isThemeStyled` for why membership is derived from the theme alone. */
+	const partition = () =>
+		partitionByStyleOwner(styleOwnerFacts(ctx), [
+			...ctx.plugin.registry.getThemeProvided(),
+			...ctx.plugin.registry.getUserDefined(),
+			...ctx.plugin.registry.getBuiltIn(),
+		]);
 
-		const listEl = userListEl.createDiv({
-			cls: "callout-studio-callout-list",
-		});
-		for (const def of userCallouts) {
-			options.renderRow(listEl, def, false);
+	const renderList = (
+		host: HTMLElement,
+		defs: CalloutDefinition[],
+		kind: RowKind,
+	): void => {
+		const listEl = host.createDiv({ cls: "callout-studio-callout-list" });
+		for (const def of sortCalloutsByDisplayName(defs, getLocale())) {
+			options.renderRow(listEl, def, kind);
 		}
 	};
 
-	const renderBuiltInList = (): void => {
+	const emptyState = (host: HTMLElement, text: string): void => {
+		host.createDiv({ cls: "callout-studio-empty-state", text });
+	};
+
+	const renderThemeList = (fromTheme: CalloutDefinition[]): void => {
+		if (!themeSectionEl || !themeListEl) return;
+		// The heading names the *active* theme, so it is re-read on every render
+		// rather than once when the section is built. `renderAll` is the refresh
+		// path — it is what the tab's `css-change` listener reaches — and without
+		// this the heading went on naming the outgoing theme while the rows under
+		// it already showed the incoming one. The built-in list's empty state
+		// below does re-read it, so the two contradicted each other on one screen.
+		themeSetting?.setDesc(
+			t("settings.themeCalloutsDesc", { theme: themeLabel() }),
+		);
+		themeListEl.empty();
+		// The whole section disappears with the last row rather than showing an
+		// empty state: most themes style no callouts at all, and a permanent
+		// "your theme styles none" heading would be noise in every one of those
+		// vaults.
+		const has = fromTheme.length > 0;
+		themeSectionEl.toggleClass("cs-hidden", !has);
+		themeListEl.toggleClass("cs-hidden", !has);
+		if (!has) return;
+		renderList(themeListEl, fromTheme, "theme");
+	};
+
+	const renderUserList = (own: CalloutDefinition[]): void => {
+		if (!userListEl) return;
+		userListEl.empty();
+		if (own.length === 0) {
+			emptyState(userListEl, t("settings.noCalloutsNow"));
+			return;
+		}
+		renderList(userListEl, own, "user");
+	};
+
+	const renderBuiltInList = (builtIn: CalloutDefinition[]): void => {
 		if (!builtInListEl) return;
 		builtInListEl.empty();
-
-		const locale = getLocale();
-		const builtInCallouts = sortCalloutsByDisplayName(
-			ctx.plugin.registry.getBuiltIn(),
-			locale,
-		);
-		const listEl = builtInListEl.createDiv({
-			cls: "callout-studio-callout-list",
-		});
-
-		for (const def of builtInCallouts) {
-			options.renderRow(listEl, def, true);
+		if (builtIn.length === 0) {
+			emptyState(
+				builtInListEl,
+				t("settings.builtInAllThemeStyled", { theme: themeLabel() }),
+			);
+			return;
 		}
+		renderList(builtInListEl, builtIn, "builtin");
+	};
+
+	const renderAll = (): void => {
+		const { fromTheme, own, builtIn } = partition();
+		renderThemeList(fromTheme);
+		renderUserList(own);
+		renderBuiltInList(builtIn);
+		// Warmed here rather than when a menu opens, because a menu cannot wait
+		// on a whole-vault read: `openThemeRowMenu` reads the answer
+		// synchronously and offers Replace and Clear uses only once it has one.
+		// Nothing on a row shows the count any more, so nothing is repainted when
+		// it lands — the callback is what used to cause a visible reflow a second
+		// after the tab opened. One pass per visit; `SettingsTab.hide()` drops it.
+		ensureThemeRowUsage(
+			ctx.app,
+			fromTheme.flatMap((def) =>
+				ctx.plugin.registry.vaultIdFormsFor(def),
+			),
+			() => {},
+		);
 	};
 
 	return {
@@ -91,6 +165,17 @@ export function createCalloutListsController(
 					.onClick(() => new WelcomeModal(ctx.plugin).open()),
 			);
 
+			// First, because it is the group the user has the least idea exists.
+			// The description is left to `renderThemeList`, which is on both the
+			// build and the refresh path, so the theme's name has exactly one
+			// place it is written from.
+			themeSetting = new Setting(containerEl)
+				.setName(t("settings.themeCalloutsHeading"))
+				.setHeading();
+			themeSetting.settingEl.addClass("cs-subheader-row");
+			themeSectionEl = themeSetting.settingEl;
+			themeListEl = containerEl.createDiv();
+
 			const subSetting = new Setting(containerEl)
 				.setName(t("settings.myCalloutTypes"))
 				.setHeading();
@@ -105,17 +190,14 @@ export function createCalloutListsController(
 			);
 
 			userListEl = containerEl.createDiv();
-			renderUserList();
 
 			new Setting(containerEl)
 				.setName(t("settings.builtInCallouts"))
 				.setHeading();
 			builtInListEl = containerEl.createDiv();
-			renderBuiltInList();
+
+			renderAll();
 		},
-		refresh: () => {
-			renderUserList();
-			renderBuiltInList();
-		},
+		refresh: renderAll,
 	};
 }

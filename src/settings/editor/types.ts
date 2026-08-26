@@ -23,6 +23,13 @@ export interface CalloutEditorPlugin {
 	settings: PluginSettings;
 	pruneSuspended: boolean;
 	saveSettings(): Promise<void>;
+	/**
+	 * Re-inject the CSS and re-render open notes. Needed by the theme callout
+	 * preview, which shares this interface: nudging a heading icon changes the
+	 * emitted `.cs-*` rules, and Reading view keeps baked DOM.
+	 */
+	refreshCallouts(): void;
+	refreshRenderModes(): void;
 	schedulePruneUnusedFallbacks(delayMs?: number): void;
 	ensureIconArtwork(icon: CalloutIcon): Promise<void>;
 	hasIconFetchFailed(icon: CalloutIcon, role: CalloutRenderRole): boolean;
