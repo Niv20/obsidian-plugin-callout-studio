@@ -64,6 +64,14 @@ export const fa: Record<string, string> = {
 	"deleteModal.replaceInstead": "به جای آن جایگزین کن",
 	"deleteModal.deleteInUse": "حذف (تبدیل به متن ساده)",
 	"deleteModal.deleteUnused": "حذف callout",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'همه استفاده‌های "{{name}}" پاک شود؟',
+	"deleteModal.keepsRowBuiltIn":
+		"این یکی از callout‌های داخلی Obsidian است، بنابراین خودِ این نوع همچنان در دسترس می‌ماند — فقط کاربردهای آن در یادداشت‌های شما تغییر می‌کند.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} این نوع callout را تعریف می‌کند، بنابراین همچنان در دسترس می‌ماند و ظاهر خود را حفظ می‌کند. Callout Studio فقط یادداشت‌های داخل vault شما را تغییر می‌دهد — چیزی متعلق به تم شما دست‌نخورده باقی می‌ماند.",
+	"deleteModal.clearUsages": "پاک کردن کاربردها (تبدیل به متن ساده)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "انواع callout من",
@@ -98,10 +106,18 @@ export const fa: Record<string, string> = {
 	"settings.makeFallbackAction": "استفاده از سبک پشتیبان پیش‌فرض",
 
 	"settings.colorSwatchAria": "برجسته: {{accent}} · پس‌زمینه: {{bg}}",
-	"settings.externalStyleTag": "استایل خارجی",
-	"settings.externalStyleAction": "استفاده از استایل خارجی (پوسته یا CSS)",
-	"settings.externalStyleBlocked":
-		"این کالوت پیش‌فرض جایگزین است، ابتدا یکی دیگر را انتخاب کنید",
+	"settings.externalCssAction": "با CSS شخصی خودم استایل بده",
+	"settings.externalCssStopAction": "اجازه بده Callout Studio دوباره این را استایل بدهد",
+	"settings.externalCssTag": "CSS خارجی",
+	"settings.themeCalloutsHeading": "Callout های پوسته‌ی شما",
+	"settings.themeCalloutsDesc":
+		"{{theme}} این‌ها را ارائه می‌دهد یا دوباره استایل می‌دهد، بنابراین Callout Studio آن‌ها را دقیقاً همان‌طور که پوسته‌تان ترسیم می‌کند رها می‌کند و فقط به‌صورت Block callout ارائه می‌دهد. هر دو نوع اینجا نمایش داده می‌شوند: انواع callout که پوسته‌تان اضافه می‌کند، و callout های داخلی که ظاهرشان را جایگزین می‌کند. انواع callout که پوسته‌تان اضافه می‌کند فقط زمانی که فعال است فهرست می‌شوند.",
+	"settings.themeCalloutsDefaultTheme": "پوسته‌ی شما",
+	"settings.themePreviewAria":
+		'پیش‌نمایش "{{name}}" — ببینید پوسته‌تان چگونه آن را ترسیم می‌کند',
+	"settings.clearUsesAction": "پاک‌کردن استفاده‌ها در یادداشت‌هایتان",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} تمام callout های داخلی را دوباره استایل می‌دهد، بنابراین همه در بالا فهرست شده‌اند و Callout Studio آن‌ها را دست‌نخورده رها می‌کند. برای طراحی یکی از آنِ خودتان، callout ای با شناسه‌ی متفاوت اضافه کنید.",
 	"settings.fallbackCallout": "callout پشتیبان پیش‌فرض",
 	"settings.fallbackCalloutDesc":
 		"انواع callout ناشناخته در vault سبک این callout را به ارث می‌برند.",
@@ -175,6 +191,10 @@ export const fa: Record<string, string> = {
 	"commandBuilder.callout": "نوع callout",
 	"commandBuilder.calloutDesc": "callout‌ای که این دستور درج می‌کند.",
 	"commandBuilder.headingLevel": "سطح سرتیتر",
+	"commandBuilder.roleThemeOwned":
+		"پوسته‌ی شما این callout را ارائه می‌دهد، بنابراین فقط قالب Block دارد.",
+	"commandBuilder.commandSuspended":
+		"متوقف‌شده: پوسته‌ی شما این callout را ارائه می‌دهد، بنابراین فقط قالب Block دارد. وقتی پوسته دیگر آن را ارائه ندهد، این دستور دوباره کار می‌کند.",
 	"commandBuilder.headingLevelDesc": "کدام سطح سرتیتر نوشته شود.",
 	"commandBuilder.action": "عملکرد",
 	"commandBuilder.actionDesc":
@@ -219,10 +239,9 @@ export const fa: Record<string, string> = {
 		"هیچ نوع callout جدیدی وارد نشد (شناسه‌ها ممکن است از قبل وجود داشته باشند).",
 	"notice.iconDownloadFailed":
 		'دانلود آیکون Material "{{name}}" ناموفق بود. ممکن است برای این سبک/وزن در دسترس نباشد، یا اتصال شما قطع باشد.',
-	"notice.externalStyleOn":
-		'"{{name}}" اکنون توسط پوسته یا قطعه CSS شما استایل می‌گیرد.',
-	"notice.externalStyleOff":
-		'Callout Studio دوباره "{{name}}" را استایل می‌دهد.',
+	"notice.externalCssOn":
+		'Callout Studio دیگر "{{name}}" را استایل نمی‌دهد — CSS شخصی خودتان تعیین می‌کند که چگونه به نظر برسد. قالب‌های Heading Callout و Inline Callout آن رندر نخواهند شد.',
+	"notice.externalCssOff": 'Callout Studio اکنون دوباره "{{name}}" را استایل می‌دهد.',
 	"notice.nothingToWrap": "چیزی برای پیچیدن وجود ندارد.",
 	"notice.cursorNotInsideCallout": "مکان‌نما داخل callout نیست.",
 	"notice.autocompleteTargetMoved":
@@ -287,6 +306,10 @@ export const fa: Record<string, string> = {
 	"editor.idConflict": "این شناسه با یک callout موجود تعارض دارد",
 	"editor.idDashConflict":
 		"Obsidian فاصله‌ها را به‌صورت خط تیره می‌نویسد، بنابراین این شناسه با «{{other}}» تداخل دارد",
+	"editor.idFromTheme":
+		"{{theme}} از قبل callout ای با این شناسه ارائه می‌دهد، بنابراین Callout Studio نمی‌تواند آن را استایل بدهد. شناسه‌ی دیگری انتخاب کنید.",
+	"editor.idThemePattern":
+		"توجه: پوسته‌ی شما هر callout ای را که با {{pattern}} مطابقت داشته باشد استایل می‌دهد، بنابراین ممکن است ظاهر این یکی را بازنویسی کند.",
 	"editor.untitledCallout": "Callout بدون عنوان",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -296,25 +319,19 @@ export const fa: Record<string, string> = {
 		"در اینجا یک قرص [!{id}] درون‌خطی در داخل یک پاراگراف وجود دارد.",
 	"editor.previewReadOnly": "پیش‌نمایش زنده قابل ویرایش نیست",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "استایل‌گرفته خارج از Callout Studio",
-	"editor.externalStyleBody":
-		"Callout Studio هیچ استایلی به {{id}} اعمال نمی‌کند. ظاهر آن از پوسته شما، یک قطعه CSS یا پیش‌فرض‌های Obsidian می‌آید.",
-	"editor.externalStyleWhat": "این یعنی چه",
-	"editor.externalStyleWhatHeading":
-		"کالوتِ عنوان مانند ## [!{{id}}] عنوان رندر نخواهد شد — متن همان‌طور که نوشته شده باقی می‌ماند.",
-	"editor.externalStyleWhatInline":
-		"نه یک کالوتِ درون‌خطی، مانند کلمه [!{{id}}] کلمه.",
-	"editor.externalStyleWhatGlobal":
-		"تنظیمات سراسری استایل (حاشیه، شعاع، اندازه متن) روی آن اعمال نمی‌شود.",
-	"editor.externalStylePreviewTitle": "اکنون چگونه رندر می‌شود",
-	"editor.externalStyleSample":
-		"## [!{{id}}] عنوان\n\n" +
-		"این شکل جمله‌ای است که [!{{id}}] در آن است.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — ارائه‌شده توسط پوسته‌ی شما',
+	"themePreview.owned":
+		'{{theme}} "{{name}}" را ارائه می‌دهد و استایل می‌دهد. Callout Studio آن را بازنویسی نمی‌کند، بنابراین Block callout آن دقیقاً همان‌طور که پوسته‌تان ترسیم می‌کند به نظر می‌رسد.',
+	"themePreview.readOnly":
+		"این یعنی رنگ، آیکون، نام و شناسه‌ی آن اینجا قابل تغییر نیست. اگر طرحی از آنِ خودتان می‌خواهید، یک callout جدید با شناسه‌ای متفاوت بسازید.",
+	"themePreview.blockOnly":
+		"قالب‌های Heading و Inline برای callout هایی که پوسته‌تان ارائه می‌دهد در دسترس نیستند. Block callout ها از استایل بومی پوسته استفاده می‌کنند.",
+	"themePreview.previewTitle": "اکنون چگونه رندر می‌شود",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
-		"> این شکل محتوای کالوت است.\n",
-	"editor.externalStyleResume": "بازپس‌گیری استایل",
+		"> محتوای این callout این‌طور به نظر می‌رسد.\n",
 	"editor.externalStyleClose": "متوجه شدم",
 
 	// Palette editor modal
@@ -603,7 +620,9 @@ export const fa: Record<string, string> = {
 	"contextMenu.copySection": "کپی بخش عنوان",
 	"contextMenu.deleteSection": "حذف بخش عنوان",
 	"heading.toggleFold": "تغییر وضعیت جمع‌شدن",
-	"settings.globalSettings": "تنظیمات کلی",
+	"settings.globalSettings": "گزینه‌های استایل Callout Studio",
+	"settings.globalSettingsScope":
+		"شکل، فاصله‌گذاری و اندازه برای callout هایی که Callout Studio استایل می‌دهد. callout هایی که پوسته‌تان استایل می‌دهد طراحی خودِ پوسته را حفظ می‌کنند.",
 	"settings.globalSettingsRegularDesc":
 		"یک توکن callout به یک نقل‌قول اضافه کنید (مثلاً `> [!type]`) تا جعبه callout بومی Obsidian نمایش داده شود. می‌توانید حاشیه، شعاع، مقیاس فونت و تراز آن را تنظیم کنید.",
 	"settings.globalSettingsHeadingDesc":
@@ -931,4 +950,8 @@ export const fa: Record<string, string> = {
 	"export.formatCss": "قطعه CSS",
 	"export.formatCssDesc":
 		"یک فایل .css ذخیره‌شده در پوشه snippets این vault، برای استفاده جایی که Callout Studio نصب نیست. فقط کال‌اوت‌های معمولی را پوشش می‌دهد و یک عکس فوری است؛ پس از تغییر دوباره خروجی بگیرید.",
+	"quickInsert.readingViewHint": "این یادداشت در حالت خواندن باز است، بنابراین چیزی قابل درج نیست.",
+	"quickInsert.readingView": "برای درج callout به حالت منبع یا Live Preview بروید.",
+	"quickInsert.noCursorHint": "در این یادداشت مکان‌نمایی وجود ندارد، بنابراین جایی برای درج نیست.",
+	"quickInsert.noCursor": "مکان‌نما را در یادداشت، در جایی که می‌خواهید callout را درج کنید، قرار دهید و دوباره امتحان کنید.",
 };

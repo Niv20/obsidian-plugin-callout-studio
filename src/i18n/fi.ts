@@ -61,6 +61,16 @@ export const fi: Record<string, string> = {
 	"deleteModal.replaceInstead": "Korvaa sen sijaan",
 	"deleteModal.deleteInUse": "Poista (muunna tavalliseksi tekstiksi)",
 	"deleteModal.deleteUnused": "Poista callout",
+
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Poistetaanko kaikki calloutin "{{name}}" käytöt?',
+	"deleteModal.keepsRowBuiltIn":
+		"Tämä on yksi Obsidianin sisäänrakennetuista callouteista, joten itse tyyppi pysyy käytettävissä — vain sen käytöt muistiinpanoissasi muuttuvat.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} määrittää tämän callout-tyypin, joten se pysyy käytettävissä ja säilyttää ulkoasunsa. Callout Studio muuttaa vain holvisi muistiinpanoja — mikään teemaasi kuuluva ei muutu.",
+	"deleteModal.clearUsages": "Poista käytöt (muunna tavalliseksi tekstiksi)",
+
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Omat callout-tyypit",
 	"settings.builtInCallouts": "Sisäänrakennetut calloutit",
@@ -90,10 +100,25 @@ export const fi: Record<string, string> = {
 	"settings.resetAction": "Palauta oletukseksi",
 	"settings.makeFallbackAction": "Käytä oletusvaratyyliä",
 	"settings.colorSwatchAria": "Aksentti: {{accent}} · Tausta: {{bg}}",
-	"settings.externalStyleTag": "Ulkoinen tyyli",
-	"settings.externalStyleAction": "Käytä ulkoista tyyliä (teema tai CSS)",
-	"settings.externalStyleBlocked":
-		"tämä on oletusarvoinen varakorosteboksi, valitse ensin toinen",
+
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Tyylittele omalla CSS:llä",
+	"settings.externalCssStopAction": "Anna Callout Studion tyylitellä tämä taas",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "Ulkoinen CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Teemasi calloutit",
+	"settings.themeCalloutsDesc":
+		"{{theme}} tarjoaa tai muotoilee nämä uudelleen, joten Callout Studio jättää ne täsmälleen sellaisiksi kuin teemasi piirtää ne, ja tarjoaa niitä vain lohko-callouteina. Molemmat tyypit näkyvät tässä: teemasi lisäämät callout-tyypit ja sisäänrakennetut calloutit, joiden ulkoasun se korvaa. Teemasi lisäämät callout-tyypit näkyvät luettelossa vain, kun teema on käytössä.",
+	"settings.themeCalloutsDefaultTheme": "Teemasi",
+	"settings.themePreviewAria":
+		'Esikatsele "{{name}}" — näe, miten teemasi piirtää sen',
+	"settings.clearUsesAction": "Poista käytöt muistiinpanoistasi",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} muotoilee jokaisen sisäänrakennetun calloutin uudelleen, joten ne kaikki näkyvät yllä eikä Callout Studio koske niihin. Jos haluat suunnitella oman, lisää callout eri tunnuksella.",
+
 	"settings.fallbackCallout": "Oletus-varausCallout",
 	"settings.fallbackCalloutDesc":
 		"Holvisi tuntemattomat callout-tyypit perivät tämän calloutin tyylin.",
@@ -176,6 +201,12 @@ export const fi: Record<string, string> = {
 	"commandBuilder.noCallouts":
 		"Ei vielä callout-tyyppejä, joista rakentaa komento.",
 	"commandBuilder.save": "Tallenna",
+
+	"commandBuilder.roleThemeOwned":
+		"Teemasi tarjoaa tämän calloutin, joten sillä on vain lohkomuoto.",
+	"commandBuilder.commandSuspended":
+		"Keskeytetty: teemasi tarjoaa tämän calloutin, joten sillä on vain lohkomuoto. Tämä komento toimii taas, kun teema lakkaa tarjoamasta sitä.",
+
 	"settings.vaultMaintenance": "Holvin näkemykset ja huolto",
 	"settings.vaultStats": "Callout-tilastot",
 	"settings.vaultStatsDesc":
@@ -204,9 +235,11 @@ export const fi: Record<string, string> = {
 		"Uusia callout-tyyppejä ei tuotu (tunnukset voivat jo olla olemassa).",
 	"notice.iconDownloadFailed":
 		'Material-kuvakkeen "{{name}}" lataaminen epäonnistui. Se ei ehkä ole saatavilla tälle tyylille/painolle tai yhteys on poikki.',
-	"notice.externalStyleOn":
-		'"{{name}}" saa nyt tyylinsä teemastasi tai CSS-katkelmasta.',
-	"notice.externalStyleOff": 'Callout Studio tyylittelee jälleen "{{name}}".',
+
+	"notice.externalCssOn":
+		'Callout Studio ei enää tyylittele calloutia "{{name}}" — oma CSS:äsi päättää sen ulkoasun. Sen otsikko- ja rivinsisäinen callout-muoto eivät näy.',
+	"notice.externalCssOff": 'Callout Studio tyylittelee taas calloutia "{{name}}".',
+
 	"notice.nothingToWrap": "Ei mitään kääriä.",
 	"notice.cursorNotInsideCallout": "Kursori ei ole calloutin sisällä.",
 	"notice.autocompleteTargetMoved":
@@ -270,6 +303,12 @@ export const fi: Record<string, string> = {
 		"Tämä tunnus on ristiriidassa olemassa olevan calloutin kanssa",
 	"editor.idDashConflict":
 		'Obsidian kirjoittaa välilyönnit väliviivoina, joten tämä tunnus on ristiriidassa tunnuksen "{{other}}" kanssa',
+
+	"editor.idFromTheme":
+		"{{theme}} tarjoaa jo calloutin tällä tunnuksella, joten Callout Studio ei voi tyylitellä sitä. Valitse toinen tunnus.",
+	"editor.idThemePattern":
+		"Huomio: teemasi tyylittelee jokaisen calloutin, joka vastaa mallia {{pattern}}, joten se saattaa ohittaa tämän ulkoasun.",
+
 	"editor.untitledCallout": "Nimetön Callout",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -279,25 +318,20 @@ export const fi: Record<string, string> = {
 		"Tässä on upotettu [!{id}] -pilleri kappaleen sisällä.",
 	"editor.previewReadOnly": "Live-esikatselua ei voi muokata",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Tyylitelty Callout Studion ulkopuolella",
-	"editor.externalStyleBody":
-		"Callout Studio ei käytä mitään tyyliä kohteeseen {{id}}. Sen ulkoasu tulee teemastasi, CSS-katkelmasta tai Obsidianin oletusasetuksista.",
-	"editor.externalStyleWhat": "Mitä tämä tarkoittaa",
-	"editor.externalStyleWhatHeading":
-		"Otsikkokorosteboksia, kuten ## [!{{id}}] Otsikko, ei renderöidä — teksti pysyy sellaisenaan.",
-	"editor.externalStyleWhatInline":
-		"Ei myöskään rivinsisäistä, kuten sana [!{{id}}] sana.",
-	"editor.externalStyleWhatGlobal":
-		"Yleiset tyyliasetukset (reunus, pyöristys, tekstin koko) eivät koske sitä.",
-	"editor.externalStylePreviewTitle": "Miten se näkyy nyt",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Otsikko\n\n" +
-		"Näin näyttää lause, jossa on [!{{id}}].\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — teemasi tarjoama',
+	"themePreview.owned":
+		'{{theme}} tarjoaa ja tyylittelee calloutin "{{name}}". Callout Studio ei ohita sitä, joten sen lohko-callout näyttää täsmälleen siltä, miltä teemasi sen piirtää.',
+	"themePreview.readOnly":
+		"Tämä tarkoittaa, ettei sen väriä, kuvaketta, nimeä tai tunnusta voi muuttaa täällä. Jos haluat oman suunnittelun, luo uusi callout eri tunnuksella.",
+	"themePreview.blockOnly":
+		"Otsikko- ja rivinsisäinen muoto eivät ole käytettävissä teemasi tarjoamille callouteille. Lohko-calloutit käyttävät teeman omaa tyyliä.",
+	"themePreview.previewTitle": "Miltä se näyttää nyt",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
-		"> Näin näyttää korosteboksin sisältö.\n",
-	"editor.externalStyleResume": "Ota tyylitys takaisin",
+		"> Tältä calloutin sisältö näyttää.\n",
+
 	"editor.externalStyleClose": "Selvä",
 	// Palette editor modal
 	"palette.newTitle": "Uusi väripaletti",
@@ -586,7 +620,9 @@ export const fi: Record<string, string> = {
 	"contextMenu.copySection": "Kopioi otsikko-osio",
 	"contextMenu.deleteSection": "Poista otsikko-osio",
 	"heading.toggleFold": "Vaihda taitto",
-	"settings.globalSettings": "Yleisasetukset",
+	"settings.globalSettings": "Callout Studion tyyliasetukset",
+	"settings.globalSettingsScope":
+		"Muoto, välit ja koko callouteille, joita Callout Studio tyylittelee. Teemasi tyylittelemät calloutit säilyttävät teeman oman ulkoasun.",
 	"settings.globalSettingsRegularDesc":
 		"Lisää callout-token lainaukseen (esim. `> [!type]`), jolloin se näkyy Obsidianin natiivina callout-laatikkona. Voit säätää sen reunaa, pyöristystä, fonttiskaalaa ja tasausta.",
 	"settings.globalSettingsHeadingDesc":
@@ -906,4 +942,8 @@ export const fi: Record<string, string> = {
 	"export.formatCss": "CSS-katkelma",
 	"export.formatCssDesc":
 		".css-tiedosto tämän vaultin snippets-kansiossa käytettäväksi siellä, missä Callout Studioa ei ole asennettu. Se kattaa vain tavalliset calloutit ja on tilannekuva; vie uudelleen muutoksen jälkeen.",
+	"quickInsert.readingViewHint": "Tämä muistiinpano on avoinna lukutilassa, joten mitään ei voida lisätä.",
+	"quickInsert.readingView": "Vaihda lähdetilaan tai Live Previewiin lisätäksesi calloutin.",
+	"quickInsert.noCursorHint": "Tässä muistiinpanossa ei ole kohdistinta, joten lisäämiselle ei ole paikkaa.",
+	"quickInsert.noCursor": "Aseta kohdistin muistiinpanoon kohtaan, johon haluat lisätä calloutin, ja yritä uudelleen.",
 };

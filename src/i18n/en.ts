@@ -79,6 +79,14 @@ export const en: Record<string, string> = {
 	"deleteModal.replaceInstead": "Replace instead",
 	"deleteModal.deleteInUse": "Delete (convert to plain text)",
 	"deleteModal.deleteUnused": "Delete callout",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Clear every use of "{{name}}"?',
+	"deleteModal.keepsRowBuiltIn":
+		"This is one of Obsidian's built-in callouts, so the type itself stays available — only its uses in your notes change.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} defines this callout type, so it stays available and keeps its look. Callout Studio only changes notes inside your vault — nothing belonging to your theme is touched.",
+	"deleteModal.clearUsages": "Clear uses (convert to plain text)",
 
 	// Settings — Section headings
 	"settings.title": "Callout Studio",
@@ -127,27 +135,23 @@ export const en: Record<string, string> = {
 	"settings.resetAction": "Reset to default",
 	"settings.makeFallbackAction": "Use default fallback style",
 	"settings.colorSwatchAria": "Accent: {{accent}} · Background: {{bg}}",
-	"settings.externalStyleTag": "External style",
-	"settings.forceStyleTag": "Overriding theme",
-	// Theme coexistence — the report of what the active theme also styles
-	"settings.themeCoexistence": "Theme coexistence",
-	"settings.themeConflictDefaultTheme": "Your theme",
-	"settings.themeConflictRow":
-		"{{theme}} also styles {{count}} of your callouts",
-	"settings.themeConflictLosing":
-		"{{count}} of them are written strongly enough to beat Callout Studio. Open a callout's ⋯ menu to hand it to the theme, or to override the theme.",
-	"settings.themeConflictWinning":
-		"Callout Studio is winning all of them. Hand one to the theme from its ⋯ menu if you prefer the theme's version.",
-	"settings.themeConflictThemeWins": "Theme wins",
-	"settings.themeConflictSets": "Your theme also sets: {{props}}",
-	"settings.themeConflictImportant":
-		"Marked !important by your theme, so overriding cannot reach it: {{props}}",
-	"settings.externalStyleAction": "Use external style (theme or CSS)",
-	"settings.externalStyleBlocked":
-		"this is the default fallback callout, pick a different one first",
-	"settings.forceStyleAction": "Override the theme",
-	"settings.forceStyleDesc":
-		"Raise the strength of Callout Studio's rules so an assertive theme stops winning. It cannot undo layout the theme adds, and cannot beat a theme that uses !important.",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Style with my own CSS",
+	"settings.externalCssStopAction": "Let Callout Studio style this again",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "External CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callouts from your theme",
+	"settings.themeCalloutsDesc":
+		"{{theme}} supplies or restyles these, so Callout Studio leaves them exactly as your theme draws them and offers them as Block callouts only. Both kinds appear here: callout types your theme adds, and built-in callouts whose look it replaces. Callout types your theme adds are listed only while it is active.",
+	"settings.themeCalloutsDefaultTheme": "Your theme",
+	"settings.themePreviewAria":
+		'Preview "{{name}}" — see how your theme draws it',
+	"settings.clearUsesAction": "Clear uses in your notes",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} restyles every built-in callout, so they are all listed above and Callout Studio leaves them alone. To design one of your own, add a callout with a different ID.",
 
 	// Settings — Fallback callout
 	"settings.fallbackCallout": "Default fallback callout",
@@ -224,6 +228,10 @@ export const en: Record<string, string> = {
 	"commandBuilder.formatBlock": "Block",
 	"commandBuilder.roleDisabled":
 		"This format is turned off, so the command will insert plain text until you switch it back on.",
+	"commandBuilder.roleThemeOwned":
+		"Your theme supplies this callout, so it only has a Block format.",
+	"commandBuilder.commandSuspended":
+		"Paused: your theme supplies this callout, so it only has a Block format. This command works again when the theme stops supplying it.",
 	"commandBuilder.callout": "Callout type",
 	"commandBuilder.calloutDesc": "The callout this command inserts.",
 	"commandBuilder.headingLevel": "Heading level",
@@ -306,12 +314,9 @@ export const en: Record<string, string> = {
 		"No new callout types were imported (ids may already exist).",
 	"notice.iconDownloadFailed":
 		'Could not download Material icon "{{name}}". It may be unavailable for this style/weight, or your connection may be offline.',
-	"notice.externalStyleOn":
-		'"{{name}}" is now styled by your theme or CSS snippet.',
-	"notice.externalStyleOff": 'Callout Studio styles "{{name}}" again.',
-	"notice.forceStyleOn": '"{{name}}" now overrides your theme.',
-	"notice.forceStyleOff":
-		'Callout Studio styles "{{name}}" at normal strength again.',
+	"notice.externalCssOn":
+		'Callout Studio no longer styles "{{name}}" — your own CSS decides how it looks. Its Heading Callout and Inline Callout forms won\'t render.',
+	"notice.externalCssOff": 'Callout Studio now styles "{{name}}" again.',
 	"notice.nothingToWrap": "Nothing to wrap.",
 	"notice.cursorNotInsideCallout": "Cursor is not inside a callout.",
 	"notice.autocompleteTargetMoved":
@@ -375,6 +380,10 @@ export const en: Record<string, string> = {
 	"editor.idEmpty": "At least one ID is required",
 	"editor.idExists": "A callout with this ID already exists",
 	"editor.idConflict": "This ID conflicts with an existing callout",
+	"editor.idFromTheme":
+		"{{theme}} already supplies a callout with this ID, so Callout Studio can't style it. Pick a different ID.",
+	"editor.idThemePattern":
+		"Heads up: your theme styles every callout matching {{pattern}}, so it may override how this one looks.",
 	"editor.idDashConflict":
 		'Obsidian writes spaces as dashes, so this ID collides with "{{other}}"',
 	"editor.untitledCallout": "Untitled Callout",
@@ -386,25 +395,19 @@ export const en: Record<string, string> = {
 		"Here is an inline [!{id}] callout inside a paragraph.",
 	"editor.previewReadOnly": "The live preview can't be edited",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Styled outside Callout Studio",
-	"editor.externalStyleBody":
-		"Callout Studio isn't applying any style to {{id}}. Its look comes from your theme, a CSS snippet, or Obsidian's defaults.",
-	"editor.externalStyleWhat": "What this means",
-	"editor.externalStyleWhatHeading":
-		"A Heading Callout like ## [!{{id}}] Title won't be rendered — the text just stays as written.",
-	"editor.externalStyleWhatInline":
-		"Neither will an Inline Callout, like word [!{{id}}] word.",
-	"editor.externalStyleWhatGlobal":
-		"Global style settings (border, radius, text size) don't apply to it.",
-	"editor.externalStylePreviewTitle": "How it renders now",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Title\n\n" +
-		"This is what a sentence with [!{{id}}] in it looks like.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — supplied by your theme',
+	"themePreview.owned":
+		'{{theme}} supplies and styles "{{name}}". Callout Studio will not override it, so its Block callout looks exactly as your theme draws it.',
+	"themePreview.readOnly":
+		"That means its colour, icon, name and ID can't be changed here. If you want a design of your own, create a new callout with a different ID.",
+	"themePreview.blockOnly":
+		"Heading and Inline formats are unavailable for callouts supplied by your theme. Block callouts use the theme's native style.",
+	"themePreview.previewTitle": "How it renders now",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> This is what the callout's content looks like.\n",
-	"editor.externalStyleResume": "Take back styling",
 	"editor.externalStyleClose": "Got it",
 
 	// Palette editor modal
@@ -704,7 +707,9 @@ export const en: Record<string, string> = {
 	"heading.toggleFold": "Toggle fold",
 
 	// Global settings section (per-role style popups)
-	"settings.globalSettings": "Global settings",
+	"settings.globalSettings": "Callout Studio style options",
+	"settings.globalSettingsScope":
+		"Shape, spacing and size for the callouts Callout Studio styles. Callouts your theme styles keep the theme's own design.",
 	"settings.globalSettingsRegularDesc":
 		"Add a callout token to a block callout (e.g., `> [!type]`) to render Obsidian's native callout box. You can adjust its border, radius, font scale, and alignment.",
 	"settings.globalSettingsHeadingDesc":

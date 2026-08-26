@@ -66,6 +66,15 @@ export const nl: Record<string, string> = {
 	"deleteModal.deleteInUse": "Verwijderen (naar platte tekst converteren)",
 	"deleteModal.deleteUnused": "Callout verwijderen",
 
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Alle gebruik van "{{name}}" wissen?',
+	"deleteModal.keepsRowBuiltIn":
+		"Dit is een van Obsidians ingebouwde callouts, dus het type zelf blijft beschikbaar — alleen het gebruik ervan in uw notities verandert.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} definieert dit callout-type, dus het blijft beschikbaar en behoudt zijn uiterlijk. Callout Studio wijzigt alleen notities binnen uw vault — niets van uw thema wordt aangeraakt.",
+	"deleteModal.clearUsages": "Gebruik wissen (naar platte tekst converteren)",
+
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Mijn callout-types",
 	"settings.builtInCallouts": "Ingebouwde callouts",
@@ -98,10 +107,24 @@ export const nl: Record<string, string> = {
 	"settings.resetAction": "Terugzetten naar standaard",
 	"settings.makeFallbackAction": "Standaard fallback-stijl gebruiken",
 	"settings.colorSwatchAria": "Accent: {{accent}} · Achtergrond: {{bg}}",
-	"settings.externalStyleTag": "Externe stijl",
-	"settings.externalStyleAction": "Externe stijl gebruiken (thema of CSS)",
-	"settings.externalStyleBlocked":
-		"dit is de standaard fallback-callout, kies eerst een andere",
+
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Stijl geven met mijn eigen CSS",
+	"settings.externalCssStopAction": "Callout Studio dit weer laten stijlen",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "Externe CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callouts van uw thema",
+	"settings.themeCalloutsDesc":
+		"{{theme}} levert of herstijlt deze, dus Callout Studio laat ze precies zoals uw thema ze tekent en biedt ze alleen als Block Callouts aan. Beide soorten verschijnen hier: callout-types die uw thema toevoegt, en ingebouwde callouts waarvan het thema het uiterlijk vervangt. Callout-types die uw thema toevoegt, worden alleen vermeld terwijl het actief is.",
+	"settings.themeCalloutsDefaultTheme": "Uw thema",
+	"settings.themePreviewAria":
+		'Voorbeeld van "{{name}}" — bekijk hoe uw thema het tekent',
+	"settings.clearUsesAction": "Gebruik in uw notities wissen",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} herstijlt elke ingebouwde callout, dus ze staan allemaal hierboven vermeld en Callout Studio laat ze met rust. Voeg een callout met een andere ID toe om er zelf een te ontwerpen.",
 
 	"settings.fallbackCallout": "Standaard fallback-callout",
 	"settings.fallbackCalloutDesc":
@@ -188,6 +211,11 @@ export const nl: Record<string, string> = {
 		"Er zijn nog geen callout-types om een opdracht van te maken.",
 	"commandBuilder.save": "Opslaan",
 
+	"commandBuilder.roleThemeOwned":
+		"Uw thema levert deze callout, dus heeft deze alleen een Blok-indeling.",
+	"commandBuilder.commandSuspended":
+		"Gepauzeerd: uw thema levert deze callout, dus heeft deze alleen een Blok-indeling. Deze opdracht werkt weer zodra het thema deze niet meer levert.",
+
 	"settings.vaultMaintenance": "Vault-inzichten & onderhoud",
 	"settings.vaultStats": "Callout-statistieken",
 	"settings.vaultStatsDesc":
@@ -218,9 +246,11 @@ export const nl: Record<string, string> = {
 		"Geen nieuwe callout-types geïmporteerd (ID's bestaan mogelijk al).",
 	"notice.iconDownloadFailed":
 		'Kan Material-pictogram "{{name}}" niet downloaden. Het is mogelijk niet beschikbaar voor deze stijl/dikte, of uw verbinding is offline.',
-	"notice.externalStyleOn":
-		'"{{name}}" wordt nu gestyled door je thema of CSS-snippet.',
-	"notice.externalStyleOff": 'Callout Studio stylet "{{name}}" weer.',
+
+	"notice.externalCssOn":
+		'Callout Studio stijlt "{{name}}" niet meer — uw eigen CSS bepaalt het uiterlijk. De Kop-callout- en Inline-callout-vormen worden niet weergegeven.',
+	"notice.externalCssOff": 'Callout Studio stijlt "{{name}}" weer.',
+
 	"notice.nothingToWrap": "Niets om in te pakken.",
 	"notice.cursorNotInsideCallout":
 		"De cursor bevindt zich niet in een callout.",
@@ -288,6 +318,12 @@ export const nl: Record<string, string> = {
 	"editor.idConflict": "Deze ID is in conflict met een bestaande callout",
 	"editor.idDashConflict":
 		'Obsidian schrijft spaties als streepjes, dus deze ID komt in conflict met "{{other}}"',
+
+	"editor.idFromTheme":
+		"{{theme}} levert al een callout met deze ID, dus Callout Studio kan deze niet stijlen. Kies een andere ID.",
+	"editor.idThemePattern":
+		"Let op: uw thema stijlt elke callout die overeenkomt met {{pattern}}, dus dit kan het uiterlijk van deze callout overschrijven.",
+
 	"editor.untitledCallout": "Naamloze callout",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -297,25 +333,20 @@ export const nl: Record<string, string> = {
 		"Hier is een Inline Callout [!{id}] binnen een alinea.",
 	"editor.previewReadOnly": "De live-voorvertoning kan niet worden bewerkt",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Gestyled buiten Callout Studio",
-	"editor.externalStyleBody":
-		"Callout Studio past geen stijl toe op {{id}}. Het uiterlijk komt van je thema, een CSS-snippet of de standaardinstellingen van Obsidian.",
-	"editor.externalStyleWhat": "Wat dit betekent",
-	"editor.externalStyleWhatHeading":
-		"Een Heading Callout zoals ## [!{{id}}] Titel wordt niet gerenderd — de tekst blijft zoals geschreven.",
-	"editor.externalStyleWhatInline":
-		"Ook een Inline Callout niet, zoals woord [!{{id}}] woord.",
-	"editor.externalStyleWhatGlobal":
-		"Globale stijlinstellingen (rand, radius, tekstgrootte) zijn er niet op van toepassing.",
-	"editor.externalStylePreviewTitle": "Hoe het nu wordt weergegeven",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Titel\n\n" +
-		"Zo ziet een zin met [!{{id}}] erin eruit.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — geleverd door uw thema',
+	"themePreview.owned":
+		'{{theme}} levert en stijlt "{{name}}". Callout Studio zal dit niet overschrijven, dus de Block Callout ziet er precies zo uit als uw thema deze tekent.',
+	"themePreview.readOnly":
+		"Dat betekent dat de kleur, het pictogram, de naam en de ID hier niet kunnen worden gewijzigd. Als u een eigen ontwerp wilt, maak dan een nieuwe callout met een andere ID.",
+	"themePreview.blockOnly":
+		"Kop- en Inline-indelingen zijn niet beschikbaar voor callouts die door uw thema worden geleverd. Block Callouts gebruiken de eigen stijl van het thema.",
+	"themePreview.previewTitle": "Hoe het er nu uitziet",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> Zo ziet de inhoud van de callout eruit.\n",
-	"editor.externalStyleResume": "Stijl terugnemen",
+
 	"editor.externalStyleClose": "Begrepen",
 
 	// Palette editor modal
@@ -607,7 +638,9 @@ export const nl: Record<string, string> = {
 	"contextMenu.copySection": "Kopsectie kopiëren",
 	"contextMenu.deleteSection": "Kopsectie verwijderen",
 	"heading.toggleFold": "Vouwen omschakelen",
-	"settings.globalSettings": "Globale instellingen",
+	"settings.globalSettings": "Callout Studio-stijlopties",
+	"settings.globalSettingsScope":
+		"Vorm, ruimte en grootte voor de callouts die Callout Studio stijlt. Callouts die uw thema stijlt behouden het eigen ontwerp van het thema.",
 	"settings.globalSettingsRegularDesc":
 		"Voeg een callout-token toe aan een block callout (bijvoorbeeld `> [!type]`) om het ingebouwde callout-vak van Obsidian weer te geven. U kunt de rand, hoekafronding, lettertypeschaal en uitlijning aanpassen.",
 	"settings.globalSettingsHeadingDesc":
@@ -937,4 +970,8 @@ export const nl: Record<string, string> = {
 	"export.formatCss": "CSS-fragment",
 	"export.formatCssDesc":
 		"Een .css-bestand in de snippets-map van deze vault, voor gebruik waar Callout Studio niet is geïnstalleerd. Het bevat alleen gewone callouts en is een momentopname; exporteer opnieuw na wijzigingen.",
+	"quickInsert.readingViewHint": "Deze notitie is geopend in leesmodus, dus er kan niets worden ingevoegd.",
+	"quickInsert.readingView": "Schakel over naar bronmodus of Live Preview om een callout in te voegen.",
+	"quickInsert.noCursorHint": "Er is geen cursor in deze notitie, dus er is nergens om in te voegen.",
+	"quickInsert.noCursor": "Plaats de cursor in de notitie op de plek waar je de callout wilt invoegen en probeer het opnieuw.",
 };

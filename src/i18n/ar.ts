@@ -65,6 +65,14 @@ export const ar: Record<string, string> = {
 	"deleteModal.replaceInstead": "الاستبدال بدلاً من ذلك",
 	"deleteModal.deleteInUse": "حذف (تحويل إلى نص عادي)",
 	"deleteModal.deleteUnused": "حذف الـ callout",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'مسح كل استخدامات "{{name}}"؟',
+	"deleteModal.keepsRowBuiltIn":
+		"هذا أحد الـ callouts المدمجة في Obsidian، لذا يبقى النوع نفسه متاحًا — فقط استخداماته في ملاحظاتك تتغيّر.",
+	"deleteModal.keepsRowTheme":
+		"تُعرّف {{theme}} نوع الـ callout هذا، لذا يبقى متاحًا ويحتفظ بمظهره. يغيّر Callout Studio الملاحظات داخل مخزنك فقط — لا شيء يخص سمتك يتم المساس به.",
+	"deleteModal.clearUsages": "مسح الاستخدامات (تحويل إلى نص عادي)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "أنواع الـ callout الخاصة بي",
@@ -98,10 +106,23 @@ export const ar: Record<string, string> = {
 	"settings.makeFallbackAction": "استخدام النمط الاحتياطي الافتراضي",
 
 	"settings.colorSwatchAria": "التمييز: {{accent}} · الخلفية: {{bg}}",
-	"settings.externalStyleTag": "نمط خارجي",
-	"settings.externalStyleAction": "استخدام النمط الخارجي (السمة أو CSS)",
-	"settings.externalStyleBlocked":
-		"هذه هي تيبة الاسترجاع الافتراضية، يرجى اختيار تيبة أخرى أولاً",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "التنسيق بـ CSS الخاص بي",
+	"settings.externalCssStopAction": "السماح لـ Callout Studio بتنسيق هذا مجددًا",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "CSS خارجي",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callouts من سمتك",
+	"settings.themeCalloutsDesc":
+		"توفّر {{theme}} هذه الـ callouts أو تعيد تنسيقها، لذا يتركها Callout Studio تمامًا كما ترسمها سمتك ويعرضها كـ Block callouts فقط. يظهر هنا كلا النوعين: أنواع الـ callout التي تضيفها سمتك، والـ callouts المدمجة التي تستبدل مظهرها. تُعرض أنواع الـ callout التي تضيفها سمتك فقط أثناء تفعيلها.",
+	"settings.themeCalloutsDefaultTheme": "سمتك",
+	"settings.themePreviewAria":
+		'معاينة "{{name}}" — شاهد كيف ترسمها سمتك',
+	"settings.clearUsesAction": "مسح الاستخدامات في ملاحظاتك",
+	"settings.builtInAllThemeStyled":
+		"تعيد {{theme}} تنسيق كل الـ callouts المدمجة، لذا تظهر كلها أعلاه ويتركها Callout Studio بلا تغيير. لتصميم واحد خاص بك، أضف callout بمعرّف مختلف.",
 	"settings.fallbackCallout": "Callout الاحتياطي الافتراضي",
 	"settings.fallbackCalloutDesc":
 		"ستَرِث أنواع الـ callout غير المعروفة في مخزنك نمط هذا الـ callout.",
@@ -184,6 +205,10 @@ export const ar: Record<string, string> = {
 	"commandBuilder.duplicate": "لديك بالفعل أمر يقوم بنفس الشيء تمامًا.",
 	"commandBuilder.noCallouts": "لا توجد أنواع callout لإنشاء أمر منها بعد.",
 	"commandBuilder.save": "حفظ",
+	"commandBuilder.roleThemeOwned":
+		"يوفّر القالب الخاص بك هذا الـ callout، لذا لا يتوفر له سوى تنسيق الكتلة.",
+	"commandBuilder.commandSuspended":
+		"متوقف مؤقتًا: يوفّر القالب الخاص بك هذا الـ callout، لذا لا يتوفر له سوى تنسيق الكتلة. سيعمل هذا الأمر مرة أخرى عندما يتوقف القالب عن توفيره.",
 
 	"settings.vaultMaintenance": "رؤى المخزن والصيانة",
 	"settings.vaultStats": "إحصائيات الـ callout",
@@ -215,9 +240,9 @@ export const ar: Record<string, string> = {
 		"لم يتم استيراد أنواع callout جديدة (قد تكون المعرّفات موجودة بالفعل).",
 	"notice.iconDownloadFailed":
 		'تعذّر تنزيل أيقونة Material "{{name}}". قد تكون غير متاحة لهذا الأسلوب/الوزن، أو قد يكون اتصالك بالإنترنت منقطعًا.',
-	"notice.externalStyleOn":
-		'"{{name}}" أصبحت الآن منسّقة بواسطة السمة أو مقتطف CSS الخاص بك.',
-	"notice.externalStyleOff": 'يعيد Callout Studio تنسيق "{{name}}" من جديد.',
+	"notice.externalCssOn":
+		'لم يعد Callout Studio ينسّق "{{name}}" — كود CSS الخاص بك هو من يحدّد شكله الآن. لن يتم عرض شكلَي callout العنوان وcallout المضمّن الخاصين به.',
+	"notice.externalCssOff": 'يقوم Callout Studio بتنسيق "{{name}}" مرة أخرى.',
 	"notice.nothingToWrap": "لا يوجد شيء للالتفاف.",
 	"notice.cursorNotInsideCallout": "المؤشر ليس داخل callout.",
 	"notice.autocompleteTargetMoved":
@@ -280,6 +305,10 @@ export const ar: Record<string, string> = {
 	"editor.idConflict": "هذا المعرّف يتعارض مع callout موجود",
 	"editor.idDashConflict":
 		'أوبسيديان يكتب المسافات كشرطات، لذلك يتعارض هذا المعرّف مع "{{other}}"',
+	"editor.idFromTheme":
+		"{{theme}} يوفّر بالفعل callout بهذا المعرّف، لذا لا يمكن لـ Callout Studio تنسيقه. اختر معرّفًا مختلفًا.",
+	"editor.idThemePattern":
+		"تنبيه: يقوم القالب الخاص بك بتنسيق كل callout يطابق {{pattern}}، لذا قد يتجاوز شكل هذا الـ callout.",
 	"editor.untitledCallout": "Callout بدون عنوان",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -288,25 +317,19 @@ export const ar: Record<string, string> = {
 	"editor.sampleInlineText": "إليك شارة [!{id}] مضمّنة داخل فقرة.",
 	"editor.previewReadOnly": "لا يمكن تعديل المعاينة المباشرة",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "تم التنسيق خارج Callout Studio",
-	"editor.externalStyleBody":
-		"لا يطبّق Callout Studio أي نمط على {{id}}. مظهرها يأتي من السمة أو مقتطف CSS أو إعدادات Obsidian الافتراضية.",
-	"editor.externalStyleWhat": "ماذا يعني هذا",
-	"editor.externalStyleWhatHeading":
-		"تيبة عنوان مثل ## [!{{id}}] العنوان لن تُعرض — يبقى النص كما كُتب.",
-	"editor.externalStyleWhatInline":
-		"ولا تيبة مضمّنة، مثل كلمة [!{{id}}] كلمة.",
-	"editor.externalStyleWhatGlobal":
-		"إعدادات النمط العامة (الحدود، الانحناء، حجم النص) لا تنطبق عليها.",
-	"editor.externalStylePreviewTitle": "كيف تُعرض الآن",
-	"editor.externalStyleSample":
-		"## [!{{id}}] العنوان\n\n" +
-		"هذا ما تبدو عليه جملة تحتوي [!{{id}}].\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — يوفّره القالب الخاص بك',
+	"themePreview.owned":
+		'{{theme}} يوفّر وينسّق "{{name}}". لن يتجاوزه Callout Studio، لذا يبدو الـ Block callout الخاص به تمامًا كما يرسمه القالب.',
+	"themePreview.readOnly":
+		"هذا يعني أنه لا يمكن تغيير لونه أو أيقونته أو اسمه أو معرّفه هنا. إذا كنت تريد تصميمًا خاصًا بك، أنشئ callout جديدًا بمعرّف مختلف.",
+	"themePreview.blockOnly":
+		"تنسيقا العنوان والمضمّن غير متاحين للـ callouts التي يوفّرها القالب الخاص بك. تستخدم الـ Block callouts النمط الأصلي للقالب.",
+	"themePreview.previewTitle": "كيف يظهر الآن",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
-		"> هذا ما يبدو عليه محتوى التيبة.\n",
-	"editor.externalStyleResume": "استعادة التنسيق",
+		"> هذا هو شكل محتوى الـ callout.\n",
 	"editor.externalStyleClose": "فهمت",
 
 	// Palette editor modal
@@ -594,7 +617,9 @@ export const ar: Record<string, string> = {
 	"contextMenu.copySection": "نسخ قسم العنوان",
 	"contextMenu.deleteSection": "حذف قسم العنوان",
 	"heading.toggleFold": "تبديل الطي",
-	"settings.globalSettings": "الإعدادات العامة",
+	"settings.globalSettings": "خيارات نمط Callout Studio",
+	"settings.globalSettingsScope":
+		"الشكل والتباعد والحجم لِـ callouts التي ينسّقها Callout Studio. الـ callouts التي ينسّقها القالب الخاص بك تحتفظ بتصميم القالب نفسه.",
 	"settings.globalSettingsRegularDesc":
 		"أضف رمز callout إلى اقتباس محظور (مثل `> [!type]`) لعرض صندوق الـ callout الأصلي في Obsidian. يمكنك ضبط حدوده ونصف قطره ومقياس الخط ومحاذاته.",
 	"settings.globalSettingsHeadingDesc":
@@ -920,4 +945,8 @@ export const ar: Record<string, string> = {
 	"export.formatCss": "مقطع CSS",
 	"export.formatCssDesc":
 		"ملف ‎.css محفوظ في مجلد المقاطع بهذه الخزنة، لاستخدامه حيث لا يكون Callout Studio مثبتًا. يغطي النداءات العادية فقط، وهو لقطة؛ صدّره مرة أخرى بعد تغيير نداء.",
+	"quickInsert.readingViewHint": "هذه الملاحظة مفتوحة في وضع القراءة، لذا لا يمكن إدراج أي شيء.",
+	"quickInsert.readingView": "بدّل إلى وضع المصدر أو المعاينة المباشرة لإدراج callout.",
+	"quickInsert.noCursorHint": "لا يوجد مؤشر في هذه الملاحظة، لذا لا يوجد مكان للإدراج.",
+	"quickInsert.noCursor": "ضع المؤشر في الملاحظة في المكان الذي تريد إدراج الـ callout فيه، ثم حاول مرة أخرى.",
 };

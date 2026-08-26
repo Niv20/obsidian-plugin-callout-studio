@@ -65,6 +65,14 @@ export const tr: Record<string, string> = {
 	"deleteModal.replaceInstead": "Bunun yerine değiştir",
 	"deleteModal.deleteInUse": "Sil (düz metne dönüştür)",
 	"deleteModal.deleteUnused": "Callout'u sil",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": '"{{name}}" için tüm kullanımları temizle?',
+	"deleteModal.keepsRowBuiltIn":
+		"Bu, Obsidian'ın yerleşik callout'larından biri, bu yüzden türün kendisi kullanılabilir kalır — yalnızca notlarınızdaki kullanımları değişir.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} bu callout türünü tanımlıyor, bu yüzden kullanılabilir kalır ve görünümünü korur. Callout Studio yalnızca kasanızdaki notları değiştirir — temanıza ait hiçbir şeye dokunulmaz.",
+	"deleteModal.clearUsages": "Kullanımları temizle (düz metne dönüştür)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Callout türlerim",
@@ -99,10 +107,23 @@ export const tr: Record<string, string> = {
 	"settings.makeFallbackAction": "Varsayılan geri dönüş stilini kullan",
 
 	"settings.colorSwatchAria": "Vurgu: {{accent}} · Arka plan: {{bg}}",
-	"settings.externalStyleTag": "Harici stil",
-	"settings.externalStyleAction": "Harici stili kullan (tema veya CSS)",
-	"settings.externalStyleBlocked":
-		"bu varsayılan yedek callout, önce başka birini seçin",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Kendi CSS'imle biçimlendir",
+	"settings.externalCssStopAction": "Callout Studio bunu tekrar biçimlendirsin",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "Harici CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Temanızdaki callout'lar",
+	"settings.themeCalloutsDesc":
+		"{{theme}} bunları sağlıyor veya yeniden biçimlendiriyor, bu yüzden Callout Studio bunları temanızın çizdiği haliyle bırakır ve yalnızca Block callout olarak sunar. Burada iki tür görünür: temanızın eklediği callout türleri ve görünümünü değiştirdiği yerleşik callout'lar. Temanızın eklediği callout türleri yalnızca tema etkinken listelenir.",
+	"settings.themeCalloutsDefaultTheme": "Temanız",
+	"settings.themePreviewAria":
+		'"{{name}}" önizlemesi — temanızın nasıl çizdiğini görün',
+	"settings.clearUsesAction": "Notlarınızdaki kullanımları temizle",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} tüm yerleşik callout'ları yeniden biçimlendiriyor, bu yüzden hepsi yukarıda listelenir ve Callout Studio bunlara dokunmaz. Kendi tasarımınızı yapmak için farklı bir ID ile bir callout ekleyin.",
 	"settings.fallbackCallout": "Varsayılan geri dönüş callout'u",
 	"settings.fallbackCalloutDesc":
 		"Vault'unuzdaki tanınmayan callout türleri bu callout'un stilini devralır.",
@@ -172,6 +193,10 @@ export const tr: Record<string, string> = {
 	"commandBuilder.formatBlock": "Blok",
 	"commandBuilder.roleDisabled":
 		"Bu biçim kapalı, bu yüzden siz tekrar açana kadar komut düz metin ekleyecek.",
+	"commandBuilder.roleThemeOwned":
+		"Temanız bu callout'u sağlıyor, bu yüzden yalnızca Block biçimi var.",
+	"commandBuilder.commandSuspended":
+		"Duraklatıldı: Temanız bu callout'u sağlıyor, bu yüzden yalnızca Block biçimi var. Tema bunu sağlamayı bıraktığında bu komut tekrar çalışır.",
 	"commandBuilder.callout": "Callout türü",
 	"commandBuilder.calloutDesc": "Bu komutun ekleyeceği callout.",
 	"commandBuilder.headingLevel": "Başlık düzeyi",
@@ -219,10 +244,9 @@ export const tr: Record<string, string> = {
 		"Yeni callout türü içe aktarılmadı (ID'ler zaten mevcut olabilir).",
 	"notice.iconDownloadFailed":
 		'"{{name}}" Material simgesi indirilemedi. Bu stil/ağırlık için mevcut olmayabilir veya bağlantınız çevrimdışı olabilir.',
-	"notice.externalStyleOn":
-		'"{{name}}" artık temanız veya CSS parçanız tarafından stillendiriliyor.',
-	"notice.externalStyleOff":
-		'Callout Studio "{{name}}" öğesini yeniden stillendiriyor.',
+	"notice.externalCssOn":
+		'Callout Studio artık "{{name}}" öğesini biçimlendirmiyor — görünümüne kendi CSS\'iniz karar veriyor. Başlık Callout ve Satır İçi Callout biçimleri işlenmeyecek.',
+	"notice.externalCssOff": 'Callout Studio artık "{{name}}" öğesini yeniden biçimlendiriyor.',
 	"notice.nothingToWrap": "Sarılacak bir şey yok.",
 	"notice.cursorNotInsideCallout": "İmleç callout içinde değil.",
 	"notice.autocompleteTargetMoved":
@@ -287,6 +311,10 @@ export const tr: Record<string, string> = {
 	"editor.idConflict": "Bu ID mevcut bir callout ile çakışıyor",
 	"editor.idDashConflict":
 		'Obsidian boşlukları tire olarak yazar, bu yüzden bu ID "{{other}}" ile çakışıyor',
+	"editor.idFromTheme":
+		"{{theme}} bu kimlikte bir callout zaten sağlıyor, bu yüzden Callout Studio onu biçimlendiremez. Farklı bir kimlik seçin.",
+	"editor.idThemePattern":
+		"Uyarı: temanız {{pattern}} ile eşleşen her callout'u biçimlendiriyor, bu yüzden bunun görünümünü geçersiz kılabilir.",
 	"editor.untitledCallout": "Başlıksız Callout",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -296,25 +324,19 @@ export const tr: Record<string, string> = {
 		"İşte bir paragraf içinde satır içi bir [!{id}] hapı.",
 	"editor.previewReadOnly": "Canlı önizleme düzenlenemez",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Callout Studio dışında stillendirildi",
-	"editor.externalStyleBody":
-		"Callout Studio, {{id}} öğesine hiçbir stil uygulamıyor. Görünümü temanızdan, bir CSS parçasından veya Obsidian'ın varsayılanlarından geliyor.",
-	"editor.externalStyleWhat": "Bunun anlamı",
-	"editor.externalStyleWhatHeading":
-		"## [!{{id}}] Başlık gibi bir başlık callout'u işlenmeyecek — metin yazıldığı gibi kalır.",
-	"editor.externalStyleWhatInline":
-		"Satır içi bir tane de öyle, örneğin kelime [!{{id}}] kelime.",
-	"editor.externalStyleWhatGlobal":
-		"Genel stil ayarları (kenarlık, yarıçap, metin boyutu) buna uygulanmaz.",
-	"editor.externalStylePreviewTitle": "Şu anda nasıl görüntüleniyor",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Başlık\n\n" +
-		"İçinde [!{{id}}] olan bir cümle böyle görünür.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — temanız tarafından sağlanıyor',
+	"themePreview.owned":
+		'{{theme}}, "{{name}}" öğesini sağlıyor ve biçimlendiriyor. Callout Studio onu geçersiz kılmaz, bu yüzden Blok callout\'u tam olarak temanızın çizdiği gibi görünür.',
+	"themePreview.readOnly":
+		"Bu, rengin, simgenin, adın ve kimliğin burada değiştirilemeyeceği anlamına gelir. Kendi tasarımınızı istiyorsanız, farklı bir kimlikle yeni bir callout oluşturun.",
+	"themePreview.blockOnly":
+		"Temanız tarafından sağlanan callout'lar için Başlık ve Satır İçi biçimleri kullanılamaz. Blok callout'lar temanın kendi stilini kullanır.",
+	"themePreview.previewTitle": "Şu anda nasıl görünüyor",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
-		"> Callout içeriği böyle görünür.\n",
-	"editor.externalStyleResume": "Stili geri al",
+		"> Callout'un içeriği böyle görünür.\n",
 	"editor.externalStyleClose": "Anladım",
 
 	// Palette editor modal
@@ -606,7 +628,9 @@ export const tr: Record<string, string> = {
 
 	"heading.toggleFold": "Katlamayı aç/kapat",
 
-	"settings.globalSettings": "Genel ayarlar",
+	"settings.globalSettings": "Callout Studio stil seçenekleri",
+	"settings.globalSettingsScope":
+		"Callout Studio'nun biçimlendirdiği callout'lar için şekil, boşluk ve boyut. Temanızın biçimlendirdiği callout'lar temanın kendi tasarımını korur.",
 	"settings.globalSettingsRegularDesc":
 		"Obsidian'ın yerel callout kutusu olarak görüntülemek için bir blok alıntıya callout belirteci ekleyin (örn. `> [!type]`). Kenarlığını, köşe yuvarlaklığını, yazı tipi ölçeğini ve hizalamasını ayarlayabilirsiniz.",
 	"settings.globalSettingsHeadingDesc":
@@ -927,4 +951,8 @@ export const tr: Record<string, string> = {
 	"export.formatCss": "CSS snippet",
 	"export.formatCssDesc":
 		"Callout Studio'nun kurulu olmadığı yerlerde kullanmak üzere bu vault'un snippets klasörüne kaydedilen .css dosyası. Yalnızca normal callout'ları kapsar ve bir anlık görüntüdür; değişiklikten sonra yeniden dışa aktarın.",
+	"quickInsert.readingViewHint": "Bu not okuma modunda açık, bu yüzden hiçbir şey eklenemez.",
+	"quickInsert.readingView": "Bir callout eklemek için kaynak moduna veya Canlı Önizleme'ye geçin.",
+	"quickInsert.noCursorHint": "Bu notta imleç yok, bu yüzden eklenecek bir yer yok.",
+	"quickInsert.noCursor": "Callout'u eklemek istediğiniz yere notta imleci yerleştirin, sonra tekrar deneyin.",
 };

@@ -62,6 +62,14 @@ export const bg: Record<string, string> = {
 	"deleteModal.replaceInstead": "Замяна вместо това",
 	"deleteModal.deleteInUse": "Изтриване (преобразуване в обикновен текст)",
 	"deleteModal.deleteUnused": "Изтриване на callout",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Изчистване на всички употреби на "{{name}}"?',
+	"deleteModal.keepsRowBuiltIn":
+		"Това е един от вградените callout-и на Obsidian, затова самият тип остава наличен — променят се само неговите употреби в бележките ви.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} дефинира този тип callout, затова той остава наличен и запазва външния си вид. Callout Studio променя само бележки във вашето хранилище — нищо, принадлежащо на темата ви, не се засяга.",
+	"deleteModal.clearUsages": "Изчистване на употребите (преобразуване в обикновен текст)",
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Моите типове callout",
 	"settings.builtInCallouts": "Вградени callout-и",
@@ -91,10 +99,23 @@ export const bg: Record<string, string> = {
 	"settings.resetAction": "Нулиране до стандартното",
 	"settings.makeFallbackAction": "Използване на стандартния резервен стил",
 	"settings.colorSwatchAria": "Акцент: {{accent}} · Фон: {{bg}}",
-	"settings.externalStyleTag": "Външен стил",
-	"settings.externalStyleAction": "Използване на външен стил (тема или CSS)",
-	"settings.externalStyleBlocked":
-		"това е стандартният резервен callout, изберете друг първо",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Стилизиране с моя собствен CSS",
+	"settings.externalCssStopAction": "Callout Studio да стилизира отново това",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "Външен CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callout-и от вашата тема",
+	"settings.themeCalloutsDesc":
+		"{{theme}} предоставя или преоформя тези callout-и, затова Callout Studio ги оставя точно както темата ви ги изобразява и ги предлага само като блокови callout-и. Тук се показват и двата вида: типове callout, добавени от темата ви, и вградени callout-и, чийто вид тя заменя. Типовете callout, добавени от темата ви, се показват само докато тя е активна.",
+	"settings.themeCalloutsDefaultTheme": "Вашата тема",
+	"settings.themePreviewAria":
+		'Преглед на "{{name}}" — вижте как темата ви го изобразява',
+	"settings.clearUsesAction": "Изчистване на употребите в бележките ви",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} преоформя всички вградени callout-и, затова те всички са изброени по-горе и Callout Studio не ги пипа. За да проектирате свой собствен, добавете callout с различно ID.",
 	"settings.fallbackCallout": "Стандартен резервен callout",
 	"settings.fallbackCalloutDesc":
 		"Непознатите типове callout в хранилището ви ще наследят стила на този callout.",
@@ -174,6 +195,10 @@ export const bg: Record<string, string> = {
 	"commandBuilder.noCallouts":
 		"Все още няма типове callout, от които да се създаде команда.",
 	"commandBuilder.save": "Запазване",
+	"commandBuilder.roleThemeOwned":
+		"Вашата тема предоставя този callout, затова той има само блоков формат.",
+	"commandBuilder.commandSuspended":
+		"На пауза: вашата тема предоставя този callout, затова той има само блоков формат. Тази команда ще проработи отново, когато темата спре да го предоставя.",
 	"settings.vaultMaintenance": "Прегледи и поддръжка на хранилището",
 	"settings.vaultStats": "Статистика за callout",
 	"settings.vaultStatsDesc":
@@ -204,9 +229,9 @@ export const bg: Record<string, string> = {
 		"Не са импортирани нови типове callout (ID-тата може вече да съществуват).",
 	"notice.iconDownloadFailed":
 		'Неуспешно изтегляне на икона Material "{{name}}". Може да е недостъпна за този стил/тегло или да нямате интернет връзка.',
-	"notice.externalStyleOn":
-		'"{{name}}" вече се стилизира от вашата тема или CSS фрагмент.',
-	"notice.externalStyleOff": 'Callout Studio отново стилизира "{{name}}".',
+	"notice.externalCssOn":
+		'Callout Studio вече не стилизира "{{name}}" — собственият ви CSS решава как изглежда. Формите му Заглавие и Вграден callout няма да се визуализират.',
+	"notice.externalCssOff": 'Callout Studio отново стилизира "{{name}}".',
 	"notice.nothingToWrap": "Няма какво да се обвие.",
 	"notice.cursorNotInsideCallout": "Курсорът не е вътре в callout.",
 	"notice.autocompleteTargetMoved":
@@ -271,6 +296,10 @@ export const bg: Record<string, string> = {
 	"editor.idConflict": "Това ID е в конфликт с вече съществуващ callout",
 	"editor.idDashConflict":
 		"Obsidian записва интервалите като тирета, затова това ID се сблъсква с „{{other}}“",
+	"editor.idFromTheme":
+		"{{theme}} вече предоставя callout с това ID, затова Callout Studio не може да го стилизира. Изберете друго ID.",
+	"editor.idThemePattern":
+		"Внимание: темата ви стилизира всеки callout, съвпадащ с {{pattern}}, затова може да промени как изглежда този.",
 	"editor.untitledCallout": "Callout без заглавие",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -279,25 +308,19 @@ export const bg: Record<string, string> = {
 	"editor.sampleInlineText": "Ето вградена [!{id}] капсула вътре в абзац.",
 	"editor.previewReadOnly": "Прегледът на живо не може да се редактира",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Стилизиран извън Callout Studio",
-	"editor.externalStyleBody":
-		"Callout Studio не прилага стил към {{id}}. Външният му вид идва от вашата тема, CSS фрагмент или стандартните настройки на Obsidian.",
-	"editor.externalStyleWhat": "Какво означава това",
-	"editor.externalStyleWhatHeading":
-		"Callout за заглавие като ## [!{{id}}] Заглавие няма да се изобрази — текстът остава такъв, какъвто е написан.",
-	"editor.externalStyleWhatInline":
-		"Нито вграден такъв, като дума [!{{id}}] дума.",
-	"editor.externalStyleWhatGlobal":
-		"Общите настройки за стил (рамка, радиус, размер на текста) не се прилагат към него.",
-	"editor.externalStylePreviewTitle": "Как се изобразява сега",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Заглавие\n\n" +
-		"Ето как изглежда изречение с [!{{id}}] в него.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — предоставен от вашата тема',
+	"themePreview.owned":
+		'{{theme}} предоставя и стилизира "{{name}}". Callout Studio не го променя, затова блоковият му callout изглежда точно както темата ви го изобразява.',
+	"themePreview.readOnly":
+		"Това означава, че цветът, иконата, името и ID-то му не могат да се променят оттук. Ако искате собствен дизайн, създайте нов callout с различно ID.",
+	"themePreview.blockOnly":
+		"Форматите Заглавие и Вграден не са налични за callout-и, предоставени от вашата тема. Блоковите callout-и използват нативния стил на темата.",
+	"themePreview.previewTitle": "Как изглежда в момента",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> Ето как изглежда съдържанието на callout-а.\n",
-	"editor.externalStyleResume": "Възстановяване на стилизирането",
 	"editor.externalStyleClose": "Разбрах",
 	// Palette editor modal
 	"palette.newTitle": "Нова цветова палитра",
@@ -589,7 +612,9 @@ export const bg: Record<string, string> = {
 	"contextMenu.copySection": "Копиране на раздел на заглавие",
 	"contextMenu.deleteSection": "Изтриване на раздел на заглавие",
 	"heading.toggleFold": "Превключване на сгъването",
-	"settings.globalSettings": "Общи настройки",
+	"settings.globalSettings": "Опции за стил на Callout Studio",
+	"settings.globalSettingsScope":
+		"Форма, разстояние и размер за callout-ите, стилизирани от Callout Studio. Callout-ите, стилизирани от темата ви, запазват собствения дизайн на темата.",
 	"settings.globalSettingsRegularDesc":
 		"Добавете токен на callout към цитат (напр. `> [!type]`), за да се визуализира нативната кутия за callout на Obsidian. Можете да коригирате нейната граница, радиус, мащаб на шрифта и подравняване.",
 	"settings.globalSettingsHeadingDesc":
@@ -917,4 +942,8 @@ export const bg: Record<string, string> = {
 	"export.formatCss": "CSS фрагмент",
 	"export.formatCssDesc":
 		".css файл, записан в папката със snippets на тази vault, за използване там, където Callout Studio не е инсталиран. Обхваща само обикновени callout-и и е моментна снимка; експортирайте отново след промяна.",
+	"quickInsert.readingViewHint": "Тази бележка е отворена в режим на четене, затова нищо не може да бъде вмъкнато.",
+	"quickInsert.readingView": "Превключете към режим на изходен код или Live Preview, за да вмъкнете callout.",
+	"quickInsert.noCursorHint": "В тази бележка няма курсор, затова няма къде да се вмъкне.",
+	"quickInsert.noCursor": "Поставете курсора в бележката там, където искате да вмъкнете callout, след което опитайте отново.",
 };

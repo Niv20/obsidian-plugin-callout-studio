@@ -62,6 +62,14 @@ export const el: Record<string, string> = {
 	"deleteModal.replaceInstead": "Αντικατάσταση αντ’ αυτού",
 	"deleteModal.deleteInUse": "Διαγραφή (μετατροπή σε απλό κείμενο)",
 	"deleteModal.deleteUnused": "Διαγραφή callout",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Εκκαθάριση κάθε χρήσης του "{{name}}";',
+	"deleteModal.keepsRowBuiltIn":
+		"Αυτό είναι ένα από τα ενσωματωμένα callouts του Obsidian, οπότε ο τύπος παραμένει διαθέσιμος — αλλάζουν μόνο οι χρήσεις του στις σημειώσεις σας.",
+	"deleteModal.keepsRowTheme":
+		"Το {{theme}} ορίζει αυτόν τον τύπο callout, οπότε παραμένει διαθέσιμος και διατηρεί την εμφάνισή του. Το Callout Studio αλλάζει μόνο σημειώσεις μέσα στο vault σας — τίποτα που ανήκει στο θέμα σας δεν επηρεάζεται.",
+	"deleteModal.clearUsages": "Εκκαθάριση χρήσεων (μετατροπή σε απλό κείμενο)",
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Οι τύποι callout μου",
 	"settings.builtInCallouts": "Ενσωματωμένα callouts",
@@ -92,10 +100,23 @@ export const el: Record<string, string> = {
 	"settings.resetAction": "Επαναφορά στις προεπιλογές",
 	"settings.makeFallbackAction": "Χρήση προεπιλεγμένου εφεδρικού στυλ",
 	"settings.colorSwatchAria": "Έμφαση: {{accent}} · Φόντο: {{bg}}",
-	"settings.externalStyleTag": "Εξωτερικό στιλ",
-	"settings.externalStyleAction": "Χρήση εξωτερικού στιλ (θέμα ή CSS)",
-	"settings.externalStyleBlocked":
-		"αυτό είναι το προεπιλεγμένο callout εφεδρείας, επιλέξτε πρώτα ένα άλλο",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Μορφοποίηση με το δικό μου CSS",
+	"settings.externalCssStopAction": "Να μορφοποιεί ξανά το Callout Studio",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "Εξωτερικό CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callouts από το θέμα σας",
+	"settings.themeCalloutsDesc":
+		"Το {{theme}} παρέχει ή επαναμορφοποιεί αυτά, οπότε το Callout Studio τα αφήνει ακριβώς όπως τα σχεδιάζει το θέμα σας και τα προσφέρει μόνο ως Block callouts. Εδώ εμφανίζονται και τα δύο είδη: τύποι callout που προσθέτει το θέμα σας, και ενσωματωμένα callouts των οποίων την εμφάνιση αντικαθιστά. Οι τύποι callout που προσθέτει το θέμα σας εμφανίζονται μόνο όσο αυτό είναι ενεργό.",
+	"settings.themeCalloutsDefaultTheme": "Το θέμα σας",
+	"settings.themePreviewAria":
+		'Προεπισκόπηση "{{name}}" — δείτε πώς το σχεδιάζει το θέμα σας',
+	"settings.clearUsesAction": "Εκκαθάριση χρήσεων στις σημειώσεις σας",
+	"settings.builtInAllThemeStyled":
+		"Το {{theme}} επαναμορφοποιεί κάθε ενσωματωμένο callout, οπότε όλα εμφανίζονται παραπάνω και το Callout Studio τα αφήνει ως έχουν. Για να σχεδιάσετε ένα δικό σας, προσθέστε ένα callout με διαφορετικό ID.",
 	"settings.fallbackCallout": "Προεπιλεγμένο εφεδρικό callout",
 	"settings.fallbackCalloutDesc":
 		"Οι άγνωστοι τύποι callout στο vault σας θα κληρονομήσουν το στυλ αυτού του callout.",
@@ -162,6 +183,10 @@ export const el: Record<string, string> = {
 	"commandBuilder.formatBlock": "Μπλοκ",
 	"commandBuilder.roleDisabled":
 		"Αυτή η μορφή είναι απενεργοποιημένη, οπότε η εντολή θα εισάγει απλό κείμενο μέχρι να την ενεργοποιήσετε ξανά.",
+	"commandBuilder.roleThemeOwned":
+		"Το θέμα σας παρέχει αυτό το callout, οπότε έχει μόνο μορφή Block.",
+	"commandBuilder.commandSuspended":
+		"Σε παύση: το θέμα σας παρέχει αυτό το callout, οπότε έχει μόνο μορφή Block. Αυτή η εντολή θα ξαναλειτουργήσει όταν το θέμα σταματήσει να το παρέχει.",
 	"commandBuilder.callout": "Τύπος callout",
 	"commandBuilder.calloutDesc": "Το callout που εισάγει αυτή η εντολή.",
 	"commandBuilder.headingLevel": "Επίπεδο επικεφαλίδας",
@@ -205,10 +230,9 @@ export const el: Record<string, string> = {
 		"Δεν εισήχθησαν νέοι τύποι callout (τα IDs μπορεί να υπάρχουν ήδη).",
 	"notice.iconDownloadFailed":
 		'Αποτυχία λήψης εικονιδίου Material "{{name}}". Ενδέχεται να μην είναι διαθέσιμο για αυτό το στυλ/βάρος ή η σύνδεσή σας να είναι εκτός σύνδεσης.',
-	"notice.externalStyleOn":
-		'Το "{{name}}" μορφοποιείται πλέον από το θέμα ή το απόσπασμα CSS σας.',
-	"notice.externalStyleOff":
-		'Το Callout Studio μορφοποιεί ξανά το "{{name}}".',
+	"notice.externalCssOn":
+		'Το Callout Studio δεν μορφοποιεί πλέον το "{{name}}" — το δικό σας CSS καθορίζει πώς εμφανίζεται. Οι μορφές Heading Callout και Inline Callout του δεν θα αποδίδονται.',
+	"notice.externalCssOff": 'Το Callout Studio μορφοποιεί ξανά το "{{name}}".',
 	"notice.nothingToWrap": "Δεν υπάρχει τίποτα για αναδίπλωση.",
 	"notice.cursorNotInsideCallout":
 		"Ο κέρσορας δεν βρίσκεται μέσα σε callout.",
@@ -273,6 +297,10 @@ export const el: Record<string, string> = {
 	"editor.idEmpty": "Απαιτείται τουλάχιστον ένα ID",
 	"editor.idExists": "Υπάρχει ήδη callout με αυτό το ID",
 	"editor.idConflict": "Αυτό το ID έρχεται σε σύγκρουση με υπάρχον callout",
+	"editor.idFromTheme":
+		"Το {{theme}} παρέχει ήδη ένα callout με αυτό το ID, οπότε το Callout Studio δεν μπορεί να το μορφοποιήσει. Επιλέξτε διαφορετικό ID.",
+	"editor.idThemePattern":
+		"Προσοχή: το θέμα σας μορφοποιεί κάθε callout που ταιριάζει με {{pattern}}, οπότε ενδέχεται να παρακάμψει την εμφάνιση αυτού.",
 	"editor.idDashConflict":
 		"Το Obsidian γράφει τα κενά ως παύλες, επομένως αυτό το ID συγκρούεται με το «{{other}}»",
 	"editor.untitledCallout": "Callout χωρίς τίτλο",
@@ -285,25 +313,19 @@ export const el: Record<string, string> = {
 	"editor.previewReadOnly":
 		"Η ζωντανή προεπισκόπηση δεν μπορεί να επεξεργαστεί",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Μορφοποιημένο εκτός Callout Studio",
-	"editor.externalStyleBody":
-		"Το Callout Studio δεν εφαρμόζει κανένα στιλ στο {{id}}. Η εμφάνισή του προέρχεται από το θέμα σας, ένα απόσπασμα CSS ή τις προεπιλογές του Obsidian.",
-	"editor.externalStyleWhat": "Τι σημαίνει αυτό",
-	"editor.externalStyleWhatHeading":
-		"Ένα callout επικεφαλίδας όπως ## [!{{id}}] Τίτλος δεν θα αποδοθεί — το κείμενο παραμένει όπως γράφτηκε.",
-	"editor.externalStyleWhatInline":
-		"Ούτε ένα ενσωματωμένο, όπως λέξη [!{{id}}] λέξη.",
-	"editor.externalStyleWhatGlobal":
-		"Οι καθολικές ρυθμίσεις στιλ (περίγραμμα, ακτίνα, μέγεθος κειμένου) δεν ισχύουν γι' αυτό.",
-	"editor.externalStylePreviewTitle": "Πώς αποδίδεται τώρα",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Τίτλος\n\n" +
-		"Έτσι φαίνεται μια πρόταση με [!{{id}}] μέσα της.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — παρέχεται από το θέμα σας',
+	"themePreview.owned":
+		'Το {{theme}} παρέχει και μορφοποιεί το "{{name}}". Το Callout Studio δεν θα το παρακάμψει, οπότε το Block callout του εμφανίζεται ακριβώς όπως το σχεδιάζει το θέμα σας.',
+	"themePreview.readOnly":
+		"Αυτό σημαίνει ότι το χρώμα, το εικονίδιο, το όνομα και το ID του δεν μπορούν να αλλάξουν εδώ. Αν θέλετε έναν δικό σας σχεδιασμό, δημιουργήστε ένα νέο callout με διαφορετικό ID.",
+	"themePreview.blockOnly":
+		"Οι μορφές Heading και Inline δεν είναι διαθέσιμες για callouts που παρέχει το θέμα σας. Τα Block callouts χρησιμοποιούν το εγγενές στυλ του θέματος.",
+	"themePreview.previewTitle": "Πώς αποδίδεται τώρα",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> Έτσι φαίνεται το περιεχόμενο του callout.\n",
-	"editor.externalStyleResume": "Επαναφορά μορφοποίησης",
 	"editor.externalStyleClose": "Το κατάλαβα",
 	// Palette editor modal
 	"palette.newTitle": "Νέα παλέτα χρωμάτων",
@@ -596,7 +618,9 @@ export const el: Record<string, string> = {
 	"contextMenu.copySection": "Αντιγραφή ενότητας επικεφαλίδας",
 	"contextMenu.deleteSection": "Διαγραφή ενότητας επικεφαλίδας",
 	"heading.toggleFold": "Εναλλαγή αναδίπλωσης",
-	"settings.globalSettings": "Καθολικές ρυθμίσεις",
+	"settings.globalSettings": "Επιλογές στυλ Callout Studio",
+	"settings.globalSettingsScope":
+		"Σχήμα, απόσταση και μέγεθος για τα callouts που μορφοποιεί το Callout Studio. Τα callouts που μορφοποιεί το θέμα σας διατηρούν τον δικό του σχεδιασμό.",
 	"settings.globalSettingsRegularDesc":
 		"Προσθέστε ένα token callout σε μια παράθεση (π.χ. `> [!type]`) για να εμφανιστεί το εγγενές πλαίσιο callout του Obsidian. Μπορείτε να προσαρμόσετε το περίγραμμα, την ακτίνα, την κλίμακα γραμματοσειράς και τη στοίχισή του.",
 	"settings.globalSettingsHeadingDesc":
@@ -932,4 +956,8 @@ export const el: Record<string, string> = {
 	"export.formatCss": "Απόσπασμα CSS",
 	"export.formatCssDesc":
 		"Αρχείο .css στον φάκελο snippets αυτού του vault, για χρήση όπου δεν είναι εγκατεστημένο το Callout Studio. Καλύπτει μόνο τα κανονικά callout και είναι στιγμιότυπο· κάντε νέα εξαγωγή μετά από αλλαγή.",
+	"quickInsert.readingViewHint": "Αυτή η σημείωση είναι ανοιχτή σε λειτουργία ανάγνωσης, οπότε δεν μπορεί να γίνει εισαγωγή.",
+	"quickInsert.readingView": "Μεταβείτε σε λειτουργία πηγής ή στη Ζωντανή Προεπισκόπηση για να εισαγάγετε ένα callout.",
+	"quickInsert.noCursorHint": "Δεν υπάρχει δρομέας σε αυτή τη σημείωση, οπότε δεν υπάρχει σημείο εισαγωγής.",
+	"quickInsert.noCursor": "Τοποθετήστε τον δρομέα στη σημείωση εκεί όπου θέλετε να εισαγάγετε το callout και δοκιμάστε ξανά.",
 };

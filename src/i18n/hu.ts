@@ -66,6 +66,14 @@ export const hu: Record<string, string> = {
 	"deleteModal.replaceInstead": "Inkább cserélje le",
 	"deleteModal.deleteInUse": "Törlés (egyszerű szöveggé alakítás)",
 	"deleteModal.deleteUnused": "Callout törlése",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Törli "{{name}}" minden előfordulását?',
+	"deleteModal.keepsRowBuiltIn":
+		"Ez az Obsidian egyik beépített callout-ja, ezért maga a típus elérhető marad — csak a jegyzeteiben lévő előfordulásai változnak.",
+	"deleteModal.keepsRowTheme":
+		"A(z) {{theme}} határozza meg ezt a callout-típust, ezért elérhető marad, és megtartja a kinézetét. A Callout Studio csak a tárában lévő jegyzeteket módosítja — a témájához tartozó semmi nem változik.",
+	"deleteModal.clearUsages": "Előfordulások törlése (egyszerű szöveggé alakítás)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Callout-típusaim",
@@ -100,10 +108,23 @@ export const hu: Record<string, string> = {
 	"settings.makeFallbackAction": "Alapértelmezett tartalékstílus használata",
 
 	"settings.colorSwatchAria": "Kiemelés: {{accent}} · Háttér: {{bg}}",
-	"settings.externalStyleTag": "Külső stílus",
-	"settings.externalStyleAction": "Külső stílus használata (téma vagy CSS)",
-	"settings.externalStyleBlocked":
-		"ez az alapértelmezett tartalék callout, először válassz egy másikat",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Stílus saját CSS-sel",
+	"settings.externalCssStopAction": "A Callout Studio ismét stílust adhat neki",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "Külső CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "A témájából származó callout-ok",
+	"settings.themeCalloutsDesc":
+		"A(z) {{theme}} biztosítja vagy stílusozza át ezeket, ezért a Callout Studio pontosan úgy hagyja őket, ahogy a témája megrajzolja, és csak Block callout-ként kínálja fel őket. Kétféle itt jelenik meg: a témája által hozzáadott callout-típusok, és azok a beépített callout-ok, amelyek kinézetét lecseréli. A témája által hozzáadott callout-típusok csak addig szerepelnek a listán, amíg az aktív.",
+	"settings.themeCalloutsDefaultTheme": "A témája",
+	"settings.themePreviewAria":
+		'Előnézet: "{{name}}" — nézze meg, hogyan rajzolja meg a témája',
+	"settings.clearUsesAction": "Előfordulások törlése a jegyzeteiben",
+	"settings.builtInAllThemeStyled":
+		"A(z) {{theme}} minden beépített callout-ot átstílusoz, ezért mindegyik fent szerepel, és a Callout Studio nem nyúl hozzájuk. Ha saját tervezésűt szeretne, adjon hozzá egy callout-ot másik azonosítóval.",
 	"settings.fallbackCallout": "Alapértelmezett tartalék callout",
 	"settings.fallbackCalloutDesc":
 		"A tárban fel nem ismert callout-típusok öröklik ennek a callout-nak a stílusát.",
@@ -173,6 +194,10 @@ export const hu: Record<string, string> = {
 	"commandBuilder.formatBlock": "Block",
 	"commandBuilder.roleDisabled":
 		"Ez a formátum ki van kapcsolva, ezért a parancs egyszerű szöveget szúr be, amíg vissza nem kapcsolja.",
+	"commandBuilder.roleThemeOwned":
+		"A témája biztosítja ezt a callout-ot, ezért csak Block formátuma van.",
+	"commandBuilder.commandSuspended":
+		"Szüneteltetve: a témája biztosítja ezt a callout-ot, ezért csak Block formátuma van. Ez a parancs újra működik, ha a téma már nem biztosítja.",
 	"commandBuilder.callout": "Callout típus",
 	"commandBuilder.calloutDesc": "A callout, amelyet ez a parancs beszúr.",
 	"commandBuilder.headingLevel": "Címsorszint",
@@ -220,10 +245,9 @@ export const hu: Record<string, string> = {
 		"Nem importáltunk új callout-típust (az azonosítók már létezhetnek).",
 	"notice.iconDownloadFailed":
 		'A "{{name}}" Material ikon letöltése nem sikerült. Lehet, hogy ez a stílus/vastagság nem érhető el, vagy nincs internetkapcsolata.',
-	"notice.externalStyleOn":
-		'"{{name}}" mostantól a témád vagy a CSS-részleted formázza.',
-	"notice.externalStyleOff":
-		'A Callout Studio ismét formázza a(z) "{{name}}" elemet.',
+	"notice.externalCssOn":
+		'A Callout Studio többé nem stílusozza a(z) "{{name}}"-t — a saját CSS-e dönti el, hogyan néz ki. A Címsor callout és a Beágyazott callout formája nem jelenik meg.',
+	"notice.externalCssOff": 'A Callout Studio ismét stílust ad a(z) "{{name}}"-nek.',
 	"notice.nothingToWrap": "Nincs mit becsomagolni.",
 	"notice.cursorNotInsideCallout": "A kurzor nem callout-on belül van.",
 	"notice.autocompleteTargetMoved":
@@ -288,6 +312,10 @@ export const hu: Record<string, string> = {
 	"editor.idEmpty": "Legalább egy azonosító szükséges",
 	"editor.idExists": "Már létezik callout ezzel az azonosítóval",
 	"editor.idConflict": "Ez az azonosító ütközik egy meglévő callout-tal",
+	"editor.idFromTheme":
+		"A(z) {{theme}} már biztosít egy callout-ot ezzel az azonosítóval, ezért a Callout Studio nem tudja stílusozni. Válasszon másik azonosítót.",
+	"editor.idThemePattern":
+		"Figyelem: a témája minden, a(z) {{pattern}}-nak megfelelő callout-ot stílusoz, ezért felülírhatja ennek a kinézetét.",
 	"editor.idDashConflict":
 		"Az Obsidian a szóközöket kötőjelként írja, ezért ez az azonosító ütközik ezzel: „{{other}}”",
 	"editor.untitledCallout": "Névtelen callout",
@@ -299,25 +327,22 @@ export const hu: Record<string, string> = {
 		"Íme egy soron belüli [!{id}] pirula egy bekezdésen belül.",
 	"editor.previewReadOnly": "Az élő előnézet nem szerkeszthető",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "A Callout Studión kívül stílusozva",
-	"editor.externalStyleBody":
-		"A Callout Studio nem alkalmaz stílust erre: {{id}}. A megjelenése a témádból, egy CSS-részletből vagy az Obsidian alapértelmezéseiből származik.",
-	"editor.externalStyleWhat": "Ez mit jelent",
-	"editor.externalStyleWhatHeading":
-		"Egy fejléc callout, mint a ## [!{{id}}] Cím, nem jelenik meg formázva — a szöveg úgy marad, ahogy leírtad.",
-	"editor.externalStyleWhatInline":
-		"Ahogy egy beágyazott sem, mint a szó [!{{id}}] szó.",
-	"editor.externalStyleWhatGlobal":
-		"A globális stílusbeállítások (keret, lekerekítés, szövegméret) nem érvényesek rá.",
-	"editor.externalStylePreviewTitle": "Hogyan jelenik meg most",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Cím\n\n" +
-		"Így néz ki egy mondat, amiben [!{{id}}] szerepel.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": 'A(z) {{name}} — a témája biztosítja',
+	"themePreview.owned":
+		'A(z) {{theme}} biztosítja és stílusozza a(z) "{{name}}"-t. A Callout Studio nem írja felül, ezért a Block callout-ja pontosan úgy néz ki, ahogy a témája megrajzolja.',
+	"themePreview.readOnly":
+		"Ez azt jelenti, hogy a színe, ikonja, neve és azonosítója itt nem módosítható. Ha saját tervezésűt szeretne, hozzon létre egy új callout-ot másik azonosítóval.",
+	"themePreview.blockOnly":
+		"A Címsor és a Beágyazott formátum nem elérhető a témája által biztosított callout-oknál. A Block callout-ok a téma natív stílusát használják.",
+	"themePreview.previewTitle": "Hogyan jelenik meg most",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> Így néz ki a callout tartalma.\n",
-	"editor.externalStyleResume": "Stílus visszavétele",
+
+	// External style window (opens instead of the editor for a callout the
+	// user handed to their theme / a CSS snippet)
 	"editor.externalStyleClose": "Értem",
 
 	// Palette editor modal
@@ -608,7 +633,9 @@ export const hu: Record<string, string> = {
 	"contextMenu.copySection": "Címsor szakasz másolása",
 	"contextMenu.deleteSection": "Címsor szakasz törlése",
 	"heading.toggleFold": "Összecsukás váltása",
-	"settings.globalSettings": "Globális beállítások",
+	"settings.globalSettings": "Callout Studio stílusbeállítások",
+	"settings.globalSettingsScope":
+		"Alak, térköz és méret a Callout Studio által stílusozott callout-okhoz. A témája által stílusozott callout-ok megtartják a téma saját dizájnját.",
 	"settings.globalSettingsRegularDesc":
 		"Adjon hozzá egy callout tokent egy idézethez (pl. `> [!type]`), hogy megjelenjen az Obsidian natív callout-doboza. Beállíthatja a szegélyét, a sugarát, a betűméret-arányát és az igazítását.",
 	"settings.globalSettingsHeadingDesc":
@@ -940,4 +967,8 @@ export const hu: Record<string, string> = {
 	"export.formatCss": "CSS-részlet",
 	"export.formatCssDesc":
 		".css fájl a vault snippets mappájában való használatra ott, ahol a Callout Studio nincs telepítve. Csak a normál calloutokat fedi le, és pillanatkép; módosítás után exportáld újra.",
+	"quickInsert.readingViewHint": "Ez a jegyzet olvasó módban van megnyitva, ezért semmit sem lehet beszúrni.",
+	"quickInsert.readingView": "Váltson forrás módra vagy élő előnézetre a callout beszúrásához.",
+	"quickInsert.noCursorHint": "Ebben a jegyzetben nincs kurzor, ezért nincs hova beszúrni.",
+	"quickInsert.noCursor": "Helyezze a kurzort a jegyzetben oda, ahová be szeretné szúrni a callout-ot, majd próbálja újra.",
 };

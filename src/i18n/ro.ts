@@ -65,6 +65,14 @@ export const ro: Record<string, string> = {
 	"deleteModal.replaceInstead": "Înlocuiți în schimb",
 	"deleteModal.deleteInUse": "Șterge (convertește în text simplu)",
 	"deleteModal.deleteUnused": "Șterge callout",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Ștergeți toate utilizările "{{name}}"?',
+	"deleteModal.keepsRowBuiltIn":
+		"Acesta este unul dintre callouts integrate ale Obsidian, așa că tipul în sine rămâne disponibil — se schimbă doar utilizările lui din notele dvs.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} definește acest tip de callout, așa că rămâne disponibil și își păstrează aspectul. Callout Studio modifică doar notele din vault-ul dvs. — nimic ce aparține temei dvs. nu este atins.",
+	"deleteModal.clearUsages": "Șterge utilizările (convertește în text simplu)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Tipurile mele de callout",
@@ -99,10 +107,23 @@ export const ro: Record<string, string> = {
 	"settings.makeFallbackAction": "Utilizați stilul de rezervă implicit",
 
 	"settings.colorSwatchAria": "Accent: {{accent}} · Fundal: {{bg}}",
-	"settings.externalStyleTag": "Stil extern",
-	"settings.externalStyleAction": "Utilizează stilul extern (temă sau CSS)",
-	"settings.externalStyleBlocked":
-		"acesta este callout-ul de rezervă implicit, alege mai întâi altul",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Stilizează cu CSS-ul meu propriu",
+	"settings.externalCssStopAction": "Lasă Callout Studio să stilizeze din nou acest lucru",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "CSS extern",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callouts din tema dvs.",
+	"settings.themeCalloutsDesc":
+		"{{theme}} furnizează sau restilizează acestea, așa că Callout Studio le lasă exact așa cum le desenează tema dvs. și le oferă doar ca callouts bloc. Ambele tipuri apar aici: tipurile de callout adăugate de tema dvs. și callouts integrate al căror aspect îl înlocuiește. Tipurile de callout adăugate de temă sunt afișate doar cât timp este activă.",
+	"settings.themeCalloutsDefaultTheme": "Tema dvs.",
+	"settings.themePreviewAria":
+		'Previzualizare "{{name}}" — vedeți cum îl desenează tema dvs.',
+	"settings.clearUsesAction": "Șterge utilizările din notele dvs.",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} restilizează fiecare callout integrat, așa că toate sunt afișate mai sus și Callout Studio le lasă în pace. Pentru a proiecta unul propriu, adăugați un callout cu un ID diferit.",
 	"settings.fallbackCallout": "Callout de rezervă implicit",
 	"settings.fallbackCalloutDesc":
 		"Tipurile de callout nerecunoscute din vault vor moșteni stilul acestui callout.",
@@ -172,6 +193,10 @@ export const ro: Record<string, string> = {
 	"commandBuilder.formatBlock": "Bloc",
 	"commandBuilder.roleDisabled":
 		"Acest format este dezactivat, așa că această comandă va insera text simplu până când îl reactivați.",
+	"commandBuilder.roleThemeOwned":
+		"Tema dvs. furnizează acest callout, așa că are doar un format bloc.",
+	"commandBuilder.commandSuspended":
+		"În pauză: tema dvs. furnizează acest callout, așa că are doar un format bloc. Această comandă funcționează din nou când tema nu îl mai furnizează.",
 	"commandBuilder.callout": "Tip de callout",
 	"commandBuilder.calloutDesc":
 		"Callout-ul pe care îl inserează această comandă.",
@@ -221,9 +246,9 @@ export const ro: Record<string, string> = {
 		"Nu au fost importate tipuri noi de callout (ID-urile pot exista deja).",
 	"notice.iconDownloadFailed":
 		'Nu s-a putut descărca pictograma Material "{{name}}". Poate fi indisponibilă pentru acest stil/grosime sau conexiunea este offline.',
-	"notice.externalStyleOn":
-		'"{{name}}" este acum stilizat de tema sau fragmentul CSS.',
-	"notice.externalStyleOff": 'Callout Studio stilizează din nou "{{name}}".',
+	"notice.externalCssOn":
+		'Callout Studio nu mai stilizează "{{name}}" — CSS-ul dvs. propriu decide cum arată. Formele sale Callout tip titlu și Callout inline nu se vor reda.',
+	"notice.externalCssOff": 'Callout Studio stilizează din nou "{{name}}".',
 	"notice.nothingToWrap": "Nimic de înfășurat.",
 	"notice.cursorNotInsideCallout":
 		"Cursorul nu este în interiorul unui callout.",
@@ -288,6 +313,10 @@ export const ro: Record<string, string> = {
 	"editor.idEmpty": "Este necesar cel puțin un ID",
 	"editor.idExists": "Există deja un callout cu acest ID",
 	"editor.idConflict": "Acest ID intră în conflict cu un callout existent",
+	"editor.idFromTheme":
+		"{{theme}} furnizează deja un callout cu acest ID, așa că Callout Studio nu îl poate stiliza. Alegeți un alt ID.",
+	"editor.idThemePattern":
+		"Atenție: tema dvs. stilizează fiecare callout care se potrivește cu {{pattern}}, așa că poate suprascrie aspectul acestuia.",
 	"editor.idDashConflict":
 		"Obsidian scrie spațiile ca liniuțe, așa că acest ID intră în conflict cu „{{other}}”",
 	"editor.untitledCallout": "Callout fără titlu",
@@ -299,25 +328,19 @@ export const ro: Record<string, string> = {
 		"Iată o pastilă [!{id}] inline în interiorul unui paragraf.",
 	"editor.previewReadOnly": "Previzualizarea live nu poate fi editată",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Stilizat în afara Callout Studio",
-	"editor.externalStyleBody":
-		"Callout Studio nu aplică niciun stil pentru {{id}}. Aspectul provine din tema ta, un fragment CSS sau setările implicite Obsidian.",
-	"editor.externalStyleWhat": "Ce înseamnă asta",
-	"editor.externalStyleWhatHeading":
-		"Un callout de titlu precum ## [!{{id}}] Titlu nu va fi redat — textul rămâne așa cum a fost scris.",
-	"editor.externalStyleWhatInline":
-		"Nici unul inline, precum cuvânt [!{{id}}] cuvânt.",
-	"editor.externalStyleWhatGlobal":
-		"Setările globale de stil (bordură, rază, dimensiunea textului) nu i se aplică.",
-	"editor.externalStylePreviewTitle": "Cum este redat acum",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Titlu\n\n" +
-		"Așa arată o propoziție cu [!{{id}}] în ea.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — furnizat de tema dvs.',
+	"themePreview.owned":
+		'{{theme}} furnizează și stilizează "{{name}}". Callout Studio nu îl va suprascrie, așa că callout-ul său bloc arată exact așa cum îl desenează tema dvs.',
+	"themePreview.readOnly":
+		"Asta înseamnă că nu i se pot schimba aici culoarea, pictograma, numele și ID-ul. Dacă doriți un design propriu, creați un callout nou cu un ID diferit.",
+	"themePreview.blockOnly":
+		"Formatele Callout tip titlu și Callout inline nu sunt disponibile pentru callouts furnizate de tema dvs. Callouts de tip bloc folosesc stilul nativ al temei.",
+	"themePreview.previewTitle": "Cum este redat acum",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
-		"> Așa arată conținutul callout-ului.\n",
-	"editor.externalStyleResume": "Recuperează stilizarea",
+		"> Așa arată conținutul acestui callout.\n",
 	"editor.externalStyleClose": "Am înțeles",
 
 	// Palette editor modal
@@ -608,7 +631,9 @@ export const ro: Record<string, string> = {
 	"contextMenu.copySection": "Copiați secțiunea de titlu",
 	"contextMenu.deleteSection": "Ștergeți secțiunea de titlu",
 	"heading.toggleFold": "Comutare pliere",
-	"settings.globalSettings": "Setări globale",
+	"settings.globalSettings": "Opțiuni de stil Callout Studio",
+	"settings.globalSettingsScope":
+		"Formă, spațiere și dimensiune pentru callouts pe care le stilizează Callout Studio. Callouts stilizate de tema dvs. păstrează designul propriu al temei.",
 	"settings.globalSettingsRegularDesc":
 		"Adăugați un token callout într-un citat (de ex. `> [!type]`) pentru a afișa caseta de callout integrată a Obsidian. Puteți ajusta bordura, rotunjirea, scara fontului și alinierea.",
 	"settings.globalSettingsHeadingDesc":
@@ -938,4 +963,8 @@ export const ro: Record<string, string> = {
 	"export.formatCss": "Fragment CSS",
 	"export.formatCssDesc":
 		"Un fișier .css salvat în folderul snippets al acestui vault, pentru utilizare unde Callout Studio nu este instalat. Acoperă doar callouturile obișnuite și este un instantaneu; exportă din nou după modificare.",
+	"quickInsert.readingViewHint": "Această notă este deschisă în modul de citire, așa că nimic nu poate fi inserat.",
+	"quickInsert.readingView": "Comută la modul sursă sau la Live Preview pentru a insera un callout.",
+	"quickInsert.noCursorHint": "Nu există niciun cursor în această notă, așa că nu există unde să inserezi.",
+	"quickInsert.noCursor": "Plasează cursorul în notă în locul în care dorești să inserezi callout-ul, apoi încearcă din nou.",
 };

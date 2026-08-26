@@ -64,6 +64,14 @@ export const th: Record<string, string> = {
 	"deleteModal.replaceInstead": "แทนที่แทน",
 	"deleteModal.deleteInUse": "ลบ (แปลงเป็นข้อความธรรมดา)",
 	"deleteModal.deleteUnused": "ลบ callout",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'ล้างการใช้งานทั้งหมดของ "{{name}}" หรือไม่?',
+	"deleteModal.keepsRowBuiltIn":
+		"นี่คือหนึ่งใน callout ในตัวของ Obsidian ดังนั้นประเภทนี้จะยังคงใช้งานได้ — มีเพียงการใช้งานในโน้ตของคุณเท่านั้นที่จะเปลี่ยนแปลง",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} กำหนดประเภท callout นี้ไว้ จึงยังคงใช้งานได้และคงรูปลักษณ์เดิม Callout Studio จะเปลี่ยนเฉพาะโน้ตภายใน vault ของคุณเท่านั้น — ไม่แตะต้องสิ่งใดที่เป็นของธีมของคุณ",
+	"deleteModal.clearUsages": "ล้างการใช้งาน (แปลงเป็นข้อความธรรมดา)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "ประเภท callout ของฉัน",
@@ -98,10 +106,23 @@ export const th: Record<string, string> = {
 	"settings.makeFallbackAction": "ใช้สไตล์สำรองเริ่มต้น",
 
 	"settings.colorSwatchAria": "จุดเน้น: {{accent}} · พื้นหลัง: {{bg}}",
-	"settings.externalStyleTag": "สไตล์ภายนอก",
-	"settings.externalStyleAction": "ใช้สไตล์ภายนอก (ธีมหรือ CSS)",
-	"settings.externalStyleBlocked":
-		"นี่คือ callout สำรองเริ่มต้น โปรดเลือกอันอื่นก่อน",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "จัดสไตล์ด้วย CSS ของฉันเอง",
+	"settings.externalCssStopAction": "ให้ Callout Studio จัดสไตล์นี้อีกครั้ง",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "CSS ภายนอก",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callout จากธีมของคุณ",
+	"settings.themeCalloutsDesc":
+		"{{theme}} กำหนดหรือปรับสไตล์ callout เหล่านี้ ดังนั้น Callout Studio จะปล่อยให้เป็นไปตามที่ธีมของคุณวาดไว้ และเสนอให้ใช้ได้เฉพาะแบบ Block callout เท่านั้น ทั้งสองประเภทจะปรากฏที่นี่: ประเภท callout ที่ธีมของคุณเพิ่มเข้ามา และ callout ในตัวที่ธีมเปลี่ยนรูปลักษณ์ ประเภท callout ที่ธีมของคุณเพิ่มเข้ามาจะแสดงเฉพาะขณะที่ธีมนั้นใช้งานอยู่เท่านั้น",
+	"settings.themeCalloutsDefaultTheme": "ธีมของคุณ",
+	"settings.themePreviewAria":
+		'ดูตัวอย่าง "{{name}}" — ดูว่าธีมของคุณวาดมันอย่างไร',
+	"settings.clearUsesAction": "ล้างการใช้งานในโน้ตของคุณ",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} ปรับสไตล์ callout ในตัวทุกรายการ ดังนั้นทั้งหมดจะแสดงอยู่ด้านบนและ Callout Studio จะไม่แตะต้อง หากต้องการออกแบบของคุณเอง ให้เพิ่ม callout ที่มี ID ต่างออกไป",
 	"settings.fallbackCallout": "Callout สำรองเริ่มต้น",
 	"settings.fallbackCalloutDesc":
 		"ประเภท callout ที่ไม่รู้จักใน vault จะสืบทอดสไตล์ของ callout นี้",
@@ -171,6 +192,10 @@ export const th: Record<string, string> = {
 	"commandBuilder.formatBlock": "บล็อก",
 	"commandBuilder.roleDisabled":
 		"รูปแบบนี้ถูกปิดอยู่ คำสั่งจึงจะแทรกข้อความธรรมดาจนกว่าคุณจะเปิดใช้อีกครั้ง",
+	"commandBuilder.roleThemeOwned":
+		"ธีมของคุณกำหนด callout นี้ไว้ จึงมีเฉพาะรูปแบบ Block เท่านั้น",
+	"commandBuilder.commandSuspended":
+		"หยุดชั่วคราว: ธีมของคุณกำหนด callout นี้ไว้ จึงมีเฉพาะรูปแบบ Block เท่านั้น คำสั่งนี้จะใช้งานได้อีกครั้งเมื่อธีมเลิกกำหนด callout นี้",
 	"commandBuilder.callout": "ประเภท callout",
 	"commandBuilder.calloutDesc": "callout ที่คำสั่งนี้แทรก",
 	"commandBuilder.headingLevel": "ระดับหัวข้อ",
@@ -214,9 +239,9 @@ export const th: Record<string, string> = {
 	"notice.noNewJSON": "ไม่มีประเภท callout ใหม่ที่นำเข้า (ID อาจมีอยู่แล้ว)",
 	"notice.iconDownloadFailed":
 		'ไม่สามารถดาวน์โหลดไอคอน Material "{{name}}" ได้ อาจไม่มีให้บริการสำหรับสไตล์/น้ำหนักนี้ หรือการเชื่อมต่อของคุณออฟไลน์อยู่',
-	"notice.externalStyleOn":
-		'"{{name}}" ตอนนี้ถูกจัดสไตล์โดยธีมหรือ CSS snippet ของคุณ',
-	"notice.externalStyleOff": 'Callout Studio จัดสไตล์ "{{name}}" อีกครั้ง',
+	"notice.externalCssOn":
+		'Callout Studio จะไม่จัดสไตล์ "{{name}}" อีกต่อไป — CSS ของคุณเองจะเป็นตัวกำหนดรูปลักษณ์ รูปแบบ Heading Callout และ Inline Callout จะไม่แสดงผล',
+	"notice.externalCssOff": 'ตอนนี้ Callout Studio จัดสไตล์ "{{name}}" อีกครั้งแล้ว',
 	"notice.nothingToWrap": "ไม่มีอะไรให้ห่อ",
 	"notice.cursorNotInsideCallout": "เคอร์เซอร์ไม่อยู่ใน callout",
 	"notice.autocompleteTargetMoved":
@@ -278,6 +303,10 @@ export const th: Record<string, string> = {
 	"editor.idEmpty": "ต้องมี ID อย่างน้อยหนึ่งรายการ",
 	"editor.idExists": "มี callout ที่มี ID นี้อยู่แล้ว",
 	"editor.idConflict": "ID นี้ขัดแย้งกับ callout ที่มีอยู่",
+	"editor.idFromTheme":
+		"{{theme}} มี callout ที่ใช้ ID นี้อยู่แล้ว Callout Studio จึงไม่สามารถจัดสไตล์ได้ กรุณาเลือก ID อื่น",
+	"editor.idThemePattern":
+		"โปรดทราบ: ธีมของคุณจัดสไตล์ callout ทุกรายการที่ตรงกับ {{pattern}} จึงอาจแทนที่รูปลักษณ์ของ callout นี้",
 	"editor.idDashConflict":
 		'Obsidian เขียนช่องว่างเป็นขีดกลาง ดังนั้น ID นี้จึงขัดแย้งกับ "{{other}}"',
 	"editor.untitledCallout": "Callout ไม่มีชื่อ",
@@ -288,25 +317,22 @@ export const th: Record<string, string> = {
 	"editor.sampleInlineText": "นี่คือแคปซูล [!{id}] แบบอินไลน์ภายในย่อหน้า",
 	"editor.previewReadOnly": "ไม่สามารถแก้ไขตัวอย่างสดได้",
 
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — กำหนดโดยธีมของคุณ',
+	"themePreview.owned":
+		'{{theme}} กำหนดและจัดสไตล์ "{{name}}" Callout Studio จะไม่แทนที่มัน ดังนั้น Block callout จึงมีรูปลักษณ์ตามที่ธีมของคุณวาดไว้ทุกประการ',
+	"themePreview.readOnly":
+		"หมายความว่าไม่สามารถเปลี่ยนสี ไอคอน ชื่อ และ ID ได้ที่นี่ หากต้องการออกแบบของคุณเอง ให้สร้าง callout ใหม่ด้วย ID ที่ต่างออกไป",
+	"themePreview.blockOnly":
+		"รูปแบบ Heading และ Inline ไม่สามารถใช้ได้กับ callout ที่ธีมของคุณกำหนดไว้ Block callout จะใช้สไตล์ดั้งเดิมของธีม",
+	"themePreview.previewTitle": "รูปลักษณ์ปัจจุบัน",
+	"themePreview.blockSample":
+		"> [!{{id}}] {{name}}\n" +
+		"> นี่คือลักษณะเนื้อหาของ callout\n",
+
 	// External style window (opens instead of the editor for a callout the
 	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "จัดสไตล์นอก Callout Studio",
-	"editor.externalStyleBody":
-		"Callout Studio ไม่ได้ใช้สไตล์ใด ๆ กับ {{id}} รูปลักษณ์ของมันมาจากธีมของคุณ CSS snippet หรือค่าเริ่มต้นของ Obsidian",
-	"editor.externalStyleWhat": "สิ่งนี้หมายความว่าอย่างไร",
-	"editor.externalStyleWhatHeading":
-		"callout แบบหัวข้ออย่าง ## [!{{id}}] ชื่อเรื่อง จะไม่ถูกเรนเดอร์ — ข้อความจะคงอยู่ตามที่เขียนไว้",
-	"editor.externalStyleWhatInline":
-		"เช่นเดียวกับแบบอินไลน์ เช่น คำ [!{{id}}] คำ",
-	"editor.externalStyleWhatGlobal":
-		"การตั้งค่าสไตล์ทั่วไป (ขอบ รัศมี ขนาดข้อความ) จะไม่ถูกนำไปใช้กับมัน",
-	"editor.externalStylePreviewTitle": "วิธีที่มันแสดงผลตอนนี้",
-	"editor.externalStyleSample":
-		"## [!{{id}}] ชื่อเรื่อง\n\n" +
-		"นี่คือลักษณะของประโยคที่มี [!{{id}}] อยู่ในนั้น\n\n" +
-		"> [!{{id}}] {{name}}\n" +
-		"> นี่คือลักษณะของเนื้อหา callout\n",
-	"editor.externalStyleResume": "นำสไตล์กลับคืนมา",
 	"editor.externalStyleClose": "เข้าใจแล้ว",
 
 	// Palette editor modal
@@ -597,7 +623,9 @@ export const th: Record<string, string> = {
 
 	"heading.toggleFold": "สลับการพับ",
 
-	"settings.globalSettings": "การตั้งค่าส่วนกลาง",
+	"settings.globalSettings": "ตัวเลือกสไตล์ของ Callout Studio",
+	"settings.globalSettingsScope":
+		"รูปร่าง ระยะห่าง และขนาดสำหรับ callout ที่ Callout Studio จัดสไตล์ให้ ส่วน callout ที่ธีมของคุณจัดสไตล์จะคงการออกแบบของธีมไว้",
 	"settings.globalSettingsRegularDesc":
 		"เพิ่มโทเค็น callout ลงในบล็อกอ้างอิง (เช่น `> [!type]`) เพื่อแสดงผลเป็นกล่อง callout ดั้งเดิมของ Obsidian คุณสามารถปรับขอบ ความโค้งมุม ขนาดตัวอักษร และการจัดแนวได้",
 	"settings.globalSettingsHeadingDesc":
@@ -909,4 +937,8 @@ export const th: Record<string, string> = {
 	"export.formatCss": "CSS snippet",
 	"export.formatCssDesc":
 		"ไฟล์ .css ที่บันทึกในโฟลเดอร์ snippets ของ vault นี้ เพื่อใช้ในที่ที่ไม่ได้ติดตั้ง Callout Studio ครอบคลุมเฉพาะ callout ปกติและเป็นภาพ snapshot; ส่งออกอีกครั้งหลังเปลี่ยนแปลง callout",
+	"quickInsert.readingViewHint": "บันทึกนี้เปิดอยู่ในโหมดอ่าน จึงไม่สามารถแทรกอะไรได้",
+	"quickInsert.readingView": "สลับไปยังโหมดต้นฉบับหรือ Live Preview เพื่อแทรก callout",
+	"quickInsert.noCursorHint": "ไม่มีเคอร์เซอร์ในบันทึกนี้ จึงไม่มีตำแหน่งให้แทรก",
+	"quickInsert.noCursor": "วางเคอร์เซอร์ในบันทึกตรงตำแหน่งที่ต้องการแทรก callout แล้วลองอีกครั้ง",
 };

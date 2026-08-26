@@ -64,6 +64,14 @@ export const cs: Record<string, string> = {
 	"deleteModal.replaceInstead": "Raději nahradit",
 	"deleteModal.deleteInUse": "Smazat (převést na prostý text)",
 	"deleteModal.deleteUnused": "Smazat callout",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Vymazat všechna použití "{{name}}"?',
+	"deleteModal.keepsRowBuiltIn":
+		"Toto je jeden z vestavěných callouts Obsidianu, takže samotný typ zůstává dostupný — mění se jen jeho výskyty ve vašich poznámkách.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} definuje tento typ callout, takže zůstává dostupný a zachovává si svůj vzhled. Callout Studio mění pouze poznámky ve vašem vaultu — ničeho, co patří vašemu tématu, se nedotýká.",
+	"deleteModal.clearUsages": "Vymazat použití (převést na prostý text)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Moje typy callout",
@@ -98,10 +106,23 @@ export const cs: Record<string, string> = {
 	"settings.makeFallbackAction": "Použít výchozí záložní styl",
 
 	"settings.colorSwatchAria": "Akcent: {{accent}} · Pozadí: {{bg}}",
-	"settings.externalStyleTag": "Externí styl",
-	"settings.externalStyleAction": "Použít externí styl (motiv nebo CSS)",
-	"settings.externalStyleBlocked":
-		"toto je výchozí záložní callout, nejprve vyberte jiný",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Stylizovat vlastním CSS",
+	"settings.externalCssStopAction": "Nechat Callout Studio opět stylizovat",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "Vlastní CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callouts z vašeho tématu",
+	"settings.themeCalloutsDesc":
+		"{{theme}} tyto callouts dodává nebo přestylovává, takže je Callout Studio ponechává přesně tak, jak je vykresluje vaše téma, a nabízí je jen jako blokové callouts. Zobrazují se zde oba druhy: typy callout, které vaše téma přidává, a vestavěné callouts, jejichž vzhled nahrazuje. Typy callout přidané vaším tématem se zobrazují jen dokud je aktivní.",
+	"settings.themeCalloutsDefaultTheme": "Vaše téma",
+	"settings.themePreviewAria":
+		'Náhled "{{name}}" — jak jej vykresluje vaše téma',
+	"settings.clearUsesAction": "Vymazat použití ve vašich poznámkách",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} přestylovává všechny vestavěné callouts, takže jsou všechny uvedeny výše a Callout Studio je nechává být. Chcete-li navrhnout vlastní, přidejte callout s jiným ID.",
 	"settings.fallbackCallout": "Výchozí záložní callout",
 	"settings.fallbackCalloutDesc":
 		"Nerozpoznané typy callout ve vaultu zdědí styl tohoto callout.",
@@ -185,6 +206,10 @@ export const cs: Record<string, string> = {
 	"commandBuilder.noCallouts":
 		"Zatím neexistují žádné typy callout, ze kterých by šlo příkaz vytvořit.",
 	"commandBuilder.save": "Uložit",
+	"commandBuilder.roleThemeOwned":
+		"Tento callout dodává vaše téma, takže má pouze blokový formát.",
+	"commandBuilder.commandSuspended":
+		"Pozastaveno: tento callout dodává vaše téma, takže má pouze blokový formát. Tento příkaz bude znovu fungovat, jakmile jej téma přestane dodávat.",
 
 	"settings.vaultMaintenance": "Statistiky a údržba vaultu",
 	"settings.vaultStats": "Statistiky callout",
@@ -216,9 +241,9 @@ export const cs: Record<string, string> = {
 		"Žádné nové typy callout nebyly importovány (ID mohou již existovat).",
 	"notice.iconDownloadFailed":
 		'Ikonu Material "{{name}}" nelze stáhnout. Může být nedostupná pro tento styl/tloušťku nebo jste offline.',
-	"notice.externalStyleOn":
-		'"{{name}}" je nyní stylizován vaším motivem nebo CSS fragmentem.',
-	"notice.externalStyleOff": 'Callout Studio opět stylizuje "{{name}}".',
+	"notice.externalCssOn":
+		'Callout Studio už nestylizuje "{{name}}" — jeho vzhled určuje vaše vlastní CSS. Jeho formáty Nadpis a Vložený se nebudou vykreslovat.',
+	"notice.externalCssOff": 'Callout Studio nyní opět stylizuje "{{name}}".',
 	"notice.nothingToWrap": "Není co zabalit.",
 	"notice.cursorNotInsideCallout": "Kurzor není uvnitř callout.",
 	"notice.autocompleteTargetMoved":
@@ -284,6 +309,10 @@ export const cs: Record<string, string> = {
 	"editor.idConflict": "Toto ID je v konfliktu s existujícím callout",
 	"editor.idDashConflict":
 		"Obsidian zapisuje mezery jako pomlčky, takže toto ID koliduje s „{{other}}“",
+	"editor.idFromTheme":
+		"{{theme}} už poskytuje callout s tímto ID, takže ho Callout Studio nemůže stylizovat. Zvolte jiné ID.",
+	"editor.idThemePattern":
+		"Upozornění: vaše téma stylizuje každý callout odpovídající {{pattern}}, takže může přepsat vzhled tohoto.",
 	"editor.untitledCallout": "Callout bez názvu",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -293,25 +322,19 @@ export const cs: Record<string, string> = {
 		"Zde je vložená pilulka [!{id}] uvnitř odstavce.",
 	"editor.previewReadOnly": "Živý náhled nelze upravovat",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Stylizováno mimo Callout Studio",
-	"editor.externalStyleBody":
-		"Callout Studio na {{id}} neaplikuje žádný styl. Jeho vzhled pochází z vašeho motivu, CSS fragmentu nebo výchozího nastavení Obsidianu.",
-	"editor.externalStyleWhat": "Co to znamená",
-	"editor.externalStyleWhatHeading":
-		"Nadpisový callout jako ## [!{{id}}] Nadpis se nevykreslí — text zůstane tak, jak byl napsán.",
-	"editor.externalStyleWhatInline":
-		"Stejně tak ani vložený, například slovo [!{{id}}] slovo.",
-	"editor.externalStyleWhatGlobal":
-		"Globální nastavení stylu (ohraničení, zaoblení, velikost textu) se na něj nevztahují.",
-	"editor.externalStylePreviewTitle": "Jak se nyní vykresluje",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Nadpis\n\n" +
-		"Takto vypadá věta s [!{{id}}].\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — poskytnuto vaším tématem',
+	"themePreview.owned":
+		'{{theme}} poskytuje a stylizuje "{{name}}". Callout Studio ho nepřepisuje, takže jeho blokový callout vypadá přesně tak, jak jej vykresluje vaše téma.',
+	"themePreview.readOnly":
+		"To znamená, že jeho barvu, ikonu, název ani ID zde nelze změnit. Pokud chcete vlastní návrh, vytvořte nový callout s jiným ID.",
+	"themePreview.blockOnly":
+		"Formáty Nadpis a Vložený nejsou pro callouts poskytované vaším tématem k dispozici. Blokové callouts používají nativní styl tématu.",
+	"themePreview.previewTitle": "Jak vypadá nyní",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
-		"> Takto vypadá obsah calloutu.\n",
-	"editor.externalStyleResume": "Obnovit stylizaci",
+		"> Takto vypadá obsah tohoto callout.\n",
 	"editor.externalStyleClose": "Rozumím",
 
 	// Palette editor modal
@@ -601,7 +624,9 @@ export const cs: Record<string, string> = {
 	"contextMenu.copySection": "Kopírovat sekci nadpisu",
 	"contextMenu.deleteSection": "Smazat sekci nadpisu",
 	"heading.toggleFold": "Přepnout sbalení",
-	"settings.globalSettings": "Globální nastavení",
+	"settings.globalSettings": "Možnosti stylu Callout Studio",
+	"settings.globalSettingsScope":
+		"Tvar, rozestupy a velikost pro callouts, které stylizuje Callout Studio. Callouts stylizované vaším tématem si zachovávají vlastní vzhled tématu.",
 	"settings.globalSettingsRegularDesc":
 		"Přidejte token callout do citace (např. `> [!type]`) a vykreslete tak nativní rámeček callout v Obsidianu. Můžete upravit jeho ohraničení, poloměr, měřítko písma a zarovnání.",
 	"settings.globalSettingsHeadingDesc":
@@ -932,4 +957,8 @@ export const cs: Record<string, string> = {
 	"export.formatCss": "CSS fragment",
 	"export.formatCssDesc":
 		"Soubor .css uložený ve složce snippets tohoto vaultu pro použití tam, kde není Callout Studio nainstalováno. Pokrývá pouze běžné callouty a je snímkem; po změně calloutu jej exportujte znovu.",
+	"quickInsert.readingViewHint": "Tato poznámka je otevřena v režimu čtení, takže nelze nic vložit.",
+	"quickInsert.readingView": "Přepněte do zdrojového režimu nebo živého náhledu a vložte callout.",
+	"quickInsert.noCursorHint": "V této poznámce není žádný kurzor, takže není kam vložit.",
+	"quickInsert.noCursor": "Umístěte kurzor v poznámce tam, kam chcete vložit callout, a zkuste to znovu.",
 };
