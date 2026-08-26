@@ -739,16 +739,27 @@ describe("no new oversized files", () => {
 	const SOFT_LIMIT = 300;
 
 	const FROZEN: Record<string, number> = {
-		"src/settings/CalloutEditor.ts": 2328,
+		"src/settings/CalloutEditor.ts": 2322,
 		// Lowered repeatedly, per this ratchet's own ask: `bgAlphaFor`'s solve moved
 		// to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the many
 		// that render the callout identically; `generateFallbackCSS` to
 		// manager/css/fallbackCSS.ts, taking the icon-box width the two now share
-		// with it to manager/css/iconBox.ts; and core's own icon reader to
-		// manager/css/coreIcon.ts.
-		"src/manager/CSSInjector.ts": 1937,
-		"src/manager/CalloutRegistry.ts": 2014,
-		"src/utils/importValidator.ts": 1190,
+		// with it to manager/css/iconBox.ts; core's own icon reader to
+		// manager/css/coreIcon.ts; the three `::after` icon overrides to
+		// manager/css/iconOverrides.ts; and the `--callout-icon` decision to
+		// manager/css/calloutIconProp.ts.
+		"src/manager/CSSInjector.ts": 1858,
+		// Lowered from 2014: what "mirror the fallback callout" means now lives
+		// entirely in manager/discoveredRow.ts, beside the other half of the same
+		// agreement, and the two-mode migration in manager/styleModeMigration.ts.
+		// Lowered again from 2003: attribute-form identity — which definition a
+		// dasherized id belongs to, and which raw forms one definition may claim
+		// in the vault — moved to manager/calloutIdForms.ts, and what the active
+		// theme claims and draws to manager/theme/ThemeFacts.ts.
+		"src/manager/CalloutRegistry.ts": 1990,
+		"src/utils/importValidator.ts": 1184,
+		// Lowered from 1190: the style-mode pair's import rules moved to
+		// utils/importStyleMode.ts.
 		// Lowered from 1106: the Base color row moved to
 		// settings/paletteBaseColorRow.ts (which also owns seedBaseColor, the
 		// reason CustomPalette.baseColor exists), and the gradient's arrow
@@ -761,9 +772,14 @@ describe("no new oversized files", () => {
 		// the remedy this list asks for is structurally unavailable to it. Raise
 		// it only for a settings field; anything else here still splits.
 		// Raised from 803 for `CustomPalette.baseColor`, lowered again when
-		// `externalStyle`'s cascade derivation moved to internals-docs, and raised
-		// for the style-mode field that replaced it.
-		"src/types.ts": 814,
+		// `externalStyle`'s cascade derivation moved to internals-docs, raised
+		// for the style-mode field that replaced it, and raised again for
+		// `PluginSettings.defaultStyleMode` — the one field standing between an
+		// upgrade and every built-in callout being handed to the theme. Raised
+		// again for `PluginSettings.retiredThemeIds`, which is what stops
+		// discovery re-creating a theme's callout types from notes that still
+		// mention them after the theme is gone.
+		"src/types.ts": 823,
 		"src/editor/livepreview/widgets.ts": 793,
 		"src/reading/calloutPostProcessor.ts": 781,
 		"src/settings/iconpicker/PackPanel.ts": 736,
@@ -780,28 +796,46 @@ describe("no new oversized files", () => {
 		// editor/quotePrefix.ts and editor/fenceBlocks.ts.
 		"src/editor/CalloutBlockTools.ts": 577,
 		"src/utils/vaultCalloutScanner.ts": 595,
-		"src/editor/AutoComplete.ts": 593,
-		"src/main.ts": 537,
+		// Lowered from 593: the suggestion row's icon and accent go through
+		// manager/theme/calloutListIcon.ts, shared with the three other lists
+		// that draw a callout small.
+		"src/editor/AutoComplete.ts": 576,
+		// Lowered from 537: everything that has to happen when the active theme
+		// changes — re-derive its callout rows, then re-inject, in that order —
+		// moved to manager/theme/themeProvidedRows.ts, which is where the rule
+		// about which pass goes first belongs.
+		"src/main.ts": 532,
 		"src/icons/renderIcon.ts": 547,
 		"src/settings/GlobalStyleModal.ts": 528,
-		"src/editor/renderShared.ts": 498,
-		"src/manager/CalloutDiscovery.ts": 454,
+		// Lowered from 497: the two role-icon helpers moved to editor/roleIcon.ts,
+		// beside the theme-artwork renderer they now both consult.
+		"src/editor/renderShared.ts": 475,
+		// Lowered from 454: the two reasons automatic discovery is held back from
+		// an id — an explicit delete seconds ago, and a callout type the active
+		// theme stopped supplying — are one question now, in
+		// manager/rediscoveryHold.ts.
+		"src/manager/CalloutDiscovery.ts": 412,
 		"src/editor/contextmenu/resolve.ts": 455,
 		"src/ui/TagInput.ts": 414,
 		"src/settings/editor/CalloutEditorSave.ts": 410,
 		"src/icons/isolateSvg.ts": 402,
 		"src/icons/packs/materialFont.ts": 398,
-		"src/settings/sections/CalloutRowActions.ts": 340,
 		"src/outline/OutlineDecorator.ts": 382,
 		"src/settings/EmbeddableMarkdownEditor.ts": 357,
-		"src/icons/svg.ts": 367,
+		// Lowered from 367: the deny-list of what is unsafe in ANY svg moved to
+		// icons/svgSafety.ts, where a third caller outside this file — the theme
+		// artwork importer in manager/css/coreIcon.ts — can reach it.
+		"src/icons/svg.ts": 329,
 		"src/settings/iconpicker/ImagePanel.ts": 354,
-		"src/settings/sections/DataManagementSection.ts": 320,
-		"src/settings/CommandBuilderModal.ts": 345,
+		"src/settings/sections/DataManagementSection.ts": 317,
+		// Lowered from 345: its row icon goes through
+		// manager/theme/calloutListIcon.ts. Lowered again from 337: the shortcut
+		// chips and the hotkey-pane button — carried identically by both lists
+		// in the window — moved to settings/command/hotkeyRow.ts.
+		"src/settings/CommandBuilderModal.ts": 308,
 		"src/settings/iconpicker/IconGrid.ts": 343,
 		"src/utils/calloutManagerImport.ts": 340,
 		"src/icons/PackDataStore.ts": 309,
-		"src/settings/CommandEditorModal.ts": 308,
 		"src/settings/sections/CustomPalettesSection.ts": 301,
 	};
 

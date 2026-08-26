@@ -251,7 +251,6 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-callout-name",
 		"cs-cm-widget",
 		"cs-command-editor",
-		"cs-external-panel",
 		"cs-fold-dropdown",
 		"cs-fold-trigger",
 		"cs-heading-title",
