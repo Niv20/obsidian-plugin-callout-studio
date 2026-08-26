@@ -610,13 +610,20 @@ describe("the tint reaches every surface that paints a callout", () => {
 			css.generateTokenColorCSS(swept()),
 			'.cs-inline-callout[data-callout="quiet"], .cs-heading-callout[data-callout="quiet"]',
 		);
+		// The COLOUR has to match; the importance does not, and must not. The
+		// block rule lands on core's DOM, where a theme is competing for it, so
+		// studio mode marks it. The token rules land on `.cs-*`, which no theme
+		// selector can reach — marking those would only take away the user's
+		// own ability to restyle them in a snippet.
+		const bare = (v: string | undefined): string | undefined =>
+			v?.replace(/ !important$/, "");
 		assert.strictEqual(
-			valueOf(tokens, "background-color"),
-			valueOf(block, "background-color"),
+			bare(valueOf(tokens, "background-color")),
+			bare(valueOf(block, "background-color")),
 		);
 		assert.strictEqual(
-			valueOf(tokens, "background-image"),
-			valueOf(block, "background-image"),
+			bare(valueOf(tokens, "background-image")),
+			bare(valueOf(block, "background-image")),
 		);
 	});
 

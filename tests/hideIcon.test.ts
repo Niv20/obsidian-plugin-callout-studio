@@ -47,6 +47,9 @@ function harness(): {
 	// The constructor only stocks `builtInDefaults`; `load(null)` is what seeds
 	// the live map with the 13 shipped callouts, exactly as a first run does.
 	registry.load(null);
+	// A clean install hands an unconfigured built-in to the theme, and this
+	// suite is about what happens when the plugin IS painting. See
+	// tests/styleMode.test.ts for the default itself.
 	const injector = new CSSInjector({} as App, registry);
 	return {
 		registry,
@@ -76,7 +79,7 @@ describe("hideIcon — the generated block-callout CSS", () => {
 
 		assert.match(
 			out,
-			/\.callout\[data-callout="quiet"\] > \.callout-title > \.callout-icon \{\s*display: none;/,
+			/\.callout\[data-callout="quiet"\] > \.callout-title > \.callout-icon \{\s*display: none !important;/,
 		);
 	});
 
@@ -90,7 +93,7 @@ describe("hideIcon — the generated block-callout CSS", () => {
 		// and here there is nothing to replace them with.
 		const allMedia = out.split("@media screen")[0] ?? "";
 		assert.ok(
-			allMedia.includes("> .callout-icon {\n  display: none;\n}"),
+			allMedia.includes("> .callout-icon {\n  display: none !important;\n}"),
 			"hide rule must not be nested inside @media screen",
 		);
 	});
@@ -124,7 +127,7 @@ describe("hideIcon — the generated block-callout CSS", () => {
 		for (const id of ["quiet", "hush", "still"]) {
 			assert.ok(
 				out.includes(
-					`.callout[data-callout="${id}"] > .callout-title > .callout-icon {\n  display: none;\n}`,
+					`.callout[data-callout="${id}"] > .callout-title > .callout-icon {\n  display: none !important;\n}`,
 				),
 				`missing hide rule for "${id}"`,
 			);
@@ -140,21 +143,24 @@ describe("hideIcon — the 'Align content with title' indent", () => {
 		const out = css.generateCalloutCSS(definition({ hideIcon: true }));
 		assert.match(
 			out,
-			/\.callout\[data-callout="quiet"\] > \.callout-content \{\s*padding-inline-start: 0;/,
+			/\.callout\[data-callout="quiet"\] > \.callout-content \{\s*padding-inline-start: 0 !important;/,
 		);
 	});
 
-	it("wins on specificity alone — an !important here would outrank a snippet", () => {
+	it("is marked on a callout this plugin paints, and absent on one it does not", () => {
+		// It owns every property it declares, this one included. A callout the
+		// plugin does not paint gets no rule at all — see the suite below for
+		// why the exception that used to live here is gone.
 		const { registry, css } = harness();
 		registry.settings.globalStyle.alignContentWithTitle = true;
 
-		const out = css.generateCalloutCSS(definition({ hideIcon: true }));
-		const reset = out
-			.split("\n\n")
-			.find((rule) => rule.includes("padding-inline-start: 0"));
+		const own = css.generateCalloutCSS(definition({ hideIcon: true }));
+		assert.match(own, /padding-inline-start: 0 !important;/);
 
-		assert.ok(reset, "expected an align reset rule");
-		assert.doesNotMatch(reset, /!important/);
+		const handed = css.generateCalloutCSS(
+			definition({ hideIcon: true, externalStyle: true }),
+		);
+		assert.strictEqual(handed, "");
 	});
 
 	it("is not emitted at all while the global setting is off", () => {
@@ -166,8 +172,8 @@ describe("hideIcon — the 'Align content with title' indent", () => {
 	});
 });
 
-describe("hideIcon — theme-owned callouts", () => {
-	it("still emits nothing at all for an external-style callout that keeps its icon", () => {
+describe("hideIcon — callouts this plugin does not paint", () => {
+	it("emits nothing for a callout the user styles in their own CSS", () => {
 		const { css } = harness();
 		assert.strictEqual(
 			css.generateCalloutCSS(definition({ externalStyle: true })),
@@ -175,19 +181,45 @@ describe("hideIcon — theme-owned callouts", () => {
 		);
 	});
 
-	it("makes one exception: the user's explicit 'no icon' is honoured", () => {
+	it("no longer makes an exception for the hide rule", () => {
+		// This used to be the one thing theme mode still emitted, on the
+		// argument that a theme cannot express "no icon" on the owner's behalf.
+		// Under an absolute rule that does not survive: `display: none` on
+		// `.callout-icon` is an override like any other, and the one a user is
+		// most likely to read as the plugin breaking their theme. The flag is
+		// preserved on the row and applies again the moment the plugin is
+		// painting the callout.
 		const { css } = harness();
 		const out = css.generateCalloutCSS(
 			definition({ externalStyle: true, hideIcon: true }),
 		);
+		assert.strictEqual(out, "");
+	});
 
-		// The exception is narrow on purpose — the hide rule and nothing else.
-		// A theme cannot express "no icon" for the user, but it must still own
-		// every colour, and none of those may reappear here.
-		assert.match(out, /display: none;/);
-		assert.doesNotMatch(out, /--cs-accent/);
-		assert.doesNotMatch(out, /--callout-color/);
-		assert.doesNotMatch(out, /background/);
+	it("keeps the flag, so nothing is lost by the theme taking over", () => {
+		const { registry } = harness();
+		registry.add(definition({ id: "quiet", hideIcon: true }));
+		registry.setThemeOwnedIds(new Set(["quiet"]));
+		assert.strictEqual(registry.get("quiet")?.hideIcon, true);
+
+		registry.setThemeOwnedIds(new Set());
+		assert.strictEqual(registry.get("quiet")?.hideIcon, true);
+	});
+
+	it("applies again the moment the theme stops claiming the id", () => {
+		const { registry, css } = harness();
+		registry.add(definition({ id: "quiet", hideIcon: true }));
+		registry.setThemeOwnedIds(new Set(["quiet"]));
+		assert.strictEqual(
+			css.generateCalloutCSS(registry.get("quiet")!),
+			"",
+		);
+
+		registry.setThemeOwnedIds(new Set());
+		assert.match(
+			css.generateCalloutCSS(registry.get("quiet")!),
+			/display: none/,
+		);
 	});
 });
 
