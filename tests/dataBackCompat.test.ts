@@ -52,7 +52,7 @@ import type { CalloutDefinition, PluginData } from "../src/types";
 ];
 
 /** The version stamp the current build writes. */
-const CURRENT_DATA_VERSION = 3;
+const CURRENT_DATA_VERSION = 4;
 
 const load = (data: Partial<PluginData> | null): CalloutRegistry => {
 	const registry = new CalloutRegistry();
@@ -279,13 +279,14 @@ describe("a data.json written by 1.0.0", () => {
 		assert.strictEqual(saved.version, CURRENT_DATA_VERSION);
 	});
 
-	it("needs no forced save — the settings rewrite rides along with the next one", () => {
-		// `needsSaveAfterLoad()` is about *definitions* a migration rewrote, and
-		// nothing in this file needed rewriting. The retired settings keys are
-		// already gone from the in-memory object, so the first ordinary save
-		// writes the cleaned-up shape; until then `data.json` keeps the 1.x one,
-		// which is exactly what makes downgrading harmless.
-		assert.strictEqual(load(vaultFrom_1_0_0()).needsSaveAfterLoad(), false);
+	it("is not flushed at all, because nothing has to be re-derived", () => {
+		// The retired 1.x settings keys need no forced save: they are already
+		// gone from the in-memory object, the first ordinary save writes the
+		// cleaned-up shape, and until then `data.json` keeps the 1.x one — which
+		// is what makes downgrading harmless. A 1.0.0 file predates every key
+		// the load-time migration looks for, so it asks for nothing.
+		const registry = load(vaultFrom_1_0_0());
+		assert.strictEqual(registry.needsSaveAfterLoad(), false);
 	});
 });
 
@@ -682,14 +683,27 @@ describe("a file that says almost nothing", () => {
 	});
 
 	it("keeps a non-`builtin` source it also carried", () => {
-		// Only the one claim is disproved. An import's `"theme"` row with a
-		// stray `builtIn: true` is still a theme row.
+		// Only the one claim is disproved: `builtIn: true` on a row with no
+		// shipped default. The `source` it arrived with is preserved.
+		const registry = load({
+			callouts: [{ ...retiredBuiltIn(), source: "plugin" }],
+		});
+
+		assert.strictEqual(registry.get("retired-builtin")?.source, "plugin");
+		assert.strictEqual(registry.get("retired-builtin")?.builtIn, false);
+	});
+
+	it("re-homes an old `theme` row, which used to mean nothing at all", () => {
+		// `source: "theme"` was inert before the two-mode model — it had zero
+		// readers and only ever arrived from a long-removed registration API.
+		// It now means "the active theme declares this id", and rows wearing it
+		// are pruned when the theme stops doing so, which would silently delete
+		// this one. See manager/styleModeMigration.ts.
 		const registry = load({
 			callouts: [{ ...retiredBuiltIn(), source: "theme" }],
 		});
 
-		assert.strictEqual(registry.get("retired-builtin")?.source, "theme");
-		assert.strictEqual(registry.get("retired-builtin")?.builtIn, false);
+		assert.strictEqual(registry.get("retired-builtin")?.source, "user");
 	});
 
 	it("rewrites the file so the broken shape stops coming back", () => {

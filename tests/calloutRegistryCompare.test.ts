@@ -69,7 +69,6 @@ const CHANGED: Record<string, Partial<CalloutDefinition>> = {
 	paletteId: { paletteId: "cp-zzz" },
 	customized: { customized: true },
 	externalStyle: { externalStyle: true },
-	styleMode: { styleMode: "force" },
 	metadata: { metadata: { k: "v" } },
 };
 
@@ -102,15 +101,14 @@ describe("the field tables themselves", () => {
 		}
 	});
 
-	it("declares exactly hideIcon and styleMode as colour-neutral", () => {
-		// Both are edits the user can see that say nothing about what colour the
-		// callout should be. `styleMode` is the sharper case: forcing an
-		// untouched `[!info]` asks for core's own blue at a weight the theme
-		// cannot reach, so counting it here would bake a literal hex and drop
-		// the deference the request depends on.
+	it("declares exactly hideIcon as colour-neutral", () => {
+		// An edit the user can see that says nothing about what colour the
+		// callout should be. `externalStyle` is deliberately NOT one: handing a
+		// callout to your own CSS is a real decision about the row, and a
+		// built-in wearing it should read as edited.
 		assert.deepStrictEqual(
 			[...TABLES.COLOUR_NEUTRAL_FIELDS].sort(),
-			["hideIcon", "styleMode"],
+			["hideIcon"],
 		);
 	});
 

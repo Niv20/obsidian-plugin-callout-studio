@@ -70,15 +70,24 @@ describe("getAll / getUserDefined / getExportableDefinitions — the plain case"
 		assert.strictEqual(registry.getAll().length, 15);
 	});
 
-	it("getUserDefined is everything that is not a built-in", () => {
+	it("getUserDefined is the user's own rows — not the theme's", () => {
+		// `source: "theme"` rows are minted from the active theme's stylesheet,
+		// so they are excluded here and answered by `getThemeProvided()`. This
+		// view feeds backups, `exportToJSON()` and the reset sweep, none of
+		// which should treat the theme's callout types as the user's work.
+		//
+		// Added after load, not through it: a `"theme"` row arriving in
+		// `data.json` predates that meaning and is re-homed to `"user"` on the
+		// way in (see manager/styleModeMigration.ts).
 		const registry = loaded(
 			saved([
 				def({ id: "mine", source: "user" }),
 				def({ id: "found", source: "fallback" }),
-				def({ id: "themed", source: "theme" }),
 			]),
 		);
-		assert.deepStrictEqual(ids(registry.getUserDefined()), ["found", "mine", "themed"]);
+		registry.add(def({ id: "themed", source: "theme" }));
+		assert.deepStrictEqual(ids(registry.getUserDefined()), ["found", "mine"]);
+		assert.deepStrictEqual(ids(registry.getThemeProvided()), ["themed"]);
 	});
 
 	it("getBuiltIn is the complement, and holds all 13 until one is displaced", () => {
