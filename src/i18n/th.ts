@@ -37,6 +37,10 @@ export const th: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio สแกน vault ของคุณและเพิ่ม {{count}} callout แล้ว",
 	"firstRun.scanning": "กำลังสแกน",
+	"firstRun.autoScanFailed":
+		"Callout Studio ไม่สามารถสแกน vault ของคุณได้ คุณสามารถลองอีกครั้งได้จาก การตั้งค่า → ข้อมูลเชิงลึกและการบำรุงรักษา vault → สแกน vault ใหม่",
+	"firstRun.scanFailed":
+		"การสแกนไม่เสร็จสมบูรณ์ คุณสามารถลองอีกครั้งได้จาก การตั้งค่า → ข้อมูลเชิงลึกและการบำรุงรักษา vault → สแกน vault ใหม่",
 
 	"welcome.tooltip": "เกี่ยวกับ Callout Studio",
 	"welcome.title": "ยินดีต้อนรับสู่ Callout Studio",

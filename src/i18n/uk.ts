@@ -37,6 +37,10 @@ export const uk: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio просканував сховище і додав {{count}} callout(ів).",
 	"firstRun.scanning": "Сканування",
+	"firstRun.autoScanFailed":
+		"Callout Studio не вдалося сканувати ваше сховище. Ви можете спробувати ще раз: Налаштування → Аналітика та обслуговування сховища → Повторно сканувати сховище.",
+	"firstRun.scanFailed":
+		"Сканування не завершилося. Ви можете спробувати ще раз: Налаштування → Аналітика та обслуговування сховища → Повторно сканувати сховище.",
 
 	"welcome.tooltip": "Про Callout Studio",
 	"welcome.title": "Ласкаво просимо до Callout Studio",

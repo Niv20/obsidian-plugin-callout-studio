@@ -37,6 +37,10 @@ export const tr: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio vault'unuzu taradı ve {{count}} callout ekledi.",
 	"firstRun.scanning": "Taranıyor",
+	"firstRun.autoScanFailed":
+		"Callout Studio vault'unuzu tarayamadı. Ayarlar → Vault içgörüleri ve bakımı → Vault'u yeniden tara üzerinden tekrar deneyebilirsiniz.",
+	"firstRun.scanFailed":
+		"Tarama tamamlanamadı. Ayarlar → Vault içgörüleri ve bakımı → Vault'u yeniden tara üzerinden tekrar deneyebilirsiniz.",
 
 	"welcome.tooltip": "Callout Studio hakkında",
 	"welcome.title": "Callout Studio'ya hoş geldiniz",

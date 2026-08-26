@@ -87,6 +87,7 @@ codebase has already been bitten by once.
 | [18-public-api.md](18-public-api.md) | How the read-only public API is actually enforced — real privacy, frozen copies, the committed-state guarantee. |
 | [19-extending.md](19-extending.md) | Step-by-step checklists for adding a setting, a command, a callout field, a menu item, an icon source, and more. |
 | [20-common-pitfalls.md](20-common-pitfalls.md) | Concentrated warnings: state sync, id normalization, helpers that must always be used, mobile quirks, backward compatibility. |
+| [22-logging-and-diagnostics.md](22-logging-and-diagnostics.md) | Every `console.debug`/`warn`/`error` call site, the policy behind which one and when to use a `Notice` instead, and why there's no centralized logger. |
 
 Opening a PR? [`CONTRIBUTING.md`](../CONTRIBUTING.md) (repo root) has the
 process — fork, branch, lint, test, commit style. This guide is what to read

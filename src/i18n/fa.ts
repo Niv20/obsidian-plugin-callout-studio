@@ -37,6 +37,10 @@ export const fa: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio vault شما را اسکان کرد و {{count}} callout اضافه کرد.",
 	"firstRun.scanning": "در حال اسکان",
+	"firstRun.autoScanFailed":
+		"Callout Studio نتوانست vault شما را اسکن کند. می‌توانید دوباره از طریق تنظیمات ← بینش‌ها و نگهداری vault ← اسکن مجدد vault تلاش کنید.",
+	"firstRun.scanFailed":
+		"اسکن به پایان نرسید. می‌توانید دوباره از طریق تنظیمات ← بینش‌ها و نگهداری vault ← اسکن مجدد vault تلاش کنید.",
 
 	"welcome.tooltip": "درباره‌ی Callout Studio",
 	"welcome.title": "به Callout Studio خوش آمدید",

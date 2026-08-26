@@ -37,6 +37,10 @@ export const cs: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio prohledal váš vault a přidal {{count}} callout(ů).",
 	"firstRun.scanning": "Prohledávání",
+	"firstRun.autoScanFailed":
+		"Callout Studio se nepodařilo prohledat váš vault. Zkuste to znovu z Nastavení → Statistiky a údržba vaultu → Znovu prohledat vault.",
+	"firstRun.scanFailed":
+		"Prohledávání se nedokončilo. Zkuste to znovu z Nastavení → Statistiky a údržba vaultu → Znovu prohledat vault.",
 
 	"welcome.tooltip": "O aplikaci Callout Studio",
 	"welcome.title": "Vítejte v Callout Studio",

@@ -37,6 +37,10 @@ export const ja: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studioがvaultをスキャンし、{{count}}件のcalloutを追加しました。",
 	"firstRun.scanning": "スキャン中",
+	"firstRun.autoScanFailed":
+		"Callout Studioはvaultをスキャンできませんでした。設定 → vaultの洞察とメンテナンス → vaultを再スキャン から再試行できます。",
+	"firstRun.scanFailed":
+		"スキャンが完了しませんでした。設定 → vaultの洞察とメンテナンス → vaultを再スキャン から再試行できます。",
 
 	"welcome.tooltip": "Callout Studioについて",
 	"welcome.title": "Callout Studioへようこそ",

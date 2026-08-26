@@ -181,6 +181,18 @@ this.app.workspace.onLayoutReady(async () => {
 already ran a scan and flipped the flag, so the re-check exists to avoid a
 redundant second scan racing the first.
 
+"Safely re-runs on the next launch" above is about a process crash landing
+mid-`await`, before the flag write is ever reached — not about the scan
+merely throwing. Both `runFirstRunDiscovery`'s silent path and
+`FirstRunScanModal`'s "Scan now" handler catch that exception, `console.error`
+it, and still mark `firstRunCompleted = true` right after, so a caught failure
+does not retry automatically. Each catch also raises a `Notice` pointing at
+Settings → Vault insights & maintenance → Re-scan vault, since that manual
+re-scan is the only recovery once first-run has moved on. See
+[Vault discovery](10-vault-discovery.md#first-run-vault-scan) and
+[Logging and diagnostics § first-run vault scan](22-logging-and-diagnostics.md#first-run-vault-scan--consoleerror--notice)
+for the full `console`/`Notice` catalog and the policy behind it.
+
 > [!NOTE]
 > The vault-size threshold that decides silent-scan vs. consent-modal is
 > `HEAVY_VAULT_FILE_THRESHOLD = 500` (`src/constants.ts`), purely a UX

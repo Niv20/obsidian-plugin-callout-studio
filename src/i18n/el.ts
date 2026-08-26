@@ -34,6 +34,10 @@ export const el: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Το Callout Studio σάρωσε το vault σας και πρόσθεσε {{count}} callout(s).",
 	"firstRun.scanning": "Σάρωση",
+	"firstRun.autoScanFailed":
+		"Το Callout Studio δεν μπόρεσε να σαρώσει το vault σας. Μπορείτε να δοκιμάσετε ξανά από Ρυθμίσεις → Πληροφορίες vault και συντήρηση → Επανασάρωση vault.",
+	"firstRun.scanFailed":
+		"Η σάρωση δεν ολοκληρώθηκε. Μπορείτε να δοκιμάσετε ξανά από Ρυθμίσεις → Πληροφορίες vault και συντήρηση → Επανασάρωση vault.",
 
 	"welcome.tooltip": "Σχετικά με το Callout Studio",
 	"welcome.title": "Καλώς ήρθατε στο Callout Studio",

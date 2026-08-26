@@ -38,6 +38,10 @@ export const ar: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"قام Callout Studio بمسح مخزنك وأضاف {{count}} callout.",
 	"firstRun.scanning": "جارٍ المسح",
+	"firstRun.autoScanFailed":
+		"تعذر على Callout Studio مسح المخزن. يمكنك المحاولة مرة أخرى من الإعدادات ← رؤى المخزن والصيانة ← إعادة مسح المخزن.",
+	"firstRun.scanFailed":
+		"لم يكتمل المسح. يمكنك المحاولة مرة أخرى من الإعدادات ← رؤى المخزن والصيانة ← إعادة مسح المخزن.",
 
 	"welcome.tooltip": "حول Callout Studio",
 	"welcome.title": "مرحبًا بك في Callout Studio",

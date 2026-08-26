@@ -35,6 +35,10 @@ export const ms: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio mengimbas vault anda dan menambah {{count}} callout.",
 	"firstRun.scanning": "Mengimbas",
+	"firstRun.autoScanFailed":
+		"Callout Studio tidak dapat mengimbas vault anda. Anda boleh mencuba semula dari Tetapan → Wawasan & penyelenggaraan vault → Imbas semula vault.",
+	"firstRun.scanFailed":
+		"Imbasan tidak selesai. Anda boleh mencuba semula dari Tetapan → Wawasan & penyelenggaraan vault → Imbas semula vault.",
 
 	"welcome.tooltip": "Tentang Callout Studio",
 	"welcome.title": "Selamat datang ke Callout Studio",

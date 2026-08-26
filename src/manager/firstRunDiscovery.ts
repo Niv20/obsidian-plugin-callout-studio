@@ -53,6 +53,7 @@ export async function runFirstRunDiscovery(
 			}
 		} catch (e) {
 			console.error("[CalloutStudio] first-run auto scan failed", e);
+				new Notice(t("firstRun.autoScanFailed"));
 		}
 		plugin.registry.settings.firstRunCompleted = true;
 		await plugin.saveSettings();

@@ -37,6 +37,10 @@ export const pt: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"O Callout Studio digitalizou seu vault e adicionou {{count}} callout(s).",
 	"firstRun.scanning": "Digitalizando",
+	"firstRun.autoScanFailed":
+		"O Callout Studio não conseguiu escanear seu vault. Você pode tentar novamente em Configurações → Insights e manutenção do vault → Redigitalizar vault.",
+	"firstRun.scanFailed":
+		"A digitalização não foi concluída. Você pode tentar novamente em Configurações → Insights e manutenção do vault → Redigitalizar vault.",
 
 	"welcome.tooltip": "Sobre o Callout Studio",
 	"welcome.title": "Bem-vindo ao Callout Studio",

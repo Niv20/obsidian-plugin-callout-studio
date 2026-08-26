@@ -34,6 +34,10 @@ export const bg: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio сканира хранилището ви и добави {{count}} callout(а).",
 	"firstRun.scanning": "Сканиране",
+	"firstRun.autoScanFailed":
+		"Callout Studio не успя да сканира хранилището ви. Можете да опитате отново от Настройки → Прегледи и поддръжка на хранилището → Повторно сканиране.",
+	"firstRun.scanFailed":
+		"Сканирането не завърши. Можете да опитате отново от Настройки → Прегледи и поддръжка на хранилището → Повторно сканиране.",
 
 	"welcome.tooltip": "За Callout Studio",
 	"welcome.title": "Добре дошли в Callout Studio",

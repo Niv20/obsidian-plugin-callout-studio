@@ -199,6 +199,17 @@ completes — an interrupted startup (crash, reload mid-scan) safely re-runs the
 whole first-run flow on the next launch. See
 [Plugin lifecycle](03-plugin-lifecycle.md#step-31-welcome-then-first-run-discovery-then-incremental-watchers--in-that-exact-order-deferred-to-layout-ready).
 
+A caught scan failure (`app.vault.cachedRead` throwing mid-scan, say) is not
+that crash-mid-await case: both paths mark `firstRunCompleted = true` right
+after their `try`/`catch`, whether the scan threw or not, so a failure here
+never retries on its own. Both paths now pair their `console.error` with a
+`Notice` (`firstRun.autoScanFailed` for the silent path,
+`firstRun.scanFailed` for the modal's "Scan now" button) pointing the user at
+the manual remedy — Settings → Vault insights & maintenance → Re-scan vault —
+since that's the only recovery a caught failure gets. See
+[Logging and diagnostics § first-run vault scan](22-logging-and-diagnostics.md#first-run-vault-scan--consoleerror--notice)
+for the full `console`/`Notice` catalog and the policy behind it.
+
 ### `convertCalloutsToPlainTextInVault` — role-specific stripping
 
 Converts every occurrence of a set of ids into plain text, with different

@@ -38,6 +38,10 @@ export const ru: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio просканировал хранилище и добавил {{count}} callout.",
 	"firstRun.scanning": "Сканирование",
+	"firstRun.autoScanFailed":
+		"Callout Studio не смог просканировать ваше хранилище. Вы можете попробовать снова: Настройки → Аналитика и обслуживание хранилища → Пересканировать хранилище.",
+	"firstRun.scanFailed":
+		"Сканирование не завершилось. Вы можете попробовать снова: Настройки → Аналитика и обслуживание хранилища → Пересканировать хранилище.",
 
 	"welcome.tooltip": "О Callout Studio",
 	"welcome.title": "Добро пожаловать в Callout Studio",

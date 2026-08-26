@@ -37,6 +37,10 @@ export const vi: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio đã quét vault và thêm {{count}} callout.",
 	"firstRun.scanning": "Đang quét",
+	"firstRun.autoScanFailed":
+		"Callout Studio không thể quét vault của bạn. Bạn có thể thử lại từ Cài đặt → Thông tin & bảo trì vault → Quét lại vault.",
+	"firstRun.scanFailed":
+		"Quá trình quét chưa hoàn tất. Bạn có thể thử lại từ Cài đặt → Thông tin & bảo trì vault → Quét lại vault.",
 
 	"welcome.tooltip": "Giới thiệu về Callout Studio",
 	"welcome.title": "Chào mừng đến với Callout Studio",

@@ -236,7 +236,9 @@ In short:
 
 Silent apart from a `console.debug`, like every other pass here, and a fixed
 point once `needsSaveAfterLoad` flushes it: the loser survives only as an alias,
-so the next load's grouping names one definition and nothing changes.
+so the next load's grouping names one definition and nothing changes. See
+[Logging and diagnostics](22-logging-and-diagnostics.md#background-discovery-and-load-time-migrations--consoledebug)
+for the full catalog of these traces and why they stay at `console.debug`.
 
 ## `isModified` and the built-in-deference mechanism
 

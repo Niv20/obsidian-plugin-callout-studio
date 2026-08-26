@@ -37,6 +37,10 @@ export const pl: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio przeskanował vault i dodał {{count}} callout(ów).",
 	"firstRun.scanning": "Skanowanie",
+	"firstRun.autoScanFailed":
+		"Callout Studio nie mógł przeskanować Twojego vaulta. Możesz spróbować ponownie z Ustawienia → Wgląd w vault i konserwacja → Ponownie skanuj vault.",
+	"firstRun.scanFailed":
+		"Skanowanie nie zostało ukończone. Możesz spróbować ponownie z Ustawienia → Wgląd w vault i konserwacja → Ponownie skanuj vault.",
 
 	"welcome.tooltip": "O Callout Studio",
 	"welcome.title": "Witamy w Callout Studio",

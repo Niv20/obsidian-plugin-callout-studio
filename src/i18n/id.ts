@@ -37,6 +37,10 @@ export const id: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio memindai vault Anda dan menambahkan {{count}} callout.",
 	"firstRun.scanning": "Memindai",
+	"firstRun.autoScanFailed":
+		"Callout Studio tidak dapat memindai vault Anda. Anda dapat mencoba lagi dari Pengaturan → Wawasan & pemeliharaan vault → Pindai ulang vault.",
+	"firstRun.scanFailed":
+		"Pemindaian tidak selesai. Anda dapat mencoba lagi dari Pengaturan → Wawasan & pemeliharaan vault → Pindai ulang vault.",
 
 	"welcome.tooltip": "Tentang Callout Studio",
 	"welcome.title": "Selamat datang di Callout Studio",

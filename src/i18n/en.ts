@@ -50,6 +50,10 @@ export const en: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio scanned your vault and added {{count}} callout(s).",
 	"firstRun.scanning": "Scanning",
+	"firstRun.autoScanFailed":
+		"Callout Studio couldn't scan your vault. You can try again from Settings → Vault insights & maintenance → Re-scan vault.",
+	"firstRun.scanFailed":
+		"The scan didn't finish. You can try again from Settings → Vault insights & maintenance → Re-scan vault.",
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
 	"welcome.tooltip": "About Callout Studio",

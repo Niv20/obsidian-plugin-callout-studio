@@ -37,6 +37,10 @@ export const ro: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio a scanat vault-ul și a adăugat {{count}} callout(uri).",
 	"firstRun.scanning": "Scanare",
+	"firstRun.autoScanFailed":
+		"Callout Studio nu a putut scana vault-ul dvs. Puteți încerca din nou din Setări → Informații și întreținere vault → Rescaneaza vault.",
+	"firstRun.scanFailed":
+		"Scanarea nu s-a finalizat. Puteți încerca din nou din Setări → Informații și întreținere vault → Rescaneaza vault.",
 
 	"welcome.tooltip": "Despre Callout Studio",
 	"welcome.title": "Bine ați venit în Callout Studio",

@@ -37,6 +37,10 @@ export const ko: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio가 볼트를 스캔하고 {{count}}개의 callout을 추가했습니다.",
 	"firstRun.scanning": "스캔 중",
+	"firstRun.autoScanFailed":
+		"Callout Studio가 볼트를 스캔하지 못했습니다. 설정 → 볼트 인사이트 및 유지보수 → 볼트 재스캔에서 다시 시도할 수 있습니다.",
+	"firstRun.scanFailed":
+		"스캔이 완료되지 않았습니다. 설정 → 볼트 인사이트 및 유지보수 → 볼트 재스캔에서 다시 시도할 수 있습니다.",
 
 	"welcome.tooltip": "Callout Studio 소개",
 	"welcome.title": "Callout Studio에 오신 것을 환영합니다",

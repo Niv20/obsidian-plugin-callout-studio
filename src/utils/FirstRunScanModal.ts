@@ -6,7 +6,7 @@
  * constants.ts). Gives the user a choice to scan now or skip; the scan
  * itself is executed via the runScan callback passed by main.ts.
  */
-import { Modal } from "obsidian";
+import { Modal, Notice } from "obsidian";
 import type { App } from "obsidian";
 import { t } from "../i18n";
 import { applyModalChrome } from "../settings/modalChrome";
@@ -85,6 +85,7 @@ export class FirstRunScanModal extends Modal {
 			await this.runScan();
 		} catch (e) {
 			console.error("[CalloutStudio] first-run scan failed", e);
+			new Notice(t("firstRun.scanFailed"));
 		} finally {
 			this.finish();
 		}

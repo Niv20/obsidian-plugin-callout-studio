@@ -48,6 +48,10 @@ export const he: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio סרק את הכספת והוסיף {{count}} תיבות־הבלטה.",
 	"firstRun.scanning": "סורק...",
+	"firstRun.autoScanFailed":
+		"ל-Callout Studio לא הצליח לסרוק את הכספת שלך. אפשר לנסות שוב דרך ההגדרות ← סקירה ותחזוקה של הכספת ← סריקה מחדש של הכספת.",
+	"firstRun.scanFailed":
+		"הסריקה לא הושלמה. אפשר לנסות שוב דרך ההגדרות ← סקירה ותחזוקה של הכספת ← סריקה מחדש של הכספת.",
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
 	"welcome.tooltip": "אודות Callout Studio",

@@ -36,6 +36,10 @@ export const zh: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio 已扫描您的库并添加了 {{count}} 个 callout。",
 	"firstRun.scanning": "扫描中",
+	"firstRun.autoScanFailed":
+		"Callout Studio 未能扫描您的库。您可以从「设置 → 库洞察与维护 → 重新扫描库」重试。",
+	"firstRun.scanFailed":
+		"扫描未完成。您可以从「设置 → 库洞察与维护 → 重新扫描库」重试。",
 
 	"welcome.tooltip": "关于 Callout Studio",
 	"welcome.title": "欢迎使用 Callout Studio",

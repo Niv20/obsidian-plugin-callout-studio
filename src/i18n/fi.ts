@@ -33,6 +33,10 @@ export const fi: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio skannasi holvisi ja lisäsi {{count}} callouttia.",
 	"firstRun.scanning": "Skannataan",
+	"firstRun.autoScanFailed":
+		"Callout Studio ei pystynyt skannaamaan holviasi. Voit yrittää uudelleen kohdasta Asetukset → Holvin näkemykset ja huolto → Skannaa holvi uudelleen.",
+	"firstRun.scanFailed":
+		"Skannaus ei valmistunut. Voit yrittää uudelleen kohdasta Asetukset → Holvin näkemykset ja huolto → Skannaa holvi uudelleen.",
 
 	"welcome.tooltip": "Tietoja Callout Studiosta",
 	"welcome.title": "Tervetuloa Callout Studioon",

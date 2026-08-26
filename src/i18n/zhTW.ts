@@ -32,6 +32,10 @@ export const zhTW: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio 已掃描您的 vault 並新增了 {{count}} 個 callout。",
 	"firstRun.scanning": "掃描中",
+	"firstRun.autoScanFailed":
+		"Callout Studio 無法掃描您的 vault。您可以從「設定 → Vault 洞察與維護 → 重新掃描 vault」重試。",
+	"firstRun.scanFailed":
+		"掃描未完成。您可以從「設定 → Vault 洞察與維護 → 重新掃描 vault」重試。",
 
 	"welcome.tooltip": "關於 Callout Studio",
 	"welcome.title": "歡迎使用 Callout Studio",

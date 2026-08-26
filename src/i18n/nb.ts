@@ -34,6 +34,10 @@ export const nb: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"Callout Studio skannet valvet ditt og la til {{count}} callout(er).",
 	"firstRun.scanning": "Skanner",
+	"firstRun.autoScanFailed":
+		"Callout Studio kunne ikke skanne hvelvet ditt. Du kan prøve igjen fra Innstillinger → Vault-innsikt og vedlikehold → Skann vault på nytt.",
+	"firstRun.scanFailed":
+		"Skanningen ble ikke fullført. Du kan prøve igjen fra Innstillinger → Vault-innsikt og vedlikehold → Skann vault på nytt.",
 
 	"welcome.tooltip": "Om Callout Studio",
 	"welcome.title": "Velkommen til Callout Studio",

@@ -38,6 +38,10 @@ export const hu: Record<string, string> = {
 	"firstRun.autoScanComplete":
 		"A Callout Studio beszkennelte a tárat, és {{count}} callout-ot hozzáadott.",
 	"firstRun.scanning": "Szkennelés",
+	"firstRun.autoScanFailed":
+		"A Callout Studio nem tudta beszkennelni a tárat. Próbálja újra a Beállítások → Tár-elemzések és karbantartás → Tár újraszkennelése menüpontból.",
+	"firstRun.scanFailed":
+		"A szkennelés nem fejeződött be. Próbálja újra a Beállítások → Tár-elemzések és karbantartás → Tár újraszkennelése menüpontból.",
 
 	"welcome.tooltip": "A Callout Studio névjegye",
 	"welcome.title": "Üdvözöljük a Callout Studióban",
