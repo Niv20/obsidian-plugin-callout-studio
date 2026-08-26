@@ -168,9 +168,9 @@ directly-opened popover would do.
 ## The five fixed commands
 
 [`src/editor/commands.ts`](../src/editor/commands.ts) registers exactly five
-command ids, and — per the README and the coding convention in `CLAUDE.md` —
-**deliberately does not register one command per callout type**, which would
-flood the command palette with hundreds of entries.
+command ids, and **deliberately does not register one command per callout
+type** — a design choice, not an oversight — which would flood the command
+palette with hundreds of entries.
 
 ```ts
 FIXED_COMMAND_IDS = [

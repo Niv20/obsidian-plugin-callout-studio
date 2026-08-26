@@ -128,9 +128,10 @@ registry.settings.customCommands = mergeById(registry.settings.customCommands, c
 > reshuffling the list), a new id is appended, and an empty incoming list
 > changes nothing at all.
 >
-> **This is also the rule stated in `CLAUDE.md` for adding any *new*
-> settings-level list**: it must merge by id on import, or it will silently
-> wipe the user's own list the same way.
+> **The rule generalizes to any *new* settings-level list**: it must merge
+> by id on import, or it will silently wipe the user's own list the same
+> way. See also [Data model § `PluginSettings`](04-data-model.md#pluginsettings)
+> for the three places a new settings field has to be registered.
 
 A palette merge can produce **cross-vault duplicate colours** — two vaults
 independently naming the same colour under different ids — so
