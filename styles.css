@@ -74,6 +74,17 @@
 	border-radius: 0;
 }
 
+/* Obsidian zeroes the gap between a heading's name and its own description
+   (`.setting-item-heading .setting-item-description` sets `padding-top: 0`
+   in core CSS) — right for a bare heading, but "Global settings" and
+   "Callouts from your theme" put the description directly on the heading
+   row instead of a separate row underneath, so that rule flattens them
+   against their own title. Restore the gap every other description in
+   this tab already gets. */
+.callout-studio-settings .setting-item-heading .setting-item-description {
+	padding-top: var(--size-4-1);
+}
+
 /* Subheading row: "My callout types" + Add new */
 .callout-studio-settings .cs-subheader-row.setting-item {
 	padding-top: 4px;
