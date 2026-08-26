@@ -82,6 +82,17 @@
 	min-height: 0;
 }
 
+/* "My callout types" also carries the section divider — same border +
+   spacing as the one above "Built-in callouts" — to separate it from
+   "Callouts from your theme" above it. Higher specificity than the plain
+   .cs-subheader-row rule above so it wins on padding-top/border-top. */
+.callout-studio-settings .cs-subheader-row.cs-section-divider.setting-item {
+	margin-top: 36px;
+	padding-top: 36px;
+	border-top: 1px solid var(--background-modifier-border);
+	border-radius: 0;
+}
+
 .callout-studio-settings .cs-subheader-row .setting-item-name {
 	display: flex;
 	align-items: baseline;

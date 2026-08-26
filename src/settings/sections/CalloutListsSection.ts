@@ -56,6 +56,7 @@ export function createCalloutListsController(
 	let themeSetting: Setting | null = null;
 	let themeSectionEl: HTMLElement | null = null;
 	let themeListEl: HTMLElement | null = null;
+	let subSectionEl: HTMLElement | null = null;
 	let userListEl: HTMLElement | null = null;
 	let builtInListEl: HTMLElement | null = null;
 
@@ -104,6 +105,10 @@ export function createCalloutListsController(
 		const has = fromTheme.length > 0;
 		themeSectionEl.toggleClass("cs-hidden", !has);
 		themeListEl.toggleClass("cs-hidden", !has);
+		// The divider above "My callout types" only earns its keep when the
+		// theme section above it is actually on screen — otherwise it would be
+		// the first thing under the plugin title, with nothing to separate it from.
+		subSectionEl?.toggleClass("cs-section-divider", has);
 		if (!has) return;
 		renderList(themeListEl, fromTheme, "theme");
 	};
@@ -180,6 +185,11 @@ export function createCalloutListsController(
 				.setName(t("settings.myCalloutTypes"))
 				.setHeading();
 			subSetting.settingEl.addClass("cs-subheader-row");
+			// Same divider the "Built-in callouts" heading gets below, so the
+			// theme-owned group above reads as visually separate from this one
+			// when that group is on screen. `renderThemeList` toggles it in step
+			// with the theme section's own visibility.
+			subSectionEl = subSetting.settingEl;
 			subSetting.addButton((btn) =>
 				btn
 					.setButtonText(t("settings.addNewCallout"))
