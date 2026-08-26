@@ -222,6 +222,16 @@
 	display: none;
 }
 
+/* The theme section's description lives on the heading row itself (see the
+   `.setting-item-heading .setting-item-description` comment above), not
+   inside `.cs-section-body` — so folding the body alone leaves it behind.
+   Fold it away with the rest of the section. */
+.callout-studio-settings
+	.cs-collapsible-heading.is-collapsed
+	.setting-item-description {
+	display: none;
+}
+
 .callout-studio-settings .cs-subheader-row .setting-item-info {
 	margin-bottom: 0;
 	padding-bottom: 0;
