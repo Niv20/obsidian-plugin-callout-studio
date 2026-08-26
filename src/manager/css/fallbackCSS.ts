@@ -41,6 +41,8 @@ import { iconBoxWidth } from "./iconBox";
  */
 export interface FallbackCssContext {
 	settings: PluginSettings;
+	/** `CalloutRegistry.standsDown` — see the early return it guards. */
+	standsDown(def: CalloutDefinition): boolean;
 	resolveSvg(icon: CalloutIcon, role: "regular"): string | null;
 	getIconCSS(def: CalloutDefinition): string;
 	accentProps(
@@ -78,6 +80,9 @@ export function generateFallbackCSS(
 
 	const fallbackDef = callouts.find((c) => c.id === fallbackId);
 	if (!fallbackDef) return "";
+	// The template has been handed to the theme: nothing to spread. Also what
+	// lets `setStyleMode` have no special case for the fallback target.
+	if (ctx.standsDown(fallbackDef)) return "";
 
 	// Collect the *attr-form* of every known callout ID and alias — the form
 	// Obsidian actually writes into `data-callout` on a block callout.
@@ -89,12 +94,10 @@ export function generateFallbackCSS(
 	// The transient settings-preview definition is registered under its real
 	// ID, so it is already included here and thus excluded from the tint.
 	//
-	// An `externalStyle` row is included too, and that is load-bearing rather
-	// than an oversight: everything below carries `!important` at a
-	// specificity no theme can reach, so dropping such a row from this set
-	// would paint the callout *harder* than a normal one — the exact
-	// opposite of handing it to the theme. "Emit nothing for it" is achieved
-	// by generateCalloutCSS returning early, not by hiding it from here.
+	// A theme-styled row is included too, and that is load-bearing: everything
+	// below carries `!important` at a specificity no theme can reach, so
+	// dropping one would paint it *harder* than a normal callout — the exact
+	// opposite of handing it over.
 	const knownAttrIds = new Set<string>();
 	for (const def of callouts) {
 		knownAttrIds.add(obsidianCalloutAttrId(def.id));

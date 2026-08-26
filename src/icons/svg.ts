@@ -4,6 +4,9 @@
  * Two sanitizers live here because there are two threat models, and conflating
  * them would either break Material or wave a user's file straight through.
  *
+ * The deny-list both of them lean on is in `svgSafety.ts`, because a third
+ * caller outside this file needs the same guarantee.
+ *
  * - `sanitizeSVG` is for Material Symbols, fetched individually from Google as
  *   complete SVG documents. One known vendor, one known shape of output, so a
  *   deny-list of the obviously executable is proportionate. Downloadable packs
@@ -13,27 +16,8 @@
  *   inline SVG is a scripting context like any other. That one is an
  *   allow-list: unknown elements and unknown attributes do not survive.
  */
+import { stripUnsafeSvg } from "./svgSafety";
 
-const DANGEROUS_TAGS = new Set([
-	"script",
-	"iframe",
-	"object",
-	"embed",
-	"applet",
-	"form",
-	"input",
-	"button",
-	"textarea",
-	"select",
-	"link",
-	"meta",
-	"base",
-	"frame",
-	"frameset",
-]);
-
-const EVENT_ATTR_RE = /^on/i;
-const DANGEROUS_ATTR_VALUES_RE = /javascript:|data:text\/html/i;
 
 /**
  * Strip anything executable from an SVG document and normalize it.
@@ -61,30 +45,8 @@ export function sanitizeSVG(raw: string): string | null {
 		);
 	}
 
-	cleanElement(svg);
+	stripUnsafeSvg(svg);
 	return new XMLSerializer().serializeToString(svg);
-}
-
-function cleanElement(el: Element): void {
-	const toRemove: Element[] = [];
-	for (let i = 0; i < el.children.length; i++) {
-		const child = el.children[i];
-		if (!child) continue;
-		if (DANGEROUS_TAGS.has(child.tagName.toLowerCase())) toRemove.push(child);
-		else cleanElement(child);
-	}
-	for (const child of toRemove) el.removeChild(child);
-
-	for (const attr of el.getAttributeNames()) {
-		if (EVENT_ATTR_RE.test(attr)) {
-			el.removeAttribute(attr);
-			continue;
-		}
-		const value = el.getAttribute(attr);
-		if (value && DANGEROUS_ATTR_VALUES_RE.test(value)) {
-			el.removeAttribute(attr);
-		}
-	}
 }
 
 /* ------------------------------------------------------------------ *
