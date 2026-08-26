@@ -16,9 +16,11 @@
  * - obsidianCalloutAttrId — the form Obsidian itself writes into a block
  *   callout's `data-callout` attribute. Used *only* for `.callout[…]` selectors
  *   and when reading that attribute back.
+ * - calloutIdentity — the one answer to "are these two IDs the same callout?".
+ *   The only thing anything may compare identity by.
  *
- * mergeDashSpaceVariants builds on the last of those to fold IDs that only a
- * vault scan can turn up in two spellings at once.
+ * mergeDashSpaceVariants builds on those to fold IDs that only a vault scan can
+ * turn up in two spellings at once.
  */
 
 /** The two halves of a `[!type|metadata]` token body. See splitCalloutMetadata. */
@@ -136,6 +138,39 @@ export const obsidianCalloutAttrId = (raw: string): string =>
 		.replace(/\s+/g, "-");
 
 /**
+ * The canonical identity of a callout ID: the one function every comparison,
+ * lookup, insertion, persistence check, discovery pass and import goes through.
+ *
+ * Two IDs name the SAME callout exactly when this returns the same string for
+ * both, because this is Obsidian's own rule. Its blockquote tokenizer reduces a
+ * `[!…]` body to `type.trim().toLowerCase().replace(/\s+/g, "-")` (after
+ * splitting the metadata off at the first `|`), and that single value is what
+ * lands in `data-callout`. So `[!banner icon]`, `[!banner   icon]`,
+ * `[!Banner Icon]` and `[!banner-icon]` are four spellings of one callout on
+ * screen, and anything that treats them as more than one row produces two
+ * definitions fighting over a single CSS rule.
+ *
+ * It is a third helper rather than a replacement for either of the two it
+ * composes, because those two answer different questions and both are right:
+ *
+ * - `normalizeCalloutId` is the *raw-text reader*, and space-preserving on
+ *   purpose: the heading/inline/ref DOM this plugin stamps itself carries that
+ *   form (see obsidianCalloutAttrId), so dasherizing there would break
+ *   `tokenAttrSel`.
+ * - `obsidianCalloutAttrId` is the *selector* form, and deliberately does not
+ *   strip `|metadata`: Obsidian removed it before the attribute existed, so
+ *   stripping could only take a stray stored ID and collapse it onto a real
+ *   callout's rule.
+ * - Identity is the third question, and it needs both halves — a stored ID that
+ *   somehow carries a pipe must fold onto its base rather than live beside it.
+ *
+ * Idempotent, and identity-equal to `obsidianCalloutAttrId` for every ID without
+ * a pipe or a whitespace run — which is every ID the editor can produce.
+ */
+export const calloutIdentity = (raw: string): string =>
+	obsidianCalloutAttrId(normalizeCalloutId(raw));
+
+/**
  * The title Obsidian shows for a block callout that carries no explicit
  * title text: `type.trim().replace(/-/g, " ").toLowerCase()`, first letter
  * capitalized (verified in its bundled renderer — see obsidianCalloutAttrId's
@@ -154,7 +189,8 @@ export const obsidianDefaultTitle = (raw: string): string => {
  *
  * A vault where someone wrote both `[!a b]` and `[!a-b]` describes ONE callout
  * — Obsidian renders both as `data-callout="a-b"` — so discovery must offer one
- * row for the pair, not two rows that then fight over a single CSS rule.
+ * row for the pair, not two rows that then fight over a single CSS rule. Folding
+ * is by {@link calloutIdentity}, so `[!a   b]` and `[!A B]` come along with them.
  *
  * The spaced spelling wins when both were actually seen, because that is the
  * form the editor's ID field and display-name derivation produce. A spelling
@@ -166,7 +202,7 @@ export const mergeDashSpaceVariants = (ids: string[]): string[] => {
 	// so preferring a later spelling never reorders the result.
 	const chosen = new Map<string, string>();
 	for (const id of ids) {
-		const attrForm = obsidianCalloutAttrId(id);
+		const attrForm = calloutIdentity(id);
 		if (!attrForm) continue;
 		const current = chosen.get(attrForm);
 		if (current === undefined) {
