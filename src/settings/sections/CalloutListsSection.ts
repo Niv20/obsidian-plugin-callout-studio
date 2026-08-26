@@ -56,12 +56,20 @@ export function createCalloutListsController(
 	let themeSetting: Setting | null = null;
 	let themeSectionEl: HTMLElement | null = null;
 	let themeListEl: HTMLElement | null = null;
+	let mySetting: Setting | null = null;
 	let subSectionEl: HTMLElement | null = null;
 	let userListEl: HTMLElement | null = null;
+	let builtInSetting: Setting | null = null;
 	let builtInListEl: HTMLElement | null = null;
 
 	const themeLabel = (): string =>
 		activeThemeName(ctx.app) ?? t("settings.themeCalloutsDefaultTheme");
+
+	// One space before the parenthesis, on every heading — the count is a
+	// suffix on whatever `t()` returns, not a translated string of its own, so
+	// it needs no entry in the other 31 locale files.
+	const headingWithCount = (base: string, count: number): string =>
+		`${base} (${count})`;
 
 	/** See `isThemeStyled` for why membership is derived from the theme alone. */
 	const partition = () =>
@@ -97,6 +105,9 @@ export function createCalloutListsController(
 		themeSetting?.setDesc(
 			t("settings.themeCalloutsDesc", { theme: themeLabel() }),
 		);
+		themeSetting?.setName(
+			headingWithCount(t("settings.themeCalloutsHeading"), fromTheme.length),
+		);
 		themeListEl.empty();
 		// The whole section disappears with the last row rather than showing an
 		// empty state: most themes style no callouts at all, and a permanent
@@ -114,6 +125,9 @@ export function createCalloutListsController(
 	};
 
 	const renderUserList = (own: CalloutDefinition[]): void => {
+		mySetting?.setName(
+			headingWithCount(t("settings.myCalloutTypes"), own.length),
+		);
 		if (!userListEl) return;
 		userListEl.empty();
 		if (own.length === 0) {
@@ -124,6 +138,9 @@ export function createCalloutListsController(
 	};
 
 	const renderBuiltInList = (builtIn: CalloutDefinition[]): void => {
+		builtInSetting?.setName(
+			headingWithCount(t("settings.builtInCallouts"), builtIn.length),
+		);
 		if (!builtInListEl) return;
 		builtInListEl.empty();
 		if (builtIn.length === 0) {
@@ -181,16 +198,16 @@ export function createCalloutListsController(
 			themeSectionEl = themeSetting.settingEl;
 			themeListEl = containerEl.createDiv();
 
-			const subSetting = new Setting(containerEl)
+			mySetting = new Setting(containerEl)
 				.setName(t("settings.myCalloutTypes"))
 				.setHeading();
-			subSetting.settingEl.addClass("cs-subheader-row");
+			mySetting.settingEl.addClass("cs-subheader-row");
 			// Same divider the "Built-in callouts" heading gets below, so the
 			// theme-owned group above reads as visually separate from this one
 			// when that group is on screen. `renderThemeList` toggles it in step
 			// with the theme section's own visibility.
-			subSectionEl = subSetting.settingEl;
-			subSetting.addButton((btn) =>
+			subSectionEl = mySetting.settingEl;
+			mySetting.addButton((btn) =>
 				btn
 					.setButtonText(t("settings.addNewCallout"))
 					.setCta()
@@ -201,7 +218,7 @@ export function createCalloutListsController(
 
 			userListEl = containerEl.createDiv();
 
-			new Setting(containerEl)
+			builtInSetting = new Setting(containerEl)
 				.setName(t("settings.builtInCallouts"))
 				.setHeading();
 			builtInListEl = containerEl.createDiv();
