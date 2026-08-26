@@ -34,6 +34,7 @@ import {
 import { sortCalloutsByDisplayName } from "../utils/sorting";
 import { filterUsableCallouts } from "../utils/usableCallouts";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
+import { buildFormatRow, type FormatRow } from "./command/commandRoles";
 
 /** Narrow structural host — the plugin instance satisfies this. */
 export interface CommandEditorHost {
@@ -52,15 +53,6 @@ export interface CommandEditorOptions {
 	takenSignatures?: ReadonlySet<string>;
 }
 
-/** Format options in the order the user was shown them. */
-const ROLE_ORDER: CalloutRenderRole[] = ["heading", "inline", "regular"];
-
-const ROLE_LABEL_KEY: Record<CalloutRenderRole, string> = {
-	heading: "commandBuilder.formatHeading",
-	inline: "commandBuilder.formatInline",
-	regular: "commandBuilder.formatBlock",
-};
-
 export class CommandEditorModal extends Modal {
 	private role: CalloutRenderRole;
 	private calloutId: string;
@@ -72,7 +64,7 @@ export class CommandEditorModal extends Modal {
 
 	private headingRowEl?: HTMLElement;
 	private actionRowEl?: HTMLElement;
-	private roleNoticeEl?: HTMLElement;
+	private formatRow?: FormatRow;
 	private previewEl?: HTMLElement;
 	private errorEl?: HTMLElement;
 	private saveBtnEl?: HTMLButtonElement;
@@ -137,7 +129,10 @@ export class CommandEditorModal extends Modal {
 			});
 		}
 
-		this.buildFormatRow(contentEl);
+		this.formatRow = buildFormatRow(contentEl, (role) => {
+			this.role = role;
+			this.syncVisibility();
+		});
 		this.buildCalloutRow(contentEl);
 		this.buildHeadingLevelRow(contentEl);
 		this.buildActionRow(contentEl);
@@ -163,24 +158,6 @@ export class CommandEditorModal extends Modal {
 			this.resolved = true;
 			this.resolve?.(null);
 		}
-	}
-
-	private buildFormatRow(parent: HTMLElement): void {
-		const setting = new Setting(parent)
-			.setName(t("commandBuilder.format"))
-			.setDesc(t("commandBuilder.formatDesc"));
-		setting.addDropdown((dd) => {
-			for (const role of ROLE_ORDER) {
-				dd.addOption(role, t(ROLE_LABEL_KEY[role]));
-			}
-			dd.setValue(this.role).onChange((raw) => {
-				this.role = raw as CalloutRenderRole;
-				this.syncVisibility();
-			});
-		});
-		this.roleNoticeEl = setting.descEl.createDiv({
-			cls: "cs-command-role-notice",
-		});
 	}
 
 	private buildCalloutRow(parent: HTMLElement): void {
@@ -258,22 +235,20 @@ export class CommandEditorModal extends Modal {
 	 * the save button can never disagree about the current format.
 	 */
 	private syncVisibility(): void {
+		// The format control settles first: it may withdraw the current role
+		// when the theme owns this callout, and every line below reads it.
+		if (this.formatRow) {
+			this.role = this.formatRow.sync(
+				this.host.registry,
+				this.host.settings,
+				this.calloutId,
+				this.role,
+			);
+		}
 		this.headingRowEl?.toggleClass("cs-row-hidden", this.role !== "heading");
 		// Heading and inline have exactly one sensible action, so the row is
 		// hidden rather than shown as a dropdown with nothing to choose.
 		this.actionRowEl?.toggleClass("cs-row-hidden", this.role !== "regular");
-
-		if (this.roleNoticeEl) {
-			const disabledRole =
-				(this.role === "heading" &&
-					!this.host.settings.headingCallouts.enabled) ||
-				(this.role === "inline" &&
-					!this.host.settings.inlineCallouts.enabled);
-			this.roleNoticeEl.setText(
-				disabledRole ? t("commandBuilder.roleDisabled") : "",
-			);
-			this.roleNoticeEl.toggleClass("is-visible", disabledRole);
-		}
 
 		const def = this.host.registry.get(this.calloutId);
 		if (this.previewEl) {
