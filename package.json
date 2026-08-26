@@ -14,7 +14,8 @@
 		"welcome": "open 'obsidian://callout-studio-welcome'",
 		"prepare": "husky",
 		"icons:generate": "node scripts/generate-icon-packs.mjs",
-		"i18n:generate": "node scripts/generate-locales.mjs"
+		"i18n:generate": "node scripts/generate-locales.mjs",
+		"themes:report": "node scripts/generate-theme-report.mjs"
 	},
 	"keywords": [],
 	"license": "SEE LICENSE IN LICENSE",

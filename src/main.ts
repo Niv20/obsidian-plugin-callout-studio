@@ -23,6 +23,7 @@ import {
 	setMaterialFontStore,
 } from "./icons/materialFontStore";
 import { CalloutDiscovery } from "./manager/CalloutDiscovery";
+import { registerThemeRowSync } from "./manager/theme/themeRowSync";
 import { removeLegacyStartupSnippet } from "./manager/legacyStartupSnippet";
 import { runFirstRunDiscovery } from "./manager/firstRunDiscovery";
 import { CalloutStudioSettingsTab } from "./settings/SettingsTab";
@@ -150,6 +151,11 @@ export default class CalloutStudioPlugin extends Plugin {
 			);
 		}
 
+		// Give the callout types the active theme declares a row of their own,
+		// and keep doing so whenever the theme changes. Runs before the first
+		// inject so those rows are in the sheet from the start.
+		registerThemeRowSync(this);
+
 		// Full CSS inject now that the registry holds real definitions
 		// (replaces the startup snapshot applied above).
 		this.cssInjector.initialize();
@@ -257,17 +263,6 @@ export default class CalloutStudioPlugin extends Plugin {
 			this.outlineDecorator.refreshAll();
 			void this.saveSettings();
 		});
-
-		// Re-inject on theme/snippet change. Pass `false` so we don't re-emit
-		// css-change in response to css-change — that would loop with other
-		// plugins that also listen and re-emit (e.g. Style Settings). The
-		// external css-change already re-renders open notes, so re-emitting is
-		// both redundant and harmful here.
-		this.registerEvent(
-			this.app.workspace.on("css-change", () => {
-				this.cssInjector.inject(false);
-			}),
-		);
 
 		// Settings tab. Held onto so a locale arriving mid-session can re-render
 		// it (see applyLocaleChange).

@@ -3286,6 +3286,17 @@ input.cs-input-invalid:focus {
 	margin-top: 4px;
 }
 
+/* "Paused: your theme supplies this callout…" under a command's name in the
+   list. Warning-coloured like the editor's notice above, because it is the
+   same fact reported after the fact — but a plain line rather than a pill: the
+   command has not gone wrong, it is waiting, and a badge silhouette here would
+   read as an error beside rows that carry hotkey chips in the very same spot. */
+.cs-command-suspended {
+	color: var(--text-warning);
+	font-size: var(--font-ui-smaller);
+	margin-top: 2px;
+}
+
 /* Saved palettes list (settings section). Its rows are .callout-studio-rows,
    so they sit on the same 2px rhythm as the callout list above them rather
    than on a looser one of their own. */
@@ -3598,6 +3609,75 @@ input.cs-input-invalid:focus {
 	   whole pills instead. */
 	white-space: nowrap;
 	flex-shrink: 0;
+}
+
+/* ── A theme's own callout icon, reproduced ─────────────────────────────────
+   Two of the five rungs in `manager/theme/themeAppearance.ts` cannot be drawn
+   by cloning a node, so they are rebuilt here from what was measured.
+
+   The mask rung is for the six installed themes that paint `.callout-icon`
+   through `mask-image`: there is no SVG to copy, only a stencil over a painted
+   box, so the box is what gets reproduced. `currentColor` keeps it tracking
+   whatever accent the surrounding row sets, exactly as a cloned SVG does. */
+.cs-theme-icon-mask {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	background-color: currentColor;
+	-webkit-mask-image: var(--cs-theme-mask);
+	mask-image: var(--cs-theme-mask);
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+	-webkit-mask-size: contain;
+	mask-size: contain;
+}
+
+/* The glyph rung, for the three themes that draw their icon as `::before`
+   content. A pseudo-element cannot be cloned, so its text becomes real text —
+   carrying the font that made it a glyph rather than three stray letters. */
+.cs-theme-icon-glyph {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1em;
+	height: 1em;
+	line-height: 1;
+	font-size: 1em;
+}
+
+/* The offscreen callout the probe measures.
+
+   `visibility: hidden`, never `display: none`: a display-none subtree has no
+   used values for the properties that matter, so masks and backgrounds come
+   back empty and every theme would read as unknown. Parked far off-canvas so
+   nothing of it reaches the page, and `contain` keeps a box that is laid out
+   but never seen from provoking layout work anywhere else. */
+.cs-theme-probe {
+	position: fixed;
+	top: 0;
+	left: -10000px;
+	width: 600px;
+	visibility: hidden;
+	pointer-events: none;
+	contain: layout style;
+}
+
+/* The *External CSS* label — the only label on any row. It reuses the fallback
+   tag's silhouette because it is the same kind of statement (a fact about this
+   row that its position cannot express), and takes the muted palette because,
+   unlike *Default*, it is not something the user navigates by. */
+.cs-external-tag {
+	color: var(--text-faint);
+}
+
+/* Theme callout preview window */
+.cs-theme-preview-note {
+	margin: 0 0 var(--size-4-2);
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	line-height: 1.5;
 }
 
 /* Phase 7: delete-without-replace styling */
@@ -4876,9 +4956,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	max-width: min(760px, 95vw);
 }
 
-/* Two-column body: explanation on the left, a live preview on the right.
-   Shared by the welcome splash and the External style window — same shape,
-   same stacking breakpoint, so they stay in step. */
+/* Two-column body: explanation on the left, a live preview on the right. */
 .cs-split-panel {
 	display: grid;
 	grid-template-columns: 1fr 1.2fr;
@@ -4941,71 +5019,6 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	}
 }
 
-/* ══ External style window ═════════════════════════════════════ */
-/* Opens instead of the callout editor for a callout handed to the theme
-   (see ExternalStyleModal). Left column explains, right column proves it
-   with a real preview rendered by the theme's own CSS. */
-
-.modal.cs-external-modal {
-	width: min(760px, 95vw);
-	max-width: min(760px, 95vw);
-}
-
-.cs-external-left {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	gap: 10px;
-	min-width: 0;
-}
-
-.cs-external-lead {
-	margin: 0;
-	font-size: var(--font-ui-medium);
-	color: var(--text-normal);
-	line-height: 1.5;
-}
-
-.cs-external-what {
-	margin: 6px 0 0;
-	font-size: var(--font-ui-small);
-	font-weight: 600;
-	color: var(--text-muted);
-}
-
-.cs-external-list {
-	margin: 0;
-	padding-inline-start: 1.2em;
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	font-size: var(--font-ui-small);
-	color: var(--text-muted);
-	line-height: 1.5;
-}
-
-.cs-external-right {
-	min-width: 0;
-	display: flex;
-	flex-direction: column;
-}
-
-.cs-external-right .cs-live-preview-container {
-	flex: 1;
-}
-
-.cs-external-right .cs-live-preview-body {
-	min-height: 200px;
-	max-height: 340px;
-	overflow-y: auto;
-}
-
-/* Settings row for an externally styled callout. Dimmed as a whole so the
-   row reads as "not ours"; its icon slot is left empty and its color
-   swatches are omitted entirely (see CalloutRowRenderer). */
-.callout-studio-row.is-external-style {
-	opacity: 0.65;
-}
 
 /* A language the user has picked but that could not be downloaded yet. Styled
    as a notice rather than an error: the plugin is fully usable in English, and
@@ -5022,52 +5035,4 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-faint);
 	font-size: var(--font-ui-smaller);
 	text-align: center;
-}
-
-/* ── Theme coexistence report ───────────────────────────────────────────────
- * One row per callout the active theme also styles. Deliberately quiet: this
- * is a diagnostic the user reads once when something looks wrong, not a
- * control surface, so it borrows the row metrics next door rather than
- * inventing its own.
- */
-.cs-theme-conflict-list {
-	display: flex;
-	flex-direction: column;
-	gap: var(--size-4-2);
-	margin-bottom: var(--size-4-4);
-}
-
-.cs-theme-conflict-row {
-	padding: var(--size-4-2) var(--size-4-3);
-	border-radius: var(--radius-s);
-	background-color: var(--cs-surface-raised, var(--background-secondary));
-}
-
-.cs-theme-conflict-name-line {
-	display: flex;
-	align-items: center;
-	gap: var(--size-4-2);
-	flex-wrap: wrap;
-}
-
-.cs-theme-conflict-name {
-	font-weight: var(--font-medium);
-}
-
-.cs-theme-conflict-id {
-	font-family: var(--font-monospace);
-	font-size: var(--font-ui-smaller);
-	color: var(--text-muted);
-}
-
-.cs-theme-conflict-props {
-	margin-top: var(--size-2-1);
-	font-size: var(--font-ui-smaller);
-	color: var(--text-muted);
-}
-
-.cs-theme-conflict-warning {
-	margin-top: var(--size-2-1);
-	font-size: var(--font-ui-smaller);
-	color: var(--text-warning);
 }
