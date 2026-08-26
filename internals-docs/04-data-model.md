@@ -196,8 +196,13 @@ interface PluginSettings {
   userImages: UserImageIcon[];
   customCommands: CustomCommand[];
   disabledFixedCommands: string[];
+  calloutListsExpanded: { theme: boolean; user: boolean; builtin: boolean };
 }
 ```
+
+`calloutListsExpanded` is which of the three callout-list sections in the
+settings tab are expanded — see
+[Settings UI and modals](15-settings-ui-and-modals.md#where-the-state-lives-and-how-long).
 
 `GlobalStyleSettings` holds vault-wide style for all three roles: border
 sides/width/radius, title/content scale, "Align content with title" for the

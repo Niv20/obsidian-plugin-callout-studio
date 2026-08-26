@@ -42,6 +42,12 @@ export function attachSectionDisclosure(
 	setting: Setting,
 	bodyEl: HTMLElement,
 	initiallyExpanded = true,
+	/**
+	 * Fired only when the user folds or unfolds the section by hand (click or
+	 * keyboard) — not when a caller drives `setExpanded` programmatically —
+	 * which is what lets a caller persist just the user's own choice.
+	 */
+	onToggle?: (expanded: boolean) => void,
 ): SectionDisclosure {
 	const headingEl = setting.settingEl;
 	const nameEl = setting.nameEl;
@@ -87,13 +93,18 @@ export function attachSectionDisclosure(
 		nameEl.insertBefore(chevron, nameEl.firstChild);
 	};
 
-	nameEl.addEventListener("click", () => setExpanded(!expanded));
+	const toggle = (): void => {
+		setExpanded(!expanded);
+		onToggle?.(expanded);
+	};
+
+	nameEl.addEventListener("click", toggle);
 	nameEl.addEventListener("keydown", (evt: KeyboardEvent) => {
 		if (evt.key !== "Enter" && evt.key !== " ") return;
 		// Space scrolls the settings pane otherwise, and Enter on a role=button
 		// is expected to activate rather than do whatever the pane would.
 		evt.preventDefault();
-		setExpanded(!expanded);
+		toggle();
 	});
 
 	mountChevron();

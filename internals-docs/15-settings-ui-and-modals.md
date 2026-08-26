@@ -82,9 +82,14 @@ where). Two behaviours sit on top of that split, each in its own helper.
 
 ### `sectionDisclosure.ts` — a heading you can fold
 
-`attachSectionDisclosure(setting, bodyEl, initiallyExpanded = true)` gives a
-heading the same chevron the credits block has had since it shipped, and
-returns `{ setName, setExpanded, isExpanded }`.
+`attachSectionDisclosure(setting, bodyEl, initiallyExpanded = true, onToggle?)`
+gives a heading the same chevron the credits block has had since it shipped,
+and returns `{ setName, setExpanded, isExpanded }`. `onToggle`, if given,
+fires with the new state on a user-driven click or keypress only — not when a
+caller drives the returned `setExpanded` — which is what lets a caller
+persist just the user's own choice; see
+[Where the state lives, and how long](#where-the-state-lives-and-how-long)
+for the one caller that does.
 
 Three things about it are decisions, not incidentals:
 
@@ -187,10 +192,24 @@ makes the three independent and what makes them survive a repaint. `refresh()`
 rebuilds every row on a registry change or a theme switch, and a list the user
 expanded must not fold back up under them.
 
-Nothing is persisted. `SettingsTab.display()` builds a new controller on every
-visit, so every section opens expanded and uncapped again — a deliberate
-choice, not an oversight: the tab is a place you visit, not a workspace whose
-layout you arrange.
+The page cursor is session-only: `SettingsTab.display()` builds a new
+controller on every visit, so every section reopens uncapped, behind its
+`Load more` button again if it was ever pressed. Nobody has asked to keep a
+whole vault's icon grid on screen by default, and paging past the cap is a
+cheap habit to reform.
+
+The **fold** is not session-only. `settings/sections/calloutListsFold.ts`
+mirrors each section's `SectionDisclosure` into
+`PluginSettings.calloutListsExpanded` (`{ theme, user, builtin }`, keyed the
+same way as `RowKind`) the moment the user folds or unfolds it by hand —
+`attachSectionDisclosure`'s `onToggle` fires only on that user gesture, never
+when a caller drives `setExpanded` programmatically, so a save only happens
+for a choice the user actually made. `createCalloutListsController` reads
+that field back as each heading's `initiallyExpanded` on `render()`, so a
+folded section stays folded across a settings-tab reopen and a plugin reload
+alike; an install upgrading from before this field existed merges in `true`
+for all three (`mergeSavedSettings`, `DEFAULT_SETTINGS.calloutListsExpanded`),
+so the tab looks exactly as it did before the upgrade.
 
 The heading count is always the **partitioned** length, never the visible
 slice. Folding a section, or leaving 20 of 34 rows on screen, changes what is

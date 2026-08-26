@@ -33,6 +33,12 @@
  * rebuilds every row on a registry change or a theme switch, and a list the
  * user had expanded must not quietly fold back up under them.
  *
+ * The fold is also written through to `settings.calloutListsExpanded`
+ * (`calloutListsFold.ts`) on every user-driven toggle, so it survives past
+ * this closure too — a settings-tab reopen or a plugin reload starts each
+ * section from whatever the user last left it, not from expanded. The paging
+ * cursor is deliberately not: it is session-only, reset by the same reopen.
+ *
  * The count in a heading is always the *partitioned* length, never the visible
  * slice — folding a section or leaving 20 of 34 rows on screen changes what is
  * drawn, not how many the user has.
@@ -44,10 +50,10 @@ import { activeThemeName } from "../../manager/theme/customCssApi";
 import { partitionByStyleOwner, styleOwnerFacts } from "./rowOwnership";
 import type { RowKind } from "./rowOwnership";
 import { ensureThemeRowUsage } from "./themeRowUsage";
-import { attachSectionDisclosure } from "./sectionDisclosure";
 import type { SectionDisclosure } from "./sectionDisclosure";
 import { LIST_PAGE_SIZE, renderPagedList } from "./listPaging";
 import type { PagingState } from "./listPaging";
+import { attachPersistedFold } from "./calloutListsFold";
 import { WelcomeModal } from "../WelcomeModal";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
@@ -245,7 +251,7 @@ export function createCalloutListsController(
 			themeSetting.settingEl.addClass("cs-subheader-row");
 			themeSectionEl = themeSetting.settingEl;
 			themeListEl = containerEl.createDiv();
-			themeFold = attachSectionDisclosure(themeSetting, themeListEl);
+			themeFold = attachPersistedFold(themeSetting, themeListEl, "theme", ctx.plugin);
 
 			mySetting = new Setting(containerEl)
 				.setName(t("settings.myCalloutTypes"))
@@ -266,7 +272,7 @@ export function createCalloutListsController(
 			);
 
 			userListEl = containerEl.createDiv();
-			userFold = attachSectionDisclosure(mySetting, userListEl);
+			userFold = attachPersistedFold(mySetting, userListEl, "user", ctx.plugin);
 
 			// No `cs-subheader-row` here on purpose: that class is what the
 			// heading-divider rule in styles.css excludes, so adding it to reach
@@ -277,7 +283,7 @@ export function createCalloutListsController(
 				.setName(t("settings.builtInCallouts"))
 				.setHeading();
 			builtInListEl = containerEl.createDiv();
-			builtInFold = attachSectionDisclosure(builtInSetting, builtInListEl);
+			builtInFold = attachPersistedFold(builtInSetting, builtInListEl, "builtin", ctx.plugin);
 
 			renderAll();
 		},

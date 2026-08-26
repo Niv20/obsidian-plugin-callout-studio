@@ -284,6 +284,140 @@ describe("each list heading folds its own section", () => {
 });
 
 /* -------------------------------------------------------------------------- */
+/* Persisted fold state                                                       */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Unlike the paging cursor above, a fold is written through to
+ * `settings.calloutListsExpanded` (`calloutListsFold.ts`) the moment the user
+ * toggles it, so it survives past the controller's own closure — a
+ * settings-tab reopen builds a brand new controller (`SettingsTab.display()`
+ * does this on every visit) and a plugin reload builds a brand new registry.
+ * Both are simulated below rather than asserted only against the in-memory
+ * `PluginSettings` object, so a wiring mistake between the fold and the
+ * settings it is supposed to read back from would show up here too.
+ */
+describe("a section's fold is remembered in settings", () => {
+	it("defaults every section to expanded when nothing has been saved yet", () => {
+		const registry = vault();
+		assert.deepStrictEqual(registry.settings.calloutListsExpanded, {
+			theme: true,
+			user: true,
+			builtin: true,
+		});
+	});
+
+	it("defaults to expanded for an existing vault whose saved settings predate this field", () => {
+		// A `data.json` from before this setting existed: `settings` is present
+		// (an upgrading install, not a fresh one) but has no `calloutListsExpanded`
+		// key at all — the exact shape `mergeSavedSettings` has to fall back on.
+		const registry = new CalloutRegistry();
+		registry.load({
+			version: 3,
+			callouts: [],
+			settings: { language: "en", welcomeSeen: true },
+		} as never);
+
+		assert.deepStrictEqual(registry.settings.calloutListsExpanded, {
+			theme: true,
+			user: true,
+			builtin: true,
+		});
+
+		const { host } = render(registry, themeApp([]), []);
+		for (const label of [THEME, MINE, BUILT_IN]) {
+			assert.strictEqual(
+				expanded(section(host, label)),
+				true,
+				`${label} did not default to expanded for an upgrading install`,
+			);
+		}
+	});
+
+	it("saves each section's fold independently", () => {
+		const registry = vault();
+		const { host } = render(registry, themeApp([]), []);
+
+		click(section(host, MINE).nameEl);
+		assert.deepStrictEqual(registry.settings.calloutListsExpanded, {
+			theme: true,
+			user: false,
+			builtin: true,
+		});
+
+		click(section(host, BUILT_IN).nameEl);
+		assert.deepStrictEqual(registry.settings.calloutListsExpanded, {
+			theme: true,
+			user: false,
+			builtin: false,
+		});
+
+		// Unfolding one leaves the other exactly where it was.
+		click(section(host, MINE).nameEl);
+		assert.deepStrictEqual(registry.settings.calloutListsExpanded, {
+			theme: true,
+			user: true,
+			builtin: false,
+		});
+	});
+
+	it("restores the fold when the settings tab is reopened", () => {
+		const registry = vault();
+		const app = themeApp([]);
+		const { host: firstVisit } = render(registry, app, []);
+
+		click(section(firstVisit, BUILT_IN).nameEl);
+		assert.strictEqual(expanded(section(firstVisit, BUILT_IN)), false);
+
+		// A reopen builds a brand new controller against the same registry —
+		// exactly what SettingsTab.display() does on every visit.
+		const { host: secondVisit } = render(registry, app, []);
+
+		const builtIn = section(secondVisit, BUILT_IN);
+		assert.strictEqual(
+			expanded(builtIn),
+			false,
+			"reopening the settings tab forgot the fold",
+		);
+		assert.strictEqual(folded(builtIn), true);
+		for (const label of [THEME, MINE]) {
+			const other = section(secondVisit, label);
+			assert.strictEqual(
+				expanded(other),
+				true,
+				`reopening the tab folded ${label}, which was never touched`,
+			);
+		}
+	});
+
+	it("restores the fold after a plugin reload", () => {
+		const registry = vault();
+		const app = themeApp([]);
+		const { host } = render(registry, app, []);
+
+		click(section(host, BUILT_IN).nameEl);
+		assert.strictEqual(expanded(section(host, BUILT_IN)), false);
+
+		// A plugin reload is a brand new CalloutRegistry loading whatever the
+		// last save wrote — not the same in-memory object at all.
+		const reloaded = new CalloutRegistry();
+		reloaded.load(registry.toSaveData());
+		const { host: afterReload } = render(reloaded, app, []);
+
+		const builtIn = section(afterReload, BUILT_IN);
+		assert.strictEqual(
+			expanded(builtIn),
+			false,
+			"the reloaded plugin forgot the fold",
+		);
+		assert.strictEqual(folded(builtIn), true);
+		for (const label of [THEME, MINE]) {
+			assert.strictEqual(expanded(section(afterReload, label)), true);
+		}
+	});
+});
+
+/* -------------------------------------------------------------------------- */
 /* Paging                                                                     */
 /* -------------------------------------------------------------------------- */
 

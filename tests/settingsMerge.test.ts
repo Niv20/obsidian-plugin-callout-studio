@@ -78,6 +78,7 @@ const FIELD_KIND: Record<keyof PluginSettings, "value" | "list"> = {
 	retiredThemeIds: "list",
 	disabledFixedCommands: "list",
 	quickInsertSource: "value",
+	calloutListsExpanded: "value",
 };
 
 const LIST_FIELDS = Object.entries(FIELD_KIND)
@@ -136,6 +137,9 @@ const LEAVES = leaves(DEFAULT_SETTINGS);
  */
 const EXPECTED_LEAVES: string[] = [
 	"autocomplete.enabled",
+	"calloutListsExpanded.builtin",
+	"calloutListsExpanded.theme",
+	"calloutListsExpanded.user",
 	"contextMenu.enabled",
 	"fallbackCalloutId",
 	"firstRunCompleted",

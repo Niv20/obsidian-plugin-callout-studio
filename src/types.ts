@@ -715,6 +715,18 @@ export interface GlobalStyleSettings {
 	inline: InlineFrameStyleSettings;
 }
 
+/**
+ * Whether each of the three callout-list sections in the settings tab —
+ * theme, user, built-in — is expanded. Keyed the same way as `RowKind`
+ * (`settings/sections/rowOwnership.ts`). Persisted so a section the user
+ * folded away stays folded across a settings-tab visit and a plugin reload.
+ */
+export interface CalloutListsFoldState {
+	theme: boolean;
+	user: boolean;
+	builtin: boolean;
+}
+
 export interface PluginSettings {
 	globalStyle: GlobalStyleSettings;
 	contextMenu: ContextMenuSettings;
@@ -776,6 +788,8 @@ export interface PluginSettings {
 	 * leaf module.
 	 */
 	quickInsertSource: string;
+	/** See {@link CalloutListsFoldState}. Defaults to all three expanded. */
+	calloutListsExpanded: CalloutListsFoldState;
 }
 
 export interface PluginData {

@@ -781,7 +781,10 @@ describe("no new oversized files", () => {
 		// again for `PluginSettings.retiredThemeIds`, which is what stops
 		// discovery re-creating a theme's callout types from notes that still
 		// mention them after the theme is gone.
-		"src/types.ts": 823,
+		// Raised again for `PluginSettings.calloutListsExpanded`, which remembers
+		// the fold state of the three callout-list sections across a
+		// settings-tab reopen and a plugin reload.
+		"src/types.ts": 837,
 		"src/editor/livepreview/widgets.ts": 793,
 		"src/reading/calloutPostProcessor.ts": 781,
 		"src/settings/iconpicker/PackPanel.ts": 736,

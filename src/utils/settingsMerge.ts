@@ -280,5 +280,20 @@ export function mergeSavedSettings(
 					),
 				]
 			: [],
+		// Field by field, not a spread of the saved object: a vault that predates
+		// this setting has no `calloutListsExpanded` key at all, and every field
+		// here must fall back to expanded on its own rather than the whole object
+		// falling back only when the key is missing entirely.
+		calloutListsExpanded: {
+			theme:
+				savedSettings.calloutListsExpanded?.theme ??
+				DEFAULT_SETTINGS.calloutListsExpanded.theme,
+			user:
+				savedSettings.calloutListsExpanded?.user ??
+				DEFAULT_SETTINGS.calloutListsExpanded.user,
+			builtin:
+				savedSettings.calloutListsExpanded?.builtin ??
+				DEFAULT_SETTINGS.calloutListsExpanded.builtin,
+		},
 	};
 }
