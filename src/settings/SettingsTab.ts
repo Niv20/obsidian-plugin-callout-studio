@@ -14,6 +14,8 @@ import type { App, EventRef } from "obsidian";
 import { CalloutEditor } from "./CalloutEditor";
 import { openCalloutEditorFor } from "./openCalloutEditor";
 import { scanStringForUnknownCallouts } from "../utils/vaultCalloutScanner";
+import { mergeDashSpaceVariants } from "../utils/calloutId";
+import { buildKnownCalloutIds } from "../manager/knownCalloutIds";
 import { renderHotkeySection } from "./sections/HotkeySection";
 import { renderCreditsSection } from "./sections/CreditsSection";
 import { renderFooterSection } from "./sections/FooterSection";
@@ -269,11 +271,8 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	}
 
 	private scanOpenEditorsForUnknownCallouts(): void {
-		const known = new Set<string>();
-		for (const def of this.plugin.registry.getAll()) {
-			known.add(def.id.toLowerCase());
-			for (const a of def.aliases ?? []) known.add(a.toLowerCase());
-		}
+		// The shared set, not a second one built here — see knownCalloutIds.ts.
+		const known = buildKnownCalloutIds(this.plugin.registry);
 		const seen = new Set<string>();
 		const leaves = this.app.workspace.getLeavesOfType("markdown");
 		for (const leaf of leaves) {
@@ -286,8 +285,10 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 			}
 		}
 		if (seen.size === 0) return;
+		// Folded again across leaves: `[!a b]` in one open note and `[!a-b]` in
+		// another arrive here as two entries, as they do in a vault scan.
 		const added = this.plugin.addUnknownCalloutsAsFallback(
-			Array.from(seen),
+			mergeDashSpaceVariants(Array.from(seen)),
 		);
 		if (added > 0) {
 			void this.plugin.saveSettings();
