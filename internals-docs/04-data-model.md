@@ -38,7 +38,7 @@ interface CalloutDefinition {
 Field-by-field notes on the ones that are not self-explanatory:
 
 - **`id`** may contain spaces (`"my callout"`). Obsidian dasherizes it for the
-  `data-callout` attribute; see [Callout IDs and the three normalizers](#callout-ids-and-the-three-normalizers)
+  `data-callout` attribute; see [Callout IDs and the normalizers](#callout-ids-and-the-normalizers)
   below.
 - **`source`** distinguishes provenance, not appearance. See the table in
   [Callout registry](05-callout-registry.md#sources).
@@ -246,9 +246,9 @@ number it likes while still needing the same repairs. See
 `callouts` is **not** every callout the registry holds — see
 [Callout registry § which rows are persisted](05-callout-registry.md#which-rows-are-persisted-the-built-in-rule).
 
-## Callout IDs and the three normalizers
+## Callout IDs and the normalizers
 
-Four helpers in [`src/utils/calloutId.ts`](../src/utils/calloutId.ts), each
+Five helpers in [`src/utils/calloutId.ts`](../src/utils/calloutId.ts), each
 with a distinct job. Confusing them is the single most common source of subtle
 bugs in this codebase — every one of them exists because a plausible-looking
 shortcut breaks a specific real case.
@@ -259,6 +259,7 @@ shortcut breaks a specific real case.
 | `normalizeCalloutId` | **Permissive.** Reading an ID out of markdown, or matching against the registry: drops metadata, collapses whitespace, trims, lowercases | Yes |
 | `sanitizeCalloutIdInput` | **Restrictive.** The user *creating* an ID in the editor: keeps only letters/numbers/space/dash, folds dash runs into spaces | No — a pipe here is a character in a display name, not a token separator |
 | `obsidianCalloutAttrId` | The form **Obsidian itself** writes into `data-callout` — `trim().toLowerCase().replace(/\s+/g, "-")`. Selectors only | No |
+| `calloutIdentity` | **The one answer to "are these two IDs the same callout?"** — `obsidianCalloutAttrId(normalizeCalloutId(x))`. Every comparison, lookup, insertion, persistence check, discovery pass and import | Yes |
 
 `normalizeCalloutId` is the funnel every raw-markdown-reading path goes
 through — discovery, the vault scanners, `resolveCalloutDef`, the context menu,
@@ -277,8 +278,32 @@ space-preserving `normalizeCalloutId` form instead — mixing the two up is what
 prevent. See the `callout-metadata-pipe` skill for the full migration/edge-case
 derivation.
 
+`calloutIdentity` is the **uniqueness** question, which is a third thing again.
+`[!banner icon]`, `[!banner   icon]`, `[!Banner Icon]` and `[!banner-icon]` are
+four spellings of ONE callout — Obsidian renders them all as
+`data-callout="banner-icon"` — so a second registry row for a second spelling is
+never a second type. It is a duplicate that fights the first over a single CSS
+rule, splits its usage count, and shows up twice in every list.
+
+`CalloutRegistry.add()` and the rename branch of `update()` refuse a colliding
+spelling themselves, so no ingestion path can create the pair: discovery, the
+three importers, the theme sweep and the editor all go through one of them.
+A pair already in `data.json` is folded on load by `reconcileIdCollisions`
+([`manager/idCollisionMigration.ts`](../src/manager/idCollisionMigration.ts)),
+which merges rather than halves — see
+[Callout registry § reconcileIdCollisions](05-callout-registry.md#reconcileidcollisions--two-rows-that-are-one-callout).
+
+It composes the two above rather than replacing either, because all three are
+right about different questions. Identity has to fold a stray stored `|metadata`
+onto its base; `obsidianCalloutAttrId` must *not*, or an emitted selector could
+hijack a real callout's rule; and `normalizeCalloutId` must keep the space, or
+the plugin's own token DOM stops matching `tokenAttrSel`. For every ID the
+editor can actually produce — `sanitizeCalloutIdInput` emits neither a pipe nor
+a whitespace run — `calloutIdentity` and `obsidianCalloutAttrId` are the same
+function.
+
 > [!TIP]
-> Reuse these four helpers rather than writing a local regex. Several
+> Reuse these five helpers rather than writing a local regex. Several
 > subsystems (discovery, the CSS injector, the vault scanner, import
 > validation) depend on identical normalization behaviour to agree with each
 > other about what counts as "the same callout."

@@ -41,7 +41,7 @@ that feels like it "should just work."
 > because "obviously correct" ad-hoc handling breaks on real cases:
 > multi-word ids, `|metadata`, dash/space equivalence in Obsidian's own
 > `data-callout` attribute. See
-> [Data model § the three normalizers](04-data-model.md#callout-ids-and-the-three-normalizers).
+> [Data model § the normalizers](04-data-model.md#callout-ids-and-the-normalizers).
 > Using the wrong one of the four in a new call site is the single most
 > common way a feature works for the common case and silently breaks on an
 > id with a space, a pipe, or a stray quote in it.
