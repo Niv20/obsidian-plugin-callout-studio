@@ -756,7 +756,9 @@ describe("no new oversized files", () => {
 		// dasherized id belongs to, and which raw forms one definition may claim
 		// in the vault — moved to manager/calloutIdForms.ts, and what the active
 		// theme claims and draws to manager/theme/ThemeFacts.ts.
-		"src/manager/CalloutRegistry.ts": 1990,
+		// Lowered from 1990: the dash/space collision fold moved to
+		// manager/idCollisionMigration.ts, which owns the merge rule.
+		"src/manager/CalloutRegistry.ts": 1983,
 		"src/utils/importValidator.ts": 1184,
 		// Lowered from 1190: the style-mode pair's import rules moved to
 		// utils/importStyleMode.ts.
@@ -814,7 +816,10 @@ describe("no new oversized files", () => {
 		// an id — an explicit delete seconds ago, and a callout type the active
 		// theme stopped supplying — are one question now, in
 		// manager/rediscoveryHold.ts.
-		"src/manager/CalloutDiscovery.ts": 412,
+		// Lowered from 412: "what ids do we already know" moved to
+		// manager/knownCalloutIds.ts, so the settings tab can ask the same
+		// question without a forwarder through the plugin.
+		"src/manager/CalloutDiscovery.ts": 398,
 		"src/editor/contextmenu/resolve.ts": 455,
 		"src/ui/TagInput.ts": 414,
 		"src/settings/editor/CalloutEditorSave.ts": 410,
