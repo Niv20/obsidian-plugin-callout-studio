@@ -9,6 +9,10 @@
  * badge ships. Comments are stripped up front and string bodies are skipped,
  * which is the only thing the CSSOM was really buying.
  *
+ * Cutting the sheet into rules is `cssBlocks.ts`, which also resolves native
+ * CSS nesting so a nested sheet reads exactly as its flat equivalent — this
+ * file sees selectors and declarations, never braces.
+ *
  * ## Two questions, not one
  *
  * *"Which callouts does this theme define?"* and *"does this theme style the
@@ -45,6 +49,7 @@ import {
 } from "../../utils/cssSpecificity";
 import { blankNegations, splitSelectorList } from "../../utils/selectorText";
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
+import { eachBlock, stripComments } from "./cssBlocks";
 
 /** One thing a stylesheet says about one callout id. */
 export interface ThemeClaim {
@@ -96,15 +101,6 @@ export interface ThemeScan {
 	byId: Map<string, ThemeClaim>;
 	/** Family claims — matched by `themeClaimLookup`, never enumerated. */
 	patterns: PatternClaim[];
-}
-
-/**
- * Strip CSS comments. Not string-aware, and does not need to be: comment
- * punctuation inside a CSS string literal is legal but vanishingly rare, and
- * the cost of getting it wrong is one missed claim rather than a wrong one.
- */
-export function stripComments(css: string): string {
-	return css.replace(/\/\*[\s\S]*?\*\//g, "");
 }
 
 /** Every `[data-callout<op>=<value>]` in one selector. */
@@ -161,43 +157,6 @@ function declarationsOf(body: string): Array<{ name: string; bang: boolean }> {
 		out.push({ name, bang: /!\s*important/i.test(piece.slice(colon + 1)) });
 	}
 	return out;
-}
-
-/**
- * Visit every `prelude { body }` block, descending into at-rule wrappers.
- *
- * The close brace has to be found by depth rather than by the next `}`: with a
- * flat search, `@media print { .callout[data-callout=x] { … } }` matches the
- * *inner* rule's brace, so the inner selector ends up inside what is treated as
- * the wrapper's body and the claim is silently lost. A wrapper is recognised by
- * its body containing a brace at all, which covers `@media`, `@supports` and
- * their nestings without needing to know their names.
- */
-export function eachBlock(
-	text: string,
-	visit: (prelude: string, body: string) => void,
-): void {
-	let cursor = 0;
-	while (cursor < text.length) {
-		const open = text.indexOf("{", cursor);
-		if (open < 0) return;
-		let depth = 0;
-		let close = -1;
-		for (let i = open; i < text.length; i++) {
-			const ch = text[i];
-			if (ch === "{") depth++;
-			else if (ch === "}" && --depth === 0) {
-				close = i;
-				break;
-			}
-		}
-		if (close < 0) return;
-		const prelude = text.slice(cursor, open);
-		const body = text.slice(open + 1, close);
-		cursor = close + 1;
-		if (body.includes("{")) eachBlock(body, visit);
-		else visit(prelude, body);
-	}
 }
 
 function absorb(

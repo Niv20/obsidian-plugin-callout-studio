@@ -35,7 +35,7 @@ and several of them have to happen in this order.
 | # | Stage | Module | Output |
 | --- | --- | --- | --- |
 | 1 | Find the active theme and its CSS text | [`customCssApi.ts`](../src/manager/theme/customCssApi.ts) | theme name, stylesheet text, snippet texts, a cheap signature |
-| 2 | Scan that text for callout claims | [`themeCalloutScan.ts`](../src/manager/theme/themeCalloutScan.ts), cached by [`ThemeCalloutStore.ts`](../src/manager/theme/ThemeCalloutStore.ts) | `Map<attrId, ThemeClaim>` + family patterns |
+| 2 | Scan that text for callout claims | [`cssBlocks.ts`](../src/manager/theme/cssBlocks.ts) → [`themeCalloutScan.ts`](../src/manager/theme/themeCalloutScan.ts), cached by [`ThemeCalloutStore.ts`](../src/manager/theme/ThemeCalloutStore.ts) | `Map<attrId, ThemeClaim>` + family patterns |
 | 3 | Publish ownership | [`ThemeFacts.ts`](../src/manager/theme/ThemeFacts.ts), via `CalloutRegistry.setThemeOwnedIds` | `registry.themeOwns(def)` |
 | 4 | Mint / retire rows for ids the theme invents | [`themeProvidedRows.ts`](../src/manager/theme/themeProvidedRows.ts) | `source: "theme"` rows |
 | 5 | Measure what the theme actually draws | [`ThemeAppearanceProbe.ts`](../src/manager/theme/ThemeAppearanceProbe.ts) + [`readCalloutStyle.ts`](../src/manager/theme/readCalloutStyle.ts) + [`themeAppearance.ts`](../src/manager/theme/themeAppearance.ts) / [`themeIcon.ts`](../src/manager/theme/themeIcon.ts) | `ThemeAppearance` per id |
@@ -99,6 +99,14 @@ scanner nobody can test is how a wrong answer ships. Comments are stripped up
 front and blocks are walked by brace depth, which is what the CSSOM was really
 buying.
 
+Cutting the sheet into rules is its own module,
+[`cssBlocks.ts`](../src/manager/theme/cssBlocks.ts), which hands the scanner one
+`(selector, declarations)` pair per rule. It resolves **native CSS nesting**
+first, so a nested sheet is read exactly as its flat equivalent would be — same
+ids, same property names, same specificity. That is not a nicety: nesting is a
+choice about source formatting, and the browser resolves it away before anything
+this plugin cares about happens.
+
 ### What a claim records
 
 ```ts
@@ -153,7 +161,8 @@ Confirmed against the scanner itself; every row here is behaviour, not intent.
 | `[data-callout="x"] { }` | **claimed** — an empty rule body still names the id |
 | `body.some-style-settings-class [data-callout="y"]` | **claimed**, whether or not that class is currently on `<body>` |
 | Anything inside a `/* … */` comment | not claimed |
-| A rule that names an id **and** contains a nested child rule (`&`, or native CSS nesting) | **the outer claim is lost entirely** — see [Patterns that prevent discovery](#patterns-that-prevent-discovery) |
+| Native CSS nesting — a rule that names an id **and** nests child rules | read as its flat equivalent: the parent's own declarations are its claim, and each nested rule is resolved against it (`&`, or the implied descendant) |
+| A nested `@media` / `@supports` inside a style rule | its declarations belong to the rule around it, exactly as the browser reads them |
 
 **Keys are the attribute form** (`obsidianCalloutAttrId`: trimmed, lower-cased,
 whitespace dasherized), never the text as written. This is load-bearing rather
@@ -699,10 +708,10 @@ Everything below follows from the scanner and the probe described above. The
 short version:
 
 > Name each callout with a plain `[data-callout="id"]` (or `~=`) attribute
-> selector in a **flat** rule, set `--callout-color` for the accent and
-> `--callout-icon` for the artwork, and Callout Studio will list your callout
-> with the right id, the right colour and the right icon — and then get out of
-> your way.
+> selector, set `--callout-color` for the accent and `--callout-icon` for the
+> artwork, and Callout Studio will list your callout with the right id, the
+> right colour and the right icon — and then get out of your way. Nest or don't;
+> both are read the same.
 
 ### What the plugin does with what it finds
 
@@ -715,10 +724,18 @@ short version:
 ### Patterns that are read reliably
 
 ```css
-/* Best: a flat rule, one id, a colour hook and an icon hook. */
+/* Best: one id, a colour hook and an icon hook. */
 .callout[data-callout="recite"] {
 	--callout-color: 174, 129, 255;      /* R, G, B — core's pre-1.13 format */
 	--callout-icon: lucide-quote;        /* any Lucide id core knows */
+}
+
+/* Native nesting is read as its flat equivalent — declarations on the rule
+   itself, `&`, an implied descendant, and any depth of either. */
+body.theme-dark .callout[data-callout="recite"] {
+	background: rgba(174, 129, 255, 0.1);
+	& .callout-title { font-variant: small-caps; }
+	.callout-content { padding-block: 0.5rem; }
 }
 
 /* Word-list form, read identically. */
@@ -748,7 +765,12 @@ short version:
   Obsidian applies when it writes the attribute.
 - **`@media`, `@supports` and `@layer` wrappers are descended into.**
 - **A rule that sets nothing still claims the id.** `[data-callout="x"] {}` is a
-  claim.
+  claim, and so is one whose body holds nothing but nested rules.
+- **Nesting costs nothing.** A nested selector is resolved against its parent
+  before anything is read, so `.callout-icon { … }` inside your callout rule is
+  scanned as `…[data-callout="x"] .callout-icon`, at that selector's real
+  specificity. Nested `@media` and `@supports` blocks hand their declarations
+  back to the rule around them.
 - **Body-class scoping still claims.** `body.my-style-settings-class
   [data-callout="y"]` claims `y` whether or not that class is currently applied.
 - **Light and dark variants both claim the same id**, so a callout styled only
@@ -760,7 +782,6 @@ short version:
 
 | Pattern | Effect |
 | --- | --- |
-| **Native CSS nesting on a callout selector** — `[data-callout="x"] { color: red; & .callout-title { … } }` | **The whole outer claim is lost.** The block walker treats a body containing `{` as a wrapper and descends into it, so the outer prelude is never visited |
 | `[data-callout*="col"]`, `^=`, `$=`, `\|=` | Kept as a family pattern, never listed as a callout type — a pattern names no id. Intended, and the editor warns a user whose id would be caught |
 | `:not([data-callout="note"])` | An anti-claim; dropped |
 | `.callout-recite`, or any class-only convention | Not a `data-callout` claim; invisible |
@@ -768,30 +789,18 @@ short version:
 | Callout CSS delivered by `@import`, or injected by a companion plugin | Not in the theme's `<style>` element, so not scanned |
 | Callout ids produced at runtime (e.g. `--callout-icon: attr(data-callout)`) | Unbounded id space; nothing static can enumerate it |
 
-The nesting case is the one that bites in practice, and it is measured: of the
-257 themes installed in the dev vault, **7 nest a rule inside a selector that
-names a callout id**, and for one of them — *Minimal Dracula*, which styles
-callouts exclusively that way — the scanner sees **no ids at all**. Its callouts
-are therefore treated as the plugin's to paint, and its `!important`
-declarations are invisible to the escalation arithmetic as well.
-
-If you write nested CSS, keep one flat rule per callout id alongside it:
-
-```css
-/* ❌ invisible to discovery */
-.callout[data-callout="todo"] {
-	background: var(--red-2) !important;
-	a { color: var(--text); }
-}
-
-/* ✅ same result, discoverable */
-.callout[data-callout="todo"] {
-	background: var(--red-2) !important;
-}
-.callout[data-callout="todo"] a {
-	color: var(--text);
-}
-```
+> [!NOTE]
+> **Native CSS nesting used to be on this list, and is not any more.** The
+> walker treated any body containing a `{` as a wrapper and descended past the
+> rule that owned it, so a rule that both declared something and nested a child
+> lost its claim outright. Measured across the 257 themes installed in the dev
+> vault, seven write callout rules that way, and *Minimal Dracula* — which
+> nests all of them — was read as having no callout rules at all. Resolving
+> nesting recovered 16 callout ids across three themes (Minimal Dracula's 13,
+> Brainhack's `brainhack` and `1`, Underwater's `box`) and four family
+> patterns, and corrected the `!important` escalation measurement for five
+> themes. Nothing that was already detected changed. If you support an older
+> Callout Studio, a flat rule per id is still the safest spelling.
 
 ### Colours
 
@@ -887,6 +896,7 @@ The columns worth checking for your own theme:
 | File | Responsibility |
 | --- | --- |
 | [`manager/theme/customCssApi.ts`](../src/manager/theme/customCssApi.ts) | The only place `app.customCss` is named |
+| [`manager/theme/cssBlocks.ts`](../src/manager/theme/cssBlocks.ts) | Cutting the sheet into rules, with native CSS nesting resolved |
 | [`manager/theme/themeCalloutScan.ts`](../src/manager/theme/themeCalloutScan.ts) | Pure text scanner: claims, patterns, weights |
 | [`manager/theme/themeClaimLookup.ts`](../src/manager/theme/themeClaimLookup.ts) | "Does this sheet style the id I already have?" |
 | [`manager/theme/ThemeCalloutStore.ts`](../src/manager/theme/ThemeCalloutStore.ts) | Caching + the enumeration/weight split |

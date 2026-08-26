@@ -278,6 +278,143 @@ describe("what the scanner reads out of a rule", () => {
 	});
 });
 
+describe("native CSS nesting is read as its flat equivalent", () => {
+	/**
+	 * The shape that made this necessary, near enough verbatim: Minimal Dracula
+	 * puts every callout rule inside `body.theme-light` / `body.theme-dark`,
+	 * declares on the callout itself, and nests the parts. The flat-only walker
+	 * treated any body holding a `{` as a wrapper, so it descended past BOTH
+	 * levels and announced only `.callout-content`, `.callout-title` and `a` —
+	 * which name no callout. The theme read as having no callout rules at all.
+	 */
+	it("reads a rule that declares AND nests, inside a wrapping rule", () => {
+		const scan = scanCalloutClaims(`body.theme-light {
+			--drx-color-red-2: #f00;
+			.callout[data-callout="todo"] {
+				background: var(--drx-color-red-2) !important;
+				color: white !important;
+				.callout-content {
+					padding: 0rem 1rem;
+					background: var(--drx-color-red-2) !important;
+				}
+				a { color: white !important; }
+			}
+		}`);
+		const c = scan.byId.get("todo");
+		assert.ok(c, "the parent rule's own claim is what used to be lost");
+		assert.deepStrictEqual([...c.props].sort(), [
+			"background",
+			"color",
+			"padding",
+		]);
+		assert.deepStrictEqual([...c.important].sort(), ["background", "color"]);
+		// `body.theme-light .callout[data-callout="todo"] .callout-content`:
+		// three classes plus the attribute, and `body` for the element column.
+		// The nested rule's weight is the whole point — `studioWeightFor` sizes
+		// the plugin's own escalation off exactly this number.
+		assert.deepStrictEqual(c.weight, [0, 4, 1]);
+	});
+
+	it("resolves & against the parent, including in a compound", () => {
+		const scan = scanCalloutClaims(
+			'.callout[data-callout="recite"] { & .callout-title { color: red; } }',
+		);
+		assert.deepStrictEqual(scan.byId.get("recite")?.weight, [0, 3, 0]);
+		const compound = scanCalloutClaims(
+			'.callout[data-callout="recite"] { &.is-collapsed { color: red; } }',
+		);
+		assert.deepStrictEqual(compound.byId.get("recite")?.weight, [0, 3, 0]);
+	});
+
+	it("treats a nested selector with no & as a descendant", () => {
+		// Verbatim from Underwater's `[!box]`, which nests `& > .callout-title`;
+		// the bare form is what Minimal Dracula writes.
+		const scan = scanCalloutClaims(
+			'.callout[data-callout="box"] { & > .callout-title { display: none; } }',
+		);
+		assert.deepStrictEqual(scan.byId.get("box")?.weight, [0, 3, 0]);
+		const bare = scanCalloutClaims(
+			'.callout[data-callout="box"] { a { color: red; } }',
+		);
+		assert.deepStrictEqual(bare.byId.get("box")?.weight, [0, 2, 1]);
+	});
+
+	it("wraps a parent selector LIST in :is(), as the spec does", () => {
+		// Substituting `.a, .b` into `& .t` raw would produce `.a, .b .t` —
+		// two selectors where the theme wrote one, one of them nobody's.
+		const scan = scanCalloutClaims(
+			'[data-callout="a"], [data-callout="b"] { & .t { color: red; } }',
+		);
+		assert.deepStrictEqual([...scan.byId.keys()].sort(), ["a", "b"]);
+		// :is() takes its most specific argument, so this is one attribute
+		// plus `.t` — not two attributes plus `.t`.
+		assert.deepStrictEqual(scan.byId.get("a")?.weight, [0, 2, 0]);
+	});
+
+	it("keeps declarations that follow a nested rule", () => {
+		// CSS allows declarations on either side of a nested rule, so the split
+		// cannot simply stop at the first `{`.
+		const c = claim(
+			'[data-callout="x"] { a { color: red; } margin: 0; }',
+			"x",
+		);
+		assert.ok(c?.props.has("margin"));
+	});
+
+	it("goes several levels deep", () => {
+		const scan = scanCalloutClaims(
+			'.a { .b { [data-callout="deep"] { color: red; .c { background: blue; } } } }',
+		);
+		const c = scan.byId.get("deep");
+		assert.deepStrictEqual([...(c?.props ?? [])].sort(), [
+			"background",
+			"color",
+		]);
+		assert.deepStrictEqual(c?.weight, [0, 4, 0]);
+	});
+
+	it("hands a nested at-rule's declarations to the rule around it", () => {
+		// `[!x] { @media print { … } }` means `@media print { [!x] { … } }`.
+		const c = claim(
+			'[data-callout="x"] { @media print { color: red !important; } }',
+			"x",
+		);
+		assert.deepStrictEqual([...(c?.important ?? [])], ["color"]);
+		assert.deepStrictEqual(c?.weight, [0, 1, 0]);
+	});
+
+	it("still claims an id whose rule holds nothing but a nested rule", () => {
+		// An empty body already named the id; a body holding only children is
+		// the same statement.
+		assert.ok(claim('[data-callout="x"] { .child { color: red; } }', "x"));
+	});
+
+	it("invents nothing from a wrapper that names no callout", () => {
+		const scan = scanCalloutClaims(
+			".wrapper { .other { color: red; } }\n" +
+				"@keyframes spin { from { transform: rotate(0deg); } }\n" +
+				"@font-face { font-family: x; src: url(a.woff); }",
+		);
+		assert.strictEqual(scan.byId.size, 0);
+		assert.strictEqual(scan.patterns.length, 0);
+	});
+
+	it("keeps :not() an anti-claim through the nesting", () => {
+		const scan = scanCalloutClaims(
+			'.callout:not([data-callout="note"]) { & .t { color: red; } }',
+		);
+		assert.strictEqual(scan.byId.size, 0);
+	});
+
+	it("does not mistake a semicolon inside a value or an id for a boundary", () => {
+		// `tl;dr` is verbatim from Primary. The `;` is inside brackets, so it
+		// must not be read as the end of a declaration run.
+		assert.ok(claim('[data-callout=tl;dr] { color: red; a { color: blue; } }', "tl;dr"));
+		const c = claim('[data-callout="x"] { content: ";"; a { color: red; } }', "x");
+		assert.ok(c?.props.has("content"));
+	});
+});
+
 describe("mergeScans — theme plus enabled snippets", () => {
 	it("keeps the strongest weight and the union of the properties", () => {
 		const a = scanCalloutClaims('.callout[data-callout="x"] { color: red; }');

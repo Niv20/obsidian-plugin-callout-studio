@@ -39,7 +39,8 @@ import { classCountOf } from "../../utils/cssSpecificity";
 import { splitSelectorList } from "../../utils/selectorText";
 import { DEFAULT_CALLOUTS } from "../../defaultCallouts";
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
-import { eachBlock, scanCalloutClaims, stripComments } from "./themeCalloutScan";
+import { eachBlock, stripComments } from "./cssBlocks";
+import { scanCalloutClaims } from "./themeCalloutScan";
 import { buildChecks } from "./themeReportChecks";
 
 /** Every id Obsidian answers to out of the box, primary names and aliases. */

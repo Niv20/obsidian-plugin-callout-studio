@@ -489,11 +489,11 @@ The two levers answer different attacks, and studio needs both:
 
 Which is why `studioWeightFor` measures only the theme's **`!important`**
 callout selectors (`ThemeCalloutStore.maxImportantClasses`). Measuring every
-selector would put most vaults near the ceiling for nothing — across the dev
-vault's 257 themes the heaviest callout selectors run to twelve class-units
-(Elegance, Faded) and AnuPpuccin to ten, and none of those carries
-`!important`, so ordinary importance already beats every one of them — while
-measuring none would lose to the themes that do reach for it. **No theme in the
+selector would put most vaults near the ceiling for nothing — only 23 of the dev
+vault's 257 themes carry `!important` on a callout rule at all, so ordinary
+importance already beats the other 234 whatever they weigh, including
+AnuPpuccin's ten class-units — while measuring none would lose to the 23 that do
+reach for it. The heaviest of those is Elegance at twelve. **No theme in the
 corpus both exceeds the ceiling and uses `!important`**, which is the property
 that makes 14 a safe number rather than a hopeful one.
 Most themes have none, so most vaults stay at `STUDIO_WEIGHT_BASE` (1) and the

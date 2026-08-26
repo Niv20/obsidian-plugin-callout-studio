@@ -267,16 +267,37 @@ describe("the checks are entailed by the columns", () => {
 		assert.ok(r.checks[0]?.includes("no callout CSS"));
 	});
 
-	it("warns that layout survives being taken over", () => {
+	it("warns that the theme's layout survives", () => {
 		const r = report('.callout[data-callout="cards"] { display: grid; }');
 		assert.ok(r.checks.some((c) => c.includes("does not undo layout")));
 	});
 
-	it("warns that a mask outlives an icon Callout Studio sets", () => {
+	it("tells the tester what a masked icon should look like in the list", () => {
 		const r = report(
 			'.callout[data-callout="x"] .callout-icon { -webkit-mask-image: url(a.svg); }',
 		);
 		assert.ok(r.checks.some((c) => c.includes("CSS mask")));
+	});
+
+	it("names one of the theme's own ids, so there is something to type", () => {
+		const r = report('.callout[data-callout="recite"] { color: red; }');
+		assert.ok(r.checks.some((c) => c.includes("> [!recite]")));
+		assert.ok(r.checks.some((c) => c.includes("## [!recite]")));
+	});
+
+	it("never sends a tester after the Customize control, which is gone", () => {
+		// It was removed with theme coexistence: a theme-owned callout cannot be
+		// taken over at all any more, so an instruction to do it is one a tester
+		// can only fail, and the first wrong line is the last one believed.
+		const r = report('.callout[data-callout="recite"] { color: red; }');
+		const stale = r.checks.filter((c) => /\bCustomize\b/.test(c));
+		assert.deepStrictEqual(
+			stale,
+			[
+				"Open recite with the pencil: expect the read-only preview naming the theme, not the editor — there is no Customize, and no colour or icon on that row is editable. Creating a callout of your own with the ID recite should be refused, and say the theme supplies it.",
+			],
+			"the only mention left may be the one saying it does not exist",
+		);
 	});
 });
 

@@ -14,8 +14,9 @@
  * answering the wrong question.
  *
  * Now the group *is* the answer (see `rowOwnership.isThemeStyled`), so no row
- * is labelled. Taking a theme callout over moves it into *My callout types*;
- * handing one back moves it up. Every row appears exactly once because the
+ * is labelled. Nothing moves a row between the lists but the theme itself:
+ * switch to one that names an id and that row rises into the theme's section,
+ * switch away and it drops back. Every row appears exactly once because the
  * split is one pass over one combined list, not three filters that have to
  * agree with each other.
  *
