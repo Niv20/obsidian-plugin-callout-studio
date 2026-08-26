@@ -8,12 +8,17 @@
  * definition a given attribute form belongs to, and which raw forms a
  * definition may claim in the vault.
  *
+ * The comparison is `calloutIdentity`, never `obsidianCalloutAttrId` on its own:
+ * identity has to fold a stray `|metadata` and a repeated space as well as the
+ * dash, and one function answering that for the whole plugin is what keeps a
+ * second spelling from becoming a second row.
+ *
  * Split out of `CalloutRegistry` because it is one concern with two entry
  * points, needs nothing from the registry but a way to walk its definitions,
  * and is the kind of arithmetic worth reading on its own — the "no other owner"
  * rule below is subtle and was a real bug before it existed.
  */
-import { obsidianCalloutAttrId } from "../utils/calloutId";
+import { calloutIdentity } from "../utils/calloutId";
 import type { CalloutDefinition } from "../types";
 
 /** How the caller supplies the definitions to search. */
@@ -32,12 +37,12 @@ export function findAttrIdConflict(
 	rawId: string,
 	excludeId: string | null,
 ): CalloutDefinition | undefined {
-	const key = obsidianCalloutAttrId(rawId);
+	const key = calloutIdentity(rawId);
 	if (!key) return undefined;
 	for (const def of definitions()) {
 		if (def.id === excludeId) continue;
-		if (obsidianCalloutAttrId(def.id) === key) return def;
-		if (def.aliases?.some((a) => obsidianCalloutAttrId(a) === key)) {
+		if (calloutIdentity(def.id) === key) return def;
+		if (def.aliases?.some((a) => calloutIdentity(a) === key)) {
 			return def;
 		}
 	}
@@ -68,7 +73,7 @@ export function vaultIdFormsFor(
 ): string[] {
 	const out = [...forms];
 	for (const form of forms) {
-		const attrForm = obsidianCalloutAttrId(form);
+		const attrForm = calloutIdentity(form);
 		if (!attrForm || attrForm === form) continue;
 		if (out.includes(attrForm)) continue;
 		if (findAttrIdConflict(definitions, attrForm, def.id)) continue;
