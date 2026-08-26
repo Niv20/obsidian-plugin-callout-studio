@@ -8,9 +8,10 @@
  *   whole appearance onto every uncustomized discovery row. Its skip list is the
  *   interesting part — each entry there is a row someone else owns.
  * - **`convertToFallback`** re-adopts a row into that mirror.
- * - **`setExternalStyle`** is the ONLY writer of `externalStyle`, so the two
- *   rules it enforces (delete rather than write `false`; never on the fallback
- *   target) cannot drift to a call site.
+ * - **`setStyleMode`** is the ONLY writer of `externalStyle` and `styleMode`,
+ *   so the rules it enforces (at most one field, delete rather than write a
+ *   falsy value, never `theme` on the fallback target) cannot drift to a call
+ *   site.
  * - **`resetBuiltIn` / `isBuiltInModified`** are the persistence gate's two ends.
  *
  * The mirror is spelled out field by field in the source, `undefined` included,
@@ -400,14 +401,14 @@ describe("convertToFallback", () => {
 });
 
 describe("setExternalStyle", () => {
-	it("turns the flag on and announces it", () => {
+	it("hands a callout to the user's own CSS and announces it", () => {
 		const { registry, events } = loaded(saved([def({ id: "mine" })]));
 		assert.strictEqual(registry.setExternalStyle("mine", true), true);
 		assert.strictEqual(registry.get("mine")?.externalStyle, true);
 		assert.strictEqual(events(), 1);
 	});
 
-	it("DELETES the key when turning it off, never writes false", () => {
+	it("DELETES the key it is leaving, never writes a falsy one", () => {
 		// `isModified` compares `JSON.stringify(value ?? null)`, so an explicit
 		// `false` would leave a built-in nobody edited looking customized
 		// forever — and being written to data.json forever with it.
@@ -416,7 +417,9 @@ describe("setExternalStyle", () => {
 		assert.ok(!("externalStyle" in (registry.get("mine") as object)));
 	});
 
-	it("leaves a built-in pristine after an on/off round trip", () => {
+	it("leaves a built-in pristine after a there-and-back trip", () => {
+		// Coming back carries no field at all, which is what keeps an untouched
+		// built-in out of data.json and out of "Reset to default".
 		const { registry } = loaded(null);
 		registry.setExternalStyle("note", true);
 		registry.setExternalStyle("note", false);
@@ -425,7 +428,7 @@ describe("setExternalStyle", () => {
 		assert.deepStrictEqual(registry.toSaveData().callouts, []);
 	});
 
-	it("returns false and announces nothing when the flag is already in that state", () => {
+	it("returns false and announces nothing when already there", () => {
 		const { registry, events } = loaded(saved([def({ id: "mine" })]));
 		assert.strictEqual(registry.setExternalStyle("mine", false), false);
 		assert.strictEqual(events(), 0);
@@ -435,21 +438,13 @@ describe("setExternalStyle", () => {
 		assert.strictEqual(events(), 1, "only the one real change");
 	});
 
-	it("refuses to turn it on for the active fallback callout", () => {
-		// generateFallbackCSS paints every unknown callout FROM that definition,
-		// so a hands-off fallback target would go on imposing its colours on the
-		// rest of the vault while claiming not to.
-		const { registry, events } = withFallback();
-		assert.strictEqual(registry.setExternalStyle("base", true), false);
-		assert.strictEqual(events(), 0);
-	});
-
-	it("still lets it be turned OFF on the fallback target", () => {
-		const { registry } = loaded(
-			saved([def({ id: "base", source: "user", externalStyle: true })], {
-				fallbackCalloutId: "base",
-			}),
-		);
+	it("has no special case for the active fallback callout", () => {
+		// It used to refuse. `generateFallbackCSS` now asks the template
+		// whether the plugin paints it and emits nothing when it does not, so
+		// the contradiction the refusal guarded against no longer exists.
+		const { registry } = withFallback();
+		assert.strictEqual(registry.setExternalStyle("base", true), true);
+		assert.strictEqual(registry.standsDown(registry.get("base")!), true);
 		assert.strictEqual(registry.setExternalStyle("base", false), true);
 	});
 
@@ -457,6 +452,15 @@ describe("setExternalStyle", () => {
 		const { registry, events } = loaded(null);
 		assert.strictEqual(registry.setExternalStyle("nope", true), false);
 		assert.strictEqual(events(), 0);
+	});
+
+	it("says nothing about the theme, which is derived and not settable", () => {
+		// The two were briefly one field. Keeping them apart is what lets an
+		// External CSS row stay in the user's own section, keep its pencil, and
+		// be handed back — none of which is true of a theme-owned callout.
+		const { registry } = loaded(saved([def({ id: "mine" })]));
+		registry.setExternalStyle("mine", true);
+		assert.strictEqual(registry.themeOwns(registry.get("mine")!), false);
 	});
 });
 

@@ -47,7 +47,7 @@ mutate → CSS → repaint loop everything else builds on.
 | [03-plugin-lifecycle.md](03-plugin-lifecycle.md) | `onload()` walked step by step in its real order, and `onunload()` cleanup. |
 | [04-data-model.md](04-data-model.md) | Every persisted type (`CalloutDefinition`, `PluginSettings`, …) and the callout-id normalization rules. |
 | [05-callout-registry.md](05-callout-registry.md) | The single source of truth: CRUD, load-time migrations, the built-in-deference mechanism, the live-preview slot. |
-| [06-css-generation.md](06-css-generation.md) | How the registry becomes a stylesheet: the injector's two write targets, icon painting, `externalStyle`, selector escaping. |
+| [06-css-generation.md](06-css-generation.md) | How the registry becomes a stylesheet: the injector's two write targets, icon painting, the two style modes and the theme scan, selector escaping. |
 | [07-persistence-and-caching.md](07-persistence-and-caching.md) | What's saved to `data.json`, what's cached on disk, what's runtime-only, and the startup CSS snapshot. |
 | [08-render-roles.md](08-render-roles.md) | The token grammar, and how heading/inline callouts render in Live Preview and Reading view. |
 | [09-editor-integrations.md](09-editor-integrations.md) | Autocomplete, wrap/unwrap, the five fixed commands, custom commands, the right-click menu, Outline/link cleanup. |

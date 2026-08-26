@@ -23,11 +23,10 @@ import {
 import type CalloutStudioPlugin from "../main";
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import { CalloutEditor } from "../settings/CalloutEditor";
-import { renderIconInto, renderNoIcon } from "../icons/renderIcon";
-import { createIconResolver } from "../icons/resolver";
+import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import { getLocale, t } from "../i18n";
 import { splitCalloutMetadata } from "../utils/calloutId";
-import { filterUsableCallouts } from "../utils/usableCallouts";
+import { suggestableCallouts } from "../utils/usableCallouts";
 import { calloutMatchesQuery } from "../utils/calloutSearch";
 import { isCalloutTokenInCode } from "./calloutCodeContext";
 import {
@@ -211,9 +210,9 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		// Exclude auto-created fallback rows only once Discovery's prune scan
 		// has actually confirmed they're unused nowhere in the vault — e.g. a
 		// token typed and abandoned before the async prune catches up. A
-		// fallback row that's genuinely used elsewhere (just never adopted
-		// via the editor) still autocompletes normally.
-		const all = filterUsableCallouts(this.plugin.registry.getAll(), (id) =>
+		// fallback row genuinely used elsewhere still autocompletes normally.
+		// The role narrows it again — see onTrigger, which classified it.
+		const all = suggestableCallouts(this.plugin.registry, this.triggerRole, (id) =>
 			this.plugin.isKnownZeroUsageFallback(id),
 		);
 
@@ -260,37 +259,18 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		el.addClass("callout-studio-suggestion");
 
 		const isDark = activeDocument.body.classList.contains("theme-dark");
-		// A callout handed to the theme keeps its place in the list — it is
-		// still a real id worth inserting — but not its stored colour, which
-		// nothing renders any more. Naming a colour here that the callout will
-		// not have on the page is the one thing the entry must not do.
-		const external = def.externalStyle === true;
-		const color = external
-			? "var(--text-muted)"
-			: isDark
-				? def.colorDark
-				: def.colorLight;
 
-		// Icon
+		// A callout the theme owns keeps its place in the list — it is still a
+		// real id worth inserting — but wears the theme's icon and colour, not
+		// the ones stored on its row. Naming an appearance here that the callout
+		// will not have on the page is the one thing the entry must not do, and
+		// this line used to do it: it tested the raw `externalStyle` field,
+		// which a theme-owned callout never carries.
 		const iconEl = el.createDiv({
 			cls: "callout-studio-suggestion-icon",
 		});
+		const color = paintCalloutListIcon(iconEl, def, this.plugin.registry, isDark);
 		iconEl.style.color = color;
-		if (def.hideIcon === true) {
-			renderNoIcon(iconEl);
-		} else {
-			renderIconInto(
-				iconEl,
-				def.icon,
-				createIconResolver(this.plugin.registry),
-				{
-					role: "regular",
-					fill: "currentColor",
-					missing: { kind: "placeholder", lucideId: "pencil" },
-					errorText: "📝",
-				},
-			);
-		}
 
 		// Text container
 		const textEl = el.createDiv({ cls: "callout-studio-suggestion-text" });
@@ -429,7 +409,10 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 
 		// Regular callout header: an optional fold mark after the `]`, then the
 		// title. The role is the splitter's argument, not the caller's position.
-		const existingTitle = splitFoldMark(afterHeader, this.triggerRole).title.trim();
+		const existingTitle = splitFoldMark(
+			afterHeader,
+			this.triggerRole,
+		).title.trim();
 
 		// Detect if this is a brand-new callout (no title text after the header)
 		const isNewCallout = existingTitle === "";

@@ -61,6 +61,14 @@ export const da: Record<string, string> = {
 	"deleteModal.replaceInstead": "Erstat i stedet",
 	"deleteModal.deleteInUse": "Slet (konverter til almindelig tekst)",
 	"deleteModal.deleteUnused": "Slet callout",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Ryd alle forekomster af "{{name}}"?',
+	"deleteModal.keepsRowBuiltIn":
+		"Dette er en af Obsidians indbyggede callouts, så selve typen forbliver tilgængelig — kun dens forekomster i dine noter ændres.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} definerer denne callout-type, så den forbliver tilgængelig og beholder sit udseende. Callout Studio ændrer kun noter i din vault — intet, der tilhører dit tema, bliver rørt.",
+	"deleteModal.clearUsages": "Ryd forekomster (konverter til almindelig tekst)",
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Mine callout-typer",
 	"settings.builtInCallouts": "Indbyggede callouts",
@@ -90,10 +98,23 @@ export const da: Record<string, string> = {
 	"settings.resetAction": "Nulstil til standard",
 	"settings.makeFallbackAction": "Brug standard reservestil",
 	"settings.colorSwatchAria": "Accent: {{accent}} · Baggrund: {{bg}}",
-	"settings.externalStyleTag": "Ekstern stil",
-	"settings.externalStyleAction": "Brug ekstern stil (tema eller CSS)",
-	"settings.externalStyleBlocked":
-		"dette er standard-fallback-callouten, vælg en anden først",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Styl med mit eget CSS",
+	"settings.externalCssStopAction": "Lad Callout Studio style den igen",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "Eksternt CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callouts fra dit tema",
+	"settings.themeCalloutsDesc":
+		"{{theme}} leverer eller omstyler disse, så Callout Studio lader dem være præcis, som dit tema tegner dem, og tilbyder dem kun som blok-callouts. Begge slags vises her: callout-typer dit tema tilføjer, og indbyggede callouts, hvis udseende det erstatter. Callout-typer dit tema tilføjer, vises kun, mens det er aktivt.",
+	"settings.themeCalloutsDefaultTheme": "Dit tema",
+	"settings.themePreviewAria":
+		'Forhåndsvis "{{name}}" — se hvordan dit tema tegner den',
+	"settings.clearUsesAction": "Ryd forekomster i dine noter",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} omstyler alle indbyggede callouts, så de er alle listet ovenfor, og Callout Studio lader dem være. Vil du designe din egen, så tilføj en callout med et andet ID.",
 	"settings.fallbackCallout": "Standard reserve-callout",
 	"settings.fallbackCalloutDesc":
 		"Ukendte callout-typer i din vault arver stilen fra denne callout.",
@@ -175,6 +196,10 @@ export const da: Record<string, string> = {
 	"commandBuilder.noCallouts":
 		"Der er endnu ingen callout-typer at bygge en kommando ud fra.",
 	"commandBuilder.save": "Gem",
+	"commandBuilder.roleThemeOwned":
+		"Dit tema leverer denne callout, så den har kun et blok-format.",
+	"commandBuilder.commandSuspended":
+		"Sat på pause: dit tema leverer denne callout, så den har kun et blok-format. Denne kommando virker igen, når temaet holder op med at levere den.",
 	"settings.vaultMaintenance": "Vault-indsigt og vedligeholdelse",
 	"settings.vaultStats": "Callout-statistik",
 	"settings.vaultStatsDesc":
@@ -204,9 +229,9 @@ export const da: Record<string, string> = {
 		"Ingen nye callout-typer importeret (ID'er eksisterer muligvis allerede).",
 	"notice.iconDownloadFailed":
 		'Kunne ikke downloade Material-ikonet "{{name}}". Det er muligvis ikke tilgængeligt for denne stil/vægt, eller din forbindelse er offline.',
-	"notice.externalStyleOn":
-		'"{{name}}" styles nu af dit tema eller CSS-uddrag.',
-	"notice.externalStyleOff": 'Callout Studio styler igen "{{name}}".',
+	"notice.externalCssOn":
+		'Callout Studio styler ikke længere "{{name}}" — dit eget CSS afgør, hvordan den ser ud. Dens Overskrift- og Inline-callout-former vil ikke blive vist.',
+	"notice.externalCssOff": 'Callout Studio styler nu "{{name}}" igen.',
 	"notice.nothingToWrap": "Intet at indpakke.",
 	"notice.cursorNotInsideCallout": "Markøren er ikke inde i en callout.",
 	"notice.autocompleteTargetMoved":
@@ -271,6 +296,10 @@ export const da: Record<string, string> = {
 	"editor.idConflict": "Dette ID er i konflikt med en eksisterende callout",
 	"editor.idDashConflict":
 		'Obsidian skriver mellemrum som bindestreger, så dette ID er i konflikt med "{{other}}"',
+	"editor.idFromTheme":
+		"{{theme}} leverer allerede en callout med dette ID, så Callout Studio kan ikke style den. Vælg et andet ID.",
+	"editor.idThemePattern":
+		"Bemærk: dit tema styler alle callouts, der matcher {{pattern}}, så det kan overskrive, hvordan denne ser ud.",
 	"editor.untitledCallout": "Navnløs Callout",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -280,25 +309,19 @@ export const da: Record<string, string> = {
 		"Her er en indlejret [!{id}] pille inde i et afsnit.",
 	"editor.previewReadOnly": "Livevisningen kan ikke redigeres",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Stylet uden for Callout Studio",
-	"editor.externalStyleBody":
-		"Callout Studio anvender ingen stil på {{id}}. Udseendet kommer fra dit tema, et CSS-uddrag eller Obsidians standarder.",
-	"editor.externalStyleWhat": "Hvad dette betyder",
-	"editor.externalStyleWhatHeading":
-		"En overskrifts-callout som ## [!{{id}}] Titel bliver ikke gengivet — teksten forbliver som skrevet.",
-	"editor.externalStyleWhatInline":
-		"Det samme gælder en indlejret, som ord [!{{id}}] ord.",
-	"editor.externalStyleWhatGlobal":
-		"Globale stilindstillinger (kant, radius, tekststørrelse) gælder ikke for den.",
-	"editor.externalStylePreviewTitle": "Sådan gengives den nu",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Titel\n\n" +
-		"Sådan ser en sætning med [!{{id}}] i sig ud.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — leveret af dit tema',
+	"themePreview.owned":
+		'{{theme}} leverer og styler "{{name}}". Callout Studio tilsidesætter den ikke, så dens blok-callout ser præcis ud, som dit tema tegner den.',
+	"themePreview.readOnly":
+		"Det betyder, at dens farve, ikon, navn og ID ikke kan ændres her. Hvis du vil have dit eget design, så opret en ny callout med et andet ID.",
+	"themePreview.blockOnly":
+		"Overskrift- og Inline-formater er ikke tilgængelige for callouts leveret af dit tema. Blok-callouts bruger temaets egen native stil.",
+	"themePreview.previewTitle": "Sådan ser den ud nu",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
-		"> Sådan ser calloutens indhold ud.\n",
-	"editor.externalStyleResume": "Genoptag styling",
+		"> Sådan ser callout'ens indhold ud.\n",
 	"editor.externalStyleClose": "Forstået",
 	// Palette editor modal
 	"palette.newTitle": "Ny farvepalet",
@@ -585,7 +608,9 @@ export const da: Record<string, string> = {
 	"contextMenu.copySection": "Kopiér overskriftsektion",
 	"contextMenu.deleteSection": "Slet overskriftsektion",
 	"heading.toggleFold": "Skift foldning",
-	"settings.globalSettings": "Globale indstillinger",
+	"settings.globalSettings": "Callout Studios stilindstillinger",
+	"settings.globalSettingsScope":
+		"Form, afstand og størrelse for de callouts, Callout Studio styler. Callouts dit tema styler, beholder temaets eget design.",
 	"settings.globalSettingsRegularDesc":
 		"Tilføj et callout-token til et citat (f.eks. `> [!type]`) for at vise Obsidians indbyggede callout-boks. Du kan justere dens kant, radius, skriftstørrelse og justering.",
 	"settings.globalSettingsHeadingDesc":
@@ -904,4 +929,8 @@ export const da: Record<string, string> = {
 	"export.formatCss": "CSS-udsnit",
 	"export.formatCssDesc":
 		"En .css-fil gemt i denne vaults snippets-mappe til brug, hvor Callout Studio ikke er installeret. Den dækker kun almindelige callouts og er et øjebliksbillede; eksportér igen efter ændringer.",
+	"quickInsert.readingViewHint": "Denne note er åben i læsetilstand, så intet kan indsættes.",
+	"quickInsert.readingView": "Skift til kildetilstand eller Live Preview for at indsætte en callout.",
+	"quickInsert.noCursorHint": "Der er ingen markør i denne note, så der er intet sted at indsætte.",
+	"quickInsert.noCursor": "Placer markøren i noten der, hvor du vil indsætte callout'en, og prøv igen.",
 };

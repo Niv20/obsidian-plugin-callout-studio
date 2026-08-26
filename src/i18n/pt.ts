@@ -65,6 +65,14 @@ export const pt: Record<string, string> = {
 	"deleteModal.replaceInstead": "Substituir em vez disso",
 	"deleteModal.deleteInUse": "Excluir (converter em texto simples)",
 	"deleteModal.deleteUnused": "Excluir callout",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Limpar todos os usos de "{{name}}"?',
+	"deleteModal.keepsRowBuiltIn":
+		"Este é um dos callouts integrados do Obsidian, então o tipo em si continua disponível — apenas seus usos nas suas notas mudam.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} define este tipo de callout, então ele continua disponível e mantém sua aparência. O Callout Studio só altera notas dentro do seu vault — nada pertencente ao seu tema é tocado.",
+	"deleteModal.clearUsages": "Limpar usos (converter em texto simples)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Meus tipos de callout",
@@ -98,10 +106,23 @@ export const pt: Record<string, string> = {
 	"settings.resetAction": "Redefinir para padrão",
 	"settings.makeFallbackAction": "Usar estilo de fallback padrão",
 	"settings.colorSwatchAria": "Destaque: {{accent}} · Fundo: {{bg}}",
-	"settings.externalStyleTag": "Estilo externo",
-	"settings.externalStyleAction": "Usar estilo externo (tema ou CSS)",
-	"settings.externalStyleBlocked":
-		"este é o callout de reserva padrão, escolha outro primeiro",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Estilizar com meu próprio CSS",
+	"settings.externalCssStopAction": "Deixar o Callout Studio estilizar isso de novo",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "CSS externo",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callouts do seu tema",
+	"settings.themeCalloutsDesc":
+		"{{theme}} fornece ou reestiliza estes, então o Callout Studio os deixa exatamente como o seu tema os desenha e os oferece apenas como callouts de bloco. Ambos os tipos aparecem aqui: tipos de callout que o seu tema adiciona, e callouts integrados cuja aparência ele substitui. Os tipos de callout que o seu tema adiciona só são listados enquanto ele está ativo.",
+	"settings.themeCalloutsDefaultTheme": "Seu tema",
+	"settings.themePreviewAria":
+		'Pré-visualizar "{{name}}" — veja como o seu tema o desenha',
+	"settings.clearUsesAction": "Limpar usos nas suas notas",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} reestiliza todos os callouts integrados, então todos estão listados acima e o Callout Studio os deixa em paz. Para projetar um seu, adicione um callout com um ID diferente.",
 
 	"settings.fallbackCallout": "Callout de fallback padrão",
 	"settings.fallbackCalloutDesc":
@@ -172,6 +193,10 @@ export const pt: Record<string, string> = {
 	"commandBuilder.formatBlock": "Bloco",
 	"commandBuilder.roleDisabled":
 		"Este formato está desativado, então o comando inserirá texto simples até que você o reative.",
+	"commandBuilder.roleThemeOwned":
+		"O seu tema fornece este callout, então ele só tem um formato de bloco.",
+	"commandBuilder.commandSuspended":
+		"Pausado: o seu tema fornece este callout, então ele só tem um formato de bloco. Este comando volta a funcionar quando o tema deixar de fornecê-lo.",
 	"commandBuilder.callout": "Tipo de callout",
 	"commandBuilder.calloutDesc": "O callout que este comando insere.",
 	"commandBuilder.headingLevel": "Nível do título",
@@ -219,9 +244,9 @@ export const pt: Record<string, string> = {
 		"Nenhum novo tipo de callout foi importado (os IDs podem já existir).",
 	"notice.iconDownloadFailed":
 		'Não foi possível baixar o ícone Material "{{name}}". Pode estar indisponível para este estilo/peso, ou sua conexão pode estar offline.',
-	"notice.externalStyleOn":
-		'"{{name}}" agora tem o estilo do seu tema ou trecho de CSS.',
-	"notice.externalStyleOff": 'O Callout Studio volta a estilizar "{{name}}".',
+	"notice.externalCssOn":
+		'O Callout Studio não estiliza mais "{{name}}" — o seu próprio CSS decide sua aparência. As formas Callout de cabeçalho e Callout em linha não serão renderizadas.',
+	"notice.externalCssOff": 'O Callout Studio volta a estilizar "{{name}}".',
 	"notice.nothingToWrap": "Nada para envolver.",
 	"notice.cursorNotInsideCallout": "O cursor não está dentro de um callout.",
 	"notice.autocompleteTargetMoved":
@@ -285,6 +310,10 @@ export const pt: Record<string, string> = {
 	"editor.idEmpty": "Pelo menos um ID é necessário",
 	"editor.idExists": "Já existe um callout com este ID",
 	"editor.idConflict": "Este ID entra em conflito com um callout existente",
+	"editor.idFromTheme":
+		"{{theme}} já fornece um callout com este ID, então o Callout Studio não pode estilizá-lo. Escolha outro ID.",
+	"editor.idThemePattern":
+		"Atenção: o seu tema estiliza todo callout que corresponda a {{pattern}}, então ele pode sobrepor a aparência deste.",
 	"editor.idDashConflict":
 		'O Obsidian grava espaços como hífens, por isso este ID entra em conflito com "{{other}}"',
 	"editor.untitledCallout": "Callout sem título",
@@ -296,25 +325,19 @@ export const pt: Record<string, string> = {
 		"Aqui está uma pílula [!{id}] embutida dentro de um parágrafo.",
 	"editor.previewReadOnly": "A pré-visualização ao vivo não pode ser editada",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Estilizado fora do Callout Studio",
-	"editor.externalStyleBody":
-		"O Callout Studio não aplica nenhum estilo a {{id}}. A aparência vem do seu tema, de um trecho de CSS ou dos padrões do Obsidian.",
-	"editor.externalStyleWhat": "O que isso significa",
-	"editor.externalStyleWhatHeading":
-		"Um callout de cabeçalho como ## [!{{id}}] Título não será renderizado — o texto permanece como foi escrito.",
-	"editor.externalStyleWhatInline":
-		"Nem um em linha, como palavra [!{{id}}] palavra.",
-	"editor.externalStyleWhatGlobal":
-		"As configurações globais de estilo (borda, raio, tamanho do texto) não se aplicam a ele.",
-	"editor.externalStylePreviewTitle": "Como é renderizado agora",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Título\n\n" +
-		"É assim que fica uma frase com [!{{id}}] nela.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — fornecido pelo seu tema',
+	"themePreview.owned":
+		'{{theme}} fornece e estiliza "{{name}}". O Callout Studio não vai sobrepor isso, então o seu callout de bloco tem exatamente a aparência que o seu tema desenha.',
+	"themePreview.readOnly":
+		"Isso significa que sua cor, ícone, nome e ID não podem ser alterados aqui. Se você quiser um design seu, crie um novo callout com um ID diferente.",
+	"themePreview.blockOnly":
+		"Os formatos Callout de cabeçalho e Callout em linha não estão disponíveis para callouts fornecidos pelo seu tema. Os callouts de bloco usam o estilo nativo do tema.",
+	"themePreview.previewTitle": "Como ele é renderizado agora",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
-		"> É assim que fica o conteúdo do callout.\n",
-	"editor.externalStyleResume": "Recuperar o estilo",
+		"> É assim que o conteúdo deste callout se parece.\n",
 	"editor.externalStyleClose": "Entendi",
 
 	// Palette editor modal
@@ -607,7 +630,9 @@ export const pt: Record<string, string> = {
 	"contextMenu.copySection": "Copiar seção do cabeçalho",
 	"contextMenu.deleteSection": "Excluir seção do cabeçalho",
 	"heading.toggleFold": "Alternar dobra",
-	"settings.globalSettings": "Configurações globais",
+	"settings.globalSettings": "Opções de estilo do Callout Studio",
+	"settings.globalSettingsScope":
+		"Forma, espaçamento e tamanho dos callouts que o Callout Studio estiliza. Os callouts que o seu tema estiliza mantêm o design próprio do tema.",
 	"settings.globalSettingsRegularDesc":
 		"Adicione um token de callout a uma citação em bloco (por exemplo, `> [!type]`) para renderizar a caixa de callout integrada do Obsidian. Você pode ajustar a borda, o arredondamento, a escala de fonte e o alinhamento.",
 	"settings.globalSettingsHeadingDesc":
@@ -944,4 +969,8 @@ export const pt: Record<string, string> = {
 	"export.formatCss": "Snippet CSS",
 	"export.formatCssDesc":
 		"Um ficheiro .css guardado na pasta snippets deste vault, para utilizar onde o Callout Studio não está instalado. Abrange apenas callouts normais e é um instantâneo; exporte novamente depois de alterar um callout.",
+	"quickInsert.readingViewHint": "Esta nota está aberta no modo de leitura, então nada pode ser inserido.",
+	"quickInsert.readingView": "Mude para o modo de fonte ou para a Pré-visualização ao vivo para inserir um callout.",
+	"quickInsert.noCursorHint": "Não há cursor nesta nota, então não há onde inserir.",
+	"quickInsert.noCursor": "Coloque o cursor na nota no local onde deseja inserir o callout e tente novamente.",
 };

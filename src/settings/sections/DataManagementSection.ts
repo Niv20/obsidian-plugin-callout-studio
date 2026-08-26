@@ -16,16 +16,9 @@ import { validateImportPayload } from "../../utils/importValidator";
 import { mergeById } from "../../utils/mergeById";
 import { ImportSourceModal } from "../ImportSourceModal";
 import { countCalloutUsages } from "../../utils/vaultCalloutScanner";
-import {
-	scanVaultCalloutStatistics,
-	type VaultCalloutStatistics,
-} from "../../utils/vaultCalloutStats";
+import { scanVaultCalloutStatistics } from "../../utils/vaultCalloutStats";
 import { VaultCalloutStatisticsModal } from "../../utils/VaultCalloutStatisticsModal";
-import type { App } from "obsidian";
 import type { SettingsSectionContext } from "./types";
-
-const scanVaultStats = (app: App): Promise<VaultCalloutStatistics> =>
-	scanVaultCalloutStatistics(app);
 
 export function renderImportExportSection(
 	ctx: SettingsSectionContext,
@@ -150,7 +143,7 @@ async function runVaultRescan(ctx: SettingsSectionContext): Promise<void> {
 }
 
 async function showVaultStatistics(ctx: SettingsSectionContext): Promise<void> {
-	new VaultCalloutStatisticsModal(ctx, await scanVaultStats(ctx.app)).open();
+	new VaultCalloutStatisticsModal(ctx, await scanVaultCalloutStatistics(ctx.app)).open();
 }
 
 /**
@@ -233,10 +226,14 @@ export async function processImportedJSON(
 		// Commands are on that list too: an export predating them carries
 		// none, and replacing the array wholesale would delete every
 		// command the user had built here.
+		// `retiredThemeIds` is not configuration at all — it is which callout
+		// types *this* vault's themes stopped supplying — so it is dropped, not
+		// merged. See `manager/theme/retiredThemeIds.ts`.
 		const {
 			customPalettes: importedPalettes,
 			userImages: importedImages,
 			customCommands: importedCommands,
+			retiredThemeIds: _vaultLocal,
 			...restSettings
 		} = result.settings;
 		Object.assign(ctx.plugin.registry.settings, restSettings);

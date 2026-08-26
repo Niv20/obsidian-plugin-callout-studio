@@ -66,6 +66,15 @@ export const vi: Record<string, string> = {
 	"deleteModal.deleteInUse": "Xóa (chuyển thành văn bản thường)",
 	"deleteModal.deleteUnused": "Xóa callout",
 
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Xóa mọi lượt sử dụng "{{name}}"?',
+	"deleteModal.keepsRowBuiltIn":
+		"Đây là một trong các callout tích hợp của Obsidian, vì vậy bản thân loại này vẫn khả dụng — chỉ các lượt sử dụng trong ghi chú của bạn thay đổi.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} định nghĩa loại callout này, vì vậy nó vẫn khả dụng và giữ nguyên hình thức. Callout Studio chỉ thay đổi ghi chú trong vault của bạn — không có gì thuộc về giao diện của bạn bị ảnh hưởng.",
+	"deleteModal.clearUsages": "Xóa các lượt sử dụng (chuyển thành văn bản thường)",
+
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Các loại callout của tôi",
 	"settings.builtInCallouts": "Callouts tích hợp",
@@ -99,10 +108,25 @@ export const vi: Record<string, string> = {
 	"settings.makeFallbackAction": "Sử dụng kiểu dự phòng mặc định",
 
 	"settings.colorSwatchAria": "Điểm nhấn: {{accent}} · Nền: {{bg}}",
-	"settings.externalStyleTag": "Kiểu bên ngoài",
-	"settings.externalStyleAction": "Dùng kiểu bên ngoài (chủ đề hoặc CSS)",
-	"settings.externalStyleBlocked":
-		"đây là callout dự phòng mặc định, hãy chọn cái khác trước",
+
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Tạo kiểu bằng CSS của riêng tôi",
+	"settings.externalCssStopAction": "Để Callout Studio tạo kiểu cho callout này trở lại",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "CSS bên ngoài",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callout từ giao diện của bạn",
+	"settings.themeCalloutsDesc":
+		"{{theme}} cung cấp hoặc tạo kiểu lại cho những callout này, vì vậy Callout Studio giữ nguyên như giao diện của bạn vẽ chúng và chỉ cung cấp chúng dưới dạng callout khối. Cả hai loại đều xuất hiện ở đây: các loại callout mà giao diện của bạn thêm vào, và các callout tích hợp mà giao diện thay đổi hình thức. Các loại callout do giao diện thêm vào chỉ được liệt kê khi giao diện đó đang hoạt động.",
+	"settings.themeCalloutsDefaultTheme": "Giao diện của bạn",
+	"settings.themePreviewAria":
+		'Xem trước "{{name}}" — xem giao diện của bạn vẽ nó như thế nào',
+	"settings.clearUsesAction": "Xóa các lượt sử dụng trong ghi chú của bạn",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} tạo kiểu lại cho mọi callout tích hợp, vì vậy tất cả đều được liệt kê ở trên và Callout Studio không can thiệp vào chúng. Để thiết kế callout của riêng bạn, hãy thêm một callout với ID khác.",
+
 	"settings.fallbackCallout": "Callout dự phòng mặc định",
 	"settings.fallbackCalloutDesc":
 		"Các loại callout không nhận dạng được trong vault sẽ kế thừa kiểu của callout này.",
@@ -186,6 +210,11 @@ export const vi: Record<string, string> = {
 	"commandBuilder.noCallouts": "Chưa có loại callout nào để tạo lệnh.",
 	"commandBuilder.save": "Lưu",
 
+	"commandBuilder.roleThemeOwned":
+		"Giao diện của bạn cung cấp callout này, nên nó chỉ có định dạng Khối.",
+	"commandBuilder.commandSuspended":
+		"Đã tạm dừng: giao diện của bạn cung cấp callout này, nên nó chỉ có định dạng Khối. Lệnh này sẽ hoạt động trở lại khi giao diện ngừng cung cấp nó.",
+
 	"settings.vaultMaintenance": "Thông tin & bảo trì vault",
 	"settings.vaultStats": "Thống kê callout",
 	"settings.vaultStatsDesc":
@@ -216,9 +245,11 @@ export const vi: Record<string, string> = {
 		"Không có loại callout mới nào được nhập (ID có thể đã tồn tại).",
 	"notice.iconDownloadFailed":
 		'Không thể tải biểu tượng Material "{{name}}". Nó có thể không có sẵn cho kiểu/độ dày này, hoặc kết nối của bạn đang ngoại tuyến.',
-	"notice.externalStyleOn":
-		'"{{name}}" giờ được tạo kiểu bởi chủ đề hoặc đoạn CSS của bạn.',
-	"notice.externalStyleOff": 'Callout Studio tạo kiểu lại cho "{{name}}".',
+
+	"notice.externalCssOn":
+		'Callout Studio không còn tạo kiểu cho "{{name}}" nữa — CSS của riêng bạn quyết định hình thức của nó. Các dạng Callout tiêu đề và Callout nội dòng của nó sẽ không hiển thị.',
+	"notice.externalCssOff": 'Callout Studio lại tạo kiểu cho "{{name}}".',
+
 	"notice.nothingToWrap": "Không có gì để bọc.",
 	"notice.cursorNotInsideCallout": "Con trỏ không nằm trong callout.",
 	"notice.autocompleteTargetMoved":
@@ -281,6 +312,12 @@ export const vi: Record<string, string> = {
 	"editor.idConflict": "ID này xung đột với callout hiện có",
 	"editor.idDashConflict":
 		'Obsidian ghi khoảng trắng thành dấu gạch ngang, vì vậy ID này xung đột với "{{other}}"',
+
+	"editor.idFromTheme":
+		"{{theme}} đã cung cấp một callout với ID này, vì vậy Callout Studio không thể tạo kiểu cho nó. Hãy chọn một ID khác.",
+	"editor.idThemePattern":
+		"Lưu ý: giao diện của bạn tạo kiểu cho mọi callout khớp với {{pattern}}, vì vậy nó có thể ghi đè hình thức của callout này.",
+
 	"editor.untitledCallout": "Callout chưa đặt tên",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -290,25 +327,20 @@ export const vi: Record<string, string> = {
 		"Đây là một viên [!{id}] nội tuyến bên trong một đoạn văn.",
 	"editor.previewReadOnly": "Không thể chỉnh sửa bản xem trước trực tiếp",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Được tạo kiểu bên ngoài Callout Studio",
-	"editor.externalStyleBody":
-		"Callout Studio không áp dụng bất kỳ kiểu nào cho {{id}}. Giao diện của nó đến từ chủ đề, đoạn CSS, hoặc mặc định của Obsidian.",
-	"editor.externalStyleWhat": "Điều này có nghĩa là",
-	"editor.externalStyleWhatHeading":
-		"Một callout tiêu đề như ## [!{{id}}] Tiêu đề sẽ không được hiển thị — văn bản giữ nguyên như đã viết.",
-	"editor.externalStyleWhatInline":
-		"Callout nội tuyến cũng vậy, như từ [!{{id}}] từ.",
-	"editor.externalStyleWhatGlobal":
-		"Cài đặt kiểu chung (viền, bo góc, cỡ chữ) không áp dụng cho nó.",
-	"editor.externalStylePreviewTitle": "Cách nó hiển thị hiện tại",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Tiêu đề\n\n" +
-		"Đây là cách một câu có [!{{id}}] trông như thế nào.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — do giao diện của bạn cung cấp',
+	"themePreview.owned":
+		'{{theme}} cung cấp và tạo kiểu cho "{{name}}". Callout Studio sẽ không ghi đè nó, vì vậy callout khối của nó trông giống hệt như giao diện của bạn vẽ.',
+	"themePreview.readOnly":
+		"Điều đó có nghĩa là màu sắc, biểu tượng, tên và ID của nó không thể thay đổi ở đây. Nếu bạn muốn một thiết kế riêng, hãy tạo một callout mới với ID khác.",
+	"themePreview.blockOnly":
+		"Định dạng Tiêu đề và Nội dòng không khả dụng cho các callout do giao diện của bạn cung cấp. Callout khối sử dụng kiểu gốc của giao diện.",
+	"themePreview.previewTitle": "Cách nó hiển thị hiện tại",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
-		"> Đây là cách nội dung callout trông như thế nào.\n",
-	"editor.externalStyleResume": "Lấy lại kiểu dáng",
+		"> Đây là hình thức nội dung của callout.\n",
+
 	"editor.externalStyleClose": "Đã hiểu",
 
 	// Palette editor modal
@@ -603,7 +635,9 @@ export const vi: Record<string, string> = {
 
 	"heading.toggleFold": "Chuyển đổi gập",
 
-	"settings.globalSettings": "Cài đặt toàn cục",
+	"settings.globalSettings": "Tùy chọn kiểu của Callout Studio",
+	"settings.globalSettingsScope":
+		"Hình dạng, khoảng cách và kích thước cho các callout mà Callout Studio tạo kiểu. Các callout mà giao diện của bạn tạo kiểu vẫn giữ thiết kế riêng của giao diện.",
 	"settings.globalSettingsRegularDesc":
 		"Thêm token callout vào một trích dẫn khối (ví dụ: `> [!type]`) để hiển thị dưới dạng hộp callout gốc của Obsidian. Bạn có thể điều chỉnh viền, độ bo góc, tỷ lệ phông và căn chỉnh của nó.",
 	"settings.globalSettingsHeadingDesc":
@@ -929,4 +963,8 @@ export const vi: Record<string, string> = {
 	"export.formatCss": "Đoạn CSS",
 	"export.formatCssDesc":
 		"Tệp .css được lưu trong thư mục snippets của vault này để dùng ở nơi chưa cài Callout Studio. Chỉ bao gồm callout thông thường và là ảnh chụp; hãy xuất lại sau khi thay đổi.",
+	"quickInsert.readingViewHint": "Ghi chú này đang mở ở chế độ đọc, nên không thể chèn gì cả.",
+	"quickInsert.readingView": "Chuyển sang chế độ nguồn hoặc Xem trước trực tiếp để chèn callout.",
+	"quickInsert.noCursorHint": "Không có con trỏ nào trong ghi chú này, nên không có chỗ để chèn.",
+	"quickInsert.noCursor": "Đặt con trỏ trong ghi chú ở vị trí bạn muốn chèn callout, sau đó thử lại.",
 };

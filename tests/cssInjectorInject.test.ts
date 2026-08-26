@@ -155,6 +155,9 @@ function injectHarness(): Recorder {
 
 	const registry = new CalloutRegistry();
 	registry.load(null);
+	// A clean install hands an unconfigured built-in to the theme; these
+	// suites are about what the plugin emits when it IS painting. The
+	// default itself lives in tests/styleMode.test.ts.
 	const injector = new CSSInjector(app, registry);
 
 	return {
@@ -282,16 +285,16 @@ describe("generateCalloutCSS — structural snapshot", () => {
 		assert.strictEqual(chevrons.length, 2);
 	});
 
-	it("a callout handed to the theme emits nothing whatsoever", () => {
+	it("a callout handed to the user's own CSS emits nothing whatsoever", () => {
 		assert.deepStrictEqual(snap({ externalStyle: true }), []);
 	});
 
-	it("…except the one thing a theme cannot express on its behalf", () => {
-		// A theme has no way to say "draw no icon", and the single `display: none`
-		// it takes cannot fight the theme over anything this flag protects.
-		assert.deepStrictEqual(snap({ externalStyle: true, hideIcon: true }), [
-			'.callout[data-callout="quiet"] > .callout-title > .callout-icon { display }',
-		]);
+	it("with no exception, not even for hideIcon", () => {
+		// This used to emit the single `display: none`, on the argument that a
+		// theme has no way to say "draw no icon". Under an absolute rule that is
+		// an override like any other — and the one most likely to read as the
+		// plugin breaking someone's theme. The flag is kept on the row.
+		assert.deepStrictEqual(snap({ externalStyle: true, hideIcon: true }), []);
 	});
 
 	it("every alias gets a full copy of the block rules", () => {

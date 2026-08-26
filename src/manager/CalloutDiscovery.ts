@@ -13,6 +13,7 @@ import type { CalloutRegistry } from "./CalloutRegistry";
 import type { PluginSettings } from "../types";
 import { normalizeCalloutId, obsidianCalloutAttrId } from "../utils/calloutId";
 import { buildDiscoveredRow, fallbackSourceFor } from "./discoveredRow";
+import { RediscoveryHold } from "./rediscoveryHold";
 import { scanLineForCalloutTokens } from "../editor/calloutTokens";
 import {
 	scanFileForUnknownCallouts,
@@ -52,32 +53,12 @@ export class CalloutDiscovery {
 	 */
 	private readonly zeroUsageFallbackIds = new Set<string>();
 
-	/**
-	 * How long an explicit delete keeps discovery from re-creating the row it
-	 * just removed. Only has to outlast the open editors catching up with the
-	 * vault writes the delete made — see {@link suppressedIds}.
-	 */
-	private static readonly REDISCOVERY_SUPPRESS_MS = 5000;
+	/** Ids automatic discovery must leave alone — see {@link RediscoveryHold}. */
+	private readonly hold: RediscoveryHold;
 
-	/**
-	 * Ids an explicit delete just removed → the timestamp their suppression
-	 * expires. Discovery refuses to auto-create a row for them until then.
-	 *
-	 * Deleting a callout rewrites its vault usages with `vault.modify`, but an
-	 * open editor's CodeMirror buffer catches up with that asynchronously — and
-	 * `SettingsTab.display()`, which the delete calls synchronously on the very
-	 * next line, scans exactly those buffers for unknown ids. Without this the
-	 * row is re-created one tick after it was removed, arriving back as a fresh
-	 * *uncustomized* fallback row: the user sees their customized row survive
-	 * the delete with its styling reset to the default.
-	 *
-	 * Deliberately time-bounded rather than permanent. It answers a race, not a
-	 * policy — an id the user genuinely writes again later deserves its row
-	 * back, and that is discovery's whole job.
-	 */
-	private readonly suppressedIds = new Map<string, number>();
-
-	constructor(private readonly host: DiscoveryHost) {}
+	constructor(private readonly host: DiscoveryHost) {
+		this.hold = new RediscoveryHold(host.settings);
+	}
 
 	destroy(): void {
 		for (const id of this.fileScanTimers.values()) {
@@ -101,37 +82,14 @@ export class CalloutDiscovery {
 		return this.zeroUsageFallbackIds.has(normalizeCalloutId(id));
 	}
 
-	/**
-	 * Refuse to auto-create rows for these ids for the next few seconds — see
-	 * {@link suppressedIds}. Pass every id form the deleted row owned
-	 * (`CalloutRegistry.vaultIdFormsFor`), or a leftover `[!my-id]` spelling
-	 * would just create the row back under the dash form.
-	 */
+	/** @see RediscoveryHold.suppress */
 	suppressRediscovery(ids: string[]): void {
-		const until = Date.now() + CalloutDiscovery.REDISCOVERY_SUPPRESS_MS;
-		for (const id of ids) {
-			const normalized = normalizeCalloutId(id);
-			if (normalized) this.suppressedIds.set(normalized, until);
-		}
+		this.hold.suppress(ids);
 	}
 
-	/**
-	 * Drop every suppression. An explicitly requested vault scan is the user
-	 * asking for these rows, so it must not be silently filtered.
-	 */
+	/** @see RediscoveryHold.clear */
 	clearRediscoverySuppression(): void {
-		this.suppressedIds.clear();
-	}
-
-	/** True while a just-deleted id is still inside its suppression window. */
-	private isRediscoverySuppressed(id: string): boolean {
-		const normalized = normalizeCalloutId(id);
-		const until = this.suppressedIds.get(normalized);
-		if (until === undefined) return false;
-		if (Date.now() < until) return true;
-		// Expired. Dropped on read, so the map needs no timer of its own.
-		this.suppressedIds.delete(normalized);
-		return false;
+		this.hold.clear();
 	}
 
 	/**
@@ -191,7 +149,7 @@ export class CalloutDiscovery {
 				// guards on purpose: this one spot covers the incremental file
 				// scan, the settings tab's open-editor scan and the first-run
 				// modal alike.
-				if (this.isRediscoverySuppressed(id)) continue;
+				if (this.hold.holds(id)) continue;
 				// Also skip a spelling an existing callout already owns through
 				// its `data-callout` form. buildKnownIds keeps the discovery
 				// paths from reaching here at all; this covers the first-run
@@ -249,18 +207,17 @@ export class CalloutDiscovery {
 	 */
 	async pruneUnused(): Promise<number> {
 		if (this.pruneSuspended) return 0;
-		// `externalStyle` is as sticky as `customized`, and for a sharper reason:
-		// pruning the row would take the flag with it, and the id would fall
-		// straight back under `generateFallbackCSS`'s `!important` catch-all —
-		// so a theme callout the user handed back to their theme would silently
-		// start being repainted again the first time it left the vault.
+		// Any chosen style mode is as sticky as `customized`, for a sharper
+		// reason: pruning takes the setting with it and the id falls back under
+		// `generateFallbackCSS`'s `!important` catch-all, so a callout handed to
+		// the theme would silently start being repainted once it left the vault.
 		const candidates = this.host.registry
 			.getUserDefined()
 			.filter(
 				(d) =>
 					d.source === "fallback" &&
 					d.customized !== true &&
-					d.externalStyle !== true,
+					!this.host.registry.standsDown(d),
 			);
 		if (candidates.length === 0) return 0;
 
@@ -302,10 +259,11 @@ export class CalloutDiscovery {
 				if (!def) continue;
 				// Re-check: another flow (e.g. settings edit) may have
 				// customized this row while the scan was in flight.
+				// Through the registry, not the raw field — they disagreed here.
 				if (
 					def.source !== "fallback" ||
 					def.customized === true ||
-					def.externalStyle === true
+					this.host.registry.standsDown(def)
 				)
 					continue;
 				// A command the user built for this row is a deliberate claim

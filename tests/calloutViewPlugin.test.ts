@@ -147,6 +147,9 @@ function harness(
 ): Harness {
 	const registry = new CalloutRegistry();
 	registry.load(null);
+	// A clean install hands an unconfigured built-in to the theme, and this
+	// suite is about what happens when the plugin IS painting. See
+	// tests/styleMode.test.ts for the default itself.
 	options.configure?.(registry);
 
 	const host = {

@@ -4,6 +4,10 @@ Beyond the color of each individual callout type, Callout Studio lets you shape 
 
 ![Global callout style](https://github.com/user-attachments/assets/7558c077-1396-43de-9715-6538b4ca8297)
 
+## What it applies to
+
+These settings shape the callouts **Callout Studio draws**. A callout your theme supplies or restyles keeps your theme's geometry along with everything else — border, radius and text size included — so if a setting here seems to skip a callout, check which list it is in. See [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md).
+
 ## Where to find it
 
 Open **Settings → Global settings**. Block Callouts, Heading Callouts, and Inline Callouts each have their own style popup, so you can shape each form independently without affecting the others.

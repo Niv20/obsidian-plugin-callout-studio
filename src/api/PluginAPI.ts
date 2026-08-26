@@ -33,7 +33,10 @@ import type {
 	CalloutStudioApi,
 } from "./types";
 import { getLocale } from "../i18n";
-import { filterUsableCallouts } from "../utils/usableCallouts";
+import {
+	committedDefinitions,
+	filterUsableCallouts,
+} from "../utils/usableCallouts";
 import { normalizeCalloutId } from "../utils/calloutId";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
 
@@ -54,7 +57,14 @@ export class CalloutStudioAPI implements CalloutStudioApi {
 	getCalloutsDetailed(): readonly CalloutDetails[] {
 		const dark = isDarkMode();
 		return Object.freeze(
-			usableDefinitions(this.#plugin).map((def) => toDetails(def, dark)),
+			usableDefinitions(this.#plugin).map((def) =>
+				toDetails(
+				def,
+				dark,
+				this.#plugin.registry.standsDown(def),
+				this.#plugin.registry.themeOwns(def),
+			),
+			),
 		);
 	}
 
@@ -120,7 +130,7 @@ export class CalloutStudioAPI implements CalloutStudioApi {
  */
 const usableDefinitions = (plugin: CalloutStudioPlugin): CalloutDefinition[] => {
 	const { registry } = plugin;
-	const committed = [...registry.getBuiltIn(), ...registry.getUserDefined()].map(
+	const committed = committedDefinitions(registry).map(
 		(def) => registry.getReal(def.id) ?? def,
 	);
 	const defs = filterUsableCallouts(committed, (id) =>
@@ -157,7 +167,16 @@ const toCallout = (def: CalloutDefinition): Callout =>
 		aliases: Object.freeze([...(def.aliases ?? [])]),
 	});
 
-const toDetails = (def: CalloutDefinition, dark: boolean): CalloutDetails => {
+const toDetails = (
+	def: CalloutDefinition,
+	dark: boolean,
+	// Both resolved by the registry rather than read off the definition. The
+	// stored `externalStyle` field answers only half of `standsDown`, and
+	// nothing on the row records theme ownership at all — it is derived from
+	// the active theme's stylesheet. See `CalloutRegistry.themeOwns`.
+	standsDown: boolean,
+	themeStyled: boolean,
+): CalloutDetails => {
 	const details: {
 		-readonly [K in keyof CalloutDetails]: CalloutDetails[K];
 	} = {
@@ -171,7 +190,8 @@ const toDetails = (def: CalloutDefinition, dark: boolean): CalloutDetails => {
 		defaultFolded: def.defaultFolded,
 		builtIn: def.builtIn,
 		source: def.source,
-		externalStyle: def.externalStyle === true,
+		externalStyle: standsDown,
+		themeStyled,
 	};
 	// Left absent rather than set to undefined: "no authored background" is a
 	// real state that means Obsidian's own tint applies, and a consumer using

@@ -21,7 +21,7 @@ The snippet covers the classic **Block Callout** form only:
 - Your global style settings
 - Aliases
 
-It does not cover **Heading Callouts** or **Inline Callouts**, since those are built by the plugin itself rather than by plain CSS. It also does not cover any callout you've set to use **External style** (more on that in the next chapter), since that one is already left to your theme.
+It does not cover **Heading Callouts** or **Inline Callouts**, since those are built by the plugin itself rather than by plain CSS. It also does not cover any callout set to **Theme style** (more on that in the next chapter), since that one is already left to your theme.
 
 The exported snippet is never turned on for you automatically. Inside this vault, the plugin is already styling those callouts live, so there's nothing to switch on here. You enable the snippet yourself, under Settings → Appearance → CSS snippets, only once you actually need it somewhere else.
 

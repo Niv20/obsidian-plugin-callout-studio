@@ -135,6 +135,9 @@ function fake(
 
 	const registry = new CalloutRegistry();
 	registry.load(null);
+	// A clean install hands an unconfigured built-in to the theme, and this
+	// suite is about what happens when the plugin IS painting. See
+	// tests/styleMode.test.ts for the default itself.
 	const zeroUsage = new Set<string>();
 	const plugin: SnippetExportPlugin = {
 		registry,
@@ -584,7 +587,7 @@ describe("styles that are easy to drop", () => {
 		const rule = parseRules(buildSnippetCss(f.plugin)).find(
 			(r) => r.selector === '.callout[data-callout="clear"]',
 		);
-		assert.ok(rule?.decls.includes("background-color: transparent"));
+		assert.ok(rule?.decls.includes("background-color: transparent !important"));
 	});
 
 	it("carries a hidden icon, including the indent it has to undo", () => {
@@ -596,13 +599,13 @@ describe("styles that are easy to drop", () => {
 		const icon = parseRules(css).find((r) =>
 			r.selector.includes('[data-callout="bare"] > .callout-title > .callout-icon'),
 		);
-		assert.ok(icon?.decls.includes("display: none"));
+		assert.ok(icon?.decls.includes("display: none !important"));
 		// Only correct because the export carries the global indent as well.
 		assert.ok(
 			parseRules(css).some(
 				(r) =>
 					r.selector.includes('[data-callout="bare"] > .callout-content') &&
-					r.decls.includes("padding-inline-start: 0"),
+					r.decls.includes("padding-inline-start: 0 !important"),
 			),
 		);
 	});

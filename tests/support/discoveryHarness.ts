@@ -198,7 +198,9 @@ export interface FakeEditor {
  * `scanFileNow`.
  */
 export interface DiscoveryInternals {
-	isRediscoverySuppressed(id: string): boolean;
+	/** The two reasons discovery is held back, now one object — see
+	 *  `manager/rediscoveryHold.ts`. */
+	hold: { holds(id: string): boolean };
 	scheduleFileScan(file: TFile): void;
 	scanFileNow(file: TFile): Promise<void>;
 	getActiveTypingCalloutIds(file: TFile): Set<string> | null;

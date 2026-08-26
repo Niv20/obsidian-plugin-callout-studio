@@ -12,7 +12,35 @@
  * is asked of the caller because only the plugin knows what Discovery's last
  * prune scan concluded.
  */
-import type { CalloutDefinition } from "../types";
+import type { CalloutDefinition, CalloutRenderRole } from "../types";
+
+/** The registry views {@link committedDefinitions} reads. */
+interface CalloutLists {
+	getBuiltIn(): CalloutDefinition[];
+	getUserDefined(): CalloutDefinition[];
+	getThemeProvided(): CalloutDefinition[];
+}
+
+/**
+ * Every callout a user could write into a note, before the unused-row filter.
+ *
+ * Three views rather than two: `getUserDefined()` deliberately excludes the
+ * rows minted from the active theme's stylesheet, so that backups, the reset
+ * sweep and `exportToJSON()` do not treat the theme's callout types as the
+ * user's work. Being able to *write* those types is a different question, and
+ * the answer is yes — discovering that your theme ships `[!definition]` is most
+ * of the point of listing it. Both surfaces that answer "what can I type here"
+ * go through this, so they cannot drift.
+ */
+export function committedDefinitions(
+	registry: CalloutLists,
+): CalloutDefinition[] {
+	return [
+		...registry.getBuiltIn(),
+		...registry.getUserDefined(),
+		...registry.getThemeProvided(),
+	];
+}
 
 /**
  * Keep the rows a user could actually write today.
@@ -31,4 +59,33 @@ export function filterUsableCallouts(
 			def.customized === true ||
 			!isKnownZeroUsageFallback(def.id),
 	);
+}
+
+/** The slice of the registry {@link suggestableCallouts} consults. */
+export interface SuggestionSource {
+	getAll(): CalloutDefinition[];
+	themeOwns(def: CalloutDefinition): boolean;
+}
+
+/**
+ * What the `[!` popover may offer at the position the user is typing in.
+ *
+ * `filterUsableCallouts` answers "does this row still mean anything"; the role
+ * narrows it further, and only away from Block. A callout the theme supplies
+ * renders as a Block callout and nothing else, so offering it where a heading
+ * or an inline pill is being typed would insert syntax Callout Studio then
+ * leaves as literal text. See `editor/renderShared.ts`.
+ */
+export function suggestableCallouts(
+	registry: SuggestionSource,
+	role: CalloutRenderRole,
+	isKnownZeroUsageFallback: (id: string) => boolean,
+): CalloutDefinition[] {
+	const usable = filterUsableCallouts(
+		registry.getAll(),
+		isKnownZeroUsageFallback,
+	);
+	return role === "regular"
+		? usable
+		: usable.filter((def) => !registry.themeOwns(def));
 }

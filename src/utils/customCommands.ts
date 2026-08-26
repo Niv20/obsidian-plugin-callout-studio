@@ -82,6 +82,36 @@ export function resolveAction(
 	return command.action === "wrap" ? "wrap" : "insert";
 }
 
+/** The slice of the registry {@link isSuspendedByTheme} consults. */
+export interface CommandOwnershipLookup {
+	get(id: string): CalloutDefinition | undefined;
+	themeOwns(def: CalloutDefinition): boolean;
+}
+
+/**
+ * Is this command temporarily unusable because the active theme has taken over
+ * its callout?
+ *
+ * A theme callout has one format, Block, so a *heading* or *inline* command
+ * aimed at one would write syntax that Callout Studio then leaves as literal
+ * text — a command that visibly does the wrong thing. It is unregistered from
+ * the palette for as long as that lasts and never deleted: ownership is a fact
+ * about the vault's current theme, and the command has to work again the moment
+ * that changes. Block commands are unaffected — the theme draws those itself.
+ *
+ * Asked in three places, which is why it is here rather than in the sweep: the
+ * sync that registers commands, the builder that lists them, and the editor
+ * that offers the roles.
+ */
+export function isSuspendedByTheme(
+	registry: CommandOwnershipLookup,
+	command: Pick<CustomCommand, "calloutId" | "role">,
+): boolean {
+	if (command.role !== "heading" && command.role !== "inline") return false;
+	const def = registry.get(command.calloutId);
+	return def !== undefined && registry.themeOwns(def);
+}
+
 /**
  * The command's name as Obsidian shows it, built from the callout's *current*
  * display name.

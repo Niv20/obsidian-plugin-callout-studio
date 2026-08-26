@@ -66,6 +66,14 @@ export const sv: Record<string, string> = {
 	"deleteModal.replaceInstead": "Ersätt istället",
 	"deleteModal.deleteInUse": "Ta bort (konvertera till vanlig text)",
 	"deleteModal.deleteUnused": "Ta bort callout",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Rensa alla användningar av "{{name}}"?',
+	"deleteModal.keepsRowBuiltIn":
+		"Detta är en av Obsidians inbyggda callouts, så själva typen förblir tillgänglig — bara dess användningar i dina anteckningar ändras.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} definierar denna callout-typ, så den förblir tillgänglig och behåller sitt utseende. Callout Studio ändrar bara anteckningar i ditt vault — inget som tillhör ditt tema rörs.",
+	"deleteModal.clearUsages": "Rensa användningar (konvertera till vanlig text)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Mina callout-typer",
@@ -99,10 +107,23 @@ export const sv: Record<string, string> = {
 	"settings.resetAction": "Återställ till standard",
 	"settings.makeFallbackAction": "Använd standard reservstil",
 	"settings.colorSwatchAria": "Accent: {{accent}} · Bakgrund: {{bg}}",
-	"settings.externalStyleTag": "Extern stil",
-	"settings.externalStyleAction": "Använd extern stil (tema eller CSS)",
-	"settings.externalStyleBlocked":
-		"detta är standard-reserv-callouten, välj en annan först",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Style med min egen CSS",
+	"settings.externalCssStopAction": "Låt Callout Studio style detta igen",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "Extern CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callouts från ditt tema",
+	"settings.themeCalloutsDesc":
+		"{{theme}} tillhandahåller eller stylar om dessa, så Callout Studio lämnar dem exakt som ditt tema ritar dem och erbjuder dem endast som block-callouts. Båda typerna visas här: callout-typer ditt tema lägger till, och inbyggda callouts vars utseende det ersätter. Callout-typer som ditt tema lägger till listas bara medan det är aktivt.",
+	"settings.themeCalloutsDefaultTheme": "Ditt tema",
+	"settings.themePreviewAria":
+		'Förhandsvisa "{{name}}" — se hur ditt tema ritar den',
+	"settings.clearUsesAction": "Rensa användningar i dina anteckningar",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} stylar om varje inbyggd callout, så de listas alla ovan och Callout Studio låter dem vara. Lägg till en callout med ett annat ID för att designa en egen.",
 
 	"settings.fallbackCallout": "Standard reservcallout",
 	"settings.fallbackCalloutDesc":
@@ -173,6 +194,10 @@ export const sv: Record<string, string> = {
 	"commandBuilder.formatBlock": "Block",
 	"commandBuilder.roleDisabled":
 		"Detta format är avstängt, så kommandot infogar vanlig text tills du slår på det igen.",
+	"commandBuilder.roleThemeOwned":
+		"Ditt tema tillhandahåller denna callout, så den har bara ett block-format.",
+	"commandBuilder.commandSuspended":
+		"Pausad: ditt tema tillhandahåller denna callout, så den har bara ett block-format. Kommandot fungerar igen när temat slutar tillhandahålla den.",
 	"commandBuilder.callout": "Callout-typ",
 	"commandBuilder.calloutDesc": "Callouten kommandot infogar.",
 	"commandBuilder.headingLevel": "Rubriknivå",
@@ -219,9 +244,9 @@ export const sv: Record<string, string> = {
 		"Inga nya callout-typer importerades (ID:n kan redan finnas).",
 	"notice.iconDownloadFailed":
 		'Det gick inte att ladda ned Material-ikonen "{{name}}". Den kanske inte är tillgänglig för den här stilen/vikten, eller så är anslutningen offline.',
-	"notice.externalStyleOn":
-		'"{{name}}" stylas nu av ditt tema eller CSS-utdrag.',
-	"notice.externalStyleOff": 'Callout Studio stylar återigen "{{name}}".',
+	"notice.externalCssOn":
+		'Callout Studio stylar inte längre "{{name}}" — din egen CSS avgör hur den ser ut. Dess Rubrik-callout- och Infogad callout-format renderas inte.',
+	"notice.externalCssOff": 'Callout Studio stylar nu "{{name}}" igen.',
 	"notice.nothingToWrap": "Inget att lägga i callout.",
 	"notice.cursorNotInsideCallout": "Markören är inte inne i en callout.",
 	"notice.autocompleteTargetMoved":
@@ -286,6 +311,10 @@ export const sv: Record<string, string> = {
 	"editor.idConflict": "Detta ID krockar med en befintlig callout",
 	"editor.idDashConflict":
 		'Obsidian skriver mellanslag som bindestreck, så detta ID krockar med "{{other}}"',
+	"editor.idFromTheme":
+		"{{theme}} tillhandahåller redan en callout med detta ID, så Callout Studio kan inte stila den. Välj ett annat ID.",
+	"editor.idThemePattern":
+		"Obs: ditt tema stilar alla callouts som matchar {{pattern}}, så det kan påverka hur den här ser ut.",
 	"editor.untitledCallout": "Namnlös Callout",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -295,25 +324,19 @@ export const sv: Record<string, string> = {
 		"Här är en infogad [!{id}]-pill inuti ett stycke.",
 	"editor.previewReadOnly": "Livevyn kan inte redigeras",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Stylad utanför Callout Studio",
-	"editor.externalStyleBody":
-		"Callout Studio tillämpar ingen stil på {{id}}. Utseendet kommer från ditt tema, ett CSS-utdrag eller Obsidians standardinställningar.",
-	"editor.externalStyleWhat": "Vad detta innebär",
-	"editor.externalStyleWhatHeading":
-		"En rubrik-callout som ## [!{{id}}] Titel renderas inte — texten förblir som den skrevs.",
-	"editor.externalStyleWhatInline":
-		"Inte heller en inline sådan, som ord [!{{id}}] ord.",
-	"editor.externalStyleWhatGlobal":
-		"Globala stilinställningar (kant, radie, textstorlek) gäller inte för den.",
-	"editor.externalStylePreviewTitle": "Hur den renderas nu",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Titel\n\n" +
-		"Så här ser en mening med [!{{id}}] i sig ut.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} – tillhandahålls av ditt tema',
+	"themePreview.owned":
+		'{{theme}} tillhandahåller och stilar "{{name}}". Callout Studio åsidosätter den inte, så blockcalloutens utseende är exakt som ditt tema ritar den.',
+	"themePreview.readOnly":
+		"Det betyder att dess färg, ikon, namn och ID inte kan ändras här. Om du vill ha en egen design, skapa en ny callout med ett annat ID.",
+	"themePreview.blockOnly":
+		"Rubrik- och inline-format är inte tillgängliga för callouts som tillhandahålls av ditt tema. Blockcallouts använder temats egen stil.",
+	"themePreview.previewTitle": "Så ser den ut nu",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> Så här ser calloutens innehåll ut.\n",
-	"editor.externalStyleResume": "Ta tillbaka stylingen",
 	"editor.externalStyleClose": "Förstått",
 
 	// Palette editor modal
@@ -602,7 +625,9 @@ export const sv: Record<string, string> = {
 	"contextMenu.copySection": "Kopiera rubriksektion",
 	"contextMenu.deleteSection": "Ta bort rubriksektion",
 	"heading.toggleFold": "Växla vikning",
-	"settings.globalSettings": "Globala inställningar",
+	"settings.globalSettings": "Stilalternativ för Callout Studio",
+	"settings.globalSettingsScope":
+		"Form, avstånd och storlek för de callouts som Callout Studio stilar. Callouts som ditt tema stilar behåller temats egen design.",
 	"settings.globalSettingsRegularDesc":
 		"Lägg till en callout-token i ett citat (t.ex. `> [!type]`) för att rendera Obsidians inbyggda callout-ruta. Du kan justera dess kant, hörnrundning, typsnittsskala och justering.",
 	"settings.globalSettingsHeadingDesc":
@@ -930,4 +955,8 @@ export const sv: Record<string, string> = {
 	"export.formatCss": "CSS-utdrag",
 	"export.formatCssDesc":
 		"En .css-fil som sparas i den här vaultens snippets-mapp för användning där Callout Studio inte är installerat. Den omfattar bara vanliga callouts och är en ögonblicksbild; exportera igen efter ändringar.",
+	"quickInsert.readingViewHint": "Den här anteckningen är öppen i läsläge, så inget kan infogas.",
+	"quickInsert.readingView": "Växla till källäge eller Live Preview för att infoga en callout.",
+	"quickInsert.noCursorHint": "Det finns ingen markör i den här anteckningen, så det finns ingenstans att infoga.",
+	"quickInsert.noCursor": "Placera markören i anteckningen där du vill infoga callouten och försök igen.",
 };

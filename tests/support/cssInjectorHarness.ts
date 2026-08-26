@@ -30,7 +30,6 @@ import type {
 	CalloutDefinition,
 	CalloutIcon,
 	CalloutRenderRole,
-	UserImageIcon,
 } from "../../src/types";
 
 /**
@@ -44,19 +43,14 @@ export interface InjectorInternals {
 	generateGlobalStyleCSS(): string;
 	generateTokenColorCSS(def: CalloutDefinition): string;
 	generateFoldArrowCSS(def: CalloutDefinition): string;
-	generateIconOverride(id: string, icon: CalloutIcon, svg: string): string;
-	generateIconMaskOverride(
-		id: string,
-		svg: string,
-		picture?: UserImageIcon,
-	): string;
-	generateImageOverride(
-		id: string,
-		svg: string,
-		picture: UserImageIcon,
-	): string;
-	generateEmojiOverride(id: string, emoji: string): string;
-	getIconCSS(def: CalloutDefinition): string;
+	/**
+	 * The artwork lookup. Reachable because `calloutIconProp` takes it as an
+	 * argument rather than reading it off the injector — see that module for
+	 * why the `--callout-icon` value is its own decision.
+	 */
+	icons: {
+		resolveSvg(icon: CalloutIcon, role: CalloutRenderRole): string | null;
+	};
 	getIconTransformCSS(def: CalloutDefinition): string;
 	iconTransformSelector(id: string, role: CalloutRenderRole): string;
 	iconHiddenCSS(def: CalloutDefinition): string;
@@ -119,6 +113,12 @@ export interface Harness {
  * `{} as App` is app enough for every emitter here. The app is only touched on
  * `inject()`, which these suites reach through `injectHarness()` in
  * cssInjectorInject.test.ts instead.
+ *
+ * Nothing is theme-owned unless a suite says so: ownership comes from
+ * `registry.setThemeOwnedIds(…)`, which nobody has called, and the empty set is
+ * the deliberate fail-safe — a registry that cannot see a theme styles
+ * everything rather than silently standing down. A suite that wants a
+ * theme-owned callout calls that method with its attribute-form id.
  */
 export function harness(app: App = {} as App): Harness {
 	const registry = new CalloutRegistry();

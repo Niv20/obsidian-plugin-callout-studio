@@ -98,12 +98,29 @@ export interface CalloutDetails extends Callout {
 	 */
 	readonly source: "builtin" | "user" | "fallback" | "theme" | "plugin";
 	/**
-	 * True when the user handed this callout to their theme or CSS snippet.
-	 * Callout Studio then emits no styling for it at all, so the colours above
-	 * are what was stored, not what renders. The id is still perfectly valid to
-	 * write into a note.
+	 * True when Callout Studio emits no styling for this callout, so the colours
+	 * above are what was stored rather than what renders. The id is still
+	 * perfectly valid to write into a note.
+	 *
+	 * Two different situations resolve to `true` and this member cannot tell
+	 * them apart, which is why {@link themeStyled} exists: the active theme
+	 * supplies the callout, or the user styles it in their own CSS. Kept with
+	 * its original meaning because it shipped first — consumers written against
+	 * it must keep working.
 	 */
 	readonly externalStyle: boolean;
+	/**
+	 * True when the **active theme** is what supplies and styles this callout.
+	 * Derived from the theme's own stylesheet, so it changes when the user
+	 * changes theme, and no field on the stored definition records it.
+	 *
+	 * The narrower half of {@link externalStyle}: `themeStyled` implies
+	 * `externalStyle`, and the difference between them is a callout the user
+	 * has handed to their own CSS snippet.
+	 *
+	 * Added after `externalStyle`, so feature-detect it before relying on it.
+	 */
+	readonly themeStyled: boolean;
 }
 
 /**

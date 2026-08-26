@@ -30,16 +30,16 @@ import {
 import type { CustomCommandManager } from "../editor/CustomCommandManager";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CustomCommand, PluginSettings } from "../types";
-import { renderIconInto, renderNoIcon } from "../icons/renderIcon";
-import { createIconResolver } from "../icons/resolver";
+import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import {
 	commandSignature,
 	describeCommand,
+	isSuspendedByTheme,
 	obsidianCommandId,
 } from "../utils/customCommands";
 import { ConfirmModal } from "../utils/ConfirmModal";
 import { CommandEditorModal } from "./CommandEditorModal";
-import { fullCommandId, hotkeysForCommand, openHotkeySettings } from "./hotkeyLink";
+import { addHotkeyButton, addHotkeyChips } from "./command/hotkeyRow";
 import { applyModalChrome } from "./modalChrome";
 
 /** Narrow structural host — the plugin instance satisfies this. */
@@ -191,12 +191,12 @@ export class CommandBuilderModal extends Modal {
 			// Still read, even switched off: the binding underneath survives the
 			// toggle, and turning the command back on must not look like it lost
 			// the shortcut.
-			this.addHotkeyChips(nameLine, id);
+			this.hotkeyChips(nameLine, id);
 
 			// Blocked, not hidden: there is nowhere left for the click to lead
 			// while the command isn't registered.
 			const buttonsEl = row.createDiv({ cls: "callout-studio-row-buttons" });
-			this.addHotkeyButton(buttonsEl, name, !enabled);
+			this.hotkeyButton(buttonsEl, name, !enabled);
 
 			const toggleWrap = row.createDiv({ cls: "cs-command-row-toggle" });
 			new ToggleComponent(toggleWrap)
@@ -209,65 +209,25 @@ export class CommandBuilderModal extends Modal {
 		}
 	}
 
-	/**
-	 * What a command is bound to, beside its name — one pill per shortcut.
-	 *
-	 * Several, not one: Obsidian lets a command hold any number of bindings, and
-	 * showing only the first would have this window quietly disagree with the
-	 * pane it links to. They go in the name line, which already wraps, so a
-	 * command with a handful of shortcuts grows a second row rather than pushing
-	 * the buttons off the end.
-	 *
-	 * A command with none still gets a pill, reading "Blank" as the hotkeys pane
-	 * does — the alternative leaves the two states structurally different rows.
-	 *
-	 * These are `<span>`s and wear no Obsidian chrome. The pill is the same one
-	 * the callout list uses for "Default" / "Default fallback" (`.cs-fallback-tag`,
-	 * see styles.css): a label, deliberately not something to click.
-	 */
-	private addHotkeyChips(nameLine: HTMLElement, shortId: string): void {
-		const shortcuts = hotkeysForCommand(
-			this.app,
-			fullCommandId(this.host.manifest.id, shortId),
-		);
-		const labels =
-			shortcuts.length > 0 ? shortcuts : [t("commandBuilder.hotkeyBlank")];
-		for (const label of labels) {
-			nameLine.createSpan({ cls: "cs-hotkey-chip", text: label });
-		}
+	/** @see addHotkeyChips */
+	private hotkeyChips(nameLine: HTMLElement, shortId: string): void {
+		addHotkeyChips(this.app, this.host.manifest.id, nameLine, shortId);
 	}
 
-	/**
-	 * The button that opens Obsidian's hotkeys pane on this command.
-	 *
-	 * Bound or blank it does the same thing, so there is one button rather than
-	 * an add/change pair. It is built bare on purpose: everything about how it
-	 * looks comes from `.callout-studio-row-buttons button`, which is what makes
-	 * it identical to the pencil and the bin beside it.
-	 *
-	 * `disabled` is for a fixed command the user switched off: with nothing
-	 * registered there is nowhere for the click to lead. The pills stay.
-	 */
-	private addHotkeyButton(
+	/** @see addHotkeyButton */
+	private hotkeyButton(
 		buttonsEl: HTMLElement,
 		name: string,
 		disabled = false,
 	): void {
-		const btn = buttonsEl.createEl("button", {
-			attr: { "aria-label": t("commandBuilder.hotkeyAria", { name }) },
-		});
-		setIcon(btn, "circle-plus");
-		if (disabled) {
-			btn.disabled = true;
-			return;
-		}
-		btn.addEventListener("click", () => {
-			// The pane opens in the settings window behind this one, so staying
-			// open would leave the user looking at a modal over what they asked
-			// for. Search by the rendered name, which is what the pane matches on.
-			this.close();
-			openHotkeySettings(this.app, `${this.host.manifest.name}: ${name}`);
-		});
+		addHotkeyButton(
+			this.app,
+			this.host.manifest.name,
+			() => this.close(),
+			buttonsEl,
+			name,
+			disabled,
+		);
 	}
 
 	private renderList(): void {
@@ -295,35 +255,38 @@ export class CommandBuilderModal extends Modal {
 				cls: "callout-studio-row cs-command-row",
 			});
 
+			// A command can be built on a callout the theme owns, and the row
+			// has to show the icon the reader will actually see beside it.
 			const iconEl = row.createDiv({ cls: "callout-studio-row-icon" });
-			if (def.hideIcon === true) {
-				renderNoIcon(iconEl);
-			} else {
-				renderIconInto(
-					iconEl,
-					def.icon,
-					createIconResolver(this.host.registry),
-					{
-						role: "regular",
-						fill: "currentColor",
-						missing: { kind: "placeholder", lucideId: "pencil" },
-						errorText: "?",
-					},
-				);
-			}
+			paintCalloutListIcon(
+				iconEl,
+				def,
+				this.host.registry,
+				activeDocument.body.classList.contains("theme-dark"),
+			);
 
 			const infoEl = row.createDiv({ cls: "callout-studio-row-info" });
 			const nameLine = infoEl.createDiv({
 				cls: "callout-studio-row-name-line",
 			});
 			nameLine.createDiv({ cls: "callout-studio-row-name", text: name });
-			this.addHotkeyChips(nameLine, obsidianCommandId(command.id));
+			this.hotkeyChips(nameLine, obsidianCommandId(command.id));
+			// A heading or inline command on a callout the theme has taken over
+			// is unregistered until the theme lets go. Said here because the
+			// alternative is a command that silently stops appearing in the
+			// palette while still sitting in this list.
+			if (isSuspendedByTheme(this.host.registry, command)) {
+				infoEl.createDiv({
+					cls: "cs-command-suspended",
+					text: t("commandBuilder.commandSuspended"),
+				});
+			}
 
 			const buttonsEl = row.createDiv({
 				cls: "callout-studio-row-buttons",
 			});
 			// First, where the shortcut itself used to sit.
-			this.addHotkeyButton(buttonsEl, name);
+			this.hotkeyButton(buttonsEl, name);
 
 			const editBtn = buttonsEl.createEl("button", {
 				attr: { "aria-label": t("commandBuilder.editAria", { name }) },

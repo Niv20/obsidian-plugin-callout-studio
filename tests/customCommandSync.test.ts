@@ -916,3 +916,74 @@ describe("no code path registers a command per callout", () => {
 		);
 	});
 });
+
+describe("a command the theme has temporarily taken over", () => {
+	/**
+	 * A theme callout has one format, Block, so a *heading* or *inline* command
+	 * aimed at one would write markdown Callout Studio then leaves as literal
+	 * text — a command that visibly does the wrong thing.
+	 *
+	 * Which makes the shape of the fix load-bearing. Everything else `syncAll`
+	 * drops is dropped for good: the filter it uses is written straight back to
+	 * `settings.customCommands`. Theme ownership is temporary and reversible, so
+	 * suspension has to happen *after* that filter — the command stays in the
+	 * file, leaves the palette, and comes back at the same id, which is what
+	 * keeps the user's own hotkey pointing at it.
+	 */
+	const suspended = (role: "heading" | "inline" = "heading") => {
+		const h = harness();
+		addCallout(h.registry, { id: "recite", displayName: "Recite" });
+		seed(h, { calloutId: "recite", role, action: undefined });
+		h.manager.syncAll();
+		h.clear();
+		h.registry.setThemeOwnedIds(new Set(["recite"]));
+		h.manager.syncAll();
+		return h;
+	};
+
+	it("leaves the command palette", () => {
+		const h = suspended();
+		assert.deepStrictEqual(h.removed, [obsidianCommandId("cc-1")]);
+		assert.deepStrictEqual(h.added, []);
+	});
+
+	it("stays in settings — this is the whole point", () => {
+		const h = suspended();
+		assert.strictEqual(h.registry.settings.customCommands.length, 1);
+		assert.strictEqual(h.registry.settings.customCommands[0]?.role, "heading");
+	});
+
+	it("is not reported as a command whose callout went missing", () => {
+		// It counts as neither `invalidCount` nor `missingCount`, so there is no
+		// Notice and no settings write: nothing has gone wrong.
+		notices.length = 0;
+		const h = suspended();
+		assert.deepStrictEqual(notices, []);
+		assert.strictEqual(h.saves, 0);
+	});
+
+	it("comes back at the same id when the theme lets go", () => {
+		// Obsidian keys the user's hotkey by the command id, so re-registering
+		// there is what makes the binding survive the round trip.
+		const h = suspended();
+		h.clear();
+		h.registry.setThemeOwnedIds(new Set());
+		h.manager.syncAll();
+		assert.strictEqual(h.added.length, 1);
+		assert.strictEqual(h.added[0]?.id, obsidianCommandId("cc-1"));
+		assert.deepStrictEqual(h.removed, []);
+	});
+
+	it("suspends an inline command too", () => {
+		assert.deepStrictEqual(suspended("inline").added, []);
+	});
+
+	it("never suspends a Block command — the theme draws those itself", () => {
+		const h = harness();
+		addCallout(h.registry, { id: "recite" });
+		seed(h, { calloutId: "recite", role: "regular", action: "wrap" });
+		h.registry.setThemeOwnedIds(new Set(["recite"]));
+		h.manager.syncAll();
+		assert.strictEqual(h.added.length, 1);
+	});
+});

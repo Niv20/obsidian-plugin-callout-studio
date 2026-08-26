@@ -65,6 +65,15 @@ export const ko: Record<string, string> = {
 	"deleteModal.deleteInUse": "삭제 (일반 텍스트로 변환)",
 	"deleteModal.deleteUnused": "callout 삭제",
 
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": '"{{name}}"의 모든 사용을 지우시겠습니까?',
+	"deleteModal.keepsRowBuiltIn":
+		"이것은 Obsidian의 기본 제공 callout 중 하나이므로 유형 자체는 계속 사용할 수 있습니다 — 노트에서의 사용만 변경됩니다.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}}이(가) 이 callout 유형을 정의하므로 계속 사용할 수 있으며 모양도 그대로 유지됩니다. Callout Studio는 볼트 내의 노트만 변경하며, 테마에 속한 것은 전혀 건드리지 않습니다.",
+	"deleteModal.clearUsages": "사용 지우기 (일반 텍스트로 변환)",
+
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "내 callout 유형",
 	"settings.builtInCallouts": "기본 제공 callout",
@@ -98,10 +107,25 @@ export const ko: Record<string, string> = {
 	"settings.makeFallbackAction": "기본 폴백 스타일 사용",
 
 	"settings.colorSwatchAria": "강조색: {{accent}} · 배경: {{bg}}",
-	"settings.externalStyleTag": "외부 스타일",
-	"settings.externalStyleAction": "외부 스타일 사용 (테마 또는 CSS)",
-	"settings.externalStyleBlocked":
-		"이것은 기본 대체 callout입니다. 먼저 다른 것을 선택하세요",
+
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "직접 CSS로 스타일 지정",
+	"settings.externalCssStopAction": "Callout Studio가 다시 스타일 지정하도록 하기",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "외부 CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "테마에서 제공하는 callout",
+	"settings.themeCalloutsDesc":
+		"{{theme}}이(가) 이들을 제공하거나 다시 스타일 지정하므로, Callout Studio는 테마가 그리는 그대로 두고 Block callout으로만 제공합니다. 여기에는 테마가 추가하는 callout 유형과, 모양이 대체되는 기본 제공 callout이 모두 표시됩니다. 테마가 추가하는 callout 유형은 해당 테마가 활성화되어 있는 동안에만 표시됩니다.",
+	"settings.themeCalloutsDefaultTheme": "사용자의 테마",
+	"settings.themePreviewAria":
+		'"{{name}}" 미리보기 — 테마가 이를 어떻게 그리는지 확인',
+	"settings.clearUsesAction": "노트에서 사용 지우기",
+	"settings.builtInAllThemeStyled":
+		"{{theme}}이(가) 모든 기본 제공 callout의 스타일을 다시 지정하므로, 모두 위에 표시되며 Callout Studio는 그대로 둡니다. 직접 디자인하려면 다른 ID로 callout을 추가하세요.",
+
 	"settings.fallbackCallout": "기본 폴백 callout",
 	"settings.fallbackCalloutDesc":
 		"볼트에서 인식되지 않는 callout 유형은 이 callout의 스타일을 상속합니다.",
@@ -171,6 +195,10 @@ export const ko: Record<string, string> = {
 	"commandBuilder.formatBlock": "Block",
 	"commandBuilder.roleDisabled":
 		"이 형식은 꺼져 있어서, 다시 켜기 전까지 명령어는 일반 텍스트를 삽입합니다.",
+	"commandBuilder.roleThemeOwned":
+		"이 callout은 테마가 제공하므로 Block 형식만 사용할 수 있습니다.",
+	"commandBuilder.commandSuspended":
+		"일시 중지됨: 이 callout은 테마가 제공하므로 Block 형식만 사용할 수 있습니다. 테마가 더 이상 이 callout을 제공하지 않으면 이 명령어가 다시 작동합니다.",
 	"commandBuilder.callout": "callout 유형",
 	"commandBuilder.calloutDesc": "이 명령어가 삽입하는 callout입니다.",
 	"commandBuilder.headingLevel": "제목 수준",
@@ -217,10 +245,9 @@ export const ko: Record<string, string> = {
 		"새로운 callout 유형을 가져오지 못했습니다 (ID가 이미 존재할 수 있습니다).",
 	"notice.iconDownloadFailed":
 		'Material 아이콘 "{{name}}"을(를) 다운로드할 수 없습니다. 이 스타일/굵기에서 사용할 수 없거나 연결이 오프라인 상태일 수 있습니다.',
-	"notice.externalStyleOn":
-		'"{{name}}"은(는) 이제 테마 또는 CSS 스니펫에 의해 스타일이 지정됩니다.',
-	"notice.externalStyleOff":
-		'Callout Studio가 다시 "{{name}}"의 스타일을 지정합니다.',
+	"notice.externalCssOn":
+		'더 이상 Callout Studio가 "{{name}}"을(를) 스타일 지정하지 않습니다 — 이제 직접 작성한 CSS가 모양을 결정합니다. 제목 callout과 인라인 callout 형식은 렌더링되지 않습니다.',
+	"notice.externalCssOff": 'Callout Studio가 "{{name}}"을(를) 다시 스타일 지정합니다.',
 	"notice.nothingToWrap": "감쌀 내용이 없습니다.",
 	"notice.cursorNotInsideCallout": "커서가 callout 안에 있지 않습니다.",
 	"notice.autocompleteTargetMoved":
@@ -282,6 +309,10 @@ export const ko: Record<string, string> = {
 	"editor.idEmpty": "최소 하나의 ID가 필요합니다",
 	"editor.idExists": "이 ID를 가진 callout이 이미 존재합니다",
 	"editor.idConflict": "이 ID는 기존 callout과 충돌합니다",
+	"editor.idFromTheme":
+		"{{theme}}이(가) 이미 이 ID로 callout을 제공하므로 Callout Studio는 이를 스타일 지정할 수 없습니다. 다른 ID를 선택하세요.",
+	"editor.idThemePattern":
+		"참고: 사용자의 테마는 {{pattern}}과(와) 일치하는 모든 callout을 스타일 지정하므로, 이 callout의 모양을 덮어쓸 수 있습니다.",
 	"editor.idDashConflict":
 		'Obsidian은 공백을 대시로 저장하므로 이 ID는 "{{other}}"와(과) 충돌합니다',
 	"editor.untitledCallout": "제목 없는 Callout",
@@ -292,25 +323,22 @@ export const ko: Record<string, string> = {
 	"editor.sampleInlineText": "다음은 단락 안에 있는 인라인 [!{id}] 필입니다.",
 	"editor.previewReadOnly": "실시간 미리보기는 편집할 수 없습니다",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Callout Studio 외부에서 스타일 지정됨",
-	"editor.externalStyleBody":
-		"Callout Studio는 {{id}}에 스타일을 적용하지 않습니다. 모양은 테마, CSS 스니펫 또는 Obsidian의 기본값에서 나옵니다.",
-	"editor.externalStyleWhat": "이것이 의미하는 것",
-	"editor.externalStyleWhatHeading":
-		"## [!{{id}}] 제목과 같은 헤딩 callout은 렌더링되지 않습니다 — 텍스트는 작성된 그대로 유지됩니다.",
-	"editor.externalStyleWhatInline":
-		"인라인 callout도 마찬가지입니다, 예: 단어 [!{{id}}] 단어.",
-	"editor.externalStyleWhatGlobal":
-		"전역 스타일 설정(테두리, 반경, 텍스트 크기)이 적용되지 않습니다.",
-	"editor.externalStylePreviewTitle": "현재 렌더링 방식",
-	"editor.externalStyleSample":
-		"## [!{{id}}] 제목\n\n" +
-		"[!{{id}}]이(가) 포함된 문장은 이렇게 보입니다.\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — 테마에서 제공',
+	"themePreview.owned":
+		'{{theme}}이(가) "{{name}}"을(를) 제공하고 스타일을 지정합니다. Callout Studio는 이를 재정의하지 않으므로, Block callout은 테마가 그리는 그대로 표시됩니다.',
+	"themePreview.readOnly":
+		"즉, 색상·아이콘·이름·ID를 여기서 변경할 수 없습니다. 직접 디자인하려면 다른 ID로 새 callout을 만드세요.",
+	"themePreview.blockOnly":
+		"테마가 제공하는 callout에는 제목과 인라인 형식을 사용할 수 없습니다. Block callout은 테마 고유의 스타일을 사용합니다.",
+	"themePreview.previewTitle": "현재 렌더링 모습",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> callout 내용은 이렇게 보입니다.\n",
-	"editor.externalStyleResume": "스타일 되찾기",
+
+	// External style window (opens instead of the editor for a callout the
+	// user handed to their theme / a CSS snippet)
 	"editor.externalStyleClose": "확인",
 
 	// Palette editor modal
@@ -602,7 +630,9 @@ export const ko: Record<string, string> = {
 
 	"heading.toggleFold": "접기 전환",
 
-	"settings.globalSettings": "전역 설정",
+	"settings.globalSettings": "Callout Studio 스타일 옵션",
+	"settings.globalSettingsScope":
+		"Callout Studio가 스타일을 지정하는 callout의 모양, 간격, 크기입니다. 테마가 스타일을 지정하는 callout은 테마 고유의 디자인을 유지합니다.",
 	"settings.globalSettingsRegularDesc":
 		"인용 블록에 callout 토큰을 추가하면(예: `> [!type]`) Obsidian 기본 callout 상자로 표시됩니다. 테두리, 반지름, 폰트 크기, 정렬을 조정할 수 있습니다.",
 	"settings.globalSettingsHeadingDesc":
@@ -923,4 +953,8 @@ export const ko: Record<string, string> = {
 	"export.formatCss": "CSS 스니펫",
 	"export.formatCssDesc":
 		"Callout Studio가 설치되지 않은 곳에서 사용할 수 있도록 이 vault의 snippets 폴더에 저장되는 .css 파일입니다. 일반 callout만 포함하며 스냅샷이므로 변경 후 다시 내보내야 합니다.",
+	"quickInsert.readingViewHint": "이 노트는 읽기 모드로 열려 있어 아무것도 삽입할 수 없습니다.",
+	"quickInsert.readingView": "callout을 삽입하려면 소스 모드 또는 라이브 미리 보기로 전환하세요.",
+	"quickInsert.noCursorHint": "이 노트에는 커서가 없어 삽입할 위치가 없습니다.",
+	"quickInsert.noCursor": "callout을 삽입할 위치에 노트의 커서를 놓은 다음 다시 시도하세요.",
 };

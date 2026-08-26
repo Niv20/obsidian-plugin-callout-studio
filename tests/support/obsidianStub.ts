@@ -84,6 +84,15 @@ export function setIcon(): void {
 	/* no-op: nothing here draws */
 }
 
+/**
+ * Records the tooltip on the element so a test can assert it was set, and so
+ * `repoSourceRules`' "nothing sets a native `title`" rule keeps having a real
+ * alternative to point at.
+ */
+export function setTooltip(el: { dataset?: Record<string, string> }, text: string): void {
+	if (el.dataset) el.dataset.csTooltip = text;
+}
+
 export function getIconIds(): string[] {
 	return seams.__CS_ICON_IDS__ ?? [];
 }
@@ -115,7 +124,16 @@ export function requireApiVersion(): boolean {
 
 export class TFile {}
 export class Plugin {}
-export class Component {}
+export class Component {
+	/**
+	 * Real `Component` owns child lifetimes and unload callbacks. Nothing here
+	 * needs that, but several modules call these on construction and teardown
+	 * (`QuickInsertPreviews`, `ThemeAppearanceProbe`), so they have to exist or
+	 * the suite dies before it reaches the behaviour it is testing.
+	 */
+	load(): void {}
+	unload(): void {}
+}
 export class Modal {}
 export class Editor {}
 
@@ -144,6 +162,7 @@ export class WorkspaceLeaf {}
 type ElementLike = {
 	createDiv(options?: { cls?: string }): ElementLike;
 	value: string;
+	dataset?: Record<string, string>;
 };
 
 /**
@@ -239,6 +258,44 @@ export class SliderComponent {
  * is real — nothing else under test constructs one — and the rest are the
  * fluent no-ops that keep a chained call from throwing.
  */
+/** The chainable shape `Setting.addButton` / `addExtraButton` hand out. */
+export class ButtonLike {
+	readonly buttonEl: ElementLike;
+	private click: (() => void) | null = null;
+
+	constructor(containerEl: ElementLike) {
+		this.buttonEl = containerEl.createDiv({ cls: "clickable-icon" });
+	}
+
+	setButtonText(text: string): this {
+		if (this.buttonEl.dataset) this.buttonEl.dataset.csText = text;
+		return this;
+	}
+
+	setIcon(): this {
+		return this;
+	}
+
+	setTooltip(text: string): this {
+		setTooltip(this.buttonEl, text);
+		return this;
+	}
+
+	setCta(): this {
+		return this;
+	}
+
+	onClick(cb: () => void): this {
+		this.click = cb;
+		return this;
+	}
+
+	/** For a test that wants to press it. */
+	press(): void {
+		this.click?.();
+	}
+}
+
 export class Setting {
 	readonly settingEl: ElementLike;
 	readonly infoEl: ElementLike;
@@ -254,15 +311,44 @@ export class Setting {
 		});
 	}
 
-	setName(): this {
+	/**
+	 * Both record onto the row rather than staying inert, through the same
+	 * `dataset` idiom as {@link setTooltip} — the copy a heading carries is
+	 * sometimes the assertion (`CalloutListsSection` writes the active theme's
+	 * name into its description, and has to rewrite it on every refresh).
+	 * Neither builds a `nameEl`/`descEl`, because the DOM shape is not what any
+	 * test here is about and inventing one would be a second thing to keep true.
+	 */
+	setName(name?: string): this {
+		if (this.settingEl.dataset) this.settingEl.dataset.csName = name ?? "";
 		return this;
 	}
 
-	setDesc(): this {
+	setDesc(desc?: string): this {
+		if (this.settingEl.dataset) this.settingEl.dataset.csDesc = desc ?? "";
 		return this;
 	}
 
 	setClass(): this {
+		return this;
+	}
+
+	setHeading(): this {
+		return this;
+	}
+
+	/**
+	 * Enough of a button for a section to *build* — the sections under test here
+	 * are exercised for what they render, not for what their buttons do, and a
+	 * section that throws while wiring one never gets as far as the rows.
+	 */
+	addButton(cb: (button: ButtonLike) => unknown): this {
+		cb(new ButtonLike(this.controlEl));
+		return this;
+	}
+
+	addExtraButton(cb: (button: ButtonLike) => unknown): this {
+		cb(new ButtonLike(this.controlEl));
 		return this;
 	}
 

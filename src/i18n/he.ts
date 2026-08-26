@@ -77,6 +77,14 @@ export const he: Record<string, string> = {
 	"deleteModal.replaceInstead": "החלפה במקום",
 	"deleteModal.deleteInUse": "מחיקה (המרה לטקסט רגיל)",
 	"deleteModal.deleteUnused": "מחיקת תיבת־ההבלטה",
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'לנקות את כל השימושים בתיבת־ההבלטה "{{name}}"?',
+	"deleteModal.keepsRowBuiltIn":
+		"זוהי אחת מתיבות־ההבלטה המובנות של Obsidian, כך שהסוג עצמו נשאר זמין — רק השימושים בפתקים שלכם משתנים.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} מגדירה את סוג תיבת־ההבלטה הזה, ולכן הוא נשאר זמין ושומר על המראה שלו. Callout Studio משנה רק פתקים בתוך הכספת שלכם — שום דבר ששייך לערכת הנושא שלכם לא נפגע.",
+	"deleteModal.clearUsages": "ניקוי שימושים (המרה לטקסט רגיל)",
 
 	// Settings — Section headings
 	"settings.title": "Callout Studio",
@@ -116,10 +124,23 @@ export const he: Record<string, string> = {
 
 	// Settings — Fallback callout
 	"settings.colorSwatchAria": "הדגשה: {{accent}} · רקע: {{bg}}",
-	"settings.externalStyleTag": "עיצוב חיצוני",
-	"settings.externalStyleAction": "שימוש בעיצוב חיצוני (ערכת נושא או CSS)",
-	"settings.externalStyleBlocked":
-		"זוהי תיבת־ההבלטה לברירת המחדל, יש לבחור אחרת קודם",
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "עיצוב באמצעות CSS משלי",
+	"settings.externalCssStopAction": "לאפשר ל-Callout Studio לעצב זאת שוב",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "CSS חיצוני",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "תיבות־הבלטה מערכת הנושא שלכם",
+	"settings.themeCalloutsDesc":
+		"{{theme}} מספקת או משנה את העיצוב של אלה, כך ש-Callout Studio משאיר אותן בדיוק כפי שערכת הנושא שלכם מציירת אותן, ומציע אותן כתיבות־הבלטה מסוג בלוק בלבד. שני הסוגים מופיעים כאן: סוגי תיבות־הבלטה שערכת הנושא שלכם מוסיפה, ותיבות־הבלטה מובנות שהמראה שלהן הוחלף. סוגי תיבות־הבלטה שערכת הנושא מוסיפה מופיעים ברשימה רק כל עוד היא פעילה.",
+	"settings.themeCalloutsDefaultTheme": "ערכת הנושא שלכם",
+	"settings.themePreviewAria":
+		'תצוגה מקדימה של "{{name}}" — לראות איך ערכת הנושא שלכם מציירת אותה',
+	"settings.clearUsesAction": "ניקוי שימושים בפתקים שלכם",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} משנה את העיצוב של כל תיבות־ההבלטה המובנות, כך שכולן מופיעות למעלה ו-Callout Studio לא נוגע בהן. כדי לעצב תיבת־הבלטה משלכם, הוסיפו תיבת־הבלטה עם מזהה אחר.",
 	"settings.fallbackCallout": "ברירת־מחדל לתיבות־הבלטה",
 	"settings.fallbackCalloutDesc":
 		"סוגי תיבות־הבלטה לא מוכרות יקבלו את העיצוב של תיבת־הבלטה זו.",
@@ -193,6 +214,10 @@ export const he: Record<string, string> = {
 	"commandBuilder.formatBlock": "בלוק",
 	"commandBuilder.roleDisabled":
 		"הפורמט הזה כבוי, כך שהפקודה תוסיף טקסט רגיל עד שתפעילו אותו מחדש.",
+	"commandBuilder.roleThemeOwned":
+		"ערכת הנושא שלכם מספקת את תיבת־ההבלטה הזו, ולכן יש לה רק פורמט בלוק.",
+	"commandBuilder.commandSuspended":
+		"מושהה: ערכת הנושא שלכם מספקת את תיבת־ההבלטה הזו, ולכן יש לה רק פורמט בלוק. הפקודה הזו תחזור לפעול כשערכת הנושא תפסיק לספק אותה.",
 	"commandBuilder.callout": "סוג תיבת־הבלטה",
 	"commandBuilder.calloutDesc": "תיבת־ההבלטה שהפקודה הזו מוסיפה.",
 	"commandBuilder.headingLevel": "רמת כותרת",
@@ -240,9 +265,9 @@ export const he: Record<string, string> = {
 		"לא יובאו תיבות־הבלטה חדשות (ייתכן שהמזהים כבר קיימים).",
 	"notice.iconDownloadFailed":
 		'לא ניתן להוריד את אייקון Material "{{name}}". ייתכן שאינו זמין בסגנון/משקל הזה, או שאין חיבור לאינטרנט.',
-	"notice.externalStyleOn":
-		'"{{name}}" מעוצבת כעת על ידי ערכת הנושא או קטע ה-CSS שלכם.',
-	"notice.externalStyleOff": 'Callout Studio חוזרת לעצב את "{{name}}".',
+	"notice.externalCssOn":
+		'Callout Studio כבר לא מעצב את "{{name}}" — ה-CSS שלכם קובע איך היא נראית. הצורות שלה ככותרת ומוטבעת לא יוצגו.',
+	"notice.externalCssOff": 'Callout Studio מעצב שוב את "{{name}}".',
 	"notice.nothingToWrap": "אין תוכן לעטוף.",
 	"notice.cursorNotInsideCallout": "הסמן אינו נמצא בתוך תיבת־הבלטה.",
 	"notice.autocompleteTargetMoved":
@@ -305,6 +330,10 @@ export const he: Record<string, string> = {
 	"editor.idEmpty": "נדרש לפחות מזהה אחד",
 	"editor.idExists": "תיבת־הבלטה עם מזהה זה כבר קיימת",
 	"editor.idConflict": "מזהה זה מתנגש עם תיבת־הבלטה קיימת",
+	"editor.idFromTheme":
+		"{{theme}} כבר מספקת תיבת־הבלטה עם מזהה זה, ולכן Callout Studio לא יכול לעצב אותה. בחרו מזהה אחר.",
+	"editor.idThemePattern":
+		"לתשומת ליבכם: ערכת הנושא שלכם מעצבת כל תיבת־הבלטה שתואמת ל-{{pattern}}, כך שהיא עשויה לשנות את המראה של זו.",
 	"editor.idDashConflict":
 		'אובסידיאן ממיר רווחים למקפים, ולכן מזהה זה מתנגש עם "{{other}}"',
 	"editor.untitledCallout": "תיבת־הבלטה ללא שם",
@@ -315,25 +344,22 @@ export const he: Record<string, string> = {
 	"editor.sampleInlineText": "כאן יש תגית [!{id}] מוטבעת בתוך פסקה.",
 	"editor.previewReadOnly": "לא ניתן לערוך את התצוגה המקדימה",
 
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — מסופקת על־ידי ערכת הנושא שלכם',
+	"themePreview.owned":
+		'{{theme}} מספקת ומעצבת את "{{name}}". Callout Studio לא יעקוף זאת, כך שתיבת־ההבלטה שלה מסוג בלוק נראית בדיוק כפי שערכת הנושא שלכם מציירת אותה.',
+	"themePreview.readOnly":
+		"המשמעות היא שאי אפשר לשנות כאן את הצבע, האייקון, השם והמזהה שלה. אם אתם רוצים עיצוב משלכם, צרו תיבת־הבלטה חדשה עם מזהה אחר.",
+	"themePreview.blockOnly":
+		"הפורמטים כותרת ומוטבע אינם זמינים לתיבות־הבלטה שמסופקות על־ידי ערכת הנושא שלכם. תיבות־הבלטה מסוג בלוק משתמשות בעיצוב המקורי של ערכת הנושא.",
+	"themePreview.previewTitle": "איך היא נראית כרגע",
+	"themePreview.blockSample":
+		"> [!{{id}}] {{name}}\n" +
+		"> כך נראה התוכן של תיבת־ההבלטה.\n",
+
 	// External style window (opens instead of the editor for a callout the
 	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "מעוצבת מחוץ ל-Callout Studio",
-	"editor.externalStyleBody":
-		"Callout Studio לא מחילה שום עיצוב על {{id}}. המראה שלה מגיע מערכת הנושא, קטע CSS, או ברירות המחדל של Obsidian.",
-	"editor.externalStyleWhat": "מה זה אומר",
-	"editor.externalStyleWhatHeading":
-		"תיבת כותרת כמו ## [!{{id}}] כותרת לא תיוצג — הטקסט יישאר כפי שנכתב.",
-	"editor.externalStyleWhatInline":
-		"וגם לא תיבה מוטבעת, כמו מילה [!{{id}}] מילה.",
-	"editor.externalStyleWhatGlobal":
-		"הגדרות עיצוב גלובליות (מסגרת, רדיוס, גודל טקסט) לא חלות עליה.",
-	"editor.externalStylePreviewTitle": "איך היא מוצגת כעת",
-	"editor.externalStyleSample":
-		"## [!{{id}}] כותרת\n\n" +
-		"כך נראה משפט עם [!{{id}}] בתוכו.\n\n" +
-		"> [!{{id}}] {{name}}\n" +
-		"> כך נראה תוכן התיבה.\n",
-	"editor.externalStyleResume": "החזרת העיצוב",
 	"editor.externalStyleClose": "הבנתי",
 
 	// Icon Picker
@@ -630,7 +656,9 @@ export const he: Record<string, string> = {
 	"heading.toggleFold": "החלפת מצב קיפול",
 
 	// Global settings section (per-role style popups)
-	"settings.globalSettings": "הגדרות גלובליות",
+	"settings.globalSettings": "אפשרויות העיצוב של Callout Studio",
+	"settings.globalSettingsScope":
+		"צורה, ריווח וגודל עבור תיבות־ההבלטה ש-Callout Studio מעצב. תיבות־הבלטה שערכת הנושא שלכם מעצבת שומרות על העיצוב המקורי שלה.",
 	"settings.globalSettingsRegularDesc":
 		"הוספת סימון תיבת־הבלטה לתוך ציטוט (למשל, `> [!type]`) תציג את תיבת־ההבלטה המובנית של Obsidian. ניתן להתאים את המסגרת, עיגול הפינות, קנה־המידה של הגופן והיישור.",
 	"settings.globalSettingsHeadingDesc":
@@ -963,4 +991,8 @@ export const he: Record<string, string> = {
 	"export.formatCss": "קטע CSS",
 	"export.formatCssDesc":
 		"קובץ ‎.css שנשמר בתיקיית הקטעים של הכספת הזו, לשימוש במקום שבו Callout Studio אינו מותקן. הוא מכסה תיבות־הבלטה רגילות בלבד ומהווה תמונת מצב; ייצאו אותו שוב לאחר שינוי.",
+	"quickInsert.readingViewHint": "הפתק הזה פתוח במצב קריאה, ולכן אי אפשר להוסיף דבר.",
+	"quickInsert.readingView": "עברו ל-Source mode או ל-Live Preview כדי להוסיף תיבת־הבלטה.",
+	"quickInsert.noCursorHint": "אין סמן בפתק הזה, ולכן אין היכן להוסיף.",
+	"quickInsert.noCursor": "מקמו את הסמן בפתק במקום שבו תרצו להוסיף את תיבת־ההבלטה, ולאחר מכן נסו שוב.",
 };

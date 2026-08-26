@@ -16,9 +16,22 @@ import type {
 	UserImageIcon,
 } from "../types";
 import { CALLOUT_RENDER_ROLES } from "../types";
-import { DEFAULT_CALLOUTS, DEFAULT_SETTINGS, FALLBACK_ICON } from "../constants";
+import {
+	DEFAULT_CALLOUTS,
+	DEFAULT_SETTINGS,
+	FALLBACK_ICON,
+} from "../constants";
 import { iconCacheKey, packFor } from "../icons/registry";
-import { iconsEqual, resolveLucideId } from "../icons/lucideId";
+import { resolveLucideId } from "../icons/lucideId";
+import { COLOUR_NEUTRAL_FIELDS, isCalloutModified } from "./calloutCompare";
+import { migrateStyleModes } from "./styleModeMigration";
+import {
+	findAttrIdConflict,
+	vaultIdFormsFor,
+} from "./calloutIdForms";
+import { ThemeFacts } from "./theme/ThemeFacts";
+import type { ThemeAppearance } from "./theme/themeAppearance";
+import { mirroredFallbackRow } from "./discoveredRow";
 import { materialPack } from "../icons/packs/material";
 import type {
 	CalloutManagerEntry,
@@ -51,7 +64,14 @@ import { sortCalloutsByDisplayName } from "../utils/sorting";
  *
  * 3: `materialSvgCache` → `iconSvgCache` (generic across icon packs).
  */
-const CURRENT_DATA_VERSION = 3;
+/**
+ * Bumped to 4 when the manual style mode was retired. Unlike the migrations
+ * around it — which key on content, because an imported or hand-edited file can
+ * carry any version it likes — the `source: "theme"` re-home in
+ * `styleModeMigration.ts` genuinely cannot be told from its own result, so it
+ * needs a durable "already done" marker and this is the one.
+ */
+const CURRENT_DATA_VERSION = 4;
 const SORTED_DEFAULT_CALLOUTS = sortCalloutsByDisplayName(DEFAULT_CALLOUTS);
 
 /** Identifier stamped into v2 export files so the importer can recognize them. */
@@ -161,7 +181,7 @@ export class CalloutRegistry {
 	 * It deliberately does **not** touch the icon on the way through. v2.7.0 had
 	 * it rewrite every bare Lucide value to the `lucide-` spelling so the two
 	 * things that compare icons by string equality (the picker's selection
-	 * match, {@link isModified}) would stop seeing one icon as two — but that
+	 * match, `isCalloutModified`) would stop seeing one icon as two — but that
 	 * prefix is a lookup instruction to Obsidian, not a synonym, and forcing it
 	 * onto ids that are not core Lucide unnamed them entirely. See
 	 * `icons/lucideId.ts`. Those two comparisons normalize themselves now; the
@@ -208,6 +228,12 @@ export class CalloutRegistry {
 		if (data.settings) {
 			this.settings = mergeSavedSettings(data.settings);
 			this.syncUserImages();
+		}
+
+		// Retire the fields of the removed manual style-mode model. Ownership is
+		// derived from the active theme now. See manager/styleModeMigration.
+		if (migrateStyleModes(this.callouts, this.settings, data)) {
+			this.pendingLoadMigrationSave = true;
 		}
 
 		// Restore cached artwork for the icons the vault actually uses.
@@ -536,19 +562,15 @@ export class CalloutRegistry {
 			this.releaseFallbackTarget(def.id, base);
 		}
 
-		if (
-			removed.length === 0 &&
-			renamed.length === 0 &&
-			!aliasesChanged
-		) {
+		if (removed.length === 0 && renamed.length === 0 && !aliasesChanged) {
 			return;
 		}
 		this.pendingLoadMigrationSave = true;
 		if (removed.length > 0 || renamed.length > 0) {
-			console.debug(
-				"[CalloutStudio] callout metadata migration:",
-				{ removed, renamed },
-			);
+			console.debug("[CalloutStudio] callout metadata migration:", {
+				removed,
+				renamed,
+			});
 		}
 	}
 
@@ -670,10 +692,12 @@ export class CalloutRegistry {
 				if (!this.previewShadowedDef) continue;
 				def = this.previewShadowedDef;
 			}
+			// An overlay, re-derived per launch — see themeProvidedRows.ts.
+			if (def.source === "theme") continue;
 			if (def.builtIn) {
 				// Only save built-in if it was modified from default
 				const original = this.builtInDefaults.get(id);
-				if (original && this.isModified(def, original)) {
+				if (original && isCalloutModified(def, original)) {
 					calloutsToSave.push(def);
 				}
 			} else {
@@ -692,89 +716,6 @@ export class CalloutRegistry {
 			iconSvgCache:
 				this.iconSvgCache.length > 0 ? this.iconSvgCache : undefined,
 		};
-	}
-
-	/**
-	 * Whether a built-in still matches the default it shipped with.
-	 *
-	 * This is the gate on {@link toSaveData} persisting a built-in at all, so a
-	 * field missing here is not a cosmetic gap: a built-in the user customized
-	 * *only* through that field reads as pristine and is never written to
-	 * `data.json` — the edit survives until the next reload and then vanishes.
-	 * Hence the total `Record`, which makes adding a field to
-	 * `CalloutDefinition` without deciding its place here a compile error.
-	 *
-	 * `id` identifies the pair rather than distinguishing it; `builtIn` and
-	 * `source` are what makes this a built-in in the first place. Everything
-	 * else is a difference the user can see.
-	 */
-	private static readonly COMPARED_FIELDS: Record<
-		Exclude<keyof CalloutDefinition, "id" | "builtIn" | "source">,
-		true
-	> = {
-		displayName: true,
-		icon: true,
-		hideIcon: true,
-		colorLight: true,
-		colorDark: true,
-		foldable: true,
-		defaultFolded: true,
-		iconAdjust: true,
-		iconOffsetX: true,
-		iconOffsetY: true,
-		iconSize: true,
-		bgColorLight: true,
-		bgColorDark: true,
-		bgGradient: true,
-		transparentBg: true,
-		textColorLight: true,
-		textColorDark: true,
-		aliases: true,
-		paletteId: true,
-		customized: true,
-		externalStyle: true,
-		metadata: true,
-	};
-
-	/**
-	 * Fields that are a difference the user can see but *not* a claim on the
-	 * callout's colour — so {@link isUnmodifiedBuiltIn} skips them while
-	 * {@link toSaveData} still counts them.
-	 *
-	 * Only `hideIcon` so far. Dropping the icon from `[!note]` has to be
-	 * persisted, or it vanishes on the next reload; but it says nothing about
-	 * what colour the callout should be, and letting it count here would swap
-	 * core's `--callout-note` for a hard-coded hex — silently ending the
-	 * built-in's deference to whatever the theme says blue is.
-	 */
-	private static readonly COLOUR_NEUTRAL_FIELDS: ReadonlySet<
-		keyof CalloutDefinition
-	> = new Set(["hideIcon"]);
-
-	private isModified(
-		current: CalloutDefinition,
-		original: CalloutDefinition,
-		ignore?: ReadonlySet<keyof CalloutDefinition>,
-	): boolean {
-		// Structural compare, so nested values (`bgGradient`, `aliases`,
-		// `metadata`) are covered without a per-field spelling of each one.
-		// `?? null` keeps "absent" and "explicitly undefined" equal, which is
-		// what a JSON round-trip through data.json produces anyway.
-		//
-		// `icon` is the one field a raw string diff gets wrong: `constants.ts`
-		// spells a built-in's icon bare (`pencil`) and the picker spells the
-		// same drawing `lucide-pencil`, so an untouched built-in would read as
-		// customized the moment its owner opened the picker. `iconsEqual` knows
-		// the two spellings are one icon.
-		return Object.keys(CalloutRegistry.COMPARED_FIELDS).some((field) => {
-			const key = field as keyof CalloutDefinition;
-			if (ignore?.has(key)) return false;
-			if (key === "icon") return !iconsEqual(current.icon, original.icon);
-			return (
-				JSON.stringify(current[key] ?? null) !==
-				JSON.stringify(original[key] ?? null)
-			);
-		});
 	}
 
 	add(def: CalloutDefinition): boolean {
@@ -868,22 +809,14 @@ export class CalloutRegistry {
 	}
 
 	/**
-	 * Re-style every uncustomized `source: "fallback"` row to mirror the
-	 * current fallback callout's icon, colors, and icon transform. Called
-	 * whenever the fallback selection changes (user-driven via the settings
-	 * dropdown, or implicitly when the active fallback row is deleted and
-	 * resets to the default) or when the fallback callout itself is edited.
-	 * Returns the number of rows that actually changed. Callers decide whether
-	 * to flush (`notifyChange`) afterwards — we emit a notification only when at
-	 * least one row actually changed so settings UI re-renders to reflect
-	 * the new mirror style.
+	 * Re-style every uncustomized `source: "fallback"` row to mirror the current
+	 * fallback callout. Called whenever the fallback selection changes (the
+	 * settings dropdown, or implicitly when the active fallback row is deleted)
+	 * or when the fallback callout itself is edited. `mirroredFallbackRow`
+	 * (`./discoveredRow`) owns what "mirror" means; the skip list is this
+	 * function's own, and every entry in it is a row somebody else owns.
 	 *
-	 * "Actually changed" is a content test, not a visit count. The pass runs on
-	 * every fallback edit, every fallback-target delete and every discovery
-	 * sweep, so most of its work lands on rows already wearing exactly this
-	 * style; writing those back unconditionally reported them as updated and
-	 * fired the change event anyway — a full stylesheet regeneration, an icon
-	 * repaint and a `data.json` write for a no-op.
+	 * Returns the number of rows that actually changed, and notifies only then.
 	 */
 	restyleUncustomizedFallbackRows(): number {
 		const fallbackId =
@@ -899,50 +832,10 @@ export class CalloutRegistry {
 			// Nothing reads this row's colours while the theme owns it, so
 			// mirroring onto it would only churn data.json on every fallback
 			// change and make the row look edited in an export.
-			if (def.externalStyle === true) continue;
+			if (this.standsDown(def)) continue;
 			if (def.id === fallbackId) continue;
-			const next: CalloutDefinition = {
-				...def,
-				icon: { ...fallback.icon },
-				// Spelled out (`undefined` included) for the same reason
-				// `transparentBg` below is: this spread merges onto the row, so
-				// omitting the key would let a mirrored row keep its own stale
-				// flag while taking the fallback's icon.
-				hideIcon: fallback.hideIcon,
-				colorLight: fallback.colorLight,
-				colorDark: fallback.colorDark,
-				bgColorLight: fallback.bgColorLight,
-				bgColorDark: fallback.bgColorDark,
-				bgGradient: fallback.bgGradient
-					? { ...fallback.bgGradient }
-					: undefined,
-				// Transparency travels with the backgrounds it replaces, and is
-				// spelled out (`undefined` included) like they are — this spread
-				// merges onto the row, so a key that isn't there leaves the old
-				// value standing. Omitting it meant a mirrored row could receive
-				// the fallback's hexes while keeping its own stale flag, which is
-				// the contradiction `dropStaleTransparencyFlags` exists to repair,
-				// and meant a transparent fallback was never mirrored as
-				// transparent at all.
-				transparentBg: fallback.transparentBg,
-				textColorLight: fallback.textColorLight,
-				textColorDark: fallback.textColorDark,
-				// Both layers travel together: the per-role map alone would be
-				// read against *this* row's stale legacy trio wherever a role
-				// leaves a field unset (see resolveIconAdjust).
-				iconAdjust: fallback.iconAdjust
-					? structuredClone(fallback.iconAdjust)
-					: undefined,
-				iconOffsetX: fallback.iconOffsetX,
-				iconOffsetY: fallback.iconOffsetY,
-				iconSize: fallback.iconSize,
-			};
-			// A structural compare, and sound precisely because `next` is a
-			// spread of `def`: the keys they share keep their order, and a
-			// mirrored key the row lacks is either `undefined` — which
-			// stringify drops on both sides, so the absent-vs-explicitly-absent
-			// pair reads as equal — or a value the row genuinely did not have.
-			if (JSON.stringify(next) === JSON.stringify(def)) continue;
+			const next = mirroredFallbackRow(def, fallback);
+			if (!next) continue;
 			this.setCallout(def.id, next);
 			updated++;
 		}
@@ -1024,7 +917,10 @@ export class CalloutRegistry {
 	 * written there. That makes this the *committed* count, which is the one the
 	 * user is being told.
 	 */
-	countPaletteLinks(paletteId: string, exceptCalloutId?: string | null): number {
+	countPaletteLinks(
+		paletteId: string,
+		exceptCalloutId?: string | null,
+	): number {
 		let count = 0;
 		for (const def of this.realDefinitions()) {
 			if (def.paletteId !== paletteId) continue;
@@ -1116,9 +1012,11 @@ export class CalloutRegistry {
 					// callout matches all three variants of the same colour
 					// and can be adopted by the wrong one. Same test the
 					// editor's dropdown uses (`matchesPalette`).
-					(p.transparentBg === true) === (def.transparentBg === true) &&
+					(p.transparentBg === true) ===
+						(def.transparentBg === true) &&
 					bgGradientsEqual(p.bgGradient, def.bgGradient) &&
-					p.colorLight.toLowerCase() === def.colorLight.toLowerCase() &&
+					p.colorLight.toLowerCase() ===
+						def.colorLight.toLowerCase() &&
 					p.colorDark.toLowerCase() === def.colorDark.toLowerCase() &&
 					p.bgColorLight.toLowerCase() ===
 						(def.bgColorLight ?? "").toLowerCase() &&
@@ -1232,42 +1130,79 @@ export class CalloutRegistry {
 	}
 
 	/**
-	 * Turn {@link CalloutDefinition.externalStyle} on or off — the only writer
-	 * of that field, so the two rules below can't drift to a call site.
+	 * Hand a callout to the user's own CSS, or take it back — the only writer of
+	 * {@link CalloutDefinition.externalStyle}, and not a statement about the
+	 * theme, which {@link themeOwns} derives and nobody sets.
 	 *
-	 * Turning it off *deletes* the key rather than writing `false`, because
-	 * {@link isModified} compares `JSON.stringify(value ?? null)` and an
-	 * explicit `false` would leave a built-in nobody edited looking customized
-	 * forever.
-	 *
-	 * Refuses on the active Default fallback callout: `CSSInjector.generateFallbackCSS`
-	 * paints every unknown callout *from* that definition, so a fallback target
-	 * that styles nothing is self-contradictory — it would silently keep
-	 * imposing its colours on the rest of the vault while claiming to be
-	 * hands-off. The caller disables the menu item for the same reason.
-	 *
-	 * Returns `true` when the row actually changed.
+	 * Writes `true` or **deletes** the key, never `false`: `isCalloutModified`
+	 * compares `JSON.stringify(value ?? null)`, so an explicit falsy value would
+	 * leave a built-in nobody edited reading as customized forever.
 	 */
-	setExternalStyle(id: string, on: boolean): boolean {
+	setExternalStyle(id: string, external: boolean): boolean {
 		const existing = this.callouts.get(id);
 		if (!existing) return false;
-		if (on && id === this.settings.fallbackCalloutId) return false;
-		if ((existing.externalStyle === true) === on) return false;
-
+		if ((existing.externalStyle === true) === external) return false;
 		const next: CalloutDefinition = { ...existing };
-		if (on) next.externalStyle = true;
+		if (external) next.externalStyle = true;
 		else delete next.externalStyle;
-
 		this.setCallout(id, next);
 		this.notifyChange();
 		return true;
+	}
+
+	/** What the theme claims and draws. Derived, never stored: {@link ThemeFacts}. */
+	private readonly themeFacts = new ThemeFacts();
+
+	/**
+	 * The two derived theme facts, published to {@link ThemeFacts}. Both
+	 * announce a move like any other registry change — ownership decides who
+	 * paints, and the probe's readings land *after* the settings tab drew its
+	 * rows — and neither announces a no-op. Call the first inside `batch()`.
+	 */
+	setThemeOwnedIds(ids: ReadonlySet<string>): boolean {
+		const moved = this.themeFacts.setOwnedIds(ids);
+		if (moved) this.notifyChange();
+		return moved;
+	}
+
+	setThemeAppearances(map: ReadonlyMap<string, ThemeAppearance>): boolean {
+		const moved = this.themeFacts.setAppearances(map);
+		if (moved) this.notifyChange();
+		return moved;
+	}
+
+	/**
+	 * Does the active theme supply or style this callout? The whole ownership
+	 * model — **derived, never stored**; `ThemeFacts` argues why, and why a
+	 * stored flip would quietly drop the row from the user's backups.
+	 */
+	themeOwns(def: CalloutDefinition): boolean {
+		return this.themeFacts.owns(def, this.vaultIdFormsFor(def));
+	}
+
+	/** How the theme paints `def`. See {@link ThemeFacts.appearanceOf}. */
+	themeAppearanceOf(def: CalloutDefinition): ThemeAppearance {
+		return this.themeFacts.appearanceOf(this.vaultIdFormsFor(def));
+	}
+
+	/**
+	 * True when this plugin emits no CSS at all for `def` — the one question
+	 * every CSS path asks. Two quite different reasons land here, and emitters
+	 * are right not to distinguish them: the theme owns the callout
+	 * ({@link themeOwns}), or the user has handed this one to their own snippet
+	 * ({@link setExternalStyle}). Callers deciding where a row is *listed*, or
+	 * whether it is read-only, must ask `themeOwns` — an External CSS row is
+	 * still the user's.
+	 */
+	standsDown(def: CalloutDefinition): boolean {
+		return def.externalStyle === true || this.themeOwns(def);
 	}
 
 	isBuiltInModified(id: string): boolean {
 		const current = this.callouts.get(id);
 		const original = this.builtInDefaults.get(id);
 		if (!current || !original) return false;
-		return this.isModified(current, original);
+		return isCalloutModified(current, original);
 	}
 
 	/**
@@ -1287,18 +1222,14 @@ export class CalloutRegistry {
 	 * would drop the very colours the preview exists to show.
 	 *
 	 * Deliberately a *narrower* question than {@link isBuiltInModified}: see
-	 * {@link COLOUR_NEUTRAL_FIELDS} for the edits that are real edits without
-	 * being a claim on the colour.
+	 * `COLOUR_NEUTRAL_FIELDS` (`manager/calloutCompare.ts`) for the edits that
+	 * are real edits without being a claim on the colour.
 	 */
 	isUnmodifiedBuiltIn(def: CalloutDefinition): boolean {
 		if (!def.builtIn) return false;
 		const original = this.builtInDefaults.get(def.id);
 		if (!original) return false;
-		return !this.isModified(
-			def,
-			original,
-			CalloutRegistry.COLOUR_NEUTRAL_FIELDS,
-		);
+		return !isCalloutModified(def, original, COLOUR_NEUTRAL_FIELDS);
 	}
 
 	resetBuiltIn(id: string): boolean {
@@ -1317,9 +1248,27 @@ export class CalloutRegistry {
 		return Array.from(this.callouts.values());
 	}
 
+	/**
+	 * The user's own callouts — neither a built-in nor a row minted from the
+	 * active theme's stylesheet. Theme rows are excluded here rather than only
+	 * in the settings list because this also feeds `getExportableDefinitions`,
+	 * `exportToJSON()` and the *Reset everything* sweep. What may be *written*
+	 * in a note is a different question — see
+	 * `utils/usableCallouts.committedDefinitions`.
+	 */
 	getUserDefined(): CalloutDefinition[] {
 		return this.definitionsForLists().filter(
-			(d) => !d.builtIn && !this.isUnshadowedPreview(d.id),
+			(d) =>
+				!d.builtIn &&
+				d.source !== "theme" &&
+				!this.isUnshadowedPreview(d.id),
+		);
+	}
+
+	/** Rows minted from the active theme's stylesheet — see `getUserDefined`. */
+	getThemeProvided(): CalloutDefinition[] {
+		return this.definitionsForLists().filter(
+			(d) => d.source === "theme" && !this.isUnshadowedPreview(d.id),
 		);
 	}
 
@@ -1443,73 +1392,22 @@ export class CalloutRegistry {
 		return undefined;
 	}
 
-	/**
-	 * The OTHER definition that already owns `rawId`'s `data-callout` attribute
-	 * form, or undefined when the form is free. Validation-only counterpart to
-	 * {@link findByAttrId}, and deliberately different from it in two ways:
-	 *
-	 * - It asks "does anyone else own this form?" rather than "who wins the
-	 *   lookup race", so there is no precedence ladder — the first other owner
-	 *   is reported. That keeps the answer symmetric: `a b` sees `a-b` and
-	 *   `a-b` sees `a b`, where a precedence-ordered search would let the
-	 *   literal ID win and hide the conflict in one of the two directions.
-	 * - It sees through the live-preview shadow exactly as {@link getReal}
-	 *   does. The callout editor registers its in-progress draft in this very
-	 *   map under the ID being typed (see setPreviewDefinition), so a raw scan
-	 *   finds the draft and reports it as its own conflict.
-	 *
-	 * `excludeId` is the definition being edited — it can never conflict with
-	 * itself, and skipping it wholesale also stops one of its own aliases from
-	 * conflicting with its ID.
-	 */
+	/** See `manager/calloutIdForms.ts`, which owns this arithmetic. */
 	findAttrIdConflict(
 		rawId: string,
 		excludeId: string | null,
 	): CalloutDefinition | undefined {
-		const key = obsidianCalloutAttrId(rawId);
-		if (!key) return undefined;
-		for (const def of this.realDefinitions()) {
-			if (def.id === excludeId) continue;
-			if (obsidianCalloutAttrId(def.id) === key) return def;
-			if (def.aliases?.some((a) => obsidianCalloutAttrId(a) === key)) {
-				return def;
-			}
-		}
-		return undefined;
+		return findAttrIdConflict(this.definitionSource, rawId, excludeId);
 	}
 
-	/**
-	 * Every raw ID form that may appear in the vault for `def` and belongs to
-	 * `def` alone: its ID and aliases, plus each one's `data-callout` attribute
-	 * form when that differs and no OTHER definition owns it.
-	 *
-	 * Callers that rewrite or count usages across the vault (rename, delete,
-	 * usage counts, the discovery prune pass) must use this rather than
-	 * `[def.id, ...aliases]`, or `> [!a-b]` written by hand is orphaned when the
-	 * `a b` row is renamed away — the same class of bug as leaving heading and
-	 * inline usages behind.
-	 *
-	 * The "no other owner" condition is what keeps a legacy vault safe: where
-	 * `a b` and `a-b` both exist as separate rows, neither claims the other's
-	 * usages.
-	 *
-	 * `forms` narrows the question to a subset of what `def` owns — the
-	 * built-in reset flow asks only about the aliases it is about to drop.
-	 */
-	vaultIdFormsFor(
-		def: CalloutDefinition,
-		forms: string[] = [def.id, ...(def.aliases ?? [])],
-	): string[] {
-		const out = [...forms];
-		for (const form of forms) {
-			const attrForm = obsidianCalloutAttrId(form);
-			if (!attrForm || attrForm === form) continue;
-			if (out.includes(attrForm)) continue;
-			if (this.findAttrIdConflict(attrForm, def.id)) continue;
-			out.push(attrForm);
-		}
-		return out;
+	/** See `manager/calloutIdForms.ts`, which owns this arithmetic. */
+	vaultIdFormsFor(def: CalloutDefinition, forms?: string[]): string[] {
+		return vaultIdFormsFor(this.definitionSource, def, forms);
 	}
+
+	/** Bound once so the two above are not re-closing over `this` per call. */
+	private readonly definitionSource = (): Iterable<CalloutDefinition> =>
+		this.realDefinitions();
 
 	/**
 	 * The committed definitions, with the transient live-preview entry replaced
@@ -1579,7 +1477,8 @@ export class CalloutRegistry {
 		// definitionsForLists), so only a NON-demo preview — the in-progress
 		// edit of a real callout — can change what those lists render. Capture
 		// the outgoing state before the bookkeeping below clears it.
-		const wasListVisible = this.previewActiveId !== null && !this.previewIsDemo;
+		const wasListVisible =
+			this.previewActiveId !== null && !this.previewIsDemo;
 
 		// Undo the previous transient registration first, restoring any real
 		// callout it shadowed.
@@ -1795,7 +1694,10 @@ export class CalloutRegistry {
 						entry.colorDark,
 						this.settings.customPalettes,
 					)
-				: resolveCalloutManagerColor(light, this.settings.customPalettes);
+				: resolveCalloutManagerColor(
+						light,
+						this.settings.customPalettes,
+					);
 			if (resolved.createdPalette) {
 				this.settings.customPalettes.push(resolved.createdPalette);
 				paletteCreated = true;
@@ -1913,7 +1815,8 @@ export class CalloutRegistry {
 					// Only what the admonition actually stated. An entry with no
 					// title must not rename the callout, and one whose icon named
 					// nothing must not blank the icon it already has.
-					if (entry.displayName) partial.displayName = entry.displayName;
+					if (entry.displayName)
+						partial.displayName = entry.displayName;
 					if (entry.icon) partial.icon = entry.icon;
 					if (entry.color) {
 						const resolved = resolveColor(entry.color);
@@ -1935,7 +1838,8 @@ export class CalloutRegistry {
 				const resolved = resolveColor(entry.color);
 				const def: CalloutDefinition = {
 					id: entry.id,
-					displayName: entry.displayName ?? obsidianDefaultTitle(entry.id),
+					displayName:
+						entry.displayName ?? obsidianDefaultTitle(entry.id),
 					// No icon in the file, or one naming a drawing that exists in
 					// no library — either way there is nothing to keep, so take
 					// the shared import fallback.

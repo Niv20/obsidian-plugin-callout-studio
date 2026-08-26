@@ -4,7 +4,9 @@ Sooner or later you'll want to retire a callout type or swap one for another acr
 
 ## Finding the menu
 
-Every callout row in your settings list has a **⋯** menu. Open it to see the actions available for that row, including replacing it or removing it.
+Every callout row in **My callout types** and **Built-in callouts** has a **⋯** menu. Open it to see the actions available for that row, including replacing it or removing it.
+
+Rows under **Callouts from your theme** carry their actions as buttons on the row itself instead, because there are only ever three of them - see [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md).
 
 ## Replacing a callout everywhere
 
@@ -25,13 +27,17 @@ If the callout is one you created yourself, choosing **Delete** first tells you 
 - **Replace it with another callout instead** - this hands you off to the same replace flow described above, so you don't lose the content.
 - **Go ahead and delete it.** If the callout is used anywhere, those existing occurrences are converted into plain ordinary paragraphs first - they keep their text, they just lose the callout styling. Only after that does the row disappear from your list.
 
-## Deleting a built-in callout
+## Deleting a callout Callout Studio didn't create
 
-The 13 built-in callouts work a little differently, because a built-in callout can never fully disappear from your list - there is always exactly one row for it, customized or not.
+Two kinds of callout can't really be deleted: **one of Obsidian's 13 built-ins**, and **a callout type your theme supplies**. In both cases something outside Callout Studio keeps declaring the type, so removing the row would only bring it straight back.
 
-Because of that, **Delete** only appears on a built-in callout once it's actually in use somewhere in your vault. Choosing it converts those existing occurrences into plain paragraphs, the same as with a custom callout. The row itself, however, stays in your list - it simply goes back to being unstyled, ready to be used again.
+Because of that, the action only appears on those once the callout is actually in use somewhere in your vault, and what it does is narrower: it converts those existing occurrences into plain paragraphs and leaves the type itself alone. The confirmation says so before you commit, and for a theme callout it says the other half too — **nothing belonging to your theme is read, changed or removed.** Callout Studio only ever writes to notes inside your vault.
 
-Turning a customized built-in callout back to its original look, without touching any of its usages in your notes, is a different action - see [Resetting callouts and settings](13-resetting-callouts-and-settings.md).
+On a callout your theme supplies, the menu item is called **Clear uses in your notes** rather than *Delete*, because that is what happens. On a built-in it is still called Delete, and the confirmation explains that the type stays.
+
+Afterwards the row is still in your list, ready to use again.
+
+Turning a customized built-in callout back to its original look, without touching any of its usages in your notes, is a different action - see [Resetting callouts and settings](13-resetting-callouts-and-settings.md). Which callouts your theme owns in the first place is explained in [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md).
 
 ---
 **Next:** [Vault insights and maintenance](10-vault-insights-and-maintenance.md)

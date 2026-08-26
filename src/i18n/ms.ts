@@ -63,6 +63,16 @@ export const ms: Record<string, string> = {
 	"deleteModal.replaceInstead": "Ganti sebaliknya",
 	"deleteModal.deleteInUse": "Padam (tukar kepada teks biasa)",
 	"deleteModal.deleteUnused": "Padam callout",
+
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": 'Kosongkan semua penggunaan "{{name}}"?',
+	"deleteModal.keepsRowBuiltIn":
+		"Ini adalah salah satu callout terbina dalam Obsidian, jadi jenis itu sendiri kekal tersedia — hanya penggunaannya dalam nota anda yang berubah.",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} mentakrifkan jenis callout ini, jadi ia kekal tersedia dan mengekalkan rupanya. Callout Studio hanya mengubah nota dalam vault anda — tiada apa-apa milik tema anda yang disentuh.",
+	"deleteModal.clearUsages": "Kosongkan penggunaan (tukar kepada teks biasa)",
+
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Jenis callout saya",
 	"settings.builtInCallouts": "Callouts terbina dalam",
@@ -92,10 +102,25 @@ export const ms: Record<string, string> = {
 	"settings.resetAction": "Set semula ke lalai",
 	"settings.makeFallbackAction": "Gunakan gaya sandaran lalai",
 	"settings.colorSwatchAria": "Aksen: {{accent}} · Latar belakang: {{bg}}",
-	"settings.externalStyleTag": "Gaya luaran",
-	"settings.externalStyleAction": "Guna gaya luaran (tema atau CSS)",
-	"settings.externalStyleBlocked":
-		"ini ialah callout sandaran lalai, pilih yang lain dahulu",
+
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "Gayakan dengan CSS saya sendiri",
+	"settings.externalCssStopAction": "Biarkan Callout Studio menggayakannya semula",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "CSS Luaran",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "Callouts daripada tema anda",
+	"settings.themeCalloutsDesc":
+		"{{theme}} membekalkan atau menggayakan semula ini, jadi Callout Studio membiarkannya seperti yang dilukis oleh tema anda dan menawarkannya sebagai callout blok sahaja. Kedua-dua jenis muncul di sini: jenis callout yang ditambah oleh tema anda, dan callouts terbina dalam yang rupanya digantikan. Jenis callout yang ditambah oleh tema anda hanya disenaraikan semasa ia aktif.",
+	"settings.themeCalloutsDefaultTheme": "Tema anda",
+	"settings.themePreviewAria":
+		'Pratonton "{{name}}" — lihat cara tema anda melukisnya',
+	"settings.clearUsesAction": "Kosongkan penggunaan dalam nota anda",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} menggayakan semula setiap callout terbina dalam, jadi semuanya disenaraikan di atas dan Callout Studio membiarkannya. Untuk mereka bentuk callout anda sendiri, tambah callout dengan ID yang berbeza.",
+
 	"settings.fallbackCallout": "Callout sandaran lalai",
 	"settings.fallbackCalloutDesc":
 		"Jenis callout yang tidak dikenali dalam vault anda akan mewarisi gaya callout ini.",
@@ -163,6 +188,10 @@ export const ms: Record<string, string> = {
 	"commandBuilder.formatBlock": "Block",
 	"commandBuilder.roleDisabled":
 		"Format ini dimatikan, jadi arahan akan memasukkan teks biasa sehingga anda menghidupkannya semula.",
+	"commandBuilder.roleThemeOwned":
+		"Tema anda membekalkan callout ini, jadi ia hanya mempunyai format Block.",
+	"commandBuilder.commandSuspended":
+		"Dijeda: tema anda membekalkan callout ini, jadi ia hanya mempunyai format Block. Arahan ini berfungsi semula apabila tema berhenti membekalkannya.",
 	"commandBuilder.callout": "Jenis callout",
 	"commandBuilder.calloutDesc": "Callout yang dimasukkan oleh arahan ini.",
 	"commandBuilder.headingLevel": "Tahap tajuk",
@@ -210,9 +239,9 @@ export const ms: Record<string, string> = {
 		"Tiada jenis callout baharu diimport (ID mungkin sudah wujud).",
 	"notice.iconDownloadFailed":
 		'Gagal memuat turun ikon Material "{{name}}". Ikon ini mungkin tidak tersedia untuk gaya/ketebalan ini, atau sambungan anda tidak tersambung.',
-	"notice.externalStyleOn":
-		'"{{name}}" kini digayakan oleh tema atau serpihan CSS anda.',
-	"notice.externalStyleOff": 'Callout Studio menggayakan semula "{{name}}".',
+	"notice.externalCssOn":
+		'Callout Studio tidak lagi menggayakan "{{name}}" — CSS anda sendiri menentukan rupanya. Bentuk Callout Tajuk dan Callout Sebarisnya tidak akan dipaparkan.',
+	"notice.externalCssOff": 'Callout Studio kini menggayakan "{{name}}" semula.',
 	"notice.nothingToWrap": "Tiada apa untuk dibalut.",
 	"notice.cursorNotInsideCallout": "Kursor tidak berada dalam callout.",
 	"notice.autocompleteTargetMoved":
@@ -275,6 +304,10 @@ export const ms: Record<string, string> = {
 	"editor.idEmpty": "Sekurang-kurangnya satu ID diperlukan",
 	"editor.idExists": "Callout dengan ID ini sudah wujud",
 	"editor.idConflict": "ID ini bercanggah dengan callout sedia ada",
+	"editor.idFromTheme":
+		"{{theme}} sudah membekalkan callout dengan ID ini, jadi Callout Studio tidak dapat menggayakannya. Pilih ID lain.",
+	"editor.idThemePattern":
+		"Ambil perhatian: tema anda menggayakan setiap callout yang sepadan dengan {{pattern}}, jadi ia mungkin mengatasi rupa yang satu ini.",
 	"editor.idDashConflict":
 		'Obsidian menulis ruang sebagai sengkang, jadi ID ini bercanggah dengan "{{other}}"',
 	"editor.untitledCallout": "Callout Tanpa Tajuk",
@@ -286,25 +319,22 @@ export const ms: Record<string, string> = {
 		"Berikut ialah pil [!{id}] sebaris di dalam perenggan.",
 	"editor.previewReadOnly": "Pratonton langsung tidak boleh diedit",
 
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — dibekalkan oleh tema anda',
+	"themePreview.owned":
+		'{{theme}} membekalkan dan menggayakan "{{name}}". Callout Studio tidak akan mengatasinya, jadi callout bloknya kelihatan tepat seperti yang dilukis oleh tema anda.',
+	"themePreview.readOnly":
+		"Ini bermakna warna, ikon, nama dan IDnya tidak boleh diubah di sini. Jika anda mahukan reka bentuk sendiri, cipta callout baharu dengan ID yang berbeza.",
+	"themePreview.blockOnly":
+		"Format Tajuk dan Sebaris tidak tersedia untuk callouts yang dibekalkan oleh tema anda. Callout blok menggunakan gaya asli tema.",
+	"themePreview.previewTitle": "Cara ia dipaparkan sekarang",
+	"themePreview.blockSample":
+		"> [!{{id}}] {{name}}\n" +
+		"> Beginilah rupa kandungan callout ini.\n",
+
 	// External style window (opens instead of the editor for a callout the
 	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Digayakan di luar Callout Studio",
-	"editor.externalStyleBody":
-		"Callout Studio tidak menggunakan sebarang gaya pada {{id}}. Rupanya datang daripada tema anda, serpihan CSS, atau lalai Obsidian.",
-	"editor.externalStyleWhat": "Apa maksudnya",
-	"editor.externalStyleWhatHeading":
-		"Callout tajuk seperti ## [!{{id}}] Tajuk tidak akan dipaparkan — teks kekal seperti yang ditulis.",
-	"editor.externalStyleWhatInline":
-		"Begitu juga yang sebaris, seperti perkataan [!{{id}}] perkataan.",
-	"editor.externalStyleWhatGlobal":
-		"Tetapan gaya global (sempadan, jejari, saiz teks) tidak terpakai padanya.",
-	"editor.externalStylePreviewTitle": "Cara ia dipaparkan sekarang",
-	"editor.externalStyleSample":
-		"## [!{{id}}] Tajuk\n\n" +
-		"Beginilah rupa ayat dengan [!{{id}}] di dalamnya.\n\n" +
-		"> [!{{id}}] {{name}}\n" +
-		"> Beginilah rupa kandungan callout.\n",
-	"editor.externalStyleResume": "Ambil semula gaya",
 	"editor.externalStyleClose": "Faham",
 	// Palette editor modal
 	"palette.newTitle": "Palet warna baharu",
@@ -592,7 +622,9 @@ export const ms: Record<string, string> = {
 	"contextMenu.copySection": "Salin bahagian tajuk",
 	"contextMenu.deleteSection": "Padam bahagian tajuk",
 	"heading.toggleFold": "Togol lipatan",
-	"settings.globalSettings": "Tetapan global",
+	"settings.globalSettings": "Pilihan gaya Callout Studio",
+	"settings.globalSettingsScope":
+		"Bentuk, jarak dan saiz untuk callouts yang digayakan oleh Callout Studio. Callouts yang digayakan oleh tema anda mengekalkan reka bentuk tema itu sendiri.",
 	"settings.globalSettingsRegularDesc":
 		"Tambah token callout pada sebutan blok (cth. `> [!type]`) untuk memaparkan kotak callout asli Obsidian. Anda boleh melaraskan sempadan, jejari, skala fon dan penjajarannya.",
 	"settings.globalSettingsHeadingDesc":
@@ -912,4 +944,8 @@ export const ms: Record<string, string> = {
 	"export.formatCss": "Coretan CSS",
 	"export.formatCssDesc":
 		"Fail .css yang disimpan dalam folder snippets vault ini, untuk digunakan apabila Callout Studio tidak dipasang. Ia hanya meliputi callout biasa dan merupakan petikan keadaan; eksport semula selepas perubahan.",
+	"quickInsert.readingViewHint": "Nota ini dibuka dalam mod bacaan, jadi tiada apa yang boleh disisipkan.",
+	"quickInsert.readingView": "Tukar ke mod sumber atau Pratonton Langsung untuk menyisipkan callout.",
+	"quickInsert.noCursorHint": "Tiada kursor dalam nota ini, jadi tiada tempat untuk menyisipkan.",
+	"quickInsert.noCursor": "Letakkan kursor dalam nota di tempat anda mahu menyisipkan callout, kemudian cuba lagi.",
 };

@@ -213,6 +213,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 	},
 	inlineCallouts: { enabled: true, allowContent: true },
 	firstRunCompleted: false,
+	retiredThemeIds: [],
 	welcomeSeen: false,
 	fallbackCalloutId: "note",
 	language: "auto",

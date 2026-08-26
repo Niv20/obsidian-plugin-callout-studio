@@ -59,6 +59,16 @@ export const zhTW: Record<string, string> = {
 	"deleteModal.replaceInstead": "改為替換",
 	"deleteModal.deleteInUse": "刪除（轉為純文字）",
 	"deleteModal.deleteUnused": "刪除 callout",
+
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": "清除所有「{{name}}」的使用？",
+	"deleteModal.keepsRowBuiltIn":
+		"這是 Obsidian 的內建 callout 之一，因此該類型本身仍可使用——只有它在您筆記中的使用會改變。",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} 定義了此 callout 類型，因此它仍可使用並保留其外觀。Callout Studio 只會變更您 vault 中的筆記——不會影響任何屬於您佈景主題的內容。",
+	"deleteModal.clearUsages": "清除使用（轉換為純文字）",
+
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "我的 callout 類型",
 	"settings.builtInCallouts": "內建 callout",
@@ -87,9 +97,25 @@ export const zhTW: Record<string, string> = {
 	"settings.resetAction": "重置為預設值",
 	"settings.makeFallbackAction": "使用預設備用樣式",
 	"settings.colorSwatchAria": "強調色：{{accent}} · 背景：{{bg}}",
-	"settings.externalStyleTag": "外部樣式",
-	"settings.externalStyleAction": "使用外部樣式（佈景主題或 CSS）",
-	"settings.externalStyleBlocked": "這是預設的備援 callout，請先選擇其他一個",
+
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "以我自己的 CSS 設定樣式",
+	"settings.externalCssStopAction": "讓 Callout Studio 重新為此設定樣式",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "外部 CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "來自您佈景主題的 callout",
+	"settings.themeCalloutsDesc":
+		"{{theme}} 提供或重新設定了這些 callout 的樣式，因此 Callout Studio 會完全依照您佈景主題繪製的樣子保留它們，並僅將它們作為 Block callout 提供。這裡會顯示兩種情況：您佈景主題新增的 callout 類型，以及佈景主題取代了外觀的內建 callout。佈景主題新增的 callout 類型僅在該佈景主題啟用時列出。",
+	"settings.themeCalloutsDefaultTheme": "您的佈景主題",
+	"settings.themePreviewAria":
+		"預覽「{{name}}」— 查看您的佈景主題如何繪製它",
+	"settings.clearUsesAction": "清除筆記中的使用",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} 重新設定了每個內建 callout 的樣式，因此它們全部列在上方，Callout Studio 不會干預它們。若要設計您自己的樣式，請新增一個使用不同 ID 的 callout。",
+
 	"settings.fallbackCallout": "預設備用 callout",
 	"settings.fallbackCalloutDesc":
 		"vault 中無法辨識的 callout 類型將繼承此 callout 的樣式。",
@@ -168,6 +194,12 @@ export const zhTW: Record<string, string> = {
 	"commandBuilder.duplicate": "您已經有一個執行完全相同動作的指令。",
 	"commandBuilder.noCallouts": "目前沒有可用來建立指令的 callout 類型。",
 	"commandBuilder.save": "儲存",
+
+	"commandBuilder.roleThemeOwned":
+		"您的佈景主題提供了此 callout，因此它只有 Block 格式。",
+	"commandBuilder.commandSuspended":
+		"已暫停：您的佈景主題提供了此 callout，因此它只有 Block 格式。當佈景主題不再提供它時，此指令將重新生效。",
+
 	"settings.vaultMaintenance": "Vault 洞察與維護",
 	"settings.vaultStats": "Callout 統計",
 	"settings.vaultStatsDesc":
@@ -194,9 +226,11 @@ export const zhTW: Record<string, string> = {
 	"notice.noNewJSON": "未匯入新的 callout 類型（ID 可能已存在）。",
 	"notice.iconDownloadFailed":
 		"無法下載 Material 圖示「{{name}}」。該圖示可能不支援此樣式/字重，或您的網路連線已中斷。",
-	"notice.externalStyleOn":
-		'"{{name}}" 現在由你的佈景主題或 CSS 片段設定樣式。',
-	"notice.externalStyleOff": 'Callout Studio 重新為 "{{name}}" 設定樣式。',
+
+	"notice.externalCssOn":
+		"Callout Studio 不再為「{{name}}」設定樣式——由您自己的 CSS 決定它的外觀。它的標題 callout 和行內 callout 形式將不會顯示。",
+	"notice.externalCssOff": "Callout Studio 現在再次為「{{name}}」設定樣式。",
+
 	"notice.nothingToWrap": "沒有可包覆的內容。",
 	"notice.cursorNotInsideCallout": "游標不在 callout 內部。",
 	"notice.autocompleteTargetMoved":
@@ -257,6 +291,12 @@ export const zhTW: Record<string, string> = {
 	"editor.idConflict": "此 ID 與現有 callout 衝突",
 	"editor.idDashConflict":
 		"Obsidian 會將空格寫為連字符，因此此 ID 與「{{other}}」衝突",
+
+	"editor.idFromTheme":
+		"{{theme}} 已經提供了具有此 ID 的 callout，因此 Callout Studio 無法為其設定樣式。請選擇其他 ID。",
+	"editor.idThemePattern":
+		"提醒：您的佈景主題會為每個符合 {{pattern}} 的 callout 設定樣式，因此它可能會覆蓋此 callout 的外觀。",
+
 	"editor.untitledCallout": "未命名 Callout",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet，consectetur adipiscing elit。",
@@ -265,25 +305,20 @@ export const zhTW: Record<string, string> = {
 	"editor.sampleInlineText": "這是一個嵌入在段落中的行內 [!{id}] 徽標。",
 	"editor.previewReadOnly": "即時預覽無法編輯",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "在 Callout Studio 之外設定了樣式",
-	"editor.externalStyleBody":
-		"Callout Studio 沒有對 {{id}} 套用任何樣式。它的外觀來自你的佈景主題、CSS 片段或 Obsidian 的預設值。",
-	"editor.externalStyleWhat": "這代表什麼",
-	"editor.externalStyleWhatHeading":
-		"像 ## [!{{id}}] 標題 這樣的標題 callout 不會被渲染——文字會保持原樣。",
-	"editor.externalStyleWhatInline":
-		"行內 callout 也是如此，例如 文字 [!{{id}}] 文字。",
-	"editor.externalStyleWhatGlobal":
-		"全域樣式設定（邊框、圓角、文字大小）不適用於它。",
-	"editor.externalStylePreviewTitle": "現在的渲染方式",
-	"editor.externalStyleSample":
-		"## [!{{id}}] 標題\n\n" +
-		"這是包含 [!{{id}}] 的句子的樣子。\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": "{{name}} — 由您的佈景主題提供",
+	"themePreview.owned":
+		"{{theme}} 提供並設定了「{{name}}」的樣式。Callout Studio 不會覆蓋它，因此其 Block callout 的外觀與您佈景主題繪製的完全一致。",
+	"themePreview.readOnly":
+		"這表示它的顏色、圖示、名稱與 ID 在此處無法變更。若您想要自己的設計，請建立一個使用不同 ID 的新 callout。",
+	"themePreview.blockOnly":
+		"標題與行內格式不適用於您佈景主題提供的 callout。Block callout 使用佈景主題的原生樣式。",
+	"themePreview.previewTitle": "目前的顯示方式",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
-		"> 這是 callout 內容的樣子。\n",
-	"editor.externalStyleResume": "恢復樣式",
+		"> 這是該 callout 內容的顯示效果。\n",
+
 	"editor.externalStyleClose": "知道了",
 	// Palette editor modal
 	"palette.newTitle": "新增調色盤",
@@ -567,7 +602,9 @@ export const zhTW: Record<string, string> = {
 	"contextMenu.copySection": "複製標題部分",
 	"contextMenu.deleteSection": "刪除標題部分",
 	"heading.toggleFold": "切換折疊",
-	"settings.globalSettings": "全域設定",
+	"settings.globalSettings": "Callout Studio 樣式選項",
+	"settings.globalSettingsScope":
+		"Callout Studio 所設定樣式的 callout 的形狀、間距與大小。您佈景主題設定樣式的 callout 保留佈景主題自身的設計。",
 	"settings.globalSettingsRegularDesc":
 		"在區塊引用中新增 callout 標記（例如 `> [!type]`）以顯示為 Obsidian 原生的 callout 框。您可以調整其邊框、圓角、字型縮放和對齊方式。",
 	"settings.globalSettingsHeadingDesc":
@@ -859,4 +896,8 @@ export const zhTW: Record<string, string> = {
 	"export.formatCss": "CSS 片段",
 	"export.formatCssDesc":
 		"儲存在此儲存庫 snippets 資料夾中的 .css 檔案，可在未安裝 Callout Studio 的地方使用。僅涵蓋一般 callout，是一份快照；變更 callout 後請重新匯出。",
+	"quickInsert.readingViewHint": "此筆記以閱讀模式開啟，因此無法插入任何內容。",
+	"quickInsert.readingView": "切換到原始碼模式或即時預覽以插入 callout。",
+	"quickInsert.noCursorHint": "此筆記中沒有游標，因此沒有可插入的位置。",
+	"quickInsert.noCursor": "在筆記中將游標放在要插入 callout 的位置，然後重試。",
 };

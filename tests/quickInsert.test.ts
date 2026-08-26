@@ -527,9 +527,9 @@ describe("the window writes no markdown of its own", () => {
 		// `getAll()` carries the callout editor's live-preview stand-in, and this
 		// window re-renders the moment that editor closes — the one moment a
 		// half-typed draft would be on screen. Same two steps the public API
-		// takes, for the same reason.
-		assert.match(modal, /registry\.getBuiltIn\(\)/);
-		assert.match(modal, /registry\.getUserDefined\(\)/);
+		// takes, for the same reason, and through the same helper so the two
+		// cannot drift about which lists count.
+		assert.match(modal, /committedDefinitions\(registry\)/);
 		assert.match(modal, /registry\.getReal\(def\.id\)/);
 		const code = modal.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, "");
 		assert.ok(!code.includes("getAll("), "reading the raw map");

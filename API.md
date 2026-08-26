@@ -82,7 +82,8 @@ export interface CalloutDetails extends Callout {
 	readonly defaultFolded: boolean;
 	readonly builtIn: boolean;
 	readonly source: "builtin" | "user" | "fallback" | "theme" | "plugin";
-	readonly externalStyle: boolean;
+	readonly externalStyle: boolean; // Callout Studio emits nothing for it
+	readonly themeStyled: boolean;   // ...because the active theme owns it
 }
 
 export interface CalloutIconInfo {
@@ -207,9 +208,43 @@ The list contains:
   in the vault are left out, so your list does not fill up with types the user
   deleted from their notes.
 
-Callouts the user handed over to their theme (`externalStyle: true`) **are**
-included: Callout Studio stops styling them, but the id is still perfectly valid
-to write into a note.
+Callouts Callout Studio does not style **are** included — whether because the
+active theme owns them or because the user styles them in their own CSS. It
+stops painting them, but the id is still perfectly valid to write into a note.
+So are the callout types the user's active theme declares itself, which Callout
+Studio lists but does not paint.
+
+### `externalStyle` and `themeStyled`
+
+Two booleans about the same thing at two widths, and the difference matters if
+you draw callouts yourself.
+
+| Member | True when |
+|---|---|
+| `externalStyle` | Callout Studio emits **no CSS** for this callout. |
+| `themeStyled` | ...and the reason is that the **active theme** supplies or restyles it. |
+
+`themeStyled` implies `externalStyle`. The gap between them is a callout the
+user has handed to their own CSS snippet.
+
+`themeStyled` also means the callout has **only** its block form: Callout
+Studio's own Heading and Inline syntaxes are not rendered for a callout the
+theme supplies, so `## [!id]` and a mid-line `[!id]` stay as literal text until
+the theme stops claiming the id.
+
+**When `externalStyle` is true, the colours and icon on this object are what is
+*stored*, not what renders.** Do not draw them. There is no API for reading back
+what the theme actually draws; if you need that, render a real callout and let
+the cascade do it, which is what Callout Studio itself does.
+
+Both report the **resolved** answer. Theme ownership in particular is derived
+from the active theme's stylesheet and is recorded nowhere on the definition, so
+do not try to work it out from a definition yourself — and expect it to change
+when the user changes theme.
+
+`themeStyled` was added after `externalStyle`; feature-detect it before relying
+on it, and keep reading `externalStyle` if that is all you need — it is not
+going away.
 
 ---
 

@@ -21,6 +21,13 @@
  *   adoptOrphansMatchingPalettes → dropDerivedBackgrounds →
  *   dropSolidBackgroundFlags → stripMetadataFromIds → reconcileAttrIdCollisions
  *
+ * Each round trip feeds back the WHOLE `toSaveData()` envelope rather than just
+ * its `callouts`, because that is what a relaunch actually reads — and because
+ * one of the migrations records its verdict in `settings` rather than on a row
+ * (`defaultStyleMode`, see manager/styleModeMigration.ts). Dropping the
+ * settings half would leave that one re-arming forever and would say nothing
+ * true about the others.
+ *
  * The colour normalization at the end of the file is the odd one out: it runs
  * per row inside `reconcileSavedRow` rather than as a pass over the finished
  * map, so it is already done by the time any of the above reads a hex. Same two
@@ -66,6 +73,18 @@ function load(data: Partial<PluginData> | null): CalloutRegistry {
 	const registry = new CalloutRegistry();
 	registry.load(data);
 	return registry;
+}
+
+/**
+ * A file this build would itself have written: rows already carrying their
+ * style mode, and the vault's era already recorded.
+ *
+ * `saved()` models a file from *before* a migration, which is what most of this
+ * suite wants. A handful of assertions mean the opposite — "there is nothing
+ * left to repair" — and for those the difference is the whole point.
+ */
+function current(callouts: CalloutDefinition[]): Partial<PluginData> {
+	return { callouts: [...callouts] } as Partial<PluginData>;
 }
 
 /** A saved custom palette whose six colors are all spelled out. */
@@ -183,7 +202,7 @@ describe("dropDerivedBackgrounds", () => {
 		);
 		assert.strictEqual(first.needsSaveAfterLoad(), true);
 
-		const second = load(saved(first.toSaveData().callouts));
+		const second = load(first.toSaveData());
 		assert.strictEqual(second.get("derived")?.bgColorLight, undefined);
 		assert.strictEqual(second.needsSaveAfterLoad(), false, "nothing left to do");
 	});
@@ -264,7 +283,7 @@ describe("dropStaleTransparencyFlags", () => {
 		);
 		assert.strictEqual(first.needsSaveAfterLoad(), true);
 
-		const second = load(saved(first.toSaveData().callouts));
+		const second = load(first.toSaveData());
 		assert.strictEqual(second.needsSaveAfterLoad(), false);
 	});
 });
@@ -315,7 +334,7 @@ describe("dropSolidBackgroundFlags", () => {
 		);
 		assert.strictEqual(first.needsSaveAfterLoad(), true);
 
-		const second = load(saved(first.toSaveData().callouts));
+		const second = load(first.toSaveData());
 		assert.strictEqual(second.needsSaveAfterLoad(), false);
 	});
 });
@@ -460,7 +479,7 @@ describe("stripMetadataFromIds", () => {
 		);
 		assert.strictEqual(first.needsSaveAfterLoad(), true);
 
-		const second = load(saved(first.toSaveData().callouts));
+		const second = load(first.toSaveData());
 		assert.deepStrictEqual(userIds(second), ["custom"]);
 		assert.strictEqual(second.needsSaveAfterLoad(), false);
 	});
@@ -570,7 +589,7 @@ describe("reconcileAttrIdCollisions", () => {
 				def({ id: "c d", source: "user" }),
 			]),
 		);
-		const second = load(saved(first.toSaveData().callouts));
+		const second = load(first.toSaveData());
 		assert.deepStrictEqual(userIds(second), ["c d"]);
 		assert.deepStrictEqual(second.get("c d")?.aliases, ["c-d"]);
 	});
@@ -591,7 +610,10 @@ describe("reconcileAttrIdCollisions", () => {
 describe("needsSaveAfterLoad()", () => {
 	it("is false for a load that repaired nothing", () => {
 		assert.strictEqual(load(null).needsSaveAfterLoad(), false);
-		assert.strictEqual(load(saved([def({ id: "clean" })])).needsSaveAfterLoad(), false);
+		assert.strictEqual(
+			load(current([def({ id: "clean" })])).needsSaveAfterLoad(),
+			false,
+		);
 	});
 
 	it("is consumed by the read, so an incidental later save cannot re-trigger it", () => {
@@ -603,7 +625,7 @@ describe("needsSaveAfterLoad()", () => {
 	it("is reset by the next load, not carried over", () => {
 		const registry = new CalloutRegistry();
 		registry.load(saved([def({ id: "note|green" })]));
-		registry.load(saved([def({ id: "clean" })]));
+		registry.load(current([def({ id: "clean" })]));
 		assert.strictEqual(registry.needsSaveAfterLoad(), false);
 	});
 
@@ -679,7 +701,7 @@ describe("needsSaveAfterLoad()", () => {
 		// CustomPalettesSection calls the pass directly after a palette edit and
 		// then saves; raising a load-time flag there would leave it standing
 		// until some unrelated startup happened to read it.
-		const registry = load(saved([def({ id: "orphan", ...paletteColors() })]));
+		const registry = load(current([def({ id: "orphan", ...paletteColors() })]));
 		assert.strictEqual(registry.needsSaveAfterLoad(), false);
 
 		registry.settings.customPalettes = [palette()];
@@ -772,7 +794,7 @@ describe("stored colours are normalized to hex on the way in", () => {
 
 	it("leaves a row that needs nothing completely alone", () => {
 		const clean = def({ textColorDark: "#eeeeee" });
-		const registry = load(saved([clean]));
+		const registry = load(current([clean]));
 		assert.deepStrictEqual(registry.get("x"), clean);
 		assert.strictEqual(registry.needsSaveAfterLoad(), false);
 	});

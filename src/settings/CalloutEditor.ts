@@ -7,7 +7,7 @@
  * real-Obsidian live preview via LiveCalloutPreview. Save logic is delegated to
  * CalloutEditorSave; validation to CalloutEditorValidation.
  */
-import { Modal, Notice, Setting, SliderComponent, setIcon } from "obsidian";
+import { Modal, Notice, Setting, setIcon } from "obsidian";
 import type {
 	ExtraButtonComponent,
 	TextComponent,
@@ -22,7 +22,6 @@ import type {
 } from "../types";
 import {
 	buildIconAdjust,
-	ICON_ADJUST_LIMITS,
 	resolveIconAdjust,
 	type ResolvedIconAdjust,
 } from "../utils/iconAdjust";
@@ -75,9 +74,14 @@ import {
 import { findUserImage } from "../icons/packs/userImages";
 import { describeIcon } from "../icons/describeIcon";
 import { iconsEqual } from "../icons/lucideId";
-import { createControlGroup, setSliderDisplay } from "./styleControls";
+import { createControlGroup } from "./styleControls";
+import { renderIconAdjustGroup } from "./editor/iconAdjustGroup";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
+import { activeThemeName } from "../manager/theme/customCssApi";
+import { patternMatches } from "../manager/theme/themeClaimLookup";
+import type { PatternOp } from "../manager/theme/themeCalloutScan";
+import { obsidianCalloutAttrId } from "../utils/calloutId";
 
 // Derive a callout ID from the display name. Spaces are preserved (the ID may
 // be a human-readable, multi-word label like "multi word callout"); the shared
@@ -1619,12 +1623,9 @@ export class CalloutEditor extends Modal {
 	}
 
 	/**
-	 * One role's icon-adjustment box: size, horizontal offset, vertical offset.
-	 *
-	 * Written once and called per role. The three sliders are identical in every
-	 * respect but which field of `this.iconAdjust[role]` they write, so the box
-	 * is built from a small table rather than three near-copies — the shape the
-	 * single-triple version of this panel had, tripled.
+	 * One role's icon-adjustment box. The controls themselves live in
+	 * `editor/iconAdjustGroup.ts`, shared with the theme callout preview, which
+	 * offers this trio and nothing else.
 	 *
 	 * Returns the box so the caller can hide it when the callout draws no icon.
 	 */
@@ -1632,74 +1633,14 @@ export class CalloutEditor extends Modal {
 		parent: HTMLElement,
 		role: CalloutRenderRole,
 	): HTMLElement {
-		const box = parent.createDiv({ cls: "callout-studio-adjust-section" });
-		box.createDiv({
-			cls: "callout-studio-adjust-header",
-			text: iconAdjustHeader(role),
-		});
-
-		const adjust = this.iconAdjust[role];
-		const { offset, size } = ICON_ADJUST_LIMITS;
-
-		// Size is stored as a factor but shown as a percentage, so it converts on
-		// the way in and out; the offsets are already px and pass straight through.
-		const controls: {
-			label: string;
-			suffix: string;
-			limits: [number, number, number];
-			get: () => number;
-			set: (value: number) => void;
-		}[] = [
-			{
-				label: t("editor.size"),
-				suffix: "%",
-				limits: [size.min * 100, size.max * 100, 5],
-				get: () => Math.round(adjust.size * 100),
-				set: (value) => {
-					adjust.size = value / 100;
-				},
+		return renderIconAdjustGroup(
+			parent,
+			iconAdjustHeader(role),
+			this.iconAdjust[role],
+			() => {
+				this.scheduleUpdatePreview();
 			},
-			{
-				label: t("editor.horizontalOffset"),
-				suffix: "px",
-				limits: [offset.min, offset.max, offset.step],
-				get: () => adjust.offsetX,
-				set: (value) => {
-					adjust.offsetX = value;
-				},
-			},
-			{
-				label: t("editor.verticalOffset"),
-				suffix: "px",
-				limits: [offset.min, offset.max, offset.step],
-				get: () => adjust.offsetY,
-				set: (value) => {
-					adjust.offsetY = value;
-				},
-			},
-		];
-
-		for (const control of controls) {
-			const row = box.createDiv({ cls: "callout-studio-slider-row" });
-			const label = row.createDiv({ cls: "callout-studio-slider-label" });
-			label.createSpan({ text: control.label });
-			// The number beside the track is Obsidian's own — SliderComponent keeps
-			// it in sync, so this only says how to spell it. All three values are
-			// whole numbers, so there are no decimals to pad.
-			new Setting(row).addSlider((slider: SliderComponent) => {
-				setSliderDisplay(slider, (v) => `${v}${control.suffix}`);
-				slider
-					.setLimits(...control.limits)
-					.setValue(control.get())
-					.setInstant(true)
-					.onChange((value: number) => {
-						control.set(value);
-						this.scheduleUpdatePreview();
-					});
-			});
-		}
-
-		return box;
+		);
 	}
 
 	/**
@@ -1990,7 +1931,36 @@ export class CalloutEditor extends Modal {
 		this.hasHadCalloutId = true;
 
 		if (!this.canUseCalloutId(this.calloutId, "primary")) {
-			this.idsTagInput.showExternalError(t("editor.idExists"));
+			// Naming the *cause* matters here, because the two causes have
+			// completely different answers. An ordinary duplicate is the user's
+			// own callout and they can go and edit it. An id the active theme
+			// supplies is one this plugin will never style, whoever creates it:
+			// the row would land under *Callouts from your theme*, read-only,
+			// which looks like the editor silently discarding the work. Saying
+			// "already exists" there sends the user looking for a callout of
+			// their own that is not there.
+			this.idsTagInput.showExternalError(
+				this.themeSuppliesId(this.calloutId)
+					? t("editor.idFromTheme", {
+							theme:
+								activeThemeName(this.plugin.app) ??
+								t("settings.themeCalloutsDefaultTheme"),
+						})
+					: t("editor.idExists"),
+			);
+			return;
+		}
+
+		// A fuzzy claim is a warning, never a block. `[data-callout*="col"]`
+		// says the theme styles a *family*, and whether this plugin wins the
+		// callout depends on a cascade no static read can settle — so the user
+		// is told and left to decide, which is the opposite of the exact case
+		// above.
+		const fuzzy = this.themeFuzzyClaim(this.calloutId);
+		if (fuzzy) {
+			this.idsTagInput.showExternalError(
+				t("editor.idThemePattern", { pattern: fuzzy }),
+			);
 			return;
 		}
 
@@ -2010,6 +1980,30 @@ export class CalloutEditor extends Modal {
 		}
 
 		this.idsTagInput.clearExternalError();
+	}
+
+	/** Does the active theme name this exact id? See {@link updateIdWarning}. */
+	private themeSuppliesId(id: string): boolean {
+		return this.plugin.cssInjector
+			.themeCallouts()
+			.themeDefinedIds()
+			.has(obsidianCalloutAttrId(id));
+	}
+
+	/**
+	 * The theme's family selector that would also catch `id`, as a readable
+	 * `*=col` string, or null.
+	 */
+	private themeFuzzyClaim(id: string): string | null {
+		const scan = this.plugin.cssInjector.themeCallouts().patternClaims();
+		for (const { op, value } of scan) {
+			if (
+				patternMatches(op as PatternOp, value, obsidianCalloutAttrId(id))
+			) {
+				return `${op}=${value}`;
+			}
+		}
+		return null;
 	}
 
 	private getIconLabel(): string {

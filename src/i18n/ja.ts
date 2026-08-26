@@ -65,6 +65,15 @@ export const ja: Record<string, string> = {
 	"deleteModal.deleteInUse": "削除（プレーンテキストに変換）",
 	"deleteModal.deleteUnused": "calloutを削除",
 
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": '"{{name}}"のすべての使用をクリアしますか？',
+	"deleteModal.keepsRowBuiltIn":
+		"これはObsidianの組み込みcalloutの一つなので、タイプ自体は引き続き利用可能です。変更されるのはノート内での使用のみです。",
+	"deleteModal.keepsRowTheme":
+		"{{theme}}がこのcalloutタイプを定義しているため、引き続き利用可能で見た目もそのまま保たれます。Callout Studioはvault内のノートのみを変更し、テーマに属するものには一切変更を加えません。",
+	"deleteModal.clearUsages": "使用箇所をクリア（プレーンテキストに変換）",
+
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "マイcalloutタイプ",
 	"settings.builtInCallouts": "組み込みcallout",
@@ -98,10 +107,25 @@ export const ja: Record<string, string> = {
 	"settings.makeFallbackAction": "デフォルトフォールバックスタイルを使用",
 
 	"settings.colorSwatchAria": "アクセント: {{accent}} · 背景: {{bg}}",
-	"settings.externalStyleTag": "外部スタイル",
-	"settings.externalStyleAction": "外部スタイルを使用（テーマまたはCSS）",
-	"settings.externalStyleBlocked":
-		"これはデフォルトのフォールバックcalloutです。先に別のものを選択してください",
+
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "自分のCSSでスタイル設定する",
+	"settings.externalCssStopAction": "Callout Studioに再度スタイルさせる",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "外部CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "テーマ由来のcallout",
+	"settings.themeCalloutsDesc":
+		"{{theme}}がこれらを提供またはスタイルを上書きしているため、Callout Studioはテーマの描画をそのまま残し、Block calloutとしてのみ提供します。ここにはテーマが追加するcalloutタイプと、見た目が置き換えられる組み込みcalloutの両方が表示されます。テーマが追加するcalloutタイプは、そのテーマが有効な間のみ表示されます。",
+	"settings.themeCalloutsDefaultTheme": "あなたのテーマ",
+	"settings.themePreviewAria":
+		'"{{name}}"をプレビュー — テーマでの描画を確認',
+	"settings.clearUsesAction": "ノート内の使用をクリア",
+	"settings.builtInAllThemeStyled":
+		"{{theme}}はすべての組み込みcalloutのスタイルを上書きしているため、それらはすべて上に一覧表示され、Callout Studioはそのままにします。独自にデザインするには、別のIDでcalloutを追加してください。",
+
 	"settings.fallbackCallout": "デフォルトフォールバックcallout",
 	"settings.fallbackCalloutDesc":
 		"vaultで認識されないcalloutタイプはこのcalloutのスタイルを継承します。",
@@ -171,6 +195,10 @@ export const ja: Record<string, string> = {
 	"commandBuilder.formatBlock": "Block",
 	"commandBuilder.roleDisabled":
 		"この形式はオフになっているため、再度オンにするまでコマンドはプレーンテキストを挿入します。",
+	"commandBuilder.roleThemeOwned":
+		"このcalloutはテーマが提供しているため、Block形式のみ使用できます。",
+	"commandBuilder.commandSuspended":
+		"一時停止中: このcalloutはテーマが提供しているため、Block形式のみ使用できます。テーマがこのcalloutの提供をやめると、このコマンドは再び機能します。",
 	"commandBuilder.callout": "calloutタイプ",
 	"commandBuilder.calloutDesc": "このコマンドが挿入するcallout。",
 	"commandBuilder.headingLevel": "見出しレベル",
@@ -219,10 +247,9 @@ export const ja: Record<string, string> = {
 		"新しいcalloutタイプはインポートされませんでした（IDがすでに存在する可能性があります）。",
 	"notice.iconDownloadFailed":
 		'Materialアイコン"{{name}}"をダウンロードできませんでした。このスタイル/ウェイトでは利用できないか、接続がオフラインの可能性があります。',
-	"notice.externalStyleOn":
-		'"{{name}}"は現在、テーマまたはCSSスニペットによってスタイルが適用されています。',
-	"notice.externalStyleOff":
-		'Callout Studioが再び"{{name}}"にスタイルを適用します。',
+	"notice.externalCssOn":
+		'"{{name}}"はCallout Studioによるスタイル設定の対象外になりました — 見た目は自分のCSSで決まります。見出しcalloutとインラインcalloutの形式は描画されません。',
+	"notice.externalCssOff": '"{{name}}"は再びCallout Studioがスタイル設定します。',
 	"notice.nothingToWrap": "囲むものがありません。",
 	"notice.cursorNotInsideCallout": "カーソルがcallout内にありません。",
 	"notice.autocompleteTargetMoved":
@@ -283,6 +310,10 @@ export const ja: Record<string, string> = {
 	"editor.idEmpty": "少なくとも1つのIDが必要です",
 	"editor.idExists": "このIDのcalloutがすでに存在します",
 	"editor.idConflict": "このIDは既存のcalloutと競合します",
+	"editor.idFromTheme":
+		"{{theme}}がこのIDのcalloutを既に提供しているため、Callout Studioはスタイル設定できません。別のIDを選んでください。",
+	"editor.idThemePattern":
+		"注意: あなたのテーマは{{pattern}}に一致するすべてのcalloutをスタイル設定するため、この見た目が上書きされる可能性があります。",
 	"editor.idDashConflict":
 		"Obsidianはスペースをハイフンとして書き込むため、このIDは「{{other}}」と衝突します",
 	"editor.untitledCallout": "タイトルなしCallout",
@@ -293,25 +324,22 @@ export const ja: Record<string, string> = {
 	"editor.sampleInlineText": "段落内にインラインの [!{id}] ピルがあります。",
 	"editor.previewReadOnly": "ライブプレビューは編集できません",
 
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — あなたのテーマが提供',
+	"themePreview.owned":
+		'{{theme}}が"{{name}}"を提供しスタイル設定しています。Callout Studioはこれを上書きしないため、そのBlock calloutはテーマの描画どおりに表示されます。',
+	"themePreview.readOnly":
+		"そのため、色・アイコン・名前・IDはここでは変更できません。独自のデザインにしたい場合は、別のIDで新しいcalloutを作成してください。",
+	"themePreview.blockOnly":
+		"テーマが提供するcalloutでは、見出しとインラインの形式は利用できません。Block calloutはテーマ本来のスタイルを使用します。",
+	"themePreview.previewTitle": "現在の表示",
+	"themePreview.blockSample":
+		"> [!{{id}}] {{name}}\n" +
+		"> これはcalloutの内容の見た目です。\n",
+
 	// External style window (opens instead of the editor for a callout the
 	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "Callout Studioの外でスタイルされています",
-	"editor.externalStyleBody":
-		"Callout Studioは{{id}}にスタイルを適用していません。見た目はテーマ、CSSスニペット、またはObsidianのデフォルトから来ています。",
-	"editor.externalStyleWhat": "これが意味すること",
-	"editor.externalStyleWhatHeading":
-		"## [!{{id}}] タイトルのような見出しcalloutはレンダリングされません — テキストは書かれたままになります。",
-	"editor.externalStyleWhatInline":
-		"インラインのもの、例えば 単語 [!{{id}}] 単語 も同様です。",
-	"editor.externalStyleWhatGlobal":
-		"グローバルスタイル設定（枠線、角の丸み、文字サイズ）は適用されません。",
-	"editor.externalStylePreviewTitle": "現在の表示方法",
-	"editor.externalStyleSample":
-		"## [!{{id}}] タイトル\n\n" +
-		"[!{{id}}] を含む文はこのように表示されます。\n\n" +
-		"> [!{{id}}] {{name}}\n" +
-		"> calloutの内容はこのように表示されます。\n",
-	"editor.externalStyleResume": "スタイルを取り戻す",
 	"editor.externalStyleClose": "了解",
 
 	// Palette editor modal
@@ -605,7 +633,9 @@ export const ja: Record<string, string> = {
 
 	"heading.toggleFold": "折りたたみを切り替え",
 
-	"settings.globalSettings": "グローバル設定",
+	"settings.globalSettings": "Callout Studioのスタイルオプション",
+	"settings.globalSettingsScope":
+		"Callout Studioがスタイル設定するcalloutの形状・間隔・サイズです。テーマがスタイル設定するcalloutはテーマ自体のデザインのままです。",
 	"settings.globalSettingsRegularDesc":
 		"引用ブロックにcalloutトークンを追加すると（例: `> [!type]`）、Obsidianのネイティブなcalloutボックスとして表示されます。ボーダー、半径、フォントスケール、整列を調整できます。",
 	"settings.globalSettingsHeadingDesc":
@@ -930,4 +960,8 @@ export const ja: Record<string, string> = {
 	"export.formatCss": "CSSスニペット",
 	"export.formatCssDesc":
 		"このvaultのsnippetsフォルダに保存する.cssファイル。Callout Studioがインストールされていない場所で使用できます。通常のcalloutのみを対象とするスナップショットです。変更後に再度エクスポートしてください。",
+	"quickInsert.readingViewHint": "このノートは閲覧モードで開かれているため、何も挿入できません。",
+	"quickInsert.readingView": "calloutを挿入するには、ソースモードまたはライブプレビューに切り替えてください。",
+	"quickInsert.noCursorHint": "このノートにはカーソルがないため、挿入する場所がありません。",
+	"quickInsert.noCursor": "calloutを挿入したい場所にノート内でカーソルを置いてから、もう一度お試しください。",
 };

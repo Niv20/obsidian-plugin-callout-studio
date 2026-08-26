@@ -107,3 +107,59 @@ export function buildDiscoveredRow(
 		externalStyle: undefined,
 	};
 }
+
+/**
+ * `def` re-styled to mirror `fallback`, or `null` when it already does.
+ *
+ * The other half of {@link buildDiscoveredRow}'s agreement, and the reason both
+ * live here: one builds a brand-new row wearing the fallback's look, the other
+ * re-dresses rows that already exist when the user picks a different fallback,
+ * and nothing outside this file forces the two to agree on which properties
+ * "the look" is. When they disagreed, mirrored rows kept their own stale
+ * transparency flag while taking the fallback's hexes — the contradiction
+ * `dropStaleTransparencyFlags` exists to repair.
+ *
+ * Every mirrored key is spelled out, `undefined` included, because the result
+ * is merged onto the row: a key that isn't there leaves the old value standing.
+ *
+ * Returning `null` for an unchanged row is not an optimization. The pass runs
+ * on every fallback edit, every fallback-target delete and every discovery
+ * sweep, so most of its work lands on rows already wearing exactly this style;
+ * writing those back fired a full stylesheet regeneration, an icon repaint and
+ * a `data.json` write for a no-op.
+ */
+export function mirroredFallbackRow(
+	def: CalloutDefinition,
+	fallback: CalloutDefinition,
+): CalloutDefinition | null {
+	const next: CalloutDefinition = {
+		...def,
+		icon: { ...fallback.icon },
+		hideIcon: fallback.hideIcon,
+		colorLight: fallback.colorLight,
+		colorDark: fallback.colorDark,
+		bgColorLight: fallback.bgColorLight,
+		bgColorDark: fallback.bgColorDark,
+		bgGradient: fallback.bgGradient ? { ...fallback.bgGradient } : undefined,
+		// Transparency travels with the backgrounds it replaces. Omitting it
+		// meant a transparent fallback was never mirrored as transparent at all.
+		transparentBg: fallback.transparentBg,
+		textColorLight: fallback.textColorLight,
+		textColorDark: fallback.textColorDark,
+		// Both adjustment layers travel together: the per-role map alone would
+		// be read against *this* row's stale legacy trio wherever a role leaves
+		// a field unset (see resolveIconAdjust).
+		iconAdjust: fallback.iconAdjust
+			? structuredClone(fallback.iconAdjust)
+			: undefined,
+		iconOffsetX: fallback.iconOffsetX,
+		iconOffsetY: fallback.iconOffsetY,
+		iconSize: fallback.iconSize,
+	};
+	// A structural compare, and sound precisely because `next` is a spread of
+	// `def`: the keys they share keep their order, and a mirrored key the row
+	// lacks is either `undefined` — which stringify drops on both sides, so the
+	// absent-vs-explicitly-absent pair reads as equal — or a value the row
+	// genuinely did not have.
+	return JSON.stringify(next) === JSON.stringify(def) ? null : next;
+}

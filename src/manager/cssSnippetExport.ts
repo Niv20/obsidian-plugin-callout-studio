@@ -127,7 +127,7 @@ function supportAccentRules(plugin: SnippetExportPlugin): string[] {
 
 	const rules: string[] = [];
 	for (const def of [...plugin.registry.getBuiltIn()].sort(byId)) {
-		if (def.externalStyle === true) continue;
+		if (plugin.registry.standsDown(def)) continue;
 		if (!plugin.registry.isUnmodifiedBuiltIn(def)) continue;
 		const props = plugin.cssInjector.ownAccentProps(def, "light");
 		rules.push(`${calloutSel(def.id)} {\n${props.join("\n")}\n}`);

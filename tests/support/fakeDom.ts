@@ -375,6 +375,41 @@ export class FakeElement {
 	}
 
 	/**
+	 * The first element child, like the real DOM. `ThemeAppearanceProbe` reaches
+	 * for it to find the artwork inside `.callout-icon`, and while it was missing
+	 * here an absent property answered `undefined` — so every test of that path
+	 * measured "no icon" and the rung went unexercised.
+	 */
+	get firstElementChild(): FakeElement | null {
+		return this.children[0] ?? null;
+	}
+
+	/**
+	 * This element serialized, like the real DOM — its companion, and needed for
+	 * the same reason: the probe records `firstElementChild.outerHTML` as the
+	 * theme's artwork, so without it a rendered icon read back as no icon.
+	 *
+	 * Faithful enough to be evidence and no more: tag, attributes, children. It
+	 * is never parsed back by anything under test.
+	 */
+	get outerHTML(): string {
+		const tag = this.tagName.toLowerCase();
+		const attrs = [...this.attrs].map(([n, v]) => ` ${n}="${v}"`).join("");
+		const cls = this.classList.value;
+		const classAttr = cls.length > 0 ? ` class="${cls}"` : "";
+		return `<${tag}${classAttr}${attrs}>${this.innerHTML}</${tag}>`;
+	}
+
+	/** The serialized children — see {@link outerHTML}. */
+	get innerHTML(): string {
+		return this.childNodes
+			.map((node) =>
+				node.nodeType === NODE_ELEMENT ? node.outerHTML : node.nodeValue,
+			)
+			.join("");
+	}
+
+	/**
 	 * Element children only, like the real DOM. Present because code guards on
 	 * `childElementCount === 0` to detect "mounted nothing", and an absent
 	 * property answers `undefined` — which is never `0`, so such a guard would

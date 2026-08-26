@@ -18,19 +18,12 @@ import { setIcon } from "obsidian";
 import type { App } from "obsidian";
 import type {
 	CalloutDefinition,
-	CalloutIcon,
 	CalloutRenderRole,
-	UserImageIcon,
 } from "../types";
 import { CALLOUT_RENDER_ROLES } from "../types";
-import {
-	isDefaultIconAdjust,
-	resolveIconAdjust,
-} from "../utils/iconAdjust";
+import { isDefaultIconAdjust, resolveIconAdjust } from "../utils/iconAdjust";
 import { renderIconInto } from "../icons/renderIcon";
-import { followsCalloutColor, userImageFor } from "../icons/packs/userImages";
 import { createIconResolver } from "../icons/resolver";
-import { packFor } from "../icons/registry";
 import type { IconResolver } from "../icons/types";
 import {
 	bgGradientCss,
@@ -43,7 +36,6 @@ import {
 } from "./accentDeclarations";
 import { resolveBgAlpha } from "../utils/bgTintAlpha";
 import { OBSIDIAN_CALLOUT_VAR } from "../constants";
-import { svgToDataUri } from "../icons/svg";
 import {
 	applyTitleGradient,
 	clearGradientChars,
@@ -59,14 +51,19 @@ import {
 	CSS_REF_TOKEN,
 	CSS_TOKEN_ICON,
 	CSS_TOKEN_NAME,
-	CSS_UNKNOWN,
 	paintRoleIcon,
 	resolveCalloutDef,
 	shouldRenderToken,
 } from "../editor/renderShared";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { obsidianCalloutAttrId } from "../utils/calloutId";
-import { calloutSel, tokenAttrSel } from "../utils/calloutSelector";
+import { coreIconValue, importCoreIconSvg } from "./css/coreIcon";
+import { StudioWeightCache } from "./theme/StudioWeightCache";
+import type { ThemeCalloutStore } from "./theme/ThemeCalloutStore";
+import { generateFallbackCSS } from "./css/fallbackCSS";
+import { calloutIconProp } from "./css/calloutIconProp";
+import { emojiOverrideCSS, iconOverrideCSS } from "./css/iconOverrides";
+import { calloutSelAt, tokenAttrSel } from "../utils/calloutSelector";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import { StartupStyleCache } from "./StartupStyleCache";
 
@@ -76,91 +73,6 @@ type RegistryWindow = Window & {
 };
 
 const STYLE_EL_ID = "callout-studio-dynamic-css";
-
-/**
- * How far off square a picture may be drawn before it is squeezed back.
- *
- * Icon boxes are square, and `contain` inside one shrinks a wide logo until its
- * *width* fits — a 3:1 banner would render a third of the height of every other
- * callout's icon. Widening the box instead keeps the height constant, which is
- * what makes a row of callouts line up. The clamp stops a pathological ratio
- * from pushing the title clean off the line.
- */
-const MAX_ICON_ASPECT = 4;
-
-/** The `::after` box's width for a picture, or the plain square for a glyph. */
-function iconBoxWidth(picture: UserImageIcon | undefined): string {
-	const size = "var(--icon-size, 1.2em)";
-	if (!picture || picture.height <= 0) return size;
-	const aspect = Math.min(
-		Math.max(picture.width / picture.height, 1 / MAX_ICON_ASPECT),
-		MAX_ICON_ASPECT,
-	);
-	// Within a hair of square, the multiplication is noise in the output CSS.
-	if (Math.abs(aspect - 1) < 0.01) return size;
-	return `calc(${size} * ${aspect.toFixed(3)})`;
-}
-
-/**
- * The icon Obsidian itself would draw in a callout, read the way core reads it:
- * the `data-callout-icon` attribute the renderer stamps from the callout node,
- * and failing that the computed `--callout-icon`.
- *
- * The unwrapping matches core's because a custom property keeps its CSS quoting
- * through the computed value — a theme writing `--callout-icon: 'lucide-star'`
- * hands back the apostrophes as well, and `setIcon` would look up an icon by
- * that name and find none. The double-quoted form goes through `JSON.parse`
- * for the escapes; a malformed one is used verbatim, which is also what core
- * does with it.
- */
-function coreIconValue(calloutEl: HTMLElement): string {
-	const attr = calloutEl.getAttribute("data-callout-icon")?.trim() ?? "";
-	const raw =
-		attr.length > 0
-			? attr
-			: calloutEl.getCssPropertyValue("--callout-icon").trim();
-	if (raw.startsWith("'") && raw.endsWith("'")) {
-		return raw.slice(1, -1).replace(/\\'/g, "'");
-	}
-	if (raw.startsWith('"')) {
-		try {
-			const parsed: unknown = JSON.parse(raw);
-			if (typeof parsed === "string") return parsed;
-		} catch {
-			// Fall through to the raw value, as core does.
-		}
-	}
-	return raw;
-}
-
-/**
- * A theme may write its icon as literal markup — `--callout-icon: '<svg …>'` —
- * and Obsidian honours that, so a faithful restore has to as well. Sized and
- * painted exactly as core's reader does it: 16px, `currentColor` for both fill
- * and stroke, so the drawing tracks whatever colour the theme gives the callout.
- *
- * Parsed as `image/svg+xml`, which builds no scripting context, and the markup
- * can only have come from a stylesheet the user installed — the same trust
- * boundary as the `background-image` any theme is already free to put here.
- * (Separate from `icons/svg.ts`, whose two sanitizers guard artwork arriving
- * over the network and artwork the user uploaded; neither describes this.)
- */
-function importCoreIconSvg(markup: string, doc: Document): Element | null {
-	const parsed = new DOMParser().parseFromString(markup, "image/svg+xml");
-	const root = parsed.documentElement;
-	if (
-		parsed.querySelector("parsererror") ||
-		root.nodeName.toLowerCase() !== "svg"
-	) {
-		return null;
-	}
-	const copy = doc.importNode(root, true);
-	copy.setAttribute("width", "16");
-	copy.setAttribute("height", "16");
-	copy.setAttribute("fill", "currentColor");
-	copy.setAttribute("stroke", "currentColor");
-	return copy;
-}
 
 /** One `background-image` layer: a gradient sweep. */
 interface BgLayer {
@@ -189,6 +101,36 @@ export class CSSInjector {
 	 * Must be nulled whenever a style target is (re)bound — see ensureStyleEl.
 	 */
 	private lastCssText: string | null = null;
+
+	/**
+	 * How many times `.callout` is repeated in the selectors emitted for the
+	 * callout currently being written — the derived studio weight while a
+	 * studio callout is being written, 1 otherwise.
+	 *
+	 * Ambient rather than a parameter because the selector is built in a dozen
+	 * helpers below (`iconHiddenCSS`, the three icon overrides, the transform,
+	 * the title sweep, the fold arrow, `printGradientCSS`), and threading a
+	 * number through all of them would cost more than the feature buys. Safe
+	 * because `generateCalloutCSS` is synchronous and one callout finishes
+	 * before the next begins; it sets this on entry and puts it back before
+	 * returning.
+	 */
+	private emitWeight = 1;
+
+	/**
+	 * The `!important` suffix the callout currently being written carries —
+	 * `" !important"` in studio mode, `""` otherwise. Ambient for exactly the
+	 * same reason as {@link emitWeight}, and set and cleared beside it.
+	 */
+	private emitImportant = "";
+
+	/**
+	 * The per-callout selector base, at whatever weight is currently in force.
+	 * Every emitter goes through this rather than `calloutSelAt` directly.
+	 */
+	private sel(id: string, themePrefix = ""): string {
+		return calloutSelAt(id, this.emitWeight, themePrefix);
+	}
 	private injecting = false;
 	private registry: CalloutRegistry;
 	private app: App;
@@ -201,6 +143,17 @@ export class CSSInjector {
 		this.registry = registry;
 		this.icons = createIconResolver(registry);
 		this.startupCache = new StartupStyleCache(app);
+		this.studioWeights = new StudioWeightCache(app);
+	}
+	private readonly studioWeights: StudioWeightCache;
+
+	/**
+	 * The one theme scan: studio mode's selector weight, and the settings tab's
+	 * list of the callout types the theme adds. Shared rather than rebuilt, so
+	 * what the list shows and what the CSS was emitted against cannot disagree.
+	 */
+	themeCallouts(): ThemeCalloutStore {
+		return this.studioWeights.themeCallouts();
 	}
 
 	initialize(): void {
@@ -322,6 +275,7 @@ export class CSSInjector {
 
 	private injectNow(emitCssChange: boolean): void {
 		this.ensureStyleSheet();
+		this.studioWeights.beginPass();
 
 		const callouts = this.registry.getAll();
 		const rules: string[] = [
@@ -660,14 +614,18 @@ export class CSSInjector {
 	 * `-webkit-text-fill-color` is what hides the flat text under the sweep;
 	 * `color` is left alone so icons keep tracking it through `currentColor`.
 	 */
-	private textSweepProps(image: string, under: string | null): string[] {
+	private textSweepProps(
+		image: string,
+		under: string | null,
+		imp = "",
+	): string[] {
 		return [
-			`  background-image: ${image}, ${under ?? "none"};`,
-			`  -webkit-background-clip: text, border-box;`,
-			`  background-clip: text, border-box;`,
-			`  -webkit-text-fill-color: transparent;`,
-			`  -webkit-print-color-adjust: exact;`,
-			`  print-color-adjust: exact;`,
+			`  background-image: ${image}, ${under ?? "none"}${imp};`,
+			`  -webkit-background-clip: text, border-box${imp};`,
+			`  background-clip: text, border-box${imp};`,
+			`  -webkit-text-fill-color: transparent${imp};`,
+			`  -webkit-print-color-adjust: exact${imp};`,
+			`  print-color-adjust: exact${imp};`,
 		];
 	}
 
@@ -687,16 +645,17 @@ export class CSSInjector {
 		def: CalloutDefinition,
 		selectorsFor: (themePrefix: string) => string,
 		ownsBackground: boolean,
+		imp = "",
 	): string[] {
 		const light = this.textGradientCss(def, "light");
 		if (!light) return [];
 		const under = (mode: "light" | "dark"): string | null =>
 			ownsBackground ? (this.bgImageFor(def, mode)?.image ?? null) : null;
-		const lightProps = this.textSweepProps(light, under("light"));
+		const lightProps = this.textSweepProps(light, under("light"), imp);
 		const rules = [`${selectorsFor("")} {\n${lightProps.join("\n")}\n}`];
 		const dark = this.textGradientCss(def, "dark");
 		if (dark) {
-			const darkProps = this.textSweepProps(dark, under("dark"));
+			const darkProps = this.textSweepProps(dark, under("dark"), imp);
 			if (darkProps.join("") !== lightProps.join("")) {
 				rules.push(
 					`${selectorsFor(".theme-dark ")} {\n${darkProps.join("\n")}\n}`,
@@ -714,12 +673,18 @@ export class CSSInjector {
 		// ::before (see pillPrintGradientCSS), never by this element again.
 		// Both theme prefixes are grouped so this later rule outranks the
 		// screen rules above in either mode by source order / specificity.
+		//
+		// It carries the SAME importance as the screen rules it cancels, and
+		// must: these two blocks have identical specificity and are resolved on
+		// source order, so an `!important` sweep above an ordinary reset here
+		// would win in print too — leaving the unclipped block over the title
+		// and the transparent fill this reset exists to undo.
 		rules.push(
 			`@media print {\n${selectorsFor("")},\n${selectorsFor(".theme-dark ")} {\n` +
-				`  background-image: none;\n` +
-				`  -webkit-background-clip: border-box;\n` +
-				`  background-clip: border-box;\n` +
-				`  -webkit-text-fill-color: currentColor;\n` +
+				`  background-image: none${imp};\n` +
+				`  -webkit-background-clip: border-box${imp};\n` +
+				`  background-clip: border-box${imp};\n` +
+				`  -webkit-text-fill-color: currentColor${imp};\n` +
 				`}\n}`,
 		);
 		return rules;
@@ -739,68 +704,75 @@ export class CSSInjector {
 	}
 
 	generateCalloutCSS(def: CalloutDefinition, standalone = false): string {
-		// The theme (or a CSS snippet, or Obsidian itself) owns this one — see
-		// CalloutDefinition.externalStyle. Guarding the whole function rather
-		// than its one call site means every block below goes quiet together:
-		// accent variables, --callout-icon, background and gradient, content
-		// colour, the ::after icon override that hides core's own <svg>, icon
-		// transforms, title sweeps, token colours, the fold arrow, the print
-		// ::before — and the alias copies of all of them at the end.
+		// The theme, or a CSS snippet, owns this one. Guarding the whole
+		// function rather than its one call site means every block below goes
+		// quiet together: accent variables, --callout-icon, background and
+		// gradient, content colour, the ::after icon override that hides core's
+		// own <svg>, icon transforms, title sweeps, the fold arrow, the print
+		// ::before — and the alias copies of all of them.
 		//
-		// One deliberate exception, below: a callout the user asked to draw with
-		// no icon at all. A theme cannot express that on the owner's behalf, and
-		// the single `display: none` it takes cannot fight the theme over any of
-		// the things this flag exists to protect.
+		// There is no exception, and there used to be one: `hideIcon` still
+		// emitted its `display: none`. Under an absolute rule that is an
+		// override like any other. The flag is preserved on the row and applies
+		// again the moment this plugin is painting the callout.
+		const theme = this.registry.standsDown(def);
+		// Both axes are set before the early return, so a leftover value cannot
+		// reach the next callout even if something below throws. See
+		// manager/theme/studioWeight.ts for why it takes both.
+		this.emitWeight = theme ? 1 : this.studioWeights.resolve();
+		this.emitImportant = theme ? "" : " !important";
+		// Nothing at all, and that is now literal: the `.cs-*` token rules used
+		// to be emitted here so a theme-owned callout could still render as a
+		// heading and a pill. Those two formats are gone for a theme callout
+		// (see `renderShared.shouldRenderToken`), so there is no DOM left to
+		// paint and no exception left to make.
+		if (theme) return "";
 		const hidesIcon = def.hideIcon === true;
-		if (def.externalStyle === true) {
-			return hidesIcon ? this.iconHiddenCSS(def) : "";
-		}
+		const imp = this.emitImportant;
 
 		// Emitting `--callout-icon` for a hidden icon would be harmless (the box
 		// it lands in is display:none) but it would also keep Obsidian resolving
 		// artwork nobody sees, so the whole icon half of this function goes quiet
 		// together — the property, both ::after overrides and the transform.
-		const iconCSS = hidesIcon ? "" : this.getIconCSS(def);
+		const iconCSS = hidesIcon ? "" : calloutIconProp(def);
 
 		const parts: string[] = [];
 		if (hidesIcon) parts.push(this.iconHiddenCSS(def));
 
 		// Light mode (default). See accentProps for what the three color
 		// variables are and why an untouched built-in gets only two of them.
-		const lightProps: string[] = [...this.accentProps(def, "light")];
-		if (iconCSS) lightProps.push(`  --callout-icon: ${iconCSS};`);
-		lightProps.push(...this.bgProps(def, "light"));
+		const lightProps: string[] = [...this.accentProps(def, "light", true)];
+		if (iconCSS) lightProps.push(`  --callout-icon: ${iconCSS}${imp};`);
+		lightProps.push(...this.bgProps(def, "light", true));
 		// Only in the light rule, which is unscoped and so matches both themes:
 		// the frame's colour is the same in either one, and the dark block below
 		// exists purely for the values that differ.
 		if (def.transparentBg) {
-			lightProps.push(...this.transparentBorderProps());
+			lightProps.push(...this.transparentBorderProps(true));
 		}
-		parts.push(
-			`${calloutSel(def.id)} {\n${lightProps.join("\n")}\n}`,
-		);
+		parts.push(`${this.sel(def.id)} {\n${lightProps.join("\n")}\n}`);
 
 		// Dark mode override
 		if (this.needsDarkBlock(def)) {
-			const darkProps: string[] = [...this.accentProps(def, "dark")];
-			darkProps.push(...this.bgProps(def, "dark"));
+			const darkProps: string[] = [...this.accentProps(def, "dark", true)];
+			darkProps.push(...this.bgProps(def, "dark", true));
 			parts.push(
-				`${calloutSel(def.id, ".theme-dark ")} {\n${darkProps.join("\n")}\n}`,
+				`${this.sel(def.id, ".theme-dark ")} {\n${darkProps.join("\n")}\n}`,
 			);
 		}
 
 		// Content text color overrides
 		if (def.textColorLight) {
 			parts.push(
-				`${calloutSel(def.id)} > .callout-content {\n` +
-					`  color: ${def.textColorLight};\n` +
+				`${this.sel(def.id)} > .callout-content {\n` +
+					`  color: ${def.textColorLight}${imp};\n` +
 					`}`,
 			);
 		}
 		if (def.textColorDark && def.textColorDark !== def.textColorLight) {
 			parts.push(
-				`${calloutSel(def.id, ".theme-dark ")} > .callout-content {\n` +
-					`  color: ${def.textColorDark};\n` +
+				`${this.sel(def.id, ".theme-dark ")} > .callout-content {\n` +
+					`  color: ${def.textColorDark}${imp};\n` +
 					`}`,
 			);
 		}
@@ -814,12 +786,17 @@ export class CSSInjector {
 			? null
 			: this.icons.resolveSvg(def.icon, "regular");
 		if (iconSvg) {
-			parts.push(this.generateIconOverride(def.id, def.icon, iconSvg));
+			parts.push(
+				iconOverrideCSS(this.sel(def.id), def.icon, iconSvg, imp),
+			);
 		}
 
 		// Emoji icon override (renders the glyph via ::after) for live view.
+		// An emoji is the one icon kind `--callout-icon` cannot carry — it takes
+		// a Lucide id and nothing else — so this ::after is not a preference,
+		// it is the only channel there is.
 		if (!hidesIcon && def.icon.type === "emoji") {
-			parts.push(this.generateEmojiOverride(def.id, def.icon.value));
+			parts.push(emojiOverrideCSS(this.sel(def.id), def.icon.value, imp));
 		}
 
 		// Icon position/size transform
@@ -840,15 +817,20 @@ export class CSSInjector {
 					[def.id, ...(def.aliases ?? [])]
 						.map(
 							(id) =>
-								`${calloutSel(id, themePrefix)} > ` +
+								`${this.sel(id, themePrefix)} > ` +
 								`.callout-title > .callout-title-inner`,
 						)
 						.join(",\n"),
 				false,
+				imp,
 			),
 		);
 
 		// Heading-bar / inline-pill colors: our own DOM — see cssSnippetExport.
+		// Deliberately outside the `!important` regime: no theme selector can
+		// match `.cs-heading-callout` or `.cs-inline-callout`, so there is
+		// nothing to beat, and leaving these ordinary is what keeps a user's own
+		// snippet able to restyle them.
 		if (!standalone) parts.push(this.generateTokenColorCSS(def));
 
 		// Fold chevron in the palette's second color (gradients only).
@@ -862,9 +844,10 @@ export class CSSInjector {
 			def,
 			(themePrefix, suffix) =>
 				[def.id, ...(def.aliases ?? [])]
-					.map((id) => `${calloutSel(id, themePrefix)}${suffix}`)
+					.map((id) => `${this.sel(id, themePrefix)}${suffix}`)
 					.join(",\n"),
 			false,
+			imp,
 		);
 		if (calloutPrint) parts.push(calloutPrint);
 
@@ -873,20 +856,20 @@ export class CSSInjector {
 			for (const alias of def.aliases) {
 				parts.push(
 					`/* alias: ${alias} → ${def.id} */\n` +
-						`${calloutSel(alias)} {\n${lightProps.join("\n")}\n}`,
+						`${this.sel(alias)} {\n${lightProps.join("\n")}\n}`,
 				);
 				if (this.needsDarkBlock(def)) {
 					const aliasDarkProps: string[] = [
-						...this.accentProps(def, "dark"),
+						...this.accentProps(def, "dark", true),
+						...this.bgProps(def, "dark", true),
 					];
-					aliasDarkProps.push(...this.bgProps(def, "dark"));
 					parts.push(
-						`${calloutSel(alias, ".theme-dark ")} {\n${aliasDarkProps.join("\n")}\n}`,
+						`${this.sel(alias, ".theme-dark ")} {\n${aliasDarkProps.join("\n")}\n}`,
 					);
 				}
 				if (def.textColorLight) {
 					parts.push(
-						`${calloutSel(alias)} > .callout-content {\n  color: ${def.textColorLight};\n}`,
+						`${this.sel(alias)} > .callout-content {\n  color: ${def.textColorLight}${imp};\n}`,
 					);
 				}
 				if (
@@ -894,31 +877,30 @@ export class CSSInjector {
 					def.textColorDark !== def.textColorLight
 				) {
 					parts.push(
-						`${calloutSel(alias, ".theme-dark ")} > .callout-content {\n  color: ${def.textColorDark};\n}`,
+						`${this.sel(alias, ".theme-dark ")} > .callout-content {\n  color: ${def.textColorDark}${imp};\n}`,
 					);
 				}
 				if (iconSvg) {
 					parts.push(
-						this.generateIconOverride(alias, def.icon, iconSvg),
+						iconOverrideCSS(this.sel(alias), def.icon, iconSvg, imp),
 					);
 				}
 				if (!hidesIcon && def.icon.type === "emoji") {
 					parts.push(
-						this.generateEmojiOverride(alias, def.icon.value),
+						emojiOverrideCSS(this.sel(alias), def.icon.value, imp),
 					);
 				}
 				const aliasTransform = hidesIcon
 					? ""
-					: this.getIconTransformCSS({
-							...def,
-							id: alias,
-						});
+					: this.getIconTransformCSS({ ...def, id: alias });
 				if (aliasTransform) {
 					parts.push(aliasTransform);
 				}
 			}
 		}
 
+		this.emitWeight = 1;
+		this.emitImportant = "";
 		return parts.join("\n\n");
 	}
 
@@ -960,7 +942,7 @@ export class CSSInjector {
 						// Obsidian's own DOM → dasherized attr (calloutSel).
 						// Our heading-bar DOM → space-form attr (the two below).
 						// The two conventions are deliberate — do not unify them.
-						`${calloutSel(id, themePrefix)} > ` +
+						`${this.sel(id, themePrefix)} > ` +
 						`.callout-title > .callout-fold, ` +
 						`${themePrefix}.${CSS_HEADING_LINE}${tokenAttrSel(id)} ` +
 						`.${CSS_FOLD_ARROW}, ` +
@@ -973,9 +955,12 @@ export class CSSInjector {
 		// Same explicit-undefined cascade as the background rules: the light rule
 		// is left unscoped so it keeps applying in dark mode when the gradient has
 		// no dark-specific end, and an identical dark rule is skipped as a no-op.
-		const parts = [`${selectorsFor("")} {\n  color: ${light};\n}`];
+		const imp = this.emitImportant;
+		const parts = [`${selectorsFor("")} {\n  color: ${light}${imp};\n}`];
 		if (dark !== light) {
-			parts.push(`${selectorsFor(".theme-dark ")} {\n  color: ${dark};\n}`);
+			parts.push(
+				`${selectorsFor(".theme-dark ")} {\n  color: ${dark}${imp};\n}`,
+			);
 		}
 		return parts.join("\n\n");
 	}
@@ -1138,19 +1123,20 @@ export class CSSInjector {
 		def: CalloutDefinition,
 		selFor: (themePrefix: string, suffix: string) => string,
 		hideElementGradient: boolean,
+		imp = "",
 	): string {
 		const light = this.bgImageFor(def, "light");
 		if (!light) return "";
 		const beforeProps = (image: string): string =>
-			`  content: "";\n` +
-			`  position: absolute;\n` +
-			`  inset: 0;\n` +
-			`  z-index: -1;\n` +
-			`  border-radius: inherit;\n` +
-			`  background-image: ${image};\n` +
-			`  filter: opacity(0.999);\n` +
-			`  -webkit-print-color-adjust: exact;\n` +
-			`  print-color-adjust: exact;`;
+			`  content: ""${imp};\n` +
+			`  position: absolute${imp};\n` +
+			`  inset: 0${imp};\n` +
+			`  z-index: -1${imp};\n` +
+			`  border-radius: inherit${imp};\n` +
+			`  background-image: ${image}${imp};\n` +
+			`  filter: opacity(0.999)${imp};\n` +
+			`  -webkit-print-color-adjust: exact${imp};\n` +
+			`  print-color-adjust: exact${imp};`;
 		// z-index: 0 scopes the ::before's -1 to the element's own stacking
 		// context, so it sits above the background-color but under text and
 		// icon. Both theme prefixes are grouped so this later rule wins over
@@ -1158,9 +1144,13 @@ export class CSSInjector {
 		// usual explicit-undefined cascade (unscoped light rule, dark
 		// override only when the gradient differs).
 		const hostProps = [
-			...(hideElementGradient ? ["  background-image: none;"] : []),
-			"  position: relative;",
-			"  z-index: 0;",
+			// Cancels the screen gradient at the SAME importance that declared
+			// it — these two rules tie on specificity and are resolved on source
+			// order, so an ordinary reset under an `!important` screen rule
+			// would leave both gradients painting in print.
+			...(hideElementGradient ? [`  background-image: none${imp};`] : []),
+			`  position: relative${imp};`,
+			`  z-index: 0${imp};`,
 		].join("\n");
 		const rules = [
 			`${selFor("", "")},\n${selFor(".theme-dark ", "")} {\n${hostProps}\n}`,
@@ -1186,7 +1176,7 @@ export class CSSInjector {
 		switch (role) {
 			case "regular":
 				// Obsidian's own DOM → dasherized attr; the two tokens are ours.
-				return `${calloutSel(id)} > .callout-title > .callout-icon`;
+				return `${this.sel(id)} > .callout-title > .callout-icon`;
 			case "heading":
 				return `.${CSS_HEADING_TOKEN}${tokenAttrSel(id)} > .${CSS_TOKEN_ICON}`;
 			case "inline":
@@ -1234,7 +1224,9 @@ export class CSSInjector {
 			if (isDefaultIconAdjust(adjust)) continue;
 
 			const extraY =
-				role === "heading" ? "var(--cs-heading-icon-offset, 0.1em)" : "";
+				role === "heading"
+					? "var(--cs-heading-icon-offset, 0.1em)"
+					: "";
 			const transforms: string[] = [];
 			if (adjust.offsetX !== 0 || adjust.offsetY !== 0 || extraY) {
 				const y = extraY
@@ -1244,10 +1236,11 @@ export class CSSInjector {
 			}
 			if (adjust.size !== 1) transforms.push(`scale(${adjust.size})`);
 
+			const imp = this.emitImportant;
 			parts.push(
 				`${this.iconTransformSelector(def.id, role)} {\n` +
-					`  transform: ${transforms.join(" ")};\n` +
-					`  transform-origin: center;\n` +
+					`  transform: ${transforms.join(" ")}${imp};\n` +
+					`  transform-origin: center${imp};\n` +
 					`}`,
 			);
 		}
@@ -1275,22 +1268,29 @@ export class CSSInjector {
 	 * is a fixed `calc(--icon-size + gap)` on `.callout-content` and knows nothing
 	 * about whether this callout has an icon to align past. Left standing it would
 	 * indent the body under empty space. One class-unit more specific than the
-	 * global rule (whose `:where()` exclusion suffix contributes zero), so it wins
-	 * on weight alone and needs no `!important`.
+	 * global rule (whose `:where()` exclusion suffix contributes zero), so it
+	 * beats it on weight alone.
+	 *
+	 * This is the one thing theme mode still emits, and there it stays ordinary:
+	 * the whole promise of theme mode is that nothing of ours competes, and a
+	 * theme that positions `.callout-icon` itself has to keep being able to.
+	 * Under studio mode it takes the same `!important` as everything else.
 	 */
 	private iconHiddenCSS(def: CalloutDefinition): string {
-		const aligned = this.registry.settings.globalStyle.alignContentWithTitle;
+		const aligned =
+			this.registry.settings.globalStyle.alignContentWithTitle;
+		const imp = this.emitImportant;
 		const parts: string[] = [];
 		for (const id of [def.id, ...(def.aliases ?? [])]) {
 			parts.push(
-				`${calloutSel(id)} > .callout-title > .callout-icon {\n` +
-					`  display: none;\n` +
+				`${this.sel(id)} > .callout-title > .callout-icon {\n` +
+					`  display: none${imp};\n` +
 					`}`,
 			);
 			if (aligned) {
 				parts.push(
-					`${calloutSel(id)} > .callout-content {\n` +
-						`  padding-inline-start: 0;\n` +
+					`${this.sel(id)} > .callout-content {\n` +
+						`  padding-inline-start: 0${imp};\n` +
 						`}`,
 				);
 			}
@@ -1298,149 +1298,7 @@ export class CSSInjector {
 		return parts.join("\n\n");
 	}
 
-	/**
-	 * Emit the live-view icon rule for a callout.
-	 *
-	 * Every library icon is a monochrome glyph, so it is drawn as a mask tinted
-	 * with the callout's colour. A picture the user supplied may be neither: a
-	 * mask is a stencil, and running a logo or a photograph through one throws
-	 * its colours away and leaves a silhouette. Those get a background image
-	 * instead — the same reasoning that already keeps emoji out of the mask path.
-	 */
-	private generateIconOverride(
-		calloutId: string,
-		icon: CalloutIcon,
-		svg: string,
-	): string {
-		const picture = userImageFor(icon);
-		if (picture && !followsCalloutColor(icon, picture)) {
-			return this.generateImageOverride(calloutId, svg, picture);
-		}
-		return this.generateIconMaskOverride(calloutId, svg, picture);
-	}
 
-	private getIconCSS(def: CalloutDefinition): string {
-		const pack = packFor(def.icon);
-		if (!pack) return "";
-		// Lucide is Obsidian's own set, so the stored id is already the value
-		// core CSS wants — emitted verbatim, and deliberately not put through
-		// `resolveLucideId` first. That repair asks whether an id is core
-		// Lucide, and this runs during plugin load, before a plugin that
-		// registered its own ids with `addIcon()` has necessarily loaded; a
-		// wrong answer here would be baked into the stylesheet *and* into the
-		// localStorage startup snapshot. `load()`'s migration has already
-		// repaired the stored value by this point, and the DOM pass
-		// (`paintIcons` → `renderIconInto`) resolves again at render time.
-		if (pack.kind === "builtin") return def.icon.value;
-		// Everything else needs a valid Lucide id as a placeholder
-		// --callout-icon so Obsidian renders *something* at first paint. The
-		// real glyph is then painted into the DOM by paintIcons (which also
-		// makes it survive PDF export).
-		return "lucide-pencil";
-	}
-
-	/**
-	 * Generates CSS that renders a pack icon via a mask-image ::after, for the
-	 * live (Reading view / Live Preview) rendering. Wrapped in `@media screen`
-	 * so it does NOT apply to PDF export (print media): there, the inline-SVG copy
-	 * baked into the DOM by paintIcons is shown instead, which is far more
-	 * reliable in Chromium's print pipeline than a CSS mask.
-	 *
-	 * The data URI is declared once into a custom property rather than repeated
-	 * for the prefixed and unprefixed mask properties. The whole stylesheet is
-	 * also written to localStorage on every inject (see StartupStyleCache), and
-	 * an inlined SVG is by far the largest thing in it, so halving each
-	 * occurrence is worth the indirection.
-	 */
-	private generateIconMaskOverride(
-		calloutId: string,
-		svg: string,
-		picture?: UserImageIcon,
-	): string {
-		const dataUri = svgToDataUri(svg);
-		const sel = calloutSel(calloutId);
-		return (
-			`@media screen {\n` +
-			`${sel} > .callout-title > .callout-icon > svg {\n` +
-			`  display: none;\n` +
-			`}\n` +
-			`${sel} > .callout-title > .callout-icon::after {\n` +
-			`  --cs-icon-mask: ${dataUri};\n` +
-			`  content: "";\n` +
-			`  display: inline-block;\n` +
-			`  width: ${iconBoxWidth(picture)};\n` +
-			`  height: var(--icon-size, 1.2em);\n` +
-			`  -webkit-mask-image: var(--cs-icon-mask);\n` +
-			`  mask-image: var(--cs-icon-mask);\n` +
-			`  -webkit-mask-size: contain;\n` +
-			`  mask-size: contain;\n` +
-			`  -webkit-mask-repeat: no-repeat;\n` +
-			`  mask-repeat: no-repeat;\n` +
-			`  background-color: var(--cs-accent);\n` +
-			`}\n` +
-			`}`
-		);
-	}
-
-	/**
-	 * Generates CSS that renders a user's picture via the icon element's
-	 * ::after, for live view — a background rather than a mask, so the picture
-	 * arrives with its own colours instead of as a one-colour stencil.
-	 *
-	 * Wrapped in `@media screen` like the mask and emoji rules, so PDF export
-	 * falls through to the DOM copy baked by paintIcons instead.
-	 */
-	private generateImageOverride(
-		calloutId: string,
-		svg: string,
-		picture: UserImageIcon,
-	): string {
-		const dataUri = svgToDataUri(svg);
-		const sel = calloutSel(calloutId);
-		return (
-			`@media screen {\n` +
-			`${sel} > .callout-title > .callout-icon > svg {\n` +
-			`  display: none;\n` +
-			`}\n` +
-			`${sel} > .callout-title > .callout-icon::after {\n` +
-			`  content: "";\n` +
-			`  display: inline-block;\n` +
-			`  width: ${iconBoxWidth(picture)};\n` +
-			`  height: var(--icon-size, 1.2em);\n` +
-			`  background-image: ${dataUri};\n` +
-			`  background-size: contain;\n` +
-			`  background-repeat: no-repeat;\n` +
-			`  background-position: center;\n` +
-			`}\n` +
-			`}`
-		);
-	}
-
-	/**
-	 * Generates CSS that renders an emoji glyph via the icon element's ::after,
-	 * for live view. Wrapped in `@media screen` so it does not apply to PDF export
-	 * (print): there the DOM <span> baked by paintIcons is shown instead. Emojis
-	 * keep their own colors, so no mask/background-color is applied.
-	 */
-	private generateEmojiOverride(calloutId: string, emoji: string): string {
-		// Defensive escaping for the CSS string literal (emojis contain neither
-		// backslashes nor quotes, but keep it safe against future data changes).
-		const safe = emoji.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-		const sel = calloutSel(calloutId);
-		return (
-			`@media screen {\n` +
-			`${sel} > .callout-title > .callout-icon > svg {\n` +
-			`  display: none;\n` +
-			`}\n` +
-			`${sel} > .callout-title > .callout-icon::after {\n` +
-			`  content: "${safe}";\n` +
-			`  display: inline-block;\n` +
-			`  font-size: var(--icon-size, 1.2em);\n` +
-			`  line-height: 1;\n` +
-			`}\n` +
-			`}`
-		);
-	}
 
 	/**
 	 * Walk rendered callouts and (re)apply DOM-level icon work.
@@ -1582,9 +1440,7 @@ export class CSSInjector {
 		if (!shouldRenderToken(resolved)) return;
 		const { def, unknown } = resolved;
 		if (!def) return;
-		const iconEl = tokenEl.querySelector<HTMLElement>(
-			`.${CSS_TOKEN_ICON}`,
-		);
+		const iconEl = tokenEl.querySelector<HTMLElement>(`.${CSS_TOKEN_ICON}`);
 		if (iconEl) {
 			// Heading tokens draw at heading size, inline callouts at callout size;
 			// packs with per-size artwork pick their drawing from that.
@@ -1626,9 +1482,9 @@ export class CSSInjector {
 	 * configured fallback callout so unknown IDs paint the fallback icon (the
 	 * DOM equivalent of generateFallbackCSS).
 	 *
-	 * Returns undefined for a callout marked `externalStyle`, which is the one
-	 * case where a *recognized* ID resolves to nothing: the caller's job is to
-	 * paint, and there is nothing of ours to paint there.
+	 * Returns undefined for a theme-styled callout, which is the one case where
+	 * a *recognized* ID resolves to nothing: the caller's job is to paint, and
+	 * there is nothing of ours to paint there.
 	 *
 	 * Only for `.callout[data-callout]` elements. Heading-bar and inline-pill
 	 * DOM is ours and carries the space-form ID; those go through
@@ -1638,14 +1494,11 @@ export class CSSInjector {
 	 */
 	private resolveDef(attrId: string): CalloutDefinition | undefined {
 		const direct = this.registry.findByAttrId(attrId);
-		// An externally styled callout resolves to nothing, which sends
-		// paintIcons down its restore path instead of its paint path. This
-		// matters even though no CSS is emitted for it: renderIconInto REPLACES
-		// the <svg> Obsidian (or the theme, via --callout-icon) already
-		// rendered, so continuing to paint would be the loudest possible way to
-		// keep interfering. Returned rather than skipped at the call site so the
-		// title-gradient sync goes quiet on the same check.
-		if (direct) return direct.externalStyle === true ? undefined : direct;
+		// A theme-styled callout resolves to nothing, sending paintIcons down its
+		// restore path: `renderIconInto` REPLACES whatever <svg> is in the slot,
+		// and swapping core's own icon for one of ours is exactly what theme
+		// mode exists not to do.
+		if (direct) return this.registry.standsDown(direct) ? undefined : direct;
 		return this.registry.get(this.registry.settings.fallbackCalloutId);
 	}
 
@@ -1653,8 +1506,8 @@ export class CSSInjector {
 	 * Prepare a `.callout-icon` for PDF export.
 	 *
 	 * Live view (Reading view / Live Preview = screen media) renders pack icons
-	 * and emoji via CSS `::after` (see generateIconMaskOverride /
-	 * generateEmojiOverride), which we wrap in `@media screen`. Here we bake a
+	 * and emoji via CSS `::after` (see css/iconOverrides.ts), which we wrap in
+	 * `@media screen`. Here we bake a
 	 * self-contained, concretely coloured copy of the icon into the DOM. The hide
 	 * rules are screen-only, so in PDF export (print media) those CSS icons
 	 * disappear and this DOM copy becomes the visible icon — an inline SVG / text
@@ -1738,9 +1591,12 @@ export class CSSInjector {
 	}
 
 	/**
-	 * Selector suffix that lifts every externally styled callout out of a rule
-	 * keyed on nothing but `.callout` — `""` when the user has handed none to
-	 * their theme.
+	 * Selector suffix that lifts every theme-styled callout out of a rule keyed
+	 * on nothing but `.callout` — `""` when the theme owns none of them.
+	 *
+	 * This is what makes the global frame settings (border, radius, text scale)
+	 * part of what "Callout Studio style" *means*: a callout handed to the theme
+	 * is handed over whole, geometry included.
 	 *
 	 * The `:where()` is the whole point. `:not()` normally takes the specificity
 	 * of its argument, so a plain `:not([data-callout="a"]):not([data-callout="b"])`
@@ -1755,7 +1611,7 @@ export class CSSInjector {
 	private externalExclusion(): string {
 		const attrIds = new Set<string>();
 		for (const def of this.registry.getAll()) {
-			if (def.externalStyle !== true) continue;
+			if (!this.registry.standsDown(def)) continue;
 			attrIds.add(obsidianCalloutAttrId(def.id));
 			for (const alias of def.aliases ?? []) {
 				attrIds.add(obsidianCalloutAttrId(alias));
@@ -1792,16 +1648,25 @@ export class CSSInjector {
 		// unconditionally, and a static rule has no way to exclude one the user
 		// handed to their theme. Emitted unconditionally here for the same reason
 		// it was static before — it is a default, not a setting.
+		//
+		// Every declaration below carries `!important`, and for the same reason
+		// the per-callout block does: these rules are keyed on `.callout` alone,
+		// which is the weakest selector in the file, so a theme with any opinion
+		// at all about callout geometry beat them outright. See
+		// manager/styleMode.ts. They stay *below* the per-callout rules among
+		// important declarations, because specificity is compared again there
+		// and `(0,1,0)` loses to `(0,w+1,0)`.
+		const imp = " !important";
 		parts.push(
 			`.callout${excl} > .callout-title > .callout-icon {\n` +
-				`  margin-inline-end: var(--cs-regular-icon-gap, 0.15em);\n` +
+				`  margin-inline-end: var(--cs-regular-icon-gap, 0.15em)${imp};\n` +
 				`}`,
 		);
 
 		const props: string[] = [];
 
 		if (gs.borderRadius !== 4) {
-			props.push(`  border-radius: ${gs.borderRadius}px;`);
+			props.push(`  border-radius: ${gs.borderRadius}px${imp};`);
 		}
 
 		// Border sides
@@ -1813,14 +1678,14 @@ export class CSSInjector {
 			`color-mix(in oklch, var(--cs-accent, currentColor) 45%, transparent)`;
 
 		if (allSides) {
-			props.push(`  border: ${bStyle};`);
+			props.push(`  border: ${bStyle}${imp};`);
 		} else if (anySide) {
 			// Reset any default border first
-			props.push(`  border: none;`);
-			if (top) props.push(`  border-top: ${bStyle};`);
-			if (right) props.push(`  border-right: ${bStyle};`);
-			if (bottom) props.push(`  border-bottom: ${bStyle};`);
-			if (left) props.push(`  border-left: ${bStyle};`);
+			props.push(`  border: none${imp};`);
+			if (top) props.push(`  border-top: ${bStyle}${imp};`);
+			if (right) props.push(`  border-right: ${bStyle}${imp};`);
+			if (bottom) props.push(`  border-bottom: ${bStyle}${imp};`);
+			if (left) props.push(`  border-left: ${bStyle}${imp};`);
 		}
 
 		// Every rule from here down is keyed on nothing but `.callout`, so each
@@ -1836,7 +1701,7 @@ export class CSSInjector {
 		if (gs.titleScale !== 1) {
 			parts.push(
 				`.callout${excl} > .callout-title > .callout-title-inner {\n` +
-					`  font-size: ${gs.titleScale}em;\n` +
+					`  font-size: ${gs.titleScale}em${imp};\n` +
 					`}`,
 			);
 		}
@@ -1845,7 +1710,7 @@ export class CSSInjector {
 		if (gs.contentScale !== 1) {
 			parts.push(
 				`.callout${excl} > .callout-content {\n` +
-					`  font-size: ${gs.contentScale}em;\n` +
+					`  font-size: ${gs.contentScale}em${imp};\n` +
 					`}`,
 			);
 		}
@@ -1860,7 +1725,7 @@ export class CSSInjector {
 		if (gs.alignContentWithTitle) {
 			parts.push(
 				`.callout${excl} > .callout-content {\n` +
-					`  padding-inline-start: calc(var(--icon-size, 1.2em) + 0.2em + var(--cs-regular-icon-gap, 0.15em));\n` +
+					`  padding-inline-start: calc(var(--icon-size, 1.2em) + 0.2em + var(--cs-regular-icon-gap, 0.15em))${imp};\n` +
 					`}`,
 			);
 		}
@@ -1898,9 +1763,7 @@ export class CSSInjector {
 			);
 		}
 		if (headingProps.length > 0 && !standalone) {
-			parts.push(
-				`.${CSS_HEADING_LINE} {\n${headingProps.join("\n")}\n}`,
-			);
+			parts.push(`.${CSS_HEADING_LINE} {\n${headingProps.join("\n")}\n}`);
 		}
 
 		// Inline-pill frame. Radius 16px ≈ the default 1em pill shape, so the
@@ -1953,236 +1816,26 @@ export class CSSInjector {
 	}
 
 	/**
-	 * Generates a CSS rule that applies the fallback callout's styles to any
-	 * callout whose data-callout ID is not explicitly defined.
-	 * Uses `:not()` selectors to exclude all known IDs/aliases.
+	 * The unknown-id catch-all. Lives in `./css/fallbackCSS.ts`; this hands it
+	 * the nine emitters it used to reach through `this`.
 	 */
 	private generateFallbackCSS(callouts: CalloutDefinition[]): string {
-		const fallbackId = this.registry.settings.fallbackCalloutId;
-		if (!fallbackId) return "";
-
-		const fallbackDef = callouts.find((c) => c.id === fallbackId);
-		if (!fallbackDef) return "";
-
-		// Collect the *attr-form* of every known callout ID and alias — the form
-		// Obsidian actually writes into `data-callout` on a block callout.
-		// A space-form `:not([data-callout="multi word callout"])` never excludes
-		// the element Obsidian tagged `multi-word-callout`, so the fallback rules
-		// below (which carry `!important`) would forcibly override that callout's
-		// real color and icon. A Set because two IDs can share one attr-form.
-		//
-		// The transient settings-preview definition is registered under its real
-		// ID, so it is already included here and thus excluded from the tint.
-		//
-		// An `externalStyle` row is included too, and that is load-bearing rather
-		// than an oversight: everything below carries `!important` at a
-		// specificity no theme can reach, so dropping such a row from this set
-		// would paint the callout *harder* than a normal one — the exact
-		// opposite of handing it to the theme. "Emit nothing for it" is achieved
-		// by generateCalloutCSS returning early, not by hiding it from here.
-		const knownAttrIds = new Set<string>();
-		for (const def of callouts) {
-			knownAttrIds.add(obsidianCalloutAttrId(def.id));
-			for (const alias of def.aliases ?? []) {
-				knownAttrIds.add(obsidianCalloutAttrId(alias));
-			}
-		}
-
-		const notSelectors = Array.from(knownAttrIds)
-			.map((id) => `:not(${tokenAttrSel(id)})`)
-			.join("");
-
-		// The fallback template drawn with no icon means every unknown id in the
-		// vault has none either — see iconHiddenCSS for what "no icon" costs. The
-		// rules here are the same two, rewritten for this selector: `!important`
-		// at a specificity the :not() chain already inflates past every
-		// per-callout rule, since that is the register the whole block speaks in.
-		const hidesIcon = fallbackDef.hideIcon === true;
-		const iconCSS = hidesIcon ? "" : this.getIconCSS(fallbackDef);
-
-		const parts: string[] = [
-			"/* Fallback callout style for unrecognized types */",
-		];
-		if (hidesIcon) {
-			parts.push(
-				`body .callout${notSelectors} > .callout-title > .callout-icon {\n` +
-					`  display: none !important;\n` +
-					`}`,
-			);
-			if (this.registry.settings.globalStyle.alignContentWithTitle) {
-				parts.push(
-					`body .callout${notSelectors} > .callout-content {\n` +
-						`  padding-inline-start: 0 !important;\n` +
-						`}`,
-				);
-			}
-		}
-
-		// Use `body` prefix + `!important` so the fallback wins over Obsidian's
-		// built-in callout color/icon definitions. The `:not()` chain makes this
-		// selector's specificity grow by one class-unit per known callout and
-		// alias — already (0,26,1) in a modest vault — so it outranks every
-		// per-callout rule on specificity alone, before the `!important` is even
-		// consulted. It also matches at any nesting depth, which is fine: the
-		// background it sets is a tint like every other, so nested unknown
-		// callouts still step.
-		const lightProps: string[] = [
-			...this.accentProps(fallbackDef, "light", true, true),
-		];
-		if (iconCSS)
-			lightProps.push(`  --callout-icon: ${iconCSS} !important;`);
-		lightProps.push(...this.bgProps(fallbackDef, "light", true));
-		// Same border pass the registered ids get, so an unknown id inherits a
-		// transparent fallback whole rather than as a frame with nothing in it.
-		if (fallbackDef.transparentBg) {
-			lightProps.push(...this.transparentBorderProps(true));
-		}
-		parts.push(
-			`body .callout${notSelectors} {\n${lightProps.join("\n")}\n}`,
-		);
-
-		if (this.needsDarkBlock(fallbackDef)) {
-			const darkProps: string[] = [
-				...this.accentProps(fallbackDef, "dark", true, true),
-			];
-			darkProps.push(...this.bgProps(fallbackDef, "dark", true));
-			parts.push(
-				`body.theme-dark .callout${notSelectors} {\n${darkProps.join("\n")}\n}`,
-			);
-		}
-
-		if (fallbackDef.textColorLight) {
-			parts.push(
-				`body .callout${notSelectors} > .callout-content {\n  color: ${fallbackDef.textColorLight} !important;\n}`,
-			);
-		}
-		if (
-			fallbackDef.textColorDark &&
-			fallbackDef.textColorDark !== fallbackDef.textColorLight
-		) {
-			parts.push(
-				`body.theme-dark .callout${notSelectors} > .callout-content {\n  color: ${fallbackDef.textColorDark} !important;\n}`,
-			);
-		}
-
-		// Pack icon override for fallback (live view; PDF uses the hidden DOM
-		// copy baked by paintIcons via resolveDef).
-		const fallbackSvg = hidesIcon
-			? null
-			: this.icons.resolveSvg(fallbackDef.icon, "regular");
-		if (fallbackSvg) {
-			const dataUri = svgToDataUri(fallbackSvg);
-			const picture = userImageFor(fallbackDef.icon);
-			const hide =
-				`body .callout${notSelectors} > .callout-title > .callout-icon > svg {\n  display: none !important;\n}\n`;
-			const box =
-				`body .callout${notSelectors} > .callout-title > .callout-icon::after {\n` +
-				`  content: "";\n` +
-				`  display: inline-block;\n` +
-				`  width: ${iconBoxWidth(picture)};\n` +
-				`  height: var(--icon-size, 1.2em);\n`;
-			// A picture that keeps its own colours is painted, not stencilled —
-			// same split as generateIconOverride, which this mirrors for the
-			// unknown-id fallback.
-			const paint =
-				picture && !followsCalloutColor(fallbackDef.icon, picture)
-					? `  background-image: ${dataUri} !important;\n` +
-						`  background-size: contain;\n` +
-						`  background-repeat: no-repeat;\n` +
-						`  background-position: center;\n`
-					: `  --cs-icon-mask: ${dataUri};\n` +
-						`  -webkit-mask-image: var(--cs-icon-mask) !important;\n` +
-						`  mask-image: var(--cs-icon-mask) !important;\n` +
-						`  -webkit-mask-size: contain;\n` +
-						`  mask-size: contain;\n` +
-						`  -webkit-mask-repeat: no-repeat;\n` +
-						`  mask-repeat: no-repeat;\n` +
-						`  background-color: var(--cs-accent) !important;\n`;
-			parts.push(`@media screen {\n${hide}${box}${paint}}\n}`);
-		}
-
-		// Emoji icon override for fallback (live view).
-		if (!hidesIcon && fallbackDef.icon.type === "emoji") {
-			const safe = fallbackDef.icon.value
-				.replace(/\\/g, "\\\\")
-				.replace(/"/g, '\\"');
-			parts.push(
-				`@media screen {\n` +
-					`body .callout${notSelectors} > .callout-title > .callout-icon > svg {\n  display: none !important;\n}\n` +
-					`body .callout${notSelectors} > .callout-title > .callout-icon::after {\n` +
-					`  content: "${safe}";\n` +
-					`  display: inline-block;\n` +
-					`  font-size: var(--icon-size, 1.2em);\n` +
-					`  line-height: 1;\n` +
-					`}\n` +
-					`}`,
-			);
-		}
-
-		// Unknown heading/inline tokens: the token renderer tags unresolved ids
-		// with .cs-unknown, so a plain class rule suffices — no :not() chain.
-		parts.push(
-			`.${CSS_INLINE_TOKEN}.${CSS_UNKNOWN}, .${CSS_HEADING_LINE}.${CSS_UNKNOWN}, .${CSS_REF_TOKEN}.${CSS_UNKNOWN} {\n${this.ownAccentProps(fallbackDef, "light").join("\n")}\n}`,
-		);
-		if (fallbackDef.colorLight !== fallbackDef.colorDark) {
-			parts.push(
-				`.theme-dark .${CSS_INLINE_TOKEN}.${CSS_UNKNOWN}, .theme-dark .${CSS_HEADING_LINE}.${CSS_UNKNOWN}, .theme-dark .${CSS_REF_TOKEN}.${CSS_UNKNOWN} {\n${this.ownAccentProps(fallbackDef, "dark").join("\n")}\n}`,
-			);
-		}
-
-		// Fallback background (solid OR gradient) on unknown heading callouts /
-		// inline callouts, mirroring generateTokenColorCSS for registered ids so all
-		// three roles share one background (ref tokens have no surface to paint).
-		// The .cs-unknown class doubles the class count, so this outranks the
-		// static styles.css tint without !important. bgProps emits nothing when
-		// the fallback has no custom bg, leaving the static tint in place.
-		const unknownBgSelectors = (themePrefix: string): string =>
-			`${themePrefix}.${CSS_INLINE_TOKEN}.${CSS_UNKNOWN}, ` +
-			`${themePrefix}.${CSS_HEADING_LINE}.${CSS_UNKNOWN}`;
-		const unknownLightBg = this.bgProps(fallbackDef, "light");
-		if (unknownLightBg.length > 0) {
-			parts.push(
-				`${unknownBgSelectors("")} {\n${unknownLightBg.join("\n")}\n}`,
-			);
-		}
-		const unknownDarkBg = this.bgProps(fallbackDef, "dark");
-		if (
-			unknownDarkBg.length > 0 &&
-			unknownDarkBg.join("") !== unknownLightBg.join("")
-		) {
-			parts.push(
-				`${unknownBgSelectors(".theme-dark ")} {\n${unknownDarkBg.join("\n")}\n}`,
-			);
-		}
-		// Only gradient backgrounds need the PDF-export ::before repaint; the
-		// method returns "" for solid backgrounds. Mirrors the known-id calls:
-		// pill hides its own gradient in print, block roles keep theirs.
-		const unknownPillPrint = this.printGradientCSS(
-			fallbackDef,
-			(themePrefix, suffix) =>
-				`${themePrefix}.${CSS_INLINE_TOKEN}.${CSS_UNKNOWN}${suffix}`,
-			true,
-		);
-		if (unknownPillPrint) parts.push(unknownPillPrint);
-		const unknownHeadingPrint = this.printGradientCSS(
-			fallbackDef,
-			(themePrefix, suffix) =>
-				`${themePrefix}.${CSS_HEADING_LINE}.${CSS_UNKNOWN}${suffix}`,
-			false,
-		);
-		if (unknownHeadingPrint) parts.push(unknownHeadingPrint);
-		// Unknown block callouts: the fallback tint carries the gradient too,
-		// so it needs the same Preview-safe raster repaint. The selector mirrors
-		// the fallback rules above (`body` prefix + :not() list).
-		const unknownCalloutPrint = this.printGradientCSS(
-			fallbackDef,
-			(themePrefix, suffix) =>
-				`body${themePrefix ? ".theme-dark" : ""} .callout${notSelectors}${suffix}`,
-			false,
-		);
-		if (unknownCalloutPrint) parts.push(unknownCalloutPrint);
-
-		return parts.join("\n\n");
+		return generateFallbackCSS(callouts, {
+			settings: this.registry.settings,
+			standsDown: (def) => this.registry.standsDown(def),
+			resolveSvg: (icon, role) => this.icons.resolveSvg(icon, role),
+			getIconCSS: (def) => calloutIconProp(def),
+			accentProps: (def, mode, important, imposed) =>
+				this.accentProps(def, mode, important, imposed),
+			ownAccentProps: (def, mode) => this.ownAccentProps(def, mode),
+			bgProps: (def, mode, important) =>
+				this.bgProps(def, mode, important),
+			transparentBorderProps: (important) =>
+				this.transparentBorderProps(important),
+			needsDarkBlock: (def) => this.needsDarkBlock(def),
+			printGradientCSS: (def, selector, isPill) =>
+				this.printGradientCSS(def, selector, isPill),
+		});
 	}
 
 	destroy(): void {

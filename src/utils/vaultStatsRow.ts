@@ -20,8 +20,7 @@
 import { setIcon } from "obsidian";
 import { t } from "../i18n";
 import { normalizeCalloutId } from "./calloutId";
-import { renderIconInto, renderNoIcon } from "../icons/renderIcon";
-import { createIconResolver } from "../icons/resolver";
+import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import { resolveCalloutDef } from "../editor/renderShared";
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
@@ -103,37 +102,27 @@ function rowNote(row: StatsRow): string | null {
 }
 
 /**
- * The row's accent, or null when there is nothing authored to accent with — an
- * undefined id borrows the fallback's *drawing* but must not borrow its colour,
- * or it would read as a callout the user set up.
+ * Draw the row's icon and return its accent, or null when there is nothing to
+ * accent with — an undefined id borrows the fallback's *drawing* but must not
+ * borrow its colour, or it would read as a callout the user set up.
+ *
+ * Both halves go through `paintCalloutListIcon`, so a callout the theme owns is
+ * listed here wearing the theme's icon and colour rather than the pair stored
+ * on its row. This surface had no ownership check at all before.
  */
-function accentFor(row: StatsRow): string | null {
-	if (row.undefinedId || !row.def) return null;
-	return activeDocument.body.classList.contains("theme-dark")
-		? row.def.colorDark
-		: row.def.colorLight;
-}
-
 function renderRowIcon(
 	iconEl: HTMLElement,
 	row: StatsRow,
 	registry: CalloutRegistry,
-): void {
+): string | null {
 	const def = row.def;
 	if (!def) {
 		setIcon(iconEl, "circle-help");
-		return;
+		return null;
 	}
-	if (def.hideIcon === true) {
-		renderNoIcon(iconEl);
-		return;
-	}
-	renderIconInto(iconEl, def.icon, createIconResolver(registry), {
-		role: "regular",
-		fill: "currentColor",
-		missing: { kind: "placeholder", lucideId: "pencil" },
-		errorText: "?",
-	});
+	const isDark = activeDocument.body.classList.contains("theme-dark");
+	const accent = paintCalloutListIcon(iconEl, def, registry, isDark);
+	return row.undefinedId ? null : accent;
 }
 
 /**
@@ -173,14 +162,15 @@ export function renderStatsTypeRow(
 	deps: StatsRowDeps,
 ): void {
 	const { entry } = row;
-	const accent = accentFor(row);
 	const rowEl = containerEl.createDiv({ cls: "cs-vault-stats-row" });
 
 	const typeEl = rowEl.createDiv({ cls: "cs-vault-stats-type" });
 	const iconEl = typeEl.createSpan({ cls: "cs-vault-stats-type-icon" });
+	// Drawn first: the icon and its accent are one decision now, so the row
+	// cannot end up with one callout's drawing and another's colour.
+	const accent = renderRowIcon(iconEl, row, deps.registry);
 	if (accent) iconEl.style.color = accent;
 	else iconEl.addClass("is-unknown");
-	renderRowIcon(iconEl, row, deps.registry);
 	// The id itself, which the cell's own header calls "Type" and which the
 	// report never showed — leaving an unresolved row with no way to tell WHICH
 	// `[!…]` the count belonged to. It also stands in for the display name the

@@ -64,6 +64,15 @@ export const zh: Record<string, string> = {
 	"deleteModal.deleteInUse": "删除（转为纯文本）",
 	"deleteModal.deleteUnused": "删除 callout",
 
+	// The variant for a callout whose definition Callout Studio cannot remove:
+	// one of Obsidian's built-ins, or a type the active theme declares.
+	"deleteModal.titleKeep": '清除所有 "{{name}}" 的使用？',
+	"deleteModal.keepsRowBuiltIn":
+		"这是 Obsidian 的内置 callout 之一，因此该类型本身仍可用——只有它在您笔记中的使用会改变。",
+	"deleteModal.keepsRowTheme":
+		"{{theme}} 定义了此 callout 类型，因此它仍可用并保留其外观。Callout Studio 只更改您库中的笔记——不会触及任何属于您主题的内容。",
+	"deleteModal.clearUsages": "清除使用（转换为纯文本）",
+
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "我的 callout 类型",
 	"settings.builtInCallouts": "内置 callout",
@@ -96,9 +105,24 @@ export const zh: Record<string, string> = {
 	"settings.makeFallbackAction": "使用默认回退样式",
 
 	"settings.colorSwatchAria": "强调色：{{accent}} · 背景：{{bg}}",
-	"settings.externalStyleTag": "外部样式",
-	"settings.externalStyleAction": "使用外部样式（主题或 CSS）",
-	"settings.externalStyleBlocked": "这是默认的后备 callout，请先选择其他一个",
+
+	// Handing a callout to the user's own CSS. Not a statement about the theme —
+	// that is derived and has no action — so the wording names the snippet.
+	"settings.externalCssAction": "用我自己的 CSS 设置样式",
+	"settings.externalCssStopAction": "让 Callout Studio 重新为此设置样式",
+	// The one label on any row: a callout sitting among the user's own that
+	// Callout Studio has nonetheless stopped painting.
+	"settings.externalCssTag": "外部 CSS",
+	// Settings — callouts the active theme styles
+	"settings.themeCalloutsHeading": "来自主题的 callout",
+	"settings.themeCalloutsDesc":
+		"{{theme}} 提供或重新设置了这些 callout 的样式，因此 Callout Studio 完全按照主题绘制的样子保留它们，并仅将它们作为 Block callout 提供。这里会显示两种情况：主题添加的 callout 类型，以及主题替换了外观的内置 callout。主题添加的 callout 类型仅在该主题启用时列出。",
+	"settings.themeCalloutsDefaultTheme": "您的主题",
+	"settings.themePreviewAria": '预览 "{{name}}" — 查看您的主题如何绘制它',
+	"settings.clearUsesAction": "清除笔记中的使用",
+	"settings.builtInAllThemeStyled":
+		"{{theme}} 重新设置了每个内置 callout 的样式，因此它们全部列在上方，Callout Studio 不会干预它们。要设计您自己的样式，请添加一个使用不同 ID 的 callout。",
+
 	"settings.fallbackCallout": "默认回退 callout",
 	"settings.fallbackCalloutDesc":
 		"库中无法识别的 callout 类型将继承此 callout 的样式。",
@@ -182,6 +206,11 @@ export const zh: Record<string, string> = {
 	"commandBuilder.noCallouts": "目前还没有可用于创建命令的 callout 类型。",
 	"commandBuilder.save": "保存",
 
+	"commandBuilder.roleThemeOwned":
+		"您的主题提供了此 callout，因此它只有 Block 格式。",
+	"commandBuilder.commandSuspended":
+		"已暂停：您的主题提供了此 callout，因此它只有 Block 格式。当主题不再提供它时，此命令将重新生效。",
+
 	"settings.vaultMaintenance": "库洞察与维护",
 	"settings.vaultStats": "Callout 统计",
 	"settings.vaultStatsDesc":
@@ -209,9 +238,11 @@ export const zh: Record<string, string> = {
 	"notice.noNewJSON": "未导入新的 callout 类型（ID 可能已存在）。",
 	"notice.iconDownloadFailed":
 		'无法下载 Material 图标"{{name}}"。该图标可能不支持此样式/字重，或您的网络连接已断开。',
-	"notice.externalStyleOn":
-		'"{{name}}" 现在由你的主题或 CSS 代码片段设置样式。',
-	"notice.externalStyleOff": 'Callout Studio 重新为 "{{name}}" 设置样式。',
+
+	"notice.externalCssOn":
+		'Callout Studio 不再为 "{{name}}" 设置样式——由您自己的 CSS 决定它的外观。它的标题 callout 和行内 callout 形式将不会渲染。',
+	"notice.externalCssOff": 'Callout Studio 现在再次为 "{{name}}" 设置样式。',
+
 	"notice.nothingToWrap": "没有可包裹的内容。",
 	"notice.cursorNotInsideCallout": "光标不在 callout 内部。",
 	"notice.autocompleteTargetMoved":
@@ -273,6 +304,12 @@ export const zh: Record<string, string> = {
 	"editor.idConflict": "此 ID 与现有 callout 冲突",
 	"editor.idDashConflict":
 		'Obsidian 会将空格写为连字符，因此此 ID 与 "{{other}}" 冲突',
+
+	"editor.idFromTheme":
+		"{{theme}} 已经提供了具有此 ID 的 callout，因此 Callout Studio 无法为其设置样式。请选择其他 ID。",
+	"editor.idThemePattern":
+		"提示：您的主题会为每个匹配 {{pattern}} 的 callout 设置样式，因此它可能会覆盖此 callout 的外观。",
+
 	"editor.untitledCallout": "未命名 Callout",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet，consectetur adipiscing elit。",
@@ -281,25 +318,20 @@ export const zh: Record<string, string> = {
 	"editor.sampleInlineText": "这是一个嵌入在段落中的行内 [!{id}] 徽标。",
 	"editor.previewReadOnly": "实时预览无法编辑",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleTitle": "在 Callout Studio 之外设置了样式",
-	"editor.externalStyleBody":
-		"Callout Studio 没有对 {{id}} 应用任何样式。它的外观来自你的主题、CSS 代码片段或 Obsidian 的默认设置。",
-	"editor.externalStyleWhat": "这意味着什么",
-	"editor.externalStyleWhatHeading":
-		"像 ## [!{{id}}] 标题 这样的标题 callout 不会被渲染——文本将保持原样。",
-	"editor.externalStyleWhatInline":
-		"行内 callout 也是如此，例如 单词 [!{{id}}] 单词。",
-	"editor.externalStyleWhatGlobal":
-		"全局样式设置（边框、圆角、文字大小）不适用于它。",
-	"editor.externalStylePreviewTitle": "现在的渲染方式",
-	"editor.externalStyleSample":
-		"## [!{{id}}] 标题\n\n" +
-		"这是包含 [!{{id}}] 的句子的样子。\n\n" +
+	// Theme callout preview window — opens instead of the editor for a callout
+	// the active theme supplies or restyles.
+	"themePreview.title": '{{name}} — 由您的主题提供',
+	"themePreview.owned":
+		'{{theme}} 提供并设置了 "{{name}}" 的样式。Callout Studio 不会覆盖它，因此其 Block callout 的外观与您主题绘制的完全一致。',
+	"themePreview.readOnly":
+		"这意味着它的颜色、图标、名称和 ID 在此处无法更改。如果您想要自己的设计，请创建一个使用不同 ID 的新 callout。",
+	"themePreview.blockOnly":
+		"标题和行内格式不适用于您主题提供的 callout。Block callout 使用主题的原生样式。",
+	"themePreview.previewTitle": "当前的渲染效果",
+	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
-		"> 这是 callout 内容的样子。\n",
-	"editor.externalStyleResume": "恢复样式",
+		"> 这是该 callout 内容的显示效果。\n",
+
 	"editor.externalStyleClose": "知道了",
 
 	// Palette editor modal
@@ -587,7 +619,9 @@ export const zh: Record<string, string> = {
 
 	"heading.toggleFold": "切换折叠",
 
-	"settings.globalSettings": "全局设置",
+	"settings.globalSettings": "Callout Studio 样式选项",
+	"settings.globalSettingsScope":
+		"Callout Studio 所设置样式的 callout 的形状、间距和大小。您主题设置样式的 callout 保留主题自身的设计。",
 	"settings.globalSettingsRegularDesc":
 		"在引用块中添加 callout 标记（例如 `> [!type]`）以显示为 Obsidian 原生的 callout 框。您可以调整其边框、圆角、字体缩放和对齐方式。",
 	"settings.globalSettingsHeadingDesc":
@@ -885,4 +919,8 @@ export const zh: Record<string, string> = {
 	"export.formatCss": "CSS 片段",
 	"export.formatCssDesc":
 		"保存在此 vault 的 snippets 文件夹中的 .css 文件，可在未安装 Callout Studio 的地方使用。仅涵盖普通 callout，是一个快照；更改 callout 后请重新导出。",
+	"quickInsert.readingViewHint": "此笔记以阅读模式打开，因此无法插入任何内容。",
+	"quickInsert.readingView": "切换到源代码模式或实时预览以插入 callout。",
+	"quickInsert.noCursorHint": "此笔记中没有光标，因此没有可插入的位置。",
+	"quickInsert.noCursor": "在笔记中将光标放在要插入 callout 的位置，然后重试。",
 };

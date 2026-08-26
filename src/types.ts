@@ -292,32 +292,22 @@ export interface CalloutDefinition {
 	 */
 	customized?: boolean;
 	/**
-	 * Hand this callout to the active theme, a CSS snippet, or Obsidian's own
-	 * defaults: Callout Studio emits no CSS for it and renders no DOM for it.
+	 * Style this callout with your own CSS: Callout Studio emits nothing for it
+	 * and the user's snippet, or plain Obsidian, decides how it looks.
 	 *
-	 * It exists because the plugin otherwise always wins. The generated CSS is
-	 * written to `document.adoptedStyleSheets`, which the cascade orders *after*
-	 * every `<link>`/`<style>` in the document tree — and a theme and a snippet
-	 * are both ordinary document stylesheets. So at the equal specificity both
-	 * sides naturally write (`.callout[data-callout="x"]`, `(0,2,0)`), we win
-	 * every tie and load order cannot save them. This flag is the only opt-out.
+	 * Deliberately **not** a statement about the theme. Whether the active theme
+	 * owns a callout is derived by `CalloutRegistry.themeOwns` from the theme's
+	 * own stylesheet and is not the user's to set; this flag is the separate,
+	 * user-chosen "I handle this one myself" that keeps such a row in the user's
+	 * own section wearing an *External CSS* label.
 	 *
-	 * "No styling" is broader than dropping the per-callout block, so three
-	 * other paths check it too: the id-blind global rules exclude it by selector
-	 * (`CSSInjector.externalExclusion`), `CSSInjector.paintIcons` skips it (for
-	 * a Lucide icon it would otherwise replace the SVG Obsidian itself
-	 * rendered), and the heading-bar / inline-pill / ref-token surfaces render
-	 * nothing at all (`resolveCalloutDef`'s `external` flag) — those are the
-	 * plugin's own syntax, so there is no external styling for them to fall back
-	 * to and a half-painted token would just look broken.
-	 *
-	 * The row deliberately stays in the registry. `CSSInjector.generateFallbackCSS`
-	 * builds its `:not()` chain from every *known* id, so dropping this one from
-	 * the registry would hand it to a rule carrying `!important` at a
-	 * specificity no theme can beat — the exact opposite of the intent.
+	 * "No styling" is broader than dropping the per-callout block, so several
+	 * paths check it — always through `CalloutRegistry.standsDown`, never off
+	 * this field, because a theme-owned callout gets no CSS either without ever
+	 * carrying it.
 	 *
 	 * Typed `true` rather than `boolean` for the same reason as
-	 * {@link transparentBg}: `CalloutRegistry.isModified` compares
+	 * {@link transparentBg}: `isCalloutModified` compares
 	 * `JSON.stringify(value ?? null)`, so an explicit `false` would read as a
 	 * modification. `CalloutRegistry.setExternalStyle` is the only writer and
 	 * deletes the key rather than writing `false`.
@@ -736,6 +726,16 @@ export interface PluginSettings {
 	inlineCallouts: InlineCalloutSettings;
 	/** Has the first-run vault scan been completed? */
 	firstRunCompleted?: boolean;
+	/**
+	 * Callout IDs that were supplied by a theme which no longer supplies them.
+	 *
+	 * Vault-local bookkeeping, not a preference: it stops automatic discovery
+	 * re-creating a theme's callout type as a fallback row the moment the theme
+	 * is switched away from, just because notes still use the ID. Explicit
+	 * creation is unaffected, and a user-requested vault scan clears it. See
+	 * `manager/theme/retiredThemeIds.ts`.
+	 */
+	retiredThemeIds: string[];
 	/** Has the welcome/splash screen been shown at least once? */
 	welcomeSeen?: boolean;
 	/** Callout ID to use as fallback for unrecognized callout types. Empty = Obsidian default */

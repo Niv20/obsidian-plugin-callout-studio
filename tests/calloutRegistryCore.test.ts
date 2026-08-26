@@ -291,7 +291,7 @@ describe("toSaveData() — what reaches data.json", () => {
 
 	it("stamps the current data version", () => {
 		const { registry } = loaded(null);
-		assert.strictEqual(registry.toSaveData().version, 3);
+		assert.strictEqual(registry.toSaveData().version, 4);
 	});
 
 	it("always writes settings, even with nothing else to write", () => {

@@ -4,16 +4,21 @@
  * Four emitters and one selector table, and the split between them is the whole
  * design:
  *
- * - **`generateIconMaskOverride`** — the default. Every library icon is a
+ * - **`iconMaskOverrideCSS`** — the default. Every library icon is a
  *   monochrome glyph, so it is drawn as a mask tinted with the callout's colour.
- * - **`generateImageOverride`** — a picture the user supplied may be neither
+ * - **`imageOverrideCSS`** — a picture the user supplied may be neither
  *   monochrome nor a glyph. A mask is a stencil: running a logo or a photograph
  *   through one throws its colours away and leaves a silhouette. Those get a
  *   `background-image` instead. Same reasoning that already keeps emoji out of
  *   the mask path.
- * - **`generateEmojiOverride`** — emoji carry their own colours, so no mask and
+ * - **`emojiOverrideCSS`** — emoji carry their own colours, so no mask and
  *   no `background-color`.
- * - **`generateIconOverride`** — the router between the first two.
+ * - **`iconOverrideCSS`** — the router between the first two.
+ *
+ * The three take a finished selector rather than a callout id: they are shared
+ * by every style mode, and the mode is what decides how heavy that selector is
+ * (see `manager/styleMode.ts`). Passing `calloutSel(id)` here is the weight-1
+ * form every mode but force emits.
  *
  * All three ::after rules are wrapped in `@media screen`, and that is not
  * decoration: PDF export drops the adopted stylesheet, so in print the CSS icon
@@ -38,6 +43,14 @@ import {
 	valueOf,
 } from "./support/cssInjectorHarness";
 import { readRepoFile } from "./support/sourceScan";
+import {
+	emojiOverrideCSS,
+	iconMaskOverrideCSS,
+	iconOverrideCSS,
+	imageOverrideCSS,
+} from "../src/manager/css/iconOverrides";
+import { calloutIconProp } from "../src/manager/css/calloutIconProp";
+import { calloutSel } from "../src/utils/calloutSelector";
 import { CALLOUT_RENDER_ROLES } from "../src/types";
 import type { CalloutDefinition, UserImageIcon } from "../src/types";
 
@@ -64,9 +77,16 @@ function picture(over: Partial<UserImageIcon> = {}): UserImageIcon {
 	};
 }
 
-describe("getIconCSS — the --callout-icon placeholder", () => {
+/**
+ * A thin alias kept so the suite below reads as testing "what goes in
+ * `--callout-icon` for this callout" rather than a bare import.
+ */
+function iconProp(def: CalloutDefinition): string {
+	return calloutIconProp(def);
+}
+
+describe("calloutIconProp — the --callout-icon value", () => {
 	it("emits Lucide's id verbatim, without re-resolving it", () => {
-		const { css } = harness();
 		// Lucide is Obsidian's own set, so the stored id is already what core CSS
 		// wants. Deliberately NOT put through `resolveLucideId` first: that
 		// repair asks whether an id is core Lucide, and this runs during plugin
@@ -74,13 +94,12 @@ describe("getIconCSS — the --callout-icon placeholder", () => {
 		// necessarily loaded. A wrong answer here would be baked into the
 		// stylesheet AND into the localStorage startup snapshot.
 		assert.strictEqual(
-			css.getIconCSS(definition({ icon: { type: "lucide", value: "lucide-star" } })),
+			iconProp(definition({ icon: { type: "lucide", value: "lucide-star" } })),
 			"lucide-star",
 		);
 	});
 
 	it("hands every other pack a valid Lucide placeholder", () => {
-		const { css } = harness();
 		// So Obsidian renders *something* at first paint; the real glyph is
 		// painted into the DOM by paintIcons, which is also what makes it survive
 		// PDF export.
@@ -90,7 +109,7 @@ describe("getIconCSS — the --callout-icon placeholder", () => {
 			{ type: "tabler-outline" as const, value: "star" },
 		]) {
 			assert.strictEqual(
-				css.getIconCSS(definition({ icon })),
+				iconProp(definition({ icon })),
 				"lucide-pencil",
 				`${icon.type} should fall back to the placeholder`,
 			);
@@ -98,9 +117,8 @@ describe("getIconCSS — the --callout-icon placeholder", () => {
 	});
 
 	it("emits nothing for an icon type no pack claims", () => {
-		const { css } = harness();
 		assert.strictEqual(
-			css.getIconCSS(
+			iconProp(
 				definition({
 					icon: { type: "not-a-pack", value: "x" } as never,
 				}),
@@ -110,10 +128,9 @@ describe("getIconCSS — the --callout-icon placeholder", () => {
 	});
 });
 
-describe("generateIconMaskOverride — the default path", () => {
+describe("iconMaskOverrideCSS — the default path", () => {
 	it("hides core's own <svg> and paints an ::after in the accent", () => {
-		const { css } = harness();
-		const out = css.generateIconMaskOverride("quiet", SVG);
+		const out = iconMaskOverrideCSS(calloutSel("quiet"), SVG);
 		const hide = ruleFor(
 			out,
 			'.callout[data-callout="quiet"] > .callout-title > .callout-icon > svg',
@@ -130,16 +147,14 @@ describe("generateIconMaskOverride — the default path", () => {
 	});
 
 	it("lives inside @media screen, so print falls through to the DOM copy", () => {
-		const { css } = harness();
-		for (const rule of parseRules(css.generateIconMaskOverride("quiet", SVG))) {
+		for (const rule of parseRules(iconMaskOverrideCSS(calloutSel("quiet"), SVG))) {
 			assert.deepStrictEqual(rule.at, ["@media screen"]);
 		}
 	});
 
 	it("declares the data URI once, into a custom property", () => {
-		const { css } = harness();
 		const after = ruleFor(
-			css.generateIconMaskOverride("quiet", SVG),
+			iconMaskOverrideCSS(calloutSel("quiet"), SVG),
 			'.callout[data-callout="quiet"] > .callout-title > .callout-icon::after',
 		);
 		// The whole stylesheet is written to localStorage on every inject and an
@@ -155,9 +170,8 @@ describe("generateIconMaskOverride — the default path", () => {
 	});
 
 	it("keeps both the prefixed and unprefixed spellings of every mask property", () => {
-		const { css } = harness();
 		const after = ruleFor(
-			css.generateIconMaskOverride("quiet", SVG),
+			iconMaskOverrideCSS(calloutSel("quiet"), SVG),
 			'.callout[data-callout="quiet"] > .callout-title > .callout-icon::after',
 		);
 		for (const prop of ["mask-image", "mask-size", "mask-repeat"]) {
@@ -167,11 +181,10 @@ describe("generateIconMaskOverride — the default path", () => {
 	});
 
 	it("keeps the box square for a square picture and for no picture at all", () => {
-		const { css } = harness();
 		const square = "var(--icon-size, 1.2em)";
 		for (const arg of [undefined, picture({ width: 24, height: 24 })]) {
 			const after = ruleFor(
-				css.generateIconMaskOverride("quiet", SVG, arg),
+				iconMaskOverrideCSS(calloutSel("quiet"), SVG, arg),
 				'.callout[data-callout="quiet"] > .callout-title > .callout-icon::after',
 			);
 			assert.strictEqual(valueOf(after, "width"), square);
@@ -180,14 +193,12 @@ describe("generateIconMaskOverride — the default path", () => {
 	});
 
 	it("widens the box for a wide picture rather than shrinking its height", () => {
-		const { css } = harness();
 		// `contain` inside a square box shrinks a wide logo until its WIDTH fits,
 		// so a 3:1 banner would render a third of the height of every other
 		// callout's icon. Widening keeps the height constant, which is what makes
 		// a row of callouts line up.
 		const after = ruleFor(
-			css.generateIconMaskOverride(
-				"quiet",
+			iconMaskOverrideCSS(calloutSel("quiet"),
 				SVG,
 				picture({ width: 90, height: 30 }),
 			),
@@ -201,11 +212,10 @@ describe("generateIconMaskOverride — the default path", () => {
 	});
 
 	it("clamps a pathological aspect ratio at 4:1 in both directions", () => {
-		const { css } = harness();
 		const read = (w: number, h: number) =>
 			valueOf(
 				ruleFor(
-					css.generateIconMaskOverride("quiet", SVG, picture({ width: w, height: h })),
+					iconMaskOverrideCSS(calloutSel("quiet"), SVG, picture({ width: w, height: h })),
 					'.callout[data-callout="quiet"] > .callout-title > .callout-icon::after',
 				),
 				"width",
@@ -216,20 +226,18 @@ describe("generateIconMaskOverride — the default path", () => {
 	});
 
 	it("ignores a picture with no usable height", () => {
-		const { css } = harness();
 		const after = ruleFor(
-			css.generateIconMaskOverride("quiet", SVG, picture({ height: 0 })),
+			iconMaskOverrideCSS(calloutSel("quiet"), SVG, picture({ height: 0 })),
 			'.callout[data-callout="quiet"] > .callout-title > .callout-icon::after',
 		);
 		assert.strictEqual(valueOf(after, "width"), "var(--icon-size, 1.2em)");
 	});
 });
 
-describe("generateImageOverride — a picture keeps its own colours", () => {
+describe("imageOverrideCSS — a picture keeps its own colours", () => {
 	it("paints a background-image instead of a mask", () => {
-		const { css } = harness();
 		const after = ruleFor(
-			css.generateImageOverride("quiet", SVG, picture()),
+			imageOverrideCSS(calloutSel("quiet"), SVG, picture()),
 			'.callout[data-callout="quiet"] > .callout-title > .callout-icon::after',
 		);
 		assert.ok(valueOf(after, "background-image")?.startsWith('url("data:'));
@@ -241,20 +249,18 @@ describe("generateImageOverride — a picture keeps its own colours", () => {
 	});
 
 	it("is screen-scoped like the mask rule", () => {
-		const { css } = harness();
 		for (const rule of parseRules(
-			css.generateImageOverride("quiet", SVG, picture()),
+			imageOverrideCSS(calloutSel("quiet"), SVG, picture()),
 		)) {
 			assert.deepStrictEqual(rule.at, ["@media screen"]);
 		}
 	});
 });
 
-describe("generateIconOverride — the router", () => {
+describe("iconOverrideCSS — the router", () => {
 	it("stencils a library icon", () => {
-		const { css } = harness();
-		const out = css.generateIconOverride(
-			"quiet",
+		const out = iconOverrideCSS(
+			calloutSel("quiet"),
 			{ type: "lucide", value: "lucide-star" },
 			SVG,
 		);
@@ -262,10 +268,10 @@ describe("generateIconOverride — the router", () => {
 	});
 
 	it("stencils a user picture the callout asked to recolour", () => {
-		const { registry, css } = harness();
+		const { registry } = harness();
 		registry.setUserImages([picture({ monochrome: true })]);
-		const out = css.generateIconOverride(
-			"quiet",
+		const out = iconOverrideCSS(
+			calloutSel("quiet"),
 			{ type: "image", value: "pic", recolor: true },
 			SVG,
 		);
@@ -274,10 +280,10 @@ describe("generateIconOverride — the router", () => {
 	});
 
 	it("paints a user picture that keeps its own colours", () => {
-		const { registry, css } = harness();
+		const { registry } = harness();
 		registry.setUserImages([picture()]);
-		const out = css.generateIconOverride(
-			"quiet",
+		const out = iconOverrideCSS(
+			calloutSel("quiet"),
 			{ type: "image", value: "pic" },
 			SVG,
 		);
@@ -286,12 +292,12 @@ describe("generateIconOverride — the router", () => {
 	});
 
 	it("paints a raster even when the callout asked to recolour it", () => {
-		const { registry, css } = harness();
+		const { registry } = harness();
 		registry.setUserImages([picture({ format: "png", monochrome: true })]);
 		// The capability half of followsCalloutColor: a raster has no stencil to
 		// take, so `recolor` alone cannot put it on the mask path.
-		const out = css.generateIconOverride(
-			"quiet",
+		const out = iconOverrideCSS(
+			calloutSel("quiet"),
 			{ type: "image", value: "pic", recolor: true },
 			SVG,
 		);
@@ -300,11 +306,10 @@ describe("generateIconOverride — the router", () => {
 	});
 });
 
-describe("generateEmojiOverride", () => {
+describe("emojiOverrideCSS", () => {
 	it("draws the glyph via content, with no mask and no tint", () => {
-		const { css } = harness();
 		const after = ruleFor(
-			css.generateEmojiOverride("quiet", "🌟"),
+			emojiOverrideCSS(calloutSel("quiet"), "🌟"),
 			'.callout[data-callout="quiet"] > .callout-title > .callout-icon::after',
 		);
 		assert.strictEqual(valueOf(after, "content"), '"🌟"');
@@ -314,20 +319,18 @@ describe("generateEmojiOverride", () => {
 	});
 
 	it("escapes the CSS string literal", () => {
-		const { css } = harness();
 		// Emoji contain neither backslashes nor quotes; this is defensive against
 		// future data changes, and it is the ONE place the injector escapes what
 		// it interpolates (see cssInjectorInject.test.ts for the selector, which
 		// does not).
-		assert.ok(css.generateEmojiOverride("quiet", 'a"b').includes('content: "a\\"b"'));
+		assert.ok(emojiOverrideCSS(calloutSel("quiet"), 'a"b').includes('content: "a\\"b"'));
 		assert.ok(
-			css.generateEmojiOverride("quiet", "a\\b").includes('content: "a\\\\b"'),
+			emojiOverrideCSS(calloutSel("quiet"), "a\\b").includes('content: "a\\\\b"'),
 		);
 	});
 
 	it("is screen-scoped", () => {
-		const { css } = harness();
-		for (const rule of parseRules(css.generateEmojiOverride("quiet", "🌟"))) {
+		for (const rule of parseRules(emojiOverrideCSS(calloutSel("quiet"), "🌟"))) {
 			assert.deepStrictEqual(rule.at, ["@media screen"]);
 		}
 	});
@@ -520,12 +523,11 @@ describe("getIconTransformCSS — per-role rules", () => {
  */
 describe("no webfont path through the injector", () => {
 	it("draws a Material icon as a mask over its cached SVG, not as a glyph", () => {
-		const { css } = harness();
 		// The premise for everything below: if this ever became a font glyph
 		// (`font-family` + a codepoint in `content`), the injector really would
 		// need the family loaded, and deleting the warm-up would be a bug.
 		const rule = ruleFor(
-			css.generateIconMaskOverride("starred", SVG),
+			iconMaskOverrideCSS(calloutSel("starred"), SVG),
 			".callout[data-callout=\"starred\"] > .callout-title > .callout-icon::after",
 		);
 		assert.ok(valueOf(rule, "mask-image"));

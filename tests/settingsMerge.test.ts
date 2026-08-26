@@ -74,6 +74,7 @@ const FIELD_KIND: Record<keyof PluginSettings, "value" | "list"> = {
 	customPalettes: "list",
 	userImages: "list",
 	customCommands: "list",
+	retiredThemeIds: "list",
 	disabledFixedCommands: "list",
 	quickInsertSource: "value",
 };

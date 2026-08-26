@@ -18,10 +18,19 @@ import { CALLOUT_RENDER_ROLES } from "../types";
 import { ICON_ADJUST_LIMITS } from "./iconAdjust";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { EXPORT_FORMAT_ID } from "../manager/CalloutRegistry";
+import {
+	applyImportedStyleMode,
+	styleModeImportIssue,
+} from "./importStyleMode";
 import { FALLBACK_ICON, MAX_TAG_LENGTH, MAX_TAGS_COUNT } from "../constants";
 import { createIconNameCheck } from "../icons/nameCheck";
 import { ICON_PACK_IDS } from "../icons/registry";
 import { normalizeCalloutId } from "./calloutId";
+import {
+	KNOWN_FIELDS,
+	KNOWN_ICON_FIELDS,
+	RETIRED_FIELDS,
+} from "./importFields";
 import { sanitizeBgGradient } from "./colorUtils";
 import { sanitizeImportedSettings } from "./settingsValidator";
 
@@ -71,70 +80,6 @@ const VALID_MATERIAL_STYLES = new Set([
 ]);
 /** Exported for the Admonition importer, which caps an imported title to it. */
 export const MAX_DISPLAY_NAME = 80;
-
-/**
- * Top-level keys we recognize on a `CalloutDefinition`. Anything else is
- * reported as a warning.
- *
- * A total `Record` rather than a bare list, for the same reason the icon
- * registry uses one: the export writes whatever a definition happens to carry,
- * so a field added to `CalloutDefinition` and forgotten here makes the plugin
- * warn about its *own* export ("Unknown field(s) ignored: …") on every entry and
- * silently drop the value. Declaring the field without listing it is now a
- * compile error instead.
- */
-const KNOWN_FIELD_MAP: Record<keyof CalloutDefinition, true> = {
-	id: true,
-	displayName: true,
-	icon: true,
-	hideIcon: true,
-	colorLight: true,
-	colorDark: true,
-	foldable: true,
-	defaultFolded: true,
-	builtIn: true,
-	source: true,
-	iconAdjust: true,
-	iconOffsetX: true,
-	iconOffsetY: true,
-	iconSize: true,
-	bgColorLight: true,
-	bgColorDark: true,
-	bgGradient: true,
-	transparentBg: true,
-	textColorLight: true,
-	textColorDark: true,
-	aliases: true,
-	paletteId: true,
-	customized: true,
-	externalStyle: true,
-	metadata: true,
-};
-const KNOWN_FIELDS = new Set<string>(Object.keys(KNOWN_FIELD_MAP));
-
-/**
- * Fields this plugin used to write and no longer reads. Dropped in silence
- * rather than reported: the warning above exists to flag a file the plugin
- * does not understand, and an export made by an older build of the plugin
- * itself is not that. Entries here are never re-added to a definition, so the
- * value is gone after the first save.
- *
- * `solidBackground` painted a callout's background as a flat, opaque fill
- * instead of the translucent tint the injector emits. An opaque fill is
- * exactly what stops nested callouts from stepping (see `CSSInjector.bgProps`),
- * so the opt-out was retired and every background is a tint now.
- */
-const RETIRED_FIELDS = new Set<string>(["solidBackground"]);
-
-/** Recognized `CalloutIcon` keys. Total for the same reason as `KNOWN_FIELD_MAP`. */
-const KNOWN_ICON_FIELD_MAP: Record<keyof CalloutIcon, true> = {
-	type: true,
-	value: true,
-	style: true,
-	weight: true,
-	recolor: true,
-};
-const KNOWN_ICON_FIELDS = new Set<string>(Object.keys(KNOWN_ICON_FIELD_MAP));
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
 	if (typeof value !== "object" || value === null || Array.isArray(value)) {
@@ -1016,21 +961,11 @@ function validateCalloutArray(
 			entryOk = false;
 		}
 
-		// ── external style flag (optional) ───────────────────
-		// Same shape as the two above. Worth carrying across an import: it says
-		// the reader's theme owns this callout, which is a decision about the
-		// reader's vault, not a colour the exporter picked.
-		if (
-			entry.externalStyle !== undefined &&
-			typeof entry.externalStyle !== "boolean"
-		) {
-			push({
-				field: "externalStyle",
-				level: "error",
-				messageKey: "import.err.boolField",
-				params: { field: "externalStyle" },
-			});
-			entryOk = false;
+		// ── style mode: the externalStyle / styleMode pair (optional) ──
+		const modeIssue = styleModeImportIssue(entry);
+		if (modeIssue) {
+			push(modeIssue);
+			if (modeIssue.fatal) entryOk = false;
 		}
 
 		// ── metadata ─────────────────────────────────────────
@@ -1233,7 +1168,7 @@ function validateCalloutArray(
 			// Same `true`-only rule. Unlike `customized` this one *does* apply to
 			// a built-in: handing `[!note]` to the reader's theme is exactly the
 			// kind of thing a shared file is worth carrying.
-			if (entry.externalStyle === true) def.externalStyle = true;
+			applyImportedStyleMode(def, entry);
 			if (isPlainObject(entry.metadata)) {
 				const meta: Record<string, string> = {};
 				for (const [k, v] of Object.entries(entry.metadata)) {

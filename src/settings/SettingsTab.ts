@@ -35,15 +35,11 @@ import {
 } from "./sections/CalloutListsSection";
 import { renderCalloutRow as renderCalloutRowSection } from "./sections/CalloutRowRenderer";
 import { openBuiltInRowMenu, openRowMenu } from "./sections/CalloutRowActions";
+import { invalidateThemeRowUsage } from "./sections/themeRowUsage";
 import type {
 	SettingsSectionContext,
 	SettingsTabPlugin,
 } from "./sections/types";
-
-const scanUnknownCalloutsInBuffer = (
-	content: string,
-	knownIds: Set<string>,
-): string[] => scanStringForUnknownCallouts(content, knownIds);
 
 export class CalloutStudioSettingsTab extends PluginSettingTab {
 	plugin: SettingsTabPlugin;
@@ -130,12 +126,12 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 				await editor.openAndWait();
 				this.display();
 			},
-			renderRow: (rowContainerEl, def, isBuiltIn) => {
+			renderRow: (rowContainerEl, def, kind) => {
 				renderCalloutRowSection(
 					sectionCtx,
 					rowContainerEl,
 					def,
-					isBuiltIn,
+					kind,
 					{
 						onEdit: (targetDef, targetIsBuiltIn) => {
 							void this.handleRowEdit(
@@ -215,6 +211,8 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 			this.refreshFrame = null;
 		}
 		this.calloutLists = null;
+		// One whole-vault usage pass per visit to this tab, not per repaint.
+		invalidateThemeRowUsage();
 		super.hide();
 	}
 
@@ -283,7 +281,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 			if (!(view instanceof MarkdownView)) continue;
 			const content = view.editor.getValue();
 			if (!content) continue;
-			for (const id of scanUnknownCalloutsInBuffer(content, known)) {
+			for (const id of scanStringForUnknownCallouts(content, known)) {
 				seen.add(id);
 			}
 		}

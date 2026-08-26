@@ -41,6 +41,7 @@ import { isCalloutSourceFilter } from "./calloutSearch";
 import { clampGlobalStyle, localePreference } from "./settingsGuards";
 import { sanitizeUserImages } from "./userImages";
 import { sanitizeCustomCommands } from "./customCommands";
+import { sanitizeRetiredThemeIds } from "../manager/theme/retiredThemeIds";
 
 /**
  * Merge saved icon-picker state over the defaults, folding the pre-2.4
@@ -254,6 +255,7 @@ export function mergeSavedSettings(
 		firstRunCompleted:
 			savedSettings.firstRunCompleted ??
 			DEFAULT_SETTINGS.firstRunCompleted,
+		retiredThemeIds: sanitizeRetiredThemeIds(savedSettings.retiredThemeIds),
 		welcomeSeen:
 			savedSettings.welcomeSeen ?? DEFAULT_SETTINGS.welcomeSeen,
 		fallbackCalloutId:
