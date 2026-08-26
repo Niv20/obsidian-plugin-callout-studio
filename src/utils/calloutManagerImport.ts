@@ -28,7 +28,7 @@ import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { ValidationIssue } from "./importValidator";
 import type { CalloutManagerNote, CalloutManagerRaw } from "./calloutManagerFormat";
 import { createLucideNameCheck } from "../icons/nameCheck";
-import { normalizeCalloutId } from "./calloutId";
+import { calloutIdentity, normalizeCalloutId } from "./calloutId";
 import { parseCssColorToHex } from "./colorUtils";
 import { validateIdString } from "./importValidator";
 
@@ -141,7 +141,7 @@ export function parseIconDecl(raw: string): CalloutIcon | undefined {
 }
 
 /**
- * Parses the pasted text into one entry per distinct `data-callout` id.
+ * Parses the pasted text into one entry per callout, keyed by identity.
  * Blocks are merged by id with last-write-wins **per property** (mirrors CSS
  * cascade: a later block for the same id that only sets one property doesn't
  * erase a property an earlier block already set).
@@ -168,8 +168,8 @@ export function parseCalloutManagerExport(text: string): CalloutManagerEntry[] {
 			: undefined;
 
 		for (const id of ids) {
-			const prev = byId.get(id);
-			byId.set(id, {
+			const prev = byId.get(calloutIdentity(id));
+			byId.set(calloutIdentity(id), {
 				id,
 				icon: icon ?? prev?.icon,
 				color: color ?? prev?.color,

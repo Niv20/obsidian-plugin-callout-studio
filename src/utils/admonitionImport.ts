@@ -31,7 +31,11 @@ import {
 	readAdmonitionIcon,
 	resolveIcon,
 } from "./admonitionIcons";
-import { normalizeCalloutId, obsidianDefaultTitle } from "./calloutId";
+import {
+	calloutIdentity,
+	normalizeCalloutId,
+	obsidianDefaultTitle,
+} from "./calloutId";
 import { parseCssColorToHex } from "./colorUtils";
 import { takenUserImageNames } from "./userImages";
 
@@ -155,7 +159,8 @@ export async function planAdmonitionImport(
 		const id = normalizeCalloutId(rawType);
 		if (!validateIdString(id, push, "type", rawType)) continue;
 
-		const firstSeen = seenIds.get(id);
+		// Keyed by identity: `banner icon` and `banner-icon` are one callout.
+		const firstSeen = seenIds.get(calloutIdentity(id));
 		if (firstSeen !== undefined) {
 			push({
 				field: "type",
@@ -165,7 +170,7 @@ export async function planAdmonitionImport(
 			});
 			continue;
 		}
-		seenIds.set(id, index);
+		seenIds.set(calloutIdentity(id), index);
 
 		const existing = registry.findByAttrId(id);
 
