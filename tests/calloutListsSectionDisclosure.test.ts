@@ -304,6 +304,7 @@ describe("a section's fold is remembered in settings", () => {
 			theme: true,
 			user: true,
 			builtin: true,
+			palettes: true,
 		});
 	});
 
@@ -322,6 +323,7 @@ describe("a section's fold is remembered in settings", () => {
 			theme: true,
 			user: true,
 			builtin: true,
+			palettes: true,
 		});
 
 		const { host } = render(registry, themeApp([]), []);
@@ -343,6 +345,7 @@ describe("a section's fold is remembered in settings", () => {
 			theme: true,
 			user: false,
 			builtin: true,
+			palettes: true,
 		});
 
 		click(section(host, BUILT_IN).nameEl);
@@ -350,6 +353,7 @@ describe("a section's fold is remembered in settings", () => {
 			theme: true,
 			user: false,
 			builtin: false,
+			palettes: true,
 		});
 
 		// Unfolding one leaves the other exactly where it was.
@@ -358,6 +362,7 @@ describe("a section's fold is remembered in settings", () => {
 			theme: true,
 			user: true,
 			builtin: false,
+			palettes: true,
 		});
 	});
 

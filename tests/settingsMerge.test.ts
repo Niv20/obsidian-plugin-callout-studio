@@ -138,6 +138,7 @@ const LEAVES = leaves(DEFAULT_SETTINGS);
 const EXPECTED_LEAVES: string[] = [
 	"autocomplete.enabled",
 	"calloutListsExpanded.builtin",
+	"calloutListsExpanded.palettes",
 	"calloutListsExpanded.theme",
 	"calloutListsExpanded.user",
 	"contextMenu.enabled",

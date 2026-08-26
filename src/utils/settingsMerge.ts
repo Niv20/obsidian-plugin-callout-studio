@@ -294,6 +294,9 @@ export function mergeSavedSettings(
 			builtin:
 				savedSettings.calloutListsExpanded?.builtin ??
 				DEFAULT_SETTINGS.calloutListsExpanded.builtin,
+			palettes:
+				savedSettings.calloutListsExpanded?.palettes ??
+				DEFAULT_SETTINGS.calloutListsExpanded.palettes,
 		},
 	};
 }

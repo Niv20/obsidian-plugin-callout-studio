@@ -222,5 +222,10 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 	customCommands: [],
 	disabledFixedCommands: [],
 	quickInsertSource: "all",
-	calloutListsExpanded: { theme: true, user: true, builtin: true },
+	calloutListsExpanded: {
+		theme: true,
+		user: true,
+		builtin: true,
+		palettes: true,
+	},
 };

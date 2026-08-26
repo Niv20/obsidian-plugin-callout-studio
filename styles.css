@@ -3491,16 +3491,12 @@ input.cs-input-invalid:focus {
 	margin-top: 2px;
 }
 
-/* Saved palettes list (settings section). Its rows are .callout-studio-rows,
-   so they sit on the same 2px rhythm as the callout list above them rather
-   than on a looser one of their own. */
-.cs-palette-list {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	margin-bottom: 12px;
-}
-
+/* Saved palettes list (settings section). The list itself is a
+   .callout-studio-callout-list — the same paged-list container the three
+   callout lists above it use — so its rows sit on the same 2px rhythm
+   without a dedicated container rule of their own. What is still specific to
+   a palette row is below: it is a .callout-studio-row like any other, but its
+   name and its swatch behave differently from a callout's. */
 .cs-palette-list-row .cs-palette-list-name {
 	flex: 1;
 	min-width: 0;

@@ -196,12 +196,18 @@ interface PluginSettings {
   userImages: UserImageIcon[];
   customCommands: CustomCommand[];
   disabledFixedCommands: string[];
-  calloutListsExpanded: { theme: boolean; user: boolean; builtin: boolean };
+  calloutListsExpanded: {
+    theme: boolean;
+    user: boolean;
+    builtin: boolean;
+    palettes: boolean;
+  };
 }
 ```
 
-`calloutListsExpanded` is which of the three callout-list sections in the
-settings tab are expanded — see
+`calloutListsExpanded` is which of the settings tab's four collapsible
+sections are expanded — the three callout lists, plus `palettes` for Saved
+color palettes — see
 [Settings UI and modals](15-settings-ui-and-modals.md#where-the-state-lives-and-how-long).
 
 `GlobalStyleSettings` holds vault-wide style for all three roles: border

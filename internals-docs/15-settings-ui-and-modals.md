@@ -72,13 +72,22 @@ every previously-registered disposer **before** rebuilding, and `hide()`
 runs them on tab close. This is what keeps a section's `MutationObserver` or
 subscription from silently accumulating across repeated `display()` calls.
 
-## The three callout lists — folding and paging
+## Folding and paging — the callout lists, and Saved color palettes
 
 [`CalloutListsSection.ts`](../src/settings/sections/CalloutListsSection.ts)
 builds *Callouts from your theme*, *My callout types* and *Built-in
 callouts*, in that order, from one pass over one combined list (see
 [Theme callout discovery](21-theme-callout-discovery.md) for who lands
-where). Two behaviours sit on top of that split, each in its own helper.
+where). Two behaviours sit on top of that split, each in its own helper —
+and [`CustomPalettesSection.ts`](../src/settings/sections/CustomPalettesSection.ts)'s
+*Saved color palettes* heading is a fourth member of the same family rather
+than a parallel implementation: it calls the identical `attachPersistedFold`
+and `renderPagedList` helpers, just keyed `"palettes"` instead of a `RowKind`.
+Its "Unlinked colors" sub-section — offering to rebuild a palette a deletion
+orphaned — neither folds nor pages on its own, and lives in a sibling module,
+[`PaletteOrphanGroups.ts`](../src/settings/sections/PaletteOrphanGroups.ts),
+so `CustomPalettesSection.ts` itself stayed under the repo's line-count
+ratchet instead of raising it.
 
 ### `sectionDisclosure.ts` — a heading you can fold
 
@@ -172,7 +181,10 @@ shared code.)
 The button's label is `t("iconPicker.loadMore")` with the hidden count
 appended in code — `Load more (14)`. That is the same trick `headingWithCount`
 uses for the `(N)`: a numeric suffix on whatever `t()` returns, so it needs
-no key of its own in any of the 31 translated locales.
+no key of its own in any of the 31 translated locales. Both `headingWithCount`
+and `focusFirstRevealed` (below) are exports of `listPaging.ts` rather than
+per-section helpers, which is what lets `CustomPalettesSection.ts` reuse them
+verbatim instead of reimplementing the same "(N)" and focus-on-reveal logic.
 
 Nothing above the button is faded. The rows carry an icon, two colour
 swatches and two buttons, and dimming an interactive row to hint that more
@@ -182,38 +194,50 @@ states the fact a gradient could only gesture at.
 Because the button is removed by the repaint that reveals the rest, focus
 would otherwise fall to the document body; `focusFirstRevealed` sends it to
 the first row that just appeared, with `tabindex="-1"` so the row is a target
-for that jump and not a stop on the way through the tab.
+for that jump and not a stop on the way through the tab. It finds that row by
+querying for `.callout-studio-callout-list` inside whatever host it is given,
+so it works for any paged section — Saved color palettes included — not just
+the callout lists it was written for.
 
 ### Where the state lives, and how long
 
 Both the fold and the page cursor are closure variables on the controller —
 one `PagingState` and one `SectionDisclosure` per section — which is what
-makes the three independent and what makes them survive a repaint. `refresh()`
-rebuilds every row on a registry change or a theme switch, and a list the user
-expanded must not fold back up under them.
+makes the sections independent and what makes them survive a repaint.
+`CalloutListsSection.ts`'s `refresh()` rebuilds every callout row on a
+registry change or a theme switch, and `CustomPalettesSection.ts`'s own
+`renderList()` does the same for palettes on a create, edit, delete or theme
+flip; in both cases a list the user expanded must not fold back up under them.
 
-The page cursor is session-only: `SettingsTab.display()` builds a new
-controller on every visit, so every section reopens uncapped, behind its
+The page cursor is session-only: rebuilding a section — `SettingsTab.display()`
+on every settings-tab visit, or opening `CustomPalettesSection.ts` fresh —
+starts a new `PagingState`, so every section reopens uncapped, behind its
 `Load more` button again if it was ever pressed. Nobody has asked to keep a
-whole vault's icon grid on screen by default, and paging past the cap is a
-cheap habit to reform.
+whole vault's icon grid, or a whole vault's saved palettes, on screen by
+default, and paging past the cap is a cheap habit to reform.
 
 The **fold** is not session-only. `settings/sections/calloutListsFold.ts`
 mirrors each section's `SectionDisclosure` into
-`PluginSettings.calloutListsExpanded` (`{ theme, user, builtin }`, keyed the
-same way as `RowKind`) the moment the user folds or unfolds it by hand —
+`PluginSettings.calloutListsExpanded` (`{ theme, user, builtin, palettes }` —
+the first three keyed the same way as `RowKind`, `palettes` added for Saved
+color palettes) the moment the user folds or unfolds it by hand —
 `attachSectionDisclosure`'s `onToggle` fires only on that user gesture, never
 when a caller drives `setExpanded` programmatically, so a save only happens
-for a choice the user actually made. `createCalloutListsController` reads
-that field back as each heading's `initiallyExpanded` on `render()`, so a
-folded section stays folded across a settings-tab reopen and a plugin reload
-alike; an install upgrading from before this field existed merges in `true`
-for all three (`mergeSavedSettings`, `DEFAULT_SETTINGS.calloutListsExpanded`),
-so the tab looks exactly as it did before the upgrade.
+for a choice the user actually made. `attachPersistedFold` takes any
+`keyof CalloutListsFoldState` (not a bare `RowKind`), which is what let
+`CustomPalettesSection.ts` become a fourth caller without widening `RowKind`
+itself to a concept it has nothing to do with. Both `createCalloutListsController`
+and `renderCustomPalettesSection` read the relevant field back as their
+heading's `initiallyExpanded` on render, so a folded section stays folded
+across a settings-tab reopen and a plugin reload alike; an install upgrading
+from before a given key existed merges in `true` for it
+(`mergeSavedSettings`, `DEFAULT_SETTINGS.calloutListsExpanded`), so the tab
+looks exactly as it did before the upgrade.
 
-The heading count is always the **partitioned** length, never the visible
-slice. Folding a section, or leaving 20 of 34 rows on screen, changes what is
-drawn — not how many the user has.
+The heading count is always the full list a section has — the partitioned
+length for a callout list, `settings.customPalettes.length` for Saved color
+palettes — never the visible slice. Folding a section, or leaving 20 of 34
+rows on screen, changes what is drawn — not how many the user has.
 
 ## Modal chrome — the one shell every window wears
 

@@ -8,17 +8,21 @@
  * callouts at apply time; editing a palette here cascades the new colors onto
  * every callout still linked to it (registry.applyPaletteColors), while
  * deleting a palette leaves existing callouts as-is.
+ *
+ * The heading folds and pages exactly like the three callout lists above it
+ * in the settings tab — `attachPersistedFold` for the chevron and the
+ * settings-backed fold state, `renderPagedList` for the first-20-then-a-button
+ * behavior — so this section is a fourth member of that family rather than a
+ * parallel implementation of the same thing.
  */
 import { Setting, setIcon } from "obsidian";
 import { t } from "../../i18n";
-import type { CalloutDefinition, CustomPalette } from "../../types";
+import type { CustomPalette } from "../../types";
 import type { SettingsSectionContext } from "./types";
 import {
 	bakePaletteColors,
 	customPaletteToColorPalette,
-	findPaletteWithSameColors,
 	generatePaletteId,
-	paletteSeedFromDefinition,
 } from "../../utils/colorPalettes";
 import {
 	renderColorCircles,
@@ -26,6 +30,14 @@ import {
 } from "../../ui/ColorCircles";
 import { PaletteEditorModal } from "../PaletteEditorModal";
 import { ConfirmModal } from "../../utils/ConfirmModal";
+import { attachPersistedFold } from "./calloutListsFold";
+import {
+	focusFirstRevealed,
+	headingWithCount,
+	renderPagedList,
+} from "./listPaging";
+import type { PagingState } from "./listPaging";
+import { renderOrphanPaletteGroups } from "./PaletteOrphanGroups";
 
 export function renderCustomPalettesSection(
 	ctx: SettingsSectionContext,
@@ -68,7 +80,9 @@ export function renderCustomPalettesSection(
 				renderList();
 			}),
 	);
-	const listEl = containerEl.createDiv({ cls: "cs-palette-list" });
+	const bodyEl = containerEl.createDiv();
+	const fold = attachPersistedFold(heading, bodyEl, "palettes", ctx.plugin);
+	const paging: PagingState = { expanded: false };
 
 	const editPalette = async (palette: CustomPalette): Promise<void> => {
 		const result = await new PaletteEditorModal(ctx.plugin, {
@@ -130,154 +144,83 @@ export function renderCustomPalettesSection(
 		renderList();
 	};
 
-	/**
-	 * Rebuild a deleted palette from the callouts it left behind, and re-link
-	 * the whole group to it.
-	 *
-	 * Checks for an existing palette with the same colors FIRST. Under the
-	 * no-duplicate-colors rule the editor would refuse to save a rebuild of one
-	 * that already exists, so opening it on a seed that duplicates a live
-	 * palette would be a dead end — and linking to the live palette is what the
-	 * user wanted anyway.
-	 */
-	const restoreOrphanGroup = async (group: {
-		paletteId: string;
-		count: number;
-		sample: CalloutDefinition;
-	}): Promise<void> => {
-		const seed = paletteSeedFromDefinition(group.sample);
-		const existing = findPaletteWithSameColors(
-			{ id: "", name: "", group: "custom", ...seed },
-			ctx.plugin.settings.customPalettes,
-		);
-		let target = existing;
-		if (!target) {
-			const result = await new PaletteEditorModal(ctx.plugin, {
-				seed,
-				takenNames: takenNamesExcept(),
-				takenColors: othersExcept(),
-			}).openAndWait();
-			if (!result) return;
-			target = { id: generatePaletteId(), ...result };
-			ctx.plugin.settings.customPalettes.push(target);
-			// Another deletion may have left its own group on these exact
-			// colors. One color is one palette now, so those callouts belong
-			// here too rather than waiting for a restore that the duplicate
-			// rule would refuse to save.
-			adoptOrphans();
-		}
-		ctx.plugin.registry.relinkPalette(group.paletteId, target.id);
-		ctx.plugin.registry.applyPaletteColors(
-			target.id,
-			bakePaletteColors(customPaletteToColorPalette(target)),
-		);
-		await ctx.plugin.saveSettings();
-		renderList();
-	};
+	const renderOrphanGroups = (): void =>
+		renderOrphanPaletteGroups(bodyEl, {
+			ctx,
+			takenNamesExcept,
+			othersExcept,
+			adoptOrphans,
+			onChange: renderList,
+		});
 
-	/**
-	 * The groups of callouts a deleted palette left behind, each offering to
-	 * rebuild it. Without this the only route back was inside the callout
-	 * editor's Color row, which meant finding a member of the group first.
-	 */
-	const renderOrphanGroups = (): void => {
-		const groups = ctx.plugin.registry.listOrphanPaletteGroups();
-		if (groups.length === 0) return;
-		new Setting(listEl)
-			.setName(t("settings.unlinkedColors"))
-			.setDesc(t("settings.unlinkedColorsDesc"))
-			.setHeading();
-		for (const group of groups) {
-			const row = listEl.createDiv({
-				cls: "callout-studio-row cs-palette-list-row",
-			});
-			const colorsEl = row.createDiv({ cls: "callout-studio-row-colors" });
-			const colors = resolveCurrentModeColors(group.sample);
-			renderColorCircles(colorsEl, colors, {
-				size: 18,
-				ariaLabel: t("settings.colorSwatchAria", {
-					accent: colors.accent,
-					bg: colors.bg,
+	const renderPaletteRow = (listEl: HTMLElement, palette: CustomPalette): void => {
+		const row = listEl.createDiv({
+			cls: "callout-studio-row cs-palette-list-row",
+		});
+		const colorsEl = row.createDiv({
+			cls: "callout-studio-row-colors",
+		});
+		const colors = resolveCurrentModeColors(palette);
+		renderColorCircles(colorsEl, colors, {
+			size: 18,
+			ariaLabel: t("settings.colorSwatchAria", {
+				accent: colors.accent,
+				bg: colors.bg,
+			}),
+		});
+		row.createSpan({
+			cls: "cs-palette-list-name",
+			text: palette.name,
+			attr: { "aria-label": palette.name },
+		});
+
+		const buttonsEl = row.createDiv({
+			cls: "callout-studio-row-buttons",
+		});
+		const editBtn = buttonsEl.createEl("button", {
+			attr: {
+				"aria-label": t("settings.editPaletteAria", {
+					name: palette.name,
 				}),
-			});
-			row.createSpan({
-				cls: "cs-palette-list-name",
-				text:
-					group.count === 1 ?
-						t("settings.unlinkedColorOne")
-					:	t("settings.unlinkedColorCount", { count: group.count }),
-			});
-			const buttonsEl = row.createDiv({ cls: "callout-studio-row-buttons" });
-			const restoreBtn = buttonsEl.createEl("button", {
-				text: t("settings.restoreColor"),
-			});
-			restoreBtn.addEventListener(
-				"click",
-				() => void restoreOrphanGroup(group),
-			);
-		}
+			},
+		});
+		setIcon(editBtn, "pencil");
+		editBtn.addEventListener("click", () => void editPalette(palette));
+		const deleteBtn = buttonsEl.createEl("button", {
+			attr: {
+				"aria-label": t("settings.deletePaletteAria", {
+					name: palette.name,
+				}),
+			},
+		});
+		setIcon(deleteBtn, "trash-2");
+		deleteBtn.addEventListener("click", () => void deletePalette(palette));
 	};
 
 	const renderList = (): void => {
-		listEl.empty();
+		bodyEl.empty();
 		// Sorted A→Z for display only; the underlying settings array keeps
 		// insertion order.
 		const palettes = [...ctx.plugin.settings.customPalettes].sort((a, b) =>
 			a.name.localeCompare(b.name),
 		);
+		// The total, never the visible slice — same rule the three callout
+		// lists follow for their own "(N)".
+		fold.setName(
+			headingWithCount(t("settings.customPalettes"), palettes.length),
+		);
 		if (palettes.length === 0) {
-			listEl.createDiv({
+			bodyEl.createDiv({
 				cls: "callout-studio-empty-state",
 				text: t("settings.customPalettesEmpty"),
 			});
 			renderOrphanGroups();
 			return;
 		}
-		for (const palette of palettes) {
-			const row = listEl.createDiv({
-				cls: "callout-studio-row cs-palette-list-row",
-			});
-			const colorsEl = row.createDiv({
-				cls: "callout-studio-row-colors",
-			});
-			const colors = resolveCurrentModeColors(palette);
-			renderColorCircles(colorsEl, colors, {
-				size: 18,
-				ariaLabel: t("settings.colorSwatchAria", {
-					accent: colors.accent,
-					bg: colors.bg,
-				}),
-			});
-			row.createSpan({
-				cls: "cs-palette-list-name",
-				text: palette.name,
-				attr: { "aria-label": palette.name },
-			});
-
-			const buttonsEl = row.createDiv({
-				cls: "callout-studio-row-buttons",
-			});
-			const editBtn = buttonsEl.createEl("button", {
-				attr: {
-					"aria-label": t("settings.editPaletteAria", {
-						name: palette.name,
-					}),
-				},
-			});
-			setIcon(editBtn, "pencil");
-			editBtn.addEventListener("click", () => void editPalette(palette));
-			const deleteBtn = buttonsEl.createEl("button", {
-				attr: {
-					"aria-label": t("settings.deletePaletteAria", {
-						name: palette.name,
-					}),
-				},
-			});
-			setIcon(deleteBtn, "trash-2");
-			deleteBtn.addEventListener("click", () =>
-				void deletePalette(palette),
-			);
-		}
+		renderPagedList(bodyEl, palettes, paging, renderPaletteRow, () => {
+			renderList();
+			focusFirstRevealed(bodyEl);
+		});
 		renderOrphanGroups();
 	};
 
@@ -285,11 +228,11 @@ export function renderCustomPalettesSection(
 	// flip. Debounced: CSSInjector fires "css-change" after every inject.
 	let refreshTimer: number | null = null;
 	const cssRef = ctx.app.workspace.on("css-change", () => {
-		if (!listEl.isConnected) return;
+		if (!bodyEl.isConnected) return;
 		if (refreshTimer !== null) window.clearTimeout(refreshTimer);
 		refreshTimer = window.setTimeout(() => {
 			refreshTimer = null;
-			if (listEl.isConnected) renderList();
+			if (bodyEl.isConnected) renderList();
 		}, 60);
 	});
 	ctx.registerDisposer(() => {

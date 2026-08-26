@@ -27,6 +27,17 @@ export const LIST_PAGE_SIZE = 20;
  */
 export type PagingState = { expanded: boolean };
 
+/**
+ * A heading's "(N)" suffix. The count is always the full list a section has,
+ * never the slice currently on screen — folding a section or leaving rows
+ * behind the Load more button changes what is drawn, not how many the user
+ * has. Shared rather than reimplemented per section so every heading agrees
+ * on the shape without needing a key of its own in any of the 31 translated
+ * locales.
+ */
+export const headingWithCount = (base: string, count: number): string =>
+	`${base} (${count})`;
+
 export function renderPagedList<T>(
 	host: HTMLElement,
 	items: T[],
@@ -57,4 +68,23 @@ export function renderPagedList<T>(
 		state.expanded = true;
 		onLoadMore();
 	});
+}
+
+/**
+ * Load more removes the button it was pressed on, so focus would land back on
+ * the document body and the reader would lose their place entirely. Send it
+ * to the first row that just appeared instead — `tabindex="-1"` because the
+ * row is a target for this jump, not a stop on the way through the tab.
+ *
+ * Depends only on the class `renderPagedList` gives its list, so it works for
+ * any paged section, not just the callout lists it was written for.
+ */
+export function focusFirstRevealed(host: HTMLElement): void {
+	const listEl = host.querySelector<HTMLElement>(
+		".callout-studio-callout-list",
+	);
+	const row = listEl?.children[LIST_PAGE_SIZE];
+	if (!(row instanceof HTMLElement)) return;
+	row.setAttribute("tabindex", "-1");
+	row.focus();
 }

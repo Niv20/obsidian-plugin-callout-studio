@@ -51,7 +51,11 @@ import { partitionByStyleOwner, styleOwnerFacts } from "./rowOwnership";
 import type { RowKind } from "./rowOwnership";
 import { ensureThemeRowUsage } from "./themeRowUsage";
 import type { SectionDisclosure } from "./sectionDisclosure";
-import { LIST_PAGE_SIZE, renderPagedList } from "./listPaging";
+import {
+	focusFirstRevealed,
+	headingWithCount,
+	renderPagedList,
+} from "./listPaging";
 import type { PagingState } from "./listPaging";
 import { attachPersistedFold } from "./calloutListsFold";
 import { WelcomeModal } from "../WelcomeModal";
@@ -97,12 +101,6 @@ export function createCalloutListsController(
 	const themeLabel = (): string =>
 		activeThemeName(ctx.app) ?? t("settings.themeCalloutsDefaultTheme");
 
-	// One space before the parenthesis, on every heading — the count is a
-	// suffix on whatever `t()` returns, not a translated string of its own, so
-	// it needs no entry in the other 31 locale files.
-	const headingWithCount = (base: string, count: number): string =>
-		`${base} (${count})`;
-
 	/** See `isThemeStyled` for why membership is derived from the theme alone. */
 	const partition = () =>
 		partitionByStyleOwner(styleOwnerFacts(ctx), [
@@ -126,22 +124,6 @@ export function createCalloutListsController(
 				focusFirstRevealed(host);
 			},
 		);
-	};
-
-	/**
-	 * Load more removes the button it was pressed on, so focus would land back
-	 * on the document body and the reader would lose their place entirely. Send
-	 * it to the first row that just appeared instead — `tabindex="-1"` because
-	 * the row is a target for this jump, not a stop on the way through the tab.
-	 */
-	const focusFirstRevealed = (host: HTMLElement): void => {
-		const listEl = host.querySelector<HTMLElement>(
-			".callout-studio-callout-list",
-		);
-		const row = listEl?.children[LIST_PAGE_SIZE];
-		if (!(row instanceof HTMLElement)) return;
-		row.setAttribute("tabindex", "-1");
-		row.focus();
 	};
 
 	const emptyState = (host: HTMLElement, text: string): void => {

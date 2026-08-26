@@ -19,7 +19,9 @@ Pick any preset and it's applied instantly to the callout type you're editing.
 
 ## Building your own custom palettes
 
-If you want a color scheme you can reuse across multiple callout types, create your own palette from **Settings → Custom palettes**. Once saved, your palette appears in the color dropdown on any callout, right alongside the built-in presets.
+If you want a color scheme you can reuse across multiple callout types, create your own palette from **Settings → Saved color palettes**. Once saved, your palette appears in the color dropdown on any callout, right alongside the built-in presets.
+
+The **Saved color palettes** heading works exactly like the callout lists above it in the settings tab: it shows your total palette count in parentheses, folds shut when you click it (or reach it with `Tab` and press `Enter` or `Space`) — remembered across a settings-tab reopen and a plugin reload — and, past twenty saved palettes, shows the first twenty with a **Load more** button that reveals the rest in one click.
 
 You can build a palette in two ways:
 
