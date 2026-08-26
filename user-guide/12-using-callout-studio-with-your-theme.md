@@ -88,5 +88,9 @@ So there is no in-between. For the callouts it does own, Callout Studio takes ev
 
 Two limits worth stating plainly. It wins the properties Callout Studio actually sets — it does not undo *layout* your theme adds, which is part of why a theme that names a callout keeps it entirely. And the colours shown for a theme callout are read from your **current** light/dark mode; switching mode re-reads them.
 
+## Writing a theme yourself?
+
+There is a compatibility guide for theme authors in the developer docs — which CSS patterns Callout Studio reads correctly, which ones hide your callouts from it, and how to check your theme against it: [Theme callout discovery](../internals-docs/21-theme-callout-discovery.md#for-theme-authors).
+
 ---
 **Next:** [Resetting callouts and settings](13-resetting-callouts-and-settings.md)

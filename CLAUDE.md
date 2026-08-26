@@ -130,7 +130,7 @@ Search indexes are bundled (packed by `icons/data/codec.ts`); artwork is not. Re
 
 **Counting usages is a whole-vault read, so it is cached in `themeRowUsage.ts` at module scope**, keyed by the id set and dropped in `SettingsTab.hide()`. One pass per visit to the tab. It must never move inside `refresh()`, which is subscribed to `registry.onChange` — that would scan every markdown file on every drag of a colour picker.
 
-Full derivation in [`internals-docs/06-css-generation.md`](internals-docs/06-css-generation.md).
+Full derivation of what is *emitted* in [`internals-docs/06-css-generation.md`](internals-docs/06-css-generation.md); how the theme is **discovered and read back** — the scanner, the appearance probe, the row lifecycle, and the compatibility guide for theme authors — in [`internals-docs/21-theme-callout-discovery.md`](internals-docs/21-theme-callout-discovery.md).
 
 ### Key types (`src/types.ts`)
 

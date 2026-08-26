@@ -226,7 +226,7 @@ own DOM and are explicitly skipped), and heading/inline **token** DOM shared
 between Live Preview widgets and reading view — with CodeMirror-owned widget
 DOM (marked `CSS_CM_WIDGET`) explicitly excluded, because CM rebuilds those
 itself when the decoration set changes (see
-[Render roles](08-render-roles.md#the-cs_cm_widget-marker)).
+[Render roles](08-render-roles.md#the-css_cm_widget-marker)).
 
 > [!WARNING]
 > **Restoring a callout back to the theme is not just "stop emitting CSS."**
@@ -320,6 +320,11 @@ otherwise                 → this plugin paints it, outright, with !important
                             at the derived weight
 ```
 
+*How* the theme is read, which selectors count as naming an id, and what happens
+to the rows on a theme switch is its own chapter:
+[21-theme-callout-discovery.md](21-theme-callout-discovery.md). This section is
+only what the injector does once that question has an answer.
+
 Three consequences worth stating separately, because each was a decision.
 
 **Every id form counts.** `ThemeFacts.owns` walks `vaultIdFormsFor(def)` — the
@@ -346,22 +351,12 @@ External CSS row is still the user's.
 
 ### Nothing is stored, and that is the design
 
-Writing `source: "theme"` onto a matching row is the obvious "real" migration.
-It loses data three ways:
-
-- `getUserDefined()` excludes `source: "theme"`, and it feeds
-  `getExportableDefinitions` → every backup. The row would **silently stop being
-  exported**.
-- `syncThemeProvidedRows`'s `stale` branch calls `registry.remove()` on an
-  uncustomized theme row the moment the theme stops declaring the id.
-- `importValidator` re-stamps `source: "user"` on every import, so the flip
-  would not even stay done.
-
-Deriving is idempotent, survives import, and is a **no-op in the safe direction**
-when the stylesheet reads empty at startup — `CalloutRegistry` takes no `App`
-and cannot see the theme when `load()` runs, so the default owned-set is empty
-and the plugin styles everything until told otherwise. Standing *down* on a bad
-read would strip a user's callouts; standing up cannot.
+Ownership is **derived on every read**, never written onto the row. Writing
+`source: "theme"` onto a matching row is the obvious "real" migration and it
+loses data three ways — the row stops being exported, the next theme switch
+deletes it, and an import re-stamps it back. The derivation, and why the empty
+owned-set at startup is the safe direction rather than a gap, is
+[21-theme-callout-discovery.md § Stage 3](21-theme-callout-discovery.md#stage-3--ownership).
 
 `source` moves in exactly one place: a one-shot re-home of pre-existing
 `source: "theme"` rows in
@@ -448,162 +443,35 @@ nothing left the definition, only what the renderer acts on.
 
 ### A theme-invented callout type is an ephemeral overlay
 
-`toSaveData()` skips `source: "theme"`. Such a row is minted from the active
-theme's stylesheet on every launch and on every `css-change`, and written to
-`data.json` by nothing at all.
+`toSaveData()` skips `source: "theme"`, so a row minted from the theme's
+stylesheet is re-derived on every launch and written to `data.json` by nothing.
+That is what makes "the theme stopped supplying this, so it is gone" true with
+nothing having to undo it, and it is why the sweep has to record what it retired
+(`settings.retiredThemeIds`) so vault discovery does not hand the row straight
+back one file-open later.
 
-That single line is the whole lifecycle model, and it buys two things.
-
-**"The theme stopped supplying this, so it is gone" needs nothing to undo it.**
-A persisted row would outlive the theme that justified it — a row for a callout
-nothing supplies any more, which the next sweep would have to recognise as its
-own and delete.
-
-**Provenance becomes structural rather than a flag.** The sweep's `claimed` set
-already refuses to mint over any existing row or alias, so the overlay only ever
-holds ids nothing else defines. A definition that survives the retire pass is,
-by construction, one that existed before the theme claimed it. No
-`introducedByTheme` boolean, nothing to migrate, nothing to get out of step.
-
-| | while the theme claims it | when it lets go |
-|---|---|---|
-| theme-invented (`recite`) | overlay row, theme section | **gone** |
-| pre-existing user callout | theme section, stands down | back to *My callout types*, field for field |
-| built-in the theme repaints | theme section | back to *Built-in callouts*, customizations intact |
-| discovered fallback row | theme section | back as a fallback row |
-
-Switching straight from theme A to theme B is one sweep and needs no special
-case. An id both declare appears in neither list — not stale, because the set
-still has it; not fresh, because a row already claims it — so it stays owned
-throughout, with no delete-and-remint in the middle.
-
-### What the overlay needs beside it
-
-The notes do not change when the theme does. They still say `> [!recite]`, and
-`CalloutDiscovery` reads exactly that and auto-creates rows for ids nothing
-defines — so without help, the row the theme switch just removed returns one
-file-open later as an uncustomized fallback row: a callout the user never made,
-styled by nobody, filed under the callouts they did make.
-
-So the sweep records what it retired into `settings.retiredThemeIds`
-([`manager/theme/retiredThemeIds.ts`](../src/manager/theme/retiredThemeIds.ts)),
-and `RediscoveryHold`
-([`manager/rediscoveryHold.ts`](../src/manager/rediscoveryHold.ts)) answers that
-and the seconds-long hold after an explicit delete as **one** question, because
-every automatic path asks them in the same breath. Four properties keep it from
-becoming a place where ids go to be forgotten:
-
-- **It gates automatic discovery only.** `canUseCalloutId` never reads it, so
-  creating the id explicitly still works and is the way to take it over.
-- **A user-requested vault scan clears it**, which is the doctrine
-  `suppressRediscovery` already followed.
-- **The sweep prunes it** — an id something defines again, or that the active
-  theme declares again, drops straight back out — so it self-cleans instead of
-  growing with every theme the user tries. It is capped as a backstop.
-- **An import does not carry it.** It records which callout types *this* vault's
-  themes stopped supplying; another vault's history says nothing about this one,
-  and adopting it would hold back ids the reader does want discovered.
-
-One more thing the sweep now does: it publishes ownership **inside** the batch.
-A theme that starts claiming a built-in mints and retires nothing, yet changes
-who paints it, which section the row sits in, whether the editor opens it and
-whether a heading command may run. `setThemeOwnedIds` therefore notifies when
-the set moves, and everything downstream re-derives from one `onChange`.
+The full lifecycle — the four row kinds and what a theme switch does to each,
+`RediscoveryHold`, and why the sweep publishes ownership inside its `batch()` —
+is [21-theme-callout-discovery.md § Representation and persistence](21-theme-callout-discovery.md#representation-and-persistence).
 
 ## Reading the theme back
 
 `themeCalloutScan` keeps property *names* only, so it can say a theme declares
 `--callout-color` for `[!note]` and never what colour that is — and no amount of
 parsing fixes that, because the answer is whatever the cascade computes through
-variables, `color-mix()`, inheritance or a Style Settings body class.
+variables, `color-mix()`, inheritance or a Style Settings body class. So
+`ThemeAppearanceProbe` renders every theme-owned callout once, offscreen, and
+reads **used values** off it.
 
-So [`ThemeAppearanceProbe`](../src/manager/theme/ThemeAppearanceProbe.ts) renders
-every theme-owned callout once, offscreen, and reads **used values** off it.
-Three things about that are load-bearing:
+Nothing in the generated stylesheet consumes those readings. They exist for the
+surfaces that *list* a callout this plugin does not paint — the settings row's
+two swatches and its icon, the small-list icon, the preview window. The probe's
+scheduling, the node ladder (`readCalloutStyle.ts`), the accent ladder and the
+five-rung icon ladder are all
+[21-theme-callout-discovery.md § Stage 5](21-theme-callout-discovery.md#stage-5--reading-the-colours-and-the-icon-back).
 
-- **The ancestry.** `.markdown-preview-view > .markdown-rendered`, the same chain
-  `quickInsertPreview.ts` rebuilds, because core's and every theme's callout CSS
-  is written against reading view.
-- **`visibility: hidden`, never `display: none`.** A display-none subtree has no
-  used values for the properties that matter; masks and backgrounds come back
-  empty and every theme reads as unknown.
-- **One batch per theme change**, cached on `stylingSignature` plus the
-  light/dark mode, dropped on `css-change`. A request that arrives while a pass
-  is still rendering is **held in one slot and re-run**, not dropped: the one
-  request that is never redundant is the one `css-change` makes, and dropping it
-  left the running pass free to write the *outgoing* theme's readings into the
-  cache it had just been cleared of, with nothing scheduled to correct them.
-
-### Which node is asked
-
-[`readCalloutStyle.ts`](../src/manager/theme/readCalloutStyle.ts) owns this and
-nothing else, because it is a real question with non-obvious answers — and
-getting it wrong is invisible. **Reading one node where the theme spoke on
-another is indistinguishable from the theme having said nothing**, so the whole
-family of themes that does so simply rendered as *core's defaults* in the
-settings list, while looking perfectly right in the Quick Insert window and the
-preview modal (which render a real callout and so never ask).
-
-Two such families, and Obsidian's own stylesheet explains both:
-
-```css
-.callout             { --callout-color: var(--callout-default); }  /* blue */
-.callout-title       { color: rgb(var(--callout-color)); }
-.callout-title-inner { color: var(--callout-title-color); }
-:root                { --callout-title-color: inherit; }
-```
-
-`--callout-title-color` is core's documented hook for a callout title's colour,
-and **25 of the 257 installed themes use it — 13 of them without ever setting
-`--callout-color`**. For those, `.callout-title` keeps core's default hue
-forever while the title the reader actually sees carries the theme's. And **21
-themes hide the *drawing* rather than the slot** — `.callout-icon > svg
-{ display: none }`, or the descendant form — painting their own artwork on
-`.callout-icon::before` with a mask instead.
-
-The ladder in [`themeIcon.ts`](../src/manager/theme/themeIcon.ts) is ordered by
-how definitive the evidence is rather than how common the mechanism is:
-
-| Rung | Evidence |
-|---|---|
-| `hidden` | computed `display: none` on `.callout-icon` |
-| `svg` | real child markup **that is itself displayed** |
-| `mask` | computed `mask-image` on `.callout-icon` **or its `::before`** — a stencil, no SVG to clone |
-| `glyph` | a `::before` with `content`, copied with its font |
-| `unknown` | nothing legible; callers draw a neutral placeholder |
-
-`hidden` outranks `svg` because a theme that hides the icon may leave core's
-markup in place; `svg` outranks `mask` because a mask behind real markup is
-decoration on top of the drawing. The `svg` rung asks whether the child is
-*displayed* for the very same reason as the first of those, one node deeper:
-testing `display` on `.callout-icon` alone reproduced the exact icon the theme
-had switched off, so every row drew core's default pencil.
-
-The accent ladder in
-[`themeAppearance.ts`](../src/manager/theme/themeAppearance.ts) follows from the
-same evidence-first ordering:
-
-1. **The `::before`'s own paint**, when the `::before` is what draws the icon —
-   its `background-color` under a mask, its `color` under a glyph. Core paints no
-   `::before` at all, so a painted one is always a theme saying so.
-2. **`.callout-title-inner`'s colour** — the hook above. Safe to add precisely
-   because it defaults to `inherit`, so it is byte-identical to rung 3 for every
-   theme that ignores it.
-3. **`.callout-title`'s colour** — `rgb(var(--callout-color))`.
-
-The child `<svg>`'s own colour is deliberately *not* a rung. Core paints it
-`rgb(var(--callout-color))`, so it would only duplicate rung 3 — while letting
-the handful of themes that neutralise their icon artwork (`--text-muted`,
-`transparent`) drain the colour out of a swatch that is currently right.
-
-**The fallback is never the row's stored icon or colour.** Those describe a
-design that is not on screen, and showing them is the exact bug this replaces —
-one that looks like a feature, because a wrong icon is indistinguishable from a
-right one until you compare.
-
-One honest limit: only the current appearance mode can be read. A nested
-`.theme-light` wrapper does not flip a theme that writes `body.theme-dark …`,
-and flipping the real body would repaint the user's screen.
+One rule from there that everything else depends on: **the fallback is never the
+row's stored icon or colour.** Those describe a design that is not on screen.
 
 ### Why studio mode uses `!important`
 
@@ -649,114 +517,30 @@ would print the unclipped block over the title that the reset exists to undo.
 
 ## Detecting what the theme claims
 
-`manager/theme/` answers two different questions from the same scan, and
-collapsing them would break both.
+Emission needs two answers out of `manager/theme/`, and they come from one text
+scan asked two different questions:
 
-### Two questions, not one
+- **Which ids does the theme name?** (`ThemeCalloutStore.themeDefinedIds()` —
+  the theme's own stylesheet, and only the operators that name exactly one
+  callout.) This decides `themeOwns`, and therefore whether anything is emitted
+  at all.
+- **What is the heaviest `!important` callout selector?**
+  (`maxImportantClasses()` — theme **plus** every enabled snippet, every
+  operator.) This decides the weight everything else is emitted at.
 
-**Enumeration** — *which callout types does the theme add?* — reads the theme's
-stylesheet only, and only the operators that name **one** callout: `=` and
-`~=`. A family operator names no callout at all: `[data-callout*="column"]`
-says "everything containing this", and inventing a type called *column* out of
-it would put an id in the user's settings list that neither their vault nor
-their theme ever declared. Snippets are excluded too: the section is called
-*Callouts from your theme* and has to mean it — a snippet the user wrote is
-their own work.
+Collapsing the two breaks both. The scanner itself, the operator rules, what it
+can and cannot see, and the row-minting sweep built on top of it are
+[21-theme-callout-discovery.md § Stage 2](21-theme-callout-discovery.md#stage-2--scanning-the-stylesheet-for-callout-claims)
+and
+[§ Stage 4](21-theme-callout-discovery.md#stage-4--minting-rows-for-the-types-a-theme-invents);
+when the scan re-runs is
+[§ When discovery re-runs](21-theme-callout-discovery.md#when-discovery-re-runs).
 
-`~=` looks like a family operator and is not one here. It matches a
-whitespace-separated word list, and Obsidian writes only the callout *type*
-into `data-callout` — metadata goes to `data-callout-metadata` — so that list
-always holds exactly one word and `~=infobox` matches precisely what
-`=infobox` matches. Leaving it out was a measured false negative rather than a
-conservative choice: ITS Theme declares `infobox`, `cards`, `timeline`,
-`aside`, `kanban` and `caption` that way and no other way, so six of the types
-its users reach for most never appeared in the list at all.
-
-The keys are the **attribute form** (`obsidianCalloutAttrId`), not the text as
-written, and that is load-bearing rather than tidy. ITS writes
-`[data-callout~=Metadata i]` in 24 rules; keyed as written, that entry matches
-nothing any caller can ask for, so `themeProvidedRows` mints a row for it,
-fails to recognise its own row on the next sweep, deletes it, and mints it
-again — forever, on every `css-change`.
-
-A third, looser question sits beside these: **does the theme style callouts at
-all?** (`themeStylesCallouts`). A bare `.callout { … }` makes no claim on any
-id, so the scan records nothing for it, yet the theme is unmistakably styling
-callouts — 54 of the 257 themes in the dev vault are exactly that shape, and
-another 134 leave callouts alone entirely. Telling those two apart is what
-stops the settings list filing every built-in under a theme that is not
-touching them.
-
-**Weight** — *how hard must studio push?* — reads the theme **and** every
-enabled snippet, through every operator, because studio has to outrank whatever
-is actually on the page whoever wrote it. Deliberately one number for the whole
-sheet rather than per callout: a per-id number would be tighter, but it would
-mean trusting the scanner's attribution of every selector to decide whether a
-callout the user explicitly asked to be styled actually gets styled, and being
-wrong there is silent.
-
-A claim inside `:not()` is an **anti**-claim and is dropped.
-
-### Theme-provided rows
-
-[`manager/theme/themeProvidedRows.ts`](../src/manager/theme/themeProvidedRows.ts)
-turns the enumeration into real registry rows (`source: "theme"`, defaulting to
-theme mode, so nothing is emitted for them). Three properties keep the sweep
-from destroying anything, and each is tested:
-
-1. **It never touches a row it did not mint.** The mint step skips any id that
-   already has a row or is somebody's alias.
-2. **A row the user adopted is re-homed, not deleted.** A customized
-   `source: "theme"` row whose type the theme stops declaring becomes
-   `source: "user"` and moves down into *My callout types* intact.
-3. **It is idempotent.** Two runs on the same stylesheet write nothing.
-
-That third one is what makes the `css-change` chain terminate. Round 1: the
-signature moved, rows change inside one `registry.batch()`, one `onChange`,
-`inject()` produces different text and triggers `css-change`. Round 2: the
-listener re-injects with `emitCssChange = false`, the text is byte-identical so
-`injectNow` returns before the swap, and the sweep finds an unchanged signature.
-Two rounds, then quiet.
-
-[`manager/theme/themeRowSync.ts`](../src/manager/theme/themeRowSync.ts) is the
-scheduling half, and owns the whole `css-change` response — drop the published
-readings, sweep, re-inject, then probe and re-inject — because the *order* is
-the load-bearing part and `main.ts` is wiring, not the place to keep a rule
-about which of two theme-dependent passes goes first. The split is the same one
-`themeCalloutScan`/`ThemeCalloutStore` and `themeAppearance`/`ThemeAppearanceProbe`
-already use: the sweep is a function of a registry and a store, and *when* to
-run it is a separate question with its own failure modes.
-
-Two of those failure modes are worth stating outright, because both look
-correct from the end state and only go wrong in the timing.
-
-**Dropping the readings is not the same as invalidating the probe.**
-`ThemeAppearanceProbe.invalidate()` clears the probe's own cache, but nothing
-draws from that cache — every row reads `ThemeFacts`, which the probe rewrites
-only when its next pass lands. The sweep's `setThemeOwnedIds` fires an
-`onChange` a turn earlier, and the settings tab repaints on it, so every row
-came up wearing the **outgoing** theme's artwork and colours. So the response
-clears `setThemeAppearances(new Map())` too, inside the sweep's own
-`registry.batch()` — which makes it free: the clear and the sweep collapse into
-the one `onChange` the sweep was going to fire anyway, and callers already have
-to handle `UNKNOWN_APPEARANCE` for the window before the probe lands.
-
-**The memo has to notice a reload.** `stylingSignature` is theme name, theme
-version and enabled snippets, and a theme edited in place and reloaded moves
-none of the three — so a callout id added that way never got a row, however
-many `css-change` events went by. The memo here is that signature plus
-`themeCss(app).length`, and when it moves the sweep calls
-`ThemeCalloutStore.invalidate()` so the store re-scans despite its own
-signature being unchanged. The length is deliberately *not* folded into
-`stylingSignature`: that function is asked on every inject, by
-`StudioWeightCache`, and reading `styleEl.textContent` allocates the entire
-stylesheet — hundreds of kilobytes for exactly the callout-heavy themes this
-matters for. This memo is read twice per theme change.
-
-One trap for anyone adding a second consumer: `StudioWeightCache.resolve()`
-advances `ThemeCalloutStore`'s signature memo as a side effect of asking it
-anything, and it runs *before* the sweep on the `css-change` path. A caller that
-wants "did the theme change since I last looked?" must keep its own memo.
+> [!WARNING]
+> `StudioWeightCache.resolve()` advances `ThemeCalloutStore`'s signature memo as
+> a side effect of asking it anything, and it runs *before* the theme sweep on
+> the `css-change` path. A caller that wants "did the theme change since I last
+> looked?" must keep its own memo.
 
 ### The specificity arithmetic
 
@@ -765,15 +549,18 @@ wants "did the theme change since I last looked?" must keep its own memo.
 replaced mis-ranked five of the 53 themes surveyed, and over-counting is the
 dangerous direction: it makes the plugin emit heavier selectors than it needs.
 
-## Theme mode — why "emit nothing" needs three separate mechanisms
+## Standing down — why "emit nothing" needs three separate mechanisms
 
 Because the generated CSS operates on several different scopes, "no styling"
 needs enforcement in three places:
 
-1. **`generateCalloutCSS(def)` returns almost immediately.** The one exception
-   is `hideIcon` — a theme cannot express "no icon" on the user's behalf, so
-   that single rule survives, and stays *un*-`!important`, since the promise of
-   theme mode is that nothing of ours competes with the theme's own positioning.
+1. **`generateCalloutCSS(def)` returns immediately**, before the first
+   declaration, and there is **no exception**. `hideIcon` used to keep emitting
+   its `display: none`, on the argument that a theme cannot express "draw no
+   icon" on the owner's behalf; under an absolute rule that is an override like
+   any other, and the one a user is most likely to read as the plugin breaking
+   their theme. The flag is preserved on the row and applies again the moment
+   the plugin is painting the callout.
 2. **`generateGlobalStyleCSS()`'s vault-wide rules exclude it by selector** via
    `externalExclusion()`, which builds a `:not(:where(...))` suffix listing every
    theme-styled callout's attribute form. The `:where()` wrapper is deliberate: a
@@ -787,17 +574,18 @@ needs enforcement in three places:
    the global frame settings part of what "Callout Studio style" *means*: a
    callout handed to the theme is handed over whole, geometry included.
 3. **The heading-bar / inline-pill / ref-token render paths skip the token
-   entirely** (`shouldRenderToken()` in `renderShared.ts`) — those are the
-   plugin's own invented syntax, so there is no theme styling for them to defer
-   to, and rendering a half-styled token would just look broken. This is a real
-   cost of theme mode, and the UI states it rather than hiding it.
+   entirely** (`shouldRenderToken()` in `renderShared.ts`). Those are the
+   plugin's own invented syntax: for an External CSS row there is nothing there
+   for the user's snippet to style, and for a theme-owned callout the two
+   formats are withdrawn outright — see *What it emits for a theme callout*
+   above. This is a real cost, and the UI states it rather than hiding it.
 
 The row **stays in the registry** deliberately — `generateFallbackCSS` builds its
-`:not()` exclusion chain from every *known* id including theme-styled ones, so
+`:not()` exclusion chain from every *known* id including theme-owned ones, so
 removing one would hand it to the `!important` catch-all instead, which is the
-opposite of "hands off." That catch-all also asks the fallback *template's* own
-mode and emits nothing when it stands down, which is what let `setStyleMode`
-drop its old special case for the fallback target.
+opposite of "hands off." That catch-all also asks the fallback *template*
+whether it stands down and emits nothing when it does, so the fallback target
+needs no special case of its own.
 
 ## `calloutSel` vs. `tokenAttrSel` — the selector escaping rule
 

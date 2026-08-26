@@ -109,21 +109,36 @@ buildContentPillDom(options): { root, payload }             // the empty shell f
 keeps DOM icons and generated CSS colours from disagreeing about which
 definition a token means.
 
-### `shouldRenderToken` — the `externalStyle` cutoff
+### `shouldRenderToken` — the two cutoffs
 
 ```ts
 export function shouldRenderToken(resolved: ResolvedCalloutDef): boolean {
-  return !resolved.external;
+  return !resolved.external && !resolved.themeOwned;
 }
 ```
 
-Every renderer of the heading/inline/ref surfaces calls this **first**. A
-callout marked `externalStyle` gets **no DOM at all** for these three roles —
-the `[!id]` stays literal text — because, unlike the block role, there's no
-theme styling for these plugin-invented roles to fall back to; a half-painted
-token would just look broken. See
-[Callout registry § externalStyle](05-callout-registry.md) and
-[CSS generation § externalStyle](06-css-generation.md#externalstyle--the-opt-out-and-why-it-needs-three-separate-exclusion-mechanisms).
+Every renderer of the heading/inline/ref surfaces calls this **first**, and two
+quite different facts land here.
+
+**`external`** — the user styles this callout in their own snippet. These three
+roles get **no DOM at all**, and the `[!id]` stays literal text: unlike the
+block role, there is nothing here for a snippet to style, so a half-painted
+token would just look broken.
+
+**`themeOwned`** — the active theme supplies this callout, and a theme callout is
+**Block only**. The plugin *could* paint `.cs-heading-token` (no theme selector
+can match it, and an earlier build did exactly that), but it would be offering
+two formats the theme has no design for and cannot follow, beside a Block
+callout the theme draws itself — three renderings of one callout with two
+invented. The withdrawal is temporary and reversible: nothing leaves the
+definition, only what the renderer acts on. Downstream, autocomplete stops
+offering theme callouts in those positions, the command builder drops the two
+options, and an existing heading/inline command is *suspended* rather than
+deleted.
+
+See [Callout registry § externalStyle](05-callout-registry.md),
+[CSS generation § standing down](06-css-generation.md#standing-down--why-emit-nothing-needs-three-separate-mechanisms), and
+[Theme callout discovery § Block only](21-theme-callout-discovery.md#where-theme-callouts-appear--and-why-block-only).
 
 ### `hideIcon` and flex-gap collapse
 

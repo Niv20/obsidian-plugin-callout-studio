@@ -34,7 +34,8 @@ from.
 | `builtin` | One of the 13 defaults in `constants.ts` |
 | `user` | User-created, or a foreign import (Callout Manager / Admonition) |
 | `fallback` | Auto-created by discovery for an unknown ID |
-| `theme` / `plugin` | Injected by an older build's now-removed public API, or an import that carried that tag |
+| `theme` | A row minted from the **active theme's** stylesheet — an overlay, never persisted. See [21-theme-callout-discovery.md](21-theme-callout-discovery.md) |
+| `plugin` | Injected by an older build's now-removed public API, or an import that carried that tag |
 
 `builtIn: boolean` is a separate field that's redundant with
 `source === "builtin"` in the common case — but `savedCalloutRows.ts`'s

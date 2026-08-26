@@ -15,6 +15,12 @@ already covers that ground for end users, and duplicating it here would just
 give it a second place to go stale. If you're looking for that, start there
 instead.
 
+One chapter has a third audience. [21-theme-callout-discovery.md](21-theme-callout-discovery.md)
+ends with a compatibility section written for **Obsidian theme authors** — which
+CSS patterns Callout Studio reads correctly, which ones hide a theme's callouts
+from it, and how to check a theme against it. No plugin internals needed to read
+that half.
+
 It complements, rather than replaces, two other documents already in the
 repo:
 
@@ -66,6 +72,7 @@ covering whatever you're touching.
 | [14-import-export.md](14-import-export.md) | The JSON backup format and validator, the CSS-snippet export, and the Callout Manager / Admonition importers. |
 | [15-settings-ui-and-modals.md](15-settings-ui-and-modals.md) | The settings tab's composition, the shared modal chrome, and the individual modals. |
 | [16-i18n.md](16-i18n.md) | How `t()` resolves strings, the locale download/verification pipeline, and the contribution workflow. |
+| [21-theme-callout-discovery.md](21-theme-callout-discovery.md) | How the active theme's callout types are found, read back and represented — and the compatibility guide for **theme authors**. |
 
 ## Shipping a change
 

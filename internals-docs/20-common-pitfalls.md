@@ -148,7 +148,7 @@ sufficient**. Common cases that also need an explicit follow-up call:
   opt out — using a plain `:not()` chain there would make the vault-wide
   rules progressively harder for a theme to override as more callouts
   become external-styled. See
-  [CSS generation § externalStyle](06-css-generation.md#externalstyle--the-opt-out-and-why-it-needs-three-separate-exclusion-mechanisms).
+  [CSS generation § standing down](06-css-generation.md#standing-down--why-emit-nothing-needs-three-separate-mechanisms).
 - **The fallback block's `:not()` chain does the opposite on purpose** —
   its growing specificity (one class-unit per known id/alias) is what lets
   it outrank every per-callout rule and correctly restyle truly unknown
@@ -247,4 +247,4 @@ sufficient**. Common cases that also need an explicit follow-up call:
   cycle even with no real change.
 
 ---
-Next chapter: [00-index.md](00-index.md)
+Next chapter: [21-theme-callout-discovery.md](21-theme-callout-discovery.md)
