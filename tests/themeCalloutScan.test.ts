@@ -4,27 +4,35 @@
  * The scanner's whole value is that it is *right*: a badge saying "your theme
  * also styles this" is trusted the first time and ignored forever after one
  * false positive. So the suites below are mostly about what must **not** be
- * claimed — substring matchers, comments, unrelated attributes — with the
- * specificity arithmetic pinned separately, since that number is what decides
- * whether the report says the theme is winning.
+ * claimed — negations, comments, unrelated attributes — and about the one
+ * distinction the whole module is shaped around: enumeration may only read the
+ * operators that name **one** callout — `=` and `~=` — while *lookup* may
+ * consult every operator, because by then the id is one the registry already
+ * holds and there is nothing left to invent.
+ *
+ * The awkward inputs here are all real. Every id and selector marked "verbatim"
+ * was copied out of a theme installed in the development vault.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import {
-	claimForId,
-	classCountOf,
 	mergeScans,
 	scanCalloutClaims,
 } from "../src/manager/theme/themeCalloutScan";
+import {
+	claimForId,
+	patternMatches,
+} from "../src/manager/theme/themeClaimLookup";
 
 const claim = (css: string, id: string) =>
 	claimForId(scanCalloutClaims(css), id);
 
-describe("which attribute matchers count as a claim", () => {
+describe("enumeration — which matchers may name a callout", () => {
 	it("takes an exact match", () => {
 		const c = claim('.callout[data-callout="tip"] { color: red; }', "tip");
 		assert.ok(c);
 		assert.deepStrictEqual([...c.props], ["color"]);
+		assert.strictEqual(c.certain, true);
 	});
 
 	it("takes it unquoted and single-quoted too", () => {
@@ -32,48 +40,52 @@ describe("which attribute matchers count as a claim", () => {
 		assert.ok(claim(".callout[data-callout='tip'] { color: red; }", "tip"));
 	});
 
-	it("ignores a substring matcher", () => {
-		// The reason this function exists in this shape. ITS Theme writes
-		// `[data-callout*=column]` to catch `two-column`, `three-column` and so
-		// on; reading it as an id invents a callout nobody has, and the badge
-		// would appear on a vault with no conflict at all.
+	it("takes a ~= match, which names exactly one callout too", () => {
+		// Obsidian writes only the callout TYPE into data-callout — metadata
+		// goes to data-callout-metadata — so the whitespace-separated list this
+		// operator matches always has one word in it. Verbatim from ITS Theme,
+		// which declares `infobox`, `cards`, `timeline`, `aside` and `kanban`
+		// this way and no other way; excluding it hid its five most-used types.
 		const scan = scanCalloutClaims(
-			".callout[data-callout*=column] { display: grid; }",
+			".callout.callout[data-callout~=infobox] { color: red; }",
 		);
-		assert.strictEqual(scan.byId.size, 0);
-		assert.strictEqual(scan.prefixes.size, 0);
+		assert.deepStrictEqual([...scan.byId.keys()], ["infobox"]);
+		assert.strictEqual(scan.byId.get("infobox")?.certain, true);
+		assert.strictEqual(scan.patterns.length, 0);
 	});
 
-	it("ignores word and suffix matchers as well", () => {
-		for (const op of ["~", "$", "|"]) {
+	it("normalizes the id to the attribute form Obsidian writes", () => {
+		// Verbatim from ITS Theme, case-insensitive flag and all. Keyed as
+		// written, this key matches nothing any caller can ask for, and
+		// `themeProvidedRows` would mint a row, fail to recognise it next
+		// sweep, delete it and mint it again forever.
+		const scan = scanCalloutClaims(
+			"body:not(.callout-no-metadata) .callout[data-callout~=Metadata i] { color: red; }",
+		);
+		assert.deepStrictEqual([...scan.byId.keys()], ["metadata"]);
+	});
+
+	it("normalizes a pattern's value too, so it can still match", () => {
+		const scan = scanCalloutClaims(
+			'.callout[data-callout^="Col"] { color: red; }',
+		);
+		assert.ok(claimForId(scan, "col-md"));
+	});
+
+	it("never enumerates a family matcher as an id", () => {
+		// The reason this module is split in two. ITS Theme writes
+		// `[data-callout*=column]` to catch `two-column`, `three-column` and so
+		// on; listing it as an id invents a callout nobody has.
+		//
+		// `~` is deliberately absent from this list. It is the one operator
+		// that describes no family: Obsidian puts a single word in
+		// `data-callout`, so `~=column` matches `column` and nothing else.
+		for (const op of ["*", "$", "|", "^"]) {
 			const scan = scanCalloutClaims(
-				`.callout[data-callout${op}=cards] { color: red; }`,
+				`.callout[data-callout${op}=column] { display: grid; }`,
 			);
 			assert.strictEqual(scan.byId.size, 0, op);
 		}
-	});
-
-	it("treats ^= as a prefix, not an id", () => {
-		// Callout Manager's parser pushes the `^=` value into its id list, which
-		// surfaces a callout named e.g. "note-" that no one ever wrote. It is a
-		// pattern, so it has to be matched with startsWith.
-		const scan = scanCalloutClaims(
-			'.callout[data-callout^="note-"] { color: red; }',
-		);
-		assert.strictEqual(scan.byId.size, 0);
-		assert.deepStrictEqual([...scan.prefixes.keys()], ["note-"]);
-		assert.ok(claimForId(scan, "note-blue"));
-		assert.strictEqual(claimForId(scan, "tip"), undefined);
-	});
-
-	it("prefers an exact claim over a prefix that also matches", () => {
-		const scan = scanCalloutClaims(
-			'.callout[data-callout^="no"] { color: red; }\n' +
-				'.callout.callout[data-callout="note"] { background: blue; }',
-		);
-		const c = claimForId(scan, "note");
-		assert.ok(c);
-		assert.deepStrictEqual([...c.props], ["background"]);
 	});
 
 	it("does not confuse data-callout-metadata for data-callout", () => {
@@ -81,6 +93,119 @@ describe("which attribute matchers count as a claim", () => {
 			'.callout[data-callout-metadata="wide"] { width: 100%; }',
 		);
 		assert.strictEqual(scan.byId.size, 0);
+	});
+
+	it("parses the awkward ids the installed themes really declare", () => {
+		// Verbatim: Velocity ships `!`, `$`, `@` and `~`; Primary ships `tl;dr`;
+		// Kakano ships `-0.5`; Blue Topaz single-quotes `'icon'`.
+		const css = [
+			".callout[data-callout=!] { color: red; }",
+			".callout[data-callout=$] { color: red; }",
+			".callout[data-callout=@] { color: red; }",
+			".callout[data-callout=~] { color: red; }",
+			".callout[data-callout=tl;dr] { color: red; }",
+			".callout[data-callout=-0.5] { color: red; }",
+			".callout[data-callout='icon'] { color: red; }",
+		].join("\n");
+		const ids = [...scanCalloutClaims(css).byId.keys()].sort();
+		assert.deepStrictEqual(ids, [
+			"!",
+			"$",
+			"-0.5",
+			"@",
+			"icon",
+			"tl;dr",
+			"~",
+		]);
+	});
+});
+
+describe("lookup — which matchers may claim an id you already have", () => {
+	it("matches a substring pattern against a real id, hedged", () => {
+		// Notation 2 styles all 26 built-ins through `*=` exclusively. Dropping
+		// these is a measured false negative: the theme reads as having no
+		// opinion about callouts at all.
+		const c = claim(
+			".callout[data-callout*=note] { color: red; }",
+			"note",
+		);
+		assert.ok(c, "a substring matcher does claim the id it matches");
+		assert.strictEqual(c.certain, false);
+	});
+
+	it("still does not invent the id the pattern was written for", () => {
+		const scan = scanCalloutClaims(
+			".callout[data-callout*=column] { display: grid; }",
+		);
+		assert.strictEqual(scan.byId.size, 0);
+		// ...and asking about a callout the user does have still works.
+		assert.ok(claimForId(scan, "two-column"));
+		assert.strictEqual(claimForId(scan, "note"), undefined);
+	});
+
+	it("treats ^= as a prefix, not an id", () => {
+		// Verbatim: Kakano's `col-md`, the only `^=` in the whole vault.
+		const scan = scanCalloutClaims(
+			'.callout[data-callout^="col-md"] { color: red; }',
+		);
+		assert.strictEqual(scan.byId.size, 0);
+		assert.ok(claimForId(scan, "col-md-6"));
+		assert.strictEqual(claimForId(scan, "tip"), undefined);
+	});
+
+	it("prefers an exact claim over a pattern that also matches", () => {
+		const scan = scanCalloutClaims(
+			'.callout[data-callout*="ote"] { color: red; }\n' +
+				'.callout.callout[data-callout="note"] { background: blue; }',
+		);
+		const c = claimForId(scan, "note");
+		assert.ok(c);
+		assert.deepStrictEqual([...c.props], ["background"]);
+		assert.strictEqual(c.certain, true);
+	});
+
+	it("keeps the heaviest of several matching patterns", () => {
+		const scan = scanCalloutClaims(
+			'.callout[data-callout*="not"] { color: red; }\n' +
+				'.a.b.c.d .callout[data-callout$="ote"] { background: blue; }',
+		);
+		assert.strictEqual(claimForId(scan, "note")?.weight[1], 6);
+	});
+
+	it("implements each operator the way CSS does", () => {
+		// `~` is listed for completeness — the scanner enumerates it now, so
+		// nothing reaches this branch through a real scan — but the operator
+		// still has to mean what CSS says it means.
+		assert.ok(patternMatches("^", "col", "col-md"));
+		assert.ok(!patternMatches("^", "md", "col-md"));
+		assert.ok(patternMatches("$", "md", "col-md"));
+		assert.ok(patternMatches("*", "ol-m", "col-md"));
+		assert.ok(patternMatches("~", "col-md", "col-md"));
+		assert.ok(!patternMatches("~", "col", "col-md"));
+		assert.ok(patternMatches("|", "col", "col-md"));
+		assert.ok(patternMatches("|", "col", "col"));
+		assert.ok(!patternMatches("|", "col", "column"));
+	});
+});
+
+describe("a negated claim is not a claim", () => {
+	it("ignores [data-callout=x] inside :not()", () => {
+		// Verbatim from Blue Topaz's indent guides. The rule deliberately
+		// leaves [!kanban] alone, so reporting a conflict on it is backwards.
+		const scan = scanCalloutClaims(
+			"body.bt-connected-indent-hover .markdown-preview-view:not(.kanban) " +
+				'*:not([data-callout="kanban"]) > div { border: 1px; }',
+		);
+		assert.strictEqual(scan.byId.size, 0);
+		assert.strictEqual(scan.patterns.length, 0);
+	});
+
+	it("still reads a claim inside :is() or :where()", () => {
+		// Those select the callout; they do not exclude it.
+		assert.ok(claim('.callout:is([data-callout="x"]) { color: red; }', "x"));
+		assert.ok(
+			claim('.callout:where([data-callout="x"]) { color: red; }', "x"),
+		);
 	});
 });
 
@@ -128,8 +253,19 @@ describe("what the scanner reads out of a rule", () => {
 			'.callout[data-callout="a"],\n' +
 				'body .callout.callout.callout[data-callout="b"] { color: red; }',
 		);
-		assert.strictEqual(scan.byId.get("a")?.maxClasses, 2);
-		assert.strictEqual(scan.byId.get("b")?.maxClasses, 4);
+		assert.deepStrictEqual(scan.byId.get("a")?.weight, [0, 2, 0]);
+		assert.deepStrictEqual(scan.byId.get("b")?.weight, [0, 4, 1]);
+	});
+
+	it("does not split a selector list inside :not()", () => {
+		// Verbatim from ITS Theme. A plain `.split(",")` tears this in two and
+		// weighs a fragment nobody wrote — which happened to land on the right
+		// answer here and would not on the next theme.
+		const scan = scanCalloutClaims(
+			"body:not(.default-callout-quote, .callout-no-quote) " +
+				".callout.callout[data-callout=quote] { color: red; }",
+		);
+		assert.deepStrictEqual(scan.byId.get("quote")?.weight, [0, 4, 1]);
 	});
 
 	it("keeps the highest weight seen for one id", () => {
@@ -138,36 +274,7 @@ describe("what the scanner reads out of a rule", () => {
 				'.callout.callout.callout[data-callout="x"] { color: blue; }\n' +
 				'.callout[data-callout="x"] { color: green; }',
 		);
-		assert.strictEqual(scan.byId.get("x")?.maxClasses, 4);
-	});
-});
-
-describe("classCountOf — the number that decides who wins", () => {
-	it("counts classes, attributes and pseudo-classes alike", () => {
-		assert.strictEqual(classCountOf(".callout[data-callout=x]"), 2);
-		assert.strictEqual(classCountOf(".a.b.c"), 3);
-		assert.strictEqual(classCountOf("li:first-child"), 1);
-	});
-
-	it("does not count elements or pseudo-elements", () => {
-		// They are the `c` component, which is only compared after `b`.
-		assert.strictEqual(classCountOf("body div .callout"), 1);
-		assert.strictEqual(classCountOf(".callout::before"), 1);
-	});
-
-	it("gives :where() a weight of zero, contents included", () => {
-		assert.strictEqual(classCountOf(".callout:where(.a.b.c)"), 1);
-	});
-
-	it("scores ITS Theme's heaviest real selector above a plain rule", () => {
-		// Verbatim from the installed theme. This is the shape that made the
-		// old "we always win" claim false.
-		const its =
-			"body:not(.default-callout-quote, .callout-no-quote) " +
-			".callout.callout[data-callout=quote]";
-		assert.ok(
-			classCountOf(its) > classCountOf(".callout[data-callout=quote]"),
-		);
+		assert.deepStrictEqual(scan.byId.get("x")?.weight, [0, 4, 0]);
 	});
 });
 
@@ -179,12 +286,23 @@ describe("mergeScans — theme plus enabled snippets", () => {
 		);
 		const merged = mergeScans([a, b]);
 		const c = merged.byId.get("x");
-		assert.strictEqual(c?.maxClasses, 4);
+		assert.deepStrictEqual(c?.weight, [0, 4, 0]);
 		assert.deepStrictEqual([...(c?.props ?? [])].sort(), [
 			"background",
 			"color",
 		]);
 		assert.deepStrictEqual([...(c?.important ?? [])], ["background"]);
+	});
+
+	it("merges pattern claims by operator and value", () => {
+		const merged = mergeScans([
+			scanCalloutClaims('.callout[data-callout*="ote"] { color: red; }'),
+			scanCalloutClaims(
+				'.a.b .callout[data-callout*="ote"] { background: blue; }',
+			),
+		]);
+		assert.strictEqual(merged.patterns.length, 1);
+		assert.deepStrictEqual(merged.patterns[0]?.claim.weight, [0, 4, 0]);
 	});
 
 	it("is empty for an empty input, and for a sheet with no callouts", () => {

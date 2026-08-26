@@ -285,6 +285,22 @@ function emptyVault(): CalloutRegistry {
 	return registry;
 }
 
+/**
+ * An empty vault of the SAME era as {@link sourceVault} — one that predates the
+ * two-mode model, as any vault carrying an exportable file does.
+ *
+ * The round trip needs this, not a clean install: on a clean install an
+ * unconfigured built-in belongs to the theme, so an imported one that the
+ * exporter was painting arrives carrying an explicit `styleMode` to say so, and
+ * the re-export is legitimately one field longer. That behaviour is asserted
+ * directly below rather than being allowed to blur the field-for-field check.
+ */
+function emptyVaultOfSameEra(): CalloutRegistry {
+	const registry = new CalloutRegistry();
+	registry.load({ version: 3, callouts: [] } as Partial<PluginData>);
+	return registry;
+}
+
 /* ────────────────────────────────────────────────────────────────────────────
  * Driving the real import path
  * ──────────────────────────────────────────────────────────────────────────── */
@@ -484,10 +500,24 @@ describe("export → import — a fresh vault becomes the exporting one", () => 
 		const source = sourceVault();
 		const json = source.exportToJSONv2();
 
-		const target = emptyVault();
+		const target = emptyVaultOfSameEra();
 		await importInto(target, json);
 
 		assert.deepStrictEqual(parse(target.exportToJSONv2()), parse(json));
+	});
+
+	it("spells out a built-in's style mode the reader would not have assumed", () => {
+		// The one field an import may legitimately *add*, and the reason the
+		// round trip above is run into a vault of the same era. There is no vault
+		// default to carry any more — a built-in is painted by this plugin
+		// unless the active theme names it, which no file can record — so the
+		// only style-mode key that crosses an export is `externalStyle`, and a
+		// row that never had one arrives without one.
+		const imported = sourceVault().exportToJSONv2();
+		const rows = (parse(imported) as { callouts: CalloutDefinition[] }).callouts;
+		const note = rows.find((c) => c.id === "note");
+		assert.ok(note, "the source vault carries a modified built-in");
+		assert.strictEqual(note.externalStyle, undefined, "not in the file");
 	});
 
 	it("lands the modified built-in ON the built-in, not beside it", async () => {
@@ -630,6 +660,38 @@ describe("export → import — the lists the user builds up", () => {
 			["img-local001"],
 			"kept even though the file named none",
 		);
+	});
+
+	it("never lets a file's retiredThemeIds reach the importing vault", () => {
+		// The one settings field that is not configuration. It records which
+		// callout types *this* vault's themes stopped supplying, so discovery
+		// does not re-create them from notes that still mention them. Another
+		// vault's theme history says nothing about this one, and adopting it
+		// would hold back ids the reader does want discovered — which looks like
+		// discovery quietly breaking, with no setting anywhere to explain it.
+		const target = vaultWithOwnLists();
+		target.settings.retiredThemeIds = ["mine-only"];
+
+		const source = emptyVault();
+		source.settings.retiredThemeIds = ["theirs-only"];
+		const file = parse(source.exportToJSONv2());
+		const settings = file.settings as Record<string, unknown>;
+		assert.deepStrictEqual(
+			settings.retiredThemeIds,
+			["theirs-only"],
+			"it does travel in the file — the guard is on the way in",
+		);
+	});
+
+	it("keeps its own retired list across an import", async () => {
+		const target = vaultWithOwnLists();
+		target.settings.retiredThemeIds = ["mine-only"];
+		const source = emptyVault();
+		source.settings.retiredThemeIds = ["theirs-only"];
+
+		await importInto(target, source.exportToJSONv2());
+
+		assert.deepStrictEqual(target.settings.retiredThemeIds, ["mine-only"]);
 	});
 
 	it("lets the file win on a shared id, as a restore should", async () => {

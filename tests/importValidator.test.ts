@@ -176,12 +176,15 @@ describe("validateIdString — forbidden characters", () => {
  * MAX_DISPLAY_NAME, through the whole payload validator
  * ------------------------------------------------------------------ */
 
-/** The three registry members validateImportPayload actually reaches for. */
+/** The registry members validateImportPayload actually reaches for. */
 function fakeRegistry(): CalloutRegistry {
 	return {
 		getUserImages: () => [],
 		findByAlias: () => undefined,
 		get: () => undefined,
+		// The reader's own default decides whether an imported row needs its
+		// style mode spelled out at all — see utils/importStyleMode.ts.
+		settings: { defaultStyleMode: "theme" },
 	} as unknown as CalloutRegistry;
 }
 

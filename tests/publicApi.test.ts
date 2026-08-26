@@ -574,7 +574,7 @@ describe("the published list — what is in it", () => {
 		assert.equal(list[list.length - 1], "alpha");
 	});
 
-	it("includes user, theme and plugin rows alongside the built-ins", () => {
+	it("includes user, theme-provided and plugin rows alongside the built-ins", () => {
 		const { api, registry } = apiHarness();
 		registry.add(definition({ id: "mine", source: "user" }));
 		registry.add(definition({ id: "theirs", source: "theme" }));
