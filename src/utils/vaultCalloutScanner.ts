@@ -21,7 +21,7 @@
  * The one exception is fold-marker normalization; see the note on it below.
  */
 import type { App, TFile } from "obsidian";
-import { mergeDashSpaceVariants, normalizeCalloutId } from "./calloutId";
+import { calloutIdentity, mergeDashSpaceVariants, normalizeCalloutId } from "./calloutId";
 import type { LineCalloutToken } from "../editor/calloutTokens";
 import {
 	createDocumentLineFilter,
@@ -154,8 +154,7 @@ export async function scanFileForUnknownCallouts(
  * Synchronously scan an in-memory string (e.g. an open editor's current
  * buffer that may be unsaved) and return unknown callout IDs from any role.
  *
- * Dash/space spellings of the same ID are merged into one — see
- * {@link mergeDashSpaceVariants}.
+ * Dash/space spellings merge into one — {@link mergeDashSpaceVariants}.
  */
 export function scanStringForUnknownCallouts(
 	content: string,
@@ -165,7 +164,8 @@ export function scanStringForUnknownCallouts(
 	forEachCalloutToken(content, (rawId) => {
 		const id = normalizeCalloutId(rawId);
 		if (!id) return;
-		if (!knownIds.has(id)) found.add(id);
+		// Symmetric: `knownIds` holds both spellings, so test both spellings.
+		if (!knownIds.has(id) && !knownIds.has(calloutIdentity(id))) found.add(id);
 	});
 	return mergeDashSpaceVariants(Array.from(found));
 }
@@ -180,7 +180,7 @@ export async function countCalloutUsages(
 ): Promise<{ fileCount: number; totalCount: number }> {
 	if (ids.length === 0) return { fileCount: 0, totalCount: 0 };
 
-	const idSet = new Set(ids.map((id) => normalizeCalloutId(id)));
+	const idSet = new Set(ids.map((id) => calloutIdentity(id)));
 	const files = app.vault.getMarkdownFiles();
 	let fileCount = 0;
 	let totalCount = 0;
@@ -189,7 +189,7 @@ export async function countCalloutUsages(
 		const content = await app.vault.cachedRead(file);
 		let countInFile = 0;
 		forEachCalloutToken(content, (rawId) => {
-			if (idSet.has(normalizeCalloutId(rawId))) countInFile++;
+			if (idSet.has(calloutIdentity(rawId))) countInFile++;
 		});
 		if (countInFile > 0) {
 			fileCount++;
@@ -202,8 +202,8 @@ export async function countCalloutUsages(
 
 /**
  * Count how many markdown files reference each of the given callout IDs in a
- * single vault pass. Returns a Map keyed by lowercased ID. IDs with zero
- * usages are still present in the map with `{ fileCount: 0, totalCount: 0 }`.
+ * single vault pass. Returns a Map keyed by {@link calloutIdentity}. Zero-usage
+ * IDs are still present with `{ fileCount: 0, totalCount: 0 }`.
  */
 export async function countCalloutUsagesMap(
 	app: App,
@@ -211,7 +211,7 @@ export async function countCalloutUsagesMap(
 ): Promise<Map<string, { fileCount: number; totalCount: number }>> {
 	const result = new Map<string, { fileCount: number; totalCount: number }>();
 	for (const id of ids) {
-		result.set(normalizeCalloutId(id), { fileCount: 0, totalCount: 0 });
+		result.set(calloutIdentity(id), { fileCount: 0, totalCount: 0 });
 	}
 	if (ids.length === 0) return result;
 
@@ -220,7 +220,7 @@ export async function countCalloutUsagesMap(
 		const content = await app.vault.cachedRead(file);
 		const seenInFile = new Set<string>();
 		forEachCalloutToken(content, (rawId) => {
-			const id = normalizeCalloutId(rawId);
+			const id = calloutIdentity(rawId);
 			if (!id) return;
 			const entry = result.get(id);
 			if (!entry) return;
@@ -263,7 +263,7 @@ export async function convertCalloutsToPlainTextInVault(
 ): Promise<{ files: number; blocks: number }> {
 	if (ids.length === 0) return { files: 0, blocks: 0 };
 
-	const idSet = new Set(ids.map((id) => normalizeCalloutId(id)));
+	const idSet = new Set(ids.map((id) => calloutIdentity(id)));
 	const headerRegex = /^(>+)\s*\[!([^\]\n\r]+)\][+-]?\s*(.*)$/i;
 	const name = displayName.trim();
 
@@ -287,7 +287,7 @@ export async function convertCalloutsToPlainTextInVault(
 			const headerMatch = line.match(headerRegex);
 			if (headerMatch) {
 				const markers = headerMatch[1] ?? ">";
-				const id = normalizeCalloutId(headerMatch[2] ?? "");
+				const id = calloutIdentity(headerMatch[2] ?? "");
 				// Only unwrap outermost blocks (single `>`) whose id matches.
 				if (markers.length === 1 && idSet.has(id)) {
 					const title = (headerMatch[3] ?? "").trim();
@@ -322,7 +322,7 @@ export async function convertCalloutsToPlainTextInVault(
 					lineTokens,
 					(token) => {
 						if (nested.has(token)) return null;
-						if (!idSet.has(normalizeCalloutId(token.rawId))) {
+						if (!idSet.has(calloutIdentity(token.rawId))) {
 							return null;
 						}
 						if (token.role === "inline") {
@@ -429,7 +429,7 @@ export async function replaceCalloutIdsInVault(
 ): Promise<number> {
 	if (oldIds.length === 0) return 0;
 
-	const idSet = new Set(oldIds.map((id) => normalizeCalloutId(id)));
+	const idSet = new Set(oldIds.map((id) => calloutIdentity(id)));
 	// An empty old title would match every title-less header and *add* a title
 	// to it, which is never what a type swap means. Same guard, same reason, as
 	// in replaceCalloutTitlesInVault.
@@ -441,7 +441,7 @@ export async function replaceCalloutIdsInVault(
 		const content = await app.vault.read(file);
 		const result = rewriteCalloutLines(content, (line, tokens) =>
 			rewriteTokensOnLine(line, tokens, (token) => {
-				if (!idSet.has(normalizeCalloutId(token.rawId))) return null;
+				if (!idSet.has(calloutIdentity(token.rawId))) return null;
 				const bracket = `[!${newId}${metadataSuffix(token)}]`;
 				// A pill has no title text of its own, so there is nothing to
 				// carry across for an inline token.
@@ -563,7 +563,7 @@ export async function replaceCalloutTitlesInVault(
 ): Promise<number> {
 	if (ids.length === 0) return 0;
 
-	const idSet = new Set(ids.map((id) => normalizeCalloutId(id)));
+	const idSet = new Set(ids.map((id) => calloutIdentity(id)));
 	const wanted = oldTitle.trim().toLowerCase();
 	// An empty old title would match every title-less header and *add* a title
 	// to it, which is never what a rename means.
@@ -576,7 +576,7 @@ export async function replaceCalloutTitlesInVault(
 		const result = rewriteCalloutLines(content, (line, tokens) =>
 			rewriteTokensOnLine(line, tokens, (token) => {
 				if (token.role === "inline") return null;
-				if (!idSet.has(normalizeCalloutId(token.rawId))) return null;
+				if (!idSet.has(calloutIdentity(token.rawId))) return null;
 				const { foldMark, title } = splitFoldAndTitle(line, token);
 				if (title.trim().toLowerCase() !== wanted) return null;
 				return {

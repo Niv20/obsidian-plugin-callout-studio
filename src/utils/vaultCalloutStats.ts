@@ -10,7 +10,7 @@
  * numbers reported here and the rewrites agree about which occurrences are real.
  */
 import type { App } from "obsidian";
-import { normalizeCalloutId } from "./calloutId";
+import { calloutIdentity, normalizeCalloutId } from "./calloutId";
 import { forEachCalloutToken } from "../editor/calloutTokens";
 import type { CalloutRenderRole } from "../types";
 
@@ -60,24 +60,35 @@ export async function scanVaultCalloutStatistics(
 		// `role` is handed to us by the tokenizer already — the three roles are
 		// one grammar, walked once, so no second pass is needed to split them.
 		forEachCalloutToken(content, (rawId, role) => {
-			const id = normalizeCalloutId(rawId);
-			if (!id) return;
+			const spelling = normalizeCalloutId(rawId);
+			if (!spelling) return;
+			// Keyed by identity so the report has ONE row per callout: a vault
+			// that writes both `[!banner icon]` and `[!banner-icon]` is using one
+			// callout twice, since Obsidian renders both the same way, and two
+			// rows splitting the count between them would describe a vault that
+			// does not exist.
+			const key = calloutIdentity(spelling);
 
-			let entry = byId.get(id);
+			let entry = byId.get(key);
 			if (!entry) {
 				entry = {
-					id,
+					// The row still SHOWS the first spelling seen, not the
+					// canonical key: the report describes what is written in the
+					// notes, and dasherizing `banner icon` on screen would name a
+					// callout the user never typed. `resolveStatsRows` resolves
+					// through the registry ladder, which reads either spelling.
+					id: spelling,
 					fileCount: 0,
 					totalCount: 0,
 					roles: emptyRoleCounts(),
 				};
-				byId.set(id, entry);
+				byId.set(key, entry);
 			}
 			entry.totalCount++;
 			entry.roles[role]++;
 			totalCount++;
 			roleTotals[role]++;
-			seenInFile.add(id);
+			seenInFile.add(key);
 		});
 
 		if (seenInFile.size > 0) {
