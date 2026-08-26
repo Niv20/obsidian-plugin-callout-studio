@@ -42,7 +42,7 @@ explains a lot of otherwise surprising behaviour:
   builds the box.
 - The heading and inline roles are the plugin's own invented syntax. Nothing else
   in the ecosystem understands them, so when a callout is handed to the theme
-  (see `externalStyle` below) those two roles render **nothing at all** — the
+  (see **Theme style** below) those two roles render **nothing at all** — the
   `[!id]` stays as literal text, because there is no external styling for them to
   fall back to.
 - The CSS snippet export only carries the block role, for the same reason: a
@@ -71,7 +71,9 @@ README and the video scripts. Use them; don't invent synonyms.
 | **Fallback row** | A row auto-created by discovery for an ID found in the vault. `source: "fallback"`. |
 | **Default fallback callout** | The definition unknown IDs are styled from — `settings.fallbackCalloutId`. |
 | **Customized** | `customized: true` — the user explicitly created or edited this row. Makes it sticky against pruning. |
-| **External style** | `externalStyle: true` — the plugin emits no CSS and renders no DOM for this callout; the theme owns it. |
+| **Theme-owned** | The active theme names this callout's id, so the theme paints it and the plugin emits nothing aimed at `.callout`. Derived from the theme's stylesheet, never stored — see `manager/theme/ThemeFacts.ts`. |
+| **External CSS** | The user styles this one in their own snippet. Persisted as `externalStyle: true`, and the only styling choice still theirs to make. |
+| **Callout Studio style** | The plugin owns every property it supports, with `!important` at a weight derived from the active theme. Not persisted — it is what applies whenever neither of the two above does. |
 | **Render role** | `regular` / `heading` / `inline`, as above. |
 | **Icon source** | A library as the user meets it — one row in the picker's source menu (`IconSourceId`, 8 of them). |
 | **Icon pack** | One body of artwork — one downloaded file, one cache key (`IconPackId`, 11 of them). |
