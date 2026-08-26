@@ -419,13 +419,24 @@
    rather than restating a number, which is what makes the phone case a single
    override below instead of one per control.
 
+   220px used to be arbitrary. It is now the icon-adjustment column's own width
+   (`.callout-studio-preview-panel`'s second grid track, below) so the three
+   rows' controls end on the SAME edge the icon-adjustment boxes do, not just
+   on each other — both sit flush against the panel's shared right edge, so
+   matching width is exactly what makes the left edges line up too. The
+   701-760px override further down mirrors the panel's own column width at
+   its one other fixed-px breakpoint, for the same reason; below that the
+   panel stacks to a full-width single column, which a `.setting-item` row
+   here has nothing to match (see the note there), so 260px just keeps
+   going.
+
    (A `.callout-studio-editor .modal-content { padding: 16px }` rule used to sit
    here and never matched anything: `contentEl` IS the `.modal-content` element
    the class is added to, so the descendant combinator had nothing to descend
    into. The modal's real padding lives on `.cs-modal > .modal-content` in the
    modal chrome block further down.) */
 .callout-studio-editor {
-	--cs-editor-control-width: 220px;
+	--cs-editor-control-width: 260px;
 }
 
 /* On phone Obsidian stacks every setting row and forces its controls to full
@@ -435,6 +446,29 @@
    means 100%. */
 .is-phone .callout-studio-editor {
 	--cs-editor-control-width: 100%;
+}
+
+/* Below 701px the preview panel stacks to one column (see the `max-width:
+   700px` query near the panel's own rules) — but the three rows above it do
+   NOT: unlike `.is-phone`, that stacking is Obsidian's own `.setting-item`
+   layout and is gated on the device class alone, not on width. A row here
+   stays name-beside-control at any desktop width, so there is no full-width
+   control slot to match the now-stacked panel into — re-pointing the
+   variable to 100% at this width (tried first) fights that layout and the
+   control overlaps the label instead of aligning with anything. Nothing
+   past the 701-760px override below is a real fix for that: the base
+   260px above simply keeps applying underneath it, same as the flat 220px
+   did before this change. */
+
+/* The panel's second column narrows to 250px between 701 and 760px (see the
+   matching query near the panel's own rules) rather than jumping straight
+   to a stack. Follow it here, or the three rows' right edge would still
+   line up but their shared width would drift 10px wider than the boxes
+   they're meant to match. */
+@media (min-width: 701px) and (max-width: 760px) {
+	.callout-studio-editor {
+		--cs-editor-control-width: 250px;
+	}
 }
 
 /* The display name field. `.cs-tag-input-field` is excluded because it is also a
@@ -1298,6 +1332,11 @@ button.callout-studio-icon-picker-loading {
 
 .callout-studio-preview-panel {
 	display: grid;
+	/* 260px, not a round number picked for this panel alone: it is also
+	   `--cs-editor-control-width` (see the callout editor's top-of-file rule),
+	   which is what lines the display-name/IDs/colour rows' right column up
+	   with the icon-adjustment boxes below it. The 701-760px override further
+	   down repeats the pairing — change one side, change the other. */
 	grid-template-columns: minmax(0, 400px) 260px;
 	gap: 12px;
 	margin: 0 0 16px;
@@ -3122,6 +3161,8 @@ input.cs-input-invalid:focus {
 	.callout-studio-preview-panel {
 		grid-template-columns: minmax(0, 1fr) 250px;
 	}
+	/* Paired with the callout editor's own `--cs-editor-control-width` override
+	   at this same range — see the top-of-file rule. */
 }
 
 /* ─── Custom Color Palettes ─────────────────────────────────── */
