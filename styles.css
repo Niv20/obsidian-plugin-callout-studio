@@ -104,12 +104,122 @@
 	border-radius: 0;
 }
 
+/* `center`, not `baseline`: the name now leads with a chevron, and a baseline
+   row would hang the icon below the text it points at. */
 .callout-studio-settings .cs-subheader-row .setting-item-name {
 	display: flex;
-	align-items: baseline;
+	align-items: center;
 	gap: 6px;
 	font-size: 1.05em;
 	font-weight: 600;
+}
+
+/* ─── Foldable section headings ───────────────────────────────── */
+
+/* The chevron's footprint, declared once on every element that hosts one: its
+   own box, and the gap between it and the text it sits beside. Both numbers
+   are read back below — by the chevron, which is sized to them, and by the
+   foldable headings, which offset themselves by their sum. One source, so the
+   two can't drift apart.
+
+   `em`, not px: a custom property is substituted where it is *used*, so each
+   heading resolves this against its own font-size and gets a chevron and a
+   gutter in proportion to its own type. That is what lets the three sections
+   share one rule instead of carrying one offset each. */
+.callout-studio-settings .cs-collapsible-heading,
+.callout-studio-credits {
+	--cs-disclosure-size: 1em;
+	--cs-disclosure-gap: 6px;
+}
+
+/* The same chevron the credits block has had since it shipped, on the three
+   callout-list headings — which cannot be <details>/<summary>, because "My
+   callout types" carries the Add-new button and a <summary> wrapping a button
+   is a button that folds the section. See sections/sectionDisclosure.ts.
+
+   The name element is the control, not the row: it spans the title line and
+   stops short of .setting-item-control, so the CTA stays pressable and the
+   button's accessible name stays "My callout types (4)" rather than the whole
+   row including a paragraph of description. Specificity is (0,3,0) so it also
+   reaches "Built-in callouts", which has no .cs-subheader-row. */
+.callout-studio-settings .cs-collapsible-heading .setting-item-name {
+	display: flex;
+	align-items: center;
+	gap: var(--cs-disclosure-gap);
+	cursor: pointer;
+	/* The chevron is *added to the left of* the title, not *inserted before*
+	   it: the whole title line shifts start-ward by exactly the chevron's
+	   footprint, so the chevron fills the space that opens up and the first
+	   glyph of the title — and the "(N)" trailing it — lands back on the x it
+	   had before there was anything to fold. Both terms come from the tokens
+	   above, which is also what keeps this honest at any type size: grow the
+	   chevron and the offset grows with it.
+
+	   It hangs into the row's own padding (`--size-4-4`), not into content, and
+	   nothing between here and the settings pane clips: `.setting-item-name`'s
+	   `overflow: hidden` is escaped by moving the box rather than by
+	   overflowing it, and `.setting-item-info` has no overflow of its own. */
+	margin-inline-start: calc(
+		-1 * (var(--cs-disclosure-size) + var(--cs-disclosure-gap))
+	);
+}
+
+.callout-studio-settings .cs-collapsible-heading .setting-item-name:hover {
+	color: var(--text-normal);
+}
+
+/* It is reachable by Tab and answers Enter and Space, so it has to show where
+   the keyboard is. The ring follows the shifted box, so it frames the chevron
+   and the title together — the control is both. */
+.callout-studio-settings
+	.cs-collapsible-heading
+	.setting-item-name:focus-visible {
+	outline: 2px solid var(--background-modifier-border-focus);
+	outline-offset: 2px;
+	border-radius: var(--radius-s);
+}
+
+/* Sized from the token rather than left to the SVG. The heading's offset is
+   computed from that same number, so the two only stay in step if the box is
+   this wide whatever `--icon-size` Obsidian or a theme hands the icon. */
+.cs-disclosure-chevron {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	inline-size: var(--cs-disclosure-size);
+	block-size: var(--cs-disclosure-size);
+	transition: transform 120ms ease;
+}
+
+.cs-disclosure-chevron svg {
+	width: 100%;
+	height: 100%;
+}
+
+.cs-collapsible-heading .cs-disclosure-chevron {
+	transform: rotate(90deg);
+}
+
+.cs-collapsible-heading.is-collapsed .cs-disclosure-chevron {
+	transform: rotate(0deg);
+}
+
+/* The chevron points at the content, so it flips with the writing direction. */
+[dir="rtl"] .cs-collapsible-heading .cs-disclosure-chevron {
+	transform: scaleX(-1) rotate(90deg);
+}
+
+[dir="rtl"] .cs-collapsible-heading.is-collapsed .cs-disclosure-chevron {
+	transform: scaleX(-1) rotate(0deg);
+}
+
+/* Folded away by the user. Deliberately not `cs-hidden`: the theme list hides
+   itself with that when it has no rows, and one class toggled for two reasons
+   means whichever ran last decides — a fold would reopen an empty section, or
+   an empty section would reopen a folded one. */
+.cs-section-body.is-collapsed {
+	display: none;
 }
 
 .callout-studio-settings .cs-subheader-row .setting-item-info {
@@ -154,6 +264,17 @@
 	flex-direction: column;
 	gap: 2px;
 	margin-bottom: 24px;
+}
+
+/* The last child of the list rather than a sibling of it, so it sits inside
+   the list's own bottom margin instead of needing one. Nothing above it is
+   faded: these rows carry live controls, and dimming an interactive row to
+   hint that more follow reads as "disabled". The button's own count says how
+   many are hidden, which is the fact a gradient could only gesture at. */
+.callout-studio-load-more {
+	display: flex;
+	justify-content: center;
+	padding-top: 8px;
 }
 
 /* The row is a pill on whatever it sits on, and it sits on two different
@@ -4273,14 +4394,9 @@ input.cs-input-invalid:focus {
 .callout-studio-credits-summary::-webkit-details-marker {
 	display: none;
 }
-.callout-studio-credits-chevron {
-	display: inline-flex;
-	transition: transform 120ms ease;
-}
-.callout-studio-credits-chevron svg {
-	width: 1em;
-	height: 1em;
-}
+/* Size, inline-flex and the 120ms rotate come from `.cs-disclosure-chevron`,
+   which this chevron also carries — see the settings-panel block above. Only
+   the trigger is local: `<details open>` rather than a class. */
 .callout-studio-credits[open] .callout-studio-credits-chevron {
 	transform: rotate(90deg);
 }

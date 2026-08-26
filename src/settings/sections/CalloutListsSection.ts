@@ -24,6 +24,18 @@
  * and the built-in one has to: with a callout-styling theme and a fresh
  * install, every built-in starts out the theme's, and an unexplained empty
  * heading reads as a bug.
+ *
+ * ## Three sections, three folds, three cursors
+ *
+ * Each heading folds its own list (`sectionDisclosure`) and each list pages
+ * its own overflow (`listPaging`). Both states live in this closure, which is
+ * what makes them independent and what makes them survive a repaint: `refresh`
+ * rebuilds every row on a registry change or a theme switch, and a list the
+ * user had expanded must not quietly fold back up under them.
+ *
+ * The count in a heading is always the *partitioned* length, never the visible
+ * slice — folding a section or leaving 20 of 34 rows on screen changes what is
+ * drawn, not how many the user has.
  */
 import { Setting } from "obsidian";
 import { getLocale, t } from "../../i18n";
@@ -32,6 +44,10 @@ import { activeThemeName } from "../../manager/theme/customCssApi";
 import { partitionByStyleOwner, styleOwnerFacts } from "./rowOwnership";
 import type { RowKind } from "./rowOwnership";
 import { ensureThemeRowUsage } from "./themeRowUsage";
+import { attachSectionDisclosure } from "./sectionDisclosure";
+import type { SectionDisclosure } from "./sectionDisclosure";
+import { LIST_PAGE_SIZE, renderPagedList } from "./listPaging";
+import type { PagingState } from "./listPaging";
 import { WelcomeModal } from "../WelcomeModal";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
@@ -57,11 +73,20 @@ export function createCalloutListsController(
 	let themeSetting: Setting | null = null;
 	let themeSectionEl: HTMLElement | null = null;
 	let themeListEl: HTMLElement | null = null;
+	let themeFold: SectionDisclosure | null = null;
 	let mySetting: Setting | null = null;
 	let subSectionEl: HTMLElement | null = null;
 	let userListEl: HTMLElement | null = null;
-	let builtInSetting: Setting | null = null;
+	let userFold: SectionDisclosure | null = null;
 	let builtInListEl: HTMLElement | null = null;
+	let builtInFold: SectionDisclosure | null = null;
+
+	/** One cursor per section — see the header note on why they live here. */
+	const paging: Record<RowKind, PagingState> = {
+		theme: { expanded: false },
+		user: { expanded: false },
+		builtin: { expanded: false },
+	};
 
 	const themeLabel = (): string =>
 		activeThemeName(ctx.app) ?? t("settings.themeCalloutsDefaultTheme");
@@ -85,10 +110,32 @@ export function createCalloutListsController(
 		defs: CalloutDefinition[],
 		kind: RowKind,
 	): void => {
-		const listEl = host.createDiv({ cls: "callout-studio-callout-list" });
-		for (const def of sortCalloutsByDisplayName(defs, getLocale())) {
-			options.renderRow(listEl, def, kind);
-		}
+		renderPagedList(
+			host,
+			sortCalloutsByDisplayName(defs, getLocale()),
+			paging[kind],
+			(listEl, def) => options.renderRow(listEl, def, kind),
+			() => {
+				renderAll();
+				focusFirstRevealed(host);
+			},
+		);
+	};
+
+	/**
+	 * Load more removes the button it was pressed on, so focus would land back
+	 * on the document body and the reader would lose their place entirely. Send
+	 * it to the first row that just appeared instead — `tabindex="-1"` because
+	 * the row is a target for this jump, not a stop on the way through the tab.
+	 */
+	const focusFirstRevealed = (host: HTMLElement): void => {
+		const listEl = host.querySelector<HTMLElement>(
+			".callout-studio-callout-list",
+		);
+		const row = listEl?.children[LIST_PAGE_SIZE];
+		if (!(row instanceof HTMLElement)) return;
+		row.setAttribute("tabindex", "-1");
+		row.focus();
 	};
 
 	const emptyState = (host: HTMLElement, text: string): void => {
@@ -106,7 +153,7 @@ export function createCalloutListsController(
 		themeSetting?.setDesc(
 			t("settings.themeCalloutsDesc", { theme: themeLabel() }),
 		);
-		themeSetting?.setName(
+		themeFold?.setName(
 			headingWithCount(t("settings.themeCalloutsHeading"), fromTheme.length),
 		);
 		themeListEl.empty();
@@ -126,7 +173,7 @@ export function createCalloutListsController(
 	};
 
 	const renderUserList = (own: CalloutDefinition[]): void => {
-		mySetting?.setName(
+		userFold?.setName(
 			headingWithCount(t("settings.myCalloutTypes"), own.length),
 		);
 		if (!userListEl) return;
@@ -139,7 +186,7 @@ export function createCalloutListsController(
 	};
 
 	const renderBuiltInList = (builtIn: CalloutDefinition[]): void => {
-		builtInSetting?.setName(
+		builtInFold?.setName(
 			headingWithCount(t("settings.builtInCallouts"), builtIn.length),
 		);
 		if (!builtInListEl) return;
@@ -198,6 +245,7 @@ export function createCalloutListsController(
 			themeSetting.settingEl.addClass("cs-subheader-row");
 			themeSectionEl = themeSetting.settingEl;
 			themeListEl = containerEl.createDiv();
+			themeFold = attachSectionDisclosure(themeSetting, themeListEl);
 
 			mySetting = new Setting(containerEl)
 				.setName(t("settings.myCalloutTypes"))
@@ -218,11 +266,18 @@ export function createCalloutListsController(
 			);
 
 			userListEl = containerEl.createDiv();
+			userFold = attachSectionDisclosure(mySetting, userListEl);
 
-			builtInSetting = new Setting(containerEl)
+			// No `cs-subheader-row` here on purpose: that class is what the
+			// heading-divider rule in styles.css excludes, so adding it to reach
+			// the fold styling would silently delete this section's divider. The
+			// chevron layout rides on `cs-collapsible-heading` instead, which all
+			// three headings get from `attachSectionDisclosure`.
+			const builtInSetting = new Setting(containerEl)
 				.setName(t("settings.builtInCallouts"))
 				.setHeading();
 			builtInListEl = containerEl.createDiv();
+			builtInFold = attachSectionDisclosure(builtInSetting, builtInListEl);
 
 			renderAll();
 		},

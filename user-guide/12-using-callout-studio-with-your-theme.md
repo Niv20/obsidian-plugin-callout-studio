@@ -12,6 +12,16 @@ You never have to look up who draws a callout, because it is the list the callou
 
 There is nothing to set. Change your theme and the lists rearrange themselves.
 
+## Getting a long list out of the way
+
+Each of the three headings folds its own list. Click the heading — or reach it with `Tab` and press `Enter` or `Space` — and the chevron turns and the rows tuck away. The other two sections stay exactly as you left them, and the count in the heading stays on screen while the section is folded, so you can still see how many are in there.
+
+A list longer than twenty rows shows the first twenty and a **Load more** button that says how many are waiting: **Load more (14)**. One click brings the rest in and the button goes away — there is no second page. Nothing is faded or dimmed; every row you can see is a row you can use.
+
+The count beside a heading is always the **total**. It does not change when you fold the section or when rows are still behind **Load more**.
+
+Both are for the current visit. Close the settings tab and every section is open and complete again the next time you come back.
+
 ## Callouts from your theme
 
 Two kinds of callout end up here, and the section says so:

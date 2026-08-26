@@ -72,6 +72,130 @@ every previously-registered disposer **before** rebuilding, and `hide()`
 runs them on tab close. This is what keeps a section's `MutationObserver` or
 subscription from silently accumulating across repeated `display()` calls.
 
+## The three callout lists — folding and paging
+
+[`CalloutListsSection.ts`](../src/settings/sections/CalloutListsSection.ts)
+builds *Callouts from your theme*, *My callout types* and *Built-in
+callouts*, in that order, from one pass over one combined list (see
+[Theme callout discovery](21-theme-callout-discovery.md) for who lands
+where). Two behaviours sit on top of that split, each in its own helper.
+
+### `sectionDisclosure.ts` — a heading you can fold
+
+`attachSectionDisclosure(setting, bodyEl, initiallyExpanded = true)` gives a
+heading the same chevron the credits block has had since it shipped, and
+returns `{ setName, setExpanded, isExpanded }`.
+
+Three things about it are decisions, not incidentals:
+
+- **It is not `<details>`/`<summary>`.** The credits block is, and gets its
+  state, its toggle and its AT mapping free from the browser. These headings
+  are `Setting` rows, and *My callout types* carries the **Add new callout**
+  CTA in its control slot — a `<summary>` wrapping a button is a button that
+  folds the section every time it is pressed. So the state, the keyboard
+  (`Enter`, `Space`) and the aria contract are written out here.
+- **The control is `setting.nameEl`, not `settingEl`.** The name element
+  spans the title line and stops short of `.setting-item-control`, which is
+  what keeps that CTA pressable without a target check. It also keeps the
+  button's accessible name to `"My callout types (4)"` rather than the whole
+  row including a paragraph of description. `role="button"`, `tabindex="0"`,
+  `aria-expanded` and `aria-controls` all live on it; the chevron is
+  `aria-hidden`, because `aria-expanded` already says what it says.
+- **`setName` is wrapped.** Each list rewrites its heading on every render to
+  update the `(N)`, and Obsidian's `setName` *replaces* `nameEl`'s children —
+  which is where the chevron lives. Attributes survive that; elements do not.
+  Callers therefore go through `fold.setName(...)`, never
+  `setting.setName(...)`.
+
+Folding toggles `is-collapsed` on the heading and on the body. That is
+deliberately **not** `cs-hidden`: the theme list already hides itself with
+`cs-hidden` when it has no rows, and one class toggled for two reasons means
+whichever ran last decides — a fold would reopen an empty section, or an
+empty section would reopen a folded one.
+
+Note also that *Built-in callouts* does **not** get `cs-subheader-row` to
+reach the chevron styling. That class is what the heading-divider rule in
+`styles.css` excludes, so adding it would silently delete that section's
+divider. The layout rides on `cs-collapsible-heading`, which all three
+headings get from the helper.
+
+### The chevron hangs in the gutter
+
+A chevron inserted before the title would push the title along, and three
+section headings that shift right the day a fold arrives read as a
+regression, not a feature. So the chevron does not take space from the title:
+`.cs-collapsible-heading .setting-item-name` carries a
+`margin-inline-start` of `calc(-1 * (var(--cs-disclosure-size) +
+var(--cs-disclosure-gap)))`, moving the whole title line start-ward by
+exactly the chevron's footprint. The chevron fills the space that opens up,
+and the first glyph of the title — and the `(N)` after it — lands back on the
+x it had before there was anything to fold.
+
+Two properties, `--cs-disclosure-size` and `--cs-disclosure-gap`, are the
+single source for that: declared once on `.cs-collapsible-heading` (and on
+`.callout-studio-credits`, whose chevron shares the class), read back by the
+chevron, which is sized to them, and by the heading, which offsets itself by
+their sum. Because a custom property is substituted where it is *used*, the
+`1em` size resolves against each heading's own font-size — 15.75px under
+`cs-subheader-row`, 15px for *Built-in callouts* — so one rule serves all
+three sections and no section carries an offset of its own. The chevron's box
+is pinned to the token (`inline-size`/`block-size`) rather than left to the
+SVG, because that is what keeps the offset and the thing it offsets in step
+whatever `--icon-size` Obsidian or a theme hands the icon.
+
+The chevron hangs into the row's own `--size-4-4` padding, not into content,
+and nothing between there and the settings pane clips it: `.setting-item-name`
+has `overflow: hidden` in Obsidian's own CSS, but the box is *moved* rather
+than overflowed, so the chevron sits inside it; `.setting-item-info` has no
+overflow of its own. `margin-inline-start` also means RTL needs nothing extra
+— the title's inline-start edge is preserved there the same way.
+
+### `listPaging.ts` — the first 20 rows, then a button
+
+`renderPagedList(host, items, state, renderItem, onLoadMore)` renders at most
+`LIST_PAGE_SIZE` (20) rows and, when anything is left over, appends
+`.callout-studio-load-more` **as the last child of the list element** — the
+list is already a column flex box carrying the section's bottom margin, so
+the button inherits the spacing rather than needing its own.
+
+One press reveals everything rather than another page: these sections are
+tens of rows, not thousands, and a second press would only be a second chance
+to lose your place. (`iconpicker/IconGrid.ts` pages repeatedly, per segment,
+because its grids run to thousands — a different problem, deliberately not
+shared code.)
+
+The button's label is `t("iconPicker.loadMore")` with the hidden count
+appended in code — `Load more (14)`. That is the same trick `headingWithCount`
+uses for the `(N)`: a numeric suffix on whatever `t()` returns, so it needs
+no key of its own in any of the 31 translated locales.
+
+Nothing above the button is faded. The rows carry an icon, two colour
+swatches and two buttons, and dimming an interactive row to hint that more
+follow lowers its contrast and reads as *disabled*. The count on the button
+states the fact a gradient could only gesture at.
+
+Because the button is removed by the repaint that reveals the rest, focus
+would otherwise fall to the document body; `focusFirstRevealed` sends it to
+the first row that just appeared, with `tabindex="-1"` so the row is a target
+for that jump and not a stop on the way through the tab.
+
+### Where the state lives, and how long
+
+Both the fold and the page cursor are closure variables on the controller —
+one `PagingState` and one `SectionDisclosure` per section — which is what
+makes the three independent and what makes them survive a repaint. `refresh()`
+rebuilds every row on a registry change or a theme switch, and a list the user
+expanded must not fold back up under them.
+
+Nothing is persisted. `SettingsTab.display()` builds a new controller on every
+visit, so every section opens expanded and uncapped again — a deliberate
+choice, not an oversight: the tab is a place you visit, not a workspace whose
+layout you arrange.
+
+The heading count is always the **partitioned** length, never the visible
+slice. Folding a section, or leaving 20 of 34 rows on screen, changes what is
+drawn — not how many the user has.
+
 ## Modal chrome — the one shell every window wears
 
 [`src/settings/modalChrome.ts`](../src/settings/modalChrome.ts) is a small

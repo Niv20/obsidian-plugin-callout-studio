@@ -162,6 +162,7 @@ export class WorkspaceLeaf {}
 type ElementLike = {
 	createDiv(options?: { cls?: string }): ElementLike;
 	value: string;
+	textContent: string;
 	dataset?: Record<string, string>;
 };
 
@@ -299,6 +300,7 @@ export class ButtonLike {
 export class Setting {
 	readonly settingEl: ElementLike;
 	readonly infoEl: ElementLike;
+	readonly nameEl: ElementLike;
 	readonly controlEl: ElementLike;
 	/** Every slider this row created, in order. */
 	readonly sliders: SliderComponent[] = [];
@@ -306,21 +308,30 @@ export class Setting {
 	constructor(containerEl: ElementLike) {
 		this.settingEl = containerEl.createDiv({ cls: "setting-item" });
 		this.infoEl = this.settingEl.createDiv({ cls: "setting-item-info" });
+		this.nameEl = this.infoEl.createDiv({ cls: "setting-item-name" });
 		this.controlEl = this.settingEl.createDiv({
 			cls: "setting-item-control",
 		});
 	}
 
 	/**
-	 * Both record onto the row rather than staying inert, through the same
-	 * `dataset` idiom as {@link setTooltip} — the copy a heading carries is
-	 * sometimes the assertion (`CalloutListsSection` writes the active theme's
-	 * name into its description, and has to rewrite it on every refresh).
-	 * Neither builds a `nameEl`/`descEl`, because the DOM shape is not what any
-	 * test here is about and inventing one would be a second thing to keep true.
+	 * Both record onto the row through the same `dataset` idiom as
+	 * {@link setTooltip} — the copy a heading carries is sometimes the
+	 * assertion (`CalloutListsSection` writes the active theme's name into its
+	 * description, and has to rewrite it on every refresh).
+	 *
+	 * `nameEl` is real, and only because production code mounts things in it:
+	 * `sections/sectionDisclosure.ts` puts the fold chevron and the whole aria
+	 * contract — `role`, `tabindex`, `aria-expanded`, `aria-controls` — on the
+	 * name element, so a heading with no `nameEl` could not be built at all,
+	 * let alone folded. `setName` writes into it the way Obsidian's does,
+	 * *replacing* its children, because that replacement is exactly what the
+	 * disclosure has to survive. There is still no `descEl`: nothing under test
+	 * reaches for one.
 	 */
 	setName(name?: string): this {
 		if (this.settingEl.dataset) this.settingEl.dataset.csName = name ?? "";
+		this.nameEl.textContent = name ?? "";
 		return this;
 	}
 

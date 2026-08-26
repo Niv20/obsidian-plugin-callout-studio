@@ -29,7 +29,13 @@ export function renderCreditsSection(
 	const summary = details.createEl("summary", {
 		cls: "callout-studio-credits-summary",
 	});
-	const chevron = summary.createSpan({ cls: "callout-studio-credits-chevron" });
+	// Two classes, one chevron: the size, the inline-flex and the 120ms rotate
+	// come from `cs-disclosure-chevron`, shared with the foldable list headings
+	// in `sectionDisclosure.ts`. What differs is only what drives the rotation —
+	// `<details open>` here, a class there — which is what the second class is for.
+	const chevron = summary.createSpan({
+		cls: "cs-disclosure-chevron callout-studio-credits-chevron",
+	});
 	setIcon(chevron, "chevron-right");
 	summary.createSpan({ text: t("credits.title") });
 
