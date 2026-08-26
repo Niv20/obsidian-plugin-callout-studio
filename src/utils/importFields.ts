@@ -49,7 +49,6 @@ const KNOWN_FIELD_MAP: Record<keyof CalloutDefinition, true> = {
 	paletteId: true,
 	customized: true,
 	externalStyle: true,
-	styleMode: true,
 	metadata: true,
 };
 
@@ -66,8 +65,14 @@ export const KNOWN_FIELDS = new Set<string>(Object.keys(KNOWN_FIELD_MAP));
  * instead of the translucent tint the injector emits. An opaque fill is
  * exactly what stops nested callouts from stepping (see `CSSInjector.bgProps`),
  * so the opt-out was retired and every background is a tint now.
+ *
+ * `styleMode` was the persisted half of a manual "who paints this callout"
+ * setting. Ownership is derived from the active theme now
+ * (`CalloutRegistry.themeOwns`), so the field describes a decision that is no
+ * longer the user's to make. Its every value meant "this plugin paints it",
+ * which is also what its absence means.
  */
-export const RETIRED_FIELDS = new Set<string>(["solidBackground"]);
+export const RETIRED_FIELDS = new Set<string>(["solidBackground", "styleMode"]);
 
 /** Recognized `CalloutIcon` keys. Total for the same reason as `KNOWN_FIELD_MAP`. */
 const KNOWN_ICON_FIELD_MAP: Record<keyof CalloutIcon, true> = {

@@ -18,6 +18,10 @@ import { CALLOUT_RENDER_ROLES } from "../types";
 import { ICON_ADJUST_LIMITS } from "./iconAdjust";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { EXPORT_FORMAT_ID } from "../manager/CalloutRegistry";
+import {
+	applyImportedStyleMode,
+	styleModeImportIssue,
+} from "./importStyleMode";
 import { FALLBACK_ICON, MAX_TAG_LENGTH, MAX_TAGS_COUNT } from "../constants";
 import { createIconNameCheck } from "../icons/nameCheck";
 import { ICON_PACK_IDS } from "../icons/registry";
@@ -957,21 +961,11 @@ function validateCalloutArray(
 			entryOk = false;
 		}
 
-		// ── external style flag (optional) ───────────────────
-		// Same shape as the two above. Worth carrying across an import: it says
-		// the reader's theme owns this callout, which is a decision about the
-		// reader's vault, not a colour the exporter picked.
-		if (
-			entry.externalStyle !== undefined &&
-			typeof entry.externalStyle !== "boolean"
-		) {
-			push({
-				field: "externalStyle",
-				level: "error",
-				messageKey: "import.err.boolField",
-				params: { field: "externalStyle" },
-			});
-			entryOk = false;
+		// ── style mode: the externalStyle / styleMode pair (optional) ──
+		const modeIssue = styleModeImportIssue(entry);
+		if (modeIssue) {
+			push(modeIssue);
+			if (modeIssue.fatal) entryOk = false;
 		}
 
 		// ── metadata ─────────────────────────────────────────
@@ -1174,7 +1168,7 @@ function validateCalloutArray(
 			// Same `true`-only rule. Unlike `customized` this one *does* apply to
 			// a built-in: handing `[!note]` to the reader's theme is exactly the
 			// kind of thing a shared file is worth carrying.
-			if (entry.externalStyle === true) def.externalStyle = true;
+			applyImportedStyleMode(def, entry);
 			if (isPlainObject(entry.metadata)) {
 				const meta: Record<string, string> = {};
 				for (const [k, v] of Object.entries(entry.metadata)) {

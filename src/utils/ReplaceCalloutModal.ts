@@ -11,8 +11,7 @@ import { Modal } from "obsidian";
 import type { App } from "obsidian";
 import type { CalloutDefinition } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
-import { renderIconInto, renderNoIcon } from "../icons/renderIcon";
-import { createIconResolver } from "../icons/resolver";
+import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import { t } from "../i18n";
 import { applyModalChrome } from "../settings/modalChrome";
 
@@ -173,14 +172,16 @@ export class ReplaceCalloutModal extends Modal {
 		});
 
 		const isDark = activeDocument.body.classList.contains("theme-dark");
-		const color = isDark ? def.colorDark : def.colorLight;
 
-		// Icon
+		// Icon and accent both come from whoever actually paints this callout —
+		// the theme's own measured pair when the theme owns the id. This list is
+		// how a user picks a replacement, so showing a colour the replacement
+		// will not have is a bad answer to the only question being asked.
 		const iconEl = item.createDiv({
 			cls: "callout-studio-replace-item-icon",
 		});
+		const color = paintCalloutListIcon(iconEl, def, this.registry, isDark);
 		iconEl.style.color = color;
-		this.renderIcon(iconEl, def);
 
 		// Text: name + id
 		const textEl = item.createDiv({
@@ -197,19 +198,6 @@ export class ReplaceCalloutModal extends Modal {
 		});
 
 		return item;
-	}
-
-	private renderIcon(iconEl: HTMLElement, def: CalloutDefinition): void {
-		if (def.hideIcon === true) {
-			renderNoIcon(iconEl);
-			return;
-		}
-		renderIconInto(iconEl, def.icon, createIconResolver(this.registry), {
-			role: "regular",
-			fill: "currentColor",
-			missing: { kind: "placeholder", lucideId: "pencil" },
-			errorText: "📝",
-		});
 	}
 
 	onClose(): void {
