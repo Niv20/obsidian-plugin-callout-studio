@@ -315,6 +315,20 @@
 	border-radius: 0;
 }
 
+/* "Saved color palettes" is the one pinned section whose section above
+   ("Fallback callout") is not itself pinned, so no body carries a
+   --cs-section-gap down to its divider the way "My callout types"' body does for
+   "Built-in callouts". The wrapper makes up that gap itself — safe only because
+   nothing hands over to it, so the space just scrolls. It is *leading* space, so
+   a wrapper margin (survives a fold), not a `--cs-section-gap` spender on a body
+   (folds away with it). The `0.75em` subtracted is exactly Obsidian's
+   `.setting-item` block padding: the Fallback dropdown row directly above already
+   contributes that much below its own text, so the wrapper only owes the
+   remainder to land the last-row-to-divider gap on the same 40px the trio gets. */
+.callout-studio-settings .cs-sticky-section.cs-palettes-section {
+	margin-top: calc(var(--cs-section-gap) - 0.75em);
+}
+
 /* The gap under a section, on the section's own body — one element, one
    variable, for all three of them.
 
@@ -432,7 +446,17 @@
 	   the title, while the first row below at least starts a new row of its
 	   own. */
 	padding-block: var(--cs-sticky-heading-pad-top) var(--size-4-5);
-	margin-bottom: 0;
+	/* Both margins flattened. `margin-bottom`: the gap under a section belongs to
+	   its body, not its heading (see `--cs-section-gap`). `margin-top`: Obsidian
+	   gives a `.setting-item-heading` a `0.75em` top margin whenever it follows a
+	   `.setting-item` sibling *or* sits in a `<div>` right after one — which is
+	   exactly the palettes wrapper's position under the Fallback dropdown row. On
+	   a band that has to sit flush against its divider hairline that margin opens
+	   an 11px strip of bare pane between the line and the paint. The trio never
+	   trips it (each wrapper follows another `<div>`); zeroing it here covers the
+	   fourth and any future reordering. The first section's own 4px top nudge
+	   outranks this and is unaffected. */
+	margin-block: 0;
 	/* Obsidian's own `.setting-item-heading` carries a corner radius — the
 	   plain headings below these three lose it via the `:not(.cs-sticky-heading)`
 	   rule near the top of this file, and these were left out of that `:not()`,

@@ -82,9 +82,12 @@ where). Two behaviours sit on top of that split, each in its own helper —
 and [`CustomPalettesSection.ts`](../src/settings/sections/CustomPalettesSection.ts)'s
 *Saved color palettes* heading is a fourth member of the same family rather
 than a parallel implementation: it calls the identical `attachPersistedFold`
-and `renderPagedList` helpers, just keyed `"palettes"` instead of a `RowKind`.
-Its "Unlinked colors" sub-section — offering to rebuild a palette a deletion
-orphaned — neither folds nor pages on its own, and lives in a sibling module,
+and `renderPagedList` helpers, just keyed `"palettes"` instead of a `RowKind`,
+and wraps itself in the same `createStickySection` the trio uses so the heading
+pins too (see [The three sections pin their headings](#the-three-sections-pin-their-headings) —
+palettes is the standalone fourth). Its "Unlinked colors" sub-section —
+offering to rebuild a palette a deletion orphaned — neither folds nor pages on
+its own, and lives in a sibling module,
 [`PaletteOrphanGroups.ts`](../src/settings/sections/PaletteOrphanGroups.ts),
 so `CustomPalettesSection.ts` itself stayed under the repo's line-count
 ratchet instead of raising it.
@@ -134,9 +137,12 @@ A user-driven toggle is wrapped in
 see [Folding a pinned heading](#folding-a-pinned-heading).
 
 Note also that *Built-in callouts* does **not** get `cs-subheader-row` to
-reach the chevron styling: that class also sets the smaller type the other
-two headings use, and this one is a size larger. The layout rides on
-`cs-collapsible-heading`, which all three headings get from the helper.
+reach the chevron styling: that class also sets the smaller type, and this
+heading is a size larger. It is the only one of the four — *Callouts from your
+theme*, *My callout types* and *Saved color palettes* all carry it, for the
+smaller type and the tighter box its CTA-bearing rows need. The chevron layout
+itself rides on `cs-collapsible-heading`, which every foldable heading gets
+from the helper regardless.
 
 ### The three sections pin their headings
 
@@ -156,6 +162,51 @@ go. Un-wrapping them leaves every CSS rule parsing and applying, and silently
 removes the behaviour — which is why the structure is asserted in
 `tests/calloutListsSectionDisclosure.test.ts` rather than left to the
 stylesheet.
+
+**A fourth section pins the same way: *Saved color palettes*.** It is built to
+be a clone of *My callout types* — the same `createStickySection` wrapper, the
+same `cs-subheader-row` heading box (tight, borderless, laid out for a CTA
+button), the same `cs-sticky-heading` / `cs-section-body` classes — so almost
+everything below applies to it unchanged. It is not one of the contiguous
+three, though: *Fallback callout* sits between *Built-in callouts* and it, so
+two things differ, both carried on its wrapper:
+
+- **`cs-sticky-section-last`**, because nothing sticky follows it either. That
+  class is now on two wrappers, and the `cs-sticky-section-last + heading` rule
+  now also spaces the *Global settings* heading below it — the same
+  `margin-top: 0; padding-top: var(--cs-sticky-heading-pad-top)` treatment
+  *Fallback callout* gets under *Built-in callouts*.
+- **`cs-palettes-section`**, for the one thing the stylesheet must special-case.
+  The section above it is not pinned, so no body hands a `--cs-section-gap`
+  down to its divider the way *My callout types*' body does for *Built-in
+  callouts*. The wrapper makes up the gap with its own `margin-top:
+  calc(var(--cs-section-gap) - 0.75em)` — the only place a sticky wrapper is
+  allowed a margin, safe because nothing hands over to it (the space just
+  scrolls). It tracks `--cs-section-gap` rather than a number of its own so it
+  never drifts out of step with the trio; the `0.75em` subtracted is Obsidian's
+  `.setting-item` block padding, which the Fallback dropdown row directly above
+  already spends below its own text, so the two land the last-row-to-divider gap
+  on the same 40px. It is written on the wrapper, not spent on the body through
+  `--cs-section-gap`, because it is *leading* space and has to survive a fold —
+  a folded palettes section still has to clear *Fallback callout* above it.
+  `sectionTrailingGap.test.ts` holds both halves.
+
+There is also a `margin-block: 0` on the shared `.cs-sticky-heading` rule that
+this fourth section is the reason for. Obsidian gives a `.setting-item-heading`
+a `0.75em` top margin whenever it follows a `.setting-item` sibling *or* sits in
+a `<div>` immediately after one (`.setting-item + div > .setting-item-heading`)
+— which is exactly where the palettes wrapper lands, under the Fallback dropdown
+row. On a band meant to sit flush against its divider hairline, that margin
+opens an 11px strip of bare pane between the line and the paint. The trio never
+trips it (each of their wrappers follows another `<div>`), but zeroing it on the
+shared rule covers the fourth and any later reordering; *Callouts from your
+theme*'s own 4px top nudge is higher-specificity and unaffected.
+
+Its "Unlinked colors" sub-section scrolls under the band like any other row.
+The `.callout-studio-callout-list` 24px-margin zeroing now reaches the palette
+list too (it is inside a `cs-sticky-section` now), trimming 24px between it and
+the "Unlinked colors" heading — which is fine, that heading carries its own
+full divider.
 
 Eight consequences are written into `styles.css` beside the rules, and are
 worth knowing before touching any of them:
@@ -204,9 +255,12 @@ worth knowing before touching any of them:
   - **Nothing a section ends with carries trailing space of its own.** A
     scoped rule zeroes `.callout-studio-callout-list`'s 24px `margin-bottom`
     and `.callout-studio-empty-state`'s 12px `padding-bottom` inside a section
-    body. Both are correct for a list that ends *mid-*section (Saved color
-    palettes, with the Unlinked colors groups under it; the Quick insert
-    window), which is why they are dropped here rather than at the source.
+    body. Both are still wanted at the source for a list that ends *mid-*view
+    (the Quick insert window), which is why they are dropped here in a
+    `cs-sticky-section`-scoped rule rather than removed outright. Inside the
+    palettes section the zeroing does now reach a list that ends mid-section
+    — the palette list, with the "Unlinked colors" groups under it — which is
+    harmless: that sub-heading carries its own full divider.
   - Both of those rules reach through a **child combinator**, so a wrapper
     element between a section body and its list would silently stop them
     matching. `sectionTrailingGap.test.ts` guards the arithmetic against
@@ -256,8 +310,9 @@ worth knowing before touching any of them:
   that is deliberately forbidden from setting anything that would (see the
   "nothing between the band and the scroller" test in
   `modalBodyLayers.test.ts`). The same shared class renders in the *Saved
-  color palettes* section and inside the callout editor's palette trigger,
-  where nothing else is pinned and the fix is a no-op.
+  color palettes* section — where the heading pins too, so the fix carries its
+  weight there as well — and inside the callout editor's palette trigger,
+  where nothing is pinned and it is a no-op.
 - **Folded, the heading's bottom padding is bumped to match its top.** Open,
   the band's top padding is deliberately larger than its bottom — nothing but
   a hairline sits above the title, while the first row below carries its own
@@ -281,12 +336,14 @@ hands the difference back to the scroller — two reads and one write, on a
 click, with nothing on the scroll path.
 
 It is applied unconditionally on the shared toggle because it is a no-op
-everywhere else: only a *stuck* box reports a different top before and after
-a change made below it, so the *Saved color palettes* heading that shares the
-helper measures zero and the scroller is never touched. The measurement is
-guarded rather than assumed — the test DOM has no layout and therefore no
-`getBoundingClientRect`, and that absence is what makes the anchor inert
-there instead of throwing on every fold.
+wherever the heading is not actually stuck: only a *stuck* box reports a
+different top before and after a change made below it, so a heading folded
+from its resting place — one below the fold, or any heading on a phone, where
+`position: static` — measures zero and the scroller is never touched. All four
+sticky headings share the helper, so all four are corrected when folded while
+pinned. The measurement is guarded rather than assumed — the test DOM has no
+layout and therefore no `getBoundingClientRect`, and that absence is what
+makes the anchor inert there instead of throwing on every fold.
 
 ### The chevron hangs in the gutter
 

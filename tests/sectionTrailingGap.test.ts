@@ -152,6 +152,39 @@ describe("the gap under a section is spent in one place", () => {
 	});
 });
 
+describe("the one section with no sticky section above it carries its own leading gap", () => {
+	// "Saved color palettes" is pinned like the trio but sits below "Fallback
+	// callout", which is not — so no section body hands a --cs-section-gap over
+	// its divider the way "My callout types" does for "Built-in callouts". The
+	// wrapper carries that space itself, as a *margin* (it has to survive a fold,
+	// unlike the trailing gap on a body) — the one place a sticky wrapper is
+	// allowed one. The value tracks --cs-section-gap, less the 0.75em the plain
+	// `.setting-item` above already contributes below its own text, so the
+	// divider lands the same 40px from the last row as the trio's do.
+	const PALETTES =
+		".callout-studio-settings .cs-sticky-section.cs-palettes-section";
+
+	it("gives the palettes wrapper a top margin off the shared section gap", () => {
+		assert.match(
+			ruleFor(PALETTES),
+			/margin-top:\s*calc\(\s*var\(--cs-section-gap\)\s*-\s*0\.75em\s*\)/,
+			"the palettes section's leading gap no longer tracks --cs-section-gap, " +
+				"so it drifts out of step with the trio the day that variable moves",
+		);
+	});
+
+	it("keeps that gap out of the trailing-gap census", () => {
+		// It must not read as a `prop: var(--cs-section-gap)` spender — those are
+		// the *body* rules that fold away with the section. Wrapped in calc(), it
+		// is a leading margin that stays put through a fold.
+		assert.doesNotMatch(
+			ruleFor(PALETTES),
+			/[a-z-]+:\s*var\(--cs-section-gap\)/,
+			"the palettes leading gap is written as a bare --cs-section-gap spender",
+		);
+	});
+});
+
 describe("nothing a section ends with carries trailing space of its own", () => {
 	const ENDINGS =
 		".callout-studio-settings .cs-sticky-section > .cs-section-body > .callout-studio-callout-list, " +

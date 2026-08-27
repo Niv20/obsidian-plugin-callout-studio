@@ -9,13 +9,15 @@
  * every callout still linked to it (registry.applyPaletteColors), while
  * deleting a palette leaves existing callouts as-is.
  *
- * The heading folds and pages exactly like the three callout lists above it
- * in the settings tab — `attachPersistedFold` for the chevron and the
+ * The heading folds, pages and *pins* exactly like the three callout lists
+ * above it in the settings tab — `attachPersistedFold` for the chevron and the
  * settings-backed fold state, `renderPagedList` for the first-20-then-a-button
- * behavior — so this section is a fourth member of that family rather than a
- * parallel implementation of the same thing.
+ * behavior, and `createStickySection` for the wrapper that parks the heading at
+ * the top of the pane while its rows scroll under it — so this section is a
+ * fourth member of that family rather than a parallel implementation of the
+ * same thing.
  */
-import { Setting, setIcon } from "obsidian";
+import { setIcon } from "obsidian";
 import { t } from "../../i18n";
 import type { CustomPalette } from "../../types";
 import type { SettingsSectionContext } from "./types";
@@ -31,6 +33,7 @@ import {
 import { PaletteEditorModal } from "../PaletteEditorModal";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { attachPersistedFold } from "./calloutListsFold";
+import { createStickySection } from "./stickySection";
 import {
 	focusFirstRevealed,
 	headingWithCount,
@@ -58,9 +61,25 @@ export function renderCustomPalettesSection(
 		ctx.plugin.registry.adoptOrphansMatchingPalettes();
 	};
 
-	const heading = new Setting(containerEl)
-		.setName(t("settings.customPalettes"))
-		.setHeading();
+	// A fourth pinned section, built exactly like "My callout types" above it —
+	// same wrapper, same `cs-subheader-row` heading box (tight, no border, and
+	// the layout its CTA button needs). The three wrapper classes are the only
+	// difference: `cs-section-divider` for the hairline a wrapped heading no
+	// longer gets from the generic rule; `cs-sticky-section-last` because
+	// nothing sticky follows, so the band lets go with its own last row rather
+	// than hang over "Global settings"; `cs-palettes-section` for the one thing
+	// styles.css must special-case — the section above it is not itself pinned,
+	// so no body carries a --cs-section-gap down to this divider.
+	const { wrapEl, setting: heading } = createStickySection(
+		containerEl,
+		t("settings.customPalettes"),
+	);
+	heading.settingEl.addClass("cs-subheader-row");
+	wrapEl.addClass(
+		"cs-section-divider",
+		"cs-sticky-section-last",
+		"cs-palettes-section",
+	);
 	heading.addButton((btn) =>
 		btn
 			.setButtonText(t("settings.newPalette"))
@@ -80,7 +99,7 @@ export function renderCustomPalettesSection(
 				renderList();
 			}),
 	);
-	const bodyEl = containerEl.createDiv();
+	const bodyEl = wrapEl.createDiv();
 	const fold = attachPersistedFold(heading, bodyEl, "palettes", ctx.plugin);
 	const paging: PagingState = { expanded: false };
 

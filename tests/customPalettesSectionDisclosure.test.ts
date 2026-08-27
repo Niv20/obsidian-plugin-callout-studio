@@ -285,3 +285,80 @@ describe("a palette list past the page size shows the first page and a button", 
 		assert.strictEqual(loadMore(section(host)), null);
 	});
 });
+
+/* -------------------------------------------------------------------------- */
+/* Pinning                                                                    */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The heading pins to the top of the settings pane while its rows scroll under
+ * it, the same way the three callout lists do. That is entirely the wrapper —
+ * a sticky box cannot leave its containing block, so a heading wrapped with its
+ * own rows is pinned for exactly as long as those rows last — which makes the
+ * *structure* the contract, not the stylesheet: un-wrap it and every CSS rule
+ * still parses while the behaviour silently goes away. See
+ * `calloutListsSectionDisclosure.test.ts` for the same guard on the trio.
+ */
+describe("the Saved color palettes heading pins like the callout lists", () => {
+	const rendered = () => {
+		const registry = vault();
+		addPalettes(registry, 3);
+		return render(registry, fakeApp());
+	};
+
+	it("wraps the heading and its rows in one sticky section", () => {
+		const s = section(rendered());
+		const wrapper = s.heading.closest(".cs-sticky-section");
+		assert.ok(wrapper, "the palettes heading is not inside a sticky wrapper");
+		assert.ok(
+			s.heading.hasClass("cs-sticky-heading"),
+			"the palettes heading is not the box that pins",
+		);
+		assert.ok(
+			s.heading.hasClass("cs-subheader-row"),
+			"the palettes heading does not use the same tight heading box as " +
+				'"My callout types" — its band renders taller and mis-spaced',
+		);
+		assert.strictEqual(
+			s.body.closest(".cs-sticky-section"),
+			wrapper,
+			"the palette rows sit outside the box the heading pins in, so the " +
+				"heading would let go the moment the wrapper's own content ended",
+		);
+	});
+
+	it("marks the wrapper as a divider, a last section, and the palettes case", () => {
+		const wrapper = section(rendered()).heading.closest(".cs-sticky-section");
+		// Divider: a wrapped heading no longer reaches the generic divider rule,
+		// so the hairline above it has to be asked for here.
+		assert.ok(wrapper?.hasClass("cs-section-divider"), "lost its divider");
+		// Last: nothing sticky follows — "Global settings" is a plain heading —
+		// so the band must let go with its own last row, not hang over it.
+		assert.ok(
+			wrapper?.hasClass("cs-sticky-section-last"),
+			"not marked as the last sticky section, so its trailing gap would " +
+				"pin the band over its own empty space",
+		);
+		// Palettes: the one pinned section with a non-pinned section above it,
+		// which supplies no gap over this divider — styles.css gives the wrapper
+		// its own top margin off this class.
+		assert.ok(
+			wrapper?.hasClass("cs-palettes-section"),
+			"not marked as the palettes case, so it would jam against Fallback " +
+				"callout above with only a hairline between them",
+		);
+	});
+
+	it("puts nothing after the body, so the trailing gap is the section's", () => {
+		// `--cs-section-gap` on the body only stands in for the wrapper's own
+		// trailing space while the body is the last thing in it — anything after
+		// it would sit below the whole gap.
+		const s = section(rendered());
+		const wrapper = s.heading.closest(".cs-sticky-section");
+		assert.strictEqual(
+			wrapper?.lastElementChild,
+			s.body,
+			"the palettes wrapper has something after its body",
+		);
+	});
+});
