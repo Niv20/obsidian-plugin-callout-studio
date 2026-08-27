@@ -636,15 +636,15 @@ export const ko: Record<string, string> = {
 
 	"heading.toggleFold": "접기 전환",
 
-	"settings.globalSettings": "Callout Studio 스타일 옵션",
+	"settings.globalSettings": "Callout Studio 전역 스타일 옵션",
 	"settings.globalSettingsScope":
-		"Callout Studio가 스타일을 지정하는 callout의 모양, 간격, 크기입니다. 테마가 스타일을 지정하는 callout은 테마 고유의 디자인을 유지합니다.",
+		"이것은 전역 설정입니다. 각 설정은 Callout Studio가 스타일을 지정하는 모든 callout의 모양, 간격, 크기를 한 번에 변경합니다. 테마가 스타일을 지정하는 callout은 테마 고유의 디자인을 유지합니다.",
 	"settings.globalSettingsRegularDesc":
-		"인용 블록에 callout 토큰을 추가하면(예: `> [!type]`) Obsidian 기본 callout 상자로 표시됩니다. 테두리, 반지름, 폰트 크기, 정렬을 조정할 수 있습니다.",
+		"볼트에 있는 모든 block callout의 테두리, 반지름, 폰트 크기, 정렬을 조정합니다.",
 	"settings.globalSettingsHeadingDesc":
-		"제목의 # 기호 바로 뒤에 callout 토큰을 추가하면(예: `## [!type]`) 스타일이 적용된 제목 callout으로 표시됩니다. 테두리, 모양, 수직 간격을 조정할 수 있습니다.",
+		"볼트에 있는 모든 제목 callout의 테두리, 모양, 수직 간격을 조정합니다.",
 	"settings.globalSettingsInlineDesc":
-		"텍스트 줄 안 어디든 callout 토큰을 추가하면(예: `[!type]`) 작은 인라인 필로 표시됩니다. 테두리와 모양을 조정할 수 있습니다.",
+		"볼트에 있는 모든 인라인 callout의 테두리와 모양을 조정합니다.",
 	"settings.globalSettingsCustomize": "사용자 지정",
 
 	"settings.calloutTypeRegular": "Block Callout",

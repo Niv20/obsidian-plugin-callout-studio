@@ -640,15 +640,15 @@ export const vi: Record<string, string> = {
 
 	"heading.toggleFold": "Chuyển đổi gập",
 
-	"settings.globalSettings": "Tùy chọn kiểu của Callout Studio",
+	"settings.globalSettings": "Tùy chọn kiểu toàn cục của Callout Studio",
 	"settings.globalSettingsScope":
-		"Hình dạng, khoảng cách và kích thước cho các callout mà Callout Studio tạo kiểu. Các callout mà giao diện của bạn tạo kiểu vẫn giữ thiết kế riêng của giao diện.",
+		"Đây là các thiết lập toàn cục: mỗi thiết lập thay đổi cùng lúc hình dạng, khoảng cách và kích thước của mọi callout mà Callout Studio tạo kiểu. Các callout mà giao diện của bạn tạo kiểu vẫn giữ thiết kế riêng của giao diện.",
 	"settings.globalSettingsRegularDesc":
-		"Thêm token callout vào một trích dẫn khối (ví dụ: `> [!type]`) để hiển thị dưới dạng hộp callout gốc của Obsidian. Bạn có thể điều chỉnh viền, độ bo góc, tỷ lệ phông và căn chỉnh của nó.",
+		"Điều chỉnh viền, độ bo góc, tỷ lệ phông và căn chỉnh của mọi block callout trong vault của bạn.",
 	"settings.globalSettingsHeadingDesc":
-		"Thêm token callout ngay sau các dấu # của tiêu đề (ví dụ: `## [!type]`) để hiển thị dưới dạng tiêu đề callout được tạo kiểu. Bạn có thể điều chỉnh viền, hình dạng và khoảng cách dọc của nó.",
+		"Điều chỉnh viền, hình dạng và khoảng cách dọc của mọi callout tiêu đề trong vault của bạn.",
 	"settings.globalSettingsInlineDesc":
-		"Thêm token callout vào bất kỳ đâu trong một dòng văn bản (ví dụ: `[!type]`) để hiển thị dưới dạng viên nội tuyến nhỏ. Bạn có thể điều chỉnh viền và hình dạng của nó.",
+		"Điều chỉnh viền và hình dạng của mọi callout nội tuyến trong vault của bạn.",
 	"settings.globalSettingsCustomize": "Tùy chỉnh",
 
 	"settings.calloutTypeRegular": "Block callout",

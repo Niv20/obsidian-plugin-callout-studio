@@ -648,15 +648,15 @@ export const fr: Record<string, string> = {
 	"contextMenu.copySection": "Copier la section de titre",
 	"contextMenu.deleteSection": "Supprimer la section de titre",
 	"heading.toggleFold": "Basculer le repli",
-	"settings.globalSettings": "Options de style de Callout Studio",
+	"settings.globalSettings": "Options de style globales de Callout Studio",
 	"settings.globalSettingsScope":
-		"Forme, espacement et taille pour les callouts que Callout Studio stylise. Les callouts stylisés par votre thème conservent le design propre du thème.",
+		"Ce sont des réglages globaux : chacun modifie d'un coup la forme, l'espacement et la taille de chaque callout que Callout Studio stylise. Les callouts stylisés par votre thème conservent le design propre du thème.",
 	"settings.globalSettingsRegularDesc":
-		"Ajoutez un jeton de callout à une citation (p. ex. `> [!type]`) pour afficher le bloc de callout natif d'Obsidian. Vous pouvez ajuster sa bordure, son rayon, son échelle de police et son alignement.",
+		"Ajustez la bordure, le rayon, l'échelle de police et l'alignement de chaque callout de bloc de votre coffre.",
 	"settings.globalSettingsHeadingDesc":
-		"Ajoutez un jeton de callout juste après les dièses du titre (p. ex. `## [!type]`) pour l'afficher comme un titre de callout stylisé. Vous pouvez ajuster sa bordure, sa forme et son espacement vertical.",
+		"Ajustez la bordure, la forme et l'espacement vertical de chaque callout de titre de votre coffre.",
 	"settings.globalSettingsInlineDesc":
-		"Ajoutez un jeton de callout n'importe où dans une ligne de texte (p. ex. `[!type]`) pour l'afficher comme une petite pastille en ligne. Vous pouvez ajuster sa bordure et sa forme.",
+		"Ajustez la bordure et la forme de chaque callout en ligne de votre coffre.",
 	"settings.globalSettingsCustomize": "Personnaliser",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "Callout de titre",

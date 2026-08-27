@@ -626,15 +626,15 @@ export const fa: Record<string, string> = {
 	"contextMenu.copySection": "کپی بخش عنوان",
 	"contextMenu.deleteSection": "حذف بخش عنوان",
 	"heading.toggleFold": "تغییر وضعیت جمع‌شدن",
-	"settings.globalSettings": "گزینه‌های استایل Callout Studio",
+	"settings.globalSettings": "گزینه‌های سراسری استایل Callout Studio",
 	"settings.globalSettingsScope":
-		"شکل، فاصله‌گذاری و اندازه برای callout هایی که Callout Studio استایل می‌دهد. callout هایی که پوسته‌تان استایل می‌دهد طراحی خودِ پوسته را حفظ می‌کنند.",
+		"این‌ها تنظیمات سراسری هستند: هرکدام به‌یک‌باره شکل، فاصله‌گذاری و اندازه هر callout ای را که Callout Studio استایل می‌دهد تغییر می‌دهد. callout هایی که پوسته‌تان استایل می‌دهد طراحی خودِ پوسته را حفظ می‌کنند.",
 	"settings.globalSettingsRegularDesc":
-		"یک توکن callout به یک نقل‌قول اضافه کنید (مثلاً `> [!type]`) تا جعبه callout بومی Obsidian نمایش داده شود. می‌توانید حاشیه، شعاع، مقیاس فونت و تراز آن را تنظیم کنید.",
+		"حاشیه، شعاع، مقیاس فونت و ترازِ هر block callout در گاوصندوق‌تان را تنظیم کنید.",
 	"settings.globalSettingsHeadingDesc":
-		"یک توکن callout را درست بعد از علامت‌های # عنوان اضافه کنید (مثلاً `## [!type]`) تا به‌صورت یک عنوان callout با سبک خاص نمایش داده شود. می‌توانید حاشیه، شکل و فاصله عمودی آن را تنظیم کنید.",
+		"حاشیه، شکل و فاصله عمودیِ هر heading callout در گاوصندوق‌تان را تنظیم کنید.",
 	"settings.globalSettingsInlineDesc":
-		"یک توکن callout را در هر جای یک خط متن اضافه کنید (مثلاً `[!type]`) تا به‌صورت یک قرص کوچک درون‌خطی نمایش داده شود. می‌توانید حاشیه و شکل آن را تنظیم کنید.",
+		"حاشیه و شکلِ هر inline callout در گاوصندوق‌تان را تنظیم کنید.",
 	"settings.globalSettingsCustomize": "سفارشی‌سازی",
 	"settings.calloutTypeRegular": "Block Callout",
 	"settings.calloutTypeHeading": "callout عنوان",

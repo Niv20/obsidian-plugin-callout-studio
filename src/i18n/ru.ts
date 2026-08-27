@@ -633,15 +633,15 @@ export const ru: Record<string, string> = {
 	"contextMenu.copySection": "Копировать раздел заголовка",
 	"contextMenu.deleteSection": "Удалить раздел заголовка",
 	"heading.toggleFold": "Переключить складывание",
-	"settings.globalSettings": "Параметры стиля Callout Studio",
+	"settings.globalSettings": "Глобальные параметры стиля Callout Studio",
 	"settings.globalSettingsScope":
-		"Форма, отступы и размер для callout, которые оформляет Callout Studio. Callout, которые оформляет ваша тема, сохраняют собственный дизайн темы.",
+		"Это глобальные настройки: каждая из них сразу меняет форму, отступы и размер каждого callout, который оформляет Callout Studio. Callout, которые оформляет ваша тема, сохраняют собственный дизайн темы.",
 	"settings.globalSettingsRegularDesc":
-		"Добавьте токен callout в цитату (например, `> [!type]`), чтобы отобразить встроенный блок callout Obsidian. Вы можете настроить его рамку, скругление, масштаб шрифта и выравнивание.",
+		"Настройте рамку, скругление, масштаб шрифта и выравнивание каждого block callout в вашем хранилище.",
 	"settings.globalSettingsHeadingDesc":
-		"Добавьте токен callout сразу после решёток заголовка (например, `## [!type]`), чтобы отобразить его как стилизованный callout-заголовок. Вы можете настроить его рамку, форму и вертикальные отступы.",
+		"Настройте рамку, форму и вертикальные отступы каждого callout-заголовка в вашем хранилище.",
 	"settings.globalSettingsInlineDesc":
-		"Добавьте токен callout в любом месте строки текста (например, `[!type]`), чтобы отобразить его в виде маленькой встроенной капсулы. Вы можете настроить его рамку и форму.",
+		"Настройте рамку и форму каждого встроенного callout в вашем хранилище.",
 	"settings.globalSettingsCustomize": "Настроить",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "Callout-заголовок",

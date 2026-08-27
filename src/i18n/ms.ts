@@ -627,15 +627,15 @@ export const ms: Record<string, string> = {
 	"contextMenu.copySection": "Salin bahagian tajuk",
 	"contextMenu.deleteSection": "Padam bahagian tajuk",
 	"heading.toggleFold": "Togol lipatan",
-	"settings.globalSettings": "Pilihan gaya Callout Studio",
+	"settings.globalSettings": "Pilihan gaya global Callout Studio",
 	"settings.globalSettingsScope":
-		"Bentuk, jarak dan saiz untuk callouts yang digayakan oleh Callout Studio. Callouts yang digayakan oleh tema anda mengekalkan reka bentuk tema itu sendiri.",
+		"Ini ialah tetapan global: setiap satunya sekaligus mengubah bentuk, jarak dan saiz setiap callout yang digayakan oleh Callout Studio. Callouts yang digayakan oleh tema anda mengekalkan reka bentuk tema itu sendiri.",
 	"settings.globalSettingsRegularDesc":
-		"Tambah token callout pada sebutan blok (cth. `> [!type]`) untuk memaparkan kotak callout asli Obsidian. Anda boleh melaraskan sempadan, jejari, skala fon dan penjajarannya.",
+		"Laraskan sempadan, jejari, skala fon dan penjajaran setiap block callout dalam vault anda.",
 	"settings.globalSettingsHeadingDesc":
-		"Tambah token callout terus selepas tanda pagar tajuk (cth. `## [!type]`) untuk memaparkannya sebagai callout tajuk bergaya. Anda boleh melaraskan sempadan, bentuk dan jarak menegaknya.",
+		"Laraskan sempadan, bentuk dan jarak menegak setiap callout tajuk dalam vault anda.",
 	"settings.globalSettingsInlineDesc":
-		"Tambah token callout di mana-mana dalam baris teks (cth. `[!type]`) untuk memaparkannya sebagai pil sebaris kecil. Anda boleh melaraskan sempadan dan bentuknya.",
+		"Laraskan sempadan dan bentuk setiap callout sebaris dalam vault anda.",
 	"settings.globalSettingsCustomize": "Sesuaikan",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "Callout tajuk",

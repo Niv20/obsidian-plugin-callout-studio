@@ -636,15 +636,15 @@ export const ro: Record<string, string> = {
 	"contextMenu.copySection": "Copiați secțiunea de titlu",
 	"contextMenu.deleteSection": "Ștergeți secțiunea de titlu",
 	"heading.toggleFold": "Comutare pliere",
-	"settings.globalSettings": "Opțiuni de stil Callout Studio",
+	"settings.globalSettings": "Opțiuni de stil globale Callout Studio",
 	"settings.globalSettingsScope":
-		"Formă, spațiere și dimensiune pentru callouts pe care le stilizează Callout Studio. Callouts stilizate de tema dvs. păstrează designul propriu al temei.",
+		"Acestea sunt setări globale: fiecare dintre ele modifică dintr-o dată forma, spațierea și dimensiunea fiecărui callout pe care îl stilizează Callout Studio. Callouts stilizate de tema dvs. păstrează designul propriu al temei.",
 	"settings.globalSettingsRegularDesc":
-		"Adăugați un token callout într-un citat (de ex. `> [!type]`) pentru a afișa caseta de callout integrată a Obsidian. Puteți ajusta bordura, rotunjirea, scara fontului și alinierea.",
+		"Ajustați bordura, rotunjirea, scara fontului și alinierea fiecărui block callout din vault-ul dvs.",
 	"settings.globalSettingsHeadingDesc":
-		"Adăugați un token callout imediat după simbolurile # ale titlului (de ex. `## [!type]`) pentru a-l afișa ca un titlu de callout stilizat. Puteți ajusta bordura, forma și spațierea verticală.",
+		"Ajustați bordura, forma și spațierea verticală a fiecărui callout tip titlu din vault-ul dvs.",
 	"settings.globalSettingsInlineDesc":
-		"Adăugați un token callout oriunde într-o linie de text (de ex. `[!type]`) pentru a-l afișa ca o pastilă mică inline. Puteți ajusta bordura și forma.",
+		"Ajustați bordura și forma fiecărui callout inline din vault-ul dvs.",
 	"settings.globalSettingsCustomize": "Personalizați",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "Callout tip titlu",

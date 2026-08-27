@@ -613,15 +613,15 @@ export const da: Record<string, string> = {
 	"contextMenu.copySection": "Kopiér overskriftsektion",
 	"contextMenu.deleteSection": "Slet overskriftsektion",
 	"heading.toggleFold": "Skift foldning",
-	"settings.globalSettings": "Callout Studios stilindstillinger",
+	"settings.globalSettings": "Callout Studios globale stilindstillinger",
 	"settings.globalSettingsScope":
-		"Form, afstand og størrelse for de callouts, Callout Studio styler. Callouts dit tema styler, beholder temaets eget design.",
+		"Dette er globale indstillinger: hver af dem ændrer på én gang form, afstand og størrelse for hver callout, som Callout Studio styler. Callouts dit tema styler, beholder temaets eget design.",
 	"settings.globalSettingsRegularDesc":
-		"Tilføj et callout-token til et citat (f.eks. `> [!type]`) for at vise Obsidians indbyggede callout-boks. Du kan justere dens kant, radius, skriftstørrelse og justering.",
+		"Justér kant, radius, skriftstørrelse og justering for hver block callout i din vault.",
 	"settings.globalSettingsHeadingDesc":
-		"Tilføj et callout-token lige efter overskriftens #-tegn (f.eks. `## [!type]`) for at vise det som en stilet callout-overskrift. Du kan justere dens kant, form og lodrette afstand.",
+		"Justér kant, form og lodret afstand for hver heading callout i din vault.",
 	"settings.globalSettingsInlineDesc":
-		"Tilføj et callout-token et vilkårligt sted inde i en tekstlinje (f.eks. `[!type]`) for at vise det som en lille indlejret pille. Du kan justere dens kant og form.",
+		"Justér kant og form for hver inline callout i din vault.",
 	"settings.globalSettingsCustomize": "Tilpas",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "Overskrift-callout",

@@ -633,15 +633,15 @@ export const tr: Record<string, string> = {
 
 	"heading.toggleFold": "Katlamayı aç/kapat",
 
-	"settings.globalSettings": "Callout Studio stil seçenekleri",
+	"settings.globalSettings": "Genel Callout Studio stil seçenekleri",
 	"settings.globalSettingsScope":
-		"Callout Studio'nun biçimlendirdiği callout'lar için şekil, boşluk ve boyut. Temanızın biçimlendirdiği callout'lar temanın kendi tasarımını korur.",
+		"Bunlar genel ayarlardır: her biri, Callout Studio'nun biçimlendirdiği her callout'un şeklini, boşluğunu ve boyutunu tek seferde değiştirir. Temanızın biçimlendirdiği callout'lar temanın kendi tasarımını korur.",
 	"settings.globalSettingsRegularDesc":
-		"Obsidian'ın yerel callout kutusu olarak görüntülemek için bir blok alıntıya callout belirteci ekleyin (örn. `> [!type]`). Kenarlığını, köşe yuvarlaklığını, yazı tipi ölçeğini ve hizalamasını ayarlayabilirsiniz.",
+		"Vault'unuzdaki her block callout'un kenarlığını, köşe yuvarlaklığını, yazı tipi ölçeğini ve hizalamasını ayarlayın.",
 	"settings.globalSettingsHeadingDesc":
-		"Stilli bir callout başlığı olarak görüntülemek için callout belirtecini başlık işaretlerinden hemen sonra ekleyin (örn. `## [!type]`). Kenarlığını, şeklini ve dikey boşluğunu ayarlayabilirsiniz.",
+		"Vault'unuzdaki her başlık callout'unun kenarlığını, şeklini ve dikey boşluğunu ayarlayın.",
 	"settings.globalSettingsInlineDesc":
-		"Küçük bir satır içi hap olarak görüntülemek için callout belirtecini bir metin satırının herhangi bir yerine ekleyin (örn. `[!type]`). Kenarlığını ve şeklini ayarlayabilirsiniz.",
+		"Vault'unuzdaki her satır içi callout'un kenarlığını ve şeklini ayarlayın.",
 	"settings.globalSettingsCustomize": "Özelleştir",
 
 	"settings.calloutTypeRegular": "Block callout",

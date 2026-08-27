@@ -645,15 +645,15 @@ export const uk: Record<string, string> = {
 
 	"heading.toggleFold": "Перемкнути складання",
 
-	"settings.globalSettings": "Параметри стилю Callout Studio",
+	"settings.globalSettings": "Глобальні параметри стилю Callout Studio",
 	"settings.globalSettingsScope":
-		"Форма, відступи та розмір для callout, які стилізує Callout Studio. Callout, які стилізує ваша тема, зберігають дизайн теми.",
+		"Це глобальні налаштування: кожне з них одразу змінює форму, відступи та розмір кожного callout, який стилізує Callout Studio. Callout, які стилізує ваша тема, зберігають дизайн теми.",
 	"settings.globalSettingsRegularDesc":
-		"Додайте токен callout до цитати (напр., `> [!type]`), щоб відобразити стандартний блок callout Obsidian. Ви можете налаштувати його рамку, заокруглення кутів, масштаб шрифту та вирівнювання.",
+		"Налаштуйте рамку, заокруглення кутів, масштаб шрифту та вирівнювання кожного block callout у вашому сховищі.",
 	"settings.globalSettingsHeadingDesc":
-		"Додайте токен callout одразу після символів заголовка (напр., `## [!type]`), щоб відобразити його як стилізований заголовок callout. Ви можете налаштувати його рамку, форму та вертикальний інтервал.",
+		"Налаштуйте рамку, форму та вертикальний інтервал кожного callout-заголовка у вашому сховищі.",
 	"settings.globalSettingsInlineDesc":
-		"Додайте токен callout будь-де всередині рядка тексту (напр., `[!type]`), щоб відобразити його як маленьку вбудовану капсулу. Ви можете налаштувати його рамку та форму.",
+		"Налаштуйте рамку та форму кожного вбудованого callout у вашому сховищі.",
 	"settings.globalSettingsCustomize": "Налаштувати",
 
 	"settings.calloutTypeRegular": "Block callout",

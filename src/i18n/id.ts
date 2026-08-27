@@ -637,15 +637,15 @@ export const id: Record<string, string> = {
 
 	"heading.toggleFold": "Alihkan lipatan",
 
-	"settings.globalSettings": "Opsi gaya Callout Studio",
+	"settings.globalSettings": "Opsi gaya global Callout Studio",
 	"settings.globalSettingsScope":
-		"Bentuk, jarak, dan ukuran untuk callout yang ditata gayanya oleh Callout Studio. Callout yang ditata gayanya oleh tema Anda tetap mempertahankan desain tema itu sendiri.",
+		"Ini adalah pengaturan global: masing-masing sekaligus mengubah bentuk, jarak, dan ukuran setiap callout yang ditata gayanya oleh Callout Studio. Callout yang ditata gayanya oleh tema Anda tetap mempertahankan desain tema itu sendiri.",
 	"settings.globalSettingsRegularDesc":
-		"Tambahkan token callout ke block callout (mis., `> [!type]`) untuk menampilkan kotak callout native Obsidian. Anda dapat menyesuaikan batas, radius, skala font, dan perataannya.",
+		"Sesuaikan batas, radius, skala font, dan perataan setiap block callout di vault Anda.",
 	"settings.globalSettingsHeadingDesc":
-		"Tambahkan token callout tepat setelah tanda pagar heading (mis., `## [!type]`) untuk menampilkannya sebagai heading callout bergaya. Anda dapat menyesuaikan batas, bentuk, dan jarak vertikalnya.",
+		"Sesuaikan batas, bentuk, dan jarak vertikal setiap callout heading di vault Anda.",
 	"settings.globalSettingsInlineDesc":
-		"Tambahkan token callout di mana saja di dalam baris teks (mis., `[!type]`) untuk menampilkannya sebagai Inline Callout kecil. Anda dapat menyesuaikan batas dan bentuknya.",
+		"Sesuaikan batas dan bentuk setiap callout sebaris di vault Anda.",
 	"settings.globalSettingsCustomize": "Sesuaikan",
 
 	"settings.calloutTypeRegular": "Block Callout",

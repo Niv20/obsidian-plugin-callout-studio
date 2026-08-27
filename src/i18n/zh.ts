@@ -624,15 +624,15 @@ export const zh: Record<string, string> = {
 
 	"heading.toggleFold": "切换折叠",
 
-	"settings.globalSettings": "Callout Studio 样式选项",
+	"settings.globalSettings": "Callout Studio 全局样式选项",
 	"settings.globalSettingsScope":
-		"Callout Studio 所设置样式的 callout 的形状、间距和大小。您主题设置样式的 callout 保留主题自身的设计。",
+		"这些是全局设置：每一项都会一次性更改 Callout Studio 所设置样式的每个 callout 的形状、间距和大小。您主题设置样式的 callout 保留主题自身的设计。",
 	"settings.globalSettingsRegularDesc":
-		"在引用块中添加 callout 标记（例如 `> [!type]`）以显示为 Obsidian 原生的 callout 框。您可以调整其边框、圆角、字体缩放和对齐方式。",
+		"调整库中每个 block callout 的边框、圆角、字体缩放和对齐方式。",
 	"settings.globalSettingsHeadingDesc":
-		"在标题井号后直接添加 callout 标记（例如 `## [!type]`）以将其显示为带样式的 callout 标题。您可以调整其边框、形状和垂直间距。",
+		"调整库中每个标题 callout 的边框、形状和垂直间距。",
 	"settings.globalSettingsInlineDesc":
-		"在文本行中的任意位置添加 callout 标记（例如 `[!type]`）以将其显示为小型行内徽标。您可以调整其边框和形状。",
+		"调整库中每个行内 callout 的边框和形状。",
 	"settings.globalSettingsCustomize": "自定义",
 
 	"settings.calloutTypeRegular": "Block callout",

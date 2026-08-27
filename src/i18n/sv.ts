@@ -630,15 +630,15 @@ export const sv: Record<string, string> = {
 	"contextMenu.copySection": "Kopiera rubriksektion",
 	"contextMenu.deleteSection": "Ta bort rubriksektion",
 	"heading.toggleFold": "Växla vikning",
-	"settings.globalSettings": "Stilalternativ för Callout Studio",
+	"settings.globalSettings": "Globala stilalternativ för Callout Studio",
 	"settings.globalSettingsScope":
-		"Form, avstånd och storlek för de callouts som Callout Studio stilar. Callouts som ditt tema stilar behåller temats egen design.",
+		"Detta är globala inställningar: var och en ändrar på en gång formen, avståndet och storleken för varje callout som Callout Studio stilar. Callouts som ditt tema stilar behåller temats egen design.",
 	"settings.globalSettingsRegularDesc":
-		"Lägg till en callout-token i ett citat (t.ex. `> [!type]`) för att rendera Obsidians inbyggda callout-ruta. Du kan justera dess kant, hörnrundning, typsnittsskala och justering.",
+		"Justera kant, hörnrundning, typsnittsskala och justering för varje block callout i ditt vault.",
 	"settings.globalSettingsHeadingDesc":
-		"Lägg till en callout-token direkt efter rubrikens fyrkanter (t.ex. `## [!type]`) för att rendera den som en stiliserad callout-rubrik. Du kan justera dess kant, form och vertikalt mellanrum.",
+		"Justera kant, form och vertikalt mellanrum för varje rubrik-callout i ditt vault.",
 	"settings.globalSettingsInlineDesc":
-		"Lägg till en callout-token var som helst i en textrad (t.ex. `[!type]`) för att rendera den som en liten infogad pill. Du kan justera dess kant och form.",
+		"Justera kant och form för varje infogad callout i ditt vault.",
 	"settings.globalSettingsCustomize": "Anpassa",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "Rubrik-callout",

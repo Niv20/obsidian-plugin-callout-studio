@@ -617,15 +617,15 @@ export const bg: Record<string, string> = {
 	"contextMenu.copySection": "Копиране на раздел на заглавие",
 	"contextMenu.deleteSection": "Изтриване на раздел на заглавие",
 	"heading.toggleFold": "Превключване на сгъването",
-	"settings.globalSettings": "Опции за стил на Callout Studio",
+	"settings.globalSettings": "Глобални опции за стил на Callout Studio",
 	"settings.globalSettingsScope":
-		"Форма, разстояние и размер за callout-ите, стилизирани от Callout Studio. Callout-ите, стилизирани от темата ви, запазват собствения дизайн на темата.",
+		"Това са глобални настройки: всяка от тях наведнъж променя формата, разстоянието и размера на всеки callout, стилизиран от Callout Studio. Callout-ите, стилизирани от темата ви, запазват собствения дизайн на темата.",
 	"settings.globalSettingsRegularDesc":
-		"Добавете токен на callout към цитат (напр. `> [!type]`), за да се визуализира нативната кутия за callout на Obsidian. Можете да коригирате нейната граница, радиус, мащаб на шрифта и подравняване.",
+		"Регулирайте границата, радиуса, мащаба на шрифта и подравняването на всеки блоков callout в трезора ви.",
 	"settings.globalSettingsHeadingDesc":
-		"Добавете токен на callout веднага след диезите на заглавието (напр. `## [!type]`), за да се визуализира като стилизирано заглавие на callout. Можете да коригирате границата, формата и вертикалното разстояние.",
+		"Регулирайте границата, формата и вертикалното разстояние на всеки заглавен callout в трезора ви.",
 	"settings.globalSettingsInlineDesc":
-		"Добавете токен на callout навсякъде вътре в ред текст (напр. `[!type]`), за да се визуализира като малка вградена капсула. Можете да коригирате границата и формата му.",
+		"Регулирайте границата и формата на всеки вграден callout в трезора ви.",
 	"settings.globalSettingsCustomize": "Персонализиране",
 	"settings.calloutTypeRegular": "Block Callout",
 	"settings.calloutTypeHeading": "Callout-заглавие",

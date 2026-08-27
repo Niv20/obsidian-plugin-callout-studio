@@ -639,15 +639,15 @@ export const ja: Record<string, string> = {
 
 	"heading.toggleFold": "折りたたみを切り替え",
 
-	"settings.globalSettings": "Callout Studioのスタイルオプション",
+	"settings.globalSettings": "Callout Studioのグローバルスタイルオプション",
 	"settings.globalSettingsScope":
-		"Callout Studioがスタイル設定するcalloutの形状・間隔・サイズです。テーマがスタイル設定するcalloutはテーマ自体のデザインのままです。",
+		"これはグローバル設定です。それぞれが、Callout Studioがスタイル設定するすべてのcalloutの形状・間隔・サイズを一度に変更します。テーマがスタイル設定するcalloutはテーマ自体のデザインのままです。",
 	"settings.globalSettingsRegularDesc":
-		"引用ブロックにcalloutトークンを追加すると（例: `> [!type]`）、Obsidianのネイティブなcalloutボックスとして表示されます。ボーダー、半径、フォントスケール、整列を調整できます。",
+		"vault内のすべてのblock calloutのボーダー、半径、フォントスケール、整列を調整します。",
 	"settings.globalSettingsHeadingDesc":
-		"見出しの # の直後にcalloutトークンを追加すると（例: `## [!type]`）、スタイル付きの見出しcalloutとして表示されます。ボーダー、形状、垂直方向の間隔を調整できます。",
+		"vault内のすべての見出しcalloutのボーダー、形状、垂直方向の間隔を調整します。",
 	"settings.globalSettingsInlineDesc":
-		"テキスト行の中のどこかにcalloutトークンを追加すると（例: `[!type]`）、小さなインラインピルとして表示されます。ボーダーと形状を調整できます。",
+		"vault内のすべてのインラインcalloutのボーダーと形状を調整します。",
 	"settings.globalSettingsCustomize": "カスタマイズ",
 
 	"settings.calloutTypeRegular": "Block Callout",

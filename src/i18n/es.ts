@@ -639,15 +639,15 @@ export const es: Record<string, string> = {
 	"contextMenu.copySection": "Copiar sección de encabezado",
 	"contextMenu.deleteSection": "Eliminar sección de encabezado",
 	"heading.toggleFold": "Alternar plegado",
-	"settings.globalSettings": "Opciones de estilo de Callout Studio",
+	"settings.globalSettings": "Opciones globales de estilo de Callout Studio",
 	"settings.globalSettingsScope":
-		"Forma, espaciado y tamaño para los callouts a los que Callout Studio aplica estilo. Los callouts a los que su tema aplica estilo conservan el diseño propio del tema.",
+		"Estos son ajustes globales: cada uno cambia a la vez la forma, el espaciado y el tamaño de todos los callouts a los que Callout Studio aplica estilo. Los callouts a los que su tema aplica estilo conservan el diseño propio del tema.",
 	"settings.globalSettingsRegularDesc":
-		"Añada un token de callout a una cita (p. ej., `> [!type]`) para renderizar el cuadro de callout nativo de Obsidian. Puede ajustar su borde, redondeo, escala de fuente y alineación.",
+		"Ajuste el borde, el redondeo, la escala de fuente y la alineación de cada callout de bloque de su bóveda.",
 	"settings.globalSettingsHeadingDesc":
-		"Añada un token de callout justo después de los símbolos # del encabezado (p. ej., `## [!type]`) para renderizarlo como un encabezado de callout con estilo. Puede ajustar su borde, forma y espaciado vertical.",
+		"Ajuste el borde, la forma y el espaciado vertical de cada callout de encabezado de su bóveda.",
 	"settings.globalSettingsInlineDesc":
-		"Añada un token de callout en cualquier parte de una línea de texto (p. ej., `[!type]`) para renderizarlo como una pequeña píldora en línea. Puede ajustar su borde y forma.",
+		"Ajuste el borde y la forma de cada callout en línea de su bóveda.",
 	"settings.globalSettingsCustomize": "Personalizar",
 	"settings.calloutTypeRegular": "Block Callout",
 	"settings.calloutTypeHeading": "Callout de encabezado",

@@ -635,15 +635,15 @@ export const pt: Record<string, string> = {
 	"contextMenu.copySection": "Copiar seção do cabeçalho",
 	"contextMenu.deleteSection": "Excluir seção do cabeçalho",
 	"heading.toggleFold": "Alternar dobra",
-	"settings.globalSettings": "Opções de estilo do Callout Studio",
+	"settings.globalSettings": "Opções de estilo globais do Callout Studio",
 	"settings.globalSettingsScope":
-		"Forma, espaçamento e tamanho dos callouts que o Callout Studio estiliza. Os callouts que o seu tema estiliza mantêm o design próprio do tema.",
+		"Estas são configurações globais: cada uma altera de uma só vez a forma, o espaçamento e o tamanho de todos os callouts que o Callout Studio estiliza. Os callouts que o seu tema estiliza mantêm o design próprio do tema.",
 	"settings.globalSettingsRegularDesc":
-		"Adicione um token de callout a uma citação em bloco (por exemplo, `> [!type]`) para renderizar a caixa de callout integrada do Obsidian. Você pode ajustar a borda, o arredondamento, a escala de fonte e o alinhamento.",
+		"Ajuste a borda, o arredondamento, a escala de fonte e o alinhamento de todos os block callouts do seu vault.",
 	"settings.globalSettingsHeadingDesc":
-		"Adicione um token de callout logo após os símbolos # do cabeçalho (por exemplo, `## [!type]`) para renderizá-lo como um cabeçalho de callout estilizado. Você pode ajustar a borda, a forma e o espaçamento vertical.",
+		"Ajuste a borda, a forma e o espaçamento vertical de todos os callouts de cabeçalho do seu vault.",
 	"settings.globalSettingsInlineDesc":
-		"Adicione um token de callout em qualquer parte de uma linha de texto (por exemplo, `[!type]`) para renderizá-lo como uma pequena pílula em linha. Você pode ajustar a borda e a forma.",
+		"Ajuste a borda e a forma de todos os callouts em linha do seu vault.",
 	"settings.globalSettingsCustomize": "Personalizar",
 	"settings.calloutTypeRegular": "Block Callout",
 	"settings.calloutTypeHeading": "Callout de cabeçalho",

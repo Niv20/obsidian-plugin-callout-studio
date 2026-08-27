@@ -640,15 +640,15 @@ export const de: Record<string, string> = {
 	"contextMenu.copySection": "Überschriftsabschnitt kopieren",
 	"contextMenu.deleteSection": "Überschriftsabschnitt löschen",
 	"heading.toggleFold": "Faltung umschalten",
-	"settings.globalSettings": "Callout Studio-Stiloptionen",
+	"settings.globalSettings": "Globale Callout Studio-Stiloptionen",
 	"settings.globalSettingsScope":
-		"Form, Abstand und Größe für die Callouts, die Callout Studio gestaltet. Callouts, die Ihr Theme gestaltet, behalten das eigene Design des Themes.",
+		"Dies sind globale Einstellungen: Jede davon ändert auf einen Schlag Form, Abstand und Größe jedes Callouts, das Callout Studio gestaltet. Callouts, die Ihr Theme gestaltet, behalten das eigene Design des Themes.",
 	"settings.globalSettingsRegularDesc":
-		"Fügen Sie einem Zitatblock ein Callout-Token hinzu (z. B. `> [!type]`), um Obsidians native Callout-Box darzustellen. Sie können Rahmen, Radius, Schriftskalierung und Ausrichtung anpassen.",
+		"Passen Sie Rahmen, Radius, Schriftskalierung und Ausrichtung jedes Block-Callouts in Ihrem Tresor an.",
 	"settings.globalSettingsHeadingDesc":
-		"Fügen Sie direkt nach den Rautezeichen der Überschrift ein Callout-Token hinzu (z. B. `## [!type]`), um es als gestaltete Callout-Überschrift darzustellen. Sie können Rahmen, Form und vertikalen Abstand anpassen.",
+		"Passen Sie Rahmen, Form und vertikalen Abstand jedes Überschriften-Callouts in Ihrem Tresor an.",
 	"settings.globalSettingsInlineDesc":
-		"Fügen Sie irgendwo innerhalb einer Textzeile ein Callout-Token hinzu (z. B. `[!type]`), um es als kleine Inline-Pille darzustellen. Sie können Rahmen und Form anpassen.",
+		"Passen Sie Rahmen und Form jedes Inline-Callouts in Ihrem Tresor an.",
 	"settings.globalSettingsCustomize": "Anpassen",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "Überschrift-Callout",

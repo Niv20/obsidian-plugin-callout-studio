@@ -625,15 +625,15 @@ export const fi: Record<string, string> = {
 	"contextMenu.copySection": "Kopioi otsikko-osio",
 	"contextMenu.deleteSection": "Poista otsikko-osio",
 	"heading.toggleFold": "Vaihda taitto",
-	"settings.globalSettings": "Callout Studion tyyliasetukset",
+	"settings.globalSettings": "Callout Studion yleiset tyyliasetukset",
 	"settings.globalSettingsScope":
-		"Muoto, välit ja koko callouteille, joita Callout Studio tyylittelee. Teemasi tyylittelemät calloutit säilyttävät teeman oman ulkoasun.",
+		"Nämä ovat yleisiä asetuksia: kukin niistä muuttaa kerralla jokaisen Callout Studion tyylitteleman calloutin muotoa, välejä ja kokoa. Teemasi tyylittelemät calloutit säilyttävät teeman oman ulkoasun.",
 	"settings.globalSettingsRegularDesc":
-		"Lisää callout-token lainaukseen (esim. `> [!type]`), jolloin se näkyy Obsidianin natiivina callout-laatikkona. Voit säätää sen reunaa, pyöristystä, fonttiskaalaa ja tasausta.",
+		"Säädä jokaisen holvisi lohko-calloutin reunaa, pyöristystä, fonttiskaalaa ja tasausta.",
 	"settings.globalSettingsHeadingDesc":
-		"Lisää callout-token suoraan otsikon risuaitojen jälkeen (esim. `## [!type]`), jolloin se näkyy tyyliteltynä callout-otsikkona. Voit säätää sen reunaa, muotoa ja pystysuuntaista väliä.",
+		"Säädä jokaisen holvisi otsikko-calloutin reunaa, muotoa ja pystysuuntaista väliä.",
 	"settings.globalSettingsInlineDesc":
-		"Lisää callout-token mihin tahansa kohtaan tekstiriviä (esim. `[!type]`), jolloin se näkyy pienenä rivinsisäisenä pillerinä. Voit säätää sen reunaa ja muotoa.",
+		"Säädä jokaisen holvisi rivinsisäisen calloutin reunaa ja muotoa.",
 	"settings.globalSettingsCustomize": "Mukauta",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "Otsikko-callout",

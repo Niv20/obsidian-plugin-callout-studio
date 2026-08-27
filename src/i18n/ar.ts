@@ -623,15 +623,15 @@ export const ar: Record<string, string> = {
 	"contextMenu.copySection": "نسخ قسم العنوان",
 	"contextMenu.deleteSection": "حذف قسم العنوان",
 	"heading.toggleFold": "تبديل الطي",
-	"settings.globalSettings": "خيارات نمط Callout Studio",
+	"settings.globalSettings": "خيارات نمط Callout Studio العامة",
 	"settings.globalSettingsScope":
-		"الشكل والتباعد والحجم لِـ callouts التي ينسّقها Callout Studio. الـ callouts التي ينسّقها القالب الخاص بك تحتفظ بتصميم القالب نفسه.",
+		"هذه إعدادات عامة: كل واحد منها يغيّر دفعةً واحدة شكل وتباعد وحجم كل callout ينسّقه Callout Studio. الـ callouts التي ينسّقها القالب الخاص بك تحتفظ بتصميم القالب نفسه.",
 	"settings.globalSettingsRegularDesc":
-		"أضف رمز callout إلى اقتباس محظور (مثل `> [!type]`) لعرض صندوق الـ callout الأصلي في Obsidian. يمكنك ضبط حدوده ونصف قطره ومقياس الخط ومحاذاته.",
+		"اضبط الحدود ونصف القطر ومقياس الخط والمحاذاة لكل block callout في خزنتك.",
 	"settings.globalSettingsHeadingDesc":
-		"أضف رمز callout مباشرة بعد علامات الشباك الخاصة بالعنوان (مثل `## [!type]`) لعرضه كعنوان callout منسّق. يمكنك ضبط حدوده وشكله والمسافة الرأسية.",
+		"اضبط الحدود والشكل والمسافة الرأسية لكل heading callout في خزنتك.",
 	"settings.globalSettingsInlineDesc":
-		"أضف رمز callout في أي مكان داخل سطر من النص (مثل `[!type]`) لعرضه كشارة صغيرة مضمّنة. يمكنك ضبط حدوده وشكله.",
+		"اضبط الحدود والشكل لكل inline callout في خزنتك.",
 	"settings.globalSettingsCustomize": "تخصيص",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "callout العنوان",

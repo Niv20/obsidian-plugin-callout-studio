@@ -630,15 +630,15 @@ export const cs: Record<string, string> = {
 	"contextMenu.copySection": "Kopírovat sekci nadpisu",
 	"contextMenu.deleteSection": "Smazat sekci nadpisu",
 	"heading.toggleFold": "Přepnout sbalení",
-	"settings.globalSettings": "Možnosti stylu Callout Studio",
+	"settings.globalSettings": "Globální možnosti stylu Callout Studio",
 	"settings.globalSettingsScope":
-		"Tvar, rozestupy a velikost pro callouts, které stylizuje Callout Studio. Callouts stylizované vaším tématem si zachovávají vlastní vzhled tématu.",
+		"Toto jsou globální nastavení: každé z nich naráz změní tvar, rozestupy a velikost každého callout, který stylizuje Callout Studio. Callouts stylizované vaším tématem si zachovávají vlastní vzhled tématu.",
 	"settings.globalSettingsRegularDesc":
-		"Přidejte token callout do citace (např. `> [!type]`) a vykreslete tak nativní rámeček callout v Obsidianu. Můžete upravit jeho ohraničení, poloměr, měřítko písma a zarovnání.",
+		"Upravte ohraničení, poloměr, měřítko písma a zarovnání každého blokového callout ve vašem trezoru.",
 	"settings.globalSettingsHeadingDesc":
-		"Přidejte token callout přímo za mřížky nadpisu (např. `## [!type]`) a vykreslete ho jako stylizovaný nadpis callout. Můžete upravit jeho ohraničení, tvar a svislé rozestupy.",
+		"Upravte ohraničení, tvar a svislé rozestupy každého nadpisového callout ve vašem trezoru.",
 	"settings.globalSettingsInlineDesc":
-		"Přidejte token callout kamkoli do řádku textu (např. `[!type]`) a vykreslete ho jako malou vloženou pilulku. Můžete upravit jeho ohraničení a tvar.",
+		"Upravte ohraničení a tvar každého vloženého callout ve vašem trezoru.",
 	"settings.globalSettingsCustomize": "Přizpůsobit",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "Callout nadpisu",

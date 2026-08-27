@@ -643,15 +643,15 @@ export const nl: Record<string, string> = {
 	"contextMenu.copySection": "Kopsectie kopiëren",
 	"contextMenu.deleteSection": "Kopsectie verwijderen",
 	"heading.toggleFold": "Vouwen omschakelen",
-	"settings.globalSettings": "Callout Studio-stijlopties",
+	"settings.globalSettings": "Globale Callout Studio-stijlopties",
 	"settings.globalSettingsScope":
-		"Vorm, ruimte en grootte voor de callouts die Callout Studio stijlt. Callouts die uw thema stijlt behouden het eigen ontwerp van het thema.",
+		"Dit zijn globale instellingen: elke instelling wijzigt in één keer de vorm, ruimte en grootte van elke callout die Callout Studio stijlt. Callouts die uw thema stijlt behouden het eigen ontwerp van het thema.",
 	"settings.globalSettingsRegularDesc":
-		"Voeg een callout-token toe aan een block callout (bijvoorbeeld `> [!type]`) om het ingebouwde callout-vak van Obsidian weer te geven. U kunt de rand, hoekafronding, lettertypeschaal en uitlijning aanpassen.",
+		"Pas de rand, hoekafronding, lettertypeschaal en uitlijning van elke block callout in uw vault aan.",
 	"settings.globalSettingsHeadingDesc":
-		"Voeg een callout-token direct na de kop-hekjes toe (bijvoorbeeld `## [!type]`) om het als een gestileerde callout-kop weer te geven. U kunt de rand, vorm en verticale afstand aanpassen.",
+		"Pas de rand, vorm en verticale afstand van elke kop-callout in uw vault aan.",
 	"settings.globalSettingsInlineDesc":
-		"Voeg een callout-token ergens in een tekstregel toe (bijvoorbeeld `[!type]`) om het als een kleine Inline Callout weer te geven. U kunt de rand en vorm aanpassen.",
+		"Pas de rand en vorm van elke inline callout in uw vault aan.",
 	"settings.globalSettingsCustomize": "Aanpassen",
 	"settings.calloutTypeRegular": "Block Callout",
 	"settings.calloutTypeHeading": "Kop-callout",

@@ -629,15 +629,15 @@ export const th: Record<string, string> = {
 
 	"heading.toggleFold": "สลับการพับ",
 
-	"settings.globalSettings": "ตัวเลือกสไตล์ของ Callout Studio",
+	"settings.globalSettings": "ตัวเลือกสไตล์ส่วนกลางของ Callout Studio",
 	"settings.globalSettingsScope":
-		"รูปร่าง ระยะห่าง และขนาดสำหรับ callout ที่ Callout Studio จัดสไตล์ให้ ส่วน callout ที่ธีมของคุณจัดสไตล์จะคงการออกแบบของธีมไว้",
+		"นี่คือการตั้งค่าส่วนกลาง โดยแต่ละรายการจะเปลี่ยนรูปร่าง ระยะห่าง และขนาดของทุก callout ที่ Callout Studio จัดสไตล์ให้พร้อมกัน ส่วน callout ที่ธีมของคุณจัดสไตล์จะคงการออกแบบของธีมไว้",
 	"settings.globalSettingsRegularDesc":
-		"เพิ่มโทเค็น callout ลงในบล็อกอ้างอิง (เช่น `> [!type]`) เพื่อแสดงผลเป็นกล่อง callout ดั้งเดิมของ Obsidian คุณสามารถปรับขอบ ความโค้งมุม ขนาดตัวอักษร และการจัดแนวได้",
+		"ปรับขอบ ความโค้งมุม ขนาดตัวอักษร และการจัดแนวของทุก block callout ใน vault ของคุณ",
 	"settings.globalSettingsHeadingDesc":
-		"เพิ่มโทเค็น callout ต่อจากเครื่องหมาย # ของหัวข้อโดยตรง (เช่น `## [!type]`) เพื่อแสดงผลเป็นหัวข้อ callout ที่จัดรูปแบบไว้ คุณสามารถปรับขอบ รูปร่าง และระยะห่างแนวตั้งได้",
+		"ปรับขอบ รูปร่าง และระยะห่างแนวตั้งของทุก callout หัวข้อ ใน vault ของคุณ",
 	"settings.globalSettingsInlineDesc":
-		"เพิ่มโทเค็น callout ที่ใดก็ได้ภายในบรรทัดข้อความ (เช่น `[!type]`) เพื่อแสดงผลเป็นแคปซูลอินไลน์ขนาดเล็ก คุณสามารถปรับขอบและรูปร่างได้",
+		"ปรับขอบและรูปร่างของทุก callout อินไลน์ ใน vault ของคุณ",
 	"settings.globalSettingsCustomize": "ปรับแต่ง",
 
 	"settings.calloutTypeRegular": "Block callout",

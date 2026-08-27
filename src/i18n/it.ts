@@ -644,15 +644,15 @@ export const it: Record<string, string> = {
 
 	"heading.toggleFold": "Attiva/disattiva la piegatura",
 
-	"settings.globalSettings": "Opzioni di stile di Callout Studio",
+	"settings.globalSettings": "Opzioni di stile globali di Callout Studio",
 	"settings.globalSettingsScope":
-		"Forma, spaziatura e dimensione per i callout a cui Callout Studio applica uno stile. I callout stilizzati dal tuo tema mantengono il design proprio del tema.",
+		"Queste sono impostazioni globali: ognuna modifica in una sola volta la forma, la spaziatura e la dimensione di ogni callout a cui Callout Studio applica uno stile. I callout stilizzati dal tuo tema mantengono il design proprio del tema.",
 	"settings.globalSettingsRegularDesc":
-		"Aggiungi un token callout a una citazione (ad es. `> [!type]`) per visualizzare il riquadro callout nativo di Obsidian. Puoi regolarne bordo, raggio, scala font e allineamento.",
+		"Regola bordo, raggio, scala font e allineamento di ogni block callout nel tuo vault.",
 	"settings.globalSettingsHeadingDesc":
-		"Aggiungi un token callout subito dopo i cancelletti dell'intestazione (ad es. `## [!type]`) per visualizzarlo come un'intestazione callout stilizzata. Puoi regolarne bordo, forma e spaziatura verticale.",
+		"Regola bordo, forma e spaziatura verticale di ogni callout di intestazione nel tuo vault.",
 	"settings.globalSettingsInlineDesc":
-		"Aggiungi un token callout in un punto qualsiasi di una riga di testo (ad es. `[!type]`) per visualizzarlo come una piccola pillola in linea. Puoi regolarne bordo e forma.",
+		"Regola bordo e forma di ogni callout in linea nel tuo vault.",
 	"settings.globalSettingsCustomize": "Personalizza",
 
 	"settings.calloutTypeRegular": "Block callout",

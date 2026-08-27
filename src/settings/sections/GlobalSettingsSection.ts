@@ -5,8 +5,9 @@
  * callout, or an inline callout. Each role has its own vault-wide geometry
  * (borders, spacing, shape, …) edited in the per-role "Global callout style"
  * popup ({@link GlobalStyleModal}). This section is a heading, then one
- * {@link Setting} row per role — each with its own syntax-specific
- * description and a "Customize" button that opens that role's popup.
+ * {@link Setting} row per role — each with a description stating that it is
+ * global and reaches every callout of that role, plus a "Customize" button
+ * that opens that role's popup.
  *
  * Each role also has an `enabled` setting (block is always on; heading and
  * inline can each be disabled) that still gates rendering, but it is not
@@ -38,16 +39,7 @@ export function renderGlobalSettingsSection(
 	ctx: SettingsSectionContext,
 	containerEl: HTMLElement,
 ): void {
-	// Named and described for its *scope*, not its reach. "Global settings"
-	// read as "settings for everything", which stopped being true the moment
-	// callouts the theme paints got a list of their own: none of this touches
-	// them, because in theme mode the plugin emits nothing at all. The heading
-	// says whose style it is and the description says who it misses, so a user
-	// looking at an unchanged theme callout is not left hunting for a bug.
-	new Setting(containerEl)
-		.setName(t("settings.globalSettings"))
-		.setDesc(t("settings.globalSettingsScope"))
-		.setHeading();
+	new Setting(containerEl).setName(t("settings.globalSettings")).setHeading();
 
 	const roles: { role: CalloutRenderRole; label: string; desc: string }[] = [
 		{

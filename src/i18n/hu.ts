@@ -638,15 +638,15 @@ export const hu: Record<string, string> = {
 	"contextMenu.copySection": "Címsor szakasz másolása",
 	"contextMenu.deleteSection": "Címsor szakasz törlése",
 	"heading.toggleFold": "Összecsukás váltása",
-	"settings.globalSettings": "Callout Studio stílusbeállítások",
+	"settings.globalSettings": "Callout Studio globális stílusbeállítások",
 	"settings.globalSettingsScope":
-		"Alak, térköz és méret a Callout Studio által stílusozott callout-okhoz. A témája által stílusozott callout-ok megtartják a téma saját dizájnját.",
+		"Ezek globális beállítások: mindegyik egyszerre módosítja a Callout Studio által stílusozott összes callout alakját, térközét és méretét. A témája által stílusozott callout-ok megtartják a téma saját dizájnját.",
 	"settings.globalSettingsRegularDesc":
-		"Adjon hozzá egy callout tokent egy idézethez (pl. `> [!type]`), hogy megjelenjen az Obsidian natív callout-doboza. Beállíthatja a szegélyét, a sugarát, a betűméret-arányát és az igazítását.",
+		"Állítsa be a tárában lévő összes block callout szegélyét, sugarát, betűméret-arányát és igazítását.",
 	"settings.globalSettingsHeadingDesc":
-		"Adjon hozzá egy callout tokent közvetlenül a címsor kettőskeresztjei után (pl. `## [!type]`), hogy stílusos callout-címsorként jelenjen meg. Beállíthatja a szegélyét, az alakját és a függőleges térközét.",
+		"Állítsa be a tárában lévő összes címsor callout szegélyét, alakját és függőleges térközét.",
 	"settings.globalSettingsInlineDesc":
-		"Adjon hozzá egy callout tokent egy szövegsor bármelyik pontján (pl. `[!type]`), hogy kis beágyazott pirulaként jelenjen meg. Beállíthatja a szegélyét és az alakját.",
+		"Állítsa be a tárában lévő összes beágyazott callout szegélyét és alakját.",
 	"settings.globalSettingsCustomize": "Testreszabás",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "Címsor callout",

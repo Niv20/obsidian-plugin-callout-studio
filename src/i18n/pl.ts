@@ -634,15 +634,15 @@ export const pl: Record<string, string> = {
 	"contextMenu.copySection": "Kopiuj sekcję nagłówka",
 	"contextMenu.deleteSection": "Usuń sekcję nagłówka",
 	"heading.toggleFold": "Przełącz zwijanie",
-	"settings.globalSettings": "Opcje stylu Callout Studio",
+	"settings.globalSettings": "Globalne opcje stylu Callout Studio",
 	"settings.globalSettingsScope":
-		"Kształt, odstępy i rozmiar dla callouts stylizowanych przez Callout Studio. Callouts stylizowane przez Twój motyw zachowują jego własny projekt.",
+		"To są ustawienia globalne: każde z nich naraz zmienia kształt, odstępy i rozmiar każdego callout stylizowanego przez Callout Studio. Callouts stylizowane przez Twój motyw zachowują jego własny projekt.",
 	"settings.globalSettingsRegularDesc":
-		"Dodaj token callout do cytatu blokowego (np. `> [!type]`), aby wyświetlić wbudowane pole callout Obsidian. Możesz dostosować jego obramowanie, zaokrąglenie, skalę czcionki i wyrównanie.",
+		"Dostosuj obramowanie, zaokrąglenie, skalę czcionki i wyrównanie każdego block callout w Twoim vault.",
 	"settings.globalSettingsHeadingDesc":
-		"Dodaj token callout bezpośrednio po krzyżykach nagłówka (np. `## [!type]`), aby wyświetlić go jako stylizowany nagłówek callout. Możesz dostosować jego obramowanie, kształt i odstęp pionowy.",
+		"Dostosuj obramowanie, kształt i odstęp pionowy każdego callout-nagłówka w Twoim vault.",
 	"settings.globalSettingsInlineDesc":
-		"Dodaj token callout w dowolnym miejscu wiersza tekstu (np. `[!type]`), aby wyświetlić go jako małą pigułkę śródtekstową. Możesz dostosować jego obramowanie i kształt.",
+		"Dostosuj obramowanie i kształt każdego callout śródtekstowego w Twoim vault.",
 	"settings.globalSettingsCustomize": "Dostosuj",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "Callout-nagłówek",

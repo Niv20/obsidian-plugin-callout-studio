@@ -623,15 +623,15 @@ export const el: Record<string, string> = {
 	"contextMenu.copySection": "Αντιγραφή ενότητας επικεφαλίδας",
 	"contextMenu.deleteSection": "Διαγραφή ενότητας επικεφαλίδας",
 	"heading.toggleFold": "Εναλλαγή αναδίπλωσης",
-	"settings.globalSettings": "Επιλογές στυλ Callout Studio",
+	"settings.globalSettings": "Καθολικές επιλογές στυλ Callout Studio",
 	"settings.globalSettingsScope":
-		"Σχήμα, απόσταση και μέγεθος για τα callouts που μορφοποιεί το Callout Studio. Τα callouts που μορφοποιεί το θέμα σας διατηρούν τον δικό του σχεδιασμό.",
+		"Αυτές είναι καθολικές ρυθμίσεις: καθεμία τους αλλάζει μεμιάς το σχήμα, την απόσταση και το μέγεθος κάθε callout που μορφοποιεί το Callout Studio. Τα callouts που μορφοποιεί το θέμα σας διατηρούν τον δικό του σχεδιασμό.",
 	"settings.globalSettingsRegularDesc":
-		"Προσθέστε ένα token callout σε μια παράθεση (π.χ. `> [!type]`) για να εμφανιστεί το εγγενές πλαίσιο callout του Obsidian. Μπορείτε να προσαρμόσετε το περίγραμμα, την ακτίνα, την κλίμακα γραμματοσειράς και τη στοίχισή του.",
+		"Προσαρμόστε το περίγραμμα, την ακτίνα, την κλίμακα γραμματοσειράς και τη στοίχιση κάθε callout μπλοκ στο vault σας.",
 	"settings.globalSettingsHeadingDesc":
-		"Προσθέστε ένα token callout αμέσως μετά τα σύμβολα δίεσης της επικεφαλίδας (π.χ. `## [!type]`) για να εμφανιστεί ως στυλιζαρισμένη επικεφαλίδα callout. Μπορείτε να προσαρμόσετε το περίγραμμα, το σχήμα και την κατακόρυφη απόσταση.",
+		"Προσαρμόστε το περίγραμμα, το σχήμα και την κατακόρυφη απόσταση κάθε callout επικεφαλίδας στο vault σας.",
 	"settings.globalSettingsInlineDesc":
-		"Προσθέστε ένα token callout οπουδήποτε μέσα σε μια γραμμή κειμένου (π.χ. `[!type]`) για να εμφανιστεί ως μικρό ενσωματωμένο χάπι. Μπορείτε να προσαρμόσετε το περίγραμμά του και το σχήμα του.",
+		"Προσαρμόστε το περίγραμμα και το σχήμα κάθε ενσωματωμένου callout στο vault σας.",
 	"settings.globalSettingsCustomize": "Προσαρμογή",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "Callout επικεφαλίδας",

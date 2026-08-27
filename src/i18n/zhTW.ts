@@ -607,15 +607,15 @@ export const zhTW: Record<string, string> = {
 	"contextMenu.copySection": "複製標題部分",
 	"contextMenu.deleteSection": "刪除標題部分",
 	"heading.toggleFold": "切換折疊",
-	"settings.globalSettings": "Callout Studio 樣式選項",
+	"settings.globalSettings": "Callout Studio 全域樣式選項",
 	"settings.globalSettingsScope":
-		"Callout Studio 所設定樣式的 callout 的形狀、間距與大小。您佈景主題設定樣式的 callout 保留佈景主題自身的設計。",
+		"這些是全域設定：每一項都會一次性變更 Callout Studio 所設定樣式的每個 callout 的形狀、間距與大小。您佈景主題設定樣式的 callout 保留佈景主題自身的設計。",
 	"settings.globalSettingsRegularDesc":
-		"在區塊引用中新增 callout 標記（例如 `> [!type]`）以顯示為 Obsidian 原生的 callout 框。您可以調整其邊框、圓角、字型縮放和對齊方式。",
+		"調整 vault 中每個 block callout 的邊框、圓角、字型縮放和對齊方式。",
 	"settings.globalSettingsHeadingDesc":
-		"在標題井號後直接新增 callout 標記（例如 `## [!type]`）以將其顯示為帶樣式的 callout 標題。您可以調整其邊框、形狀和垂直間距。",
+		"調整 vault 中每個標題 callout 的邊框、形狀和垂直間距。",
 	"settings.globalSettingsInlineDesc":
-		"在文字行中的任意位置新增 callout 標記（例如 `[!type]`）以將其顯示為小型行內徽標。您可以調整其邊框和形狀。",
+		"調整 vault 中每個行內 callout 的邊框和形狀。",
 	"settings.globalSettingsCustomize": "自訂",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "標題 callout",

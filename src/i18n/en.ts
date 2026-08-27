@@ -719,15 +719,15 @@ export const en: Record<string, string> = {
 	"heading.toggleFold": "Toggle fold",
 
 	// Global settings section (per-role style popups)
-	"settings.globalSettings": "Callout Studio style options",
+	"settings.globalSettings": "Global Callout Studio style options",
 	"settings.globalSettingsScope":
-		"Shape, spacing and size for the callouts Callout Studio styles. Callouts your theme styles keep the theme's own design.",
+		"These are global settings: each one changes the shape, spacing, and size of every callout Callout Studio styles at once. Callouts your theme styles keep the theme's own design.",
 	"settings.globalSettingsRegularDesc":
-		"Add a callout token to a block callout (e.g., `> [!type]`) to render Obsidian's native callout box. You can adjust its border, radius, font scale, and alignment.",
+		"Adjust the border, radius, font scale, and alignment of every block callout in your vault.",
 	"settings.globalSettingsHeadingDesc":
-		"Add a callout token directly after the heading hashes (e.g., `## [!type]`) to render it as a styled callout heading. You can adjust its border, shape, and vertical spacing.",
+		"Adjust the border, shape, and vertical spacing of every heading callout in your vault.",
 	"settings.globalSettingsInlineDesc":
-		"Add a callout token anywhere inside a line of text (e.g., `[!type]`) to render it as a small inline callout. You can adjust its border and shape.",
+		"Adjust the border and shape of every inline callout in your vault.",
 	"settings.globalSettingsCustomize": "Customize",
 
 	// Callout types section

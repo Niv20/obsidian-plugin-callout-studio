@@ -635,15 +635,15 @@ export const hi: Record<string, string> = {
 	"contextMenu.copySection": "शीर्षक अनुभाग कॉपी करें",
 	"contextMenu.deleteSection": "शीर्षक अनुभाग हटाएँ",
 	"heading.toggleFold": "मोड़ना टॉगल करें",
-	"settings.globalSettings": "Callout Studio स्टाइल विकल्प",
+	"settings.globalSettings": "Callout Studio के वैश्विक स्टाइल विकल्प",
 	"settings.globalSettingsScope":
-		"उन callouts के लिए आकार, दूरी और साइज़ जिन्हें Callout Studio स्टाइल करता है। जिन callouts को आपकी थीम स्टाइल करती है वे थीम के अपने डिज़ाइन में ही रहते हैं।",
+		"ये वैश्विक सेटिंग्स हैं: इनमें से हर एक Callout Studio द्वारा स्टाइल किए जाने वाले हर callout के आकार, दूरी और साइज़ को एक साथ बदल देती है। जिन callouts को आपकी थीम स्टाइल करती है वे थीम के अपने डिज़ाइन में ही रहते हैं।",
 	"settings.globalSettingsRegularDesc":
-		"Obsidian के मूल callout बॉक्स को दिखाने के लिए किसी उद्धरण में एक callout टोकन जोड़ें (जैसे, `> [!type]`)। आप इसका बॉर्डर, रेडियस, फ़ॉन्ट स्केल और संरेखण समायोजित कर सकते हैं।",
+		"अपने वॉल्ट के हर ब्लॉक callout का बॉर्डर, रेडियस, फ़ॉन्ट स्केल और संरेखण समायोजित करें।",
 	"settings.globalSettingsHeadingDesc":
-		"इसे स्टाइल किए गए callout शीर्षक के रूप में दिखाने के लिए शीर्षक के # चिह्नों के ठीक बाद एक callout टोकन जोड़ें (जैसे, `## [!type]`)। आप इसका बॉर्डर, आकार और ऊर्ध्वाधर दूरी समायोजित कर सकते हैं।",
+		"अपने वॉल्ट के हर शीर्षक callout का बॉर्डर, आकार और ऊर्ध्वाधर दूरी समायोजित करें।",
 	"settings.globalSettingsInlineDesc":
-		"इसे एक छोटे इनलाइन पिल के रूप में दिखाने के लिए टेक्स्ट की किसी भी पंक्ति के भीतर कहीं भी एक callout टोकन जोड़ें (जैसे, `[!type]`)। आप इसका बॉर्डर और आकार समायोजित कर सकते हैं।",
+		"अपने वॉल्ट के हर इनलाइन callout का बॉर्डर और आकार समायोजित करें।",
 	"settings.globalSettingsCustomize": "कस्टमाइज़ करें",
 	"settings.calloutTypeRegular": "Block callout",
 	"settings.calloutTypeHeading": "शीर्षक callout",
