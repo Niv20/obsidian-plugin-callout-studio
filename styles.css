@@ -5125,10 +5125,24 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 
 /* Neutral demo callout shown in the per-role style popups: its Lucide square
    icon is filled with the accent color so it reads as a solid swatch rather
-   than an outline, on all three surfaces (regular / heading / inline). */
-.callout[data-callout="global-style-demo"] > .callout-title > .callout-icon svg,
-.cs-heading-token[data-callout="global-style-demo"] .cs-callout-icon svg,
-.cs-inline-callout[data-callout="global-style-demo"] .cs-callout-icon svg {
+   than an outline, on all three surfaces (regular / heading / inline).
+
+   Scoped to this modal, not keyed on the id alone. The welcome splash reserves
+   the same id for its own demo (see settings/welcomeDemo.ts) but draws an
+   outline `sparkles`, which this rule would flood-fill into a blob. */
+.cs-role-style-modal
+	.callout[data-callout="global-style-demo"]
+	> .callout-title
+	> .callout-icon
+	svg,
+.cs-role-style-modal
+	.cs-heading-token[data-callout="global-style-demo"]
+	.cs-callout-icon
+	svg,
+.cs-role-style-modal
+	.cs-inline-callout[data-callout="global-style-demo"]
+	.cs-callout-icon
+	svg {
 	fill: currentColor;
 }
 
@@ -5156,16 +5170,6 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	text-align: left;
 	gap: 12px;
 	min-width: 0;
-}
-
-.cs-welcome-icon {
-	color: var(--interactive-accent);
-	line-height: 0;
-}
-
-.cs-welcome-icon .svg-icon {
-	width: 2.4em;
-	height: 2.4em;
 }
 
 .cs-welcome-title {
@@ -5196,6 +5200,140 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	min-height: 200px;
 	max-height: 340px;
 	overflow-y: auto;
+}
+
+/* ── The splash's demo callout, pinned against the active theme ──────
+
+   The splash demonstrates all three roles at once, and it used to do it with
+   the real built-ins `tip`, `warning` and `note` — exactly the ids a theme
+   restyles by name. Moving to the splash's own `demo` id
+   (settings/welcomeDemo.ts) settles that half: no theme has a rule for an id it
+   has never heard of.
+
+   It does not settle the other half. A theme's *generic* selectors still reach
+   the examples — `.callout { ... !important }` for the block role, and plain
+   heading rules for the heading role, which is the worse case: the injected
+   `.cs-heading-callout` / `.cs-inline-callout` rules carry no `!important` at
+   all, on purpose (see CSSInjector's note on keeping them user-overridable), so
+   a theme wins those without a fight. On several popular themes that made the
+   heading and inline examples unreadable.
+
+   Hence this block. It restates what the injected sheet already says, with
+   enough weight to survive a theme: among `!important` author declarations the
+   higher specificity wins, and repeating a compound buys that the same way
+   manager/theme/studioWeight.ts does. Scoped to `.cs-welcome-modal` and keyed
+   on the demo id, so it can reach nothing else — and that scope is load-bearing
+   here rather than tidiness, because `demo` is a name a user may legitimately
+   own (see WELCOME_DEMO_ID). Their `[!demo]` callouts keep their own colours
+   everywhere outside this modal. */
+
+.cs-welcome-modal {
+	--cs-welcome-demo-accent: #7c3aed;
+}
+
+.theme-dark .cs-welcome-modal {
+	--cs-welcome-demo-accent: #a78bfa;
+}
+
+/* ONE tint for all three roles, and it is `.cs-heading-callout`'s and
+   `.cs-inline-callout`'s own default formula copied verbatim from further up
+   this file — same 12%, same oklch space. That is what makes the comment above
+   ("restates what the injected sheet already says") true rather than
+   approximate: the hardening changes the *weight* of the plugin's answer, never
+   the answer. The three examples therefore sit on the same wash as each other
+   and as every real callout of this colour elsewhere in the vault.
+
+   Translucent rather than opaque for the reason the whole plugin is: an opaque
+   fill stops following the theme's surface and breaks nested callouts. It is
+   also why the inline pill is a tint and not the solid violet lozenge it was
+   for one revision — a solid pill is a look the plugin gives no other inline
+   callout, so the splash was demonstrating something users would never
+   reproduce. */
+.modal.cs-welcome-modal {
+	--cs-welcome-demo-tint: color-mix(
+		in oklch,
+		var(--cs-welcome-demo-accent) 12%,
+		transparent
+	);
+}
+
+/* Block role. Three `.callout` units + the modal scope clears any realistic
+   theme rule.
+
+   `--callout-color` is deliberately NOT restated here. Its format is
+   version-dependent — a bare RGB triplet on ≤1.12, a full colour on 1.13+ (see
+   utils/calloutColorFormat) — so a hex hard-coded in a static sheet is wrong on
+   one of them, and CSSInjector already emits the right one at two selectors,
+   which no theme's generic `.callout` rule reaches. */
+.modal.cs-welcome-modal .callout.callout.callout[data-callout="demo"] {
+	--cs-accent: var(--cs-welcome-demo-accent) !important;
+	background-color: var(--cs-welcome-demo-tint) !important;
+	border-color: color-mix(
+		in oklch,
+		var(--cs-welcome-demo-accent) 35%,
+		transparent
+	) !important;
+}
+
+.modal.cs-welcome-modal
+	.callout.callout.callout[data-callout="demo"]
+	> .callout-title {
+	color: var(--cs-welcome-demo-accent) !important;
+}
+
+.modal.cs-welcome-modal
+	.callout.callout.callout[data-callout="demo"]
+	> .callout-content {
+	color: var(--text-normal) !important;
+}
+
+/* Heading role. The one a theme reaches most easily, because it is wrapping a
+   real `<hN>` and themes style headings hard — colour, weight, size, sometimes
+   a background of their own. */
+.modal.cs-welcome-modal
+	.cs-heading-callout.cs-heading-callout[data-callout="demo"] {
+	--cs-accent: var(--cs-welcome-demo-accent) !important;
+	background-color: var(--cs-welcome-demo-tint) !important;
+	color: var(--cs-welcome-demo-accent) !important;
+}
+
+.modal.cs-welcome-modal
+	.cs-heading-callout.cs-heading-callout[data-callout="demo"]
+	.cs-heading-title,
+.modal.cs-welcome-modal
+	.cs-heading-callout.cs-heading-callout[data-callout="demo"]
+	.cs-callout-name {
+	color: var(--cs-welcome-demo-accent) !important;
+	-webkit-text-fill-color: var(--cs-welcome-demo-accent) !important;
+}
+
+/* Inline role. No border: the pill has never had one, and the splash's job is
+   to show what the user will get. `-webkit-text-fill-color` is restated
+   alongside `color` because that is the property the pill's gradient title
+   sweep uses, and it is the one a print sheet or a theme can set without
+   touching `color` at all. */
+.modal.cs-welcome-modal
+	.cs-inline-callout.cs-inline-callout[data-callout="demo"] {
+	--cs-accent: var(--cs-welcome-demo-accent) !important;
+	background-color: var(--cs-welcome-demo-tint) !important;
+	color: var(--cs-welcome-demo-accent) !important;
+	-webkit-text-fill-color: var(--cs-welcome-demo-accent) !important;
+}
+
+/* Icons. `currentColor` is what the injector's mask fills with, so setting
+   `color` above is most of this — these pin the elements that carry their own.
+   All three roles now sit on the same tint, so all three icons are the accent. */
+.modal.cs-welcome-modal
+	.callout.callout.callout[data-callout="demo"]
+	> .callout-title
+	> .callout-icon,
+.modal.cs-welcome-modal
+	.cs-heading-callout.cs-heading-callout[data-callout="demo"]
+	.cs-callout-icon,
+.modal.cs-welcome-modal
+	.cs-inline-callout.cs-inline-callout[data-callout="demo"]
+	.cs-callout-icon {
+	color: var(--cs-welcome-demo-accent) !important;
 }
 
 @media (max-width: 640px) {
