@@ -58,6 +58,7 @@ import {
 } from "./listPaging";
 import type { PagingState } from "./listPaging";
 import { attachPersistedFold } from "./calloutListsFold";
+import { createStickySection } from "./stickySection";
 import { WelcomeModal } from "../WelcomeModal";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
@@ -82,6 +83,7 @@ export function createCalloutListsController(
 ): CalloutListsController {
 	let themeSetting: Setting | null = null;
 	let themeSectionEl: HTMLElement | null = null;
+	let themeDescEl: HTMLElement | null = null;
 	let themeListEl: HTMLElement | null = null;
 	let themeFold: SectionDisclosure | null = null;
 	let mySetting: Setting | null = null;
@@ -138,7 +140,7 @@ export function createCalloutListsController(
 		// this the heading went on naming the outgoing theme while the rows under
 		// it already showed the incoming one. The built-in list's empty state
 		// below does re-read it, so the two contradicted each other on one screen.
-		themeSetting?.setDesc(
+		themeDescEl?.setText(
 			t("settings.themeCalloutsDesc", { theme: themeLabel() }),
 		);
 		themeFold?.setName(
@@ -149,9 +151,11 @@ export function createCalloutListsController(
 		// empty state: most themes style no callouts at all, and a permanent
 		// "your theme styles none" heading would be noise in every one of those
 		// vaults.
+		// One toggle, on the section wrapper: it holds the heading and the rows,
+		// so hiding it hides both, and neither has to carry `cs-hidden` beside
+		// the `is-collapsed` the fold puts there.
 		const has = fromTheme.length > 0;
 		themeSectionEl.toggleClass("cs-hidden", !has);
-		themeListEl.toggleClass("cs-hidden", !has);
 		// The divider above "My callout types" only earns its keep when the
 		// theme section above it is actually on screen — otherwise it would be
 		// the first thing under the plugin title, with nothing to separate it from.
@@ -227,23 +231,39 @@ export function createCalloutListsController(
 			// The description is left to `renderThemeList`, which is on both the
 			// build and the refresh path, so the theme's name has exactly one
 			// place it is written from.
-			themeSetting = new Setting(containerEl)
-				.setName(t("settings.themeCalloutsHeading"))
-				.setHeading();
+			const theme = createStickySection(
+				containerEl,
+				t("settings.themeCalloutsHeading"),
+			);
+			themeSetting = theme.setting;
 			themeSetting.settingEl.addClass("cs-subheader-row");
-			themeSectionEl = themeSetting.settingEl;
-			themeListEl = containerEl.createDiv();
+			// The wrapper, not the heading. The section disappears whole when the
+			// theme styles nothing (see `renderThemeList`), and hiding the wrapper
+			// takes the heading and its rows with it in one toggle — which is also
+			// what keeps `cs-hidden` and the fold's `is-collapsed` off the same
+			// element, so neither can undo the other.
+			themeSectionEl = theme.wrapEl;
+			// A plain row, not part of the sticky heading above it, so naming the
+			// active theme scrolls off like any other row instead of pinning with it.
+			themeDescEl = theme.wrapEl.createEl("p", {
+				cls: "setting-item-description cs-theme-desc",
+			});
+			themeListEl = theme.wrapEl.createDiv();
 			themeFold = attachPersistedFold(themeSetting, themeListEl, "theme", ctx.plugin);
 
-			mySetting = new Setting(containerEl)
-				.setName(t("settings.myCalloutTypes"))
-				.setHeading();
+			const my = createStickySection(
+				containerEl,
+				t("settings.myCalloutTypes"),
+			);
+			mySetting = my.setting;
 			mySetting.settingEl.addClass("cs-subheader-row");
-			// Same divider the "Built-in callouts" heading gets below, so the
+			// Same divider the "Built-in callouts" section gets below, so the
 			// theme-owned group above reads as visually separate from this one
 			// when that group is on screen. `renderThemeList` toggles it in step
-			// with the theme section's own visibility.
-			subSectionEl = mySetting.settingEl;
+			// with the theme section's own visibility. On the wrapper rather than
+			// the heading — styles.css says why a heading that pins cannot carry
+			// its own divider.
+			subSectionEl = my.wrapEl;
 			mySetting.addButton((btn) =>
 				btn
 					.setButtonText(t("settings.addNewCallout"))
@@ -253,19 +273,25 @@ export function createCalloutListsController(
 					}),
 			);
 
-			userListEl = containerEl.createDiv();
+			userListEl = my.wrapEl.createDiv();
 			userFold = attachPersistedFold(mySetting, userListEl, "user", ctx.plugin);
 
-			// No `cs-subheader-row` here on purpose: that class is what the
-			// heading-divider rule in styles.css excludes, so adding it to reach
-			// the fold styling would silently delete this section's divider. The
-			// chevron layout rides on `cs-collapsible-heading` instead, which all
-			// three headings get from `attachSectionDisclosure`.
-			const builtInSetting = new Setting(containerEl)
-				.setName(t("settings.builtInCallouts"))
-				.setHeading();
-			builtInListEl = containerEl.createDiv();
-			builtInFold = attachPersistedFold(builtInSetting, builtInListEl, "builtin", ctx.plugin);
+			// No `cs-subheader-row` here on purpose: this heading is a size larger
+			// than the two above it, and that class is what sets their smaller
+			// type. The chevron layout rides on `cs-collapsible-heading` instead,
+			// which all three headings get from `attachSectionDisclosure`.
+			const builtIn = createStickySection(
+				containerEl,
+				t("settings.builtInCallouts"),
+			);
+			// Its divider is unconditional — set here because the generic heading
+			// rule that used to supply it no longer reaches a wrapped heading. And
+			// it is the last one: the gap under a section is kept inside it so the
+			// heading stays pinned across it, and this one has nothing to hand over
+			// to, so it lets go with its own last row instead.
+			builtIn.wrapEl.addClass("cs-section-divider", "cs-sticky-section-last");
+			builtInListEl = builtIn.wrapEl.createDiv();
+			builtInFold = attachPersistedFold(builtIn.setting, builtInListEl, "builtin", ctx.plugin);
 
 			renderAll();
 		},

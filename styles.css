@@ -63,26 +63,37 @@
 }
 
 /* Section dividers: add spacing + thin top border above every heading
-   except the main plugin title and the "My callout types" sub-header */
+   except the main plugin title and the "My callout types" sub-header.
+
+   `:not(.cs-sticky-heading)` keeps this off the three callout-list headings.
+   Those are the ones that pin, and a heading that pins cannot carry its own
+   section divider: 36px of padding and a border-top belong to the *gap between
+   two sections*, and on a pinned box they become a rule frozen against the top
+   edge of the pane with a hole under it. Their wrapper carries it instead — see
+   `.cs-sticky-section.cs-section-divider` below. This rule still dresses the
+   eight sections underneath them, which are not wrapped. */
 .callout-studio-settings
 	.setting-item.setting-item-heading:not(.cs-header-row):not(
 		.cs-subheader-row
-	) {
+	):not(.cs-sticky-heading) {
 	margin-top: 36px;
 	padding-top: 36px;
 	border-top: 1px solid var(--background-modifier-border);
 	border-radius: 0;
 }
 
-/* Obsidian zeroes the gap between a heading's name and its own description
-   (`.setting-item-heading .setting-item-description` sets `padding-top: 0`
-   in core CSS) — right for a bare heading, but "Global settings" and
-   "Callouts from your theme" put the description directly on the heading
-   row instead of a separate row underneath, so that rule flattens them
-   against their own title. Restore the gap every other description in
-   this tab already gets. */
-.callout-studio-settings .setting-item-heading .setting-item-description {
+/* The theme section's description: naming the active theme, right after the
+   sticky heading that says "Callouts from your theme" but not part of it —
+   see `.cs-theme-desc` in CalloutListsSection.ts for why. It is a plain row
+   like any other, so it scrolls out of view under that heading's opaque,
+   pinned band instead of staying glued beside the title for as long as the
+   section is on screen. Only the top gap needs restoring: the same
+   `--size-4-1` a description gets when Obsidian doesn't zero it out from
+   sitting directly under a heading's own name. */
+.callout-studio-settings .cs-theme-desc.setting-item-description {
+	margin: 0;
 	padding-top: var(--size-4-1);
+	padding-bottom: var(--size-4-2);
 }
 
 /* Subheading row: "My callout types" + Add new */
@@ -91,17 +102,6 @@
 	padding-bottom: 2px;
 	border-top: none;
 	min-height: 0;
-}
-
-/* "My callout types" also carries the section divider — same border +
-   spacing as the one above "Built-in callouts" — to separate it from
-   "Callouts from your theme" above it. Higher specificity than the plain
-   .cs-subheader-row rule above so it wins on padding-top/border-top. */
-.callout-studio-settings .cs-subheader-row.cs-section-divider.setting-item {
-	margin-top: 36px;
-	padding-top: 36px;
-	border-top: 1px solid var(--background-modifier-border);
-	border-radius: 0;
 }
 
 /* `center`, not `baseline`: the name now leads with a chevron, and a baseline
@@ -214,22 +214,281 @@
 	transform: scaleX(-1) rotate(0deg);
 }
 
-/* Folded away by the user. Deliberately not `cs-hidden`: the theme list hides
-   itself with that when it has no rows, and one class toggled for two reasons
-   means whichever ran last decides — a fold would reopen an empty section, or
-   an empty section would reopen a folded one. */
+/* Folded away by the user. Deliberately not `cs-hidden`: the theme section
+   hides itself with that when it has no rows, and one class toggled for two
+   reasons means whichever ran last decides — a fold would reopen an empty
+   section, or an empty section would reopen a folded one. The two are on
+   different elements now as well (the section wrapper hides, the body folds),
+   which makes that collision impossible rather than merely avoided. */
 .cs-section-body.is-collapsed {
 	display: none;
 }
 
-/* The theme section's description lives on the heading row itself (see the
-   `.setting-item-heading .setting-item-description` comment above), not
-   inside `.cs-section-body` — so folding the body alone leaves it behind.
-   Fold it away with the rest of the section. */
+/* The theme section's description is a sibling of its heading now, not a
+   descendant of it (see `.cs-theme-desc` above and CalloutListsSection.ts) —
+   it lives outside `.cs-section-body` too, so folding the body alone would
+   leave it behind. Reached as the row right after the heading it folds
+   with, since nesting no longer gets there. */
 .callout-studio-settings
 	.cs-collapsible-heading.is-collapsed
-	.setting-item-description {
+	+ .cs-theme-desc {
 	display: none;
+}
+
+/* ─── Sticky section headings ─────────────────────────────────── */
+
+/* The three callout-list headings pin to the top of the settings pane while
+   their own rows scroll under them, hand over to the next section's heading,
+   and leave with the last of their own rows rather than hanging over the eight
+   settings sections below.
+
+   All of that is the wrapper. A sticky box is clamped to its own containing
+   block, so a heading wrapped with its rows sticks for exactly as long as those
+   rows last and no longer. These three used to be flat siblings of each other
+   and of everything under them — one containing block between them, which would
+   have pinned all three at the same offset, stacked them, and never let any of
+   them go. See sections/CalloutListsSection.ts. */
+
+/* A sticky `top` is measured from the scrollport's *content* box, not its
+   border box — verified in Chromium, not assumed — and Obsidian gives this pane
+   `padding-top: var(--size-4-12)`. Left alone, `top: 0` would park the band 48px
+   down with rows scrolling visibly through the strip above it.
+
+   Obsidian answers this on its own sticky page the same way, and this is a copy
+   of it: `.setting-page.vertical-tab-content { padding-top: 0 }` beside
+   `.setting-page-titlebar { position: sticky; top: 0 }`. The space is handed to
+   the title row instead, so the tab starts exactly where it did.
+
+   A phone is deliberately left out of both halves. There the pane is positioned
+   at the very top of the modal and its much larger `padding-top` is reserving
+   that band for the floating back and close buttons sitting over it at
+   --layer-modal — so keeping the padding is what puts the pinned band *below*
+   the chrome instead of in the notch behind it. Obsidian's phone rule outranks
+   this one, so that happens by itself; only the title row's replacement gap has
+   to be given back. */
+.callout-studio-settings {
+	padding-top: 0;
+	/* The space under *every* section, named because *where* it is spent is the
+	   whole point and a bare number invites it back to the wrong place: it
+	   belongs to the section above (see `.cs-section-body` below), never
+	   between the two wrappers and never on the heading underneath. It is the
+	   section's whole trailing gap, not a share of it — nothing a section ends
+	   with adds any of its own, which is what makes a list, a Load more button
+	   and a line of empty-state text all sit the same distance above the
+	   divider. 40px leaves the last row of one section 65px from the title of
+	   the next: 40 here, the divider hairline, and the band's 24px of top
+	   padding. */
+	--cs-section-gap: 40px;
+	/* The sticky heading's own top padding, named for the same reason as the
+	   gap above: it is read from a second place — the `.cs-subheader-row`
+	   spacer rule below — that has to subtract exactly what the band adds, or
+	   the first section's heading ends up spaced twice. A bare number in both
+	   spots is how that drifted silently through two rounds of "make the band
+	   roomier" before anyone noticed: the padding moved, the subtraction did
+	   not. One variable can't disagree with itself. */
+	--cs-sticky-heading-pad-top: var(--size-4-6);
+}
+
+.callout-studio-settings .cs-header-row.setting-item {
+	margin-top: var(--size-4-12);
+}
+
+.is-phone .callout-studio-settings .cs-header-row.setting-item {
+	margin-top: 0;
+}
+
+.callout-studio-settings .cs-sticky-section {
+	/* Carries the pane's own paint down one level, so the band below can take it
+	   from here. See the heading's `background-color`. */
+	background-color: inherit;
+}
+
+/* The divider between two sections — a hairline and nothing else. The 36px the
+   other headings get cannot be used here in either of the two places it could
+   go: on the heading it is part of the box that pins, which freezes a rule
+   against the top edge of the pane; between the wrappers it is a band where the
+   section above has already let go and the one below has not yet caught, so the
+   header blinks out and back rather than handing over. The space it replaces is
+   inside the section above instead — see `.cs-section-body` below. */
+.callout-studio-settings .cs-sticky-section.cs-section-divider {
+	border-top: 1px solid var(--background-modifier-border);
+	border-radius: 0;
+}
+
+/* The gap under a section, on the section's own body — one element, one
+   variable, for all three of them.
+
+   The body is the only box that answers every question the gap has to answer at
+   once. It is *inside* the wrapper, so a sticky heading stays pinned the whole
+   way across the gap instead of letting go at its last row and leaving a band
+   with nothing pinned to it (a sticky box is clamped to its containing block,
+   which is the wrapper's content box — space outside that box is space the
+   heading has already left). And it is `display: none` when the section is
+   folded, so a folded section contributes no trailing gap at all and its band
+   sits on the next divider with only its own bottom padding between them, which
+   is what makes the folded state match across the three as well.
+
+   Padding, because padding is unambiguously inside that containing block. */
+.callout-studio-settings
+	.cs-sticky-section:not(.cs-sticky-section-last)
+	> .cs-section-body {
+	padding-bottom: var(--cs-section-gap);
+}
+
+/* The last section spends the same variable on the same element as a *margin*,
+   and both halves of that sentence are load-bearing.
+
+   Margin, because below this one the sections are unwrapped and nothing is
+   pinning: it has to let its rows end and go with them rather than hang over
+   them (requirement 4). A bottom margin on the last in-flow child collapses out
+   through the wrapper — which has no bottom padding, no bottom border and is not
+   a formatting-context root, and must not gain one — so the space lands outside
+   the containing block and the heading releases on the last row exactly as
+   before, while the gap itself still measures the same 40px as the two above.
+
+   The same element as the other two, because that is what makes this gap fold
+   away with the section. It used to live on the *next* heading's `margin-top`,
+   which cannot see the fold: collapsed, "Built-in callouts" carried 40px it had
+   no content to justify, stacked under the band's own bottom padding, and was
+   the one folded section that did not sit on its divider like the others. */
+.callout-studio-settings .cs-sticky-section-last > .cs-section-body {
+	margin-bottom: var(--cs-section-gap);
+}
+
+/* …and nothing a section *ends with* may carry trailing space of its own, or
+   the variable above stops being the whole of the gap. The list's 24px bottom
+   margin and the empty state's 12px bottom padding are what made one section
+   measure three different distances to the same divider depending on whether it
+   ended in rows, a Load more button or a line of text — and what put the two
+   paged sections 24px lower than the built-in one, which only escaped it because
+   its list margin collapsed away into the following heading's instead of adding
+   to a padding.
+
+   Dropped here rather than at the source: both are correct for a list that ends
+   *mid-section*, which is what the Saved color palettes list does — the Unlinked
+   colors groups follow it inside the same body. */
+.callout-studio-settings
+	.cs-sticky-section
+	> .cs-section-body
+	> .callout-studio-callout-list,
+.callout-studio-settings
+	.cs-sticky-section
+	> .cs-section-body
+	> .callout-studio-empty-state {
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+/* The plain heading right after the last sticky section — "Fallback callout"
+   today — would otherwise fall back to the generic divider rule near the top of
+   this file: 36px + 36px, sized for two headings that both carry their own
+   margin. Its top gap comes from the section above now, like every other
+   section's does, so all this has left to do is take that generic margin back
+   off and spend the band's own top padding under the hairline — which is what
+   puts its title exactly as far below the divider as a sticky heading's is. */
+.callout-studio-settings
+	.cs-sticky-section-last
+	+ .setting-item.setting-item-heading:not(.cs-header-row):not(
+		.cs-subheader-row
+	):not(.cs-sticky-heading) {
+	margin-top: 0;
+	padding-top: var(--cs-sticky-heading-pad-top);
+}
+
+/* Folded shut, a section has no gap under it at all, and that is deliberate.
+   The gap cannot follow the heading down there: a sticky box is constrained by
+   its *margin* box, so a bottom margin travels with it and buys no extra pinned
+   distance — measured, not assumed. Anything left between a folded heading and
+   the next one is therefore a band with nothing pinned to it, and the headings
+   blink out and back instead of handing over. So folded sections sit directly on
+   one another, separated by the same hairline that separates them open — all
+   three of them, which is what putting the last one's gap on its own body
+   (above) bought: the gap disappears with the body it is written on, so no
+   folded section can be left carrying space for content it is not showing. */
+
+.callout-studio-settings .cs-sticky-heading.setting-item {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	/* Not `var(--cs-surface, …)`, and the exception is deliberate. That pair is
+	   defined inside `.cs-modal` and nowhere else, by contract — and this band is
+	   not in a window, it is *on* the settings pane, whose paint Obsidian changes
+	   by device: --background-primary on the desktop, --settings-background under
+	   .is-mobile, --modal-background on a dark tablet. `inherit` is whichever of
+	   those actually applied. It is the same failure `modalSurfaces` exists for —
+	   an opaque band coming out as a stripe on a platform nobody looked at —
+	   answered by not naming a colour at all instead of by a token that has to be
+	   kept in step with three of Obsidian's. */
+	background-color: inherit;
+	/* Padding, not margin: the band is opaque only where it paints, and rows have
+	   to pass under it right up to the first one. Same on all three, so the band
+	   is one height whichever section you are in — the gaps *between* sections
+	   are the section's job now, not the heading's. Roomier than a plain
+	   `setting-item-heading`'s on purpose: this one has to read as a solid bar
+	   pinned above scrolling rows, not just a label, so it carries more air
+	   above and below the title than a heading that never leaves its place in
+	   the flow needs — more above than below, since the divider hairline sits
+	   flush against the band's top edge with nothing else to separate it from
+	   the title, while the first row below at least starts a new row of its
+	   own. */
+	padding-block: var(--cs-sticky-heading-pad-top) var(--size-4-5);
+	margin-bottom: 0;
+	/* Obsidian's own `.setting-item-heading` carries a corner radius — the
+	   plain headings below these three lose it via the `:not(.cs-sticky-heading)`
+	   rule near the top of this file, and these were left out of that `:not()`,
+	   so they kept it. Wrong on a band that pins flush against the top edge of
+	   the pane: a rounded top corner there reads as a gap the content peeks
+	   through, not as a rounded box. */
+	border-radius: 0;
+}
+
+/* Folded, a section has nothing below its heading — `.cs-section-body` is
+   `display: none` — so the next thing down is either another folded heading's
+   band or, for the last one, an unrelated section. Either way the bottom
+   padding is now facing the exact situation the *top* padding was made larger
+   for: a hairline with nothing else beside it, not a row lending its own
+   weight the way an open section's first row does. Matching it to the top
+   value keeps a folded heading's title centred between the divider above it
+   and the one below it (where either exists), instead of sitting closer to
+   the bottom one. `cs-collapsible-heading` and `cs-sticky-heading` are the
+   same element (`attachSectionDisclosure` toggles `is-collapsed` on
+   `setting.settingEl`, the element `stickySection.ts` already put
+   `cs-sticky-heading` on), so this needs no third class to reach. */
+.callout-studio-settings .cs-sticky-heading.is-collapsed {
+	padding-bottom: var(--cs-sticky-heading-pad-top);
+}
+
+/* Not on a phone, and Obsidian's own sticky settings header makes the same call
+   one line away (`.is-phone .setting-page-titlebar { display: none }`).
+
+   There the pane sits at the very top of the modal and reserves the band over it
+   — for the floating back and close buttons at --layer-modal — with its own
+   `padding-top` rather than by starting lower. A sticky offset is measured from
+   the scrollport's *content* box, so a band pinned there parks below that
+   reserved strip, and padding does not clip: rows go on scrolling through the
+   strip *above* the pinned heading, which reads as a glitch rather than as a
+   header. Pinning flush instead only trades it for a title under the ✕. There is
+   no third answer that leaves the unpinned layout alone, so the phone keeps the
+   plain headings it already had. */
+.is-phone .callout-studio-settings .cs-sticky-heading.setting-item {
+	position: static;
+}
+
+/* Obsidian hands a heading its top gap through a sibling selector
+   (`.vertical-tab-content .setting-item ~ .setting-item-heading`), which stops
+   matching the moment the heading is inside a wrapper. Put back what it gave —
+   less the padding that moved into the band, plus the 4px `.cs-subheader-row`
+   used to carry itself — for the first of the three, which has no divider above
+   it to space it. The subtracted term is `--cs-sticky-heading-pad-top`, not a
+   number of its own: it has to track whatever the band's top padding actually
+   is, or this either double-spaces the first heading or eats into Obsidian's
+   own gap the moment one changes without the other. */
+.callout-studio-settings
+	.cs-sticky-section:not(.cs-section-divider)
+	> .cs-subheader-row.setting-item {
+	margin-top: calc(
+		var(--size-4-6) - var(--cs-sticky-heading-pad-top) + 4px
+	);
 }
 
 .callout-studio-settings .cs-subheader-row .setting-item-info {
@@ -269,6 +528,12 @@
 
 /* ─── Callout List Rows ───────────────────────────────────────── */
 
+/* The bottom margin is for a list that ends *mid-section* — the Saved color
+   palettes one, with the Unlinked colors groups under it, and the Quick insert
+   window's. A list that ends a section gives it up again: there the trailing
+   space is the section's, spent once on `.cs-section-body` so that rows, a Load
+   more button and an empty state all sit the same distance above the divider.
+   See `--cs-section-gap`. */
 .callout-studio-callout-list {
 	display: flex;
 	flex-direction: column;
@@ -276,15 +541,17 @@
 	margin-bottom: 24px;
 }
 
-/* The last child of the list rather than a sibling of it, so it sits inside
-   the list's own bottom margin instead of needing one. Nothing above it is
-   faded: these rows carry live controls, and dimming an interactive row to
-   hint that more follow reads as "disabled". The button's own count says how
-   many are hidden, which is the fact a gradient could only gesture at. */
+/* The last child of the list rather than a sibling of it, which is what puts it
+   *inside* whatever trailing space the list is sitting in — so the button ends
+   a section at exactly the distance a last row would, with no spacing of its
+   own to keep in step. Nothing above it is faded: these rows carry live
+   controls, and dimming an interactive row to hint that more follow reads as
+   "disabled". The button's own count says how many are hidden, which is the
+   fact a gradient could only gesture at. */
 .callout-studio-load-more {
 	display: flex;
 	justify-content: center;
-	padding-top: 8px;
+	padding-top: 16px;
 }
 
 /* The row is a pill on whatever it sits on, and it sits on two different
@@ -1853,6 +2120,19 @@ button.callout-studio-icon-picker-loading {
 	display: inline-flex;
 	align-items: center;
 	flex-shrink: 0;
+	/* The three circles below stack front-to-back with `z-index: 2/1/0` of their
+	   own — fine on their own, except none of this widget's ancestors otherwise
+	   establish a stacking context, so those values are not scoped to the widget
+	   at all: they are compared directly against whatever else is in the nearest
+	   real stacking context, which on the three sticky callout lists is the
+	   pinned `.cs-sticky-heading` (`z-index: 1`). Without this, the front circle
+	   (`z-index: 2`) outranks the header it is supposed to scroll under, and a
+	   row passing beneath the band shows its circles floating on top of it.
+	   `isolation: isolate` scopes the 0/1/2 stack to this element without
+	   touching layout, position, or the scrollport — unlike the properties
+	   `.cs-sticky-section` is forbidden from carrying (see
+	   `modalBodyLayers.test.ts`), this is safe to add here. */
+	isolation: isolate;
 }
 
 .cs-color-circle {

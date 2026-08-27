@@ -88,10 +88,15 @@ function themeRowIds(host: HTMLElement): string[] {
 	).map((el) => el.textContent ?? "");
 }
 
-/** The copy the heading is carrying, recorded by the `obsidian` stub. */
+/**
+ * The copy the theme section is carrying. It lives in its own paragraph next
+ * to the heading now, not on the heading itself — see `.cs-theme-desc` in
+ * CalloutListsSection.ts — so that a description naming the active theme can
+ * scroll normally instead of staying pinned with the sticky heading above it.
+ */
 function headingDesc(host: HTMLElement): string {
-	const el = host.querySelector<HTMLElement>(".cs-subheader-row");
-	return el?.dataset.csDesc ?? "";
+	const el = host.querySelector<HTMLElement>(".cs-theme-desc");
+	return el?.textContent ?? "";
 }
 
 describe("the theme heading follows the active theme across a refresh", () => {

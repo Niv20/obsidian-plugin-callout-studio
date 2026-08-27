@@ -269,7 +269,22 @@ const STICKY_LAYERS: Record<string, string> = {
 		"the vault-statistics table header, inside .cs-vault-stats-list",
 	".cs-quick-insert-toolbar":
 		"the quick-insert window's search + source filter, inside .modal-content",
+	".callout-studio-settings .cs-sticky-heading.setting-item":
+		"the three callout-list section headings, inside .vertical-tab-content — " +
+		"the settings tab is its own scroller, and the plugin renders straight into it",
 };
+
+/**
+ * What a layer paints itself with, under either spelling.
+ *
+ * `background` and `background-color` are the same answer to the same question,
+ * and a check that read only the shorthand would let a layer written the other
+ * way past every assertion below without failing one — which for this file is
+ * worse than a wrong answer, because it looks like a right one.
+ */
+function paintOf(rule: Rule): string | undefined {
+	return valueOf(rule, "background") ?? valueOf(rule, "background-color");
+}
 
 const stickyRules = rules.filter((r) =>
 	r.decls.some((d) => /^position:\s*(-webkit-)?sticky$/.test(d)),
@@ -331,13 +346,23 @@ describe("sticky layers", () => {
 		// makes it precisely the kind of band `modalSurfaces` is about: on
 		// mobile dark a raw `--background-primary` comes out as a black stripe
 		// and a raw `--background-secondary` disappears into the window.
-		const painted = stickyRules.filter((r) => valueOf(r, "background"));
+		//
+		// `inherit` is the third sanctioned answer and the only one outside a
+		// window. The surface pair is defined inside `.cs-modal` and nowhere
+		// else, so on the settings tab it resolves to its own fallback — and
+		// `--background-primary` is what Obsidian paints that pane on the
+		// desktop *only*: `--settings-background` under `.is-mobile`,
+		// `--modal-background` on a dark tablet. A band there has to match a
+		// colour this stylesheet does not choose, which is exactly what
+		// `inherit` is: it cannot disagree with the pane, on any platform,
+		// because it is the pane's own computed colour.
+		const painted = stickyRules.filter((r) => paintOf(r));
 		assert.ok(painted.length >= 2, "expected at least two painted layers");
 
 		for (const rule of painted) {
 			assert.match(
-				valueOf(rule, "background") as string,
-				/^var\(--cs-surface(-raised)?, var\(--background-(primary|secondary)\)\)$/,
+				paintOf(rule) as string,
+				/^(inherit|var\(--cs-surface(-raised)?, var\(--background-(primary|secondary)\)\))$/,
 				`${rule.selector} (styles.css:${rule.line})`,
 			);
 		}
@@ -346,11 +371,105 @@ describe("sticky layers", () => {
 	it("whichever ones paint a background also lift above the content", () => {
 		// Painting alone is not enough: without a stacking order the rows that
 		// scroll under an opaque band can still paint over it.
-		for (const rule of stickyRules.filter((r) => valueOf(r, "background"))) {
+		for (const rule of stickyRules.filter((r) => paintOf(r))) {
 			assert.ok(
 				valueOf(rule, "z-index") !== undefined,
 				`${rule.selector} is opaque and sticky but has no z-index (styles.css:${rule.line})`,
 			);
 		}
+	});
+
+	it("the one that inherits has something to inherit from", () => {
+		// `background-color` is not an inherited property, so `inherit` on the
+		// band is only half the chain: it takes the *wrapper's* computed colour,
+		// and the wrapper's own initial value is `transparent`. Drop the
+		// wrapper's declaration and the band silently stops being opaque —
+		// nothing else in this file would notice, and rows would scroll through
+		// a heading that still looks correctly positioned.
+		const inheriting = stickyRules.filter((r) => paintOf(r) === "inherit");
+		if (inheriting.length === 0) return;
+		const wrapper = ruleFor(".callout-studio-settings .cs-sticky-section");
+		assert.strictEqual(
+			paintOf(wrapper),
+			"inherit",
+			`the sticky band inherits its paint, so ${wrapper.selector} has to carry it down ` +
+				`from the pane (styles.css:${wrapper.line})`,
+		);
+	});
+
+	it("nothing between the band and the scroller makes a new scrollport", () => {
+		// A sticky box sticks inside its nearest scrolling ancestor. Give the
+		// wrapper an `overflow` — or a `transform`, `filter`, `contain` or
+		// `perspective`, which capture it a different way — and the heading
+		// starts sticking to the wrapper it was supposed to be pinned *across*,
+		// which looks like nothing happening at all.
+		const wrapper = ruleFor(".callout-studio-settings .cs-sticky-section");
+		for (const prop of [
+			"overflow",
+			"overflow-x",
+			"overflow-y",
+			"transform",
+			"filter",
+			"backdrop-filter",
+			"contain",
+			"perspective",
+		]) {
+			assert.strictEqual(
+				valueOf(wrapper, prop),
+				undefined,
+				`${prop} on the section wrapper would capture the heading it is meant to ` +
+					`let float (styles.css:${wrapper.line})`,
+			);
+		}
+	});
+
+	it("a row's colour circles don't outrank the band they scroll under", () => {
+		// `.cs-color-circle-l/-r/-r2` carry their own `z-index: 2/1/0` so the
+		// three overlap correctly with each other. Nothing forces that stack to
+		// stay scoped to the widget, though — without a stacking context of its
+		// own, those values are compared directly against whatever else shares
+		// the nearest real one, which for a row inside these three sections is
+		// the pinned heading's `z-index: 1`. The front circle would then outrank
+		// the header it is supposed to disappear behind. `isolation: isolate`
+		// (or an equivalent stacking-context trigger) on the shared container
+		// keeps the 0/1/2 stack local.
+		const circles = ruleFor(".cs-color-circles");
+		assert.ok(
+			valueOf(circles, "isolation") === "isolate" ||
+				(valueOf(circles, "position") !== undefined &&
+					valueOf(circles, "z-index") !== undefined),
+			`${circles.selector} has no stacking context of its own, so its ` +
+				`circles' z-index leaks past the widget and can outrank a sticky ` +
+				`heading elsewhere on the page (styles.css:${circles.line})`,
+		);
+	});
+
+	it("a folded heading is spaced the same above and below", () => {
+		// Folded, `.cs-section-body` is `display: none` — there is no row left
+		// to lend the bottom of the band its own visual weight, so the next
+		// thing down is either another folded heading's divider or, for the
+		// last section, an unrelated one. Either way the bottom now faces
+		// exactly what the top padding was made larger for: a hairline with
+		// nothing else beside it. `.is-collapsed` overrides padding-bottom to
+		// match the top value so the title stays centred between the two
+		// dividers instead of drifting toward the bottom one — asserted
+		// against the shared variable, not a resolved pixel amount, so the two
+		// stay locked together through a future re-tuning of either.
+		const base = ruleFor(".callout-studio-settings .cs-sticky-heading.setting-item");
+		const padBlock = valueOf(base, "padding-block");
+		assert.ok(
+			padBlock,
+			`expected padding-block on ${base.selector} (styles.css:${base.line})`,
+		);
+		const [top] = padBlock.split(/\s+/);
+		const collapsed = ruleFor(
+			".callout-studio-settings .cs-sticky-heading.is-collapsed",
+		);
+		assert.strictEqual(
+			valueOf(collapsed, "padding-bottom"),
+			top,
+			`folded heading's bottom padding should match its top padding (${top}) so it ` +
+				`sits centred between the dividers above and below it (styles.css:${collapsed.line})`,
+		);
 	});
 });

@@ -106,7 +106,10 @@ function themeSectionVisible(host: HTMLElement): boolean {
 	const el = Array.from(
 		host.querySelectorAll<HTMLElement>(".cs-subheader-row"),
 	).find((row) => (row.dataset.csName ?? "").startsWith("Callouts from your theme"));
-	return el !== undefined && !el.hasClass("cs-hidden");
+	// `cs-hidden` sits on the section wrapper, not the heading: the wrapper holds
+	// the heading and the rows, so one class takes the whole section off screen.
+	const section = el?.closest(".cs-sticky-section");
+	return el !== undefined && section !== null && !section?.hasClass("cs-hidden");
 }
 
 function render(registry: Registry, app: App, themeIds: string[]) {

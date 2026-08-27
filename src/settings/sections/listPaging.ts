@@ -55,8 +55,10 @@ export function renderPagedList<T>(
 	if (hidden === 0) return;
 
 	// Last child of the list, not a sibling of it: the list is already a column
-	// flex box with the section's bottom margin on it, so the button inherits
-	// the spacing instead of needing its own.
+	// flex box, and whatever trailing space it is sitting in — its own margin
+	// mid-section, the section's `--cs-section-gap` when it ends one — then
+	// falls under the button exactly as it would under a last row. A sibling
+	// would need spacing of its own, and one more thing to keep in step.
 	const row = listEl.createDiv({ cls: "callout-studio-load-more" });
 	// The count is a suffix on whatever `t()` returns — the same shape the list
 	// headings use for their "(N)" — so it needs no key of its own in any of

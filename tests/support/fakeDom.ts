@@ -385,6 +385,19 @@ export class FakeElement {
 	}
 
 	/**
+	 * The last element child, and here for the same reason as its opposite: a
+	 * settings section's trailing gap is spent on the assumption that its body
+	 * is the last thing in its wrapper and its list the last thing in the body
+	 * (`sectionTrailingGap.test.ts`), and an absent property answers `undefined`
+	 * — which is neither the element a check is looking for nor the `null` it
+	 * would accept, so the check either fails for the wrong reason or, compared
+	 * against `null`, passes without ever having looked.
+	 */
+	get lastElementChild(): FakeElement | null {
+		return this.children[this.children.length - 1] ?? null;
+	}
+
+	/**
 	 * This element serialized, like the real DOM — its companion, and needed for
 	 * the same reason: the probe records `firstElementChild.outerHTML` as the
 	 * theme's artwork, so without it a rendered icon read back as no icon.

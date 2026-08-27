@@ -22,6 +22,16 @@ The count beside a heading is always the **total**. It does not change when you 
 
 Folding is remembered — close the settings tab, or restart Obsidian, and each section comes back exactly as you left it. **Load more** is not: every list opens capped at twenty again the next time you visit.
 
+## The heading stays with you while you scroll
+
+Scroll into a long list and its heading stops at the top of the settings pane and stays there, so you can always see which group the rows in front of you belong to — and, on **My callout types**, the **Add new callout** button stays within reach with it. When you reach the next section, its heading pushes the old one out of the way and takes over. Past the end of **Built-in callouts** the last heading scrolls away like anything else, so nothing hangs over the settings below.
+
+Folding a section while its heading is parked at the top leaves the heading under your pointer instead of letting the page jump.
+
+The note under **Callouts from your theme** naming your active theme is not part of the heading that pins — scroll and it goes with the rows underneath, out of sight behind the heading, rather than staying parked next to the title.
+
+On iPhone the headings scroll normally — the top of the settings screen there belongs to Obsidian's own back and close buttons, and a pinned heading has nowhere to sit that does not collide with them. iPad and desktop both pin.
+
 ## Callouts from your theme
 
 Two kinds of callout end up here, and the section says so:

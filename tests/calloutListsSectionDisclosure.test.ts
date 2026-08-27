@@ -606,3 +606,150 @@ describe("the fold chevron hangs in the gutter, not in the title", () => {
 		);
 	});
 });
+
+/* -------------------------------------------------------------------------- */
+/* The wrapper each section is pinned inside                                  */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The three headings pin to the top of the settings pane while their own rows
+ * scroll under them, and the wrapper is the entire mechanism: a sticky box
+ * cannot be shifted outside its containing block, so a heading wrapped together
+ * with its rows is pinned for exactly as long as those rows last, and no longer.
+ *
+ * Which makes the *structure* the contract, not the CSS. These three were flat
+ * siblings of each other and of the eight sections below them until this change,
+ * and that is the one arrangement that cannot work — one containing block
+ * between them, so all three would pin at the same offset, stack on top of one
+ * another, and none of them would ever let go. Un-wrap them and `styles.css`
+ * still parses, still applies, and the feature silently stops being the feature.
+ */
+describe("each section is wrapped in the box it pins inside", () => {
+	const LABELS = [
+		"Callouts from your theme",
+		"My callout types",
+		"Built-in callouts",
+	];
+
+	const rendered = () => {
+		const registry = vault();
+		addUserCallout(registry, "mine");
+		return render(registry, themeApp(["note"]), ["note"]);
+	};
+
+	for (const label of LABELS) {
+		it(`"${label}" has its heading and its rows in one wrapper`, () => {
+			const { host } = rendered();
+			const { heading, body } = section(host, label);
+
+			const wrapper = heading.closest(".cs-sticky-section");
+			assert.ok(wrapper, `"${label}" is not inside a section wrapper`);
+			assert.strictEqual(
+				body.closest(".cs-sticky-section"),
+				wrapper,
+				`"${label}" keeps its rows outside the box its heading pins in, so the ` +
+					"heading would let go the moment the wrapper's own content ended",
+			);
+			assert.ok(
+				heading.hasClass("cs-sticky-heading"),
+				`"${label}" is not the box that pins`,
+			);
+		});
+	}
+
+	it("gives each section a wrapper of its own", () => {
+		// One shared wrapper is no better than none: the three would once more be
+		// clamped to the same block, and the first would stay pinned over the
+		// other two.
+		const { host } = rendered();
+		const wrappers = LABELS.map((label) =>
+			section(host, label).heading.closest(".cs-sticky-section"),
+		);
+		assert.strictEqual(
+			new Set(wrappers).size,
+			3,
+			"the three sections share a wrapper",
+		);
+	});
+
+	it("marks the last one, which has nothing to hand over to", () => {
+		// The gap under a section is kept inside it so its heading stays pinned
+		// across it. The last section wants the opposite — to let go with its own
+		// last row rather than hang over the settings below it — so it is the one
+		// that carries no trailing gap.
+		const { host } = rendered();
+		const last = section(host, "Built-in callouts").heading.closest(
+			".cs-sticky-section",
+		);
+		assert.ok(last?.hasClass("cs-sticky-section-last"));
+
+		for (const label of ["Callouts from your theme", "My callout types"]) {
+			const wrapper = section(host, label).heading.closest(
+				".cs-sticky-section",
+			);
+			assert.strictEqual(
+				wrapper?.hasClass("cs-sticky-section-last"),
+				false,
+				`"${label}" hands over to the section below it`,
+			);
+		}
+	});
+
+	it("puts the divider on the wrapper, never on the heading that pins", () => {
+		// 36px of padding and a rule on a *pinned* box freeze that rule against
+		// the top edge of the pane with a hole under it, for as long as the
+		// section is on screen. On the wrapper it stays between two sections,
+		// where it means something, and scrolls with them.
+		const { host } = rendered();
+		for (const label of ["My callout types", "Built-in callouts"]) {
+			const { heading } = section(host, label);
+			assert.strictEqual(
+				heading.hasClass("cs-section-divider"),
+				false,
+				`"${label}" carries its divider on the box that pins`,
+			);
+			assert.ok(
+				heading.closest(".cs-sticky-section")?.hasClass("cs-section-divider"),
+				`"${label}" lost its divider`,
+			);
+		}
+	});
+
+	it("hides the theme section by its wrapper, so the rows go with it", () => {
+		// Nothing to show and nothing to say: most themes style no callouts, and
+		// a permanent "your theme styles none" heading would be noise in every
+		// one of those vaults. One class on the wrapper takes the heading and the
+		// rows together — and keeps `cs-hidden` off the same element as the
+		// fold's own `is-collapsed`, so neither can undo the other.
+		const { host } = render(vault(), themeApp([]), []);
+		const wrapper = section(host, "Callouts from your theme").heading.closest(
+			".cs-sticky-section",
+		);
+		assert.ok(wrapper?.hasClass("cs-hidden"), "the empty section is on screen");
+		assert.strictEqual(
+			section(host, "Callouts from your theme").heading.hasClass("cs-hidden"),
+			false,
+			"`cs-hidden` is back on the heading, where the fold also writes",
+		);
+	});
+
+	it("folds in a DOM that cannot measure anything", () => {
+		// The fold is wrapped in `foldAnchor.keepHeadingInPlace`, which reads the
+		// heading's box to put a pinned heading back where it was clicked. The
+		// fake DOM has no layout and therefore no `getBoundingClientRect`, and
+		// that is deliberate on both sides: the anchor has to treat the absence
+		// as "nothing to correct" rather than throw, or every fold in this file
+		// dies on a missing method.
+		const { host } = rendered();
+		for (const label of LABELS) {
+			const { nameEl } = section(host, label);
+			assert.strictEqual(nameEl.getAttribute("aria-expanded"), "true");
+			click(nameEl);
+			assert.strictEqual(
+				nameEl.getAttribute("aria-expanded"),
+				"false",
+				`"${label}" did not fold`,
+			);
+		}
+	});
+});

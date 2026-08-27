@@ -24,9 +24,15 @@
  * heading on every refresh to update the "(N)", and Obsidian's `setName`
  * replaces `nameEl`'s children — which is where the chevron lives. Attributes
  * survive that; child elements do not.
+ *
+ * The user-driven toggle is also wrapped in `foldAnchor.keepHeadingInPlace`, so
+ * folding a heading that is currently pinned does not shoot it off the top of
+ * the pane. It is a no-op for a heading that was not pinned, which is why it can
+ * sit on the shared path rather than only on the three sticky ones.
  */
 import { setIcon } from "obsidian";
 import type { Setting } from "obsidian";
+import { keepHeadingInPlace } from "./foldAnchor";
 
 export type SectionDisclosure = {
 	/** `setName`, then the chevron put back — see the note above. */
@@ -94,7 +100,7 @@ export function attachSectionDisclosure(
 	};
 
 	const toggle = (): void => {
-		setExpanded(!expanded);
+		keepHeadingInPlace(headingEl, () => setExpanded(!expanded));
 		onToggle?.(expanded);
 	};
 
