@@ -327,6 +327,57 @@ that only make sense for some roles.
   deleting a callout *definition*, which is a destructive, harder-to-reverse
   action guarded elsewhere — see [Vault discovery](10-vault-discovery.md#delete-flow)).
 
+### The context menu inside a read-only preview
+
+The settings previews host a *real* embedded Obsidian editor, so they get
+Obsidian's real editor context menu — and none of its editing commands was ever
+stopped by `EditorState.readOnly` (see
+[Callout editor](13-callout-editor.md#why-read-only-needed-two-layers)). A user
+could right-click the splash screen and turn its sample into a bulleted list, an
+H1, a table or a code block.
+
+[`readOnlyPreview.ts`](../src/editor/contextmenu/readOnlyPreview.ts) handles the
+menu half. `maybeAddItems` asks `isReadOnlyPreviewTarget(trigger.targetEl)`
+first, and when it answers yes:
+
+- `stripEditingItems(menu)` removes every item whose section is editing-only —
+  `selection-link`, `insert`, `correction`, `spellcheck`, and anything under
+  `selection.format`, `selection.paragraph` or `selection.insert`. That is the
+  whole Format / Paragraph / Insert set.
+- **None of this plugin's own items are added.** The fold-marker and
+  cut/delete-section builders write through `context.editor`, which in a preview
+  is the preview's own editor — and the block-callout resolver reaches inside
+  one regardless of `view`, via the `.cm-callout` widget path, so this is a real
+  route rather than a hypothetical one.
+
+Three details are load-bearing:
+
+- **The check runs *before* the `settings.contextMenu.enabled` gate.** Whether
+  this plugin adds menu items and whether a preview is immutable are unrelated
+  questions; answering them in the other order would make immutability
+  something a user could switch off by accident.
+- **Sections, not titles.** The section strings are Obsidian's own identifiers,
+  so the filter holds in every language. A rename in a future Obsidian version
+  degrades to the menu showing items that no longer do anything — never to a
+  crash, and never to a mutable preview, because the transaction filter is the
+  guarantee.
+- **`Menu.sort()` runs inside `showAtPosition()`**, i.e. *after* the
+  `showAtMouseEvent` / `showAtPosition` patches above. At that moment `items` is
+  complete and nothing has been rendered, so filtering the array in place is
+  enough — no DOM surgery, and a section left empty takes its submenu header
+  with it.
+
+`clipboard` is kept whole on purpose. Copy and Select all are exactly what a
+read-only preview should still offer; Cut and Paste stay visible and are now
+inert, so they explain themselves with "The live preview can't be edited"
+rather than sitting greyed out. `selection` (Edit link / Edit tag) only moves
+the selection, and the link/open/info/view sections are what make the splash
+screen's **Learn more** link work.
+
+Everything keys off `.cs-live-preview-editable`, the class `LiveCalloutPreview`
+adds only on the embedded-editor path. Notes, and the preview's own static
+fallback, are untouched by construction.
+
 ## Outline pane and link suggestions
 
 Two decorators clean up how heading-callout tokens appear **outside** the note

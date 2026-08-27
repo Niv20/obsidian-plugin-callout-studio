@@ -76,7 +76,10 @@ in a real note, in whatever theme is active — not an approximation.
 - **Read-only, but interactive** — clicking reveals raw source (the normal
   Live Preview affordance) but an actual edit attempt is blocked and
   surfaces a throttled Notice (`READ_ONLY_NOTICE_THROTTLE_MS = 1500` —
-  throttled so rapid attempted keystrokes don't spam notices).
+  throttled so rapid attempted keystrokes don't spam notices). What
+  "blocked" means is
+  [`src/settings/previewReadOnly.ts`](../src/settings/previewReadOnly.ts),
+  and it is worth reading before touching it — see below.
 - **Graceful degradation**: the embed API is explicitly undocumented and may
   change out from under the plugin. If constructing it throws, the preview
   falls back to a static (non-editable) `MarkdownRenderer.render()` pass —
@@ -87,6 +90,55 @@ in a real note, in whatever theme is active — not an approximation.
   registry's preview slot and re-inject CSS **before** the editor's
   decorations are built, so the very first paint already reflects the
   in-progress edit.
+
+### Why "read-only" needed two layers
+
+`EditorState.readOnly.of(true)` is **advisory**. CodeMirror's own
+documentation says it "is consulted by commands and extensions that implement
+editing functionality" — it does not reject a programmatic
+`dispatch({changes})`. So it stopped typing, and stopped nothing that called
+the editor API directly.
+
+That was not a theoretical gap. An embedded editor gets Obsidian's *real*
+editor context menu, whose **Format**, **Paragraph** and **Insert** submenus
+call `toggleBulletList()`, `setHeading()`, `toggleBlockquote()`,
+`insertTable()`, `insertCallout()`, `insertHorizontalRule()`,
+`insertCodeblock()` and `insertMathBlock()` on the editor. Every one of them
+landed in a "read-only" preview, silently and with no notice. So did this
+plugin's own fold-marker and cut/delete-section items, which write through
+`editor.replaceRange`.
+
+Two layers now, and only the first is a guarantee:
+
+1. **`EditorState.transactionFilter`** in
+   [`previewReadOnly.ts`](../src/settings/previewReadOnly.ts) drops any
+   transaction with `docChanged` and reports it through `onEditAttempt`. Every
+   route converges on `cm.dispatch`, so this sees all of them — menu commands,
+   `Editor.*` writes, other plugins' editor commands, raw dispatches. Selection
+   moves and effect-only transactions pass untouched, which is what keeps
+   click-to-reveal-source, `parkCursor()` and `calloutStudioRefresh` working.
+   The `beforeinput` / `paste` / `drop` handlers stay, at `Prec.highest`, to
+   stop the browser's own default and to cover the Electron context-menu paths
+   (cut, spellcheck replacement) that mutate the DOM without a CodeMirror
+   command.
+2. **Menu filtering** in
+   [`editor/contextmenu/readOnlyPreview.ts`](../src/editor/contextmenu/readOnlyPreview.ts)
+   removes the editing-only sections so the menu stops *offering* commands
+   whose only remaining effect is a notice. See
+   [Editor integrations](09-editor-integrations.md#the-context-menu-inside-a-read-only-preview).
+
+`EditorView.editable.of(false)` is deliberately **not** used: with no caret
+there is no cursor position, and Live Preview reveals a line's raw markdown by
+cursor position. It would turn the preview into a static render with extra
+steps.
+
+**The write gate.** `setValue()` reseeds the whole document when the form the
+preview mirrors changes, and that reseed is a doc-changing transaction like any
+other. `readOnlyPreviewExtensions()` therefore returns a `PreviewWriteGate`
+alongside its extensions; `setValue` wraps its `instance.set()` in
+`gate.allow(…)`, which opens synchronously and closes in a `finally`. Anything
+else that needs to write the preview must go through the same gate — do not
+loosen the filter instead.
 
 ## Registering the in-progress draft: the preview slot, from the editor's side
 
