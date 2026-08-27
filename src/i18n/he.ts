@@ -55,17 +55,19 @@ export const he: Record<string, string> = {
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
 	"welcome.tooltip": "אודות Callout Studio",
-	"welcome.title": "ברוכים הבאים ל־Callout Studio",
-	"welcome.tagline": "הפתרון המלא שלכם לניהול תיבות־הבלטה ב־Obsidian.",
+	"welcome.title": "ברוכים הבאים ל־Callout Studio!",
+	"welcome.tagline":
+		"הפתרון המלא שלכם ליצירה, לעיצוב ולניהול של תיבות־הבלטה ב־Obsidian.",
 	"welcome.previewTitle": "לראות איך זה עובד",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio מאפשר לכם ליצור תיבות־הבלטה עם אייקון, צבעים ושם מותאמים אישית.\n\n" +
-		"אפשר להשתמש באותה תיבת־הבלטה ב־**שלוש** דרכים שונות:\n\n" +
-		"## [!tip] ככותרת\n" +
+		"אפשר להשתמש בתיבת־ההבלטה הזאת ב־**שלוש** דרכים שונות:\n\n" +
+		"## [!{{id}}] תיבת־הבלטה ככותרת\n" +
 		"כדי להפוך כל כותרת לכותרת בסגנון תיבת־הבלטה, הוסיפו `[!type]` מיד אחרי סימני ה־`#`.\n\n" +
-		"רוצים תיבת־הבלטה מוטבעת כמו זו [!warning]? פשוט הוסיפו `[!type]` באמצע משפט, בלי לשבור את הזרימה.\n\n" +
-		"> [!note] תיבת־הבלטה רגילה\n" +
-		"> כמובן, תיבת־ההבלטה הקלאסית פועלת לפי אותו תחביר בדיוק שאתם כבר מכירים: `> [!type]`.\n\n" +
+		"רוצים [!{{id}}]{תיבת־הבלטה מוטבעת} כמו זו? פשוט הוסיפו `[!type]{text}` באמצע משפט, בלי לשבור את הזרימה.\n\n" +
+		"> [!{{id}}] תיבת־הבלטה כבלוק\n" +
+		"> תיבת־ההבלטה הקלאסית פועלת לפי אותו תחביר בדיוק שאתם כבר מכירים: `> [!type]`.\n\n" +
 		"ל־Callout Studio יש עוד הרבה מה להציע! [למידע נוסף]({{repoUrl}}).\n",
 
 	// Delete-callout modal (trash button on user rows)
@@ -802,6 +804,8 @@ export const he: Record<string, string> = {
 		'ה־ID "{{value}}" מכיל תווים לא חוקיים ("|", "[", "]", טאבים ומעברי שורה אינם מורשים).',
 	"import.err.idMetadata":
 		'ה־ID "{{value}}" מכיל "|". באובסידיאן כל מה שבא אחרי ה־"|" הראשון הוא מטא־דאטה של ה־callout ולא חלק מהסוג, ולכן הרשומה הזאת מתארת את ה־callout "{{id}}". הרשומה דולגה, כך שה־"{{id}}" הקיים שלך נשאר ללא שינוי.',
+	"import.err.idReserved":
+		'ה־ID "{{value}}" שמור עבור Callout Studio לצורך התצוגות המקדימות שלו ולא ניתן לייבא אותו.',
 	"import.err.displayNameEmpty": "שם התצוגה לא יכול להיות ריק.",
 	"import.err.displayNameTooLong":
 		"שם התצוגה ארוך מדי ({{length}} תווים); המקסימום המותר הוא {{max}}.",

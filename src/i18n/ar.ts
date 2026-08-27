@@ -44,17 +44,19 @@ export const ar: Record<string, string> = {
 		"لم يكتمل المسح. يمكنك المحاولة مرة أخرى من الإعدادات ← رؤى المخزن والصيانة ← إعادة مسح المخزن.",
 
 	"welcome.tooltip": "حول Callout Studio",
-	"welcome.title": "مرحبًا بك في Callout Studio",
-	"welcome.tagline": "حلّك الشامل لإدارة callouts في Obsidian.",
+	"welcome.title": "مرحبًا بك في Callout Studio!",
+	"welcome.tagline":
+		"حلّك الشامل لإنشاء callouts في Obsidian وتصميمها وإدارتها.",
 	"welcome.previewTitle": "شاهده أثناء العمل",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"يتيح لك Callout Studio إنشاء callouts بأيقونة وألوان واسم مخصصة.\n\n" +
-		"يمكنك استخدام نفس الـ callout بـ **ثلاث** طرق مختلفة:\n\n" +
-		"## [!tip] كعنوان\n" +
+		"يمكنك استخدام هذا الـ callout بـ **ثلاث** طرق مختلفة:\n\n" +
+		"## [!{{id}}] Callout كعنوان\n" +
 		"لتحويل أي عنوان إلى عنوان بنمط callout، أضف `[!type]` مباشرة بعد علامات `#`.\n\n" +
-		"هل تريد callout مضمّنًا مثل هذا [!warning]؟ فقط أضف `[!type]` داخل الجملة، دون كسر تسلسل الكتابة.\n\n" +
-		"> [!note] Block Callout\n" +
-		"> بالطبع، الـ callout الكلاسيكي يعمل بنفس الصيغة التي اعتدت عليها تمامًا: `> [!type]`.\n\n" +
+		"هل تريد [!{{id}}]{callout مضمّن}؟ فقط أضف `[!type]{text}` داخل الجملة، دون كسر تسلسل الكتابة.\n\n" +
+		"> [!{{id}}] Callout ككتلة\n" +
+		"> يعمل الـ callout الكلاسيكي بنفس الصيغة التي اعتدت عليها تمامًا: `> [!type]`.\n\n" +
 		"هناك الكثير مما يقدمه Callout Studio! [معرفة المزيد]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'حذف callout "{{name}}"؟',
@@ -756,6 +758,8 @@ export const ar: Record<string, string> = {
 		'يحتوي المعرّف "{{value}}" على أحرف غير صالحة ("|" و"[" و"]" وعلامات الجدولة وفواصل الأسطر غير مسموح بها).',
 	"import.err.idMetadata":
 		'المعرّف "{{value}}" يحتوي على "|". في Obsidian كل ما يأتي بعد "|" الأولى هو بيانات وصفية للـ callout وليس جزءاً من النوع، لذا فإن هذا الإدخال يصف الـ callout "{{id}}". تم التخطي، وبالتالي يبقى "{{id}}" الحالي دون تغيير.',
+	"import.err.idReserved":
+		'المعرّف "{{value}}" محجوز لـ Callout Studio من أجل معايناته الخاصة ولا يمكن استيراده.',
 	"import.err.displayNameEmpty": "يجب ألا يكون الاسم المعروض فارغاً.",
 	"import.err.displayNameTooLong":
 		"الاسم المعروض يتكون من {{length}} حرفاً؛ الحد الأقصى هو {{max}}.",

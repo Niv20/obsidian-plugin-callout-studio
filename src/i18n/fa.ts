@@ -43,17 +43,19 @@ export const fa: Record<string, string> = {
 		"اسکن به پایان نرسید. می‌توانید دوباره از طریق تنظیمات ← بینش‌ها و نگهداری vault ← اسکن مجدد vault تلاش کنید.",
 
 	"welcome.tooltip": "درباره‌ی Callout Studio",
-	"welcome.title": "به Callout Studio خوش آمدید",
-	"welcome.tagline": "راه‌حل کامل شما برای مدیریت callout‌های Obsidian.",
+	"welcome.title": "به Callout Studio خوش آمدید!",
+	"welcome.tagline":
+		"راه‌حل کامل شما برای ساخت، طراحی و مدیریت callout‌های Obsidian.",
 	"welcome.previewTitle": "آن را در عمل ببینید",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio به شما امکان می‌دهد callout‌هایی با آیکون، رنگ‌ها و نام دلخواه بسازید.\n\n" +
-		"می‌توانید از یک callout به **سه** روش متفاوت استفاده کنید:\n\n" +
-		"## [!tip] به‌عنوان یک تیتر\n" +
+		"می‌توانید از این callout به **سه** روش متفاوت استفاده کنید:\n\n" +
+		"## [!{{id}}] callout به‌عنوان تیتر\n" +
 		"برای تبدیل هر تیتر به تیتری با سبک callout، بلافاصله بعد از `#`ها عبارت `[!type]` را اضافه کنید.\n\n" +
-		"می‌خواهید یک callout درون‌خطی مثل این [!warning] داشته باشید؟ فقط `[!type]` را وسط یک جمله اضافه کنید، بدون آنکه روند نوشتن قطع شود.\n\n" +
-		"> [!note] Block Callout\n" +
-		"> البته، callout کلاسیک دقیقاً با همان نحوی که به آن عادت دارید کار می‌کند: `> [!type]`.\n\n" +
+		"یک [!{{id}}]{callout درون‌خطی} مثل این می‌خواهید؟ فقط `[!type]{text}` را وسط یک جمله اضافه کنید، بدون آنکه روند نوشتن قطع شود.\n\n" +
+		"> [!{{id}}] callout بلوکی\n" +
+		"> callout کلاسیک دقیقاً با همان نحوی که به آن عادت دارید کار می‌کند: `> [!type]`.\n\n" +
 		"Callout Studio قابلیت‌های بیشتری هم دارد! [بیشتر بدانید]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'callout "{{name}}" حذف شود؟',
@@ -763,6 +765,8 @@ export const fa: Record<string, string> = {
 		'شناسه "{{value}}" دارای کاراکترهای نامعتبر است ("|"، "["، "]"، تب و خط جدید مجاز نیستند).',
 	"import.err.idMetadata":
 		'شناسه "{{value}}" حاوی "|" است. در Obsidian هر چیزی بعد از اولین "|" متادیتای callout است و بخشی از نوع نیست، بنابراین این ورودی callout "{{id}}" را توصیف می‌کند. رد شد تا "{{id}}" موجود شما دست‌نخورده بماند.',
+	"import.err.idReserved":
+		'شناسه "{{value}}" توسط Callout Studio برای پیش‌نمایش‌های خودش رزرو شده است و قابل وارد کردن نیست.',
 	"import.err.displayNameEmpty": "نام نمایشی نباید خالی باشد.",
 	"import.err.displayNameTooLong":
 		"نام نمایشی دارای {{length}} کاراکتر است؛ حداکثر {{max}} است.",

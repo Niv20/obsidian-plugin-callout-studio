@@ -43,18 +43,19 @@ export const hi: Record<string, string> = {
 		"स्कैन पूरा नहीं हुआ। आप इसे सेटिंग → vault अंतर्दृष्टि और रखरखाव → vault फिर से स्कैन करें से फिर से आज़मा सकते हैं।",
 
 	"welcome.tooltip": "Callout Studio के बारे में",
-	"welcome.title": "Callout Studio में आपका स्वागत है",
+	"welcome.title": "Callout Studio में आपका स्वागत है!",
 	"welcome.tagline":
-		"Obsidian callouts प्रबंधित करने के लिए आपका संपूर्ण समाधान।",
+		"Obsidian callouts बनाने, स्टाइल करने और प्रबंधित करने के लिए आपका संपूर्ण समाधान।",
 	"welcome.previewTitle": "इसे कार्य में देखें",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio से आप कस्टम आइकन, रंग और नाम के साथ callouts बना सकते हैं।\n\n" +
-		"आप एक ही callout को **तीन** अलग-अलग तरीकों से उपयोग कर सकते हैं:\n\n" +
-		"## [!tip] हेडिंग के रूप में\n" +
+		"आप इस callout को **तीन** अलग-अलग तरीकों से उपयोग कर सकते हैं:\n\n" +
+		"## [!{{id}}] हेडिंग callout\n" +
 		"किसी भी हेडिंग को callout-शैली की हेडिंग बनाने के लिए, `#` के ठीक बाद `[!type]` जोड़ें।\n\n" +
-		"क्या आप इस जैसा इनलाइन callout चाहते हैं [!warning]? बस किसी वाक्य के बीच में `[!type]` जोड़ें, अपने लेखन के प्रवाह को बिना तोड़े।\n\n" +
-		"> [!note] सामान्य callout\n" +
-		"> बेशक, क्लासिक callout ठीक उसी सिंटैक्स के साथ काम करता है जिसके आप पहले से ही आदी हैं: `> [!type]`।\n\n" +
+		"क्या आप इस जैसा [!{{id}}]{इनलाइन callout} चाहते हैं? बस किसी वाक्य के बीच में `[!type]{text}` जोड़ें, अपने लेखन के प्रवाह को बिना तोड़े।\n\n" +
+		"> [!{{id}}] ब्लॉक callout\n" +
+		"> क्लासिक callout ठीक उसी सिंटैक्स के साथ काम करता है जिसके आप पहले से ही आदी हैं: `> [!type]`।\n\n" +
 		"Callout Studio के पास पेश करने के लिए और भी बहुत कुछ है! [और जानें]({{repoUrl}})।\n",
 
 	"deleteModal.title": 'callout "{{name}}" हटाएँ?',
@@ -767,6 +768,8 @@ export const hi: Record<string, string> = {
 		'ID "{{value}}" में अमान्य अक्षर हैं ("|", "[", "]", टैब और लाइन ब्रेक की अनुमति नहीं है)।',
 	"import.err.idMetadata":
 		'ID "{{value}}" में "|" है। Obsidian में पहले "|" के बाद सब कुछ callout मेटाडेटा होता है, type का हिस्सा नहीं, इसलिए यह entry "{{id}}" callout का वर्णन करती है। छोड़ दिया गया, ताकि आपका मौजूदा "{{id}}" अपरिवर्तित रहे।',
+	"import.err.idReserved":
+		'ID "{{value}}" Callout Studio द्वारा अपने स्वयं के पूर्वावलोकनों के लिए आरक्षित है और इसे import नहीं किया जा सकता।',
 	"import.err.displayNameEmpty": "प्रदर्शन नाम खाली नहीं होना चाहिए।",
 	"import.err.displayNameTooLong":
 		"प्रदर्शन नाम में {{length}} अक्षर हैं; अधिकतम {{max}} है।",

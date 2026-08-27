@@ -43,17 +43,19 @@ export const ja: Record<string, string> = {
 		"スキャンが完了しませんでした。設定 → vaultの洞察とメンテナンス → vaultを再スキャン から再試行できます。",
 
 	"welcome.tooltip": "Callout Studioについて",
-	"welcome.title": "Callout Studioへようこそ",
-	"welcome.tagline": "Obsidianのcalloutを管理するための総合ソリューション。",
+	"welcome.title": "Callout Studioへようこそ！",
+	"welcome.tagline":
+		"Obsidianのcalloutを作成、スタイル設定、管理するための総合ソリューション。",
 	"welcome.previewTitle": "実際の動作を見る",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studioを使えば、アイコン・色・名前をカスタマイズしたcalloutを作成できます。\n\n" +
-		"同じcalloutは**3つ**の異なる方法で使用できます。\n\n" +
-		"## [!tip] 見出しとして\n" +
+		"このcalloutは**3つ**の異なる方法で使用できます。\n\n" +
+		"## [!{{id}}] 見出し callout\n" +
 		"見出しをcallout風にするには、`#`の直後に`[!type]`を追加します。\n\n" +
-		"この[!warning]のようなインラインcalloutにしたい場合は、文章の途中に`[!type]`を追加するだけです。流れを止める必要はありません。\n\n" +
-		"> [!note] Block Callout\n" +
-		"> もちろん、従来のcalloutもこれまでと同じ構文でそのまま使えます：`> [!type]`。\n\n" +
+		"この[!{{id}}]{インライン callout}のようにしたい場合は、文章の途中に`[!type]{text}`を追加するだけです。流れを止める必要はありません。\n\n" +
+		"> [!{{id}}] ブロック callout\n" +
+		"> 従来のcalloutも、これまでと同じ構文でそのまま使えます：`> [!type]`。\n\n" +
 		"Callout Studioにはまだまだ多くの機能があります！[詳しく見る]({{repoUrl}})。\n",
 
 	"deleteModal.title": 'callout "{{name}}" を削除しますか？',
@@ -773,6 +775,8 @@ export const ja: Record<string, string> = {
 		'ID"{{value}}"に無効な文字が含まれています（"|"、"["、"]"、タブ、改行は使用できません）。',
 	"import.err.idMetadata":
 		'ID"{{value}}"に"|"が含まれています。Obsidianでは最初の"|"以降はすべてcalloutのメタデータであり、タイプの一部ではありません。このため、このエントリは"{{id}}"calloutを説明しています。スキップされました。既存の"{{id}}"はそのまま変更されていません。',
+	"import.err.idReserved":
+		'ID"{{value}}"はCallout Studioが独自のプレビュー用に予約しているため、インポートできません。',
 	"import.err.displayNameEmpty": "表示名は空であってはなりません。",
 	"import.err.displayNameTooLong":
 		"表示名は{{length}}文字です。最大は{{max}}文字です。",

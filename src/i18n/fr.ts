@@ -43,18 +43,19 @@ export const fr: Record<string, string> = {
 		"Le scan ne s'est pas terminé. Vous pouvez réessayer depuis Paramètres → Informations et maintenance du vault → Rescanner le vault.",
 
 	"welcome.tooltip": "À propos de Callout Studio",
-	"welcome.title": "Bienvenue dans Callout Studio",
+	"welcome.title": "Bienvenue dans Callout Studio !",
 	"welcome.tagline":
-		"Votre solution complète pour gérer les callouts d'Obsidian.",
+		"Votre solution complète pour créer, styliser et gérer les callouts d'Obsidian.",
 	"welcome.previewTitle": "Voir en action",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio vous permet de créer des callouts avec une icône, des couleurs et un nom personnalisés.\n\n" +
-		"Vous pouvez utiliser le même callout de **trois** façons différentes :\n\n" +
-		"## [!tip] Comme titre\n" +
+		"Vous pouvez utiliser ce callout de **trois** façons différentes :\n\n" +
+		"## [!{{id}}] Callout en titre\n" +
 		"Pour transformer n'importe quel titre en titre au style callout, ajoutez `[!type]` juste après les `#`.\n\n" +
-		"Vous voulez un callout en ligne comme celui-ci [!warning] ? Ajoutez simplement `[!type]` au milieu d'une phrase, sans interrompre votre rédaction.\n\n" +
-		"> [!note] Callout standard\n" +
-		"> Bien sûr, le callout classique fonctionne exactement avec la même syntaxe que vous connaissez déjà : `> [!type]`.\n\n" +
+		"Vous voulez un [!{{id}}]{callout en ligne} comme celui-ci ? Ajoutez simplement `[!type]{text}` au milieu d'une phrase, sans interrompre votre rédaction.\n\n" +
+		"> [!{{id}}] Callout en bloc\n" +
+		"> Le callout classique fonctionne exactement avec la même syntaxe que vous connaissez déjà : `> [!type]`.\n\n" +
 		"Callout Studio a bien plus à offrir ! [En savoir plus]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'Supprimer le callout "{{name}}" ?',
@@ -782,6 +783,8 @@ export const fr: Record<string, string> = {
 		'L\'ID "{{value}}" contient des caractères invalides ("|", "[", "]", les tabulations et les sauts de ligne ne sont pas autorisés).',
 	"import.err.idMetadata":
 		'L\'ID "{{value}}" contient un "|". Dans Obsidian, tout ce qui suit le premier "|" est une métadonnée du callout, pas une partie du type ; cet entrée décrit donc le callout "{{id}}". Ignoré, afin que votre "{{id}}" existant reste inchangé.',
+	"import.err.idReserved":
+		'L\'ID "{{value}}" est réservé par Callout Studio pour ses propres aperçus et ne peut pas être importé.',
 	"import.err.displayNameEmpty": "Le nom d'affichage ne doit pas être vide.",
 	"import.err.displayNameTooLong":
 		"Le nom d'affichage fait {{length}} caractères ; le maximum est {{max}}.",

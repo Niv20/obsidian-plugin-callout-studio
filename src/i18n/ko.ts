@@ -43,17 +43,19 @@ export const ko: Record<string, string> = {
 		"스캔이 완료되지 않았습니다. 설정 → 볼트 인사이트 및 유지보수 → 볼트 재스캔에서 다시 시도할 수 있습니다.",
 
 	"welcome.tooltip": "Callout Studio 소개",
-	"welcome.title": "Callout Studio에 오신 것을 환영합니다",
-	"welcome.tagline": "Obsidian callout 관리를 위한 완벽한 솔루션입니다.",
+	"welcome.title": "Callout Studio에 오신 것을 환영합니다!",
+	"welcome.tagline":
+		"Obsidian callout을 만들고, 스타일을 지정하고, 관리하기 위한 완벽한 솔루션입니다.",
 	"welcome.previewTitle": "실제 동작 보기",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio를 사용하면 아이콘, 색상, 이름을 원하는 대로 지정한 callout을 만들 수 있습니다.\n\n" +
-		"같은 callout을 **세 가지** 다른 방식으로 사용할 수 있습니다:\n\n" +
-		"## [!tip] 제목으로 사용\n" +
+		"이 callout을 **세 가지** 다른 방식으로 사용할 수 있습니다:\n\n" +
+		"## [!{{id}}] 제목 callout\n" +
 		"제목을 callout 스타일로 바꾸려면 `#` 바로 뒤에 `[!type]`을 추가하세요.\n\n" +
-		"이 [!warning]처럼 인라인 callout을 원하시나요? 문장 중간에 `[!type]`을 추가하기만 하면 흐름을 끊지 않고 삽입할 수 있습니다.\n\n" +
-		"> [!note] Block Callout\n" +
-		"> 물론 기존에 사용하던 것과 동일한 문법으로 클래식 callout도 그대로 사용할 수 있습니다: `> [!type]`.\n\n" +
+		"이처럼 [!{{id}}]{인라인 callout}을 원하시나요? 문장 중간에 `[!type]{text}`를 추가하기만 하면 흐름을 끊지 않고 삽입할 수 있습니다.\n\n" +
+		"> [!{{id}}] 블록 callout\n" +
+		"> 기존에 사용하던 것과 동일한 문법으로 클래식 callout도 그대로 사용할 수 있습니다: `> [!type]`.\n\n" +
 		"Callout Studio에는 훨씬 더 많은 기능이 있습니다! [자세히 보기]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'callout "{{name}}"을(를) 삭제하시겠습니까?',
@@ -769,6 +771,8 @@ export const ko: Record<string, string> = {
 		'ID "{{value}}"에 유효하지 않은 문자가 포함되어 있습니다 ("|", "[", "]", 탭, 줄 바꿈은 허용되지 않습니다).',
 	"import.err.idMetadata":
 		'ID "{{value}}"에 "|"가 포함되어 있습니다. Obsidian에서 첫 번째 "|" 이후의 모든 것은 callout 메타데이터이며 유형의 일부가 아니므로 이 항목은 "{{id}}" callout을 설명합니다. 건너뜀, 기존 "{{id}}"는 변경되지 않습니다.',
+	"import.err.idReserved":
+		'ID "{{value}}"는 Callout Studio가 자체 미리 보기를 위해 예약해 두었으므로 가져올 수 없습니다.',
 	"import.err.displayNameEmpty": "표시 이름은 비어 있으면 안 됩니다.",
 	"import.err.displayNameTooLong":
 		"표시 이름은 {{length}}자입니다. 최대 {{max}}자입니다.",
