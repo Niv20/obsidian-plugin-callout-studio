@@ -758,8 +758,17 @@ describe("no new oversized files", () => {
 		// theme claims and draws to manager/theme/ThemeFacts.ts.
 		// Lowered from 1990: the dash/space collision fold moved to
 		// manager/idCollisionMigration.ts, which owns the merge rule.
-		"src/manager/CalloutRegistry.ts": 1983,
-		"src/utils/importValidator.ts": 1184,
+		// Raised from 1983 for the `RESERVED_DEMO_IDS` filter in
+		// `getExportableDefinitions`. Six lines, and there is no sibling module
+		// for them: the question is "what does an export contain", which is
+		// this class's, and the set they consult already lives in constants.ts
+		// precisely so `manager/` and `utils/` can share it.
+		"src/manager/CalloutRegistry.ts": 1989,
+		// Raised from 1184 for the same set, rejected in `validateIdString`.
+		// Same reasoning: "which id strings are valid on import" is the one
+		// thing this file is for, so the rule cannot move out of it without
+		// splitting the answer in two.
+		"src/utils/importValidator.ts": 1200,
 		// Lowered from 1190: the style-mode pair's import rules moved to
 		// utils/importStyleMode.ts.
 		// Lowered from 1106: the Base color row moved to
@@ -812,7 +821,10 @@ describe("no new oversized files", () => {
 		// about which pass goes first belongs.
 		"src/main.ts": 532,
 		"src/icons/renderIcon.ts": 547,
-		"src/settings/GlobalStyleModal.ts": 528,
+		// Lowered from 528: `STYLE_DEMO_ID` moved to constants.ts, where the
+		// discovery/import/autocomplete filters that now consult it can reach
+		// it without importing a settings modal.
+		"src/settings/GlobalStyleModal.ts": 522,
 		// Lowered from 497: the two role-icon helpers moved to editor/roleIcon.ts,
 		// beside the theme-artwork renderer they now both consult.
 		"src/editor/renderShared.ts": 475,
@@ -830,7 +842,10 @@ describe("no new oversized files", () => {
 		"src/icons/isolateSvg.ts": 402,
 		"src/icons/packs/materialFont.ts": 398,
 		"src/outline/OutlineDecorator.ts": 382,
-		"src/settings/EmbeddableMarkdownEditor.ts": 357,
+		// Lowered from 357: the read-only rule — and the transaction filter
+		// that finally made it one — moved to settings/previewReadOnly.ts,
+		// where it can be tested against a real EditorState.
+		"src/settings/EmbeddableMarkdownEditor.ts": 349,
 		// Lowered from 367: the deny-list of what is unsafe in ANY svg moved to
 		// icons/svgSafety.ts, where a third caller outside this file — the theme
 		// artwork importer in manager/css/coreIcon.ts — can reach it.
