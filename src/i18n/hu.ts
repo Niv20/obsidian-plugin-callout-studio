@@ -44,18 +44,19 @@ export const hu: Record<string, string> = {
 		"A szkennelés nem fejeződött be. Próbálja újra a Beállítások → Tár-elemzések és karbantartás → Tár újraszkennelése menüpontból.",
 
 	"welcome.tooltip": "A Callout Studio névjegye",
-	"welcome.title": "Üdvözöljük a Callout Studióban",
+	"welcome.title": "Üdvözöljük a Callout Studióban!",
 	"welcome.tagline":
-		"Az Ön teljes körű megoldása az Obsidian callout-ok kezelésére.",
+		"Az Ön teljes körű megoldása az Obsidian callout-ok létrehozására, stílusozására és kezelésére.",
 	"welcome.previewTitle": "Nézze meg működés közben",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"A Callout Studio segítségével egyéni ikonnal, színekkel és névvel hozhat létre callout-okat.\n\n" +
-		"Ugyanazt a callout-ot **három** különböző módon használhatja:\n\n" +
-		"## [!tip] Címsorként\n" +
+		"Ezt a callout-ot **három** különböző módon használhatja:\n\n" +
+		"## [!{{id}}] Callout címsorként\n" +
 		"Ahhoz, hogy bármely címsort callout stílusú címsorrá alakítsa, adja hozzá a `[!type]`-ot közvetlenül a `#` jelek után.\n\n" +
-		"Szeretne egy ilyen beágyazott callout-ot, mint ez [!warning]? Egyszerűen illessze be a `[!type]`-ot egy mondat közepére, anélkül, hogy megszakítaná az írás menetét.\n\n" +
-		"> [!note] Normál callout\n" +
-		"> A klasszikus callout természetesen ugyanazzal a szintaxissal működik, amit már megszokott: `> [!type]`.\n\n" +
+		"Szeretne egy ilyen [!{{id}}]{beágyazott callout-ot}? Egyszerűen illessze be a `[!type]{text}`-ot egy mondat közepére, anélkül, hogy megszakítaná az írás menetét.\n\n" +
+		"> [!{{id}}] Blokk callout\n" +
+		"> A klasszikus callout ugyanazzal a szintaxissal működik, amit már megszokott: `> [!type]`.\n\n" +
 		"A Callout Studio ennél sokkal többet is kínál! [Tudjon meg többet]({{repoUrl}}).\n",
 
 	"deleteModal.title": '"{{name}}" callout törlése?',
@@ -772,6 +773,8 @@ export const hu: Record<string, string> = {
 		'A "{{value}}" azonosító érvénytelen karaktereket tartalmaz ("|", "[", "]", tabulátorok és sortörések nem megengedettek).',
 	"import.err.idMetadata":
 		'A "{{value}}" azonosító "|" karaktert tartalmaz. Az Obsidianban az első "|" utáni minden szöveg callout-metaadat, nem a típus része, ezért ez a bejegyzés a "{{id}}" calloutot írja le. Kihagyva, hogy a meglévő "{{id}}" érintetlen maradjon.',
+	"import.err.idReserved":
+		'A "{{value}}" azonosítót a Callout Studio a saját előnézeteihez tartja fenn, ezért nem importálható.',
 	"import.err.displayNameEmpty": "A megjelenítési név nem lehet üres.",
 	"import.err.displayNameTooLong":
 		"A megjelenítési név {{length}} karakter; a maximum {{max}}.",

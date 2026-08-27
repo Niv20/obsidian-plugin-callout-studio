@@ -42,6 +42,29 @@ name straight into the autocomplete dropdown would be jarring. Discovery picks
 it up on the *next* scan, once the cursor has moved off the line (i.e. the
 user has effectively committed it).
 
+### Ids that are never unknown
+
+`buildKnownCalloutIds` ([`manager/knownCalloutIds.ts`](../src/manager/knownCalloutIds.ts))
+seeds the reserved demo ids — `new-callout-preview` and `global-style-demo` —
+unconditionally, on top of everything `getAll()` reports.
+
+It answered purely from `getAll()` before, which meant a demo id counted as
+known only *while a modal held it in the preview slot*. A note that happens to
+contain `[!global-style-demo]` — pasted from a screenshot, or left behind by a
+crash — would then be discovered the moment that modal closed, and appear as a
+row the user never made and cannot explain. See
+[Callout registry § Reserved demo ids](05-callout-registry.md#reserved-demo-ids)
+for the other three surfaces that reserve them.
+
+The welcome splash's demo id (`demo`) is **not** seeded, and that is not an
+oversight: it is a name a user may own, so a note writing `[!demo]` must stay
+discoverable — see
+[the third demo id](05-callout-registry.md#the-third-demo-id-and-why-it-is-not-in-the-set).
+
+Both spellings are seeded, as for any known id: `scanStringForUnknownCallouts`
+tests a *found* id's literal form and its identity against the set, so the pair
+together is what makes `[!global style demo]` recognised too.
+
 ### Adding unknown ids as fallback rows
 
 ```ts

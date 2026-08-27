@@ -40,18 +40,19 @@ export const nb: Record<string, string> = {
 		"Skanningen ble ikke fullført. Du kan prøve igjen fra Innstillinger → Vault-innsikt og vedlikehold → Skann vault på nytt.",
 
 	"welcome.tooltip": "Om Callout Studio",
-	"welcome.title": "Velkommen til Callout Studio",
+	"welcome.title": "Velkommen til Callout Studio!",
 	"welcome.tagline":
-		"Din komplette løsning for å administrere Obsidian-callouts.",
+		"Din komplette løsning for å opprette, style og administrere Obsidian-callouts.",
 	"welcome.previewTitle": "Se det i aksjon",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Med Callout Studio kan du lage callouts med eget ikon, farger og navn.\n\n" +
-		"Du kan bruke den samme callout-en på **tre** forskjellige måter:\n\n" +
-		"## [!tip] Som overskrift\n" +
+		"Du kan bruke denne callout-en på **tre** forskjellige måter:\n\n" +
+		"## [!{{id}}] Callout som overskrift\n" +
 		"For å gjøre en overskrift om til en overskrift i callout-stil, legg til `[!type]` rett etter `#`-tegnene.\n\n" +
-		"Vil du ha en innebygd callout som denne [!warning]? Bare legg til `[!type]` midt i en setning, uten å bryte skriveflyten.\n\n" +
-		"> [!note] Block Callout\n" +
-		"> Den klassiske callout-en fungerer selvfølgelig med akkurat den samme syntaksen du allerede er vant til: `> [!type]`.\n\n" +
+		"Vil du ha en [!{{id}}]{innebygd callout} som denne? Bare legg til `[!type]{text}` midt i en setning, uten å bryte skriveflyten.\n\n" +
+		"> [!{{id}}] Blokk-callout\n" +
+		"> Den klassiske callout-en fungerer med akkurat den samme syntaksen du allerede er vant til: `> [!type]`.\n\n" +
 		"Callout Studio har mye mer å tilby! [Les mer]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'Slett callout "{{name}}"?',
@@ -746,6 +747,8 @@ export const nb: Record<string, string> = {
 		'ID-en "{{value}}" inneholder ugyldige tegn ("|", "[", "]", tabulatorer og linjeskift er ikke tillatt).',
 	"import.err.idMetadata":
 		'ID-en "{{value}}" inneholder et "|". I Obsidian er alt etter det første "|" callout-metadata, ikke en del av typen, så denne oppføringen beskriver callouten "{{id}}". Hoppet over, slik at ditt eksisterende "{{id}}" forblir uendret.',
+	"import.err.idReserved":
+		'ID-en "{{value}}" er reservert av Callout Studio for dens egne forhåndsvisninger og kan ikke importeres.',
 	"import.err.displayNameEmpty": "Visningsnavnet må ikke være tomt.",
 	"import.err.displayNameTooLong":
 		"Visningsnavnet er {{length}} tegn; maksimum er {{max}}.",

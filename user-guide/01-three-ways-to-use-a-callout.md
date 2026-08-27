@@ -35,6 +35,18 @@ Remember to check the settings [!note] before you continue.
 
 The pill sits inline with your text, so you can flag a word or phrase without interrupting the flow of a paragraph.
 
+### Giving the pill its own text
+
+Add text in curly braces straight after the token, and it goes **inside** the pill:
+
+```
+Want an [!note]{Inline Callout}? Just add [!type]{text} right in a sentence.
+```
+
+The `{` has to touch the `]` — `[!note] {text}` with a space is an ordinary pill followed by the literal words ` {text}`. Braces nest, so `{a {b} c}` is one piece of text, and the first `}` that closes the outer brace ends it.
+
+There's no backslash escape. If you need a literal brace right after a pill, put it in backticks — inline code is ignored when the pill's text is worked out.
+
 ## The same look everywhere
 
 All three forms render the same way in Live Preview, Reading view, and PDF export — so however you choose to write a callout, it will look consistent no matter how your note is viewed or exported.

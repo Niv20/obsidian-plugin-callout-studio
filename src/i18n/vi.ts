@@ -43,18 +43,19 @@ export const vi: Record<string, string> = {
 		"Quá trình quét chưa hoàn tất. Bạn có thể thử lại từ Cài đặt → Thông tin & bảo trì vault → Quét lại vault.",
 
 	"welcome.tooltip": "Giới thiệu về Callout Studio",
-	"welcome.title": "Chào mừng đến với Callout Studio",
+	"welcome.title": "Chào mừng đến với Callout Studio!",
 	"welcome.tagline":
-		"Giải pháp toàn diện của bạn để quản lý callout trong Obsidian.",
+		"Giải pháp toàn diện của bạn để tạo, tạo kiểu và quản lý callout trong Obsidian.",
 	"welcome.previewTitle": "Xem nó hoạt động",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio cho phép bạn tạo callout với biểu tượng, màu sắc và tên tùy chỉnh.\n\n" +
-		"Bạn có thể sử dụng cùng một callout theo **ba** cách khác nhau:\n\n" +
-		"## [!tip] Làm tiêu đề\n" +
+		"Bạn có thể sử dụng callout này theo **ba** cách khác nhau:\n\n" +
+		"## [!{{id}}] Callout làm tiêu đề\n" +
 		"Để biến bất kỳ tiêu đề nào thành tiêu đề kiểu callout, hãy thêm `[!type]` ngay sau các dấu `#`.\n\n" +
-		"Muốn có một callout nội dòng như thế này [!warning]? Chỉ cần thêm `[!type]` vào giữa câu, mà không làm gián đoạn mạch viết của bạn.\n\n" +
-		"> [!note] Callout thông thường\n" +
-		"> Tất nhiên, callout cổ điển vẫn hoạt động với đúng cú pháp mà bạn đã quen thuộc: `> [!type]`.\n\n" +
+		"Muốn có một [!{{id}}]{callout nội dòng} như thế này? Chỉ cần thêm `[!type]{text}` vào giữa câu, mà không làm gián đoạn mạch viết của bạn.\n\n" +
+		"> [!{{id}}] Callout khối\n" +
+		"> Callout cổ điển vẫn hoạt động với đúng cú pháp mà bạn đã quen thuộc: `> [!type]`.\n\n" +
 		"Callout Studio còn có nhiều thứ hơn thế để mang lại! [Tìm hiểu thêm]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'Xóa callout "{{name}}"?',
@@ -775,6 +776,8 @@ export const vi: Record<string, string> = {
 		'ID "{{value}}" chứa ký tự không hợp lệ ("|", "[", "]", tab và ngắt dòng không được phép).',
 	"import.err.idMetadata":
 		'ID "{{value}}" chứa "|". Trong Obsidian, mọi thứ sau "|" đầu tiên là siêu dữ liệu callout, không phải một phần của loại, vì vậy mục này mô tả callout "{{id}}". Đã bỏ qua để "{{id}}" hiện có của bạn không bị thay đổi.',
+	"import.err.idReserved":
+		'ID "{{value}}" được Callout Studio dành riêng cho các bản xem trước của chính nó và không thể nhập.',
 	"import.err.displayNameEmpty": "Tên hiển thị không được để trống.",
 	"import.err.displayNameTooLong":
 		"Tên hiển thị có {{length}} ký tự; tối đa là {{max}}.",

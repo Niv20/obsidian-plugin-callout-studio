@@ -43,18 +43,19 @@ export const it: Record<string, string> = {
 		"La scansione non è stata completata. Puoi riprovare da Impostazioni → Approfondimenti e manutenzione vault → Riscansiona vault.",
 
 	"welcome.tooltip": "Informazioni su Callout Studio",
-	"welcome.title": "Benvenuto in Callout Studio",
+	"welcome.title": "Benvenuto in Callout Studio!",
 	"welcome.tagline":
-		"La tua soluzione completa per gestire i callout di Obsidian.",
+		"La tua soluzione completa per creare, applicare stili e gestire i callout di Obsidian.",
 	"welcome.previewTitle": "Guardalo in azione",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio ti permette di creare callout con un'icona, colori e nome personalizzati.\n\n" +
-		"Puoi usare lo stesso callout in **tre** modi diversi:\n\n" +
-		"## [!tip] Come titolo\n" +
+		"Puoi usare questo callout in **tre** modi diversi:\n\n" +
+		"## [!{{id}}] Callout come titolo\n" +
 		"Per trasformare qualsiasi titolo in un titolo in stile callout, aggiungi `[!type]` subito dopo i `#`.\n\n" +
-		"Vuoi un callout inline come questo [!warning]? Basta aggiungere `[!type]` in mezzo a una frase, senza interrompere il flusso.\n\n" +
-		"> [!note] Block Callout\n" +
-		"> Naturalmente, il callout classico funziona con la stessa identica sintassi a cui sei già abituato: `> [!type]`.\n\n" +
+		"Vuoi un [!{{id}}]{callout inline} come questo? Basta aggiungere `[!type]{text}` in mezzo a una frase, senza interrompere il flusso.\n\n" +
+		"> [!{{id}}] Callout a blocco\n" +
+		"> Il callout classico funziona con la stessa identica sintassi a cui sei già abituato: `> [!type]`.\n\n" +
 		"Callout Studio ha molto altro da offrire! [Scopri di più]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'Elimina callout "{{name}}"?',
@@ -781,6 +782,8 @@ export const it: Record<string, string> = {
 		'L\'ID "{{value}}" contiene caratteri non validi ("|", "[", "]", tabulazioni e a capo non sono consentiti).',
 	"import.err.idMetadata":
 		'L\'ID "{{value}}" contiene un "|". In Obsidian tutto ciò che segue il primo "|" è metadata del callout, non parte del tipo; quindi questa voce descrive il callout "{{id}}". Saltata, in modo che il tuo "{{id}}" esistente resti invariato.',
+	"import.err.idReserved":
+		'L\'ID "{{value}}" è riservato da Callout Studio per le proprie anteprime e non può essere importato.',
 	"import.err.displayNameEmpty":
 		"Il nome visualizzato non deve essere vuoto.",
 	"import.err.displayNameTooLong":

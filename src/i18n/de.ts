@@ -44,18 +44,19 @@ export const de: Record<string, string> = {
 		"Der Scan wurde nicht abgeschlossen. Sie können es erneut über Einstellungen → Vault-Einblicke & Wartung → Vault erneut scannen versuchen.",
 
 	"welcome.tooltip": "Über Callout Studio",
-	"welcome.title": "Willkommen bei Callout Studio",
+	"welcome.title": "Willkommen bei Callout Studio!",
 	"welcome.tagline":
-		"Ihre umfassende Lösung zur Verwaltung von Obsidian-Callouts.",
+		"Ihre umfassende Lösung zum Erstellen, Gestalten und Verwalten von Obsidian-Callouts.",
 	"welcome.previewTitle": "In Aktion sehen",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Mit Callout Studio können Sie Callouts mit eigenem Symbol, eigenen Farben und Namen erstellen.\n\n" +
-		"Sie können denselben Callout auf **drei** verschiedene Arten verwenden:\n\n" +
-		"## [!tip] Als Überschrift\n" +
+		"Sie können diesen Callout auf **drei** verschiedene Arten verwenden:\n\n" +
+		"## [!{{id}}] Callout als Überschrift\n" +
 		"Um eine Überschrift in eine Callout-Überschrift zu verwandeln, fügen Sie `[!type]` direkt nach den `#` ein.\n\n" +
-		"Möchten Sie einen Inline-Callout wie diesen [!warning]? Fügen Sie einfach `[!type]` mitten in einem Satz ein, ohne Ihren Lesefluss zu unterbrechen.\n\n" +
-		"> [!note] Regulärer Callout\n" +
-		"> Natürlich funktioniert der klassische Callout mit genau der gleichen Syntax, die Sie bereits kennen: `> [!type]`.\n\n" +
+		"Möchten Sie einen [!{{id}}]{Inline-Callout} wie diesen? Fügen Sie einfach `[!type]{text}` mitten in einem Satz ein, ohne Ihren Lesefluss zu unterbrechen.\n\n" +
+		"> [!{{id}}] Block-Callout\n" +
+		"> Der klassische Callout funktioniert mit genau der gleichen Syntax, die Sie bereits kennen: `> [!type]`.\n\n" +
 		"Callout Studio hat noch viel mehr zu bieten! [Mehr erfahren]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'Callout "{{name}}" löschen?',
@@ -775,6 +776,8 @@ export const de: Record<string, string> = {
 		'Die ID "{{value}}" enthält ungültige Zeichen ("|", "[", "]", Tabulatoren und Zeilenumbrüche sind nicht erlaubt).',
 	"import.err.idMetadata":
 		'Die ID "{{value}}" enthält ein "|". In Obsidian ist alles nach dem ersten "|" Callout-Metadaten und nicht Teil des Typs. Daher beschreibt dieser Eintrag den Callout "{{id}}". Übersprungen, sodass Ihr vorhandenes "{{id}}" unverändert bleibt.',
+	"import.err.idReserved":
+		'Die ID "{{value}}" ist von Callout Studio für seine eigenen Vorschauen reserviert und kann nicht importiert werden.',
 	"import.err.displayNameEmpty": "Der Anzeigename darf nicht leer sein.",
 	"import.err.displayNameTooLong":
 		"Der Anzeigename hat {{length}} Zeichen; das Maximum ist {{max}}.",

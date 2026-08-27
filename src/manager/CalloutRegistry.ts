@@ -20,6 +20,7 @@ import {
 	DEFAULT_CALLOUTS,
 	DEFAULT_SETTINGS,
 	FALLBACK_ICON,
+	RESERVED_DEMO_IDS,
 } from "../constants";
 import { iconCacheKey, packFor } from "../icons/registry";
 import { resolveLucideId } from "../icons/lucideId";
@@ -1257,7 +1258,12 @@ export class CalloutRegistry {
 				!this.isUnshadowedPreview(d.id) &&
 				this.isBuiltInModified(d.id),
 		);
-		return [...this.getUserDefined(), ...modifiedBuiltIns];
+		// The same answer `isUnshadowedPreview` gives, minus its "for as long as
+		// a modal is open": an export must not depend on which windows happen
+		// to be open, nor carry a demo row an older data.json left behind.
+		return [...this.getUserDefined(), ...modifiedBuiltIns].filter(
+			(d) => !RESERVED_DEMO_IDS.has(d.id),
+		);
 	}
 
 	/**

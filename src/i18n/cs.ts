@@ -43,17 +43,19 @@ export const cs: Record<string, string> = {
 		"Prohledávání se nedokončilo. Zkuste to znovu z Nastavení → Statistiky a údržba vaultu → Znovu prohledat vault.",
 
 	"welcome.tooltip": "O aplikaci Callout Studio",
-	"welcome.title": "Vítejte v Callout Studio",
-	"welcome.tagline": "Vaše komplexní řešení pro správu calloutů v Obsidianu.",
+	"welcome.title": "Vítejte v Callout Studio!",
+	"welcome.tagline":
+		"Vaše komplexní řešení pro vytváření, stylování a správu calloutů v Obsidianu.",
 	"welcome.previewTitle": "Podívejte se na to v akci",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio vám umožňuje vytvářet callouty s vlastní ikonou, barvami a názvem.\n\n" +
-		"Stejný callout můžete použít **třemi** různými způsoby:\n\n" +
-		"## [!tip] Jako nadpis\n" +
+		"Tento callout můžete použít **třemi** různými způsoby:\n\n" +
+		"## [!{{id}}] Callout jako nadpis\n" +
 		"Chcete-li proměnit jakýkoli nadpis v nadpis ve stylu callout, přidejte `[!type]` hned za `#`.\n\n" +
-		"Chcete vložený callout, jako je tento [!warning]? Stačí přidat `[!type]` doprostřed věty, aniž byste přerušili plynulost textu.\n\n" +
-		"> [!note] Block Callout\n" +
-		"> Klasický callout samozřejmě funguje se stejnou syntaxí, na kterou jste už zvyklí: `> [!type]`.\n\n" +
+		"Chcete [!{{id}}]{vložený callout}, jako je tento? Stačí přidat `[!type]{text}` doprostřed věty, aniž byste přerušili plynulost textu.\n\n" +
+		"> [!{{id}}] Blokový callout\n" +
+		"> Klasický callout funguje se stejnou syntaxí, na kterou jste už zvyklí: `> [!type]`.\n\n" +
 		"Callout Studio má mnohem víc co nabídnout! [Zjistit více]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'Smazat callout "{{name}}"?',
@@ -763,6 +765,8 @@ export const cs: Record<string, string> = {
 		'ID "{{value}}" obsahuje neplatné znaky ("|", "[", "]", tabulátory a konce řádků nejsou povoleny).',
 	"import.err.idMetadata":
 		'ID "{{value}}" obsahuje "|". V Obsidianu je vše za prvním "|" metadata calloutu, nikoli součást typu, takže tento záznam popisuje callout "{{id}}". Přeskočeno, aby vaše stávající "{{id}}" zůstalo beze změny.',
+	"import.err.idReserved":
+		'ID "{{value}}" je vyhrazeno pro Callout Studio a jeho vlastní náhledy a nelze je importovat.',
 	"import.err.displayNameEmpty": "Zobrazovaný název nesmí být prázdný.",
 	"import.err.displayNameTooLong":
 		"Zobrazovaný název má {{length}} znaků; maximum je {{max}}.",

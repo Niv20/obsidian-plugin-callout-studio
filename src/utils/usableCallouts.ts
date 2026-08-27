@@ -12,6 +12,7 @@
  * is asked of the caller because only the plugin knows what Discovery's last
  * prune scan concluded.
  */
+import { RESERVED_DEMO_IDS } from "../constants";
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 
 /** The registry views {@link committedDefinitions} reads. */
@@ -75,6 +76,13 @@ export interface SuggestionSource {
  * renders as a Block callout and nothing else, so offering it where a heading
  * or an inline pill is being typed would insert syntax Callout Studio then
  * leaves as literal text. See `editor/renderShared.ts`.
+ *
+ * Unlike Quick Insert and the public API — which reach the registry through
+ * `committedDefinitions()` and so see only the three list views — this reads
+ * `getAll()`, deliberately, so a row is offerable the moment it exists. The one
+ * exception is `RESERVED_DEMO_IDS`: those reach `getAll()` too (that is how
+ * they get styled at all), and offering the splash screen's demo callout in a
+ * note would insert an id that stops existing when the modal closes.
  */
 export function suggestableCallouts(
 	registry: SuggestionSource,
@@ -82,7 +90,7 @@ export function suggestableCallouts(
 	isKnownZeroUsageFallback: (id: string) => boolean,
 ): CalloutDefinition[] {
 	const usable = filterUsableCallouts(
-		registry.getAll(),
+		registry.getAll().filter((def) => !RESERVED_DEMO_IDS.has(def.id)),
 		isKnownZeroUsageFallback,
 	);
 	return role === "regular"

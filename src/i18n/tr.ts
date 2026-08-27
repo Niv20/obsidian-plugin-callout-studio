@@ -43,18 +43,19 @@ export const tr: Record<string, string> = {
 		"Tarama tamamlanamadı. Ayarlar → Vault içgörüleri ve bakımı → Vault'u yeniden tara üzerinden tekrar deneyebilirsiniz.",
 
 	"welcome.tooltip": "Callout Studio hakkında",
-	"welcome.title": "Callout Studio'ya hoş geldiniz",
+	"welcome.title": "Callout Studio'ya hoş geldiniz!",
 	"welcome.tagline":
-		"Obsidian callout'larını yönetmek için eksiksiz çözümünüz.",
+		"Obsidian callout'larını oluşturmak, biçimlendirmek ve yönetmek için eksiksiz çözümünüz.",
 	"welcome.previewTitle": "Aksiyon halinde görün",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio, özel bir simge, renkler ve ad ile callout'lar oluşturmanızı sağlar.\n\n" +
-		"Aynı callout'u **üç** farklı şekilde kullanabilirsiniz:\n\n" +
-		"## [!tip] Başlık olarak\n" +
+		"Bu callout'u **üç** farklı şekilde kullanabilirsiniz:\n\n" +
+		"## [!{{id}}] Başlık callout'u\n" +
 		"Herhangi bir başlığı callout stiline dönüştürmek için `#` işaretlerinin hemen ardından `[!type]` ekleyin.\n\n" +
-		"Bunun gibi satır içi bir callout mu istiyorsunuz [!warning]? Akışınızı bozmadan bir cümlenin ortasına `[!type]` eklemeniz yeterli.\n\n" +
-		"> [!note] Block Callout\n" +
-		"> Elbette, klasik callout zaten alışık olduğunuz aynı sözdizimiyle çalışır: `> [!type]`.\n\n" +
+		"Bunun gibi bir [!{{id}}]{satır içi callout} mu istiyorsunuz? Akışınızı bozmadan bir cümlenin ortasına `[!type]{text}` eklemeniz yeterli.\n\n" +
+		"> [!{{id}}] Blok callout\n" +
+		"> Klasik callout zaten alışık olduğunuz aynı sözdizimiyle çalışır: `> [!type]`.\n\n" +
 		"Callout Studio'nun sunacağı çok daha fazlası var! [Daha fazla bilgi]({{repoUrl}}).\n",
 
 	"deleteModal.title": '"{{name}}" callout\'unu sil?',
@@ -767,6 +768,8 @@ export const tr: Record<string, string> = {
 		'"{{value}}" ID\'si geçersiz karakterler içeriyor ("|", "[", "]", sekmeler ve satır sonları kullanılamaz).',
 	"import.err.idMetadata":
 		'"{{value}}" ID\'si "|" içeriyor. Obsidian\'da ilk "|"den sonraki her şey callout\'un meta verisidir, türün bir parçası değildir; bu nedenle bu giriş "{{id}}" callout\'unu tanımlar. Mevcut "{{id}}"niz değiştirilmeden bırakılması için atlandı.',
+	"import.err.idReserved":
+		'"{{value}}" ID\'si, Callout Studio tarafından kendi önizlemeleri için ayrılmıştır ve içe aktarılamaz.',
 	"import.err.displayNameEmpty": "Görünen ad boş olmamalıdır.",
 	"import.err.displayNameTooLong":
 		"Görünen ad {{length}} karakter; maksimum {{max}}.",

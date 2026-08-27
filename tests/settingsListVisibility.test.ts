@@ -225,17 +225,22 @@ describe("a NON-demo preview standing in for nothing", () => {
 describe("the pick-a-callout surfaces do not all read the same list view", () => {
 	// Stated rather than smoothed over. `filterUsableCallouts` only ever drops
 	// discovered rows, so it cannot remove a preview — whichever list is handed
-	// to it decides that, and the three callers hand it different ones:
-	// `PluginAPI` unions the two list views (no preview can survive), while
-	// `AutoComplete` and `CommandEditorModal` pass `registry.getAll()` (every
-	// preview does).
+	// to it decides that, and the callers hand it different ones: `PluginAPI`
+	// unions the two list views (no preview can survive), while
+	// `CommandEditorModal` passes `registry.getAll()` (every preview does).
+	//
+	// `AutoComplete` used to be in that second group and is now half out of it:
+	// it goes through `suggestableCallouts`, which drops `RESERVED_DEMO_IDS` by
+	// name before filtering. A draft callout mid-edit still reaches the `[!`
+	// popover; the splash screen's and the style popups' demo ids no longer do.
+	// That narrowing is `previewPlaceholderId.test.ts`'s subject — what stays
+	// pinned here is the shape below, which `CommandEditorModal` still has.
 	//
 	// It is benign today for a reason that is worth writing down rather than
-	// relying on: a preview only exists while a modal is open, and both of the
-	// `getAll()` callers are unreachable then — the autocomplete popover belongs
-	// to the editor pane behind the modal, and the command editor opens over the
-	// command builder, never over the callout editor. If either of those ever
-	// stops being true, this test is where it shows up.
+	// relying on: a preview only exists while a modal is open, and the raw-map
+	// caller is unreachable then — the command editor opens over the command
+	// builder, never over the callout editor or the splash. If that ever stops
+	// being true, this test is where it shows up.
 	const registry = loaded();
 	registry.setPreviewDefinition(def({ id: PREVIEW_PLACEHOLDER_ID }), true);
 

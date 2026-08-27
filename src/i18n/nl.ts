@@ -43,18 +43,19 @@ export const nl: Record<string, string> = {
 		"Het scannen is niet voltooid. U kunt het opnieuw proberen via Instellingen → Vault-inzichten & onderhoud → Vault opnieuw scannen.",
 
 	"welcome.tooltip": "Over Callout Studio",
-	"welcome.title": "Welkom bij Callout Studio",
+	"welcome.title": "Welkom bij Callout Studio!",
 	"welcome.tagline":
-		"Uw complete oplossing voor het beheren van Obsidian-callouts.",
+		"Uw complete oplossing voor het maken, stylen en beheren van Obsidian-callouts.",
 	"welcome.previewTitle": "Bekijk het in actie",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Met Callout Studio kunt u callouts maken met een eigen icoon, kleuren en naam.\n\n" +
-		"U kunt dezelfde callout op **drie** verschillende manieren gebruiken:\n\n" +
-		"## [!tip] Als Heading Callout\n" +
+		"U kunt deze callout op **drie** verschillende manieren gebruiken:\n\n" +
+		"## [!{{id}}] Callout als kop\n" +
 		"Om een kop om te zetten in een kop in callout-stijl, voegt u `[!type]` direct na de `#`'s toe.\n\n" +
-		"Wilt u een Inline Callout zoals deze [!warning]? Voeg gewoon `[!type]` midden in een zin toe, zonder uw schrijfflow te onderbreken.\n\n" +
-		"> [!note] Block Callout\n" +
-		"> Natuurlijk werkt de klassieke callout met precies dezelfde syntaxis die u al gewend bent: `> [!type]`.\n\n" +
+		"Wilt u een [!{{id}}]{inline callout} zoals deze? Voeg gewoon `[!type]{text}` midden in een zin toe, zonder uw schrijfflow te onderbreken.\n\n" +
+		"> [!{{id}}] Blok-callout\n" +
+		"> De klassieke callout werkt met precies dezelfde syntaxis die u al gewend bent: `> [!type]`.\n\n" +
 		"Callout Studio heeft nog veel meer te bieden! [Meer informatie]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'Callout "{{name}}" verwijderen?',
@@ -777,6 +778,8 @@ export const nl: Record<string, string> = {
 		'De ID "{{value}}" bevat ongeldige tekens ("|", "[", "]", tabs en regeleinden zijn niet toegestaan).',
 	"import.err.idMetadata":
 		'De ID "{{value}}" bevat een "|". In Obsidian is alles na het eerste "|" callout-metadata, niet een onderdeel van het type, dus beschrijft dit item de callout "{{id}}". Overgeslagen, zodat uw bestaande "{{id}}" ongewijzigd blijft.',
+	"import.err.idReserved":
+		'De ID "{{value}}" is door Callout Studio gereserveerd voor de eigen voorbeelden en kan niet worden geïmporteerd.',
 	"import.err.displayNameEmpty": "De weergavenaam mag niet leeg zijn.",
 	"import.err.displayNameTooLong":
 		"De weergavenaam is {{length}} tekens; het maximum is {{max}}.",

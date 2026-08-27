@@ -439,5 +439,84 @@ never sees it. Reopenable any time via the info icon in settings, or the
 dev-convenience protocol handler `obsidian://callout-studio-welcome`
 registered in `main.ts`.
 
+#### It demonstrates itself with a demo callout of its own
+
+The right column is a real `LiveCalloutPreview` rendering `welcome.sample`,
+which shows all three render roles at once. It used to show them with the real
+built-ins `tip`, `warning` and `note`, and that was wrong twice over:
+
+- Those are exactly the ids a theme restyles **by name**, so on several popular
+  themes the heading and inline examples were unreadable.
+- For an *unmodified* built-in, `CSSInjector` deliberately hands the accent to
+  Obsidian's own `--callout-tip` variable rather than a hex (see
+  [CSS generation](06-css-generation.md)) — so the splash was advertising the
+  theme's colours rather than the plugin's.
+
+It now uses `WELCOME_DEMO_ID` (`demo`) and registers its own violet definition
+into the registry's transient preview slot via `beforeRender` —
+[`welcomeDemo.ts`](../src/settings/welcomeDemo.ts).
+
+##### Why this one id is *not* reserved
+
+`demo` is deliberately **absent** from `RESERVED_DEMO_IDS`, and that is the
+single respect in which it differs from the other two demo ids. The splash
+sample is copy a user reads, and `> [!global-style-demo]` puts plumbing in the
+middle of the one screen whose whole job is to teach the syntax — so this id is
+spelled the way a person would write it.
+
+The price is exactly what reservation buys, and it is not worth paying here.
+`new-callout-preview` and `global-style-demo` are spelled with a dash, which
+`sanitizeCalloutIdInput` folds to a space, so **no user can mint them** and
+reserving them costs nothing. `demo` is an ordinary word the editor does
+produce (`"Demo"` → `demo`), so reserving it would quietly cripple a callout
+somebody legitimately named "Demo": filtered out of the autocomplete, dropped
+from their export, rejected by their own re-import — with nothing in the editor
+telling them the name was taken. A reserved id has to be one nobody can reach.
+
+What stands in for reservation is that the definition exists **only while the
+splash is open**, which is all the isolation it needs: `setPreviewDefinition`
+never persists and never notifies, `definitionsForLists()` hides it from every
+settings list, and if the user *does* own a real `demo` the preview slot
+shadows it and hands the real row back on close (`previewShadowedDef`). The one
+residue is cosmetic and transient — their own `[!demo]` callouts in a note
+behind the modal repaint violet until it closes. `tests/welcomeSample.test.ts`
+pins the non-reservation so a later tidy-up cannot undo the reasoning.
+
+Two halves are needed, and only together:
+
+1. **The id**, which removes the by-name attack — no theme has a rule for an id
+   it has never heard of.
+2. **A scoped hardening block in `styles.css`**, which handles what an id change
+   structurally cannot: a theme's *generic* selectors. `.callout { … !important }`
+   still reaches the block role, and plain heading rules still reach the heading
+   role — the injected `.cs-heading-callout` / `.cs-inline-callout` rules carry
+   no `!important` at all, on purpose, so a theme wins those without a fight.
+   The block restates the same values under `.cs-welcome-modal`, keyed on the
+   demo id, with repeated compounds for weight (the trick
+   `manager/theme/studioWeight.ts` uses). Among `!important` author declarations
+   the higher specificity wins, so it survives; and because it is scoped to the
+   modal and the id, it can reach nothing else — load-bearing here rather than
+   tidiness, since a user may own a real `demo`.
+
+   It restates, and does not invent. All three roles carry
+   `color-mix(in oklch, <accent> 12%, transparent)`, which is
+   `.cs-heading-callout`'s and `.cs-inline-callout`'s own default formula copied
+   verbatim: the hardening changes the *weight* of the plugin's answer, never
+   the answer. That is also why the inline example is a tint and not the solid
+   violet lozenge it was for one revision — a solid pill is a look the plugin
+   gives no other inline callout, so the splash was demonstrating something
+   users could not reproduce.
+
+`onDestroy` clears the slot and re-injects. That inject is not just tidying: on
+a fresh install this modal holds a preview definition during the very first
+launch, and `injectNow` skips the startup CSS snapshot for as long as one is
+live — so this is the inject that writes it.
+
+The demo never becomes a real callout. `isDemo` keeps it out of the settings
+lists and out of `data.json`, and the slot is cleared on close — see
+[Callout registry](05-callout-registry.md#reserved-demo-ids) for the permanent
+guarantees the other two demo ids get on top of that, and the section above for
+why this one does not take them.
+
 ---
 Next chapter: [16-i18n.md](16-i18n.md)

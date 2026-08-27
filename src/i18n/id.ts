@@ -43,17 +43,19 @@ export const id: Record<string, string> = {
 		"Pemindaian tidak selesai. Anda dapat mencoba lagi dari Pengaturan → Wawasan & pemeliharaan vault → Pindai ulang vault.",
 
 	"welcome.tooltip": "Tentang Callout Studio",
-	"welcome.title": "Selamat datang di Callout Studio",
-	"welcome.tagline": "Solusi lengkap Anda untuk mengelola callout Obsidian.",
+	"welcome.title": "Selamat datang di Callout Studio!",
+	"welcome.tagline":
+		"Solusi lengkap Anda untuk membuat, menata gaya, dan mengelola callout Obsidian.",
 	"welcome.previewTitle": "Lihat dalam aksi",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio memungkinkan Anda membuat callout dengan ikon, warna, dan nama khusus.\n\n" +
-		"Anda dapat menggunakan callout yang sama dengan **tiga** cara berbeda:\n\n" +
-		"## [!tip] Sebagai Heading Callout\n" +
+		"Anda dapat menggunakan callout ini dengan **tiga** cara berbeda:\n\n" +
+		"## [!{{id}}] Callout sebagai judul\n" +
 		"Untuk mengubah judul apa pun menjadi judul bergaya callout, tambahkan `[!type]` tepat setelah `#`.\n\n" +
-		"Ingin Inline Callout seperti ini [!warning]? Cukup tambahkan `[!type]` di tengah kalimat, tanpa mengganggu alur tulisan Anda.\n\n" +
-		"> [!note] Block Callout\n" +
-		"> Tentu saja, callout klasik tetap berfungsi dengan sintaks yang sama persis seperti yang sudah Anda kenal: `> [!type]`.\n\n" +
+		"Ingin [!{{id}}]{callout inline} seperti ini? Cukup tambahkan `[!type]{text}` di tengah kalimat, tanpa mengganggu alur tulisan Anda.\n\n" +
+		"> [!{{id}}] Callout blok\n" +
+		"> Callout klasik tetap berfungsi dengan sintaks yang sama persis seperti yang sudah Anda kenal: `> [!type]`.\n\n" +
 		"Callout Studio masih punya banyak hal lain untuk ditawarkan! [Pelajari lebih lanjut]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'Hapus callout "{{name}}"?',
@@ -771,6 +773,8 @@ export const id: Record<string, string> = {
 		'ID "{{value}}" mengandung karakter tidak valid ("|", "[", "]", tab, dan baris baru tidak diizinkan).',
 	"import.err.idMetadata":
 		'ID "{{value}}" mengandung "|". Di Obsidian, semua yang ada setelah "|" pertama adalah metadata callout, bukan bagian dari tipenya, sehingga entri ini mendeskripsikan callout "{{id}}". Dilewati, sehingga "{{id}}" yang sudah ada tidak berubah.',
+	"import.err.idReserved":
+		'ID "{{value}}" dicadangkan oleh Callout Studio untuk pratinjaunya sendiri dan tidak dapat diimpor.',
 	"import.err.displayNameEmpty": "Nama tampilan tidak boleh kosong.",
 	"import.err.displayNameTooLong":
 		"Nama tampilan memiliki {{length}} karakter; maksimum adalah {{max}}.",

@@ -22,7 +22,12 @@ import {
 	applyImportedStyleMode,
 	styleModeImportIssue,
 } from "./importStyleMode";
-import { FALLBACK_ICON, MAX_TAG_LENGTH, MAX_TAGS_COUNT } from "../constants";
+import {
+	FALLBACK_ICON,
+	MAX_TAG_LENGTH,
+	MAX_TAGS_COUNT,
+	RESERVED_DEMO_IDS,
+} from "../constants";
 import { createIconNameCheck } from "../icons/nameCheck";
 import { ICON_PACK_IDS } from "../icons/registry";
 import { calloutIdentity, normalizeCalloutId } from "./calloutId";
@@ -159,6 +164,17 @@ export function validateIdString(
 			level: "error",
 			messageKey: "import.err.idTooLong",
 			params: { value: id, max: MAX_TAG_LENGTH, length: id.length },
+		});
+		ok = false;
+	}
+	// The preview-only ids reach `getAll()` by design, so an imported row under
+	// one would restyle the vault permanently — from a list that never shows it.
+	if (RESERVED_DEMO_IDS.has(id)) {
+		push({
+			field,
+			level: "error",
+			messageKey: "import.err.idReserved",
+			params: { value: id },
 		});
 		ok = false;
 	}

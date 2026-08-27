@@ -42,17 +42,18 @@ export const zh: Record<string, string> = {
 		"扫描未完成。您可以从「设置 → 库洞察与维护 → 重新扫描库」重试。",
 
 	"welcome.tooltip": "关于 Callout Studio",
-	"welcome.title": "欢迎使用 Callout Studio",
-	"welcome.tagline": "管理 Obsidian callout 的完整解决方案。",
+	"welcome.title": "欢迎使用 Callout Studio！",
+	"welcome.tagline": "创建、设计和管理 Obsidian callout 的完整解决方案。",
 	"welcome.previewTitle": "查看实际效果",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio 让您可以创建带有自定义图标、颜色和名称的 callout。\n\n" +
-		"同一个 callout 可以用**三**种不同的方式使用：\n\n" +
-		"## [!tip] 作为标题\n" +
+		"这个 callout 可以用**三**种不同的方式使用：\n\n" +
+		"## [!{{id}}] 标题 callout\n" +
 		"要把任意标题变成 callout 样式的标题，只需在 `#` 后面直接加上 `[!type]`。\n\n" +
-		"想要像这样的行内 callout [!warning] 吗？只需在句子中加入 `[!type]`，不会打断您的写作。\n\n" +
-		"> [!note] 常规 callout\n" +
-		"> 当然，经典的 callout 依然使用您熟悉的语法：`> [!type]`。\n\n" +
+		"想要这样的 [!{{id}}]{行内 callout} 吗？只需在句子中加入 `[!type]{text}`，不会打断您的写作。\n\n" +
+		"> [!{{id}}] 块级 callout\n" +
+		"> 经典的 callout 依然使用您熟悉的语法：`> [!type]`。\n\n" +
 		"Callout Studio 还有更多功能等您发现！[了解更多]({{repoUrl}})。\n",
 
 	"deleteModal.title": '删除 callout "{{name}}"？',
@@ -752,6 +753,8 @@ export const zh: Record<string, string> = {
 		'ID"{{value}}"包含无效字符（不允许使用"|"、"["、"]"、制表符和换行符）。',
 	"import.err.idMetadata":
 		'ID"{{value}}"包含"|"。在 Obsidian 中，第一个"|"后面的所有内容都是 callout 元数据，而非类型的一部分，因此此条目描述的是“{{id}}”callout。已跳过，您现有的“{{id}}”保持不变。',
+	"import.err.idReserved":
+		'ID"{{value}}"已被 Callout Studio 保留用于其自身的预览，无法导入。',
 	"import.err.displayNameEmpty": "显示名称不能为空。",
 	"import.err.displayNameTooLong":
 		"显示名称长度为 {{length}} 个字符；最大值为 {{max}}。",

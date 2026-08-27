@@ -40,8 +40,16 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { DEFAULT_CALLOUTS, PREVIEW_PLACEHOLDER_ID } from "../src/constants";
-import { STYLE_DEMO_ID } from "../src/settings/GlobalStyleModal";
+import {
+	DEFAULT_CALLOUTS,
+	PREVIEW_PLACEHOLDER_ID,
+	RESERVED_DEMO_IDS,
+	STYLE_DEMO_ID,
+} from "../src/constants";
+import { buildKnownCalloutIds } from "../src/manager/knownCalloutIds";
+import { scanStringForUnknownCallouts } from "../src/utils/vaultCalloutScanner";
+import { suggestableCallouts } from "../src/utils/usableCallouts";
+import { validateIdString } from "../src/utils/importValidator";
 import { sanitizeCalloutIdInput } from "../src/utils/calloutId";
 import { readRepoFile } from "./support/sourceScan";
 import type { CalloutDefinition, PluginData } from "../src/types";
@@ -122,8 +130,10 @@ describe("no reserved demo id names anything real", () => {
 				for (const spelling of [
 					demoId,
 					demoId.replace(/-/g, " "),
-					demoId.replace(/(^|-)(\w)/g, (_m, sep: string, c: string) =>
-						`${sep}${c.toUpperCase()}`,
+					demoId.replace(
+						/(^|-)(\w)/g,
+						(_m: string, sep: string, c: string) =>
+							`${sep}${c.toUpperCase()}`,
 					),
 					demoId.replace(/-/g, " - "),
 				]) {
@@ -131,6 +141,89 @@ describe("no reserved demo id names anything real", () => {
 					assert.ok(!sanitized.includes("-"), spelling);
 					assert.notStrictEqual(sanitized, demoId, spelling);
 				}
+			});
+
+			it("is listed in RESERVED_DEMO_IDS", () => {
+				// The four claims below are all keyed off that set, so an id
+				// that reserves itself in name only would pass every one of
+				// them vacuously.
+				assert.ok(RESERVED_DEMO_IDS.has(demoId));
+			});
+
+			it("counts as known, so discovery never mints a row for it", () => {
+				// `buildKnownCalloutIds` used to answer purely from `getAll()`,
+				// which meant a demo id was "known" only while a modal held it
+				// in the preview slot. A note that writes `[!global-style-demo]`
+				// — pasted from a screenshot, or left behind by a crash — would
+				// then be discovered the moment that modal closed, and appear
+				// as a row the user never made and cannot explain.
+				//
+				// Asked through the real scanner rather than of the set: the
+				// set holds a *known* id's two spellings and the scanner tests
+				// a *found* id's two spellings against it, so only the pair
+				// together answers "would this be discovered".
+				const known = buildKnownCalloutIds(loaded());
+				for (const spelling of [demoId, demoId.replace(/-/g, " ")]) {
+					assert.deepStrictEqual(
+						scanStringForUnknownCallouts(
+							[
+								`> [!${spelling}] Block`,
+								"",
+								`## [!${spelling}] Heading`,
+								"",
+								`An [!${spelling}] pill.`,
+							].join("\n"),
+							known,
+						),
+						[],
+						spelling,
+					);
+				}
+			});
+
+			it("is never offered by the `[!` autocomplete", () => {
+				// Autocomplete reads `getAll()` rather than the list views —
+				// deliberately, so a fresh row is offerable at once — which is
+				// exactly why the demo ids need excluding here by name. The
+				// registry is seeded with the demo raised on a *fresh* id, the
+				// shape a real preview takes.
+				const registry = loaded();
+				registry.setPreviewDefinition(def({ id: demoId }), true);
+				for (const role of ["regular", "heading", "inline"] as const) {
+					const offered = suggestableCallouts(
+						registry,
+						role,
+						() => false,
+					).map((d) => d.id);
+					assert.ok(!offered.includes(demoId), `${demoId} / ${role}`);
+				}
+			});
+
+			it("is rejected by the import validator", () => {
+				const issues: Array<{ messageKey: string }> = [];
+				const ok = validateIdString(
+					demoId,
+					(issue) => issues.push(issue),
+					"id",
+				);
+				assert.strictEqual(ok, false, demoId);
+				assert.ok(
+					issues.some((i) => i.messageKey === "import.err.idReserved"),
+					JSON.stringify(issues),
+				);
+			});
+
+			it("never reaches an export, even shadowing a real row", () => {
+				// `isUnshadowedPreview` already covers the ordinary case. This
+				// is the one it does not: a row that somehow exists under the
+				// reserved id with no preview active at all — an older
+				// data.json, or a crash mid-preview — must still not leave in
+				// a backup file.
+				const registry = loaded([
+					def({ id: demoId, displayName: "Leaked" }),
+				]);
+				const exported = ids(registry.getExportableDefinitions());
+				assert.ok(!exported.includes(demoId), exported.join(", "));
 			});
 		});
 	}

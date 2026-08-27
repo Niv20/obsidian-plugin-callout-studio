@@ -393,5 +393,58 @@ or force a document-wide re-render. `SettingsTab` subscribes to this so its row
 swatches track the editor modal's colour picker live, without either side
 touching disk.
 
+## Reserved demo ids
+
+```ts
+// constants.ts
+export const PREVIEW_PLACEHOLDER_ID = "new-callout-preview";
+export const STYLE_DEMO_ID = "global-style-demo";
+export const RESERVED_DEMO_IDS: ReadonlySet<string> = new Set([...]);
+export const WELCOME_DEMO_ID = "demo"; // NOT in the set — see below
+```
+
+Two ids exist only to be previewed: the callout editor's placeholder for an
+unnamed draft, and the demo callout the per-role style popups render themselves
+with.
+
+`isDemo` above is **not** the whole story, and reading it as such is the mistake
+this section exists to prevent. It hides a row from the settings lists, and only
+for as long as a modal holds the preview slot. But the preview reaches `getAll()`
+by design — that is what gets it styled at all — and several surfaces read
+`getAll()` directly. So the ids are reserved *permanently*, and independently of
+any modal being open:
+
+| Surface | Where | What it stops |
+|---|---|---|
+| Auto-discovery | `manager/knownCalloutIds.ts` seeds both id forms unconditionally | A note that writes `[!global-style-demo]` — pasted from a screenshot, or left by a crash — minting a row the user never made |
+| Autocomplete | `utils/usableCallouts.ts` → `suggestableCallouts` filters the set | The `[!` popover offering an id that stops existing when the modal closes |
+| Import | `utils/importValidator.ts` → `validateIdString` rejects with `import.err.idReserved` | An imported row inheriting a modal's vault-wide restyling power, permanently, from a list that never shows it |
+| Export | `getExportableDefinitions()` filters the set | A backup depending on which windows happened to be open |
+
+Quick Insert and the public API already exclude them, via
+`committedDefinitions()` + `getReal()`.
+
+Both ids are spelled with a **dash**, and `sanitizeCalloutIdInput` folds dash
+runs into spaces, so no name a user can type in the ID field normalizes onto
+one. That is what keeps `previewShadowedDef` null, which is what
+`isUnshadowedPreview` is built on. `tests/previewPlaceholderId.test.ts` pins
+every claim on this page.
+
+### The third demo id, and why it is not in the set
+
+The [welcome splash](15-settings-ui-and-modals.md#why-this-one-id-is-not-reserved)
+has a demo callout too, `WELCOME_DEMO_ID = "demo"`, and it is deliberately
+**not** reserved. The dash is the whole mechanism above, and `demo` does not
+have one: `sanitizeCalloutIdInput("Demo")` returns exactly `demo`, so a user can
+own this id. Reserving it would then apply all four rows of that table to
+*their* callout — dropped from the autocomplete, dropped from the export,
+rejected by their own re-import — silently, since nothing in the editor checks
+the set. A reserved id has to be one nobody can reach; this one is reachable, so
+it takes the `isDemo` half only and lives just as long as the modal does.
+
+That is also the one place `previewShadowedDef` earns its keep in production
+rather than in principle: if the user does own a `demo`, the splash shadows it
+and the slot hands the real row back on close.
+
 ---
 Next chapter: [06-css-generation.md](06-css-generation.md)

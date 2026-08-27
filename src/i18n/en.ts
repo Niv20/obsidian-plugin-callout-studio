@@ -57,17 +57,25 @@ export const en: Record<string, string> = {
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
 	"welcome.tooltip": "About Callout Studio",
-	"welcome.title": "Welcome to Callout Studio",
-	"welcome.tagline": "Your complete solution for managing Obsidian callouts.",
+	"welcome.title": "Welcome to Callout Studio!",
+	"welcome.tagline":
+		"Your complete solution for creating, styling and managing Obsidian callouts.",
 	"welcome.previewTitle": "See it in action",
+	"welcome.demoName": "Callout Studio",
+	// `{{id}}` is the demo callout the splash styles itself with, so the three
+	// examples cannot be hijacked by a theme that restyles `tip` or `warning`
+	// (see settings/welcomeDemo.ts). Two structural rules for anyone
+	// translating this: `{` must follow `]` with NO space or the payload is
+	// read as literal prose, and the sample must END outside a block callout
+	// (see EmbeddableMarkdownEditor.parkCursor).
 	"welcome.sample":
 		"Callout Studio lets you create callouts with a custom icon, colors, and name.\n\n" +
-		"You can use the same callout in **three** different ways:\n\n" +
-		"## [!tip] As a Heading Callout\n" +
+		"You can use this callout in **three** different ways:\n\n" +
+		"## [!{{id}}] Heading Callout\n" +
 		"To turn any heading into a callout-style heading, add `[!type]` right after the `#`s.\n\n" +
-		"Want an Inline Callout like this [!warning]? Just add `[!type]` right in a sentence, without breaking your flow.\n\n" +
-		"> [!note] Block Callout\n" +
-		"> Of course, the classic callout works with the exact same syntax you're already used to: `> [!type]`.\n\n" +
+		"Want an [!{{id}}]{Inline Callout}? Just add `[!type]{text}` right in a sentence, without breaking your flow.\n\n" +
+		"> [!{{id}}] Block Callout\n" +
+		"> The classic callout works with the exact syntax you're already used to: `> [!type]`.\n\n" +
 		"There's a lot more Callout Studio has to offer! [Learn more]({{repoUrl}}).\n",
 
 	// Delete-callout modal (trash button on user rows)
@@ -401,7 +409,7 @@ export const en: Record<string, string> = {
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — supplied by your theme',
+	"themePreview.title": "{{name}} — supplied by your theme",
 	"themePreview.owned":
 		'{{theme}} supplies and styles "{{name}}". Callout Studio will not override it, so its Block callout looks exactly as your theme draws it.',
 	"themePreview.readOnly":
@@ -850,6 +858,8 @@ export const en: Record<string, string> = {
 		'ID "{{value}}" contains invalid characters ("|", "[", "]", tabs, and line breaks are not allowed).',
 	"import.err.idMetadata":
 		'ID "{{value}}" contains a "|". In Obsidian everything after the first "|" is callout metadata, not part of the type, so this entry describes the "{{id}}" callout. Skipped, so your existing "{{id}}" is left untouched.',
+	"import.err.idReserved":
+		'ID "{{value}}" is reserved by Callout Studio for its own previews and can\'t be imported.',
 	"import.err.displayNameEmpty": "Display name must not be empty.",
 	"import.err.displayNameTooLong":
 		"Display name is {{length}} characters; the maximum is {{max}}.",

@@ -43,18 +43,19 @@ export const ro: Record<string, string> = {
 		"Scanarea nu s-a finalizat. Puteți încerca din nou din Setări → Informații și întreținere vault → Rescaneaza vault.",
 
 	"welcome.tooltip": "Despre Callout Studio",
-	"welcome.title": "Bine ați venit în Callout Studio",
+	"welcome.title": "Bine ați venit în Callout Studio!",
 	"welcome.tagline":
-		"Soluția dvs. completă pentru gestionarea callouts din Obsidian.",
+		"Soluția dvs. completă pentru crearea, stilizarea și gestionarea callout-urilor din Obsidian.",
 	"welcome.previewTitle": "Vedeți-l în acțiune",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studio vă permite să creați callouts cu o pictogramă, culori și un nume personalizate.\n\n" +
-		"Puteți folosi același callout în **trei** moduri diferite:\n\n" +
-		"## [!tip] Ca titlu\n" +
+		"Puteți folosi acest callout în **trei** moduri diferite:\n\n" +
+		"## [!{{id}}] Callout ca titlu\n" +
 		"Pentru a transforma orice titlu într-un titlu în stil callout, adăugați `[!type]` imediat după `#`-uri.\n\n" +
-		"Doriți un callout inline ca acesta [!warning]? Adăugați pur și simplu `[!type]` în mijlocul unei propoziții, fără a vă întrerupe scrisul.\n\n" +
-		"> [!note] Block Callout\n" +
-		"> Desigur, callout-ul clasic funcționează cu exact aceeași sintaxă cu care sunteți deja obișnuiți: `> [!type]`.\n\n" +
+		"Doriți un [!{{id}}]{callout inline} ca acesta? Adăugați pur și simplu `[!type]{text}` în mijlocul unei propoziții, fără a vă întrerupe scrisul.\n\n" +
+		"> [!{{id}}] Callout de bloc\n" +
+		"> Callout-ul clasic funcționează cu exact aceeași sintaxă cu care sunteți deja obișnuiți: `> [!type]`.\n\n" +
 		"Callout Studio are mult mai multe de oferit! [Aflați mai multe]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'Ștergeți callout "{{name}}"?',
@@ -771,6 +772,8 @@ export const ro: Record<string, string> = {
 		'ID-ul "{{value}}" conține caractere invalide ("|", "[", "]", tabulatorii și sfârșiturile de linie nu sunt permise).',
 	"import.err.idMetadata":
 		'ID-ul "{{value}}" conține un "|". În Obsidian, tot ce urmează după primul "|" reprezintă metadate ale callout-ului, nu parte a tipului, deci această intrare descrie callout-ul "{{id}}". Ignorată, pentru ca "{{id}}" existent să rămână neschimbat.',
+	"import.err.idReserved":
+		'ID-ul "{{value}}" este rezervat de Callout Studio pentru propriile previzualizări și nu poate fi importat.',
 	"import.err.displayNameEmpty": "Numele afișat nu trebuie să fie gol.",
 	"import.err.displayNameTooLong":
 		"Numele afișat are {{length}} caractere; maximul este {{max}}.",

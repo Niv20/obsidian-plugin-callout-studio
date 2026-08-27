@@ -39,18 +39,19 @@ export const fi: Record<string, string> = {
 		"Skannaus ei valmistunut. Voit yrittää uudelleen kohdasta Asetukset → Holvin näkemykset ja huolto → Skannaa holvi uudelleen.",
 
 	"welcome.tooltip": "Tietoja Callout Studiosta",
-	"welcome.title": "Tervetuloa Callout Studioon",
+	"welcome.title": "Tervetuloa Callout Studioon!",
 	"welcome.tagline":
-		"Täydellinen ratkaisusi Obsidian-callouttien hallintaan.",
+		"Täydellinen ratkaisusi Obsidian-callouttien luomiseen, tyylittelyyn ja hallintaan.",
 	"welcome.previewTitle": "Näe se toiminnassa",
+	"welcome.demoName": "Callout Studio",
 	"welcome.sample":
 		"Callout Studion avulla voit luoda callouteja mukautetulla kuvakkeella, väreillä ja nimellä.\n\n" +
-		"Voit käyttää samaa calloutia **kolmella** eri tavalla:\n\n" +
-		"## [!tip] Otsikkona\n" +
+		"Voit käyttää tätä calloutia **kolmella** eri tavalla:\n\n" +
+		"## [!{{id}}] Callout otsikkona\n" +
 		"Muuttaaksesi minkä tahansa otsikon callout-tyyliseksi otsikoksi, lisää `[!type]` heti `#`-merkkien jälkeen.\n\n" +
-		"Haluatko tällaisen upotetun calloutin [!warning]? Lisää vain `[!type]` keskelle lausetta, kirjoituksen kulkua katkaisematta.\n\n" +
-		"> [!note] Block Callout\n" +
-		"> Klassinen callout toimii tietysti täsmälleen samalla syntaksilla, johon olet jo tottunut: `> [!type]`.\n\n" +
+		"Haluatko tällaisen [!{{id}}]{upotetun calloutin}? Lisää vain `[!type]{text}` keskelle lausetta, kirjoituksen kulkua katkaisematta.\n\n" +
+		"> [!{{id}}] Lohko-callout\n" +
+		"> Klassinen callout toimii täsmälleen samalla syntaksilla, johon olet jo tottunut: `> [!type]`.\n\n" +
 		"Callout Studiolla on paljon muutakin tarjottavaa! [Lue lisää]({{repoUrl}}).\n",
 
 	"deleteModal.title": 'Poistetaanko callout "{{name}}"?',
@@ -754,6 +755,8 @@ export const fi: Record<string, string> = {
 		'Tunnus "{{value}}" sisältää virheellisiä merkkejä ("|", "[", "]", sarkaimet ja rivinvaihdot eivät ole sallittuja).',
 	"import.err.idMetadata":
 		'Tunnus "{{value}}" sisältää "|". Obsidianissa kaikki ensimmäisen "|" jälkeen on callout-metatietoa, ei osa tyyppiä, joten tämä merkintä kuvaa calloutia "{{id}}". Ohitettu, jotta olemassa oleva "{{id}}" pysyy muuttumattomana.',
+	"import.err.idReserved":
+		'Tunnus "{{value}}" on Callout Studion varaama sen omia esikatseluja varten, eikä sitä voi tuoda.',
 	"import.err.displayNameEmpty": "Näyttönimi ei saa olla tyhjä.",
 	"import.err.displayNameTooLong":
 		"Näyttönimi on {{length}} merkkiä; enimmäismäärä on {{max}}.",
