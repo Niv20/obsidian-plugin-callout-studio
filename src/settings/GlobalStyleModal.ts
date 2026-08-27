@@ -26,13 +26,7 @@ import type { SettingsTabPlugin } from "./sections/types";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { CSS_FOLD_ARROW, CSS_HEADING_LINE } from "../editor/renderShared";
 import { applyModalChrome } from "./modalChrome";
-
-/**
- * Reserved id for the popups' neutral demo callout; a user callout occupying
- * it is shadowed, then restored. Reserved as `PREVIEW_PLACEHOLDER_ID` is and
- * for its reason: it reaches `getAll()`, so a popup restyles it vault-wide.
- */
-export const STYLE_DEMO_ID = "global-style-demo";
+import { STYLE_DEMO_ID } from "../constants";
 
 /** Neutral gray accent used by the demo callout in both theme modes. */
 const STYLE_DEMO_GRAY = "#808080";

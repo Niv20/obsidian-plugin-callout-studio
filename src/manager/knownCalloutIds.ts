@@ -12,6 +12,7 @@
  * settings tab can ask without a forwarder threaded through the plugin.
  */
 import { calloutIdentity, normalizeCalloutId } from "../utils/calloutId";
+import { RESERVED_DEMO_IDS } from "../constants";
 import type { CalloutDefinition } from "../types";
 
 /** All this needs of a registry, so a caller can pass anything that lists rows. */
@@ -43,5 +44,12 @@ export function buildKnownCalloutIds(registry: KnownIdSource): Set<string> {
 		addBothForms(def.id);
 		for (const a of def.aliases ?? []) addBothForms(a);
 	}
+	// The preview-only ids, always — not merely while a modal happens to hold
+	// one in the registry's preview slot. "Known" is what stops discovery from
+	// minting a row, and a note that writes `[!global-style-demo]` (pasted from
+	// a screenshot, say) must never become a callout the user then has to
+	// delete. Listing them here is also the cheaper half of the deal: the
+	// scanner asks this set, so nothing downstream needs its own exception.
+	for (const id of RESERVED_DEMO_IDS) addBothForms(id);
 	return known;
 }

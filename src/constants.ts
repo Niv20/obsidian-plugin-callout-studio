@@ -60,6 +60,65 @@ export const PLUGIN_ICON_ID = "paintbrush";
 export const PREVIEW_PLACEHOLDER_ID = "new-callout-preview";
 
 /**
+ * Reserved id for the neutral demo callout the per-role style popups and the
+ * welcome splash render. Reserved as {@link PREVIEW_PLACEHOLDER_ID} is and for
+ * its reason: it reaches `getAll()`, so a modal restyles it vault-wide.
+ *
+ * It lives here rather than beside either of its two users because
+ * `RESERVED_DEMO_IDS` below has to be readable from `manager/` and `utils/`,
+ * and neither may import a settings modal.
+ */
+export const STYLE_DEMO_ID = "global-style-demo";
+
+/**
+ * The ids that exist only to be previewed, and must therefore never become a
+ * callout the user can reach.
+ *
+ * The `isDemo` flag on the registry's preview slot keeps a demo out of the
+ * settings lists, but only for as long as a modal holds it — and it was never
+ * the whole story anyway, since `getAll()` (autocomplete, discovery's known-id
+ * set) reads straight past it. These ids are unreachable *permanently*: a note
+ * that happens to write `[!global-style-demo]` must not mint a row, an import
+ * must not carry one in, and neither may ever be offered or exported.
+ *
+ * Both are spelled with a dash, which `sanitizeCalloutIdInput` never produces,
+ * so the editor cannot mint one either — that is what keeps the preview slot's
+ * `previewShadowedDef` null and its list filter honest.
+ */
+export const RESERVED_DEMO_IDS: ReadonlySet<string> = new Set([
+	PREVIEW_PLACEHOLDER_ID,
+	STYLE_DEMO_ID,
+]);
+
+/**
+ * The id the welcome splash's three examples are written with.
+ *
+ * **Deliberately absent from {@link RESERVED_DEMO_IDS}, and that is the whole
+ * point of it being its own constant.** The splash sample is copy the user
+ * reads — `> [!global-style-demo]` puts plumbing in the middle of the one
+ * screen that is supposed to teach the syntax — so this one is spelled the way
+ * a person would write it.
+ *
+ * The cost of that is precisely what reserving buys, and it is not worth
+ * paying: `demo` is a plain word, so `sanitizeCalloutIdInput` DOES produce it
+ * (`"Demo"` → `demo`) and a user may legitimately own a callout with this id.
+ * Reserving it would then filter *their* callout out of the autocomplete, drop
+ * it from their exports and make their own file fail to re-import — silently,
+ * because nothing in the editor tells them the name is taken. A reserved id
+ * has to be one nobody can reach, and this is not one.
+ *
+ * What stands in for reservation is that this definition only exists **while
+ * the splash is open**, which is all the isolation it actually needs:
+ * `setPreviewDefinition(def, isDemo)` never persists, never notifies, and
+ * `definitionsForLists()` hides it from every settings list; if the user *does*
+ * own a real `demo`, the preview slot shadows it and hands the real row back on
+ * close (see `previewShadowedDef`). The one residue is cosmetic and transient —
+ * their own `[!demo]` callouts in a note behind the modal repaint violet until
+ * it closes.
+ */
+export const WELCOME_DEMO_ID = "demo";
+
+/**
  * First-run vault-scan threshold (number of markdown files).
  *
  * On the very first plugin install:
