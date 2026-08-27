@@ -17,18 +17,17 @@
  * i.e. it renders exactly like a real note, in the active theme, for free.
  */
 import { Component, type App, type Editor, type TFile } from "obsidian";
-import { EditorView } from "@codemirror/view";
-import {
-	EditorSelection,
-	EditorState,
-	Prec,
-	StateEffect,
-} from "@codemirror/state";
+import type { EditorView } from "@codemirror/view";
+import { EditorSelection, StateEffect } from "@codemirror/state";
 import {
 	createEditorOwner,
 	releaseActiveEditor,
 	type EditorOwner,
 } from "./embeddedEditorOwner";
+import {
+	readOnlyPreviewExtensions,
+	type PreviewWriteGate,
+} from "./previewReadOnly";
 
 /** Minimal shape of the internal edit view we touch. */
 interface InternalMarkdownEditor extends Component {
@@ -156,6 +155,12 @@ export interface EmbeddableMarkdownEditorOptions {
 export class EmbeddableMarkdownEditor {
 	private readonly instance: InternalMarkdownEditor;
 	private readonly readOnly: boolean;
+	/**
+	 * The permit {@link setValue} needs to get its own reseed past the
+	 * read-only transaction filter. Null until {@link applyReadOnly} runs, and
+	 * for a writable editor forever — neither case has a filter to get past.
+	 */
+	private writeGate: PreviewWriteGate | null = null;
 	private destroyed = false;
 	/** Handle of the pending blur-park timer, so destroy() can cancel it. */
 	private parkTimer: number | null = null;
@@ -214,63 +219,40 @@ export class EmbeddableMarkdownEditor {
 	/**
 	 * Make the editor read-only while keeping it interactive: selection/cursor
 	 * still work (so Obsidian's Live Preview reveals raw markdown on click), but
-	 * every input attempt is swallowed and reported via `onEditAttempt`.
+	 * no route can change the document, and each attempt is reported via
+	 * `onEditAttempt`. The rule itself — and why `EditorState.readOnly` alone
+	 * never sufficed — lives in {@link readOnlyPreviewExtensions}.
 	 *
-	 * `readOnly` is the real guarantee that nothing lands; the high-precedence
-	 * DOM handlers exist to surface the notice and stop the browser's default.
-	 *
-	 * Focus policy for previews:
-	 * - `tabindex="-1"` on the content element keeps Obsidian's modal
-	 *   focus-first pass (which skips `[tabindex="-1"]`) from dropping the
-	 *   caret into the preview when a popup opens. Clicking still focuses.
-	 * - On blur the caret is parked at the end of the document (see
-	 *   {@link parkCursor} for why it must not idle inside a callout).
+	 * On blur the caret is parked at the end of the document (see
+	 * {@link parkCursor} for why it must not idle inside a callout).
 	 */
 	private applyReadOnly(onEditAttempt?: () => void): void {
 		const cm = this.cm;
 		if (!cm) return;
-		const block = (event: Event): boolean => {
-			event.preventDefault();
-			onEditAttempt?.();
-			return true;
-		};
-		cm.dispatch({
-			effects: StateEffect.appendConfig.of([
-				EditorState.readOnly.of(true),
-				EditorView.contentAttributes.of({ tabindex: "-1" }),
-				EditorView.domEventHandlers({
-					blur: () => {
-						// Focus is what made this the app's active editor, and
-						// losing it is what makes that untrue. Releasing here
-						// narrows the window in which core reads the preview
-						// instead of the user's note down to exactly the time
-						// the preview is focused.
-						releaseActiveEditor(this.app, this.owner);
-						// Deferred: let CodeMirror finish processing the focus
-						// change before we move the selection. Blur is also
-						// exactly what fires when the modal closes, and the
-						// teardown runs in that same turn — so the handle is
-						// kept for destroy() to cancel, and a second blur
-						// replaces the pending timer rather than stacking one.
-						if (this.parkTimer !== null) {
-							window.clearTimeout(this.parkTimer);
-						}
-						this.parkTimer = window.setTimeout(() => {
-							this.parkTimer = null;
-							this.parkCursor();
-						}, 0);
-						return false;
-					},
-				}),
-				Prec.highest(
-					EditorView.domEventHandlers({
-						beforeinput: block,
-						paste: block,
-						drop: block,
-					}),
-				),
-			]),
+		const { extensions, gate } = readOnlyPreviewExtensions({
+			onEditAttempt,
+			onBlur: () => {
+				// Focus is what made this the app's active editor, and losing
+				// it is what makes that untrue. Releasing here narrows the
+				// window in which core reads the preview instead of the user's
+				// note down to exactly the time the preview is focused.
+				releaseActiveEditor(this.app, this.owner);
+				// Deferred: let CodeMirror finish processing the focus change
+				// before we move the selection. Blur is also exactly what fires
+				// when the modal closes, and the teardown runs in that same
+				// turn — so the handle is kept for destroy() to cancel, and a
+				// second blur replaces the pending timer rather than stacking.
+				if (this.parkTimer !== null) {
+					window.clearTimeout(this.parkTimer);
+				}
+				this.parkTimer = window.setTimeout(() => {
+					this.parkTimer = null;
+					this.parkCursor();
+				}, 0);
+			},
 		});
+		this.writeGate = gate;
+		cm.dispatch({ effects: StateEffect.appendConfig.of(extensions) });
 	}
 
 	/**
@@ -323,9 +305,19 @@ export class EmbeddableMarkdownEditor {
 		}
 	}
 
-	/** Replace the whole document. */
+	/**
+	 * Replace the whole document.
+	 *
+	 * This is the plugin's own write, not the user's, so it goes through the
+	 * gate — otherwise the read-only transaction filter would drop the reseed
+	 * along with everything else and the preview would freeze on its first
+	 * sample. Safe because the reseed is not user input: the preview mirrors a
+	 * form, so there is never anything typed here to clobber.
+	 */
 	setValue(value: string): void {
-		this.instance.set(value, false);
+		const write = (): void => this.instance.set(value, false);
+		if (this.writeGate) this.writeGate.allow(write);
+		else write();
 		// set() leaves the caret at position 0 — inside a callout when the
 		// sample starts with one (see parkCursor).
 		if (this.readOnly) this.parkCursor();

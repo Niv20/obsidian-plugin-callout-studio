@@ -17,6 +17,7 @@ import {
 	type PointerContext,
 } from "./resolve";
 import { addItems } from "./items";
+import { isReadOnlyPreviewTarget, stripEditingItems } from "./readOnlyPreview";
 
 const MENU_MOUSE_PATCH_KEY =
 	"callout-studio-context-menu.show-at-mouse-event@obsidian-plugin-callout-studio";
@@ -114,9 +115,25 @@ function maybeAddItems(
 	trigger: PointerContext,
 	injectedMenus: WeakSet<Menu>,
 ): void {
-	if (!plugin.settings.contextMenu.enabled || injectedMenus.has(menu)) {
+	if (injectedMenus.has(menu)) return;
+
+	// Ahead of the settings gate, deliberately. A user who turned this
+	// plugin's context menu off still gets a preview that cannot be edited —
+	// the two are unrelated questions, and answering them in the other order
+	// would make immutability a feature you can accidentally switch off.
+	if (isReadOnlyPreviewTarget(trigger.targetEl)) {
+		stripEditingItems(menu);
+		injectedMenus.add(menu);
+		menu.onHide(() => injectedMenus.delete(menu));
+		// No items of our own either: the fold-marker and cut/delete-section
+		// builders write through `context.editor`, which in a preview is the
+		// preview's own editor. The block-callout resolver reaches inside one
+		// regardless of `view` (see resolve.ts's widget path), so this is a
+		// real path, not a hypothetical one.
 		return;
 	}
+
+	if (!plugin.settings.contextMenu.enabled) return;
 
 	const context = resolveContext(plugin, trigger);
 	if (!context) return;
