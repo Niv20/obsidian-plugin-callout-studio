@@ -26,7 +26,7 @@
  * `setPreviewDefinition`'s `isDemo` flag covers all three, and it only exists
  * while this modal is open.
  */
-import { WELCOME_DEMO_ID } from "../constants";
+import { PLUGIN_ICON_ID, WELCOME_DEMO_ID } from "../constants";
 import { t } from "../i18n";
 import type { CalloutDefinition } from "../types";
 
@@ -49,8 +49,8 @@ export const WELCOME_DEMO_DARK = "#A78BFA";
  *
  * Deliberately shaped like `GlobalStyleModal.buildDemoDefinition()` — same
  * "not a real row" fields — and different in three places: its own id, the
- * colour (violet, not the popups' neutral gray) and the icon (`sparkles`, not
- * the popups' solid square).
+ * colour (violet, not the popups' neutral gray) and the icon (the plugin's own
+ * `PLUGIN_ICON_ID`, not the popups' solid square).
  *
  * `foldable: false` because a splash that can be collapsed into a bare header
  * has stopped demonstrating anything.
@@ -59,7 +59,7 @@ export function buildWelcomeDemoDefinition(): CalloutDefinition {
 	return {
 		id: WELCOME_DEMO_ID,
 		displayName: t("welcome.demoName"),
-		icon: { type: "lucide", value: "sparkles" },
+		icon: { type: "lucide", value: PLUGIN_ICON_ID },
 		colorLight: WELCOME_DEMO_LIGHT,
 		colorDark: WELCOME_DEMO_DARK,
 		foldable: false,
