@@ -5,6 +5,12 @@
  * decision, not wiring: it picks between a silent auto-scan and a consent
  * modal, and it owns when the `firstRunCompleted` flag may be written. `main.ts`
  * keeps only the `onLayoutReady` call that starts it.
+ *
+ * The flag is **per device** (`DeviceLocalStore`), not per vault. That is what
+ * makes this pass double as index recovery: a machine joining an existing
+ * synced vault, or one whose local storage was cleared, has no record of the
+ * discovered ids and needs exactly this scan to rebuild it — sized by the same
+ * threshold, asking with the same modal.
  */
 import { Notice } from "obsidian";
 import type { App } from "obsidian";
@@ -20,9 +26,11 @@ import type { PluginSettings } from "../types";
 export interface FirstRunDiscoveryHost {
 	app: App;
 	settings: PluginSettings;
-	registry: { settings: PluginSettings };
+	localState: {
+		firstRunCompleted: boolean;
+		completeFirstRun(): void;
+	};
 	runVaultScan(markFirstRun?: boolean): Promise<number>;
-	saveSettings(): Promise<void>;
 }
 
 /**
@@ -34,9 +42,14 @@ export interface FirstRunDiscoveryHost {
 export async function runFirstRunDiscovery(
 	plugin: FirstRunDiscoveryHost,
 ): Promise<void> {
+	// The user turned automatic discovery off. Deliberately WITHOUT marking the
+	// first run complete: turning it back on should still get the one scan that
+	// populates this device's index.
+	if (!plugin.settings.autoDiscoverCallouts) return;
+
 	// Re-check the flag — onLayoutReady can fire after another flow
 	// (e.g. an import) already ran a scan and flipped the flag.
-	if (plugin.settings.firstRunCompleted) return;
+	if (plugin.localState.firstRunCompleted) return;
 
 	const fileCount = plugin.app.vault.getMarkdownFiles().length;
 
@@ -55,8 +68,7 @@ export async function runFirstRunDiscovery(
 			console.error("[CalloutStudio] first-run auto scan failed", e);
 				new Notice(t("firstRun.autoScanFailed"));
 		}
-		plugin.registry.settings.firstRunCompleted = true;
-		await plugin.saveSettings();
+		plugin.localState.completeFirstRun();
 		return;
 	}
 
@@ -69,6 +81,5 @@ export async function runFirstRunDiscovery(
 			}),
 		);
 	}).prompt();
-	plugin.registry.settings.firstRunCompleted = true;
-	await plugin.saveSettings();
+	plugin.localState.completeFirstRun();
 }

@@ -763,7 +763,12 @@ describe("no new oversized files", () => {
 		// for them: the question is "what does an export contain", which is
 		// this class's, and the set they consult already lives in constants.ts
 		// precisely so `manager/` and `utils/` can share it.
-		"src/manager/CalloutRegistry.ts": 1989,
+		// Lowered from 1989: the four icon repairs that run on load moved to
+		// manager/iconMigrations.ts (which also made them ask for the write-back
+		// they had always skipped), and which rows `data.json` may hold — above
+		// all why an unclaimed discovered row may not — to
+		// manager/discoveredRowPersistence.ts.
+		"src/manager/CalloutRegistry.ts": 1949,
 		// Raised from 1184 for the same set, rejected in `validateIdString`.
 		// Same reasoning: "which id strings are valid on import" is the one
 		// thing this file is for, so the rule cannot move out of it without
@@ -794,7 +799,13 @@ describe("no new oversized files", () => {
 		// the fold state of the three callout-list sections across a
 		// settings-tab reopen and a plugin reload. Raised again when Saved color
 		// palettes joined that fold state as its fourth key, `palettes`.
-		"src/types.ts": 839,
+		// Lowered from 839: `firstRunCompleted`, `retiredThemeIds` and the
+		// settings-list fold are not settings at all — they describe a machine,
+		// not a vault — and moved to manager/DeviceLocalStore.ts. Raised again
+		// for `autoDiscoverCallouts`, on the same terms as every settings field
+		// above: this file is where a settings field is declared, and there is
+		// no sibling module for one field's declaration to move into.
+		"src/types.ts": 838,
 		"src/editor/livepreview/widgets.ts": 793,
 		"src/reading/calloutPostProcessor.ts": 781,
 		"src/settings/iconpicker/PackPanel.ts": 736,
@@ -819,7 +830,13 @@ describe("no new oversized files", () => {
 		// changes — re-derive its callout rows, then re-inject, in that order —
 		// moved to manager/theme/themeProvidedRows.ts, which is where the rule
 		// about which pass goes first belongs.
-		"src/main.ts": 532,
+		// Lowered from 532 while gaining `onExternalSettingsChange`: the welcome
+		// screen's "who sees it, and when" moved to settings/welcomeRouting.ts,
+		// the data.json write policy to manager/SettingsWriter.ts, reading it
+		// back into a live registry to manager/settingsBoot.ts, and the two
+		// repaint passes to editor/renderRefresh.ts. What is left is lifecycle
+		// and wiring, which is all CLAUDE.md asks of this file.
+		"src/main.ts": 512,
 		"src/icons/renderIcon.ts": 547,
 		// Lowered from 528: `STYLE_DEMO_ID` moved to constants.ts, where the
 		// discovery/import/autocomplete filters that now consult it can reach
@@ -835,7 +852,14 @@ describe("no new oversized files", () => {
 		// Lowered from 412: "what ids do we already know" moved to
 		// manager/knownCalloutIds.ts, so the settings tab can ask the same
 		// question without a forwarder through the plugin.
-		"src/manager/CalloutDiscovery.ts": 398,
+		// Lowered from 398: the whole-vault half — which rows nothing references
+		// any more — moved to manager/CalloutPrune.ts. Discovery reads one file;
+		// the prune reads every file. They shared a subject, not a job.
+		// Lowered from 318: *when* to scan — the debounce, the triggers including
+		// the `file-open` one, and the mtime memo that keeps it cheap — moved to
+		// manager/discoveryScheduler.ts, and reading the half-typed line under
+		// the cursor to editor/activeTypingIds.ts.
+		"src/manager/CalloutDiscovery.ts": 307,
 		"src/editor/contextmenu/resolve.ts": 455,
 		"src/ui/TagInput.ts": 414,
 		"src/settings/editor/CalloutEditorSave.ts": 410,
@@ -851,7 +875,10 @@ describe("no new oversized files", () => {
 		// artwork importer in manager/css/coreIcon.ts — can reach it.
 		"src/icons/svg.ts": 329,
 		"src/settings/iconpicker/ImagePanel.ts": 354,
-		"src/settings/sections/DataManagementSection.ts": 317,
+		// Raised for the "Automatically discover callouts in your vault" toggle,
+		// which belongs beside Re-scan vault: this file IS the vault-maintenance
+		// section, and a sibling module for one Setting row would only hide it.
+		"src/settings/sections/DataManagementSection.ts": 329,
 		// Lowered from 345: its row icon goes through
 		// manager/theme/calloutListIcon.ts. Lowered again from 337: the shortcut
 		// chips and the hotkey-pane button — carried identically by both lists
@@ -860,13 +887,6 @@ describe("no new oversized files", () => {
 		"src/settings/iconpicker/IconGrid.ts": 343,
 		"src/utils/calloutManagerImport.ts": 340,
 		"src/icons/PackDataStore.ts": 309,
-		// A newcomer, not a legacy file: it merges `PluginSettings` field by
-		// field against defaults, one fallback line per leaf, so every field this
-		// plugin has ever added shows up here once — the same reason `types.ts`
-		// above is allowed to grow for a settings field. Saved color palettes'
-		// fold state pushed it two lines past the limit; there is no sibling
-		// module for "the `calloutListsExpanded.palettes` fallback" to move into.
-		"src/utils/settingsMerge.ts": 302,
 	};
 
 	it("nothing new crosses the 300-line line", () => {

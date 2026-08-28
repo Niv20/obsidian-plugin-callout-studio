@@ -68,17 +68,15 @@ const FIELD_KIND: Record<keyof PluginSettings, "value" | "list"> = {
 	iconSources: "value",
 	headingCallouts: "value",
 	inlineCallouts: "value",
-	firstRunCompleted: "value",
 	welcomeSeen: "value",
+	autoDiscoverCallouts: "value",
 	fallbackCalloutId: "value",
 	language: "value",
 	customPalettes: "list",
 	userImages: "list",
 	customCommands: "list",
-	retiredThemeIds: "list",
 	disabledFixedCommands: "list",
 	quickInsertSource: "value",
-	calloutListsExpanded: "value",
 };
 
 const LIST_FIELDS = Object.entries(FIELD_KIND)
@@ -136,14 +134,10 @@ const LEAVES = leaves(DEFAULT_SETTINGS);
  * to decide whether it also needs a hand-written test below.
  */
 const EXPECTED_LEAVES: string[] = [
+	"autoDiscoverCallouts",
 	"autocomplete.enabled",
-	"calloutListsExpanded.builtin",
-	"calloutListsExpanded.palettes",
-	"calloutListsExpanded.theme",
-	"calloutListsExpanded.user",
 	"contextMenu.enabled",
 	"fallbackCalloutId",
-	"firstRunCompleted",
 	"globalStyle.alignContentWithTitle",
 	"globalStyle.borderRadius",
 	"globalStyle.borderSides.bottom",
@@ -264,6 +258,20 @@ describe("mergeSavedSettings — the three places", () => {
 
 	it("a merge of nothing IS the defaults, value for value", () => {
 		assert.deepStrictEqual(mergeSavedSettings({}), DEFAULT_SETTINGS);
+	});
+
+	it("names its fields in DEFAULT_SETTINGS' order, not just its set", () => {
+		// `deepStrictEqual` above is blind to key ORDER, and order is what
+		// `JSON.stringify` writes. While the two lists disagreed, a registry
+		// built from `structuredClone(DEFAULT_SETTINGS)` and one rebuilt by this
+		// merge serialized the same settings into byte-different files — so the
+		// save guard could never find two writes identical, and every launch of
+		// an untouched vault rewrote `data.json` for a sync client to pick up.
+		// Sorted comparison is the test above; this one is deliberately unsorted.
+		assert.deepStrictEqual(
+			Object.keys(mergeSavedSettings({})),
+			Object.keys(DEFAULT_SETTINGS),
+		);
 	});
 
 	it("the defaults round-trip through the merge unchanged", () => {

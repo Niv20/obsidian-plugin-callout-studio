@@ -607,7 +607,7 @@ describe("a theme's callout is the user's row when they are one callout", () => 
 		const store = new ThemeCalloutStore(
 			themeApp('.callout[data-callout="banner-icon"] { color: red; }'),
 		);
-		assert.strictEqual(syncThemeProvidedRows(registry, store), 0);
+		assert.strictEqual(syncThemeProvidedRows(registry, store, { retiredThemeIds: [] }), 0);
 		assert.deepStrictEqual(userIds(registry), ["banner icon"]);
 		assert.strictEqual(registry.getThemeProvided().length, 0);
 	});
@@ -620,7 +620,7 @@ describe("a theme's callout is the user's row when they are one callout", () => 
 		const store = new ThemeCalloutStore(
 			themeApp('.callout[data-callout="banner-icon"] { color: red; }'),
 		);
-		syncThemeProvidedRows(registry, store);
+		syncThemeProvidedRows(registry, store, { retiredThemeIds: [] });
 		assert.strictEqual(registry.themeOwns(registry.get("banner icon")!), true);
 	});
 });

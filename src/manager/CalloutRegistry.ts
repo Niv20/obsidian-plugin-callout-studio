@@ -23,7 +23,11 @@ import {
 	RESERVED_DEMO_IDS,
 } from "../constants";
 import { iconCacheKey, packFor } from "../icons/registry";
-import { resolveLucideId } from "../icons/lucideId";
+import { migrateSavedIcons } from "./iconMigrations";
+import {
+	isEphemeralDiscoveredRow,
+	selectPersistedRows,
+} from "./discoveredRowPersistence";
 import { COLOUR_NEUTRAL_FIELDS, isCalloutModified } from "./calloutCompare";
 import { migrateStyleModes } from "./styleModeMigration";
 import { reconcileIdCollisions } from "./idCollisionMigration";
@@ -34,7 +38,6 @@ import {
 import { ThemeFacts } from "./theme/ThemeFacts";
 import type { ThemeAppearance } from "./theme/themeAppearance";
 import { mirroredFallbackRow } from "./discoveredRow";
-import { materialPack } from "../icons/packs/material";
 import type {
 	CalloutManagerEntry,
 	CalloutManagerPlanItem,
@@ -242,73 +245,19 @@ export class CalloutRegistry {
 		if (data.iconSvgCache) {
 			this.iconSvgCache = data.iconSvgCache;
 		}
-		// Migration: fold the pre-2.4 Material-only cache into the generic one.
-		// Keyed on the field being present rather than on `data.version`, since
-		// an imported or hand-edited file can carry any version it likes.
-		// This is the only place that may read `materialSvgCache`; it exists
-		// precisely to retire it.
-		if (data.materialSvgCache) {
-			for (const entry of data.materialSvgCache) {
-				this.addIconSvg({
-					pack: "material",
-					name: entry.name,
-					variant: materialPack.cacheVariant(
-						{
-							type: "material",
-							value: entry.name,
-							style: entry.style,
-							weight: entry.weight,
-						},
-						// Material draws the same artwork at every size, so any
-						// role yields the same variant.
-						"regular",
-					),
-					svg: entry.svg,
-				});
-			}
-		}
-		// Migration: any callout that still references the removed `svg` icon
-		// type falls back to a generic lucide pencil so renders don't crash.
-		// `lucide-pencil` rather than `pencil` only because that is the spelling
-		// `getIconIds()` hands back for it, which is what the picker will match
-		// against when the user opens it on this callout.
-		for (const def of this.callouts.values()) {
-			const t = (def.icon?.type as string | undefined) ?? "lucide";
-			if (t === "svg") {
-				def.icon = { type: "lucide", value: "lucide-pencil" };
-			}
-		}
-		// Migration: v2.7.0-2.7.1 prepended `lucide-` to every bare Lucide value
-		// on the way into the registry and then persisted it. That prefix tells
-		// `getIcon` to look in Obsidian's core Lucide table and nowhere else, so
-		// on an id that came from another plugin's `addIcon()` (`remix-*`) or
-		// from Obsidian's own internal set (`dice`, `discord`, `help`) it named
-		// nothing and the callout lost its icon everywhere at once. Undo it for
-		// exactly those, leaving real core ids alone — see `icons/lucideId.ts`.
-		//
-		// Safe this early in load: the test inside `resolveLucideId` is
-		// membership in the *prefixed* half of `getIconIds()`, which Obsidian has
-		// fully registered before any plugin runs. An id belonging to a plugin
-		// that has not loaded yet is simply absent from that half, which is the
-		// answer we want anyway.
-		for (const def of this.callouts.values()) {
-			if (def.icon?.type !== "lucide") continue;
-			const repaired = resolveLucideId(def.icon.value);
-			if (repaired !== def.icon.value) {
-				def.icon = { ...def.icon, value: repaired };
-			}
-		}
-		// Migration: `recolor` used to live on the picture, shared by every
-		// callout pointing at it. Give each callout its own copy, taken from the
-		// picture, so nothing changes appearance on the way over.
-		for (const def of this.callouts.values()) {
-			if (def.icon.type !== "image" || def.icon.recolor !== undefined) {
-				continue;
-			}
-			const picture = this.settings.userImages.find(
-				(image) => image.id === def.icon.value,
-			);
-			def.icon = { ...def.icon, recolor: picture?.monochrome === true };
+		// Repair the icon fields of saved rows — see manager/iconMigrations.ts
+		// for the four passes and why they ask for a flush.
+		if (
+			migrateSavedIcons(
+				{
+					callouts: this.callouts,
+					userImages: this.settings.userImages,
+					addIconSvg: (entry) => this.addIconSvg(entry),
+				},
+				data.materialSvgCache,
+			)
+		) {
+			this.pendingLoadMigrationSave = true;
 		}
 		// Before the palette matching below: that test compares transparency
 		// first, so it has to run against the repaired truth rather than against
@@ -628,34 +577,16 @@ export class CalloutRegistry {
 	}
 
 	toSaveData(): PluginData {
-		const calloutsToSave: CalloutDefinition[] = [];
-
-		for (const [id, entry] of this.callouts) {
-			// The transient settings-preview definition is never persisted. When
-			// it shadows a real callout (editing an existing type), persist the
-			// original we shadowed instead so a background save mid-edit can't
-			// drop the real definition or leak the in-progress preview.
-			let def = entry;
-			if (id === this.previewActiveId) {
-				if (!this.previewShadowedDef) continue;
-				def = this.previewShadowedDef;
-			}
-			// An overlay, re-derived per launch — see themeProvidedRows.ts.
-			if (def.source === "theme") continue;
-			if (def.builtIn) {
-				// Only save built-in if it was modified from default
-				const original = this.builtInDefaults.get(id);
-				if (original && isCalloutModified(def, original)) {
-					calloutsToSave.push(def);
-				}
-			} else {
-				calloutsToSave.push(def);
-			}
-		}
-
 		return {
 			version: CURRENT_DATA_VERSION,
-			callouts: calloutsToSave,
+			// Which rows the file may hold, and why an unclaimed discovered one
+			// may not — see manager/discoveredRowPersistence.ts.
+			callouts: selectPersistedRows(this.callouts, {
+				previewActiveId: this.previewActiveId,
+				previewShadowedDef: this.previewShadowedDef,
+				customCommands: this.settings.customCommands,
+				builtInDefault: (id) => this.builtInDefaults.get(id),
+			}),
 			settings: this.settings,
 			// `materialSvgCache` is deliberately not written back: the legacy
 			// entries were folded into `iconSvgCache` on load, and writing both
@@ -1261,6 +1192,11 @@ export class CalloutRegistry {
 		// The same answer `isUnshadowedPreview` gives, minus its "for as long as
 		// a modal is open": an export must not depend on which windows happen
 		// to be open, nor carry a demo row an older data.json left behind.
+		//
+		// Unclaimed discovered rows ARE included, and the filtering happens in
+		// the two JSON builders instead: this view also feeds the CSS snippet
+		// export, which has to paint every callout the plugin paints — a
+		// discovered one included. See `authoredDefinitions`.
 		return [...this.getUserDefined(), ...modifiedBuiltIns].filter(
 			(d) => !RESERVED_DEMO_IDS.has(d.id),
 		);
@@ -1864,8 +1800,32 @@ export class CalloutRegistry {
 		return { created, updated };
 	}
 
+	/**
+	 * {@link getExportableDefinitions} as a JSON **backup** should see it: the
+	 * user's configuration, and nothing this device merely observed.
+	 *
+	 * A backup restored into another vault must not plant placeholder rows for
+	 * callouts that vault may never mention — and an unclaimed discovered row
+	 * is exactly that, an id someone's notes happened to contain. The CSS
+	 * snippet export asks the unfiltered question, because it has to paint
+	 * every callout the plugin paints. See discoveredRowPersistence.ts.
+	 */
+	private authoredDefinitions(): CalloutDefinition[] {
+		return this.getExportableDefinitions().filter(
+			(d) => !isEphemeralDiscoveredRow(d, this.settings.customCommands),
+		);
+	}
+
 	exportToJSON(): string {
-		return JSON.stringify(this.getUserDefined(), null, 2);
+		// The legacy shape — `getUserDefined()` as it always was — asking the
+		// same question about discovered rows. See authoredDefinitions.
+		return JSON.stringify(
+			this.getUserDefined().filter(
+				(d) => !isEphemeralDiscoveredRow(d, this.settings.customCommands),
+			),
+			null,
+			2,
+		);
 	}
 
 	/**
@@ -1879,7 +1839,7 @@ export class CalloutRegistry {
 			{
 				format: EXPORT_FORMAT_ID,
 				formatVersion: EXPORT_FORMAT_VERSION,
-				callouts: this.getExportableDefinitions(),
+				callouts: this.authoredDefinitions(),
 				settings: this.settings,
 			},
 			null,

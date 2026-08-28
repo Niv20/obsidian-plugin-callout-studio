@@ -36,11 +36,12 @@ import {
 	pruneRetiredThemeIds,
 	recordRetiredThemeIds,
 } from "./retiredThemeIds";
+import type { RetiredThemeIdHolder } from "../DeviceLocalStore";
 import type { ThemeCalloutStore } from "./ThemeCalloutStore";
 
 /** The slice of `CalloutRegistry` this sweep needs. */
 export interface ThemeRowRegistry {
-	settings: { fallbackCalloutId: string; retiredThemeIds: string[] };
+	settings: { fallbackCalloutId: string };
 	getAll(): CalloutDefinition[];
 	get(id: string): CalloutDefinition | undefined;
 	add(def: CalloutDefinition): boolean;
@@ -62,6 +63,7 @@ export interface ThemeRowRegistry {
 export function syncThemeProvidedRows(
 	registry: ThemeRowRegistry,
 	store: ThemeCalloutStore,
+	holder: RetiredThemeIdHolder,
 ): number {
 	const themeIds = store.themeDefinedIds();
 	const existing = registry.getAll();
@@ -135,14 +137,14 @@ export function syncThemeProvidedRows(
 		// Recorded and pruned together so the list only ever holds ids that are
 		// still retired: one that has a definition again, or that this theme has
 		// started declaring again, drops straight back out.
-		const before = registry.settings.retiredThemeIds;
+		const before = holder.retiredThemeIds;
 		const next = pruneRetiredThemeIds(
 			recordRetiredThemeIds(before, retired),
 			(id) => registry.get(id) !== undefined,
 			(id) => themeIds.has(obsidianCalloutAttrId(id)),
 		);
 		if (next.length !== before.length || next.some((id, i) => id !== before[i])) {
-			registry.settings.retiredThemeIds = next;
+			holder.retiredThemeIds = next;
 			changed++;
 		}
 		return changed;

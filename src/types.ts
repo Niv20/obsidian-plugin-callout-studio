@@ -738,20 +738,21 @@ export interface PluginSettings {
 	headingCallouts: HeadingCalloutSettings;
 	/** Inline callouts (`[!name]` mid-line) — optional role, can be disabled. */
 	inlineCallouts: InlineCalloutSettings;
-	/** Has the first-run vault scan been completed? */
-	firstRunCompleted?: boolean;
-	/**
-	 * Callout IDs that were supplied by a theme which no longer supplies them.
-	 *
-	 * Vault-local bookkeeping, not a preference: it stops automatic discovery
-	 * re-creating a theme's callout type as a fallback row the moment the theme
-	 * is switched away from, just because notes still use the ID. Explicit
-	 * creation is unaffected, and a user-requested vault scan clears it. See
-	 * `manager/theme/retiredThemeIds.ts`.
-	 */
-	retiredThemeIds: string[];
 	/** Has the welcome/splash screen been shown at least once? */
 	welcomeSeen?: boolean;
+	/**
+	 * Notice callout ids written in vault notes and give them a row
+	 * automatically. On by default — it is how most callouts in a vault come to
+	 * be listed at all.
+	 *
+	 * Turning it off leaves every existing row exactly where it is and leaves
+	 * **Re-scan vault** working: this gates the automatic passes, never an
+	 * action the user asked for. Discovery has not written to `data.json` since
+	 * the device-local index arrived (see `manager/DeviceLocalStore.ts`), so
+	 * this is a preference about what appears in the settings list, not a
+	 * remedy for anything.
+	 */
+	autoDiscoverCallouts: boolean;
 	/** Callout ID to use as fallback for unrecognized callout types. Empty = Obsidian default */
 	fallbackCalloutId: string;
 	/**
@@ -790,8 +791,6 @@ export interface PluginSettings {
 	 * leaf module.
 	 */
 	quickInsertSource: string;
-	/** See {@link CalloutListsFoldState}. Defaults to all four expanded. */
-	calloutListsExpanded: CalloutListsFoldState;
 }
 
 export interface PluginData {

@@ -41,7 +41,6 @@ import { isCalloutSourceFilter } from "./calloutSearch";
 import { clampGlobalStyle, localePreference } from "./settingsGuards";
 import { sanitizeUserImages } from "./userImages";
 import { sanitizeCustomCommands } from "./customCommands";
-import { sanitizeRetiredThemeIds } from "../manager/theme/retiredThemeIds";
 
 /**
  * Merge saved icon-picker state over the defaults, folding the pre-2.4
@@ -252,12 +251,11 @@ export function mergeSavedSettings(
 				savedSettings.inlineCallouts?.allowContent ??
 				DEFAULT_SETTINGS.inlineCallouts.allowContent,
 		},
-		firstRunCompleted:
-			savedSettings.firstRunCompleted ??
-			DEFAULT_SETTINGS.firstRunCompleted,
-		retiredThemeIds: sanitizeRetiredThemeIds(savedSettings.retiredThemeIds),
 		welcomeSeen:
 			savedSettings.welcomeSeen ?? DEFAULT_SETTINGS.welcomeSeen,
+		autoDiscoverCallouts:
+			savedSettings.autoDiscoverCallouts ??
+			DEFAULT_SETTINGS.autoDiscoverCallouts,
 		fallbackCalloutId:
 			savedSettings.fallbackCalloutId ??
 			DEFAULT_SETTINGS.fallbackCalloutId,
@@ -265,12 +263,6 @@ export function mergeSavedSettings(
 		customPalettes: sanitizeCustomPalettes(savedSettings.customPalettes),
 		userImages: sanitizeUserImages(savedSettings.userImages),
 		customCommands: sanitizeCustomCommands(savedSettings.customCommands),
-		// An unknown value here is not corruption to report — it is a filter
-		// this build no longer has (or never had). Falling back to "all" shows
-		// every callout, which is the one state that can never look broken.
-		quickInsertSource: isCalloutSourceFilter(savedSettings.quickInsertSource)
-			? savedSettings.quickInsertSource
-			: DEFAULT_SETTINGS.quickInsertSource,
 		disabledFixedCommands: Array.isArray(savedSettings.disabledFixedCommands)
 			? [
 					...new Set(
@@ -280,23 +272,11 @@ export function mergeSavedSettings(
 					),
 				]
 			: [],
-		// Field by field, not a spread of the saved object: a vault that predates
-		// this setting has no `calloutListsExpanded` key at all, and every field
-		// here must fall back to expanded on its own rather than the whole object
-		// falling back only when the key is missing entirely.
-		calloutListsExpanded: {
-			theme:
-				savedSettings.calloutListsExpanded?.theme ??
-				DEFAULT_SETTINGS.calloutListsExpanded.theme,
-			user:
-				savedSettings.calloutListsExpanded?.user ??
-				DEFAULT_SETTINGS.calloutListsExpanded.user,
-			builtin:
-				savedSettings.calloutListsExpanded?.builtin ??
-				DEFAULT_SETTINGS.calloutListsExpanded.builtin,
-			palettes:
-				savedSettings.calloutListsExpanded?.palettes ??
-				DEFAULT_SETTINGS.calloutListsExpanded.palettes,
-		},
+		// An unknown value here is not corruption to report — it is a filter
+		// this build no longer has (or never had). Falling back to "all" shows
+		// every callout, which is the one state that can never look broken.
+		quickInsertSource: isCalloutSourceFilter(savedSettings.quickInsertSource)
+			? savedSettings.quickInsertSource
+			: DEFAULT_SETTINGS.quickInsertSource,
 	};
 }

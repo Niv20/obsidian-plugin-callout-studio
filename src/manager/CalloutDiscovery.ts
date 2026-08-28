@@ -1,31 +1,44 @@
 /**
- * manager/CalloutDiscovery.ts — Vault scanning and auto-discovery of callouts.
+ * manager/CalloutDiscovery.ts — noticing callout ids the registry has no row for.
  *
- * Watches for file-open and file-modify events and incrementally scans changed
- * files for unrecognized callout IDs, adding them as fallback rows in the
- * registry. Also runs debounced prune passes to remove auto-created rows that
- * are no longer used. Owned by main.ts; destroyed in onunload.
- * Depends on CalloutRegistry, vaultCalloutScanner utilities, and PluginSettings.
+ * Scans the ONE file it is handed, through a cached read and one tokenizer
+ * pass. *Which* file, and what made it worth looking at, is `DiscoveryScheduler`
+ * — including the `file-open` trigger, without which merely opening a note
+ * containing an unknown callout discovered nothing at all.
+ *
+ * What it does with what it finds is the part issue #41 changed. A row for an
+ * unclaimed id is not written to `data.json` any more; its id goes to the
+ * device-local index instead (`DeviceLocalStore`), so opening a synced note no
+ * longer edits the settings file on a second device. See
+ * `discoveredRowPersistence.ts` for the rule and `discoveryIndexBoot.ts` for
+ * how the rows come back at startup.
+ *
+ * The opposite question — which rows nothing references any more — is a
+ * whole-vault read and lives in `CalloutPrune`, which this class owns and
+ * forwards to. Owned by main.ts; destroyed in onunload.
  */
-import { Platform, TFile } from "obsidian";
-import type { App, EventRef } from "obsidian";
+import type { App, EventRef, TFile } from "obsidian";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import type { PluginSettings } from "../types";
-import { calloutIdentity, normalizeCalloutId } from "../utils/calloutId";
+import { activeTypingCalloutIds } from "../editor/activeTypingIds";
 import { buildDiscoveredRow, fallbackSourceFor } from "./discoveredRow";
+import type { DeviceLocalStore } from "./DeviceLocalStore";
+import { syncIndexFromRegistry } from "./discoveryIndexBoot";
 import { buildKnownCalloutIds } from "./knownCalloutIds";
 import { RediscoveryHold } from "./rediscoveryHold";
-import { scanLineForCalloutTokens } from "../editor/calloutTokens";
+import { CalloutPrune } from "./CalloutPrune";
+import { DiscoveryScheduler, type ScanReason } from "./discoveryScheduler";
 import {
 	scanFileForUnknownCallouts,
 	scanVaultForUnknownCallouts,
-	countCalloutUsagesMap,
 } from "../utils/vaultCalloutScanner";
 
 interface DiscoveryHost {
 	app: App;
 	registry: CalloutRegistry;
 	settings: PluginSettings;
+	/** Where a discovered id is remembered, since `data.json` no longer holds it. */
+	localState: DeviceLocalStore;
 	saveSettings(): Promise<void>;
 	refreshCallouts(): void;
 	registerEvent(eventRef: EventRef): void;
@@ -37,40 +50,47 @@ interface DiscoveryHost {
  * changes. Owns its own timers and is destroyed via {@link destroy}.
  */
 export class CalloutDiscovery {
-	/** When true, automatic prune passes are skipped (e.g. while the editor modal is open). */
-	pruneSuspended = false;
-
-	/** Pending per-file debounce timers for incremental callout scanning. */
-	private readonly fileScanTimers: Map<string, number> = new Map();
-	/** Debounce timer for {@link pruneUnused}. */
-	private pruneTimer: number | undefined;
-	/**
-	 * Canonical ids ({@link calloutIdentity}) of uncustomized fallback rows the
-	 * last prune scan confirmed have zero usages anywhere in the vault — one key
-	 * per callout, never one per spelling. Kept in sync by
-	 * {@link pruneUnused} and {@link addUnknownCalloutsAsFallback}; consulted
-	 * by autocomplete so it can hide only *confirmed-gone* fallback rows
-	 * instead of every unadopted one, without re-scanning the vault on every
-	 * keystroke.
-	 */
-	private readonly zeroUsageFallbackIds = new Set<string>();
-
 	/** Ids automatic discovery must leave alone — see {@link RediscoveryHold}. */
 	private readonly hold: RediscoveryHold;
 
+	/** The whole-vault half — see {@link CalloutPrune}. */
+	private readonly prune: CalloutPrune;
+
+	/** Which files get looked at, and when — see {@link DiscoveryScheduler}. */
+	private readonly scheduler: DiscoveryScheduler;
+
 	constructor(private readonly host: DiscoveryHost) {
-		this.hold = new RediscoveryHold(host.settings);
+		this.hold = new RediscoveryHold(host.localState);
+		this.prune = new CalloutPrune(host);
+		this.scheduler = new DiscoveryScheduler(host, {
+			scan: (file, reason) => {
+				void this.scanFileNow(file, reason);
+			},
+			enabled: () => host.settings.autoDiscoverCallouts,
+		});
+	}
+
+	/** When true, automatic prune passes are skipped (e.g. while the editor modal is open). */
+	get pruneSuspended(): boolean {
+		return this.prune.suspended;
+	}
+	set pruneSuspended(value: boolean) {
+		this.prune.suspended = value;
+	}
+
+	/** @see CalloutPrune.schedulePrune */
+	schedulePrune(delayMs?: number): void {
+		this.prune.schedulePrune(delayMs);
+	}
+
+	/** @see CalloutPrune.pruneUnused */
+	pruneUnused(): Promise<number> {
+		return this.prune.pruneUnused();
 	}
 
 	destroy(): void {
-		for (const id of this.fileScanTimers.values()) {
-			window.clearTimeout(id);
-		}
-		this.fileScanTimers.clear();
-		if (this.pruneTimer !== undefined) {
-			window.clearTimeout(this.pruneTimer);
-			this.pruneTimer = undefined;
-		}
+		this.scheduler.destroy();
+		this.prune.destroy();
 	}
 
 	/**
@@ -81,12 +101,25 @@ export class CalloutDiscovery {
 	 * real" rather than excluding it.
 	 */
 	isKnownZeroUsageFallback(id: string): boolean {
-		return this.zeroUsageFallbackIds.has(calloutIdentity(id));
+		return this.prune.isKnownZeroUsage(id);
 	}
 
-	/** @see RediscoveryHold.suppress */
+	/**
+	 * @see RediscoveryHold.suppress
+	 *
+	 * Also drops the ids from the index, and that half is not housekeeping: the
+	 * hold lasts five seconds, the index is read on every launch. Left in, a row
+	 * the user deleted would be rebuilt on the next open — the same
+	 * resurrection the hold exists to prevent, made permanent.
+	 *
+	 * The scan memo goes too, for the mirror-image reason: the hold lasts five
+	 * seconds *and is then meant to lapse*, and a memoized note is one the next
+	 * open would not re-read. See {@link DiscoveryScheduler.forgetScanned}.
+	 */
 	suppressRediscovery(ids: string[]): void {
 		this.hold.suppress(ids);
+		this.host.localState.forget(ids);
+		this.scheduler.forgetScanned();
 	}
 
 	/** @see RediscoveryHold.clear */
@@ -125,8 +158,9 @@ export class CalloutDiscovery {
 		// all of that six times over, synchronously, and on mobile that reads as
 		// the view jumping. The per-id guards inside the loop still see live
 		// registry state, so nothing about WHICH rows get created changes.
-		return this.host.registry.batch(() => {
-			let added = 0;
+		const accepted: string[] = [];
+		const added = this.host.registry.batch(() => {
+			let count = 0;
 			for (const id of unknownIds) {
 				if (this.host.registry.get(id)) continue;
 				// An id the user just deleted. Placed with the other per-id
@@ -143,138 +177,20 @@ export class CalloutDiscovery {
 				// what it deliberately does not, is decided in one place — see
 				// discoveredRow.ts.
 				if (this.host.registry.add(buildDiscoveredRow(id, fallback))) {
-					added++;
+					count++;
+					accepted.push(id);
 					// Being (re)discovered means it currently appears in file
 					// content — any stale "confirmed zero usage" verdict from an
 					// earlier scan no longer applies.
-					this.zeroUsageFallbackIds.delete(calloutIdentity(id));
+					this.prune.clearZeroUsage(id);
 				}
-			}
-			return added;
-		});
-	}
-
-	/**
-	 * How long a prune waits after the last edit that asked for one.
-	 *
-	 * A prune reads EVERY markdown file in the vault through `cachedRead` and
-	 * tokenizes it, on the main thread. The debounce collapses bursts, so the
-	 * real pattern is one whole-vault pass shortly after the user stops typing
-	 * — i.e. at the exact moment they stop and look at the screen. On a phone,
-	 * with a few thousand notes, that reads as the editor freezing.
-	 *
-	 * Pushing the touch delay well past the interaction window is the whole
-	 * fix: nothing about the pass is urgent, and the only user-visible effect
-	 * of waiting is that an orphaned auto-created row lingers in the settings
-	 * list a few seconds longer before it disappears.
-	 */
-	private static readonly PRUNE_DELAY_MS = Platform.isMobile ? 10000 : 1500;
-
-	/**
-	 * Schedule a debounced prune of auto-created (`source: "fallback"`) rows
-	 * that have never been customized and have zero vault usages.
-	 */
-	schedulePrune(delayMs = CalloutDiscovery.PRUNE_DELAY_MS): void {
-		if (this.pruneSuspended) return;
-		if (this.pruneTimer !== undefined) {
-			window.clearTimeout(this.pruneTimer);
-		}
-		this.pruneTimer = window.setTimeout(() => {
-			this.pruneTimer = undefined;
-			void this.pruneUnused();
-		}, delayMs);
-	}
-
-	/**
-	 * Remove auto-created (`source: "fallback"`) callouts that the user has
-	 * never edited and that no longer appear in any markdown file.
-	 */
-	async pruneUnused(): Promise<number> {
-		if (this.pruneSuspended) return 0;
-		// Any chosen style mode is as sticky as `customized`, for a sharper
-		// reason: pruning takes the setting with it and the id falls back under
-		// `generateFallbackCSS`'s `!important` catch-all, so a callout handed to
-		// the theme would silently start being repainted once it left the vault.
-		const candidates = this.host.registry
-			.getUserDefined()
-			.filter(
-				(d) =>
-					d.source === "fallback" &&
-					d.customized !== true &&
-					!this.host.registry.standsDown(d),
-			);
-		if (candidates.length === 0) return 0;
-
-		// A row owns every spelling that renders as it does, so one written in
-		// the vault only as `[!a-b]` must not read as zero-usage and be pruned
-		// out from under itself. See CalloutRegistry.vaultIdFormsFor.
-		const formsById = new Map(
-			candidates.map((d) => [d.id, this.host.registry.vaultIdFormsFor(d)]),
-		);
-
-		let usage: Map<string, { fileCount: number; totalCount: number }>;
-		try {
-			usage = await countCalloutUsagesMap(
-				this.host.app,
-				Array.from(formsById.values()).flat(),
-			);
-		} catch (e) {
-			console.debug("[CalloutStudio] prune usage scan failed", e);
-			return 0;
-		}
-
-		// Batched for the same reason the discovery adds are: one `onChange` per
-		// removed row means one full stylesheet regeneration, icon repaint,
-		// editor refresh and `css-change` per row.
-		const removed = this.host.registry.batch(() => {
-			let count = 0;
-			for (const { id } of candidates) {
-				const normalized = calloutIdentity(id);
-				const hasUsage = (formsById.get(id) ?? [id]).some((form) => {
-						// countCalloutUsagesMap keys by identity, so read it back
-					// with the same function.
-					const stat = usage.get(calloutIdentity(form));
-					return stat !== undefined && stat.fileCount > 0;
-				});
-				if (hasUsage) {
-					this.zeroUsageFallbackIds.delete(normalized);
-					continue;
-				}
-				this.zeroUsageFallbackIds.add(normalized);
-				const def = this.host.registry.get(id);
-				if (!def) continue;
-				// Re-check: another flow (e.g. settings edit) may have
-				// customized this row while the scan was in flight.
-				// Through the registry, not the raw field — they disagreed here.
-				if (
-					def.source !== "fallback" ||
-					def.customized === true ||
-					this.host.registry.standsDown(def)
-				)
-					continue;
-				// A command the user built for this row is a deliberate claim
-				// on it, the same as customizing it. Pruning here would delete
-				// that command — and the hotkey bound to it — the moment the
-				// last note using the callout went away.
-				if (
-					this.host.settings.customCommands.some(
-						(command) => command.calloutId === id,
-					)
-				)
-					continue;
-				if (this.host.registry.remove(id)) count++;
 			}
 			return count;
 		});
-		if (removed > 0) {
-			await this.host.saveSettings();
-			console.debug(
-				"[CalloutStudio] pruned",
-				removed,
-				"unused fallback callout(s)",
-			);
-		}
-		return removed;
+		// The row itself is never written to data.json; its id is what survives
+		// a restart. See manager/discoveredRowPersistence.ts.
+		this.host.localState.remember(accepted);
+		return added;
 	}
 
 	/**
@@ -287,8 +203,12 @@ export class CalloutDiscovery {
 		const known = this.buildKnownIds();
 		const unknown = await scanVaultForUnknownCallouts(this.host.app, known);
 		const added = this.addUnknownCalloutsAsFallback(unknown);
+		// A scan of the whole vault is the authoritative answer about it, so the
+		// index is re-derived rather than added to — this is what drops an id
+		// whose row is gone for a reason no incremental pass saw.
+		syncIndexFromRegistry(this.host.registry, this.host.localState);
 		if (markFirstRun) {
-			this.host.registry.settings.firstRunCompleted = true;
+			this.host.localState.completeFirstRun();
 		}
 		await this.host.saveSettings();
 		this.host.refreshCallouts();
@@ -296,65 +216,26 @@ export class CalloutDiscovery {
 	}
 
 	/**
-	 * Subscribe to vault/metadata events for incremental discovery of new
-	 * callout IDs. Should be called inside `onLayoutReady`.
+	 * Subscribe to the events that surface an unknown callout — a write, a
+	 * creation, or a note being opened — and sweep the notes already on screen.
+	 * Should be called inside `onLayoutReady`. See {@link DiscoveryScheduler}.
 	 */
 	registerIncrementalWatchers(): void {
-		this.host.registerEvent(
-			this.host.app.metadataCache.on("changed", (file) => {
-				if (file instanceof TFile && file.extension === "md") {
-					this.scheduleFileScan(file);
-				}
-			}),
-		);
-		this.host.registerEvent(
-			this.host.app.vault.on("create", (file) => {
-				if (file instanceof TFile && file.extension === "md") {
-					this.scheduleFileScan(file);
-				}
-			}),
-		);
+		this.scheduler.registerTriggers();
 	}
 
 	/**
-	 * Debounced per-file incremental scan. Cheap: reads a single cached file
-	 * and runs one regex.
+	 * Queue the debounced per-file scan. Cheap: reads a single cached file and
+	 * runs one regex.
 	 */
-	private scheduleFileScan(file: TFile): void {
-		const path = file.path;
-		const existing = this.fileScanTimers.get(path);
-		if (existing !== undefined) window.clearTimeout(existing);
-		const timerId = window.setTimeout(() => {
-			this.fileScanTimers.delete(path);
-			void this.scanFileNow(file);
-		}, 300);
-		this.fileScanTimers.set(path, timerId);
+	private scheduleFileScan(file: TFile, reason: ScanReason = "change"): void {
+		this.scheduler.schedule(file, reason);
 	}
 
-	/**
-	 * If the active editor is editing this file, return the (lowercased) ids
-	 * of every callout token — regular, heading, or inline — on the cursor's
-	 * line. While the cursor stays on the line those ids are "in progress"
-	 * and must not be auto-created yet: doing so would feed a half-typed name
-	 * straight back into the autocomplete dropdown. Discovery happens once
-	 * the cursor leaves the line (treated as the user having committed it).
-	 */
-	private getActiveTypingCalloutIds(file: TFile): Set<string> | null {
-		const active = this.host.app.workspace.activeEditor;
-		if (!active?.editor || active.file !== file) return null;
-		const editor = active.editor;
-		const line = editor.getLine(editor.getCursor().line); // live buffer
-		const ids = new Set<string>();
-		// Token ids are normalized exactly like the vault scanner's, so
-		// multi-word IDs with spaces match identically.
-		for (const token of scanLineForCalloutTokens(line)) {
-			const id = normalizeCalloutId(token.rawId);
-			if (id) ids.add(id);
-		}
-		return ids.size > 0 ? ids : null;
-	}
-
-	private async scanFileNow(file: TFile): Promise<void> {
+	private async scanFileNow(
+		file: TFile,
+		reason: ScanReason = "change",
+	): Promise<void> {
 		if (this.host.app.vault.getAbstractFileByPath(file.path) !== file)
 			return;
 		const known = this.buildKnownIds();
@@ -370,13 +251,24 @@ export class CalloutDiscovery {
 			return;
 		}
 		// Skip tokens the user is actively typing — they get discovered once
-		// they commit them (Enter, move off the line, or switch files).
-		const inProgress = this.getActiveTypingCalloutIds(file);
+		// they commit them (Enter, move off the line, or switch files). Asked
+		// on the write path ONLY, which is load-bearing: see the docblock on
+		// editor/activeTypingIds.ts for what asking on an open threw away.
+		const inProgress =
+			reason === "change"
+				? activeTypingCalloutIds(this.host.app, file)
+				: null;
+		const withheld =
+			inProgress !== null && unknown.some((id) => inProgress.has(id));
 		if (inProgress) unknown = unknown.filter((id) => !inProgress.has(id));
+		// Only a scan that reached the end of the file has settled it. One that
+		// held a half-typed id back has not, and memoizing it would make the
+		// open that commits that id the one open which never looks.
+		if (!withheld) this.scheduler.markScanned(file);
 		if (unknown.length === 0) {
 			// Edit may have removed the last usage of a fallback row. Run
 			// a prune so the settings list stays clean as the user types.
-			this.schedulePrune();
+			this.pruneAfter(reason);
 			return;
 		}
 		const added = this.addUnknownCalloutsAsFallback(unknown);
@@ -389,10 +281,27 @@ export class CalloutDiscovery {
 			// No refreshCallouts() here: the batch's single onChange already
 			// injected (which itself ends in refreshAllCalloutEditors), so a
 			// second pass would only regenerate identical CSS.
-			await this.host.saveSettings();
+			//
+			// And no saveSettings() either, which is the point of the whole
+			// change: opening a note must not edit the settings file. The ids
+			// went to the device-local index inside the call above, and
+			// `data.json` has nothing to say about them.
 		}
 		// Always schedule a prune pass: even if no new rows were added,
 		// existing fallback rows may now be unused after this edit.
-		this.schedulePrune();
+		this.pruneAfter(reason);
+	}
+
+	/**
+	 * The prune that follows a scan — but only when the scan followed a write.
+	 *
+	 * A prune reads every markdown file in the vault, and the question it
+	 * answers is "did that edit remove the last usage of a row". An *open*
+	 * removes nothing, and notes are opened far more often than they are
+	 * edited, so pruning after one would have put a whole-vault pass behind
+	 * every tab switch. The settings tab and startup still ask for their own.
+	 */
+	private pruneAfter(reason: ScanReason): void {
+		if (reason === "change") this.schedulePrune();
 	}
 }

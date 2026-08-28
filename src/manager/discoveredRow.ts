@@ -15,10 +15,18 @@
  * `CalloutDiscovery` does the deciding (which ids, which guards) rather than
  * the assembling. Depends on nothing but the type, the shipped defaults and the
  * title helper.
+ *
+ * A third path joins them at startup: `restoreDiscoveredRows` rebuilds the rows
+ * this device discovered in earlier sessions from the id list `DeviceLocalStore`
+ * kept, since `data.json` no longer carries them. It goes through the very same
+ * builder, which is the point — a restored row and a freshly discovered one are
+ * the same object, and the appearance follows whatever the fallback is TODAY
+ * rather than whatever it was when the id was first seen.
  */
 import type { CalloutDefinition } from "../types";
 import { DEFAULT_CALLOUTS } from "../constants";
 import { obsidianDefaultTitle } from "../utils/calloutId";
+import { isRetiredThemeId } from "./theme/retiredThemeIds";
 
 /** The narrow slice of `CalloutRegistry` this module needs to look a row up. */
 interface DefinitionLookup {
@@ -162,4 +170,50 @@ export function mirroredFallbackRow(
 	// absent-vs-explicitly-absent pair reads as equal — or a value the row
 	// genuinely did not have.
 	return JSON.stringify(next) === JSON.stringify(def) ? null : next;
+}
+
+/** The registry surface {@link restoreDiscoveredRows} drives. */
+interface RestoreTarget extends DefinitionLookup {
+	settings: { fallbackCalloutId: string };
+	add(def: CalloutDefinition): boolean;
+	batch<T>(body: () => T): T;
+}
+
+/**
+ * Re-create a fallback row for every id this device discovered in an earlier
+ * session, and return how many were actually added.
+ *
+ * Cheap by construction: no file is read, no note is parsed. That is the whole
+ * reason the id list is persisted at all — `data.json` no longer describes
+ * these rows, and re-deriving them from the vault on every launch would mean a
+ * whole-vault scan at startup forever.
+ *
+ * Three ids are skipped, and `registry.add` would refuse the last two anyway:
+ * one the settings file already defines (an explicit configuration outranks a
+ * placeholder, whichever arrived first), one a theme retired (`retiredThemeIds`
+ * gates discovery, and a restore is discovery catching up on itself), and one
+ * that collides with an existing callout's identity.
+ *
+ * Batched, so a vault with fifty discovered ids costs one stylesheet
+ * regeneration at startup rather than fifty.
+ */
+export function restoreDiscoveredRows(
+	registry: RestoreTarget,
+	ids: readonly string[],
+	retiredThemeIds: readonly string[],
+): number {
+	if (ids.length === 0) return 0;
+	const fallback = fallbackSourceFor(
+		registry,
+		registry.settings.fallbackCalloutId,
+	);
+	return registry.batch(() => {
+		let added = 0;
+		for (const id of ids) {
+			if (registry.get(id)) continue;
+			if (isRetiredThemeId(retiredThemeIds, id)) continue;
+			if (registry.add(buildDiscoveredRow(id, fallback))) added++;
+		}
+		return added;
+	});
 }

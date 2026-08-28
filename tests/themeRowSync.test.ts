@@ -81,6 +81,8 @@ function syncHost(registry: CalloutRegistry, app: App) {
 	const host = {
 		app,
 		registry,
+		// The retirement list is per device now — see manager/DeviceLocalStore.
+		localState: { retiredThemeIds: [] as string[] },
 		cssInjector: {
 			themeCallouts: () => store,
 			inject: (emit?: boolean) => injects.push(emit !== false),

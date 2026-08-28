@@ -26,6 +26,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
+import { activeTypingCalloutIds } from "../src/editor/activeTypingIds";
 import {
 	discovered,
 	discoveryHarness,
@@ -36,6 +37,8 @@ import {
 const FILE_SCAN_MS = 300;
 /** `CalloutDiscovery.PRUNE_DELAY_MS` on desktop (`Platform.isMobile` is false). */
 const PRUNE_MS = 1500;
+/** `CalloutPrune.PRUNE_MIN_INTERVAL_MS` — the floor under two automatic passes. */
+const PRUNE_MIN_GAP_MS = 10000;
 
 /* ========================================================================== */
 /* 93. getActiveTypingCalloutIds                                              */
@@ -46,7 +49,7 @@ describe("getActiveTypingCalloutIds — when it has no answer", () => {
 		const h = discoveryHarness({ "note.md": "> [!half]" });
 		h.editor.none();
 		assert.strictEqual(
-			h.internals.getActiveTypingCalloutIds(h.vault.file("note.md")),
+			activeTypingCalloutIds(h.app, h.vault.file("note.md")),
 			null,
 		);
 	});
@@ -56,7 +59,7 @@ describe("getActiveTypingCalloutIds — when it has no answer", () => {
 		const h = discoveryHarness({ "note.md": "> [!half]", "other.md": "" });
 		h.editor.typing("other.md", "> [!half]");
 		assert.strictEqual(
-			h.internals.getActiveTypingCalloutIds(h.vault.file("note.md")),
+			activeTypingCalloutIds(h.app, h.vault.file("note.md")),
 			null,
 		);
 	});
@@ -65,7 +68,7 @@ describe("getActiveTypingCalloutIds — when it has no answer", () => {
 		const h = discoveryHarness({ "note.md": "> [!half]" });
 		h.editor.typing("note.md", "just some prose");
 		assert.strictEqual(
-			h.internals.getActiveTypingCalloutIds(h.vault.file("note.md")),
+			activeTypingCalloutIds(h.app, h.vault.file("note.md")),
 			null,
 		);
 	});
@@ -74,7 +77,7 @@ describe("getActiveTypingCalloutIds — when it has no answer", () => {
 		const h = discoveryHarness({ "note.md": "> [!half]" });
 		h.editor.idle("note.md");
 		assert.strictEqual(
-			h.internals.getActiveTypingCalloutIds(h.vault.file("note.md")),
+			activeTypingCalloutIds(h.app, h.vault.file("note.md")),
 			null,
 		);
 	});
@@ -84,7 +87,7 @@ describe("getActiveTypingCalloutIds — what it reports", () => {
 	const idsOn = (line: string): string[] => {
 		const h = discoveryHarness({ "note.md": "" });
 		h.editor.typing("note.md", line);
-		const found = h.internals.getActiveTypingCalloutIds(
+		const found = activeTypingCalloutIds(h.app, 
 			h.vault.file("note.md"),
 		);
 		return found ? [...found].sort() : [];
@@ -297,12 +300,35 @@ describe("schedulePrune — the other debounce", () => {
 });
 
 describe("scanFileNow", () => {
-	it("adds the unknown ids it finds and persists them", async () => {
+	it("adds the unknown ids it finds", async () => {
 		const h = discoveryHarness({ "note.md": "> [!alpha] x\n\n[!beta] pill" });
 		await h.internals.scanFileNow(h.vault.file("note.md"));
 		assert.ok(h.registry.get("alpha"));
 		assert.ok(h.registry.get("beta"));
-		assert.strictEqual(h.saves(), 1);
+	});
+
+	it("remembers them on this device instead of writing data.json", async () => {
+		// The heart of issue #41: a second device that merely OPENS a synced
+		// note must not edit the settings file, or two devices are modifying
+		// one file seconds apart and the sync client can only pick a winner.
+		// The ids go to the device-local index, which cannot conflict; the
+		// rows are rebuilt from it at startup.
+		const h = discoveryHarness({ "note.md": "> [!alpha] x\n\n[!beta] pill" });
+		await h.internals.scanFileNow(h.vault.file("note.md"));
+
+		assert.strictEqual(h.saves(), 0, "no settings write for a discovery");
+		assert.deepStrictEqual([...h.localState.discovered], ["alpha", "beta"]);
+		assert.deepStrictEqual(h.registry.toSaveData().callouts, []);
+	});
+
+	it("keeps the index to ids it actually created a row for", async () => {
+		// A spelling an existing callout already owns is refused by `add`, and
+		// remembering it anyway would have the next launch try, and fail, to
+		// rebuild a row for it forever.
+		const h = discoveryHarness({ "note.md": "> [!note] x\n\n> [!alpha] y" });
+		await h.internals.scanFileNow(h.vault.file("note.md"));
+
+		assert.deepStrictEqual([...h.localState.discovered], ["alpha"]);
 	});
 
 	it("never refreshes the editors itself", async () => {
@@ -378,5 +404,116 @@ describe("scanFileNow", () => {
 		h.clock.advance(PRUNE_MS);
 		await settle();
 		assert.strictEqual(h.registry.get("alpha"), undefined);
+	});
+});
+
+/* ========================================================================== */
+/* 95. The floor under two automatic prune passes                             */
+/* ========================================================================== */
+
+describe("the prune's minimum interval", () => {
+	/**
+	 * Two notes, so the two kinds of read are told apart by count: a per-file
+	 * scan reads one, a whole-vault prune pass reads both.
+	 */
+	const vault = () =>
+		discoveryHarness({ "note.md": "> [!alpha] x", "other.md": "plain" });
+
+	/** Type, pause — the pattern the debounce alone cannot collapse. */
+	const drafting = async (h: ReturnType<typeof discoveryHarness>) => {
+		const before = h.vault.reads();
+		await h.internals.scanFileNow(h.vault.file("note.md"));
+		h.clock.advance(PRUNE_MS);
+		await settle();
+		return h.vault.reads() - before;
+	};
+
+	it("runs the first pass on the ordinary delay", async () => {
+		const h = vault();
+		assert.strictEqual(await drafting(h), 3, "one file scan, then both files");
+	});
+
+	it("does not run a second whole-vault pass moments later", async () => {
+		// Every pause longer than the debounce used to buy another full read.
+		const h = vault();
+		await drafting(h);
+		assert.strictEqual(await drafting(h), 1, "the file scan, and nothing else");
+	});
+
+	it("runs again once the gap has actually passed", async () => {
+		const h = vault();
+		await drafting(h);
+		const after = h.vault.reads();
+
+		await h.internals.scanFileNow(h.vault.file("note.md"));
+		h.clock.advance(PRUNE_MIN_GAP_MS);
+		await settle();
+		assert.strictEqual(h.vault.reads() - after, 3);
+	});
+
+	it("never throttles a pass the user is standing in front of", async () => {
+		// `schedulePrune(0)` comes from opening the settings tab or closing the
+		// callout editor — the moments the list has to be right.
+		const h = vault();
+		await drafting(h);
+		const after = h.vault.reads();
+
+		h.discovery.schedulePrune(0);
+		h.clock.advance(0);
+		await settle();
+		assert.strictEqual(h.vault.reads() - after, 2, "both files, right away");
+	});
+});
+
+/* ========================================================================== */
+/* 96. The automatic-discovery toggle                                         */
+/* ========================================================================== */
+
+describe("automatic discovery, switched off", () => {
+	it("does not scan a changed file at all", async () => {
+		const h = discoveryHarness({ "note.md": "> [!alpha] x" });
+		h.settings.autoDiscoverCallouts = false;
+
+		h.internals.scheduleFileScan(h.vault.file("note.md"));
+		h.clock.advance(FILE_SCAN_MS);
+		await settle();
+
+		assert.strictEqual(h.vault.reads(), 0, "not even a cached read");
+		assert.strictEqual(h.registry.get("alpha"), undefined);
+	});
+
+	it("takes effect immediately when switched back on", async () => {
+		// The listener stays subscribed either way, so there is no registration
+		// to redo and no launch to wait for.
+		const h = discoveryHarness({ "note.md": "> [!alpha] x" });
+		h.settings.autoDiscoverCallouts = false;
+		h.internals.scheduleFileScan(h.vault.file("note.md"));
+		h.clock.advance(FILE_SCAN_MS);
+		await settle();
+
+		h.settings.autoDiscoverCallouts = true;
+		h.internals.scheduleFileScan(h.vault.file("note.md"));
+		h.clock.advance(FILE_SCAN_MS);
+		await settle();
+
+		assert.ok(h.registry.get("alpha"));
+	});
+
+	it("leaves a vault scan the user asked for alone", async () => {
+		// The toggle gates the automatic passes, never an action the user took.
+		const h = discoveryHarness({ "note.md": "> [!alpha] x" });
+		h.settings.autoDiscoverCallouts = false;
+
+		assert.strictEqual(await h.discovery.runVaultScan(), 1);
+		assert.ok(h.registry.get("alpha"));
+	});
+
+	it("leaves the rows already discovered exactly where they are", async () => {
+		const h = discoveryHarness({ "note.md": "> [!alpha] x" });
+		await h.internals.scanFileNow(h.vault.file("note.md"));
+
+		h.settings.autoDiscoverCallouts = false;
+		assert.ok(h.registry.get("alpha"), "nothing is taken away");
+		assert.deepStrictEqual([...h.localState.discovered], ["alpha"]);
 	});
 });

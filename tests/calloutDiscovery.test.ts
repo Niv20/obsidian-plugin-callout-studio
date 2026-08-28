@@ -798,25 +798,25 @@ describe("runVaultScan", () => {
 	it("leaves firstRunCompleted alone unless asked", async () => {
 		const h = discoveryHarness({ "a.md": "> [!alpha] x" });
 		await h.discovery.runVaultScan();
-		assert.strictEqual(h.settings.firstRunCompleted, false);
+		assert.strictEqual(h.localState.firstRunCompleted, false);
 	});
 
-	it("marks the first run as done when asked, before it saves", async () => {
+	it("marks the first run as done when asked", async () => {
 		const h = discoveryHarness({ "a.md": "> [!alpha] x" });
 		await h.discovery.runVaultScan(true);
-		assert.strictEqual(h.settings.firstRunCompleted, true);
-		assert.strictEqual(h.saves(), 1);
+		assert.strictEqual(h.localState.firstRunCompleted, true);
 	});
 
-	it("writes the flag onto the same settings object the host holds", async () => {
-		// `runVaultScan` sets it through `registry.settings` while everything
-		// else here reads `host.settings`. main.ts's `settings` getter returns
-		// `registry.settings`, so the two are one object — if they ever diverge,
-		// the first-run modal reopens on every launch.
+	it("keeps the flag off the settings file entirely", async () => {
+		// It is a claim about a MACHINE, not about a vault. Synced, it told a
+		// second device it had already scanned when it never had — and an
+		// imported profile carrying `true` suppressed that device's first run
+		// permanently. See manager/DeviceLocalStore.ts.
 		const h = discoveryHarness();
 		await h.discovery.runVaultScan(true);
-		assert.strictEqual(h.registry.settings, h.settings);
-		assert.strictEqual(h.registry.settings.firstRunCompleted, true);
+		assert.ok(
+			!("firstRunCompleted" in h.registry.toSaveData().settings),
+		);
 	});
 
 	it("does not re-add ids the registry already knows in either spelling", async () => {
