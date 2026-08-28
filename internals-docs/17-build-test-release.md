@@ -140,7 +140,7 @@ mixing them up is a real trap:
 
 ## CI
 
-Two workflows, `.github/workflows/`:
+Three workflows, `.github/workflows/`:
 
 ### `lint.yml` — every push, every branch, Node 20.x and 22.x
 
@@ -153,6 +153,24 @@ The locale-sync check runs **right after the build** (which already ran
 edited without the regenerated output committed alongside it, which would
 otherwise fail every download's checksum for the next release, discovered
 only in users' vaults instead of here.
+
+### `obsidian-lint.yml` — weekly (Mondays 06:00 UTC) and on demand
+
+```text
+npm ci → npm install --no-save eslint-plugin-obsidianmd@latest → npm run lint -- --max-warnings 0
+```
+
+`lint.yml` pins `eslint-plugin-obsidianmd` through the lockfile, so it only
+re-checks when our own code changes. The Obsidian community-plugin scanner
+runs whatever version of that plugin is current. This job re-runs the lint
+against the **latest published ruleset** so a newly added rule surfaces
+here instead of at the next submission — the same drift that forced the
+`0.3.0 → 0.4.1` bump. `--max-warnings 0` so a rule that ships as a warning
+still fails the run. `--no-save` keeps the bump out of `package.json` /
+the lockfile; a real bump comes through the Dependabot PR below.
+
+`.github/dependabot.yml` also watches `eslint-plugin-obsidianmd` (weekly)
+and opens a PR on each new release, which `lint.yml` then runs against.
 
 ### `release.yml` — triggered by pushing a bare-semver tag (`[0-9]+.[0-9]+.[0-9]+`, no `v`)
 
