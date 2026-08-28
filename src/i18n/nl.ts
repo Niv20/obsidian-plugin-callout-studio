@@ -15,6 +15,9 @@ export const nl: Record<string, string> = {
 
 	"settings.fallbackTag": "Standaard",
 	"settings.fallbackTagAuto": "Automatisch standaard",
+	"settings.autoDiscover": "Callouts automatisch detecteren in je kluis",
+	"settings.autoDiscoverDesc":
+		"Herkent callout-types die in je notities zijn geschreven en voegt ze automatisch toe aan de lijst. Als je dit uitschakelt, blijven bestaande callouts ongewijzigd — je kunt ze nog altijd zelf toevoegen of hieronder Kluis opnieuw scannen gebruiken.",
 	"settings.rescanVault": "Vault opnieuw scannen",
 	"settings.rescanVaultDesc":
 		"Zoekt niet-herkende callout-ID's in notities en voegt ze toe als fallback-rijen.",

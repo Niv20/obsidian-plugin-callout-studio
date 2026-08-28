@@ -12,6 +12,9 @@ export const da: Record<string, string> = {
 	"autocomplete.createNew": 'Opret ny callout: "{{name}}"',
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
+	"settings.autoDiscover": "Registrer automatisk callouts i din boks",
+	"settings.autoDiscoverDesc":
+		"Bemærker callout-typer, der er skrevet i dine noter, og tilføjer dem automatisk til listen. Slår du dette fra, forbliver dine eksisterende callouts urørte — du kan stadig tilføje dem selv eller bruge Genscan boks nedenfor.",
 	"settings.rescanVault": "Genscann vault",
 	"settings.rescanVaultDesc":
 		"Finder ukendte callout-ID'er i noter og tilføjer dem som reserverækker.",

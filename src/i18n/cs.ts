@@ -15,6 +15,9 @@ export const cs: Record<string, string> = {
 
 	"settings.fallbackTag": "Výchozí",
 	"settings.fallbackTagAuto": "Aut. výchozí",
+	"settings.autoDiscover": "Automaticky rozpoznávat upozornění ve vašem trezoru",
+	"settings.autoDiscoverDesc":
+		"Rozpozná typy upozornění napsané v poznámkách a automaticky je přidá do seznamu. Vypnutím zůstanou stávající upozornění beze změny — stále je můžete přidat ručně nebo použít Znovu prohledat trezor níže.",
 	"settings.rescanVault": "Znovu prohledat vault",
 	"settings.rescanVaultDesc":
 		"Vyhledá nerozpoznaná ID callout v poznámkách a přidá je jako záložní řádky.",

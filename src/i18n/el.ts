@@ -13,6 +13,9 @@ export const el: Record<string, string> = {
 	"autocomplete.createNew": 'Δημιουργία νέου callout: "{{name}}"',
 	"settings.fallbackTag": "Προεπιλογή",
 	"settings.fallbackTagAuto": "Αυτόματη προεπιλογή",
+	"settings.autoDiscover": "Αυτόματος εντοπισμός callouts στο vault σας",
+	"settings.autoDiscoverDesc":
+		"Εντοπίζει τύπους callout που γράφονται στις σημειώσεις σας και τους προσθέτει αυτόματα στη λίστα. Απενεργοποιώντας το, τα callouts που ήδη έχετε παραμένουν ανέπαφα — μπορείτε ακόμα να τα προσθέσετε μόνοι σας ή να χρησιμοποιήσετε το «Επανασάρωση vault» παρακάτω.",
 	"settings.rescanVault": "Επανασάρωση vault",
 	"settings.rescanVaultDesc":
 		"Βρίσκει άγνωστα IDs callout σε σημειώσεις και τα προσθέτει ως εφεδρικές γραμμές.",

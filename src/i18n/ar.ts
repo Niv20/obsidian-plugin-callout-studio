@@ -16,6 +16,9 @@ export const ar: Record<string, string> = {
 
 	"settings.fallbackTag": "افتراضي",
 	"settings.fallbackTagAuto": "افتراضي تلقائي",
+	"settings.autoDiscover": "اكتشاف الكولاوت تلقائيًا في خزنتك",
+	"settings.autoDiscoverDesc":
+		"لاحظ أنواع الكولاوت المكتوبة في ملاحظاتك وأضفها إلى القائمة تلقائيًا. إيقاف هذا الخيار يترك الكولاوت الموجودة لديك دون تغيير — يمكنك إضافتها بنفسك، أو استخدام إعادة مسح الخزنة أدناه.",
 	"settings.rescanVault": "إعادة مسح المخزن",
 	"settings.rescanVaultDesc":
 		"يبحث عن معرّفات callout غير المعروفة في الملاحظات ويضيفها كصفوف احتياطية.",

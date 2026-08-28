@@ -15,6 +15,9 @@ export const it: Record<string, string> = {
 
 	"settings.fallbackTag": "Predefinito",
 	"settings.fallbackTagAuto": "Predefinito automatico",
+	"settings.autoDiscover": "Rileva automaticamente i callout nel tuo vault",
+	"settings.autoDiscoverDesc":
+		"Individua i tipi di callout scritti nelle tue note e li aggiunge automaticamente all'elenco. Disattivando questa opzione i callout già presenti restano invariati: puoi comunque aggiungerli manualmente oppure usare Ripeti scansione del vault qui sotto.",
 	"settings.rescanVault": "Riscansiona vault",
 	"settings.rescanVaultDesc":
 		"Cerca ID callout non riconosciuti nelle note e li aggiunge come righe di fallback.",

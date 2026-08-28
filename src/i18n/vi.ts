@@ -15,6 +15,9 @@ export const vi: Record<string, string> = {
 
 	"settings.fallbackTag": "Mặc định",
 	"settings.fallbackTagAuto": "Mặc định tự động",
+	"settings.autoDiscover": "Tự động phát hiện callout trong kho của bạn",
+	"settings.autoDiscoverDesc":
+		"Nhận biết các loại callout được viết trong ghi chú của bạn và tự động thêm chúng vào danh sách. Tắt tùy chọn này không ảnh hưởng đến các callout bạn đã có — bạn vẫn có thể tự thêm chúng, hoặc dùng Quét lại kho bên dưới.",
 	"settings.rescanVault": "Quét lại vault",
 	"settings.rescanVaultDesc":
 		"Tìm các ID callout chưa được nhận dạng trong ghi chú và thêm chúng như các hàng dự phòng.",

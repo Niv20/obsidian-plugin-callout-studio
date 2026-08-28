@@ -15,6 +15,9 @@ export const pt: Record<string, string> = {
 
 	"settings.fallbackTag": "Padrão",
 	"settings.fallbackTagAuto": "Padrão automático",
+	"settings.autoDiscover": "Detectar callouts automaticamente no seu cofre",
+	"settings.autoDiscoverDesc":
+		"Percebe os tipos de callout escritos nas suas notas e adiciona-os automaticamente à lista. Desativar isto deixa os callouts que já tem inalterados — ainda pode adicioná-los você mesmo, ou usar Reanalisar cofre abaixo.",
 	"settings.rescanVault": "Redigitalizar vault",
 	"settings.rescanVaultDesc":
 		"Encontra IDs de callout não reconhecidos nas notas e os adiciona como linhas de fallback.",

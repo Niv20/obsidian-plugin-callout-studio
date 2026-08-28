@@ -16,6 +16,9 @@ export const es: Record<string, string> = {
 
 	"settings.fallbackTag": "Predeterminado",
 	"settings.fallbackTagAuto": "Predeterminado automático",
+	"settings.autoDiscover": "Descubrir automáticamente los callouts en tu bóveda",
+	"settings.autoDiscoverDesc":
+		"Detecta los tipos de callout escritos en tus notas y los añade automáticamente a la lista. Desactivar esto deja intactos los callouts que ya tienes: aún puedes añadirlos tú mismo o usar Volver a escanear la bóveda más abajo.",
 	"settings.rescanVault": "Volver a escanear el vault",
 	"settings.rescanVaultDesc":
 		"Busca IDs de callout no reconocidos en las notas y los añade como filas de reserva.",

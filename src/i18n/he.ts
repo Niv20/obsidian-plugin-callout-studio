@@ -26,6 +26,9 @@ export const he: Record<string, string> = {
 	// Vault scan / fallback / delete
 	"settings.fallbackTag": "ברירת־מחדל",
 	"settings.fallbackTagAuto": "ברירת־מחדל אוטומטית",
+	"settings.autoDiscover": "איתור אוטומטי של קריאות בכספת שלך",
+	"settings.autoDiscoverDesc":
+		"מזהה סוגי קריאה שנכתבו בפתקים שלך ומוסיף אותם לרשימה באופן אוטומטי. כיבוי האפשרות הזו משאיר את הקריאות שכבר יש לך ללא שינוי — עדיין אפשר להוסיף אותן בעצמך, או להשתמש בסריקה מחדש של הכספת שלמטה.",
 	"settings.rescanVault": "סריקה מחדש של הכספת",
 	"settings.rescanVaultDesc":
 		"חיפוש מזהים של תיבות־הבלטה לא מוכרות ברחבי הכספת והוספתם כשורות ברירת־מחדל.",

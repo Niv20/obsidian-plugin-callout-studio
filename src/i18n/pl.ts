@@ -15,6 +15,9 @@ export const pl: Record<string, string> = {
 
 	"settings.fallbackTag": "Domyślny",
 	"settings.fallbackTagAuto": "Aut. domyślny",
+	"settings.autoDiscover": "Automatycznie wykrywaj callouty w skarbcu",
+	"settings.autoDiscoverDesc":
+		"Rozpoznaje typy calloutów zapisane w Twoich notatkach i automatycznie dodaje je do listy. Wyłączenie tej opcji pozostawia istniejące już callouty bez zmian — nadal możesz dodać je ręcznie lub użyć poniższej funkcji Ponownie skanuj skarbiec.",
 	"settings.rescanVault": "Ponownie skanuj vault",
 	"settings.rescanVaultDesc":
 		"Wyszukuje nierozpoznane ID callout w notatkach i dodaje je jako wiersze zapasowe.",

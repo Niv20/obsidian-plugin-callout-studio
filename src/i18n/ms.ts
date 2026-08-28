@@ -14,6 +14,9 @@ export const ms: Record<string, string> = {
 	"autocomplete.createNew": 'Cipta callout baharu: "{{name}}"',
 	"settings.fallbackTag": "Lalai",
 	"settings.fallbackTagAuto": "Lalai automatik",
+	"settings.autoDiscover": "Kesan callout secara automatik dalam vault anda",
+	"settings.autoDiscoverDesc":
+		"Mengenal pasti jenis callout yang ditulis dalam nota anda dan menambahkannya ke senarai secara automatik. Mematikan ini membiarkan callout yang sudah anda ada tidak berubah — anda masih boleh menambahkannya sendiri, atau guna Imbas semula vault di bawah.",
 	"settings.rescanVault": "Imbas semula vault",
 	"settings.rescanVaultDesc":
 		"Mencari ID callout yang tidak dikenali dalam nota dan menambahkannya sebagai baris sandaran.",

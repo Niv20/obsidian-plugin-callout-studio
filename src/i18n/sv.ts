@@ -15,6 +15,9 @@ export const sv: Record<string, string> = {
 
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
+	"settings.autoDiscover": "Upptäck callouts i ditt valv automatiskt",
+	"settings.autoDiscoverDesc":
+		"Uppmärksammar callout-typer som skrivs i dina anteckningar och lägger till dem i listan automatiskt. Om du stänger av detta lämnas de callouts du redan har orörda — du kan fortfarande lägga till dem själv, eller använda Skanna om valvet nedan.",
 	"settings.rescanVault": "Skanna vault igen",
 	"settings.rescanVaultDesc":
 		"Hittar okända callout-ID:n i anteckningar och lägger till dem som reservrader.",

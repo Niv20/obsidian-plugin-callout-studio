@@ -15,6 +15,9 @@ export const tr: Record<string, string> = {
 
 	"settings.fallbackTag": "Varsayılan",
 	"settings.fallbackTagAuto": "Otomatik varsayılan",
+	"settings.autoDiscover": "Kasanızdaki callout'ları otomatik olarak algıla",
+	"settings.autoDiscoverDesc":
+		"Notlarınızda yazılan callout türlerini fark eder ve otomatik olarak listeye ekler. Bunu kapatmak sahip olduğunuz callout'ları değiştirmeden bırakır — bunları yine de kendiniz ekleyebilir veya aşağıdaki Kasayı yeniden tara seçeneğini kullanabilirsiniz.",
 	"settings.rescanVault": "Vault'u yeniden tara",
 	"settings.rescanVaultDesc":
 		"Notlardaki tanınmayan callout ID'lerini bulur ve geri dönüş satırları olarak ekler.",
