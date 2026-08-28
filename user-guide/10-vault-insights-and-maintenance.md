@@ -2,6 +2,10 @@
 
 Callout Studio can look across your entire vault and tell you exactly how your callouts are being used. This chapter covers the statistics view and a couple of small maintenance tools that live alongside it.
 
+## Automatic discovery
+
+**Automatically discover callouts in your vault** is on by default: callout types you write in your notes are added to your list on their own. Switching it off stops that and nothing else — the callouts already in your list stay put, **Scan now** still works, and you can add callout types yourself as usual. See [Fallback callouts & auto-discovery](08-fallback-callouts-and-auto-discovery.md).
+
 ## Callout statistics
 
 Callout statistics scans every markdown file in your vault and builds a complete picture of your callouts. For each callout type you use, it shows:

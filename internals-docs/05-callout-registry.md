@@ -110,7 +110,7 @@ second callout to choose between*:
 
 ## Load-time migrations
 
-All ten migrations below are **content-keyed, not version-keyed** — each one
+The migrations below are **content-keyed, not version-keyed** — each one
 checks the shape of the data itself rather than trusting `data.version`. This
 is deliberate and stated repeatedly in the source: an imported or hand-edited
 file can carry any version number it likes, and a migration that trusted the
@@ -279,7 +279,14 @@ toSaveData(): PluginData
   in-progress edit); if it occupies a fresh id, it's skipped entirely.
 - A built-in is written **only if `isModified()` is true** against its shipped
   default.
-- Every non-built-in row is always written.
+- Every non-built-in row is written **except** an unclaimed discovered one —
+  `source: "fallback"` with no `customized`, no `externalStyle` and no custom
+  command pointing at it. Those live in the registry for the session and are
+  rebuilt at startup from the device-local index; `data.json` says nothing about
+  them at all. The rule and its three exceptions are in
+  [`manager/discoveredRowPersistence.ts`](../src/manager/discoveredRowPersistence.ts);
+  why they cannot be in the settings file is in
+  [Persistence § multi-device sync](07-persistence-and-caching.md#multi-device-sync).
 - `materialSvgCache` is deliberately never written back — legacy entries were
   folded into `iconSvgCache` on load, and writing both would let them drift.
 

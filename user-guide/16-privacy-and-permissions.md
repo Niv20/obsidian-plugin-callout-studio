@@ -61,6 +61,7 @@ These pictures live in the plugin's own data file alongside the rest of your set
 - **The interface's own translation file**, one language only — safe to delete; it falls back to English and re-downloads.
 - **The Material Symbols preview font** — used only to draw the icon picker's grid, never your notes.
 - **A small local snapshot of the plugin's generated CSS**, purely to shorten the flash of unstyled callouts on a slow startup (mainly on mobile). It lives in the app's own local storage, never in the vault, and never leaves the device.
+- **A short list of the callout IDs this device has noticed in your notes**, so your discovered callouts are still listed after a restart without re-reading every note. It holds IDs only — no colours, no icons, no note content — and it lives in the app's own local storage, never in the vault, so it never syncs to your other devices and never leaves this one. Deleting it costs nothing: the list is rebuilt from your notes.
 - **The exported CSS snippet file**, only if you've explicitly asked for one (see [Import, export & sharing](11-import-export-and-sharing.md)). It's never turned on automatically, and it's safe to delete.
 
 ---

@@ -5,8 +5,9 @@ saved, cached, or purely in memory, and what happens when it's missing.
 
 ## `data.json` — the one persisted settings file
 
-Written by `plugin.saveSettings()` → `this.saveData(this.registry.toSaveData())`,
-Obsidian's standard per-plugin JSON file at
+Written by `plugin.saveSettings()` → `SettingsWriter` →
+`this.saveData(this.registry.toSaveData())`, Obsidian's standard per-plugin
+JSON file at
 `<Vault>/.obsidian/plugins/callout-studio/data.json`. Its shape is `PluginData`
 (see [Data model](04-data-model.md#plugindata--the-shape-of-datajson)). Nothing
 else in the plugin writes to disk except:
@@ -30,10 +31,85 @@ is understanding the whole persistence contract.
 ### When is it saved?
 
 Every `registry.onChange` fires `void this.saveSettings()` (see
-[Architecture § the data-flow loop](02-architecture.md#the-data-flow-loop)).
-Because `onChange` fires at most once per `batch()`, a multi-row import or a
-rename is one save, not several. There is no debounce on the save itself — it
-runs synchronously off the same tick as the CSS inject.
+[Architecture § the data-flow loop](02-architecture.md#the-data-flow-loop)),
+and roughly forty UI call sites do so directly. Because `onChange` fires at
+most once per `batch()`, a multi-row import or a rename is one save, not
+several.
+
+Every one of them goes through
+[`manager/SettingsWriter.ts`](../src/manager/SettingsWriter.ts), which applies
+two rules the raw `saveData` call did not:
+
+- **Concurrent saves are coalesced, not raced.** Most callers are
+  `void saveSettings()`, so two could be in flight at once, each carrying a
+  snapshot taken at its own moment, and the file was left to whichever finished
+  last. A request made during a write now joins a single follow-up pass that
+  **builds its payload when it runs** — so the file always ends up holding the
+  final state, whatever order the callers arrived in.
+- **A byte-identical payload is not written at all**
+  ([`utils/saveGuard.ts`](../src/utils/saveGuard.ts)). The same argument
+  `cssSnippetExport` already makes for the CSS snippet: every write is a sync
+  event. The baseline moves only after a write *succeeds*, so a failed write is
+  retried rather than suppressed forever — and it is **invalidated** whenever
+  settings are reloaded from disk, because it is a claim about what *we* last
+  wrote and someone else has just written something else.
+
+That guard only works because `mergeSavedSettings` names its fields in
+`DEFAULT_SETTINGS`' order: `JSON.stringify` writes keys in insertion order, so
+while the two lists disagreed, a freshly constructed registry and a reloaded one
+serialized the same settings into byte-different files.
+
+### Multi-device sync
+
+`data.json` sits inside `.obsidian/`, so on a vault synced with Syncthing (or
+any file-level sync) **both devices write the same file**. Three properties
+decide whether that is safe, and issue #41 was all three going the wrong way.
+
+**1. Only user intent is written.** A row automatic discovery minted and nobody
+claimed is *an observation this machine made*, not configuration. Writing it
+meant a second device edited the settings file — differently — merely by
+opening a synced note, seconds after the first device wrote its own version.
+`selectPersistedRows`
+([`manager/discoveredRowPersistence.ts`](../src/manager/discoveredRowPersistence.ts))
+now excludes those rows, the same way `source: "theme"` rows have always been
+excluded.
+
+**2. What is derived, or per machine, lives outside the file.**
+[`manager/DeviceLocalStore.ts`](../src/manager/DeviceLocalStore.ts) is one
+`localStorage` blob, vault-scoped exactly like `StartupStyleCache`, holding:
+
+| Field | Why it is not settings |
+| --- | --- |
+| `discovered` | The ids this device has seen written in notes. A cache of a vault-derived fact — the notes sync, so both devices reach the same answer on their own. Losing it costs one background scan. |
+| `firstRunCompleted` | A claim about a machine. Synced, it told a second device it had already scanned when it never had. |
+| `retiredThemeIds` | Derived from the *active theme*, which routinely differs between a phone and a desktop. |
+| `listsExpanded` | Pure per-device UI state — folding a settings section used to rewrite the synced file. |
+
+Only ids are kept, never a style: what a discovered callout looks like is
+resolved from the current fallback at load time by the same
+`buildDiscoveredRow` discovery itself uses.
+
+**3. An external change is adopted, not clobbered.** `onExternalSettingsChange`
+is implemented (`manager/settingsBoot.ts: adoptExternalSettings`); without it,
+`Plugin.loadData` does not even track the file's mtime, and the plugin's
+in-memory snapshot would overwrite whatever a sync client had just delivered.
+It re-reads, rebuilds the registry, restores the discovered rows, **re-sweeps
+the theme's overlay rows** (`registry.load()` clears them and they are never
+persisted), re-syncs the custom commands and invalidates the write guard. It is
+**deferred** while the callout editor is open, so a reload can never change the
+row being edited underneath the user.
+
+> [!WARNING]
+> The hook has two limits, and neither can be worked around from inside a
+> plugin. The config-folder watcher behind it is **desktop only** — the mobile
+> adapter has no `fs.watch`. And Obsidian's own gate is
+> `_lastDataModifiedTime < stat.mtime`, strictly; Syncthing preserves the
+> *source* file's mtime, so a file written on a device whose clock or write
+> order put it earlier than our last local save does not fire it at all.
+>
+> This is why the real fix is property 1 — a passive device that writes nothing
+> gives the sync client nothing to reconcile. The hook is the second line of
+> defence, not the first.
 
 ### Settings merge — never a raw spread
 
@@ -76,8 +152,10 @@ doesn't silently switch a hidden menu item back on.
 | State | Owner | Rebuilt from |
 | --- | --- | --- |
 | `CalloutDiscovery`'s debounce timers | `CalloutDiscovery` | N/A — pure runtime scheduling |
-| The rediscovery-suppression map (`suppressedIds`) | `CalloutDiscovery` | N/A — a 5-second window after an explicit delete |
-| The "known zero usage" fallback-id set | `CalloutDiscovery` | Recomputed by the next `pruneUnused()` scan |
+| The rediscovery-suppression map (`RediscoveryHold.deleted`) | `CalloutDiscovery` | N/A — a 5-second window after an explicit delete |
+| The "known zero usage" fallback-id set | `CalloutPrune` | Recomputed by the next `pruneUnused()` scan |
+| Rows for discovered ids nobody has claimed | `CalloutRegistry` | Rebuilt at startup from `DeviceLocalStore`'s id list — no vault read |
+| `SettingsWriter`'s last-written payload | `SettingsWriter` | The next save writes unconditionally; invalidated on an external change |
 | `CSSInjector.lastCssText` | `CSSInjector` | Recomputed by the next `inject()` |
 | The registry's transient live-preview slot | `CalloutRegistry` | Cleared automatically when the editor modal closes |
 | `IconFetchManager`/`PackDataStore` in-flight promise maps | `IconService` | Nothing to rebuild — just de-duplicates concurrent requests |
@@ -104,6 +182,21 @@ notice missing after a restart.
   by `refreshAllCalloutEditors()` whenever the registry changes (registry
   mutations don't touch the document text, so CodeMirror has no reason to
   rebuild its own decorations without being asked).
+
+## The device-local store
+
+[`src/manager/DeviceLocalStore.ts`](../src/manager/DeviceLocalStore.ts) is the
+second `localStorage` layer, alongside the CSS snapshot below and keyed the same
+way. What it holds and why none of it belongs in `data.json` is in
+[§ multi-device sync](#multi-device-sync); the mechanics are deliberately the
+same as `StartupStyleCache`'s, down to advancing the write memo **only after the
+write lands** so a refused write is retried rather than remembered as a success.
+
+One asymmetry is load bearing: a blob that is missing, corrupt, or from a
+version this build does not know reads as **absent**, never as empty. "Absent"
+asks for a scan; "empty" would say this vault genuinely uses no discovered
+callouts, and getting that wrong hides every row with no way back but the
+settings button.
 
 ## The startup CSS snapshot
 
