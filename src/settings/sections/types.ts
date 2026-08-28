@@ -8,6 +8,7 @@
  */
 import type { App, Plugin, PluginManifest } from "obsidian";
 import type { CalloutRegistry } from "../../manager/CalloutRegistry";
+import type { DeviceLocalStore } from "../../manager/DeviceLocalStore";
 import type { CSSInjector } from "../../manager/CSSInjector";
 import type { CustomCommandManager } from "../../editor/CustomCommandManager";
 import type { FixedCommandId } from "../../editor/commands";
@@ -27,6 +28,8 @@ export type SettingsTabPlugin = Plugin & {
 	manifest: PluginManifest;
 	settings: PluginSettings;
 	pruneSuspended: boolean;
+	/** Per-device state — the settings-list fold, above all. */
+	localState: DeviceLocalStore;
 	onIconCacheChange(cb: () => void): () => void;
 	schedulePruneUnusedFallbacks(delayMs?: number): void;
 	addUnknownCalloutsAsFallback(unknownIds: string[]): number;

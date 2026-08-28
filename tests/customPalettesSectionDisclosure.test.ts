@@ -29,8 +29,28 @@ function fakeApp(): App {
 	return { workspace: { on: () => ({}), offref: () => {} } } as unknown as App;
 }
 
+/**
+ * Stands in for `DeviceLocalStore`'s fold state, which is where the palettes
+ * section's chevron is remembered — per device, not in the synced settings
+ * file, so folding a section is no longer a sync event.
+ */
+function foldStore() {
+	const state = { theme: true, user: true, builtin: true, palettes: true };
+	return {
+		state,
+		isExpanded: (kind: keyof typeof state) => state[kind],
+		setExpanded: (kind: keyof typeof state, expanded: boolean) => {
+			state[kind] = expanded;
+		},
+	};
+}
+
 /** The slice of the settings context the section actually touches. */
-function paletteCtx(registry: Registry, app: App) {
+function paletteCtx(
+	registry: Registry,
+	app: App,
+	localState: ReturnType<typeof foldStore>,
+) {
 	return {
 		app,
 		display: () => {},
@@ -39,6 +59,7 @@ function paletteCtx(registry: Registry, app: App) {
 			app,
 			registry,
 			settings: registry.settings,
+			localState,
 			saveSettings: () => Promise.resolve(),
 		},
 	} as never;
@@ -73,8 +94,12 @@ function addPalettes(registry: Registry, count: number): void {
 	}
 }
 
-function render(registry: Registry, app: App) {
-	const ctx = paletteCtx(registry, app);
+function render(
+	registry: Registry,
+	app: App,
+	localState: ReturnType<typeof foldStore> = foldStore(),
+) {
+	const ctx = paletteCtx(registry, app, localState);
 	const host: HTMLElement = createDiv();
 	renderCustomPalettesSection(ctx, host);
 	return host;
@@ -159,26 +184,28 @@ describe("the Saved color palettes heading folds like the callout lists", () => 
 		assert.strictEqual(folded(section(host)), false);
 	});
 
-	it("saves the fold to settings.calloutListsExpanded.palettes", () => {
+	it("saves the fold to this device's own state", () => {
 		const registry = vault();
-		const host = render(registry, fakeApp());
+		const local = foldStore();
+		const host = render(registry, fakeApp(), local);
 
-		assert.strictEqual(registry.settings.calloutListsExpanded.palettes, true);
+		assert.strictEqual(local.state.palettes, true);
 		click(section(host).nameEl);
-		assert.strictEqual(registry.settings.calloutListsExpanded.palettes, false);
+		assert.strictEqual(local.state.palettes, false);
 	});
 
-	it("restores the fold when the section is rebuilt against the same settings", () => {
+	it("restores the fold when the section is rebuilt on the same device", () => {
 		const registry = vault();
 		const app = fakeApp();
-		const first = render(registry, app);
+		const local = foldStore();
+		const first = render(registry, app, local);
 
 		click(section(first).nameEl);
 		assert.strictEqual(expanded(section(first)), false);
 
 		// A settings-tab reopen builds the section fresh against the same
-		// PluginSettings object — the exact thing that has to remember the fold.
-		const second = render(registry, app);
+		// device-local state — the exact thing that has to remember the fold.
+		const second = render(registry, app, local);
 		assert.strictEqual(expanded(section(second)), false);
 		assert.strictEqual(folded(section(second)), true);
 	});

@@ -271,6 +271,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	}
 
 	private scanOpenEditorsForUnknownCallouts(): void {
+		if (!this.plugin.settings.autoDiscoverCallouts) return;
 		// The shared set, not a second one built here — see knownCalloutIds.ts.
 		const known = buildKnownCalloutIds(this.plugin.registry);
 		const seen = new Set<string>();
@@ -291,7 +292,8 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 			mergeDashSpaceVariants(Array.from(seen)),
 		);
 		if (added > 0) {
-			void this.plugin.saveSettings();
+			// No saveSettings(): opening the settings tab is not a settings
+			// change. See manager/discoveredRowPersistence.ts.
 			this.plugin.refreshCallouts();
 		}
 	}
