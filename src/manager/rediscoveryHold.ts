@@ -18,8 +18,9 @@
  *   and that is discovery's whole job.
  *
  * - **A callout type the active theme stopped supplying.** That one *is* a
- *   policy and so has no expiry; it lives in settings and is explained in
- *   `theme/retiredThemeIds.ts`.
+ *   policy and so has no expiry; it lives in the DEVICE-LOCAL store — which
+ *   theme is active is a property of this machine, not of the vault — and is
+ *   explained in `theme/retiredThemeIds.ts`.
  *
  * Both are dropped by {@link RediscoveryHold.clear}, which a user-requested
  * vault scan calls: the user asking for these rows outranks either reason.
@@ -34,6 +35,7 @@
  */
 import { calloutIdentity } from "../utils/calloutId";
 import { isRetiredThemeId } from "./theme/retiredThemeIds";
+import type { RetiredThemeIdHolder } from "./DeviceLocalStore";
 
 /**
  * How long an explicit delete keeps discovery from re-creating the row it just
@@ -46,7 +48,7 @@ export class RediscoveryHold {
 	/** Ids an explicit delete just removed → when their hold expires. */
 	private readonly deleted = new Map<string, number>();
 
-	constructor(private readonly settings: { retiredThemeIds: string[] }) {}
+	constructor(private readonly retired: RetiredThemeIdHolder) {}
 
 	/**
 	 * Hold these ids back for the next few seconds. Pass every id form the
@@ -64,12 +66,12 @@ export class RediscoveryHold {
 	/** Drop every hold, of both kinds. */
 	clear(): void {
 		this.deleted.clear();
-		this.settings.retiredThemeIds = [];
+		this.retired.retiredThemeIds = [];
 	}
 
 	/** Whether automatic discovery must not create a row for this id. */
 	holds(id: string): boolean {
-		if (isRetiredThemeId(this.settings.retiredThemeIds, id)) return true;
+		if (isRetiredThemeId(this.retired.retiredThemeIds, id)) return true;
 		const normalized = calloutIdentity(id);
 		const until = this.deleted.get(normalized);
 		if (until === undefined) return false;

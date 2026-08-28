@@ -38,6 +38,8 @@ import { TFile } from "obsidian";
 import type { App, EventRef } from "obsidian";
 import { CalloutDiscovery } from "../../src/manager/CalloutDiscovery";
 import { CalloutRegistry } from "../../src/manager/CalloutRegistry";
+import { DeviceLocalStore } from "../../src/manager/DeviceLocalStore";
+import type { ScanReason } from "../../src/manager/discoveryScheduler";
 import type { CalloutDefinition, PluginSettings } from "../../src/types";
 
 /* -------------------------------------------------------------------------- */
@@ -99,11 +101,23 @@ const clock: Clock = {
 	},
 };
 
+/**
+ * The device-local store reads and writes `window.localStorage`, which Node has
+ * no more of than it has a `window`. An in-memory map is the whole of it: these
+ * suites care what the index *says*, and the store's own suite is where the
+ * quota and corrupt-blob paths are exercised.
+ */
+const storage = new Map<string, string>();
+
 (
 	globalThis as unknown as {
 		window: {
 			setTimeout(fn: () => void, ms?: number): number;
 			clearTimeout(id?: number): void;
+			localStorage: {
+				getItem(key: string): string | null;
+				setItem(key: string, value: string): void;
+			};
 		};
 	}
 ).window = {
@@ -114,6 +128,12 @@ const clock: Clock = {
 	},
 	clearTimeout(id?: number): void {
 		if (id !== undefined) timers.delete(id);
+	},
+	localStorage: {
+		getItem: (key) => storage.get(key) ?? null,
+		setItem: (key, value) => {
+			storage.set(key, value);
+		},
 	},
 };
 
@@ -154,6 +174,14 @@ export interface FakeVault {
 	reads(): number;
 }
 
+/**
+ * A note's handle, carrying the `stat.mtime` the scan memo keys on.
+ *
+ * The mtime is the virtual clock's, so a `write` that follows an `advance` is
+ * genuinely newer than the scan before it — which is what lets a suite prove
+ * that re-opening an *unchanged* note is free while re-opening an edited one is
+ * not.
+ */
 function makeFile(path: string): TFile {
 	const file = new TFile();
 	return Object.assign(file, {
@@ -161,6 +189,7 @@ function makeFile(path: string): TFile {
 		extension: "md",
 		basename: path.replace(/\.md$/, ""),
 		name: path,
+		stat: { ctime: virtualNow, mtime: virtualNow, size: 0 },
 	});
 }
 
@@ -184,6 +213,40 @@ export interface FakeEditor {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Fake workspace                                                             */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The events `registerIncrementalWatchers` subscribes to, and the open tabs it
+ * sweeps once on registration.
+ *
+ * Firing them by hand is the only way to test the triggers: the harness's `on`
+ * handlers just record the callback, so nothing happens until a suite says a
+ * note was opened, written, or created.
+ */
+export interface FakeWorkspace {
+	/**
+	 * Fire `workspace.on("file-open")` for the note at `path` — or with `null`,
+	 * which is what core sends when the last markdown tab closes.
+	 */
+	open(path: string | null): void;
+	/** Fire `metadataCache.on("changed")` for the note at `path`. */
+	change(path: string): void;
+	/** Fire `vault.on("create")` for the note at `path`. */
+	create(path: string): void;
+	/**
+	 * Put `paths` in markdown leaves — one leaf per path, each showing that
+	 * note. Set this *before* `registerIncrementalWatchers()`, which is what
+	 * sweeps them.
+	 *
+	 * `deferred` builds them the way Obsidian 1.7.2+ restores a tab that has
+	 * not been activated: the leaf reports as markdown and carries serialized
+	 * view state, but its view is not loaded and has no `file`.
+	 */
+	leaves(paths: string[], deferred?: boolean): void;
+}
+
+/* -------------------------------------------------------------------------- */
 /* Private surface                                                            */
 /* -------------------------------------------------------------------------- */
 
@@ -201,9 +264,9 @@ export interface DiscoveryInternals {
 	/** The two reasons discovery is held back, now one object — see
 	 *  `manager/rediscoveryHold.ts`. */
 	hold: { holds(id: string): boolean };
-	scheduleFileScan(file: TFile): void;
-	scanFileNow(file: TFile): Promise<void>;
-	getActiveTypingCalloutIds(file: TFile): Set<string> | null;
+	/** `reason` defaults to `"change"`, exactly as the production signature does. */
+	scheduleFileScan(file: TFile, reason?: ScanReason): void;
+	scanFileNow(file: TFile, reason?: ScanReason): Promise<void>;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -214,6 +277,8 @@ export interface DiscoveryHarness {
 	discovery: CalloutDiscovery;
 	internals: DiscoveryInternals;
 	registry: CalloutRegistry;
+	/** The device-local index discovery writes its ids to. */
+	localState: DeviceLocalStore;
 	/**
 	 * The live settings object. Identical to `registry.settings` on purpose:
 	 * main.ts hands discovery `this.settings`, which is a getter returning
@@ -225,6 +290,8 @@ export interface DiscoveryHarness {
 	app: App;
 	vault: FakeVault;
 	editor: FakeEditor;
+	/** The discovery triggers, and the tabs a restored session leaves open. */
+	workspace: FakeWorkspace;
 	clock: Clock;
 	/** How many times `saveSettings()` was called. */
 	saves(): number;
@@ -260,6 +327,19 @@ export function discoveryHarness(
 	};
 
 	let activeEditor: unknown = null;
+	let openLeaves: string[] = [];
+	let leavesDeferred = false;
+
+	// `on` records rather than ignores, so a suite can fire the very event
+	// `registerIncrementalWatchers` subscribed to. Keyed by owner and name
+	// because "changed" and "create" live on different objects.
+	const handlers = new Map<string, (arg: unknown) => void>();
+	const listen =
+		(owner: string) =>
+		(event: string, cb: (arg: unknown) => void): EventRef => {
+			handlers.set(`${owner}:${event}`, cb);
+			return {} as EventRef;
+		};
 
 	const app = {
 		vault: {
@@ -271,22 +351,42 @@ export function discoveryHarness(
 				store.set(file.path, data);
 				return Promise.resolve();
 			},
-			on: () => ({}) as EventRef,
+			on: listen("vault"),
 		},
 		metadataCache: {
-			on: () => ({}) as EventRef,
+			on: listen("metadataCache"),
 		},
 		workspace: {
 			get activeEditor() {
 				return activeEditor;
 			},
+			on: listen("workspace"),
+			getLeavesOfType: (type: string) =>
+				type === "markdown"
+					? openLeaves.map((path) => ({
+							// A deferred leaf's view is not loaded, so it has no
+							// `file` — only the serialized state does.
+							view: leavesDeferred
+								? {}
+								: { file: vault.file(path) },
+							getViewState: () => ({
+								type: "markdown",
+								state: { file: path },
+							}),
+						}))
+					: [],
 		},
 	} as unknown as App;
 
 	const vault: FakeVault = {
 		write(path, content) {
 			store.set(path, content);
-			if (!handles.has(path)) handles.set(path, makeFile(path));
+			const existing = handles.get(path);
+			// A write moves the mtime, which is what invalidates the scan memo.
+			// Without this an edited note would read as "already scanned" and
+			// the very trigger under test would be skipped.
+			if (existing) existing.stat.mtime = virtualNow;
+			else handles.set(path, makeFile(path));
 		},
 		remove(path) {
 			store.delete(path);
@@ -326,6 +426,29 @@ export function discoveryHarness(
 		},
 	};
 
+	const fire = (key: string, path: string): void => {
+		handlers.get(key)?.(vault.file(path));
+	};
+
+	const workspace: FakeWorkspace = {
+		open: (path) => {
+			if (path === null) handlers.get("workspace:file-open")?.(null);
+			else fire("workspace:file-open", path);
+		},
+		change: (path) => fire("metadataCache:changed", path),
+		create: (path) => fire("vault:create", path),
+		leaves: (paths, deferred = false) => {
+			openLeaves = [...paths];
+			leavesDeferred = deferred;
+		},
+	};
+
+	// A fresh scope per harness, so one test's index cannot leak into the next.
+	storage.clear();
+	const localState = new DeviceLocalStore({
+		vault: { getName: () => "test-vault" },
+	} as unknown as App);
+
 	const registry = new CalloutRegistry();
 	// `load(null)` rather than the bare constructor: it is `load` that seeds the
 	// live map with the 13 shipped callouts and stocks `settings` from
@@ -342,6 +465,7 @@ export function discoveryHarness(
 		app,
 		registry,
 		settings: registry.settings,
+		localState,
 		saveSettings: () => {
 			saves++;
 			return Promise.resolve();
@@ -359,9 +483,11 @@ export function discoveryHarness(
 		internals: discovery as unknown as DiscoveryInternals,
 		registry,
 		settings: registry.settings,
+		localState,
 		app,
 		vault,
 		editor,
+		workspace,
 		clock,
 		saves: () => saves,
 		refreshes: () => refreshes,
