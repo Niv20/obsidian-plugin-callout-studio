@@ -1,0 +1,29 @@
+name: Obsidian lint (latest ruleset)
+
+# lint.yml pins eslint-plugin-obsidianmd through the lockfile, so it only
+# re-checks when our own code changes. The Obsidian community-plugin
+# scanner runs whatever version of that plugin is current. This job closes
+# the gap: once a week, and on demand, it re-runs the lint against the
+# latest published ruleset so a newly added rule surfaces here instead of
+# at the next submission. --max-warnings 0 so a rule that ships as a
+# warning still fails the run.
+
+on:
+    schedule:
+        - cron: "0 6 * * 1" # Mondays, 06:00 UTC
+    workflow_dispatch:
+
+jobs:
+    obsidianmd-lint:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22.x
+                  cache: "npm"
+            - run: npm ci
+            - name: Upgrade eslint-plugin-obsidianmd to the latest release
+              run: npm install --no-save eslint-plugin-obsidianmd@latest
+            - run: npm run lint -- --max-warnings 0

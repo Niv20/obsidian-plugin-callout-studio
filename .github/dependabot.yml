@@ -1,0 +1,14 @@
+# Track eslint-plugin-obsidianmd. A new release lands here as a PR that
+# lint.yml runs against, so a rule the Obsidian community-plugin scanner
+# added shows up as a red PR instead of a surprise at submission time.
+# See internals-docs/17-build-test-release.md.
+version: 2
+updates:
+    - package-ecosystem: npm
+      directory: "/"
+      schedule:
+          interval: weekly
+      allow:
+          - dependency-name: "eslint-plugin-obsidianmd"
+      commit-message:
+          prefix: chore
