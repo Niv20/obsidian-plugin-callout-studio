@@ -15,6 +15,9 @@ export const id: Record<string, string> = {
 
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default otomatis",
+	"settings.autoDiscover": "Deteksi callout secara otomatis di vault Anda",
+	"settings.autoDiscoverDesc":
+		"Mengenali jenis callout yang ditulis di catatan Anda dan menambahkannya ke daftar secara otomatis. Menonaktifkan ini membiarkan callout yang sudah Anda miliki tidak berubah — Anda tetap bisa menambahkannya sendiri, atau gunakan Pindai ulang vault di bawah.",
 	"settings.rescanVault": "Pindai ulang vault",
 	"settings.rescanVaultDesc":
 		"Menemukan ID callout yang tidak dikenal dalam catatan dan menambahkannya sebagai baris fallback.",

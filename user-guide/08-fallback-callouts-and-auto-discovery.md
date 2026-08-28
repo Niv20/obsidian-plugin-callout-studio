@@ -6,7 +6,11 @@ Callout Studio keeps its callout list in sync with what your vault actually uses
 
 - When a note uses a callout ID that isn't in your list yet, it gets added on its own.
 - New callout IDs typed into any open note are picked up automatically as you write — you don't need to save the note first.
+- **Opening a note is enough.** A note you open — including the tabs Obsidian restores when you reopen the vault — is scanned for callout IDs you don't have yet, so you don't have to edit it for its callouts to appear. Open several notes in a row and every one of them is scanned, not just the last: each note's new callouts are added to your list alongside the others.
+- If the settings tab is open while this happens, the list updates in place — you don't need to close and reopen it.
 - Opening the settings tab also scans any unsaved text sitting in your currently open editor tabs for new IDs, so a callout type you just typed shows up in the list even before you save the note.
+
+Re-opening a note that hasn't changed since it was last looked at costs nothing — Callout Studio remembers it has already seen that version, so moving between tabs stays fast.
 
 ## The default fallback callout
 
@@ -18,9 +22,26 @@ Auto-discovery normally works note by note, as you open and edit files. If you w
 
 On very large vaults — 500 or more markdown files — Callout Studio asks permission before doing a full initial scan. If you decline, files are scanned individually as you open them instead, so nothing is ever scanned without at least implicit action from you opening it.
 
+## Turning auto-discovery off
+
+If you would rather add every callout type by hand, switch off **Automatically discover callouts in your vault** in Settings → Vault insights & maintenance. Nothing is taken away when you do: every callout already in your list stays exactly as it is, **Scan now** still works whenever you want it, and you can create callout types yourself as usual. Switching it back on takes effect immediately.
+
 ## Automatic cleanup
 
 Rows that were auto-created this way, and that you never used again and never customized, are quietly cleaned up in the background over time. This keeps your callout list free of clutter from typos or one-off experiments, so it stays focused on the callout types you actually use.
+
+## If you sync your vault across devices
+
+Auto-discovered callouts are remembered **on each device separately**, and never written into the settings file that syncs. That is deliberate: when a note travels to your other device before your settings do, that device would otherwise invent its own plain-looking version of the new callout and save it — and your two devices would end up arguing over the same file, which is how sync tools produce `data.json.sync-conflict-…` copies.
+
+In practice this means:
+
+- Creating or customizing a callout on one device still syncs to the other, exactly as you would expect.
+- Simply *reading* a synced note never changes your settings file on the other device.
+- Each device builds its own list of discovered callouts from your notes, so the two lists agree without either device having to tell the other anything.
+- A brand-new device — or one where you have cleared Obsidian's local data — scans the vault once to build that list, the same way a fresh install does.
+
+On desktop, Callout Studio also notices when your settings file is updated by a sync tool while Obsidian is open, and picks up the change without you having to restart. On mobile, Obsidian gives plugins no way to be told about that, so reopening the vault is still the way to pick up settings that arrived while it was open.
 
 ---
 **Next:** [Deleting and replacing callouts](09-deleting-and-replacing-callouts.md)

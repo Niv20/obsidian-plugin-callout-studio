@@ -246,6 +246,42 @@ describe("load() — seeding the built-ins", () => {
 		});
 	});
 
+	it("asks for a write-back when an icon repair changed something", () => {
+		// The repairs used to mutate the registry in silence: the fixed icon
+		// lived in memory while the broken one stayed on disk, and it reached
+		// the file only when some unrelated mutation happened to trigger a
+		// save. Second load has nothing left to repair, so the flag stays down
+		// and the flush cannot loop.
+		const { registry } = loaded(
+			saved([
+				def({ id: "legacy", icon: { type: "svg", value: "<svg/>" } as never }),
+			]),
+		);
+		assert.strictEqual(registry.needsSaveAfterLoad(), true);
+
+		const second = new CalloutRegistry();
+		second.load(registry.toSaveData());
+		assert.strictEqual(second.needsSaveAfterLoad(), false);
+	});
+
+	it("asks for a write-back when the pre-2.4 Material cache is folded in", () => {
+		// `toSaveData` never writes `materialSvgCache` back, so the one flush
+		// is what actually retires the field from the file.
+		const registry = new CalloutRegistry();
+		registry.load({
+			callouts: [],
+			materialSvgCache: [
+				{ name: "home", style: "outlined", weight: 400, svg: "<svg/>" },
+			],
+		} as unknown as Parameters<CalloutRegistry["load"]>[0]);
+		assert.strictEqual(registry.needsSaveAfterLoad(), true);
+	});
+
+	it("does not ask for a write-back when every icon is already current", () => {
+		const { registry } = loaded(saved([def({ id: "fine" })]));
+		assert.strictEqual(registry.needsSaveAfterLoad(), false);
+	});
+
 	it("undoes v2.7.0's `lucide-` prefix on an id core Lucide does not own", () => {
 		// Prefixed, `getIcon` looks in the core table and nowhere else — so on
 		// another plugin's `addIcon()` id the prefix named nothing at all and
@@ -314,15 +350,54 @@ describe("toSaveData() — what reaches data.json", () => {
 		assert.deepStrictEqual(registry.toSaveData().callouts, []);
 	});
 
-	it("persists every user callout unconditionally", () => {
+	it("persists every user callout the user actually made", () => {
 		const { registry } = loaded(null);
 		registry.add(def({ id: "mine" }));
-		registry.add(def({ id: "discovered", source: "fallback" }));
+
+		assert.deepStrictEqual(ids(registry.toSaveData().callouts), ["mine"]);
+	});
+
+	it("says nothing about a discovered row nobody has claimed", () => {
+		// The row is real for this session and shows in the settings lists; its
+		// id is remembered by DeviceLocalStore instead, so a restart rebuilds it
+		// without re-reading the vault. Writing it here is what let a second
+		// device edit the settings file just by opening a synced note — see
+		// manager/discoveredRowPersistence.ts.
+		const { registry } = loaded(null);
+		registry.add(def({ id: "seen", source: "fallback" }));
+
+		assert.ok(registry.get("seen"), "still in the registry");
+		assert.deepStrictEqual(registry.toSaveData().callouts, []);
+	});
+
+	it("persists a discovered row the moment somebody claims it", () => {
+		const { registry } = loaded(null);
+		registry.add(def({ id: "adopted", source: "fallback" }));
+		registry.add(def({ id: "handed-off", source: "fallback" }));
+		registry.add(def({ id: "commanded", source: "fallback" }));
+
+		registry.update("adopted", { customized: true });
+		registry.setExternalStyle("handed-off", true);
+		registry.settings.customCommands = [
+			{ id: "c1", calloutId: "commanded" } as never,
+		];
 
 		assert.deepStrictEqual(
 			ids(registry.toSaveData().callouts).sort(),
-			["discovered", "mine"],
+			["adopted", "commanded", "handed-off"],
 		);
+	});
+
+	it("claims a discovered row through any spelling of the command's id", () => {
+		// A custom command is keyed by identity everywhere else; persistence has
+		// to agree, or the row is dropped and the hotkey orphaned.
+		const { registry } = loaded(null);
+		registry.add(def({ id: "two words", source: "fallback" }));
+		registry.settings.customCommands = [
+			{ id: "c1", calloutId: "two-words" } as never,
+		];
+
+		assert.deepStrictEqual(ids(registry.toSaveData().callouts), ["two words"]);
 	});
 
 	it("omits an empty icon cache rather than writing an empty array", () => {

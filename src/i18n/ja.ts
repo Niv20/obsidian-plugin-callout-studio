@@ -15,6 +15,9 @@ export const ja: Record<string, string> = {
 
 	"settings.fallbackTag": "デフォルト",
 	"settings.fallbackTagAuto": "自動デフォルト",
+	"settings.autoDiscover": "Vault内のコールアウトを自動検出する",
+	"settings.autoDiscoverDesc":
+		"ノートに記述されたコールアウトの種類を検出し、自動的にリストへ追加します。オフにしても既存のコールアウトはそのまま残ります。自分で追加することも、下のVaultを再スキャンを使うこともできます。",
 	"settings.rescanVault": "vaultを再スキャン",
 	"settings.rescanVaultDesc":
 		"ノート内の未認識のcallout IDを検索し、フォールバック行として追加します。",

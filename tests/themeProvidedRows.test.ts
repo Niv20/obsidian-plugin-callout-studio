@@ -22,7 +22,7 @@ import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import { ThemeCalloutStore } from "../src/manager/theme/ThemeCalloutStore";
-import { syncThemeProvidedRows } from "../src/manager/theme/themeProvidedRows";
+import { syncThemeProvidedRows as sweepRows } from "../src/manager/theme/themeProvidedRows";
 import {
 	isThemeStyled,
 	partitionByStyleOwner,
@@ -65,6 +65,25 @@ function vault(): CalloutRegistry {
 	registry.load(null);
 	return registry;
 }
+
+/**
+ * The retirement list the sweep writes to.
+ *
+ * It lives in `DeviceLocalStore` rather than in settings — which theme is
+ * active is a property of a machine, not of a vault, so two devices on
+ * different themes used to rewrite the same array in the same synced file.
+ * A test that cares about retirements passes one of these across both sweeps;
+ * every other test gets a scratch one it never looks at.
+ */
+const retirements = (): { retiredThemeIds: string[] } => ({
+	retiredThemeIds: [],
+});
+
+const sweep = (
+	registry: CalloutRegistry,
+	store: ThemeCalloutStore,
+	holder = retirements(),
+): number => sweepRows(registry, store, holder);
 
 const ids = (defs: CalloutDefinition[]): string[] =>
 	defs.map((d) => d.id).sort();
@@ -144,7 +163,7 @@ describe("syncThemeProvidedRows — minting", () => {
 			),
 		);
 
-		assert.strictEqual(syncThemeProvidedRows(registry, store), 2);
+		assert.strictEqual(sweep(registry, store), 2);
 		assert.deepStrictEqual(ids(registry.getThemeProvided()), [
 			"definition",
 			"proof",
@@ -156,7 +175,7 @@ describe("syncThemeProvidedRows — minting", () => {
 		const store = new ThemeCalloutStore(
 			appWithTheme('.callout[data-callout="definition"] {}'),
 		);
-		syncThemeProvidedRows(registry, store);
+		sweep(registry, store);
 
 		const row = registry.get("definition");
 		assert.ok(row);
@@ -174,7 +193,7 @@ describe("syncThemeProvidedRows — minting", () => {
 			appWithTheme('.callout[data-callout="note"] { color: red; }'),
 		);
 
-		assert.strictEqual(syncThemeProvidedRows(registry, store), 0);
+		assert.strictEqual(sweep(registry, store), 0);
 		assert.deepStrictEqual(registry.getThemeProvided(), []);
 	});
 
@@ -187,7 +206,7 @@ describe("syncThemeProvidedRows — minting", () => {
 			appWithTheme('.callout[data-callout="proof"] {}'),
 		);
 
-		assert.strictEqual(syncThemeProvidedRows(registry, store), 0);
+		assert.strictEqual(sweep(registry, store), 0);
 		const row = registry.get("proof");
 		assert.strictEqual(row?.source, "user");
 		assert.strictEqual(row.displayName, "My Proof");
@@ -202,7 +221,7 @@ describe("syncThemeProvidedRows — minting", () => {
 			appWithTheme('.callout[data-callout="proof"] {}'),
 		);
 
-		assert.strictEqual(syncThemeProvidedRows(registry, store), 0);
+		assert.strictEqual(sweep(registry, store), 0);
 	});
 
 	it("writes nothing at all on a second identical run", () => {
@@ -211,11 +230,11 @@ describe("syncThemeProvidedRows — minting", () => {
 		const store = new ThemeCalloutStore(
 			appWithTheme('.callout[data-callout="definition"] {}'),
 		);
-		syncThemeProvidedRows(registry, store);
+		sweep(registry, store);
 
 		let events = 0;
 		registry.onChange(() => events++);
-		assert.strictEqual(syncThemeProvidedRows(registry, store), 0);
+		assert.strictEqual(sweep(registry, store), 0);
 		assert.strictEqual(events, 0, "an idempotent sweep must fire no event");
 	});
 });
@@ -223,13 +242,13 @@ describe("syncThemeProvidedRows — minting", () => {
 describe("syncThemeProvidedRows — when the theme changes", () => {
 	it("retires a row nobody adopted", () => {
 		const registry = vault();
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme('.callout[data-callout="gone"] {}')),
 		);
 		assert.strictEqual(registry.getThemeProvided().length, 1);
 
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme("", "Other")),
 		);
@@ -240,13 +259,13 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 		// Switching theme must never cost the user work. The row keeps its id,
 		// its colours and everything else — it simply becomes theirs.
 		const registry = vault();
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme('.callout[data-callout="kept"] {}')),
 		);
 		registry.update("kept", { customized: true, colorLight: "#ff0000" });
 
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme("", "Other")),
 		);
@@ -263,12 +282,12 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 		// the row is the user's there is nothing left to defer to, so the
 		// colours they adopted actually render.
 		const registry = vault();
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme('.callout[data-callout="kept"] {}')),
 		);
 		registry.update("kept", { customized: true });
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme("", "Other")),
 		);
@@ -282,7 +301,7 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 		// outlive the theme that justified it. Nothing has to delete it later
 		// because nothing wrote it down.
 		const registry = vault();
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(
 				appWithTheme('.callout[data-callout="definition"] {}'),
@@ -303,7 +322,7 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 		// the row the theme invented is still absent from the save, and the
 		// built-in the theme borrowed is still exactly as it shipped.
 		const registry = vault();
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(
 				appWithTheme(
@@ -348,7 +367,7 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 		const store = new ThemeCalloutStore(
 			appWithTheme('.callout[data-callout="definition"] {}'),
 		);
-		syncThemeProvidedRows(registry, store);
+		sweep(registry, store);
 
 		const reloaded = new CalloutRegistry();
 		reloaded.load(registry.toSaveData());
@@ -357,7 +376,7 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 		// is the fail-safe. The sweep is what publishes ownership.
 		assert.strictEqual(reloaded.themeOwns(def({ id: "definition" })), false);
 
-		syncThemeProvidedRows(reloaded, store);
+		sweep(reloaded, store);
 		assert.strictEqual(reloaded.get("definition")?.source, "theme");
 		assert.strictEqual(reloaded.standsDown(reloaded.get("definition")!), true);
 		assert.strictEqual(
@@ -386,11 +405,11 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 		const claimed = new ThemeCalloutStore(
 			appWithTheme('.callout[data-callout="mine"] {}'),
 		);
-		syncThemeProvidedRows(registry, claimed);
+		sweep(registry, claimed);
 		assert.strictEqual(registry.themeOwns(registry.get("mine")!), true);
 		assert.deepStrictEqual(registry.get("mine"), before, "untouched while owned");
 
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme("", "Other")),
 		);
@@ -401,51 +420,61 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 
 	it("records a theme-only id it retired, so discovery leaves it alone", () => {
 		const registry = vault();
-		syncThemeProvidedRows(
+		const retired = retirements();
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme('.callout[data-callout="recite"] {}')),
+			retired,
 		);
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme("", "Other")),
+			retired,
 		);
-		assert.deepStrictEqual(registry.settings.retiredThemeIds, ["recite"]);
+		assert.deepStrictEqual(retired.retiredThemeIds, ["recite"]);
 	});
 
 	it("records nothing for a pre-existing callout it merely let go of", () => {
 		// Its row is still there, so there is nothing for discovery to re-create
 		// and nothing to hold back.
 		const registry = vault();
+		const retired = retirements();
 		registry.add(def({ id: "mine" }));
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme('.callout[data-callout="mine"] {}')),
+			retired,
 		);
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme("", "Other")),
+			retired,
 		);
-		assert.deepStrictEqual(registry.settings.retiredThemeIds, []);
+		assert.deepStrictEqual(retired.retiredThemeIds, []);
 	});
 
 	it("forgets a retired id the moment anything claims it again", () => {
 		const registry = vault();
-		syncThemeProvidedRows(
+		const retired = retirements();
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme('.callout[data-callout="recite"] {}')),
+			retired,
 		);
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(appWithTheme("", "Other")),
+			retired,
 		);
 		// A later theme brings it back.
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(
 				appWithTheme('.callout[data-callout="recite"] {}', "Third"),
 			),
+			retired,
 		);
-		assert.deepStrictEqual(registry.settings.retiredThemeIds, []);
+		assert.deepStrictEqual(retired.retiredThemeIds, []);
 	});
 
 	it("re-homes a `theme` row that predates the two-mode model", () => {
@@ -463,7 +492,8 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 		// be a non-event: it is in neither the stale list nor the fresh one, so
 		// nothing deletes and re-mints it and ownership never lapses.
 		const registry = vault();
-		syncThemeProvidedRows(
+		const retired = retirements();
+		sweep(
 			registry,
 			new ThemeCalloutStore(
 				appWithTheme(
@@ -472,6 +502,7 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 					"ITS",
 				),
 			),
+			retired,
 		);
 		const sharedBefore = registry.get("shared");
 		assert.deepStrictEqual(ids(registry.getThemeProvided()), [
@@ -479,7 +510,7 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 			"shared",
 		]);
 
-		syncThemeProvidedRows(
+		sweep(
 			registry,
 			new ThemeCalloutStore(
 				appWithTheme(
@@ -488,6 +519,7 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 					"AnuPpuccin",
 				),
 			),
+			retired,
 		);
 
 		assert.strictEqual(registry.get("recite"), undefined, "only A's is gone");
@@ -498,7 +530,7 @@ describe("syncThemeProvidedRows — when the theme changes", () => {
 			"the shared row is the same object — never deleted and re-minted",
 		);
 		assert.strictEqual(registry.themeOwns(registry.get("shared")!), true);
-		assert.deepStrictEqual(registry.settings.retiredThemeIds, ["recite"]);
+		assert.deepStrictEqual(retired.retiredThemeIds, ["recite"]);
 	});
 
 	it("drops a `theme` row this build's own sweep left behind", () => {

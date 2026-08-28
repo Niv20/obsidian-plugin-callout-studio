@@ -75,6 +75,18 @@ export function renderResetSection(
 		});
 
 	new Setting(containerEl)
+		.setName(t("settings.autoDiscover"))
+		.setDesc(t("settings.autoDiscoverDesc"))
+		.addToggle((toggle) =>
+			toggle
+				.setValue(ctx.plugin.settings.autoDiscoverCallouts)
+				.onChange((value) => {
+					ctx.plugin.settings.autoDiscoverCallouts = value;
+					void ctx.plugin.saveSettings();
+				}),
+		);
+
+	new Setting(containerEl)
 		.setName(t("settings.rescanVault"))
 		.setDesc(t("settings.rescanVaultDesc"))
 		.addButton((btn) => {
@@ -226,14 +238,14 @@ export async function processImportedJSON(
 		// Commands are on that list too: an export predating them carries
 		// none, and replacing the array wholesale would delete every
 		// command the user had built here.
-		// `retiredThemeIds` is not configuration at all — it is which callout
-		// types *this* vault's themes stopped supplying — so it is dropped, not
-		// merged. See `manager/theme/retiredThemeIds.ts`.
+		// `retiredThemeIds` needs no carve-out here any more: it is not in
+		// `PluginSettings` at all, having moved to the device-local store —
+		// which theme is active is a property of a machine, not of a vault.
+		// See `manager/DeviceLocalStore.ts`.
 		const {
 			customPalettes: importedPalettes,
 			userImages: importedImages,
 			customCommands: importedCommands,
-			retiredThemeIds: _vaultLocal,
 			...restSettings
 		} = result.settings;
 		Object.assign(ctx.plugin.registry.settings, restSettings);

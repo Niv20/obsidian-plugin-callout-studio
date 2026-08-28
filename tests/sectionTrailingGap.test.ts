@@ -249,6 +249,11 @@ function listsCtx(registry: CalloutRegistry, app: App, themeIds: string[]) {
 			app,
 			registry,
 			settings: registry.settings,
+			// The settings-list fold is per device now — see DeviceLocalStore.
+			localState: {
+				isExpanded: () => true,
+				setExpanded: () => {},
+			},
 			saveSettings: () => Promise.resolve(),
 			refreshCallouts: () => {},
 			refreshRenderModes: () => {},

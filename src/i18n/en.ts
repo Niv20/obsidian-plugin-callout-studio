@@ -27,6 +27,9 @@ export const en: Record<string, string> = {
 	// Vault scan / fallback / delete
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default fallback",
+	"settings.autoDiscover": "Automatically discover callouts in your vault",
+	"settings.autoDiscoverDesc":
+		"Notice callout types written in your notes and add them to the list automatically. Turning this off leaves the callouts you already have untouched — you can still add them yourself, or use Re-scan vault below.",
 	"settings.rescanVault": "Re-scan vault",
 	"settings.rescanVaultDesc":
 		"Find unrecognized callout IDs used in notes and add them as fallback rows.",

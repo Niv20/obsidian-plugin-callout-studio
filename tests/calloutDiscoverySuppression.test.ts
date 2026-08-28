@@ -291,7 +291,7 @@ describe("a callout type the theme stopped supplying", () => {
 
 	it("is not re-created from notes that still use it", () => {
 		const h = discoveryHarness();
-		h.settings.retiredThemeIds = ["recite"];
+		h.localState.retiredThemeIds = ["recite"];
 		assert.strictEqual(h.discovery.addUnknownCalloutsAsFallback(["recite"]), 0);
 		assert.strictEqual(h.registry.get("recite"), undefined);
 	});
@@ -301,14 +301,14 @@ describe("a callout type the theme stopped supplying", () => {
 		// the theme no longer supplies is not going to start existing again on
 		// its own.
 		const h = discoveryHarness();
-		h.settings.retiredThemeIds = ["recite"];
+		h.localState.retiredThemeIds = ["recite"];
 		h.clock.advance(WINDOW_MS * 100);
 		assert.strictEqual(h.internals.hold.holds("recite"), true);
 	});
 
 	it("holds every spelling the notes might use", () => {
 		const h = discoveryHarness();
-		h.settings.retiredThemeIds = ["recite"];
+		h.localState.retiredThemeIds = ["recite"];
 		assert.strictEqual(h.internals.hold.holds("Recite"), true);
 		assert.strictEqual(h.internals.hold.holds("  recite "), true);
 	});
@@ -317,21 +317,21 @@ describe("a callout type the theme stopped supplying", () => {
 		// The list gates automatic discovery and nothing else. Creating the
 		// callout is how you take the id over once the theme has let go of it.
 		const h = discoveryHarness();
-		h.settings.retiredThemeIds = ["recite"];
+		h.localState.retiredThemeIds = ["recite"];
 		assert.strictEqual(h.registry.add(definition({ id: "recite" })), true);
 		assert.ok(h.registry.get("recite"));
 	});
 
 	it("is dropped by a user-requested vault scan", async () => {
 		const h = discoveryHarness();
-		h.settings.retiredThemeIds = ["recite"];
+		h.localState.retiredThemeIds = ["recite"];
 		await h.discovery.runVaultScan();
-		assert.deepStrictEqual(h.settings.retiredThemeIds, []);
+		assert.deepStrictEqual(h.localState.retiredThemeIds, []);
 	});
 
 	it("lets the rest of the batch through", () => {
 		const h = discoveryHarness();
-		h.settings.retiredThemeIds = ["recite"];
+		h.localState.retiredThemeIds = ["recite"];
 		assert.strictEqual(
 			h.discovery.addUnknownCalloutsAsFallback(["recite", "keeper"]),
 			1,

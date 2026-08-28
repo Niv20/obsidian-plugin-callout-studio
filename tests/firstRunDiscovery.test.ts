@@ -65,18 +65,21 @@ function harness(opts: {
 	const app = {
 		vault: { getMarkdownFiles: () => handles },
 	} as unknown as App;
-	let saves = 0;
+	let completions = 0;
+	const localState = {
+		firstRunCompleted: false,
+		completeFirstRun(): void {
+			completions++;
+			localState.firstRunCompleted = true;
+		},
+	};
 	const host: FirstRunDiscoveryHost = {
 		app,
 		settings: registry.settings,
-		registry: { settings: registry.settings },
+		localState,
 		runVaultScan: opts.runVaultScan ?? (() => Promise.resolve(0)),
-		saveSettings: () => {
-			saves++;
-			return Promise.resolve();
-		},
 	};
-	return { host, saves: () => saves };
+	return { host, saves: () => completions };
 }
 
 describe("runFirstRunDiscovery — small vault (silent auto-scan)", () => {
@@ -85,7 +88,7 @@ describe("runFirstRunDiscovery — small vault (silent auto-scan)", () => {
 		const h = harness({ fileCount: 3, runVaultScan: () => Promise.resolve(0) });
 		await runFirstRunDiscovery(h.host);
 		assert.deepStrictEqual(notices, []);
-		assert.strictEqual(h.host.settings.firstRunCompleted, true);
+		assert.strictEqual(h.host.localState.firstRunCompleted, true);
 		assert.strictEqual(h.saves(), 1);
 	});
 
@@ -96,7 +99,7 @@ describe("runFirstRunDiscovery — small vault (silent auto-scan)", () => {
 		assert.deepStrictEqual(notices, [
 			t("firstRun.autoScanComplete", { count: "2" }),
 		]);
-		assert.strictEqual(h.host.settings.firstRunCompleted, true);
+		assert.strictEqual(h.host.localState.firstRunCompleted, true);
 	});
 
 	it("surfaces a Notice when the scan throws, and still marks first-run done", async () => {
@@ -114,7 +117,7 @@ describe("runFirstRunDiscovery — small vault (silent auto-scan)", () => {
 		// No retry loop: a caught failure still completes first-run, exactly
 		// like a caught success does. Only an actual crash mid-await (which
 		// never reaches this line at all) re-runs the flow on next launch.
-		assert.strictEqual(h.host.settings.firstRunCompleted, true);
+		assert.strictEqual(h.host.localState.firstRunCompleted, true);
 		assert.strictEqual(h.saves(), 1);
 	});
 });
@@ -160,5 +163,23 @@ describe("FirstRunScanModal — the large-vault consent modal's Scan now button"
 
 		assert.deepStrictEqual(notices, []);
 		assert.strictEqual(closed, true);
+	});
+});
+
+describe("runFirstRunDiscovery — automatic discovery switched off", () => {
+	it("does not scan", async () => {
+		const h = harness({ fileCount: 3, runVaultScan: () => Promise.resolve(5) });
+		h.host.settings.autoDiscoverCallouts = false;
+		await runFirstRunDiscovery(h.host);
+		assert.deepStrictEqual(notices, []);
+	});
+
+	it("does not mark the first run done", async () => {
+		// Turning discovery back on should still get the one scan that builds
+		// this device's index — marking it here would skip that forever.
+		const h = harness({ fileCount: 3 });
+		h.host.settings.autoDiscoverCallouts = false;
+		await runFirstRunDiscovery(h.host);
+		assert.strictEqual(h.host.localState.firstRunCompleted, false);
 	});
 });

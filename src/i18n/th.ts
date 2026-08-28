@@ -15,6 +15,9 @@ export const th: Record<string, string> = {
 
 	"settings.fallbackTag": "ค่าเริ่มต้น",
 	"settings.fallbackTagAuto": "ค่าเริ่มต้นอัตโนมัติ",
+	"settings.autoDiscover": "ตรวจจับ callout ในคลังของคุณโดยอัตโนมัติ",
+	"settings.autoDiscoverDesc":
+		"สังเกตประเภท callout ที่เขียนไว้ในโน้ตของคุณและเพิ่มลงในรายการโดยอัตโนมัติ การปิดตัวเลือกนี้จะไม่ส่งผลต่อ callout ที่มีอยู่แล้ว — คุณยังสามารถเพิ่มเองได้ หรือใช้ สแกนคลังอีกครั้ง ด้านล่าง",
 	"settings.rescanVault": "สแกน vault ใหม่",
 	"settings.rescanVaultDesc":
 		"ค้นหา ID callout ที่ไม่รู้จักในโน้ตและเพิ่มเป็นแถวสำรอง",

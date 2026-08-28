@@ -73,6 +73,12 @@ unstyled callouts" window on a slow mobile launch. See
 
 ### Steps 4–5: load and flush migrations
 
+All of this is `loadSettingsInto(this)`
+([`manager/settingsBoot.ts`](../src/manager/settingsBoot.ts)) rather than
+inline code, because `onExternalSettingsChange` has to do the identical thing
+when another device's settings file arrives mid-session — and a reload that is
+a shortened copy of the startup path is how a reload quietly skips a migration.
+
 `registry.load(savedData)` seeds the 13 built-ins unconditionally, folds saved
 rows over them, and runs a chain of content-keyed migrations (metadata-pipe
 IDs, derived backgrounds, stale transparency flags, dash/space collisions,
@@ -83,6 +89,26 @@ this, a cleaned-up shape would be recomputed identically on every launch but
 never actually written back, and an export taken between launches would still
 carry the pre-migration shape. Full migration list in
 [Callout registry](05-callout-registry.md#load-time-migrations).
+
+`bootDiscoveryIndex` runs in the same breath, before the first inject: it
+rebuilds this device's discovered rows from
+[`DeviceLocalStore`](../src/manager/DeviceLocalStore.ts)'s id list — no vault
+read — and folds in any such rows an older `data.json` still lists, which is
+the one write-back that retires them from the file. See
+[Vault discovery](10-vault-discovery.md) and
+[Persistence § multi-device sync](07-persistence-and-caching.md#multi-device-sync).
+
+### `onExternalSettingsChange()`
+
+Not part of `onload`, but the same sequence. Obsidian calls it when `data.json`
+is rewritten by something other than us, and **only because the method exists**
+— `Plugin.loadData` starts tracking the file's mtime only when it is defined.
+It re-runs the load above, re-sweeps the theme's overlay rows (`registry.load()`
+clears them and they are never persisted), re-syncs the custom commands,
+re-injects, and invalidates the write guard's baseline. It is deferred while the
+callout editor is open, so a reload never changes the row being edited
+underneath the user. Limits — desktop only, and mtime-gated — are in
+[Persistence § multi-device sync](07-persistence-and-caching.md#multi-device-sync).
 
 ### Step 7: locale preparation blocks, on purpose
 

@@ -224,7 +224,9 @@ describe("a data.json written by 1.0.0", () => {
 
 		assert.strictEqual(settings.autocomplete.enabled, false);
 		assert.strictEqual(settings.contextMenu.enabled, true);
-		assert.strictEqual(settings.firstRunCompleted, true);
+		// Retired from the settings file: it is a per-device claim now, adopted
+		// into DeviceLocalStore on the launch that migrates the vault over.
+		assert.ok(!("firstRunCompleted" in settings));
 		assert.strictEqual(settings.fallbackCalloutId, "recipe");
 		assert.strictEqual(settings.iconSources.materialStyleDefault, "outlined");
 		assert.strictEqual(settings.iconSources.materialWeightDefault, 400);

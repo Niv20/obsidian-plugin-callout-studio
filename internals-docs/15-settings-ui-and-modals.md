@@ -64,6 +64,21 @@ immediately schedules a prune pass. This is exactly the scan that
 row from — see
 [Vault discovery § rediscovery suppression](10-vault-discovery.md#rediscovery-suppression--the-delete-race).
 
+> [!NOTE]
+> **This sweep is a backstop, not the discovery path.** It reads
+> `getLeavesOfType("markdown")`, and a leaf holds exactly one *visible* note,
+> so it can only ever see as many notes as there are tabs. It used to be the
+> only thing that noticed a callout in an opened-but-unedited note, which is
+> why opening five notes in one tab and then opening settings discovered
+> exactly one callout. `workspace.on("file-open")` is the real trigger now —
+> see [Vault discovery § where events come from](10-vault-discovery.md#where-events-come-from).
+> What this sweep still adds is the **unsaved buffer**: `cachedRead` answers
+> with what is on disk, and this does not.
+
+Once the tab is open it stays live off `registry.onChange` alone
+(`scheduleListRefresh`), so a discovery landing while the tab is on screen
+repaints the list on the next animation frame without a `display()`.
+
 ### Section disposers
 
 Each section that registers a resource needing cleanup (an event listener, a

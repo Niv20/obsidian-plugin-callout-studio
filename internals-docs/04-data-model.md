@@ -188,27 +188,32 @@ interface PluginSettings {
   iconSources: IconSourceSettings;
   headingCallouts: HeadingCalloutSettings;
   inlineCallouts: InlineCalloutSettings;
-  firstRunCompleted?: boolean;
   welcomeSeen?: boolean;
+  autoDiscoverCallouts: boolean;
   fallbackCalloutId: string;
   language: string;                  // "auto" or a locale code
   customPalettes: CustomPalette[];
   userImages: UserImageIcon[];
   customCommands: CustomCommand[];
   disabledFixedCommands: string[];
-  calloutListsExpanded: {
-    theme: boolean;
-    user: boolean;
-    builtin: boolean;
-    palettes: boolean;
-  };
+  quickInsertSource: string;
 }
 ```
 
-`calloutListsExpanded` is which of the settings tab's four collapsible
-sections are expanded — the three callout lists, plus `palettes` for Saved
-color palettes — see
-[Settings UI and modals](15-settings-ui-and-modals.md#where-the-state-lives-and-how-long).
+`autoDiscoverCallouts` (default **true**) gates the three automatic discovery
+passes and nothing else — **Re-scan vault** still works with it off, and no
+existing row is taken away. See
+[Vault discovery](10-vault-discovery.md#the-automatic-discovery-toggle).
+
+> [!NOTE]
+> **Four fields left this interface** and are not settings at all: they describe
+> a *machine*, not a vault, and syncing them had two devices writing opposite
+> answers into one file. `firstRunCompleted`, `retiredThemeIds`,
+> `calloutListsExpanded` and the discovered-id index now live in
+> [`manager/DeviceLocalStore.ts`](../src/manager/DeviceLocalStore.ts) — see
+> [Persistence § multi-device sync](07-persistence-and-caching.md#multi-device-sync).
+> An older `data.json` carrying them is adopted once, on the launch that
+> upgrades the vault, and the fields then drop out of the file.
 
 `GlobalStyleSettings` holds vault-wide style for all three roles: border
 sides/width/radius, title/content scale, "Align content with title" for the
@@ -239,7 +244,7 @@ syntax claims characters a vault may already use for something else.
 
 ```ts
 interface PluginData {
-  version: number;                        // CURRENT_DATA_VERSION = 3
+  version: number;                        // CURRENT_DATA_VERSION = 4
   callouts: CalloutDefinition[];            // only non-default rows — see below
   settings: PluginSettings;
   materialIconsCache?: unknown;              // legacy, ignored on save

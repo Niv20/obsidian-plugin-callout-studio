@@ -42,6 +42,7 @@
 import type { App, EventRef } from "obsidian";
 import type { CalloutDefinition } from "../../types";
 import { stylingSignature, themeCss } from "./customCssApi";
+import type { RetiredThemeIdHolder } from "../DeviceLocalStore";
 import type { ThemeCalloutStore } from "./ThemeCalloutStore";
 import { ThemeAppearanceProbe } from "./ThemeAppearanceProbe";
 import type { ThemeAppearance } from "./themeAppearance";
@@ -52,6 +53,8 @@ import {
 
 /** What {@link registerThemeRowSync} needs from the plugin. */
 export interface ThemeSyncHost {
+	/** Where the retirement list lives — per device, see DeviceLocalStore. */
+	localState: RetiredThemeIdHolder;
 	app: App;
 	registry: ThemeRowRegistry & {
 		getAll(): CalloutDefinition[];
@@ -85,7 +88,7 @@ export interface ThemeSyncHost {
  * `css-change` already re-renders open notes, so re-emitting is both redundant
  * and harmful.
  */
-export function registerThemeRowSync(host: ThemeSyncHost): void {
+export function registerThemeRowSync(host: ThemeSyncHost): () => void {
 	// Owned here rather than on the plugin: nothing outside this function needs
 	// a handle on it, and its whole job — re-read the theme, then re-inject — is
 	// the job this function already coordinates.
@@ -121,7 +124,11 @@ export function registerThemeRowSync(host: ThemeSyncHost): void {
 		host.cssInjector.themeCallouts().invalidate();
 		// Publishes ownership as its first act, so a row minted this round is
 		// already known to be the theme's by the time anything renders it.
-		syncThemeProvidedRows(host.registry, host.cssInjector.themeCallouts());
+		syncThemeProvidedRows(
+			host.registry,
+			host.cssInjector.themeCallouts(),
+			host.localState,
+		);
 	};
 
 	/**
@@ -157,6 +164,19 @@ export function registerThemeRowSync(host: ThemeSyncHost): void {
 
 	sweep(true);
 	probe();
+	/**
+	 * Re-derive the theme's rows on demand.
+	 *
+	 * `CalloutRegistry.load()` clears the callout map, and the `source:"theme"`
+	 * rows live in it — they are an overlay, deliberately never persisted. A
+	 * reload therefore drops every one of them until the next `css-change`,
+	 * which may never come. Handing the sweep back is what lets
+	 * `onExternalSettingsChange` put them straight back.
+	 */
+	const resweep = (): void => {
+		sweep();
+		probe();
+	};
 	host.registerEvent(
 		host.app.workspace.on("css-change", () => {
 			// Both halves of the stale answer go first, and the published half is
@@ -181,4 +201,5 @@ export function registerThemeRowSync(host: ThemeSyncHost): void {
 			probe();
 		}),
 	);
+	return resweep;
 }

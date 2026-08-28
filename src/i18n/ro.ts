@@ -15,6 +15,9 @@ export const ro: Record<string, string> = {
 
 	"settings.fallbackTag": "Implicit",
 	"settings.fallbackTagAuto": "Implicit automat",
+	"settings.autoDiscover": "Detectează automat callout-urile din seif",
+	"settings.autoDiscoverDesc":
+		"Observă tipurile de callout scrise în notițele tale și le adaugă automat în listă. Dezactivarea acestei opțiuni lasă neschimbate callout-urile pe care le ai deja — le poți adăuga în continuare manual sau poți folosi Rescanează seiful de mai jos.",
 	"settings.rescanVault": "Rescaneaza vault",
 	"settings.rescanVaultDesc":
 		"Caută ID-uri de callout nerecunoscute în note și le adaugă ca rânduri de rezervă.",

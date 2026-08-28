@@ -24,6 +24,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
+import type { CalloutListsFoldState } from "../src/types";
 import { createCalloutListsController } from "../src/settings/sections/CalloutListsSection";
 import { LIST_PAGE_SIZE } from "../src/settings/sections/listPaging";
 import { installFakeDom } from "./support/fakeDom";
@@ -52,8 +53,38 @@ function themeApp(themeIds: string[]) {
 	return { customCss } as unknown as App;
 }
 
+/**
+ * Stands in for `DeviceLocalStore`'s fold state.
+ *
+ * The fold is per device now, not per vault: what is folded away on a phone has
+ * nothing to say to a desktop, and writing it through to the synced settings
+ * file made every chevron click a sync event. A plugin reload keeps it (local
+ * storage outlives the registry); a second device never sees it at all.
+ */
+function foldStore(initial: Partial<CalloutListsFoldState> = {}) {
+	const state: CalloutListsFoldState = {
+		theme: true,
+		user: true,
+		builtin: true,
+		palettes: true,
+		...initial,
+	};
+	return {
+		state,
+		isExpanded: (kind: keyof CalloutListsFoldState) => state[kind],
+		setExpanded: (kind: keyof CalloutListsFoldState, expanded: boolean) => {
+			state[kind] = expanded;
+		},
+	};
+}
+
 /** The slice of the settings context the three lists actually touch. */
-function listsCtx(registry: Registry, app: App, themeIds: string[]) {
+function listsCtx(
+	registry: Registry,
+	app: App,
+	themeIds: string[],
+	localState: ReturnType<typeof foldStore> = foldStore(),
+) {
 	registry.setThemeOwnedIds(new Set(themeIds));
 	return {
 		app,
@@ -63,6 +94,7 @@ function listsCtx(registry: Registry, app: App, themeIds: string[]) {
 			app,
 			registry,
 			settings: registry.settings,
+			localState,
 			saveSettings: () => Promise.resolve(),
 			refreshCallouts: () => {},
 			refreshRenderModes: () => {},
@@ -103,8 +135,13 @@ function addUserCallouts(registry: Registry, count: number): void {
 	}
 }
 
-function render(registry: Registry, app: App, themeIds: string[]) {
-	const ctx = listsCtx(registry, app, themeIds);
+function render(
+	registry: Registry,
+	app: App,
+	themeIds: string[],
+	localState: ReturnType<typeof foldStore> = foldStore(),
+) {
+	const ctx = listsCtx(registry, app, themeIds, localState);
 	const host: HTMLElement = createDiv();
 	const lists = createCalloutListsController(ctx, {
 		onAddNewCallout: () => Promise.resolve(),
@@ -116,7 +153,7 @@ function render(registry: Registry, app: App, themeIds: string[]) {
 		},
 	});
 	lists.render(host);
-	return { host, lists };
+	return { host, lists, localState };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -288,43 +325,31 @@ describe("each list heading folds its own section", () => {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Unlike the paging cursor above, a fold is written through to
- * `settings.calloutListsExpanded` (`calloutListsFold.ts`) the moment the user
- * toggles it, so it survives past the controller's own closure — a
- * settings-tab reopen builds a brand new controller (`SettingsTab.display()`
- * does this on every visit) and a plugin reload builds a brand new registry.
- * Both are simulated below rather than asserted only against the in-memory
- * `PluginSettings` object, so a wiring mistake between the fold and the
- * settings it is supposed to read back from would show up here too.
+ * Unlike the paging cursor above, a fold is written through to the device-local
+ * store (`calloutListsFold.ts`) the moment the user toggles it, so it survives
+ * past the controller's own closure — a settings-tab reopen builds a brand new
+ * controller (`SettingsTab.display()` does this on every visit) and a plugin
+ * reload builds a brand new registry. Both are simulated below rather than
+ * asserted only against the in-memory state, so a wiring mistake between the
+ * fold and the store it reads back from would show up here too.
  */
-describe("a section's fold is remembered in settings", () => {
+describe("a section's fold is remembered on this device", () => {
 	it("defaults every section to expanded when nothing has been saved yet", () => {
-		const registry = vault();
-		assert.deepStrictEqual(registry.settings.calloutListsExpanded, {
-			theme: true,
-			user: true,
-			builtin: true,
-			palettes: true,
-		});
+		const { host } = render(vault(), themeApp([]), []);
+		for (const label of [THEME, MINE, BUILT_IN]) {
+			assert.strictEqual(expanded(section(host, label)), true, label);
+		}
 	});
 
-	it("defaults to expanded for an existing vault whose saved settings predate this field", () => {
-		// A `data.json` from before this setting existed: `settings` is present
-		// (an upgrading install, not a fresh one) but has no `calloutListsExpanded`
-		// key at all — the exact shape `mergeSavedSettings` has to fall back on.
+	it("defaults to expanded for a device that has never folded anything", () => {
+		// The fold used to live in `data.json`; a vault upgrading out of that
+		// era has no stored fold on this machine at all.
 		const registry = new CalloutRegistry();
 		registry.load({
 			version: 3,
 			callouts: [],
 			settings: { language: "en", welcomeSeen: true },
 		} as never);
-
-		assert.deepStrictEqual(registry.settings.calloutListsExpanded, {
-			theme: true,
-			user: true,
-			builtin: true,
-			palettes: true,
-		});
 
 		const { host } = render(registry, themeApp([]), []);
 		for (const label of [THEME, MINE, BUILT_IN]) {
@@ -338,10 +363,10 @@ describe("a section's fold is remembered in settings", () => {
 
 	it("saves each section's fold independently", () => {
 		const registry = vault();
-		const { host } = render(registry, themeApp([]), []);
+		const { host, localState } = render(registry, themeApp([]), []);
 
 		click(section(host, MINE).nameEl);
-		assert.deepStrictEqual(registry.settings.calloutListsExpanded, {
+		assert.deepStrictEqual(localState.state, {
 			theme: true,
 			user: false,
 			builtin: true,
@@ -349,7 +374,7 @@ describe("a section's fold is remembered in settings", () => {
 		});
 
 		click(section(host, BUILT_IN).nameEl);
-		assert.deepStrictEqual(registry.settings.calloutListsExpanded, {
+		assert.deepStrictEqual(localState.state, {
 			theme: true,
 			user: false,
 			builtin: false,
@@ -358,7 +383,7 @@ describe("a section's fold is remembered in settings", () => {
 
 		// Unfolding one leaves the other exactly where it was.
 		click(section(host, MINE).nameEl);
-		assert.deepStrictEqual(registry.settings.calloutListsExpanded, {
+		assert.deepStrictEqual(localState.state, {
 			theme: true,
 			user: true,
 			builtin: false,
@@ -369,14 +394,14 @@ describe("a section's fold is remembered in settings", () => {
 	it("restores the fold when the settings tab is reopened", () => {
 		const registry = vault();
 		const app = themeApp([]);
-		const { host: firstVisit } = render(registry, app, []);
+		const { host: firstVisit, localState } = render(registry, app, []);
 
 		click(section(firstVisit, BUILT_IN).nameEl);
 		assert.strictEqual(expanded(section(firstVisit, BUILT_IN)), false);
 
 		// A reopen builds a brand new controller against the same registry —
 		// exactly what SettingsTab.display() does on every visit.
-		const { host: secondVisit } = render(registry, app, []);
+		const { host: secondVisit } = render(registry, app, [], localState);
 
 		const builtIn = section(secondVisit, BUILT_IN);
 		assert.strictEqual(
@@ -398,16 +423,17 @@ describe("a section's fold is remembered in settings", () => {
 	it("restores the fold after a plugin reload", () => {
 		const registry = vault();
 		const app = themeApp([]);
-		const { host } = render(registry, app, []);
+		const { host, localState } = render(registry, app, []);
 
 		click(section(host, BUILT_IN).nameEl);
 		assert.strictEqual(expanded(section(host, BUILT_IN)), false);
 
 		// A plugin reload is a brand new CalloutRegistry loading whatever the
-		// last save wrote — not the same in-memory object at all.
+		// last save wrote — but local storage outlives it, which is exactly why
+		// the fold does not have to travel through `data.json` to survive one.
 		const reloaded = new CalloutRegistry();
 		reloaded.load(registry.toSaveData());
-		const { host: afterReload } = render(reloaded, app, []);
+		const { host: afterReload } = render(reloaded, app, [], localState);
 
 		const builtIn = section(afterReload, BUILT_IN);
 		assert.strictEqual(

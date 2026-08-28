@@ -12,6 +12,9 @@ export const zhTW: Record<string, string> = {
 	"autocomplete.createNew": "建立新 callout：「{{name}}」",
 	"settings.fallbackTag": "預設",
 	"settings.fallbackTagAuto": "自動預設",
+	"settings.autoDiscover": "自動偵測庫中的 callout",
+	"settings.autoDiscoverDesc":
+		"辨識你筆記中寫出的 callout 類型，並自動加入清單。關閉此選項不會影響你已有的 callout——你仍可以自行新增，或使用下方的重新掃描庫。",
 	"settings.rescanVault": "重新掃描 vault",
 	"settings.rescanVaultDesc":
 		"尋找筆記中未辨識的 callout ID 並將其新增為備用列。",

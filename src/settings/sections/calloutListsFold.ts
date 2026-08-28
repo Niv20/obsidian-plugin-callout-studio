@@ -19,7 +19,10 @@ import type { SectionDisclosure } from "./sectionDisclosure";
 import type { CalloutListsFoldState } from "../../types";
 
 type FoldHost = {
-	settings: { calloutListsExpanded: CalloutListsFoldState };
+	localState: {
+		isExpanded(kind: keyof CalloutListsFoldState): boolean;
+		setExpanded(kind: keyof CalloutListsFoldState, expanded: boolean): void;
+	};
 	saveSettings: () => Promise<void>;
 };
 
@@ -32,10 +35,12 @@ export function attachPersistedFold(
 	return attachSectionDisclosure(
 		setting,
 		bodyEl,
-		plugin.settings.calloutListsExpanded[kind],
+		plugin.localState.isExpanded(kind),
 		(expanded) => {
-			plugin.settings.calloutListsExpanded[kind] = expanded;
-			void plugin.saveSettings();
+			// Device-local, so no settings write at all: what is folded away on
+			// one machine says nothing about another, and rewriting the synced
+			// file for it is a sync event nobody asked for.
+			plugin.localState.setExpanded(kind, expanded);
 		},
 	);
 }

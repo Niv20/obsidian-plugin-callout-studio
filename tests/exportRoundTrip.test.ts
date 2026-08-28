@@ -262,7 +262,6 @@ function sourceVault(): CalloutRegistry {
 			showFoldArrow: false,
 		},
 		inlineCallouts: { enabled: true, allowContent: false },
-		firstRunCompleted: true,
 		welcomeSeen: true,
 		fallbackCalloutId: "alpha",
 		language: "he",
@@ -662,36 +661,17 @@ describe("export → import — the lists the user builds up", () => {
 		);
 	});
 
-	it("never lets a file's retiredThemeIds reach the importing vault", () => {
-		// The one settings field that is not configuration. It records which
-		// callout types *this* vault's themes stopped supplying, so discovery
-		// does not re-create them from notes that still mention them. Another
-		// vault's theme history says nothing about this one, and adopting it
-		// would hold back ids the reader does want discovered — which looks like
-		// discovery quietly breaking, with no setting anywhere to explain it.
-		const target = vaultWithOwnLists();
-		target.settings.retiredThemeIds = ["mine-only"];
-
-		const source = emptyVault();
-		source.settings.retiredThemeIds = ["theirs-only"];
-		const file = parse(source.exportToJSONv2());
-		const settings = file.settings as Record<string, unknown>;
-		assert.deepStrictEqual(
-			settings.retiredThemeIds,
-			["theirs-only"],
-			"it does travel in the file — the guard is on the way in",
-		);
-	});
-
-	it("keeps its own retired list across an import", async () => {
-		const target = vaultWithOwnLists();
-		target.settings.retiredThemeIds = ["mine-only"];
-		const source = emptyVault();
-		source.settings.retiredThemeIds = ["theirs-only"];
-
-		await importInto(target, source.exportToJSONv2());
-
-		assert.deepStrictEqual(target.settings.retiredThemeIds, ["mine-only"]);
+	it("does not carry a retired-theme list in the file at all", () => {
+		// It used to travel and be dropped on the way in. It is not in
+		// `PluginSettings` any more — which theme is active is a property of a
+		// machine, not of a vault, so the list lives in `DeviceLocalStore` —
+		// which makes the old carve-out unnecessary and the guarantee stronger:
+		// there is nothing to drop, on either side.
+		const settings = parse(emptyVault().exportToJSONv2()).settings as Record<
+			string,
+			unknown
+		>;
+		assert.ok(!("retiredThemeIds" in settings));
 	});
 
 	it("lets the file win on a shared id, as a restore should", async () => {

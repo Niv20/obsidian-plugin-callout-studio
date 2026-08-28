@@ -8,11 +8,10 @@
  * Keep this file focused on lifecycle only — all feature logic lives in
  * the sub-modules under manager/, editor/, settings/, etc.
  */
-import { MarkdownView, Notice, Platform, Plugin } from "obsidian";
+import { Notice, Platform, Plugin } from "obsidian";
 import type {
 	CalloutIcon,
 	CalloutRenderRole,
-	PluginData,
 	PluginSettings,
 } from "./types";
 import { CalloutRegistry } from "./manager/CalloutRegistry";
@@ -23,11 +22,18 @@ import {
 	setMaterialFontStore,
 } from "./icons/materialFontStore";
 import { CalloutDiscovery } from "./manager/CalloutDiscovery";
+import { SettingsWriter } from "./manager/SettingsWriter";
+import { DeviceLocalStore } from "./manager/DeviceLocalStore";
+import {
+	adoptExternalSettings,
+	loadSettingsInto,
+} from "./manager/settingsBoot";
 import { registerThemeRowSync } from "./manager/theme/themeRowSync";
 import { removeLegacyStartupSnippet } from "./manager/legacyStartupSnippet";
 import { runFirstRunDiscovery } from "./manager/firstRunDiscovery";
 import { CalloutStudioSettingsTab } from "./settings/SettingsTab";
 import { WelcomeModal } from "./settings/WelcomeModal";
+import { maybeShowWelcomeOnLaunch } from "./settings/welcomeRouting";
 import { CalloutEditor } from "./settings/CalloutEditor";
 import { QuickInsertModal } from "./settings/QuickInsertModal";
 import { CalloutAutoComplete } from "./editor/AutoComplete";
@@ -37,7 +43,10 @@ import { createCalloutViewPlugin } from "./editor/livepreview/calloutViewPlugin"
 import { clearContentPillCache } from "./editor/livepreview/contentPillRender";
 import { createHeadingGapField } from "./editor/livepreview/headingGapField";
 import { beginStartupEntranceWindow } from "./editor/renderShared";
-import { refreshAllCalloutEditors } from "./editor/livepreview/refresh";
+import {
+	refreshCallouts,
+	refreshRenderModes,
+} from "./editor/renderRefresh";
 import { OutlineDecorator } from "./outline/OutlineDecorator";
 import { createCalloutReadingPostProcessor } from "./reading/calloutPostProcessor";
 import {
@@ -69,8 +78,18 @@ export default class CalloutStudioPlugin extends Plugin {
 	outlineDecorator!: OutlineDecorator;
 	icons!: IconService;
 	locales!: LocaleStore;
-	private settingsTab!: CalloutStudioSettingsTab;
+	settingsTab!: CalloutStudioSettingsTab;
 	private discovery!: CalloutDiscovery;
+	settingsWriter!: SettingsWriter;
+	/**
+	 * Discovery's index and the rest of what must not travel between devices.
+	 * Public because `settingsBoot` and `CalloutDiscovery` both take it.
+	 */
+	localState!: DeviceLocalStore;
+	/** Re-derives the theme's overlay rows — see registerThemeRowSync. */
+	resyncThemeRows!: () => void;
+	/** Set when data.json changed on disk while a modal held the registry. */
+	private pendingExternalReload = false;
 	private linkSuggestDecorator!: LinkSuggestDecorator;
 
 	get settings(): PluginSettings {
@@ -83,6 +102,24 @@ export default class CalloutStudioPlugin extends Plugin {
 	}
 	set pruneSuspended(value: boolean) {
 		this.discovery.pruneSuspended = value;
+		// The same seam because it answers the same question — this flag is
+		// raised exactly while the callout editor owns the registry, so
+		// lowering it is the modal closing. See adoptExternalSettings.
+		if (!value && this.pendingExternalReload) {
+			void this.onExternalSettingsChange();
+		}
+	}
+
+	/**
+	 * `data.json` was rewritten by something other than us.
+	 *
+	 * Obsidian only calls this because the method exists — `Plugin.loadData`
+	 * starts tracking the file's mtime only when it is defined. The work is in
+	 * `manager/settingsBoot.ts`, including why a deferral is needed and what
+	 * this hook cannot cover.
+	 */
+	async onExternalSettingsChange(): Promise<void> {
+		this.pendingExternalReload = await adoptExternalSettings(this);
 	}
 
 	async onload() {
@@ -103,22 +140,18 @@ export default class CalloutStudioPlugin extends Plugin {
 		this.cssInjector = new CSSInjector(this.app, this.registry);
 		this.cssInjector.injectFromCache();
 
-		// Load persisted data
-		const savedData = (await this.loadData()) as Partial<PluginData> | null;
-		this.registry.load(savedData);
-		// A load-time migration that rewrote definitions is flushed right away,
-		// so the cleaned-up list survives the next reload rather than waiting on
-		// whatever incidental save happens to come first.
-		if (this.registry.needsSaveAfterLoad()) {
-			await this.saveSettings();
-		}
+		// Every write to data.json goes through here — coalesced, and skipped
+		// when the payload is byte-identical to the last one that landed. Built
+		// before the first save below, which is the load-migration flush.
+		this.settingsWriter = new SettingsWriter({
+			build: () => this.registry.toSaveData(),
+			write: (data) => this.saveData(data),
+		});
 
-		// Distinguish a brand-new install (no data.json yet) from an existing
-		// user updating into this version. This drives WHERE the welcome screen
-		// appears — see maybeShowWelcomeOnLaunch(). Computed once, cheaply, from
-		// the data we already loaded.
-		const isFreshInstall =
-			savedData == null || Object.keys(savedData).length === 0;
+		// Read data.json, rebuild the registry, and put back the rows this
+		// device discovered in earlier sessions — see manager/settingsBoot.ts.
+		this.localState = new DeviceLocalStore(this.app);
+		const boot = await loadSettingsInto(this);
 
 		// UI locale follows the user's saved preference; "auto" (the default)
 		// tracks Obsidian's interface language.
@@ -154,7 +187,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		// Give the callout types the active theme declares a row of their own,
 		// and keep doing so whenever the theme changes. Runs before the first
 		// inject so those rows are in the sheet from the start.
-		registerThemeRowSync(this);
+		this.resyncThemeRows = registerThemeRowSync(this);
 
 		// Full CSS inject now that the registry holds real definitions
 		// (replaces the startup snapshot applied above).
@@ -210,6 +243,7 @@ export default class CalloutStudioPlugin extends Plugin {
 			app: this.app,
 			registry: this.registry,
 			settings: this.settings,
+			localState: this.localState,
 			saveSettings: () => this.saveSettings(),
 			refreshCallouts: () => this.refreshCallouts(),
 			registerEvent: (ref) => this.registerEvent(ref),
@@ -239,14 +273,15 @@ export default class CalloutStudioPlugin extends Plugin {
 		// it doubles as the startup pass that drops commands whose callout is
 		// gone.
 		//
-		// Subscribed BEFORE the save listener below, and that order is load
-		// bearing: deleting a callout invalidates the commands that used it,
-		// and both listeners then call saveSettings(). Each call snapshots the
-		// settings as they stand at that moment, so if the save ran first it
-		// would snapshot the list *including* the commands about to be pruned,
-		// and two concurrent writes of different content would leave the file
-		// to whichever finished last. Pruning first makes both snapshots
-		// identical, so there is nothing to race over.
+		// Still subscribed BEFORE the save listener below, though the reason is
+		// weaker than it was: deleting a callout invalidates the commands that
+		// used it, and both listeners then call saveSettings(). That used to be
+		// two concurrent writes of different content, each carrying a snapshot
+		// taken at its own moment, with the file left to whichever finished
+		// last. SettingsWriter coalesces them and builds the payload at write
+		// time, so both now write the pruned list either way; the order is kept
+		// so the settings the sweep produces are the ones the FIRST write
+		// carries, rather than arriving in a second one.
 		this.customCommands = new CustomCommandManager(this);
 		this.registry.onChange(() => this.customCommands.syncAll());
 		this.customCommands.syncAll();
@@ -316,25 +351,17 @@ export default class CalloutStudioPlugin extends Plugin {
 		// the next launch tries again.
 		void this.ensureLocale();
 
-		// First-run vault discovery.
-		//
-		// Decoupled from initial render so onload stays fast. The flag is
-		// only flipped *after* the chosen path completes, so an interrupted
-		// startup (crash / reload mid-scan) safely re-runs next launch.
-		//
-		// - Small vaults: silent auto-scan in the background.
-		// - Large vaults (>= HEAVY_VAULT_FILE_THRESHOLD): one-time modal
-		//   asks the user before doing anything.
-		//
-		// On subsequent loads (firstRunCompleted=true) we just opportunistically
-		// prune stale auto-created rows accumulated while typing in a previous
-		// session.
+		// First-run vault discovery — once per DEVICE, which is also how a
+		// machine whose local index is missing rebuilds it. Decoupled from
+		// first render so onload stays fast; see manager/firstRunDiscovery.ts
+		// for the size threshold and the consent modal. Afterwards we only
+		// prune rows a previous session left orphaned.
 		this.app.workspace.onLayoutReady(async () => {
 			try {
 				// Welcome first, so it never stacks on top of the first-run
 				// scan modal (which only appears for large vaults).
-				await this.maybeShowWelcomeOnLaunch(isFreshInstall);
-				if (!this.settings.firstRunCompleted) {
+				await maybeShowWelcomeOnLaunch(this, boot.isFreshInstall);
+				if (!this.localState.firstRunCompleted) {
 					await runFirstRunDiscovery(this);
 				} else {
 					this.discovery.schedulePrune(2000);
@@ -403,31 +430,6 @@ export default class CalloutStudioPlugin extends Plugin {
 		return new WelcomeModal(this).prompt();
 	}
 
-	/**
-	 * First-run welcome routing, evaluated once at launch. The screen greets
-	 * a brand-new install immediately, right after layout is ready — and only
-	 * a brand-new install. A user who merely updated into this version (they
-	 * already have a `data.json`) never sees it. It appears exactly once per
-	 * fresh install: once `welcomeSeen` is persisted it is never shown again.
-	 */
-	private async maybeShowWelcomeOnLaunch(
-		isFreshInstall: boolean,
-	): Promise<void> {
-		if (this.settings.welcomeSeen || !isFreshInstall) return;
-		await this.showWelcomeOnce();
-	}
-
-	/**
-	 * Open the welcome screen once. The `welcomeSeen` flag is persisted
-	 * *before* opening (synchronously, ahead of any await) so an interrupted
-	 * startup won't re-show it.
-	 */
-	private async showWelcomeOnce(): Promise<void> {
-		this.registry.settings.welcomeSeen = true;
-		await this.saveSettings();
-		await new WelcomeModal(this).prompt();
-	}
-
 	onunload() {
 		this.discovery?.destroy();
 		this.cssInjector?.destroy();
@@ -435,40 +437,18 @@ export default class CalloutStudioPlugin extends Plugin {
 		clearContentPillCache();
 	}
 
-	async saveSettings(): Promise<void> {
-		await this.saveData(this.registry.toSaveData());
+	saveSettings(): Promise<void> {
+		return this.settingsWriter.save();
 	}
 
-	/**
-	 * Re-applies all callout styling and forces every open Markdown view to
-	 * re-render. Use after any mutation that should be immediately visible.
-	 */
+	/** @see editor/renderRefresh.ts */
 	refreshCallouts(): void {
-		// inject() emits "css-change" itself once the CSS is in place — a
-		// second explicit trigger here would only re-enter our own listener
-		// and run the whole pass again.
-		this.cssInjector.inject();
-		// A content pill's payload is rendered markdown and can itself hold a
-		// callout token, so a registry edit can change what a cached payload
-		// should look like. Dropped before the rebuild below re-renders them.
-		clearContentPillCache();
-		// Rebuild Live Preview heading/inline decorations: registry changes
-		// don't touch the document, so CodeMirror won't rebuild them itself.
-		refreshAllCalloutEditors();
+		refreshCallouts(this);
 	}
 
-	/**
-	 * Fully re-render both preview modes. Used when a render-role toggle
-	 * flips: unlike refreshCallouts(), this also re-runs reading-view
-	 * post-processors (via previewMode.rerender) so already-baked inline
-	 * callouts and heading callouts are added or stripped immediately.
-	 */
+	/** @see editor/renderRefresh.ts */
 	refreshRenderModes(): void {
-		refreshAllCalloutEditors();
-		for (const leaf of this.app.workspace.getLeavesOfType("markdown")) {
-			const view = leaf.view;
-			if (view instanceof MarkdownView) view.previewMode?.rerender(true);
-		}
+		refreshRenderModes(this.app);
 	}
 
 	// ── Forwarders that keep the public plugin surface stable ──

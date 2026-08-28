@@ -15,6 +15,9 @@ export const hu: Record<string, string> = {
 
 	"settings.fallbackTag": "Alapértelmezett",
 	"settings.fallbackTagAuto": "Aut. alapértelmezett",
+	"settings.autoDiscover": "Callout-ok automatikus felismerése a tárolóban",
+	"settings.autoDiscoverDesc":
+		"Felismeri a jegyzeteidben leírt callout-típusokat, és automatikusan hozzáadja őket a listához. Kikapcsolása nem érinti a már meglévő callout-okat — továbbra is hozzáadhatod őket kézzel, vagy használhatod az alábbi Tároló újraszkennelése funkciót.",
 	"settings.rescanVault": "Tár újraszkennelése",
 	"settings.rescanVaultDesc":
 		"Megkeresi a fel nem ismert callout-azonosítókat a jegyzetekben, és hozzáadja őket tartalék sorokként.",

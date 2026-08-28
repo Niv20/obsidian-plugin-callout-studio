@@ -16,6 +16,9 @@ export const de: Record<string, string> = {
 
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatischer Standard",
+	"settings.autoDiscover": "Callouts in deinem Tresor automatisch erkennen",
+	"settings.autoDiscoverDesc":
+		"Erkennt Callout-Typen, die in deinen Notizen geschrieben sind, und fügt sie automatisch zur Liste hinzu. Wird dies deaktiviert, bleiben bereits vorhandene Callouts unverändert — du kannst sie weiterhin selbst hinzufügen oder unten „Vault erneut scannen“ verwenden.",
 	"settings.rescanVault": "Vault erneut scannen",
 	"settings.rescanVaultDesc":
 		"Sucht unbekannte Callout-IDs in Notizen und fügt sie als Fallback-Einträge hinzu.",

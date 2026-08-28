@@ -13,6 +13,9 @@ export const nb: Record<string, string> = {
 	"autocomplete.createNew": 'Opprett ny callout: "{{name}}"',
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
+	"settings.autoDiscover": "Oppdag automatisk callouts i hvelvet ditt",
+	"settings.autoDiscoverDesc":
+		"Legger merke til callout-typer skrevet i notatene dine og legger dem automatisk til i listen. Å slå dette av lar callouts du allerede har være urørt — du kan fortsatt legge dem til selv, eller bruke Skann hvelvet på nytt nedenfor.",
 	"settings.rescanVault": "Skann vault på nytt",
 	"settings.rescanVaultDesc":
 		"Finner ukjente callout-ID-er i notater og legger dem til som reserverader.",

@@ -271,9 +271,8 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 		showFoldArrow: true,
 	},
 	inlineCallouts: { enabled: true, allowContent: true },
-	firstRunCompleted: false,
-	retiredThemeIds: [],
 	welcomeSeen: false,
+	autoDiscoverCallouts: true,
 	fallbackCalloutId: "note",
 	language: "auto",
 	customPalettes: [],
@@ -281,10 +280,4 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 	customCommands: [],
 	disabledFixedCommands: [],
 	quickInsertSource: "all",
-	calloutListsExpanded: {
-		theme: true,
-		user: true,
-		builtin: true,
-		palettes: true,
-	},
 };

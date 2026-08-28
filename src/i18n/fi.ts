@@ -12,6 +12,9 @@ export const fi: Record<string, string> = {
 	"autocomplete.createNew": 'Luo uusi callout: "{{name}}"',
 	"settings.fallbackTag": "Oletus",
 	"settings.fallbackTagAuto": "Automaattinen oletus",
+	"settings.autoDiscover": "Havaitse callout-tyypit automaattisesti holvistasi",
+	"settings.autoDiscoverDesc":
+		"Huomaa muistiinpanoihisi kirjoitetut callout-tyypit ja lisää ne automaattisesti listalle. Tämän poistaminen käytöstä ei koske olemassa olevia callouteja — voit silti lisätä ne itse tai käyttää alla olevaa Skannaa holvi uudelleen -toimintoa.",
 	"settings.rescanVault": "Skannaa holvi uudelleen",
 	"settings.rescanVaultDesc":
 		"Etsii muistiinpanoista tunnistamattomia callout-tunnuksia ja lisää ne varariveinä.",

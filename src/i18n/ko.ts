@@ -15,6 +15,9 @@ export const ko: Record<string, string> = {
 
 	"settings.fallbackTag": "기본값",
 	"settings.fallbackTagAuto": "자동 기본값",
+	"settings.autoDiscover": "보관함에서 콜아웃을 자동으로 감지",
+	"settings.autoDiscoverDesc":
+		"메모에 작성된 콜아웃 유형을 인식해 목록에 자동으로 추가합니다. 이 옵션을 끄면 이미 있는 콜아웃은 그대로 유지됩니다 — 직접 추가하거나 아래의 보관함 다시 스캔을 사용할 수 있습니다.",
 	"settings.rescanVault": "볼트 재스캔",
 	"settings.rescanVaultDesc":
 		"노트에서 인식되지 않는 callout ID를 찾아 폴백 행으로 추가합니다.",

@@ -15,6 +15,9 @@ export const zh: Record<string, string> = {
 
 	"settings.fallbackTag": "默认",
 	"settings.fallbackTagAuto": "自动默认",
+	"settings.autoDiscover": "自动发现库中的 callout",
+	"settings.autoDiscoverDesc":
+		"识别你笔记中写出的 callout 类型，并自动将其添加到列表中。关闭此选项不会影响你已有的 callout——你仍可以自行添加，或使用下方的重新扫描库。",
 	"settings.rescanVault": "重新扫描库",
 	"settings.rescanVaultDesc":
 		"查找笔记中未识别的 callout ID 并将其添加为回退行。",
