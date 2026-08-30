@@ -154,6 +154,35 @@ const REAL: Array<{ theme: string; selector: string; expect: Specificity }> = [
 		expect: [0, 10, 1],
 	},
 	{
+		// AnuPpuccin's Vanilla Normal, the Style Settings option that draws the
+		// vertical accent line. Measured because the core accent shim has to
+		// LOSE to it — see manager/css/coreAccentShim.ts. Four class-units on
+		// the box, five once the `> .callout-title` half is counted.
+		theme: "AnuPpuccin (Vanilla Normal)",
+		selector:
+			".anp-callout-vanilla-normal .callout" +
+			":not([data-callout-metadata*=anp-sleek],[data-callout-metadata*=anp-block])" +
+			":not([data-callout-metadata*=revert],[data-callout=multi-column])" +
+			" > .callout-title",
+		expect: [0, 5, 0],
+	},
+	{
+		// The lightest callout rule in the vault, and the whole reason the shim
+		// suppresses a property a theme declares on a bare `.callout`: it ties
+		// this exactly, and a tie goes to whoever comes last in the document.
+		theme: "Obsidian gruvbox",
+		selector: ".callout",
+		expect: [0, 1, 0],
+	},
+	{
+		// One class of guard — Minimal's "Outlined", Aura's origin layout. The
+		// shim is deliberately one class-unit BELOW this, so these win outright
+		// instead of tying and losing on source order.
+		theme: "Minimal (Outlined)",
+		selector: ".callouts-outlined .callout",
+		expect: [0, 2, 0],
+	},
+	{
 		// (old scanner: b=9 — it counted both :not()s twice over)
 		theme: "Prism",
 		selector:

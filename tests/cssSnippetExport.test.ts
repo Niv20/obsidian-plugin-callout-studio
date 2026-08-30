@@ -481,6 +481,21 @@ describe("untouched built-ins", () => {
 		);
 	});
 
+	it("carry the @property registration that gives them a meaning", () => {
+		// styles.css does not travel. Without this line --cs-accent-theme is an
+		// ordinary custom property in the target vault: the <color> validation
+		// vanishes, so a theme that spells --callout-default as a bare RGB
+		// triplet puts that triplet into --cs-accent and every color-mix()
+		// downstream of it is silently dropped.
+		const f = seeded();
+		borderOn(f);
+		const css = buildSnippetCss(f.plugin);
+		assert.ok(css.includes("--cs-accent-theme"), "precondition");
+		assert.ok(css.startsWith("@property --cs-accent-theme {"), css.slice(0, 120));
+		assert.ok(css.includes('syntax: "<color>"'));
+		assert.ok(css.includes("initial-value: #7d7d7d;"));
+	});
+
 	it("get nothing when no border is switched on", () => {
 		const f = seeded();
 		f.registry.settings.globalStyle.borderSides = {
@@ -499,6 +514,17 @@ describe("untouched built-ins", () => {
 });
 
 /* --- Which callouts -------------------------------------------------------- */
+
+describe("the accent registration", () => {
+	it("is absent from a snippet that never mentions the variable", () => {
+		// Every byte in this file is read by a person and synced by a vault, so
+		// a declaration nothing reads does not get to ride along.
+		const f = seeded();
+		const css = buildSnippetCss(f.plugin);
+		assert.ok(!css.includes("--cs-accent-theme"), "precondition");
+		assert.ok(!css.includes("@property"));
+	});
+});
 
 describe("which callouts are covered", () => {
 	it("drops a discovered row nothing uses and nobody adopted", () => {

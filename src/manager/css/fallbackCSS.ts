@@ -21,12 +21,7 @@ import {
 	userImageFor,
 } from "../../icons/packs/userImages";
 import { svgToDataUri } from "../../icons/svg";
-import {
-	CSS_HEADING_LINE,
-	CSS_INLINE_TOKEN,
-	CSS_REF_TOKEN,
-	CSS_UNKNOWN,
-} from "../../editor/renderShared";
+import { fallbackTokenCSS } from "./fallbackTokenCSS";
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
 import { tokenAttrSel } from "../../utils/calloutSelector";
 import { iconBoxWidth } from "./iconBox";
@@ -59,6 +54,16 @@ export interface FallbackCssContext {
 	): string[];
 	transparentBorderProps(important?: boolean): string[];
 	needsDarkBlock(def: CalloutDefinition): boolean;
+	/**
+	 * `CSSInjector.themeSurface` — what the active styling says about the surface
+	 * of a callout it does not name. Asked here for the same reason the per-id
+	 * block asks it: an unknown callout is painted by this block, so it inherits
+	 * this block's quarrel with a theme that blanks the callout background.
+	 */
+	themeSurface(
+		def: CalloutDefinition,
+		selectorsAt: (guard: string, weight: number) => string,
+	): string;
 	printGradientCSS(
 		def: CalloutDefinition,
 		selector: (themePrefix: string, suffix: string) => string,
@@ -180,6 +185,22 @@ export function generateFallbackCSS(
 		);
 	}
 
+	// The same stand-down the registered ids get. Three `.callout` repeats rather
+	// than the chain's own one: this has to outrank the dark block above, which
+	// `body.theme-dark` already puts one class-unit ahead of the light one.
+	//
+	// The guard REPLACES this block's own `body` rather than sitting in front of
+	// it. Every guard the scanner accepts is a compound on the element Style
+	// Settings puts its classes on, which is `<body>` itself — so `body.callout-on
+	// body .callout` would be asking for a body inside a body, and match nothing
+	// at all. The one case with no guard keeps the `body` it always had.
+	const surface = ctx.themeSurface(
+		fallbackDef,
+		(guard, weight) =>
+			`${guard === "" ? "body " : guard}${".callout".repeat(weight)}${notSelectors}`,
+	);
+	if (surface) parts.push(surface);
+
 	// Pack icon override for fallback (live view; PDF uses the hidden DOM
 	// copy baked by paintIcons via resolveDef).
 	const fallbackSvg = hidesIcon
@@ -233,58 +254,9 @@ export function generateFallbackCSS(
 		);
 	}
 
-	// Unknown heading/inline tokens: the token renderer tags unresolved ids
-	// with .cs-unknown, so a plain class rule suffices — no :not() chain.
-	parts.push(
-		`.${CSS_INLINE_TOKEN}.${CSS_UNKNOWN}, .${CSS_HEADING_LINE}.${CSS_UNKNOWN}, .${CSS_REF_TOKEN}.${CSS_UNKNOWN} {\n${ctx.ownAccentProps(fallbackDef, "light").join("\n")}\n}`,
-	);
-	if (fallbackDef.colorLight !== fallbackDef.colorDark) {
-		parts.push(
-			`.theme-dark .${CSS_INLINE_TOKEN}.${CSS_UNKNOWN}, .theme-dark .${CSS_HEADING_LINE}.${CSS_UNKNOWN}, .theme-dark .${CSS_REF_TOKEN}.${CSS_UNKNOWN} {\n${ctx.ownAccentProps(fallbackDef, "dark").join("\n")}\n}`,
-		);
-	}
-
-	// Fallback background (solid OR gradient) on unknown heading callouts /
-	// inline callouts, mirroring generateTokenColorCSS for registered ids so all
-	// three roles share one background (ref tokens have no surface to paint).
-	// The .cs-unknown class doubles the class count, so this outranks the
-	// static styles.css tint without !important. bgProps emits nothing when
-	// the fallback has no custom bg, leaving the static tint in place.
-	const unknownBgSelectors = (themePrefix: string): string =>
-		`${themePrefix}.${CSS_INLINE_TOKEN}.${CSS_UNKNOWN}, ` +
-		`${themePrefix}.${CSS_HEADING_LINE}.${CSS_UNKNOWN}`;
-	const unknownLightBg = ctx.bgProps(fallbackDef, "light");
-	if (unknownLightBg.length > 0) {
-		parts.push(
-			`${unknownBgSelectors("")} {\n${unknownLightBg.join("\n")}\n}`,
-		);
-	}
-	const unknownDarkBg = ctx.bgProps(fallbackDef, "dark");
-	if (
-		unknownDarkBg.length > 0 &&
-		unknownDarkBg.join("") !== unknownLightBg.join("")
-	) {
-		parts.push(
-			`${unknownBgSelectors(".theme-dark ")} {\n${unknownDarkBg.join("\n")}\n}`,
-		);
-	}
-	// Only gradient backgrounds need the PDF-export ::before repaint; the
-	// method returns "" for solid backgrounds. Mirrors the known-id calls:
-	// pill hides its own gradient in print, block roles keep theirs.
-	const unknownPillPrint = ctx.printGradientCSS(
-		fallbackDef,
-		(themePrefix, suffix) =>
-			`${themePrefix}.${CSS_INLINE_TOKEN}.${CSS_UNKNOWN}${suffix}`,
-		true,
-	);
-	if (unknownPillPrint) parts.push(unknownPillPrint);
-	const unknownHeadingPrint = ctx.printGradientCSS(
-		fallbackDef,
-		(themePrefix, suffix) =>
-			`${themePrefix}.${CSS_HEADING_LINE}.${CSS_UNKNOWN}${suffix}`,
-		false,
-	);
-	if (unknownHeadingPrint) parts.push(unknownHeadingPrint);
+	// The plugin's own heading / inline / ref token DOM for these same unknown
+	// ids — a different surface in a different register, so a different module.
+	parts.push(...fallbackTokenCSS(fallbackDef, ctx));
 	// Unknown block callouts: the fallback tint carries the gradient too,
 	// so it needs the same Preview-safe raster repaint. The selector mirrors
 	// the fallback rules above (`body` prefix + :not() list).

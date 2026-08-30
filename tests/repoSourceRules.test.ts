@@ -747,8 +747,18 @@ describe("no new oversized files", () => {
 		// with it to manager/css/iconBox.ts; core's own icon reader to
 		// manager/css/coreIcon.ts; the three `::after` icon overrides to
 		// manager/css/iconOverrides.ts; and the `--callout-icon` decision to
-		// manager/css/calloutIconProp.ts.
-		"src/manager/CSSInjector.ts": 1858,
+		// manager/css/calloutIconProp.ts. Held flat since: the outline half of
+		// `transparentBg` moved out to manager/css/transparentBorder.ts — which
+		// both this file and fallbackCSS were already reaching for through
+		// `FallbackCssContext` — and the room that bought was spent on the core
+		// accent shim rather than banked.
+		// Lowered from 1859: `bgProps` and `bgImageFor` moved to
+		// manager/css/backgroundProps.ts — they were already being handed to
+		// `fallbackCSS` as plain functions of a definition, and read nothing off
+		// the injector — and part of the room that bought went to `themeSurface`,
+		// which asks manager/theme/calloutSurface.ts whether the active styling
+		// owns the callout surface.
+		"src/manager/CSSInjector.ts": 1838,
 		// Lowered from 2014: what "mirror the fallback callout" means now lives
 		// entirely in manager/discoveredRow.ts, beside the other half of the same
 		// agreement, and the two-mode migration in manager/styleModeMigration.ts.

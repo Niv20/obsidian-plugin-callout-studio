@@ -26,9 +26,13 @@ Folding is remembered — close the settings tab, or restart Obsidian, and each 
 
 Scroll into a long list and its heading stops at the top of the settings pane and stays there, so you can always see which group the rows in front of you belong to — and, on **My callout types**, the **Add new callout** button stays within reach with it. When you reach the next section, its heading pushes the old one out of the way and takes over. Past the end of **Built-in callouts** the last heading scrolls away like anything else, so nothing hangs over the settings below.
 
+The parked heading takes its colour from whatever your theme paints the settings pane, so it matches the rows sliding under it. A few themes paint that area with a window-wide gradient or leave it see-through altogether; there the heading falls back to your theme's own window colour rather than letting the rows show through it, so it may read as a slightly different shade from the pane around it. On a theme that makes every surface transparent on purpose, the heading stays transparent with them.
+
 Folding a section while its heading is parked at the top leaves the heading under your pointer instead of letting the page jump.
 
 The note under **Callouts from your theme** naming your active theme is not part of the heading that pins — scroll and it goes with the rows underneath, out of sight behind the heading, rather than staying parked next to the title.
+
+The heading stops flush with the top of the pane whatever spacing your theme gives the settings screen. Some themes — ITS Theme among them — set their own padding there, and the heading used to stop short of the top and leave a gap with the rows sliding past behind it. It doesn't any more, on any theme.
 
 On iPhone the headings scroll normally — the top of the settings screen there belongs to Obsidian's own back and close buttons, and a pinned heading has nowhere to sit that does not collide with them. iPad and desktop both pin.
 
@@ -107,6 +111,38 @@ The old result was neither side winning cleanly, but a split: some colours and i
 So there is no in-between. For the callouts it does own, Callout Studio takes every property outright, and measures how hard it has to push from the theme you actually have on. For the callouts your theme owns, it takes nothing at all.
 
 Two limits worth stating plainly. It wins the properties Callout Studio actually sets — it does not undo *layout* your theme adds, which is part of why a theme that names a callout keeps it entirely. And the colours shown for a theme callout are read from your **current** light/dark mode; switching mode re-reads them.
+
+## Themes written for an older Obsidian
+
+Obsidian changed how a callout's colour is written down in version 1.13. Themes that have been updated since use the new way; plenty of excellent themes have not, and still use the old one. They are not interchangeable — a colour written the new way means nothing to a theme expecting the old way, and the effect is silent: a background simply doesn't appear, or a coloured line down the side of a callout doesn't draw.
+
+Callout Studio reads your theme and writes whichever way **your** theme is expecting. You don't set this anywhere and there is nothing to configure; it re-checks whenever you switch themes.
+
+What you should see as a result:
+
+- A callout you made picks up your theme's own callout design — its background treatment, its side accents, its title bar — in the colour *you* chose.
+- Changing a callout option in **Style Settings** takes effect on your callouts immediately, the same as it does on your theme's own callouts. No restart, no reopening the note.
+- If your theme deliberately paints callout backgrounds itself, it keeps doing that. Callout Studio only fills in a background where nothing else is providing one.
+
+A colour you picked from **Saved color palettes** is treated differently from one you picked out of the preset swatches, and this is deliberate. A palette colour includes a background you chose, so it is applied over whatever your theme would have done. A preset is just a colour — the background is worked out from it, so your theme's own background design wins where it has one. If you want a callout to keep a specific background under every theme, save it as a palette.
+
+This is worked out separately for light and dark mode, because a number of themes only set their callout colours in one of the two and leave the other on Obsidian's. So a built-in callout follows your theme in whichever mode your theme actually has an opinion in, and Obsidian's own colour in the other — which is exactly what you would see without Callout Studio installed.
+
+Three things Callout Studio cannot work around. A theme that mixes both ways of writing colours in the same stylesheet will have the smaller half not work — that is a bug in the theme, and only the theme can fix it. Callout types you use in notes but have never added to Callout Studio get your theme's design but not a background of their own; adding them fixes that. And if your theme puts its callout colours behind one of its own **Style Settings options** — a layout or a palette you have to switch on — Callout Studio treats those colours as not in use, because from the stylesheet alone there is no way to tell whether you switched it on. Built-in callouts then follow Obsidian's colours rather than your theme's. Two themes in a 257-theme survey do this (Aura's "Origin" layout, TerraFlow's "Academia" palette); your own callouts are unaffected either way, since they carry the colour you picked.
+
+## Themes that give callouts no background
+
+Some themes deliberately draw callouts with no fill at all — the colour lives in the icon, the title and a line or a frame, and the body of the callout is simply the page. **GitHub Theme** does it when you switch on **GitHub callout style** in Style Settings; **Minimal** and **Oxygen** do it under **Outlined callouts**; **Prism**, **Cybertron** and a dozen others do it too, some of them by default.
+
+Callout Studio follows. On those themes a callout you made drops its background and sits flat like the theme's own, while keeping the things that make it yours: your icon, and your colour on the icon, the title, and any frame the theme draws.
+
+Three details worth knowing:
+
+- **It follows the theme's own switch.** Turn **GitHub callout style** (or **Outlined callouts**) on and your callouts go flat with everything else; turn it off and your background comes straight back. It happens the moment you flip the toggle — no restart, no reopening the note.
+- **A background you chose is set aside, not forgotten.** If your callout came from a Saved palette with a background or a gradient, that background is what gets stood down. Switch to a theme that fills callouts, or switch the theme's option off, and it returns exactly as you saved it. Nothing is rewritten.
+- **Text colour goes back to the theme's.** Callout Studio fills the text-colour boxes in the editor with a readable default so the swatch has something to show. On these themes that default is dropped and your theme's own text colour is used, so your callout reads like the ones beside it. A text colour you actually picked yourself is kept.
+
+Themes that fill callout backgrounds normally are untouched by any of this — 240 of the 257 themes surveyed emit exactly what they did before.
 
 ## Writing a theme yourself?
 

@@ -223,27 +223,92 @@ list too (it is inside a `cs-sticky-section` now), trimming 24px between it and
 the "Unlinked colors" heading — which is fine, that heading carries its own
 full divider.
 
-Eight consequences are written into `styles.css` beside the rules, and are
+Nine consequences are written into `styles.css` beside the rules, and are
 worth knowing before touching any of them:
 
-- **The pane's `padding-top` is zeroed and handed to the title row.** A
-  sticky `top` is measured from the scrollport's *content* box, so Obsidian's
-  `padding-top: var(--size-4-12)` would park the band 48px down with rows
-  scrolling visibly through the strip above it. Obsidian's own sticky
-  settings header does the same thing one line away —
-  `.setting-page.vertical-tab-content { padding-top: 0 }` beside
+- **The pane's `padding-top` is zeroed and handed to the title row, at a
+  weight that survives a theme.** A sticky `top` is measured from the
+  scrollport's *content* box, so Obsidian's `padding-top: var(--size-4-12)`
+  would park the band 48px down with rows scrolling visibly through the strip
+  above it. Obsidian's own sticky settings header does the same thing one line
+  away — `.setting-page.vertical-tab-content { padding-top: 0 }` beside
   `.setting-page-titlebar { position: sticky; top: 0 }`.
+
+  The weight is the part that was missing, and it is not defensive padding.
+  `containerEl` **is** `.vertical-tab-content`, so the reset lands on the very
+  element a theme styles, at the same `(0,1,0)` a bare `.vertical-tab-content`
+  carries — and the theme sheet loads after this plugin's. Measured over the
+  257 themes installed in the development vault, **26 declare padding on that
+  element and 20 put a non-zero top inset back**, from `(0,1,0)` (ITS Theme's
+  `padding: 35px`, NotSwift's `padding-top: 60px`, Kakano, Terminal, Sandstorm,
+  Subtlegold, TerraFlow, Cybertron, Ono Sendai, Suddha, Pine Forest Berry)
+  through `(0,7,1)` (Maple), one of them — Elegance — with `!important`. Every
+  one of them un-sticks all four bands identically, at whatever distance it
+  chose. So the reset is written
+  `body:not(.is-phone) .callout-studio-settings×3 { padding-top: 0 !important }`:
+  `!important` because nothing else outranks Elegance's, the class tripled to
+  `(0,4,1)` for headroom over a future important rule, and the phone excluded
+  *explicitly* — with an `!important` in play it would otherwise have beaten
+  Obsidian's own `(0,5,0)` phone rule, whose padding is reserving the top of the
+  screen for the floating back and close buttons. `padding-block-start`
+  (flexcyon's spelling) cascades in the same slot and needs no separate
+  declaration; a `border-top` on the pane (TerraFlow's 1px glass frame) insets
+  the content box the same way and is deliberately left alone. Section **165**
+  of `modalBodyLayers.test.ts` resolves that cascade against the theme rules
+  verbatim.
 - **The band paints `background-color: inherit`, not the `--cs-surface`
   pair.** That pair is defined inside `.cs-modal` and nowhere else, so on the
   settings tab it falls through to `--background-primary` — and that is what
-  Obsidian paints this pane on the *desktop only*: `--settings-background`
-  under `.is-mobile`, `--modal-background` on a dark tablet. Measured, a dark
-  tablet's pane is `rgb(17,17,17)` while `--background-primary` there is
-  `#000`; the token would have made the band a visible stripe, which is the
-  exact failure `modalSurfaces.test.ts` exists for. `inherit` cannot disagree
-  with the pane on any platform. It is a chain: the wrapper declares it too,
-  because `background-color` is not an inherited property and the band would
-  otherwise inherit `transparent`.
+  Obsidian paints this pane on the *desktop only*: under `.is-mobile` the pane
+  takes `--settings-background`, which is itself `--background-secondary`,
+  `--background-primary` or `--background-primary-alt` depending on phone,
+  tablet and colour scheme. Measured, a dark tablet's pane is `rgb(17,17,17)`
+  while `--background-primary` there is `#000`; the token would have made the
+  band a visible stripe, which is the exact failure `modalSurfaces.test.ts`
+  exists for. `inherit` cannot disagree with the pane on any platform. It is a chain:
+  the wrapper declares it too, because `background-color` is not an inherited
+  property and the band would otherwise inherit `transparent`.
+- **Under that paint is a floor, because `inherit` is only as opaque as what
+  it copies.** Replayed through a headless Chrome against the running
+  Obsidian's own `app.css`, this stylesheet and one theme at a time — the 257
+  installed in the development vault, in both colour schemes — the band
+  computes **transparent under a good many of them**. Most of those leave the
+  pane itself see-through (Sodalite paints `.vertical-tab-content` `transparent` and puts the surface
+  on the container behind it; TerraFlow's dark pane is glass; Velocity's whole
+  window is, `--modal-background` included, at `oklch(… / 0.625)`), so the
+  chain has nothing opaque to carry down. Three others beat the band's own
+  declaration: Elegance and Lagom write `background-color: transparent
+  !important` on `.setting-item-heading` — at `(0,2,0)` and, nested under
+  `.mod-settings`, at the band rule's own `(0,3,0)` — and Micro Mike wins a
+  `(0,3,0)` tie through `.modal.mod-settings :is(h1, …,
+  .setting-item-heading)`. Either way rows scroll visibly through a heading
+  that is pinned exactly right.
+
+  The fix is a floor rather than a fight, because `!important` is not
+  available: Lagom's is already at the band rule's specificity, so winning
+  means out-specifying the *next* theme rather than that one. So
+  `.cs-sticky-heading::before` lays an opaque base — `--background-primary`
+  with `var(--settings-background, var(--modal-background))` over it, the
+  theme's own surface tokens and never a colour named here; the top layer is
+  the token core paints this pane *with*, so measured on desktop, tablet and
+  phone in both schemes it comes out the pane's own colour every time — and
+  `.cs-sticky-heading::after` repaints the band's whole
+  background over that with `background: inherit`, image included, so a theme's
+  heading gradient still paints. Both sit at `z-index: -1` inside the band's
+  own stacking context, so they are above its background and below its title,
+  and both are scoped `body:not(.is-phone)`, where the band is `position:
+  static` and so not a containing block. Where the band's paint is opaque — the
+  great majority of themes, and every platform with no theme installed — the
+  `::after` covers the floor completely and nothing changes: with no theme the
+  rendered pane is pixel-identical before and after.
+
+  It reaches all but a few. The ones left over are the themes that name no
+  opaque surface anywhere — see the rules' own comment in `styles.css` for the
+  roll call and the reason each one is out of reach. That is deliberately where it stops: the only floor
+  that could not itself be see-through is a colour named here, and on a theme
+  whose every surface is transparent on purpose it would be the one opaque
+  thing in the window. Section **166** of `modalBodyLayers.test.ts` pins the
+  arrangement and the cascade behind it.
 - **The gap under a section lives on that section's own body, and nothing
   else contributes to it.** Space outside a wrapper's content box is space
   with no heading pinned to it, so a 36px margin between wrappers would be
@@ -581,10 +646,12 @@ is doing.
 > Two things the settings-tab band added to that contract. The offset is
 > measured from the scrollport's **content** box, so a scroller with its own
 > `padding-top` needs that padding moved onto the content before `top: 0`
-> means the top of the pane. And `background-color: inherit` is the third
-> sanctioned paint beside the two surface tokens — it is the only one
-> available to a band sitting *on* a pane whose colour the plugin does not
-> choose. See [The three sections pin their headings](#the-three-sections-pin-their-headings).
+> means the top of the pane — and where that scroller is Obsidian's rather
+> than this plugin's, the rule doing the moving has to outrank the active
+> theme, which is a second question and the one that actually regressed. And
+> `background-color: inherit` is the third sanctioned paint beside the two
+> surface tokens — it is the only one available to a band sitting *on* a pane
+> whose colour the plugin does not choose. See [The three sections pin their headings](#the-three-sections-pin-their-headings).
 
 ## Notable individual modals
 

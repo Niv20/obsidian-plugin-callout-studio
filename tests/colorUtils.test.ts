@@ -59,6 +59,7 @@ import {
 	calloutAccentVarRef,
 	calloutColorValue,
 } from "../src/utils/calloutColorFormat";
+import type { AccentDialect } from "../src/manager/theme/accentDialect";
 import type { BgGradient } from "../src/types";
 
 /** A spread wide enough that a per-channel bug cannot hide in it. */
@@ -1036,27 +1037,59 @@ describe("hexToRgbString", () => {
 });
 
 describe("calloutColorValue / calloutAccentVarRef", () => {
-	it("agree on which Obsidian era they are writing for", () => {
-		// The two are one decision read from opposite sides: on ≤1.12 the value
-		// is a bare triplet AND the read must be wrapped in rgb(); on 1.13+ the
-		// value is a real colour AND the read is a plain var(). A build where
-		// they disagreed would emit a colour the other side cannot consume.
-		const raw = calloutColorValue("#ff8800") === "255, 136, 0";
-		const ref = calloutAccentVarRef("--cs-accent");
-		assert.equal(ref, raw ? "rgb(var(--cs-accent))" : "var(--cs-accent)");
+	/** `declared` takes either one spelling for both modes, or a per-mode pair. */
+	const dialect = (
+		read: "triplet" | "color",
+		declared: Record<
+			string,
+			"triplet" | "color" | { light?: "triplet" | "color"; dark?: "triplet" | "color" }
+		> = {},
+	): AccentDialect => ({
+		read,
+		declared: new Map(
+			Object.entries(declared).map(([k, v]) => [
+				k,
+				typeof v === "string"
+					? { light: v, dark: v }
+					: { light: v.light, dark: v.dark },
+			]),
+		),
+		unguarded: new Set(),
 	});
 
-	it("emits a value the CSS side can actually parse", () => {
-		const value = calloutColorValue("#ff8800");
-		assert.ok(
-			isValidHexColor(value) || /^\d+, \d+, \d+$/.test(value),
-			value,
+	it("writes the spelling the read sites asked for", () => {
+		assert.equal(calloutColorValue("#ff8800", dialect("triplet")), "255, 136, 0");
+		assert.equal(calloutColorValue("#ff8800", dialect("color")), "#ff8800");
+	});
+
+	it("reads a theme variable in the spelling that theme declared it", () => {
+		// Per variable, not per theme: Composer declares --callout-error as a
+		// triplet while reading --callout-color as a colour, so one answer for
+		// the whole sheet is wrong for half of it.
+		const d = dialect("color", { "--callout-error": "triplet" });
+		assert.equal(calloutAccentVarRef("--callout-error", d, "light"), "rgb(var(--callout-error))");
+		assert.equal(calloutAccentVarRef("--callout-info", d, "light"), "var(--callout-info)");
+	});
+
+	it("reads it per MODE, because a theme can declare only one", () => {
+		// Nier declares all thirteen under `.theme-dark` alone, as triplets, and
+		// leaves light mode on core's colours. One answer for both modes wraps
+		// the wrong one in `rgb()`, which fails `--cs-accent-theme`'s `<color>`
+		// registration and greys every heading bar and pill in that mode.
+		const d = dialect("triplet", { "--callout-warning": { dark: "triplet" } });
+		assert.equal(calloutAccentVarRef("--callout-warning", d, "dark"), "rgb(var(--callout-warning))");
+		assert.equal(
+			calloutAccentVarRef("--callout-warning", d, "light"),
+			"var(--callout-warning)",
+			"undeclared in light — core supplies it there, in core's spelling",
 		);
 	});
 
-	it("is stable across calls — the version check is cached", () => {
-		assert.equal(calloutColorValue("#123456"), calloutColorValue("#123456"));
-		assert.equal(calloutAccentVarRef("--x"), calloutAccentVarRef("--x"));
+	it("emits a value the CSS side can actually parse", () => {
+		for (const read of ["triplet", "color"] as const) {
+			const value = calloutColorValue("#ff8800", dialect(read));
+			assert.ok(isValidHexColor(value) || /^\d+, \d+, \d+$/.test(value), value);
+		}
 	});
 });
 

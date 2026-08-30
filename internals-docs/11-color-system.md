@@ -300,14 +300,73 @@ appearing as an unmatched "Deleted color."
 > background style, which is the one place the user can find and re-select it
 > later.
 
-## Obsidian version drift: `--callout-color` format
+## Accent dialect: version drift **and** theme drift
 
-`calloutColorValue(hex)` and `calloutAccentVarRef(cssVar)` both branch on a
-**cached** `requireApiVersion("1.13.0")` check (computed once, not per
-callout, per inject): Obsidian 1.13 changed `--callout-color` from a bare RGB
-triplet (`"255, 0, 0"`, which core itself wraps in `rgb(...)`) to a full CSS
-colour string. The plugin emits whichever format the *running* Obsidian
-expects, so one release works correctly on both sides of that line.
+Obsidian 1.13 changed `--callout-color` from a bare RGB triplet (`"255, 0, 0"`,
+which core itself wraps in `rgb(...)`) to a full CSS colour string. For a long
+time this plugin answered "which spelling do I write?" from
+`requireApiVersion("1.13.0")` alone, and that was only ever half the question:
+
+> **`--callout-color` is read by whoever wrote the rules that consume it, and
+> once a theme is active that is usually the theme, not core.**
+
+A theme written before 1.13 and never updated still writes
+`rgba(var(--callout-color), 0.1)`. Handed a hex, that declaration is *invalid at
+computed-value time* and the property silently unsets — the background vanishes,
+and a `border-left` shorthand unsets all the way to `border-left-style: none`,
+so a side accent disappears entirely. Handed a triplet, a theme written after
+1.13 loses every `color-mix()` the same way. **No single value serves both.**
+
+So the spelling is chosen per theme, from the theme's own text.
+[`manager/theme/accentDialectScan.ts`](../src/manager/theme/accentDialectScan.ts)
+reads one sheet;
+[`accentDialect.ts`](../src/manager/theme/accentDialect.ts) folds the active
+theme and every enabled snippet into **two** answers —
+collapsing them into one is the mistake that module is shaped around:
+
+| | Question | Scope | Decides |
+| --- | --- | --- | --- |
+| `read` | what do the `var(--callout-…)` **read sites** expect? | one answer per sheet, by majority | `calloutColorValue()` — what we write *into* `--callout-color` |
+| `declared` | what does the theme's own `--callout-info` **hold**? | per variable **and per mode**, following `var()` hops | `calloutAccentVarRef()` — `var(X)` vs `rgb(var(X))` into `--cs-accent-theme` |
+
+They demonstrably disagree. **Composer** declares `--callout-error: 158, 48, 57`
+while reading `color-mix(in srgb, var(--callout-color) …)`; six more themes
+(Reshi, Nebula, Novadust, Nightfox, RetroNotes, …) declare triplets they never
+read at all, which a read-only detector cannot see — and since `--cs-accent-theme`
+is registered `<color>`, an unseen triplet falls back to its grey initial value
+and quietly greys every heading bar, inline pill and icon tint on an unmodified
+built-in.
+
+### `declared` is per mode, and three ways a value can hide
+
+Grey is the entire failure mode here, and it is silent, so the `declared` half
+is shaped by the three ways a theme can put an accent value somewhere a naive
+scan reads wrongly. Each is a measurement over the 257 themes in the dev vault,
+and each has a test in `tests/accentDialect.test.ts` naming the theme.
+
+| Hiding place | Themes | Answer |
+| --- | --- | --- |
+| declared in **one mode only** | 10 — Nier declares all thirteen under `.theme-dark`, as triplets, leaving light mode on core's colours | two fields, `{ light, dark }`. `undefined` in the other mode means "core supplies it there", not "unknown" |
+| the `var()` chain **leaves the sheet** | 4 — Arcane ends on core's `--color-blue` (a colour), Aura/Nier/Vicious on `--color-*-rgb` (triplets) | fall back to the sheet's **own `read`** spelling. A stylesheet is consistent with itself; Arcane is why this is not a `-rgb` name check |
+| declared only behind a **theme option** | 2 — Aura's `.aura-origin-layout` (one layout of three, not the default), TerraFlow's `.academia-theme` (one palette of eleven) | ignore it. In the state almost everyone is in the class is absent and the variable still holds core's value. A `:not()` guard is the opposite case and *is* trusted — Velocity's `body:not(.disable-callout-styling)` is its normal styling |
+
+The mode split follows the cascade: the light view is the unscoped declarations
+with `.theme-light`'s on top, the dark view the same with `.theme-dark`'s, and a
+`var()` hop resolves inside its own view. When the two views disagree,
+`accentDeclarations.needsDarkBlock()` returns true even though the colours are
+identical — that is the one caller that has to know the spelling can split
+without the colour splitting.
+
+`coreAccentDialect()` — still the cached `requireApiVersion` check — is what the
+running Obsidian expects, and is the fallback wherever the active styling has no
+opinion. That is 196 of the 257 themes in the dev vault, and it is what keeps
+this machinery invisible in those vaults: their generated CSS is byte-identical
+to what it was before any of it existed.
+
+Measured across all 257: **36** themes read a triplet, **25** read a colour,
+**0** tie. See [21-theme-callout-discovery.md](21-theme-callout-discovery.md)
+for the scan itself, the per-theme matrix and the known limitations.
+
 `parseCssColorToHex()` is the inverse — used by CSS-snippet import — and
 handles hex, `rgb()`/`rgba()`, and the bare pre-1.13 triplet, returning `null`
 (caller skips the entry) for anything else (named colours, `oklch()`, …).

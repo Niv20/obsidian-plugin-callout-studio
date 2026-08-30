@@ -106,6 +106,8 @@ registry actually holds data) replaces it with a real generated pass.
 2. generateGlobalStyleCSS()        — vault-wide border/radius/scale + icon gap default
 3. @media screen { .cs-export-icon { display: none } }   — hides the PDF-only DOM icon copies on screen
 4. generateCalloutCSS(def) for every callout in registry.getAll()
+     └─ within it, coreAccentShimCSS(def) — only when the active theme spells the
+        accent differently from core; see "The core accent shim" below
 5. generateFallbackCSS(callouts)   — styles any data-callout Obsidian rendered that this
                                        plugin does not recognize
 ```
@@ -118,9 +120,9 @@ hand-off point:
 
 | Variable | Owner | Behaviour |
 | --- | --- | --- |
-| `--callout-color` | Obsidian core | Format changed in **Obsidian 1.13** (full colour string; a bare RGB triplet before) — `calloutColorValue()` resolves the right shape. **Omitted entirely for an untouched built-in** — that's what lets core's own rule (and any theme overriding it) keep deciding the accent. |
+| `--callout-color` | Obsidian core | Spelled the way the **active theme's** read sites expect, not the way the running Obsidian does — `calloutColorValue(hex, dialect)`, see [Accent dialect](11-color-system.md#accent-dialect-version-drift-and-theme-drift). **Omitted entirely for an untouched built-in** — that's what lets core's own rule (and any theme overriding it) keep deciding the accent. |
 | `--cs-accent` | This plugin | Always a real colour on every Obsidian version, so it can feed `color-mix()`. On an untouched built-in it follows the same core variable (`--callout-info` etc.) so the plugin's own surfaces (heading bars, inline pills, borders, icon tints) move with the active theme in lockstep with the block callout itself. |
-| `--cs-accent-theme` | This plugin | What makes "always a real colour" true rather than merely intended. Registered `<color>` via `@property` in `styles.css`; a theme's value passes through it on the way to `--cs-accent`, so a theme still writing ≤1.12 bare triplets degrades to that registration's grey instead of resolving to a non-colour and dropping every declaration downstream. Emitted **only** when there is a theme value to launder — the plugin's own hexes are validated into and out of storage and go direct. Deliberately a separate name, not a registration of `--cs-accent` itself: a registered property is never "undefined", which would kill the `var(--cs-accent, currentColor)` fallback the global border rule relies on. |
+| `--cs-accent-theme` | This plugin | What makes "always a real colour" true rather than merely intended. Registered `<color>` via `@property` in `styles.css`; a theme's value passes through it on the way to `--cs-accent`. The registration is the *last* line of defence, not the first: `calloutAccentVarRef` wraps the read in `rgb()` when the dialect says that theme declares the variable as a triplet, so the value arrives already a colour. Degrading to the registration's grey is what happens when that fails, and it is why the per-variable half of the dialect exists at all. Emitted **only** when there is a theme value to launder — the plugin's own hexes are validated into and out of storage and go direct. Deliberately a separate name, not a registration of `--cs-accent` itself: a registered property is never "undefined", which would kill the `var(--cs-accent, currentColor)` fallback the global border rule relies on. |
 | `--cs-color-rgb` | Legacy | Bare triplet, kept one release for external consumers still reading it. Cannot follow a theme (a triplet can't be derived from a `var()`), so on an untouched built-in it's a best-effort snapshot of the shipped default. Nothing inside this plugin depends on it anymore. |
 
 `themeAccentVar(def)` returns the Obsidian variable name
@@ -132,9 +134,72 @@ and the hex wins from then on.
 The **fallback block** is the one place `imposed = true` is passed: dropping
 `--callout-color` there would leave an unrecognized callout on core's own
 default rather than on the fallback's colour, silently breaking the "Default
-fallback callout" setting. It gets the variable spelled out explicitly
-instead — `var(--callout-error)` etc. — which still follows the theme AND
-still imposes the intended hue on every unrecognized id.
+fallback callout" setting. It gets the variable spelled out explicitly instead,
+in one of three shapes depending on the dialect:
+
+| Dialect | Emitted | Why |
+| --- | --- | --- |
+| reads a colour | `var(--cs-accent-theme)` | the `<color>`-typed hand-off, so a theme writing triplets cannot reach core through us |
+| reads a triplet, theme declares one | `var(--callout-error)` | forward it; the accent keeps following the theme |
+| reads a triplet, theme declares a colour | a spelled-out triplet | no spelling both follows the theme and parses. This block paints *every* unknown id at an `!important` nothing outranks, so forwarding an unparseable value would take all of them down at once — better to lose the theme-following for these rows than lose the rows |
+
+### The core accent shim
+
+Writing a triplet into `--callout-color` on an Obsidian that wants a colour
+costs something precise and enumerable: core's own `app.css` reads that variable
+in exactly **eight** declarations, and all eight go invalid at computed-value
+time. [`manager/css/coreAccentShim.ts`](../src/manager/css/coreAccentShim.ts)
+restates seven of them, re-spelled so they parse. The eighth,
+`.callout-icon .svg-icon { color }`, is deliberately absent: it is the only
+`color` reaching that element, so when it unsets it *inherits* from
+`.callout-title`, which the shim does set.
+
+Three properties of that rule are the whole design, and each is load-bearing:
+
+- **It reads back the variable the plugin itself wrote, where it wrote one.**
+  For any callout but an unmodified built-in, `--callout-color` is ours and its
+  spelling is known by construction, so reading it back makes the rule a
+  *transliteration* of core's rather than a second opinion about the colour —
+  and it stays in step with a theme's per-id override, which AnuPpuccin's
+  `anp-callout-color-toggle` applies to all 13 built-ins. For an unmodified
+  built-in the plugin deliberately writes nothing, so the spelling belongs to
+  core or the theme and is a guess; that branch reads `--cs-accent` instead,
+  which is guaranteed a real colour. Guessing wrong there would not give a
+  near-miss — an unparseable `var()` substitution unsets the property outright.
+- **No `!important`, and the selector is `calloutSelDeferring`** —
+  `:where(.callout)[data-callout="x"]`, specificity `(0,1,0)`. These are core's
+  defaults restated, not the user's choices, so any theme rule must still win.
+  Building it from `CSSInjector.sel()` instead would land it at the *studio*
+  weight — 5 under AnuPpuccin — and paint an opaque box over the Style Settings
+  option the user deliberately chose, which is worse than the bug it fixes.
+- **It suppresses any property the active styling already paints
+  unconditionally** — a bare `.callout` rule (Obsidian gruvbox's entire callout
+  section is one, with a deliberate 20% tint that ties this rule and would lose
+  on source order), or a `[data-callout*=…]` family claim, which names no
+  callout and so never makes the row theme-owned. The suppression asks
+  `PAINTERS`, a table of every declaration name that reaches each property this
+  shim emits, because **a theme does not have to name the longhand to own the
+  colour**. Sanctum's whole callout section is one bare rule carrying
+  `background-color` and `border`; reading only `border-color` suppressed the
+  first and missed the second. What that cost was not a colour swap — Sanctum
+  sets `--callout-border-opacity: 30%`, so core's `calc(var(--callout-border-opacity)
+  * 100%)`, which this shim transliterates, multiplies two percentages and is
+  invalid; the declaration unset and the border fell back to `currentColor`.
+  Raising Sanctum's **Callout border width** drew a black frame where the theme
+  asked for a 30% tint of the accent — and it only became reachable *because*
+  writing the triplet dialect had repaired the `rgba()` underneath it. The table
+  lives beside the declarations it guards rather than in the scanners: the
+  scanners report what a stylesheet says, and only the emitter knows what it is
+  about to emit. It also covers both claim sources at once, which two
+  recording-site fixes would not.
+
+It is emitted only when `dialect.read !== coreAccentDialect()`, and never for a
+row `standsDown` covers. **The fallback block deliberately gets no shim**: its
+selector is a `:not()` chain already at `(0,26,1)` in a modest vault, so a
+non-important rule on it would still outrank every theme — the opposite of what
+this is for. Unknown ids under a legacy theme keep a correct `--callout-color`,
+so the theme's own rules work; only core's default background is missing, and
+registering the callout is the fix.
 
 ### Backgrounds are always translucent tints — never the authored hex
 
@@ -285,6 +350,29 @@ cleanly — it is a **split render**, this plugin carrying the properties the
 theme did not escalate and the theme carrying the rest. That is why the
 symptom reads as broken rather than merely overridden.
 
+### The three registers this sheet writes in
+
+Everything the generated stylesheet emits sits in one of exactly three bands,
+and which band a declaration belongs in is a question about **whose choice it
+is**, not about how badly we want it to apply:
+
+| Band | Emitted as | Beats | Loses to |
+| --- | --- | --- | --- |
+| **Theme-owned row** (`registry.standsDown`) | nothing at all | — | everything |
+| **Derived surface** — core's own defaults, restated because the accent spelling broke them | `:where(.callout)[data-callout="x"]` = `(0,1,0)`, **no `!important`** | core, on source order | every theme rule from `(0,2,0)` up |
+| **Explicit Studio choice** — chosen accent, authored background, gradient, transparency, icon, global style | `CSSInjector.sel()` at the studio weight, **`!important`** | theme and snippets | a user snippet at `!important` plus one more class-unit |
+| **Theme-owned surface** — the active styling says a callout has no background, or frames it in `currentColor` | the theme's own guard + `.callout` at **`weight + 2`**, `!important` | the row above, which is the point | nothing this sheet emits |
+
+The line between the middle two rows is the one that is easy to get wrong: **a
+chosen accent colour is not a chosen background.** A background *derived* from
+the accent defers to the theme; a background the user authored — a Saved
+Palette, a custom colour, a gradient, "transparent" — wins, for that one
+property and no other.
+
+And the fourth band inverts the third: **an authored background is still not a
+claim on a surface the theme has taken away.** See
+[The theme-owned surface](#the-theme-owned-surface) below.
+
 Two consequences worth keeping in mind before touching any of this:
 
 - A rule emitted here is *not* guaranteed to apply. Anything that must hold
@@ -296,6 +384,73 @@ Two consequences worth keeping in mind before touching any of this:
   title colour, the icon colour **and** the background
   (`background-color: color-mix(in oklch, var(--callout-color) 10%, transparent)`),
   so deferring to it is both the most compatible and the least code.
+
+### The theme-owned surface
+
+Sixteen of the 257 themes in the dev vault blank the callout background on a
+selector that names no id — `body.callout-on .callout { background-color:
+transparent }` (GitHub Theme), `body:not(.pt-disable-callout-styling) .callout
+{ background-color: unset }` (Prism, Cybertron), `.callouts-outlined .callout`
+(Minimal, Oxygen) — and then draw the visible box out of `.callout-title` and
+`.callout-content` instead. Four of them leave those two borders **colourless**,
+so the frame draws in `currentColor`.
+
+A studio callout is painted at the studio weight with `!important`, so it wins
+both declarations and is the only filled box in the note. In Prism it is worse
+than a mismatch: `.callout` there carries `--callout-padding: 4px` and a radius
+of its own while the *visible* frame is its two children, so a background painted
+on it is a 4px halo in the wrong radius — measured as a colour "spilling" out of
+the bottom-right corner, because the palette's 135° gradient puts its far stop
+there. And the plugin's `.callout-content { color }` reaches the frame through
+`currentColor`: on Cybertron, whose built-ins frame themselves in the theme's
+cyan `--text-normal`, the studio callout's frame measured `rgb(224,224,224)` —
+`#e0e0e0`, which is `DEFAULT_TEXT_COLOR_DARK`.
+
+So [`manager/theme/calloutSurface.ts`](../src/manager/theme/calloutSurface.ts)
+resolves two facts and
+[`manager/css/themeSurfaceCSS.ts`](../src/manager/css/themeSurfaceCSS.ts) emits
+what they cost. Four properties of that block are the whole design:
+
+- **The guard travels with the fact, and is re-stated in the selector.** Twelve
+  of the sixteen hide this behind a Style Settings class, and Style Settings'
+  `setSetting` only calls `removeClasses()/initClasses()` — **it fires no
+  `css-change`**, so a decision taken in JS would never be revisited. Putting the
+  theme's own ancestor compound in front of our selector hands the decision back
+  to the cascade: one stylesheet carries both states and the browser picks,
+  instantly, with no re-inject and no MutationObserver. It is also why this is
+  emitted as a *cancel* rather than by suppressing `bgProps` at the source — one
+  block covers the light rule, the dark rule, every alias, and the print
+  `::before` that `printGradientCSS` paints a second copy of the surface onto.
+- **`weight + 2`, not `weight + 1`.** The heaviest thing being cancelled is the
+  dark block, whose `.theme-dark` is a class of its own. `weight + 1` would only
+  tie it and win on source order.
+- **The frame rule never touches `.callout`.** All four colourless-frame themes
+  put those borders on the title and the content, and the callout root is where
+  `generateGlobalStyleCSS` paints the plugin's own border setting — so the two
+  features cannot collide. It also stands down entirely for `transparentBg`,
+  whose `transparentBorderProps` already asked for `border-color: transparent`.
+- **The content-colour cancel is gated on the value being invented, not on the
+  field being set.** `DEFAULT_TEXT_COLOR_LIGHT`/`_DARK` are what the editor fills
+  a swatch with; a colour the user picked survives in every theme. Same line
+  `hasAuthoredTextColors` draws in `settings/editor/authoredStyle.ts` and
+  `dropDerivedBackgrounds` applies retroactively to backgrounds.
+
+One veto, and it is deliberately **global rather than per guard**: if the active
+styling colours a generic callout frame *anywhere*, the frame half stands down
+entirely. Shiba Inu writes `border: 2px solid` and `border-color: color-mix(in
+srgb, var(--callout-color) 40%, transparent)` in the same rule — it colours its
+frame from the very variable this plugin sets, so it already works. A per-guard
+veto would catch that one and miss a theme that states the colour in a separate
+rule under a different guard.
+
+> [!WARNING]
+> `generateFallbackCSS` writes `body .callout<chain>`, and every guard the
+> scanner accepts is a compound on `<body>` itself — so the guard **replaces**
+> that `body` rather than sitting in front of it. `body.callout-on body .callout`
+> asks for a body inside a body and matches nothing, silently.
+
+240 of the 257 installed themes resolve to no claim at all and emit
+byte-identical text to before this existed.
 
 ## One rule, and why there is no setting
 

@@ -41,10 +41,15 @@
 import type { App } from "obsidian";
 import { studioWeightFor } from "./studioWeight";
 import { ThemeCalloutStore } from "./ThemeCalloutStore";
+import type { AccentDialect } from "./accentDialect";
+import type { CalloutSurface } from "./calloutSurface";
+import { coreAccentDialect } from "../../utils/calloutColorFormat";
 
 export class StudioWeightCache {
 	private store: ThemeCalloutStore | null = null;
 	private weight: number | null = null;
+	private accent: AccentDialect | null = null;
+	private surfaceClaim: CalloutSurface | null = null;
 
 	constructor(private readonly app: App) {}
 
@@ -67,11 +72,46 @@ export class StudioWeightCache {
 	 */
 	beginPass(): void {
 		this.weight = null;
+		this.accent = null;
+		this.surfaceClaim = null;
 	}
 
 	/** The `.callout` repeat count studio mode should emit at. */
 	resolve(): number {
 		this.weight ??= studioWeightFor(this.themeCallouts().maxImportantClasses());
 		return this.weight;
+	}
+
+	/**
+	 * Which spelling of `--callout-*` the active styling expects.
+	 *
+	 * Memoised here, beside {@link resolve}, rather than in `accentDialect.ts`
+	 * itself — and that placement is the whole point. This class never asks the
+	 * store "has anything changed?"; it asks for data and lets {@link beginPass}
+	 * decide freshness. A signature-keyed memo inside the dialect module would
+	 * walk straight into the hazard in this file's header: `resolve()` has
+	 * already advanced the store's signature by the time such a memo looked.
+	 *
+	 * Lazy rather than filled in `beginPass`, because `cssSnippetExport` reads
+	 * the accent declarations outside any inject pass.
+	 */
+	dialect(): AccentDialect {
+		this.accent ??= this.themeCallouts().accentDialect(coreAccentDialect());
+		return this.accent;
+	}
+
+	/**
+	 * What the active styling says about the surface of a callout it does not
+	 * name — see `calloutSurface.ts`.
+	 *
+	 * Memoised here for the same reason {@link dialect} is, and it is the same
+	 * hazard: this class asks the store for data and lets {@link beginPass} decide
+	 * freshness, because `resolve()` has already advanced the store's signature by
+	 * the time any memo of its own could look. Lazy rather than filled in
+	 * `beginPass`, because `cssSnippetExport` emits outside any inject pass.
+	 */
+	surface(): CalloutSurface {
+		this.surfaceClaim ??= this.themeCallouts().calloutSurface();
+		return this.surfaceClaim;
 	}
 }
