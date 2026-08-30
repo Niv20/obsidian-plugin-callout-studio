@@ -64,6 +64,10 @@ export async function buildSnippetFile(body: string): Promise<string> {
 		" * fallback style. In PDF export a non-Lucide icon prints as a pencil:\n" +
 		" * printing one needs a real SVG element in the page, and a stylesheet can\n" +
 		" * style an element but never create one. Colours and gradients do print.\n" +
+		" *\n" +
+		" * Written for the theme that was active when you exported: how a theme\n" +
+		" * spells its callout colours decides what this file has to say, so under a\n" +
+		" * very different theme some of it may be redundant or, in the accent, off.\n" +
 		` * fingerprint: ${fingerprint}${HEADER_END}` +
 		body
 	);

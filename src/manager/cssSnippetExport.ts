@@ -26,7 +26,11 @@
  * `.cs-heading-callout`, `.cs-inline-callout` and `.cs-ref-token` are classes
  * our own post-processors stamp, so nothing carries them once we are gone. The
  * fallback `:not()` catch-all is left out for a different reason: it chains
- * over every known id and would restyle callouts this export never touched.
+ * over every known id and would restyle callouts this export never touched. The
+ * theme-surface block goes for a third reason: its guard is a class belonging to
+ * whichever theme is active *now*, and an opt-out guard like Prism's
+ * `body:not(.pt-disable-callout-styling)` is satisfied in every other vault too —
+ * so exporting one would blank callout backgrounds under every theme, for good.
  *
  * Two survivors that can look like oversights. Icon `::after` overrides stay
  * inside `@media screen`, so a non-Lucide icon prints as core's pencil: print
@@ -136,6 +140,27 @@ function supportAccentRules(plugin: SnippetExportPlugin): string[] {
 }
 
 /**
+ * The `@property` registration `--cs-accent-theme` needs to mean anything.
+ *
+ * `styles.css` does not travel — a snippet lands in someone's vault with no
+ * plugin behind it — and without this line the variable is an ordinary custom
+ * property: the `<color>` validation vanishes, so a target vault whose theme
+ * spells `--callout-default` as a bare RGB triplet puts that triplet straight
+ * into `--cs-accent`, and every `color-mix()` downstream of it is dropped. With
+ * the registration the same value falls back to the grey initial instead, which
+ * is wrong in a way you can see rather than wrong in a way you cannot.
+ *
+ * Emitted only alongside the rules that read it, so a snippet that never
+ * mentions `--cs-accent-theme` stays as short as it was.
+ */
+const ACCENT_PROPERTY_RULE =
+	"@property --cs-accent-theme {\n" +
+	'  syntax: "<color>";\n' +
+	"  inherits: false;\n" +
+	"  initial-value: #7d7d7d;\n" +
+	"}";
+
+/**
  * The stylesheet, without its header. Empty when no callout of the user's own
  * produced a rule — which covers having none at all *and* having handed every
  * one of them to the theme. Global style alone styles no callout in particular,
@@ -152,7 +177,11 @@ export function buildSnippetCss(plugin: SnippetExportPlugin): string {
 		...supportAccentRules(plugin),
 		...callouts,
 	];
-	return `${parts.filter((p) => p.trim()).join("\n\n")}\n`;
+	const body = parts.filter((p) => p.trim()).join("\n\n");
+	const head = body.includes("--cs-accent-theme")
+		? `${ACCENT_PROPERTY_RULE}\n\n`
+		: "";
+	return `${head}${body}\n`;
 }
 
 /* --- Writing it ----------------------------------------------------------- */
