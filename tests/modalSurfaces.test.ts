@@ -398,6 +398,16 @@ const KNOWN_RAW_PRIMARY = [
 	// `--background-primary`; there is no `--cs-surface` in scope there and the
 	// fallback would resolve to the same colour anyway.
 	".callout-studio-row-syntax | background",
+
+	// Deliberate, and the settings tab again — but for the opposite reason to
+	// the entry above. This is the last layer of the floor under the three
+	// pinned section bands (see 166 in `modalBodyLayers.test.ts`), painted
+	// *under* `--modal-background`, which is itself under the band's own
+	// inherited paint. So it is never what anyone sees unless a theme has made
+	// both of the surfaces above it see-through — and being the layer that
+	// cannot itself be transparent is the whole of its job. A window token
+	// would be undefined in this scope in any case.
+	"body:not(.is-phone) .callout-studio-settings .cs-sticky-heading.setting-item::before | background-color",
 ];
 
 describe("nothing else paints --background-primary unexamined", () => {

@@ -257,17 +257,57 @@
    Obsidian answers this on its own sticky page the same way, and this is a copy
    of it: `.setting-page.vertical-tab-content { padding-top: 0 }` beside
    `.setting-page-titlebar { position: sticky; top: 0 }`. The space is handed to
-   the title row instead, so the tab starts exactly where it did.
+   the title row instead (`.cs-header-row`'s `margin-top`), so the tab starts
+   exactly where it did.
 
-   A phone is deliberately left out of both halves. There the pane is positioned
-   at the very top of the modal and its much larger `padding-top` is reserving
-   that band for the floating back and close buttons sitting over it at
-   --layer-modal — so keeping the padding is what puts the pinned band *below*
-   the chrome instead of in the notch behind it. Obsidian's phone rule outranks
-   this one, so that happens by itself; only the title row's replacement gap has
-   to be given back. */
+   The weight is the rest of the rule, and it is not defensive padding. This
+   pane IS `.vertical-tab-content` — the plugin renders straight into the
+   scroller — so the reset lands on the very element a theme styles, at the
+   `(0,1,0)` a bare `.vertical-tab-content` also carries, and the theme sheet
+   loads *after* this one. Measured across the 257 themes installed in this
+   vault, 26 declare padding on this element and 20 of those put a *top* inset
+   back: ITS Theme (`padding: 35px`) and NotSwift (`padding-top: 60px`) at
+   (0,1,0), Notation 2 at (0,2,1), LYT Mode and Sodalite at (0,3,0), flexcyon at
+   (0,5,1) and (0,6,1), Maple at (0,7,1) — and Elegance with
+   `padding-top: 20px !important`. Every one of them un-sticks all four pinned
+   headings identically: the band parks that far down and the strip above it is
+   bare pane with rows sliding through it, which reads as the pane clipping
+   early rather than as a header.
+
+   Hence `!important`, against the house style of this file and for the reason
+   the house style itself names: added specificity was not an option here twice
+   over. Elegance's `!important` is on this same property and nothing but
+   another `!important` outranks one (see `.hmd-inactive-line`'s `font-size`,
+   which keeps its own for exactly that reason), and Maple's ordinary rule sits
+   at (0,7,1) — a selector this plugin could only match by naming five of
+   Obsidian's own modal classes and breaking the next time one of them is
+   renamed. The class is still tripled, to (0,4,1), so this also clears any
+   future important rule below that weight. `padding-top` only, on this
+   plugin's own pane, on this plugin's own tab: a theme's settings styling is
+   untouched everywhere else, and the space this takes is handed straight back
+   on the title row.
+
+   Two notes on what it does and does not reach. flexcyon writes
+   `padding-block-start`; logical and physical padding longhands cascade in one
+   slot, so this single declaration answers that spelling too and no alias needs
+   listing. A `border-top` on the pane insets the content box the same way
+   (TerraFlow puts a 1px glass frame there) and is deliberately left alone —
+   zeroing one side of a theme's border is a worse trade than a hairline.
+
+   A phone is left out, and now says so rather than leaving it to Obsidian's
+   (0,5,0) phone rule happening to outrank this one, which an `!important` would
+   have quietly reversed. There the pane sits at the very top of the modal and
+   its much larger `padding-top` reserves that band for the floating back and
+   close buttons over it at --layer-modal, so keeping the padding is what puts
+   content *below* the chrome instead of in the notch behind it. Nothing pins
+   there either — `.cs-sticky-heading` goes `position: static` below — so the
+   reset would buy nothing and cost the chrome its room. */
+body:not(.is-phone)
+	.callout-studio-settings.callout-studio-settings.callout-studio-settings {
+	padding-top: 0 !important;
+}
+
 .callout-studio-settings {
-	padding-top: 0;
 	/* The space under *every* section, named because *where* it is spent is the
 	   whole point and a bare number invites it back to the wrong place: it
 	   belongs to the section above (see `.cs-section-body` below), never
@@ -427,12 +467,17 @@
 	/* Not `var(--cs-surface, …)`, and the exception is deliberate. That pair is
 	   defined inside `.cs-modal` and nowhere else, by contract — and this band is
 	   not in a window, it is *on* the settings pane, whose paint Obsidian changes
-	   by device: --background-primary on the desktop, --settings-background under
-	   .is-mobile, --modal-background on a dark tablet. `inherit` is whichever of
-	   those actually applied. It is the same failure `modalSurfaces` exists for —
+	   by device: --background-primary on the desktop, --settings-background
+	   under .is-mobile — itself --background-secondary, --background-primary or
+	   --background-primary-alt depending on phone, tablet and scheme. `inherit`
+	   is whichever of those actually applied. It is the same failure `modalSurfaces` exists for —
 	   an opaque band coming out as a stripe on a platform nobody looked at —
 	   answered by not naming a colour at all instead of by a token that has to be
-	   kept in step with three of Obsidian's. */
+	   kept in step with four of Obsidian's.
+
+	   Only as opaque as what it copies, though, and on a good number of the
+	   themes installed here it copies nothing: the `::before`/`::after` pair
+	   below is the floor under this declaration, not a decoration on it. */
 	background-color: inherit;
 	/* Padding, not margin: the band is opaque only where it paints, and rows have
 	   to pass under it right up to the first one. Same on all three, so the band
@@ -464,6 +509,116 @@
 	   the pane: a rounded top corner there reads as a gap the content peeks
 	   through, not as a rounded box. */
 	border-radius: 0;
+}
+
+/* The floor under that inherited paint, and the only thing standing between a
+   *pinned* band and a theme that leaves it see-through. `inherit` is exactly as
+   opaque as the thing it copies, and copying is not enough: replayed through a
+   headless Chrome against the running Obsidian's own `app.css`, this sheet and
+   one theme at a time — the 257 installed in the development vault, in both
+   colour schemes — the band comes out transparent under a good many of them, in
+   two ways.
+
+   In most of those the pane itself is not opaque, so the chain has nothing to
+   carry down: Sodalite paints `.vertical-tab-content` `transparent` and puts the
+   surface on the container behind it, TerraFlow's dark pane is glass, and
+   Velocity, Zen, Cupertino, Encore, Dune, Rose Red, Baseline, Agate, Cyber
+   Glow, Ultra Lobster, Transient, Blur, Transparent and Glass Robo are
+   see-through one way or another. In the rest the pane is opaque and the band's
+   own paint is beaten: Elegance and Lagom both write `background-color:
+   transparent !important` on `.setting-item-heading` — at (0,2,0) and, nested
+   under `.mod-settings`, at this rule's own (0,3,0) — and Micro Mike wins a
+   (0,3,0) tie through
+   `.modal.mod-settings :is(h1, …, .setting-item-heading)`, because the theme
+   sheet loads after this one. Either way rows scroll visibly through a heading
+   that is pinned exactly right.
+
+   `!important` is not the answer to the second group and would not have been
+   the answer to the first: Lagom's is already at this rule's specificity, so
+   winning means out-specifying the next theme rather than that one, forever, on
+   a property where being wrong paints a stripe. So the two answers are stacked
+   instead of chosen between. `::before` lays a floor; `::after` repaints over it
+   everything the band itself would have painted. Where that paint is opaque —
+   the great majority of themes, and every platform with no theme installed —
+   the `::after` covers the floor completely and nothing about the band changes;
+   where it is not, the theme's own tint composites over the floor instead of
+   over the rows. Nothing in that contests a cascade: a theme that wins the
+   band's `background-color` wins the `::after` along with it and simply leaves
+   more of the floor showing, and of the 257 themes not one paints or positions
+   a pseudo-element on a settings heading (Elegance's `*::before` is the only
+   universal one, and it sets animation timings inside a reduced-motion
+   query).
+
+   `background: inherit` on the `::after`, not `background-color`: the whole
+   stack travels one layer up, image included, so Micro Mike's heading gradient
+   still paints — over a floor now, rather than over the rows.
+
+   The floor is the theme's *own* surface tokens, stacked, and never a colour
+   invented here. `--settings-background` on top, because it is not another
+   guess at what the pane is painted: it is the token core paints it *with* —
+   `.is-mobile .modal.mod-settings .vertical-tab-content { background-color:
+   var(--settings-background) }` — and on the desktop it is defined as
+   `--modal-background`, which is `--background-primary`, which is exactly what
+   the desktop rule paints. Measured with no theme installed, on the desktop, a
+   tablet and a phone, in both schemes, the floor comes out the pane's own
+   colour every time; `--modal-background` would not, because on a dark tablet
+   core points the two at different tokens (`--background-primary-alt` for the
+   pane, `--background-secondary` for the modal). `--modal-background` is kept
+   as its fallback rather than as the answer, for a core old enough not to
+   define the newer name — this plugin's `minAppVersion` is 1.7.2. And
+   `--background-primary` underneath
+   both, because a theme is free to make the settings surface glass — Velocity's
+   `--modal-background` is `oklch(… / 0.625)` — and a translucent floor is no
+   floor at all.
+
+   That reaches all but a few. The ones left over are the themes that name no
+   opaque surface anywhere: Blur and Transparent set `--background-primary`
+   itself transparent, Transient's `--modal-background` is `#0c0c11ee`, and Rose
+   Red's *is* a `linear-gradient`, which makes the wrapper above invalid and
+   leaves only the last layer. Nothing further is available here, and that is
+   the right place to stop: the only floor that could not itself be see-through is a
+   colour this stylesheet invented, and on a theme that has deliberately made
+   every surface in its window transparent it would be the one opaque thing in
+   it. A theme that means it keeps its see-through band.
+
+   Both at `z-index: -1`. The band is sticky with a `z-index`, so it is a
+   stacking context of its own, and a negative-z child paints above its
+   background but below its content — without it the pair would cover the title.
+   The rows still pass under one thing rather than three: the whole band,
+   pseudo-elements included, sits at the band's `z-index: 1` in the pane.
+
+   Not on a phone. There the band is `position: static` (below) and so not a
+   containing block, which would size both pseudo-elements to the viewport
+   instead of to the band. Nothing pins there, so there is nothing to be opaque
+   for. */
+body:not(.is-phone)
+	.callout-studio-settings
+	.cs-sticky-heading.setting-item::before,
+body:not(.is-phone)
+	.callout-studio-settings
+	.cs-sticky-heading.setting-item::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+}
+
+body:not(.is-phone)
+	.callout-studio-settings
+	.cs-sticky-heading.setting-item::before {
+	--cs-band-floor: var(--settings-background, var(--modal-background));
+	background-color: var(--background-primary);
+	background-image: linear-gradient(
+		var(--cs-band-floor),
+		var(--cs-band-floor)
+	);
+}
+
+body:not(.is-phone)
+	.callout-studio-settings
+	.cs-sticky-heading.setting-item::after {
+	background: inherit;
 }
 
 /* Folded, a section has nothing below its heading — `.cs-section-body` is
