@@ -23,10 +23,14 @@
  * flag, not a claim on colour) — pinned in tests/hideIcon.test.ts, and restated
  * from this side here because the two answers come out of one comparison.
  *
- * Note on version drift: the `obsidian` stub's `requireApiVersion` returns true,
- * so every value below is in the 1.13+ format (a full colour, and a bare
- * `var(--callout-…)` reference). The ≤1.12 triplet formats are
- * `colorUtils`' own business and are covered in tests/colorUtils.test.ts.
+ * Note on drift, which is now TWO kinds. The `obsidian` stub's
+ * `requireApiVersion` returns true, so *core's* spelling here is always the
+ * 1.13+ one — a full colour and a bare `var(--callout-…)` reference. But the
+ * spelling actually emitted is the **active theme's**, not core's: a theme that
+ * never updated its `rgba(var(--callout-color), …)` gets a triplet on the same
+ * Obsidian. `harness()` reports no theme at all, which is the 196-of-257 case
+ * and why most of this file reads as before; `themedHarness()` is how the
+ * suites below drive the other answer. See `manager/theme/accentDialect.ts`.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
@@ -34,8 +38,10 @@ import {
 	definition,
 	firstRule,
 	harness,
+	must,
 	parseRules,
 	ruleFor,
+	themedHarness,
 	valueOf,
 } from "./support/cssInjectorHarness";
 import { OBSIDIAN_CALLOUT_VAR } from "../src/constants";
@@ -155,6 +161,67 @@ describe("accentProps — the three colour variables", () => {
 			`the hand-off must be declared in the same rule, got:\n${props.join("\n")}`,
 		);
 		assert.ok(props.every((p) => p.endsWith(" !important;")));
+	});
+
+	it("wraps the theme's variable when the theme declared it as a triplet", () => {
+		// Obsidian gruvbox declares --callout-info: var(--neutral-blue_x) and
+		// --neutral-blue_x: 69,133,136. --cs-accent-theme is registered <color>,
+		// so handing it that triplet fails the type check and falls back to the
+		// grey initial value — greying every heading bar, pill and icon tint on
+		// every unmodified built-in. Nothing errors; it just goes grey.
+		const { registry, css } = themedHarness(
+			`body { --neutral-blue_x: 69,133,136; --callout-default: var(--neutral-blue_x); }`,
+		);
+		const note = must(registry.get("note"), "built-in note");
+		assert.ok(
+			css
+				.accentProps(note, "light", true)
+				.includes("  --cs-accent-theme: rgb(var(--callout-default)) !important;"),
+		);
+	});
+
+	it("leaves it bare when the theme declared it as a colour", () => {
+		const { registry, css } = themedHarness(
+			`body { --callout-default: #446688; }`,
+		);
+		const note = must(registry.get("note"), "built-in note");
+		assert.ok(
+			css
+				.accentProps(note, "light", true)
+				.includes("  --cs-accent-theme: var(--callout-default) !important;"),
+		);
+	});
+
+	it("stops following the theme when imposing a hue it cannot spell", () => {
+		// The third branch of the imposed rule. The read sites want a triplet,
+		// but the theme's own variable holds a colour, so there is no spelling
+		// that both follows the theme and parses. The fallback block paints every
+		// unknown id at an `!important` nothing outranks, so forwarding an
+		// unparseable value would take all of them down at once — it spells out
+		// its own triplet instead and gives up the theme-following.
+		const { registry, css } = themedHarness(`
+			body { --callout-default: #446688; }
+			.callout { background: rgba(var(--callout-color), 0.1); }
+		`);
+		const note = must(registry.get("note"), "built-in note");
+		const props = css.accentProps(note, "light", true, true);
+		assert.ok(
+			props.some((p) => /^ {2}--callout-color: \d+, \d+, \d+ !important;$/.test(p)),
+			`expected a spelled-out triplet, got:\n${props.join("\n")}`,
+		);
+	});
+
+	it("forwards the theme's variable when it CAN spell it", () => {
+		const { registry, css } = themedHarness(`
+			body { --callout-default: 8, 109, 221; }
+			.callout { background: rgba(var(--callout-color), 0.1); }
+		`);
+		const note = must(registry.get("note"), "built-in note");
+		assert.ok(
+			css
+				.accentProps(note, "light", true, true)
+				.includes("  --callout-color: var(--callout-default) !important;"),
+		);
 	});
 
 	it("imposed changes nothing for a def that already carries its own colour", () => {

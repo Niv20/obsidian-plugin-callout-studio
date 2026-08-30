@@ -36,6 +36,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { hexToRgb } from "../src/utils/colorUtils";
+import { transparentBorderProps } from "../src/manager/css/transparentBorder";
 import {
 	definition,
 	harness,
@@ -409,36 +410,37 @@ describe("bgProps — transparentBg", () => {
 
 describe("transparentBorderProps — the outline half", () => {
 	it("clears both the frame and any elevation ring", () => {
-		const { css } = harness();
+		const { registry } = harness();
 		// Core draws the frame in `--callout-color` — this plugin's accent — so a
 		// callout the user asked to disappear would otherwise read as an empty
 		// outline in their custom colour. Some themes draw the same frame (or an
 		// elevation ring) as an inset box-shadow off the same variable, so both
 		// have to go.
-		assert.deepStrictEqual(css.transparentBorderProps(), [
-			"  box-shadow: none;",
-			"  border-color: transparent;",
-		]);
+		assert.deepStrictEqual(
+			transparentBorderProps(registry.settings.globalStyle.borderSides),
+			["  box-shadow: none;", "  border-color: transparent;"],
+		);
 	});
 
 	it("leaves border-color alone once the plugin's own border is on", () => {
-		const { registry, css } = harness();
+		const { registry } = harness();
 		registry.settings.globalStyle.borderSides.left = true;
 		// That border is an explicit choice, drawn in the accent by
 		// generateGlobalStyleCSS at one class less than this rule, so clearing
 		// the colour here would quietly erase it. box-shadow carries no such
 		// conflict — the plugin never draws its own border that way.
-		assert.deepStrictEqual(css.transparentBorderProps(), [
-			"  box-shadow: none;",
-		]);
+		assert.deepStrictEqual(
+			transparentBorderProps(registry.settings.globalStyle.borderSides),
+			["  box-shadow: none;"],
+		);
 	});
 
 	it("never touches border-width, so the box keeps its place in the flow", () => {
-		const { css } = harness();
+		const { registry } = harness();
 		assert.ok(
-			css
-				.transparentBorderProps()
-				.every((p) => !p.includes("border-width")),
+			transparentBorderProps(
+				registry.settings.globalStyle.borderSides,
+			).every((p) => !p.includes("border-width")),
 		);
 	});
 

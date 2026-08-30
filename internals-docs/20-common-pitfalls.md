@@ -160,6 +160,88 @@ sufficient**. Common cases that also need an explicit follow-up call:
   visually but would defeat the actual mechanism a theme relies on to
   override core's own rule at its own specificity. See
   [Colour system § built-ins](11-color-system.md#built-ins-no---callout-color-at-all-until-edited).
+- **`this.sel(id)` inside `CSSInjector` is not weight 1 — it is the *studio*
+  weight**, set from the active theme's heaviest `!important` callout selector
+  at the top of `generateCalloutCSS`. It is 5 under AnuPpuccin, where a single
+  `.callout[data-callout=formula] .callout-title { … !important }` lifts it. Any
+  rule that is meant to **defer** to the theme must be built from
+  `calloutSelDeferring(id)` instead and kept out of `lightProps`, or it inherits
+  a weight that beats the theme outright. Emitting the core accent shim through
+  `this.sel()` would put an opaque tint over AnuPpuccin's Vanilla Normal — worse
+  than the bug it exists to fix. See
+  [CSS generation § the core accent shim](06-css-generation.md#the-core-accent-shim).
+- **The spelling of a `--callout-<type>` is a fact about the theme AND about the
+  MODE.** Ten installed themes declare an accent variable under `.theme-dark` (or
+  `.theme-light`) alone and leave the other mode on core's value — Nier does it
+  for all thirteen. `accentVarSpelling` therefore takes a mode, and
+  `accentDeclarations.needsDarkBlock()` returns true when only the *spelling*
+  splits, even though every colour is identical. Getting it wrong is silent and
+  total: `--cs-accent-theme` is registered `<color>`, so the wrong wrapper falls
+  back to grey and takes every heading bar, inline pill, ref token and icon tint
+  on that built-in with it. See
+  [Colour system § declared is per mode](11-color-system.md#declared-is-per-mode-and-three-ways-a-value-can-hide).
+- **A theme declaration behind a body class you cannot see is not evidence.**
+  `accentDialectScan` ignores a `--callout-<type>` declared only under a theme
+  option (Aura's `.aura-origin-layout`, TerraFlow's `.academia-theme`) for the
+  same reason `unguarded` ignores a guarded property: in the state almost
+  everyone is in, the class is absent and the variable still holds core's value.
+  A `:not()` guard is the opposite — that *is* the default state — and so is
+  `.callout` itself.
+- **The settings tab's scroller is Obsidian's, not this plugin's, and a theme
+  can reach it.** `PluginSettingTab.containerEl` **is** `.vertical-tab-content`
+  — the element that scrolls — so `.callout-studio-settings` lands on it and any
+  rule this plugin writes about the pane competes directly with the theme's own
+  `.vertical-tab-content` rules, at equal specificity and from an *earlier*
+  sheet. That matters for one property in particular: a sticky `top` is measured
+  from the scrollport's **content** box, so the pane's `padding-top` has to be
+  zero or every pinned section heading parks that far down with rows scrolling
+  through the strip above it. 20 of the 257 themes in the development vault put
+  that padding back, one with `!important` — which is why the reset carries an
+  `!important` of its own and an explicit `body:not(.is-phone)`. The band's
+  *paint* is the same problem one level down and does not have the same answer:
+  `background-color: inherit` copies the pane, a good many themes leave the
+  pane see-through, and three more beat the declaration outright — one of them (Lagom)
+  with an `!important` already at the band rule's own `(0,3,0)`, so there is no
+  weight to win with. That one is answered by a floor instead: a `::before` of
+  the theme's own surface tokens under the band and an `::after` repainting the
+  band over it, contesting nothing. Before adding any other rule about the
+  pane, assume a theme has an opinion about the same property, check the
+  weight, and ask whether being *under* the theme would do the job instead of
+  being above it. See
+  [Settings UI § the three sections pin their headings](15-settings-ui-and-modals.md#the-three-sections-pin-their-headings)
+  and sections 165 and 166 of `tests/modalBodyLayers.test.ts`.
+- **The spelling of `--callout-color` is a fact about the active *theme*, not
+  about the running Obsidian version.** `requireApiVersion("1.13.0")` answers
+  only what *core* wants; a theme that never updated still reads
+  `rgba(var(--callout-color), …)` and a hex makes every such declaration invalid
+  at computed-value time — it unsets silently, so the symptom is a missing
+  background or a vanished side accent, never an error. See
+  [Colour system § accent dialect](11-color-system.md#accent-dialect-version-drift-and-theme-drift).
+
+## Style Settings changes nothing you can hear
+
+`obsidian-style-settings` applies a `class-toggle` by calling
+`removeClasses()` + `initClasses()` on `document.body`. It **does not fire
+`css-change`**, and `stylingSignature()` is theme name + version + snippet
+names, so it does not move either. There is no event and no cache miss: a
+plugin decision that depends on a Style Settings class will be taken once and
+never revisited, and the user sees the option do nothing until they restart.
+
+The fix used by `manager/css/themeSurfaceCSS.ts` is to never take the decision
+in JS — record the theme's own guard during the scan and re-state it in the
+emitted selector, so the browser evaluates it live. Anything else needs a
+`MutationObserver` on `document.body`'s `class` attribute, which is a cost and a
+lifetime this plugin has so far not had to take on.
+
+## A guard on `<body>` cannot be prefixed onto a selector that already says `body`
+
+Style Settings puts its classes on `<body>` itself, so a scanned guard is a
+compound *on* that element — `body.callout-on`, `.callouts-outlined`,
+`body:not(.pt-disable-callout-styling)`. Prefixing one onto a selector that
+already starts with `body` (which `generateFallbackCSS` does) produces
+`body.callout-on body .callout…`: a body inside a body, which matches nothing,
+with no error and no warning. The guard has to **replace** that `body`, and the
+no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
 
 ## Obsidian APIs with special lifecycle requirements
 

@@ -31,13 +31,24 @@
  * (or none) and the two flags, the declarations are a pure function —
  * `CSSInjector` is left holding only `themeAccentVar`, which is the one part
  * that does need the registry.
+ *
+ * `needsDarkBlock` lives here for the same reason, and moved here rather than
+ * staying a method: once the *spelling* of a theme variable can differ between
+ * light and dark — ten installed themes declare one in a single mode — "does
+ * anything mode-dependent differ?" stopped being a question about the
+ * definition alone and became one about these declarations.
  */
 import {
+	accentVarSpelling,
 	calloutAccentVarRef,
-	calloutColorUsesRawTriplet,
 	calloutColorValue,
 } from "../utils/calloutColorFormat";
+import type { AccentDialect } from "./theme/accentDialect";
 import { hexToRgbString } from "../utils/colorUtils";
+import type { CalloutDefinition } from "../types";
+
+/** Which of a definition's two colour sets a declaration is being built from. */
+type CalloutMode = "light" | "dark";
 
 /**
  * The two variables this plugin owns, without Obsidian's `--callout-color`.
@@ -48,11 +59,13 @@ export function ownAccentDeclarations(
 	hex: string,
 	themeVar: string | undefined,
 	imp: string,
+	dialect: AccentDialect,
+	mode: CalloutMode,
 ): string[] {
 	const rgb = `  --cs-color-rgb: ${hexToRgbString(hex)}${imp};`;
 	if (!themeVar) return [`  --cs-accent: ${hex}${imp};`, rgb];
 	return [
-		`  --cs-accent-theme: ${calloutAccentVarRef(themeVar)}${imp};`,
+		`  --cs-accent-theme: ${calloutAccentVarRef(themeVar, dialect, mode)}${imp};`,
 		`  --cs-accent: var(--cs-accent-theme)${imp};`,
 		rgb,
 	];
@@ -79,16 +92,79 @@ export function accentDeclarations(
 	themeVar: string | undefined,
 	imp: string,
 	imposed: boolean,
+	dialect: AccentDialect,
+	mode: CalloutMode,
 ): string[] {
 	const props: string[] = [];
 	if (!themeVar) {
-		props.push(`  --callout-color: ${calloutColorValue(hex)}${imp};`);
+		props.push(`  --callout-color: ${calloutColorValue(hex, dialect)}${imp};`);
 	} else if (imposed) {
-		const themed = calloutColorUsesRawTriplet()
-			? `var(${themeVar})`
-			: "var(--cs-accent-theme)";
-		props.push(`  --callout-color: ${themed}${imp};`);
+		props.push(
+			`  --callout-color: ${imposedValue(hex, themeVar, dialect, mode)}${imp};`,
+		);
 	}
-	props.push(...ownAccentDeclarations(hex, themeVar, imp));
+	props.push(...ownAccentDeclarations(hex, themeVar, imp, dialect, mode));
 	return props;
+}
+
+/**
+ * What the fallback block forwards into `--callout-color` for a built-in it is
+ * imposing a hue on — three cases, because the read sites and the theme's own
+ * variable can want different spellings.
+ *
+ * - Read sites want a colour: hand over the `<color>`-typed `--cs-accent-theme`
+ *   declared alongside this in the same rule, so a theme still writing ≤1.12
+ *   triplets cannot reach core through us.
+ * - Read sites want a triplet and the theme's variable *is* one: forward it, and
+ *   the accent keeps following the theme.
+ * - Read sites want a triplet and the theme's variable is a colour: there is no
+ *   spelling that both follows the theme and parses, so stop following it and
+ *   spell out our own triplet. This block paints every undefined id at an
+ *   `!important` no per-callout rule outranks, so forwarding a value the read
+ *   sites cannot parse would take all of them down at once — the same reasoning
+ *   that put `--cs-accent-theme` in the first case.
+ */
+function imposedValue(
+	hex: string,
+	themeVar: string,
+	dialect: AccentDialect,
+	mode: CalloutMode,
+): string {
+	if (dialect.read === "color") return "var(--cs-accent-theme)";
+	return accentVarSpelling(themeVar, dialect, mode) === "triplet"
+		? `var(${themeVar})`
+		: hexToRgbString(hex);
+}
+
+/**
+ * True when `def` needs a `.theme-dark` override block for its accent — any of
+ * its mode-dependent colours differ, **or** the theme variable it defers to is
+ * spelled differently in the two modes.
+ *
+ * That second clause is the whole reason this moved out of `CSSInjector`: the
+ * colours can be identical in both modes and the *spelling* still not be, so
+ * "does anything mode-dependent differ" stopped being a question about the
+ * definition alone. Nier declares all thirteen accent variables under
+ * `.theme-dark` only, as triplets, and leaves light mode on core's colours —
+ * without a dark block one of the two modes emits the wrong wrapper and greys
+ * every surface that reads `--cs-accent`. See `ModeSpelling` in
+ * `manager/theme/accentDialect.ts`.
+ */
+export function needsDarkBlock(
+	def: Pick<
+		CalloutDefinition,
+		"colorLight" | "colorDark" | "bgColorLight" | "bgColorDark" | "bgGradient"
+	>,
+	themeVar: string | undefined,
+	dialect: AccentDialect,
+): boolean {
+	return (
+		def.colorLight !== def.colorDark ||
+		def.bgColorLight !== def.bgColorDark ||
+		(!!def.bgGradient &&
+			def.bgGradient.toColorLight !== def.bgGradient.toColorDark) ||
+		(themeVar !== undefined &&
+			accentVarSpelling(themeVar, dialect, "light") !==
+				accentVarSpelling(themeVar, dialect, "dark"))
+	);
 }

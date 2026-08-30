@@ -27,12 +27,13 @@ import { createIconResolver } from "../icons/resolver";
 import type { IconResolver } from "../icons/types";
 import {
 	bgGradientCss,
-	tintColorAt,
-	tintCss,
+	DEFAULT_TEXT_COLOR_DARK,
+	DEFAULT_TEXT_COLOR_LIGHT,
 } from "../utils/colorUtils";
 import {
 	accentDeclarations,
 	ownAccentDeclarations,
+	needsDarkBlock,
 } from "./accentDeclarations";
 import { resolveBgAlpha } from "../utils/bgTintAlpha";
 import { OBSIDIAN_CALLOUT_VAR } from "../constants";
@@ -61,9 +62,18 @@ import { coreIconValue, importCoreIconSvg } from "./css/coreIcon";
 import { StudioWeightCache } from "./theme/StudioWeightCache";
 import type { ThemeCalloutStore } from "./theme/ThemeCalloutStore";
 import { generateFallbackCSS } from "./css/fallbackCSS";
+import { bgImageFor, bgProps, type BgLayer } from "./css/backgroundProps";
+import { themeSurfaceCSS } from "./css/themeSurfaceCSS";
 import { calloutIconProp } from "./css/calloutIconProp";
 import { emojiOverrideCSS, iconOverrideCSS } from "./css/iconOverrides";
-import { calloutSelAt, tokenAttrSel } from "../utils/calloutSelector";
+import { transparentBorderProps } from "./css/transparentBorder";
+import {
+	calloutSelAt,
+	calloutSelDeferring,
+	tokenAttrSel,
+} from "../utils/calloutSelector";
+import { coreAccentShimCSS } from "./css/coreAccentShim";
+import { coreAccentDialect } from "../utils/calloutColorFormat";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import { StartupStyleCache } from "./StartupStyleCache";
 
@@ -73,11 +83,6 @@ type RegistryWindow = Window & {
 };
 
 const STYLE_EL_ID = "callout-studio-dynamic-css";
-
-/** One `background-image` layer: a gradient sweep. */
-interface BgLayer {
-	image: string;
-}
 
 export class CSSInjector {
 	private styleSheet: CSSStyleSheet | null = null;
@@ -383,6 +388,8 @@ export class CSSInjector {
 			this.themeAccentVar(def),
 			important ? " !important" : "",
 			imposed,
+			this.studioWeights.dialect(),
+			mode,
 		);
 	}
 
@@ -394,6 +401,36 @@ export class CSSInjector {
 	private themeAccentVar(def: CalloutDefinition): string | undefined {
 		if (!this.registry.isUnmodifiedBuiltIn(def)) return undefined;
 		return OBSIDIAN_CALLOUT_VAR[def.id];
+	}
+
+	/**
+	 * The core declarations to restate for one def, or `""` when core and the
+	 * active styling agree on the spelling and nothing is broken.
+	 */
+	private coreAccentShim(def: CalloutDefinition): string {
+		const ids = [def.id, ...(def.aliases ?? [])];
+		const claimed = new Set<string>(this.studioWeights.dialect().unguarded);
+		for (const id of ids) {
+			for (const prop of this.studioWeights
+				.themeCallouts()
+				.claimedProps(obsidianCalloutAttrId(id))) {
+				claimed.add(prop);
+			}
+		}
+		const sels = ids.map((id) => calloutSelDeferring(id));
+		return coreAccentShimCSS({
+			selectors: sels.join(",\n"),
+			titleSelectors: sels.map((s) => `${s} > .callout-title`).join(",\n"),
+			dialect: this.studioWeights.dialect(),
+			core: coreAccentDialect(),
+			ownsAccentVariable: this.themeAccentVar(def) === undefined,
+			ownsBackground:
+				def.transparentBg === true ||
+				def.bgGradient !== undefined ||
+				def.bgColorLight !== undefined ||
+				def.bgColorDark !== undefined,
+			claims: (prop) => claimed.has(prop),
+		});
 	}
 
 	/**
@@ -410,6 +447,8 @@ export class CSSInjector {
 			mode === "dark" ? def.colorDark : def.colorLight,
 			this.themeAccentVar(def),
 			important ? " !important" : "",
+			this.studioWeights.dialect(),
+			mode,
 		);
 	}
 
@@ -428,154 +467,25 @@ export class CSSInjector {
 	}
 
 	/**
-	 * Background declarations for one theme mode: the color plus, when a
-	 * gradient is set, the image layered on top. The `background-color`
-	 * doubles as the fallback if a renderer drops the image;
-	 * `print-color-adjust: exact` keeps the image from being stripped when
-	 * exporting to PDF / printing. Empty when the mode has no background
-	 * color (a gradient alone has no base to render on).
-	 *
-	 * The color is emitted as a TRANSLUCENT tint that renders as the authored
-	 * hex on the theme's own background, not as the hex itself. That is what
-	 * restores Obsidian's nesting: core gives nested callouts their stepped look
-	 * purely by compositing translucent layers, and an opaque fill hides
-	 * everything behind it — under `mix-blend-mode: darken` a colour over itself
-	 * is `min(x, x) = x`, a step of exactly zero. The callout looks unchanged on
-	 * its own; only what shows *through* it changes. There is no opt-out into an
-	 * opaque fill: it would break nesting for every callout stacked inside it.
-	 *
-	 * `transparentBg` is the one way out and is checked FIRST, before the
-	 * no-background return below — a transparent def carries no bg hex at all,
-	 * so it would otherwise fall out here emitting nothing, and "nothing" is not
-	 * transparent: it hands the callout back to core's own default tint. It is
-	 * also not the opaque opt-out in disguise (see `CalloutDefinition`): zero
-	 * alpha hides nothing, so a callout nested inside a transparent one still
-	 * tints normally.
+	 * Background declarations for one theme mode, and the gradient layer that
+	 * rides on top of them. Both moved to `manager/css/backgroundProps.ts`, which
+	 * owns the tint solve and the `transparentBg` short-circuit; these stay as
+	 * one-line delegations because `FallbackCssContext` and the CSS suites reach
+	 * them through the injector.
 	 */
 	private bgProps(
 		def: CalloutDefinition,
 		mode: "light" | "dark",
 		important = false,
 	): string[] {
-		if (def.transparentBg) {
-			const impT = important ? " !important" : "";
-			// `background-image: none` is load-bearing, not belt-and-braces: a
-			// theme can paint one, and it also stops a gradient left behind by
-			// hand-edited data from showing through the cleared colour.
-			return [
-				`  background-color: transparent${impT};`,
-				`  background-image: none${impT};`,
-			];
-		}
-		const bg = mode === "dark" ? def.bgColorDark : def.bgColorLight;
-		if (!bg) return [];
-		const imp = important ? " !important" : "";
-		const alpha = this.bgAlphaFor(def, mode);
-		const color =
-			alpha === null
-				? bg
-				: tintCss(tintColorAt(bg, mode === "dark", alpha), alpha);
-		const props = [`  background-color: ${color}${imp};`];
-		const layer = this.bgImageFor(def, mode);
-		if (layer) {
-			props.push(
-				`  background-image: ${layer.image}${imp};`,
-				`  -webkit-print-color-adjust: exact${imp};`,
-				`  print-color-adjust: exact${imp};`,
-			);
-		}
-		return props;
+		return bgProps(def, mode, important);
 	}
 
-	/**
-	 * The outline half of `transparentBg` — emitted only for a def that clears
-	 * its background, and only for the block-callout roles.
-	 *
-	 * Clearing the background alone still leaves the box outlined on any theme
-	 * that gives callouts a frame. Core draws that frame itself:
-	 *
-	 *     .callout {
-	 *       border-style: solid;
-	 *       border-color: color-mix(in oklch, var(--callout-color)
-	 *                     calc(var(--callout-border-opacity) * 100%), transparent);
-	 *       border-width: var(--callout-border-width);   // 0px out of the box
-	 *     }
-	 *
-	 * so a theme turns it on by doing nothing more than raising that width — and
-	 * the colour it comes out in is `--callout-color`, which is *this plugin's*
-	 * accent. The callout the user asked to disappear reads as an empty outline
-	 * in their custom colour instead. Some themes draw the same frame — or an
-	 * elevation ring — as an inset `box-shadow` keyed off the very same
-	 * variable instead of (or in addition to) `border`, so both have to go.
-	 *
-	 * `border-color` rather than the `--callout-border-opacity` knob, even
-	 * though the knob is what core's own rule reads: custom properties inherit,
-	 * so zeroing it here would also silently reach every callout NESTED inside
-	 * this one and strip the theme's frame off callouts nobody made transparent.
-	 * The colour is per-element and can't leak. It also outranks the variable
-	 * route anyway — core declares the border on `.callout` (0,1,0) while this
-	 * lands on `.callout[data-callout="…"]` (0,2,0). `box-shadow: none` has no
-	 * comparable variable to leak through in the first place — it fully
-	 * replaces whatever the theme declared for this callout alone.
-	 *
-	 * The width is deliberately left alone: the frame keeps its box, so a
-	 * transparent callout still lines up with its neighbours and nothing
-	 * reflows — only the ink goes.
-	 *
-	 * `border-color` is empty when the user has switched the plugin's OWN
-	 * global border on. That border is an explicit choice, drawn in the accent
-	 * by `generateGlobalStyleCSS` at one class less than this rule, so clearing
-	 * the colour here would quietly erase it. `box-shadow: none` carries no
-	 * such conflict — the plugin never draws its own border that way — so it is
-	 * unconditional.
-	 */
-	private transparentBorderProps(important = false): string[] {
-		const imp = important ? " !important" : "";
-		const { top, right, bottom, left } =
-			this.registry.settings.globalStyle.borderSides;
-		const props = [`  box-shadow: none${imp};`];
-		if (!(top || right || bottom || left)) {
-			props.push(`  border-color: transparent${imp};`);
-		}
-		return props;
-	}
-
-	/**
-	 * The `background-image` layer for one mode: the gradient sweep, or null
-	 * when the def has no gradient, or when the mode has no background color
-	 * to sweep from.
-	 *
-	 * Both stops go through the same tint solve as the flat color above, at the
-	 * one shared alpha from `bgAlphaFor`. They have to: an opaque gradient
-	 * painted over a translucent `background-color` would put the opaque layer
-	 * back on top and re-hide the backdrop the tint just exposed.
-	 */
 	private bgImageFor(
 		def: CalloutDefinition,
 		mode: "light" | "dark",
 	): BgLayer | null {
-		// A sweep is a background, so transparency wins over it. `bgProps`
-		// already returns before reaching here; this guards the hand-edited case
-		// where a gradient survived alongside the flag.
-		if (def.transparentBg) return null;
-		const bg = mode === "dark" ? def.bgColorDark : def.bgColorLight;
-		if (!bg) return null;
-		if (!def.bgGradient) return null;
-		const isDark = mode === "dark";
-		const to = isDark
-			? def.bgGradient.toColorDark
-			: def.bgGradient.toColorLight;
-		const alpha = this.bgAlphaFor(def, mode);
-		if (alpha === null) {
-			return { image: bgGradientCss(bg, to, def.bgGradient) };
-		}
-		return {
-			image: bgGradientCss(
-				tintCss(tintColorAt(bg, isDark, alpha), alpha),
-				tintCss(tintColorAt(to, isDark, alpha), alpha),
-				def.bgGradient,
-			),
-		};
+		return bgImageFor(def, mode);
 	}
 
 	/**
@@ -690,17 +600,10 @@ export class CSSInjector {
 		return rules;
 	}
 
-	/**
-	 * True when the def needs a `.theme-dark` override block — any of its
-	 * mode-dependent colors (accent, background, gradient end) differ.
-	 */
+	/** See `accentDeclarations.needsDarkBlock`, which owns the rule. */
 	private needsDarkBlock(def: CalloutDefinition): boolean {
-		return (
-			def.colorLight !== def.colorDark ||
-			def.bgColorLight !== def.bgColorDark ||
-			(!!def.bgGradient &&
-				def.bgGradient.toColorLight !== def.bgGradient.toColorDark)
-		);
+		const d = this.studioWeights.dialect();
+		return needsDarkBlock(def, this.themeAccentVar(def), d);
 	}
 
 	generateCalloutCSS(def: CalloutDefinition, standalone = false): string {
@@ -748,9 +651,21 @@ export class CSSInjector {
 		// the frame's colour is the same in either one, and the dark block below
 		// exists purely for the values that differ.
 		if (def.transparentBg) {
-			lightProps.push(...this.transparentBorderProps(true));
+			lightProps.push(
+				...transparentBorderProps(
+					this.registry.settings.globalStyle.borderSides,
+					true,
+				),
+			);
 		}
 		parts.push(`${this.sel(def.id)} {\n${lightProps.join("\n")}\n}`);
+
+		// What core stops painting when the theme's spelling is not core's. Its
+		// own rule at weight 1, deliberately below everything above it — see
+		// manager/css/coreAccentShim.ts for the specificity arithmetic and why
+		// building it from `this.sel` instead would make the bug worse.
+		const shim = this.coreAccentShim(def);
+		if (shim) parts.push(shim);
 
 		// Dark mode override
 		if (this.needsDarkBlock(def)) {
@@ -899,9 +814,65 @@ export class CSSInjector {
 			}
 		}
 
+		// Last, so it also wins on source order: what the active styling says
+		// about the surface of a callout it does not name. Empty for 241 of the
+		// 257 installed themes — see manager/css/themeSurfaceCSS.ts.
+		// Never in a standalone export: the guard is a class belonging to the
+		// theme that happens to be active now, and `body:not(.pt-…)` is true in
+		// every OTHER vault too — so a snippet carrying it would blank backgrounds
+		// under every theme, for good. See cssSnippetExport's `standalone` note.
+		const surface = standalone
+			? ""
+			: this.themeSurface(def, (guard, weight) =>
+					[def.id, ...(def.aliases ?? [])]
+						.map((id) => calloutSelAt(id, weight, guard))
+						.join(",\n"),
+				);
+		if (surface) parts.push(surface);
+
 		this.emitWeight = 1;
 		this.emitImportant = "";
 		return parts.join("\n\n");
+	}
+
+	/**
+	 * The theme-surface block for one def, or `""` when the active styling
+	 * claims nothing.
+	 *
+	 * Takes a selector builder rather than an id, because `generateFallbackCSS`
+	 * asks the same question about a `:not()` chain that names no callout at all.
+	 * `weight + 2` is the cancel weight — see `themeSurfaceCSS.ts` for why the
+	 * dark-mode block is what it has to clear.
+	 *
+	 * The content-colour cancel is gated on the value being the plugin's own
+	 * invented default rather than on the field being set: a text colour the user
+	 * actually picked survives every theme. Same line `hasAuthoredTextColors`
+	 * draws in settings/editor/authoredStyle.ts.
+	 */
+	private themeSurface(
+		def: CalloutDefinition,
+		selectorsAt: (guard: string, weight: number) => string,
+	): string {
+		const surface = this.studioWeights.surface();
+		if (
+			surface.neutralBackground.length === 0 &&
+			surface.colorlessFrame.length === 0
+		) {
+			return "";
+		}
+		const weight = this.emitWeight + 2;
+		return themeSurfaceCSS({
+			selectorsFor: (guard) => selectorsAt(guard, weight),
+			surface,
+			paintsBackground:
+				def.transparentBg !== true &&
+				(this.bgProps(def, "light").length > 0 ||
+					this.bgProps(def, "dark").length > 0),
+			cancelsContentColor:
+				def.textColorLight === DEFAULT_TEXT_COLOR_LIGHT ||
+				def.textColorDark === DEFAULT_TEXT_COLOR_DARK,
+			transparentBg: def.transparentBg === true,
+		});
 	}
 
 	/**
@@ -984,13 +955,17 @@ export class CSSInjector {
 				)
 				.join(",\n");
 
+		const lightOwn = this.ownAccentProps(def, "light");
+		const darkOwn = this.ownAccentProps(def, "dark");
 		const parts: string[] = [
-			`${selectorsFor("")} {\n${this.ownAccentProps(def, "light").join("\n")}\n}`,
+			`${selectorsFor("")} {\n${lightOwn.join("\n")}\n}`,
 		];
-		if (def.colorLight !== def.colorDark) {
-			parts.push(
-				`${selectorsFor(".theme-dark ")} {\n${this.ownAccentProps(def, "dark").join("\n")}\n}`,
-			);
+		// Compared rather than keyed off `colorLight !== colorDark`: an unmodified
+		// built-in has one colour for both modes and still needs this rule when the
+		// theme variable it defers to is SPELLED differently in the two — see
+		// `ModeSpelling` in manager/theme/accentDialect.ts.
+		if (darkOwn.join("") !== lightOwn.join("")) {
+			parts.push(`${selectorsFor(".theme-dark ")} {\n${darkOwn.join("\n")}\n}`);
 		}
 
 		// The callout's background — solid color OR gradient — is applied to
@@ -1831,8 +1806,13 @@ export class CSSInjector {
 			bgProps: (def, mode, important) =>
 				this.bgProps(def, mode, important),
 			transparentBorderProps: (important) =>
-				this.transparentBorderProps(important),
+				transparentBorderProps(
+					this.registry.settings.globalStyle.borderSides,
+					important,
+				),
 			needsDarkBlock: (def) => this.needsDarkBlock(def),
+			themeSurface: (def, selectorsAt) =>
+				this.themeSurface(def, selectorsAt),
 			printGradientCSS: (def, selector, isPill) =>
 				this.printGradientCSS(def, selector, isPill),
 		});

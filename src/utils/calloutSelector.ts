@@ -89,6 +89,25 @@ export const calloutSelAt = (
 	`[data-callout="${cssAttrValue(obsidianCalloutAttrId(id))}"]`;
 
 /**
+ * {@link calloutSel} at the LOWEST specificity that still matches only a real
+ * callout: `(0,1,0)`, the attribute alone, with the class laundered through
+ * `:where()` so it contributes nothing.
+ *
+ * For rules that must defer to the theme rather than beat it — see
+ * `manager/css/coreAccentShim.ts`, which restates core's own declarations and
+ * has no business outranking anybody. The `:where(.callout)` is not decoration:
+ * without it the attribute would also match this plugin's own heading-bar and
+ * inline-pill DOM, which carries `data-callout` too.
+ *
+ * The one thing this rule still beats is core, and it beats it on source order
+ * rather than weight — `adoptedStyleSheets` sort after every `<link>` in the
+ * document, and app.css is a `<link>`. That is the same premise the rest of the
+ * emitted sheet rests on; see `manager/theme/studioWeight.ts`.
+ */
+export const calloutSelDeferring = (id: string): string =>
+	`:where(.callout)[data-callout="${cssAttrValue(obsidianCalloutAttrId(id))}"]`;
+
+/**
  * The `[data-callout=…]` attribute selector for the plugin's OWN token DOM —
  * heading bars, inline pills, ref tokens — which carries the space-preserving
  * normalized ID rather than Obsidian's dasherized one, so it must not go

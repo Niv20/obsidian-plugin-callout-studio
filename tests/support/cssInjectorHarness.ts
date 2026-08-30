@@ -76,7 +76,6 @@ export interface InjectorInternals {
 		def: CalloutDefinition,
 		mode: "light" | "dark",
 	): { image: string } | null;
-	transparentBorderProps(important?: boolean): string[];
 	textGradientCss(
 		def: CalloutDefinition,
 		mode: "light" | "dark",
@@ -129,6 +128,36 @@ export function harness(app: App = {} as App): Harness {
 		injector,
 		css: injector as unknown as InjectorInternals,
 	};
+}
+
+/**
+ * A harness whose Obsidian reports an active theme with the given CSS.
+ *
+ * `app.customCss` is Obsidian's own private field — `manager/theme/customCssApi.ts`
+ * is the only place it is named in `src/`, and this is the shape that file
+ * reads. Handing it real theme text is what lets a suite drive the accent
+ * dialect and the studio weight the way a vault does, instead of reaching past
+ * them: put `rgba(var(--callout-color), .1)` in the fixture and the emitted
+ * `--callout-color` becomes a triplet, because that is what the theme asked for.
+ *
+ * `{} as App` (the plain {@link harness}) reports no theme at all, which is the
+ * 196-of-257 case and the one every pre-existing suite is written against.
+ */
+export function themedHarness(
+	themeCss: string,
+	snippetCss: readonly string[] = [],
+): Harness {
+	const app = {
+		customCss: {
+			theme: "Fixture",
+			themes: { Fixture: { version: "1.0.0" } },
+			styleEl: { textContent: themeCss },
+			snippets: snippetCss.map((_, i) => `snippet-${i}`),
+			enabledSnippets: new Set(snippetCss.map((_, i) => `snippet-${i}`)),
+			extraStyleEls: snippetCss.map((text) => ({ textContent: text })),
+		},
+	} as unknown as App;
+	return harness(app);
 }
 
 /** One neutral user-created callout. Light and dark accents differ by default,
