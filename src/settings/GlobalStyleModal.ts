@@ -27,6 +27,7 @@ import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { CSS_FOLD_ARROW, CSS_HEADING_LINE } from "../editor/renderShared";
 import { applyModalChrome } from "./modalChrome";
 import { STYLE_DEMO_ID } from "../constants";
+import { beginDemoPreview, endDemoPreview } from "./previewOwnership";
 
 /** Neutral gray accent used by the demo callout in both theme modes. */
 const STYLE_DEMO_GRAY = "#808080";
@@ -74,16 +75,9 @@ export class GlobalStyleModal extends Modal {
 			beforeRender: () => {
 				// A neutral demo callout for previewing the vault-wide geometry,
 				// never a real row — keep it out of the settings lists.
-				this.plugin.registry.setPreviewDefinition(
-					this.buildDemoDefinition(),
-					true,
-				);
-				this.plugin.cssInjector.inject(false);
+				beginDemoPreview(this.plugin, this.buildDemoDefinition());
 			},
-			onDestroy: () => {
-				this.plugin.registry.setPreviewDefinition(null);
-				this.plugin.cssInjector.inject(false);
-			},
+			onDestroy: () => endDemoPreview(this.plugin),
 		});
 
 		const controlsCol = panel.createDiv({

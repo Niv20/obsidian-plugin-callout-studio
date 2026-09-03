@@ -19,6 +19,7 @@ import { WELCOME_DEMO_ID } from "../constants";
 import { LiveCalloutPreview } from "./LiveCalloutPreview";
 import { buildWelcomeDemoDefinition } from "./welcomeDemo";
 import type { SettingsTabPlugin } from "./sections/types";
+import { beginDemoPreview, endDemoPreview } from "./previewOwnership";
 
 const REPO_URL = "https://github.com/Niv20/obsidian-plugin-callout-studio";
 
@@ -64,19 +65,10 @@ export class WelcomeModal extends Modal {
 				// The splash demonstrates itself with a demo callout of its own,
 				// never a real one — see welcomeDemo.ts for why the built-ins
 				// it used to borrow could not survive a theme.
-				this.plugin.registry.setPreviewDefinition(
-					buildWelcomeDemoDefinition(),
-					true,
-				);
-				this.plugin.cssInjector.inject(false);
+				beginDemoPreview(this.plugin, buildWelcomeDemoDefinition());
 			},
 			onDestroy: () => {
-				this.plugin.registry.setPreviewDefinition(null);
-				// Not merely tidying: `injectNow` skips the startup CSS
-				// snapshot for as long as a preview definition is live, and on
-				// a fresh install this modal is what holds one during the very
-				// first launch. This inject is the one that writes it.
-				this.plugin.cssInjector.inject(false);
+				endDemoPreview(this.plugin);
 			},
 		});
 	}
