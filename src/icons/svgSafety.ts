@@ -29,6 +29,19 @@ const DANGEROUS_TAGS = new Set([
 	"base",
 	"frame",
 	"frameset",
+	// SVG's own two ways to reach back out of the picture. `use` resolves an
+	// `href` — including into another document — and the SMIL elements can
+	// retarget any attribute after the sanitizer has already walked it, which
+	// makes a cleaned `href` no guarantee of the one that ends up live. Neither
+	// appears in any artwork this plugin ships or fetches (the icon packs are
+	// flat `path`/`circle` geometry), so denying them costs nothing real.
+	// Lowercase because the check lowercases: `animateTransform` arrives here as
+	// `animatetransform`.
+	"use",
+	"animate",
+	"animatetransform",
+	"animatemotion",
+	"set",
 ]);
 
 const EVENT_ATTR_RE = /^on/i;
@@ -40,8 +53,19 @@ const DANGEROUS_ATTR_VALUES_RE = /javascript:|data:text\/html/i;
  * Parsing as `image/svg+xml` builds no scripting context, but the result is
  * then inserted into the live document — where an inline SVG is a scripting
  * context like any other and an `on*` handler would fire.
+ *
+ * Returns whether `el` itself is a denied element. Every caller today hands in
+ * an `<svg>` root, which never is — but the recursion below tests children
+ * only, so a caller passing a subtree would otherwise have its outermost node
+ * skipped. Answering rather than assuming keeps that from being a trap for the
+ * next caller.
  */
-export function stripUnsafeSvg(el: Element): void {
+export function stripUnsafeSvg(el: Element): boolean {
+	if (DANGEROUS_TAGS.has(el.tagName.toLowerCase())) {
+		el.remove();
+		return true;
+	}
+
 	const toRemove: Element[] = [];
 	for (let i = 0; i < el.children.length; i++) {
 		const child = el.children[i];
@@ -61,4 +85,6 @@ export function stripUnsafeSvg(el: Element): void {
 			el.removeAttribute(attr);
 		}
 	}
+
+	return false;
 }
