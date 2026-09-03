@@ -16,12 +16,36 @@ else in the plugin writes to disk except:
 - The Material Symbols preview webfont cache (`icon-fonts/`).
 - Downloaded locale files (`translations/`).
 - The user-requested CSS snippet export (`.obsidian/snippets/callout-studio-custom.css`).
-- **The user's own vault notes**, via `app.vault.modify()` — not a
+- **The user's own vault notes**, via `app.vault.process()` — not a
   plugin-owned file at all, and the most consequential write the plugin
   makes since it touches arbitrary user content. The vault rewriters
   (`src/utils/vaultCalloutScanner.ts` — rename/replace-id, convert-to-plain-
   text) and the delete flow's cleanup (`CalloutDiscovery`) both go through
   this path. See [Vault discovery](10-vault-discovery.md).
+
+  How that pass is walked lives in
+  [`utils/vaultRewrite.ts`](../src/utils/vaultRewrite.ts), and the three rules
+  there are what make a whole-vault write safe rather than merely correct on a
+  quiet vault:
+
+  - **`process()`, not `read()` + `modify()`.** A bulk pass runs for seconds on
+    a large vault while the user keeps typing and Sync keeps landing changes.
+    `process` does the read, the transform and the write under the vault's own
+    lock, so an edit arriving mid-pass is rewritten on top of rather than
+    overwritten by a stale snapshot. The pair it replaced left exactly that
+    window open on every file.
+  - **A probe first, off `cachedRead`.** `process` writes whatever its callback
+    returns, so "does this file change at all" has to be settled before it is
+    opened — otherwise every note in the vault takes a write, and every write
+    is a sync event. Only affected files are opened.
+  - **Failures are per file, not per pass.** A note that cannot be read is
+    logged and skipped, and the pass continues; a bare loop over `await`s
+    unwound on the first rejection and left the vault half-rewritten with
+    nothing said. What was skipped is reported in one `Notice` at the end.
+
+  `getMarkdownFiles()` is a snapshot, so each file is also re-resolved by path
+  before it is touched — the same `getAbstractFileByPath(...) !== file` guard
+  `CalloutDiscovery` makes before acting on a queued scan.
 
 Every write to `data.json` happens through `registry.toSaveData()` — never a
 partial patch — so understanding what that method includes/excludes (see

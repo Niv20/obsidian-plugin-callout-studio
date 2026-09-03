@@ -35,6 +35,16 @@ function fakeApp(files: Record<string, string>): {
 			getMarkdownFiles: () => handles,
 			read,
 			cachedRead: read,
+			// The writers go through `process`, which owns the read/write pair;
+			// the fake keeps the same identity contract the real vault has, so
+			// the staleness guard in `forEachVaultFile` resolves each handle.
+			getAbstractFileByPath: (path: string) =>
+				handles.find((h) => h.path === path) ?? null,
+			process: (file: { path: string }, fn: (data: string) => string) => {
+				const next = fn(store.get(file.path) ?? "");
+				store.set(file.path, next);
+				return Promise.resolve(next);
+			},
 			modify: (file: { path: string }, data: string) => {
 				store.set(file.path, data);
 				return Promise.resolve();
@@ -297,5 +307,145 @@ describe("convertCalloutsToPlainTextInVault", () => {
 		);
 		// The parent callout is untouched.
 		assert.ok(content("note.md").includes("> [!note] Parent"));
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* Crossing the vault safely — see utils/vaultRewrite.ts                       */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * A vault that can misbehave the way a real one does mid-rewrite: a note that
+ * refuses to be read, and a note that vanishes between the file list and its
+ * turn. Both are ordinary on a pass that runs for seconds while Sync is live,
+ * and neither may be allowed to strand the notes queued behind it.
+ */
+function hostileVault(
+	files: Record<string, string>,
+	opts: { unreadable?: string[]; vanished?: string[] } = {},
+): {
+	app: App;
+	content: (path: string) => string;
+	written: string[];
+} {
+	const store = new Map(Object.entries(files));
+	const handles = Array.from(store.keys()).map((path) => ({ path }));
+	const unreadable = new Set(opts.unreadable ?? []);
+	const vanished = new Set(opts.vanished ?? []);
+	const written: string[] = [];
+	const read = (file: { path: string }): Promise<string> =>
+		unreadable.has(file.path)
+			? Promise.reject(new Error(`EACCES: ${file.path}`))
+			: Promise.resolve(store.get(file.path) ?? "");
+	const app = {
+		vault: {
+			getMarkdownFiles: () => handles,
+			read,
+			cachedRead: read,
+			getAbstractFileByPath: (path: string) =>
+				vanished.has(path)
+					? null
+					: (handles.find((h) => h.path === path) ?? null),
+			process: (file: { path: string }, fn: (data: string) => string) => {
+				if (unreadable.has(file.path)) {
+					return Promise.reject(new Error(`EACCES: ${file.path}`));
+				}
+				written.push(file.path);
+				const next = fn(store.get(file.path) ?? "");
+				store.set(file.path, next);
+				return Promise.resolve(next);
+			},
+		},
+	} as unknown as App;
+	return { app, content: (path) => store.get(path) ?? "", written };
+}
+
+describe("a bulk rewrite survives a hostile vault", () => {
+	const three = {
+		"a.md": "> [!old] One",
+		"b.md": "> [!old] Two",
+		"c.md": "> [!old] Three",
+	};
+
+	it("keeps going when one note cannot be read", async () => {
+		// The whole point: a `for` loop over bare `await`s unwinds on the first
+		// rejection, leaving the vault half-renamed. `c.md` is the proof that
+		// the notes queued behind the failure still get their rewrite.
+		const notices: string[] = [];
+		(globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ = notices;
+
+		const { app, content } = hostileVault(three, { unreadable: ["b.md"] });
+		const count = await replaceCalloutIdsInVault(app, ["old"], "new");
+
+		assert.strictEqual(content("a.md"), "> [!new] One");
+		assert.strictEqual(content("b.md"), "> [!old] Two", "left untouched");
+		assert.strictEqual(content("c.md"), "> [!new] Three", "not stranded");
+		assert.strictEqual(count, 2, "counts only what it actually rewrote");
+		assert.strictEqual(
+			notices.length,
+			1,
+			"the user is told some notes were skipped",
+		);
+	});
+
+	it("skips a note that vanished after the file list was taken", async () => {
+		const { app, content, written } = hostileVault(three, {
+			vanished: ["b.md"],
+		});
+		const count = await replaceCalloutIdsInVault(app, ["old"], "new");
+
+		assert.deepStrictEqual(written, ["a.md", "c.md"]);
+		assert.strictEqual(content("b.md"), "> [!old] Two");
+		assert.strictEqual(count, 2);
+	});
+
+	it("opens no note for writing when none is affected", async () => {
+		// Every write is a vault modification, which syncs, which re-renders —
+		// and `process` writes whatever its callback returns, so an unaffected
+		// note has to be spared the call entirely rather than handed back.
+		const { app, written } = hostileVault(three);
+		const count = await replaceCalloutIdsInVault(app, ["absent"], "new");
+
+		assert.strictEqual(count, 0);
+		assert.deepStrictEqual(written, []);
+	});
+
+	it("rewrites against the text on disk, not the text it probed", async () => {
+		// The race this whole change exists for: the probe reads one thing, the
+		// user saves another, and the commit must land on what is actually
+		// there. The fake edits the file between the two reads.
+		const store = { "a.md": "> [!old] One" };
+		const { app } = hostileVault(store);
+		const vault = app.vault as unknown as {
+			cachedRead: (f: { path: string }) => Promise<string>;
+			process: (
+				f: { path: string },
+				fn: (data: string) => string,
+			) => Promise<string>;
+		};
+		const probe = vault.cachedRead;
+		let landed = "";
+		vault.cachedRead = (f) =>
+			probe(f).then((text) => {
+				// Between probe and commit the user adds a paragraph. The fake's
+				// `process` mutates the store before it resolves, so the write
+				// has landed by the time the commit below reads — no await
+				// needed, and the ordering stays deterministic.
+				void vault.process({ path: "a.md" }, () => "> [!old] One\n\nTyped.");
+				return text;
+			});
+		const inner = vault.process;
+		vault.process = (f, fn) =>
+			inner(f, (data) => {
+				landed = fn(data);
+				return landed;
+			});
+
+		await replaceCalloutIdsInVault(app, ["old"], "new");
+		assert.strictEqual(
+			landed,
+			"> [!new] One\n\nTyped.",
+			"the paragraph typed mid-pass survives the rewrite",
+		);
 	});
 });

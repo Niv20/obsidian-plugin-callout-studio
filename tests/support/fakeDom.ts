@@ -329,6 +329,14 @@ export class FakeElement {
 		return this.attrs.has(name);
 	}
 
+	/**
+	 * A snapshot, as the real one is — `stripUnsafeSvg` removes attributes while
+	 * iterating this, which over a live view would skip every other name.
+	 */
+	getAttributeNames(): string[] {
+		return Array.from(this.attrs.keys());
+	}
+
 	removeAttribute(name: string): void {
 		this.attrs.delete(name);
 	}

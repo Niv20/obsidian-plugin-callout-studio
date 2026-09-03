@@ -299,6 +299,19 @@ function fakeApp(files: Record<string, string>): {
 			getMarkdownFiles: () => handles,
 			read,
 			cachedRead: read,
+			getAbstractFileByPath: (path: string) =>
+				handles.find((h) => h.path === path) ?? null,
+			// The writer goes through `process`, which owns the read/write pair.
+			// Recording the write here is what keeps "does not open the file for
+			// writing when nothing changed" meaningful: the real `process` writes
+			// whatever its callback returns, so the only thing that can spare an
+			// unaffected note a write is not calling `process` on it at all.
+			process: (file: { path: string }, fn: (data: string) => string) => {
+				writes.push(file.path);
+				const next = fn(store.get(file.path) ?? "");
+				store.set(file.path, next);
+				return Promise.resolve(next);
+			},
 			modify: (file: { path: string }, data: string) => {
 				writes.push(file.path);
 				store.set(file.path, data);

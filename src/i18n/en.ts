@@ -332,6 +332,8 @@ export const en: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio no longer styles "{{name}}" — your own CSS decides how it looks. Its Heading Callout and Inline Callout forms won\'t render.',
 	"notice.externalCssOff": 'Callout Studio now styles "{{name}}" again.',
+	"notice.vaultRewritePartial":
+		"{{count}} note(s) could not be updated and were left unchanged. See the developer console for details.",
 	"notice.nothingToWrap": "Nothing to wrap.",
 	"notice.cursorNotInsideCallout": "Cursor is not inside a callout.",
 	"notice.autocompleteTargetMoved":

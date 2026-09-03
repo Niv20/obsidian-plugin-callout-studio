@@ -831,7 +831,7 @@ describe("no new oversized files", () => {
 		// ranges an expansion must not cut through — moved to
 		// editor/quotePrefix.ts and editor/fenceBlocks.ts.
 		"src/editor/CalloutBlockTools.ts": 577,
-		"src/utils/vaultCalloutScanner.ts": 595,
+		"src/utils/vaultCalloutScanner.ts": 574,
 		// Lowered from 593: the suggestion row's icon and accent go through
 		// manager/theme/calloutListIcon.ts, shared with the three other lists
 		// that draw a callout small.

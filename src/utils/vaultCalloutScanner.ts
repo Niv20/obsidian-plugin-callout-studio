@@ -22,6 +22,7 @@
  */
 import type { App, TFile } from "obsidian";
 import { calloutIdentity, mergeDashSpaceVariants, normalizeCalloutId } from "./calloutId";
+import { rewriteVaultFiles } from "./vaultRewrite";
 import type { LineCalloutToken } from "../editor/calloutTokens";
 import {
 	createDocumentLineFilter,
@@ -267,12 +268,9 @@ export async function convertCalloutsToPlainTextInVault(
 	const headerRegex = /^(>+)\s*\[!([^\]\n\r]+)\][+-]?\s*(.*)$/i;
 	const name = displayName.trim();
 
-	const files = app.vault.getMarkdownFiles();
-	let modifiedFiles = 0;
-	let totalBlocks = 0;
-
-	for (const file of files) {
-		const content = await app.vault.read(file);
+	// Pure function of one file's content — rewriteVaultFiles runs it to probe,
+	// then again under the vault lock to commit.
+	const transform = (content: string) => {
 		const lines = content.split("\n");
 		const isContentLine = createDocumentLineFilter();
 		let blocksInFile = 0;
@@ -376,14 +374,13 @@ export async function convertCalloutsToPlainTextInVault(
 			i++;
 		}
 
-		if (blocksInFile > 0) {
-			totalBlocks += blocksInFile;
-			modifiedFiles++;
-			await app.vault.modify(file, lines.join("\n"));
-		}
-	}
+		return blocksInFile > 0
+			? { content: lines.join("\n"), count: blocksInFile }
+			: null;
+	};
 
-	return { files: modifiedFiles, blocks: totalBlocks };
+	const { files, count } = await rewriteVaultFiles(app, transform);
+	return { files, blocks: count };
 }
 
 /**
@@ -434,41 +431,34 @@ export async function replaceCalloutIdsInVault(
 	// to it, which is never what a type swap means. Same guard, same reason, as
 	// in replaceCalloutTitlesInVault.
 	const wanted = titleSwap?.from.trim().toLowerCase() ?? "";
-	const files = app.vault.getMarkdownFiles();
-	let totalReplacements = 0;
 
-	for (const file of files) {
-		const content = await app.vault.read(file);
-		const result = rewriteCalloutLines(content, (line, tokens) =>
-			rewriteTokensOnLine(line, tokens, (token) => {
-				if (!idSet.has(calloutIdentity(token.rawId))) return null;
-				const bracket = `[!${newId}${metadataSuffix(token)}]`;
-				// A pill has no title text of its own, so there is nothing to
-				// carry across for an inline token.
-				if (titleSwap && wanted && token.role !== "inline") {
-					const { foldMark, title } = splitFoldAndTitle(line, token);
-					if (title.trim().toLowerCase() === wanted) {
-						// Widening to end-of-line is safe here precisely
-						// because the title matched: a title that is exactly a
-						// plain display name holds no tokens of its own, so
-						// rewriteTokensOnLine (which works right-to-left) has
-						// not edited anything to the right of this token.
-						return {
-							text: `${bracket}${foldMark} ${titleSwap.to}`,
-							end: line.length,
-						};
+	const { count } = await rewriteVaultFiles(app, (content) =>
+			rewriteCalloutLines(content, (line, tokens) =>
+				rewriteTokensOnLine(line, tokens, (token) => {
+					if (!idSet.has(calloutIdentity(token.rawId))) return null;
+					const bracket = `[!${newId}${metadataSuffix(token)}]`;
+					// A pill has no title text of its own, so there is nothing
+					// to carry across for an inline token.
+					if (titleSwap && wanted && token.role !== "inline") {
+						const { foldMark, title } = splitFoldAndTitle(line, token);
+						if (title.trim().toLowerCase() === wanted) {
+							// Widening to end-of-line is safe here precisely
+							// because the title matched: a title that is exactly
+							// a plain display name holds no tokens of its own, so
+							// rewriteTokensOnLine (which works right-to-left) has
+							// not edited anything to the right of this token.
+							return {
+								text: `${bracket}${foldMark} ${titleSwap.to}`,
+								end: line.length,
+							};
+						}
 					}
-				}
-				return { text: bracket, end: tokenBracketEnd(token) };
-			}),
-		);
-		if (result) {
-			totalReplacements += result.count;
-			await app.vault.modify(file, result.content);
-		}
-	}
+					return { text: bracket, end: tokenBracketEnd(token) };
+				}),
+			),
+	);
 
-	return totalReplacements;
+	return count;
 }
 
 /**
@@ -499,27 +489,23 @@ export async function normalizeFoldMarkersInVault(
 		"gim",
 	);
 
-	const files = app.vault.getMarkdownFiles();
-	let totalReplacements = 0;
+	const { count: total } = await rewriteVaultFiles(app, (content) => {
+			let count = 0;
+			// `g`-flagged and shared across files, and this now runs twice per
+			// changed file — so never inherit a `lastIndex` from the last pass.
+			regex.lastIndex = 0;
+			const newContent = content.replace(
+				regex,
+				(_match, prefix: string, current: string) => {
+					if (current === desiredMarker) return _match;
+					count++;
+					return `${prefix}${desiredMarker}`;
+				},
+			);
+			return count > 0 ? { content: newContent, count } : null;
+	});
 
-	for (const file of files) {
-		const content = await app.vault.read(file);
-		let count = 0;
-		const newContent = content.replace(
-			regex,
-			(_match, prefix: string, current: string) => {
-				if (current === desiredMarker) return _match;
-				count++;
-				return `${prefix}${desiredMarker}`;
-			},
-		);
-		if (count > 0) {
-			totalReplacements += count;
-			await app.vault.modify(file, newContent);
-		}
-	}
-
-	return totalReplacements;
+	return total;
 }
 
 /**
@@ -568,28 +554,21 @@ export async function replaceCalloutTitlesInVault(
 	// An empty old title would match every title-less header and *add* a title
 	// to it, which is never what a rename means.
 	if (!wanted) return 0;
-	const files = app.vault.getMarkdownFiles();
-	let totalReplacements = 0;
 
-	for (const file of files) {
-		const content = await app.vault.read(file);
-		const result = rewriteCalloutLines(content, (line, tokens) =>
-			rewriteTokensOnLine(line, tokens, (token) => {
-				if (token.role === "inline") return null;
-				if (!idSet.has(calloutIdentity(token.rawId))) return null;
-				const { foldMark, title } = splitFoldAndTitle(line, token);
-				if (title.trim().toLowerCase() !== wanted) return null;
-				return {
-					text: `${line.slice(token.from, token.to)}${foldMark} ${newTitle}`,
-					end: line.length,
-				};
-			}),
-		);
-		if (result) {
-			totalReplacements += result.count;
-			await app.vault.modify(file, result.content);
-		}
-	}
+	const { count } = await rewriteVaultFiles(app, (content) =>
+			rewriteCalloutLines(content, (line, tokens) =>
+				rewriteTokensOnLine(line, tokens, (token) => {
+					if (token.role === "inline") return null;
+					if (!idSet.has(calloutIdentity(token.rawId))) return null;
+					const { foldMark, title } = splitFoldAndTitle(line, token);
+					if (title.trim().toLowerCase() !== wanted) return null;
+					return {
+						text: `${line.slice(token.from, token.to)}${foldMark} ${newTitle}`,
+						end: line.length,
+					};
+				}),
+			),
+	);
 
-	return totalReplacements;
+	return count;
 }

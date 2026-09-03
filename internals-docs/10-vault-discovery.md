@@ -218,8 +218,12 @@ holds(id: string): boolean                  // RediscoveryHold
 
 > [!IMPORTANT]
 > **This exists to fix a specific, real race.** Deleting a callout rewrites
-> its vault usages with `vault.modify()` — but an *open* editor's CodeMirror
-> buffer catches up with that write **asynchronously**. `SettingsTab.display()`,
+> its vault usages with `vault.process()` — but an *open* editor's CodeMirror
+> buffer catches up with that write **asynchronously**. (Note this is a
+> *different* race from the one `process` itself closes: that one is about the
+> write landing on stale bytes, this one is about a buffer that has not yet
+> re-read the bytes we wrote. Making the write atomic does not shorten the
+> catch-up, so the hold below is still needed.) `SettingsTab.display()`,
 > which the delete flow calls on the very next line
 > (`CalloutRowActions.ts: handleCalloutDelete`), immediately scans every open
 > editor's *in-memory buffer* for unknown callout ids
