@@ -106,6 +106,35 @@ const themeIds = (registry: CalloutRegistry): string[] =>
 		.map((d: CalloutDefinition) => d.id)
 		.sort();
 
+describe("the re-sweep handed back for a settings reload", () => {
+	it("puts the theme's rows back even though the theme has not changed", () => {
+		// `CalloutRegistry.load()` clears the callout map, and the theme's
+		// `source: "theme"` rows live in it — they are an overlay, deliberately
+		// never persisted, so only a sweep brings them back. But a settings
+		// reload does not move the theme fingerprint, so the memo inside `sweep`
+		// used to swallow the call: the caller asked for a re-sweep and got a
+		// no-op, and every theme-provided callout stayed missing until the next
+		// `css-change`, which may never come.
+		//
+		// Worse than cosmetic. `adoptExternalSettings` calls this and then runs
+		// `customCommands.syncAll()`, which drops any command whose callout
+		// `registry.has()` cannot find — so a settings file arriving from another
+		// device silently deleted the user's commands for theme callouts, and
+		// saved the deletion straight back to that device.
+		const t = themeHost('.callout[data-callout="recite"] { color: red; }');
+		const registry = vault();
+		const { host } = syncHost(registry, t.app);
+		const resweep = registerThemeRowSync(host);
+		assert.deepStrictEqual(themeIds(registry), ["recite"]);
+
+		registry.load(null); // what every settings reload does first
+		assert.deepStrictEqual(themeIds(registry), [], "precondition");
+
+		resweep();
+		assert.deepStrictEqual(themeIds(registry), ["recite"]);
+	});
+});
+
 describe("a theme change does not leave the outgoing theme's artwork published", () => {
 	it("has cleared the readings by the time the sweep's onChange fires", () => {
 		const vaultCss = '.callout[data-callout="recite"] { color: red; }';

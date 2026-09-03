@@ -104,10 +104,22 @@ Not part of `onload`, but the same sequence. Obsidian calls it when `data.json`
 is rewritten by something other than us, and **only because the method exists**
 — `Plugin.loadData` starts tracking the file's mtime only when it is defined.
 It re-runs the load above, re-sweeps the theme's overlay rows (`registry.load()`
-clears them and they are never persisted), re-syncs the custom commands,
-re-injects, and invalidates the write guard's baseline. It is deferred while the
-callout editor is open, so a reload never changes the row being edited
-underneath the user. Limits — desktop only, and mtime-gated — are in
+clears them and they are never persisted — and the sweep is *forced*, because a
+settings reload does not move the theme fingerprint), re-syncs the custom
+commands, re-injects, and **re-seeds** the write guard's baseline with the file
+it just read, so a save that would merely reproduce that file is suppressed.
+
+Three things it declines to do, each of which was a bug:
+
+- It does not adopt a read it could not make sense of, or one that found no file
+  at all — both are transient far more often than they are meant.
+- It does not rebuild anything for a write of *ours* arriving back through the
+  watcher, which Obsidian re-fires for every save we make.
+- It does not clear the write guard. Clearing it made the reload write the
+  incoming file straight back at the device that sent it.
+
+It is deferred while a modal owns the registry, so a reload never changes the row
+being edited underneath the user. Limits — desktop only, and mtime-gated — are in
 [Persistence § multi-device sync](07-persistence-and-caching.md#multi-device-sync).
 
 ### Step 7: locale preparation blocks, on purpose

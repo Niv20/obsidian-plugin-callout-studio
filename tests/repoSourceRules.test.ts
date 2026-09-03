@@ -851,7 +851,11 @@ describe("no new oversized files", () => {
 		// Lowered from 528: `STYLE_DEMO_ID` moved to constants.ts, where the
 		// discovery/import/autocomplete filters that now consult it can reach
 		// it without importing a settings modal.
-		"src/settings/GlobalStyleModal.ts": 522,
+		// Lowered from 522: standing a demo callout up and taking it down —
+		// including raising `pruneSuspended` for as long as it is up, which is
+		// what lets a deferred settings reload be released — moved to
+		// settings/previewOwnership.ts, shared with WelcomeModal.
+		"src/settings/GlobalStyleModal.ts": 516,
 		// Lowered from 497: the two role-icon helpers moved to editor/roleIcon.ts,
 		// beside the theme-artwork renderer they now both consult.
 		"src/editor/renderShared.ts": 475,

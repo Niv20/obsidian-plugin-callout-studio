@@ -41,6 +41,9 @@ In practice this means:
 - Each device builds its own list of discovered callouts from your notes, so the two lists agree without either device having to tell the other anything.
 - A brand-new device — or one where you have cleared Obsidian's local data — scans the vault once to build that list, the same way a fresh install does.
 
+- When settings arrive from your other device, Callout Studio adopts them without writing anything back. Two devices that agree stay silent, so there is nothing for a sync tool to reconcile and no conflict copies to clean up.
+- If your settings file is ever half-written or unreadable — a sync still in progress, most likely — Callout Studio leaves it completely alone rather than replacing it. Your callouts may be missing until you reload Obsidian, and it will tell you so, but the file itself is never overwritten with an empty one.
+
 On desktop, Callout Studio also notices when your settings file is updated by a sync tool while Obsidian is open, and picks up the change without you having to restart. On mobile, Obsidian gives plugins no way to be told about that, so reopening the vault is still the way to pick up settings that arrived while it was open.
 
 ---

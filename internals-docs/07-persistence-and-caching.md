@@ -62,7 +62,7 @@ several.
 
 Every one of them goes through
 [`manager/SettingsWriter.ts`](../src/manager/SettingsWriter.ts), which applies
-two rules the raw `saveData` call did not:
+four rules the raw `saveData` call did not:
 
 - **Concurrent saves are coalesced, not raced.** Most callers are
   `void saveSettings()`, so two could be in flight at once, each carrying a
@@ -73,10 +73,34 @@ two rules the raw `saveData` call did not:
 - **A byte-identical payload is not written at all**
   ([`utils/saveGuard.ts`](../src/utils/saveGuard.ts)). The same argument
   `cssSnippetExport` already makes for the CSS snippet: every write is a sync
-  event. The baseline moves only after a write *succeeds*, so a failed write is
-  retried rather than suppressed forever — and it is **invalidated** whenever
-  settings are reloaded from disk, because it is a claim about what *we* last
-  wrote and someone else has just written something else.
+  event. The baseline is **the bytes we believe `data.json` holds**, and two
+  events establish that belief: `commit()` after a write of ours lands, and
+  `adopt()` when we have just read a file somebody else wrote. It moves only
+  after a write *succeeds*, so a failed write is retried rather than suppressed
+  forever.
+
+  > [!IMPORTANT]
+  > An external change **re-seeds** the baseline; it must never *clear* it.
+  > `SaveGuard` used to expose `invalidate()` for exactly that, on the reasoning
+  > that a baseline describing our own last write is a lie once another device
+  > has written the file. The reasoning is right and the remedy was wrong — we
+  > have just *read* that file, so the baseline can be corrected instead of
+  > discarded. Clearing it meant the reload's own `onChange` wrote the incoming
+  > file straight back at the device that sent it, and that device did the same
+  > in return: an unbounded exchange, seconds apart, with no user action
+  > anywhere in it. See [Multi-device sync](#multi-device-sync) property 4.
+- **A whole reload writes at most once.** `SettingsWriter.hold(body)` collects
+  the saves a reload provokes — `registry.load`, the discovered-row restore, the
+  theme sweep, the command re-sync, each arriving as its own fire-and-forget
+  `void saveSettings()` — and performs one pass at the end, which builds its
+  payload then. Without it, whichever save won the race could publish an
+  *intermediate* state; most sharply the window after the callout map was
+  cleared and before the theme's rows were swept back, in which every
+  theme-owned custom command looks orphaned and gets pruned. Re-entrant, like
+  `CalloutRegistry.batch`, and a body that throws flushes nothing.
+- **A session that could not read the file never writes it.**
+  `SettingsWriter.freeze()`, set by the startup path alone. See
+  [A file we cannot read](#a-file-we-cannot-read).
 
 That guard only works because `mergeSavedSettings` names its fields in
 `DEFAULT_SETTINGS`' order: `JSON.stringify` writes keys in insertion order, so
@@ -86,8 +110,9 @@ serialized the same settings into byte-different files.
 ### Multi-device sync
 
 `data.json` sits inside `.obsidian/`, so on a vault synced with Syncthing (or
-any file-level sync) **both devices write the same file**. Three properties
-decide whether that is safe, and issue #41 was all three going the wrong way.
+any file-level sync) **both devices write the same file**. Five properties
+decide whether that is safe. Issue #41 was the first three going the wrong way;
+the report that followed v2.12.0 was the last two.
 
 **1. Only user intent is written.** A row automatic discovery minted and nobody
 claimed is *an observation this machine made*, not configuration. Writing it
@@ -119,9 +144,18 @@ is implemented (`manager/settingsBoot.ts: adoptExternalSettings`); without it,
 in-memory snapshot would overwrite whatever a sync client had just delivered.
 It re-reads, rebuilds the registry, restores the discovered rows, **re-sweeps
 the theme's overlay rows** (`registry.load()` clears them and they are never
-persisted), re-syncs the custom commands and invalidates the write guard. It is
-**deferred** while the callout editor is open, so a reload can never change the
-row being edited underneath the user.
+persisted), re-syncs the custom commands and re-seeds the write guard. It is
+**deferred** while a modal owns the registry, so a reload can never change the
+row being edited underneath the user — and `pruneSuspended`, the flag that says
+so, is the only seam that re-runs a deferred reload, which is why the two
+previewing modals raise it too ([`settings/previewOwnership.ts`](../src/settings/previewOwnership.ts))
+rather than leaving `pendingExternalReload` latched for the session.
+
+The order inside it is load bearing twice over: the theme sweep runs **before**
+`customCommands.syncAll()`, because `syncAll` drops any command whose callout
+`registry.has()` cannot find, and the sweep is what puts the theme's callouts
+back. (The sweep is also *forced* — a settings reload does not move the theme
+fingerprint, so an unforced one returns having done nothing.)
 
 > [!WARNING]
 > The hook has two limits, and neither can be worked around from inside a
@@ -134,6 +168,65 @@ row being edited underneath the user.
 > This is why the real fix is property 1 — a passive device that writes nothing
 > gives the sync client nothing to reconcile. The hook is the second line of
 > defence, not the first.
+>
+> A third quirk is worth knowing because it looks like a bug in *our* code:
+> `Plugin._onConfigFileChange` assigns `_lastDataModifiedTime = <the mtime it
+> read before awaiting us>` **after** the handler returns, rolling back the
+> stamp `saveData` set during it. So Obsidian re-fires the hook for our own
+> saves. `adoptExternalSettings` answers that by comparing the incoming file
+> against the guard's baseline and returning before it rebuilds anything.
+
+**4. Adopting a file must not provoke a write.** This is the one v2.12.0 got
+wrong, and it was worse than the bug it replaced: a device rewrote `data.json`
+on *every* external change it received, so two devices ping-ponged the file
+between them every few seconds until it was destroyed. The chain was
+`invalidate()` → `restoreDiscoveredRows` re-adds this device's rows → `onChange`
+→ `void saveSettings()` → a guard that had just been switched off. Every link
+was reasonable on its own. Re-seeding the baseline (above) breaks it, and
+`hold()` makes "a reload writes at most once" structural rather than incidental.
+
+**5. Two devices holding the same state must serialize the same bytes.** The
+guard compares serialized output, so any field whose order depends on *this*
+machine's history is a permanent source of real, meaningless differences that no
+write suppression can suppress. `mergeSavedSettings` already handles the settings
+object by naming its fields in `DEFAULT_SETTINGS`' order. `iconSvgCache` did not:
+it is appended to in fetch order, so two devices with identical artwork wrote
+byte-different files forever. It is now sorted on the way out by
+`(pack, name, variant)` — the same triple `addIconSvg` dedupes on, so the order
+is total — in
+[`manager/iconSvgCacheOrder.ts`](../src/manager/iconSvgCacheOrder.ts), with a
+code-unit comparison rather than `localeCompare`, which would put a Turkish
+phone and an English desktop back into disagreement.
+
+### A file we cannot read
+
+`Plugin.loadData()` returns a nullish value for two situations that could not be
+more different, and conflating them is how a sync conflict became data loss.
+[`manager/settingsFile.ts`](../src/manager/settingsFile.ts) separates them:
+
+| Verdict | How it is reached | What happens |
+| --- | --- | --- |
+| `absent` | nullish, and the adapter says there is no file | A fresh install. Start from the shipped defaults. |
+| `loaded` | a parsed object | Normal. Its re-serialized form seeds the guard. |
+| `unreadable` | nullish (or a non-object) while the adapter says the file **is** there — or the adapter itself throws | Change nothing. |
+
+Obsidian does distinguish the two internally — `Vault.readJson` returns `null`
+only for `ENOENT` and `undefined` for every other read or parse failure — but
+that is private behaviour of a minified bundle, not an API promise, so the
+adapter is asked the question that *is* stable.
+
+The two callers answer `unreadable` differently, and both answers matter:
+
+- **The reload path** returns immediately: no `registry.load`, no re-seed, no
+  write. The state in memory is the last thing known to be good.
+- **The startup path** has no earlier state to protect, so the registry does come
+  up holding only the built-ins — but `SettingsWriter.freeze()` takes the file
+  off the table for the session and the user is told, because otherwise the very
+  next save replaces a file we failed to understand with one we know is wrong.
+
+This is not hypothetical. The reporter's screenshot showed alternating conflict
+copies where every copy from one device was exactly **0 bytes**, and
+`JSON.parse("")` throws.
 
 ### Settings merge — never a raw spread
 
@@ -179,7 +272,7 @@ doesn't silently switch a hidden menu item back on.
 | The rediscovery-suppression map (`RediscoveryHold.deleted`) | `CalloutDiscovery` | N/A — a 5-second window after an explicit delete |
 | The "known zero usage" fallback-id set | `CalloutPrune` | Recomputed by the next `pruneUnused()` scan |
 | Rows for discovered ids nobody has claimed | `CalloutRegistry` | Rebuilt at startup from `DeviceLocalStore`'s id list — no vault read |
-| `SettingsWriter`'s last-written payload | `SettingsWriter` | The next save writes unconditionally; invalidated on an external change |
+| `SettingsWriter`'s belief about what is on disk | `SettingsWriter` | Seeded by the load at startup, and re-seeded whenever an external change is adopted |
 | `CSSInjector.lastCssText` | `CSSInjector` | Recomputed by the next `inject()` |
 | The registry's transient live-preview slot | `CalloutRegistry` | Cleared automatically when the editor modal closes |
 | `IconFetchManager`/`PackDataStore` in-flight promise maps | `IconService` | Nothing to rebuild — just de-duplicates concurrent requests |

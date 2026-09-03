@@ -334,6 +334,8 @@ export const en: Record<string, string> = {
 	"notice.externalCssOff": 'Callout Studio now styles "{{name}}" again.',
 	"notice.vaultRewritePartial":
 		"{{count}} note(s) could not be updated and were left unchanged. See the developer console for details.",
+	"notice.settingsUnreadable":
+		"Callout Studio could not read its settings file, so your callout types are missing from this session. Nothing has been written and the file on disk is unchanged \u2014 reload Obsidian to try again.",
 	"notice.nothingToWrap": "Nothing to wrap.",
 	"notice.cursorNotInsideCallout": "Cursor is not inside a callout.",
 	"notice.autocompleteTargetMoved":

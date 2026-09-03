@@ -156,9 +156,12 @@ function device(name: string, vault: Vault, disk: Disk) {
 			const saved = disk.content
 				? (JSON.parse(disk.content) as Partial<PluginData>)
 				: null;
+			// Mirrors applySettingsRead: what is on disk becomes the guard's
+			// baseline BEFORE the rebuild, so a save that merely reproduces it
+			// is suppressed while a genuinely different local state still writes.
+			if (saved) writer.adopt(JSON.stringify(saved));
 			registry.load(saved);
 			bootDiscoveryIndex(registry, localState, saved);
-			writer.invalidate();
 		},
 		/** The scan the incremental watcher would run for one changed note. */
 		open(path: string): Promise<void> {
@@ -314,10 +317,10 @@ describe("two devices, one vault — the writes that remain", () => {
 		assert.strictEqual(disk.writesBy("A"), before);
 	});
 
-	it("re-asserts local state after an external change, identical or not", async () => {
-		// The guard's baseline describes what WE last wrote. Once another
-		// device's file is on disk it is a lie, and leaving it standing lets a
-		// byte-identical comparison suppress the write that would fix things.
+	it("re-asserts local state that differs from an adopted file", async () => {
+		// The half of the old `invalidate()` contract that survives: adopting a
+		// file is a claim about the file, never a claim that we agree with it,
+		// so a genuine local change still reaches disk afterwards.
 		const { disk, a } = world();
 		a.registry.add(authored("tip-plus"));
 		await a.saveSettings();
@@ -327,6 +330,20 @@ describe("two devices, one vault — the writes that remain", () => {
 		a.registry.update("tip-plus", { colorLight: "#111111" });
 		await a.saveSettings();
 		assert.strictEqual(disk.writesBy("A"), before + 1);
+	});
+
+	it("writes nothing when a reload changed nothing", async () => {
+		// The mirror, and the actual regression for the runaway loop: the old
+		// `invalidate()` made this write unconditionally, the peer's watcher
+		// then woke and did the same back, and neither device ever stopped.
+		const { disk, a } = world();
+		a.registry.add(authored("tip-plus"));
+		await a.saveSettings();
+
+		a.launch(); // stands in for onExternalSettingsChange's reload
+		const before = disk.writesBy("A");
+		await a.saveSettings();
+		assert.strictEqual(disk.writesBy("A"), before);
 	});
 });
 

@@ -83,14 +83,80 @@ describe("SettingsWriter — the guard", () => {
 		assert.deepStrictEqual(h.writes, ['{"n":1}', '{"n":2}']);
 	});
 
-	it("writes after invalidate(), even with nothing changed", async () => {
-		// The external-change case: our state may serialize to what we last
-		// wrote while the file now holds another device's version.
+	it("suppresses a save that reproduces the file it adopted", async () => {
+		// The reload path's whole reason for existing: adopting another device's
+		// file must not provoke a write back at it. See utils/saveGuard.ts.
 		const h = harness();
+		h.writer.adopt(JSON.stringify({ n: 1 }));
 		await h.writer.save();
-		h.writer.invalidate();
+		assert.strictEqual(h.writes.length, 0);
+	});
+
+	it("still writes when local state differs from the adopted file", async () => {
+		const h = harness();
+		h.writer.adopt(JSON.stringify({ n: 99 }));
 		await h.writer.save();
-		assert.strictEqual(h.writes.length, 2);
+		assert.deepStrictEqual(h.writes, ['{"n":1}']);
+	});
+
+	it("collapses every save made during a hold into one pass", async () => {
+		// A reload provokes several independent `void saveSettings()` calls on
+		// its way past. Only the settled state may reach the file.
+		const h = harness();
+		await h.writer.hold(async () => {
+			await h.writer.save();
+			h.state.n = 2;
+			await h.writer.save();
+			h.state.n = 3;
+			assert.strictEqual(h.writes.length, 0, "nothing written while held");
+		});
+		assert.deepStrictEqual(h.writes, ['{"n":3}']);
+	});
+
+	it("writes nothing for a hold that asked for nothing", async () => {
+		const h = harness();
+		await h.writer.hold(async () => undefined);
+		assert.strictEqual(h.writes.length, 0);
+	});
+
+	it("does not flush a hold whose body threw", async () => {
+		// A body that threw may have left the registry half-rebuilt, and writing
+		// that over the file it was being rebuilt from is the worst outcome.
+		const h = harness();
+		await assert.rejects(
+			h.writer.hold(async () => {
+				await h.writer.save();
+				throw new Error("mid-reload");
+			}),
+		);
+		assert.strictEqual(h.writes.length, 0);
+		// The request must not leak into the next hold either.
+		await h.writer.hold(async () => undefined);
+		assert.strictEqual(h.writes.length, 0);
+	});
+
+	it("flushes once for nested holds, at the outermost release", async () => {
+		const h = harness();
+		await h.writer.hold(async () => {
+			await h.writer.hold(async () => {
+				await h.writer.save();
+			});
+			assert.strictEqual(h.writes.length, 0, "inner release must not flush");
+			h.state.n = 7;
+		});
+		assert.deepStrictEqual(h.writes, ['{"n":7}']);
+	});
+
+	it("writes nothing at all once frozen", async () => {
+		// The session that could not read data.json. Every save it could produce
+		// would replace a file we failed to understand with one we know is wrong.
+		const h = harness();
+		h.writer.freeze();
+		await h.writer.save();
+		await h.writer.hold(async () => {
+			await h.writer.save();
+		});
+		assert.strictEqual(h.writes.length, 0);
 	});
 
 	it("retries a write that threw", async () => {

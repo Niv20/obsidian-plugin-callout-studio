@@ -172,9 +172,18 @@ export function registerThemeRowSync(host: ThemeSyncHost): () => void {
 	 * reload therefore drops every one of them until the next `css-change`,
 	 * which may never come. Handing the sweep back is what lets
 	 * `onExternalSettingsChange` put them straight back.
+	 *
+	 * **Forced**, and that is the whole point. A settings reload does not move
+	 * the theme fingerprint — the theme is the same one it was a moment ago — so
+	 * an unforced `sweep()` returns at its memo check having done nothing, and
+	 * the rows this function exists to restore stay missing. It read as correct
+	 * for a year: the caller asked for a re-sweep and got a no-op. Worse than
+	 * cosmetic, because `customCommands.syncAll()` runs next and prunes commands
+	 * whose callout it cannot find — so a reload silently deleted the user's
+	 * commands for every theme-provided callout, and saved the deletion.
 	 */
 	const resweep = (): void => {
-		sweep();
+		sweep(true);
 		probe();
 	};
 	host.registerEvent(

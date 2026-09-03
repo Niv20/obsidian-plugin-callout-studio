@@ -13,9 +13,16 @@
  * that ordering is no longer load bearing, because a queued pass here rebuilds
  * the payload at write time rather than replaying a stale one.
  *
- * **Nothing compared the payload.** See `utils/saveGuard.ts` for what that
- * cost and why the baseline has to be invalidated when someone else writes the
- * file.
+ * **Nothing compared the payload.** See `utils/saveGuard.ts` for what that cost,
+ * and for why an external change now *re-seeds* the baseline rather than
+ * clearing it — clearing it is what turned a synced vault into two devices
+ * rewriting `data.json` at each other without end.
+ *
+ * On top of the guard this class owns two policies of its own, both of which
+ * exist so that a reload cannot publish something the user did not ask for:
+ * {@link hold}, which collapses every save a whole reload provokes into one
+ * pass that runs after it, and {@link freeze}, which takes the file off the
+ * table entirely for a session that could not read it.
  *
  * Its own module, and structurally typed, so the policy can be tested without
  * a plugin: `build` is `registry.toSaveData()` and `write` is `plugin.saveData`.
@@ -38,6 +45,12 @@ export class SettingsWriter {
 	private queued = false;
 	/** The promise every caller that arrived during `inFlight` is waiting on. */
 	private followUp: Promise<void> | null = null;
+	/** Depth of nested {@link hold} calls; > 0 means saves are being collected. */
+	private holdDepth = 0;
+	/** Whether a save was asked for while held. */
+	private heldRequest = false;
+	/** @see freeze */
+	private frozen = false;
 
 	constructor(private readonly host: SettingsWriterHost) {}
 
@@ -51,6 +64,17 @@ export class SettingsWriter {
 	 * state rather than whichever snapshot happened to be taken last.
 	 */
 	save(): Promise<void> {
+		// Nothing this session may reach the file — see freeze().
+		if (this.frozen) return Promise.resolve();
+		if (this.holdDepth > 0) {
+			// Collapsed into the single pass hold() runs on release, which
+			// builds its payload then, so no half-rebuilt intermediate state is
+			// ever published. This resolves before that write lands; every
+			// caller that can reach it is inside the body hold() is awaiting,
+			// so none of them can observe the difference.
+			this.heldRequest = true;
+			return Promise.resolve();
+		}
 		if (this.inFlight === null) {
 			this.inFlight = this.runPass().finally(() => {
 				this.inFlight = null;
@@ -71,12 +95,76 @@ export class SettingsWriter {
 	}
 
 	/**
-	 * Forget what we last wrote — the file on disk is someone else's now.
+	 * Record the file someone else wrote, as we have just read it back, so a
+	 * save that would merely reproduce it is suppressed.
 	 *
-	 * @see SaveGuard.invalidate
+	 * @see SaveGuard.adopt for what to pass and why it is not the raw file text
 	 */
-	invalidate(): void {
-		this.guard.invalidate();
+	adopt(json: string): void {
+		this.guard.adopt(json);
+	}
+
+	/**
+	 * Whether `json` is exactly what `data.json` is believed to hold — i.e.
+	 * whether an incoming file is one of our own writes coming back.
+	 *
+	 * @see SaveGuard.matches
+	 */
+	matchesLastWrite(json: string): boolean {
+		return this.guard.matches(json);
+	}
+
+	/**
+	 * Run `body` with saves collected rather than performed, then perform at
+	 * most one of them.
+	 *
+	 * A reload is not one mutation. It clears the callout map, re-seeds the
+	 * built-ins, merges the incoming rows, restores this device's discovered
+	 * rows, re-derives the theme's overlay and re-syncs the custom commands —
+	 * and several of those steps ask for a save on their way past, each from a
+	 * fire-and-forget `void saveSettings()`. Left alone, whichever won the race
+	 * could publish an *intermediate* state: most sharply the window after the
+	 * map was cleared and before the theme's rows were swept back, in which
+	 * every theme-owned custom command looks orphaned.
+	 *
+	 * Holding makes "a reload writes at most once, and only what it settled on"
+	 * a property of the code rather than of the order the listeners happen to
+	 * run in. Re-entrant, and modelled on `CalloutRegistry.batch` — the same
+	 * shape for the same reason, one level down.
+	 */
+	async hold<T>(body: () => Promise<T>): Promise<T> {
+		this.holdDepth++;
+		let completed = false;
+		try {
+			const result = await body();
+			completed = true;
+			return result;
+		} finally {
+			this.holdDepth--;
+			if (this.holdDepth === 0) {
+				const wanted = this.heldRequest;
+				this.heldRequest = false;
+				// Only flush a hold that ran to completion. A body that threw
+				// may have left the registry half-rebuilt, and writing that
+				// over the file it was being rebuilt from is the one outcome
+				// worse than not writing at all.
+				if (wanted && completed) await this.save();
+			}
+		}
+	}
+
+	/**
+	 * Stop writing `data.json` for the rest of the session.
+	 *
+	 * For the one case where the file exists but could not be read: the
+	 * in-memory registry is then built from nothing and describes none of the
+	 * user's callouts, so every save it could produce would replace a file we
+	 * failed to understand with one we know to be wrong. There is no recovering
+	 * from that, and no undo — so the session goes read-only and the user is
+	 * told to reload. See `manager/settingsFile.ts`.
+	 */
+	freeze(): void {
+		this.frozen = true;
 	}
 
 	/** Whether a save is currently in flight or queued behind one. */

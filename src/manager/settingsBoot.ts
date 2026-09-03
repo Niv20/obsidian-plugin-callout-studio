@@ -11,18 +11,33 @@
  * Keeping it here rather than in `main.ts` is what stops the reload path from
  * being a shortened copy of the startup path, which is how a reload quietly
  * ends up skipping a migration.
+ *
+ * Both paths share three rules that only matter on a synced vault, and all
+ * three are issue #41 (see `utils/saveGuard.ts` and `manager/settingsFile.ts`):
+ *
+ * - **A file we could not read changes nothing.** Never mistake it for an empty
+ *   one.
+ * - **What we read becomes the write guard's baseline.** A save that would
+ *   merely reproduce the file we just adopted is then suppressed, which is what
+ *   stops two devices rewriting it at each other.
+ * - **A whole load writes at most once**, via `SettingsWriter.hold`, so no
+ *   half-rebuilt intermediate state is ever published.
  */
+import { Notice } from "obsidian";
 import type { PluginData } from "../types";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import type { SettingsWriter } from "./SettingsWriter";
 import type { DeviceLocalStore } from "./DeviceLocalStore";
 import { bootDiscoveryIndex } from "./discoveryIndexBoot";
+import { readSettingsFile } from "./settingsFile";
+import type { SettingsFileHost, SettingsRead } from "./settingsFile";
+import { t } from "../i18n";
 
 /** What the load needs from the plugin. */
-export interface SettingsBootHost {
+export interface SettingsBootHost extends SettingsFileHost {
 	registry: CalloutRegistry;
 	localState: DeviceLocalStore;
-	loadData(): Promise<unknown>;
+	settingsWriter: SettingsWriter;
 	saveSettings(): Promise<void>;
 }
 
@@ -31,44 +46,96 @@ export interface SettingsBootResult {
 	 * Nothing was on disk at all — a brand-new install, as opposed to a user
 	 * who merely updated into this version. Drives where the welcome screen
 	 * appears; see `settings/welcomeRouting.ts`.
+	 *
+	 * Deliberately **not** true for a file holding `{}`. That is a file somebody
+	 * wrote, and a user whose `data.json` was emptied — by a half-finished sync,
+	 * or by the very bug this module now guards against — must not be greeted as
+	 * a new install and must not have `welcomeSeen` written back over whatever
+	 * is about to arrive.
 	 */
 	isFreshInstall: boolean;
 }
 
 /**
+ * Rebuild the registry from a read that produced something usable, and flush
+ * once if the load changed what should be on disk.
+ *
+ * Shared by both callers so neither can drift from the other. Held, so every
+ * save the rebuild provokes — `restoreDiscoveredRows` alone always fires one on
+ * a device that has discovered anything — collapses into the single pass that
+ * runs when the outermost hold releases. Re-entrant: the reload path wraps a
+ * wider hold around this one, and the flush then happens once, at the end of
+ * the whole adoption.
+ */
+async function applySettingsRead(
+	host: SettingsBootHost,
+	read: Extract<SettingsRead, { kind: "absent" | "loaded" }>,
+): Promise<void> {
+	const savedData: Partial<PluginData> | null =
+		read.kind === "loaded" ? read.data : null;
+
+	// Before the load, not after. The baseline has to describe what is on
+	// **disk**, so that the convergence flush below still sees a difference and
+	// writes; seeding it from the post-load `toSaveData()` would claim the file
+	// already says what we are about to correct, and suppress the correction.
+	if (read.kind === "loaded") host.settingsWriter.adopt(read.json);
+
+	await host.settingsWriter.hold(async () => {
+		host.registry.load(savedData);
+
+		// Before the first inject, so the restored rows are in the sheet from
+		// the start — exactly as theme rows are.
+		const index = bootDiscoveryIndex(
+			host.registry,
+			host.localState,
+			savedData,
+		);
+
+		// A load-time migration that rewrote definitions is flushed right away,
+		// so the cleaned-up list survives the next reload rather than waiting on
+		// whatever incidental save happens to come first. `converged` is the
+		// same need for the discovered rows the file should stop carrying.
+		if (host.registry.needsSaveAfterLoad() || index.converged) {
+			await host.saveSettings();
+		}
+	});
+}
+
+/**
  * Read `data.json`, rebuild the registry from it, restore this device's
  * discovered rows, and flush once if any of that changed what should be on disk.
+ *
+ * The startup path. Its one behaviour the reload path does not share is what it
+ * does with a file it cannot read: at startup there is no earlier state to fall
+ * back on, so the registry comes up holding only the shipped built-ins — and the
+ * writer is **frozen**, because every save that registry could produce would
+ * replace a file we failed to understand with one we know to be wrong. The user
+ * is told, because they are about to notice their callouts missing and the one
+ * thing they need to know is that the file itself is intact.
  */
 export async function loadSettingsInto(
 	host: SettingsBootHost,
 ): Promise<SettingsBootResult> {
-	const savedData = (await host.loadData()) as Partial<PluginData> | null;
-	host.registry.load(savedData);
+	const read = await readSettingsFile(host);
 
-	// Before the first inject, so the restored rows are in the sheet from the
-	// start — exactly as theme rows are.
-	const index = bootDiscoveryIndex(host.registry, host.localState, savedData);
-
-	// A load-time migration that rewrote definitions is flushed right away, so
-	// the cleaned-up list survives the next reload rather than waiting on
-	// whatever incidental save happens to come first. `converged` is the same
-	// need for the discovered rows the file should stop carrying.
-	if (host.registry.needsSaveAfterLoad() || index.converged) {
-		await host.saveSettings();
+	if (read.kind === "unreadable") {
+		host.settingsWriter.freeze();
+		console.error(
+			"[callout-studio] data.json exists but could not be read; " +
+				"settings will not be written this session",
+		);
+		new Notice(t("notice.settingsUnreadable"), 0);
+		return { isFreshInstall: false };
 	}
 
-	return {
-		isFreshInstall:
-			savedData == null || Object.keys(savedData).length === 0,
-	};
+	await applySettingsRead(host, read);
+	return { isFreshInstall: read.kind === "absent" };
 }
-
 
 /** What adopting an external change needs on top of {@link SettingsBootHost}. */
 export interface ExternalReloadHost extends SettingsBootHost {
 	/** True exactly while the callout editor owns the registry. */
 	pruneSuspended: boolean;
-	settingsWriter: SettingsWriter;
 	/** @see registerThemeRowSync */
 	resyncThemeRows(): void;
 	customCommands: { syncAll(): void };
@@ -85,28 +152,61 @@ export interface ExternalReloadHost extends SettingsBootHost {
  * remove the row being edited underneath the user. The caller holds the answer
  * and calls again when the modal closes.
  *
- * Two things have to happen that no ordinary load needs:
+ * Three things have to happen that no ordinary load needs:
  *
- * - **The write guard's baseline is invalidated.** It is a claim about what
- *   *we* last wrote, and it has just stopped being true; leaving it standing
- *   lets a byte-identical comparison suppress the very write that would
- *   re-assert local state. See `utils/saveGuard.ts`.
+ * - **Our own write coming back is recognised and skipped.** Obsidian re-fires
+ *   the hook for saves we make ourselves: `Plugin._onConfigFileChange` assigns
+ *   `_lastDataModifiedTime = <the mtime it read before awaiting us>` *after*
+ *   this returns, rolling back the stamp `saveData` set during it. Comparing the
+ *   incoming file against the write guard's baseline settles that in a string
+ *   compare, instead of a full rebuild, CSS regeneration and repaint per save.
+ * - **The guard's baseline is re-seeded**, in `applySettingsRead`. It used to be
+ *   *cleared* here, on the reasoning that a baseline describing our own last
+ *   write is a lie once someone else has written the file. True, and the wrong
+ *   remedy: we have just read that file, so the baseline can be corrected rather
+ *   than discarded. Clearing it meant the reload's own `onChange` wrote the file
+ *   straight back at the device that sent it, and that device did the same in
+ *   return — the unbounded exchange that is the second half of issue #41.
  * - **The theme's overlay rows are re-derived.** `CalloutRegistry.load()`
  *   clears the callout map and those rows live in it; they are deliberately
  *   never persisted, so only a re-sweep brings them back — otherwise every
- *   theme-provided callout silently disappears until the next `css-change`.
+ *   theme-provided callout silently disappears until the next `css-change`, and
+ *   `customCommands.syncAll()` below, running against a registry that is missing
+ *   them, deletes the user's commands for those callouts and saves the deletion.
  */
 export async function adoptExternalSettings(
 	host: ExternalReloadHost,
 ): Promise<boolean> {
 	if (host.pruneSuspended || host.registry.hasPreviewDefinition()) return true;
 
-	host.settingsWriter.invalidate();
-	await loadSettingsInto(host);
-	host.resyncThemeRows();
-	// A command may point at a callout the incoming file does not define, or at
-	// one it has just introduced.
-	host.customCommands.syncAll();
+	const read = await readSettingsFile(host);
+
+	// Nothing usable arrived. Both cases keep the state we have and stay
+	// pending, because both are transient far more often than they are meant:
+	// `unreadable` is a file mid-write, and `absent` is the gap a sync client
+	// leaves while it renames the local copy aside to make room for the remote
+	// one. Adopting either would mean wiping every callout to answer a question
+	// nobody asked. A retry costs nothing — the write that follows fires the
+	// hook again.
+	if (read.kind !== "loaded") {
+		console.warn(
+			`[callout-studio] ignoring an external data.json change: ${read.kind}`,
+		);
+		return true;
+	}
+
+	// Our own write, arriving back through the watcher.
+	if (host.settingsWriter.matchesLastWrite(read.json)) return false;
+
+	await host.settingsWriter.hold(async () => {
+		await applySettingsRead(host, read);
+		host.resyncThemeRows();
+		// A command may point at a callout the incoming file does not define, or
+		// at one it has just introduced. After the theme sweep above, never
+		// before it — see the third bullet.
+		host.customCommands.syncAll();
+	});
+
 	host.refreshCallouts();
 	if (host.settingsTab?.containerEl.isConnected) host.settingsTab.display();
 	return false;

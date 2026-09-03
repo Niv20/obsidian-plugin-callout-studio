@@ -210,7 +210,7 @@ export class CalloutDiscovery {
 		if (markFirstRun) {
 			this.host.localState.completeFirstRun();
 		}
-		await this.host.saveSettings();
+		if (added > 0) await this.host.saveSettings();
 		this.host.refreshCallouts();
 		return added;
 	}
