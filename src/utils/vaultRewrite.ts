@@ -38,7 +38,7 @@ import { t } from "../i18n";
  *   notes were left alone. See `internals-docs/22-logging-and-diagnostics.md` —
  *   a swallowed failure with no user-visible trace is what that doc rules out.
  */
-export async function forEachVaultFile(
+async function forEachVaultFile(
 	app: App,
 	visit: (file: TFile) => Promise<void>,
 ): Promise<void> {
