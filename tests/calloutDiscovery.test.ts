@@ -787,11 +787,16 @@ describe("runVaultScan", () => {
 		);
 	});
 
-	it("saves and refreshes even when it found nothing", async () => {
-		// The user pressed a button; the settings list has to redraw either way.
+	it("refreshes when it found nothing, but writes nothing", async () => {
+		// The user pressed a button, so the settings list has to redraw either
+		// way — that was always this test's point. The save is the part that
+		// changed: a scan that added no row has nothing to tell `data.json`,
+		// and everything else the scan touches (the discovered-id index, the
+		// first-run flag) lives in localStorage. On a synced vault an empty
+		// write is still a file event, which is what issue #41 is made of.
 		const h = discoveryHarness({ "a.md": "> [!note] known" });
 		assert.strictEqual(await h.discovery.runVaultScan(), 0);
-		assert.strictEqual(h.saves(), 1);
+		assert.strictEqual(h.saves(), 0);
 		assert.strictEqual(h.refreshes(), 1);
 	});
 
