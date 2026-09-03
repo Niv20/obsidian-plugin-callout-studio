@@ -261,6 +261,12 @@ See [`theme/retiredThemeIds.ts`](../src/manager/theme/retiredThemeIds.ts).
 `clearRediscoverySuppression()` first — a user asking for a scan means nothing
 should be held back from it, even something deleted seconds ago.
 
+It saves only when it actually added a row. Everything else it touches — the
+device-local discovered index, the first-run flag — lives in `localStorage`, so
+a scan that found nothing has nothing to tell `data.json`, and on a synced vault
+an empty write is still a file event. It always refreshes, though: the user
+pressed a button and the settings list has to redraw either way.
+
 ### Pruning unused fallback rows
 
 ```ts

@@ -289,6 +289,13 @@ toSaveData(): PluginData
   [Persistence § multi-device sync](07-persistence-and-caching.md#multi-device-sync).
 - `materialSvgCache` is deliberately never written back — legacy entries were
   folded into `iconSvgCache` on load, and writing both would let them drift.
+- `iconSvgCache` is written **sorted**, by
+  [`manager/iconSvgCacheOrder.ts`](../src/manager/iconSvgCacheOrder.ts). In
+  memory it is appended to in fetch order, which is per machine; on disk that
+  made two synced devices holding identical artwork serialize byte-different
+  files, and so rewrite each other's `data.json` forever. See
+  [Persistence § multi-device sync](07-persistence-and-caching.md#multi-device-sync)
+  property 5.
 
 > [!CAUTION]
 > A modified built-in and a user-created callout are equally "real, authored
