@@ -16,6 +16,7 @@ import type {
 	UserImageIcon,
 } from "../types";
 import { CALLOUT_RENDER_ROLES } from "../types";
+import { persistedIconSvgCache } from "./iconSvgCacheOrder";
 import {
 	DEFAULT_CALLOUTS,
 	DEFAULT_SETTINGS,
@@ -592,8 +593,7 @@ export class CalloutRegistry {
 			// entries were folded into `iconSvgCache` on load, and writing both
 			// would let them drift apart. Downgrading to a pre-2.4 build simply
 			// re-downloads the Material SVGs.
-			iconSvgCache:
-				this.iconSvgCache.length > 0 ? this.iconSvgCache : undefined,
+			iconSvgCache: persistedIconSvgCache(this.iconSvgCache),
 		};
 	}
 
