@@ -132,6 +132,14 @@ function harness(
 			getMarkdownFiles: () => handles,
 			read,
 			cachedRead: read,
+			getAbstractFileByPath: (path: string) =>
+				handles.find((h) => h.path === path) ?? null,
+			// The vault rewriters go through `process`, which owns the pair.
+			process: (f: { path: string }, fn: (data: string) => string) => {
+				const next = fn(store.get(f.path) ?? "");
+				store.set(f.path, next);
+				return Promise.resolve(next);
+			},
 			modify: (f: { path: string }, data: string) => {
 				store.set(f.path, data);
 				return Promise.resolve();

@@ -35,6 +35,16 @@ function fakeApp(files: Record<string, string>): {
 			getMarkdownFiles: () => handles,
 			read,
 			cachedRead: read,
+			// The writers go through `process`, which owns the read/write pair;
+			// the fake keeps the same identity contract the real vault has, so
+			// the staleness guard in `forEachVaultFile` resolves each handle.
+			getAbstractFileByPath: (path: string) =>
+				handles.find((h) => h.path === path) ?? null,
+			process: (file: { path: string }, fn: (data: string) => string) => {
+				const next = fn(store.get(file.path) ?? "");
+				store.set(file.path, next);
+				return Promise.resolve(next);
+			},
 			modify: (file: { path: string }, data: string) => {
 				store.set(file.path, data);
 				return Promise.resolve();
