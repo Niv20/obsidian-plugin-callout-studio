@@ -39,5 +39,13 @@ Afterwards the row is still in your list, ready to use again.
 
 Turning a customized built-in callout back to its original look, without touching any of its usages in your notes, is a different action - see [Resetting callouts and settings](13-resetting-callouts-and-settings.md). Which callouts your theme owns in the first place is explained in [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md).
 
+## While your notes are being updated
+
+Renaming, replacing and deleting all rewrite the notes that use the callout, and on a large vault that takes a moment. You can keep working while it runs — each note is updated as one atomic step against whatever is on disk at that instant, so a paragraph you type mid-way through is not overwritten by the update.
+
+Notes that don't use the callout are not touched at all, and are never even opened for writing — so nothing needless is handed to Sync.
+
+If a note genuinely can't be updated — it was deleted moments earlier, or Sync has it locked — that note is skipped and the rest still go through. You'll get a notice saying how many were left alone, and those notes keep their original text; re-running the same action later picks them up.
+
 ---
 **Next:** [Vault insights and maintenance](10-vault-insights-and-maintenance.md)

@@ -6,7 +6,7 @@
  * is deliberate, and the notes have not caught up yet":
  *
  * - **An explicit delete, seconds ago.** Deleting a callout rewrites its vault
- *   usages with `vault.modify`, but an open editor's CodeMirror buffer catches
+ *   usages with `vault.process`, but an open editor's CodeMirror buffer catches
  *   up with that asynchronously — and `SettingsTab.display()`, which the delete
  *   calls synchronously on the very next line, scans exactly those buffers for
  *   unknown ids. Without the hold the row is re-created one tick after it was
