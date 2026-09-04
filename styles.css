@@ -4170,7 +4170,7 @@ input.cs-input-invalid:focus {
 .cs-gradient-dir-row {
 	display: flex;
 	gap: 4px;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 }
 .cs-gradient-dir-btn {
 	display: inline-flex;
@@ -4202,13 +4202,15 @@ input.cs-input-invalid:focus {
    column: `.is-phone …button:not(.clickable-icon) { width: 100% }` and
    `.is-tablet button:not(.clickable-icon) { padding: var(--size-4-1)
    var(--size-4-5) }` (4px 20px). Both outrank our base .cs-gradient-dir-btn
-   rule, so on phone/iPad the three arrows get smeared full-width / ballooned
-   and wrap into a vertical stack, while the 40px of forced horizontal padding
-   squeezes the centered 14px arrow out of its 26px box — the icons vanish.
-   Reassert our fixed square size and zero padding; doubling the
-   .cs-gradient-dir-btn class makes a 4-class selector that beats both core
-   rules without !important, and .is-mobile covers phone and tablet alike.
-   Desktop lacks these body classes, so it's untouched. */
+   rule, so on phone/iPad the three arrows get smeared full-width / ballooned,
+   while the 40px of forced horizontal padding squeezes the centered 14px
+   arrow out of its 26px box — the icons vanish. (The row's own
+   `flex-wrap: nowrap` above stops them stacking regardless, but without this
+   reassertion they'd still render oversized/blank.) Reassert our fixed
+   square size and zero padding; doubling the .cs-gradient-dir-btn class
+   makes a 4-class selector that beats both core rules without !important,
+   and .is-mobile covers phone and tablet alike. Desktop lacks these body
+   classes, so it's untouched. */
 .is-mobile .cs-gradient-dir-row .cs-gradient-dir-btn.cs-gradient-dir-btn {
 	width: 26px;
 	flex: 0 0 26px;
