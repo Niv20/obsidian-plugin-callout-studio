@@ -331,8 +331,16 @@ describe("toSaveData() — what reaches data.json", () => {
 	});
 
 	it("always writes settings, even with nothing else to write", () => {
+		// Equal, no longer the same object: the snapshot now carries the
+		// quarantined fields of a newer build alongside ours
+		// (manager/foreignFields.ts), which means building one. Nothing wanted
+		// the identity — a snapshot handed to `saveData` is serialized and
+		// dropped — and losing it costs a caller the ability to mutate live
+		// settings through it, which was never a good idea.
 		const { registry } = loaded(null);
-		assert.strictEqual(registry.toSaveData().settings, registry.settings);
+		const saved = registry.toSaveData();
+		assert.deepStrictEqual(saved.settings, registry.settings);
+		assert.notStrictEqual(saved.settings, registry.settings);
 	});
 
 	it("persists a built-in once it differs from its shipped default", () => {

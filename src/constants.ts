@@ -182,6 +182,23 @@ export const OBSIDIAN_CALLOUT_VAR: Readonly<Record<string, string>> =
 	});
 
 /**
+ * The shape number `data.json` carries.
+ *
+ * Bumped to 4 when the manual style mode was retired. Unlike the migrations
+ * around it — which key on content, because an imported or hand-edited file can
+ * carry any version it likes — the `source: "theme"` re-home in
+ * `styleModeMigration.ts` genuinely cannot be told from its own result, so it
+ * needs a durable "already done" marker and this is the one.
+ *
+ * It is also the one thing that can say a file came from a build newer than
+ * this one, which `manager/foreignFields.ts` reads to take the file off the
+ * table rather than write an older understanding of it back. Here rather than
+ * on the registry so that check does not have to import the class that imports
+ * it.
+ */
+export const CURRENT_DATA_VERSION = 4;
+
+/**
  * Default right-click menu layout per render role. Array order = menu order.
  * The settings loader merges saved lists against these (unknown ids dropped,
  * newly introduced ids appended), so extending a list here is upgrade-safe.

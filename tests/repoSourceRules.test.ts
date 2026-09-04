@@ -783,7 +783,17 @@ describe("no new oversized files", () => {
 		// they had always skipped), and which rows `data.json` may hold — above
 		// all why an unclaimed discovered row may not — to
 		// manager/discoveredRowPersistence.ts.
-		"src/manager/CalloutRegistry.ts": 1949,
+		// Raised from 1949 for the foreign-field quarantine: a field a NEWER
+		// build wrote is now set aside on load and handed back on save, so two
+		// devices on different versions stop rewriting `data.json` at each
+		// other forever. The rule and both key lists live in
+		// manager/foreignFields.ts; what is left here is the three places only
+		// this class can put them — the load that sets them aside, the save
+		// that hands them back, and the reset that throws them away with
+		// everything else. Most of that raise was paid straight back by moving
+		// CURRENT_DATA_VERSION to constants.ts, where the same check can read
+		// it without importing the class that imports the check.
+		"src/manager/CalloutRegistry.ts": 1958,
 		// Raised from 1184 for the same set, rejected in `validateIdString`.
 		// Same reasoning: "which id strings are valid on import" is the one
 		// thing this file is for, so the rule cannot move out of it without

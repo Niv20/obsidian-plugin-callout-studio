@@ -56,3 +56,14 @@ export function offerFreshStart(startFresh: () => void): void {
 		notice.hide();
 	});
 }
+
+/**
+ * A `data.json` written by a newer version of this plugin.
+ *
+ * No escape hatch, for the same reason `warnSettingsUnreadable` has none: the
+ * file is intact and the fix is to update the plugin, not to overwrite it with
+ * an older build's understanding of it.
+ */
+export function warnSettingsFromNewerVersion(): void {
+	new Notice(t("notice.settingsNewerVersion"), 0);
+}

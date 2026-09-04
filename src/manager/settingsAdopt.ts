@@ -29,6 +29,8 @@ import type { SettingsWriter } from "./SettingsWriter";
 import type { DeviceLocalStore } from "./DeviceLocalStore";
 import { bootDiscoveryIndex } from "./discoveryIndexBoot";
 import { readSettingsFile } from "./settingsFile";
+import { isFromNewerBuild } from "./foreignFields";
+import { warnSettingsFromNewerVersion } from "./settingsNotices";
 import { registryIsOwned } from "./registryOwnership";
 import type { SettingsFileHost, SettingsRead } from "./settingsFile";
 
@@ -63,6 +65,18 @@ export async function applySettingsRead(
 	// writes; seeding it from the post-load `toSaveData()` would claim the file
 	// already says what we are about to correct, and suppress the correction.
 	if (read.kind === "loaded") host.settingsWriter.adopt(read.json);
+
+	// A file from a build that knows more than this one. Everything below still
+	// runs — the user sees as much of their configuration as this version can
+	// read — but nothing may be written back over it. @see isFromNewerBuild
+	if (isFromNewerBuild(savedData)) {
+		host.settingsWriter.freeze();
+		console.error(
+			"[callout-studio] data.json was written by a newer version; " +
+				"settings will not be written this session",
+		);
+		warnSettingsFromNewerVersion();
+	}
 
 	await host.settingsWriter.hold(async () => {
 		host.registry.load(savedData);

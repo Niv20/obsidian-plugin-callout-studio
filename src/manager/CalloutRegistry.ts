@@ -18,6 +18,13 @@ import type {
 import { CALLOUT_RENDER_ROLES } from "../types";
 import { persistedIconSvgCache } from "./iconSvgCacheOrder";
 import {
+	collectForeignFields,
+	NO_FOREIGN_FIELDS,
+	withForeignSettings,
+	type ForeignFields,
+} from "./foreignFields";
+import {
+	CURRENT_DATA_VERSION,
 	DEFAULT_CALLOUTS,
 	DEFAULT_SETTINGS,
 	FALLBACK_ICON,
@@ -70,14 +77,6 @@ import { sortCalloutsByDisplayName } from "../utils/sorting";
  *
  * 3: `materialSvgCache` → `iconSvgCache` (generic across icon packs).
  */
-/**
- * Bumped to 4 when the manual style mode was retired. Unlike the migrations
- * around it — which key on content, because an imported or hand-edited file can
- * carry any version it likes — the `source: "theme"` re-home in
- * `styleModeMigration.ts` genuinely cannot be told from its own result, so it
- * needs a durable "already done" marker and this is the one.
- */
-const CURRENT_DATA_VERSION = 4;
 const SORTED_DEFAULT_CALLOUTS = sortCalloutsByDisplayName(DEFAULT_CALLOUTS);
 
 /** Identifier stamped into v2 export files so the importer can recognize them. */
@@ -171,6 +170,8 @@ export class CalloutRegistry {
 	private pendingLoadMigrationSave = false;
 	/** Palette merges from the last load, awaiting {@link takePaletteMerges}. */
 	private pendingPaletteMerges: Array<{ from: string; to: string }> = [];
+	/** What a newer build wrote and this one must hand back — see foreignFields. */
+	private foreign: ForeignFields = NO_FOREIGN_FIELDS;
 
 	constructor() {
 		this.settings = structuredClone(DEFAULT_SETTINGS);
@@ -201,6 +202,8 @@ export class CalloutRegistry {
 		this.callouts.clear();
 		this.pendingLoadMigrationSave = false;
 		this.pendingPaletteMerges = [];
+		// Before the early return below, so a load of nothing clears it too.
+		this.foreign = collectForeignFields(data);
 
 		// Always start with built-in defaults
 		for (const def of SORTED_DEFAULT_CALLOUTS) {
@@ -579,6 +582,9 @@ export class CalloutRegistry {
 
 	toSaveData(): PluginData {
 		return {
+			// First, so nothing a foreign build wrote can shadow a field this
+			// one owns. @see manager/foreignFields.ts
+			...this.foreign.data,
 			version: CURRENT_DATA_VERSION,
 			// Which rows the file may hold, and why an unclaimed discovered one
 			// may not — see manager/discoveredRowPersistence.ts.
@@ -588,7 +594,7 @@ export class CalloutRegistry {
 				customCommands: this.settings.customCommands,
 				builtInDefault: (id) => this.builtInDefaults.get(id),
 			}),
-			settings: this.settings,
+			settings: withForeignSettings(this.settings, this.foreign),
 			// `materialSvgCache` is deliberately not written back: the legacy
 			// entries were folded into `iconSvgCache` on load, and writing both
 			// would let them drift apart. Downgrading to a pre-2.4 build simply
@@ -1561,6 +1567,9 @@ export class CalloutRegistry {
 	}
 
 	resetAll(): void {
+		// A reset is the user saying "none of this is mine" — which goes for
+		// another build's fields as much as for their own callouts.
+		this.foreign = NO_FOREIGN_FIELDS;
 		this.callouts.clear();
 		for (const def of DEFAULT_CALLOUTS) {
 			this.setCallout(def.id, structuredClone(def));
