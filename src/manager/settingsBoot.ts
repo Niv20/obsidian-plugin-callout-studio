@@ -148,28 +148,14 @@ export async function loadSettingsInto(
 		return { isFreshInstall: false };
 	}
 
-	// No file, and no index either — so this really may be a first launch, and
-	// must be free to write. It may equally be a device this vault has only just
-	// reached, whose `data.json` is still in flight; nothing available *now*
-	// separates the two.
-	//
-	// So the launch itself creates nothing. Loading asks for a save like every
-	// other rebuild does — `registry.load()` alone fires one — and on a fresh
-	// install that save is pure ceremony: it writes the shipped defaults, which
-	// is precisely the payload that must never reach a device whose real
-	// settings are still arriving. Frozen across the load, that write is
-	// dropped; `guardFirstWrite` then takes the question to the first save that
-	// has something to say, which is far enough after startup for the file to
-	// have shown up if it was ever going to.
-	if (read.kind === "absent") {
-		host.settingsWriter.freeze();
-		await applySettingsRead(host, read);
-		host.settingsWriter.thaw();
-		return { isFreshInstall: true };
-	}
-
+	// No file, and no index either, so this really may be a first launch — and a
+	// first launch must be free to write, or the user's first callout is never
+	// saved. It may equally be a device this vault has only just reached, whose
+	// `data.json` is still in flight, and nothing available *now* separates the
+	// two. What separates them is time: see `manager/settingsLateArrival.ts`,
+	// which asks again at the last moment before a file would be created.
 	await applySettingsRead(host, read);
-	return { isFreshInstall: false };
+	return { isFreshInstall: read.kind === "absent" };
 }
 
 /** What adopting an external change needs on top of {@link SettingsBootHost}. */

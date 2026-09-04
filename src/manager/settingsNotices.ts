@@ -42,12 +42,13 @@ export function warnSettingsUnreadable(): void {
  */
 export function offerFreshStart(startFresh: () => void): void {
 	const frag = createFragment();
-	frag.createEl("p", { text: t("notice.settingsMissing") });
-	const action = frag.createEl("a", {
-		text: t("notice.settingsMissingAction"),
-		href: "#",
-		cls: "cs-notice-action",
-	});
+	frag.appendChild(createEl("p", { text: t("notice.settingsMissing") }));
+	const action = frag.appendChild(
+		createEl("a", {
+			text: t("notice.settingsMissingAction"),
+			cls: "cs-notice-action",
+		}),
+	);
 	const notice = new Notice(frag, 0);
 	action.addEventListener("click", (event) => {
 		event.preventDefault();
