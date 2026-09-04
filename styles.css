@@ -3271,18 +3271,28 @@ input.cs-input-invalid:focus {
 		max-height 0.3s ease;
 }
 
+/*
+ * max-height, not height: auto, so the reveal/collapse can transition (auto
+ * can't be animated) and the row still shrinks back to 0 the moment the
+ * class comes off. The ceiling has to clear three wrapped lines, not one:
+ * these one-sentence messages (duplicate palette name, duplicate ID, "You
+ * already have a command that does exactly this.") run longer in several
+ * locales than in English, and on a narrow mobile control column they wrap
+ * well before a desktop row would — a tight cap here clipped the wrapped
+ * line's last word instead of growing to show it.
+ */
 .cs-tag-error.is-visible {
 	opacity: 1;
 	min-height: 1.2em;
-	max-height: 2em;
+	max-height: 4.5em;
 	margin-top: 4px;
 }
 
 /*
  * The duplicate-color error stands alone in the palette editor's options
- * column rather than inside a setting's info block, so it needs room for the
- * sentence to wrap around its inline "use it instead" link — the 2em ceiling
- * above is sized for the one-line ID errors.
+ * column rather than inside a setting's info block, so it needs even more
+ * room than the base ceiling above: its sentence has to wrap around an
+ * inline "use it instead" link too.
  */
 .cs-palette-color-error.is-visible {
 	max-height: 6em;
