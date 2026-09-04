@@ -32,13 +32,16 @@ deferred (see the [`settings-getsettingdefinitions`](#) memory note if one
 exists in this project's history; functionally, this is a `[]` returned on
 purpose, not a stub someone forgot).
 
-### Three subscriptions, one coalesced refresh
+### Four subscriptions, one coalesced refresh
+
+They live in `settings/sections/tabSubscriptions.ts`, wired on the first
+`display()` and undone by the single disposer it returns:
 
 ```ts
-registry.onChange(sub)         → scheduleListRefresh()
-registry.onPreviewChange(sub)   → scheduleListRefresh()
-plugin.onIconCacheChange(cb)     → scheduleListRefresh()
-workspace.on("css-change", cb)    → scheduleListRefresh()   // theme-mode swatch colours
+registry.onChange(sub)          → scheduleListRefresh(false)
+registry.onPreviewChange(sub)    → scheduleListRefresh(true)
+plugin.onIconCacheChange(cb)      → scheduleListRefresh(true)
+workspace.on("css-change", cb)     → scheduleListRefresh(false)  // theme-mode swatch colours
 ```
 
 All four funnel into one `requestAnimationFrame`-coalesced refresh
@@ -50,10 +53,70 @@ editor's in-progress colour picks live, without the preview reaching
 `saveSettings()` or forcing a document-wide re-render — see
 [Callout registry § the transient live-preview slot](05-callout-registry.md#the-transient-live-preview-slot).
 
+Subscribed **once per visit, not per render.** `display()` re-runs for things
+the reader never asked for (see below), and re-subscribing on each would stack
+duplicate listeners for the life of the session.
+
+#### `force`, and why only two of the four carry it
+
+`refresh` compares a signature of everything it would draw
+(`sections/calloutListsSignature.ts`) and skips the rebuild when nothing moved.
+Two of the four signals describe changes that signature reads for itself; the
+other two describe changes it structurally **cannot** see, and those pass
+`force`:
+
+| Signal | `force` | Why |
+| --- | --- | --- |
+| `registry.onChange` | no | A real mutation, read straight off the registry |
+| `workspace.on("css-change")` | no | Moves the colour scheme, the theme's name and its measured appearances — all in the signature |
+| `registry.onPreviewChange` | **yes** | Registered transiently and *without* a registry mutation, by contract, so it may not be visible from the signature at all |
+| `plugin.onIconCacheChange` | **yes** | Artwork lives in a download cache keyed by icon name, so a definition naming a not-yet-downloaded icon is byte-identical to the one naming it a second later — guarding this would leave every spinner spinning for good |
+
+`force` is sticky across the coalescing frame: a frame that coalesced an icon
+landing with an unrelated `css-change` still honours the icon.
+
+The signature serialises **whole definitions**, not the fields a row happens to
+read today, and the module says why at length: a curated list is how the tenth
+field added later goes stale on screen. Both directions of failure are named
+there too — a signature that changes when nothing did costs one repaint the
+scroll anchor already hides, while one that fails to change leaves a stale row
+with nothing to catch it, so it errs toward including more.
+
+### The repaint must not move the page under the reader
+
+The tab renders **into Obsidian's own scroller** — `containerEl` *is*
+`.vertical-tab-content` — and the four sections that repaint asynchronously all
+sit above the other eleven. So every repaint above happens above the fold for
+anyone reading a section below it: rows appear and vanish, the whole theme
+section comes and goes with `cs-hidden`, and a theme row grows when the
+appearance probe lands it a swatch. Where the transient page comes out shorter
+than the offset the reader was at, the browser clamps it and the place is lost
+outright rather than merely shifted.
+
+Both async repaint paths therefore run inside
+`sections/foldAnchor.ts`'s `keepScrollAnchored` — `SettingsTab.refreshLists`
+and `CustomPalettesSection`'s 60 ms `css-change` debounce. It measures the
+topmost *direct child* of the container still on screen, runs the mutation, and
+hands the difference back to the scroller. Direct children are the right depth
+because they outlive the mutation: the repaints empty and refill containers
+nested inside the section wrappers, never the wrappers themselves.
+
+It is the same two-reads-and-one-write shape as `keepHeadingInPlace`
+([Folding a pinned heading](#folding-a-pinned-heading)), differing in two ways
+that matter — the anchor is chosen rather than handed in, and the correction
+runs in **both** directions, because content above the fold here can grow as
+well as shrink. It does not double-count Chromium's own scroll anchoring:
+reading the second measurement forces layout, so any adjustment the browser
+made has already landed and the drift measured is only the residual.
+
+Two things it deliberately does not touch: the **Load more** jump
+(`focusFirstRevealed`), which is an intended move, and the user-driven fold,
+which `keepHeadingInPlace` already anchors.
+
 ### `display()` also does two side-effecting things before rendering anything
 
 ```ts
-this.scanOpenEditorsForUnknownCallouts();
+scanOpenEditorsForUnknownCallouts(this.app, this.plugin);  // sections/openEditorDiscovery.ts
 this.plugin.schedulePruneUnusedFallbacks(0);
 ```
 
@@ -78,6 +141,24 @@ row from — see
 Once the tab is open it stays live off `registry.onChange` alone
 (`scheduleListRefresh`), so a discovery landing while the tab is on screen
 repaints the list on the next animation frame without a `display()`.
+
+### `display()` is not only run by someone opening the tab
+
+`manager/settingsBoot.ts`'s `adoptExternalSettings` re-runs it whenever another
+device's `data.json` lands — i.e. on every sync round trip — and
+`applyLocaleChange` does the same when a locale finishes downloading. Neither is
+a gesture the reader made, and `display()` empties the container, so both used
+to drop them at the top of a fifteen-section page mid-scroll **and** fold every
+list back to its first 20 rows. Two things answer that:
+
+- **Scroll.** `display()` reads `containerEl.scrollTop` on entry and writes it
+  back after the last section renders — last, because assigning past the end of
+  a still-short page would be clamped and lost. It is self-limiting rather than
+  stateful: a freshly opened pane is already at 0, so a genuine open restores
+  nothing and behaves exactly as it always has.
+- **Paging.** The cursors moved out of the controller closure and onto
+  `SettingsTab` — see
+  [Where the state lives, and how long](#where-the-state-lives-and-how-long).
 
 ### Section disposers
 
@@ -425,6 +506,15 @@ pinned. The measurement is guarded rather than assumed — the test DOM has no
 layout and therefore no `getBoundingClientRect`, and that absence is what
 makes the anchor inert there instead of throwing on every fold.
 
+`foldAnchor.ts` has a second export built on the same three lines,
+`keepScrollAnchored`, which anchors the *asynchronous repaints* rather than the
+click — see
+[The repaint must not move the page under the reader](#the-repaint-must-not-move-the-page-under-the-reader).
+The two differ in the direction they correct, and deliberately: this one returns
+early on a negative drift, because the browser's own `scrollTop` clamp has
+already handled the page getting shorter, while the repaint case has to correct
+both ways.
+
 ### The chevron hangs in the gutter
 
 A chevron inserted before the title would push the title along, and three
@@ -495,20 +585,31 @@ the callout lists it was written for.
 
 ### Where the state lives, and how long
 
-Both the fold and the page cursor are closure variables on the controller —
-one `PagingState` and one `SectionDisclosure` per section — which is what
-makes the sections independent and what makes them survive a repaint.
+One `PagingState` and one `SectionDisclosure` per section is what makes the
+sections independent and what makes them survive a repaint.
 `CalloutListsSection.ts`'s `refresh()` rebuilds every callout row on a
 registry change or a theme switch, and `CustomPalettesSection.ts`'s own
 `renderList()` does the same for palettes on a create, edit, delete or theme
 flip; in both cases a list the user expanded must not fold back up under them.
 
-The page cursor is session-only: rebuilding a section — `SettingsTab.display()`
-on every settings-tab visit, or opening `CustomPalettesSection.ts` fresh —
-starts a new `PagingState`, so every section reopens uncapped, behind its
-`Load more` button again if it was ever pressed. Nobody has asked to keep a
-whole vault's icon grid, or a whole vault's saved palettes, on screen by
-default, and paging past the cap is a cheap habit to reform.
+The page cursor is session-only, and *which* lifetime that means was a bug
+report: **"it keeps jumping back to the top and re-collapsing the view more
+callouts list."** The three callout-list cursors used to be closure variables on
+the controller — and a controller lives exactly one `display()`, which re-runs
+for things nobody asked for (above). Pressing **Load more** and then having
+another device's settings file land was enough to lose it.
+
+They are held by `SettingsTab` now (`freshPaging()`, in
+`sections/calloutListsSignature.ts`) and handed to the controller through
+`CreateCalloutListsControllerOptions.paging`, so a rebuild inherits them.
+`hide()` calls `freshPaging()` again, which is what keeps the cursor
+session-only in the sense that was always meant: a genuine reopen still starts
+every section back behind its `Load more` button. Nobody has asked to keep a
+whole vault's saved palettes on screen by default, and paging past the cap is a
+cheap habit to reform — but losing your place to a repaint you did not cause is
+not that. (Saved color palettes keeps its own single cursor in
+`CustomPalettesSection.ts`, which is rebuilt by the same `display()`; its
+`Load more` is one press on a much shorter list.)
 
 The **fold** is not session-only. `settings/sections/calloutListsFold.ts`
 mirrors each section's `SectionDisclosure` into

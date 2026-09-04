@@ -38,7 +38,10 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { createCalloutListsController } from "../src/settings/sections/CalloutListsSection";
+import {
+	createCalloutListsController,
+} from "../src/settings/sections/CalloutListsSection";
+import { freshPaging } from "../src/settings/sections/calloutListsSignature";
 import { LIST_PAGE_SIZE } from "../src/settings/sections/listPaging";
 import { installFakeDom } from "./support/fakeDom";
 import { readRepoFile } from "./support/sourceScan";
@@ -292,6 +295,7 @@ function addUserCallouts(registry: CalloutRegistry, count: number): void {
 function render(registry: CalloutRegistry, app: App, themeIds: string[]) {
 	const host: HTMLElement = createDiv();
 	const lists = createCalloutListsController(listsCtx(registry, app, themeIds), {
+		paging: freshPaging(),
 		onAddNewCallout: () => Promise.resolve(),
 		renderRow: (el, def) => {
 			el.createDiv({ cls: "callout-studio-row", text: def.id });

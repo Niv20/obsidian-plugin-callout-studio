@@ -28,48 +28,73 @@
  * ## Three sections, three folds, three cursors
  *
  * Each heading folds its own list (`sectionDisclosure`) and each list pages
- * its own overflow (`listPaging`). Both states live in this closure, which is
- * what makes them independent and what makes them survive a repaint: `refresh`
- * rebuilds every row on a registry change or a theme switch, and a list the
- * user had expanded must not quietly fold back up under them.
+ * its own overflow (`listPaging`). Both are per-section, which is what makes
+ * them independent, and both have to survive a repaint: `refresh` rebuilds
+ * every row on a registry change or a theme switch, and a list the user had
+ * expanded must not quietly fold back up under them.
  *
- * The fold is also written through to `settings.calloutListsExpanded`
- * (`calloutListsFold.ts`) on every user-driven toggle, so it survives past
- * this closure too — a settings-tab reopen or a plugin reload starts each
- * section from whatever the user last left it, not from expanded. The paging
- * cursor is deliberately not: it is session-only, reset by the same reopen.
+ * The fold is written through to `settings.calloutListsExpanded`
+ * (`calloutListsFold.ts`) on every user-driven toggle, so it survives a
+ * settings-tab reopen or a plugin reload — each section starts from whatever
+ * the user last left it, not from expanded.
+ *
+ * The paging cursor is deliberately not persisted: it is session-only, reset
+ * by that same reopen. But it is *held by `SettingsTab`* rather than by this
+ * closure, and the distinction is the bug it was: a controller lives one
+ * `display()`, and `display()` re-runs for things nobody asked for — another
+ * device's settings file arriving, a locale download — so a cursor kept in
+ * here folded an expanded list back to 20 rows mid-scroll. A reopen still
+ * resets it, because `hide()` is what clears it now. See `freshPaging`.
  *
  * The count in a heading is always the *partitioned* length, never the visible
  * slice — folding a section or leaving 20 of 34 rows on screen changes what is
  * drawn, not how many the user has.
  */
-import { Setting } from "obsidian";
 import { getLocale, t } from "../../i18n";
 import { sortCalloutsByDisplayName } from "../../utils/sorting";
 import { activeThemeName } from "../../manager/theme/customCssApi";
 import { partitionByStyleOwner, styleOwnerFacts } from "./rowOwnership";
 import type { RowKind } from "./rowOwnership";
 import { ensureThemeRowUsage } from "./themeRowUsage";
-import type { SectionDisclosure } from "./sectionDisclosure";
 import {
 	focusFirstRevealed,
 	headingWithCount,
 	renderPagedList,
 } from "./listPaging";
 import type { PagingState } from "./listPaging";
-import { attachPersistedFold } from "./calloutListsFold";
-import { createStickySection } from "./stickySection";
-import { WelcomeModal } from "../WelcomeModal";
+import { calloutListsSignature } from "./calloutListsSignature";
+import {
+	buildCalloutListsScaffold,
+	type CalloutListsScaffold,
+} from "./calloutListsScaffold";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
 
 export type CalloutListsController = {
 	render: (containerEl: HTMLElement) => void;
-	refresh: () => void;
+	/**
+	 * Redraw the three lists — unless nothing they draw has moved.
+	 *
+	 * `force` is for the two signals whose effect the signature structurally
+	 * cannot see; see `renderSignature` for which, and why.
+	 */
+	refresh: (force?: boolean) => void;
 };
 
 type CreateCalloutListsControllerOptions = {
 	onAddNewCallout: () => Promise<void>;
+	/**
+	 * One cursor per section, owned by the caller rather than by this closure.
+	 *
+	 * It used to live in here, which quietly tied "how far the user has paged
+	 * into a list" to the lifetime of a *controller* — and a controller is
+	 * rebuilt by every `display()`, including the ones nobody asked for (another
+	 * device's `data.json` landing, a locale download). A reader who pressed
+	 * **Load more** and kept scrolling had the list fold back to 20 rows
+	 * underneath them. The lifetime it should have been tied to all along is the
+	 * *visit*, which is `SettingsTab`'s to hold and to clear in `hide()`.
+	 */
+	paging: Record<RowKind, PagingState>;
 	renderRow: (
 		containerEl: HTMLElement,
 		def: CalloutDefinition,
@@ -81,24 +106,14 @@ export function createCalloutListsController(
 	ctx: SettingsSectionContext,
 	options: CreateCalloutListsControllerOptions,
 ): CalloutListsController {
-	let themeSetting: Setting | null = null;
-	let themeSectionEl: HTMLElement | null = null;
-	let themeDescEl: HTMLElement | null = null;
-	let themeListEl: HTMLElement | null = null;
-	let themeFold: SectionDisclosure | null = null;
-	let mySetting: Setting | null = null;
-	let subSectionEl: HTMLElement | null = null;
-	let userListEl: HTMLElement | null = null;
-	let userFold: SectionDisclosure | null = null;
-	let builtInListEl: HTMLElement | null = null;
-	let builtInFold: SectionDisclosure | null = null;
+	/** Null until `render` has built them — see `calloutListsScaffold`. */
+	let els: CalloutListsScaffold | null = null;
 
-	/** One cursor per section — see the header note on why they live here. */
-	const paging: Record<RowKind, PagingState> = {
-		theme: { expanded: false },
-		user: { expanded: false },
-		builtin: { expanded: false },
-	};
+	/** One cursor per section — see `CreateCalloutListsControllerOptions`. */
+	const paging = options.paging;
+
+	/** What the last completed render drew. `null` until there has been one. */
+	let lastSignature: string | null = null;
 
 	const themeLabel = (): string =>
 		activeThemeName(ctx.app) ?? t("settings.themeCalloutsDefaultTheme");
@@ -133,17 +148,18 @@ export function createCalloutListsController(
 	};
 
 	const renderThemeList = (fromTheme: CalloutDefinition[]): void => {
-		if (!themeSectionEl || !themeListEl) return;
+		if (!els) return;
+		const { themeSectionEl, themeDescEl, themeFold, themeListEl } = els;
 		// The heading names the *active* theme, so it is re-read on every render
 		// rather than once when the section is built. `renderAll` is the refresh
 		// path — it is what the tab's `css-change` listener reaches — and without
 		// this the heading went on naming the outgoing theme while the rows under
 		// it already showed the incoming one. The built-in list's empty state
 		// below does re-read it, so the two contradicted each other on one screen.
-		themeDescEl?.setText(
+		themeDescEl.setText(
 			t("settings.themeCalloutsDesc", { theme: themeLabel() }),
 		);
-		themeFold?.setName(
+		themeFold.setName(
 			headingWithCount(t("settings.themeCalloutsHeading"), fromTheme.length),
 		);
 		themeListEl.empty();
@@ -159,16 +175,17 @@ export function createCalloutListsController(
 		// The divider above "My callout types" only earns its keep when the
 		// theme section above it is actually on screen — otherwise it would be
 		// the first thing under the plugin title, with nothing to separate it from.
-		subSectionEl?.toggleClass("cs-section-divider", has);
+		els.subSectionEl.toggleClass("cs-section-divider", has);
 		if (!has) return;
 		renderList(themeListEl, fromTheme, "theme");
 	};
 
 	const renderUserList = (own: CalloutDefinition[]): void => {
-		userFold?.setName(
+		if (!els) return;
+		const { userFold, userListEl } = els;
+		userFold.setName(
 			headingWithCount(t("settings.myCalloutTypes"), own.length),
 		);
-		if (!userListEl) return;
 		userListEl.empty();
 		if (own.length === 0) {
 			emptyState(userListEl, t("settings.noCalloutsNow"));
@@ -178,10 +195,11 @@ export function createCalloutListsController(
 	};
 
 	const renderBuiltInList = (builtIn: CalloutDefinition[]): void => {
-		builtInFold?.setName(
+		if (!els) return;
+		const { builtInFold, builtInListEl } = els;
+		builtInFold.setName(
 			headingWithCount(t("settings.builtInCallouts"), builtIn.length),
 		);
-		if (!builtInListEl) return;
 		builtInListEl.empty();
 		if (builtIn.length === 0) {
 			emptyState(
@@ -193,8 +211,22 @@ export function createCalloutListsController(
 		renderList(builtInListEl, builtIn, "builtin");
 	};
 
-	const renderAll = (): void => {
+	const renderAll = (force = false): void => {
 		const { fromTheme, own, builtIn } = partition();
+
+		// Nothing that would be drawn has moved, so drawing it again would only
+		// cost the reader their place. `force` is the escape for the two signals
+		// this cannot see — see `calloutListsSignature`.
+		const signature = calloutListsSignature(
+			ctx,
+			paging,
+			themeLabel(),
+			getLocale(),
+			{ theme: fromTheme, user: own, builtin: builtIn },
+		);
+		if (!force && signature === lastSignature) return;
+		lastSignature = signature;
+
 		renderThemeList(fromTheme);
 		renderUserList(own);
 		renderBuiltInList(builtIn);
@@ -215,84 +247,11 @@ export function createCalloutListsController(
 
 	return {
 		render: (containerEl: HTMLElement) => {
-			const headerSetting = new Setting(containerEl)
-				.setName(t("settings.title"))
-				.setHeading();
-			headerSetting.settingEl.addClass("cs-header-row");
-			// Info icon opposite the title — reopens the welcome/splash screen.
-			headerSetting.addExtraButton((btn) =>
-				btn
-					.setIcon("info")
-					.setTooltip(t("welcome.tooltip"))
-					.onClick(() => new WelcomeModal(ctx.plugin).open()),
-			);
-
-			// First, because it is the group the user has the least idea exists.
-			// The description is left to `renderThemeList`, which is on both the
-			// build and the refresh path, so the theme's name has exactly one
-			// place it is written from.
-			const theme = createStickySection(
+			els = buildCalloutListsScaffold(
+				ctx,
 				containerEl,
-				t("settings.themeCalloutsHeading"),
+				options.onAddNewCallout,
 			);
-			themeSetting = theme.setting;
-			themeSetting.settingEl.addClass("cs-subheader-row");
-			// The wrapper, not the heading. The section disappears whole when the
-			// theme styles nothing (see `renderThemeList`), and hiding the wrapper
-			// takes the heading and its rows with it in one toggle — which is also
-			// what keeps `cs-hidden` and the fold's `is-collapsed` off the same
-			// element, so neither can undo the other.
-			themeSectionEl = theme.wrapEl;
-			// A plain row, not part of the sticky heading above it, so naming the
-			// active theme scrolls off like any other row instead of pinning with it.
-			themeDescEl = theme.wrapEl.createEl("p", {
-				cls: "setting-item-description cs-theme-desc",
-			});
-			themeListEl = theme.wrapEl.createDiv();
-			themeFold = attachPersistedFold(themeSetting, themeListEl, "theme", ctx.plugin);
-
-			const my = createStickySection(
-				containerEl,
-				t("settings.myCalloutTypes"),
-			);
-			mySetting = my.setting;
-			mySetting.settingEl.addClass("cs-subheader-row");
-			// Same divider the "Built-in callouts" section gets below, so the
-			// theme-owned group above reads as visually separate from this one
-			// when that group is on screen. `renderThemeList` toggles it in step
-			// with the theme section's own visibility. On the wrapper rather than
-			// the heading — styles.css says why a heading that pins cannot carry
-			// its own divider.
-			subSectionEl = my.wrapEl;
-			mySetting.addButton((btn) =>
-				btn
-					.setButtonText(t("settings.addNewCallout"))
-					.setCta()
-					.onClick(() => {
-						void options.onAddNewCallout();
-					}),
-			);
-
-			userListEl = my.wrapEl.createDiv();
-			userFold = attachPersistedFold(mySetting, userListEl, "user", ctx.plugin);
-
-			// No `cs-subheader-row` here on purpose: this heading is a size larger
-			// than the two above it, and that class is what sets their smaller
-			// type. The chevron layout rides on `cs-collapsible-heading` instead,
-			// which all three headings get from `attachSectionDisclosure`.
-			const builtIn = createStickySection(
-				containerEl,
-				t("settings.builtInCallouts"),
-			);
-			// Its divider is unconditional — set here because the generic heading
-			// rule that used to supply it no longer reaches a wrapped heading. And
-			// it is the last one: the gap under a section is kept inside it so the
-			// heading stays pinned across it, and this one has nothing to hand over
-			// to, so it lets go with its own last row instead.
-			builtIn.wrapEl.addClass("cs-section-divider", "cs-sticky-section-last");
-			builtInListEl = builtIn.wrapEl.createDiv();
-			builtInFold = attachPersistedFold(builtIn.setting, builtInListEl, "builtin", ctx.plugin);
-
 			renderAll();
 		},
 		refresh: renderAll,

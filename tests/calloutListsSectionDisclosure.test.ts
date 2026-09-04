@@ -25,7 +25,10 @@ import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import type { CalloutListsFoldState } from "../src/types";
-import { createCalloutListsController } from "../src/settings/sections/CalloutListsSection";
+import {
+	createCalloutListsController,
+} from "../src/settings/sections/CalloutListsSection";
+import { freshPaging } from "../src/settings/sections/calloutListsSignature";
 import { LIST_PAGE_SIZE } from "../src/settings/sections/listPaging";
 import { installFakeDom } from "./support/fakeDom";
 import { readRepoFile } from "./support/sourceScan";
@@ -144,6 +147,7 @@ function render(
 	const ctx = listsCtx(registry, app, themeIds, localState);
 	const host: HTMLElement = createDiv();
 	const lists = createCalloutListsController(ctx, {
+		paging: freshPaging(),
 		onAddNewCallout: () => Promise.resolve(),
 		renderRow: (el, def) => {
 			el.createEl("code", {
