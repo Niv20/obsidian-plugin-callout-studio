@@ -20,7 +20,7 @@ A list longer than twenty rows shows the first twenty and a **Load more** button
 
 The count beside a heading is always the **total**. It does not change when you fold the section or when rows are still behind **Load more**.
 
-Folding is remembered — close the settings tab, or restart Obsidian, and each section comes back exactly as you left it. **Load more** is not: every list opens capped at twenty again the next time you visit.
+Folding is remembered — close the settings tab, or restart Obsidian, and each section comes back exactly as you left it. **Load more** is not: every list opens capped at twenty again the next time you visit. It does hold for as long as you stay on the tab, though — a list you have opened up stays open even if the settings redraw themselves while you are reading, which they can do on their own when a theme changes or another device syncs a change across.
 
 ## The heading stays with you while you scroll
 
