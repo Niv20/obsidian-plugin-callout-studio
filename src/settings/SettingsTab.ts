@@ -118,12 +118,14 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		containerEl.empty();
 		containerEl.addClass("callout-studio-settings");
 
-		scanOpenEditorsForUnknownCallouts(this.app, this.plugin);
-		this.plugin.schedulePruneUnusedFallbacks(0);
+		// Two things below are owed to a *visit*, not a render: `display()`
+		// re-runs for a synced settings file or a locale download, and neither
+		// may stack a listener or skip the prune floor. See internals-docs/15.
+		const visit = this.unsubscribe === null;
 
-		// Once per visit, not per render: `display()` re-runs for things the
-		// reader did not ask for, and re-subscribing on each would stack
-		// duplicate listeners for the life of the session.
+		scanOpenEditorsForUnknownCallouts(this.app, this.plugin);
+		this.plugin.schedulePruneUnusedFallbacks(visit ? 0 : undefined);
+
 		this.unsubscribe ??= subscribeSettingsTab(
 			this.app,
 			this.plugin,
