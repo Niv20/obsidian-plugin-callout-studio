@@ -30,6 +30,7 @@ import type { DeviceLocalStore } from "./DeviceLocalStore";
 import { bootDiscoveryIndex } from "./discoveryIndexBoot";
 import { readSettingsFile } from "./settingsFile";
 import { offerFreshStart, warnSettingsUnreadable } from "./settingsNotices";
+import { watchForLateSettings } from "./settingsLateArrival";
 import type { SettingsFileHost, SettingsRead } from "./settingsFile";
 
 /** What the load needs from the plugin. */
@@ -150,6 +151,9 @@ export async function loadSettingsInto(
 			host.settingsWriter.thaw();
 			void host.saveSettings();
 		});
+		// The file may yet come back on its own, and adopting it is a far better
+		// outcome than the user starting over.
+		watchForLateSettings(host);
 		return { isFreshInstall: false };
 	}
 
@@ -158,7 +162,9 @@ export async function loadSettingsInto(
 	// saved. It may equally be a device this vault has only just reached, whose
 	// `data.json` is still in flight, and nothing available *now* separates the
 	// two. What separates them is time: see `manager/settingsLateArrival.ts`,
-	// which asks again at the last moment before a file would be created.
+	// which asks again at the last moment before a file would be created, and
+	// keeps watching for the rest of the session.
+	if (read.kind === "absent") watchForLateSettings(host);
 	await applySettingsRead(host, read);
 	return { isFreshInstall: read.kind === "absent" };
 }
@@ -172,6 +178,16 @@ export interface ExternalReloadHost extends SettingsBootHost {
 	customCommands: { syncAll(): void };
 	refreshCallouts(): void;
 	settingsTab?: { containerEl: { isConnected: boolean }; display(): void };
+	/**
+	 * Obsidian's `Plugin.registerDomEvent`, so a launch that found no settings
+	 * can keep watching for them — see `manager/settingsLateArrival.ts`.
+	 * Optional because a test harness is not a plugin.
+	 */
+	registerDomEvent?: (
+		el: Document,
+		type: "visibilitychange",
+		callback: () => void,
+	) => void;
 }
 
 /**

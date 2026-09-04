@@ -70,3 +70,64 @@ export async function stillFreshInstall(
 	await reloadFrom(host, read);
 	return false;
 }
+
+/**
+ * Keep looking for a `data.json` that startup did not find, and adopt it the
+ * moment it lands.
+ *
+ * Registered by `loadSettingsInto` for both launches that came up without a
+ * usable settings file — the frozen one, where a device that has run here
+ * before found its file missing, and the fresh-install one, where the file may
+ * simply not have arrived yet.
+ *
+ * `stillFreshInstall` covers the narrow window between `onload` and the first
+ * write. This covers the rest of the session, which on mobile is otherwise
+ * uncovered entirely: Obsidian's config-folder watcher is desktop-only, so a
+ * phone that starts without settings never hears about them arriving and will
+ * happily run all day describing callouts the user does not have.
+ *
+ * Returning to the app is the signal, because that is when a sync client has
+ * most likely just run. It is a single small read, and it stops at the first
+ * file it manages to adopt.
+ *
+ * **Adopting also thaws the writer.** A freeze is the guess that the missing
+ * file is coming back; when it does come back there is nothing left to guess
+ * about, and the baseline now describes the file on disk, so the session can
+ * safely save again. That is the one automatic path to `thaw()`, and it is
+ * reached only with the real file in hand — never on a hunch.
+ */
+export function watchForLateSettings(host: ExternalReloadHost): void {
+	// Absent on a test harness, and on any host that is not a real plugin.
+	if (!host.registerDomEvent) return;
+
+	let settled = false;
+	host.registerDomEvent(activeDocument, "visibilitychange", () => {
+		// Only skip when we positively know the app is going away: the event
+		// fires for both directions, and coming back is the half worth acting
+		// on. Anything other than a definite "hidden" is worth a look.
+		if (settled || activeDocument.visibilityState === "hidden") return;
+		void adoptIfArrived();
+	});
+
+	async function adoptIfArrived(): Promise<void> {
+		const read = await readSettingsFile(host);
+		// Still nothing, or still not readable. Quietly wait for the next time
+		// the user comes back — this fires on every foreground, so anything
+		// said here would be said hundreds of times.
+		if (read.kind !== "loaded") return;
+
+		// Our own writing, which means this session was never waiting.
+		if (host.settingsWriter.matchesLastWrite(read.json)) {
+			settled = true;
+			return;
+		}
+
+		// The editor owns the registry right now; rebuilding under it would
+		// change the row being edited. Try again next time.
+		if (host.pruneSuspended || host.registry.hasPreviewDefinition()) return;
+
+		settled = true;
+		host.settingsWriter.thaw();
+		await reloadFrom(host, read);
+	}
+}

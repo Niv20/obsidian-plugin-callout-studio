@@ -85,6 +85,9 @@ function phone(name: string, disk: Disk) {
 		workspace: { activeEditor: null },
 	} as unknown as App;
 
+	// The foreground listener the plugin registers, captured so a test can fire
+	// it — this stands in for the user coming back to the app.
+	let foreground: (() => void) | null = null;
 	const registry = new CalloutRegistry();
 	const localState = new DeviceLocalStore(app);
 	const writer = new SettingsWriter({
@@ -125,6 +128,9 @@ function phone(name: string, disk: Disk) {
 		resyncThemeRows: () => undefined,
 		customCommands: { syncAll: () => undefined },
 		refreshCallouts: () => undefined,
+		registerDomEvent: (_el, _type, callback) => {
+			foreground = callback;
+		},
 	};
 
 	return {
@@ -134,6 +140,14 @@ function phone(name: string, disk: Disk) {
 		writer,
 		boot: () => loadSettingsInto(host),
 		save: () => writer.save(),
+		/** The user switches back to Obsidian. */
+		returnToApp: async () => {
+			foreground?.();
+			// The listener is sync and starts an async adopt; let it finish.
+			await new Promise((r) => setImmediate(r));
+			await new Promise((r) => setImmediate(r));
+		},
+		watching: () => foreground !== null,
 	};
 }
 
@@ -352,5 +366,94 @@ describe("the way out of a frozen session", () => {
 			(disk.content ?? "").includes("starting-over"),
 			"the user's callout was not saved",
 		);
+	});
+});
+
+describe("waiting for settings that arrive during the session", () => {
+	it("adopts them on a device that booted with the file missing", async () => {
+		// Case A, recovering by itself. The phone froze at startup because its
+		// settings file was gone; sync finishes while the user is away, and
+		// coming back is enough to put everything right without a restart.
+		storage.clear();
+		const disk = vaultWithUserCallouts();
+		const settingsOnDisk = disk.content;
+
+		const first = phone("phone", disk);
+		await first.boot();
+
+		disk.content = null;
+		const second = phone("phone", disk);
+		await second.boot();
+		assert.ok(second.watching(), "nothing was watching for the file");
+		assert.ok(!second.registry.get("insight"), "started without the callouts");
+
+		// Sync catches up while Obsidian is in the background.
+		disk.content = settingsOnDisk;
+		await second.returnToApp();
+
+		assert.ok(second.registry.get("insight"), "the file was not adopted");
+		assert.strictEqual(disk.writes, 0, "adopting wrote something back");
+
+		// And the session can save again, because the file is real now.
+		second.registry.add(authored("made-after-recovery"));
+		await second.save();
+		assert.ok(disk.writes > 0, "still frozen after the file came back");
+	});
+
+	it("adopts them on a brand-new device rather than overwriting", async () => {
+		// Case B, past the welcome window. A device the vault has only just
+		// reached, whose data.json turns up minutes later. On mobile nothing
+		// else is watching, so without this the phone would keep its
+		// built-ins-only registry and publish it at the next save.
+		storage.clear();
+		const disk = new Disk();
+		const p = phone("new-phone", disk);
+		await p.boot();
+
+		const arrived = vaultWithUserCallouts();
+		disk.content = arrived.content;
+		await p.returnToApp();
+
+		assert.ok(p.registry.get("insight"), "the arriving file was not adopted");
+		assert.ok(p.registry.get("warning-plus"));
+		assert.strictEqual(disk.writes, 0, "wrote over the file that arrived");
+
+		// A save now carries the real settings forward, not the defaults.
+		p.registry.add(authored("added-later"));
+		await p.save();
+		assert.ok((disk.content ?? "").includes("insight"), "lost the real ones");
+	});
+
+	it("says nothing and changes nothing while the file is still missing", async () => {
+		// This fires on every single foreground, so it has to be silent and
+		// cheap when there is nothing to do.
+		storage.clear();
+		const disk = new Disk();
+		const p = phone("new-phone", disk);
+		await p.boot();
+
+		await p.returnToApp();
+		await p.returnToApp();
+
+		assert.strictEqual(disk.writes, 0);
+		assert.strictEqual(disk.content, null);
+	});
+
+	it("leaves the registry alone while the callout editor is open", async () => {
+		storage.clear();
+		const disk = new Disk();
+		const p = phone("new-phone", disk);
+		await p.boot();
+
+		p.host.pruneSuspended = true;
+		const arrived = vaultWithUserCallouts();
+		disk.content = arrived.content;
+		await p.returnToApp();
+		assert.ok(!p.registry.get("insight"), "rebuilt under the open editor");
+
+		// Closing it, the next return picks the file up.
+		p.host.pruneSuspended = false;
+		await p.returnToApp();
+		assert.ok(p.registry.get("insight"), "never retried after the editor closed");
 	});
 });
