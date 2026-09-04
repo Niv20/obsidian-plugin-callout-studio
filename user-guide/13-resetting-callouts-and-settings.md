@@ -42,5 +42,27 @@ This single action returns the whole plugin to its factory state in one step:
 
 Because this affects the entire plugin at once, use it only when you genuinely want to start fresh - not when you only meant to undo one field or one callout type. If you're unsure which level you need, it's worth pausing: **Reset everything** cannot be limited to part of your setup, so it's the one to reach for last, not first.
 
+## If your callout types disappear
+
+Everything above is a reset you asked for. This section is about the one you didn't.
+
+Callout Studio keeps your callout types in a single settings file inside your vault. If you sync your vault, that file travels like any other - and a sync client can be caught mid-delivery, with the file briefly missing or only half-written. A phone is the most common place to notice, because it often opens a vault while the sync is still catching up.
+
+When Callout Studio starts and finds its settings file missing or unreadable, it does **not** treat that as an empty setup. It shows a notice, leaves the file completely alone, and writes nothing at all for the rest of that session. Your callout types will be missing from the list while that notice is up, but the file on disk still has them.
+
+**What to do:** let the sync finish, then reload Obsidian. That's usually all it takes.
+
+The one case where the file really is gone for good is when you deleted it yourself to start over. For that, the notice offers **Start fresh on this device**, which lets Callout Studio save again from that point on. Only use it if you know the file isn't coming back - once Callout Studio starts writing, it writes what it currently has, which is the built-in callout types and nothing else.
+
+### If your callout types were already lost
+
+If a sync has already replaced your settings with the defaults, stop and check these before changing anything, in this order.
+
+1. **Don't open Obsidian on your other devices yet.** The most complete copy of your setup lives on a device that hasn't loaded the plugin since the loss.
+2. **Copy your settings file somewhere safe** from `.obsidian/plugins/callout-studio/data.json`. Even when the callout types are gone from it, it can still hold your saved icon artwork and color palettes - and that goes away the moment you save any callout type.
+3. **Look for an exported backup.** If you ever used **Settings → Import / export**, you may have `callout-studio-export.json` in your Downloads folder, or a `callout-studio-custom.css` in your vault's `.obsidian/snippets/` folder. Either one restores a great deal.
+4. **Check your sync tool's file history.** Obsidian Sync keeps version history, and Syncthing keeps replaced files in a `.stversions` folder. A settings file from before the loss can be restored from there.
+5. **If you came from Callout Manager or Admonition** and haven't deleted their folders, **Settings → Import / export → Import** still reads them directly, even with those plugins disabled.
+
 ---
 **Next:** [Icons in depth](14-icons-in-depth.md)

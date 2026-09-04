@@ -336,6 +336,9 @@ export const en: Record<string, string> = {
 		"{{count}} note(s) could not be updated and were left unchanged. See the developer console for details.",
 	"notice.settingsUnreadable":
 		"Callout Studio could not read its settings file, so your callout types are missing from this session. Nothing has been written and the file on disk is unchanged \u2014 reload Obsidian to try again.",
+	"notice.settingsMissing":
+		"Callout Studio's settings file is missing, so your callout types are missing from this session. Nothing has been written — if you sync this vault, let the sync finish and reload Obsidian before making any changes.",
+	"notice.settingsMissingAction": "Start fresh on this device",
 	"notice.nothingToWrap": "Nothing to wrap.",
 	"notice.cursorNotInsideCallout": "Cursor is not inside a callout.",
 	"notice.autocompleteTargetMoved":
