@@ -104,13 +104,18 @@ async function applySettingsRead(
  * Read `data.json`, rebuild the registry from it, restore this device's
  * discovered rows, and flush once if any of that changed what should be on disk.
  *
- * The startup path. Its one behaviour the reload path does not share is what it
- * does with a file it cannot read: at startup there is no earlier state to fall
+ * The startup path. What it does not share with the reload path is how it
+ * handles a file it cannot use: at startup there is no earlier state to fall
  * back on, so the registry comes up holding only the shipped built-ins — and the
  * writer is **frozen**, because every save that registry could produce would
  * replace a file we failed to understand with one we know to be wrong. The user
  * is told, because they are about to notice their callouts missing and the one
  * thing they need to know is that the file itself is intact.
+ *
+ * A file that is *missing* gets the same treatment, but only on a device that
+ * has run here before — see the `hasIndex` test below, and
+ * `manager/settingsLateArrival.ts` for the first launch, where that test cannot
+ * help and the question has to be asked again later.
  */
 export async function loadSettingsInto(
 	host: ExternalReloadHost,
@@ -232,9 +237,10 @@ export async function adoptExternalSettings(
  * Rebuild everything from a `data.json` somebody else wrote, and repaint.
  *
  * Shared by the two paths that can meet one mid-session: the watcher-driven
- * {@link adoptExternalSettings} on desktop, and {@link confirmFirstWrite} on a
- * device where the file simply arrived late. Held as a whole, so the rebuild
- * publishes at most one write and never an intermediate state.
+ * {@link adoptExternalSettings} on desktop, and `settingsLateArrival`'s
+ * `stillFreshInstall` on a device where the file simply arrived late. Held as a
+ * whole, so the rebuild publishes at most one write and never an intermediate
+ * state.
  */
 export async function reloadFrom(
 	host: ExternalReloadHost,
