@@ -259,14 +259,46 @@ available at the moment of the read:
 - **Time.** A first launch has no index either, so nothing at load time can rule
   out a device the vault has only just reached. What rules it out is looking
   again later: [`manager/settingsLateArrival.ts`](../src/manager/settingsLateArrival.ts)
-  re-reads at the last moment before a file would be created, and adopts one that
-  has turned up instead of replacing it.
+  re-reads once the workspace is ready, and adopts a file that has turned up
+  instead of replacing it.
 
-That moment is `settings/welcomeRouting.ts`. The `welcomeSeen` flag is the first
-thing a fresh install writes, and it runs from `onLayoutReady` — well after
-`onload`, which is time a sync client can use.
+So the session **writes nothing until that second look**. `loadSettingsInto`
+freezes the writer on this branch too, and `confirmFreshInstall` — called from
+[`manager/launchSequence.ts`](../src/manager/launchSequence.ts) at
+`onLayoutReady` — ends the freeze one way or the other: `thaw()` if the folder is
+still empty, or an adoption if the file arrived. The welcome screen then creates
+`data.json` exactly as it always has, and `maybeShowWelcomeOnLaunch` takes the
+answer as an argument rather than re-reading anything itself.
 
-That covers the window between `onload` and the first write. `watchForLateSettings`
+> [!IMPORTANT]
+> The freeze is the point, and guarding the *creating write* instead is what
+> shipped in 2.12.1 and left #53 open. `welcomeSeen` is the first write a fresh
+> install makes, so re-checking there looks sufficient — but it is not the only
+> write that can happen first. `void icons.initialize()` and any `css-change`
+> theme sweep reach `saveSettings` on their own schedule, unordered against
+> `onLayoutReady`, and on this branch `SaveGuard`'s baseline is still `null`, so
+> nothing suppresses them. Whichever fires first publishes the shipped defaults,
+> and the sync client carries that to every other device.
+>
+> A pre-write check inside `SettingsWriter` is the obvious repair and it
+> **deadlocks**. `runPass` is what `inFlight` holds; a check that adopts calls
+> `reloadFrom`, whose `hold()` releases with `await this.save()`, and that
+> `save()` — seeing `inFlight` set — returns a `followUp` chained on the very
+> `runPass` awaiting it. A closed promise cycle, on exactly the path the check
+> exists for. `frozen` is the only writer-level gate that is safe here, because
+> it is a synchronous boolean read at the top of `save()`: a re-entrant save
+> resolves immediately instead of joining a promise the gate is awaiting.
+>
+> Nothing is lost by suppressing rather than deferring — `runPass` builds its
+> payload at write time, so anything mutated during the freeze rides the first
+> write after it.
+
+There is one asymmetry worth keeping in mind: `confirmFreshInstall` must be
+called **only** for this freeze. The `absent && hasIndex` freeze reports "still
+nothing there" too, and thawing it would write the built-ins over settings that
+have merely gone missing.
+
+`watchForLateSettings`
 covers the rest of the session, which on mobile is otherwise not covered at all:
 it listens for the app returning to the foreground — the moment a sync client has
 most likely just run — and adopts a settings file that has appeared since. Every
@@ -299,10 +331,11 @@ callouts come back and the settings tab repaints — while every edit the user m
 from then on was discarded at the `frozen` check. On desktop that is the whole
 session after a single mid-write launch, announced by nothing.
 
-The check is deliberately **not** a `SettingsWriter` pre-write hook, which is the
-other obvious home for it. Adopting a file rebuilds the registry, a rebuild asks
-for saves of its own, and those saves would then queue behind the very write pass
-that was waiting on the check. At a seam between writes there is no such knot.
+Neither check is a `SettingsWriter` pre-write hook, which is the other obvious
+home for both — see the deadlock above. Adopting a file rebuilds the registry, a
+rebuild asks for saves of its own, and those saves do not merely *queue* behind
+the write pass waiting on the check: `hold()` awaits its own release, so they
+close a cycle with it. At a seam between writes there is no such knot.
 
 **The freeze carries its own way out.** "The file is coming back" is true of a
 sync client mid-swap and false of a user who deleted `data.json` themselves to

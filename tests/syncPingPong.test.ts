@@ -36,6 +36,7 @@ import {
 	adoptExternalSettings,
 	loadSettingsInto,
 } from "../src/manager/settingsBoot";
+import { confirmFreshInstall } from "../src/manager/settingsLateArrival";
 import type { ExternalReloadHost } from "../src/manager/settingsBoot";
 import type { CalloutDefinition, IconSvgCacheEntry } from "../src/types";
 
@@ -153,6 +154,13 @@ function device(name: string, disk: Disk) {
 		writer,
 		/** The startup path. */
 		boot: () => loadSettingsInto(host),
+		/**
+		 * `main.ts`'s `onLayoutReady`, which is where a launch that found no
+		 * settings file settles whether it really is a fresh install. Until it
+		 * runs, that launch is frozen and writes nothing — so a harness that
+		 * stops at `boot()` is modelling half a launch.
+		 */
+		layoutReady: () => confirmFreshInstall(host),
 		/** The sync client landing the other device's file here. */
 		adopt: () => adoptExternalSettings(host),
 		save: () => writer.save(),
@@ -220,6 +228,11 @@ async function world() {
 	const b = device("B", disk);
 	await a.boot();
 	await b.boot();
+	// Both found an empty folder, so both came up frozen. A real launch resolves
+	// that at `onLayoutReady`; without this the world starts read-only and every
+	// convergence test below passes for the wrong reason.
+	await a.layoutReady();
+	await b.layoutReady();
 	return { disk, a, b, all: [a, b] };
 }
 

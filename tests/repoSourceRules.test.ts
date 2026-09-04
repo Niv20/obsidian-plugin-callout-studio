@@ -846,7 +846,11 @@ describe("no new oversized files", () => {
 		// back into a live registry to manager/settingsBoot.ts, and the two
 		// repaint passes to editor/renderRefresh.ts. What is left is lifecycle
 		// and wiring, which is all CLAUDE.md asks of this file.
-		"src/main.ts": 512,
+		// Lowered again from 512: the post-layout half of startup — confirm the
+		// fresh install, greet, run first-run discovery — moved to
+		// manager/launchSequence.ts, which is where the ordering rule between
+		// those three belongs.
+		"src/main.ts": 503,
 		"src/icons/renderIcon.ts": 547,
 		// Lowered from 528: `STYLE_DEMO_ID` moved to constants.ts, where the
 		// discovery/import/autocomplete filters that now consult it can reach

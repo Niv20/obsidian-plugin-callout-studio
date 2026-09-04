@@ -167,10 +167,16 @@ export async function loadSettingsInto(
 	// first launch must be free to write, or the user's first callout is never
 	// saved. It may equally be a device this vault has only just reached, whose
 	// `data.json` is still in flight, and nothing available *now* separates the
-	// two. What separates them is time: see `manager/settingsLateArrival.ts`,
-	// which asks again at the last moment before a file would be created, and
-	// keeps watching for the rest of the session.
-	if (read.kind === "absent") watchForLateSettings(host);
+	// two. What separates them is time, so the session is frozen *provisionally*
+	// and `confirmFreshInstall` ends it at `onLayoutReady`. Guarding only the
+	// write that creates the file is what shipped and why #53 stayed open: a
+	// background icon fetch or a theme sweep reaches `saveSettings` unordered
+	// against it and publishes the defaults first. A freeze is the only gate
+	// that catches all of them — see internals-docs/07.
+	if (read.kind === "absent") {
+		host.settingsWriter.freeze();
+		watchForLateSettings(host);
+	}
 	await applySettingsRead(host, read);
 	return { isFreshInstall: read.kind === "absent" };
 }

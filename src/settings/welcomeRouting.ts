@@ -10,15 +10,17 @@
  *   in `onload`, from the data that was just loaded.
  * - **The flag is persisted before the modal opens**, so a startup interrupted
  *   while the screen is up (a crash, a reload) does not show it again on the
- *   next launch. That write is also the first one a fresh install makes, which
- *   is why the second look for a late-arriving `data.json` belongs here — see
- *   `manager/settingsBoot.ts`'s `stillFreshInstall`.
+ *   next launch. That write is also the first one a fresh install makes — and
+ *   it is safe to make here only because `isFreshInstall` now arrives already
+ *   confirmed. `manager/settingsLateArrival.ts`'s `confirmFreshInstall` has
+ *   re-read the folder immediately before this runs, and the session was frozen
+ *   until it did; this file used to make that check itself, which guarded this
+ *   one write while every background save went around it. Issue #53.
  *
  * `openWelcome()` on the plugin is the deliberate bypass — the protocol handler
  * and the DevTools console reach the screen through it regardless of the flag.
  */
 import { WelcomeModal } from "./WelcomeModal";
-import { stillFreshInstall } from "../manager/settingsLateArrival";
 import type { ExternalReloadHost } from "../manager/settingsBoot";
 import type { SettingsTabPlugin } from "./sections/types";
 
@@ -31,19 +33,15 @@ type WelcomeHost = SettingsTabPlugin &
 /**
  * Show the welcome screen if this launch is the one that should show it.
  *
- * Awaited by `onLayoutReady` before first-run discovery, so the splash never
- * stacks on top of the large-vault scan modal.
+ * `isFreshInstall` arrives already confirmed — `manager/launchSequence.ts` asks
+ * `confirmFreshInstall` immediately before this, and awaits this before
+ * first-run discovery so the splash never stacks on the large-vault scan modal.
  */
 export async function maybeShowWelcomeOnLaunch(
 	plugin: WelcomeHost,
 	isFreshInstall: boolean,
 ): Promise<void> {
 	if (plugin.settings.welcomeSeen || !isFreshInstall) return;
-	// Startup found no settings file, and this is the moment we would create
-	// one. On a device a synced vault has only just reached, that file may have
-	// arrived in the meantime — writing here would replace it with the shipped
-	// defaults and sync that back over every other device. Issue #53.
-	if (!(await stillFreshInstall(plugin))) return;
 	plugin.settings.welcomeSeen = true;
 	await plugin.saveSettings();
 	await new WelcomeModal(plugin).prompt();

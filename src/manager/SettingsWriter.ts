@@ -154,14 +154,32 @@ export class SettingsWriter {
 	}
 
 	/**
-	 * Stop writing `data.json` for the rest of the session.
+	 * Stop writing `data.json` until something lifts it. Three callers, and the
+	 * third is not like the other two:
 	 *
-	 * For the one case where the file exists but could not be read: the
-	 * in-memory registry is then built from nothing and describes none of the
-	 * user's callouts, so every save it could produce would replace a file we
-	 * failed to understand with one we know to be wrong. There is no recovering
-	 * from that, and no undo — so the session goes read-only and the user is
-	 * told to reload. See `manager/settingsFile.ts`.
+	 * - **The file exists but could not be read.** The in-memory registry is
+	 *   then built from nothing and describes none of the user's callouts, so
+	 *   every save it could produce would replace a file we failed to understand
+	 *   with one we know to be wrong. See `manager/settingsFile.ts`.
+	 * - **The file is missing on a device that has run here before.** Its
+	 *   settings have gone away since it last launched — a sync client mid-swap,
+	 *   most often — and the built-ins must not be written over whatever took
+	 *   them.
+	 * - **The file is missing on a device that has never run here.** This one is
+	 *   *provisional* and lasts under a second: it holds the whole window
+	 *   between `onload` and `onLayoutReady`, where nothing has yet looked at
+	 *   the folder a second time and a brand-new device cannot be told apart
+	 *   from one a synced vault is still reaching. `confirmFreshInstall` ends it
+	 *   either way — {@link thaw} if the folder is still empty, or an adoption
+	 *   if the file turned up. Nothing announces it, because in the overwhelming
+	 *   majority of launches there is nothing to announce.
+	 *
+	 * The first two are read-only for the session unless the user or the file
+	 * itself says otherwise; see {@link thaw}.
+	 *
+	 * Nothing is lost by suppressing rather than deferring: `runPass` builds its
+	 * payload at write time, so whatever was mutated during a freeze is carried
+	 * by the first write after it.
 	 */
 	freeze(): void {
 		this.frozen = true;
@@ -195,6 +213,17 @@ export class SettingsWriter {
 	/** Whether a save is currently in flight or queued behind one. */
 	get busy(): boolean {
 		return this.inFlight !== null || this.queued;
+	}
+
+	/**
+	 * Whether {@link freeze} is in effect.
+	 *
+	 * Read by `confirmFreshInstall`, which must not re-read `data.json` or greet
+	 * a user whose file has already been adopted — an adoption thaws, so a
+	 * writer that is no longer frozen is the record of one having happened.
+	 */
+	get isFrozen(): boolean {
+		return this.frozen;
 	}
 
 	private async runPass(): Promise<void> {
