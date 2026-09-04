@@ -373,6 +373,37 @@ describe("a data.json that cannot be read", () => {
 		assert.strictEqual(disk.content, "}} not json {{", "the file changed");
 	});
 
+	it("writes again once the real file turns up and is adopted", async () => {
+		// The freeze above is a guess that the file is coming back. When it does
+		// come back and is adopted, the guess has been answered: the baseline
+		// now describes what is on disk, so there is nothing left to protect.
+		// Without this the user watches their callouts reappear and then every
+		// edit they make is discarded in silence, for the rest of the session.
+		storage.clear();
+		const disk = new Disk();
+		disk.content = "}} not json {{";
+		const a = device("A", disk);
+		await a.boot();
+		assert.strictEqual(disk.writesBy("A"), 0);
+
+		const seed = new CalloutRegistry();
+		seed.load(null);
+		seed.add(authored("insight"));
+		disk.content = JSON.stringify(seed.toSaveData(), undefined, 2);
+		await a.adopt();
+		assert.ok(a.registry.get("insight"), "the repaired file was not adopted");
+
+		// The content, not the write count: an adoption that wrote something of
+		// its own would satisfy a bare `writes > 0` while the user's edit was
+		// still being thrown away.
+		a.registry.add(authored("made-after-recovery"));
+		await a.save();
+		assert.ok(
+			(disk.content ?? "").includes("made-after-recovery"),
+			"stayed read-only after recovering the file",
+		);
+	});
+
 	it("still treats a genuinely missing file as a fresh install", async () => {
 		storage.clear();
 		const disk = new Disk();

@@ -75,10 +75,11 @@ export async function stillFreshInstall(
  * Keep looking for a `data.json` that startup did not find, and adopt it the
  * moment it lands.
  *
- * Registered by `loadSettingsInto` for both launches that came up without a
- * usable settings file — the frozen one, where a device that has run here
- * before found its file missing, and the fresh-install one, where the file may
- * simply not have arrived yet.
+ * Registered by `loadSettingsInto` for every launch that came up without usable
+ * settings: the frozen one, where a device that has run here before found its
+ * file missing; the fresh-install one, where the file may simply not have
+ * arrived yet; and the one that found a file it could not read, which is a
+ * transfer still in progress far more often than it is corruption.
  *
  * `stillFreshInstall` covers the narrow window between `onload` and the first
  * write. This covers the rest of the session, which on mobile is otherwise
@@ -90,11 +91,12 @@ export async function stillFreshInstall(
  * most likely just run. It is a single small read, and it stops at the first
  * file it manages to adopt.
  *
- * **Adopting also thaws the writer.** A freeze is the guess that the missing
- * file is coming back; when it does come back there is nothing left to guess
- * about, and the baseline now describes the file on disk, so the session can
- * safely save again. That is the one automatic path to `thaw()`, and it is
- * reached only with the real file in hand — never on a hunch.
+ * **Adopting also thaws the writer**, in `reloadFrom`. A freeze is the guess
+ * that the missing file is coming back; when it does come back there is nothing
+ * left to guess about, and the baseline now describes the file on disk, so the
+ * session can safely save again. Every automatic path to `thaw()` runs through
+ * an adoption, and an adoption is reached only with the real file in hand —
+ * never on a hunch.
  */
 export function watchForLateSettings(host: ExternalReloadHost): void {
 	// Absent on a test harness, and on any host that is not a real plugin.
@@ -116,18 +118,21 @@ export function watchForLateSettings(host: ExternalReloadHost): void {
 		// said here would be said hundreds of times.
 		if (read.kind !== "loaded") return;
 
-		// Our own writing, which means this session was never waiting.
-		if (host.settingsWriter.matchesLastWrite(read.json)) {
-			settled = true;
-			return;
-		}
+		// Our own writing. Nothing has landed *yet* — which is not the same as
+		// nothing landing, so this must not retire the watcher. A fresh install
+		// that created its own file is exactly the session still waiting on a
+		// sync client, and Syncthing's floor is a ten-second scan delay with an
+		// hourly rescan behind it. Marking this settled disarmed the only
+		// mechanism a phone has, on the one path where it was still needed.
+		if (host.settingsWriter.matchesLastWrite(read.json)) return;
 
 		// The editor owns the registry right now; rebuilding under it would
 		// change the row being edited. Try again next time.
 		if (host.pruneSuspended || host.registry.hasPreviewDefinition()) return;
 
 		settled = true;
-		host.settingsWriter.thaw();
+		// `reloadFrom` thaws — see its docblock. Adopting is the one thing that
+		// ends a freeze, and it is reached only with the real file in hand.
 		await reloadFrom(host, read);
 	}
 }
