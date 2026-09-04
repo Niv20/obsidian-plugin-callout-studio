@@ -23,7 +23,10 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { createCalloutListsController } from "../src/settings/sections/CalloutListsSection";
+import {
+	createCalloutListsController,
+} from "../src/settings/sections/CalloutListsSection";
+import { freshPaging } from "../src/settings/sections/calloutListsSignature";
 import { installFakeDom } from "./support/fakeDom";
 
 installFakeDom();
@@ -111,6 +114,7 @@ describe("the theme heading follows the active theme across a refresh", () => {
 		const ctx = listsCtx(registry, t.app, ["note"]);
 		const host: HTMLElement = createDiv();
 		const lists = createCalloutListsController(ctx, {
+			paging: freshPaging(),
 			onAddNewCallout: () => Promise.resolve(),
 			renderRow: (el, def) => {
 				el.createEl("code", {
@@ -148,6 +152,7 @@ describe("the theme heading follows the active theme across a refresh", () => {
 		const ctx = listsCtx(registry, t.app, ["note"]);
 		const host: HTMLElement = createDiv();
 		const lists = createCalloutListsController(ctx, {
+			paging: freshPaging(),
 			onAddNewCallout: () => Promise.resolve(),
 			renderRow: (el, def, kind) => {
 				if (kind !== "theme") return;
@@ -162,8 +167,12 @@ describe("the theme heading follows the active theme across a refresh", () => {
 		const once = themeRowIds(host);
 		assert.deepStrictEqual(once, ["note"], "one row to begin with");
 
-		lists.refresh();
-		lists.refresh();
+		// Forced, so the point of this case survives the signature guard added
+		// later: `refresh` now skips a repaint that would draw the identical
+		// thing, and what is under test here is what happens when it does NOT
+		// skip — that `renderAll` empties before it fills.
+		lists.refresh(true);
+		lists.refresh(true);
 		assert.deepStrictEqual(
 			themeRowIds(host),
 			once,

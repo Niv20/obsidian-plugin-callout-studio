@@ -13,7 +13,10 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { createCalloutListsController } from "../src/settings/sections/CalloutListsSection";
+import {
+	createCalloutListsController,
+} from "../src/settings/sections/CalloutListsSection";
+import { freshPaging } from "../src/settings/sections/calloutListsSignature";
 import { installFakeDom } from "./support/fakeDom";
 
 installFakeDom();
@@ -121,6 +124,7 @@ function render(registry: Registry, app: App, themeIds: string[]) {
 	const ctx = listsCtx(registry, app, themeIds);
 	const host: HTMLElement = createDiv();
 	const lists = createCalloutListsController(ctx, {
+		paging: freshPaging(),
 		onAddNewCallout: () => Promise.resolve(),
 		renderRow: () => {},
 	});
