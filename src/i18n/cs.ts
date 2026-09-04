@@ -253,6 +253,13 @@ export const cs: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio už nestylizuje "{{name}}" — jeho vzhled určuje vaše vlastní CSS. Jeho formáty Nadpis a Vložený se nebudou vykreslovat.',
 	"notice.externalCssOff": 'Callout Studio nyní opět stylizuje "{{name}}".',
+	"notice.vaultRewritePartial":
+		"{{count}} poznámku(y) se nepodařilo aktualizovat a zůstaly beze změny. Podrobnosti najdete v konzoli pro vývojáře.",
+	"notice.settingsUnreadable":
+		"Callout Studio nemohlo přečíst svůj soubor s nastavením, takže vaše typy calloutů v této relaci chybí. Nic nebylo zapsáno a soubor na disku je nezměněný — znovu načtěte Obsidian a zkuste to znovu.",
+	"notice.settingsMissing":
+		"Soubor s nastavením Callout Studia chybí, takže vaše typy calloutů v této relaci chybí. Nic nebylo zapsáno — pokud tento trezor synchronizujete, nechte synchronizaci doběhnout a před provedením jakýchkoli změn znovu načtěte Obsidian.",
+	"notice.settingsMissingAction": "Začít znovu na tomto zařízení",
 	"notice.nothingToWrap": "Není co zabalit.",
 	"notice.cursorNotInsideCallout": "Kurzor není uvnitř callout.",
 	"notice.autocompleteTargetMoved":

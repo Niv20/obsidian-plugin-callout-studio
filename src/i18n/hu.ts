@@ -256,6 +256,13 @@ export const hu: Record<string, string> = {
 	"notice.externalCssOn":
 		'A Callout Studio többé nem stílusozza a(z) "{{name}}"-t — a saját CSS-e dönti el, hogyan néz ki. A Címsor callout és a Beágyazott callout formája nem jelenik meg.',
 	"notice.externalCssOff": 'A Callout Studio ismét stílust ad a(z) "{{name}}"-nek.',
+	"notice.vaultRewritePartial":
+		"{{count}} jegyzetet nem sikerült frissíteni, ezek változatlanok maradtak. A részletekért lásd a fejlesztői konzolt.",
+	"notice.settingsUnreadable":
+		"A Callout Studio nem tudta beolvasni a beállításfájlját, ezért a callout típusaid hiányoznak ebből a munkamenetből. Semmi nem íródott, és a lemezen lévő fájl változatlan — töltsd újra az Obsidiant az újbóli próbához.",
+	"notice.settingsMissing":
+		"A Callout Studio beállításfájlja hiányzik, ezért a callout típusaid hiányoznak ebből a munkamenetből. Semmi nem íródott — ha ezt a boltívet szinkronizálod, várd meg a szinkronizálás befejezését, és töltsd újra az Obsidiant, mielőtt bármit módosítanál.",
+	"notice.settingsMissingAction": "Kezdés elölről ezen az eszközön",
 	"notice.nothingToWrap": "Nincs mit becsomagolni.",
 	"notice.cursorNotInsideCallout": "A kurzor nem callout-on belül van.",
 	"notice.autocompleteTargetMoved":

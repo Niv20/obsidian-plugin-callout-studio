@@ -251,6 +251,13 @@ export const fa: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio دیگر "{{name}}" را استایل نمی‌دهد — CSS شخصی خودتان تعیین می‌کند که چگونه به نظر برسد. قالب‌های Heading Callout و Inline Callout آن رندر نخواهند شد.',
 	"notice.externalCssOff": 'Callout Studio اکنون دوباره "{{name}}" را استایل می‌دهد.',
+	"notice.vaultRewritePartial":
+		"{{count}} یادداشت به‌روزرسانی نشد و بدون تغییر باقی ماند. برای جزئیات به کنسول توسعه‌دهنده مراجعه کنید.",
+	"notice.settingsUnreadable":
+		"Callout Studio نتوانست فایل تنظیمات خود را بخواند، بنابراین انواع callout شما در این جلسه گم شده‌اند. چیزی نوشته نشده و فایل روی دیسک بدون تغییر است — Obsidian را دوباره بارگذاری کنید تا دوباره امتحان کنید.",
+	"notice.settingsMissing":
+		"فایل تنظیمات Callout Studio گم شده است، بنابراین انواع callout شما در این جلسه گم شده‌اند. چیزی نوشته نشده — اگر این ولت را همگام‌سازی می‌کنید، اجازه دهید همگام‌سازی تمام شود و پیش از هر تغییری Obsidian را دوباره بارگذاری کنید.",
+	"notice.settingsMissingAction": "شروع دوباره در این دستگاه",
 	"notice.nothingToWrap": "چیزی برای پیچیدن وجود ندارد.",
 	"notice.cursorNotInsideCallout": "مکان‌نما داخل callout نیست.",
 	"notice.autocompleteTargetMoved":

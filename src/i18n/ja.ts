@@ -259,6 +259,13 @@ export const ja: Record<string, string> = {
 	"notice.externalCssOn":
 		'"{{name}}"はCallout Studioによるスタイル設定の対象外になりました — 見た目は自分のCSSで決まります。見出しcalloutとインラインcalloutの形式は描画されません。',
 	"notice.externalCssOff": '"{{name}}"は再びCallout Studioがスタイル設定します。',
+	"notice.vaultRewritePartial":
+		"{{count}} 件のノートを更新できなかったため、変更されずに残されました。詳細は開発者コンソールを確認してください。",
+	"notice.settingsUnreadable":
+		"Callout Studio は設定ファイルを読み込めなかったため、このセッションではコールアウトの種類が表示されません。何も書き込まれておらず、ディスク上のファイルも変更されていません — もう一度試すには Obsidian を再読み込みしてください。",
+	"notice.settingsMissing":
+		"Callout Studio の設定ファイルが見つからないため、このセッションではコールアウトの種類が表示されません。何も書き込まれていません — このボールトを同期している場合は、同期が完了するのを待ってから、変更を加える前に Obsidian を再読み込みしてください。",
+	"notice.settingsMissingAction": "このデバイスで最初からやり直す",
 	"notice.nothingToWrap": "囲むものがありません。",
 	"notice.cursorNotInsideCallout": "カーソルがcallout内にありません。",
 	"notice.autocompleteTargetMoved":

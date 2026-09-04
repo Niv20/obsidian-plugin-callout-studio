@@ -256,6 +256,13 @@ export const de: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio gestaltet "{{name}}" nicht mehr — Ihr eigenes CSS bestimmt jetzt das Aussehen. Die Formate Überschrift-Callout und Inline-Callout werden nicht mehr dargestellt.',
 	"notice.externalCssOff": 'Callout Studio gestaltet "{{name}}" wieder.',
+	"notice.vaultRewritePartial":
+		"{{count}} Notiz(en) konnten nicht aktualisiert werden und blieben unverändert. Details in der Entwicklerkonsole.",
+	"notice.settingsUnreadable":
+		"Callout Studio konnte seine Einstellungsdatei nicht lesen, daher fehlen deine Callout-Typen in dieser Sitzung. Es wurde nichts geschrieben, und die Datei auf der Festplatte ist unverändert — lade Obsidian neu, um es erneut zu versuchen.",
+	"notice.settingsMissing":
+		"Die Einstellungsdatei von Callout Studio fehlt, daher fehlen deine Callout-Typen in dieser Sitzung. Es wurde nichts geschrieben — wenn du diesen Tresor synchronisierst, lass die Synchronisierung abschließen und lade Obsidian neu, bevor du Änderungen vornimmst.",
+	"notice.settingsMissingAction": "Auf diesem Gerät neu beginnen",
 	"notice.nothingToWrap": "Nichts zum Einbetten.",
 	"notice.cursorNotInsideCallout":
 		"Der Cursor befindet sich nicht in einem Callout.",

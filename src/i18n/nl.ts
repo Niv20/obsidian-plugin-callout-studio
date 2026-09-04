@@ -258,6 +258,13 @@ export const nl: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio stijlt "{{name}}" niet meer — uw eigen CSS bepaalt het uiterlijk. De Kop-callout- en Inline-callout-vormen worden niet weergegeven.',
 	"notice.externalCssOff": 'Callout Studio stijlt "{{name}}" weer.',
+	"notice.vaultRewritePartial":
+		"{{count}} notitie(s) konden niet worden bijgewerkt en zijn ongewijzigd gebleven. Zie de ontwikkelaarsconsole voor details.",
+	"notice.settingsUnreadable":
+		"Callout Studio kon zijn instellingenbestand niet lezen, dus je callout-typen ontbreken in deze sessie. Er is niets geschreven en het bestand op schijf is ongewijzigd — herlaad Obsidian om het opnieuw te proberen.",
+	"notice.settingsMissing":
+		"Het instellingenbestand van Callout Studio ontbreekt, dus je callout-typen ontbreken in deze sessie. Er is niets geschreven — als je deze kluis synchroniseert, laat de synchronisatie dan voltooien en herlaad Obsidian voordat je wijzigingen aanbrengt.",
+	"notice.settingsMissingAction": "Opnieuw beginnen op dit apparaat",
 
 	"notice.nothingToWrap": "Niets om in te pakken.",
 	"notice.cursorNotInsideCallout":

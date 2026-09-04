@@ -257,6 +257,13 @@ export const ko: Record<string, string> = {
 	"notice.externalCssOn":
 		'더 이상 Callout Studio가 "{{name}}"을(를) 스타일 지정하지 않습니다 — 이제 직접 작성한 CSS가 모양을 결정합니다. 제목 callout과 인라인 callout 형식은 렌더링되지 않습니다.',
 	"notice.externalCssOff": 'Callout Studio가 "{{name}}"을(를) 다시 스타일 지정합니다.',
+	"notice.vaultRewritePartial":
+		"{{count}}개의 노트를 업데이트할 수 없어 변경되지 않은 상태로 남았습니다. 자세한 내용은 개발자 콘솔을 확인하세요.",
+	"notice.settingsUnreadable":
+		"Callout Studio가 설정 파일을 읽을 수 없어 이 세션에서 콜아웃 유형이 누락되었습니다. 아무것도 기록되지 않았으며 디스크의 파일은 변경되지 않았습니다 — 다시 시도하려면 Obsidian을 다시 로드하세요.",
+	"notice.settingsMissing":
+		"Callout Studio의 설정 파일이 없어 이 세션에서 콜아웃 유형이 누락되었습니다. 아무것도 기록되지 않았습니다 — 이 볼트를 동기화하는 경우 동기화가 끝날 때까지 기다렸다가 변경하기 전에 Obsidian을 다시 로드하세요.",
+	"notice.settingsMissingAction": "이 기기에서 새로 시작",
 	"notice.nothingToWrap": "감쌀 내용이 없습니다.",
 	"notice.cursorNotInsideCallout": "커서가 callout 안에 있지 않습니다.",
 	"notice.autocompleteTargetMoved":

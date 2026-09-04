@@ -238,6 +238,13 @@ export const zhTW: Record<string, string> = {
 	"notice.externalCssOn":
 		"Callout Studio 不再為「{{name}}」設定樣式——由您自己的 CSS 決定它的外觀。它的標題 callout 和行內 callout 形式將不會顯示。",
 	"notice.externalCssOff": "Callout Studio 現在再次為「{{name}}」設定樣式。",
+	"notice.vaultRewritePartial":
+		"有 {{count}} 則筆記無法更新，已保持不變。詳情請查看開發者主控台。",
+	"notice.settingsUnreadable":
+		"Callout Studio 無法讀取其設定檔，因此本次工作階段中缺少你的 callout 類型。未寫入任何內容，磁碟上的檔案也未變更——重新載入 Obsidian 以再試一次。",
+	"notice.settingsMissing":
+		"Callout Studio 的設定檔遺失，因此本次工作階段中缺少你的 callout 類型。未寫入任何內容——如果你正在同步此保存庫，請等待同步完成後再重新載入 Obsidian，然後再進行任何變更。",
+	"notice.settingsMissingAction": "在此裝置上重新開始",
 
 	"notice.nothingToWrap": "沒有可包覆的內容。",
 	"notice.cursorNotInsideCallout": "游標不在 callout 內部。",

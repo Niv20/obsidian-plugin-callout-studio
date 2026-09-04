@@ -240,6 +240,13 @@ export const bg: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio вече не стилизира "{{name}}" — собственият ви CSS решава как изглежда. Формите му Заглавие и Вграден callout няма да се визуализират.',
 	"notice.externalCssOff": 'Callout Studio отново стилизира "{{name}}".',
+	"notice.vaultRewritePartial":
+		"{{count}} бележка(и) не можаха да бъдат актуализирани и останаха непроменени. Вижте конзолата за разработчици за подробности.",
+	"notice.settingsUnreadable":
+		"Callout Studio не можа да прочете файла си с настройки, затова типовете ви callout липсват в тази сесия. Нищо не е записано и файлът на диска е непроменен — презаредете Obsidian, за да опитате отново.",
+	"notice.settingsMissing":
+		"Файлът с настройки на Callout Studio липсва, затова типовете ви callout липсват в тази сесия. Нищо не е записано — ако синхронизирате това хранилище, изчакайте синхронизацията да завърши и презаредете Obsidian, преди да правите промени.",
+	"notice.settingsMissingAction": "Започни отначало на това устройство",
 	"notice.nothingToWrap": "Няма какво да се обвие.",
 	"notice.cursorNotInsideCallout": "Курсорът не е вътре в callout.",
 	"notice.autocompleteTargetMoved":

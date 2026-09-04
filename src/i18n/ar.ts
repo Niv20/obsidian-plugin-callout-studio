@@ -252,6 +252,13 @@ export const ar: Record<string, string> = {
 	"notice.externalCssOn":
 		'لم يعد Callout Studio ينسّق "{{name}}" — كود CSS الخاص بك هو من يحدّد شكله الآن. لن يتم عرض شكلَي callout العنوان وcallout المضمّن الخاصين به.',
 	"notice.externalCssOff": 'يقوم Callout Studio بتنسيق "{{name}}" مرة أخرى.',
+	"notice.vaultRewritePartial":
+		"تعذّر تحديث {{count}} ملاحظة (ملاحظات) وبقيت دون تغيير. راجع وحدة تحكم المطور للتفاصيل.",
+	"notice.settingsUnreadable":
+		"تعذّر على Callout Studio قراءة ملف الإعدادات، لذا أنواع الـ callout الخاصة بك مفقودة في هذه الجلسة. لم يُكتب شيء والملف على القرص لم يتغيّر — أعد تحميل Obsidian للمحاولة مجددًا.",
+	"notice.settingsMissing":
+		"ملف إعدادات Callout Studio مفقود، لذا أنواع الـ callout الخاصة بك مفقودة في هذه الجلسة. لم يُكتب شيء — إذا كنت تُزامن هذا الخزنة، فدع المزامنة تنتهي وأعد تحميل Obsidian قبل إجراء أي تغييرات.",
+	"notice.settingsMissingAction": "ابدأ من جديد على هذا الجهاز",
 	"notice.nothingToWrap": "لا يوجد شيء للالتفاف.",
 	"notice.cursorNotInsideCallout": "المؤشر ليس داخل callout.",
 	"notice.autocompleteTargetMoved":

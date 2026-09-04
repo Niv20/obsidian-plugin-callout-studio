@@ -250,6 +250,13 @@ export const ms: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio tidak lagi menggayakan "{{name}}" — CSS anda sendiri menentukan rupanya. Bentuk Callout Tajuk dan Callout Sebarisnya tidak akan dipaparkan.',
 	"notice.externalCssOff": 'Callout Studio kini menggayakan "{{name}}" semula.',
+	"notice.vaultRewritePartial":
+		"{{count}} nota tidak dapat dikemas kini dan dibiarkan tanpa perubahan. Lihat konsol pembangun untuk butiran.",
+	"notice.settingsUnreadable":
+		"Callout Studio tidak dapat membaca fail tetapannya, jadi jenis callout anda hilang daripada sesi ini. Tiada apa yang ditulis dan fail pada cakera tidak berubah — muat semula Obsidian untuk mencuba lagi.",
+	"notice.settingsMissing":
+		"Fail tetapan Callout Studio hilang, jadi jenis callout anda hilang daripada sesi ini. Tiada apa yang ditulis — jika anda menyegerakkan vault ini, biarkan penyegerakan selesai dan muat semula Obsidian sebelum membuat sebarang perubahan.",
+	"notice.settingsMissingAction": "Mula semula pada peranti ini",
 	"notice.nothingToWrap": "Tiada apa untuk dibalut.",
 	"notice.cursorNotInsideCallout": "Kursor tidak berada dalam callout.",
 	"notice.autocompleteTargetMoved":

@@ -251,6 +251,13 @@ export const th: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio จะไม่จัดสไตล์ "{{name}}" อีกต่อไป — CSS ของคุณเองจะเป็นตัวกำหนดรูปลักษณ์ รูปแบบ Heading Callout และ Inline Callout จะไม่แสดงผล',
 	"notice.externalCssOff": 'ตอนนี้ Callout Studio จัดสไตล์ "{{name}}" อีกครั้งแล้ว',
+	"notice.vaultRewritePartial":
+		"ไม่สามารถอัปเดตโน้ตได้ {{count}} รายการ และถูกปล่อยไว้โดยไม่มีการเปลี่ยนแปลง ดูรายละเอียดในคอนโซลสำหรับนักพัฒนา",
+	"notice.settingsUnreadable":
+		"Callout Studio ไม่สามารถอ่านไฟล์การตั้งค่าได้ ดังนั้นประเภท callout ของคุณจึงหายไปในเซสชันนี้ ไม่มีการเขียนสิ่งใด และไฟล์บนดิสก์ไม่มีการเปลี่ยนแปลง — โหลด Obsidian ใหม่เพื่อลองอีกครั้ง",
+	"notice.settingsMissing":
+		"ไฟล์การตั้งค่าของ Callout Studio หายไป ดังนั้นประเภท callout ของคุณจึงหายไปในเซสชันนี้ ไม่มีการเขียนสิ่งใด — หากคุณซิงค์ vault นี้ ให้รอจนกว่าการซิงค์จะเสร็จสิ้นแล้วโหลด Obsidian ใหม่ก่อนทำการเปลี่ยนแปลงใด ๆ",
+	"notice.settingsMissingAction": "เริ่มต้นใหม่บนอุปกรณ์นี้",
 	"notice.nothingToWrap": "ไม่มีอะไรให้ห่อ",
 	"notice.cursorNotInsideCallout": "เคอร์เซอร์ไม่อยู่ใน callout",
 	"notice.autocompleteTargetMoved":

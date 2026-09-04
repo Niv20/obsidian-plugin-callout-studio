@@ -255,6 +255,13 @@ export const id: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio tidak lagi menata gaya "{{name}}" — CSS Anda sendiri yang menentukan tampilannya. Bentuk Heading Callout dan Inline Callout-nya tidak akan dirender.',
 	"notice.externalCssOff": 'Callout Studio kini menata gaya "{{name}}" lagi.',
+	"notice.vaultRewritePartial":
+		"{{count}} catatan tidak dapat diperbarui dan dibiarkan tidak berubah. Lihat konsol pengembang untuk detailnya.",
+	"notice.settingsUnreadable":
+		"Callout Studio tidak dapat membaca file pengaturannya, sehingga jenis callout Anda hilang dari sesi ini. Tidak ada yang ditulis dan file di disk tidak berubah — muat ulang Obsidian untuk mencoba lagi.",
+	"notice.settingsMissing":
+		"File pengaturan Callout Studio hilang, sehingga jenis callout Anda hilang dari sesi ini. Tidak ada yang ditulis — jika Anda menyinkronkan vault ini, biarkan sinkronisasi selesai dan muat ulang Obsidian sebelum membuat perubahan apa pun.",
+	"notice.settingsMissingAction": "Mulai baru di perangkat ini",
 	"notice.nothingToWrap": "Tidak ada yang perlu dibungkus.",
 	"notice.cursorNotInsideCallout": "Kursor tidak berada di dalam callout.",
 	"notice.autocompleteTargetMoved":

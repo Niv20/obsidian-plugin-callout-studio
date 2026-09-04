@@ -241,6 +241,13 @@ export const el: Record<string, string> = {
 	"notice.externalCssOn":
 		'Το Callout Studio δεν μορφοποιεί πλέον το "{{name}}" — το δικό σας CSS καθορίζει πώς εμφανίζεται. Οι μορφές Heading Callout και Inline Callout του δεν θα αποδίδονται.',
 	"notice.externalCssOff": 'Το Callout Studio μορφοποιεί ξανά το "{{name}}".',
+	"notice.vaultRewritePartial":
+		"{{count}} σημείωση/-εις δεν ήταν δυνατό να ενημερωθούν και παρέμειναν αμετάβλητες. Δείτε την κονσόλα προγραμματιστή για λεπτομέρειες.",
+	"notice.settingsUnreadable":
+		"Το Callout Studio δεν μπόρεσε να διαβάσει το αρχείο ρυθμίσεών του, επομένως οι τύποι callout σας λείπουν από αυτήν τη συνεδρία. Δεν γράφτηκε τίποτα και το αρχείο στον δίσκο παραμένει αμετάβλητο — επαναφορτώστε το Obsidian για να δοκιμάσετε ξανά.",
+	"notice.settingsMissing":
+		"Το αρχείο ρυθμίσεων του Callout Studio λείπει, επομένως οι τύποι callout σας λείπουν από αυτήν τη συνεδρία. Δεν γράφτηκε τίποτα — αν συγχρονίζετε αυτό το θησαυροφυλάκιο, αφήστε τον συγχρονισμό να ολοκληρωθεί και επαναφορτώστε το Obsidian πριν κάνετε αλλαγές.",
+	"notice.settingsMissingAction": "Ξεκινήστε από την αρχή σε αυτήν τη συσκευή",
 	"notice.nothingToWrap": "Δεν υπάρχει τίποτα για αναδίπλωση.",
 	"notice.cursorNotInsideCallout":
 		"Ο κέρσορας δεν βρίσκεται μέσα σε callout.",

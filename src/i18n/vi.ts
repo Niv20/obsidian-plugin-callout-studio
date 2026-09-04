@@ -257,6 +257,13 @@ export const vi: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio không còn tạo kiểu cho "{{name}}" nữa — CSS của riêng bạn quyết định hình thức của nó. Các dạng Callout tiêu đề và Callout nội dòng của nó sẽ không hiển thị.',
 	"notice.externalCssOff": 'Callout Studio lại tạo kiểu cho "{{name}}".',
+	"notice.vaultRewritePartial":
+		"{{count}} ghi chú không thể cập nhật và được giữ nguyên. Xem bảng điều khiển nhà phát triển để biết chi tiết.",
+	"notice.settingsUnreadable":
+		"Callout Studio không thể đọc tệp cài đặt của nó, vì vậy các loại callout của bạn bị thiếu trong phiên này. Không có gì được ghi và tệp trên đĩa không thay đổi — tải lại Obsidian để thử lại.",
+	"notice.settingsMissing":
+		"Tệp cài đặt của Callout Studio bị thiếu, vì vậy các loại callout của bạn bị thiếu trong phiên này. Không có gì được ghi — nếu bạn đồng bộ hóa kho lưu trữ này, hãy để việc đồng bộ hóa hoàn tất và tải lại Obsidian trước khi thực hiện bất kỳ thay đổi nào.",
+	"notice.settingsMissingAction": "Bắt đầu lại trên thiết bị này",
 
 	"notice.nothingToWrap": "Không có gì để bọc.",
 	"notice.cursorNotInsideCallout": "Con trỏ không nằm trong callout.",

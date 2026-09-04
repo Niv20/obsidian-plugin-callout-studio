@@ -277,6 +277,13 @@ export const he: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio כבר לא מעצב את "{{name}}" — ה-CSS שלכם קובע איך היא נראית. הצורות שלה ככותרת ומוטבעת לא יוצגו.',
 	"notice.externalCssOff": 'Callout Studio מעצב שוב את "{{name}}".',
+	"notice.vaultRewritePartial":
+		"{{count}} פתק(ים) לא ניתן היה לעדכן ונשארו ללא שינוי. פרטים נוספים בקונסולת המפתחים.",
+	"notice.settingsUnreadable":
+		"Callout Studio לא הצליח לקרוא את קובץ ההגדרות שלו, ולכן סוגי ה-callout שלך חסרים בהפעלה זו. שום דבר לא נכתב והקובץ בדיסק לא השתנה — טען מחדש את Obsidian כדי לנסות שוב.",
+	"notice.settingsMissing":
+		"קובץ ההגדרות של Callout Studio חסר, ולכן סוגי ה-callout שלך חסרים בהפעלה זו. שום דבר לא נכתב — אם אתה מסנכרן את הכספת הזו, תן לסנכרון להסתיים וטען מחדש את Obsidian לפני ביצוע שינויים.",
+	"notice.settingsMissingAction": "התחל מחדש במכשיר הזה",
 	"notice.nothingToWrap": "אין תוכן לעטוף.",
 	"notice.cursorNotInsideCallout": "הסמן אינו נמצא בתוך תיבת־הבלטה.",
 	"notice.autocompleteTargetMoved":

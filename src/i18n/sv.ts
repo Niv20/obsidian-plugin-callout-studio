@@ -255,6 +255,13 @@ export const sv: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio stylar inte längre "{{name}}" — din egen CSS avgör hur den ser ut. Dess Rubrik-callout- och Infogad callout-format renderas inte.',
 	"notice.externalCssOff": 'Callout Studio stylar nu "{{name}}" igen.',
+	"notice.vaultRewritePartial":
+		"{{count}} anteckning(ar) kunde inte uppdateras och lämnades oförändrade. Se utvecklarkonsolen för detaljer.",
+	"notice.settingsUnreadable":
+		"Callout Studio kunde inte läsa sin inställningsfil, så dina callout-typer saknas i den här sessionen. Inget har skrivits och filen på disken är oförändrad — läs in Obsidian igen för att försöka på nytt.",
+	"notice.settingsMissing":
+		"Callout Studios inställningsfil saknas, så dina callout-typer saknas i den här sessionen. Inget har skrivits — om du synkroniserar det här valvet, låt synkroniseringen bli klar och läs in Obsidian igen innan du gör några ändringar.",
+	"notice.settingsMissingAction": "Börja om på den här enheten",
 	"notice.nothingToWrap": "Inget att lägga i callout.",
 	"notice.cursorNotInsideCallout": "Markören är inte inne i en callout.",
 	"notice.autocompleteTargetMoved":

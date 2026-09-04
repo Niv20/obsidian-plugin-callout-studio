@@ -240,6 +240,13 @@ export const da: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio styler ikke længere "{{name}}" — dit eget CSS afgør, hvordan den ser ud. Dens Overskrift- og Inline-callout-former vil ikke blive vist.',
 	"notice.externalCssOff": 'Callout Studio styler nu "{{name}}" igen.',
+	"notice.vaultRewritePartial":
+		"{{count}} note(r) kunne ikke opdateres og blev efterladt uændret. Se udviklerkonsollen for detaljer.",
+	"notice.settingsUnreadable":
+		"Callout Studio kunne ikke læse sin indstillingsfil, så dine callout-typer mangler i denne session. Der er ikke skrevet noget, og filen på disken er uændret — genindlæs Obsidian for at prøve igen.",
+	"notice.settingsMissing":
+		"Callout Studios indstillingsfil mangler, så dine callout-typer mangler i denne session. Der er ikke skrevet noget — hvis du synkroniserer dette vault, så lad synkroniseringen fuldføres, og genindlæs Obsidian, før du foretager ændringer.",
+	"notice.settingsMissingAction": "Start forfra på denne enhed",
 	"notice.nothingToWrap": "Intet at indpakke.",
 	"notice.cursorNotInsideCallout": "Markøren er ikke inde i en callout.",
 	"notice.autocompleteTargetMoved":

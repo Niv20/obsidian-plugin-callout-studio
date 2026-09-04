@@ -257,6 +257,13 @@ export const hi: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio अब "{{name}}" को स्टाइल नहीं करता — इसका रूप अब आपका खुद का CSS तय करता है। इसके हेडिंग callout और इनलाइन callout रूप नहीं दिखेंगे।',
 	"notice.externalCssOff": 'Callout Studio अब फिर से "{{name}}" को स्टाइल करता है।',
+	"notice.vaultRewritePartial":
+		"{{count}} नोट अपडेट नहीं हो सके और बिना बदलाव के रह गए। विवरण के लिए डेवलपर कंसोल देखें।",
+	"notice.settingsUnreadable":
+		"Callout Studio अपनी सेटिंग्स फ़ाइल नहीं पढ़ सका, इसलिए आपके callout प्रकार इस सत्र में गायब हैं। कुछ भी नहीं लिखा गया है और डिस्क पर फ़ाइल अपरिवर्तित है — फिर से कोशिश करने के लिए Obsidian को रीलोड करें।",
+	"notice.settingsMissing":
+		"Callout Studio की सेटिंग्स फ़ाइल गायब है, इसलिए आपके callout प्रकार इस सत्र में गायब हैं। कुछ भी नहीं लिखा गया है — यदि आप इस वॉल्ट को सिंक करते हैं, तो सिंक पूरा होने दें और कोई बदलाव करने से पहले Obsidian को रीलोड करें।",
+	"notice.settingsMissingAction": "इस डिवाइस पर नए सिरे से शुरू करें",
 	"notice.nothingToWrap": "लपेटने के लिए कुछ नहीं।",
 	"notice.cursorNotInsideCallout": "कर्सर callout के अंदर नहीं है।",
 	"notice.autocompleteTargetMoved":

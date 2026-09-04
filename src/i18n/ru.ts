@@ -256,6 +256,13 @@ export const ru: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio больше не оформляет "{{name}}" — его вид теперь определяет ваш собственный CSS. Его формы Callout-заголовок и Встроенный callout не будут отображаться.',
 	"notice.externalCssOff": 'Callout Studio снова оформляет "{{name}}".',
+	"notice.vaultRewritePartial":
+		"{{count}} заметку(и) не удалось обновить, они остались без изменений. Подробности см. в консоли разработчика.",
+	"notice.settingsUnreadable":
+		"Callout Studio не удалось прочитать файл настроек, поэтому ваши типы callout отсутствуют в этой сессии. Ничего не было записано, файл на диске не изменён — перезагрузите Obsidian, чтобы попробовать снова.",
+	"notice.settingsMissing":
+		"Файл настроек Callout Studio отсутствует, поэтому ваши типы callout отсутствуют в этой сессии. Ничего не было записано — если вы синхронизируете это хранилище, дождитесь завершения синхронизации и перезагрузите Obsidian, прежде чем вносить какие-либо изменения.",
+	"notice.settingsMissingAction": "Начать заново на этом устройстве",
 	"notice.nothingToWrap": "Нечего оборачивать.",
 	"notice.cursorNotInsideCallout": "Курсор не находится внутри callout.",
 	"notice.autocompleteTargetMoved":

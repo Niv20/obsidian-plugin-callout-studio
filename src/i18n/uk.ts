@@ -260,6 +260,13 @@ export const uk: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio більше не стилізує "{{name}}" — тепер його вигляд визначає ваш власний CSS. Його форми Callout-заголовок та Вбудований callout не відображатимуться.',
 	"notice.externalCssOff": 'Callout Studio знову стилізує "{{name}}".',
+	"notice.vaultRewritePartial":
+		"{{count}} нотатку(и) не вдалося оновити, вони залишилися без змін. Подробиці в консолі розробника.",
+	"notice.settingsUnreadable":
+		"Callout Studio не вдалося прочитати файл налаштувань, тому ваші типи callout відсутні в цьому сеансі. Нічого не було записано, файл на диску не змінено — перезавантажте Obsidian, щоб спробувати знову.",
+	"notice.settingsMissing":
+		"Файл налаштувань Callout Studio відсутній, тому ваші типи callout відсутні в цьому сеансі. Нічого не було записано — якщо ви синхронізуєте це сховище, дочекайтеся завершення синхронізації та перезавантажте Obsidian перед внесенням будь-яких змін.",
+	"notice.settingsMissingAction": "Почати заново на цьому пристрої",
 
 	"notice.nothingToWrap": "Нічого для обгортання.",
 	"notice.cursorNotInsideCallout": "Курсор не знаходиться всередині callout.",

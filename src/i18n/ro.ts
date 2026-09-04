@@ -257,6 +257,13 @@ export const ro: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio nu mai stilizează "{{name}}" — CSS-ul dvs. propriu decide cum arată. Formele sale Callout tip titlu și Callout inline nu se vor reda.',
 	"notice.externalCssOff": 'Callout Studio stilizează din nou "{{name}}".',
+	"notice.vaultRewritePartial":
+		"{{count}} notă/note nu au putut fi actualizate și au rămas neschimbate. Vezi consola pentru dezvoltatori pentru detalii.",
+	"notice.settingsUnreadable":
+		"Callout Studio nu a putut citi fișierul de setări, astfel încât tipurile tale de callout lipsesc din această sesiune. Nu s-a scris nimic, iar fișierul de pe disc este neschimbat — reîncarcă Obsidian pentru a încerca din nou.",
+	"notice.settingsMissing":
+		"Fișierul de setări al Callout Studio lipsește, astfel încât tipurile tale de callout lipsesc din această sesiune. Nu s-a scris nimic — dacă sincronizezi acest vault, lasă sincronizarea să se termine și reîncarcă Obsidian înainte de a face vreo modificare.",
+	"notice.settingsMissingAction": "Începe din nou pe acest dispozitiv",
 	"notice.nothingToWrap": "Nimic de înfășurat.",
 	"notice.cursorNotInsideCallout":
 		"Cursorul nu este în interiorul unui callout.",

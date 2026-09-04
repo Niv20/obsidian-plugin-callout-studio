@@ -255,6 +255,13 @@ export const tr: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio artık "{{name}}" öğesini biçimlendirmiyor — görünümüne kendi CSS\'iniz karar veriyor. Başlık Callout ve Satır İçi Callout biçimleri işlenmeyecek.',
 	"notice.externalCssOff": 'Callout Studio artık "{{name}}" öğesini yeniden biçimlendiriyor.',
+	"notice.vaultRewritePartial":
+		"{{count}} not güncellenemedi ve değiştirilmeden bırakıldı. Ayrıntılar için geliştirici konsolunu kontrol edin.",
+	"notice.settingsUnreadable":
+		"Callout Studio ayarlar dosyasını okuyamadı, bu nedenle callout türleriniz bu oturumda eksik. Hiçbir şey yazılmadı ve diskteki dosya değişmedi — tekrar denemek için Obsidian'ı yeniden yükleyin.",
+	"notice.settingsMissing":
+		"Callout Studio'nun ayarlar dosyası eksik, bu nedenle callout türleriniz bu oturumda eksik. Hiçbir şey yazılmadı — bu kasayı senkronize ediyorsanız, senkronizasyonun tamamlanmasını bekleyin ve herhangi bir değişiklik yapmadan önce Obsidian'ı yeniden yükleyin.",
+	"notice.settingsMissingAction": "Bu cihazda yeniden başla",
 	"notice.nothingToWrap": "Sarılacak bir şey yok.",
 	"notice.cursorNotInsideCallout": "İmleç callout içinde değil.",
 	"notice.autocompleteTargetMoved":

@@ -256,6 +256,13 @@ export const pl: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio nie stylizuje już "{{name}}" — o jego wyglądzie decyduje teraz Twój własny CSS. Jego formy Callout-nagłówek i Callout śródtekstowy nie będą renderowane.',
 	"notice.externalCssOff": 'Callout Studio znów stylizuje "{{name}}".',
+	"notice.vaultRewritePartial":
+		"Nie udało się zaktualizować {{count}} notatek — pozostały bez zmian. Szczegóły w konsoli deweloperskiej.",
+	"notice.settingsUnreadable":
+		"Callout Studio nie mogło odczytać pliku ustawień, więc twoje typy callout są niewidoczne w tej sesji. Nic nie zostało zapisane, a plik na dysku pozostaje niezmieniony — załaduj ponownie Obsidian, aby spróbować jeszcze raz.",
+	"notice.settingsMissing":
+		"Brakuje pliku ustawień Callout Studio, więc twoje typy callout są niewidoczne w tej sesji. Nic nie zostało zapisane — jeśli synchronizujesz ten skarbiec, poczekaj na zakończenie synchronizacji i załaduj ponownie Obsidian przed wprowadzeniem jakichkolwiek zmian.",
+	"notice.settingsMissingAction": "Zacznij od nowa na tym urządzeniu",
 	"notice.nothingToWrap": "Nic do owinięcia.",
 	"notice.cursorNotInsideCallout": "Kursor nie jest wewnątrz callout.",
 	"notice.autocompleteTargetMoved":

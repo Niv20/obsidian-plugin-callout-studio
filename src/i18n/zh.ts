@@ -250,6 +250,13 @@ export const zh: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio 不再为 "{{name}}" 设置样式——由您自己的 CSS 决定它的外观。它的标题 callout 和行内 callout 形式将不会渲染。',
 	"notice.externalCssOff": 'Callout Studio 现在再次为 "{{name}}" 设置样式。',
+	"notice.vaultRewritePartial":
+		"有 {{count}} 条笔记无法更新，已保持不变。详情请查看开发者控制台。",
+	"notice.settingsUnreadable":
+		"Callout Studio 无法读取其设置文件，因此本次会话中缺少你的 callout 类型。未写入任何内容，磁盘上的文件也未更改——重新加载 Obsidian 以重试。",
+	"notice.settingsMissing":
+		"Callout Studio 的设置文件缺失，因此本次会话中缺少你的 callout 类型。未写入任何内容——如果你正在同步此仓库，请等待同步完成后再重新加载 Obsidian，然后再进行任何更改。",
+	"notice.settingsMissingAction": "在此设备上重新开始",
 
 	"notice.nothingToWrap": "没有可包裹的内容。",
 	"notice.cursorNotInsideCallout": "光标不在 callout 内部。",

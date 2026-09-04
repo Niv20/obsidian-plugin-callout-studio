@@ -247,6 +247,13 @@ export const fi: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio ei enää tyylittele calloutia "{{name}}" — oma CSS:äsi päättää sen ulkoasun. Sen otsikko- ja rivinsisäinen callout-muoto eivät näy.',
 	"notice.externalCssOff": 'Callout Studio tyylittelee taas calloutia "{{name}}".',
+	"notice.vaultRewritePartial":
+		"{{count}} muistiinpanoa ei voitu päivittää ja ne jätettiin ennalleen. Katso lisätietoja kehittäjäkonsolista.",
+	"notice.settingsUnreadable":
+		"Callout Studio ei pystynyt lukemaan asetustiedostoaan, joten callout-tyyppisi puuttuvat tästä istunnosta. Mitään ei kirjoitettu, ja levyllä oleva tiedosto on muuttumaton — lataa Obsidian uudelleen yrittääksesi uudelleen.",
+	"notice.settingsMissing":
+		"Callout Studion asetustiedosto puuttuu, joten callout-tyyppisi puuttuvat tästä istunnosta. Mitään ei kirjoitettu — jos synkronoit tätä holvia, anna synkronoinnin valmistua ja lataa Obsidian uudelleen ennen muutosten tekemistä.",
+	"notice.settingsMissingAction": "Aloita alusta tällä laitteella",
 
 	"notice.nothingToWrap": "Ei mitään kääriä.",
 	"notice.cursorNotInsideCallout": "Kursori ei ole calloutin sisällä.",

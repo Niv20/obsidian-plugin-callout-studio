@@ -260,6 +260,13 @@ export const es: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio ya no aplica estilo a "{{name}}" — su propio CSS decide su aspecto. Sus formatos de encabezado y en línea no se renderizarán.',
 	"notice.externalCssOff": 'Callout Studio vuelve a aplicar estilo a "{{name}}".',
+	"notice.vaultRewritePartial":
+		"{{count}} nota(s) no se pudieron actualizar y quedaron sin cambios. Consulta la consola de desarrollador para más detalles.",
+	"notice.settingsUnreadable":
+		"Callout Studio no pudo leer su archivo de configuración, por lo que tus tipos de callout faltan en esta sesión. No se ha escrito nada y el archivo en disco no ha cambiado — recarga Obsidian para intentarlo de nuevo.",
+	"notice.settingsMissing":
+		"Falta el archivo de configuración de Callout Studio, por lo que tus tipos de callout faltan en esta sesión. No se ha escrito nada — si sincronizas esta bóveda, deja que la sincronización termine y recarga Obsidian antes de hacer cambios.",
+	"notice.settingsMissingAction": "Empezar de nuevo en este dispositivo",
 	"notice.nothingToWrap": "No hay nada para envolver.",
 	"notice.cursorNotInsideCallout": "El cursor no está dentro de un callout.",
 	"notice.autocompleteTargetMoved":
