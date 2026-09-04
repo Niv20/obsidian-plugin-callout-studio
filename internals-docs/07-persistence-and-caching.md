@@ -206,7 +206,7 @@ more different, and conflating them is how a sync conflict became data loss.
 
 | Verdict | How it is reached | What happens |
 | --- | --- | --- |
-| `absent` | nullish, and the adapter says there is no file | A fresh install. Start from the shipped defaults. |
+| `absent` | nullish, and the adapter says there is no file | A fresh install — but only on a device with no index of its own, and only until the second look confirms it. See below. |
 | `loaded` | a parsed object | Normal. Its re-serialized form seeds the guard. |
 | `unreadable` | nullish (or a non-object) while the adapter says the file **is** there — or the adapter itself throws | Change nothing. |
 
@@ -227,6 +227,57 @@ The two callers answer `unreadable` differently, and both answers matter:
 This is not hypothetical. The reporter's screenshot showed alternating conflict
 copies where every copy from one device was exactly **0 bytes**, and
 `JSON.parse("")` throws.
+
+### A file that is not there yet
+
+`absent` had the opposite failure, and issue #53 is what it costs. A sync client
+delivers a plugin folder as files, not as a transaction, so `main.js` can be in
+place and running while `data.json` is still on its way — and it renames the
+local copy aside while swapping in a remote one, leaving a window in which the
+file genuinely does not exist. Read as "a fresh install", both windows end with
+the shipped defaults written over settings that were about to arrive, and the
+sync client carries that loss to every other device.
+
+On mobile there is nothing downstream to catch it. Obsidian's config-folder
+watcher is desktop-only, so `onExternalSettingsChange` never fires on a phone: it
+reads `data.json` once, at `onload`, and never again.
+
+Two things separate a fresh install from a file in flight, and neither is
+available at the moment of the read:
+
+- **The device's own memory.** `DeviceLocalStore.hasIndex` is false only where
+  this plugin has never completed a launch in this vault, because every launch
+  writes the discovery index back. A device that *has* an index and no
+  `data.json` is not new — its settings file has gone missing since it last ran,
+  and `loadSettingsInto` freezes the writer exactly as it does for an unreadable
+  one.
+- **Time.** A first launch has no index either, so nothing at load time can rule
+  out a device the vault has only just reached. What rules it out is looking
+  again later: [`manager/settingsLateArrival.ts`](../src/manager/settingsLateArrival.ts)
+  re-reads at the last moment before a file would be created, and adopts one that
+  has turned up instead of replacing it.
+
+That moment is `settings/welcomeRouting.ts`. The `welcomeSeen` flag is the first
+thing a fresh install writes, and it runs from `onLayoutReady` — well after
+`onload`, which is time a sync client can use.
+
+The check is deliberately **not** a `SettingsWriter` pre-write hook, which is the
+other obvious home for it. Adopting a file rebuilds the registry, a rebuild asks
+for saves of its own, and those saves would then queue behind the very write pass
+that was waiting on the check. At a seam between writes there is no such knot.
+
+**The freeze carries its own way out.** "The file is coming back" is true of a
+sync client mid-swap and false of a user who deleted `data.json` themselves to
+start over, and for that second user a freeze with no escape would mean every
+launch from here on silently discarding their work. So the notice announcing a
+missing file offers **Start fresh on this device**, and that button is the only
+caller of `SettingsWriter.thaw()` — see
+[`manager/settingsNotices.ts`](../src/manager/settingsNotices.ts). Nothing
+automatic reaches it.
+
+`tests/syncMobileWipe.test.ts` holds all of this, with the device shape the rest
+of the sync suite could not express: no `adoptExternalSettings`, startup as the
+only entry point.
 
 ### Settings merge — never a raw spread
 
