@@ -31,7 +31,7 @@ import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { DeviceLocalStore } from "../src/manager/DeviceLocalStore";
 import { SettingsWriter } from "../src/manager/SettingsWriter";
 import { loadSettingsInto } from "../src/manager/settingsBoot";
-import type { ExternalReloadHost } from "../src/manager/settingsBoot";
+import type { ExternalReloadHost } from "../src/manager/settingsAdopt";
 import { confirmFreshInstall } from "../src/manager/settingsLateArrival";
 import { maybeShowWelcomeOnLaunch } from "../src/settings/welcomeRouting";
 import type { CalloutDefinition } from "../src/types";

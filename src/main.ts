@@ -26,9 +26,9 @@ import type { SettingsWriter } from "./manager/SettingsWriter";
 import { createSettingsWriter } from "./manager/settingsWriterHost";
 import { DeviceLocalStore } from "./manager/DeviceLocalStore";
 import {
-	adoptExternalSettings,
 	loadSettingsInto,
 } from "./manager/settingsBoot";
+import { adoptExternalSettings } from "./manager/settingsAdopt";
 import { registerThemeRowSync } from "./manager/theme/themeRowSync";
 import { removeLegacyStartupSnippet } from "./manager/legacyStartupSnippet";
 import { runLaunchSequence } from "./manager/launchSequence";

@@ -33,8 +33,8 @@
  * behind the very write pass that was waiting on the check. At a seam between
  * writes there is no such knot to tie.
  */
-import type { ExternalReloadHost } from "./settingsBoot";
-import { reloadFrom } from "./settingsBoot";
+import type { ExternalReloadHost } from "./settingsAdopt";
+import { reloadFrom } from "./settingsAdopt";
 import { readSettingsFile } from "./settingsFile";
 import { warnSettingsUnreadable } from "./settingsNotices";
 import { registryIsOwned } from "./registryOwnership";
@@ -132,24 +132,31 @@ export async function confirmFreshInstall(
 }
 
 /**
- * Keep looking for a `data.json` that startup did not find, and adopt it the
- * moment it lands.
+ * Watch for a `data.json` this session has not seen, and adopt it whenever one
+ * lands.
  *
- * Registered by `loadSettingsInto` for every launch that came up without usable
- * settings: the frozen one, where a device that has run here before found its
- * file missing; the fresh-install one, where the file may simply not have
- * arrived yet; and the one that found a file it could not read, which is a
- * transfer still in progress far more often than it is corruption.
+ * Registered by `loadSettingsInto` for **every** launch, and the "every" is the
+ * point. It began as a rescue for the three launches that came up without
+ * usable settings — file missing, missing on a device that has run before,
+ * present but unreadable — on the reasoning that a healthy launch has nothing
+ * to wait for. That reasoning is wrong the moment the session outlives the
+ * read: Obsidian's config-folder watcher is **desktop-only**, so a phone whose
+ * launch went perfectly reads `data.json` once, at `onload`, and never hears
+ * about it again. Another device rewrites the file, the phone knows nothing,
+ * and the next local edit serializes a launch-time registry over it. That is
+ * issue #53, and no amount of care at boot reaches it.
  *
- * `stillFreshInstall` covers the narrow window between `onload` and the first
- * write. This covers the rest of the session, which on mobile is otherwise
- * uncovered entirely: Obsidian's config-folder watcher is desktop-only, so a
- * phone that starts without settings never hears about them arriving and will
- * happily run all day describing callouts the user does not have.
+ * So this is the mobile counterpart of `onExternalSettingsChange`, not a
+ * recovery path. `stillFreshInstall` covers the narrow window between `onload`
+ * and the first write; this covers the rest of the session.
  *
  * Returning to the app is the signal, because that is when a sync client has
- * most likely just run. It is a single small read, and it stops at the first
- * file it manages to adopt.
+ * most likely just run. The steady state costs one small read per foreground
+ * and stops at `matchesLastWrite`.
+ *
+ * **It never retires.** An adoption is not the end of the story — the device
+ * goes on being a device with no watcher, and the very next file it is sent
+ * would be missed the same way. The only thing an adoption ends is a freeze.
  *
  * **Adopting also thaws the writer**, in `reloadFrom`. A freeze is the guess
  * that the missing file is coming back; when it does come back there is nothing
@@ -162,37 +169,47 @@ export function watchForLateSettings(host: ExternalReloadHost): void {
 	// Absent on a test harness, and on any host that is not a real plugin.
 	if (!host.registerDomEvent) return;
 
-	let settled = false;
-	host.registerDomEvent(activeDocument, "visibilitychange", () => {
+	// The MAIN document, deliberately, rather than `activeDocument` — which is
+	// whichever window had focus at the instant this ran. Bind to a popout and
+	// the watcher dies with it, and a popout's visibility says nothing about
+	// whether the app was in the background anyway.
+	const doc = document;
+	/** True while a check is in flight, so two foregrounds cannot interleave. */
+	let checking = false;
+
+	host.registerDomEvent(doc, "visibilitychange", () => {
 		// Only skip when we positively know the app is going away: the event
 		// fires for both directions, and coming back is the half worth acting
 		// on. Anything other than a definite "hidden" is worth a look.
-		if (settled || activeDocument.visibilityState === "hidden") return;
+		if (checking || doc.visibilityState === "hidden") return;
 		void adoptIfArrived();
 	});
 
 	async function adoptIfArrived(): Promise<void> {
-		const read = await readSettingsFile(host);
-		// Still nothing, or still not readable. Quietly wait for the next time
-		// the user comes back — this fires on every foreground, so anything
-		// said here would be said hundreds of times.
-		if (read.kind !== "loaded") return;
+		checking = true;
+		try {
+			const read = await readSettingsFile(host);
+			// Still nothing, or still not readable. Quietly wait for the next
+			// time the user comes back — this fires on every foreground, so
+			// anything said here would be said hundreds of times.
+			if (read.kind !== "loaded") return;
 
-		// Our own writing. Nothing has landed *yet* — which is not the same as
-		// nothing landing, so this must not retire the watcher. A fresh install
-		// that created its own file is exactly the session still waiting on a
-		// sync client, and Syncthing's floor is a ten-second scan delay with an
-		// hourly rescan behind it. Marking this settled disarmed the only
-		// mechanism a phone has, on the one path where it was still needed.
-		if (host.settingsWriter.matchesLastWrite(read.json)) return;
+			// Our own writing coming back. The ordinary case on a healthy
+			// session, and the reason the steady state is nearly free.
+			if (host.settingsWriter.matchesLastWrite(read.json)) return;
 
-		// The editor owns the registry right now; rebuilding under it would
-		// change the row being edited. Try again next time.
-		if (registryIsOwned(host)) return;
+			// The editor owns the registry right now; rebuilding under it would
+			// change the row being edited. Try again next time.
+			if (registryIsOwned(host)) return;
 
-		settled = true;
-		// `reloadFrom` thaws — see its docblock. Adopting is the one thing that
-		// ends a freeze, and it is reached only with the real file in hand.
-		await reloadFrom(host, read);
+			// `reloadFrom` thaws — see its docblock. Adopting is the one thing
+			// that ends a freeze, and it is reached only with the real file in
+			// hand.
+			await reloadFrom(host, read);
+		} finally {
+			// In a finally, so a read or a rebuild that threw costs one check
+			// rather than the rest of the session's.
+			checking = false;
+		}
 	}
 }

@@ -32,12 +32,10 @@ import type { App, EventRef, PluginManifest } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { DeviceLocalStore } from "../src/manager/DeviceLocalStore";
 import { SettingsWriter } from "../src/manager/SettingsWriter";
-import {
-	adoptExternalSettings,
-	loadSettingsInto,
-} from "../src/manager/settingsBoot";
+import { loadSettingsInto } from "../src/manager/settingsBoot";
+import { adoptExternalSettings } from "../src/manager/settingsAdopt";
 import { confirmFreshInstall } from "../src/manager/settingsLateArrival";
-import type { ExternalReloadHost } from "../src/manager/settingsBoot";
+import type { ExternalReloadHost } from "../src/manager/settingsAdopt";
 import type { CalloutDefinition, IconSvgCacheEntry } from "../src/types";
 
 /** One `localStorage` for the process, scoped per device by `appId`. */

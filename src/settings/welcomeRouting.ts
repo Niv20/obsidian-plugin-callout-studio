@@ -21,7 +21,7 @@
  * and the DevTools console reach the screen through it regardless of the flag.
  */
 import { WelcomeModal } from "./WelcomeModal";
-import type { ExternalReloadHost } from "../manager/settingsBoot";
+import type { ExternalReloadHost } from "../manager/settingsAdopt";
 import type { SettingsTabPlugin } from "./sections/types";
 
 /** What the routing needs beyond what `WelcomeModal` itself takes. */
