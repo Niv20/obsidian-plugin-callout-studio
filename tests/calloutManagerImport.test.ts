@@ -15,6 +15,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { toCalloutManagerEntries } from "../src/utils/calloutManagerImport";
+import { parseCalloutManagerExport } from "../src/utils/calloutCssParse";
 import type { CalloutManagerRaw } from "../src/utils/calloutManagerFormat";
 import {
 	derivePaletteFromColor,
@@ -101,5 +102,54 @@ describe("derivePaletteFromColors", () => {
 		assert.equal(split.bgColorLight, red.bgColorLight);
 		assert.equal(split.colorDark, blue.colorDark);
 		assert.equal(split.bgColorDark, blue.bgColorDark);
+	});
+});
+
+describe("parseCalloutManagerExport — recovering from generated CSS", () => {
+	it("reads back a stylesheet this plugin wrote", async () => {
+		// The recovery route offered to anyone whose settings file was lost:
+		// the startup snapshot in localStorage is the whole generated
+		// stylesheet, and the paste box is what turns it back into callouts.
+		// Every custom property in that sheet is `!important`, so this is also
+		// the regression test for parsing around it.
+		const { harness, definition } = await import(
+			"./support/cssInjectorHarness"
+		);
+		const h = harness();
+		const def = definition({
+			id: "insight",
+			displayName: "Insight",
+			icon: { type: "lucide", value: "lightbulb" },
+			colorLight: "#aa3366",
+			colorDark: "#ff88bb",
+		});
+		h.registry.add(def);
+
+		const entries = parseCalloutManagerExport(h.css.generateCalloutCSS(def));
+		const insight = entries.find((e) => e.id === "insight");
+
+		assert.ok(insight, "the callout was not recoverable from its own CSS");
+		assert.deepEqual(
+			insight.icon,
+			{ type: "lucide", value: "lightbulb" },
+			"`!important` leaked into the icon name",
+		);
+		assert.equal(
+			insight.color,
+			"#ff88bb",
+			"no colour survived; the dark block wins the per-property merge",
+		);
+	});
+
+	it("tolerates !important on either declaration", () => {
+		const entries = parseCalloutManagerExport(
+			`.callout[data-callout="tip"] {
+				--callout-color: rgb(255, 0, 0) !important;
+				--callout-icon: lucide-star !important;
+			}`,
+		);
+		assert.deepEqual(entries, [
+			{ id: "tip", icon: { type: "lucide", value: "star" }, color: "#ff0000" },
+		]);
 	});
 });

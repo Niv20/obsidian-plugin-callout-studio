@@ -899,7 +899,6 @@ describe("no new oversized files", () => {
 		// in the window — moved to settings/command/hotkeyRow.ts.
 		"src/settings/CommandBuilderModal.ts": 308,
 		"src/settings/iconpicker/IconGrid.ts": 343,
-		"src/utils/calloutManagerImport.ts": 340,
 		"src/icons/PackDataStore.ts": 309,
 	};
 

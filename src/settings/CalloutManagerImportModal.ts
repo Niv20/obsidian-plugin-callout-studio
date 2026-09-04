@@ -26,8 +26,8 @@
 import { Modal, Notice, normalizePath, setIcon } from "obsidian";
 import { t } from "../i18n";
 import { parseCalloutManagerData } from "../utils/calloutManagerFormat";
+import { parseCalloutManagerExport } from "../utils/calloutCssParse";
 import {
-	parseCalloutManagerExport,
 	planCalloutManagerImport,
 	toCalloutManagerEntries,
 	type CalloutManagerEntry,

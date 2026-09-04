@@ -28,8 +28,9 @@ import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { ValidationIssue } from "./importValidator";
 import type { CalloutManagerNote, CalloutManagerRaw } from "./calloutManagerFormat";
 import { createLucideNameCheck } from "../icons/nameCheck";
-import { calloutIdentity, normalizeCalloutId } from "./calloutId";
+import { normalizeCalloutId } from "./calloutId";
 import { parseCssColorToHex } from "./colorUtils";
+import { parseIconDecl } from "./calloutCssParse";
 import { validateIdString } from "./importValidator";
 
 /**
@@ -107,77 +108,6 @@ export function toCalloutManagerEntries(
 			notes: raw.notes,
 		};
 	});
-}
-
-const BLOCK_RE = /([^{}]+)\{([^}]*)\}/g;
-const SELECTOR_ID_RE = /data-callout=["']([^"']+)["']/g;
-const ICON_DECL_RE = /--callout-icon\s*:\s*([^;}]+)/i;
-const COLOR_DECL_RE = /--callout-color\s*:\s*([^;}]+)/i;
-
-/**
- * Turns an Obsidian icon id into our `CalloutIcon` convention: a bare Lucide
- * name. Obsidian's own `--callout-icon` variable (which both Obsidian core and
- * Callout Manager write) always uses the `lucide-` prefixed form, but every
- * render path in this plugin (`renderIcon.ts`, `constants.ts`) stores and
- * consumes the bare name directly with `setIcon`.
- *
- * Callout Manager picks icons with Obsidian's own suggester, so the value is
- * whatever `getIconIds()` listed — which is three different things (see the
- * header of `icons/lucideId.ts`): prefixed core Lucide, bare ids some other
- * plugin registered with `addIcon()`, and a handful of bare Obsidian-internal
- * ids. Stripping only the prefix leaves all three intact and drawable, and
- * whether the id names anything *here* is the planner's `createLucideNameCheck`
- * to decide — a foreign id passes exactly when the plugin that registered it is
- * installed in this vault, which is exactly when it can be drawn.
- */
-export function parseIconDecl(raw: string): CalloutIcon | undefined {
-	const trimmed = raw.trim();
-	if (!trimmed) return undefined;
-	const value = trimmed.startsWith("lucide-")
-		? trimmed.slice("lucide-".length)
-		: trimmed;
-	if (!value) return undefined;
-	return { type: "lucide", value };
-}
-
-/**
- * Parses the pasted text into one entry per callout, keyed by identity.
- * Blocks are merged by id with last-write-wins **per property** (mirrors CSS
- * cascade: a later block for the same id that only sets one property doesn't
- * erase a property an earlier block already set).
- */
-export function parseCalloutManagerExport(text: string): CalloutManagerEntry[] {
-	const withoutComments = text.replace(/\/\*[\s\S]*?\*\//g, "");
-	const byId = new Map<string, CalloutManagerEntry>();
-
-	let block: RegExpExecArray | null;
-	while ((block = BLOCK_RE.exec(withoutComments)) !== null) {
-		const [, selector, body] = block;
-		if (!selector || body === undefined) continue;
-
-		const ids = [...selector.matchAll(SELECTOR_ID_RE)]
-			.map((m) => m[1])
-			.filter((id): id is string => !!id);
-		if (ids.length === 0) continue;
-
-		const iconMatch = ICON_DECL_RE.exec(body);
-		const icon = iconMatch?.[1] ? parseIconDecl(iconMatch[1]) : undefined;
-		const colorMatch = COLOR_DECL_RE.exec(body);
-		const color = colorMatch?.[1]
-			? (parseCssColorToHex(colorMatch[1].trim()) ?? undefined)
-			: undefined;
-
-		for (const id of ids) {
-			const prev = byId.get(calloutIdentity(id));
-			byId.set(calloutIdentity(id), {
-				id,
-				icon: icon ?? prev?.icon,
-				color: color ?? prev?.color,
-			});
-		}
-	}
-
-	return [...byId.values()];
 }
 
 export interface CalloutManagerPlanItem {
