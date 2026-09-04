@@ -97,12 +97,15 @@ export function migrateStyleModes(
 	if (rawSettings?.defaultStyleMode !== undefined) changed = true;
 
 	for (const saved of data.callouts ?? []) {
-		const def = live.get(saved.id) as
-			| (CalloutDefinition & { styleMode?: unknown })
-			| undefined;
+		const def = live.get(saved.id);
 		if (!def) continue;
-		if (def.styleMode !== undefined) {
-			delete def.styleMode;
+		// `styleMode` is off `CalloutDefinition` — retiring it is the whole point
+		// of this file — so the field is reached through a shape that names only
+		// it, rather than by intersecting it back onto the row (a widening that
+		// leaves the row's type unchanged, and reads as a no-op to the linter).
+		const retired = def as { styleMode?: unknown };
+		if (retired.styleMode !== undefined) {
+			delete retired.styleMode;
 			changed = true;
 		}
 		if (def.source !== "theme") continue;

@@ -82,7 +82,7 @@ export async function readSettingsFile(
 	if (typeof raw === "object" && raw !== null && !Array.isArray(raw)) {
 		return {
 			kind: "loaded",
-			data: raw as Partial<PluginData>,
+			data: raw,
 			json: JSON.stringify(raw),
 		};
 	}
