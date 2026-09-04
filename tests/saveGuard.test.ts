@@ -48,14 +48,60 @@ describe("SaveGuard", () => {
 		assert.notStrictEqual(guard.prepare(payload({ version: 5 })), null);
 	});
 
-	it("compares serialized form, so key order counts", () => {
-		// Not a quirk to work around — it is the reason settingsMerge names its
-		// fields in DEFAULT_SETTINGS' order. A guard that ignored order would
-		// hide that divergence here and let it surface as file churn instead.
+	it("ignores key order, which carries no meaning and never settles", () => {
+		// This used to assert the opposite, on the reasoning that order is a
+		// real signal worth surfacing. It is not: two builds of this plugin
+		// order the same settings differently — a field the newer one names in
+		// DEFAULT_SETTINGS' order is re-emitted by the older one, which does
+		// not know it, from `collectUnknownSettings` and therefore from a
+		// different position. Compared by raw bytes those two files disagree
+		// forever, each rewriting the other's, which is issue #41's file-sync
+		// tennis. See utils/stableJson.ts.
 		const guard = new SaveGuard();
 		guard.commit(guard.prepare({ a: 1, b: 2 })!);
 
-		assert.notStrictEqual(guard.prepare({ b: 2, a: 1 }), null);
+		assert.strictEqual(guard.prepare({ b: 2, a: 1 }), null);
+	});
+
+	it("ignores key order at depth, and inside array entries", () => {
+		// A callout row is an object inside an array, and two builds name its
+		// fields in their own order too.
+		const guard = new SaveGuard();
+		guard.commit(guard.prepare({ callouts: [{ id: "a", icon: "x" }] })!);
+
+		assert.strictEqual(
+			guard.prepare({ callouts: [{ icon: "x", id: "a" }] }),
+			null,
+		);
+	});
+
+	it("still hears a change that array order carries", () => {
+		// Order within an array is the user's own — the context menu they
+		// arranged, the list they sorted — so it must keep counting.
+		const guard = new SaveGuard();
+		guard.commit(guard.prepare({ items: ["a", "b"] })!);
+
+		assert.notStrictEqual(guard.prepare({ items: ["b", "a"] }), null);
+	});
+
+	it("recognises a file written in another build's key order", () => {
+		// The half `prepare` alone cannot do: `adopt` and `matches` are handed
+		// text somebody else serialized, so they normalize it the same way.
+		const guard = new SaveGuard();
+		guard.adopt(JSON.stringify({ settings: { b: 2, a: 1 }, version: 4 }));
+
+		assert.strictEqual(
+			guard.matches(JSON.stringify({ version: 4, settings: { a: 1, b: 2 } })),
+			true,
+		);
+		assert.strictEqual(guard.prepare({ version: 4, settings: { a: 1, b: 2 } }), null);
+	});
+
+	it("treats text that is not JSON as nothing it could have written", () => {
+		const guard = new SaveGuard();
+		guard.commit(guard.prepare({ a: 1 })!);
+
+		assert.strictEqual(guard.matches("{ truncated"), false);
 	});
 
 	it("keeps the old baseline when a write is never committed", () => {
@@ -115,8 +161,15 @@ describe("SaveGuard", () => {
 	});
 
 	it("returns the exact string commit() expects", () => {
+		// The canonical spelling rather than `JSON.stringify(data)` — the two
+		// differ whenever the payload's keys are not already sorted, and the
+		// value that was compared has to be the value that gets recorded or
+		// the next save is written twice.
 		const guard = new SaveGuard();
 		const data = payload();
-		assert.strictEqual(guard.prepare(data), JSON.stringify(data));
+		const prepared = guard.prepare(data);
+		assert.notStrictEqual(prepared, null);
+		guard.commit(prepared!);
+		assert.strictEqual(guard.prepare(payload()), null);
 	});
 });

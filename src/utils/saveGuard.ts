@@ -36,10 +36,44 @@
  * > genuinely different local state still writes, because its payload differs
  * > from the bytes on disk.
  *
+ * Everything it compares goes through one canonical spelling first — the
+ * object with its keys sorted, deeply. Bytes carry one thing that means
+ * nothing, which is the order the keys happen to be in, and two builds of this
+ * plugin genuinely do order the same settings differently: a field the newer
+ * one names in `DEFAULT_SETTINGS`' order is re-emitted by the older one, which
+ * has never heard of it, from `collectUnknownSettings` and therefore from
+ * somewhere else entirely. Left uncanonicalized those two files disagree
+ * forever, each rewriting the other's — the same shape as the `iconSvgCache`
+ * ordering bug, one level up. See `utils/stableJson.ts`.
+ *
  * Its own module, holding its own baseline, so `main.ts` keeps only the call
  * and the rule can be tested without standing up a plugin harness.
  */
 import { WriteMemo } from "./writeMemo";
+import { stableKeyOrder } from "./stableJson";
+
+/** One settings object, as the only spelling of it this class compares. */
+function canonical(data: unknown): string {
+	return JSON.stringify(stableKeyOrder(data));
+}
+
+/**
+ * The same, for text somebody else produced.
+ *
+ * Every string that reaches {@link SaveGuard.adopt} or
+ * {@link SaveGuard.matches} is a serialization of a settings object written by
+ * some build of this plugin, in whatever key order that build emits — so it has
+ * to be put back through the same normalizer as our own payload before the two
+ * can be compared at all. Text that is not JSON is returned unchanged: it
+ * cannot equal a canonical payload, which is the right answer for both callers.
+ */
+function canonicalText(json: string): string {
+	try {
+		return canonical(JSON.parse(json));
+	} catch {
+		return json;
+	}
+}
 
 export class SaveGuard {
 	private readonly memo = new WriteMemo();
@@ -53,7 +87,7 @@ export class SaveGuard {
 	 * migration.
 	 */
 	prepare(data: unknown): string | null {
-		return this.memo.prepare(JSON.stringify(data));
+		return this.memo.prepare(canonical(data));
 	}
 
 	/** Record a write that succeeded. Pass the string {@link prepare} returned. */
@@ -64,14 +98,16 @@ export class SaveGuard {
 	/**
 	 * Record the file someone else wrote, as we have just read it back.
 	 *
-	 * Pass `JSON.stringify(parsed)` — the *parsed* object re-serialized, never
-	 * the raw file text. Obsidian writes with `JSON.stringify(data, undefined, 2)`,
-	 * so the text on disk is pretty-printed while {@link prepare} compares
-	 * compact output; a parse/stringify round-trip normalizes the whitespace and
-	 * preserves key order, which is what makes the two comparable at all.
+	 * Pass what `manager/settingsFile.ts` produced — the *parsed* object put
+	 * back through `stableKeyOrder` and re-serialized, never the raw file text.
+	 * Obsidian writes with `JSON.stringify(data, undefined, 2)`, so the text on
+	 * disk is pretty-printed while {@link prepare} compares compact output; the
+	 * round-trip normalizes the whitespace, and the key sort normalizes the one
+	 * other difference that carries no meaning — see `utils/stableJson.ts` for
+	 * the version-skew loop that one costs.
 	 */
 	adopt(json: string): void {
-		this.memo.adopt(json);
+		this.memo.adopt(canonicalText(json));
 	}
 
 	/**
@@ -83,6 +119,6 @@ export class SaveGuard {
 	 * repeating it for a file that cannot have changed anything.
 	 */
 	matches(json: string): boolean {
-		return this.memo.matches(json);
+		return this.memo.matches(canonicalText(json));
 	}
 }

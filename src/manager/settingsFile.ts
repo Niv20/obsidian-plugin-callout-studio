@@ -39,7 +39,8 @@ export type SettingsRead =
 	 *
 	 * `json` is the re-serialized form of exactly what was read, ready to seed
 	 * the write guard's baseline — see `utils/saveGuard.ts` for why it is the
-	 * parsed object round-tripped rather than the raw file text.
+	 * parsed object round-tripped rather than the raw file text, and for the
+	 * canonicalization it applies on top.
 	 */
 	| { kind: "loaded"; data: Partial<PluginData>; json: string }
 	/** A file that is there but is not usable settings. Change nothing. */
