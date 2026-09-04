@@ -48,9 +48,9 @@ Everything above is a reset you asked for. This section is about the one you did
 
 Callout Studio keeps your callout types in a single settings file inside your vault. If you sync your vault, that file travels like any other - and a sync client can be caught mid-delivery, with the file briefly missing or only half-written. A phone is the most common place to notice, because it often opens a vault while the sync is still catching up.
 
-When Callout Studio starts and finds its settings file missing or unreadable, it does **not** treat that as an empty setup. It shows a notice, leaves the file completely alone, and writes nothing at all for the rest of that session. Your callout types will be missing from the list while that notice is up, but the file on disk still has them.
+When Callout Studio starts and finds its settings file missing or unreadable, it does **not** treat that as an empty setup. It shows a notice, leaves the file completely alone, and stops writing. Your callout types will be missing from the list while that notice is up, but the file on disk still has them.
 
-**What to do:** let the sync finish, then reload Obsidian. That's usually all it takes.
+**What to do:** let the sync finish. Callout Studio keeps watching for the file, and picks it up on its own the moment it lands — on desktop as soon as it changes, on mobile the next time you come back to the app. Your callout types reappear and saving starts working again, so anything you change from then on is kept. Reloading Obsidian also works and is never wrong, but it is usually not needed.
 
 The one case where the file really is gone for good is when you deleted it yourself to start over. For that, the notice offers **Start fresh on this device**, which lets Callout Studio save again from that point on. Only use it if you know the file isn't coming back - once Callout Studio starts writing, it writes what it currently has, which is the built-in callout types and nothing else.
 

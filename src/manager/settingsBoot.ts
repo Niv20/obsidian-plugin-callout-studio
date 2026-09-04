@@ -130,6 +130,12 @@ export async function loadSettingsInto(
 				"settings will not be written this session",
 		);
 		warnSettingsUnreadable();
+		// A file caught mid-write is finished moments later, and this is the
+		// only thing that will notice on a phone — Obsidian's config-folder
+		// watcher is desktop-only, so `onExternalSettingsChange` never fires
+		// there and the session would otherwise show no callouts until the user
+		// thought to restart the app.
+		watchForLateSettings(host);
 		return { isFreshInstall: false };
 	}
 
@@ -257,11 +263,23 @@ export async function adoptExternalSettings(
  * `stillFreshInstall` on a device where the file simply arrived late. Held as a
  * whole, so the rebuild publishes at most one write and never an intermediate
  * state.
+ *
+ * **Adopting is what ends a freeze.** A freeze is the guess that a file we
+ * could not read or find is coming back; arriving with that file in hand is the
+ * guess being answered, and the baseline seeded below then describes what is on
+ * disk, so saving is safe again. Without this, a session that recovered went on
+ * *looking* right — the callouts come back and repaint — while silently
+ * discarding every edit the user made for the rest of it.
+ *
+ * It thaws **before** the hold, not after: `applySettingsRead`'s convergence
+ * flush runs inside that hold, and a writer still frozen at that moment would
+ * drop the load-time migration on the very path that just recovered.
  */
 export async function reloadFrom(
 	host: ExternalReloadHost,
 	read: Extract<SettingsRead, { kind: "loaded" }>,
 ): Promise<void> {
+	host.settingsWriter.thaw();
 	await host.settingsWriter.hold(async () => {
 		await applySettingsRead(host, read);
 		host.resyncThemeRows();

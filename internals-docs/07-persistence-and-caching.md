@@ -223,6 +223,11 @@ The two callers answer `unreadable` differently, and both answers matter:
   up holding only the built-ins — but `SettingsWriter.freeze()` takes the file
   off the table for the session and the user is told, because otherwise the very
   next save replaces a file we failed to understand with one we know is wrong.
+  It also registers `watchForLateSettings`, because "unreadable" is a transfer
+  still in progress far more often than it is corruption, and on a phone nothing
+  else is going to notice when it finishes. Until that was added, a mobile
+  launch that landed mid-write showed no callouts for the whole session and
+  could do nothing about it but wait for the user to restart the app.
 
 This is not hypothetical. The reporter's screenshot showed alternating conflict
 copies where every copy from one device was exactly **0 bytes**, and
@@ -264,13 +269,35 @@ thing a fresh install writes, and it runs from `onLayoutReady` — well after
 That covers the window between `onload` and the first write. `watchForLateSettings`
 covers the rest of the session, which on mobile is otherwise not covered at all:
 it listens for the app returning to the foreground — the moment a sync client has
-most likely just run — and adopts a settings file that has appeared since. Both
-launches that came up without a usable file register it, so a frozen device
-recovers on its own rather than waiting for a restart. Adopting is also the one
-automatic path to `SettingsWriter.thaw()`, and it is reached only with the real
-file in hand: the baseline then describes what is on disk, so saving is safe
-again. It stops at the first file it adopts, stays silent while there is still
-nothing there, and defers while the callout editor owns the registry.
+most likely just run — and adopts a settings file that has appeared since. Every
+launch that came up without usable settings registers it — missing, missing-on-a
+-known-device, and unreadable alike — so a frozen device recovers on its own
+rather than waiting for a restart. It stops at the first file it **adopts**,
+stays silent while there is still nothing there, and defers while the callout
+editor owns the registry.
+
+> [!IMPORTANT]
+> Seeing *our own* file on disk is not a reason to stop watching. The watcher
+> used to treat `matchesLastWrite` as "settled", and on the one path where the
+> baseline is not null — a fresh install that has written its own `data.json` —
+> that is precisely the session still waiting on a sync client. Syncthing's floor
+> is a ten-second scan delay with an hourly rescan behind it, so "nothing has
+> landed yet" is the normal state for a long time, and retiring the watcher on it
+> disarmed the only mechanism a phone has.
+
+**Adopting is what ends a freeze**, and `reloadFrom` does it as its first act, so
+both adoption paths get it — the desktop watcher and the mobile foreground check.
+It is reached only with a `loaded` read in hand: the baseline it then seeds
+describes what is on disk, so saving asserts nothing the file does not already
+say. The thaw comes **before** the hold rather than after, because
+`applySettingsRead`'s convergence flush runs inside that hold and a writer still
+frozen at that moment would drop a load-time migration on the very path that just
+recovered.
+
+Without that thaw, a session that recovered went on *looking* right — the
+callouts come back and the settings tab repaints — while every edit the user made
+from then on was discarded at the `frozen` check. On desktop that is the whole
+session after a single mid-write launch, announced by nothing.
 
 The check is deliberately **not** a `SettingsWriter` pre-write hook, which is the
 other obvious home for it. Adopting a file rebuilds the registry, a rebuild asks
@@ -281,10 +308,12 @@ that was waiting on the check. At a seam between writes there is no such knot.
 sync client mid-swap and false of a user who deleted `data.json` themselves to
 start over, and for that second user a freeze with no escape would mean every
 launch from here on silently discarding their work. So the notice announcing a
-missing file offers **Start fresh on this device**, and that button is the only
-caller of `SettingsWriter.thaw()` — see
-[`manager/settingsNotices.ts`](../src/manager/settingsNotices.ts). Nothing
-automatic reaches it.
+missing file offers **Start fresh on this device** — see
+[`manager/settingsNotices.ts`](../src/manager/settingsNotices.ts). That button
+and `reloadFrom` are the only two callers of `SettingsWriter.thaw()`, and they
+are the only two things that can answer the guess: the user saying the file is
+gone for good, or the file itself turning up. What still never happens is a thaw
+on a hunch — no timer, no retry count, no "it has probably finished by now".
 
 `tests/syncMobileWipe.test.ts` holds all of this, with the device shape the rest
 of the sync suite could not express: no `adoptExternalSettings`, startup as the

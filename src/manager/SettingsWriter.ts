@@ -168,15 +168,25 @@ export class SettingsWriter {
 	}
 
 	/**
-	 * Lift a {@link freeze}, on the user's explicit say-so and nothing else.
+	 * Lift a {@link freeze}, once there is a reason to believe the file again.
 	 *
 	 * A freeze is a guess — a well-founded one, but a guess — that the file it
-	 * could not find or read is coming back. When it is not coming back, because
-	 * the user deleted `data.json` themselves to start over, that guess would
-	 * otherwise stand for every launch from here on and quietly discard
-	 * everything they did next. So the notice announcing a freeze carries the way
-	 * out of it, and this is what that button calls. Nothing automatic reaches
-	 * it; that is the whole point. See `manager/settingsNotices.ts`.
+	 * could not find or read is coming back. Exactly two things answer that
+	 * guess, and both call this:
+	 *
+	 * - **The file came back.** `manager/settingsBoot.ts`'s `reloadFrom` thaws
+	 *   as its first act, because it is only ever reached with a `loaded` read
+	 *   in hand: the baseline it then seeds describes what is on disk, so saving
+	 *   asserts nothing the file does not already say. Without this a recovered
+	 *   session went on looking right while discarding every edit in it.
+	 * - **The user says it is not coming back**, because they deleted
+	 *   `data.json` themselves to start over. Left frozen, that user would have
+	 *   every launch from here on quietly throw their work away — so the notice
+	 *   announcing a freeze carries the way out, and that button calls this. See
+	 *   `manager/settingsNotices.ts`.
+	 *
+	 * What still never happens is a thaw on a *hunch* — a timer, a retry count,
+	 * or "it has probably finished by now".
 	 */
 	thaw(): void {
 		this.frozen = false;

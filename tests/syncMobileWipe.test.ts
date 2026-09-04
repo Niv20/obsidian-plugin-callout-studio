@@ -328,6 +328,58 @@ describe("a data.json that turns up after startup", () => {
 		assert.ok(p.registry.get("insight"), "the real settings were not adopted");
 	});
 
+	it("keeps watching after a file it could not read", async () => {
+		// The other half of the freeze. A phone has no config-folder watcher, so
+		// if the foreground listener is not registered here, a launch that
+		// landed mid-write shows no callouts and can do nothing about it until
+		// the user thinks to restart the app.
+		storage.clear();
+		const disk = new Disk();
+		disk.content = '{"version":4,"callouts":[{"id":"tru';
+		const p = phone("new-phone", disk);
+		await p.boot();
+		assert.strictEqual(p.watching(), true, "nothing was left watching");
+
+		disk.content = vaultWithUserCallouts().content;
+		await p.returnToApp();
+		assert.ok(p.registry.get("insight"), "the repaired file was not adopted");
+
+		// The content, not the write count: an adoption that wrote something of
+		// its own would satisfy a bare `writes > 0` while the user's edit was
+		// still being thrown away.
+		p.registry.add(authored("made-after-recovery"));
+		await p.save();
+		assert.ok(
+			(disk.content ?? "").includes("made-after-recovery"),
+			"stayed read-only for the whole session",
+		);
+	});
+
+	it("goes on watching after seeing a file it wrote itself", async () => {
+		// Our own bytes on disk say only that nothing has landed *yet*. Treating
+		// that as "settled" retires the one mechanism a phone has, and the file
+		// this device is waiting for is usually still in flight.
+		storage.clear();
+		const disk = new Disk();
+		const p = phone("new-phone", disk);
+		await p.boot();
+
+		p.registry.add(authored("first-one"));
+		await p.save();
+		assert.ok(disk.writes > 0, "a real fresh install was blocked");
+
+		// A foreground where the only thing on disk is what we just wrote.
+		await p.returnToApp();
+
+		// The vault's real settings finally reach the phone.
+		disk.content = vaultWithUserCallouts().content;
+		await p.returnToApp();
+		assert.ok(
+			p.registry.get("insight"),
+			"stopped watching after seeing its own file",
+		);
+	});
+
 	it("goes on writing when nothing turned up after all", async () => {
 		storage.clear();
 		const disk = new Disk();

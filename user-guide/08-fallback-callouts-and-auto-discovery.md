@@ -42,9 +42,9 @@ In practice this means:
 - A brand-new device — or one where you have cleared Obsidian's local data — scans the vault once to build that list, the same way a fresh install does.
 
 - When settings arrive from your other device, Callout Studio adopts them without writing anything back. Two devices that agree stay silent, so there is nothing for a sync tool to reconcile and no conflict copies to clean up.
-- If your settings file is ever half-written or unreadable — a sync still in progress, most likely — Callout Studio leaves it completely alone rather than replacing it. Your callouts may be missing until you reload Obsidian, and it will tell you so, but the file itself is never overwritten with an empty one.
+- If your settings file is ever half-written or unreadable — a sync still in progress, most likely — Callout Studio leaves it completely alone rather than replacing it. Your callouts may be missing for a moment, and it will tell you so, but the file itself is never overwritten with an empty one.
 
-On desktop, Callout Studio also notices when your settings file is updated by a sync tool while Obsidian is open, and picks up the change without you having to restart. On mobile, Obsidian gives plugins no way to be told about that, so reopening the vault is still the way to pick up settings that arrived while it was open.
+On desktop, Callout Studio notices when your settings file is updated by a sync tool while Obsidian is open, and picks up the change without you having to restart. Obsidian gives plugins no way to be told about that on mobile, so there Callout Studio checks each time you come back to the app — which is usually just after your sync tool has run. Either way, once your real settings turn up they are adopted and everything works normally again, including saving: you do not have to restart, and any callout you make after that point is kept.
 
 ---
 **Next:** [Deleting and replacing callouts](09-deleting-and-replacing-callouts.md)
