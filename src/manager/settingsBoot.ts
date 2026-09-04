@@ -44,6 +44,12 @@ export interface SettingsBootResult {
  * is told, because they are about to notice their callouts missing and the one
  * thing they need to know is that the file itself is intact.
  *
+ * "Holding only the built-ins" is something this function has to *do*, and for
+ * a long time it only said so: `registry.load()` is the sole caller that puts
+ * the shipped rows on the map, and both branches below used to return before
+ * reaching it. A frozen session therefore held nothing whatsoever — no `note`,
+ * no `warning`, no stylesheet, and every custom command looking orphaned.
+ *
  * A file that is *missing* gets the same treatment, but only on a device that
  * has run here before — see the `hasIndex` test below, and
  * `manager/settingsLateArrival.ts` for the first launch, where that test cannot
@@ -61,6 +67,14 @@ export async function loadSettingsInto(
 				"settings will not be written this session",
 		);
 		warnSettingsUnreadable();
+		// Seed the built-ins anyway. `registry.load` is the ONLY thing that puts
+		// them on the map — the constructor fills `builtInDefaults`, which is
+		// the comparison set, not the live one — so a branch that returns before
+		// this leaves the session holding no callouts at all, not even `note`.
+		// The whole stylesheet then goes missing, every custom command is swept
+		// as orphaned, and "Start fresh" would write that emptiness to disk.
+		// Frozen, so nothing here reaches the file.
+		await applySettingsRead(host, { kind: "absent" });
 		// A file caught mid-write is finished moments later, and on a phone this
 		// is the only thing that will notice: the config-folder watcher behind
 		// `onExternalSettingsChange` is desktop-only, so the session would
@@ -87,6 +101,8 @@ export async function loadSettingsInto(
 			host.settingsWriter.thaw();
 			void host.saveSettings();
 		});
+		// Built-ins and this device's discovered rows, as above. Frozen.
+		await applySettingsRead(host, { kind: "absent" });
 		// The file may yet come back on its own, and adopting it is a far better
 		// outcome than the user starting over.
 		watchForLateSettings(host);

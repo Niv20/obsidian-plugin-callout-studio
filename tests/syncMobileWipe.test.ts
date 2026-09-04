@@ -570,3 +570,51 @@ describe("waiting for settings that arrive during the session", () => {
 		assert.ok(p.registry.get("insight"), "never retried after the editor closed");
 	});
 });
+
+describe("a frozen session still has callouts to show", () => {
+	/**
+	 * `registry.load()` is the only thing that puts the shipped rows on the
+	 * map — the constructor fills `builtInDefaults`, which is the *comparison*
+	 * set, not the live one. Both freeze branches used to return before
+	 * reaching it, so a session that could not read `data.json` held nothing
+	 * whatsoever: no `note`, no `warning`, no generated stylesheet, and every
+	 * custom command looking orphaned to the sweep. The docs said the opposite,
+	 * which is how it went unnoticed.
+	 */
+	it("holds the built-ins when the file could not be read", async () => {
+		const disk = new Disk();
+		disk.content = "{ truncated";
+		const p = phone("phone", disk);
+
+		await p.boot();
+
+		assert.ok(p.registry.get("note"), "the built-ins must be there");
+		assert.strictEqual(p.registry.getBuiltIn().length, 13);
+	});
+
+	it("holds them when the file went missing on a known device", async () => {
+		const disk = new Disk();
+		const p = phone("phone", disk);
+		p.localState.remember(["seen-here"]);
+		disk.content = null;
+
+		await p.boot();
+
+		assert.ok(p.registry.get("note"));
+		assert.strictEqual(p.registry.getBuiltIn().length, 13);
+	});
+
+	it("and still writes nothing at all", async () => {
+		// Seeding them must not become a way for the defaults to reach disk —
+		// that is the whole failure both freezes exist to prevent.
+		const disk = new Disk();
+		disk.content = "{ truncated";
+		const p = phone("phone", disk);
+
+		await p.boot();
+		await p.save();
+
+		assert.strictEqual(disk.writes, 0);
+		assert.strictEqual(disk.content, "{ truncated");
+	});
+});
