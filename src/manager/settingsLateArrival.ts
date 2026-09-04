@@ -37,6 +37,7 @@ import type { ExternalReloadHost } from "./settingsBoot";
 import { reloadFrom } from "./settingsBoot";
 import { readSettingsFile } from "./settingsFile";
 import { warnSettingsUnreadable } from "./settingsNotices";
+import { registryIsOwned } from "./registryOwnership";
 
 /**
  * Whether this is still the fresh install that startup took it for.
@@ -187,7 +188,7 @@ export function watchForLateSettings(host: ExternalReloadHost): void {
 
 		// The editor owns the registry right now; rebuilding under it would
 		// change the row being edited. Try again next time.
-		if (host.pruneSuspended || host.registry.hasPreviewDefinition()) return;
+		if (registryIsOwned(host)) return;
 
 		settled = true;
 		// `reloadFrom` thaws — see its docblock. Adopting is the one thing that

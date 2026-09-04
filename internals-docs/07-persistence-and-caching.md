@@ -79,6 +79,18 @@ four rules the raw `saveData` call did not:
   after a write *succeeds*, so a failed write is retried rather than suppressed
   forever.
 
+  That last rule is not specific to `data.json`. All three stores the plugin
+  writes keep the same baseline — this one, the device-local blob and the
+  startup CSS snapshot — so it lives in
+  [`utils/writeMemo.ts`](../src/utils/writeMemo.ts) and the three hold a
+  `WriteMemo` rather than a `string | null` of their own. They had a field, a
+  compare and a copy of the explanation each, and `StartupStyleCache` is where
+  that cost something: it recorded the value *before* offering it to storage, so
+  a refused write was remembered as a success and that text was never offered
+  again for the rest of the session. `SaveGuard` stays as the `data.json` face
+  over it, because what it adds — serializing the object, and the
+  `commit`/`adopt` vocabulary issue #41 turned on — is worth its own name.
+
   > [!IMPORTANT]
   > An external change **re-seeds** the baseline; it must never *clear* it.
   > `SaveGuard` used to expose `invalidate()` for exactly that, on the reasoning
@@ -150,6 +162,13 @@ row being edited underneath the user — and `pruneSuspended`, the flag that say
 so, is the only seam that re-runs a deferred reload, which is why the two
 previewing modals raise it too ([`settings/previewOwnership.ts`](../src/settings/previewOwnership.ts))
 rather than leaving `pendingExternalReload` latched for the session.
+
+Both adoption paths ask that question, so both ask it through
+[`manager/registryOwnership.ts`](../src/manager/registryOwnership.ts)'s
+`registryIsOwned` — `previewOwnership.ts` is the writing side of the same flag,
+this is the reading side. They differ only in the answer: `adoptExternalSettings`
+reports the adoption as *deferred* so `main.ts` can re-run it when the flag
+drops, while the foreground check simply waits for the next return to the app.
 
 The order inside it is load bearing twice over: the theme sweep runs **before**
 `customCommands.syncAll()`, because `syncAll` drops any command whose callout

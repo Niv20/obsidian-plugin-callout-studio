@@ -31,6 +31,7 @@ import { bootDiscoveryIndex } from "./discoveryIndexBoot";
 import { readSettingsFile } from "./settingsFile";
 import { offerFreshStart, warnSettingsUnreadable } from "./settingsNotices";
 import { watchForLateSettings } from "./settingsLateArrival";
+import { registryIsOwned } from "./registryOwnership";
 import type { SettingsFileHost, SettingsRead } from "./settingsFile";
 
 /** What the load needs from the plugin. */
@@ -130,11 +131,10 @@ export async function loadSettingsInto(
 				"settings will not be written this session",
 		);
 		warnSettingsUnreadable();
-		// A file caught mid-write is finished moments later, and this is the
-		// only thing that will notice on a phone — Obsidian's config-folder
-		// watcher is desktop-only, so `onExternalSettingsChange` never fires
-		// there and the session would otherwise show no callouts until the user
-		// thought to restart the app.
+		// A file caught mid-write is finished moments later, and on a phone this
+		// is the only thing that will notice: the config-folder watcher behind
+		// `onExternalSettingsChange` is desktop-only, so the session would
+		// otherwise show no callouts until the user thought to restart.
 		watchForLateSettings(host);
 		return { isFreshInstall: false };
 	}
@@ -236,7 +236,7 @@ export interface ExternalReloadHost extends SettingsBootHost {
 export async function adoptExternalSettings(
 	host: ExternalReloadHost,
 ): Promise<boolean> {
-	if (host.pruneSuspended || host.registry.hasPreviewDefinition()) return true;
+	if (registryIsOwned(host)) return true;
 
 	const read = await readSettingsFile(host);
 
