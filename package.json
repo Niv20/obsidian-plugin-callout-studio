@@ -1,6 +1,6 @@
 {
 	"name": "callout-studio",
-	"version": "2.12.0",
+	"version": "2.12.1",
 	"description": "Ultimate callout manager for Obsidian with custom types, Material Icons, native context menu actions, and full dark/light mode color control.",
 	"main": "main.js",
 	"type": "module",
