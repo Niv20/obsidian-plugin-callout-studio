@@ -34,9 +34,26 @@
  * The settings pane by name first: Obsidian's `.vertical-tab-content` is both
  * the scroller and, on a plugin tab, the element the plugin renders into (see
  * `SettingsTab.display`), and `hotkeyLink` already reaches for the same pair.
- * The walk behind it is what keeps this honest if that stops being true — a
- * phone puts a `.vertical-tab-content-inner` in between, and the overflow could
- * move up to the container.
+ * The walk behind it is what keeps this honest if that ever stops being true.
+ *
+ * It is true on **every** platform, phones included, and this comment used to
+ * say otherwise — that a phone puts a `.vertical-tab-content-inner` in between
+ * and the overflow "could move up to the container". Checked against Obsidian
+ * 1.13.7's own `app.css` and `app.js`, that is wrong in both halves, and the
+ * mistake is worth recording because it points a reader at the wrong element:
+ *
+ * - `.vertical-tab-content-container { overflow: hidden }` and
+ *   `.vertical-tab-content { overflow-y: auto; height: 100% }` are the only two
+ *   overflow rules on either class, with no mobile override. The overflow does
+ *   not move.
+ * - `.vertical-tab-content-inner` is styled only under
+ *   `.is-phone .modal.mod-settings .vertical-tab-content .vertical-tab-content-inner`
+ *   — a *descendant* of the scroller, for the rounded card look — and the
+ *   string does not appear in `app.js` at all, so nothing creates it on the
+ *   path a plugin tab takes.
+ *
+ * `SettingsTab.display` therefore reads and writes `containerEl.scrollTop`
+ * correctly as it stands. See `internals-docs/15-settings-ui-and-modals.md`.
  */
 function scrollParentOf(el: HTMLElement): HTMLElement | null {
 	const known = el.closest<HTMLElement>(

@@ -33,10 +33,12 @@
  * every row on a registry change or a theme switch, and a list the user had
  * expanded must not quietly fold back up under them.
  *
- * The fold is written through to `settings.calloutListsExpanded`
+ * The fold is written through to `DeviceLocalStore.listsExpanded`
  * (`calloutListsFold.ts`) on every user-driven toggle, so it survives a
  * settings-tab reopen or a plugin reload — each section starts from whatever
- * the user last left it, not from expanded.
+ * the user last left it, not from expanded. Device-local, not in `data.json`:
+ * what is folded on a phone has nothing to say to a desktop, and folding a
+ * section used to be a write to a synced file.
  *
  * The paging cursor is deliberately not persisted: it is session-only, reset
  * by that same reopen. But it is *held by `SettingsTab`* rather than by this

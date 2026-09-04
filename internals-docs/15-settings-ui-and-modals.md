@@ -117,7 +117,7 @@ which `keepHeadingInPlace` already anchors.
 
 ```ts
 scanOpenEditorsForUnknownCallouts(this.app, this.plugin);  // sections/openEditorDiscovery.ts
-this.plugin.schedulePruneUnusedFallbacks(0);
+this.plugin.schedulePruneUnusedFallbacks(this.unsubscribe === null ? 0 : undefined);
 ```
 
 Opening the settings tab **scans every open editor's in-memory buffer** for
@@ -156,6 +156,20 @@ list back to its first 20 rows. Two things answer that:
   a still-short page would be clamped and lost. It is self-limiting rather than
   stateful: a freshly opened pane is already at 0, so a genuine open restores
   nothing and behaves exactly as it always has.
+
+  > [!NOTE]
+  > `containerEl` **is** the scroller, on phones as much as anywhere else, so
+  > reading `scrollTop` off it directly is right and does not need
+  > `foldAnchor`'s `scrollParentOf`. Verified against Obsidian 1.13.7: the tab's
+  > container is `createDiv("vertical-tab-content")`, the only two overflow
+  > rules on the pair are `.vertical-tab-content-container { overflow: hidden }`
+  > and `.vertical-tab-content { overflow-y: auto; height: 100% }` with no
+  > mobile override, and `vertical-tab-content-inner` — which `foldAnchor` used
+  > to warn "could move the overflow up to the container" — appears **zero**
+  > times in `app.js` and only ever as a *descendant* of the scroller in
+  > `app.css`, for the phone's rounded-card look. That warning was wrong in both
+  > halves and is corrected in place, because it points a reader at the wrong
+  > element when they go looking for a scroll bug.
 - **Paging.** The cursors moved out of the controller closure and onto
   `SettingsTab` — see
   [Where the state lives, and how long](#where-the-state-lives-and-how-long).
@@ -613,9 +627,9 @@ not that. (Saved color palettes keeps its own single cursor in
 
 The **fold** is not session-only. `settings/sections/calloutListsFold.ts`
 mirrors each section's `SectionDisclosure` into
-`PluginSettings.calloutListsExpanded` (`{ theme, user, builtin, palettes }` —
-the first three keyed the same way as `RowKind`, `palettes` added for Saved
-color palettes) the moment the user folds or unfolds it by hand —
+`DeviceLocalStore.listsExpanded` (`{ theme, user, builtin, palettes }` — the
+first three keyed the same way as `RowKind`, `palettes` added for Saved color
+palettes) the moment the user folds or unfolds it by hand —
 `attachSectionDisclosure`'s `onToggle` fires only on that user gesture, never
 when a caller drives `setExpanded` programmatically, so a save only happens
 for a choice the user actually made. `attachPersistedFold` takes any
@@ -624,10 +638,16 @@ for a choice the user actually made. `attachPersistedFold` takes any
 itself to a concept it has nothing to do with. Both `createCalloutListsController`
 and `renderCustomPalettesSection` read the relevant field back as their
 heading's `initiallyExpanded` on render, so a folded section stays folded
-across a settings-tab reopen and a plugin reload alike; an install upgrading
-from before a given key existed merges in `true` for it
-(`mergeSavedSettings`, `DEFAULT_SETTINGS.calloutListsExpanded`), so the tab
-looks exactly as it did before the upgrade.
+across a settings-tab reopen and a plugin reload alike; a device whose stored
+blob predates a given key defaults it to `true` field by field
+(`DeviceLocalStore.read`), so the tab looks exactly as it did before the
+upgrade.
+
+It lives in `localStorage` rather than `data.json` precisely because it is
+per-device: folding a section away used to rewrite the synced settings file,
+which on a synced vault is one more file event for the sync client to
+reconcile, and what is folded on a phone has nothing to say to a desktop. See
+[Persistence § the device-local store](07-persistence-and-caching.md).
 
 The heading count is always the full list a section has — the partitioned
 length for a callout list, `settings.customPalettes.length` for Saved color

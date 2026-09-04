@@ -1,6 +1,6 @@
 /**
  * settings/sections/calloutListsFold.ts — the settings tab's collapsible
- * headings, backed by `settings.calloutListsExpanded` instead of a closure
+ * headings, backed by `DeviceLocalStore.listsExpanded` instead of a closure
  * that dies with the settings tab.
  *
  * `sectionDisclosure.ts` stays settings-agnostic — a plain foldable heading,
