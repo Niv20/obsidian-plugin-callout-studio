@@ -22,7 +22,8 @@ import {
 	setMaterialFontStore,
 } from "./icons/materialFontStore";
 import { CalloutDiscovery } from "./manager/CalloutDiscovery";
-import { SettingsWriter } from "./manager/SettingsWriter";
+import type { SettingsWriter } from "./manager/SettingsWriter";
+import { createSettingsWriter } from "./manager/settingsWriterHost";
 import { DeviceLocalStore } from "./manager/DeviceLocalStore";
 import {
 	adoptExternalSettings,
@@ -147,10 +148,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		// Every write to data.json goes through here — coalesced, and skipped
 		// when the payload is byte-identical to the last one that landed. Built
 		// before the first save below, which is the load-migration flush.
-		this.settingsWriter = new SettingsWriter({
-			build: () => this.registry.toSaveData(),
-			write: (data) => this.saveData(data),
-		});
+		this.settingsWriter = createSettingsWriter(this);
 
 		// Read data.json, rebuild the registry, and put back the rows this
 		// device discovered in earlier sessions — see manager/settingsBoot.ts.

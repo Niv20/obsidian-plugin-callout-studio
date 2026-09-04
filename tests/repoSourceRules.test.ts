@@ -867,7 +867,12 @@ describe("no new oversized files", () => {
 		// fresh install, greet, run first-run discovery — moved to
 		// manager/launchSequence.ts, which is where the ordering rule between
 		// those three belongs.
-		"src/main.ts": 503,
+		// Lowered from 503: what the plugin hands SettingsWriter — including
+		// what to do when a write turns out to be stale — moved to
+		// manager/settingsWriterHost.ts. That last part is a policy, not a
+		// wire, and "why did a save sometimes not save" should be findable
+		// without reading the plugin class.
+		"src/main.ts": 501,
 		"src/icons/renderIcon.ts": 547,
 		// Lowered from 528: `STYLE_DEMO_ID` moved to constants.ts, where the
 		// discovery/import/autocomplete filters that now consult it can reach

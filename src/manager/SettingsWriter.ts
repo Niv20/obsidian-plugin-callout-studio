@@ -24,13 +24,27 @@
  * pass that runs after it, and {@link freeze}, which takes the file off the
  * table entirely for a session that could not read it.
  *
+ * A third, `manager/staleWriteGuard.ts`, is the last thing asked before a
+ * write lands: **is the file on disk still the one this session read?** The
+ * guard above cannot answer that — its baseline describes what we last wrote
+ * or adopted, not what a sync client has done to the file since — and on a
+ * phone nothing else asks at all, because Obsidian's config watcher is
+ * desktop-only. That gap is issue #53.
+ *
  * Its own module, and structurally typed, so the policy can be tested without
  * a plugin: `build` is `registry.toSaveData()` and `write` is `plugin.saveData`.
  */
 import { SaveGuard } from "../utils/saveGuard";
+import { StaleWriteGuard, type StaleWriteHost } from "./staleWriteGuard";
 
-/** The two things the writer needs from the plugin. */
-export interface SettingsWriterHost {
+/**
+ * What the writer needs from the plugin.
+ *
+ * `readCurrent` and `onStaleWrite` come from {@link StaleWriteHost} and are
+ * both optional: a host that omits them gets exactly the behaviour this class
+ * had before the pre-write check existed, down to the task ordering.
+ */
+export interface SettingsWriterHost extends StaleWriteHost {
 	/** A fresh whole-registry snapshot. Called at write time, never earlier. */
 	build(): unknown;
 	/** Obsidian's `Plugin.saveData`. */
@@ -51,8 +65,12 @@ export class SettingsWriter {
 	private heldRequest = false;
 	/** @see freeze */
 	private frozen = false;
+	/** "Is the file still ours?" — see manager/staleWriteGuard.ts. */
+	private readonly stale: StaleWriteGuard;
 
-	constructor(private readonly host: SettingsWriterHost) {}
+	constructor(private readonly host: SettingsWriterHost) {
+		this.stale = new StaleWriteGuard(host);
+	}
 
 	/**
 	 * Persist the current settings, coalescing concurrent requests.
@@ -231,9 +249,17 @@ export class SettingsWriter {
 		const payload = this.guard.prepare(data);
 		// Byte-identical to the last write that landed: skip the file event.
 		if (payload === null) return;
+		// Asked after the guard, never before: a save that changes nothing
+		// needs no file read to prove it is harmless. Short-circuited rather
+		// than awaited-and-ignored when there is nothing to check — see
+		// StaleWriteGuard.enabled.
+		if (this.stale.enabled && (await this.stale.blocks(this.guard))) {
+			return;
+		}
 		await this.host.write(data);
 		// Only now — a throw above leaves the baseline where it was, so the
 		// next attempt writes rather than being suppressed as a duplicate.
 		this.guard.commit(payload);
+		this.stale.clear();
 	}
 }

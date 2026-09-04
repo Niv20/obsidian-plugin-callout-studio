@@ -339,6 +339,8 @@ export const en: Record<string, string> = {
 	"notice.settingsMissing":
 		"Callout Studio's settings file is missing, so your callout types are missing from this session. Nothing has been written — if you sync this vault, let the sync finish and reload Obsidian before making any changes.",
 	"notice.settingsMissingAction": "Start fresh on this device",
+	"notice.settingsChangedElsewhere":
+		"Callout Studio's settings were changed on another device, so this change was not saved. The other device's settings are being loaded now — please make the change again.",
 	"notice.nothingToWrap": "Nothing to wrap.",
 	"notice.cursorNotInsideCallout": "Cursor is not inside a callout.",
 	"notice.autocompleteTargetMoved":
