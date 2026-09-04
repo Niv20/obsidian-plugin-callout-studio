@@ -261,6 +261,17 @@ That moment is `settings/welcomeRouting.ts`. The `welcomeSeen` flag is the first
 thing a fresh install writes, and it runs from `onLayoutReady` — well after
 `onload`, which is time a sync client can use.
 
+That covers the window between `onload` and the first write. `watchForLateSettings`
+covers the rest of the session, which on mobile is otherwise not covered at all:
+it listens for the app returning to the foreground — the moment a sync client has
+most likely just run — and adopts a settings file that has appeared since. Both
+launches that came up without a usable file register it, so a frozen device
+recovers on its own rather than waiting for a restart. Adopting is also the one
+automatic path to `SettingsWriter.thaw()`, and it is reached only with the real
+file in hand: the baseline then describes what is on disk, so saving is safe
+again. It stops at the first file it adopts, stays silent while there is still
+nothing there, and defers while the callout editor owns the registry.
+
 The check is deliberately **not** a `SettingsWriter` pre-write hook, which is the
 other obvious home for it. Adopting a file rebuilds the registry, a rebuild asks
 for saves of its own, and those saves would then queue behind the very write pass
