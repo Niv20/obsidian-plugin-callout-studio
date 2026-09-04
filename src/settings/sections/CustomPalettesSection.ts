@@ -18,7 +18,7 @@
  * same thing.
  */
 import { setIcon } from "obsidian";
-import { t } from "../../i18n";
+import { getLocale, t } from "../../i18n";
 import type { CustomPalette } from "../../types";
 import type { SettingsSectionContext } from "./types";
 import {
@@ -33,6 +33,7 @@ import {
 import { PaletteEditorModal } from "../PaletteEditorModal";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { attachPersistedFold } from "./calloutListsFold";
+import { keepScrollAnchored } from "./foldAnchor";
 import { createStickySection } from "./stickySection";
 import {
 	focusFirstRevealed,
@@ -216,7 +217,25 @@ export function renderCustomPalettesSection(
 		deleteBtn.addEventListener("click", () => void deletePalette(palette));
 	};
 
+	/**
+	 * What this section would draw, as one comparable string.
+	 *
+	 * Declared above `renderList` because that is where it is *recorded* — every
+	 * path that redraws goes through there, so recording it at the source is
+	 * what keeps the `css-change` comparison below honest. Storing it only at
+	 * the comparison would leave the stamp describing a page two renders old.
+	 */
+	const paletteSignature = (): string =>
+		JSON.stringify([
+			activeDocument.body.classList.contains("theme-dark"),
+			getLocale(),
+			paging.expanded,
+			ctx.plugin.settings.customPalettes,
+		]);
+	let lastSignature: string | null = null;
+
 	const renderList = (): void => {
+		lastSignature = paletteSignature();
 		bodyEl.empty();
 		// Sorted A→Z for display only; the underlying settings array keeps
 		// insertion order.
@@ -245,13 +264,22 @@ export function renderCustomPalettesSection(
 
 	// The swatches show the CURRENT theme mode, so re-render on a live theme
 	// flip. Debounced: CSSInjector fires "css-change" after every inject.
+	//
+	// Two guards around that, for the same reason the callout lists have them —
+	// this section sits above the eight below it, so a repaint here moves all of
+	// them under whoever is reading one. The signature drops the repaints that
+	// would have drawn the identical thing (which is most of them: `css-change`
+	// fires for any theme, snippet or other plugin, and the palettes themselves
+	// rarely move), and the anchor makes the ones that survive it invisible.
 	let refreshTimer: number | null = null;
 	const cssRef = ctx.app.workspace.on("css-change", () => {
 		if (!bodyEl.isConnected) return;
 		if (refreshTimer !== null) window.clearTimeout(refreshTimer);
 		refreshTimer = window.setTimeout(() => {
 			refreshTimer = null;
-			if (bodyEl.isConnected) renderList();
+			if (!bodyEl.isConnected) return;
+			if (paletteSignature() === lastSignature) return;
+			keepScrollAnchored(containerEl, renderList);
 		}, 60);
 	});
 	ctx.registerDisposer(() => {
