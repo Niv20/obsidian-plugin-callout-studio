@@ -9,13 +9,10 @@
  * Holds a CalloutListsController for efficient list refresh without full
  * re-renders.
  */
-import { MarkdownView, PluginSettingTab } from "obsidian";
-import type { App, EventRef } from "obsidian";
+import { PluginSettingTab } from "obsidian";
+import type { App } from "obsidian";
 import { CalloutEditor } from "./CalloutEditor";
 import { openCalloutEditorFor } from "./openCalloutEditor";
-import { scanStringForUnknownCallouts } from "../utils/vaultCalloutScanner";
-import { mergeDashSpaceVariants } from "../utils/calloutId";
-import { buildKnownCalloutIds } from "../manager/knownCalloutIds";
 import { renderHotkeySection } from "./sections/HotkeySection";
 import { renderCreditsSection } from "./sections/CreditsSection";
 import { renderFooterSection } from "./sections/FooterSection";
@@ -35,6 +32,12 @@ import {
 	createCalloutListsController,
 	type CalloutListsController,
 } from "./sections/CalloutListsSection";
+import { freshPaging } from "./sections/calloutListsSignature";
+import { keepScrollAnchored } from "./sections/foldAnchor";
+import { subscribeSettingsTab } from "./sections/tabSubscriptions";
+import { scanOpenEditorsForUnknownCallouts } from "./sections/openEditorDiscovery";
+import type { PagingState } from "./sections/listPaging";
+import type { RowKind } from "./sections/rowOwnership";
 import { renderCalloutRow as renderCalloutRowSection } from "./sections/CalloutRowRenderer";
 import { openBuiltInRowMenu, openRowMenu } from "./sections/CalloutRowActions";
 import { invalidateThemeRowUsage } from "./sections/themeRowUsage";
@@ -45,13 +48,29 @@ import type {
 
 export class CalloutStudioSettingsTab extends PluginSettingTab {
 	plugin: SettingsTabPlugin;
-	private registrySubscription: (() => void) | null = null;
-	private previewSubscription: (() => void) | null = null;
-	private iconCacheUnsubscribe: (() => void) | null = null;
-	private cssChangeRef: EventRef | null = null;
+	/** Undoes all four change subscriptions — see `subscribeSettingsTab`. */
+	private unsubscribe: (() => void) | null = null;
 	private refreshFrame: number | null = null;
+	/**
+	 * Whether the refresh already queued for the next frame must redraw even if
+	 * nothing in the registry moved. Sticky on purpose: a frame that coalesces a
+	 * forcing signal with a non-forcing one has to honour the forcing one.
+	 */
+	private refreshForced = false;
 	private calloutLists: CalloutListsController | null = null;
 	private sectionDisposers: (() => void)[] = [];
+	/**
+	 * How far the reader has paged into each of the three lists.
+	 *
+	 * Held here rather than inside the controller because a controller lives
+	 * exactly one `display()`, and `display()` is re-run by things the reader
+	 * never asked for — another device's settings file arriving
+	 * (`adoptExternalSettings`), a locale finishing its download. Both used to
+	 * fold an expanded list back to its first 20 rows mid-scroll. A *visit* is
+	 * the right lifetime, and this class is what has one: `hide()` clears it,
+	 * which keeps the cursor session-only exactly as it has always been.
+	 */
+	private paging: Record<RowKind, PagingState> = freshPaging();
 
 	constructor(app: App, plugin: SettingsTabPlugin) {
 		super(app, plugin);
@@ -81,48 +100,39 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 
 	display(): void {
 		const { containerEl } = this;
+		// Where the reader was, before `empty()` below takes the page out from
+		// under them.
+		//
+		// This tab is not only rebuilt when someone opens it: `adoptExternalSettings`
+		// re-runs it whenever another device's data.json lands, and a locale
+		// download does the same. Both used to drop a reader at the top of a
+		// fifteen-section page, mid-scroll, for a change they did not make.
+		//
+		// Nothing distinguishes those from a genuine open, and nothing needs to:
+		// a freshly opened pane is at 0, so the restore below is already a no-op
+		// there. The state is the scroller's own, which is why none is kept.
+		const scrollTop = containerEl.scrollTop;
+
 		// Tear down any resources from a previous render before rebuilding.
 		this.runSectionDisposers();
 		containerEl.empty();
 		containerEl.addClass("callout-studio-settings");
 
-		this.scanOpenEditorsForUnknownCallouts();
+		scanOpenEditorsForUnknownCallouts(this.app, this.plugin);
 		this.plugin.schedulePruneUnusedFallbacks(0);
 
-		if (!this.registrySubscription) {
-			const sub = () => this.scheduleListRefresh();
-			this.plugin.registry.onChange(sub);
-			this.registrySubscription = sub;
-		}
-
-		// The callout editor's live preview registers its in-progress definition
-		// transiently, without a registry mutation (no save, no note re-render
-		// — see setPreviewDefinition). This is the only signal that reaches us,
-		// and it is what keeps the row swatches in step with the modal's colour
-		// picker instead of trailing it by a beat.
-		if (!this.previewSubscription) {
-			const sub = () => this.scheduleListRefresh();
-			this.plugin.registry.onPreviewChange(sub);
-			this.previewSubscription = sub;
-		}
-
-		if (!this.iconCacheUnsubscribe) {
-			this.iconCacheUnsubscribe = this.plugin.onIconCacheChange(() =>
-				this.scheduleListRefresh(),
-			);
-		}
-
-		// Row swatches show the CURRENT theme mode's accent/background, so a
-		// live theme flip must re-render them. Refresh only (never a full
-		// display()): CSSInjector fires "css-change" after every inject.
-		if (!this.cssChangeRef) {
-			this.cssChangeRef = this.app.workspace.on("css-change", () =>
-				this.scheduleListRefresh(),
-			);
-		}
+		// Once per visit, not per render: `display()` re-runs for things the
+		// reader did not ask for, and re-subscribing on each would stack
+		// duplicate listeners for the life of the session.
+		this.unsubscribe ??= subscribeSettingsTab(
+			this.app,
+			this.plugin,
+			(force) => this.scheduleListRefresh(force),
+		);
 
 		const sectionCtx = this.getSectionContext();
 		this.calloutLists = createCalloutListsController(sectionCtx, {
+			paging: this.paging,
 			onAddNewCallout: async () => {
 				const editor = new CalloutEditor(this.plugin);
 				await editor.openAndWait();
@@ -168,6 +178,10 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		renderResetSection(sectionCtx, containerEl);
 		renderCreditsSection(sectionCtx, containerEl);
 		renderFooterSection(sectionCtx, containerEl);
+
+		// Last, once every section is in and the page is its full height again —
+		// assigning past the end of a short page would be clamped and lost.
+		if (scrollTop > 0) containerEl.scrollTop = scrollTop;
 	}
 
 	private getSectionContext(): SettingsSectionContext {
@@ -192,27 +206,18 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 
 	hide(): void {
 		this.runSectionDisposers();
-		if (this.registrySubscription) {
-			this.plugin.registry.offChange(this.registrySubscription);
-			this.registrySubscription = null;
-		}
-		if (this.previewSubscription) {
-			this.plugin.registry.offPreviewChange(this.previewSubscription);
-			this.previewSubscription = null;
-		}
-		if (this.iconCacheUnsubscribe) {
-			this.iconCacheUnsubscribe();
-			this.iconCacheUnsubscribe = null;
-		}
-		if (this.cssChangeRef) {
-			this.app.workspace.offref(this.cssChangeRef);
-			this.cssChangeRef = null;
-		}
+		this.unsubscribe?.();
+		this.unsubscribe = null;
 		if (this.refreshFrame !== null) {
 			window.cancelAnimationFrame(this.refreshFrame);
 			this.refreshFrame = null;
 		}
+		this.refreshForced = false;
 		this.calloutLists = null;
+		// The cursor is session-only and this is what makes that true: leaving
+		// the tab is the reopen it has always been reset by. What it is no
+		// longer reset by is a repaint the reader did not ask for.
+		this.paging = freshPaging();
 		// One whole-vault usage pass per visit to this tab, not per repaint.
 		invalidateThemeRowUsage();
 		super.hide();
@@ -249,8 +254,21 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		this.display();
 	}
 
-	private refreshLists(): void {
-		this.calloutLists?.refresh();
+	/**
+	 * Redraw the three lists without moving the page under the reader.
+	 *
+	 * The lists sit above eleven other sections, so a reader parked anywhere
+	 * below them has all of this happening off-screen and above: rows appear and
+	 * vanish, the whole theme section comes and goes with `cs-hidden`, and a row
+	 * grows when the appearance probe finally lands it a swatch. Every one of
+	 * those shifts everything below by its own height, and where the page ends
+	 * up shorter than the offset they were at, the browser clamps it and they
+	 * lose their place outright rather than merely sliding.
+	 */
+	private refreshLists(force: boolean): void {
+		keepScrollAnchored(this.containerEl, () => {
+			this.calloutLists?.refresh(force);
+		});
 	}
 
 	/**
@@ -260,41 +278,21 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	 * (a registry mutation that also emits css-change, or a colour dragged
 	 * across the editor's palette menu) still costs exactly one re-render — but
 	 * that render lands in the very next paint instead of a beat afterwards.
+	 *
+	 * `force` rides along rather than being re-decided in the frame, and it
+	 * accumulates: a frame that coalesced an icon landing with an unrelated
+	 * `css-change` still has to honour the icon.
 	 */
-	private scheduleListRefresh(): void {
+	private scheduleListRefresh(force = false): void {
 		if (!this.containerEl.isConnected) return;
+		this.refreshForced ||= force;
 		if (this.refreshFrame !== null) return;
 		this.refreshFrame = window.requestAnimationFrame(() => {
 			this.refreshFrame = null;
-			if (this.containerEl.isConnected) this.refreshLists();
+			const forced = this.refreshForced;
+			this.refreshForced = false;
+			if (this.containerEl.isConnected) this.refreshLists(forced);
 		});
 	}
 
-	private scanOpenEditorsForUnknownCallouts(): void {
-		if (!this.plugin.settings.autoDiscoverCallouts) return;
-		// The shared set, not a second one built here — see knownCalloutIds.ts.
-		const known = buildKnownCalloutIds(this.plugin.registry);
-		const seen = new Set<string>();
-		const leaves = this.app.workspace.getLeavesOfType("markdown");
-		for (const leaf of leaves) {
-			const view = leaf.view;
-			if (!(view instanceof MarkdownView)) continue;
-			const content = view.editor.getValue();
-			if (!content) continue;
-			for (const id of scanStringForUnknownCallouts(content, known)) {
-				seen.add(id);
-			}
-		}
-		if (seen.size === 0) return;
-		// Folded again across leaves: `[!a b]` in one open note and `[!a-b]` in
-		// another arrive here as two entries, as they do in a vault scan.
-		const added = this.plugin.addUnknownCalloutsAsFallback(
-			mergeDashSpaceVariants(Array.from(seen)),
-		);
-		if (added > 0) {
-			// No saveSettings(): opening the settings tab is not a settings
-			// change. See manager/discoveredRowPersistence.ts.
-			this.plugin.refreshCallouts();
-		}
-	}
 }
