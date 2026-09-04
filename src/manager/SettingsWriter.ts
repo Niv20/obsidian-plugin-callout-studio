@@ -167,6 +167,21 @@ export class SettingsWriter {
 		this.frozen = true;
 	}
 
+	/**
+	 * Lift a {@link freeze}, on the user's explicit say-so and nothing else.
+	 *
+	 * A freeze is a guess — a well-founded one, but a guess — that the file it
+	 * could not find or read is coming back. When it is not coming back, because
+	 * the user deleted `data.json` themselves to start over, that guess would
+	 * otherwise stand for every launch from here on and quietly discard
+	 * everything they did next. So the notice announcing a freeze carries the way
+	 * out of it, and this is what that button calls. Nothing automatic reaches
+	 * it; that is the whole point. See `manager/settingsNotices.ts`.
+	 */
+	thaw(): void {
+		this.frozen = false;
+	}
+
 	/** Whether a save is currently in flight or queued behind one. */
 	get busy(): boolean {
 		return this.inFlight !== null || this.queued;

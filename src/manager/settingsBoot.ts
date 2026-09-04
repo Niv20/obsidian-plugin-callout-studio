@@ -23,15 +23,14 @@
  * - **A whole load writes at most once**, via `SettingsWriter.hold`, so no
  *   half-rebuilt intermediate state is ever published.
  */
-import { Notice } from "obsidian";
 import type { PluginData } from "../types";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import type { SettingsWriter } from "./SettingsWriter";
 import type { DeviceLocalStore } from "./DeviceLocalStore";
 import { bootDiscoveryIndex } from "./discoveryIndexBoot";
 import { readSettingsFile } from "./settingsFile";
+import { offerFreshStart, warnSettingsUnreadable } from "./settingsNotices";
 import type { SettingsFileHost, SettingsRead } from "./settingsFile";
-import { t } from "../i18n";
 
 /** What the load needs from the plugin. */
 export interface SettingsBootHost extends SettingsFileHost {
@@ -114,7 +113,7 @@ async function applySettingsRead(
  * thing they need to know is that the file itself is intact.
  */
 export async function loadSettingsInto(
-	host: SettingsBootHost,
+	host: ExternalReloadHost,
 ): Promise<SettingsBootResult> {
 	const read = await readSettingsFile(host);
 
@@ -124,12 +123,53 @@ export async function loadSettingsInto(
 			"[callout-studio] data.json exists but could not be read; " +
 				"settings will not be written this session",
 		);
-		new Notice(t("notice.settingsUnreadable"), 0);
+		warnSettingsUnreadable();
 		return { isFreshInstall: false };
 	}
 
+	// No file — which is two entirely different events wearing one shape, and
+	// the device's own storage is what tells them apart. `hasIndex` is false
+	// only where this plugin has never completed a launch in this vault, because
+	// every launch writes the discovery index back (see `discoveryIndexBoot`).
+	// So a device that *has* an index and no `data.json` is not a fresh install:
+	// its settings file has gone missing since it last ran, and the built-ins
+	// the registry is about to come up with must not be written over whatever
+	// took it away — a sync client mid-swap, most often. Issue #53.
+	if (read.kind === "absent" && host.localState.hasIndex) {
+		host.settingsWriter.freeze();
+		console.error(
+			"[callout-studio] data.json is missing on a device that has run " +
+				"before; settings will not be written this session",
+		);
+		offerFreshStart(() => {
+			host.settingsWriter.thaw();
+			void host.saveSettings();
+		});
+		return { isFreshInstall: false };
+	}
+
+	// No file, and no index either — so this really may be a first launch, and
+	// must be free to write. It may equally be a device this vault has only just
+	// reached, whose `data.json` is still in flight; nothing available *now*
+	// separates the two.
+	//
+	// So the launch itself creates nothing. Loading asks for a save like every
+	// other rebuild does — `registry.load()` alone fires one — and on a fresh
+	// install that save is pure ceremony: it writes the shipped defaults, which
+	// is precisely the payload that must never reach a device whose real
+	// settings are still arriving. Frozen across the load, that write is
+	// dropped; `guardFirstWrite` then takes the question to the first save that
+	// has something to say, which is far enough after startup for the file to
+	// have shown up if it was ever going to.
+	if (read.kind === "absent") {
+		host.settingsWriter.freeze();
+		await applySettingsRead(host, read);
+		host.settingsWriter.thaw();
+		return { isFreshInstall: true };
+	}
+
 	await applySettingsRead(host, read);
-	return { isFreshInstall: read.kind === "absent" };
+	return { isFreshInstall: false };
 }
 
 /** What adopting an external change needs on top of {@link SettingsBootHost}. */
@@ -198,6 +238,22 @@ export async function adoptExternalSettings(
 	// Our own write, arriving back through the watcher.
 	if (host.settingsWriter.matchesLastWrite(read.json)) return false;
 
+	await reloadFrom(host, read);
+	return false;
+}
+
+/**
+ * Rebuild everything from a `data.json` somebody else wrote, and repaint.
+ *
+ * Shared by the two paths that can meet one mid-session: the watcher-driven
+ * {@link adoptExternalSettings} on desktop, and {@link confirmFirstWrite} on a
+ * device where the file simply arrived late. Held as a whole, so the rebuild
+ * publishes at most one write and never an intermediate state.
+ */
+export async function reloadFrom(
+	host: ExternalReloadHost,
+	read: Extract<SettingsRead, { kind: "loaded" }>,
+): Promise<void> {
 	await host.settingsWriter.hold(async () => {
 		await applySettingsRead(host, read);
 		host.resyncThemeRows();
@@ -209,5 +265,4 @@ export async function adoptExternalSettings(
 
 	host.refreshCallouts();
 	if (host.settingsTab?.containerEl.isConnected) host.settingsTab.display();
-	return false;
 }
