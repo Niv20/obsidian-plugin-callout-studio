@@ -22,14 +22,16 @@
  * legacyStartupSnippet.ts, which cleans up what it left behind.
  */
 import type { App } from "obsidian";
+import { WriteMemo } from "../utils/writeMemo";
 
 const LOCAL_STORAGE_KEY = "callout-studio-css";
 
 export class StartupStyleCache {
 	private app: App;
-	/** Last CSS handed to persist() — dedupes the no-op injects that follow
-	 * every external css-change event. */
-	private lastPersisted: string | null = null;
+	/** What the snapshot is believed to hold — dedupes the no-op injects that
+	 * follow every external css-change event. See utils/writeMemo.ts, which
+	 * also records why this must only move after a write lands. */
+	private readonly memo = new WriteMemo();
 
 	constructor(app: App) {
 		this.app = app;
@@ -60,20 +62,15 @@ export class StartupStyleCache {
 
 	/** Record freshly generated CSS for the next launch's fast path. */
 	persist(cssText: string): void {
-		if (cssText === this.lastPersisted) return;
+		if (this.memo.prepare(cssText) === null) return;
 		try {
 			window.localStorage.setItem(
 				this.scopedKey(LOCAL_STORAGE_KEY),
 				cssText,
 			);
-			// Only once the write has actually landed. Raised before the `try`,
-			// the memo remembered a refused write as a successful one — and
-			// since the memo is what makes a repeat inject a no-op, the same
-			// text was then never offered to storage again for the rest of the
-			// session. A store that frees up mid-session (the user deletes
-			// something, another plugin's quota is reclaimed) would have gone on
-			// launching without a snapshot until a style edit changed the text.
-			this.lastPersisted = cssText;
+			// Only once the write has actually landed — the rule, and the bug
+			// that produced it, are in utils/writeMemo.ts.
+			this.memo.commit(cssText);
 		} catch {
 			// Quota exceeded / storage unavailable — the normal inject path still
 			// works, so styling is never lost; only the fast path is skipped.

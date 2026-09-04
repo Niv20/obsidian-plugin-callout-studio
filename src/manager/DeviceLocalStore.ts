@@ -29,6 +29,7 @@
 import type { App } from "obsidian";
 import type { CalloutListsFoldState } from "../types";
 import { calloutIdentity, mergeDashSpaceVariants } from "../utils/calloutId";
+import { WriteMemo } from "../utils/writeMemo";
 import {
 	recordRetiredThemeIds,
 	sanitizeRetiredThemeIds,
@@ -107,8 +108,12 @@ export class DeviceLocalStore {
 	 * indexed here".
 	 */
 	private indexed: boolean;
-	/** Last string handed to storage — dedupes the writes discovery repeats. */
-	private lastPersisted: string | null = null;
+	/**
+	 * What the stored blob is believed to hold — dedupes the writes discovery
+	 * repeats. See utils/writeMemo.ts for why it only moves after a write
+	 * lands, and why reading a store back counts as learning the same thing.
+	 */
+	private readonly memo = new WriteMemo();
 
 	constructor(private readonly app: App) {
 		const raw = this.read();
@@ -116,7 +121,7 @@ export class DeviceLocalStore {
 		this.state = raw ?? structuredClone(EMPTY);
 		// Seed the memo from what is already stored, so the startup pass
 		// re-asserting an unchanged index costs no write at all.
-		if (raw !== null) this.lastPersisted = JSON.stringify(this.state);
+		if (raw !== null) this.memo.adopt(JSON.stringify(this.state));
 	}
 
 	/**
@@ -270,12 +275,12 @@ export class DeviceLocalStore {
 
 	private persist(): void {
 		const json = JSON.stringify(this.state);
-		if (json === this.lastPersisted) return;
+		if (this.memo.prepare(json) === null) return;
 		try {
 			window.localStorage.setItem(this.scopedKey(), json);
 			// Only after the write landed — a refused write must be retried, not
-			// remembered as a success. See StartupStyleCache.persist.
-			this.lastPersisted = json;
+			// remembered as a success. See utils/writeMemo.ts.
+			this.memo.commit(json);
 			this.indexed = true;
 		} catch {
 			// Storage full or unavailable. The rows are already in the registry

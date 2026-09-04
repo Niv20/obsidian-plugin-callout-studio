@@ -9,45 +9,40 @@
  * started — the same argument `cssSnippetExport` already makes for the CSS
  * snippet and `StartupStyleCache` makes for the startup snapshot.
  *
- * The baseline is **the bytes we believe `data.json` currently holds**. Two
- * different events establish that belief, which is why there are two setters
- * with the same one-line body and deliberately different names:
+ * The shared discipline — a baseline that moves only after a write lands, and
+ * that an external write re-seeds rather than clears — lives in
+ * [`utils/writeMemo.ts`](./writeMemo.ts), because those same three stores all
+ * need it. What is specific to `data.json`, and stays here, is that the thing
+ * being compared is a **serialized object** rather than text the caller already
+ * holds, and the reason the distinction between the two setters is worth its
+ * own vocabulary:
  *
  * - {@link commit} — *we* wrote those bytes, and the write landed.
  * - {@link adopt} — *someone else* wrote them and we have just read them back,
  *   so they are the truth now whatever we last wrote ourselves.
  *
- * Two rules this guard exists to get right:
- *
- * - **The baseline moves only after a write succeeds.** `prepare()` hands back
- *   the serialized payload and `commit()` records it, so a throwing write
- *   leaves the baseline where it was and the next attempt tries again rather
- *   than being suppressed as a duplicate forever.
- * - **An external change re-seeds the baseline; it does not clear it.** This
- *   file used to expose `invalidate()`, which nulled the baseline so that the
- *   next save wrote unconditionally. That was the engine of issue #41's second
- *   failure: `onExternalSettingsChange` called it, the reload then re-added this
- *   device's discovered rows, the resulting `onChange` asked for a save, and the
- *   guard — having just been switched off — wrote the file straight back at the
- *   device that had sent it. Both devices did this to each other, forever.
- *
- *   `adopt()` keeps the safety property `invalidate()` was reaching for while
- *   removing the loop: a save whose payload *reproduces* the adopted file is
- *   suppressed (it asserts nothing and is pure sync churn), and a save carrying
- *   genuinely different local state still writes, because its payload differs
- *   from the bytes on disk.
+ * > [!IMPORTANT]
+ * > **An external change re-seeds the baseline; it does not clear it.** This
+ * > file used to expose `invalidate()`, which nulled the baseline so that the
+ * > next save wrote unconditionally. That was the engine of issue #41's second
+ * > failure: `onExternalSettingsChange` called it, the reload then re-added this
+ * > device's discovered rows, the resulting `onChange` asked for a save, and the
+ * > guard — having just been switched off — wrote the file straight back at the
+ * > device that had sent it. Both devices did this to each other, forever.
+ * >
+ * > `adopt()` keeps the safety property `invalidate()` was reaching for while
+ * > removing the loop: a save whose payload *reproduces* the adopted file is
+ * > suppressed (it asserts nothing and is pure sync churn), and a save carrying
+ * > genuinely different local state still writes, because its payload differs
+ * > from the bytes on disk.
  *
  * Its own module, holding its own baseline, so `main.ts` keeps only the call
  * and the rule can be tested without standing up a plugin harness.
  */
+import { WriteMemo } from "./writeMemo";
 
 export class SaveGuard {
-	/**
-	 * Serialized form of what `data.json` is believed to hold, or null before
-	 * anything has established that — a session that has neither written nor
-	 * read the file.
-	 */
-	private last: string | null = null;
+	private readonly memo = new WriteMemo();
 
 	/**
 	 * The payload to write, or `null` when it is byte-identical to what the
@@ -58,13 +53,12 @@ export class SaveGuard {
 	 * migration.
 	 */
 	prepare(data: unknown): string | null {
-		const json = JSON.stringify(data);
-		return json === this.last ? null : json;
+		return this.memo.prepare(JSON.stringify(data));
 	}
 
 	/** Record a write that succeeded. Pass the string {@link prepare} returned. */
 	commit(json: string): void {
-		this.last = json;
+		this.memo.commit(json);
 	}
 
 	/**
@@ -77,7 +71,7 @@ export class SaveGuard {
 	 * preserves key order, which is what makes the two comparable at all.
 	 */
 	adopt(json: string): void {
-		this.last = json;
+		this.memo.adopt(json);
 	}
 
 	/**
@@ -89,6 +83,6 @@ export class SaveGuard {
 	 * repeating it for a file that cannot have changed anything.
 	 */
 	matches(json: string): boolean {
-		return json === this.last;
+		return this.memo.matches(json);
 	}
 }
