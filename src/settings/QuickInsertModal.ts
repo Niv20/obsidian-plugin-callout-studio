@@ -35,6 +35,7 @@ import {
 } from "../utils/calloutSearch";
 import { committedDefinitions, filterUsableCallouts } from "../utils/usableCallouts";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
+import { autofocusOnOpen } from "./modalAutofocus";
 import { openCalloutEditorFor } from "./openCalloutEditor";
 import { quickInsertHint, quickInsertNotice } from "./quickInsertMessages";
 import { QuickInsertPreviews } from "./quickInsertPreview";
@@ -68,6 +69,8 @@ export class QuickInsertModal extends Modal {
 		void this.refresh();
 	};
 	private disposeIconListener: (() => void) | null = null;
+	/** Releases the search field's autofocus scroll hold (modalAutofocus). */
+	private releaseAutofocus: (() => void) | null = null;
 
 	constructor(private readonly plugin: SettingsTabPlugin) {
 		super(plugin.app);
@@ -110,13 +113,18 @@ export class QuickInsertModal extends Modal {
 			void this.refresh();
 		});
 
-		this.searchEl?.focus();
+		// No create/edit gate here — this window exists to be typed into, so it
+		// always takes the cursor. It goes through the shared helper for the
+		// other half of the rule: a phone keyboard must not drag the list up.
+		this.releaseAutofocus = autofocusOnOpen(this.contentEl, this.searchEl);
 	}
 
 	onClose(): void {
 		this.plugin.registry.offChange(this.onRegistryChange);
 		this.disposeIconListener?.();
 		this.disposeIconListener = null;
+		this.releaseAutofocus?.();
+		this.releaseAutofocus = null;
 		this.previews?.destroy();
 		this.previews = null;
 		this.contentEl.empty();

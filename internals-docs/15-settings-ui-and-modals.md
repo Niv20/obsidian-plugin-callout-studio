@@ -715,6 +715,87 @@ open count check is reliable specifically because `Modal.open()` appends
 `containerEl` to the document **before** calling `onOpen()`, so this modal is
 already counted by the time the check runs.
 
+## Where the cursor lands when a window opens
+
+[`src/settings/modalAutofocus.ts`](../src/settings/modalAutofocus.ts) is the
+other half of the shared window behaviour, and exists because both rules it
+carries were previously reinvented — or simply got wrong — per modal.
+
+```ts
+autofocusOnOpen(scroller: HTMLElement, input: HTMLInputElement | null | undefined): () => void
+```
+
+It takes the **scroller** (`contentEl`, the one scroll container in the band
+diagram above) rather than the `Modal`, because the scroller is the only part of
+the window it needs. It returns a disposer for `onClose()`.
+
+### Rule 1: only a window that is *creating* something takes the cursor
+
+A **new** callout or palette opens on an empty name that must be filled in
+before anything can be saved, so the cursor belongs there — and on a phone, the
+keyboard coming up with it is the point. An **edit** opens on a filled-in form
+the user came to change some other part of; taking the name field there costs a
+tap to get back out, and on a phone throws the keyboard over the form they
+opened the window to look at.
+
+The gate is the caller's, and is deliberately the **same expression the window's
+own title asks**:
+
+| Window | Gate | Title |
+| --- | --- | --- |
+| `CalloutEditor` | `!this.existingId` | `editor.newCallout` / `editor.editCallout` |
+| `PaletteEditorModal` | `!this.existing` | `palette.newTitle` / `palette.editTitle` |
+
+> [!IMPORTANT]
+> `CalloutEditor` used to ask **`!this.isBuiltIn`**, which is a different
+> question — whether the name field is *editable*, not whether the window is
+> *creating* anything. Every edit of a custom callout therefore grabbed the name
+> field too. `tests/modalAutofocus.test.ts` pins the guard against the title key
+> so the two cannot drift apart again.
+
+For `PaletteEditorModal` the gate is `existing`, **not** the seeded state: the
+`seed` option pre-fills every colour but stays a *new* palette (it rebuilds one
+deleted out from under a callout, so the user "only has to type a name") — which
+is the case that most wants the cursor.
+
+`CommandEditorModal` is the third create/edit window and is deliberately *not*
+wired up: its first control is a dropdown, not a text field, so there is no
+keyboard to raise and nothing to focus.
+
+`QuickInsertModal` is the one window that autofocuses with **no gate** — it has
+no edit mode to hold back for, since it exists to be typed into. It still goes
+through the helper, for rule 2 alone.
+
+### Rule 2: the focus must not move the view
+
+Focusing scrolls in two separate ways, and only one of them can be refused
+outright:
+
+- **the DOM's own scroll-into-view on focus** — turned off with
+  `input.focus({ preventScroll: true })`;
+- **the soft keyboard** — the one that actually showed up as the mobile bug.
+  This is not a scroll the plugin asked for: the WebView shrinks the visual
+  viewport as the keyboard slides up, then scrolls to keep the caret inside
+  what's left. `preventScroll` has no say over it, because by then the `focus()`
+  call has long returned.
+
+So the second is answered after the fact: the scroller's `scrollTop` is **held
+at the value it had before the focus** for `KEYBOARD_SETTLE_MS` (400ms, covering
+the ~250-300ms iOS slide-in). The field is the *first* one in the window, so
+that value is the top and the caret is already inside the standing viewport —
+there is nothing worth jumping to.
+
+The hold is not a lock. It gives way immediately on `pointerdown`, `touchstart`
+or `wheel`, so it can never read as a window whose scrolling is dead for half a
+second. It deliberately does **not** release on `keydown`: typing into the field
+just focused is the expected next event, not a request to scroll away from it.
+
+> [!NOTE]
+> Call the returned disposer from `onClose()`. The hold expires on its own
+> timer, so this is not about leaking — it is that Obsidian reuses `contentEl`
+> across open/close, so a hold left running would be sitting on the *next*
+> window's body.
+
 ## Two theme-aware surface tokens
 
 Defined **only** on `.modal.cs-modal` (never redefined per-modal), so

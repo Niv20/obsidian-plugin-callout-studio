@@ -739,7 +739,12 @@ describe("no new oversized files", () => {
 	const SOFT_LIMIT = 300;
 
 	const FROZEN: Record<string, number> = {
-		"src/settings/CalloutEditor.ts": 2322,
+		// Raised from 2322 for the create-only autofocus: the guard, the field
+		// holding its disposer, and the two lines that release it on close.
+		// Everything movable already moved — settings/modalAutofocus.ts owns the
+		// focus and the scroll hold whole — and what is left is the one thing
+		// only this class can answer: whether this window is creating a callout.
+		"src/settings/CalloutEditor.ts": 2335,
 		// Lowered repeatedly, per this ratchet's own ask: `bgAlphaFor`'s solve moved
 		// to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the many
 		// that render the callout identically; `generateFallbackCSS` to
@@ -791,7 +796,19 @@ describe("no new oversized files", () => {
 		// reason CustomPalette.baseColor exists), and the gradient's arrow
 		// direction picker — a pure function of its arguments — to
 		// settings/paletteDirectionPicker.ts.
-		"src/settings/PaletteEditorModal.ts": 1070,
+		// Raised from 1070 for the same create-only autofocus, for the same
+		// reason: settings/modalAutofocus.ts holds all of it except "is this
+		// window creating a palette", which is `existing` and lives here.
+		"src/settings/PaletteEditorModal.ts": 1082,
+		// Joined this list at 306, crossing 300 for the autofocus that stops the
+		// search field dragging the list up under a phone keyboard. Admitted
+		// rather than split, deliberately: everything this window does that is
+		// not "list callouts and insert one" already lives in a sibling —
+		// quickInsertToolbar, quickInsertRow, quickInsertPreview,
+		// quickInsertMessages, and wrapSelectionInCallout in editor/. What is
+		// left is one modal's lifecycle, its arrow-key walk and its list, and any
+		// further cut would be by line count rather than by responsibility.
+		"src/settings/QuickInsertModal.ts": 306,
 		"src/editor/calloutTokens.ts": 840,
 		// The one entry that is allowed to move, and only for this reason: a
 		// member of `PluginSettings` has no sibling module to be moved into, so

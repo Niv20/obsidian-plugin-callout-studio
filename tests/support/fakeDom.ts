@@ -690,9 +690,22 @@ export class FakeElement {
 	/** Bumped by {@link focus} / {@link select}, which have nothing else to do. */
 	focusCount = 0;
 	selectCount = 0;
+	/**
+	 * How this element was last focused. Recorded rather than counted because
+	 * `preventScroll` is the whole substance of the modal autofocus fix: a
+	 * `focus()` that omits it is the bug, and a count cannot tell the two apart.
+	 */
+	lastFocusOptions: { preventScroll?: boolean } | undefined = undefined;
+	/**
+	 * A scroll offset with no layout behind it, so it is whatever was last
+	 * assigned. Enough for the one thing under test: a handler that puts the
+	 * container back where it was.
+	 */
+	scrollTop = 0;
 
-	focus(): void {
+	focus(options?: { preventScroll?: boolean }): void {
 		this.focusCount++;
+		this.lastFocusOptions = options;
 		this.ownerDocument.activeElement = this;
 	}
 

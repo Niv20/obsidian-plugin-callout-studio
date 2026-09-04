@@ -77,6 +77,7 @@ import { iconsEqual } from "../icons/lucideId";
 import { createControlGroup } from "./styleControls";
 import { renderIconAdjustGroup } from "./editor/iconAdjustGroup";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
+import { autofocusOnOpen } from "./modalAutofocus";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { activeThemeName } from "../manager/theme/customCssApi";
 import { patternMatches } from "../manager/theme/themeClaimLookup";
@@ -321,6 +322,8 @@ export class CalloutEditor extends Modal {
 	private initialSnapshot: string = "";
 	private initialStyleSnapshot: string = "";
 	private removePopupOutsideClickListener: (() => void) | null = null;
+	/** Releases the new-callout autofocus's scroll hold (modalAutofocus). */
+	private releaseAutofocus: (() => void) | null = null;
 
 	constructor(
 		plugin: CalloutEditorPlugin,
@@ -478,7 +481,6 @@ export class CalloutEditor extends Modal {
 						this.updateSaveState();
 					});
 				}
-				if (!this.isBuiltIn) text.inputEl.focus();
 			});
 
 		// Callout IDs (primary + aliases) — unified tag input
@@ -1620,6 +1622,15 @@ export class CalloutEditor extends Modal {
 
 		// Set initial save button state
 		this.updateSaveState();
+
+		// Creating only, and last, on the finished window. Editing opens on a
+		// filled-in form the user came to change some other part of, and the
+		// question is whether this window is CREATING — not, as it once asked,
+		// whether the name is editable. See modalAutofocus.
+		if (!this.existingId) {
+			const nameEl = this.nameTextInput?.inputEl;
+			this.releaseAutofocus = autofocusOnOpen(this.contentEl, nameEl);
+		}
 	}
 
 	/**
@@ -2306,6 +2317,8 @@ export class CalloutEditor extends Modal {
 		this.preview = null;
 		this.removePopupOutsideClickListener?.();
 		this.removePopupOutsideClickListener = null;
+		this.releaseAutofocus?.();
+		this.releaseAutofocus = null;
 		if (this.resolve) {
 			this.resolve(null);
 			this.resolve = null;

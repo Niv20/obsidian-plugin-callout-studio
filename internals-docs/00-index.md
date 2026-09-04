@@ -71,7 +71,7 @@ covering whatever you're touching.
 | [12-icons.md](12-icons.md) | The icon-pack model, fetch/cache/verify pipeline, rendering, SVG sanitization, and "Your images." |
 | [13-callout-editor.md](13-callout-editor.md) | The edit/create modal: the concrete-form-vs-optional-field tension, the live preview, validation, and save pipeline. |
 | [14-import-export.md](14-import-export.md) | The JSON backup format and validator, the CSS-snippet export, and the Callout Manager / Admonition importers. |
-| [15-settings-ui-and-modals.md](15-settings-ui-and-modals.md) | The settings tab's composition, the shared modal chrome, and the individual modals. |
+| [15-settings-ui-and-modals.md](15-settings-ui-and-modals.md) | The settings tab's composition, the shared modal chrome and autofocus, and the individual modals. |
 | [16-i18n.md](16-i18n.md) | How `t()` resolves strings, the locale download/verification pipeline, and the contribution workflow. |
 | [21-theme-callout-discovery.md](21-theme-callout-discovery.md) | How the active theme's callout types are found, read back and represented — and the compatibility guide for **theme authors**. |
 
