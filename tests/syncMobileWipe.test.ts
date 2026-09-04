@@ -32,7 +32,7 @@ import { DeviceLocalStore } from "../src/manager/DeviceLocalStore";
 import { SettingsWriter } from "../src/manager/SettingsWriter";
 import { loadSettingsInto } from "../src/manager/settingsBoot";
 import type { ExternalReloadHost } from "../src/manager/settingsBoot";
-import { stillFreshInstall } from "../src/manager/settingsLateArrival";
+import { confirmFreshInstall } from "../src/manager/settingsLateArrival";
 import { maybeShowWelcomeOnLaunch } from "../src/settings/welcomeRouting";
 import type { CalloutDefinition } from "../src/types";
 import { installFakeDom } from "./support/fakeDom";
@@ -139,6 +139,14 @@ function phone(name: string, disk: Disk) {
 		host,
 		writer,
 		boot: () => loadSettingsInto(host),
+		/**
+		 * `main.ts`'s `onLayoutReady`, where a launch that found no settings
+		 * file settles whether it really is a fresh install. Until it runs that
+		 * launch is frozen and writes nothing, so the window between the two is
+		 * where issue #53 lives — and a harness that goes straight from `boot()`
+		 * to the welcome cannot see it.
+		 */
+		layoutReady: () => confirmFreshInstall(host),
 		save: () => writer.save(),
 		/** The user switches back to Obsidian. */
 		returnToApp: async () => {
@@ -223,6 +231,7 @@ describe("a phone whose data.json has not arrived", () => {
 
 		const boot = await p.boot();
 		assert.strictEqual(boot.isFreshInstall, true);
+		assert.strictEqual(await p.layoutReady(), true, "was not let through");
 
 		p.registry.add(authored("first-one"));
 		await p.save();
@@ -230,6 +239,51 @@ describe("a phone whose data.json has not arrived", () => {
 		assert.ok(
 			(disk.content ?? "").includes("first-one"),
 			"the callout did not reach the file",
+		);
+	});
+
+	it("writes nothing before the launch has confirmed it is fresh", async () => {
+		// The window issue #53 actually lives in, and the one the welcome-time
+		// re-check could never see. `void icons.initialize()` runs unordered
+		// against `onLayoutReady`, and `IconFetchManager` saves the moment it
+		// has artwork — so a background write can create `data.json` from the
+		// shipped defaults before anything has looked at the folder a second
+		// time. A theme sweep reaching `registry.onChange` does the same.
+		storage.clear();
+		const disk = new Disk();
+		const p = phone("new-phone", disk);
+		await p.boot();
+
+		await p.save();
+		assert.strictEqual(disk.writes, 0, "a background save created the file");
+		assert.strictEqual(disk.content, null, "the file exists too early");
+	});
+
+	it("leaves the next launch of a confirmed fresh install alone", async () => {
+		// The other direction of the freeze, and the reason the welcome screen's
+		// write is load bearing rather than ceremony. A launch that confirms it
+		// is fresh must end up with a `data.json`: the device is marked indexed
+		// either way, so a second launch that found no file would take the
+		// `absent && hasIndex` branch instead — read-only, with a notice telling
+		// the user their settings have gone missing when they never had any.
+		storage.clear();
+		const disk = new Disk();
+		const first = phone("new-phone", disk);
+		assert.strictEqual((await first.boot()).isFreshInstall, true);
+		assert.strictEqual(await first.layoutReady(), true);
+
+		// What `maybeShowWelcomeOnLaunch` does once the launch is confirmed.
+		first.registry.settings.welcomeSeen = true;
+		await first.save();
+		assert.ok(disk.content !== null, "a confirmed fresh install wrote nothing");
+
+		const second = phone("new-phone", disk);
+		assert.strictEqual((await second.boot()).isFreshInstall, false);
+		second.registry.add(authored("made-on-the-second-launch"));
+		await second.save();
+		assert.ok(
+			(disk.content ?? "").includes("made-on-the-second-launch"),
+			"the second launch came up read-only",
 		);
 	});
 
@@ -250,10 +304,10 @@ describe("a phone whose data.json has not arrived", () => {
 
 describe("a data.json that turns up after startup", () => {
 	it("is adopted rather than replaced with the defaults", async () => {
-		// The remaining shape of #53: a device this vault has only just reached,
-		// so there is no device index to say the file ever existed. It arrives
-		// between `onload` and the first write, and the first write is what
-		// `stillFreshInstall` gates. See settings/welcomeRouting.ts.
+		// The shape of #53: a device this vault has only just reached, so there
+		// is no device index to say the file ever existed. It arrives between
+		// `onload` and `onLayoutReady` — the window the launch spends frozen,
+		// waiting to find out which of the two it is.
 		storage.clear();
 		const disk = new Disk();
 		const p = phone("new-phone", disk);
@@ -266,7 +320,7 @@ describe("a data.json that turns up after startup", () => {
 		disk.content = arrived.content;
 
 		assert.strictEqual(
-			await stillFreshInstall(p.host),
+			await p.layoutReady(),
 			false,
 			"still believed it was a fresh install",
 		);
@@ -282,7 +336,7 @@ describe("a data.json that turns up after startup", () => {
 
 		disk.content = '{"version":4,"callouts":[{"id":"tru';
 
-		assert.strictEqual(await stillFreshInstall(p.host), false);
+		assert.strictEqual(await p.layoutReady(), false);
 		p.registry.add(authored("made-after-the-failure"));
 		await p.save();
 		assert.strictEqual(disk.writes, 0, "replaced a file it could not read");
@@ -294,9 +348,10 @@ describe("a data.json that turns up after startup", () => {
 	});
 
 	it("stops the welcome flow from creating one over it", async () => {
-		// The wiring, not just the check. `welcomeSeen` is the first thing a
-		// fresh install writes, so if this seam does not hold, nothing else
-		// downstream gets the chance to.
+		// The wiring, not just the check: `main.ts` runs the confirmation and
+		// hands its answer to the welcome, which no longer re-reads anything of
+		// its own. If that seam does not hold, `welcomeSeen` is written over the
+		// file that just arrived and nothing downstream gets a chance to help.
 		storage.clear();
 		const disk = new Disk();
 		const p = phone("new-phone", disk);
@@ -305,6 +360,11 @@ describe("a data.json that turns up after startup", () => {
 		const arrived = vaultWithUserCallouts();
 		disk.content = arrived.content;
 		const fileBefore = disk.content;
+
+		const freshInstall = boot.isFreshInstall
+			? await p.layoutReady()
+			: false;
+		assert.strictEqual(freshInstall, false, "greeted an existing vault");
 
 		// `main.ts` exposes `settings` off the registry, and the routing reads
 		// `welcomeSeen` from it. `WelcomeModal` is never constructed on this
@@ -320,7 +380,7 @@ describe("a data.json that turns up after startup", () => {
 			welcomeHost as unknown as Parameters<
 				typeof maybeShowWelcomeOnLaunch
 			>[0],
-			boot.isFreshInstall,
+			freshInstall,
 		);
 
 		assert.strictEqual(disk.writes, 0, "welcome wrote over the real file");
@@ -363,6 +423,7 @@ describe("a data.json that turns up after startup", () => {
 		const disk = new Disk();
 		const p = phone("new-phone", disk);
 		await p.boot();
+		await p.layoutReady();
 
 		p.registry.add(authored("first-one"));
 		await p.save();
@@ -386,7 +447,7 @@ describe("a data.json that turns up after startup", () => {
 		const p = phone("new-phone", disk);
 		await p.boot();
 
-		assert.strictEqual(await stillFreshInstall(p.host), true);
+		assert.strictEqual(await p.layoutReady(), true);
 		p.registry.add(authored("first-one"));
 		await p.save();
 		assert.ok(disk.writes > 0, "a real fresh install was blocked");

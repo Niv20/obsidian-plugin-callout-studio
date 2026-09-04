@@ -72,6 +72,65 @@ export async function stillFreshInstall(
 }
 
 /**
+ * End the provisional freeze a fresh-install launch started with, and answer
+ * whether this really is a fresh install.
+ *
+ * `loadSettingsInto` cannot tell a brand-new device from one a synced vault is
+ * still reaching — both read as `absent`, and a first launch has no device index
+ * to break the tie either. It resolves that by writing nothing at all until this
+ * runs, at `onLayoutReady`, which is as long as the question can be left open
+ * without a genuine fresh install noticing.
+ *
+ * Three outcomes, and only the first lets the session write:
+ *
+ * - **Still nothing there.** A real fresh install. Thaw, and let the welcome
+ *   screen create the file exactly as it always has.
+ * - **A file turned up.** `stillFreshInstall` adopts it through `reloadFrom`,
+ *   which thaws on its own because it arrived holding the real settings.
+ * - **A file turned up and cannot be read.** Stay frozen, and say so.
+ *
+ * Returns `false` without reading anything when the writer is no longer frozen,
+ * which means a file was already adopted between `onload` and here — by the
+ * foreground watcher, or on desktop by `onExternalSettingsChange`. That session
+ * has its settings, so there is nothing to confirm and nobody to greet.
+ *
+ * > [!WARNING]
+ * > Call this **only** for a launch whose boot reported `isFreshInstall`. The
+ * > other freeze that reaches `onLayoutReady` — a file missing on a device that
+ * > has run here before — looks identical from inside this function, and
+ * > "still nothing there" is exactly what that device reports. Thawing it would
+ * > write the built-ins over settings that have merely gone missing, which is
+ * > the whole of what `loadSettingsInto`'s `hasIndex` test exists to prevent.
+ */
+export async function confirmFreshInstall(
+	host: ExternalReloadHost,
+): Promise<boolean> {
+	if (!host.settingsWriter.isFrozen) return false;
+
+	let stillFresh: boolean;
+	try {
+		stillFresh = await stillFreshInstall(host);
+	} catch (err) {
+		// Genuinely exceptional: `readSettingsFile` already turns an adapter
+		// that will not answer into `unreadable` rather than throwing. But the
+		// freeze this releases has no other way out, so a throw here would
+		// leave a fresh install keeping nothing — this launch and, since no
+		// file ever gets created, every launch after it. Between "might
+		// overwrite a file that is probably not there" and "certainly discards
+		// everything the user does", the first is the better bet.
+		console.error(
+			"[callout-studio] could not confirm a fresh install; " +
+				"allowing this session to write",
+			err,
+		);
+		stillFresh = true;
+	}
+
+	if (stillFresh) host.settingsWriter.thaw();
+	return stillFresh;
+}
+
+/**
  * Keep looking for a `data.json` that startup did not find, and adopt it the
  * moment it lands.
  *

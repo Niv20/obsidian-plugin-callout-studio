@@ -38,7 +38,7 @@ specifically *because* of what runs before or after them.
 28. new CalloutStudioAPI(this)
 29. void icons.initialize()                                          ← background, non-blocking
 30. void ensureLocale()                                              ← background, non-blocking
-31. workspace.onLayoutReady: maybeShowWelcomeOnLaunch, then first-run discovery or scheduled prune,
+31. workspace.onLayoutReady: runLaunchSequence — confirmFreshInstall, then welcome, then first-run discovery or scheduled prune,
     then registerIncrementalWatchers()
 ```
 
@@ -188,24 +188,36 @@ decide which of the five fixed commands to actually call `addCommand` for.
 `this.registry.settings` — there is no separate settings object on the plugin
 itself.
 
-### Step 31: welcome, then first-run discovery, then incremental watchers — in that exact order, deferred to layout-ready
+### Step 31: confirm the fresh install, welcome, then first-run discovery — in that exact order, deferred to layout-ready
+
+`main.ts` only schedules it; the three steps and the rule about their order live
+in [`manager/launchSequence.ts`](../src/manager/launchSequence.ts).
 
 ```ts
-this.app.workspace.onLayoutReady(async () => {
+export async function runLaunchSequence(plugin, boot) {
     try {
-        await this.maybeShowWelcomeOnLaunch(isFreshInstall);
-        if (!this.settings.firstRunCompleted) {
-            await this.runFirstRunDiscovery();
+        const freshInstall = boot.isFreshInstall
+            ? await confirmFreshInstall(plugin)
+            : false;
+        await maybeShowWelcomeOnLaunch(plugin, freshInstall);
+        if (!plugin.localState.firstRunCompleted) {
+            await runFirstRunDiscovery(plugin);
         } else {
-            this.discovery.schedulePrune(2000);
+            plugin.discovery.schedulePrune(PRUNE_AFTER_LAUNCH_MS);
         }
     } finally {
-        this.discovery.registerIncrementalWatchers();
+        plugin.discovery.registerIncrementalWatchers();
     }
-});
+}
 ```
 
-- **Welcome first**, so it never stacks visually on top of the first-run scan
+- **The confirmation first**, because a launch that found no `data.json` has been
+  frozen since `onload` and cannot write until this answers whether it is a
+  brand-new device or one a synced vault is still reaching. `maybeShowWelcomeOnLaunch`
+  takes that answer as an argument and re-reads nothing itself — see
+  [Persistence § A file that is not there yet](07-persistence-and-caching.md#a-file-that-is-not-there-yet)
+  for why the guard has to sit here rather than around the write.
+- **Welcome next**, so it never stacks visually on top of the first-run scan
   consent modal (which only large vaults see).
 - **`firstRunCompleted` is only persisted after the chosen path finishes** — a
   crash or reload mid-scan safely re-runs the whole first-run flow on the next

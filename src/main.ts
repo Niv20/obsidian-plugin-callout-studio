@@ -30,10 +30,9 @@ import {
 } from "./manager/settingsBoot";
 import { registerThemeRowSync } from "./manager/theme/themeRowSync";
 import { removeLegacyStartupSnippet } from "./manager/legacyStartupSnippet";
-import { runFirstRunDiscovery } from "./manager/firstRunDiscovery";
+import { runLaunchSequence } from "./manager/launchSequence";
 import { CalloutStudioSettingsTab } from "./settings/SettingsTab";
 import { WelcomeModal } from "./settings/WelcomeModal";
-import { maybeShowWelcomeOnLaunch } from "./settings/welcomeRouting";
 import { CalloutEditor } from "./settings/CalloutEditor";
 import { QuickInsertModal } from "./settings/QuickInsertModal";
 import { CalloutAutoComplete } from "./editor/AutoComplete";
@@ -79,7 +78,12 @@ export default class CalloutStudioPlugin extends Plugin {
 	icons!: IconService;
 	locales!: LocaleStore;
 	settingsTab!: CalloutStudioSettingsTab;
-	private discovery!: CalloutDiscovery;
+	/**
+	 * Public for the same reason `localState` is: `manager/launchSequence.ts`
+	 * drives the post-layout half of startup and needs the prune and the
+	 * incremental watchers.
+	 */
+	discovery!: CalloutDiscovery;
 	settingsWriter!: SettingsWriter;
 	/**
 	 * Discovery's index and the rest of what must not travel between devices.
@@ -351,24 +355,11 @@ export default class CalloutStudioPlugin extends Plugin {
 		// the next launch tries again.
 		void this.ensureLocale();
 
-		// First-run vault discovery — once per DEVICE, which is also how a
-		// machine whose local index is missing rebuilds it. Decoupled from
-		// first render so onload stays fast; see manager/firstRunDiscovery.ts
-		// for the size threshold and the consent modal. Afterwards we only
-		// prune rows a previous session left orphaned.
-		this.app.workspace.onLayoutReady(async () => {
-			try {
-				// Welcome first, so it never stacks on top of the first-run
-				// scan modal (which only appears for large vaults).
-				await maybeShowWelcomeOnLaunch(this, boot.isFreshInstall);
-				if (!this.localState.firstRunCompleted) {
-					await runFirstRunDiscovery(this);
-				} else {
-					this.discovery.schedulePrune(2000);
-				}
-			} finally {
-				this.discovery.registerIncrementalWatchers();
-			}
+		// Confirm the fresh install, greet, then run first-run discovery —
+		// decoupled from first render so onload stays fast. See
+		// manager/launchSequence.ts for why those three are one function.
+		this.app.workspace.onLayoutReady(() => {
+			void runLaunchSequence(this, boot);
 		});
 	}
 
