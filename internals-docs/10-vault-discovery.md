@@ -49,6 +49,38 @@ costs nothing and the toggle takes effect immediately in both directions.
 Turning it off deliberately does **not** mark the first run complete: turning
 it back on still gets the one scan that populates this device's index.
 
+### The per-callout half of the same switch
+
+`settings.ignoredCalloutIds` is the control people actually reach for. The
+switch above is all-or-nothing, and the vaults that want it usually want one
+specific id left alone: a CSS snippet's `[!mcc]` for a multi-column layout, a
+theme's helper, another plugin's marker. Those ids belong to something else,
+they will never be configured here, and a row for each one arrives every time a
+note using it is opened.
+
+Issue #41 asked for this, and the sentence attached to the request is why the
+row itself is the problem rather than the clutter: *"I accidentally deleted
+every instance of `>[!mcc]`, not fun."* A row nobody wants puts a delete button
+next to a callout this plugin does not own, in a list where every other row is
+safe to delete.
+
+[`manager/ignoredCallouts.ts`](../src/manager/ignoredCallouts.ts) owns the list.
+Two decisions worth knowing:
+
+- **Entries are `calloutIdentity` forms**, so ignoring `[!multi column]` also
+  ignores `[!multi-column]` — the rule `findAttrIdConflict` and
+  `DeviceLocalStore` already follow, for the reason Obsidian renders the two
+  identically.
+- **It lives in `data.json`**, unlike the discovery *index*. The index is an
+  observation this machine made; this is a decision about the vault, and the
+  snippet defining the id syncs, so the reason to ignore it is true everywhere.
+
+Reached from a discovered row's menu ("Never detect this callout"), and undone
+from **Data management → Callouts you don't detect**, which is drawn only when
+the list is non-empty. Removing an entry does *not* re-create the row: the id is
+simply detectable again, and the next scan of a note using it puts the row back
+the way it arrived the first time.
+
 ### Where events come from
 
 ```ts
@@ -160,7 +192,14 @@ user has effectively committed it).
 
 `buildKnownCalloutIds` ([`manager/knownCalloutIds.ts`](../src/manager/knownCalloutIds.ts))
 seeds the reserved demo ids — `new-callout-preview` and `global-style-demo` —
-unconditionally, on top of everything `getAll()` reports.
+unconditionally, on top of everything `getAll()` reports, and the vault's
+`ignoredCalloutIds` alongside them.
+
+The ignore list is enforced *here* rather than in a check further down for the
+same reason the demo ids are: "known" is what stops the scanner reporting an id
+at all, so one addition covers the incremental per-file scan, the whole-vault
+scan, the settings tab's open-buffer sweep and the first-run modal — which is
+handed a list the scan produced — without any of them needing its own exception.
 
 It answered purely from `getAll()` before, which meant a demo id counted as
 known only *while a modal held it in the preview slot*. A note that happens to

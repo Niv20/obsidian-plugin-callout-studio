@@ -22,6 +22,16 @@ Auto-discovery normally works note by note, as you open and edit files. If you w
 
 On very large vaults — 500 or more markdown files — Callout Studio asks permission before doing a full initial scan. If you decline, files are scanned individually as you open them instead, so nothing is ever scanned without at least implicit action from you opening it.
 
+## Ignoring a callout you don't want listed
+
+Some callout IDs in your vault aren't yours to configure: a CSS snippet's `[!mcc]` for a multi-column layout, a helper your theme provides, a marker another plugin renders. Auto-discovery adds a row for each of them anyway, and that row sits in your list with a delete button next to it — for a callout Callout Studio doesn't actually own.
+
+Open the **⋯** menu on a detected callout and choose **Never detect this callout**. The row goes away and no future scan brings it back. Both spellings are covered at once: ignoring `[!multi column]` also ignores `[!multi-column]`, since Obsidian treats them as the same callout.
+
+The list of what you're ignoring lives in **Settings → Callout Studio → Data management → Callouts you don't detect**, and appears only once you've ignored something. **Detect again** removes an entry; the row doesn't come straight back, but the next time you open a note that uses the callout it's picked up normally.
+
+This setting syncs, unlike the list of discovered callouts — the snippet or theme that defines the callout is on all your devices, so the reason to ignore it is too.
+
 ## Turning auto-discovery off
 
 If you would rather add every callout type by hand, switch off **Automatically discover callouts in your vault** in Settings → Vault insights & maintenance. Nothing is taken away when you do: every callout already in your list stays exactly as it is, **Scan now** still works whenever you want it, and you can create callout types yourself as usual. Switching it back on takes effect immediately.
@@ -45,6 +55,13 @@ In practice this means:
 - If your settings file is ever half-written or unreadable — a sync still in progress, most likely — Callout Studio leaves it completely alone rather than replacing it. Your callouts may be missing for a moment, and it will tell you so, but the file itself is never overwritten with an empty one.
 
 On desktop, Callout Studio notices when your settings file is updated by a sync tool while Obsidian is open, and picks up the change without you having to restart. Obsidian gives plugins no way to be told about that on mobile, so there Callout Studio checks each time you come back to the app — which is usually just after your sync tool has run. Either way, once your real settings turn up they are adopted and everything works normally again, including saving: you do not have to restart, and any callout you make after that point is kept.
+
+- **A change made on one device can never quietly erase one made on another.** Before saving anything, Callout Studio re-reads the settings file. If it has changed since — your other device got there first — the save is abandoned rather than written over the top, the newer settings are loaded, and you are told that the change you just made needs making again. Without this, a phone left open in the background could hold hours-old settings and write them back over everything, which is exactly how a vault ends up with every custom callout reset.
+- **Before settings arrive that describe fewer callouts than you have, a copy of your current ones is kept** in `.obsidian/plugins/callout-studio/backups/`. The five most recent are kept. Usually that shorter list is simply a callout you deleted on your other device and nothing is wrong — but if something ever does go missing, the copy is there.
+- **Devices running different versions of Callout Studio no longer correct each other.** A setting a newer version added used to be stripped by the older one and put back by the newer, over and over, which sync tools see as a genuine change every time. An older version now carries settings it doesn't recognise through untouched.
+- **If your settings were saved by a newer version than the one you're running**, Callout Studio shows them as best it can but writes nothing at all, so an older version can't overwrite something it doesn't understand. Update the plugin on that device and reload.
+
+Whenever Callout Studio isn't saving — for any of the reasons above — it says so in a banner at the top of its settings page, for as long as it lasts. Changes you make still work for the rest of the session; they just don't survive closing Obsidian.
 
 ---
 **Next:** [Deleting and replacing callouts](09-deleting-and-replacing-callouts.md)

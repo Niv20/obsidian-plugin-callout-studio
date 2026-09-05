@@ -111,20 +111,33 @@ four rules the raw `saveData` call did not:
   theme-owned custom command looks orphaned and gets pruned. Re-entrant, like
   `CalloutRegistry.batch`, and a body that throws flushes nothing.
 - **A session that could not read the file never writes it.**
-  `SettingsWriter.freeze()`, set by the startup path alone. See
-  [A file we cannot read](#a-file-we-cannot-read).
+  `SettingsWriter.freeze()`, set by the startup path and by a file from a newer
+  build. See [A file we cannot read](#a-file-we-cannot-read). The first save it
+  throws away says so — once per freeze, through `onFrozenSave` — and the
+  settings tab carries a banner for as long as it lasts
+  ([`settings/sections/ReadOnlyBanner.ts`](../src/settings/sections/ReadOnlyBanner.ts)).
+  The launch notice alone was shown before the user had looked at the screen and
+  was long gone by the time they changed a colour that did not stick.
+- **A write that would overwrite a file we have not read is abandoned.**
+  `runPass` re-reads `data.json` and compares it to the guard's baseline before
+  handing anything to `saveData`
+  ([`manager/staleWriteGuard.ts`](../src/manager/staleWriteGuard.ts)). This is
+  the last line, and on a phone it is the *only* one — see
+  [A file that moved while we were not looking](#a-file-that-moved-while-we-were-not-looking).
 
-That guard only works because `mergeSavedSettings` names its fields in
-`DEFAULT_SETTINGS`' order: `JSON.stringify` writes keys in insertion order, so
-while the two lists disagreed, a freshly constructed registry and a reloaded one
-serialized the same settings into byte-different files.
+The guard compares a **canonical** serialization: the object with its keys
+sorted, deeply ([`utils/stableJson.ts`](../src/utils/stableJson.ts)), applied by
+`SaveGuard` to everything it prepares, adopts or matches. Key order is the one
+thing bytes carry that means nothing, and two builds of this plugin genuinely
+order the same settings differently — see property 6.
 
 ### Multi-device sync
 
 `data.json` sits inside `.obsidian/`, so on a vault synced with Syncthing (or
-any file-level sync) **both devices write the same file**. Five properties
+any file-level sync) **both devices write the same file**. Seven properties
 decide whether that is safe. Issue #41 was the first three going the wrong way;
-the report that followed v2.12.0 was the last two.
+the report that followed v2.12.0 was properties 4 and 5; properties 6 and 7 are
+what the two issues still had left in them afterwards.
 
 **1. Only user intent is written.** A row automatic discovery minted and nobody
 claimed is *an observation this machine made*, not configuration. Writing it
@@ -151,7 +164,8 @@ resolved from the current fallback at load time by the same
 `buildDiscoveredRow` discovery itself uses.
 
 **3. An external change is adopted, not clobbered.** `onExternalSettingsChange`
-is implemented (`manager/settingsBoot.ts: adoptExternalSettings`); without it,
+is implemented (`manager/settingsAdopt.ts: adoptExternalSettings`, the
+mid-session half of what `settingsBoot.ts` used to hold alone); without it,
 `Plugin.loadData` does not even track the file's mtime, and the plugin's
 in-memory snapshot would overwrite whatever a sync client had just delivered.
 It re-reads, rebuilds the registry, restores the discovered rows, **re-sweeps
@@ -185,8 +199,10 @@ fingerprint, so an unforced one returns having done nothing.)
 > order put it earlier than our last local save does not fire it at all.
 >
 > This is why the real fix is property 1 — a passive device that writes nothing
-> gives the sync client nothing to reconcile. The hook is the second line of
-> defence, not the first.
+> gives the sync client nothing to reconcile — and why property 7 exists: a
+> device that *does* have something to say re-reads the file immediately before
+> writing it, and a phone re-checks on every return to the app. The hook is the
+> second line of defence, not the first, and on mobile it is not a line at all.
 >
 > A third quirk is worth knowing because it looks like a bug in *our* code:
 > `Plugin._onConfigFileChange` assigns `_lastDataModifiedTime = <the mtime it
@@ -217,6 +233,84 @@ is total — in
 code-unit comparison rather than `localeCompare`, which would put a Turkish
 phone and an English desktop back into disagreement.
 
+**6. Two devices on different plugin versions must not correct each other.**
+`mergeSavedSettings` names every field it understands and drops the rest —
+correct for an import file, and a permanent write loop for a shared one. A
+desktop updates itself the day a release lands and a phone updates a week
+later, so for most of a release cycle the two devices reading one `data.json`
+are running different code: the older build strips a setting the newer one
+added and writes the file back without it, the newer build puts it back, and
+neither stops. `SaveGuard` cannot suppress it because the difference is real.
+This is what the reporter of #41 saw as "file-sync tennis" after upgrading one
+device to v2.12.0 and not the other — the shape is verifiable against the 2.11.0
+tag, which writes `settings.firstRunCompleted` and `settings.retiredThemeIds`
+(both since moved to `DeviceLocalStore`) and has never heard of
+`autoDiscoverCallouts`.
+
+So a field this build does not recognise is **quarantined**, not dropped:
+[`manager/foreignFields.ts`](../src/manager/foreignFields.ts) sets it aside at
+load and `toSaveData()` hands it back verbatim, in a position property 5's key
+sort then makes irrelevant. Two lists decide what that means, and the second is
+the load-bearing one — *known* is `DEFAULT_SETTINGS`' own keys, read rather than
+restated so a build cannot quarantine a field it owns; *retired* is the fields
+this plugin removed on purpose, without which the quarantine would carry
+`firstRunCompleted` and `retiredThemeIds` straight back into the synced file and
+undo the whole of v2.12.0. The quarantine is deliberately not applied to
+imports, where dropping the unknown is still right.
+
+`version` covers what the quarantine cannot: a release that changes what an
+existing field *means*. A file whose `version` exceeds `CURRENT_DATA_VERSION`
+freezes the writer for the session, because there the older build's reading is
+wrong rather than merely incomplete.
+
+**7. A device must notice the file moving under it.** Properties 1–6 stop a
+device writing when it has nothing to say. None of them helps a device that has
+something to say and is holding a stale picture of the file — which on mobile is
+every session, because Obsidian's config-folder watcher is desktop-only. The
+sequence is issue #53: a phone launches and reads a good `data.json`, sits in the
+background while a desktop adds ten callouts, and the user comes back and changes
+one colour. The payload is a snapshot of a registry built at launch, the guard's
+baseline agrees with it, and the write lands.
+
+Two changes close it, and they are deliberately independent:
+
+- [`manager/staleWriteGuard.ts`](../src/manager/staleWriteGuard.ts) re-reads
+  `data.json` immediately before every write and abandons the write if the bytes
+  are not what this session adopted. It reports the divergence on a **later
+  task** (`window.setTimeout(…, 0)`), never inline: adopting rebuilds the
+  registry, a rebuild asks for saves of its own, and `hold()` releases with an
+  `await save()` that would join the very `runPass` awaiting the callback. That
+  is the same closed cycle which keeps the check from being a `SettingsWriter`
+  pre-write hook at all.
+- `watchForLateSettings` is registered on **every** launch rather than only the
+  ones that came up without settings, and never retires. It is the mobile
+  counterpart of `onExternalSettingsChange`, not a recovery path; the steady
+  state is one small read per foreground, stopping at `matchesLastWrite`.
+
+A baseline of `null` against a file that exists is the same failure in its
+starkest form — a write about to land on a file this session has never read —
+and the check treats it as a mismatch. What it must never do is *cause* a write:
+no `readCurrent`, a read that threw, and no readable file at all all mean "go
+ahead", the last because refusing there would stop a genuine fresh install ever
+creating one.
+
+### A copy taken before the loss
+
+An adoption is last-writer-wins over the whole file, and nearly always that is
+right. The exception is the case #53 is made of, where the shorter list is not a
+decision but the result of a bug upstream of the sync client — and by the time
+anybody notices, every device agrees. Telling those apart is not possible from
+inside `reloadFrom`, and guessing in the cautious direction means refusing a sync
+the user asked for, so the adoption goes ahead and
+[`manager/settingsBackup.ts`](../src/manager/settingsBackup.ts) keeps a copy
+first: `<plugin>/backups/data-<stamp>.json`, newest five, written **only** when
+the incoming file describes fewer callouts than this device holds.
+
+Before destruction and never on a schedule, because the folder syncs too — a
+backup per launch would be a file event per launch on every device, which is the
+churn properties 1–6 exist to remove. And it cannot fail the operation it
+protects: every error is swallowed and reported as `null`.
+
 ### A file we cannot read
 
 `Plugin.loadData()` returns a nullish value for two situations that could not be
@@ -242,6 +336,14 @@ The two callers answer `unreadable` differently, and both answers matter:
   up holding only the built-ins — but `SettingsWriter.freeze()` takes the file
   off the table for the session and the user is told, because otherwise the very
   next save replaces a file we failed to understand with one we know is wrong.
+  "Holding the built-ins" is something the branch has to *do*: `registry.load()`
+  is the only caller that puts the shipped rows on the map — the constructor
+  fills `builtInDefaults`, which is the comparison set, not the live one — and
+  both freeze branches used to return before reaching it. A frozen session
+  therefore held nothing whatsoever: no `note`, no `warning`, no stylesheet, and
+  every custom command looking orphaned to the sweep. Both branches now call
+  `applySettingsRead(host, { kind: "absent" })`, whose convergence flush is a
+  no-op because the writer is already frozen.
   It also registers `watchForLateSettings`, because "unreadable" is a transfer
   still in progress far more often than it is corruption, and on a phone nothing
   else is going to notice when it finishes. Until that was added, a mobile
@@ -320,12 +422,13 @@ have merely gone missing.
 `watchForLateSettings`
 covers the rest of the session, which on mobile is otherwise not covered at all:
 it listens for the app returning to the foreground — the moment a sync client has
-most likely just run — and adopts a settings file that has appeared since. Every
-launch that came up without usable settings registers it — missing, missing-on-a
--known-device, and unreadable alike — so a frozen device recovers on its own
-rather than waiting for a restart. It stops at the first file it **adopts**,
-stays silent while there is still nothing there, and defers while the callout
-editor owns the registry.
+most likely just run — and adopts a settings file that has appeared since. **Every
+launch registers it**, the healthy one included; see property 7 for why a launch
+that read a perfectly good file is exactly the one that needs it. It stays silent
+while there is nothing there, defers while the callout editor owns the registry,
+and **never retires** — an adoption is not the end of the story, since the device
+goes on being a device with no watcher and would miss the next file the same way.
+The only thing an adoption ends is a freeze.
 
 > [!IMPORTANT]
 > Seeing *our own* file on disk is not a reason to stop watching. The watcher
@@ -364,12 +467,52 @@ missing file offers **Start fresh on this device** — see
 [`manager/settingsNotices.ts`](../src/manager/settingsNotices.ts). That button
 and `reloadFrom` are the only two callers of `SettingsWriter.thaw()`, and they
 are the only two things that can answer the guess: the user saying the file is
-gone for good, or the file itself turning up. What still never happens is a thaw
+gone for good, or the file itself turning up. It asks first, through a
+`ConfirmModal`: it is the most destructive control this plugin has — it publishes
+an empty configuration to every device on the vault — it is offered at the exact
+moment the real file is most likely still in flight, and it lives inside a
+notice, a surface people dismiss by clicking at. What still never happens is a thaw
 on a hunch — no timer, no retry count, no "it has probably finished by now".
 
 `tests/syncMobileWipe.test.ts` holds all of this, with the device shape the rest
 of the sync suite could not express: no `adoptExternalSettings`, startup as the
-only entry point.
+only entry point. `tests/syncStaleOverwrite.test.ts` holds property 7,
+`tests/syncVersionSkew.test.ts` property 6, and `tests/reloadQueue.test.ts` the
+serialization and the deferred-reload retry below.
+
+### One adoption at a time, and never a dropped one
+
+`adoptExternalSettings` rebuilds the whole registry and is reachable from three
+callers that know nothing about each other — the config watcher, the foreground
+check, and the retry that runs when a modal hands the registry back. One of them
+does not await the handler. Two overlapping runs interleave their
+`registry.load()` calls around the awaits inside them, and the file that wins is
+whichever finished first rather than whichever is newer, so
+[`manager/reloadQueue.ts`](../src/manager/reloadQueue.ts) serializes them: a
+caller arriving mid-flight joins the run already going, which necessarily
+re-reads the file when it gets there.
+
+It also owns the deferral. A reload refused because a modal owns the registry
+used to be retried by exactly one thing — `pruneSuspended` going false — which is
+only half of what `registryIsOwned` asks about; the other half is
+`registry.hasPreviewDefinition()`. The two always move together today, by the
+convention `settings/previewOwnership.ts` documents, but a latch whose only
+release depends on two call sites keeping their order is a latch that will stick,
+and a stuck one means the device silently stops adopting settings for the rest of
+the session. Both seams release it now, and `release()` re-asks `registryIsOwned`
+rather than trusting the caller's reason for calling.
+
+### Settings are read, never held
+
+`CalloutRegistry.load()` **replaces** `registry.settings` — every adoption builds
+a fresh object from `mergeSavedSettings` — so anything holding its own reference
+has a dead one from the first file another device sends, with nothing to announce
+it. `CalloutDiscovery` and `CalloutPrune` were handed one at construction: after
+an adoption the automatic-discovery toggle went inert for the rest of the
+session, and the prune checked a stale `customCommands` list, deleting rows a
+command synced in from another device had just claimed. Neither takes a
+`settings` field any more; both read `host.registry.settings` at the point of
+use.
 
 ### Settings merge — never a raw spread
 
@@ -394,6 +537,14 @@ enough to warrant one).
 > it by name only cleans up the one field someone remembered to name. Naming
 > every field that *stays* here is what makes "unknown fields are dropped"
 > actually true at every depth, not just the top level.
+>
+> Dropped is right for an **import file**, which is a document this version is
+> being asked to read. It is wrong for `data.json`, which two versions of this
+> plugin share — see [Multi-device sync](#multi-device-sync) property 6, where
+> the top-level settings keys this build does not recognise are set aside by
+> [`manager/foreignFields.ts`](../src/manager/foreignFields.ts) and handed back
+> on save. That quarantine sits *beside* this function, never inside it, so the
+> import path keeps the promise above unchanged.
 
 The same function is shared by two callers that ask the identical question —
 "what does this possibly-partial, possibly-ancient blob mean under the current
