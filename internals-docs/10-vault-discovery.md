@@ -1,383 +1,55 @@
-# Vault discovery, statistics, replace, and delete
+# Manual discovery, statistics, replace, and delete
 
-This covers everything that keeps the registry synced with what's actually
-written in the vault: auto-discovery of unknown callout IDs, pruning stale
-auto-created rows, the statistics modal, bulk replace, and the delete flow.
+## One discovery entry point
 
-## `CalloutDiscovery` — the coordinator
+The single **Discover now** button beside **My callout types** and **Add new callout** calls `plugin.runVaultScan()` →
+`ManualCalloutDiscovery.run()`. There are no note listeners, startup scans,
+open-editor sweeps, pruning passes, ignored-id settings, completion flags,
+rediscovery suppression or local discovery storage.
 
-[`src/manager/CalloutDiscovery.ts`](../src/manager/CalloutDiscovery.ts) is
-destroyed via `destroy()` on plugin unload. It does not scan the vault itself —
-the scanning primitives live in `utils/vaultCalloutScanner.ts` (shared with
-statistics and replace, see below); this class decides *which ids* and *what
-guards* apply.
+The operation reads saved Markdown files and the current theme's declared ids.
+The shared tokenizer ignores code and frontmatter, recognizes block/heading/inline
+roles, and folds equivalent spellings. `buildKnownCalloutIds` includes saved
+ids, aliases and reserved demo ids. Before publication, the staged registry also
+checks attribute-id collisions. A scan only adds unknown rows; it never rewrites
+existing definitions or removes rows that have no usages.
+Closing code fences must contain only the matching marker and whitespace;
+another marker line with a language label remains part of the code block.
 
-It has been split twice, both times because a question with its own failure
-modes was hiding inside it. It owns an instance of each and forwards to it:
+File identity, modification time, size, Markdown-file membership and the theme's
+usable declared ids are checked. A failure, added/changed/deleted/renamed note or
+changed theme-id set cancels the whole pass. Settings and all scan inputs are
+checked after scanning and again after the asynchronous disk freshness check,
+immediately before the write. Theme attribute values that cannot form a Markdown
+callout token (including brackets, metadata pipes and CSS escapes) are skipped.
+A successful save precedes the one registry batch that publishes the new rows.
+Failed saves leave no partial rows. Another click joins the same promise;
+unloading invalidates the scan.
 
-- The **whole-vault** half — which rows nothing references any more — lives in
-  [`manager/CalloutPrune.ts`](../src/manager/CalloutPrune.ts): discovery reads
-  one file, the prune reads every file. `schedulePrune` / `pruneUnused` /
-  `pruneSuspended` forward there.
-- The ***when*** half — the triggers, the per-file debounce and the memo that
-  keeps the `file-open` trigger cheap — lives in
-  [`manager/discoveryScheduler.ts`](../src/manager/discoveryScheduler.ts).
-  `registerIncrementalWatchers` and `scheduleFileScan` forward there.
+A local edit during an already-started write keeps priority: publication skips
+ids/aliases it has since claimed, and uses the latest fallback selection and
+appearance. The normal queued save persists that combined state. The completion
+count includes only definitions actually added to the live registry.
 
-> [!IMPORTANT]
-> **A discovered row nobody has claimed is never written to `data.json`.**
-> It lives in the registry for the session; its *id* goes to
-> [`DeviceLocalStore`](../src/manager/DeviceLocalStore.ts), and
-> [`discoveryIndexBoot`](../src/manager/discoveryIndexBoot.ts) rebuilds the row
-> at startup through the same `buildDiscoveredRow` discovery itself uses — so
-> the restored row wears whatever the fallback looks like *today*, and a
-> restart costs no vault read at all. This is the fix for issue #41: a second
-> device that merely opened a synced note used to edit the settings file, and
-> edit it differently from the first. See
-> [Persistence § multi-device sync](07-persistence-and-caching.md#multi-device-sync).
+These checks use Obsidian's file objects and metadata, not a filesystem lock.
+An external writer that changes bytes without updating observed metadata, or
+writes after the final check, cannot be excluded by this API. Recovery and
+two-device limitations remain described in the persistence chapter.
 
-### The automatic-discovery toggle
+Discovered fallback rows are saved normally and exported. Appearance continues to
+follow the selected fallback until customized, except where the current theme owns
+the type. There is no discovery state to restore at startup. Old cached ids can
+be recovered only with an explicit scan. See [Persistence](07-persistence-and-caching.md).
 
-`settings.autoDiscoverCallouts` (default **on**) gates the three automatic
-paths and nothing else: `scheduleFileScan`, the first-run scan, and the
-settings tab's sweep of open editor buffers. **Re-scan vault** and every other
-action the user takes still work, and turning it off takes nothing away — the
-rows already discovered stay exactly where they are. The gate sits inside each
-of the three rather than around the event registration, so an inert listener
-costs nothing and the toggle takes effect immediately in both directions.
+## Commands and device conflicts
 
-Turning it off deliberately does **not** mark the first run complete: turning
-it back on still gets the one scan that populates this device's index.
+Missing command targets are paused while their configuration and identity remain
+saved. A manual discovery or synced definition can reactivate them. No command
+is deleted merely because one device has not discovered its target.
 
-### The per-callout half of the same switch
-
-`settings.ignoredCalloutIds` is the control people actually reach for. The
-switch above is all-or-nothing, and the vaults that want it usually want one
-specific id left alone: a CSS snippet's `[!mcc]` for a multi-column layout, a
-theme's helper, another plugin's marker. Those ids belong to something else,
-they will never be configured here, and a row for each one arrives every time a
-note using it is opened.
-
-Issue #41 asked for this, and the sentence attached to the request is why the
-row itself is the problem rather than the clutter: *"I accidentally deleted
-every instance of `>[!mcc]`, not fun."* A row nobody wants puts a delete button
-next to a callout this plugin does not own, in a list where every other row is
-safe to delete.
-
-[`manager/ignoredCallouts.ts`](../src/manager/ignoredCallouts.ts) owns the list.
-Two decisions worth knowing:
-
-- **Entries are `calloutIdentity` forms**, so ignoring `[!multi column]` also
-  ignores `[!multi-column]` — the rule `findAttrIdConflict` and
-  `DeviceLocalStore` already follow, for the reason Obsidian renders the two
-  identically.
-- **It lives in `data.json`**, unlike the discovery *index*. The index is an
-  observation this machine made; this is a decision about the vault, and the
-  snippet defining the id syncs, so the reason to ignore it is true everywhere.
-
-Reached from a discovered row's menu ("Never detect this callout"), and undone
-from **Data management → Callouts you don't detect**, which is drawn only when
-the list is non-empty. Removing an entry does *not* re-create the row: the id is
-simply detectable again, and the next scan of a note using it puts the row back
-the way it arrived the first time.
-
-### Where events come from
-
-```ts
-registerIncrementalWatchers(): void   // called from main.ts's onLayoutReady
-```
-
-Everything about *which* file gets looked at and *when* lives in
-[`manager/discoveryScheduler.ts`](../src/manager/discoveryScheduler.ts) —
-the same split as `CalloutPrune`, and `CalloutDiscovery` only forwards to it.
-Three Obsidian events, all registered through `this.host.registerEvent(...)`
-(so they're torn down automatically on unload):
-
-- `metadataCache.on("changed", file)` — a markdown file's metadata was
-  re-parsed (essentially: it was saved or its content otherwise settled).
-- `vault.on("create", file)` — a new markdown file appeared.
-- `workspace.on("file-open", file)` — a note was opened.
-
-All three route through `schedule(file, reason)`, a **per-file** 300ms debounce
-(`Map<path, {timerId, reason}>`) — so a burst of keystrokes in one file
-collapses into one scan. `vault.on("modify")` is still not among them, which
-this chapter and the module's own docblock both used to claim.
-
-> [!important] Opening a note is a trigger, and used not to be.
-> The first two events both mean *the file was written*, so pasting a callout
-> into a note discovered it and **opening a note that already contained one
-> discovered nothing at all**. The settings tab's own open-buffer sweep was the
-> only thing standing in for a trigger, and it reads
-> `getLeavesOfType("markdown")` — one *visible* note per leaf. Opening five
-> notes in a single tab and then opening settings therefore found the fifth
-> callout and none of the other four: they had already been replaced in the
-> only leaf that ever existed. `file-open` is what makes each of the five its
-> own scan, and the registry is what accumulates them.
-
-**The catch-up sweep.** `registerTriggers()` also queues one scan per note
-already showing in a markdown leaf. It runs from `onLayoutReady`, which is
-*after* the workspace has restored the previous session's tabs — so those
-notes' own `file-open` events have already been and gone, and without the sweep
-a restored tab is the one note discovery never looks at.
-
-A leaf restored but not yet activated is a **deferred view** (Obsidian 1.7.2+):
-it reports as a markdown leaf but its view is not loaded and carries no `file`
-at all. Reading `view.file` alone therefore skipped exactly the tabs the sweep
-exists for, so `leafFile()` falls back to `leaf.getViewState().state.file` —
-serialized state, which a deferred leaf has by definition — and resolves that
-path back to a handle, so the scan receives the same object every other trigger
-passes it.
-
-**The `mtime` memo.** A note is opened far more often than it is edited — every
-tab switch is one — and each scan is a `cachedRead` plus a tokenizer pass. So
-`markScanned(file)` records `path → stat.mtime` after any scan that ran out of
-things to find, and an **open** of a file already scanned at exactly that mtime
-queues nothing at all. Three rules keep it honest:
-
-- Only opens are deduped. A write path is left alone deliberately, because it
-  is also what schedules the prune (below) and a memo hit would skip that too.
-- A scan that **withheld a half-typed id** is not recorded — it has not
-  finished with the file, and memoizing it would make the open that commits
-  the id the one open that never looks.
-- `suppressRediscovery` clears the memo outright. The rediscovery hold lasts
-  five seconds *and is then meant to lapse*; a memoized note is one the next
-  open would not re-read, which would silently make a deletion permanent.
-
-The memo is capped at `SCAN_MEMO_MAX_ENTRIES` (500), evicting least-recently
-marked, so a long session walking a whole vault cannot hold an entry for every
-note ever opened — including every note deleted since.
-
-**Reason survives the debounce.** `"change"` beats `"open"` whichever order the
-two arrive in, because only the write is owed a prune.
-
-### Skipping tokens still being typed
-
-```ts
-activeTypingCalloutIds(app: App, file: TFile): Set<string> | null
-```
-
-Lives in [`editor/activeTypingIds.ts`](../src/editor/activeTypingIds.ts),
-under `editor/` because everything it touches is an editor concern —
-`workspace.activeEditor`, a cursor, and the same line tokenizer the editor
-surfaces use.
-
-Before discovering an id from a file scan, it checks whether the **active
-editor**'s cursor currently sits on a line containing that id. If so, the id
-is filtered out of the "unknown" list for this pass — feeding a half-typed
-name straight into the autocomplete dropdown would be jarring. Discovery picks
-it up on the *next* scan, once the cursor has moved off the line (i.e. the
-user has effectively committed it).
-
-> [!WARNING]
-> **`scanFileNow` asks this on the `"change"` path only, and that qualifier is
-> load-bearing.** "The cursor is on the line" is evidence of typing *only when
-> something was just written*. Opening a note also makes it
-> `workspace.activeEditor`, with the cursor at line 0 — so for the ordinary
-> note, one that **starts** with `> [!alpha]`, the id sits on the cursor's line
-> through no act of the user's.
->
-> Asking on the open path is what made `file-open` discovery look broken while
-> working perfectly: the scan ran, found the id, filtered it out as "in
-> progress", and discarded it. Every note whose callout was on the line the
-> cursor happened to land on was silently skipped — which is most notes — and
-> the only id still reaching the settings list was whichever one that tab's own
-> *unfiltered* sweep of the visible leaf could see. That is the whole of "only
-> the last note's callout is discovered".
->
-> Nothing is lost by not asking: the half-typed id this protects is one the
-> user is still editing, and editing it produces a write, which is the path
-> that does ask.
-
-### Ids that are never unknown
-
-`buildKnownCalloutIds` ([`manager/knownCalloutIds.ts`](../src/manager/knownCalloutIds.ts))
-seeds the reserved demo ids — `new-callout-preview` and `global-style-demo` —
-unconditionally, on top of everything `getAll()` reports, and the vault's
-`ignoredCalloutIds` alongside them.
-
-The ignore list is enforced *here* rather than in a check further down for the
-same reason the demo ids are: "known" is what stops the scanner reporting an id
-at all, so one addition covers the incremental per-file scan, the whole-vault
-scan, the settings tab's open-buffer sweep and the first-run modal — which is
-handed a list the scan produced — without any of them needing its own exception.
-
-It answered purely from `getAll()` before, which meant a demo id counted as
-known only *while a modal held it in the preview slot*. A note that happens to
-contain `[!global-style-demo]` — pasted from a screenshot, or left behind by a
-crash — would then be discovered the moment that modal closed, and appear as a
-row the user never made and cannot explain. See
-[Callout registry § Reserved demo ids](05-callout-registry.md#reserved-demo-ids)
-for the other three surfaces that reserve them.
-
-The welcome splash's demo id (`demo`) is **not** seeded, and that is not an
-oversight: it is a name a user may own, so a note writing `[!demo]` must stay
-discoverable — see
-[the third demo id](05-callout-registry.md#the-third-demo-id-and-why-it-is-not-in-the-set).
-
-Both spellings are seeded, as for any known id: `scanStringForUnknownCallouts`
-tests a *found* id's literal form and its identity against the set, so the pair
-together is what makes `[!global style demo]` recognised too.
-
-### Adding unknown ids as fallback rows
-
-```ts
-addUnknownCalloutsAsFallback(unknownIds: string[]): number
-```
-
-For each id, in order: skip if already registered; skip if
-**rediscovery-suppressed** (see below); skip if it collides with an existing
-callout under `calloutIdentity` (`findAttrIdConflict` — `registry.add()` refuses
-such a row anyway, this only keeps the count honest); otherwise
-build a row via `discoveredRow.ts`'s `buildDiscoveredRow(id, fallback)` and
-`registry.add()` it. The whole batch is wrapped in `registry.batch()` — one
-`onChange` for the entire set of new rows, not one per id, which matters a
-lot when a pasted template introduces half a dozen unknown ids at once (see
-[Architecture § coalescing](02-architecture.md#coalescing-why-a-single-edit-is-not-four-full-passes)).
-
-`buildDiscoveredRow` (in
-[`src/manager/discoveredRow.ts`](../src/manager/discoveredRow.ts)) is a small,
-deliberately isolated module: it's the **one place** that decides what
-"mirror the fallback callout's look" means, because two different code paths
-build/rebuild such rows from opposite ends (a brand-new row here, and
-`restyleUncustomizedFallbackRows` re-styling *existing* rows when the fallback
-changes — see [Callout registry](05-callout-registry.md)) and letting them
-disagree about which fields get copied was a real bug class. It spreads the
-fallback's entire appearance but explicitly clears `customized`,
-`externalStyle`, and `aliases`, and **deep-clones** every object field
-(`icon`, `bgGradient`, `iconAdjust`) rather than copying the reference — a
-naive spread would have every discovered row *and* the live fallback
-definition sharing one mutable `CalloutIcon` object.
-
-### Rediscovery suppression — the delete race
-
-```ts
-suppressRediscovery(ids: string[]): void   // CalloutDiscovery
-holds(id: string): boolean                  // RediscoveryHold
-```
-
-> [!IMPORTANT]
-> **This exists to fix a specific, real race.** Deleting a callout rewrites
-> its vault usages with `vault.process()` — but an *open* editor's CodeMirror
-> buffer catches up with that write **asynchronously**. (Note this is a
-> *different* race from the one `process` itself closes: that one is about the
-> write landing on stale bytes, this one is about a buffer that has not yet
-> re-read the bytes we wrote. Making the write atomic does not shorten the
-> catch-up, so the hold below is still needed.) `SettingsTab.display()`,
-> which the delete flow calls on the very next line
-> (`CalloutRowActions.ts: handleCalloutDelete`), immediately scans every open
-> editor's *in-memory buffer* for unknown callout ids
-> (`scanOpenEditorsForUnknownCallouts`). Without suppression, that scan finds
-> the just-deleted id still sitting in a buffer that hasn't caught up yet,
-> and re-creates it — **one tick after it was removed** — as a fresh,
-> *uncustomized* fallback row. From the user's perspective, a delete of a row
-> they'd carefully customized appears to instead reset it to default styling.
->
-> The fix: `suppressCalloutRediscovery(allIds)` is called **before**
-> `registry.remove()`, using every id form the row owns (`vaultIdFormsFor`).
-> The hold itself is keyed by `calloutIdentity`, so a leftover `[!my-id]` in
-> some open buffer is the *same* key as `my id` and cannot walk past a hold
-> placed on the other spelling — keyed per spelling, it did exactly that and
-> re-created the row under the dash form. Passing every form still matters for
-> a real alias, which is not a dash/space variant of the id.
-> The suppression window is `SUPPRESS_MS = 5000` — just long
-> enough to outlast the async catch-up, not a permanent block. It answers a
-> **race**, not a policy: typing that same id again a minute later gets a
-> brand-new fallback row, exactly as discovery is meant to do.
-
-`suppressRediscovery` also drops the ids from the **discovery index**
-(`DeviceLocalStore.forget`), and that half is not housekeeping: the hold lasts
-five seconds, the index is read on every launch, so a row left in it would be
-rebuilt the next time Obsidian opened — the same resurrection made permanent.
-
-[`RediscoveryHold`](../src/manager/rediscoveryHold.ts) carries a **second**
-hold with no expiry: `retiredThemeIds`, the callout types the active theme
-stopped supplying. It lives in the device-local store rather than in settings —
-which theme is active is a property of a machine, not of a vault, and two
-devices on different themes used to rewrite that array in the same synced file.
-See [`theme/retiredThemeIds.ts`](../src/manager/theme/retiredThemeIds.ts).
-
-`runVaultScan()` (a user-requested scan) explicitly calls
-`clearRediscoverySuppression()` first — a user asking for a scan means nothing
-should be held back from it, even something deleted seconds ago.
-
-It saves only when it actually added a row. Everything else it touches — the
-device-local discovered index, the first-run flag — lives in `localStorage`, so
-a scan that found nothing has nothing to tell `data.json`, and on a synced vault
-an empty write is still a file event. It always refreshes, though: the user
-pressed a button and the settings list has to redraw either way.
-
-### Pruning unused fallback rows
-
-```ts
-schedulePrune(delayMs?: number): void   // debounced, see below
-async pruneUnused(): Promise<number>
-```
-
-Candidates: `source === "fallback"` **and** `customized !== true` **and**
-`standsDown(d) === false` (which is broader than `externalStyle` alone — it
-covers theme ownership too). For each candidate, every id form it owns
-(`vaultIdFormsFor`) is checked against a single whole-vault usage scan
-(`countCalloutUsagesMap`); a row with zero usages across every form it owns is
-removed, again inside `registry.batch()`.
-
-> [!NOTE]
-> **`externalStyle` is as sticky as `customized`, for a sharper reason than
-> "the user made a choice."** Pruning the row would take the flag with it,
-> and the id would fall straight back under `generateFallbackCSS`'s
-> `!important` catch-all — so a theme-owned callout the user explicitly
-> handed back would silently start being repainted again the moment its last
-> vault usage disappeared.
-
-> [!NOTE]
-> **A custom command referencing the row also blocks pruning**
-> (`settings.customCommands.some(c => c.calloutId === id)`) — building a
-> command for a callout is a deliberate claim on it, exactly like editing the
-> row through the callout editor. Pruning here would silently delete both the
-> command and any hotkey bound to it the moment the last note using the
-> callout was edited away.
-
-#### A scan schedules one only when it followed a write
-
-`scanFileNow` ends in `pruneAfter(reason)`, which does nothing for a
-`reason` of `"open"`. The question a prune answers is *"did that edit remove
-the last usage of a row"*, and an open removes nothing — so with notes opened
-far more often than they are written, pruning after one would have put a
-whole-vault read behind every tab switch. The settings tab
-(`schedulePruneUnusedFallbacks(0)`) and startup (`schedulePrune(2000)`) still
-ask for their own.
-
-#### The debounce delay is tuned for mobile, not just "feels responsive"
-
-```ts
-private static readonly PRUNE_DELAY_MS = Platform.isMobile ? 10000 : 1500;
-```
-
-A prune pass reads **every** markdown file in the vault through `cachedRead`
-and tokenizes it, on the main thread. The comment in the source is explicit
-about why the delay is this long, especially on mobile: "the real pattern is
-one whole-vault pass shortly after the user stops typing — i.e. at the exact
-moment they stop and look at the screen. On a phone, with a few thousand
-notes, that reads as the editor freezing." Nothing about the pass is urgent;
-the only user-visible cost of waiting longer is an orphaned row lingering a
-few extra seconds in the settings list before it disappears.
-
-`pruneSuspended` (a public field, toggled by `plugin.pruneSuspended`) is
-checked at the top of both `schedulePrune` and `pruneUnused` — the callout
-editor modal sets this while open, so editing a callout doesn't race a
-background prune deleting the very row being edited.
-
-### `isKnownZeroUsageFallback`
-
-```ts
-isKnownZeroUsageFallback(id: string): boolean
-```
-
-Distinct from "unknown" — an id that was **never scanned**, or was scanned
-and found in use, is *not* zero-usage. Only an id a completed prune scan
-explicitly confirmed has zero usages counts. This asymmetry matters:
-`filterUsableCallouts` (shared by autocomplete, the public API, and the
-callout-list filters) treats "might still be real" and "confirmed gone" very
-differently — see [Public API](18-public-api.md#which-callouts-are-included).
+A settings change detected during discovery cancels publication. For external
+file adoption, generic conflict protection preserves a backup before replacing
+local definitions; see [Multi-device sync](07-persistence-and-caching.md#multi-device-sync).
 
 ## Vault scanners — one shared tokenizer for every consumer
 
@@ -392,44 +64,10 @@ and "3 references updated" (replace) never disagree with each other.
 | Function | Purpose |
 | --- | --- |
 | `scanVaultCalloutStatistics(app)` | Full vault pass, grouped by id: file count + total count per type |
-| `scanFileForUnknownCallouts` / `scanStringForUnknownCallouts` | Ids in one file/buffer not in a known-id set — the discovery primitives |
-| `countCalloutUsages` / `countCalloutUsagesMap` | Usage counts for a specific set of ids — used before delete/replace, and by the prune pass |
+| `scanStringForUnknownCallouts` | Ids in one string not in a known-id set — the discovery primitives |
+| `countCalloutUsages` / `countCalloutUsagesMap` | Usage counts for a specific set of ids — used before delete/replace, and by explicit maintenance actions |
 | `convertCalloutsToPlainTextInVault` | Strips callout markup, keeping content as plain paragraphs — see below |
 | `replaceCalloutIdsInVault` | Bulk id swap, with optional title rewrite |
-
-### First-run vault scan
-
-Threshold: `HEAVY_VAULT_FILE_THRESHOLD = 500` markdown files
-(`src/constants.ts`), a pure UX cutoff with no effect on what the scan itself
-does. Below it, `main.ts`'s `runFirstRunDiscovery()` scans **silently** in
-the background; at or above it, `FirstRunScanModal` asks first. Either way,
-the first-run flag is only persisted **after** the chosen path completes — an
-interrupted startup (crash, reload mid-scan) safely re-runs the whole first-run
-flow on the next launch. See
-[Plugin lifecycle](03-plugin-lifecycle.md#step-31-welcome-then-first-run-discovery-then-incremental-watchers--in-that-exact-order-deferred-to-layout-ready).
-
-A caught scan failure (`app.vault.cachedRead` throwing mid-scan, say) is not
-that crash-mid-await case: both paths call `localState.completeFirstRun()`
-right after their `try`/`catch`, whether the scan threw or not, so a failure here
-never retries on its own. Both paths now pair their `console.error` with a
-`Notice` (`firstRun.autoScanFailed` for the silent path,
-`firstRun.scanFailed` for the modal's "Scan now" button) pointing the user at
-the manual remedy — Settings → Vault insights & maintenance → Re-scan vault —
-since that's the only recovery a caught failure gets. See
-[Logging and diagnostics § first-run vault scan](22-logging-and-diagnostics.md#first-run-vault-scan--consoleerror--notice)
-
-> [!IMPORTANT]
-> **The flag is per device**, in `DeviceLocalStore`, not in `data.json`. It was
-> a claim about a vault and it is a claim about a machine: synced, it told a
-> second device it had already scanned when it never had, and an imported
-> profile carrying `true` suppressed that device's first run permanently.
->
-> That also makes this pass double as **index recovery**. A machine joining an
-> existing synced vault, or one whose local storage was cleared, has no record
-> of the discovered ids — and needs exactly this scan to rebuild it, sized by
-> the same threshold and asking with the same modal. There is no separate
-> recovery path, because there does not need to be one.
-for the full `console`/`Notice` catalog and the policy behind it.
 
 ### `convertCalloutsToPlainTextInVault` — role-specific stripping
 
@@ -449,9 +87,13 @@ rules per role:
   reformatted as `<displayName>: <payload>` so the note still reads
   sensibly once the plugin's own rendering is gone.
 
-No `[!id]` survives anywhere afterward — this is deliberate and load-bearing:
-a live reference left behind is exactly what discovery would re-create a row
-for on its next scan, silently undoing the delete.
+All targeted callout tokens are removed by this explicit operation. A later manual scan can only rediscover an id if a note or the active theme still supplies it.
+
+The editor's id/title/fold rewrites use the same document filter, so examples in
+frontmatter or fenced code remain untouched. They request complete success from
+the vault rewrite helper: it visits every available file, reports failures and
+then rejects an incomplete pass. The editor retains its unfinished work for an
+explicit Save retry and keeps old ids as saved aliases until all files succeed.
 
 ## Delete flow
 
@@ -464,11 +106,10 @@ The delete flow, end to end (`CalloutRowActions.ts: handleCalloutDelete`):
      - unused:   simpler "this callout has no usages" copy
 3. "replace" → hands off to the Replace flow (below); return
 4. "delete", usage.fileCount > 0 → convertCalloutsToPlainTextInVault() first
-5. plugin.suppressCalloutRediscovery(allIds)   ← BEFORE the remove, see above
 6. registry.remove(def.id)
 7. registry.cleanupUnusedIconSvgs()
 8. await plugin.saveSettings()                  ← awaited explicitly, see below
-9. ctx.display()                                 ← re-renders settings, scans open buffers
+9. ctx.display()                                 ← re-renders settings only
 ```
 
 > [!WARNING]
@@ -500,4 +141,3 @@ is touched** — a title the user wrote themselves is never touched.
 
 ---
 Next chapter: [11-color-system.md](11-color-system.md)
-

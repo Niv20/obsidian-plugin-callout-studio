@@ -33,8 +33,8 @@ from.
 | --- | --- |
 | `builtin` | One of the 13 defaults in `constants.ts` |
 | `user` | User-created, or a foreign import (Callout Manager / Admonition) |
-| `fallback` | Auto-created by discovery for an unknown ID |
-| `theme` | A row minted from the **active theme's** stylesheet — an overlay, never persisted. See [21-theme-callout-discovery.md](21-theme-callout-discovery.md) |
+| `fallback` | Added by a manual scan for an unknown ID |
+| `theme` | Legacy overlay provenance; saved rows are migrated to durable fallback definitions. New theme types are added only manually. |
 | `plugin` | Injected by an older build's now-removed public API, or an import that carried that tag |
 
 `builtIn: boolean` is a separate field that's redundant with
@@ -146,7 +146,7 @@ exactly zero. Vaults accumulated opaque-looking backgrounds without anyone
 asking for them: opening the editor on a callout used to *materialize* a
 derived tint into the form fields, saving wrote it back regardless of what the
 user actually meant to change, and `restyleUncustomizedFallbackRows` then
-copied that derived value onto every auto-discovered row that mirrored it.
+copied that derived value onto every discovered row that mirrored it.
 
 Both write sites are fixed now (see [Colour system](11-color-system.md)); this
 migration retires what they already wrote to `data.json`. A background is
@@ -198,8 +198,7 @@ vault would silently lose its styling.
 > plenty of false positives: it would have renamed *every* user callout ever
 > named with a pipe, silently breaking any `[!proscons]` already written in
 > the vault. `notegreen`-style ids are left alone; an uncustomized one is
-> already swept up by `pruneUnused`, and a customized one is the user's own to
-> delete.
+> retained until the user explicitly deletes it, whether customized or not.
 
 ### `reconcileIdCollisions` — two rows that are one callout
 
@@ -279,14 +278,9 @@ toSaveData(): PluginData
   in-progress edit); if it occupies a fresh id, it's skipped entirely.
 - A built-in is written **only if `isModified()` is true** against its shipped
   default.
-- Every non-built-in row is written **except** an unclaimed discovered one —
-  `source: "fallback"` with no `customized`, no `externalStyle` and no custom
-  command pointing at it. Those live in the registry for the session and are
-  rebuilt at startup from the device-local index; `data.json` says nothing about
-  them at all. The rule and its three exceptions are in
-  [`manager/discoveredRowPersistence.ts`](../src/manager/discoveredRowPersistence.ts);
-  why they cannot be in the settings file is in
-  [Persistence § multi-device sync](07-persistence-and-caching.md#multi-device-sync).
+- Every manually discovered fallback row is written, including uncustomized,
+  unused types. Results are ordinary configuration; there is no discovery cache.
+  Legacy theme rows in saved data are migrated to durable fallback definitions.
 - `materialSvgCache` is deliberately never written back — legacy entries were
   folded into `iconSvgCache` on load, and writing both would let them drift.
 - `iconSvgCache` is written **sorted**, by
@@ -430,7 +424,7 @@ any modal being open:
 
 | Surface | Where | What it stops |
 |---|---|---|
-| Auto-discovery | `manager/knownCalloutIds.ts` seeds both id forms unconditionally | A note that writes `[!global-style-demo]` — pasted from a screenshot, or left by a crash — minting a row the user never made |
+| Manual discovery | `manager/knownCalloutIds.ts` seeds both id forms unconditionally | A note that writes `[!global-style-demo]` — pasted from a screenshot, or left by a crash — minting a row the user never made |
 | Autocomplete | `utils/usableCallouts.ts` → `suggestableCallouts` filters the set | The `[!` popover offering an id that stops existing when the modal closes |
 | Import | `utils/importValidator.ts` → `validateIdString` rejects with `import.err.idReserved` | An imported row inheriting a modal's vault-wide restyling power, permanently, from a list that never shows it |
 | Export | `getExportableDefinitions()` filters the set | A backup depending on which windows happened to be open |

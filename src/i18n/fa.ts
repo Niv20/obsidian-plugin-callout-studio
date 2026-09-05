@@ -15,35 +15,16 @@ export const fa: Record<string, string> = {
 
 	"settings.fallbackTag": "پیش‌فرض",
 	"settings.fallbackTagAuto": "پیش‌فرض خودکار",
-	"settings.autoDiscover": "شناسایی خودکار کالاوت‌ها در ولت شما",
-	"settings.autoDiscoverDesc":
-		"انواع کالاوت نوشته‌شده در یادداشت‌هایتان را تشخیص می‌دهد و به‌صورت خودکار به فهرست اضافه می‌کند. غیرفعال کردن این گزینه کالاوت‌های موجود را دست‌نخورده باقی می‌گذارد — همچنان می‌توانید خودتان آن‌ها را اضافه کنید یا از «اسکن مجدد ولت» در پایین استفاده کنید.",
-	"settings.rescanVault": "اسکان مجدد vault",
-	"settings.rescanVaultDesc":
-		"شناسه‌های callout ناشناخته را در یادداشت‌ها جستجو می‌کند و آن‌ها را به عنوان ردیف‌های پشتیبان اضافه می‌کند.",
-	"settings.rescanVaultHintAction": "همین الان اسکان کن",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "نتایج شناسایی ذخیره نشد. پس از پایان همگام‌سازی دوباره از تنظیمات ← انواع فراخوان‌های من ← شناسایی اکنون تلاش کنید. فراخوان‌های موجود جایگزین نشده‌اند.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"اسکان مجدد کامل شد: {{count}} callout جدید اضافه شد.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(به پیش‌فرض برمی‌گردد)",
 	"replaceModal.titleDelete": "حذف callout",
 	"replaceModal.titleReplace": "جایگزینی در vault",
-
-	"firstRun.title": "callout‌های موجود در vault را پیدا کنیم؟",
-	"firstRun.body":
-		"Callout Studio می‌تواند vault شما را اسکان کند تا callout‌هایی را که از قبل استفاده می‌کنید کشف کند، تا در لیست تنظیمات نمایش داده شوند و سبک پشتیبان شما را بپذیرند.",
-	"firstRun.heavyVaultNote":
-		"vault شما {{count}} فایل Markdown دارد — اسکان ممکن است چند ثانیه طول بکشد.",
-	"firstRun.laterHint":
-		"می‌توانید این کار را بعداً از طریق تنظیمات ← بینش‌ها و نگهداری vault ← اسکان مجدد vault انجام دهید.",
-	"firstRun.scanNow": "همین الان اسکان کن",
-	"firstRun.noThanks": "نه، ممنون",
-	"firstRun.autoScanComplete":
-		"Callout Studio vault شما را اسکان کرد و {{count}} callout اضافه کرد.",
-	"firstRun.scanning": "در حال اسکان",
-	"firstRun.autoScanFailed":
-		"Callout Studio نتوانست vault شما را اسکن کند. می‌توانید دوباره از طریق تنظیمات ← بینش‌ها و نگهداری vault ← اسکن مجدد vault تلاش کنید.",
-	"firstRun.scanFailed":
-		"اسکن به پایان نرسید. می‌توانید دوباره از طریق تنظیمات ← بینش‌ها و نگهداری vault ← اسکن مجدد vault تلاش کنید.",
 
 	"welcome.tooltip": "درباره‌ی Callout Studio",
 	"welcome.title": "به Callout Studio خوش آمدید!",
@@ -313,6 +294,9 @@ export const fa: Record<string, string> = {
 	"editor.foldClosed": "به صورت پیش‌فرض بسته",
 	"editor.cancel": "لغو",
 	"editor.saveChanges": "ذخیره تغییرات",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "ایجاد callout",
 	"editor.nameRequired": "قبل از ایجاد callout، نام نمایشی لازم است.",
 	"editor.noChangesToSave": "هیچ تغییری انجام نشد.",
@@ -742,9 +726,6 @@ export const fa: Record<string, string> = {
 	"vaultStats.roleBlock": "بلوکی",
 	"vaultStats.roleHeading": "عنوان",
 	"vaultStats.roleInline": "درون‌خطی",
-	"vaultStats.defineUndefined": "تعریف {{count}} مورد گمشده",
-	"vaultStats.defineRunning": "در حال اسکن",
-	"vaultStats.defineDone": "{{count}} نوع callout اضافه شد.",
 	"vaultStats.close": "بستن",
 
 	"import.title": "مشکلات وارد کردن",
@@ -972,4 +953,6 @@ export const fa: Record<string, string> = {
 	"quickInsert.readingView": "برای درج callout به حالت منبع یا Live Preview بروید.",
 	"quickInsert.noCursorHint": "در این یادداشت مکان‌نمایی وجود ندارد، بنابراین جایی برای درج نیست.",
 	"quickInsert.noCursor": "مکان‌نما را در یادداشت، در جایی که می‌خواهید callout را درج کنید، قرار دهید و دوباره امتحان کنید.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

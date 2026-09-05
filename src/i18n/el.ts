@@ -13,34 +13,16 @@ export const el: Record<string, string> = {
 	"autocomplete.createNew": 'Δημιουργία νέου callout: "{{name}}"',
 	"settings.fallbackTag": "Προεπιλογή",
 	"settings.fallbackTagAuto": "Αυτόματη προεπιλογή",
-	"settings.autoDiscover": "Αυτόματος εντοπισμός callouts στο vault σας",
-	"settings.autoDiscoverDesc":
-		"Εντοπίζει τύπους callout που γράφονται στις σημειώσεις σας και τους προσθέτει αυτόματα στη λίστα. Απενεργοποιώντας το, τα callouts που ήδη έχετε παραμένουν ανέπαφα — μπορείτε ακόμα να τα προσθέσετε μόνοι σας ή να χρησιμοποιήσετε το «Επανασάρωση vault» παρακάτω.",
-	"settings.rescanVault": "Επανασάρωση vault",
-	"settings.rescanVaultDesc":
-		"Βρίσκει άγνωστα IDs callout σε σημειώσεις και τα προσθέτει ως εφεδρικές γραμμές.",
-	"settings.rescanVaultHintAction": "Σάρωση τώρα",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Η επανασάρωση ολοκληρώθηκε: προστέθηκαν {{count}} νέα callout(s).",
 	"replaceModal.deleteWithoutReplaceSuffix": "(επιστρέφει στην προεπιλογή)",
 	"replaceModal.titleDelete": "Διαγραφή callout",
 	"replaceModal.titleReplace": "Αντικατάσταση στο vault",
-	"firstRun.title": "Εύρεση υπαρχόντων callouts στο vault;",
-	"firstRun.body":
-		"Το Callout Studio μπορεί να σαρώσει το vault σας για να ανακαλύψει callouts που ήδη χρησιμοποιείτε, ώστε να εμφανίζονται στη λίστα ρυθμίσεων και να υιοθετούν το εφεδρικό σας στυλ.",
-	"firstRun.heavyVaultNote":
-		"Το vault σας έχει {{count}} αρχεία Markdown — η σάρωση μπορεί να διαρκέσει μερικά δευτερόλεπτα.",
-	"firstRun.laterHint":
-		"Μπορείτε πάντα να το εκτελέσετε αργότερα από Ρυθμίσεις → Πληροφορίες vault και συντήρηση → Επανασάρωση vault.",
-	"firstRun.scanNow": "Σάρωση τώρα",
-	"firstRun.noThanks": "Όχι, ευχαριστώ",
-	"firstRun.autoScanComplete":
-		"Το Callout Studio σάρωσε το vault σας και πρόσθεσε {{count}} callout(s).",
-	"firstRun.scanning": "Σάρωση",
-	"firstRun.autoScanFailed":
-		"Το Callout Studio δεν μπόρεσε να σαρώσει το vault σας. Μπορείτε να δοκιμάσετε ξανά από Ρυθμίσεις → Πληροφορίες vault και συντήρηση → Επανασάρωση vault.",
-	"firstRun.scanFailed":
-		"Η σάρωση δεν ολοκληρώθηκε. Μπορείτε να δοκιμάσετε ξανά από Ρυθμίσεις → Πληροφορίες vault και συντήρηση → Επανασάρωση vault.",
 
 	"welcome.tooltip": "Σχετικά με το Callout Studio",
 	"welcome.title": "Καλώς ήρθατε στο Callout Studio!",
@@ -304,6 +286,9 @@ export const el: Record<string, string> = {
 	"editor.foldClosed": "Κλειστό από προεπιλογή",
 	"editor.cancel": "Ακύρωση",
 	"editor.saveChanges": "Αποθήκευση αλλαγών",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Δημιουργία callout",
 	"editor.nameRequired":
 		"Απαιτείται εμφανιζόμενο όνομα πριν τη δημιουργία callout.",
@@ -733,9 +718,6 @@ export const el: Record<string, string> = {
 	"vaultStats.roleBlock": "Μπλοκ",
 	"vaultStats.roleHeading": "Επικεφαλίδα",
 	"vaultStats.roleInline": "Ενσωματωμένο",
-	"vaultStats.defineUndefined": "Ορισμός {{count}} που λείπουν",
-	"vaultStats.defineRunning": "Σάρωση",
-	"vaultStats.defineDone": "Προστέθηκαν {{count}} τύποι callout.",
 	"vaultStats.close": "Κλείσιμο",
 	"import.title": "Προβλήματα εισαγωγής",
 	"import.reportLeadIn":
@@ -977,4 +959,6 @@ export const el: Record<string, string> = {
 	"quickInsert.readingView": "Μεταβείτε σε λειτουργία πηγής ή στη Ζωντανή Προεπισκόπηση για να εισαγάγετε ένα callout.",
 	"quickInsert.noCursorHint": "Δεν υπάρχει δρομέας σε αυτή τη σημείωση, οπότε δεν υπάρχει σημείο εισαγωγής.",
 	"quickInsert.noCursor": "Τοποθετήστε τον δρομέα στη σημείωση εκεί όπου θέλετε να εισαγάγετε το callout και δοκιμάστε ξανά.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

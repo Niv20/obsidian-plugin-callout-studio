@@ -96,6 +96,7 @@ function listsCtx(
 		plugin: {
 			app,
 			registry,
+			settingsWriter: { isFrozen: false },
 			settings: registry.settings,
 			localState,
 			saveSettings: () => Promise.resolve(),

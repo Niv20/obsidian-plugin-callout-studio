@@ -20,7 +20,7 @@ whatever you're trying to do — or start at the top and read through in order.
 | --- | --- |
 | [06 — The right-click menu](06-the-right-click-menu.md) | Extra actions added to Obsidian's native right-click menu. |
 | [07 — Commands, wrap/unwrap & hotkeys](07-commands-wrap-unwrap-and-hotkeys.md) | The five built-in commands, and building your own with a shortcut. |
-| [08 — Fallback callouts & auto-discovery](08-fallback-callouts-and-auto-discovery.md) | How new callout IDs found in your vault get picked up automatically. |
+| [08 — Fallback callouts & manual discovery](08-fallback-callouts-and-manual-discovery.md) | One button discovers and saves missing callout types. |
 | [09 — Deleting and replacing callouts](09-deleting-and-replacing-callouts.md) | Removing a callout, or swapping every use of one for another. |
 | [10 — Vault insights & maintenance](10-vault-insights-and-maintenance.md) | Usage statistics across your whole vault, and converting a callout to plain text. |
 

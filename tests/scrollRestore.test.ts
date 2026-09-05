@@ -82,6 +82,47 @@ describe("putting the reader back where they were", () => {
 		assert.strictEqual(el.scrollTop, 700);
 	});
 
+	it("does not rubberband an intentional upward scroll after a successful restore", () => {
+		const el = scroller(1000, 400);
+		captureScroll(el)();
+		el.scrollTop = 200;
+		dom.window.flushFrames();
+		assert.strictEqual(el.scrollTop, 200);
+	});
+
+	for (const destination of [50, 250]) {
+		it(`cancels a clamped retry when the reader scrolls to ${destination}`, () => {
+			const el = scroller(1000, 400);
+			const restore = captureScroll(el);
+			el.max = 150;
+			restore();
+			el.max = 1000;
+			el.scrollTop = destination;
+			dom.window.flushFrames();
+			assert.strictEqual(el.scrollTop, destination);
+		});
+	}
+
+	it("invalidates an old clamped retry when a newer display captures its own position", () => {
+		const el = scroller(1000, 400);
+		const older = captureScroll(el);
+		el.max = 150; older();
+		const newer = captureScroll(el);
+		el.max = 1000; newer();
+		dom.window.flushFrames();
+		assert.strictEqual(el.scrollTop, 150);
+	});
+
+	it("invalidates a pending retry when the pane is reopened at the top", () => {
+		const el = scroller(1000, 400);
+		const restore = captureScroll(el);
+		el.max = 0; restore();
+		captureScroll(el)();
+		el.max = 1000;
+		dom.window.flushFrames();
+		assert.strictEqual(el.scrollTop, 0);
+	});
+
 	it("does nothing at all for a pane that was at the top", () => {
 		// A freshly opened tab. The restore has to be a no-op there, or every
 		// open would schedule a frame for nothing.

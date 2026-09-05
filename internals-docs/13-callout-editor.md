@@ -234,6 +234,15 @@ no edits is not really "customizing" anything.
 `performCalloutEditorSave()` is the single function every save (new, edit,
 rename, "mirror the fallback") goes through.
 
+`EditorSaveSession` owns one in-flight attempt. `persistEditorSettings` awaits
+the writer and checks that the canonical current registry matches the writer's
+last successful file state; a resolved frozen/stale save is not success.
+The editor resolves and closes only after this confirmation and the required
+note updates. Failed attempts retain the form and allow retry, repeated Save
+clicks are ignored, and newer form edits made during the wait keep the editor
+open. Background saves use `settingsSaveFeedback` to report errors without
+leaking an unhandled promise rejection; awaiting callers still receive failure.
+
 ### The `fallbackBase` mirroring path
 
 When `saveAsFallback` is true, nearly every field is taken from
@@ -256,14 +265,9 @@ saved = plugin.registry.batch(() => {
 ```
 
 > [!IMPORTANT]
-> **This exact ordering — batched, with the command migration inside the
-> batch — is load-bearing.** Un-batched, the `remove()`'s own `onChange`
-> would reach `CustomCommandManager.syncAll()` while commands still pointed
-> at the id that had just stopped existing, and the sweep — correctly, per
-> its own logic, but very unhelpfully — would delete them as broken. Doing
-> the migration inside the batch means the *single* `onChange` that fires
-> once the batch closes sees a world where the commands already point at the
-> new id. See [Editor integrations](09-editor-integrations.md#customcommandmanager--one-idempotent-sweep).
+> Migration stays inside the batch, so the single `onChange` sees commands
+> already pointing to the new id. Missing targets are now paused and retained,
+> rather than deleted, but observers must still see a consistent rename.
 
 ### Vault side effects that ride along with a save
 
@@ -280,6 +284,20 @@ After the definition is written, three vault-wide operations may run,
    `normalizeFoldMarkersInVault` rewrites every existing header's fold mark to
    match the new default.
 
+The editor retains an unfinished, idempotent note-update plan in its save
+session. It confirms durable settings before running that plan, requests
+strict failure reporting from the shared rewrite helpers, and retries the
+unfinished old operation before applying a subsequent edit. This preserves an
+original A→B rename even after the in-memory editor identity became B. Closing
+the modal during a save keeps edit ownership until the attempt settles, so
+external settings cannot replace the registry midway through note updates.
+The plan is session-only. Before a rename begins, removed IDs are persisted as
+temporary aliases; they are removed only after all note-update phases succeed.
+A process crash can therefore leave a partial text rename but preserves how
+both old and new spellings resolve after restart. Removing a retained alias in
+a later edit can finish its remaining note updates. Settings plus multiple
+Markdown files still have no shared transaction.
+
 ### Material icons fetch on save, not on pick
 
 ```ts
@@ -289,11 +307,11 @@ if (def.hideIcon !== true && packFor(def.icon)?.kind === "perIconRemote") {
 }
 ```
 
-A `perIconRemote` icon (Material Symbols) is fetched **here**, at save time —
-so the artwork is guaranteed present in the cache before the definition is
-rendered anywhere in the vault, rather than racing the first paint against an
-in-flight network request. Bundled-pack icons (already downloaded, or
-downloaded eagerly when picked in the picker) return immediately.
+A `perIconRemote` icon (Material Symbols) is requested at save time so available
+artwork reaches the saved cache. Download failure is caught: the chosen icon
+identity remains in the definition, and the ordinary missing-artwork fallback
+can render until artwork becomes available. Bundled-pack icons return
+immediately. Network availability is not a prerequisite for keeping a callout.
 
 ## The icon picker
 

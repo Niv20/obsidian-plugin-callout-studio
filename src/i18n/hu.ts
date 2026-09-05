@@ -15,36 +15,17 @@ export const hu: Record<string, string> = {
 
 	"settings.fallbackTag": "Alapértelmezett",
 	"settings.fallbackTagAuto": "Aut. alapértelmezett",
-	"settings.autoDiscover": "Callout-ok automatikus felismerése a tárolóban",
-	"settings.autoDiscoverDesc":
-		"Felismeri a jegyzeteidben leírt callout-típusokat, és automatikusan hozzáadja őket a listához. Kikapcsolása nem érinti a már meglévő callout-okat — továbbra is hozzáadhatod őket kézzel, vagy használhatod az alábbi Tároló újraszkennelése funkciót.",
-	"settings.rescanVault": "Tár újraszkennelése",
-	"settings.rescanVaultDesc":
-		"Megkeresi a fel nem ismert callout-azonosítókat a jegyzetekben, és hozzáadja őket tartalék sorokként.",
-	"settings.rescanVaultHintAction": "Szkennelés most",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Újraszkennelés kész: {{count}} új callout hozzáadva.",
 	"replaceModal.deleteWithoutReplaceSuffix":
 		"(visszaesik az alapértelmezettre)",
 	"replaceModal.titleDelete": "Callout törlése",
 	"replaceModal.titleReplace": "Csere a tárban",
-
-	"firstRun.title": "Meglévő callout-ok keresése a tárban?",
-	"firstRun.body":
-		"A Callout Studio szkennelheti a tárat, hogy felfedezze a már használt callout-okat, így megjelennek a beállítások listájában, és átveszik a tartalék stílust.",
-	"firstRun.heavyVaultNote":
-		"A tárban {{count}} Markdown-fájl van – a szkennelés néhány másodpercet vehet igénybe.",
-	"firstRun.laterHint":
-		"Ezt később is futtathatja a Beállítások → Tár-elemzések és karbantartás → Tár újraszkennelése menüpontból.",
-	"firstRun.scanNow": "Szkennelés most",
-	"firstRun.noThanks": "Nem, köszönöm",
-	"firstRun.autoScanComplete":
-		"A Callout Studio beszkennelte a tárat, és {{count}} callout-ot hozzáadott.",
-	"firstRun.scanning": "Szkennelés",
-	"firstRun.autoScanFailed":
-		"A Callout Studio nem tudta beszkennelni a tárat. Próbálja újra a Beállítások → Tár-elemzések és karbantartás → Tár újraszkennelése menüpontból.",
-	"firstRun.scanFailed":
-		"A szkennelés nem fejeződött be. Próbálja újra a Beállítások → Tár-elemzések és karbantartás → Tár újraszkennelése menüpontból.",
 
 	"welcome.tooltip": "A Callout Studio névjegye",
 	"welcome.title": "Üdvözöljük a Callout Studióban!",
@@ -319,6 +300,9 @@ export const hu: Record<string, string> = {
 	"editor.foldClosed": "Alapértelmezetten zárva",
 	"editor.cancel": "Mégse",
 	"editor.saveChanges": "Változtatások mentése",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Callout létrehozása",
 	"editor.nameRequired":
 		"Callout létrehozása előtt megjelenítési név szükséges.",
@@ -751,9 +735,6 @@ export const hu: Record<string, string> = {
 	"vaultStats.roleBlock": "Blokk",
 	"vaultStats.roleHeading": "Címsor",
 	"vaultStats.roleInline": "Beágyazott",
-	"vaultStats.defineUndefined": "{{count}} hiányzó meghatározása",
-	"vaultStats.defineRunning": "Vizsgálat",
-	"vaultStats.defineDone": "{{count}} callout-típus hozzáadva.",
 	"vaultStats.close": "Bezárás",
 
 	"import.title": "Importálási problémák",
@@ -988,4 +969,6 @@ export const hu: Record<string, string> = {
 	"quickInsert.readingView": "Váltson forrás módra vagy élő előnézetre a callout beszúrásához.",
 	"quickInsert.noCursorHint": "Ebben a jegyzetben nincs kurzor, ezért nincs hova beszúrni.",
 	"quickInsert.noCursor": "Helyezze a kurzort a jegyzetben oda, ahová be szeretné szúrni a callout-ot, majd próbálja újra.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

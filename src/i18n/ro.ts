@@ -15,35 +15,16 @@ export const ro: Record<string, string> = {
 
 	"settings.fallbackTag": "Implicit",
 	"settings.fallbackTagAuto": "Implicit automat",
-	"settings.autoDiscover": "Detectează automat callout-urile din seif",
-	"settings.autoDiscoverDesc":
-		"Observă tipurile de callout scrise în notițele tale și le adaugă automat în listă. Dezactivarea acestei opțiuni lasă neschimbate callout-urile pe care le ai deja — le poți adăuga în continuare manual sau poți folosi Rescanează seiful de mai jos.",
-	"settings.rescanVault": "Rescaneaza vault",
-	"settings.rescanVaultDesc":
-		"Caută ID-uri de callout nerecunoscute în note și le adaugă ca rânduri de rezervă.",
-	"settings.rescanVaultHintAction": "Scanează acum",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Rescanare completă: {{count}} callout(uri) noi adăugate.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(revine la implicit)",
 	"replaceModal.titleDelete": "Șterge callout",
 	"replaceModal.titleReplace": "Înlocuiți în vault",
-
-	"firstRun.title": "Găsiți callouts existente în vault?",
-	"firstRun.body":
-		"Callout Studio poate scana vault-ul pentru a descoperi callouts pe care le utilizați deja, astfel încât să apară în lista de setări și să adopte stilul de rezervă.",
-	"firstRun.heavyVaultNote":
-		"Vault-ul dvs. are {{count}} fișiere Markdown — scanarea poate dura câteva secunde.",
-	"firstRun.laterHint":
-		"Puteți rula oricând mai târziu din Setări → Informații și întreținere vault → Rescaneaza vault.",
-	"firstRun.scanNow": "Scanează acum",
-	"firstRun.noThanks": "Nu, mulțumesc",
-	"firstRun.autoScanComplete":
-		"Callout Studio a scanat vault-ul și a adăugat {{count}} callout(uri).",
-	"firstRun.scanning": "Scanare",
-	"firstRun.autoScanFailed":
-		"Callout Studio nu a putut scana vault-ul dvs. Puteți încerca din nou din Setări → Informații și întreținere vault → Rescaneaza vault.",
-	"firstRun.scanFailed":
-		"Scanarea nu s-a finalizat. Puteți încerca din nou din Setări → Informații și întreținere vault → Rescaneaza vault.",
 
 	"welcome.tooltip": "Despre Callout Studio",
 	"welcome.title": "Bine ați venit în Callout Studio!",
@@ -320,6 +301,9 @@ export const ro: Record<string, string> = {
 	"editor.foldClosed": "Închis implicit",
 	"editor.cancel": "Anulare",
 	"editor.saveChanges": "Salvați modificările",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Creați callout",
 	"editor.nameRequired":
 		"Este necesar un nume afișat înainte de a crea un callout.",
@@ -749,9 +733,6 @@ export const ro: Record<string, string> = {
 	"vaultStats.roleBlock": "Bloc",
 	"vaultStats.roleHeading": "Titlu",
 	"vaultStats.roleInline": "Inline",
-	"vaultStats.defineUndefined": "Definește {{count}} lipsă",
-	"vaultStats.defineRunning": "Scanare",
-	"vaultStats.defineDone": "S-au adăugat {{count}} tipuri de callout.",
 	"vaultStats.close": "Închide",
 
 	"import.title": "Probleme de import",
@@ -984,4 +965,6 @@ export const ro: Record<string, string> = {
 	"quickInsert.readingView": "Comută la modul sursă sau la Live Preview pentru a insera un callout.",
 	"quickInsert.noCursorHint": "Nu există niciun cursor în această notă, așa că nu există unde să inserezi.",
 	"quickInsert.noCursor": "Plasează cursorul în notă în locul în care dorești să inserezi callout-ul, apoi încearcă din nou.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

@@ -49,7 +49,6 @@ export interface CommandBuilderHost {
 	customCommands: CustomCommandManager;
 	/** Both halves are needed: the id keys a hotkey, the name prefixes it. */
 	manifest: { id: string; name: string };
-	isKnownZeroUsageFallback(id: string): boolean;
 	setFixedCommandEnabled(id: FixedCommandId, enabled: boolean): Promise<void>;
 }
 
@@ -246,11 +245,7 @@ export class CommandBuilderModal extends Modal {
 
 		for (const command of commands) {
 			const def = this.host.registry.get(command.calloutId);
-			// A command whose callout is gone is pruned by the manager's sweep,
-			// so a row here without one is a frame out of date at most.
-			if (!def) continue;
-
-			const name = describeCommand(command, def);
+			const name = def ? describeCommand(command, def) : command.calloutId;
 			const row = listEl.createDiv({
 				cls: "callout-studio-row cs-command-row",
 			});
@@ -258,7 +253,7 @@ export class CommandBuilderModal extends Modal {
 			// A command can be built on a callout the theme owns, and the row
 			// has to show the icon the reader will actually see beside it.
 			const iconEl = row.createDiv({ cls: "callout-studio-row-icon" });
-			paintCalloutListIcon(
+			if (def) paintCalloutListIcon(
 				iconEl,
 				def,
 				this.host.registry,
@@ -275,10 +270,10 @@ export class CommandBuilderModal extends Modal {
 			// is unregistered until the theme lets go. Said here because the
 			// alternative is a command that silently stops appearing in the
 			// palette while still sitting in this list.
-			if (isSuspendedByTheme(this.host.registry, command)) {
+			if (!def || isSuspendedByTheme(this.host.registry, command)) {
 				infoEl.createDiv({
 					cls: "cs-command-suspended",
-					text: t("commandBuilder.commandSuspended"),
+					text: t(def ? "commandBuilder.commandSuspended" : "commandBuilder.missingCallout"),
 				});
 			}
 

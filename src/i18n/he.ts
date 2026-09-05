@@ -26,35 +26,20 @@ export const he: Record<string, string> = {
 	// Vault scan / fallback / delete
 	"settings.fallbackTag": "ברירת־מחדל",
 	"settings.fallbackTagAuto": "ברירת־מחדל אוטומטית",
-	"settings.autoDiscover": "איתור אוטומטי של קריאות בכספת שלך",
-	"settings.autoDiscoverDesc":
-		"מזהה סוגי קריאה שנכתבו בפתקים שלך ומוסיף אותם לרשימה באופן אוטומטי. כיבוי האפשרות הזו משאיר את הקריאות שכבר יש לך ללא שינוי — עדיין אפשר להוסיף אותן בעצמך, או להשתמש בסריקה מחדש של הכספת שלמטה.",
-	"settings.rescanVault": "סריקה מחדש של הכספת",
-	"settings.rescanVaultDesc":
-		"חיפוש מזהים של תיבות־הבלטה לא מוכרות ברחבי הכספת והוספתם כשורות ברירת־מחדל.",
-	"settings.rescanVaultHintAction": "סריקה עכשיו",
+	"settings.rescanVault": "גילוי קריאות ידני",
+	"settings.rescanVaultDesc": "סריקה חד־פעמית של הפתקים השמורים וערכת הנושא הנוכחית. סוגים חסרים יתווספו להגדרות השמורות בלי לשנות סוגים קיימים. אין גילוי אוטומטי.",
+	"settings.rescanVaultHintAction": "גלה עכשיו",
+	"manualDiscovery.failed": "תוצאות הגילוי לא נשמרו. יש להמתין לסיום הסנכרון ולנסות שוב דרך הגדרות ← סוגי תיבות־ההבלטה שלי ← גלה עכשיו. הקריאות הקיימות לא הוחלפו.",
+	"notice.settingsBackupFailed": "ההגדרות שהגיעו לא הוחלו מפני שלא ניתן לשמור גיבוי. יש לבדוק את המקום הפנוי ולפתוח מחדש את Obsidian כדי לנסות שוב.",
+	"notice.settingsBackupSaved": "עותק לשחזור של הגדרות הקריאות המקומיות נשמר לפני החלת הגדרות שהגיעו ממכשיר אחר: {{path}}.",
+	"commandBuilder.missingCallout": "מושהית: הקריאה חסרה. יש לגלות או ליצור אותה כדי להפעיל מחדש את הפקודה, או לערוך את הפקודה ולבחור סוג אחר.",
+	"manualDiscovery.scanning": "מגלה קריאות…",
 	"settings.rescanComplete": "הסריקה הסתיימה: נוספו {{count}} בלוקים חדשים.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(החלה של ברירת־מחדל)",
 	"replaceModal.titleDelete": "מחיקת תיבת־ההבלטה",
 	"replaceModal.titleReplace": "החלפה בכספת",
 
 	// פופאפ סריקה ראשונית (מוצג פעם אחת בהתקנה ראשונה ל-Vault גדול)
-	"firstRun.title": "לזהות תיבות־הבלטה קיימות בכספת שלכם?",
-	"firstRun.body":
-		"Callout Studio יכול לסרוק את הכספת ולגלות תיבות־הבלטה שכבר בשימוש, כך שיופיעו ברשימת ההגדרות ויקבלו את עיצוב ברירת־המחדל.",
-	"firstRun.heavyVaultNote":
-		"בכספת שלכם יש {{count}} קובצי Markdown — הסריקה עשויה להימשך מספר שניות.",
-	"firstRun.laterHint":
-		"תמיד אפשר להריץ סריקה מאוחר יותר דרך ההגדרות ← סקירה ותחזוקה של הכספת ← סריקה מחדש של הכספת.",
-	"firstRun.scanNow": "סריקה עכשיו",
-	"firstRun.noThanks": "לא כרגע, תודה",
-	"firstRun.autoScanComplete":
-		"Callout Studio סרק את הכספת והוסיף {{count}} תיבות־הבלטה.",
-	"firstRun.scanning": "סורק...",
-	"firstRun.autoScanFailed":
-		"ל-Callout Studio לא הצליח לסרוק את הכספת שלך. אפשר לנסות שוב דרך ההגדרות ← סקירה ותחזוקה של הכספת ← סריקה מחדש של הכספת.",
-	"firstRun.scanFailed":
-		"הסריקה לא הושלמה. אפשר לנסות שוב דרך ההגדרות ← סקירה ותחזוקה של הכספת ← סריקה מחדש של הכספת.",
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
 	"welcome.tooltip": "אודות Callout Studio",
@@ -339,6 +324,9 @@ export const he: Record<string, string> = {
 	"editor.foldClosed": "סגור כברירת־מחדל",
 	"editor.cancel": "ביטול",
 	"editor.saveChanges": "שמירת שינויים",
+	"editor.saving": "שומר…",
+	"editor.saveFailed": "השמירה לא הושלמה. אם העורך עדיין פתוח, השאר אותו פתוח ונסה שוב אחרי בדיקת המקום הפנוי והסנכרון. ייתכן שחלק מההגדרות או מעדכוני הפתקים כבר נשמרו.",
+	"notice.settingsSaveFailed": "Callout Studio לא הצליח לשמור את השינויים. יש לבדוק מקום פנוי וסנכרון ולנסות שוב לפני סגירת Obsidian.",
 	"editor.createCallout": "יצירת תיבת־הבלטה",
 	"editor.nameRequired": "יש להזין שם לתצוגה לפני יצירת תיבת־הבלטה.",
 	"editor.noChangesToSave": "לא בוצעו שינויים.",
@@ -782,9 +770,6 @@ export const he: Record<string, string> = {
 	"vaultStats.roleBlock": "בלוק",
 	"vaultStats.roleHeading": "כותרת",
 	"vaultStats.roleInline": "מוטבע",
-	"vaultStats.defineUndefined": "הגדרת {{count}} חסרים",
-	"vaultStats.defineRunning": "סורק",
-	"vaultStats.defineDone": "נוספו {{count}} סוגי תיבת־הבלטה.",
 	"vaultStats.close": "סגירה",
 
 	// Import validation
@@ -1013,4 +998,6 @@ export const he: Record<string, string> = {
 	"quickInsert.readingView": "עברו ל-Source mode או ל-Live Preview כדי להוסיף תיבת־הבלטה.",
 	"quickInsert.noCursorHint": "אין סמן בפתק הזה, ולכן אין היכן להוסיף.",
 	"quickInsert.noCursor": "מקמו את הסמן בפתק במקום שבו תרצו להוסיף את תיבת־ההבלטה, ולאחר מכן נסו שוב.",
+	"notice.legacyDiscoveryArchived": "נשמר עותק לשחזור בזמן השדרוג: {{path}}. הוא כולל את מטמון הגילוי הקודם ואת עיצוב האתחול לצורכי שחזור בלבד; לא שוחזרו סוגי תיבות־הבלטה אוטומטית.",
+	"notice.legacyDiscoveryArchiveFailed": "יצירת עותק השחזור בזמן השדרוג לא הושלמה. מטמון הגילוי המקומי הקודם ועיצוב האתחול נשמרו ללא שינוי. יש לבדוק הרשאות כתיבה ומקום פנוי, ואז לפתוח מחדש את Obsidian כדי לנסות שוב.",
 };

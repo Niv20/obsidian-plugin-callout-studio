@@ -596,18 +596,13 @@ A pre-existing callout that becomes theme-owned loses the two formats for
 exactly as long as the theme claims it, and gets them back with no migration:
 nothing left the definition, only what the renderer acts on.
 
-### A theme-invented callout type is an ephemeral overlay
+### Theme callout definitions are added manually
 
-`toSaveData()` skips `source: "theme"`, so a row minted from the theme's
-stylesheet is re-derived on every launch and written to `data.json` by nothing.
-That is what makes "the theme stopped supplying this, so it is gone" true with
-nothing having to undo it, and it is why the sweep has to record what it retired
-(`settings.retiredThemeIds`) so vault discovery does not hand the row straight
-back one file-open later.
+A user-requested scan may add the theme's declared ids as durable fallback rows.
+Automatic theme appearance inspection updates only ownership and measured artwork.
+Switching themes never adds or removes definitions, writes a retirement list, or
+starts a vault discovery pass. See [theme appearance](21-theme-callout-discovery.md).
 
-The full lifecycle — the four row kinds and what a theme switch does to each,
-`RediscoveryHold`, and why the sweep publishes ownership inside its `batch()` —
-is [21-theme-callout-discovery.md § Representation and persistence](21-theme-callout-discovery.md#representation-and-persistence).
 
 ## Reading the theme back
 

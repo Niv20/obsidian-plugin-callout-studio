@@ -2,7 +2,7 @@
 
 How Callout Studio finds out which callout types the **active Obsidian theme**
 supplies, what those callouts look like, and what it then does with that
-knowledge: a row under *Callouts from your theme*, an entry in *Quick insert
+knowledge for an existing or manually discovered type: a row under *Callouts from your theme*, an entry in *Quick insert
 block callout*, and — deliberately — no CSS of its own.
 
 This chapter has two audiences, and they want different halves of it:
@@ -38,14 +38,14 @@ happen in this order.
 | 1 | Find the active theme and its CSS text | [`customCssApi.ts`](../src/manager/theme/customCssApi.ts) | theme name, stylesheet text, snippet texts, a cheap signature |
 | 2 | Scan that text for callout claims | [`cssBlocks.ts`](../src/manager/theme/cssBlocks.ts) → [`themeCalloutScan.ts`](../src/manager/theme/themeCalloutScan.ts), cached by [`ThemeCalloutStore.ts`](../src/manager/theme/ThemeCalloutStore.ts) | `Map<attrId, ThemeClaim>` + family patterns |
 | 3 | Publish ownership | [`ThemeFacts.ts`](../src/manager/theme/ThemeFacts.ts), via `CalloutRegistry.setThemeOwnedIds` | `registry.themeOwns(def)` |
-| 4 | Mint / retire rows for ids the theme invents | [`themeProvidedRows.ts`](../src/manager/theme/themeProvidedRows.ts) | `source: "theme"` rows |
+| 4 | Add missing ids only after a manual request | [`ManualCalloutDiscovery.ts`](../src/manager/ManualCalloutDiscovery.ts) | Durable fallback rows |
 | 5 | Measure what the theme actually draws | [`ThemeAppearanceProbe.ts`](../src/manager/theme/ThemeAppearanceProbe.ts) + [`readCalloutStyle.ts`](../src/manager/theme/readCalloutStyle.ts) + [`themeAppearance.ts`](../src/manager/theme/themeAppearance.ts) / [`themeIcon.ts`](../src/manager/theme/themeIcon.ts) | `ThemeAppearance` per id |
 | 6 | Reproduce it wherever the plugin lists callouts | [`renderThemeIcon.ts`](../src/manager/theme/renderThemeIcon.ts), [`calloutListIcon.ts`](../src/manager/theme/calloutListIcon.ts) | icons and swatches on rows, menus, pickers |
 | — | Decide how the theme **spells** a callout accent | [`accentDialectScan.ts`](../src/manager/theme/accentDialectScan.ts) + [`accentDialect.ts`](../src/manager/theme/accentDialect.ts) + [`accentValueFormat.ts`](../src/manager/theme/accentValueFormat.ts), cached alongside stage 2 | `AccentDialect` — see [The accent dialect](#the-accent-dialect) |
 
 Scheduling — when the whole thing runs and in which order — is
-[`themeRowSync.ts`](../src/manager/theme/themeRowSync.ts), covered under
-[When discovery re-runs](#when-discovery-re-runs).
+[`themeAppearanceSync.ts`](../src/manager/theme/themeAppearanceSync.ts), covered under
+[When theme appearance refreshes](#when-theme-appearance-refreshes).
 
 Two of these stages are deliberately split into a **pure half and an
 impure half**, the same way twice: `themeCalloutScan` (pure text) sits under
@@ -170,8 +170,8 @@ Confirmed against the scanner itself; every row here is behaviour, not intent.
 whitespace dasherized), never the text as written. This is load-bearing rather
 than tidy. ITS writes `[data-callout~=Metadata i]` in 24 rules; keyed as
 written, that entry matches nothing any caller can ask for, so
-`themeProvidedRows` would mint a row for it, fail to recognise its own row on
-the next sweep, delete it, and mint it again — forever, on every `css-change`.
+manual discovery and rendering ownership would disagree about which id
+the theme claims.
 
 ### The bare `.callout` rule the claim scanner never sees
 
@@ -367,75 +367,14 @@ would silently stop being exported; the sweep's `stale` branch **deletes** an
 uncustomized theme row on the next theme switch; and `importValidator` re-stamps
 `source: "user"` on every import, so the flip would not even stay done.
 
-## Stage 4 — Minting rows for the types a theme invents
+## Stage 4 — Adding theme types manually
 
-A theme like AnuPpuccin or ITS does not only repaint `note` and `warning`; it
-declares callout ids Obsidian has never heard of. Before this subsystem those
-were invisible to the plugin — no row, so no settings entry, no autocomplete, no
-quick insert, and the only way to use one was to type it from memory.
+`ManualCalloutDiscovery` includes the current theme's declared ids when the user
+presses **Discover now**. Missing ids become durable fallback rows, checked against
+existing definitions, aliases and reserved ids. No theme event adds, retires or
+recreates a row. The same saved type can follow a theme on one device and fallback
+styling on another without either device rewriting its definition.
 
-`syncThemeProvidedRows(registry, store)`
-([`themeProvidedRows.ts`](../src/manager/theme/themeProvidedRows.ts)) is one
-idempotent sweep over the enumerated id set. It works out three sets against the
-current registry, then applies them inside a single `registry.batch()`:
-
-- **`claimed`** — every attribute form already spoken for, **aliases included**.
-- **`stale`** — existing `source: "theme"` rows the id set no longer holds.
-- **`fresh`** — enumerated ids not in `claimed`.
-
-Inside the batch, in this order:
-
-1. **Publish ownership** (`setThemeOwnedIds`), unconditionally and *first*, so a
-   row minted this round is already known to be the theme's by the time anything
-   renders it. It is unconditional because a theme that starts claiming a
-   built-in mints and retires nothing yet changes who paints it, which section
-   the row sits in, whether the editor opens it, and whether a heading command
-   may run.
-2. **Retire the `stale` rows** — removed, or *re-homed* to `source: "user"` if
-   somehow customized, and each removal recorded for
-   `settings.retiredThemeIds`.
-3. **Mint the `fresh` rows.**
-4. **Record and prune `retiredThemeIds`** together, so the list only ever holds
-   ids that are still retired.
-
-A minted row is `buildDiscoveredRow(id, fallbackSource)` with
-`source: "theme"` stamped over it — modelled on the configured **Fallback
-callout** so the row has *something* to show in the pickers, where a colourless
-entry reads as broken. None of that styling is emitted and none of it is saved;
-the row's real appearance comes from the probe.
-
-Three rules keep the sweep from destroying anything, and each is covered by
-`tests/themeProvidedRows.test.ts`:
-
-1. **It never touches a row it did not mint.** The `claimed` check skips any id
-   that already has a row or is somebody's alias.
-2. **A row the user adopted is re-homed, not deleted.**
-3. **It is idempotent.** Two runs on the same stylesheet write nothing, which is
-   what makes the `css-change` chain terminate.
-
-`claimed` also makes provenance **structural** rather than a flag: the overlay
-only ever holds ids nothing else defines, so a definition that survives the
-retire pass is, by construction, one that existed before the theme claimed it.
-There is no `introducedByTheme` boolean to migrate or get out of step.
-
-### Collisions
-
-| The theme names… | What happens |
-| --- | --- |
-| A built-in id (`note`) | No row is minted. The built-in moves into *Callouts from your theme*, keeps every stored customization, and gets it all back when the theme lets go |
-| An id the user already created | No row is minted. It stays `source: "user"`, keeps its colours, aliases and backups, and is simply listed under the theme while the theme paints it |
-| An id that is somebody's **alias** | No row is minted — the alias owner is already `claimed`, and that owner becomes theme-owned via `vaultIdFormsFor` |
-| An id a discovered fallback row holds | No row is minted; the fallback row is listed under the theme and returns to its own section afterwards |
-| An id nothing holds | A fresh `source: "theme"` row |
-| The same id as the outgoing theme, on a theme switch | In neither `stale` nor `fresh` — it stays owned throughout, with no delete-and-remint in the middle |
-
-Creating a callout whose id the theme supplies is **blocked** in the editor,
-because the sweep has already minted a row and `canUseCalloutId` rejects the
-duplicate. The message is the part that matters: `updateIdWarning` says the
-theme supplies it (`editor.idFromTheme`) rather than *already exists*, which
-would send the user looking for a callout of their own that is not there. A
-*fuzzy* family match warns without blocking — whether the plugin wins is a live
-cascade question no static read settles.
 
 ## Stage 5 — Reading the colours and the icon back
 
@@ -620,139 +559,23 @@ settings row uses the same measured pair for its two swatches
 (`CalloutRowRenderer.ts`), and shows no swatch at all when the accent came back
 `null`.
 
-## When discovery re-runs
+## When theme appearance refreshes
 
-[`themeRowSync.ts`](../src/manager/theme/themeRowSync.ts) owns the whole
-lifecycle. It is registered from `main.ts` **before the first inject**, so the
-theme's rows are in the sheet from the start, and it runs its first sweep and
-probe immediately.
-
-| Trigger | What happens |
-| --- | --- |
-| Plugin load | `sweep(true)` then `probe()` |
-| `workspace.on("css-change")` — theme switch, snippet toggle, appearance change, another plugin's restyle | drop the readings → sweep → `inject(false)` → probe → `inject(false)` |
-
-The `css-change` order is the load-bearing part, which is why it lives here and
-not in `main.ts`:
-
-```
-appearance.invalidate()                 // the probe's own cache
-registry.batch(() => {
-    registry.setThemeAppearances(new Map())   // the PUBLISHED readings
-    sweep()                                   // ownership + rows
-})
-cssInjector.inject(false)               // rows are in the sheet
-probe()                                 // measure, then inject again
-```
-
-**Dropping the published readings is not the same as invalidating the probe.**
-`invalidate()` clears the probe's cache, but nothing draws from that cache —
-every row reads `ThemeFacts`, which the probe only rewrites when its next pass
-lands, and the sweep's own `onChange` repaints the settings tab a turn earlier.
-Without the explicit clear, every row came up wearing the **outgoing** theme's
-artwork. The clear rides inside the sweep's `batch()`, so it *removes* a repaint
-rather than adding one.
-
-The re-inject passes `emitCssChange = false`: re-emitting `css-change` in
-response to `css-change` loops with other plugins that also listen and re-emit
-(Style Settings, for one), and the external event has already re-rendered open
-notes.
-
-### Why the chain terminates
-
-- **Round 1** — the theme really changed: the fingerprint differs, rows are
-  minted or pruned inside one `batch()`, one `onChange` fires, `inject()`
-  produces different text, swaps it in and triggers `css-change`.
-- **Round 2** — the listener re-injects with `emitCssChange = false`, the text
-  is byte-identical so `injectNow` returns before the stylesheet swap, and the
-  sweep finds an unchanged fingerprint and writes nothing.
-
-The probe lands after both and announces its readings — a third `onChange` — and
-still cannot cycle, on two counts: nothing that generates CSS reads an
-appearance, so that inject is byte-identical and never reaches the trigger; and
-`ThemeFacts.setAppearances` stays silent unless the readings actually moved.
-Both `setOwnedIds` and `setAppearances` compare before notifying, because
-announcing a no-op costs a CSS regeneration, a `data.json` write and a full
-settings-tab repaint.
-
-### The fingerprint that catches a reload
-
-`stylingSignature` is name + version + enabled snippets, and **none of those
-move when a theme is edited in place and reloaded** — so a callout id added that
-way would never get a row, however many `css-change` events went by. The sweep's
-own memo is that signature plus `themeCss(app).length`, and when it moves it
-calls `ThemeCalloutStore.invalidate()` so the store re-scans despite its own
-signature being unchanged.
-
-The length is deliberately *not* folded into `stylingSignature`: that function
-is asked on every inject by `StudioWeightCache`, and reading `styleEl.textContent`
-allocates the entire stylesheet — hundreds of kilobytes for exactly the
-callout-heavy themes this matters for. The sweep reads it twice per theme
-change, which is where that cost is affordable.
-
-> [!WARNING]
-> `StudioWeightCache.resolve()` advances `ThemeCalloutStore`'s signature memo as
-> a side effect of asking it anything, and it runs *before* the sweep on the
-> `css-change` path. Any new consumer that wants to know "did the theme change
-> since I last looked?" must keep its own memo, exactly as this file does.
+`registerThemeAppearance` in `themeAppearanceSync.ts` publishes theme ownership and
+measured appearance at startup, settings adoption and CSS changes. It never adds
+or removes definitions. Its fingerprint includes the CSS text, so an in-place edit
+with unchanged name, version and text length is still recognized. Rendering updates
+are deduplicated and do not emit another CSS event when reinjecting.
 
 ## Representation and persistence
 
-A row minted for a callout type the theme invented is an **ephemeral overlay**.
-`CalloutRegistry.toSaveData()` skips `source: "theme"`, so such a row is minted
-from the stylesheet on every launch and on every `css-change`, and written to
-`data.json` by nothing at all.
+Manually discovered types have `source: "fallback"` and are saved in `data.json`.
+Theme ownership remains a runtime fact derived from the active theme. Changing a
+theme can change grouping and available render roles; it cannot erase a saved
+callout. There is no retired-theme-id store. Legacy `source: "theme"` rows found
+in saved data are preserved as durable fallback definitions.
 
-That single line is the whole lifecycle model, and it buys two things: *"the
-theme stopped supplying this, so it is gone"* needs nothing to undo it, and
-provenance stays structural (see [stage 4](#stage-4--minting-rows-for-the-types-a-theme-invents)).
 
-| | While the theme claims it | When it lets go |
-| --- | --- | --- |
-| Theme-invented (`recite`) | overlay row, theme section | **gone**; the notes are untouched |
-| Pre-existing user callout | theme section, stands down | back to *My callout types*, field for field |
-| Built-in the theme repaints | theme section | back to *Built-in callouts*, customizations intact |
-| Discovered fallback row | theme section | back as a fallback row |
-
-Which registry view a caller wants is therefore a real question:
-
-| View | Includes theme rows? | Used by |
-| --- | --- | --- |
-| `getAll()` | yes | autocomplete's raw list, the injector's sweeps |
-| `getThemeProvided()` | only theme rows | the settings list, `committedDefinitions` |
-| `getUserDefined()` | **no** | backups, `getExportableDefinitions`, *Reset everything* |
-| `committedDefinitions()` | yes | "what may be written in a note" — quick insert, the public API |
-
-`CalloutDetails.themeStyled` is the public API's read of the same fact
-(additive; `externalStyle` keeps its released meaning, which is the broader
-"the plugin emits nothing"). See [18-public-api.md](18-public-api.md).
-
-### Retired ids
-
-The notes do not change when the theme does. They still say `> [!recite]`, and
-`CalloutDiscovery` auto-creates rows for ids nothing defines — so without help
-the row a theme switch just removed returns one file-open later as an
-uncustomized fallback row: a callout the user never made, styled by nobody,
-filed under the callouts they did make.
-
-So the sweep records what it retired into `settings.retiredThemeIds`
-([`retiredThemeIds.ts`](../src/manager/theme/retiredThemeIds.ts)) and
-[`RediscoveryHold`](../src/manager/rediscoveryHold.ts) answers that and the
-seconds-long hold after an explicit delete as **one** question, because every
-automatic path asks them in the same breath. Four properties keep the list from
-becoming a place where ids go to be forgotten:
-
-- **It gates automatic discovery only.** `canUseCalloutId` never reads it, so
-  creating the id explicitly still works and is the way to take it over.
-- **A user-requested vault scan clears it** — the same doctrine
-  `suppressRediscovery` already followed.
-- **The sweep prunes it.** An id something defines again, or that the active
-  theme declares again, drops straight back out.
-- **An import does not carry it.** It is this vault's theme history, not
-  configuration — see [14-import-export.md](14-import-export.md).
-
-It is capped at `RETIRED_THEME_ID_CAP` (200), oldest first, as a backstop
-against a pathological switching history growing `data.json` without bound.
 
 ## Where theme callouts appear — and why Block only
 
@@ -808,9 +631,8 @@ settings row, the context menu, quick insert and the public API all reach the
 editor through it. The pencil opens
 [`ThemeCalloutPreviewModal`](../src/settings/ThemeCalloutPreviewModal.ts), which
 states who owns the callout, that Heading and Inline are unavailable, and shows
-a Block-only live preview — and **writes nothing at all**, which is what keeps a
-theme row an ephemeral overlay rather than a row with a hidden way to become
-permanent. Its `⋯` menu
+a Block-only live preview that **writes nothing at all**. The saved definition
+remains intact while its current theme owns the appearance. Its `⋯` menu
 ([`themeRowActions.ts`](../src/settings/sections/themeRowActions.ts)) carries
 usage information, and — only when the callout is actually written somewhere —
 *Replace in vault* and *Clear uses in your notes*. Never *Delete*, which would
@@ -1126,7 +948,7 @@ result:
 
 - **Extract `app.css` from the *running* asar** — `~/Library/Application Support/obsidian/obsidian-<v>.asar`, not the copy inside `Obsidian.app`, which lags badly. The two disagree about whether `--callout-color` is a triplet or a colour, which is the whole subject.
 - **Link every sheet, never inline it into a `<style>`.** Several installed themes — Border, NeuBorder, Tokyo Night, Poimandres Extended, Glass Robo and Olivier's Theme — carry a literal `</style>` inside their Style Settings YAML comment; inlined, that ends the element early and Chrome parses 301 of Border's rules and silently drops the rest, including the entire `callout-style-N` family. It is not only a callout question: inlined, Glass Robo lost the `--modal-background` its whole window is painted with, and read as a theme with no surface at all. Obsidian assigns theme CSS through `styleEl.textContent`, which never re-enters the HTML parser.
-- **Publish theme ownership.** `syncThemeProvidedRows` hands `registry.setThemeOwnedIds` every id the theme names, built-ins included, so `standsDown` silences the plugin for them. Measuring without it measures a configuration that cannot occur.
+- **Publish theme ownership.** `registerThemeAppearance` hands `registry.setThemeOwnedIds` every id the theme names, built-ins included, so `standsDown` silences the plugin for them. Measuring without it measures a configuration that cannot occur.
 - **Model Style Settings exactly.** Class toggles and class selects add classes to `<body>`; variables land in `body.css-settings-manager` and `body.theme-{light,dark}.css-settings-manager`, in a `<style>` appended last to `<head>`. Read them out of the theme's own `/* @settings */` YAML rather than guessing.
 - **Read numbers, not pixels.** Without real CodeMirror the layout collapses, so a screenshot lies where `getComputedStyle` does not. (Settings-pane questions are the exception: that DOM is plain markup and a screenshot of it is real — which is how the sticky band's paint was verified pixel-identical before and after a change.)
 - **Put only the classes a default install has on `<body>`.** `is-translucent` is a setting that is off by default, and a theme is free to key its whole see-through look off it; measuring with it on measures somebody else's install. `theme-{dark,light}`, `mod-macos`, `is-focused` — and `is-mobile is-tablet` / `is-mobile is-phone` when the question is a mobile one, which for anything painted per device it usually is.
@@ -1197,24 +1019,22 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 | [`manager/css/coreAccentShim.ts`](../src/manager/css/coreAccentShim.ts) | Core's own declarations, restated when the spelling breaks them |
 | [`manager/theme/ThemeCalloutStore.ts`](../src/manager/theme/ThemeCalloutStore.ts) | Caching + the enumeration/weight split |
 | [`manager/theme/ThemeFacts.ts`](../src/manager/theme/ThemeFacts.ts) | Owned ids + measured appearances, held behind the registry |
-| [`manager/theme/themeProvidedRows.ts`](../src/manager/theme/themeProvidedRows.ts) | The mint/retire/re-home sweep |
-| [`manager/theme/themeRowSync.ts`](../src/manager/theme/themeRowSync.ts) | Scheduling, ordering, the fingerprint, the probe's lifetime |
+| [`manager/theme/themeAppearanceSync.ts`](../src/manager/theme/themeAppearanceSync.ts) | Scheduling, ordering, the fingerprint, the probe's lifetime |
 | [`manager/theme/ThemeAppearanceProbe.ts`](../src/manager/theme/ThemeAppearanceProbe.ts) | Offscreen render + cache |
 | [`manager/theme/readCalloutStyle.ts`](../src/manager/theme/readCalloutStyle.ts) | Which node answers which property |
 | [`manager/theme/themeAppearance.ts`](../src/manager/theme/themeAppearance.ts) | Accent/background interpretation |
 | [`manager/theme/themeIcon.ts`](../src/manager/theme/themeIcon.ts) | The five-rung icon ladder |
 | [`manager/theme/renderThemeIcon.ts`](../src/manager/theme/renderThemeIcon.ts) | Reproducing a measured icon |
 | [`manager/theme/calloutListIcon.ts`](../src/manager/theme/calloutListIcon.ts) | One answer for every small callout list |
-| [`manager/theme/retiredThemeIds.ts`](../src/manager/theme/retiredThemeIds.ts) | What a theme took with it |
 | [`manager/theme/studioWeight.ts`](../src/manager/theme/studioWeight.ts) / [`StudioWeightCache.ts`](../src/manager/theme/StudioWeightCache.ts) | How hard the plugin pushes on what it *does* own |
 | [`manager/theme/themeReport*.ts`](../src/manager/theme/themeReport.ts) | The `themes:report` worksheet — not bundled into `main.js` |
 | [`settings/sections/rowOwnership.ts`](../src/settings/sections/rowOwnership.ts) | Which of the three lists a row belongs in |
 | [`settings/sections/themeRowActions.ts`](../src/settings/sections/themeRowActions.ts), [`themeRowUsage.ts`](../src/settings/sections/themeRowUsage.ts) | The theme row's controls and its cached use counts |
 | [`settings/ThemeCalloutPreviewModal.ts`](../src/settings/ThemeCalloutPreviewModal.ts) | The read-only window behind the pencil |
 
-Suites: `themeCalloutScan`, `themeOwnership`, `themeProvidedRows`,
+Suites: `themeCalloutScan`, `themeOwnership`, `manualDiscovery`,
 `themeRowSync`, `themeAppearance`, `themeAppearanceProbe`, `themeRowActions`,
-`themeReport`, `retiredThemeIds`, `cssSpecificity`.
+`themeReport`, `cssSpecificity`.
 
 ---
 Next chapter: [00-index.md](00-index.md)

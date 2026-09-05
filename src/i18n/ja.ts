@@ -15,35 +15,16 @@ export const ja: Record<string, string> = {
 
 	"settings.fallbackTag": "デフォルト",
 	"settings.fallbackTagAuto": "自動デフォルト",
-	"settings.autoDiscover": "Vault内のコールアウトを自動検出する",
-	"settings.autoDiscoverDesc":
-		"ノートに記述されたコールアウトの種類を検出し、自動的にリストへ追加します。オフにしても既存のコールアウトはそのまま残ります。自分で追加することも、下のVaultを再スキャンを使うこともできます。",
-	"settings.rescanVault": "vaultを再スキャン",
-	"settings.rescanVaultDesc":
-		"ノート内の未認識のcallout IDを検索し、フォールバック行として追加します。",
-	"settings.rescanVaultHintAction": "今すぐスキャン",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"再スキャン完了: {{count}}件の新しいcalloutを追加しました。",
 	"replaceModal.deleteWithoutReplaceSuffix": "（デフォルトにフォールバック）",
 	"replaceModal.titleDelete": "calloutを削除",
 	"replaceModal.titleReplace": "vaultで置き換え",
-
-	"firstRun.title": "vault内の既存のcalloutを検索しますか？",
-	"firstRun.body":
-		"Callout Studioはvaultをスキャンして、すでに使用しているcalloutを検出できます。設定リストに表示され、フォールバックスタイルを適用します。",
-	"firstRun.heavyVaultNote":
-		"vaultに{{count}}個のMarkdownファイルがあります。スキャンに数秒かかる場合があります。",
-	"firstRun.laterHint":
-		"後から設定 → vaultの洞察とメンテナンス → vaultを再スキャン から実行できます。",
-	"firstRun.scanNow": "今すぐスキャン",
-	"firstRun.noThanks": "いいえ、結構です",
-	"firstRun.autoScanComplete":
-		"Callout Studioがvaultをスキャンし、{{count}}件のcalloutを追加しました。",
-	"firstRun.scanning": "スキャン中",
-	"firstRun.autoScanFailed":
-		"Callout Studioはvaultをスキャンできませんでした。設定 → vaultの洞察とメンテナンス → vaultを再スキャン から再試行できます。",
-	"firstRun.scanFailed":
-		"スキャンが完了しませんでした。設定 → vaultの洞察とメンテナンス → vaultを再スキャン から再試行できます。",
 
 	"welcome.tooltip": "Callout Studioについて",
 	"welcome.title": "Callout Studioへようこそ！",
@@ -319,6 +300,9 @@ export const ja: Record<string, string> = {
 	"editor.foldClosed": "デフォルトで閉じる",
 	"editor.cancel": "キャンセル",
 	"editor.saveChanges": "変更を保存",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "calloutを作成",
 	"editor.nameRequired": "calloutを作成する前に表示名が必要です。",
 	"editor.noChangesToSave": "変更はありませんでした。",
@@ -752,9 +736,6 @@ export const ja: Record<string, string> = {
 	"vaultStats.roleBlock": "ブロック",
 	"vaultStats.roleHeading": "見出し",
 	"vaultStats.roleInline": "インライン",
-	"vaultStats.defineUndefined": "未定義の{{count}}件を定義",
-	"vaultStats.defineRunning": "スキャン中",
-	"vaultStats.defineDone": "{{count}}件のcalloutタイプを追加しました。",
 	"vaultStats.close": "閉じる",
 
 	"import.title": "インポートの問題",
@@ -982,4 +963,6 @@ export const ja: Record<string, string> = {
 	"quickInsert.readingView": "calloutを挿入するには、ソースモードまたはライブプレビューに切り替えてください。",
 	"quickInsert.noCursorHint": "このノートにはカーソルがないため、挿入する場所がありません。",
 	"quickInsert.noCursor": "calloutを挿入したい場所にノート内でカーソルを置いてから、もう一度お試しください。",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

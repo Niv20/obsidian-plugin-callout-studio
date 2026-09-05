@@ -32,7 +32,6 @@ import {
 	resolveHeadingLevel,
 } from "../utils/customCommands";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
-import { filterUsableCallouts } from "../utils/usableCallouts";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
 import { buildFormatRow, type FormatRow } from "./command/commandRoles";
 
@@ -40,7 +39,6 @@ import { buildFormatRow, type FormatRow } from "./command/commandRoles";
 export interface CommandEditorHost {
 	registry: CalloutRegistry;
 	settings: PluginSettings;
-	isKnownZeroUsageFallback(id: string): boolean;
 }
 
 export interface CommandEditorOptions {
@@ -77,9 +75,7 @@ export class CommandEditorModal extends Modal {
 		private readonly options: CommandEditorOptions = {},
 	) {
 		super(app);
-		const offerable = filterUsableCallouts(host.registry.getAll(), (id) =>
-			host.isKnownZeroUsageFallback(id),
-		);
+		const offerable = host.registry.getAll();
 
 		// A command pins the callout it uses, which is exactly why a discovered
 		// row with no remaining vault usage can still be behind one: the prune

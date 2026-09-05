@@ -15,35 +15,16 @@ export const hi: Record<string, string> = {
 
 	"settings.fallbackTag": "डिफ़ॉल्ट",
 	"settings.fallbackTagAuto": "स्वतः डिफ़ॉल्ट",
-	"settings.autoDiscover": "अपने वॉल्ट में कॉलआउट को स्वचालित रूप से खोजें",
-	"settings.autoDiscoverDesc":
-		"आपके नोट्स में लिखे गए कॉलआउट प्रकारों को पहचानता है और उन्हें स्वचालित रूप से सूची में जोड़ता है। इसे बंद करने से आपके पास पहले से मौजूद कॉलआउट अपरिवर्तित रहते हैं — आप उन्हें स्वयं जोड़ सकते हैं, या नीचे दिए गए वॉल्ट को फिर से स्कैन करें का उपयोग कर सकते हैं।",
-	"settings.rescanVault": "vault फिर से स्कैन करें",
-	"settings.rescanVaultDesc":
-		"नोट्स में अज्ञात callout ID ढूँढता है और उन्हें फ़ॉलबैक पंक्तियों के रूप में जोड़ता है।",
-	"settings.rescanVaultHintAction": "अभी स्कैन करें",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"पुनः स्कैन पूर्ण: {{count}} नए callout जोड़े गए।",
 	"replaceModal.deleteWithoutReplaceSuffix": "(डिफ़ॉल्ट पर वापस)",
 	"replaceModal.titleDelete": "callout हटाएँ",
 	"replaceModal.titleReplace": "vault में बदलें",
-
-	"firstRun.title": "vault में मौजूद callouts ढूँढें?",
-	"firstRun.body":
-		"Callout Studio आपके vault को स्कैन करके उन callouts को खोज सकता है जो आप पहले से उपयोग कर रहे हैं, ताकि वे सेटिंग सूची में दिखें और आपकी फ़ॉलबैक शैली अपनाएँ।",
-	"firstRun.heavyVaultNote":
-		"आपके vault में {{count}} Markdown फ़ाइलें हैं — स्कैन में कुछ सेकंड लग सकते हैं।",
-	"firstRun.laterHint":
-		"आप इसे बाद में सेटिंग → vault अंतर्दृष्टि और रखरखाव → vault फिर से स्कैन करें से चला सकते हैं।",
-	"firstRun.scanNow": "अभी स्कैन करें",
-	"firstRun.noThanks": "नहीं, धन्यवाद",
-	"firstRun.autoScanComplete":
-		"Callout Studio ने आपका vault स्कैन किया और {{count}} callout जोड़े।",
-	"firstRun.scanning": "स्कैन हो रहा है",
-	"firstRun.autoScanFailed":
-		"Callout Studio आपकी vault को स्कैन नहीं कर सका। आप इसे सेटिंग → vault अंतर्दृष्टि और रखरखाव → vault फिर से स्कैन करें से फिर से आज़मा सकते हैं।",
-	"firstRun.scanFailed":
-		"स्कैन पूरा नहीं हुआ। आप इसे सेटिंग → vault अंतर्दृष्टि और रखरखाव → vault फिर से स्कैन करें से फिर से आज़मा सकते हैं।",
 
 	"welcome.tooltip": "Callout Studio के बारे में",
 	"welcome.title": "Callout Studio में आपका स्वागत है!",
@@ -318,6 +299,9 @@ export const hi: Record<string, string> = {
 	"editor.foldClosed": "डिफ़ॉल्ट रूप से बंद",
 	"editor.cancel": "रद्द करें",
 	"editor.saveChanges": "परिवर्तन सहेजें",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "callout बनाएँ",
 	"editor.nameRequired": "callout बनाने से पहले प्रदर्शन नाम आवश्यक है।",
 	"editor.noChangesToSave": "कोई परिवर्तन नहीं हुआ।",
@@ -746,9 +730,6 @@ export const hi: Record<string, string> = {
 	"vaultStats.roleBlock": "ब्लॉक",
 	"vaultStats.roleHeading": "शीर्षक",
 	"vaultStats.roleInline": "इनलाइन",
-	"vaultStats.defineUndefined": "{{count}} गुम को परिभाषित करें",
-	"vaultStats.defineRunning": "स्कैन हो रहा है",
-	"vaultStats.defineDone": "{{count}} callout प्रकार जोड़े गए।",
 	"vaultStats.close": "बंद करें",
 
 	"import.title": "आयात समस्याएँ",
@@ -971,4 +952,6 @@ export const hi: Record<string, string> = {
 	"quickInsert.readingView": "callout डालने के लिए सोर्स मोड या लाइव प्रीव्यू पर स्विच करें।",
 	"quickInsert.noCursorHint": "इस नोट में कोई कर्सर नहीं है, इसलिए डालने के लिए कोई स्थान नहीं है।",
 	"quickInsert.noCursor": "नोट में उस जगह कर्सर रखें जहाँ आप callout डालना चाहते हैं, फिर पुनः प्रयास करें।",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

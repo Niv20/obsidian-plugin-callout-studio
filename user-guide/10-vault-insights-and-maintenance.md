@@ -1,10 +1,11 @@
 # Vault insights & maintenance
 
-Callout Studio can look across your entire vault and tell you exactly how your callouts are being used. This chapter covers the statistics view and a couple of small maintenance tools that live alongside it.
+Callout Studio can look across your entire vault and tell you exactly how your callouts are being used. This chapter covers the statistics view and the maintenance tools that live alongside it.
 
-## Automatic discovery
+## Manual discovery
 
-**Automatically discover callouts in your vault** is on by default: callout types you write in your notes are added to your list on their own. Switching it off stops that and nothing else — the callouts already in your list stay put, **Scan now** still works, and you can add callout types yourself as usual. See [Fallback callouts & auto-discovery](08-fallback-callouts-and-auto-discovery.md).
+The **Discover now** button lives at the top beside **My callout types** and **Add new callout**. Press it to scan saved notes and the current theme once and save missing callout types. Existing types are never overwritten or automatically removed. See [Manual discovery](08-fallback-callouts-and-manual-discovery.md) for saving, migration and multi-device conflicts.
+
 
 ## Callout statistics
 
@@ -12,7 +13,7 @@ Callout statistics scans every markdown file in your vault and builds a complete
 
 - **Usage count** — how many times that callout type appears across your vault.
 - **Files** — how many separate files it shows up in.
-- **Source** — where the callout type comes from: built-in, custom, auto-fallback, from a CSS snippet, or unknown.
+- **Source** — where the callout type comes from: built-in, custom, manually discovered fallback, from a CSS snippet, or unknown.
 
 This is a quick way to see which callout types you actually rely on, spot ones you forgot you were using, and notice any unfamiliar IDs that might need a closer look.
 

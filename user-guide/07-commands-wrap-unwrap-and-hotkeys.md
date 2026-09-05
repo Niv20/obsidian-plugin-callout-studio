@@ -51,4 +51,4 @@ Custom commands stay tied to the callout type they were built around, so they ne
 - **Editing a command's target** always keeps its shortcut, so you never have to reassign it after a change.
 
 ---
-**Next:** [Fallback callouts and auto-discovery](08-fallback-callouts-and-auto-discovery.md)
+**Next:** [Fallback callouts and manual discovery](08-fallback-callouts-and-manual-discovery.md)

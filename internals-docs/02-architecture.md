@@ -6,7 +6,7 @@
 main.ts (CalloutStudioPlugin) — lifecycle and wiring only
 ├── CalloutRegistry           — single source of truth: Map<id, CalloutDefinition> + PluginSettings
 ├── CSSInjector                — reads the registry, writes generated CSS + paints icon DOM
-├── CalloutDiscovery            — watches the vault, adds/prunes fallback rows
+├── ManualCalloutDiscovery      — one explicit additive scan; no watchers or pruning
 ├── IconService                  — icon artwork: fetch, cache, disk storage
 │   ├── IconFetchManager          (Material's per-icon fetches)
 │   └── PackDataStore             (whole-pack downloads, SHA-256 verified)
@@ -48,7 +48,7 @@ Only a handful of classes actually **own** state:
 | Owner | State | Persisted? |
 | --- | --- | --- |
 | `CalloutRegistry` | `Map<id, CalloutDefinition>`, `PluginSettings`, `iconSvgCache` | Yes, via `toSaveData()` → `data.json` |
-| `CalloutDiscovery` | debounce timers, the rediscovery-suppression map, "known zero usage" set | No — runtime only |
+| `ManualCalloutDiscovery` | one in-flight manual scan | No — only its successfully saved definitions persist |
 | `CSSInjector` | the adopted stylesheet, the `<style>` element, `lastCssText` | No (but mirrors to `StartupStyleCache` → localStorage) |
 | `IconService` / `PackDataStore` | in-flight fetches, failure flags | Artwork lands in the registry's `iconSvgCache` (persisted); pack files live on disk under `icon-packs/` |
 | `LocaleStore` | per-locale load state, in-flight downloads | Locale files live on disk under `translations/`; the *table* is registered into `i18n/index.ts`'s module-level map (runtime only) |

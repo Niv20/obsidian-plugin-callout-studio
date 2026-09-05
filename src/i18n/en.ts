@@ -27,20 +27,14 @@ export const en: Record<string, string> = {
 	// Vault scan / fallback / delete
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default fallback",
-	"settings.autoDiscover": "Automatically discover callouts in your vault",
-	"settings.autoDiscoverDesc":
-		"Notice callout types written in your notes and add them to the list automatically. Turning this off leaves the callouts you already have untouched — you can still add them yourself, or use Re-scan vault below.",
-	"settings.rescanVault": "Re-scan vault",
-	"settings.rescanVaultDesc":
-		"Find unrecognized callout IDs used in notes and add them as fallback rows.",
-	"settings.rescanVaultHintAction": "Scan now",
-	"settings.ignoreCalloutAction": "Never detect this callout",
-	"settings.ignoredHeading": "Callouts you don't detect",
-	"settings.ignoredHint":
-		"Automatic detection skips these, so they never appear as rows here. Useful for callouts a CSS snippet, a theme or another plugin provides.",
-	"settings.ignoredEmpty":
-		"None yet. Use \u201cNever detect this callout\u201d in a detected callout\u2019s menu.",
-	"settings.ignoredRemove": "Detect again",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"notice.settingsBackupFailed": "Incoming settings were not applied because a safety backup could not be saved. Check available storage, then reopen Obsidian to retry.",
+	"notice.settingsBackupSaved": "A recovery copy of local callout definitions was saved before applying incoming settings: {{path}}.",
+	"commandBuilder.missingCallout": "Paused: the callout is missing. Discover or create it to restore this command, or edit the command to choose another type.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Re-scan complete: {{count}} new callout(s) added.",
 	"settings.readOnly":
@@ -48,24 +42,6 @@ export const en: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(falls back to default)",
 	"replaceModal.titleDelete": "Delete callout",
 	"replaceModal.titleReplace": "Replace in vault",
-
-	// First-run scan modal (shown once on first install for large vaults)
-	"firstRun.title": "Find existing callouts in your vault?",
-	"firstRun.body":
-		"Callout Studio can scan your vault to discover callouts you already use, so they appear in your settings list and adopt your fallback style.",
-	"firstRun.heavyVaultNote":
-		"Your vault has {{count}} Markdown files — the scan may take a few seconds.",
-	"firstRun.laterHint":
-		"You can always run this later from Settings → Vault insights & maintenance → Re-scan vault.",
-	"firstRun.scanNow": "Scan now",
-	"firstRun.noThanks": "No thanks",
-	"firstRun.autoScanComplete":
-		"Callout Studio scanned your vault and added {{count}} callout(s).",
-	"firstRun.scanning": "Scanning",
-	"firstRun.autoScanFailed":
-		"Callout Studio couldn't scan your vault. You can try again from Settings → Vault insights & maintenance → Re-scan vault.",
-	"firstRun.scanFailed":
-		"The scan didn't finish. You can try again from Settings → Vault insights & maintenance → Re-scan vault.",
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
 	"welcome.tooltip": "About Callout Studio",
@@ -409,6 +385,9 @@ export const en: Record<string, string> = {
 	"editor.foldClosed": "Closed by default",
 	"editor.cancel": "Cancel",
 	"editor.saveChanges": "Save changes",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Create callout",
 	"editor.nameRequired":
 		"A display name is required before creating a callout.",
@@ -853,9 +832,6 @@ export const en: Record<string, string> = {
 	"vaultStats.roleBlock": "Block",
 	"vaultStats.roleHeading": "Heading",
 	"vaultStats.roleInline": "Inline",
-	"vaultStats.defineUndefined": "Define {{count}} missing",
-	"vaultStats.defineRunning": "Scanning",
-	"vaultStats.defineDone": "Added {{count}} callout types.",
 	"vaultStats.close": "Close",
 
 	// Import validation
@@ -1067,4 +1043,6 @@ export const en: Record<string, string> = {
 		'These colors are identical to "{{name}}". Two saved colors cannot be the same — change a color, or {{link}}.',
 	"palette.colorExistsUseLink": "use the existing one",
 	"footer.madeBy": "Made by Niv  •  ",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

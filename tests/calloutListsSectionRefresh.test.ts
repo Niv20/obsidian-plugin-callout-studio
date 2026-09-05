@@ -64,6 +64,7 @@ function listsCtx(registry: CalloutRegistry, app: App, themeIds: string[]) {
 		plugin: {
 			app,
 			registry,
+			settingsWriter: { isFrozen: false },
 			settings: registry.settings,
 			// The settings-list fold is per device now — see DeviceLocalStore.
 			localState: {

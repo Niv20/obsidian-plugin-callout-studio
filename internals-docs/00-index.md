@@ -66,7 +66,7 @@ covering whatever you're touching.
 
 | File | What it covers |
 | --- | --- |
-| [10-vault-discovery.md](10-vault-discovery.md) | Auto-discovering unknown callouts, pruning unused rows, statistics, replace-in-vault, and the delete flow. |
+| [10-vault-discovery.md](10-vault-discovery.md) | Manual discovery, durable results, statistics, replace-in-vault, and the delete flow. |
 | [11-color-system.md](11-color-system.md) | The translucent-tint nesting invariant, palette derivation and baking, the Obsidian 1.13 colour-format split. |
 | [12-icons.md](12-icons.md) | The icon-pack model, fetch/cache/verify pipeline, rendering, SVG sanitization, and "Your images." |
 | [13-callout-editor.md](13-callout-editor.md) | The edit/create modal: the concrete-form-vs-optional-field tension, the live preview, validation, and save pipeline. |
@@ -74,6 +74,7 @@ covering whatever you're touching.
 | [15-settings-ui-and-modals.md](15-settings-ui-and-modals.md) | The settings tab's composition, the shared modal chrome and autofocus, and the individual modals. |
 | [16-i18n.md](16-i18n.md) | How `t()` resolves strings, the locale download/verification pipeline, and the contribution workflow. |
 | [21-theme-callout-discovery.md](21-theme-callout-discovery.md) | How the active theme's callout types are found, read back and represented — and the compatibility guide for **theme authors**. |
+| [22-upgrading-manual-discovery.md](22-upgrading-manual-discovery.md) | Released 2.12.x compatibility, verified one-time recovery archives, and safe removal of legacy local discovery state. |
 
 ## Shipping a change
 

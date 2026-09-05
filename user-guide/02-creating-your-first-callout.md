@@ -1,6 +1,6 @@
 # Creating your first callout
 
-There are two ways to bring a new callout type into being with Callout Studio: type it straight into a note as you write, or build it deliberately in the callout editor before you use it anywhere. Both end up in the same place — a callout type you can reuse for the rest of your vault. Here's how each one works.
+Create a callout type through the editor, opened either from autocomplete or from **Add new callout** in settings. You can also add types already used in your saved notes with the explicit **Discover now** button beside **My callout types**. Typing or opening a note never creates a saved definition by itself.
 
 ## The fastest way: type it in a note
 
@@ -11,7 +11,7 @@ The quickest path to a new callout starts wherever you're already writing. Open 
 From here you have two options:
 
 - **Pick a suggestion** from the list, and Callout Studio inserts a complete callout header for you — no need to remember the exact syntax.
-- **Type a brand-new name** that doesn't exist yet and confirm it on the spot. Callout Studio adds it as a new row in your callout list automatically. It starts out as a plain, uncustomized entry — you can give it an icon and colors whenever you're ready.
+- **Type a brand-new name** and choose **Create new callout** in the suggestions. This opens the editor with that name filled in. Choose its appearance and press **Create callout** to save it; dismissing the editor creates nothing.
 
 This is the easiest way to get going, especially when a new callout idea occurs to you mid-sentence.
 
@@ -28,6 +28,10 @@ Inside the callout editor you:
 The cursor starts in the **Name** field, so you can begin typing straight away — on a phone or tablet the keyboard comes up with it, and the window stays where it is rather than scrolling. This happens only when you're creating something new: opening an existing callout to edit it leaves the cursor alone, so the keyboard doesn't cover the form you came to look at.
 
 As you make each choice, a live, real preview shows exactly how the callout will render. This chapter won't go deep on colors or icons — for the full picture, see [Colors and color palettes](03-colors-and-color-palettes.md) and [Icons in depth](14-icons-in-depth.md).
+
+The editor waits for the settings file to be saved before it reports success and closes. If saving fails or a synchronized file has changed underneath it, the editor stays open and shows a notice. Keep your work open while checking storage and sync; an appearance visible in a live preview is not proof that it was saved. If incoming settings need to load, close the editor after preserving your work, let synchronization finish, and retry the edit. A recovery copy is made before incoming settings replace local definitions.
+
+Renaming a type or changing its standard title/fold behavior can also update existing notes. Those changes start only after its settings save succeeds. If a note cannot be updated, keep the editor open and press **Save changes** again after resolving the file problem. The retry continues the unfinished update before applying further edits. During a rename, the old IDs remain saved as aliases until all affected notes are updated. If Obsidian closes midway, those aliases preserve the styling of notes that still use an old ID; you can complete the rename later by editing the type and removing the old alias. A settings save and changes to many note files cannot be one atomic operation.
 
 ## Using your new callout type
 

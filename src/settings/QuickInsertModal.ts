@@ -33,7 +33,7 @@ import {
 	isCalloutSourceFilter,
 	type CalloutSourceFilter,
 } from "../utils/calloutSearch";
-import { committedDefinitions, filterUsableCallouts } from "../utils/usableCallouts";
+import { committedDefinitions } from "../utils/usableCallouts";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
 import { autofocusOnOpen } from "./modalAutofocus";
 import { openCalloutEditorFor } from "./openCalloutEditor";
@@ -181,26 +181,12 @@ export class QuickInsertModal extends Modal {
 
 	// ── List ────────────────────────────────────────────────────────────
 
-	/**
-	 * Every callout the user could write right now, re-read from the registry.
-	 *
-	 * The same two steps `PluginAPI.usableDefinitions()` takes, for the same two
-	 * reasons. The list views rather than `getAll()`, so the callout editor's
-	 * transient live-preview *row* cannot appear here as a phantom entry; then
-	 * `getReal()` on each, so its draft *values* cannot either — this window
-	 * re-renders the moment that editor closes, which is exactly when a
-	 * half-typed name would be on screen. And `filterUsableCallouts` last: the
-	 * gate every callout-offering surface shares, so a row discovery
-	 * auto-created for an id that has since left the vault is not offered back.
-	 */
 	private usableCallouts(): CalloutDefinition[] {
 		const { registry } = this.plugin;
 		const committed = committedDefinitions(registry).map(
 			(def) => registry.getReal(def.id) ?? def,
 		);
-		return filterUsableCallouts(committed, (id) =>
-			this.plugin.isKnownZeroUsageFallback(id),
-		);
+		return committed;
 	}
 
 	/**

@@ -15,35 +15,16 @@ export const cs: Record<string, string> = {
 
 	"settings.fallbackTag": "Výchozí",
 	"settings.fallbackTagAuto": "Aut. výchozí",
-	"settings.autoDiscover": "Automaticky rozpoznávat upozornění ve vašem trezoru",
-	"settings.autoDiscoverDesc":
-		"Rozpozná typy upozornění napsané v poznámkách a automaticky je přidá do seznamu. Vypnutím zůstanou stávající upozornění beze změny — stále je můžete přidat ručně nebo použít Znovu prohledat trezor níže.",
-	"settings.rescanVault": "Znovu prohledat vault",
-	"settings.rescanVaultDesc":
-		"Vyhledá nerozpoznaná ID callout v poznámkách a přidá je jako záložní řádky.",
-	"settings.rescanVaultHintAction": "Prohledat nyní",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Opětovné prohledávání dokončeno: přidáno {{count}} nových callout(ů).",
 	"replaceModal.deleteWithoutReplaceSuffix": "(vrátí se na výchozí)",
 	"replaceModal.titleDelete": "Smazat callout",
 	"replaceModal.titleReplace": "Nahradit ve vaultu",
-
-	"firstRun.title": "Najít existující callouts ve vaultu?",
-	"firstRun.body":
-		"Callout Studio může prohledat váš vault a objevit callouts, které již používáte, takže se zobrazí v seznamu nastavení a převezmou váš záložní styl.",
-	"firstRun.heavyVaultNote":
-		"Váš vault má {{count}} souborů Markdown — prohledání může trvat několik sekund.",
-	"firstRun.laterHint":
-		"Tuto operaci můžete spustit kdykoli z Nastavení → Statistiky a údržba vaultu → Znovu prohledat vault.",
-	"firstRun.scanNow": "Prohledat nyní",
-	"firstRun.noThanks": "Ne, díky",
-	"firstRun.autoScanComplete":
-		"Callout Studio prohledal váš vault a přidal {{count}} callout(ů).",
-	"firstRun.scanning": "Prohledávání",
-	"firstRun.autoScanFailed":
-		"Callout Studio se nepodařilo prohledat váš vault. Zkuste to znovu z Nastavení → Statistiky a údržba vaultu → Znovu prohledat vault.",
-	"firstRun.scanFailed":
-		"Prohledávání se nedokončilo. Zkuste to znovu z Nastavení → Statistiky a údržba vaultu → Znovu prohledat vault.",
 
 	"welcome.tooltip": "O aplikaci Callout Studio",
 	"welcome.title": "Vítejte v Callout Studio!",
@@ -315,6 +296,9 @@ export const cs: Record<string, string> = {
 	"editor.foldClosed": "Ve výchozím stavu zavřený",
 	"editor.cancel": "Zrušit",
 	"editor.saveChanges": "Uložit změny",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Vytvořit callout",
 	"editor.nameRequired":
 		"Před vytvořením callout je vyžadován zobrazovaný název.",
@@ -743,9 +727,6 @@ export const cs: Record<string, string> = {
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Nadpis",
 	"vaultStats.roleInline": "Vložený v textu",
-	"vaultStats.defineUndefined": "Definovat {{count}} chybějících",
-	"vaultStats.defineRunning": "Skenování",
-	"vaultStats.defineDone": "Přidáno {{count}} typů callout.",
 	"vaultStats.close": "Zavřít",
 
 	"import.title": "Problémy s importem",
@@ -979,4 +960,6 @@ export const cs: Record<string, string> = {
 	"quickInsert.readingView": "Přepněte do zdrojového režimu nebo živého náhledu a vložte callout.",
 	"quickInsert.noCursorHint": "V této poznámce není žádný kurzor, takže není kam vložit.",
 	"quickInsert.noCursor": "Umístěte kurzor v poznámce tam, kam chcete vložit callout, a zkuste to znovu.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

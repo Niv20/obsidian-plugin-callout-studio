@@ -12,33 +12,15 @@ export const zhTW: Record<string, string> = {
 	"autocomplete.createNew": "建立新 callout：「{{name}}」",
 	"settings.fallbackTag": "預設",
 	"settings.fallbackTagAuto": "自動預設",
-	"settings.autoDiscover": "自動偵測庫中的 callout",
-	"settings.autoDiscoverDesc":
-		"辨識你筆記中寫出的 callout 類型，並自動加入清單。關閉此選項不會影響你已有的 callout——你仍可以自行新增，或使用下方的重新掃描庫。",
-	"settings.rescanVault": "重新掃描 vault",
-	"settings.rescanVaultDesc":
-		"尋找筆記中未辨識的 callout ID 並將其新增為備用列。",
-	"settings.rescanVaultHintAction": "立即掃描",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete": "重新掃描完成：已新增 {{count}} 個新 callout。",
 	"replaceModal.deleteWithoutReplaceSuffix": "（回復為預設值）",
 	"replaceModal.titleDelete": "刪除 callout",
 	"replaceModal.titleReplace": "在 vault 中替換",
-	"firstRun.title": "在 vault 中尋找現有的 callout？",
-	"firstRun.body":
-		"Callout Studio 可以掃描您的 vault 以探索您已在使用的 callout，使其出現在設定清單中並套用備用樣式。",
-	"firstRun.heavyVaultNote":
-		"您的 vault 有 {{count}} 個 Markdown 檔案——掃描可能需要幾秒鐘。",
-	"firstRun.laterHint":
-		"您隨時可以從「設定 → Vault 洞察與維護 → 重新掃描 vault」執行此操作。",
-	"firstRun.scanNow": "立即掃描",
-	"firstRun.noThanks": "不，謝謝",
-	"firstRun.autoScanComplete":
-		"Callout Studio 已掃描您的 vault 並新增了 {{count}} 個 callout。",
-	"firstRun.scanning": "掃描中",
-	"firstRun.autoScanFailed":
-		"Callout Studio 無法掃描您的 vault。您可以從「設定 → Vault 洞察與維護 → 重新掃描 vault」重試。",
-	"firstRun.scanFailed":
-		"掃描未完成。您可以從「設定 → Vault 洞察與維護 → 重新掃描 vault」重試。",
 
 	"welcome.tooltip": "關於 Callout Studio",
 	"welcome.title": "歡迎使用 Callout Studio！",
@@ -297,6 +279,9 @@ export const zhTW: Record<string, string> = {
 	"editor.foldClosed": "預設折疊",
 	"editor.cancel": "取消",
 	"editor.saveChanges": "儲存變更",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "建立 callout",
 	"editor.nameRequired": "建立 callout 前需要提供顯示名稱。",
 	"editor.noChangesToSave": "沒有做任何更改。",
@@ -713,9 +698,6 @@ export const zhTW: Record<string, string> = {
 	"vaultStats.roleBlock": "區塊",
 	"vaultStats.roleHeading": "標題",
 	"vaultStats.roleInline": "行內",
-	"vaultStats.defineUndefined": "定義 {{count}} 個缺失項",
-	"vaultStats.defineRunning": "掃描中",
-	"vaultStats.defineDone": "已新增 {{count}} 種 callout 類型。",
 	"vaultStats.close": "關閉",
 	"import.title": "匯入問題",
 	"import.reportLeadIn": "看起來您匯入的檔案已被修改。以下是問題清單：",
@@ -917,4 +899,6 @@ export const zhTW: Record<string, string> = {
 	"quickInsert.readingView": "切換到原始碼模式或即時預覽以插入 callout。",
 	"quickInsert.noCursorHint": "此筆記中沒有游標，因此沒有可插入的位置。",
 	"quickInsert.noCursor": "在筆記中將游標放在要插入 callout 的位置，然後重試。",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

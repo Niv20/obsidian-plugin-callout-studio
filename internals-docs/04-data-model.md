@@ -52,10 +52,9 @@ Field-by-field notes on the ones that are not self-explanatory:
   `utils/iconAdjust.ts`, never by reading either layer directly.
 - **`transparentBg`** and **`externalStyle`** are typed `true` (not `boolean`)
   on purpose — see the callout below.
-- **`customized`** marks a row the user explicitly created or edited. It makes
-  the row *sticky*: `CalloutDiscovery.pruneUnused` never removes a customized
-  row even with zero vault usages. Auto-created fallback rows start with it
-  unset.
+- **`customized`** marks a row the user explicitly created or edited. It prevents
+  fallback restyling from replacing the authored appearance. Manually discovered
+  rows start with it unset but remain durable regardless of note usage.
 - **`paletteId`** links a definition back to the `CustomPalette` its colors were
   last applied from, so a later edit to that palette can cascade. Left stale
   (pointing at nothing) when the palette is deleted — see
@@ -189,7 +188,6 @@ interface PluginSettings {
   headingCallouts: HeadingCalloutSettings;
   inlineCallouts: InlineCalloutSettings;
   welcomeSeen?: boolean;
-  autoDiscoverCallouts: boolean;
   fallbackCalloutId: string;
   language: string;                  // "auto" or a locale code
   customPalettes: CustomPalette[];
@@ -200,45 +198,11 @@ interface PluginSettings {
 }
 ```
 
-`autoDiscoverCallouts` (default **true**) gates the three automatic discovery
-passes and nothing else — **Re-scan vault** still works with it off, and no
-existing row is taken away. See
-[Vault discovery](10-vault-discovery.md#the-automatic-discovery-toggle).
-
-> [!NOTE]
-> **Four fields left this interface** and are not settings at all: they describe
-> a *machine*, not a vault, and syncing them had two devices writing opposite
-> answers into one file. `firstRunCompleted`, `retiredThemeIds`,
-> `calloutListsExpanded` and the discovered-id index now live in
-> [`manager/DeviceLocalStore.ts`](../src/manager/DeviceLocalStore.ts) — see
-> [Persistence § multi-device sync](07-persistence-and-caching.md#multi-device-sync).
-> An older `data.json` carrying them is adopted once, on the launch that
-> upgrades the vault, and the fields then drop out of the file.
-
-`GlobalStyleSettings` holds vault-wide style for all three roles: border
-sides/width/radius, title/content scale, "Align content with title" for the
-block role; a nested `heading: HeadingFrameStyleSettings` (adds
-`paddingTop`/`paddingBottom`/`marginTop`) and `inline: InlineFrameStyleSettings`
-(adds `fontScale`) for the other two.
-
-`HeadingCalloutSettings` and `InlineCalloutSettings` extend `RoleToggleSettings`
-(`{ enabled: boolean }`) — either optional role can be switched off entirely.
-`InlineCalloutSettings.allowContent` has **no settings UI** (flip it by hand in
-`data.json`) — it governs whether `[!id]{text}` renders as a labeled pill or
-stays literal markdown, and turning it off restores the exact pre-2.9 reading
-of that syntax. It's a real switch rather than hard-coded because the brace
-syntax claims characters a vault may already use for something else.
-
-> [!IMPORTANT]
-> **A new settings field must be registered in three places or it is silently
-> dropped on load:** the `PluginSettings` interface (here), `DEFAULT_SETTINGS`
-> (`src/constants.ts`), and `mergeSavedSettings()`
-> (`src/utils/settingsMerge.ts`). Missing the third one is the common mistake:
-> `mergeSavedSettings` builds every nested section **explicitly**, field by
-> field, rather than spreading the saved object over the defaults — so an
-> unmerged field is not merely un-migrated, it never reaches the in-memory
-> settings object at all, however it round-trips through `toSaveData()`. See
-> [Settings and storage](07-persistence-and-caching.md#settings-merge--never-a-raw-spread).
+Discovery has no saved preferences or device index. Manual results are ordinary
+fallback definitions in `data.json` (data format 5). The retired automatic-discovery,
+ignored-id, first-run and theme-retirement settings are dropped on serialization.
+Local UI folds and the initialized-installation marker live in `DeviceLocalStore`.
+See [Persistence](07-persistence-and-caching.md).
 
 ## `PluginData` — the shape of `data.json`
 

@@ -1,5 +1,17 @@
 # Callout Studio
 
+This development build uses **manual discovery only**. In the plugin settings,
+press **Discover now** beside **My callout types** and **Add new callout** to
+add missing types from saved notes and the active theme. Results are saved in
+`data.json` and included in backups/exports; discovery has no active local-storage
+state. On upgrade, the old discovery cache and startup CSS are archived for
+recovery before the old cache is removed. A failed archive leaves both original
+values untouched and inactive. Update **both devices before resuming sync or
+editing**: this build writes settings data format 5, but released versions
+2.12.0–2.12.2 do not protect files written by newer builds. See
+[manual discovery, upgrading and two-device recovery](user-guide/08-fallback-callouts-and-manual-discovery.md).
+
+
 Callout Studio is a powerful callout management **plugin** for [Obsidian.](https://obsidian.md)
 
 It lets you create, edit, and style your own callout types, override the built-in ones, pick icons from large libraries, and use every callout as a Block Callout, a Heading Callout, or an Inline Callout - all from a single settings tab!

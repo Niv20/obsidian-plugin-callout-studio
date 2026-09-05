@@ -23,9 +23,13 @@
  *
  * So the restore happens twice: immediately, which is right in the common case
  * and avoids a visible flash, and again on the next frame **only if the first
- * one was clamped short**. Correcting upward only is what keeps it from
- * fighting a reader who scrolled deliberately in that one frame.
+ * one was clamped short**, and only while the position is still that clamped
+ * value. Either direction of deliberate scrolling cancels the retry. A newer
+ * capture also invalidates the older frame, including when the pane reopens
+ * at the top.
  */
+
+const currentCaptures = new WeakMap<HTMLElement, object>();
 
 /**
  * Remember where `el` is scrolled to, and hand back the restore.
@@ -35,15 +39,21 @@
  * caller has to check.
  */
 export function captureScroll(el: HTMLElement): () => void {
+	const capture = {};
+	currentCaptures.set(el, capture);
 	const target = el.scrollTop;
 	if (target <= 0) return () => undefined;
 	return () => {
-		if (!el.isConnected) return;
+		if (!el.isConnected || currentCaptures.get(el) !== capture) return;
 		el.scrollTop = target;
+		const restored = el.scrollTop;
+		if (restored >= target) return;
 		// Late-loading rows grow the page; a clamped assignment above is what
 		// reads as "it jumped back to the top".
 		window.requestAnimationFrame(() => {
-			if (el.isConnected && el.scrollTop < target) el.scrollTop = target;
+			if (el.isConnected && currentCaptures.get(el) === capture && el.scrollTop === restored) {
+				el.scrollTop = target;
+			}
 		});
 	};
 }

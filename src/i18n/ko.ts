@@ -15,35 +15,16 @@ export const ko: Record<string, string> = {
 
 	"settings.fallbackTag": "기본값",
 	"settings.fallbackTagAuto": "자동 기본값",
-	"settings.autoDiscover": "보관함에서 콜아웃을 자동으로 감지",
-	"settings.autoDiscoverDesc":
-		"메모에 작성된 콜아웃 유형을 인식해 목록에 자동으로 추가합니다. 이 옵션을 끄면 이미 있는 콜아웃은 그대로 유지됩니다 — 직접 추가하거나 아래의 보관함 다시 스캔을 사용할 수 있습니다.",
-	"settings.rescanVault": "볼트 재스캔",
-	"settings.rescanVaultDesc":
-		"노트에서 인식되지 않는 callout ID를 찾아 폴백 행으로 추가합니다.",
-	"settings.rescanVaultHintAction": "지금 스캔",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"재스캔 완료: {{count}}개의 새 callout이 추가되었습니다.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(기본값으로 폴백)",
 	"replaceModal.titleDelete": "callout 삭제",
 	"replaceModal.titleReplace": "볼트에서 교체",
-
-	"firstRun.title": "볼트에서 기존 callout을 찾으시겠습니까?",
-	"firstRun.body":
-		"Callout Studio가 볼트를 스캔하여 이미 사용 중인 callout을 검색할 수 있습니다. 설정 목록에 표시되고 폴백 스타일을 적용합니다.",
-	"firstRun.heavyVaultNote":
-		"볼트에 {{count}}개의 Markdown 파일이 있습니다. 스캔에 몇 초가 걸릴 수 있습니다.",
-	"firstRun.laterHint":
-		"나중에 설정 → 볼트 인사이트 및 유지보수 → 볼트 재스캔에서 실행할 수 있습니다.",
-	"firstRun.scanNow": "지금 스캔",
-	"firstRun.noThanks": "아니오, 괜찮습니다",
-	"firstRun.autoScanComplete":
-		"Callout Studio가 볼트를 스캔하고 {{count}}개의 callout을 추가했습니다.",
-	"firstRun.scanning": "스캔 중",
-	"firstRun.autoScanFailed":
-		"Callout Studio가 볼트를 스캔하지 못했습니다. 설정 → 볼트 인사이트 및 유지보수 → 볼트 재스캔에서 다시 시도할 수 있습니다.",
-	"firstRun.scanFailed":
-		"스캔이 완료되지 않았습니다. 설정 → 볼트 인사이트 및 유지보수 → 볼트 재스캔에서 다시 시도할 수 있습니다.",
 
 	"welcome.tooltip": "Callout Studio 소개",
 	"welcome.title": "Callout Studio에 오신 것을 환영합니다!",
@@ -318,6 +299,9 @@ export const ko: Record<string, string> = {
 	"editor.foldClosed": "기본적으로 닫기",
 	"editor.cancel": "취소",
 	"editor.saveChanges": "변경 사항 저장",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "callout 만들기",
 	"editor.nameRequired": "callout을 만들기 전에 표시 이름이 필요합니다.",
 	"editor.noChangesToSave": "변경 사항이 없습니다.",
@@ -749,9 +733,6 @@ export const ko: Record<string, string> = {
 	"vaultStats.roleBlock": "블록",
 	"vaultStats.roleHeading": "제목",
 	"vaultStats.roleInline": "인라인",
-	"vaultStats.defineUndefined": "누락된 {{count}}개 정의",
-	"vaultStats.defineRunning": "스캔 중",
-	"vaultStats.defineDone": "callout 유형 {{count}}개를 추가했습니다.",
 	"vaultStats.close": "닫기",
 
 	"import.title": "가져오기 문제",
@@ -975,4 +956,6 @@ export const ko: Record<string, string> = {
 	"quickInsert.readingView": "callout을 삽입하려면 소스 모드 또는 라이브 미리 보기로 전환하세요.",
 	"quickInsert.noCursorHint": "이 노트에는 커서가 없어 삽입할 위치가 없습니다.",
 	"quickInsert.noCursor": "callout을 삽입할 위치에 노트의 커서를 놓은 다음 다시 시도하세요.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

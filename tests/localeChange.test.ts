@@ -368,12 +368,14 @@ describe("ensureLocale applies the change only when there is one", () => {
 	interface EnsureHost {
 		self: CalloutStudioPlugin;
 		applied: () => number;
+		destroy: () => void;
 	}
 
 	function ensureHost(language: string, ok: boolean): EnsureHost {
 		let applied = 0;
 		const self = {
 			settings: { ...structuredClone(DEFAULT_SETTINGS), language },
+			settingsWriter: { isDestroyed: false },
 			locales: { ensure: () => Promise.resolve(ok) },
 			applyLocaleChange: () => {
 				applied++;
@@ -382,6 +384,7 @@ describe("ensureLocale applies the change only when there is one", () => {
 		return {
 			self: self as unknown as CalloutStudioPlugin,
 			applied: () => applied,
+			destroy: () => { self.settingsWriter.isDestroyed = true; },
 		};
 	}
 
@@ -428,6 +431,16 @@ describe("ensureLocale applies the change only when there is one", () => {
 		registerLocale("worked", { "settings.language": "WORKED" });
 		const succeeded = ensureHost("worked", true);
 		assert.strictEqual(await ensureLocale(succeeded.self), true);
+	});
+	it("does not repaint or change the active locale when download finishes after unload", async () => {
+		setLocale("en");
+		registerLocale("late", { "settings.language": "LATE" });
+		const h = ensureHost("late", true);
+		const pending = ensureLocale(h.self);
+		h.destroy();
+		assert.strictEqual(await pending, false);
+		assert.strictEqual(getLocale(), "en");
+		assert.strictEqual(h.applied(), 0);
 	});
 });
 

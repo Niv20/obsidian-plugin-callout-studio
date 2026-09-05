@@ -15,35 +15,16 @@ export const th: Record<string, string> = {
 
 	"settings.fallbackTag": "ค่าเริ่มต้น",
 	"settings.fallbackTagAuto": "ค่าเริ่มต้นอัตโนมัติ",
-	"settings.autoDiscover": "ตรวจจับ callout ในคลังของคุณโดยอัตโนมัติ",
-	"settings.autoDiscoverDesc":
-		"สังเกตประเภท callout ที่เขียนไว้ในโน้ตของคุณและเพิ่มลงในรายการโดยอัตโนมัติ การปิดตัวเลือกนี้จะไม่ส่งผลต่อ callout ที่มีอยู่แล้ว — คุณยังสามารถเพิ่มเองได้ หรือใช้ สแกนคลังอีกครั้ง ด้านล่าง",
-	"settings.rescanVault": "สแกน vault ใหม่",
-	"settings.rescanVaultDesc":
-		"ค้นหา ID callout ที่ไม่รู้จักในโน้ตและเพิ่มเป็นแถวสำรอง",
-	"settings.rescanVaultHintAction": "สแกนเดี๋ยวนี้",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"สแกนใหม่เสร็จแล้ว: เพิ่ม {{count}} callout ใหม่",
 	"replaceModal.deleteWithoutReplaceSuffix": "(กลับไปใช้ค่าเริ่มต้น)",
 	"replaceModal.titleDelete": "ลบ callout",
 	"replaceModal.titleReplace": "แทนที่ใน vault",
-
-	"firstRun.title": "ค้นหา callout ที่มีอยู่ใน vault หรือไม่?",
-	"firstRun.body":
-		"Callout Studio สามารถสแกน vault ของคุณเพื่อค้นพบ callout ที่คุณใช้งานอยู่แล้ว เพื่อให้แสดงในรายการการตั้งค่าและใช้สไตล์สำรองของคุณ",
-	"firstRun.heavyVaultNote":
-		"vault ของคุณมีไฟล์ Markdown {{count}} ไฟล์ — การสแกนอาจใช้เวลาสักครู่",
-	"firstRun.laterHint":
-		"คุณสามารถเรียกใช้งานนี้ในภายหลังได้จาก การตั้งค่า → ข้อมูลเชิงลึกและการบำรุงรักษา vault → สแกน vault ใหม่",
-	"firstRun.scanNow": "สแกนเดี๋ยวนี้",
-	"firstRun.noThanks": "ไม่ ขอบคุณ",
-	"firstRun.autoScanComplete":
-		"Callout Studio สแกน vault ของคุณและเพิ่ม {{count}} callout แล้ว",
-	"firstRun.scanning": "กำลังสแกน",
-	"firstRun.autoScanFailed":
-		"Callout Studio ไม่สามารถสแกน vault ของคุณได้ คุณสามารถลองอีกครั้งได้จาก การตั้งค่า → ข้อมูลเชิงลึกและการบำรุงรักษา vault → สแกน vault ใหม่",
-	"firstRun.scanFailed":
-		"การสแกนไม่เสร็จสมบูรณ์ คุณสามารถลองอีกครั้งได้จาก การตั้งค่า → ข้อมูลเชิงลึกและการบำรุงรักษา vault → สแกน vault ใหม่",
 
 	"welcome.tooltip": "เกี่ยวกับ Callout Studio",
 	"welcome.title": "ยินดีต้อนรับสู่ Callout Studio!",
@@ -312,6 +293,9 @@ export const th: Record<string, string> = {
 	"editor.foldClosed": "ปิดโดยค่าเริ่มต้น",
 	"editor.cancel": "ยกเลิก",
 	"editor.saveChanges": "บันทึกการเปลี่ยนแปลง",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "สร้าง callout",
 	"editor.nameRequired": "ต้องใส่ชื่อที่แสดงก่อนสร้าง callout",
 	"editor.noChangesToSave": "ไม่มีการเปลี่ยนแปลง",
@@ -742,9 +726,6 @@ export const th: Record<string, string> = {
 	"vaultStats.roleBlock": "บล็อก",
 	"vaultStats.roleHeading": "หัวเรื่อง",
 	"vaultStats.roleInline": "อินไลน์",
-	"vaultStats.defineUndefined": "กำหนด {{count}} รายการที่ขาดหายไป",
-	"vaultStats.defineRunning": "กำลังสแกน",
-	"vaultStats.defineDone": "เพิ่มประเภท callout แล้ว {{count}} รายการ",
 	"vaultStats.close": "ปิด",
 
 	"import.title": "ปัญหาการนำเข้า",
@@ -959,4 +940,6 @@ export const th: Record<string, string> = {
 	"quickInsert.readingView": "สลับไปยังโหมดต้นฉบับหรือ Live Preview เพื่อแทรก callout",
 	"quickInsert.noCursorHint": "ไม่มีเคอร์เซอร์ในบันทึกนี้ จึงไม่มีตำแหน่งให้แทรก",
 	"quickInsert.noCursor": "วางเคอร์เซอร์ในบันทึกตรงตำแหน่งที่ต้องการแทรก callout แล้วลองอีกครั้ง",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

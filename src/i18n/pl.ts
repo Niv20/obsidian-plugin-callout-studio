@@ -15,35 +15,16 @@ export const pl: Record<string, string> = {
 
 	"settings.fallbackTag": "Domyślny",
 	"settings.fallbackTagAuto": "Aut. domyślny",
-	"settings.autoDiscover": "Automatycznie wykrywaj callouty w skarbcu",
-	"settings.autoDiscoverDesc":
-		"Rozpoznaje typy calloutów zapisane w Twoich notatkach i automatycznie dodaje je do listy. Wyłączenie tej opcji pozostawia istniejące już callouty bez zmian — nadal możesz dodać je ręcznie lub użyć poniższej funkcji Ponownie skanuj skarbiec.",
-	"settings.rescanVault": "Ponownie skanuj vault",
-	"settings.rescanVaultDesc":
-		"Wyszukuje nierozpoznane ID callout w notatkach i dodaje je jako wiersze zapasowe.",
-	"settings.rescanVaultHintAction": "Skanuj teraz",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Ponowne skanowanie zakończone: dodano {{count}} nowych callout(ów).",
 	"replaceModal.deleteWithoutReplaceSuffix": "(wraca do domyślnego)",
 	"replaceModal.titleDelete": "Usuń callout",
 	"replaceModal.titleReplace": "Zastąp w vault",
-
-	"firstRun.title": "Znaleźć istniejące callouts w vault?",
-	"firstRun.body":
-		"Callout Studio może przeskanować vault, aby odkryć callouts, których już używasz, tak aby pojawiły się na liście ustawień i przyjęły styl zapasowy.",
-	"firstRun.heavyVaultNote":
-		"Twój vault ma {{count}} plików Markdown — skanowanie może potrwać kilka sekund.",
-	"firstRun.laterHint":
-		"Zawsze możesz to uruchomić później z Ustawienia → Wgląd w vault i konserwacja → Ponownie skanuj vault.",
-	"firstRun.scanNow": "Skanuj teraz",
-	"firstRun.noThanks": "Nie, dziękuję",
-	"firstRun.autoScanComplete":
-		"Callout Studio przeskanował vault i dodał {{count}} callout(ów).",
-	"firstRun.scanning": "Skanowanie",
-	"firstRun.autoScanFailed":
-		"Callout Studio nie mógł przeskanować Twojego vaulta. Możesz spróbować ponownie z Ustawienia → Wgląd w vault i konserwacja → Ponownie skanuj vault.",
-	"firstRun.scanFailed":
-		"Skanowanie nie zostało ukończone. Możesz spróbować ponownie z Ustawienia → Wgląd w vault i konserwacja → Ponownie skanuj vault.",
 
 	"welcome.tooltip": "O Callout Studio",
 	"welcome.title": "Witamy w Callout Studio!",
@@ -318,6 +299,9 @@ export const pl: Record<string, string> = {
 	"editor.foldClosed": "Domyślnie zamknięty",
 	"editor.cancel": "Anuluj",
 	"editor.saveChanges": "Zapisz zmiany",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Utwórz callout",
 	"editor.nameRequired":
 		"Przed utworzeniem callout wymagana jest nazwa wyświetlana.",
@@ -745,9 +729,6 @@ export const pl: Record<string, string> = {
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Nagłówek",
 	"vaultStats.roleInline": "Śródtekstowy",
-	"vaultStats.defineUndefined": "Zdefiniuj {{count}} brakujących",
-	"vaultStats.defineRunning": "Skanowanie",
-	"vaultStats.defineDone": "Dodano {{count}} typów callout.",
 	"vaultStats.close": "Zamknij",
 
 	"import.title": "Problemy z importem",
@@ -983,4 +964,6 @@ export const pl: Record<string, string> = {
 	"quickInsert.readingView": "Przełącz się na tryb źródłowy lub podgląd na żywo, aby wstawić callout.",
 	"quickInsert.noCursorHint": "W tej notatce nie ma kursora, więc nie ma gdzie wstawić.",
 	"quickInsert.noCursor": "Umieść kursor w notatce w miejscu, w którym chcesz wstawić callout, a następnie spróbuj ponownie.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

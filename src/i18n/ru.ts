@@ -16,35 +16,16 @@ export const ru: Record<string, string> = {
 
 	"settings.fallbackTag": "По умолчанию",
 	"settings.fallbackTagAuto": "Авт. по умолчанию",
-	"settings.autoDiscover": "Автоматически находить каллауты в хранилище",
-	"settings.autoDiscoverDesc":
-		"Распознаёт типы каллаутов, написанные в заметках, и автоматически добавляет их в список. Отключение этой опции не затрагивает уже имеющиеся каллауты — вы всё ещё можете добавить их вручную или воспользоваться пунктом «Пересканировать хранилище» ниже.",
-	"settings.rescanVault": "Пересканировать хранилище",
-	"settings.rescanVaultDesc":
-		"Ищет нераспознанные ID callout в заметках и добавляет их как резервные строки.",
-	"settings.rescanVaultHintAction": "Сканировать сейчас",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Сканирование завершено: добавлено {{count}} новых callout.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(возврат к умолчанию)",
 	"replaceModal.titleDelete": "Удалить callout",
 	"replaceModal.titleReplace": "Заменить в хранилище",
-
-	"firstRun.title": "Найти существующие callout в хранилище?",
-	"firstRun.body":
-		"Callout Studio может просканировать хранилище, чтобы обнаружить уже используемые callout — они появятся в списке настроек и унаследуют ваш резервный стиль.",
-	"firstRun.heavyVaultNote":
-		"В вашем хранилище {{count}} файлов Markdown — сканирование может занять несколько секунд.",
-	"firstRun.laterHint":
-		"Вы всегда можете сделать это позже: Настройки → Аналитика и обслуживание хранилища → Пересканировать хранилище.",
-	"firstRun.scanNow": "Сканировать сейчас",
-	"firstRun.noThanks": "Нет, спасибо",
-	"firstRun.autoScanComplete":
-		"Callout Studio просканировал хранилище и добавил {{count}} callout.",
-	"firstRun.scanning": "Сканирование",
-	"firstRun.autoScanFailed":
-		"Callout Studio не смог просканировать ваше хранилище. Вы можете попробовать снова: Настройки → Аналитика и обслуживание хранилища → Пересканировать хранилище.",
-	"firstRun.scanFailed":
-		"Сканирование не завершилось. Вы можете попробовать снова: Настройки → Аналитика и обслуживание хранилища → Пересканировать хранилище.",
 
 	"welcome.tooltip": "О Callout Studio",
 	"welcome.title": "Добро пожаловать в Callout Studio!",
@@ -318,6 +299,9 @@ export const ru: Record<string, string> = {
 	"editor.foldClosed": "Закрыт по умолчанию",
 	"editor.cancel": "Отмена",
 	"editor.saveChanges": "Сохранить изменения",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Создать callout",
 	"editor.nameRequired":
 		"Перед созданием callout необходимо указать отображаемое имя.",
@@ -744,9 +728,6 @@ export const ru: Record<string, string> = {
 	"vaultStats.roleBlock": "Блок",
 	"vaultStats.roleHeading": "Заголовок",
 	"vaultStats.roleInline": "Встроенный",
-	"vaultStats.defineUndefined": "Определить {{count}} отсутствующих",
-	"vaultStats.defineRunning": "Сканирование",
-	"vaultStats.defineDone": "Добавлено {{count}} типов callout.",
 	"vaultStats.close": "Закрыть",
 
 	"import.title": "Проблемы импорта",
@@ -977,4 +958,6 @@ export const ru: Record<string, string> = {
 	"quickInsert.readingView": "Переключитесь в режим источника или в живой предпросмотр, чтобы вставить callout.",
 	"quickInsert.noCursorHint": "В этой заметке нет курсора, поэтому вставлять некуда.",
 	"quickInsert.noCursor": "Поместите курсор в заметке в том месте, куда хотите вставить callout, затем попробуйте снова.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

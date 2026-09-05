@@ -82,10 +82,6 @@ the UI. None of these are user-actionable, so none raise a `Notice`.
 
 | File | Function | Fires when |
 | --- | --- | --- |
-| [CalloutDiscovery.ts](../src/manager/CalloutDiscovery.ts) | `pruneUnused()` | the usage-count scan throws (a vault read failure mid-scan) — logs the caught exception |
-| [CalloutDiscovery.ts](../src/manager/CalloutDiscovery.ts) | `pruneUnused()` | it actually removes ≥1 unused fallback row — logs the removed count |
-| [CalloutDiscovery.ts](../src/manager/CalloutDiscovery.ts) | `scanFileNow()` | the 300ms-debounced per-file incremental scan throws for one file — logs `file.path` and the caught exception |
-| [CalloutDiscovery.ts](../src/manager/CalloutDiscovery.ts) | `scanFileNow()` | it auto-adds ≥1 unknown id as a fallback row — logs `file.path` and the new ids |
 | [CalloutRegistry.ts](../src/manager/CalloutRegistry.ts) | `load()` → `stripMetadataFromIds()` | it actually removed/renamed a legacy piped id — logs `{removed, renamed}` |
 | [CalloutRegistry.ts](../src/manager/CalloutRegistry.ts) | `load()` → `reconcileIdCollisions()` | it actually merged ≥1 colliding row — logs the merged ids |
 | [CustomCommandManager.ts](../src/editor/CustomCommandManager.ts) | `syncAll()` | it drops ≥1 structurally malformed stored command — logs the dropped count |
@@ -99,23 +95,13 @@ startup housekeeping) but escalates to a real `Notice` on every later sweep,
 once dropping it would be news rather than routine. See
 [Callout registry § load-time migrations](05-callout-registry.md#load-time-migrations).
 
-### First-run vault scan — `console.error` + `Notice`
+### Manual discovery and conflict recovery
 
-Covered in depth in
-[Plugin lifecycle § step 31](03-plugin-lifecycle.md#step-31-welcome-then-first-run-discovery-then-incremental-watchers--in-that-exact-order-deferred-to-layout-ready)
-and
-[Vault discovery § first-run vault scan](10-vault-discovery.md#first-run-vault-scan).
-These are the only two `console.error` calls in the codebase, and the only
-two call sites this chapter's audit changed: both used to fail with zero
-trace a user could see, even though `firstRunCompleted` is still marked done
-either way (no automatic retry). Both now pair the existing `console.error`
-with a `Notice` pointing at the real remedy (Settings → Vault insights &
-maintenance → Re-scan vault).
-
-| File | Function | Fires when | Notice shown |
-| --- | --- | --- | --- |
-| [firstRunDiscovery.ts](../src/manager/firstRunDiscovery.ts) | `runFirstRunDiscovery()` | the silent small-vault auto-scan throws | `firstRun.autoScanFailed` |
-| [FirstRunScanModal.ts](../src/utils/FirstRunScanModal.ts) | `handleScan()` | the user clicks "Scan now" on the large-vault modal and the scan throws | `firstRun.scanFailed` |
+The single discovery button reports errors through `console.error` and
+`manualDiscovery.failed`, and only reports added rows after a successful save.
+External adoption announces a recovery backup using `notice.settingsBackupSaved`;
+a failed required backup uses `notice.settingsBackupFailed` and defers adoption.
+There are no automatic scan or prune logs.
 
 ### Icon pack and webfont pipeline — `console.warn`
 
@@ -191,7 +177,7 @@ audit behind this chapter found only two sites that were actually
 misclassified (both fixed above). A logger module would mainly buy two
 things: de-duplicating the prefix string, and one place to gate
 `console.debug` behind a settings flag so the two highest-frequency traces
-(`CalloutDiscovery.ts`'s `pruneUnused()`/`scanFileNow()` success logs, which
+(manual discovery diagnostics)`/`scanFileNow()` success logs, which
 can fire on nearly every callout a user types) don't spam anyone who opens
 devtools for an unrelated reason. That is a real but narrow win, not worth a
 new abstraction layer at this scale — and since there is no dev/production

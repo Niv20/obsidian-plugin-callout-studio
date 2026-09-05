@@ -206,11 +206,9 @@ Before considering a registry-touching change done, verify:
 
 - [ ] Does this mutation need to be inside `registry.batch()` to avoid
       firing `onChange` multiple times for one logical operation?
-- [ ] Does this need to interact with the **rediscovery suppression**
-      window (deleting/replacing a callout — see
-      [Vault discovery](10-vault-discovery.md#rediscovery-suppression--the-delete-race))?
-- [ ] Does this need to prune-protect against `customCommands` referencing
-      the row (see `CalloutDiscovery.pruneUnused`)?
+- [ ] Does this preserve manual discovery's additive transaction and the
+      persisted definitions on another device?
+- [ ] Does this preserve commands whose targets may be temporarily absent?
 - [ ] Does a rename need `customCommands.migrateCalloutId()` called
       **inside** the same batch, before the batched `onChange` fires?
 - [ ] Does the icon cache need `cleanupUnusedIconSvgs()` — and if so, is the

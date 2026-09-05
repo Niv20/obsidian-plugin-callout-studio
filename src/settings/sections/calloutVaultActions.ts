@@ -44,7 +44,6 @@ const convertVaultCalloutsToPlainText = (
 	// carry no text besides the token, so it is all they have left.
 	convertCalloutsToPlainTextInVault(app, ids, def.displayName);
 
-
 export async function handleCalloutDelete(
 	ctx: SettingsSectionContext,
 	def: CalloutDefinition,
@@ -83,7 +82,6 @@ export async function handleCalloutDelete(
 	// CodeMirror buffer that has not yet caught up with the conversion above —
 	// it would come back as an uncustomized fallback row, reading as "delete
 	// only reset my callout". Every id form goes in, not just the primary one.
-	ctx.plugin.suppressCalloutRediscovery(allIds);
 	ctx.plugin.registry.remove(def.id);
 	ctx.plugin.registry.cleanupUnusedIconSvgs();
 	// Awaited, and not just for tidiness: cleanupUnusedIconSvgs does not notify,

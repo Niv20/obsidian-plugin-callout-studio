@@ -32,7 +32,6 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { filterUsableCallouts } from "../src/utils/usableCallouts";
 import { PREVIEW_PLACEHOLDER_ID } from "../src/constants";
 import type { CalloutDefinition, PluginData } from "../src/types";
 
@@ -77,7 +76,7 @@ const offerableFromMap = (
 	registry: CalloutRegistry,
 	unused: Set<string>,
 ): string[] =>
-	ids(filterUsableCallouts(registry.getAll(), (id) => unused.has(id)));
+	ids(registry.getAll());
 
 /** What the public API offers: the two list views unioned, then filtered. */
 const offerableFromLists = (
@@ -85,10 +84,7 @@ const offerableFromLists = (
 	unused: Set<string>,
 ): string[] =>
 	ids(
-		filterUsableCallouts(
-			[...registry.getBuiltIn(), ...registry.getUserDefined()],
-			(id) => unused.has(id),
-		),
+		[...registry.getBuiltIn(), ...registry.getUserDefined()],
 	);
 
 /* -------------------------------------------------------------------------- */
@@ -106,11 +102,11 @@ describe("a discovered row the scan found written nowhere", () => {
 		assert.ok(settingsUserList(registry).includes("stale"));
 	});
 
-	it("is not offered anywhere the user picks a callout", () => {
-		assert.strictEqual(offerableFromMap(registry, unused).includes("stale"), false);
+	it("remains offered until the user removes it", () => {
+		assert.strictEqual(offerableFromMap(registry, unused).includes("stale"), true);
 		assert.strictEqual(
 			offerableFromLists(registry, unused).includes("stale"),
-			false,
+			true,
 		);
 	});
 });

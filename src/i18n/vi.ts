@@ -15,35 +15,16 @@ export const vi: Record<string, string> = {
 
 	"settings.fallbackTag": "Mặc định",
 	"settings.fallbackTagAuto": "Mặc định tự động",
-	"settings.autoDiscover": "Tự động phát hiện callout trong kho của bạn",
-	"settings.autoDiscoverDesc":
-		"Nhận biết các loại callout được viết trong ghi chú của bạn và tự động thêm chúng vào danh sách. Tắt tùy chọn này không ảnh hưởng đến các callout bạn đã có — bạn vẫn có thể tự thêm chúng, hoặc dùng Quét lại kho bên dưới.",
-	"settings.rescanVault": "Quét lại vault",
-	"settings.rescanVaultDesc":
-		"Tìm các ID callout chưa được nhận dạng trong ghi chú và thêm chúng như các hàng dự phòng.",
-	"settings.rescanVaultHintAction": "Quét ngay",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Quét lại hoàn tất: đã thêm {{count}} callout mới.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(quay lại mặc định)",
 	"replaceModal.titleDelete": "Xóa callout",
 	"replaceModal.titleReplace": "Thay thế trong vault",
-
-	"firstRun.title": "Tìm callouts hiện có trong vault?",
-	"firstRun.body":
-		"Callout Studio có thể quét vault của bạn để khám phá các callout bạn đang sử dụng, để chúng xuất hiện trong danh sách cài đặt và áp dụng kiểu dự phòng của bạn.",
-	"firstRun.heavyVaultNote":
-		"Vault của bạn có {{count}} tệp Markdown — quá trình quét có thể mất vài giây.",
-	"firstRun.laterHint":
-		"Bạn luôn có thể chạy điều này sau từ Cài đặt → Thông tin & bảo trì vault → Quét lại vault.",
-	"firstRun.scanNow": "Quét ngay",
-	"firstRun.noThanks": "Không, cảm ơn",
-	"firstRun.autoScanComplete":
-		"Callout Studio đã quét vault và thêm {{count}} callout.",
-	"firstRun.scanning": "Đang quét",
-	"firstRun.autoScanFailed":
-		"Callout Studio không thể quét vault của bạn. Bạn có thể thử lại từ Cài đặt → Thông tin & bảo trì vault → Quét lại vault.",
-	"firstRun.scanFailed":
-		"Quá trình quét chưa hoàn tất. Bạn có thể thử lại từ Cài đặt → Thông tin & bảo trì vault → Quét lại vault.",
 
 	"welcome.tooltip": "Giới thiệu về Callout Studio",
 	"welcome.title": "Chào mừng đến với Callout Studio!",
@@ -318,6 +299,9 @@ export const vi: Record<string, string> = {
 	"editor.foldClosed": "Mặc định đóng",
 	"editor.cancel": "Hủy",
 	"editor.saveChanges": "Lưu thay đổi",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Tạo callout",
 	"editor.nameRequired": "Cần có tên hiển thị trước khi tạo callout.",
 	"editor.noChangesToSave": "Không có thay đổi nào được thực hiện.",
@@ -753,9 +737,6 @@ export const vi: Record<string, string> = {
 	"vaultStats.roleBlock": "Khối",
 	"vaultStats.roleHeading": "Tiêu đề",
 	"vaultStats.roleInline": "Nội dòng",
-	"vaultStats.defineUndefined": "Xác định {{count}} còn thiếu",
-	"vaultStats.defineRunning": "Đang quét",
-	"vaultStats.defineDone": "Đã thêm {{count}} loại callout.",
 	"vaultStats.close": "Đóng",
 
 	"import.title": "Vấn đề nhập",
@@ -984,4 +965,6 @@ export const vi: Record<string, string> = {
 	"quickInsert.readingView": "Chuyển sang chế độ nguồn hoặc Xem trước trực tiếp để chèn callout.",
 	"quickInsert.noCursorHint": "Không có con trỏ nào trong ghi chú này, nên không có chỗ để chèn.",
 	"quickInsert.noCursor": "Đặt con trỏ trong ghi chú ở vị trí bạn muốn chèn callout, sau đó thử lại.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

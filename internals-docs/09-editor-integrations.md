@@ -211,13 +211,14 @@ syncAll(): void
 
 `syncAll()` **re-derives the entire desired command set from scratch** every
 time it runs, rather than reacting incrementally to what changed. This single
-design choice is what makes delete, auto-prune, edit, import, startup, and
+design choice is what makes delete, manual discovery, edit, import, startup, and
 plugin re-enable all fall out of the *same* code path with no special-casing:
 
 1. Sanitize the stored list (`sanitizeCustomCommands` — drops structurally
    malformed entries).
-2. Drop any command whose `calloutId` no longer exists in the registry.
-3. Compute the desired Obsidian command name for every survivor
+2. Keep valid commands whose `calloutId` is temporarily absent in saved settings,
+   but pause their registration until the target is restored.
+3. Compute the desired Obsidian command name for every available target
    (`describeCommand`, built from the callout's **current** display name).
 4. Unregister anything currently registered that's no longer desired.
 5. Register (or **re**-register) anything whose desired name differs from

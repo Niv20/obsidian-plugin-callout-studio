@@ -229,6 +229,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-welcome", // obsidian:// URI action
 		"callout-studio-context-menu", // Menu section id
 		"callout-studio-export", // export filename stem
+		"callout-studio-upgrade-recovery", // recovery archive format identifier
 	]);
 
 	/**
@@ -240,12 +241,12 @@ describe("class names in styles.css and src/ agree", () => {
 	 * line here.
 	 */
 	const EMITTED_WITHOUT_RULES = new Set([
+		"cs-discover-callouts-btn", // stable action hook; neutral-button and heading rules supply its styling
 		"callout-studio-credit-license",
 		"callout-studio-delete-modal",
 		"callout-studio-delete-modal-hint",
 		"callout-studio-delete-modal-warning",
-		"callout-studio-firstrun-heavy-note",
-		"callout-studio-firstrun-later-hint",
+
 		"callout-studio-footer-tagline",
 		"callout-studio-more-btn",
 		"callout-studio-replace-modal",

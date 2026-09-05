@@ -111,7 +111,7 @@ that feels like it "should just work."
 > — most visibly on a disable/re-enable cycle, where a leaked listener from
 > the *previous* instance keeps firing alongside the new one.
 
-`CalloutDiscovery.destroy()`, `CSSInjector.destroy()`,
+`ManualCalloutDiscovery.destroy()`, `CSSInjector.destroy()`,
 `OutlineDecorator.destroy()`, and the context-menu's
 `monkey-around` uninstall (via `plugin.register(uninstallPatch)`) are the
 concrete examples to follow for anything that isn't a plain Obsidian event
@@ -266,11 +266,9 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
 
 ## Mobile-specific behaviour
 
-- **The prune-scan debounce is 10 seconds on mobile vs. 1.5 seconds on
-  desktop** (`CalloutDiscovery.PRUNE_DELAY_MS`) — a whole-vault synchronous
-  scan reads as the editor freezing on a phone with thousands of notes.
-  Don't shorten this without re-reading the reasoning in
-  [Vault discovery](10-vault-discovery.md#the-debounce-delay-is-tuned-for-mobile-not-just-feels-responsive).
+- **Discovery is manual and additive on mobile and desktop.** Do not add
+  startup scans, discovery timers, open-note triggers or automatic pruning.
+  Mobile foreground checks may adopt saved settings but must not discover types.
 - **The Live Preview mousedown-freeze window is much wider on mobile** —
   core arms the same flag on every caret move with a 700ms debounce, not
   just on an actual mouse hold. See

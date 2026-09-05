@@ -13,34 +13,16 @@ export const nb: Record<string, string> = {
 	"autocomplete.createNew": 'Opprett ny callout: "{{name}}"',
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
-	"settings.autoDiscover": "Oppdag automatisk callouts i hvelvet ditt",
-	"settings.autoDiscoverDesc":
-		"Legger merke til callout-typer skrevet i notatene dine og legger dem automatisk til i listen. Å slå dette av lar callouts du allerede har være urørt — du kan fortsatt legge dem til selv, eller bruke Skann hvelvet på nytt nedenfor.",
-	"settings.rescanVault": "Skann vault på nytt",
-	"settings.rescanVaultDesc":
-		"Finner ukjente callout-ID-er i notater og legger dem til som reserverader.",
-	"settings.rescanVaultHintAction": "Skann nå",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Ny skanning ferdig: {{count}} ny(e) callout(er) lagt til.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(faller tilbake til standard)",
 	"replaceModal.titleDelete": "Slett callout",
 	"replaceModal.titleReplace": "Erstatt i vault",
-	"firstRun.title": "Finn eksisterende callouts i valvet?",
-	"firstRun.body":
-		"Callout Studio kan skanne valvet ditt for å oppdage callouts du allerede bruker, slik at de vises i innstillingslisten og tar i bruk reservestilen din.",
-	"firstRun.heavyVaultNote":
-		"Valvet ditt har {{count}} Markdown-filer — skanningen kan ta noen sekunder.",
-	"firstRun.laterHint":
-		"Du kan alltid kjøre dette senere fra Innstillinger → Vault-innsikt og vedlikehold → Skann vault på nytt.",
-	"firstRun.scanNow": "Skann nå",
-	"firstRun.noThanks": "Nei takk",
-	"firstRun.autoScanComplete":
-		"Callout Studio skannet valvet ditt og la til {{count}} callout(er).",
-	"firstRun.scanning": "Skanner",
-	"firstRun.autoScanFailed":
-		"Callout Studio kunne ikke skanne hvelvet ditt. Du kan prøve igjen fra Innstillinger → Vault-innsikt og vedlikehold → Skann vault på nytt.",
-	"firstRun.scanFailed":
-		"Skanningen ble ikke fullført. Du kan prøve igjen fra Innstillinger → Vault-innsikt og vedlikehold → Skann vault på nytt.",
 
 	"welcome.tooltip": "Om Callout Studio",
 	"welcome.title": "Velkommen til Callout Studio!",
@@ -304,6 +286,9 @@ export const nb: Record<string, string> = {
 	"editor.foldClosed": "Lukket som standard",
 	"editor.cancel": "Avbryt",
 	"editor.saveChanges": "Lagre endringer",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Opprett callout",
 	"editor.nameRequired":
 		"Et visningsnavn er påkrevd før du oppretter en callout.",
@@ -726,9 +711,6 @@ export const nb: Record<string, string> = {
 	"vaultStats.roleBlock": "Blokk",
 	"vaultStats.roleHeading": "Overskrift",
 	"vaultStats.roleInline": "Inline",
-	"vaultStats.defineUndefined": "Definer {{count}} manglende",
-	"vaultStats.defineRunning": "Skanner",
-	"vaultStats.defineDone": "La til {{count}} callout-typer.",
 	"vaultStats.close": "Lukk",
 	"import.title": "Importproblemer",
 	"import.reportLeadIn":
@@ -951,4 +933,6 @@ export const nb: Record<string, string> = {
 	"quickInsert.readingView": "Bytt til kildemodus eller Live Preview for å sette inn en callout.",
 	"quickInsert.noCursorHint": "Det finnes ingen markør i dette notatet, så det er ingen steder å sette inn.",
 	"quickInsert.noCursor": "Plasser markøren i notatet der du vil sette inn callouten, og prøv igjen.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

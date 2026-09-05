@@ -69,8 +69,6 @@ const FIELD_KIND: Record<keyof PluginSettings, "value" | "list"> = {
 	headingCallouts: "value",
 	inlineCallouts: "value",
 	welcomeSeen: "value",
-	autoDiscoverCallouts: "value",
-	ignoredCalloutIds: "list",
 	fallbackCalloutId: "value",
 	language: "value",
 	customPalettes: "list",
@@ -135,7 +133,7 @@ const LEAVES = leaves(DEFAULT_SETTINGS);
  * to decide whether it also needs a hand-written test below.
  */
 const EXPECTED_LEAVES: string[] = [
-	"autoDiscoverCallouts",
+
 	"autocomplete.enabled",
 	"contextMenu.enabled",
 	"fallbackCalloutId",

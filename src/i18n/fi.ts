@@ -12,34 +12,16 @@ export const fi: Record<string, string> = {
 	"autocomplete.createNew": 'Luo uusi callout: "{{name}}"',
 	"settings.fallbackTag": "Oletus",
 	"settings.fallbackTagAuto": "Automaattinen oletus",
-	"settings.autoDiscover": "Havaitse callout-tyypit automaattisesti holvistasi",
-	"settings.autoDiscoverDesc":
-		"Huomaa muistiinpanoihisi kirjoitetut callout-tyypit ja lisää ne automaattisesti listalle. Tämän poistaminen käytöstä ei koske olemassa olevia callouteja — voit silti lisätä ne itse tai käyttää alla olevaa Skannaa holvi uudelleen -toimintoa.",
-	"settings.rescanVault": "Skannaa holvi uudelleen",
-	"settings.rescanVaultDesc":
-		"Etsii muistiinpanoista tunnistamattomia callout-tunnuksia ja lisää ne varariveinä.",
-	"settings.rescanVaultHintAction": "Skannaa nyt",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Uudelleenskannaus valmis: {{count}} uutta callouttia lisätty.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(palaa oletukseen)",
 	"replaceModal.titleDelete": "Poista callout",
 	"replaceModal.titleReplace": "Korvaa holvissa",
-	"firstRun.title": "Etsitkö olemassa olevia callouteja holvista?",
-	"firstRun.body":
-		"Callout Studio voi skannata holvisi löytääkseen jo käyttämäsi calloutit, jotta ne näkyvät asetusluettelossasi ja omaksuvat varatyylisi.",
-	"firstRun.heavyVaultNote":
-		"Holvissasi on {{count}} Markdown-tiedostoa — skannaus voi kestää muutaman sekunnin.",
-	"firstRun.laterHint":
-		"Voit aina suorittaa tämän myöhemmin kohdasta Asetukset → Holvin näkemykset ja huolto → Skannaa holvi uudelleen.",
-	"firstRun.scanNow": "Skannaa nyt",
-	"firstRun.noThanks": "Ei kiitos",
-	"firstRun.autoScanComplete":
-		"Callout Studio skannasi holvisi ja lisäsi {{count}} callouttia.",
-	"firstRun.scanning": "Skannataan",
-	"firstRun.autoScanFailed":
-		"Callout Studio ei pystynyt skannaamaan holviasi. Voit yrittää uudelleen kohdasta Asetukset → Holvin näkemykset ja huolto → Skannaa holvi uudelleen.",
-	"firstRun.scanFailed":
-		"Skannaus ei valmistunut. Voit yrittää uudelleen kohdasta Asetukset → Holvin näkemykset ja huolto → Skannaa holvi uudelleen.",
 
 	"welcome.tooltip": "Tietoja Callout Studiosta",
 	"welcome.title": "Tervetuloa Callout Studioon!",
@@ -308,6 +290,9 @@ export const fi: Record<string, string> = {
 	"editor.foldClosed": "Kiinni oletuksena",
 	"editor.cancel": "Peruuta",
 	"editor.saveChanges": "Tallenna muutokset",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Luo callout",
 	"editor.nameRequired": "Näyttönimi vaaditaan ennen calloutin luomista.",
 	"editor.noChangesToSave": "Muutoksia ei tehty.",
@@ -733,9 +718,6 @@ export const fi: Record<string, string> = {
 	"vaultStats.roleBlock": "Lohko",
 	"vaultStats.roleHeading": "Otsikko",
 	"vaultStats.roleInline": "Rivin sisäinen",
-	"vaultStats.defineUndefined": "Määritä {{count}} puuttuvaa",
-	"vaultStats.defineRunning": "Skannataan",
-	"vaultStats.defineDone": "{{count}} callout-tyyppiä lisätty.",
 	"vaultStats.close": "Sulje",
 	"import.title": "Tuontiongelmat",
 	"import.reportLeadIn":
@@ -963,4 +945,6 @@ export const fi: Record<string, string> = {
 	"quickInsert.readingView": "Vaihda lähdetilaan tai Live Previewiin lisätäksesi calloutin.",
 	"quickInsert.noCursorHint": "Tässä muistiinpanossa ei ole kohdistinta, joten lisäämiselle ei ole paikkaa.",
 	"quickInsert.noCursor": "Aseta kohdistin muistiinpanoon kohtaan, johon haluat lisätä calloutin, ja yritä uudelleen.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

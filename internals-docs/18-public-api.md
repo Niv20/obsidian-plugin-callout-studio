@@ -98,11 +98,8 @@ Three deliberate steps, each closing a real gap:
    placeholder. Together they cover every source: built-ins are seeded
    unconditionally on every load, so all 13 of Obsidian's own types appear
    whether or not the user has ever touched them.
-2. **Unused auto-discovered rows are dropped** via the exact same predicate
-   the autocomplete dropdown uses (`filterUsableCallouts`) — otherwise a
-   consumer building, say, one command per callout would offer commands for
-   ids the user deleted from their notes hours ago. See
-   [Vault discovery](10-vault-discovery.md#isknownzerousagefallback).
+2. **All saved manual results are included**, regardless of note usage. There
+   is no usage-based discovery filter or background pruning.
 3. **Every row is re-resolved through `registry.getReal(id)`** — this is
    the step that makes the list answer with **saved** state, not
    in-progress editor state. The settings-list view *deliberately* lets a
@@ -118,10 +115,8 @@ Three deliberate steps, each closing a real gap:
 
 - **Every built-in**, customized or not.
 - **Everything the user created themselves.**
-- **Callouts injected by a theme or another plugin** (`source: "theme"` /
-  `"plugin"`).
-- **Discovered callouts, but only if customized or still genuinely used
-  somewhere in the vault** — see point 2 above.
+- **Manually discovered theme types and saved plugin-provided definitions.**
+- **All manually discovered callouts**, including uncustomized or unused types.
 - **Callouts handed to the theme (`externalStyle: true`) — deliberately
   included**, even though Callout Studio itself no longer styles them: the
   id is still perfectly valid markdown to write, so hiding it from the API
@@ -167,7 +162,7 @@ A thin pass-through to the registry's own change list (see
 [Callout registry § onChange carries no payload](05-callout-registry.md#onchange-carries-no-payload)).
 `API.md` is explicit that consumers must **not** treat this as a precise
 diff: "A single user action can fire it more than once — editing the
-callout that other auto-discovered callouts mirror emits one event for the
+callout that other manually discovered callouts mirror emits one event for the
 edit and another for the rows it restyled — and most events change nothing
 you care about, since a colour tweak fires it just as a rename does."
 Consumers wanting to skip expensive rebuilds are told to diff the resolved

@@ -13,34 +13,16 @@ export const bg: Record<string, string> = {
 	"autocomplete.createNew": 'Създаване на нов callout: "{{name}}"',
 	"settings.fallbackTag": "По подразбиране",
 	"settings.fallbackTagAuto": "Авт. по подразбиране",
-	"settings.autoDiscover": "Автоматично откриване на извиквания във вашето хранилище",
-	"settings.autoDiscoverDesc":
-		"Забелязва типовете извиквания, написани в бележките ви, и ги добавя автоматично в списъка. Изключването оставя вече наличните извиквания непроменени — можете да ги добавите сами или да използвате „Повторно сканиране на хранилището“ по-долу.",
-	"settings.rescanVault": "Повторно сканиране на хранилището",
-	"settings.rescanVaultDesc":
-		"Търси непознати ID-та на callout в бележките и ги добавя като резервни редове.",
-	"settings.rescanVaultHintAction": "Сканирай сега",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Повторното сканиране завърши: добавени са {{count}} нови callout(а).",
 	"replaceModal.deleteWithoutReplaceSuffix": "(връща се към стандартното)",
 	"replaceModal.titleDelete": "Изтриване на callout",
 	"replaceModal.titleReplace": "Замяна в хранилището",
-	"firstRun.title": "Намиране на съществуващи callout-и в хранилището?",
-	"firstRun.body":
-		"Callout Studio може да сканира хранилището ви, за да открие callout-и, които вече използвате, така че да се показват в списъка с настройки и да приемат вашия резервен стил.",
-	"firstRun.heavyVaultNote":
-		"Хранилището ви има {{count}} Markdown файла — сканирането може да отнеме няколко секунди.",
-	"firstRun.laterHint":
-		"Можете винаги да го стартирате по-късно от Настройки → Прегледи и поддръжка на хранилището → Повторно сканиране.",
-	"firstRun.scanNow": "Сканирай сега",
-	"firstRun.noThanks": "Не, благодаря",
-	"firstRun.autoScanComplete":
-		"Callout Studio сканира хранилището ви и добави {{count}} callout(а).",
-	"firstRun.scanning": "Сканиране",
-	"firstRun.autoScanFailed":
-		"Callout Studio не успя да сканира хранилището ви. Можете да опитате отново от Настройки → Прегледи и поддръжка на хранилището → Повторно сканиране.",
-	"firstRun.scanFailed":
-		"Сканирането не завърши. Можете да опитате отново от Настройки → Прегледи и поддръжка на хранилището → Повторно сканиране.",
 
 	"welcome.tooltip": "За Callout Studio",
 	"welcome.title": "Добре дошли в Callout Studio!",
@@ -301,6 +283,9 @@ export const bg: Record<string, string> = {
 	"editor.foldClosed": "Затворен по подразбиране",
 	"editor.cancel": "Отказ",
 	"editor.saveChanges": "Запазване на промените",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Създаване на callout",
 	"editor.nameRequired":
 		"Необходимо е показвано име преди създаването на callout.",
@@ -725,9 +710,6 @@ export const bg: Record<string, string> = {
 	"vaultStats.roleBlock": "Блок",
 	"vaultStats.roleHeading": "Заглавие",
 	"vaultStats.roleInline": "Вграден в текста",
-	"vaultStats.defineUndefined": "Дефиниране на {{count}} липсващи",
-	"vaultStats.defineRunning": "Сканиране",
-	"vaultStats.defineDone": "Добавени бяха {{count}} типа callout.",
 	"vaultStats.close": "Затваряне",
 	"import.title": "Проблеми с импортирането",
 	"import.reportLeadIn":
@@ -963,4 +945,6 @@ export const bg: Record<string, string> = {
 	"quickInsert.readingView": "Превключете към режим на изходен код или Live Preview, за да вмъкнете callout.",
 	"quickInsert.noCursorHint": "В тази бележка няма курсор, затова няма къде да се вмъкне.",
 	"quickInsert.noCursor": "Поставете курсора в бележката там, където искате да вмъкнете callout, след което опитайте отново.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

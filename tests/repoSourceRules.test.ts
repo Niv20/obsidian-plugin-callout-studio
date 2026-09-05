@@ -744,7 +744,7 @@ describe("no new oversized files", () => {
 		// Everything movable already moved — settings/modalAutofocus.ts owns the
 		// focus and the scroll hold whole — and what is left is the one thing
 		// only this class can answer: whether this window is creating a callout.
-		"src/settings/CalloutEditor.ts": 2335,
+		"src/settings/CalloutEditor.ts": 2326,
 		// Lowered repeatedly, per this ratchet's own ask: `bgAlphaFor`'s solve moved
 		// to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the many
 		// that render the callout identically; `generateFallbackCSS` to
@@ -793,7 +793,7 @@ describe("no new oversized files", () => {
 		// everything else. Most of that raise was paid straight back by moving
 		// CURRENT_DATA_VERSION to constants.ts, where the same check can read
 		// it without importing the class that imports the check.
-		"src/manager/CalloutRegistry.ts": 1958,
+		"src/manager/CalloutRegistry.ts": 1892,
 		// Raised from 1184 for the same set, rejected in `validateIdString`.
 		// Same reasoning: "which id strings are valid on import" is the one
 		// thing this file is for, so the rule cannot move out of it without
@@ -818,7 +818,7 @@ describe("no new oversized files", () => {
 		// quickInsertMessages, and wrapSelectionInCallout in editor/. What is
 		// left is one modal's lifecycle, its arrow-key walk and its list, and any
 		// further cut would be by line count rather than by responsibility.
-		"src/settings/QuickInsertModal.ts": 306,
+
 		"src/editor/calloutTokens.ts": 840,
 		// The one entry that is allowed to move, and only for this reason: a
 		// member of `PluginSettings` has no sibling module to be moved into, so
@@ -847,7 +847,7 @@ describe("no new oversized files", () => {
 		// deleted every `[!mcc]` in their vault from a row they never wanted.
 		// The field has to be declared here; everything it means lives in
 		// manager/ignoredCallouts.ts.
-		"src/types.ts": 841,
+		"src/types.ts": 825,
 		"src/editor/livepreview/widgets.ts": 793,
 		"src/reading/calloutPostProcessor.ts": 781,
 		"src/settings/iconpicker/PackPanel.ts": 736,
@@ -863,11 +863,11 @@ describe("no new oversized files", () => {
 		// ranges an expansion must not cut through — moved to
 		// editor/quotePrefix.ts and editor/fenceBlocks.ts.
 		"src/editor/CalloutBlockTools.ts": 577,
-		"src/utils/vaultCalloutScanner.ts": 574,
+		"src/utils/vaultCalloutScanner.ts": 524,
 		// Lowered from 593: the suggestion row's icon and accent go through
 		// manager/theme/calloutListIcon.ts, shared with the three other lists
 		// that draw a callout small.
-		"src/editor/AutoComplete.ts": 576,
+		"src/editor/AutoComplete.ts": 574,
 		// Lowered from 537: everything that has to happen when the active theme
 		// changes — re-derive its callout rows, then re-inject, in that order —
 		// moved to manager/theme/themeProvidedRows.ts, which is where the rule
@@ -890,13 +890,13 @@ describe("no new oversized files", () => {
 		// Lowered again from 501: serializing external reloads and retrying a
 		// deferred one moved to manager/reloadQueue.ts, and the discovery host
 		// stopped being handed a `settings` object it would only hold stale.
-		"src/main.ts": 500,
+		"src/main.ts": 456,
 		"src/icons/renderIcon.ts": 547,
 		// Lowered from 528: `STYLE_DEMO_ID` moved to constants.ts, where the
 		// discovery/import/autocomplete filters that now consult it can reach
 		// it without importing a settings modal.
 		// Lowered from 522: standing a demo callout up and taking it down —
-		// including raising `pruneSuspended` for as long as it is up, which is
+		// including raising `settingsEditOpen` for as long as it is up, which is
 		// what lets a deferred settings reload be released — moved to
 		// settings/previewOwnership.ts, shared with WelcomeModal.
 		"src/settings/GlobalStyleModal.ts": 516,
@@ -917,10 +917,10 @@ describe("no new oversized files", () => {
 		// the `file-open` one, and the mtime memo that keeps it cheap — moved to
 		// manager/discoveryScheduler.ts, and reading the half-typed line under
 		// the cursor to editor/activeTypingIds.ts.
-		"src/manager/CalloutDiscovery.ts": 307,
+
 		"src/editor/contextmenu/resolve.ts": 455,
 		"src/ui/TagInput.ts": 414,
-		"src/settings/editor/CalloutEditorSave.ts": 410,
+		"src/settings/editor/CalloutEditorSave.ts": 368,
 		"src/icons/isolateSvg.ts": 402,
 		"src/icons/packs/materialFont.ts": 398,
 		"src/outline/OutlineDecorator.ts": 382,
@@ -933,19 +933,11 @@ describe("no new oversized files", () => {
 		// artwork importer in manager/css/coreIcon.ts — can reach it.
 		"src/icons/svg.ts": 329,
 		"src/settings/iconpicker/ImagePanel.ts": 354,
-		// Raised for the "Automatically discover callouts in your vault" toggle,
-		// which belongs beside Re-scan vault: this file IS the vault-maintenance
-		// section, and a sibling module for one Setting row would only hide it.
-		// Raised from 329 for the ignored-callout list: one call and its import.
-		// The list itself — a repeated row with its own undo, which is a different
-		// shape from the settings-plus-buttons around it — lives in
-		// settings/sections/IgnoredCalloutsList.ts.
-		"src/settings/sections/DataManagementSection.ts": 332,
 		// Lowered from 345: its row icon goes through
 		// manager/theme/calloutListIcon.ts. Lowered again from 337: the shortcut
 		// chips and the hotkey-pane button — carried identically by both lists
 		// in the window — moved to settings/command/hotkeyRow.ts.
-		"src/settings/CommandBuilderModal.ts": 308,
+		"src/settings/CommandBuilderModal.ts": 303,
 		"src/settings/iconpicker/IconGrid.ts": 343,
 		"src/icons/PackDataStore.ts": 309,
 	};

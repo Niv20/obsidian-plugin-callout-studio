@@ -12,6 +12,22 @@ into one scrollable tab: callout lists → fallback → custom palettes → glob
 settings → autocomplete → context menu → hotkeys → import/export → language →
 reset → credits → footer.
 
+### Manual discovery in the callout-list heading
+
+`calloutListsScaffold.ts` places the single **Discover now** action beside
+**Add new callout** in the **My callout types** heading. Both are siblings of
+the disclosure control, so clicking an action never folds the list. The row and
+its action group wrap against available pane width; full labels, logical margins,
+and 44px minimum button height accommodate narrow panes, mobile, RTL and larger
+text without relying on viewport size.
+
+`manualDiscoveryButton.ts` shares only transient running state per plugin through
+a `WeakMap`. Settings redraws and reopenings reuse that state and remove obsolete
+DOM listeners through `registerDisposer`; repeated or detached-button clicks do
+nothing. The button catches scan failures, restores its label/disabled state, and
+never calls `display()` or focuses a control after completion. Existing registry
+subscriptions refresh rows and counts while preserving paging and scroll.
+
 ### `getSettingDefinitions()` returns `[]` — deliberately, and only for now
 
 ```ts
@@ -113,34 +129,14 @@ Two things it deliberately does not touch: the **Load more** jump
 (`focusFirstRevealed`), which is an intended move, and the user-driven fold,
 which `keepHeadingInPlace` already anchors.
 
-### `display()` also does two side-effecting things before rendering anything
+### Opening settings does not discover callouts
 
-```ts
-scanOpenEditorsForUnknownCallouts(this.app, this.plugin);  // sections/openEditorDiscovery.ts
-this.plugin.schedulePruneUnusedFallbacks(this.unsubscribe === null ? 0 : undefined);
-```
+`display()` builds the settings page and subscribes once per visit. It neither
+scans open editors for unknown types nor schedules pruning. The one **Discover
+now** button lives in the **My callout types** heading; it disables itself while its promise
+is pending, catches failures and reports success only after persistence.
+The statistics modal is read-only and has no second discovery button.
 
-Opening the settings tab **scans every open editor's in-memory buffer** for
-unknown callout ids (not just what's on disk — an unsaved buffer counts) and
-immediately schedules a prune pass. This is exactly the scan that
-`CalloutDiscovery.suppressRediscovery()` exists to protect a just-deleted
-row from — see
-[Vault discovery § rediscovery suppression](10-vault-discovery.md#rediscovery-suppression--the-delete-race).
-
-> [!NOTE]
-> **This sweep is a backstop, not the discovery path.** It reads
-> `getLeavesOfType("markdown")`, and a leaf holds exactly one *visible* note,
-> so it can only ever see as many notes as there are tabs. It used to be the
-> only thing that noticed a callout in an opened-but-unedited note, which is
-> why opening five notes in one tab and then opening settings discovered
-> exactly one callout. `workspace.on("file-open")` is the real trigger now —
-> see [Vault discovery § where events come from](10-vault-discovery.md#where-events-come-from).
-> What this sweep still adds is the **unsaved buffer**: `cachedRead` answers
-> with what is on disk, and this does not.
-
-Once the tab is open it stays live off `registry.onChange` alone
-(`scheduleListRefresh`), so a discovery landing while the tab is on screen
-repaints the list on the next animation frame without a `display()`.
 
 ### `display()` is not only run by someone opening the tab
 
@@ -156,6 +152,11 @@ list back to its first 20 rows. Two things answer that:
   a still-short page would be clamped and lost. It is self-limiting rather than
   stateful: a freshly opened pane is already at 0, so a genuine open restores
   nothing and behaves exactly as it always has.
+
+  `scrollRestore.ts` retries on the next frame only if that initial assignment
+  was clamped. Any intervening scroll, up or down, cancels the retry. A newer
+  capture invalidates the older frame so an obsolete display cannot move a
+  newly opened or redrawn pane back to its previous position.
 
   > [!NOTE]
   > `containerEl` **is** the scroller, on phones as much as anywhere else, so

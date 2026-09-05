@@ -23,6 +23,7 @@ import type { SectionDisclosure } from "./sectionDisclosure";
 import { attachPersistedFold } from "./calloutListsFold";
 import { createStickySection } from "./stickySection";
 import { WelcomeModal } from "../WelcomeModal";
+import { addManualDiscoveryButton } from "./manualDiscoveryButton";
 import type { SettingsSectionContext } from "./types";
 
 /** Everything the painter needs to keep hold of after the build. */
@@ -85,7 +86,7 @@ export function buildCalloutListsScaffold(
 			t("settings.myCalloutTypes"),
 		);
 		const mySetting = my.setting;
-		mySetting.settingEl.addClass("cs-subheader-row");
+		mySetting.settingEl.addClass("cs-subheader-row", "cs-callout-list-heading");
 		// Same divider the "Built-in callouts" section gets below, so the
 		// theme-owned group above reads as visually separate from this one
 		// when that group is on screen. `renderThemeList` toggles it in step
@@ -101,6 +102,7 @@ export function buildCalloutListsScaffold(
 					void onAddNewCallout();
 				}),
 		);
+		addManualDiscoveryButton(ctx, mySetting.controlEl);
 
 		const userListEl = my.wrapEl.createDiv();
 		const userFold = attachPersistedFold(mySetting, userListEl, "user", ctx.plugin);

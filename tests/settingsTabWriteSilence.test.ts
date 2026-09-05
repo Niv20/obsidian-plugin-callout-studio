@@ -31,10 +31,9 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { MarkdownView, Setting } from "obsidian";
-import type { App, EventRef, WorkspaceLeaf } from "obsidian";
+import { Setting } from "obsidian";
+import type { App, EventRef } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { scanOpenEditorsForUnknownCallouts } from "../src/settings/sections/openEditorDiscovery";
 import { attachPersistedFold } from "../src/settings/sections/calloutListsFold";
 import { subscribeSettingsTab } from "../src/settings/sections/tabSubscriptions";
 import type { SettingsTabPlugin } from "../src/settings/sections/types";
@@ -53,134 +52,6 @@ function builtInsOnly(): CalloutRegistry {
 /* -------------------------------------------------------------------------- */
 /* The open-editor sweep                                                      */
 /* -------------------------------------------------------------------------- */
-
-/** A workspace leaf showing a markdown note with `content` in its editor. */
-function markdownLeaf(content: string) {
-	return {
-		view: Object.assign(new MarkdownView(undefined as unknown as WorkspaceLeaf), {
-			editor: { getValue: () => content },
-		}),
-	};
-}
-
-/** A leaf reporting as markdown while showing something that is not. */
-function foreignLeaf(content: string) {
-	return { view: { editor: { getValue: () => content } } };
-}
-
-function sweep(
-	leaves: unknown[],
-	options: { autoDiscover?: boolean; registry?: CalloutRegistry } = {},
-) {
-	const registry = options.registry ?? builtInsOnly();
-	const seen = { saves: 0, refreshes: 0 };
-	const added: string[] = [];
-
-	const app = {
-		workspace: { getLeavesOfType: () => leaves },
-	} as unknown as App;
-
-	const plugin = {
-		registry,
-		settings: { autoDiscoverCallouts: options.autoDiscover ?? true },
-		addUnknownCalloutsAsFallback: (ids: string[]): number => {
-			added.push(...ids);
-			return ids.length;
-		},
-		refreshCallouts: (): void => {
-			seen.refreshes += 1;
-		},
-		saveSettings: (): Promise<void> => {
-			seen.saves += 1;
-			return Promise.resolve();
-		},
-	} as unknown as SettingsTabPlugin;
-
-	scanOpenEditorsForUnknownCallouts(app, plugin);
-	return { added, ...seen };
-}
-
-describe("the open-editor sweep reads the vault and writes nothing", () => {
-	it("mints a row for an id only an open note knows about", () => {
-		const result = sweep([markdownLeaf("> [!zeta] hello\n> body")]);
-
-		assert.deepStrictEqual(result.added, ["zeta"]);
-		assert.strictEqual(
-			result.refreshes,
-			1,
-			"a row it added has to reach the stylesheet",
-		);
-	});
-
-	it("does not save the row it just minted", () => {
-		const result = sweep([markdownLeaf("> [!zeta] hello")]);
-
-		assert.strictEqual(
-			result.saves,
-			0,
-			"opening a settings tab must not write data.json — issue #41",
-		);
-	});
-
-	it("stays silent on the file however many rows it adds", () => {
-		const result = sweep([
-			markdownLeaf("> [!zeta] one"),
-			markdownLeaf("> [!eta] two"),
-			markdownLeaf("> [!theta] three"),
-		]);
-
-		assert.strictEqual(result.added.length, 3);
-		assert.strictEqual(result.saves, 0);
-	});
-
-	it("does nothing at all when automatic discovery is switched off", () => {
-		const result = sweep([markdownLeaf("> [!zeta] hello")], {
-			autoDiscover: false,
-		});
-
-		assert.deepStrictEqual(result.added, []);
-		assert.strictEqual(result.refreshes, 0);
-		assert.strictEqual(result.saves, 0);
-	});
-
-	it("folds the two spellings of one id across leaves into a single row", () => {
-		// Obsidian renders `[!my note]` and `[!my-note]` as the same
-		// `data-callout`, so two open notes describe one callout, not two.
-		const result = sweep([
-			markdownLeaf("> [!my note] spaced"),
-			markdownLeaf("> [!my-note] dashed"),
-		]);
-
-		assert.deepStrictEqual(
-			result.added,
-			["my note"],
-			"the spaced spelling is the one the editor's ID field produces",
-		);
-	});
-
-	it("skips a leaf that is not showing a markdown view", () => {
-		const result = sweep([foreignLeaf("> [!zeta] hello")]);
-
-		assert.deepStrictEqual(result.added, []);
-		assert.strictEqual(result.refreshes, 0);
-		assert.strictEqual(result.saves, 0);
-	});
-
-	it("neither refreshes nor writes when every open note is already known", () => {
-		const result = sweep([markdownLeaf("> [!note] a built-in\n> body")]);
-
-		assert.deepStrictEqual(result.added, []);
-		assert.strictEqual(result.refreshes, 0);
-		assert.strictEqual(result.saves, 0);
-	});
-
-	it("reads an empty editor without reaching the registry", () => {
-		const result = sweep([markdownLeaf("")]);
-
-		assert.deepStrictEqual(result.added, []);
-		assert.strictEqual(result.saves, 0);
-	});
-});
 
 /* -------------------------------------------------------------------------- */
 /* A folded section                                                           */

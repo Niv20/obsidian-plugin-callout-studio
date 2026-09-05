@@ -14,34 +14,16 @@ export const ms: Record<string, string> = {
 	"autocomplete.createNew": 'Cipta callout baharu: "{{name}}"',
 	"settings.fallbackTag": "Lalai",
 	"settings.fallbackTagAuto": "Lalai automatik",
-	"settings.autoDiscover": "Kesan callout secara automatik dalam vault anda",
-	"settings.autoDiscoverDesc":
-		"Mengenal pasti jenis callout yang ditulis dalam nota anda dan menambahkannya ke senarai secara automatik. Mematikan ini membiarkan callout yang sudah anda ada tidak berubah — anda masih boleh menambahkannya sendiri, atau guna Imbas semula vault di bawah.",
-	"settings.rescanVault": "Imbas semula vault",
-	"settings.rescanVaultDesc":
-		"Mencari ID callout yang tidak dikenali dalam nota dan menambahkannya sebagai baris sandaran.",
-	"settings.rescanVaultHintAction": "Imbas sekarang",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Pengimbasan semula selesai: {{count}} callout baharu ditambah.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(kembali ke lalai)",
 	"replaceModal.titleDelete": "Padam callout",
 	"replaceModal.titleReplace": "Ganti dalam vault",
-	"firstRun.title": "Cari callouts sedia ada dalam vault?",
-	"firstRun.body":
-		"Callout Studio boleh mengimbas vault anda untuk menemui callouts yang sudah anda gunakan, supaya ia muncul dalam senarai tetapan dan menggunakan gaya sandaran anda.",
-	"firstRun.heavyVaultNote":
-		"Vault anda mempunyai {{count}} fail Markdown — pengimbasan mungkin mengambil beberapa saat.",
-	"firstRun.laterHint":
-		"Anda sentiasa boleh menjalankannya kemudian dari Tetapan → Wawasan & penyelenggaraan vault → Imbas semula vault.",
-	"firstRun.scanNow": "Imbas sekarang",
-	"firstRun.noThanks": "Tidak, terima kasih",
-	"firstRun.autoScanComplete":
-		"Callout Studio mengimbas vault anda dan menambah {{count}} callout.",
-	"firstRun.scanning": "Mengimbas",
-	"firstRun.autoScanFailed":
-		"Callout Studio tidak dapat mengimbas vault anda. Anda boleh mencuba semula dari Tetapan → Wawasan & penyelenggaraan vault → Imbas semula vault.",
-	"firstRun.scanFailed":
-		"Imbasan tidak selesai. Anda boleh mencuba semula dari Tetapan → Wawasan & penyelenggaraan vault → Imbas semula vault.",
 
 	"welcome.tooltip": "Tentang Callout Studio",
 	"welcome.title": "Selamat datang ke Callout Studio!",
@@ -312,6 +294,9 @@ export const ms: Record<string, string> = {
 	"editor.foldClosed": "Tertutup secara lalai",
 	"editor.cancel": "Batal",
 	"editor.saveChanges": "Simpan perubahan",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Cipta callout",
 	"editor.nameRequired": "Nama paparan diperlukan sebelum mencipta callout.",
 	"editor.noChangesToSave": "Tiada perubahan dibuat.",
@@ -735,9 +720,6 @@ export const ms: Record<string, string> = {
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Tajuk",
 	"vaultStats.roleInline": "Sebaris",
-	"vaultStats.defineUndefined": "Takrifkan {{count}} yang hilang",
-	"vaultStats.defineRunning": "Mengimbas",
-	"vaultStats.defineDone": "{{count}} jenis callout ditambah.",
 	"vaultStats.close": "Tutup",
 	"import.title": "Masalah import",
 	"import.reportLeadIn":
@@ -965,4 +947,6 @@ export const ms: Record<string, string> = {
 	"quickInsert.readingView": "Tukar ke mod sumber atau Pratonton Langsung untuk menyisipkan callout.",
 	"quickInsert.noCursorHint": "Tiada kursor dalam nota ini, jadi tiada tempat untuk menyisipkan.",
 	"quickInsert.noCursor": "Letakkan kursor dalam nota di tempat anda mahu menyisipkan callout, kemudian cuba lagi.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

@@ -37,7 +37,6 @@ import {
 import { freshPaging } from "./sections/calloutListsSignature";
 import { keepScrollAnchored } from "./sections/foldAnchor";
 import { subscribeSettingsTab } from "./sections/tabSubscriptions";
-import { scanOpenEditorsForUnknownCallouts } from "./sections/openEditorDiscovery";
 import type { PagingState } from "./sections/listPaging";
 import type { RowKind } from "./sections/rowOwnership";
 import { renderCalloutRow as renderCalloutRowSection } from "./sections/CalloutRowRenderer";
@@ -110,14 +109,6 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		this.runSectionDisposers();
 		containerEl.empty();
 		containerEl.addClass("callout-studio-settings");
-
-		// Two things below are owed to a *visit*, not a render: `display()`
-		// re-runs for a synced settings file or a locale download, and neither
-		// may stack a listener or skip the prune floor. See internals-docs/15.
-		const visit = this.unsubscribe === null;
-
-		scanOpenEditorsForUnknownCallouts(this.app, this.plugin);
-		this.plugin.schedulePruneUnusedFallbacks(visit ? 0 : undefined);
 
 		this.unsubscribe ??= subscribeSettingsTab(
 			this.app,

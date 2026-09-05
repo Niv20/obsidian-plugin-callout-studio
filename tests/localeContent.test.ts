@@ -378,7 +378,7 @@ describe("navigation arrows survive translation", () => {
 
 	it("has arrows in English to compare against", () => {
 		assert.ok(arrowKeys.length > 0, "no en string uses an arrow any more");
-		assert.ok(arrowKeys.includes("firstRun.laterHint"));
+		assert.ok(arrowKeys.includes("manualDiscovery.failed"));
 	});
 
 	for (const [fileId, table] of entries) {
@@ -402,12 +402,12 @@ describe("navigation arrows survive translation", () => {
 
 	for (const fileId of RTL_LOCALES) {
 		it(`${fileId}.ts mirrors the arrow in a translated path`, () => {
-			// `firstRun.laterHint` is prose: the arrows sit between translated
+			// `manualDiscovery.failed` is prose: the arrows sit between translated
 			// words, so the whole run is RTL and a "→" would point back the way
 			// the reader came. Only this key is asserted — see the block comment
 			// below for the two where the answer is genuinely different.
-			const value = LOCALE_TABLES[fileId]["firstRun.laterHint"];
-			assert.ok(value !== undefined, "firstRun.laterHint is untranslated");
+			const value = LOCALE_TABLES[fileId]["manualDiscovery.failed"];
+			assert.ok(value !== undefined, "manualDiscovery.failed is untranslated");
 			assert.ok(value.includes("←"), "expected ← in an RTL path");
 			assert.ok(!value.includes("→"), "found an unmirrored →");
 		});
@@ -426,7 +426,7 @@ describe("navigation arrows survive translation", () => {
 	 * of what the sentence says. Hebrew already had this right; Arabic and
 	 * Persian did not, and this is what pins it for all three.
 	 *
-	 * The distinction against `firstRun.laterHint` is the whole point: there the
+	 * The distinction against `manualDiscovery.failed` is the whole point: there the
 	 * arrows sit between *translated words*, the run is RTL, and `←` is correct.
 	 * Direction here is decided by what surrounds the arrow, not by the language.
 	 */
@@ -454,10 +454,10 @@ describe("navigation arrows survive translation", () => {
 		// control: it uses `→` in both places, so the split really is about
 		// direction and not about the two keys being different sentences.
 		for (const fileId of RTL_LOCALES) {
-			assert.ok(LOCALE_TABLES[fileId]["firstRun.laterHint"]?.includes("←"));
+			assert.ok(LOCALE_TABLES[fileId]["manualDiscovery.failed"]?.includes("←"));
 			assert.ok(LOCALE_TABLES[fileId]["vault.idsUpdated"]?.includes("→"));
 		}
-		assert.ok(en["firstRun.laterHint"]?.includes("→"));
+		assert.ok(en["manualDiscovery.failed"]?.includes("→"));
 		assert.ok(en["vault.idsUpdated"]?.includes("→"));
 	});
 });

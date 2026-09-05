@@ -56,6 +56,7 @@ function listsCtx(registry: CalloutRegistry, app: App) {
 		plugin: {
 			app,
 			registry,
+			settingsWriter: { isFrozen: false },
 			settings: registry.settings,
 			localState: { isExpanded: () => true, setExpanded: () => {} },
 			saveSettings: () => Promise.resolve(),

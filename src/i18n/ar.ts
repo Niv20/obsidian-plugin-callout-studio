@@ -16,35 +16,16 @@ export const ar: Record<string, string> = {
 
 	"settings.fallbackTag": "افتراضي",
 	"settings.fallbackTagAuto": "افتراضي تلقائي",
-	"settings.autoDiscover": "اكتشاف الكولاوت تلقائيًا في خزنتك",
-	"settings.autoDiscoverDesc":
-		"لاحظ أنواع الكولاوت المكتوبة في ملاحظاتك وأضفها إلى القائمة تلقائيًا. إيقاف هذا الخيار يترك الكولاوت الموجودة لديك دون تغيير — يمكنك إضافتها بنفسك، أو استخدام إعادة مسح الخزنة أدناه.",
-	"settings.rescanVault": "إعادة مسح المخزن",
-	"settings.rescanVaultDesc":
-		"يبحث عن معرّفات callout غير المعروفة في الملاحظات ويضيفها كصفوف احتياطية.",
-	"settings.rescanVaultHintAction": "مسح الآن",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "لم يتم حفظ نتائج الاكتشاف. انتظر اكتمال المزامنة ثم أعد المحاولة من الإعدادات ← أنواع التنبيهات الخاصة بي ← اكتشف الآن. لم يتم استبدال التعليقات الحالية.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"اكتمل إعادة المسح: تمت إضافة {{count}} callout جديد.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(يعود إلى الافتراضي)",
 	"replaceModal.titleDelete": "حذف الـ callout",
 	"replaceModal.titleReplace": "استبدال في المخزن",
-
-	"firstRun.title": "البحث عن callouts الموجودة في مخزنك؟",
-	"firstRun.body":
-		"يمكن لـ Callout Studio مسح مخزنك للعثور على callouts التي تستخدمها بالفعل، حتى تظهر في قائمة الإعدادات وتتبنى نمط الاحتياطي الخاص بك.",
-	"firstRun.heavyVaultNote":
-		"يحتوي مخزنك على {{count}} ملف Markdown — قد يستغرق المسح بضع ثوانٍ.",
-	"firstRun.laterHint":
-		"يمكنك دائماً تشغيل هذا لاحقاً من الإعدادات ← رؤى المخزن والصيانة ← إعادة مسح المخزن.",
-	"firstRun.scanNow": "مسح الآن",
-	"firstRun.noThanks": "لا، شكراً",
-	"firstRun.autoScanComplete":
-		"قام Callout Studio بمسح مخزنك وأضاف {{count}} callout.",
-	"firstRun.scanning": "جارٍ المسح",
-	"firstRun.autoScanFailed":
-		"تعذر على Callout Studio مسح المخزن. يمكنك المحاولة مرة أخرى من الإعدادات ← رؤى المخزن والصيانة ← إعادة مسح المخزن.",
-	"firstRun.scanFailed":
-		"لم يكتمل المسح. يمكنك المحاولة مرة أخرى من الإعدادات ← رؤى المخزن والصيانة ← إعادة مسح المخزن.",
 
 	"welcome.tooltip": "حول Callout Studio",
 	"welcome.title": "مرحبًا بك في Callout Studio!",
@@ -312,6 +293,9 @@ export const ar: Record<string, string> = {
 	"editor.foldClosed": "مغلق افتراضياً",
 	"editor.cancel": "إلغاء",
 	"editor.saveChanges": "حفظ التغييرات",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "إنشاء callout",
 	"editor.nameRequired": "يلزم تحديد اسم معروض قبل إنشاء callout.",
 	"editor.noChangesToSave": "لم يتم إجراء أي تغييرات.",
@@ -736,9 +720,6 @@ export const ar: Record<string, string> = {
 	"vaultStats.roleBlock": "كتلة",
 	"vaultStats.roleHeading": "عنوان",
 	"vaultStats.roleInline": "ضمن السطر",
-	"vaultStats.defineUndefined": "تعريف {{count}} غير معرّف",
-	"vaultStats.defineRunning": "جارٍ المسح",
-	"vaultStats.defineDone": "تمت إضافة {{count}} من أنواع الـ callout.",
 	"vaultStats.close": "إغلاق",
 
 	"import.title": "مشاكل الاستيراد",
@@ -967,4 +948,6 @@ export const ar: Record<string, string> = {
 	"quickInsert.readingView": "بدّل إلى وضع المصدر أو المعاينة المباشرة لإدراج callout.",
 	"quickInsert.noCursorHint": "لا يوجد مؤشر في هذه الملاحظة، لذا لا يوجد مكان للإدراج.",
 	"quickInsert.noCursor": "ضع المؤشر في الملاحظة في المكان الذي تريد إدراج الـ callout فيه، ثم حاول مرة أخرى.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

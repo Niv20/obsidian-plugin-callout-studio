@@ -96,7 +96,7 @@
 	padding-bottom: var(--size-4-2);
 }
 
-/* Subheading row: "My callout types" + Add new */
+/* Subheading row: "My callout types" + Add new + manual discovery */
 .callout-studio-settings .cs-subheader-row.setting-item {
 	padding-top: 4px;
 	padding-bottom: 2px;
@@ -112,6 +112,47 @@
 	gap: 6px;
 	font-size: 1.05em;
 	font-weight: 600;
+}
+
+/* Wrap against the actual settings pane width, including a narrow desktop
+   pane, mobile, long translations, and enlarged text. The actions stay outside
+   the fold control and stay visible while its list is collapsed. */
+.callout-studio-settings .cs-callout-list-heading.setting-item {
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 16px;
+}
+
+.callout-studio-settings .cs-callout-list-heading .setting-item-info {
+	flex: 1 1 12rem;
+	min-width: 0;
+	margin-inline-end: 0;
+}
+
+.callout-studio-settings .cs-callout-list-heading .setting-item-name {
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.callout-studio-settings .cs-callout-list-heading .setting-item-control {
+	display: flex;
+	flex: 0 1 auto;
+	flex-wrap: wrap;
+	gap: 8px;
+	min-width: 0;
+	max-width: 100%;
+}
+
+.callout-studio-settings .cs-callout-list-heading .setting-item-control > button {
+	flex: 1 1 auto;
+	min-inline-size: 0;
+	max-inline-size: 100%;
+	min-block-size: 44px;
+	height: auto;
+	padding-block: 8px;
+	white-space: normal;
+	overflow-wrap: anywhere;
 }
 
 /* ─── Foldable section headings ───────────────────────────────── */

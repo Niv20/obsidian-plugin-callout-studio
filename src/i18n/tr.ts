@@ -15,35 +15,16 @@ export const tr: Record<string, string> = {
 
 	"settings.fallbackTag": "Varsayılan",
 	"settings.fallbackTagAuto": "Otomatik varsayılan",
-	"settings.autoDiscover": "Kasanızdaki callout'ları otomatik olarak algıla",
-	"settings.autoDiscoverDesc":
-		"Notlarınızda yazılan callout türlerini fark eder ve otomatik olarak listeye ekler. Bunu kapatmak sahip olduğunuz callout'ları değiştirmeden bırakır — bunları yine de kendiniz ekleyebilir veya aşağıdaki Kasayı yeniden tara seçeneğini kullanabilirsiniz.",
-	"settings.rescanVault": "Vault'u yeniden tara",
-	"settings.rescanVaultDesc":
-		"Notlardaki tanınmayan callout ID'lerini bulur ve geri dönüş satırları olarak ekler.",
-	"settings.rescanVaultHintAction": "Şimdi tara",
+	"settings.rescanVault": "Discover callouts",
+	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
+	"settings.rescanVaultHintAction": "Discover now",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Discovering…",
 	"settings.rescanComplete":
 		"Yeniden tarama tamamlandı: {{count}} yeni callout eklendi.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(varsayılana geri döner)",
 	"replaceModal.titleDelete": "Callout'u sil",
 	"replaceModal.titleReplace": "Vault'ta değiştir",
-
-	"firstRun.title": "Vault'unuzdaki mevcut callout'ları bulsun mu?",
-	"firstRun.body":
-		"Callout Studio, zaten kullandığınız callout'ları keşfetmek için vault'unuzu tarayabilir; bunlar ayarlar listenizde görünür ve geri dönüş stilinizi benimser.",
-	"firstRun.heavyVaultNote":
-		"Vault'unuzda {{count}} Markdown dosyası var — tarama birkaç saniye sürebilir.",
-	"firstRun.laterHint":
-		"Bunu daha sonra Ayarlar → Vault içgörüleri ve bakımı → Vault'u yeniden tara üzerinden her zaman çalıştırabilirsiniz.",
-	"firstRun.scanNow": "Şimdi tara",
-	"firstRun.noThanks": "Hayır, teşekkürler",
-	"firstRun.autoScanComplete":
-		"Callout Studio vault'unuzu taradı ve {{count}} callout ekledi.",
-	"firstRun.scanning": "Taranıyor",
-	"firstRun.autoScanFailed":
-		"Callout Studio vault'unuzu tarayamadı. Ayarlar → Vault içgörüleri ve bakımı → Vault'u yeniden tara üzerinden tekrar deneyebilirsiniz.",
-	"firstRun.scanFailed":
-		"Tarama tamamlanamadı. Ayarlar → Vault içgörüleri ve bakımı → Vault'u yeniden tara üzerinden tekrar deneyebilirsiniz.",
 
 	"welcome.tooltip": "Callout Studio hakkında",
 	"welcome.title": "Callout Studio'ya hoş geldiniz!",
@@ -317,6 +298,9 @@ export const tr: Record<string, string> = {
 	"editor.foldClosed": "Varsayılan olarak kapalı",
 	"editor.cancel": "İptal",
 	"editor.saveChanges": "Değişiklikleri kaydet",
+	"editor.saving": "Saving…",
+	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
+	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Callout oluştur",
 	"editor.nameRequired": "Callout oluşturmadan önce görünen ad gereklidir.",
 	"editor.noChangesToSave": "Herhangi bir değişiklik yapılmadı.",
@@ -746,9 +730,6 @@ export const tr: Record<string, string> = {
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Başlık",
 	"vaultStats.roleInline": "Satır içi",
-	"vaultStats.defineUndefined": "{{count}} eksik olanı tanımla",
-	"vaultStats.defineRunning": "Taranıyor",
-	"vaultStats.defineDone": "{{count}} callout türü eklendi.",
 	"vaultStats.close": "Kapat",
 
 	"import.title": "İçe aktarma sorunları",
@@ -972,4 +953,6 @@ export const tr: Record<string, string> = {
 	"quickInsert.readingView": "Bir callout eklemek için kaynak moduna veya Canlı Önizleme'ye geçin.",
 	"quickInsert.noCursorHint": "Bu notta imleç yok, bu yüzden eklenecek bir yer yok.",
 	"quickInsert.noCursor": "Callout'u eklemek istediğiniz yere notta imleci yerleştirin, sonra tekrar deneyin.",
+	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
 };

@@ -3,13 +3,12 @@
  *
  * Renders the "Vault insights & maintenance" and "Import / Export" sections in
  * the settings tab. Handles JSON import with validation (via importValidator),
- * vault re-scan, and full data reset. Uses ImportReportModal to surface
+ * vault statistics, and full data reset. Uses ImportReportModal to surface
  * validation issues before import. Both export formats live behind
  * ExportFormatModal, the way both import sources live behind ImportSourceModal.
  */
 import { Notice, Setting } from "obsidian";
 import { t } from "../../i18n";
-import { renderIgnoredCalloutsList } from "./IgnoredCalloutsList";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { ExportFormatModal } from "../ExportFormatModal";
 import { ImportReportModal } from "../../utils/ImportReportModal";
@@ -76,32 +75,6 @@ export function renderResetSection(
 		});
 
 	new Setting(containerEl)
-		.setName(t("settings.autoDiscover"))
-		.setDesc(t("settings.autoDiscoverDesc"))
-		.addToggle((toggle) =>
-			toggle
-				.setValue(ctx.plugin.settings.autoDiscoverCallouts)
-				.onChange((value) => {
-					ctx.plugin.settings.autoDiscoverCallouts = value;
-					void ctx.plugin.saveSettings();
-				}),
-		);
-
-	renderIgnoredCalloutsList(ctx, containerEl);
-
-	new Setting(containerEl)
-		.setName(t("settings.rescanVault"))
-		.setDesc(t("settings.rescanVaultDesc"))
-		.addButton((btn) => {
-			btn.setButtonText(t("settings.rescanVaultHintAction")).onClick(
-				() => {
-					void runVaultRescan(ctx);
-				},
-			);
-			btn.buttonEl.addClass("cs-settings-neutral-btn");
-		});
-
-	new Setting(containerEl)
 		.setName(t("settings.resetAll"))
 		.setDesc(t("settings.resetAllDesc"))
 		.addButton((btn) =>
@@ -145,16 +118,6 @@ export function renderResetSection(
 					ctx.display();
 				}),
 		);
-}
-
-async function runVaultRescan(ctx: SettingsSectionContext): Promise<void> {
-	const added = await ctx.plugin.runVaultScan(false);
-	new Notice(
-		t("settings.rescanComplete", {
-			count: String(added),
-		}),
-	);
-	ctx.display();
 }
 
 async function showVaultStatistics(ctx: SettingsSectionContext): Promise<void> {
@@ -241,10 +204,6 @@ export async function processImportedJSON(
 		// Commands are on that list too: an export predating them carries
 		// none, and replacing the array wholesale would delete every
 		// command the user had built here.
-		// `retiredThemeIds` needs no carve-out here any more: it is not in
-		// `PluginSettings` at all, having moved to the device-local store —
-		// which theme is active is a property of a machine, not of a vault.
-		// See `manager/DeviceLocalStore.ts`.
 		const {
 			customPalettes: importedPalettes,
 			userImages: importedImages,
