@@ -345,3 +345,32 @@ describe("SettingsWriter — a session that is not writing", () => {
 		await writer.save();
 	});
 });
+
+describe("SettingsWriter — unloading", () => {
+	it("drops queued and later saves after unload", async () => {
+		const h = harness(); h.hold();
+		const first = h.writer.save();
+		h.state.n = 2;
+		const queued = h.writer.save();
+		h.writer.destroy(); h.release();
+		await Promise.all([first, queued]);
+		await h.writer.save();
+		assert.deepStrictEqual(h.writes, ['{"n":1}']);
+	});
+	it("does not begin a write if unloaded while checking disk freshness", async () => {
+		const gate = deferred<string | null>(); let writes = 0;
+		const writer = new SettingsWriter({ build: () => ({}), readCurrent: () => gate.promise,
+			write: async () => { writes++; } });
+		const pending = writer.save(); writer.destroy(); gate.resolve(null);
+		await pending;
+		assert.strictEqual(writes, 0);
+	});
+	it("does not publish a manual transaction after unload during its physical write", async () => {
+		const gate = deferred<void>(); let published = 0;
+		const writer = new SettingsWriter({ build: () => ({}), write: () => gate.promise });
+		const pending = writer.commit({ n: 1 }, () => true, () => { published++; });
+		writer.destroy(); gate.resolve();
+		assert.strictEqual(await pending, false);
+		assert.strictEqual(published, 0);
+	});
+});

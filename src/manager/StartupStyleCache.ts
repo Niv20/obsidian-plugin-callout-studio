@@ -64,6 +64,14 @@ export class StartupStyleCache {
 	persist(cssText: string): void {
 		if (this.memo.prepare(cssText) === null) return;
 		try {
+			// A v1 discovery blob is removed only after its recovery archive
+			// includes this CSS. Failed migration must not erase the last visual
+			// evidence of styles that an earlier broken settings write lost.
+			const local = window.localStorage.getItem(this.scopedKey("callout-studio-local"));
+			if (local) {
+				const parsed = JSON.parse(local) as { v?: unknown } | null;
+				if (parsed?.v !== 2) return;
+			}
 			window.localStorage.setItem(
 				this.scopedKey(LOCAL_STORAGE_KEY),
 				cssText,

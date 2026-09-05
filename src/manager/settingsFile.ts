@@ -29,6 +29,7 @@
 import { normalizePath } from "obsidian";
 import type { App, PluginManifest } from "obsidian";
 import type { PluginData } from "../types";
+import { hasSafeSettingsFileShape } from "./settingsFileShape";
 
 /** What `data.json` turned out to be. */
 export type SettingsRead =
@@ -76,11 +77,14 @@ function dataPath(host: SettingsFileHost): string {
 export async function readSettingsFile(
 	host: SettingsFileHost,
 ): Promise<SettingsRead> {
-	const raw = await host.loadData();
+	let raw: unknown;
+	try { raw = await host.loadData(); } catch { return { kind: "unreadable" }; }
 	// Arrays and primitives parse fine and are not settings. They also prove the
 	// file exists, so they fall through to the same verdict the check below
 	// reaches — but they must not be handed on as `Partial<PluginData>`.
 	if (typeof raw === "object" && raw !== null && !Array.isArray(raw)) {
+		const data = raw as Record<string, unknown>;
+		if (!hasSafeSettingsFileShape(data)) return { kind: "unreadable" };
 		return {
 			kind: "loaded",
 			data: raw,

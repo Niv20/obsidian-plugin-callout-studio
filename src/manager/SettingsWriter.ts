@@ -1,99 +1,42 @@
-/**
- * manager/SettingsWriter.ts — the one place `data.json` is written.
- *
- * `saveSettings()` used to be two lines: build a whole-registry snapshot, hand
- * it to `saveData`. Two properties of that were load bearing in the wrong
- * direction, and issue #41 is what they add up to on a synced vault.
- *
- * **Nothing serialized the writes.** Most callers are `void saveSettings()`,
- * so two of them could be in flight at once, each holding a snapshot taken at
- * a different moment, and the file was left to whichever finished last. The
- * codebase worked around that by ordering its listeners (`main.ts` subscribes
- * the custom-command sweep before the save listener so both snapshots match);
- * that ordering is no longer load bearing, because a queued pass here rebuilds
- * the payload at write time rather than replaying a stale one.
- *
- * **Nothing compared the payload.** See `utils/saveGuard.ts` for what that cost,
- * and for why an external change now *re-seeds* the baseline rather than
- * clearing it — clearing it is what turned a synced vault into two devices
- * rewriting `data.json` at each other without end.
- *
- * On top of the guard this class owns two policies of its own, both of which
- * exist so that a reload cannot publish something the user did not ask for:
- * {@link hold}, which collapses every save a whole reload provokes into one
- * pass that runs after it, and {@link freeze}, which takes the file off the
- * table entirely for a session that could not read it.
- *
- * A third, `manager/staleWriteGuard.ts`, is the last thing asked before a
- * write lands: **is the file on disk still the one this session read?** The
- * guard above cannot answer that — its baseline describes what we last wrote
- * or adopted, not what a sync client has done to the file since — and on a
- * phone nothing else asks at all, because Obsidian's config watcher is
- * desktop-only. That gap is issue #53.
- *
- * Its own module, and structurally typed, so the policy can be tested without
- * a plugin: `build` is `registry.toSaveData()` and `write` is `plugin.saveData`.
- */
 import { SaveGuard } from "../utils/saveGuard";
 import { StaleWriteGuard, type StaleWriteHost } from "./staleWriteGuard";
 
-/**
- * What the writer needs from the plugin.
- *
- * `readCurrent` and `onStaleWrite` come from {@link StaleWriteHost} and are
- * both optional: a host that omits them gets exactly the behaviour this class
- * had before the pre-write check existed, down to the task ordering.
- */
 export interface SettingsWriterHost extends StaleWriteHost {
-	/** A fresh whole-registry snapshot. Called at write time, never earlier. */
+
 	build(): unknown;
-	/** Obsidian's `Plugin.saveData`. */
+
 	write(data: unknown): Promise<void>;
-	/**
-	 * The first save a {@link freeze} threw away, and only the first — one per
-	 * freeze, at the moment the user's change stops being real.
-	 *
-	 * The launch notice already said the session would not write, but it said
-	 * it before the user had looked at the screen and it is long gone by the
-	 * time they change a colour. A change silently not sticking is how a
-	 * frozen session gets reported as "the plugin is ignoring me".
-	 */
+
 	onFrozenSave?(): void;
 }
 
 export class SettingsWriter {
 	private readonly guard = new SaveGuard();
-	/** The pass currently writing, or null when idle. */
+
 	private inFlight: Promise<void> | null = null;
-	/** Whether a save was asked for while `inFlight` was running. */
+
 	private queued = false;
-	/** The promise every caller that arrived during `inFlight` is waiting on. */
+
 	private followUp: Promise<void> | null = null;
-	/** Depth of nested {@link hold} calls; > 0 means saves are being collected. */
+
 	private holdDepth = 0;
-	/** Whether a save was asked for while held. */
+
 	private heldRequest = false;
-	/** @see freeze */
+
 	private frozen = false;
-	/** Whether this freeze has already reported a save it threw away. */
+
 	private frozenNotified = false;
-	/** "Is the file still ours?" — see manager/staleWriteGuard.ts. */
+
 	private readonly stale: StaleWriteGuard;
+	private revision = 0;
+	private destroyed = false;
 
 	constructor(private readonly host: SettingsWriterHost) {
 		this.stale = new StaleWriteGuard(host);
 	}
 
-	/**
-	 * Persist the current settings, coalescing concurrent requests.
-	 *
-	 * A call made while a write is in flight does not start a second write and
-	 * does not queue a third: it joins one follow-up pass that runs after the
-	 * current one and builds its payload then. So any number of mutations
-	 * during a write collapse into exactly one more write, carrying the final
-	 * state rather than whichever snapshot happened to be taken last.
-	 */
 	save(): Promise<void> {
+		if (this.destroyed) return Promise.resolve();
 		// Nothing this session may reach the file — see freeze().
 		if (this.frozen) {
 			if (!this.frozenNotified) {
@@ -130,44 +73,16 @@ export class SettingsWriter {
 		return this.followUp;
 	}
 
-	/**
-	 * Record the file someone else wrote, as we have just read it back, so a
-	 * save that would merely reproduce it is suppressed.
-	 *
-	 * @see SaveGuard.adopt for what to pass and why it is not the raw file text
-	 */
 	adopt(json: string): void {
 		this.guard.adopt(json);
+		this.revision++;
+		this.stale.clear();
 	}
 
-	/**
-	 * Whether `json` is exactly what `data.json` is believed to hold — i.e.
-	 * whether an incoming file is one of our own writes coming back.
-	 *
-	 * @see SaveGuard.matches
-	 */
 	matchesLastWrite(json: string): boolean {
 		return this.guard.matches(json);
 	}
 
-	/**
-	 * Run `body` with saves collected rather than performed, then perform at
-	 * most one of them.
-	 *
-	 * A reload is not one mutation. It clears the callout map, re-seeds the
-	 * built-ins, merges the incoming rows, restores this device's discovered
-	 * rows, re-derives the theme's overlay and re-syncs the custom commands —
-	 * and several of those steps ask for a save on their way past, each from a
-	 * fire-and-forget `void saveSettings()`. Left alone, whichever won the race
-	 * could publish an *intermediate* state: most sharply the window after the
-	 * map was cleared and before the theme's rows were swept back, in which
-	 * every theme-owned custom command looks orphaned.
-	 *
-	 * Holding makes "a reload writes at most once, and only what it settled on"
-	 * a property of the code rather than of the order the listeners happen to
-	 * run in. Re-entrant, and modelled on `CalloutRegistry.batch` — the same
-	 * shape for the same reason, one level down.
-	 */
 	async hold<T>(body: () => Promise<T>): Promise<T> {
 		this.holdDepth++;
 		let completed = false;
@@ -189,82 +104,61 @@ export class SettingsWriter {
 		}
 	}
 
-	/**
-	 * Stop writing `data.json` until something lifts it. Three callers, and the
-	 * third is not like the other two:
-	 *
-	 * - **The file exists but could not be read.** The in-memory registry is
-	 *   then built from nothing and describes none of the user's callouts, so
-	 *   every save it could produce would replace a file we failed to understand
-	 *   with one we know to be wrong. See `manager/settingsFile.ts`.
-	 * - **The file is missing on a device that has run here before.** Its
-	 *   settings have gone away since it last launched — a sync client mid-swap,
-	 *   most often — and the built-ins must not be written over whatever took
-	 *   them.
-	 * - **The file is missing on a device that has never run here.** This one is
-	 *   *provisional* and lasts under a second: it holds the whole window
-	 *   between `onload` and `onLayoutReady`, where nothing has yet looked at
-	 *   the folder a second time and a brand-new device cannot be told apart
-	 *   from one a synced vault is still reaching. `confirmFreshInstall` ends it
-	 *   either way — {@link thaw} if the folder is still empty, or an adoption
-	 *   if the file turned up. Nothing announces it, because in the overwhelming
-	 *   majority of launches there is nothing to announce.
-	 *
-	 * The first two are read-only for the session unless the user or the file
-	 * itself says otherwise; see {@link thaw}.
-	 *
-	 * Nothing is lost by suppressing rather than deferring: `runPass` builds its
-	 * payload at write time, so whatever was mutated during a freeze is carried
-	 * by the first write after it.
-	 */
 	freeze(): void {
 		this.frozen = true;
+		this.revision++;
 		this.frozenNotified = false;
 	}
 
-	/**
-	 * Lift a {@link freeze}, once there is a reason to believe the file again.
-	 *
-	 * A freeze is a guess — a well-founded one, but a guess — that the file it
-	 * could not find or read is coming back. Exactly two things answer that
-	 * guess, and both call this:
-	 *
-	 * - **The file came back.** `manager/settingsBoot.ts`'s `reloadFrom` thaws
-	 *   as its first act, because it is only ever reached with a `loaded` read
-	 *   in hand: the baseline it then seeds describes what is on disk, so saving
-	 *   asserts nothing the file does not already say. Without this a recovered
-	 *   session went on looking right while discarding every edit in it.
-	 * - **The user says it is not coming back**, because they deleted
-	 *   `data.json` themselves to start over. Left frozen, that user would have
-	 *   every launch from here on quietly throw their work away — so the notice
-	 *   announcing a freeze carries the way out, and that button calls this. See
-	 *   `manager/settingsNotices.ts`.
-	 *
-	 * What still never happens is a thaw on a *hunch* — a timer, a retry count,
-	 * or "it has probably finished by now".
-	 */
 	thaw(): void {
 		this.frozen = false;
 	}
 
-	/** Whether a save is currently in flight or queued behind one. */
 	get busy(): boolean {
 		return this.inFlight !== null || this.queued;
 	}
 
-	/**
-	 * Whether {@link freeze} is in effect.
-	 *
-	 * Read by `confirmFreshInstall`, which must not re-read `data.json` or greet
-	 * a user whose file has already been adopted — an adoption thaws, so a
-	 * writer that is no longer frozen is the record of one having happened.
-	 */
 	get isFrozen(): boolean {
 		return this.frozen;
 	}
 
+	get isDestroyed(): boolean { return this.destroyed; }
+
+	/** A started adapter write cannot be cancelled, but no later pass may run. */
+	destroy(): void {
+		this.destroyed = true;
+		this.revision++;
+		this.stale.destroy();
+	}
+
+	/** Save an isolated manual change and publish it only after persistence succeeds. */
+	commit(data: unknown, isCurrent: () => boolean, publish: () => void): Promise<boolean> {
+		if (this.busy || this.holdDepth > 0 || this.frozen || this.destroyed) return Promise.resolve(false);
+		const task = this.commitPass(data, isCurrent, publish);
+		this.inFlight = task.then(() => undefined).finally(() => { this.inFlight = null; });
+		// The caller owns failures. Keep the internal serialization promise handled too.
+		void this.inFlight.catch(() => undefined);
+		return task;
+	}
+
+	private async commitPass(data: unknown, isCurrent: () => boolean, publish: () => void): Promise<boolean> {
+		const revision = this.revision;
+		const payload = this.guard.prepare(data);
+		if (this.stale.enabled && await this.stale.blocks(this.guard)) return false;
+		if (this.frozen || this.destroyed || revision !== this.revision || !isCurrent()) return false;
+		if (payload !== null) {
+			await this.host.write(data);
+			this.guard.commit(payload);
+			this.stale.clear();
+		}
+		if (this.destroyed) return false;
+		publish();
+		return true;
+	}
+
 	private async runPass(): Promise<void> {
-		const data = this.host.build();
+		const revision = this.revision;
+		const data = structuredClone(this.host.build());
 		const payload = this.guard.prepare(data);
 		// Byte-identical to the last write that landed: skip the file event.
 		if (payload === null) return;
@@ -275,6 +169,7 @@ export class SettingsWriter {
 		if (this.stale.enabled && (await this.stale.blocks(this.guard))) {
 			return;
 		}
+		if (this.frozen || this.destroyed || revision !== this.revision) return;
 		await this.host.write(data);
 		// Only now — a throw above leaves the baseline where it was, so the
 		// next attempt writes rather than being suppressed as a duplicate.

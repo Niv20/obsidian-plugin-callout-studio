@@ -2,7 +2,7 @@
  * manager/CalloutRegistry.ts — Central in-memory store for all callout definitions.
  *
  * Holds the live Map of CalloutDefinitions (built-in defaults + user overrides +
- * auto-discovered fallbacks), exposes CRUD operations, handles data migration
+ * manually discovered fallbacks), exposes CRUD operations, handles data migration
  * from older saved formats, and fires onChange callbacks when the store mutates.
  * This is the single source of truth read by CSSInjector, AutoComplete,
  * SettingsTab, and the public API.
@@ -33,7 +33,6 @@ import {
 import { iconCacheKey, packFor } from "../icons/registry";
 import { migrateSavedIcons } from "./iconMigrations";
 import {
-	isEphemeralDiscoveredRow,
 	selectPersistedRows,
 } from "./discoveredRowPersistence";
 import { COLOUR_NEUTRAL_FIELDS, isCalloutModified } from "./calloutCompare";
@@ -200,6 +199,14 @@ export class CalloutRegistry {
 
 	load(data: Partial<PluginData> | null): void {
 		this.callouts.clear();
+		// Loading is replacement, including keys absent from older files. Never
+		// carry a previous device's settings, artwork or shadowed preview across.
+		this.settings = mergeSavedSettings(data?.settings ?? {});
+		this.iconSvgCache = data?.iconSvgCache ?? [];
+		this.previewActiveId = null;
+		this.previewShadowedDef = null;
+		this.previewIsDemo = false;
+		this.syncUserImages();
 		this.pendingLoadMigrationSave = false;
 		this.pendingPaletteMerges = [];
 		// Before the early return below, so a load of nothing clears it too.
@@ -233,22 +240,12 @@ export class CalloutRegistry {
 			}
 		}
 
-		// Merge settings (field-by-field against defaults; see mergeSavedSettings)
-		if (data.settings) {
-			this.settings = mergeSavedSettings(data.settings);
-			this.syncUserImages();
-		}
-
 		// Retire the fields of the removed manual style-mode model. Ownership is
 		// derived from the active theme now. See manager/styleModeMigration.
 		if (migrateStyleModes(this.callouts, this.settings, data)) {
 			this.pendingLoadMigrationSave = true;
 		}
 
-		// Restore cached artwork for the icons the vault actually uses.
-		if (data.iconSvgCache) {
-			this.iconSvgCache = data.iconSvgCache;
-		}
 		// Repair the icon fields of saved rows — see manager/iconMigrations.ts
 		// for the four passes and why they ask for a flush.
 		if (
@@ -420,44 +417,6 @@ export class CalloutRegistry {
 		if (changed > 0) this.pendingLoadMigrationSave = true;
 	}
 
-	/**
-	 * Migration: retire definitions whose ID carries Obsidian callout metadata.
-	 *
-	 * Everything after the first `|` in `[!note|purple]` is metadata, not part
-	 * of the type (see splitCalloutMetadata). Before that was understood here,
-	 * discovery read the whole bracket body as an ID and auto-created a separate
-	 * `fallback` row for every metadata value a vault used — `note|green`,
-	 * `note|purple`, `note|yellow` alongside the real `note`. Those rows also
-	 * styled nothing where it mattered: their selector is
-	 * `.callout[data-callout="note|green"]`, and Obsidian writes `note`.
-	 *
-	 * A row is renamed to its base ID when that ID is free, so a genuinely
-	 * customized one keeps its icon and colors and starts matching the callout
-	 * it always named. When the base is taken — the common case, since the base
-	 * is usually a built-in — the row is dropped: it can no longer be reached by
-	 * any spelling, and merging it into the survivor would silently restyle a
-	 * callout the user never asked to change. Renaming is safe precisely because
-	 * the retired spelling was never a real callout ID: Obsidian split the pipe
-	 * off long before this plugin saw the token, so no note can contain a
-	 * `[!note|green]` that meant anything other than `note`.
-	 *
-	 * **Only the piped ID is retired.** Opening such a row in a pre-metadata
-	 * editor could also leave the pipe-eaten spelling `notegreen` behind, and an
-	 * earlier draft of this migration retired that too — by matching an ID that
-	 * equalled the old sanitizer's reading of its own display name. That test
-	 * has no false negatives and plenty of false positives: the old editor
-	 * *pinned* the ID to the display name, so every user callout ever named with
-	 * a pipe (`Pros|Cons` → `proscons`) matched it by construction and would
-	 * have been renamed to `pros` — silently breaking every `[!proscons]`
-	 * already written in the vault. Unlike the piped spelling, `notegreen` IS a
-	 * reachable ID, so it is left alone; an uncustomized one is already swept up
-	 * by {@link CalloutDiscovery.pruneUnused}, and a customized one is the
-	 * user's to delete.
-	 *
-	 * Keyed on the definitions' content rather than on `data.version`, like the
-	 * other migrations in {@link load}: an imported or hand-edited file can
-	 * carry any version it likes, and this way the pass is idempotent.
-	 */
 	private stripMetadataFromIds(): void {
 		const removed: string[] = [];
 		const renamed: string[] = [];
@@ -591,8 +550,7 @@ export class CalloutRegistry {
 			callouts: selectPersistedRows(this.callouts, {
 				previewActiveId: this.previewActiveId,
 				previewShadowedDef: this.previewShadowedDef,
-				customCommands: this.settings.customCommands,
-				builtInDefault: (id) => this.builtInDefaults.get(id),
+					builtInDefault: (id) => this.builtInDefaults.get(id),
 			}),
 			settings: withForeignSettings(this.settings, this.foreign),
 			// `materialSvgCache` is deliberately not written back: the legacy
@@ -1809,32 +1767,8 @@ export class CalloutRegistry {
 		return { created, updated };
 	}
 
-	/**
-	 * {@link getExportableDefinitions} as a JSON **backup** should see it: the
-	 * user's configuration, and nothing this device merely observed.
-	 *
-	 * A backup restored into another vault must not plant placeholder rows for
-	 * callouts that vault may never mention — and an unclaimed discovered row
-	 * is exactly that, an id someone's notes happened to contain. The CSS
-	 * snippet export asks the unfiltered question, because it has to paint
-	 * every callout the plugin paints. See discoveredRowPersistence.ts.
-	 */
-	private authoredDefinitions(): CalloutDefinition[] {
-		return this.getExportableDefinitions().filter(
-			(d) => !isEphemeralDiscoveredRow(d, this.settings.customCommands),
-		);
-	}
-
 	exportToJSON(): string {
-		// The legacy shape — `getUserDefined()` as it always was — asking the
-		// same question about discovered rows. See authoredDefinitions.
-		return JSON.stringify(
-			this.getUserDefined().filter(
-				(d) => !isEphemeralDiscoveredRow(d, this.settings.customCommands),
-			),
-			null,
-			2,
-		);
+		return JSON.stringify(this.getUserDefined(), null, 2);
 	}
 
 	/**
@@ -1848,7 +1782,7 @@ export class CalloutRegistry {
 			{
 				format: EXPORT_FORMAT_ID,
 				formatVersion: EXPORT_FORMAT_VERSION,
-				callouts: this.authoredDefinitions(),
+				callouts: this.getExportableDefinitions(),
 				settings: this.settings,
 			},
 			null,

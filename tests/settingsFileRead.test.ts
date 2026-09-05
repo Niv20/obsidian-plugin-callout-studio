@@ -15,6 +15,7 @@ import { describe, it } from "node:test";
 import type { App, PluginManifest } from "obsidian";
 import { readSettingsFile } from "../src/manager/settingsFile";
 import type { SettingsFileHost } from "../src/manager/settingsFile";
+import { definition } from "./support/discoveryHarness";
 
 /**
  * A host whose `loadData` answers exactly as Obsidian's `Vault.readJson` does:
@@ -127,5 +128,51 @@ describe("readSettingsFile", () => {
 		assert.deepStrictEqual(h.asked, [
 			".obsidian/plugins/callout-studio/data.json",
 		]);
+	});
+
+	for (const [name, patch] of [
+		["a missing icon", { icon: undefined }],
+		["a null icon", { icon: null }],
+		["a numeric icon value", { icon: { type: "lucide", value: 12 } }],
+		["an object icon type", { icon: { type: {}, value: "pen" } }],
+		["a missing name", { displayName: undefined }],
+		["a non-string name", { displayName: {} }],
+		["aliases stored as an object", { aliases: {} }],
+		["a null alias", { aliases: ["valid", null] }],
+		["a non-string background", { bgColorLight: {} }],
+		["malformed metadata", { metadata: [] }],
+		["an empty gradient", { bgGradient: {} }],
+		["a non-string gradient end color", { bgGradient: { angleDeg: 45, toColorLight: 2, toColorDark: "#ffffff" } }],
+		["a non-string text-gradient end color", { bgGradient: { angleDeg: 45, toColorLight: "#000000", toColorDark: "#ffffff", textToColorDark: {} } }],
+	] as const) {
+		it(`rejects ${name} before a partial registry rebuild`, async () => {
+			const raw = { callouts: [{ ...definition({ id: "authored" }), ...patch }] };
+			assert.strictEqual((await readSettingsFile(host({ raw }))).kind, "unreadable");
+		});
+	}
+
+	for (const raw of [
+		{ iconSvgCache: [null] },
+		{ iconSvgCache: [{ name: "star", svg: 12, pack: "material" }] },
+		{ materialSvgCache: [null] },
+		{ materialSvgCache: { length: 1 } },
+		{ settings: { fallbackCalloutId: {} } },
+	]) {
+		it(`rejects unsafe nested saved content ${JSON.stringify(raw)}`, async () => {
+			assert.strictEqual((await readSettingsFile(host({ raw }))).kind, "unreadable");
+		});
+	}
+
+	it("continues accepting partial built-in rows and unknown future fields", async () => {
+		const raw = { callouts: [{ id: "note", colorLight: "rgb(1, 2, 3)" }], futureSetting: { value: true } };
+		assert.strictEqual((await readSettingsFile(host({ raw }))).kind, "loaded");
+	});
+	it("accepts supported gradient shapes with legacy or future metadata intact", async () => {
+		const raw = { callouts: [{ ...definition({ id: "gradient" }), bgGradient: {
+			angleDeg: 45, toColorLight: "#ffffff", toColorDark: "#000000", type: "radial", futureGradientHint: true,
+		} }] };
+		const read = await readSettingsFile(host({ raw }));
+		assert.strictEqual(read.kind, "loaded");
+		assert.deepStrictEqual(read.kind === "loaded" && read.data, raw);
 	});
 });

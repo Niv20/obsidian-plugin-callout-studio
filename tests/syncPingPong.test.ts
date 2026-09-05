@@ -84,6 +84,10 @@ function device(name: string, disk: Disk) {
 			getName: () => "shared-vault",
 			configDir: ".obsidian",
 			adapter: {
+                mkdir: () => Promise.resolve(),
+                write: () => Promise.resolve(),
+                list: () => Promise.resolve({ files: [], folders: [] }),
+                remove: () => Promise.resolve(),
 				// The file is there whenever the disk holds anything at all,
 				// including the empty string — which is the case that matters.
 				exists: () => Promise.resolve(disk.content !== null),
@@ -136,8 +140,8 @@ function device(name: string, disk: Disk) {
 		localState,
 		settingsWriter: writer,
 		saveSettings: () => writer.save(),
-		pruneSuspended: false,
-		resyncThemeRows: () => {
+		settingsEditOpen: false,
+		refreshThemeAppearance: () => {
 			themeSweeps++;
 		},
 		customCommands: { syncAll: () => undefined },
@@ -245,8 +249,6 @@ describe("two devices exchanging data.json", () => {
 		// The old `invalidate()` made that save unconditional, so B rewrote the
 		// file A had just sent it, and A then did the same back.
 		const { disk, a, b } = await world();
-		a.localState.remember(["seen-one"]);
-		b.localState.remember(["seen-one", "seen-two"]);
 
 		a.registry.add(authored("tip-plus"));
 		await a.save();
@@ -262,8 +264,6 @@ describe("two devices exchanging data.json", () => {
 		// which is the normal state, and the state the loop needs: a reload
 		// re-adds these rows, that counts as a change, and so every reload on
 		// every device asks for a save.
-		a.localState.remember(["seen-one"]);
-		b.localState.remember(["seen-one"]);
 
 		a.registry.add(authored("tip-plus"));
 		await a.save();
@@ -279,8 +279,6 @@ describe("two devices exchanging data.json", () => {
 		// The reporter's scenario: X configures a callout while Y is asleep, and
 		// Y has its own local state when it wakes.
 		const { disk, a, b, all } = await world();
-		a.localState.remember(["seen-on-a", "shared"]);
-		b.localState.remember(["seen-on-b", "shared"]);
 
 		a.registry.add(authored("from-a"));
 		await a.save();

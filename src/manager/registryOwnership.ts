@@ -11,7 +11,7 @@
  * the next time the user comes back.
  *
  * Two flags rather than one because they are raised by different owners.
- * `pruneSuspended` is the callout editor and the two previewing modals (see
+ * `settingsEditOpen` is the callout editor and the two previewing modals (see
  * `settings/previewOwnership.ts`, which is the *writing* side of the same
  * question); `hasPreviewDefinition()` is the registry's own answer about a live
  * preview slot. Either one means the same thing to a reload.
@@ -25,7 +25,8 @@
 /** What answering the question needs. */
 export interface RegistryOwnershipHost {
 	/** True exactly while the callout editor or a previewing modal owns it. */
-	pruneSuspended: boolean;
+	settingsEditOpen: boolean;
+	settingsWriter?: { busy: boolean; isDestroyed?: boolean };
 	registry: { hasPreviewDefinition(): boolean };
 }
 
@@ -35,5 +36,6 @@ export interface RegistryOwnershipHost {
  * Callers must not adopt an incoming settings file while this is true.
  */
 export function registryIsOwned(host: RegistryOwnershipHost): boolean {
-	return host.pruneSuspended || host.registry.hasPreviewDefinition();
+	return host.settingsEditOpen || host.registry.hasPreviewDefinition() ||
+		host.settingsWriter?.busy === true || host.settingsWriter?.isDestroyed === true;
 }

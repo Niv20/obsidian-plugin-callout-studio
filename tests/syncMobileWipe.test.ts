@@ -76,6 +76,10 @@ function phone(name: string, disk: Disk) {
 			getName: () => "shared-vault",
 			configDir: ".obsidian",
 			adapter: {
+                mkdir: () => Promise.resolve(),
+                write: () => Promise.resolve(),
+                list: () => Promise.resolve({ files: [], folders: [] }),
+                remove: () => Promise.resolve(),
 				exists: () => Promise.resolve(disk.content !== null),
 			},
 			getMarkdownFiles: () => [],
@@ -124,8 +128,8 @@ function phone(name: string, disk: Disk) {
 		localState,
 		settingsWriter: writer,
 		saveSettings: () => writer.save(),
-		pruneSuspended: false,
-		resyncThemeRows: () => undefined,
+		settingsEditOpen: false,
+		refreshThemeAppearance: () => undefined,
 		customCommands: { syncAll: () => undefined },
 		refreshCallouts: () => undefined,
 		registerDomEvent: (_el, _type, callback) => {
@@ -202,7 +206,7 @@ describe("a phone whose data.json has not arrived", () => {
 		// Second launch, and this time the file is gone.
 		disk.content = null;
 		const second = phone("phone", disk);
-		assert.ok(second.localState.hasIndex, "the device remembers itself");
+		assert.ok(second.localState.hasInitialized, "the device remembers itself");
 		await second.boot();
 
 		assert.strictEqual(disk.writes, 0, "wrote over a file it never read");
@@ -558,14 +562,14 @@ describe("waiting for settings that arrive during the session", () => {
 		const p = phone("new-phone", disk);
 		await p.boot();
 
-		p.host.pruneSuspended = true;
+		p.host.settingsEditOpen = true;
 		const arrived = vaultWithUserCallouts();
 		disk.content = arrived.content;
 		await p.returnToApp();
 		assert.ok(!p.registry.get("insight"), "rebuilt under the open editor");
 
 		// Closing it, the next return picks the file up.
-		p.host.pruneSuspended = false;
+		p.host.settingsEditOpen = false;
 		await p.returnToApp();
 		assert.ok(p.registry.get("insight"), "never retried after the editor closed");
 	});
@@ -595,7 +599,7 @@ describe("a frozen session still has callouts to show", () => {
 	it("holds them when the file went missing on a known device", async () => {
 		const disk = new Disk();
 		const p = phone("phone", disk);
-		p.localState.remember(["seen-here"]);
+		p.localState.markInitialized();
 		disk.content = null;
 
 		await p.boot();

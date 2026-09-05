@@ -141,7 +141,7 @@ describe("keeping the folder from growing", () => {
 		// The folder is inside the plugin directory, which syncs. Anything else
 		// in there belongs to the user or to another tool.
 		const dir = ".obsidian/plugins/callout-studio/backups";
-		const v = vault({ [`${dir}/notes-of-my-own.json`]: "{}" });
+		const v = vault({ [`${dir}/notes-of-my-own.json`]: "{}", [`${dir}/data-my-recovery.json`]: "{}" });
 		v.folders.add(dir);
 
 		for (let i = 0; i < 8; i++) {
@@ -149,6 +149,15 @@ describe("keeping the folder from growing", () => {
 		}
 
 		assert.ok(v.files.has(`${dir}/notes-of-my-own.json`));
+		assert.ok(v.files.has(`${dir}/data-my-recovery.json`));
+	});
+
+	it("keeps the new recovery copy when another device's clock runs ahead", async () => {
+		const v = vault();
+		for (let i = 10; i < 16; i++) await writeSettingsBackup(v.host, { n: i }, at(i));
+		const recovery = await writeSettingsBackup(v.host, { rescued: true }, at(0));
+		assert.ok(recovery && v.files.has(recovery));
+		assert.strictEqual(v.backups().length, 5);
 	});
 });
 
@@ -178,5 +187,23 @@ describe("a backup that cannot be written", () => {
 
 		assert.ok(path);
 		assert.ok(v.files.has(path));
+	});
+
+	it("contains a timestamp-generation failure rather than rejecting adoption", async () => {
+		assert.strictEqual(await writeSettingsBackup(vault().host, {}, new Date(NaN)), null);
+	});
+
+	it("captures recovery data before awaited adapter work can mutate it", async () => {
+		const v = vault();
+		const data = { callouts: [{ id: "original" }] };
+		const originalExists = v.host.app.vault.adapter.exists.bind(v.host.app.vault.adapter);
+		v.host.app.vault.adapter.exists = async path => {
+			data.callouts[0]!.id = "changed during await";
+			return originalExists(path);
+		};
+		const path = await writeSettingsBackup(v.host, data, at(0));
+		assert.ok(path);
+		const saved = JSON.parse(v.files.get(path)!) as { callouts: Array<{ id: string }> };
+		assert.strictEqual(saved.callouts[0]!.id, "original");
 	});
 });

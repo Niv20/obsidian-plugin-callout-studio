@@ -1176,7 +1176,7 @@ function validateCalloutArray(
 			if (typeof entry.paletteId === "string") {
 				def.paletteId = entry.paletteId.trim();
 			}
-			// Built-ins never carry it (they are not auto-prunable), matching
+			// Built-ins use authored fields to identify their edits, matching
 			// what the editor writes — see CalloutEditorSave's `customized`.
 			if (!isBuiltIn && entry.customized === true) {
 				def.customized = true;

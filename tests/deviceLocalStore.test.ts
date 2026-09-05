@@ -67,141 +67,43 @@ function fresh(seed?: unknown): DeviceLocalStore {
 	return new DeviceLocalStore(app);
 }
 
-describe("DeviceLocalStore — the discovery index", () => {
-	it("starts empty and un-indexed on a device that has never scanned", () => {
-		const store = fresh();
-		assert.deepStrictEqual([...store.discovered], []);
-		assert.strictEqual(store.hasIndex, false);
-	});
-
-	it("reads back what an earlier session remembered", () => {
-		const store = fresh({ v: 1, discovered: ["alpha", "beta"] });
-		assert.deepStrictEqual([...store.discovered], ["alpha", "beta"]);
-		assert.strictEqual(store.hasIndex, true);
-	});
-
-	it("remembers new ids and keeps the ones it had", () => {
-		const store = fresh({ v: 1, discovered: ["alpha"] });
-		store.remember(["beta"]);
-		assert.deepStrictEqual([...store.discovered], ["alpha", "beta"]);
-	});
-
-	it("holds one entry per callout, not one per spelling", () => {
-		// `a b` and `a-b` are one callout everywhere else; two entries here
-		// would try, and fail, to build a second row for it on every launch.
-		const store = fresh();
-		store.remember(["a b", "a-b"]);
-		assert.deepStrictEqual([...store.discovered], ["a b"]);
-	});
-
-	it("forgets through any spelling of the id", () => {
-		const store = fresh({ v: 1, discovered: ["a b"] });
-		store.forget(["a-b"]);
-		assert.deepStrictEqual([...store.discovered], []);
-	});
-
-	it("replaces the set outright when a whole-vault scan says so", () => {
-		const store = fresh({ v: 1, discovered: ["stale", "kept"] });
-		store.replace(["kept", "new"]);
-		assert.deepStrictEqual([...store.discovered], ["kept", "new"]);
-	});
-
-	it("counts as indexed once it has written, not only once it has read", () => {
-		// The launch that migrates a vault over writes its first index. Without
-		// this, that same launch would still read as "never indexed here" and
-		// ask for a scan it does not need.
-		const store = fresh();
-		assert.strictEqual(store.hasIndex, false);
-		store.replace([]);
-		assert.strictEqual(store.hasIndex, true);
-	});
-});
-
-describe("DeviceLocalStore — the first-run flag", () => {
-	it("is false until this device completes a scan", () => {
-		const store = fresh();
-		assert.strictEqual(store.firstRunCompleted, false);
-		store.completeFirstRun();
-		assert.strictEqual(store.firstRunCompleted, true);
-	});
-
-	it("survives a reload", () => {
-		fresh().completeFirstRun();
-		assert.strictEqual(new DeviceLocalStore(app).firstRunCompleted, true);
-	});
-
-	it("adopts a pre-move data.json value once", () => {
-		const store = fresh();
-		store.adoptLegacyFirstRun(true);
-		assert.strictEqual(store.firstRunCompleted, true);
-	});
-
-	it("only ever raises the flag", () => {
-		// A settings file written before the flag moved must not un-scan a
-		// device that has already scanned.
-		const store = fresh();
-		store.completeFirstRun();
-		store.adoptLegacyFirstRun(undefined);
-		store.adoptLegacyFirstRun(false);
-		assert.strictEqual(store.firstRunCompleted, true);
-	});
-});
-
-describe("DeviceLocalStore — storage that misbehaves", () => {
-	it("reads a corrupt blob as absent, not as empty", () => {
-		// "Absent" and "empty" mean different things: absent asks for a scan,
-		// empty says this vault genuinely uses no discovered callouts. Treating
-		// a blob this build cannot parse as empty would hide every row with no
-		// way back but the settings button.
-		const store = fresh("{not json");
-		assert.strictEqual(store.hasIndex, false);
-		assert.deepStrictEqual([...store.discovered], []);
-	});
-
-	it("reads a blob from a future version as absent", () => {
-		const store = fresh({ v: 2, discovered: ["alpha"] });
-		assert.strictEqual(store.hasIndex, false);
-	});
-
-	it("drops non-string entries rather than the whole blob", () => {
-		const store = fresh({ v: 1, discovered: ["alpha", 7, null, "beta"] });
-		assert.deepStrictEqual([...store.discovered], ["alpha", "beta"]);
-	});
-
-	it("survives storage that throws on read", () => {
-		storage.map.clear();
-		storage.failReads(true);
-		const store = new DeviceLocalStore(app);
-		assert.strictEqual(store.hasIndex, false);
-		storage.failReads(false);
-	});
-
-	it("survives storage that throws on write", () => {
-		const store = fresh();
-		storage.failWrites(true);
-		assert.doesNotThrow(() => store.remember(["alpha"]));
-		// In memory for this session either way — only the next launch's fast
-		// restore is lost.
-		assert.deepStrictEqual([...store.discovered], ["alpha"]);
-		storage.failWrites(false);
-	});
-
-	it("retries content whose write was refused", () => {
-		// The StartupStyleCache rule: a memo raised before the write lands
-		// remembers a refusal as a success, and the same content is then never
-		// offered to storage again for the rest of the session.
-		const store = fresh();
-		storage.failWrites(true);
-		store.replace(["alpha"]);
-		storage.failWrites(false);
-		store.replace(["alpha"]);
-		assert.strictEqual(storage.map.get(KEY)?.includes("alpha"), true);
-	});
-
-	it("does not rewrite an unchanged index", () => {
-		const store = fresh({ v: 1, discovered: ["alpha"] });
-		const before = storage.writes();
-		store.replace(["alpha"]);
-		assert.strictEqual(storage.writes(), before);
-	});
+describe("device UI state without a discovery cache", () => {
+ it("does not write or discover anything on a new installation", () => {
+  const store = fresh(); const before = storage.writes();
+  assert.strictEqual(store.hasInitialized, false);
+  assert.strictEqual(storage.writes(), before);
+ });
+ it("preserves legacy evidence until the verified archive and keeps section preferences", () => {
+  const store = fresh({ v: 1, discovered: ["old"], firstRunCompleted: true,
+   retiredThemeIds: ["retired"], listsExpanded: { user: false } });
+  assert.strictEqual(store.hasInitialized, true);
+  assert.strictEqual(store.isExpanded("user"), false);
+  const saved = JSON.parse(storage.map.get(KEY)!) as Record<string, unknown>;
+  assert.deepStrictEqual(saved.discovered, ["old"]);
+  assert.strictEqual(saved.v, 1);
+  store.markInitialized(); store.setExpanded("theme", false);
+  assert.strictEqual((JSON.parse(storage.map.get(KEY)!) as { v: number }).v, 1);
+ });
+ it("persists only the installation marker and UI preferences", () => {
+  const store = fresh(); store.markInitialized(); store.setExpanded("theme", false);
+  const restored = new DeviceLocalStore(app);
+  assert.strictEqual(restored.hasInitialized, true);
+  assert.strictEqual(restored.isExpanded("theme"), false);
+ });
+ it("tolerates corrupt and unavailable storage", () => {
+  assert.doesNotThrow(() => fresh("broken"));
+  storage.failReads(true); assert.doesNotThrow(() => new DeviceLocalStore(app));
+  storage.failReads(false);
+ });
+ it("retries refused writes", () => {
+  const store = fresh(); storage.failWrites(true); store.markInitialized();
+  assert.strictEqual(storage.map.has(KEY), false);
+  storage.failWrites(false); store.markInitialized();
+  assert.ok(storage.map.has(KEY));
+ });
+ it("does not rewrite identical state", () => {
+  const store = fresh(); store.markInitialized(); const before = storage.writes();
+  store.markInitialized(); store.setExpanded("theme", true);
+  assert.strictEqual(storage.writes(), before);
+ });
 });

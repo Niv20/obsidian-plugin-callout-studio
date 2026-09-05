@@ -1,41 +1,15 @@
-/**
- * manager/settingsAdopt.ts — taking on a `data.json` somebody else wrote.
- *
- * The mid-session half of `manager/settingsBoot.ts`. Reading the file at
- * startup and adopting one that arrives later share a body — the registry has
- * to be rebuilt the same way both times, or a reload quietly skips a migration
- * — but they are different questions with different failure modes, and the
- * shared body is small enough to state once and hand to both.
- *
- * What lives here is the second question: something other than us rewrote the
- * settings file, and this session has to end up holding what it says without
- * writing anything back at it. Three rules, all of them issue #41:
- *
- * - **A file we could not read changes nothing.** Never mistake it for an
- *   empty one.
- * - **What we read becomes the write guard's baseline.** A save that would
- *   merely reproduce the file we just adopted is then suppressed, which is what
- *   stops two devices rewriting it at each other.
- * - **A whole adoption writes at most once**, via `SettingsWriter.hold`, so no
- *   half-rebuilt intermediate state is ever published.
- *
- * Its own module also breaks a cycle: `settingsLateArrival` needs `reloadFrom`
- * and `settingsBoot` needs `watchForLateSettings`, so the two imported each
- * other for as long as both lived in one file.
- */
 import type { PluginData } from "../types";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import type { SettingsWriter } from "./SettingsWriter";
 import type { DeviceLocalStore } from "./DeviceLocalStore";
-import { bootDiscoveryIndex } from "./discoveryIndexBoot";
 import { readSettingsFile } from "./settingsFile";
 import { isFromNewerBuild } from "./foreignFields";
 import { warnSettingsFromNewerVersion } from "./settingsNotices";
 import { registryIsOwned } from "./registryOwnership";
-import { writeSettingsBackup } from "./settingsBackup";
+import { backUpBeforeAdoption } from "./settingsConflictBackup";
+import { stableKeyOrder } from "../utils/stableJson";
 import type { SettingsFileHost, SettingsRead } from "./settingsFile";
 
-/** What rebuilding a registry from a settings file needs from the plugin. */
 export interface SettingsBootHost extends SettingsFileHost {
 	registry: CalloutRegistry;
 	localState: DeviceLocalStore;
@@ -43,33 +17,16 @@ export interface SettingsBootHost extends SettingsFileHost {
 	saveSettings(): Promise<void>;
 }
 
-/**
- * Rebuild the registry from a read that produced something usable, and flush
- * once if the load changed what should be on disk.
- *
- * Shared by both callers so neither can drift from the other. Held, so every
- * save the rebuild provokes — `restoreDiscoveredRows` alone always fires one on
- * a device that has discovered anything — collapses into the single pass that
- * runs when the outermost hold releases. Re-entrant: the reload path wraps a
- * wider hold around this one, and the flush then happens once, at the end of
- * the whole adoption.
- */
 export async function applySettingsRead(
 	host: SettingsBootHost,
 	read: Extract<SettingsRead, { kind: "absent" | "loaded" }>,
 ): Promise<void> {
+	if (host.settingsWriter.isDestroyed) return;
 	const savedData: Partial<PluginData> | null =
 		read.kind === "loaded" ? read.data : null;
 
-	// Before the load, not after. The baseline has to describe what is on
-	// **disk**, so that the convergence flush below still sees a difference and
-	// writes; seeding it from the post-load `toSaveData()` would claim the file
-	// already says what we are about to correct, and suppress the correction.
 	if (read.kind === "loaded") host.settingsWriter.adopt(read.json);
 
-	// A file from a build that knows more than this one. Everything below still
-	// runs — the user sees as much of their configuration as this version can
-	// read — but nothing may be written back over it. @see isFromNewerBuild
 	if (isFromNewerBuild(savedData)) {
 		host.settingsWriter.freeze();
 		console.error(
@@ -81,39 +38,24 @@ export async function applySettingsRead(
 
 	await host.settingsWriter.hold(async () => {
 		host.registry.load(savedData);
+		if (savedData) host.localState.markInitialized();
 
-		// Before the first inject, so the restored rows are in the sheet from
-		// the start — exactly as theme rows are.
-		const index = bootDiscoveryIndex(
-			host.registry,
-			host.localState,
-			savedData,
-		);
-
-		// A load-time migration that rewrote definitions is flushed right away,
-		// so the cleaned-up list survives the next reload rather than waiting on
-		// whatever incidental save happens to come first. `converged` is the
-		// same need for the discovered rows the file should stop carrying.
-		if (host.registry.needsSaveAfterLoad() || index.converged) {
+		if (host.registry.needsSaveAfterLoad()) {
 			await host.saveSettings();
 		}
 	});
 }
 
-/** What adopting an external change needs on top of {@link SettingsBootHost}. */
 export interface ExternalReloadHost extends SettingsBootHost {
-	/** True exactly while the callout editor owns the registry. */
-	pruneSuspended: boolean;
-	/** @see registerThemeRowSync */
-	resyncThemeRows(): void;
+
+	settingsEditOpen: boolean;
+	onExternalSettingsChange?(): Promise<void>;
+
+	refreshThemeAppearance(): void;
 	customCommands: { syncAll(): void };
 	refreshCallouts(): void;
 	settingsTab?: { containerEl: { isConnected: boolean }; display(): void };
-	/**
-	 * Obsidian's `Plugin.registerDomEvent`, so a launch that found no settings
-	 * can keep watching for them — see `manager/settingsLateArrival.ts`.
-	 * Optional because a test harness is not a plugin.
-	 */
+
 	registerDomEvent?: (
 		el: Document,
 		type: "visibilitychange",
@@ -121,51 +63,14 @@ export interface ExternalReloadHost extends SettingsBootHost {
 	) => void;
 }
 
-/**
- * Adopt a `data.json` that something other than us rewrote — a sync client
- * landing another device's settings, most often.
- *
- * Returns whether the adoption was **deferred**. A reload rebuilds the whole
- * registry, so running one while the callout editor is open would change or
- * remove the row being edited underneath the user. The caller holds the answer
- * and calls again when the modal closes.
- *
- * Three things have to happen that no ordinary load needs:
- *
- * - **Our own write coming back is recognised and skipped.** Obsidian re-fires
- *   the hook for saves we make ourselves: `Plugin._onConfigFileChange` assigns
- *   `_lastDataModifiedTime = <the mtime it read before awaiting us>` *after*
- *   this returns, rolling back the stamp `saveData` set during it. Comparing the
- *   incoming file against the write guard's baseline settles that in a string
- *   compare, instead of a full rebuild, CSS regeneration and repaint per save.
- * - **The guard's baseline is re-seeded**, in `applySettingsRead`. It used to be
- *   *cleared* here, on the reasoning that a baseline describing our own last
- *   write is a lie once someone else has written the file. True, and the wrong
- *   remedy: we have just read that file, so the baseline can be corrected rather
- *   than discarded. Clearing it meant the reload's own `onChange` wrote the file
- *   straight back at the device that sent it, and that device did the same in
- *   return — the unbounded exchange that is the second half of issue #41.
- * - **The theme's overlay rows are re-derived.** `CalloutRegistry.load()`
- *   clears the callout map and those rows live in it; they are deliberately
- *   never persisted, so only a re-sweep brings them back — otherwise every
- *   theme-provided callout silently disappears until the next `css-change`, and
- *   `customCommands.syncAll()` below, running against a registry that is missing
- *   them, deletes the user's commands for those callouts and saves the deletion.
- */
 export async function adoptExternalSettings(
 	host: ExternalReloadHost,
 ): Promise<boolean> {
 	if (registryIsOwned(host)) return true;
 
 	const read = await readSettingsFile(host);
+	if (registryIsOwned(host)) return true;
 
-	// Nothing usable arrived. Both cases keep the state we have and stay
-	// pending, because both are transient far more often than they are meant:
-	// `unreadable` is a file mid-write, and `absent` is the gap a sync client
-	// leaves while it renames the local copy aside to make room for the remote
-	// one. Adopting either would mean wiping every callout to answer a question
-	// nobody asked. A retry costs nothing — the write that follows fires the
-	// hook again.
 	if (read.kind !== "loaded") {
 		console.warn(
 			`[callout-studio] ignoring an external data.json change: ${read.kind}`,
@@ -173,80 +78,32 @@ export async function adoptExternalSettings(
 		return true;
 	}
 
-	// Our own write, arriving back through the watcher.
 	if (host.settingsWriter.matchesLastWrite(read.json)) return false;
 
-	await reloadFrom(host, read);
-	return false;
+	return !(await reloadFrom(host, read));
 }
 
-/**
- * Rebuild everything from a `data.json` somebody else wrote, and repaint.
- *
- * Shared by the two paths that can meet one mid-session: the watcher-driven
- * {@link adoptExternalSettings} on desktop, and `settingsLateArrival`'s
- * `stillFreshInstall` on a device where the file simply arrived late. Held as a
- * whole, so the rebuild publishes at most one write and never an intermediate
- * state.
- *
- * **Adopting is what ends a freeze.** A freeze is the guess that a file we
- * could not read or find is coming back; arriving with that file in hand is the
- * guess being answered, and the baseline seeded below then describes what is on
- * disk, so saving is safe again. Without this, a session that recovered went on
- * *looking* right — the callouts come back and repaint — while silently
- * discarding every edit the user made for the rest of it.
- *
- * It thaws **before** the hold, not after: `applySettingsRead`'s convergence
- * flush runs inside that hold, and a writer still frozen at that moment would
- * drop the load-time migration on the very path that just recovered.
- */
 export async function reloadFrom(
 	host: ExternalReloadHost,
 	read: Extract<SettingsRead, { kind: "loaded" }>,
-): Promise<void> {
-	await backUpIfRowsAreAboutToGo(host, read);
+): Promise<boolean> {
+	if (registryIsOwned(host)) return false;
+	const before = host.registry.toSaveData();
+	const snapshot = JSON.stringify(stableKeyOrder(before));
+	if (!(await backUpBeforeAdoption(host, before, read.data))) return false;
+	// User edits made while the backup was being written must not disappear.
+	if (registryIsOwned(host) || JSON.stringify(stableKeyOrder(host.registry.toSaveData())) !== snapshot) return false;
 	host.settingsWriter.thaw();
 	await host.settingsWriter.hold(async () => {
 		await applySettingsRead(host, read);
-		host.resyncThemeRows();
-		// A command may point at a callout the incoming file does not define, or
-		// at one it has just introduced. After the theme sweep above, never
-		// before it — see the third bullet.
+		if (host.settingsWriter.isDestroyed) return;
+		host.refreshThemeAppearance();
+
 		host.customCommands.syncAll();
 	});
+	if (host.settingsWriter.isDestroyed) return false;
 
 	host.refreshCallouts();
 	if (host.settingsTab?.containerEl.isConnected) host.settingsTab.display();
-}
-
-/**
- * Keep a copy of this device's settings when the file about to replace them
- * describes fewer callouts.
- *
- * An adoption is last-writer-wins over the whole file: the incoming settings
- * are taken as the truth, and whatever this device held that the other one did
- * not is gone. Nearly always that is exactly right — the other device is where
- * the user was working. The exception is the case issue #53 is made of, where
- * the shorter list is not a decision but the result of a bug somewhere upstream
- * of the sync client, and by the time anybody notices, every device agrees.
- *
- * Rather than try to tell those apart — which cannot be done from here, and
- * guessing wrong in the cautious direction means refusing a sync the user
- * asked for — the adoption goes ahead and a copy is kept. "Fewer rows than we
- * had" is a coarse test on purpose: it fires on a deliberate deletion too,
- * which costs one file out of five and is the trade this exists to make.
- *
- * Awaited before the rebuild, because the state being copied is the one the
- * rebuild is about to discard.
- */
-async function backUpIfRowsAreAboutToGo(
-	host: ExternalReloadHost,
-	read: Extract<SettingsRead, { kind: "loaded" }>,
-): Promise<void> {
-	const current = host.registry.toSaveData();
-	const incoming = read.data.callouts;
-	const losing =
-		Array.isArray(incoming) && incoming.length < current.callouts.length;
-	if (!losing) return;
-	await writeSettingsBackup(host, current);
+	return true;
 }

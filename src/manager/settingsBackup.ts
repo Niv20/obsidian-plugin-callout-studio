@@ -15,10 +15,9 @@
  *   synced folder, and so does this; a backup per launch would be a file event
  *   per launch on every device, which is precisely the churn `SaveGuard` and
  *   `WriteMemo` exist to remove. Today there is one caller — an adoption about
- *   to replace this device's callouts with a shorter list.
- * - **It cannot fail the operation it protects.** Every error is swallowed and
- *   reported as `null`. A backup that throws must not be the reason a user's
- *   settings failed to load.
+ *   to remove or replace this device's callout definitions.
+ * - **Failure is explicit.** Write errors are reported as `null`, so the caller
+ *   can defer destructive adoption until a recovery copy can be saved.
  *
  * The copies live beside `data.json` rather than somewhere private, which means
  * they sync too. That is deliberate: the device that still has the settings is
@@ -33,6 +32,8 @@ const KEEP = 5;
 const FOLDER = "backups";
 const PREFIX = "data-";
 const SUFFIX = ".json";
+// Accept this writer's current and legacy names, never a user's data-notes.json.
+const BACKUP_NAME = /^data-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z(?:-[\da-f-]{36})?\.json$/i;
 
 /** What writing a backup needs from the plugin. */
 export interface SettingsBackupHost {
@@ -56,31 +57,36 @@ function backupDir(host: SettingsBackupHost): string {
  * a fixed-width replacement does.
  */
 function stamp(now: Date): string {
-	return `${PREFIX}${now.toISOString().replace(/[:.]/g, "-")}${SUFFIX}`;
+	return `${PREFIX}${now.toISOString().replace(/[:.]/g, "-")}-${crypto.randomUUID()}${SUFFIX}`;
 }
 
 /**
  * Write `data` beside `data.json` and drop all but the newest {@link KEEP}.
  *
- * Returns the path written, or `null` when anything went wrong — the caller is
- * expected to carry on either way.
+ * Returns the path written, or `null` when the backup could not be saved. The
+ * caller must defer adoption that would remove or replace local definitions
+ * when no recovery copy was written.
  */
 export async function writeSettingsBackup(
 	host: SettingsBackupHost,
 	data: unknown,
 	now: Date = new Date(),
 ): Promise<string | null> {
-	const dir = backupDir(host);
-	const path = normalizePath(`${dir}/${stamp(now)}`);
-	const { adapter } = host.app.vault;
+	let path: string;
 	try {
+		const dir = backupDir(host);
+		path = normalizePath(`${dir}/${stamp(now)}`);
+		const { adapter } = host.app.vault;
+		// Capture before the first await: edits during mkdir/exists must not
+		// mutate the recovery copy that the caller is counting on.
+		const json = JSON.stringify(data, undefined, 2);
 		if (!(await adapter.exists(dir))) await adapter.mkdir(dir);
-		await adapter.write(path, JSON.stringify(data, undefined, 2));
+		await adapter.write(path, json);
+		await prune(host, dir, path);
 	} catch (err) {
 		console.error("[callout-studio] could not write a settings backup", err);
 		return null;
 	}
-	await prune(host, dir);
 	return path;
 }
 
@@ -92,17 +98,20 @@ export async function writeSettingsBackup(
  * the same reason as above: the backup has already been written, and tidying is
  * the part nobody is depending on.
  */
-async function prune(host: SettingsBackupHost, dir: string): Promise<void> {
+async function prune(host: SettingsBackupHost, dir: string, protectedPath: string): Promise<void> {
 	const { adapter } = host.app.vault;
 	try {
 		const listing = await adapter.list(dir);
 		const mine = listing.files
 			.filter((file) => {
 				const name = file.slice(file.lastIndexOf("/") + 1);
-				return name.startsWith(PREFIX) && name.endsWith(SUFFIX);
+				return BACKUP_NAME.test(name);
 			})
 			.sort();
-		for (const file of mine.slice(0, Math.max(0, mine.length - KEEP))) {
+		// Devices can disagree about the clock. Never immediately delete the
+		// copy whose successful creation is allowing destructive adoption.
+		const removable = mine.filter(file => file !== protectedPath);
+		for (const file of removable.slice(0, Math.max(0, mine.length - KEEP))) {
 			await adapter.remove(file);
 		}
 	} catch (err) {

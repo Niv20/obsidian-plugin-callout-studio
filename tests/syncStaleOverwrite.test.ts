@@ -179,7 +179,7 @@ describe("a save the freshness check must not stop", () => {
 		assert.deepStrictEqual(d.writes, ['{"n":2}']);
 	});
 
-	it("writes when the freshness read itself throws", async () => {
+	it("refuses a write when the freshness read throws", async () => {
 		const d = device({ n: 1 });
 		d.adopt();
 		d.breakReads();
@@ -189,8 +189,8 @@ describe("a save the freshness check must not stop", () => {
 
 		assert.deepStrictEqual(
 			d.writes,
-			['{"n":2}'],
-			"the safety net must not break the operation it watches",
+			[],
+			"unreadable settings must never be overwritten",
 		);
 	});
 

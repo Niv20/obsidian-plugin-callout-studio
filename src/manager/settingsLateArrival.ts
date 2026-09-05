@@ -1,37 +1,12 @@
 /**
- * manager/settingsLateArrival.ts — the second look a fresh install takes before
- * it creates the `data.json` it did not find.
+ * Recheck initially missing settings before enabling a fresh session, and keep
+ * checking on foreground for settings that synchronize later (#53).
  *
- * A launch that finds no settings file cannot tell which of two things it is
- * looking at, and they want opposite treatment:
- *
- * - **A genuine fresh install.** Nothing to lose, everything to write. Any
- *   hesitation here means the user's first callout is not saved, which is its
- *   own data loss and a far more common one.
- * - **A device a synced vault has only just reached.** The plugin folder syncs
- *   as files, not as a transaction, so `main.js` can be in place and running
- *   while `data.json` is still on its way. Creating one here publishes the
- *   shipped defaults over settings that are seconds from arriving, and the sync
- *   client carries that back to every other device. That is issue #53, and on
- *   mobile nothing catches it afterwards: Obsidian's config-folder watcher is
- *   desktop-only, so `onExternalSettingsChange` never fires to put it right.
- *
- * Nothing available at load time separates the two — both read as `absent`, and
- * a first launch has no device index to break the tie either. What separates
- * them is *time*: the file turns up, or it does not. So the question is asked
- * once, at the latest moment it is still worth asking.
- *
- * That moment is `settings/welcomeRouting.ts`. The `welcomeSeen` flag is the
- * first thing a fresh install writes, which makes it the last point at which
- * finding a file still rescues the user's settings instead of replacing them —
- * and it runs from `onLayoutReady`, well after `onload`, which is time a sync
- * client can use.
- *
- * Deliberately **not** wired into `SettingsWriter` as a pre-write hook, which
- * is the other obvious home for it. Adopting a file rebuilds the registry, a
- * rebuild asks for saves of its own, and those saves would then be queueing
- * behind the very write pass that was waiting on the check. At a seam between
- * writes there is no such knot to tie.
+ * Two absent reads cannot distinguish a new install from slow synchronization.
+ * The welcome therefore creates no settings file. A first deliberate edit still
+ * passes the writer's disk freshness check. A previously initialized device
+ * stays frozen while its settings are missing; only actual adoption (or an
+ * explicit fresh-start decision) can release that protection.
  */
 import type { ExternalReloadHost } from "./settingsAdopt";
 import { reloadFrom } from "./settingsAdopt";
@@ -73,35 +48,12 @@ export async function stillFreshInstall(
 }
 
 /**
- * End the provisional freeze a fresh-install launch started with, and answer
- * whether this really is a fresh install.
+ * Recheck a launch whose boot reported `isFreshInstall`. An absent file enables
+ * real edits, a loaded file is adopted, and an unreadable file remains protected.
+ * Nothing here writes defaults or marks the installation initialized.
  *
- * `loadSettingsInto` cannot tell a brand-new device from one a synced vault is
- * still reaching — both read as `absent`, and a first launch has no device index
- * to break the tie either. It resolves that by writing nothing at all until this
- * runs, at `onLayoutReady`, which is as long as the question can be left open
- * without a genuine fresh install noticing.
- *
- * Three outcomes, and only the first lets the session write:
- *
- * - **Still nothing there.** A real fresh install. Thaw, and let the welcome
- *   screen create the file exactly as it always has.
- * - **A file turned up.** `stillFreshInstall` adopts it through `reloadFrom`,
- *   which thaws on its own because it arrived holding the real settings.
- * - **A file turned up and cannot be read.** Stay frozen, and say so.
- *
- * Returns `false` without reading anything when the writer is no longer frozen,
- * which means a file was already adopted between `onload` and here — by the
- * foreground watcher, or on desktop by `onExternalSettingsChange`. That session
- * has its settings, so there is nothing to confirm and nobody to greet.
- *
- * > [!WARNING]
- * > Call this **only** for a launch whose boot reported `isFreshInstall`. The
- * > other freeze that reaches `onLayoutReady` — a file missing on a device that
- * > has run here before — looks identical from inside this function, and
- * > "still nothing there" is exactly what that device reports. Thawing it would
- * > write the built-ins over settings that have merely gone missing, which is
- * > the whole of what `loadSettingsInto`'s `hasIndex` test exists to prevent.
+ * Never call for a missing file on a previously used device: its frozen state
+ * looks identical, but absence is precisely why that device must not write.
  */
 export async function confirmFreshInstall(
 	host: ExternalReloadHost,
@@ -112,19 +64,17 @@ export async function confirmFreshInstall(
 	try {
 		stillFresh = await stillFreshInstall(host);
 	} catch (err) {
-		// Genuinely exceptional: `readSettingsFile` already turns an adapter
-		// that will not answer into `unreadable` rather than throwing. But the
-		// freeze this releases has no other way out, so a throw here would
-		// leave a fresh install keeping nothing — this launch and, since no
-		// file ever gets created, every launch after it. Between "might
-		// overwrite a file that is probably not there" and "certainly discards
-		// everything the user does", the first is the better bet.
+		// The failed operation may have been adopting a file that JUST arrived.
+		// An exception is never evidence that no file exists; keep it protected
+		// and let the ordinary foreground/external-change path retry recovery.
 		console.error(
 			"[callout-studio] could not confirm a fresh install; " +
-				"allowing this session to write",
+				"settings remain protected",
 			err,
 		);
-		stillFresh = true;
+		host.settingsWriter.freeze();
+		warnSettingsUnreadable();
+		stillFresh = false;
 	}
 
 	if (stillFresh) host.settingsWriter.thaw();
@@ -147,8 +97,8 @@ export async function confirmFreshInstall(
  * issue #53, and no amount of care at boot reaches it.
  *
  * So this is the mobile counterpart of `onExternalSettingsChange`, not a
- * recovery path. `stillFreshInstall` covers the narrow window between `onload`
- * and the first write; this covers the rest of the session.
+ * recovery path. `stillFreshInstall` covers the launch window, the writer checks actual saves,
+ * and this picks up remote updates without waiting for a local edit.
  *
  * Returning to the app is the signal, because that is when a sync client has
  * most likely just run. The steady state costs one small read per foreground
@@ -167,7 +117,7 @@ export async function confirmFreshInstall(
  */
 export function watchForLateSettings(host: ExternalReloadHost): void {
 	// Absent on a test harness, and on any host that is not a real plugin.
-	if (!host.registerDomEvent) return;
+	if (!host.registerDomEvent || host.settingsWriter.isDestroyed) return;
 
 	// The MAIN document, deliberately, rather than `activeDocument` — which is
 	// whichever window had focus at the instant this ran. Bind to a popout and
@@ -198,14 +148,17 @@ export function watchForLateSettings(host: ExternalReloadHost): void {
 			// session, and the reason the steady state is nearly free.
 			if (host.settingsWriter.matchesLastWrite(read.json)) return;
 
-			// The editor owns the registry right now; rebuilding under it would
-			// change the row being edited. Try again next time.
-			if (registryIsOwned(host)) return;
+			// The real plugin queues even an editor-owned update, so closing
+			// the editor can retry it. Minimal hosts retry on the next foreground.
+			if (registryIsOwned(host) && !host.onExternalSettingsChange) return;
 
 			// `reloadFrom` thaws — see its docblock. Adopting is the one thing
 			// that ends a freeze, and it is reached only with the real file in
 			// hand.
-			await reloadFrom(host, read);
+			if (host.onExternalSettingsChange) await host.onExternalSettingsChange();
+			else await reloadFrom(host, read);
+		} catch (err) {
+			console.error("[callout-studio] could not refresh settings on foreground", err);
 		} finally {
 			// In a finally, so a read or a rebuild that threw costs one check
 			// rather than the rest of the session's.

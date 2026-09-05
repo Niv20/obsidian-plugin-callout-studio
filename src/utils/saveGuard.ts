@@ -77,6 +77,7 @@ function canonicalText(json: string): string {
 
 export class SaveGuard {
 	private readonly memo = new WriteMemo();
+	hasBaseline = false;
 
 	/**
 	 * The payload to write, or `null` when it is byte-identical to what the
@@ -93,6 +94,7 @@ export class SaveGuard {
 	/** Record a write that succeeded. Pass the string {@link prepare} returned. */
 	commit(json: string): void {
 		this.memo.commit(json);
+		this.hasBaseline = true;
 	}
 
 	/**
@@ -108,6 +110,7 @@ export class SaveGuard {
 	 */
 	adopt(json: string): void {
 		this.memo.adopt(canonicalText(json));
+		this.hasBaseline = true;
 	}
 
 	/**

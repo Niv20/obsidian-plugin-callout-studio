@@ -14,9 +14,8 @@
  *   second one writes the shipped built-ins over settings that are merely in
  *   transit, which is issue #53 with the guard removed — so the call is gated on
  *   `boot.isFreshInstall` at the call site, and only there.
- * - **The watchers are registered in a `finally`.** A modal the user dismissed
- *   oddly, or a read that failed, costs that step. It must not cost the rest of
- *   the session's discovery, which has no other place to be wired up.
+ * - **The welcome writes nothing.** Missing settings may still be in transit,
+ *   so a greeting is no reason to publish defaults or mark a device initialized.
  *
  * The adoption branch — a file that turned up between `onload` and here — is
  * covered by `syncMobileWipe.test.ts` against a whole device. What is pinned
@@ -31,6 +30,7 @@ import { runLaunchSequence } from "../src/manager/launchSequence";
 import type { SettingsBootResult } from "../src/manager/settingsBoot";
 import type CalloutStudioPlugin from "../src/main";
 import { installFakeDom } from "./support/fakeDom";
+import { WelcomeModal } from "../src/settings/WelcomeModal";
 
 installFakeDom();
 
@@ -55,6 +55,7 @@ function launch(options: {
 		scans: 0,
 		prunes: [] as (number | undefined)[],
 		watchers: 0,
+		initialized: 0,
 	};
 
 	const app = {
@@ -93,7 +94,7 @@ function launch(options: {
 		},
 		localState: {
 			firstRunCompleted: options.firstRunCompleted ?? true,
-			completeFirstRun: (): void => {},
+			markInitialized: (): void => { seen.initialized++; },
 		},
 		runVaultScan: (): Promise<number> => {
 			seen.scans += 1;
@@ -158,50 +159,34 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 		);
 		assert.strictEqual(l.plugin.settings.welcomeSeen, false);
 	});
+	it("does not create data.json or mark it as previously saved when a fresh welcome closes", async () => {
+		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
+		WelcomeModal.prototype.prompt = () => Promise.resolve();
+		try {
+			const l = launch({ welcomeSeen: false });
+			await l.run(true);
+			assert.strictEqual(l.plugin.settings.welcomeSeen, true);
+			assert.strictEqual(l.seen.saves, 0);
+			assert.strictEqual(l.seen.initialized, 0);
+		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
+	});
+	it("does not show a queued welcome after the plugin unloads", async () => {
+		const l = launch({ welcomeSeen: false });
+		l.settingsWriter.destroy();
+		await l.run(true);
+		assert.strictEqual(l.plugin.settings.welcomeSeen, false);
+		assert.strictEqual(l.seen.saves, 0);
+	});
 });
 
-describe("what the launch does once the freeze is settled", () => {
-	it("prunes rather than scans on a device that has run here before", async () => {
-		const l = launch({ firstRunCompleted: true });
-
-		await l.run(false);
-
-		assert.strictEqual(l.seen.scans, 0);
-		assert.deepStrictEqual(
-			l.seen.prunes,
-			[2000],
-			"a launch still owes a prune for rows an earlier session orphaned",
-		);
-	});
-
-	it("scans rather than prunes on a device with no index of its own", async () => {
-		const l = launch({ firstRunCompleted: false, welcomeSeen: true });
-
-		await l.run(false);
-
-		assert.strictEqual(l.seen.scans, 1);
-		assert.deepStrictEqual(l.seen.prunes, []);
-	});
-
-	it("registers the incremental watchers on the ordinary path", async () => {
-		const l = launch();
-
-		await l.run(false);
-
-		assert.strictEqual(l.seen.watchers, 1);
-	});
-
-	it("registers them anyway when a step throws", async () => {
-		// The welcome screen's own write is the easiest step to break, and a
-		// modal dismissed oddly is the real-world version of it.
-		const l = launch({ welcomeSeen: false, saveRejects: true });
-
-		await assert.rejects(() => l.run(true));
-
-		assert.strictEqual(
-			l.seen.watchers,
-			1,
-			"a failed step must not cost the session its discovery",
-		);
+describe("launch never discovers callouts", () => {
+	it("does not scan, prune, or subscribe, even on a fresh device", async () => {
+		for (const firstRunCompleted of [false, true]) {
+			const h = launch({ firstRunCompleted, welcomeSeen: true });
+			await h.run(true);
+			assert.strictEqual(h.seen.scans, 0);
+			assert.deepStrictEqual(h.seen.prunes, []);
+			assert.strictEqual(h.seen.watchers, 0);
+		}
 	});
 });

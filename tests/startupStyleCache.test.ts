@@ -158,7 +158,7 @@ describe("StartupStyleCache — the key is scoped to the vault", () => {
 			const cache = new StartupStyleCache(app({ appId: "abc123" }));
 			cache.persist("/* css */");
 			cache.loadCachedCss();
-			assert.deepStrictEqual(store.reads, [`abc123-${CSS_KEY}`]);
+			assert.deepStrictEqual(store.reads, ["abc123-callout-studio-local", `abc123-${CSS_KEY}`]);
 		});
 	});
 

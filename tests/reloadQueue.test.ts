@@ -33,7 +33,7 @@ let devices = 0;
 function host(disk: { content: string | null }) {
 	devices++;
 	const state = {
-		pruneSuspended: false,
+		settingsEditOpen: false,
 		hasPreview: false,
 		reads: 0,
 		/** Set to hold the read in flight open, so a test can overlap two runs. */
@@ -85,14 +85,14 @@ function host(disk: { content: string | null }) {
 				return undefined;
 			}
 		},
-		get pruneSuspended() {
-			return state.pruneSuspended;
+		get settingsEditOpen() {
+			return state.settingsEditOpen;
 		},
 		registry,
 		localState,
 		settingsWriter: writer,
 		saveSettings: () => writer.save(),
-		resyncThemeRows: () => undefined,
+		refreshThemeAppearance: () => undefined,
 		customCommands: { syncAll: () => undefined },
 		refreshCallouts: () => undefined,
 	} as unknown as ReloadQueueHost;
@@ -165,7 +165,8 @@ describe("adopting one file at a time", () => {
 			return original();
 		};
 
-		await assert.rejects(q.run());
+		await q.run();
+		assert.strictEqual(q.isPending, true);
 		// The next caller must get a real run, not a rejected promise held over
 		// from the last one.
 		await q.run();
@@ -179,7 +180,7 @@ describe("a reload deferred by an open modal", () => {
 
 	it("is remembered rather than dropped", async () => {
 		const { host: h, state } = host(withFile());
-		state.pruneSuspended = true;
+		state.settingsEditOpen = true;
 		const q = new ReloadQueue(h);
 
 		await q.run();
@@ -189,12 +190,12 @@ describe("a reload deferred by an open modal", () => {
 
 	it("runs when the editor closes", async () => {
 		const { host: h, state } = host(withFile());
-		state.pruneSuspended = true;
+		state.settingsEditOpen = true;
 		const q = new ReloadQueue(h);
 		await q.run();
 		const before = state.reads;
 
-		state.pruneSuspended = false;
+		state.settingsEditOpen = false;
 		q.release();
 		await settle();
 
@@ -223,13 +224,13 @@ describe("a reload deferred by an open modal", () => {
 		// one of them while the other is still up cannot force a rebuild under
 		// the modal that is up.
 		const { host: h, state } = host(withFile());
-		state.pruneSuspended = true;
+		state.settingsEditOpen = true;
 		state.hasPreview = true;
 		const q = new ReloadQueue(h);
 		await q.run();
 		const before = state.reads;
 
-		state.pruneSuspended = false;
+		state.settingsEditOpen = false;
 		q.release();
 		await settle();
 
@@ -249,5 +250,27 @@ describe("a release with nothing waiting", () => {
 		await settle();
 
 		assert.strictEqual(state.reads, 0);
+	});
+});
+
+describe("reload recovery and unload", () => {
+	it("contains adoption failures and retains a retry", async () => {
+		const { host: h } = host({ content: JSON.stringify({ callouts: [] }) });
+		h.refreshThemeAppearance = () => { throw new Error("theme changed during refresh"); };
+		const q = new ReloadQueue(h);
+		await assert.doesNotReject(() => q.run());
+		assert.strictEqual(q.isPending, true);
+	});
+	it("does not adopt an in-flight read or start new reads after unload", async () => {
+		const { host: h, state } = host({ content: JSON.stringify({ settings: { welcomeSeen: true } }) });
+		state.gate = () => undefined;
+		const q = new ReloadQueue(h);
+		const pending = q.run(); await settle();
+		q.destroy(); h.settingsWriter.destroy();
+		state.gate?.(); state.gate = null;
+		await pending;
+		assert.strictEqual(h.registry.settings.welcomeSeen, false);
+		await q.run();
+		assert.strictEqual(state.reads, 1);
 	});
 });

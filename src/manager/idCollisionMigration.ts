@@ -49,7 +49,7 @@
  *
  * `customized` IS filled, on purpose: a survivor that has just inherited the
  * loser's authored styling has been customized, and leaving the flag unset would
- * let `CalloutDiscovery.pruneUnused` throw the merged row away the next time the
+ * discard authored provenance the next time the
  * vault stopped mentioning it.
  *
  * ## What else has to move with the row

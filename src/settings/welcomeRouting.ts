@@ -8,14 +8,11 @@
  *   this version already has a `data.json`, and a splash screen on an upgrade
  *   reads as the plugin having reset itself. `isFreshInstall` is computed once,
  *   in `onload`, from the data that was just loaded.
- * - **The flag is persisted before the modal opens**, so a startup interrupted
- *   while the screen is up (a crash, a reload) does not show it again on the
- *   next launch. That write is also the first one a fresh install makes — and
- *   it is safe to make here only because `isFreshInstall` now arrives already
- *   confirmed. `manager/settingsLateArrival.ts`'s `confirmFreshInstall` has
- *   re-read the folder immediately before this runs, and the session was frozen
- *   until it did; this file used to make that check itself, which guarded this
- *   one write while every background save went around it. Issue #53.
+ * - **The welcome never creates a settings file.** A second absent read still
+ *   cannot prove another device's settings are not arriving later. Remember
+ *   the greeting in memory; a subsequent deliberate settings edit persists it
+ *   with the actual change. A no-edit restart may show the welcome again, which
+ *   is preferable to publishing defaults over a slowly arriving file (#53).
  *
  * `openWelcome()` on the plugin is the deliberate bypass — the protocol handler
  * and the DevTools console reach the screen through it regardless of the flag.
@@ -33,9 +30,8 @@ type WelcomeHost = SettingsTabPlugin &
 /**
  * Show the welcome screen if this launch is the one that should show it.
  *
- * `isFreshInstall` arrives already confirmed — `manager/launchSequence.ts` asks
- * `confirmFreshInstall` immediately before this, and awaits this before
- * first-run discovery so the splash never stacks on the large-vault scan modal.
+ * `manager/launchSequence.ts` rechecks the settings file immediately before
+ * reaching this point. Showing or dismissing the preview is never a save.
  */
 export async function maybeShowWelcomeOnLaunch(
 	plugin: WelcomeHost,
@@ -43,6 +39,5 @@ export async function maybeShowWelcomeOnLaunch(
 ): Promise<void> {
 	if (plugin.settings.welcomeSeen || !isFreshInstall) return;
 	plugin.settings.welcomeSeen = true;
-	await plugin.saveSettings();
 	await new WelcomeModal(plugin).prompt();
 }

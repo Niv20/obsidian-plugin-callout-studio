@@ -3,17 +3,13 @@
  *
  * Bootstraps the entire plugin during Obsidian's `onload` lifecycle:
  * creates the CalloutRegistry, wires up CSSInjector, IconService,
- * and CalloutDiscovery, registers all commands, the settings tab, the
+ * and manual discovery, registers all commands, the settings tab, the
  * autocomplete provider, and the context menu.
  * Keep this file focused on lifecycle only — all feature logic lives in
  * the sub-modules under manager/, editor/, settings/, etc.
  */
 import { Notice, Platform, Plugin } from "obsidian";
-import type {
-	CalloutIcon,
-	CalloutRenderRole,
-	PluginSettings,
-} from "./types";
+import type { CalloutIcon, CalloutRenderRole, PluginSettings } from "./types";
 import { CalloutRegistry } from "./manager/CalloutRegistry";
 import { CSSInjector } from "./manager/CSSInjector";
 import { IconService } from "./icons/IconService";
@@ -21,15 +17,15 @@ import {
 	clearMaterialFontStore,
 	setMaterialFontStore,
 } from "./icons/materialFontStore";
-import { CalloutDiscovery } from "./manager/CalloutDiscovery";
+import { ManualCalloutDiscovery } from "./manager/ManualCalloutDiscovery";
 import type { SettingsWriter } from "./manager/SettingsWriter";
 import { createSettingsWriter } from "./manager/settingsWriterHost";
+import { saveSettingsWithFeedback } from "./manager/settingsSaveFeedback";
 import { DeviceLocalStore } from "./manager/DeviceLocalStore";
-import {
-	loadSettingsInto,
-} from "./manager/settingsBoot";
+import { reportLegacyDiscoveryMigration } from "./manager/legacyDiscoveryNotices";
+import { loadSettingsInto } from "./manager/settingsBoot";
 import { ReloadQueue } from "./manager/reloadQueue";
-import { registerThemeRowSync } from "./manager/theme/themeRowSync";
+import { registerThemeAppearance } from "./manager/theme/themeAppearanceSync";
 import { removeLegacyStartupSnippet } from "./manager/legacyStartupSnippet";
 import { runLaunchSequence } from "./manager/launchSequence";
 import { CalloutStudioSettingsTab } from "./settings/SettingsTab";
@@ -79,20 +75,12 @@ export default class CalloutStudioPlugin extends Plugin {
 	icons!: IconService;
 	locales!: LocaleStore;
 	settingsTab!: CalloutStudioSettingsTab;
-	/**
-	 * Public for the same reason `localState` is: `manager/launchSequence.ts`
-	 * drives the post-layout half of startup and needs the prune and the
-	 * incremental watchers.
-	 */
-	discovery!: CalloutDiscovery;
+	discovery!: ManualCalloutDiscovery;
 	settingsWriter!: SettingsWriter;
-	/**
-	 * Discovery's index and the rest of what must not travel between devices.
-	 * Public because `settingsBoot` and `CalloutDiscovery` both take it.
-	 */
+	/** Only local UI preferences and a prior-install marker. */
 	localState!: DeviceLocalStore;
-	/** Re-derives the theme's overlay rows — see registerThemeRowSync. */
-	resyncThemeRows!: () => void;
+	/** Re-derives the theme's overlay rows — see registerThemeAppearance. */
+	refreshThemeAppearance!: () => void;
 	/** Adoption of another device's `data.json` — serialized, and retried when
 	 * a modal hands the registry back. See manager/reloadQueue.ts. */
 	private reloads!: ReloadQueue;
@@ -103,11 +91,12 @@ export default class CalloutStudioPlugin extends Plugin {
 	}
 
 	/** Backwards-compatible accessor used by SettingsTab/CalloutEditor. */
-	get pruneSuspended(): boolean {
-		return this.discovery.pruneSuspended;
+	private editingSettings = false;
+	get settingsEditOpen(): boolean {
+		return this.editingSettings;
 	}
-	set pruneSuspended(value: boolean) {
-		this.discovery.pruneSuspended = value;
+	set settingsEditOpen(value: boolean) {
+		this.editingSettings = value;
 		// One of two seams that hand the registry back; see manager/reloadQueue.ts.
 		if (!value) this.reloads?.release();
 	}
@@ -134,11 +123,7 @@ export default class CalloutStudioPlugin extends Plugin {
 
 		this.registry = new CalloutRegistry();
 
-		// Startup fast path — synchronously re-apply last session's CSS from
-		// localStorage BEFORE the first await, so on slow startups (mobile,
-		// where the note renders before plugins finish loading) custom callout
-		// styling lands as early as this plugin possibly can. See
-		// StartupStyleCache for the full picture.
+		// Restore cached CSS before awaiting disk so mobile keeps its prior styles.
 		this.cssInjector = new CSSInjector(this.app, this.registry);
 		this.cssInjector.injectFromCache();
 
@@ -147,13 +132,15 @@ export default class CalloutStudioPlugin extends Plugin {
 		// before the first save below, which is the load-migration flush.
 		this.settingsWriter = createSettingsWriter(this);
 
-		// Read data.json, rebuild the registry, and put back the rows this
-		// device discovered in earlier sessions — see manager/settingsBoot.ts.
+		// Load saved definitions and device-only UI preferences.
 		this.localState = new DeviceLocalStore(this.app);
 		this.reloads = new ReloadQueue(this);
 		// The other seam. Cheap: a no-op unless a reload is actually waiting.
 		this.registry.onPreviewChange(() => this.reloads.release());
+		const legacyRecovery = await this.localState.archiveLegacyDiscovery(this.manifest);
+		if (this.settingsWriter.isDestroyed) return;
 		const boot = await loadSettingsInto(this);
+		if (this.settingsWriter.isDestroyed) return;
 
 		// UI locale follows the user's saved preference; "auto" (the default)
 		// tracks Obsidian's interface language.
@@ -167,7 +154,9 @@ export default class CalloutStudioPlugin extends Plugin {
 		// onload.
 		this.locales = new LocaleStore(this.app, this.manifest);
 		await this.locales.prepare(this.settings.language);
+		if (this.settingsWriter.isDestroyed) return;
 		setLocale(this.settings.language);
+		reportLegacyDiscoveryMigration(legacyRecovery);
 
 		// After setLocale, since this is the first user-facing string of the
 		// session. Saved palettes that turned out to hold identical colors were
@@ -186,10 +175,8 @@ export default class CalloutStudioPlugin extends Plugin {
 			);
 		}
 
-		// Give the callout types the active theme declares a row of their own,
-		// and keep doing so whenever the theme changes. Runs before the first
-		// inject so those rows are in the sheet from the start.
-		this.resyncThemeRows = registerThemeRowSync(this);
+		// Refresh ownership and artwork for existing types without adding rows.
+		this.refreshThemeAppearance = registerThemeAppearance(this);
 
 		// Full CSS inject now that the registry holds real definitions
 		// (replaces the startup snapshot applied above).
@@ -241,13 +228,13 @@ export default class CalloutStudioPlugin extends Plugin {
 			cssInjector: this.cssInjector,
 			saveSettings: () => this.saveSettings(),
 		});
-		this.discovery = new CalloutDiscovery({
+		this.discovery = new ManualCalloutDiscovery({
 			app: this.app,
 			registry: this.registry,
-			localState: this.localState,
-			saveSettings: () => this.saveSettings(),
-			refreshCallouts: () => this.refreshCallouts(),
-			registerEvent: (ref) => this.registerEvent(ref),
+			settingsWriter: this.settingsWriter,
+			themeIds: () => this.cssInjector.themeCallouts().themeDefinedIds(),
+			canApply: () => !this.settingsEditOpen && !this.registry.hasPreviewDefinition(),
+			onSettled: () => this.reloads.release(),
 		});
 
 		// Remove the startup CSS snippet versions up to 2.5.0 left in the vault.
@@ -267,22 +254,8 @@ export default class CalloutStudioPlugin extends Plugin {
 		);
 		this.register(() => this.outlineDecorator.destroy());
 
-		// The user's own commands, on top of the six fixed ones. Registering
-		// them during onload is what makes them survive a restart or a
-		// disable/enable — Obsidian tears every plugin command down on unload
-		// by itself. The sweep re-derives the whole set from the registry, so
-		// it doubles as the startup pass that drops commands whose callout is
-		// gone.
-		//
-		// Still subscribed BEFORE the save listener below, though the reason is
-		// weaker than it was: deleting a callout invalidates the commands that
-		// used it, and both listeners then call saveSettings(). That used to be
-		// two concurrent writes of different content, each carrying a snapshot
-		// taken at its own moment, with the file left to whichever finished
-		// last. SettingsWriter coalesces them and builds the payload at write
-		// time, so both now write the pruned list either way; the order is kept
-		// so the settings the sweep produces are the ones the FIRST write
-		// carries, rather than arriving in a second one.
+		// Register saved commands before the save listener. Missing targets stay
+		// stored and paused until a manual discovery or settings load restores them.
 		this.customCommands = new CustomCommandManager(this);
 		this.registry.onChange(() => this.customCommands.syncAll());
 		this.customCommands.syncAll();
@@ -352,7 +325,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		// the next launch tries again.
 		void this.ensureLocale();
 
-		// Confirm the fresh install, greet, then run first-run discovery —
+		// Confirm the fresh install and greet the user —
 		// decoupled from first render so onload stays fast. See
 		// manager/launchSequence.ts for why those three are one function.
 		this.app.workspace.onLayoutReady(() => {
@@ -369,6 +342,7 @@ export default class CalloutStudioPlugin extends Plugin {
 	async ensureLocale(): Promise<boolean> {
 		const before = getLocale();
 		const ok = await this.locales.ensure(this.settings.language);
+		if (this.settingsWriter.isDestroyed) return false;
 		setLocale(this.settings.language);
 		if (getLocale() !== before) this.applyLocaleChange();
 		return ok;
@@ -420,13 +394,15 @@ export default class CalloutStudioPlugin extends Plugin {
 
 	onunload() {
 		this.discovery?.destroy();
+		this.settingsWriter?.destroy();
+		this.reloads?.destroy();
 		this.cssInjector?.destroy();
 		clearMaterialFontStore();
 		clearContentPillCache();
 	}
 
 	saveSettings(): Promise<void> {
-		return this.settingsWriter.save();
+		return saveSettingsWithFeedback(this, () => this.reloads?.release());
 	}
 
 	/** @see editor/renderRefresh.ts */
@@ -442,11 +418,7 @@ export default class CalloutStudioPlugin extends Plugin {
 	// ── Forwarders that keep the public plugin surface stable ──
 
 	restyleUncustomizedFallbackRows(): number {
-		return this.discovery.restyleUncustomizedFallbackRows();
-	}
-
-	isKnownZeroUsageFallback(id: string): boolean {
-		return this.discovery.isKnownZeroUsageFallback(id);
+		return this.registry.restyleUncustomizedFallbackRows();
 	}
 
 	/**
@@ -462,24 +434,8 @@ export default class CalloutStudioPlugin extends Plugin {
 		await this.saveSettings();
 	}
 
-	addUnknownCalloutsAsFallback(unknownIds: string[]): number {
-		return this.discovery.addUnknownCalloutsAsFallback(unknownIds);
-	}
-
-	suppressCalloutRediscovery(ids: string[]): void {
-		this.discovery.suppressRediscovery(ids);
-	}
-
-	schedulePruneUnusedFallbacks(delayMs?: number): void {
-		this.discovery.schedulePrune(delayMs);
-	}
-
-	async pruneUnusedFallbacks(): Promise<number> {
-		return this.discovery.pruneUnused();
-	}
-
-	async runVaultScan(markFirstRun = false): Promise<number> {
-		return this.discovery.runVaultScan(markFirstRun);
+	runVaultScan(): Promise<number> {
+		return this.discovery.run();
 	}
 
 	onIconCacheChange(cb: () => void): () => void {

@@ -1,0 +1,377 @@
+{
+  "saved": {
+    "version": 4,
+    "callouts": [
+      {
+        "id": "kept-custom",
+        "displayName": "kept-custom",
+        "icon": {
+          "type": "lucide",
+          "value": "book"
+        },
+        "colorLight": "#f1ab23",
+        "colorDark": "#ab23f1",
+        "foldable": true,
+        "defaultFolded": false,
+        "builtIn": false,
+        "source": "user",
+        "aliases": [
+          "kept-alias"
+        ],
+        "metadata": {
+          "purpose": "original style"
+        },
+        "customized": true
+      },
+      {
+        "id": "claimed-fallback",
+        "displayName": "claimed-fallback",
+        "icon": {
+          "type": "lucide",
+          "value": "book"
+        },
+        "colorLight": "#f1ab23",
+        "colorDark": "#ab23f1",
+        "foldable": true,
+        "defaultFolded": false,
+        "builtIn": false,
+        "source": "fallback",
+        "customized": true
+      },
+      {
+        "id": "command-fallback",
+        "displayName": "command-fallback",
+        "icon": {
+          "type": "lucide",
+          "value": "book"
+        },
+        "colorLight": "#f1ab23",
+        "colorDark": "#ab23f1",
+        "foldable": true,
+        "defaultFolded": false,
+        "builtIn": false,
+        "source": "fallback"
+      }
+    ],
+    "settings": {
+      "globalStyle": {
+        "borderSides": {
+          "top": false,
+          "right": false,
+          "bottom": false,
+          "left": false
+        },
+        "borderWidth": 2.5,
+        "titleScale": 1,
+        "contentScale": 1,
+        "borderRadius": 4,
+        "alignContentWithTitle": false,
+        "heading": {
+          "borderSides": {
+            "top": false,
+            "right": false,
+            "bottom": false,
+            "left": false
+          },
+          "borderWidth": 1.5,
+          "borderRadius": 4,
+          "paddingTop": 0.25,
+          "paddingBottom": 0.25,
+          "marginTop": 0.5
+        },
+        "inline": {
+          "borderSides": {
+            "top": false,
+            "right": false,
+            "bottom": false,
+            "left": false
+          },
+          "borderWidth": 1.5,
+          "borderRadius": 16,
+          "fontScale": 1
+        }
+      },
+      "contextMenu": {
+        "enabled": true,
+        "items": {
+          "regular": [
+            {
+              "id": "copyMarkdown",
+              "enabled": true
+            },
+            {
+              "id": "foldDefaults",
+              "enabled": true
+            },
+            {
+              "id": "edit",
+              "enabled": true
+            },
+            {
+              "id": "openSettings",
+              "enabled": true
+            }
+          ],
+          "heading": [
+            {
+              "id": "cutSection",
+              "enabled": true
+            },
+            {
+              "id": "copySection",
+              "enabled": true
+            },
+            {
+              "id": "deleteSection",
+              "enabled": true
+            },
+            {
+              "id": "edit",
+              "enabled": true
+            },
+            {
+              "id": "openSettings",
+              "enabled": true
+            }
+          ],
+          "inline": [
+            {
+              "id": "edit",
+              "enabled": true
+            },
+            {
+              "id": "openSettings",
+              "enabled": true
+            }
+          ]
+        }
+      },
+      "autocomplete": {
+        "enabled": true
+      },
+      "iconSources": {
+        "materialStyleDefault": "rounded",
+        "materialWeightDefault": 300,
+        "lastCategory": {
+          "material": ""
+        },
+        "lastEmojiSkinTone": 0
+      },
+      "headingCallouts": {
+        "enabled": true,
+        "refCleanTitles": true,
+        "refShowIcon": true,
+        "showFoldArrow": true
+      },
+      "inlineCallouts": {
+        "enabled": true,
+        "allowContent": true
+      },
+      "welcomeSeen": false,
+      "autoDiscoverCallouts": true,
+      "fallbackCalloutId": "note",
+      "language": "auto",
+      "customPalettes": [],
+      "userImages": [],
+      "customCommands": [
+        {
+          "id": "stable-hotkey-command",
+          "calloutId": "command-fallback",
+          "role": "regular",
+          "action": "wrap"
+        }
+      ],
+      "disabledFixedCommands": [],
+      "quickInsertSource": "all"
+    }
+  },
+  "legacyLocalRaw": "{\"v\":1,\"discovered\":[\"unclaimed\",\"local-only\",\"kept-custom\"],\"firstRunCompleted\":true,\"retiredThemeIds\":[\"retired-theme\"],\"listsExpanded\":{\"theme\":true,\"user\":false,\"builtin\":true,\"palettes\":true}}",
+  "oldReadOfNewerData": {
+    "version": 4,
+    "callouts": [
+      {
+        "id": "kept-custom",
+        "displayName": "kept-custom",
+        "icon": {
+          "type": "lucide",
+          "value": "book"
+        },
+        "colorLight": "#f1ab23",
+        "colorDark": "#ab23f1",
+        "foldable": true,
+        "defaultFolded": false,
+        "builtIn": false,
+        "source": "user",
+        "aliases": [
+          "kept-alias"
+        ],
+        "metadata": {
+          "purpose": "original style"
+        },
+        "customized": true
+      },
+      {
+        "id": "claimed-fallback",
+        "displayName": "claimed-fallback",
+        "icon": {
+          "type": "lucide",
+          "value": "book"
+        },
+        "colorLight": "#f1ab23",
+        "colorDark": "#ab23f1",
+        "foldable": true,
+        "defaultFolded": false,
+        "builtIn": false,
+        "source": "fallback",
+        "customized": true
+      },
+      {
+        "id": "command-fallback",
+        "displayName": "command-fallback",
+        "icon": {
+          "type": "lucide",
+          "value": "book"
+        },
+        "colorLight": "#f1ab23",
+        "colorDark": "#ab23f1",
+        "foldable": true,
+        "defaultFolded": false,
+        "builtIn": false,
+        "source": "fallback"
+      }
+    ],
+    "settings": {
+      "globalStyle": {
+        "borderSides": {
+          "top": false,
+          "right": false,
+          "bottom": false,
+          "left": false
+        },
+        "borderWidth": 2.5,
+        "titleScale": 1,
+        "contentScale": 1,
+        "borderRadius": 4,
+        "alignContentWithTitle": false,
+        "heading": {
+          "borderSides": {
+            "top": false,
+            "right": false,
+            "bottom": false,
+            "left": false
+          },
+          "borderWidth": 1.5,
+          "borderRadius": 4,
+          "paddingTop": 0.25,
+          "paddingBottom": 0.25,
+          "marginTop": 0.5
+        },
+        "inline": {
+          "borderSides": {
+            "top": false,
+            "right": false,
+            "bottom": false,
+            "left": false
+          },
+          "borderWidth": 1.5,
+          "borderRadius": 16,
+          "fontScale": 1
+        }
+      },
+      "contextMenu": {
+        "enabled": true,
+        "items": {
+          "regular": [
+            {
+              "id": "copyMarkdown",
+              "enabled": true
+            },
+            {
+              "id": "foldDefaults",
+              "enabled": true
+            },
+            {
+              "id": "edit",
+              "enabled": true
+            },
+            {
+              "id": "openSettings",
+              "enabled": true
+            }
+          ],
+          "heading": [
+            {
+              "id": "cutSection",
+              "enabled": true
+            },
+            {
+              "id": "copySection",
+              "enabled": true
+            },
+            {
+              "id": "deleteSection",
+              "enabled": true
+            },
+            {
+              "id": "edit",
+              "enabled": true
+            },
+            {
+              "id": "openSettings",
+              "enabled": true
+            }
+          ],
+          "inline": [
+            {
+              "id": "edit",
+              "enabled": true
+            },
+            {
+              "id": "openSettings",
+              "enabled": true
+            }
+          ]
+        }
+      },
+      "autocomplete": {
+        "enabled": true
+      },
+      "iconSources": {
+        "materialStyleDefault": "rounded",
+        "materialWeightDefault": 300,
+        "lastCategory": {
+          "material": ""
+        },
+        "lastEmojiSkinTone": 0
+      },
+      "headingCallouts": {
+        "enabled": true,
+        "refCleanTitles": true,
+        "refShowIcon": true,
+        "showFoldArrow": true
+      },
+      "inlineCallouts": {
+        "enabled": true,
+        "allowContent": true
+      },
+      "welcomeSeen": false,
+      "autoDiscoverCallouts": true,
+      "fallbackCalloutId": "note",
+      "language": "auto",
+      "customPalettes": [],
+      "userImages": [],
+      "customCommands": [
+        {
+          "id": "stable-hotkey-command",
+          "calloutId": "command-fallback",
+          "role": "regular",
+          "action": "wrap"
+        }
+      ],
+      "disabledFixedCommands": [],
+      "quickInsertSource": "all"
+    }
+  },
+  "generatedFromTag": "2.12.2",
+  "generatedFromCommit": "77449e5fc9af4e41f7623da4a9c8e73d6cf7a517"
+}
