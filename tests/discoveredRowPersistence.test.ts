@@ -15,7 +15,6 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import {
-	isEphemeralDiscoveredRow,
 	selectPersistedRows,
 } from "../src/manager/discoveredRowPersistence";
 import type { CalloutDefinition, CustomCommand } from "../src/types";
@@ -33,75 +32,6 @@ const row = (over: Partial<CalloutDefinition> = {}): CalloutDefinition => ({
 	...over,
 });
 
-const command = (calloutId: string) =>
-	({ id: "c1", calloutId }) as unknown as CustomCommand;
-
-describe("isEphemeralDiscoveredRow", () => {
-	it("is true for a discovered row nobody has claimed", () => {
-		assert.strictEqual(isEphemeralDiscoveredRow(row(), []), true);
-	});
-
-	it("is false for anything discovery did not mint", () => {
-		for (const source of ["user", "builtin", "theme", "plugin"] as const) {
-			assert.strictEqual(
-				isEphemeralDiscoveredRow(row({ source }), []),
-				false,
-				source,
-			);
-		}
-	});
-
-	it("is false once the user has customized it", () => {
-		assert.strictEqual(
-			isEphemeralDiscoveredRow(row({ customized: true }), []),
-			false,
-		);
-	});
-
-	it("is false once the user has handed its styling to their own CSS", () => {
-		// Sharper than "they chose it": drop the row and the id falls back under
-		// generateFallbackCSS's `!important` catch-all, so a callout explicitly
-		// handed off would silently start being repainted again.
-		assert.strictEqual(
-			isEphemeralDiscoveredRow(row({ externalStyle: true }), []),
-			false,
-		);
-	});
-
-	it("is false once a custom command points at it", () => {
-		assert.strictEqual(
-			isEphemeralDiscoveredRow(row({ id: "seen" }), [command("seen")]),
-			false,
-		);
-	});
-
-	it("matches a command's callout by identity, not by spelling", () => {
-		// A hotkey is bound to that command; keying by spelling would drop the
-		// row through the dash form and orphan the binding.
-		assert.strictEqual(
-			isEphemeralDiscoveredRow(row({ id: "two words" }), [
-				command("two-words"),
-			]),
-			false,
-		);
-	});
-
-	it("is unmoved by a command pointing somewhere else", () => {
-		assert.strictEqual(
-			isEphemeralDiscoveredRow(row({ id: "seen" }), [command("other")]),
-			true,
-		);
-	});
-
-	it("takes `customized: false` as unclaimed", () => {
-		// The flag means "the user adopted it"; only `true` says so.
-		assert.strictEqual(
-			isEphemeralDiscoveredRow(row({ customized: false }), []),
-			true,
-		);
-	});
-});
-
 describe("selectPersistedRows", () => {
 	const ctx = (over = {}) => ({
 		previewActiveId: null,
@@ -114,12 +44,12 @@ describe("selectPersistedRows", () => {
 	const map = (defs: CalloutDefinition[]) =>
 		new Map(defs.map((d) => [d.id, d]));
 
-	it("keeps the user's own rows and drops the observed ones", () => {
+	it("keeps both authored and manually discovered rows", () => {
 		const rows = map([
 			row({ id: "mine", source: "user" }),
 			row({ id: "seen" }),
 		]);
-		assert.deepStrictEqual(ids(selectPersistedRows(rows, ctx())), ["mine"]);
+		assert.deepStrictEqual(ids(selectPersistedRows(rows, ctx())), ["mine", "seen"]);
 	});
 
 	it("drops a theme row, which is re-derived every launch", () => {

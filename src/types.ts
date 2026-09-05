@@ -284,11 +284,11 @@ export interface CalloutDefinition {
 	 */
 	paletteId?: string;
 	/**
-	 * Marks a user-owned callout that the user has explicitly created or
-	 * modified through the editor. Such callouts are sticky: they are never
-	 * auto-pruned even when no vault content references them. Auto-created
-	 * fallback rows start with this flag unset/false and are pruned when
-	 * unused. Has no effect on built-in callouts.
+	 * Marks a callout explicitly created or customized through the editor.
+	 * Uncustomized fallback rows follow the selected fallback appearance;
+	 * customized rows keep their authored style. All saved rows are durable
+	 * regardless of note usage. This flag does not control persistence and
+	 * has no effect on built-in callouts.
 	 */
 	customized?: boolean;
 	/**
@@ -740,22 +740,6 @@ export interface PluginSettings {
 	inlineCallouts: InlineCalloutSettings;
 	/** Has the welcome/splash screen been shown at least once? */
 	welcomeSeen?: boolean;
-	/**
-	 * Notice callout ids written in vault notes and give them a row
-	 * automatically. On by default — it is how most callouts in a vault come to
-	 * be listed at all.
-	 *
-	 * Turning it off leaves every existing row exactly where it is and leaves
-	 * **Re-scan vault** working: this gates the automatic passes, never an
-	 * action the user asked for. Discovery has not written to `data.json` since
-	 * the device-local index arrived (see `manager/DeviceLocalStore.ts`), so
-	 * this is a preference about what appears in the settings list, not a
-	 * remedy for anything.
-	 */
-	autoDiscoverCallouts: boolean;
-	/** Ids discovery must never mint a row for, in `calloutIdentity` form.
-	 *  @see manager/ignoredCallouts.ts */
-	ignoredCalloutIds: string[];
 	/** Callout ID to use as fallback for unrecognized callout types. Empty = Obsidian default */
 	fallbackCalloutId: string;
 	/**

@@ -35,9 +35,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { ThemeCalloutStore } from "../src/manager/theme/ThemeCalloutStore";
-import { syncThemeProvidedRows } from "../src/manager/theme/themeProvidedRows";
 import { validateImportPayload } from "../src/utils/importValidator";
-import { filterUsableCallouts } from "../src/utils/usableCallouts";
 import { buildKnownCalloutIds } from "../src/manager/knownCalloutIds";
 import { scanStringForUnknownCallouts } from "../src/utils/vaultCalloutScanner";
 import {
@@ -83,7 +81,7 @@ describe("discovery — two spellings across the vault are one row", () => {
 			"a.md": "> [!banner icon] spaced",
 			"b.md": "> [!banner-icon] dashed",
 		});
-		assert.strictEqual(await h.discovery.runVaultScan(), 1);
+		assert.strictEqual(await h.discovery.run(), 1);
 		assert.deepStrictEqual(userIds(h.registry), ["banner icon"]);
 	});
 
@@ -95,7 +93,7 @@ describe("discovery — two spellings across the vault are one row", () => {
 			"a.md": "> [!banner-icon] dashed",
 			"b.md": "> [!banner icon] spaced",
 		});
-		assert.strictEqual(await h.discovery.runVaultScan(), 1);
+		assert.strictEqual(await h.discovery.run(), 1);
 		assert.deepStrictEqual(userIds(h.registry), ["banner icon"]);
 	});
 
@@ -103,7 +101,7 @@ describe("discovery — two spellings across the vault are one row", () => {
 		const h = discoveryHarness({
 			"a.md": "> [!banner icon] one\n\n> [!banner-icon] two",
 		});
-		assert.strictEqual(await h.discovery.runVaultScan(), 1);
+		assert.strictEqual(await h.discovery.run(), 1);
 		assert.deepStrictEqual(userIds(h.registry), ["banner icon"]);
 	});
 
@@ -112,7 +110,7 @@ describe("discovery — two spellings across the vault are one row", () => {
 			"a.md": "> [!banner   icon] padded",
 			"b.md": "> [!banner-icon] dashed",
 		});
-		assert.strictEqual(await h.discovery.runVaultScan(), 1);
+		assert.strictEqual(await h.discovery.run(), 1);
 		// Collapsed to a single space on the way in, so the row reads the way
 		// the user would have typed it.
 		assert.deepStrictEqual(userIds(h.registry), ["banner icon"]);
@@ -123,7 +121,7 @@ describe("discovery — two spellings across the vault are one row", () => {
 			"a.md": "> [!Banner Icon] shouty",
 			"b.md": "> [!banner-icon] dashed",
 		});
-		assert.strictEqual(await h.discovery.runVaultScan(), 1);
+		assert.strictEqual(await h.discovery.run(), 1);
 		assert.deepStrictEqual(userIds(h.registry), ["banner icon"]);
 	});
 
@@ -133,7 +131,7 @@ describe("discovery — two spellings across the vault are one row", () => {
 			"b.md": "a [!banner-icon] pill",
 			"c.md": "> [!BANNER   ICON] block",
 		});
-		assert.strictEqual(await h.discovery.runVaultScan(), 1);
+		assert.strictEqual(await h.discovery.run(), 1);
 		assert.deepStrictEqual(userIds(h.registry), ["banner icon"]);
 	});
 });
@@ -141,11 +139,11 @@ describe("discovery — two spellings across the vault are one row", () => {
 describe("discovery — a collision found while scanning files, one at a time", () => {
 	it("does not add a second row when the dash spelling turns up later", async () => {
 		const h = discoveryHarness({ "a.md": "> [!banner icon] spaced" });
-		await h.internals.scanFileNow(h.vault.file("a.md"));
+		await h.discovery.run();
 		assert.deepStrictEqual(userIds(h.registry), ["banner icon"]);
 
 		h.vault.write("b.md", "> [!banner-icon] dashed");
-		await h.internals.scanFileNow(h.vault.file("b.md"));
+		await h.discovery.run();
 		assert.deepStrictEqual(userIds(h.registry), ["banner icon"]);
 	});
 
@@ -154,11 +152,11 @@ describe("discovery — a collision found while scanning files, one at a time", 
 		// registers both spellings of what it stores, but only the scanner
 		// testing a found id's identity too closes the other half.
 		const h = discoveryHarness({ "a.md": "> [!banner-icon] dashed" });
-		await h.internals.scanFileNow(h.vault.file("a.md"));
+		await h.discovery.run();
 		assert.deepStrictEqual(userIds(h.registry), ["banner-icon"]);
 
 		h.vault.write("b.md", "> [!banner icon] spaced");
-		await h.internals.scanFileNow(h.vault.file("b.md"));
+		await h.discovery.run();
 		assert.deepStrictEqual(userIds(h.registry), ["banner-icon"]);
 	});
 
@@ -187,7 +185,8 @@ describe("discovery — a collision found while scanning files, one at a time", 
 	it("an ALIAS covers the other spelling too", async () => {
 		const h = discoveryHarness({ "a.md": "> [!banner-icon] dashed" });
 		h.registry.add(definition({ id: "flag", aliases: ["banner icon"] }));
-		await h.internals.scanFileNow(h.vault.file("a.md"));
+		h.syncBaseline();
+		await h.discovery.run();
 		assert.deepStrictEqual(userIds(h.registry), ["flag"]);
 	});
 });
@@ -607,7 +606,7 @@ describe("a theme's callout is the user's row when they are one callout", () => 
 		const store = new ThemeCalloutStore(
 			themeApp('.callout[data-callout="banner-icon"] { color: red; }'),
 		);
-		assert.strictEqual(syncThemeProvidedRows(registry, store, { retiredThemeIds: [] }), 0);
+		registry.setThemeOwnedIds(store.themeDefinedIds());
 		assert.deepStrictEqual(userIds(registry), ["banner icon"]);
 		assert.strictEqual(registry.getThemeProvided().length, 0);
 	});
@@ -620,7 +619,7 @@ describe("a theme's callout is the user's row when they are one callout", () => 
 		const store = new ThemeCalloutStore(
 			themeApp('.callout[data-callout="banner-icon"] { color: red; }'),
 		);
-		syncThemeProvidedRows(registry, store, { retiredThemeIds: [] });
+		registry.setThemeOwnedIds(store.themeDefinedIds());
 		assert.strictEqual(registry.themeOwns(registry.get("banner icon")!), true);
 	});
 });
@@ -635,15 +634,12 @@ describe("the lists show one entry, not two", () => {
 			"a.md": "> [!banner icon] spaced",
 			"b.md": "> [!banner-icon] dashed",
 		});
-		await h.discovery.runVaultScan();
+		await h.discovery.run();
 
 		assert.deepStrictEqual(userIds(h.registry), ["banner icon"]);
 		// The list every writable surface reads — quick insert, the command
 		// builder, the suggestion popup.
-		const usable = filterUsableCallouts(
-			[...h.registry.getBuiltIn(), ...h.registry.getUserDefined()],
-			(id) => h.discovery.isKnownZeroUsageFallback(id),
-		).filter((d) => !d.builtIn);
+		const usable = h.registry.getUserDefined();
 		assert.deepStrictEqual(
 			usable.map((d) => d.id),
 			["banner icon"],
@@ -655,7 +651,7 @@ describe("the lists show one entry, not two", () => {
 			"a.md": "> [!banner icon] spaced",
 			"b.md": "> [!banner-icon] dashed",
 		});
-		await h.discovery.runVaultScan();
+		await h.discovery.run();
 		assert.strictEqual(h.registry.findByAttrId("banner-icon")?.id, "banner icon");
 		assert.strictEqual(h.registry.findByAttrId("banner icon")?.id, "banner icon");
 		assert.strictEqual(h.registry.findByAttrId("BANNER   ICON")?.id, "banner icon");

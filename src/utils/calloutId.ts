@@ -174,7 +174,7 @@ export const calloutIdentity = (raw: string): string =>
  * The title Obsidian shows for a block callout that carries no explicit
  * title text: `type.trim().replace(/-/g, " ").toLowerCase()`, first letter
  * capitalized (verified in its bundled renderer — see obsidianCalloutAttrId's
- * doc). Used when we generate a display name ourselves (auto-discovered
+ * doc). Used when we generate a display name ourselves (manually discovered
  * fallback rows) so it reads the same as what the regular role would show for
  * the identical raw text.
  */

@@ -324,7 +324,7 @@ describe("syncAll — churn", () => {
 /* -------------------------------------------------------------------------- */
 
 describe("syncAll — dropping commands", () => {
-	it("drops a command whose callout is gone, and says so once running", () => {
+	it("pauses a command whose callout is missing and retains its identity", () => {
 		const h = harness();
 		addCallout(h.registry);
 		seed(h);
@@ -336,8 +336,8 @@ describe("syncAll — dropping commands", () => {
 		h.manager.syncAll();
 
 		assert.deepStrictEqual(h.removed, [obsidianCommandId("cc-1")]);
-		assert.deepStrictEqual(h.registry.settings.customCommands, []);
-		assert.strictEqual(notices.length, 1, "the user gets told");
+		assert.deepStrictEqual(h.registry.settings.customCommands.map(c => c.id), ["cc-1"]);
+		assert.strictEqual(notices.length, 0);
 	});
 
 	it("stays quiet about it at startup", () => {
@@ -348,7 +348,7 @@ describe("syncAll — dropping commands", () => {
 		h.manager.syncAll();
 
 		assert.deepStrictEqual(h.added, []);
-		assert.deepStrictEqual(h.registry.settings.customCommands, []);
+		assert.deepStrictEqual(h.registry.settings.customCommands.map(c => c.id), ["cc-1"]);
 		assert.deepStrictEqual(notices, []);
 	});
 
@@ -388,7 +388,7 @@ describe("syncAll — dropping commands", () => {
 		assert.deepStrictEqual(notices, []);
 	});
 
-	it("persists the pruned list", () => {
+	it("does not write settings when only a command target is missing", () => {
 		const h = harness();
 		addCallout(h.registry);
 		seed(h);
@@ -398,7 +398,7 @@ describe("syncAll — dropping commands", () => {
 		h.registry.remove("quiet");
 		h.manager.syncAll();
 
-		assert.ok(h.saves > before, "a pruned list has to reach data.json");
+		assert.strictEqual(h.saves, before);
 	});
 
 	it("saves nothing when there was nothing to drop", () => {
@@ -800,12 +800,10 @@ describe("the registered editorCallback", () => {
 		);
 		run(h, "", registered);
 
-		// Two notices, and both earn their place: the first explains why
-		// pressing the hotkey did nothing, the second reports the command the
-		// converging sweep then took away.
-		assert.strictEqual(notices.length, 2);
+		// The missing-callout notice explains why the hotkey cannot run.
+		assert.strictEqual(notices.length, 1);
 		assert.deepStrictEqual(h.removed, [obsidianCommandId("cc-1")]);
-		assert.deepStrictEqual(h.registry.settings.customCommands, []);
+		assert.strictEqual(h.registry.settings.customCommands.length, 1);
 	});
 });
 
@@ -987,3 +985,11 @@ describe("a command the theme has temporarily taken over", () => {
 		assert.strictEqual(h.added.length, 1);
 	});
 });
+
+ it("restores the same command after a missing callout becomes available", () => {
+  const h = harness(); seed(h); h.manager.syncAll();
+  assert.deepStrictEqual(h.added, []);
+  assert.strictEqual(h.registry.settings.customCommands[0]?.id, "cc-1");
+  addCallout(h.registry); h.manager.syncAll();
+  assert.deepStrictEqual(idsOf(h.added), [obsidianCommandId("cc-1")]);
+ });

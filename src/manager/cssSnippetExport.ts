@@ -46,7 +46,6 @@
 import { normalizePath } from "obsidian";
 import type { App } from "obsidian";
 import { calloutSel } from "../utils/calloutSelector";
-import { filterUsableCallouts } from "../utils/usableCallouts";
 import type { CalloutDefinition } from "../types";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import type { CSSInjector } from "./CSSInjector";
@@ -76,7 +75,6 @@ export type SnippetExportOutcome =
 export interface SnippetExportPlugin {
 	registry: CalloutRegistry;
 	cssInjector: CSSInjector;
-	isKnownZeroUsageFallback(id: string): boolean;
 }
 
 /**
@@ -100,10 +98,7 @@ interface CustomCssApi {
 export function exportableDefinitions(
 	plugin: SnippetExportPlugin,
 ): CalloutDefinition[] {
-	const usable = filterUsableCallouts(
-		plugin.registry.getExportableDefinitions(),
-		(id) => plugin.isKnownZeroUsageFallback(id),
-	);
+	const usable = plugin.registry.getExportableDefinitions();
 	return usable.sort(byId);
 }
 

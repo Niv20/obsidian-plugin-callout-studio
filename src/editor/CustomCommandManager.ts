@@ -10,7 +10,7 @@
  * tell a delete from an update from an add — and a callout id "rename" is
  * really a remove followed by an add, so per-event handlers cannot work.
  * Re-deriving the desired set from the registry every time converges from any
- * starting state instead, which is what makes deletion, auto-pruning, editing,
+ * starting state instead, which is what makes deletion, editing,
  * importing, startup and re-enabling all fall out of the same code path.
  *
  * Rename is the one thing a sweep genuinely cannot infer, since the old id is
@@ -62,7 +62,6 @@ export class CustomCommandManager {
 	 * dropping entries is expected housekeeping and a popup would be noise;
 	 * later ones follow a user action, where silence would be mystifying.
 	 */
-	private hasSynced = false;
 
 	constructor(private plugin: CustomCommandHostPlugin) {}
 
@@ -138,16 +137,11 @@ export class CustomCommandManager {
 		// A corrupt or half-written entry is dropped on its own rather than
 		// taken as a reason to give up on the rest of the list.
 		const sanitized = sanitizeCustomCommands(stored);
-		const kept = sanitized.filter((command) =>
-			this.plugin.registry.has(command.calloutId),
-		);
-		// Counted apart because they mean different things to the user: a
-		// callout they deleted is worth a word, a malformed entry in the data
-		// file is a log line.
+		// Missing targets can be awaiting a manual scan or another device's
+		// settings. Suspend registration while preserving the command and hotkey.
+		const kept = sanitized;
 		const invalidCount = stored.length - sanitized.length;
-		const missingCount = sanitized.length - kept.length;
-		const droppedCount = invalidCount + missingCount;
-		if (droppedCount > 0) this.plugin.settings.customCommands = kept;
+		if (invalidCount > 0) this.plugin.settings.customCommands = kept;
 
 		const desiredNames = new Map<string, string>();
 		for (const command of kept) {
@@ -195,31 +189,11 @@ export class CustomCommandManager {
 			this.registered.set(command.id, name);
 		}
 
-		if (droppedCount > 0) {
+		if (invalidCount > 0) {
 			void this.plugin.saveSettings();
-			if (invalidCount > 0) {
-				console.debug(
-					"[CalloutStudio] dropped",
-					invalidCount,
-					"malformed custom command entr(ies)",
-				);
-			}
-			// Only worth interrupting for once the plugin is running: at
-			// startup a command with no callout is housekeeping, not news.
-			if (missingCount > 0 && this.hasSynced) {
-				new Notice(
-					t("notice.customCommandsRemoved", { count: missingCount }),
-				);
-			} else if (missingCount > 0) {
-				console.debug(
-					"[CalloutStudio] dropped",
-					missingCount,
-					"custom command(s) with no matching callout",
-				);
-			}
+			console.debug("[CalloutStudio] dropped malformed custom commands", invalidCount);
 		}
 
-		this.hasSynced = true;
 	}
 
 	/** Whether a title is only some callout's display name, not the user's. */

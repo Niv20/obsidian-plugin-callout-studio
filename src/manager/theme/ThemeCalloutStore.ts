@@ -60,7 +60,7 @@ export class ThemeCalloutStore {
 	 * {@link refresh} keys on `stylingSignature`, which is theme name, theme
 	 * version and enabled snippets — none of which move when a theme is
 	 * *reloaded* after being edited in place. A theme that gained a callout id
-	 * that way would never get a row. `registerThemeRowSync` notices the reload
+	 * that way would never get a row. `registerThemeAppearance` notices the reload
 	 * by a route this class deliberately does not take (see the note there about
 	 * why the CSS text is not in the signature) and calls this.
 	 */

@@ -12,13 +12,12 @@
  * vault scan the settings tab does, so a callout used in notes but missing from
  * the registry can be turned into a real row from here.
  */
-import { Modal, Notice } from "obsidian";
+import { Modal } from "obsidian";
 import { getLocale, t } from "../i18n";
 import { applyModalChrome } from "../settings/modalChrome";
 import {
 	resolveStatsRows,
 	renderStatsTypeRow,
-	undefinedRowIds,
 	type StatsRow,
 } from "./vaultStatsRow";
 import type { SettingsSectionContext } from "../settings/sections/types";
@@ -60,7 +59,6 @@ export class VaultCalloutStatisticsModal extends Modal {
 		btnContainer
 			.createEl("button", { text: t("vaultStats.close") })
 			.addEventListener("click", () => this.close());
-		this.renderDefineButton(btnContainer);
 	}
 
 	onClose(): void {
@@ -142,53 +140,6 @@ export class VaultCalloutStatisticsModal extends Modal {
 		for (const row of this.rows) {
 			renderStatsTypeRow(listEl, row, deps);
 		}
-	}
-
-	/**
-	 * Offers the vault scan when — and only when — the report found ids nothing
-	 * defines. `runVaultScan` is the same path the settings tab's "Re-scan
-	 * vault" button takes: it clears the rediscovery hold (a user-requested scan
-	 * may bring anything back), derives the known set including attribute-form
-	 * spellings, saves, and re-injects. Calling it rather than adding the rows
-	 * from the list here keeps that one code path.
-	 */
-	private renderDefineButton(footerEl: HTMLElement): void {
-		const undefinedIds = undefinedRowIds(this.rows);
-		if (undefinedIds.length === 0) return;
-		const btn = footerEl.createEl("button", {
-			cls: "mod-cta",
-			text: t("vaultStats.defineUndefined", {
-				count: this.format(undefinedIds.length),
-			}),
-		});
-		btn.addEventListener("click", () => void this.defineUndefined(btn));
-	}
-
-	private async defineUndefined(btn: HTMLButtonElement): Promise<void> {
-		btn.disabled = true;
-		btn.setText(t("vaultStats.defineRunning"));
-		let added = 0;
-		try {
-			added = await this.ctx.plugin.runVaultScan(false);
-		} finally {
-			// Either way: the counts cannot have moved — the vault was read, not
-			// edited — so only each row's *resolution* can differ. Re-render in
-			// place, and never leave the button reading "Scanning" if the scan
-			// threw.
-			btn.disabled = false;
-			this.renderTypeList();
-			const left = undefinedRowIds(this.rows).length;
-			if (left === 0) btn.remove();
-			else {
-				btn.setText(
-					t("vaultStats.defineUndefined", {
-						count: this.format(left),
-					}),
-				);
-			}
-		}
-		new Notice(t("vaultStats.defineDone", { count: this.format(added) }));
-		this.ctx.display();
 	}
 
 	private format(value: number): string {

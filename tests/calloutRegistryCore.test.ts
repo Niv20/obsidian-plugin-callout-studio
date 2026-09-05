@@ -327,7 +327,7 @@ describe("toSaveData() — what reaches data.json", () => {
 
 	it("stamps the current data version", () => {
 		const { registry } = loaded(null);
-		assert.strictEqual(registry.toSaveData().version, 4);
+		assert.strictEqual(registry.toSaveData().version, 5);
 	});
 
 	it("always writes settings, even with nothing else to write", () => {
@@ -365,7 +365,7 @@ describe("toSaveData() — what reaches data.json", () => {
 		assert.deepStrictEqual(ids(registry.toSaveData().callouts), ["mine"]);
 	});
 
-	it("says nothing about a discovered row nobody has claimed", () => {
+	it("persists a manually discovered row without requiring customization", () => {
 		// The row is real for this session and shows in the settings lists; its
 		// id is remembered by DeviceLocalStore instead, so a restart rebuilds it
 		// without re-reading the vault. Writing it here is what let a second
@@ -375,7 +375,7 @@ describe("toSaveData() — what reaches data.json", () => {
 		registry.add(def({ id: "seen", source: "fallback" }));
 
 		assert.ok(registry.get("seen"), "still in the registry");
-		assert.deepStrictEqual(registry.toSaveData().callouts, []);
+		assert.deepStrictEqual(registry.toSaveData().callouts.map(row => row.id), ["seen"]);
 	});
 
 	it("persists a discovered row the moment somebody claims it", () => {

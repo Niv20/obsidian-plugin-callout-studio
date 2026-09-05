@@ -92,9 +92,9 @@ export interface CalloutDetails extends Callout {
 	readonly builtIn: boolean;
 	/**
 	 * Where the callout came from: `builtin` is one of Obsidian's defaults,
-	 * `user` was created or customized by the user, `fallback` was discovered in
-	 * the vault and styled automatically, `theme` and `plugin` were injected by
-	 * something else.
+	 * `user` was created or customized by the user, `fallback` was added by a
+	 * manual scan and follows the fallback style. `theme` is a legacy source;
+	 * `plugin` identifies other plugin-provided definitions.
 	 */
 	readonly source: "builtin" | "user" | "fallback" | "theme" | "plugin";
 	/**

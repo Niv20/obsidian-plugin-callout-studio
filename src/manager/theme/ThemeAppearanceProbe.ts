@@ -130,7 +130,7 @@ export class ThemeAppearanceProbe {
 	 * Refusing outright was nearly right — a second call against the *same*
 	 * stylesheet is redundant by construction — but the one call that is not
 	 * redundant is the one `css-change` makes, and that is exactly when a pass
-	 * is likely to still be in flight. `registerThemeRowSync` does
+	 * is likely to still be in flight. `registerThemeAppearance` does
 	 * `invalidate()` then `probe()`; dropping that second half left the running
 	 * pass free to write the **outgoing** theme's readings into the cache it had
 	 * just been cleared of, with nothing scheduled to correct them. Every row

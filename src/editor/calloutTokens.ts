@@ -595,7 +595,7 @@ export function createDocumentLineFilter(): (
 				fence &&
 				fence[1] &&
 				fence[1][0] === fenceMarker[0] &&
-				fence[1].length >= fenceMarker.length
+				fence[1].length >= fenceMarker.length && line.slice(fence[0].length).trim() === ""
 			) {
 				fenceMarker = null;
 			}

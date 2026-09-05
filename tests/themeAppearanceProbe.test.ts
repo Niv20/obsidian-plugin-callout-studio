@@ -486,7 +486,7 @@ describe("ids it refuses to render", () => {
 
 describe("a theme switch that lands mid-pass", () => {
 	it("re-measures instead of keeping the outgoing theme's readings", async () => {
-		// `registerThemeRowSync` does `invalidate()` then `probe()` on every
+		// `registerThemeAppearance` does `invalidate()` then `probe()` on every
 		// `css-change`. While a pass was in flight that second half used to be
 		// dropped outright — and the running pass then wrote the *outgoing*
 		// theme's colours into the cache it had just been cleared of, with

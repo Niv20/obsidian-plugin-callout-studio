@@ -52,7 +52,7 @@ import type { CalloutDefinition, PluginData } from "../src/types";
 ];
 
 /** The version stamp the current build writes. */
-const CURRENT_DATA_VERSION = 4;
+const CURRENT_DATA_VERSION = 5;
 
 const load = (data: Partial<PluginData> | null): CalloutRegistry => {
 	const registry = new CalloutRegistry();

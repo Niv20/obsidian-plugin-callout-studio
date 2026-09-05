@@ -4,7 +4,7 @@
  *
  * `themeProvidedRows.test.ts` pins the sweep as a function: given a registry
  * and a store, which rows exist afterwards. This pins the half around it —
- * `registerThemeRowSync` — where the failures are all about *timing* rather
+ * `registerThemeAppearance` — where the failures are all about *timing* rather
  * than about the result, and so are invisible to a test that only inspects the
  * end state:
  *
@@ -17,7 +17,7 @@
  *   and *version*, neither of which moves when a theme is reloaded after being
  *   edited in place.
  *
- * The probe inside `registerThemeRowSync` reads real computed styles, which no
+ * The probe inside `registerThemeAppearance` reads real computed styles, which no
  * fake DOM supplies — and does not have to here, because the `obsidian` stub's
  * `MarkdownRenderer.render` produces no DOM, so a measured pass legitimately
  * finds nothing and reports an empty map. What that leaves visible is exactly
@@ -28,10 +28,8 @@ import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { ThemeCalloutStore } from "../src/manager/theme/ThemeCalloutStore";
-import { registerThemeRowSync } from "../src/manager/theme/themeRowSync";
-import { UNKNOWN_APPEARANCE } from "../src/manager/theme/themeAppearance";
-import type { ThemeAppearance } from "../src/manager/theme/themeAppearance";
-import type { CalloutDefinition } from "../src/types";
+import { registerThemeAppearance } from "../src/manager/theme/themeAppearanceSync";
+import { discovered } from "./support/discoveryHarness";
 import { installFakeDom } from "./support/fakeDom";
 
 installFakeDom();
@@ -73,7 +71,7 @@ function themeHost(css: string, name = "Nord", version = "1.0.0") {
 	};
 }
 
-/** The plugin slice `registerThemeRowSync` reaches for, plus what it did. */
+/** The plugin slice `registerThemeAppearance` reaches for, plus what it did. */
 function syncHost(registry: CalloutRegistry, app: App) {
 	const store = new ThemeCalloutStore(app);
 	const injects: boolean[] = [];
@@ -99,177 +97,30 @@ function vault(): CalloutRegistry {
 	return registry;
 }
 
-const themeIds = (registry: CalloutRegistry): string[] =>
-	registry
-		.getAll()
-		.filter((d: CalloutDefinition) => d.source === "theme")
-		.map((d: CalloutDefinition) => d.id)
-		.sort();
-
-describe("the re-sweep handed back for a settings reload", () => {
-	it("puts the theme's rows back even though the theme has not changed", () => {
-		// `CalloutRegistry.load()` clears the callout map, and the theme's
-		// `source: "theme"` rows live in it — they are an overlay, deliberately
-		// never persisted, so only a sweep brings them back. But a settings
-		// reload does not move the theme fingerprint, so the memo inside `sweep`
-		// used to swallow the call: the caller asked for a re-sweep and got a
-		// no-op, and every theme-provided callout stayed missing until the next
-		// `css-change`, which may never come.
-		//
-		// Worse than cosmetic. `adoptExternalSettings` calls this and then runs
-		// `customCommands.syncAll()`, which drops any command whose callout
-		// `registry.has()` cannot find — so a settings file arriving from another
-		// device silently deleted the user's commands for theme callouts, and
-		// saved the deletion straight back to that device.
-		const t = themeHost('.callout[data-callout="recite"] { color: red; }');
-		const registry = vault();
-		const { host } = syncHost(registry, t.app);
-		const resweep = registerThemeRowSync(host);
-		assert.deepStrictEqual(themeIds(registry), ["recite"]);
-
-		registry.load(null); // what every settings reload does first
-		assert.deepStrictEqual(themeIds(registry), [], "precondition");
-
-		resweep();
-		assert.deepStrictEqual(themeIds(registry), ["recite"]);
-	});
-});
-
-describe("a theme change does not leave the outgoing theme's artwork published", () => {
-	it("has cleared the readings by the time the sweep's onChange fires", () => {
-		const vaultCss = '.callout[data-callout="recite"] { color: red; }';
-		const t = themeHost(vaultCss);
-		const registry = vault();
-		const { host } = syncHost(registry, t.app);
-		registerThemeRowSync(host);
-
-		// Stand in for the probe having landed under the outgoing theme: every
-		// row is carrying real measured artwork before the switch.
-		const measured: ThemeAppearance = {
-			accent: "rgb(1, 2, 3)",
-			background: "rgb(4, 5, 6)",
-			icon: { kind: "mask", image: "url(outgoing)" },
-		};
-		registry.setThemeAppearances(new Map([["recite", measured]]));
-		assert.strictEqual(
-			registry.themeAppearanceOf(registry.get("recite")!).icon.kind,
-			"mask",
-			"precondition: the outgoing theme's reading is published",
-		);
-
-		// What the settings tab sees, at the instant it is told to repaint.
-		const seen: string[] = [];
-		registry.onChange(() => {
-			const row = registry.get("recite");
-			seen.push(row ? registry.themeAppearanceOf(row).icon.kind : "gone");
-		});
-
-		t.setTheme({
-			name: "Sanctum",
-			css: '.callout[data-callout="recite"] { color: blue; }',
-		});
-		t.cssChange();
-
-		assert.ok(seen.length > 0, "the tab is told to repaint at all");
-		assert.deepStrictEqual(
-			[...new Set(seen)],
-			["unknown"],
-			"no repaint may see the outgoing theme's icon",
-		);
-	});
-
-	it("collapses the clear and the sweep into one repaint", () => {
-		// The clear rides in the sweep's own `batch()`, so it must not cost an
-		// extra pass over every row in the tab.
-		const t = themeHost('.callout[data-callout="recite"] { color: red; }');
-		const registry = vault();
-		const { host } = syncHost(registry, t.app);
-		registerThemeRowSync(host);
-		registry.setThemeAppearances(
-			new Map([["recite", { ...UNKNOWN_APPEARANCE, accent: "rgb(1, 2, 3)" }]]),
-		);
-
-		let repaints = 0;
-		registry.onChange(() => {
-			repaints++;
-		});
-		t.setTheme({ name: "Sanctum", css: '.callout[data-callout="quiet"] {}' });
-		t.cssChange();
-		assert.strictEqual(repaints, 1, "one onChange for the whole sweep");
-	});
-
-	it("says nothing when the styling did not actually move", () => {
-		const css = '.callout[data-callout="recite"] { color: red; }';
-		const t = themeHost(css);
-		const registry = vault();
-		const { host } = syncHost(registry, t.app);
-		registerThemeRowSync(host);
-
-		let repaints = 0;
-		registry.onChange(() => {
-			repaints++;
-		});
-		t.cssChange();
-		assert.strictEqual(repaints, 0, "a no-op css-change must stay silent");
-	});
-});
-
-describe("a reload is a change even when the name and version are not", () => {
-	it("re-scans a theme edited in place", () => {
-		// `stylingSignature` is name@version|snippets, and a user who edits
-		// their theme and hits reload moves none of the three. Before the CSS
-		// length joined the memo, the new id never got a row however many
-		// `css-change` events went by.
-		const t = themeHost('.callout[data-callout="recite"] { color: red; }');
-		const registry = vault();
-		const { host } = syncHost(registry, t.app);
-		registerThemeRowSync(host);
-		assert.deepStrictEqual(themeIds(registry), ["recite"]);
-
-		t.setTheme({
-			css: '.callout[data-callout="recite"] {} .callout[data-callout="chant"] {}',
-		});
-		t.cssChange();
-
-		assert.deepStrictEqual(
-			themeIds(registry),
-			["chant", "recite"],
-			"the id added by the reload has a row",
-		);
-	});
-
-	it("keeps an id both the outgoing and incoming theme declare", () => {
-		// Not deleted and re-minted in the middle of a switch: an id in neither
-		// the stale list nor the fresh one is simply left alone.
-		const t = themeHost('.callout[data-callout="recite"] { color: red; }');
-		const registry = vault();
-		const { host } = syncHost(registry, t.app);
-		registerThemeRowSync(host);
-		const before = registry.get("recite");
-		assert.ok(before);
-
-		t.setTheme({
-			name: "Sanctum",
-			css: '.callout[data-callout="recite"] {} .callout[data-callout="chant"] {}',
-		});
-		t.cssChange();
-
-		assert.strictEqual(
-			registry.get("recite"),
-			before,
-			"the same row object, never removed and re-added",
-		);
-		assert.deepStrictEqual(themeIds(registry), ["chant", "recite"]);
-	});
-
-	it("registers exactly one css-change listener, however many sweeps run", () => {
-		const t = themeHost('.callout[data-callout="recite"] {}');
-		const registry = vault();
-		const { host } = syncHost(registry, t.app);
-		registerThemeRowSync(host);
-		t.setTheme({ name: "Sanctum", css: '.callout[data-callout="chant"] {}' });
-		t.cssChange();
-		t.cssChange();
-		assert.strictEqual(t.listenerCount(), 1, "no listener may be added twice");
-	});
+describe("theme appearance updates never discover or delete callouts", () => {
+ it("updates ownership for existing rows without adding unknown ids", () => {
+  const t = themeHost('.callout[data-callout="recite"] { color: red; }');
+  const registry = vault(); const { host } = syncHost(registry, t.app);
+  const refresh = registerThemeAppearance(host);
+  assert.strictEqual(registry.get("recite"), undefined);
+  registry.add(discovered("recite")); const saved = registry.toSaveData(); refresh();
+  assert.strictEqual(registry.themeOwns(registry.get("recite")!), true);
+  assert.deepStrictEqual(registry.toSaveData(), saved);
+ });
+ it("preserves saved rows when a theme stops defining them", () => {
+  const t = themeHost('.callout[data-callout="recite"] { color: red; }');
+  const registry = vault(); registry.add(discovered("recite"));
+  const saved = registry.toSaveData(); const { host } = syncHost(registry, t.app);
+  registerThemeAppearance(host); t.setTheme({ css: "" }); t.cssChange();
+  assert.ok(registry.get("recite")); assert.strictEqual(registry.themeOwns(registry.get("recite")!), false);
+  assert.deepStrictEqual(registry.toSaveData(), saved);
+ });
+ it("recognizes a theme edited in place even when its length is unchanged", () => {
+  const t = themeHost('.callout[data-callout="alpha"] { color: red; }');
+  const registry = vault(); registry.add(discovered("alpha")); registry.add(discovered("bravo"));
+  const { host } = syncHost(registry, t.app); registerThemeAppearance(host);
+  t.setTheme({ css: '.callout[data-callout="bravo"] { color: red; }' }); t.cssChange();
+  assert.strictEqual(registry.themeOwns(registry.get("alpha")!), false);
+  assert.strictEqual(registry.themeOwns(registry.get("bravo")!), true);
+ });
 });

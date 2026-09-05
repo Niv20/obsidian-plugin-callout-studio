@@ -21,7 +21,7 @@ import { obsidianCalloutAttrId } from "./calloutId";
  * paths put one in front of this without the user typing a character of it:
  *
  * - **Vault discovery.** The scanner's header regex is `\[!([^\]\n\r]+)\]`, so
- *   a note containing `> [!ev"il]` yields the ID `ev"il` and `CalloutDiscovery`
+ *   a note containing `> [!ev"il]` yields the ID `ev"il` and `ManualCalloutDiscovery`
  *   auto-creates a row for it. Opening a shared note is enough.
  * - **Import.** `ID_BAD_CHAR_RE` rejects pipes, brackets and non-space
  *   whitespace, and permits `"` and `\`.

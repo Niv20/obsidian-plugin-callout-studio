@@ -41,7 +41,6 @@ import { isCalloutSourceFilter } from "./calloutSearch";
 import { clampGlobalStyle, localePreference } from "./settingsGuards";
 import { sanitizeUserImages } from "./userImages";
 import { sanitizeCustomCommands } from "./customCommands";
-import { sanitizeIgnoredCalloutIds } from "../manager/ignoredCallouts";
 
 /**
  * Merge saved icon-picker state over the defaults, folding the pre-2.4
@@ -254,12 +253,6 @@ export function mergeSavedSettings(
 		},
 		welcomeSeen:
 			savedSettings.welcomeSeen ?? DEFAULT_SETTINGS.welcomeSeen,
-		autoDiscoverCallouts:
-			savedSettings.autoDiscoverCallouts ??
-			DEFAULT_SETTINGS.autoDiscoverCallouts,
-		ignoredCalloutIds: sanitizeIgnoredCalloutIds(
-			savedSettings.ignoredCalloutIds,
-		),
 		fallbackCalloutId:
 			savedSettings.fallbackCalloutId ??
 			DEFAULT_SETTINGS.fallbackCalloutId,

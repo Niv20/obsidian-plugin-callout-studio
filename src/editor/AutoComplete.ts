@@ -212,9 +212,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		// token typed and abandoned before the async prune catches up. A
 		// fallback row genuinely used elsewhere still autocompletes normally.
 		// The role narrows it again — see onTrigger, which classified it.
-		const all = suggestableCallouts(this.plugin.registry, this.triggerRole, (id) =>
-			this.plugin.isKnownZeroUsageFallback(id),
-		);
+		const all = suggestableCallouts(this.plugin.registry, this.triggerRole);
 
 		// Filter — the same predicate the quick-insert window matches with, so
 		// the two lists can never disagree about what a typed word finds.

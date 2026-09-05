@@ -142,7 +142,6 @@ function fake(
 	const plugin: SnippetExportPlugin = {
 		registry,
 		cssInjector: new CSSInjector(app, registry),
-		isKnownZeroUsageFallback: (id) => zeroUsage.has(id),
 	};
 	return { app, vault, registry, plugin, zeroUsage };
 }
@@ -527,7 +526,7 @@ describe("the accent registration", () => {
 });
 
 describe("which callouts are covered", () => {
-	it("drops a discovered row nothing uses and nobody adopted", () => {
+	it("exports a saved discovery result regardless of usage", () => {
 		const f = seeded();
 		f.registry.add(
 			definition({ id: "ghost", source: "fallback", customized: false }),
@@ -536,7 +535,7 @@ describe("which callouts are covered", () => {
 
 		assert.deepStrictEqual(
 			exportableDefinitions(f.plugin).map((d) => d.id),
-			["quiet"],
+			["ghost", "quiet"],
 		);
 	});
 

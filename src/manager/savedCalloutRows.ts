@@ -141,5 +141,8 @@ export function reconcileSavedRow(
 			repaired: true,
 		};
 	}
+	if (row.source === "theme") {
+		return { def: { ...row, source: "fallback" }, repaired: true };
+	}
 	return { def: row, repaired: changed };
 }

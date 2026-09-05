@@ -425,7 +425,7 @@ describe("getCallout — the forgiving lookups API.md promises", () => {
 });
 
 describe("getCallout — only ever answers with what the list shows", () => {
-	it("refuses a discovered row the last scan found written nowhere", () => {
+	it("returns a saved discovery result without usage tracking", () => {
 		// The row is genuinely in the registry — `registry.get` finds it — but
 		// the published list drops it, and the lookup has to agree.
 		const { api, registry, zeroUsage } = apiHarness();
@@ -435,7 +435,7 @@ describe("getCallout — only ever answers with what the list shows", () => {
 
 		zeroUsage.add("gone");
 		assert.ok(registry.get("gone"), "the row itself must survive");
-		assert.equal(api.getCallout("gone"), undefined);
+		assert.equal(api.getCallout("gone")?.id, "gone");
 	});
 
 	it("keeps a discovered row the user adopted, even at zero usage", () => {
@@ -445,13 +445,13 @@ describe("getCallout — only ever answers with what the list shows", () => {
 		assert.equal(api.getCallout("mine")?.id, "mine");
 	});
 
-	it("refuses a dropped row asked for by alias as well", () => {
+	it("returns a saved discovery result by alias", () => {
 		// The ladder resolves the alias first and the list check runs second,
 		// so both spellings have to give the same answer.
 		const { api, registry, zeroUsage } = apiHarness();
 		registry.add(discovered("gone", { aliases: ["vanished"] }));
 		zeroUsage.add("gone");
-		assert.equal(api.getCallout("vanished"), undefined);
+		assert.equal(api.getCallout("vanished")?.id, "gone");
 	});
 
 	it("refuses the callout editor's in-progress draft of a new type", () => {
@@ -600,12 +600,12 @@ describe("the published list — what is in it", () => {
 });
 
 describe("the published list — what is dropped from it", () => {
-	it("drops a discovered row the last scan found written nowhere", () => {
+	it("keeps a saved discovery result without usage tracking", () => {
 		const { api, registry, zeroUsage } = apiHarness();
 		registry.add(discovered("gone"));
 		assert.ok(ids(api.getCallouts()).includes("gone"));
 		zeroUsage.add("gone");
-		assert.ok(!ids(api.getCallouts()).includes("gone"));
+		assert.ok(ids(api.getCallouts()).includes("gone"));
 	});
 
 	it("keeps a discovered row that is still written somewhere", () => {
@@ -621,7 +621,7 @@ describe("the published list — what is dropped from it", () => {
 		assert.ok(ids(api.getCallouts()).includes("mine"));
 	});
 
-	it("asks the plugin about discovered rows only", () => {
+	it("does not query usage for any saved definition", () => {
 		// The usage lookup is a map the plugin only populates after a completed
 		// scan; asking about a built-in would be a question with no meaningful
 		// answer, and the source check is what short-circuits it.
@@ -631,7 +631,7 @@ describe("the published list — what is dropped from it", () => {
 		registry.add(discovered("adopted", { customized: true }));
 		usageQueries.length = 0;
 		api.getCallouts();
-		assert.deepStrictEqual(usageQueries, ["found"]);
+		assert.deepStrictEqual(usageQueries, []);
 	});
 
 	it("drops the callout editor's draft of a new type", () => {

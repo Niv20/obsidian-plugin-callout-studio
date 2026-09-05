@@ -453,7 +453,7 @@ describe("getSuggestions", () => {
 		assert.ok(!ids(h, "   ").some((id) => id.startsWith("+")));
 	});
 
-	it("hides a discovered row confirmed unused everywhere in the vault", () => {
+	it("offers a manually discovered row even when unused", () => {
 		const h = harness();
 		h.registry.add({
 			id: "ghost",
@@ -469,7 +469,7 @@ describe("getSuggestions", () => {
 
 		assert.ok(ids(h, "ghost").includes("ghost"), "used somewhere: still offered");
 		h.zeroUsage.add("ghost");
-		assert.ok(!ids(h, "ghost").includes("ghost"), "confirmed unused: dropped");
+		assert.ok(ids(h, "ghost").includes("ghost"), "saved rows stay available");
 	});
 });
 

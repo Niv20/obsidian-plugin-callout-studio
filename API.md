@@ -170,7 +170,7 @@ this.register(unsubscribe);
 ```
 
 **Treat it as a hint, not a precise event.** A single user action can fire it
-more than once — editing the callout that other auto-discovered callouts mirror
+more than once — editing the callout that other manually discovered callouts mirror
 emits one event for the edit and another for the rows it restyled — and most
 events change nothing you care about, since a colour tweak fires it just as a
 rename does. If reacting is expensive, diff against what you last saw:
@@ -202,17 +202,14 @@ The list contains:
   `example`, `quote` — whether or not the user has customized them. Callout
   Studio lets users restyle the built-ins, so they belong in any list you show.
 * Everything the user created themselves.
-* Callouts injected by their theme or by another plugin.
-* Callouts Callout Studio discovered in their vault, **as long as they are still
-  in use** or the user has customized them. Ids that no longer appear anywhere
-  in the vault are left out, so your list does not fill up with types the user
-  deleted from their notes.
+* Manually discovered theme types and saved types from another plugin.
+* All manually discovered callouts, including uncustomized or unused types.
 
 Callouts Callout Studio does not style **are** included — whether because the
 active theme owns them or because the user styles them in their own CSS. It
 stops painting them, but the id is still perfectly valid to write into a note.
-So are the callout types the user's active theme declares itself, which Callout
-Studio lists but does not paint.
+Manually discovered types declared by the active theme are listed without
+Callout Studio painting over them.
 
 ### `externalStyle` and `themeStyled`
 

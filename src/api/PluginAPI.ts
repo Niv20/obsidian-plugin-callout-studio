@@ -20,9 +20,7 @@
  * a module-level function is on no object at all, which is what makes the
  * documented five members the *only* five that exist.
  *
- * Depends on CalloutRegistry for data and CalloutDiscovery (via the plugin's
- * forwarders) to know which auto-discovered callouts are actually in use.
- * See API.md for the consumer-facing documentation.
+ * Reads committed definitions from CalloutRegistry, including manual results.
  */
 import type CalloutStudioPlugin from "../main";
 import type { CalloutDefinition, CalloutIcon } from "../types";
@@ -35,7 +33,6 @@ import type {
 import { getLocale } from "../i18n";
 import {
 	committedDefinitions,
-	filterUsableCallouts,
 } from "../utils/usableCallouts";
 import { normalizeCalloutId } from "../utils/calloutId";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
@@ -133,9 +130,7 @@ const usableDefinitions = (plugin: CalloutStudioPlugin): CalloutDefinition[] => 
 	const committed = committedDefinitions(registry).map(
 		(def) => registry.getReal(def.id) ?? def,
 	);
-	const defs = filterUsableCallouts(committed, (id) =>
-		plugin.isKnownZeroUsageFallback(id),
-	);
+	const defs = committed;
 	return sortCalloutsByDisplayName(defs, getLocale());
 };
 
