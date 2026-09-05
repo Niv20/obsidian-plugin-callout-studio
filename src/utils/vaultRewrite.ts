@@ -24,23 +24,25 @@ import { t } from "../i18n";
  * - **The file list is a snapshot.** `getMarkdownFiles()` answers once, up
  *   front; by the time the loop reaches entry 3,000 a note may have been
  *   deleted, or deleted and recreated at the same path as a different `TFile`.
- *   The identity check is the same one `CalloutDiscovery` makes before acting
+ *   The identity check is the same one `ManualCalloutDiscovery` makes before acting
  *   on a queued scan, and for the same reason: a stale handle writes to the
  *   wrong place, or throws.
  *
  * - **One unreadable file must not abort the rest.** A bare loop over `await`s
  *   unwinds on the first rejection, which for a rename means notes before the
- *   failure are rewritten on disk, notes after it are not, and the caller —
- *   which updates the registry only once this resolves — is left holding a
- *   promise that never does. The vault ends up half-renamed with nothing said.
+ *   failure are rewritten on disk and notes after it are not. The vault ends
+ *   up half-renamed with nothing said.
  *   Failures are collected per file and reported once at the end: a
  *   `console.warn` carries the detail, a single `Notice` tells the user some
  *   notes were left alone. See `internals-docs/22-logging-and-diagnostics.md` —
  *   a swallowed failure with no user-visible trace is what that doc rules out.
+ *   Editor saves additionally request `requireComplete`: after visiting every
+ *   file, an incomplete pass rejects so its saved retry plan is not discarded.
  */
 async function forEachVaultFile(
 	app: App,
 	visit: (file: TFile) => Promise<void>,
+	requireComplete: boolean,
 ): Promise<void> {
 	const files = app.vault.getMarkdownFiles();
 	const failed: string[] = [];
@@ -62,6 +64,7 @@ async function forEachVaultFile(
 
 	if (failed.length > 0) {
 		new Notice(t("notice.vaultRewritePartial", { count: failed.length }), 10000);
+		if (requireComplete) throw new Error(`Vault rewrite incomplete: ${failed.length} files could not be updated`);
 	}
 }
 
@@ -100,6 +103,7 @@ async function forEachVaultFile(
 export async function rewriteVaultFiles(
 	app: App,
 	transform: (content: string) => { content: string; count: number } | null,
+	requireComplete = false,
 ): Promise<{ files: number; count: number }> {
 	let files = 0;
 	let total = 0;
@@ -117,7 +121,7 @@ export async function rewriteVaultFiles(
 			files++;
 			total += count;
 		}
-	});
+	}, requireComplete);
 
 	return { files, count: total };
 }

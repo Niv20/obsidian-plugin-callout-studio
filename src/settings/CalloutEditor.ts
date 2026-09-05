@@ -66,6 +66,7 @@ import {
 } from "./editor/CalloutEditorValidation";
 import { renderCalloutEditorIconPreview } from "./editor/CalloutEditorIconRenderer";
 import { performCalloutEditorSave } from "./editor/CalloutEditorSave";
+import { EditorSaveSession } from "./editor/EditorSaveSession";
 import {
 	hasAuthoredBackground,
 	hasAuthoredIconAdjust,
@@ -319,6 +320,8 @@ export class CalloutEditor extends Modal {
 	private hasHadCalloutId = false;
 	private saveBtn: HTMLButtonElement | null = null;
 	private isSaveActionEnabled = false;
+	private readonly saveSession = new EditorSaveSession();
+	private editorOpen = false;
 	private initialSnapshot: string = "";
 	private initialStyleSnapshot: string = "";
 	private removePopupOutsideClickListener: (() => void) | null = null;
@@ -409,6 +412,7 @@ export class CalloutEditor extends Modal {
 	}
 
 	onOpen(): void {
+		this.editorOpen = true;
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.addClass("callout-studio-editor");
@@ -417,10 +421,8 @@ export class CalloutEditor extends Modal {
 		this.modalEl.addClass("callout-studio-editor-modal");
 		const footerEl = applyModalChrome(this, { footer: true, wide: true });
 
-		// Suspend automatic prune passes while the user is editing so a
-		// fallback row currently being customized cannot be auto-removed
-		// out from under the modal.
-		this.plugin.pruneSuspended = true;
+		// Hold incoming settings while this editor owns a draft.
+		this.plugin.settingsEditOpen = true;
 
 		// Enforce the name↔ID invariant (the primary ID mirrors the display
 		// name) before snapshotting, so legacy rows normalize without creating
@@ -1825,9 +1827,10 @@ export class CalloutEditor extends Modal {
 		const isValid = this.isStateValid();
 		// For new callouts: enable if valid (no need for "changes" check)
 		// For existing: enable if valid AND has changes
-		const enabled = this.existingId ? hasChanges && isValid : isValid;
+		const enabled = !this.saveSession.busy && (this.existingId ? hasChanges && isValid : isValid);
 		this.isSaveActionEnabled = enabled;
-		this.saveBtn.disabled = false;
+		this.saveBtn.disabled = this.saveSession.busy;
+		this.saveBtn.textContent = t(this.saveSession.busy ? "editor.saving" : this.existingId ? "editor.saveChanges" : "editor.createCallout");
 		this.saveBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
 		this.saveBtn.toggleClass("cs-btn-disabled", !enabled);
 	}
@@ -2233,22 +2236,16 @@ export class CalloutEditor extends Modal {
 	}
 
 	private async save(): Promise<void> {
-		// A palette may still be hovered (the outside-click handler that ends a
-		// hover preview only runs after this button's own handler). It was
-		// never chosen, so it must not survive into the save — nor into the
-		// re-registered preview if the save is rejected below.
+		if (this.saveSession.busy) return;
+		const before = this.stateSnapshot();
+		// Hover colours and transient previews must never become committed data.
 		this.previewColorOverride = null;
-		// Clear the transient preview registration first, restoring any real
-		// callout it was shadowing, so the save flow mutates the real definition
-		// (not the in-progress preview) and onClose can't later revert the save.
 		this.plugin.registry.setPreviewDefinition(null);
-		const def = await performCalloutEditorSave({
+		const def = await this.saveSession.run(this.plugin, () => performCalloutEditorSave({
 			app: this.app,
 			plugin: this.plugin,
 			existingId: this.existingId,
 			isBuiltIn: this.isBuiltIn,
-			// The same baseline the live preview's `hasAuthored…` gates read, so
-			// the definition that gets saved matches the one being previewed.
 			baselineDef: this.baselineDef,
 			state: {
 				displayName: this.displayName,
@@ -2274,31 +2271,27 @@ export class CalloutEditor extends Modal {
 			overwriteAutoFallback: this.isOverwritingAutoFallbackRow(),
 			canUseCalloutId: (id, role) => this.canUseCalloutId(id, role),
 			getFallbackBase: () => this.getFallbackBase(),
-			onMaterialDownloadStart: () => {
-				if (this.saveBtn) {
-					this.isSaveActionEnabled = false;
-					this.saveBtn.disabled = true;
-					this.saveBtn.textContent = t("editor.downloadingIcon");
-				}
-			},
+			onDefinitionApplied: (saved) => { this.existingId = saved.id; },
+			onVaultChangesReady: (plan) => this.saveSession.applyVaultChanges(this.plugin, plan),
+		}), () => {
+			if (this.editorOpen) this.updateSaveState();
+			else this.plugin.settingsEditOpen = this.saveSession.busy;
 		});
-
-		if (!def) {
+		if (!this.editorOpen) return;
+		if (!def || this.stateSnapshot() !== before) {
+			// Keep a failed save, or newer edits made during a save, available.
 			this.updateIdWarning();
 			this.updateSaveState();
-			// Save was rejected and the modal stays open — re-register the
-			// transient preview definition (cleared above) so the live preview
-			// keeps showing the in-progress style.
 			this.updatePreview();
 			return;
 		}
-
 		if (this.resolve) this.resolve(def);
 		this.resolve = null;
 		this.close();
 	}
 
 	onClose(): void {
+		this.editorOpen = false;
 		// Drop any coalesced refresh still queued from the last preview render.
 		// Must happen BEFORE destroy(): that reverts the preview and refreshes
 		// the notes synchronously, so a frame firing afterwards would only
@@ -2327,9 +2320,7 @@ export class CalloutEditor extends Modal {
 		// The button bar is a sibling of contentEl, so emptying that misses it.
 		removeModalChrome(this);
 		this.modalEl.removeClass("callout-studio-editor-modal");
-		// Re-enable automatic pruning and run one pass to clean up any
-		// fallback rows the user touched but did not save.
-		this.plugin.pruneSuspended = false;
-		this.plugin.schedulePruneUnusedFallbacks(0);
+		// A pending save still owns its definition while it finishes note work.
+		this.plugin.settingsEditOpen = this.saveSession.busy;
 	}
 }

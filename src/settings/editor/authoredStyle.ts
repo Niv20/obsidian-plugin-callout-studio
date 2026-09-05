@@ -146,11 +146,11 @@ export function authoredStyleMode(hasStyleChanges: boolean): {
  *
  * Lives beside {@link authoredStyleMode} because it answers the same question
  * from the other end: that one records who *styles* the callout, this one
- * records whether it is the user's to keep. Both turn on authorship, and
+ * records whether its appearance is authored. Both turn on authorship, and
  * keeping them apart is how they drifted before.
  *
- * `undefined` for a built-in: they are never auto-prunable, so the flag would
- * mean nothing, and writing it would make an untouched one read as edited.
+ * `undefined` for a built-in: its authored fields already identify edits.
+ * Writing the flag would make an untouched built-in read as edited.
  */
 export function authoredCustomizedFlag(
 	isBuiltIn: boolean,

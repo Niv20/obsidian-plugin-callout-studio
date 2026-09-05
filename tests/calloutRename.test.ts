@@ -178,7 +178,7 @@ describe("the rename as the editor performs it", () => {
 		assert.deepStrictEqual(log.removed, []);
 	});
 
-	it("loses the command WITHOUT the batch — which is why the batch is there", () => {
+	it("retains the command even if a rename temporarily removes its target", () => {
 		// The failure this pins is the reason `CalloutEditorSave` wraps the pair:
 		// un-batched, the remove's event reaches the sweep while the command
 		// still points at an id that has just stopped existing.
@@ -191,7 +191,7 @@ describe("the rename as the editor performs it", () => {
 		registry.add(def({ id: "new", displayName: "Old" }));
 		manager.migrateCalloutId("old", "new");
 
-		assert.deepStrictEqual(registry.settings.customCommands, [], "already pruned");
+		assert.strictEqual(registry.settings.customCommands[0]?.calloutId, "new");
 	});
 
 	it("carries the aliases across", () => {
@@ -304,7 +304,7 @@ describe("syncAll after a rename — the Obsidian command registration", () => {
 		assert.deepStrictEqual(log.removed, []);
 	});
 
-	it("drops a command whose callout really is gone", () => {
+	it("pauses a command whose callout is gone", () => {
 		const { registry, manager, log } = harness([command()]);
 		registry.add(def({ id: "old", displayName: "Old" }));
 		manager.syncAll();
@@ -312,7 +312,7 @@ describe("syncAll after a rename — the Obsidian command registration", () => {
 		registry.remove("old");
 		manager.syncAll();
 
-		assert.deepStrictEqual(registry.settings.customCommands, []);
+		assert.strictEqual(registry.settings.customCommands.length, 1);
 		assert.strictEqual(log.removed.length, 1);
 	});
 

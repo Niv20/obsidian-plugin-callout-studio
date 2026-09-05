@@ -192,9 +192,7 @@ describe("no reserved demo id names anything real", () => {
 				for (const role of ["regular", "heading", "inline"] as const) {
 					const offered = suggestableCallouts(
 						registry,
-						role,
-						() => false,
-					).map((d) => d.id);
+						role).map((d) => d.id);
 					assert.ok(!offered.includes(demoId), `${demoId} / ${role}`);
 				}
 			});

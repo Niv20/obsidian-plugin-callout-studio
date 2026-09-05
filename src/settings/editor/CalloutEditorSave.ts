@@ -19,12 +19,7 @@ import {
 	hasAuthoredTextColors,
 } from "./authoredStyle";
 import type { CalloutEditorPlugin } from "./types";
-import {
-	countCalloutUsages,
-	normalizeFoldMarkersInVault,
-	replaceCalloutIdsInVault,
-	replaceCalloutTitlesInVault,
-} from "../../utils/vaultCalloutScanner";
+import { createCalloutVaultSavePlan, stageRenameAliases, type CalloutVaultSavePlan } from "./calloutVaultSavePlan";
 
 export type CalloutEditorSaveState = {
 	displayName: string;
@@ -80,6 +75,10 @@ export type CalloutEditorSaveInput = {
 	canUseCalloutId: (id: string, role: "primary" | "alias") => boolean;
 	getFallbackBase: () => CalloutDefinition | undefined;
 	onMaterialDownloadStart?: () => void;
+	/** Track the committed in-memory identity before fallible artwork/file work. */
+	onDefinitionApplied?: (def: CalloutDefinition) => void;
+	/** Own and durably save the definition before running resumable note work. */
+	onVaultChangesReady?: (plan: CalloutVaultSavePlan) => Promise<void>;
 };
 
 export async function performCalloutEditorSave(
@@ -294,10 +293,13 @@ export async function performCalloutEditorSave(
 				: undefined,
 		aliases: state.aliases.length > 0 ? [...state.aliases] : undefined,
 		paletteId: fallbackBase ? fallbackBase.paletteId : state.paletteId,
+		...(existingDef?.metadata ? { metadata: structuredClone(existingDef.metadata) } : {}),
 		...(customized === true ? { customized: true } : {}),
 		...authoredStyleMode(hasStyleChanges),
 	};
 
+	const protectedRename = stageRenameAliases(def, input.onVaultChangesReady ? removedIds : []);
+	const mutationDef = protectedRename.definition;
 	let saved = false;
 	if (existingId) {
 		if (isIdChanged) {
@@ -308,26 +310,32 @@ export async function performCalloutEditorSave(
 			// broken. Inside the batch the migration lands first, so the single
 			// event that follows sees a consistent world.
 			saved = plugin.registry.batch(() => {
+				const wasFallback = plugin.registry.settings.fallbackCalloutId === existingId;
 				plugin.registry.remove(existingId);
-				const added = plugin.registry.add(def);
+				const added = plugin.registry.add(mutationDef);
 				if (added) {
 					plugin.customCommands.migrateCalloutId(existingId, def.id);
+					if (wasFallback) {
+						plugin.registry.settings.fallbackCalloutId = def.id;
+						plugin.registry.restyleUncustomizedFallbackRows();
+					}
 				}
 				return added;
 			});
 		} else {
-			saved = plugin.registry.update(existingId, def);
+			saved = plugin.registry.update(existingId, mutationDef);
 		}
 	} else if (overwriteAutoFallback) {
-		saved = plugin.registry.update(state.calloutId, def);
+		saved = plugin.registry.update(state.calloutId, mutationDef);
 	} else {
-		saved = plugin.registry.add(def);
+		saved = plugin.registry.add(mutationDef);
 	}
 
 	if (!saved) {
 		new Notice(t("editor.idConflict"));
 		return null;
 	}
+	input.onDefinitionApplied?.(def);
 
 	// Packs served one icon at a time fetch on save, so the artwork is in the
 	// cache before the definition is rendered anywhere. Packs that ship or
@@ -343,67 +351,17 @@ export async function performCalloutEditorSave(
 
 	plugin.registry.cleanupUnusedIconSvgs();
 
-	if (removedIds.length > 0) {
-		const { fileCount } = await countCalloutUsages(app, removedIds);
-		if (fileCount > 0) {
-			const replaced = await replaceCalloutIdsInVault(
-				app,
-				removedIds,
-				state.calloutId,
-			);
-			if (replaced > 0) {
-				new Notice(
-					t("vault.idsUpdated", {
-						count: String(replaced),
-						oldIds: removedIds.join(", "),
-						newId: state.calloutId,
-					}),
-				);
-			}
-		}
-	}
-
-	if (
-		oldDisplayName &&
-		oldDisplayName !== newDisplayName &&
-		oldAllIds.length > 0
-	) {
-		const allCurrentIds = plugin.registry.vaultIdFormsFor(def, [
-			state.calloutId,
-			...state.aliases,
-		]);
-		const replaced = await replaceCalloutTitlesInVault(
-			app,
-			allCurrentIds,
-			oldDisplayName,
-			newDisplayName,
-		);
-		if (replaced > 0) {
-			new Notice(
-				t("vault.titlesUpdated", {
-					count: String(replaced),
-					oldTitle: oldDisplayName,
-					newTitle: newDisplayName,
-				}),
-			);
-		}
-	}
-
-	if (
-		existingId &&
-		(oldFoldable !== state.foldable ||
-			oldDefaultFolded !== state.defaultFolded)
-	) {
-		const desiredMarker: "" | "+" | "-" = !state.foldable
-			? ""
-			: state.defaultFolded
-				? "-"
-				: "+";
-		const allCurrentIds = plugin.registry.vaultIdFormsFor(def, [
-			state.calloutId,
-			...state.aliases,
-		]);
-		await normalizeFoldMarkersInVault(app, allCurrentIds, desiredMarker);
+	const plan = createCalloutVaultSavePlan({
+		app, removedIds, newId: state.calloutId,
+		currentIds: plugin.registry.vaultIdFormsFor(def, [state.calloutId, ...state.aliases]),
+		oldTitle: oldAllIds.length > 0 ? oldDisplayName : null,
+		newTitle: newDisplayName,
+		foldMarker: existingId && (oldFoldable !== state.foldable || oldDefaultFolded !== state.defaultFolded)
+			? !state.foldable ? "" : state.defaultFolded ? "-" : "+" : null,
+	});
+	if (plan) {
+		const complete = async () => { await plan(); protectedRename.release(plugin.registry); };
+		await (input.onVaultChangesReady ? input.onVaultChangesReady(complete) : complete());
 	}
 
 	return def;

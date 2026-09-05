@@ -151,7 +151,7 @@ function harness(
 		app,
 		registry,
 		settings: registry.settings,
-		pruneSuspended: false,
+		settingsEditOpen: false,
 		saveSettings: () => Promise.resolve(),
 		schedulePruneUnusedFallbacks: () => {},
 		ensureIconArtwork: (icon: CalloutDefinition["icon"]) => {

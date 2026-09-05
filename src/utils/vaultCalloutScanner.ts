@@ -4,7 +4,7 @@
  * Provides async functions for reading every markdown file in the vault:
  * discovering unknown callout IDs, counting usages, bulk-replacing callout IDs
  * or titles, converting callouts to plain text, and normalizing fold markers.
- * Used by CalloutDiscovery (auto-discovery), DataManagementSection (re-scan),
+ * Used by ManualCalloutDiscovery (explicit scans), DataManagementSection,
  * and CalloutRowActions (pre-delete counts). The user-facing usage report lives
  * next door in vaultCalloutStats.ts.
  *
@@ -18,9 +18,8 @@
  * the same grammar as the counters is what stops the menu from promising "3
  * uses in 2 files" and the rewrite from reporting 0.
  *
- * The one exception is fold-marker normalization; see the note on it below.
  */
-import type { App, TFile } from "obsidian";
+import type { App } from "obsidian";
 import { calloutIdentity, mergeDashSpaceVariants, normalizeCalloutId } from "./calloutId";
 import { rewriteVaultFiles } from "./vaultRewrite";
 import type { LineCalloutToken } from "../editor/calloutTokens";
@@ -32,10 +31,6 @@ import {
 	tokenEnd,
 } from "../editor/calloutTokens";
 import { splitFoldMark } from "../editor/calloutWriter";
-
-function escapeRegex(str: string): string {
-	return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
 
 /**
  * End offset of a token's `[!…]` bracket span — the whole of it, `|metadata`
@@ -135,20 +130,6 @@ function rewriteCalloutLines(
 	}
 
 	return total > 0 ? { content: lines.join("\n"), count: total } : null;
-}
-
-/**
- * Scan a single Markdown file (cheap; reads from cache) and return the set of
- * callout IDs referenced in any role (block / heading / inline) that are
- * NOT in `knownIds`. Used for incremental tracking on file save / create.
- */
-export async function scanFileForUnknownCallouts(
-	app: App,
-	file: TFile,
-	knownIds: Set<string>,
-): Promise<string[]> {
-	const content = await app.vault.cachedRead(file);
-	return scanStringForUnknownCallouts(content, knownIds);
 }
 
 /**
@@ -423,6 +404,7 @@ export async function replaceCalloutIdsInVault(
 	oldIds: string[],
 	newId: string,
 	titleSwap?: CalloutTitleSwap,
+	requireComplete = false,
 ): Promise<number> {
 	if (oldIds.length === 0) return 0;
 
@@ -456,6 +438,7 @@ export async function replaceCalloutIdsInVault(
 					return { text: bracket, end: tokenBracketEnd(token) };
 				}),
 			),
+		requireComplete,
 	);
 
 	return count;
@@ -469,9 +452,8 @@ export async function replaceCalloutIdsInVault(
  * block callout alone. A heading has none — its folding is the two chevrons —
  * so anything after `## [!id]` there is title text and must not be touched.
  *
- * Any *depth* of blockquote, though: a nested `>> [!note]` folds exactly as its
- * parent does, so the prefix matched is the tokenizer's own — and `[ \t]` not
- * `\s`, so the run cannot cross a newline onto a `[!note]` after a lone `>`.
+ * Any depth of blockquote uses the same shared tokenizer as the other writers,
+ * so nested callouts count while fenced-code and frontmatter examples do not.
  *
  * The optional `|…` before `]` matches occurrences carrying metadata, which an
  * id-only pattern would skip; the mark sits after the `]` and passes through.
@@ -480,56 +462,22 @@ export async function normalizeFoldMarkersInVault(
 	app: App,
 	ids: string[],
 	desiredMarker: "" | "+" | "-",
+	requireComplete = false,
 ): Promise<number> {
 	if (ids.length === 0) return 0;
 
-	const pattern = ids.map(escapeRegex).join("|");
-	const regex = new RegExp(
-		`(^(?:>[ \\t]*)+\\[!(?:${pattern})(?:\\|[^\\]\\n\\r]*)?\\])([+-]?)`,
-		"gim",
-	);
-
-	const { count: total } = await rewriteVaultFiles(app, (content) => {
-			let count = 0;
-			// `g`-flagged and shared across files, and this now runs twice per
-			// changed file — so never inherit a `lastIndex` from the last pass.
-			regex.lastIndex = 0;
-			const newContent = content.replace(
-				regex,
-				(_match, prefix: string, current: string) => {
-					if (current === desiredMarker) return _match;
-					count++;
-					return `${prefix}${desiredMarker}`;
-				},
-			);
-			return count > 0 ? { content: newContent, count } : null;
-	});
-
-	return total;
-}
-
-/**
- * Scan every Markdown file once and return the set of callout IDs that are
- * referenced in any role (regular / heading / inline) but are NOT in the
- * supplied known set.
- *
- * Merges dash/space spellings again after aggregating: each file was merged on
- * its own, but `[!a b]` in one note and `[!a-b]` in another still arrive here
- * as two entries.
- */
-export async function scanVaultForUnknownCallouts(
-	app: App,
-	knownIds: Set<string>,
-): Promise<string[]> {
-	const files = app.vault.getMarkdownFiles();
-	const found = new Set<string>();
-	for (const file of files) {
-		const content = await app.vault.cachedRead(file);
-		for (const id of scanStringForUnknownCallouts(content, knownIds)) {
-			found.add(id);
-		}
-	}
-	return mergeDashSpaceVariants(Array.from(found));
+	const idSet = new Set(ids.map(calloutIdentity));
+	const { count } = await rewriteVaultFiles(app, (content) =>
+		rewriteCalloutLines(content, (line, tokens) =>
+			rewriteTokensOnLine(line, tokens, (token) => {
+				// Keep the full written quote prefix, including repeated spaces.
+				if (!/^(?:>[ \t]*)+$/.test(line.slice(0, token.from)) || !idSet.has(calloutIdentity(token.rawId))) return null;
+				const current = /^[+-]/.exec(line.slice(token.to))?.[0] ?? "";
+				if (current === desiredMarker) return null;
+				return { text: `${line.slice(token.from, token.to)}${desiredMarker}`, end: token.to + current.length };
+			}),
+		), requireComplete);
+	return count;
 }
 
 /**
@@ -546,6 +494,7 @@ export async function replaceCalloutTitlesInVault(
 	ids: string[],
 	oldTitle: string,
 	newTitle: string,
+	requireComplete = false,
 ): Promise<number> {
 	if (ids.length === 0) return 0;
 
@@ -568,6 +517,7 @@ export async function replaceCalloutTitlesInVault(
 					};
 				}),
 			),
+		requireComplete,
 	);
 
 	return count;
