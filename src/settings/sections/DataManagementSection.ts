@@ -9,6 +9,7 @@
  */
 import { Notice, Setting } from "obsidian";
 import { t } from "../../i18n";
+import { renderIgnoredCalloutsList } from "./IgnoredCalloutsList";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { ExportFormatModal } from "../ExportFormatModal";
 import { ImportReportModal } from "../../utils/ImportReportModal";
@@ -85,6 +86,8 @@ export function renderResetSection(
 					void ctx.plugin.saveSettings();
 				}),
 		);
+
+	renderIgnoredCalloutsList(ctx, containerEl);
 
 	new Setting(containerEl)
 		.setName(t("settings.rescanVault"))

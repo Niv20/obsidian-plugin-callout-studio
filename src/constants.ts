@@ -190,11 +190,9 @@ export const OBSIDIAN_CALLOUT_VAR: Readonly<Record<string, string>> =
  * `styleModeMigration.ts` genuinely cannot be told from its own result, so it
  * needs a durable "already done" marker and this is the one.
  *
- * It is also the one thing that can say a file came from a build newer than
- * this one, which `manager/foreignFields.ts` reads to take the file off the
- * table rather than write an older understanding of it back. Here rather than
- * on the registry so that check does not have to import the class that imports
- * it.
+ * It is also what says a file came from a build newer than this one — see
+ * `manager/foreignFields.ts`. Here rather than on the registry so that check
+ * need not import the class that imports it.
  */
 export const CURRENT_DATA_VERSION = 4;
 
@@ -290,6 +288,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 	inlineCallouts: { enabled: true, allowContent: true },
 	welcomeSeen: false,
 	autoDiscoverCallouts: true,
+	ignoredCalloutIds: [],
 	fallbackCalloutId: "note",
 	language: "auto",
 	customPalettes: [],

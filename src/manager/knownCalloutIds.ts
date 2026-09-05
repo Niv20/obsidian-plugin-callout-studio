@@ -13,11 +13,13 @@
  */
 import { calloutIdentity, normalizeCalloutId } from "../utils/calloutId";
 import { RESERVED_DEMO_IDS } from "../constants";
-import type { CalloutDefinition } from "../types";
+import type { CalloutDefinition, PluginSettings } from "../types";
 
 /** All this needs of a registry, so a caller can pass anything that lists rows. */
 export interface KnownIdSource {
 	getAll(): CalloutDefinition[];
+	/** Only `ignoredCalloutIds` is read. @see manager/ignoredCallouts.ts */
+	settings: Pick<PluginSettings, "ignoredCalloutIds">;
 }
 
 /**
@@ -51,5 +53,12 @@ export function buildKnownCalloutIds(registry: KnownIdSource): Set<string> {
 	// delete. Listing them here is also the cheaper half of the deal: the
 	// scanner asks this set, so nothing downstream needs its own exception.
 	for (const id of RESERVED_DEMO_IDS) addBothForms(id);
+	// The ids the user has told discovery to leave alone — a snippet's callout,
+	// a theme's helper, another plugin's marker. Here rather than in a check
+	// further down for the same reason as the line above: "known" is what stops
+	// the scanner reporting an id at all, so one addition covers the
+	// incremental scan, the whole-vault scan, the open-buffer sweep and the
+	// first-run modal alike. See manager/ignoredCallouts.ts.
+	for (const id of registry.settings.ignoredCalloutIds) addBothForms(id);
 	return known;
 }

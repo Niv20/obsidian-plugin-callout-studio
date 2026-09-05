@@ -842,7 +842,12 @@ describe("no new oversized files", () => {
 		// for `autoDiscoverCallouts`, on the same terms as every settings field
 		// above: this file is where a settings field is declared, and there is
 		// no sibling module for one field's declaration to move into.
-		"src/types.ts": 838,
+		// Raised from 838 for `ignoredCalloutIds` — the per-callout half of
+		// automatic discovery, asked for in issue #41 by a user who had already
+		// deleted every `[!mcc]` in their vault from a row they never wanted.
+		// The field has to be declared here; everything it means lives in
+		// manager/ignoredCallouts.ts.
+		"src/types.ts": 841,
 		"src/editor/livepreview/widgets.ts": 793,
 		"src/reading/calloutPostProcessor.ts": 781,
 		"src/settings/iconpicker/PackPanel.ts": 736,
@@ -931,7 +936,11 @@ describe("no new oversized files", () => {
 		// Raised for the "Automatically discover callouts in your vault" toggle,
 		// which belongs beside Re-scan vault: this file IS the vault-maintenance
 		// section, and a sibling module for one Setting row would only hide it.
-		"src/settings/sections/DataManagementSection.ts": 329,
+		// Raised from 329 for the ignored-callout list: one call and its import.
+		// The list itself — a repeated row with its own undo, which is a different
+		// shape from the settings-plus-buttons around it — lives in
+		// settings/sections/IgnoredCalloutsList.ts.
+		"src/settings/sections/DataManagementSection.ts": 332,
 		// Lowered from 345: its row icon goes through
 		// manager/theme/calloutListIcon.ts. Lowered again from 337: the shortcut
 		// chips and the hotkey-pane button — carried identically by both lists

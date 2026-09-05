@@ -753,6 +753,9 @@ export interface PluginSettings {
 	 * remedy for anything.
 	 */
 	autoDiscoverCallouts: boolean;
+	/** Ids discovery must never mint a row for, in `calloutIdentity` form.
+	 *  @see manager/ignoredCallouts.ts */
+	ignoredCalloutIds: string[];
 	/** Callout ID to use as fallback for unrecognized callout types. Empty = Obsidian default */
 	fallbackCalloutId: string;
 	/**

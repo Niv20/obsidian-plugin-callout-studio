@@ -34,6 +34,13 @@ export const en: Record<string, string> = {
 	"settings.rescanVaultDesc":
 		"Find unrecognized callout IDs used in notes and add them as fallback rows.",
 	"settings.rescanVaultHintAction": "Scan now",
+	"settings.ignoreCalloutAction": "Never detect this callout",
+	"settings.ignoredHeading": "Callouts you don't detect",
+	"settings.ignoredHint":
+		"Automatic detection skips these, so they never appear as rows here. Useful for callouts a CSS snippet, a theme or another plugin provides.",
+	"settings.ignoredEmpty":
+		"None yet. Use \u201cNever detect this callout\u201d in a detected callout\u2019s menu.",
+	"settings.ignoredRemove": "Detect again",
 	"settings.rescanComplete":
 		"Re-scan complete: {{count}} new callout(s) added.",
 	"settings.readOnly":

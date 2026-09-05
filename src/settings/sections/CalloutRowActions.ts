@@ -20,6 +20,7 @@ import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
 import { addExternalCssMenuItem } from "./externalCssMenu";
 import { addDeleteItem } from "./rowOwnership";
+import { addIgnoredCalloutId } from "../../manager/ignoredCallouts";
 import {
 	handleCalloutReplace,
 	handleClearCalloutUsages,
@@ -108,6 +109,21 @@ export async function openRowMenu(
 
 	const isFallbackTarget = def.id === ctx.plugin.settings.fallbackCalloutId;
 	const alreadyMirrors = def.source === "fallback" && def.customized !== true;
+
+	// Only for a row discovery minted and nobody has claimed. Ignoring one the
+	// user configured would throw their work away to stop a row reappearing
+	// that was never going to; ignoring the fallback target would leave every
+	// unrecognized callout pointing at an id this vault refuses to detect.
+	if (alreadyMirrors && !isFallbackTarget) {
+		menu.addItem((item) =>
+			item
+				.setTitle(t("settings.ignoreCalloutAction"))
+				.setIcon("eye-off")
+				.onClick(() => {
+					void handleIgnoreCallout(ctx, def);
+				}),
+		);
+	}
 	if (!isFallbackTarget && !alreadyMirrors) {
 		menu.addItem((item) =>
 			item
@@ -141,6 +157,34 @@ function addUsageInfoMenuItem(
 			.setIcon("info")
 			.setDisabled(true),
 	);
+}
+
+/**
+ * Stop detecting this id, and take the row away.
+ *
+ * Three steps, and the order is the interesting part: the row goes first so the
+ * list is right immediately, the id joins the ignore list so no later scan
+ * mints it again, and the device index forgets it so the next launch does not
+ * rebuild it from memory. Missing the third is how a "deleted" discovered row
+ * comes back on restart.
+ *
+ * `suppressCalloutRediscovery` covers the seconds in between, during which the
+ * open note still contains the id and a scan is already queued for it.
+ */
+async function handleIgnoreCallout(
+	ctx: SettingsSectionContext,
+	def: CalloutDefinition,
+): Promise<void> {
+	const settings = ctx.plugin.settings;
+	settings.ignoredCalloutIds = addIgnoredCalloutId(
+		settings.ignoredCalloutIds,
+		def.id,
+	);
+	ctx.plugin.suppressCalloutRediscovery([def.id]);
+	ctx.plugin.registry.remove(def.id);
+	await ctx.plugin.saveSettings();
+	ctx.plugin.refreshCallouts();
+	ctx.display();
 }
 
 async function handleConvertToFallback(

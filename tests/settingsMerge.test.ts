@@ -70,6 +70,7 @@ const FIELD_KIND: Record<keyof PluginSettings, "value" | "list"> = {
 	inlineCallouts: "value",
 	welcomeSeen: "value",
 	autoDiscoverCallouts: "value",
+	ignoredCalloutIds: "list",
 	fallbackCalloutId: "value",
 	language: "value",
 	customPalettes: "list",
