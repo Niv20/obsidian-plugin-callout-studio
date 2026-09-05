@@ -36,6 +36,8 @@ export const en: Record<string, string> = {
 	"settings.rescanVaultHintAction": "Scan now",
 	"settings.rescanComplete":
 		"Re-scan complete: {{count}} new callout(s) added.",
+	"settings.readOnly":
+		"Callout Studio could not use its settings file when Obsidian started, so nothing on this page is being saved on this device. Your changes will last until you close Obsidian. Reload Obsidian once the file is back — if you sync this vault, let the sync finish first.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(falls back to default)",
 	"replaceModal.titleDelete": "Delete callout",
 	"replaceModal.titleReplace": "Replace in vault",
@@ -339,6 +341,8 @@ export const en: Record<string, string> = {
 	"notice.settingsMissing":
 		"Callout Studio's settings file is missing, so your callout types are missing from this session. Nothing has been written — if you sync this vault, let the sync finish and reload Obsidian before making any changes.",
 	"notice.settingsMissingAction": "Start fresh on this device",
+	"notice.settingsNotSaved":
+		"That change was not saved. Callout Studio could not use its settings file when Obsidian started, so nothing is being written on this device — your changes will last until you close Obsidian. See Settings \u2192 Callout Studio for what to do.",
 	"notice.settingsNewerVersion":
 		"Callout Studio's settings were saved by a newer version of the plugin, so nothing will be written on this device until you update it. Your settings are safe — update Callout Studio here and reload Obsidian.",
 	"notice.settingsChangedElsewhere":

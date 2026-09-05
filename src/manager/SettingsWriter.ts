@@ -49,6 +49,16 @@ export interface SettingsWriterHost extends StaleWriteHost {
 	build(): unknown;
 	/** Obsidian's `Plugin.saveData`. */
 	write(data: unknown): Promise<void>;
+	/**
+	 * The first save a {@link freeze} threw away, and only the first — one per
+	 * freeze, at the moment the user's change stops being real.
+	 *
+	 * The launch notice already said the session would not write, but it said
+	 * it before the user had looked at the screen and it is long gone by the
+	 * time they change a colour. A change silently not sticking is how a
+	 * frozen session gets reported as "the plugin is ignoring me".
+	 */
+	onFrozenSave?(): void;
 }
 
 export class SettingsWriter {
@@ -65,6 +75,8 @@ export class SettingsWriter {
 	private heldRequest = false;
 	/** @see freeze */
 	private frozen = false;
+	/** Whether this freeze has already reported a save it threw away. */
+	private frozenNotified = false;
 	/** "Is the file still ours?" — see manager/staleWriteGuard.ts. */
 	private readonly stale: StaleWriteGuard;
 
@@ -83,7 +95,13 @@ export class SettingsWriter {
 	 */
 	save(): Promise<void> {
 		// Nothing this session may reach the file — see freeze().
-		if (this.frozen) return Promise.resolve();
+		if (this.frozen) {
+			if (!this.frozenNotified) {
+				this.frozenNotified = true;
+				this.host.onFrozenSave?.();
+			}
+			return Promise.resolve();
+		}
 		if (this.holdDepth > 0) {
 			// Collapsed into the single pass hold() runs on release, which
 			// builds its payload then, so no half-rebuilt intermediate state is
@@ -201,6 +219,7 @@ export class SettingsWriter {
 	 */
 	freeze(): void {
 		this.frozen = true;
+		this.frozenNotified = false;
 	}
 
 	/**

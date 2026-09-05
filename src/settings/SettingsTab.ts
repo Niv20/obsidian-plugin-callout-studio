@@ -25,6 +25,8 @@ import {
 	renderContextMenuSettingsSection,
 } from "./sections/EditorFeaturesSection";
 import { renderFallbackSection } from "./sections/FallbackSection";
+import { renderReadOnlyBanner } from "./sections/ReadOnlyBanner";
+import { captureScroll } from "./sections/scrollRestore";
 import { renderLanguageSection } from "./sections/LanguageSection";
 import { renderCustomPalettesSection } from "./sections/CustomPalettesSection";
 import { renderGlobalSettingsSection } from "./sections/GlobalSettingsSection";
@@ -100,18 +102,9 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 
 	display(): void {
 		const { containerEl } = this;
-		// Where the reader was, before `empty()` below takes the page out from
-		// under them.
-		//
-		// This tab is not only rebuilt when someone opens it: `adoptExternalSettings`
-		// re-runs it whenever another device's data.json lands, and a locale
-		// download does the same. Both used to drop a reader at the top of a
-		// fifteen-section page, mid-scroll, for a change they did not make.
-		//
-		// Nothing distinguishes those from a genuine open, and nothing needs to:
-		// a freshly opened pane is at 0, so the restore below is already a no-op
-		// there. The state is the scroller's own, which is why none is kept.
-		const scrollTop = containerEl.scrollTop;
+		// Where the reader was, before `empty()` takes the page out from under
+		// them — and why once is not enough. @see sections/scrollRestore.ts
+		const restoreScroll = captureScroll(containerEl);
 
 		// Tear down any resources from a previous render before rebuilding.
 		this.runSectionDisposers();
@@ -133,6 +126,9 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		);
 
 		const sectionCtx = this.getSectionContext();
+		// First on the page, because it is the reason nothing below it will be
+		// saved. @see sections/ReadOnlyBanner.ts
+		renderReadOnlyBanner(sectionCtx, containerEl);
 		this.calloutLists = createCalloutListsController(sectionCtx, {
 			paging: this.paging,
 			onAddNewCallout: async () => {
@@ -181,9 +177,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		renderCreditsSection(sectionCtx, containerEl);
 		renderFooterSection(sectionCtx, containerEl);
 
-		// Last, once every section is in and the page is its full height again —
-		// assigning past the end of a short page would be clamped and lost.
-		if (scrollTop > 0) containerEl.scrollTop = scrollTop;
+		restoreScroll();
 	}
 
 	private getSectionContext(): SettingsSectionContext {

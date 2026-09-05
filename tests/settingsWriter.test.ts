@@ -281,3 +281,67 @@ describe("SettingsWriter — coalescing", () => {
 		assert.strictEqual(h.builds(), 1);
 	});
 });
+
+describe("SettingsWriter — a session that is not writing", () => {
+	/** A writer that records the saves a freeze threw away. */
+	function frozenHarness() {
+		const dropped: number[] = [];
+		const writes: string[] = [];
+		const writer = new SettingsWriter({
+			build: () => ({ n: 1 }),
+			write: async (data) => {
+				writes.push(JSON.stringify(data));
+			},
+			onFrozenSave: () => dropped.push(writes.length),
+		});
+		return { writer, writes, dropped };
+	}
+
+	it("says so the first time a change is thrown away", async () => {
+		// The launch notice announcing the freeze was shown before the user had
+		// looked at the screen, and is long gone by the time they change a
+		// colour. A change that silently does not stick is how a frozen session
+		// gets reported as the plugin ignoring the user.
+		const h = frozenHarness();
+		h.writer.freeze();
+
+		await h.writer.save();
+
+		assert.deepStrictEqual(h.dropped, [0]);
+		assert.deepStrictEqual(h.writes, []);
+	});
+
+	it("says it once, not on every save the session goes on making", async () => {
+		const h = frozenHarness();
+		h.writer.freeze();
+
+		for (let i = 0; i < 5; i++) await h.writer.save();
+
+		assert.strictEqual(h.dropped.length, 1);
+	});
+
+	it("says it again after a second freeze", async () => {
+		// A session can recover and lose the file again — a sync client
+		// swapping it twice is one file event each way.
+		const h = frozenHarness();
+		h.writer.freeze();
+		await h.writer.save();
+		h.writer.thaw();
+		await h.writer.save();
+		h.writer.freeze();
+		await h.writer.save();
+
+		assert.strictEqual(h.dropped.length, 2);
+		assert.strictEqual(h.writes.length, 1, "the thawed save wrote");
+	});
+
+	it("stays quiet on a host that does not want to know", async () => {
+		const writer = new SettingsWriter({
+			build: () => ({ n: 1 }),
+			write: () => Promise.resolve(),
+		});
+		writer.freeze();
+
+		await writer.save();
+	});
+});

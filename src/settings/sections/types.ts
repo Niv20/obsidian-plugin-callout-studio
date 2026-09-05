@@ -28,6 +28,8 @@ export type SettingsTabPlugin = Plugin & {
 	manifest: PluginManifest;
 	settings: PluginSettings;
 	pruneSuspended: boolean;
+	/** Read for one thing only: whether this session is writing at all. */
+	settingsWriter: { isFrozen: boolean };
 	/** Per-device state — the settings-list fold, above all. */
 	localState: DeviceLocalStore;
 	onIconCacheChange(cb: () => void): () => void;

@@ -56,5 +56,12 @@ export function createSettingsWriter(
 			new Notice(t("notice.settingsChangedElsewhere"), 10000);
 			void owner.onExternalSettingsChange();
 		},
+		// Once per freeze, and worth the interruption exactly because it is
+		// once: the launch notice that announced the freeze was shown before
+		// the user had looked at the screen, and this fires at the moment their
+		// first change stops being real.
+		onFrozenSave: () => {
+			new Notice(t("notice.settingsNotSaved"), 10000);
+		},
 	});
 }

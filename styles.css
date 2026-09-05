@@ -5843,3 +5843,30 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	text-decoration: underline;
 	cursor: pointer;
 }
+
+/* A session that is not writing its settings file, said on the page where the
+   user is actually making changes (see settings/sections/ReadOnlyBanner.ts).
+   The launch notice that announces the same thing is long gone by then. Styled
+   as a warning rather than an error: nothing is broken, and in the common case
+   — a sync client mid-swap — it resolves itself. */
+.cs-readonly-banner {
+	margin: 0 0 16px;
+	padding: 10px 14px;
+	border-left: 3px solid var(--text-warning, var(--color-orange));
+	border-radius: var(--radius-s);
+	/* A translucent tint of the warning colour rather than a surface token: the
+	   banner sits on the settings tab, and a raised-shade token would be a claim
+	   about what it is sitting on (see tests/modalSurfaces.test.ts). */
+	background: color-mix(
+		in srgb,
+		var(--text-warning, var(--color-orange)) 12%,
+		transparent
+	);
+}
+
+.cs-readonly-banner p {
+	margin: 0;
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
+	line-height: 1.5;
+}
