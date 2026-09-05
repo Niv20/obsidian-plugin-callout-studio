@@ -24,7 +24,6 @@
 import { Platform } from "obsidian";
 import type { App } from "obsidian";
 import type { CalloutRegistry } from "./CalloutRegistry";
-import type { PluginSettings } from "../types";
 import type { DeviceLocalStore } from "./DeviceLocalStore";
 import { calloutIdentity } from "../utils/calloutId";
 import { countCalloutUsagesMap } from "../utils/vaultCalloutScanner";
@@ -32,8 +31,8 @@ import { countCalloutUsagesMap } from "../utils/vaultCalloutScanner";
 /** What the prune needs from the plugin — the same host `CalloutDiscovery` has. */
 export interface PruneHost {
 	app: App;
+	/** Settings come off this — see `DiscoveryHost.registry` for why. */
 	registry: CalloutRegistry;
-	settings: PluginSettings;
 	localState: DeviceLocalStore;
 	saveSettings(): Promise<void>;
 }
@@ -211,7 +210,7 @@ export class CalloutPrune {
 				// that command — and the hotkey bound to it — the moment the
 				// last note using the callout went away.
 				if (
-					this.host.settings.customCommands.some(
+					this.host.registry.settings.customCommands.some(
 						(command) => command.calloutId === id,
 					)
 				)

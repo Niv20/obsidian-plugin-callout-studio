@@ -28,7 +28,7 @@ import { DeviceLocalStore } from "./manager/DeviceLocalStore";
 import {
 	loadSettingsInto,
 } from "./manager/settingsBoot";
-import { adoptExternalSettings } from "./manager/settingsAdopt";
+import { ReloadQueue } from "./manager/reloadQueue";
 import { registerThemeRowSync } from "./manager/theme/themeRowSync";
 import { removeLegacyStartupSnippet } from "./manager/legacyStartupSnippet";
 import { runLaunchSequence } from "./manager/launchSequence";
@@ -93,8 +93,9 @@ export default class CalloutStudioPlugin extends Plugin {
 	localState!: DeviceLocalStore;
 	/** Re-derives the theme's overlay rows — see registerThemeRowSync. */
 	resyncThemeRows!: () => void;
-	/** Set when data.json changed on disk while a modal held the registry. */
-	private pendingExternalReload = false;
+	/** Adoption of another device's `data.json` — serialized, and retried when
+	 * a modal hands the registry back. See manager/reloadQueue.ts. */
+	private reloads!: ReloadQueue;
 	private linkSuggestDecorator!: LinkSuggestDecorator;
 
 	get settings(): PluginSettings {
@@ -107,12 +108,8 @@ export default class CalloutStudioPlugin extends Plugin {
 	}
 	set pruneSuspended(value: boolean) {
 		this.discovery.pruneSuspended = value;
-		// The same seam because it answers the same question — this flag is
-		// raised exactly while the callout editor owns the registry, so
-		// lowering it is the modal closing. See adoptExternalSettings.
-		if (!value && this.pendingExternalReload) {
-			void this.onExternalSettingsChange();
-		}
+		// One of two seams that hand the registry back; see manager/reloadQueue.ts.
+		if (!value) this.reloads?.release();
 	}
 
 	/**
@@ -124,7 +121,7 @@ export default class CalloutStudioPlugin extends Plugin {
 	 * this hook cannot cover.
 	 */
 	async onExternalSettingsChange(): Promise<void> {
-		this.pendingExternalReload = await adoptExternalSettings(this);
+		await this.reloads.run();
 	}
 
 	async onload() {
@@ -153,6 +150,9 @@ export default class CalloutStudioPlugin extends Plugin {
 		// Read data.json, rebuild the registry, and put back the rows this
 		// device discovered in earlier sessions — see manager/settingsBoot.ts.
 		this.localState = new DeviceLocalStore(this.app);
+		this.reloads = new ReloadQueue(this);
+		// The other seam. Cheap: a no-op unless a reload is actually waiting.
+		this.registry.onPreviewChange(() => this.reloads.release());
 		const boot = await loadSettingsInto(this);
 
 		// UI locale follows the user's saved preference; "auto" (the default)
@@ -244,7 +244,6 @@ export default class CalloutStudioPlugin extends Plugin {
 		this.discovery = new CalloutDiscovery({
 			app: this.app,
 			registry: this.registry,
-			settings: this.settings,
 			localState: this.localState,
 			saveSettings: () => this.saveSettings(),
 			refreshCallouts: () => this.refreshCallouts(),

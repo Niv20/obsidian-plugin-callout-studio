@@ -464,7 +464,6 @@ export function discoveryHarness(
 	const discovery = new CalloutDiscovery({
 		app,
 		registry,
-		settings: registry.settings,
 		localState,
 		saveSettings: () => {
 			saves++;
@@ -482,6 +481,7 @@ export function discoveryHarness(
 		discovery,
 		internals: discovery as unknown as DiscoveryInternals,
 		registry,
+		// The live object, read back off the registry the way the code does.
 		settings: registry.settings,
 		localState,
 		app,

@@ -19,7 +19,6 @@
  */
 import type { App, EventRef, TFile } from "obsidian";
 import type { CalloutRegistry } from "./CalloutRegistry";
-import type { PluginSettings } from "../types";
 import { activeTypingCalloutIds } from "../editor/activeTypingIds";
 import { buildDiscoveredRow, fallbackSourceFor } from "./discoveredRow";
 import type { DeviceLocalStore } from "./DeviceLocalStore";
@@ -35,8 +34,9 @@ import {
 
 interface DiscoveryHost {
 	app: App;
+	/** Settings are read off THIS, never held as a field — `registry.load()`
+	 * replaces `registry.settings` on every adoption. See internals-docs/07. */
 	registry: CalloutRegistry;
-	settings: PluginSettings;
 	/** Where a discovered id is remembered, since `data.json` no longer holds it. */
 	localState: DeviceLocalStore;
 	saveSettings(): Promise<void>;
@@ -66,7 +66,7 @@ export class CalloutDiscovery {
 			scan: (file, reason) => {
 				void this.scanFileNow(file, reason);
 			},
-			enabled: () => host.settings.autoDiscoverCallouts,
+			enabled: () => host.registry.settings.autoDiscoverCallouts,
 		});
 	}
 
@@ -148,7 +148,7 @@ export class CalloutDiscovery {
 		if (unknownIds.length === 0) return 0;
 		const fallback = fallbackSourceFor(
 			this.host.registry,
-			this.host.settings.fallbackCalloutId,
+			this.host.registry.settings.fallbackCalloutId,
 		);
 		// One notification for the whole batch. Each `add` below would otherwise
 		// fire its own, and a single one costs a full stylesheet regeneration, a

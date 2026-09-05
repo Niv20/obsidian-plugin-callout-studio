@@ -138,7 +138,6 @@ function device(name: string, vault: Vault, disk: Disk) {
 	const discovery = new CalloutDiscovery({
 		app,
 		registry,
-		settings: registry.settings,
 		localState,
 		saveSettings,
 		refreshCallouts: () => undefined,
