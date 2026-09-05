@@ -97,7 +97,7 @@ export async function loadSettingsInto(
 			"[callout-studio] data.json is missing on a device that has run " +
 				"before; settings will not be written this session",
 		);
-		offerFreshStart(() => {
+		offerFreshStart(host.app, () => {
 			host.settingsWriter.thaw();
 			void host.saveSettings();
 		});

@@ -13,7 +13,9 @@
  * revised without the policy around it changing at all.
  */
 import { Notice } from "obsidian";
+import type { App } from "obsidian";
 import { t } from "../i18n";
+import { ConfirmModal } from "../utils/ConfirmModal";
 
 /**
  * A `data.json` that exists but could not be parsed.
@@ -39,8 +41,16 @@ export function warnSettingsUnreadable(): void {
  * discarding everything they did. So the notice stays up until it is used or
  * dismissed, and clicking it is the only path in the codebase that reaches
  * `SettingsWriter.thaw()`.
+ *
+ * **It asks first.** That link is the single most destructive control this
+ * plugin has: it publishes an empty configuration to every device on the vault,
+ * it is offered at the exact moment the real file is most likely still in
+ * flight, and it appears inside a notice — a surface nothing else here uses for
+ * an irreversible action, and one people dismiss by clicking at. The
+ * confirmation is not ceremony; it is the difference between "the file is gone"
+ * and "the file is gone *and so are the copies on my other devices*".
  */
-export function offerFreshStart(startFresh: () => void): void {
+export function offerFreshStart(app: App, startFresh: () => void): void {
 	const frag = createFragment();
 	frag.appendChild(createEl("p", { text: t("notice.settingsMissing") }));
 	const action = frag.appendChild(
@@ -52,9 +62,33 @@ export function offerFreshStart(startFresh: () => void): void {
 	const notice = new Notice(frag, 0);
 	action.addEventListener("click", (event) => {
 		event.preventDefault();
-		startFresh();
-		notice.hide();
+		void confirmFreshStart(app, notice, startFresh);
 	});
+}
+
+/**
+ * Kept apart from the listener so the listener stays synchronous — an async
+ * handler on a click swallows its own rejections, and this one ends in a write
+ * nobody can take back.
+ *
+ * The notice is hidden only once the user has committed. Backing out of the
+ * dialog leaves it standing, because the session is still frozen and still
+ * needs to say so.
+ */
+async function confirmFreshStart(
+	app: App,
+	notice: Notice,
+	startFresh: () => void,
+): Promise<void> {
+	const ok = await new ConfirmModal(
+		app,
+		t("confirm.titleStartFresh"),
+		t("confirm.startFresh"),
+		t("confirm.startFreshOk"),
+	).confirm();
+	if (!ok) return;
+	startFresh();
+	notice.hide();
 }
 
 /**

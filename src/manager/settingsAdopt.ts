@@ -32,6 +32,7 @@ import { readSettingsFile } from "./settingsFile";
 import { isFromNewerBuild } from "./foreignFields";
 import { warnSettingsFromNewerVersion } from "./settingsNotices";
 import { registryIsOwned } from "./registryOwnership";
+import { writeSettingsBackup } from "./settingsBackup";
 import type { SettingsFileHost, SettingsRead } from "./settingsFile";
 
 /** What rebuilding a registry from a settings file needs from the plugin. */
@@ -203,6 +204,7 @@ export async function reloadFrom(
 	host: ExternalReloadHost,
 	read: Extract<SettingsRead, { kind: "loaded" }>,
 ): Promise<void> {
+	await backUpIfRowsAreAboutToGo(host, read);
 	host.settingsWriter.thaw();
 	await host.settingsWriter.hold(async () => {
 		await applySettingsRead(host, read);
@@ -215,4 +217,36 @@ export async function reloadFrom(
 
 	host.refreshCallouts();
 	if (host.settingsTab?.containerEl.isConnected) host.settingsTab.display();
+}
+
+/**
+ * Keep a copy of this device's settings when the file about to replace them
+ * describes fewer callouts.
+ *
+ * An adoption is last-writer-wins over the whole file: the incoming settings
+ * are taken as the truth, and whatever this device held that the other one did
+ * not is gone. Nearly always that is exactly right — the other device is where
+ * the user was working. The exception is the case issue #53 is made of, where
+ * the shorter list is not a decision but the result of a bug somewhere upstream
+ * of the sync client, and by the time anybody notices, every device agrees.
+ *
+ * Rather than try to tell those apart — which cannot be done from here, and
+ * guessing wrong in the cautious direction means refusing a sync the user
+ * asked for — the adoption goes ahead and a copy is kept. "Fewer rows than we
+ * had" is a coarse test on purpose: it fires on a deliberate deletion too,
+ * which costs one file out of five and is the trade this exists to make.
+ *
+ * Awaited before the rebuild, because the state being copied is the one the
+ * rebuild is about to discard.
+ */
+async function backUpIfRowsAreAboutToGo(
+	host: ExternalReloadHost,
+	read: Extract<SettingsRead, { kind: "loaded" }>,
+): Promise<void> {
+	const current = host.registry.toSaveData();
+	const incoming = read.data.callouts;
+	const losing =
+		Array.isArray(incoming) && incoming.length < current.callouts.length;
+	if (!losing) return;
+	await writeSettingsBackup(host, current);
 }

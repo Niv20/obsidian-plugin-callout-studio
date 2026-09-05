@@ -783,6 +783,10 @@ export const en: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"The CSS snippet in your snippets folder has changed since Callout Studio wrote it. Exporting again replaces the whole file.",
 	"confirm.overwriteSnippetOk": "Overwrite",
+	"confirm.titleStartFresh": "Start fresh on this device",
+	"confirm.startFresh":
+		"This creates a new settings file from the defaults. If the missing file is still on its way from another device, or is still syncing, it will be replaced everywhere — including on the devices that still have your callouts.\nOnly do this if you deleted the file yourself, or if you are sure it is not coming back.",
+	"confirm.startFreshOk": "Create a new settings file",
 
 	// Vault edge-case modals
 	"vault.filesUpdated":
