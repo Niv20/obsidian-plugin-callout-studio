@@ -736,6 +736,8 @@ export const en: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Set callout open (+)",
 	"contextMenu.setFoldNone": "Make callout non-collapsible",
 	"contextMenu.cutSection": "Cut heading section",
+	"notice.clipboardWriteFailed": "Could not copy to the clipboard. The note was left unchanged.",
+	"notice.sectionChangedAfterCopy": "The section was copied, but the note changed before it could be cut. Nothing was removed.",
 	"contextMenu.copySection": "Copy heading section",
 	"contextMenu.deleteSection": "Delete heading section",
 

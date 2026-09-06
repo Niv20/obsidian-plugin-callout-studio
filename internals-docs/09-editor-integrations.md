@@ -326,7 +326,10 @@ that only make sense for some roles.
   compute the section range via `getHeadingSectionRange` in
   [`sectionOps.ts`](../src/editor/contextmenu/sectionOps.ts): the heading line
   through everything up to (not including) the next heading of the same-or-higher
-  level, or end-of-document. These are single editor transactions — undo works
+  level, or end-of-document. Cut first awaits clipboard success, then checks
+  that the complete document and captured file/editor/leaf ownership still match;
+  a clipboard error or intervening change leaves the note untouched. These
+  are single editor transactions — undo works
   through the editor's own history, no confirmation modal needed (unlike
   deleting a callout *definition*, which is a destructive, harder-to-reverse
   action guarded elsewhere — see [Vault discovery](10-vault-discovery.md#delete-flow)).
