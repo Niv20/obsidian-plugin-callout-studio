@@ -14,6 +14,7 @@ import { ExportFormatModal } from "../ExportFormatModal";
 import { ImportReportModal } from "../../utils/ImportReportModal";
 import { validateImportPayload } from "../../utils/importValidator";
 import { mergeById } from "../../utils/mergeById";
+import { applyImportedCallout } from "../../utils/importedCallout";
 import { ImportSourceModal } from "../ImportSourceModal";
 import { countCalloutUsages } from "../../utils/vaultCalloutScanner";
 import { scanVaultCalloutStatistics } from "../../utils/vaultCalloutStats";
@@ -178,7 +179,7 @@ export async function processImportedJSON(
 	let overwritten = 0;
 	for (const def of defs) {
 		if (ctx.plugin.registry.has(def.id)) {
-			ctx.plugin.registry.update(def.id, def);
+			if (!applyImportedCallout(ctx.plugin.registry, def)) continue;
 			overwritten++;
 			imported++;
 		} else {
