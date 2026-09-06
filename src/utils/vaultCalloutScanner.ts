@@ -26,11 +26,10 @@ import type { LineCalloutToken } from "../editor/calloutTokens";
 import {
 	createDocumentLineFilter,
 	forEachCalloutToken,
-	nestedInlineTokens,
 	scanLineForCalloutTokens,
-	tokenEnd,
 } from "../editor/calloutTokens";
 import { splitFoldMark } from "../editor/calloutWriter";
+import { calloutsToPlainText } from "./calloutPlainText";
 
 /**
  * End offset of a token's `[!…]` bracket span — the whole of it, `|metadata`
@@ -244,119 +243,7 @@ export async function convertCalloutsToPlainTextInVault(
 ): Promise<{ files: number; blocks: number }> {
 	if (ids.length === 0) return { files: 0, blocks: 0 };
 	const idSet = new Set(ids.map((id) => calloutIdentity(id)));
-	const headerRegex = /^(>+)\s*\[!([^\]\n\r]+)\][+-]?\s*(.*)$/i;
-	const name = displayName.trim();
-
-	// Pure function of one file's content — rewriteVaultFiles runs it to probe,
-	// then again under the vault lock to commit.
-	const transform = (content: string) => {
-		const lines = content.split("\n");
-		const isContentLine = createDocumentLineFilter();
-		let blocksInFile = 0;
-		let i = 0;
-
-		while (i < lines.length) {
-			const line = lines[i] ?? "";
-			if (!isContentLine(line, i)) {
-				i++;
-				continue;
-			}
-			const headerMatch = line.match(headerRegex);
-			if (headerMatch) {
-				const markers = headerMatch[1] ?? ">";
-				const id = calloutIdentity(headerMatch[2] ?? "");
-				// Only unwrap outermost blocks (single `>`) whose id matches.
-				if (markers.length === 1 && idSet.has(id)) {
-					const title = (headerMatch[3] ?? "").trim();
-					lines[i] = title;
-					i++;
-					// Strip leading `> ` from continuation lines until the
-					// blockquote ends (a non-`>` line, including blank lines).
-					while (i < lines.length) {
-						const cont = lines[i] ?? "";
-						if (!/^>/.test(cont)) break;
-						// Still feed the filter every line we consume, or its
-						// fence state desyncs on a fenced callout body.
-						isContentLine(cont, i);
-						lines[i] = cont.replace(/^>\s?/, "");
-						i++;
-					}
-					blocksInFile++;
-					continue;
-				}
-			}
-
-			// Not a block callout header we own → heading and inline tokens.
-			if (line.indexOf("[!") !== -1) {
-				const lineTokens = scanLineForCalloutTokens(line);
-				// A token inside another's `{…}` payload is rewritten by the
-				// outer token's own edit. Letting it match too would splice the
-				// same characters twice (rewriteTokensOnLine works
-				// right-to-left over overlapping ranges).
-				const nested = nestedInlineTokens(lineTokens);
-				const result = rewriteTokensOnLine(
-					line,
-					lineTokens,
-					(token) => {
-						if (nested.has(token)) return null;
-						if (!idSet.has(calloutIdentity(token.rawId))) {
-							return null;
-						}
-						if (token.role === "inline") {
-							// A content pill's payload is the user's own prose —
-							// keep it, prefixed by the callout name so the note
-							// still reads as "Warning: be careful" once the
-							// plugin's syntax is gone. Widened past the braces so
-							// no orphaned `{…}` is left behind.
-							const content = token.content?.text.trim();
-							return {
-								text: content ? `${name}: ${content}` : name,
-								end: tokenEnd(token),
-							};
-						}
-						// Heading, or a *nested* block header. An outermost
-						// `> [!id]` was unwrapped by the branch above, which
-						// `continue`d past here, so a `regular` token reaching
-						// this point sits inside another blockquote: there the
-						// `>` prefix belongs to the parent callout, and
-						// unwrapping it the way an outermost block is unwrapped
-						// would break the parent. So only the token goes —
-						// `>> [!id] Title` becomes `>> Title`. Leaving it would
-						// keep a live reference to an id the caller is deleting,
-						// which discovery then re-creates a row for.
-						//
-						// Either role: swallow the fold mark (block syntax) and
-						// the whitespace after the token, and let the line's own
-						// title stand — falling back to the name when the token
-						// was all it had. Read that title back off the line
-						// rather than from `token.hasTitle`, which the tokenizer
-						// only computes for headings (a block token always
-						// reports false, because Obsidian renders the whole rest
-						// of the line as the title itself).
-						const { foldMark, title } = splitFoldAndTitle(
-							line,
-							token,
-						);
-						const gap =
-							title.length - title.replace(/^[ \t]+/, "").length;
-						return {
-							text: title.trim() ? "" : name,
-							end: token.to + foldMark.length + gap,
-						};
-					},
-				);
-				if (result.count > 0) {
-					lines[i] = result.line;
-					blocksInFile += result.count;
-				}
-			}
-			i++;
-		}
-
-		return blocksInFile > 0
-			? { content: lines.join("\n"), count: blocksInFile }
-			: null;
-	};
+	const transform = (content: string) => calloutsToPlainText(content, idSet, displayName);
 
 	const { files, count } = await rewriteVaultFiles(app, transform, requireComplete);
 	return { files, blocks: count };
