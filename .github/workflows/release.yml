@@ -50,6 +50,8 @@ jobs:
 
             - run: npm ci
             - run: npm run build
+            - run: npm run lint
+            - run: npm test
 
             # The locale JSON served from this tag must be byte-identical to the
             # checksums compiled into the main.js built above, or every download

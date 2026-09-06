@@ -176,7 +176,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 
 ```text
 1. Verify manifest.json / package.json / versions.json all agree with the pushed tag exactly
-2. npm ci, npm run build
+2. npm ci, npm run build, npm run lint, npm test (all required on the tagged commit)
 3. Re-verify locales/ has no diff (same reasoning as lint.yml, but against the release build)
 4. Check main.js is under the 2 MiB bundle-size budget
 5. Attest build provenance for main.js and styles.css
