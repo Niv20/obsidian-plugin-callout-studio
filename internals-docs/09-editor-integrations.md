@@ -88,6 +88,10 @@ syntax is column-0-anchored (`HEADING_CALLOUT_RE` is anchored), so a heading
 callout inside a blockquote is impossible; the command instead inserts the
 new heading *below* the blockquote.
 
+`frontmatter.ts` owns the protected property range. A note containing only
+frontmatter gets a new body after its closing `---` or `...`; insertion never
+clamps the requested first body line back onto the closing delimiter.
+
 ### `insertInlineCallout`
 
 Inserts a plain pill at the cursor, or — when `allowContent` is on, the

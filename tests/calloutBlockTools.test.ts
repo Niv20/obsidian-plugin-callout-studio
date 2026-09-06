@@ -325,6 +325,18 @@ describe("insertHeadingCallout", () => {
 			"---\ntitle: x\n---\n## [!warning] body",
 		);
 	});
+	for (const closing of ["---", "..."]) {
+		it(`preserves metadata-only frontmatter ending in ${closing} at EOF`, () => {
+			const e = editor(`---\n|tags: [x]\n${closing}`);
+			insertHeadingCallout(asEditor(e), def(), 2);
+			assert.strictEqual(e.value(), `---\ntags: [x]\n${closing}\n\n## [!warning]`);
+		});
+	}
+	it("uses the existing body line when frontmatter has a final newline", () => {
+		const e = editor("---\n|tags: [x]\n---\n");
+		insertHeadingCallout(asEditor(e), def(), 2);
+		assert.strictEqual(e.value(), "---\ntags: [x]\n---\n## [!warning]");
+	});
 });
 
 describe("insertInlineCallout", () => {
