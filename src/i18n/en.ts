@@ -278,6 +278,8 @@ export const en: Record<string, string> = {
 	"quickInsert.editAria": "Edit {{name}}",
 	"quickInsert.insertAria": "Insert {{name}} as a block callout",
 	"quickInsert.noResults": "No callouts found",
+	"quickInsert.targetMoved": "The note you opened Quick insert from changed or closed. Reopen Quick insert in the note you want to edit.",
+	"quickInsert.targetMovedHint": "The original note is no longer available for this insertion.",
 	"quickInsert.noUserCallouts": "You haven't created any callouts yet.",
 	"quickInsert.noEditorHint":
 		"No note is open in editing mode, so nothing can be inserted.",

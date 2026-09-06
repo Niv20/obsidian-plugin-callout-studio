@@ -14,6 +14,10 @@ Callout Studio adds exactly five commands to Obsidian's command palette. None of
 
 ## Assigning shortcuts
 
+Quick Insert writes into the note it was opened from. If that note closes or
+the pane switches to another file, reopen Quick Insert in the intended note;
+the old window will leave the replacement note untouched.
+
 To give any of these commands a keyboard shortcut:
 
 1. Go to **Settings → Keyboard shortcuts → Manage commands**.

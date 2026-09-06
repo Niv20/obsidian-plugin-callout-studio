@@ -44,11 +44,12 @@
  * made a note in Reading view and no note at all read the same.
  */
 import { MarkdownView } from "obsidian";
-import type { App, Editor, EditorPosition } from "obsidian";
+import type { App, Editor, EditorPosition, TFile } from "obsidian";
 
 export interface TargetEditor {
 	view: MarkdownView;
 	editor: Editor;
+	file: TFile;
 }
 
 /**
@@ -67,7 +68,7 @@ export interface TargetEditor {
  *   position to write at. Nothing is wrong with the *view*, so telling the user
  *   to open or switch anything would send them somewhere they already are.
  */
-export type TargetEditorProblem = "no-note" | "reading-view" | "no-cursor";
+export type TargetEditorProblem = "no-note" | "reading-view" | "no-cursor" | "target-moved";
 
 /** An editor to write into, or the reason there isn't one. */
 export type TargetEditorResult =
@@ -115,11 +116,11 @@ function cursorOf(editor: Editor | undefined): EditorPosition | null {
 export function classifyTargetEditor(
 	view: MarkdownView | null,
 ): TargetEditorResult {
-	if (!view) return { ok: false, problem: "no-note" };
+	if (!view?.file) return { ok: false, problem: "no-note" };
 	if (view.getMode() !== "source") return { ok: false, problem: "reading-view" };
 	const { editor } = view;
 	if (!cursorOf(editor)) return { ok: false, problem: "no-cursor" };
-	return { ok: true, target: { view, editor } };
+	return { ok: true, target: { view, editor, file: view.file } };
 }
 
 /**
@@ -196,24 +197,23 @@ export function resolveTargetEditor(app: App): TargetEditorResult {
  * wrong — `Editor`.
  */
 export function isTargetStillValid(app: App, target: TargetEditor): boolean {
-	const { view } = target;
-	// `leaf` is typed non-nullable but a detached view really can be missing it.
-	if (!view.leaf) return false;
-	if (view.leaf.view !== view) return false;
-	if (!app.workspace.getLeavesOfType("markdown").includes(view.leaf)) {
-		return false;
-	}
-	if (view.getMode() !== "source") return false;
-	return view.file !== null;
+	return hasTargetIdentity(app, target) && target.view.getMode() === "source";
+}
+
+function hasTargetIdentity(app: App, { view, editor, file }: TargetEditor): boolean {
+	try {
+		return !!file && view.file === file && view.editor === editor &&
+			!!view.leaf && view.leaf.view === view &&
+			app.workspace.getLeavesOfType("markdown").includes(view.leaf);
+	} catch { return false; }
 }
 
 /**
- * The captured target if it still holds, otherwise whatever is active now,
- * otherwise the reason for neither.
+ * The captured note if it still holds; a moved capture is refused.
  *
  * Preferring the capture is what makes the window predictable — it writes where
- * it was opened from — while the fallback keeps it useful when the user opened
- * it with nothing focused and then clicked into a note behind it.
+ * it was opened from. Resolve from scratch only when no note was captured;
+ * redirecting a stale capture would silently edit a different note.
  *
  * A held capture is still put back through {@link classifyTargetEditor} rather
  * than returned as-is: `isTargetStillValid` asks whether it is the *same* live
@@ -223,7 +223,8 @@ export function currentTargetEditor(
 	app: App,
 	captured: TargetEditor | null,
 ): TargetEditorResult {
-	if (captured && isTargetStillValid(app, captured)) {
+	if (captured) {
+		if (!hasTargetIdentity(app, captured)) return { ok: false, problem: "target-moved" };
 		return classifyTargetEditor(captured.view);
 	}
 	return resolveTargetEditor(app);
