@@ -238,6 +238,8 @@ export const ro: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio nu mai stilizează "{{name}}" — CSS-ul dvs. propriu decide cum arată. Formele sale Callout tip titlu și Callout inline nu se vor reda.',
 	"notice.externalCssOff": 'Callout Studio stilizează din nou "{{name}}".',
+	"notice.vaultScanFailed": "Nu s-a putut număra utilizarea callout pentru că {{count}} notițe nu au putut fi citite. Verificați stocarea și sincronizarea, apoi încercați din nou.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} notă/note nu au putut fi actualizate și au rămas neschimbate. Vezi consola pentru dezvoltatori pentru detalii.",
 	"notice.settingsUnreadable":

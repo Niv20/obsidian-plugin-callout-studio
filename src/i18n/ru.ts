@@ -237,6 +237,8 @@ export const ru: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio больше не оформляет "{{name}}" — его вид теперь определяет ваш собственный CSS. Его формы Callout-заголовок и Встроенный callout не будут отображаться.',
 	"notice.externalCssOff": 'Callout Studio снова оформляет "{{name}}".',
+	"notice.vaultScanFailed": "Не удалось посчитать использование callout, потому что нельзя прочитать {{count}} заметку(к). Проверьте хранилище и синхронизацию, затем попробуйте снова.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} заметку(и) не удалось обновить, они остались без изменений. Подробности см. в консоли разработчика.",
 	"notice.settingsUnreadable":

@@ -240,6 +240,8 @@ export const ja: Record<string, string> = {
 	"notice.externalCssOn":
 		'"{{name}}"はCallout Studioによるスタイル設定の対象外になりました — 見た目は自分のCSSで決まります。見出しcalloutとインラインcalloutの形式は描画されません。',
 	"notice.externalCssOff": '"{{name}}"は再びCallout Studioがスタイル設定します。',
+	"notice.vaultScanFailed": "コールアウトの使用数を集計できませんでした。{{count}} 件のノートを読み取れませんでした。ストレージと同期を確認してから再試行してください。",
+
 	"notice.vaultRewritePartial":
 		"{{count}} 件のノートを更新できなかったため、変更されずに残されました。詳細は開発者コンソールを確認してください。",
 	"notice.settingsUnreadable":

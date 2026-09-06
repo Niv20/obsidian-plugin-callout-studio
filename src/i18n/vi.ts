@@ -238,6 +238,8 @@ export const vi: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio không còn tạo kiểu cho "{{name}}" nữa — CSS của riêng bạn quyết định hình thức của nó. Các dạng Callout tiêu đề và Callout nội dòng của nó sẽ không hiển thị.',
 	"notice.externalCssOff": 'Callout Studio lại tạo kiểu cho "{{name}}".',
+	"notice.vaultScanFailed": "Không thể đếm số lần sử dụng callout vì không thể đọc được {{count}} ghi chú. Hãy kiểm tra bộ nhớ lưu trữ và đồng bộ hóa, sau đó thử lại.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} ghi chú không thể cập nhật và được giữ nguyên. Xem bảng điều khiển nhà phát triển để biết chi tiết.",
 	"notice.settingsUnreadable":

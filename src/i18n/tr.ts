@@ -236,6 +236,8 @@ export const tr: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio artık "{{name}}" öğesini biçimlendirmiyor — görünümüne kendi CSS\'iniz karar veriyor. Başlık Callout ve Satır İçi Callout biçimleri işlenmeyecek.',
 	"notice.externalCssOff": 'Callout Studio artık "{{name}}" öğesini yeniden biçimlendiriyor.',
+	"notice.vaultScanFailed": "Callout kullanımı, {{count}} not okunamadığı için sayılmadı. Depolamayı ve senkronizasyonu kontrol edip tekrar deneyin.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} not güncellenemedi ve değiştirilmeden bırakıldı. Ayrıntılar için geliştirici konsolunu kontrol edin.",
 	"notice.settingsUnreadable":

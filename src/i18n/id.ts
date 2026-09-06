@@ -236,6 +236,8 @@ export const id: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio tidak lagi menata gaya "{{name}}" — CSS Anda sendiri yang menentukan tampilannya. Bentuk Heading Callout dan Inline Callout-nya tidak akan dirender.',
 	"notice.externalCssOff": 'Callout Studio kini menata gaya "{{name}}" lagi.',
+	"notice.vaultScanFailed": "Tidak dapat menghitung penggunaan callout karena {{count}} catatan tidak dapat dibaca. Periksa penyimpanan dan sinkronisasi, lalu coba lagi.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} catatan tidak dapat diperbarui dan dibiarkan tidak berubah. Lihat konsol pengembang untuk detailnya.",
 	"notice.settingsUnreadable":

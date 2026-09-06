@@ -262,6 +262,8 @@ export const he: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio כבר לא מעצב את "{{name}}" — ה-CSS שלכם קובע איך היא נראית. הצורות שלה ככותרת ומוטבעת לא יוצגו.',
 	"notice.externalCssOff": 'Callout Studio מעצב שוב את "{{name}}".',
+	"notice.vaultScanFailed":
+		"לא ניתן להשלים את ספירת השימושים בקריאות, כי לא ניתן לקרוא {{count}} פתקים. יש לבדוק את האחסון והסנכרון ולנסות שוב.",
 	"notice.vaultRewritePartial":
 		"{{count}} פתק(ים) לא ניתן היה לעדכן ונשארו ללא שינוי. פרטים נוספים בקונסולת המפתחים.",
 	"notice.settingsUnreadable":

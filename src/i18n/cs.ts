@@ -234,6 +234,8 @@ export const cs: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio už nestylizuje "{{name}}" — jeho vzhled určuje vaše vlastní CSS. Jeho formáty Nadpis a Vložený se nebudou vykreslovat.',
 	"notice.externalCssOff": 'Callout Studio nyní opět stylizuje "{{name}}".',
+	"notice.vaultScanFailed": "Počet použití calloutu nebylo možné zjistit, protože nebylo možné přečíst {{count}} poznámku/poznámek. Zkontrolujte ukládání a synchronizaci a zkuste to znovu.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} poznámku(y) se nepodařilo aktualizovat a zůstaly beze změny. Podrobnosti najdete v konzoli pro vývojáře.",
 	"notice.settingsUnreadable":

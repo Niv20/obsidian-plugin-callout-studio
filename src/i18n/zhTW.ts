@@ -220,6 +220,8 @@ export const zhTW: Record<string, string> = {
 	"notice.externalCssOn":
 		"Callout Studio 不再為「{{name}}」設定樣式——由您自己的 CSS 決定它的外觀。它的標題 callout 和行內 callout 形式將不會顯示。",
 	"notice.externalCssOff": "Callout Studio 現在再次為「{{name}}」設定樣式。",
+	"notice.vaultScanFailed": "無法統計 Callout 使用次數，因為無法讀取 {{count}} 篇筆記。請檢查儲存與同步後再試。",
+
 	"notice.vaultRewritePartial":
 		"有 {{count}} 則筆記無法更新，已保持不變。詳情請查看開發者主控台。",
 	"notice.settingsUnreadable":

@@ -237,6 +237,8 @@ export const hu: Record<string, string> = {
 	"notice.externalCssOn":
 		'A Callout Studio többé nem stílusozza a(z) "{{name}}"-t — a saját CSS-e dönti el, hogyan néz ki. A Címsor callout és a Beágyazott callout formája nem jelenik meg.',
 	"notice.externalCssOff": 'A Callout Studio ismét stílust ad a(z) "{{name}}"-nek.',
+	"notice.vaultScanFailed": "A callout használatot nem sikerült megszámolni, mert {{count}} jegyzet nem volt olvasható. Ellenőrizze a tárolót és a szinkronizálást, majd próbálja újra.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} jegyzetet nem sikerült frissíteni, ezek változatlanok maradtak. A részletekért lásd a fejlesztői konzolt.",
 	"notice.settingsUnreadable":

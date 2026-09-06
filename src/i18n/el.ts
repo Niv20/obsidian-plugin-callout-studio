@@ -223,6 +223,8 @@ export const el: Record<string, string> = {
 	"notice.externalCssOn":
 		'Το Callout Studio δεν μορφοποιεί πλέον το "{{name}}" — το δικό σας CSS καθορίζει πώς εμφανίζεται. Οι μορφές Heading Callout και Inline Callout του δεν θα αποδίδονται.',
 	"notice.externalCssOff": 'Το Callout Studio μορφοποιεί ξανά το "{{name}}".',
+	"notice.vaultScanFailed": "Δεν ήταν δυνατή η καταμέτρηση της χρήσης callout, επειδή δεν ήταν δυνατή η ανάγνωση {{count}} σημειώσεων. Ελέγξτε την αποθήκευση και τον συγχρονισμό και δοκιμάστε ξανά.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} σημείωση/-εις δεν ήταν δυνατό να ενημερωθούν και παρέμειναν αμετάβλητες. Δείτε την κονσόλα προγραμματιστή για λεπτομέρειες.",
 	"notice.settingsUnreadable":

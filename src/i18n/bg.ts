@@ -222,6 +222,8 @@ export const bg: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio вече не стилизира "{{name}}" — собственият ви CSS решава как изглежда. Формите му Заглавие и Вграден callout няма да се визуализират.',
 	"notice.externalCssOff": 'Callout Studio отново стилизира "{{name}}".',
+	"notice.vaultScanFailed": "Не може да се преброи използването на callout, защото не могат да се прочетат {{count}} бележки. Проверете съхранението и синхронизацията и опитайте отново.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} бележка(и) не можаха да бъдат актуализирани и останаха непроменени. Вижте конзолата за разработчици за подробности.",
 	"notice.settingsUnreadable":

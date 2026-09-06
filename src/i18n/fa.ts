@@ -232,6 +232,8 @@ export const fa: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio دیگر "{{name}}" را استایل نمی‌دهد — CSS شخصی خودتان تعیین می‌کند که چگونه به نظر برسد. قالب‌های Heading Callout و Inline Callout آن رندر نخواهند شد.',
 	"notice.externalCssOff": 'Callout Studio اکنون دوباره "{{name}}" را استایل می‌دهد.',
+	"notice.vaultScanFailed": "نمی‌توان شمارش استفاده از کال‌اوت را انجام داد چون {{count}} یادداشت(ها) قابل خواندن نبودند. لطفاً ذخیره‌سازی و همگام‌سازی را بررسی کرده و دوباره تلاش کنید.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} یادداشت به‌روزرسانی نشد و بدون تغییر باقی ماند. برای جزئیات به کنسول توسعه‌دهنده مراجعه کنید.",
 	"notice.settingsUnreadable":

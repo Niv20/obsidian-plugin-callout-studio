@@ -241,6 +241,8 @@ export const uk: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio більше не стилізує "{{name}}" — тепер його вигляд визначає ваш власний CSS. Його форми Callout-заголовок та Вбудований callout не відображатимуться.',
 	"notice.externalCssOff": 'Callout Studio знову стилізує "{{name}}".',
+	"notice.vaultScanFailed": "Не вдалося порахувати використання callout, оскільки не вдалося прочитати {{count}} нотаток. Перевірте сховище й синхронізацію, потім спробуйте ще раз.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} нотатку(и) не вдалося оновити, вони залишилися без змін. Подробиці в консолі розробника.",
 	"notice.settingsUnreadable":

@@ -239,6 +239,8 @@ export const nl: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio stijlt "{{name}}" niet meer — uw eigen CSS bepaalt het uiterlijk. De Kop-callout- en Inline-callout-vormen worden niet weergegeven.',
 	"notice.externalCssOff": 'Callout Studio stijlt "{{name}}" weer.',
+	"notice.vaultScanFailed": "Het gebruik van callouts kon niet worden geteld omdat {{count}} notitie(s) niet konden worden gelezen. Controleer opslag en synchronisatie en probeer het opnieuw.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} notitie(s) konden niet worden bijgewerkt en zijn ongewijzigd gebleven. Zie de ontwikkelaarsconsole voor details.",
 	"notice.settingsUnreadable":

@@ -238,6 +238,8 @@ export const hi: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio अब "{{name}}" को स्टाइल नहीं करता — इसका रूप अब आपका खुद का CSS तय करता है। इसके हेडिंग callout और इनलाइन callout रूप नहीं दिखेंगे।',
 	"notice.externalCssOff": 'Callout Studio अब फिर से "{{name}}" को स्टाइल करता है।',
+	"notice.vaultScanFailed": "कॉलआउट उपयोग की गणना नहीं की जा सकी क्योंकि {{count}} नोट(ों) को पढ़ा नहीं जा सका। भंडारण और सिंक्रोनाइज़ेशन की जाँच करें, फिर दोबारा प्रयास करें।",
+
 	"notice.vaultRewritePartial":
 		"{{count}} नोट अपडेट नहीं हो सके और बिना बदलाव के रह गए। विवरण के लिए डेवलपर कंसोल देखें।",
 	"notice.settingsUnreadable":

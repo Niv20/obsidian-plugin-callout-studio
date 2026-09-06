@@ -238,6 +238,8 @@ export const ko: Record<string, string> = {
 	"notice.externalCssOn":
 		'더 이상 Callout Studio가 "{{name}}"을(를) 스타일 지정하지 않습니다 — 이제 직접 작성한 CSS가 모양을 결정합니다. 제목 callout과 인라인 callout 형식은 렌더링되지 않습니다.',
 	"notice.externalCssOff": 'Callout Studio가 "{{name}}"을(를) 다시 스타일 지정합니다.',
+	"notice.vaultScanFailed": "callout 사용량을 계산할 수 없었습니다. {{count}}개의 노트를 읽을 수 없었습니다. 저장소 및 동기화를 확인하고 다시 시도하세요.",
+
 	"notice.vaultRewritePartial":
 		"{{count}}개의 노트를 업데이트할 수 없어 변경되지 않은 상태로 남았습니다. 자세한 내용은 개발자 콘솔을 확인하세요.",
 	"notice.settingsUnreadable":

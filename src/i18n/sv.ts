@@ -236,6 +236,8 @@ export const sv: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio stylar inte längre "{{name}}" — din egen CSS avgör hur den ser ut. Dess Rubrik-callout- och Infogad callout-format renderas inte.',
 	"notice.externalCssOff": 'Callout Studio stylar nu "{{name}}" igen.',
+	"notice.vaultScanFailed": "Det gick inte att räkna callout-användning eftersom {{count}} anteckning(ar) inte gick att läsa. Kontrollera lagring och synkronisering och försök igen.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} anteckning(ar) kunde inte uppdateras och lämnades oförändrade. Se utvecklarkonsolen för detaljer.",
 	"notice.settingsUnreadable":

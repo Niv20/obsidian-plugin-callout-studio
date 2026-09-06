@@ -222,6 +222,8 @@ export const da: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio styler ikke længere "{{name}}" — dit eget CSS afgør, hvordan den ser ud. Dens Overskrift- og Inline-callout-former vil ikke blive vist.',
 	"notice.externalCssOff": 'Callout Studio styler nu "{{name}}" igen.',
+	"notice.vaultScanFailed": "Kunne ikke tælle callout-brugen, fordi {{count}} note(r) ikke kunne læses. Tjek lager og synkronisering, og prøv igen.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} note(r) kunne ikke opdateres og blev efterladt uændret. Se udviklerkonsollen for detaljer.",
 	"notice.settingsUnreadable":

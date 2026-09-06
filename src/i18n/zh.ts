@@ -231,6 +231,8 @@ export const zh: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio 不再为 "{{name}}" 设置样式——由您自己的 CSS 决定它的外观。它的标题 callout 和行内 callout 形式将不会渲染。',
 	"notice.externalCssOff": 'Callout Studio 现在再次为 "{{name}}" 设置样式。',
+	"notice.vaultScanFailed": "无法统计 callout 使用次数，因为无法读取 {{count}} 篇笔记。请检查存储和同步后重试。",
+
 	"notice.vaultRewritePartial":
 		"有 {{count}} 条笔记无法更新，已保持不变。详情请查看开发者控制台。",
 	"notice.settingsUnreadable":

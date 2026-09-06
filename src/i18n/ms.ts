@@ -232,6 +232,8 @@ export const ms: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio tidak lagi menggayakan "{{name}}" — CSS anda sendiri menentukan rupanya. Bentuk Callout Tajuk dan Callout Sebarisnya tidak akan dipaparkan.',
 	"notice.externalCssOff": 'Callout Studio kini menggayakan "{{name}}" semula.',
+	"notice.vaultScanFailed": "Penggunaan callout tidak dapat dikira kerana {{count}} nota tidak dapat dibaca. Semak storan dan penyegerakan, kemudian cuba lagi.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} nota tidak dapat dikemas kini dan dibiarkan tanpa perubahan. Lihat konsol pembangun untuk butiran.",
 	"notice.settingsUnreadable":

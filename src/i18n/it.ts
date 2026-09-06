@@ -240,6 +240,8 @@ export const it: Record<string, string> = {
 	"notice.externalCssOn":
 		"Callout Studio non applica più uno stile a \"{{name}}\" — il tuo CSS decide il suo aspetto. Le sue forme Callout di intestazione e Callout in linea non verranno visualizzate.",
 	"notice.externalCssOff": 'Callout Studio applica di nuovo uno stile a "{{name}}".',
+	"notice.vaultScanFailed": "Impossibile contare l'uso dei callout perché non è stato possibile leggere {{count}} nota/e. Controlla lo spazio di archiviazione e la sincronizzazione, quindi riprova.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} nota/e non è stato possibile aggiornare ed è rimasta invariata. Vedi la console per sviluppatori per i dettagli.",
 	"notice.settingsUnreadable":

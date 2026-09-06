@@ -232,6 +232,8 @@ export const th: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio จะไม่จัดสไตล์ "{{name}}" อีกต่อไป — CSS ของคุณเองจะเป็นตัวกำหนดรูปลักษณ์ รูปแบบ Heading Callout และ Inline Callout จะไม่แสดงผล',
 	"notice.externalCssOff": 'ตอนนี้ Callout Studio จัดสไตล์ "{{name}}" อีกครั้งแล้ว',
+	"notice.vaultScanFailed": "ไม่สามารถนับการใช้งานคอลเอาท์ได้ เนื่องจากไม่สามารถอ่านโน้ต {{count}} รายการได้ กรุณาตรวจสอบการจัดเก็บและการซิงก์แล้วลองอีกครั้ง",
+
 	"notice.vaultRewritePartial":
 		"ไม่สามารถอัปเดตโน้ตได้ {{count}} รายการ และถูกปล่อยไว้โดยไม่มีการเปลี่ยนแปลง ดูรายละเอียดในคอนโซลสำหรับนักพัฒนา",
 	"notice.settingsUnreadable":

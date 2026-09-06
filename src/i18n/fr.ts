@@ -243,6 +243,8 @@ export const fr: Record<string, string> = {
 	"notice.externalCssOn":
 		"Callout Studio ne stylise plus \"{{name}}\" — votre propre CSS décide de son apparence. Ses formats Callout de titre et Callout en ligne ne s'afficheront pas.",
 	"notice.externalCssOff": 'Callout Studio stylise de nouveau "{{name}}".',
+	"notice.vaultScanFailed": "Impossible de compter l'utilisation des callouts car {{count}} note(s) n'ont pas pu être lues. Vérifiez le stockage et la synchronisation, puis réessayez.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} note(s) n'ont pas pu être mises à jour et sont restées inchangées. Voir la console développeur pour plus de détails.",
 	"notice.settingsUnreadable":

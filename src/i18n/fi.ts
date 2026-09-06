@@ -229,6 +229,8 @@ export const fi: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio ei enää tyylittele calloutia "{{name}}" — oma CSS:äsi päättää sen ulkoasun. Sen otsikko- ja rivinsisäinen callout-muoto eivät näy.',
 	"notice.externalCssOff": 'Callout Studio tyylittelee taas calloutia "{{name}}".',
+	"notice.vaultScanFailed": "Calloutien käyttöä ei voitu laskea, koska {{count}} muistiinpanoa ei voitu lukea. Tarkista tallennustila ja synkronointi ja yritä uudelleen.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} muistiinpanoa ei voitu päivittää ja ne jätettiin ennalleen. Katso lisätietoja kehittäjäkonsolista.",
 	"notice.settingsUnreadable":

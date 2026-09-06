@@ -236,6 +236,8 @@ export const pt: Record<string, string> = {
 	"notice.externalCssOn":
 		'O Callout Studio não estiliza mais "{{name}}" — o seu próprio CSS decide sua aparência. As formas Callout de cabeçalho e Callout em linha não serão renderizadas.',
 	"notice.externalCssOff": 'O Callout Studio volta a estilizar "{{name}}".',
+	"notice.vaultScanFailed": "Não foi possível contar o uso do callout porque {{count}} nota(s) não puderam ser lidas. Verifique o armazenamento e a sincronização e tente novamente.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} nota(s) não puderam ser atualizadas e permaneceram inalteradas. Consulte o console do desenvolvedor para mais detalhes.",
 	"notice.settingsUnreadable":

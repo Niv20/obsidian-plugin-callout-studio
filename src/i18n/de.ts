@@ -237,6 +237,8 @@ export const de: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio gestaltet "{{name}}" nicht mehr — Ihr eigenes CSS bestimmt jetzt das Aussehen. Die Formate Überschrift-Callout und Inline-Callout werden nicht mehr dargestellt.',
 	"notice.externalCssOff": 'Callout Studio gestaltet "{{name}}" wieder.',
+	"notice.vaultScanFailed": "Die Callout-Nutzung konnte nicht gezählt werden, da {{count}} Notiz(en) nicht gelesen werden konnten. Überprüfen Sie Speicher und Synchronisierung und versuchen Sie es erneut.",
+
 	"notice.vaultRewritePartial":
 		"{{count}} Notiz(en) konnten nicht aktualisiert werden und blieben unverändert. Details in der Entwicklerkonsole.",
 	"notice.settingsUnreadable":

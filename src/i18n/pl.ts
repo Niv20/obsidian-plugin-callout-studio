@@ -237,6 +237,8 @@ export const pl: Record<string, string> = {
 	"notice.externalCssOn":
 		'Callout Studio nie stylizuje już "{{name}}" — o jego wyglądzie decyduje teraz Twój własny CSS. Jego formy Callout-nagłówek i Callout śródtekstowy nie będą renderowane.',
 	"notice.externalCssOff": 'Callout Studio znów stylizuje "{{name}}".',
+	"notice.vaultScanFailed": "Nie można policzyć użycia calloutów, ponieważ nie udało się odczytać {{count}} notatek. Sprawdź pamięć i synchronizację, a następnie spróbuj ponownie.",
+
 	"notice.vaultRewritePartial":
 		"Nie udało się zaktualizować {{count}} notatek — pozostały bez zmian. Szczegóły w konsoli deweloperskiej.",
 	"notice.settingsUnreadable":

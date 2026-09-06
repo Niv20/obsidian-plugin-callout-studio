@@ -233,6 +233,8 @@ export const ar: Record<string, string> = {
 	"notice.externalCssOn":
 		'لم يعد Callout Studio ينسّق "{{name}}" — كود CSS الخاص بك هو من يحدّد شكله الآن. لن يتم عرض شكلَي callout العنوان وcallout المضمّن الخاصين به.',
 	"notice.externalCssOff": 'يقوم Callout Studio بتنسيق "{{name}}" مرة أخرى.',
+	"notice.vaultScanFailed": "تعذّرت عملية عدّ استخدامات الـcallout لأن {{count}} ملاحظة/ملاحظات لا يمكن قراءتها. تحقق من التخزين والمزامنة ثم أعد المحاولة.",
+
 	"notice.vaultRewritePartial":
 		"تعذّر تحديث {{count}} ملاحظة (ملاحظات) وبقيت دون تغيير. راجع وحدة تحكم المطور للتفاصيل.",
 	"notice.settingsUnreadable":
