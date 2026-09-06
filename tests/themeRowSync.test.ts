@@ -56,6 +56,11 @@ function themeHost(css: string, name = "Nord", version = "1.0.0") {
 	} as unknown as App;
 	return {
 		app,
+		setSnippet(css: string) {
+			customCss.snippets = ["custom"];
+			customCss.enabledSnippets = new Set(["custom"]);
+			customCss.extraStyleEls = [{ textContent: css }];
+		},
 		/** Point the vault at a different theme, or the same one re-read. */
 		setTheme(next: { css: string; name?: string; version?: string }) {
 			if (next.name !== undefined) customCss.theme = next.name;
@@ -88,7 +93,7 @@ function syncHost(registry: CalloutRegistry, app: App) {
 		registerEvent: () => {},
 		register: (cb: () => void) => disposers.push(cb),
 	};
-	return { host: host as never, injects, disposers };
+	return { host: host as never, injects, disposers, store };
 }
 
 function vault(): CalloutRegistry {
@@ -98,6 +103,19 @@ function vault(): CalloutRegistry {
 }
 
 describe("theme appearance updates never discover or delete callouts", () => {
+ it("refreshes claims when an enabled snippet is edited without a name or length change", () => {
+  const t = themeHost("");
+  t.setSnippet('.callout[data-callout="probe"] { color:tan; }');
+  const registry = vault(); const { host, store, disposers } = syncHost(registry, t.app);
+  registerThemeAppearance(host);
+  assert.ok(store.claimedProps("probe").has("color"));
+  t.setSnippet('.callout[data-callout="probe"] { width:1px; }'); t.cssChange();
+  assert.ok(store.claimedProps("probe").has("width"));
+  assert.ok(!store.claimedProps("probe").has("color"));
+  assert.ok(!store.themeDefinedIds().has("probe"));
+  assert.strictEqual(registry.get("probe"), undefined);
+  for (const dispose of disposers) dispose();
+ });
  it("updates ownership for existing rows without adding unknown ids", () => {
   const t = themeHost('.callout[data-callout="recite"] { color: red; }');
   const registry = vault(); const { host } = syncHost(registry, t.app);

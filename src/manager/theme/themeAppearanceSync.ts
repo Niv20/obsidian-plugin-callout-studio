@@ -1,6 +1,6 @@
 import type { App, EventRef } from "obsidian";
 import type { CalloutDefinition } from "../../types";
-import { stylingSignature, themeCss } from "./customCssApi";
+import { enabledSnippetCss, stylingSignature, themeCss } from "./customCssApi";
 import type { ThemeCalloutStore } from "./ThemeCalloutStore";
 import { ThemeAppearanceProbe } from "./ThemeAppearanceProbe";
 import type { ThemeAppearance } from "./themeAppearance";
@@ -36,7 +36,7 @@ export function registerThemeAppearance(host: ThemeSyncHost): () => void {
 	let signature: string | null = null;
 
 	const fingerprint = (): string =>
-		`${stylingSignature(host.app)}|${themeCss(host.app)}`;
+		JSON.stringify([stylingSignature(host.app), themeCss(host.app), enabledSnippetCss(host.app)]);
 	const sweep = (force = false): void => {
 		const next = fingerprint();
 		if (!force && next === signature) return;

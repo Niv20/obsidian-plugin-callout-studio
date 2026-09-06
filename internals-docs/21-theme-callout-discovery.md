@@ -567,8 +567,9 @@ settings row uses the same measured pair for its two swatches
 
 `registerThemeAppearance` in `themeAppearanceSync.ts` publishes theme ownership and
 measured appearance at startup, settings adoption and CSS changes. It never adds
-or removes definitions. Its fingerprint includes the CSS text, so an in-place edit
-with unchanged name, version and text length is still recognized. Rendering updates
+or removes definitions. Its fingerprint includes the theme and enabled snippet CSS
+texts, so an in-place edit with unchanged name, version and text length is still
+recognized. Snippet edits refresh cascade claims without discovering theme types. Rendering updates
 are deduplicated and do not emit another CSS event when reinjecting.
 
 ## Representation and persistence
