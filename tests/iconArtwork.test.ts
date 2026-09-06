@@ -804,6 +804,7 @@ describe("IconFetchManager.cacheOne — one request per drawing", () => {
 				void Promise.resolve().then(fn);
 				return 0;
 			},
+			clearTimeout: () => {},
 		};
 		return {
 			requests: () => requests,

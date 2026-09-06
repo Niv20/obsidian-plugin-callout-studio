@@ -17,7 +17,7 @@
 import { Notice } from "obsidian";
 import type { App, PluginManifest } from "obsidian";
 import type { CalloutIcon, CalloutRenderRole, IconPackId } from "../types";
-import { CALLOUT_RENDER_ROLES } from "../types";
+import { copyIconPackArtwork, isIconFullyCached } from "./iconArtworkCache";
 import { t } from "../i18n";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CSSInjector } from "../manager/CSSInjector";
@@ -40,6 +40,7 @@ export class IconService implements IconResolver {
 	private readonly fetch: IconFetchManager;
 	private readonly resolver: IconResolver;
 	private readonly listeners = new Set<() => void>();
+	private destroyed = false;
 
 	constructor(private readonly host: IconServiceHost) {
 		this.packs = new PackDataStore(host.app, host.manifest);
@@ -60,10 +61,11 @@ export class IconService implements IconResolver {
 	// ── IconResolver ────────────────────────────────────────────────────
 
 	resolveSvg(icon: CalloutIcon, role: CalloutRenderRole): string | null {
-		return this.resolver.resolveSvg(icon, role);
+		return this.destroyed ? null : this.resolver.resolveSvg(icon, role);
 	}
 
 	hasFailed(icon: CalloutIcon, role: CalloutRenderRole): boolean {
+		if (this.destroyed) return false;
 		if (this.resolver.hasFailed(icon, role)) return true;
 		// A pack whose download gave up is just as permanently unavailable as a
 		// per-icon fetch that did. Without this the settings list would spin
@@ -72,6 +74,7 @@ export class IconService implements IconResolver {
 	}
 
 	onChange(cb: () => void): () => void {
+		if (this.destroyed) return () => {};
 		this.listeners.add(cb);
 		return () => {
 			this.listeners.delete(cb);
@@ -80,6 +83,7 @@ export class IconService implements IconResolver {
 
 	private notify(): void {
 		for (const cb of this.listeners) {
+			if (this.destroyed) break;
 			try {
 				cb();
 			} catch (e) {
@@ -90,6 +94,14 @@ export class IconService implements IconResolver {
 
 	// ── Lifecycle ───────────────────────────────────────────────────────
 
+	destroy(): void {
+		if (this.destroyed) return;
+		this.destroyed = true;
+		this.listeners.clear();
+		this.fetch.destroy();
+		this.packs.destroy();
+	}
+
 	/**
 	 * Startup: read from disk the packs this vault actually uses, replace any
 	 * that have gone missing or bad, then fill in missing per-icon artwork. No
@@ -97,6 +109,7 @@ export class IconService implements IconResolver {
 	 * costs nothing.
 	 */
 	async initialize(): Promise<void> {
+		if (this.destroyed) return;
 		// A callout drawing no icon still stores one, but nothing paints it, so
 		// it must not pull a whole pack off disk (or, further down, off the
 		// network). Its cached SVG is left alone by cleanupUnusedIconSvgs, so
@@ -106,8 +119,10 @@ export class IconService implements IconResolver {
 			.filter((def) => def.hideIcon !== true)
 			.map((def) => def.icon);
 		const results = await this.packs.loadUsed(icons.map((icon) => icon.type));
+		if (this.destroyed) return;
 		// Repaint: pack artwork read from disk arrives after the first inject.
 		this.host.cssInjector.inject();
+		if (this.destroyed) return;
 
 		for (const [id, result] of results) {
 			if (result === "corrupt") {
@@ -122,6 +137,7 @@ export class IconService implements IconResolver {
 		// missing Material icon through cacheOne's three attempts and its waits
 		// between them, on a vault that may simply be offline.
 		await this.fetch.ensureAll();
+		if (this.destroyed) return;
 		// Then repair whatever the packs would have drawn. Icons whose artwork
 		// is already in `data.json` are skipped, so a deleted pack file whose
 		// icons are all cached downloads nothing at all.
@@ -135,7 +151,7 @@ export class IconService implements IconResolver {
 	 * Called when the user confirms a choice in the picker and again on save.
 	 */
 	async ensureArtwork(icon: CalloutIcon): Promise<void> {
-		if (await this.fetchArtwork(icon)) await this.publish();
+		if (!this.destroyed && await this.fetchArtwork(icon)) await this.publish();
 	}
 
 	/**
@@ -146,6 +162,7 @@ export class IconService implements IconResolver {
 	 * once at the end rather than once per icon.
 	 */
 	private async fetchArtwork(icon: CalloutIcon): Promise<boolean> {
+		if (this.destroyed) return false;
 		const pack = packFor(icon);
 		if (!pack) return false;
 
@@ -161,16 +178,18 @@ export class IconService implements IconResolver {
 		if (this.packs.state(icon.type) !== "ready") {
 			// A file that is there but damaged is no more usable than none at
 			// all, so both outcomes fall through to the download.
-			if ((await this.packs.loadFromDisk(icon.type)) !== "ready") {
-				await this.packs.download(icon.type);
-			}
+			const result = await this.packs.loadFromDisk(icon.type);
+			if (this.destroyed) return false;
+			if (result !== "ready") await this.packs.download(icon.type);
 		}
-		return this.copyPackArtwork(icon);
+		return !this.destroyed && copyIconPackArtwork(this.host.registry, icon);
 	}
 
 	/** Repaint and persist newly cached artwork. */
 	private async publish(): Promise<void> {
+		if (this.destroyed) return;
 		this.host.cssInjector.inject();
+		if (this.destroyed) return;
 		await this.host.saveSettings();
 		this.notify();
 	}
@@ -189,9 +208,10 @@ export class IconService implements IconResolver {
 	 * device that synced `data.json` from re-downloading packs it never needed.
 	 */
 	async ensureArtworkFor(icons: readonly CalloutIcon[]): Promise<void> {
+		if (this.destroyed) return;
 		const pending = icons.filter(
 			(icon) =>
-				!this.isFullyCached(icon) &&
+				!isIconFullyCached(this.host.registry, icon) &&
 				// Already tried and given up on this session — retrying here
 				// would just repeat the wait. Cleared on the next launch.
 				!this.hasFailed(icon, "regular"),
@@ -218,13 +238,15 @@ export class IconService implements IconResolver {
 			for (const icon of group) {
 				if (this.hasFailed(icon, "regular")) continue;
 				if (await this.fetchArtwork(icon)) stored = true;
+				if (this.destroyed) return;
 			}
 			const first = group[0];
-			if (!first || !group.every((i) => this.isFullyCached(i))) continue;
+			if (!first || !group.every((i) => isIconFullyCached(this.host.registry, i))) continue;
 			const title = packFor(first)?.attribution.title;
 			if (title) restored.add(title);
 		}
 		if (stored) await this.publish();
+		if (this.destroyed) return;
 
 		// Say what was fetched, once for the batch. Anything that failed has
 		// already announced itself — a per-icon Notice from the fetch manager,
@@ -238,63 +260,5 @@ export class IconService implements IconResolver {
 		}
 	}
 
-	/**
-	 * Whether every drawing this icon could need is already in `data.json`.
-	 *
-	 * All roles, not just the one on screen: `copyPackArtwork` stores them all,
-	 * so anything short of that means the pack is still needed — to fill in the
-	 * heading callout or inline callout the user may enable later.
-	 */
-	private isFullyCached(icon: CalloutIcon): boolean {
-		const pack = packFor(icon);
-		if (!pack) return true;
-		// Lucide and emoji carry no artwork of their own to be missing, and a
-		// user's own picture is already sitting in settings — none of the three
-		// has anything a download could add.
-		if (
-			pack.kind === "builtin" ||
-			pack.kind === "glyph" ||
-			pack.kind === "local"
-		) {
-			return true;
-		}
-		return CALLOUT_RENDER_ROLES.every((role) =>
-			this.host.registry.findIconSvg(
-				icon.type,
-				icon.value,
-				pack.cacheVariant(icon, role),
-			),
-		);
-	}
 
-	/**
-	 * Copy this icon's drawings out of the pack and into `data.json`.
-	 *
-	 * Every render role is copied, not just the one on screen: a pack can draw
-	 * the same icon differently per surface (Octicons' 16px and 24px art), and
-	 * enabling inline callouts later must not require the pack to still be around.
-	 * Two roles that share a drawing collapse to one entry via the cache key.
-	 */
-	private copyPackArtwork(icon: CalloutIcon): boolean {
-		const pack = packFor(icon);
-		if (!pack?.buildSvg) return false;
-
-		let stored = false;
-		for (const role of CALLOUT_RENDER_ROLES) {
-			const variant = pack.cacheVariant(icon, role);
-			if (this.host.registry.findIconSvg(icon.type, icon.value, variant)) {
-				continue;
-			}
-			const svg = pack.buildSvg(icon, role);
-			if (!svg) continue;
-			this.host.registry.addIconSvg({
-				pack: icon.type,
-				name: icon.value,
-				variant,
-				svg,
-			});
-			stored = true;
-		}
-		return stored;
-	}
 }

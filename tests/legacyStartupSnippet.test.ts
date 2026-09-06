@@ -40,6 +40,12 @@ const SNIPPET = "callout-studio-do-not-delete";
 const CONFIG_DIR = ".obsidian";
 const SNIPPET_PATH = `${CONFIG_DIR}/snippets/${SNIPPET}.css`;
 
+function deferred() {
+	let resolve!: () => void;
+	const promise = new Promise<void>(done => { resolve = done; });
+	return { promise, resolve };
+}
+
 interface Vault {
 	/** Every path `exists()` was asked about. */
 	stats: string[];
@@ -370,5 +376,59 @@ describe("removeLegacyStartupSnippet — nothing here may throw", () => {
 		);
 
 		assert.match(String(warnings[0]?.[0]), /snippets folder manually/);
+	});
+});
+
+describe("removeLegacyStartupSnippet — unload during cleanup", () => {
+	it("does no work when the plugin is already inactive", async () => {
+		const f = fake({ fileExists: true, snippetEnabled: true });
+		await removeLegacyStartupSnippet(f.app, () => false);
+		assert.deepStrictEqual(f.vault.stats, []);
+		assert.deepStrictEqual(f.css.calls, []);
+	});
+
+	for (const stage of ["first-read", "mkdir", "write", "final-read"] as const) {
+		it(`preserves the active source if unloaded during ${stage}`, async () => {
+			const f = fake({ fileExists: true, snippetEnabled: true });
+			const entered = deferred(), resume = deferred();
+			const adapter = f.app.vault.adapter;
+			const read = adapter.read.bind(adapter), mkdir = adapter.mkdir.bind(adapter), write = adapter.write.bind(adapter);
+			let sourceReads = 0, active = true;
+			const pause = async () => { entered.resolve(); await resume.promise; };
+			adapter.read = async path => {
+				const result = await read(path);
+				if (path === SNIPPET_PATH) {
+					sourceReads++;
+					if ((stage === "first-read" && sourceReads === 1) || (stage === "final-read" && sourceReads === 2)) await pause();
+				}
+				return result;
+			};
+			adapter.mkdir = async path => { await mkdir(path); if (stage === "mkdir") await pause(); };
+			adapter.write = async (path, text) => { await write(path, text); if (stage === "write") await pause(); };
+			const pending = removeLegacyStartupSnippet(f.app, () => active);
+			await entered.promise;
+			active = false;
+			resume.resolve();
+			await pending;
+			assert.deepStrictEqual(f.vault.removed, []);
+			assert.deepStrictEqual(f.css.calls, []);
+			assert.strictEqual(f.css.enabled.has(SNIPPET), true);
+			assert.strictEqual(f.vault.present.has(SNIPPET_PATH), true);
+			if (stage === "first-read" || stage === "mkdir") assert.strictEqual(f.vault.content.size, 1);
+		});
+	}
+
+	it("does not reload snippets when an already-started removal completes after unload", async () => {
+		const f = fake({ fileExists: true, snippetEnabled: true });
+		const entered = deferred(), resume = deferred();
+		const adapter = f.app.vault.adapter, remove = adapter.remove.bind(adapter);
+		let active = true;
+		adapter.remove = async path => { await remove(path); entered.resolve(); await resume.promise; };
+		const pending = removeLegacyStartupSnippet(f.app, () => active);
+		await entered.promise;
+		active = false;
+		resume.resolve();
+		await pending;
+		assert.deepStrictEqual(f.css.calls, [`disable:${SNIPPET}`]);
 	});
 });

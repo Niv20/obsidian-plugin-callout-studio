@@ -541,14 +541,17 @@ describe("inject — what lands in the stylesheet", () => {
 			assert.deepStrictEqual(hide.at, ["@media screen"]);
 		}));
 
-	it("destroy() drops the element and forgets what was installed", () =>
+	it("destroy() prevents late callbacks from recreating styles or painting", () =>
 		withInjector((h) => {
 			h.injector.inject();
 			h.injector.destroy();
 			h.injector.inject();
-			// Both targets are gone, so the next pass must write unconditionally
-			// rather than trusting a cached copy of text nobody is showing.
-			assert.strictEqual(h.writes.length, 2);
+			h.injector.initialize();
+			h.injector.injectFromCache();
+			h.injector.paintIcons({ querySelectorAll: () => { throw new Error("painted after destroy"); } } as unknown as ParentNode);
+			h.injector.destroy();
+			assert.strictEqual(h.writes.length, 1);
+			assert.strictEqual(h.persists.length, 1);
 		}));
 });
 

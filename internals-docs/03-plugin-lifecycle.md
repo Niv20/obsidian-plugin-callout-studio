@@ -47,9 +47,14 @@ See [Persistence](07-persistence-and-caching.md) and
 
 ## Unload
 
-Destroy manual discovery, the settings writer and the reload queue so unfinished
-work cannot publish new results or start queued saves;
-destroy the CSS injector and existing renderer/icon resources. Registered event
+Destroy the settings writer first, then the icon/locale services, manual discovery,
+reload queue and CSS injector. Shutdown is terminal: deferred asset reads and
+downloads cannot publish artwork/translations, start cache writes, repaint or
+notify after their service has been destroyed. Already-started adapter writes and
+Obsidian HTTP requests cannot be cancelled; their later results are ignored.
+The CSS injector cannot recreate styles after destruction. Layout-ready callbacks
+check that the plugin remains active before installing decorators or starting work.
+Registered event
 and DOM listeners are removed through Obsidian's plugin lifecycle. There are no
 discovery timers, note watchers, prune queues or rediscovery holds to clean up.
 

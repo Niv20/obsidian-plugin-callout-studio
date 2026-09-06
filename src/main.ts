@@ -15,6 +15,7 @@ import type { CalloutIcon, CalloutRenderRole, PluginSettings } from "./types";
 import { CalloutRegistry } from "./manager/CalloutRegistry";
 import { CSSInjector } from "./manager/CSSInjector";
 import { IconService } from "./icons/IconService";
+import { startMaterialFontLoader, stopMaterialFontLoader } from "./icons/packs/materialFont";
 import {
 	clearMaterialFontStore,
 	setMaterialFontStore,
@@ -30,6 +31,7 @@ import { ReloadQueue } from "./manager/reloadQueue";
 import { registerThemeAppearance } from "./manager/theme/themeAppearanceSync";
 import { removeLegacyStartupSnippet } from "./manager/legacyStartupSnippet";
 import { runLaunchSequence } from "./manager/launchSequence";
+import { onActiveLayoutReady } from "./manager/activeLayoutReady";
 import { CalloutStudioSettingsTab } from "./settings/SettingsTab";
 import { WelcomeModal } from "./settings/WelcomeModal";
 import { CalloutEditor } from "./settings/CalloutEditor";
@@ -109,11 +111,9 @@ export default class CalloutStudioPlugin extends Plugin {
 	}
 
 	async onload() {
-		// Was the UI already on screen when we loaded? True on mobile every
-		// launch (plugins load after the note paints) and on desktop only for a
-		// mid-session enable/reload or a lazy-loader — exactly the cases where
-		// our DOM transforms arrive late and should animate in (see the startup
-		// entrance window opened at the end of onload). Read before any await.
+		startMaterialFontLoader();
+		// Mobile and mid-session loads animate over an already visible UI.
+		// Capture visibility before any await.
 		const uiWasVisible = this.app.workspace.layoutReady;
 
 		this.registry = new CalloutRegistry();
@@ -232,16 +232,14 @@ export default class CalloutStudioPlugin extends Plugin {
 			onSettled: () => this.reloads.release(),
 		});
 
-		// Remove the startup CSS snippet versions up to 2.5.0 left in the vault.
-		// Deferred to layout-ready so its one `exists()` stat never sits on the
-		// startup path. Delete this together with legacyStartupSnippet.ts in 3.0.0.
-		this.app.workspace.onLayoutReady(() => {
-			void removeLegacyStartupSnippet(this.app);
+		// Archive the obsolete startup snippet after layout, while still active.
+		onActiveLayoutReady(this, () => {
+			void removeLegacyStartupSnippet(this.app, () => !this.settingsWriter.isDestroyed);
 		});
 
 		// Clean heading-callout titles in the Outline pane.
 		this.outlineDecorator = new OutlineDecorator(this);
-		this.app.workspace.onLayoutReady(() => this.outlineDecorator.attachAll());
+		onActiveLayoutReady(this, () => this.outlineDecorator.attachAll());
 		this.registerEvent(
 			this.app.workspace.on("layout-change", () =>
 				this.outlineDecorator.attachAll(),
@@ -252,7 +250,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		// Register saved commands before the save listener. Missing targets stay
 		// stored and paused until a manual discovery or settings load restores them.
 		this.customCommands = new CustomCommandManager(this);
-		this.registry.onChange(() => this.customCommands.syncAll());
+		this.registry.onChange(() => { if (!this.settingsWriter.isDestroyed) this.customCommands.syncAll(); });
 		this.customCommands.syncAll();
 
 		// Re-inject CSS when registry changes. One call does both jobs:
@@ -262,6 +260,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		// trigger landed in our own css-change listener, which injects
 		// immediately, and the debounced timer then repeated it 300ms later.)
 		this.registry.onChange(() => {
+			if (this.settingsWriter.isDestroyed) return;
 			this.cssInjector.inject();
 			// Icon/color/display-name edits must repaint outline items too.
 			this.outlineDecorator.refreshAll();
@@ -297,7 +296,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		// Installed on layout-ready so the core link suggester exists; our own
 		// autocomplete is skipped (it renders callout suggestions itself).
 		this.linkSuggestDecorator = new LinkSuggestDecorator(this);
-		this.app.workspace.onLayoutReady(() =>
+		onActiveLayoutReady(this, () =>
 			this.linkSuggestDecorator.install([this.autoComplete]),
 		);
 		this.register(() => this.linkSuggestDecorator.uninstall());
@@ -320,10 +319,8 @@ export default class CalloutStudioPlugin extends Plugin {
 		// the next launch tries again.
 		void this.ensureLocale();
 
-		// Confirm the fresh install and greet the user —
-		// decoupled from first render so onload stays fast. See
-		// manager/launchSequence.ts for why those three are one function.
-		this.app.workspace.onLayoutReady(() => {
+		// Confirm the fresh install after layout without blocking first render.
+		onActiveLayoutReady(this, () => {
 			void runLaunchSequence(this, boot);
 		});
 	}
@@ -388,8 +385,11 @@ export default class CalloutStudioPlugin extends Plugin {
 	}
 
 	onunload() {
-		this.discovery?.destroy();
 		this.settingsWriter?.destroy();
+		stopMaterialFontLoader();
+		this.icons?.destroy();
+		this.locales?.destroy();
+		this.discovery?.destroy();
 		this.reloads?.destroy();
 		this.cssInjector?.destroy();
 		clearMaterialFontStore();

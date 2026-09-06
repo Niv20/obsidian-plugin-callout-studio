@@ -141,6 +141,8 @@ export class LocaleStore {
 	/** De-duplicates concurrent requests for the same file. */
 	private readonly inFlight = new Map<LocaleFileId, Promise<boolean>>();
 	private readonly listeners = new Set<() => void>();
+	private readonly cancelDownloads = new Set<() => void>();
+	private destroyed = false;
 	/** Set once a write has failed, so the user is only told the once. */
 	private diskWriteBroken = false;
 
@@ -149,7 +151,19 @@ export class LocaleStore {
 		private readonly manifest: PluginManifest,
 	) {}
 
+	/** Terminal: late adapter/network results cannot publish into a new session. */
+	destroy(): void {
+		if (this.destroyed) return;
+		this.destroyed = true;
+		this.listeners.clear();
+		this.states.clear();
+		this.inFlight.clear();
+		for (const cancel of this.cancelDownloads) cancel();
+		this.cancelDownloads.clear();
+	}
+
 	onChange(cb: () => void): () => void {
+		if (this.destroyed) return () => {};
 		this.listeners.add(cb);
 		return () => {
 			this.listeners.delete(cb);
@@ -158,10 +172,11 @@ export class LocaleStore {
 
 	private notify(): void {
 		for (const cb of this.listeners) {
+			if (this.destroyed) return;
 			try {
 				cb();
 			} catch (e) {
-				console.warn("[CalloutStudio] locale listener error", e);
+				if (!this.destroyed) console.warn("[CalloutStudio] locale listener error", e);
 			}
 		}
 	}
@@ -175,6 +190,7 @@ export class LocaleStore {
 	 * needs its file loaded, whether fresh or stale.
 	 */
 	isReady(pref: string): boolean {
+		if (this.destroyed) return false;
 		const id = resolveLocaleFile(pref);
 		if (!id) return true;
 		const state = this.state(id);
@@ -223,20 +239,24 @@ export class LocaleStore {
 	 * labels — and would do it precisely when they are offline and cannot fix it.
 	 */
 	async loadFromDisk(id: LocaleFileId): Promise<LocaleDiskResult> {
+		if (this.destroyed) return "missing";
 		const path = this.filePath(id);
 		const expected = LOCALE_MANIFEST[id];
 		try {
 			const adapter = this.app.vault.adapter;
-			if (!(await adapter.exists(path))) return "missing";
+			if (!(await adapter.exists(path)) || this.destroyed) return "missing";
 			const text = await adapter.read(path);
+			if (this.destroyed) return "missing";
 			if (text.length > MAX_LOCALE_BYTES) {
 				console.warn(`[CalloutStudio] locale "${id}" on disk is too large`);
 				return "invalid";
 			}
 			const fresh = await this.matches(text, expected);
+			if (this.destroyed) return "missing";
 			if (!this.accept(id, text, `disk (${path})`, fresh)) return "invalid";
 			return fresh ? "fresh" : "stale";
 		} catch (e) {
+			if (this.destroyed) return "missing";
 			console.warn(`[CalloutStudio] could not read locale "${id}"`, e);
 			return "invalid";
 		}
@@ -249,9 +269,11 @@ export class LocaleStore {
 	 * straight into the user's language.
 	 */
 	async prepare(pref: string): Promise<LocaleDiskResult | null> {
+		if (this.destroyed) return null;
 		const id = resolveLocaleFile(pref);
 		if (!id) return null;
 		const result = await this.loadFromDisk(id);
+		if (this.destroyed) return null;
 		this.notify();
 		return result;
 	}
@@ -263,12 +285,17 @@ export class LocaleStore {
 	 * session-only.
 	 */
 	private async persist(id: LocaleFileId, text: string): Promise<void> {
+		if (this.destroyed) return;
 		const adapter = this.app.vault.adapter;
 		const dir = this.dir();
 		try {
-			if (!(await adapter.exists(dir))) await adapter.mkdir(dir);
+			const exists = await adapter.exists(dir);
+			if (this.destroyed) return;
+			if (!exists) await adapter.mkdir(dir);
+			if (this.destroyed) return;
 			await adapter.write(this.filePath(id), text);
 		} catch (e) {
+			if (this.destroyed) return;
 			console.warn(`[CalloutStudio] could not cache locale "${id}"`, e);
 			if (!this.diskWriteBroken) {
 				this.diskWriteBroken = true;
@@ -289,16 +316,18 @@ export class LocaleStore {
 	 * download is needed belongs here, not in the UI.
 	 */
 	async ensure(pref: string): Promise<boolean> {
+		if (this.destroyed) return false;
 		const id = resolveLocaleFile(pref);
 		if (!id) return true;
 
 		if (this.state(id) === "absent") await this.loadFromDisk(id);
+		if (this.destroyed) return false;
 		if (this.state(id) === "ready") return true;
 
 		// A stale file is already usable, so a failed refresh is not a failure.
 		const hadStale = this.state(id) === "stale";
 		const ok = await this.download(id);
-		return ok || hadStale;
+		return !this.destroyed && (ok || hadStale);
 	}
 
 	/**
@@ -306,17 +335,19 @@ export class LocaleStore {
 	 * request.
 	 */
 	download(id: LocaleFileId): Promise<boolean> {
+		if (this.destroyed) return Promise.resolve(false);
 		const existing = this.inFlight.get(id);
 		if (existing) return existing;
 
 		const run = this.runDownload(id).finally(() => {
 			this.inFlight.delete(id);
 		});
-		this.inFlight.set(id, run);
+		if (!this.destroyed) this.inFlight.set(id, run);
 		return run;
 	}
 
 	private async runDownload(id: LocaleFileId): Promise<boolean> {
+		if (this.destroyed) return false;
 		const expected = LOCALE_MANIFEST[id];
 		if (!expected) return false;
 
@@ -326,20 +357,26 @@ export class LocaleStore {
 
 		let lastError: unknown;
 		for (const url of localeUrls(id, this.manifest.version)) {
+			if (this.destroyed) return false;
 			try {
 				const text = await this.fetchWithTimeout(url);
+				if (this.destroyed) return false;
 				// Unlike a stale file on disk, an unverifiable response is simply
 				// discarded: the next URL may serve the right bytes, and there is
 				// no reason to trust a CDN that just returned the wrong ones.
-				if (!(await this.matches(text, expected))) {
+				const matches = await this.matches(text, expected);
+				if (this.destroyed) return false;
+				if (!matches) {
 					console.warn(`[CalloutStudio] locale "${id}" mismatch from ${url}`);
 					continue;
 				}
 				if (!this.accept(id, text, url, true)) continue;
 				await this.persist(id, text);
+				if (this.destroyed) return false;
 				this.notify();
 				return true;
 			} catch (e) {
+				if (this.destroyed) return false;
 				lastError = e;
 			}
 		}
@@ -353,8 +390,15 @@ export class LocaleStore {
 	}
 
 	private async fetchWithTimeout(url: string): Promise<string> {
+		if (this.destroyed) throw new Error("Locale store destroyed");
 		let timer = 0;
+		let cancel = () => {};
 		const timeout = new Promise<never>((_, reject) => {
+			cancel = () => {
+				window.clearTimeout(timer);
+				reject(new Error("Locale store destroyed"));
+			};
+			this.cancelDownloads.add(cancel);
 			timer = window.setTimeout(
 				() => reject(new Error(`timed out after ${DOWNLOAD_TIMEOUT_MS}ms`)),
 				DOWNLOAD_TIMEOUT_MS,
@@ -365,6 +409,7 @@ export class LocaleStore {
 			return response.text;
 		} finally {
 			window.clearTimeout(timer);
+			this.cancelDownloads.delete(cancel);
 		}
 	}
 
@@ -373,10 +418,11 @@ export class LocaleStore {
 		text: string,
 		expected: LocaleManifestEntry | undefined,
 	): Promise<boolean> {
-		if (!expected) return false;
+		if (this.destroyed || !expected) return false;
 		const bytes = new TextEncoder().encode(text);
 		if (bytes.byteLength !== expected.bytes) return false;
 		const digest = await crypto.subtle.digest("SHA-256", bytes);
+		if (this.destroyed) return false;
 		const hex = Array.from(new Uint8Array(digest))
 			.map((b) => b.toString(16).padStart(2, "0"))
 			.join("");
@@ -390,6 +436,7 @@ export class LocaleStore {
 		source: string,
 		fresh: boolean,
 	): boolean {
+		if (this.destroyed) return false;
 		let raw: unknown;
 		try {
 			raw = JSON.parse(text);

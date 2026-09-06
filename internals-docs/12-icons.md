@@ -120,6 +120,15 @@ network) would be pure waste. Its cached SVG is left untouched by cleanup
 passes, so turning the icon back on later needs neither a re-download nor a
 re-fetch.
 
+`IconService.destroy()` terminally closes both supply managers and clears their
+listeners. `IconTaskScope` ends pending waits and clears retry/deadline timers;
+every asynchronous continuation checks disposal before publishing artwork,
+starting another cache write, injecting CSS, saving, or announcing a result.
+An Obsidian request or adapter write that was already started cannot be aborted,
+but its late completion cannot begin another operation or revive the old service.
+`packValidation.ts` holds the verification/parsing helpers separately from this
+lifecycle, and `iconArtworkCache.ts` holds the synchronous role-aware cache copy.
+
 ### `ensureArtworkFor(icons)` — the only repair path
 
 This is the function called from **both** places an icon can arrive without
@@ -212,6 +221,23 @@ putting in front of everyone downloading an icon set").
   fetch — the icon may have just been picked in the picker and not yet
   attached to any callout; a cleanup sweep at that moment would delete
   exactly what was just fetched.
+
+## Material preview font lifetime
+
+`packs/materialFont.ts` owns the preview font loader for one enabled plugin
+lifetime. `main.ts` calls `startMaterialFontLoader()` on load and
+`stopMaterialFontLoader()` on unload; `resetMaterialFontLoader()` starts a fresh
+enabled session when its resources need rebuilding. Pending loads share a
+per-document memo only within that session.
+
+`materialFontSession.ts` cancels waiters and owns cached `FontFace` registrations,
+stylesheet links, and link timers across the main document and pop-outs.
+`materialFontLink.ts` clears link callbacks when they settle or are cancelled.
+Every continuation after a cache read, face load, stylesheet verification, or
+network response checks its captured session; cache work also checks that its
+store is still current and alive. Browser requests already in progress cannot
+be aborted through Obsidian's `requestUrl`, but their late results cannot add a
+font, start another request, or write through a stale loader after disable.
 
 ## `IconResolver` — the read-only, synchronous view every renderer uses
 

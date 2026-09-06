@@ -49,7 +49,8 @@ interface CustomCssApi {
  * Delete the legacy startup snippet and take its name out of the enabled list.
  * Never throws — a vault that refuses the write is not a reason to fail load.
  */
-export async function removeLegacyStartupSnippet(app: App): Promise<void> {
+export async function removeLegacyStartupSnippet(app: App, isActive: () => boolean = () => true): Promise<void> {
+	if (!isActive()) return;
 	try {
 		const adapter = app.vault.adapter;
 		const path = normalizePath(
@@ -60,11 +61,13 @@ export async function removeLegacyStartupSnippet(app: App): Promise<void> {
 		const wasEnabled =
 			customCss?.enabledSnippets?.has?.(LEGACY_SNIPPET_NAME) ?? false;
 		const exists = await adapter.exists(path);
+		if (!isActive()) return;
 		// The normal path on every launch after the first cleanup.
 		if (!exists && !wasEnabled) return;
 		// The historical filename does not prove its contents are still generated.
 		// Preserve and verify personal edits before disabling or deleting anything.
-		if (exists) await archiveLegacySnippet(app, path);
+		if (exists) await archiveLegacySnippet(app, path, isActive);
+		if (!isActive()) return;
 
 		// Disable before deleting. This does two jobs at once — it drops the
 		// snippet's <style> out of the live cascade and takes the name out of
@@ -75,6 +78,7 @@ export async function removeLegacyStartupSnippet(app: App): Promise<void> {
 		if (wasEnabled) {
 			customCss?.setCssEnabledStatus?.(LEGACY_SNIPPET_NAME, false);
 		}
+		if (!isActive()) return;
 
 		// The file lives under configDir, so it is not a TFile and `vault.delete`
 		// cannot see it — the adapter is the only way in. Removed outright rather
@@ -82,9 +86,11 @@ export async function removeLegacyStartupSnippet(app: App): Promise<void> {
 		// move the orphan. A verified, inactive .txt recovery copy now preserves
 		// the exact bytes, even if the user edited the historical generated file.
 		if (exists) await adapter.remove(path);
+		if (!isActive()) return;
 
 		customCss?.requestLoadSnippets?.();
 	} catch (e) {
+		if (!isActive()) return;
 		console.warn(
 			"[CalloutStudio] failed to remove the legacy startup CSS snippet — " +
 				`delete "${LEGACY_SNIPPET_NAME}.css" from your snippets folder manually`,

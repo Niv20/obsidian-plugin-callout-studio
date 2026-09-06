@@ -6,6 +6,8 @@ import { CalloutRegistry } from "../../src/manager/CalloutRegistry";
 import { validateImportPayload } from "../../src/utils/importValidator";
 import { emojiOverrideCSS } from "../../src/manager/css/iconOverrides";
 import { calloutIconProp } from "../../src/manager/css/calloutIconProp";
+import { IconFetchManager } from "../../src/icons/IconFetchManager";
+import type { CSSInjector } from "../../src/manager/CSSInjector";
 
 function check(value: unknown, message: string): asserts value {
 	if (!value) throw new Error(message);
@@ -57,7 +59,40 @@ export async function runSvgSecurityTests(): Promise<number> {
 	const foreign = clean('<style xmlns="http://www.w3.org/1999/xhtml">body{display:none}</style><rect width="24" height="24"/>');
 	check(!foreign.querySelector("style"), "Foreign namespace style survived");
 	check(document.body.dataset.attacked === undefined, "Event handler executed");
-	return checks + 6 + cachedSvgChecks() + await iconCssChecks();
+	return checks + 6 + cachedSvgChecks() + await iconCssChecks() + await lateMaterialChecks();
+}
+
+async function lateMaterialChecks(): Promise<number> {
+	const seams = globalThis as unknown as Record<string, unknown>;
+	const previous = seams.__CS_REQUEST_URL__;
+	let respond!: (value: { text: string }) => void;
+	const response = new Promise<{ text: string }>(resolve => { respond = resolve; });
+	seams.__CS_REQUEST_URL__ = () => response;
+	const registry = new CalloutRegistry(); registry.load(null);
+	let injects = 0; let saves = 0; let notifications = 0;
+	const host = {
+		registry,
+		cssInjector: { inject: () => { injects++; } } as unknown as CSSInjector,
+		saveSettings: async () => { saves++; },
+	};
+	const text = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0L24 24"/></svg>';
+	try {
+		const fetch = new IconFetchManager(host);
+		fetch.onChange(() => { notifications++; });
+		const pending = fetch.cacheOne({ type: "material", value: "home" });
+		fetch.destroy(); await pending;
+		respond({ text });
+		for (let i = 0; i < 8; i++) await Promise.resolve();
+		check(registry.iconSvgCache.length === 0 && injects === 0 && saves === 0 && notifications === 0,
+			"A successful late Material response published after destroy");
+		const live = new IconFetchManager(host);
+		live.onChange(() => { notifications++; });
+		await live.cacheOne({ type: "material", value: "home" });
+		check(registry.iconSvgCache.length > 0, "Live Material artwork was not stored");
+		check(Number(injects) === 1 && Number(saves) === 1 && Number(notifications) === 1, "Live Material publication regressed");
+		live.destroy();
+		return 3;
+	} finally { seams.__CS_REQUEST_URL__ = previous; }
 }
 
 async function iconCssChecks(): Promise<number> {

@@ -17,6 +17,7 @@ import type { CSSInjector } from "../manager/CSSInjector";
 import { downloadMaterialSvg, materialVariantOf } from "./packs/material";
 import { iconCacheKey, packFor } from "./registry";
 import { t } from "../i18n";
+import { IconTaskScope } from "./IconTaskScope";
 
 interface IconFetchHost {
 	registry: CalloutRegistry;
@@ -29,6 +30,12 @@ const MAX_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 2000;
 
 export class IconFetchManager {
+	private readonly work = new IconTaskScope();
+	destroy(): void {
+		this.work.destroy();
+		this.listeners.clear();
+		this.inFlight.clear();
+	}
 	/**
 	 * Icons whose fetch has been given up on, keyed by pack/name/variant.
 	 * In-memory only, so every launch is a fresh chance — which is what makes
@@ -51,6 +58,7 @@ export class IconFetchManager {
 
 	/** Subscribe to icon cache updates. Returns an unsubscribe function. */
 	onChange(cb: () => void): () => void {
+		if (this.work.destroyed) return () => {};
 		this.listeners.add(cb);
 		return () => {
 			this.listeners.delete(cb);
@@ -59,6 +67,7 @@ export class IconFetchManager {
 
 	private notify(): void {
 		for (const cb of this.listeners) {
+			if (this.work.destroyed) break;
 			try {
 				cb();
 			} catch (e) {
@@ -77,7 +86,7 @@ export class IconFetchManager {
 	/** True once fetching this icon has been attempted and permanently failed. */
 	hasFailed(icon: CalloutIcon, role: CalloutRenderRole = "regular"): boolean {
 		const key = this.keyFor(icon, role);
-		return key !== null && this.failed.has(key);
+		return !this.work.destroyed && key !== null && this.failed.has(key);
 	}
 
 	/** True when this icon's artwork has to be fetched before it can render. */
@@ -112,7 +121,7 @@ export class IconFetchManager {
 	 * wrapping it — which is what makes the sharing observable and testable.
 	 */
 	cacheOne(icon: CalloutIcon): Promise<void> {
-		if (!this.needsFetch(icon)) return Promise.resolve();
+		if (this.work.destroyed || !this.needsFetch(icon)) return Promise.resolve();
 		const key = this.keyFor(icon, "regular");
 		if (key === null) return Promise.resolve();
 
@@ -131,8 +140,10 @@ export class IconFetchManager {
 		const { style, weight } = materialVariantOf(icon);
 		let lastErr: unknown;
 		for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+			if (this.work.destroyed) return;
 			try {
-				const svg = await downloadMaterialSvg(icon.value, style, weight);
+				const svg = await downloadMaterialSvg(icon.value, style, weight, this.work);
+				if (this.work.destroyed) return;
 				this.store(icon, svg);
 				this.failed.delete(key);
 				// Deliberately no cleanupUnusedIconSvgs() here: the icon may
@@ -141,15 +152,16 @@ export class IconFetchManager {
 				// Cleanup runs at save points instead (CalloutEditor save,
 				// row actions).
 				this.host.cssInjector.inject();
+				if (this.work.destroyed) return;
 				await this.host.saveSettings();
 				this.notify();
 				return;
 			} catch (err) {
+				if (this.work.destroyed) return;
 				lastErr = err;
 				if (attempt < MAX_ATTEMPTS) {
-					await new Promise((r) =>
-						window.setTimeout(r, RETRY_DELAY_MS),
-					);
+					try { await this.work.pause(RETRY_DELAY_MS); }
+					catch { return; }
 				}
 			}
 		}
@@ -168,6 +180,7 @@ export class IconFetchManager {
 	 * launch, since the failure set does not survive a reload.
 	 */
 	async ensureAll(): Promise<void> {
+		if (this.work.destroyed) return;
 		const missing = this.host.registry
 			.getAll()
 			.filter((def) => this.needsFetch(def.icon));
@@ -182,11 +195,14 @@ export class IconFetchManager {
 					def.icon.value,
 					style,
 					weight,
+					this.work,
 				);
+				if (this.work.destroyed) return;
 				this.store(def.icon, svg);
 				if (key !== null) this.failed.delete(key);
 				fetched++;
 			} catch {
+				if (this.work.destroyed) return;
 				// Record the failure so the settings list shows an error rather
 				// than a spinner that never resolves. Cleared on next launch.
 				if (key !== null) this.failed.add(key);
@@ -195,6 +211,7 @@ export class IconFetchManager {
 
 		if (fetched > 0) {
 			this.host.cssInjector.inject();
+			if (this.work.destroyed) return;
 			await this.host.saveSettings();
 		}
 		// Notify either way: failures changed the UI state too.

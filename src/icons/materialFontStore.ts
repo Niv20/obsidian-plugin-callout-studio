@@ -40,10 +40,19 @@ const WOFF2_MAGIC = [0x77, 0x4f, 0x46, 0x32];
 const MAX_FONT_BYTES = 8 * 1024 * 1024;
 
 class MaterialFontStore {
+	private destroyed = false;
+
 	constructor(
 		private readonly app: App,
 		private readonly manifest: PluginManifest,
 	) {}
+
+	/** Captured references must stop as well as the module-level accessor. */
+	destroy(): void {
+		this.destroyed = true;
+	}
+
+	get isDestroyed(): boolean { return this.destroyed; }
 
 	/**
 	 * The plugin's own folder, so uninstalling takes the fonts with it.
@@ -65,8 +74,10 @@ class MaterialFontStore {
 
 	/** Whether this family is already cached, without reading it back. */
 	async has(family: string): Promise<boolean> {
+		if (this.destroyed) return false;
 		try {
-			return await this.app.vault.adapter.exists(this.path(family));
+			const exists = await this.app.vault.adapter.exists(this.path(family));
+			return !this.destroyed && exists;
 		} catch {
 			return false;
 		}
@@ -80,10 +91,12 @@ class MaterialFontStore {
 	 * up with a plausible path holding implausible bytes.
 	 */
 	async read(family: string): Promise<ArrayBuffer | null> {
+		if (this.destroyed) return null;
 		const path = this.path(family);
 		try {
-			if (!(await this.app.vault.adapter.exists(path))) return null;
+			if (!(await this.app.vault.adapter.exists(path)) || this.destroyed) return null;
 			const bytes = await this.app.vault.adapter.readBinary(path);
+			if (this.destroyed) return null;
 			if (!isWoff2(bytes)) {
 				console.warn(
 					`[CalloutStudio] cached webfont at ${path} is not woff2; discarding`,
@@ -93,7 +106,7 @@ class MaterialFontStore {
 			}
 			return bytes;
 		} catch (e) {
-			console.warn(`[CalloutStudio] could not read cached webfont ${path}`, e);
+			if (!this.destroyed) console.warn(`[CalloutStudio] could not read cached webfont ${path}`, e);
 			return null;
 		}
 	}
@@ -104,18 +117,22 @@ class MaterialFontStore {
 	 * failure only downgrades this to session-only.
 	 */
 	async write(family: string, bytes: ArrayBuffer): Promise<void> {
-		if (!isWoff2(bytes) || bytes.byteLength > MAX_FONT_BYTES) return;
+		if (this.destroyed || !isWoff2(bytes) || bytes.byteLength > MAX_FONT_BYTES) return;
 		const adapter = this.app.vault.adapter;
 		try {
 			const dir = this.dir();
-			if (!(await adapter.exists(dir))) await adapter.mkdir(dir);
+			const exists = await adapter.exists(dir);
+			if (this.destroyed) return;
+			if (!exists) await adapter.mkdir(dir);
+			if (this.destroyed) return;
 			await adapter.writeBinary(this.path(family), bytes);
 		} catch (e) {
-			console.warn(`[CalloutStudio] could not cache the "${family}" webfont`, e);
+			if (!this.destroyed) console.warn(`[CalloutStudio] could not cache the "${family}" webfont`, e);
 		}
 	}
 
 	private async remove(family: string): Promise<void> {
+		if (this.destroyed) return;
 		try {
 			await this.app.vault.adapter.remove(this.path(family));
 		} catch {
@@ -136,11 +153,13 @@ let store: MaterialFontStore | null = null;
 
 /** Called once from `main.ts`. Until then, every load takes the network path. */
 export function setMaterialFontStore(app: App, manifest: PluginManifest): void {
+	store?.destroy();
 	store = new MaterialFontStore(app, manifest);
 }
 
 /** Dropped on unload so a disabled plugin holds no reference to the app. */
 export function clearMaterialFontStore(): void {
+	store?.destroy();
 	store = null;
 }
 

@@ -22,12 +22,13 @@ import type { App, PluginManifest } from "obsidian";
 import type { IconPackId } from "../types";
 import { t } from "../i18n";
 import {
-	PACK_FORMAT,
 	PACK_MANIFEST,
 	packUrls,
 	type PackManifestEntry,
 } from "./data/packManifest";
-import { isPackLoaded, parsePackFile, setPackData } from "./packData";
+import { isPackLoaded, setPackData } from "./packData";
+import { parseVerifiedPack, verifyPackText } from "./packValidation";
+import { IconTaskScope } from "./IconTaskScope";
 
 /**
  * `requestUrl` cannot be aborted and reports no progress, so a hung connection
@@ -49,6 +50,13 @@ export type PackLoadState =
 export type PackDiskResult = "ready" | "missing" | "corrupt";
 
 export class PackDataStore {
+	private readonly work = new IconTaskScope();
+	destroy(): void {
+		this.work.destroy();
+		this.listeners.clear();
+		this.inFlight.clear();
+		this.states.clear();
+	}
 	private readonly states = new Map<IconPackId, PackLoadState>();
 	/** De-duplicates concurrent requests for the same pack. */
 	private readonly inFlight = new Map<IconPackId, Promise<boolean>>();
@@ -62,6 +70,7 @@ export class PackDataStore {
 	) {}
 
 	onChange(cb: () => void): () => void {
+		if (this.work.destroyed) return () => {};
 		this.listeners.add(cb);
 		return () => {
 			this.listeners.delete(cb);
@@ -70,6 +79,7 @@ export class PackDataStore {
 
 	private notify(): void {
 		for (const cb of this.listeners) {
+			if (this.work.destroyed) break;
 			try {
 				cb();
 			} catch (e) {
@@ -79,6 +89,7 @@ export class PackDataStore {
 	}
 
 	state(id: IconPackId): PackLoadState {
+		if (this.work.destroyed) return "unavailable";
 		if (isPackLoaded(id)) return "ready";
 		return this.states.get(id) ?? "unavailable";
 	}
@@ -128,18 +139,21 @@ export class PackDataStore {
 	 * happened; both mean the same thing to the picker.
 	 */
 	async loadFromDisk(id: IconPackId): Promise<PackDiskResult> {
+		if (this.work.destroyed) return "missing";
 		if (isPackLoaded(id)) return "ready";
 		const path = this.packPath(id);
 		const expected = PACK_MANIFEST[id];
 		try {
 			const adapter = this.app.vault.adapter;
-			if (!(await adapter.exists(path))) return "missing";
-			const text = await adapter.read(path);
-			if (expected && !(await this.verify(text, expected, path))) {
+			if (!(await this.work.wait(adapter.exists(path))) || this.work.destroyed) return "missing";
+			const text = await this.work.wait(adapter.read(path));
+			if (this.work.destroyed) return "missing";
+			if (expected && !(await verifyPackText(text, expected, path, () => !this.work.destroyed))) {
 				return "corrupt";
 			}
 			return this.accept(id, text, `disk (${path})`) ? "ready" : "corrupt";
 		} catch (e) {
+			if (this.work.destroyed) return "missing";
 			console.warn(`[CalloutStudio] could not read pack "${id}"`, e);
 			return "corrupt";
 		}
@@ -155,6 +169,7 @@ export class PackDataStore {
 	): Promise<Map<IconPackId, PackDiskResult>> {
 		const results = new Map<IconPackId, PackDiskResult>();
 		for (const id of new Set(usedPacks)) {
+			if (this.work.destroyed) break;
 			if (PACK_MANIFEST[id]) results.set(id, await this.loadFromDisk(id));
 		}
 		this.notify();
@@ -172,6 +187,7 @@ export class PackDataStore {
 	 */
 	async loadAllFromDisk(): Promise<void> {
 		for (const id of Object.keys(PACK_MANIFEST) as IconPackId[]) {
+			if (this.work.destroyed) return;
 			if (this.state(id) === "unavailable") await this.loadFromDisk(id);
 		}
 		this.notify();
@@ -183,12 +199,17 @@ export class PackDataStore {
 	 * download they just did, so failure only downgrades this to session-only.
 	 */
 	private async persist(id: IconPackId, text: string): Promise<void> {
+		if (this.work.destroyed) return;
 		const adapter = this.app.vault.adapter;
 		const dir = this.packDir();
 		try {
-			if (!(await adapter.exists(dir))) await adapter.mkdir(dir);
-			await adapter.write(this.packPath(id), text);
+			const exists = await this.work.wait(adapter.exists(dir));
+			if (this.work.destroyed) return;
+			if (!exists) await this.work.wait(adapter.mkdir(dir));
+			if (this.work.destroyed) return;
+			await this.work.wait(adapter.write(this.packPath(id), text));
 		} catch (e) {
+			if (this.work.destroyed) return;
 			console.warn(`[CalloutStudio] could not cache pack "${id}" to disk`, e);
 			if (!this.diskWriteBroken) {
 				this.diskWriteBroken = true;
@@ -204,6 +225,7 @@ export class PackDataStore {
 	 * is now available. Concurrent calls share one request.
 	 */
 	download(id: IconPackId): Promise<boolean> {
+		if (this.work.destroyed) return Promise.resolve(false);
 		if (isPackLoaded(id)) return Promise.resolve(true);
 		const existing = this.inFlight.get(id);
 		if (existing) return existing;
@@ -224,18 +246,23 @@ export class PackDataStore {
 
 		let lastError: unknown;
 		for (const url of packUrls(id)) {
+			if (this.work.destroyed) return false;
 			try {
 				const text = await this.fetchWithTimeout(url);
-				if (!(await this.verify(text, expected, url))) continue;
+				if (this.work.destroyed) return false;
+				if (!(await verifyPackText(text, expected, url, () => !this.work.destroyed))) continue;
 				if (!this.accept(id, text, url)) continue;
 				await this.persist(id, text);
+				if (this.work.destroyed) return false;
 				this.notify();
 				return true;
 			} catch (e) {
+				if (this.work.destroyed) return false;
 				lastError = e;
 			}
 		}
 
+		if (this.work.destroyed) return false;
 		this.states.set(id, "failed");
 		this.notify();
 		console.warn(`[CalloutStudio] pack "${id}" download failed`, lastError);
@@ -251,59 +278,20 @@ export class PackDataStore {
 			);
 		});
 		try {
-			const response = await Promise.race([requestUrl({ url }), timeout]);
+			const response = await this.work.wait(Promise.race([requestUrl({ url }), timeout]));
 			return response.text;
 		} finally {
 			window.clearTimeout(timer);
 		}
 	}
 
-	/**
-	 * Reject anything that is not byte-for-byte the file this build expects.
-	 * `source` is a URL when downloading and a path when reading from disk.
-	 */
-	private async verify(
-		text: string,
-		expected: PackManifestEntry,
-		source: string,
-	): Promise<boolean> {
-		const bytes = new TextEncoder().encode(text);
-		if (bytes.byteLength !== expected.bytes) {
-			console.warn(
-				`[CalloutStudio] pack size mismatch from ${source}: ` +
-					`${bytes.byteLength} != ${expected.bytes}`,
-			);
-			return false;
-		}
-		const digest = await crypto.subtle.digest("SHA-256", bytes);
-		const hex = Array.from(new Uint8Array(digest))
-			.map((b) => b.toString(16).padStart(2, "0"))
-			.join("");
-		if (hex !== expected.sha256) {
-			console.warn(`[CalloutStudio] pack checksum mismatch from ${source}`);
-			return false;
-		}
-		return true;
-	}
-
-	/** Parse, validate and publish pack text. */
 	private accept(id: IconPackId, text: string, source: string): boolean {
-		let raw: unknown;
-		try {
-			raw = JSON.parse(text);
-		} catch {
-			console.warn(`[CalloutStudio] pack "${id}" from ${source} is not JSON`);
-			return false;
-		}
-		const result = parsePackFile(raw, id, PACK_FORMAT);
-		if (!result.ok) {
-			console.warn(
-				`[CalloutStudio] pack "${id}" from ${source} rejected: ${result.reason}`,
-			);
-			return false;
-		}
-		setPackData(id, result.file);
+		if (this.work.destroyed) return false;
+		const file = parseVerifiedPack(id, text, source);
+		if (!file) return false;
+		setPackData(id, file);
 		this.states.set(id, "ready");
 		return true;
 	}
+
 }

@@ -22,6 +22,7 @@ import type {
 import { decodeIndex, memoizeIndex } from "../data/codec";
 import { MATERIAL_INDEX } from "../data/material.index";
 import { sanitizeSVG } from "../svg";
+import type { IconTaskScope } from "../IconTaskScope";
 
 const loadIndex = memoizeIndex(() => decodeIndex(MATERIAL_INDEX));
 const DOWNLOAD_TIMEOUT_MS = 30_000;
@@ -149,7 +150,9 @@ export async function downloadMaterialSvg(
 	name: string,
 	style: MaterialIconStyle,
 	weight: number = MATERIAL_DEFAULT_WEIGHT,
+	scope?: IconTaskScope,
 ): Promise<string> {
+	if (scope?.destroyed) throw new Error("Icon work stopped");
 	// requestUrl cannot be aborted; a late response is ignored by the race.
 	// Bound each attempt so one stalled icon cannot hold the startup queue.
 	let timer = 0;
@@ -157,9 +160,10 @@ export async function downloadMaterialSvg(
 		timer = window.setTimeout(() => reject(new Error("Material icon download timed out")), DOWNLOAD_TIMEOUT_MS);
 	});
 	try {
-		const response = await Promise.race([
+		const pending = Promise.race([
 			requestUrl({ url: materialSvgUrl(name, style, weight) }), timeout,
 		]);
+		const response = await (scope ? scope.wait(pending) : pending);
 		const sanitized = sanitizeSVG(response.text);
 		if (!sanitized) throw new Error(`Invalid SVG received for Material icon "${name}"`);
 		return sanitized;

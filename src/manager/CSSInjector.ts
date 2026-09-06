@@ -142,6 +142,7 @@ export class CSSInjector {
 	private startupCache: StartupStyleCache;
 	/** Artwork lookup for both the CSS masks and the DOM export copies. */
 	private icons: IconResolver;
+	private destroyed = false;
 
 	constructor(app: App, registry: CalloutRegistry) {
 		this.app = app;
@@ -162,19 +163,17 @@ export class CSSInjector {
 	}
 
 	initialize(): void {
+		if (this.destroyed) return;
 		this.ensureStyleSheet();
 		this.inject();
 	}
 
 	/**
-	 * Startup fast path: synchronously re-apply the CSS snapshot cached by the
-	 * previous session (see StartupStyleCache). Called as the very first step
-	 * of plugin onload, BEFORE `loadData()` is awaited, so styling lands
-	 * without waiting on disk IO or CSS generation. The registry is still
-	 * empty at this point — no css-change is emitted and no icons are painted;
-	 * the real inject() replaces this snapshot moments later.
+	 * Restore StartupStyleCache before loadData without painting icons or
+	 * emitting css-change; inject() replaces it once settings load.
 	 */
 	injectFromCache(): void {
+		if (this.destroyed) return;
 		const cached = this.startupCache.loadCachedCss();
 		if (!cached) return;
 		this.ensureStyleSheet();
@@ -261,15 +260,11 @@ export class CSSInjector {
 	/**
 	 * Regenerate and apply all callout CSS.
 	 *
-	 * The `injecting` latch makes this re-entrancy-safe: emitting `css-change`
-	 * below lands back here through the plugin's own listener, and that nested
-	 * call must be a no-op rather than a second full pass. `finally` is
-	 * load-bearing — a throw anywhere in the pass (a malformed colour, an
-	 * export realm without `setIcon`) would otherwise leave the latch stuck on
-	 * and silently drop every later inject for the rest of the session.
+	 * Ignore recursive css-change notifications and all work after destroy.
+	 * Always release the re-entrancy latch, including when rendering throws.
 	 */
 	inject(emitCssChange = true): void {
-		if (this.injecting) return;
+		if (this.destroyed || this.injecting) return;
 		this.injecting = true;
 		try {
 			this.injectNow(emitCssChange);
@@ -1290,6 +1285,7 @@ export class CSSInjector {
 	 * silently skip the main window (and the other way round).
 	 */
 	paintIcons(root?: ParentNode): void {
+		if (this.destroyed) return;
 		if (root === undefined) {
 			for (const doc of this.openDocuments()) this.paintIcons(doc);
 			return;
@@ -1819,6 +1815,9 @@ export class CSSInjector {
 	}
 
 	destroy(): void {
+		if (this.destroyed) return;
+		this.destroyed = true;
+		const ownedSheet = this.styleSheet;
 		const doc = this.styleDoc ?? activeDocument;
 		if (this.styleSheet && "adoptedStyleSheets" in doc) {
 			doc.adoptedStyleSheets = doc.adoptedStyleSheets.filter(
@@ -1828,11 +1827,10 @@ export class CSSInjector {
 			this.styleDoc = null;
 		}
 		const registryWindow = window as RegistryWindow;
-		delete registryWindow[STYLE_SHEET_REGISTRY_KEY];
+		if (registryWindow[STYLE_SHEET_REGISTRY_KEY] === ownedSheet) delete registryWindow[STYLE_SHEET_REGISTRY_KEY];
 
 		this.styleEl?.remove();
 		this.styleEl = null;
-		// Both targets are gone; nothing is installed to compare against.
 		this.lastCssText = null;
 	}
 }

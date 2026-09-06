@@ -763,7 +763,7 @@ describe("no new oversized files", () => {
 		// the injector — and part of the room that bought went to `themeSurface`,
 		// which asks manager/theme/calloutSurface.ts whether the active styling
 		// owns the callout surface.
-		"src/manager/CSSInjector.ts": 1838,
+		"src/manager/CSSInjector.ts": 1836,
 		// Lowered from 2014: what "mirror the fallback callout" means now lives
 		// entirely in manager/discoveredRow.ts, beside the other half of the same
 		// agreement, and the two-mode migration in manager/styleModeMigration.ts.
@@ -923,7 +923,6 @@ describe("no new oversized files", () => {
 		"src/ui/TagInput.ts": 414,
 		"src/settings/editor/CalloutEditorSave.ts": 368,
 		"src/icons/isolateSvg.ts": 402,
-		"src/icons/packs/materialFont.ts": 398,
 		"src/outline/OutlineDecorator.ts": 382,
 		// Lowered from 357: the read-only rule — and the transaction filter
 		// that finally made it one — moved to settings/previewReadOnly.ts,
@@ -936,7 +935,6 @@ describe("no new oversized files", () => {
 		// in the window — moved to settings/command/hotkeyRow.ts.
 		"src/settings/CommandBuilderModal.ts": 303,
 		"src/settings/iconpicker/IconGrid.ts": 343,
-		"src/icons/PackDataStore.ts": 309,
 	};
 
 	it("nothing new crosses the 300-line line", () => {
