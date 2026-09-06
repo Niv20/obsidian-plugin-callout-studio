@@ -25,6 +25,7 @@
  * the file?
  */
 import assert from "node:assert";
+import { setTimeout as delay } from "node:timers/promises";
 import { describe, it } from "node:test";
 import type { App, EventRef, PluginManifest } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
@@ -155,9 +156,9 @@ function phone(name: string, disk: Disk) {
 		/** The user switches back to Obsidian. */
 		returnToApp: async () => {
 			foreground?.();
-			// The listener is sync and starts an async adopt; let it finish.
-			await new Promise((r) => setImmediate(r));
-			await new Promise((r) => setImmediate(r));
+			// The minimal host has no queue promise to join; include its content
+			// settling window before observing the foreground adoption.
+			await delay(200);
 		},
 		watching: () => foreground !== null,
 	};

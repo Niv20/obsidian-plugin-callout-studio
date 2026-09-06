@@ -798,7 +798,7 @@ describe("no new oversized files", () => {
 		// Same reasoning: "which id strings are valid on import" is the one
 		// thing this file is for, so the rule cannot move out of it without
 		// splitting the answer in two.
-		"src/utils/importValidator.ts": 1200,
+		"src/utils/importValidator.ts": 1199,
 		// Lowered from 1190: the style-mode pair's import rules moved to
 		// utils/importStyleMode.ts.
 		// Lowered from 1106: the Base color row moved to

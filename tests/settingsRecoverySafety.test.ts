@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { setTimeout as delay } from "node:timers/promises";
 import type { App, PluginManifest } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { createSettingsWriter } from "../src/manager/settingsWriterHost";
@@ -24,6 +25,7 @@ function device() {
 	const disk = { json: null as string | null, writes: 0, failWrite: false };
 	const backups = new Map<string, string>();
 	let foreground = () => {};
+	let foregroundRun = Promise.resolve();
 	const app = { appId: `recovery-${deviceNumber++}`, vault: { configDir: ".obsidian", getName: () => "recovery",
 		adapter: {
 			exists: (path: string) => Promise.resolve(path.endsWith("data.json") ? disk.json !== null : true),
@@ -45,12 +47,12 @@ function device() {
 		refreshThemeAppearance: () => {}, customCommands: { syncAll: () => {} }, refreshCallouts: () => {},
 		registerDomEvent: (_doc: Document, _type: "visibilitychange", callback: () => void) => { foreground = callback; },
 	} as ExternalReloadHost & { saveData(data: unknown): Promise<void> };
-	host.settingsWriter = createSettingsWriter({ ...host, onExternalSettingsChange: () => queue.run() });
+	host.settingsWriter = createSettingsWriter({ ...host, onExternalSettingsChange: () => queue.run() }, { read: async () => null, write: async () => {} });
 	host.saveSettings = () => host.settingsWriter.save().finally(() => queue.release());
 	const queue = new ReloadQueue(host);
-	host.onExternalSettingsChange = () => queue.run();
+	host.onExternalSettingsChange = () => { foregroundRun = queue.run(); return foregroundRun; };
 	return { host, disk, registry, localState, queue, backups,
-		foreground: async () => { foreground(); for (let i = 0; i < 12; i++) await new Promise(resolve => setImmediate(resolve)); },
+		foreground: async () => { foreground(); await foregroundRun; },
 	};
 }
 
@@ -98,7 +100,9 @@ describe("settings recovery uses the production freshness and reload path", () =
 		assert.equal(d.queue.isPending, true);
 		assert.equal(d.registry.get("from-desktop"), undefined);
 		d.host.settingsEditOpen = false; d.queue.release();
-		for (let i = 0; i < 12; i++) await new Promise(resolve => setImmediate(resolve));
+		for (let i = 0; i < 100 && !d.registry.get("from-desktop"); i++) {
+			await delay(10);
+		}
 		assert.ok(d.registry.get("from-desktop"));
 		assert.equal(d.disk.writes, 0);
 	});
@@ -124,6 +128,44 @@ describe("settings recovery uses the production freshness and reload path", () =
 		assert.equal(await confirmFreshInstall(d.host), false);
 		assert.equal(d.host.settingsWriter.isFrozen, true);
 		assert.equal(d.disk.writes, 0);
+	});
+
+	for (const phase of ["startup", "fresh-install confirmation"] as const) {
+		it(`waits for complete content during ${phase}`, async () => {
+			const d = device();
+			if (phase === "fresh-install confirmation") await loadSettingsInto(d.host);
+			const remote = new CalloutRegistry(); remote.load(null);
+			remote.add(definition({ id: "fully-synced" }));
+			const complete = remote.toSaveData();
+			d.disk.json = JSON.stringify(complete);
+			let reads = 0;
+			d.host.loadData = () => Promise.resolve(reads++ === 0 ? {} : complete);
+			if (phase === "startup") await loadSettingsInto(d.host);
+			else assert.equal(await confirmFreshInstall(d.host), false);
+			assert.ok(d.registry.get("fully-synced"));
+			assert.ok(d.disk.json?.includes("fully-synced"), "any migration save retains the complete incoming row");
+			assert.ok(reads >= 3, "the initial partial object was not adopted");
+		});
+	}
+
+	it("a failed registry rebuild cannot become the write baseline and can be retried", async () => {
+		const d = device();
+		await loadSettingsInto(d.host);
+		const remote = new CalloutRegistry(); remote.load(null);
+		remote.add(definition({ id: "recover-after-load-error" }));
+		const incoming = remote.toSaveData();
+		d.disk.json = JSON.stringify(incoming);
+		const load = d.registry.load.bind(d.registry);
+		d.registry.load = () => { throw new Error("registry rebuild failed"); };
+		await assert.rejects(() => applySettingsRead(d.host, { kind: "loaded", data: incoming, json: d.disk.json! }));
+		assert.equal(d.host.settingsWriter.isFrozen, true);
+		assert.equal(d.host.settingsWriter.matchesLastWrite(d.disk.json), false);
+		await d.host.saveSettings();
+		assert.equal(d.disk.writes, 0);
+		d.registry.load = load;
+		await d.queue.run();
+		assert.ok(d.registry.get("recover-after-load-error"));
+		assert.equal(d.host.settingsWriter.isFrozen, false);
 	});
 
 	it("a malformed gradient beside a saved palette cannot crash startup", async () => {
