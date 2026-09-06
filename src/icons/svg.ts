@@ -182,7 +182,7 @@ function cleanUserAttributes(el: Element): void {
 			continue;
 		}
 		if (name === "style") {
-			const safe = sanitizeSvgStyleAttribute(value, el.ownerDocument);
+			const safe = sanitizeSvgStyleAttribute(el);
 			if (safe) el.setAttribute(attr, safe);
 			else el.removeAttribute(attr);
 			continue;
