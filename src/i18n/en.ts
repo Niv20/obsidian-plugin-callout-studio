@@ -31,7 +31,23 @@ export const en: Record<string, string> = {
 	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
 	"settings.rescanVaultHintAction": "Discover now",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"notice.settingsBackupFailed": "Incoming settings were not applied because a safety backup could not be saved. Check available storage, then reopen Obsidian to retry.",
+	"saveStatus.missing": "Saving is paused because the settings file is missing. This can happen after reinstalling or while sync is still running. Finish synchronization and retry. To intentionally replace the missing file, use Create a new settings file in Callout Studio settings.",
+	"saveStatus.unreadable": "Saving is paused because the settings file cannot be read safely. Finish synchronization or restore a valid copy, then retry. The existing file has been kept.",
+	"saveStatus.recoveryRead": "Saving is paused because the local recovery copy cannot be read. Your settings file may still be intact. Check available storage, then retry recovery. Existing recovery data will not be overwritten.",
+	"saveStatus.recoveryWrite": "The local recovery copy could not be saved. Check available storage, then retry. Keep your draft open until saving succeeds.",
+	"saveStatus.writePermission": "The settings file could not be saved because storage denied write access. Check that the vault and plugin folder are writable, then retry.",
+	"saveStatus.writeSpace": "The settings file could not be saved because storage is full or its quota was exceeded. Free some space, then retry.",
+	"saveStatus.notesFailed": "The callout definition was saved, but some note updates could not be completed. Keep this editor open and choose Save to retry the unfinished updates.",
+	"saveStatus.write": "The settings file could not be saved. Check available storage, folder permissions and synchronization, then retry before closing Obsidian.",
+	"saveStatus.changed": "The settings file changed while you were editing. Your draft is still available. Choose Retry saving and recovery to load the incoming settings, then review your draft and save again.",
+	"saveStatus.syncConflict": "Incoming settings conflict with a callout needed for unfinished note updates. Your draft and pending updates have been kept. Resolve the conflicting settings before retrying.",
+	"saveStatus.retry": "Retry saving and recovery",
+	"saveStatus.retrying": "Checking saving and recovery…",
+	"saveStatus.retryFailed": "Saving is still blocked. Check the saving status in Callout Studio settings for the cause, then retry.",
+	"saveStatus.reviewDraft": "Incoming settings and recovery checks are complete. Your draft is unchanged. Review it and save again.",
+	"saveStatus.settingsArrived": "Existing settings arrived and were loaded. A replacement file was not created.",
+	"saveStatus.newFile": "Create a new settings file",
+	"notice.settingsBackupFailed": "Settings recovery could not continue because a safety backup could not be saved. Check available storage and write permissions, then retry.",
 	"notice.settingsBackupSaved": "A recovery copy of local callout definitions was saved before applying incoming settings: {{path}}.",
 	"commandBuilder.missingCallout": "Paused: the callout is missing. Discover or create it to restore this command, or edit the command to choose another type.",
 	"manualDiscovery.scanning": "Discovering…",
@@ -323,7 +339,7 @@ export const en: Record<string, string> = {
 		"Callout Studio could not read its settings file, so your callout types are missing from this session. Nothing has been written and the file on disk is unchanged \u2014 reload Obsidian to try again.",
 	"notice.settingsMissing":
 		"Callout Studio's settings file is missing, so your callout types are missing from this session. Nothing has been written — if you sync this vault, let the sync finish and reload Obsidian before making any changes.",
-	"notice.settingsMissingAction": "Start fresh on this device",
+	"notice.settingsMissingAction": "Create a new settings file",
 	"notice.settingsNotSaved":
 		"That change was not saved. Callout Studio could not use its settings file when Obsidian started, so nothing is being written on this device — your changes will last until you close Obsidian. See Settings \u2192 Callout Studio for what to do.",
 	"notice.settingsNewerVersion":
@@ -773,9 +789,9 @@ export const en: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"The CSS snippet in your snippets folder has changed since Callout Studio wrote it. Exporting again replaces the whole file.",
 	"confirm.overwriteSnippetOk": "Overwrite",
-	"confirm.titleStartFresh": "Start fresh on this device",
+	"confirm.titleStartFresh": "Create a new settings file",
 	"confirm.startFresh":
-		"This creates a new settings file from the defaults. If the missing file is still on its way from another device, or is still syncing, it will be replaced everywhere — including on the devices that still have your callouts.\nOnly do this if you deleted the file yourself, or if you are sure it is not coming back.",
+		"This creates a new settings file from the callout types and settings currently shown. Any previous readable recovery copy is kept in a backup. If the missing file is still on its way from another device, or is still syncing, it will be replaced everywhere — including on the devices that still have your callouts.\nOnly do this if you deleted the file yourself, or if you are sure it is not coming back.",
 	"confirm.startFreshOk": "Create a new settings file",
 
 	// Vault edge-case modals
