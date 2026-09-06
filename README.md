@@ -46,6 +46,8 @@ Thank you all for helping make Callout Studio better!
 
 ## Privacy, in short
 
+A device-local recovery copy protects plugin settings when a synced `data.json` is replaced while the plugin is closed. Concurrent edits and recognized conflict copies are merged automatically when valid; damaged or unsupported data is kept for recovery. Install the same updated build on every device. See [multi-device editing and recovery](user-guide/13-resetting-callouts-and-settings.md#editing-on-more-than-one-device).
+
 Callout Studio never sends vault content anywhere, and collects no telemetry or analytics. The only things it ever downloads are icon artwork you actually pick and, when needed, the plugin's own UI translation — both explained in full, with exactly what's stored where, in [Privacy & permissions](user-guide/16-privacy-and-permissions.md).
 
 ## Install

@@ -14,6 +14,8 @@ identical content, and re-reads the file immediately before writing. A missing
 previously read file, unreadable file, changed baseline, or frozen writer blocks
 that write. Adoption re-seeds the canonical baseline rather than clearing it.
 A write that changes nothing does not create a sync event.
+A loaded file becomes the baseline only after the registry rebuild succeeds.
+A failed rebuild freezes writes and leaves the failed file eligible for retry.
 Unloading destroys the writer and reload queue, cancels pending stale notices,
 and invalidates queued or pre-write operations. A physical adapter write that has
 already begun cannot be cancelled, but it cannot launch another save or publish
@@ -31,7 +33,7 @@ click joins the operation. No results are locally cached or automatically pruned
 
 ## Multi-device sync
 
-There are no discovery-specific synchronization settings or merge state.
+There are no discovery-specific synchronization settings.
 The ordinary settings file carries manual results to another device; opening it
 never discovers additional rows. A subsequent explicit scan adds missing ids,
 leaving existing definitions and commands intact. Different themes affect only
@@ -50,19 +52,114 @@ Recovery bytes are captured before awaited adapter operations, so edits while a
 folder is being created cannot change the copy. Failure to create a required backup defers adoption; a local
 edit during the backup also defers it. A notice identifies recovery copies.
 
-This is optimistic protection, not a distributed transaction: independent offline
-writes and an external replacement between the final read and the physical write
-cannot be locked by Obsidian's settings API. Incoming readable files are adopted
-after backup, without inventing a field-level merge or resurrecting deleted rows.
-Users should update both devices and finish synchronization before scanning or
-editing. Restore a conflict copy with Obsidian closed on both devices, preserving
-the current file first. Never promise conflict-free simultaneous offline editing.
+Startup, fresh-install confirmation, and changed external files require two
+matching content reads 150 ms apart, with at most three additional reads. A
+continuously changing file is treated as unavailable; metadata and wall-clock
+ordering are not used to establish its baseline. Canonical equality skips local
+write echoes without adding a settling delay. Missing or unreadable external
+files get up to three queued retries after 250, 750, and 2000 ms. A new event or
+foreground starts a new retry budget. There is no continuous polling, and unload
+cancels queued retries. Backup failures remain deferred without automatic retry
+notices. A save or editor release during an adoption is retained even before the
+pending flag is set, so that wakeup cannot be lost during a recovery backup.
+Once a settling cycle has observed a file or an unreadable state, later absence
+cannot turn it into a fresh installation; only stable loaded content can recover it.
+
+`settingsSync.ts` adds a versioned `calloutStudioSync` envelope to `data.json`
+on the first actual edit. It records Lamport counters and random session actor
+ids for changed JSON paths; wall clocks do not decide conflicts. `syncTree.ts`
+represents callouts, palettes, images, custom commands, menu items and icon cache
+entries as keyed lists. Objects merge by field; ordinary arrays (including aliases)
+and complete icon identities remain atomic. Legacy icon-subfield clocks are folded
+into the icon identity clock, avoiding a pack/name combination that neither user chose. List ordering has a deterministic winner and concurrently added
+ids are retained. A deleted row keeps path tombstones, so delayed snapshots cannot
+resurrect it. Deletion wins over concurrent edits inside that deleted row; explicit
+recreation after observing the deletion uses a later counter. Tombstones are not
+pruned because a device may remain offline indefinitely.
+
+The production `SettingsWriter` stamps writes only after building an isolated
+snapshot. It advances committed sync state only after the write succeeds. During
+external adoption, it combines the incoming snapshot with its last adopted/saved
+state and any unsaved in-memory changes. Both the local and incoming versions are
+checked for lost content; any losing version requires a recovery copy before the
+registry changes. The merged registry adopts the actual incoming disk bytes as
+its freshness baseline, then writes the merged result through the ordinary guard.
+A failed merged write remains retryable and is never reported as durable to an
+editor. Duplicate deliveries and no-op saves do not cause further writes.
+
+Both devices must run a build with this merge protocol. An unstamped legacy file
+cannot undo stamped edits or tombstones; changes made by older builds may therefore
+require recovery from the incoming backup. Before either side has stamped state,
+unsaved local changes merge relative to the last observed snapshot, while an
+incoming-only change follows ordinary adoption. Unknown
+or malformed sync envelope versions are unreadable and cannot authorize a rewrite.
+The envelope is carried by the existing foreign-field preservation, and ignored
+when deciding whether metadata alone needs a recovery backup.
+
+Envelope version 2 fingerprints both the content and the stamp map, excluding the
+fingerprint itself. `syncFingerprint.ts` is a deterministic corruption checksum,
+not cryptographic authentication. A provider-combined body/stamp map or an external
+manual edit retaining stale metadata fails validation. Version 1 remains readable
+for migration but has no such integrity check. Update both devices: older builds
+cannot understand version 2. A fingerprint failure preserves the file and defers
+adoption; it must not be silently restamped as a legitimate user edit.
+
+`SettingsCheckpoint` stores one complete recovery snapshot per vault/config-profile/
+plugin in the app's `CalloutStudioRecovery` IndexedDB database. It never writes a
+recovery sidecar into the synced folder. Read/write transactions request strict
+durability and wait for transaction completion rather than request success. Abort,
+quota, blocked-open and unavailable-storage errors propagate; a blocked connection
+that eventually opens is closed. Snapshots are checked by the same shape and
+integrity gate as `data.json`. Disabling/uninstalling does not erase this device-local
+copy; clearing app data does, and an explicit plugin reset updates the copy.
+
+For ordinary registry saves, the writer saves the checkpoint before writing `data.json`, then repeats its
+freshness/cancellation checks because external state can change during the local
+transaction. A failed primary-file write leaves the intended state recoverable.
+Isolated manual commits preflight storage with the currently accepted registry,
+then write and publish the candidate before checkpointing it. A cancelled candidate
+cannot reappear through recovery. Failure of this final checkpoint is reported after
+publication, since the primary file already changed; a crash between those two writes
+can leave the checkpoint one isolated commit behind.
+Incoming adoption also remembers validated snapshots. `settingsRecovery.ts` joins
+the checkpoint on startup, making closed-plugin replacements recoverable. Reloads
+also consult it, including after a launch inside a missing-file window. Lost local,
+incoming, checkpoint or conflict-file content must be backed up before replacement.
+If a recovery read fails, saving is frozen and its bytes are not overwritten. A
+foreground check can recover the session after storage becomes readable even when
+the primary file has not changed. A corrupt primary file can display a readable
+checkpoint while keeping all writes frozen.
+
+`settingsConflictFiles.ts` reads explicitly recognized Syncthing and Conflicted-copy
+filenames in this plugin directory. It requires two identical reads, settings shape
+validation and a supported envelope, and never deletes copies. Unstamped or damaged
+copies remain available for manual recovery. Primary-file echoes still scan for
+new conflict copies; an already incorporated copy creates no extra data writes.
+Only startup/external/foreground events drive this; there is no claim that every
+provider generates config change events for every conflict filename.
+
+An open editor/preview still defers registry adoption, and a stale save may need
+the owner to close before its in-memory change can merge. Unsaved form state is not
+a durable settings write. These mechanisms do not control note synchronization,
+provider exclusions, file-size limits, storage eviction, OS power failures, account
+availability or permanent loss of every surviving copy. They are not a distributed
+filesystem lock or proof of compatibility with all cloud sync providers.
+
+Tests include field/identity conflicts, deletion and recreation, legacy clocks,
+300 seeded four-replica runs with 70 scheduled operations each, duplicate/reordered
+messages, restarts and a large Unicode payload. Filesystem integration uses the
+production registry/writer/loader/queue with injected independent checkpoint storage;
+it covers closed-plugin overwrite, primary-write failure, missing-file startup,
+quota/read failures, copy-file recovery and integrity mismatch. The actual IndexedDB
+driver is also exercised by transaction-boundary unit tests; a separate local browser
+smoke test verified persistence over page reload and vault isolation. None of these
+is a live end-to-end test of two physical devices or a provider's cloud service.
 
 ## Missing or unsupported settings
 
 `settingsFile.ts` distinguishes absence from unreadable/malformed data and catches
-adapter read failures. Startup freezes an unreadable/newer file and seeds built-ins
-for display. A missing file on a previously initialized device remains protected.
+adapter read failures. Startup freezes an unreadable/newer file. An unreadable primary file displays
+a valid recovery copy when available; otherwise it seeds built-ins for display. A missing file on a previously initialized device remains protected.
 A new device uses `confirmFreshInstall` before enabling edits; this is a second
 read, not proof that sync has finished. The welcome only marks `welcomeSeen` in
 memory and never creates `data.json`. The first real settings write rechecks
@@ -74,9 +171,16 @@ is retained until the editor closes. A readable,
 supported file can thaw the writer; a newer data version stays read-only.
 
 The settings-file shape gate checks callout icons/names/aliases, optional text
-fields, metadata and both icon-cache formats before a rebuild. Malformed rows
+fields, metadata, finite gradient angles, duplicate row ids, and both icon-cache
+formats before a rebuild. Malformed rows
 are not silently dropped; the whole file is preserved for recovery. Partial
 built-in overrides and unknown future fields remain supported.
+Canonical comparison and foreign-field retention preserve JSON keys such as
+`__proto__` as own data properties, so they neither change a temporary object's
+prototype nor disappear from the freshness comparison. Observed non-object JSON
+stays unreadable even if a later existence check would see the file disappear.
+An explicit data version must be a finite number before migrations run; older
+files without a version and numeric future versions retain their existing handling.
 
 No discovery cache is used to decide this. `DeviceLocalStore` v2 keeps only
 `initialized` and `listsExpanded`. A recognized v1 blob and the old startup CSS

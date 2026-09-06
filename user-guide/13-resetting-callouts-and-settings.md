@@ -48,13 +48,49 @@ Everything above is a reset you asked for. This section is about the one you did
 
 Callout Studio keeps your callout types in a single settings file inside your vault. If you sync your vault, that file travels like any other - and a sync client can be caught mid-delivery, with the file briefly missing or only half-written. A phone is the most common place to notice, because it often opens a vault while the sync is still catching up.
 
-When Callout Studio starts and finds its settings file missing or unreadable, it does **not** treat that as an empty setup. It shows a notice, leaves the file completely alone, and stops writing. Your callout types will be missing from the list while that notice is up, but the file on disk still has them.
+When Callout Studio starts and finds its settings file missing or unreadable, it does **not** treat that as an empty setup. It shows a notice, leaves the file completely alone, and stops writing. A valid local recovery copy may keep your callout types visible while saving is disabled. If no readable copy is available, the list may show only defaults; that is not permission to overwrite the unavailable file.
 
-**What to do:** let the sync finish. Callout Studio keeps watching for the file, and picks it up on its own the moment it lands — on desktop as soon as it changes, on mobile the next time you come back to the app. Your callout types reappear and saving starts working again, so anything you change from then on is kept. Reloading Obsidian also works and is never wrong, but it is usually not needed.
+**What to do:** let the sync finish. Callout Studio briefly checks that incoming settings have stopped changing before loading them. Desktop file changes and returning to the app also trigger a few automatic retries if the file is temporarily missing or unreadable. Your callout types reappear and saving starts working again after a readable file is loaded. If synchronization takes longer than those retries, return to the app again or reload Obsidian after it finishes.
 
 The one case where the file really is gone for good is when you deleted it yourself to start over. For that, the notice offers **Start fresh on this device**, which lets Callout Studio save again from that point on. Only use it if you know the file isn't coming back - once Callout Studio starts writing, it writes what it currently has, which is the built-in callout types and nothing else.
 
-### If your callout types were already lost
+## Editing on more than one device
+
+Use the same updated Callout Studio build on both devices. Changes to different
+callouts or different fields of the same callout merge automatically when the
+plugin receives the other device's settings. Additions to palettes, images and
+custom commands also merge. If both devices change the same field, a consistent
+logical ordering chooses one value and the replaced version is kept in the
+`backups` folder. This ordering does not depend on the devices' clock settings.
+Deleting a callout wins over a concurrent edit to that callout; a later explicit
+recreation is allowed. Older delivered settings do not undo a recorded deletion.
+
+Incoming changes wait while an editor or preview is open. If Save reports that
+settings changed elsewhere, the draft stays in memory; close the editor to allow
+the pending merge. Wait for a successful save before quitting Obsidian.
+
+The plugin also keeps a recovery copy in the app's local storage, separate from
+the synced vault. If sync replaces `data.json` while the plugin is closed, the next
+launch merges that copy with the incoming file. A missing or broken recovery store
+stops saving until it is available again. If the settings file is damaged, an
+available recovery copy is displayed read-only and the damaged file is preserved.
+Reload the plugin or return to the app after fixing the storage problem.
+
+Recognized `data.sync-conflict-...json` and `data (Conflicted copy ...).json` files
+in the plugin folder are checked at startup and during external/foreground checks.
+Intact copies that carry synchronization metadata are merged even if the main
+settings file is unchanged. Conflict files are not deleted. Unversioned, malformed
+or unrecognized copies stay untouched for manual recovery. An incoming JSON file
+whose data and revision metadata do not match is also preserved without adoption.
+
+These protections cannot recover data removed from every copy or bypass a sync
+service's exclusions, offline devices or file-size limits. Both devices must receive
+the relevant files and run the updated build. Lists such as aliases are resolved as
+one field, and an icon's pack and value stay together. This feature merges plugin
+settings, not note text. The automatic vault backups keep the latest five copies;
+they complement the device-local recovery copy and your sync service's history.
+
+## If your callout types were already lost
 
 If a sync has already replaced your settings with the defaults, stop and check these before changing anything, in this order.
 

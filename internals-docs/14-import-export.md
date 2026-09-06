@@ -67,6 +67,10 @@ picture at once rather than one error at a time across repeated attempts.
 - **Tags/aliases**: length-capped at `MAX_TAG_LENGTH` (200 — a generous
   safety net on *imported*, untrusted data only; the editor itself imposes
   no length limit), count-capped at `MAX_TAGS_COUNT`.
+- **Metadata**: every value must be a string. Keys such as `__proto__`,
+  `constructor`, and `prototype` remain literal data properties through import
+  and export; safe object construction avoids invoking inherited setters or
+  silently discarding a metadata entry.
 - **Unknown top-level fields** are reported as warnings via `KNOWN_FIELD_MAP`
   — a **total `Record`** over `keyof CalloutDefinition`, so adding a field
   to the type without adding it here is a compile error, which is what stops
