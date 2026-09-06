@@ -42,7 +42,7 @@ const convertVaultCalloutsToPlainText = (
 ): Promise<{ files: number; blocks: number }> =>
 	// The display name is what a heading or inline usage falls back to: those
 	// carry no text besides the token, so it is all they have left.
-	convertCalloutsToPlainTextInVault(app, ids, def.displayName);
+	convertCalloutsToPlainTextInVault(app, ids, def.displayName, true);
 
 export async function handleCalloutDelete(
 	ctx: SettingsSectionContext,
@@ -64,18 +64,23 @@ export async function handleCalloutDelete(
 		return;
 	}
 
-	if (usage.fileCount > 0) {
+	// Recheck every note even after a zero count: confirmation may outlive sync.
+	try {
 		const result = await convertVaultCalloutsToPlainText(
 			ctx.app,
 			def,
 			allIds,
 		);
-		new Notice(
+		if (result.blocks > 0) new Notice(
 			t("vault.convertedToPlainText", {
 				blocks: String(result.blocks),
 				files: String(result.files),
 			}),
 		);
+	} catch (error) {
+		console.warn("[callout-studio] deletion stopped after incomplete conversion", error);
+		new Notice(t("notice.calloutDeleteIncomplete"), 10000);
+		return;
 	}
 	// Delete is authoritative. Suppress before removing, so the open-editor scan
 	// that ctx.display() runs one line down cannot resurrect the row from a
@@ -117,7 +122,13 @@ export async function handleClearCalloutUsages(
 		return;
 	}
 
-	const result = await convertVaultCalloutsToPlainText(ctx.app, def, allIds);
+	let result: { files: number; blocks: number };
+	try { result = await convertVaultCalloutsToPlainText(ctx.app, def, allIds); }
+	catch (error) {
+		console.warn("[callout-studio] clearing callout usages was incomplete", error);
+		new Notice(t("notice.calloutDeleteIncomplete"), 10000);
+		return;
+	}
 	new Notice(
 		t("vault.convertedToPlainText", {
 			blocks: String(result.blocks),
