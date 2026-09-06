@@ -231,6 +231,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-context-menu", // Menu section id
 		"callout-studio-export", // export filename stem
 		"callout-studio-upgrade-recovery", // recovery archive format identifier
+		"callout-studio-recovery", // inert legacy snippet archive directory
 	]);
 
 	/**

@@ -401,6 +401,14 @@ undocumented `app.customCss` API) on **every launch**, deferred to
 `workspace.onLayoutReady` so its one `exists()` stat never sits on the startup
 path.
 
+Before disabling/removing an existing file, `legacySnippetArchive.ts` writes its
+exact bytes to `snippets/callout-studio-recovery/legacy-startup-<sha256>.txt` under
+the configured vault folder. It verifies the copy, never overwrites a mismatched
+copy, and rechecks the source before deletion. Failed archival or a changed
+source leaves the original and enabled state intact for the next launch. Copies
+are inert text files and are not pruned automatically, so personal edits survive
+even when the old generated filename was reused.
+
 > [!CAUTION]
 > This runs on every launch — not once behind a `data.json` flag — because a
 > flag would *sync*: it could reach a second device before the orphan file

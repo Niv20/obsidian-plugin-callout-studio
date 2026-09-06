@@ -69,6 +69,12 @@ is removed; a damaged drawing uses the usual missing-icon display.
 - **A small local snapshot of the plugin's generated CSS**, purely to shorten the flash of unstyled callouts on a slow startup (mainly on mobile). It lives in the app's own local storage, never in the vault, and never leaves the device.
 - **Local interface preferences and an installation marker.** Section folds stay on this device. The marker protects settings when a previously used installation temporarily cannot find its settings file. Discovery has no local cache; its manually saved results live in `data.json`.
 - **The exported CSS snippet file**, only if you've explicitly asked for one (see [Import, export & sharing](11-import-export-and-sharing.md)). It's never turned on automatically, and it's safe to delete.
+- **Recovery copies of the old startup snippet**, if upgrading from a version
+  that created `callout-studio-do-not-delete.css`. Cleanup preserves its exact
+  contents, including personal edits, as `.txt` files in
+  `.obsidian/snippets/callout-studio-recovery/` (or your configured equivalent).
+  These copies do not apply CSS and remain until you remove them. If a copy
+  cannot be verified, the original snippet is left alone for a later retry.
 
 ---
 **Next:** [Back to the guide overview](README.md)
