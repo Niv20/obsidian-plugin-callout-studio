@@ -1030,3 +1030,16 @@ why this one does not take them.
 
 ---
 Next chapter: [16-i18n.md](16-i18n.md)
+
+## Saving-status banner
+
+`saveStatusBanner.ts` is shared by the settings page and the callout editor.
+It subscribes to `SettingsWriter.status` and redraws only its own slot, preserving
+scroll position and form fields. The settings page also exposes the confirmed
+new-file action when the frozen reason is a missing file; other failures expose
+recovery retry without an unsafe reset. Disposers run on tab hide/re-render and
+editor close. Buttons are disabled while their action is running.
+
+Saving-status observers are isolated from persistence: a detached or failing UI
+listener is logged without preventing other listeners or writes. Recovery and editor
+errors use a shared writer-scoped English notification and omit raw storage paths.

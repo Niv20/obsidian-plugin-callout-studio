@@ -243,6 +243,15 @@ clicks are ignored, and newer form edits made during the wait keep the editor
 open. Background saves use `settingsSaveFeedback` to report errors without
 leaking an unhandled promise rejection; awaiting callers still receive failure.
 
+The persistent saving banner displays the writer's specific failure reason.
+Its explicit recovery action keeps the form and editor ownership in place while
+allowing a guarded external adoption. Preview writes pause during saving/recovery.
+After recovery the user reviews the unchanged form and saves again. Unfinished
+note work retains a canonical snapshot of the definition it needs, including
+rename aliases; conflicting changes cannot silently allow that plan to run against
+a different or missing definition. Banner subscriptions are released on close.
+
+
 ### The `fallbackBase` mirroring path
 
 When `saveAsFallback` is true, nearly every field is taken from
@@ -348,3 +357,9 @@ this triggers.
 
 ---
 Next chapter: [14-import-export.md](14-import-export.md)
+
+Persistence errors share the writer's English error reporter, including frozen and
+stale saves. A failed required vault rewrite reports once through `EditorSaveSession`
+and explicitly says that the definition was saved while note updates remain pending.
+The low-level required rewrite rejects without issuing a second popup. Successful
+rename/title phases are summarized together only after all note phases finish.

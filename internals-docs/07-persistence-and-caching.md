@@ -21,6 +21,48 @@ and invalidates queued or pre-write operations. A physical adapter write that ha
 already begun cannot be cancelled, but it cannot launch another save or publish
 manual results into the unloaded instance.
 
+## Saving status and explicit recovery
+
+`SettingsSaveStatus` separates a frozen session's reason from the most recent
+failed operation. File absence, malformed settings, newer data, recovery reads,
+recovery writes, required backups, primary writes and external changes have
+separate messages. The settings page and callout editor subscribe to just the
+status banner; status changes do not rebuild the form or reset settings scroll.
+Subscriptions are disposed when those surfaces close. Error wrappers preserve the
+original exception for console diagnosis. Persistence errors always use English
+copy, independent of the UI locale; raw adapter errors and paths stay in the console.
+Known storage codes distinguish exhausted space/quota from denied write access.
+`settingsSaveReporter.ts` shares a single notice across background writes, the editor,
+and deferred guards; recovery clears it. Status observer failures cannot interrupt
+persistence. Successful retry/adoption cancels queued stale notifications and
+invalidates unfinished freshness checks. When an identical primary file returns
+after a transient missing/unreadable read, its obsolete warning is cleared without
+a settings rewrite.
+
+`settingsRecoveryActions.ts` provides explicit retries, including unchanged valid
+primary files after a recovery-store failure. Only an explicit retry bypasses the
+normal echo fast path; background retries retain it to avoid a failed-write loop.
+A checkpoint failure during initial adoption freezes saving while still loading
+the validated settings and allowing the plugin UI to finish opening.
+
+Reinstallation can leave a prior-use marker after the settings file is deleted.
+It remains protected until settings arrive or the user confirms creating a new
+file. That action is available persistently in settings, rechecks stable absence,
+preserves a readable previous checkpoint in a vault backup, and uses the writer's
+ordinary before/after-checkpoint freshness checks. It reports success only after
+persistence. Missing-file protection remains in place after a failed attempt.
+Missing-file startup also reads the checkpoint before deciding that this is a new
+installation: the first attempted primary write may have failed after checkpointing,
+without setting the initialized marker. Such a copy is displayed while saving remains
+protected; confirmed recreation keeps the displayed definitions. A boot-time failure
+to read that copy can be retried even while the primary file remains absent.
+Checkpoints from a newer build cannot be replaced through the new-file action.
+
+A migration's primary-write failure leaves the plugin UI available for retry.
+If the adapter rejects after actually replacing the primary file, the writer accepts
+success only after reading back the exact intended payload. An unchanged save still
+retries a previously failed final checkpoint rather than silently skipping it.
+
 ## Manual discovery transaction
 
 `ManualCalloutDiscovery.run()` snapshots saved settings, scans saved notes and
@@ -39,6 +81,14 @@ never discovers additional rows. A subsequent explicit scan adds missing ids,
 leaving existing definitions and commands intact. Different themes affect only
 rendering ownership; they cannot alter the stored list in the background.
 
+External adoption is serialized even when explicit recovery bypasses `ReloadQueue`.
+It rechecks disk content, registry ownership, and local edits after the checkpoint
+await before replacing the registry. Storage preflight checkpoints only previously accepted data; the incoming merge
+is checkpointed after adoption. Cancellation or unload during preflight cannot
+make speculative incoming data a later recovery baseline.
+A frozen writer remains frozen until these checks pass. Legacy recovery copies
+without sync stamps are joined as older baselines; they cannot replace a newer
+unstamped primary file and remove newly received rows.
 External adoption uses `ReloadQueue` and waits while a settings editor, preview,
 or file write owns the registry. Incoming events during a read cause a subsequent
 read, so the later state is not dropped. Before adopting a file that changes or
@@ -50,7 +100,7 @@ latest five copies, always preserving the copy just written even if another
 device's clock is ahead. Only the exact generated filename patterns are pruned.
 Recovery bytes are captured before awaited adapter operations, so edits while a
 folder is being created cannot change the copy. Failure to create a required backup defers adoption; a local
-edit during the backup also defers it. A notice identifies recovery copies.
+edit during the backup also defers it. Backup locations are logged to the console; individual copies do not each produce a popup.
 
 Startup, fresh-install confirmation, and changed external files require two
 matching content reads 150 ms apart, with at most three additional reads. A
@@ -108,10 +158,17 @@ adoption; it must not be silently restamped as a legitimate user edit.
 plugin in the app's `CalloutStudioRecovery` IndexedDB database. It never writes a
 recovery sidecar into the synced folder. Read/write transactions request strict
 durability and wait for transaction completion rather than request success. Abort,
-quota, blocked-open and unavailable-storage errors propagate; a blocked connection
-that eventually opens is closed. Snapshots are checked by the same shape and
+quota, blocked-open and unavailable-storage errors propagate. Opens time out after
+five seconds; late connections are closed and open connections close on version-change
+requests. A TypeError rejecting transaction options retries without the options for
+older embedded browsers; permission and storage errors do not use that fallback.
+Both transaction paths wait for completion. Snapshots are checked by the same shape and
 integrity gate as `data.json`. Disabling/uninstalling does not erase this device-local
 copy; clearing app data does, and an explicit plugin reset updates the copy.
+Recovery-store opening is bounded at five seconds and transactions at ten seconds.
+A timed-out transaction is aborted and its connection closed. Late success events
+cannot revive a failed operation; later saves can retry. Request success alone
+still does not count as a committed transaction.
 
 For ordinary registry saves, the writer saves the checkpoint before writing `data.json`, then repeats its
 freshness/cancellation checks because external state can change during the local
@@ -138,8 +195,11 @@ new conflict copies; an already incorporated copy creates no extra data writes.
 Only startup/external/foreground events drive this; there is no claim that every
 provider generates config change events for every conflict filename.
 
-An open editor/preview still defers registry adoption, and a stale save may need
-the owner to close before its in-memory change can merge. Unsaved form state is not
+An open editor/preview still defers background registry adoption. The explicit
+editor recovery action uses an editor-scoped adoption option while retaining editor
+ownership, so the background queue cannot race it. Preview and in-flight writer
+ownership still block adoption. The form is preserved for review and another Save.
+Pending note work can reject an incoming merge that changes its required definition. Unsaved form state is not
 a durable settings write. These mechanisms do not control note synchronization,
 provider exclusions, file-size limits, storage eviction, OS power failures, account
 availability or permanent loss of every surviving copy. They are not a distributed

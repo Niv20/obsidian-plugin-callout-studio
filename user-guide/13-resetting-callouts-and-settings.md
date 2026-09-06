@@ -52,7 +52,7 @@ When Callout Studio starts and finds its settings file missing or unreadable, it
 
 **What to do:** let the sync finish. Callout Studio briefly checks that incoming settings have stopped changing before loading them. Desktop file changes and returning to the app also trigger a few automatic retries if the file is temporarily missing or unreadable. Your callout types reappear and saving starts working again after a readable file is loaded. If synchronization takes longer than those retries, return to the app again or reload Obsidian after it finishes.
 
-The one case where the file really is gone for good is when you deleted it yourself to start over. For that, the notice offers **Start fresh on this device**, which lets Callout Studio save again from that point on. Only use it if you know the file isn't coming back - once Callout Studio starts writing, it writes what it currently has, which is the built-in callout types and nothing else.
+The one case where the file really is gone for good is when you deleted it yourself to start over. For that, the notice offers **Create a new settings file**, which lets Callout Studio save again after confirmation. The same action remains available in the saving-status banner at the top of Callout Studio settings, even after the startup notice is dismissed. A new-file action rechecks for settings that arrived while the confirmation was open and preserves a readable local recovery copy in a backup before replacing it. Only use it if you know the file isn't coming back - once Callout Studio starts writing, it writes what it currently has, including any callout types restored from the local recovery copy.
 
 ## Editing on more than one device
 
@@ -66,15 +66,30 @@ Deleting a callout wins over a concurrent edit to that callout; a later explicit
 recreation is allowed. Older delivered settings do not undo a recorded deletion.
 
 Incoming changes wait while an editor or preview is open. If Save reports that
-settings changed elsewhere, the draft stays in memory; close the editor to allow
-the pending merge. Wait for a successful save before quitting Obsidian.
+settings changed elsewhere, use **Retry saving and recovery** in the editor.
+Incoming settings are checked and merged while your form stays open and unchanged.
+Review your draft and save again. Background sync continues to wait while an editor
+is open. If unfinished note updates need a definition that conflicts with the incoming
+settings, recovery keeps both the draft and pending work rather than applying unsafe
+changes. Wait for a successful save before quitting Obsidian.
 
 The plugin also keeps a recovery copy in the app's local storage, separate from
 the synced vault. If sync replaces `data.json` while the plugin is closed, the next
-launch merges that copy with the incoming file. A missing or broken recovery store
-stops saving until it is available again. If the settings file is damaged, an
+launch merges that copy with the incoming file. An unreadable recovery store
+stops saving until it is available again. The banner distinguishes that problem
+from an unreadable settings file, a failed recovery write, and a failed settings
+write. **Retry saving and recovery** checks again without restarting Obsidian. If the settings file is damaged, an
 available recovery copy is displayed read-only and the damaged file is preserved.
-Reload the plugin or return to the app after fixing the storage problem.
+Saving errors are shown in English and identify the failed step. A full drive,
+denied write access, unavailable local recovery storage, and an incoming sync change
+have different messages. Technical file paths stay in the developer console, and
+one failed save produces one error notification. A recovery operation that stops
+responding times out so it can be retried.
+
+If the definition was saved but updating existing notes failed, the message says so.
+Keep the editor open and choose **Save** again to resume the unfinished note updates.
+
+After fixing the storage problem, use **Retry saving and recovery**, return to the app, or reload the plugin. Recovery data that could not be read is never silently discarded.
 
 Recognized `data.sync-conflict-...json` and `data (Conflicted copy ...).json` files
 in the plugin folder are checked at startup and during external/foreground checks.
