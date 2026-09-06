@@ -4,7 +4,7 @@ import type { CalloutDefinition } from "../../types";
 import type { CalloutRegistry } from "../../manager/CalloutRegistry";
 import { calloutIdentity } from "../../utils/calloutId";
 import {
-	countCalloutUsages, normalizeFoldMarkersInVault,
+	normalizeFoldMarkersInVault,
 	replaceCalloutIdsInVault, replaceCalloutTitlesInVault,
 } from "../../utils/vaultCalloutScanner";
 
@@ -65,13 +65,10 @@ export function createCalloutVaultSavePlan(input: VaultSavePlanInput): CalloutVa
 	const updates: string[] = [];
 	return async () => {
 		if (!idsDone) {
-			const { fileCount } = await countCalloutUsages(app, removedIds);
-			if (fileCount > 0) {
-				const replaced = await replaceCalloutIdsInVault(app, removedIds, newId, undefined, true);
-				if (replaced > 0) updates.push(t("vault.idsUpdated", {
-					count: String(replaced), oldIds: removedIds.join(", "), newId,
-				}));
-			}
+			const replaced = await replaceCalloutIdsInVault(app, removedIds, newId, undefined, true);
+			if (replaced > 0) updates.push(t("vault.idsUpdated", {
+				count: String(replaced), oldIds: removedIds.join(", "), newId,
+			}));
 			idsDone = true;
 		}
 		if (!titleDone && oldTitle !== null) {

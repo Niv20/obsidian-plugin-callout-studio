@@ -21,7 +21,7 @@
  */
 import type { App } from "obsidian";
 import { calloutIdentity, mergeDashSpaceVariants, normalizeCalloutId } from "./calloutId";
-import { rewriteVaultFiles } from "./vaultRewrite";
+import { rewriteVaultFiles, scanVaultFiles } from "./vaultRewrite";
 import type { LineCalloutToken } from "../editor/calloutTokens";
 import {
 	createDocumentLineFilter,
@@ -154,7 +154,7 @@ export function scanStringForUnknownCallouts(
 
 /**
  * Count how many markdown files reference any of the given callout IDs.
- * Uses `cachedRead` for speed.
+ * Uses `cachedRead`; skips stale handles and rejects incomplete scans.
  */
 export async function countCalloutUsages(
 	app: App,
@@ -163,11 +163,10 @@ export async function countCalloutUsages(
 	if (ids.length === 0) return { fileCount: 0, totalCount: 0 };
 
 	const idSet = new Set(ids.map((id) => calloutIdentity(id)));
-	const files = app.vault.getMarkdownFiles();
 	let fileCount = 0;
 	let totalCount = 0;
 
-	for (const file of files) {
+	await scanVaultFiles(app, async (file) => {
 		const content = await app.vault.cachedRead(file);
 		let countInFile = 0;
 		forEachCalloutToken(content, (rawId) => {
@@ -177,7 +176,7 @@ export async function countCalloutUsages(
 			fileCount++;
 			totalCount += countInFile;
 		}
-	}
+	});
 
 	return { fileCount, totalCount };
 }
@@ -185,7 +184,7 @@ export async function countCalloutUsages(
 /**
  * Count how many markdown files reference each of the given callout IDs in a
  * single vault pass. Returns a Map keyed by {@link calloutIdentity}. Zero-usage
- * IDs are still present with `{ fileCount: 0, totalCount: 0 }`.
+ * IDs are still present with `{ fileCount: 0, totalCount: 0 }`. Incomplete scans reject.
  */
 export async function countCalloutUsagesMap(
 	app: App,
@@ -197,8 +196,7 @@ export async function countCalloutUsagesMap(
 	}
 	if (ids.length === 0) return result;
 
-	const files = app.vault.getMarkdownFiles();
-	for (const file of files) {
+	await scanVaultFiles(app, async (file) => {
 		const content = await app.vault.cachedRead(file);
 		const seenInFile = new Set<string>();
 		forEachCalloutToken(content, (rawId) => {
@@ -212,7 +210,7 @@ export async function countCalloutUsagesMap(
 		for (const id of seenInFile) {
 			result.get(id)!.fileCount++;
 		}
-	}
+	});
 	return result;
 }
 

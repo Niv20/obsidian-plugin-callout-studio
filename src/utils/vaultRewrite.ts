@@ -1,5 +1,5 @@
 /**
- * utils/vaultRewrite.ts — how a bulk rewrite of the user's notes is walked.
+ * utils/vaultRewrite.ts — safe traversal for scans and bulk note rewrites.
  *
  * Split from `vaultCalloutScanner.ts`, which owns *what* each rewrite does to a
  * line. This file owns the part that has nothing to do with callouts: crossing
@@ -32,9 +32,9 @@ import { t } from "../i18n";
  *   unwinds on the first rejection, which for a rename means notes before the
  *   failure are rewritten on disk and notes after it are not. The vault ends
  *   up half-renamed with nothing said.
- *   Failures are collected per file and reported once at the end: a
- *   `console.warn` carries the detail, a single `Notice` tells the user some
- *   notes were left alone. See `internals-docs/22-logging-and-diagnostics.md` —
+ *   Failures are collected per file and reported once at the end by the scan
+ *   or rewrite wrapper. A `console.warn` carries each file's detail. See
+ *   `internals-docs/22-logging-and-diagnostics.md` —
  *   a swallowed failure with no user-visible trace is what that doc rules out.
  *   Editor saves additionally request `requireComplete`: after visiting every
  *   file, an incomplete pass rejects so its saved retry plan is not discarded.
@@ -42,8 +42,7 @@ import { t } from "../i18n";
 async function forEachVaultFile(
 	app: App,
 	visit: (file: TFile) => Promise<void>,
-	requireComplete: boolean,
-): Promise<void> {
+): Promise<string[]> {
 	const files = app.vault.getMarkdownFiles();
 	const failed: string[] = [];
 
@@ -55,17 +54,29 @@ async function forEachVaultFile(
 			await visit(file);
 		} catch (error) {
 			console.warn(
-				`[callout-studio] vault rewrite skipped ${file.path}`,
+				`[callout-studio] vault traversal skipped ${file.path}`,
 				error,
 			);
 			failed.push(file.path);
 		}
 	}
 
-	if (failed.length > 0) {
-		if (!requireComplete) new Notice(t("notice.vaultRewritePartial", { count: failed.length }), 10000);
-		if (requireComplete) throw new Error(`Vault rewrite incomplete: ${failed.length} files could not be updated`);
-	}
+	return failed;
+}
+
+/**
+ * Scan every live markdown file, then reject if any could not be read.
+ * Usage counts drive delete confirmations, so a partial zero must never be
+ * returned as proof that a callout is unused. Report once before rejecting.
+ */
+export async function scanVaultFiles(
+	app: App,
+	visit: (file: TFile) => Promise<void>,
+): Promise<void> {
+	const failed = await forEachVaultFile(app, visit);
+	if (failed.length === 0) return;
+	new Notice(t("notice.vaultScanFailed", { count: failed.length }), 10000);
+	throw new Error(`Vault scan incomplete: ${failed.length} files could not be read`);
 }
 
 /**
@@ -108,7 +119,7 @@ export async function rewriteVaultFiles(
 	let files = 0;
 	let total = 0;
 
-	await forEachVaultFile(app, async (file) => {
+	const failed = await forEachVaultFile(app, async (file) => {
 		if (!transform(await app.vault.cachedRead(file))) return;
 
 		let count = 0;
@@ -121,7 +132,12 @@ export async function rewriteVaultFiles(
 			files++;
 			total += count;
 		}
-	}, requireComplete);
+	});
+
+	if (failed.length > 0) {
+		if (!requireComplete) new Notice(t("notice.vaultRewritePartial", { count: failed.length }), 10000);
+		if (requireComplete) throw new Error(`Vault rewrite incomplete: ${failed.length} files could not be updated`);
+	}
 
 	return { files, count: total };
 }
