@@ -891,7 +891,7 @@ describe("no new oversized files", () => {
 		// deferred one moved to manager/reloadQueue.ts, and the discovery host
 		// stopped being handed a `settings` object it would only hold stale.
 		"src/main.ts": 454,
-		"src/icons/renderIcon.ts": 547,
+		"src/icons/renderIcon.ts": 545,
 		// Lowered from 528: `STYLE_DEMO_ID` moved to constants.ts, where the
 		// discovery/import/autocomplete filters that now consult it can reach
 		// it without importing a settings modal.

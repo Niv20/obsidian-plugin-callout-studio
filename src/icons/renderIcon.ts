@@ -23,6 +23,7 @@ import { packFor } from "./registry";
 import { resolveLucideId } from "./lucideId";
 import { followsCalloutColor, userImageFor } from "./packs/userImages";
 import { isolateSvgCopy } from "./isolateSvg";
+import { sanitizeUserSvg } from "./svg";
 
 /**
  * Shapes that carry their own paint inside a vendor SVG. A baked export colour
@@ -519,7 +520,7 @@ export function iconRenderKey(
 }
 
 /**
- * Parse cached SVG markup and import it into `doc`.
+ * Sanitize cached SVG markup and import it into `doc`.
  *
  * Returns null for anything that is not a well-formed `<svg>` root, so a
  * corrupted cache entry falls through to the caller's missing behavior instead
@@ -533,15 +534,12 @@ export function iconRenderKey(
  * into a sibling copy.
  */
 function importSvg(svg: string, doc: Document): Element | null {
-	const parsed = new DOMParser().parseFromString(svg, "image/svg+xml");
-	const root = parsed.documentElement;
-	if (
-		parsed.querySelector("parsererror") ||
-		root.nodeName.toLowerCase() !== "svg"
-	) {
-		return null;
-	}
-	const copy = doc.importNode(root, true);
+	// Cache provenance is not a trust boundary: data.json can be edited or
+	// synced. Apply the full markup/CSS profile to every source at the sink.
+	const safe = sanitizeUserSvg(svg);
+	if (!safe) return null;
+	const parsed = new DOMParser().parseFromString(safe.svg, "image/svg+xml");
+	const copy = doc.importNode(parsed.documentElement, true);
 	isolateSvgCopy(copy);
 	return copy;
 }

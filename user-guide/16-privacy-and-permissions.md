@@ -58,6 +58,10 @@ These pictures live in the plugin's own data file alongside the rest of your set
 - **A recovery copy of plugin settings**, including callout definitions, palettes, commands and stored icon artwork, in the app's IndexedDB storage. It is separate from the vault and is not synced or sent to a server by this plugin. It is updated before a settings write and when valid incoming settings are accepted, so an offline branch can survive a later replacement of `data.json`. It remains on the device until replaced or the app's local data is cleared; disabling or uninstalling the plugin does not itself clear it. **Reset everything** replaces it with the reset state. Storage failure prevents a settings write rather than silently dropping recovery protection.
 
 - **Artwork of icons actually in use**, plus your own uploaded pictures — both inside the plugin's data file, so callouts keep rendering even on a device that synced your settings but never downloaded a source.
+
+Stored SVG artwork is filtered again before it is displayed as part of a note
+or the plugin interface, including copies received through sync. Unsafe markup
+is removed; a damaged drawing uses the usual missing-icon display.
 - **The commands you've built** — a few bytes each. The shortcut itself is Obsidian's own and lives in Obsidian's hotkeys file, so it survives a command being edited.
 - **Downloaded icon library files** — safe to delete, since callouts keep rendering from the copy already saved in the plugin's data file.
 - **The interface's own translation file**, one language only — safe to delete; it falls back to English and re-downloads.

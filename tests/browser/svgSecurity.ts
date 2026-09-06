@@ -1,5 +1,8 @@
 import { sanitizeUserSvg } from "../../src/icons/svg";
 import { isolateSvgCopy } from "../../src/icons/isolateSvg";
+import { renderIconInto } from "../../src/icons/renderIcon";
+import { createIconResolver } from "../../src/icons/resolver";
+import { CalloutRegistry } from "../../src/manager/CalloutRegistry";
 
 function check(value: unknown, message: string): asserts value {
 	if (!value) throw new Error(message);
@@ -51,5 +54,32 @@ export function runSvgSecurityTests(): number {
 	const foreign = clean('<style xmlns="http://www.w3.org/1999/xhtml">body{display:none}</style><rect width="24" height="24"/>');
 	check(!foreign.querySelector("style"), "Foreign namespace style survived");
 	check(document.body.dataset.attacked === undefined, "Event handler executed");
-	return checks + 6;
+	return checks + 6 + cachedSvgChecks();
+}
+
+/** Exercise saved data -> registry -> resolver -> the actual live DOM painter. */
+function cachedSvgChecks(): number {
+	const registry = new CalloutRegistry();
+	registry.load({ iconSvgCache: [{
+		pack: "material", name: "home", variant: "outlined|400",
+		svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" onload="document.documentElement.dataset.csAudit=\'executed\'"><script>document.body.dataset.attacked="yes"</script><foreignObject><div xmlns="http://www.w3.org/1999/xhtml">outside</div></foreignObject><style>@\\69mport "https://example.invalid/cache.css";</style><path onclick="document.body.dataset.attacked=\'yes\'" d="M0 0L24 24"/></svg>',
+	}] });
+	const icon = { type: "material" as const, value: "home", style: "outlined" as const, weight: 400 };
+	// Obsidian's convenience DOM method; parsing and painting remain native.
+	const target = document.createElement("div");
+	target.removeClass = (...names: string[]) => target.classList.remove(...names);
+	document.body.appendChild(target);
+	const resolver = createIconResolver(registry);
+	check(resolver.resolveSvg(icon, "regular")?.includes("onload"), "Cache test did not reach the untrusted entry");
+	const result = renderIconInto(target, icon, resolver, {
+		role: "regular", fill: "currentColor", missing: { kind: "leave" },
+	});
+	check(result === "painted", "Safe cache geometry did not render");
+	check(target.querySelector("path"), "Cache drawing was lost");
+	check(!target.querySelector("[onload], [onclick], script, foreignObject, style"), "Active cached markup reached live DOM");
+	registry.iconSvgCache[0]!.svg = "<svg><broken";
+	check(renderIconInto(target, icon, resolver, {
+		role: "regular", fill: "currentColor", missing: { kind: "leave" },
+	}) === "skipped", "Malformed cache did not use the missing-artwork path");
+	return 5;
 }

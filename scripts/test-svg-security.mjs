@@ -21,6 +21,11 @@ try {
 	await page.addScriptTag({ content: outputFiles[0].text });
 	const count = await page.evaluate(() => svgSecurityTests.runSvgSecurityTests());
 	await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+	await page.evaluate(() => {
+		if (document.body.dataset.attacked || document.documentElement.dataset.csAudit) {
+			throw new Error("Injected SVG event/script executed");
+		}
+	});
 	if (requests.length) throw new Error(`Unexpected network requests: ${requests.join(", ")}`);
 	console.log(`SVG browser security: ${count} checks passed; no network requests.`);
 } finally {

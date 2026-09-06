@@ -238,6 +238,13 @@ the two surfaces that need to distinguish "still downloading" from "gave up"
 surface (block/heading/inline rendering, autocomplete, PDF export) just
 shows a placeholder either way.
 
+Resolution supplies artwork, not a trust guarantee. Before any cached or
+pack-provided SVG enters a live document, `renderIcon.importSvg` applies the
+same full element/attribute/CSS allow-list used for user images, then isolates
+the sanitized copy. Edited or synchronized cache entries therefore cannot
+bypass sanitization. Rejected markup follows the caller's existing missing-icon
+behavior; sanitization does not rewrite the stored cache during a paint.
+
 ## `renderIcon.ts` — the only "icon → DOM" painter
 
 [`src/icons/renderIcon.ts`](../src/icons/renderIcon.ts) is explicitly the
