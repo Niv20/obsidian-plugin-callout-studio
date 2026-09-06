@@ -236,6 +236,7 @@ export const fa: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} یادداشت به‌روزرسانی نشد و بدون تغییر باقی ماند. برای جزئیات به کنسول توسعه‌دهنده مراجعه کنید.",
+	"notice.calloutDeleteIncomplete": "برخی یادداشت‌ها قابل تبدیل نبودند. نوع callout حفظ شد. تبدیل‌های کامل‌شده ذخیره شده‌اند؛ مشکل فایل را برطرف کنید و سپس برای تکمیل، دوباره این کنش را اجرا کنید.",
 	"notice.settingsUnreadable":
 		"Callout Studio نتوانست فایل تنظیمات خود را بخواند، بنابراین انواع callout شما در این جلسه گم شده‌اند. چیزی نوشته نشده و فایل روی دیسک بدون تغییر است — Obsidian را دوباره بارگذاری کنید تا دوباره امتحان کنید.",
 	"notice.settingsMissing":
@@ -619,6 +620,8 @@ export const fa: Record<string, string> = {
 	"contextMenu.setFoldOpen": "تنظیم callout به‌صورت باز (+)",
 	"contextMenu.setFoldNone": "تنظیم callout به‌صورت غیرقابل جمع‌شدن",
 	"contextMenu.cutSection": "برش بخش عنوان",
+	"notice.clipboardWriteFailed": "کپی در کلیپ‌بورد ممکن نشد. یادداشت بدون تغییر باقی ماند.",
+	"notice.sectionChangedAfterCopy": "بخش کپی شد، اما یادداشت پیش از آنکه بتوان آن را برش داد تغییر کرد. چیزی حذف نشد.",
 	"contextMenu.copySection": "کپی بخش عنوان",
 	"contextMenu.deleteSection": "حذف بخش عنوان",
 	"heading.toggleFold": "تغییر وضعیت جمع‌شدن",
@@ -702,6 +705,8 @@ export const fa: Record<string, string> = {
 	"quickInsert.editAria": "ویرایش {{name}}",
 	"quickInsert.insertAria": "درج {{name}} به‌عنوان callout بلوکی",
 	"quickInsert.noResults": "هیچ callout‌ای یافت نشد",
+	"quickInsert.targetMoved": "یادداشتی که درج سریع را از آن باز کردید تغییر کرده یا بسته شده است. درج سریع را دوباره در یادداشتی که می‌خواهید ویرایش کنید باز کنید.",
+	"quickInsert.targetMovedHint": "یادداشت اصلی دیگر برای این درج در دسترس نیست.",
 	"quickInsert.noUserCallouts": "هنوز هیچ callout‌ای نساخته‌اید.",
 	"quickInsert.noEditorHint": "هیچ یادداشتی در حالت ویرایش باز نیست، بنابراین چیزی قابل درج نیست.",
 	"quickInsert.noEditor": "برای درج callout یک یادداشت را در حالت ویرایش باز کنید.",

@@ -228,6 +228,7 @@ export const nb: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} notat kunne ikke oppdateres og ble stående uendret. Se utviklerkonsollen for detaljer.",
+	"notice.calloutDeleteIncomplete": "Noen notater kunne ikke konverteres. Callout-typen ble beholdt. Fullførte konverteringer er lagret; løs filproblemet, og kjør handlingen på nytt for å fullføre.",
 	"notice.settingsUnreadable":
 		"Callout Studio klarte ikke å lese innstillingsfilen sin, så callout-typene dine mangler i denne økten. Ingenting er skrevet, og filen på disken er uendret — last inn Obsidian på nytt for å prøve igjen.",
 	"notice.settingsMissing":
@@ -612,6 +613,8 @@ export const nb: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Sett callout til åpen (+)",
 	"contextMenu.setFoldNone": "Gjør callout ikke-foldbar",
 	"contextMenu.cutSection": "Klipp ut overskriftsseksjon",
+	"notice.clipboardWriteFailed": "Kunne ikke kopiere til utklippstavlen. Notatet ble ikke endret.",
+	"notice.sectionChangedAfterCopy": "Seksjonen ble kopiert, men notatet ble endret før den kunne klippes ut. Ingenting ble fjernet.",
 	"contextMenu.copySection": "Kopier overskriftsseksjon",
 	"contextMenu.deleteSection": "Slett overskriftsseksjon",
 	"heading.toggleFold": "Veksle folding",
@@ -687,6 +690,8 @@ export const nb: Record<string, string> = {
 	"quickInsert.editAria": "Rediger {{name}}",
 	"quickInsert.insertAria": "Sett inn {{name}} som blokk-callout",
 	"quickInsert.noResults": "Ingen callouter funnet",
+	"quickInsert.targetMoved": "Notatet du åpnet Hurtiginnsetting fra, er endret eller lukket. Åpne Hurtiginnsetting på nytt i notatet du vil redigere.",
+	"quickInsert.targetMovedHint": "Det opprinnelige notatet er ikke lenger tilgjengelig for denne innsettingen.",
 	"quickInsert.noUserCallouts": "Du har ikke opprettet noen callouter ennå.",
 	"quickInsert.noEditorHint": "Ingen notat er åpent i redigeringsmodus, så ingenting kan settes inn.",
 	"quickInsert.noEditor": "Åpne et notat i redigeringsmodus for å sette inn en callout.",

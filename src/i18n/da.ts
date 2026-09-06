@@ -226,6 +226,7 @@ export const da: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} note(r) kunne ikke opdateres og blev efterladt uændret. Se udviklerkonsollen for detaljer.",
+	"notice.calloutDeleteIncomplete": "Nogle noter kunne ikke konverteres. Callout-typen blev bevaret. Gennemførte konverteringer er gemt; løs filproblemet, og kør handlingen igen for at afslutte.",
 	"notice.settingsUnreadable":
 		"Callout Studio kunne ikke læse sin indstillingsfil, så dine callout-typer mangler i denne session. Der er ikke skrevet noget, og filen på disken er uændret — genindlæs Obsidian for at prøve igen.",
 	"notice.settingsMissing":
@@ -607,6 +608,8 @@ export const da: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Sæt callout til åben (+)",
 	"contextMenu.setFoldNone": "Gør callout ikke-foldbar",
 	"contextMenu.cutSection": "Klip overskriftsektion",
+	"notice.clipboardWriteFailed": "Kunne ikke kopiere til udklipsholderen. Noten blev ikke ændret.",
+	"notice.sectionChangedAfterCopy": "Sektionen blev kopieret, men noten blev ændret, før den kunne klippes. Intet blev fjernet.",
 	"contextMenu.copySection": "Kopiér overskriftsektion",
 	"contextMenu.deleteSection": "Slet overskriftsektion",
 	"heading.toggleFold": "Skift foldning",
@@ -682,6 +685,8 @@ export const da: Record<string, string> = {
 	"quickInsert.editAria": "Rediger {{name}}",
 	"quickInsert.insertAria": "Indsæt {{name}} som blok-callout",
 	"quickInsert.noResults": "Ingen callouts fundet",
+	"quickInsert.targetMoved": "Den note, du åbnede Hurtig indsættelse fra, er ændret eller lukket. Åbn Hurtig indsættelse igen i den note, du vil redigere.",
+	"quickInsert.targetMovedHint": "Den oprindelige note er ikke længere tilgængelig for denne indsættelse.",
 	"quickInsert.noUserCallouts": "Du har endnu ikke oprettet nogen callouts.",
 	"quickInsert.noEditorHint": "Ingen note er åben i redigeringstilstand, så intet kan indsættes.",
 	"quickInsert.noEditor": "Åbn en note i redigeringstilstand for at indsætte en callout.",

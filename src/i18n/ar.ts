@@ -237,6 +237,7 @@ export const ar: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"تعذّر تحديث {{count}} ملاحظة (ملاحظات) وبقيت دون تغيير. راجع وحدة تحكم المطور للتفاصيل.",
+	"notice.calloutDeleteIncomplete": "تعذّر تحويل بعض الملاحظات. تم الاحتفاظ بنوع الـ callout. التحويلات المكتملة محفوظة؛ عالج مشكلة الملف ثم شغّل الإجراء مرة أخرى لإتمامه.",
 	"notice.settingsUnreadable":
 		"تعذّر على Callout Studio قراءة ملف الإعدادات، لذا أنواع الـ callout الخاصة بك مفقودة في هذه الجلسة. لم يُكتب شيء والملف على القرص لم يتغيّر — أعد تحميل Obsidian للمحاولة مجددًا.",
 	"notice.settingsMissing":
@@ -616,6 +617,8 @@ export const ar: Record<string, string> = {
 	"contextMenu.setFoldOpen": "تعيين الـ callout كمفتوح (+)",
 	"contextMenu.setFoldNone": "جعل الـ callout غير قابل للطي",
 	"contextMenu.cutSection": "قص قسم العنوان",
+	"notice.clipboardWriteFailed": "تعذّر النسخ إلى الحافظة. تُركت الملاحظة دون تغيير.",
+	"notice.sectionChangedAfterCopy": "تم نسخ القسم، لكن الملاحظة تغيّرت قبل أن يتسنّى قصّه. لم يُحذف أي شيء.",
 	"contextMenu.copySection": "نسخ قسم العنوان",
 	"contextMenu.deleteSection": "حذف قسم العنوان",
 	"heading.toggleFold": "تبديل الطي",
@@ -696,6 +699,8 @@ export const ar: Record<string, string> = {
 	"quickInsert.editAria": "تعديل {{name}}",
 	"quickInsert.insertAria": "إدراج {{name}} كـ callout كتلة",
 	"quickInsert.noResults": "لم يتم العثور على أي callout",
+	"quickInsert.targetMoved": "الملاحظة التي فتحت منها الإدراج السريع تغيّرت أو أُغلقت. أعد فتح الإدراج السريع في الملاحظة التي تريد تحريرها.",
+	"quickInsert.targetMovedHint": "الملاحظة الأصلية لم تعد متاحة لهذا الإدراج.",
 	"quickInsert.noUserCallouts": "لم تُنشئ أي callout خاص بك بعد.",
 	"quickInsert.noEditorHint": "لا توجد ملاحظة مفتوحة في وضع التحرير، لذا لا يمكن إدراج شيء.",
 	"quickInsert.noEditor": "افتح ملاحظة في وضع التحرير لإدراج callout.",

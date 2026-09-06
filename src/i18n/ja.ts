@@ -244,6 +244,7 @@ export const ja: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} 件のノートを更新できなかったため、変更されずに残されました。詳細は開発者コンソールを確認してください。",
+	"notice.calloutDeleteIncomplete": "一部のノートを変換できませんでした。callout タイプは保持されました。完了した変換は保存されています。ファイルの問題を解決してから、操作をもう一度実行して完了してください。",
 	"notice.settingsUnreadable":
 		"Callout Studio は設定ファイルを読み込めなかったため、このセッションではコールアウトの種類が表示されません。何も書き込まれておらず、ディスク上のファイルも変更されていません — もう一度試すには Obsidian を再読み込みしてください。",
 	"notice.settingsMissing":
@@ -630,6 +631,8 @@ export const ja: Record<string, string> = {
 	"contextMenu.setFoldOpen": "calloutを開いた状態に設定 (+)",
 	"contextMenu.setFoldNone": "calloutを折りたたみ不可にする",
 	"contextMenu.cutSection": "見出しセクションを切り取り",
+	"notice.clipboardWriteFailed": "クリップボードにコピーできませんでした。ノートは変更されていません。",
+	"notice.sectionChangedAfterCopy": "セクションはコピーされましたが、切り取る前にノートが変更されました。何も削除されていません。",
 	"contextMenu.copySection": "見出しセクションをコピー",
 	"contextMenu.deleteSection": "見出しセクションを削除",
 
@@ -712,6 +715,8 @@ export const ja: Record<string, string> = {
 	"quickInsert.editAria": "{{name}}を編集",
 	"quickInsert.insertAria": "{{name}}をブロックcalloutとして挿入",
 	"quickInsert.noResults": "calloutが見つかりません",
+	"quickInsert.targetMoved": "クイック挿入を開いたノートが変更されたか閉じられました。編集したいノートでクイック挿入を開き直してください。",
+	"quickInsert.targetMovedHint": "この挿入には元のノートが利用できなくなりました。",
 	"quickInsert.noUserCallouts": "まだcalloutを作成していません。",
 	"quickInsert.noEditorHint": "編集モードで開いているノートがないため、何も挿入できません。",
 	"quickInsert.noEditor": "calloutを挿入するには、ノートを編集モードで開いてください。",

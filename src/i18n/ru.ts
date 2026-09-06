@@ -241,6 +241,7 @@ export const ru: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} заметку(и) не удалось обновить, они остались без изменений. Подробности см. в консоли разработчика.",
+	"notice.calloutDeleteIncomplete": "Некоторые заметки не удалось преобразовать. Тип callout сохранён. Завершённые преобразования сохранены; устраните проблему с файлом и запустите действие снова, чтобы завершить его.",
 	"notice.settingsUnreadable":
 		"Callout Studio не удалось прочитать файл настроек, поэтому ваши типы callout отсутствуют в этой сессии. Ничего не было записано, файл на диске не изменён — перезагрузите Obsidian, чтобы попробовать снова.",
 	"notice.settingsMissing":
@@ -626,6 +627,8 @@ export const ru: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Сделать callout открытым (+)",
 	"contextMenu.setFoldNone": "Сделать callout нескладываемым",
 	"contextMenu.cutSection": "Вырезать раздел заголовка",
+	"notice.clipboardWriteFailed": "Не удалось скопировать в буфер обмена. Заметка осталась без изменений.",
+	"notice.sectionChangedAfterCopy": "Раздел скопирован, но заметка изменилась до того, как её можно было вырезать. Ничего не удалено.",
 	"contextMenu.copySection": "Копировать раздел заголовка",
 	"contextMenu.deleteSection": "Удалить раздел заголовка",
 	"heading.toggleFold": "Переключить складывание",
@@ -704,6 +707,8 @@ export const ru: Record<string, string> = {
 	"quickInsert.editAria": "Редактировать {{name}}",
 	"quickInsert.insertAria": "Вставить {{name}} как блочный callout",
 	"quickInsert.noResults": "Callout не найдены",
+	"quickInsert.targetMoved": "Заметка, из которой вы открыли быструю вставку, изменилась или закрыта. Откройте быструю вставку заново в заметке, которую хотите редактировать.",
+	"quickInsert.targetMovedHint": "Исходная заметка больше недоступна для этой вставки.",
 	"quickInsert.noUserCallouts": "Вы ещё не создали ни одного callout.",
 	"quickInsert.noEditorHint": "Нет заметки, открытой в режиме редактирования, поэтому вставить ничего нельзя.",
 	"quickInsert.noEditor": "Откройте заметку в режиме редактирования, чтобы вставить callout.",

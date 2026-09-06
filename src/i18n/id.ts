@@ -240,6 +240,7 @@ export const id: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} catatan tidak dapat diperbarui dan dibiarkan tidak berubah. Lihat konsol pengembang untuk detailnya.",
+	"notice.calloutDeleteIncomplete": "Beberapa catatan tidak dapat dikonversi. Tipe callout dipertahankan. Konversi yang selesai telah disimpan; atasi masalah berkas, lalu jalankan lagi tindakan tersebut untuk menyelesaikannya.",
 	"notice.settingsUnreadable":
 		"Callout Studio tidak dapat membaca file pengaturannya, sehingga jenis callout Anda hilang dari sesi ini. Tidak ada yang ditulis dan file di disk tidak berubah — muat ulang Obsidian untuk mencoba lagi.",
 	"notice.settingsMissing":
@@ -628,6 +629,8 @@ export const id: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Atur callout menjadi terbuka (+)",
 	"contextMenu.setFoldNone": "Jadikan callout tidak dapat dilipat",
 	"contextMenu.cutSection": "Potong bagian heading",
+	"notice.clipboardWriteFailed": "Tidak dapat menyalin ke papan klip. Catatan dibiarkan tidak berubah.",
+	"notice.sectionChangedAfterCopy": "Bagian tersebut disalin, tetapi catatan berubah sebelum dapat dipotong. Tidak ada yang dihapus.",
 	"contextMenu.copySection": "Salin bagian heading",
 	"contextMenu.deleteSection": "Hapus bagian heading",
 
@@ -710,6 +713,8 @@ export const id: Record<string, string> = {
 	"quickInsert.editAria": "Edit {{name}}",
 	"quickInsert.insertAria": "Sisipkan {{name}} sebagai callout blok",
 	"quickInsert.noResults": "Tidak ada callout yang ditemukan",
+	"quickInsert.targetMoved": "Catatan tempat Anda membuka Sisipan cepat telah berubah atau ditutup. Buka kembali Sisipan cepat di catatan yang ingin Anda edit.",
+	"quickInsert.targetMovedHint": "Catatan asli tidak lagi tersedia untuk penyisipan ini.",
 	"quickInsert.noUserCallouts": "Anda belum membuat callout apa pun.",
 	"quickInsert.noEditorHint": "Tidak ada catatan yang terbuka dalam mode edit, jadi tidak ada yang dapat disisipkan.",
 	"quickInsert.noEditor": "Buka catatan dalam mode edit untuk menyisipkan callout.",

@@ -238,6 +238,7 @@ export const cs: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} poznámku(y) se nepodařilo aktualizovat a zůstaly beze změny. Podrobnosti najdete v konzoli pro vývojáře.",
+	"notice.calloutDeleteIncomplete": "Některé poznámky se nepodařilo převést. Typ calloutu byl zachován. Dokončené převody jsou uloženy; vyřešte problém se souborem a poté akci spusťte znovu, abyste ji dokončili.",
 	"notice.settingsUnreadable":
 		"Callout Studio nemohlo přečíst svůj soubor s nastavením, takže vaše typy calloutů v této relaci chybí. Nic nebylo zapsáno a soubor na disku je nezměněný — znovu načtěte Obsidian a zkuste to znovu.",
 	"notice.settingsMissing":
@@ -623,6 +624,8 @@ export const cs: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Nastavit callout jako otevřený (+)",
 	"contextMenu.setFoldNone": "Nastavit callout jako nesbalitelný",
 	"contextMenu.cutSection": "Vyjmout sekci nadpisu",
+	"notice.clipboardWriteFailed": "Nepodařilo se zkopírovat do schránky. Poznámka zůstala beze změny.",
+	"notice.sectionChangedAfterCopy": "Sekce byla zkopírována, ale poznámka se změnila dříve, než ji bylo možné vyjmout. Nic nebylo odebráno.",
 	"contextMenu.copySection": "Kopírovat sekci nadpisu",
 	"contextMenu.deleteSection": "Smazat sekci nadpisu",
 	"heading.toggleFold": "Přepnout sbalení",
@@ -703,6 +706,8 @@ export const cs: Record<string, string> = {
 	"quickInsert.editAria": "Upravit {{name}}",
 	"quickInsert.insertAria": "Vložit {{name}} jako blokový callout",
 	"quickInsert.noResults": "Nebyly nalezeny žádné callouty",
+	"quickInsert.targetMoved": "Poznámka, ze které jste otevřeli Rychlé vložení, se změnila nebo byla zavřena. Otevřete Rychlé vložení znovu v poznámce, kterou chcete upravit.",
+	"quickInsert.targetMovedHint": "Původní poznámka již není pro toto vložení k dispozici.",
 	"quickInsert.noUserCallouts": "Zatím jste nevytvořili žádný callout.",
 	"quickInsert.noEditorHint": "Není otevřena žádná poznámka v režimu úprav, takže nelze nic vložit.",
 	"quickInsert.noEditor": "Otevřete poznámku v režimu úprav pro vložení callout.",

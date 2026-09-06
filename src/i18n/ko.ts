@@ -242,6 +242,7 @@ export const ko: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}}개의 노트를 업데이트할 수 없어 변경되지 않은 상태로 남았습니다. 자세한 내용은 개발자 콘솔을 확인하세요.",
+	"notice.calloutDeleteIncomplete": "일부 노트를 변환하지 못했습니다. callout 유형은 유지되었습니다. 완료된 변환은 저장되었습니다. 파일 문제를 해결한 다음 작업을 다시 실행하여 완료하세요.",
 	"notice.settingsUnreadable":
 		"Callout Studio가 설정 파일을 읽을 수 없어 이 세션에서 콜아웃 유형이 누락되었습니다. 아무것도 기록되지 않았으며 디스크의 파일은 변경되지 않았습니다 — 다시 시도하려면 Obsidian을 다시 로드하세요.",
 	"notice.settingsMissing":
@@ -627,6 +628,8 @@ export const ko: Record<string, string> = {
 	"contextMenu.setFoldOpen": "callout 열림(+)으로 설정",
 	"contextMenu.setFoldNone": "callout을 접을 수 없게 설정",
 	"contextMenu.cutSection": "제목 섹션 잘라내기",
+	"notice.clipboardWriteFailed": "클립보드에 복사하지 못했습니다. 노트는 변경되지 않았습니다.",
+	"notice.sectionChangedAfterCopy": "섹션을 복사했지만 잘라내기 전에 노트가 변경되었습니다. 아무것도 제거되지 않았습니다.",
 	"contextMenu.copySection": "제목 섹션 복사",
 	"contextMenu.deleteSection": "제목 섹션 삭제",
 
@@ -709,6 +712,8 @@ export const ko: Record<string, string> = {
 	"quickInsert.editAria": "{{name}} 편집",
 	"quickInsert.insertAria": "{{name}}을(를) 블록 callout으로 삽입",
 	"quickInsert.noResults": "callout을 찾을 수 없습니다",
+	"quickInsert.targetMoved": "빠른 삽입을 연 노트가 변경되었거나 닫혔습니다. 편집하려는 노트에서 빠른 삽입을 다시 여세요.",
+	"quickInsert.targetMovedHint": "이 삽입에 사용할 원본 노트를 더 이상 사용할 수 없습니다.",
 	"quickInsert.noUserCallouts": "아직 만든 callout이 없습니다.",
 	"quickInsert.noEditorHint": "편집 모드로 열린 노트가 없어 아무것도 삽입할 수 없습니다.",
 	"quickInsert.noEditor": "callout을 삽입하려면 노트를 편집 모드로 여세요.",

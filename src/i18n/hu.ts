@@ -241,6 +241,7 @@ export const hu: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} jegyzetet nem sikerült frissíteni, ezek változatlanok maradtak. A részletekért lásd a fejlesztői konzolt.",
+	"notice.calloutDeleteIncomplete": "Néhány jegyzetet nem sikerült átalakítani. A callout típusa megmaradt. A befejezett átalakítások mentve vannak; oldja meg a fájlproblémát, majd futtassa újra a műveletet a befejezéshez.",
 	"notice.settingsUnreadable":
 		"A Callout Studio nem tudta beolvasni a beállításfájlját, ezért a callout típusaid hiányoznak ebből a munkamenetből. Semmi nem íródott, és a lemezen lévő fájl változatlan — töltsd újra az Obsidiant az újbóli próbához.",
 	"notice.settingsMissing":
@@ -631,6 +632,8 @@ export const hu: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Callout beállítása nyitottra (+)",
 	"contextMenu.setFoldNone": "Callout összecsukhatatlanná tétele",
 	"contextMenu.cutSection": "Címsor szakasz kivágása",
+	"notice.clipboardWriteFailed": "Nem sikerült a vágólapra másolni. A jegyzet változatlan maradt.",
+	"notice.sectionChangedAfterCopy": "A szakasz átmásolva, de a jegyzet módosult, mielőtt ki lehetett volna vágni. Semmi sem lett eltávolítva.",
 	"contextMenu.copySection": "Címsor szakasz másolása",
 	"contextMenu.deleteSection": "Címsor szakasz törlése",
 	"heading.toggleFold": "Összecsukás váltása",
@@ -711,6 +714,8 @@ export const hu: Record<string, string> = {
 	"quickInsert.editAria": "{{name}} szerkesztése",
 	"quickInsert.insertAria": "{{name}} beszúrása blokk callout-ként",
 	"quickInsert.noResults": "Nem található callout",
+	"quickInsert.targetMoved": "A jegyzet, amelyből a Gyors beszúrást megnyitotta, megváltozott vagy bezárult. Nyissa meg újra a Gyors beszúrást abban a jegyzetben, amelyet szerkeszteni szeretne.",
+	"quickInsert.targetMovedHint": "Az eredeti jegyzet már nem érhető el ehhez a beszúráshoz.",
 	"quickInsert.noUserCallouts": "Még nem hoztál létre callout-ot.",
 	"quickInsert.noEditorHint": "Nincs szerkesztési módban megnyitott jegyzet, ezért semmit sem lehet beszúrni.",
 	"quickInsert.noEditor": "Nyiss meg egy jegyzetet szerkesztési módban a callout beszúrásához.",

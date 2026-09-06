@@ -236,6 +236,7 @@ export const th: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"ไม่สามารถอัปเดตโน้ตได้ {{count}} รายการ และถูกปล่อยไว้โดยไม่มีการเปลี่ยนแปลง ดูรายละเอียดในคอนโซลสำหรับนักพัฒนา",
+	"notice.calloutDeleteIncomplete": "ไม่สามารถแปลงบางโน้ตได้ ระบบเก็บประเภท callout ไว้ การแปลงที่เสร็จแล้วถูกบันทึกไว้ แก้ไขปัญหาไฟล์แล้วเรียกใช้การกระทำนี้อีกครั้งเพื่อให้เสร็จสมบูรณ์",
 	"notice.settingsUnreadable":
 		"Callout Studio ไม่สามารถอ่านไฟล์การตั้งค่าได้ ดังนั้นประเภท callout ของคุณจึงหายไปในเซสชันนี้ ไม่มีการเขียนสิ่งใด และไฟล์บนดิสก์ไม่มีการเปลี่ยนแปลง — โหลด Obsidian ใหม่เพื่อลองอีกครั้ง",
 	"notice.settingsMissing":
@@ -620,6 +621,8 @@ export const th: Record<string, string> = {
 	"contextMenu.setFoldOpen": "ตั้งค่า callout เป็นเปิด (+)",
 	"contextMenu.setFoldNone": "ทำให้ callout พับไม่ได้",
 	"contextMenu.cutSection": "ตัดส่วนหัวข้อ",
+	"notice.clipboardWriteFailed": "ไม่สามารถคัดลอกไปยังคลิปบอร์ดได้ โน้ตไม่มีการเปลี่ยนแปลง",
+	"notice.sectionChangedAfterCopy": "คัดลอกส่วนนี้แล้ว แต่โน้ตมีการเปลี่ยนแปลงก่อนที่จะตัดได้ ไม่มีการลบสิ่งใด",
 	"contextMenu.copySection": "คัดลอกส่วนหัวข้อ",
 	"contextMenu.deleteSection": "ลบส่วนหัวข้อ",
 
@@ -702,6 +705,8 @@ export const th: Record<string, string> = {
 	"quickInsert.editAria": "แก้ไข {{name}}",
 	"quickInsert.insertAria": "แทรก {{name}} เป็น callout แบบบล็อก",
 	"quickInsert.noResults": "ไม่พบ callout",
+	"quickInsert.targetMoved": "โน้ตที่คุณเปิดแทรกอย่างรวดเร็วมามีการเปลี่ยนแปลงหรือถูกปิดไปแล้ว เปิดแทรกอย่างรวดเร็วอีกครั้งในโน้ตที่คุณต้องการแก้ไข",
+	"quickInsert.targetMovedHint": "โน้ตต้นฉบับไม่พร้อมใช้งานสำหรับการแทรกนี้อีกต่อไป",
 	"quickInsert.noUserCallouts": "คุณยังไม่ได้สร้าง callout ใดๆ",
 	"quickInsert.noEditorHint": "ไม่มีบันทึกที่เปิดอยู่ในโหมดแก้ไข จึงไม่สามารถแทรกอะไรได้",
 	"quickInsert.noEditor": "เปิดบันทึกในโหมดแก้ไขเพื่อแทรก callout",

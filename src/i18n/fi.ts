@@ -233,6 +233,7 @@ export const fi: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} muistiinpanoa ei voitu päivittää ja ne jätettiin ennalleen. Katso lisätietoja kehittäjäkonsolista.",
+	"notice.calloutDeleteIncomplete": "Joitakin muistiinpanoja ei voitu muuntaa. Callout-tyyppi säilytettiin. Valmiit muunnokset on tallennettu; korjaa tiedosto-ongelma ja suorita toiminto uudelleen, niin se valmistuu.",
 	"notice.settingsUnreadable":
 		"Callout Studio ei pystynyt lukemaan asetustiedostoaan, joten callout-tyyppisi puuttuvat tästä istunnosta. Mitään ei kirjoitettu, ja levyllä oleva tiedosto on muuttumaton — lataa Obsidian uudelleen yrittääksesi uudelleen.",
 	"notice.settingsMissing":
@@ -619,6 +620,8 @@ export const fi: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Aseta callout avoimeksi (+)",
 	"contextMenu.setFoldNone": "Tee calloutista ei-taitettava",
 	"contextMenu.cutSection": "Leikkaa otsikko-osio",
+	"notice.clipboardWriteFailed": "Leikepöydälle kopiointi ei onnistunut. Muistiinpanoa ei muutettu.",
+	"notice.sectionChangedAfterCopy": "Osio kopioitiin, mutta muistiinpano muuttui ennen kuin se ehdittiin leikata. Mitään ei poistettu.",
 	"contextMenu.copySection": "Kopioi otsikko-osio",
 	"contextMenu.deleteSection": "Poista otsikko-osio",
 	"heading.toggleFold": "Vaihda taitto",
@@ -694,6 +697,8 @@ export const fi: Record<string, string> = {
 	"quickInsert.editAria": "Muokkaa {{name}}",
 	"quickInsert.insertAria": "Lisää {{name}} lohko-callout'ina",
 	"quickInsert.noResults": "Ei löytyneitä callouteja",
+	"quickInsert.targetMoved": "Muistiinpano, josta avasit pikalisäyksen, on muuttunut tai suljettu. Avaa pikalisäys uudelleen muistiinpanossa, jota haluat muokata.",
+	"quickInsert.targetMovedHint": "Alkuperäinen muistiinpano ei ole enää käytettävissä tähän lisäykseen.",
 	"quickInsert.noUserCallouts": "Et ole vielä luonut yhtään calloutia.",
 	"quickInsert.noEditorHint": "Yhtään muistiinpanoa ei ole avoinna muokkaustilassa, joten mitään ei voida lisätä.",
 	"quickInsert.noEditor": "Avaa muistiinpano muokkaustilassa lisätäksesi calloutin.",

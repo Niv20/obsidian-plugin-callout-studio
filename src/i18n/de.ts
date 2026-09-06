@@ -241,6 +241,7 @@ export const de: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} Notiz(en) konnten nicht aktualisiert werden und blieben unverändert. Details in der Entwicklerkonsole.",
+	"notice.calloutDeleteIncomplete": "Einige Notizen konnten nicht konvertiert werden. Der Callout-Typ wurde beibehalten. Abgeschlossene Konvertierungen sind gespeichert; behebe das Dateiproblem und führe die Aktion dann erneut aus, um sie abzuschließen.",
 	"notice.settingsUnreadable":
 		"Callout Studio konnte seine Einstellungsdatei nicht lesen, daher fehlen deine Callout-Typen in dieser Sitzung. Es wurde nichts geschrieben, und die Datei auf der Festplatte ist unverändert — lade Obsidian neu, um es erneut zu versuchen.",
 	"notice.settingsMissing":
@@ -633,6 +634,8 @@ export const de: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Callout als geöffnet festlegen (+)",
 	"contextMenu.setFoldNone": "Callout nicht faltbar machen",
 	"contextMenu.cutSection": "Überschriftsabschnitt ausschneiden",
+	"notice.clipboardWriteFailed": "Kopieren in die Zwischenablage nicht möglich. Die Notiz wurde nicht verändert.",
+	"notice.sectionChangedAfterCopy": "Der Abschnitt wurde kopiert, aber die Notiz hat sich geändert, bevor er ausgeschnitten werden konnte. Es wurde nichts entfernt.",
 	"contextMenu.copySection": "Überschriftsabschnitt kopieren",
 	"contextMenu.deleteSection": "Überschriftsabschnitt löschen",
 	"heading.toggleFold": "Faltung umschalten",
@@ -713,6 +716,8 @@ export const de: Record<string, string> = {
 	"quickInsert.editAria": "{{name}} bearbeiten",
 	"quickInsert.insertAria": "{{name}} als Block-Callout einfügen",
 	"quickInsert.noResults": "Keine Callouts gefunden",
+	"quickInsert.targetMoved": "Die Notiz, aus der du das Schnelleinfügen geöffnet hast, wurde geändert oder geschlossen. Öffne das Schnelleinfügen erneut in der Notiz, die du bearbeiten möchtest.",
+	"quickInsert.targetMovedHint": "Die ursprüngliche Notiz ist für diese Einfügung nicht mehr verfügbar.",
 	"quickInsert.noUserCallouts": "Du hast noch keine Callouts erstellt.",
 	"quickInsert.noEditorHint": "Keine Notiz ist im Bearbeitungsmodus geöffnet, daher kann nichts eingefügt werden.",
 	"quickInsert.noEditor": "Öffne eine Notiz im Bearbeitungsmodus, um einen Callout einzufügen.",

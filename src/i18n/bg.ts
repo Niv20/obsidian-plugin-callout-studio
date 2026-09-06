@@ -226,6 +226,7 @@ export const bg: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} бележка(и) не можаха да бъдат актуализирани и останаха непроменени. Вижте конзолата за разработчици за подробности.",
+	"notice.calloutDeleteIncomplete": "Някои бележки не можаха да бъдат преобразувани. Типът callout беше запазен. Завършените преобразувания са запазени; отстранете проблема с файла и стартирайте действието отново, за да го завършите.",
 	"notice.settingsUnreadable":
 		"Callout Studio не можа да прочете файла си с настройки, затова типовете ви callout липсват в тази сесия. Нищо не е записано и файлът на диска е непроменен — презаредете Obsidian, за да опитате отново.",
 	"notice.settingsMissing":
@@ -611,6 +612,8 @@ export const bg: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Задаване на callout като отворен (+)",
 	"contextMenu.setFoldNone": "Задаване на callout като несгъваем",
 	"contextMenu.cutSection": "Изрязване на раздел на заглавие",
+	"notice.clipboardWriteFailed": "Копирането в клипборда не бе успешно. Бележката остана без промяна.",
+	"notice.sectionChangedAfterCopy": "Разделът беше копиран, но бележката се промени, преди да може да бъде изрязана. Нищо не беше премахнато.",
 	"contextMenu.copySection": "Копиране на раздел на заглавие",
 	"contextMenu.deleteSection": "Изтриване на раздел на заглавие",
 	"heading.toggleFold": "Превключване на сгъването",
@@ -686,6 +689,8 @@ export const bg: Record<string, string> = {
 	"quickInsert.editAria": "Редактиране на {{name}}",
 	"quickInsert.insertAria": "Вмъкване на {{name}} като блоков callout",
 	"quickInsert.noResults": "Не бяха намерени callout",
+	"quickInsert.targetMoved": "Бележката, от която отворихте Бързото вмъкване, е променена или затворена. Отворете отново Бързото вмъкване в бележката, която искате да редактирате.",
+	"quickInsert.targetMovedHint": "Първоначалната бележка вече не е налична за това вмъкване.",
 	"quickInsert.noUserCallouts": "Все още не сте създали никакви callout.",
 	"quickInsert.noEditorHint": "Няма отворена бележка в режим на редактиране, затова нищо не може да бъде вмъкнато.",
 	"quickInsert.noEditor": "Отворете бележка в режим на редактиране, за да вмъкнете callout.",

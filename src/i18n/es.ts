@@ -245,6 +245,7 @@ export const es: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} nota(s) no se pudieron actualizar y quedaron sin cambios. Consulta la consola de desarrollador para más detalles.",
+	"notice.calloutDeleteIncomplete": "Algunas notas no se pudieron convertir. Se conservó el tipo de callout. Las conversiones completadas se han guardado; resuelve el problema del archivo y vuelve a ejecutar la acción para terminar.",
 	"notice.settingsUnreadable":
 		"Callout Studio no pudo leer su archivo de configuración, por lo que tus tipos de callout faltan en esta sesión. No se ha escrito nada y el archivo en disco no ha cambiado — recarga Obsidian para intentarlo de nuevo.",
 	"notice.settingsMissing":
@@ -632,6 +633,8 @@ export const es: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Establecer el callout como abierto (+)",
 	"contextMenu.setFoldNone": "Hacer que el callout no sea plegable",
 	"contextMenu.cutSection": "Cortar sección de encabezado",
+	"notice.clipboardWriteFailed": "No se pudo copiar al portapapeles. La nota quedó sin cambios.",
+	"notice.sectionChangedAfterCopy": "La sección se copió, pero la nota cambió antes de poder cortarla. No se eliminó nada.",
 	"contextMenu.copySection": "Copiar sección de encabezado",
 	"contextMenu.deleteSection": "Eliminar sección de encabezado",
 	"heading.toggleFold": "Alternar plegado",
@@ -711,6 +714,8 @@ export const es: Record<string, string> = {
 	"quickInsert.editAria": "Editar {{name}}",
 	"quickInsert.insertAria": "Insertar {{name}} como callout de bloque",
 	"quickInsert.noResults": "No se encontraron callouts",
+	"quickInsert.targetMoved": "La nota desde la que abriste la Inserción rápida cambió o se cerró. Vuelve a abrir la Inserción rápida en la nota que quieres editar.",
+	"quickInsert.targetMovedHint": "La nota original ya no está disponible para esta inserción.",
 	"quickInsert.noUserCallouts": "Todavía no has creado ningún callout.",
 	"quickInsert.noEditorHint": "No hay ninguna nota abierta en modo de edición, así que no se puede insertar nada.",
 	"quickInsert.noEditor": "Abre una nota en modo de edición para insertar un callout.",

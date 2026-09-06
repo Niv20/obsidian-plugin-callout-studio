@@ -242,6 +242,7 @@ export const ro: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} notă/note nu au putut fi actualizate și au rămas neschimbate. Vezi consola pentru dezvoltatori pentru detalii.",
+	"notice.calloutDeleteIncomplete": "Unele notițe nu au putut fi convertite. Tipul de callout a fost păstrat. Conversiile finalizate sunt salvate; rezolvați problema fișierului, apoi rulați din nou acțiunea pentru a finaliza.",
 	"notice.settingsUnreadable":
 		"Callout Studio nu a putut citi fișierul de setări, astfel încât tipurile tale de callout lipsesc din această sesiune. Nu s-a scris nimic, iar fișierul de pe disc este neschimbat — reîncarcă Obsidian pentru a încerca din nou.",
 	"notice.settingsMissing":
@@ -629,6 +630,8 @@ export const ro: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Setați callout ca deschis (+)",
 	"contextMenu.setFoldNone": "Setați callout ca nepliabil",
 	"contextMenu.cutSection": "Decupați secțiunea de titlu",
+	"notice.clipboardWriteFailed": "Nu s-a putut copia în clipboard. Notița a rămas neschimbată.",
+	"notice.sectionChangedAfterCopy": "Secțiunea a fost copiată, dar notița s-a modificat înainte de a putea fi decupată. Nu a fost eliminat nimic.",
 	"contextMenu.copySection": "Copiați secțiunea de titlu",
 	"contextMenu.deleteSection": "Ștergeți secțiunea de titlu",
 	"heading.toggleFold": "Comutare pliere",
@@ -709,6 +712,8 @@ export const ro: Record<string, string> = {
 	"quickInsert.editAria": "Editează {{name}}",
 	"quickInsert.insertAria": "Inserează {{name}} ca callout bloc",
 	"quickInsert.noResults": "Nu s-au găsit callout-uri",
+	"quickInsert.targetMoved": "Notița din care ați deschis Inserarea rapidă s-a modificat sau a fost închisă. Redeschideți Inserarea rapidă în notița pe care doriți să o editați.",
+	"quickInsert.targetMovedHint": "Notița originală nu mai este disponibilă pentru această inserare.",
 	"quickInsert.noUserCallouts": "Nu ai creat încă niciun callout.",
 	"quickInsert.noEditorHint": "Nicio notă nu este deschisă în modul de editare, așa că nimic nu poate fi inserat.",
 	"quickInsert.noEditor": "Deschide o notă în modul de editare pentru a insera un callout.",

@@ -236,6 +236,7 @@ export const ms: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} nota tidak dapat dikemas kini dan dibiarkan tanpa perubahan. Lihat konsol pembangun untuk butiran.",
+	"notice.calloutDeleteIncomplete": "Sesetengah nota tidak dapat ditukar. Jenis callout dikekalkan. Penukaran yang selesai telah disimpan; selesaikan masalah fail, kemudian jalankan tindakan itu semula untuk menyelesaikannya.",
 	"notice.settingsUnreadable":
 		"Callout Studio tidak dapat membaca fail tetapannya, jadi jenis callout anda hilang daripada sesi ini. Tiada apa yang ditulis dan fail pada cakera tidak berubah — muat semula Obsidian untuk mencuba lagi.",
 	"notice.settingsMissing":
@@ -621,6 +622,8 @@ export const ms: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Tetapkan callout sebagai terbuka (+)",
 	"contextMenu.setFoldNone": "Jadikan callout tidak boleh dilipat",
 	"contextMenu.cutSection": "Potong bahagian tajuk",
+	"notice.clipboardWriteFailed": "Tidak dapat menyalin ke papan keratan. Nota dibiarkan tidak berubah.",
+	"notice.sectionChangedAfterCopy": "Bahagian itu telah disalin, tetapi nota berubah sebelum ia dapat dipotong. Tiada apa-apa yang dialih keluar.",
 	"contextMenu.copySection": "Salin bahagian tajuk",
 	"contextMenu.deleteSection": "Padam bahagian tajuk",
 	"heading.toggleFold": "Togol lipatan",
@@ -696,6 +699,8 @@ export const ms: Record<string, string> = {
 	"quickInsert.editAria": "Sunting {{name}}",
 	"quickInsert.insertAria": "Sisipkan {{name}} sebagai callout blok",
 	"quickInsert.noResults": "Tiada callout ditemui",
+	"quickInsert.targetMoved": "Nota tempat anda membuka Sisipan pantas telah berubah atau ditutup. Buka semula Sisipan pantas dalam nota yang anda mahu edit.",
+	"quickInsert.targetMovedHint": "Nota asal tidak lagi tersedia untuk sisipan ini.",
 	"quickInsert.noUserCallouts": "Anda belum mencipta sebarang callout.",
 	"quickInsert.noEditorHint": "Tiada nota dibuka dalam mod penyuntingan, jadi tiada apa yang boleh disisipkan.",
 	"quickInsert.noEditor": "Buka nota dalam mod penyuntingan untuk menyisipkan callout.",

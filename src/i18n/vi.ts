@@ -242,6 +242,7 @@ export const vi: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} ghi chú không thể cập nhật và được giữ nguyên. Xem bảng điều khiển nhà phát triển để biết chi tiết.",
+	"notice.calloutDeleteIncomplete": "Không thể chuyển đổi một số ghi chú. Loại callout đã được giữ lại. Các chuyển đổi đã hoàn tất được lưu; hãy khắc phục sự cố tệp, sau đó chạy lại hành động để hoàn tất.",
 	"notice.settingsUnreadable":
 		"Callout Studio không thể đọc tệp cài đặt của nó, vì vậy các loại callout của bạn bị thiếu trong phiên này. Không có gì được ghi và tệp trên đĩa không thay đổi — tải lại Obsidian để thử lại.",
 	"notice.settingsMissing":
@@ -631,6 +632,8 @@ export const vi: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Đặt callout thành mở (+)",
 	"contextMenu.setFoldNone": "Làm cho callout không thể gập",
 	"contextMenu.cutSection": "Cắt phần tiêu đề",
+	"notice.clipboardWriteFailed": "Không thể sao chép vào bảng nhớ tạm. Ghi chú không thay đổi.",
+	"notice.sectionChangedAfterCopy": "Đã sao chép phần này, nhưng ghi chú đã thay đổi trước khi có thể cắt. Không có gì bị xóa.",
 	"contextMenu.copySection": "Sao chép phần tiêu đề",
 	"contextMenu.deleteSection": "Xóa phần tiêu đề",
 
@@ -713,6 +716,8 @@ export const vi: Record<string, string> = {
 	"quickInsert.editAria": "Chỉnh sửa {{name}}",
 	"quickInsert.insertAria": "Chèn {{name}} dưới dạng callout khối",
 	"quickInsert.noResults": "Không tìm thấy callout nào",
+	"quickInsert.targetMoved": "Ghi chú mà bạn đã mở Chèn nhanh từ đó đã thay đổi hoặc đã đóng. Hãy mở lại Chèn nhanh trong ghi chú bạn muốn chỉnh sửa.",
+	"quickInsert.targetMovedHint": "Ghi chú gốc không còn khả dụng cho lần chèn này.",
 	"quickInsert.noUserCallouts": "Bạn chưa tạo callout nào.",
 	"quickInsert.noEditorHint": "Không có ghi chú nào đang mở ở chế độ chỉnh sửa, nên không thể chèn gì cả.",
 	"quickInsert.noEditor": "Mở một ghi chú ở chế độ chỉnh sửa để chèn callout.",

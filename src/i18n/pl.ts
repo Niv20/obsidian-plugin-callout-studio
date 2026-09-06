@@ -241,6 +241,7 @@ export const pl: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"Nie udało się zaktualizować {{count}} notatek — pozostały bez zmian. Szczegóły w konsoli deweloperskiej.",
+	"notice.calloutDeleteIncomplete": "Niektórych notatek nie udało się przekonwertować. Typ callout został zachowany. Ukończone konwersje są zapisane; rozwiąż problem z plikiem, a następnie ponownie uruchom akcję, aby ją zakończyć.",
 	"notice.settingsUnreadable":
 		"Callout Studio nie mogło odczytać pliku ustawień, więc twoje typy callout są niewidoczne w tej sesji. Nic nie zostało zapisane, a plik na dysku pozostaje niezmieniony — załaduj ponownie Obsidian, aby spróbować jeszcze raz.",
 	"notice.settingsMissing":
@@ -627,6 +628,8 @@ export const pl: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Ustaw callout jako otwarty (+)",
 	"contextMenu.setFoldNone": "Ustaw callout jako niezwijany",
 	"contextMenu.cutSection": "Wytnij sekcję nagłówka",
+	"notice.clipboardWriteFailed": "Nie udało się skopiować do schowka. Notatka pozostała bez zmian.",
+	"notice.sectionChangedAfterCopy": "Sekcja została skopiowana, ale notatka zmieniła się, zanim można było ją wyciąć. Nic nie zostało usunięte.",
 	"contextMenu.copySection": "Kopiuj sekcję nagłówka",
 	"contextMenu.deleteSection": "Usuń sekcję nagłówka",
 	"heading.toggleFold": "Przełącz zwijanie",
@@ -705,6 +708,8 @@ export const pl: Record<string, string> = {
 	"quickInsert.editAria": "Edytuj {{name}}",
 	"quickInsert.insertAria": "Wstaw {{name}} jako callout blokowy",
 	"quickInsert.noResults": "Nie znaleziono żadnych callout",
+	"quickInsert.targetMoved": "Notatka, z której otwarto Szybkie wstawianie, została zmieniona lub zamknięta. Otwórz Szybkie wstawianie ponownie w notatce, którą chcesz edytować.",
+	"quickInsert.targetMovedHint": "Pierwotna notatka nie jest już dostępna dla tego wstawienia.",
 	"quickInsert.noUserCallouts": "Nie utworzono jeszcze żadnego callout.",
 	"quickInsert.noEditorHint": "Żadna notatka nie jest otwarta w trybie edycji, więc nic nie można wstawić.",
 	"quickInsert.noEditor": "Otwórz notatkę w trybie edycji, aby wstawić callout.",

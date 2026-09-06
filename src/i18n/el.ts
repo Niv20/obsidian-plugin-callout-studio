@@ -227,6 +227,7 @@ export const el: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} σημείωση/-εις δεν ήταν δυνατό να ενημερωθούν και παρέμειναν αμετάβλητες. Δείτε την κονσόλα προγραμματιστή για λεπτομέρειες.",
+	"notice.calloutDeleteIncomplete": "Ορισμένες σημειώσεις δεν ήταν δυνατό να μετατραπούν. Ο τύπος callout διατηρήθηκε. Οι ολοκληρωμένες μετατροπές αποθηκεύτηκαν. Επιλύστε το πρόβλημα του αρχείου και, στη συνέχεια, εκτελέστε ξανά την ενέργεια για να ολοκληρωθεί.",
 	"notice.settingsUnreadable":
 		"Το Callout Studio δεν μπόρεσε να διαβάσει το αρχείο ρυθμίσεών του, επομένως οι τύποι callout σας λείπουν από αυτήν τη συνεδρία. Δεν γράφτηκε τίποτα και το αρχείο στον δίσκο παραμένει αμετάβλητο — επαναφορτώστε το Obsidian για να δοκιμάσετε ξανά.",
 	"notice.settingsMissing":
@@ -617,6 +618,8 @@ export const el: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Ορισμός callout ως ανοιχτού (+)",
 	"contextMenu.setFoldNone": "Ορισμός callout ως μη αναδιπλούμενου",
 	"contextMenu.cutSection": "Αποκοπή ενότητας επικεφαλίδας",
+	"notice.clipboardWriteFailed": "Δεν ήταν δυνατή η αντιγραφή στο πρόχειρο. Η σημείωση παρέμεινε αμετάβλητη.",
+	"notice.sectionChangedAfterCopy": "Η ενότητα αντιγράφηκε, αλλά η σημείωση άλλαξε πριν προλάβει να αποκοπεί. Δεν αφαιρέθηκε τίποτα.",
 	"contextMenu.copySection": "Αντιγραφή ενότητας επικεφαλίδας",
 	"contextMenu.deleteSection": "Διαγραφή ενότητας επικεφαλίδας",
 	"heading.toggleFold": "Εναλλαγή αναδίπλωσης",
@@ -694,6 +697,8 @@ export const el: Record<string, string> = {
 	"quickInsert.editAria": "Επεξεργασία {{name}}",
 	"quickInsert.insertAria": "Εισαγωγή {{name}} ως callout μπλοκ",
 	"quickInsert.noResults": "Δεν βρέθηκαν callout",
+	"quickInsert.targetMoved": "Η σημείωση από την οποία ανοίξατε τη Γρήγορη εισαγωγή άλλαξε ή έκλεισε. Ανοίξτε ξανά τη Γρήγορη εισαγωγή στη σημείωση που θέλετε να επεξεργαστείτε.",
+	"quickInsert.targetMovedHint": "Η αρχική σημείωση δεν είναι πλέον διαθέσιμη για αυτήν την εισαγωγή.",
 	"quickInsert.noUserCallouts": "Δεν έχετε δημιουργήσει ακόμα κανένα callout.",
 	"quickInsert.noEditorHint": "Δεν υπάρχει ανοιχτή σημείωση σε λειτουργία επεξεργασίας, οπότε δεν μπορεί να γίνει εισαγωγή.",
 	"quickInsert.noEditor": "Ανοίξτε μια σημείωση σε λειτουργία επεξεργασίας για να εισαγάγετε ένα callout.",

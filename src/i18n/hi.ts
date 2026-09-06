@@ -242,6 +242,7 @@ export const hi: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} नोट अपडेट नहीं हो सके और बिना बदलाव के रह गए। विवरण के लिए डेवलपर कंसोल देखें।",
+	"notice.calloutDeleteIncomplete": "कुछ नोट रूपांतरित नहीं किए जा सके। callout प्रकार रखा गया। पूर्ण हो चुके रूपांतरण सहेजे गए हैं; फ़ाइल समस्या हल करें, फिर पूरा करने के लिए क्रिया दोबारा चलाएँ।",
 	"notice.settingsUnreadable":
 		"Callout Studio अपनी सेटिंग्स फ़ाइल नहीं पढ़ सका, इसलिए आपके callout प्रकार इस सत्र में गायब हैं। कुछ भी नहीं लिखा गया है और डिस्क पर फ़ाइल अपरिवर्तित है — फिर से कोशिश करने के लिए Obsidian को रीलोड करें।",
 	"notice.settingsMissing":
@@ -628,6 +629,8 @@ export const hi: Record<string, string> = {
 	"contextMenu.setFoldOpen": "callout को खुला (+) पर सेट करें",
 	"contextMenu.setFoldNone": "callout को मोड़ने योग्य न बनाएं",
 	"contextMenu.cutSection": "शीर्षक अनुभाग काटें",
+	"notice.clipboardWriteFailed": "क्लिपबोर्ड पर कॉपी नहीं किया जा सका। नोट अपरिवर्तित रहा।",
+	"notice.sectionChangedAfterCopy": "अनुभाग कॉपी किया गया, लेकिन काटे जाने से पहले नोट बदल गया। कुछ भी नहीं हटाया गया।",
 	"contextMenu.copySection": "शीर्षक अनुभाग कॉपी करें",
 	"contextMenu.deleteSection": "शीर्षक अनुभाग हटाएँ",
 	"heading.toggleFold": "मोड़ना टॉगल करें",
@@ -706,6 +709,8 @@ export const hi: Record<string, string> = {
 	"quickInsert.editAria": "{{name}} संपादित करें",
 	"quickInsert.insertAria": "{{name}} को ब्लॉक callout के रूप में डालें",
 	"quickInsert.noResults": "कोई callout नहीं मिला",
+	"quickInsert.targetMoved": "जिस नोट से आपने क्विक इंसर्ट खोला था वह बदल गया या बंद हो गया। जिस नोट को आप संपादित करना चाहते हैं उसमें क्विक इंसर्ट फिर से खोलें।",
+	"quickInsert.targetMovedHint": "मूल नोट अब इस सम्मिलन के लिए उपलब्ध नहीं है।",
 	"quickInsert.noUserCallouts": "आपने अभी तक कोई callout नहीं बनाया है।",
 	"quickInsert.noEditorHint": "संपादन मोड में कोई नोट खुला नहीं है, इसलिए कुछ भी नहीं डाला जा सकता।",
 	"quickInsert.noEditor": "callout डालने के लिए एक नोट संपादन मोड में खोलें।",

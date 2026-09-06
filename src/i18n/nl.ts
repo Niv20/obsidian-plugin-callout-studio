@@ -243,6 +243,7 @@ export const nl: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} notitie(s) konden niet worden bijgewerkt en zijn ongewijzigd gebleven. Zie de ontwikkelaarsconsole voor details.",
+	"notice.calloutDeleteIncomplete": "Sommige notities konden niet worden geconverteerd. Het callout-type is behouden. Voltooide conversies zijn opgeslagen; los het bestandsprobleem op en voer de actie opnieuw uit om te voltooien.",
 	"notice.settingsUnreadable":
 		"Callout Studio kon zijn instellingenbestand niet lezen, dus je callout-typen ontbreken in deze sessie. Er is niets geschreven en het bestand op schijf is ongewijzigd — herlaad Obsidian om het opnieuw te proberen.",
 	"notice.settingsMissing":
@@ -636,6 +637,8 @@ export const nl: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Callout instellen als geopend (+)",
 	"contextMenu.setFoldNone": "Callout niet-opvouwbaar maken",
 	"contextMenu.cutSection": "Kopsectie knippen",
+	"notice.clipboardWriteFailed": "Kopiëren naar het klembord is mislukt. De notitie is niet gewijzigd.",
+	"notice.sectionChangedAfterCopy": "De sectie is gekopieerd, maar de notitie is gewijzigd voordat deze kon worden geknipt. Er is niets verwijderd.",
 	"contextMenu.copySection": "Kopsectie kopiëren",
 	"contextMenu.deleteSection": "Kopsectie verwijderen",
 	"heading.toggleFold": "Vouwen omschakelen",
@@ -715,6 +718,8 @@ export const nl: Record<string, string> = {
 	"quickInsert.editAria": "{{name}} bewerken",
 	"quickInsert.insertAria": "{{name}} invoegen als blok-callout",
 	"quickInsert.noResults": "Geen callouts gevonden",
+	"quickInsert.targetMoved": "De notitie van waaruit je Snel invoegen hebt geopend, is gewijzigd of gesloten. Open Snel invoegen opnieuw in de notitie die je wilt bewerken.",
+	"quickInsert.targetMovedHint": "De oorspronkelijke notitie is niet meer beschikbaar voor deze invoeging.",
 	"quickInsert.noUserCallouts": "Je hebt nog geen callouts gemaakt.",
 	"quickInsert.noEditorHint": "Er is geen notitie geopend in bewerkingsmodus, dus er kan niets worden ingevoegd.",
 	"quickInsert.noEditor": "Open een notitie in bewerkingsmodus om een callout in te voegen.",

@@ -266,6 +266,7 @@ export const he: Record<string, string> = {
 		"לא ניתן להשלים את ספירת השימושים בקריאות, כי לא ניתן לקרוא {{count}} פתקים. יש לבדוק את האחסון והסנכרון ולנסות שוב.",
 	"notice.vaultRewritePartial":
 		"{{count}} פתק(ים) לא ניתן היה לעדכן ונשארו ללא שינוי. פרטים נוספים בקונסולת המפתחים.",
+	"notice.calloutDeleteIncomplete": "חלק מהפתקים לא ניתנים להמרה. סוג תיבת־ההבלטה נשמר. ההמרות שהושלמו נשמרו; טפלו בבעיית הקובץ והפעילו שוב את הפעולה כדי לסיים.",
 	"notice.settingsUnreadable":
 		"Callout Studio לא הצליח לקרוא את קובץ ההגדרות שלו, ולכן סוגי ה-callout שלך חסרים בהפעלה זו. שום דבר לא נכתב והקובץ בדיסק לא השתנה — טען מחדש את Obsidian כדי לנסות שוב.",
 	"notice.settingsMissing":
@@ -655,6 +656,8 @@ export const he: Record<string, string> = {
 	"contextMenu.setFoldOpen": "הגדרת תיבת־ההבלטה כפתוחה (+)",
 	"contextMenu.setFoldNone": "הפיכת תיבת־ההבלטה לבלתי ניתנת לקיפול",
 	"contextMenu.cutSection": "גזירת מקטע הכותרת",
+	"notice.clipboardWriteFailed": "לא ניתן להעתיק ללוח הגזירה. הפתק נשאר ללא שינוי.",
+	"notice.sectionChangedAfterCopy": "המקטע הועתק, אך הפתק השתנה לפני שניתן היה לגזור אותו. שום דבר לא הוסר.",
 	"contextMenu.copySection": "העתקת מקטע הכותרת",
 	"contextMenu.deleteSection": "מחיקת מקטע הכותרת",
 
@@ -746,6 +749,8 @@ export const he: Record<string, string> = {
 	"quickInsert.editAria": "עריכת {{name}}",
 	"quickInsert.insertAria": "הוספת {{name}} כתיבת־הבלטה מסוג בלוק",
 	"quickInsert.noResults": "לא נמצאו תיבות־הבלטה",
+	"quickInsert.targetMoved": "הפתק שממנו פתחתם את ההוספה המהירה השתנה או נסגר. פתחו מחדש את ההוספה המהירה בפתק שברצונכם לערוך.",
+	"quickInsert.targetMovedHint": "הפתק המקורי כבר אינו זמין להוספה זו.",
 	"quickInsert.noUserCallouts": "עדיין לא יצרתם אף תיבת־הבלטה.",
 	"quickInsert.noEditorHint": "אין פתק פתוח במצב עריכה, ולכן לא ניתן להוסיף דבר.",
 	"quickInsert.noEditor": "פתחו פתק במצב עריכה כדי להוסיף תיבת־הבלטה.",

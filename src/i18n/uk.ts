@@ -245,6 +245,7 @@ export const uk: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} нотатку(и) не вдалося оновити, вони залишилися без змін. Подробиці в консолі розробника.",
+	"notice.calloutDeleteIncomplete": "Деякі нотатки не вдалося перетворити. Тип callout збережено. Завершені перетворення збережено; усуньте проблему з файлом, а потім запустіть дію знову, щоб завершити.",
 	"notice.settingsUnreadable":
 		"Callout Studio не вдалося прочитати файл налаштувань, тому ваші типи callout відсутні в цьому сеансі. Нічого не було записано, файл на диску не змінено — перезавантажте Obsidian, щоб спробувати знову.",
 	"notice.settingsMissing":
@@ -636,6 +637,8 @@ export const uk: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Зробити callout відкритим (+)",
 	"contextMenu.setFoldNone": "Зробити callout нескладаним",
 	"contextMenu.cutSection": "Вирізати розділ заголовка",
+	"notice.clipboardWriteFailed": "Не вдалося скопіювати до буфера обміну. Нотатку залишено без змін.",
+	"notice.sectionChangedAfterCopy": "Розділ скопійовано, але нотатка змінилася, перш ніж її можна було вирізати. Нічого не видалено.",
 	"contextMenu.copySection": "Копіювати розділ заголовка",
 	"contextMenu.deleteSection": "Видалити розділ заголовка",
 
@@ -718,6 +721,8 @@ export const uk: Record<string, string> = {
 	"quickInsert.editAria": "Редагувати {{name}}",
 	"quickInsert.insertAria": "Вставити {{name}} як блоковий callout",
 	"quickInsert.noResults": "Callout не знайдено",
+	"quickInsert.targetMoved": "Нотатка, з якої ви відкрили швидку вставку, змінилася або закрита. Відкрийте швидку вставку знову в нотатці, яку хочете редагувати.",
+	"quickInsert.targetMovedHint": "Початкова нотатка більше недоступна для цієї вставки.",
 	"quickInsert.noUserCallouts": "Ви ще не створили жодного callout.",
 	"quickInsert.noEditorHint": "Жодна нотатка не відкрита в режимі редагування, тому нічого вставити не можна.",
 	"quickInsert.noEditor": "Відкрийте нотатку в режимі редагування, щоб вставити callout.",

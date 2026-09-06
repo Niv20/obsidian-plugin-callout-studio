@@ -240,6 +240,7 @@ export const tr: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} not güncellenemedi ve değiştirilmeden bırakıldı. Ayrıntılar için geliştirici konsolunu kontrol edin.",
+	"notice.calloutDeleteIncomplete": "Bazı notlar dönüştürülemedi. Callout türü korundu. Tamamlanan dönüştürmeler kaydedildi; dosya sorununu çözün, ardından işlemi bitirmek için yeniden çalıştırın.",
 	"notice.settingsUnreadable":
 		"Callout Studio ayarlar dosyasını okuyamadı, bu nedenle callout türleriniz bu oturumda eksik. Hiçbir şey yazılmadı ve diskteki dosya değişmedi — tekrar denemek için Obsidian'ı yeniden yükleyin.",
 	"notice.settingsMissing":
@@ -624,6 +625,8 @@ export const tr: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Callout'u açık olarak ayarla (+)",
 	"contextMenu.setFoldNone": "Callout'u katlanamaz yap",
 	"contextMenu.cutSection": "Başlık bölümünü kes",
+	"notice.clipboardWriteFailed": "Panoya kopyalanamadı. Not değiştirilmeden bırakıldı.",
+	"notice.sectionChangedAfterCopy": "Bölüm kopyalandı, ancak kesilmeden önce not değişti. Hiçbir şey kaldırılmadı.",
 	"contextMenu.copySection": "Başlık bölümünü kopyala",
 	"contextMenu.deleteSection": "Başlık bölümünü sil",
 
@@ -706,6 +709,8 @@ export const tr: Record<string, string> = {
 	"quickInsert.editAria": "{{name}} düzenle",
 	"quickInsert.insertAria": "{{name}} öğesini blok callout olarak ekle",
 	"quickInsert.noResults": "Callout bulunamadı",
+	"quickInsert.targetMoved": "Hızlı eklemeyi açtığınız not değişti veya kapatıldı. Düzenlemek istediğiniz notta Hızlı eklemeyi yeniden açın.",
+	"quickInsert.targetMovedHint": "Bu ekleme için orijinal not artık kullanılamıyor.",
 	"quickInsert.noUserCallouts": "Henüz herhangi bir callout oluşturmadınız.",
 	"quickInsert.noEditorHint": "Düzenleme modunda açık bir not yok, bu yüzden hiçbir şey eklenemez.",
 	"quickInsert.noEditor": "Bir callout eklemek için bir notu düzenleme modunda açın.",

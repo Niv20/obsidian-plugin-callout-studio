@@ -240,6 +240,7 @@ export const sv: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"{{count}} anteckning(ar) kunde inte uppdateras och lämnades oförändrade. Se utvecklarkonsolen för detaljer.",
+	"notice.calloutDeleteIncomplete": "Vissa anteckningar kunde inte konverteras. Callout-typen behölls. Slutförda konverteringar har sparats; åtgärda filproblemet och kör åtgärden igen för att slutföra.",
 	"notice.settingsUnreadable":
 		"Callout Studio kunde inte läsa sin inställningsfil, så dina callout-typer saknas i den här sessionen. Inget har skrivits och filen på disken är oförändrad — läs in Obsidian igen för att försöka på nytt.",
 	"notice.settingsMissing":
@@ -623,6 +624,8 @@ export const sv: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Ställ in callout som öppen (+)",
 	"contextMenu.setFoldNone": "Gör callout icke-vikbar",
 	"contextMenu.cutSection": "Klipp ut rubriksektion",
+	"notice.clipboardWriteFailed": "Det gick inte att kopiera till urklipp. Anteckningen ändrades inte.",
+	"notice.sectionChangedAfterCopy": "Sektionen kopierades, men anteckningen ändrades innan den kunde klippas ut. Ingenting togs bort.",
 	"contextMenu.copySection": "Kopiera rubriksektion",
 	"contextMenu.deleteSection": "Ta bort rubriksektion",
 	"heading.toggleFold": "Växla vikning",
@@ -701,6 +704,8 @@ export const sv: Record<string, string> = {
 	"quickInsert.editAria": "Redigera {{name}}",
 	"quickInsert.insertAria": "Infoga {{name}} som block-callout",
 	"quickInsert.noResults": "Inga callouts hittades",
+	"quickInsert.targetMoved": "Anteckningen som du öppnade Snabbinfoga från har ändrats eller stängts. Öppna Snabbinfoga igen i anteckningen du vill redigera.",
+	"quickInsert.targetMovedHint": "Den ursprungliga anteckningen är inte längre tillgänglig för den här infogningen.",
 	"quickInsert.noUserCallouts": "Du har inte skapat några callouts än.",
 	"quickInsert.noEditorHint": "Ingen anteckning är öppen i redigeringsläge, så inget kan infogas.",
 	"quickInsert.noEditor": "Öppna en anteckning i redigeringsläge för att infoga en callout.",

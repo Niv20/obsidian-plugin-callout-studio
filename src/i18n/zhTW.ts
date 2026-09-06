@@ -224,6 +224,7 @@ export const zhTW: Record<string, string> = {
 
 	"notice.vaultRewritePartial":
 		"有 {{count}} 則筆記無法更新，已保持不變。詳情請查看開發者主控台。",
+	"notice.calloutDeleteIncomplete": "部分筆記無法轉換。callout 類型已保留。已完成的轉換已儲存；請解決檔案問題，然後再次執行該動作以完成。",
 	"notice.settingsUnreadable":
 		"Callout Studio 無法讀取其設定檔，因此本次工作階段中缺少你的 callout 類型。未寫入任何內容，磁碟上的檔案也未變更——重新載入 Obsidian 以再試一次。",
 	"notice.settingsMissing":
@@ -601,6 +602,8 @@ export const zhTW: Record<string, string> = {
 	"contextMenu.setFoldOpen": "將 callout 設定為開啟 (+)",
 	"contextMenu.setFoldNone": "使 callout 不可折疊",
 	"contextMenu.cutSection": "剪下標題部分",
+	"notice.clipboardWriteFailed": "無法複製到剪貼簿。筆記未變更。",
+	"notice.sectionChangedAfterCopy": "已複製該部分，但在剪下之前筆記發生了變更。未移除任何內容。",
 	"contextMenu.copySection": "複製標題部分",
 	"contextMenu.deleteSection": "刪除標題部分",
 	"heading.toggleFold": "切換折疊",
@@ -674,6 +677,8 @@ export const zhTW: Record<string, string> = {
 	"quickInsert.editAria": "編輯 {{name}}",
 	"quickInsert.insertAria": "將 {{name}} 作為區塊 callout 插入",
 	"quickInsert.noResults": "找不到 callout",
+	"quickInsert.targetMoved": "開啟快速插入時所在的筆記已變更或關閉。請在你要編輯的筆記中重新開啟快速插入。",
+	"quickInsert.targetMovedHint": "原始筆記已無法用於這次插入。",
 	"quickInsert.noUserCallouts": "您尚未建立任何 callout。",
 	"quickInsert.noEditorHint": "沒有筆記以編輯模式開啟，因此無法插入任何內容。",
 	"quickInsert.noEditor": "以編輯模式開啟一篇筆記以插入 callout。",
