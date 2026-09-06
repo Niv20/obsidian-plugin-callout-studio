@@ -10,8 +10,7 @@
  */
 import { Notice, type App, type Editor, type EditorPosition, type MarkdownView } from "obsidian";
 import { t } from "../../i18n";
-
-const HEADING_LINE_RE = /^(#{1,6})[ \t]/;
+import { sectionEndLine } from "./sectionBoundary";
 
 export interface HeadingSectionRange {
 	from: EditorPosition;
@@ -30,14 +29,7 @@ export function getHeadingSectionRange(
 	level: number,
 ): HeadingSectionRange {
 	const lastLine = editor.lineCount() - 1;
-	let endLine = lastLine;
-	for (let line = headingLine + 1; line <= lastLine; line++) {
-		const m = HEADING_LINE_RE.exec(editor.getLine(line));
-		if (m && m[1] && m[1].length <= level) {
-			endLine = line - 1;
-			break;
-		}
-	}
+	const endLine = Math.min(lastLine, sectionEndLine(editor, headingLine, level) - 1);
 
 	const from: EditorPosition = { line: headingLine, ch: 0 };
 	// Include the trailing newline so the whole block (and the blank line it

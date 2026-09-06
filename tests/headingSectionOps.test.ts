@@ -15,7 +15,7 @@
  * - a section that does not reach end-of-document consumes the newline that
  *   follows it, and one that does cannot (there is none) — the difference
  *   between deleting a block and leaving a blank line behind;
- * - `HEADING_LINE_RE` is markdown's rule, not a `#` count: no space after the
+	 * - Markdown heading boundaries are not just a `#` count: no space after the
  *   hashes is not a heading, and seven hashes is not a heading either.
  *
  * The clipboard is checked as a side effect rather than mocked away, because
@@ -158,11 +158,11 @@ describe("getHeadingSectionRange — what counts as a heading", () => {
 		assert.ok(range.text.includes("####### seven"));
 	});
 
-	it("ignores an indented heading, which markdown does not treat as one either", () => {
+	it("recognizes headings indented by up to three spaces", () => {
 		const e = editor(["## [!tip] A", "  ## indented", "body"].join("\n"));
 		const range = getHeadingSectionRange(asEditor(e), 0, 2);
 
-		assert.ok(range.text.includes("  ## indented"));
+		assert.strictEqual(range.text, "## [!tip] A\n");
 	});
 
 	it("does not look at the heading line it was given", () => {

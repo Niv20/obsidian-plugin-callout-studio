@@ -326,7 +326,11 @@ that only make sense for some roles.
   compute the section range via `getHeadingSectionRange` in
   [`sectionOps.ts`](../src/editor/contextmenu/sectionOps.ts): the heading line
   through everything up to (not including) the next heading of the same-or-higher
-  level, or end-of-document. Cut first awaits clipboard success, then checks
+  level. `sectionBoundary.ts` uses the current document's native fold service
+  when available; the source-only fallback excludes frontmatter, length-aware
+  code fences, raw HTML, math and comments, and recognizes indented ATX/setext boundaries.
+  A hash-prefixed line inside a code fence never cuts a section in half.
+  Without a following section it reaches end-of-document. Cut first awaits clipboard success, then checks
   that the complete document and captured file/editor/leaf ownership still match;
   a clipboard error or intervening change leaves the note untouched. These
   are single editor transactions — undo works
