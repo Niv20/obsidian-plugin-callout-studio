@@ -39,6 +39,7 @@ import {
 	buildInlineToken,
 	metadataSuffixOf,
 	splitFoldMark,
+	titleAfterToken,
 } from "./calloutWriter";
 import {
 	getSortedCalloutIds,
@@ -552,9 +553,8 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		const metaSuffix = this.tokenMetadataSuffix(line, start.ch);
 
 		if (role === "heading") {
-			// No title text — the rendered token shows the display name.
 			editor.replaceRange(
-				buildHeadingToken(result, { metaSuffix }),
+				buildHeadingToken(result, { metaSuffix, existingTitle: titleAfterToken(line, start.ch, role) }),
 				start,
 				lineEnd,
 			);
@@ -565,7 +565,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 			return;
 		}
 
-		const replacement = buildBlockHeaderToken(result, { metaSuffix });
+		const replacement = buildBlockHeaderToken(result, { metaSuffix, existingTitle: titleAfterToken(line, start.ch, role) });
 		editor.replaceRange(replacement, start, lineEnd);
 		this.pendingEditor = editor;
 		this.pendingLine = start.line;

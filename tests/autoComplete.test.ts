@@ -26,10 +26,8 @@
  * typed belongs to the occurrence rather than to the type, and an alias the user
  * typed is the spelling that should be written back.
  *
- * Not covered here, deliberately: the deferred cursor placement in `close()`
- * (a `requestAnimationFrame` + 50ms `setTimeout` chain), and the "Create new"
- * round trip, which opens a real modal. Both are wiring around the decisions
- * above rather than decisions of their own.
+ * The create-new round trip substitutes only the modal result, allowing its
+ * asynchronous note write to be checked without mounting a real Obsidian UI.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
@@ -40,9 +38,45 @@ import { asEditor, editor, FakeEditor } from "./support/fakeEditor";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutAutoComplete } from "../src/editor/AutoComplete";
 import { CSS_ICON_NONE } from "../src/icons/renderIcon";
+import { CalloutEditor } from "../src/settings/CalloutEditor";
+import type { EditorSuggestContext } from "obsidian";
 
 type Registry = InstanceType<typeof CalloutRegistry>;
 type Suggest = InstanceType<typeof CalloutAutoComplete>;
+
+describe("Create new preserves occurrence titles", () => {
+	for (const [source, expected] of [
+		["> [!brand⎸new|meta]- Keep this title", "> [!quiet|meta] Keep this title"],
+		["## [!brand⎸new|meta] - My title", "## [!quiet|meta] - My title\n"],
+	]) {
+		it(source, async (test) => {
+			const h = harness();
+			addCallout(h.registry);
+			const result = h.registry.get("quiet")!;
+			test.mock.method(CalloutEditor.prototype, "openAndWait", async () => result);
+			const { info, editor: ed, line, ch } = triggerAt(h, source!);
+			assert.ok(info);
+			const ctx = { editor: asEditor(ed), file: null, start: info.start, end: { line, ch }, query: info.query };
+			await (h.suggest as unknown as {
+				openCreateForQuery(query: string, context: EditorSuggestContext): Promise<void>;
+			}).openCreateForQuery(info.query, ctx as unknown as EditorSuggestContext);
+			assert.strictEqual(ed.getValue(), expected);
+		});
+	}
+	it("keeps a title changed while the modal was open", async (test) => {
+		const h = harness();
+		addCallout(h.registry);
+		const { info, editor: ed, line, ch } = triggerAt(h, "> [!brand⎸new] Old title");
+		assert.ok(info);
+		test.mock.method(CalloutEditor.prototype, "openAndWait", async () => {
+			ed.replaceRange("New title", { line: 0, ch: 14 }, { line: 0, ch: 23 });
+			return h.registry.get("quiet")!;
+		});
+		await (h.suggest as unknown as { openCreateForQuery(query: string, context: EditorSuggestContext): Promise<void> })
+			.openCreateForQuery(info.query, { editor: asEditor(ed), file: null, start: info.start, end: { line, ch }, query: info.query } as unknown as EditorSuggestContext);
+		assert.strictEqual(ed.getValue(), "> [!quiet] New title");
+	});
+});
 
 /* -------------------------------------------------------------------------- */
 /* Harness                                                                    */

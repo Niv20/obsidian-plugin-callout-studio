@@ -15,6 +15,8 @@ From here you have two options:
 
 This is the easiest way to get going, especially when a new callout idea occurs to you mid-sentence.
 
+Creating a type from an existing block or heading token keeps the title you already wrote after that token.
+
 ## Building it first: the callout editor
 
 If you'd rather design a callout type before you write a word about it, use the command **Create new callout type** from the command palette. This opens the callout editor directly, where you set the callout's name, icon and colors before it appears anywhere in a note.
