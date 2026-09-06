@@ -104,9 +104,13 @@ export function sanitizeSvgStylesheet(css: string): string {
 	}
 }
 
-/** A detached element parses declarations without installing their styles. */
-export function sanitizeSvgStyleAttribute(value: string, doc: Document): string {
-	const scratch = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
-	scratch.style.cssText = value;
-	return drawingDeclarations(scratch.style);
+/**
+ * The element has already parsed its own `style` attribute into an inert
+ * declaration block, so nothing has to be created to read one back. An element
+ * outside the SVG namespace has no such block — and no styling either — so its
+ * attribute is dropped rather than rewritten.
+ */
+export function sanitizeSvgStyleAttribute(el: Element): string {
+	const { style } = el as { style?: CSSStyleDeclaration };
+	return style ? drawingDeclarations(style) : "";
 }
