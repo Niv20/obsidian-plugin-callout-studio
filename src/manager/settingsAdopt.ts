@@ -166,15 +166,15 @@ async function applyExternalSettings(
 	conflicts: Partial<PluginData>[] = [], options: SettingsAdoptionOptions = {},
 ): Promise<boolean> {
 	if (adoptionIsHeld(host, options)) return false;
-	let durable: unknown = null;
+	let durable: Partial<PluginData> | null = null;
 	if (host.settingsWriter.hasCheckpoint && !isFromNewerBuild(read.data)) {
-		try { durable = await host.settingsWriter.recoveryCopy(); } catch (error) {
+		try { durable = await host.settingsWriter.recoveryCopy() as Partial<PluginData> | null; } catch (error) {
 			host.settingsWriter.freeze("recovery-read");
 			throw error;
 		}
 	}
 	if (adoptionIsHeld(host, options)) return false;
-	if (isFromNewerBuild(durable as Partial<PluginData> | null)) { host.settingsWriter.freeze("newer-version"); return false; }
+	if (isFromNewerBuild(durable)) { host.settingsWriter.freeze("newer-version"); return false; }
 	const before = host.registry.toSaveData();
 	const snapshot = JSON.stringify(stableKeyOrder(before));
 	const merged = isFromNewerBuild(read.data) ? read.data :
@@ -187,7 +187,7 @@ async function applyExternalSettings(
 	}
 	if (!(await backUpBeforeAdoption(host, before, merged))) return false;
 	if (durable && canonical(content(durable)) !== canonical(content(before)) &&
-		!await backUpBeforeAdoption(host, durable as Partial<PluginData>, merged)) return false;
+		!await backUpBeforeAdoption(host, durable, merged)) return false;
 	for (const conflict of conflicts) {
 		if (!await backUpBeforeAdoption(host, conflict, merged)) return false;
 	}
