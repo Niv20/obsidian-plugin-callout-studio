@@ -5,7 +5,7 @@
  *
  * | icon | value |
  * |---|---|
- * | Lucide | the id, verbatim — it is already what core CSS wants |
+ * | Lucide | a plain id token, or a safe placeholder for invalid values |
  * | pack glyph, user picture, emoji | `lucide-pencil`, as a placeholder |
  *
  * The placeholder is the interesting half. Core's `--callout-icon` takes a
@@ -35,10 +35,12 @@ export function calloutIconProp(def: CalloutDefinition): string {
 	// and this runs during plugin load, before a plugin that registered its own
 	// ids with `addIcon()` has necessarily loaded; a wrong answer here would be
 	// baked into the stylesheet *and* into the localStorage startup snapshot.
-	// `load()`'s migration has already repaired the stored value by this point,
-	// and the DOM pass (`paintIcons` → `renderIconInto`) resolves again at
-	// render time.
-	if (pack.kind === "builtin") return def.icon.value;
+	// Do not trust a load-time migration as CSS validation: synced/edited
+	// settings can carry declaration delimiters. Preserve ordinary third-party
+	// IDs without depending on whether their plugin has registered them yet.
+	if (pack.kind === "builtin") {
+		return /^[A-Za-z0-9_-]+$/.test(def.icon.value) ? def.icon.value : "lucide-pencil";
+	}
 
 	// Everything else needs a valid Lucide id as a placeholder so Obsidian
 	// renders *something* at first paint. The real glyph is then painted into

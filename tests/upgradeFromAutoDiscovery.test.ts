@@ -5,7 +5,7 @@ import { DeviceLocalStore } from "../src/manager/DeviceLocalStore";
 import type { PluginData } from "../src/types";
 import { installFakeDom } from "./support/fakeDom";
 import { readRepoFile } from "./support/sourceScan";
-import { CSS_KEY, DATA_PATH, LOCAL_KEY, ORIGINAL_CSS, upgradeHarness } from "./support/upgradeHarness";
+import { CSS_KEY, CURRENT_CSS_KEY, DATA_PATH, LOCAL_KEY, ORIGINAL_CSS, upgradeHarness } from "./support/upgradeHarness";
 
 installFakeDom();
 type HistoricalFixture = { saved: PluginData; legacyLocalRaw: string; oldReadOfNewerData: PluginData };
@@ -49,7 +49,9 @@ describe("upgrade from released automatic-discovery versions", () => {
 			assert.equal(h.registry.toSaveData().version, 5);
 			assert.equal(h.localState.isExpanded("user"), false);
 			assert.deepEqual(Object.keys(JSON.parse(h.local.get(LOCAL_KEY)!) as Record<string, unknown>).sort(), ["initialized", "listsExpanded", "v"]);
-			h.css.persist("new live CSS"); assert.equal(h.local.get(CSS_KEY), "new live CSS");
+			h.css.persist("new live CSS");
+			assert.equal(h.local.get(CURRENT_CSS_KEY), "new live CSS");
+			assert.equal(h.local.get(CSS_KEY), ORIGINAL_CSS);
 			assert.equal(copy.startupCss, ORIGINAL_CSS, "the recovery archive remains independent of the new cache");
 		});
 

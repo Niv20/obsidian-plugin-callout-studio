@@ -23,6 +23,7 @@ import { svgToDataUri } from "../../icons/svg";
 import { followsCalloutColor, userImageFor } from "../../icons/packs/userImages";
 import type { CalloutIcon, UserImageIcon } from "../../types";
 import { iconBoxWidth } from "./iconBox";
+import { cssAttrValue } from "../../utils/calloutSelector";
 
 /**
  * A pack glyph, painted as a mask tinted with the callout's accent.
@@ -101,9 +102,8 @@ export function emojiOverrideCSS(
 	emoji: string,
 	imp = "",
 ): string {
-	// Defensive escaping for the CSS string literal (emojis contain neither
-	// backslashes nor quotes, but keep it safe against future data changes).
-	const safe = emoji.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+	// Imported/synced values are arbitrary strings, including CSS newlines.
+	const safe = cssAttrValue(emoji);
 	return (
 		`@media screen {\n` +
 		`${sel} > .callout-title > .callout-icon > svg {\n` +

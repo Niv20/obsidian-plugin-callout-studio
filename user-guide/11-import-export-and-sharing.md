@@ -27,6 +27,12 @@ The exported snippet is never turned on for you automatically. Inside this vault
 
 ## Importing a Callout Studio backup
 
+Icon text from backups is treated as text when styles are generated. Lucide
+icon IDs containing punctuation other than dashes or underscores use a pencil
+placeholder; ordinary icon names and emoji keep their usual appearance.
+After upgrading, the old local startup style snapshot is ignored and regenerated
+from your settings. Your callout definitions and recovery data are preserved.
+
 If you have a JSON backup file that Callout Studio produced — from this vault or another one — you can bring it back in:
 
 1. The importer checks every entry in the file.

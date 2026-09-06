@@ -265,6 +265,11 @@ why both exist matters for anyone touching icon rendering:
    `--cs-accent`; a user-uploaded picture that keeps its own colours is drawn
    as a plain `background-image` instead (a mask is a stencil — running a
    photo through one would flatten it to a silhouette).
+   Emoji `content` values use `cssAttrValue`, including LF/CR/FF escapes;
+   imports and synced settings must never be trusted as CSS string syntax.
+   Lucide custom-property values accept only plain ASCII letter/digit/dash/
+   underscore IDs, falling back to `lucide-pencil` for other text. Ordinary
+   third-party IDs are preserved without requiring their plugin to be loaded.
 2. **A visible inline-SVG (or text) node baked directly into the DOM**
    (`paintIcon()`, called from `paintIcons()`), hidden on screen via the same
    `@media screen` rule that hides the CSS icon in print. This DOM copy is

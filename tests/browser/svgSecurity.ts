@@ -3,6 +3,9 @@ import { isolateSvgCopy } from "../../src/icons/isolateSvg";
 import { renderIconInto } from "../../src/icons/renderIcon";
 import { createIconResolver } from "../../src/icons/resolver";
 import { CalloutRegistry } from "../../src/manager/CalloutRegistry";
+import { validateImportPayload } from "../../src/utils/importValidator";
+import { emojiOverrideCSS } from "../../src/manager/css/iconOverrides";
+import { calloutIconProp } from "../../src/manager/css/calloutIconProp";
 
 function check(value: unknown, message: string): asserts value {
 	if (!value) throw new Error(message);
@@ -18,7 +21,7 @@ function clean(contents: string): SVGSVGElement {
 	return svg;
 }
 
-export function runSvgSecurityTests(): number {
+export async function runSvgSecurityTests(): Promise<number> {
 	let checks = 0;
 	for (const css of [
 		'@\\69mport "https://example.invalid/audit.css";',
@@ -54,7 +57,29 @@ export function runSvgSecurityTests(): number {
 	const foreign = clean('<style xmlns="http://www.w3.org/1999/xhtml">body{display:none}</style><rect width="24" height="24"/>');
 	check(!foreign.querySelector("style"), "Foreign namespace style survived");
 	check(document.body.dataset.attacked === undefined, "Event handler executed");
-	return checks + 6 + cachedSvgChecks();
+	return checks + 6 + cachedSvgChecks() + await iconCssChecks();
+}
+
+async function iconCssChecks(): Promise<number> {
+	const registry = new CalloutRegistry();
+	registry.load(null);
+	for (const control of ["\n", "\r", "\f"]) {
+		const payload = `🙂${control}; } body { display:none; background:url(https://example.invalid/icon) } /*`;
+		const result = await validateImportPayload([{
+			id: "audit", displayName: "Audit", icon: { type: "emoji", value: payload },
+			colorLight: "#ff0000", colorDark: "#ff0000", foldable: true, defaultFolded: false,
+		}], registry);
+		const imported = result.validDefs[0];
+		check(imported?.icon.value === payload, "Test payload did not survive actual import validation");
+		const sheet = new CSSStyleSheet();
+		sheet.replaceSync(emojiOverrideCSS(".callout", imported.icon.value));
+		const group = sheet.cssRules[0];
+		check(group instanceof CSSMediaRule && group.cssRules.length === 2, "Emoji escaped its CSS declaration");
+		check(Array.from(group.cssRules).every(rule => rule instanceof CSSStyleRule && rule.selectorText.startsWith(".callout")), "Injected CSS selector survived");
+		imported.icon = { type: "lucide", value: "pencil; } body { display:none } /*" };
+		check(calloutIconProp(imported) === "lucide-pencil", "Saved Lucide value escaped its CSS token");
+	}
+	return 12;
 }
 
 /** Exercise saved data -> registry -> resolver -> the actual live DOM painter. */

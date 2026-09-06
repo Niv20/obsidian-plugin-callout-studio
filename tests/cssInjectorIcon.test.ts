@@ -86,6 +86,12 @@ function iconProp(def: CalloutDefinition): string {
 }
 
 describe("calloutIconProp — the --callout-icon value", () => {
+	it("rejects CSS delimiters while retaining third-party plain IDs", () => {
+		for (const value of ["pencil; } body { display:none } /*", "star\n}", 'star"', "var(--other)"]) {
+			assert.equal(iconProp(definition({ icon: { type: "lucide", value } })), "lucide-pencil");
+		}
+		assert.equal(iconProp(definition({ icon: { type: "lucide", value: "other-plugin_icon-2" } })), "other-plugin_icon-2");
+	});
 	it("emits Lucide's id verbatim, without re-resolving it", () => {
 		// Lucide is Obsidian's own set, so the stored id is already what core CSS
 		// wants. Deliberately NOT put through `resolveLucideId` first: that
@@ -327,6 +333,15 @@ describe("emojiOverrideCSS", () => {
 		assert.ok(
 			emojiOverrideCSS(calloutSel("quiet"), "a\\b").includes('content: "a\\\\b"'),
 		);
+	});
+
+	it("encodes CSS newline characters inside untrusted emoji strings", () => {
+		for (const [control, escaped] of [["\n", "\\a "], ["\r", "\\d "], ["\f", "\\c "]]) {
+			const payload = `🙂${control}; } body { display:none } /*`;
+			const css = emojiOverrideCSS(calloutSel("quiet"), payload);
+			assert.ok(css.includes(`content: "🙂${escaped}; } body { display:none } /*";`));
+			assert.ok(!css.includes(`🙂${control}`));
+		}
 	});
 
 	it("is screen-scoped", () => {
