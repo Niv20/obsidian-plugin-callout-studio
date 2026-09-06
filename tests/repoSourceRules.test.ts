@@ -862,7 +862,8 @@ describe("no new oversized files", () => {
 		// consult — blockquote prefix arithmetic and the fenced code/math
 		// ranges an expansion must not cut through — moved to
 		// editor/quotePrefix.ts and editor/fenceBlocks.ts.
-		"src/editor/CalloutBlockTools.ts": 577,
+		// Frontmatter protection moved to editor/frontmatter.ts.
+		"src/editor/CalloutBlockTools.ts": 566,
 		"src/utils/vaultCalloutScanner.ts": 409,
 		// Lowered from 593: the suggestion row's icon and accent go through
 		// manager/theme/calloutListIcon.ts, shared with the three other lists

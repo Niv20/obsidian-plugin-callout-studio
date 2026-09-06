@@ -28,6 +28,7 @@ import {
 	stripLeadingQuoteTokens,
 } from "./quotePrefix";
 import type { QuoteStripResult } from "./quotePrefix";
+import { appendAfterFrontmatter, findFrontmatterEnd } from "./frontmatter";
 
 interface CalloutBlockInfo {
 	headerLine: number;
@@ -39,19 +40,6 @@ const CALLOUT_HEADER_REGEX = /^\[![^\]]*\]/;
 
 const arePositionsEqual = (a: EditorPosition, b: EditorPosition): boolean =>
 	a.line === b.line && a.ch === b.ch;
-
-const findFrontmatterEnd = (editor: Editor): number => {
-	if (editor.lineCount() === 0) return -1;
-	if (editor.getLine(0).trim() !== "---") return -1;
-
-	for (let line = 1; line < editor.lineCount(); line++) {
-		if (editor.getLine(line).trim() === "---") {
-			return line;
-		}
-	}
-
-	return -1;
-};
 
 const expandStartLine = (
 	editor: Editor,
@@ -413,6 +401,7 @@ export const insertHeadingCallout = (
 
 	const hashes = "#".repeat(Math.min(Math.max(Math.round(level), 1), 6));
 	const frontmatterEnd = findFrontmatterEnd(editor);
+	if (appendAfterFrontmatter(editor, frontmatterEnd, `${hashes} ${buildHeadingToken(def)}`)) return true;
 	const head = editor.getCursor("head");
 	const targetLine = Math.min(
 		Math.max(head.line, frontmatterEnd + 1),

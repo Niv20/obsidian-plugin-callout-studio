@@ -42,6 +42,8 @@ Each custom command you build gets registered with Obsidian just like any other 
 
 Custom commands behave exactly like the five generic commands above — the same handling of selections, cursor position, nesting, code blocks, and frontmatter. The only difference is that the callout type is already chosen, so there's no suggestion-list step; the command does its job immediately.
 
+In a note containing only properties, a heading command adds the heading below the properties and keeps their closing delimiter intact.
+
 ## Custom commands stay in sync
 
 Custom commands stay tied to the callout type they were built around, so they never go stale:
