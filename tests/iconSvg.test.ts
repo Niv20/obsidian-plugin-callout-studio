@@ -6,8 +6,8 @@
  * re-serialize through `DOMParser`/`XMLSerializer`, which Node has not got, and
  * this project's standing answer to that is the one written at the top of
  * `userImages.test.ts`: a test that stubbed a DOM would be testing the stub. So
- * `sanitizeSVG` and `sanitizeUserSvg` are not covered here — see the session
- * summary for what covering them would take.
+ * the real sanitizer/DOM regression cases live in tests/browser/svgSecurity.ts,
+ * run with scripts/test-svg-security.mjs against an existing Chromium install.
  *
  * What *is* here is everything on that surface that is pure or is decided before
  * the artwork is ever parsed:
