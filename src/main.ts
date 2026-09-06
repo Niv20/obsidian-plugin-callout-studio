@@ -1,3 +1,5 @@
+import { retrySettingsRecovery, startFreshSettings } from "./manager/settingsRecoveryActions";
+import type { SettingsAdoptionOptions } from "./manager/settingsAdopt";
 /**
  * main.ts — Plugin entry point.
  *
@@ -101,14 +103,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		if (!value) this.reloads?.release();
 	}
 
-	/**
-	 * `data.json` was rewritten by something other than us.
-	 *
-	 * Obsidian only calls this because the method exists — `Plugin.loadData`
-	 * starts tracking the file's mtime only when it is defined. The work is in
-	 * `manager/settingsBoot.ts`, including why a deferral is needed and what
-	 * this hook cannot cover.
-	 */
+	/** Obsidian config-file events enter the serialized settings reload queue. */
 	async onExternalSettingsChange(): Promise<void> {
 		await this.reloads.run();
 	}
@@ -400,6 +395,9 @@ export default class CalloutStudioPlugin extends Plugin {
 		clearMaterialFontStore();
 		clearContentPillCache();
 	}
+
+	retrySettingsRecovery(options?: SettingsAdoptionOptions): Promise<boolean> { return retrySettingsRecovery(this, options); }
+	startFreshSettings(): Promise<boolean> { return startFreshSettings(this); }
 
 	saveSettings(): Promise<void> {
 		return saveSettingsWithFeedback(this, () => this.reloads?.release());

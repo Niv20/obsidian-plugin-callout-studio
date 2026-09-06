@@ -1,3 +1,4 @@
+import { SettingsSaveStatus, SettingsPersistenceError, settingsWriteReason, type SettingsSaveReason } from "./settingsSaveStatus";
 import type { SettingsCheckpointStore } from "./settingsCheckpoint";
 import { canonical, content } from "./syncTree";
 import { SettingsSync } from "./settingsSync";
@@ -17,6 +18,7 @@ export interface SettingsWriterHost extends StaleWriteHost {
 }
 
 export class SettingsWriter {
+	readonly status = new SettingsSaveStatus();
 	private readonly guard = new SaveGuard();
 
 	private inFlight: Promise<void> | null = null;
@@ -40,7 +42,7 @@ export class SettingsWriter {
 	private destroyed = false;
 
 	constructor(private readonly host: SettingsWriterHost) {
-		this.stale = new StaleWriteGuard(host);
+		this.stale = new StaleWriteGuard({ ...host, onBlocked: reason => { this.status.fail(reason); host.onBlocked?.(reason); } });
 		this.sync = host.mergeConcurrent ? new SettingsSync() : null;
 	}
 
@@ -88,20 +90,46 @@ export class SettingsWriter {
 		if (this.sync) this.persistedContent = canonical(content(JSON.parse(diskJson)));
 		this.revision++;
 		this.stale.clear();
+		this.status.clear();
 	}
 
 	matchesLastWrite(json: string, contentOnly = false): boolean {
 		return contentOnly && this.sync ? this.persistedContent === canonical(content(JSON.parse(json))) : this.guard.matches(json);
 	}
 
+	/** An unchanged file returning after a transient read failure is healthy again. */
+	confirmUnchangedRead(json: string): void {
+		if (this.frozen || !this.matchesLastWrite(json) ||
+			!["missing", "unreadable", "changed"].includes(this.status.failure ?? "")) return;
+		this.stale.clear(); this.status.clear();
+	}
+
 	get hasCheckpoint(): boolean { return this.host.checkpoint !== undefined; }
 	get mergesConcurrent(): boolean { return this.sync !== null; }
 
 	async recoveryCopy(): Promise<unknown> {
-		return await this.host.checkpoint?.read() ?? null;
+		try { return await this.host.checkpoint?.read() ?? null; }
+		catch (error) { this.status.fail("recovery-read"); throw new SettingsPersistenceError("recovery-read", error); }
 	}
 
-	async remember(data: unknown): Promise<void> { await this.host.checkpoint?.write(data); }
+	async remember(data: unknown): Promise<void> {
+		try { await this.host.checkpoint?.write(data); }
+		catch (error) { this.status.fail("recovery-write"); throw new SettingsPersistenceError("recovery-write", error); }
+	}
+
+	private async write(data: unknown): Promise<void> {
+		try { await this.host.write(data); }
+		catch (error) {
+			// An adapter can finish the replacement and then reject. Confirm the
+			// exact payload before retrying, rather than treating our own file as sync.
+			try {
+				const current = await this.host.readCurrent?.();
+				if (current != null && canonical(JSON.parse(current)) === canonical(data)) return;
+			} catch { /* The original failure remains the useful diagnostic. */ }
+			const reason = settingsWriteReason(error);
+			this.status.fail(reason); throw new SettingsPersistenceError(reason, error);
+		}
+	}
 
 	recover(incoming: unknown, saved: unknown): unknown {
 		if (!this.sync) return incoming;
@@ -115,8 +143,11 @@ export class SettingsWriter {
 		if (!this.sync) return merged;
 		const joining = new SettingsSync();
 		for (const conflict of conflicts) {
-			joining.adopt(merged);
-			merged = joining.merge(conflict, merged);
+			// An unstamped recovery copy is an older baseline, not a new
+			// external edit. Reversing these operands lets that old copy undo
+			// an incoming legacy file, including deleting its newly added rows.
+			joining.adopt(conflict);
+			merged = joining.merge(merged, conflict);
 		}
 		return merged;
 	}
@@ -142,14 +173,16 @@ export class SettingsWriter {
 		}
 	}
 
-	freeze(): void {
+	freeze(reason: SettingsSaveReason = "unreadable"): void {
 		this.frozen = true;
+		this.status.freeze(reason);
 		this.revision++;
 		this.frozenNotified = false;
 	}
 
 	thaw(): void {
 		this.frozen = false;
+		this.status.thaw();
 	}
 
 	get busy(): boolean {
@@ -167,6 +200,7 @@ export class SettingsWriter {
 		this.destroyed = true;
 		this.revision++;
 		this.stale.destroy();
+		this.status.destroy();
 	}
 
 	/** Save an isolated manual change and publish it only after persistence succeeds. */
@@ -195,11 +229,12 @@ export class SettingsWriter {
 			if (this.frozen || this.destroyed || revision !== this.revision || !isCurrent()) return false;
 			if (this.host.checkpoint && this.stale.enabled && await this.stale.blocks(this.guard)) return false;
 			if (this.frozen || this.destroyed || revision !== this.revision || !isCurrent()) return false;
-			await this.host.write(data);
+			await this.write(data);
 			this.guard.commit(payload);
 			this.sync?.adopt(data);
 			if (this.sync) this.persistedContent = canonical(content(data));
 			this.stale.clear();
+			this.status.clear();
 		}
 		if (this.destroyed) return false;
 		publish();
@@ -214,7 +249,15 @@ export class SettingsWriter {
 		data = this.sync?.prepare(data) ?? data;
 		const payload = this.guard.prepare(data);
 		// Byte-identical to the last write that landed: skip the file event.
-		if (payload === null) return;
+		if (payload === null) {
+			// A prior commit may have saved the primary file but failed its final
+			// checkpoint. An unchanged Save must still retry that failed step.
+			if (this.status.failure === "recovery-write") {
+				await this.remember(data);
+				this.status.clear();
+			}
+			return;
+		}
 		// Asked after the guard, never before: a save that changes nothing
 		// needs no file read to prove it is harmless. Short-circuited rather
 		// than awaited-and-ignored when there is nothing to check — see
@@ -227,12 +270,13 @@ export class SettingsWriter {
 		if (this.frozen || this.destroyed || revision !== this.revision) return;
 		if (this.host.checkpoint && this.stale.enabled && await this.stale.blocks(this.guard)) return;
 		if (this.frozen || this.destroyed || revision !== this.revision) return;
-		await this.host.write(data);
+		await this.write(data);
 		// Only now — a throw above leaves the baseline where it was, so the
 		// next attempt writes rather than being suppressed as a duplicate.
 		this.guard.commit(payload);
 		this.sync?.adopt(data);
 		if (this.sync) this.persistedContent = canonical(content(data));
 		this.stale.clear();
+		this.status.clear();
 	}
 }

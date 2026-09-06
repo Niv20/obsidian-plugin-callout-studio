@@ -15,6 +15,10 @@
 import { Notice } from "obsidian";
 import type { App } from "obsidian";
 import { t } from "../i18n";
+import { settingsSaveMessage } from "./settingsSaveMessage";
+import { en } from "../i18n/en";
+import { reportSettingsSaveFailure } from "./settingsSaveReporter";
+import type { SettingsWriter } from "./SettingsWriter";
 import { ConfirmModal } from "../utils/ConfirmModal";
 
 /**
@@ -26,8 +30,8 @@ import { ConfirmModal } from "../utils/ConfirmModal";
  * next to a file that is probably fine would invite exactly the loss the freeze
  * just prevented.
  */
-export function warnSettingsUnreadable(): void {
-	new Notice(t("notice.settingsUnreadable"), 0);
+export function warnSettingsUnreadable(writer?: SettingsWriter): void {
+	reportSettingsSaveFailure(writer ?? {}, undefined, settingsSaveMessage(writer?.status.reason ?? "unreadable"));
 }
 
 /**
@@ -39,8 +43,7 @@ export function warnSettingsUnreadable(): void {
  * deleted `data.json` themselves to start over — and for that second user, a
  * freeze with no way out would mean every launch from here on silently
  * discarding everything they did. So the notice stays up until it is used or
- * dismissed, and clicking it is the only path in the codebase that reaches
- * `SettingsWriter.thaw()`.
+ * dismissed, and the same confirmed action remains available in the settings banner.
  *
  * **It asks first.** That link is the single most destructive control this
  * plugin has: it publishes an empty configuration to every device on the vault,
@@ -50,12 +53,12 @@ export function warnSettingsUnreadable(): void {
  * confirmation is not ceremony; it is the difference between "the file is gone"
  * and "the file is gone *and so are the copies on my other devices*".
  */
-export function offerFreshStart(app: App, startFresh: () => void): void {
+export function offerFreshStart(app: App, startFresh: () => Promise<boolean>): void {
 	const frag = createFragment();
-	frag.appendChild(createEl("p", { text: t("notice.settingsMissing") }));
+	frag.appendChild(createEl("p", { text: settingsSaveMessage("missing") }));
 	const action = frag.appendChild(
 		createEl("a", {
-			text: t("notice.settingsMissingAction"),
+			text: t("saveStatus.newFile"),
 			cls: "cs-notice-action",
 		}),
 	);
@@ -75,20 +78,28 @@ export function offerFreshStart(app: App, startFresh: () => void): void {
  * dialog leaves it standing, because the session is still frozen and still
  * needs to say so.
  */
-async function confirmFreshStart(
+export async function confirmFreshStart(
 	app: App,
-	notice: Notice,
-	startFresh: () => void,
-): Promise<void> {
+	notice: Notice | null,
+	startFresh: () => Promise<boolean>,
+): Promise<boolean> {
 	const ok = await new ConfirmModal(
 		app,
 		t("confirm.titleStartFresh"),
 		t("confirm.startFresh"),
 		t("confirm.startFreshOk"),
 	).confirm();
-	if (!ok) return;
-	startFresh();
-	notice.hide();
+	if (!ok) return false;
+	try {
+		const saved = await startFresh();
+		if (saved) notice?.hide();
+		return saved;
+	} catch (error) {
+		console.error("[callout-studio] fresh start failed", error);
+		const message = en["saveStatus.retryFailed"]!;
+		new Notice(message, 10000);
+		return false;
+	}
 }
 
 /**
@@ -98,6 +109,6 @@ async function confirmFreshStart(
  * file is intact and the fix is to update the plugin, not to overwrite it with
  * an older build's understanding of it.
  */
-export function warnSettingsFromNewerVersion(): void {
-	new Notice(t("notice.settingsNewerVersion"), 0);
+export function warnSettingsFromNewerVersion(writer?: SettingsWriter): void {
+	reportSettingsSaveFailure(writer ?? {}, undefined, settingsSaveMessage("newer-version"));
 }

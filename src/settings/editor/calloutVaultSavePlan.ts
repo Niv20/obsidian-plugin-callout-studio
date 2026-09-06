@@ -62,12 +62,13 @@ export function createCalloutVaultSavePlan(input: VaultSavePlanInput): CalloutVa
 	let titleDone = oldTitle === null || oldTitle === newTitle;
 	let foldDone = foldMarker === null;
 	if (idsDone && titleDone && foldDone) return null;
+	const updates: string[] = [];
 	return async () => {
 		if (!idsDone) {
 			const { fileCount } = await countCalloutUsages(app, removedIds);
 			if (fileCount > 0) {
 				const replaced = await replaceCalloutIdsInVault(app, removedIds, newId, undefined, true);
-				if (replaced > 0) new Notice(t("vault.idsUpdated", {
+				if (replaced > 0) updates.push(t("vault.idsUpdated", {
 					count: String(replaced), oldIds: removedIds.join(", "), newId,
 				}));
 			}
@@ -75,7 +76,7 @@ export function createCalloutVaultSavePlan(input: VaultSavePlanInput): CalloutVa
 		}
 		if (!titleDone && oldTitle !== null) {
 			const replaced = await replaceCalloutTitlesInVault(app, currentIds, oldTitle, newTitle, true);
-			if (replaced > 0) new Notice(t("vault.titlesUpdated", {
+			if (replaced > 0) updates.push(t("vault.titlesUpdated", {
 				count: String(replaced), oldTitle, newTitle,
 			}));
 			titleDone = true;
@@ -84,5 +85,6 @@ export function createCalloutVaultSavePlan(input: VaultSavePlanInput): CalloutVa
 			await normalizeFoldMarkersInVault(app, currentIds, foldMarker, true);
 			foldDone = true;
 		}
+		if (updates.length) { new Notice(updates.join("\n")); updates.length = 0; }
 	};
 }

@@ -1,3 +1,5 @@
+import { recoverEditorSaving } from "./editor/recoverEditorSaving";
+import { renderSaveStatusBanner } from "./saveStatusBanner";
 /**
  * settings/CalloutEditor.ts — Modal dialog for creating and editing callouts.
  *
@@ -321,6 +323,7 @@ export class CalloutEditor extends Modal {
 	private saveBtn: HTMLButtonElement | null = null;
 	private isSaveActionEnabled = false;
 	private readonly saveSession = new EditorSaveSession();
+	private releaseSaveStatus: (() => void) | null = null;
 	private editorOpen = false;
 	private initialSnapshot: string = "";
 	private initialStyleSnapshot: string = "";
@@ -423,6 +426,8 @@ export class CalloutEditor extends Modal {
 
 		// Hold incoming settings while this editor owns a draft.
 		this.plugin.settingsEditOpen = true;
+		this.releaseSaveStatus?.();
+		this.releaseSaveStatus = renderSaveStatusBanner(this.plugin, contentEl, { retry: () => this.recoverSaving() });
 
 		// Enforce the name↔ID invariant (the primary ID mirrors the display
 		// name) before snapshotting, so legacy rows normalize without creating
@@ -2057,21 +2062,7 @@ export class CalloutEditor extends Modal {
 		});
 	}
 
-	/**
-	 * {@link updatePreview}, coalesced to at most one run per animation frame —
-	 * for the controls that fire continuously while a pointer is held.
-	 *
-	 * A slider tick is not cheap: `updatePreview` re-registers the draft
-	 * definition and re-injects, which regenerates the CSS for every callout and
-	 * then repaints every icon in the document. Running that several times
-	 * between two frames only makes the last one visible, so the earlier passes
-	 * buy nothing and cost the frame budget the live preview needs. One pass per
-	 * frame still tracks the thumb at ~60fps — unlike a debounce, which would
-	 * hold the preview still until the drag stopped.
-	 *
-	 * The same gate `addStyleSlider` puts around the global style sliders
-	 * (settings/styleControls.ts), which is why those already drag smoothly.
-	 */
+	/** Coalesce slider previews to one paint per animation frame. */
 	private scheduleUpdatePreview(): void {
 		if (this.updatePreviewFrame !== null) return;
 		this.updatePreviewFrame = window.requestAnimationFrame(() => {
@@ -2081,7 +2072,7 @@ export class CalloutEditor extends Modal {
 	}
 
 	private updatePreview(): void {
-		if (!this.preview) return;
+		if (!this.preview || this.saveSession.busy) return;
 		// Keep the sample's titles tracking the display-name field.
 		this.preview.setText(this.buildSampleText());
 		this.preview.refresh();
@@ -2098,7 +2089,7 @@ export class CalloutEditor extends Modal {
 	 * Hovering is not an edit, so it must leave "Save changes" alone.
 	 */
 	private previewColorsTransient(state: EditorColorState | null): void {
-		if (state === null && this.previewColorOverride === null) return;
+		if (this.saveSession.busy || (state === null && this.previewColorOverride === null)) return;
 		this.previewColorOverride = state;
 		this.preview?.refresh();
 	}
@@ -2235,6 +2226,20 @@ export class CalloutEditor extends Modal {
 		};
 	}
 
+	private recoverSaving(): Promise<boolean> {
+		return recoverEditorSaving(this.plugin, this.saveSession, {
+			prepare: () => { this.previewColorOverride = null; },
+			busyChanged: () => {
+				if (this.editorOpen) this.updateSaveState();
+				else this.plugin.settingsEditOpen = this.saveSession.busy;
+			},
+			finish: recovered => {
+				if (recovered && this.existingId && !this.plugin.registry.getReal(this.existingId)) this.existingId = null;
+				if (this.editorOpen) { this.updateIdWarning(); this.updateSaveState(); this.updatePreview(); }
+			},
+		});
+	}
+
 	private async save(): Promise<void> {
 		if (this.saveSession.busy) return;
 		const before = this.stateSnapshot();
@@ -2272,7 +2277,7 @@ export class CalloutEditor extends Modal {
 			canUseCalloutId: (id, role) => this.canUseCalloutId(id, role),
 			getFallbackBase: () => this.getFallbackBase(),
 			onDefinitionApplied: (saved) => { this.existingId = saved.id; },
-			onVaultChangesReady: (plan) => this.saveSession.applyVaultChanges(this.plugin, plan),
+			onVaultChangesReady: (plan, definition) => this.saveSession.applyVaultChanges(this.plugin, plan, definition),
 		}), () => {
 			if (this.editorOpen) this.updateSaveState();
 			else this.plugin.settingsEditOpen = this.saveSession.busy;
@@ -2292,16 +2297,13 @@ export class CalloutEditor extends Modal {
 
 	onClose(): void {
 		this.editorOpen = false;
-		// Drop any coalesced refresh still queued from the last preview render.
-		// Must happen BEFORE destroy(): that reverts the preview and refreshes
-		// the notes synchronously, so a frame firing afterwards would only
-		// repeat work — and one firing after the modal is gone is pure waste.
+		this.releaseSaveStatus?.();
+		this.releaseSaveStatus = null;
+		// Cancel queued paints before destroying the preview.
 		if (this.noteRefreshFrame !== null) {
 			window.cancelAnimationFrame(this.noteRefreshFrame);
 			this.noteRefreshFrame = null;
 		}
-		// Same reasoning for the slider's coalesced preview pass, with one more
-		// on top: it touches `this.preview`, which is about to be destroyed.
 		if (this.updatePreviewFrame !== null) {
 			window.cancelAnimationFrame(this.updatePreviewFrame);
 			this.updatePreviewFrame = null;

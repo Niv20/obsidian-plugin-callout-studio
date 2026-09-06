@@ -1,8 +1,11 @@
+import { installFakeDom } from "./support/fakeDom";
 import { SettingsWriter } from "../src/manager/SettingsWriter";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { App, PluginManifest } from "obsidian";
 import { SettingsCheckpoint } from "../src/manager/settingsCheckpoint";
+
+const dom = installFakeDom();
 
 function fixture() {
 	const previous = Object.getOwnPropertyDescriptor(globalThis, "indexedDB");
@@ -16,7 +19,7 @@ function fixture() {
 	Object.defineProperty(request, "result", { value: db, configurable: true });
 	Object.defineProperty(globalThis, "indexedDB", { configurable: true, value: { open: () => request } });
 	const app = { appId: "checkpoint-test", vault: { configDir: ".obsidian", getName: () => "test" } } as unknown as App;
-	return { store: new SettingsCheckpoint(app, { id: "callout-studio" } as PluginManifest), request, operation, transaction,
+	return { db, store: new SettingsCheckpoint(app, { id: "callout-studio" } as PluginManifest), request, operation, transaction,
 		get closed() { return closed; },
 		open: async () => { request.onsuccess?.call(request, new Event("success")); await Promise.resolve(); },
 		restore: () => { if (previous) Object.defineProperty(globalThis, "indexedDB", previous); else Reflect.deleteProperty(globalThis, "indexedDB"); },
@@ -61,11 +64,67 @@ describe("durable recovery transaction boundaries", () => {
 			f.transaction.oncomplete?.call(f.transaction, new Event("complete")); await rejected;
 		} finally { f.restore(); }
 	});
+	it("times out a hung open and closes a database that arrives afterwards", async () => {
+		const f = fixture();
+		try {
+			const read = f.store.read(); const rejected = assert.rejects(read, /did not respond/);
+			dom.window.flushTimers(); await rejected;
+			await f.open(); assert.equal(f.closed, 1);
+		} finally { f.restore(); }
+	});
+	it("releases an open connection when another window requests an upgrade", async () => {
+		const f = fixture();
+		try {
+			const read = f.store.read(); await f.open();
+			f.db.onversionchange?.call(f.db, new Event("versionchange") as IDBVersionChangeEvent);
+			assert.equal(f.closed, 1);
+			f.transaction.oncomplete?.call(f.transaction, new Event("complete")); await read;
+		} finally { f.restore(); }
+	});
+	it("supports older browsers without transaction options but still waits for completion", async () => {
+		const f = fixture(); let attempts = 0;
+		try {
+			f.db.transaction = ((...args: unknown[]) => {
+				attempts++;
+				if (args.length === 3) throw new TypeError("Options unsupported");
+				return Object.assign(f.transaction, { objectStore: () => ({ get: () => f.operation, put: () => f.operation }) });
+			}) as typeof f.db.transaction;
+			let saved = false; const write = f.store.write({}).then(() => { saved = true; });
+			await f.open(); f.operation.onsuccess?.call(f.operation, new Event("success")); await Promise.resolve();
+			assert.equal(attempts, 2); assert.equal(saved, false);
+			f.transaction.oncomplete?.call(f.transaction, new Event("complete")); await write; assert.equal(saved, true);
+		} finally { f.restore(); }
+	});
+	it("does not retry a permission error as an unsupported transaction option", async () => {
+		const f = fixture(); let attempts = 0;
+		try {
+			f.db.transaction = (() => { attempts++; throw new DOMException("Permission denied", "SecurityError"); }) as typeof f.db.transaction;
+			const read = f.store.read(); const rejected = assert.rejects(read, /Permission denied/);
+			await f.open(); await rejected; assert.equal(attempts, 1); assert.equal(f.closed, 1);
+		} finally { f.restore(); }
+	});
 	it("reports unavailable recovery storage explicitly", async () => {
 		const f = fixture();
 		try { Reflect.deleteProperty(globalThis, "indexedDB"); await assert.rejects(f.store.read(), /unavailable/); }
 		finally { f.restore(); }
 	});
+	for (const mode of ["read", "write"] as const) {
+		it(`aborts a hung ${mode} transaction and allows a later retry`, async () => {
+			const f = fixture(); let aborted = 0;
+			f.transaction.abort = () => { aborted++; };
+			try {
+				const pending = mode === "read" ? f.store.read() : f.store.write({});
+				const rejected = assert.rejects(pending, /transaction did not respond/);
+				await f.open(); dom.window.flushTimers(); await rejected;
+				assert.equal(aborted, 1); assert.equal(f.closed, 1);
+				// A late completion cannot turn the rejected operation into success.
+				f.transaction.oncomplete?.call(f.transaction, new Event("complete"));
+				const retry = f.store.write({}); await f.open();
+				f.transaction.oncomplete?.call(f.transaction, new Event("complete")); await retry;
+				assert.equal(f.closed, 2);
+			} finally { f.restore(); }
+		});
+	}
 	it("does not turn a cancelled isolated commit into a recoverable accepted edit", async () => {
 		let release!: () => void, current = true, saved: unknown = { n: 1 }, writes = 0;
 		const gate = new Promise<void>(resolve => { release = resolve; });

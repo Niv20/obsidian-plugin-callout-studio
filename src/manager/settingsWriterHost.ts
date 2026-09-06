@@ -1,8 +1,8 @@
+import { SettingsPersistenceError } from "./settingsSaveStatus";
+import { reportSettingsSaveFailure } from "./settingsSaveReporter";
 import { SettingsCheckpoint, type SettingsCheckpointStore } from "./settingsCheckpoint";
-import { Notice } from "obsidian";
 import { SettingsWriter } from "./SettingsWriter";
 import { readSettingsFile, type SettingsFileHost } from "./settingsFile";
-import { t } from "../i18n";
 
 export interface SettingsWriterOwner extends SettingsFileHost {
 	registry: { toSaveData(): unknown };
@@ -17,7 +17,7 @@ export function createSettingsWriter(
 	owner: SettingsWriterOwner,
 	checkpoint: SettingsCheckpointStore = new SettingsCheckpoint(owner.app, owner.manifest),
 ): SettingsWriter {
-	return new SettingsWriter({
+	const writer = new SettingsWriter({
 		mergeConcurrent: true, checkpoint,
 		build: () => owner.registry.toSaveData(),
 		write: async (data) => {
@@ -26,19 +26,22 @@ export function createSettingsWriter(
 		},
 		readCurrent: async () => {
 			const read = await readSettingsFile(owner);
-			if (read.kind === "unreadable") throw new Error("Settings are unreadable");
+			if (read.kind === "unreadable") throw new SettingsPersistenceError("unreadable", "Settings are unreadable");
 			return read.kind === "loaded" ? read.json : null;
 		},
 		onStaleWrite: () => {
-			new Notice(t("notice.settingsChangedElsewhere"), 10000);
-			void owner.onExternalSettingsChange();
+			reportSettingsSaveFailure(writer);
+			void owner.onExternalSettingsChange().catch(error => {
+				console.error("[callout-studio] settings reload failed", error);
+			});
 		},
 		// Once per freeze, and worth the interruption exactly because it is
 		// once: the launch notice that announced the freeze was shown before
 		// the user had looked at the screen, and this fires at the moment their
 		// first change stops being real.
 		onFrozenSave: () => {
-			new Notice(t("notice.settingsNotSaved"), 10000);
+			reportSettingsSaveFailure(writer);
 		},
 	});
+	return writer;
 }

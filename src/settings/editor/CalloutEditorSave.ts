@@ -78,7 +78,7 @@ export type CalloutEditorSaveInput = {
 	/** Track the committed in-memory identity before fallible artwork/file work. */
 	onDefinitionApplied?: (def: CalloutDefinition) => void;
 	/** Own and durably save the definition before running resumable note work. */
-	onVaultChangesReady?: (plan: CalloutVaultSavePlan) => Promise<void>;
+	onVaultChangesReady?: (plan: CalloutVaultSavePlan, definition: CalloutDefinition) => Promise<void>;
 };
 
 export async function performCalloutEditorSave(
@@ -361,7 +361,7 @@ export async function performCalloutEditorSave(
 	});
 	if (plan) {
 		const complete = async () => { await plan(); protectedRename.release(plugin.registry); };
-		await (input.onVaultChangesReady ? input.onVaultChangesReady(complete) : complete());
+		await (input.onVaultChangesReady ? input.onVaultChangesReady(complete, mutationDef) : complete());
 	}
 
 	return def;

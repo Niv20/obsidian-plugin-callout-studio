@@ -373,6 +373,7 @@ export class Setting {
 
 /** Records its message when `__CS_NOTICES__` is an array; inert otherwise. */
 export class Notice {
+	hide(): void {}
 	constructor(message?: string) {
 		if (Array.isArray(seams.__CS_NOTICES__) && message !== undefined) {
 			seams.__CS_NOTICES__.push(message);

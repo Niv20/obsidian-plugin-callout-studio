@@ -1,3 +1,9 @@
+import { rememberMissingSettingsDisplay } from "./missingSettingsRecovery";
+import { SettingsPersistenceError } from "./settingsSaveStatus";
+import { reportSettingsSaveFailure } from "./settingsSaveReporter";
+import { isFromNewerBuild } from "./foreignFields";
+import type { PluginData } from "../types";
+import { startFreshSettings } from "./settingsRecoveryActions";
 import { recoverSettingsAtBoot, recoveryDisplay } from "./settingsRecovery";
 import { readSettledSettingsFile } from "./settingsSettledRead";
 import { offerFreshStart, warnSettingsUnreadable } from "./settingsNotices";
@@ -24,7 +30,7 @@ export async function loadSettingsInto(
 			"[callout-studio] data.json exists but could not be read; " +
 				"settings will not be written this session",
 		);
-		warnSettingsUnreadable();
+		warnSettingsUnreadable(host.settingsWriter);
 
 		await applySettingsRead(host, host.settingsWriter.hasCheckpoint ? await recoveryDisplay(host) : { kind: "absent" });
 
@@ -32,28 +38,48 @@ export async function loadSettingsInto(
 		return { isFreshInstall: false };
 	}
 
-	if (read.kind === "absent" && host.localState.hasInitialized) {
-		host.settingsWriter.freeze();
+	let missingRecovery: Partial<PluginData> | null = null;
+	if (read.kind === "absent" && host.settingsWriter.hasCheckpoint) {
+		try { missingRecovery = await host.settingsWriter.recoveryCopy() as Partial<PluginData> | null; }
+		catch (error) {
+			host.settingsWriter.freeze("recovery-read");
+			reportSettingsSaveFailure(host.settingsWriter, error);
+			await applySettingsRead(host, { kind: "absent" });
+			rememberMissingSettingsDisplay(host);
+			watchForLateSettings(host);
+			return { isFreshInstall: false };
+		}
+		if (host.settingsWriter.isDestroyed) return { isFreshInstall: false };
+	}
+	if (read.kind === "absent" && (host.localState.hasInitialized || missingRecovery)) {
+		host.settingsWriter.freeze("missing");
 		console.error(
 			"[callout-studio] data.json is missing on a device that has run " +
 				"before; settings will not be written this session",
 		);
-		offerFreshStart(host.app, () => {
-			host.settingsWriter.thaw();
-			void host.saveSettings();
-		});
+		if (isFromNewerBuild(missingRecovery)) {
+			host.settingsWriter.freeze("newer-version");
+			reportSettingsSaveFailure(host.settingsWriter);
+		} else offerFreshStart(host.app, () => startFreshSettings(host));
 
-		await applySettingsRead(host, { kind: "absent" });
+		// Display the durable copy without making it the baseline for a file
+		// that is absent. Confirmed recreation preserves these definitions.
+		await host.settingsWriter.hold(async () => { host.registry.load(missingRecovery); });
 
 		if (!host.settingsWriter.isDestroyed) watchForLateSettings(host);
 		return { isFreshInstall: false };
 	}
 
 	if (read.kind === "absent") {
-		host.settingsWriter.freeze();
+		host.settingsWriter.freeze("missing");
 	}
 	const recovered = read.kind === "loaded" && host.settingsWriter.hasCheckpoint ? await recoverSettingsAtBoot(host, read) : read;
-	await applySettingsRead(host, recovered, read.kind === "loaded" ? read.json : undefined);
+	try { await applySettingsRead(host, recovered, read.kind === "loaded" ? read.json : undefined); }
+	catch (error) {
+		// A failed migration flush must leave the loaded UI available to retry.
+		if (!(error instanceof SettingsPersistenceError)) throw error;
+		reportSettingsSaveFailure(host.settingsWriter, error);
+	}
 
 	if (!host.settingsWriter.isDestroyed) watchForLateSettings(host);
 	return { isFreshInstall: read.kind === "absent" };

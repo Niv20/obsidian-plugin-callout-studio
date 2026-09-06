@@ -193,3 +193,18 @@ describe("editor rename work survives failed saves and partial note rewrites", (
 		assert.deepEqual([...h.contents.values()], ["> [!new] New", "> [!new] New"]);
 	});
 });
+
+it("reports one precise error for a failed note rewrite and retains unfinished work", async () => {
+	const h = recoveryHarness(); h.state.failProcess = () => true;
+	const seams = globalThis as { __CS_NOTICES__?: string[] };
+	const messages: string[] = []; seams.__CS_NOTICES__ = messages;
+	try {
+		assert.equal(await h.save(), null);
+		assert.equal(messages.length, 1);
+		assert.match(messages[0]!, /definition was saved.*note updates could not be completed/);
+		assert.doesNotMatch(messages[0]!, /a\.md|b\.md|settings file could not be saved/);
+		assert.ok(h.state.disk.callouts.some(row => row.id === "new"));
+		h.state.failProcess = null; assert.ok(await h.save());
+		assert.ok([...h.contents.values()].every(text => text.includes("[!new]")));
+	} finally { delete seams.__CS_NOTICES__; h.writer.destroy(); }
+});

@@ -1,3 +1,4 @@
+import type { SettingsAdoptionOptions } from "../../manager/settingsAdopt";
 import type { App, Plugin, PluginManifest } from "obsidian";
 import type { CalloutRegistry } from "../../manager/CalloutRegistry";
 import type { DeviceLocalStore } from "../../manager/DeviceLocalStore";
@@ -22,12 +23,14 @@ export type SettingsTabPlugin = Plugin & {
 	settings: PluginSettings;
 	settingsEditOpen: boolean;
 
-	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite">;
+	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite"> & Partial<Pick<SettingsWriter, "status">>;
 
 	localState: DeviceLocalStore;
 	onIconCacheChange(cb: () => void): () => void;
 
 	saveSettings(): Promise<void>;
+	retrySettingsRecovery?(options?: SettingsAdoptionOptions): Promise<boolean>;
+	startFreshSettings?(): Promise<boolean>;
 	refreshCallouts(): void;
 	refreshRenderModes(): void;
 	hasIconFetchFailed(icon: CalloutIcon, role: CalloutRenderRole): boolean;

@@ -1,6 +1,7 @@
 import { readSettingsConflictFiles } from "./settingsConflictFiles";
 /** Reconcile a durable local checkpoint before adopting the launch-time file. */
-import { warnSettingsUnreadable } from "./settingsNotices";
+import { reportSettingsSaveFailure } from "./settingsSaveReporter";
+import { SettingsPersistenceError } from "./settingsSaveStatus";
 import { isFromNewerBuild } from "./foreignFields";
 import { backUpBeforeAdoption } from "./settingsConflictBackup";
 import { canonical } from "./syncTree";
@@ -15,7 +16,7 @@ export async function recoverSettingsAtBoot(host: SettingsBootHost, incoming: Lo
 	try {
 		const saved = await host.settingsWriter.recoveryCopy() as Partial<PluginData> | null;
 		if (host.settingsWriter.isDestroyed) return incoming;
-		if (isFromNewerBuild(saved)) throw new Error("Settings recovery copy is from a newer build");
+		if (isFromNewerBuild(saved)) throw new SettingsPersistenceError("newer-version", "Settings recovery copy is from a newer build");
 		const recovered = saved ? host.settingsWriter.recover(incoming.data, saved) : incoming.data;
 		const conflicts = await readSettingsConflictFiles(host);
 		// Each join uses the preceding snapshot as an unchanged local view.
@@ -23,16 +24,16 @@ export async function recoverSettingsAtBoot(host: SettingsBootHost, incoming: Lo
 		for (const conflict of conflicts) merged = host.settingsWriter.recover(conflict, merged) as Partial<PluginData>;
 		if (canonical(merged) === canonical(incoming.data)) return incoming;
 		for (const conflict of conflicts) {
-			if (!await backUpBeforeAdoption(host, conflict, merged)) throw new Error("Cannot preserve conflict copy");
+			if (!await backUpBeforeAdoption(host, conflict, merged)) throw new SettingsPersistenceError("backup", "Cannot preserve conflict copy");
 		}
 		if ((saved && !await backUpBeforeAdoption(host, saved, merged)) ||
-			!await backUpBeforeAdoption(host, incoming.data, merged)) throw new Error("Cannot preserve recovery conflict");
+			!await backUpBeforeAdoption(host, incoming.data, merged)) throw new SettingsPersistenceError("backup", "Cannot preserve recovery conflict");
 		return { kind: "loaded", data: merged, json: JSON.stringify(merged) };
 	} catch (error) {
 		// Reading the recovery copy must not become permission to replace it.
-		host.settingsWriter.freeze();
+		host.settingsWriter.freeze(error instanceof SettingsPersistenceError ? error.reason : "recovery-read");
 		console.error("[callout-studio] settings recovery is unavailable", error);
-		warnSettingsUnreadable();
+		reportSettingsSaveFailure(host.settingsWriter, error);
 		return incoming;
 	}
 }

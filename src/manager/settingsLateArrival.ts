@@ -39,7 +39,7 @@ export async function stillFreshInstall(
 			"[callout-studio] data.json appeared but could not be read; " +
 				"settings will not be written this session",
 		);
-		warnSettingsUnreadable();
+		warnSettingsUnreadable(host.settingsWriter);
 		return false;
 	}
 
@@ -77,7 +77,7 @@ export async function confirmFreshInstall(
 			err,
 		);
 		host.settingsWriter.freeze();
-		warnSettingsUnreadable();
+		warnSettingsUnreadable(host.settingsWriter);
 		stillFresh = false;
 	}
 

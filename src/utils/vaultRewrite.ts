@@ -63,7 +63,7 @@ async function forEachVaultFile(
 	}
 
 	if (failed.length > 0) {
-		new Notice(t("notice.vaultRewritePartial", { count: failed.length }), 10000);
+		if (!requireComplete) new Notice(t("notice.vaultRewritePartial", { count: failed.length }), 10000);
 		if (requireComplete) throw new Error(`Vault rewrite incomplete: ${failed.length} files could not be updated`);
 	}
 }

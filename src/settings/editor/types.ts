@@ -1,3 +1,4 @@
+import type { SettingsAdoptionOptions } from "../../manager/settingsAdopt";
 import type { App } from "obsidian";
 import type { CalloutRegistry } from "../../manager/CalloutRegistry";
 import type { SettingsWriter } from "../../manager/SettingsWriter";
@@ -15,8 +16,10 @@ export interface CalloutEditorPlugin {
 	cssInjector: CSSInjector;
 	settings: PluginSettings;
 	settingsEditOpen: boolean;
-	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite">;
+	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite"> & Partial<Pick<SettingsWriter, "status">>;
 	saveSettings(): Promise<void>;
+	retrySettingsRecovery?(options?: SettingsAdoptionOptions): Promise<boolean>;
+	startFreshSettings?(): Promise<boolean>;
 
 	refreshCallouts(): void;
 	refreshRenderModes(): void;

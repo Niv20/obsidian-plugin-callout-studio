@@ -1,9 +1,10 @@
+import type { SettingsWriter } from "./SettingsWriter";
 import { content } from "./syncTree";
 /** Preserve local definitions before a synced file replaces or removes them. */
-import { Notice } from "obsidian";
 import type { PluginData } from "../types";
 import { stableKeyOrder } from "../utils/stableJson";
-import { t } from "../i18n";
+import { settingsSaveMessage } from "./settingsSaveMessage";
+import { reportSettingsSaveFailure } from "./settingsSaveReporter";
 import { writeSettingsBackup, type SettingsBackupHost } from "./settingsBackup";
 import { mergeSavedSettings } from "../utils/settingsMerge";
 import { collectForeignFields, withForeignSettings } from "./foreignFields";
@@ -27,14 +28,16 @@ function settingsWouldReplacePreferences(current: Partial<PluginData>, incoming:
 }
 
 export async function backUpBeforeAdoption(
-	host: SettingsBackupHost, current: Partial<PluginData>, incoming: Partial<PluginData>,
+	host: SettingsBackupHost & { settingsWriter?: Pick<SettingsWriter, "status"> }, current: Partial<PluginData>, incoming: Partial<PluginData>,
 ): Promise<boolean> {
 	if (!settingsWouldDiscardRows(current, incoming) && !settingsWouldReplacePreferences(current, incoming)) return true;
 	const path = await writeSettingsBackup(host, current);
 	if (!path) {
-		new Notice(t("notice.settingsBackupFailed"), 10000);
+		host.settingsWriter?.status.fail("backup");
+		if (host.settingsWriter) reportSettingsSaveFailure(host.settingsWriter);
+		else reportSettingsSaveFailure({}, undefined, settingsSaveMessage("backup"));
 		return false;
 	}
-	new Notice(t("notice.settingsBackupSaved", { path }), 10000);
+	console.debug("[callout-studio] settings recovery backup saved", path);
 	return true;
 }
