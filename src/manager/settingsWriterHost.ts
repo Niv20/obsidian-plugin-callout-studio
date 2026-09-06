@@ -1,3 +1,4 @@
+import { SettingsCheckpoint, type SettingsCheckpointStore } from "./settingsCheckpoint";
 import { Notice } from "obsidian";
 import { SettingsWriter } from "./SettingsWriter";
 import { readSettingsFile, type SettingsFileHost } from "./settingsFile";
@@ -14,8 +15,10 @@ export interface SettingsWriterOwner extends SettingsFileHost {
 
 export function createSettingsWriter(
 	owner: SettingsWriterOwner,
+	checkpoint: SettingsCheckpointStore = new SettingsCheckpoint(owner.app, owner.manifest),
 ): SettingsWriter {
 	return new SettingsWriter({
+		mergeConcurrent: true, checkpoint,
 		build: () => owner.registry.toSaveData(),
 		write: async (data) => {
 			await owner.saveData(data);

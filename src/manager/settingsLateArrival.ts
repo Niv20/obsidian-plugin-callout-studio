@@ -11,6 +11,7 @@
 import type { ExternalReloadHost } from "./settingsAdopt";
 import { reloadFrom } from "./settingsAdopt";
 import { readSettingsFile } from "./settingsFile";
+import { readSettledSettingsFile } from "./settingsSettledRead";
 import { warnSettingsUnreadable } from "./settingsNotices";
 import { registryIsOwned } from "./registryOwnership";
 
@@ -24,7 +25,10 @@ import { registryIsOwned } from "./registryOwnership";
 export async function stillFreshInstall(
 	host: ExternalReloadHost,
 ): Promise<boolean> {
-	const read = await readSettingsFile(host);
+	const read = await readSettledSettingsFile(host, {
+		isCancelled: () => host.settingsWriter.isDestroyed,
+	});
+	if (host.settingsWriter.isDestroyed) return false;
 	if (read.kind === "absent") return true;
 
 	if (read.kind === "unreadable") {
@@ -124,39 +128,50 @@ export function watchForLateSettings(host: ExternalReloadHost): void {
 	// the watcher dies with it, and a popout's visibility says nothing about
 	// whether the app was in the background anyway.
 	const doc = document;
-	/** True while a check is in flight, so two foregrounds cannot interleave. */
+	/** Minimal hosts without a reload queue still serialize their own reads. */
 	let checking = false;
 
 	host.registerDomEvent(doc, "visibilitychange", () => {
 		// Only skip when we positively know the app is going away: the event
 		// fires for both directions, and coming back is the half worth acting
 		// on. Anything other than a definite "hidden" is worth a look.
-		if (checking || doc.visibilityState === "hidden") return;
+		if (host.settingsWriter.isDestroyed || doc.visibilityState === "hidden") return;
+		if (checking && !host.onExternalSettingsChange) return;
 		void adoptIfArrived();
 	});
 
 	async function adoptIfArrived(): Promise<void> {
 		checking = true;
 		try {
-			const read = await readSettingsFile(host);
+			// The queue owns stabilization and bounded retries. A foreground
+			// landing mid-download must enter it even when the first read is
+			// missing or malformed, and a newer foreground must request a pass.
+			if (host.onExternalSettingsChange) {
+				await host.onExternalSettingsChange();
+				return;
+			}
+			const initial = await readSettingsFile(host);
 			// Still nothing, or still not readable. Quietly wait for the next
 			// time the user comes back — this fires on every foreground, so
 			// anything said here would be said hundreds of times.
-			if (read.kind !== "loaded") return;
+			if (initial.kind !== "loaded") return;
 
 			// Our own writing coming back. The ordinary case on a healthy
 			// session, and the reason the steady state is nearly free.
-			if (host.settingsWriter.matchesLastWrite(read.json)) return;
+			if (host.settingsWriter.matchesLastWrite(initial.json)) return;
+			const read = await readSettledSettingsFile(host, {
+				initial,
+				isCancelled: () => host.settingsWriter.isDestroyed,
+			});
+			if (read.kind !== "loaded") return;
 
-			// The real plugin queues even an editor-owned update, so closing
-			// the editor can retry it. Minimal hosts retry on the next foreground.
-			if (registryIsOwned(host) && !host.onExternalSettingsChange) return;
+			// Minimal hosts retry on the next foreground.
+			if (registryIsOwned(host)) return;
 
 			// `reloadFrom` thaws — see its docblock. Adopting is the one thing
 			// that ends a freeze, and it is reached only with the real file in
 			// hand.
-			if (host.onExternalSettingsChange) await host.onExternalSettingsChange();
-			else await reloadFrom(host, read);
+			await reloadFrom(host, read);
 		} catch (err) {
 			console.error("[callout-studio] could not refresh settings on foreground", err);
 		} finally {

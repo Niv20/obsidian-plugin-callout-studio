@@ -1186,11 +1186,10 @@ function validateCalloutArray(
 			// kind of thing a shared file is worth carrying.
 			applyImportedStyleMode(def, entry);
 			if (isPlainObject(entry.metadata)) {
-				const meta: Record<string, string> = {};
-				for (const [k, v] of Object.entries(entry.metadata)) {
-					if (typeof v === "string") meta[k] = v;
-				}
-				def.metadata = meta;
+				// Literal metadata names must survive, including __proto__. Ordinary
+				// indexed assignment would invoke the inherited prototype setter.
+				def.metadata = Object.fromEntries(Object.entries(entry.metadata)
+					.filter((entry): entry is [string, string] => typeof entry[1] === "string"));
 			}
 			validDefs.push(def);
 		}

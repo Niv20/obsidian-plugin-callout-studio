@@ -49,16 +49,15 @@ function unrecognised(
 	known: ReadonlySet<string>,
 	retired: ReadonlySet<string> = new Set(),
 ): Record<string, unknown> {
-	const out: Record<string, unknown> = {};
-	for (const [key, entry] of entriesOf(value)) {
-		if (known.has(key) || retired.has(key)) continue;
+	return Object.fromEntries(entriesOf(value).filter(([key, entry]) => {
+		if (known.has(key) || retired.has(key)) return false;
 		// An explicit `undefined` is not a value another build is keeping — it
 		// does not survive `JSON.stringify` either way, and reproducing the key
 		// would only make the two files look different.
-		if (entry === undefined) continue;
-		out[key] = entry;
-	}
-	return out;
+		// fromEntries preserves every name as an own property, including
+		// __proto__, without invoking the prototype setter on a plain object.
+		return entry !== undefined;
+	}));
 }
 
 export function collectForeignFields(

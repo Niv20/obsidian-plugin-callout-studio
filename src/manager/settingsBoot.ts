@@ -1,4 +1,5 @@
-import { readSettingsFile } from "./settingsFile";
+import { recoverSettingsAtBoot, recoveryDisplay } from "./settingsRecovery";
+import { readSettledSettingsFile } from "./settingsSettledRead";
 import { offerFreshStart, warnSettingsUnreadable } from "./settingsNotices";
 import { watchForLateSettings } from "./settingsLateArrival";
 import { applySettingsRead } from "./settingsAdopt";
@@ -12,7 +13,9 @@ export interface SettingsBootResult {
 export async function loadSettingsInto(
 	host: ExternalReloadHost,
 ): Promise<SettingsBootResult> {
-	const read = await readSettingsFile(host);
+	const read = await readSettledSettingsFile(host, {
+		isCancelled: () => host.settingsWriter.isDestroyed,
+	});
 	if (host.settingsWriter.isDestroyed) return { isFreshInstall: false };
 
 	if (read.kind === "unreadable") {
@@ -23,7 +26,7 @@ export async function loadSettingsInto(
 		);
 		warnSettingsUnreadable();
 
-		await applySettingsRead(host, { kind: "absent" });
+		await applySettingsRead(host, host.settingsWriter.hasCheckpoint ? await recoveryDisplay(host) : { kind: "absent" });
 
 		if (!host.settingsWriter.isDestroyed) watchForLateSettings(host);
 		return { isFreshInstall: false };
@@ -49,7 +52,8 @@ export async function loadSettingsInto(
 	if (read.kind === "absent") {
 		host.settingsWriter.freeze();
 	}
-	await applySettingsRead(host, read);
+	const recovered = read.kind === "loaded" && host.settingsWriter.hasCheckpoint ? await recoverSettingsAtBoot(host, read) : read;
+	await applySettingsRead(host, recovered, read.kind === "loaded" ? read.json : undefined);
 
 	if (!host.settingsWriter.isDestroyed) watchForLateSettings(host);
 	return { isFreshInstall: read.kind === "absent" };

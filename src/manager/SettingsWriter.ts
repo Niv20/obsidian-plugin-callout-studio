@@ -1,7 +1,13 @@
+import type { SettingsCheckpointStore } from "./settingsCheckpoint";
+import { canonical, content } from "./syncTree";
+import { SettingsSync } from "./settingsSync";
 import { SaveGuard } from "../utils/saveGuard";
 import { StaleWriteGuard, type StaleWriteHost } from "./staleWriteGuard";
 
 export interface SettingsWriterHost extends StaleWriteHost {
+
+	mergeConcurrent?: boolean;
+	checkpoint?: SettingsCheckpointStore;
 
 	build(): unknown;
 
@@ -28,11 +34,14 @@ export class SettingsWriter {
 	private frozenNotified = false;
 
 	private readonly stale: StaleWriteGuard;
+	private readonly sync: SettingsSync | null;
+	private persistedContent: string | null = null;
 	private revision = 0;
 	private destroyed = false;
 
 	constructor(private readonly host: SettingsWriterHost) {
 		this.stale = new StaleWriteGuard(host);
+		this.sync = host.mergeConcurrent ? new SettingsSync() : null;
 	}
 
 	save(): Promise<void> {
@@ -73,14 +82,43 @@ export class SettingsWriter {
 		return this.followUp;
 	}
 
-	adopt(json: string): void {
-		this.guard.adopt(json);
+	adopt(json: string, diskJson = json): void {
+		this.sync?.adopt(JSON.parse(json));
+		this.guard.adopt(diskJson);
+		if (this.sync) this.persistedContent = canonical(content(JSON.parse(diskJson)));
 		this.revision++;
 		this.stale.clear();
 	}
 
-	matchesLastWrite(json: string): boolean {
-		return this.guard.matches(json);
+	matchesLastWrite(json: string, contentOnly = false): boolean {
+		return contentOnly && this.sync ? this.persistedContent === canonical(content(JSON.parse(json))) : this.guard.matches(json);
+	}
+
+	get hasCheckpoint(): boolean { return this.host.checkpoint !== undefined; }
+	get mergesConcurrent(): boolean { return this.sync !== null; }
+
+	async recoveryCopy(): Promise<unknown> {
+		return await this.host.checkpoint?.read() ?? null;
+	}
+
+	async remember(data: unknown): Promise<void> { await this.host.checkpoint?.write(data); }
+
+	recover(incoming: unknown, saved: unknown): unknown {
+		if (!this.sync) return incoming;
+		const recovering = new SettingsSync();
+		recovering.adopt(saved);
+		return recovering.merge(incoming, saved);
+	}
+
+	mergeExternal(incoming: unknown, local: unknown, conflicts: unknown[] = []): unknown {
+		let merged = this.sync?.merge(incoming, local) ?? incoming;
+		if (!this.sync) return merged;
+		const joining = new SettingsSync();
+		for (const conflict of conflicts) {
+			joining.adopt(merged);
+			merged = joining.merge(conflict, merged);
+		}
+		return merged;
 	}
 
 	async hold<T>(body: () => Promise<T>): Promise<T> {
@@ -143,22 +181,37 @@ export class SettingsWriter {
 
 	private async commitPass(data: unknown, isCurrent: () => boolean, publish: () => void): Promise<boolean> {
 		const revision = this.revision;
+		data = this.sync?.prepare(data) ?? data;
 		const payload = this.guard.prepare(data);
 		if (this.stale.enabled && await this.stale.blocks(this.guard)) return false;
 		if (this.frozen || this.destroyed || revision !== this.revision || !isCurrent()) return false;
 		if (payload !== null) {
+			if (this.host.checkpoint) {
+				// A staged candidate is not an accepted edit until its final
+				// cancellation check passes. Preflight storage with current state.
+				const accepted = structuredClone(this.host.build());
+				await this.remember(this.sync?.prepare(accepted) ?? accepted);
+			}
+			if (this.frozen || this.destroyed || revision !== this.revision || !isCurrent()) return false;
+			if (this.host.checkpoint && this.stale.enabled && await this.stale.blocks(this.guard)) return false;
+			if (this.frozen || this.destroyed || revision !== this.revision || !isCurrent()) return false;
 			await this.host.write(data);
 			this.guard.commit(payload);
+			this.sync?.adopt(data);
+			if (this.sync) this.persistedContent = canonical(content(data));
 			this.stale.clear();
 		}
 		if (this.destroyed) return false;
 		publish();
+		// Publish the successful file write even if this final checkpoint fails.
+		if (payload !== null && this.host.checkpoint) await this.remember(data);
 		return true;
 	}
 
 	private async runPass(): Promise<void> {
 		const revision = this.revision;
-		const data = structuredClone(this.host.build());
+		let data = structuredClone(this.host.build());
+		data = this.sync?.prepare(data) ?? data;
 		const payload = this.guard.prepare(data);
 		// Byte-identical to the last write that landed: skip the file event.
 		if (payload === null) return;
@@ -170,10 +223,16 @@ export class SettingsWriter {
 			return;
 		}
 		if (this.frozen || this.destroyed || revision !== this.revision) return;
+		if (this.host.checkpoint) await this.remember(data);
+		if (this.frozen || this.destroyed || revision !== this.revision) return;
+		if (this.host.checkpoint && this.stale.enabled && await this.stale.blocks(this.guard)) return;
+		if (this.frozen || this.destroyed || revision !== this.revision) return;
 		await this.host.write(data);
 		// Only now — a throw above leaves the baseline where it was, so the
 		// next attempt writes rather than being suppressed as a duplicate.
 		this.guard.commit(payload);
+		this.sync?.adopt(data);
+		if (this.sync) this.persistedContent = canonical(content(data));
 		this.stale.clear();
 	}
 }

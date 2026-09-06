@@ -79,9 +79,9 @@ export async function readSettingsFile(
 ): Promise<SettingsRead> {
 	let raw: unknown;
 	try { raw = await host.loadData(); } catch { return { kind: "unreadable" }; }
-	// Arrays and primitives parse fine and are not settings. They also prove the
-	// file exists, so they fall through to the same verdict the check below
-	// reaches — but they must not be handed on as `Partial<PluginData>`.
+	// Arrays and primitives parse fine and are not settings. A subsequent
+	// disappearance during sync must not turn that observed corruption into
+	// permission to initialize a new file.
 	if (typeof raw === "object" && raw !== null && !Array.isArray(raw)) {
 		const data = raw as Record<string, unknown>;
 		if (!hasSafeSettingsFileShape(data)) return { kind: "unreadable" };
@@ -91,6 +91,7 @@ export async function readSettingsFile(
 			json: JSON.stringify(raw),
 		};
 	}
+	if (raw !== null && raw !== undefined) return { kind: "unreadable" };
 
 	try {
 		const present = await host.app.vault.adapter.exists(dataPath(host));

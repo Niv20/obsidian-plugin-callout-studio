@@ -1,3 +1,4 @@
+import { validSyncEnvelope } from "./settingsSync";
 /** Reject stored shapes that cannot safely reach the registry or renderers. */
 import { DEFAULT_CALLOUTS } from "../constants";
 
@@ -22,6 +23,7 @@ function safeRow(value: unknown): boolean {
 	if (value.metadata !== undefined && (!object(value.metadata) ||
 		!Object.values(value.metadata).every(entry => typeof entry === "string"))) return false;
 	if (value.bgGradient !== undefined && (!object(value.bgGradient) ||
+		typeof value.bgGradient.angleDeg !== "number" || !Number.isFinite(value.bgGradient.angleDeg) ||
 		typeof value.bgGradient.toColorLight !== "string" || typeof value.bgGradient.toColorDark !== "string" ||
 		!optionalString(value.bgGradient, "textToColorLight") || !optionalString(value.bgGradient, "textToColorDark"))) return false;
 	return ["bgColorLight", "bgColorDark", "textColorLight", "textColorDark", "paletteId"]
@@ -41,7 +43,17 @@ function safeCache(value: unknown, legacy: boolean): boolean {
  * instead of crashing halfway through a load and later saving a partial map.
  */
 export function hasSafeSettingsFileShape(data: Record<string, unknown>): boolean {
+	// Migrations compare this numerically. An object here can throw during a
+	// rebuild; absent legacy versions and finite future versions remain valid.
+	if (!validSyncEnvelope(data)) return false;
+	if (data.version !== undefined && (typeof data.version !== "number" || !Number.isFinite(data.version))) return false;
 	if (data.callouts !== undefined && (!Array.isArray(data.callouts) || !data.callouts.every(safeRow))) return false;
+	if (Array.isArray(data.callouts)) {
+		// The registry is keyed by exact ID; accepting duplicates would silently
+		// discard one row before the next save could overwrite the source file.
+		const ids = data.callouts.map((row: { id: string }) => row.id);
+		if (new Set(ids).size !== ids.length) return false;
+	}
 	if (data.settings !== undefined && (!object(data.settings) || !optionalString(data.settings, "fallbackCalloutId"))) return false;
 	if (data.iconSvgCache !== undefined && !safeCache(data.iconSvgCache, false)) return false;
 	if (data.materialSvgCache !== undefined && !safeCache(data.materialSvgCache, true)) return false;
