@@ -204,6 +204,14 @@ its rendered name changes (a locale arriving mid-session, or the user changing
 language) — same-id re-registration is what keeps the hotkey bound, since
 Obsidian keys bindings by command id, not by the registered object.
 
+## Quick Insert targets
+
+Quick Insert captures the `MarkdownView`, `Editor` and `TFile` together.
+Before inserting, all identities and leaf membership must still match; a
+reused view, closed leaf or replaced editor produces a refusal instead of
+redirecting the edit to the active note. A mode-only change retains the
+specific Reading view message. With no captured note, normal resolution applies.
+
 ## `CustomCommandManager` — one idempotent sweep
 
 [`src/editor/CustomCommandManager.ts`](../src/editor/CustomCommandManager.ts)

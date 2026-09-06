@@ -27,6 +27,7 @@ const HINT_KEY: Record<TargetEditorProblem, string> = {
 	"no-note": "quickInsert.noEditorHint",
 	"reading-view": "quickInsert.readingViewHint",
 	"no-cursor": "quickInsert.noCursorHint",
+	"target-moved": "quickInsert.targetMovedHint",
 };
 
 /** Raised in answer to a press of Insert that had nowhere to go. */
@@ -34,6 +35,7 @@ const NOTICE_KEY: Record<TargetEditorProblem, string> = {
 	"no-note": "quickInsert.noEditor",
 	"reading-view": "quickInsert.readingView",
 	"no-cursor": "quickInsert.noCursor",
+	"target-moved": "quickInsert.targetMoved",
 };
 
 /** The standing line in the window: why nothing can be inserted right now. */

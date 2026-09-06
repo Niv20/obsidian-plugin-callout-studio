@@ -795,7 +795,8 @@ describe("classifyTargetEditor: an editing view with nowhere to write", () => {
 describe("isTargetStillValid", () => {
 	const capture = (v: MarkdownView): TargetEditor => ({
 		view: v,
-		editor: { marker: "the editor" } as unknown as Editor,
+		editor: editorOf(v),
+		file: v.file!,
 	});
 
 	it("holds while the leaf is still open and still showing that view", () => {
@@ -843,6 +844,32 @@ describe("isTargetStillValid", () => {
 });
 
 describe("currentTargetEditor", () => {
+	it("rejects a different non-null file in the same view", () => {
+		const v = view({});
+		const captured = classifyTargetEditor(v);
+		assert.ok(captured.ok);
+		v.file = { path: "different.md" } as never;
+		const host = app({ active: v, markdownLeaves: [v.leaf] });
+		assert.strictEqual(isTargetStillValid(host, captured.target), false);
+		assert.strictEqual(problemOf(currentTargetEditor(host, captured.target)), "target-moved");
+	});
+	it("rejects replacement editor state for the same file", () => {
+		const v = view({});
+		const captured = classifyTargetEditor(v);
+		assert.ok(captured.ok);
+		Object.assign(v, { editor: fakeEditor({ line: 0, ch: 0 }) });
+		assert.strictEqual(problemOf(currentTargetEditor(app({ active: v, markdownLeaves: [v.leaf] }), captured.target)), "target-moved");
+	});
+	it("allows the captured file to be renamed without changing identity", () => {
+		const v = view({});
+		const captured = classifyTargetEditor(v);
+		assert.ok(captured.ok);
+		captured.target.file.path = "renamed.md";
+		assert.strictEqual(targetView(currentTargetEditor(app({ active: v, markdownLeaves: [v.leaf] }), captured.target)), v);
+	});
+	it("does not capture a view that has no file", () => {
+		assert.strictEqual(problemOf(classifyTargetEditor(view({ file: null }))), "no-note");
+	});
 	it("prefers the note the window was opened from", () => {
 		// With two panes open, "the one you opened this from" is the only
 		// answer that is not a guess.
@@ -850,7 +877,7 @@ describe("currentTargetEditor", () => {
 		const other = view({});
 		const openedLeaf = (opened as unknown as { leaf: FakeLeaf }).leaf;
 		const otherLeaf = (other as unknown as { leaf: FakeLeaf }).leaf;
-		const captured: TargetEditor = { view: opened, editor: editorOf(opened) };
+		const captured: TargetEditor = { view: opened, editor: editorOf(opened), file: opened.file! };
 
 		const resolved = currentTargetEditor(
 			app({ active: other, markdownLeaves: [openedLeaf, otherLeaf] }),
@@ -860,18 +887,18 @@ describe("currentTargetEditor", () => {
 		assert.strictEqual(targetView(resolved), opened);
 	});
 
-	it("falls back to whatever is active once the capture goes stale", () => {
+	it("refuses a stale capture without redirecting to another active note", () => {
 		const closed = view({});
 		const nowActive = view({});
 		const activeLeaf = (nowActive as unknown as { leaf: FakeLeaf }).leaf;
-		const captured: TargetEditor = { view: closed, editor: editorOf(closed) };
+		const captured: TargetEditor = { view: closed, editor: editorOf(closed), file: closed.file! };
 
 		const resolved = currentTargetEditor(
 			app({ active: nowActive, markdownLeaves: [activeLeaf] }),
 			captured,
 		);
 
-		assert.strictEqual(targetView(resolved), nowActive);
+		assert.strictEqual(problemOf(resolved), "target-moved");
 	});
 
 	it("resolves from scratch when nothing was captured", () => {
@@ -879,22 +906,20 @@ describe("currentTargetEditor", () => {
 		assert.strictEqual(targetView(currentTargetEditor(app({ active: v }), null)), v);
 	});
 
-	it("says no-note when the capture is stale and nothing else is open", () => {
+	it("reports a moved target when the captured note closed", () => {
 		// What makes the Insert button raise a notice instead of writing into
 		// some arbitrary editor that merely happens to exist.
 		const closed = view({});
-		const captured: TargetEditor = { view: closed, editor: editorOf(closed) };
+		const captured: TargetEditor = { view: closed, editor: editorOf(closed), file: closed.file! };
 
-		assert.strictEqual(problemOf(currentTargetEditor(app({}), captured)), "no-note");
+		assert.strictEqual(problemOf(currentTargetEditor(app({}), captured)), "target-moved");
 	});
 
 	it("reports the *current* reason when the captured note is now being read", () => {
-		// The capture is stale precisely because the mode changed, so the
-		// answer has to come from re-resolving — and the note the user is
-		// looking at is the one it is about.
+		// The identity still holds; classify the captured note's new mode.
 		const flipped = view({ mode: "preview" });
 		const leaf = (flipped as unknown as { leaf: FakeLeaf }).leaf;
-		const captured: TargetEditor = { view: flipped, editor: editorOf(flipped) };
+		const captured: TargetEditor = { view: flipped, editor: editorOf(flipped), file: flipped.file! };
 
 		const resolved = currentTargetEditor(
 			app({ active: flipped, markdownLeaves: [leaf] }),
@@ -911,7 +936,7 @@ describe("currentTargetEditor", () => {
 		// refuse every time — the modal itself takes the focus.
 		const opened = view({ cursor: { line: 4, ch: 2 } });
 		const leaf = (opened as unknown as { leaf: FakeLeaf }).leaf;
-		const captured: TargetEditor = { view: opened, editor: editorOf(opened) };
+		const captured: TargetEditor = { view: opened, editor: editorOf(opened), file: opened.file! };
 
 		const resolved = currentTargetEditor(
 			app({ active: null, markdownLeaves: [leaf] }),
@@ -927,7 +952,7 @@ describe("currentTargetEditor", () => {
 		// the view and the mode are all unchanged here.
 		const v = view({ cursor: null });
 		const leaf = (v as unknown as { leaf: FakeLeaf }).leaf;
-		const captured: TargetEditor = { view: v, editor: editorOf(v) };
+		const captured: TargetEditor = { view: v, editor: editorOf(v), file: v.file! };
 
 		const resolved = currentTargetEditor(
 			app({ active: v, markdownLeaves: [leaf] }),
@@ -956,6 +981,7 @@ describe("every refusal has its own message", () => {
 		"no-note",
 		"reading-view",
 		"no-cursor",
+		"target-moved",
 	];
 
 	// `t()` answers in English until a locale is downloaded, so these are the
