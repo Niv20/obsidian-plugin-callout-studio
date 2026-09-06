@@ -38,10 +38,11 @@ import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CSSInjector } from "../src/manager/CSSInjector";
 import { StartupStyleCache } from "../src/manager/StartupStyleCache";
+import { STARTUP_CSS_STORAGE_KEY, LEGACY_STARTUP_CSS_STORAGE_KEY } from "../src/manager/startupStyleKeys";
 import { must } from "./support/cssInjectorHarness";
 
 /** The single key, as `StartupStyleCache` spells it before scoping. */
-const CSS_KEY = "callout-studio-css";
+const CSS_KEY = STARTUP_CSS_STORAGE_KEY;
 
 /* ────────────────────────────────────────────────────────────────────────────
  * A localStorage that records, and can be told to refuse
@@ -187,6 +188,20 @@ describe("StartupStyleCache — the key is scoped to the vault", () => {
  * ──────────────────────────────────────────────────────────────────────────── */
 
 describe("StartupStyleCache — persist → loadCachedCss", () => {
+	it("never replays a pre-fix snapshot and retains it for legacy recovery", () => {
+		const store = storage();
+		const oldKey = `v-${LEGACY_STARTUP_CSS_STORAGE_KEY}`;
+		const unsafe = "body { display:none }";
+		store.held.set(oldKey, unsafe);
+		withWindow(store, () => {
+			const cache = new StartupStyleCache(app({ appId: "v" }));
+			assert.equal(cache.loadCachedCss(), null);
+			cache.persist(".callout { color:red }");
+			assert.equal(cache.loadCachedCss(), ".callout { color:red }");
+			assert.equal(store.held.get(oldKey), unsafe);
+			assert.ok(!store.reads.includes(oldKey));
+		});
+	});
 	it("hands back exactly the text it was given", () => {
 		// Byte-exact matters: the snapshot IS what the adopted stylesheet gets,
 		// so the handoff to the live-generated CSS is only invisible if the two

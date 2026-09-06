@@ -23,8 +23,7 @@
  */
 import type { App } from "obsidian";
 import { WriteMemo } from "../utils/writeMemo";
-
-const LOCAL_STORAGE_KEY = "callout-studio-css";
+import { STARTUP_CSS_STORAGE_KEY } from "./startupStyleKeys";
 
 export class StartupStyleCache {
 	private app: App;
@@ -52,7 +51,7 @@ export class StartupStyleCache {
 	loadCachedCss(): string | null {
 		try {
 			const cached = window.localStorage.getItem(
-				this.scopedKey(LOCAL_STORAGE_KEY),
+				this.scopedKey(STARTUP_CSS_STORAGE_KEY),
 			);
 			return cached && cached.length > 0 ? cached : null;
 		} catch {
@@ -73,7 +72,7 @@ export class StartupStyleCache {
 				if (parsed?.v !== 2) return;
 			}
 			window.localStorage.setItem(
-				this.scopedKey(LOCAL_STORAGE_KEY),
+				this.scopedKey(STARTUP_CSS_STORAGE_KEY),
 				cssText,
 			);
 			// Only once the write has actually landed — the rule, and the bug

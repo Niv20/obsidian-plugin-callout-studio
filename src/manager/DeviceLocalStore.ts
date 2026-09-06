@@ -1,5 +1,6 @@
 /** Device-only UI preferences. Legacy discovery is archived, never restored. */
 import type { App, PluginManifest } from "obsidian";
+import { LEGACY_STARTUP_CSS_STORAGE_KEY } from "./startupStyleKeys";
 import type { CalloutListsFoldState } from "../types";
 import { WriteMemo } from "../utils/writeMemo";
 import { writeLegacyDiscoveryArchive } from "./legacyDiscoveryArchive";
@@ -72,7 +73,7 @@ export class DeviceLocalStore {
 		const raw = this.legacyRaw;
 		if (raw === null) return { kind: "none" };
 		try {
-			const cssKey = this.scopedKey().replace(/callout-studio-local$/, "callout-studio-css");
+			const cssKey = this.scopedKey().replace(/callout-studio-local$/, LEGACY_STARTUP_CSS_STORAGE_KEY);
 			const css = window.localStorage.getItem(cssKey);
 			const path = await writeLegacyDiscoveryArchive(this.app, manifest, raw, css);
 			if (path === null) return { kind: "failed" };

@@ -350,7 +350,7 @@ persist(cssText: string): void     // called at the end of every inject() whose 
 ```
 
 The key is vault-scoped:
-`${appId ?? vault.getName()}-callout-studio-css` — `App.loadLocalStorage`'s
+`${appId ?? vault.getName()}-callout-studio-css-v2` — `App.loadLocalStorage`'s
 own `${appId}-${key}` convention, replicated by hand because that public API
 requires Obsidian ≥1.8.7 while this plugin's `minAppVersion` is lower.
 
@@ -361,6 +361,12 @@ literal first statement of `onload()`, before `loadData()` is even awaited
 (see [Plugin lifecycle](03-plugin-lifecycle.md#step-3-the-startup-css-fast-path)).
 A stale snapshot self-heals automatically: the very next `inject()` (once the
 registry is populated) persists fresh CSS over it.
+
+The versioned key deliberately never falls back to the old
+`callout-studio-css` key, whose text may contain icon CSS generated before the
+string-escaping security fixes. The first launch after upgrading generates fresh
+styles after settings load. The old key remains untouched for the existing
+legacy-discovery recovery archive; it is never installed as a stylesheet.
 
 > [!NOTE]
 > `persist()` is skipped while a transient live-preview definition is

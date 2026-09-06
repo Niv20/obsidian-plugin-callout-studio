@@ -221,7 +221,8 @@ describe("class names in styles.css and src/ agree", () => {
 	 * not.
 	 */
 	const NOT_A_CLASS = new Set([
-		"callout-studio-css", // localStorage key for the startup CSS snapshot
+		"callout-studio-css", // legacy startup CSS retained for recovery
+		"callout-studio-css-v2", // current startup CSS snapshot
 		"callout-studio-local", // localStorage key for the device-local state
 		"callout-studio-dynamic-css", // <style> element id
 		"callout-studio-do-not-delete", // the legacy vault snippet's filename

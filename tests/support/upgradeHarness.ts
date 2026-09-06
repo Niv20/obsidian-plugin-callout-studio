@@ -1,13 +1,15 @@
 import type { App, EventRef, PluginManifest } from "obsidian";
 import { DeviceLocalStore } from "../../src/manager/DeviceLocalStore";
 import { StartupStyleCache } from "../../src/manager/StartupStyleCache";
+import { LEGACY_STARTUP_CSS_STORAGE_KEY, STARTUP_CSS_STORAGE_KEY } from "../../src/manager/startupStyleKeys";
 import { CalloutRegistry } from "../../src/manager/CalloutRegistry";
 import { SettingsWriter } from "../../src/manager/SettingsWriter";
 import { loadSettingsInto } from "../../src/manager/settingsBoot";
 import { adoptExternalSettings, type ExternalReloadHost } from "../../src/manager/settingsAdopt";
 
 export const LOCAL_KEY = "upgrade-vault-callout-studio-local";
-export const CSS_KEY = "upgrade-vault-callout-studio-css";
+export const CSS_KEY = `upgrade-vault-${LEGACY_STARTUP_CSS_STORAGE_KEY}`;
+export const CURRENT_CSS_KEY = `upgrade-vault-${STARTUP_CSS_STORAGE_KEY}`;
 export const DATA_PATH = ".obsidian/plugins/callout-studio/data.json";
 export const ORIGINAL_CSS = '.callout[data-callout="local-only"] { --callout-color: 197, 32, 79; --callout-icon: lucide-heart; }';
 
