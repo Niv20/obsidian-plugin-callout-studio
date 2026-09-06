@@ -51,6 +51,10 @@ interface Vault {
 	failRemove: boolean;
 	/** Make `exists()` reject. */
 	failExists: boolean;
+	content: Map<string, string>;
+	failArchiveWrite: boolean;
+	corruptArchive: boolean;
+	changeSource: boolean;
 }
 
 interface CustomCss {
@@ -86,6 +90,10 @@ function fake(
 		present: new Set(opts.otherFiles ?? []),
 		failRemove: false,
 		failExists: false,
+		content: new Map([[SNIPPET_PATH, "/* personal changes */ body { color: red; }"]]),
+		failArchiveWrite: false,
+		corruptArchive: false,
+		changeSource: false,
 	};
 	if (opts.fileExists) vault.present.add(SNIPPET_PATH);
 
@@ -118,6 +126,18 @@ function fake(
 		vault: {
 			configDir: CONFIG_DIR,
 			adapter: {
+				async read(path: string): Promise<string> {
+					if (vault.corruptArchive && path.endsWith(".txt")) return "truncated";
+					const text = vault.content.get(path);
+					if (text === undefined) throw new Error("ENOENT");
+					return text;
+				},
+				async mkdir(path: string): Promise<void> { vault.present.add(path); },
+				async write(path: string, text: string): Promise<void> {
+					if (vault.failArchiveWrite) throw new Error("ENOSPC");
+					vault.content.set(path, text); vault.present.add(path);
+					if (vault.changeSource) vault.content.set(SNIPPET_PATH, "new edit during backup");
+				},
 				exists(path: string): Promise<boolean> {
 					vault.stats.push(path);
 					if (vault.failExists) {
@@ -159,6 +179,28 @@ async function withQuietWarnings(
 }
 
 describe("removeLegacyStartupSnippet — the vault that still has one", () => {
+	it("preserves user edits in a verified inactive archive before deleting", async () => {
+		const f = fake({ fileExists: true, snippetEnabled: true });
+		const original = f.vault.content.get(SNIPPET_PATH);
+		await removeLegacyStartupSnippet(f.app);
+		const copies = [...f.vault.content].filter(([path]) => path.endsWith(".txt"));
+		assert.strictEqual(copies.length, 1);
+		assert.strictEqual(copies[0]?.[1], original);
+		assert.ok(copies[0]?.[0].startsWith(`${CONFIG_DIR}/snippets/callout-studio-recovery/`));
+		assert.deepStrictEqual(f.vault.removed, [SNIPPET_PATH]);
+	});
+	for (const fault of ["failArchiveWrite", "corruptArchive", "changeSource"] as const) {
+		it(`preserves the source and enabled state when ${fault} prevents safe archival`, async () => {
+			const f = fake({ fileExists: true, snippetEnabled: true }); f.vault[fault] = true;
+			await withQuietWarnings(() => removeLegacyStartupSnippet(f.app));
+			assert.deepStrictEqual(f.vault.removed, []);
+			assert.strictEqual(f.css.enabled.has(SNIPPET), true);
+			assert.strictEqual(f.vault.present.has(SNIPPET_PATH), true);
+			f.vault[fault] = false;
+			await removeLegacyStartupSnippet(f.app);
+			assert.deepStrictEqual(f.vault.removed, [SNIPPET_PATH]);
+		});
+	}
 	it("deletes the file and takes the name out of the enabled list", async () => {
 		const f = fake({ fileExists: true, snippetEnabled: true });
 		await removeLegacyStartupSnippet(f.app);

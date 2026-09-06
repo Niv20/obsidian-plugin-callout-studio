@@ -25,6 +25,7 @@
  */
 import { normalizePath } from "obsidian";
 import type { App } from "obsidian";
+import { archiveLegacySnippet } from "./legacySnippetArchive";
 
 /**
  * The only name this snippet ever had, across every released version — so
@@ -61,6 +62,9 @@ export async function removeLegacyStartupSnippet(app: App): Promise<void> {
 		const exists = await adapter.exists(path);
 		// The normal path on every launch after the first cleanup.
 		if (!exists && !wasEnabled) return;
+		// The historical filename does not prove its contents are still generated.
+		// Preserve and verify personal edits before disabling or deleting anything.
+		if (exists) await archiveLegacySnippet(app, path);
 
 		// Disable before deleting. This does two jobs at once — it drops the
 		// snippet's <style> out of the live cascade and takes the name out of
@@ -75,8 +79,8 @@ export async function removeLegacyStartupSnippet(app: App): Promise<void> {
 		// The file lives under configDir, so it is not a TFile and `vault.delete`
 		// cannot see it — the adapter is the only way in. Removed outright rather
 		// than trashed: `.trash` sits inside the vault, so trashing would just
-		// move the orphan, and the file is generated output carrying a
-		// "do not edit" header, so there is nothing to preserve.
+		// move the orphan. A verified, inactive .txt recovery copy now preserves
+		// the exact bytes, even if the user edited the historical generated file.
 		if (exists) await adapter.remove(path);
 
 		customCss?.requestLoadSnippets?.();
