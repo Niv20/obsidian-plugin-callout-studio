@@ -29,7 +29,6 @@ import {
 	RENDERED_HEADING_TOKEN_RE,
 	parseHeadingRefDisplayText,
 	scanLineForCalloutTokens,
-	stripInlineCode,
 	tokenEnd,
 } from "../editor/calloutTokens";
 import { splitCalloutMetadata } from "../utils/calloutId";
@@ -55,6 +54,7 @@ import {
 	shouldRenderToken,
 } from "../editor/renderShared";
 import { applyTitleGradient } from "./gradientTitleText";
+import { createInlineEscapePlan, type InlineEscapePlan } from "./inlineEscapePlan";
 
 /** Narrow structural host type (avoids importing the concrete plugin class). */
 export interface ReadingRenderHost {
@@ -147,10 +147,9 @@ export function createCalloutReadingPostProcessor(
 			// Content pills first: they absorb whole runs of already-rendered
 			// nodes, and PILL_EXCLUDE_SELECTOR then keeps the plain-pill pass
 			// out of everything they swallowed.
-			const contentPills = host.settings.inlineCallouts.allowContent
-				? transformContentPills(el, host)
-				: 0;
-			transformInlinePills(el, host, getSectionLines, contentPills > 0);
+			const escapes = createInlineEscapePlan(el, getSectionLines, PILL_EXCLUDE_SELECTOR, isHeadingLeadingTextNode);
+			if (host.settings.inlineCallouts.allowContent) transformContentPills(el, host, escapes);
+			transformInlinePills(el, host, escapes);
 		}
 	};
 }
@@ -504,18 +503,19 @@ function spliceContentPill(
 	end: ContentEnd,
 	rawId: string,
 	metadata: string,
+	escapes: InlineEscapePlan,
 ): void {
 	// Identity, before any split: splitText keeps the original node as the head
 	// and returns a new tail, so `end.node === openNode` only reads true here.
 	const sameNode = end.node === openNode;
 	// Right-to-left: cutting after the `}` first leaves the `[` offset valid
 	// when both land in the same node.
-	end.node.splitText(end.offset + 1);
+	escapes.split(end.node, end.offset + 1);
 	// `openNode` keeps the text before `[`; `body` starts at `[`.
-	const body = openNode.splitText(tokenFrom);
+	const body = escapes.split(openNode, tokenFrom);
 	// Drop `[!id]{` — the lead cap stands in for it. When the payload closed in
 	// this same node, the split above moved the tail into `body` as well.
-	const firstContent = body.splitText(braceOffset - tokenFrom + 1);
+	const firstContent = escapes.split(body, braceOffset - tokenFrom + 1);
 	const lastContent = sameNode ? firstContent : end.node;
 	body.remove();
 
@@ -551,10 +551,9 @@ function spliceContentPill(
  * far easier to trust than patching offsets. Bounded by the number of content
  * pills in one rendered block, so the repetition costs nothing real.
  *
- * Returns how many pills it built, so the plain-pill pass can tell whether its
- * escape pairing is still trustworthy.
+ * The shared escape plan follows split text across both passes.
  */
-function transformContentPills(el: HTMLElement, host: ReadingRenderHost): number {
+function transformContentPills(el: HTMLElement, host: ReadingRenderHost, escapes: InlineEscapePlan): number {
 	const doc = el.ownerDocument;
 	let built = 0;
 
@@ -590,6 +589,7 @@ function transformContentPills(el: HTMLElement, host: ReadingRenderHost): number
 				if (token.from === 0 && isHeadingLeadingTextNode(text)) {
 					continue;
 				}
+				if (!escapes.allows(text, token.from)) continue;
 				if (!shouldRenderToken(resolveCalloutDef(host.registry, token.rawId))) {
 					continue;
 				}
@@ -603,6 +603,7 @@ function transformContentPills(el: HTMLElement, host: ReadingRenderHost): number
 					end,
 					token.rawId,
 					token.metadata,
+					escapes,
 				);
 				built++;
 				spliced = true;
@@ -632,16 +633,7 @@ interface PillCandidate {
 function transformInlinePills(
 	el: HTMLElement,
 	host: ReadingRenderHost,
-	getSectionLines: () => string[] | null,
-	/**
-	 * True when pass A already turned some tokens into content pills. Those are
-	 * gone from the plain text this pass walks, so the ordinal escape pairing —
-	 * which assumes the i-th candidate here is the i-th visible `[!` in the
-	 * source — can no longer line up. It degrades to "render everything", which
-	 * is the same safety valve resolveEscapedCandidates already uses when the
-	 * counts disagree.
-	 */
-	skipEscapePairing: boolean,
+	escapes: InlineEscapePlan,
 ): void {
 	const doc = el.ownerDocument;
 	const walker = doc.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
@@ -696,27 +688,17 @@ function transformInlinePills(
 	}
 	if (candidates.length === 0) return;
 
-	// Escape handling: only when the source really contains `\[!` do we pay
-	// for the pairing pass; otherwise every candidate is a real token.
-	const escaped = skipEscapePairing
-		? new Array<boolean>(candidates.length).fill(false)
-		: resolveEscapedCandidates(candidates.length, getSectionLines);
-
 	// Replace per node in reverse order so earlier offsets stay valid.
 	for (let i = candidates.length - 1; i >= 0; i--) {
-		if (escaped[i]) continue;
 		const c = candidates[i]!;
+		if (!escapes.allows(c.node, c.from)) continue;
 		// Theme-owned: leave the `[!id]` as the literal text it already is.
-		// Deliberately here and not at candidate-collection time —
-		// resolveEscapedCandidates pairs candidates with source `[!`
-		// occurrences by ordinal position, so dropping one early would shift
-		// every later pairing and mis-detect escapes.
 		const resolved = resolveCalloutDef(host.registry, c.rawId);
 		if (!shouldRenderToken(resolved)) continue;
 		// First split leaves the post-token tail in place; the second isolates
 		// the token text itself, which the pill then replaces.
-		c.node.splitText(c.to);
-		const tokenPart = c.node.splitText(c.from);
+		escapes.split(c.node, c.to);
+		const tokenPart = escapes.split(c.node, c.from);
 		const pill = buildCalloutTokenDom({
 			rawId: c.rawId,
 			metadata: c.metadata,
@@ -736,46 +718,4 @@ function transformInlinePills(
 			if (nameEl) applyTitleGradient(nameEl, def);
 		}
 	}
-}
-
-/**
- * Decide which rendered candidates came from escaped `\[!id]` source. The
- * markdown renderer preserves occurrence order, so the i-th rendered
- * candidate corresponds to the i-th visible `[!` occurrence in the source
- * (real inline tokens and escaped tokens merged by position). When the
- * source is unavailable or the counts disagree, everything renders — a
- * missing escape is a milder failure than a missing pill.
- */
-function resolveEscapedCandidates(
-	count: number,
-	getSectionLines: () => string[] | null,
-): boolean[] {
-	const noEscapes = new Array<boolean>(count).fill(false);
-	const lines = getSectionLines();
-	if (!lines) return noEscapes;
-	const source = lines.join("\n");
-	if (source.indexOf("\\[!") === -1) return noEscapes;
-
-	const sequence: boolean[] = [];
-	const escapedTokenRe = /\\\[!([^\][\n\r]+)\]/g;
-	for (const rawLine of lines) {
-		const line = stripInlineCode(rawLine);
-		const entries: Array<{ pos: number; escaped: boolean }> = [];
-		for (const token of scanLineForCalloutTokens(line)) {
-			if (token.role !== "inline") continue;
-			entries.push({ pos: token.from, escaped: false });
-		}
-		escapedTokenRe.lastIndex = 0;
-		let m: RegExpExecArray | null;
-		while ((m = escapedTokenRe.exec(line)) !== null) {
-			// +1: the visible text starts at the `[`, after the backslash.
-			entries.push({ pos: m.index + 1, escaped: true });
-		}
-		entries.sort((a, b) => a.pos - b.pos);
-		for (const e of entries) sequence.push(e.escaped);
-	}
-
-	// Source and DOM disagree (nested renderers, exotic markdown) — render all.
-	if (sequence.length !== count) return noEscapes;
-	return sequence;
 }
