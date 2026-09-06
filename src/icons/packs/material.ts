@@ -24,6 +24,7 @@ import { MATERIAL_INDEX } from "../data/material.index";
 import { sanitizeSVG } from "../svg";
 
 const loadIndex = memoizeIndex(() => decodeIndex(MATERIAL_INDEX));
+const DOWNLOAD_TIMEOUT_MS = 30_000;
 
 /** Defaults applied when an icon omits the fields (pre-2.0 data, or imports). */
 export const MATERIAL_DEFAULT_STYLE: MaterialIconStyle = "outlined";
@@ -149,12 +150,20 @@ export async function downloadMaterialSvg(
 	style: MaterialIconStyle,
 	weight: number = MATERIAL_DEFAULT_WEIGHT,
 ): Promise<string> {
-	const response = await requestUrl({
-		url: materialSvgUrl(name, style, weight),
+	// requestUrl cannot be aborted; a late response is ignored by the race.
+	// Bound each attempt so one stalled icon cannot hold the startup queue.
+	let timer = 0;
+	const timeout = new Promise<never>((_, reject) => {
+		timer = window.setTimeout(() => reject(new Error("Material icon download timed out")), DOWNLOAD_TIMEOUT_MS);
 	});
-	const sanitized = sanitizeSVG(response.text);
-	if (!sanitized) {
-		throw new Error(`Invalid SVG received for Material icon "${name}"`);
+	try {
+		const response = await Promise.race([
+			requestUrl({ url: materialSvgUrl(name, style, weight) }), timeout,
+		]);
+		const sanitized = sanitizeSVG(response.text);
+		if (!sanitized) throw new Error(`Invalid SVG received for Material icon "${name}"`);
+		return sanitized;
+	} finally {
+		window.clearTimeout(timer);
 	}
-	return sanitized;
 }

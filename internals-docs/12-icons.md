@@ -200,6 +200,10 @@ putting in front of everyone downloading an icon set").
   (`failed: Set<string>`, **in-memory only** — every launch is a fresh
   chance, which is what makes it safe for the startup sweep to record
   failures for a vault that simply happened to be offline at that moment).
+- **Each HTTP attempt has a 30-second deadline.** A stalled request becomes
+  an ordinary failure, so startup can advance to the next icon and the picker
+  can finish its bounded retries. The underlying Obsidian request cannot be
+  aborted; late results are ignored and the deadline timer is always cleared.
 - **Concurrent requests for the same drawing share one promise**
   (`inFlight`), keyed identically to the cache — so the picker's "Confirm"
   and the callout editor's save both asking for the same icon at once cost
