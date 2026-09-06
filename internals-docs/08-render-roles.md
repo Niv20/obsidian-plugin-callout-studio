@@ -276,10 +276,15 @@ negligible.
 
 Markdown rendering consumes the backslash of `\[!id]`, so the *rendered* text
 of an escaped token looks byte-identical to a real one. The post-processor
-resolves this by pairing rendered candidate matches against the block's raw
-**source** by ordinal position, and only runs that full pairing pass when the
-source actually contains a literal `\[!` — the common case (no escapes) skips
-it entirely.
+builds one source mapping before either inline pass mutates the DOM, pairing
+candidate order and token identity (including metadata). `inlineEscapePlan.ts`
+keeps each escape decision attached to its text node and moves offsets when
+content or plain pills split that node. Both passes consult the same plan.
+
+The full pairing runs only when source contains `\[!`. If supplied source and
+rendered candidates disagree, the block's inline tokens remain literal rather
+than ignoring a possible escape. When source is unavailable (some embeds and
+exports), the existing DOM-only rendering remains available.
 
 ## The Outline pane, PDF export, and gradient text
 

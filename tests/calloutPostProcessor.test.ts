@@ -796,18 +796,29 @@ describe("inline pills — escaped tokens", () => {
 		assert.strictEqual(root.textContent, "a Quiet b");
 	});
 
-	it("renders everything when source and DOM disagree on the count", () => {
-		// Nested renderers and exotic markdown can desync the ordinal pairing. A
-		// missing escape is a milder failure than a missing pill, so the valve
-		// opens towards rendering. (The pair below is deliberately inconsistent —
-		// two source occurrences, one in the DOM — which is what a desync is.)
+	it("preserves literal text when source and DOM disagree on the count", () => {
+		const h = withQuiet();
+		const root = h.render("<p>a [!quiet] b</p>", "a \\[!quiet] b \\[!quiet] c");
+		assert.strictEqual(root.textContent, "a [!quiet] b");
+		assert.strictEqual(pills(root).length, 0);
+	});
+
+	it("preserves text when equal counts have different token identities", () => {
+		const h = withQuiet();
+		const root = h.render("<p>[!quiet] [!warning]</p>", "\\[!warning] [!quiet]");
+		assert.strictEqual(root.textContent, "[!quiet] [!warning]");
+		assert.strictEqual(pills(root).length, 0);
+	});
+
+	it("pairs metadata with its token before splitting content", () => {
 		const h = withQuiet();
 		const root = h.render(
-			"<p>a [!quiet] b</p>",
-			"a \\[!quiet] b \\[!quiet] c",
+			"<p>[!quiet|one]{payload} [!quiet|two] [!quiet|three]</p>",
+			"[!quiet|one]{payload} \\[!quiet|two] [!quiet|three]",
 		);
-
-		assert.strictEqual(root.textContent, "a Quiet b");
+		assert.strictEqual(root.textContent, "payload [!quiet|two] Quiet");
+		assert.strictEqual(pills(root).length, 2);
+		assert.strictEqual(pills(root)[1]?.getAttribute("data-callout-metadata"), "three");
 	});
 
 	it("renders everything when there is no source to pair against", () => {
@@ -908,18 +919,55 @@ describe("content pills", () => {
 		);
 	});
 
-	it("gives up escape pairing once it has built one", () => {
-		// Pass A removed tokens the ordinal pairing counted on, so it degrades to
-		// "render everything" — and does not even ask for the source.
+	it("preserves escape pairing after it has built content pills", () => {
 		const h = withQuiet();
 		const root = h.render(
 			"<p>[!quiet] text [!quiet]{payload}</p>",
 			"\\[!quiet] text [!quiet]{payload}",
 		);
-
-		assert.strictEqual(pills(root).length, 2);
-		assert.strictEqual(h.sectionReads(), 0);
+		assert.strictEqual(pills(root).length, 1);
+		assert.strictEqual(root.textContent, "[!quiet] text payload");
+		assert.strictEqual(h.sectionReads(), 1);
 	});
+
+	it("leaves an escaped content token and its payload literal", () => {
+		const h = withQuiet();
+		const root = h.render("<p>[!quiet]{literal}</p>", "\\[!quiet]{literal}");
+		assert.strictEqual(pills(root).length, 0);
+		assert.strictEqual(root.textContent, "[!quiet]{literal}");
+	});
+
+	it("keeps source positions after same-node content and plain splits", () => {
+		const h = withQuiet();
+		const root = h.render(
+			"<p>[!quiet]{one} [!quiet] [!quiet] [!quiet]{two} [!quiet]{literal}</p>",
+			"[!quiet]{one} \\[!quiet] [!quiet] [!quiet]{two} \\[!quiet]{literal}",
+		);
+		assert.strictEqual(pills(root).length, 3);
+		assert.strictEqual(root.textContent, "one [!quiet] Quiet two [!quiet]{literal}");
+	});
+
+	it("keeps source positions when content moves formatted siblings", () => {
+		const h = withQuiet();
+		const root = h.render(
+			"<p>[!quiet]{one <strong>bold</strong> tail} [!quiet] [!quiet]{two}</p>",
+			"[!quiet]{one **bold** tail} \\[!quiet] [!quiet]{two}",
+		);
+		assert.strictEqual(pills(root).length, 2);
+		assert.strictEqual(root.textContent, "one bold tail [!quiet] two");
+		assert.strictEqual(one(root, "strong").textContent, "bold");
+	});
+
+	it("accounts for literal nested tokens consumed by a content pill", () => {
+		const h = withQuiet();
+		const root = h.render(
+			"<p>[!quiet]{one [!quiet]} [!quiet] [!quiet]</p>",
+			"[!quiet]{one \\[!quiet]} \\[!quiet] [!quiet]",
+		);
+		assert.strictEqual(pills(root).length, 2);
+		assert.strictEqual(root.textContent, "one [!quiet] [!quiet] Quiet");
+	});
+
 });
 
 describe("content pills — the shapes it refuses", () => {

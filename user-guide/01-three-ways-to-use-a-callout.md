@@ -45,7 +45,9 @@ Want an [!note]{Inline Callout}? Just add [!type]{text} right in a sentence.
 
 The `{` has to touch the `]` — `[!note] {text}` with a space is an ordinary pill followed by the literal words ` {text}`. Braces nest, so `{a {b} c}` is one piece of text, and the first `}` that closes the outer brace ends it.
 
-There's no backslash escape. If you need a literal brace right after a pill, put it in backticks — inline code is ignored when the pill's text is worked out.
+Curly braces have no backslash escape. If you need a literal brace right after a pill, put it in backticks — inline code is ignored when the pill's text is worked out.
+
+To show a token as literal text, escape its opening bracket: `\[!note]` or `\[!note]{literal text}`. Reading view preserves that escape for both ordinary pills and pills with their own text.
 
 ## The same look everywhere
 

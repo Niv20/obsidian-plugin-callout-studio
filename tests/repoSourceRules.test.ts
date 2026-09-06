@@ -849,7 +849,7 @@ describe("no new oversized files", () => {
 		// manager/ignoredCallouts.ts.
 		"src/types.ts": 825,
 		"src/editor/livepreview/widgets.ts": 793,
-		"src/reading/calloutPostProcessor.ts": 781,
+		"src/reading/calloutPostProcessor.ts": 721,
 		"src/settings/iconpicker/PackPanel.ts": 736,
 		"src/utils/colorUtils.ts": 685,
 		"src/settings/iconpicker/IconPickerModal.ts": 681,
