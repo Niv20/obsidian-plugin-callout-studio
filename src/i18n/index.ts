@@ -125,6 +125,10 @@ const localeNames: Record<string, string> = {
 
 let currentLocale = "en";
 
+/** Saved names must name a table entry, never an inherited Object property. */
+const owns = (table: object, key: string): boolean =>
+	Object.prototype.hasOwnProperty.call(table, key);
+
 /**
  * Register a downloaded locale so `setLocale` can select it.
  *
@@ -159,7 +163,7 @@ export function registerLocaleFile(
 
 /** Is a table for this exact code loaded? */
 export function isLocaleRegistered(code: string): boolean {
-	return code in locales;
+	return owns(locales, code);
 }
 
 type MomentLike = { locale: () => string };
@@ -190,7 +194,7 @@ function resolve(pref: string, has: (code: string) => boolean): string {
  * `"auto"` follows Obsidian's interface language.
  */
 export function resolveLocaleCode(pref: string): string {
-	return resolve(pref, (code) => code === "en" || code in LOCALE_FILES);
+	return resolve(pref, (code) => code === "en" || owns(LOCALE_FILES, code));
 }
 
 /**
@@ -198,7 +202,8 @@ export function resolveLocaleCode(pref: string): string {
  * English already covers it.
  */
 export function resolveLocaleFile(pref: string): LocaleFileId | null {
-	return LOCALE_FILES[resolveLocaleCode(pref)] ?? null;
+	const code = resolveLocaleCode(pref);
+	return owns(LOCALE_FILES, code) ? (LOCALE_FILES[code] ?? null) : null;
 }
 
 /**
@@ -209,7 +214,7 @@ export function resolveLocaleFile(pref: string): LocaleFileId | null {
  * the file lands to switch the UI over.
  */
 export function setLocale(pref: string): void {
-	currentLocale = resolve(pref, (code) => code in locales);
+	currentLocale = resolve(pref, isLocaleRegistered);
 }
 
 /**
