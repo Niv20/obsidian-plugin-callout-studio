@@ -47,5 +47,10 @@ Notes that don't use the callout are not touched at all, and are never even open
 
 If a note genuinely can't be updated — it was deleted moments earlier, or Sync has it locked — that note is skipped and the rest still go through. You'll get a notice saying how many were left alone, and those notes keep their original text; re-running the same action later picks them up.
 
+For **Delete**, an incomplete conversion keeps the callout type in your list and
+preserves its styling for the remaining notes. Notes already converted stay
+converted. Resolve the file problem and run **Delete** again to finish; the type
+is removed only after the complete conversion succeeds.
+
 ---
 **Next:** [Vault insights and maintenance](10-vault-insights-and-maintenance.md)

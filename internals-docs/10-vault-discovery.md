@@ -105,12 +105,18 @@ The delete flow, end to end (`CalloutRowActions.ts: handleCalloutDelete`):
      - in use:   warns about conversion to plain text, offers "Replace instead"
      - unused:   simpler "this callout has no usages" copy
 3. "replace" → hands off to the Replace flow (below); return
-4. "delete", usage.fileCount > 0 → convertCalloutsToPlainTextInVault() first
+4. "delete" → convertCalloutsToPlainTextInVault(..., requireComplete = true)
+5. an incomplete conversion reports failure and returns, retaining the definition
 6. registry.remove(def.id)
 7. registry.cleanupUnusedIconSvgs()
 8. await plugin.saveSettings()                  ← awaited explicitly, see below
 9. ctx.display()                                 ← re-renders settings only
 ```
+
+Conversion is retried even when the earlier menu count was zero, because notes
+may arrive while confirmation is open. Successful file conversions are retained;
+the definition and its styling remain available until a complete retry succeeds.
+Clear-usages actions also request complete success and report unfinished work.
 
 > [!WARNING]
 > Step 8's `await` is not tidiness. `cleanupUnusedIconSvgs()` mutates

@@ -335,6 +335,8 @@ export const en: Record<string, string> = {
 	"notice.externalCssOff": 'Callout Studio now styles "{{name}}" again.',
 	"notice.vaultRewritePartial":
 		"{{count}} note(s) could not be updated and were left unchanged. See the developer console for details.",
+	"notice.calloutDeleteIncomplete":
+		"Some notes could not be converted. The callout type was kept. Completed conversions are saved; resolve the file problem, then run the action again to finish.",
 	"notice.vaultScanFailed":
 		"Callout usage could not be counted because {{count}} note(s) could not be read. Check storage and synchronization, then try again.",
 	"notice.settingsUnreadable":

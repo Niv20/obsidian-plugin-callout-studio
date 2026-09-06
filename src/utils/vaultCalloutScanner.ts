@@ -240,9 +240,9 @@ export async function convertCalloutsToPlainTextInVault(
 	app: App,
 	ids: string[],
 	displayName: string,
+	requireComplete = false,
 ): Promise<{ files: number; blocks: number }> {
 	if (ids.length === 0) return { files: 0, blocks: 0 };
-
 	const idSet = new Set(ids.map((id) => calloutIdentity(id)));
 	const headerRegex = /^(>+)\s*\[!([^\]\n\r]+)\][+-]?\s*(.*)$/i;
 	const name = displayName.trim();
@@ -358,7 +358,7 @@ export async function convertCalloutsToPlainTextInVault(
 			: null;
 	};
 
-	const { files, count } = await rewriteVaultFiles(app, transform);
+	const { files, count } = await rewriteVaultFiles(app, transform, requireComplete);
 	return { files, blocks: count };
 }
 
