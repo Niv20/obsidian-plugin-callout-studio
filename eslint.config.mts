@@ -89,6 +89,29 @@ export default tseslint.config(
 			],
 		},
 	},
+	{
+		// The one bare timer left in `src/`, and it has to stay bare.
+		//
+		// `readSettledSettingsFile` waits 150ms between two reads of `data.json`
+		// to let a sync provider finish writing. It schedules nothing that belongs
+		// to a window — no element, no view, no popout — so the compatibility this
+		// rule protects is not at stake here.
+		//
+		// What is at stake is the eleven Node suites that drive the settling read
+		// through `loadSettingsInto` and friends, none of which can pass their own
+		// `wait`. Some run with no `window` at all; the rest install one whose
+		// `setTimeout` is deliberately inert — `tests/support/fakeDom.ts` queues
+		// timers until a suite flushes them on purpose, and syncPingPong and
+		// syncMobileWipe stub `setTimeout` to a no-op so `ReloadQueue` cannot
+		// retry behind their backs. A window timer here resolves in none of them,
+		// and every one of those suites deadlocks inside the await.
+		//
+		// So this is scoped off in the config, where the reason is written down,
+		// rather than suppressed at the call site — which
+		// `eslint-comments/no-restricted-disable` rightly forbids for `src/`.
+		files: ["src/manager/settingsSettledRead.ts"],
+		rules: { "obsidianmd/prefer-window-timers": "off" },
+	},
 	globalIgnores([
 		"node_modules",
 		"dist",
