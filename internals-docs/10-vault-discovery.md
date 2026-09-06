@@ -87,7 +87,13 @@ rules per role:
   reformatted as `<displayName>: <payload>` so the note still reads
   sensibly once the plugin's own rendering is gone.
 
-All targeted callout tokens are removed by this explicit operation. A later manual scan can only rediscover an id if a note or the active theme still supplies it.
+`calloutPlainText.ts` plans conversion from the original document lines. It
+processes matching nested blocks and body/title tokens even when an outer block
+is unwrapped. Nested payload edits are composed into their parent's source span,
+so edits never overlap and generated display names are never scanned again.
+Frontmatter, fences, inline code and escaped tokens retain their source exclusions;
+payloads inside a surviving other-type pill remain literal payloads.
+A later manual scan can only rediscover an id if a note or the active theme still supplies it.
 
 The editor's id/title/fold rewrites use the same document filter, so examples in
 frontmatter or fenced code remain untouched. They request complete success from

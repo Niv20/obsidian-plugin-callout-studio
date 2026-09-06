@@ -230,6 +230,42 @@ describe("convertCalloutsToPlainTextInVault", () => {
 				(r) => r.blocks,
 			),
 		);
+	it("converts matching tokens inside a matching parent body and title", async () => {
+		const source = "> [!zzz] Parent [!zzz]\n> before [!zzz] after\n>> [!zzz] Nested";
+		const result = await convert(source);
+		assert.strictEqual(result.line, "Parent Zzz\nbefore Zzz after\n> Nested");
+		assert.strictEqual(result.count, 4);
+	});
+
+	it("uses original source exclusions while unwrapping fences and escaped prose", async () => {
+		const source = [
+			"---", "example: '[!zzz]'", "---", "> [!zzz] Parent",
+			"> \\[!zzz] and `[!zzz]`", "> ```md", "> [!zzz] code example", "> ```",
+			"> [!zzz] Real", "", "### [!zzz] After",
+		].join("\n");
+		const result = await convert(source);
+		assert.strictEqual(result.line, [
+			"---", "example: '[!zzz]'", "---", "Parent",
+			"\\[!zzz] and `[!zzz]`", "```md", "[!zzz] code example", "```",
+			"Real", "", "### After",
+		].join("\n"));
+		assert.strictEqual(result.count, 3);
+	});
+
+	it("converts nested matching payload tokens without rescanning escaped/code content", async () => {
+		const source = "[!zzz]{outer [!zzz]{inner} `[!zzz]` \\[!zzz]}";
+		const result = await convert(source);
+		assert.strictEqual(result.line, "Zzz: outer Zzz: inner `[!zzz]` \\[!zzz]");
+		assert.strictEqual(result.count, 2);
+		assert.strictEqual((await convert("[!other]{literal [!zzz]}")).line, "[!other]{literal [!zzz]}");
+	});
+
+	it("does not interpret newly inserted display names as further tokens", async () => {
+		const { app, content } = fakeApp({ "note.md": "> [!zzz] Parent\n> before [!zzz]" });
+		const result = await convertCalloutsToPlainTextInVault(app, ["zzz"], "Literal [!zzz]");
+		assert.strictEqual(content("note.md"), "Parent\nbefore Literal [!zzz]");
+		assert.strictEqual(result.blocks, 2);
+	});
 
 	it("unwraps an outermost block, body and all", async () => {
 		const { app, content } = fakeApp({

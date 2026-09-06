@@ -52,5 +52,10 @@ preserves its styling for the remaining notes. Notes already converted stay
 converted. Resolve the file problem and run **Delete** again to finish; the type
 is removed only after the complete conversion succeeds.
 
+Conversion also handles matching nested callouts and matching tokens in a
+converted block's title or body. Escaped examples, inline code and fenced code
+keep their literal text; removing a blockquote wrapper does not make those
+examples eligible for conversion.
+
 ---
 **Next:** [Vault insights and maintenance](10-vault-insights-and-maintenance.md)
