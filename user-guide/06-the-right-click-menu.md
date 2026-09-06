@@ -30,6 +30,8 @@ When you right-click a Heading Callout, the menu offers whole-section actions th
 - Copy the heading section.
 - Delete the heading section entirely - the heading plus everything nested beneath it.
 
+**Cut** removes text only after it reaches the clipboard. If copying fails or the note changes while copying, the note stays unchanged and a notice explains what happened.
+
 ## Customizing the menu
 
 You don't have to keep every action visible. Head to Settings → Customize menu items to choose exactly which actions appear for each of the three callout forms - Block Callout, Heading Callout, and Inline Callout - and to reorder them however you like.

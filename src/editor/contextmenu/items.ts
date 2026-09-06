@@ -20,6 +20,7 @@ import {
 } from "./resolve";
 import {
 	copyHeadingSection,
+	captureSectionTarget,
 	cutHeadingSection,
 	deleteHeadingSection,
 	getHeadingSectionRange,
@@ -96,19 +97,21 @@ const buildRegularFoldDefaults: ItemBuilder = (_plugin, menu, context) => {
 
 // ─── Heading-callout item builders ───────────────────────────────────────────
 
-const buildCutSection: ItemBuilder = (_plugin, menu, context) => {
+const buildCutSection: ItemBuilder = (plugin, menu, context) => {
 	if (context.role !== "heading") return;
+	const canDelete = captureSectionTarget(plugin.app, context.view, context.editor);
 	menu.addItem((item) => {
 		item.setTitle(t("contextMenu.cutSection"))
 			.setIcon("scissors")
 			.setSection(MENU_SECTION)
 			.onClick(() => {
+				if (!canDelete()) return;
 				const range = getHeadingSectionRange(
 					context.editor,
 					context.headingLine,
 					context.headingLevel,
 				);
-				cutHeadingSection(context.editor, range);
+				void cutHeadingSection(context.editor, range, canDelete);
 			});
 	});
 };
@@ -125,7 +128,7 @@ const buildCopySection: ItemBuilder = (_plugin, menu, context) => {
 					context.headingLine,
 					context.headingLevel,
 				);
-				copyHeadingSection(range);
+				void copyHeadingSection(range);
 			});
 	});
 };

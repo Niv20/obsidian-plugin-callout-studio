@@ -8,7 +8,8 @@
  * transactions, so Ctrl/Cmd+Z restores them — no confirmation modal is used
  * (unlike DEFINITION deletion, which is guarded elsewhere).
  */
-import type { Editor, EditorPosition } from "obsidian";
+import { Notice, type App, type Editor, type EditorPosition, type MarkdownView } from "obsidian";
+import { t } from "../../i18n";
 
 const HEADING_LINE_RE = /^(#{1,6})[ \t]/;
 
@@ -51,17 +52,42 @@ export function getHeadingSectionRange(
 }
 
 /** Copy the whole section to the clipboard (trailing newline trimmed). */
-export function copyHeadingSection(range: HeadingSectionRange): void {
-	void navigator.clipboard.writeText(range.text.replace(/\n$/, ""));
+export async function copyHeadingSection(range: HeadingSectionRange): Promise<boolean> {
+	try {
+		await navigator.clipboard.writeText(range.text.replace(/\n$/, ""));
+		return true;
+	} catch {
+		new Notice(t("notice.clipboardWriteFailed"));
+		return false;
+	}
 }
 
-/** Copy then delete the whole section. */
-export function cutHeadingSection(
+/** Capture ownership before a menu/clipboard wait can switch the note. */
+export function captureSectionTarget(app: App, view: MarkdownView | null, editor: Editor): () => boolean {
+	const file = view?.file;
+	return () => {
+		try {
+			return !!view && !!file && view.file === file && view.editor === editor &&
+				view.leaf?.view === view && app.workspace.getLeavesOfType("markdown").includes(view.leaf);
+		} catch { return false; }
+	};
+}
+
+/** Delete only after copying succeeds and both the document and owner still match. */
+export async function cutHeadingSection(
 	editor: Editor,
 	range: HeadingSectionRange,
-): void {
-	copyHeadingSection(range);
+	canDelete: () => boolean = () => true,
+): Promise<boolean> {
+	if (!canDelete()) return false;
+	const before = editor.getValue();
+	if (!await copyHeadingSection(range)) return false;
+	if (!canDelete() || editor.getValue() !== before) {
+		new Notice(t("notice.sectionChangedAfterCopy"));
+		return false;
+	}
 	editor.replaceRange("", range.from, range.to);
+	return true;
 }
 
 /** Delete the whole section (undoable via the editor's history). */

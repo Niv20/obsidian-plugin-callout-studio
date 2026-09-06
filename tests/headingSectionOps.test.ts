@@ -26,11 +26,13 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import {
 	copyHeadingSection,
+	captureSectionTarget,
 	cutHeadingSection,
 	deleteHeadingSection,
 	getHeadingSectionRange,
 } from "../src/editor/contextmenu/sectionOps";
 import { asEditor, editor } from "./support/fakeEditor";
+import type { App, MarkdownView } from "obsidian";
 
 /* -------------------------------------------------------------------------- */
 /* Clipboard                                                                  */
@@ -182,33 +184,33 @@ describe("getHeadingSectionRange — what counts as a heading", () => {
 describe("copy / cut / delete", () => {
 	const source = ["## [!tip] A", "body", "## [!note] B", "tail"].join("\n");
 
-	it("copy puts the section on the clipboard without the trailing newline", () => {
+	it("copy puts the section on the clipboard without the trailing newline", async () => {
 		const log = clipboard();
 		const e = editor(source);
 		const range = getHeadingSectionRange(asEditor(e), 0, 2);
 
 		assert.strictEqual(range.text, "## [!tip] A\nbody\n");
-		copyHeadingSection(range);
+		await copyHeadingSection(range);
 
 		assert.deepStrictEqual(log, ["## [!tip] A\nbody"]);
 		// …and leaves the document alone.
 		assert.strictEqual(e.getValue(), source);
 	});
 
-	it("copy trims exactly one newline, never a blank line the user wrote", () => {
+	it("copy trims exactly one newline, never a blank line the user wrote", async () => {
 		const log = clipboard();
 		const e = editor(
 			["## [!tip] A", "body", "", "## [!note] B"].join("\n"),
 		);
-		copyHeadingSection(getHeadingSectionRange(asEditor(e), 0, 2));
+		await copyHeadingSection(getHeadingSectionRange(asEditor(e), 0, 2));
 
 		assert.deepStrictEqual(log, ["## [!tip] A\nbody\n"]);
 	});
 
-	it("cut copies first, then removes the range", () => {
+	it("cut copies first, then removes the range", async () => {
 		const log = clipboard();
 		const e = editor(source);
-		cutHeadingSection(asEditor(e), getHeadingSectionRange(asEditor(e), 0, 2));
+		await cutHeadingSection(asEditor(e), getHeadingSectionRange(asEditor(e), 0, 2));
 
 		assert.deepStrictEqual(log, ["## [!tip] A\nbody"]);
 		assert.strictEqual(e.getValue(), "## [!note] B\ntail");
@@ -238,9 +240,9 @@ describe("copy / cut / delete", () => {
 		assert.strictEqual(e.getValue(), "## [!tip] A\nbody\n");
 	});
 
-	it("both writers go through a single replaceRange, so undo restores it whole", () => {
+	it("both writers go through a single replaceRange, so undo restores it whole", async () => {
 		const cut = editor(source);
-		cutHeadingSection(
+		await cutHeadingSection(
 			asEditor(cut),
 			getHeadingSectionRange(asEditor(cut), 0, 2),
 		);
@@ -252,5 +254,41 @@ describe("copy / cut / delete", () => {
 
 		assert.strictEqual(cut.edits.length, 1);
 		assert.strictEqual(del.edits.length, 1);
+	});
+});
+
+describe("cut clipboard failures and stale targets", () => {
+	const source = "## [!note] First\nbody\n## Second\ntail";
+	it("preserves all text when copying rejects", async (test) => {
+		test.mock.method(navigator.clipboard, "writeText", async () => { throw new Error("denied"); });
+		const e = editor(source);
+		assert.strictEqual(await cutHeadingSection(asEditor(e), getHeadingSectionRange(asEditor(e), 0, 2)), false);
+		assert.strictEqual(e.getValue(), source);
+	});
+	it("waits for success and refuses a document changed during the copy", async (test) => {
+		let complete!: () => void;
+		test.mock.method(navigator.clipboard, "writeText", () => new Promise<void>((resolve) => { complete = resolve; }));
+		const e = editor(source);
+		const cut = cutHeadingSection(asEditor(e), getHeadingSectionRange(asEditor(e), 0, 2));
+		assert.strictEqual(e.getValue(), source);
+		e.replaceRange("new ", { line: 1, ch: 0 });
+		complete();
+		assert.strictEqual(await cut, false);
+		assert.strictEqual(e.getValue(), source.replace("body", "new body"));
+	});
+	it("refuses a different file even when its text is identical", async (test) => {
+		let complete!: () => void;
+		test.mock.method(navigator.clipboard, "writeText", () => new Promise<void>((resolve) => { complete = resolve; }));
+		const e = editor(source);
+		const view = { file: { path: "a.md" }, editor: asEditor(e), leaf: {} };
+		const leaf = { view };
+		view.leaf = leaf;
+		const app = { workspace: { getLeavesOfType: () => [leaf] } } as unknown as App;
+		const guard = captureSectionTarget(app, view as unknown as MarkdownView, asEditor(e));
+		const cut = cutHeadingSection(asEditor(e), getHeadingSectionRange(asEditor(e), 0, 2), guard);
+		view.file = { path: "b.md" };
+		complete();
+		assert.strictEqual(await cut, false);
+		assert.strictEqual(e.getValue(), source);
 	});
 });
