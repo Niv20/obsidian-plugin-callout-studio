@@ -1,5 +1,9 @@
 # Resetting callouts and settings
 
+When older settings contain several callout definitions connected by overlapping
+aliases, startup consolidates the entire group in one load. The surviving type
+keeps the accepted names, and fallback selections and custom commands follow it.
+
 Sooner or later you'll want to undo something - a color you didn't mean to change, an icon that isn't working out, or a whole setup you want to start over. Callout Studio actually gives you three separate "undo" tools, each covering a different amount of ground, and picking the right one matters: reach for too big a reset and you'll lose work you meant to keep.
 
 ## Three levels, three scopes

@@ -486,6 +486,25 @@ describe("stripMetadataFromIds", () => {
 });
 
 describe("reconcileIdCollisions", () => {
+	it("resolves transitive alias bridges in one load and preserves references", () => {
+		const first = load(saved([
+			def({ id: "alpha", aliases: ["x"] }),
+			def({ id: "beta", aliases: ["x", "y"] }),
+			def({ id: "gamma", aliases: ["y", "z"] }),
+			def({ id: "delta", aliases: ["z"] }),
+		], { fallbackCalloutId: "delta", customCommands: [{ id: "cc-existing", calloutId: "delta", role: "regular" }] }));
+		assert.deepStrictEqual(userIds(first), ["alpha"]);
+		for (const alias of ["x", "y", "z", "beta", "gamma", "delta"]) {
+			assert.strictEqual(first.findByIdentity(alias)?.id, "alpha", alias);
+		}
+		assert.strictEqual(first.settings.fallbackCalloutId, "alpha");
+		assert.strictEqual(first.settings.customCommands[0]?.calloutId, "alpha");
+		const persisted = first.toSaveData();
+		const second = load(persisted);
+		assert.deepStrictEqual(second.toSaveData(), persisted);
+		assert.strictEqual(second.needsSaveAfterLoad(), false);
+	});
+
 	it("folds a dash/space pair down to one row", () => {
 		// Obsidian dasherizes `data-callout`, so `a b` and `a-b` are one
 		// selector. Two surviving rows would forever fight over it.
