@@ -32,6 +32,8 @@ When you right-click a Heading Callout, the menu offers whole-section actions th
 
 **Cut** removes text only after it reaches the clipboard. If copying fails or the note changes while copying, the note stays unchanged and a notice explains what happened.
 
+Section actions keep fenced code blocks whole: a line such as `# a shell comment` inside a code example does not end the section. The next heading of the same or a higher level stays in the note.
+
 ## Customizing the menu
 
 You don't have to keep every action visible. Head to Settings → Customize menu items to choose exactly which actions appear for each of the three callout forms - Block Callout, Heading Callout, and Inline Callout - and to reorder them however you like.
