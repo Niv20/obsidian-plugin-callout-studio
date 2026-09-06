@@ -41,6 +41,12 @@ export function metadataSuffixOf(line: string, startCh: number): string {
 	return parts.hasMetadata ? `|${parts.metadata}` : "";
 }
 
+/** Preserve the live occurrence's title when its type is created in a modal. */
+export function titleAfterToken(line: string, startCh: number, role: CalloutRenderRole): string {
+	const close = line.indexOf("]", startCh + 2);
+	return close < 0 ? "" : splitFoldMark(line.slice(close + 1), role).title;
+}
+
 /** The fold marker a definition's header carries, if any. */
 export function foldMarkFor(def: CalloutDefinition): string {
 	if (!def.foldable) return "";

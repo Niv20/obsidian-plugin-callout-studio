@@ -144,7 +144,10 @@ normally. A non-empty query with no exact id/alias match appends a synthetic
 "Create new: …" row.
 
 Picking "Create new" opens `CalloutEditor` pre-filled with the typed name and
-awaits the result. Because the modal can sit open for an arbitrary amount of
+awaits the result. Both block and heading creation preserve the current title
+after the token, including metadata and titles edited while the modal is open;
+only block titles strip the old fold marker before applying the new defaults.
+Because the modal can sit open for an arbitrary amount of
 time (minutes, if the user steps away), every position captured before that
 `await` is treated as **stale** and re-validated against the *live* document
 via `liveTriggerLine()` — checking the editor still belongs to the same file
