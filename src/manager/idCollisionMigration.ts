@@ -131,6 +131,22 @@ export function reconcileIdCollisions(
 	settings: PluginSettings,
 	defaultFallbackId: string,
 ): IdCollisionMergeReport {
+	const merged: string[] = [];
+	// A survivor can inherit aliases from a bridge shared by several groups.
+	// Rebuild after each pass so deleted bridge IDs cannot hide the new owner.
+	// Every reported merge removes a row, so this reaches a fixed point.
+	for (;;) {
+		const pass = reconcileCollisionPass(callouts, settings, defaultFallbackId);
+		if (pass.merged.length === 0) return { merged };
+		merged.push(...pass.merged);
+	}
+}
+
+function reconcileCollisionPass(
+	callouts: Map<string, CalloutDefinition>,
+	settings: PluginSettings,
+	defaultFallbackId: string,
+): IdCollisionMergeReport {
 	// Group by identity, over ids AND aliases: a row whose *alias* is the other
 	// row's id is the same collision wearing a different hat.
 	const groups = new Map<string, Set<string>>();
