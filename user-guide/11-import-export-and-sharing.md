@@ -2,6 +2,12 @@
 
 Callout Studio makes it easy to take your callout styling with you, hand it off to a theme or a published site, or bring in work from other tools. This chapter covers exporting your setup, and importing it back in — whether from a Callout Studio backup, from another plugin, or from CSS snippets already sitting in your vault.
 
+Importing a backup replaces the appearance of matching callout types, including
+clearing optional colors, icon adjustments and palette links absent from the
+backup. Existing aliases are retained alongside imported aliases so notes using
+those names keep working. To remove an old alias and update its note usages, edit
+the callout type after importing.
+
 ## Exporting your setup
 
 Export offers two formats, and they serve different purposes:

@@ -96,7 +96,7 @@ made the picture is the ordinary, expected case.
 
 ```ts
 for (const def of defs) {
-  if (registry.has(def.id)) { registry.update(def.id, def); overwritten++; }
+  if (registry.has(def.id)) { applyImportedCallout(registry, def); overwritten++; }
   else { const added = registry.add(def); if (added) imported++; }
 }
 ```
@@ -105,6 +105,13 @@ An id already in the registry is **updated in place**, not skipped or
 duplicated — this is what makes re-importing the same backup, or importing
 one vault's export into another that shares some built-in customizations,
 converge rather than error.
+
+`applyImportedCallout` clears optional appearance, palette-link, ownership-override
+and metadata fields omitted by a backup before merging the validated definition.
+Thus restoring a backup does not retain later text colors, icon adjustments or
+palette links. Aliases are the intentional exception: importing does not rewrite
+notes, so incoming and existing aliases are united by canonical identity. Removing
+an old alias remains an editor action, whose save plan protects its note usages.
 
 ### Settings import: replace wholesale, except three lists that merge by id
 
