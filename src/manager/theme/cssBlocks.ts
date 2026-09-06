@@ -57,12 +57,22 @@ import {
 export type BlockVisitor = (prelude: string, body: string) => void;
 
 /**
- * Strip CSS comments. Not string-aware, and does not need to be: comment
- * punctuation inside a CSS string literal is legal but vanishingly rare, and
- * the cost of getting it wrong is one missed claim rather than a wrong one.
+ * Strip CSS comments without treating quoted artwork or content as comments.
  */
 export function stripComments(css: string): string {
-	return css.replace(/\/\*[\s\S]*?\*\//g, "");
+	let out = "";
+	let start = 0;
+	for (let i = 0; i < css.length;) {
+		if (css[i] === '"' || css[i] === "'") { i = skipString(css, i); continue; }
+		if (css[i] === "\\") { i += 2; continue; }
+		if (css.startsWith("/*", i)) {
+			out += css.slice(start, i);
+			const end = css.indexOf("*/", i + 2);
+			i = end < 0 ? css.length : end + 2;
+			start = i;
+		} else i++;
+	}
+	return out + css.slice(start);
 }
 
 /**
@@ -101,7 +111,7 @@ function walkBody(
 	let cursor = 0;
 	let own = "";
 	while (cursor < text.length) {
-		const open = text.indexOf("{", cursor);
+		const open = nextBrace(text, cursor, "{");
 		if (open < 0) break;
 		const close = closingBrace(text, open);
 		if (close < 0) break;
@@ -146,10 +156,24 @@ function visitRule(
 	return "";
 }
 
-/** Index just past the `}` closing the `{` at `open`, or -1 when unclosed. */
+/** Next structural brace, ignoring strings, escapes and selector/function data. */
+function nextBrace(text: string, start: number, wanted?: string): number {
+	for (let i = start; i < text.length;) {
+		const ch = text[i];
+		if (ch === '"' || ch === "'") { i = skipString(text, i); continue; }
+		if (ch === "\\") { i += 2; continue; }
+		if (ch === "[") { i = skipBrackets(text, i); continue; }
+		if (ch === "(") { i = matchParen(text, i) + 1; continue; }
+		if ((ch === "{" || ch === "}") && (!wanted || ch === wanted)) return i;
+		i++;
+	}
+	return -1;
+}
+
+/** Index of the `}` closing the `{` at `open`, or -1 when unclosed. */
 function closingBrace(text: string, open: number): number {
 	let depth = 0;
-	for (let i = open; i < text.length; i++) {
+	for (let i = open; i >= 0; i = nextBrace(text, i + 1)) {
 		const ch = text[i];
 		if (ch === "{") depth++;
 		else if (ch === "}" && --depth === 0) return i;

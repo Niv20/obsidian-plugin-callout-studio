@@ -101,6 +101,10 @@ scanner nobody can test is how a wrong answer ships. Comments are stripped up
 front and blocks are walked by brace depth, which is what the CSSOM was really
 buying.
 
+Comment removal and brace boundaries respect quoted strings and escaped
+punctuation. Literal braces in `content`, attribute selectors or SVG data URLs
+do not hide later rules or become false nested blocks.
+
 Cutting the sheet into rules is its own module,
 [`cssBlocks.ts`](../src/manager/theme/cssBlocks.ts), which hands the scanner one
 `(selector, declarations)` pair per rule. It resolves **native CSS nesting**
