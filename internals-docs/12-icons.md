@@ -296,6 +296,23 @@ gradients, and clipping — enough to draw any icon — and explicitly excludes
 `<animate>`/`<set>` (can assign event-handler attributes at runtime), and any
 nested `<svg>` (would re-open the whole attack surface one level down).
 
+User SVG CSS is parsed with the browser's non-adopted, constructed stylesheet
+parser (`svgCss.ts`); parsing never installs a sheet or loads its imports.
+Only flat style rules and an allow-list of drawing declarations survive.
+All at-rules, nested rules, custom properties, substitutions and external
+references are discarded, including escaped CSS spellings. Safe class-based
+colors, inline drawing styles and literal local gradient/clip references remain;
+`isolateSvgCopy` scopes selectors and renames local references per displayed copy.
+Every style element takes the same event/attribute cleanup as the shapes.
+Render realms without constructable stylesheets omit style blocks safely and
+retain ordinary presentation attributes.
+
+`scripts/test-svg-security.mjs` exercises the actual DOMParser, XMLSerializer,
+CSS parser and live DOM in Chromium, in addition to the Node grammar tests.
+Run it with an existing Playwright installation, setting `PLAYWRIGHT_MODULE`
+to its module path when it is outside the repository. Requests are intercepted
+and fail the test; no package or browser download is part of the runner.
+
 > [!IMPORTANT]
 > **User SVG is re-sanitized on every read, not just when first added.**
 > `data.json` syncs between devices and can be hand-edited or arrive via

@@ -928,10 +928,6 @@ describe("no new oversized files", () => {
 		// that finally made it one — moved to settings/previewReadOnly.ts,
 		// where it can be tested against a real EditorState.
 		"src/settings/EmbeddableMarkdownEditor.ts": 349,
-		// Lowered from 367: the deny-list of what is unsafe in ANY svg moved to
-		// icons/svgSafety.ts, where a third caller outside this file — the theme
-		// artwork importer in manager/css/coreIcon.ts — can reach it.
-		"src/icons/svg.ts": 329,
 		"src/settings/iconpicker/ImagePanel.ts": 354,
 		// Lowered from 345: its row icon goes through
 		// manager/theme/calloutListIcon.ts. Lowered again from 337: the shortcut

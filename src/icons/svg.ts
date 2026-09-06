@@ -16,7 +16,9 @@
  *   inline SVG is a scripting context like any other. That one is an
  *   allow-list: unknown elements and unknown attributes do not survive.
  */
+import { USER_SVG_ELEMENTS, USER_SVG_ATTRS } from "./userSvgProfile";
 import { stripUnsafeSvg } from "./svgSafety";
+import { SVG_CSS_PROPERTIES, safeSvgCssValue, sanitizeSvgStyleAttribute, sanitizeSvgStylesheet } from "./svgCss";
 
 
 /**
@@ -52,111 +54,6 @@ export function sanitizeSVG(raw: string): string | null {
 /* ------------------------------------------------------------------ *
  * User-supplied SVG
  * ------------------------------------------------------------------ */
-
-/**
- * Elements a picture is allowed to be made of.
- *
- * Shapes, grouping, gradients and clipping — enough to draw any icon, and
- * nothing that can reach outside the document. The absences are deliberate:
- * `<use>`/`<foreignObject>` pull in content by reference, `<animate>`/`<set>`
- * assign event handlers at runtime, and a nested `<svg>` re-opens all of it
- * one level down. `<title>` is absent for appearance, not safety: browsers
- * draw it as the OS tooltip. `<desc>` stays — it draws nothing.
- *
- * Lowercase, because SVG's own spelling is mixed (`linearGradient`, `clipPath`)
- * and every lookup here folds case first.
- */
-const USER_SVG_ELEMENTS = new Set([
-	"svg",
-	"desc",
-	"defs",
-	"g",
-	"path",
-	"circle",
-	"ellipse",
-	"rect",
-	"line",
-	"polyline",
-	"polygon",
-	"text",
-	"tspan",
-	"lineargradient",
-	"radialgradient",
-	"stop",
-	"clippath",
-	"mask",
-	"style",
-	"image",
-]);
-
-/**
- * Attributes those elements are allowed to carry: geometry, paint, and the few
- * structural ones a gradient or clip path needs to be referred to. Anything
- * else — every `on*` handler, every `href` outside the `<image>` exception
- * below, every `xlink:*` — is dropped without being looked at.
- */
-const USER_SVG_ATTRS = new Set([
-	// structure
-	"viewbox",
-	"preserveaspectratio",
-	"xmlns",
-	"id",
-	"class",
-	"style",
-	"transform",
-	// geometry
-	"x",
-	"y",
-	"width",
-	"height",
-	"d",
-	"cx",
-	"cy",
-	"r",
-	"rx",
-	"ry",
-	"x1",
-	"y1",
-	"x2",
-	"y2",
-	"points",
-	"offset",
-	"dx",
-	"dy",
-	"text-anchor",
-	"font-size",
-	"font-family",
-	"font-weight",
-	// paint
-	"fill",
-	"fill-opacity",
-	"fill-rule",
-	"stroke",
-	"stroke-width",
-	"stroke-opacity",
-	"stroke-linecap",
-	"stroke-linejoin",
-	"stroke-miterlimit",
-	"stroke-dasharray",
-	"stroke-dashoffset",
-	"opacity",
-	"color",
-	"stop-color",
-	"stop-opacity",
-	"paint-order",
-	"vector-effect",
-	"display",
-	"visibility",
-	// referencing, restricted to same-document `url(#…)` by the value guard
-	"clip-path",
-	"clip-rule",
-	"mask",
-	"gradientunits",
-	"gradienttransform",
-	"spreadmethod",
-	"maskunits",
-	"clippathunits",
-]);
 
 /**
  * The one kind of `href` that survives: a raster embedded in the file itself.
@@ -201,11 +98,13 @@ export interface SanitizedUserSvg {
  * renders blank is not a better outcome than a refusal that says why.
  */
 export function sanitizeUserSvg(raw: string): SanitizedUserSvg | null {
+	if (raw.length > MAX_USER_SVG_BYTES) return null;
 	const doc = new DOMParser().parseFromString(raw, "image/svg+xml");
 	if (doc.querySelector("parsererror")) return null;
 
 	const svg = doc.documentElement;
-	if (svg.localName.toLowerCase() !== "svg") return null;
+	if (svg.localName.toLowerCase() !== "svg" ||
+		(svg.namespaceURI !== null && svg.namespaceURI !== "http://www.w3.org/2000/svg")) return null;
 
 	const { width, height } = normalizeViewBox(svg);
 	// The root's own width/height would pin the artwork to whatever pixel size
@@ -239,20 +138,19 @@ function cleanUserElement(
 	const toRemove: Element[] = [];
 	for (const child of Array.from(el.children)) {
 		const name = child.localName.toLowerCase();
-		if (!USER_SVG_ELEMENTS.has(name)) {
+		if (!USER_SVG_ELEMENTS.has(name) || name === "svg" ||
+			(child.namespaceURI !== null && child.namespaceURI !== "http://www.w3.org/2000/svg")) {
 			toRemove.push(child);
 			continue;
 		}
-		// CSS is kept because Illustrator and Figma colour whole drawings
-		// through classes, and dropping it would render those files black. It
-		// is kept only when it stays inside the document, though: `@import` and
-		// an external `url()` are both requests to somewhere else.
+		// Parse CSS before retaining drawing declarations. The style element
+		// itself still takes the normal attribute pass (including event removal).
 		if (name === "style") {
-			const css = child.textContent ?? "";
-			if (css.includes("@import") || EXTERNAL_URL_RE.test(css)) {
+			child.textContent = sanitizeSvgStylesheet(child.textContent ?? "");
+			if (!child.textContent) {
 				toRemove.push(child);
+				continue;
 			}
-			continue;
 		}
 		if (!cleanUserElement(child, budget)) return false;
 	}
@@ -281,6 +179,16 @@ function cleanUserAttributes(el: Element): void {
 
 		if (!USER_SVG_ATTRS.has(name)) {
 			el.removeAttribute(attr);
+			continue;
+		}
+		if (name === "style") {
+			const safe = sanitizeSvgStyleAttribute(value, el.ownerDocument);
+			if (safe) el.setAttribute(attr, safe);
+			else el.removeAttribute(attr);
+			continue;
+		}
+		if (SVG_CSS_PROPERTIES.has(name)) {
+			if (!safeSvgCssValue(value)) el.removeAttribute(attr);
 			continue;
 		}
 		if (UNSAFE_VALUE_RE.test(value) || EXTERNAL_URL_RE.test(value)) {

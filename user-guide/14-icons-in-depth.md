@@ -34,6 +34,13 @@ Turning the icon back on is instant: the icon you had picked before is remembere
 
 Beyond the seven libraries, there's an eighth source: **Your images**. From the same picker, you can upload your own SVG, PNG, JPEG, or WebP files from your computer and use them as a callout's icon.
 
+SVG shapes, gradients, clipping, and ordinary class-based colors are preserved.
+Imported stylesheets, animations, global CSS rules, external references, and CSS
+variables are removed. Files that depend on those features may look different;
+export them with literal colors and embedded shapes for predictable results.
+On older rendering engines without stylesheet parsing support, SVG style blocks
+are omitted while colors written directly on shapes remain available.
+
 For an uploaded SVG, you can choose whether it follows the callout's own color or keeps its original colors. Following the callout's color is useful for a simple, flat, single-color logo or symbol, so it tints along with the rest of the callout. Callout Studio makes a sensible guess about which of these you probably want as soon as you add the file, and the picker always gives you a toggle to switch it either way. Photos and other multi-color raster images (PNG, JPEG, WebP) always keep their own original colors, since tinting wouldn't make sense for them.
 
 Exactly what happens to an uploaded picture on disk, and how network requests for the downloadable libraries work, is covered in [Privacy & permissions](16-privacy-and-permissions.md).
