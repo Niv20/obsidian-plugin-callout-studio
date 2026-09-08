@@ -7,6 +7,10 @@ export const sv: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Lägg i blockcallout {{name}}",
 	"cmd.customInsertBlock": "Infoga blockcallout {{name}}",
+	"cmd.customWrapBlockExpanded": "Lägg i blockcallout {{name}} (öppen)",
+	"cmd.customWrapBlockCollapsed": "Lägg i blockcallout {{name}} (stängd)",
+	"cmd.customInsertBlockExpanded": "Infoga blockcallout {{name}} (öppen)",
+	"cmd.customInsertBlockCollapsed": "Infoga blockcallout {{name}} (stängd)",
 	"cmd.customInsertHeading": "Infoga H{{level}}-rubrikcallout {{name}}",
 	"cmd.customInsertInline": "Infoga infogad callout {{name}}",
 	"cmd.openQuickInsert": "Snabbinfoga block-callout",
@@ -195,6 +199,12 @@ export const sv: Record<string, string> = {
 		"Lägg i omvandlar markeringen till en callout; infoga lägger till en tom.",
 	"commandBuilder.actionWrap": "Lägg i markering",
 	"commandBuilder.actionInsert": "Infoga ny",
+	"commandBuilder.foldState": "Hopfällningsstatus",
+	"commandBuilder.foldStateDesc":
+		"Om callouten som detta kommando skriver kan vikas, och i vilket tillstånd den startar.",
+	"commandBuilder.foldNone": "Icke-vikbar",
+	"commandBuilder.foldExpanded": "Vikbar, öppen (+)",
+	"commandBuilder.foldCollapsed": "Vikbar, stängd (-)",
 	"commandBuilder.preview": "Kommandonamn",
 	"commandBuilder.duplicate":
 		"Du har redan ett kommando som gör exakt detta.",

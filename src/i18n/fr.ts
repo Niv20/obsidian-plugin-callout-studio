@@ -7,6 +7,10 @@ export const fr: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Envelopper dans un callout de bloc {{name}}",
 	"cmd.customInsertBlock": "Insérer un callout de bloc {{name}}",
+	"cmd.customWrapBlockExpanded": "Envelopper dans un callout de bloc {{name}} (ouvert)",
+	"cmd.customWrapBlockCollapsed": "Envelopper dans un callout de bloc {{name}} (fermé)",
+	"cmd.customInsertBlockExpanded": "Insérer un callout de bloc {{name}} (ouvert)",
+	"cmd.customInsertBlockCollapsed": "Insérer un callout de bloc {{name}} (fermé)",
 	"cmd.customInsertHeading": "Insérer un titre H{{level}} callout {{name}}",
 	"cmd.customInsertInline": "Insérer un callout en ligne {{name}}",
 	"cmd.openQuickInsert": "Insertion rapide d'un callout de bloc",
@@ -194,6 +198,12 @@ export const fr: Record<string, string> = {
 		"Envelopper transforme la sélection en callout ; insérer en ajoute un vide.",
 	"commandBuilder.actionWrap": "Envelopper la sélection",
 	"commandBuilder.actionInsert": "Insérer un nouveau",
+	"commandBuilder.foldState": "État de repli",
+	"commandBuilder.foldStateDesc":
+		"Indique si le callout écrit par cette commande peut être replié, et dans quel état il démarre.",
+	"commandBuilder.foldNone": "Non repliable",
+	"commandBuilder.foldExpanded": "Repliable, ouvert (+)",
+	"commandBuilder.foldCollapsed": "Repliable, fermé (-)",
 	"commandBuilder.preview": "Nom de la commande",
 	"commandBuilder.duplicate":
 		"Vous avez déjà une commande qui fait exactement cela.",

@@ -7,6 +7,10 @@ export const th: Record<string, string> = {
 
 	"cmd.customWrapBlock": "ห่อใน callout แบบบล็อก {{name}}",
 	"cmd.customInsertBlock": "แทรก callout แบบบล็อก {{name}}",
+	"cmd.customWrapBlockExpanded": "ห่อใน callout แบบบล็อก {{name}} (เปิด)",
+	"cmd.customWrapBlockCollapsed": "ห่อใน callout แบบบล็อก {{name}} (ปิด)",
+	"cmd.customInsertBlockExpanded": "แทรก callout แบบบล็อก {{name}} (เปิด)",
+	"cmd.customInsertBlockCollapsed": "แทรก callout แบบบล็อก {{name}} (ปิด)",
 	"cmd.customInsertHeading": "แทรกหัวข้อ callout H{{level}} {{name}}",
 	"cmd.customInsertInline": "แทรก callout แบบอินไลน์ {{name}}",
 	"cmd.openQuickInsert": "แทรก callout แบบบล็อกอย่างรวดเร็ว",
@@ -194,6 +198,12 @@ export const th: Record<string, string> = {
 		"ห่อจะเปลี่ยนข้อความที่เลือกให้เป็น callout ส่วนแทรกจะเพิ่ม callout เปล่า",
 	"commandBuilder.actionWrap": "ห่อข้อความที่เลือก",
 	"commandBuilder.actionInsert": "แทรกใหม่",
+	"commandBuilder.foldState": "สถานะการพับ",
+	"commandBuilder.foldStateDesc":
+		"callout ที่คำสั่งนี้เขียนสามารถพับได้หรือไม่ และเริ่มต้นในสถานะใด",
+	"commandBuilder.foldNone": "พับไม่ได้",
+	"commandBuilder.foldExpanded": "พับได้ เปิด (+)",
+	"commandBuilder.foldCollapsed": "พับได้ ปิด (-)",
 	"commandBuilder.preview": "ชื่อคำสั่ง",
 	"commandBuilder.duplicate": "คุณมีคำสั่งที่ทำแบบนี้อยู่แล้ว",
 	"commandBuilder.noCallouts": "ยังไม่มีประเภท callout ให้สร้างคำสั่งจาก",

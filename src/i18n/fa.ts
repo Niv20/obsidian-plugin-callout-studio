@@ -7,6 +7,10 @@ export const fa: Record<string, string> = {
 
 	"cmd.customWrapBlock": "پیچیدن در callout بلوکی {{name}}",
 	"cmd.customInsertBlock": "درج callout بلوکی {{name}}",
+	"cmd.customWrapBlockExpanded": "پیچیدن در callout بلوکی {{name}} (باز)",
+	"cmd.customWrapBlockCollapsed": "پیچیدن در callout بلوکی {{name}} (بسته)",
+	"cmd.customInsertBlockExpanded": "درج callout بلوکی {{name}} (باز)",
+	"cmd.customInsertBlockCollapsed": "درج callout بلوکی {{name}} (بسته)",
 	"cmd.customInsertHeading": "درج سرتیتر H{{level}} از نوع callout {{name}}",
 	"cmd.customInsertInline": "درج callout درون‌خطی {{name}}",
 	"cmd.openQuickInsert": "درج سریع callout بلوکی",
@@ -190,6 +194,12 @@ export const fa: Record<string, string> = {
 		"پیچیدن، انتخاب را به یک callout تبدیل می‌کند؛ درج، یک callout خالی اضافه می‌کند.",
 	"commandBuilder.actionWrap": "پیچیدن انتخاب",
 	"commandBuilder.actionInsert": "درج جدید",
+	"commandBuilder.foldState": "وضعیت تا کردن",
+	"commandBuilder.foldStateDesc":
+		"اینکه آیا callout ای که این دستور می‌نویسد قابل جمع است یا نه، و با چه وضعیتی شروع می‌شود.",
+	"commandBuilder.foldNone": "غیرقابل جمع‌شدن",
+	"commandBuilder.foldExpanded": "قابل جمع، باز (+)",
+	"commandBuilder.foldCollapsed": "قابل جمع، بسته (-)",
 	"commandBuilder.preview": "نام دستور",
 	"commandBuilder.duplicate":
 		"شما همین حالا دستوری دارید که دقیقاً همین کار را انجام می‌دهد.",

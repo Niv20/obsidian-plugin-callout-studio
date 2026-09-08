@@ -16,6 +16,10 @@ export const he: Record<string, string> = {
 	// Commands — names generated for the user's own commands
 	"cmd.customWrapBlock": "עטיפה בתיבת־הבלטה בלוקית {{name}}",
 	"cmd.customInsertBlock": "הוספת תיבת־הבלטה בלוקית {{name}}",
+	"cmd.customWrapBlockExpanded": "עטיפה בתיבת־הבלטה בלוקית {{name}} (פתוחה)",
+	"cmd.customWrapBlockCollapsed": "עטיפה בתיבת־הבלטה בלוקית {{name}} (סגורה)",
+	"cmd.customInsertBlockExpanded": "הוספת תיבת־הבלטה בלוקית {{name}} (פתוחה)",
+	"cmd.customInsertBlockCollapsed": "הוספת תיבת־הבלטה בלוקית {{name}} (סגורה)",
 	"cmd.customInsertHeading": "הוספת כותרת H{{level}} מסוג {{name}}",
 	"cmd.customInsertInline": "הוספת תיבת־הבלטה מוטבעת {{name}}",
 	"cmd.openQuickInsert": "הוספה מהירה של תיבת־הבלטה מסוג בלוק",
@@ -220,6 +224,12 @@ export const he: Record<string, string> = {
 		"עטיפה הופכת את הבחירה לתיבת־הבלטה; הוספה מוסיפה תיבה ריקה.",
 	"commandBuilder.actionWrap": "עטיפת הבחירה",
 	"commandBuilder.actionInsert": "הוספת חדשה",
+	"commandBuilder.foldState": "מצב קיפול",
+	"commandBuilder.foldStateDesc":
+		"האם תיבת־ההבלטה שהפקודה הזו כותבת ניתנת לקיפול, ובאיזה מצב היא מתחילה.",
+	"commandBuilder.foldNone": "בלתי ניתן לקיפול",
+	"commandBuilder.foldExpanded": "ניתן לקיפול, פתוח (+)",
+	"commandBuilder.foldCollapsed": "ניתן לקיפול, סגור (-)",
 	"commandBuilder.preview": "שם הפקודה",
 	"commandBuilder.duplicate": "כבר יש לכם פקודה שעושה בדיוק את זה.",
 	"commandBuilder.noCallouts":

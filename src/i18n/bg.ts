@@ -6,6 +6,10 @@ export const bg: Record<string, string> = {
 	"cmd.calloutUnwrap": "Премахване на callout",
 	"cmd.customWrapBlock": "Обвиване в блоков callout {{name}}",
 	"cmd.customInsertBlock": "Вмъкване на блоков callout {{name}}",
+	"cmd.customWrapBlockExpanded": "Обвиване в блоков callout {{name}} (отворен)",
+	"cmd.customWrapBlockCollapsed": "Обвиване в блоков callout {{name}} (затворен)",
+	"cmd.customInsertBlockExpanded": "Вмъкване на блоков callout {{name}} (отворен)",
+	"cmd.customInsertBlockCollapsed": "Вмъкване на блоков callout {{name}} (затворен)",
 	"cmd.customInsertHeading":
 		"Вмъкване на заглавен callout {{name}} (H{{level}})",
 	"cmd.customInsertInline": "Вмъкване на вграден callout {{name}}",
@@ -179,6 +183,12 @@ export const bg: Record<string, string> = {
 		"Обвиването превръща избора в callout; вмъкването добавя празен.",
 	"commandBuilder.actionWrap": "Обвиване на избора",
 	"commandBuilder.actionInsert": "Вмъкване на нов",
+	"commandBuilder.foldState": "Състояние на сгъването",
+	"commandBuilder.foldStateDesc":
+		"Дали callout-ът, който записва тази команда, може да се сгъва и в какво състояние започва.",
+	"commandBuilder.foldNone": "Несгъваем",
+	"commandBuilder.foldExpanded": "Сгъваем, отворен (+)",
+	"commandBuilder.foldCollapsed": "Сгъваем, затворен (-)",
 	"commandBuilder.preview": "Име на командата",
 	"commandBuilder.duplicate": "Вече имате команда, която прави точно това.",
 	"commandBuilder.noCallouts":

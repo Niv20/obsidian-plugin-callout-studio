@@ -7,6 +7,10 @@ export const ko: Record<string, string> = {
 
 	"cmd.customWrapBlock": "{{name}} 블록 callout으로 감싸기",
 	"cmd.customInsertBlock": "{{name}} 블록 callout 삽입",
+	"cmd.customWrapBlockExpanded": "{{name}} 블록 callout으로 감싸기 (열림)",
+	"cmd.customWrapBlockCollapsed": "{{name}} 블록 callout으로 감싸기 (닫힘)",
+	"cmd.customInsertBlockExpanded": "{{name}} 블록 callout 삽입 (열림)",
+	"cmd.customInsertBlockCollapsed": "{{name}} 블록 callout 삽입 (닫힘)",
 	"cmd.customInsertHeading": "H{{level}} {{name}} 제목 callout 삽입",
 	"cmd.customInsertInline": "{{name}} 인라인 callout 삽입",
 	"cmd.openQuickInsert": "블록 callout 빠른 삽입",
@@ -197,6 +201,12 @@ export const ko: Record<string, string> = {
 		"감싸기는 선택 영역을 callout으로 바꾸고, 삽입은 빈 callout을 추가합니다.",
 	"commandBuilder.actionWrap": "선택 영역 감싸기",
 	"commandBuilder.actionInsert": "새로 삽입",
+	"commandBuilder.foldState": "접기 상태",
+	"commandBuilder.foldStateDesc":
+		"이 명령이 작성하는 callout을 접을 수 있는지와 시작 상태를 지정합니다.",
+	"commandBuilder.foldNone": "접을 수 없음",
+	"commandBuilder.foldExpanded": "접을 수 있음, 열림 (+)",
+	"commandBuilder.foldCollapsed": "접을 수 있음, 닫힘 (-)",
 	"commandBuilder.preview": "명령어 이름",
 	"commandBuilder.duplicate": "이미 똑같은 작업을 하는 명령어가 있습니다.",
 	"commandBuilder.noCallouts":

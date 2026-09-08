@@ -7,6 +7,10 @@ export const cs: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Zabalit do blokového callout {{name}}",
 	"cmd.customInsertBlock": "Vložit blokový callout {{name}}",
+	"cmd.customWrapBlockExpanded": "Zabalit do blokového callout {{name}} (otevřený)",
+	"cmd.customWrapBlockCollapsed": "Zabalit do blokového callout {{name}} (zavřený)",
+	"cmd.customInsertBlockExpanded": "Vložit blokový callout {{name}} (otevřený)",
+	"cmd.customInsertBlockCollapsed": "Vložit blokový callout {{name}} (zavřený)",
 	"cmd.customInsertHeading": "Vložit nadpisový callout {{name}} (H{{level}})",
 	"cmd.customInsertInline": "Vložit vložený callout {{name}}",
 	"cmd.openQuickInsert": "Rychlé vložení blokového callout",
@@ -190,6 +194,12 @@ export const cs: Record<string, string> = {
 		"Zabalení promění výběr v callout; vložení přidá prázdný.",
 	"commandBuilder.actionWrap": "Zabalit výběr",
 	"commandBuilder.actionInsert": "Vložit nový",
+	"commandBuilder.foldState": "Stav sbalení",
+	"commandBuilder.foldStateDesc":
+		"Zda lze callout, který tento příkaz zapisuje, sbalit, a v jakém stavu začíná.",
+	"commandBuilder.foldNone": "Nesbalitelný",
+	"commandBuilder.foldExpanded": "Sbalitelný, otevřený (+)",
+	"commandBuilder.foldCollapsed": "Sbalitelný, zavřený (-)",
 	"commandBuilder.preview": "Název příkazu",
 	"commandBuilder.duplicate": "Takový příkaz už máte.",
 	"commandBuilder.noCallouts":

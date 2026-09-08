@@ -7,6 +7,10 @@ export const pl: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Owiń w blokowy callout {{name}}",
 	"cmd.customInsertBlock": "Wstaw blokowy callout {{name}}",
+	"cmd.customWrapBlockExpanded": "Owiń w blokowy callout {{name}} (otwarty)",
+	"cmd.customWrapBlockCollapsed": "Owiń w blokowy callout {{name}} (zamknięty)",
+	"cmd.customInsertBlockExpanded": "Wstaw blokowy callout {{name}} (otwarty)",
+	"cmd.customInsertBlockCollapsed": "Wstaw blokowy callout {{name}} (zamknięty)",
 	"cmd.customInsertHeading": "Wstaw nagłówek H{{level}} callout {{name}}",
 	"cmd.customInsertInline": "Wstaw śródtekstowy callout {{name}}",
 	"cmd.openQuickInsert": "Szybkie wstawianie callout blokowego",
@@ -194,6 +198,12 @@ export const pl: Record<string, string> = {
 		"Owiń zamienia zaznaczenie w callout; wstaw dodaje pusty.",
 	"commandBuilder.actionWrap": "Owiń zaznaczenie",
 	"commandBuilder.actionInsert": "Wstaw nowy",
+	"commandBuilder.foldState": "Stan zwijania",
+	"commandBuilder.foldStateDesc":
+		"Czy callout zapisywany przez to polecenie można zwinąć i w jakim stanie zaczyna.",
+	"commandBuilder.foldNone": "Niezwijany",
+	"commandBuilder.foldExpanded": "Zwijany, otwarty (+)",
+	"commandBuilder.foldCollapsed": "Zwijany, zamknięty (-)",
 	"commandBuilder.preview": "Nazwa polecenia",
 	"commandBuilder.duplicate":
 		"Masz już polecenie, które robi dokładnie to samo.",

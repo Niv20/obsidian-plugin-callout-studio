@@ -7,6 +7,10 @@ export const ar: Record<string, string> = {
 
 	"cmd.customWrapBlock": "التفاف في callout الكتلي {{name}}",
 	"cmd.customInsertBlock": "إدراج callout الكتلي {{name}}",
+	"cmd.customWrapBlockExpanded": "التفاف في callout الكتلي {{name}} (مفتوح)",
+	"cmd.customWrapBlockCollapsed": "التفاف في callout الكتلي {{name}} (مغلق)",
+	"cmd.customInsertBlockExpanded": "إدراج callout الكتلي {{name}} (مفتوح)",
+	"cmd.customInsertBlockCollapsed": "إدراج callout الكتلي {{name}} (مغلق)",
 	"cmd.customInsertHeading":
 		"إدراج عنوان callout {{name}} من المستوى H{{level}}",
 	"cmd.customInsertInline": "إدراج callout {{name}} ضمن السطر",
@@ -190,6 +194,12 @@ export const ar: Record<string, string> = {
 		"الالتفاف يحوّل التحديد إلى callout؛ الإدراج يضيف واحدًا فارغًا.",
 	"commandBuilder.actionWrap": "التفاف حول التحديد",
 	"commandBuilder.actionInsert": "إدراج جديد",
+	"commandBuilder.foldState": "حالة الطي",
+	"commandBuilder.foldStateDesc":
+		"هل الـ callout الذي تكتبه هذه الأوامر قابل للطي، وكيف تبدأ حالته.",
+	"commandBuilder.foldNone": "غير قابل للطي",
+	"commandBuilder.foldExpanded": "قابل للطي، مفتوح (+)",
+	"commandBuilder.foldCollapsed": "قابل للطي، مغلق (-)",
 	"commandBuilder.preview": "اسم الأمر",
 	"commandBuilder.duplicate": "لديك بالفعل أمر يقوم بنفس الشيء تمامًا.",
 	"commandBuilder.noCallouts": "لا توجد أنواع callout لإنشاء أمر منها بعد.",

@@ -7,6 +7,10 @@ export const uk: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Обгорнути в блоковий callout {{name}}",
 	"cmd.customInsertBlock": "Вставити блоковий callout {{name}}",
+	"cmd.customWrapBlockExpanded": "Обгорнути в блоковий callout {{name}} (відкритий)",
+	"cmd.customWrapBlockCollapsed": "Обгорнути в блоковий callout {{name}} (закритий)",
+	"cmd.customInsertBlockExpanded": "Вставити блоковий callout {{name}} (відкритий)",
+	"cmd.customInsertBlockCollapsed": "Вставити блоковий callout {{name}} (закритий)",
 	"cmd.customInsertHeading": "Вставити заголовок H{{level}} callout {{name}}",
 	"cmd.customInsertInline": "Вставити вбудований callout {{name}}",
 	"cmd.openQuickInsert": "Швидка вставка блокового callout",
@@ -194,6 +198,12 @@ export const uk: Record<string, string> = {
 		"«Обгорнути» перетворює виділення на callout; «Вставити» додає порожній.",
 	"commandBuilder.actionWrap": "Обгорнути виділення",
 	"commandBuilder.actionInsert": "Вставити новий",
+	"commandBuilder.foldState": "Стан згортання",
+	"commandBuilder.foldStateDesc":
+		"Чи можна складати callout, який записує ця команда, і в якому стані він починається.",
+	"commandBuilder.foldNone": "Нескладаний",
+	"commandBuilder.foldExpanded": "Складаний, відкритий (+)",
+	"commandBuilder.foldCollapsed": "Складаний, закритий (-)",
 	"commandBuilder.preview": "Назва команди",
 	"commandBuilder.duplicate":
 		"У вас уже є команда, яка робить точно те саме.",

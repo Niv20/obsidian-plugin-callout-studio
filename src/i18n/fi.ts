@@ -6,6 +6,10 @@ export const fi: Record<string, string> = {
 	"cmd.calloutUnwrap": "Poista callout",
 	"cmd.customWrapBlock": "Kääri {{name}}-lohkocalloutiin",
 	"cmd.customInsertBlock": "Lisää {{name}}-lohkocallout",
+	"cmd.customWrapBlockExpanded": "Kääri {{name}}-lohkocalloutiin (auki)",
+	"cmd.customWrapBlockCollapsed": "Kääri {{name}}-lohkocalloutiin (kiinni)",
+	"cmd.customInsertBlockExpanded": "Lisää {{name}}-lohkocallout (auki)",
+	"cmd.customInsertBlockCollapsed": "Lisää {{name}}-lohkocallout (kiinni)",
 	"cmd.customInsertHeading": "Lisää H{{level}}-otsikkocallout ({{name}})",
 	"cmd.customInsertInline": "Lisää {{name}}-rivin sisäinen callout",
 	"cmd.openQuickInsert": "Lisää lohko-callout nopeasti",
@@ -184,6 +188,12 @@ export const fi: Record<string, string> = {
 		"Kääri muuttaa valinnan calloutiksi; lisää lisää tyhjän.",
 	"commandBuilder.actionWrap": "Kääri valinta",
 	"commandBuilder.actionInsert": "Lisää uusi",
+	"commandBuilder.foldState": "Kutistustila",
+	"commandBuilder.foldStateDesc":
+		"Voiko tämän komennon kirjoittama callout taittua ja missä tilassa se aloittaa.",
+	"commandBuilder.foldNone": "Ei taitettava",
+	"commandBuilder.foldExpanded": "Taitettava, auki (+)",
+	"commandBuilder.foldCollapsed": "Taitettava, kiinni (-)",
 	"commandBuilder.preview": "Komennon nimi",
 	"commandBuilder.duplicate":
 		"Sinulla on jo täsmälleen tämän tekevä komento.",

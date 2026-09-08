@@ -6,6 +6,10 @@ export const da: Record<string, string> = {
 	"cmd.calloutUnwrap": "Fjern callout",
 	"cmd.customWrapBlock": "Indpak i {{name}}-blokcallout",
 	"cmd.customInsertBlock": "Indsæt {{name}}-blokcallout",
+	"cmd.customWrapBlockExpanded": "Indpak i {{name}}-blokcallout (åben)",
+	"cmd.customWrapBlockCollapsed": "Indpak i {{name}}-blokcallout (lukket)",
+	"cmd.customInsertBlockExpanded": "Indsæt {{name}}-blokcallout (åben)",
+	"cmd.customInsertBlockCollapsed": "Indsæt {{name}}-blokcallout (lukket)",
 	"cmd.customInsertHeading": "Indsæt H{{level}} {{name}}-overskriftscallout",
 	"cmd.customInsertInline": "Indsæt {{name}}-inline-callout",
 	"cmd.openQuickInsert": "Hurtig indsættelse af blok-callout",
@@ -179,6 +183,12 @@ export const da: Record<string, string> = {
 		"Indpak gør markeringen til en callout; indsæt tilføjer en tom.",
 	"commandBuilder.actionWrap": "Indpak markering",
 	"commandBuilder.actionInsert": "Indsæt ny",
+	"commandBuilder.foldState": "Foldtilstand",
+	"commandBuilder.foldStateDesc":
+		"Om callout'en, denne kommando skriver, kan foldes, og hvilken tilstand den starter i.",
+	"commandBuilder.foldNone": "Ikke-foldbar",
+	"commandBuilder.foldExpanded": "Foldbar, åben (+)",
+	"commandBuilder.foldCollapsed": "Foldbar, lukket (-)",
 	"commandBuilder.preview": "Kommandonavn",
 	"commandBuilder.duplicate":
 		"Du har allerede en kommando, der gør præcis det samme.",

@@ -6,6 +6,10 @@ export const nb: Record<string, string> = {
 	"cmd.calloutUnwrap": "Fjern callout",
 	"cmd.customWrapBlock": "Pakk inn i {{name}}-blokk-callout",
 	"cmd.customInsertBlock": "Sett inn {{name}}-blokk-callout",
+	"cmd.customWrapBlockExpanded": "Pakk inn i {{name}}-blokk-callout (åpen)",
+	"cmd.customWrapBlockCollapsed": "Pakk inn i {{name}}-blokk-callout (lukket)",
+	"cmd.customInsertBlockExpanded": "Sett inn {{name}}-blokk-callout (åpen)",
+	"cmd.customInsertBlockCollapsed": "Sett inn {{name}}-blokk-callout (lukket)",
 	"cmd.customInsertHeading":
 		"Sett inn H{{level}} {{name}}-overskriftscallout",
 	"cmd.customInsertInline": "Sett inn {{name}}-inline-callout",
@@ -185,6 +189,12 @@ export const nb: Record<string, string> = {
 		"Pakk inn gjør utvalget om til en callout; sett inn legger til en tom en.",
 	"commandBuilder.actionWrap": "Pakk inn utvalg",
 	"commandBuilder.actionInsert": "Sett inn ny",
+	"commandBuilder.foldState": "Foldetilstand",
+	"commandBuilder.foldStateDesc":
+		"Om callout-en denne kommandoen skriver kan foldes, og hvilken tilstand den starter i.",
+	"commandBuilder.foldNone": "Ikke-foldbar",
+	"commandBuilder.foldExpanded": "Foldbar, åpen (+)",
+	"commandBuilder.foldCollapsed": "Foldbar, lukket (-)",
 	"commandBuilder.preview": "Kommandonavn",
 	"commandBuilder.duplicate":
 		"Du har allerede en kommando som gjør nøyaktig dette.",

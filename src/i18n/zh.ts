@@ -7,6 +7,10 @@ export const zh: Record<string, string> = {
 
 	"cmd.customWrapBlock": "用 {{name}} 块 callout 包裹",
 	"cmd.customInsertBlock": "插入 {{name}} 块 callout",
+	"cmd.customWrapBlockExpanded": "用 {{name}} 块 callout 包裹（展开）",
+	"cmd.customWrapBlockCollapsed": "用 {{name}} 块 callout 包裹（折叠）",
+	"cmd.customInsertBlockExpanded": "插入 {{name}} 块 callout（展开）",
+	"cmd.customInsertBlockCollapsed": "插入 {{name}} 块 callout（折叠）",
 	"cmd.customInsertHeading": "插入 H{{level}} {{name}} 标题 callout",
 	"cmd.customInsertInline": "插入 {{name}} 行内 callout",
 	"cmd.openQuickInsert": "快速插入块级 callout",
@@ -189,6 +193,12 @@ export const zh: Record<string, string> = {
 		"「包裹」将选中内容转换为 callout；「插入」添加一个空 callout。",
 	"commandBuilder.actionWrap": "包裹所选内容",
 	"commandBuilder.actionInsert": "插入新的",
+	"commandBuilder.foldState": "折叠状态",
+	"commandBuilder.foldStateDesc":
+		"此命令写入的 callout 是否可折叠，以及它的初始状态。",
+	"commandBuilder.foldNone": "不可折叠",
+	"commandBuilder.foldExpanded": "可折叠，展开 (+)",
+	"commandBuilder.foldCollapsed": "可折叠，折叠 (-)",
 	"commandBuilder.preview": "命令名称",
 	"commandBuilder.duplicate": "您已经有一个执行完全相同操作的命令。",
 	"commandBuilder.noCallouts": "目前还没有可用于创建命令的 callout 类型。",

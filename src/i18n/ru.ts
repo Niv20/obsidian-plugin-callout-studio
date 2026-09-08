@@ -7,6 +7,10 @@ export const ru: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Обернуть в блочный callout «{{name}}»",
 	"cmd.customInsertBlock": "Вставить блочный callout «{{name}}»",
+	"cmd.customWrapBlockExpanded": "Обернуть в блочный callout «{{name}}» (открыт)",
+	"cmd.customWrapBlockCollapsed": "Обернуть в блочный callout «{{name}}» (закрыт)",
+	"cmd.customInsertBlockExpanded": "Вставить блочный callout «{{name}}» (открыт)",
+	"cmd.customInsertBlockCollapsed": "Вставить блочный callout «{{name}}» (закрыт)",
 	"cmd.customInsertHeading":
 		"Вставить заголовок H{{level}} callout «{{name}}»",
 	"cmd.customInsertInline": "Вставить встроенный callout «{{name}}»",
@@ -195,6 +199,12 @@ export const ru: Record<string, string> = {
 		"«Обернуть» превращает выделение в callout; «вставить» добавляет пустой.",
 	"commandBuilder.actionWrap": "Обернуть выделение",
 	"commandBuilder.actionInsert": "Вставить новый",
+	"commandBuilder.foldState": "Состояние сворачивания",
+	"commandBuilder.foldStateDesc":
+		"Можно ли складывать callout, который создаёт эта команда, и в каком состоянии он начинается.",
+	"commandBuilder.foldNone": "Нескладываемый",
+	"commandBuilder.foldExpanded": "Складываемый, открыт (+)",
+	"commandBuilder.foldCollapsed": "Складываемый, закрыт (-)",
 	"commandBuilder.preview": "Название команды",
 	"commandBuilder.duplicate":
 		"У вас уже есть команда, которая делает то же самое.",

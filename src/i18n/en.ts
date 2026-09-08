@@ -18,6 +18,13 @@ export const en: Record<string, string> = {
 	// the "Callout Studio: " prefix itself, so these must not repeat it.
 	"cmd.customWrapBlock": "Wrap in {{name}} block callout",
 	"cmd.customInsertBlock": "Insert {{name}} block callout",
+	// The fold word is part of the sentence rather than a suffix glued on in
+	// code, so a translation can put it wherever its grammar wants it.
+	"cmd.customWrapBlockExpanded": "Wrap in {{name}} block callout (expanded)",
+	"cmd.customWrapBlockCollapsed": "Wrap in {{name}} block callout (collapsed)",
+	"cmd.customInsertBlockExpanded": "Insert {{name}} block callout (expanded)",
+	"cmd.customInsertBlockCollapsed":
+		"Insert {{name}} block callout (collapsed)",
 	"cmd.customInsertHeading": "Insert H{{level}} {{name}} heading callout",
 	"cmd.customInsertInline": "Insert {{name}} inline callout",
 
@@ -256,6 +263,12 @@ export const en: Record<string, string> = {
 		"Wrap turns the selection into a callout; insert adds an empty one.",
 	"commandBuilder.actionWrap": "Wrap selection",
 	"commandBuilder.actionInsert": "Insert new",
+	"commandBuilder.foldState": "Fold state",
+	"commandBuilder.foldStateDesc":
+		"Whether the callout this command writes can be folded, and how it starts out.",
+	"commandBuilder.foldNone": "Non-foldable",
+	"commandBuilder.foldExpanded": "Foldable, expanded (+)",
+	"commandBuilder.foldCollapsed": "Foldable, collapsed (-)",
 	"commandBuilder.preview": "Command name",
 	"commandBuilder.duplicate":
 		"You already have a command that does exactly this.",

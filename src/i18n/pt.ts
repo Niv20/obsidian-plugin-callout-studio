@@ -7,6 +7,10 @@ export const pt: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Envolver em callout de bloco {{name}}",
 	"cmd.customInsertBlock": "Inserir callout de bloco {{name}}",
+	"cmd.customWrapBlockExpanded": "Envolver em callout de bloco {{name}} (aberto)",
+	"cmd.customWrapBlockCollapsed": "Envolver em callout de bloco {{name}} (fechado)",
+	"cmd.customInsertBlockExpanded": "Inserir callout de bloco {{name}} (aberto)",
+	"cmd.customInsertBlockCollapsed": "Inserir callout de bloco {{name}} (fechado)",
 	"cmd.customInsertHeading": "Inserir título H{{level}} callout {{name}}",
 	"cmd.customInsertInline": "Inserir callout inline {{name}}",
 	"cmd.openQuickInsert": "Inserção rápida de callout de bloco",
@@ -194,6 +198,12 @@ export const pt: Record<string, string> = {
 		"Envolver transforma a seleção em um callout; inserir adiciona um vazio.",
 	"commandBuilder.actionWrap": "Envolver seleção",
 	"commandBuilder.actionInsert": "Inserir novo",
+	"commandBuilder.foldState": "Estado de dobra",
+	"commandBuilder.foldStateDesc":
+		"Se o callout que este comando escreve pode ser dobrado, e em que estado ele começa.",
+	"commandBuilder.foldNone": "Não dobrável",
+	"commandBuilder.foldExpanded": "Dobrável, aberto (+)",
+	"commandBuilder.foldCollapsed": "Dobrável, fechado (-)",
 	"commandBuilder.preview": "Nome do comando",
 	"commandBuilder.duplicate":
 		"Você já tem um comando que faz exatamente isso.",

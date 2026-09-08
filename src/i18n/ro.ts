@@ -7,6 +7,10 @@ export const ro: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Înfășoară în callout bloc {{name}}",
 	"cmd.customInsertBlock": "Inserează callout bloc {{name}}",
+	"cmd.customWrapBlockExpanded": "Înfășoară în callout bloc {{name}} (deschis)",
+	"cmd.customWrapBlockCollapsed": "Înfășoară în callout bloc {{name}} (închis)",
+	"cmd.customInsertBlockExpanded": "Inserează callout bloc {{name}} (deschis)",
+	"cmd.customInsertBlockCollapsed": "Inserează callout bloc {{name}} (închis)",
 	"cmd.customInsertHeading": "Inserează titlu H{{level}} callout {{name}}",
 	"cmd.customInsertInline": "Inserează callout inline {{name}}",
 	"cmd.openQuickInsert": "Inserare rapidă de callout bloc",
@@ -195,6 +199,12 @@ export const ro: Record<string, string> = {
 		"Înfășoară transformă selecția într-un callout; inserează adaugă unul gol.",
 	"commandBuilder.actionWrap": "Înfășoară selecția",
 	"commandBuilder.actionInsert": "Inserează nou",
+	"commandBuilder.foldState": "Stare de pliere",
+	"commandBuilder.foldStateDesc":
+		"Dacă callout-ul scris de această comandă poate fi pliat și în ce stare începe.",
+	"commandBuilder.foldNone": "Nepliabil",
+	"commandBuilder.foldExpanded": "Pliabil, deschis (+)",
+	"commandBuilder.foldCollapsed": "Pliabil, închis (-)",
 	"commandBuilder.preview": "Numele comenzii",
 	"commandBuilder.duplicate":
 		"Aveți deja o comandă care face exact acest lucru.",

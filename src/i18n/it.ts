@@ -7,6 +7,10 @@ export const it: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Racchiudi in callout a blocco {{name}}",
 	"cmd.customInsertBlock": "Inserisci callout a blocco {{name}}",
+	"cmd.customWrapBlockExpanded": "Racchiudi in callout a blocco {{name}} (aperto)",
+	"cmd.customWrapBlockCollapsed": "Racchiudi in callout a blocco {{name}} (chiuso)",
+	"cmd.customInsertBlockExpanded": "Inserisci callout a blocco {{name}} (aperto)",
+	"cmd.customInsertBlockCollapsed": "Inserisci callout a blocco {{name}} (chiuso)",
 	"cmd.customInsertHeading": "Inserisci titolo callout H{{level}} {{name}}",
 	"cmd.customInsertInline": "Inserisci callout in linea {{name}}",
 	"cmd.openQuickInsert": "Inserimento rapido di callout a blocco",
@@ -193,6 +197,12 @@ export const it: Record<string, string> = {
 		"Racchiudi trasforma la selezione in un callout; inserisci ne aggiunge uno vuoto.",
 	"commandBuilder.actionWrap": "Racchiudi selezione",
 	"commandBuilder.actionInsert": "Inserisci nuovo",
+	"commandBuilder.foldState": "Stato di piegatura",
+	"commandBuilder.foldStateDesc":
+		"Se il callout scritto da questo comando può essere piegato e in quale stato inizia.",
+	"commandBuilder.foldNone": "Non pieghevole",
+	"commandBuilder.foldExpanded": "Pieghevole, aperto (+)",
+	"commandBuilder.foldCollapsed": "Pieghevole, chiuso (-)",
 	"commandBuilder.preview": "Nome del comando",
 	"commandBuilder.duplicate": "Hai già un comando che fa esattamente questo.",
 	"commandBuilder.noCallouts":
