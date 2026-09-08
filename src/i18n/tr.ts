@@ -7,6 +7,10 @@ export const tr: Record<string, string> = {
 
 	"cmd.customWrapBlock": "{{name}} blok callout'una sar",
 	"cmd.customInsertBlock": "{{name}} blok callout'u ekle",
+	"cmd.customWrapBlockExpanded": "{{name}} blok callout'una sar (açık)",
+	"cmd.customWrapBlockCollapsed": "{{name}} blok callout'una sar (kapalı)",
+	"cmd.customInsertBlockExpanded": "{{name}} blok callout'u ekle (açık)",
+	"cmd.customInsertBlockCollapsed": "{{name}} blok callout'u ekle (kapalı)",
 	"cmd.customInsertHeading": "H{{level}} {{name}} başlık callout'u ekle",
 	"cmd.customInsertInline": "{{name}} satır içi callout'u ekle",
 	"cmd.openQuickInsert": "Blok callout'u hızlı ekle",
@@ -194,6 +198,12 @@ export const tr: Record<string, string> = {
 		"Sar, seçimi bir callout'a dönüştürür; ekle boş bir tane ekler.",
 	"commandBuilder.actionWrap": "Seçimi sar",
 	"commandBuilder.actionInsert": "Yeni ekle",
+	"commandBuilder.foldState": "Katlama durumu",
+	"commandBuilder.foldStateDesc":
+		"Bu komutun yazdığı callout'un katlanıp katlanamayacağını ve hangi durumda başlayacağını belirler.",
+	"commandBuilder.foldNone": "Katlanamaz",
+	"commandBuilder.foldExpanded": "Katlanabilir, açık (+)",
+	"commandBuilder.foldCollapsed": "Katlanabilir, kapalı (-)",
 	"commandBuilder.preview": "Komut adı",
 	"commandBuilder.duplicate":
 		"Tam olarak aynısını yapan bir komutunuz zaten var.",

@@ -2,13 +2,13 @@
  * settings/CommandEditorModal.ts — Build or edit one custom command.
  *
  * A small form: which format to write, which callout, and — where the format
- * gives a real choice — the heading level and the action. Returns the draft to
- * its caller, which owns the list and mints the identity; this modal never
- * touches settings itself.
+ * gives a real choice — the heading level, the action and the fold state.
+ * Returns the draft to its caller, which owns the list and mints the identity;
+ * this modal never touches settings itself.
  *
- * Heading level and action are built unconditionally and hidden by class, the
+ * The format-specific rows are built unconditionally and hidden by class, the
  * same way the palette editor handles its gradient rows: one sync function
- * decides visibility so the two controls can never disagree about the format.
+ * decides visibility so the controls can never disagree about the format.
  */
 import { Modal, Setting } from "obsidian";
 import type { App } from "obsidian";
@@ -21,6 +21,7 @@ import type {
 	CalloutRenderRole,
 	CustomCommand,
 	CustomCommandAction,
+	CustomCommandFold,
 	PluginSettings,
 } from "../types";
 import {
@@ -29,11 +30,13 @@ import {
 	commandSignature,
 	describeCommand,
 	resolveAction,
+	resolveFold,
 	resolveHeadingLevel,
 } from "../utils/customCommands";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
 import { buildFormatRow, type FormatRow } from "./command/commandRoles";
+import { buildFoldStateRow, type FoldStateRow } from "./command/foldStateRow";
 
 /** Narrow structural host — the plugin instance satisfies this. */
 export interface CommandEditorHost {
@@ -56,6 +59,7 @@ export class CommandEditorModal extends Modal {
 	private calloutId: string;
 	private headingLevel: number;
 	private action: CustomCommandAction;
+	private fold: CustomCommandFold;
 
 	private resolve?: (result: CustomCommandDraft | null) => void;
 	private resolved = false;
@@ -63,6 +67,7 @@ export class CommandEditorModal extends Modal {
 	private headingRowEl?: HTMLElement;
 	private actionRowEl?: HTMLElement;
 	private formatRow?: FormatRow;
+	private foldRow?: FoldStateRow;
 	private previewEl?: HTMLElement;
 	private errorEl?: HTMLElement;
 	private saveBtnEl?: HTMLButtonElement;
@@ -96,6 +101,7 @@ export class CommandEditorModal extends Modal {
 			? resolveHeadingLevel(existing)
 			: DEFAULT_HEADING_LEVEL;
 		this.action = existing ? resolveAction(existing) : "insert";
+		this.fold = existing ? resolveFold(existing) : "none";
 		this.calloutId =
 			existing?.calloutId ?? this.choices[0]?.id ?? "";
 	}
@@ -132,6 +138,10 @@ export class CommandEditorModal extends Modal {
 		this.buildCalloutRow(contentEl);
 		this.buildHeadingLevelRow(contentEl);
 		this.buildActionRow(contentEl);
+		this.foldRow = buildFoldStateRow(contentEl, this.fold, (fold) => {
+			this.fold = fold;
+			this.syncVisibility();
+		});
 		this.buildPreview(contentEl);
 
 		footer
@@ -222,6 +232,12 @@ export class CommandEditorModal extends Modal {
 				? { headingLevel: this.headingLevel }
 				: {}),
 			...(this.role === "regular" ? { action: this.action } : {}),
+			// Omitted when it is the default, matching what the sanitizer
+			// stores — otherwise a saved command and the same command reloaded
+			// would differ by a key that means nothing.
+			...(this.role === "regular" && this.fold !== "none"
+				? { fold: this.fold }
+				: {}),
 		};
 	}
 
@@ -245,6 +261,7 @@ export class CommandEditorModal extends Modal {
 		// Heading and inline have exactly one sensible action, so the row is
 		// hidden rather than shown as a dropdown with nothing to choose.
 		this.actionRowEl?.toggleClass("cs-row-hidden", this.role !== "regular");
+		this.foldRow?.sync(this.role);
 
 		const def = this.host.registry.get(this.calloutId);
 		if (this.previewEl) {

@@ -7,6 +7,10 @@ export const ms: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Balut dalam callout blok {{name}}",
 	"cmd.customInsertBlock": "Masukkan callout blok {{name}}",
+	"cmd.customWrapBlockExpanded": "Balut dalam callout blok {{name}} (terbuka)",
+	"cmd.customWrapBlockCollapsed": "Balut dalam callout blok {{name}} (tertutup)",
+	"cmd.customInsertBlockExpanded": "Masukkan callout blok {{name}} (terbuka)",
+	"cmd.customInsertBlockCollapsed": "Masukkan callout blok {{name}} (tertutup)",
 	"cmd.customInsertHeading": "Masukkan callout tajuk H{{level}} {{name}}",
 	"cmd.customInsertInline": "Masukkan callout sebaris {{name}}",
 	"cmd.openQuickInsert": "Sisipan pantas callout blok",
@@ -190,6 +194,12 @@ export const ms: Record<string, string> = {
 		"Balut menukar pilihan menjadi callout; masukkan menambah satu yang kosong.",
 	"commandBuilder.actionWrap": "Balut pilihan",
 	"commandBuilder.actionInsert": "Masukkan baharu",
+	"commandBuilder.foldState": "Status lipatan",
+	"commandBuilder.foldStateDesc":
+		"Sama ada callout yang ditulis oleh arahan ini boleh dilipat, dan keadaan permulaannya.",
+	"commandBuilder.foldNone": "Tidak boleh dilipat",
+	"commandBuilder.foldExpanded": "Boleh dilipat, terbuka (+)",
+	"commandBuilder.foldCollapsed": "Boleh dilipat, tertutup (-)",
 	"commandBuilder.preview": "Nama arahan",
 	"commandBuilder.duplicate":
 		"Anda sudah mempunyai arahan yang melakukan perkara yang sama.",

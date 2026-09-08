@@ -7,6 +7,10 @@ export const vi: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Bọc trong callout khối {{name}}",
 	"cmd.customInsertBlock": "Chèn callout khối {{name}}",
+	"cmd.customWrapBlockExpanded": "Bọc trong callout khối {{name}} (mở)",
+	"cmd.customWrapBlockCollapsed": "Bọc trong callout khối {{name}} (đóng)",
+	"cmd.customInsertBlockExpanded": "Chèn callout khối {{name}} (mở)",
+	"cmd.customInsertBlockCollapsed": "Chèn callout khối {{name}} (đóng)",
 	"cmd.customInsertHeading": "Chèn tiêu đề callout H{{level}} {{name}}",
 	"cmd.customInsertInline": "Chèn callout nội dòng {{name}}",
 	"cmd.openQuickInsert": "Chèn nhanh callout khối",
@@ -193,6 +197,12 @@ export const vi: Record<string, string> = {
 		"Bọc sẽ biến phần chọn thành callout; chèn sẽ thêm một callout trống.",
 	"commandBuilder.actionWrap": "Bọc phần chọn",
 	"commandBuilder.actionInsert": "Chèn mới",
+	"commandBuilder.foldState": "Trạng thái thu gọn",
+	"commandBuilder.foldStateDesc":
+		"Callout mà lệnh này ghi có thể gập được hay không, và trạng thái ban đầu của nó.",
+	"commandBuilder.foldNone": "Không thể gập",
+	"commandBuilder.foldExpanded": "Có thể gập, mở (+)",
+	"commandBuilder.foldCollapsed": "Có thể gập, đóng (-)",
 	"commandBuilder.preview": "Tên lệnh",
 	"commandBuilder.duplicate": "Bạn đã có một lệnh làm chính xác việc này.",
 	"commandBuilder.noCallouts": "Chưa có loại callout nào để tạo lệnh.",

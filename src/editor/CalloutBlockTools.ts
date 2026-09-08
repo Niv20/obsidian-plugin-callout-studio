@@ -203,8 +203,8 @@ const getOrderedCursorLines = (
  * autocomplete. A user-built command already knows its type, so it gets the
  * finished header and no popover.
  */
-const openingHeaderToken = (def?: CalloutDefinition): string =>
-	def ? buildBlockHeaderToken(def) : "[!";
+const openingHeaderToken = (def?: CalloutDefinition, foldMark?: "" | "+" | "-"): string =>
+	def ? buildBlockHeaderToken(def, { foldMark }) : "[!";
 
 /**
  * The blank quoted line a finished, empty block callout opens with — `> ` at
@@ -223,7 +223,7 @@ const emptyBodyLine = (prefix: string, def?: CalloutDefinition): string | null =
 
 export const wrapSelectionInCallout = (
 	editor: Editor,
-	options?: { requireSelection?: boolean; def?: CalloutDefinition },
+	options?: { requireSelection?: boolean; def?: CalloutDefinition; foldMark?: "" | "+" | "-" },
 ): boolean => {
 	const lineCount = editor.lineCount();
 	if (lineCount === 0) {
@@ -282,7 +282,7 @@ export const wrapSelectionInCallout = (
 	const headerPrefix = buildPrefix(
 		Math.max(nestLevel - (wrappingExistingCallout ? 1 : 0), 0),
 	);
-	const headerLine = `${headerPrefix}> ${openingHeaderToken(options?.def)}`;
+	const headerLine = `${headerPrefix}> ${openingHeaderToken(options?.def, options?.foldMark)}`;
 	const replacementLines: string[] = [headerLine];
 
 	// Nothing was found to wrap, so the callout is born empty and its body is
@@ -330,13 +330,13 @@ export const wrapSelectionInCallout = (
 
 export const insertEmptyCallout = (
 	editor: Editor,
-	options?: { def?: CalloutDefinition },
+	options?: { def?: CalloutDefinition; foldMark?: "" | "+" | "-" },
 ): boolean => {
 	const head = editor.getCursor("head");
 	const lineText = editor.getLine(head.line);
 	const nestLevel = countLeadingQuoteTokens(lineText);
 	const prefix = buildPrefix(nestLevel);
-	const header = `${prefix}> ${openingHeaderToken(options?.def)}`;
+	const header = `${prefix}> ${openingHeaderToken(options?.def, options?.foldMark)}`;
 	const body = emptyBodyLine(prefix, options?.def);
 	const block = body === null ? header : `${header}\n${body}`;
 	/** Where the cursor goes, given the line the header landed on. */

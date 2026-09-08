@@ -35,12 +35,35 @@ To build one, you pick:
 - A **format** — heading, inline, or block.
 - A **callout type** — any callout type you've defined.
 - Where the format offers a choice — a **heading level**, or whether the command **wraps a selection** or **inserts a new callout**.
+- For block callouts, a **fold state** — see below.
+
+### Fold state
+
+Block callouts can be foldable, and a command can decide that for you. The **Fold state** option offers three choices, and applies to both block actions — wrapping a selection and inserting a new callout:
+
+| Choice | What the command writes |
+| --- | --- |
+| **Non-foldable** | `> [!note]` — the callout is always open. |
+| **Foldable, expanded (+)** | `> [!note]+` — foldable, and starts open. |
+| **Foldable, collapsed (-)** | `> [!note]-` — foldable, and starts folded. |
+
+So a command set to *Foldable, collapsed* turns a selected paragraph straight into:
+
+```md
+> [!note]-
+> Selected content
+```
+
+Heading and inline callouts don't have this option, because they have no fold marker: in a heading, `### [!note]- Title` isn't a folded callout at all — the `-` is just the first character of the title.
+
+Existing commands are unaffected. Every command built before this option existed is **Non-foldable**, keeps the exact name it had, and keeps whatever shortcut you assigned to it.
 
 ## Custom commands
 
 Each custom command you build gets registered with Obsidian just like any other command. That means it shows up in the command palette and in **Settings → Hotkeys**, ready for you to assign a shortcut. A few examples of what a custom command might be named:
 
 - Wrap in Warning callout
+- Wrap in Note block callout (collapsed)
 - Insert H2 Note heading callout
 - Insert Important inline callout
 

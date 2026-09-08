@@ -7,6 +7,10 @@ export const ja: Record<string, string> = {
 
 	"cmd.customWrapBlock": "{{name}}ブロックcalloutで囲む",
 	"cmd.customInsertBlock": "{{name}}ブロックcalloutを挿入",
+	"cmd.customWrapBlockExpanded": "{{name}}ブロックcalloutで囲む（展開）",
+	"cmd.customWrapBlockCollapsed": "{{name}}ブロックcalloutで囲む（折りたたみ）",
+	"cmd.customInsertBlockExpanded": "{{name}}ブロックcalloutを挿入（展開）",
+	"cmd.customInsertBlockCollapsed": "{{name}}ブロックcalloutを挿入（折りたたみ）",
 	"cmd.customInsertHeading": "H{{level}} {{name}}見出しcalloutを挿入",
 	"cmd.customInsertInline": "{{name}}インラインcalloutを挿入",
 	"cmd.openQuickInsert": "ブロックcalloutをクイック挿入",
@@ -197,6 +201,12 @@ export const ja: Record<string, string> = {
 		"「囲む」は選択範囲をcalloutに変換し、「挿入」は空のcalloutを追加します。",
 	"commandBuilder.actionWrap": "選択範囲を囲む",
 	"commandBuilder.actionInsert": "新規挿入",
+	"commandBuilder.foldState": "折りたたみ状態",
+	"commandBuilder.foldStateDesc":
+		"このコマンドが書き込むcalloutが折りたたみ可能かどうか、およびどの状態で開始するか。",
+	"commandBuilder.foldNone": "折りたたみ不可",
+	"commandBuilder.foldExpanded": "折りたたみ可能、開いた状態 (+)",
+	"commandBuilder.foldCollapsed": "折りたたみ可能、閉じた状態 (-)",
 	"commandBuilder.preview": "コマンド名",
 	"commandBuilder.duplicate":
 		"まったく同じことを行うコマンドが既に存在します。",

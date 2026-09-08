@@ -288,6 +288,27 @@ describe("syncAll — churn", () => {
 		assert.deepStrictEqual(h.removed, []);
 	});
 
+	it("DOES re-register when the command's own fold state changes", async () => {
+		// The mirror of the test above, and the reason it still holds: the name
+		// follows the command's fold state, never the callout's. Re-registered
+		// at the same id, so the user's hotkey survives the edit.
+		const h = harness();
+		addCallout(h.registry);
+		const command = seed(h, { role: "regular", action: "wrap" });
+		h.manager.syncAll();
+		h.clear();
+
+		await h.manager.update(command.id, {
+			calloutId: "quiet",
+			role: "regular",
+			action: "wrap",
+			fold: "collapsed",
+		});
+
+		assert.deepStrictEqual(idsOf(h.added), [obsidianCommandId(command.id)]);
+		assert.strictEqual(h.added[0]?.name, "Wrap in Quiet block callout (collapsed)");
+	});
+
 	it("hands addCommand a fresh object each time", () => {
 		// It mutates what it is given, prefixing the id and name in place.
 		const h = harness();
@@ -782,6 +803,79 @@ describe("the registered editorCallback", () => {
 
 		await h.manager.add({ calloutId: "quiet", role: "inline" });
 		assert.ok(run(h, "").startsWith("[!quiet]"));
+	});
+
+	it("writes the fold mark its own fold state asks for", async () => {
+		const h = harness();
+		addCallout(h.registry);
+
+		await h.manager.add({
+			calloutId: "quiet",
+			role: "regular",
+			action: "wrap",
+			fold: "expanded",
+		});
+		assert.strictEqual(run(h, "hello"), "> [!quiet]+ Quiet\n> hello");
+
+		await h.manager.add({
+			calloutId: "quiet",
+			role: "regular",
+			action: "wrap",
+			fold: "collapsed",
+		});
+		assert.strictEqual(run(h, "hello"), "> [!quiet]- Quiet\n> hello");
+
+		// Both block actions write the same header, so insert folds too.
+		await h.manager.add({
+			calloutId: "quiet",
+			role: "regular",
+			action: "insert",
+			fold: "collapsed",
+		});
+		assert.strictEqual(run(h, ""), "> [!quiet]- Quiet\n> ");
+	});
+
+	it("lets a non-foldable command override a foldable callout", async () => {
+		// The two legacy importers stamp `foldable: true` on everything they
+		// create, so without this a command whose dropdown reads "Non-foldable"
+		// would still write `+`. The command owns the answer, not the callout.
+		const h = harness();
+		addCallout(h.registry, { foldable: true });
+
+		await h.manager.add({ calloutId: "quiet", role: "regular", action: "wrap" });
+		assert.strictEqual(run(h, "hello"), "> [!quiet] Quiet\n> hello");
+
+		await h.manager.add({
+			calloutId: "quiet",
+			role: "regular",
+			action: "wrap",
+			fold: "none",
+		});
+		assert.strictEqual(run(h, "hello"), "> [!quiet] Quiet\n> hello");
+	});
+
+	it("leaks no fold mark into the roles that have no fold syntax", async () => {
+		// A stale fold on a heading command must not put a `-` where the user's
+		// title starts. `tests/headingFoldSyntax.test.ts` guards the same rule
+		// at the grammar level; this is it at the command level.
+		const h = harness();
+		addCallout(h.registry, { foldable: true, defaultFolded: true });
+
+		await h.manager.add({
+			calloutId: "quiet",
+			role: "heading",
+			headingLevel: 3,
+			fold: "collapsed",
+		});
+		assert.strictEqual(run(h, ""), "### [!quiet]");
+
+		await h.manager.add({
+			calloutId: "quiet",
+			role: "inline",
+			fold: "collapsed",
+		});
+		assert.ok(run(h, "").startsWith("[!quiet]"));
+		assert.ok(!run(h, "").includes("]-"));
 	});
 
 	it("tells the user and converges when the callout vanished silently", () => {

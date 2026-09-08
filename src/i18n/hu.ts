@@ -7,6 +7,10 @@ export const hu: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Becsomagolás {{name}} blokk callout-ba",
 	"cmd.customInsertBlock": "{{name}} blokk callout beszúrása",
+	"cmd.customWrapBlockExpanded": "Becsomagolás {{name}} blokk callout-ba (nyitott)",
+	"cmd.customWrapBlockCollapsed": "Becsomagolás {{name}} blokk callout-ba (zárt)",
+	"cmd.customInsertBlockExpanded": "{{name}} blokk callout beszúrása (nyitott)",
+	"cmd.customInsertBlockCollapsed": "{{name}} blokk callout beszúrása (zárt)",
 	"cmd.customInsertHeading": "H{{level}} {{name}} címsor callout beszúrása",
 	"cmd.customInsertInline": "{{name}} beágyazott callout beszúrása",
 	"cmd.openQuickInsert": "Blokk callout gyors beszúrása",
@@ -195,6 +199,12 @@ export const hu: Record<string, string> = {
 		"A becsomagolás callout-tá alakítja a kijelölést; a beszúrás egy üreset ad hozzá.",
 	"commandBuilder.actionWrap": "Kijelölés becsomagolása",
 	"commandBuilder.actionInsert": "Új beszúrása",
+	"commandBuilder.foldState": "Összecsukási állapot",
+	"commandBuilder.foldStateDesc":
+		"Hogy az ezzel a paranccsal létrehozott callout összecsukható-e, és milyen állapotban indul.",
+	"commandBuilder.foldNone": "Nem összecsukható",
+	"commandBuilder.foldExpanded": "Összecsukható, nyitott (+)",
+	"commandBuilder.foldCollapsed": "Összecsukható, zárt (-)",
 	"commandBuilder.preview": "Parancs neve",
 	"commandBuilder.duplicate":
 		"Már van egy parancsa, amely pontosan ezt teszi.",

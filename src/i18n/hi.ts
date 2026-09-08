@@ -7,6 +7,10 @@ export const hi: Record<string, string> = {
 
 	"cmd.customWrapBlock": "{{name}} ब्लॉक callout में लपेटें",
 	"cmd.customInsertBlock": "{{name}} ब्लॉक callout डालें",
+	"cmd.customWrapBlockExpanded": "{{name}} ब्लॉक callout में लपेटें (खुला)",
+	"cmd.customWrapBlockCollapsed": "{{name}} ब्लॉक callout में लपेटें (बंद)",
+	"cmd.customInsertBlockExpanded": "{{name}} ब्लॉक callout डालें (खुला)",
+	"cmd.customInsertBlockCollapsed": "{{name}} ब्लॉक callout डालें (बंद)",
 	"cmd.customInsertHeading": "H{{level}} {{name}} हेडिंग callout डालें",
 	"cmd.customInsertInline": "{{name}} इनलाइन callout डालें",
 	"cmd.openQuickInsert": "ब्लॉक callout जल्दी डालें",
@@ -195,6 +199,12 @@ export const hi: Record<string, string> = {
 		"लपेटें चयन को callout में बदल देता है; डालें एक खाली callout जोड़ता है।",
 	"commandBuilder.actionWrap": "चयन लपेटें",
 	"commandBuilder.actionInsert": "नया डालें",
+	"commandBuilder.foldState": "फ़ोल्ड स्थिति",
+	"commandBuilder.foldStateDesc":
+		"क्या यह कमांड जो callout लिखता है वह मोड़ा जा सकता है, और वह किस स्थिति में शुरू होता है।",
+	"commandBuilder.foldNone": "मोड़ने योग्य नहीं",
+	"commandBuilder.foldExpanded": "मोड़ने योग्य, खुला (+)",
+	"commandBuilder.foldCollapsed": "मोड़ने योग्य, बंद (-)",
 	"commandBuilder.preview": "कमांड का नाम",
 	"commandBuilder.duplicate":
 		"आपके पास पहले से ही बिल्कुल यही काम करने वाला कमांड है।",

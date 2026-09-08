@@ -6,6 +6,10 @@ export const el: Record<string, string> = {
 	"cmd.calloutUnwrap": "Αφαίρεση callout",
 	"cmd.customWrapBlock": "Αναδίπλωση σε callout μπλοκ {{name}}",
 	"cmd.customInsertBlock": "Εισαγωγή callout μπλοκ {{name}}",
+	"cmd.customWrapBlockExpanded": "Αναδίπλωση σε callout μπλοκ {{name}} (ανοιχτό)",
+	"cmd.customWrapBlockCollapsed": "Αναδίπλωση σε callout μπλοκ {{name}} (κλειστό)",
+	"cmd.customInsertBlockExpanded": "Εισαγωγή callout μπλοκ {{name}} (ανοιχτό)",
+	"cmd.customInsertBlockCollapsed": "Εισαγωγή callout μπλοκ {{name}} (κλειστό)",
 	"cmd.customInsertHeading":
 		"Εισαγωγή callout επικεφαλίδας H{{level}} {{name}}",
 	"cmd.customInsertInline": "Εισαγωγή ενσωματωμένου callout {{name}}",
@@ -185,6 +189,12 @@ export const el: Record<string, string> = {
 		"Η αναδίπλωση μετατρέπει την επιλογή σε callout· η εισαγωγή προσθέτει ένα κενό.",
 	"commandBuilder.actionWrap": "Αναδίπλωση επιλογής",
 	"commandBuilder.actionInsert": "Εισαγωγή νέου",
+	"commandBuilder.foldState": "Κατάσταση σύμπτυξης",
+	"commandBuilder.foldStateDesc":
+		"Αν το callout που γράφει αυτή η εντολή μπορεί να αναδιπλωθεί, και σε ποια κατάσταση ξεκινά.",
+	"commandBuilder.foldNone": "Μη αναδιπλούμενο",
+	"commandBuilder.foldExpanded": "Αναδιπλούμενο, ανοιχτό (+)",
+	"commandBuilder.foldCollapsed": "Αναδιπλούμενο, κλειστό (-)",
 	"commandBuilder.preview": "Όνομα εντολής",
 	"commandBuilder.duplicate": "Έχετε ήδη μια εντολή που κάνει ακριβώς αυτό.",
 	"commandBuilder.noCallouts":

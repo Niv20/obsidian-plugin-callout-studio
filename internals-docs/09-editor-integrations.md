@@ -23,6 +23,14 @@ foldMarkFor(def): "" | "+" | "-"
 splitFoldMark(afterBracket, role)     // the READING half — only "regular" has fold syntax
 ```
 
+`TokenBuildOptions.foldMark` overrides `foldMarkFor(def)` for one call, and is
+read with `??` rather than `||` because `""` is a real answer meaning *no mark,
+whatever the definition says*. Only `CustomCommandManager` passes it — a
+user-built command carries its own fold state; every other caller leaves it
+`undefined` and keeps following the definition. `buildHeadingToken` and
+`buildInlineToken` ignore the option entirely, for the reason the note below
+gives.
+
 `resolveTitle()` decides whether an existing title survives a type change: an
 empty title, or one that merely echoes some *other* callout's display name
 (`isKnownDisplayName` callback), is replaced by the new callout's own name —
@@ -238,6 +246,16 @@ plugin re-enable all fall out of the *same* code path with no special-casing:
 4. Unregister anything currently registered that's no longer desired.
 5. Register (or **re**-register) anything whose desired name differs from
    what it's currently registered under.
+
+`run()` resolves the command's fold state at *run* time, alongside its action,
+and passes the resulting mark to `wrapSelectionInCallout` /
+`insertEmptyCallout` as `foldMark`. It is passed even when it is `""`, which is
+the point: that is what overrides a callout whose stored `foldable` would
+otherwise add a `+` the command's own dropdown says it does not want. Both block
+actions get it — they write the same header line — and neither of the other two
+roles does. See [`CustomCommand`](04-data-model.md#customcommand) for the
+absence-means-`"none"` rule that keeps older commands writing what they always
+wrote.
 
 > [!IMPORTANT]
 > **Three invariants make this correct, and each one had to be deliberately

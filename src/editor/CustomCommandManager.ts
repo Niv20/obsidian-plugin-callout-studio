@@ -21,11 +21,13 @@ import { t } from "../i18n";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CustomCommand, PluginSettings } from "../types";
 import {
+	FOLD_MARK,
 	describeCommand,
 	generateCommandId,
 	isSuspendedByTheme,
 	obsidianCommandId,
 	resolveAction,
+	resolveFold,
 	resolveHeadingLevel,
 	sanitizeCustomCommands,
 } from "../utils/customCommands";
@@ -241,10 +243,14 @@ export class CustomCommandManager {
 			return;
 		}
 
+		// The command's own fold state, not the definition's: passing it even
+		// when it is "" is the point, since that is what overrides a callout
+		// whose stored `foldable` would otherwise add a mark nobody chose.
+		const foldMark = FOLD_MARK[resolveFold(command)];
 		if (resolveAction(command) === "wrap") {
-			wrapSelectionInCallout(editor, { def });
+			wrapSelectionInCallout(editor, { def, foldMark });
 			return;
 		}
-		insertEmptyCallout(editor, { def });
+		insertEmptyCallout(editor, { def, foldMark });
 	}
 }

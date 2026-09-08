@@ -25,6 +25,15 @@ export interface TokenBuildOptions {
 	/** Whatever already followed the `]`, which may be a title worth keeping. */
 	existingTitle?: string;
 	/**
+	 * The fold mark to write, in place of the definition's own default.
+	 *
+	 * Set by a user-built command, which carries its own fold state; every other
+	 * caller leaves it `undefined` and keeps following `foldMarkFor`. `""` is a
+	 * real value here meaning "no mark, whatever the definition says", which is
+	 * why the read below is `??` and must never become `||`.
+	 */
+	foldMark?: "" | "+" | "-";
+	/**
 	 * Whether a title is merely some callout's display name rather than
 	 * something the user wrote. Such a title is replaced instead of preserved,
 	 * so switching type doesn't leave the old type's name behind.
@@ -103,7 +112,8 @@ export function buildBlockHeaderToken(
 	def: CalloutDefinition,
 	options: TokenBuildOptions = {},
 ): string {
-	return `${tokenId(def, options)}${foldMarkFor(def)} ${resolveTitle(def, options)}`;
+	const foldMark = options.foldMark ?? foldMarkFor(def);
+	return `${tokenId(def, options)}${foldMark} ${resolveTitle(def, options)}`;
 }
 
 /**

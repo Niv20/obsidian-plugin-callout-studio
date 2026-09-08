@@ -797,6 +797,23 @@ describe("mergeSavedSettings — the lists the user builds up", () => {
 		);
 	});
 
+	it("keeps a usable fold state and forgets an unusable one", () => {
+		const merged = mergeSavedSettings({
+			customCommands: [
+				{ id: "keep", calloutId: "note", role: "regular", fold: "collapsed" },
+				{ id: "drop", calloutId: "note", role: "regular", fold: "sideways" },
+				{ id: "bare", calloutId: "note", role: "regular" },
+			],
+		} as unknown as Partial<PluginSettings>);
+
+		assert.deepStrictEqual(
+			merged.customCommands.map((c) => c.fold),
+			// A bad value and an absent one are the same answer, and neither is
+			// stored: absence already means non-foldable.
+			["collapsed", undefined, undefined],
+		);
+	});
+
 	it("de-duplicates `disabledFixedCommands` and drops non-strings", () => {
 		const merged = mergeSavedSettings({
 			disabledFixedCommands: [

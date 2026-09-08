@@ -7,6 +7,10 @@ export const id: Record<string, string> = {
 
 	"cmd.customWrapBlock": "Bungkus dalam callout blok {{name}}",
 	"cmd.customInsertBlock": "Sisipkan callout blok {{name}}",
+	"cmd.customWrapBlockExpanded": "Bungkus dalam callout blok {{name}} (terbuka)",
+	"cmd.customWrapBlockCollapsed": "Bungkus dalam callout blok {{name}} (tertutup)",
+	"cmd.customInsertBlockExpanded": "Sisipkan callout blok {{name}} (terbuka)",
+	"cmd.customInsertBlockCollapsed": "Sisipkan callout blok {{name}} (tertutup)",
 	"cmd.customInsertHeading": "Sisipkan heading callout {{name}} H{{level}}",
 	"cmd.customInsertInline": "Sisipkan inline callout {{name}}",
 	"cmd.openQuickInsert": "Sisipan cepat callout blok",
@@ -194,6 +198,12 @@ export const id: Record<string, string> = {
 		"Bungkus mengubah seleksi menjadi callout; sisipkan menambahkan callout kosong.",
 	"commandBuilder.actionWrap": "Bungkus seleksi",
 	"commandBuilder.actionInsert": "Sisipkan baru",
+	"commandBuilder.foldState": "Status lipatan",
+	"commandBuilder.foldStateDesc":
+		"Apakah callout yang ditulis perintah ini dapat dilipat, dan status awalnya.",
+	"commandBuilder.foldNone": "Tidak dapat dilipat",
+	"commandBuilder.foldExpanded": "Dapat dilipat, terbuka (+)",
+	"commandBuilder.foldCollapsed": "Dapat dilipat, tertutup (-)",
 	"commandBuilder.preview": "Nama perintah",
 	"commandBuilder.duplicate":
 		"Anda sudah memiliki perintah yang melakukan persis hal ini.",

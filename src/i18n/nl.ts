@@ -7,6 +7,10 @@ export const nl: Record<string, string> = {
 
 	"cmd.customWrapBlock": "In {{name}}-blokcallout inpakken",
 	"cmd.customInsertBlock": "{{name}}-blokcallout invoegen",
+	"cmd.customWrapBlockExpanded": "In {{name}}-blokcallout inpakken (open)",
+	"cmd.customWrapBlockCollapsed": "In {{name}}-blokcallout inpakken (gesloten)",
+	"cmd.customInsertBlockExpanded": "{{name}}-blokcallout invoegen (open)",
+	"cmd.customInsertBlockCollapsed": "{{name}}-blokcallout invoegen (gesloten)",
 	"cmd.customInsertHeading": "H{{level}} {{name}}-kopcallout invoegen",
 	"cmd.customInsertInline": "Inline {{name}}-callout invoegen",
 	"cmd.openQuickInsert": "Blok-callout snel invoegen",
@@ -192,6 +196,12 @@ export const nl: Record<string, string> = {
 		"Inpakken maakt van de selectie een callout; invoegen voegt een lege toe.",
 	"commandBuilder.actionWrap": "Selectie inpakken",
 	"commandBuilder.actionInsert": "Nieuwe invoegen",
+	"commandBuilder.foldState": "Inklapstatus",
+	"commandBuilder.foldStateDesc":
+		"Of de callout die deze opdracht schrijft kan worden ingeklapt, en in welke status hij begint.",
+	"commandBuilder.foldNone": "Niet-opvouwbaar",
+	"commandBuilder.foldExpanded": "Opvouwbaar, open (+)",
+	"commandBuilder.foldCollapsed": "Opvouwbaar, gesloten (-)",
 	"commandBuilder.preview": "Opdrachtnaam",
 	"commandBuilder.duplicate":
 		"U hebt al een opdracht die precies hetzelfde doet.",

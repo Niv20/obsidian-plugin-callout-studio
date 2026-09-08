@@ -7,6 +7,10 @@ export const de: Record<string, string> = {
 
 	"cmd.customWrapBlock": "In {{name}}-Block-Callout einbetten",
 	"cmd.customInsertBlock": "{{name}}-Block-Callout einfügen",
+	"cmd.customWrapBlockExpanded": "In {{name}}-Block-Callout einbetten (geöffnet)",
+	"cmd.customWrapBlockCollapsed": "In {{name}}-Block-Callout einbetten (geschlossen)",
+	"cmd.customInsertBlockExpanded": "{{name}}-Block-Callout einfügen (geöffnet)",
+	"cmd.customInsertBlockCollapsed": "{{name}}-Block-Callout einfügen (geschlossen)",
 	"cmd.customInsertHeading":
 		"H{{level}}-{{name}}-Überschrift-Callout einfügen",
 	"cmd.customInsertInline": "{{name}}-Inline-Callout einfügen",
@@ -192,6 +196,12 @@ export const de: Record<string, string> = {
 		"Einbetten verwandelt die Auswahl in einen Callout; Einfügen fügt einen leeren hinzu.",
 	"commandBuilder.actionWrap": "Auswahl einbetten",
 	"commandBuilder.actionInsert": "Neu einfügen",
+	"commandBuilder.foldState": "Einklappstatus",
+	"commandBuilder.foldStateDesc":
+		"Ob der Callout, den dieser Befehl schreibt, gefaltet werden kann und in welchem Zustand er startet.",
+	"commandBuilder.foldNone": "Nicht faltbar",
+	"commandBuilder.foldExpanded": "Faltbar, geöffnet (+)",
+	"commandBuilder.foldCollapsed": "Faltbar, geschlossen (-)",
 	"commandBuilder.preview": "Befehlsname",
 	"commandBuilder.duplicate":
 		"Sie haben bereits einen Befehl, der genau das tut.",

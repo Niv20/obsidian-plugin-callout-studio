@@ -549,6 +549,19 @@ export interface InlineCalloutSettings extends RoleToggleSettings {
 export type CustomCommandAction = "wrap" | "insert";
 
 /**
+ * Whether the block callout a custom command writes is foldable, and how it
+ * opens: `> [!note]`, `> [!note]+` or `> [!note]-`.
+ *
+ * Block-only, and that is a rule about the markdown rather than a UI choice.
+ * `### [!tip]- Title` is the `tip` callout titled `- Title`, and `[!tip]-`
+ * inline is a pill followed by a dash — so a mark written for either of those
+ * roles is a character the user did not ask for, in output that looks correct.
+ * See `tests/headingFoldSyntax.test.ts`, which guards the same invariant from
+ * the reading side.
+ */
+export type CustomCommandFold = "none" | "expanded" | "collapsed";
+
+/**
  * One user-built command, registered with Obsidian so it can be given a hotkey.
  *
  * The plugin registers only its six fixed commands by default; everything here
@@ -573,6 +586,14 @@ export interface CustomCommand {
 	headingLevel?: number;
 	/** Only read when `role` is `"regular"`; the other roles always insert. */
 	action?: CustomCommandAction;
+	/**
+	 * Only read when `role` is `"regular"`; the other roles have no fold syntax.
+	 *
+	 * Absent means `"none"`, and that is a promise rather than a convenience:
+	 * every command stored before this field existed keeps writing the header it
+	 * has always written. `resolveFold` is the one place that promise is kept.
+	 */
+	fold?: CustomCommandFold;
 }
 
 /**
