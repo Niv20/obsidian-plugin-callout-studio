@@ -94,6 +94,11 @@ export function buildCalloutListsScaffold(
 		// the heading — styles.css says why a heading that pins cannot carry
 		// its own divider.
 		const subSectionEl = my.wrapEl;
+		// Discovery first in the DOM, the CTA last, so the CTA lands on the row's
+		// outer edge — its right end under LTR, its left under RTL, both times the
+		// far side of the row, which is where every other section in this tab puts
+		// its primary button and where the reading eye and the thumb arrive last.
+		addManualDiscoveryButton(ctx, mySetting.controlEl);
 		mySetting.addButton((btn) =>
 			btn
 				.setButtonText(t("settings.addNewCallout"))
@@ -102,7 +107,6 @@ export function buildCalloutListsScaffold(
 					void onAddNewCallout();
 				}),
 		);
-		addManualDiscoveryButton(ctx, mySetting.controlEl);
 
 		const userListEl = my.wrapEl.createDiv();
 		const userFold = attachPersistedFold(mySetting, userListEl, "user", ctx.plugin);

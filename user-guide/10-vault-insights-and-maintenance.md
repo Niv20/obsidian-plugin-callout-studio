@@ -4,7 +4,7 @@ Callout Studio can look across your entire vault and tell you exactly how your c
 
 ## Manual discovery
 
-The **Discover now** button lives at the top beside **My callout types** and **Add new callout**. Press it to scan saved notes and the current theme once and save missing callout types. Existing types are never overwritten or automatically removed. See [Manual discovery](08-fallback-callouts-and-manual-discovery.md) for saving, migration and multi-device conflicts.
+The **Discover now** button lives at the top beside **My callout types**, just inside **Add new callout**. Press it to scan saved notes and the current theme once and save missing callout types. Existing types are never overwritten or automatically removed. See [Manual discovery](08-fallback-callouts-and-manual-discovery.md) for saving, migration and multi-device conflicts.
 
 
 ## Callout statistics

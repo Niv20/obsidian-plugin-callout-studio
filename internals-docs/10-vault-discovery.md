@@ -2,7 +2,7 @@
 
 ## One discovery entry point
 
-The single **Discover now** button beside **My callout types** and **Add new callout** calls `plugin.runVaultScan()` →
+The single **Discover now** button beside **My callout types**, just inside **Add new callout**, calls `plugin.runVaultScan()` →
 `ManualCalloutDiscovery.run()`. There are no note listeners, startup scans,
 open-editor sweeps, pruning passes, ignored-id settings, completion flags,
 rediscovery suppression or local discovery storage.

@@ -144,13 +144,25 @@
 	max-width: 100%;
 }
 
+/* Wrapping, not sizing. `--input-height` is Obsidian's own answer to how tall a
+   button is, and it already resolves to 30px on desktop and 44px
+   (`--touch-size-m`) on mobile — so borrowing it as a *minimum* keeps both of
+   these buttons exactly as tall as "New palette", and as every other button in
+   the tab, on each platform, while `height: auto` still lets a long translation
+   wrap to a second line rather than spill out of a fixed box. A hardcoded 44px
+   used to sit here: it bought the phone nothing it did not already have from
+   `--input-height`, and on desktop it made these the only oversized buttons in
+   the tab.
+
+   Both buttons, deliberately. What separates them is colour, not size — Add
+   wears `.mod-cta`, Discover wears `.cs-settings-neutral-btn` — and nothing
+   here should be what makes them different heights. */
 .callout-studio-settings .cs-callout-list-heading .setting-item-control > button {
-	flex: 1 1 auto;
+	flex: 0 1 auto;
 	min-inline-size: 0;
 	max-inline-size: 100%;
-	min-block-size: 44px;
+	min-block-size: var(--input-height);
 	height: auto;
-	padding-block: 8px;
 	white-space: normal;
 	overflow-wrap: anywhere;
 }

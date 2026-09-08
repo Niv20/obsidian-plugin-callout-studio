@@ -16,10 +16,29 @@ reset → credits → footer.
 
 `calloutListsScaffold.ts` places the single **Discover now** action beside
 **Add new callout** in the **My callout types** heading. Both are siblings of
-the disclosure control, so clicking an action never folds the list. The row and
-its action group wrap against available pane width; full labels, logical margins,
-and 44px minimum button height accommodate narrow panes, mobile, RTL and larger
-text without relying on viewport size.
+the disclosure control, so clicking an action never folds the list.
+
+Discovery is written into `controlEl` **first** and the CTA last, which puts the
+CTA on the row's outer edge — its right end under LTR, its left under RTL — the
+side every other section in the tab puts its primary button on.
+
+Colour is what separates them, not size. Add wears `.mod-cta`; **Discover
+now** wears `.cs-settings-neutral-btn`, the tab's grey secondary button. The
+class rather than a bare `<button>` for a mobile reason: there
+`--interactive-normal` resolves to `--background-secondary`, which *is* the
+settings pane, and `--input-shadow` is `none` — so Obsidian's plain grey button
+is the pane colour with nothing to separate it from the pane. The class's
+hairline border is what keeps it a button on a phone. (**Load more** is bare and
+does vanish there.)
+
+Both take their height from `--input-height` — already 30px on desktop and 44px
+(`--touch-size-m`) on mobile — so they match **New palette** and every other
+button in the tab on each platform; a hardcoded 44px minimum used to sit there
+and made these the only oversized buttons on desktop. It is a *minimum*, so a
+long translation still wraps to a second line rather than spilling out. The row
+and its action group wrap against available pane width; full labels and logical
+margins accommodate narrow panes, mobile, RTL and larger text without relying on
+viewport size.
 
 `manualDiscoveryButton.ts` shares only transient running state per plugin through
 a `WeakMap`. Settings redraws and reopenings reuse that state and remove obsolete

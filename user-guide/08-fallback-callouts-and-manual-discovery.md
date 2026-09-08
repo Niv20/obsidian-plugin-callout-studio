@@ -1,6 +1,6 @@
 # Fallback callouts and manual discovery
 
-Callout Studio creates discovered callout types only when you press **Discover now** in **Settings → Callout Studio → My callout types**, beside **Add new callout**. Opening notes or settings, editing notes, starting Obsidian, and changing themes never add or remove callout definitions.
+Callout Studio creates discovered callout types only when you press **Discover now** in **Settings → Callout Studio → My callout types**, just inside **Add new callout**. Opening notes or settings, editing notes, starting Obsidian, and changing themes never add or remove callout definitions.
 
 The button performs one scan of saved Markdown notes and the current theme's declared callout types. Save your notes first. New types receive the selected fallback style; existing types, aliases, customizations, and commands are preserved. Repeating a scan does not duplicate existing types. A scan does not edit your notes or remove unused types.
 
