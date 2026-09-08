@@ -27,10 +27,9 @@ export const en: Record<string, string> = {
 	// Vault scan / fallback / delete
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default fallback",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
+	"settings.rescanVaultDesc": "Adds callout types found in your notes that aren't listed here yet. Existing callouts and notes stay untouched.",
+	"settings.rescanVaultHintAction": "Scan for callouts",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"saveStatus.missing": "Saving is paused because the settings file is missing. This can happen after reinstalling or while sync is still running. Finish synchronization and retry. To intentionally replace the missing file, use Create a new settings file in Callout Studio settings.",
 	"saveStatus.unreadable": "Saving is paused because the settings file cannot be read safely. Finish synchronization or restore a valid copy, then retry. The existing file has been kept.",
 	"saveStatus.recoveryRead": "Saving is paused because the local recovery copy cannot be read. Your settings file may still be intact. Check available storage, then retry recovery. Existing recovery data will not be overwritten.",
@@ -50,9 +49,9 @@ export const en: Record<string, string> = {
 	"notice.settingsBackupFailed": "Settings recovery could not continue because a safety backup could not be saved. Check available storage and write permissions, then retry.",
 	"notice.settingsBackupSaved": "A recovery copy of local callout definitions was saved before applying incoming settings: {{path}}.",
 	"commandBuilder.missingCallout": "Paused: the callout is missing. Discover or create it to restore this command, or edit the command to choose another type.",
-	"manualDiscovery.scanning": "Discovering…",
+	"manualDiscovery.scanning": "Scanning…",
 	"settings.rescanComplete":
-		"Re-scan complete: {{count}} new callout(s) added.",
+		"Scan complete: {{count}} new callout type(s) added.",
 	"settings.readOnly":
 		"Callout Studio could not use its settings file when Obsidian started, so nothing on this page is being saved on this device. Your changes will last until you close Obsidian. Reload Obsidian once the file is back — if you sync this vault, let the sync finish first.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(falls back to default)",

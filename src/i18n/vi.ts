@@ -15,13 +15,12 @@ export const vi: Record<string, string> = {
 
 	"settings.fallbackTag": "Mặc định",
 	"settings.fallbackTagAuto": "Mặc định tự động",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "Thêm các loại callout tìm thấy trong ghi chú của bạn mà chưa có trong danh sách này. Các callout và ghi chú hiện có được giữ nguyên.",
+	"settings.rescanVaultHintAction": "Quét tìm callout",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Đang quét…",
 	"settings.rescanComplete":
-		"Quét lại hoàn tất: đã thêm {{count}} callout mới.",
+		"Quét hoàn tất: đã thêm {{count}} loại callout mới.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(quay lại mặc định)",
 	"replaceModal.titleDelete": "Xóa callout",
 	"replaceModal.titleReplace": "Thay thế trong vault",

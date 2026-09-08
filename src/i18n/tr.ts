@@ -15,13 +15,12 @@ export const tr: Record<string, string> = {
 
 	"settings.fallbackTag": "Varsayılan",
 	"settings.fallbackTagAuto": "Otomatik varsayılan",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "Notlarınızda bulunan ve bu listede henüz yer almayan callout türlerini ekler. Mevcut callout'lar ve notlar değiştirilmez.",
+	"settings.rescanVaultHintAction": "Callout'ları tara",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Taranıyor…",
 	"settings.rescanComplete":
-		"Yeniden tarama tamamlandı: {{count}} yeni callout eklendi.",
+		"Tarama tamamlandı: {{count}} yeni callout türü eklendi.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(varsayılana geri döner)",
 	"replaceModal.titleDelete": "Callout'u sil",
 	"replaceModal.titleReplace": "Vault'ta değiştir",

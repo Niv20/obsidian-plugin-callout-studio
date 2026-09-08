@@ -15,13 +15,12 @@ export const cs: Record<string, string> = {
 
 	"settings.fallbackTag": "Výchozí",
 	"settings.fallbackTagAuto": "Aut. výchozí",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "Přidá typy calloutů nalezené ve vašich poznámkách, které zatím nejsou v tomto seznamu. Stávající callouty a poznámky zůstanou beze změny.",
+	"settings.rescanVaultHintAction": "Vyhledat callouty",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Prohledávání…",
 	"settings.rescanComplete":
-		"Opětovné prohledávání dokončeno: přidáno {{count}} nových callout(ů).",
+		"Prohledávání dokončeno: přidáno {{count}} nových typů calloutů.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(vrátí se na výchozí)",
 	"replaceModal.titleDelete": "Smazat callout",
 	"replaceModal.titleReplace": "Nahradit ve vaultu",

@@ -15,13 +15,12 @@ export const id: Record<string, string> = {
 
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default otomatis",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "Menambahkan tipe callout yang ditemukan di catatan Anda yang belum tercantum di daftar ini. Callout dan catatan yang ada tidak diubah.",
+	"settings.rescanVaultHintAction": "Pindai callout",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Memindai…",
 	"settings.rescanComplete":
-		"Pemindaian ulang selesai: {{count}} callout baru ditambahkan.",
+		"Pemindaian selesai: {{count}} tipe callout baru ditambahkan.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(kembali ke default)",
 	"replaceModal.titleDelete": "Hapus callout",
 	"replaceModal.titleReplace": "Ganti di vault",

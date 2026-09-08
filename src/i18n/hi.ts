@@ -15,13 +15,12 @@ export const hi: Record<string, string> = {
 
 	"settings.fallbackTag": "डिफ़ॉल्ट",
 	"settings.fallbackTagAuto": "स्वतः डिफ़ॉल्ट",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "आपके नोट्स में मिले ऐसे callout प्रकार जोड़ता है जो अभी इस सूची में नहीं हैं। मौजूदा callout और नोट्स अपरिवर्तित रहते हैं।",
+	"settings.rescanVaultHintAction": "callout के लिए स्कैन करें",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "स्कैन हो रहा है…",
 	"settings.rescanComplete":
-		"पुनः स्कैन पूर्ण: {{count}} नए callout जोड़े गए।",
+		"स्कैन पूर्ण: {{count}} नए callout प्रकार जोड़े गए।",
 	"replaceModal.deleteWithoutReplaceSuffix": "(डिफ़ॉल्ट पर वापस)",
 	"replaceModal.titleDelete": "callout हटाएँ",
 	"replaceModal.titleReplace": "vault में बदलें",

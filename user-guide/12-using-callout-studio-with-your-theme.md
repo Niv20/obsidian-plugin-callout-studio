@@ -40,7 +40,7 @@ On iPhone the headings scroll normally — the top of the settings screen there 
 
 Two kinds of callout end up here, and the section says so:
 
-**Callout types your theme invents.** Some themes don't only repaint `note` and `warning` — they add types of their own, with names Obsidian has never heard of. ITS Theme adds `recite`, `infobox`, `cards`, `timeline` and a dozen more. Those used to be invisible: you had to know the name and type it from memory. Press **Discover now** to add them to your saved callout types. They then appear in this section, autocomplete and Quick insert. Changing themes never creates or deletes definitions.
+**Callout types your theme invents.** Some themes don't only repaint `note` and `warning` — they add types of their own, with names Obsidian has never heard of. ITS Theme adds `recite`, `infobox`, `cards`, `timeline` and a dozen more. Those used to be invisible: you had to know the name and type it from memory. Press **Scan for callouts** to add them to your saved callout types. They then appear in this section, autocomplete and Quick insert. Changing themes never creates or deletes definitions.
 
 **Built-in callouts your theme replaces.** If your theme restyles `[!note]`, then your theme is what you see, so `note` is listed here rather than under **Built-in callouts**. On a theme that restyles all thirteen — and a fair number do — the built-in section will be empty and say so.
 
@@ -88,7 +88,7 @@ Everything recalculates, and nothing of *yours* is lost, because none of it is s
 
 There are two different things in that top section, and they behave differently when the theme goes away.
 
-**A manually discovered type your theme invented** stays saved when you switch themes. It moves to the appropriate list and uses its saved fallback appearance when the new theme does not own it. Your notes remain unchanged. A new theme adds no definitions until you press **Discover now**.
+**A manually discovered type your theme invented** stays saved when you switch themes. It moves to the appropriate list and uses its saved fallback appearance when the new theme does not own it. Your notes remain unchanged. A new theme adds no definitions until you press **Scan for callouts**.
 
 **A callout that was already yours** is only *borrowed* while the theme claims the same ID. Switch away and it returns to **My callout types** exactly as it was: same name, colours, icon, aliases, everything — and its Heading and Inline formats work again. Built-ins behave the same way: ones your new theme leaves alone return to **Built-in callouts** wearing whatever you had saved on them. If you customised `[!note]` years ago and then switched to a theme that restyles it, your colours were kept the whole time, unused, and reappear the moment you switch away again.
 

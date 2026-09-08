@@ -15,13 +15,12 @@ export const th: Record<string, string> = {
 
 	"settings.fallbackTag": "ค่าเริ่มต้น",
 	"settings.fallbackTagAuto": "ค่าเริ่มต้นอัตโนมัติ",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "เพิ่มชนิด callout ที่พบในโน้ตของคุณซึ่งยังไม่อยู่ในรายการนี้ callout และโน้ตที่มีอยู่จะไม่ถูกเปลี่ยนแปลง",
+	"settings.rescanVaultHintAction": "สแกนหา callout",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "กำลังสแกน…",
 	"settings.rescanComplete":
-		"สแกนใหม่เสร็จแล้ว: เพิ่ม {{count}} callout ใหม่",
+		"สแกนเสร็จแล้ว: เพิ่มชนิด callout ใหม่ {{count}} รายการ",
 	"replaceModal.deleteWithoutReplaceSuffix": "(กลับไปใช้ค่าเริ่มต้น)",
 	"replaceModal.titleDelete": "ลบ callout",
 	"replaceModal.titleReplace": "แทนที่ใน vault",

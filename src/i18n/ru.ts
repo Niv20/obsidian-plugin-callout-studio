@@ -16,13 +16,12 @@ export const ru: Record<string, string> = {
 
 	"settings.fallbackTag": "По умолчанию",
 	"settings.fallbackTagAuto": "Авт. по умолчанию",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "Добавляет типы callout, найденные в ваших заметках и ещё не указанные в этом списке. Существующие callout и заметки не изменяются.",
+	"settings.rescanVaultHintAction": "Найти callout",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Сканирование…",
 	"settings.rescanComplete":
-		"Сканирование завершено: добавлено {{count}} новых callout.",
+		"Сканирование завершено: добавлено {{count}} новых типов callout.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(возврат к умолчанию)",
 	"replaceModal.titleDelete": "Удалить callout",
 	"replaceModal.titleReplace": "Заменить в хранилище",

@@ -15,13 +15,12 @@ export const ko: Record<string, string> = {
 
 	"settings.fallbackTag": "기본값",
 	"settings.fallbackTagAuto": "자동 기본값",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "노트에서 발견된, 아직 이 목록에 없는 callout 유형을 추가합니다. 기존 callout과 노트는 변경되지 않습니다.",
+	"settings.rescanVaultHintAction": "callout 스캔",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "스캔 중…",
 	"settings.rescanComplete":
-		"재스캔 완료: {{count}}개의 새 callout이 추가되었습니다.",
+		"스캔 완료: {{count}}개의 새 callout 유형이 추가되었습니다.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(기본값으로 폴백)",
 	"replaceModal.titleDelete": "callout 삭제",
 	"replaceModal.titleReplace": "볼트에서 교체",

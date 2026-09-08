@@ -15,13 +15,12 @@ export const fa: Record<string, string> = {
 
 	"settings.fallbackTag": "پیش‌فرض",
 	"settings.fallbackTagAuto": "پیش‌فرض خودکار",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "نتایج شناسایی ذخیره نشد. پس از پایان همگام‌سازی دوباره از تنظیمات ← انواع فراخوان‌های من ← شناسایی اکنون تلاش کنید. فراخوان‌های موجود جایگزین نشده‌اند.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "انواع callout موجود در یادداشت‌های شما را که هنوز در این فهرست نیستند اضافه می‌کند. calloutها و یادداشت‌های موجود بدون تغییر می‌مانند.",
+	"settings.rescanVaultHintAction": "جستجو برای callout",
+	"manualDiscovery.failed": "نتایج شناسایی ذخیره نشد. پس از پایان همگام‌سازی دوباره از تنظیمات ← انواع فراخوان‌های من ← جستجو برای callout تلاش کنید. فراخوان‌های موجود جایگزین نشده‌اند.",
+	"manualDiscovery.scanning": "در حال اسکن…",
 	"settings.rescanComplete":
-		"اسکان مجدد کامل شد: {{count}} callout جدید اضافه شد.",
+		"اسکن کامل شد: {{count}} نوع callout جدید اضافه شد.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(به پیش‌فرض برمی‌گردد)",
 	"replaceModal.titleDelete": "حذف callout",
 	"replaceModal.titleReplace": "جایگزینی در vault",

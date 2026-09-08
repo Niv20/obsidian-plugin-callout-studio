@@ -6,7 +6,7 @@ Callout Studio never sends your vault content anywhere, and it collects no telem
 
 Callout Studio asks for a small number of permissions, and all of them stay local to your machine:
 
-- **Vault file enumeration.** The plugin reads note contents using Obsidian's own read APIs, for things like manual discovery's **Discover now** button, callout statistics, **Replace in vault**, **Convert to plain text**, and warning you before you delete a callout type that's still in use somewhere. Whatever it reads is used only to do that one job — it is never sent anywhere.
+- **Vault file enumeration.** The plugin reads note contents using Obsidian's own read APIs, for things like manual discovery's **Scan for callouts** button, callout statistics, **Replace in vault**, **Convert to plain text**, and warning you before you delete a callout type that's still in use somewhere. Whatever it reads is used only to do that one job — it is never sent anywhere.
 - **Vault file modification.** The plugin only writes to your notes when you explicitly ask it to — by running **Replace in vault**, **Convert to plain text**, or one of the wrap/unwrap commands. Nothing is rewritten in the background.
 - **Clipboard access**, narrowly, for two things only: the **Copy callout Markdown** menu action writes to your clipboard when you click it, and the callout ID/alias input field can read a pasted block of comma- or space-separated text so you can paste several IDs at once. The clipboard is never read at any other time.
 

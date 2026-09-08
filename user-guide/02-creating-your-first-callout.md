@@ -1,6 +1,6 @@
 # Creating your first callout
 
-Create a callout type through the editor, opened either from autocomplete or from **Add new callout** in settings. You can also add types already used in your saved notes with the explicit **Discover now** button beside **My callout types**. Typing or opening a note never creates a saved definition by itself.
+Create a callout type through the editor, opened either from autocomplete or from **Add new callout** in settings. You can also add types already used in your saved notes with the explicit **Scan for callouts** button beside **My callout types**. Typing or opening a note never creates a saved definition by itself.
 
 ## The fastest way: type it in a note
 

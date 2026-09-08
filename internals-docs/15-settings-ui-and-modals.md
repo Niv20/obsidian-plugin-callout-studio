@@ -14,7 +14,7 @@ reset → credits → footer.
 
 ### Manual discovery in the callout-list heading
 
-`calloutListsScaffold.ts` places the single **Discover now** action beside
+`calloutListsScaffold.ts` places the single **Scan for callouts** action beside
 **Add new callout** in the **My callout types** heading. Both are siblings of
 the disclosure control, so clicking an action never folds the list.
 

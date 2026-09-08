@@ -15,13 +15,12 @@ export const it: Record<string, string> = {
 
 	"settings.fallbackTag": "Predefinito",
 	"settings.fallbackTagAuto": "Predefinito automatico",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "Aggiunge i tipi di callout trovati nelle tue note che non sono ancora in questo elenco. I callout e le note esistenti restano invariati.",
+	"settings.rescanVaultHintAction": "Cerca callout",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Scansione…",
 	"settings.rescanComplete":
-		"Riscansione completata: {{count}} nuovo/i callout aggiunto/i.",
+		"Scansione completata: {{count}} nuovo/i tipo/i di callout aggiunto/i.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(torna al predefinito)",
 	"replaceModal.titleDelete": "Elimina callout",
 	"replaceModal.titleReplace": "Sostituisci nel vault",

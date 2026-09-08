@@ -1,7 +1,7 @@
 # Callout Studio
 
 This development build uses **manual discovery only**. In the plugin settings,
-press **Discover now** beside **My callout types** and **Add new callout** to
+press **Scan for callouts** beside **My callout types** and **Add new callout** to
 add missing types from saved notes and the active theme. Results are saved in
 `data.json` and included in backups/exports; discovery has no active local-storage
 state. On upgrade, the old discovery cache and startup CSS are archived for

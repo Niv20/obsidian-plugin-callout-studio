@@ -15,13 +15,12 @@ export const ja: Record<string, string> = {
 
 	"settings.fallbackTag": "デフォルト",
 	"settings.fallbackTagAuto": "自動デフォルト",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "ノート内で見つかった、まだこの一覧にないcalloutタイプを追加します。既存のcalloutとノートは変更されません。",
+	"settings.rescanVaultHintAction": "calloutをスキャン",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "スキャン中…",
 	"settings.rescanComplete":
-		"再スキャン完了: {{count}}件の新しいcalloutを追加しました。",
+		"スキャン完了: {{count}}件の新しいcalloutタイプを追加しました。",
 	"replaceModal.deleteWithoutReplaceSuffix": "（デフォルトにフォールバック）",
 	"replaceModal.titleDelete": "calloutを削除",
 	"replaceModal.titleReplace": "vaultで置き換え",

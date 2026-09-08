@@ -16,13 +16,12 @@ export const ar: Record<string, string> = {
 
 	"settings.fallbackTag": "افتراضي",
 	"settings.fallbackTagAuto": "افتراضي تلقائي",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "لم يتم حفظ نتائج الاكتشاف. انتظر اكتمال المزامنة ثم أعد المحاولة من الإعدادات ← أنواع التنبيهات الخاصة بي ← اكتشف الآن. لم يتم استبدال التعليقات الحالية.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "يضيف أنواع callout الموجودة في ملاحظاتك وغير المدرجة هنا بعد. تبقى الـ callout والملاحظات الحالية دون تغيير.",
+	"settings.rescanVaultHintAction": "مسح بحثًا عن callout",
+	"manualDiscovery.failed": "لم يتم حفظ نتائج الاكتشاف. انتظر اكتمال المزامنة ثم أعد المحاولة من الإعدادات ← أنواع التنبيهات الخاصة بي ← مسح بحثًا عن callout. لم يتم استبدال التعليقات الحالية.",
+	"manualDiscovery.scanning": "جارٍ المسح…",
 	"settings.rescanComplete":
-		"اكتمل إعادة المسح: تمت إضافة {{count}} callout جديد.",
+		"اكتمل المسح: تمت إضافة {{count}} نوع callout جديد.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(يعود إلى الافتراضي)",
 	"replaceModal.titleDelete": "حذف الـ callout",
 	"replaceModal.titleReplace": "استبدال في المخزن",

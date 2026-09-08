@@ -374,7 +374,7 @@ uncustomized theme row on the next theme switch; and `importValidator` re-stamps
 ## Stage 4 — Adding theme types manually
 
 `ManualCalloutDiscovery` includes the current theme's declared ids when the user
-presses **Discover now**. Missing ids become durable fallback rows, checked against
+presses **Scan for callouts**. Missing ids become durable fallback rows, checked against
 existing definitions, aliases and reserved ids. No theme event adds, retires or
 recreates a row. The same saved type can follow a theme on one device and fallback
 styling on another without either device rewriting its definition.

@@ -15,13 +15,12 @@ export const hu: Record<string, string> = {
 
 	"settings.fallbackTag": "Alapértelmezett",
 	"settings.fallbackTagAuto": "Aut. alapértelmezett",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "Hozzáadja a jegyzeteidben található, ezen a listán még nem szereplő callout-típusokat. A meglévő calloutok és jegyzetek változatlanok maradnak.",
+	"settings.rescanVaultHintAction": "Calloutok keresése",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Keresés…",
 	"settings.rescanComplete":
-		"Újraszkennelés kész: {{count}} új callout hozzáadva.",
+		"Keresés kész: {{count}} új callout-típus hozzáadva.",
 	"replaceModal.deleteWithoutReplaceSuffix":
 		"(visszaesik az alapértelmezettre)",
 	"replaceModal.titleDelete": "Callout törlése",

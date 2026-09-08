@@ -74,12 +74,12 @@ describe("the manual discovery header action", () => {
 		assert.equal(h.calls(), 1);
 		assert.equal(button.disabled, true);
 		assert.equal(button.getAttribute("aria-busy"), "true");
-		assert.equal(button.textContent, "Discovering…");
+		assert.equal(button.textContent, "Scanning…");
 		assert.equal(button.getAttribute("aria-label"), button.textContent);
 		p.resolve(3); await turn();
 		assert.equal(button.disabled, false);
 		assert.equal(button.getAttribute("aria-busy"), "false");
-		assert.equal(button.textContent, "Discover now");
+		assert.equal(button.textContent, "Scan for callouts");
 		assert.equal(h.displays(), 0);
 		assert.equal(host.scrollTop, 900);
 		assert.equal(document.activeElement, button);
@@ -120,7 +120,7 @@ describe("the manual discovery header action", () => {
 		h.plugin.settingsWriter.isFrozen = true;
 		p.resolve(0); await turn();
 		assert.equal(button.disabled, true);
-		assert.equal(button.textContent, "Discover now");
+		assert.equal(button.textContent, "Scan for callouts");
 	});
 
 	for (const synchronous of [false, true]) {

@@ -15,13 +15,12 @@ export const ro: Record<string, string> = {
 
 	"settings.fallbackTag": "Implicit",
 	"settings.fallbackTagAuto": "Implicit automat",
-	"settings.rescanVault": "Discover callouts",
-	"settings.rescanVaultDesc": "Scan saved notes and the current theme once. Add missing callout types to your saved settings without changing existing types. Nothing is discovered automatically.",
-	"settings.rescanVaultHintAction": "Discover now",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Discover now again. Existing callouts have not been replaced.",
-	"manualDiscovery.scanning": "Discovering…",
+	"settings.rescanVaultDesc": "Adaugă tipurile de callout găsite în notițele tale care nu sunt încă în această listă. Callout-urile și notițele existente rămân neschimbate.",
+	"settings.rescanVaultHintAction": "Scanează după callout-uri",
+	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.scanning": "Se scanează…",
 	"settings.rescanComplete":
-		"Rescanare completă: {{count}} callout(uri) noi adăugate.",
+		"Scanare completă: {{count}} tip(uri) de callout noi adăugate.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(revine la implicit)",
 	"replaceModal.titleDelete": "Șterge callout",
 	"replaceModal.titleReplace": "Înlocuiți în vault",
