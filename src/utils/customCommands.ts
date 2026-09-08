@@ -12,6 +12,7 @@ import {
 	type CalloutRenderRole,
 	type CustomCommand,
 	type CustomCommandAction,
+	type CustomCommandFold,
 } from "../types";
 
 /** Heading levels a heading-callout command may target. */
@@ -56,11 +57,18 @@ export function obsidianCommandId(commandId: string): string {
  * id, because it changes whenever the command is edited.
  */
 export function commandSignature(
-	command: Pick<CustomCommand, "role" | "calloutId" | "headingLevel" | "action">,
+	command: Pick<
+		CustomCommand,
+		"role" | "calloutId" | "headingLevel" | "action" | "fold"
+	>,
 ): string {
 	const level = command.role === "heading" ? resolveHeadingLevel(command) : "";
 	const action = command.role === "regular" ? resolveAction(command) : "";
-	return `${command.role}|${command.calloutId}|${action}|${level}`;
+	// Fold belongs here because it reaches the palette: "Wrap in Note block
+	// callout" and "…(expanded)" are two entries a user can want at once, and
+	// leaving it out would grey the save button on the second as a duplicate.
+	const fold = command.role === "regular" ? resolveFold(command) : "";
+	return `${command.role}|${command.calloutId}|${action}|${level}|${fold}`;
 }
 
 /** The heading level a command targets, with the stored value clamped. */
@@ -81,6 +89,35 @@ export function resolveAction(
 ): CustomCommandAction {
 	return command.action === "wrap" ? "wrap" : "insert";
 }
+
+/**
+ * The fold state a block command writes, defaulting to a plain header.
+ *
+ * The default is the backward-compatibility guarantee in one line: a command
+ * saved before this field existed has no `fold`, resolves to `"none"`, and goes
+ * on writing `> [!id] Title` under the name it already had.
+ *
+ * That default is also a deliberate break with what the *definition* says. The
+ * mark used to come from `def.foldable`/`def.defaultFolded` alone, and the two
+ * legacy importers (`applyCalloutManagerImport`, `applyAdmonitionImport`) stamp
+ * `foldable: true` on every callout they create — so a command aimed at one of
+ * those wrote `+` that nobody chose, from a setting whose UI is hidden. The
+ * command now owns its own answer, which is what makes the dropdown honest.
+ */
+export function resolveFold(
+	command: Pick<CustomCommand, "fold">,
+): CustomCommandFold {
+	return command.fold === "expanded" || command.fold === "collapsed"
+		? command.fold
+		: "none";
+}
+
+/** The header marker each fold state writes after the `]`. */
+export const FOLD_MARK: Record<CustomCommandFold, "" | "+" | "-"> = {
+	none: "",
+	expanded: "+",
+	collapsed: "-",
+};
 
 /** The slice of the registry {@link isSuspendedByTheme} consults. */
 export interface CommandOwnershipLookup {
@@ -134,10 +171,30 @@ export function describeCommand(
 	if (command.role === "inline") {
 		return t("cmd.customInsertInline", { name });
 	}
-	return resolveAction(command) === "wrap"
-		? t("cmd.customWrapBlock", { name })
-		: t("cmd.customInsertBlock", { name });
+	const keys = resolveAction(command) === "wrap" ? WRAP_KEYS : INSERT_KEYS;
+	return t(keys[resolveFold(command)], { name });
 }
+
+/**
+ * Palette names for a block command, by fold state.
+ *
+ * Whole sentences per state rather than a word appended in code: a suffix
+ * concatenated onto a translated name has nowhere to go in a language that puts
+ * it elsewhere, and reads as debris in an RTL one. `"none"` keeps the exact
+ * string it has always had, so a stored command's registration is untouched —
+ * `syncAll` re-registers only when the rendered name changes.
+ */
+const WRAP_KEYS: Record<CustomCommandFold, string> = {
+	none: "cmd.customWrapBlock",
+	expanded: "cmd.customWrapBlockExpanded",
+	collapsed: "cmd.customWrapBlockCollapsed",
+};
+
+const INSERT_KEYS: Record<CustomCommandFold, string> = {
+	none: "cmd.customInsertBlock",
+	expanded: "cmd.customInsertBlockExpanded",
+	collapsed: "cmd.customInsertBlockCollapsed",
+};
 
 const isRenderRole = (value: unknown): value is CalloutRenderRole =>
 	typeof value === "string" &&
@@ -150,8 +207,9 @@ const isRenderRole = (value: unknown): value is CalloutRenderRole =>
  * rest of the settings loader — one corrupt entry must not stop every other
  * command from registering.
  *
- * A bad heading level or action degrades to the default rather than dropping
- * the entry: the role and callout are the parts that carry the meaning.
+ * A bad heading level, action or fold state degrades to the default rather than
+ * dropping the entry: the role and callout are the parts that carry the
+ * meaning.
  */
 export function sanitizeCustomCommands(raw: unknown): CustomCommand[] {
 	if (!Array.isArray(raw)) return [];
@@ -173,6 +231,15 @@ export function sanitizeCustomCommands(raw: unknown): CustomCommand[] {
 				? { headingLevel: resolveHeadingLevel(c) }
 				: {}),
 			...(c.role === "regular" ? { action: resolveAction(c) } : {}),
+			// Written only when it says something. `"none"` is what absence
+			// already means, so stamping it would rewrite every command in
+			// every existing `data.json` — a file that syncs between devices —
+			// to record a default. `tests/upgradeFromAutoDiscovery.test.ts`
+			// holds this to the stronger promise: a command saved by a released
+			// version must load back identical, not merely equivalent.
+			...(c.role === "regular" && resolveFold(c) !== "none"
+				? { fold: resolveFold(c) }
+				: {}),
 		});
 	}
 	return result;
