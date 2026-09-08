@@ -169,6 +169,7 @@ interface CustomCommand {
   role: CalloutRenderRole;
   headingLevel?: number;             // 1–6, only read when role === "heading"
   action?: CustomCommandAction;      // "wrap" | "insert", only read when role === "regular"
+  fold?: CustomCommandFold;          // "none" | "expanded" | "collapsed", only read when role === "regular"
 }
 ```
 
@@ -176,6 +177,28 @@ interface CustomCommand {
 user's hotkey by command id, and editing a command's callout/role/level must
 not orphan that binding. See
 [Editor integrations](09-editor-integrations.md#customcommandmanager--one-idempotent-sweep).
+
+`fold` decides which header the command writes — `> [!note]`, `> [!note]+` or
+`> [!note]-` — and is block-only for the same reason `splitFoldMark` takes a
+role: the other two formats have no fold syntax, so a mark written for them is
+a stray character in the user's title.
+
+Two rules hang off it, both in
+[`utils/customCommands.ts`](../src/utils/customCommands.ts):
+
+- **Absent means `"none"`,** resolved by `resolveFold`. That is the upgrade
+  promise for every command saved before the field existed — same header, same
+  palette name, same hotkey.
+- **`"none"` is never written.** The sanitizer stores `fold` only when it says
+  something, so an existing `data.json` — a file that syncs between devices — is
+  not rewritten to record a default.
+  `tests/upgradeFromAutoDiscovery.test.ts` holds a released version's saved
+  commands to loading back identical, not merely equivalent.
+
+It also overrides `CalloutDefinition.foldable`/`defaultFolded` rather than
+deferring to them: the command carries its own answer, so a callout created by
+`applyCalloutManagerImport` or `applyAdmonitionImport` — both of which stamp
+`foldable: true` on everything — no longer decides what a command writes.
 
 ## `PluginSettings`
 

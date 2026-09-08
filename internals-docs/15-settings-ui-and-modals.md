@@ -946,6 +946,30 @@ moment rather than offering a dead row. Everything here **saves itself
 immediately** on every change — there's no separate OK/Cancel, matching the
 plugin's general save-on-change convention.
 
+#### `CommandEditorModal` — the rows, and where each one's rule lives
+
+The form is *Callout format*, *Callout type*, *Heading level*, *Action*, *Fold
+state*, then a live preview of the palette name. Every row is built
+unconditionally and hidden with `cs-row-hidden`; one `syncVisibility()` decides
+all of it, so the controls can never disagree about the current format.
+
+Two of those rows are their own modules under `settings/command/` rather than
+methods on the modal, because each carries a rule that only makes sense next to
+its control — and because the modal is close enough to the 300-line ratchet that
+a rule written inline would have to be written *thin*:
+
+- **`commandRoles.ts`** — the format dropdown refills itself per callout
+  (a theme-owned callout has only Block), with a line explaining the absence.
+- **`foldStateRow.ts`** — the three fold states, shown only for Block. Heading
+  and inline are not narrower versions of the same choice, they have no fold
+  syntax at all, so the row hides rather than greying out. Both block *actions*
+  show it: Wrap selection and Insert new write the same header line.
+
+`draft()` mirrors the sanitizer's shape, including omitting `fold` when it is
+`"none"` — otherwise a command saved from this window and the same command
+reloaded would differ by a key that means nothing. See
+[`CustomCommand`](04-data-model.md#customcommand).
+
 ### `hotkeyLink.ts` — reading a binding Obsidian doesn't expose a public API for
 
 `printHotkeyForCommand` goes through the undocumented `app.hotkeyManager`,
