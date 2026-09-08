@@ -1576,11 +1576,7 @@ export class CalloutRegistry {
 	} {
 		let created = 0;
 		let updated = 0;
-		// Pushed onto settings.customPalettes as soon as created (not batched
-		// to the end) so a later entry sharing the same new color sees it via
-		// resolveCalloutManagerColor and reuses it instead of saving a
-		// duplicate, and so it's already present by the time add()/update()
-		// below fires the save.
+		// Save palettes immediately so later entries sharing a color reuse them.
 		let paletteCreated = false;
 
 		const resolveColor = (
@@ -1604,6 +1600,10 @@ export class CalloutRegistry {
 				this.settings.customPalettes.push(resolved.createdPalette);
 				paletteCreated = true;
 			}
+			// CM supplies an accent, not a background. Keep core/theme's tint;
+			// explicit undefined also clears stronger backgrounds on re-import.
+			resolved.colors.bgColorLight = undefined;
+			resolved.colors.bgColorDark = undefined;
 			return resolved;
 		};
 

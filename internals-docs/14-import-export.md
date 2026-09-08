@@ -185,6 +185,20 @@ Manager's own default grey (its `default_colors.json`, "light gray") rather
 than this plugin's own house colour, because fidelity to what the user was
 actually looking at beats consistency with this plugin's conventions here.
 
+The CM apply path keeps the resolved accents and palette link but explicitly
+clears `bgColorLight` and `bgColorDark`: the source supplies an accent, so block
+callouts must use core/the theme's translucent background instead of baking the
+palette's stronger default tint. The shared palette resolver and Admonition
+import are unchanged. This applies to new rows and color-bearing updates;
+icon-only updates preserve the existing colors and background.
+
+Re-importing repairs old CM imports in place. A load-time migration cannot
+safely identify them: old imports have no provenance marker and can be identical
+to manually styled, palette-linked rows. Existing palettes and unrelated rows
+are therefore left intact. Opening/saving the callout editor does not recreate
+the background; explicitly choosing or editing a palette still applies that
+palette's authored appearance.
+
 **Per-theme styling and custom CSS have no equivalent and are left behind**
 — reported to the user before the import runs, same as the JSON importer's
 report modal.

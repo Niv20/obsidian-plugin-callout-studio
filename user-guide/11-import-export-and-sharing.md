@@ -57,6 +57,15 @@ This brings over your customized callouts, icons and colors from Callout Manager
 - Reading Callout Manager's settings directly out of this vault.
 - Using the styles its own **Copy** button puts on your clipboard.
 
+Imported colors use Obsidian's or your theme's normal callout background, so
+nested custom callouts no longer receive a stronger background just because
+they were imported. If you imported them with an older version and still see
+overly bright backgrounds, import from Callout Manager again after updating.
+Matching callout types are updated in place; their IDs, aliases and note content
+are preserved. Re-importing reapplies the source's colors and icons, so any
+later color or icon edits to those types are replaced. Existing styles are not
+reset automatically when you upgrade.
+
 Anything that has no equivalent in Callout Studio is listed before the import runs, so you know exactly what did and didn't come across.
 
 **Admonition**
