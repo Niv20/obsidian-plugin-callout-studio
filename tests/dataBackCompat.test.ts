@@ -36,6 +36,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { DEFAULT_CALLOUTS, DEFAULT_SETTINGS } from "../src/constants";
+import { FOLD_MARK, resolveFold } from "../src/utils/customCommands";
 import type { CalloutDefinition, PluginData } from "../src/types";
 
 // Seeded before the first load, for the reason calloutRegistryCore's header
@@ -720,6 +721,42 @@ describe("a file that says almost nothing", () => {
 		);
 		assert.strictEqual(saved?.builtIn, false);
 		assert.strictEqual(saved.source, "user");
+	});
+});
+
+describe("custom commands saved before the fold state existed", () => {
+	/**
+	 * Every command in every vault predates this field, and each one has a
+	 * hotkey the user chose. Two things have to survive the upgrade: the
+	 * markdown it writes, and the entry it writes it from.
+	 */
+	const preFold = () =>
+		({
+			callouts: [],
+			settings: {
+				customCommands: [
+					{ id: "cc-old", calloutId: "note", role: "regular", action: "wrap" },
+					{ id: "cc-ins", calloutId: "note", role: "regular" },
+				],
+			},
+		}) as unknown as Partial<PluginData>;
+
+	it("reads back exactly what was saved, with no fold key added", () => {
+		const settings = load(preFold()).settings;
+
+		assert.deepStrictEqual(settings.customCommands, [
+			{ id: "cc-old", calloutId: "note", role: "regular", action: "wrap" },
+			{ id: "cc-ins", calloutId: "note", role: "regular", action: "insert" },
+		]);
+	});
+
+	it("resolves them to a plain, non-foldable header", () => {
+		const settings = load(preFold()).settings;
+
+		for (const command of settings.customCommands) {
+			assert.strictEqual(resolveFold(command), "none");
+			assert.strictEqual(FOLD_MARK[resolveFold(command)], "");
+		}
 	});
 });
 

@@ -153,6 +153,24 @@ describe("wrapSelectionInCallout", () => {
 		assert.strictEqual(e.value(), "> [!warning]- Warning\n> hello");
 	});
 
+	it("writes the caller's fold mark over the definition's", () => {
+		// What a user-built command with a fold state does: the command owns
+		// the answer, so it can add a mark the callout does not have...
+		const added = editor("hello|");
+		wrapSelectionInCallout(asEditor(added), { def: def(), foldMark: "-" });
+		assert.strictEqual(added.value(), "> [!warning]- Warning\n> hello");
+
+		// ...and remove one the callout does have. This is the case that makes
+		// a "Non-foldable" command honest against a callout imported from
+		// Callout Manager, which stamps `foldable: true` on everything.
+		const removed = editor("hello|");
+		wrapSelectionInCallout(asEditor(removed), {
+			def: def({ foldable: true }),
+			foldMark: "",
+		});
+		assert.strictEqual(removed.value(), "> [!warning] Warning\n> hello");
+	});
+
 	it("wraps a multi-line selection, quoting every line", () => {
 		const e = editor("«one\ntwo\nthree»");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
@@ -226,6 +244,21 @@ describe("insertEmptyCallout", () => {
 		const e = editor("|");
 		insertEmptyCallout(asEditor(e), { def: def() });
 		assert.strictEqual(e.valueWithCursor(), "> [!warning] Warning\n> |");
+	});
+
+	it("takes a fold mark from the caller too", () => {
+		// Both block actions write the same header line, so an "Insert new"
+		// command has the same three fold states a wrapping one does.
+		const e = editor("|");
+		insertEmptyCallout(asEditor(e), { def: def(), foldMark: "+" });
+		assert.strictEqual(e.valueWithCursor(), "> [!warning]+ Warning\n> |");
+
+		const removed = editor("|");
+		insertEmptyCallout(asEditor(removed), {
+			def: def({ foldable: true, defaultFolded: true }),
+			foldMark: "",
+		});
+		assert.strictEqual(removed.value(), "> [!warning] Warning\n> ");
 	});
 
 	it("adds the callout below a line that has content", () => {

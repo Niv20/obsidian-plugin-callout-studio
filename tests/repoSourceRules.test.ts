@@ -847,7 +847,14 @@ describe("no new oversized files", () => {
 		// deleted every `[!mcc]` in their vault from a row they never wanted.
 		// The field has to be declared here; everything it means lives in
 		// manager/ignoredCallouts.ts.
-		"src/types.ts": 825,
+		// Raised from 825 for `CustomCommandFold` and `CustomCommand.fold` — the
+		// per-command fold state, which lets a hotkey write `> [!note]-` rather
+		// than only `> [!note]`. Declared here on the same terms as every
+		// settings field above: `CustomCommand` is a `PluginSettings` member and
+		// `CustomCommandAction` already sits beside it. Everything the field
+		// means — the default that keeps older commands writing what they always
+		// wrote, and the marks it maps to — lives in utils/customCommands.ts.
+		"src/types.ts": 846,
 		"src/editor/livepreview/widgets.ts": 793,
 		"src/reading/calloutPostProcessor.ts": 721,
 		"src/settings/iconpicker/PackPanel.ts": 736,

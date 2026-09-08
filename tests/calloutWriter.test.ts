@@ -61,6 +61,33 @@ describe("buildBlockHeaderToken", () => {
 		);
 	});
 
+	it("lets a caller's fold mark beat the definition's default", () => {
+		// A user-built command carries its own fold state, so it must be able
+		// to add a mark to a callout that has none...
+		assert.strictEqual(
+			buildBlockHeaderToken(def(), { foldMark: "+" }),
+			"[!warning]+ Warning",
+		);
+		// ...and, the case that actually matters, take one away. `""` is a real
+		// answer here, not an absent one, which is why the builder reads the
+		// option with `??` and must never be changed to `||`.
+		assert.strictEqual(
+			buildBlockHeaderToken(def({ foldable: true, defaultFolded: true }), {
+				foldMark: "",
+			}),
+			"[!warning] Warning",
+		);
+	});
+
+	it("still follows the definition when no caller says otherwise", () => {
+		assert.strictEqual(
+			buildBlockHeaderToken(def({ foldable: true }), {
+				foldMark: undefined,
+			}),
+			"[!warning]+ Warning",
+		);
+	});
+
 	it("keeps a title the user actually wrote", () => {
 		assert.strictEqual(
 			buildBlockHeaderToken(def(), { existingTitle: "  Read this  " }),
@@ -102,6 +129,17 @@ describe("buildHeadingToken", () => {
 	it("never writes a fold mark, which this role has no syntax for", () => {
 		assert.strictEqual(
 			buildHeadingToken(def({ foldable: true, defaultFolded: true })),
+			"[!warning]",
+		);
+		// Not even when a caller asks for one: `### [!warning]- Title` is this
+		// callout titled "- Title", so the mark would be a character the user
+		// never typed appearing in their heading.
+		assert.strictEqual(
+			buildHeadingToken(def(), { foldMark: "-" }),
+			"[!warning]",
+		);
+		assert.strictEqual(
+			buildInlineToken(def(), { foldMark: "-" }),
 			"[!warning]",
 		);
 	});
