@@ -214,7 +214,10 @@ export class CommandEditorModal extends Modal {
 	}
 
 	private buildPreview(parent: HTMLElement): void {
-		const box = parent.createDiv({ cls: "cs-command-preview" });
+		// The wrapper carries the divider above the card, and only it can —
+		// see `.cs-command-preview-row` in styles.css.
+		const row = parent.createDiv({ cls: "cs-command-preview-row" });
+		const box = row.createDiv({ cls: "cs-command-preview" });
 		box.createDiv({
 			cls: "cs-command-preview-label",
 			text: t("commandBuilder.preview"),

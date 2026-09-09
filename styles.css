@@ -3964,8 +3964,37 @@ input.cs-input-invalid:focus {
 }
 
 /* Editor: the generated command name, shown as the user picks. */
+
+/* The card is the last thing in the form, so the eye reads it as one more line
+   of the stack above it and wants the same hairline between them that every
+   pair of Settings gets. Both halves of the gap are Obsidian's own
+   `.setting-item` block padding (`0.75em`): the last option row already pays
+   the half above the rule, and this wrapper pays the half below, so the line
+   sits centred exactly as it does between two rows.
+
+   `em`, not a pixel value, because that is what `.setting-item` uses — the
+   wrapper is a sibling of those rows and inherits the same font size, so the
+   two gaps stay equal at any UI font scale.
+
+   The rule lives on this wrapper rather than on the card because the card
+   carries a full border of its own: a `border-top` there would thicken into
+   the box's own edge and read as part of the card, not as the line between
+   two rows. */
+.cs-command-preview-row {
+	border-top: 1px solid var(--background-modifier-border);
+	padding-top: 0.75em;
+}
+
+/* The phone re-spaces every row of its own accord — `.is-phone .setting-item`
+   is `padding: 1em 0` with `border-width: var(--border-width)` — so the wrapper
+   follows it there instead of holding a desktop gap the rows above no longer
+   use, which would leave the rule sitting high between them. */
+.is-phone .cs-command-preview-row {
+	border-top-width: var(--border-width);
+	padding-top: 1em;
+}
+
 .cs-command-preview {
-	margin-top: 16px;
 	padding: 10px 12px;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-s);
