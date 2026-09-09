@@ -44,6 +44,11 @@ This single action returns the whole plugin to its factory state in one step:
 - The global style settings covered earlier in this guide are reset.
 - Cached icon artwork is cleared.
 
+Callouts supplied by your active theme remain listed, including ones you had
+previously scanned, imported or edited on another device. Reset removes their
+saved customization and keeps only the local theme entry. On another device
+without that theme, the saved entry disappears after sync; notes stay untouched.
+
 Because this affects the entire plugin at once, use it only when you genuinely want to start fresh - not when you only meant to undo one field or one callout type. If you're unsure which level you need, it's worth pausing: **Reset everything** cannot be limited to part of your setup, so it's the one to reach for last, not first.
 
 ## If your callout types disappear

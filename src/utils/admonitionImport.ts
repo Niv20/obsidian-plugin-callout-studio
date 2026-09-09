@@ -172,7 +172,8 @@ export async function planAdmonitionImport(
 		}
 		seenIds.set(calloutIdentity(id), index);
 
-		const existing = registry.findByAttrId(id);
+		const candidate = registry.findByAttrId(id);
+		const existing = candidate?.source === "theme" ? undefined : candidate;
 
 		// Every reason to reject the entry comes before any of the mapping
 		// below, and this one is the reason why: converting a picture is the

@@ -103,6 +103,25 @@ describe("restyleUncustomizedFallbackRows — who is mirrored", () => {
 		assert.strictEqual(registry.get("themed")?.colorLight, "#336699");
 	});
 
+	it("mirrors the same row on two devices running different themes", () => {
+		// `themeOwns` is derived from the theme active on *this* machine, so
+		// asking it inside a mutation that reaches data.json would make one
+		// user action write two different files — the issue #41 shape. Only
+		// `externalStyle` may skip: it is stored, so every device agrees.
+		const withTheme = withFallback().registry;
+		const withoutTheme = withFallback().registry;
+		withTheme.setThemeOwnedIds(new Set(["f1"]));
+
+		withTheme.restyleUncustomizedFallbackRows();
+		withoutTheme.restyleUncustomizedFallbackRows();
+
+		assert.deepStrictEqual(
+			withTheme.toSaveData().callouts,
+			withoutTheme.toSaveData().callouts,
+		);
+		assert.strictEqual(withTheme.get("f1")?.colorLight, "#ff0000");
+	});
+
 	it("skips a user-created callout — it was never a mirror", () => {
 		const { registry } = withFallback({}, [def({ id: "mine", source: "user" })]);
 		registry.restyleUncustomizedFallbackRows();

@@ -6,7 +6,8 @@ import type { SettingsWriter } from "./SettingsWriter";
 import { buildKnownCalloutIds } from "./knownCalloutIds";
 import { buildDiscoveredRow, fallbackSourceFor } from "./discoveredRow";
 import { scanStringForUnknownCallouts } from "../utils/vaultCalloutScanner";
-import { mergeDashSpaceVariants, normalizeCalloutId } from "../utils/calloutId";
+import { mergeDashSpaceVariants } from "../utils/calloutId";
+import { usableThemeIds } from "../utils/usableCallouts";
 import { stableKeyOrder } from "../utils/stableJson";
 
 interface ManualDiscoveryHost {
@@ -20,13 +21,6 @@ interface ManualDiscoveryHost {
 
 function snapshot(registry: CalloutRegistry): string {
 	return JSON.stringify(stableKeyOrder(registry.toSaveData()));
-}
-
-/** CSS attribute values must still be expressible as an actual callout token. */
-function usableThemeIds(ids: ReadonlySet<string>): Set<string> {
-	return new Set([...ids]
-		.filter((id) => !/[[\]|\\\r\n\0]/.test(id))
-		.map(normalizeCalloutId).filter(Boolean));
 }
 
 export class ManualCalloutDiscovery {
@@ -101,6 +95,11 @@ export class ManualCalloutDiscovery {
 			const latestFallback = fallbackSourceFor(registry, registry.settings.fallbackCalloutId);
 			registry.batch(() => {
 				for (const row of added) {
+					// The theme overlay may be holding this id — it is one of the
+					// places the scan takes ids from. `add` would refuse, leaving
+					// the row on disk but not in the live registry. Retiring the
+					// ephemeral row first is what promotes it to real settings.
+					if (registry.get(row.id)?.source === "theme") registry.remove(row.id);
 					// A local edit made while the file write was in flight wins.
 					// Rebuild against its fallback too: that edit may have changed
 					// the chosen fallback or its colors before these rows existed.

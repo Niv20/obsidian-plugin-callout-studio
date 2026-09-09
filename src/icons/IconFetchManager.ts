@@ -183,7 +183,7 @@ export class IconFetchManager {
 		if (this.work.destroyed) return;
 		const missing = this.host.registry
 			.getAll()
-			.filter((def) => this.needsFetch(def.icon));
+			.filter((def) => def.source !== "theme" && this.needsFetch(def.icon));
 		if (missing.length === 0) return;
 
 		let fetched = 0;

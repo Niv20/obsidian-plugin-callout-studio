@@ -42,6 +42,8 @@ import {
 	findAttrIdConflict,
 	vaultIdFormsFor,
 } from "./calloutIdForms";
+import { syncThemeOverlayRows } from "./theme/themeOverlayRows";
+import { addImportedCallout } from "../utils/importedCallout";
 import { ThemeFacts } from "./theme/ThemeFacts";
 import type { ThemeAppearance } from "./theme/themeAppearance";
 import { mirroredFallbackRow } from "./discoveredRow";
@@ -691,10 +693,10 @@ export class CalloutRegistry {
 			if (def.builtIn) continue;
 			if (def.source !== "fallback") continue;
 			if (def.customized === true) continue;
-			// Nothing reads this row's colours while the theme owns it, so
-			// mirroring onto it would only churn data.json on every fallback
-			// change and make the row look edited in an export.
-			if (this.standsDown(def)) continue;
+			// Only `externalStyle` may skip here: it is a stored per-row field,
+			// so every device agrees. `themeOwns` must not be asked — it would
+			// let this machine's theme decide what data.json says (issue #41).
+			if (def.externalStyle === true) continue;
 			if (def.id === fallbackId) continue;
 			const next = mirroredFallbackRow(def, fallback);
 			if (!next) continue;
@@ -1496,7 +1498,7 @@ export class CalloutRegistry {
 	cleanupUnusedIconSvgs(): void {
 		const usedKeys = new Set<string>();
 		for (const def of this.callouts.values()) {
-			const pack = packFor(def.icon);
+			const pack = def.source === "theme" ? null : packFor(def.icon);
 			if (!pack) continue;
 			for (const role of CALLOUT_RENDER_ROLES) {
 				usedKeys.add(
@@ -1554,13 +1556,17 @@ export class CalloutRegistry {
 		// that is meant to empty it.
 		this.settings.userImages = [];
 		// The commands the user built point at callouts this reset just wiped.
-		// The manager's sync would drop them anyway; clearing here keeps the
-		// reset atomic instead of leaving a list that empties a moment later.
+		// Clear them together with the callouts they reference.
 		this.settings.customCommands = [];
 		this.syncUserImages();
 		// Clear SVG caches
 		this.clearIconSvgCache();
-		this.notifyChange();
+		// Rebuild every currently declared id, including those previously held
+		// by a saved row or alias. Use the reset defaults, not deleted artwork.
+		this.batch(() => {
+			syncThemeOverlayRows(this, this.themeFacts.getOwnedIds());
+			this.notifyChange();
+		});
 	}
 
 	/**
@@ -1648,7 +1654,7 @@ export class CalloutRegistry {
 					builtIn: false,
 					source: "user",
 				};
-				if (this.add(def)) created++;
+				if (addImportedCallout(this, def)) created++;
 			}
 
 			// Safety net: add()/update() above already save on every successful
@@ -1753,7 +1759,7 @@ export class CalloutRegistry {
 					builtIn: false,
 					source: "user",
 				};
-				if (this.add(def)) created++;
+				if (addImportedCallout(this, def)) created++;
 			}
 
 			// Safety net, as in applyCalloutManagerImport: add()/update() save on

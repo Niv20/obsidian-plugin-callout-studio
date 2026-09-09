@@ -116,7 +116,7 @@ export class IconService implements IconResolver {
 		// turning the icon back on needs neither.
 		const icons = this.host.registry
 			.getAll()
-			.filter((def) => def.hideIcon !== true)
+			.filter((def) => def.source !== "theme" && def.hideIcon !== true)
 			.map((def) => def.icon);
 		const results = await this.packs.loadUsed(icons.map((icon) => icon.type));
 		if (this.destroyed) return;

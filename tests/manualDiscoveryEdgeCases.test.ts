@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { setImmediate as nextTurn } from "node:timers/promises";
 import { describe, it } from "node:test";
+import { syncThemeOverlayRows } from "../src/manager/theme/themeOverlayRows";
 import { discoveryHarness, definition } from "./support/discoveryHarness";
 
 function gate() {
@@ -84,4 +85,36 @@ describe("manual discovery reconciles local changes during the write", () => {
 		assert.deepEqual(h.registry.get("found"), authored);
 		assert.equal(h.state.disk?.callouts.find((row) => row.id === "found")?.displayName, authored.displayName);
 	});
+});
+
+
+describe("manual discovery with a live theme overlay", () => {
+	for (const during of ["read", "write"] as const) {
+		it(`handles a theme switch during the ${during} without publishing temporary styles`, async () => {
+			const h = discoveryHarness({ "a.md": "> [!from-note]" });
+			h.state.themes = new Set(["old-theme"]);
+			syncThemeOverlayRows(h.registry, h.state.themes);
+			const changeTheme = () => {
+				h.state.themes = new Set(["new-theme"]);
+				syncThemeOverlayRows(h.registry, h.state.themes);
+			};
+			if (during === "read") h.state.duringRead = changeTheme;
+			else h.state.duringWrite = changeTheme;
+			try {
+				if (during === "read") {
+					await assert.rejects(h.discovery.run());
+					assert.equal(h.state.writes, 0);
+					assert.equal(h.registry.get("old-theme"), undefined);
+				} else {
+					// The user's scan already committed: keep the discovered ids,
+					// even though the current theme now supplies different ones.
+					assert.equal(await h.discovery.run(), 2);
+					assert.equal(h.registry.get("old-theme")?.source, "fallback");
+					assert.equal(h.registry.themeOwns(h.registry.get("old-theme")!), false);
+				}
+				assert.equal(h.registry.get("new-theme")?.source, "theme");
+				assert.ok(!h.state.disk?.callouts.some(row => row.source === "theme"));
+			} finally { h.discovery.destroy(); h.writer.destroy(); }
+		});
+	}
 });

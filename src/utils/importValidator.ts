@@ -1049,7 +1049,7 @@ function validateCalloutArray(
 			const identity = calloutIdentity(idRaw);
 			for (const alias of aliasesClean) {
 				const conflict = registry.findByIdentity(alias);
-				if (conflict && calloutIdentity(conflict.id) !== identity) {
+				if (conflict && conflict.source !== "theme" && calloutIdentity(conflict.id) !== identity) {
 					push({
 						field: "aliases",
 						level: "error",
@@ -1098,7 +1098,7 @@ function validateCalloutArray(
 			// row merely carrying this spelling as an ALIAS is another callout.
 			const found = registry.findByIdentity(idRaw);
 			const target =
-				found && calloutIdentity(found.id) === calloutIdentity(idRaw)
+				found && found.source !== "theme" && calloutIdentity(found.id) === calloutIdentity(idRaw)
 					? found
 					: undefined;
 			const isBuiltIn = target?.builtIn === true;

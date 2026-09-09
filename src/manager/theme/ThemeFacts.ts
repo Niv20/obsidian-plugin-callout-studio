@@ -40,6 +40,11 @@ export class ThemeFacts {
 	private ownedIds: ReadonlySet<string> = new Set();
 	private appearances: ReadonlyMap<string, ThemeAppearance> = new Map();
 
+	/** A snapshot for rebuilding the overlay after settings are reset. */
+	getOwnedIds(): ReadonlySet<string> {
+		return new Set(this.ownedIds);
+	}
+
 	/**
 	 * Publish the ids the active theme claims, in attribute form.
 	 *
@@ -69,7 +74,7 @@ export class ThemeFacts {
 	 * announced change, and announcing one that changed nothing costs a CSS
 	 * regeneration, a settings save and a full settings-tab repaint. The
 	 * `css-change → inject → sweep` chain terminates on this comparison —
-	 * see the termination note in `themeRowSync.ts`.
+	 * see the termination note in `themeAppearanceSync.ts`.
 	 */
 	setAppearances(map: ReadonlyMap<string, ThemeAppearance>): boolean {
 		if (sameThemeAppearances(this.appearances, map)) return false;

@@ -602,3 +602,45 @@ describe("teardown", () => {
 		assert.strictEqual(probe.results().size, 0);
 	});
 });
+
+
+describe("invalidated asynchronous theme measurements", () => {
+	for (const change of ["same theme CSS reload", "rapid A to B to A", "destroy"] as const) {
+		it(`does not publish an obsolete measurement after ${change}`, async () => {
+			const { app, setTheme } = switchableApp();
+			const renderer = MarkdownRenderer as unknown as {
+				render: (app: unknown, markdown: string, el: HTMLElement) => Promise<void>;
+			};
+			const original = renderer.render;
+			let release!: () => void;
+			const gate = new Promise<void>(resolve => { release = resolve; });
+			let passes = 0;
+			const notifications: string[] = [];
+			renderer.render = async (_app, _md, el) => {
+				const first = ++passes === 1;
+				el.createDiv({ cls: "callout", attr: { "data-callout": "recite" } })
+					.createDiv({ cls: "callout-title" })
+					.createDiv({ cls: "callout-title-inner", attr: { "data-self-color": first ? "old" : "new" } });
+				if (first) await gate;
+			};
+			const probe = new ThemeAppearanceProbe(app, attrReader);
+			try {
+				const first = probe.ensure(["recite"], () => notifications.push("old"));
+				if (change === "destroy") probe.destroy();
+				else {
+					if (change === "rapid A to B to A") { setTheme("Lumines"); probe.invalidate(); setTheme("ITS Theme"); }
+					probe.invalidate();
+					await probe.ensure(["recite"], () => notifications.push("new"));
+				}
+				release();
+				await first;
+				// Let the one queued measurement finish without waiting on a callback
+				// that a broken cache could suppress forever.
+				await new Promise<void>(resolve => setImmediate(resolve));
+				assert.deepStrictEqual(notifications, change === "destroy" ? [] : ["new"]);
+				assert.strictEqual(probe.get("recite").accent, change === "destroy" ? null : "new");
+				assert.strictEqual(passes, change === "destroy" ? 1 : 2);
+			} finally { release(); probe.destroy(); renderer.render = original; }
+		});
+	}
+});

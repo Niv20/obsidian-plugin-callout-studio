@@ -37,7 +37,7 @@
  * Such a row must not reach the live map, because a theme row is no longer a
  * stored thing at all: it is an **ephemeral overlay**, minted from the active
  * theme's stylesheet on every launch and written to `data.json` by nothing (see
- * `CalloutRegistry.toSaveData` and `manager/theme/themeProvidedRows.ts`). But
+ * `CalloutRegistry.toSaveData` and `manager/theme/themeOverlayRows.ts`). But
  * "what is this row" has two different answers depending on who wrote it, and
  * getting that wrong either deletes a user's callout or resurrects a ghost.
  *
