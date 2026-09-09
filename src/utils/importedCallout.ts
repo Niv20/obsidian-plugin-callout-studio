@@ -5,6 +5,14 @@ import { calloutIdentity } from "./calloutId";
 /** Restore a validated backup row, preserving spellings still used in notes. */
 export function applyImportedCallout(registry: CalloutRegistry, def: CalloutDefinition): boolean {
 	const existing = registry.getReal(def.id);
+	// A theme overlay row is not a definition to merge onto — it is a stand-in
+	// for whatever the active theme draws. Merging would make the imported row
+	// depend on which theme happened to be enabled, so a device with the theme
+	// and one without would end up with different rows from the same backup.
+	if (existing?.source === "theme") {
+		registry.remove(def.id);
+		return registry.add(def);
+	}
 	if (!existing) return registry.add(def);
 	// A backup describes a whole appearance. Omitted optional values mean the
 	// default/inherited value, not whatever was changed after the backup.

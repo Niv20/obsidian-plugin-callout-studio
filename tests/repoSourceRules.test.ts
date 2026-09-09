@@ -793,7 +793,12 @@ describe("no new oversized files", () => {
 		// everything else. Most of that raise was paid straight back by moving
 		// CURRENT_DATA_VERSION to constants.ts, where the same check can read
 		// it without importing the class that imports the check.
-		"src/manager/CalloutRegistry.ts": 1892,
+		// Raised from 1892 for `resetAll`'s theme-overlay carve-out. Reset must
+		// not empty the theme list: those rows are minted from the active
+		// stylesheet, not saved anywhere, and only a sweep can put them back.
+		// The rule belongs where the map is cleared — moving it out would mean
+		// a caller had to remember, which is the bug.
+		"src/manager/CalloutRegistry.ts": 1898,
 		// Raised from 1184 for the same set, rejected in `validateIdString`.
 		// Same reasoning: "which id strings are valid on import" is the one
 		// thing this file is for, so the rule cannot move out of it without

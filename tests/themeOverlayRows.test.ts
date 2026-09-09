@@ -22,6 +22,7 @@ import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { syncThemeOverlayRows } from "../src/manager/theme/themeOverlayRows";
 import { PREVIEW_PLACEHOLDER_ID, STYLE_DEMO_ID } from "../src/constants";
 import { discovered, definition } from "./support/discoveryHarness";
+import { pluginSourceFiles, readRepoFile, report } from "./support/sourceScan";
 
 function vault(): CalloutRegistry {
 	const registry = new CalloutRegistry();
@@ -162,6 +163,19 @@ describe("theme overlay rows — what the sweep retires", () => {
 		assert.deepStrictEqual(registry.toSaveData(), after);
 	});
 
+	it("survives Reset everything", () => {
+		// The theme did not go anywhere, so its callouts must not either. They
+		// are in no backup and no export, and only a sweep can put them back —
+		// which may not happen until the user next changes theme.
+		const registry = vault();
+		registry.add(definition({ id: "mine" }));
+		sweep(registry, "recite");
+		registry.resetAll();
+		assert.strictEqual(registry.get("recite")?.source, "theme");
+		assert.strictEqual(registry.get("mine"), undefined, "the user's row went");
+		assert.ok(!registry.toSaveData().callouts.some((d) => d.id === "recite"));
+	});
+
 	it("hands a minted id over to a real row when a scan claims it", () => {
 		// The one sanctioned route from theme id to saved configuration.
 		const registry = vault();
@@ -174,5 +188,47 @@ describe("theme overlay rows — what the sweep retires", () => {
 			registry.toSaveData().callouts.some((d) => d.id === "recite"),
 			"a scanned row is saved configuration",
 		);
+	});
+});
+
+/** Comments removed, so a doc block quoting the marker is not a hit. */
+function code(text: string): string {
+	return text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+}
+
+describe("theme overlay rows — the guards that keep them off disk", () => {
+	it("is the only place in src/ that mints a theme row", () => {
+		// The overlay is safe because exactly one function can create one and
+		// that function is covered above. A second minter somewhere else would
+		// be a row nobody has reasoned about reaching a persisted field.
+		const offenders = pluginSourceFiles()
+			.filter((f) => f.path !== "src/manager/theme/themeOverlayRows.ts")
+			.filter((f) => /source:\s*"theme"/.test(code(f.text)))
+			.map((f) => f.path);
+		assert.deepStrictEqual(
+			offenders,
+			[],
+			report("Files minting a theme row", offenders),
+		);
+	});
+
+	it("keeps the persistence skip unconditional", () => {
+		// No `builtIn` test, no `customized` test, no theme-ownership question:
+		// any condition here would be a way for machine-local state to decide
+		// what the synced file says.
+		assert.match(
+			code(readRepoFile("src/manager/discoveredRowPersistence.ts")),
+			/if \(def\.source === "theme"\) continue;/,
+		);
+	});
+
+	it("keeps a theme row out of every persisted field", () => {
+		const registry = vault();
+		const before = registry.toSaveData();
+		sweep(registry, "recite");
+		registry.cleanupUnusedIconSvgs();
+		const after = registry.toSaveData();
+		assert.deepStrictEqual(after, before);
+		assert.deepStrictEqual(after.iconSvgCache, before.iconSvgCache);
 	});
 });

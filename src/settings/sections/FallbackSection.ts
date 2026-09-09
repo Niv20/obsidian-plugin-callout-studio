@@ -23,8 +23,12 @@ export function renderFallbackSection(
 		.setName(t("settings.fallbackCallout"))
 		.setDesc(t("settings.fallbackCalloutDesc"))
 		.addDropdown((dd) => {
+			// `fallbackCalloutId` is persisted, so only a row that exists on
+			// every device may be offered. A theme overlay row exists on this
+			// one, for as long as this theme is active — choosing it would put
+			// machine-local state into the synced settings file (issue #41).
 			const allCallouts = sortCalloutsById(
-				ctx.plugin.registry.getAll(),
+				ctx.plugin.registry.getAll().filter((c) => c.source !== "theme"),
 				getLocale(),
 			);
 			for (const c of allCallouts) {

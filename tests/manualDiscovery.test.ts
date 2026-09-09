@@ -3,6 +3,7 @@ import { setImmediate as nextTurn } from "node:timers/promises";
 import { describe, it } from "node:test";
 import { discoveryHarness, definition } from "./support/discoveryHarness";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
+import { syncThemeOverlayRows } from "../src/manager/theme/themeOverlayRows";
 import { CURRENT_DATA_VERSION } from "../src/constants";
 import { readRepoFile, repoFileExists } from "./support/sourceScan";
 
@@ -25,6 +26,25 @@ describe("manual discovery is an explicit additive transaction", () => {
 		assert.equal(await h.discovery.run(), 4);
 		assert.deepEqual(h.registry.getUserDefined().map(d => d.id).sort(), ["block", "heading", "inline", "owned", "two words"]);
 		assert.equal(h.state.writes, 1);
+	});
+	it("still converts a theme id the overlay already holds into a saved row", async () => {
+		// The overlay puts a `source: "theme"` row on the map for every id the
+		// active theme declares. Two things then quietly break unless they are
+		// taught to look past it: `buildKnownCalloutIds` reads `getAll()`, so
+		// the id looks already-known and the scan skips it; and `registry.add`
+		// refuses an id the overlay occupies, so the file gains the row while
+		// the live registry keeps the overlay. Both fail silently.
+		const h = discoveryHarness({ "a.md": "> [!themed]" });
+		h.state.themes.add("themed");
+		syncThemeOverlayRows(h.registry, new Set(["themed"]));
+		h.syncBaseline();
+		assert.equal(h.registry.get("themed")?.source, "theme");
+
+		assert.equal(await h.discovery.run(), 1);
+		assert.equal(h.state.writes, 1);
+		assert.equal(h.registry.get("themed")?.source, "fallback");
+		assert.equal(h.registry.getAll().filter(d => d.id === "themed").length, 1);
+		assert.ok(h.state.disk?.callouts.some(d => d.id === "themed"), "saved to disk");
 	});
 	it("adds current theme ids only on request and preserves an existing definition", async () => {
 		const h = discoveryHarness(); h.state.themes.add("themed"); h.state.themes.add("owned");

@@ -1496,7 +1496,7 @@ export class CalloutRegistry {
 	cleanupUnusedIconSvgs(): void {
 		const usedKeys = new Set<string>();
 		for (const def of this.callouts.values()) {
-			const pack = packFor(def.icon);
+			const pack = def.source === "theme" ? null : packFor(def.icon);
 			if (!pack) continue;
 			for (const role of CALLOUT_RENDER_ROLES) {
 				usedKeys.add(
@@ -1528,10 +1528,16 @@ export class CalloutRegistry {
 		// A reset is the user saying "none of this is mine" — which goes for
 		// another build's fields as much as for their own callouts.
 		this.foreign = NO_FOREIGN_FIELDS;
+		// The theme's callouts are not the user's to reset: they are an overlay
+		// minted from the active stylesheet, absent from every backup and
+		// export, and re-minted only by the next sweep. Without this, Reset
+		// empties the theme list until the user happens to change theme.
+		const themeRows = this.getAll().filter((d) => d.source === "theme");
 		this.callouts.clear();
 		for (const def of DEFAULT_CALLOUTS) {
 			this.setCallout(def.id, structuredClone(def));
 		}
+		for (const row of themeRows) this.setCallout(row.id, row);
 		// Reset global style to defaults
 		this.settings.globalStyle = structuredClone(
 			DEFAULT_SETTINGS.globalStyle,

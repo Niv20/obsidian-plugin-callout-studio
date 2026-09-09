@@ -95,6 +95,11 @@ export class ManualCalloutDiscovery {
 			const latestFallback = fallbackSourceFor(registry, registry.settings.fallbackCalloutId);
 			registry.batch(() => {
 				for (const row of added) {
+					// The theme overlay may be holding this id — it is one of the
+					// places the scan takes ids from. `add` would refuse, leaving
+					// the row on disk but not in the live registry. Retiring the
+					// ephemeral row first is what promotes it to real settings.
+					if (registry.get(row.id)?.source === "theme") registry.remove(row.id);
 					// A local edit made while the file write was in flight wins.
 					// Rebuild against its fallback too: that edit may have changed
 					// the chosen fallback or its colors before these rows existed.
