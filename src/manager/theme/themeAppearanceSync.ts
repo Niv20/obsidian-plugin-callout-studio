@@ -3,15 +3,20 @@ import type { CalloutDefinition } from "../../types";
 import { enabledSnippetCss, stylingSignature, themeCss } from "./customCssApi";
 import type { ThemeCalloutStore } from "./ThemeCalloutStore";
 import { ThemeAppearanceProbe } from "./ThemeAppearanceProbe";
+import { syncThemeOverlayRows } from "./themeOverlayRows";
 import type { ThemeAppearance } from "./themeAppearance";
 
 export interface ThemeSyncHost {
 
 	app: App;
 	registry: {
+		settings: { fallbackCalloutId: string };
 		batch<T>(body: () => T): T;
 		setThemeOwnedIds(ids: ReadonlySet<string>): boolean;
 		getAll(): CalloutDefinition[];
+		get(id: string): CalloutDefinition | undefined;
+		add(def: CalloutDefinition): boolean;
+		remove(id: string): boolean;
 		vaultIdFormsFor(def: CalloutDefinition): string[];
 		setThemeAppearances(
 			map: ReadonlyMap<string, ThemeAppearance>,
@@ -44,7 +49,12 @@ export function registerThemeAppearance(host: ThemeSyncHost): () => void {
 
 		host.cssInjector.themeCallouts().invalidate();
 
-		host.registry.setThemeOwnedIds(host.cssInjector.themeCallouts().themeDefinedIds());
+		// Mints and retires the theme's own callout rows as well as publishing
+		// ownership, in one batch, so listeners never see the two halves apart.
+		syncThemeOverlayRows(
+			host.registry,
+			host.cssInjector.themeCallouts().themeDefinedIds(),
+		);
 	};
 
 	const probe = (): void => {

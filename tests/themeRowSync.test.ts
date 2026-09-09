@@ -2,8 +2,9 @@
  * tests/themeRowSync.test.ts — what happens, and in what order, when the
  * active styling changes.
  *
- * `themeProvidedRows.test.ts` pins the sweep as a function: given a registry
- * and a store, which rows exist afterwards. This pins the half around it —
+ * `themeOverlayRows.test.ts` pins the sweep as a function: given a registry
+ * and a set of declared ids, which rows exist afterwards. This pins the half
+ * around it —
  * `registerThemeAppearance` — where the failures are all about *timing* rather
  * than about the result, and so are invisible to a test that only inspects the
  * end state:
@@ -102,7 +103,7 @@ function vault(): CalloutRegistry {
 	return registry;
 }
 
-describe("theme appearance updates never discover or delete callouts", () => {
+describe("theme appearance updates never persist anything", () => {
  it("refreshes claims when an enabled snippet is edited without a name or length change", () => {
   const t = themeHost("");
   t.setSnippet('.callout[data-callout="probe"] { color:tan; }');
@@ -116,14 +117,36 @@ describe("theme appearance updates never discover or delete callouts", () => {
   assert.strictEqual(registry.get("probe"), undefined);
   for (const dispose of disposers) dispose();
  });
- it("updates ownership for existing rows without adding unknown ids", () => {
+ it("mints an overlay row for a theme id without persisting it", () => {
   const t = themeHost('.callout[data-callout="recite"] { color: red; }');
-  const registry = vault(); const { host } = syncHost(registry, t.app);
-  const refresh = registerThemeAppearance(host);
-  assert.strictEqual(registry.get("recite"), undefined);
-  registry.add(discovered("recite")); const saved = registry.toSaveData(); refresh();
+  const registry = vault(); const saved = registry.toSaveData();
+  const { host } = syncHost(registry, t.app);
+  registerThemeAppearance(host);
+  const row = registry.get("recite");
+  assert.ok(row, "the theme's own type is listed without a scan");
+  assert.strictEqual(row.source, "theme");
+  assert.strictEqual(registry.themeOwns(row), true);
+  assert.deepStrictEqual(registry.toSaveData(), saved, "data.json did not move");
+ });
+ it("leaves an existing row's source alone when the theme declares its id", () => {
+  const t = themeHost('.callout[data-callout="recite"] { color: red; }');
+  const registry = vault(); registry.add(discovered("recite"));
+  const saved = registry.toSaveData();
+  const { host } = syncHost(registry, t.app);
+  const refresh = registerThemeAppearance(host); refresh();
+  assert.strictEqual(registry.get("recite")?.source, "fallback");
   assert.strictEqual(registry.themeOwns(registry.get("recite")!), true);
   assert.deepStrictEqual(registry.toSaveData(), saved);
+ });
+ it("retires only the rows it minted when the theme lets go", () => {
+  const t = themeHost('.callout[data-callout="recite"] { color: red; }');
+  const registry = vault(); const { host } = syncHost(registry, t.app);
+  registerThemeAppearance(host);
+  assert.strictEqual(registry.get("recite")?.source, "theme");
+  const saved = registry.toSaveData();
+  t.setTheme({ css: "" }); t.cssChange();
+  assert.strictEqual(registry.get("recite"), undefined, "the overlay went with the theme");
+  assert.deepStrictEqual(registry.toSaveData(), saved, "data.json did not move");
  });
  it("preserves saved rows when a theme stops defining them", () => {
   const t = themeHost('.callout[data-callout="recite"] { color: red; }');
