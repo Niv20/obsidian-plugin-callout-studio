@@ -200,7 +200,7 @@ export const tr: Record<string, string> = {
 	"commandBuilder.actionInsert": "Yeni ekle",
 	"commandBuilder.foldState": "Katlama durumu",
 	"commandBuilder.foldStateDesc":
-		"Bu komutun yazdığı callout'un katlanıp katlanamayacağını ve hangi durumda başlayacağını belirler.",
+		"Callout'un katlanıp katlanamayacağını ve hangi durumda başlayacağını belirler.",
 	"commandBuilder.foldNone": "Katlanamaz",
 	"commandBuilder.foldExpanded": "Katlanabilir, açık (+)",
 	"commandBuilder.foldCollapsed": "Katlanabilir, kapalı (-)",

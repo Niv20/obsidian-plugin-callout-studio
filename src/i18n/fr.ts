@@ -200,7 +200,7 @@ export const fr: Record<string, string> = {
 	"commandBuilder.actionInsert": "Insérer un nouveau",
 	"commandBuilder.foldState": "État de repli",
 	"commandBuilder.foldStateDesc":
-		"Indique si le callout écrit par cette commande peut être replié, et dans quel état il démarre.",
+		"Indique si le callout peut être replié, et dans quel état il démarre.",
 	"commandBuilder.foldNone": "Non repliable",
 	"commandBuilder.foldExpanded": "Repliable, ouvert (+)",
 	"commandBuilder.foldCollapsed": "Repliable, fermé (-)",

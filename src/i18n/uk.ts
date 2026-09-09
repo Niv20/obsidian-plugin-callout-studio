@@ -200,7 +200,7 @@ export const uk: Record<string, string> = {
 	"commandBuilder.actionInsert": "Вставити новий",
 	"commandBuilder.foldState": "Стан згортання",
 	"commandBuilder.foldStateDesc":
-		"Чи можна складати callout, який записує ця команда, і в якому стані він починається.",
+		"Чи можна складати callout, і в якому стані він починається.",
 	"commandBuilder.foldNone": "Нескладаний",
 	"commandBuilder.foldExpanded": "Складаний, відкритий (+)",
 	"commandBuilder.foldCollapsed": "Складаний, закритий (-)",

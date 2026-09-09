@@ -265,7 +265,7 @@ export const en: Record<string, string> = {
 	"commandBuilder.actionInsert": "Insert new",
 	"commandBuilder.foldState": "Fold state",
 	"commandBuilder.foldStateDesc":
-		"Whether the callout this command writes can be folded, and how it starts out.",
+		"Whether the callout can be folded, and how it starts out.",
 	"commandBuilder.foldNone": "Non-foldable",
 	"commandBuilder.foldExpanded": "Foldable, expanded (+)",
 	"commandBuilder.foldCollapsed": "Foldable, collapsed (-)",

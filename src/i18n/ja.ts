@@ -203,7 +203,7 @@ export const ja: Record<string, string> = {
 	"commandBuilder.actionInsert": "新規挿入",
 	"commandBuilder.foldState": "折りたたみ状態",
 	"commandBuilder.foldStateDesc":
-		"このコマンドが書き込むcalloutが折りたたみ可能かどうか、およびどの状態で開始するか。",
+		"calloutが折りたたみ可能かどうか、およびどの状態で開始するか。",
 	"commandBuilder.foldNone": "折りたたみ不可",
 	"commandBuilder.foldExpanded": "折りたたみ可能、開いた状態 (+)",
 	"commandBuilder.foldCollapsed": "折りたたみ可能、閉じた状態 (-)",

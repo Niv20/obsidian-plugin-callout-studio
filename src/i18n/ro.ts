@@ -201,7 +201,7 @@ export const ro: Record<string, string> = {
 	"commandBuilder.actionInsert": "Inserează nou",
 	"commandBuilder.foldState": "Stare de pliere",
 	"commandBuilder.foldStateDesc":
-		"Dacă callout-ul scris de această comandă poate fi pliat și în ce stare începe.",
+		"Dacă callout-ul poate fi pliat și în ce stare începe.",
 	"commandBuilder.foldNone": "Nepliabil",
 	"commandBuilder.foldExpanded": "Pliabil, deschis (+)",
 	"commandBuilder.foldCollapsed": "Pliabil, închis (-)",

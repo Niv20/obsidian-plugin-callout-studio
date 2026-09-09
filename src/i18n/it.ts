@@ -199,7 +199,7 @@ export const it: Record<string, string> = {
 	"commandBuilder.actionInsert": "Inserisci nuovo",
 	"commandBuilder.foldState": "Stato di piegatura",
 	"commandBuilder.foldStateDesc":
-		"Se il callout scritto da questo comando può essere piegato e in quale stato inizia.",
+		"Se il callout può essere piegato e in quale stato inizia.",
 	"commandBuilder.foldNone": "Non pieghevole",
 	"commandBuilder.foldExpanded": "Pieghevole, aperto (+)",
 	"commandBuilder.foldCollapsed": "Pieghevole, chiuso (-)",

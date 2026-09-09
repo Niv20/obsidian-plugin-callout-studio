@@ -191,7 +191,7 @@ export const nb: Record<string, string> = {
 	"commandBuilder.actionInsert": "Sett inn ny",
 	"commandBuilder.foldState": "Foldetilstand",
 	"commandBuilder.foldStateDesc":
-		"Om callout-en denne kommandoen skriver kan foldes, og hvilken tilstand den starter i.",
+		"Om callout-en kan foldes, og hvilken tilstand den starter i.",
 	"commandBuilder.foldNone": "Ikke-foldbar",
 	"commandBuilder.foldExpanded": "Foldbar, åpen (+)",
 	"commandBuilder.foldCollapsed": "Foldbar, lukket (-)",

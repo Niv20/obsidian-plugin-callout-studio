@@ -196,7 +196,7 @@ export const ms: Record<string, string> = {
 	"commandBuilder.actionInsert": "Masukkan baharu",
 	"commandBuilder.foldState": "Status lipatan",
 	"commandBuilder.foldStateDesc":
-		"Sama ada callout yang ditulis oleh arahan ini boleh dilipat, dan keadaan permulaannya.",
+		"Sama ada callout boleh dilipat, dan keadaan permulaannya.",
 	"commandBuilder.foldNone": "Tidak boleh dilipat",
 	"commandBuilder.foldExpanded": "Boleh dilipat, terbuka (+)",
 	"commandBuilder.foldCollapsed": "Boleh dilipat, tertutup (-)",

@@ -201,7 +201,7 @@ export const sv: Record<string, string> = {
 	"commandBuilder.actionInsert": "Infoga ny",
 	"commandBuilder.foldState": "Hopfällningsstatus",
 	"commandBuilder.foldStateDesc":
-		"Om callouten som detta kommando skriver kan vikas, och i vilket tillstånd den startar.",
+		"Om callouten kan vikas, och i vilket tillstånd den startar.",
 	"commandBuilder.foldNone": "Icke-vikbar",
 	"commandBuilder.foldExpanded": "Vikbar, öppen (+)",
 	"commandBuilder.foldCollapsed": "Vikbar, stängd (-)",

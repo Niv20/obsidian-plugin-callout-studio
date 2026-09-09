@@ -198,7 +198,7 @@ export const nl: Record<string, string> = {
 	"commandBuilder.actionInsert": "Nieuwe invoegen",
 	"commandBuilder.foldState": "Inklapstatus",
 	"commandBuilder.foldStateDesc":
-		"Of de callout die deze opdracht schrijft kan worden ingeklapt, en in welke status hij begint.",
+		"Of de callout kan worden ingeklapt, en in welke status hij begint.",
 	"commandBuilder.foldNone": "Niet-opvouwbaar",
 	"commandBuilder.foldExpanded": "Opvouwbaar, open (+)",
 	"commandBuilder.foldCollapsed": "Opvouwbaar, gesloten (-)",

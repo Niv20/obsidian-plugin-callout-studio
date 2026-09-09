@@ -185,7 +185,7 @@ export const da: Record<string, string> = {
 	"commandBuilder.actionInsert": "Indsæt ny",
 	"commandBuilder.foldState": "Foldtilstand",
 	"commandBuilder.foldStateDesc":
-		"Om callout'en, denne kommando skriver, kan foldes, og hvilken tilstand den starter i.",
+		"Om callout'en kan foldes, og hvilken tilstand den starter i.",
 	"commandBuilder.foldNone": "Ikke-foldbar",
 	"commandBuilder.foldExpanded": "Foldbar, åben (+)",
 	"commandBuilder.foldCollapsed": "Foldbar, lukket (-)",
