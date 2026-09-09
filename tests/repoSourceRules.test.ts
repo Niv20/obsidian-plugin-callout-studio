@@ -739,12 +739,20 @@ describe("no new oversized files", () => {
 	const SOFT_LIMIT = 300;
 
 	const FROZEN: Record<string, number> = {
-		// Raised from 2322 for the create-only autofocus: the guard, the field
-		// holding its disposer, and the two lines that release it on close.
-		// Everything movable already moved — settings/modalAutofocus.ts owns the
-		// focus and the scroll hold whole — and what is left is the one thing
-		// only this class can answer: whether this window is creating a callout.
-		"src/settings/CalloutEditor.ts": 2328,
+		// Lowered from 2328: the Color row's dropdown — its trigger, its menu,
+		// its arrow-key navigation and its outside-click — moved to
+		// settings/paletteCombobox.ts, over the shared ui/listboxPopup.ts, so
+		// the row can be typed into like every other callout picker. What stays
+		// is the half only this class can answer: which palette the form's
+		// colours resolve to, the "Deleted color" state when they resolve to
+		// none, and the save-state baseline that resolution feeds.
+		// Raised from 2322 for the create-only autofocus, then lowered again to
+		// 2144 when the mobile scroll-hold workaround went: the disposer field
+		// and the two lines that released it on close went with it. Everything
+		// movable already moved — settings/modalAutofocus.ts owns the focus and
+		// the platform gate whole — and what is left is the one thing only this
+		// class can answer: whether this window is creating a callout.
+		"src/settings/CalloutEditor.ts": 2144,
 		// Lowered repeatedly, per this ratchet's own ask: `bgAlphaFor`'s solve moved
 		// to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the many
 		// that render the callout identically; `generateFallbackCSS` to
@@ -811,19 +819,11 @@ describe("no new oversized files", () => {
 		// reason CustomPalette.baseColor exists), and the gradient's arrow
 		// direction picker — a pure function of its arguments — to
 		// settings/paletteDirectionPicker.ts.
-		// Raised from 1070 for the same create-only autofocus, for the same
-		// reason: settings/modalAutofocus.ts holds all of it except "is this
-		// window creating a palette", which is `existing` and lives here.
-		"src/settings/PaletteEditorModal.ts": 1082,
-		// Joined this list at 306, crossing 300 for the autofocus that stops the
-		// search field dragging the list up under a phone keyboard. Admitted
-		// rather than split, deliberately: everything this window does that is
-		// not "list callouts and insert one" already lives in a sibling —
-		// quickInsertToolbar, quickInsertRow, quickInsertPreview,
-		// quickInsertMessages, and wrapSelectionInCallout in editor/. What is
-		// left is one modal's lifecycle, its arrow-key walk and its list, and any
-		// further cut would be by line count rather than by responsibility.
-
+		// Raised from 1070 for the same create-only autofocus and lowered again
+		// to 1079 by the same workaround removal, for the same reason:
+		// settings/modalAutofocus.ts holds all of it except "is this window
+		// creating a palette", which is `existing` and lives here.
+		"src/settings/PaletteEditorModal.ts": 1079,
 		"src/editor/calloutTokens.ts": 840,
 		// The one entry that is allowed to move, and only for this reason: a
 		// member of `PluginSettings` has no sibling module to be moved into, so
@@ -880,7 +880,11 @@ describe("no new oversized files", () => {
 		// Lowered from 593: the suggestion row's icon and accent go through
 		// manager/theme/calloutListIcon.ts, shared with the three other lists
 		// that draw a callout small.
-		"src/editor/AutoComplete.ts": 574,
+		// Lowered again from 574: the id/alias second line moved to
+		// settings/calloutComboboxRow.ts `renderCalloutIdLine`, which the
+		// settings callout picker draws too — the popover and the picker must
+		// not describe the same callout differently.
+		"src/editor/AutoComplete.ts": 540,
 		// Lowered from 537: everything that has to happen when the active theme
 		// changes — re-derive its callout rows, then re-inject, in that order —
 		// moved to manager/theme/themeProvidedRows.ts, which is where the rule

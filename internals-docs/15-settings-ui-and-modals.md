@@ -738,25 +738,27 @@ already counted by the time the check runs.
 ## Where the cursor lands when a window opens
 
 [`src/settings/modalAutofocus.ts`](../src/settings/modalAutofocus.ts) is the
-other half of the shared window behaviour, and exists because both rules it
+other half of the shared window behaviour, and exists because the rules it
 carries were previously reinvented — or simply got wrong — per modal.
 
 ```ts
-autofocusOnOpen(scroller: HTMLElement, input: HTMLInputElement | null | undefined): () => void
+autofocusOnOpen(input: HTMLInputElement | null | undefined): void
+autofocusOnDesktop(input: HTMLInputElement | null | undefined): void
 ```
 
-It takes the **scroller** (`contentEl`, the one scroll container in the band
-diagram above) rather than the `Modal`, because the scroller is the only part of
-the window it needs. It returns a disposer for `onClose()`.
+Two entry points, split by what the window is *for*. Both take the field alone,
+and `null` or `undefined` is a no-op — that is what lets a caller reach through
+an optional (`this.nameTextInput?.inputEl`) without guarding it twice. Both ask
+for the focus with `preventScroll: true`, refusing the DOM's own
+scroll-into-view. Neither returns anything: there is nothing to dispose of.
 
 ### Rule 1: only a window that is *creating* something takes the cursor
 
 A **new** callout or palette opens on an empty name that must be filled in
-before anything can be saved, so the cursor belongs there — and on a phone, the
-keyboard coming up with it is the point. An **edit** opens on a filled-in form
-the user came to change some other part of; taking the name field there costs a
-tap to get back out, and on a phone throws the keyboard over the form they
-opened the window to look at.
+before anything can be saved, so the cursor belongs there. An **edit** opens on
+a filled-in form the user came to change some other part of; taking the name
+field there costs a tap to get back out, and on a phone would throw the keyboard
+over the form they opened the window to look at.
 
 The gate is the caller's, and is deliberately the **same expression the window's
 own title asks**:
@@ -782,39 +784,34 @@ is the case that most wants the cursor.
 wired up: its first control is a dropdown, not a text field, so there is no
 keyboard to raise and nothing to focus.
 
-`QuickInsertModal` is the one window that autofocuses with **no gate** — it has
-no edit mode to hold back for, since it exists to be typed into. It still goes
-through the helper, for rule 2 alone.
+### Rule 2: a create window is desktop-only, and the inconsistency is deliberate
 
-### Rule 2: the focus must not move the view
+`autofocusOnDesktop` returns without doing anything when `Platform.isMobile`,
+which is true for phones **and** tablets — exactly the set of devices with a
+soft keyboard. There, the user taps the name field themselves.
 
-Focusing scrolls in two separate ways, and only one of them can be refused
-outright:
+The reason is the jump, and it is not a scroll the plugin asks for, so
+`preventScroll` has no say over it: the WebView shrinks the visual viewport as
+the keyboard slides up, then scrolls to keep the caret inside what is left. A
+window the user has not read yet moves while they are looking at it.
 
-- **the DOM's own scroll-into-view on focus** — turned off with
-  `input.focus({ preventScroll: true })`;
-- **the soft keyboard** — the one that actually showed up as the mobile bug.
-  This is not a scroll the plugin asked for: the WebView shrinks the visual
-  viewport as the keyboard slides up, then scrolls to keep the caret inside
-  what's left. `preventScroll` has no say over it, because by then the `focus()`
-  call has long returned.
+> [!IMPORTANT]
+> This was once fixed the *other* way, keeping every device consistent: focus on
+> mobile as well, then hold the scroller's `scrollTop` at its pre-focus value
+> for `KEYBOARD_SETTLE_MS` (400ms, covering the ~250-300ms iOS slide-in),
+> releasing early on `pointerdown`, `touchstart` or `wheel`. It did not work
+> well — it read as a delayed, clunky lurch rather than as no jump at all — and
+> it cost every window a scroll listener plus a disposer to run from `onClose()`,
+> for a problem no desktop user has. **It has been removed rather than tuned;
+> don't reach for it again.** `tests/modalAutofocus.test.ts` fails if a timer, a
+> listener or a `scrollTop` reappears in `modalAutofocus.ts`.
 
-So the second is answered after the fact: the scroller's `scrollTop` is **held
-at the value it had before the focus** for `KEYBOARD_SETTLE_MS` (400ms, covering
-the ~250-300ms iOS slide-in). The field is the *first* one in the window, so
-that value is the top and the caret is already inside the standing viewport —
-there is nothing worth jumping to.
+### The search windows are the exception, on purpose
 
-The hold is not a lock. It gives way immediately on `pointerdown`, `touchstart`
-or `wheel`, so it can never read as a window whose scrolling is dead for half a
-second. It deliberately does **not** release on `keydown`: typing into the field
-just focused is the expected next event, not a request to scroll away from it.
-
-> [!NOTE]
-> Call the returned disposer from `onClose()`. The hold expires on its own
-> timer, so this is not about leaking — it is that Obsidian reuses `contentEl`
-> across open/close, so a hold left running would be sitting on the *next*
-> window's body.
+`QuickInsertModal` and `ReplaceCalloutModal` call `autofocusOnOpen`, so they
+take the cursor on **every** device, phone included. They have no edit mode to
+gate on, and nothing in them does anything until a query is typed — so there the
+keyboard arriving with the window is the point rather than the problem.
 
 ## Two theme-aware surface tokens
 
