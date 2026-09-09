@@ -3547,13 +3547,43 @@ button.callout-studio-icon-picker-loading {
 	outline-offset: -2px;
 }
 
-/* The toolbar's search box and dropdowns deliberately carry NO focus rule of
-   their own. Obsidian already focuses both the way the rest of the plugin now
-   does — a text field gets its 1px border in `--background-modifier-border-
-   focus` plus the 2px ring, a select gets a flat 3px ring in the same colour,
-   so the two read as the same weight of grey edge. The accent outline that
-   used to sit here was the one thing making this toolbar disagree with the
-   palette editor's Name box, which is the field every input is matched to. */
+/* The toolbar's search box and dropdowns deliberately carry NO rule that
+   changes what focus looks like. Obsidian already focuses both the way the
+   rest of the plugin now does — a text field gets its 1px border in
+   `--background-modifier-border-focus` plus the 2px ring, a select gets a
+   flat 3px ring in the same colour, so the two read as the same weight of
+   grey edge. The accent outline that used to sit here was the one thing
+   making this toolbar disagree with the palette editor's Name box, which is
+   the field every input is matched to.
+
+   The search box does now carry a *pointer* rule, immediately below — see
+   there for why that is a narrower claim than "no rule at all" and does not
+   contradict this paragraph. The dropdowns are untouched by it: nothing here
+   changes how a `<select>` behaves. */
+
+/* Freeze the search box the same way the palette editor's Name field is
+   frozen (see `.callout-studio-palette-editor …input[type="text"]:not(…)` in
+   the Tag Input section below) and for the same reason: it is otherwise a
+   bare `input[type="text"]`, so Obsidian's own `input[type='text']:hover` —
+   (0,2,1), border-color plus background-color — repainted it for as long as
+   the pointer sat over it, mid-search, unfocused. The values are copied 1:1
+   from what Obsidian already paints at rest, so this does not change how the
+   field looks — only that it stops changing with the mouse. One class
+   (`.icon-picker-search-input`) is shared by both panels that build this
+   toolbar (ImagePanel's "Your images" search and PackPanel's per-source
+   search), so the one rule covers both. */
+.icon-picker-toolbar input[type="text"].icon-picker-search-input {
+	border-color: var(--background-modifier-border);
+	background-color: var(--background-modifier-form-field);
+}
+
+/* Raising the base rule above Obsidian's hover rule means its own `:focus`
+   state (0,2,1) now loses to it too — without this, focusing the field would
+   leave the border at its resting grey instead of the focus colour the
+   paragraph above still leaves entirely to Obsidian. */
+.icon-picker-toolbar input[type="text"].icon-picker-search-input:focus {
+	border-color: var(--background-modifier-border-focus);
+}
 
 /* Minimum 32px touch targets */
 .icon-picker-toolbar input,
@@ -3576,9 +3606,20 @@ button.callout-studio-icon-picker-loading {
 	max-width: 100%;
 }
 
-/* Invalid text input (e.g. duplicate palette name) — red like an ID error */
-input.cs-input-invalid,
-input.cs-input-invalid:focus {
+/* Invalid text input (e.g. duplicate palette name) — red like an ID error.
+   Applied today only to the palette editor's Name field (see
+   `updateValidity()` in PaletteEditorModal.ts), which is otherwise a bare
+   `input[type="text"]` — so without the class tripled, this sat at (0,1,1)
+   (rest) / (0,2,1) (`:focus`) against Obsidian's own `input[type='text']:hover`
+   at (0,2,1). The rest-state half of that is a straight loss: hovering a field
+   already flagged as a duplicate name faded its red border to Obsidian's
+   ordinary hover grey for as long as the pointer sat over it, then snapped
+   back the moment it left — the same pointer-driven flinch as the Callout IDs
+   field above, just on the error colour instead of the focus ring. Tripling
+   the class takes the rest state to (0,3,1), clearing the hover rule
+   outright rather than tying it and leaning on load order. */
+input.cs-input-invalid.cs-input-invalid.cs-input-invalid,
+input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	border-color: var(--text-error);
 	box-shadow: 0 0 0 1px var(--text-error);
 }
@@ -3650,8 +3691,27 @@ input.cs-input-invalid:focus {
    when the field is empty, since the field is still full width and only the
    placeholder (never longer than a few words) shares the space.
 
-   `+ 5px`: the slot sits 1px inside the border, so this clears it by 4px. */
-.cs-tag-input-row > .cs-tag-input-field {
+   `+ 5px`: the slot sits 1px inside the border, so this clears it by 4px.
+
+   **`input[type="text"]` is load-bearing — do not simplify this back to
+   `.cs-tag-input-row > .cs-tag-input-field`.** Obsidian paints every text
+   field on hover (`input[type='text']:hover` → `border-color:
+   var(--background-modifier-border-hover)` plus `background-color`), and that
+   selector is (0,2,1). Two classes are (0,2,0) and LOSE to it, so this field —
+   alone among the plugin's inputs — had Obsidian repainting its border the
+   moment the pointer crossed it, while the display-name field directly above
+   it (whose rule is (0,4,1)) sat still. The two are deliberately styled as one
+   control, so one of them flinching at the mouse and the other not is exactly
+   the seam a reader notices. Type + attribute + two classes is (0,3,1), which
+   clears the hover rule and freezes both properties.
+
+   Freezing `background` is not incidental: `.cs-tag-add-slot` below paints
+   `--cs-tag-field-bg` to disappear into this field, and it has no hover state
+   of its own. While Obsidian could still swap this field to
+   `--background-modifier-form-field-hover`, any theme that gives those two
+   tokens different values drew the end-cap as a visible block at the field's
+   trailing edge for as long as the pointer was inside it. */
+.cs-tag-input-row > input[type="text"].cs-tag-input-field {
 	flex: 1 1 auto;
 	min-width: 80px;
 	border: 1px solid var(--background-modifier-border);
@@ -3668,8 +3728,14 @@ input.cs-input-invalid:focus {
 
 /* Matched to the display-name field above it for the reason given there: the
    two sit one on top of the other in the callout editor and were deliberately
-   styled as one control, so the focus state has to move together too. */
-.cs-tag-input-row > .cs-tag-input-field:focus {
+   styled as one control, so the focus state has to move together too.
+
+   Carries the same `input[type="text"]` as the base rule above, and must: the
+   base is now (0,3,1), so a (0,3,0) focus rule would lose to it on the type
+   count alone and the field would keep its resting border while focused. This
+   is (0,4,1), which sits above the base and above every rule Obsidian aims at
+   a focused text field. */
+.cs-tag-input-row > input[type="text"].cs-tag-input-field:focus {
 	border-color: var(--background-modifier-border-focus);
 	box-shadow: 0 0 0 var(--input-border-width-focus)
 		var(--background-modifier-border-focus);
@@ -3681,8 +3747,12 @@ input.cs-input-invalid:focus {
    split them apart on exactly the platform the fix is for. The only host of a
    `.cs-tag-input-row` is that editor (src/ui/TagInput.ts), which is a chromed
    window — but the fallback stays, because it is what makes the token safe to
-   name from a rule whose selector does not say so. */
-.cs-tag-input-row > .cs-tag-input-field:disabled {
+   name from a rule whose selector does not say so.
+
+   `input[type="text"]` for the same reason as the two rules above: it has to
+   stay above the (0,3,1) base, or a disabled field would paint the form-field
+   fill again. */
+.cs-tag-input-row > input[type="text"].cs-tag-input-field:disabled {
 	color: var(--text-faint);
 	opacity: 0.5;
 	cursor: not-allowed;
@@ -4392,6 +4462,50 @@ input.cs-input-invalid:focus {
 	select {
 	width: 100%;
 	min-width: 0;
+}
+
+/* Freeze the Name field the same way the callout editor's Display name and
+   Callout IDs fields are frozen (see `.callout-studio-editor
+   …input[type="text"]:not(...)` and `.cs-tag-input-row > input[type="text"]
+   .cs-tag-input-field` above). This field is otherwise a bare
+   `input[type="text"]` with no plugin rule of its own, so Obsidian's own
+   `input[type='text']:hover` — (0,2,1), border-color plus background-color —
+   was free to repaint it for as long as the pointer sat over it, even before
+   it was ever focused. The two fields in the callout editor never do that, so
+   opening this modal right after that one made the difference obvious: the
+   row that looks identical at rest visibly changes with the mouse and the
+   other two don't.
+
+   Four classes/attributes deep (`.callout-studio-palette-editor
+   .cs-palette-name-setting .setting-item-control input[type="text"]`) is
+   already (0,4,1), comfortably past the (0,2,1) it has to clear, so nothing
+   here is doubled or tripled the way `.cs-input-invalid` below had to be.
+
+   `:not(.cs-input-invalid)` carves out the one state this field can be in
+   that this rule must not touch: `updateValidity()` (PaletteEditorModal.ts)
+   toggles that class to turn the border red for a taken name, and pinning
+   border-color unconditionally here would outrank its declaration and mute
+   the red back to grey. */
+.callout-studio-palette-editor
+	.cs-palette-name-setting
+	.setting-item-control
+	input[type="text"]:not(.cs-input-invalid) {
+	border-color: var(--background-modifier-border);
+	background-color: var(--background-modifier-form-field);
+}
+
+/* Raising the base rule above Obsidian's hover rule means its `:focus` state
+   (0,2,1) now loses to the base too — without this, focusing the field would
+   leave the border at its resting grey instead of turning to the same focus
+   colour every other field in the plugin uses. Matched to the base rule's own
+   `:not(.cs-input-invalid)` so a taken name keeps its red ring while
+   focused, exactly as `input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus`
+   (above) already provides for it. */
+.callout-studio-palette-editor
+	.cs-palette-name-setting
+	.setting-item-control
+	input[type="text"]:not(.cs-input-invalid):focus {
+	border-color: var(--background-modifier-border-focus);
 }
 
 /* ── Card row separators ─────────────────────────────────────────

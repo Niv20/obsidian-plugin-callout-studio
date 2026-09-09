@@ -371,9 +371,17 @@ describe("a disabled text field stays raised off the window", () => {
 		// the comment on `.cs-tag-input-field`), and fixing one without the other
 		// would make them disagree on mobile dark alone — the hardest place to
 		// notice and the only place it shows.
+		//
+		// `input[type="text"]` is part of the selector, not decoration: the base
+		// rule had to clear Obsidian's `input[type='text']:hover` (0,2,1), which
+		// was repainting this field's border and fill whenever the pointer was
+		// inside it, so every layer on top of it moved up with it.
+		// `tests/inputPointerStability.test.ts` owns that arithmetic.
 		assert.strictEqual(
 			declaration(
-				ruleFor(".cs-tag-input-row > .cs-tag-input-field:disabled"),
+				ruleFor(
+					'.cs-tag-input-row > input[type="text"].cs-tag-input-field:disabled',
+				),
 				"background",
 			),
 			`background: ${RAISED}`,

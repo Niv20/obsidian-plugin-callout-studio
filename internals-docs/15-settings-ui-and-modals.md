@@ -875,9 +875,15 @@ is doing.
 ## How an input field focuses
 
 Every control a user types into focuses the same way, and that way is
-**Obsidian's own**, not a plugin invention. The reference is the Name box in
-the palette editor: it carries no focus rule of its own, so it falls straight
-through to `app.css`, and everything else is matched to what that produces.
+**Obsidian's own**, not a plugin invention. The reference is still the Name
+box in the palette editor: every value it paints — border colour, ring width,
+background — is copied 1:1 from what `app.css` already produces, and
+everything else in the plugin is matched to that. It used to carry *literally*
+no rule of its own to get there; as of the pointer-stability fix below it
+carries a narrow one, added not to change what the field looks like but to
+stop it changing *when* — see "A rule can be added for parity alone" further
+down for why matching the reference now means giving it a rule rather than
+withholding one.
 
 The contract has two shapes, which are meant to look like one:
 
@@ -920,6 +926,126 @@ Two rules follow from this, and both have already been broken once:
   `ListboxPopup.setDisabled` does set `inputEl.disabled`, so that state is
   reachable, and `tests/modalSurfaces.test.ts` pins the disabled one by its
   exact selector.
+
+- **A field that paints its own box has to outrank Obsidian's `:hover`, not
+  just its `:focus`.** Focus is the state everyone checks; hover is the one
+  that gets forgotten, and it is a *different* rule with a different number:
+
+  ```css
+  /* app.css, inside @media (hover: hover) */
+  input[type='text']:hover {
+    border-color: var(--background-modifier-border-hover);
+    background-color: var(--background-modifier-form-field-hover);
+  }
+  ```
+
+  That is **(0,2,1)**, and it is the bar. `.cs-tag-input-row >
+  .cs-tag-input-field` — the Callout IDs field — was (0,2,0), one short. It
+  painted its own border, radius, fill and padding, and then Obsidian repainted
+  the border and fill out from under it for as long as the pointer was inside
+  the field. The display name field directly above it is (0,4,1) and cleared
+  the bar, so the two rows — which are deliberately styled as one control —
+  disagreed about whether the mouse was worth reacting to: one flinched, the
+  other sat still. Adding the type and attribute takes it to (0,3,1) and
+  settles it:
+
+  ```css
+  .cs-tag-input-row > input[type="text"].cs-tag-input-field
+  ```
+
+  Raising a base rule has a second half that must not be skipped: the state
+  layers on top of it have to be raised with it. `:focus` was (0,3,0), which
+  *did* clear Obsidian's hover on its own — but not the new (0,3,1) base, which
+  would then have kept its resting border on a focused field. `:focus` and
+  `:disabled` therefore carry the same `input[type="text"]`, landing at (0,4,1).
+  `tests/inputPointerStability.test.ts` checks both halves as arithmetic, and
+  sweeps the stylesheet for any other rule that paints a field's box from at or
+  below (0,2,1).
+
+  Freezing the fill is not incidental either. `.cs-tag-add-slot` — the end-cap
+  the **+** button sits in — paints `--cs-tag-field-bg` in order to disappear
+  into the field, and it has no hover state of its own. While Obsidian could
+  still swap the field to `--background-modifier-form-field-hover`, any theme
+  that gives those two tokens different values drew the end-cap as a visible
+  block at the field's trailing edge whenever the pointer was inside it. The
+  default theme defines `--background-modifier-form-field-hover` as
+  `--background-modifier-form-field`, which is exactly why that half never
+  showed up on the machine it was written on.
+
+  **A rule can be added for parity alone — no size or colour was wrong.** The
+  palette editor's Name box was the second field to fall into this, the other
+  way round: not a box painted too low a specificity, but *no* box at all. It
+  is a bare `input[type="text"]` inside `.callout-studio-palette-editor`,
+  which is a scope of its own — it does not reuse `.callout-studio-editor`, so
+  none of that section's rules, including the freeze above, ever reached it.
+  Wherever it was opened next to the callout editor's Display name field —
+  the two look identical and sit in list of "create a thing with a name" flows
+  a user moves between — the palette field kept pulsing grey on hover and the
+  callout editor's field did not. Fixed by giving it a scoped rule of its own,
+  copying the exact values `app.css` already paints there (`border-color:
+  var(--background-modifier-border)`, `background-color:
+  var(--background-modifier-form-field)`) and clearing the same (0,2,1) bar —
+  so the field looks *exactly* as it did before, it just stops changing when
+  the mouse happens to be over it:
+
+  ```css
+  .callout-studio-palette-editor
+    .cs-palette-name-setting
+    .setting-item-control
+    input[type="text"]:not(.cs-input-invalid) { … }
+  ```
+
+  `:not(.cs-input-invalid)` is not decorative. `updateValidity()`
+  (`PaletteEditorModal.ts`) toggles that class on this same input to turn its
+  border red for a taken name, and the freeze rule above is (0,4,1) against
+  `.cs-input-invalid`'s then-(0,1,1) — high enough to silently mute the red
+  back to grey if it were not excluded. Discovering that `.cs-input-invalid`
+  was live at all was its own detour: a repo-wide `grep -r cs-input-invalid
+  src/` came back empty during the *first* pass at this bug and was read as
+  proof the class was an orphan, because `PaletteEditorModal.ts` — for reasons
+  never fully isolated, not a NUL byte — is flagged `data` rather than `ASCII
+  text` by `file(1)`, and BSD `grep` without `-a` silently returns zero
+  matches for a file it treats as binary. No "Binary file matches" notice,
+  no error. `grep -a` (or `ripgrep`, which does not binary-sniff `.ts` files)
+  reads it fine. Once found, `.cs-input-invalid` turned out to have the exact
+  same defect one level down: at its original, undoubled specificity its red
+  border also lost to Obsidian's hover rule, fading to grey while the pointer
+  sat over an already-invalid field. Tripling the class
+  (`input.cs-input-invalid.cs-input-invalid.cs-input-invalid`) clears the bar
+  outright rather than tying it at (0,2,1) and leaning on `styles.css` loading
+  after `app.css` to win the tie.
+
+  **The icon picker's search box** was the third field found this way, fixed
+  on a direct follow-up request rather than in the same pass as the two above
+  — "I want uniformity" turned out to mean the whole plugin, not just the one
+  pair of fields first raised. Same shape as the palette Name field: a bare
+  `input[type="text"]`, no rule of its own, so it fell straight through to
+  Obsidian's hover rule and repainted mid-search, unfocused. One class,
+  `.icon-picker-search-input`, is shared by both panels that build this
+  toolbar — PackPanel (Lucide, Tabler, Material, Font Awesome, emoji, the
+  pooled "All sources" list) and ImagePanel ("Your images") — so the one rule
+  fixes both at once:
+
+  ```css
+  .icon-picker-toolbar input[type="text"].icon-picker-search-input { … }
+  ```
+
+  No `:not()` exclusion needed here — nothing ever adds an error class to this
+  field, unlike the palette Name field beside it in the same file. The
+  toolbar's `<select>` dropdowns are untouched by this rule and remain exactly
+  as documented above: no rule of their own, focusing the way Obsidian's
+  `select, .dropdown:focus-visible` already does.
+
+  What is **still** deliberately untouched, and now on its second round of not
+  being asked about: the Replace search and the quick-insert filter, both bare
+  `input[type="text"]` fields that likewise recolour their border on hover
+  before focus. The reasoning that first excused them — a *search/filter*
+  field reacting to hover is Obsidian's ordinary affordance, and there is no
+  adjacent field in the same modal for either of them to visibly disagree with
+  — held up through one round of "is this actually wanted here" (the icon
+  picker's search box, which turned out to be wanted despite fitting the same
+  description) and should not be assumed to hold through the next one either.
+  Treat it as open, not settled, the next time a field on this list comes up.
 
 > [!TIP]
 > This is a cascade question, not a reading-the-file question, and it is worth
