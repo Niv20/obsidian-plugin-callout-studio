@@ -203,7 +203,7 @@ export const es: Record<string, string> = {
 	"commandBuilder.actionInsert": "Insertar nuevo",
 	"commandBuilder.foldState": "Estado de plegado",
 	"commandBuilder.foldStateDesc":
-		"Si el callout que escribe este comando se puede plegar y en qué estado empieza.",
+		"Si el callout se puede plegar y en qué estado empieza.",
 	"commandBuilder.foldNone": "No plegable",
 	"commandBuilder.foldExpanded": "Plegable, abierto (+)",
 	"commandBuilder.foldCollapsed": "Plegable, cerrado (-)",

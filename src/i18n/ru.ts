@@ -201,7 +201,7 @@ export const ru: Record<string, string> = {
 	"commandBuilder.actionInsert": "Вставить новый",
 	"commandBuilder.foldState": "Состояние сворачивания",
 	"commandBuilder.foldStateDesc":
-		"Можно ли складывать callout, который создаёт эта команда, и в каком состоянии он начинается.",
+		"Можно ли складывать callout, и в каком состоянии он начинается.",
 	"commandBuilder.foldNone": "Нескладываемый",
 	"commandBuilder.foldExpanded": "Складываемый, открыт (+)",
 	"commandBuilder.foldCollapsed": "Складываемый, закрыт (-)",

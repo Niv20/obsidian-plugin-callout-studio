@@ -226,7 +226,7 @@ export const he: Record<string, string> = {
 	"commandBuilder.actionInsert": "הוספת חדשה",
 	"commandBuilder.foldState": "מצב קיפול",
 	"commandBuilder.foldStateDesc":
-		"האם תיבת־ההבלטה שהפקודה הזו כותבת ניתנת לקיפול, ובאיזה מצב היא מתחילה.",
+		"האם תיבת־ההבלטה ניתנת לקיפול, ובאיזה מצב היא מתחילה.",
 	"commandBuilder.foldNone": "בלתי ניתן לקיפול",
 	"commandBuilder.foldExpanded": "ניתן לקיפול, פתוח (+)",
 	"commandBuilder.foldCollapsed": "ניתן לקיפול, סגור (-)",

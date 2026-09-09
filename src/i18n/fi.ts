@@ -190,7 +190,7 @@ export const fi: Record<string, string> = {
 	"commandBuilder.actionInsert": "Lisää uusi",
 	"commandBuilder.foldState": "Kutistustila",
 	"commandBuilder.foldStateDesc":
-		"Voiko tämän komennon kirjoittama callout taittua ja missä tilassa se aloittaa.",
+		"Voiko callout taittua ja missä tilassa se aloittaa.",
 	"commandBuilder.foldNone": "Ei taitettava",
 	"commandBuilder.foldExpanded": "Taitettava, auki (+)",
 	"commandBuilder.foldCollapsed": "Taitettava, kiinni (-)",

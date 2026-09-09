@@ -201,7 +201,7 @@ export const hi: Record<string, string> = {
 	"commandBuilder.actionInsert": "नया डालें",
 	"commandBuilder.foldState": "फ़ोल्ड स्थिति",
 	"commandBuilder.foldStateDesc":
-		"क्या यह कमांड जो callout लिखता है वह मोड़ा जा सकता है, और वह किस स्थिति में शुरू होता है।",
+		"क्या callout मोड़ा जा सकता है, और वह किस स्थिति में शुरू होता है।",
 	"commandBuilder.foldNone": "मोड़ने योग्य नहीं",
 	"commandBuilder.foldExpanded": "मोड़ने योग्य, खुला (+)",
 	"commandBuilder.foldCollapsed": "मोड़ने योग्य, बंद (-)",

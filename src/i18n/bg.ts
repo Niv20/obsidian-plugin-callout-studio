@@ -185,7 +185,7 @@ export const bg: Record<string, string> = {
 	"commandBuilder.actionInsert": "Вмъкване на нов",
 	"commandBuilder.foldState": "Състояние на сгъването",
 	"commandBuilder.foldStateDesc":
-		"Дали callout-ът, който записва тази команда, може да се сгъва и в какво състояние започва.",
+		"Дали callout-ът може да се сгъва и в какво състояние започва.",
 	"commandBuilder.foldNone": "Несгъваем",
 	"commandBuilder.foldExpanded": "Сгъваем, отворен (+)",
 	"commandBuilder.foldCollapsed": "Сгъваем, затворен (-)",

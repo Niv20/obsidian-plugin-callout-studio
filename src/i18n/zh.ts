@@ -195,7 +195,7 @@ export const zh: Record<string, string> = {
 	"commandBuilder.actionInsert": "插入新的",
 	"commandBuilder.foldState": "折叠状态",
 	"commandBuilder.foldStateDesc":
-		"此命令写入的 callout 是否可折叠，以及它的初始状态。",
+		"callout 是否可折叠，以及它的初始状态。",
 	"commandBuilder.foldNone": "不可折叠",
 	"commandBuilder.foldExpanded": "可折叠，展开 (+)",
 	"commandBuilder.foldCollapsed": "可折叠，折叠 (-)",

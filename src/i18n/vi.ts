@@ -199,7 +199,7 @@ export const vi: Record<string, string> = {
 	"commandBuilder.actionInsert": "Chèn mới",
 	"commandBuilder.foldState": "Trạng thái thu gọn",
 	"commandBuilder.foldStateDesc":
-		"Callout mà lệnh này ghi có thể gập được hay không, và trạng thái ban đầu của nó.",
+		"Callout có thể gập được hay không, và trạng thái ban đầu của nó.",
 	"commandBuilder.foldNone": "Không thể gập",
 	"commandBuilder.foldExpanded": "Có thể gập, mở (+)",
 	"commandBuilder.foldCollapsed": "Có thể gập, đóng (-)",

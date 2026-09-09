@@ -200,7 +200,7 @@ export const th: Record<string, string> = {
 	"commandBuilder.actionInsert": "แทรกใหม่",
 	"commandBuilder.foldState": "สถานะการพับ",
 	"commandBuilder.foldStateDesc":
-		"callout ที่คำสั่งนี้เขียนสามารถพับได้หรือไม่ และเริ่มต้นในสถานะใด",
+		"callout สามารถพับได้หรือไม่ และเริ่มต้นในสถานะใด",
 	"commandBuilder.foldNone": "พับไม่ได้",
 	"commandBuilder.foldExpanded": "พับได้ เปิด (+)",
 	"commandBuilder.foldCollapsed": "พับได้ ปิด (-)",

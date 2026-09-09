@@ -203,7 +203,7 @@ export const ko: Record<string, string> = {
 	"commandBuilder.actionInsert": "새로 삽입",
 	"commandBuilder.foldState": "접기 상태",
 	"commandBuilder.foldStateDesc":
-		"이 명령이 작성하는 callout을 접을 수 있는지와 시작 상태를 지정합니다.",
+		"callout을 접을 수 있는지와 시작 상태를 지정합니다.",
 	"commandBuilder.foldNone": "접을 수 없음",
 	"commandBuilder.foldExpanded": "접을 수 있음, 열림 (+)",
 	"commandBuilder.foldCollapsed": "접을 수 있음, 닫힘 (-)",

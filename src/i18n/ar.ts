@@ -196,7 +196,7 @@ export const ar: Record<string, string> = {
 	"commandBuilder.actionInsert": "إدراج جديد",
 	"commandBuilder.foldState": "حالة الطي",
 	"commandBuilder.foldStateDesc":
-		"هل الـ callout الذي تكتبه هذه الأوامر قابل للطي، وكيف تبدأ حالته.",
+		"هل الـ callout قابل للطي، وكيف تبدأ حالته.",
 	"commandBuilder.foldNone": "غير قابل للطي",
 	"commandBuilder.foldExpanded": "قابل للطي، مفتوح (+)",
 	"commandBuilder.foldCollapsed": "قابل للطي، مغلق (-)",

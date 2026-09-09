@@ -185,7 +185,7 @@ export const zhTW: Record<string, string> = {
 	"commandBuilder.actionInsert": "插入新項目",
 	"commandBuilder.foldState": "折疊狀態",
 	"commandBuilder.foldStateDesc":
-		"此指令寫入的 callout 是否可折疊，以及其初始狀態。",
+		"callout 是否可折疊，以及其初始狀態。",
 	"commandBuilder.foldNone": "不可折疊",
 	"commandBuilder.foldExpanded": "可折疊，展開 (+)",
 	"commandBuilder.foldCollapsed": "可折疊，折疊 (-)",

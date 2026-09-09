@@ -200,7 +200,7 @@ export const pt: Record<string, string> = {
 	"commandBuilder.actionInsert": "Inserir novo",
 	"commandBuilder.foldState": "Estado de dobra",
 	"commandBuilder.foldStateDesc":
-		"Se o callout que este comando escreve pode ser dobrado, e em que estado ele começa.",
+		"Se o callout pode ser dobrado, e em que estado ele começa.",
 	"commandBuilder.foldNone": "Não dobrável",
 	"commandBuilder.foldExpanded": "Dobrável, aberto (+)",
 	"commandBuilder.foldCollapsed": "Dobrável, fechado (-)",

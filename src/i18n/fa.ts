@@ -196,7 +196,7 @@ export const fa: Record<string, string> = {
 	"commandBuilder.actionInsert": "درج جدید",
 	"commandBuilder.foldState": "وضعیت تا کردن",
 	"commandBuilder.foldStateDesc":
-		"اینکه آیا callout ای که این دستور می‌نویسد قابل جمع است یا نه، و با چه وضعیتی شروع می‌شود.",
+		"اینکه آیا callout قابل جمع است یا نه، و با چه وضعیتی شروع می‌شود.",
 	"commandBuilder.foldNone": "غیرقابل جمع‌شدن",
 	"commandBuilder.foldExpanded": "قابل جمع، باز (+)",
 	"commandBuilder.foldCollapsed": "قابل جمع، بسته (-)",

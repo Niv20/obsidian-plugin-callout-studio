@@ -200,7 +200,7 @@ export const pl: Record<string, string> = {
 	"commandBuilder.actionInsert": "Wstaw nowy",
 	"commandBuilder.foldState": "Stan zwijania",
 	"commandBuilder.foldStateDesc":
-		"Czy callout zapisywany przez to polecenie można zwinąć i w jakim stanie zaczyna.",
+		"Czy callout można zwinąć i w jakim stanie zaczyna.",
 	"commandBuilder.foldNone": "Niezwijany",
 	"commandBuilder.foldExpanded": "Zwijany, otwarty (+)",
 	"commandBuilder.foldCollapsed": "Zwijany, zamknięty (-)",

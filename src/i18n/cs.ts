@@ -196,7 +196,7 @@ export const cs: Record<string, string> = {
 	"commandBuilder.actionInsert": "Vložit nový",
 	"commandBuilder.foldState": "Stav sbalení",
 	"commandBuilder.foldStateDesc":
-		"Zda lze callout, který tento příkaz zapisuje, sbalit, a v jakém stavu začíná.",
+		"Zda lze callout sbalit, a v jakém stavu začíná.",
 	"commandBuilder.foldNone": "Nesbalitelný",
 	"commandBuilder.foldExpanded": "Sbalitelný, otevřený (+)",
 	"commandBuilder.foldCollapsed": "Sbalitelný, zavřený (-)",

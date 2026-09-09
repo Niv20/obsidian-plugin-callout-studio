@@ -198,7 +198,7 @@ export const de: Record<string, string> = {
 	"commandBuilder.actionInsert": "Neu einfügen",
 	"commandBuilder.foldState": "Einklappstatus",
 	"commandBuilder.foldStateDesc":
-		"Ob der Callout, den dieser Befehl schreibt, gefaltet werden kann und in welchem Zustand er startet.",
+		"Ob der Callout gefaltet werden kann und in welchem Zustand er startet.",
 	"commandBuilder.foldNone": "Nicht faltbar",
 	"commandBuilder.foldExpanded": "Faltbar, geöffnet (+)",
 	"commandBuilder.foldCollapsed": "Faltbar, geschlossen (-)",

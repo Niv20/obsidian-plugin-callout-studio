@@ -191,7 +191,7 @@ export const el: Record<string, string> = {
 	"commandBuilder.actionInsert": "Εισαγωγή νέου",
 	"commandBuilder.foldState": "Κατάσταση σύμπτυξης",
 	"commandBuilder.foldStateDesc":
-		"Αν το callout που γράφει αυτή η εντολή μπορεί να αναδιπλωθεί, και σε ποια κατάσταση ξεκινά.",
+		"Αν το callout μπορεί να αναδιπλωθεί, και σε ποια κατάσταση ξεκινά.",
 	"commandBuilder.foldNone": "Μη αναδιπλούμενο",
 	"commandBuilder.foldExpanded": "Αναδιπλούμενο, ανοιχτό (+)",
 	"commandBuilder.foldCollapsed": "Αναδιπλούμενο, κλειστό (-)",

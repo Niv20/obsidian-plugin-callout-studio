@@ -201,7 +201,7 @@ export const hu: Record<string, string> = {
 	"commandBuilder.actionInsert": "Új beszúrása",
 	"commandBuilder.foldState": "Összecsukási állapot",
 	"commandBuilder.foldStateDesc":
-		"Hogy az ezzel a paranccsal létrehozott callout összecsukható-e, és milyen állapotban indul.",
+		"Hogy a callout összecsukható-e, és milyen állapotban indul.",
 	"commandBuilder.foldNone": "Nem összecsukható",
 	"commandBuilder.foldExpanded": "Összecsukható, nyitott (+)",
 	"commandBuilder.foldCollapsed": "Összecsukható, zárt (-)",
