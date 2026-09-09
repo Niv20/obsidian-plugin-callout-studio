@@ -93,7 +93,7 @@ export interface ThemeScan {
 	 * Not the text as written, and the difference is not cosmetic. Every
 	 * consumer compares against `obsidianCalloutAttrId(def.id)`, so a theme
 	 * writing `[data-callout~=Metadata i]` — ITS Theme does, in 24 rules —
-	 * would produce a key nothing could ever match: `themeProvidedRows` would
+	 * would produce a key nothing could ever match: `themeOverlayRows` would
 	 * mint a row for it, fail to recognise that row on the next sweep, delete
 	 * it, and mint it again, forever. Normalising here is what keeps the sweep
 	 * idempotent no matter how a theme author capitalised their selector.

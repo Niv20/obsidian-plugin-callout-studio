@@ -36,7 +36,7 @@
  * `ThemeCalloutStore`'s signature as a side effect of asking it anything. A
  * caller that wants to know "did the theme change since I last looked?" must
  * keep its own memo rather than reading the store's — see
- * `themeRowSync.ts`, which does exactly that.
+ * `themeAppearanceSync.ts`, which does exactly that.
  */
 import type { App } from "obsidian";
 import { studioWeightFor } from "./studioWeight";

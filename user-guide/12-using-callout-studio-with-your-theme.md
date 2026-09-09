@@ -40,7 +40,13 @@ On iPhone the headings scroll normally — the top of the settings screen there 
 
 Two kinds of callout end up here, and the section says so:
 
-**Callout types your theme invents.** Some themes don't only repaint `note` and `warning` — they add types of their own, with names Obsidian has never heard of. ITS Theme adds `recite`, `infobox`, `cards`, `timeline` and a dozen more. Those used to be invisible: you had to know the name and type it from memory. Press **Scan for callouts** to add them to your saved callout types. They then appear in this section, autocomplete and Quick insert. Changing themes never creates or deletes definitions.
+**Callout types your theme invents.** Some themes don't only repaint `note` and `warning` — they add types of their own, with names Obsidian has never heard of. ITS Theme adds `recite`, `infobox`, `cards`, `timeline` and a dozen more. **They are listed here for as long as that theme is active — you don't have to scan, or do anything at all.** They show up in autocomplete and Quick insert too, and your theme keeps drawing them exactly as it always did.
+
+They are listed, not saved. Nothing about them is written into your settings, they are in no backup or export, and **Reset everything** leaves them alone, because they are not yours to reset — they belong to the theme. Switch to a theme that doesn't have them and they simply stop being listed; your notes are untouched, and switching back brings them straight back.
+
+That also means they cost you nothing on your other devices. A laptop running a different theme lists different types, and neither machine writes anything because of it — which is what stops your two devices arguing over the same settings file.
+
+**Keeping one for good.** If you want a theme's callout type to stay yours — to recolour it, or to keep using it after you change theme — press **Scan for callouts**. That saves it as a real callout type of your own, and from then on it behaves like any other: it syncs, it is in your backups, and it survives a theme change wearing its saved appearance.
 
 **Built-in callouts your theme replaces.** If your theme restyles `[!note]`, then your theme is what you see, so `note` is listed here rather than under **Built-in callouts**. On a theme that restyles all thirteen — and a fair number do — the built-in section will be empty and say so.
 
@@ -86,9 +92,11 @@ The row stays where it is and wears an **External CSS** label, so you can tell a
 
 Everything recalculates, and nothing of *yours* is lost, because none of it is stored.
 
-There are two different things in that top section, and they behave differently when the theme goes away.
+There are three different things in that top section, and they behave differently when the theme goes away.
 
-**A manually discovered type your theme invented** stays saved when you switch themes. It moves to the appropriate list and uses its saved fallback appearance when the new theme does not own it. Your notes remain unchanged. A new theme adds no definitions until you press **Scan for callouts**.
+**A type the theme itself invented, that you never saved** is listed only while that theme is active. Switch away and it stops being listed. Nothing is deleted, because nothing was ever saved — your notes still contain it, and the new theme's own types take its place in the list. A theme change never adds or removes a *saved* definition.
+
+**A type your theme invented that you kept with Scan for callouts** stays saved when you switch themes. It moves to the appropriate list and uses its saved fallback appearance when the new theme does not own it. Your notes remain unchanged.
 
 **A callout that was already yours** is only *borrowed* while the theme claims the same ID. Switch away and it returns to **My callout types** exactly as it was: same name, colours, icon, aliases, everything — and its Heading and Inline formats work again. Built-ins behave the same way: ones your new theme leaves alone return to **Built-in callouts** wearing whatever you had saved on them. If you customised `[!note]` years ago and then switched to a theme that restyles it, your colours were kept the whole time, unused, and reappear the moment you switch away again.
 

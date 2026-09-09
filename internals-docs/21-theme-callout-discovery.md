@@ -371,13 +371,49 @@ would silently stop being exported; the sweep's `stale` branch **deletes** an
 uncustomized theme row on the next theme switch; and `importValidator` re-stamps
 `source: "user"` on every import, so the flip would not even stay done.
 
-## Stage 4 — Adding theme types manually
+## Stage 4 — The overlay, and adding theme types permanently
 
-`ManualCalloutDiscovery` includes the current theme's declared ids when the user
-presses **Scan for callouts**. Missing ids become durable fallback rows, checked against
-existing definitions, aliases and reserved ids. No theme event adds, retires or
-recreates a row. The same saved type can follow a theme on one device and fallback
-styling on another without either device rewriting its definition.
+A theme-declared id with **no row at all** is worse than unlisted. The `:not()`
+chain in `generateFallbackCSS` is built from `getAll()`, and everything below it
+carries `!important` at a specificity no theme can reach — so an id the registry
+has never heard of is not merely missing from the settings list, it is actively
+**overpainted** with the fallback template.
+
+[`syncThemeOverlayRows`](../src/manager/theme/themeOverlayRows.ts) closes that.
+Every sweep — startup and each `css-change` — mints an in-memory row in
+`source: "theme"` for each declared id nothing else claims, and retires the ones
+the theme has stopped declaring. It runs inside the same `registry.batch` that
+publishes ownership, so listeners never see the two halves apart.
+
+**The overlay is add-or-remove only, and it never reaches `data.json`:**
+
+| Guard | Where |
+|---|---|
+| Dropped from the saved payload, unconditionally | `discoveredRowPersistence.ts` |
+| Out of `getUserDefined`, so out of exports and *Reset everything* | `CalloutRegistry.getUserDefined` |
+| Never counted as "known", so a scan still sees the id | `knownCalloutIds.ts` |
+| Never offered as the fallback target — that id **is** persisted | `settings/sections/FallbackSection.ts` |
+| Never a merge base for an import | `utils/importedCallout.ts` |
+| Never keeps an `iconSvgCache` entry alive | `CalloutRegistry.cleanupUnusedIconSvgs` |
+| Kept by `resetAll` — the theme did not go anywhere | `CalloutRegistry.resetAll` |
+
+That last one is the exception that proves the rule: Reset clears the user's
+work, but an overlay row is not the user's work and only a sweep can put it
+back, which may not happen until they next change theme.
+
+Because ownership is derived per machine, a laptop with a different theme holds
+a different overlay and still writes the same settings body — the property
+`syncThemeOverlay.test.ts` exists to pin. `tests/themeOverlayRows.test.ts` adds
+a source-scan assertion that `themeOverlayRows.ts` is the **only** file in
+`src/` that constructs a `source: "theme"` row, which is what makes "no other
+path can mint machine-local state" a failing test rather than a claim.
+
+**Making one permanent.** `ManualCalloutDiscovery` seeds its found-set with the
+same declared ids, so **Scan for callouts** promotes them to durable
+`source: "fallback"` rows — retiring the ephemeral row first, since `add` would
+otherwise refuse the id. That is the only sanctioned route from a theme id to
+saved configuration, and it is a deliberate user action, so the resulting row
+syncs like any other setting.
 
 
 ## Stage 5 — Reading the colours and the icon back
@@ -1025,6 +1061,7 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 | [`manager/theme/ThemeCalloutStore.ts`](../src/manager/theme/ThemeCalloutStore.ts) | Caching + the enumeration/weight split |
 | [`manager/theme/ThemeFacts.ts`](../src/manager/theme/ThemeFacts.ts) | Owned ids + measured appearances, held behind the registry |
 | [`manager/theme/themeAppearanceSync.ts`](../src/manager/theme/themeAppearanceSync.ts) | Scheduling, ordering, the fingerprint, the probe's lifetime |
+| [`manager/theme/themeOverlayRows.ts`](../src/manager/theme/themeOverlayRows.ts) | Minting and retiring the ephemeral `source: "theme"` rows |
 | [`manager/theme/ThemeAppearanceProbe.ts`](../src/manager/theme/ThemeAppearanceProbe.ts) | Offscreen render + cache |
 | [`manager/theme/readCalloutStyle.ts`](../src/manager/theme/readCalloutStyle.ts) | Which node answers which property |
 | [`manager/theme/themeAppearance.ts`](../src/manager/theme/themeAppearance.ts) | Accent/background interpretation |
@@ -1038,8 +1075,8 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 | [`settings/ThemeCalloutPreviewModal.ts`](../src/settings/ThemeCalloutPreviewModal.ts) | The read-only window behind the pencil |
 
 Suites: `themeCalloutScan`, `themeOwnership`, `manualDiscovery`,
-`themeRowSync`, `themeAppearance`, `themeAppearanceProbe`, `themeRowActions`,
-`themeReport`, `cssSpecificity`.
+`themeOverlayRows`, `themeRowSync`, `syncThemeOverlay`, `themeAppearance`,
+`themeAppearanceProbe`, `themeRowActions`, `themeReport`, `cssSpecificity`.
 
 ---
 Next chapter: [00-index.md](00-index.md)

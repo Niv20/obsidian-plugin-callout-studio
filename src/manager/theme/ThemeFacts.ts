@@ -69,7 +69,7 @@ export class ThemeFacts {
 	 * announced change, and announcing one that changed nothing costs a CSS
 	 * regeneration, a settings save and a full settings-tab repaint. The
 	 * `css-change → inject → sweep` chain terminates on this comparison —
-	 * see the termination note in `themeRowSync.ts`.
+	 * see the termination note in `themeAppearanceSync.ts`.
 	 */
 	setAppearances(map: ReadonlyMap<string, ThemeAppearance>): boolean {
 		if (sameThemeAppearances(this.appearances, map)) return false;
