@@ -691,10 +691,10 @@ export class CalloutRegistry {
 			if (def.builtIn) continue;
 			if (def.source !== "fallback") continue;
 			if (def.customized === true) continue;
-			// Nothing reads this row's colours while the theme owns it, so
-			// mirroring onto it would only churn data.json on every fallback
-			// change and make the row look edited in an export.
-			if (this.standsDown(def)) continue;
+			// Only `externalStyle` may skip here: it is a stored per-row field,
+			// so every device agrees. `themeOwns` must not be asked — it would
+			// let this machine's theme decide what data.json says (issue #41).
+			if (def.externalStyle === true) continue;
 			if (def.id === fallbackId) continue;
 			const next = mirroredFallbackRow(def, fallback);
 			if (!next) continue;
