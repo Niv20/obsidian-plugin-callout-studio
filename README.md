@@ -1,17 +1,5 @@
 # Callout Studio
 
-This development build uses **manual discovery only**. In the plugin settings,
-press **Scan for callouts** beside **My callout types** and **Add new callout** to
-add missing types from saved notes and the active theme. Results are saved in
-`data.json` and included in backups/exports; discovery has no active local-storage
-state. On upgrade, the old discovery cache and startup CSS are archived for
-recovery before the old cache is removed. A failed archive leaves both original
-values untouched and inactive. Update **both devices before resuming sync or
-editing**: this build writes settings data format 5, but released versions
-2.12.0–2.12.2 do not protect files written by newer builds. See
-[manual discovery, upgrading and two-device recovery](user-guide/08-fallback-callouts-and-manual-discovery.md).
-
-
 Callout Studio is a powerful callout management **plugin** for [Obsidian.](https://obsidian.md)
 
 It lets you create, edit, and style your own callout types, override the built-in ones, pick icons from large libraries, and use every callout as a Block Callout, a Heading Callout, or an Inline Callout - all from a single settings tab!
@@ -36,11 +24,11 @@ Unlock the full potential of Callout Studio! Explore the [User Guide](user-guide
 
 A huge thank you to everyone who took the time to report bugs, identify issues, and help make Callout Studio more stable and reliable. Your reports, testing, and detailed feedback have been incredibly helpful:
 
-[brianjwalton](https://github.com/brianjwalton) · [astreloff](https://github.com/astreloff) · [rubcap](https://github.com/rubcap) · [Xto-tT0](https://github.com/Xto-tT0) · [Jarsgon](https://github.com/Jarsgon) · [Ravencaller213](https://github.com/Ravencaller213) · [frudolph77](https://github.com/frudolph77) · [DesertSnak3](https://github.com/DesertSnak3) · [dragonish](https://github.com/dragonish) · [Ana-Mendes123](https://github.com/Ana-Mendes123) · [EddyCurrrent](https://github.com/EddyCurrrent) · [Indra-Reaper](https://github.com/Indra-Reaper) · [hisbo](https://github.com/hisbo)
+[brianjwalton](https://github.com/brianjwalton) · [astreloff](https://github.com/astreloff) · [rubcap](https://github.com/rubcap) · [Xto-tT0](https://github.com/Xto-tT0) · [Jarsgon](https://github.com/Jarsgon) · [Ravencaller213](https://github.com/Ravencaller213) · [frudolph77](https://github.com/frudolph77) · [DesertSnak3](https://github.com/DesertSnak3) · [alythobani](https://github.com/alythobani) · [dragonish](https://github.com/dragonish) · [Ana-Mendes123](https://github.com/Ana-Mendes123) · [EddyCurrrent](https://github.com/EddyCurrrent) · [Indra-Reaper](https://github.com/Indra-Reaper) · [hisbo](https://github.com/hisbo)
 
 And a huge thank you to everyone who shared ideas, suggested enhancements, and helped shape the direction of Callout Studio. Many of the features and improvements in the plugin have been inspired by your feedback and suggestions:
 
-[ericxob77](https://github.com/ericxob77) · [TechnoMaverick](https://github.com/TechnoMaverick) · [epilo9er](https://github.com/epilo9er) · [Xto-tT0](https://github.com/Xto-tT0) · [TyceHerrman](https://github.com/TyceHerrman) · [eth-p](https://github.com/eth-p) · [kwhsiung](https://github.com/kwhsiung) · [archangelglass](https://github.com/archangelglass) · [quantumstargazer](https://github.com/quantumstargazer) · [BloatedBlowfish](https://github.com/BloatedBlowfish) · [alythobani](https://github.com/alythobani)
+[ericxob77](https://github.com/ericxob77) · [TechnoMaverick](https://github.com/TechnoMaverick) · [epilo9er](https://github.com/epilo9er) · [Xto-tT0](https://github.com/Xto-tT0) · [TyceHerrman](https://github.com/TyceHerrman) · [eth-p](https://github.com/eth-p) · [kwhsiung](https://github.com/kwhsiung) · [archangelglass](https://github.com/archangelglass) · [quantumstargazer](https://github.com/quantumstargazer) · [BloatedBlowfish](https://github.com/BloatedBlowfish) · [Camouflagee](https://github.com/Camouflagee)
 
 Thank you all for helping make Callout Studio better!
 
