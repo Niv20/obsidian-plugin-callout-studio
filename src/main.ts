@@ -170,7 +170,7 @@ export default class CalloutStudioPlugin extends Plugin {
 			);
 		}
 
-		// Refresh ownership and artwork for existing types without adding rows.
+		// Derive local theme rows, ownership and artwork before the full CSS pass.
 		this.refreshThemeAppearance = registerThemeAppearance(this);
 
 		// Full CSS inject now that the registry holds real definitions

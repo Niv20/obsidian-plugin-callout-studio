@@ -92,7 +92,7 @@ export async function device(dir: string, seed?: unknown) {
 
 export async function pair(run: (a: Awaited<ReturnType<typeof device>>, b: Awaited<ReturnType<typeof device>>) => Promise<void>) {
 	const dir = await mkdtemp(join(tmpdir(), "callout-sync-"));
-	const initial = new CalloutRegistry(); initial.load(null); initial.add(definition({ id: "shared" }));
+	const initial = new CalloutRegistry(); initial.load(null); initial.add(definition({ id: "shared", icon: { type: "lucide", value: "pencil" } }));
 	const a = await device(join(dir, "a"), initial.toSaveData());
 	const b = await device(join(dir, "b"), initial.toSaveData());
 	try { await run(a, b); } finally { a.close(); b.close(); await rm(dir, { recursive: true, force: true }); }

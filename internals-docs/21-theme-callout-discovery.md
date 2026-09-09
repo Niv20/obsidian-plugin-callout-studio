@@ -38,7 +38,7 @@ happen in this order.
 | 1 | Find the active theme and its CSS text | [`customCssApi.ts`](../src/manager/theme/customCssApi.ts) | theme name, stylesheet text, snippet texts, a cheap signature |
 | 2 | Scan that text for callout claims | [`cssBlocks.ts`](../src/manager/theme/cssBlocks.ts) → [`themeCalloutScan.ts`](../src/manager/theme/themeCalloutScan.ts), cached by [`ThemeCalloutStore.ts`](../src/manager/theme/ThemeCalloutStore.ts) | `Map<attrId, ThemeClaim>` + family patterns |
 | 3 | Publish ownership | [`ThemeFacts.ts`](../src/manager/theme/ThemeFacts.ts), via `CalloutRegistry.setThemeOwnedIds` | `registry.themeOwns(def)` |
-| 4 | Add missing ids only after a manual request | [`ManualCalloutDiscovery.ts`](../src/manager/ManualCalloutDiscovery.ts) | Durable fallback rows |
+| 4 | List theme ids locally; persist only explicit scans/imports | [`themeOverlayRows.ts`](../src/manager/theme/themeOverlayRows.ts), [`ManualCalloutDiscovery.ts`](../src/manager/ManualCalloutDiscovery.ts) | Ephemeral theme rows or durable definitions |
 | 5 | Measure what the theme actually draws | [`ThemeAppearanceProbe.ts`](../src/manager/theme/ThemeAppearanceProbe.ts) + [`readCalloutStyle.ts`](../src/manager/theme/readCalloutStyle.ts) + [`themeAppearance.ts`](../src/manager/theme/themeAppearance.ts) / [`themeIcon.ts`](../src/manager/theme/themeIcon.ts) | `ThemeAppearance` per id |
 | 6 | Reproduce it wherever the plugin lists callouts | [`renderThemeIcon.ts`](../src/manager/theme/renderThemeIcon.ts), [`calloutListIcon.ts`](../src/manager/theme/calloutListIcon.ts) | icons and swatches on rows, menus, pickers |
 | — | Decide how the theme **spells** a callout accent | [`accentDialectScan.ts`](../src/manager/theme/accentDialectScan.ts) + [`accentDialect.ts`](../src/manager/theme/accentDialect.ts) + [`accentValueFormat.ts`](../src/manager/theme/accentValueFormat.ts), cached alongside stage 2 | `AccentDialect` — see [The accent dialect](#the-accent-dialect) |
@@ -380,26 +380,32 @@ has never heard of is not merely missing from the settings list, it is actively
 **overpainted** with the fallback template.
 
 [`syncThemeOverlayRows`](../src/manager/theme/themeOverlayRows.ts) closes that.
-Every sweep — startup and each `css-change` — mints an in-memory row in
+A sweep on startup, CSS events, or settings adoption mints an in-memory row in
 `source: "theme"` for each declared id nothing else claims, and retires the ones
 the theme has stopped declaring. It runs inside the same `registry.batch` that
-publishes ownership, so listeners never see the two halves apart.
+publishes ownership, so listeners never see the two halves apart. An unchanged
+stylesheet reuses the cached scan but still reconciles missing rows. Closing an
+unsaved callout draft also reconciles the overlay: a theme enabled while the draft
+was open must retain its type after the draft is cancelled, even with fallback CSS
+disabled. The preview listener is removed on plugin unload.
 
 **The overlay is add-or-remove only, and it never reaches `data.json`:**
 
 | Guard | Where |
 |---|---|
 | Dropped from the saved payload, unconditionally | `discoveredRowPersistence.ts` |
-| Out of `getUserDefined`, so out of exports and *Reset everything* | `CalloutRegistry.getUserDefined` |
+| Out of `getUserDefined`, so out of exports | `CalloutRegistry.getUserDefined` |
 | Never counted as "known", so a scan still sees the id | `knownCalloutIds.ts` |
 | Never offered as the fallback target — that id **is** persisted | `settings/sections/FallbackSection.ts` |
 | Never a merge base for an import | `utils/importedCallout.ts` |
+| Never fetches artwork | `IconService.initialize`, `IconFetchManager.ensureAll` |
 | Never keeps an `iconSvgCache` entry alive | `CalloutRegistry.cleanupUnusedIconSvgs` |
-| Kept by `resetAll` — the theme did not go anywhere | `CalloutRegistry.resetAll` |
+| Rebuilt by `resetAll` from the current owned ids and reset defaults | `CalloutRegistry.resetAll` |
 
-That last one is the exception that proves the rule: Reset clears the user's
-work, but an overlay row is not the user's work and only a sweep can put it
-back, which may not happen until they next change theme.
+Reset clears saved customizations, then rebuilds all current theme ids in one
+notification. This includes ids previously held by saved user/fallback rows or
+aliases. Temporary rows are rebuilt from defaults so they cannot retain references
+to pictures or palettes that reset removed.
 
 Because ownership is derived per machine, a laptop with a different theme holds
 a different overlay and still writes the same settings body — the property
@@ -411,9 +417,11 @@ path can mint machine-local state" a failing test rather than a claim.
 **Making one permanent.** `ManualCalloutDiscovery` seeds its found-set with the
 same declared ids, so **Scan for callouts** promotes them to durable
 `source: "fallback"` rows — retiring the ephemeral row first, since `add` would
-otherwise refuse the id. That is the only sanctioned route from a theme id to
-saved configuration, and it is a deliberate user action, so the resulting row
-syncs like any other setting.
+otherwise refuse the id. JSON, Callout Manager and Admonition imports can also
+create durable definitions. Their planners ignore temporary rows; replacement
+checks all id/alias conflicts before removing any overlay and publishes one
+batched change. A planned create never overwrites a saved row added in the meantime.
+These explicit actions sync like other settings; theme ownership remains local.
 
 
 ## Stage 5 — Reading the colours and the icon back
@@ -454,6 +462,11 @@ slot and re-run**, never dropped — the one request that is never redundant is
 *outgoing* theme's readings into a cache that had just been cleared. A failed
 read clears both the cache and the signature, so the next repaint tries again
 and every row falls to a neutral placeholder in the meantime.
+
+An invalidation generation also guards asynchronous results. A render started
+before a CSS change cannot publish or satisfy the cache after that change, even
+when the name/version/id signature is unchanged (an in-place CSS reload or rapid
+A → B → A). A destroyed probe never repopulates its cache.
 
 ### Which node is asked
 

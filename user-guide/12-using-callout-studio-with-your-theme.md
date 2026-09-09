@@ -46,7 +46,7 @@ They are listed, not saved. Nothing about them is written into your settings, th
 
 That also means they cost you nothing on your other devices. A laptop running a different theme lists different types, and neither machine writes anything because of it — which is what stops your two devices arguing over the same settings file.
 
-**Keeping one for good.** If you want a theme's callout type to stay yours — to recolour it, or to keep using it after you change theme — press **Scan for callouts**. That saves it as a real callout type of your own, and from then on it behaves like any other: it syncs, it is in your backups, and it survives a theme change wearing its saved appearance.
+**Keeping one for good.** If you want a theme's callout type to stay yours — to recolour it on a device without that theme, or to keep using it after you change theme — press **Scan for callouts**. That saves it as a real callout type of your own, and from then on it behaves like any other: it syncs, it is in your backups, and it survives a theme change wearing its saved appearance.
 
 **Built-in callouts your theme replaces.** If your theme restyles `[!note]`, then your theme is what you see, so `note` is listed here rather than under **Built-in callouts**. On a theme that restyles all thirteen — and a fair number do — the built-in section will be empty and say so.
 
@@ -101,6 +101,23 @@ There are three different things in that top section, and they behave differentl
 **A callout that was already yours** is only *borrowed* while the theme claims the same ID. Switch away and it returns to **My callout types** exactly as it was: same name, colours, icon, aliases, everything — and its Heading and Inline formats work again. Built-ins behave the same way: ones your new theme leaves alone return to **Built-in callouts** wearing whatever you had saved on them. If you customised `[!note]` years ago and then switched to a theme that restyles it, your colours were kept the whole time, unused, and reappear the moment you switch away again.
 
 Switching straight from one theme to another does all of this in one pass — including the case where both themes define the same ID, which simply stays where it is.
+
+## Different themes on different devices
+
+Each device lists the callouts supplied by its own active theme. A theme-only
+`X` on device A is not automatically listed on device B without that theme.
+Notes using `X` still sync normally; on B they use the fallback appearance until
+you scan for callouts or create/import a saved definition for `X`.
+
+Once saved, edits to `X` sync to both devices. If B changes its colour or icon,
+A stores those changes too, but A's theme still controls the appearance. Switch
+A to a theme that does not own `X` and the saved design takes effect. If both
+devices have different themes defining `X`, each theme controls its local look.
+
+Theme changes during a settings sync use the latest local theme when the incoming
+settings are adopted. Changing themes does not copy a theme's colours into the
+shared settings. Reset removes the saved customizations on all synced devices,
+while callouts supplied by each device's current theme remain listed.
 
 ## If you already had one of your theme's callouts
 
