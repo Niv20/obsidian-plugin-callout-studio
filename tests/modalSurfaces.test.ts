@@ -343,10 +343,21 @@ describe("a disabled text field stays raised off the window", () => {
 	const RAISED = "var(--cs-surface-raised, var(--background-secondary))";
 
 	it("the display-name field in the callout editor", () => {
+		// The `:not()` list is load-bearing and both halves have to stay in it.
+		// This rule reaches every `input[type="text"]` in the editor's control
+		// column, and two of them are not this field: the IDs field, and the
+		// text half of the Color row's palette combobox. The combobox input
+		// paints itself down to nothing so its wrapper can be the visible box,
+		// and `.cs-combobox-control .cs-combobox-input` is (0,2,0) against this
+		// rule's (0,4,1) — so without the exclusion this fill wins and a
+		// disabled picker draws the raised shade *inside* the transparent
+		// field, which is the box-in-a-box the focus states had too.
+		// `ListboxPopup.setDisabled` (src/ui/listboxPopup.ts) does set
+		// `inputEl.disabled`, so that state is reachable, not theoretical.
 		assert.strictEqual(
 			declaration(
 				ruleFor(
-					'.callout-studio-editor .setting-item-control input[type="text"]:not(.cs-tag-input-field):disabled',
+					'.callout-studio-editor .setting-item-control input[type="text"]:not(.cs-tag-input-field, .cs-combobox-input):disabled',
 				),
 				"background",
 			),

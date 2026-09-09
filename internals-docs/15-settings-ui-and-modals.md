@@ -875,6 +875,65 @@ is doing.
 > surface tokens — it is the only one available to a band sitting *on* a pane
 > whose colour the plugin does not choose. See [The three sections pin their headings](#the-three-sections-pin-their-headings).
 
+## How an input field focuses
+
+Every control a user types into focuses the same way, and that way is
+**Obsidian's own**, not a plugin invention. The reference is the Name box in
+the palette editor: it carries no focus rule of its own, so it falls straight
+through to `app.css`, and everything else is matched to what that produces.
+
+The contract has two shapes, which are meant to look like one:
+
+| Control | On focus |
+| --- | --- |
+| A bordered text field (`input[type="text"]`, `textarea`) | its 1px border recolours to `--background-modifier-border-focus`, plus `box-shadow: 0 0 0 var(--input-border-width-focus)` (2px) in the same colour |
+| A borderless, dropdown-shaped control (`select`, `.cs-combobox-control`) | a flat `box-shadow: 0 0 0 3px` in that colour |
+
+The widths differ because the results must not. A text field keeps its own
+border and recolours it, so its 2px ring sits on top of that and the eye reads
+**3px** of grey edge; a control with `border: 0` has nothing to recolour, so it
+needs all 3px from the ring. Obsidian draws its own `select, .dropdown` exactly
+that way, and `.cs-combobox-control` follows it.
+
+Two rules follow from this, and both have already been broken once:
+
+- **Never focus a field with the accent colour.** The display name, the Callout
+  IDs field and the icon-picker search each used to paint
+  `var(--interactive-accent)` or an accent `outline`, which made them the only
+  fields in the plugin that disagreed with the Name box beside them.
+- **A rule scoped to the editor reaches more inputs than the field it was
+  written for.** `.callout-studio-editor .setting-item-control
+  input[type="text"]` is (0,4,1) and matches *every* text input in that
+  column — including the text half of the Color row's palette combobox, which
+  is styled by `.cs-combobox-control .cs-combobox-input` at (0,2,0) and
+  therefore loses. Before the exclusion, that gave the Color row a bordered,
+  form-field-coloured box **inside** the picker and two nested focus rings when
+  the user typed in it, while the same component in the settings tab was
+  correct — the two only ever differed because of who their ancestor was. The
+  rule now excludes both specialised fields by class:
+
+  ```css
+  input[type="text"]:not(.cs-tag-input-field, .cs-combobox-input)
+  ```
+
+  A `:not()` **list**, not two chained `:not()`s: a list takes the specificity
+  of its most specific argument, so the selector stays (0,4,1) and the
+  reasoning written beside it about outranking Obsidian's phone rule still
+  holds. The same exclusion is on the `:focus` and `:disabled` variants —
+  `ListboxPopup.setDisabled` does set `inputEl.disabled`, so that state is
+  reachable, and `tests/modalSurfaces.test.ts` pins the disabled one by its
+  exact selector.
+
+> [!TIP]
+> This is a cascade question, not a reading-the-file question, and it is worth
+> answering with the harness in
+> [21 — Checking a theme against the real cascade](21-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade):
+> extract `app.css` from the installer asar, load it beside the live
+> `styles.css`, rebuild the DOM chain, focus the field and read
+> `getComputedStyle`. Comparing a field against the Name box that way is how
+> the combobox divergence was found — both mount sites *look* identical in the
+> stylesheet, and only the computed values show that one of them is not.
+
 ## Notable individual modals
 
 ### `ConfirmModal` — the generic yes/no dialog
@@ -953,13 +1012,17 @@ state*, then a live preview of the palette name. Every row is built
 unconditionally and hidden with `cs-row-hidden`; one `syncVisibility()` decides
 all of it, so the controls can never disagree about the current format.
 
-Two of those rows are their own modules under `settings/command/` rather than
+Three of those rows are their own modules under `settings/command/` rather than
 methods on the modal, because each carries a rule that only makes sense next to
-its control — and because the modal is close enough to the 300-line ratchet that
-a rule written inline would have to be written *thin*:
+its control — and because the modal is *at* the 300-line ratchet, so a rule
+written inline would have to be written *thin*:
 
 - **`commandRoles.ts`** — the format dropdown refills itself per callout
   (a theme-owned callout has only Block), with a line explaining the absence.
+- **`calloutRow.ts`** — the *Callout type* picker, over the shared
+  [combobox](#the-shared-callout-picker). This was a `<select>` whose every
+  option read `Abstract (abstract)`; the id is now shown only on a row it
+  actually explains.
 - **`foldStateRow.ts`** — the three fold states, shown only for Block. Heading
   and inline are not narrower versions of the same choice, they have no fold
   syntax at all, so the row hides rather than greying out. Both block *actions*
@@ -969,6 +1032,73 @@ a rule written inline would have to be written *thin*:
 `"none"` — otherwise a command saved from this window and the same command
 reloaded would differ by a key that means nothing. See
 [`CustomCommand`](04-data-model.md#customcommand).
+
+### The shared callout picker
+
+Every place the user picks one callout out of a list is the same control:
+[`calloutCombobox.ts`](../src/settings/calloutCombobox.ts), over
+[`ui/listboxPopup.ts`](../src/ui/listboxPopup.ts). It replaced two native
+`<select>`s — *Default fallback callout*
+([`FallbackSection.ts`](../src/settings/sections/FallbackSection.ts)) and
+*Callout type* above — neither of which could be typed into or showed a callout's
+icon or colour, while the `[!` popover in the editor had done both for a long
+time.
+
+The rows are literally the popover's markup
+([`calloutComboboxRow.ts`](../src/settings/calloutComboboxRow.ts) reuses the
+`callout-studio-suggestion*` classes), and the id/alias second line is the same
+function in both — `renderCalloutIdLine`, which `AutoComplete.renderSuggestion`
+calls too, so a callout cannot describe itself one way in the editor and another
+way in settings. Matching goes through the same `calloutMatchesQuery` — id,
+display name and **aliases**, substring rather than fuzzy — ordered by
+`matchRank`'s four tiers (exact, name-prefix, id/alias-prefix, anywhere) so that
+typing `no` answers `Note` rather than `Annotation`.
+
+A query that matches nothing does **not** dead-end. When the call site supplies
+`onCreate`, the empty state is replaced by a real, keyboard-reachable row
+offering to create the callout under that name — the same offer, and the same
+`callout-studio-suggestion-create-new` markup, as the `[!` popover. The picker
+then adopts what comes back, which is why `choices` is a *function*: the list is
+re-read after the editor closes, so the new row is simply there.
+
+Two rules in `listboxPopup.ts` carry the design and are worth reading before
+changing it:
+
+- **The query is separate state from `input.value`.** Opening does not search
+  for the committed label (that would list exactly one row); it starts empty and
+  selects the text so the first keystroke replaces it.
+- **Blur never commits.** Leaving with half a word typed reverts. `fallbackCalloutId`
+  is persisted *and* synced, so a picker that guessed "probably the first match"
+  would write an id the user never chose onto every device.
+
+Callers **must** call `destroy()` — a modal from `onClose`, a settings section
+through `registerDisposer` — because the popup holds a document-level
+click listener.
+
+Two details in [`listboxPopupEvents.ts`](../src/ui/listboxPopupEvents.ts) are
+load-bearing and have already been bugs. Selecting the label on click has to
+happen on `click`, not on `focus`: the browser fires mousedown → focus →
+mouseup → click, and mouseup places a caret that undoes an earlier `select()`.
+And the menu's `mousedown` `preventDefault()` is what lets a mouse selection
+commit at all — a click on a row is also a blur, and blur lands first.
+
+The control itself is built from Obsidian's own `select, .dropdown` variables
+(`--input-height`, `--input-shadow`, `--input-radius`, `--dropdown-background`,
+`border: 0`) so it is exactly as tall as the native dropdowns beside it. The
+input inside is painted down to nothing, and **its rules are descendant-
+qualified on purpose**: Obsidian styles `input[type='text']` at specificity
+(0,1,1), which beats a lone class — a bare `.cs-combobox-input` rule loses, and
+that is how the field first came to look like a second box drawn inside the
+control.
+
+The Color row uses the same popup through
+[`paletteCombobox.ts`](../src/settings/paletteCombobox.ts), which adds group
+headings (*Custom* / *Obsidian* / *Presets*, emitted per run so a group filtered
+to nothing leaves no stranded heading) and the pinned "+ New color…" action.
+Only the *control* moved out of `CalloutEditor`: which palette the form's colours
+resolve to, the "Deleted color" state when they resolve to none, and the
+save-state baseline that feeds all stayed, because they read and write editor
+state.
 
 ### `hotkeyLink.ts` — reading a binding Obsidian doesn't expose a public API for
 
