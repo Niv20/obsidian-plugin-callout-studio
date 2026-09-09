@@ -10,6 +10,7 @@ import { ReloadQueue } from "../../src/manager/reloadQueue";
 import { loadSettingsInto } from "../../src/manager/settingsBoot";
 import type { ExternalReloadHost } from "../../src/manager/settingsAdopt";
 import { definition } from "./discoveryHarness";
+import { syncThemeOverlayRows } from "../../src/manager/theme/themeOverlayRows";
 import { installFakeDom } from "./fakeDom";
 
 import { hasSafeSettingsFileShape } from "../../src/manager/settingsFileShape";
@@ -26,6 +27,8 @@ export async function device(dir: string, seed?: unknown) {
 	if (seed !== undefined) await writeFile(file, JSON.stringify(seed));
 	const checkpointFile = join(dir, "device-checkpoint.json");
 	let writes = 0, backupFails = false, writeFails = false, checkpointFails = false;
+	/** What this device's active theme declares — machine-local by definition. */
+	let themeIds: ReadonlySet<string> = new Set<string>();
 	let checkpointHook: (() => Promise<void>) | null = null;
 	const app = { appId: dir, vault: { configDir: ".obsidian", getName: () => dir,
 		adapter: {
@@ -44,7 +47,12 @@ export async function device(dir: string, seed?: unknown) {
 			catch (error) { if ((error as { code: string }).code === "ENOENT") return null; throw error; }
 		},
 		saveData: async (data: unknown) => { if (writeFails) throw new Error("write unavailable"); writes++; await writeFile(file, JSON.stringify(data)); },
-		refreshThemeAppearance: () => {}, customCommands: { syncAll: () => {} }, refreshCallouts: () => {},
+		// The real hook re-runs the theme sweep, which is why `settingsAdopt`
+		// calls it straight after `registry.load()` clears the map: the theme
+		// overlay is derived, so adoption drops it and this puts it back. A
+		// device with no theme declares nothing and the sweep is a no-op.
+		refreshThemeAppearance: () => { syncThemeOverlayRows(registry, themeIds); },
+		customCommands: { syncAll: () => {} }, refreshCallouts: () => {},
 	} as ExternalReloadHost & { saveData(data: unknown): Promise<void> };
 	host.settingsWriter = createSettingsWriter({ ...host, onExternalSettingsChange: () => queue.run() }, {
 		read: async () => {
@@ -62,6 +70,11 @@ export async function device(dir: string, seed?: unknown) {
 	host.saveSettings = () => host.settingsWriter.save().finally(() => queue.release());
 	await loadSettingsInto(host);
 	return { dir, host, registry, queue,
+		/** Switch this device's theme and sweep, as `css-change` would. */
+		setTheme: (...ids: string[]) => {
+			themeIds = new Set(ids);
+			syncThemeOverlayRows(registry, themeIds);
+		},
 		removeDisk: async () => { await rm(file); },
 		conflict: async (name: string, data: unknown) => { await writeFile(join(dir, name), JSON.stringify(data)); },
 		replaceDisk: async (data: unknown) => { await writeFile(file, JSON.stringify(data)); },
