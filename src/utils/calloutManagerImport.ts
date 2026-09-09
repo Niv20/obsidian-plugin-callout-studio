@@ -167,7 +167,9 @@ export function planCalloutManagerImport(
 			entry = { ...rawEntry, icon: undefined };
 		}
 
-		const existing = registry.findByAttrId(entry.id);
+		const candidate = registry.findByAttrId(entry.id);
+		// A local overlay supplies no saved fields for an import to inherit.
+		const existing = candidate?.source === "theme" ? undefined : candidate;
 		if (unknownIcon) {
 			issues.push({
 				index,
