@@ -42,6 +42,8 @@ import {
 	findAttrIdConflict,
 	vaultIdFormsFor,
 } from "./calloutIdForms";
+import { syncThemeOverlayRows } from "./theme/themeOverlayRows";
+import { addImportedCallout } from "../utils/importedCallout";
 import { ThemeFacts } from "./theme/ThemeFacts";
 import type { ThemeAppearance } from "./theme/themeAppearance";
 import { mirroredFallbackRow } from "./discoveredRow";
@@ -1528,16 +1530,10 @@ export class CalloutRegistry {
 		// A reset is the user saying "none of this is mine" — which goes for
 		// another build's fields as much as for their own callouts.
 		this.foreign = NO_FOREIGN_FIELDS;
-		// The theme's callouts are not the user's to reset: they are an overlay
-		// minted from the active stylesheet, absent from every backup and
-		// export, and re-minted only by the next sweep. Without this, Reset
-		// empties the theme list until the user happens to change theme.
-		const themeRows = this.getAll().filter((d) => d.source === "theme");
 		this.callouts.clear();
 		for (const def of DEFAULT_CALLOUTS) {
 			this.setCallout(def.id, structuredClone(def));
 		}
-		for (const row of themeRows) this.setCallout(row.id, row);
 		// Reset global style to defaults
 		this.settings.globalStyle = structuredClone(
 			DEFAULT_SETTINGS.globalStyle,
@@ -1560,13 +1556,17 @@ export class CalloutRegistry {
 		// that is meant to empty it.
 		this.settings.userImages = [];
 		// The commands the user built point at callouts this reset just wiped.
-		// The manager's sync would drop them anyway; clearing here keeps the
-		// reset atomic instead of leaving a list that empties a moment later.
+		// Clear them together with the callouts they reference.
 		this.settings.customCommands = [];
 		this.syncUserImages();
 		// Clear SVG caches
 		this.clearIconSvgCache();
-		this.notifyChange();
+		// Rebuild every currently declared id, including those previously held
+		// by a saved row or alias. Use the reset defaults, not deleted artwork.
+		this.batch(() => {
+			syncThemeOverlayRows(this, this.themeFacts.getOwnedIds());
+			this.notifyChange();
+		});
 	}
 
 	/**
@@ -1654,7 +1654,7 @@ export class CalloutRegistry {
 					builtIn: false,
 					source: "user",
 				};
-				if (this.add(def)) created++;
+				if (addImportedCallout(this, def)) created++;
 			}
 
 			// Safety net: add()/update() above already save on every successful
@@ -1759,7 +1759,7 @@ export class CalloutRegistry {
 					builtIn: false,
 					source: "user",
 				};
-				if (this.add(def)) created++;
+				if (addImportedCallout(this, def)) created++;
 			}
 
 			// Safety net, as in applyCalloutManagerImport: add()/update() save on

@@ -40,6 +40,11 @@ export class ThemeFacts {
 	private ownedIds: ReadonlySet<string> = new Set();
 	private appearances: ReadonlyMap<string, ThemeAppearance> = new Map();
 
+	/** A snapshot for rebuilding the overlay after settings are reset. */
+	getOwnedIds(): ReadonlySet<string> {
+		return new Set(this.ownedIds);
+	}
+
 	/**
 	 * Publish the ids the active theme claims, in attribute form.
 	 *

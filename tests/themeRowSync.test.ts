@@ -30,7 +30,7 @@ import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { ThemeCalloutStore } from "../src/manager/theme/ThemeCalloutStore";
 import { registerThemeAppearance } from "../src/manager/theme/themeAppearanceSync";
-import { discovered } from "./support/discoveryHarness";
+import { discovered, definition } from "./support/discoveryHarness";
 import { installFakeDom } from "./support/fakeDom";
 
 installFakeDom();
@@ -164,4 +164,34 @@ describe("theme appearance updates never persist anything", () => {
   assert.strictEqual(registry.themeOwns(registry.get("alpha")!), false);
   assert.strictEqual(registry.themeOwns(registry.get("bravo")!), true);
  });
+});
+
+
+describe("theme rows after transient editors and removals", () => {
+	it("restores a theme row when a new-callout draft closes, even with fallback disabled", () => {
+		const t = themeHost("");
+		const registry = vault();
+		registry.settings.fallbackCalloutId = "";
+		const { host, disposers } = syncHost(registry, t.app);
+		registerThemeAppearance(host);
+		registry.setPreviewDefinition(definition({ id: "recite" }));
+		t.setTheme({ css: '.callout[data-callout="recite"] { color: red; }' });
+		t.cssChange();
+		registry.setPreviewDefinition(null);
+		assert.strictEqual(registry.get("recite")?.source, "theme");
+		assert.ok(!registry.toSaveData().callouts.some(row => row.id === "recite"));
+		for (const dispose of disposers) dispose();
+	});
+
+	it("reconciles a removed saved row without requiring a different theme stylesheet", () => {
+		const t = themeHost('.callout[data-callout="recite"] { color: red; }');
+		const registry = vault();
+		registry.add(discovered("recite"));
+		const { host, disposers } = syncHost(registry, t.app);
+		registerThemeAppearance(host);
+		registry.remove("recite");
+		t.cssChange();
+		assert.strictEqual(registry.get("recite")?.source, "theme");
+		for (const dispose of disposers) dispose();
+	});
 });

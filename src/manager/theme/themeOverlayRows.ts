@@ -20,8 +20,8 @@
  * about *this machine*: a vault synced to a laptop with a different theme must
  * produce a byte-identical `data.json`, or two devices start rewriting one
  * file at each other — issue #41. The overlay is therefore add-or-remove only.
- * Nothing here re-homes a row into a persisted source; the only way a theme id
- * becomes saved configuration is the user pressing **Scan for callouts**.
+ * Nothing here re-homes a row into a persisted source. A manual scan or an
+ * explicit import can save a definition for that id.
  *
  * ## Three rules that keep the sweep from destroying anything
  *
@@ -123,9 +123,9 @@ export function syncThemeOverlayRows(
 			for (const id of fresh) {
 				// Modelled on the fallback callout so the row has *something* to
 				// show in the pickers, where a colourless entry reads as broken.
-				// Cloning a row already in the map also means no new icon cache
-				// key is introduced, so `iconSvgCache` — which *is* persisted —
-				// cannot move because of a theme. None of this is emitted (the
+				// Artwork loaders and cache cleanup skip theme rows, so even a
+				// placeholder left over after a fallback change cannot modify
+				// the synced icon cache. None of this is emitted (the
 				// injector stands down for a theme-owned row) and none of it is
 				// saved.
 				const row: CalloutDefinition = {
