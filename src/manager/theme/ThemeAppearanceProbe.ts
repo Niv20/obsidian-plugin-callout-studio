@@ -73,6 +73,7 @@ export class ThemeAppearanceProbe {
 	private readonly component = new Component();
 	private cache: Map<string, ThemeAppearance> = new Map();
 	private signature: string | null = null;
+	private generation = 0;
 	private running = false;
 	private destroyed = false;
 	/** The one request that arrived mid-pass. See {@link ensure}. */
@@ -117,6 +118,7 @@ export class ThemeAppearanceProbe {
 	 * moment is the contract callers are already written against.
 	 */
 	invalidate(): void {
+		this.generation++;
 		this.signature = null;
 		this.cache = new Map();
 	}
@@ -165,13 +167,18 @@ export class ThemeAppearanceProbe {
 		if (signature === this.signature) return;
 
 		this.running = true;
+		const generation = this.generation;
 		try {
-			this.cache =
+			const measured =
 				wanted.length > 0
 					? await this.measure(wanted)
 					: new Map<string, ThemeAppearance>();
+			// Even A → B → A or an in-place CSS edit invalidates the old pass.
+			if (this.destroyed || generation !== this.generation) return;
+			this.cache = measured;
 			this.signature = signature;
 		} catch {
+			if (this.destroyed || generation !== this.generation) return;
 			// A failed read must not freeze the answers: clearing the signature
 			// lets the next repaint try again, and until then every row falls to
 			// the neutral placeholder rather than to a stored Studio colour.
@@ -182,7 +189,7 @@ export class ThemeAppearanceProbe {
 			this.cache = new Map();
 		} finally {
 			this.running = false;
-			if (!this.destroyed) onReady();
+			if (!this.destroyed && generation === this.generation) onReady();
 			const next = this.pending;
 			this.pending = null;
 			if (next && !this.destroyed) void this.ensure(next.ids, next.onReady);

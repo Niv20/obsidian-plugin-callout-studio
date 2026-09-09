@@ -6,6 +6,7 @@ import type { App, PluginManifest } from "obsidian";
 import { PackDataStore } from "../src/icons/PackDataStore";
 import { IconService } from "../src/icons/IconService";
 import { IconFetchManager } from "../src/icons/IconFetchManager";
+import { syncThemeOverlayRows } from "../src/manager/theme/themeOverlayRows";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import type { CSSInjector } from "../src/manager/CSSInjector";
 import { isPackLoaded } from "../src/icons/packData";
@@ -175,4 +176,26 @@ describe("icon work has a terminal lifecycle", () => {
 		fetch.destroy(); await pending;
 		assert.equal(timers.size, 0); assert.equal(requests, 1); assert.deepEqual(notices, []);
 	}));
+});
+
+
+describe("theme placeholders never populate synced artwork caches", () => {
+	for (const type of ["material", "octicons"] as const) {
+		it(`does not fetch a stale ${type} icon held only by an overlay`, async () => globals(async () => {
+			const h = harness();
+			h.registry.update("note", { icon: { type, value: type === "material" ? "home" : "alert" } });
+			syncThemeOverlayRows(h.registry, new Set(["recite"]));
+			// The fallback changes while the theme keeps its temporary row.
+			h.registry.resetBuiltIn("note");
+			let requests = 0;
+			serve(async () => { requests++; return { text: type === "material" ? '<svg viewBox="0 0 24 24"><path d="M0 0h1v1z"/></svg>' : artwork(type) }; });
+			const service = new IconService(h.host);
+			const before = structuredClone(h.registry.toSaveData());
+			try {
+				await service.initialize();
+				assert.equal(requests, 0, "only the theme uses the old icon placeholder");
+				assert.deepEqual(h.registry.toSaveData(), before);
+			} finally { service.destroy(); }
+		}));
+	}
 });
