@@ -17,7 +17,13 @@
  */
 import { Setting } from "obsidian";
 import { getSelectableLocales, resolveLocaleFile, setLocale, t } from "../../i18n";
+import { ListboxPopup } from "../../ui/listboxPopup";
 import type { SettingsSectionContext } from "./types";
+
+type LanguageChoice = {
+	code: string;
+	name: string;
+};
 
 export function renderLanguageSection(
 	ctx: SettingsSectionContext,
@@ -27,39 +33,77 @@ export function renderLanguageSection(
 
 	const setting = new Setting(containerEl)
 		.setName(t("settings.language"))
+		.setClass("cs-language-setting")
 		.setDesc(t("settings.languageDesc"));
 
-	setting.addDropdown((dd) => {
-		dd.addOption("auto", t("settings.languageAuto"));
-		for (const { code, name } of getSelectableLocales()) {
-			dd.addOption(code, name);
-		}
-		dd.setValue(ctx.plugin.settings.language).onChange(async (val) => {
-			ctx.plugin.settings.language = val;
-			await ctx.plugin.saveSettings();
-
-			// Nothing to fetch for English, or for a language already on disk —
-			// the common case, and it must not flicker a spinner.
-			if (ctx.plugin.locales.isReady(val)) {
-				setLocale(val);
-				ctx.display();
-				ctx.plugin.applyLocaleChange();
-				return;
-			}
-
-			dd.setDisabled(true);
-			setting.setDesc(t("locale.downloading"));
-			// ensureLocale applies the new language itself, including the
-			// command names and the rendered notes, so there is nothing to do
-			// here but redraw: on success every label has changed language, and
-			// on failure the warning below has to replace the "Downloading…"
-			// text this row is still showing.
-			await ctx.plugin.ensureLocale();
-			ctx.display();
-		});
+	const picker = new ListboxPopup<LanguageChoice>(setting.controlEl, {
+		ariaLabel: t("settings.language"),
+		placeholder: t("settings.language"),
+		emptyText: () => "",
+		itemsFor: (query) => filterLanguageChoices(query),
+		renderRow: renderLanguageRow,
+		labelOf: (choice) => choice.name,
+		keyOf: (choice) => choice.code,
+		searchable: false,
+		onCommit: (choice) => {
+			void setLanguage(ctx, setting, picker, choice.code);
+		},
 	});
+	picker.setSelected(ctx.plugin.settings.language);
+	ctx.registerDisposer(() => picker.destroy());
 
 	renderUnavailableWarning(ctx, containerEl);
+}
+
+function languageChoices(): LanguageChoice[] {
+	return [
+		{ code: "auto", name: t("settings.languageAuto") },
+		...getSelectableLocales(),
+	];
+}
+
+function filterLanguageChoices(query: string): LanguageChoice[] {
+	const q = query.trim().toLocaleLowerCase();
+	const choices = languageChoices();
+	if (!q) return choices;
+	return choices.filter(
+		(choice) =>
+			choice.name.toLocaleLowerCase().includes(q) ||
+			choice.code.toLocaleLowerCase().includes(q),
+	);
+}
+
+function renderLanguageRow(rowEl: HTMLElement, choice: LanguageChoice): void {
+	rowEl.createDiv({ cls: "cs-language-option-label", text: choice.name });
+}
+
+async function setLanguage(
+	ctx: SettingsSectionContext,
+	setting: Setting,
+	picker: ListboxPopup<LanguageChoice>,
+	val: string,
+): Promise<void> {
+	ctx.plugin.settings.language = val;
+	await ctx.plugin.saveSettings();
+
+	// Nothing to fetch for English, or for a language already on disk —
+	// the common case, and it must not flicker a spinner.
+	if (ctx.plugin.locales.isReady(val)) {
+		setLocale(val);
+		ctx.display();
+		ctx.plugin.applyLocaleChange();
+		return;
+	}
+
+	picker.setDisabled(true);
+	setting.setDesc(t("locale.downloading"));
+	// ensureLocale applies the new language itself, including the
+	// command names and the rendered notes, so there is nothing to do
+	// here but redraw: on success every label has changed language, and
+	// on failure the warning below has to replace the "Downloading…"
+	// text this row is still showing.
+	await ctx.plugin.ensureLocale();
+	ctx.display();
 }
 
 /**

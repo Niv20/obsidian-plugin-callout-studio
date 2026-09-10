@@ -201,6 +201,7 @@ export class PaletteEditorModal extends Modal {
 		private plugin: PaletteEditorPlugin,
 		options: {
 			existing?: CustomPalette;
+			seedName?: string;
 			/**
 			 * Pre-fill every colour field but stay a NEW palette: the name comes
 			 * up empty and the title still reads "New color palette". Used to
@@ -251,7 +252,8 @@ export class PaletteEditorModal extends Modal {
 			...(options.takenColors ?? []).map(customPaletteToColorPalette),
 			...getAllColorPalettes(),
 		];
-		this.name = this.existing?.name ?? "";
+		const seedName = options.seedName?.trim();
+		this.name = this.existing?.name ?? seedName ?? "";
 		// Prefers the user's stored pick over the derivation's own output; see
 		// seedBaseColor for why that ordering is load-bearing.
 		this.baseColor = seedBaseColor(base, DEFAULT_BASE_COLOR);
