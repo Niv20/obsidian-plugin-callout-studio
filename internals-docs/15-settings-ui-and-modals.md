@@ -1291,6 +1291,90 @@ and the two tokens that must never come back to a button face.
 > harness measured the resting colour twice that way and reported the fix as
 > broken.
 
+### The red half: a hover rule that resolves to nothing
+
+The footer carve-out hands `.mod-cta`, `.mod-warning` and `.mod-destructive`
+back to Obsidian on the grounds that they own their own faces. The red variants
+only appear to own a useful hover, and the reason is worth writing down because
+nothing in either stylesheet looks wrong.
+
+Obsidian ships the rule you would expect:
+
+```css
+button.mod-warning       { background-color: var(--background-modifier-error) }
+button.mod-warning:hover { background-color: var(--background-modifier-error-hover) }
+```
+
+and then, under `body`, defines both of those tokens as the same colour:
+
+```css
+--background-modifier-error: var(--color-red);
+--background-modifier-error-hover: var(--color-red);
+```
+
+So the hover matches, fires, and paints the colour that is already there. Read
+out of headless Chrome against the real `app.css`, both tokens resolve to
+`rgb(233, 49, 71)` in light and `rgb(251, 70, 76)` in dark — **identical**,
+where the accent pair beside them genuinely differs. Delete, Replace and
+"Reset everything" were never missing a hover rule; they were running a no-op,
+Δlum 0.0% in both themes, which is why the gap outlived the grey-button pass
+sitting directly above it.
+
+This reaches the settings tab as well as the windows. The class produced by
+`ButtonComponent.setWarning()` has changed across Obsidian versions: older
+versions and themes use `.mod-warning`, while the live DOM in Obsidian 1.13.7
+gives "Reset everything" both `.mod-destructive` and `.mod-cta`. That dual
+classification caused a second regression when the accent hover was fixed:
+the generic `.mod-cta` rule won and turned the red button purple. The accent
+selector therefore excludes both red classes, and the danger selector accepts
+either of them.
+
+`--cs-btn-danger-face-hover` is declared beside `--cs-btn-face` and mixed the
+same way, at the same 92%, with `--mono-rgb-100` for direction:
+
+| | rest → hover | ΔE00 | white text |
+| --- | --- | --- | --- |
+| light | `#e93147` → `#d62d41` | 4.19 | 4.20:1 → 4.87:1 |
+| dark | `#fb464c` → `#fb555a` | 2.84 | 3.45:1 → 3.20:1 |
+
+against the grey face's 4.10 and 5.26. Light matches almost exactly; dark is
+deliberately the smaller step, because a saturated red is already the most
+prominent thing on the surface and driving it to the grey's ΔE00 needs ~86%,
+which costs white-text contrast (3.01:1) on a fill Obsidian already ships below
+AA.
+
+> [!WARNING]
+> Measure a step like this in **CIEDE2000**. Plain CIE76 ΔE scores the two rows
+> above 6.5 and 7.4 — "already matched" — and it is wrong in exactly the
+> saturated region a red button lives in. The greys above are near-neutral,
+> which is the case where the two measures happen to agree.
+
+Three constraints shape the rule itself:
+
+- **It sets the hover only.** A theme that restyles `.mod-warning` or
+  `.mod-destructive` keeps its own red, and because the mix reads
+  `--background-modifier-error`, a theme that retunes *that* gets a hover
+  derived from its colour. Claiming the resting fill at this weight would beat
+  a theme painting either class directly.
+- **`body:not(.is-mobile)`**, because Obsidian's mobile warning/destructive
+  treatment drops the red fill for grey-with-red-text, and a tablet with a
+  pointer attached satisfies `hover: hover` while still carrying `.is-mobile`.
+- **(0,5,2) against Obsidian's (0,2,1)**, so it lands without `!important`.
+
+> [!NOTE]
+> `.cs-icon-tile-clear` — the small red ✕ on an icon tile — is the one red
+> control that does **not** follow this, and that is deliberate. It mixes toward
+> a hardcoded `black` in both themes, so it darkens in dark mode against the
+> house direction rule. It also carries a hardcoded white glyph, and darkening
+> is what keeps that glyph legible: `color-mix(… black)` holds it at 6.08:1
+> light and 5.10:1 dark, where switching to `--mono-rgb-100` would drop the dark
+> pair to 2.80:1. The direction rule serves contrast; here it would cost it.
+
+Do not infer the runtime class from a search for literal `.mod-destructive`
+call sites in `src/`: it is added inside Obsidian's `ButtonComponent`. The
+regression test intentionally covers the real `mod-destructive mod-cta`
+combination so a future accent change cannot capture warning buttons again.
+
 ## Notable individual modals
 
 ### `ConfirmModal` — the generic yes/no dialog

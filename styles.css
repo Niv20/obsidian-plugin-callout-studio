@@ -84,6 +84,86 @@
 	);
 	--cs-btn-border: var(--background-modifier-border);
 	--cs-btn-border-hover: var(--background-modifier-border-hover);
+	--cs-btn-accent-face-hover: color-mix(
+		in srgb,
+		var(--interactive-accent) 92%,
+		rgb(var(--mono-rgb-100))
+	);
+
+	/* The danger half of the same idea, and it fails for a different reason than
+	   the greys did. Obsidian *does* ship a hover for red buttons —
+
+	       button.mod-warning       { background-color: var(--background-modifier-error) }
+	       button.mod-warning:hover { background-color: var(--background-modifier-error-hover) }
+
+	   — but under `body` it defines both of those tokens as the same colour:
+
+	       --background-modifier-error: var(--color-red);
+	       --background-modifier-error-hover: var(--color-red);
+
+	   so the rule matches, fires, and paints the colour that is already there.
+	   Delete, Replace and "Reset everything" are not missing a hover rule; they
+	   are running one that resolves to a no-op, Δlum 0.0% in *both* themes. That
+	   is why they feel dead next to Cancel while looking, in the stylesheet, like
+	   they are handled — and why the fix is a token of ours, not a rule of ours.
+
+	   Mixed at the same 92% as `--cs-btn-face-hover`, with `--mono-rgb-100` for
+	   direction, so it darkens in light and lightens in dark like everything else
+	   here. Measured in CIEDE2000 against the grey face it sits beside (which is
+	   4.10 light, 5.26 dark):
+
+	       light   #e93147 → #d62d41   ΔE00 4.19   white text 4.20:1 → 4.87:1
+	       dark    #fb464c → #fb555a   ΔE00 2.84   white text 3.45:1 → 3.20:1
+
+	   Light matches the grey almost exactly. Dark is deliberately the smaller
+	   step: a saturated red is already the most prominent thing on the surface,
+	   and driving it to the grey's ΔE00 needs ~86%, which costs white-text
+	   contrast (3.01:1) on a fill Obsidian already ships below AA. If you retune
+	   this, measure in ΔE00 — plain CIE76 scores these two 6.5 and 7.4 and calls
+	   them matched, which is wrong in exactly the saturated region a red lives
+	   in, and near-neutral greys are the case where the two happen to agree. */
+	--cs-btn-danger-face-hover: color-mix(
+		in srgb,
+		var(--background-modifier-error) 92%,
+		rgb(var(--mono-rgb-100))
+	);
+}
+
+/* Obsidian's accent hover can move toward a lighter purple in the light theme.
+   Derive the hover from the resting accent instead: the theme's mono endpoint
+   is black in light mode and white in dark mode, so the direction is stable
+   without hard-coding either theme's accent colour. */
+@media (hover: hover) {
+	.callout-studio-settings
+		button.mod-cta:not(
+			.mod-warning,
+			.mod-destructive,
+			:disabled,
+			.cs-btn-disabled
+		):hover,
+	.cs-modal
+		button.mod-cta:not(
+			.mod-warning,
+			.mod-destructive,
+			:disabled,
+			.cs-btn-disabled
+		):hover,
+	.callout-studio-editor
+		button.mod-cta:not(
+			.mod-warning,
+			.mod-destructive,
+			:disabled,
+			.cs-btn-disabled
+		):hover {
+		background-color: var(
+			--cs-btn-accent-face-hover,
+			var(--interactive-accent-hover)
+		);
+		border-color: var(
+			--cs-btn-accent-face-hover,
+			var(--interactive-accent-hover)
+		);
+	}
 }
 
 /* ─── Settings Panel ──────────────────────────────────────────── */
@@ -2315,6 +2395,56 @@ button.callout-studio-icon-picker-loading {
 	cursor: not-allowed;
 }
 
+/* ── Red buttons answer the pointer ──────────────────────────────
+   The variants the carve-out above hands back to Obsidian: Delete (a callout,
+   a user image), Replace, "Start fresh", the settings tab's "Reset everything"
+   (`ButtonComponent.setWarning()` is `mod-destructive mod-cta` in Obsidian
+   1.13), and any `ConfirmModal` that keeps the older `mod-warning` class. They rest on
+   Obsidian's red and — because `--background-modifier-error` and
+   `--background-modifier-error-hover` are the same colour, see
+   `--cs-btn-danger-face-hover` above — hover to it too. This rule is the only
+   thing that makes them move.
+
+   **The resting fill is deliberately left alone.** A theme that restyles
+	   `.mod-warning` or `.mod-destructive` keeps its own red, and mixing from
+   `--background-modifier-error` means a theme that retunes *that* gets a hover
+   derived from its colour. Claiming the resting fill at this weight would beat
+	   any theme painting either class directly.
+
+	   `body:not(.is-mobile)` because Obsidian's mobile warning/destructive
+	   treatment deliberately drops the red fill for grey-with-red-text, and a
+	   tablet with a pointer attached satisfies `hover: hover` while still carrying
+	   `.is-mobile` — without the guard those two meet and a grey button hovers red.
+
+   Scoped to the same three roots as the token, so a red button in a core
+   Obsidian dialog is untouched. (0,5,2) against Obsidian's (0,2,1), so it
+   lands without `!important`. */
+@media (hover: hover) {
+	body:not(.is-mobile)
+		.callout-studio-settings
+		button:is(.mod-warning, .mod-destructive):not(
+			:disabled,
+			.cs-btn-disabled
+		):hover,
+	body:not(.is-mobile)
+		.cs-modal
+		button:is(.mod-warning, .mod-destructive):not(
+			:disabled,
+			.cs-btn-disabled
+		):hover,
+	body:not(.is-mobile)
+		.callout-studio-editor
+		button:is(.mod-warning, .mod-destructive):not(
+			:disabled,
+			.cs-btn-disabled
+		):hover {
+		background-color: var(
+			--cs-btn-danger-face-hover,
+			var(--background-modifier-error-hover)
+		);
+	}
+}
+
 /* ── Stacked windows on mobile ────────────────────────────────────
    Opening a window on top of another one darkens everything behind the front
    one — on desktop. On iPhone and iPad it doesn't, and the layer underneath is
@@ -4496,12 +4626,17 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 
 	/* Selected + hovered. Keeping the accent is what keeps "selected" legible
 	   while the pointer is over it — a hovered selection must not read as an
-	   unselected segment — so the feedback is a step *within* the accent, using
-	   Obsidian's own paired token rather than a colour of our own. Distinct
-	   from both neighbouring states, which is the requirement. */
+	   unselected segment — so the feedback is the same theme-aware step within
+	   the accent as every other purple button. */
 	.cs-border-side-btn.is-active:hover {
-		background: var(--interactive-accent-hover);
-		border-color: var(--interactive-accent-hover);
+		background: var(
+			--cs-btn-accent-face-hover,
+			var(--interactive-accent-hover)
+		);
+		border-color: var(
+			--cs-btn-accent-face-hover,
+			var(--interactive-accent-hover)
+		);
 		color: var(--text-on-accent);
 	}
 }
@@ -5124,8 +5259,14 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 		color: var(--text-normal);
 	}
 	.cs-gradient-dir-btn.is-active:hover {
-		background: var(--interactive-accent-hover);
-		border-color: var(--interactive-accent-hover);
+		background: var(
+			--cs-btn-accent-face-hover,
+			var(--interactive-accent-hover)
+		);
+		border-color: var(
+			--cs-btn-accent-face-hover,
+			var(--interactive-accent-hover)
+		);
 		color: var(--text-on-accent);
 	}
 }

@@ -216,7 +216,7 @@ describe("a selected segment still answers the pointer", () => {
 			assert.ok(rule, `${seg.active}:hover is missing — a hovered selection has no feedback`);
 			assert.match(
 				backgroundOf(rule) ?? "",
-				/var\(--interactive-accent-hover\)/,
+				/var\(\s*--cs-btn-accent-face-hover/,
 				"a hovered selection steps within the accent, so it cannot be mistaken for an unselected segment",
 			);
 		});
