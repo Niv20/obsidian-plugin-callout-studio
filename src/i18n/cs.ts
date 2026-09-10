@@ -15,8 +15,13 @@ export const cs: Record<string, string> = {
 	"cmd.customInsertInline": "Vložit vložený callout {{name}}",
 	"cmd.openQuickInsert": "Rychlé vložení blokového callout",
 
-	"autocomplete.createNew": 'Vytvořit nový callout: "{{name}}"',
+	"autocomplete.createNew": 'Vytvořit "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Hledat callouty",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Hledat callouty",
 	"settings.fallbackTag": "Výchozí",
 	"settings.fallbackTagAuto": "Aut. výchozí",
 	"settings.rescanVaultDesc": "Přidá typy calloutů použité ve vašich poznámkách, které zatím nejsou v tomto seznamu. Vaše stávající callouty a poznámky se nezmění.",

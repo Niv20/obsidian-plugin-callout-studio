@@ -15,8 +15,13 @@ export const pl: Record<string, string> = {
 	"cmd.customInsertInline": "Wstaw śródtekstowy callout {{name}}",
 	"cmd.openQuickInsert": "Szybkie wstawianie callout blokowego",
 
-	"autocomplete.createNew": 'Utwórz nowy callout: "{{name}}"',
+	"autocomplete.createNew": 'Utwórz "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Szukaj callout",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Szukaj callout",
 	"settings.fallbackTag": "Domyślny",
 	"settings.fallbackTagAuto": "Aut. domyślny",
 	"settings.rescanVaultDesc": "Dodaje typy calloutów używane w Twoich notatkach, których nie ma jeszcze na tej liście. Twoje istniejące callouty i notatki nie są zmieniane.",

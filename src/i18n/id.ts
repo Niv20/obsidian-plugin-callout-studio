@@ -15,8 +15,13 @@ export const id: Record<string, string> = {
 	"cmd.customInsertInline": "Sisipkan inline callout {{name}}",
 	"cmd.openQuickInsert": "Sisipan cepat callout blok",
 
-	"autocomplete.createNew": 'Buat callout baru: "{{name}}"',
+	"autocomplete.createNew": 'Buat "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Cari callout",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Cari callout",
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default otomatis",
 	"settings.rescanVaultDesc": "Menambahkan tipe callout yang digunakan di catatan Anda yang belum ada di daftar ini. Callout dan catatan Anda yang sudah ada tidak diubah.",

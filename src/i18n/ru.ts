@@ -16,8 +16,13 @@ export const ru: Record<string, string> = {
 	"cmd.customInsertInline": "Вставить встроенный callout «{{name}}»",
 	"cmd.openQuickInsert": "Быстрая вставка блочного callout",
 
-	"autocomplete.createNew": 'Создать новый callout: "{{name}}"',
+	"autocomplete.createNew": 'Создать "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Поиск callout",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Поиск callout",
 	"settings.fallbackTag": "По умолчанию",
 	"settings.fallbackTagAuto": "Авт. по умолчанию",
 	"settings.rescanVaultDesc": "Добавляет типы callout, используемые в ваших заметках, которых ещё нет в этом списке. Ваши существующие callout и заметки не изменяются.",

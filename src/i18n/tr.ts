@@ -15,8 +15,13 @@ export const tr: Record<string, string> = {
 	"cmd.customInsertInline": "{{name}} satır içi callout'u ekle",
 	"cmd.openQuickInsert": "Blok callout'u hızlı ekle",
 
-	"autocomplete.createNew": 'Yeni callout oluştur: "{{name}}"',
+	"autocomplete.createNew": 'Oluştur "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Callout ara",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Callout ara",
 	"settings.fallbackTag": "Varsayılan",
 	"settings.fallbackTagAuto": "Otomatik varsayılan",
 	"settings.rescanVaultDesc": "Notlarınızda kullanılan ve bu listede henüz yer almayan callout türlerini ekler. Mevcut callout'larınız ve notlarınız değiştirilmez.",

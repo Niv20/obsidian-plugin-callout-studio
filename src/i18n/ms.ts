@@ -15,7 +15,12 @@ export const ms: Record<string, string> = {
 	"cmd.customInsertInline": "Masukkan callout sebaris {{name}}",
 	"cmd.openQuickInsert": "Sisipan pantas callout blok",
 
-	"autocomplete.createNew": 'Cipta callout baharu: "{{name}}"',
+	"autocomplete.createNew": 'Cipta "{{name}}"',
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Cari callout",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Cari callout",
 	"settings.fallbackTag": "Lalai",
 	"settings.fallbackTagAuto": "Lalai automatik",
 	"settings.rescanVaultDesc": "Menambah jenis callout yang digunakan dalam nota anda yang belum ada dalam senarai ini. Callout dan nota sedia ada anda tidak diubah.",

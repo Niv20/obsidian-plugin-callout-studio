@@ -15,8 +15,13 @@ export const ja: Record<string, string> = {
 	"cmd.customInsertInline": "{{name}}インラインcalloutを挿入",
 	"cmd.openQuickInsert": "ブロックcalloutをクイック挿入",
 
-	"autocomplete.createNew": '新しいcalloutを作成: "{{name}}"',
+	"autocomplete.createNew": '作成 "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "calloutを検索",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "calloutを検索",
 	"settings.fallbackTag": "デフォルト",
 	"settings.fallbackTagAuto": "自動デフォルト",
 	"settings.rescanVaultDesc": "ノートで使われていて、まだこの一覧にないcalloutタイプを追加します。既存のcalloutとノートは変更されません。",

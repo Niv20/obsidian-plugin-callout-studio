@@ -15,8 +15,13 @@ export const sv: Record<string, string> = {
 	"cmd.customInsertInline": "Infoga infogad callout {{name}}",
 	"cmd.openQuickInsert": "Snabbinfoga block-callout",
 
-	"autocomplete.createNew": 'Skapa ny callout: "{{name}}"',
+	"autocomplete.createNew": 'Skapa "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Sök callouts",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Sök callouts",
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
 	"settings.rescanVaultDesc": "Lägger till callout-typer som används i dina anteckningar och som inte redan finns i den här listan. Dina befintliga callouts och anteckningar ändras inte.",

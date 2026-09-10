@@ -15,8 +15,13 @@ export const hu: Record<string, string> = {
 	"cmd.customInsertInline": "{{name}} beágyazott callout beszúrása",
 	"cmd.openQuickInsert": "Blokk callout gyors beszúrása",
 
-	"autocomplete.createNew": 'Új callout létrehozása: "{{name}}"',
+	"autocomplete.createNew": 'Létrehozás "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Callout-ok keresése",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Callout-ok keresése",
 	"settings.fallbackTag": "Alapértelmezett",
 	"settings.fallbackTagAuto": "Aut. alapértelmezett",
 	"settings.rescanVaultDesc": "Hozzáadja a jegyzeteidben használt, ezen a listán még nem szereplő callout-típusokat. A meglévő calloutjaid és jegyzeteid nem változnak.",

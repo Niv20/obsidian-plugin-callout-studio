@@ -15,8 +15,13 @@ export const hi: Record<string, string> = {
 	"cmd.customInsertInline": "{{name}} इनलाइन callout डालें",
 	"cmd.openQuickInsert": "ब्लॉक callout जल्दी डालें",
 
-	"autocomplete.createNew": 'नया callout बनाएँ: "{{name}}"',
+	"autocomplete.createNew": 'नया "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "callout खोजें",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "callout खोजें",
 	"settings.fallbackTag": "डिफ़ॉल्ट",
 	"settings.fallbackTagAuto": "स्वतः डिफ़ॉल्ट",
 	"settings.rescanVaultDesc": "आपके नोट्स में इस्तेमाल हो रहे ऐसे callout प्रकार जोड़ता है जो अभी इस सूची में नहीं हैं। आपके मौजूदा callout और नोट्स नहीं बदले जाते।",

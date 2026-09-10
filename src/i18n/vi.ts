@@ -15,8 +15,13 @@ export const vi: Record<string, string> = {
 	"cmd.customInsertInline": "Chèn callout nội dòng {{name}}",
 	"cmd.openQuickInsert": "Chèn nhanh callout khối",
 
-	"autocomplete.createNew": 'Tạo callout mới: "{{name}}"',
+	"autocomplete.createNew": 'Tạo "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Tìm kiếm callout",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Tìm kiếm callout",
 	"settings.fallbackTag": "Mặc định",
 	"settings.fallbackTagAuto": "Mặc định tự động",
 	"settings.rescanVaultDesc": "Thêm các loại callout được dùng trong ghi chú của bạn mà chưa có trong danh sách này. Các callout và ghi chú hiện có của bạn không bị thay đổi.",

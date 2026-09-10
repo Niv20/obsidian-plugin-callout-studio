@@ -15,8 +15,13 @@ export const uk: Record<string, string> = {
 	"cmd.customInsertInline": "Вставити вбудований callout {{name}}",
 	"cmd.openQuickInsert": "Швидка вставка блокового callout",
 
-	"autocomplete.createNew": 'Створити новий callout: "{{name}}"',
+	"autocomplete.createNew": 'Створити "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Пошук callout",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Пошук callout",
 	"settings.fallbackTag": "За замовчуванням",
 	"settings.fallbackTagAuto": "Авт. за замовчуванням",
 	"settings.rescanVaultDesc": "Додає типи callout, які використовуються у ваших нотатках і яких ще немає в цьому списку. Наявні callout і нотатки не змінюються.",

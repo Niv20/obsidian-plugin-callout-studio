@@ -29,7 +29,7 @@ export const en: Record<string, string> = {
 	"cmd.customInsertInline": "Insert {{name}} inline callout",
 
 	// Autocomplete
-	"autocomplete.createNew": 'Create new callout: "{{name}}"',
+	"autocomplete.createNew": 'Create "{{name}}"',
 
 	// Vault scan / fallback / delete
 	"settings.fallbackTag": "Default",
@@ -68,6 +68,7 @@ export const en: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(falls back to default)",
 	"replaceModal.titleDelete": "Delete callout",
 	"replaceModal.titleReplace": "Replace in vault",
+	"replaceModal.searchPlaceholder": "Search callouts…",
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
 	"welcome.tooltip": "About Callout Studio",
@@ -178,6 +179,10 @@ export const en: Record<string, string> = {
 	"settings.clearUsesAction": "Clear uses in your notes",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} restyles every built-in callout, so they are all listed above and Callout Studio leaves them alone. To design one of your own, add a callout with a different ID.",
+
+	// The shared callout picker — the fallback row, the command editor
+	"calloutPicker.placeholder": "Search callouts…",
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
 
 	// Settings — Fallback callout
 	"settings.fallbackCallout": "Default fallback callout",
@@ -413,6 +418,8 @@ export const en: Record<string, string> = {
 	"editor.paletteGroupPresets": "Color presets",
 	"editor.paletteGroupCustom": "Custom",
 	"editor.paletteNewColor": "New color…",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
 	"editor.contrastWarning":
 		"Low contrast against the background — may be hard to read",
 	"editor.foldable": "Foldable",

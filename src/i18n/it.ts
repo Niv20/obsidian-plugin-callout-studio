@@ -15,8 +15,13 @@ export const it: Record<string, string> = {
 	"cmd.customInsertInline": "Inserisci callout in linea {{name}}",
 	"cmd.openQuickInsert": "Inserimento rapido di callout a blocco",
 
-	"autocomplete.createNew": 'Crea nuovo callout: "{{name}}"',
+	"autocomplete.createNew": 'Crea "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Cerca callout",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Cerca callout",
 	"settings.fallbackTag": "Predefinito",
 	"settings.fallbackTagAuto": "Predefinito automatico",
 	"settings.rescanVaultDesc": "Aggiunge i tipi di callout usati nelle tue note che non sono ancora in questo elenco. I tuoi callout e le tue note esistenti non vengono modificati.",

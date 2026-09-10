@@ -15,8 +15,13 @@ export const nl: Record<string, string> = {
 	"cmd.customInsertInline": "Inline {{name}}-callout invoegen",
 	"cmd.openQuickInsert": "Blok-callout snel invoegen",
 
-	"autocomplete.createNew": 'Nieuwe callout aanmaken: "{{name}}"',
+	"autocomplete.createNew": 'Nieuwe "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Callouts zoeken",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Callouts zoeken",
 	"settings.fallbackTag": "Standaard",
 	"settings.fallbackTagAuto": "Automatisch standaard",
 	"settings.rescanVaultDesc": "Voegt callouttypen toe die in je notities worden gebruikt en nog niet in deze lijst staan. Je bestaande callouts en notities worden niet gewijzigd.",

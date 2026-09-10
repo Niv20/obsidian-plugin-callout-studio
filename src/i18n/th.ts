@@ -15,8 +15,13 @@ export const th: Record<string, string> = {
 	"cmd.customInsertInline": "แทรก callout แบบอินไลน์ {{name}}",
 	"cmd.openQuickInsert": "แทรก callout แบบบล็อกอย่างรวดเร็ว",
 
-	"autocomplete.createNew": 'สร้าง callout ใหม่: "{{name}}"',
+	"autocomplete.createNew": 'สร้าง "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "ค้นหา callout",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "ค้นหา callout",
 	"settings.fallbackTag": "ค่าเริ่มต้น",
 	"settings.fallbackTagAuto": "ค่าเริ่มต้นอัตโนมัติ",
 	"settings.rescanVaultDesc": "เพิ่มชนิด callout ที่ใช้ในโน้ตของคุณซึ่งยังไม่อยู่ในรายการนี้ callout และโน้ตที่มีอยู่ของคุณจะไม่ถูกเปลี่ยนแปลง",

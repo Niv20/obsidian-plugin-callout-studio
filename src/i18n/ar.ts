@@ -16,8 +16,13 @@ export const ar: Record<string, string> = {
 	"cmd.customInsertInline": "إدراج callout {{name}} ضمن السطر",
 	"cmd.openQuickInsert": "إدراج سريع لـ callout كتلة",
 
-	"autocomplete.createNew": 'إنشاء callout جديد: "{{name}}"',
+	"autocomplete.createNew": 'إنشاء "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "بحث في الـ callouts",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "بحث في الـ callouts",
 	"settings.fallbackTag": "افتراضي",
 	"settings.fallbackTagAuto": "افتراضي تلقائي",
 	"settings.rescanVaultDesc": "يضيف أنواع callout المستخدَمة في ملاحظاتك وغير الموجودة في هذه القائمة بعد. لا تتغيّر الـ callout والملاحظات الحالية لديك.",

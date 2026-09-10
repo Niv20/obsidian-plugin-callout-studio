@@ -15,8 +15,13 @@ export const ro: Record<string, string> = {
 	"cmd.customInsertInline": "Inserează callout inline {{name}}",
 	"cmd.openQuickInsert": "Inserare rapidă de callout bloc",
 
-	"autocomplete.createNew": 'Creează callout nou: "{{name}}"',
+	"autocomplete.createNew": 'Creează "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "Caută callout-uri",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "Caută callout-uri",
 	"settings.fallbackTag": "Implicit",
 	"settings.fallbackTagAuto": "Implicit automat",
 	"settings.rescanVaultDesc": "Adaugă tipurile de callout folosite în notițele tale care nu sunt încă în această listă. Callout-urile și notițele tale existente nu sunt modificate.",

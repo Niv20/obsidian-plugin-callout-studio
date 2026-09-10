@@ -15,8 +15,13 @@ export const zh: Record<string, string> = {
 	"cmd.customInsertInline": "插入 {{name}} 行内 callout",
 	"cmd.openQuickInsert": "快速插入块级 callout",
 
-	"autocomplete.createNew": '创建新 callout："{{name}}"',
+	"autocomplete.createNew": '创建 "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "搜索 callout",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "搜索 callout",
 	"settings.fallbackTag": "默认",
 	"settings.fallbackTagAuto": "自动默认",
 	"settings.rescanVaultDesc": "添加你笔记中使用但尚未在此列表中的 callout 类型。你现有的 callout 和笔记不会被更改。",

@@ -15,8 +15,13 @@ export const ko: Record<string, string> = {
 	"cmd.customInsertInline": "{{name}} 인라인 callout 삽입",
 	"cmd.openQuickInsert": "블록 callout 빠른 삽입",
 
-	"autocomplete.createNew": '새 callout 만들기: "{{name}}"',
+	"autocomplete.createNew": '만들기 "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "callout 검색",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "callout 검색",
 	"settings.fallbackTag": "기본값",
 	"settings.fallbackTagAuto": "자동 기본값",
 	"settings.rescanVaultDesc": "노트에서 사용 중이지만 아직 이 목록에 없는 callout 유형을 추가합니다. 기존 callout과 노트는 변경되지 않습니다.",

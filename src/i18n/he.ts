@@ -25,9 +25,14 @@ export const he: Record<string, string> = {
 	"cmd.openQuickInsert": "הוספה מהירה של תיבת־הבלטה מסוג בלוק",
 
 	// Autocomplete
-	"autocomplete.createNew": 'יצירת תיבת־הבלטה חדשה: "{{name}}"',
+	"autocomplete.createNew": 'צור "{{name}}"',
 
 	// Vault scan / fallback / delete
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "חיפוש תיבות־הבלטה",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "חיפוש תיבות־הבלטה",
 	"settings.fallbackTag": "ברירת־מחדל",
 	"settings.fallbackTagAuto": "ברירת־מחדל אוטומטית",
 	"settings.rescanVaultDesc": "מוסיף סוגי תיבות־הבלטה שבשימוש בפתקים שלך ועדיין אינם ברשימה הזו. תיבות־ההבלטה והפתקים הקיימים שלך לא משתנים.",

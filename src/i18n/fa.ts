@@ -15,8 +15,13 @@ export const fa: Record<string, string> = {
 	"cmd.customInsertInline": "درج callout درون‌خطی {{name}}",
 	"cmd.openQuickInsert": "درج سریع callout بلوکی",
 
-	"autocomplete.createNew": 'ایجاد callout جدید: "{{name}}"',
+	"autocomplete.createNew": 'ایجاد "{{name}}"',
 
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.placeholder": "جستجوی callout‌ها",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"replaceModal.searchPlaceholder": "جستجوی callout‌ها",
 	"settings.fallbackTag": "پیش‌فرض",
 	"settings.fallbackTagAuto": "پیش‌فرض خودکار",
 	"settings.rescanVaultDesc": "انواع callout به‌کاررفته در یادداشت‌های شما را که هنوز در این فهرست نیستند اضافه می‌کند. calloutها و یادداشت‌های موجود شما تغییر نمی‌کنند.",
