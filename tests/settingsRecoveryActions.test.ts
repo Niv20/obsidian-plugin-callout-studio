@@ -1,6 +1,10 @@
 import { ConfirmModal } from "../src/utils/ConfirmModal";
-import { confirmFreshStart } from "../src/manager/settingsNotices";
+import { confirmFreshStart, offerFreshStart } from "../src/manager/settingsNotices";
 import type { Notice } from "obsidian";
+// The value, not the type: `last` is the stub's own, and esbuild aliases both
+// specifiers to this one module (see scripts/run-tests.mjs).
+import { Notice as StubNotice } from "./support/obsidianStub";
+import { FakeElement, type FakeDocumentFragment } from "./support/fakeDom";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { retrySettingsRecovery, startFreshSettings } from "../src/manager/settingsRecoveryActions";
@@ -148,6 +152,32 @@ describe("explicit saving recovery", () => {
 		h.host.registry.update("renamed", { colorLight: "#000000" }); h.state.failWrite = false;
 		assert.equal(await session.run(h.editor, async () => draft, () => {}), null);
 		assert.equal(h.host.settingsWriter.status.reason, "sync-conflict"); assert.equal(rewrites, 0);
+		h.host.settingsWriter.destroy();
+	});
+	it("the startup notice opens the settings tab rather than replacing the file itself", () => {
+		// The one destructive action this plugin has does not belong on a
+		// transient surface people dismiss by clicking at. The notice navigates;
+		// the banner it lands on is where the choice is actually made.
+		const h = recoveryActionHarness();
+		const opened: string[] = []; let panes = 0;
+		(h.host.app as unknown as { setting: unknown }).setting = {
+			open: () => { panes++; },
+			openTabById: (id: string) => { opened.push(id); return null; },
+		};
+		offerFreshStart(h.host.app, h.host.manifest.id);
+		const notice = StubNotice.last!;
+		// The link is a direct child of the notice fragment, which has no
+		// `querySelector` of its own — a fragment is a bag of nodes, not a tree.
+		const link = (notice.message as FakeDocumentFragment).childNodes
+			.find((node): node is FakeElement => node instanceof FakeElement && node.hasClass("cs-notice-action"));
+		assert.ok(link, "the notice carries no action link");
+		assert.equal(link.textContent, "Open Callout Studio settings");
+		const click = { type: "click", preventDefault: () => {} };
+		link.dispatchEvent(click);
+		assert.equal(panes, 1);
+		assert.deepStrictEqual(opened, ["callout-studio"]);
+		assert.equal(notice.hidden, true);
+		assert.equal(h.state.disk !== null, true, "navigating must not touch the settings file");
 		h.host.settingsWriter.destroy();
 	});
 	it("updates a persistent banner without rebuilding the form and disposes its listener", async () => {

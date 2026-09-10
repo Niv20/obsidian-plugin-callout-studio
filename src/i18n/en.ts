@@ -55,6 +55,8 @@ export const en: Record<string, string> = {
 	"saveStatus.reviewDraft": "Incoming settings and recovery checks are complete. Your draft is unchanged. Review it and save again.",
 	"saveStatus.settingsArrived": "Existing settings arrived and were loaded. A replacement file was not created.",
 	"saveStatus.newFile": "Create a new settings file",
+	"saveStatus.openSettings": "Open Callout Studio settings",
+	"notice.openSettingsFailed": "Callout Studio settings could not be opened. Open Settings → Callout Studio to choose what to do.",
 	"notice.settingsBackupFailed": "Settings recovery could not continue because a safety backup could not be saved. Check available storage and write permissions, then retry.",
 	"notice.settingsBackupSaved": "A recovery copy of local callout definitions was saved before applying incoming settings: {{path}}.",
 	"commandBuilder.missingCallout": "Paused: the callout is missing. Discover or create it to restore this command, or edit the command to choose another type.",

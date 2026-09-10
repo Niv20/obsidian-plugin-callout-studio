@@ -373,8 +373,19 @@ export class Setting {
 
 /** Records its message when `__CS_NOTICES__` is an array; inert otherwise. */
 export class Notice {
-	hide(): void {}
+	/**
+	 * The most recently constructed notice. `__CS_NOTICES__` collects the plain
+	 * strings, which is all most suites need; a notice built from a fragment —
+	 * the frozen-settings one, which carries a link — has to be reached as an
+	 * object to click what is inside it.
+	 */
+	static last: Notice | null = null;
+	readonly message: unknown;
+	hidden = false;
+	hide(): void { this.hidden = true; }
 	constructor(message?: string) {
+		this.message = message;
+		Notice.last = this;
 		if (Array.isArray(seams.__CS_NOTICES__) && message !== undefined) {
 			seams.__CS_NOTICES__.push(message);
 		}

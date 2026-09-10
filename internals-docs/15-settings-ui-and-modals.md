@@ -1577,7 +1577,11 @@ rather than barred down one edge, which is also what makes it read the same way
 in an RTL locale; the action row is `flex-start`-aligned with the prose and
 stacks full width under 600px. The settings page also exposes the confirmed
 new-file action when the frozen reason is a missing file; other failures expose
-recovery retry without an unsafe reset. Disposers run on tab hide/re-render and
+recovery retry without an unsafe reset. That banner is the *only* place the
+new-file action is offered: the startup notice for a missing file
+(`offerFreshStart`) links to the plugin's settings tab and nothing else, because
+a notice is transient, sits in a corner away from the page the decision belongs
+to, and is a surface people dismiss by clicking at. Disposers run on tab hide/re-render and
 editor close. Buttons are disabled while their action is running.
 
 Saving-status observers are isolated from persistence: a detached or failing UI
