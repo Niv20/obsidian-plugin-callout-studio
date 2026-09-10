@@ -6779,18 +6779,63 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
    as a warning rather than an error: nothing is broken, and in the common case
    — a sync client mid-swap — it resolves itself. */
 .cs-readonly-banner {
-	margin: 0 0 16px;
-	padding: 10px 14px;
-	border-left: 3px solid var(--text-warning, var(--color-orange));
-	border-radius: var(--radius-s);
-	/* A translucent tint of the warning colour rather than a surface token: the
-	   banner sits on the settings tab, and a raised-shade token would be a claim
-	   about what it is sitting on (see tests/modalSurfaces.test.ts). */
-	background: color-mix(
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	/* Space above as well as below: the banner is the first thing the settings
+	   tab renders, and the header row under it zeroes its own `padding-top`, so
+	   with no margin here the card sits flush against the top edge of the pane. */
+	margin: 12px 0 16px;
+	padding: 12px 14px;
+	/* A thin outline on all four sides rather than a bar down one edge. The bar
+	   only marked the side it was on, so the block ran off into the page on the
+	   other three, and it changed sides between an LTR and an RTL locale. A
+	   closed card says the same thing in either direction and keeps the buttons
+	   below visibly inside the message that offers them. */
+	border: 1px solid color-mix(
 		in srgb,
-		var(--text-warning, var(--color-orange)) 12%,
+		var(--text-warning, var(--color-orange)) 40%,
 		transparent
 	);
+	border-radius: var(--radius-m);
+	/* A translucent tint of the warning colour rather than a surface token: the
+	   banner sits on the settings tab, and a raised-shade token would be a claim
+	   about what it is sitting on (see tests/modalSurfaces.test.ts). Lighter
+	   than the bar version was — the outline now carries the emphasis. */
+	background: color-mix(
+		in srgb,
+		var(--text-warning, var(--color-orange)) 9%,
+		transparent
+	);
+}
+
+.cs-readonly-banner-header {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+
+/* Fixed to the height of one title line rather than centred on the whole
+   header, so a title that wraps to two lines on a phone still starts level
+   with its icon instead of drifting to the middle of the block. */
+.cs-readonly-banner-icon {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	height: calc(var(--font-ui-medium) * 1.4);
+	color: var(--text-warning, var(--color-orange));
+}
+
+.cs-readonly-banner-icon .svg-icon {
+	width: var(--icon-s);
+	height: var(--icon-s);
+}
+
+.cs-readonly-banner-title {
+	color: var(--text-normal);
+	font-size: var(--font-ui-medium);
+	font-weight: var(--font-semibold);
+	line-height: 1.4;
 }
 
 .cs-readonly-banner p {
@@ -6798,4 +6843,33 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-normal);
 	font-size: var(--font-ui-small);
 	line-height: 1.5;
+}
+
+/* Actions start at the same edge as the title and the prose, so the card reads
+   as one left-aligned column in an LTR locale and one right-aligned column in
+   an RTL one — `flex-start` is what makes that follow the text direction. */
+.cs-readonly-banner-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	gap: 8px;
+	margin-top: 2px;
+}
+
+.cs-readonly-banner-actions button {
+	margin: 0;
+}
+
+/* On a phone two side-by-side buttons either overflow the card or shrink their
+   labels to a truncated word, so they stack full width instead. */
+@media (max-width: 600px) {
+	.cs-readonly-banner-actions {
+		flex-direction: column;
+		align-items: stretch;
+		/* `stretch` fills the flex *line*, and a wrapping column sizes its line
+		   to the widest button — so wrapping has to go off here or the stack
+		   comes out as wide as its longest label instead of as wide as the
+		   card. */
+		flex-wrap: nowrap;
+	}
 }

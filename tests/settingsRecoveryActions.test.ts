@@ -156,6 +156,11 @@ describe("explicit saving recovery", () => {
 		const dispose = renderSaveStatusBanner(h.host, container as unknown as HTMLElement, { retry: async () => true, startFresh: async () => true });
 		h.host.settingsWriter.freeze("missing");
 		assert.equal(container.querySelectorAll("button").length, 2);
+		// Both actions belong to the banner's own action row, and the row is what
+		// stacks them full width on a phone — a button left as a sibling of the
+		// prose would sit outside that and lay out on its own.
+		assert.equal(container.querySelectorAll(".cs-readonly-banner-actions button").length, 2);
+		assert.equal(container.querySelector(".cs-readonly-banner-title")?.textContent, "Saving is paused");
 		assert.equal(input.value, "My draft");
 		h.host.settingsWriter.freeze("recovery-read");
 		assert.equal(container.querySelectorAll("button").length, 1);

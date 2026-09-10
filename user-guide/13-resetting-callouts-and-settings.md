@@ -87,7 +87,10 @@ the synced vault. If sync replaces `data.json` while the plugin is closed, the n
 launch merges that copy with the incoming file. An unreadable recovery store
 stops saving until it is available again. The banner distinguishes that problem
 from an unreadable settings file, a failed recovery write, and a failed settings
-write. **Retry saving and recovery** checks again without restarting Obsidian. If the settings file is damaged, an
+write. It is headed **Saving is paused** while the session is not saving at all,
+and **Settings were not saved** when a single save failed; its actions sit
+together below the message, and stack to full width on a phone.
+**Retry saving and recovery** checks again without restarting Obsidian. If the settings file is damaged, an
 available recovery copy is displayed read-only and the damaged file is preserved.
 Saving errors are shown in English and identify the failed step. A full drive,
 denied write access, unavailable local recovery storage, and an incoming sync change

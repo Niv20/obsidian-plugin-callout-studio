@@ -47,6 +47,8 @@ export const en: Record<string, string> = {
 	"saveStatus.write": "The settings file could not be saved. Check available storage, folder permissions and synchronization, then retry before closing Obsidian.",
 	"saveStatus.changed": "The settings file changed while you were editing. Your draft is still available. Choose Retry saving and recovery to load the incoming settings, then review your draft and save again.",
 	"saveStatus.syncConflict": "Incoming settings conflict with a callout needed for unfinished note updates. Your draft and pending updates have been kept. Resolve the conflicting settings before retrying.",
+	"saveStatus.titlePaused": "Saving is paused",
+	"saveStatus.titleFailed": "Settings were not saved",
 	"saveStatus.retry": "Retry saving and recovery",
 	"saveStatus.retrying": "Checking saving and recovery…",
 	"saveStatus.retryFailed": "Saving is still blocked. Check the saving status in Callout Studio settings for the cause, then retry.",

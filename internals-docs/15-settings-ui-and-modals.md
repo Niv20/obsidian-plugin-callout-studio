@@ -1565,7 +1565,17 @@ Next chapter: [16-i18n.md](16-i18n.md)
 
 `saveStatusBanner.ts` is shared by the settings page and the callout editor.
 It subscribes to `SettingsWriter.status` and redraws only its own slot, preserving
-scroll position and form fields. The settings page also exposes the confirmed
+scroll position and form fields.
+
+Each redraw builds the same three parts: a header (`alert-triangle` plus a title
+row), the message paragraph, and `.cs-readonly-banner-actions` holding whatever
+actions apply. The title is chosen from the writer, not from the message —
+`isFrozen || status.frozenReason` reads as *Saving is paused*, a bare
+`status.failure` as *Settings were not saved* — so a frozen session that also
+fails a retry still says it is paused. The card is outlined on all four sides
+rather than barred down one edge, which is also what makes it read the same way
+in an RTL locale; the action row is `flex-start`-aligned with the prose and
+stacks full width under 600px. The settings page also exposes the confirmed
 new-file action when the frozen reason is a missing file; other failures expose
 recovery retry without an unsafe reset. Disposers run on tab hide/re-render and
 editor close. Buttons are disabled while their action is running.
