@@ -51,11 +51,10 @@ import { t } from "../i18n";
 import { sanitizeCalloutIdInput } from "../utils/calloutId";
 import { TagInput } from "../ui/TagInput";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
-import {
-	renderColorCircles,
-	resolveCurrentModeColors,
-} from "../ui/ColorCircles";
+import { resolveCurrentModeColors } from "../ui/ColorCircles";
 import { PaletteEditorModal } from "./PaletteEditorModal";
+import { PaletteCombobox } from "./paletteCombobox";
+import type { PaletteEntry } from "./paletteCombobox";
 import type { CalloutEditorPlugin } from "./editor/types";
 import {
 	buildStateSnapshot,
@@ -80,7 +79,7 @@ import { iconsEqual } from "../icons/lucideId";
 import { createControlGroup } from "./styleControls";
 import { renderIconAdjustGroup } from "./editor/iconAdjustGroup";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
-import { autofocusOnOpen } from "./modalAutofocus";
+import { autofocusOnDesktop } from "./modalAutofocus";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { activeThemeName } from "../manager/theme/customCssApi";
 import { patternMatches } from "../manager/theme/themeClaimLookup";
@@ -328,8 +327,8 @@ export class CalloutEditor extends Modal {
 	private initialSnapshot: string = "";
 	private initialStyleSnapshot: string = "";
 	private removePopupOutsideClickListener: (() => void) | null = null;
-	/** Releases the new-callout autofocus's scroll hold (modalAutofocus). */
-	private releaseAutofocus: (() => void) | null = null;
+	/** The Color row's picker; holds a document listener until destroyed. */
+	private palettePicker: PaletteCombobox | null = null;
 
 	constructor(
 		plugin: CalloutEditorPlugin,
@@ -818,15 +817,9 @@ export class CalloutEditor extends Modal {
 		};
 		this.syncPictureBox();
 
-		// ── Palette dropdown (fills the Color row created above the preview) ──
-		// Build rich palette dropdown (custom widget with circles + names).
+		// ── Palette picker (fills the Color row created above the preview) ──
+		// The entries; the control that shows them is paletteCombobox.ts.
 		// Rebuilt on every menu open so palettes saved mid-session appear.
-		type PaletteEntry = {
-			id: string;
-			name: string;
-			group: ColorPalette["group"];
-			palette: ColorPalette;
-		};
 		const paletteEntries: PaletteEntry[] = [];
 		const rebuildPaletteEntries = (): void => {
 			paletteEntries.length = 0;
@@ -860,46 +853,24 @@ export class CalloutEditor extends Modal {
 		};
 		rebuildPaletteEntries();
 
-		const dropdown = colorSetting.controlEl.createDiv({
-			cls: "cs-palette-dropdown",
-		});
-		const trigger = dropdown.createEl("button", {
-			cls: "cs-palette-trigger",
-			attr: {
-				type: "button",
-				"aria-haspopup": "listbox",
-				"aria-expanded": "false",
+		// A combobox rather than the button this used to be: the swatches and
+		// the grouping were always right, but with a few dozen saved palettes
+		// the only way to a colour was to scroll to it. Everything about *which*
+		// palette the form resolves to stays here — see paletteCombobox.ts.
+		const palettePicker = new PaletteCombobox(colorSetting.controlEl, {
+			entries: () => {
+				// Rebuilt on every read so palettes saved mid-session appear.
+				rebuildPaletteEntries();
+				return paletteEntries;
 			},
+			onPreview: (palette) =>
+				this.previewColorsTransient(
+					palette ? paletteToColorState(palette) : null,
+				),
+			onCommit: (entry) => selectPaletteEntry(entry),
+			onNewColor: (name) => void pickNewPaletteColor(name),
 		});
-		const triggerCircles = trigger.createDiv({
-			cls: "cs-palette-trigger-circles",
-		});
-		// Fallback label for colors that match no palette — typically a custom
-		// palette that was deleted after being applied (colors are baked in).
-		const triggerLabel = trigger.createSpan({
-			cls: "cs-palette-trigger-label",
-			text: t("editor.paletteDeleted"),
-		});
-		// The same Lucide chevron the icon picker's source button uses, rather
-		// than a "▾" glyph: a text caret is sized and baselined by the UI font,
-		// so it never quite lines up with the real chevrons elsewhere in the
-		// plugin.
-		const triggerCaret = trigger.createSpan({
-			cls: "cs-palette-trigger-caret",
-		});
-		setIcon(triggerCaret, "chevron-down");
-
-		// Opens downward: the colors section now sits near the top of the
-		// modal, so an upward menu would clip against the modal edge.
-		const menu = dropdown.createDiv({
-			cls: "cs-palette-menu cs-palette-menu-hidden",
-			attr: { role: "listbox", tabindex: "-1" },
-		});
-
-		let activeIndex = -1;
-		let selectedId = "";
-		let menuOpen = false;
-		const itemEls: HTMLElement[] = [];
+		this.palettePicker = palettePicker;
 		const readColorState = (): EditorColorState => this.colorState();
 		// Reverts colours (and background/text) to the built-in's shipped
 		// values; only shown once they have actually diverged from that
@@ -942,12 +913,7 @@ export class CalloutEditor extends Modal {
 		// matched palette so the "Deleted color" case — where there is no
 		// palette to read — needs no branch of its own.
 		const renderTriggerCircles = (): void => {
-			triggerCircles.empty();
-			renderColorCircles(
-				triggerCircles,
-				resolveCurrentModeColors(readColorState()),
-				{ size: 16 },
-			);
+			palettePicker.renderLead(resolveCurrentModeColors(readColorState()));
 		};
 		const matchesPalette = (palette: ColorPalette): boolean =>
 			// Transparency is compared first and alone, and it decides whether
@@ -1058,13 +1024,14 @@ export class CalloutEditor extends Modal {
 					: undefined) ??
 				paletteEntries.find(({ palette }) => matchesPalette(palette));
 			if (matched) {
-				selectedId = matched.id;
 				this.paletteId = matched.id;
-				triggerLabel.setText(matched.name);
+				palettePicker.setSelection(matched.id, matched.name);
 				isOrphanColor = false;
 				orphanPaletteId = undefined;
 			} else {
-				triggerLabel.setText(t("editor.paletteDeleted"));
+				// No palette to point at, but the field must still say what
+				// happened rather than sit empty.
+				palettePicker.setSelection("", t("editor.paletteDeleted"));
 				isOrphanColor = true;
 				orphanPaletteId = this.paletteId;
 			}
@@ -1144,128 +1111,20 @@ export class CalloutEditor extends Modal {
 			applyColorState(paletteToColorState(palette));
 		};
 
-		const closeMenu = (): void => {
-			if (!menuOpen) return;
-			menuOpen = false;
-			menu.addClass("cs-palette-menu-hidden");
-			trigger.removeClass("is-open");
-			trigger.setAttribute("aria-expanded", "false");
-			// Drop any hover preview: nothing was committed, so the preview
-			// simply returns to the form's own colours.
-			this.previewColorsTransient(null);
-		};
-
-		const clearActive = (): void => {
-			const prev = itemEls[activeIndex];
-			if (activeIndex >= 0 && prev) {
-				prev.removeClass("is-active");
-			}
-			activeIndex = -1;
-		};
-
-		const setActive = (
-			index: number,
-			opts?: { preview?: boolean },
-		): void => {
-			if (index < 0 || index >= itemEls.length) return;
-			clearActive();
-			activeIndex = index;
-			const el = itemEls[index];
-			if (!el) return;
-			el.addClass("is-active");
-			el.scrollIntoView({ block: "nearest" });
-			// Live preview the hovered preset without committing it: the form
-			// state, the save button, the trigger label and the settings-list
-			// swatches all stay on the current colour until it is clicked.
-			if (opts?.preview === false) return;
-			const entry = paletteEntries[index];
-			if (entry) {
-				this.previewColorsTransient(paletteToColorState(entry.palette));
-			}
-		};
-
-		const commitSelection = (index: number): void => {
-			if (index < 0 || index >= paletteEntries.length) return;
-			const entry = paletteEntries[index];
-			if (!entry) return;
-			selectedId = entry.id;
+		/**
+		 * Take `entry` as the callout's colour — the one path a palette becomes
+		 * this row's, whether the user picked it from the list or was steered
+		 * onto it by the duplicate-colour escape hatch below.
+		 */
+		const selectPaletteEntry = (entry: PaletteEntry): void => {
 			this.paletteId = entry.id;
 			applyPaletteColors(entry.palette);
-			triggerLabel.setText(entry.name);
+			palettePicker.setSelection(entry.id, entry.name);
 			renderTriggerCircles();
 			clearOrphanState();
 			this.updateSaveState();
-			closeMenu();
 		};
 
-		const buildMenu = (): void => {
-			menu.empty();
-			itemEls.length = 0;
-
-			const groupSpec: {
-				key: ColorPalette["group"];
-				label: string;
-			}[] = [
-				{ key: "custom", label: t("editor.paletteGroupCustom") },
-				{ key: "obsidian", label: t("editor.paletteGroupObsidian") },
-				{ key: "preset", label: t("editor.paletteGroupPresets") },
-			];
-
-			for (const grp of groupSpec) {
-				const groupEntries = paletteEntries
-					.map((e, i) => ({ e, i }))
-					.filter(({ e }) => e.group === grp.key);
-				if (groupEntries.length === 0) continue;
-
-				menu.createDiv({
-					cls: "cs-palette-menu-group-label",
-					text: grp.label,
-				});
-
-				for (const { e, i } of groupEntries) {
-					const item = menu.createDiv({
-						cls: "cs-palette-menu-item",
-						attr: { role: "option", "data-index": String(i) },
-					});
-					renderColorCircles(item, resolveCurrentModeColors(e.palette), {
-						size: 16,
-					});
-					item.createSpan({
-						cls: "cs-palette-menu-item-label",
-						text: e.name,
-					});
-					item.addEventListener("mouseenter", () => setActive(i));
-					item.addEventListener("click", () => commitSelection(i));
-					itemEls[i] = item;
-					if (e.id === selectedId) item.addClass("is-selected");
-				}
-			}
-
-			// "+ New color…" — opens the palette editor to create a named
-			// custom palette, which is then applied to this callout. Kept out
-			// of itemEls so arrow-key navigation stays within real palettes.
-			const newColorItem = menu.createDiv({
-				cls: "cs-palette-menu-item cs-palette-menu-new-color",
-				attr: { role: "option" },
-			});
-			const newColorIcon = newColorItem.createSpan({
-				cls: "cs-palette-new-color-icon",
-			});
-			setIcon(newColorIcon, "plus");
-			newColorItem.createSpan({
-				cls: "cs-palette-menu-item-label",
-				text: t("editor.paletteNewColor"),
-			});
-			newColorItem.addEventListener("mouseenter", () => {
-				// Leaving the palette rows also ends their hover preview.
-				clearActive();
-				this.previewColorsTransient(null);
-			});
-			newColorItem.addEventListener(
-				"click",
-				() => void pickNewPaletteColor(),
-			);
-		};
 
 		/**
 		 * Select a palette that already exists, optionally taking a group of
@@ -1280,13 +1139,12 @@ export class CalloutEditor extends Modal {
 			orphanId: string | null | undefined,
 		): void => {
 			rebuildPaletteEntries();
-			const index = paletteEntries.findIndex((e) => e.id === paletteId);
-			const entry = paletteEntries[index];
+			const entry = paletteEntries.find((e) => e.id === paletteId);
 			if (!entry) return;
 			// Same two-step as a revive, and for the same reason: re-point the
 			// siblings, then repaint them through the ordinary cascade. This
 			// callout is excluded from both — the editor owns its own row until
-			// Save, and commitSelection below is what moves it.
+			// Save, and selectPaletteEntry below is what moves it.
 			if (orphanId) {
 				this.plugin.registry.relinkPalette(
 					orphanId,
@@ -1299,20 +1157,19 @@ export class CalloutEditor extends Modal {
 				);
 				void this.plugin.saveSettings();
 			}
-			commitSelection(index);
+			selectPaletteEntry(entry);
 		};
 
 		// ── "+ New color…" flow ──
 		// Opens the same palette editor the settings section uses; saving the
 		// new palette immediately selects and applies it to this callout.
-		const pickNewPaletteColor = async (): Promise<void> => {
+		const pickNewPaletteColor = async (seedName = ""): Promise<void> => {
 			// Drop any uncommitted hover-preview colors before the modal opens.
 			this.previewColorsTransient(null);
-			closeMenu();
+			palettePicker.close();
 			const result = await new PaletteEditorModal(this.plugin, {
-				takenNames: this.plugin.settings.customPalettes.map(
-					(p) => p.name,
-				),
+				seedName,
+				takenNames: this.plugin.settings.customPalettes.map((p) => p.name),
 				takenColors: this.plugin.settings.customPalettes,
 				onUseExisting: (paletteId) =>
 					adoptExistingPalette(paletteId, null),
@@ -1325,10 +1182,9 @@ export class CalloutEditor extends Modal {
 			this.plugin.settings.customPalettes.push(palette);
 			await this.plugin.saveSettings();
 			rebuildPaletteEntries();
-			selectedId = palette.id;
 			this.paletteId = palette.id;
 			applyPaletteColors(customPaletteToColorPalette(palette));
-			triggerLabel.setText(palette.name);
+			palettePicker.setSelection(palette.id, palette.name);
 			renderTriggerCircles();
 			clearOrphanState();
 			this.updateSaveState();
@@ -1344,7 +1200,7 @@ export class CalloutEditor extends Modal {
 			const orphanId = orphanPaletteId;
 			// Drop any uncommitted hover-preview colors before the modal opens.
 			this.previewColorsTransient(null);
-			closeMenu();
+			palettePicker.close();
 			const seed = paletteSeedFromColorState(readColorState());
 			// A saved palette may already carry exactly these colors — the user
 			// recreated it from the settings list, or another group was revived
@@ -1397,55 +1253,14 @@ export class CalloutEditor extends Modal {
 			// repainted a row, so this is what makes the save unconditional.)
 			await this.plugin.saveSettings();
 			rebuildPaletteEntries();
-			selectedId = palette.id;
 			this.paletteId = palette.id;
 			applyPaletteColors(customPaletteToColorPalette(palette));
-			triggerLabel.setText(palette.name);
+			palettePicker.setSelection(palette.id, palette.name);
 			renderTriggerCircles();
 			clearOrphanState();
 			this.updateSaveState();
 		};
 
-		const openMenu = (): void => {
-			if (menuOpen) return;
-			closeFoldMenu();
-			menuOpen = true;
-			rebuildPaletteEntries();
-			buildMenu();
-			menu.removeClass("cs-palette-menu-hidden");
-			trigger.addClass("is-open");
-			trigger.setAttribute("aria-expanded", "true");
-			// Focus selected, else first — highlight only. Opening the menu is
-			// not a choice, so it must not repaint the preview (with no palette
-			// matched it would otherwise jump to the first entry's colours).
-			const startIdx = paletteEntries.findIndex(
-				(e) => e.id === selectedId,
-			);
-			activeIndex = -1;
-			setActive(startIdx >= 0 ? startIdx : 0, { preview: false });
-			menu.focus();
-		};
-
-		trigger.addEventListener("click", () => {
-			if (menuOpen) closeMenu();
-			else openMenu();
-		});
-
-		menu.addEventListener("keydown", (ev) => {
-			if (ev.key === "ArrowDown") {
-				ev.preventDefault();
-				setActive(Math.min(activeIndex + 1, itemEls.length - 1));
-			} else if (ev.key === "ArrowUp") {
-				ev.preventDefault();
-				setActive(Math.max(activeIndex - 1, 0));
-			} else if (ev.key === "Enter") {
-				ev.preventDefault();
-				commitSelection(activeIndex);
-			} else if (ev.key === "Escape") {
-				ev.preventDefault();
-				closeMenu();
-			}
-		});
 
 		// Foldable — dropdown in the same adjustment column.
 		// NOTE: The foldable option is currently hidden from the Edit callout
@@ -1570,7 +1385,7 @@ export class CalloutEditor extends Modal {
 		};
 		const openFoldMenu = (): void => {
 			if (foldMenuOpen) return;
-			closeMenu();
+			palettePicker.close();
 			foldMenuOpen = true;
 			foldStateBeforeMenu = readFoldState();
 			buildFoldMenu();
@@ -1588,13 +1403,13 @@ export class CalloutEditor extends Modal {
 				closeFoldMenu();
 			}
 		});
-		// Close any popup when clicking outside both popup containers.
+		// Close the fold popup when clicking outside it. The palette picker
+		// keeps its own outside-click (see ListboxPopup), so this no longer has
+		// to know where that one lives.
 		const popupOutsideClick = (ev: MouseEvent): void => {
 			const target = ev.target as Node | null;
 			if (!target) return;
-			if (dropdown.contains(target) || foldDropdown.contains(target))
-				return;
-			closeMenu();
+			if (foldDropdown.contains(target)) return;
 			closeFoldMenu();
 		};
 		this.removePopupOutsideClickListener?.();
@@ -1633,10 +1448,10 @@ export class CalloutEditor extends Modal {
 		// Creating only, and last, on the finished window. Editing opens on a
 		// filled-in form the user came to change some other part of, and the
 		// question is whether this window is CREATING — not, as it once asked,
-		// whether the name is editable. See modalAutofocus.
+		// whether the name is editable. Desktop only: a phone or tablet is left
+		// alone to be tapped. See modalAutofocus.
 		if (!this.existingId) {
-			const nameEl = this.nameTextInput?.inputEl;
-			this.releaseAutofocus = autofocusOnOpen(this.contentEl, nameEl);
+			autofocusOnDesktop(this.nameTextInput?.inputEl);
 		}
 	}
 
@@ -2312,8 +2127,8 @@ export class CalloutEditor extends Modal {
 		this.preview = null;
 		this.removePopupOutsideClickListener?.();
 		this.removePopupOutsideClickListener = null;
-		this.releaseAutofocus?.();
-		this.releaseAutofocus = null;
+		this.palettePicker?.destroy();
+		this.palettePicker = null;
 		if (this.resolve) {
 			this.resolve(null);
 			this.resolve = null;

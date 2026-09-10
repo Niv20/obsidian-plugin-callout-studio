@@ -75,7 +75,10 @@ describe("the manual discovery header action", () => {
 		assert.equal(button.disabled, true);
 		assert.equal(button.getAttribute("aria-busy"), "true");
 		assert.equal(button.textContent, "Scanning…");
-		assert.equal(button.getAttribute("aria-label"), button.textContent);
+		// The visible text is the accessible name; no aria-label, so the
+		// descriptive tooltip is not shadowed by a repeat of the label.
+		assert.equal(button.getAttribute("aria-label"), null);
+		assert.match(button.dataset.csTooltip ?? "", /Adds callout types used in your notes/);
 		p.resolve(3); await turn();
 		assert.equal(button.disabled, false);
 		assert.equal(button.getAttribute("aria-busy"), "false");

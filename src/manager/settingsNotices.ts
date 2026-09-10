@@ -43,30 +43,55 @@ export function warnSettingsUnreadable(writer?: SettingsWriter): void {
  * deleted `data.json` themselves to start over — and for that second user, a
  * freeze with no way out would mean every launch from here on silently
  * discarding everything they did. So the notice stays up until it is used or
- * dismissed, and the same confirmed action remains available in the settings banner.
+ * dismissed, and the way out is where the decision belongs: the settings
+ * banner, which states the situation and offers both actions side by side.
  *
- * **It asks first.** That link is the single most destructive control this
- * plugin has: it publishes an empty configuration to every device on the vault,
- * it is offered at the exact moment the real file is most likely still in
- * flight, and it appears inside a notice — a surface nothing else here uses for
- * an irreversible action, and one people dismiss by clicking at. The
- * confirmation is not ceremony; it is the difference between "the file is gone"
- * and "the file is gone *and so are the copies on my other devices*".
+ * **The notice navigates; it does not act.** Creating a replacement file is the
+ * single most destructive control this plugin has — it publishes an empty
+ * configuration to every device on the vault, and it is offered at the exact
+ * moment the real file is most likely still in flight. A notice is the wrong
+ * surface for that: it is transient, it is a corner of the screen rather than
+ * the page the settings live on, and it is one people dismiss by clicking at.
+ * So this link only opens Callout Studio's settings. The confirmed action is
+ * still one click away in the banner there, next to the retry that is far more
+ * often the right answer.
  */
-export function offerFreshStart(app: App, startFresh: () => Promise<boolean>): void {
+export function offerFreshStart(app: App, pluginId: string): void {
 	const frag = createFragment();
 	frag.appendChild(createEl("p", { text: settingsSaveMessage("missing") }));
 	const action = frag.appendChild(
 		createEl("a", {
-			text: t("saveStatus.newFile"),
+			text: t("saveStatus.openSettings"),
 			cls: "cs-notice-action",
 		}),
 	);
 	const notice = new Notice(frag, 0);
 	action.addEventListener("click", (event) => {
 		event.preventDefault();
-		void confirmFreshStart(app, notice, startFresh);
+		// The notice stands if the pane could not be opened: the session is
+		// still frozen, and this is still the only thing saying so.
+		if (openPluginSettings(app, pluginId)) notice.hide();
 	});
+}
+
+/**
+ * `app.setting` is declared as always present (src/types.ts), which is a claim
+ * about an internal rather than a contract — hence the structural guard, the
+ * same one `settings/hotkeyLink.ts` makes for the hotkeys pane.
+ */
+function openPluginSettings(app: App, pluginId: string): boolean {
+	const pane: App["setting"] | undefined = app.setting;
+	if (pane?.openTabById) {
+		try {
+			pane.open?.();
+			pane.openTabById(pluginId);
+			return true;
+		} catch (error) {
+			console.error("[callout-studio] settings tab could not be opened", error);
+		}
+	}
+	new Notice(t("notice.openSettingsFailed"));
+	return false;
 }
 
 /**

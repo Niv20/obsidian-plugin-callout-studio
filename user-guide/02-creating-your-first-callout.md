@@ -27,7 +27,9 @@ Inside the callout editor you:
 2. Pick its icon.
 3. Choose its light and dark colors.
 
-The cursor starts in the **Name** field, so you can begin typing straight away — on a phone or tablet the keyboard comes up with it, and the window stays where it is rather than scrolling. This happens only when you're creating something new: opening an existing callout to edit it leaves the cursor alone, so the keyboard doesn't cover the form you came to look at.
+On a computer the cursor starts in the **Name** field, so you can begin typing straight away. This happens only when you're creating something new: opening an existing callout to edit it leaves the cursor alone, so nothing you came to look at is disturbed.
+
+On a phone or tablet nothing is focused and the keyboard stays down — tap the **Name** field yourself when you're ready to type. That's deliberately different from the computer: raising the keyboard the moment the window appears made it jump while you were still reading it.
 
 As you make each choice, a live, real preview shows exactly how the callout will render. This chapter won't go deep on colors or icons — for the full picture, see [Colors and color palettes](03-colors-and-color-palettes.md) and [Icons in depth](14-icons-in-depth.md).
 

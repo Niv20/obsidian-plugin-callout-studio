@@ -35,10 +35,43 @@ Both take their height from `--input-height` — already 30px on desktop and 44p
 (`--touch-size-m`) on mobile — so they match **New palette** and every other
 button in the tab on each platform; a hardcoded 44px minimum used to sit there
 and made these the only oversized buttons on desktop. It is a *minimum*, so a
-long translation still wraps to a second line rather than spilling out. The row
-and its action group wrap against available pane width; full labels and logical
-margins accommodate narrow panes, mobile, RTL and larger text without relying on
-viewport size.
+long translation still wraps to a second line rather than spilling out.
+
+Everything about how the row reflows is stated in logical properties against the
+*pane*, never a viewport query, so narrow desktop panes, phones, RTL and larger
+text are one code path rather than four. Three declarations carry it, and they
+are guarded by `tests/subheaderRowWrapping.test.ts`:
+
+- **`flex-wrap: wrap` on `.cs-subheader-row`**, shared with the palettes heading
+  rather than written per row. Obsidian's `.setting-item` is `nowrap`, so its
+  answer to a narrow pane is to shrink the info box while the buttons hold their
+  width — at a phone width that left *Saved color palettes (1)* stacking a word
+  per line beside a button that had not moved. Wrapping picks the other answer:
+  the action group drops whole to the next line and the title takes the width
+  back. Line breaking measures each item at its max-content size, so the break
+  lands exactly where crushing would otherwise begin — no breakpoint to pick, and
+  none to keep in step with a translation.
+- **`margin-inline-start: auto` on the control**, because a wrapped flex item
+  starts its new line at the *leading* edge — the buttons reappeared under the
+  first letter of the title instead of out where they had been a pixel earlier.
+  The auto margin is inert on the unwrapped line (flexing has already taken the
+  free space), so one declaration covers both states.
+- **`flex-wrap: wrap-reverse` on the callout-list control**, which is what stacks
+  **Add new callout** above **Scan for callouts** when even a line of their own
+  is too narrow for both. It hangs the *last* line at the top, so it is true only
+  while the CTA is last in the DOM — the same ordering that lands it on the row's
+  outer edge horizontally. Swapping the two `addButton` calls looks like nothing
+  and silently inverts the stack; the test's DOM half exists for that.
+  `justify-content: flex-end` is restated on the control rather than inherited
+  from Obsidian, since it is per-line and is what holds the lower button to the
+  trailing edge.
+
+The button rule that supplies `min-inline-size: 0` and `overflow-wrap: anywhere`
+is scoped to `.cs-subheader-row`, not to the callout-list heading alone. Obsidian's
+`button` is `white-space: nowrap` with a fixed `height`, so its min-content width
+is the whole label: scoped narrowly, a long translation of **New palette**
+("Neue Farbpalette erstellen") ran off the trailing edge of the pane instead of
+wrapping inside its own box — before this row could wrap and after.
 
 `manualDiscoveryButton.ts` shares only transient running state per plugin through
 a `WeakMap`. Settings redraws and reopenings reuse that state and remove obsolete
@@ -296,7 +329,7 @@ stylesheet.
 **A fourth section pins the same way: *Saved color palettes*.** It is built to
 be a clone of *My callout types* — the same `createStickySection` wrapper, the
 same `cs-subheader-row` heading box (tight, borderless, laid out for a CTA
-button), the same `cs-sticky-heading` / `cs-section-body` classes — so almost
+button, and wrapping that button below the title on a narrow pane), the same `cs-sticky-heading` / `cs-section-body` classes — so almost
 everything below applies to it unchanged. It is not one of the contiguous
 three, though: *Fallback callout* sits between *Built-in callouts* and it, so
 two things differ, both carried on its wrapper:
@@ -738,25 +771,27 @@ already counted by the time the check runs.
 ## Where the cursor lands when a window opens
 
 [`src/settings/modalAutofocus.ts`](../src/settings/modalAutofocus.ts) is the
-other half of the shared window behaviour, and exists because both rules it
+other half of the shared window behaviour, and exists because the rules it
 carries were previously reinvented — or simply got wrong — per modal.
 
 ```ts
-autofocusOnOpen(scroller: HTMLElement, input: HTMLInputElement | null | undefined): () => void
+autofocusOnOpen(input: HTMLInputElement | null | undefined): void
+autofocusOnDesktop(input: HTMLInputElement | null | undefined): void
 ```
 
-It takes the **scroller** (`contentEl`, the one scroll container in the band
-diagram above) rather than the `Modal`, because the scroller is the only part of
-the window it needs. It returns a disposer for `onClose()`.
+Two entry points, split by what the window is *for*. Both take the field alone,
+and `null` or `undefined` is a no-op — that is what lets a caller reach through
+an optional (`this.nameTextInput?.inputEl`) without guarding it twice. Both ask
+for the focus with `preventScroll: true`, refusing the DOM's own
+scroll-into-view. Neither returns anything: there is nothing to dispose of.
 
 ### Rule 1: only a window that is *creating* something takes the cursor
 
 A **new** callout or palette opens on an empty name that must be filled in
-before anything can be saved, so the cursor belongs there — and on a phone, the
-keyboard coming up with it is the point. An **edit** opens on a filled-in form
-the user came to change some other part of; taking the name field there costs a
-tap to get back out, and on a phone throws the keyboard over the form they
-opened the window to look at.
+before anything can be saved, so the cursor belongs there. An **edit** opens on
+a filled-in form the user came to change some other part of; taking the name
+field there costs a tap to get back out, and on a phone would throw the keyboard
+over the form they opened the window to look at.
 
 The gate is the caller's, and is deliberately the **same expression the window's
 own title asks**:
@@ -782,39 +817,34 @@ is the case that most wants the cursor.
 wired up: its first control is a dropdown, not a text field, so there is no
 keyboard to raise and nothing to focus.
 
-`QuickInsertModal` is the one window that autofocuses with **no gate** — it has
-no edit mode to hold back for, since it exists to be typed into. It still goes
-through the helper, for rule 2 alone.
+### Rule 2: a create window is desktop-only, and the inconsistency is deliberate
 
-### Rule 2: the focus must not move the view
+`autofocusOnDesktop` returns without doing anything when `Platform.isMobile`,
+which is true for phones **and** tablets — exactly the set of devices with a
+soft keyboard. There, the user taps the name field themselves.
 
-Focusing scrolls in two separate ways, and only one of them can be refused
-outright:
+The reason is the jump, and it is not a scroll the plugin asks for, so
+`preventScroll` has no say over it: the WebView shrinks the visual viewport as
+the keyboard slides up, then scrolls to keep the caret inside what is left. A
+window the user has not read yet moves while they are looking at it.
 
-- **the DOM's own scroll-into-view on focus** — turned off with
-  `input.focus({ preventScroll: true })`;
-- **the soft keyboard** — the one that actually showed up as the mobile bug.
-  This is not a scroll the plugin asked for: the WebView shrinks the visual
-  viewport as the keyboard slides up, then scrolls to keep the caret inside
-  what's left. `preventScroll` has no say over it, because by then the `focus()`
-  call has long returned.
+> [!IMPORTANT]
+> This was once fixed the *other* way, keeping every device consistent: focus on
+> mobile as well, then hold the scroller's `scrollTop` at its pre-focus value
+> for `KEYBOARD_SETTLE_MS` (400ms, covering the ~250-300ms iOS slide-in),
+> releasing early on `pointerdown`, `touchstart` or `wheel`. It did not work
+> well — it read as a delayed, clunky lurch rather than as no jump at all — and
+> it cost every window a scroll listener plus a disposer to run from `onClose()`,
+> for a problem no desktop user has. **It has been removed rather than tuned;
+> don't reach for it again.** `tests/modalAutofocus.test.ts` fails if a timer, a
+> listener or a `scrollTop` reappears in `modalAutofocus.ts`.
 
-So the second is answered after the fact: the scroller's `scrollTop` is **held
-at the value it had before the focus** for `KEYBOARD_SETTLE_MS` (400ms, covering
-the ~250-300ms iOS slide-in). The field is the *first* one in the window, so
-that value is the top and the caret is already inside the standing viewport —
-there is nothing worth jumping to.
+### The search windows are the exception, on purpose
 
-The hold is not a lock. It gives way immediately on `pointerdown`, `touchstart`
-or `wheel`, so it can never read as a window whose scrolling is dead for half a
-second. It deliberately does **not** release on `keydown`: typing into the field
-just focused is the expected next event, not a request to scroll away from it.
-
-> [!NOTE]
-> Call the returned disposer from `onClose()`. The hold expires on its own
-> timer, so this is not about leaking — it is that Obsidian reuses `contentEl`
-> across open/close, so a hold left running would be sitting on the *next*
-> window's body.
+`QuickInsertModal` and `ReplaceCalloutModal` call `autofocusOnOpen`, so they
+take the cursor on **every** device, phone included. They have no edit mode to
+gate on, and nothing in them does anything until a query is typed — so there the
+keyboard arriving with the window is the point rather than the problem.
 
 ## Two theme-aware surface tokens
 
@@ -874,6 +904,476 @@ is doing.
 > `background-color: inherit` is the third sanctioned paint beside the two
 > surface tokens — it is the only one available to a band sitting *on* a pane
 > whose colour the plugin does not choose. See [The three sections pin their headings](#the-three-sections-pin-their-headings).
+
+## How an input field focuses
+
+Every control a user types into focuses the same way, and that way is
+**Obsidian's own**, not a plugin invention. The reference is still the Name
+box in the palette editor: every value it paints — border colour, ring width,
+background — is copied 1:1 from what `app.css` already produces, and
+everything else in the plugin is matched to that. It used to carry *literally*
+no rule of its own to get there; as of the pointer-stability fix below it
+carries a narrow one, added not to change what the field looks like but to
+stop it changing *when* — see "A rule can be added for parity alone" further
+down for why matching the reference now means giving it a rule rather than
+withholding one.
+
+The contract has two shapes, which are meant to look like one:
+
+| Control | On focus |
+| --- | --- |
+| A bordered text field (`input[type="text"]`, `textarea`) | its 1px border recolours to `--background-modifier-border-focus`, plus `box-shadow: 0 0 0 var(--input-border-width-focus)` (2px) in the same colour |
+| A borderless, dropdown-shaped control (`select`, `.cs-combobox-control`) | a flat `box-shadow: 0 0 0 3px` in that colour |
+
+The widths differ because the results must not. A text field keeps its own
+border and recolours it, so its 2px ring sits on top of that and the eye reads
+**3px** of grey edge; a control with `border: 0` has nothing to recolour, so it
+needs all 3px from the ring. Obsidian draws its own `select, .dropdown` exactly
+that way, and `.cs-combobox-control` follows it.
+
+A third control answers to the first row without being a field at all — the
+callout editor's icon tile, which is a `<button>` with a 1px border sitting in
+the same form as the two fields above it. See
+[The one control that is not a field but focuses like one](#the-one-control-that-is-not-a-field-but-focuses-like-one).
+
+Two rules follow from this, and both have already been broken once:
+
+- **Never focus a field with the accent colour.** The display name, the Callout
+  IDs field and the icon-picker search each used to paint
+  `var(--interactive-accent)` or an accent `outline`, which made them the only
+  fields in the plugin that disagreed with the Name box beside them.
+- **A rule scoped to the editor reaches more inputs than the field it was
+  written for.** `.callout-studio-editor .setting-item-control
+  input[type="text"]` is (0,4,1) and matches *every* text input in that
+  column — including the text half of the Color row's palette combobox, which
+  is styled by `.cs-combobox-control .cs-combobox-input` at (0,2,0) and
+  therefore loses. Before the exclusion, that gave the Color row a bordered,
+  form-field-coloured box **inside** the picker and two nested focus rings when
+  the user typed in it, while the same component in the settings tab was
+  correct — the two only ever differed because of who their ancestor was. The
+  rule now excludes both specialised fields by class:
+
+  ```css
+  input[type="text"]:not(.cs-tag-input-field, .cs-combobox-input)
+  ```
+
+  A `:not()` **list**, not two chained `:not()`s: a list takes the specificity
+  of its most specific argument, so the selector stays (0,4,1) and the
+  reasoning written beside it about outranking Obsidian's phone rule still
+  holds. The same exclusion is on the `:focus` and `:disabled` variants —
+  `ListboxPopup.setDisabled` does set `inputEl.disabled`, so that state is
+  reachable, and `tests/modalSurfaces.test.ts` pins the disabled one by its
+  exact selector.
+
+- **A field that paints its own box has to outrank Obsidian's `:hover`, not
+  just its `:focus`.** Focus is the state everyone checks; hover is the one
+  that gets forgotten, and it is a *different* rule with a different number:
+
+  ```css
+  /* app.css, inside @media (hover: hover) */
+  input[type='text']:hover {
+    border-color: var(--background-modifier-border-hover);
+    background-color: var(--background-modifier-form-field-hover);
+  }
+  ```
+
+  That is **(0,2,1)**, and it is the bar. `.cs-tag-input-row >
+  .cs-tag-input-field` — the Callout IDs field — was (0,2,0), one short. It
+  painted its own border, radius, fill and padding, and then Obsidian repainted
+  the border and fill out from under it for as long as the pointer was inside
+  the field. The display name field directly above it is (0,4,1) and cleared
+  the bar, so the two rows — which are deliberately styled as one control —
+  disagreed about whether the mouse was worth reacting to: one flinched, the
+  other sat still. Adding the type and attribute takes it to (0,3,1) and
+  settles it:
+
+  ```css
+  .cs-tag-input-row > input[type="text"].cs-tag-input-field
+  ```
+
+  Raising a base rule has a second half that must not be skipped: the state
+  layers on top of it have to be raised with it. `:focus` was (0,3,0), which
+  *did* clear Obsidian's hover on its own — but not the new (0,3,1) base, which
+  would then have kept its resting border on a focused field. `:focus` and
+  `:disabled` therefore carry the same `input[type="text"]`, landing at (0,4,1).
+  `tests/inputPointerStability.test.ts` checks both halves as arithmetic, and
+  sweeps the stylesheet for any other rule that paints a field's box from at or
+  below (0,2,1).
+
+  Freezing the fill is not incidental either. `.cs-tag-add-slot` — the end-cap
+  the **+** button sits in — paints `--cs-tag-field-bg` in order to disappear
+  into the field, and it has no hover state of its own. While Obsidian could
+  still swap the field to `--background-modifier-form-field-hover`, any theme
+  that gives those two tokens different values drew the end-cap as a visible
+  block at the field's trailing edge whenever the pointer was inside it. The
+  default theme defines `--background-modifier-form-field-hover` as
+  `--background-modifier-form-field`, which is exactly why that half never
+  showed up on the machine it was written on.
+
+  **A rule can be added for parity alone — no size or colour was wrong.** The
+  palette editor's Name box was the second field to fall into this, the other
+  way round: not a box painted too low a specificity, but *no* box at all. It
+  is a bare `input[type="text"]` inside `.callout-studio-palette-editor`,
+  which is a scope of its own — it does not reuse `.callout-studio-editor`, so
+  none of that section's rules, including the freeze above, ever reached it.
+  Wherever it was opened next to the callout editor's Display name field —
+  the two look identical and sit in list of "create a thing with a name" flows
+  a user moves between — the palette field kept pulsing grey on hover and the
+  callout editor's field did not. Fixed by giving it a scoped rule of its own,
+  copying the exact values `app.css` already paints there (`border-color:
+  var(--background-modifier-border)`, `background-color:
+  var(--background-modifier-form-field)`) and clearing the same (0,2,1) bar —
+  so the field looks *exactly* as it did before, it just stops changing when
+  the mouse happens to be over it:
+
+  ```css
+  .callout-studio-palette-editor
+    .cs-palette-name-setting
+    .setting-item-control
+    input[type="text"]:not(.cs-input-invalid) { … }
+  ```
+
+  `:not(.cs-input-invalid)` is not decorative. `updateValidity()`
+  (`PaletteEditorModal.ts`) toggles that class on this same input to turn its
+  border red for a taken name, and the freeze rule above is (0,4,1) against
+  `.cs-input-invalid`'s then-(0,1,1) — high enough to silently mute the red
+  back to grey if it were not excluded. Discovering that `.cs-input-invalid`
+  was live at all was its own detour: a repo-wide `grep -r cs-input-invalid
+  src/` came back empty during the *first* pass at this bug and was read as
+  proof the class was an orphan, because `PaletteEditorModal.ts` — for reasons
+  never fully isolated, not a NUL byte — is flagged `data` rather than `ASCII
+  text` by `file(1)`, and BSD `grep` without `-a` silently returns zero
+  matches for a file it treats as binary. No "Binary file matches" notice,
+  no error. `grep -a` (or `ripgrep`, which does not binary-sniff `.ts` files)
+  reads it fine. Once found, `.cs-input-invalid` turned out to have the exact
+  same defect one level down: at its original, undoubled specificity its red
+  border also lost to Obsidian's hover rule, fading to grey while the pointer
+  sat over an already-invalid field. Tripling the class
+  (`input.cs-input-invalid.cs-input-invalid.cs-input-invalid`) clears the bar
+  outright rather than tying it at (0,2,1) and leaning on `styles.css` loading
+  after `app.css` to win the tie.
+
+  **The icon picker's search box** was the third field found this way, fixed
+  on a direct follow-up request rather than in the same pass as the two above
+  — "I want uniformity" turned out to mean the whole plugin, not just the one
+  pair of fields first raised. Same shape as the palette Name field: a bare
+  `input[type="text"]`, no rule of its own, so it fell straight through to
+  Obsidian's hover rule and repainted mid-search, unfocused. One class,
+  `.icon-picker-search-input`, is shared by both panels that build this
+  toolbar — PackPanel (Lucide, Tabler, Material, Font Awesome, emoji, the
+  pooled "All sources" list) and ImagePanel ("Your images") — so the one rule
+  fixes both at once:
+
+  ```css
+  .icon-picker-toolbar input[type="text"].icon-picker-search-input { … }
+  ```
+
+  No `:not()` exclusion needed here — nothing ever adds an error class to this
+  field, unlike the palette Name field beside it in the same file. The
+  toolbar's `<select>` dropdowns are untouched by this rule and remain exactly
+  as documented above: no rule of their own, focusing the way Obsidian's
+  `select, .dropdown:focus-visible` already does.
+
+  What is **still** deliberately untouched, and now on its second round of not
+  being asked about: the Replace search and the quick-insert filter, both bare
+  `input[type="text"]` fields that likewise recolour their border on hover
+  before focus. The reasoning that first excused them — a *search/filter*
+  field reacting to hover is Obsidian's ordinary affordance, and there is no
+  adjacent field in the same modal for either of them to visibly disagree with
+  — held up through one round of "is this actually wanted here" (the icon
+  picker's search box, which turned out to be wanted despite fitting the same
+  description) and should not be assumed to hold through the next one either.
+  Treat it as open, not settled, the next time a field on this list comes up.
+
+> [!TIP]
+> This is a cascade question, not a reading-the-file question, and it is worth
+> answering with the harness in
+> [21 — Checking a theme against the real cascade](21-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade):
+> extract `app.css` from the installer asar, load it beside the live
+> `styles.css`, rebuild the DOM chain, focus the field and read
+> `getComputedStyle`. Comparing a field against the Name box that way is how
+> the combobox divergence was found — both mount sites *look* identical in the
+> stylesheet, and only the computed values show that one of them is not.
+
+### The one control that is not a field but focuses like one
+
+The **icon tile** in the callout editor (`.cs-icon-tile` — the 44px box that
+*is* the icon picker's button, with the ⓧ badge straddling its corner) sits
+directly under the Display name and Callout IDs fields, and it is the third row
+of the same form. It used to light `--interactive-accent` on hover, which made
+it the one purple-lit control in a window of grey-lit ones, so it now takes the
+bordered-field row of the table above verbatim: `border-color` to
+`--background-modifier-border-focus`, plus `0 0 0 var(--input-border-width-focus)`
+in the same grey. Measured against real `app.css`, hover and `:focus-visible`
+both land on `#bdbdbd` + a 2px ring in light and `#555555` + 2px in dark — the
+same two numbers the fields above it produce.
+
+Three things about it are easy to get wrong a second time:
+
+- **The box needs four classes; the fill does not.** `box-shadow` is contested
+  three ways — `button:not(.clickable-icon)` (0,1,1) sets `--input-shadow`,
+  `button:hover` (0,1,1) sets `--input-shadow-hover`, and
+  `button:not(.clickable-icon).mobile-tap` (0,2,1) sets it again the moment a
+  finger lands — so the ring is written at (0,4,1), the same count and the same
+  reason as the ⓧ badge. `background-color` is contested only at (0,1,1) and
+  has to *stay* at (0,2,0): the empty state paints `background-color:
+  transparent` at the same weight further down the file and wins the tie on
+  source order, which is the only thing keeping the dashed "add one" box from
+  filling in under the pointer.
+- **`border-color`, never the `border` shorthand.** The empty state swaps
+  `border-style` to dashed at (0,2,0); a shorthand at (0,4,1) would silently
+  solidify it.
+- **The resting shadow is still Obsidian's.** `.cs-icon-tile` declares
+  `box-shadow: none` at (0,1,0) and loses to `button:not(.clickable-icon)`, so
+  at rest the tile wears `--input-shadow` while the fields above it wear
+  nothing. That is left as it was — the request was to sync the *hover* state —
+  but it is why `box-shadow` in the tile's `transition` only eases on the phone
+  and under themes that null `--input-shadow`: an inset hairline plus a drop
+  shadow is not interpolable with a flat ring, so on desktop with the default
+  theme the ring arrives at once instead.
+
+#### Hover is desktop-only, and the press is the touch half
+
+Every hover-driven change the tile makes — the ring, the fill, fading the
+artwork out, revealing the swap arrows, the ⓧ badge appearing — lives in one
+`@media (hover: hover) and (pointer: fine)` block. The `hover: hover` half is
+old and load-bearing: iOS Safari applies `:hover` on the first tap of an element
+that has hover styles ("sticky hover"), which here blanked the artwork and left
+the arrows showing on the way into the picker. `pointer: fine` is the newer
+half, and it excludes the stylus and the hybrid laptops that answer
+`hover: hover` from a touchscreen.
+
+Touch gets the complement, written as `@media (hover: none), (pointer: coarse)`
+rather than `not ((hover: hover) and (pointer: fine))` — Safari only learned
+that boolean form in 16.4, and this is the block whose whole job is the phone.
+There the press carries the box instead: the same border and ring on `:active`
+**and** on `.mobile-tap`, Obsidian's own press class (it adds it to every
+`a, button, .tappable, …` on touchstart and removes it on release), which is the
+dependable half on iOS where `:active` fires only for elements the engine has
+already decided are tappable. Both are self-clearing, so nothing stays lit
+behind a tap that opened a picker on top of it. The artwork is deliberately
+*not* swapped for the arrows on touch: a finger has nothing to reveal with, only
+something to commit with, and the drawing is the content.
+
+The ⓧ badge's own pair moved with it, and has to stay its exact complement — a
+coarse pointer that also reports `hover: hover` must land in one of the two
+blocks, and the one it should land in is the permanent, 22px, tappable badge.
+
+#### The swap arrows drift
+
+The glyph revealed on hover is Lucide's `arrow-left-right`, and Obsidian builds
+a lucide icon as bare shape children of the `<svg>` with no `<g>` wrapper — for
+this one, four `<path>`s in drawing order: the top arrow's head and shaft
+(pointing left), then the bottom arrow's head and shaft (pointing right). That
+is what lets a plain `:nth-child(-n + 2)` / `:nth-child(n + 3)` split hand one
+arrow to each of two keyframe sets and slide them apart, each in the direction
+it already points, and back — 3.5 user units on a 24-unit viewBox drawn at
+18px, about 2.6 device pixels, on a 1.05s `ease-in-out infinite` loop.
+
+- It is scoped off `.is-empty` because the glyph there is `plus`, whose two
+  paths would take the same split as one arrow each and pull the `+` apart.
+- `translateX` on an SVG child resolves in that child's own user coordinate
+  system, so there is no `transform-box` or `transform-origin` to get wrong; a
+  pure translation has no origin.
+- Reduced motion is handled by putting `prefers-reduced-motion: no-preference`
+  **in the query** rather than an `animation: none` in the `reduce` block beside
+  it. Those selectors are (0,6,1) and an override would have to restate every
+  one of them to outrank it. A loop that never starts needs no stopping.
+
+## How a secondary button paints
+
+The companion to the section above, and it went wrong the same way: four
+places each answering "what does a grey button look like" for themselves.
+
+Everything that is not a call to action — the settings tab's
+`.cs-settings-neutral-btn` row (Discover, Import, Export, Reset, and the two in
+Data management), the bare `<button>`s a window's `.cs-modal-footer` carries
+(Cancel), and the two segmented rows, `.cs-border-side-btn`
+(All/Top/Right/Bottom/Left) and `.cs-gradient-dir-btn` — now reads one pair of
+tokens, declared once near the top of `styles.css`:
+
+```css
+--cs-btn-face: var(--interactive-normal);
+--cs-btn-face-hover: color-mix(
+	in srgb,
+	var(--interactive-normal) 92%,
+	rgb(var(--mono-rgb-100))
+);
+```
+
+`--interactive-normal` is Obsidian's own button face — white
+(`--color-base-00`) in light, `#363636` (`--color-base-30`) in dark — so the
+resting look is unchanged and stays whatever a theme makes it.
+
+### Why the hover is a `color-mix` and not `--background-modifier-hover`
+
+Because **that token is not a colour**. It is a translucent mono overlay,
+`rgba(var(--mono-rgb-100), 0.067)` — black at 6.7% under `.theme-light`, white
+at 6.7% under `.theme-dark`. Two things follow, and both shipped:
+
+- **It composites against what is behind the button, not against the button's
+  own fill.** Discover rested on `--background-modifier-form-field` — an
+  *input* token, `--color-base-25` (`#2a2a2a`) — over a `#1e1e1e` pane, and
+  hovered to `#2d2d2d`. That is a luminance change of 0.3%: **no hover at all
+  in dark mode**, while the very same rule in light moved `#ffffff` → `#eeeeee`
+  and looked correct. One rule, one theme broken.
+- **Its direction flips with the theme**, because it always moves *away* from
+  the background. The segmented rows rest on `--interactive-normal` (`#363636`
+  in dark) but hovered to that overlay composited over the group box behind
+  them (`#1e1e1e`), landing at `#2d2d2d` — *darker than the button*. That is
+  the "these get darker" report, and it is the same trap reached from the
+  other side.
+
+Mixing the step into the resting fill fixes both: the result is opaque, so it
+cannot be pulled around by whatever the button happens to sit on, and
+`--mono-rgb-100` supplies the direction the active theme reads as "more
+contrast". Measured in headless Chrome against real `app.css`:
+
+| | rest → hover | Δlum |
+| --- | --- | --- |
+| light | `#ffffff` → `#ebebeb` | −16.9% |
+| dark | `#363636` → `#464646` | +2.4% |
+
+identical for all four, against `#ffffff` → `#fafafa` (−4.4%) and `#363636` →
+`#3f3f3f` (+1.3%) for a native Obsidian button, which is deliberately left
+alone — every rule here is scoped to `.callout-studio-settings` or
+`.cs-modal > .cs-modal-footer`, so nothing reaches a core dialog. The coloured
+variants keep their own faces: the footer rule carves out `.mod-cta`,
+`.mod-warning` and `.mod-destructive` with a `:not()` **list**, which takes the
+specificity of its most specific argument and so leaves the selector at (0,3,1).
+
+### The specificity half, which is the half that gets lost
+
+Obsidian paints every button from
+
+```css
+button:not(.clickable-icon) { background-color: var(--interactive-normal) }
+```
+
+which is **(0,1,1)**. A single-class rule is (0,1,0) and *does not get the
+resting fill at all* — which is why the `background: transparent` the
+border-side buttons carried for their whole life never once took effect, and
+why their hover looked like it was darkening from a transparent base when it
+was really darkening from Obsidian's grey one. Both segmented rows double their
+class to clear the bar, the same trick `.cs-gradient-dir-btn` already used
+against the mobile core rules.
+
+Two more consequences worth keeping:
+
+- **`.is-active` is declared *before* `:hover`.** They tie at (0,2,0), so the
+  later rule wins; with the order reversed a selected segment swallowed its own
+  hover and was the one dead control in the row. A hovered selection steps
+  within the accent (`--interactive-accent-hover`) so it can never be mistaken
+  for an unselected segment.
+- **`box-shadow: none` must not eat the focus ring.** `:focus-visible` used to
+  be grouped in with `:hover` on the neutral buttons, and at (0,3,0) that
+  `box-shadow: none` beat Obsidian's (0,1,1) `button:focus-visible` — so six
+  buttons focused invisibly. Each now restates the ring itself, in the grey
+  described in [How an input field focuses](#how-an-input-field-focuses).
+
+`tests/secondaryButtons.test.ts` pins all of it: the shared tokens, the four
+faces reading them, the specificity bar, the `.is-active`/`:hover` ordering,
+and the two tokens that must never come back to a button face.
+
+> [!NOTE]
+> The overlay is still right for a **list row, an icon button or a chip** —
+> anything that sits on the surface behind it rather than owning a face — so
+> `--background-modifier-hover` is deliberately untouched on
+> `.cs-combobox-option`, `.callout-studio-row-buttons button`, `.cs-icon-tile`,
+> `.cs-drag-handle` and friends. The rule is about which of the two a control
+> is, not about banning a variable.
+
+> [!TIP]
+> When measuring this with the headless-Chrome harness, **disable transitions
+> first**. These buttons carry `transition: background 0.12s`, and
+> `getComputedStyle` immediately after forcing the hover state returns the
+> *interpolating* value — which Chrome reports in `oklab`. A first pass at the
+> harness measured the resting colour twice that way and reported the fix as
+> broken.
+
+### The red half: a hover rule that resolves to nothing
+
+The footer carve-out hands `.mod-cta`, `.mod-warning` and `.mod-destructive`
+back to Obsidian on the grounds that they own their own faces. The red variants
+only appear to own a useful hover, and the reason is worth writing down because
+nothing in either stylesheet looks wrong.
+
+Obsidian ships the rule you would expect:
+
+```css
+button.mod-warning       { background-color: var(--background-modifier-error) }
+button.mod-warning:hover { background-color: var(--background-modifier-error-hover) }
+```
+
+and then, under `body`, defines both of those tokens as the same colour:
+
+```css
+--background-modifier-error: var(--color-red);
+--background-modifier-error-hover: var(--color-red);
+```
+
+So the hover matches, fires, and paints the colour that is already there. Read
+out of headless Chrome against the real `app.css`, both tokens resolve to
+`rgb(233, 49, 71)` in light and `rgb(251, 70, 76)` in dark — **identical**,
+where the accent pair beside them genuinely differs. Delete, Replace and
+"Reset everything" were never missing a hover rule; they were running a no-op,
+Δlum 0.0% in both themes, which is why the gap outlived the grey-button pass
+sitting directly above it.
+
+This reaches the settings tab as well as the windows. The class produced by
+`ButtonComponent.setWarning()` has changed across Obsidian versions: older
+versions and themes use `.mod-warning`, while the live DOM in Obsidian 1.13.7
+gives "Reset everything" both `.mod-destructive` and `.mod-cta`. That dual
+classification caused a second regression when the accent hover was fixed:
+the generic `.mod-cta` rule won and turned the red button purple. The accent
+selector therefore excludes both red classes, and the danger selector accepts
+either of them.
+
+`--cs-btn-danger-face-hover` is declared beside `--cs-btn-face` and mixed the
+same way, at the same 92%, with `--mono-rgb-100` for direction:
+
+| | rest → hover | ΔE00 | white text |
+| --- | --- | --- | --- |
+| light | `#e93147` → `#d62d41` | 4.19 | 4.20:1 → 4.87:1 |
+| dark | `#fb464c` → `#fb555a` | 2.84 | 3.45:1 → 3.20:1 |
+
+against the grey face's 4.10 and 5.26. Light matches almost exactly; dark is
+deliberately the smaller step, because a saturated red is already the most
+prominent thing on the surface and driving it to the grey's ΔE00 needs ~86%,
+which costs white-text contrast (3.01:1) on a fill Obsidian already ships below
+AA.
+
+> [!WARNING]
+> Measure a step like this in **CIEDE2000**. Plain CIE76 ΔE scores the two rows
+> above 6.5 and 7.4 — "already matched" — and it is wrong in exactly the
+> saturated region a red button lives in. The greys above are near-neutral,
+> which is the case where the two measures happen to agree.
+
+Three constraints shape the rule itself:
+
+- **It sets the hover only.** A theme that restyles `.mod-warning` or
+  `.mod-destructive` keeps its own red, and because the mix reads
+  `--background-modifier-error`, a theme that retunes *that* gets a hover
+  derived from its colour. Claiming the resting fill at this weight would beat
+  a theme painting either class directly.
+- **`body:not(.is-mobile)`**, because Obsidian's mobile warning/destructive
+  treatment drops the red fill for grey-with-red-text, and a tablet with a
+  pointer attached satisfies `hover: hover` while still carrying `.is-mobile`.
+- **(0,5,2) against Obsidian's (0,2,1)**, so it lands without `!important`.
+
+> [!NOTE]
+> `.cs-icon-tile-clear` — the small red ✕ on an icon tile — is the one red
+> control that does **not** follow this, and that is deliberate. It mixes toward
+> a hardcoded `black` in both themes, so it darkens in dark mode against the
+> house direction rule. It also carries a hardcoded white glyph, and darkening
+> is what keeps that glyph legible: `color-mix(… black)` holds it at 6.08:1
+> light and 5.10:1 dark, where switching to `--mono-rgb-100` would drop the dark
+> pair to 2.80:1. The direction rule serves contrast; here it would cost it.
+
+Do not infer the runtime class from a search for literal `.mod-destructive`
+call sites in `src/`: it is added inside Obsidian's `ButtonComponent`. The
+regression test intentionally covers the real `mod-destructive mod-cta`
+combination so a future accent change cannot capture warning buttons again.
 
 ## Notable individual modals
 
@@ -953,13 +1453,17 @@ state*, then a live preview of the palette name. Every row is built
 unconditionally and hidden with `cs-row-hidden`; one `syncVisibility()` decides
 all of it, so the controls can never disagree about the current format.
 
-Two of those rows are their own modules under `settings/command/` rather than
+Three of those rows are their own modules under `settings/command/` rather than
 methods on the modal, because each carries a rule that only makes sense next to
-its control — and because the modal is close enough to the 300-line ratchet that
-a rule written inline would have to be written *thin*:
+its control — and because the modal is *at* the 300-line ratchet, so a rule
+written inline would have to be written *thin*:
 
 - **`commandRoles.ts`** — the format dropdown refills itself per callout
   (a theme-owned callout has only Block), with a line explaining the absence.
+- **`calloutRow.ts`** — the *Callout type* picker, over the shared
+  [combobox](#the-shared-callout-picker). This was a `<select>` whose every
+  option read `Abstract (abstract)`; the id is now shown only on a row it
+  actually explains.
 - **`foldStateRow.ts`** — the three fold states, shown only for Block. Heading
   and inline are not narrower versions of the same choice, they have no fold
   syntax at all, so the row hides rather than greying out. Both block *actions*
@@ -969,6 +1473,73 @@ a rule written inline would have to be written *thin*:
 `"none"` — otherwise a command saved from this window and the same command
 reloaded would differ by a key that means nothing. See
 [`CustomCommand`](04-data-model.md#customcommand).
+
+### The shared callout picker
+
+Every place the user picks one callout out of a list is the same control:
+[`calloutCombobox.ts`](../src/settings/calloutCombobox.ts), over
+[`ui/listboxPopup.ts`](../src/ui/listboxPopup.ts). It replaced two native
+`<select>`s — *Default fallback callout*
+([`FallbackSection.ts`](../src/settings/sections/FallbackSection.ts)) and
+*Callout type* above — neither of which could be typed into or showed a callout's
+icon or colour, while the `[!` popover in the editor had done both for a long
+time.
+
+The rows are literally the popover's markup
+([`calloutComboboxRow.ts`](../src/settings/calloutComboboxRow.ts) reuses the
+`callout-studio-suggestion*` classes), and the id/alias second line is the same
+function in both — `renderCalloutIdLine`, which `AutoComplete.renderSuggestion`
+calls too, so a callout cannot describe itself one way in the editor and another
+way in settings. Matching goes through the same `calloutMatchesQuery` — id,
+display name and **aliases**, substring rather than fuzzy — ordered by
+`matchRank`'s four tiers (exact, name-prefix, id/alias-prefix, anywhere) so that
+typing `no` answers `Note` rather than `Annotation`.
+
+A query that matches nothing does **not** dead-end. When the call site supplies
+`onCreate`, the empty state is replaced by a real, keyboard-reachable row
+offering to create the callout under that name — the same offer, and the same
+`callout-studio-suggestion-create-new` markup, as the `[!` popover. The picker
+then adopts what comes back, which is why `choices` is a *function*: the list is
+re-read after the editor closes, so the new row is simply there.
+
+Two rules in `listboxPopup.ts` carry the design and are worth reading before
+changing it:
+
+- **The query is separate state from `input.value`.** Opening does not search
+  for the committed label (that would list exactly one row); it starts empty and
+  selects the text so the first keystroke replaces it.
+- **Blur never commits.** Leaving with half a word typed reverts. `fallbackCalloutId`
+  is persisted *and* synced, so a picker that guessed "probably the first match"
+  would write an id the user never chose onto every device.
+
+Callers **must** call `destroy()` — a modal from `onClose`, a settings section
+through `registerDisposer` — because the popup holds a document-level
+click listener.
+
+Two details in [`listboxPopupEvents.ts`](../src/ui/listboxPopupEvents.ts) are
+load-bearing and have already been bugs. Selecting the label on click has to
+happen on `click`, not on `focus`: the browser fires mousedown → focus →
+mouseup → click, and mouseup places a caret that undoes an earlier `select()`.
+And the menu's `mousedown` `preventDefault()` is what lets a mouse selection
+commit at all — a click on a row is also a blur, and blur lands first.
+
+The control itself is built from Obsidian's own `select, .dropdown` variables
+(`--input-height`, `--input-shadow`, `--input-radius`, `--dropdown-background`,
+`border: 0`) so it is exactly as tall as the native dropdowns beside it. The
+input inside is painted down to nothing, and **its rules are descendant-
+qualified on purpose**: Obsidian styles `input[type='text']` at specificity
+(0,1,1), which beats a lone class — a bare `.cs-combobox-input` rule loses, and
+that is how the field first came to look like a second box drawn inside the
+control.
+
+The Color row uses the same popup through
+[`paletteCombobox.ts`](../src/settings/paletteCombobox.ts), which adds group
+headings (*Custom* / *Obsidian* / *Presets*, emitted per run so a group filtered
+to nothing leaves no stranded heading) and the pinned "+ New color…" action.
+Only the *control* moved out of `CalloutEditor`: which palette the form's colours
+resolve to, the "Deleted color" state when they resolve to none, and the
+save-state baseline that feeds all stayed, because they read and write editor
+state.
 
 ### `hotkeyLink.ts` — reading a binding Obsidian doesn't expose a public API for
 
@@ -1078,9 +1649,30 @@ Next chapter: [16-i18n.md](16-i18n.md)
 
 `saveStatusBanner.ts` is shared by the settings page and the callout editor.
 It subscribes to `SettingsWriter.status` and redraws only its own slot, preserving
-scroll position and form fields. The settings page also exposes the confirmed
+scroll position and form fields.
+
+On the settings page the slot is `CalloutListsScaffold.bannerSlotEl` — an empty
+div the lists scaffold creates directly under the **Callout Studio** title row,
+which is why `SettingsTab.display()` renders the banner *after*
+`calloutLists.render()` rather than first. It is still ahead of every section,
+since it is the reason nothing below it will be saved; above the title it read
+as a message about the settings window rather than about this plugin.
+
+Each redraw builds the same three parts: a header (`alert-triangle` plus a title
+row), the message paragraph, and `.cs-readonly-banner-actions` holding whatever
+actions apply. The title is chosen from the writer, not from the message —
+`isFrozen || status.frozenReason` reads as *Saving is paused*, a bare
+`status.failure` as *Settings were not saved* — so a frozen session that also
+fails a retry still says it is paused. The card is outlined on all four sides
+rather than barred down one edge, which is also what makes it read the same way
+in an RTL locale; the action row is `flex-start`-aligned with the prose and
+stacks full width under 600px. The settings page also exposes the confirmed
 new-file action when the frozen reason is a missing file; other failures expose
-recovery retry without an unsafe reset. Disposers run on tab hide/re-render and
+recovery retry without an unsafe reset. That banner is the *only* place the
+new-file action is offered: the startup notice for a missing file
+(`offerFreshStart`) links to the plugin's settings tab and nothing else, because
+a notice is transient, sits in a corner away from the page the decision belongs
+to, and is a surface people dismiss by clicking at. Disposers run on tab hide/re-render and
 editor close. Buttons are disabled while their action is running.
 
 Saving-status observers are isolated from persistence: a detached or failing UI

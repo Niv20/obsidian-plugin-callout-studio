@@ -6,11 +6,13 @@ The one thing that appears without asking is your **theme's own** callout types,
 
 The button performs one scan of saved Markdown notes and the current theme's declared callout types. Save your notes first. New types receive the selected fallback style; existing types, aliases, customizations, and commands are preserved. Repeating a scan does not duplicate existing types. A scan does not edit your notes or remove unused types.
 
-On narrow panes and phones, the actions wrap below the heading and, when necessary, onto separate lines. Both retain their text labels and remain available when the list is folded. During a scan, the **Scan for callouts** button shows progress and cannot start a second scan; reopening settings preserves this state.
+On narrow panes and phones, the actions wrap below the heading — keeping to the same side of the pane they started on — and, when there is no longer room for both side by side, stack with **Add new callout** on top and **Scan for callouts** beneath it. The heading keeps its full width either way, rather than being squeezed to make room for the buttons. Both retain their text labels and remain available when the list is folded. During a scan, the **Scan for callouts** button shows progress and cannot start a second scan; reopening settings preserves this state.
 
 ## Fallback styling
 
 An unrecognized callout can still use the configured **Fallback callout** appearance without becoming a saved definition. Changing that appearance also updates saved fallback rows that you have not customized. Theme-owned callouts continue to use the active theme's appearance.
+
+To choose it, click the **Fallback callout** field — the whole label is selected, so you can just start typing. The list narrows as you type and matches a callout's name, its ID, or any of its aliases, with the closest match first; typing `summary` finds **Abstract**. Each row shows the callout's own icon in its own colour, with its ID and aliases underneath. If nothing matches what you typed, the list offers to create that callout for you, and selects it once you save. Callouts your theme adds are not offered here: they exist only while that theme is active, and this setting is synced to your other devices.
 
 ## Saving and recovery
 

@@ -29,12 +29,12 @@ export const en: Record<string, string> = {
 	"cmd.customInsertInline": "Insert {{name}} inline callout",
 
 	// Autocomplete
-	"autocomplete.createNew": 'Create new callout: "{{name}}"',
+	"autocomplete.createNew": 'Create "{{name}}"',
 
 	// Vault scan / fallback / delete
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default fallback",
-	"settings.rescanVaultDesc": "Adds callout types found in your notes that aren't listed here yet. Existing callouts and notes stay untouched.",
+	"settings.rescanVaultDesc": "Adds callout types used in your notes that aren't in this list yet. Your existing callouts and notes aren't changed.",
 	"settings.rescanVaultHintAction": "Scan for callouts",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"saveStatus.missing": "Saving is paused because the settings file is missing. This can happen after reinstalling or while sync is still running. Finish synchronization and retry. To intentionally replace the missing file, use Create a new settings file in Callout Studio settings.",
@@ -47,12 +47,16 @@ export const en: Record<string, string> = {
 	"saveStatus.write": "The settings file could not be saved. Check available storage, folder permissions and synchronization, then retry before closing Obsidian.",
 	"saveStatus.changed": "The settings file changed while you were editing. Your draft is still available. Choose Retry saving and recovery to load the incoming settings, then review your draft and save again.",
 	"saveStatus.syncConflict": "Incoming settings conflict with a callout needed for unfinished note updates. Your draft and pending updates have been kept. Resolve the conflicting settings before retrying.",
+	"saveStatus.titlePaused": "Saving is paused",
+	"saveStatus.titleFailed": "Settings were not saved",
 	"saveStatus.retry": "Retry saving and recovery",
 	"saveStatus.retrying": "Checking saving and recovery…",
 	"saveStatus.retryFailed": "Saving is still blocked. Check the saving status in Callout Studio settings for the cause, then retry.",
 	"saveStatus.reviewDraft": "Incoming settings and recovery checks are complete. Your draft is unchanged. Review it and save again.",
 	"saveStatus.settingsArrived": "Existing settings arrived and were loaded. A replacement file was not created.",
 	"saveStatus.newFile": "Create a new settings file",
+	"saveStatus.openSettings": "Open Callout Studio settings",
+	"notice.openSettingsFailed": "Callout Studio settings could not be opened. Open Settings → Callout Studio to choose what to do.",
 	"notice.settingsBackupFailed": "Settings recovery could not continue because a safety backup could not be saved. Check available storage and write permissions, then retry.",
 	"notice.settingsBackupSaved": "A recovery copy of local callout definitions was saved before applying incoming settings: {{path}}.",
 	"commandBuilder.missingCallout": "Paused: the callout is missing. Discover or create it to restore this command, or edit the command to choose another type.",
@@ -64,6 +68,7 @@ export const en: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(falls back to default)",
 	"replaceModal.titleDelete": "Delete callout",
 	"replaceModal.titleReplace": "Replace in vault",
+	"replaceModal.searchPlaceholder": "Search callouts…",
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
 	"welcome.tooltip": "About Callout Studio",
@@ -174,6 +179,10 @@ export const en: Record<string, string> = {
 	"settings.clearUsesAction": "Clear uses in your notes",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} restyles every built-in callout, so they are all listed above and Callout Studio leaves them alone. To design one of your own, add a callout with a different ID.",
+
+	// The shared callout picker — the fallback row, the command editor
+	"calloutPicker.placeholder": "Search callouts…",
+	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
 
 	// Settings — Fallback callout
 	"settings.fallbackCallout": "Default fallback callout",
@@ -409,6 +418,8 @@ export const en: Record<string, string> = {
 	"editor.paletteGroupPresets": "Color presets",
 	"editor.paletteGroupCustom": "Custom",
 	"editor.paletteNewColor": "New color…",
+	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "No color matches “{{query}}”.",
 	"editor.contrastWarning":
 		"Low contrast against the background — may be hard to read",
 	"editor.foldable": "Foldable",

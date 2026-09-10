@@ -12,8 +12,10 @@ import type { App } from "obsidian";
 import type { CalloutDefinition } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
-import { t } from "../i18n";
+import { getLocale, t } from "../i18n";
+import { filterCalloutList } from "./calloutSearch";
 import { applyModalChrome } from "../settings/modalChrome";
+import { autofocusOnOpen } from "../settings/modalAutofocus";
 
 export type DeleteAction =
 	| { action: "replace"; replaceWith: string }
@@ -52,6 +54,7 @@ export class ReplaceCalloutModal extends Modal {
 	private selectedId: string | null | undefined = undefined;
 	private itemEls = new Map<string | null, HTMLElement>();
 	private confirmBtn: HTMLButtonElement | null = null;
+	private listEl?: HTMLElement;
 
 	private mode: "delete" | "replace";
 	private title: string;
@@ -93,34 +96,27 @@ export class ReplaceCalloutModal extends Modal {
 			cls: "callout-studio-replace-label",
 		});
 
-		// Scrollable list of callouts
-		const listEl = contentEl.createDiv({
+		// A vault with a few dozen callouts makes this list longer than the
+		// window, and the user arrived here knowing which callout they want.
+		// Matches ids and aliases as well as names, like every other callout
+		// search in the plugin.
+		const search = contentEl.createEl("input", {
+			type: "text",
+			cls: "callout-studio-replace-search",
+			placeholder: t("replaceModal.searchPlaceholder"),
+		});
+		search.addEventListener("input", () => this.renderList(search.value));
+		// Bound to the field, so typing and arrowing are one gesture — the same
+		// arrangement the quick-insert window uses.
+		search.addEventListener("keydown", (ev) => this.onSearchKey(ev));
+
+		this.listEl = contentEl.createDiv({
 			cls: "callout-studio-replace-list",
 		});
-
-		for (const def of this.availableCallouts) {
-			const item = this.renderCalloutItem(listEl, def);
-			this.itemEls.set(def.id, item);
-			if (def.id === this.selectedId) {
-				item.addClass("is-selected");
-			}
-			item.addEventListener("click", () => this.selectItem(def.id));
-		}
-
-		// "Delete without replacing" option
-		if (!this.disallowDeleteWithoutReplace) {
-			const noReplaceItem = listEl.createDiv({
-				cls: "callout-studio-replace-item callout-studio-replace-no-replace",
-			});
-			noReplaceItem.createDiv({
-				cls: "callout-studio-replace-item-name callout-studio-replace-no-replace-name",
-				text: `${t("vault.deleteWithout")} ${t("replaceModal.deleteWithoutReplaceSuffix")}`,
-			});
-			this.itemEls.set(null, noReplaceItem);
-			noReplaceItem.addEventListener("click", () =>
-				this.selectItem(null),
-			);
-		}
+		this.renderList("");
+		// Typed into like the quick-insert window, and focused on the same terms:
+		// every device, phone included. See modalAutofocus.
+		autofocusOnOpen(search);
 
 		// Single confirm button
 		const btnContainer = applyModalChrome(this, { footer: true });
@@ -147,6 +143,78 @@ export class ReplaceCalloutModal extends Modal {
 			}
 			this.close();
 		});
+	}
+
+	/**
+	 * Draw the rows matching `query`, plus the pinned delete row.
+	 *
+	 * The selection is *not* cleared by filtering. A row typed out of view is
+	 * still the answer the user gave, and the confirm button stays live on it —
+	 * clearing it would mean a stray keystroke silently disarmed the window.
+	 */
+	private renderList(query: string): void {
+		const listEl = this.listEl;
+		if (!listEl) return;
+		listEl.empty();
+		this.itemEls.clear();
+
+		const matches = filterCalloutList(this.availableCallouts, {
+			query,
+			filter: "all",
+			locale: getLocale(),
+		});
+
+		for (const def of matches) {
+			const item = this.renderCalloutItem(listEl, def);
+			this.itemEls.set(def.id, item);
+			if (def.id === this.selectedId) {
+				item.addClass("is-selected");
+			}
+			item.addEventListener("click", () => this.selectItem(def.id));
+		}
+
+		if (matches.length === 0) {
+			listEl.createDiv({
+				cls: "callout-studio-empty-state",
+				text: t("calloutPicker.noMatches", { query }),
+			});
+		}
+
+		// "Delete without replacing" — pinned, and never filtered. It is an
+		// action rather than a callout, so a query that matches no callout must
+		// not also take away the other thing this window is for.
+		if (!this.disallowDeleteWithoutReplace) {
+			const noReplaceItem = listEl.createDiv({
+				cls: "callout-studio-replace-item callout-studio-replace-no-replace",
+			});
+			noReplaceItem.createDiv({
+				cls: "callout-studio-replace-item-name callout-studio-replace-no-replace-name",
+				text: `${t("vault.deleteWithout")} ${t("replaceModal.deleteWithoutReplaceSuffix")}`,
+			});
+			if (this.selectedId === null) noReplaceItem.addClass("is-selected");
+			this.itemEls.set(null, noReplaceItem);
+			noReplaceItem.addEventListener("click", () => this.selectItem(null));
+		}
+	}
+
+	/** Arrow and Enter drive the list from the search field. */
+	private onSearchKey(ev: KeyboardEvent): void {
+		const ids = [...this.itemEls.keys()];
+		if (ids.length === 0) return;
+		const at = ids.indexOf(this.selectedId ?? null);
+		if (ev.key === "ArrowDown") {
+			ev.preventDefault();
+			this.selectItem(ids[Math.min(at + 1, ids.length - 1)] ?? null);
+		} else if (ev.key === "ArrowUp") {
+			ev.preventDefault();
+			this.selectItem(ids[Math.max(at - 1, 0)] ?? null);
+		} else if (ev.key === "Enter") {
+			ev.preventDefault();
+			// With nothing chosen yet, Enter takes the top row — the one the
+			// query is most plausibly about.
+			if (this.selectedId === undefined) this.selectItem(ids[0] ?? null);
+			this.confirmBtn?.click();
+		}
 	}
 
 	private selectItem(id: string | null): void {

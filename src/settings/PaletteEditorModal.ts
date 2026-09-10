@@ -56,7 +56,7 @@ import { t } from "../i18n";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CSSInjector } from "../manager/CSSInjector";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
-import { autofocusOnOpen } from "./modalAutofocus";
+import { autofocusOnDesktop } from "./modalAutofocus";
 import {
 	createControlGroup,
 	createSliderRow,
@@ -194,15 +194,13 @@ export class PaletteEditorModal extends Modal {
 	/** Identity of the clash the error line currently shows; "" when clear. */
 	private renderedClashKey = "";
 	private saveBtnEl: HTMLButtonElement | null = null;
-	/** Releases the new-palette autofocus's scroll hold (modalAutofocus). */
-	private releaseAutofocus: (() => void) | null = null;
 	/** The second-color swatch, for programmatic sync. Null whenever the row is not built. */
 	private gradToInput: HTMLInputElement | null = null;
-
 	constructor(
 		private plugin: PaletteEditorPlugin,
 		options: {
 			existing?: CustomPalette;
+			seedName?: string;
 			/**
 			 * Pre-fill every colour field but stay a NEW palette: the name comes
 			 * up empty and the title still reads "New color palette". Used to
@@ -253,7 +251,7 @@ export class PaletteEditorModal extends Modal {
 			...(options.takenColors ?? []).map(customPaletteToColorPalette),
 			...getAllColorPalettes(),
 		];
-		this.name = this.existing?.name ?? "";
+		this.name = this.existing?.name ?? options.seedName?.trim() ?? "";
 		// Prefers the user's stored pick over the derivation's own output; see
 		// seedBaseColor for why that ordering is load-bearing.
 		this.baseColor = seedBaseColor(base, DEFAULT_BASE_COLOR);
@@ -449,9 +447,10 @@ export class PaletteEditorModal extends Modal {
 
 		// Creating only, and last, on the finished window — `existing` is the
 		// same thing the title asks above, so the `seed` rebuild counts as a
-		// create and gets the cursor it exists to ask for. See modalAutofocus.
+		// create and gets the cursor it exists to ask for. Desktop only: a
+		// phone or tablet is left alone to be tapped. See modalAutofocus.
 		if (!this.existing) {
-			this.releaseAutofocus = autofocusOnOpen(this.contentEl, this.nameInputEl);
+			autofocusOnDesktop(this.nameInputEl);
 		}
 	}
 
@@ -1070,8 +1069,6 @@ export class PaletteEditorModal extends Modal {
 		this.colorCardEl = null;
 		this.colorCardRows = [];
 		this.gradToInput = null;
-		this.releaseAutofocus?.();
-		this.releaseAutofocus = null;
 		// The button bar is a sibling of contentEl, so emptying that misses it.
 		removeModalChrome(this);
 		if (this.resolve) {

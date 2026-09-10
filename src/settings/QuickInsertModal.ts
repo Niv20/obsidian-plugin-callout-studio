@@ -69,8 +69,6 @@ export class QuickInsertModal extends Modal {
 		void this.refresh();
 	};
 	private disposeIconListener: (() => void) | null = null;
-	/** Releases the search field's autofocus scroll hold (modalAutofocus). */
-	private releaseAutofocus: (() => void) | null = null;
 
 	constructor(private readonly plugin: SettingsTabPlugin) {
 		super(plugin.app);
@@ -114,17 +112,17 @@ export class QuickInsertModal extends Modal {
 		});
 
 		// No create/edit gate here — this window exists to be typed into, so it
-		// always takes the cursor. It goes through the shared helper for the
-		// other half of the rule: a phone keyboard must not drag the list up.
-		this.releaseAutofocus = autofocusOnOpen(this.contentEl, this.searchEl);
+		// always takes the cursor, on a phone as much as on the desktop. That is
+		// the opposite call to the create windows, which stay hands-off on a
+		// phone: nothing else in THIS window does anything until a query is
+		// there, so the keyboard arriving with it is the point.
+		autofocusOnOpen(this.searchEl);
 	}
 
 	onClose(): void {
 		this.plugin.registry.offChange(this.onRegistryChange);
 		this.disposeIconListener?.();
 		this.disposeIconListener = null;
-		this.releaseAutofocus?.();
-		this.releaseAutofocus = null;
 		this.previews?.destroy();
 		this.previews = null;
 		this.contentEl.empty();

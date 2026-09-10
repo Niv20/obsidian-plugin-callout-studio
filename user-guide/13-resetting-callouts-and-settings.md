@@ -61,7 +61,7 @@ When Callout Studio starts and finds its settings file missing or unreadable, it
 
 **What to do:** let the sync finish. Callout Studio briefly checks that incoming settings have stopped changing before loading them. Desktop file changes and returning to the app also trigger a few automatic retries if the file is temporarily missing or unreadable. Your callout types reappear and saving starts working again after a readable file is loaded. If synchronization takes longer than those retries, return to the app again or reload Obsidian after it finishes.
 
-The one case where the file really is gone for good is when you deleted it yourself to start over. For that, the notice offers **Create a new settings file**, which lets Callout Studio save again after confirmation. The same action remains available in the saving-status banner at the top of Callout Studio settings, even after the startup notice is dismissed. A new-file action rechecks for settings that arrived while the confirmation was open and preserves a readable local recovery copy in a backup before replacing it. Only use it if you know the file isn't coming back - once Callout Studio starts writing, it writes what it currently has, including any callout types restored from the local recovery copy.
+The one case where the file really is gone for good is when you deleted it yourself to start over. The startup notice does not do that for you: its link, **Open Callout Studio settings**, only takes you to the saving-status banner directly under the **Callout Studio** heading at the top of the plugin's settings, where **Create a new settings file** sits beside **Retry saving and recovery** and lets Callout Studio save again after confirmation. The banner stays there for as long as the session is frozen, even after the startup notice is dismissed. A new-file action rechecks for settings that arrived while the confirmation was open and preserves a readable local recovery copy in a backup before replacing it. Only use it if you know the file isn't coming back - once Callout Studio starts writing, it writes what it currently has, including any callout types restored from the local recovery copy.
 
 ## Editing on more than one device
 
@@ -87,7 +87,10 @@ the synced vault. If sync replaces `data.json` while the plugin is closed, the n
 launch merges that copy with the incoming file. An unreadable recovery store
 stops saving until it is available again. The banner distinguishes that problem
 from an unreadable settings file, a failed recovery write, and a failed settings
-write. **Retry saving and recovery** checks again without restarting Obsidian. If the settings file is damaged, an
+write. It is headed **Saving is paused** while the session is not saving at all,
+and **Settings were not saved** when a single save failed; its actions sit
+together below the message, and stack to full width on a phone.
+**Retry saving and recovery** checks again without restarting Obsidian. If the settings file is damaged, an
 available recovery copy is displayed read-only and the damaged file is preserved.
 Saving errors are shown in English and identify the failed step. A full drive,
 denied write access, unavailable local recovery storage, and an incoming sync change

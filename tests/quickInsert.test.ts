@@ -221,6 +221,48 @@ describe("filterCalloutList", () => {
 		);
 	});
 
+	it("ranks a prefix above a match buried mid-word", () => {
+		// Alphabetical order alone answered "no" with Annotation before Note,
+		// because A sorts before N — which is never what the typist meant.
+		const ranked = [
+			def({ id: "annotation", displayName: "Annotation" }),
+			def({ id: "note", displayName: "Note" }),
+		];
+		assert.deepStrictEqual(
+			names(filterCalloutList(ranked, { query: "no", filter: "all" })),
+			["Note", "Annotation"],
+		);
+	});
+
+	it("ranks the name's own prefix above an alias's", () => {
+		const ranked = [
+			def({ id: "abstract", displayName: "Abstract", aliases: ["summary"] }),
+			def({ id: "success", displayName: "Success" }),
+		];
+		assert.deepStrictEqual(
+			names(filterCalloutList(ranked, { query: "su", filter: "all" })),
+			["Success", "Abstract"],
+		);
+	});
+
+	it("puts an exact alias first, ahead of a longer name that starts the same", () => {
+		const ranked = [
+			def({ id: "tipsy", displayName: "Tipsy" }),
+			def({ id: "hint", displayName: "Hint", aliases: ["tip"] }),
+		];
+		assert.deepStrictEqual(
+			names(filterCalloutList(ranked, { query: "tip", filter: "all" })),
+			["Hint", "Tipsy"],
+		);
+	});
+
+	it("keeps one tier alphabetical, so the order stays predictable", () => {
+		assert.deepStrictEqual(
+			names(filterCalloutList(list, { query: "e", filter: "user" })),
+			["budget", "Recipe"],
+		);
+	});
+
 	it("trims the query, so a stray space is not a failed search", () => {
 		assert.deepStrictEqual(
 			names(filterCalloutList(list, { query: "  NOTE  ", filter: "all" })),

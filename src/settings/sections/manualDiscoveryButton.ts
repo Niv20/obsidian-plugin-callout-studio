@@ -46,9 +46,9 @@ export function addManualDiscoveryButton(
 		const label = t(shared.running
 			? "manualDiscovery.scanning"
 			: "settings.rescanVaultHintAction");
+		// The button's text is its accessible name; no aria-label, which would
+		// otherwise shadow the descriptive tooltip set above.
 		button.setText(label);
-		// A tooltip must not replace the visible name in the accessibility tree.
-		button.setAttribute("aria-label", label);
 	};
 	const notify = (): void => {
 		for (const listener of shared.listeners) listener();

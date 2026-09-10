@@ -1,6 +1,10 @@
 import { ConfirmModal } from "../src/utils/ConfirmModal";
-import { confirmFreshStart } from "../src/manager/settingsNotices";
+import { confirmFreshStart, offerFreshStart } from "../src/manager/settingsNotices";
 import type { Notice } from "obsidian";
+// The value, not the type: `last` is the stub's own, and esbuild aliases both
+// specifiers to this one module (see scripts/run-tests.mjs).
+import { Notice as StubNotice } from "./support/obsidianStub";
+import { FakeElement, type FakeDocumentFragment } from "./support/fakeDom";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { retrySettingsRecovery, startFreshSettings } from "../src/manager/settingsRecoveryActions";
@@ -150,12 +154,43 @@ describe("explicit saving recovery", () => {
 		assert.equal(h.host.settingsWriter.status.reason, "sync-conflict"); assert.equal(rewrites, 0);
 		h.host.settingsWriter.destroy();
 	});
+	it("the startup notice opens the settings tab rather than replacing the file itself", () => {
+		// The one destructive action this plugin has does not belong on a
+		// transient surface people dismiss by clicking at. The notice navigates;
+		// the banner it lands on is where the choice is actually made.
+		const h = recoveryActionHarness();
+		const opened: string[] = []; let panes = 0;
+		(h.host.app as unknown as { setting: unknown }).setting = {
+			open: () => { panes++; },
+			openTabById: (id: string) => { opened.push(id); return null; },
+		};
+		offerFreshStart(h.host.app, h.host.manifest.id);
+		const notice = StubNotice.last!;
+		// The link is a direct child of the notice fragment, which has no
+		// `querySelector` of its own — a fragment is a bag of nodes, not a tree.
+		const link = (notice.message as FakeDocumentFragment).childNodes
+			.find((node): node is FakeElement => node instanceof FakeElement && node.hasClass("cs-notice-action"));
+		assert.ok(link, "the notice carries no action link");
+		assert.equal(link.textContent, "Open Callout Studio settings");
+		const click = { type: "click", preventDefault: () => {} };
+		link.dispatchEvent(click);
+		assert.equal(panes, 1);
+		assert.deepStrictEqual(opened, ["callout-studio"]);
+		assert.equal(notice.hidden, true);
+		assert.equal(h.state.disk !== null, true, "navigating must not touch the settings file");
+		h.host.settingsWriter.destroy();
+	});
 	it("updates a persistent banner without rebuilding the form and disposes its listener", async () => {
 		const h = recoveryActionHarness(); await h.boot();
 		const container = h.dom.document.createElement("div"); const input = container.createEl("input"); input.value = "My draft";
 		const dispose = renderSaveStatusBanner(h.host, container as unknown as HTMLElement, { retry: async () => true, startFresh: async () => true });
 		h.host.settingsWriter.freeze("missing");
 		assert.equal(container.querySelectorAll("button").length, 2);
+		// Both actions belong to the banner's own action row, and the row is what
+		// stacks them full width on a phone — a button left as a sibling of the
+		// prose would sit outside that and lay out on its own.
+		assert.equal(container.querySelectorAll(".cs-readonly-banner-actions button").length, 2);
+		assert.equal(container.querySelector(".cs-readonly-banner-title")?.textContent, "Saving is paused");
 		assert.equal(input.value, "My draft");
 		h.host.settingsWriter.freeze("recovery-read");
 		assert.equal(container.querySelectorAll("button").length, 1);

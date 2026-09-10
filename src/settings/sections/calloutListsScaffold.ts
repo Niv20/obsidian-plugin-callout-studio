@@ -28,6 +28,14 @@ import type { SettingsSectionContext } from "./types";
 
 /** Everything the painter needs to keep hold of after the build. */
 export type CalloutListsScaffold = {
+	/**
+	 * Empty div directly under the "Callout Studio" title row, for the
+	 * saving-status banner. The banner used to open the page above the title,
+	 * which read as a message about Obsidian rather than about this plugin's
+	 * settings; under the title it is still the first thing in the page's own
+	 * content. @see SettingsTab.display
+	 */
+	bannerSlotEl: HTMLElement;
 	themeSectionEl: HTMLElement;
 	themeDescEl: HTMLElement;
 	themeListEl: HTMLElement;
@@ -56,6 +64,9 @@ export function buildCalloutListsScaffold(
 				.setTooltip(t("welcome.tooltip"))
 				.onClick(() => new WelcomeModal(ctx.plugin).open()),
 		);
+
+		// Immediately after the title, before any section — see `bannerSlotEl`.
+		const bannerSlotEl = containerEl.createDiv();
 
 		// First, because it is the group the user has the least idea exists.
 		// The description is left to `renderThemeList`, which is on both the
@@ -129,6 +140,7 @@ export function buildCalloutListsScaffold(
 		const builtInFold = attachPersistedFold(builtIn.setting, builtInListEl, "builtin", ctx.plugin);
 
 	return {
+		bannerSlotEl,
 		themeSectionEl,
 		themeDescEl,
 		themeListEl,

@@ -19,11 +19,11 @@ Pick any preset and it's applied instantly to the callout type you're editing.
 
 ## Building your own custom palettes
 
-If you want a color scheme you can reuse across multiple callout types, create your own palette from **Settings → Saved color palettes**. Once saved, your palette appears in the color dropdown on any callout, right alongside the built-in presets.
+If you want a color scheme you can reuse across multiple callout types, create your own palette from **Settings → Saved color palettes**. Once saved, your palette appears in the colour list on any callout, right alongside the built-in presets. That list can be typed into: click the field and start typing to narrow it by name.
 
 The **Saved color palettes** heading works exactly like the callout lists above it in the settings tab: it shows your total palette count in parentheses, folds shut when you click it (or reach it with `Tab` and press `Enter` or `Space`) — remembered across a settings-tab reopen and a plugin reload — and, past twenty saved palettes, shows the first twenty with a **Load more** button that reveals the rest in one click. It also stays with you while you scroll: reach a long palette list and the heading stops at the top of the settings pane so you can always see which group you're in, then scrolls away with its own last row once you're past it. (On iPhone it scrolls normally, the same as the callout list headings.)
 
-As in the callout editor, a **new** palette opens with the cursor already in its **Name** field — ready to type, with the window held still while a phone keyboard opens. Reopening a saved palette to change its colors leaves the cursor alone.
+As in the callout editor, on a computer a **new** palette opens with the cursor already in its **Name** field, ready to type; reopening a saved palette to change its colors leaves the cursor alone. On a phone or tablet the cursor stays out of the way either way — tap the field when you want to type.
 
 You can build a palette in two ways:
 

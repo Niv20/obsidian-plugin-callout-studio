@@ -280,6 +280,15 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
 - **`isDesktopOnly` is `false`** — any new feature must avoid Node/Electron-
   only APIs. The startup CSS-snapshot cache exists specifically to soften
   slow mobile launches (see [Persistence and caching](07-persistence-and-caching.md#the-startup-css-snapshot)).
+- **A create window does not autofocus its name field on mobile or
+  tablet.** `autofocusOnDesktop` bails on `Platform.isMobile`, so "New
+  callout" and "New color palette" leave the cursor alone there and the
+  user taps the field. Desktop and mobile are deliberately inconsistent:
+  the 400ms `scrollTop` hold that once kept them the same read as a clunky
+  lurch and was removed, not tuned. Don't reinstate it — see
+  [Settings UI § where the cursor lands](15-settings-ui-and-modals.md#where-the-cursor-lands-when-a-window-opens).
+  The search windows (quick-insert, replace-callout) still focus on every
+  device; they exist to be typed into.
 
 ## Backward compatibility constraints
 

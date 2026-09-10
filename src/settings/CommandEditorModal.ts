@@ -10,23 +10,20 @@
  * same way the palette editor handles its gradient rows: one sync function
  * decides visibility so the controls can never disagree about the format.
  */
-import { Modal, Setting } from "obsidian";
+import { Modal } from "obsidian";
 import type { App } from "obsidian";
 import { t } from "../i18n";
 import { getLocale } from "../i18n";
 import type { CustomCommandDraft } from "../editor/CustomCommandManager";
-import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type {
 	CalloutDefinition,
 	CalloutRenderRole,
 	CustomCommand,
 	CustomCommandAction,
 	CustomCommandFold,
-	PluginSettings,
 } from "../types";
 import {
 	DEFAULT_HEADING_LEVEL,
-	HEADING_LEVELS,
 	commandSignature,
 	describeCommand,
 	resolveAction,
@@ -35,14 +32,18 @@ import {
 } from "../utils/customCommands";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
+import { buildCalloutRow, type CalloutRow } from "./command/calloutRow";
+import type { CalloutEditorPlugin } from "./editor/types";
 import { buildFormatRow, type FormatRow } from "./command/commandRoles";
 import { buildFoldStateRow, type FoldStateRow } from "./command/foldStateRow";
+import { buildActionRow, buildHeadingLevelRow } from "./command/optionRows";
 
-/** Narrow structural host — the plugin instance satisfies this. */
-export interface CommandEditorHost {
-	registry: CalloutRegistry;
-	settings: PluginSettings;
-}
+/**
+ * Narrow structural host — the plugin instance, which both call sites already
+ * pass. It is `CalloutEditorPlugin` because the Callout type row can open the
+ * callout editor for a callout the user has not created yet.
+ */
+export type CommandEditorHost = CalloutEditorPlugin;
 
 export interface CommandEditorOptions {
 	/** The command being edited; absent when creating a new one. */
@@ -68,11 +69,10 @@ export class CommandEditorModal extends Modal {
 	private actionRowEl?: HTMLElement;
 	private formatRow?: FormatRow;
 	private foldRow?: FoldStateRow;
+	private calloutRow?: CalloutRow;
 	private previewEl?: HTMLElement;
 	private errorEl?: HTMLElement;
 	private saveBtnEl?: HTMLButtonElement;
-
-	private readonly choices: CalloutDefinition[];
 
 	constructor(
 		app: App,
@@ -80,20 +80,7 @@ export class CommandEditorModal extends Modal {
 		private readonly options: CommandEditorOptions = {},
 	) {
 		super(app);
-		const offerable = host.registry.getAll();
-
-		// A command pins the callout it uses, which is exactly why a discovered
-		// row with no remaining vault usage can still be behind one: the prune
-		// skips it. That row is filtered out of the offerable list, so without
-		// this an existing command could not be edited without also being
-		// re-pointed at a different callout.
-		const pinned = options.existing
-			? host.registry.get(options.existing.calloutId)
-			: undefined;
-		if (pinned && !offerable.some((def) => def.id === pinned.id)) {
-			offerable.push(pinned);
-		}
-		this.choices = sortCalloutsByDisplayName(offerable, getLocale());
+		const initialChoices = this.getChoices();
 
 		const existing = options.existing;
 		this.role = existing?.role ?? "regular";
@@ -102,8 +89,24 @@ export class CommandEditorModal extends Modal {
 			: DEFAULT_HEADING_LEVEL;
 		this.action = existing ? resolveAction(existing) : "insert";
 		this.fold = existing ? resolveFold(existing) : "none";
-		this.calloutId =
-			existing?.calloutId ?? this.choices[0]?.id ?? "";
+		this.calloutId = existing?.calloutId ?? initialChoices[0]?.id ?? "";
+	}
+
+	private getChoices(): CalloutDefinition[] {
+		const offerable = this.host.registry.getAll();
+
+		// A command pins the callout it uses, which is exactly why a discovered
+		// row with no remaining vault usage can still be behind one: the prune
+		// skips it. That row is filtered out of the offerable list, so without
+		// this an existing command could not be edited without also being
+		// re-pointed at a different callout.
+		const pinned = this.options.existing
+			? this.host.registry.get(this.options.existing.calloutId)
+			: undefined;
+		if (pinned && !offerable.some((def) => def.id === pinned.id)) {
+			offerable.push(pinned);
+		}
+		return sortCalloutsByDisplayName(offerable, getLocale());
 	}
 
 	openAndWait(): Promise<CustomCommandDraft | null> {
@@ -124,7 +127,7 @@ export class CommandEditorModal extends Modal {
 				: t("commandBuilder.newTitle"),
 		);
 
-		if (this.choices.length === 0) {
+		if (this.getChoices().length === 0) {
 			contentEl.createDiv({
 				cls: "callout-studio-empty-state",
 				text: t("commandBuilder.noCallouts"),
@@ -135,9 +138,24 @@ export class CommandEditorModal extends Modal {
 			this.role = role;
 			this.syncVisibility();
 		});
-		this.buildCalloutRow(contentEl);
-		this.buildHeadingLevelRow(contentEl);
-		this.buildActionRow(contentEl);
+		this.calloutRow = buildCalloutRow(
+			contentEl,
+			this.host,
+			() => this.getChoices(),
+			this.calloutId,
+			(id) => {
+				this.calloutId = id;
+				this.syncVisibility();
+			},
+		);
+		this.headingRowEl = buildHeadingLevelRow(contentEl, this.headingLevel, (level) => {
+			this.headingLevel = level;
+			this.syncVisibility();
+		});
+		this.actionRowEl = buildActionRow(contentEl, this.action, (action) => {
+			this.action = action;
+			this.syncVisibility();
+		});
 		this.foldRow = buildFoldStateRow(contentEl, this.fold, (fold) => {
 			this.fold = fold;
 			this.syncVisibility();
@@ -157,6 +175,9 @@ export class CommandEditorModal extends Modal {
 	}
 
 	onClose(): void {
+		// Before `empty()`: the teardown reaches a document-level listener.
+		this.calloutRow?.destroy();
+		this.calloutRow = undefined;
 		this.contentEl.empty();
 		// The footer is a sibling of contentEl, so empty() never reaches it.
 		removeModalChrome(this);
@@ -164,53 +185,6 @@ export class CommandEditorModal extends Modal {
 			this.resolved = true;
 			this.resolve?.(null);
 		}
-	}
-
-	private buildCalloutRow(parent: HTMLElement): void {
-		new Setting(parent)
-			.setName(t("commandBuilder.callout"))
-			.setDesc(t("commandBuilder.calloutDesc"))
-			.addDropdown((dd) => {
-				for (const def of this.choices) {
-					dd.addOption(def.id, `${def.displayName} (${def.id})`);
-				}
-				dd.setValue(this.calloutId).onChange((value) => {
-					this.calloutId = value;
-					this.syncVisibility();
-				});
-				dd.setDisabled(this.choices.length === 0);
-			});
-	}
-
-	private buildHeadingLevelRow(parent: HTMLElement): void {
-		const setting = new Setting(parent)
-			.setName(t("commandBuilder.headingLevel"))
-			.setDesc(t("commandBuilder.headingLevelDesc"))
-			.addDropdown((dd) => {
-				for (const level of HEADING_LEVELS) {
-					dd.addOption(String(level), `H${level}`);
-				}
-				dd.setValue(String(this.headingLevel)).onChange((value) => {
-					this.headingLevel = Number(value);
-					this.syncVisibility();
-				});
-			});
-		this.headingRowEl = setting.settingEl;
-	}
-
-	private buildActionRow(parent: HTMLElement): void {
-		const setting = new Setting(parent)
-			.setName(t("commandBuilder.action"))
-			.setDesc(t("commandBuilder.actionDesc"))
-			.addDropdown((dd) => {
-				dd.addOption("wrap", t("commandBuilder.actionWrap"));
-				dd.addOption("insert", t("commandBuilder.actionInsert"));
-				dd.setValue(this.action).onChange((value) => {
-					this.action = value as CustomCommandAction;
-					this.syncVisibility();
-				});
-			});
-		this.actionRowEl = setting.settingEl;
 	}
 
 	private buildPreview(parent: HTMLElement): void {
@@ -260,7 +234,10 @@ export class CommandEditorModal extends Modal {
 				this.role,
 			);
 		}
-		this.headingRowEl?.toggleClass("cs-row-hidden", this.role !== "heading");
+		this.headingRowEl?.toggleClass(
+			"cs-row-hidden",
+			this.role !== "heading",
+		);
 		// Heading and inline have exactly one sensible action, so the row is
 		// hidden rather than shown as a dropdown with nothing to choose.
 		this.actionRowEl?.toggleClass("cs-row-hidden", this.role !== "regular");
@@ -268,14 +245,19 @@ export class CommandEditorModal extends Modal {
 
 		const def = this.host.registry.get(this.calloutId);
 		if (this.previewEl) {
-			this.previewEl.setText(def ? describeCommand(this.draft(), def) : "—");
+			this.previewEl.setText(
+				def ? describeCommand(this.draft(), def) : "—",
+			);
 		}
 
 		const duplicate =
-			this.options.takenSignatures?.has(commandSignature(this.draft())) ===
-			true;
+			this.options.takenSignatures?.has(
+				commandSignature(this.draft()),
+			) === true;
 		if (this.errorEl) {
-			this.errorEl.setText(duplicate ? t("commandBuilder.duplicate") : "");
+			this.errorEl.setText(
+				duplicate ? t("commandBuilder.duplicate") : "",
+			);
 			this.errorEl.toggleClass("is-visible", duplicate);
 		}
 
@@ -291,7 +273,9 @@ export class CommandEditorModal extends Modal {
 		// Re-check rather than trusting the button: the callout could have been
 		// deleted from another surface while this modal sat open.
 		const result =
-			save && this.host.registry.has(this.calloutId) ? this.draft() : null;
+			save && this.host.registry.has(this.calloutId)
+				? this.draft()
+				: null;
 		this.resolved = true;
 		this.close();
 		this.resolve?.(result);

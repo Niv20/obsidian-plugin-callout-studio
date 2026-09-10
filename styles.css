@@ -32,6 +32,140 @@
 	initial-value: #7d7d7d;
 }
 
+/* ─── The secondary ("grey") button ───────────────────────────────
+   One face, one hover, one border, read by every non-CTA button this
+   plugin draws: the settings tab's five neutral buttons and Discover,
+   every window's Cancel, and the two segmented rows (border sides,
+   gradient direction). Declared here so that "what does a grey button
+   look like" has a single answer instead of six.
+
+   **Why the hover is a `color-mix` and not `--background-modifier-hover`.**
+   That token is not a colour, it is a *translucent mono overlay* —
+   `rgba(var(--mono-rgb-100), 0.067)`, so black at 6.7% under
+   `.theme-light` and white at 6.7% under `.theme-dark`. Two things follow
+   from that, and both were live bugs:
+
+   - Being translucent, it composites against whatever is *behind* the
+     button rather than against the button's own fill. A button resting on
+     `--background-modifier-form-field` (`--color-base-25`, #2a2a2a) over a
+     #1e1e1e pane hovered to #2d2d2d — a luminance change of 0.3%, which is
+     nothing. That is why **Scan for callouts had no hover in dark mode at
+     all** while looking correct in light, where the same rule lands
+     #ffffff → #eeeeee.
+   - Being mono, it always moves *away* from the background. That is right
+     for a row highlight and wrong for a button face, which wants a fixed
+     step off its own resting colour.
+
+   So the step is mixed into the resting fill directly. `--interactive-normal`
+   is Obsidian's own button face — white (`--color-base-00`) in light, grey
+   (`--color-base-30`, #363636) in dark, which is exactly the resting look
+   that was already wanted — and `--mono-rgb-100` supplies the direction the
+   active theme reads as "more contrast":
+
+       light   #ffffff → #ebebeb   Δlum −17.2%   (was −4.4% via native, −14.5% via the overlay)
+       dark    #363636 → #464646   Δlum  +2.5%   (was +0.3% — the invisible one)
+
+   Both are comfortably perceptible, and the dark half *lightens*, which is
+   the rule this refactor exists to make true everywhere. A theme that
+   restyles `--interactive-normal` gets a hover derived from its own colour
+   rather than one we picked, so this stays theme-compatible by construction.
+
+   Call sites read these with a fallback so that a theme which somehow
+   invalidates the `color-mix` degrades to Obsidian's native pair rather
+   than to no hover at all. */
+.callout-studio-settings,
+.cs-modal,
+.callout-studio-editor {
+	--cs-btn-face: var(--interactive-normal);
+	--cs-btn-face-hover: color-mix(
+		in srgb,
+		var(--interactive-normal) 92%,
+		rgb(var(--mono-rgb-100))
+	);
+	--cs-btn-border: var(--background-modifier-border);
+	--cs-btn-border-hover: var(--background-modifier-border-hover);
+	--cs-btn-accent-face-hover: color-mix(
+		in srgb,
+		var(--interactive-accent) 92%,
+		rgb(var(--mono-rgb-100))
+	);
+
+	/* The danger half of the same idea, and it fails for a different reason than
+	   the greys did. Obsidian *does* ship a hover for red buttons —
+
+	       button.mod-warning       { background-color: var(--background-modifier-error) }
+	       button.mod-warning:hover { background-color: var(--background-modifier-error-hover) }
+
+	   — but under `body` it defines both of those tokens as the same colour:
+
+	       --background-modifier-error: var(--color-red);
+	       --background-modifier-error-hover: var(--color-red);
+
+	   so the rule matches, fires, and paints the colour that is already there.
+	   Delete, Replace and "Reset everything" are not missing a hover rule; they
+	   are running one that resolves to a no-op, Δlum 0.0% in *both* themes. That
+	   is why they feel dead next to Cancel while looking, in the stylesheet, like
+	   they are handled — and why the fix is a token of ours, not a rule of ours.
+
+	   Mixed at the same 92% as `--cs-btn-face-hover`, with `--mono-rgb-100` for
+	   direction, so it darkens in light and lightens in dark like everything else
+	   here. Measured in CIEDE2000 against the grey face it sits beside (which is
+	   4.10 light, 5.26 dark):
+
+	       light   #e93147 → #d62d41   ΔE00 4.19   white text 4.20:1 → 4.87:1
+	       dark    #fb464c → #fb555a   ΔE00 2.84   white text 3.45:1 → 3.20:1
+
+	   Light matches the grey almost exactly. Dark is deliberately the smaller
+	   step: a saturated red is already the most prominent thing on the surface,
+	   and driving it to the grey's ΔE00 needs ~86%, which costs white-text
+	   contrast (3.01:1) on a fill Obsidian already ships below AA. If you retune
+	   this, measure in ΔE00 — plain CIE76 scores these two 6.5 and 7.4 and calls
+	   them matched, which is wrong in exactly the saturated region a red lives
+	   in, and near-neutral greys are the case where the two happen to agree. */
+	--cs-btn-danger-face-hover: color-mix(
+		in srgb,
+		var(--background-modifier-error) 92%,
+		rgb(var(--mono-rgb-100))
+	);
+}
+
+/* Obsidian's accent hover can move toward a lighter purple in the light theme.
+   Derive the hover from the resting accent instead: the theme's mono endpoint
+   is black in light mode and white in dark mode, so the direction is stable
+   without hard-coding either theme's accent colour. */
+@media (hover: hover) {
+	.callout-studio-settings
+		button.mod-cta:not(
+			.mod-warning,
+			.mod-destructive,
+			:disabled,
+			.cs-btn-disabled
+		):hover,
+	.cs-modal
+		button.mod-cta:not(
+			.mod-warning,
+			.mod-destructive,
+			:disabled,
+			.cs-btn-disabled
+		):hover,
+	.callout-studio-editor
+		button.mod-cta:not(
+			.mod-warning,
+			.mod-destructive,
+			:disabled,
+			.cs-btn-disabled
+		):hover {
+		background-color: var(
+			--cs-btn-accent-face-hover,
+			var(--interactive-accent-hover)
+		);
+		border-color: var(
+			--cs-btn-accent-face-hover,
+			var(--interactive-accent-hover)
+		);
+	}
+}
+
 /* ─── Settings Panel ──────────────────────────────────────────── */
 
 .callout-studio-settings {
@@ -96,12 +230,45 @@
 	padding-bottom: var(--size-4-2);
 }
 
-/* Subheading row: "My callout types" + Add new + manual discovery */
+/* Subheading row: "My callout types" + Add new + manual discovery, "Saved
+   color palettes" + New palette, and the theme heading, which has no actions.
+
+   `flex-wrap` is on the shared rule rather than on the one section that used to
+   carry it, because the choice a narrow pane offers is the same for both rows:
+   crush the title, or move the buttons. Obsidian's own answer is to crush —
+   `.setting-item` is `nowrap`, so the info box shrinks until "Saved color
+   palettes (1)" is stacking one word per line beside a button that never
+   moved. Wrapping picks the other answer for these rows only: the actions drop
+   whole to the next line and the title gets the width back.
+
+   Nothing else is needed to *trigger* it. Line breaking measures each item at
+   its flex base size — max-content for both of these — so the break happens at
+   the width where the full title and the full button group stop fitting side by
+   side, which is the width where crushing would otherwise start. No breakpoint
+   to pick and none to keep in step with a translation.
+
+   `row-gap` is left to Obsidian (`--size-4-3`); the callout-list heading below
+   tightens it to 8px along with its column gap. */
 .callout-studio-settings .cs-subheader-row.setting-item {
 	padding-top: 4px;
 	padding-bottom: 2px;
 	border-top: none;
 	min-height: 0;
+	flex-wrap: wrap;
+}
+
+/* ...and once wrapped, the actions stay on the trailing side — the right under
+   LTR, the left under RTL — instead of falling back to the start of the line
+   the way a wrapped flex item does by default.
+
+   `margin-inline-start: auto` is what does it, and it is inert on the line it
+   is not needed on: auto margins are only fed the free space that survives
+   flexing, and on an unwrapped row the info box (or, on the palettes row,
+   Obsidian's own growing control) has already taken all of it. So one
+   declaration covers both states without a query — zero when the row is one
+   line, the whole gap when the actions have a line to themselves. */
+.callout-studio-settings .cs-subheader-row .setting-item-control {
+	margin-inline-start: auto;
 }
 
 /* `center`, not `baseline`: the name now leads with a chevron, and a baseline
@@ -116,10 +283,15 @@
 
 /* Wrap against the actual settings pane width, including a narrow desktop
    pane, mobile, long translations, and enlarged text. The actions stay outside
-   the fold control and stay visible while its list is collapsed. */
+   the fold control and stay visible while its list is collapsed.
+
+   `flex-wrap` used to be declared here as well. It moved up to
+   `.cs-subheader-row`, which this row also carries, so the two headings that
+   wrap now read their wrapping from one place; what is left here is only what
+   is true of this row and not of the palettes one — a tighter gap, and the two
+   axes it is measured on. */
 .callout-studio-settings .cs-callout-list-heading.setting-item {
 	flex-direction: row;
-	flex-wrap: wrap;
 	align-items: center;
 	gap: 8px 16px;
 }
@@ -135,10 +307,33 @@
 	overflow-wrap: anywhere;
 }
 
+/* Two buttons, three layouts, one declaration each.
+
+   `wrap-reverse` is the stacking order. When the pair no longer fits on one
+   line it breaks into two, and the reversed cross axis puts the *last* line on
+   top — which is **Add new callout**, because the CTA is last in the DOM (see
+   sections/calloutListsScaffold.ts: last is what lands it on the row's outer
+   edge while the two are still side by side). So the accent button leads the
+   stack and **Scan for callouts** sits under it, which is the same ranking the
+   horizontal row states by putting the CTA furthest out. Reversing the wrap
+   rather than the DOM is what lets one order serve both: nothing about the
+   side-by-side row changes, and a single-line control has no second line for
+   `wrap-reverse` to act on.
+
+   `justify-content` is the alignment, restated rather than inherited from
+   Obsidian's `.setting-item-control`: it is per-line, so it is what holds a
+   stacked **Scan** to the trailing edge under a stacked **Add**, and it is
+   direction-relative — `flex-end` is the right under LTR and the left under
+   RTL, with no `[dir]` rule to write. A theme that flattens the control's
+   alignment would otherwise leave the stack hanging off the leading edge.
+
+   The buttons keep their content width there (`flex: 0 1 auto` below), so they
+   stack as two right-aligned buttons, not as two full-width bars. */
 .callout-studio-settings .cs-callout-list-heading .setting-item-control {
 	display: flex;
 	flex: 0 1 auto;
-	flex-wrap: wrap;
+	flex-wrap: wrap-reverse;
+	justify-content: flex-end;
 	gap: 8px;
 	min-width: 0;
 	max-width: 100%;
@@ -154,10 +349,20 @@
    `--input-height`, and on desktop it made these the only oversized buttons in
    the tab.
 
-   Both buttons, deliberately. What separates them is colour, not size — Add
-   wears `.mod-cta`, Discover wears `.cs-settings-neutral-btn` — and nothing
-   here should be what makes them different heights. */
-.callout-studio-settings .cs-callout-list-heading .setting-item-control > button {
+   All three, deliberately. What separates them is colour, not size — Add and
+   New palette wear `.mod-cta`, Discover wears `.cs-settings-neutral-btn` — and
+   nothing here should be what makes them different heights.
+
+   Scoped to `.cs-subheader-row` rather than to the callout-list heading alone,
+   because the shrinking half matters just as much on the palettes row and it
+   was not getting it. Obsidian's `button` is `white-space: nowrap` with a fixed
+   `height`, so its min-content width is the whole label: **New palette** could
+   not shrink, and a long translation of it ("Neue Farbpalette erstellen") ran
+   off the trailing edge of the pane instead of wrapping inside its own box —
+   both before this row could wrap and after. `min-inline-size: 0` plus
+   `overflow-wrap: anywhere` is what makes the button narrower than its longest
+   word, and it is the same fix the two buttons beside it already had. */
+.callout-studio-settings .cs-subheader-row .setting-item-control > button {
 	flex: 0 1 auto;
 	min-inline-size: 0;
 	max-inline-size: 100%;
@@ -728,19 +933,40 @@ body:not(.is-phone)
 	padding-bottom: 0;
 }
 
+/* The tab's grey buttons — Discover, Import, Export, Reset, and the two in
+   Data management. `--background-modifier-form-field` used to sit here, and it
+   is an *input* token: `--color-base-25` in dark, which is both darker than a
+   button ought to be and, fatally, the colour the old hover composited to. See
+   the token block at the top of this file for the arithmetic.
+
+   `box-shadow: none` stays — it suppresses the button shadow themes hang on
+   `--input-shadow` — but it is no longer allowed to swallow the focus ring,
+   which is what grouping `:focus-visible` in with `:hover` used to do. This
+   selector is (0,3,0) against Obsidian's own (0,1,1) `button:focus-visible`,
+   so `box-shadow: none` beat it and these six buttons focused invisibly. They
+   now restate the ring themselves, in the grey the rest of the plugin uses. */
 .callout-studio-settings .cs-settings-neutral-btn {
-	background: var(--background-modifier-form-field);
-	border: 1px solid var(--background-modifier-border);
+	background-color: var(--cs-btn-face, var(--interactive-normal));
+	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
 	color: var(--text-normal);
 	box-shadow: none;
 }
 
-.callout-studio-settings .cs-settings-neutral-btn:hover,
+/* `@media (hover: hover)` mirrors how Obsidian guards its own `button:hover`,
+   and keeps a tapped button on a phone from staying lit until the next tap.
+   `:not(:disabled)` because Discover disables itself for the length of a scan
+   and a disabled control must not answer the pointer. */
+@media (hover: hover) {
+	.callout-studio-settings .cs-settings-neutral-btn:hover:not(:disabled) {
+		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
+		color: var(--text-normal);
+		box-shadow: none;
+	}
+}
+
 .callout-studio-settings .cs-settings-neutral-btn:focus-visible {
-	background: var(--background-modifier-hover);
-	border-color: var(--background-modifier-border-hover);
-	color: var(--text-normal);
-	box-shadow: none;
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
 }
 
 /* Obsidian centers a setting row's control by default, but several themes
@@ -1101,11 +1327,24 @@ body:not(.is-phone)
 	}
 }
 
-/* The display name field. `.cs-tag-input-field` is excluded because it is also a
-   text input inside a control column — but it is the flexible half of the IDs
-   row, and the width belongs to the wrapper around it, not to the field. Our 4
-   classes + 1 type outrank Obsidian's phone rule above (3 classes + 1 type),
-   and on phone the variable resolves to 100% anyway, so the two agree.
+/* The display name field. Two classes are excluded because they are also text
+   inputs inside a control column. `.cs-tag-input-field` is the flexible half of
+   the IDs row, and the width belongs to the wrapper around it, not to the
+   field. `.cs-combobox-input` is the text half of the Color row's palette
+   picker, which paints itself down to nothing so its wrapper can be the visible
+   box — and this rule was handing it back a border, a form-field background,
+   padding and a second focus ring, so the Color row drew a white box inside the
+   picker and lit two nested rings when the user typed in it. The combobox is
+   (0,2,0) and this rule is (0,4,1), so it could never have won on its own; the
+   exclusion is the only thing that settles it. The same picker in the settings
+   tab was always correct, which is why the two looked different side by side.
+
+   A `:not()` selector list, not two chained `:not()`s: a list takes the
+   specificity of its most specific argument, so this stays 4 classes + 1 type
+   and the count below still holds.
+
+   Those 4 classes + 1 type outrank Obsidian's phone rule above (3 classes + 1
+   type), and on phone the variable resolves to 100% anyway, so the two agree.
 
    The rest of the box model (border, padding, height) and the focus/disabled
    states are copied from `.cs-tag-input-field` on purpose: this field sits
@@ -1114,7 +1353,7 @@ body:not(.is-phone)
    deliberately-styled tag field. */
 .callout-studio-editor
 	.setting-item-control
-	input[type="text"]:not(.cs-tag-input-field) {
+	input[type="text"]:not(.cs-tag-input-field, .cs-combobox-input) {
 	width: var(--cs-editor-control-width);
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-s);
@@ -1124,11 +1363,20 @@ body:not(.is-phone)
 	box-sizing: border-box;
 }
 
+/* The same focus treatment Obsidian gives a bare text field — an emphasized
+   grey border plus the 2px ring — rather than the accent colour this used to
+   paint. Written out instead of deleted: the base rule above sets the `border`
+   shorthand at (0,4,1), which outranks Obsidian's own (0,2,1) `input:focus`,
+   so dropping this block would leave the border at its resting grey and change
+   only the ring. Naming both properties here is what keeps the field identical
+   to the palette editor's Name box, which has no override and is the reference
+   every input in the plugin is matched to. */
 .callout-studio-editor
 	.setting-item-control
-	input[type="text"]:not(.cs-tag-input-field):focus {
-	border-color: var(--interactive-accent);
-	box-shadow: 0 0 0 2px rgba(var(--interactive-accent-rgb), 0.2);
+	input[type="text"]:not(.cs-tag-input-field, .cs-combobox-input):focus {
+	border-color: var(--background-modifier-border-focus);
+	box-shadow: 0 0 0 var(--input-border-width-focus)
+		var(--background-modifier-border-focus);
 }
 
 /* A greyed-out control still has to read as a control, which means it has to
@@ -1141,7 +1389,7 @@ body:not(.is-phone)
    the token is always in scope here and the fallback never fires. */
 .callout-studio-editor
 	.setting-item-control
-	input[type="text"]:not(.cs-tag-input-field):disabled {
+	input[type="text"]:not(.cs-tag-input-field, .cs-combobox-input):disabled {
 	color: var(--text-faint);
 	opacity: 0.5;
 	cursor: not-allowed;
@@ -1297,9 +1545,18 @@ body:not(.is-phone)
 	box-shadow: none;
 	color: var(--text-normal);
 	cursor: pointer;
+	/* `box-shadow` rides along because the hover/press state below paints its
+	   ring with it. Whether it actually eases depends on what is underneath:
+	   Obsidian's `--input-shadow` is an *inset* hairline plus a drop shadow, and
+	   a list that shape is not interpolable with a flat ring, so on desktop with
+	   the default theme the ring still arrives at once (measured: it reads its
+	   target value on frame 0). On the phone — and under any theme that nulls
+	   `--input-shadow` — the resting shadow is `none`, which interpolates, and
+	   the ring fades in with the border instead of landing on top of it. */
 	transition:
 		border-color 120ms ease,
-		background-color 120ms ease;
+		background-color 120ms ease,
+		box-shadow 120ms ease;
 }
 
 /* Obsidian stretches every non-`clickable-icon` button in a setting row to the
@@ -1312,26 +1569,70 @@ body:not(.is-phone)
 	width: 44px;
 }
 
-.cs-icon-tile:hover,
+/* ── Hover, press and focus ──
+
+   The tile is a box the user edits without typing into, and it sits directly
+   below the Display name and Callout IDs fields, so it borrows *their* focus
+   treatment rather than inventing one: the 1px border recolours to
+   `--background-modifier-border-focus` and a 2px ring in the same grey sits on
+   top of it, which the eye reads as 3px of grey edge. That is the contract in
+   "How an input field focuses" (`internals-docs/15-settings-ui-and-modals.md`),
+   and this row now answers to it like the two above it. It used to light
+   `--interactive-accent`, which made it the one purple-lit control in a modal
+   of grey-lit ones.
+
+   ── Why the box needs four classes and the fill does not ──
+
+   `box-shadow` is contested three ways: `button:not(.clickable-icon)` (0,1,1)
+   sets `--input-shadow`, `button:hover` (0,1,1) sets `--input-shadow-hover`,
+   and `button:not(.clickable-icon).mobile-tap` (0,2,1) sets it again the moment
+   a finger lands. A one-class rule is (0,1,0), so the ring would simply never
+   appear — the same trap, and the same fix, as the ⓧ badge further down.
+   `background-color` is contested only at (0,1,1), which a plain
+   `.cs-icon-tile:hover` clears on its own.
+
+   `border-color`, never the `border` shorthand: the empty state swaps
+   `border-style` to dashed at (0,2,0) and a shorthand here would silently
+   solidify it.
+
+   The fill also *has* to stay at (0,2,0). The empty state paints
+   `background-color: transparent` at the same weight further down the file and
+   wins the tie on source order, which is the only thing keeping the dashed
+   "add one" box from filling in under the pointer; raising this rule would
+   quietly undo that.
+
+   Only `:focus-visible` lives out here, because a keyboard reaches this tile on
+   every device. `:hover` and the touch press are in the two device-gated blocks
+   below. */
+.callout-studio-editor
+	.setting-item
+	.setting-item-control
+	button.cs-icon-tile:focus-visible {
+	outline: none;
+	border-color: var(--background-modifier-border-focus);
+	box-shadow: 0 0 0 var(--input-border-width-focus)
+		var(--background-modifier-border-focus);
+}
+
 .cs-icon-tile:focus-visible {
-	border-color: var(--interactive-accent);
 	background-color: var(--background-modifier-hover);
 }
 
-.cs-icon-tile:focus-visible {
-	outline: none;
-	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
-}
-
-/* The pencil shares the box rather than covering it: fading the artwork out
+/* The glyph shares the box rather than covering it: fading the artwork out
    under it needs no opaque layer, so it cannot mismatch the tile's background
-   in one theme or the other. */
+   in one theme or the other. (Two glyphs, in fact — the swap arrows normally,
+   a `+` when the callout draws no icon at all.)
+
+   `--text-muted` is Obsidian's own icon grey: `--icon-color` is defined as
+   exactly this token, so every `clickable-icon` in the window is already
+   wearing it. It replaces `--text-accent`, which put the one purple mark in a
+   modal that otherwise reserves the accent for the callout being edited. */
 .cs-icon-tile-edit {
 	position: absolute;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var(--text-accent);
+	color: var(--text-muted);
 	opacity: 0;
 	transform: scale(0.8);
 	pointer-events: none;
@@ -1345,12 +1646,43 @@ body:not(.is-phone)
 	height: 16px;
 }
 
-/* Behind `hover: hover` so a touch device never matches it. Not a nicety: iOS
-   Safari applies :hover on the first tap of an element that has hover styles
-   ("sticky hover"), which here would blank the artwork and swap in the swap
-   arrow on the way into the picker. A phone has no pointer to reveal anything
-   with, so it simply keeps showing the drawing — which is the content. */
-@media (hover: hover) {
+/* The swap arrows run a hair larger than the `+` that shares this slot: the
+   drift below reads better with a little more glyph to move, and the two are
+   never on screen together to look uneven against each other. (0,3,1) over the
+   (0,1,1) rule above.) */
+.cs-icon-tile-wrap:not(.is-empty) .cs-icon-tile-edit svg {
+	width: 18px;
+	height: 18px;
+}
+
+/* ── Desktop cursors only ──
+
+   Every hover-driven change this tile makes lives in this one block, gated on
+   `hover: hover` AND `pointer: fine`. Not a nicety: iOS Safari applies :hover
+   on the first tap of an element that has hover styles ("sticky hover"), which
+   here would blank the artwork, swap in the arrows and leave them there on the
+   way into the picker. `pointer: fine` rules out the rest — a stylus, and the
+   hybrid laptops that answer `hover: hover` from a touchscreen. A finger has
+   nothing to *reveal* anything with, only something to commit with, so touch
+   keeps showing the drawing — which is the content — and gets its feedback
+   from the press block below instead. */
+@media (hover: hover) and (pointer: fine) {
+	/* Same declarations as the `:focus-visible` rule above, and the same four
+	   classes for the same reason; they are apart because only this half may
+	   reach a pointer. */
+	.callout-studio-editor
+		.setting-item
+		.setting-item-control
+		button.cs-icon-tile:hover {
+		border-color: var(--background-modifier-border-focus);
+		box-shadow: 0 0 0 var(--input-border-width-focus)
+			var(--background-modifier-border-focus);
+	}
+
+	.cs-icon-tile:hover {
+		background-color: var(--background-modifier-hover);
+	}
+
 	.cs-icon-tile:hover .callout-studio-icon-preview,
 	.cs-icon-tile:focus-visible .callout-studio-icon-preview {
 		opacity: 0;
@@ -1360,6 +1692,112 @@ body:not(.is-phone)
 	.cs-icon-tile:focus-visible .cs-icon-tile-edit {
 		opacity: 1;
 		transform: none;
+	}
+}
+
+/* ── Touch and other coarse pointers ──
+
+   Exactly the complement of the query above, written as a comma list rather
+   than `not ((hover: hover) and (pointer: fine))`: Safari only learned that
+   boolean form in 16.4, and this is the block whose whole job is the phone.
+
+   With no hover to carry the box, the press carries it — the same grey border
+   and ring, for as long as the finger is down and not one frame longer.
+   Self-clearing is the point: nothing stays lit behind a tap that opened a
+   picker on top of it.
+
+   `.mobile-tap` beside `:active` is Obsidian's own press class (added to every
+   `a, button, .tappable, …` on touchstart, removed on release) and it is the
+   dependable half on iOS, where `:active` fires only for elements the engine
+   has already decided are tappable. Both need the four classes: Obsidian paints
+   `button:not(.clickable-icon).mobile-tap` at (0,2,1) with a fill and a shadow
+   of its own, and a lighter rule loses the ring to it.
+
+   Deliberately no artwork swap and no drift loop here — see the block above. */
+@media (hover: none), (pointer: coarse) {
+	.callout-studio-editor
+		.setting-item
+		.setting-item-control
+		button.cs-icon-tile:active,
+	.callout-studio-editor
+		.setting-item
+		.setting-item-control
+		button.cs-icon-tile.mobile-tap {
+		border-color: var(--background-modifier-border-focus);
+		box-shadow: 0 0 0 var(--input-border-width-focus)
+			var(--background-modifier-border-focus);
+	}
+}
+
+/* ── The swap arrows drift apart, and back ──
+
+   The glyph revealed above is Lucide's `arrow-left-right`, and Obsidian builds
+   it as four bare <path> children of the <svg>, in drawing order: the top
+   arrow's head and shaft (pointing left), then the bottom arrow's head and
+   shaft (pointing right). No <g>, no wrapper — which is what lets a plain
+   `:nth-child()` split hand one arrow to each keyframe set and slide them
+   apart, each in the direction it already points, then back. Forever, gently:
+   3.5 user units on a 24-unit viewBox drawn at 18px is about 2.6 device pixels,
+   enough to read as "these two trade places", too little to pull the eye off
+   the form.
+
+   `translateX` on an SVG child resolves in that child's own user coordinate
+   system, so there is no `transform-box` or `transform-origin` to get wrong —
+   a pure translation has no origin.
+
+   Scoped off the empty state because the glyph there is `plus`, whose two
+   paths would take the split as one arrow each and pull the + apart.
+
+   `prefers-reduced-motion: no-preference` in the query rather than an
+   `animation: none` in the `reduce` block below: these selectors are (0,6,1)
+   and an override would have to restate every one of them to outrank it. A
+   loop that never starts needs no stopping. */
+@keyframes cs-icon-swap-lead {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	50% {
+		transform: translateX(-3.5px);
+	}
+}
+
+@keyframes cs-icon-swap-trail {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	50% {
+		transform: translateX(3.5px);
+	}
+}
+
+@media (hover: hover) and (pointer: fine) and
+	(prefers-reduced-motion: no-preference) {
+	.cs-icon-tile-wrap:not(.is-empty)
+		.cs-icon-tile:hover
+		.cs-icon-tile-edit
+		svg
+		> :nth-child(-n + 2),
+	.cs-icon-tile-wrap:not(.is-empty)
+		.cs-icon-tile:focus-visible
+		.cs-icon-tile-edit
+		svg
+		> :nth-child(-n + 2) {
+		animation: cs-icon-swap-lead 1.05s ease-in-out infinite;
+	}
+
+	.cs-icon-tile-wrap:not(.is-empty)
+		.cs-icon-tile:hover
+		.cs-icon-tile-edit
+		svg
+		> :nth-child(n + 3),
+	.cs-icon-tile-wrap:not(.is-empty)
+		.cs-icon-tile:focus-visible
+		.cs-icon-tile-edit
+		svg
+		> :nth-child(n + 3) {
+		animation: cs-icon-swap-trail 1.05s ease-in-out infinite;
 	}
 }
 
@@ -1495,8 +1933,14 @@ body:not(.is-phone)
    picker returned focus to the tile and the badge stayed lit with the pointer
    nowhere near it, until something else was clicked. `:focus-visible` is only
    set when the browser judges focus should be *shown*, i.e. keyboard
-   navigation, which is the case this rule exists for in the first place. */
-@media (hover: hover) {
+   navigation, which is the case this rule exists for in the first place.
+
+   The device gate moved to `(hover: hover) and (pointer: fine)` with the tile's
+   own hover rules, and the permanent-badge block below moved with it to stay
+   its exact complement — a coarse pointer that also reports `hover: hover` must
+   land in one of the two, and the badge it lands on should be the tappable
+   one. */
+@media (hover: hover) and (pointer: fine) {
 	.cs-icon-tile-wrap:hover .cs-icon-tile-clear,
 	.cs-icon-tile:focus-visible + .cs-icon-tile-clear,
 	.cs-icon-tile-clear:focus-visible {
@@ -1505,11 +1949,15 @@ body:not(.is-phone)
 	}
 }
 
-/* No hover exists here, so the badge is permanent — the iPhone equivalent of
+/* No usable hover here, so the badge is permanent — the iPhone equivalent of
    jiggle mode, minus the mode. Bigger, and with `::after` padding the tap area
    out past the 22px circle, since half of it hangs off the tile and the half
-   that does not would otherwise be competing for taps with the picker. */
-@media (hover: none) {
+   that does not would otherwise be competing for taps with the picker.
+
+   The comma list is the complement of the reveal block's query above; see the
+   press block up by the tile for why it is spelled this way and not with
+   `not (…)`. */
+@media (hover: none), (pointer: coarse) {
 	/* Four classes again, and here it is the size that needs them: this is the
 	   phone, where `.is-phone .setting-item-control button:not(.clickable-icon)`
 	   (0,3,1) sets `width: 100%` and its sibling sets `padding: 10px`. A badge
@@ -1560,13 +2008,21 @@ body:not(.is-phone)
 	color: var(--text-faint);
 }
 
-@media (hover: hover) {
+/* Warming `--text-faint` to the same `--text-muted` the swap arrows wear, so
+   the two states of one glyph slot agree; it used to warm to `--text-accent`,
+   the last purple left in this component. Same device gate as every other
+   hover rule here. */
+@media (hover: hover) and (pointer: fine) {
 	.cs-icon-tile-wrap.is-empty .cs-icon-tile:hover .cs-icon-tile-edit,
 	.cs-icon-tile-wrap.is-empty .cs-icon-tile:focus-visible .cs-icon-tile-edit {
-		color: var(--text-accent);
+		color: var(--text-muted);
 	}
 }
 
+/* Transitions only. The swap arrows' drift loop is not switched off here — it
+   is never switched *on*, by a `prefers-reduced-motion: no-preference` in its
+   own query above, because its selectors are far too specific to override from
+   a block this shape. */
 @media (prefers-reduced-motion: reduce) {
 	.cs-icon-tile,
 	.cs-icon-tile-edit,
@@ -1885,9 +2341,108 @@ button.callout-studio-icon-picker-loading {
 	font-size: var(--font-ui-small);
 }
 
+/* Cancel, and every other neutral action a window's footer carries. These are
+   built as bare `<button>`s — no class — so until now they fell straight
+   through to `app.css` and hovered `--interactive-normal` → `--interactive-hover`,
+   which in light mode is #ffffff → #fafafa: a 4.4% luminance step that reads as
+   nothing happening. That is the "Cancel does not change on hover" report, and
+   it is the same family of bug as Discover's, reached from the opposite side.
+
+   Giving them the shared face rather than a class of their own keeps the
+   call sites bare — there is no `cs-` class to remember to add to the next
+   window's Cancel, and none of the five that exist today had to change.
+
+   The `:not()` is a **list**, so its specificity is that of its most specific
+   argument (0,1,0) rather than the sum of three — the selector stays (0,3,1),
+   enough to outrank Obsidian's (0,1,1) `button:hover` without `!important`.
+   It carves out the coloured variants, which own their own faces: `.mod-cta`
+   (Save, Confirm), `.mod-warning` (Delete, Replace) and `.mod-destructive`.
+
+   Scoped `.cs-modal > .cs-modal-footer` — the bar `applyModalChrome()` builds
+   — so this cannot reach a button in a core Obsidian dialog, or even one in
+   the body of our own windows. */
+.cs-modal
+	> .cs-modal-footer
+	button:not(.mod-cta, .mod-warning, .mod-destructive) {
+	background-color: var(--cs-btn-face, var(--interactive-normal));
+	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
+	color: var(--text-normal);
+	box-shadow: none;
+}
+
+@media (hover: hover) {
+	.cs-modal
+		> .cs-modal-footer
+		button:not(.mod-cta, .mod-warning, .mod-destructive):not(
+			:disabled,
+			.cs-btn-disabled
+		):hover {
+		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
+		color: var(--text-normal);
+		box-shadow: none;
+	}
+}
+
+.cs-modal
+	> .cs-modal-footer
+	button:not(.mod-cta, .mod-warning, .mod-destructive):focus-visible {
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+}
+
 .cs-modal > .cs-modal-footer button.cs-btn-disabled {
 	opacity: 0.4;
 	cursor: not-allowed;
+}
+
+/* ── Red buttons answer the pointer ──────────────────────────────
+   The variants the carve-out above hands back to Obsidian: Delete (a callout,
+   a user image), Replace, "Start fresh", the settings tab's "Reset everything"
+   (`ButtonComponent.setWarning()` is `mod-destructive mod-cta` in Obsidian
+   1.13), and any `ConfirmModal` that keeps the older `mod-warning` class. They rest on
+   Obsidian's red and — because `--background-modifier-error` and
+   `--background-modifier-error-hover` are the same colour, see
+   `--cs-btn-danger-face-hover` above — hover to it too. This rule is the only
+   thing that makes them move.
+
+   **The resting fill is deliberately left alone.** A theme that restyles
+	   `.mod-warning` or `.mod-destructive` keeps its own red, and mixing from
+   `--background-modifier-error` means a theme that retunes *that* gets a hover
+   derived from its colour. Claiming the resting fill at this weight would beat
+	   any theme painting either class directly.
+
+	   `body:not(.is-mobile)` because Obsidian's mobile warning/destructive
+	   treatment deliberately drops the red fill for grey-with-red-text, and a
+	   tablet with a pointer attached satisfies `hover: hover` while still carrying
+	   `.is-mobile` — without the guard those two meet and a grey button hovers red.
+
+   Scoped to the same three roots as the token, so a red button in a core
+   Obsidian dialog is untouched. (0,5,2) against Obsidian's (0,2,1), so it
+   lands without `!important`. */
+@media (hover: hover) {
+	body:not(.is-mobile)
+		.callout-studio-settings
+		button:is(.mod-warning, .mod-destructive):not(
+			:disabled,
+			.cs-btn-disabled
+		):hover,
+	body:not(.is-mobile)
+		.cs-modal
+		button:is(.mod-warning, .mod-destructive):not(
+			:disabled,
+			.cs-btn-disabled
+		):hover,
+	body:not(.is-mobile)
+		.callout-studio-editor
+		button:is(.mod-warning, .mod-destructive):not(
+			:disabled,
+			.cs-btn-disabled
+		):hover {
+		background-color: var(
+			--cs-btn-danger-face-hover,
+			var(--background-modifier-error-hover)
+		);
+	}
 }
 
 /* ── Stacked windows on mobile ────────────────────────────────────
@@ -2206,15 +2761,6 @@ button.callout-studio-icon-picker-loading {
 	background-color: var(--background-modifier-hover);
 }
 
-/* `flex-shrink: 0` because the trigger is a fixed width now and something has
-   to give when the name is long — and it must be the name, not the swatch. A
-   gradient palette draws three overlapping circles (~35px); left shrinkable,
-   they would be squeezed toward the 22px floor and the back one clipped. */
-.cs-palette-trigger-circles {
-	display: inline-flex;
-	flex-shrink: 0;
-	min-width: 22px;
-}
 
 /* `min-width: 0` is not redundant next to `flex: 1`: the flex BASIS is 0 but
    `min-width` still defaults to `auto`, which floors the label at its content
@@ -2297,32 +2843,21 @@ button.callout-studio-icon-picker-loading {
 	bottom: calc(100% + 4px);
 }
 
-.cs-palette-menu-group-label {
-	padding: 4px 12px;
-	font-size: var(--font-ui-smaller);
-	color: var(--text-faint);
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-	text-align: start;
-}
 
-/* Separates each later group from the one above it. Skipped on the first
-   label — the menu's own top edge already delimits it, so a divider there
-   would just duplicate the border a pixel below. */
-.cs-palette-menu-group-label:not(:first-child) {
-	margin-top: 6px;
-	padding-top: 10px;
-	border-top: 1px solid var(--background-modifier-border);
-}
-
+/* `padding` is the row spacing: a list of colour swatches needs more air than a
+   list of words to read as separate rows rather than one striped block. */
 .cs-palette-menu-item {
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	padding: 6px 12px;
+	padding: 9px 12px;
 	cursor: pointer;
 	color: var(--text-normal);
 	font-size: var(--font-ui-small);
+}
+
+.cs-palette-combobox .cs-combobox-control {
+	gap: 14px;
 }
 
 .cs-palette-menu-item.is-active,
@@ -2486,12 +3021,24 @@ button.callout-studio-icon-picker-loading {
 	margin-bottom: 4px;
 }
 
+/* Full width, sitting directly on the list it filters. */
+.callout-studio-replace-search {
+	width: 100%;
+	margin-bottom: 8px;
+}
+
 .callout-studio-replace-list {
 	max-height: 240px;
 	overflow-y: auto;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-s);
 	margin-bottom: 12px;
+}
+
+/* The shared empty state is a page-level block elsewhere; in this list it only
+   needs to fill the space one row would have. */
+.callout-studio-replace-list .callout-studio-empty-state {
+	padding: 8px 12px;
 }
 
 .callout-studio-replace-item {
@@ -2566,6 +3113,9 @@ button.callout-studio-icon-picker-loading {
 	align-items: center;
 	gap: 8px;
 	padding: 6px 8px;
+	min-width: 0;
+	overflow-x: hidden;
+	width: 100%;
 }
 
 .callout-studio-suggestion-icon {
@@ -2586,22 +3136,353 @@ button.callout-studio-icon-picker-loading {
 .callout-studio-suggestion-text {
 	flex: 1;
 	min-width: 0;
+	max-width: 100%;
+	overflow-x: hidden;
 }
 
 .callout-studio-suggestion-name {
+	min-width: 0;
+	width: 100%;
 	font-size: var(--font-ui-medium);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .callout-studio-suggestion-id {
 	font-size: var(--font-ui-smaller);
 	color: var(--text-muted);
 	font-family: var(--font-monospace);
+	min-width: 0;
+	max-width: 100%;
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.callout-studio-suggestion-id-truncated {
+	max-width: 100%;
+	width: 100%;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
 /* Characters around the matched run of an id/alias fade out. */
 .callout-studio-suggestion-id-dim {
 	color: var(--text-faint);
+}
+
+/* ─── Combobox (type-to-filter picker) ───────────────────────── */
+
+.suggestion:has(.callout-studio-suggestion) {
+	max-width: 100%;
+	overflow-x: hidden;
+}
+
+/* Deliberately placed right under the suggestion rules above: the popup draws
+   its rows with those very classes, so the two live together and cannot drift
+   into looking like two different lists. */
+
+.cs-combobox {
+	position: relative;
+	/* The settings-tab control column is a flex row that ends flush right; a
+	   fixed-width control would sit in it as a stub, so this fills it. */
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+/* Match the native text fields in the callout editor.
+
+   The display-name field is `6px 10px`, `--radius-s`, `1px` border and `36px`
+   min-height in this plugin's own theme rules. The combobox needs the same model
+   so it reads like a sibling in callout rows and settings tabs.
+
+   One box, no field inside it: the input below is painted down to nothing so
+   the text sits straight on this background, and the focus ring is drawn here
+   rather than around the input. */
+.cs-combobox-control {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 36px;
+	box-sizing: border-box;
+	padding: 6px 10px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	background-color: var(--background-modifier-form-field);
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
+	/* A button, not a text field — the whole thing opens the list. */
+	cursor: pointer;
+}
+
+.cs-combobox-control:hover,
+.cs-combobox-control.is-open {
+	background-color: var(--background-modifier-form-field-hover);
+	border-color: var(--background-modifier-border-hover);
+}
+
+.cs-combobox-control:focus-within {
+	border-color: var(--background-modifier-border-focus);
+	box-shadow: 0 0 0 var(--input-border-width-focus)
+		var(--background-modifier-border-focus);
+}
+
+/* Sized like `.callout-studio-suggestion-icon` so the chosen item beside the
+   input is the same size as the same item down in the list. */
+.cs-combobox-lead {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+}
+
+.cs-combobox-lead svg {
+	width: 16px;
+	height: 16px;
+}
+
+/* Nothing chosen: no empty box holding a gap open. */
+.cs-combobox.is-empty .cs-combobox-lead {
+	display: none;
+}
+
+/* **Descendant-qualified on purpose — do not flatten this to
+   `.cs-combobox-input`.** Obsidian styles `input[type='text']` with a
+   background, a border, padding and a radius, and that selector's specificity
+   (0,1,1) BEATS a lone class (0,1,0): a bare `.cs-combobox-input` rule loses,
+   which is exactly how the field ended up drawn as a second box inside this
+   one. Two classes (0,2,0) win, so the input paints as nothing at all.
+
+   `min-width: 0` is not redundant beside `flex: 1` — the basis is 0 but
+   `min-width` still defaults to `auto`, which floors the field at its content
+   width and lets a long name push the caret out of the control. */
+.cs-combobox-control input[type="text"].cs-combobox-input {
+	flex: 1;
+	min-width: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	outline: none;
+	padding: 0;
+	height: auto;
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
+	font-family: inherit;
+	text-align: start;
+	/* The control is the button; the text inside it is just text. */
+	cursor: inherit;
+}
+
+/* Obsidian's `input:focus` / `:focus-visible` / `:hover` are (0,2,1) — a border
+   colour and the focus ring. Three classes (0,3,0) outrank them, which is what
+   keeps the ring on the control instead of around the text.
+
+   Outranking *Obsidian* is not the whole test, and assuming it was is what let
+   the Color row break. This plugin's own editor-scoped rule
+   (`.callout-studio-editor .setting-item-control input[type="text"]…:focus`) is
+   (0,5,1) and beats this, so wherever a combobox is mounted inside the callout
+   editor these declarations lost and the input drew its own box and ring inside
+   the control. That rule now excludes `.cs-combobox-input` by name; if another
+   broadly-scoped `input[type="text"]` rule is ever added, it has to do the
+   same. */
+.cs-combobox-control input[type="text"].cs-combobox-input:hover,
+.cs-combobox-control input[type="text"].cs-combobox-input:active,
+.cs-combobox-control input[type="text"].cs-combobox-input:focus,
+.cs-combobox-control input[type="text"].cs-combobox-input:focus-visible {
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	outline: none;
+}
+
+.cs-combobox-control .cs-combobox-input::placeholder {
+	color: var(--text-faint);
+}
+
+.cs-combobox.is-select-only .cs-combobox-input {
+	caret-color: transparent;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+/* margin-inline-start, not margin-left: RTL puts the caret on the left. */
+.cs-combobox-caret {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	margin-inline-start: auto;
+	color: var(--text-muted);
+	pointer-events: none;
+}
+
+.cs-combobox-caret .svg-icon {
+	width: var(--icon-xs);
+	height: var(--icon-xs);
+}
+
+/* Both inset-inline edges pinned, for the reason spelled out at
+   `.cs-palette-menu`: with only the start edge the popup is shrink-to-fit and
+   free to end up narrower than the field that opened it. */
+.cs-combobox-menu {
+	position: absolute;
+	top: calc(100% + 4px);
+	inset-inline-start: 0;
+	inset-inline-end: 0;
+	max-width: 100%;
+	max-height: var(--cs-combobox-menu-max-height, 320px);
+	overflow-x: hidden;
+	overflow-y: auto;
+	z-index: 1000;
+	padding: 6px 0;
+	border-radius: var(--radius-s);
+	border: 1px solid var(--background-modifier-border);
+	background-color: var(--cs-surface, var(--background-primary));
+	box-shadow:
+		0 8px 18px rgba(0, 0, 0, 0.22),
+		0 2px 6px rgba(0, 0, 0, 0.18);
+	outline: none;
+	text-align: start;
+}
+
+.cs-combobox-menu-hidden {
+	display: none;
+}
+
+/* Same treatment as `.cs-palette-menu-group-label`, which this replaced. */
+.cs-combobox-group-label {
+	padding: 4px 12px;
+	font-size: var(--font-ui-smaller);
+	color: var(--text-faint);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	text-align: start;
+}
+
+/* Separates each later group from the one above. Skipped on the first, whose
+   top edge is the menu's own. */
+.cs-combobox-group-label:not(:first-child) {
+	margin-top: 6px;
+	border-top: 1px solid var(--background-modifier-border);
+	padding-top: 8px;
+}
+
+.cs-combobox-option {
+	cursor: pointer;
+	max-width: 100%;
+	overflow-x: hidden;
+}
+
+/* `is-active` is where the keyboard is; `is-selected` is what is committed.
+   Two states, two weights — a highlighted row must not look chosen. */
+.cs-combobox-option:hover,
+.cs-combobox-option.is-active {
+	background-color: var(--background-modifier-hover);
+}
+
+.cs-combobox-option.is-selected {
+	background-color: var(--background-secondary-alt);
+}
+
+.cs-language-option-label {
+	padding: 6px 12px;
+	overflow: hidden;
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-align: start;
+}
+
+.cs-language-setting .cs-combobox-lead {
+	display: none;
+}
+
+.cs-fallback-setting .cs-combobox-control,
+.cs-language-setting .cs-combobox-control {
+	background-color: var(--cs-btn-face, var(--interactive-normal));
+	border-color: var(--cs-btn-border, var(--background-modifier-border));
+	color: var(--text-normal);
+	box-shadow: none;
+}
+
+@media (hover: hover) {
+	.cs-fallback-setting .cs-combobox-control:hover,
+	.cs-fallback-setting .cs-combobox-control.is-open,
+	.cs-language-setting .cs-combobox-control:hover,
+	.cs-language-setting .cs-combobox-control.is-open {
+		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-btn-border, var(--background-modifier-border));
+		color: var(--text-normal);
+		box-shadow: none;
+	}
+}
+
+.cs-combobox-footer-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	cursor: pointer;
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+}
+
+.cs-combobox-footer-row:hover {
+	background-color: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+.cs-combobox-footer-row-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	flex-shrink: 0;
+}
+
+.cs-combobox-footer-row-icon .svg-icon {
+	width: var(--icon-s);
+	height: var(--icon-s);
+}
+
+.cs-combobox-footer-row-label {
+	flex: 1;
+	min-width: 0;
+}
+
+.cs-command-callout-setting .cs-combobox {
+	flex: 0 1 auto;
+	width: 220px;
+	max-width: 100%;
+}
+
+/* The shared empty state is a page-level block elsewhere; inside a popup it
+   only needs to fill one row. */
+.cs-combobox-menu .callout-studio-empty-state {
+	padding: 8px 12px;
+}
+
+.cs-combobox.is-disabled .cs-combobox-control {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* A fixed 320px is most of a phone screen with the keyboard up. */
+@media (max-width: 600px) {
+	.cs-combobox-menu {
+		max-height: 50vh;
+	}
+
+	.is-phone .cs-command-callout-setting .cs-combobox {
+		width: 100%;
+	}
 }
 
 /* ─── Icon Picker Modal ──────────────────────────────────────── */
@@ -3278,10 +4159,42 @@ button.callout-studio-icon-picker-loading {
 	outline-offset: -2px;
 }
 
-.icon-picker-toolbar input:focus-visible,
-.icon-picker-toolbar select:focus-visible {
-	outline: 2px solid var(--text-accent);
-	outline-offset: -1px;
+/* The toolbar's search box and dropdowns deliberately carry NO rule that
+   changes what focus looks like. Obsidian already focuses both the way the
+   rest of the plugin now does — a text field gets its 1px border in
+   `--background-modifier-border-focus` plus the 2px ring, a select gets a
+   flat 3px ring in the same colour, so the two read as the same weight of
+   grey edge. The accent outline that used to sit here was the one thing
+   making this toolbar disagree with the palette editor's Name box, which is
+   the field every input is matched to.
+
+   The search box does now carry a *pointer* rule, immediately below — see
+   there for why that is a narrower claim than "no rule at all" and does not
+   contradict this paragraph. The dropdowns are untouched by it: nothing here
+   changes how a `<select>` behaves. */
+
+/* Freeze the search box the same way the palette editor's Name field is
+   frozen (see `.callout-studio-palette-editor …input[type="text"]:not(…)` in
+   the Tag Input section below) and for the same reason: it is otherwise a
+   bare `input[type="text"]`, so Obsidian's own `input[type='text']:hover` —
+   (0,2,1), border-color plus background-color — repainted it for as long as
+   the pointer sat over it, mid-search, unfocused. The values are copied 1:1
+   from what Obsidian already paints at rest, so this does not change how the
+   field looks — only that it stops changing with the mouse. One class
+   (`.icon-picker-search-input`) is shared by both panels that build this
+   toolbar (ImagePanel's "Your images" search and PackPanel's per-source
+   search), so the one rule covers both. */
+.icon-picker-toolbar input[type="text"].icon-picker-search-input {
+	border-color: var(--background-modifier-border);
+	background-color: var(--background-modifier-form-field);
+}
+
+/* Raising the base rule above Obsidian's hover rule means its own `:focus`
+   state (0,2,1) now loses to it too — without this, focusing the field would
+   leave the border at its resting grey instead of the focus colour the
+   paragraph above still leaves entirely to Obsidian. */
+.icon-picker-toolbar input[type="text"].icon-picker-search-input:focus {
+	border-color: var(--background-modifier-border-focus);
 }
 
 /* Minimum 32px touch targets */
@@ -3305,9 +4218,20 @@ button.callout-studio-icon-picker-loading {
 	max-width: 100%;
 }
 
-/* Invalid text input (e.g. duplicate palette name) — red like an ID error */
-input.cs-input-invalid,
-input.cs-input-invalid:focus {
+/* Invalid text input (e.g. duplicate palette name) — red like an ID error.
+   Applied today only to the palette editor's Name field (see
+   `updateValidity()` in PaletteEditorModal.ts), which is otherwise a bare
+   `input[type="text"]` — so without the class tripled, this sat at (0,1,1)
+   (rest) / (0,2,1) (`:focus`) against Obsidian's own `input[type='text']:hover`
+   at (0,2,1). The rest-state half of that is a straight loss: hovering a field
+   already flagged as a duplicate name faded its red border to Obsidian's
+   ordinary hover grey for as long as the pointer sat over it, then snapped
+   back the moment it left — the same pointer-driven flinch as the Callout IDs
+   field above, just on the error colour instead of the focus ring. Tripling
+   the class takes the rest state to (0,3,1), clearing the hover rule
+   outright rather than tying it and leaning on load order. */
+input.cs-input-invalid.cs-input-invalid.cs-input-invalid,
+input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	border-color: var(--text-error);
 	box-shadow: 0 0 0 1px var(--text-error);
 }
@@ -3379,8 +4303,27 @@ input.cs-input-invalid:focus {
    when the field is empty, since the field is still full width and only the
    placeholder (never longer than a few words) shares the space.
 
-   `+ 5px`: the slot sits 1px inside the border, so this clears it by 4px. */
-.cs-tag-input-row > .cs-tag-input-field {
+   `+ 5px`: the slot sits 1px inside the border, so this clears it by 4px.
+
+   **`input[type="text"]` is load-bearing — do not simplify this back to
+   `.cs-tag-input-row > .cs-tag-input-field`.** Obsidian paints every text
+   field on hover (`input[type='text']:hover` → `border-color:
+   var(--background-modifier-border-hover)` plus `background-color`), and that
+   selector is (0,2,1). Two classes are (0,2,0) and LOSE to it, so this field —
+   alone among the plugin's inputs — had Obsidian repainting its border the
+   moment the pointer crossed it, while the display-name field directly above
+   it (whose rule is (0,4,1)) sat still. The two are deliberately styled as one
+   control, so one of them flinching at the mouse and the other not is exactly
+   the seam a reader notices. Type + attribute + two classes is (0,3,1), which
+   clears the hover rule and freezes both properties.
+
+   Freezing `background` is not incidental: `.cs-tag-add-slot` below paints
+   `--cs-tag-field-bg` to disappear into this field, and it has no hover state
+   of its own. While Obsidian could still swap this field to
+   `--background-modifier-form-field-hover`, any theme that gives those two
+   tokens different values drew the end-cap as a visible block at the field's
+   trailing edge for as long as the pointer was inside it. */
+.cs-tag-input-row > input[type="text"].cs-tag-input-field {
 	flex: 1 1 auto;
 	min-width: 80px;
 	border: 1px solid var(--background-modifier-border);
@@ -3395,9 +4338,19 @@ input.cs-input-invalid:focus {
 	box-sizing: border-box;
 }
 
-.cs-tag-input-row > .cs-tag-input-field:focus {
-	border-color: var(--interactive-accent);
-	box-shadow: 0 0 0 2px rgba(var(--interactive-accent-rgb), 0.2);
+/* Matched to the display-name field above it for the reason given there: the
+   two sit one on top of the other in the callout editor and were deliberately
+   styled as one control, so the focus state has to move together too.
+
+   Carries the same `input[type="text"]` as the base rule above, and must: the
+   base is now (0,3,1), so a (0,3,0) focus rule would lose to it on the type
+   count alone and the field would keep its resting border while focused. This
+   is (0,4,1), which sits above the base and above every rule Obsidian aims at
+   a focused text field. */
+.cs-tag-input-row > input[type="text"].cs-tag-input-field:focus {
+	border-color: var(--background-modifier-border-focus);
+	box-shadow: 0 0 0 var(--input-border-width-focus)
+		var(--background-modifier-border-focus);
 }
 
 /* The same raised shade as the display-name field above it, for the same
@@ -3406,8 +4359,12 @@ input.cs-input-invalid:focus {
    split them apart on exactly the platform the fix is for. The only host of a
    `.cs-tag-input-row` is that editor (src/ui/TagInput.ts), which is a chromed
    window — but the fallback stays, because it is what makes the token safe to
-   name from a rule whose selector does not say so. */
-.cs-tag-input-row > .cs-tag-input-field:disabled {
+   name from a rule whose selector does not say so.
+
+   `input[type="text"]` for the same reason as the two rules above: it has to
+   stay above the (0,3,1) base, or a disabled field would paint the form-field
+   fill again. */
+.cs-tag-input-row > input[type="text"].cs-tag-input-field:disabled {
 	color: var(--text-faint);
 	opacity: 0.5;
 	cursor: not-allowed;
@@ -3691,13 +4648,35 @@ input.cs-input-invalid:focus {
 	padding-top: 18px;
 }
 
-.cs-border-side-btn {
+/* All / Top / Right / Bottom / Left. A segmented control, but its segments are
+   secondary buttons and they now say so: the resting face is the shared grey
+   rather than `transparent`. Transparent is what made the old hover misbehave —
+   with no fill of its own, a segment showed the group box behind it, so the
+   translucent `--background-modifier-hover` composited against *that* and moved
+   whichever way the theme's mono direction pointed. Under `.theme-light` that
+   is black at 6.7%, i.e. #ffffff → #eeeeee: the reported "these get darker".
+
+   Sharing the face fixes the direction and the inconsistency in one move —
+   these segments now rest and hover exactly as Cancel and Discover do — and it
+   sharpens the control, since an unselected segment reads as a button rather
+   than as a gap between borders. */
+/* The class is doubled, and it has to be. Obsidian paints every button from
+   `button:not(.clickable-icon) { background-color: var(--interactive-normal) }`,
+   which is (0,1,1) — so a single-class rule here is (0,1,0) and *loses the
+   resting fill outright*. That is not new; it is why the `background:
+   transparent` this rule used to carry never actually took effect, and why the
+   old hover looked like it was darkening from a transparent base when it was
+   really darkening from Obsidian's grey one. Doubling to (0,2,0) is the same
+   trick `.cs-gradient-dir-btn` already uses against the mobile core rules
+   further down this file, and it is what puts `--cs-btn-face` genuinely in
+   charge rather than agreeing with core by coincidence. */
+.cs-border-side-btn.cs-border-side-btn {
 	font-size: var(--font-ui-smaller);
 	padding: 3px 10px;
 	min-height: 24px;
-	border: 1px solid var(--background-modifier-border);
+	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
 	border-radius: 6px;
-	background: transparent;
+	background: var(--cs-btn-face, var(--interactive-normal));
 	color: var(--text-muted);
 	cursor: pointer;
 	transition:
@@ -3706,14 +4685,44 @@ input.cs-input-invalid:focus {
 		border-color 0.12s ease;
 }
 
-.cs-border-side-btn:hover {
-	background: var(--background-modifier-hover);
-}
-
+/* Selected. Declared *before* the hover rules on purpose: this and
+   `.cs-border-side-btn:hover` are both (0,2,0), so at equal specificity the
+   later rule wins the source-order tie-break. It used to sit after, which meant
+   a selected segment swallowed its own hover and answered the pointer with
+   nothing at all — the one segment in the row that felt dead. */
 .cs-border-side-btn.is-active {
 	background: var(--interactive-accent);
 	color: var(--text-on-accent);
 	border-color: var(--interactive-accent);
+}
+
+@media (hover: hover) {
+	.cs-border-side-btn:hover {
+		background: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
+		color: var(--text-normal);
+	}
+
+	/* Selected + hovered. Keeping the accent is what keeps "selected" legible
+	   while the pointer is over it — a hovered selection must not read as an
+	   unselected segment — so the feedback is the same theme-aware step within
+	   the accent as every other purple button. */
+	.cs-border-side-btn.is-active:hover {
+		background: var(
+			--cs-btn-accent-face-hover,
+			var(--interactive-accent-hover)
+		);
+		border-color: var(
+			--cs-btn-accent-face-hover,
+			var(--interactive-accent-hover)
+		);
+		color: var(--text-on-accent);
+	}
+}
+
+.cs-border-side-btn:focus-visible {
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+	outline: none;
 }
 
 .cs-hidden {
@@ -3850,26 +4859,6 @@ input.cs-input-invalid:focus {
 	height: 11px;
 }
 
-/* "+ New color…" entry pinned at the bottom of the palette menu */
-.cs-palette-menu-new-color {
-	border-top: 1px solid var(--background-modifier-border);
-	margin-top: 4px;
-	color: var(--text-muted);
-}
-
-.cs-palette-new-color-icon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 16px;
-	line-height: 0;
-	flex-shrink: 0;
-}
-
-.cs-palette-new-color-icon svg {
-	width: 14px;
-	height: 14px;
-}
 
 /* ─── Custom commands ─────────────────────────────────────────────────── */
 
@@ -4139,6 +5128,50 @@ input.cs-input-invalid:focus {
 	min-width: 0;
 }
 
+/* Freeze the Name field the same way the callout editor's Display name and
+   Callout IDs fields are frozen (see `.callout-studio-editor
+   …input[type="text"]:not(...)` and `.cs-tag-input-row > input[type="text"]
+   .cs-tag-input-field` above). This field is otherwise a bare
+   `input[type="text"]` with no plugin rule of its own, so Obsidian's own
+   `input[type='text']:hover` — (0,2,1), border-color plus background-color —
+   was free to repaint it for as long as the pointer sat over it, even before
+   it was ever focused. The two fields in the callout editor never do that, so
+   opening this modal right after that one made the difference obvious: the
+   row that looks identical at rest visibly changes with the mouse and the
+   other two don't.
+
+   Four classes/attributes deep (`.callout-studio-palette-editor
+   .cs-palette-name-setting .setting-item-control input[type="text"]`) is
+   already (0,4,1), comfortably past the (0,2,1) it has to clear, so nothing
+   here is doubled or tripled the way `.cs-input-invalid` below had to be.
+
+   `:not(.cs-input-invalid)` carves out the one state this field can be in
+   that this rule must not touch: `updateValidity()` (PaletteEditorModal.ts)
+   toggles that class to turn the border red for a taken name, and pinning
+   border-color unconditionally here would outrank its declaration and mute
+   the red back to grey. */
+.callout-studio-palette-editor
+	.cs-palette-name-setting
+	.setting-item-control
+	input[type="text"]:not(.cs-input-invalid) {
+	border-color: var(--background-modifier-border);
+	background-color: var(--background-modifier-form-field);
+}
+
+/* Raising the base rule above Obsidian's hover rule means its `:focus` state
+   (0,2,1) now loses to the base too — without this, focusing the field would
+   leave the border at its resting grey instead of turning to the same focus
+   colour every other field in the plugin uses. Matched to the base rule's own
+   `:not(.cs-input-invalid)` so a taken name keeps its red ring while
+   focused, exactly as `input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus`
+   (above) already provides for it. */
+.callout-studio-palette-editor
+	.cs-palette-name-setting
+	.setting-item-control
+	input[type="text"]:not(.cs-input-invalid):focus {
+	border-color: var(--background-modifier-border-focus);
+}
+
 /* ── Card row separators ─────────────────────────────────────────
    This column holds two `cs-layout-group` cards (see createControlGroup), and
    that modifier strips every row's chrome — including the border Obsidian draws
@@ -4264,7 +5297,16 @@ input.cs-input-invalid:focus {
 	gap: 4px;
 	flex-wrap: nowrap;
 }
-.cs-gradient-dir-btn {
+/* The gradient direction arrows — the plugin's other segmented control, and
+   the third variation on one button. It rested on `--cs-surface-raised`, which
+   is a *surface* token: right for a group box's header strip, wrong for a
+   control, and different again from the two rows above. Its hover moved only
+   `color`, so the face never answered the pointer at all — not the wrong
+   direction like the border sides, simply absent. Both now come from the
+   shared pair. */
+/* Doubled for the same reason as `.cs-border-side-btn` above — (0,1,1) core
+   rule, (0,1,0) single-class rule, core wins the face. */
+.cs-gradient-dir-btn.cs-gradient-dir-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -4272,19 +5314,44 @@ input.cs-input-invalid:focus {
 	height: 26px;
 	padding: 0;
 	box-shadow: none;
-	background: var(--cs-surface-raised, var(--background-secondary));
-	border: 1px solid var(--background-modifier-border);
+	background: var(--cs-btn-face, var(--interactive-normal));
+	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
 	border-radius: var(--radius-s, 4px);
 	color: var(--text-muted);
 	cursor: pointer;
+	transition:
+		background 0.12s ease,
+		color 0.12s ease,
+		border-color 0.12s ease;
 }
-.cs-gradient-dir-btn:hover {
-	color: var(--text-normal);
-}
+/* Before the hover rules, for the tie-break reason given on
+   `.cs-border-side-btn.is-active` above. */
 .cs-gradient-dir-btn.is-active {
 	background: var(--interactive-accent);
 	border-color: var(--interactive-accent);
 	color: var(--text-on-accent);
+}
+@media (hover: hover) {
+	.cs-gradient-dir-btn:hover {
+		background: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
+		color: var(--text-normal);
+	}
+	.cs-gradient-dir-btn.is-active:hover {
+		background: var(
+			--cs-btn-accent-face-hover,
+			var(--interactive-accent-hover)
+		);
+		border-color: var(
+			--cs-btn-accent-face-hover,
+			var(--interactive-accent-hover)
+		);
+		color: var(--text-on-accent);
+	}
+}
+.cs-gradient-dir-btn:focus-visible {
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+	outline: none;
 }
 .cs-gradient-dir-btn .svg-icon {
 	width: 14px;
@@ -5932,18 +6999,64 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
    as a warning rather than an error: nothing is broken, and in the common case
    — a sync client mid-swap — it resolves itself. */
 .cs-readonly-banner {
-	margin: 0 0 16px;
-	padding: 10px 14px;
-	border-left: 3px solid var(--text-warning, var(--color-orange));
-	border-radius: var(--radius-s);
-	/* A translucent tint of the warning colour rather than a surface token: the
-	   banner sits on the settings tab, and a raised-shade token would be a claim
-	   about what it is sitting on (see tests/modalSurfaces.test.ts). */
-	background: color-mix(
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	/* The card sits directly under the "Callout Studio" title row, which already
+	   carries 8px of `padding-bottom`, so a small top margin is enough to keep
+	   it off the title; the larger bottom margin separates it from the first
+	   section heading below. */
+	margin: 4px 0 16px;
+	padding: 12px 14px;
+	/* A thin outline on all four sides rather than a bar down one edge. The bar
+	   only marked the side it was on, so the block ran off into the page on the
+	   other three, and it changed sides between an LTR and an RTL locale. A
+	   closed card says the same thing in either direction and keeps the buttons
+	   below visibly inside the message that offers them. */
+	border: 1px solid color-mix(
 		in srgb,
-		var(--text-warning, var(--color-orange)) 12%,
+		var(--text-warning, var(--color-orange)) 40%,
 		transparent
 	);
+	border-radius: var(--radius-m);
+	/* A translucent tint of the warning colour rather than a surface token: the
+	   banner sits on the settings tab, and a raised-shade token would be a claim
+	   about what it is sitting on (see tests/modalSurfaces.test.ts). Lighter
+	   than the bar version was — the outline now carries the emphasis. */
+	background: color-mix(
+		in srgb,
+		var(--text-warning, var(--color-orange)) 9%,
+		transparent
+	);
+}
+
+.cs-readonly-banner-header {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+
+/* Fixed to the height of one title line rather than centred on the whole
+   header, so a title that wraps to two lines on a phone still starts level
+   with its icon instead of drifting to the middle of the block. */
+.cs-readonly-banner-icon {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	height: calc(var(--font-ui-medium) * 1.4);
+	color: var(--text-warning, var(--color-orange));
+}
+
+.cs-readonly-banner-icon .svg-icon {
+	width: var(--icon-s);
+	height: var(--icon-s);
+}
+
+.cs-readonly-banner-title {
+	color: var(--text-normal);
+	font-size: var(--font-ui-medium);
+	font-weight: var(--font-semibold);
+	line-height: 1.4;
 }
 
 .cs-readonly-banner p {
@@ -5951,4 +7064,33 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-normal);
 	font-size: var(--font-ui-small);
 	line-height: 1.5;
+}
+
+/* Actions start at the same edge as the title and the prose, so the card reads
+   as one left-aligned column in an LTR locale and one right-aligned column in
+   an RTL one — `flex-start` is what makes that follow the text direction. */
+.cs-readonly-banner-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	gap: 8px;
+	margin-top: 2px;
+}
+
+.cs-readonly-banner-actions button {
+	margin: 0;
+}
+
+/* On a phone two side-by-side buttons either overflow the card or shrink their
+   labels to a truncated word, so they stack full width instead. */
+@media (max-width: 600px) {
+	.cs-readonly-banner-actions {
+		flex-direction: column;
+		align-items: stretch;
+		/* `stretch` fills the flex *line*, and a wrapping column sizes its line
+		   to the widest button — so wrapping has to go off here or the stack
+		   comes out as wide as its longest label instead of as wide as the
+		   card. */
+		flex-wrap: nowrap;
+	}
 }

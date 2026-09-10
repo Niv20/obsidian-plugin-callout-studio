@@ -28,8 +28,8 @@ import {
 	type FixedCommandId,
 } from "../editor/commands";
 import type { CustomCommandManager } from "../editor/CustomCommandManager";
-import type { CalloutRegistry } from "../manager/CalloutRegistry";
-import type { CustomCommand, PluginSettings } from "../types";
+import type { CalloutEditorPlugin } from "./editor/types";
+import type { CustomCommand } from "../types";
 import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import {
 	commandSignature,
@@ -43,9 +43,9 @@ import { addHotkeyButton, addHotkeyChips } from "./command/hotkeyRow";
 import { applyModalChrome } from "./modalChrome";
 
 /** Narrow structural host — the plugin instance satisfies this. */
-export interface CommandBuilderHost {
-	registry: CalloutRegistry;
-	settings: PluginSettings;
+// Extends `CalloutEditorPlugin` because this window hands itself to
+// `CommandEditorModal`, whose Callout type row can open the callout editor.
+export interface CommandBuilderHost extends CalloutEditorPlugin {
 	customCommands: CustomCommandManager;
 	/** Both halves are needed: the id keys a hotkey, the name prefixes it. */
 	manifest: { id: string; name: string };

@@ -75,6 +75,11 @@ import type { SettingsSectionContext } from "./types";
 export type CalloutListsController = {
 	render: (containerEl: HTMLElement) => void;
 	/**
+	 * The slot under the "Callout Studio" title row that the saving-status
+	 * banner draws into. `null` until `render` has run.
+	 */
+	bannerSlot: () => HTMLElement | null;
+	/**
 	 * Redraw the three lists — unless nothing they draw has moved.
 	 *
 	 * `force` is for the two signals whose effect the signature structurally
@@ -256,6 +261,7 @@ export function createCalloutListsController(
 			);
 			renderAll();
 		},
+		bannerSlot: () => els?.bannerSlotEl ?? null,
 		refresh: renderAll,
 	};
 }

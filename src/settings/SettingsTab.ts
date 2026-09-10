@@ -117,9 +117,6 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		);
 
 		const sectionCtx = this.getSectionContext();
-		// First on the page, because it is the reason nothing below it will be
-		// saved. @see sections/ReadOnlyBanner.ts
-		renderReadOnlyBanner(sectionCtx, containerEl);
 		this.calloutLists = createCalloutListsController(sectionCtx, {
 			paging: this.paging,
 			onAddNewCallout: async () => {
@@ -155,6 +152,14 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 			},
 		});
 		this.calloutLists.render(containerEl);
+		// Straight under the "Callout Studio" title row, ahead of every
+		// section, because it is the reason nothing below it will be saved.
+		// Above the title it read as a message about the settings window
+		// rather than about this plugin. @see sections/ReadOnlyBanner.ts
+		renderReadOnlyBanner(
+			sectionCtx,
+			this.calloutLists.bannerSlot() ?? containerEl,
+		);
 
 		renderFallbackSection(sectionCtx, containerEl);
 		renderCustomPalettesSection(sectionCtx, containerEl);

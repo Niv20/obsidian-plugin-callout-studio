@@ -596,8 +596,10 @@ anything about colour.
 
 [`calloutListIcon.ts`](../src/manager/theme/calloutListIcon.ts) is the single
 answer for every list that draws a callout *small* — autocomplete, *Replace in
-vault*, vault stats, the command builder. Those four had drifted into three
-different answers, two with no ownership check at all:
+vault*, vault stats, the command builder, and the settings callout picker
+([`calloutComboboxRow.ts`](../src/settings/calloutComboboxRow.ts)). The first
+four had drifted into three different answers, two with no ownership check at
+all:
 
 | Who paints the callout | Icon | Accent |
 | --- | --- | --- |
@@ -639,7 +641,7 @@ in saved data are preserved as durable fallback definitions.
 | *Quick insert block callout* | yes — rendered by Obsidian, so the theme draws the row itself |
 | The `[!` autocomplete, **block** position | yes |
 | The `[!` autocomplete, **heading / inline** position | no (`suggestableCallouts`) |
-| *Replace in vault*, vault stats, command builder lists | yes, drawn through `calloutListIcon` |
+| *Replace in vault*, vault stats, command builder and settings pickers | yes, drawn through `calloutListIcon` |
 | The command builder's **format** dropdown | Block only (`offerableRoles`) |
 | Backups / export JSON | no (`getUserDefined` excludes them) |
 
@@ -1005,6 +1007,7 @@ result:
 - **Publish theme ownership.** `registerThemeAppearance` hands `registry.setThemeOwnedIds` every id the theme names, built-ins included, so `standsDown` silences the plugin for them. Measuring without it measures a configuration that cannot occur.
 - **Model Style Settings exactly.** Class toggles and class selects add classes to `<body>`; variables land in `body.css-settings-manager` and `body.theme-{light,dark}.css-settings-manager`, in a `<style>` appended last to `<head>`. Read them out of the theme's own `/* @settings */` YAML rather than guessing.
 - **Read numbers, not pixels.** Without real CodeMirror the layout collapses, so a screenshot lies where `getComputedStyle` does not. (Settings-pane questions are the exception: that DOM is plain markup and a screenshot of it is real — which is how the sticky band's paint was verified pixel-identical before and after a change.)
+- **A width question needs the modal chain's own widths overridden.** `.modal` is `width: var(--dialog-width)` with a `max-width`, and `.vertical-tab-content` adds `padding-inline: var(--size-4-12)` and `container-type: inline-size`. So sizing the *host* element proves nothing: a sweep from 900px down to 220px reports byte-identical geometry at every step, because the pane never actually narrowed. Set `width: 100% !important; max-width: none; min-width: 0` on `.modal`, `.vertical-tab-content-container` and `.vertical-tab-content`, then size the wrapper — that is what makes a responsive question measurable. Read logical edges, too: `getBoundingClientRect` is physical, so an assertion written as "16px from the right" passes in LTR and fails in RTL for a layout that is correct in both.
 - **Put only the classes a default install has on `<body>`.** `is-translucent` is a setting that is off by default, and a theme is free to key its whole see-through look off it; measuring with it on measures somebody else's install. `theme-{dark,light}`, `mod-macos`, `is-focused` — and `is-mobile is-tablet` / `is-mobile is-phone` when the question is a mobile one, which for anything painted per device it usually is.
 - **Do not use `--virtual-time-budget`.** Virtual time does not advance while an animation is running, so any theme with one hangs the run until it is killed, and a sweep across every installed theme will hit several. The page has no async work of its own: `--dump-dom` after the load event is enough, with a wall-clock timeout per run.
 - **A rule walk needs a `try` around every rule, and still cannot see a nested one.** Reading `document.styleSheets` to find *which* declaration won is the natural follow-up to a surprising computed value, and it has two traps: one unusual rule type throws and takes the rest of that sheet's rules with it unless each is caught on its own, and `el.matches(rule.selectorText)` throws outright on a nested rule, whose `selectorText` starts with `&`. A theme written with CSS nesting then looks like it has no opinion at all — Lagom's `background-color: transparent !important` on settings headings, nested under `.mod-settings`, was invisible that way, and it is the reason the band's paint could not be fixed with an `!important`.
