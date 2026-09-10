@@ -1394,9 +1394,18 @@ body:not(.is-phone)
 	box-shadow: none;
 	color: var(--text-normal);
 	cursor: pointer;
+	/* `box-shadow` rides along because the hover/press state below paints its
+	   ring with it. Whether it actually eases depends on what is underneath:
+	   Obsidian's `--input-shadow` is an *inset* hairline plus a drop shadow, and
+	   a list that shape is not interpolable with a flat ring, so on desktop with
+	   the default theme the ring still arrives at once (measured: it reads its
+	   target value on frame 0). On the phone — and under any theme that nulls
+	   `--input-shadow` — the resting shadow is `none`, which interpolates, and
+	   the ring fades in with the border instead of landing on top of it. */
 	transition:
 		border-color 120ms ease,
-		background-color 120ms ease;
+		background-color 120ms ease,
+		box-shadow 120ms ease;
 }
 
 /* Obsidian stretches every non-`clickable-icon` button in a setting row to the
@@ -1409,26 +1418,70 @@ body:not(.is-phone)
 	width: 44px;
 }
 
-.cs-icon-tile:hover,
+/* ── Hover, press and focus ──
+
+   The tile is a box the user edits without typing into, and it sits directly
+   below the Display name and Callout IDs fields, so it borrows *their* focus
+   treatment rather than inventing one: the 1px border recolours to
+   `--background-modifier-border-focus` and a 2px ring in the same grey sits on
+   top of it, which the eye reads as 3px of grey edge. That is the contract in
+   "How an input field focuses" (`internals-docs/15-settings-ui-and-modals.md`),
+   and this row now answers to it like the two above it. It used to light
+   `--interactive-accent`, which made it the one purple-lit control in a modal
+   of grey-lit ones.
+
+   ── Why the box needs four classes and the fill does not ──
+
+   `box-shadow` is contested three ways: `button:not(.clickable-icon)` (0,1,1)
+   sets `--input-shadow`, `button:hover` (0,1,1) sets `--input-shadow-hover`,
+   and `button:not(.clickable-icon).mobile-tap` (0,2,1) sets it again the moment
+   a finger lands. A one-class rule is (0,1,0), so the ring would simply never
+   appear — the same trap, and the same fix, as the ⓧ badge further down.
+   `background-color` is contested only at (0,1,1), which a plain
+   `.cs-icon-tile:hover` clears on its own.
+
+   `border-color`, never the `border` shorthand: the empty state swaps
+   `border-style` to dashed at (0,2,0) and a shorthand here would silently
+   solidify it.
+
+   The fill also *has* to stay at (0,2,0). The empty state paints
+   `background-color: transparent` at the same weight further down the file and
+   wins the tie on source order, which is the only thing keeping the dashed
+   "add one" box from filling in under the pointer; raising this rule would
+   quietly undo that.
+
+   Only `:focus-visible` lives out here, because a keyboard reaches this tile on
+   every device. `:hover` and the touch press are in the two device-gated blocks
+   below. */
+.callout-studio-editor
+	.setting-item
+	.setting-item-control
+	button.cs-icon-tile:focus-visible {
+	outline: none;
+	border-color: var(--background-modifier-border-focus);
+	box-shadow: 0 0 0 var(--input-border-width-focus)
+		var(--background-modifier-border-focus);
+}
+
 .cs-icon-tile:focus-visible {
-	border-color: var(--interactive-accent);
 	background-color: var(--background-modifier-hover);
 }
 
-.cs-icon-tile:focus-visible {
-	outline: none;
-	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
-}
-
-/* The pencil shares the box rather than covering it: fading the artwork out
+/* The glyph shares the box rather than covering it: fading the artwork out
    under it needs no opaque layer, so it cannot mismatch the tile's background
-   in one theme or the other. */
+   in one theme or the other. (Two glyphs, in fact — the swap arrows normally,
+   a `+` when the callout draws no icon at all.)
+
+   `--text-muted` is Obsidian's own icon grey: `--icon-color` is defined as
+   exactly this token, so every `clickable-icon` in the window is already
+   wearing it. It replaces `--text-accent`, which put the one purple mark in a
+   modal that otherwise reserves the accent for the callout being edited. */
 .cs-icon-tile-edit {
 	position: absolute;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var(--text-accent);
+	color: var(--text-muted);
 	opacity: 0;
 	transform: scale(0.8);
 	pointer-events: none;
@@ -1442,12 +1495,43 @@ body:not(.is-phone)
 	height: 16px;
 }
 
-/* Behind `hover: hover` so a touch device never matches it. Not a nicety: iOS
-   Safari applies :hover on the first tap of an element that has hover styles
-   ("sticky hover"), which here would blank the artwork and swap in the swap
-   arrow on the way into the picker. A phone has no pointer to reveal anything
-   with, so it simply keeps showing the drawing — which is the content. */
-@media (hover: hover) {
+/* The swap arrows run a hair larger than the `+` that shares this slot: the
+   drift below reads better with a little more glyph to move, and the two are
+   never on screen together to look uneven against each other. (0,3,1) over the
+   (0,1,1) rule above.) */
+.cs-icon-tile-wrap:not(.is-empty) .cs-icon-tile-edit svg {
+	width: 18px;
+	height: 18px;
+}
+
+/* ── Desktop cursors only ──
+
+   Every hover-driven change this tile makes lives in this one block, gated on
+   `hover: hover` AND `pointer: fine`. Not a nicety: iOS Safari applies :hover
+   on the first tap of an element that has hover styles ("sticky hover"), which
+   here would blank the artwork, swap in the arrows and leave them there on the
+   way into the picker. `pointer: fine` rules out the rest — a stylus, and the
+   hybrid laptops that answer `hover: hover` from a touchscreen. A finger has
+   nothing to *reveal* anything with, only something to commit with, so touch
+   keeps showing the drawing — which is the content — and gets its feedback
+   from the press block below instead. */
+@media (hover: hover) and (pointer: fine) {
+	/* Same declarations as the `:focus-visible` rule above, and the same four
+	   classes for the same reason; they are apart because only this half may
+	   reach a pointer. */
+	.callout-studio-editor
+		.setting-item
+		.setting-item-control
+		button.cs-icon-tile:hover {
+		border-color: var(--background-modifier-border-focus);
+		box-shadow: 0 0 0 var(--input-border-width-focus)
+			var(--background-modifier-border-focus);
+	}
+
+	.cs-icon-tile:hover {
+		background-color: var(--background-modifier-hover);
+	}
+
 	.cs-icon-tile:hover .callout-studio-icon-preview,
 	.cs-icon-tile:focus-visible .callout-studio-icon-preview {
 		opacity: 0;
@@ -1457,6 +1541,112 @@ body:not(.is-phone)
 	.cs-icon-tile:focus-visible .cs-icon-tile-edit {
 		opacity: 1;
 		transform: none;
+	}
+}
+
+/* ── Touch and other coarse pointers ──
+
+   Exactly the complement of the query above, written as a comma list rather
+   than `not ((hover: hover) and (pointer: fine))`: Safari only learned that
+   boolean form in 16.4, and this is the block whose whole job is the phone.
+
+   With no hover to carry the box, the press carries it — the same grey border
+   and ring, for as long as the finger is down and not one frame longer.
+   Self-clearing is the point: nothing stays lit behind a tap that opened a
+   picker on top of it.
+
+   `.mobile-tap` beside `:active` is Obsidian's own press class (added to every
+   `a, button, .tappable, …` on touchstart, removed on release) and it is the
+   dependable half on iOS, where `:active` fires only for elements the engine
+   has already decided are tappable. Both need the four classes: Obsidian paints
+   `button:not(.clickable-icon).mobile-tap` at (0,2,1) with a fill and a shadow
+   of its own, and a lighter rule loses the ring to it.
+
+   Deliberately no artwork swap and no drift loop here — see the block above. */
+@media (hover: none), (pointer: coarse) {
+	.callout-studio-editor
+		.setting-item
+		.setting-item-control
+		button.cs-icon-tile:active,
+	.callout-studio-editor
+		.setting-item
+		.setting-item-control
+		button.cs-icon-tile.mobile-tap {
+		border-color: var(--background-modifier-border-focus);
+		box-shadow: 0 0 0 var(--input-border-width-focus)
+			var(--background-modifier-border-focus);
+	}
+}
+
+/* ── The swap arrows drift apart, and back ──
+
+   The glyph revealed above is Lucide's `arrow-left-right`, and Obsidian builds
+   it as four bare <path> children of the <svg>, in drawing order: the top
+   arrow's head and shaft (pointing left), then the bottom arrow's head and
+   shaft (pointing right). No <g>, no wrapper — which is what lets a plain
+   `:nth-child()` split hand one arrow to each keyframe set and slide them
+   apart, each in the direction it already points, then back. Forever, gently:
+   3.5 user units on a 24-unit viewBox drawn at 18px is about 2.6 device pixels,
+   enough to read as "these two trade places", too little to pull the eye off
+   the form.
+
+   `translateX` on an SVG child resolves in that child's own user coordinate
+   system, so there is no `transform-box` or `transform-origin` to get wrong —
+   a pure translation has no origin.
+
+   Scoped off the empty state because the glyph there is `plus`, whose two
+   paths would take the split as one arrow each and pull the + apart.
+
+   `prefers-reduced-motion: no-preference` in the query rather than an
+   `animation: none` in the `reduce` block below: these selectors are (0,6,1)
+   and an override would have to restate every one of them to outrank it. A
+   loop that never starts needs no stopping. */
+@keyframes cs-icon-swap-lead {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	50% {
+		transform: translateX(-3.5px);
+	}
+}
+
+@keyframes cs-icon-swap-trail {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	50% {
+		transform: translateX(3.5px);
+	}
+}
+
+@media (hover: hover) and (pointer: fine) and
+	(prefers-reduced-motion: no-preference) {
+	.cs-icon-tile-wrap:not(.is-empty)
+		.cs-icon-tile:hover
+		.cs-icon-tile-edit
+		svg
+		> :nth-child(-n + 2),
+	.cs-icon-tile-wrap:not(.is-empty)
+		.cs-icon-tile:focus-visible
+		.cs-icon-tile-edit
+		svg
+		> :nth-child(-n + 2) {
+		animation: cs-icon-swap-lead 1.05s ease-in-out infinite;
+	}
+
+	.cs-icon-tile-wrap:not(.is-empty)
+		.cs-icon-tile:hover
+		.cs-icon-tile-edit
+		svg
+		> :nth-child(n + 3),
+	.cs-icon-tile-wrap:not(.is-empty)
+		.cs-icon-tile:focus-visible
+		.cs-icon-tile-edit
+		svg
+		> :nth-child(n + 3) {
+		animation: cs-icon-swap-trail 1.05s ease-in-out infinite;
 	}
 }
 
@@ -1592,8 +1782,14 @@ body:not(.is-phone)
    picker returned focus to the tile and the badge stayed lit with the pointer
    nowhere near it, until something else was clicked. `:focus-visible` is only
    set when the browser judges focus should be *shown*, i.e. keyboard
-   navigation, which is the case this rule exists for in the first place. */
-@media (hover: hover) {
+   navigation, which is the case this rule exists for in the first place.
+
+   The device gate moved to `(hover: hover) and (pointer: fine)` with the tile's
+   own hover rules, and the permanent-badge block below moved with it to stay
+   its exact complement — a coarse pointer that also reports `hover: hover` must
+   land in one of the two, and the badge it lands on should be the tappable
+   one. */
+@media (hover: hover) and (pointer: fine) {
 	.cs-icon-tile-wrap:hover .cs-icon-tile-clear,
 	.cs-icon-tile:focus-visible + .cs-icon-tile-clear,
 	.cs-icon-tile-clear:focus-visible {
@@ -1602,11 +1798,15 @@ body:not(.is-phone)
 	}
 }
 
-/* No hover exists here, so the badge is permanent — the iPhone equivalent of
+/* No usable hover here, so the badge is permanent — the iPhone equivalent of
    jiggle mode, minus the mode. Bigger, and with `::after` padding the tap area
    out past the 22px circle, since half of it hangs off the tile and the half
-   that does not would otherwise be competing for taps with the picker. */
-@media (hover: none) {
+   that does not would otherwise be competing for taps with the picker.
+
+   The comma list is the complement of the reveal block's query above; see the
+   press block up by the tile for why it is spelled this way and not with
+   `not (…)`. */
+@media (hover: none), (pointer: coarse) {
 	/* Four classes again, and here it is the size that needs them: this is the
 	   phone, where `.is-phone .setting-item-control button:not(.clickable-icon)`
 	   (0,3,1) sets `width: 100%` and its sibling sets `padding: 10px`. A badge
@@ -1657,13 +1857,21 @@ body:not(.is-phone)
 	color: var(--text-faint);
 }
 
-@media (hover: hover) {
+/* Warming `--text-faint` to the same `--text-muted` the swap arrows wear, so
+   the two states of one glyph slot agree; it used to warm to `--text-accent`,
+   the last purple left in this component. Same device gate as every other
+   hover rule here. */
+@media (hover: hover) and (pointer: fine) {
 	.cs-icon-tile-wrap.is-empty .cs-icon-tile:hover .cs-icon-tile-edit,
 	.cs-icon-tile-wrap.is-empty .cs-icon-tile:focus-visible .cs-icon-tile-edit {
-		color: var(--text-accent);
+		color: var(--text-muted);
 	}
 }
 
+/* Transitions only. The swap arrows' drift loop is not switched off here — it
+   is never switched *on*, by a `prefers-reduced-motion: no-preference` in its
+   own query above, because its selectors are far too specific to override from
+   a block this shape. */
 @media (prefers-reduced-motion: reduce) {
 	.cs-icon-tile,
 	.cs-icon-tile-edit,

@@ -22,6 +22,23 @@ Names, keywords, and categories for all seven libraries ship with the plugin, so
 
 Once you've picked an icon for a callout, you can fine-tune it further: adjust its size, and nudge it with a horizontal offset and a vertical offset, independently of each other. This lets you correct an icon that looks slightly too big, small, or off-center next to your title text.
 
+## The icon tile is the button
+
+In the callout editor, the small square showing the current icon isn't a
+preview sitting next to a button — it *is* the button. Press it and the picker
+opens on the drawing you're about to replace.
+
+On a computer, moving the mouse over it says so: the drawing fades out, two
+arrows fade in and drift gently apart and back, and the tile's frame picks up
+the same grey highlight the **Display name** and **Callout IDs** fields above it
+show when you click into them. Tabbing to it with the keyboard does the same
+thing.
+
+On a phone or tablet there's no pointer to hover with, so the tile keeps showing
+your icon — the drawing is the thing you came to look at — and the frame lights
+up for as long as your finger is down instead. If you've asked your system to
+reduce motion, the arrows still appear on hover but hold still.
+
 ## Choosing no icon at all
 
 You don't have to show an icon. Hover over the icon tile in the callout editor and a small **✕** appears in its corner — on phone and tablet it's shown all the time rather than only on hover, since there's no hover there. Press it and the callout renders with no icon anywhere: in a Block Callout, a Heading Callout, an Inline Callout, and in an exported PDF alike.

@@ -898,6 +898,11 @@ border and recolours it, so its 2px ring sits on top of that and the eye reads
 needs all 3px from the ring. Obsidian draws its own `select, .dropdown` exactly
 that way, and `.cs-combobox-control` follows it.
 
+A third control answers to the first row without being a field at all — the
+callout editor's icon tile, which is a `<button>` with a 1px border sitting in
+the same form as the two fields above it. See
+[The one control that is not a field but focuses like one](#the-one-control-that-is-not-a-field-but-focuses-like-one).
+
 Two rules follow from this, and both have already been broken once:
 
 - **Never focus a field with the accent colour.** The display name, the Callout
@@ -1056,6 +1061,91 @@ Two rules follow from this, and both have already been broken once:
 > `getComputedStyle`. Comparing a field against the Name box that way is how
 > the combobox divergence was found — both mount sites *look* identical in the
 > stylesheet, and only the computed values show that one of them is not.
+
+### The one control that is not a field but focuses like one
+
+The **icon tile** in the callout editor (`.cs-icon-tile` — the 44px box that
+*is* the icon picker's button, with the ⓧ badge straddling its corner) sits
+directly under the Display name and Callout IDs fields, and it is the third row
+of the same form. It used to light `--interactive-accent` on hover, which made
+it the one purple-lit control in a window of grey-lit ones, so it now takes the
+bordered-field row of the table above verbatim: `border-color` to
+`--background-modifier-border-focus`, plus `0 0 0 var(--input-border-width-focus)`
+in the same grey. Measured against real `app.css`, hover and `:focus-visible`
+both land on `#bdbdbd` + a 2px ring in light and `#555555` + 2px in dark — the
+same two numbers the fields above it produce.
+
+Three things about it are easy to get wrong a second time:
+
+- **The box needs four classes; the fill does not.** `box-shadow` is contested
+  three ways — `button:not(.clickable-icon)` (0,1,1) sets `--input-shadow`,
+  `button:hover` (0,1,1) sets `--input-shadow-hover`, and
+  `button:not(.clickable-icon).mobile-tap` (0,2,1) sets it again the moment a
+  finger lands — so the ring is written at (0,4,1), the same count and the same
+  reason as the ⓧ badge. `background-color` is contested only at (0,1,1) and
+  has to *stay* at (0,2,0): the empty state paints `background-color:
+  transparent` at the same weight further down the file and wins the tie on
+  source order, which is the only thing keeping the dashed "add one" box from
+  filling in under the pointer.
+- **`border-color`, never the `border` shorthand.** The empty state swaps
+  `border-style` to dashed at (0,2,0); a shorthand at (0,4,1) would silently
+  solidify it.
+- **The resting shadow is still Obsidian's.** `.cs-icon-tile` declares
+  `box-shadow: none` at (0,1,0) and loses to `button:not(.clickable-icon)`, so
+  at rest the tile wears `--input-shadow` while the fields above it wear
+  nothing. That is left as it was — the request was to sync the *hover* state —
+  but it is why `box-shadow` in the tile's `transition` only eases on the phone
+  and under themes that null `--input-shadow`: an inset hairline plus a drop
+  shadow is not interpolable with a flat ring, so on desktop with the default
+  theme the ring arrives at once instead.
+
+#### Hover is desktop-only, and the press is the touch half
+
+Every hover-driven change the tile makes — the ring, the fill, fading the
+artwork out, revealing the swap arrows, the ⓧ badge appearing — lives in one
+`@media (hover: hover) and (pointer: fine)` block. The `hover: hover` half is
+old and load-bearing: iOS Safari applies `:hover` on the first tap of an element
+that has hover styles ("sticky hover"), which here blanked the artwork and left
+the arrows showing on the way into the picker. `pointer: fine` is the newer
+half, and it excludes the stylus and the hybrid laptops that answer
+`hover: hover` from a touchscreen.
+
+Touch gets the complement, written as `@media (hover: none), (pointer: coarse)`
+rather than `not ((hover: hover) and (pointer: fine))` — Safari only learned
+that boolean form in 16.4, and this is the block whose whole job is the phone.
+There the press carries the box instead: the same border and ring on `:active`
+**and** on `.mobile-tap`, Obsidian's own press class (it adds it to every
+`a, button, .tappable, …` on touchstart and removes it on release), which is the
+dependable half on iOS where `:active` fires only for elements the engine has
+already decided are tappable. Both are self-clearing, so nothing stays lit
+behind a tap that opened a picker on top of it. The artwork is deliberately
+*not* swapped for the arrows on touch: a finger has nothing to reveal with, only
+something to commit with, and the drawing is the content.
+
+The ⓧ badge's own pair moved with it, and has to stay its exact complement — a
+coarse pointer that also reports `hover: hover` must land in one of the two
+blocks, and the one it should land in is the permanent, 22px, tappable badge.
+
+#### The swap arrows drift
+
+The glyph revealed on hover is Lucide's `arrow-left-right`, and Obsidian builds
+a lucide icon as bare shape children of the `<svg>` with no `<g>` wrapper — for
+this one, four `<path>`s in drawing order: the top arrow's head and shaft
+(pointing left), then the bottom arrow's head and shaft (pointing right). That
+is what lets a plain `:nth-child(-n + 2)` / `:nth-child(n + 3)` split hand one
+arrow to each of two keyframe sets and slide them apart, each in the direction
+it already points, and back — 3.5 user units on a 24-unit viewBox drawn at
+18px, about 2.6 device pixels, on a 1.05s `ease-in-out infinite` loop.
+
+- It is scoped off `.is-empty` because the glyph there is `plus`, whose two
+  paths would take the same split as one arrow each and pull the `+` apart.
+- `translateX` on an SVG child resolves in that child's own user coordinate
+  system, so there is no `transform-box` or `transform-origin` to get wrong; a
+  pure translation has no origin.
+- Reduced motion is handled by putting `prefers-reduced-motion: no-preference`
+  **in the query** rather than an `animation: none` in the `reduce` block beside
+  it. Those selectors are (0,6,1) and an override would have to restate every
+  one of them to outrank it. A loop that never starts needs no stopping.
 
 ## How a secondary button paints
 
