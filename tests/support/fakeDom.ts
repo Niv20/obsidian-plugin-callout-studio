@@ -317,6 +317,22 @@ export class FakeElement {
 		this.classList.add(...value.split(/\s+/).filter(Boolean));
 	}
 
+	/**
+	 * A real alias of the `id` attribute, for the same reason {@link className}
+	 * is one of `class`: code sets it through `attr: { id }` and reads it back
+	 * as a property. `aria-activedescendant` is exactly that round trip — the
+	 * listbox names its rows in markup and points the input at one of them in
+	 * script — and a property that did not see the attribute would quietly hand
+	 * back `undefined` for every one of them.
+	 */
+	get id(): string {
+		return this.attrs.get("id") ?? "";
+	}
+
+	set id(value: string) {
+		this.attrs.set("id", value);
+	}
+
 	setAttribute(name: string, value: string): void {
 		this.attrs.set(name, value);
 	}
@@ -713,6 +729,16 @@ export class FakeElement {
 		this.selectCount++;
 	}
 
+	/**
+	 * A no-op, because there is no layout here to scroll. It exists because
+	 * `scrollIntoView` is *not* optional on `HTMLElement`: a caller written as
+	 * `el.scrollIntoView?.(…)` to dodge this shim reads as dead code to anyone
+	 * who checks the type, so the shim is the honest half of that trade. Every
+	 * keyboard-navigable list in the plugin keeps its active row in view this
+	 * way, and without this none of them could be driven from a test at all.
+	 */
+	scrollIntoView(): void {}
+
 	getClientRects(): { length: number } {
 		return { length: this.rects };
 	}
@@ -1105,7 +1131,7 @@ export class FakeDocument {
 	/** Last element {@link FakeElement.focus} was called on. */
 	activeElement: FakeElement | null = null;
 	/** Every listener added through `addEventListener`, by type. */
-	readonly listeners = new Map<string, Array<() => void>>();
+	readonly listeners = new Map<string, Array<(ev: unknown) => void>>();
 
 	private readonly observers: FakeMutationObserver[] = [];
 
@@ -1183,22 +1209,29 @@ export class FakeDocument {
 
 	/* ---- events ---- */
 
-	addEventListener(type: string, fn: () => void): void {
+	addEventListener(type: string, fn: (ev: unknown) => void): void {
 		const list = this.listeners.get(type) ?? [];
 		list.push(fn);
 		this.listeners.set(type, list);
 	}
 
-	removeEventListener(type: string, fn: () => void): void {
+	removeEventListener(type: string, fn: (ev: unknown) => void): void {
 		const list = this.listeners.get(type);
 		if (!list) return;
 		const at = list.indexOf(fn);
 		if (at >= 0) list.splice(at, 1);
 	}
 
-	/** Fire every listener of a type, as a real dispatch would. */
-	fire(type: string): void {
-		for (const fn of [...(this.listeners.get(type) ?? [])]) fn();
+	/**
+	 * Fire every listener of a type, as a real dispatch would.
+	 *
+	 * The event object is passed on, the way {@link FakeElement.fire} already
+	 * does: a document-level click handler exists precisely to ask *where* the
+	 * click landed, so one that reads `ev.target` — every outside-click closer in
+	 * the plugin — would throw on `undefined` if this fired bare.
+	 */
+	fire(type: string, event: unknown = { type }): void {
+		for (const fn of [...(this.listeners.get(type) ?? [])]) fn(event);
 	}
 }
 
