@@ -150,12 +150,45 @@
 	padding-bottom: var(--size-4-2);
 }
 
-/* Subheading row: "My callout types" + Add new + manual discovery */
+/* Subheading row: "My callout types" + Add new + manual discovery, "Saved
+   color palettes" + New palette, and the theme heading, which has no actions.
+
+   `flex-wrap` is on the shared rule rather than on the one section that used to
+   carry it, because the choice a narrow pane offers is the same for both rows:
+   crush the title, or move the buttons. Obsidian's own answer is to crush —
+   `.setting-item` is `nowrap`, so the info box shrinks until "Saved color
+   palettes (1)" is stacking one word per line beside a button that never
+   moved. Wrapping picks the other answer for these rows only: the actions drop
+   whole to the next line and the title gets the width back.
+
+   Nothing else is needed to *trigger* it. Line breaking measures each item at
+   its flex base size — max-content for both of these — so the break happens at
+   the width where the full title and the full button group stop fitting side by
+   side, which is the width where crushing would otherwise start. No breakpoint
+   to pick and none to keep in step with a translation.
+
+   `row-gap` is left to Obsidian (`--size-4-3`); the callout-list heading below
+   tightens it to 8px along with its column gap. */
 .callout-studio-settings .cs-subheader-row.setting-item {
 	padding-top: 4px;
 	padding-bottom: 2px;
 	border-top: none;
 	min-height: 0;
+	flex-wrap: wrap;
+}
+
+/* ...and once wrapped, the actions stay on the trailing side — the right under
+   LTR, the left under RTL — instead of falling back to the start of the line
+   the way a wrapped flex item does by default.
+
+   `margin-inline-start: auto` is what does it, and it is inert on the line it
+   is not needed on: auto margins are only fed the free space that survives
+   flexing, and on an unwrapped row the info box (or, on the palettes row,
+   Obsidian's own growing control) has already taken all of it. So one
+   declaration covers both states without a query — zero when the row is one
+   line, the whole gap when the actions have a line to themselves. */
+.callout-studio-settings .cs-subheader-row .setting-item-control {
+	margin-inline-start: auto;
 }
 
 /* `center`, not `baseline`: the name now leads with a chevron, and a baseline
@@ -170,10 +203,15 @@
 
 /* Wrap against the actual settings pane width, including a narrow desktop
    pane, mobile, long translations, and enlarged text. The actions stay outside
-   the fold control and stay visible while its list is collapsed. */
+   the fold control and stay visible while its list is collapsed.
+
+   `flex-wrap` used to be declared here as well. It moved up to
+   `.cs-subheader-row`, which this row also carries, so the two headings that
+   wrap now read their wrapping from one place; what is left here is only what
+   is true of this row and not of the palettes one — a tighter gap, and the two
+   axes it is measured on. */
 .callout-studio-settings .cs-callout-list-heading.setting-item {
 	flex-direction: row;
-	flex-wrap: wrap;
 	align-items: center;
 	gap: 8px 16px;
 }
@@ -189,10 +227,33 @@
 	overflow-wrap: anywhere;
 }
 
+/* Two buttons, three layouts, one declaration each.
+
+   `wrap-reverse` is the stacking order. When the pair no longer fits on one
+   line it breaks into two, and the reversed cross axis puts the *last* line on
+   top — which is **Add new callout**, because the CTA is last in the DOM (see
+   sections/calloutListsScaffold.ts: last is what lands it on the row's outer
+   edge while the two are still side by side). So the accent button leads the
+   stack and **Scan for callouts** sits under it, which is the same ranking the
+   horizontal row states by putting the CTA furthest out. Reversing the wrap
+   rather than the DOM is what lets one order serve both: nothing about the
+   side-by-side row changes, and a single-line control has no second line for
+   `wrap-reverse` to act on.
+
+   `justify-content` is the alignment, restated rather than inherited from
+   Obsidian's `.setting-item-control`: it is per-line, so it is what holds a
+   stacked **Scan** to the trailing edge under a stacked **Add**, and it is
+   direction-relative — `flex-end` is the right under LTR and the left under
+   RTL, with no `[dir]` rule to write. A theme that flattens the control's
+   alignment would otherwise leave the stack hanging off the leading edge.
+
+   The buttons keep their content width there (`flex: 0 1 auto` below), so they
+   stack as two right-aligned buttons, not as two full-width bars. */
 .callout-studio-settings .cs-callout-list-heading .setting-item-control {
 	display: flex;
 	flex: 0 1 auto;
-	flex-wrap: wrap;
+	flex-wrap: wrap-reverse;
+	justify-content: flex-end;
 	gap: 8px;
 	min-width: 0;
 	max-width: 100%;
@@ -208,10 +269,20 @@
    `--input-height`, and on desktop it made these the only oversized buttons in
    the tab.
 
-   Both buttons, deliberately. What separates them is colour, not size — Add
-   wears `.mod-cta`, Discover wears `.cs-settings-neutral-btn` — and nothing
-   here should be what makes them different heights. */
-.callout-studio-settings .cs-callout-list-heading .setting-item-control > button {
+   All three, deliberately. What separates them is colour, not size — Add and
+   New palette wear `.mod-cta`, Discover wears `.cs-settings-neutral-btn` — and
+   nothing here should be what makes them different heights.
+
+   Scoped to `.cs-subheader-row` rather than to the callout-list heading alone,
+   because the shrinking half matters just as much on the palettes row and it
+   was not getting it. Obsidian's `button` is `white-space: nowrap` with a fixed
+   `height`, so its min-content width is the whole label: **New palette** could
+   not shrink, and a long translation of it ("Neue Farbpalette erstellen") ran
+   off the trailing edge of the pane instead of wrapping inside its own box —
+   both before this row could wrap and after. `min-inline-size: 0` plus
+   `overflow-wrap: anywhere` is what makes the button narrower than its longest
+   word, and it is the same fix the two buttons beside it already had. */
+.callout-studio-settings .cs-subheader-row .setting-item-control > button {
 	flex: 0 1 auto;
 	min-inline-size: 0;
 	max-inline-size: 100%;

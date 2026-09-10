@@ -6,7 +6,7 @@ The one thing that appears without asking is your **theme's own** callout types,
 
 The button performs one scan of saved Markdown notes and the current theme's declared callout types. Save your notes first. New types receive the selected fallback style; existing types, aliases, customizations, and commands are preserved. Repeating a scan does not duplicate existing types. A scan does not edit your notes or remove unused types.
 
-On narrow panes and phones, the actions wrap below the heading and, when necessary, onto separate lines. Both retain their text labels and remain available when the list is folded. During a scan, the **Scan for callouts** button shows progress and cannot start a second scan; reopening settings preserves this state.
+On narrow panes and phones, the actions wrap below the heading — keeping to the same side of the pane they started on — and, when there is no longer room for both side by side, stack with **Add new callout** on top and **Scan for callouts** beneath it. The heading keeps its full width either way, rather than being squeezed to make room for the buttons. Both retain their text labels and remain available when the list is folded. During a scan, the **Scan for callouts** button shows progress and cannot start a second scan; reopening settings preserves this state.
 
 ## Fallback styling
 

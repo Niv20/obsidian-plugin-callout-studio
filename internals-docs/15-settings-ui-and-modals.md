@@ -35,10 +35,43 @@ Both take their height from `--input-height` — already 30px on desktop and 44p
 (`--touch-size-m`) on mobile — so they match **New palette** and every other
 button in the tab on each platform; a hardcoded 44px minimum used to sit there
 and made these the only oversized buttons on desktop. It is a *minimum*, so a
-long translation still wraps to a second line rather than spilling out. The row
-and its action group wrap against available pane width; full labels and logical
-margins accommodate narrow panes, mobile, RTL and larger text without relying on
-viewport size.
+long translation still wraps to a second line rather than spilling out.
+
+Everything about how the row reflows is stated in logical properties against the
+*pane*, never a viewport query, so narrow desktop panes, phones, RTL and larger
+text are one code path rather than four. Three declarations carry it, and they
+are guarded by `tests/subheaderRowWrapping.test.ts`:
+
+- **`flex-wrap: wrap` on `.cs-subheader-row`**, shared with the palettes heading
+  rather than written per row. Obsidian's `.setting-item` is `nowrap`, so its
+  answer to a narrow pane is to shrink the info box while the buttons hold their
+  width — at a phone width that left *Saved color palettes (1)* stacking a word
+  per line beside a button that had not moved. Wrapping picks the other answer:
+  the action group drops whole to the next line and the title takes the width
+  back. Line breaking measures each item at its max-content size, so the break
+  lands exactly where crushing would otherwise begin — no breakpoint to pick, and
+  none to keep in step with a translation.
+- **`margin-inline-start: auto` on the control**, because a wrapped flex item
+  starts its new line at the *leading* edge — the buttons reappeared under the
+  first letter of the title instead of out where they had been a pixel earlier.
+  The auto margin is inert on the unwrapped line (flexing has already taken the
+  free space), so one declaration covers both states.
+- **`flex-wrap: wrap-reverse` on the callout-list control**, which is what stacks
+  **Add new callout** above **Scan for callouts** when even a line of their own
+  is too narrow for both. It hangs the *last* line at the top, so it is true only
+  while the CTA is last in the DOM — the same ordering that lands it on the row's
+  outer edge horizontally. Swapping the two `addButton` calls looks like nothing
+  and silently inverts the stack; the test's DOM half exists for that.
+  `justify-content: flex-end` is restated on the control rather than inherited
+  from Obsidian, since it is per-line and is what holds the lower button to the
+  trailing edge.
+
+The button rule that supplies `min-inline-size: 0` and `overflow-wrap: anywhere`
+is scoped to `.cs-subheader-row`, not to the callout-list heading alone. Obsidian's
+`button` is `white-space: nowrap` with a fixed `height`, so its min-content width
+is the whole label: scoped narrowly, a long translation of **New palette**
+("Neue Farbpalette erstellen") ran off the trailing edge of the pane instead of
+wrapping inside its own box — before this row could wrap and after.
 
 `manualDiscoveryButton.ts` shares only transient running state per plugin through
 a `WeakMap`. Settings redraws and reopenings reuse that state and remove obsolete
@@ -296,7 +329,7 @@ stylesheet.
 **A fourth section pins the same way: *Saved color palettes*.** It is built to
 be a clone of *My callout types* — the same `createStickySection` wrapper, the
 same `cs-subheader-row` heading box (tight, borderless, laid out for a CTA
-button), the same `cs-sticky-heading` / `cs-section-body` classes — so almost
+button, and wrapping that button below the title on a narrow pane), the same `cs-sticky-heading` / `cs-section-body` classes — so almost
 everything below applies to it unchanged. It is not one of the contiguous
 three, though: *Fallback callout* sits between *Built-in callouts* and it, so
 two things differ, both carried on its wrapper:
