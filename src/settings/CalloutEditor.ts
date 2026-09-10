@@ -1163,17 +1163,13 @@ export class CalloutEditor extends Modal {
 		// ── "+ New color…" flow ──
 		// Opens the same palette editor the settings section uses; saving the
 		// new palette immediately selects and applies it to this callout.
-		const pickNewPaletteColor = async (
-			seedName = "",
-		): Promise<void> => {
+		const pickNewPaletteColor = async (seedName = ""): Promise<void> => {
 			// Drop any uncommitted hover-preview colors before the modal opens.
 			this.previewColorsTransient(null);
 			palettePicker.close();
 			const result = await new PaletteEditorModal(this.plugin, {
 				seedName,
-				takenNames: this.plugin.settings.customPalettes.map(
-					(p) => p.name,
-				),
+				takenNames: this.plugin.settings.customPalettes.map((p) => p.name),
 				takenColors: this.plugin.settings.customPalettes,
 				onUseExisting: (paletteId) =>
 					adoptExistingPalette(paletteId, null),

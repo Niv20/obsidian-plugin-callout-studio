@@ -27,36 +27,10 @@ import {
 	renderComboboxEmptyState,
 	renderComboboxFooterRow,
 	renderComboboxRows,
-	type ComboboxRowContract,
-	type FooterRowSpec,
 } from "./listboxPopupDom";
 import { wirePopupEvents } from "./listboxPopupEvents";
-
-export interface ListboxPopupOptions<T> extends ComboboxRowContract<T> {
-	/** Rows to offer for `query` — already filtered and ordered by the caller. */
-	itemsFor(query: string): readonly T[];
-	/** The text a committed `item` leaves in the closed input. */
-	labelOf(item: T): string;
-	/** A row was chosen — by click or by Enter, never by blur. */
-	onCommit(item: T): void;
-	/** The highlight moved, or left it (`null`). Must be undoable by `null`. */
-	onHighlight?(item: T | null): void;
-	/** One extra action pinned below the list — e.g. "+ New color…". */
-	footerRow?: FooterRowSpec;
-	/**
-	 * Offered *instead of* the empty state when a non-empty query matches
-	 * nothing. Unlike `footerRow` it is a real row: the keyboard reaches it.
-	 */
-	emptyAction?: {
-		label(query: string): string;
-		onSelect(query: string): void;
-	};
-	/** `aria-label` for the input. The caller owns the wording. */
-	ariaLabel: string;
-	placeholder: string;
-	/** False for select-like pickers whose label should not behave like text. */
-	searchable?: boolean;
-}
+import type { ListboxPopupOptions } from "./listboxPopupTypes";
+import { clearListboxMenuHeightCap, syncListboxMenuHeightCap } from "./listboxPopupLayout";
 
 /**
  * Interpolated on purpose: the style ratchet scans literals for class-shaped
@@ -64,8 +38,6 @@ export interface ListboxPopupOptions<T> extends ComboboxRowContract<T> {
  * read as a class nobody styled.
  */
 let listboxSeq = 0;
-const COMBOBOX_MAX_HEIGHT_PX = 320;
-const COMBOBOX_MENU_OFFSET_PX = 4;
 
 export class ListboxPopup<T> {
 	readonly el: HTMLElement;
@@ -159,7 +131,7 @@ export class ListboxPopup<T> {
 		this.removeDocumentClick = undefined;
 		this.removeWindowResize?.();
 		this.removeWindowResize = undefined;
-		this.menuEl.setCssProps({ "--cs-combobox-menu-max-height": "" });
+		clearListboxMenuHeightCap(this.menuEl);
 	}
 
 	/* ---- opening and closing ---- */
@@ -177,25 +149,12 @@ export class ListboxPopup<T> {
 	}
 
 	private applyMenuHeightCap(): void {
-		if (typeof window === "undefined") return;
-
-		const rect = this.controlEl.getBoundingClientRect();
-		const viewportHeight =
-			window.visualViewport?.height ?? document.documentElement.clientHeight;
-		if (!Number.isFinite(viewportHeight) || viewportHeight <= 0) return;
-
-		const available = viewportHeight - rect.bottom - COMBOBOX_MENU_OFFSET_PX;
-		const cap = Math.max(0, Math.min(COMBOBOX_MAX_HEIGHT_PX, Math.floor(available)));
-		this.menuEl.setCssProps({ "--cs-combobox-menu-max-height": `${cap}px` });
-
-		if (this.removeWindowResize) return;
-		const onResize = (): void => this.applyMenuHeightCap();
-		window.addEventListener("resize", onResize);
-		window.visualViewport?.addEventListener("resize", onResize);
-		this.removeWindowResize = (): void => {
-			window.removeEventListener("resize", onResize);
-			window.visualViewport?.removeEventListener("resize", onResize);
-		};
+		this.removeWindowResize = syncListboxMenuHeightCap(
+			this.controlEl,
+			this.menuEl,
+			this.removeWindowResize,
+			() => this.applyMenuHeightCap(),
+		);
 	}
 
 	/** Close, reverting to the committed label — the header's second rule. */
@@ -205,7 +164,7 @@ export class ListboxPopup<T> {
 		this.menuEl.addClass("cs-combobox-menu-hidden");
 		this.controlEl.removeClass("is-open");
 		this.inputEl.setAttribute("aria-expanded", "false");
-		this.menuEl.setCssProps({ "--cs-combobox-menu-max-height": "" });
+		clearListboxMenuHeightCap(this.menuEl);
 		this.inputEl.value = this.selected
 			? this.options.labelOf(this.selected)
 			: "";

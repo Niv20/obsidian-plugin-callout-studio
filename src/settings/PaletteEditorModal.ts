@@ -196,7 +196,6 @@ export class PaletteEditorModal extends Modal {
 	private saveBtnEl: HTMLButtonElement | null = null;
 	/** The second-color swatch, for programmatic sync. Null whenever the row is not built. */
 	private gradToInput: HTMLInputElement | null = null;
-
 	constructor(
 		private plugin: PaletteEditorPlugin,
 		options: {
@@ -252,8 +251,7 @@ export class PaletteEditorModal extends Modal {
 			...(options.takenColors ?? []).map(customPaletteToColorPalette),
 			...getAllColorPalettes(),
 		];
-		const seedName = options.seedName?.trim();
-		this.name = this.existing?.name ?? seedName ?? "";
+		this.name = this.existing?.name ?? options.seedName?.trim() ?? "";
 		// Prefers the user's stored pick over the derivation's own output; see
 		// seedBaseColor for why that ordering is load-bearing.
 		this.baseColor = seedBaseColor(base, DEFAULT_BASE_COLOR);

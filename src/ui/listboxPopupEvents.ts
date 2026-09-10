@@ -12,9 +12,10 @@
  *   mousedown → focus → mouseup → click. A `select()` on focus is undone by
  *   mouseup, which places a caret. So the selection is made again on `click`,
  *   which runs last and sticks. This is the fix for the split-second selection
- *   flicker, and it applies every click inside the control so the full label is
- *   always ready to overwrite. Deliberately no `preventDefault()`: suppressing
- *   the native focus takes the on-screen keyboard with it on mobile.
+ *   flicker, and it applies when a click first enters the control so the full
+ *   label is ready to overwrite without stealing later caret placement.
+ *   Deliberately no `preventDefault()`: suppressing the native focus takes the
+ *   on-screen keyboard with it on mobile.
  * - **The menu's `mousedown` preventDefault.** A click on a row is also a blur,
  *   and blur lands first. Killing the default keeps focus on the input so the
  *   row's own click still arrives and wins; without it every selection made
@@ -44,13 +45,19 @@ export interface PopupEventTarget {
  * outlives its element — the document-level click.
  */
 export function wirePopupEvents(popup: PopupEventTarget): () => void {
+	let selectOnControlClick = false;
+
 	// The whole control opens, not just the input — a bigger tap target.
+	popup.controlEl.addEventListener("mousedown", () => {
+		selectOnControlClick = activeDocument.activeElement !== popup.inputEl;
+	});
 	popup.controlEl.addEventListener("click", (ev) => {
 		if (ev.target !== popup.inputEl) {
 			popup.inputEl.focus();
 		}
 		popup.open();
-		if (popup.searchable()) popup.inputEl.select();
+		if (popup.searchable() && selectOnControlClick) popup.inputEl.select();
+		selectOnControlClick = false;
 	});
 	// Keyboard focus (Tab) never gets a mouseup, so the select() the popup does
 	// on open is the whole story there.

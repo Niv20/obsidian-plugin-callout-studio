@@ -282,6 +282,8 @@ export class FakeElement {
 	readonly style = createStyle(this.cssProps);
 	readonly childNodes: FakeNode[] = [];
 	parentElement: FakeElement | null = null;
+	clientWidth = 240;
+	clientHeight = 36;
 	/**
 	 * Plain field, not derived from the tree: suites build detached trees and say
 	 * for themselves whether the thing is on screen. `OutlineDecorator` reads it
@@ -685,6 +687,13 @@ export class FakeElement {
 		this.cssProps.set(name, value);
 	}
 
+	setCssProps(props: Record<string, string>): void {
+		for (const [name, value] of Object.entries(props)) {
+			if (value === "") this.cssProps.delete(name);
+			else this.cssProps.set(name, value);
+		}
+	}
+
 	/* ---- form controls ---- */
 
 	/**
@@ -741,6 +750,28 @@ export class FakeElement {
 
 	getClientRects(): { length: number } {
 		return { length: this.rects };
+	}
+
+	getBoundingClientRect(): DOMRect {
+		return {
+			x: 0,
+			y: 0,
+			width: 240,
+			height: 36,
+			top: 0,
+			right: 240,
+			bottom: 36,
+			left: 0,
+			toJSON: () => ({}),
+		} as DOMRect;
+	}
+
+	getContext(type: "2d"): CanvasRenderingContext2D | null {
+		if (this.tagName !== "CANVAS" || type !== "2d") return null;
+		return {
+			font: "",
+			measureText: (text: string) => ({ width: text.length * 8 }),
+		} as CanvasRenderingContext2D;
 	}
 
 	/* ---- events ---- */
@@ -1042,7 +1073,15 @@ export class FakeMutationObserver {
  */
 export class FakeWindow {
 	private readonly frames = new Map<number, () => void>();
+	private readonly listeners = new Map<string, Array<(ev: unknown) => void>>();
 	private seq = 1;
+	readonly visualViewport = {
+		height: 720,
+		addEventListener: (type: string, fn: (ev: unknown) => void): void =>
+			this.addEventListener(`visualViewport:${type}`, fn),
+		removeEventListener: (type: string, fn: (ev: unknown) => void): void =>
+			this.removeEventListener(`visualViewport:${type}`, fn),
+	};
 
 	requestAnimationFrame(fn: () => void): number {
 		const id = this.seq++;
@@ -1063,6 +1102,21 @@ export class FakeWindow {
 
 	pendingFrames(): number {
 		return this.frames.size;
+	}
+
+	addEventListener(type: string, fn: (ev: unknown) => void): void {
+		const list = this.listeners.get(type) ?? [];
+		list.push(fn);
+		this.listeners.set(type, list);
+	}
+
+	removeEventListener(type: string, fn: (ev: unknown) => void): void {
+		const list = this.listeners.get(type);
+		if (!list) return;
+		this.listeners.set(
+			type,
+			list.filter((listener) => listener !== fn),
+		);
 	}
 
 	/* ---- timers ---- */

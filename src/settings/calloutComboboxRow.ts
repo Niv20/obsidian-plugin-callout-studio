@@ -91,8 +91,11 @@ export function renderCalloutIdLine(
 	};
 
 	const canvas = createEl("canvas");
-	const ctx = canvas.getContext("2d");
-	if (ctx) {
+	const ctx =
+		typeof canvas.getContext === "function"
+			? canvas.getContext("2d")
+			: null;
+	if (ctx && typeof getComputedStyle === "function") {
 		ctx.font = getComputedStyle(idEl).font;
 	}
 	const measure = (value: string): number =>

@@ -752,7 +752,7 @@ describe("no new oversized files", () => {
 		// movable already moved — settings/modalAutofocus.ts owns the focus and
 		// the platform gate whole — and what is left is the one thing only this
 		// class can answer: whether this window is creating a callout.
-		"src/settings/CalloutEditor.ts": 2144,
+		"src/settings/CalloutEditor.ts": 2143,
 		// Lowered repeatedly, per this ratchet's own ask: `bgAlphaFor`'s solve moved
 		// to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the many
 		// that render the callout identically; `generateFallbackCSS` to
