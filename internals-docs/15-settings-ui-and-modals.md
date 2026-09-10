@@ -1057,6 +1057,117 @@ Two rules follow from this, and both have already been broken once:
 > the combobox divergence was found — both mount sites *look* identical in the
 > stylesheet, and only the computed values show that one of them is not.
 
+## How a secondary button paints
+
+The companion to the section above, and it went wrong the same way: four
+places each answering "what does a grey button look like" for themselves.
+
+Everything that is not a call to action — the settings tab's
+`.cs-settings-neutral-btn` row (Discover, Import, Export, Reset, and the two in
+Data management), the bare `<button>`s a window's `.cs-modal-footer` carries
+(Cancel), and the two segmented rows, `.cs-border-side-btn`
+(All/Top/Right/Bottom/Left) and `.cs-gradient-dir-btn` — now reads one pair of
+tokens, declared once near the top of `styles.css`:
+
+```css
+--cs-btn-face: var(--interactive-normal);
+--cs-btn-face-hover: color-mix(
+	in srgb,
+	var(--interactive-normal) 92%,
+	rgb(var(--mono-rgb-100))
+);
+```
+
+`--interactive-normal` is Obsidian's own button face — white
+(`--color-base-00`) in light, `#363636` (`--color-base-30`) in dark — so the
+resting look is unchanged and stays whatever a theme makes it.
+
+### Why the hover is a `color-mix` and not `--background-modifier-hover`
+
+Because **that token is not a colour**. It is a translucent mono overlay,
+`rgba(var(--mono-rgb-100), 0.067)` — black at 6.7% under `.theme-light`, white
+at 6.7% under `.theme-dark`. Two things follow, and both shipped:
+
+- **It composites against what is behind the button, not against the button's
+  own fill.** Discover rested on `--background-modifier-form-field` — an
+  *input* token, `--color-base-25` (`#2a2a2a`) — over a `#1e1e1e` pane, and
+  hovered to `#2d2d2d`. That is a luminance change of 0.3%: **no hover at all
+  in dark mode**, while the very same rule in light moved `#ffffff` → `#eeeeee`
+  and looked correct. One rule, one theme broken.
+- **Its direction flips with the theme**, because it always moves *away* from
+  the background. The segmented rows rest on `--interactive-normal` (`#363636`
+  in dark) but hovered to that overlay composited over the group box behind
+  them (`#1e1e1e`), landing at `#2d2d2d` — *darker than the button*. That is
+  the "these get darker" report, and it is the same trap reached from the
+  other side.
+
+Mixing the step into the resting fill fixes both: the result is opaque, so it
+cannot be pulled around by whatever the button happens to sit on, and
+`--mono-rgb-100` supplies the direction the active theme reads as "more
+contrast". Measured in headless Chrome against real `app.css`:
+
+| | rest → hover | Δlum |
+| --- | --- | --- |
+| light | `#ffffff` → `#ebebeb` | −16.9% |
+| dark | `#363636` → `#464646` | +2.4% |
+
+identical for all four, against `#ffffff` → `#fafafa` (−4.4%) and `#363636` →
+`#3f3f3f` (+1.3%) for a native Obsidian button, which is deliberately left
+alone — every rule here is scoped to `.callout-studio-settings` or
+`.cs-modal > .cs-modal-footer`, so nothing reaches a core dialog. The coloured
+variants keep their own faces: the footer rule carves out `.mod-cta`,
+`.mod-warning` and `.mod-destructive` with a `:not()` **list**, which takes the
+specificity of its most specific argument and so leaves the selector at (0,3,1).
+
+### The specificity half, which is the half that gets lost
+
+Obsidian paints every button from
+
+```css
+button:not(.clickable-icon) { background-color: var(--interactive-normal) }
+```
+
+which is **(0,1,1)**. A single-class rule is (0,1,0) and *does not get the
+resting fill at all* — which is why the `background: transparent` the
+border-side buttons carried for their whole life never once took effect, and
+why their hover looked like it was darkening from a transparent base when it
+was really darkening from Obsidian's grey one. Both segmented rows double their
+class to clear the bar, the same trick `.cs-gradient-dir-btn` already used
+against the mobile core rules.
+
+Two more consequences worth keeping:
+
+- **`.is-active` is declared *before* `:hover`.** They tie at (0,2,0), so the
+  later rule wins; with the order reversed a selected segment swallowed its own
+  hover and was the one dead control in the row. A hovered selection steps
+  within the accent (`--interactive-accent-hover`) so it can never be mistaken
+  for an unselected segment.
+- **`box-shadow: none` must not eat the focus ring.** `:focus-visible` used to
+  be grouped in with `:hover` on the neutral buttons, and at (0,3,0) that
+  `box-shadow: none` beat Obsidian's (0,1,1) `button:focus-visible` — so six
+  buttons focused invisibly. Each now restates the ring itself, in the grey
+  described in [How an input field focuses](#how-an-input-field-focuses).
+
+`tests/secondaryButtons.test.ts` pins all of it: the shared tokens, the four
+faces reading them, the specificity bar, the `.is-active`/`:hover` ordering,
+and the two tokens that must never come back to a button face.
+
+> [!NOTE]
+> The overlay is still right for a **list row, an icon button or a chip** —
+> anything that sits on the surface behind it rather than owning a face — so
+> `--background-modifier-hover` is deliberately untouched on
+> `.cs-combobox-option`, `.callout-studio-row-buttons button`, `.cs-icon-tile`,
+> `.cs-drag-handle` and friends. The rule is about which of the two a control
+> is, not about banning a variable.
+
+> [!TIP]
+> When measuring this with the headless-Chrome harness, **disable transitions
+> first**. These buttons carry `transition: background 0.12s`, and
+> `getComputedStyle` immediately after forcing the hover state returns the
+> *interpolating* value — which Chrome reports in `oklab`. A first pass at the
+> harness measured the resting colour twice that way and reported the fix as
+> broken.
+
 ## Notable individual modals
 
 ### `ConfirmModal` — the generic yes/no dialog

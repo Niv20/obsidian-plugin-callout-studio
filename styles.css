@@ -32,6 +32,60 @@
 	initial-value: #7d7d7d;
 }
 
+/* ─── The secondary ("grey") button ───────────────────────────────
+   One face, one hover, one border, read by every non-CTA button this
+   plugin draws: the settings tab's five neutral buttons and Discover,
+   every window's Cancel, and the two segmented rows (border sides,
+   gradient direction). Declared here so that "what does a grey button
+   look like" has a single answer instead of six.
+
+   **Why the hover is a `color-mix` and not `--background-modifier-hover`.**
+   That token is not a colour, it is a *translucent mono overlay* —
+   `rgba(var(--mono-rgb-100), 0.067)`, so black at 6.7% under
+   `.theme-light` and white at 6.7% under `.theme-dark`. Two things follow
+   from that, and both were live bugs:
+
+   - Being translucent, it composites against whatever is *behind* the
+     button rather than against the button's own fill. A button resting on
+     `--background-modifier-form-field` (`--color-base-25`, #2a2a2a) over a
+     #1e1e1e pane hovered to #2d2d2d — a luminance change of 0.3%, which is
+     nothing. That is why **Scan for callouts had no hover in dark mode at
+     all** while looking correct in light, where the same rule lands
+     #ffffff → #eeeeee.
+   - Being mono, it always moves *away* from the background. That is right
+     for a row highlight and wrong for a button face, which wants a fixed
+     step off its own resting colour.
+
+   So the step is mixed into the resting fill directly. `--interactive-normal`
+   is Obsidian's own button face — white (`--color-base-00`) in light, grey
+   (`--color-base-30`, #363636) in dark, which is exactly the resting look
+   that was already wanted — and `--mono-rgb-100` supplies the direction the
+   active theme reads as "more contrast":
+
+       light   #ffffff → #ebebeb   Δlum −17.2%   (was −4.4% via native, −14.5% via the overlay)
+       dark    #363636 → #464646   Δlum  +2.5%   (was +0.3% — the invisible one)
+
+   Both are comfortably perceptible, and the dark half *lightens*, which is
+   the rule this refactor exists to make true everywhere. A theme that
+   restyles `--interactive-normal` gets a hover derived from its own colour
+   rather than one we picked, so this stays theme-compatible by construction.
+
+   Call sites read these with a fallback so that a theme which somehow
+   invalidates the `color-mix` degrades to Obsidian's native pair rather
+   than to no hover at all. */
+.callout-studio-settings,
+.cs-modal,
+.callout-studio-editor {
+	--cs-btn-face: var(--interactive-normal);
+	--cs-btn-face-hover: color-mix(
+		in srgb,
+		var(--interactive-normal) 92%,
+		rgb(var(--mono-rgb-100))
+	);
+	--cs-btn-border: var(--background-modifier-border);
+	--cs-btn-border-hover: var(--background-modifier-border-hover);
+}
+
 /* ─── Settings Panel ──────────────────────────────────────────── */
 
 .callout-studio-settings {
@@ -728,19 +782,40 @@ body:not(.is-phone)
 	padding-bottom: 0;
 }
 
+/* The tab's grey buttons — Discover, Import, Export, Reset, and the two in
+   Data management. `--background-modifier-form-field` used to sit here, and it
+   is an *input* token: `--color-base-25` in dark, which is both darker than a
+   button ought to be and, fatally, the colour the old hover composited to. See
+   the token block at the top of this file for the arithmetic.
+
+   `box-shadow: none` stays — it suppresses the button shadow themes hang on
+   `--input-shadow` — but it is no longer allowed to swallow the focus ring,
+   which is what grouping `:focus-visible` in with `:hover` used to do. This
+   selector is (0,3,0) against Obsidian's own (0,1,1) `button:focus-visible`,
+   so `box-shadow: none` beat it and these six buttons focused invisibly. They
+   now restate the ring themselves, in the grey the rest of the plugin uses. */
 .callout-studio-settings .cs-settings-neutral-btn {
-	background: var(--background-modifier-form-field);
-	border: 1px solid var(--background-modifier-border);
+	background-color: var(--cs-btn-face, var(--interactive-normal));
+	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
 	color: var(--text-normal);
 	box-shadow: none;
 }
 
-.callout-studio-settings .cs-settings-neutral-btn:hover,
+/* `@media (hover: hover)` mirrors how Obsidian guards its own `button:hover`,
+   and keeps a tapped button on a phone from staying lit until the next tap.
+   `:not(:disabled)` because Discover disables itself for the length of a scan
+   and a disabled control must not answer the pointer. */
+@media (hover: hover) {
+	.callout-studio-settings .cs-settings-neutral-btn:hover:not(:disabled) {
+		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
+		color: var(--text-normal);
+		box-shadow: none;
+	}
+}
+
 .callout-studio-settings .cs-settings-neutral-btn:focus-visible {
-	background: var(--background-modifier-hover);
-	border-color: var(--background-modifier-border-hover);
-	color: var(--text-normal);
-	box-shadow: none;
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
 }
 
 /* Obsidian centers a setting row's control by default, but several themes
@@ -1905,6 +1980,55 @@ button.callout-studio-icon-picker-loading {
 	min-height: 28px;
 	padding: 2px 14px;
 	font-size: var(--font-ui-small);
+}
+
+/* Cancel, and every other neutral action a window's footer carries. These are
+   built as bare `<button>`s — no class — so until now they fell straight
+   through to `app.css` and hovered `--interactive-normal` → `--interactive-hover`,
+   which in light mode is #ffffff → #fafafa: a 4.4% luminance step that reads as
+   nothing happening. That is the "Cancel does not change on hover" report, and
+   it is the same family of bug as Discover's, reached from the opposite side.
+
+   Giving them the shared face rather than a class of their own keeps the
+   call sites bare — there is no `cs-` class to remember to add to the next
+   window's Cancel, and none of the five that exist today had to change.
+
+   The `:not()` is a **list**, so its specificity is that of its most specific
+   argument (0,1,0) rather than the sum of three — the selector stays (0,3,1),
+   enough to outrank Obsidian's (0,1,1) `button:hover` without `!important`.
+   It carves out the coloured variants, which own their own faces: `.mod-cta`
+   (Save, Confirm), `.mod-warning` (Delete, Replace) and `.mod-destructive`.
+
+   Scoped `.cs-modal > .cs-modal-footer` — the bar `applyModalChrome()` builds
+   — so this cannot reach a button in a core Obsidian dialog, or even one in
+   the body of our own windows. */
+.cs-modal
+	> .cs-modal-footer
+	button:not(.mod-cta, .mod-warning, .mod-destructive) {
+	background-color: var(--cs-btn-face, var(--interactive-normal));
+	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
+	color: var(--text-normal);
+	box-shadow: none;
+}
+
+@media (hover: hover) {
+	.cs-modal
+		> .cs-modal-footer
+		button:not(.mod-cta, .mod-warning, .mod-destructive):not(
+			:disabled,
+			.cs-btn-disabled
+		):hover {
+		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
+		color: var(--text-normal);
+		box-shadow: none;
+	}
+}
+
+.cs-modal
+	> .cs-modal-footer
+	button:not(.mod-cta, .mod-warning, .mod-destructive):focus-visible {
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
 }
 
 .cs-modal > .cs-modal-footer button.cs-btn-disabled {
@@ -4036,13 +4160,35 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	padding-top: 18px;
 }
 
-.cs-border-side-btn {
+/* All / Top / Right / Bottom / Left. A segmented control, but its segments are
+   secondary buttons and they now say so: the resting face is the shared grey
+   rather than `transparent`. Transparent is what made the old hover misbehave —
+   with no fill of its own, a segment showed the group box behind it, so the
+   translucent `--background-modifier-hover` composited against *that* and moved
+   whichever way the theme's mono direction pointed. Under `.theme-light` that
+   is black at 6.7%, i.e. #ffffff → #eeeeee: the reported "these get darker".
+
+   Sharing the face fixes the direction and the inconsistency in one move —
+   these segments now rest and hover exactly as Cancel and Discover do — and it
+   sharpens the control, since an unselected segment reads as a button rather
+   than as a gap between borders. */
+/* The class is doubled, and it has to be. Obsidian paints every button from
+   `button:not(.clickable-icon) { background-color: var(--interactive-normal) }`,
+   which is (0,1,1) — so a single-class rule here is (0,1,0) and *loses the
+   resting fill outright*. That is not new; it is why the `background:
+   transparent` this rule used to carry never actually took effect, and why the
+   old hover looked like it was darkening from a transparent base when it was
+   really darkening from Obsidian's grey one. Doubling to (0,2,0) is the same
+   trick `.cs-gradient-dir-btn` already uses against the mobile core rules
+   further down this file, and it is what puts `--cs-btn-face` genuinely in
+   charge rather than agreeing with core by coincidence. */
+.cs-border-side-btn.cs-border-side-btn {
 	font-size: var(--font-ui-smaller);
 	padding: 3px 10px;
 	min-height: 24px;
-	border: 1px solid var(--background-modifier-border);
+	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
 	border-radius: 6px;
-	background: transparent;
+	background: var(--cs-btn-face, var(--interactive-normal));
 	color: var(--text-muted);
 	cursor: pointer;
 	transition:
@@ -4051,14 +4197,39 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 		border-color 0.12s ease;
 }
 
-.cs-border-side-btn:hover {
-	background: var(--background-modifier-hover);
-}
-
+/* Selected. Declared *before* the hover rules on purpose: this and
+   `.cs-border-side-btn:hover` are both (0,2,0), so at equal specificity the
+   later rule wins the source-order tie-break. It used to sit after, which meant
+   a selected segment swallowed its own hover and answered the pointer with
+   nothing at all — the one segment in the row that felt dead. */
 .cs-border-side-btn.is-active {
 	background: var(--interactive-accent);
 	color: var(--text-on-accent);
 	border-color: var(--interactive-accent);
+}
+
+@media (hover: hover) {
+	.cs-border-side-btn:hover {
+		background: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
+		color: var(--text-normal);
+	}
+
+	/* Selected + hovered. Keeping the accent is what keeps "selected" legible
+	   while the pointer is over it — a hovered selection must not read as an
+	   unselected segment — so the feedback is a step *within* the accent, using
+	   Obsidian's own paired token rather than a colour of our own. Distinct
+	   from both neighbouring states, which is the requirement. */
+	.cs-border-side-btn.is-active:hover {
+		background: var(--interactive-accent-hover);
+		border-color: var(--interactive-accent-hover);
+		color: var(--text-on-accent);
+	}
+}
+
+.cs-border-side-btn:focus-visible {
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+	outline: none;
 }
 
 .cs-hidden {
@@ -4633,7 +4804,16 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	gap: 4px;
 	flex-wrap: nowrap;
 }
-.cs-gradient-dir-btn {
+/* The gradient direction arrows — the plugin's other segmented control, and
+   the third variation on one button. It rested on `--cs-surface-raised`, which
+   is a *surface* token: right for a group box's header strip, wrong for a
+   control, and different again from the two rows above. Its hover moved only
+   `color`, so the face never answered the pointer at all — not the wrong
+   direction like the border sides, simply absent. Both now come from the
+   shared pair. */
+/* Doubled for the same reason as `.cs-border-side-btn` above — (0,1,1) core
+   rule, (0,1,0) single-class rule, core wins the face. */
+.cs-gradient-dir-btn.cs-gradient-dir-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -4641,19 +4821,38 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	height: 26px;
 	padding: 0;
 	box-shadow: none;
-	background: var(--cs-surface-raised, var(--background-secondary));
-	border: 1px solid var(--background-modifier-border);
+	background: var(--cs-btn-face, var(--interactive-normal));
+	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
 	border-radius: var(--radius-s, 4px);
 	color: var(--text-muted);
 	cursor: pointer;
+	transition:
+		background 0.12s ease,
+		color 0.12s ease,
+		border-color 0.12s ease;
 }
-.cs-gradient-dir-btn:hover {
-	color: var(--text-normal);
-}
+/* Before the hover rules, for the tie-break reason given on
+   `.cs-border-side-btn.is-active` above. */
 .cs-gradient-dir-btn.is-active {
 	background: var(--interactive-accent);
 	border-color: var(--interactive-accent);
 	color: var(--text-on-accent);
+}
+@media (hover: hover) {
+	.cs-gradient-dir-btn:hover {
+		background: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
+		color: var(--text-normal);
+	}
+	.cs-gradient-dir-btn.is-active:hover {
+		background: var(--interactive-accent-hover);
+		border-color: var(--interactive-accent-hover);
+		color: var(--text-on-accent);
+	}
+}
+.cs-gradient-dir-btn:focus-visible {
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+	outline: none;
 }
 .cs-gradient-dir-btn .svg-icon {
 	width: 14px;
