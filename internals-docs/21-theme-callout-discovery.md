@@ -596,8 +596,10 @@ anything about colour.
 
 [`calloutListIcon.ts`](../src/manager/theme/calloutListIcon.ts) is the single
 answer for every list that draws a callout *small* — autocomplete, *Replace in
-vault*, vault stats, the command builder. Those four had drifted into three
-different answers, two with no ownership check at all:
+vault*, vault stats, the command builder, and the settings callout picker
+([`calloutComboboxRow.ts`](../src/settings/calloutComboboxRow.ts)). The first
+four had drifted into three different answers, two with no ownership check at
+all:
 
 | Who paints the callout | Icon | Accent |
 | --- | --- | --- |
@@ -639,7 +641,7 @@ in saved data are preserved as durable fallback definitions.
 | *Quick insert block callout* | yes — rendered by Obsidian, so the theme draws the row itself |
 | The `[!` autocomplete, **block** position | yes |
 | The `[!` autocomplete, **heading / inline** position | no (`suggestableCallouts`) |
-| *Replace in vault*, vault stats, command builder lists | yes, drawn through `calloutListIcon` |
+| *Replace in vault*, vault stats, command builder and settings pickers | yes, drawn through `calloutListIcon` |
 | The command builder's **format** dropdown | Block only (`offerableRoles`) |
 | Backups / export JSON | no (`getUserDefined` excludes them) |
 

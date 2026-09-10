@@ -1651,6 +1651,13 @@ Next chapter: [16-i18n.md](16-i18n.md)
 It subscribes to `SettingsWriter.status` and redraws only its own slot, preserving
 scroll position and form fields.
 
+On the settings page the slot is `CalloutListsScaffold.bannerSlotEl` — an empty
+div the lists scaffold creates directly under the **Callout Studio** title row,
+which is why `SettingsTab.display()` renders the banner *after*
+`calloutLists.render()` rather than first. It is still ahead of every section,
+since it is the reason nothing below it will be saved; above the title it read
+as a message about the settings window rather than about this plugin.
+
 Each redraw builds the same three parts: a header (`alert-triangle` plus a title
 row), the message paragraph, and `.cs-readonly-banner-actions` holding whatever
 actions apply. The title is chosen from the writer, not from the message —

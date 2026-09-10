@@ -12,6 +12,8 @@ On narrow panes and phones, the actions wrap below the heading — keeping to th
 
 An unrecognized callout can still use the configured **Fallback callout** appearance without becoming a saved definition. Changing that appearance also updates saved fallback rows that you have not customized. Theme-owned callouts continue to use the active theme's appearance.
 
+To choose it, click the **Fallback callout** field — the whole label is selected, so you can just start typing. The list narrows as you type and matches a callout's name, its ID, or any of its aliases, with the closest match first; typing `summary` finds **Abstract**. Each row shows the callout's own icon in its own colour, with its ID and aliases underneath. If nothing matches what you typed, the list offers to create that callout for you, and selects it once you save. Callouts your theme adds are not offered here: they exist only while that theme is active, and this setting is synced to your other devices.
+
 ## Saving and recovery
 
 Results become visible after their settings write succeeds. If a note cannot be read, a note changes during the scan, settings change during the scan, or saving fails, the scan is cancelled without publishing partial results. Wait for synchronization and note edits to finish, then press the button again.

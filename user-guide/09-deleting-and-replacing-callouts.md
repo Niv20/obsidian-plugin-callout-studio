@@ -14,7 +14,7 @@ Use **Replace in vault** when you want every occurrence of one callout type to b
 
 1. Open the **⋯** menu on the callout you want to replace.
 2. Choose **Replace in vault**.
-3. Pick the callout type you want it replaced with.
+3. Pick the callout type you want it replaced with. Start typing in the search box above the list to narrow it — it matches a callout's name, its ID, or any of its aliases.
 4. Confirm.
 
 Callout Studio then goes through your whole vault in a single pass and swaps every occurrence of the original callout for the one you picked.
