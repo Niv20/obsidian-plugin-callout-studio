@@ -76,7 +76,7 @@ describe("the actions on the My callout types heading", () => {
 		assert.ok(control);
 		// `children`, not `querySelectorAll("button")`: the fake DOM matches
 		// classes, not bare tag names, and the control holds nothing but these two.
-		const buttons = [...control.children] as HTMLElement[];
+		const buttons = Array.from(control.children) as HTMLElement[];
 		assert.equal(buttons.length, 2, "the heading no longer carries exactly two actions");
 		assert.ok(
 			buttons[0]?.hasClass("cs-discover-callouts-btn"),
