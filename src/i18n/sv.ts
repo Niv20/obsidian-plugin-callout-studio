@@ -19,7 +19,7 @@ export const sv: Record<string, string> = {
 
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
-	"settings.rescanVaultDesc": "Lägger till callout-typer som hittas i dina anteckningar och som inte redan finns med i den här listan. Befintliga callouts och anteckningar lämnas orörda.",
+	"settings.rescanVaultDesc": "Lägger till callout-typer som används i dina anteckningar och som inte redan finns i den här listan. Dina befintliga callouts och anteckningar ändras inte.",
 	"settings.rescanVaultHintAction": "Sök efter callouts",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Skannar…",

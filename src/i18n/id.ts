@@ -19,7 +19,7 @@ export const id: Record<string, string> = {
 
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default otomatis",
-	"settings.rescanVaultDesc": "Menambahkan tipe callout yang ditemukan di catatan Anda yang belum tercantum di daftar ini. Callout dan catatan yang ada tidak diubah.",
+	"settings.rescanVaultDesc": "Menambahkan tipe callout yang digunakan di catatan Anda yang belum ada di daftar ini. Callout dan catatan Anda yang sudah ada tidak diubah.",
 	"settings.rescanVaultHintAction": "Pindai callout",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Memindai…",

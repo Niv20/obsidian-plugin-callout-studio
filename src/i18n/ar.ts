@@ -20,7 +20,7 @@ export const ar: Record<string, string> = {
 
 	"settings.fallbackTag": "افتراضي",
 	"settings.fallbackTagAuto": "افتراضي تلقائي",
-	"settings.rescanVaultDesc": "يضيف أنواع callout الموجودة في ملاحظاتك وغير المدرجة هنا بعد. تبقى الـ callout والملاحظات الحالية دون تغيير.",
+	"settings.rescanVaultDesc": "يضيف أنواع callout المستخدَمة في ملاحظاتك وغير الموجودة في هذه القائمة بعد. لا تتغيّر الـ callout والملاحظات الحالية لديك.",
 	"settings.rescanVaultHintAction": "مسح بحثًا عن callout",
 	"manualDiscovery.failed": "لم يتم حفظ نتائج الاكتشاف. انتظر اكتمال المزامنة ثم أعد المحاولة من الإعدادات ← أنواع التنبيهات الخاصة بي ← مسح بحثًا عن callout. لم يتم استبدال التعليقات الحالية.",
 	"manualDiscovery.scanning": "جارٍ المسح…",

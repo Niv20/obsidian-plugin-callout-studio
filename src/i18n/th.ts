@@ -19,7 +19,7 @@ export const th: Record<string, string> = {
 
 	"settings.fallbackTag": "ค่าเริ่มต้น",
 	"settings.fallbackTagAuto": "ค่าเริ่มต้นอัตโนมัติ",
-	"settings.rescanVaultDesc": "เพิ่มชนิด callout ที่พบในโน้ตของคุณซึ่งยังไม่อยู่ในรายการนี้ callout และโน้ตที่มีอยู่จะไม่ถูกเปลี่ยนแปลง",
+	"settings.rescanVaultDesc": "เพิ่มชนิด callout ที่ใช้ในโน้ตของคุณซึ่งยังไม่อยู่ในรายการนี้ callout และโน้ตที่มีอยู่ของคุณจะไม่ถูกเปลี่ยนแปลง",
 	"settings.rescanVaultHintAction": "สแกนหา callout",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "กำลังสแกน…",

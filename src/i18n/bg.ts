@@ -17,7 +17,7 @@ export const bg: Record<string, string> = {
 	"autocomplete.createNew": 'Създаване на нов callout: "{{name}}"',
 	"settings.fallbackTag": "По подразбиране",
 	"settings.fallbackTagAuto": "Авт. по подразбиране",
-	"settings.rescanVaultDesc": "Добавя типове callout, намерени в бележките ви, които още не са в този списък. Съществуващите callout и бележки остават непроменени.",
+	"settings.rescanVaultDesc": "Добавя типовете callout, използвани в бележките ви, които още ги няма в този списък. Съществуващите ви callout и бележки не се променят.",
 	"settings.rescanVaultHintAction": "Сканиране за callout",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Сканиране…",

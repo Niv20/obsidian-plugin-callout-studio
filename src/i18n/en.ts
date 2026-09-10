@@ -34,7 +34,7 @@ export const en: Record<string, string> = {
 	// Vault scan / fallback / delete
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default fallback",
-	"settings.rescanVaultDesc": "Adds callout types found in your notes that aren't listed here yet. Existing callouts and notes stay untouched.",
+	"settings.rescanVaultDesc": "Adds callout types used in your notes that aren't in this list yet. Your existing callouts and notes aren't changed.",
 	"settings.rescanVaultHintAction": "Scan for callouts",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"saveStatus.missing": "Saving is paused because the settings file is missing. This can happen after reinstalling or while sync is still running. Finish synchronization and retry. To intentionally replace the missing file, use Create a new settings file in Callout Studio settings.",

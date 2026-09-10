@@ -18,7 +18,7 @@ export const ms: Record<string, string> = {
 	"autocomplete.createNew": 'Cipta callout baharu: "{{name}}"',
 	"settings.fallbackTag": "Lalai",
 	"settings.fallbackTagAuto": "Lalai automatik",
-	"settings.rescanVaultDesc": "Menambah jenis callout yang ditemui dalam nota anda yang belum disenaraikan di sini. Callout dan nota sedia ada kekal tidak berubah.",
+	"settings.rescanVaultDesc": "Menambah jenis callout yang digunakan dalam nota anda yang belum ada dalam senarai ini. Callout dan nota sedia ada anda tidak diubah.",
 	"settings.rescanVaultHintAction": "Imbas callout",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Mengimbas…",

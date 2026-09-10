@@ -19,7 +19,7 @@ export const zh: Record<string, string> = {
 
 	"settings.fallbackTag": "默认",
 	"settings.fallbackTagAuto": "自动默认",
-	"settings.rescanVaultDesc": "添加在你的笔记中找到但尚未列在此处的 callout 类型。现有的 callout 和笔记保持不变。",
+	"settings.rescanVaultDesc": "添加你笔记中使用但尚未在此列表中的 callout 类型。你现有的 callout 和笔记不会被更改。",
 	"settings.rescanVaultHintAction": "扫描 callout",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "扫描中…",

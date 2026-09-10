@@ -16,7 +16,7 @@ export const zhTW: Record<string, string> = {
 	"autocomplete.createNew": "建立新 callout：「{{name}}」",
 	"settings.fallbackTag": "預設",
 	"settings.fallbackTagAuto": "自動預設",
-	"settings.rescanVaultDesc": "新增在你的筆記中找到但尚未列在此處的 callout 類型。現有的 callout 與筆記維持不變。",
+	"settings.rescanVaultDesc": "新增你筆記中使用但尚未在此清單中的 callout 類型。你現有的 callout 與筆記不會被變更。",
 	"settings.rescanVaultHintAction": "掃描 callout",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "掃描中…",

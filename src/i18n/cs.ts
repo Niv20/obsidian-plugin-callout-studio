@@ -19,7 +19,7 @@ export const cs: Record<string, string> = {
 
 	"settings.fallbackTag": "Výchozí",
 	"settings.fallbackTagAuto": "Aut. výchozí",
-	"settings.rescanVaultDesc": "Přidá typy calloutů nalezené ve vašich poznámkách, které zatím nejsou v tomto seznamu. Stávající callouty a poznámky zůstanou beze změny.",
+	"settings.rescanVaultDesc": "Přidá typy calloutů použité ve vašich poznámkách, které zatím nejsou v tomto seznamu. Vaše stávající callouty a poznámky se nezmění.",
 	"settings.rescanVaultHintAction": "Vyhledat callouty",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Prohledávání…",

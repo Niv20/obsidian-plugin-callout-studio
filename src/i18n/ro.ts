@@ -19,7 +19,7 @@ export const ro: Record<string, string> = {
 
 	"settings.fallbackTag": "Implicit",
 	"settings.fallbackTagAuto": "Implicit automat",
-	"settings.rescanVaultDesc": "Adaugă tipurile de callout găsite în notițele tale care nu sunt încă în această listă. Callout-urile și notițele existente rămân neschimbate.",
+	"settings.rescanVaultDesc": "Adaugă tipurile de callout folosite în notițele tale care nu sunt încă în această listă. Callout-urile și notițele tale existente nu sunt modificate.",
 	"settings.rescanVaultHintAction": "Scanează după callout-uri",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Se scanează…",

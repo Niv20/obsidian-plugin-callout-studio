@@ -16,7 +16,7 @@ export const da: Record<string, string> = {
 	"autocomplete.createNew": 'Opret ny callout: "{{name}}"',
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
-	"settings.rescanVaultDesc": "Tilføjer callout-typer fundet i dine noter, som ikke er på denne liste endnu. Eksisterende callouts og noter forbliver urørte.",
+	"settings.rescanVaultDesc": "Tilføjer callout-typer, der bruges i dine noter, og som endnu ikke er på denne liste. Dine eksisterende callouts og noter ændres ikke.",
 	"settings.rescanVaultHintAction": "Scan efter callouts",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Scanner…",

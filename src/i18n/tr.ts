@@ -19,7 +19,7 @@ export const tr: Record<string, string> = {
 
 	"settings.fallbackTag": "Varsayılan",
 	"settings.fallbackTagAuto": "Otomatik varsayılan",
-	"settings.rescanVaultDesc": "Notlarınızda bulunan ve bu listede henüz yer almayan callout türlerini ekler. Mevcut callout'lar ve notlar değiştirilmez.",
+	"settings.rescanVaultDesc": "Notlarınızda kullanılan ve bu listede henüz yer almayan callout türlerini ekler. Mevcut callout'larınız ve notlarınız değiştirilmez.",
 	"settings.rescanVaultHintAction": "Callout'ları tara",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Taranıyor…",

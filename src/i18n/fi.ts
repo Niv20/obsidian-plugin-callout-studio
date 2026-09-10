@@ -16,7 +16,7 @@ export const fi: Record<string, string> = {
 	"autocomplete.createNew": 'Luo uusi callout: "{{name}}"',
 	"settings.fallbackTag": "Oletus",
 	"settings.fallbackTagAuto": "Automaattinen oletus",
-	"settings.rescanVaultDesc": "Lisää muistiinpanoistasi löytyneet callout-tyypit, joita ei vielä ole tässä luettelossa. Nykyiset calloutit ja muistiinpanot säilyvät ennallaan.",
+	"settings.rescanVaultDesc": "Lisää muistiinpanoissasi käytetyt callout-tyypit, joita ei vielä ole tässä luettelossa. Nykyisiä calloutejasi ja muistiinpanojasi ei muuteta.",
 	"settings.rescanVaultHintAction": "Etsi callouteja",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Skannataan…",

@@ -19,7 +19,7 @@ export const fa: Record<string, string> = {
 
 	"settings.fallbackTag": "پیش‌فرض",
 	"settings.fallbackTagAuto": "پیش‌فرض خودکار",
-	"settings.rescanVaultDesc": "انواع callout موجود در یادداشت‌های شما را که هنوز در این فهرست نیستند اضافه می‌کند. calloutها و یادداشت‌های موجود بدون تغییر می‌مانند.",
+	"settings.rescanVaultDesc": "انواع callout به‌کاررفته در یادداشت‌های شما را که هنوز در این فهرست نیستند اضافه می‌کند. calloutها و یادداشت‌های موجود شما تغییر نمی‌کنند.",
 	"settings.rescanVaultHintAction": "جستجو برای callout",
 	"manualDiscovery.failed": "نتایج شناسایی ذخیره نشد. پس از پایان همگام‌سازی دوباره از تنظیمات ← انواع فراخوان‌های من ← جستجو برای callout تلاش کنید. فراخوان‌های موجود جایگزین نشده‌اند.",
 	"manualDiscovery.scanning": "در حال اسکن…",

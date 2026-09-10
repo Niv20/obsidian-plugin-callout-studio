@@ -17,7 +17,7 @@ export const el: Record<string, string> = {
 	"autocomplete.createNew": 'Δημιουργία νέου callout: "{{name}}"',
 	"settings.fallbackTag": "Προεπιλογή",
 	"settings.fallbackTagAuto": "Αυτόματη προεπιλογή",
-	"settings.rescanVaultDesc": "Προσθέτει τύπους callout που βρέθηκαν στις σημειώσεις σας και δεν υπάρχουν ακόμη σε αυτήν τη λίστα. Τα υπάρχοντα callout και οι σημειώσεις παραμένουν ανέπαφα.",
+	"settings.rescanVaultDesc": "Προσθέτει τύπους callout που χρησιμοποιούνται στις σημειώσεις σας και δεν βρίσκονται ακόμη σε αυτήν τη λίστα. Τα υπάρχοντα callout και οι σημειώσεις σας δεν αλλάζουν.",
 	"settings.rescanVaultHintAction": "Σάρωση για callout",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Σάρωση…",

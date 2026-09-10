@@ -19,7 +19,7 @@ export const hi: Record<string, string> = {
 
 	"settings.fallbackTag": "डिफ़ॉल्ट",
 	"settings.fallbackTagAuto": "स्वतः डिफ़ॉल्ट",
-	"settings.rescanVaultDesc": "आपके नोट्स में मिले ऐसे callout प्रकार जोड़ता है जो अभी इस सूची में नहीं हैं। मौजूदा callout और नोट्स अपरिवर्तित रहते हैं।",
+	"settings.rescanVaultDesc": "आपके नोट्स में इस्तेमाल हो रहे ऐसे callout प्रकार जोड़ता है जो अभी इस सूची में नहीं हैं। आपके मौजूदा callout और नोट्स नहीं बदले जाते।",
 	"settings.rescanVaultHintAction": "callout के लिए स्कैन करें",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "स्कैन हो रहा है…",

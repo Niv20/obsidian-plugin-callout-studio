@@ -20,7 +20,7 @@ export const de: Record<string, string> = {
 
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatischer Standard",
-	"settings.rescanVaultDesc": "Fügt Callout-Typen hinzu, die in deinen Notizen gefunden werden und hier noch nicht aufgeführt sind. Vorhandene Callouts und Notizen bleiben unverändert.",
+	"settings.rescanVaultDesc": "Fügt Callout-Typen hinzu, die in deinen Notizen verwendet werden und noch nicht in dieser Liste stehen. Deine vorhandenen Callouts und Notizen werden nicht geändert.",
 	"settings.rescanVaultHintAction": "Nach Callouts suchen",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Suche läuft…",

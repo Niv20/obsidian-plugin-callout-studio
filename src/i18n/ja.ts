@@ -19,7 +19,7 @@ export const ja: Record<string, string> = {
 
 	"settings.fallbackTag": "デフォルト",
 	"settings.fallbackTagAuto": "自動デフォルト",
-	"settings.rescanVaultDesc": "ノート内で見つかった、まだこの一覧にないcalloutタイプを追加します。既存のcalloutとノートは変更されません。",
+	"settings.rescanVaultDesc": "ノートで使われていて、まだこの一覧にないcalloutタイプを追加します。既存のcalloutとノートは変更されません。",
 	"settings.rescanVaultHintAction": "calloutをスキャン",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "スキャン中…",

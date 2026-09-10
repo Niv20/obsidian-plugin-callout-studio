@@ -19,7 +19,7 @@ export const nl: Record<string, string> = {
 
 	"settings.fallbackTag": "Standaard",
 	"settings.fallbackTagAuto": "Automatisch standaard",
-	"settings.rescanVaultDesc": "Voegt callout-typen toe die in je notities zijn gevonden en hier nog niet staan. Bestaande callouts en notities blijven ongewijzigd.",
+	"settings.rescanVaultDesc": "Voegt callouttypen toe die in je notities worden gebruikt en nog niet in deze lijst staan. Je bestaande callouts en notities worden niet gewijzigd.",
 	"settings.rescanVaultHintAction": "Scannen op callouts",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Scannen…",

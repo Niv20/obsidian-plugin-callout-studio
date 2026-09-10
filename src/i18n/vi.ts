@@ -19,7 +19,7 @@ export const vi: Record<string, string> = {
 
 	"settings.fallbackTag": "Mặc định",
 	"settings.fallbackTagAuto": "Mặc định tự động",
-	"settings.rescanVaultDesc": "Thêm các loại callout tìm thấy trong ghi chú của bạn mà chưa có trong danh sách này. Các callout và ghi chú hiện có được giữ nguyên.",
+	"settings.rescanVaultDesc": "Thêm các loại callout được dùng trong ghi chú của bạn mà chưa có trong danh sách này. Các callout và ghi chú hiện có của bạn không bị thay đổi.",
 	"settings.rescanVaultHintAction": "Quét tìm callout",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"manualDiscovery.scanning": "Đang quét…",
