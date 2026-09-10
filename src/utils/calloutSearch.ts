@@ -10,9 +10,15 @@
  *
  * The match is plain case-insensitive substring across the three things a user
  * could plausibly type — display name, id, any alias — and nothing more. Not
- * fuzzy, not ranked: a callout list is a dozen or two rows, where a fuzzy match
- * mostly manufactures wrong answers, and the caller already sorts by name so
- * the order never depends on the query.
+ * fuzzy: a callout list is a dozen or two rows, where a fuzzy match mostly
+ * manufactures wrong answers.
+ *
+ * It *is* ranked, in four tiers (see {@link matchRank}), and that is a change
+ * from how this started. Pure alphabetical order is fine for an empty query and
+ * wrong the moment there is one: typing `no` put `Annotation` above `Note`,
+ * because A sorts before N. The tiers are exactness and then prefix, which is
+ * the whole of it — no scoring, no distance, nothing that can surprise. Within
+ * a tier the order is still alphabetical, so it stays predictable.
  */
 import type { CalloutDefinition } from "../types";
 import { sortCalloutsByDisplayName } from "./sorting";
@@ -82,7 +88,29 @@ export interface CalloutListOptions {
 }
 
 /**
- * Source filter, then text match, then one alphabetical order over the lot.
+ * How well `def` answers `lowerQuery` — lower is better, and 3 is "it matched
+ * somewhere". **The query must already be lowercased and non-empty.**
+ *
+ * Four tiers and no more, because every extra rule is a way for the list to
+ * reorder itself for a reason the user cannot see:
+ *
+ * 0. the query *is* the name, the id, or an alias — you typed the whole thing
+ * 1. the name starts with it — `no` → `Note`
+ * 2. an id or alias starts with it — `sum` → `Abstract`, via `summary`
+ * 3. it appears somewhere — `arn` → `Warning`
+ */
+export function matchRank(def: CalloutDefinition, lowerQuery: string): number {
+	const name = def.displayName.toLowerCase();
+	const ids = [def.id.toLowerCase(), ...(def.aliases ?? []).map((a) => a.toLowerCase())];
+	if (name === lowerQuery || ids.includes(lowerQuery)) return 0;
+	if (name.startsWith(lowerQuery)) return 1;
+	if (ids.some((id) => id.startsWith(lowerQuery))) return 2;
+	return 3;
+}
+
+/**
+ * Source filter, then text match, then order: by rank when there is a query, by
+ * name alone when there is not.
  *
  * Sorting last and once is what keeps built-ins and the user's own callouts
  * *mixed* rather than grouped: they are only ever two halves of one list, and
@@ -98,5 +126,9 @@ export function filterCalloutList(
 			matchesSourceFilter(def, options.filter) &&
 			(query === "" || calloutMatchesQuery(def, query)),
 	);
-	return sortCalloutsByDisplayName(matched, options.locale);
+	const byName = sortCalloutsByDisplayName(matched, options.locale);
+	if (query === "") return byName;
+	// A stable sort over the already-alphabetical list, so each tier keeps that
+	// order inside itself and only the tiers move.
+	return byName.sort((a, b) => matchRank(a, query) - matchRank(b, query));
 }

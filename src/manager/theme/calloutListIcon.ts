@@ -2,8 +2,9 @@
  * manager/theme/calloutListIcon.ts — one answer to "draw this callout small",
  * for every list that offers callouts to pick from.
  *
- * Autocomplete, *Replace in vault*, the vault-stats rows and the command
- * builder all draw the same thing: a small icon and an accent beside a name.
+ * Autocomplete, *Replace in vault*, the vault-stats rows, the command builder
+ * and the settings callout picker (`settings/calloutComboboxRow.ts`) all draw
+ * the same thing: a small icon and an accent beside a name.
  * They had drifted into three different answers about theme-owned callouts —
  * autocomplete tested the raw `externalStyle` field (so it missed every callout
  * the theme owns and cheerfully showed the stored colour), and the other two

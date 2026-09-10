@@ -2856,6 +2856,10 @@ button.callout-studio-icon-picker-loading {
 	font-size: var(--font-ui-small);
 }
 
+.cs-palette-combobox .cs-combobox-control {
+	gap: 14px;
+}
+
 .cs-palette-menu-item.is-active,
 .cs-palette-menu-item:hover {
 	background-color: var(--background-modifier-hover);
@@ -3109,6 +3113,9 @@ button.callout-studio-icon-picker-loading {
 	align-items: center;
 	gap: 8px;
 	padding: 6px 8px;
+	min-width: 0;
+	overflow-x: hidden;
+	width: 100%;
 }
 
 .callout-studio-suggestion-icon {
@@ -3129,16 +3136,37 @@ button.callout-studio-icon-picker-loading {
 .callout-studio-suggestion-text {
 	flex: 1;
 	min-width: 0;
+	max-width: 100%;
+	overflow-x: hidden;
 }
 
 .callout-studio-suggestion-name {
+	min-width: 0;
+	width: 100%;
 	font-size: var(--font-ui-medium);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .callout-studio-suggestion-id {
 	font-size: var(--font-ui-smaller);
 	color: var(--text-muted);
 	font-family: var(--font-monospace);
+	min-width: 0;
+	max-width: 100%;
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.callout-studio-suggestion-id-truncated {
+	max-width: 100%;
+	width: 100%;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
@@ -3148,6 +3176,11 @@ button.callout-studio-icon-picker-loading {
 }
 
 /* ─── Combobox (type-to-filter picker) ───────────────────────── */
+
+.suggestion:has(.callout-studio-suggestion) {
+	max-width: 100%;
+	overflow-x: hidden;
+}
 
 /* Deliberately placed right under the suggestion rules above: the popup draws
    its rows with those very classes, so the two live together and cannot drift
@@ -3161,11 +3194,11 @@ button.callout-studio-icon-picker-loading {
 	min-width: 0;
 }
 
-/* Built from the same variables Obsidian's own `select, .dropdown` rule uses —
-   `--input-height`, `--input-shadow`, `--input-radius`, `--dropdown-background`,
-   `border: 0` — rather than a hand-picked padding and border. That is the only
-   way the height matches the native dropdowns beside it in a settings row
-   *exactly*, in every theme, including ones that repoint those variables.
+/* Match the native text fields in the callout editor.
+
+   The display-name field is `6px 10px`, `--radius-s`, `1px` border and `36px`
+   min-height in this plugin's own theme rules. The combobox needs the same model
+   so it reads like a sibling in callout rows and settings tabs.
 
    One box, no field inside it: the input below is painted down to nothing so
    the text sits straight on this background, and the focus ring is drawn here
@@ -3174,13 +3207,12 @@ button.callout-studio-icon-picker-loading {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	height: var(--input-height);
+	min-height: 36px;
 	box-sizing: border-box;
-	padding: 0 var(--size-4-2);
-	border: 0;
-	border-radius: var(--input-radius);
-	box-shadow: var(--input-shadow);
-	background-color: var(--dropdown-background);
+	padding: 6px 10px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	background-color: var(--background-modifier-form-field);
 	color: var(--text-normal);
 	font-size: var(--font-ui-small);
 	/* A button, not a text field — the whole thing opens the list. */
@@ -3189,23 +3221,14 @@ button.callout-studio-icon-picker-loading {
 
 .cs-combobox-control:hover,
 .cs-combobox-control.is-open {
-	background-color: var(--interactive-hover);
+	background-color: var(--background-modifier-form-field-hover);
+	border-color: var(--background-modifier-border-hover);
 }
 
-/* The ring Obsidian would have drawn around the input, drawn around the whole
-   control instead — same variable, so it is the same grey the rest of the
-   settings pane focuses with.
-
-   3px, not the 2px `--input-border-width-focus` a bare text field uses, because
-   the two only look equal at different widths. A text field keeps its own 1px
-   border and recolours it on focus, so its 2px ring sits on top of that and the
-   eye reads 3px of grey. This control is built like a dropdown — `border: 0`,
-   the box painted by `--input-shadow` — so a 2px ring here would be a pixel
-   thinner than every field beside it. Obsidian resolves the same problem the
-   same way: its own `select, .dropdown:focus-visible` is a flat
-   `0 0 0 3px var(--background-modifier-border-focus)`. */
 .cs-combobox-control:focus-within {
-	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+	border-color: var(--background-modifier-border-focus);
+	box-shadow: 0 0 0 var(--input-border-width-focus)
+		var(--background-modifier-border-focus);
 }
 
 /* Sized like `.callout-studio-suggestion-icon` so the chosen item beside the
@@ -3239,7 +3262,7 @@ button.callout-studio-icon-picker-loading {
    `min-width: 0` is not redundant beside `flex: 1` — the basis is 0 but
    `min-width` still defaults to `auto`, which floors the field at its content
    width and lets a long name push the caret out of the control. */
-.cs-combobox-control .cs-combobox-input {
+.cs-combobox-control input[type="text"].cs-combobox-input {
 	flex: 1;
 	min-width: 0;
 	border: 0;
@@ -3252,6 +3275,7 @@ button.callout-studio-icon-picker-loading {
 	color: var(--text-normal);
 	font-size: var(--font-ui-small);
 	font-family: inherit;
+	text-align: start;
 	/* The control is the button; the text inside it is just text. */
 	cursor: inherit;
 }
@@ -3268,10 +3292,10 @@ button.callout-studio-icon-picker-loading {
    the control. That rule now excludes `.cs-combobox-input` by name; if another
    broadly-scoped `input[type="text"]` rule is ever added, it has to do the
    same. */
-.cs-combobox-control .cs-combobox-input:hover,
-.cs-combobox-control .cs-combobox-input:active,
-.cs-combobox-control .cs-combobox-input:focus,
-.cs-combobox-control .cs-combobox-input:focus-visible {
+.cs-combobox-control input[type="text"].cs-combobox-input:hover,
+.cs-combobox-control input[type="text"].cs-combobox-input:active,
+.cs-combobox-control input[type="text"].cs-combobox-input:focus,
+.cs-combobox-control input[type="text"].cs-combobox-input:focus-visible {
 	border: 0;
 	background: transparent;
 	box-shadow: none;
@@ -3280,6 +3304,12 @@ button.callout-studio-icon-picker-loading {
 
 .cs-combobox-control .cs-combobox-input::placeholder {
 	color: var(--text-faint);
+}
+
+.cs-combobox.is-select-only .cs-combobox-input {
+	caret-color: transparent;
+	user-select: none;
+	-webkit-user-select: none;
 }
 
 /* margin-inline-start, not margin-left: RTL puts the caret on the left. */
@@ -3305,7 +3335,9 @@ button.callout-studio-icon-picker-loading {
 	top: calc(100% + 4px);
 	inset-inline-start: 0;
 	inset-inline-end: 0;
-	max-height: 320px;
+	max-width: 100%;
+	max-height: var(--cs-combobox-menu-max-height, 320px);
+	overflow-x: hidden;
 	overflow-y: auto;
 	z-index: 1000;
 	padding: 6px 0;
@@ -3316,6 +3348,7 @@ button.callout-studio-icon-picker-loading {
 		0 8px 18px rgba(0, 0, 0, 0.22),
 		0 2px 6px rgba(0, 0, 0, 0.18);
 	outline: none;
+	text-align: start;
 }
 
 .cs-combobox-menu-hidden {
@@ -3342,6 +3375,8 @@ button.callout-studio-icon-picker-loading {
 
 .cs-combobox-option {
 	cursor: pointer;
+	max-width: 100%;
+	overflow-x: hidden;
 }
 
 /* `is-active` is where the keyboard is; `is-selected` is what is committed.
@@ -3353,6 +3388,40 @@ button.callout-studio-icon-picker-loading {
 
 .cs-combobox-option.is-selected {
 	background-color: var(--background-secondary-alt);
+}
+
+.cs-language-option-label {
+	padding: 6px 12px;
+	overflow: hidden;
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-align: start;
+}
+
+.cs-language-setting .cs-combobox-lead {
+	display: none;
+}
+
+.cs-fallback-setting .cs-combobox-control,
+.cs-language-setting .cs-combobox-control {
+	background-color: var(--cs-btn-face, var(--interactive-normal));
+	border-color: var(--cs-btn-border, var(--background-modifier-border));
+	color: var(--text-normal);
+	box-shadow: none;
+}
+
+@media (hover: hover) {
+	.cs-fallback-setting .cs-combobox-control:hover,
+	.cs-fallback-setting .cs-combobox-control.is-open,
+	.cs-language-setting .cs-combobox-control:hover,
+	.cs-language-setting .cs-combobox-control.is-open {
+		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-btn-border, var(--background-modifier-border));
+		color: var(--text-normal);
+		box-shadow: none;
+	}
 }
 
 .cs-combobox-footer-row {
@@ -3388,6 +3457,12 @@ button.callout-studio-icon-picker-loading {
 	min-width: 0;
 }
 
+.cs-command-callout-setting .cs-combobox {
+	flex: 0 1 auto;
+	width: 220px;
+	max-width: 100%;
+}
+
 /* The shared empty state is a page-level block elsewhere; inside a popup it
    only needs to fill one row. */
 .cs-combobox-menu .callout-studio-empty-state {
@@ -3403,6 +3478,10 @@ button.callout-studio-icon-picker-loading {
 @media (max-width: 600px) {
 	.cs-combobox-menu {
 		max-height: 50vh;
+	}
+
+	.is-phone .cs-command-callout-setting .cs-combobox {
+		width: 100%;
 	}
 }
 
@@ -6923,10 +7002,11 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	/* Space above as well as below: the banner is the first thing the settings
-	   tab renders, and the header row under it zeroes its own `padding-top`, so
-	   with no margin here the card sits flush against the top edge of the pane. */
-	margin: 12px 0 16px;
+	/* The card sits directly under the "Callout Studio" title row, which already
+	   carries 8px of `padding-bottom`, so a small top margin is enough to keep
+	   it off the title; the larger bottom margin separates it from the first
+	   section heading below. */
+	margin: 4px 0 16px;
 	padding: 12px 14px;
 	/* A thin outline on all four sides rather than a bar down one edge. The bar
 	   only marked the side it was on, so the block ran off into the page on the

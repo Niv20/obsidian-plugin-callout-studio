@@ -41,10 +41,8 @@ import {
 	splitFoldMark,
 	titleAfterToken,
 } from "./calloutWriter";
-import {
-	getSortedCalloutIds,
-	sortCalloutsByDisplayName,
-} from "../utils/sorting";
+import { sortCalloutsByDisplayName } from "../utils/sorting";
+import { renderCalloutIdLine } from "../settings/calloutComboboxRow";
 
 /** Heading hashes + whitespace and nothing else before the `[!` trigger. */
 const HEADING_TRIGGER_PREFIX_REGEX = /^#{1,6}[ \t]+$/;
@@ -279,42 +277,10 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		});
 		nameEl.style.color = color;
 
-		// Second line: id + aliases. When the user has typed something, show
-		// only the ids/aliases that contain the query, keeping the matched
-		// characters at the normal color — wherever they fall, not only at the
-		// start — and fading the rest. With no query (or when only the display
-		// name matched), show them all unfaded.
-		const query = (this.context?.query ?? "").toLowerCase();
-		const allIds = getSortedCalloutIds(def, getLocale());
-		const matches =
-			query.length > 0
-				? allIds.filter((id) => id.toLowerCase().includes(query))
-				: [];
-		const toShow = matches.length > 0 ? matches : allIds;
-		const highlight = query.length > 0 && matches.length > 0;
-
-		const idEl = textEl.createDiv({
-			cls: "callout-studio-suggestion-id",
-		});
-		const fade = (text: string) => {
-			if (text)
-				idEl.createSpan({
-					cls: "callout-studio-suggestion-id-dim",
-					text,
-				});
-		};
-		toShow.forEach((id, i) => {
-			if (i > 0) idEl.appendText(", ");
-			if (highlight) {
-				// Matched run stays normal; everything around it fades out.
-				const at = id.toLowerCase().indexOf(query);
-				fade(id.slice(0, at));
-				idEl.appendText(id.slice(at, at + query.length));
-				fade(id.slice(at + query.length));
-			} else {
-				idEl.appendText(id);
-			}
-		});
+		// Second line: id + aliases, drawn by the same function the settings
+		// picker uses — the two lists offer the same callouts and must not
+		// describe them differently.
+		renderCalloutIdLine(textEl, def, this.context?.query ?? "");
 	}
 
 	/**
