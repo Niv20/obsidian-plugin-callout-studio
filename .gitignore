@@ -24,6 +24,9 @@ main.js
 # obsidian
 data.json
 
+# Local recovery snapshots created by the plugin
+backups/
+
 # Icon packs downloaded at runtime — served from the packs-v2 tag, never committed
 icon-packs/
 
