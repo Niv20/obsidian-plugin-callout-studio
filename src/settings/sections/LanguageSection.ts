@@ -50,9 +50,65 @@ export function renderLanguageSection(
 		},
 	});
 	picker.setSelected(ctx.plugin.settings.language);
+	renderLanguageWidthSizer(picker.el, languageChoices());
+	observeLanguageSettingLayout(ctx, setting);
 	ctx.registerDisposer(() => picker.destroy());
 
 	renderUnavailableWarning(ctx, containerEl);
+}
+
+/**
+ * Follow Obsidian's actual setting-row layout instead of copying its current
+ * breakpoint. Core and themes are free to change that breakpoint; the picker
+ * only needs to know whether its own row has already stacked.
+ */
+function observeLanguageSettingLayout(
+	ctx: SettingsSectionContext,
+	setting: Setting,
+): void {
+	const sync = (): void => {
+		setting.settingEl.toggleClass(
+			"cs-language-setting-stacked",
+			getComputedStyle(setting.settingEl).flexDirection === "column",
+		);
+	};
+
+	sync();
+	const observer = new ResizeObserver(sync);
+	observer.observe(setting.settingEl);
+	ctx.registerDisposer(() => observer.disconnect());
+}
+
+/**
+ * Let CSS size the closed picker from the widest translated option.
+ *
+ * The popup is absolutely positioned, so its rows cannot contribute to the
+ * combobox's intrinsic width. These overlapping, hidden labels can: CSS takes
+ * the widest one without us guessing at glyph widths in proportional fonts.
+ */
+function renderLanguageWidthSizer(
+	containerEl: HTMLElement,
+	choices: readonly LanguageChoice[],
+): void {
+	const sizerEl = containerEl.createDiv({
+		cls: "cs-language-width-sizer",
+		attr: { "aria-hidden": "true" },
+	});
+	for (const choice of choices) {
+		sizerEl.createSpan({ text: choice.name });
+	}
+
+	const widestLabel = Math.max(
+		...Array.from(sizerEl.children, (labelEl) =>
+			Math.ceil((labelEl as HTMLElement).scrollWidth),
+		),
+	);
+	if (widestLabel > 0) {
+		containerEl.style.setProperty(
+			"--cs-language-picker-width",
+			`${widestLabel}px`,
+		);
+	}
 }
 
 function languageChoices(): LanguageChoice[] {

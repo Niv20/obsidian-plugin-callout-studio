@@ -3404,6 +3404,39 @@ button.callout-studio-icon-picker-loading {
 	display: none;
 }
 
+/* The menu is absolute and therefore cannot make the closed language picker
+   wide enough for its labels. This hidden stack restores that intrinsic-size
+   information: every translated option occupies the same grid cell, so the
+   widest one sets the width. The inline padding reserves the control's own
+   padding, gap and caret. */
+.cs-language-setting .cs-combobox {
+	flex: 0 0 var(--cs-language-picker-width, auto);
+	inline-size: var(--cs-language-picker-width, max-content);
+}
+
+.cs-language-width-sizer {
+	display: grid;
+	block-size: 0;
+	overflow: hidden;
+	visibility: hidden;
+	font-size: var(--font-ui-small);
+}
+
+.cs-language-width-sizer > span {
+	grid-area: 1 / 1;
+	padding-inline: 10px 34px;
+	white-space: nowrap;
+}
+
+/* The renderer adds this class only while Obsidian has actually stacked the
+   setting row. Reading the real layout keeps this custom control aligned with
+   core and with themes without duplicating a breakpoint that can drift. */
+.cs-language-setting-stacked .cs-combobox {
+	flex-basis: auto;
+	inline-size: 100%;
+	max-inline-size: 100%;
+}
+
 .cs-fallback-setting .cs-combobox-control,
 .cs-language-setting .cs-combobox-control {
 	background-color: var(--cs-btn-face, var(--interactive-normal));
