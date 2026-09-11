@@ -38,6 +38,10 @@ export const th: Record<string, string> = {
 	"welcome.title": "ยินดีต้อนรับสู่ Callout Studio!",
 	"welcome.tagline":
 		"โซลูชันครบวงจรของคุณสำหรับสร้าง จัดรูปแบบ และจัดการ callout ใน Obsidian",
+	"importBanner.message":
+		"เราสังเกตเห็นว่าคุณใช้ {{plugins}} คุณต้องการนำเข้า callout ของคุณหรือไม่?",
+	"importBanner.action": "นำเข้า",
+	"importBanner.dismiss": "ปิด",
 	"welcome.previewTitle": "ดูการทำงานจริง",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":

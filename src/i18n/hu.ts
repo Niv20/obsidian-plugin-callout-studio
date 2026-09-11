@@ -39,6 +39,10 @@ export const hu: Record<string, string> = {
 	"welcome.title": "Üdvözöljük a Callout Studióban!",
 	"welcome.tagline":
 		"Az Ön teljes körű megoldása az Obsidian callout-ok létrehozására, stílusozására és kezelésére.",
+	"importBanner.message":
+		"Észrevettük, hogy Ön a következőt használja: {{plugins}}. Szeretné importálni a callout-jait?",
+	"importBanner.action": "Importálás",
+	"importBanner.dismiss": "Elutasítás",
 	"welcome.previewTitle": "Nézze meg működés közben",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":

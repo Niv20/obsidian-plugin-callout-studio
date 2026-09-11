@@ -24,10 +24,10 @@ import type { SettingsSectionContext } from "./types";
 export function renderImportExportSection(
 	ctx: SettingsSectionContext,
 	containerEl: HTMLElement,
-): void {
+): HTMLElement {
 	new Setting(containerEl).setName(t("settings.importExport")).setHeading();
 
-	new Setting(containerEl)
+	const importSetting = new Setting(containerEl)
 		.setName(t("settings.import"))
 		.setDesc(t("settings.importDesc"))
 		.addButton((btn) => {
@@ -36,6 +36,7 @@ export function renderImportExportSection(
 				.onClick(() => new ImportSourceModal(ctx).open());
 			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
+	importSetting.settingEl.addClass("cs-import-target");
 
 	new Setting(containerEl)
 		.setName(t("settings.export"))
@@ -46,6 +47,8 @@ export function renderImportExportSection(
 				.onClick(() => new ExportFormatModal(ctx).open());
 			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
+
+	return importSetting.settingEl;
 }
 
 export function renderResetSection(

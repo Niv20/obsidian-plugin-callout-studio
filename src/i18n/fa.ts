@@ -38,6 +38,10 @@ export const fa: Record<string, string> = {
 	"welcome.title": "به Callout Studio خوش آمدید!",
 	"welcome.tagline":
 		"راه‌حل کامل شما برای ساخت، طراحی و مدیریت callout‌های Obsidian.",
+	"importBanner.message":
+		"متوجه شدیم که از {{plugins}} استفاده می‌کنید. آیا مایلید callout‌های خود را وارد کنید؟",
+	"importBanner.action": "وارد کردن",
+	"importBanner.dismiss": "رد کردن",
 	"welcome.previewTitle": "آن را در عمل ببینید",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":

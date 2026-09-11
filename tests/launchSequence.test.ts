@@ -31,6 +31,7 @@ import type { SettingsBootResult } from "../src/manager/settingsBoot";
 import type CalloutStudioPlugin from "../src/main";
 import { installFakeDom } from "./support/fakeDom";
 import { WelcomeModal } from "../src/settings/WelcomeModal";
+import { shouldShowCompetitorImportBanner } from "../src/settings/competitorImportState";
 
 installFakeDom();
 
@@ -158,6 +159,7 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 			"the welcome flag is the first write a fresh install makes",
 		);
 		assert.strictEqual(l.plugin.settings.welcomeSeen, false);
+		assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), false);
 	});
 	it("does not create data.json or mark it as previously saved when a fresh welcome closes", async () => {
 		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
@@ -166,6 +168,7 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 			const l = launch({ welcomeSeen: false });
 			await l.run(true);
 			assert.strictEqual(l.plugin.settings.welcomeSeen, true);
+			assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), true);
 			assert.strictEqual(l.seen.saves, 0);
 			assert.strictEqual(l.seen.initialized, 0);
 		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }

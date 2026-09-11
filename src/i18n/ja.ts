@@ -38,6 +38,10 @@ export const ja: Record<string, string> = {
 	"welcome.title": "Callout Studioへようこそ！",
 	"welcome.tagline":
 		"Obsidianのcalloutを作成、スタイル設定、管理するための総合ソリューション。",
+	"importBanner.message":
+		"{{plugins}} をお使いのようです。calloutをインポートしますか?",
+	"importBanner.action": "インポート",
+	"importBanner.dismiss": "閉じる",
 	"welcome.previewTitle": "実際の動作を見る",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":

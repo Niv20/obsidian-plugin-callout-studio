@@ -759,8 +759,8 @@ export interface PluginSettings {
 	headingCallouts: HeadingCalloutSettings;
 	/** Inline callouts (`[!name]` mid-line) — optional role, can be disabled. */
 	inlineCallouts: InlineCalloutSettings;
-	/** Has the welcome/splash screen been shown at least once? */
-	welcomeSeen?: boolean;
+	/** Has the welcome/splash screen been shown at least once? */ welcomeSeen?: boolean;
+	/** Has the first-install import prompt been dismissed or completed? */ competitorImportBannerHandled?: boolean;
 	/** Callout ID to use as fallback for unrecognized callout types. Empty = Obsidian default */
 	fallbackCalloutId: string;
 	/**
