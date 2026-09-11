@@ -1,6 +1,6 @@
 # Icons
 
-Covers the whole icon subsystem: [`src/icons/`](../src/icons/) — the service
+Covers the whole icon subsystem: [`src/icons/`](../../src/icons/) — the service
 layer (fetching, caching, resolving), the pack registry (what each library
 looks like as data), rendering, and the "Your images" user-upload source.
 
@@ -11,7 +11,7 @@ From [Architecture](02-architecture.md#two-id-spaces-for-icons):
 (11 members) is one body of downloadable/cacheable artwork. They coincide
 except for Font Awesome (`fa` → `fa-solid`/`fa-regular`/`fa-brands`) and
 Tabler (`tabler` → `tabler-outline`/`tabler-filled`).
-[`src/icons/registry.ts`](../src/icons/registry.ts) holds both mappings as
+[`src/icons/registry.ts`](../../src/icons/registry.ts) holds both mappings as
 **total, frozen `Record`s** — declaring a member on one union without a line
 in the corresponding record is a compile error, not a silently-blank grid.
 
@@ -30,7 +30,7 @@ iconCacheKey(pack, name, variant): string             // "pack name variant" —
 
 ## The `IconPack` contract
 
-[`src/icons/types.ts`](../src/icons/types.ts) defines the interface every
+[`src/icons/types.ts`](../../src/icons/types.ts) defines the interface every
 library implements — **pure data and pure functions, no I/O**. Downloading is
 strictly `IconService`'s job, which is what keeps a pack trivially testable
 and unable to stall a render:
@@ -85,7 +85,7 @@ different drawings collide on one cache entry:
 
 ## `IconService` — the one entry point
 
-[`src/icons/IconService.ts`](../src/icons/IconService.ts) is what `main.ts`
+[`src/icons/IconService.ts`](../../src/icons/IconService.ts) is what `main.ts`
 and every other consumer talks to; it composes two very different fetch
 strategies behind one interface.
 
@@ -159,7 +159,7 @@ source pack to still be downloaded.
 
 ## `PackDataStore` — bundled-file download and verification
 
-[`src/icons/PackDataStore.ts`](../src/icons/PackDataStore.ts) handles the
+[`src/icons/PackDataStore.ts`](../../src/icons/PackDataStore.ts) handles the
 `bundledRemote` packs (Tabler, Font Awesome, Octicons, RPG Awesome).
 
 ```ts
@@ -200,7 +200,7 @@ putting in front of everyone downloading an icon set").
 
 ## `IconFetchManager` — Material Symbols, one icon at a time
 
-[`src/icons/IconFetchManager.ts`](../src/icons/IconFetchManager.ts) is the
+[`src/icons/IconFetchManager.ts`](../../src/icons/IconFetchManager.ts) is the
 `perIconRemote` counterpart, needed because Material's 3,870 icons × 4 styles
 × 7 weights is over 100,000 combinations — no bulk file could cover it.
 
@@ -241,7 +241,7 @@ font, start another request, or write through a stale loader after disable.
 
 ## `IconResolver` — the read-only, synchronous view every renderer uses
 
-[`src/icons/resolver.ts`](../src/icons/resolver.ts) is what stands between
+[`src/icons/resolver.ts`](../../src/icons/resolver.ts) is what stands between
 "an icon might need fetching" and "a render path that cannot wait":
 
 ```ts
@@ -273,7 +273,7 @@ behavior; sanitization does not rewrite the stored cache during a paint.
 
 ## `renderIcon.ts` — the only "icon → DOM" painter
 
-[`src/icons/renderIcon.ts`](../src/icons/renderIcon.ts) is explicitly the
+[`src/icons/renderIcon.ts`](../../src/icons/renderIcon.ts) is explicitly the
 **one** place that turns an icon into DOM; every render surface calls
 `renderIconInto()`. The surfaces differ in exactly four ways, expressed as
 options rather than duplicated logic:
@@ -311,7 +311,7 @@ gap collapse — see [Render roles § hideIcon](08-render-roles.md#hideicon-and-
 
 ## SVG sanitization — two sanitizers, two threat models
 
-[`src/icons/svg.ts`](../src/icons/svg.ts) makes the distinction explicit and
+[`src/icons/svg.ts`](../../src/icons/svg.ts) makes the distinction explicit and
 deliberate:
 
 | Function | Input | Model | Approach |
@@ -355,8 +355,8 @@ and fail the test; no package or browser download is part of the runner.
 
 ## "Your images" — the local, never-downloaded source
 
-[`src/icons/userImageImport.ts`](../src/icons/userImageImport.ts) +
-[`src/icons/packs/userImages.ts`](../src/icons/packs/userImages.ts).
+[`src/icons/userImageImport.ts`](../../src/icons/userImageImport.ts) +
+[`src/icons/packs/userImages.ts`](../../src/icons/packs/userImages.ts).
 
 - **One stored representation for everything uploaded.** An SVG stays SVG
   (sanitized, kept as vector — sharp at any size). A PNG/JPEG/WebP is
@@ -404,7 +404,7 @@ plugin instance.
 ## Search indexes are bundled; artwork is not
 
 Every pack's **search index** (names, keywords, categories) ships inside
-`main.js`, encoded via [`src/icons/data/codec.ts`](../src/icons/data/codec.ts)
+`main.js`, encoded via [`src/icons/data/codec.ts`](../../src/icons/data/codec.ts)
 — this is what makes searching every source work fully offline from install,
 before any artwork download. **Artwork itself is never bundled** (beyond
 Lucide, which Obsidian already ships). Regeneration is a deliberately

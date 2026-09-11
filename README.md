@@ -18,7 +18,7 @@ The same callout type can be written three ways:
 
 <img alt="Three ways to use a callout" src="https://github.com/user-attachments/assets/3cf88262-184d-42e6-b810-d43889629afb" />
 
-Unlock the full potential of Callout Studio! Explore the [User Guide](user-guide/README.md) to discover advanced features like custom color palettes, icon management, global styling, context menus, vault discovery, themes, and more.
+Unlock the full potential of Callout Studio! Explore the [User Guide](docs/user-guide/README.md) to discover advanced features like custom color palettes, icon management, global styling, context menus, vault discovery, themes, and more.
 
 ## 💖 Special Thanks
 
@@ -34,9 +34,9 @@ Thank you all for helping make Callout Studio better!
 
 ## Privacy, in short
 
-A device-local recovery copy protects plugin settings when a synced `data.json` is replaced while the plugin is closed. Concurrent edits and recognized conflict copies are merged automatically when valid; damaged or unsupported data is kept for recovery. Install the same updated build on every device. See [multi-device editing and recovery](user-guide/13-resetting-callouts-and-settings.md#editing-on-more-than-one-device).
+A device-local recovery copy protects plugin settings when a synced `data.json` is replaced while the plugin is closed. Concurrent edits and recognized conflict copies are merged automatically when valid; damaged or unsupported data is kept for recovery. Install the same updated build on every device. See [multi-device editing and recovery](docs/user-guide/13-resetting-callouts-and-settings.md#editing-on-more-than-one-device).
 
-Callout Studio never sends vault content anywhere, and collects no telemetry or analytics. The only things it ever downloads are icon artwork you actually pick and, when needed, the plugin's own UI translation — both explained in full, with exactly what's stored where, in [Privacy & permissions](user-guide/16-privacy-and-permissions.md).
+Callout Studio never sends vault content anywhere, and collects no telemetry or analytics. The only things it ever downloads are icon artwork you actually pick and, when needed, the plugin's own UI translation — both explained in full, with exactly what's stored where, in [Privacy & permissions](docs/user-guide/16-privacy-and-permissions.md).
 
 ## Install
 
@@ -62,7 +62,7 @@ npm run lint   # ESLint with the official obsidianmd plugin rules
 
 Source lives under `src/` and is bundled by esbuild into `main.js`. The release artifacts are `main.js`, `manifest.json`, and `styles.css`.
 
-Digging into how it's built, or preparing a pull request? See [`internals-docs/`](internals-docs/00-index.md) for the architecture, and [CONTRIBUTING.md](CONTRIBUTING.md) for the process.
+Digging into how it's built, or preparing a pull request? See [`docs/internals-docs/`](docs/internals-docs/00-index.md) for the architecture, and [CONTRIBUTING.md](CONTRIBUTING.md) for the process.
 
 ### Plugin API
 

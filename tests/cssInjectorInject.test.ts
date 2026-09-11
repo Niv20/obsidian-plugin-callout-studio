@@ -804,9 +804,9 @@ describe("nothing documents a scheduleInject the injector does not have", () => 
 		// "Documentation maintenance" section), so the mutate → CSS → repaint
 		// loop is documented in internals-docs, not there.
 		const docs = [
-			"internals-docs/03-plugin-lifecycle.md",
-			"internals-docs/06-css-generation.md",
-			"internals-docs/20-common-pitfalls.md",
+			"docs/internals-docs/03-plugin-lifecycle.md",
+			"docs/internals-docs/06-css-generation.md",
+			"docs/internals-docs/20-common-pitfalls.md",
 		].map(readRepoFile);
 		assert.ok(
 			docs.every((doc) => !NAMED_AS_API.test(doc)),

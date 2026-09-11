@@ -7,7 +7,7 @@ syntax outside the editor (Outline pane, link suggestions).
 
 ## `calloutWriter.ts` — the only place a definition becomes markdown
 
-[`src/editor/calloutWriter.ts`](../src/editor/calloutWriter.ts) is deliberately
+[`src/editor/calloutWriter.ts`](../../src/editor/calloutWriter.ts) is deliberately
 narrow: it turns a `CalloutDefinition` into token text for one role, and
 **nothing else writes tokens**. Both `AutoComplete` (which knows the id from
 what the user picked) and `CustomCommandManager` (which knows it from stored
@@ -51,7 +51,7 @@ still-default title while leaving a custom one alone.
 
 ## `CalloutBlockTools.ts` — wrap, unwrap, insert
 
-[`src/editor/CalloutBlockTools.ts`](../src/editor/CalloutBlockTools.ts) holds
+[`src/editor/CalloutBlockTools.ts`](../../src/editor/CalloutBlockTools.ts) holds
 the pure editor-manipulation functions behind both the five fixed commands and
 custom commands. All of it is careful about structure that has nothing to do
 with callouts: fenced code blocks, math blocks (`$$`), YAML frontmatter, and
@@ -120,7 +120,7 @@ from every line of its body, and replaces the whole block. Fails with a
 
 ## Autocomplete
 
-[`src/editor/AutoComplete.ts`](../src/editor/AutoComplete.ts) extends
+[`src/editor/AutoComplete.ts`](../../src/editor/AutoComplete.ts) extends
 Obsidian's `EditorSuggest`, triggered by typing `[!` in any of the three role
 positions.
 
@@ -182,7 +182,7 @@ directly-opened popover would do.
 
 ## The five fixed commands
 
-[`src/editor/commands.ts`](../src/editor/commands.ts) registers exactly five
+[`src/editor/commands.ts`](../../src/editor/commands.ts) registers exactly five
 command ids, and **deliberately does not register one command per callout
 type** — a design choice, not an oversight — which would flood the command
 palette with hundreds of entries.
@@ -222,7 +222,7 @@ specific Reading view message. With no captured note, normal resolution applies.
 
 ## `CustomCommandManager` — one idempotent sweep
 
-[`src/editor/CustomCommandManager.ts`](../src/editor/CustomCommandManager.ts)
+[`src/editor/CustomCommandManager.ts`](../../src/editor/CustomCommandManager.ts)
 is worth understanding in depth because its whole design follows from one
 constraint: `registry.onChange` carries **no payload**, and a callout id
 "rename" is really `remove()` followed by `add()` — so no per-event handler
@@ -286,7 +286,7 @@ deliberate claim on it, exactly like `customized: true`. See
 
 ## The right-click context menu
 
-[`src/editor/contextmenu/`](../src/editor/contextmenu/) is split into three
+[`src/editor/contextmenu/`](../../src/editor/contextmenu/) is split into three
 concerns: **injection** (`index.ts`), **target resolution** (`resolve.ts`),
 and **item construction** (`items.ts` + `sectionOps.ts`).
 
@@ -354,7 +354,7 @@ that only make sense for some roles.
   fold mark in place.
 - **Heading-role section operations** (`cutSection`/`copySection`/`deleteSection`)
   compute the section range via `getHeadingSectionRange` in
-  [`sectionOps.ts`](../src/editor/contextmenu/sectionOps.ts): the heading line
+  [`sectionOps.ts`](../../src/editor/contextmenu/sectionOps.ts): the heading line
   through everything up to (not including) the next heading of the same-or-higher
   level. `sectionBoundary.ts` uses the current document's native fold service
   when available; the source-only fallback excludes frontmatter, length-aware
@@ -377,7 +377,7 @@ stopped by `EditorState.readOnly` (see
 could right-click the splash screen and turn its sample into a bulleted list, an
 H1, a table or a code block.
 
-[`readOnlyPreview.ts`](../src/editor/contextmenu/readOnlyPreview.ts) handles the
+[`readOnlyPreview.ts`](../../src/editor/contextmenu/readOnlyPreview.ts) handles the
 menu half. `maybeAddItems` asks `isReadOnlyPreviewTarget(trigger.targetEl)`
 first, and when it answers yes:
 
@@ -426,7 +426,7 @@ that contains them.
 
 ### `OutlineDecorator`
 
-[`src/outline/OutlineDecorator.ts`](../src/outline/OutlineDecorator.ts)
+[`src/outline/OutlineDecorator.ts`](../../src/outline/OutlineDecorator.ts)
 rewrites Obsidian's Outline pane, whose `HeadingCache`-based rendering shows
 `## [!tip] My Title` as the raw `!tip My Title` (brackets stripped, nothing
 else). Because the Outline view has no typed public API, this attaches **one

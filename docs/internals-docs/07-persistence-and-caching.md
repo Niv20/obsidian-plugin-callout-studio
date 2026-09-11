@@ -262,11 +262,11 @@ that object, so managers must not retain an earlier settings reference.
 mergeSavedSettings(savedSettings: LegacySavedSettings): PluginSettings
 ```
 
-[`src/utils/settingsMerge.ts`](../src/utils/settingsMerge.ts) rebuilds
+[`src/utils/settingsMerge.ts`](../../src/utils/settingsMerge.ts) rebuilds
 `PluginSettings` from possibly-partial, possibly-ancient saved data by naming
 **every field explicitly** against `DEFAULT_SETTINGS`, all the way down into
 nested sections (`globalStyle` has its own module,
-[`globalStyleMerge.ts`](../src/utils/globalStyleMerge.ts), because it's deep
+[`globalStyleMerge.ts`](../../src/utils/globalStyleMerge.ts), because it's deep
 enough to warrant one).
 
 > [!WARNING]
@@ -284,7 +284,7 @@ enough to warrant one).
 > being asked to read. It is wrong for `data.json`, which two versions of this
 > plugin share — see [Multi-device sync](#multi-device-sync) property 6, where
 > the top-level settings keys this build does not recognise are set aside by
-> [`manager/foreignFields.ts`](../src/manager/foreignFields.ts) and handed back
+> [`manager/foreignFields.ts`](../../src/manager/foreignFields.ts) and handed back
 > on save. That quarantine sits *beside* this function, never inside it, so the
 > import path keeps the promise above unchanged.
 
@@ -340,7 +340,7 @@ retirement state. A failed write does not advance the write memo, allowing retry
 
 ## The startup CSS snapshot
 
-[`src/manager/StartupStyleCache.ts`](../src/manager/StartupStyleCache.ts) is
+[`src/manager/StartupStyleCache.ts`](../../src/manager/StartupStyleCache.ts) is
 **one layer, `localStorage`, per device**, deliberately with no settings
 toggle (the README states this explicitly under "What is stored locally").
 
@@ -395,7 +395,7 @@ outlived the plugin on uninstall, leaving a dangling name in
 
 ### Cleaning up the old snippet layer
 
-[`src/manager/legacyStartupSnippet.ts`](../src/manager/legacyStartupSnippet.ts)
+[`src/manager/legacyStartupSnippet.ts`](../../src/manager/legacyStartupSnippet.ts)
 deletes that leftover file (and disables its name in `appearance.json` via the
 undocumented `app.customCss` API) on **every launch**, deferred to
 `workspace.onLayoutReady` so its one `exists()` stat never sits on the startup

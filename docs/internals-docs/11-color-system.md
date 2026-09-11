@@ -1,9 +1,9 @@
 # Colour system
 
-Covers [`src/utils/colorUtils.ts`](../src/utils/colorUtils.ts) (the maths),
-[`src/utils/colorPalettes.ts`](../src/utils/colorPalettes.ts) (presets, custom
-palettes, baking), [`src/utils/globalStyleMerge.ts`](../src/utils/globalStyleMerge.ts),
-and [`src/utils/iconAdjust.ts`](../src/utils/iconAdjust.ts).
+Covers [`src/utils/colorUtils.ts`](../../src/utils/colorUtils.ts) (the maths),
+[`src/utils/colorPalettes.ts`](../../src/utils/colorPalettes.ts) (presets, custom
+palettes, baking), [`src/utils/globalStyleMerge.ts`](../../src/utils/globalStyleMerge.ts),
+and [`src/utils/iconAdjust.ts`](../../src/utils/iconAdjust.ts).
 
 ## The nesting invariant, in full
 
@@ -63,7 +63,7 @@ tilt it.
 
 ### Which alpha, and why it isn't simply the smallest
 
-[`src/utils/bgTintAlpha.ts`](../src/utils/bgTintAlpha.ts) picks the alpha a
+[`src/utils/bgTintAlpha.ts`](../../src/utils/bgTintAlpha.ts) picks the alpha a
 callout's background is actually painted at. It is a separate file, and a
 separate decision, because the minimum above is a *floor*, not an answer:
 
@@ -318,9 +318,9 @@ so a side accent disappears entirely. Handed a triplet, a theme written after
 1.13 loses every `color-mix()` the same way. **No single value serves both.**
 
 So the spelling is chosen per theme, from the theme's own text.
-[`manager/theme/accentDialectScan.ts`](../src/manager/theme/accentDialectScan.ts)
+[`manager/theme/accentDialectScan.ts`](../../src/manager/theme/accentDialectScan.ts)
 reads one sheet;
-[`accentDialect.ts`](../src/manager/theme/accentDialect.ts) folds the active
+[`accentDialect.ts`](../../src/manager/theme/accentDialect.ts) folds the active
 theme and every enabled snippet into **two** answers —
 collapsing them into one is the mistake that module is shaped around:
 

@@ -17,7 +17,7 @@ number.
 
 ## There is no dev/production split
 
-`esbuild.config.mjs` minifies the production build (`minify: prod`) but does
+`scripts/esbuild.config.mjs` minifies the production build (`minify: prod`) but does
 **not** set `drop: ["console"]`. Minification only compresses syntax — every
 `console.*` call in the source ships, unchanged in behavior, inside the
 `main.js` every installed copy of the plugin runs. There is no build-time
@@ -82,10 +82,10 @@ the UI. None of these are user-actionable, so none raise a `Notice`.
 
 | File | Function | Fires when |
 | --- | --- | --- |
-| [CalloutRegistry.ts](../src/manager/CalloutRegistry.ts) | `load()` → `stripMetadataFromIds()` | it actually removed/renamed a legacy piped id — logs `{removed, renamed}` |
-| [CalloutRegistry.ts](../src/manager/CalloutRegistry.ts) | `load()` → `reconcileIdCollisions()` | it actually merged ≥1 colliding row — logs the merged ids |
-| [CustomCommandManager.ts](../src/editor/CustomCommandManager.ts) | `syncAll()` | it drops ≥1 structurally malformed stored command — logs the dropped count |
-| [CustomCommandManager.ts](../src/editor/CustomCommandManager.ts) | `syncAll()` | its **first** sweep only drops a command whose callout no longer exists — logs the dropped count |
+| [CalloutRegistry.ts](../../src/manager/CalloutRegistry.ts) | `load()` → `stripMetadataFromIds()` | it actually removed/renamed a legacy piped id — logs `{removed, renamed}` |
+| [CalloutRegistry.ts](../../src/manager/CalloutRegistry.ts) | `load()` → `reconcileIdCollisions()` | it actually merged ≥1 colliding row — logs the merged ids |
+| [CustomCommandManager.ts](../../src/editor/CustomCommandManager.ts) | `syncAll()` | it drops ≥1 structurally malformed stored command — logs the dropped count |
+| [CustomCommandManager.ts](../../src/editor/CustomCommandManager.ts) | `syncAll()` | its **first** sweep only drops a command whose callout no longer exists — logs the dropped count |
 
 `CustomCommandManager.ts`'s pair implements a split written into the code's
 own comments: nothing in the UI exists for the user to fix a malformed
@@ -113,23 +113,23 @@ sits behind an existing `Notice`, a retry UI, or an automatic self-heal — see
 
 | File | Function | Fires when |
 | --- | --- | --- |
-| [IconFetchManager.ts](../src/icons/IconFetchManager.ts) | `notify()` | a subscriber to the change event throws (pub/sub error boundary) |
-| [IconFetchManager.ts](../src/icons/IconFetchManager.ts) | `runFetch()` | all retries of a Material Symbol SVG download are exhausted — **paired with a `Notice`** (`notice.iconDownloadFailed`), raised immediately before this warn |
-| [PackDataStore.ts](../src/icons/PackDataStore.ts) | `notify()` | a pack-change listener throws (pub/sub error boundary) |
-| [PackDataStore.ts](../src/icons/PackDataStore.ts) | `loadFromDisk()` | reading an already-downloaded pack file off disk throws |
-| [PackDataStore.ts](../src/icons/PackDataStore.ts) | `persist()` | writing a freshly-verified pack to disk fails — **paired with a one-time `Notice`** (`iconPack.diskWriteFailed`, gated by `diskWriteBroken`), the same pattern as `LocaleStore.persist()` below |
-| [PackDataStore.ts](../src/icons/PackDataStore.ts) | `runDownload()` | every mirror URL for a pack download has failed — no direct Notice, but sets pack state to `"failed"`, which `PackPanel` reads via `state(id)` to swap its button to a persistent **Retry** label |
-| [PackDataStore.ts](../src/icons/PackDataStore.ts) | `verify()` | a downloaded pack's byte length doesn't match the manifest |
-| [PackDataStore.ts](../src/icons/PackDataStore.ts) | `verify()` | a downloaded pack's SHA-256 doesn't match after the length already did (tamper/corruption signal) |
-| [PackDataStore.ts](../src/icons/PackDataStore.ts) | `accept()` | `JSON.parse` fails on bytes that already passed verification |
-| [PackDataStore.ts](../src/icons/PackDataStore.ts) | `accept()` | a verified pack fails schema validation |
-| [materialFontStore.ts](../src/icons/materialFontStore.ts) | `read()` | a cached `.woff2` fails its magic-number check |
-| [materialFontStore.ts](../src/icons/materialFontStore.ts) | `read()` | reading a cached webfont off disk throws (outer catch) |
-| [materialFontStore.ts](../src/icons/materialFontStore.ts) | `write()` | best-effort disk-caching a webfont fails after the network render already succeeded |
-| [IconService.ts](../src/icons/IconService.ts) | `notify()` | an icon-change listener throws (pub/sub error boundary) |
-| [IconService.ts](../src/icons/IconService.ts) | `initialize()` | a pack found on disk at startup fails its own corruption check, right before it's automatically re-downloaded |
-| [packs/materialFont.ts](../src/icons/packs/materialFont.ts) | `addFromCache()` | `FontFace` construction fails on cached bytes that already passed the magic-number check |
-| [packs/materialFont.ts](../src/icons/packs/materialFont.ts) | `cacheToDisk()` | fire-and-forget disk-caching a webfont fails after the grid already rendered from the network |
+| [IconFetchManager.ts](../../src/icons/IconFetchManager.ts) | `notify()` | a subscriber to the change event throws (pub/sub error boundary) |
+| [IconFetchManager.ts](../../src/icons/IconFetchManager.ts) | `runFetch()` | all retries of a Material Symbol SVG download are exhausted — **paired with a `Notice`** (`notice.iconDownloadFailed`), raised immediately before this warn |
+| [PackDataStore.ts](../../src/icons/PackDataStore.ts) | `notify()` | a pack-change listener throws (pub/sub error boundary) |
+| [PackDataStore.ts](../../src/icons/PackDataStore.ts) | `loadFromDisk()` | reading an already-downloaded pack file off disk throws |
+| [PackDataStore.ts](../../src/icons/PackDataStore.ts) | `persist()` | writing a freshly-verified pack to disk fails — **paired with a one-time `Notice`** (`iconPack.diskWriteFailed`, gated by `diskWriteBroken`), the same pattern as `LocaleStore.persist()` below |
+| [PackDataStore.ts](../../src/icons/PackDataStore.ts) | `runDownload()` | every mirror URL for a pack download has failed — no direct Notice, but sets pack state to `"failed"`, which `PackPanel` reads via `state(id)` to swap its button to a persistent **Retry** label |
+| [PackDataStore.ts](../../src/icons/PackDataStore.ts) | `verify()` | a downloaded pack's byte length doesn't match the manifest |
+| [PackDataStore.ts](../../src/icons/PackDataStore.ts) | `verify()` | a downloaded pack's SHA-256 doesn't match after the length already did (tamper/corruption signal) |
+| [PackDataStore.ts](../../src/icons/PackDataStore.ts) | `accept()` | `JSON.parse` fails on bytes that already passed verification |
+| [PackDataStore.ts](../../src/icons/PackDataStore.ts) | `accept()` | a verified pack fails schema validation |
+| [materialFontStore.ts](../../src/icons/materialFontStore.ts) | `read()` | a cached `.woff2` fails its magic-number check |
+| [materialFontStore.ts](../../src/icons/materialFontStore.ts) | `read()` | reading a cached webfont off disk throws (outer catch) |
+| [materialFontStore.ts](../../src/icons/materialFontStore.ts) | `write()` | best-effort disk-caching a webfont fails after the network render already succeeded |
+| [IconService.ts](../../src/icons/IconService.ts) | `notify()` | an icon-change listener throws (pub/sub error boundary) |
+| [IconService.ts](../../src/icons/IconService.ts) | `initialize()` | a pack found on disk at startup fails its own corruption check, right before it's automatically re-downloaded |
+| [packs/materialFont.ts](../../src/icons/packs/materialFont.ts) | `addFromCache()` | `FontFace` construction fails on cached bytes that already passed the magic-number check |
+| [packs/materialFont.ts](../../src/icons/packs/materialFont.ts) | `cacheToDisk()` | fire-and-forget disk-caching a webfont fails after the grid already rendered from the network |
 
 ### Locale downloads — `console.warn`
 
@@ -142,26 +142,26 @@ and
 
 | File | Function | Fires when |
 | --- | --- | --- |
-| [LocaleStore.ts](../src/i18n/LocaleStore.ts) | `notify()` | a change listener throws (pub/sub error boundary — currently dead code, nothing subscribes in production) |
-| [LocaleStore.ts](../src/i18n/LocaleStore.ts) | `loadFromDisk()` | a cached locale file on disk exceeds `MAX_LOCALE_BYTES` |
-| [LocaleStore.ts](../src/i18n/LocaleStore.ts) | `loadFromDisk()` | reading a cached locale file off disk throws |
-| [LocaleStore.ts](../src/i18n/LocaleStore.ts) | `persist()` | writing a verified download to disk fails — **paired with a one-time `Notice`** (`locale.diskWriteFailed`), the one call site that was already the surfaced case before this chapter existed |
-| [LocaleStore.ts](../src/i18n/LocaleStore.ts) | `runDownload()` | a downloaded locale file fails its checksum, before falling through to the next mirror URL |
-| [LocaleStore.ts](../src/i18n/LocaleStore.ts) | `runDownload()` | every mirror URL for a locale download has failed |
-| [LocaleStore.ts](../src/i18n/LocaleStore.ts) | `accept()` | `JSON.parse` fails on a locale file |
-| [LocaleStore.ts](../src/i18n/LocaleStore.ts) | `accept()` | a locale file fails shape validation |
+| [LocaleStore.ts](../../src/i18n/LocaleStore.ts) | `notify()` | a change listener throws (pub/sub error boundary — currently dead code, nothing subscribes in production) |
+| [LocaleStore.ts](../../src/i18n/LocaleStore.ts) | `loadFromDisk()` | a cached locale file on disk exceeds `MAX_LOCALE_BYTES` |
+| [LocaleStore.ts](../../src/i18n/LocaleStore.ts) | `loadFromDisk()` | reading a cached locale file off disk throws |
+| [LocaleStore.ts](../../src/i18n/LocaleStore.ts) | `persist()` | writing a verified download to disk fails — **paired with a one-time `Notice`** (`locale.diskWriteFailed`), the one call site that was already the surfaced case before this chapter existed |
+| [LocaleStore.ts](../../src/i18n/LocaleStore.ts) | `runDownload()` | a downloaded locale file fails its checksum, before falling through to the next mirror URL |
+| [LocaleStore.ts](../../src/i18n/LocaleStore.ts) | `runDownload()` | every mirror URL for a locale download has failed |
+| [LocaleStore.ts](../../src/i18n/LocaleStore.ts) | `accept()` | `JSON.parse` fails on a locale file |
+| [LocaleStore.ts](../../src/i18n/LocaleStore.ts) | `accept()` | a locale file fails shape validation |
 
 ### Settings, preview and export — `console.warn`
 
 | File | Function | Fires when |
 | --- | --- | --- |
-| [LiveCalloutPreview.ts](../src/settings/LiveCalloutPreview.ts) | `build()` | constructing the undocumented `EmbeddableMarkdownEditor` internal API throws; falls back to a static render |
-| [IconPickerModal.ts](../src/settings/iconpicker/IconPickerModal.ts) | `loadSourceCounts()` | one icon source's `loadIndex()` fails while counting icons per source |
-| [CalloutEditorSave.ts](../src/settings/editor/CalloutEditorSave.ts) | `performCalloutEditorSave()` | an on-demand icon prefetch fails after the callout definition already saved |
-| [cssSnippetExport.ts](../src/manager/cssSnippetExport.ts) | `readExisting()` | reading an existing CSS snippet file (for the overwrite-confirmation check) throws |
-| [cssSnippetExport.ts](../src/manager/cssSnippetExport.ts) | `runExport()` | building the exported snippet throws |
-| [cssSnippetExport.ts](../src/manager/cssSnippetExport.ts) | `runExport()` | writing the exported snippet to disk throws |
-| [legacyStartupSnippet.ts](../src/manager/legacyStartupSnippet.ts) | `removeLegacyStartupSnippet()` | removing the legacy startup CSS snippet throws on launch |
+| [LiveCalloutPreview.ts](../../src/settings/LiveCalloutPreview.ts) | `build()` | constructing the undocumented `EmbeddableMarkdownEditor` internal API throws; falls back to a static render |
+| [IconPickerModal.ts](../../src/settings/iconpicker/IconPickerModal.ts) | `loadSourceCounts()` | one icon source's `loadIndex()` fails while counting icons per source |
+| [CalloutEditorSave.ts](../../src/settings/editor/CalloutEditorSave.ts) | `performCalloutEditorSave()` | an on-demand icon prefetch fails after the callout definition already saved |
+| [cssSnippetExport.ts](../../src/manager/cssSnippetExport.ts) | `readExisting()` | reading an existing CSS snippet file (for the overwrite-confirmation check) throws |
+| [cssSnippetExport.ts](../../src/manager/cssSnippetExport.ts) | `runExport()` | building the exported snippet throws |
+| [cssSnippetExport.ts](../../src/manager/cssSnippetExport.ts) | `runExport()` | writing the exported snippet to disk throws |
+| [legacyStartupSnippet.ts](../../src/manager/legacyStartupSnippet.ts) | `removeLegacyStartupSnippet()` | removing the legacy startup CSS snippet throws on launch |
 
 `LiveCalloutPreview.ts`'s `build()` guards an undocumented internal Obsidian
 API with a working fallback — see

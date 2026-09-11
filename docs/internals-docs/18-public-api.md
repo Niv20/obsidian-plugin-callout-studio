@@ -1,10 +1,10 @@
 # Public API
 
-[`src/api/PluginAPI.ts`](../src/api/PluginAPI.ts) + `src/api/types.ts`.
+[`src/api/PluginAPI.ts`](../../src/api/PluginAPI.ts) + `src/api/types.ts`.
 Exposed at `app.plugins.plugins["callout-studio"].api`. This is the
 plugin's one committed, versioned integration surface for *other* Obsidian
 plugins — everything else in this codebase is free to change at will.
-[`API.md`](../API.md) at the repo root is the consumer-facing contract
+[`API.md`](../../API.md) at the repo root is the consumer-facing contract
 document; this page explains how the implementation actually enforces what
 that document promises.
 

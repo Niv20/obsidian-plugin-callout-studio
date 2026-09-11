@@ -6,7 +6,7 @@
 .idea
 
 # my own stuff...
-video-scripts
+/docs/video-scripts/
 
 # npm
 node_modules

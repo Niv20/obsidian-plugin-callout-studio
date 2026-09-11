@@ -1,8 +1,8 @@
 # Data model
 
-Every type referenced here lives in [`src/types.ts`](../src/types.ts) unless
+Every type referenced here lives in [`src/types.ts`](../../src/types.ts) unless
 noted. The 13 built-in seed values live in
-[`src/constants.ts`](../src/constants.ts).
+[`src/constants.ts`](../../src/constants.ts).
 
 ## `CalloutDefinition`
 
@@ -184,7 +184,7 @@ role: the other two formats have no fold syntax, so a mark written for them is
 a stray character in the user's title.
 
 Two rules hang off it, both in
-[`utils/customCommands.ts`](../src/utils/customCommands.ts):
+[`utils/customCommands.ts`](../../src/utils/customCommands.ts):
 
 - **Absent means `"none"`,** resolved by `resolveFold`. That is the upgrade
   promise for every command saved before the field existed — same header, same
@@ -251,7 +251,7 @@ number it likes while still needing the same repairs. See
 
 ## Callout IDs and the normalizers
 
-Five helpers in [`src/utils/calloutId.ts`](../src/utils/calloutId.ts), each
+Five helpers in [`src/utils/calloutId.ts`](../../src/utils/calloutId.ts), each
 with a distinct job. Confusing them is the single most common source of subtle
 bugs in this codebase — every one of them exists because a plausible-looking
 shortcut breaks a specific real case.
@@ -292,7 +292,7 @@ rule, splits its usage count, and shows up twice in every list.
 spelling themselves, so no ingestion path can create the pair: discovery, the
 three importers, the theme sweep and the editor all go through one of them.
 A pair already in `data.json` is folded on load by `reconcileIdCollisions`
-([`manager/idCollisionMigration.ts`](../src/manager/idCollisionMigration.ts)),
+([`manager/idCollisionMigration.ts`](../../src/manager/idCollisionMigration.ts)),
 which merges rather than halves — see
 [Callout registry § reconcileIdCollisions](05-callout-registry.md#reconcileidcollisions--two-rows-that-are-one-callout).
 

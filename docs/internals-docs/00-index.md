@@ -24,7 +24,7 @@ that half.
 It complements, rather than replaces, two other documents already in the
 repo:
 
-- **[`API.md`](../API.md)** — the public plugin API contract for other
+- **[`API.md`](../../API.md)** — the public plugin API contract for other
   Obsidian plugins. [18-public-api.md](18-public-api.md) explains how the
   implementation enforces what that document promises.
 - **`CLAUDE.md`** (repo root) — a short entry point for AI coding assistants:
@@ -90,7 +90,7 @@ codebase has already been bitten by once.
 | [20-common-pitfalls.md](20-common-pitfalls.md) | Concentrated warnings: state sync, id normalization, helpers that must always be used, mobile quirks, backward compatibility. |
 | [22-logging-and-diagnostics.md](22-logging-and-diagnostics.md) | Every `console.debug`/`warn`/`error` call site, the policy behind which one and when to use a `Notice` instead, and why there's no centralized logger. |
 
-Opening a PR? [`CONTRIBUTING.md`](../CONTRIBUTING.md) (repo root) has the
+Opening a PR? [`CONTRIBUTING.md`](../../CONTRIBUTING.md) (repo root) has the
 process — fork, branch, lint, test, commit style. This guide is what to read
 *before* that, so the change itself lands right the first time.
 

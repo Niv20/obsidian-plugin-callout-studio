@@ -34,7 +34,7 @@ import { t } from "../i18n";
  *   up half-renamed with nothing said.
  *   Failures are collected per file and reported once at the end by the scan
  *   or rewrite wrapper. A `console.warn` carries each file's detail. See
- *   `internals-docs/22-logging-and-diagnostics.md` —
+ *   `docs/internals-docs/22-logging-and-diagnostics.md` —
  *   a swallowed failure with no user-visible trace is what that doc rules out.
  *   Editor saves additionally request `requireComplete`: after visiting every
  *   file, an incomplete pass rejects so its saved retry plan is not discarded.

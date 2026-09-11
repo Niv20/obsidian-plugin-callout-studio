@@ -156,7 +156,7 @@ npm version <patch|minor|major|X.Y.Z> \
 ```
 
 That single command does all of it: the `version` lifecycle script runs
-[version-bump.mjs](../../../version-bump.mjs), which writes `manifest.json` and adds
+[version-bump.mjs](../../../scripts/version-bump.mjs), which writes `manifest.json` and adds
 the `versions.json` entry; npm updates `package.json` and `package-lock.json`,
 commits all four, and creates the tag **on that same commit**. `.npmrc` sets
 `tag-version-prefix=""`, which is what keeps the tag bare.

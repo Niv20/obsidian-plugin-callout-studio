@@ -1,6 +1,6 @@
 # CSS generation
 
-[`src/manager/CSSInjector.ts`](../src/manager/CSSInjector.ts) (~1,950 lines,
+[`src/manager/CSSInjector.ts`](../../src/manager/CSSInjector.ts) (~1,950 lines,
 one of the frozen oversized-file exceptions) reads every `CalloutDefinition`
 from the registry and writes one CSS stylesheet that restyles Obsidian's block
 callouts and paints the plugin's own heading/inline DOM. It also paints icon
@@ -148,7 +148,7 @@ in one of three shapes depending on the dialect:
 Writing a triplet into `--callout-color` on an Obsidian that wants a colour
 costs something precise and enumerable: core's own `app.css` reads that variable
 in exactly **eight** declarations, and all eight go invalid at computed-value
-time. [`manager/css/coreAccentShim.ts`](../src/manager/css/coreAccentShim.ts)
+time. [`manager/css/coreAccentShim.ts`](../../src/manager/css/coreAccentShim.ts)
 restates seven of them, re-spelled so they parse. The eighth,
 `.callout-icon .svg-icon { color }`, is deliberately absent: it is the only
 `color` reaching that element, so when it unsets it *inherits* from
@@ -216,7 +216,7 @@ for the actual alpha math (`translucentTintFor` / `minTintAlpha` /
 `resolveTintAlpha`) and why this is not optional (the nesting invariant).
 
 `bgAlphaFor()` is a one-line delegation to `resolveBgAlpha()`
-([`utils/bgTintAlpha.ts`](../src/utils/bgTintAlpha.ts)), which owns the
+([`utils/bgTintAlpha.ts`](../../src/utils/bgTintAlpha.ts)), which owns the
 *choice* of alpha rather than the maths of the tint: every alpha at or above
 the minimum renders this callout identically, so what it decides is how
 saturated a colour anything nested inside converges toward. It caps that at
@@ -411,9 +411,9 @@ there. And the plugin's `.callout-content { color }` reaches the frame through
 cyan `--text-normal`, the studio callout's frame measured `rgb(224,224,224)` —
 `#e0e0e0`, which is `DEFAULT_TEXT_COLOR_DARK`.
 
-So [`manager/theme/calloutSurface.ts`](../src/manager/theme/calloutSurface.ts)
+So [`manager/theme/calloutSurface.ts`](../../src/manager/theme/calloutSurface.ts)
 resolves two facts and
-[`manager/css/themeSurfaceCSS.ts`](../src/manager/css/themeSurfaceCSS.ts) emits
+[`manager/css/themeSurfaceCSS.ts`](../../src/manager/css/themeSurfaceCSS.ts) emits
 what they cost. Four properties of that block are the whole design:
 
 - **The guard travels with the fact, and is re-stated in the selector.** Twelve
@@ -520,7 +520,7 @@ owned-set at startup is the safe direction rather than a gap, is
 
 `source` moves in exactly one place: a one-shot re-home of pre-existing
 `source: "theme"` rows in
-[`manager/styleModeMigration.ts`](../src/manager/styleModeMigration.ts), gated on
+[`manager/styleModeMigration.ts`](../../src/manager/styleModeMigration.ts), gated on
 `PluginData.version < 4`. That value was inert in every released build, and
 without the re-home the sweep would treat such a row as its own and delete it.
 The version gate is the marker, because a re-homed row and a row that was always
@@ -699,8 +699,8 @@ when the scan re-runs is
 
 ### The specificity arithmetic
 
-[`utils/cssSpecificity.ts`](../src/utils/cssSpecificity.ts) and
-[`utils/selectorText.ts`](../src/utils/selectorText.ts) own it. The regexes they
+[`utils/cssSpecificity.ts`](../../src/utils/cssSpecificity.ts) and
+[`utils/selectorText.ts`](../../src/utils/selectorText.ts) own it. The regexes they
 replaced mis-ranked five of the 53 themes surveyed, and over-counting is the
 dangerous direction: it makes the plugin emit heavier selectors than it needs.
 
@@ -744,7 +744,7 @@ needs no special case of its own.
 
 ## `calloutSel` vs. `tokenAttrSel` — the selector escaping rule
 
-[`src/utils/calloutSelector.ts`](../src/utils/calloutSelector.ts) is the
+[`src/utils/calloutSelector.ts`](../../src/utils/calloutSelector.ts) is the
 **only** place selectors are built, specifically because the escaping rule has
 to hold for every builder or it's not actually a rule:
 

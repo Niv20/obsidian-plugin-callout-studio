@@ -37,7 +37,7 @@ halves of one section shaped differently").
 
 ## Import — the JSON backup
 
-[`src/utils/importValidator.ts`](../src/utils/importValidator.ts) (~1,250
+[`src/utils/importValidator.ts`](../../src/utils/importValidator.ts) (~1,250
 lines) is the gate every import file passes through before a single
 `registry.add()`/`update()` call happens. `validateImportPayload(raw,
 registry)` accepts **both** the legacy flat-array shape and the v2 envelope,
@@ -134,7 +134,7 @@ registry.settings.customCommands = mergeById(registry.settings.customCommands, c
 > silently **wipe** the user's existing palettes/pictures/commands the
 > moment they imported a file that predates one of them (an old export
 > naming zero custom commands would delete every command built since). See
-> [`mergeById`](../src/utils/mergeById.ts): a repeated id overwrites in
+> [`mergeById`](../../src/utils/mergeById.ts): a repeated id overwrites in
 > place (so re-importing the same backup rewrites, not duplicates, without
 > reshuffling the list), a new id is appended, and an empty incoming list
 > changes nothing at all.
@@ -156,7 +156,7 @@ every imported icon whose callout doesn't hide it — see
 
 ## Import from Callout Manager
 
-[`src/utils/calloutManagerImport.ts`](../src/utils/calloutManagerImport.ts)
+[`src/utils/calloutManagerImport.ts`](../../src/utils/calloutManagerImport.ts)
 + `calloutManagerFormat.ts`. **Two entry routes, one shape, one planner** —
 whichever route data arrives by, it becomes a `CalloutManagerEntry[]` and
 goes through the same `planCalloutManagerImport`:
@@ -205,7 +205,7 @@ report modal.
 
 ## Import from Admonition
 
-[`src/utils/admonitionImport.ts`](../src/utils/admonitionImport.ts) +
+[`src/utils/admonitionImport.ts`](../../src/utils/admonitionImport.ts) +
 `admonitionFormat.ts`, structured identically to the Callout Manager
 importer for the same reason: **planning is read-only against the registry;
 `CalloutRegistry.applyAdmonitionImport` is the only mutator**, so a report

@@ -118,10 +118,10 @@ export default tseslint.config(
 		"scripts",
 		// Bundled test output (npm test) — generated, and a copy of tests/.
 		".test-out",
-		"esbuild.config.mjs",
+		"scripts/esbuild.config.mjs",
 		"eslint.config.js",
 		"eslint.config.mts",
-		"version-bump.mjs",
+		"scripts/version-bump.mjs",
 		"versions.json",
 		"main.js",
 	]),

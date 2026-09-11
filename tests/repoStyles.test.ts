@@ -427,7 +427,7 @@ describe("class names in styles.css and src/ agree", () => {
 /* -------------------------------------------------------------------------- */
 
 describe("modal surfaces use the --cs-surface pair", () => {
-	// internals-docs/15-settings-ui-and-modals.md's rule, and the reason it
+	// docs/internals-docs/15-settings-ui-and-modals.md's rule, and the reason it
 	// exists is not visible on a desktop:
 	// mobile dark repoints --modal-background onto --background-secondary, so a
 	// band painted --background-primary comes out as a pure-black stripe and a

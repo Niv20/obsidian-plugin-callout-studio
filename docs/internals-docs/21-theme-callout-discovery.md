@@ -35,16 +35,16 @@ happen in this order.
 
 | # | Stage | Module | Output |
 | --- | --- | --- | --- |
-| 1 | Find the active theme and its CSS text | [`customCssApi.ts`](../src/manager/theme/customCssApi.ts) | theme name, stylesheet text, snippet texts, a cheap signature |
-| 2 | Scan that text for callout claims | [`cssBlocks.ts`](../src/manager/theme/cssBlocks.ts) → [`themeCalloutScan.ts`](../src/manager/theme/themeCalloutScan.ts), cached by [`ThemeCalloutStore.ts`](../src/manager/theme/ThemeCalloutStore.ts) | `Map<attrId, ThemeClaim>` + family patterns |
-| 3 | Publish ownership | [`ThemeFacts.ts`](../src/manager/theme/ThemeFacts.ts), via `CalloutRegistry.setThemeOwnedIds` | `registry.themeOwns(def)` |
-| 4 | List theme ids locally; persist only explicit scans/imports | [`themeOverlayRows.ts`](../src/manager/theme/themeOverlayRows.ts), [`ManualCalloutDiscovery.ts`](../src/manager/ManualCalloutDiscovery.ts) | Ephemeral theme rows or durable definitions |
-| 5 | Measure what the theme actually draws | [`ThemeAppearanceProbe.ts`](../src/manager/theme/ThemeAppearanceProbe.ts) + [`readCalloutStyle.ts`](../src/manager/theme/readCalloutStyle.ts) + [`themeAppearance.ts`](../src/manager/theme/themeAppearance.ts) / [`themeIcon.ts`](../src/manager/theme/themeIcon.ts) | `ThemeAppearance` per id |
-| 6 | Reproduce it wherever the plugin lists callouts | [`renderThemeIcon.ts`](../src/manager/theme/renderThemeIcon.ts), [`calloutListIcon.ts`](../src/manager/theme/calloutListIcon.ts) | icons and swatches on rows, menus, pickers |
-| — | Decide how the theme **spells** a callout accent | [`accentDialectScan.ts`](../src/manager/theme/accentDialectScan.ts) + [`accentDialect.ts`](../src/manager/theme/accentDialect.ts) + [`accentValueFormat.ts`](../src/manager/theme/accentValueFormat.ts), cached alongside stage 2 | `AccentDialect` — see [The accent dialect](#the-accent-dialect) |
+| 1 | Find the active theme and its CSS text | [`customCssApi.ts`](../../src/manager/theme/customCssApi.ts) | theme name, stylesheet text, snippet texts, a cheap signature |
+| 2 | Scan that text for callout claims | [`cssBlocks.ts`](../../src/manager/theme/cssBlocks.ts) → [`themeCalloutScan.ts`](../../src/manager/theme/themeCalloutScan.ts), cached by [`ThemeCalloutStore.ts`](../../src/manager/theme/ThemeCalloutStore.ts) | `Map<attrId, ThemeClaim>` + family patterns |
+| 3 | Publish ownership | [`ThemeFacts.ts`](../../src/manager/theme/ThemeFacts.ts), via `CalloutRegistry.setThemeOwnedIds` | `registry.themeOwns(def)` |
+| 4 | List theme ids locally; persist only explicit scans/imports | [`themeOverlayRows.ts`](../../src/manager/theme/themeOverlayRows.ts), [`ManualCalloutDiscovery.ts`](../../src/manager/ManualCalloutDiscovery.ts) | Ephemeral theme rows or durable definitions |
+| 5 | Measure what the theme actually draws | [`ThemeAppearanceProbe.ts`](../../src/manager/theme/ThemeAppearanceProbe.ts) + [`readCalloutStyle.ts`](../../src/manager/theme/readCalloutStyle.ts) + [`themeAppearance.ts`](../../src/manager/theme/themeAppearance.ts) / [`themeIcon.ts`](../../src/manager/theme/themeIcon.ts) | `ThemeAppearance` per id |
+| 6 | Reproduce it wherever the plugin lists callouts | [`renderThemeIcon.ts`](../../src/manager/theme/renderThemeIcon.ts), [`calloutListIcon.ts`](../../src/manager/theme/calloutListIcon.ts) | icons and swatches on rows, menus, pickers |
+| — | Decide how the theme **spells** a callout accent | [`accentDialectScan.ts`](../../src/manager/theme/accentDialectScan.ts) + [`accentDialect.ts`](../../src/manager/theme/accentDialect.ts) + [`accentValueFormat.ts`](../../src/manager/theme/accentValueFormat.ts), cached alongside stage 2 | `AccentDialect` — see [The accent dialect](#the-accent-dialect) |
 
 Scheduling — when the whole thing runs and in which order — is
-[`themeAppearanceSync.ts`](../src/manager/theme/themeAppearanceSync.ts), covered under
+[`themeAppearanceSync.ts`](../../src/manager/theme/themeAppearanceSync.ts), covered under
 [When theme appearance refreshes](#when-theme-appearance-refreshes).
 
 Two of these stages are deliberately split into a **pure half and an
@@ -56,7 +56,7 @@ judgement and all of the unit tests; the repo's test DOM has neither a
 
 ## Stage 1 — Finding the active theme
 
-[`customCssApi.ts`](../src/manager/theme/customCssApi.ts) is the **only** place
+[`customCssApi.ts`](../../src/manager/theme/customCssApi.ts) is the **only** place
 `app.customCss` is named. None of it is in `obsidian.d.ts`: it is real and
 stable in practice (the shape read there is what ships in 1.13.7, and most of it
 predates 1.0), but it is somebody else's private field, so every access is
@@ -93,7 +93,7 @@ Two traps this module exists to absorb:
 
 ## Stage 2 — Scanning the stylesheet for callout claims
 
-[`themeCalloutScan.ts`](../src/manager/theme/themeCalloutScan.ts) is pure text
+[`themeCalloutScan.ts`](../../src/manager/theme/themeCalloutScan.ts) is pure text
 in, plain data out. The obvious implementation is to `replaceSync()` the theme
 into an unadopted `CSSStyleSheet` and walk `cssRules` — which is what Callout
 Manager does — but `CSSStyleSheet` does not exist in this repo's test DOM, and a
@@ -106,7 +106,7 @@ punctuation. Literal braces in `content`, attribute selectors or SVG data URLs
 do not hide later rules or become false nested blocks.
 
 Cutting the sheet into rules is its own module,
-[`cssBlocks.ts`](../src/manager/theme/cssBlocks.ts), which hands the scanner one
+[`cssBlocks.ts`](../../src/manager/theme/cssBlocks.ts), which hands the scanner one
 `(selector, declarations)` pair per rule. It resolves **native CSS nesting**
 first, so a nested sheet is read exactly as its flat equivalent would be — same
 ids, same property names, same specificity. That is not a nicety: nesting is a
@@ -201,10 +201,10 @@ does the active styling say about a callout it has never heard of?** Every
 callout this plugin invents is one of those, and sixteen of the 257 installed
 themes answer with some form of "a callout has no background of its own".
 
-[`calloutSurfaceTarget.ts`](../src/manager/theme/calloutSurfaceTarget.ts) reads
-the selector, [`calloutSurfaceScan.ts`](../src/manager/theme/calloutSurfaceScan.ts)
+[`calloutSurfaceTarget.ts`](../../src/manager/theme/calloutSurfaceTarget.ts) reads
+the selector, [`calloutSurfaceScan.ts`](../../src/manager/theme/calloutSurfaceScan.ts)
 reads the declarations, and
-[`calloutSurface.ts`](../src/manager/theme/calloutSurface.ts) folds several
+[`calloutSurface.ts`](../../src/manager/theme/calloutSurface.ts) folds several
 sheets into the answer `StudioWeightCache.surface()` memoises beside the dialect.
 `ThemeCalloutStore.refresh()` runs it on the theme **and** every enabled snippet,
 for the same reason the dialect does: what has to work is what is on the page,
@@ -312,7 +312,7 @@ collapsing them breaks both.
 | Why | *Callouts from your theme* has to mean it — a snippet the user wrote is their own work, and a family pattern names no callout | The emitted CSS has to outrank whatever is on the page, whoever wrote it |
 
 A third, laxer question — *does this stylesheet style the callout I already
-have?* — is [`themeClaimLookup.ts`](../src/manager/theme/themeClaimLookup.ts).
+have?* — is [`themeClaimLookup.ts`](../../src/manager/theme/themeClaimLookup.ts).
 It is allowed to consult every operator because it is only ever handed an id the
 registry already holds, so there is nothing left to invent. `patternMatches()`
 is its production export (the editor's fuzzy warning); `claimForId()` is
@@ -323,7 +323,7 @@ Both answers are memoised on `stylingSignature`, because parsing ITS Theme is
 
 ## Stage 3 — Ownership
 
-[`ThemeFacts.ts`](../src/manager/theme/ThemeFacts.ts) holds the two derived
+[`ThemeFacts.ts`](../../src/manager/theme/ThemeFacts.ts) holds the two derived
 theme facts — which ids are owned, and what they look like — and both are read
 back through `CalloutRegistry`, because every surface that draws a callout
 already has the registry. Threading a theme store through the eight surfaces
@@ -379,7 +379,7 @@ carries `!important` at a specificity no theme can reach — so an id the regist
 has never heard of is not merely missing from the settings list, it is actively
 **overpainted** with the fallback template.
 
-[`syncThemeOverlayRows`](../src/manager/theme/themeOverlayRows.ts) closes that.
+[`syncThemeOverlayRows`](../../src/manager/theme/themeOverlayRows.ts) closes that.
 A sweep on startup, CSS events, or settings adoption mints an in-memory row in
 `source: "theme"` for each declared id nothing else claims, and retires the ones
 the theme has stopped declaring. It runs inside the same `registry.batch` that
@@ -431,7 +431,7 @@ gap cannot be closed by parsing, because the answer is whatever the cascade
 computes — through variables, `color-mix()`, inheritance, or a Style Settings
 body class the user toggled ten minutes ago.
 
-So [`ThemeAppearanceProbe`](../src/manager/theme/ThemeAppearanceProbe.ts)
+So [`ThemeAppearanceProbe`](../../src/manager/theme/ThemeAppearanceProbe.ts)
 renders every theme-owned callout once, offscreen, and reads **used values** off
 it. Three things about that rendering are load-bearing:
 
@@ -470,7 +470,7 @@ A → B → A). A destroyed probe never repopulates its cache.
 
 ### Which node is asked
 
-[`readCalloutStyle.ts`](../src/manager/theme/readCalloutStyle.ts) owns this and
+[`readCalloutStyle.ts`](../../src/manager/theme/readCalloutStyle.ts) owns this and
 nothing else, because **reading one node where the theme spoke on another is
 indistinguishable from the theme having said nothing**. Two whole families of
 theme rendered as *core's defaults* in the settings list for exactly that
@@ -500,7 +500,7 @@ browsers do not mirror one onto the other.
 
 ### The icon ladder
 
-[`themeIcon.ts`](../src/manager/theme/themeIcon.ts), ordered by how **definitive**
+[`themeIcon.ts`](../../src/manager/theme/themeIcon.ts), ordered by how **definitive**
 the evidence is rather than by how common the mechanism is:
 
 | Rung | Evidence | Reproduced as |
@@ -536,7 +536,7 @@ kinds alone would call that "unchanged" and keep the outgoing theme's artwork.
 
 ### The accent ladder
 
-[`themeAppearance.ts`](../src/manager/theme/themeAppearance.ts), same
+[`themeAppearance.ts`](../../src/manager/theme/themeAppearance.ts), same
 evidence-first ordering:
 
 1. **The `::before`'s own paint**, when the `::before` is what drew the icon —
@@ -575,7 +575,7 @@ transparent and drew no swatch at all.
 
 ## Stage 6 — Reproducing what was measured
 
-[`renderThemeIcon.ts`](../src/manager/theme/renderThemeIcon.ts) is the **only**
+[`renderThemeIcon.ts`](../../src/manager/theme/renderThemeIcon.ts) is the **only**
 code allowed to draw a *theme's* callout icon, exactly as
 `icons/renderIcon.ts` is the only code allowed to draw a *Callout Studio* one.
 Each rung reproduces what was measured rather than interpreting it again:
@@ -594,10 +594,10 @@ Both colour-dependent rungs inherit `currentColor`, so a caller that sets the
 accent on the container gets a matching drawing without this function knowing
 anything about colour.
 
-[`calloutListIcon.ts`](../src/manager/theme/calloutListIcon.ts) is the single
+[`calloutListIcon.ts`](../../src/manager/theme/calloutListIcon.ts) is the single
 answer for every list that draws a callout *small* — autocomplete, *Replace in
 vault*, vault stats, the command builder, and the settings callout picker
-([`calloutComboboxRow.ts`](../src/settings/calloutComboboxRow.ts)). The first
+([`calloutComboboxRow.ts`](../../src/settings/calloutComboboxRow.ts)). The first
 four had drifted into three different answers, two with no ownership check at
 all:
 
@@ -682,24 +682,24 @@ exactly as long as the theme claims it, and gets them back with no migration:
 nothing left the definition, only what the renderer acts on.
 
 **The row itself is read-only**, and the refusal lives in
-[`openCalloutEditor.ts`](../src/settings/openCalloutEditor.ts) because the
+[`openCalloutEditor.ts`](../../src/settings/openCalloutEditor.ts) because the
 settings row, the context menu, quick insert and the public API all reach the
 editor through it. The pencil opens
-[`ThemeCalloutPreviewModal`](../src/settings/ThemeCalloutPreviewModal.ts), which
+[`ThemeCalloutPreviewModal`](../../src/settings/ThemeCalloutPreviewModal.ts), which
 states who owns the callout, that Heading and Inline are unavailable, and shows
 a Block-only live preview that **writes nothing at all**. The saved definition
 remains intact while its current theme owns the appearance. Its `⋯` menu
-([`themeRowActions.ts`](../src/settings/sections/themeRowActions.ts)) carries
+([`themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts)) carries
 usage information, and — only when the callout is actually written somewhere —
 *Replace in vault* and *Clear uses in your notes*. Never *Delete*, which would
 be a lie since the theme keeps supplying the type; `deleteRemovesRow`
-([`rowOwnership.ts`](../src/settings/sections/rowOwnership.ts)) is the single
+([`rowOwnership.ts`](../../src/settings/sections/rowOwnership.ts)) is the single
 predicate behind that wording, and it answers the same way for a built-in.
 
 The use count lives in that menu rather than on the row, and the row carries no
 *Default fallback* tag either: both describe a callout the user cannot act on.
 Counting is a whole-vault read, so it is cached at module scope in
-[`themeRowUsage.ts`](../src/settings/sections/themeRowUsage.ts) — one pass per
+[`themeRowUsage.ts`](../../src/settings/sections/themeRowUsage.ts) — one pass per
 visit to the settings tab, dropped in `SettingsTab.hide()`. It must never move
 inside `refresh()`, which is subscribed to `registry.onChange`: that would scan
 every markdown file on every drag of a colour picker.
@@ -1066,29 +1066,29 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 
 | File | Responsibility |
 | --- | --- |
-| [`manager/theme/customCssApi.ts`](../src/manager/theme/customCssApi.ts) | The only place `app.customCss` is named |
-| [`manager/theme/cssBlocks.ts`](../src/manager/theme/cssBlocks.ts) | Cutting the sheet into rules, with native CSS nesting resolved |
-| [`manager/theme/themeCalloutScan.ts`](../src/manager/theme/themeCalloutScan.ts) | Pure text scanner: claims, patterns, weights |
-| [`manager/theme/themeClaimLookup.ts`](../src/manager/theme/themeClaimLookup.ts) | "Does this sheet style the id I already have?" |
-| [`manager/theme/accentDialectScan.ts`](../src/manager/theme/accentDialectScan.ts) | Reading ONE sheet: reads, declarations per mode, what it paints unguarded |
-| [`manager/theme/accentDialect.ts`](../src/manager/theme/accentDialect.ts) | Folding every sheet's evidence into the one answer the emitters consult |
-| [`manager/theme/accentValueFormat.ts`](../src/manager/theme/accentValueFormat.ts) | Is one declared value a colour or a triplet, following `var()` |
-| [`manager/css/coreAccentShim.ts`](../src/manager/css/coreAccentShim.ts) | Core's own declarations, restated when the spelling breaks them |
-| [`manager/theme/ThemeCalloutStore.ts`](../src/manager/theme/ThemeCalloutStore.ts) | Caching + the enumeration/weight split |
-| [`manager/theme/ThemeFacts.ts`](../src/manager/theme/ThemeFacts.ts) | Owned ids + measured appearances, held behind the registry |
-| [`manager/theme/themeAppearanceSync.ts`](../src/manager/theme/themeAppearanceSync.ts) | Scheduling, ordering, the fingerprint, the probe's lifetime |
-| [`manager/theme/themeOverlayRows.ts`](../src/manager/theme/themeOverlayRows.ts) | Minting and retiring the ephemeral `source: "theme"` rows |
-| [`manager/theme/ThemeAppearanceProbe.ts`](../src/manager/theme/ThemeAppearanceProbe.ts) | Offscreen render + cache |
-| [`manager/theme/readCalloutStyle.ts`](../src/manager/theme/readCalloutStyle.ts) | Which node answers which property |
-| [`manager/theme/themeAppearance.ts`](../src/manager/theme/themeAppearance.ts) | Accent/background interpretation |
-| [`manager/theme/themeIcon.ts`](../src/manager/theme/themeIcon.ts) | The five-rung icon ladder |
-| [`manager/theme/renderThemeIcon.ts`](../src/manager/theme/renderThemeIcon.ts) | Reproducing a measured icon |
-| [`manager/theme/calloutListIcon.ts`](../src/manager/theme/calloutListIcon.ts) | One answer for every small callout list |
-| [`manager/theme/studioWeight.ts`](../src/manager/theme/studioWeight.ts) / [`StudioWeightCache.ts`](../src/manager/theme/StudioWeightCache.ts) | How hard the plugin pushes on what it *does* own |
-| [`manager/theme/themeReport*.ts`](../src/manager/theme/themeReport.ts) | The `themes:report` worksheet — not bundled into `main.js` |
-| [`settings/sections/rowOwnership.ts`](../src/settings/sections/rowOwnership.ts) | Which of the three lists a row belongs in |
-| [`settings/sections/themeRowActions.ts`](../src/settings/sections/themeRowActions.ts), [`themeRowUsage.ts`](../src/settings/sections/themeRowUsage.ts) | The theme row's controls and its cached use counts |
-| [`settings/ThemeCalloutPreviewModal.ts`](../src/settings/ThemeCalloutPreviewModal.ts) | The read-only window behind the pencil |
+| [`manager/theme/customCssApi.ts`](../../src/manager/theme/customCssApi.ts) | The only place `app.customCss` is named |
+| [`manager/theme/cssBlocks.ts`](../../src/manager/theme/cssBlocks.ts) | Cutting the sheet into rules, with native CSS nesting resolved |
+| [`manager/theme/themeCalloutScan.ts`](../../src/manager/theme/themeCalloutScan.ts) | Pure text scanner: claims, patterns, weights |
+| [`manager/theme/themeClaimLookup.ts`](../../src/manager/theme/themeClaimLookup.ts) | "Does this sheet style the id I already have?" |
+| [`manager/theme/accentDialectScan.ts`](../../src/manager/theme/accentDialectScan.ts) | Reading ONE sheet: reads, declarations per mode, what it paints unguarded |
+| [`manager/theme/accentDialect.ts`](../../src/manager/theme/accentDialect.ts) | Folding every sheet's evidence into the one answer the emitters consult |
+| [`manager/theme/accentValueFormat.ts`](../../src/manager/theme/accentValueFormat.ts) | Is one declared value a colour or a triplet, following `var()` |
+| [`manager/css/coreAccentShim.ts`](../../src/manager/css/coreAccentShim.ts) | Core's own declarations, restated when the spelling breaks them |
+| [`manager/theme/ThemeCalloutStore.ts`](../../src/manager/theme/ThemeCalloutStore.ts) | Caching + the enumeration/weight split |
+| [`manager/theme/ThemeFacts.ts`](../../src/manager/theme/ThemeFacts.ts) | Owned ids + measured appearances, held behind the registry |
+| [`manager/theme/themeAppearanceSync.ts`](../../src/manager/theme/themeAppearanceSync.ts) | Scheduling, ordering, the fingerprint, the probe's lifetime |
+| [`manager/theme/themeOverlayRows.ts`](../../src/manager/theme/themeOverlayRows.ts) | Minting and retiring the ephemeral `source: "theme"` rows |
+| [`manager/theme/ThemeAppearanceProbe.ts`](../../src/manager/theme/ThemeAppearanceProbe.ts) | Offscreen render + cache |
+| [`manager/theme/readCalloutStyle.ts`](../../src/manager/theme/readCalloutStyle.ts) | Which node answers which property |
+| [`manager/theme/themeAppearance.ts`](../../src/manager/theme/themeAppearance.ts) | Accent/background interpretation |
+| [`manager/theme/themeIcon.ts`](../../src/manager/theme/themeIcon.ts) | The five-rung icon ladder |
+| [`manager/theme/renderThemeIcon.ts`](../../src/manager/theme/renderThemeIcon.ts) | Reproducing a measured icon |
+| [`manager/theme/calloutListIcon.ts`](../../src/manager/theme/calloutListIcon.ts) | One answer for every small callout list |
+| [`manager/theme/studioWeight.ts`](../../src/manager/theme/studioWeight.ts) / [`StudioWeightCache.ts`](../../src/manager/theme/StudioWeightCache.ts) | How hard the plugin pushes on what it *does* own |
+| [`manager/theme/themeReport*.ts`](../../src/manager/theme/themeReport.ts) | The `themes:report` worksheet — not bundled into `main.js` |
+| [`settings/sections/rowOwnership.ts`](../../src/settings/sections/rowOwnership.ts) | Which of the three lists a row belongs in |
+| [`settings/sections/themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts), [`themeRowUsage.ts`](../../src/settings/sections/themeRowUsage.ts) | The theme row's controls and its cached use counts |
+| [`settings/ThemeCalloutPreviewModal.ts`](../../src/settings/ThemeCalloutPreviewModal.ts) | The read-only window behind the pencil |
 
 Suites: `themeCalloutScan`, `themeOwnership`, `manualDiscovery`,
 `themeOverlayRows`, `themeRowSync`, `syncThemeOverlay`, `themeAppearance`,

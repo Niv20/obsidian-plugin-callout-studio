@@ -319,7 +319,7 @@ describe("the ownership line a theme actually feels", () => {
 	 * on DOM of this plugin's own, where no theme is competing and no
 	 * `!important` is needed (see `generateTokenColorCSS`). Split by band
 	 * because the two answer different questions — see the table in
-	 * `internals-docs/06-css-generation.md`.
+	 * `docs/internals-docs/06-css-generation.md`.
 	 */
 	function blockBackgrounds(css: string) {
 		const decls = parseRules(css)

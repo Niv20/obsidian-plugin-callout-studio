@@ -1,6 +1,6 @@
 # Settings UI and modals
 
-Covers [`src/settings/SettingsTab.ts`](../src/settings/SettingsTab.ts), the
+Covers [`src/settings/SettingsTab.ts`](../../src/settings/SettingsTab.ts), the
 section modules under `src/settings/sections/`, the shared modal chrome, and
 the individual modals not already covered by
 [Callout editor](13-callout-editor.md) or [Icons](12-icons.md).
@@ -237,12 +237,12 @@ subscription from silently accumulating across repeated `display()` calls.
 
 ## Folding and paging — the callout lists, and Saved color palettes
 
-[`CalloutListsSection.ts`](../src/settings/sections/CalloutListsSection.ts)
+[`CalloutListsSection.ts`](../../src/settings/sections/CalloutListsSection.ts)
 builds *Callouts from your theme*, *My callout types* and *Built-in
 callouts*, in that order, from one pass over one combined list (see
 [Theme callout discovery](21-theme-callout-discovery.md) for who lands
 where). Two behaviours sit on top of that split, each in its own helper —
-and [`CustomPalettesSection.ts`](../src/settings/sections/CustomPalettesSection.ts)'s
+and [`CustomPalettesSection.ts`](../../src/settings/sections/CustomPalettesSection.ts)'s
 *Saved color palettes* heading is a fourth member of the same family rather
 than a parallel implementation: it calls the identical `attachPersistedFold`
 and `renderPagedList` helpers, just keyed `"palettes"` instead of a `RowKind`,
@@ -251,7 +251,7 @@ pins too (see [The three sections pin their headings](#the-three-sections-pin-th
 palettes is the standalone fourth). Its "Unlinked colors" sub-section —
 offering to rebuild a palette a deletion orphaned — neither folds nor pages on
 its own, and lives in a sibling module,
-[`PaletteOrphanGroups.ts`](../src/settings/sections/PaletteOrphanGroups.ts),
+[`PaletteOrphanGroups.ts`](../../src/settings/sections/PaletteOrphanGroups.ts),
 so `CustomPalettesSection.ts` itself stayed under the repo's line-count
 ratchet instead of raising it.
 
@@ -296,7 +296,7 @@ elements as well (the section wrapper hides, the body folds), which makes the
 collision impossible rather than merely avoided.
 
 A user-driven toggle is wrapped in
-[`foldAnchor.keepHeadingInPlace`](../src/settings/sections/foldAnchor.ts) —
+[`foldAnchor.keepHeadingInPlace`](../../src/settings/sections/foldAnchor.ts) —
 see [Folding a pinned heading](#folding-a-pinned-heading).
 
 Note also that *Built-in callouts* does **not** get `cs-subheader-row` to
@@ -310,7 +310,7 @@ from the helper regardless.
 ### The three sections pin their headings
 
 Each of the three callout lists is built into a `div.cs-sticky-section` by
-[`stickySection.ts`](../src/settings/sections/stickySection.ts), with its
+[`stickySection.ts`](../../src/settings/sections/stickySection.ts), with its
 heading carrying `cs-sticky-heading`. The wrapper *is* the feature: a sticky
 box cannot be shifted outside its containing block, so a heading wrapped
 together with its own rows is pinned to the top of the settings pane for
@@ -709,7 +709,7 @@ rows on screen, changes what is drawn — not how many the user has.
 
 ## Modal chrome — the one shell every window wears
 
-[`src/settings/modalChrome.ts`](../src/settings/modalChrome.ts) is a small
+[`src/settings/modalChrome.ts`](../../src/settings/modalChrome.ts) is a small
 file with an outsized effect on the whole UI's consistency. Before it
 existed, different modals had independently reinvented a sticky title, a
 pinned button bar, or neither — "two carried a sticky title with a rule
@@ -770,7 +770,7 @@ already counted by the time the check runs.
 
 ## Where the cursor lands when a window opens
 
-[`src/settings/modalAutofocus.ts`](../src/settings/modalAutofocus.ts) is the
+[`src/settings/modalAutofocus.ts`](../../src/settings/modalAutofocus.ts) is the
 other half of the shared window behaviour, and exists because the rules it
 carries were previously reinvented — or simply got wrong — per modal.
 
@@ -1477,16 +1477,16 @@ reloaded would differ by a key that means nothing. See
 ### The shared callout picker
 
 Every place the user picks one callout out of a list is the same control:
-[`calloutCombobox.ts`](../src/settings/calloutCombobox.ts), over
-[`ui/listboxPopup.ts`](../src/ui/listboxPopup.ts). It replaced two native
+[`calloutCombobox.ts`](../../src/settings/calloutCombobox.ts), over
+[`ui/listboxPopup.ts`](../../src/ui/listboxPopup.ts). It replaced two native
 `<select>`s — *Default fallback callout*
-([`FallbackSection.ts`](../src/settings/sections/FallbackSection.ts)) and
+([`FallbackSection.ts`](../../src/settings/sections/FallbackSection.ts)) and
 *Callout type* above — neither of which could be typed into or showed a callout's
 icon or colour, while the `[!` popover in the editor had done both for a long
 time.
 
 The rows are literally the popover's markup
-([`calloutComboboxRow.ts`](../src/settings/calloutComboboxRow.ts) reuses the
+([`calloutComboboxRow.ts`](../../src/settings/calloutComboboxRow.ts) reuses the
 `callout-studio-suggestion*` classes), and the id/alias second line is the same
 function in both — `renderCalloutIdLine`, which `AutoComplete.renderSuggestion`
 calls too, so a callout cannot describe itself one way in the editor and another
@@ -1516,7 +1516,7 @@ Callers **must** call `destroy()` — a modal from `onClose`, a settings section
 through `registerDisposer` — because the popup holds a document-level
 click listener.
 
-Two details in [`listboxPopupEvents.ts`](../src/ui/listboxPopupEvents.ts) are
+Two details in [`listboxPopupEvents.ts`](../../src/ui/listboxPopupEvents.ts) are
 load-bearing and have already been bugs. Selecting the label on click has to
 happen on `click`, not on `focus`: the browser fires mousedown → focus →
 mouseup → click, and mouseup places a caret that undoes an earlier `select()`.
@@ -1533,7 +1533,7 @@ that is how the field first came to look like a second box drawn inside the
 control.
 
 The Color row uses the same popup through
-[`paletteCombobox.ts`](../src/settings/paletteCombobox.ts), which adds group
+[`paletteCombobox.ts`](../../src/settings/paletteCombobox.ts), which adds group
 headings (*Custom* / *Obsidian* / *Presets*, emitted per run so a group filtered
 to nothing leaves no stranded heading) and the pinned "+ New color…" action.
 Only the *control* moved out of `CalloutEditor`: which palette the form's colours
@@ -1578,7 +1578,7 @@ built-ins `tip`, `warning` and `note`, and that was wrong twice over:
 
 It now uses `WELCOME_DEMO_ID` (`demo`) and registers its own violet definition
 into the registry's transient preview slot via `beforeRender` —
-[`welcomeDemo.ts`](../src/settings/welcomeDemo.ts).
+[`welcomeDemo.ts`](../../src/settings/welcomeDemo.ts).
 
 ##### Why this one id is *not* reserved
 

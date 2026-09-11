@@ -8,7 +8,7 @@ the registry.
 
 ## The token grammar — one parser, every consumer
 
-[`src/editor/calloutTokens.ts`](../src/editor/calloutTokens.ts) (~840 lines)
+[`src/editor/calloutTokens.ts`](../../src/editor/calloutTokens.ts) (~840 lines)
 is the **single source of truth** for what counts as a callout token. Every
 consumer — Live Preview's decoration builder, the reading-view post-processor,
 vault discovery, statistics, the autocomplete trigger, the vault rewriters
@@ -92,7 +92,7 @@ trusting it). See [Outline pane and link cleanup](09-editor-integrations.md#outl
 
 ## `renderShared.ts` — the shared DOM builder
 
-[`src/editor/renderShared.ts`](../src/editor/renderShared.ts) is what makes
+[`src/editor/renderShared.ts`](../../src/editor/renderShared.ts) is what makes
 Live Preview and Reading view produce **byte-identical DOM** for the same
 token, which is what lets `CSSInjector`'s icon-repaint sweep target both with
 one selector.
@@ -154,7 +154,7 @@ parent.
 ## Live Preview: `calloutViewPlugin.ts`
 
 A single CodeMirror `ViewPlugin`
-([`src/editor/livepreview/calloutViewPlugin.ts`](../src/editor/livepreview/calloutViewPlugin.ts))
+([`src/editor/livepreview/calloutViewPlugin.ts`](../../src/editor/livepreview/calloutViewPlugin.ts))
 recomputes decorations for **visible ranges only**, triggered by doc changes,
 viewport changes, selection/focus changes, fold changes, and an explicit
 no-payload refresh effect.
@@ -165,7 +165,7 @@ In CodeMirror 6, **block decorations may not come from a `ViewPlugin`** — the
 content-drawing code consumes block decorations before layout, while a
 plugin's decorations are read afterward; supplying one from a plugin throws
 `"Block decorations may not be specified via plugins"`. So
-[`headingGapField.ts`](../src/editor/livepreview/headingGapField.ts) is a
+[`headingGapField.ts`](../../src/editor/livepreview/headingGapField.ts) is a
 standalone `StateField` that scans the **whole document** (block decorations
 affect the whole height map, so viewport-limiting isn't an option) but is
 gated hard: nothing runs unless the feature is genuinely on (`marginTop > 0`
@@ -223,7 +223,7 @@ flag hasn't cleared by the time the safety-net timer fires.
 
 Registry mutations (colour edits, renames, new definitions, settings toggles)
 never touch document text, so CodeMirror has no organic reason to rebuild
-this plugin's decorations. [`refresh.ts`](../src/editor/livepreview/refresh.ts)
+this plugin's decorations. [`refresh.ts`](../../src/editor/livepreview/refresh.ts)
 tracks **every** `EditorView` this plugin's `ViewPlugin` is currently mounted
 in — not just top-level markdown-leaf editors, but table cells, canvas cards,
 editable transclusions, and the settings tab's own live preview — and
@@ -248,7 +248,7 @@ both directions right. Only the code that built the element knows for sure.
 
 ## Reading view: `calloutPostProcessor.ts`
 
-[`src/reading/calloutPostProcessor.ts`](../src/reading/calloutPostProcessor.ts)
+[`src/reading/calloutPostProcessor.ts`](../../src/reading/calloutPostProcessor.ts)
 is registered as a `registerMarkdownPostProcessor`, with two cheap bail-outs
 (both roles disabled; block text contains no `[!`) that keep per-render cost
 negligible.

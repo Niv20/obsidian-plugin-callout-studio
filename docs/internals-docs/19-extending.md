@@ -57,7 +57,7 @@ new *roles/actions* the builder can offer, which would touch
 If you're modifying an *existing* fixed command's behaviour: never change its
 `id` (it's a stable API users have hotkeys bound to — enforced by
 `repoRelease.test.ts`), and route the actual editor manipulation through
-[`CalloutBlockTools.ts`](../src/editor/CalloutBlockTools.ts) so the fixed
+[`CalloutBlockTools.ts`](../../src/editor/CalloutBlockTools.ts) so the fixed
 command and any custom command sharing the same operation can't drift apart.
 
 ## Adding a callout-related behaviour (new field on `CalloutDefinition`)

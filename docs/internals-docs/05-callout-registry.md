@@ -1,6 +1,6 @@
 # Callout registry
 
-[`src/manager/CalloutRegistry.ts`](../src/manager/CalloutRegistry.ts) (~2,100
+[`src/manager/CalloutRegistry.ts`](../../src/manager/CalloutRegistry.ts) (~2,100
 lines — one of the handful of files exempted from the 300-line rule, tracked in
 `tests/repoSourceRules.test.ts`) is the single source of truth for every
 callout definition and every setting. `CSSInjector`, `AutoComplete`,
@@ -80,7 +80,7 @@ Order matters here — every step depends on the ones before it:
 
 ### `reconcileSavedRow` — the "only one callout per id" repair
 
-[`src/manager/savedCalloutRows.ts`](../src/manager/savedCalloutRows.ts) answers
+[`src/manager/savedCalloutRows.ts`](../../src/manager/savedCalloutRows.ts) answers
 one narrow question in isolation from registry state: given a saved row and
 whether this version ships a built-in for that id, what should be stored?
 
@@ -215,7 +215,7 @@ backup importer was the one that did). This migration is the other half: the
 pairs already sitting in `data.json`.
 
 The whole rule, and the reasoning behind each clause, is in
-[`manager/idCollisionMigration.ts`](../src/manager/idCollisionMigration.ts).
+[`manager/idCollisionMigration.ts`](../../src/manager/idCollisionMigration.ts).
 In short:
 
 - **Survivor**, first match wins: a built-in → a real row spelled without a dash
@@ -288,7 +288,7 @@ toSaveData(): PluginData
 - `materialSvgCache` is deliberately never written back — legacy entries were
   folded into `iconSvgCache` on load, and writing both would let them drift.
 - `iconSvgCache` is written **sorted**, by
-  [`manager/iconSvgCacheOrder.ts`](../src/manager/iconSvgCacheOrder.ts). In
+  [`manager/iconSvgCacheOrder.ts`](../../src/manager/iconSvgCacheOrder.ts). In
   memory it is appended to in fetch order, which is per machine; on disk that
   made two synced devices holding identical artwork serialize byte-different
   files, and so rewrite each other's `data.json` forever. See

@@ -1576,7 +1576,7 @@ body:not(.is-phone)
    treatment rather than inventing one: the 1px border recolours to
    `--background-modifier-border-focus` and a 2px ring in the same grey sits on
    top of it, which the eye reads as 3px of grey edge. That is the contract in
-   "How an input field focuses" (`internals-docs/15-settings-ui-and-modals.md`),
+   "How an input field focuses" (`docs/internals-docs/15-settings-ui-and-modals.md`),
    and this row now answers to it like the two above it. It used to light
    `--interactive-accent`, which made it the one purple-lit control in a modal
    of grey-lit ones.

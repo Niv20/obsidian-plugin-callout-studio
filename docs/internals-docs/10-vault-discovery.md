@@ -53,7 +53,7 @@ local definitions; see [Multi-device sync](07-persistence-and-caching.md#multi-d
 
 ## Vault scanners — one shared tokenizer for every consumer
 
-[`src/utils/vaultCalloutScanner.ts`](../src/utils/vaultCalloutScanner.ts)
+[`src/utils/vaultCalloutScanner.ts`](../../src/utils/vaultCalloutScanner.ts)
 holds every function that reads or writes callout tokens across the whole
 vault — both the **read-only** scanners (statistics, unknown-id discovery,
 usage counting) and the **write** operations (bulk replace, convert-to-plain-

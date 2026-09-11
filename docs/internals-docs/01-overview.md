@@ -26,7 +26,7 @@ Studio adds:
 ## The three render roles
 
 One `CalloutDefinition` can be written in three places, and each place is a
-**render role** (`CalloutRenderRole` in [`src/types.ts`](../src/types.ts)):
+**render role** (`CalloutRenderRole` in [`src/types.ts`](../../src/types.ts)):
 
 | Role | Markdown | Who renders it |
 | --- | --- | --- |
@@ -97,7 +97,7 @@ type, everything after is `data-callout-metadata`. So `> [!note|purple]` is the
 
 Every path that turns raw markdown into an ID funnels through
 `normalizeCalloutId` / `splitCalloutMetadata` in
-[`src/utils/calloutId.ts`](../src/utils/calloutId.ts), which is what makes a piped
+[`src/utils/calloutId.ts`](../../src/utils/calloutId.ts), which is what makes a piped
 ID structurally unreachable by the registry. Full treatment in
 [Callout IDs and normalization](04-data-model.md#callout-ids-and-the-three-normalizers).
 

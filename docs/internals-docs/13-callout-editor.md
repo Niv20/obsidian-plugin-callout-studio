@@ -1,6 +1,6 @@
 # Callout editor
 
-The edit/create modal — [`src/settings/CalloutEditor.ts`](../src/settings/CalloutEditor.ts)
+The edit/create modal — [`src/settings/CalloutEditor.ts`](../../src/settings/CalloutEditor.ts)
 (~2,330 lines, one of the frozen oversized-file exceptions) plus its three
 focused helper modules under `src/settings/editor/`. This is the most
 state-heavy UI in the plugin, and understanding *why* is the point of this
@@ -31,7 +31,7 @@ forever, defeating `isUnmodifiedBuiltIn`.
 
 ### `authoredStyle.ts` — the shared answer
 
-[`src/settings/editor/authoredStyle.ts`](../src/settings/editor/authoredStyle.ts)
+[`src/settings/editor/authoredStyle.ts`](../../src/settings/editor/authoredStyle.ts)
 holds three predicates — `hasAuthoredBackground`, `hasAuthoredTextColors`,
 `hasAuthoredIconAdjust` — each answering "did the user actually author this,
 or is the form merely showing an invented default?" **Two entirely separate
@@ -60,7 +60,7 @@ palette editor's intensity slider produces tints at any strength between
 
 ## The live preview: a real embedded Obsidian editor
 
-[`src/settings/LiveCalloutPreview.ts`](../src/settings/LiveCalloutPreview.ts)
+[`src/settings/LiveCalloutPreview.ts`](../../src/settings/LiveCalloutPreview.ts)
 hosts a genuine **embedded Obsidian markdown editor**
 (`EmbeddableMarkdownEditor` — an undocumented Obsidian internal), not a mock
 render. Because editor extensions registered via `registerEditorExtension`
@@ -78,7 +78,7 @@ in a real note, in whatever theme is active — not an approximation.
   surfaces a throttled Notice (`READ_ONLY_NOTICE_THROTTLE_MS = 1500` —
   throttled so rapid attempted keystrokes don't spam notices). What
   "blocked" means is
-  [`src/settings/previewReadOnly.ts`](../src/settings/previewReadOnly.ts),
+  [`src/settings/previewReadOnly.ts`](../../src/settings/previewReadOnly.ts),
   and it is worth reading before touching it — see below.
 - **Graceful degradation**: the embed API is explicitly undocumented and may
   change out from under the plugin. If constructing it throws, the preview
@@ -111,7 +111,7 @@ plugin's own fold-marker and cut/delete-section items, which write through
 Two layers now, and only the first is a guarantee:
 
 1. **`EditorState.transactionFilter`** in
-   [`previewReadOnly.ts`](../src/settings/previewReadOnly.ts) drops any
+   [`previewReadOnly.ts`](../../src/settings/previewReadOnly.ts) drops any
    transaction with `docChanged` and reports it through `onEditAttempt`. Every
    route converges on `cm.dispatch`, so this sees all of them — menu commands,
    `Editor.*` writes, other plugins' editor commands, raw dispatches. Selection
@@ -122,7 +122,7 @@ Two layers now, and only the first is a guarantee:
    (cut, spellcheck replacement) that mutate the DOM without a CodeMirror
    command.
 2. **Menu filtering** in
-   [`editor/contextmenu/readOnlyPreview.ts`](../src/editor/contextmenu/readOnlyPreview.ts)
+   [`editor/contextmenu/readOnlyPreview.ts`](../../src/editor/contextmenu/readOnlyPreview.ts)
    removes the editing-only sections so the menu stops *offering* commands
    whose only remaining effect is a notice. See
    [Editor integrations](09-editor-integrations.md#the-context-menu-inside-a-read-only-preview).
@@ -185,7 +185,7 @@ mechanics in [Callout registry](05-callout-registry.md#the-transient-live-previe
 
 ## Validation
 
-[`src/settings/editor/CalloutEditorValidation.ts`](../src/settings/editor/CalloutEditorValidation.ts)
+[`src/settings/editor/CalloutEditorValidation.ts`](../../src/settings/editor/CalloutEditorValidation.ts)
 holds pure functions used by both the form's live "is Save enabled" state and
 the save pipeline's final gate.
 
@@ -230,7 +230,7 @@ no edits is not really "customizing" anything.
 
 ## Save pipeline
 
-[`src/settings/editor/CalloutEditorSave.ts`](../src/settings/editor/CalloutEditorSave.ts)'s
+[`src/settings/editor/CalloutEditorSave.ts`](../../src/settings/editor/CalloutEditorSave.ts)'s
 `performCalloutEditorSave()` is the single function every save (new, edit,
 rename, "mirror the fallback") goes through.
 
@@ -324,7 +324,7 @@ immediately. Network availability is not a prerequisite for keeping a callout.
 
 ## The icon picker
 
-[`src/settings/iconpicker/`](../src/settings/iconpicker/) — `IconPickerModal`
+[`src/settings/iconpicker/`](../../src/settings/iconpicker/) — `IconPickerModal`
 (source menu, search, preview, confirm), `PackPanel` (one source's toolbar +
 grid, driven entirely by its `IconPack`), `IconGrid` (paging + keyboard
 navigation), `ImagePanel` ("Your images" upload/manage), `allSources.ts` (the
@@ -332,7 +332,7 @@ pooled cross-source search).
 
 ### "All sources" is itself an `IconPack`
 
-[`src/settings/iconpicker/allSources.ts`](../src/settings/iconpicker/allSources.ts)
+[`src/settings/iconpicker/allSources.ts`](../../src/settings/iconpicker/allSources.ts)
 pools every **currently drawable** source's index into one searchable list,
 and — notably — **is itself shaped as an `IconPack`** (borrowing the
 interface without being a real library), specifically so the picker panel

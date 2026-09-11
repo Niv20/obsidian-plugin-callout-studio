@@ -53,7 +53,7 @@
  *   path a plugin tab takes.
  *
  * `SettingsTab.display` therefore reads and writes `containerEl.scrollTop`
- * correctly as it stands. See `internals-docs/15-settings-ui-and-modals.md`.
+ * correctly as it stands. See `docs/internals-docs/15-settings-ui-and-modals.md`.
  */
 function scrollParentOf(el: HTMLElement): HTMLElement | null {
 	const known = el.closest<HTMLElement>(

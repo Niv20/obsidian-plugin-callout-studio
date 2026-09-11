@@ -6,16 +6,16 @@ Callout Studio is an Obsidian plugin for creating and managing custom callout ty
 
 ## Where the documentation lives
 
-- **[`internals-docs/`](internals-docs/00-index.md)** is the authoritative source for architecture, internal behavior, data models, lifecycle, the CSS/theme system, icons, the public API, and everything else a programmer needs before changing source or preparing a PR. Start at [`00-index.md`](internals-docs/00-index.md) — it has a reading order and a full table of contents.
-- **[`user-guide/`](user-guide/README.md)** is the authoritative source for user-visible behavior — features, settings, workflows, compatibility, limitations.
+- **[`docs/internals-docs/`](docs/internals-docs/00-index.md)** is the authoritative source for architecture, internal behavior, data models, lifecycle, the CSS/theme system, icons, the public API, and everything else a programmer needs before changing source or preparing a PR. Start at [`00-index.md`](docs/internals-docs/00-index.md) — it has a reading order and a full table of contents.
+- **[`docs/user-guide/`](docs/user-guide/README.md)** is the authoritative source for user-visible behavior — features, settings, workflows, compatibility, limitations.
 - A handful of narrow subsystems have their own `.claude/skills/` entry instead of an internals-docs chapter (Tabler's outline icons, the "Your images" source, callout colour nesting, the metadata-pipe id split) — see each skill's description for when it applies.
 
 ## Documentation maintenance
 
-- Touch **`user-guide/`** when a change affects user-visible behavior, features, settings, workflows, compatibility, or limitations.
-- Touch **`internals-docs/`** when a change affects architecture, internal behavior, data models, lifecycle, APIs, implementation details, migrations, or developer-facing integration guidance.
+- Touch **`docs/user-guide/`** when a change affects user-visible behavior, features, settings, workflows, compatibility, or limitations.
+- Touch **`docs/internals-docs/`** when a change affects architecture, internal behavior, data models, lifecycle, APIs, implementation details, migrations, or developer-facing integration guidance.
 - Before treating a change as done, check both directories for pages it touches, update what's now wrong, and cut anything that's gone stale rather than leaving it to contradict the code.
-- **Do not expand or routinely update `CLAUDE.md` when implementing changes.** Keep it short and stable. Update the relevant files in `internals-docs/` instead, and let `CLAUDE.md` point Claude to that directory. If a change affects users, update `user-guide/` as well. Only modify `CLAUDE.md` when its navigation, essential project-level instructions, or documentation paths themselves become inaccurate.
+- **Do not expand or routinely update `CLAUDE.md` when implementing changes.** Keep it short and stable. Update the relevant files in `docs/internals-docs/` instead, and let `CLAUDE.md` point Claude to that directory. If a change affects users, update `docs/user-guide/` as well. Only modify `CLAUDE.md` when its navigation, essential project-level instructions, or documentation paths themselves become inaccurate.
 
 ## Commands
 
@@ -42,7 +42,7 @@ Releases are cut with the `/release` skill (`.claude/skills/release/SKILL.md`) �
 - Files over ~300 lines should be split by responsibility.
 - All listeners and intervals must use `this.registerEvent` / `this.registerInterval` / `this.registerDomEvent` so they are cleaned up on unload.
 - Command IDs are stable API — never rename after release. So is `manifest.json`'s `id`: changing it breaks every existing install, since both the vault folder name and the community-plugins registry key off it.
-- Network calls must remain opt-graceful: always have an offline fallback, and never fetch without an explicit user action. No new network call without disclosure in the README's privacy section. The one existing exception — the background UI-translation fetch — is documented in [`internals-docs/16-i18n.md`](internals-docs/16-i18n.md). Never execute remote code or eval a fetched script; read/write only what's necessary inside the vault, never files outside it.
+- Network calls must remain opt-graceful: always have an offline fallback, and never fetch without an explicit user action. No new network call without disclosure in the README's privacy section. The one existing exception — the background UI-translation fetch — is documented in [`docs/internals-docs/16-i18n.md`](docs/internals-docs/16-i18n.md). Never execute remote code or eval a fetched script; read/write only what's necessary inside the vault, never files outside it.
 - `isDesktopOnly` is `false` (`manifest.json`) — avoid Node/Electron-only APIs.
 - TypeScript strict mode is enforced. No `any` without explicit ESLint disable comment.
 - UI copy: sentence case for headings/buttons; **bold** for UI labels; arrow notation (`Settings → Hotkeys`) for navigation.

@@ -19,7 +19,7 @@ npm run i18n:generate      # regenerate locales/*.json + localeManifest.ts — r
 > rebuild, check `main.js`'s modification time and check for a duplicate
 > plugin folder with the same id before assuming the code is wrong.
 
-## Build (`esbuild.config.mjs`)
+## Build (`scripts/esbuild.config.mjs`)
 
 ```js
 entryPoints: ["src/main.ts"]
@@ -68,7 +68,7 @@ the TypeScript source directly. Two reasons, both structural:
    was removed in Node 20.
 2. Several modules under test transitively import `obsidian`, which only
    exists inside the running app. esbuild's `alias` config swaps in
-   [`tests/support/obsidianStub.ts`](../tests/support/obsidianStub.ts)
+   [`tests/support/obsidianStub.ts`](../../tests/support/obsidianStub.ts)
    instead — a minimal, hand-maintained stand-in kept in `tests/` rather than
    inlined, specifically because it needs to import `@codemirror/state` for
    `editorLivePreviewField` to be a real `StateField`.
@@ -212,7 +212,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 ## Versioning
 
 Bumping `manifest.json`/`package.json`/`versions.json` happens together, via
-`npm version <bump>` (wired through `version-bump.mjs`, which reads the new
+`npm version <bump>` (wired through `scripts/version-bump.mjs`, which reads the new
 `npm_package_version` and syncs `manifest.json` and appends an entry to
 `versions.json` keyed to the *current* `manifest.json`'s `minAppVersion`).
 
