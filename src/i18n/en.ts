@@ -75,6 +75,10 @@ export const en: Record<string, string> = {
 	"welcome.title": "Welcome to Callout Studio!",
 	"welcome.tagline":
 		"Your complete solution for creating, styling and managing Obsidian callouts.",
+	"importBanner.message":
+		"We noticed you are using {{plugins}}. Would you like to import your callouts?",
+	"importBanner.action": "Import",
+	"importBanner.dismiss": "Dismiss",
 	"welcome.previewTitle": "See it in action",
 	"welcome.demoName": "Callout Studio",
 	// `{{id}}` is the demo callout the splash styles itself with, so the three

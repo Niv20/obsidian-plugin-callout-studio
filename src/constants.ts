@@ -271,6 +271,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 	},
 	inlineCallouts: { enabled: true, allowContent: true },
 	welcomeSeen: false,
+	competitorImportBannerHandled: false,
 	fallbackCalloutId: "note",
 	language: "auto",
 	customPalettes: [],

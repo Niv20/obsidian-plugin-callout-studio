@@ -253,6 +253,8 @@ export function mergeSavedSettings(
 		},
 		welcomeSeen:
 			savedSettings.welcomeSeen ?? DEFAULT_SETTINGS.welcomeSeen,
+		competitorImportBannerHandled:
+			savedSettings.competitorImportBannerHandled === true,
 		fallbackCalloutId:
 			savedSettings.fallbackCalloutId ??
 			DEFAULT_SETTINGS.fallbackCalloutId,

@@ -38,6 +38,10 @@ export const vi: Record<string, string> = {
 	"welcome.title": "Chào mừng đến với Callout Studio!",
 	"welcome.tagline":
 		"Giải pháp toàn diện của bạn để tạo, tạo kiểu và quản lý callout trong Obsidian.",
+	"importBanner.message":
+		"Chúng tôi nhận thấy bạn đang dùng {{plugins}}. Bạn có muốn nhập callout của mình không?",
+	"importBanner.action": "Nhập",
+	"importBanner.dismiss": "Bỏ qua",
 	"welcome.previewTitle": "Xem nó hoạt động",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":

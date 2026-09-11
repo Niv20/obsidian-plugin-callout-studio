@@ -38,6 +38,10 @@ export const uk: Record<string, string> = {
 	"welcome.title": "Ласкаво просимо до Callout Studio!",
 	"welcome.tagline":
 		"Ваше повне рішення для створення, стилізації та керування callout в Obsidian.",
+	"importBanner.message":
+		"Ми помітили, що ви використовуєте {{plugins}}. Хочете імпортувати свої callout?",
+	"importBanner.action": "Імпортувати",
+	"importBanner.dismiss": "Відхилити",
 	"welcome.previewTitle": "Побачити в дії",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":

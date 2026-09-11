@@ -61,6 +61,7 @@ import { CalloutStudioAPI } from "./api/PluginAPI";
 import { PLUGIN_ICON_ID } from "./constants";
 import { getLocale, setLocale, t } from "./i18n";
 import { LocaleStore } from "./i18n/LocaleStore";
+import { registerDeveloperProtocols } from "./settings/developerProtocols";
 
 /**
  * How long the startup entrance animation window stays open. Long enough to
@@ -272,11 +273,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		this.settingsTab = new CalloutStudioSettingsTab(this.app, this);
 		this.addSettingTab(this.settingsTab);
 
-		// Dev/test convenience: from a terminal, `open "obsidian://callout-studio-welcome"`
-		// re-opens the welcome modal on demand (bypasses the welcomeSeen flag).
-		this.registerObsidianProtocolHandler("callout-studio-welcome", () => {
-			void this.openWelcome();
-		});
+		registerDeveloperProtocols(this);
 
 		// Commands
 		registerCalloutCommands(this, this.commandDeps());

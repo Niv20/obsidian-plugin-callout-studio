@@ -39,6 +39,10 @@ export const de: Record<string, string> = {
 	"welcome.title": "Willkommen bei Callout Studio!",
 	"welcome.tagline":
 		"Ihre umfassende Lösung zum Erstellen, Gestalten und Verwalten von Obsidian-Callouts.",
+	"importBanner.message":
+		"Wir haben bemerkt, dass Sie {{plugins}} verwenden. Möchten Sie Ihre Callouts importieren?",
+	"importBanner.action": "Importieren",
+	"importBanner.dismiss": "Verwerfen",
 	"welcome.previewTitle": "In Aktion sehen",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":

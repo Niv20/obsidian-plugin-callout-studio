@@ -35,6 +35,7 @@ import {
 import { ImportReportModal } from "../utils/ImportReportModal";
 import { applyModalChrome } from "./modalChrome";
 import type { SettingsSectionContext } from "./sections/types";
+import { markCompetitorImportBannerHandled } from "./competitorImportState";
 
 /**
  * Callout Manager's plugin id, and so its folder name under the config
@@ -226,6 +227,7 @@ export class CalloutManagerImportModal extends Modal {
 		// to true anyway, so the call would only add a promise.
 		const { created, updated } =
 			this.ctx.plugin.registry.applyCalloutManagerImport(toApply);
+		await markCompetitorImportBannerHandled(this.ctx.plugin);
 		new Notice(t("notice.importedCalloutManager", { created, updated }));
 		this.ctx.display();
 		this.close();

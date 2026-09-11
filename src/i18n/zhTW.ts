@@ -33,6 +33,10 @@ export const zhTW: Record<string, string> = {
 	"welcome.tooltip": "關於 Callout Studio",
 	"welcome.title": "歡迎使用 Callout Studio！",
 	"welcome.tagline": "建立、設計和管理 Obsidian callout 的完整解決方案。",
+	"importBanner.message":
+		"我們注意到您正在使用 {{plugins}}。是否要匯入您的 callout？",
+	"importBanner.action": "匯入",
+	"importBanner.dismiss": "忽略",
 	"welcome.previewTitle": "查看實際效果",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":

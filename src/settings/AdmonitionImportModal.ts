@@ -27,6 +27,7 @@ import { planAdmonitionImport } from "../utils/admonitionImport";
 import { ImportReportModal } from "../utils/ImportReportModal";
 import { applyModalChrome } from "./modalChrome";
 import type { SettingsSectionContext } from "./sections/types";
+import { markCompetitorImportBannerHandled } from "./competitorImportState";
 
 /**
  * Admonition's plugin id, and so its folder name under the config directory.
@@ -250,6 +251,7 @@ export class AdmonitionImportModal extends Modal {
 		// Saving is the registry's own doing: every add/update fires the change
 		// callback the plugin already persists on.
 		const { created, updated } = registry.applyAdmonitionImport(plan);
+		await markCompetitorImportBannerHandled(this.ctx.plugin);
 		new Notice(t("notice.importedAdmonition", { created, updated }));
 		this.ctx.display();
 		this.close();

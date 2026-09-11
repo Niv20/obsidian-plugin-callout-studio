@@ -54,6 +54,10 @@ export const he: Record<string, string> = {
 	"welcome.title": "ברוכים הבאים ל־Callout Studio!",
 	"welcome.tagline":
 		"הפתרון המלא שלכם ליצירה, לעיצוב ולניהול של תיבות־הבלטה ב־Obsidian.",
+	"importBanner.message":
+		"שמנו לב שאתם משתמשים ב־{{plugins}}. האם תרצו לייבא את תיבות־ההבלטה שלכם?",
+	"importBanner.action": "ייבוא",
+	"importBanner.dismiss": "ביטול",
 	"welcome.previewTitle": "לראות איך זה עובד",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":

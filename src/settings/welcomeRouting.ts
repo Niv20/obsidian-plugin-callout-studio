@@ -20,6 +20,7 @@
 import { WelcomeModal } from "./WelcomeModal";
 import type { ExternalReloadHost } from "../manager/settingsAdopt";
 import type { SettingsTabPlugin } from "./sections/types";
+import { armCompetitorImportBanner } from "./competitorImportState";
 
 /** What the routing needs beyond what `WelcomeModal` itself takes. */
 type WelcomeHost = SettingsTabPlugin &
@@ -38,6 +39,10 @@ export async function maybeShowWelcomeOnLaunch(
 	isFreshInstall: boolean,
 ): Promise<void> {
 	if (plugin.settings.welcomeSeen || !isFreshInstall) return;
+	// This is the one path that arms the settings banner. The info button and
+	// protocol handler construct WelcomeModal directly, so manually reopening
+	// the welcome screen can never opt an existing user into first-run UI.
+	armCompetitorImportBanner(plugin);
 	plugin.settings.welcomeSeen = true;
 	await new WelcomeModal(plugin).prompt();
 }

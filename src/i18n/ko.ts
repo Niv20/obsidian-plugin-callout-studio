@@ -38,6 +38,10 @@ export const ko: Record<string, string> = {
 	"welcome.title": "Callout Studio에 오신 것을 환영합니다!",
 	"welcome.tagline":
 		"Obsidian callout을 만들고, 스타일을 지정하고, 관리하기 위한 완벽한 솔루션입니다.",
+	"importBanner.message":
+		"{{plugins}}을(를) 사용 중이신 것을 확인했습니다. callout을 가져오시겠습니까?",
+	"importBanner.action": "가져오기",
+	"importBanner.dismiss": "닫기",
 	"welcome.previewTitle": "실제 동작 보기",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":

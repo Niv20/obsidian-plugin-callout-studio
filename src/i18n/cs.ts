@@ -38,6 +38,10 @@ export const cs: Record<string, string> = {
 	"welcome.title": "Vítejte v Callout Studio!",
 	"welcome.tagline":
 		"Vaše komplexní řešení pro vytváření, stylování a správu calloutů v Obsidianu.",
+	"importBanner.message":
+		"Všimli jsme si, že používáte {{plugins}}. Chcete importovat své callouty?",
+	"importBanner.action": "Importovat",
+	"importBanner.dismiss": "Zavřít",
 	"welcome.previewTitle": "Podívejte se na to v akci",
 	"welcome.demoName": "Callout Studio",
 	"welcome.sample":

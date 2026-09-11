@@ -26,6 +26,7 @@ import {
 } from "./sections/EditorFeaturesSection";
 import { renderFallbackSection } from "./sections/FallbackSection";
 import { renderReadOnlyBanner } from "./sections/ReadOnlyBanner";
+import { renderCompetitorImportBanner } from "./competitorImportBanner";
 import { captureScroll } from "./sections/scrollRestore";
 import { renderLanguageSection } from "./sections/LanguageSection";
 import { renderCustomPalettesSection } from "./sections/CustomPalettesSection";
@@ -152,14 +153,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 			},
 		});
 		this.calloutLists.render(containerEl);
-		// Straight under the "Callout Studio" title row, ahead of every
-		// section, because it is the reason nothing below it will be saved.
-		// Above the title it read as a message about the settings window
-		// rather than about this plugin. @see sections/ReadOnlyBanner.ts
-		renderReadOnlyBanner(
-			sectionCtx,
-			this.calloutLists.bannerSlot() ?? containerEl,
-		);
+		const bannerSlot = this.calloutLists.bannerSlot() ?? containerEl;
 
 		renderFallbackSection(sectionCtx, containerEl);
 		renderCustomPalettesSection(sectionCtx, containerEl);
@@ -167,11 +161,17 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		renderAutocompleteSettingsSection(sectionCtx, containerEl);
 		renderContextMenuSettingsSection(sectionCtx, containerEl);
 		renderHotkeySection(sectionCtx, containerEl);
-		renderImportExportSection(sectionCtx, containerEl);
+		const importTarget = renderImportExportSection(sectionCtx, containerEl);
 		renderLanguageSection(sectionCtx, containerEl);
 		renderResetSection(sectionCtx, containerEl);
 		renderCreditsSection(sectionCtx, containerEl);
 		renderFooterSection(sectionCtx, containerEl);
+
+		// Both notices belong directly under the title. Rendering them after the
+		// sections lets the import prompt hold the real row it will scroll to,
+		// without changing their DOM position inside the title's banner slot.
+		renderCompetitorImportBanner(sectionCtx, bannerSlot, importTarget);
+		renderReadOnlyBanner(sectionCtx, bannerSlot);
 
 		restoreScroll();
 	}

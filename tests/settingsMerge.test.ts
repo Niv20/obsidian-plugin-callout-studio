@@ -69,6 +69,7 @@ const FIELD_KIND: Record<keyof PluginSettings, "value" | "list"> = {
 	headingCallouts: "value",
 	inlineCallouts: "value",
 	welcomeSeen: "value",
+	competitorImportBannerHandled: "value",
 	fallbackCalloutId: "value",
 	language: "value",
 	customPalettes: "list",
@@ -135,6 +136,7 @@ const LEAVES = leaves(DEFAULT_SETTINGS);
 const EXPECTED_LEAVES: string[] = [
 
 	"autocomplete.enabled",
+	"competitorImportBannerHandled",
 	"contextMenu.enabled",
 	"fallbackCalloutId",
 	"globalStyle.alignContentWithTitle",
