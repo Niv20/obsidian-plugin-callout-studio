@@ -82,7 +82,7 @@ export default class CalloutStudioPlugin extends Plugin {
 	settingsTab!: CalloutStudioSettingsTab;
 	discovery!: ManualCalloutDiscovery;
 	settingsWriter!: SettingsWriter;
-	/** Only local UI preferences and a prior-install marker. */
+	/** Local UI/onboarding preferences and a prior-install marker. */
 	localState!: DeviceLocalStore;
 	/** Re-derives the theme's overlay rows — see registerThemeAppearance. */
 	refreshThemeAppearance!: () => void;

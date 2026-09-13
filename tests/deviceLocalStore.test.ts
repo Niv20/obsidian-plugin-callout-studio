@@ -71,6 +71,7 @@ describe("device UI state without a discovery cache", () => {
  it("does not write or discover anything on a new installation", () => {
   const store = fresh(); const before = storage.writes();
   assert.strictEqual(store.hasInitialized, false);
+  assert.strictEqual(store.hasSeenWelcome, false);
   assert.strictEqual(storage.writes(), before);
  });
  it("preserves legacy evidence until the verified archive and keeps section preferences", () => {
@@ -89,6 +90,19 @@ describe("device UI state without a discovery cache", () => {
   const restored = new DeviceLocalStore(app);
   assert.strictEqual(restored.hasInitialized, true);
   assert.strictEqual(restored.isExpanded("theme"), false);
+ });
+ it("remembers the welcome separately without marking the installation initialized", () => {
+  const store = fresh(); store.markWelcomeSeen();
+  assert.strictEqual(store.hasSeenWelcome, true);
+  assert.strictEqual(store.hasInitialized, false);
+  const restored = new DeviceLocalStore(app);
+  assert.strictEqual(restored.hasSeenWelcome, true);
+  assert.strictEqual(restored.hasInitialized, false);
+ });
+ it("does not mistake older local-state blobs for a completed welcome", () => {
+  const store = fresh({ v: 2, initialized: true, listsExpanded: { user: false } });
+  assert.strictEqual(store.hasSeenWelcome, false);
+  assert.strictEqual(store.hasInitialized, true);
  });
  it("tolerates corrupt and unavailable storage", () => {
   assert.doesNotThrow(() => fresh("broken"));

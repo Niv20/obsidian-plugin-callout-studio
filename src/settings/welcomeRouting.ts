@@ -10,9 +10,13 @@
  *   in `onload`, from the data that was just loaded.
  * - **The welcome never creates a settings file.** A second absent read still
  *   cannot prove another device's settings are not arriving later. Remember
- *   the greeting in memory; a subsequent deliberate settings edit persists it
- *   with the actual change. A no-edit restart may show the welcome again, which
- *   is preferable to publishing defaults over a slowly arriving file (#53).
+ *   the greeting in device-local storage immediately, while keeping the synced
+ *   setting in memory until a deliberate settings edit persists it. This makes
+ *   the splash once-only without publishing defaults over a slowly arriving
+ *   file (#53).
+ * - **The import banner has its own lifetime.** Once first-install onboarding
+ *   has made it eligible, every later launch arms it again until dismissal or
+ *   a successful import persists `competitorImportBannerHandled`.
  *
  * `openWelcome()` on the plugin is the deliberate bypass — the protocol handler
  * and the DevTools console reach the screen through it regardless of the flag.
@@ -38,10 +42,25 @@ export async function maybeShowWelcomeOnLaunch(
 	plugin: WelcomeHost,
 	isFreshInstall: boolean,
 ): Promise<void> {
-	if (plugin.settings.welcomeSeen || !isFreshInstall) return;
-	// This is the one path that arms the settings banner. The info button and
-	// protocol handler construct WelcomeModal directly, so manually reopening
-	// the welcome screen can never opt an existing user into first-run UI.
+	const welcomeSeen =
+		plugin.settings.welcomeSeen === true || plugin.localState.hasSeenWelcome;
+
+	// Re-arm the separate import prompt on every launch after first-install
+	// onboarding. Manually opening WelcomeModal never sets either marker, so it
+	// still cannot opt an existing user into the banner.
+	if (
+		welcomeSeen &&
+		plugin.settings.competitorImportBannerHandled !== true
+	) {
+		armCompetitorImportBanner(plugin);
+	}
+
+	if (welcomeSeen || !isFreshInstall) return;
+
+	// Persist locally before opening: a plugin reload while the modal is open
+	// must not open a second automatic welcome. This deliberately does not mark
+	// the installation initialized and does not create data.json.
+	plugin.localState.markWelcomeSeen();
 	armCompetitorImportBanner(plugin);
 	plugin.settings.welcomeSeen = true;
 	await new WelcomeModal(plugin).prompt();

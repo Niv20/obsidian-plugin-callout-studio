@@ -1,4 +1,4 @@
-/** Device-only UI preferences. Legacy discovery is archived, never restored. */
+/** Device-only UI and onboarding state. Legacy discovery is archived, never restored. */
 import type { App, PluginManifest } from "obsidian";
 import { LEGACY_STARTUP_CSS_STORAGE_KEY } from "./startupStyleKeys";
 import type { CalloutListsFoldState } from "../types";
@@ -11,16 +11,19 @@ export type LegacyDiscoveryMigration =
 	| { kind: "failed" };
 
 interface DeviceLocalState {
-	v: 2;
+	v: 3;
 	/** Protect a previously used installation when data.json temporarily vanishes. */
 	initialized: boolean;
+	/** Prevent the automatic welcome from reopening before data.json exists. */
+	welcomeSeen: boolean;
 	listsExpanded: CalloutListsFoldState;
 }
 
 export class DeviceLocalStore {
 	private state: DeviceLocalState = {
-		v: 2,
+		v: 3,
 		initialized: false,
+		welcomeSeen: false,
 		listsExpanded: { theme: true, user: true, builtin: true, palettes: true },
 	};
 	private readonly memo = new WriteMemo();
@@ -36,11 +39,12 @@ export class DeviceLocalStore {
 			// Unknown/corrupt data must not be overwritten by UI preferences.
 			this.writable = false;
 			this.state.initialized = true;
-			const parsed = JSON.parse(raw) as { v?: number; initialized?: boolean; listsExpanded?: Partial<CalloutListsFoldState> };
-			if (!parsed || (parsed.v !== 1 && parsed.v !== 2)) return;
+			const parsed = JSON.parse(raw) as { v?: number; initialized?: boolean; welcomeSeen?: boolean; listsExpanded?: Partial<CalloutListsFoldState> };
+			if (!parsed || (parsed.v !== 1 && parsed.v !== 2 && parsed.v !== 3)) return;
 			this.state = {
-				v: 2,
+				v: 3,
 				initialized: parsed.v === 1 || parsed.initialized === true,
+				welcomeSeen: parsed.v === 3 && parsed.welcomeSeen === true,
 				listsExpanded: {
 					theme: parsed.listsExpanded?.theme !== false,
 					user: parsed.listsExpanded?.user !== false,
@@ -97,6 +101,15 @@ export class DeviceLocalStore {
 
 	markInitialized(): void {
 		this.state.initialized = true;
+		this.persist();
+	}
+
+	get hasSeenWelcome(): boolean {
+		return this.state.welcomeSeen;
+	}
+
+	markWelcomeSeen(): void {
+		this.state.welcomeSeen = true;
 		this.persist();
 	}
 

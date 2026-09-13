@@ -188,6 +188,15 @@ describe("StartupStyleCache — the key is scoped to the vault", () => {
  * ──────────────────────────────────────────────────────────────────────────── */
 
 describe("StartupStyleCache — persist → loadCachedCss", () => {
+	it("keeps persisting after device-local onboarding upgrades the store", () => {
+		const store = storage();
+		store.held.set("v-callout-studio-local", JSON.stringify({ v: 3 }));
+		withWindow(store, () => {
+			const cache = new StartupStyleCache(app({ appId: "v" }));
+			cache.persist(".callout { color:red }");
+			assert.equal(cache.loadCachedCss(), ".callout { color:red }");
+		});
+	});
 	it("never replays a pre-fix snapshot and retains it for legacy recovery", () => {
 		const store = storage();
 		const oldKey = `v-${LEGACY_STARTUP_CSS_STORAGE_KEY}`;

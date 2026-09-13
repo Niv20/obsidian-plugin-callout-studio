@@ -14,8 +14,9 @@
  *   second one writes the shipped built-ins over settings that are merely in
  *   transit, which is issue #53 with the guard removed — so the call is gated on
  *   `boot.isFreshInstall` at the call site, and only there.
- * - **The welcome writes nothing.** Missing settings may still be in transit,
- *   so a greeting is no reason to publish defaults or mark a device initialized.
+ * - **The welcome writes no synced settings.** Missing settings may still be in
+ *   transit, so a greeting is no reason to publish defaults or mark a device
+ *   initialized. Its once-only marker is device-local instead.
  *
  * The adoption branch — a file that turned up between `onload` and here — is
  * covered by `syncMobileWipe.test.ts` against a whole device. What is pinned
@@ -46,6 +47,8 @@ function launch(options: {
 	frozen?: boolean;
 	firstRunCompleted?: boolean;
 	welcomeSeen?: boolean;
+	localWelcomeSeen?: boolean;
+	competitorImportBannerHandled?: boolean;
 	saveRejects?: boolean;
 } = {}) {
 	const registry = new CalloutRegistry();
@@ -57,7 +60,9 @@ function launch(options: {
 		prunes: [] as (number | undefined)[],
 		watchers: 0,
 		initialized: 0,
+		welcomeMarks: 0,
 	};
+	let localWelcomeSeen = options.localWelcomeSeen ?? false;
 
 	const app = {
 		vault: {
@@ -74,6 +79,8 @@ function launch(options: {
 	if (options.frozen ?? true) settingsWriter.freeze();
 
 	registry.settings.welcomeSeen = options.welcomeSeen ?? false;
+	registry.settings.competitorImportBannerHandled =
+		options.competitorImportBannerHandled ?? false;
 
 	const plugin = {
 		app,
@@ -96,6 +103,11 @@ function launch(options: {
 		localState: {
 			firstRunCompleted: options.firstRunCompleted ?? true,
 			markInitialized: (): void => { seen.initialized++; },
+			get hasSeenWelcome(): boolean { return localWelcomeSeen; },
+			markWelcomeSeen: (): void => {
+				localWelcomeSeen = true;
+				seen.welcomeMarks++;
+			},
 		},
 		runVaultScan: (): Promise<number> => {
 			seen.scans += 1;
@@ -161,7 +173,7 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 		assert.strictEqual(l.plugin.settings.welcomeSeen, false);
 		assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), false);
 	});
-	it("does not create data.json or mark it as previously saved when a fresh welcome closes", async () => {
+	it("records the welcome locally without creating data.json or marking a prior save", async () => {
 		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
 		WelcomeModal.prototype.prompt = () => Promise.resolve();
 		try {
@@ -171,7 +183,28 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 			assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), true);
 			assert.strictEqual(l.seen.saves, 0);
 			assert.strictEqual(l.seen.initialized, 0);
+			assert.strictEqual(l.seen.welcomeMarks, 1);
 		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
+	});
+	it("re-arms an unhandled import banner after reload without reopening the welcome", async () => {
+		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
+		let prompts = 0;
+		WelcomeModal.prototype.prompt = () => { prompts++; return Promise.resolve(); };
+		try {
+			const l = launch({ localWelcomeSeen: true, welcomeSeen: false });
+			await l.run(true);
+			assert.strictEqual(prompts, 0);
+			assert.strictEqual(l.seen.welcomeMarks, 0);
+			assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), true);
+		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
+	});
+	it("does not re-arm the import banner after dismissal or a successful import", async () => {
+		const l = launch({
+			localWelcomeSeen: true,
+			competitorImportBannerHandled: true,
+		});
+		await l.run(true);
+		assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), false);
 	});
 	it("does not show a queued welcome after the plugin unloads", async () => {
 		const l = launch({ welcomeSeen: false });

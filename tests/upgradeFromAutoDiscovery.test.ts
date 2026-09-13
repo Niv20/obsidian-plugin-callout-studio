@@ -48,7 +48,7 @@ describe("upgrade from released automatic-discovery versions", () => {
 			assert.equal(h.state.noteReads, 0);
 			assert.equal(h.registry.toSaveData().version, 5);
 			assert.equal(h.localState.isExpanded("user"), false);
-			assert.deepEqual(Object.keys(JSON.parse(h.local.get(LOCAL_KEY)!) as Record<string, unknown>).sort(), ["initialized", "listsExpanded", "v"]);
+			assert.deepEqual(Object.keys(JSON.parse(h.local.get(LOCAL_KEY)!) as Record<string, unknown>).sort(), ["initialized", "listsExpanded", "v", "welcomeSeen"]);
 			h.css.persist("new live CSS");
 			assert.equal(h.local.get(CURRENT_CSS_KEY), "new live CSS");
 			assert.equal(h.local.get(CSS_KEY), ORIGINAL_CSS);

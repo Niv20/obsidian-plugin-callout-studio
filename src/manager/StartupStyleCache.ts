@@ -69,7 +69,7 @@ export class StartupStyleCache {
 			const local = window.localStorage.getItem(this.scopedKey("callout-studio-local"));
 			if (local) {
 				const parsed = JSON.parse(local) as { v?: unknown } | null;
-				if (parsed?.v !== 2) return;
+				if (parsed?.v !== 2 && parsed?.v !== 3) return;
 			}
 			window.localStorage.setItem(
 				this.scopedKey(STARTUP_CSS_STORAGE_KEY),
