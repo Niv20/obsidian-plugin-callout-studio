@@ -933,14 +933,6 @@ export const cs: Record<string, string> = {
 		'Smazat paletu "{{name}}"?\nPoužívá ji 1 callout. Zachová si své barvy a později ho můžete znovu propojit z řádku Barva v jeho editoru.',
 	"settings.deletePaletteConfirmLinked":
 		'Smazat paletu "{{name}}"?\nPoužívá ji {{count}} calloutů. Zachovají si své barvy a později je můžete znovu propojit z řádku Barva v kterémkoli z jejich editorů.',
-	"settings.unlinkedColors": "Nepropojené barvy",
-	"settings.unlinkedColorsDesc":
-		"Callouty, jejichž uložená barva byla smazána. Zachovají barvy, které měly; obnovení barvu znovu uloží a propojí celou skupinu.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} calloutů",
-	"settings.restoreColor": "Obnovit",
-	"settings.palettesMergedNotice":
-		"Sloučeno {{count}} importovaných palet do uložených barev, které už měly stejné barvy.",
 	"notice.palettesMerged":
 		"Sloučeno {{count}} uložených barev se stejnými barvami: {{names}}. Callouty, které je používají, si ponechají své barvy a nyní jsou propojené se zbývající barvou.",
 	"editor.colorsDescDeleted":

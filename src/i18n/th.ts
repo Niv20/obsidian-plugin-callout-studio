@@ -913,14 +913,6 @@ export const th: Record<string, string> = {
 		'ลบพาเลต "{{name}}" ใช่ไหม?\nมี 1 callout ใช้งานอยู่ มันจะคงสีเดิมไว้ และคุณสามารถเชื่อมโยงกลับได้ภายหลังจากแถวสีในตัวแก้ไขของมัน',
 	"settings.deletePaletteConfirmLinked":
 		'ลบพาเลต "{{name}}" ใช่ไหม?\nมี {{count}} callout ใช้งานอยู่ พวกมันจะคงสีเดิมไว้ และคุณสามารถเชื่อมโยงกลับได้ภายหลังจากแถวสีในตัวแก้ไขของแต่ละรายการ',
-	"settings.unlinkedColors": "สีที่ยังไม่เชื่อมโยง",
-	"settings.unlinkedColorsDesc":
-		"Callout ที่สีที่บันทึกไว้ถูกลบไปแล้ว พวกมันยังคงสีเดิมไว้; การกู้คืนจะบันทึกสีนั้นอีกครั้งและเชื่อมโยงทั้งกลุ่มกลับเข้าหากัน",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callout",
-	"settings.restoreColor": "กู้คืน",
-	"settings.palettesMergedNotice":
-		"รวมพาเลตที่นำเข้า {{count}} รายการเข้ากับสีที่บันทึกไว้ซึ่งมีสีเดียวกันอยู่แล้ว",
 	"notice.palettesMerged":
 		"รวมสีที่บันทึกไว้ {{count}} รายการที่มีสีเหมือนกัน: {{names}} callout ที่ใช้สีเหล่านี้จะยังคงสีเดิม และตอนนี้เชื่อมโยงกับสีที่เหลืออยู่แล้ว",
 	"editor.colorsDescDeleted":

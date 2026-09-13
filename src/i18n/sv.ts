@@ -930,14 +930,6 @@ export const sv: Record<string, string> = {
 		'Ta bort paletten "{{name}}"?\n1 callout använder den. Den behåller sina färger, och du kan återansluta den senare från färgraden i redigeraren.',
 	"settings.deletePaletteConfirmLinked":
 		'Ta bort paletten "{{name}}"?\n{{count}} callouts använder den. De behåller sina färger, och du kan återansluta dem senare från färgraden i någon av deras redigerare.',
-	"settings.unlinkedColors": "Frånkopplade färger",
-	"settings.unlinkedColorsDesc":
-		"Callouts vars sparade färg togs bort. De behåller färgerna de hade; återställning sparar färgen igen och återansluter hela gruppen.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callouts",
-	"settings.restoreColor": "Återställ",
-	"settings.palettesMergedNotice":
-		"Slog ihop {{count}} importerade palett(er) med sparade färger som redan hade samma färger.",
 	"notice.palettesMerged":
 		"Slog ihop {{count}} sparade färg(er) som hade identiska färger: {{names}}. Callouts som använder dem behåller sina färger och är nu länkade till färgen som blev kvar.",
 	"editor.colorsDescDeleted":

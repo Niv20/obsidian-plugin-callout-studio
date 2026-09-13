@@ -948,14 +948,6 @@ export const es: Record<string, string> = {
 		'¿Eliminar la paleta "{{name}}"?\n1 callout la usa. Conserva sus colores y puedes volver a conectarla más tarde desde la fila Color en su editor.',
 	"settings.deletePaletteConfirmLinked":
 		'¿Eliminar la paleta "{{name}}"?\n{{count}} callouts la usan. Conservan sus colores y puedes volver a conectarlos más tarde desde la fila Color en cualquiera de sus editores.',
-	"settings.unlinkedColors": "Colores desvinculados",
-	"settings.unlinkedColorsDesc":
-		"Callouts cuyo color guardado fue eliminado. Conservan los colores que tenían; restaurar vuelve a guardar el color y reconecta todo el grupo.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callouts",
-	"settings.restoreColor": "Restaurar",
-	"settings.palettesMergedNotice":
-		"Se fusionaron {{count}} paleta(s) importada(s) con colores guardados que ya tenían los mismos colores.",
 	"notice.palettesMerged":
 		"Se fusionaron {{count}} color(es) guardado(s) que tenían colores idénticos: {{names}}. Los callouts que los usan conservan sus colores y ahora están vinculados al color que permanece.",
 	"editor.colorsDescDeleted":

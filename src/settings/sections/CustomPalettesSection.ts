@@ -41,7 +41,6 @@ import {
 	renderPagedList,
 } from "./listPaging";
 import type { PagingState } from "./listPaging";
-import { renderOrphanPaletteGroups } from "./PaletteOrphanGroups";
 
 export function renderCustomPalettesSection(
 	ctx: SettingsSectionContext,
@@ -164,15 +163,6 @@ export function renderCustomPalettesSection(
 		renderList();
 	};
 
-	const renderOrphanGroups = (): void =>
-		renderOrphanPaletteGroups(bodyEl, {
-			ctx,
-			takenNamesExcept,
-			othersExcept,
-			adoptOrphans,
-			onChange: renderList,
-		});
-
 	const renderPaletteRow = (listEl: HTMLElement, palette: CustomPalette): void => {
 		const row = listEl.createDiv({
 			cls: "callout-studio-row cs-palette-list-row",
@@ -252,14 +242,12 @@ export function renderCustomPalettesSection(
 				cls: "callout-studio-empty-state",
 				text: t("settings.customPalettesEmpty"),
 			});
-			renderOrphanGroups();
 			return;
 		}
 		renderPagedList(bodyEl, palettes, paging, renderPaletteRow, () => {
 			renderList();
 			focusFirstRevealed(bodyEl);
 		});
-		renderOrphanGroups();
 	};
 
 	// The swatches show the CURRENT theme mode, so re-render on a live theme

@@ -971,14 +971,6 @@ export const he: Record<string, string> = {
 		'האם למחוק את הפלטה "{{name}}"?\nתיבת־הבלטה אחת משתמשת בה. הצבעים שלה נשמרים, ואפשר לחבר אותה שוב אחר כך משורת הצבע בעורך שלה.',
 	"settings.deletePaletteConfirmLinked":
 		'האם למחוק את הפלטה "{{name}}"?\n{{count}} תיבות־הבלטה משתמשות בה. הצבעים שלהן נשמרים, ואפשר לחבר אותן שוב אחר כך משורת הצבע בכל אחד מהעורכים שלהן.',
-	"settings.unlinkedColors": "צבעים מנותקים",
-	"settings.unlinkedColorsDesc":
-		"תיבות־הבלטה שהצבע השמור שלהן נמחק. הן שומרות על הצבעים שהיו להן; שחזור ישמור שוב את הצבע ויחבר מחדש את כל הקבוצה.",
-	"settings.unlinkedColorOne": "תיבת־הבלטה אחת",
-	"settings.unlinkedColorCount": "{{count}} תיבות־הבלטה",
-	"settings.restoreColor": "שחזור",
-	"settings.palettesMergedNotice":
-		"מוזגו {{count}} פלטות מיובאות לתוך צבעים שמורים שכבר היו באותם צבעים.",
 	"notice.palettesMerged":
 		"מוזגו {{count}} צבעים שמורים שהיו עם צבעים זהים: {{names}}. תיבות־ההבלטה שמשתמשות בהם שומרות על הצבעים שלהן וכעת מקושרות לצבע שנשאר.",
 	"editor.colorsDescDeleted":

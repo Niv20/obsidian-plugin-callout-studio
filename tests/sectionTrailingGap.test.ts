@@ -207,9 +207,8 @@ describe("nothing a section ends with carries trailing space of its own", () => 
 
 	it("leaves the list its margin where a list ends mid-section", () => {
 		// The override is scoped rather than removed at source on purpose: the
-		// Saved color palettes list is followed by the Unlinked colors groups
-		// inside the same body, and the Quick insert window's list is not in a
-		// section at all. Both still need the 24px.
+		// the palette list and Quick insert list still sit inside the same body
+		// in their respective contexts, so both still need the 24px.
 		assert.match(
 			ruleFor(".callout-studio-callout-list"),
 			/margin-bottom:\s*24px/,

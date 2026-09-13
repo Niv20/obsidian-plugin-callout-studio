@@ -918,14 +918,6 @@ export const fi: Record<string, string> = {
 		'Poistetaanko paletti "{{name}}"?\n1 callout käyttää sitä. Se säilyttää värinsä, ja voit yhdistää sen myöhemmin uudelleen editorin Väririviltä.',
 	"settings.deletePaletteConfirmLinked":
 		'Poistetaanko paletti "{{name}}"?\n{{count}} calloutia käyttää sitä. Ne säilyttävät värinsä, ja voit yhdistää ne myöhemmin uudelleen minkä tahansa editorinsa Väririviltä.',
-	"settings.unlinkedColors": "Irrotetut värit",
-	"settings.unlinkedColorsDesc":
-		"Calloutit, joiden tallennettu väri poistettiin. Ne säilyttävät aiemmat värinsä; palauttaminen tallentaa värin uudelleen ja yhdistää koko ryhmän uudelleen.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} calloutia",
-	"settings.restoreColor": "Palauta",
-	"settings.palettesMergedNotice":
-		"Yhdistettiin {{count}} tuotua palettia tallennettuihin väreihin, joilla oli jo samat värit.",
 	"notice.palettesMerged":
 		"Yhdistettiin {{count}} tallennettua väriä, joilla oli samat värit: {{names}}. Niitä käyttävät calloutit säilyttävät värinsä ja ovat nyt linkitetty jäljelle jääneeseen väriin.",
 	"editor.colorsDescDeleted":

@@ -925,14 +925,6 @@ export const hi: Record<string, string> = {
 		'"{{name}}" पैलेट हटाएँ?\nइसे 1 callout उपयोग करता है। उसके रंग बने रहेंगे, और आप बाद में उसके एडिटर की Color पंक्ति से फिर से जोड़ सकते हैं।',
 	"settings.deletePaletteConfirmLinked":
 		'"{{name}}" पैलेट हटाएँ?\nइसे {{count}} callout उपयोग करते हैं। उनके रंग बने रहेंगे, और आप बाद में उनके किसी भी एडिटर की Color पंक्ति से फिर से जोड़ सकते हैं।',
-	"settings.unlinkedColors": "अनलिंक किए गए रंग",
-	"settings.unlinkedColorsDesc":
-		"वे callout जिनका सहेजा गया रंग हट गया है। वे अपने पुराने रंग बनाए रखते हैं; Restore करने पर रंग फिर से सहेजा जाता है और पूरा समूह फिर से लिंक हो जाता है।",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callout",
-	"settings.restoreColor": "Restore",
-	"settings.palettesMergedNotice":
-		"{{count}} आयातित पैलेट को उन सहेजे गए रंगों में मिला दिया गया जिनके रंग पहले से समान थे।",
 	"notice.palettesMerged":
 		"समान रंग वाले {{count}} सहेजे गए रंगों को मिला दिया गया: {{names}}। इन्हें उपयोग करने वाले callout अपने रंग बनाए रखते हैं और अब बचे हुए रंग से लिंक हैं।",
 	"editor.colorsDescDeleted":

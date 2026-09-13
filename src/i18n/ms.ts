@@ -920,14 +920,6 @@ export const ms: Record<string, string> = {
 		'Padam palet "{{name}}"?\n1 callout menggunakannya. Ia mengekalkan warnanya, dan anda boleh sambungkan semula kemudian dari baris Warna dalam editornya.',
 	"settings.deletePaletteConfirmLinked":
 		'Padam palet "{{name}}"?\n{{count}} callout menggunakannya. Mereka mengekalkan warna masing-masing, dan anda boleh sambungkan semula kemudian dari baris Warna dalam mana-mana editor mereka.',
-	"settings.unlinkedColors": "Warna tidak dipaut",
-	"settings.unlinkedColorsDesc":
-		"Callout yang warna tersimpannya telah dipadam. Mereka mengekalkan warna sedia ada; pulih akan menyimpan semula warna itu dan memautkan semula seluruh kumpulan.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callout",
-	"settings.restoreColor": "Pulihkan",
-	"settings.palettesMergedNotice":
-		"Menggabungkan {{count}} palet import ke dalam warna tersimpan yang sudah mempunyai warna yang sama.",
 	"notice.palettesMerged":
 		"Menggabungkan {{count}} warna tersimpan yang mempunyai warna serupa: {{names}}. Callout yang menggunakannya mengekalkan warna masing-masing dan kini dipautkan kepada warna yang tinggal.",
 	"editor.colorsDescDeleted":

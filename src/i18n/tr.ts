@@ -926,14 +926,6 @@ export const tr: Record<string, string> = {
 		'"{{name}}" paleti silinsin mi?\n1 callout bunu kullanıyor. Renklerini korur ve daha sonra düzenleyicisindeki Renk satırından yeniden bağlayabilirsiniz.',
 	"settings.deletePaletteConfirmLinked":
 		'"{{name}}" paleti silinsin mi?\n{{count}} callout bunu kullanıyor. Renklerini korurlar ve daha sonra düzenleyicilerindeki Renk satırından yeniden bağlayabilirsiniz.',
-	"settings.unlinkedColors": "Bağlantısı kaldırılmış renkler",
-	"settings.unlinkedColorsDesc":
-		"Kaydedilmiş rengi silinen callout'lar. Sahip oldukları renkleri korurlar; geri yükleme rengi tekrar kaydeder ve tüm grubu yeniden bağlar.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callout",
-	"settings.restoreColor": "Geri yükle",
-	"settings.palettesMergedNotice":
-		"Aynı renklere zaten sahip kayıtlı renklere {{count}} içe aktarılan palet birleştirildi.",
 	"notice.palettesMerged":
 		"Aynı renklere sahip {{count}} kayıtlı renk birleştirildi: {{names}}. Bunları kullanan callout'lar renklerini korur ve artık kalan renge bağlıdır.",
 	"editor.colorsDescDeleted":

@@ -938,14 +938,6 @@ export const vi: Record<string, string> = {
 		'Xóa bảng màu "{{name}}"?\nCó 1 callout đang dùng nó. Callout đó giữ nguyên màu, và bạn có thể liên kết lại sau từ hàng Màu trong trình chỉnh sửa của nó.',
 	"settings.deletePaletteConfirmLinked":
 		'Xóa bảng màu "{{name}}"?\nCó {{count}} callout đang dùng nó. Chúng giữ nguyên màu, và bạn có thể liên kết lại sau từ hàng Màu trong bất kỳ trình chỉnh sửa nào của chúng.',
-	"settings.unlinkedColors": "Màu chưa liên kết",
-	"settings.unlinkedColorsDesc":
-		"Các callout có màu đã lưu bị xóa. Chúng vẫn giữ màu hiện có; khôi phục sẽ lưu lại màu và liên kết lại cả nhóm.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callout",
-	"settings.restoreColor": "Khôi phục",
-	"settings.palettesMergedNotice":
-		"Đã gộp {{count}} bảng màu nhập vào các màu đã lưu vốn đã có cùng màu.",
 	"notice.palettesMerged":
 		"Đã gộp {{count}} màu đã lưu có màu giống hệt nhau: {{names}}. Các callout dùng chúng vẫn giữ màu và giờ được liên kết với màu còn lại.",
 	"editor.colorsDescDeleted":

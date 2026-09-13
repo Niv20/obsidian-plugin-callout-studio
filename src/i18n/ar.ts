@@ -921,14 +921,6 @@ export const ar: Record<string, string> = {
 		'حذف لوحة الألوان "{{name}}"؟\nيوجد 1 callout يستخدمها. سيحتفظ بألوانه، ويمكنك إعادة ربطه لاحقًا من صف اللون في محرره.',
 	"settings.deletePaletteConfirmLinked":
 		'حذف لوحة الألوان "{{name}}"؟\nيوجد {{count}} callout يستخدمونها. سيحتفظون بألوانهم، ويمكنك إعادة ربطهم لاحقًا من صف اللون في أي محرر منهم.',
-	"settings.unlinkedColors": "ألوان غير مرتبطة",
-	"settings.unlinkedColorsDesc":
-		"Callouts التي حُذف لونها المحفوظ. ستحتفظ بالألوان التي كانت عليها؛ الاستعادة تحفظ اللون مرة أخرى وتعيد ربط المجموعة كاملة.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callouts",
-	"settings.restoreColor": "استعادة",
-	"settings.palettesMergedNotice":
-		"تم دمج {{count}} لوحة مستوردة في ألوان محفوظة كانت تحمل الألوان نفسها بالفعل.",
 	"notice.palettesMerged":
 		"تم دمج {{count}} لون محفوظ كان يحمل ألوانًا متطابقة: {{names}}. الـ callouts التي تستخدمها تحتفظ بألوانها وهي الآن مرتبطة باللون المتبقي.",
 	"editor.colorsDescDeleted":

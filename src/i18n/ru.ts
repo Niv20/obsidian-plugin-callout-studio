@@ -931,14 +931,6 @@ export const ru: Record<string, string> = {
 		'Удалить палитру "{{name}}"?\nЕё использует 1 callout. Он сохранит свои цвета, и вы сможете снова связать его позже из строки «Цвет» в его редакторе.',
 	"settings.deletePaletteConfirmLinked":
 		'Удалить палитру "{{name}}"?\nЕё используют {{count}} callout-ов. Они сохранят свои цвета, и вы сможете снова связать их позже из строки «Цвет» в любом из их редакторов.',
-	"settings.unlinkedColors": "Отвязанные цвета",
-	"settings.unlinkedColorsDesc":
-		"Callout-ы, у которых сохранённый цвет был удалён. Они сохраняют прежние цвета; восстановление снова сохраняет цвет и перепривязывает всю группу.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callout-ов",
-	"settings.restoreColor": "Восстановить",
-	"settings.palettesMergedNotice":
-		"Объединено {{count}} импортированных палитр(ы) с сохранёнными цветами, у которых уже были те же цвета.",
 	"notice.palettesMerged":
 		"Объединено {{count}} сохранённых цветов с одинаковыми цветами: {{names}}. Callout-ы, которые их используют, сохраняют свои цвета и теперь привязаны к оставшемуся цвету.",
 	"editor.colorsDescDeleted":

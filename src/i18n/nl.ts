@@ -944,14 +944,6 @@ export const nl: Record<string, string> = {
 		'Palet "{{name}}" verwijderen?\n1 callout gebruikt het. Het behoudt zijn kleuren en je kunt het later opnieuw koppelen via de rij Kleur in de editor.',
 	"settings.deletePaletteConfirmLinked":
 		'Palet "{{name}}" verwijderen?\n{{count}} callouts gebruiken het. Ze behouden hun kleuren en je kunt ze later opnieuw koppelen via de rij Kleur in een van hun editors.',
-	"settings.unlinkedColors": "Ontkoppelde kleuren",
-	"settings.unlinkedColorsDesc":
-		"Callouts waarvan de opgeslagen kleur is verwijderd. Ze behouden de kleuren die ze hadden; herstellen slaat de kleur opnieuw op en koppelt de hele groep weer.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callouts",
-	"settings.restoreColor": "Herstellen",
-	"settings.palettesMergedNotice":
-		"{{count}} geïmporteerde palet(ten) samengevoegd met opgeslagen kleuren die al dezelfde kleuren hadden.",
 	"notice.palettesMerged":
 		"{{count}} opgeslagen kleur(en) met identieke kleuren samengevoegd: {{names}}. De callouts die ze gebruiken behouden hun kleuren en zijn nu gekoppeld aan de kleur die is overgebleven.",
 	"editor.colorsDescDeleted":

@@ -932,14 +932,6 @@ export const el: Record<string, string> = {
 		'Να διαγραφεί η παλέτα "{{name}}";\n1 callout τη χρησιμοποιεί. Κρατά τα χρώματά του και μπορείτε να το συνδέσετε ξανά αργότερα από τη γραμμή Χρώμα στον επεξεργαστή του.',
 	"settings.deletePaletteConfirmLinked":
 		'Να διαγραφεί η παλέτα "{{name}}";\n{{count}} callouts τη χρησιμοποιούν. Κρατούν τα χρώματά τους και μπορείτε να τα συνδέσετε ξανά αργότερα από τη γραμμή Χρώμα σε οποιονδήποτε από τους επεξεργαστές τους.',
-	"settings.unlinkedColors": "Μη συνδεδεμένα χρώματα",
-	"settings.unlinkedColorsDesc":
-		"Callouts των οποίων το αποθηκευμένο χρώμα διαγράφηκε. Κρατούν τα χρώματα που είχαν· η επαναφορά αποθηκεύει ξανά το χρώμα και επανασυνδέει όλη την ομάδα.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callouts",
-	"settings.restoreColor": "Επαναφορά",
-	"settings.palettesMergedNotice":
-		"Συγχωνεύτηκαν {{count}} εισαγόμενες παλέτες σε αποθηκευμένα χρώματα που είχαν ήδη τα ίδια χρώματα.",
 	"notice.palettesMerged":
 		"Συγχωνεύτηκαν {{count}} αποθηκευμένα χρώματα με πανομοιότυπα χρώματα: {{names}}. Τα callouts που τα χρησιμοποιούν κρατούν τα χρώματά τους και τώρα συνδέονται με το χρώμα που έμεινε.",
 	"editor.colorsDescDeleted":

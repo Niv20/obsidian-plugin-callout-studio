@@ -937,14 +937,6 @@ export const id: Record<string, string> = {
 		'Hapus palet "{{name}}"?\n1 callout menggunakannya. Ia tetap mempertahankan warnanya, dan Anda bisa menyambungkannya lagi nanti dari baris Warna di editornya.',
 	"settings.deletePaletteConfirmLinked":
 		'Hapus palet "{{name}}"?\n{{count}} callout menggunakannya. Mereka tetap mempertahankan warnanya, dan Anda bisa menyambungkannya lagi nanti dari baris Warna di salah satu editornya.',
-	"settings.unlinkedColors": "Warna tidak tertaut",
-	"settings.unlinkedColorsDesc":
-		"Callout yang warna tersimpannya dihapus. Mereka tetap mempertahankan warna yang dimiliki; pulihkan akan menyimpan warna lagi dan menyambungkan kembali seluruh grup.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callout",
-	"settings.restoreColor": "Pulihkan",
-	"settings.palettesMergedNotice":
-		"Menggabungkan {{count}} palet impor ke warna tersimpan yang sudah memiliki warna yang sama.",
 	"notice.palettesMerged":
 		"Menggabungkan {{count}} warna tersimpan yang memiliki warna identik: {{names}}. Callout yang menggunakannya tetap mempertahankan warnanya dan sekarang tertaut ke warna yang tersisa.",
 	"editor.colorsDescDeleted":

@@ -943,14 +943,6 @@ export const pt: Record<string, string> = {
 		'Excluir a paleta "{{name}}"?\n1 callout a utiliza. Ele mantém suas cores, e você pode reconectá-la depois na linha Cor do editor.',
 	"settings.deletePaletteConfirmLinked":
 		'Excluir a paleta "{{name}}"?\n{{count}} callouts a utilizam. Eles mantêm suas cores, e você pode reconectá-los depois na linha Cor de qualquer um dos editores.',
-	"settings.unlinkedColors": "Cores desvinculadas",
-	"settings.unlinkedColorsDesc":
-		"Callouts cuja cor salva foi excluída. Eles mantêm as cores que tinham; restaurar salva a cor novamente e reconecta todo o grupo.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callouts",
-	"settings.restoreColor": "Restaurar",
-	"settings.palettesMergedNotice":
-		"Mesclou {{count}} paleta(s) importada(s) com cores salvas que já tinham as mesmas cores.",
 	"notice.palettesMerged":
 		"Mesclou {{count}} cor(es) salva(s) com cores idênticas: {{names}}. Os callouts que as usam mantêm suas cores e agora estão vinculados à cor que permaneceu.",
 	"editor.colorsDescDeleted":

@@ -918,14 +918,6 @@ export const bg: Record<string, string> = {
 		'Да изтрия ли палитрата "{{name}}"?\n1 callout я използва. Той запазва цветовете си и можете да го свържете отново по-късно от реда „Цвят“ в редактора му.',
 	"settings.deletePaletteConfirmLinked":
 		'Да изтрия ли палитрата "{{name}}"?\n{{count}} callout-а я използват. Те запазват цветовете си и можете да ги свържете отново по-късно от реда „Цвят“ в който и да е от редакторите им.',
-	"settings.unlinkedColors": "Несвързани цветове",
-	"settings.unlinkedColorsDesc":
-		"Callout-и, чийто запазен цвят е изтрит. Те запазват цветовете, които са имали; възстановяването записва цвета отново и свързва цялата група.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callout-а",
-	"settings.restoreColor": "Възстанови",
-	"settings.palettesMergedNotice":
-		"Сля {{count}} импортирани палитри със запазени цветове, които вече имаха същите цветове.",
 	"notice.palettesMerged":
 		"Сля {{count}} запазени цвята с еднакви цветове: {{names}}. Callout-ите, които ги използват, запазват цветовете си и сега са свързани с останалия цвят.",
 	"editor.colorsDescDeleted":

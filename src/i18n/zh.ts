@@ -895,14 +895,6 @@ export const zh: Record<string, string> = {
 		"删除调色板“{{name}}”？\n1 个 callout 正在使用它。它会保留原有颜色，你之后可以在其编辑器的颜色行重新关联。",
 	"settings.deletePaletteConfirmLinked":
 		"删除调色板“{{name}}”？\n{{count}} 个 callout 正在使用它。它们会保留原有颜色，你之后可以在任一编辑器的颜色行重新关联。",
-	"settings.unlinkedColors": "未关联颜色",
-	"settings.unlinkedColorsDesc":
-		"这些 callout 的已保存颜色已被删除。它们会保留原有颜色；恢复会重新保存该颜色并重新关联整个组。",
-	"settings.unlinkedColorOne": "1 个 callout",
-	"settings.unlinkedColorCount": "{{count}} 个 callout",
-	"settings.restoreColor": "恢复",
-	"settings.palettesMergedNotice":
-		"已将 {{count}} 个导入调色板合并到已保存且颜色相同的颜色项中。",
 	"notice.palettesMerged":
 		"已合并 {{count}} 个颜色完全相同的已保存颜色：{{names}}。使用它们的 callout 会保留原有颜色，并已关联到保留的颜色。",
 	"editor.colorsDescDeleted":

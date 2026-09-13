@@ -942,14 +942,6 @@ export const uk: Record<string, string> = {
 		'Видалити палітру "{{name}}"?\nЇї використовує 1 callout. Він збереже свої кольори, і ви зможете знову прив’язати його пізніше з рядка «Колір» у редакторі.',
 	"settings.deletePaletteConfirmLinked":
 		'Видалити палітру "{{name}}"?\nЇї використовують {{count}} callout-ів. Вони збережуть свої кольори, і ви зможете знову прив’язати їх пізніше з рядка «Колір» у будь-якому з їхніх редакторів.',
-	"settings.unlinkedColors": "Неприв’язані кольори",
-	"settings.unlinkedColorsDesc":
-		"Callout-и, у яких збережений колір було видалено. Вони зберігають наявні кольори; відновлення знову збереже колір і переприв’яже всю групу.",
-	"settings.unlinkedColorOne": "1 callout",
-	"settings.unlinkedColorCount": "{{count}} callout-ів",
-	"settings.restoreColor": "Відновити",
-	"settings.palettesMergedNotice":
-		"Об’єднано {{count}} імпортованих палітр(и) із збереженими кольорами, які вже мали ті самі кольори.",
 	"notice.palettesMerged":
 		"Об’єднано {{count}} збережених кольорів із однаковими кольорами: {{names}}. Callout-и, що їх використовують, зберігають свої кольори й тепер прив’язані до кольору, який залишився.",
 	"editor.colorsDescDeleted":

@@ -243,17 +243,13 @@ callouts*, in that order, from one pass over one combined list (see
 [Theme callout discovery](21-theme-callout-discovery.md) for who lands
 where). Two behaviours sit on top of that split, each in its own helper —
 and [`CustomPalettesSection.ts`](../../src/settings/sections/CustomPalettesSection.ts)'s
-*Saved color palettes* heading is a fourth member of the same family rather
-than a parallel implementation: it calls the identical `attachPersistedFold`
-and `renderPagedList` helpers, just keyed `"palettes"` instead of a `RowKind`,
-and wraps itself in the same `createStickySection` the trio uses so the heading
-pins too (see [The three sections pin their headings](#the-three-sections-pin-their-headings) —
-palettes is the standalone fourth). Its "Unlinked colors" sub-section —
-offering to rebuild a palette a deletion orphaned — neither folds nor pages on
-its own, and lives in a sibling module,
-[`PaletteOrphanGroups.ts`](../../src/settings/sections/PaletteOrphanGroups.ts),
-so `CustomPalettesSection.ts` itself stayed under the repo's line-count
-ratchet instead of raising it.
+*Saved color palettes* heading is a fourth member of the same family rather than
+a parallel implementation: it calls the identical `attachPersistedFold` and
+`renderPagedList` helpers, just keyed `"palettes"` instead of a `RowKind`, and
+wraps itself in the same `createStickySection` the trio uses so the heading pins
+too (see [The three sections pin their headings](#the-three-sections-pin-their-headings) —
+palettes is the standalone fourth). Unlike the other sections, it keeps only the
+list of saved palettes and no additional orphan groups.
 
 ### `sectionDisclosure.ts` — a heading you can fold
 
@@ -365,11 +361,10 @@ trips it (each of their wrappers follows another `<div>`), but zeroing it on the
 shared rule covers the fourth and any later reordering; *Callouts from your
 theme*'s own 4px top nudge is higher-specificity and unaffected.
 
-Its "Unlinked colors" sub-section scrolls under the band like any other row.
+This section's list scrolls under the band like any other row.
 The `.callout-studio-callout-list` 24px-margin zeroing now reaches the palette
 list too (it is inside a `cs-sticky-section` now), trimming 24px between it and
-the "Unlinked colors" heading — which is fine, that heading carries its own
-full divider.
+the heading — which is fine, the heading carries its own full divider.
 
 Nine consequences are written into `styles.css` beside the rules, and are
 worth knowing before touching any of them:
@@ -487,7 +482,7 @@ worth knowing before touching any of them:
     (the Quick insert window), which is why they are dropped here in a
     `cs-sticky-section`-scoped rule rather than removed outright. Inside the
     palettes section the zeroing does now reach a list that ends mid-section
-    — the palette list, with the "Unlinked colors" groups under it — which is
+    — the palette list inside its section — which is
     harmless: that sub-heading carries its own full divider.
   - Both of those rules reach through a **child combinator**, so a wrapper
     element between a section body and its list would silently stop them

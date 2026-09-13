@@ -987,8 +987,8 @@ body:not(.is-phone)
 /* ─── Callout List Rows ───────────────────────────────────────── */
 
 /* The bottom margin is for a list that ends *mid-section* — the Saved color
-   palettes one, with the Unlinked colors groups under it, and the Quick insert
-   window's. A list that ends a section gives it up again: there the trailing
+   palettes one, and the Quick insert window's. A list that ends a section
+   gives it up again: there the trailing
    space is the section's, spent once on `.cs-section-body` so that rows, a Load
    more button and an empty state all sit the same distance above the divider.
    See `--cs-section-gap`. */
@@ -3240,6 +3240,12 @@ button.callout-studio-icon-picker-loading {
 	width: 20px;
 	height: 20px;
 	flex-shrink: 0;
+}
+
+.cs-palette-combobox .cs-combobox-lead {
+	width: auto;
+	justify-content: flex-start;
+	min-width: 20px;
 }
 
 .cs-combobox-lead svg {
