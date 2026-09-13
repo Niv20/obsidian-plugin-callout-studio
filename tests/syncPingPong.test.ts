@@ -136,6 +136,7 @@ function device(name: string, disk: Disk) {
 				return Promise.resolve(undefined);
 			}
 		},
+		waitForSettingsSettle: () => Promise.resolve(),
 		registry,
 		localState,
 		settingsWriter: writer,

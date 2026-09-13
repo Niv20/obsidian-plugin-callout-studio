@@ -37,6 +37,7 @@ export function recoveryActionHarness(options: { missing?: boolean; legacy?: boo
 	const host = {
 		app, manifest: { id: "callout-studio", dir: ".obsidian/plugins/callout-studio" } as PluginManifest,
 		registry, localState: new DeviceLocalStore(app), settingsEditOpen: false,
+		waitForSettingsSettle: () => Promise.resolve(),
 		loadData: async () => state.disk === null ? null : JSON.parse(state.disk) as unknown,
 		saveData: async (data: unknown) => { if (state.failWrite) throw new Error("Primary disk full"); state.writes++; state.disk = JSON.stringify(data); },
 		refreshCallouts: () => {}, refreshThemeAppearance: () => {}, customCommands: { syncAll: () => {} },

@@ -39,6 +39,7 @@ function device() {
 	const host = {
 		app, manifest: { id: "callout-studio", dir: ".obsidian/plugins/callout-studio" } as PluginManifest,
 		registry, localState, settingsEditOpen: false,
+		waitForSettingsSettle: () => Promise.resolve(),
 		loadData: () => Promise.resolve(disk.json === null ? null : JSON.parse(disk.json) as unknown),
 		saveData: async (data: unknown) => {
 			if (disk.failWrite) throw new Error("disk full");

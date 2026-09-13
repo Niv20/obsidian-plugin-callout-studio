@@ -42,6 +42,7 @@ export async function device(dir: string, seed?: unknown) {
 	const registry = new CalloutRegistry();
 	const host = { app, manifest: { id: "callout-studio", dir } as PluginManifest, registry,
 		localState: new DeviceLocalStore(app), settingsEditOpen: false,
+		waitForSettingsSettle: () => Promise.resolve(),
 		loadData: async () => {
 			try { return JSON.parse(await readFile(file, "utf8")) as unknown; }
 			catch (error) { if ((error as { code: string }).code === "ENOENT") return null; throw error; }

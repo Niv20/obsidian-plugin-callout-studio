@@ -6,14 +6,14 @@ import type { CalloutRegistry } from "./CalloutRegistry";
 import type { SettingsWriter } from "./SettingsWriter";
 import type { DeviceLocalStore } from "./DeviceLocalStore";
 import { readSettingsFile } from "./settingsFile";
-import { readSettledSettingsFile } from "./settingsSettledRead";
+import { readSettledSettingsFile, type SettledSettingsFileHost } from "./settingsSettledRead";
 import { isFromNewerBuild } from "./foreignFields";
 import { registryIsOwned } from "./registryOwnership";
 import { backUpBeforeAdoption } from "./settingsConflictBackup";
 import { stableKeyOrder } from "../utils/stableJson";
-import type { SettingsFileHost, SettingsRead } from "./settingsFile";
+import type { SettingsRead } from "./settingsFile";
 
-export interface SettingsBootHost extends SettingsFileHost {
+export interface SettingsBootHost extends SettledSettingsFileHost {
 	registry: CalloutRegistry;
 	localState: DeviceLocalStore;
 	settingsWriter: SettingsWriter;

@@ -7,6 +7,11 @@ interface SettledReadOptions {
 	wait?: () => Promise<void>;
 }
 
+export interface SettledSettingsFileHost extends SettingsFileHost {
+	/** Override the pause between reads for hosts without browser timers. */
+	waitForSettingsSettle?: () => Promise<void>;
+}
+
 function sameRead(a: SettingsRead, b: SettingsRead): boolean {
 	if (a.kind === "absent" && b.kind === "absent") return true;
 	return a.kind === "loaded" && b.kind === "loaded" &&
@@ -20,10 +25,11 @@ function sameRead(a: SettingsRead, b: SettingsRead): boolean {
  * The writer still performs its own immediate freshness check before saving.
  */
 export async function readSettledSettingsFile(
-	host: SettingsFileHost, options: SettledReadOptions = {},
+	host: SettledSettingsFileHost, options: SettledReadOptions = {},
 ): Promise<SettingsRead> {
 	const cancelled = options.isCancelled ?? (() => false);
-	const wait = options.wait ?? (() => new Promise<void>(resolve => { setTimeout(resolve, 150); }));
+	const wait = options.wait ?? host.waitForSettingsSettle ??
+		(() => new Promise<void>(resolve => { window.setTimeout(resolve, 150); }));
 	if (cancelled()) return { kind: "unreadable" };
 	let previous = options.initial ?? await readSettingsFile(host);
 	let observedFile = previous.kind !== "absent";

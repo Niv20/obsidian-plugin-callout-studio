@@ -65,6 +65,7 @@ export function upgradeHarness(legacyRaw: string, saved?: unknown) {
 	});
 	const host: ExternalReloadHost = {
 		app, manifest, registry, localState, settingsWriter: writer,
+		waitForSettingsSettle: () => Promise.resolve(),
 		loadData: async () => disk.has(DATA_PATH) ? JSON.parse(disk.get(DATA_PATH)!) as unknown : null,
 		saveSettings: () => writer.save(), settingsEditOpen: false,
 		refreshThemeAppearance: () => {}, customCommands: { syncAll: () => {} },

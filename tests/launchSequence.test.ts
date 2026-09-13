@@ -94,6 +94,7 @@ function launch(options: {
 		// Nothing is on disk, which is what makes both frozen launches read the
 		// same way.
 		loadData: () => Promise.resolve(null),
+		waitForSettingsSettle: () => Promise.resolve(),
 		saveSettings: (): Promise<void> => {
 			seen.saves += 1;
 			return options.saveRejects
