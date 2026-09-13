@@ -970,8 +970,7 @@ export const tr: Record<string, string> = {
 	"quickInsert.readingView": "Bir callout eklemek için kaynak moduna veya Canlı Önizleme'ye geçin.",
 	"quickInsert.noCursorHint": "Bu notta imleç yok, bu yüzden eklenecek bir yer yok.",
 	"quickInsert.noCursor": "Callout'u eklemek istediğiniz yere notta imleci yerleştirin, sonra tekrar deneyin.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Yükseltme kurtarma kopyası tamamlanamadı. Önceki yerel keşif önbelleği ve başlangıç CSS'si değiştirilmeden korundu. Depolama alanının yazma izinlerini ve boş alanı kontrol edin, ardından yeniden denemek için Obsidian'ı yeniden başlatın.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Duraklatıldı: callout eksik. Bu komutu geri yüklemek için onu bulun veya oluşturun, ya da başka bir tür seçmek için komutu düzenleyin.",
 	"confirm.startFresh": "Bu, şu anda gösterilen callout türlerinden ve ayarlardan yeni bir ayarlar dosyası oluşturur. Önceki okunabilir bir kurtarma kopyası varsa bir yedekte saklanır. Eksik dosya hâlâ başka bir cihazdan geliyorsa, veya hâlâ senkronize oluyorsa, her yerde değiştirilecektir — callout'larınızın hâlâ bulunduğu cihazlar da dahil.\nBunu yalnızca dosyayı kendiniz sildiyseniz, veya geri gelmeyeceğinden eminseniz yapın.",

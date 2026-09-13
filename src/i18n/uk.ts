@@ -986,8 +986,7 @@ export const uk: Record<string, string> = {
 	"quickInsert.readingView": "Перемкніться в режим джерела або живий попередній перегляд, щоб вставити callout.",
 	"quickInsert.noCursorHint": "У цій нотатці немає курсора, тому нема куди вставити.",
 	"quickInsert.noCursor": "Розмістіть курсор у нотатці там, де хочете вставити callout, а потім спробуйте ще раз.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Не вдалося створити копію відновлення для оновлення. Попередній локальний кеш виявлення та початковий CSS залишено без змін. Перевірте права на запис і вільне місце на диску, потім перезапустіть Obsidian, щоб повторити спробу.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Призупинено: callout відсутній. Знайдіть або створіть його, щоб відновити цю команду, або відредагуйте команду, щоб вибрати інший тип.",
 	"confirm.startFresh": "Це створить новий файл налаштувань із типів callout і налаштувань, що показані зараз. Будь-яка попередня придатна для читання копія відновлення зберігається в резервній копії. Якщо відсутній файл усе ще в дорозі з іншого пристрою, або все ще синхронізується, він буде замінений усюди — включно з пристроями, на яких ваші callout ще є.\nРобіть це, лише якщо ви самі видалили файл, або впевнені, що він не повернеться.",

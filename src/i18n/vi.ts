@@ -982,8 +982,7 @@ export const vi: Record<string, string> = {
 	"quickInsert.readingView": "Chuyển sang chế độ nguồn hoặc Xem trước trực tiếp để chèn callout.",
 	"quickInsert.noCursorHint": "Không có con trỏ nào trong ghi chú này, nên không có chỗ để chèn.",
 	"quickInsert.noCursor": "Đặt con trỏ trong ghi chú ở vị trí bạn muốn chèn callout, sau đó thử lại.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Không thể hoàn tất bản sao khôi phục cho quá trình nâng cấp. Bộ nhớ đệm phát hiện cục bộ trước đó và CSS khởi động đã được giữ nguyên. Kiểm tra quyền ghi vào bộ nhớ và dung lượng trống, sau đó khởi động lại Obsidian để thử lại.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Đã tạm dừng: callout bị thiếu. Khám phá hoặc tạo lại để khôi phục lệnh này, hoặc chỉnh sửa lệnh để chọn loại khác.",
 	"confirm.startFresh": "Thao tác này tạo một tệp cài đặt mới từ các loại callout và cài đặt hiện đang hiển thị. Bất kỳ bản sao khôi phục có thể đọc được nào trước đó đều được giữ trong bản sao lưu. Nếu tệp bị thiếu vẫn đang trên đường từ thiết bị khác, hoặc vẫn đang đồng bộ hóa, nó sẽ được thay thế ở mọi nơi — kể cả trên các thiết bị vẫn còn callout của bạn.\nChỉ làm điều này nếu chính bạn đã xóa tệp, hoặc chắc chắn rằng nó sẽ không quay lại.",

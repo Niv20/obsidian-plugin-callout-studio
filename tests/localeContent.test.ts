@@ -205,6 +205,31 @@ describe("no locale carries a key English lacks", () => {
 });
 
 /* -------------------------------------------------------------------------- */
+/* Upgrade recovery failure                                                   */
+/* -------------------------------------------------------------------------- */
+
+describe("upgrade recovery failure is localized in every shipped language", () => {
+	const key = "notice.legacyDiscoveryArchiveFailed";
+	const english = en[key];
+
+	for (const [fileId, table] of entries) {
+		it(`${fileId}.ts has its own recovery failure notice`, () => {
+			const localized = table[key];
+			assert.strictEqual(
+				typeof localized,
+				"string",
+				`${fileId}.ts is missing ${key}`,
+			);
+			assert.notStrictEqual(
+				localized,
+				english,
+				`${fileId}.ts still shows the English recovery failure notice`,
+			);
+		});
+	}
+});
+
+/* -------------------------------------------------------------------------- */
 /* Placeholders                                                               */
 /* -------------------------------------------------------------------------- */
 

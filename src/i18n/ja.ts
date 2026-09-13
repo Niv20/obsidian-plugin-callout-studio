@@ -980,8 +980,7 @@ export const ja: Record<string, string> = {
 	"quickInsert.readingView": "calloutを挿入するには、ソースモードまたはライブプレビューに切り替えてください。",
 	"quickInsert.noCursorHint": "このノートにはカーソルがないため、挿入する場所がありません。",
 	"quickInsert.noCursor": "calloutを挿入したい場所にノート内でカーソルを置いてから、もう一度お試しください。",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "アップグレード用の復旧コピーを完了できませんでした。以前のローカル検出キャッシュと起動時の CSS は変更されていません。書き込み権限、ストレージへのアクセス、空き容量を確認してから、Obsidian を再起動してもう一度お試しください。",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "一時停止: callout が見つかりません。このコマンドを復元するには見つけるか作成するか、別の種類を選ぶにはコマンドを編集してください。",
 	"confirm.startFresh": "これにより、現在表示されている callout の種類と設定から新しい設定ファイルが作成されます。読み取り可能な以前の復旧コピーはバックアップに保持されます。見つからないファイルがまだ別のデバイスから届いている途中であるか、まだ同期中の場合、あらゆる場所で置き換えられます — まだあなたの callout を持っているデバイスも含みます。\nこれを行うのは、自分でファイルを削除した場合、またはファイルが戻ってこないと確信している場合のみにしてください。",

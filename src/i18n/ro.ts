@@ -982,8 +982,7 @@ export const ro: Record<string, string> = {
 	"quickInsert.readingView": "Comută la modul sursă sau la Live Preview pentru a insera un callout.",
 	"quickInsert.noCursorHint": "Nu există niciun cursor în această notă, așa că nu există unde să inserezi.",
 	"quickInsert.noCursor": "Plasează cursorul în notă în locul în care dorești să inserezi callout-ul, apoi încearcă din nou.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Copia de recuperare pentru actualizare nu a putut fi finalizată. Cache-ul local anterior pentru detectare și CSS-ul de pornire au fost păstrate neschimbate. Verifică accesul de scriere la spațiul de stocare și spațiul liber, apoi repornește Obsidian pentru a încerca din nou.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "În pauză: callout-ul lipsește. Descoperă-l sau creează-l pentru a restabili această comandă, sau editează comanda pentru a alege alt tip.",
 	"confirm.startFresh": "Aceasta creează un fișier de setări nou din tipurile de callout și setările afișate în prezent. Orice copie de recuperare lizibilă anterioară este păstrată într-o copie de siguranță. Dacă fișierul lipsă este încă pe drum de pe alt dispozitiv, sau încă se sincronizează, va fi înlocuit peste tot — inclusiv pe dispozitivele care încă au callout-urile tale.\nFă asta doar dacă ai șters tu însuți fișierul, sau ești sigur că nu se va mai întoarce.",

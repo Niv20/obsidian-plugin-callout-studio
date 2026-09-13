@@ -916,8 +916,7 @@ export const zhTW: Record<string, string> = {
 	"quickInsert.readingView": "切換到原始碼模式或即時預覽以插入 callout。",
 	"quickInsert.noCursorHint": "此筆記中沒有游標，因此沒有可插入的位置。",
 	"quickInsert.noCursor": "在筆記中將游標放在要插入 callout 的位置，然後重試。",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "升級復原副本未能完成。先前的本機探索快取與啟動 CSS 已原樣保留。請檢查儲存空間的寫入權限與可用空間，然後重新啟動 Obsidian 以重試。",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "已暫停：callout 遺失。探索或建立它以復原此命令，或編輯命令以選擇其他類型。",
 	"confirm.startFresh": "此操作會根據目前顯示的 callout 類型與設定建立一個新的設定檔。先前任何可讀取的復原副本都會保留在備份中。如果遺失的檔案仍在從另一部裝置傳輸中，或仍在同步，它將在所有地方被取代——包括仍保留你的 callout 的裝置。\n只有在你自己刪除了該檔案，或確定它不會再出現時，才應該這樣做。",

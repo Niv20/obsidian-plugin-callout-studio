@@ -981,8 +981,7 @@ export const pl: Record<string, string> = {
 	"quickInsert.readingView": "Przełącz się na tryb źródłowy lub podgląd na żywo, aby wstawić callout.",
 	"quickInsert.noCursorHint": "W tej notatce nie ma kursora, więc nie ma gdzie wstawić.",
 	"quickInsert.noCursor": "Umieść kursor w notatce w miejscu, w którym chcesz wstawić callout, a następnie spróbuj ponownie.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Nie udało się utworzyć kopii odzyskiwania na potrzeby aktualizacji. Poprzednia lokalna pamięć podręczna wykrywania i startowy kod CSS pozostały niezmienione. Sprawdź uprawnienia do zapisu oraz wolne miejsce na dysku, a następnie uruchom ponownie Obsidian, aby spróbować ponownie.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Wstrzymano: brak callout. Odkryj go lub utwórz, aby przywrócić to polecenie, albo edytuj polecenie, aby wybrać inny typ.",
 	"confirm.startFresh": "To tworzy nowy plik ustawień na podstawie aktualnie wyświetlanych typów callout i ustawień. Wszelkie poprzednie czytelne kopie odzyskiwania są zachowywane w kopii zapasowej. Jeśli brakujący plik wciąż jest w drodze z innego urządzenia lub wciąż się synchronizuje, zostanie zastąpiony wszędzie — także na urządzeniach, które nadal mają twoje callouty.\nZrób to tylko wtedy, gdy sam usunąłeś plik lub masz pewność, że nie wróci.",

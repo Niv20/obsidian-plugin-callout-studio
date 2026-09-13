@@ -962,8 +962,7 @@ export const fi: Record<string, string> = {
 	"quickInsert.readingView": "Vaihda lähdetilaan tai Live Previewiin lisätäksesi calloutin.",
 	"quickInsert.noCursorHint": "Tässä muistiinpanossa ei ole kohdistinta, joten lisäämiselle ei ole paikkaa.",
 	"quickInsert.noCursor": "Aseta kohdistin muistiinpanoon kohtaan, johon haluat lisätä calloutin, ja yritä uudelleen.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Päivityksen palautuskopion luominen ei onnistunut. Aiempi paikallinen etsintävälimuisti ja käynnistyksen CSS säilyivät ennallaan. Tarkista kirjoitus- ja tallennustilan käyttöoikeudet sekä vapaa tila, käynnistä sitten Obsidian uudelleen ja yritä uudelleen.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Keskeytetty: callout puuttuu. Etsi tai luo se palauttaaksesi tämän komennon, tai muokkaa komentoa valitaksesi toisen tyypin.",
 	"confirm.startFresh": "Tämä luo uuden asetustiedoston nyt näkyvistä callout-tyypeistä ja asetuksista. Aiempi luettavissa oleva palautuskopio säilytetään varmuuskopiossa. Jos puuttuva tiedosto on vielä matkalla toiselta laitteelta tai synkronoituu edelleen, se korvataan kaikkialla — myös laitteilla, joilla on edelleen calloutisi.\nTee tämä vain, jos poistit tiedoston itse tai olet varma, ettei se palaa.",

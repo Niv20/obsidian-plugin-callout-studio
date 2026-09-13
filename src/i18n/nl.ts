@@ -989,8 +989,7 @@ export const nl: Record<string, string> = {
 	"quickInsert.readingView": "Schakel over naar bronmodus of Live Preview om een callout in te voegen.",
 	"quickInsert.noCursorHint": "Er is geen cursor in deze notitie, dus er is nergens om in te voegen.",
 	"quickInsert.noCursor": "Plaats de cursor in de notitie op de plek waar je de callout wilt invoegen en probeer het opnieuw.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "De herstelkopie voor de upgrade kon niet worden voltooid. De vorige lokale detectiecache en opstart-CSS zijn ongewijzigd behouden. Controleer de schrijftoegang tot de opslag en de vrije ruimte en start Obsidian vervolgens opnieuw om het nogmaals te proberen.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Gepauzeerd: de callout ontbreekt. Ontdek of maak hem om deze opdracht te herstellen, of bewerk de opdracht om een ander type te kiezen.",
 	"confirm.startFresh": "Dit maakt een nieuw instellingenbestand op basis van de callout-typen en instellingen die nu worden getoond. Een eerdere leesbare herstelkopie blijft bewaard in een back-up. Als het ontbrekende bestand nog onderweg is vanaf een ander apparaat, of nog aan het synchroniseren is, wordt het overal vervangen — ook op apparaten die je callouts nog hebben.\nDoe dit alleen als je het bestand zelf hebt verwijderd, of zeker weet dat het niet terugkomt.",

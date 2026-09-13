@@ -976,8 +976,7 @@ export const el: Record<string, string> = {
 	"quickInsert.readingView": "Μεταβείτε σε λειτουργία πηγής ή στη Ζωντανή Προεπισκόπηση για να εισαγάγετε ένα callout.",
 	"quickInsert.noCursorHint": "Δεν υπάρχει δρομέας σε αυτή τη σημείωση, οπότε δεν υπάρχει σημείο εισαγωγής.",
 	"quickInsert.noCursor": "Τοποθετήστε τον δρομέα στη σημείωση εκεί όπου θέλετε να εισαγάγετε το callout και δοκιμάστε ξανά.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Δεν ήταν δυνατή η ολοκλήρωση του αντιγράφου ανάκτησης για την αναβάθμιση. Η προηγούμενη τοπική προσωρινή μνήμη εντοπισμού και το CSS εκκίνησης διατηρήθηκαν χωρίς αλλαγές. Ελέγξτε τα δικαιώματα εγγραφής, την πρόσβαση στον αποθηκευτικό χώρο και τον διαθέσιμο χώρο και, στη συνέχεια, επανεκκινήστε το Obsidian για να δοκιμάσετε ξανά.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Σε παύση: το callout λείπει. Ανακαλύψτε το ή δημιουργήστε το για να επαναφέρετε αυτήν την εντολή, ή επεξεργαστείτε την εντολή για να επιλέξετε άλλον τύπο.",
 	"confirm.startFresh": "Αυτό δημιουργεί ένα νέο αρχείο ρυθμίσεων από τους τύπους callout και τις ρυθμίσεις που εμφανίζονται τώρα. Τυχόν προηγούμενο αναγνώσιμο αντίγραφο ανάκτησης διατηρείται σε ένα αντίγραφο ασφαλείας. Αν το αρχείο που λείπει είναι ακόμη καθ' οδόν από άλλη συσκευή, ή συγχρονίζεται ακόμη, θα αντικατασταθεί παντού — συμπεριλαμβανομένων των συσκευών που εξακολουθούν να έχουν τα callout σας.\nΚάντε το μόνο αν διαγράψατε εσείς το αρχείο, ή είστε σίγουροι ότι δεν θα επιστρέψει.",

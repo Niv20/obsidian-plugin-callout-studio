@@ -986,8 +986,7 @@ export const hu: Record<string, string> = {
 	"quickInsert.readingView": "Váltson forrás módra vagy élő előnézetre a callout beszúrásához.",
 	"quickInsert.noCursorHint": "Ebben a jegyzetben nincs kurzor, ezért nincs hova beszúrni.",
 	"quickInsert.noCursor": "Helyezze a kurzort a jegyzetben oda, ahová be szeretné szúrni a callout-ot, majd próbálja újra.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "A frissítéshez tartozó helyreállítási másolatot nem sikerült elkészíteni. A korábbi helyi felderítési gyorsítótár és az indítási CSS változatlan maradt. Ellenőrizze az írási jogosultságot, a tárhelyhez való hozzáférést és a szabad helyet, majd az újbóli próbálkozáshoz indítsa újra az Obsidian alkalmazást.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Szüneteltetve: a callout hiányzik. Fedezd fel vagy hozd létre a parancs visszaállításához, vagy szerkeszd a parancsot másik típus kiválasztásához.",
 	"confirm.startFresh": "Ez új beállításfájlt hoz létre a jelenleg megjelenített callout típusokból és beállításokból. Minden korábbi olvasható helyreállítási másolat megmarad egy biztonsági mentésben. Ha a hiányzó fájl még úton van egy másik eszközről, vagy még szinkronizál, akkor mindenhol lecserélődik — beleértve azokat az eszközöket is, amelyeken még megvannak a callout-jaid.\nCsak akkor tedd ezt meg, ha te magad törölted a fájlt, vagy biztos vagy benne, hogy nem fog visszatérni.",

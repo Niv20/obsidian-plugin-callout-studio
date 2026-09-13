@@ -998,8 +998,7 @@ export const fr: Record<string, string> = {
 	"quickInsert.readingView": "Passez en mode source ou en aperçu en direct pour insérer un callout.",
 	"quickInsert.noCursorHint": "Il n'y a pas de curseur dans cette note, donc il n'y a nulle part où insérer.",
 	"quickInsert.noCursor": "Placez le curseur dans la note à l'endroit où vous souhaitez insérer le callout, puis réessayez.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "La copie de récupération de la mise à niveau n’a pas pu être créée. L’ancien cache de détection local et le CSS de démarrage ont été conservés sans modification. Vérifiez les autorisations d’écriture, l’accès au stockage et l’espace libre, puis redémarrez Obsidian pour réessayer.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "En pause : le callout est manquant. Découvrez-le ou créez-le pour restaurer cette commande, ou modifiez la commande pour choisir un autre type.",
 	"confirm.startFresh": "Cela crée un nouveau fichier de paramètres à partir des types de callout et des paramètres actuellement affichés. Toute copie de récupération lisible précédente est conservée dans une sauvegarde. Si le fichier manquant est encore en route depuis un autre appareil, ou est encore en cours de synchronisation, il sera remplacé partout — y compris sur les appareils qui ont encore vos callouts.\nNe faites ceci que si vous avez supprimé le fichier vous-même, ou si vous êtes sûr qu'il ne reviendra pas.",

@@ -969,8 +969,7 @@ export const hi: Record<string, string> = {
 	"quickInsert.readingView": "callout डालने के लिए सोर्स मोड या लाइव प्रीव्यू पर स्विच करें।",
 	"quickInsert.noCursorHint": "इस नोट में कोई कर्सर नहीं है, इसलिए डालने के लिए कोई स्थान नहीं है।",
 	"quickInsert.noCursor": "नोट में उस जगह कर्सर रखें जहाँ आप callout डालना चाहते हैं, फिर पुनः प्रयास करें।",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "अपग्रेड की पुनर्प्राप्ति प्रति पूरी नहीं हो सकी। पुराना स्थानीय खोज कैश और स्टार्टअप CSS बिना बदलाव के रखा गया है। लिखने की अनुमति, स्टोरेज तक पहुँच और खाली जगह की जाँच करें, फिर दोबारा प्रयास करने के लिए Obsidian को पुनः आरंभ करें।",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "रोका गया: callout गुम है। इस कमांड को पुनर्स्थापित करने के लिए इसे खोजें या बनाएं, या दूसरा प्रकार चुनने के लिए कमांड संपादित करें।",
 	"confirm.startFresh": "यह वर्तमान में दिखाए गए callout प्रकारों और सेटिंग्स से एक नई सेटिंग्स फ़ाइल बनाता है। कोई भी पिछली पठनीय रिकवरी कॉपी बैकअप में रखी जाती है। यदि गुम फ़ाइल अभी भी किसी अन्य डिवाइस से आ रही है, या अभी भी सिंक हो रही है, तो यह हर जगह बदल दी जाएगी — उन डिवाइस पर भी जिनमें अभी भी आपके callouts हैं।\nयह तभी करें जब आपने फ़ाइल खुद हटाई हो, या आपको यकीन हो कि यह वापस नहीं आएगी।",

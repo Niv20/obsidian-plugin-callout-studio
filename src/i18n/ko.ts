@@ -973,8 +973,7 @@ export const ko: Record<string, string> = {
 	"quickInsert.readingView": "callout을 삽입하려면 소스 모드 또는 라이브 미리 보기로 전환하세요.",
 	"quickInsert.noCursorHint": "이 노트에는 커서가 없어 삽입할 위치가 없습니다.",
 	"quickInsert.noCursor": "callout을 삽입할 위치에 노트의 커서를 놓은 다음 다시 시도하세요.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "업그레이드 복구 사본을 만들지 못했습니다. 이전 로컬 검색 캐시와 시작 CSS는 변경되지 않은 상태로 유지되었습니다. 저장소 쓰기 권한과 여유 공간을 확인한 다음 Obsidian을 다시 시작하여 재시도하세요.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "일시 중지됨: callout이 없습니다. 이 명령을 복원하려면 찾거나 만드세요. 다른 유형을 선택하려면 명령을 편집하세요.",
 	"confirm.startFresh": "현재 표시된 callout 유형과 설정으로 새 설정 파일을 만듭니다. 이전의 읽을 수 있는 복구 사본은 백업에 보관됩니다. 누락된 파일이 아직 다른 기기에서 오는 중이거나 여전히 동기화 중이라면, callout이 아직 남아 있는 기기를 포함해 모든 곳에서 교체됩니다.\n파일을 직접 삭제했거나 다시 돌아오지 않을 것이 확실한 경우에만 이 작업을 수행하세요.",

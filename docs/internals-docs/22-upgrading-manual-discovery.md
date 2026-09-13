@@ -28,6 +28,10 @@ also keeps that guard active until cleanup later succeeds. Corrupt/unknown local
 data is treated as evidence of a previously used installation, never proof of a
 fresh install whose missing `data.json` can safely be initialized.
 
+A successful archive is silent in the UI and writes its path to
+`console.debug` for diagnostics. A failed archive remains user-visible because
+checking write access and free space, then restarting Obsidian, can resolve it.
+
 Saved definitions remain authoritative; stale same-id cache observations never
 override saved colors, icons, aliases or commands. A later manual scan can recover
 ids still present in notes or a theme. Archived CSS is a limited recovery aid,

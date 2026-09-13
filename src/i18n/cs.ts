@@ -977,8 +977,7 @@ export const cs: Record<string, string> = {
 	"quickInsert.readingView": "Přepněte do zdrojového režimu nebo živého náhledu a vložte callout.",
 	"quickInsert.noCursorHint": "V této poznámce není žádný kurzor, takže není kam vložit.",
 	"quickInsert.noCursor": "Umístěte kurzor v poznámce tam, kam chcete vložit callout, a zkuste to znovu.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Kopii pro obnovení při aktualizaci se nepodařilo dokončit. Předchozí místní mezipaměť zjišťování a spouštěcí CSS zůstaly beze změny. Zkontrolujte oprávnění k zápisu, přístup k úložišti a volné místo a poté restartujte Obsidian, aby se akce zopakovala.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Pozastaveno: callout chybí. Objevte ho nebo vytvořte, abyste obnovili tento příkaz, nebo příkaz upravte a zvolte jiný typ.",
 	"confirm.startFresh": "Tímto se vytvoří nový soubor s nastavením z aktuálně zobrazených typů calloutů a nastavení. Jakákoli předchozí čitelná záloha pro obnovení zůstane zachována v záloze. Pokud je chybějící soubor stále na cestě z jiného zařízení nebo se stále synchronizuje, bude nahrazen všude — včetně zařízení, která vaše callouty stále mají.\nUdělejte to jen tehdy, pokud jste soubor smazali sami, nebo jste si jisti, že se už nevrátí.",

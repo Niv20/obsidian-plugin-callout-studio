@@ -962,8 +962,7 @@ export const bg: Record<string, string> = {
 	"quickInsert.readingView": "Превключете към режим на изходен код или Live Preview, за да вмъкнете callout.",
 	"quickInsert.noCursorHint": "В тази бележка няма курсор, затова няма къде да се вмъкне.",
 	"quickInsert.noCursor": "Поставете курсора в бележката там, където искате да вмъкнете callout, след което опитайте отново.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Копието за възстановяване при надстройката не можа да бъде завършено. Предишният локален кеш за откриване и CSS кодът за стартиране са запазени непроменени. Проверете достъпа за запис, достъпа до хранилището и свободното място, след което рестартирайте Obsidian, за да опитате отново.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "На пауза: callout липсва. Открийте го или го създайте, за да възстановите тази команда, или редактирайте командата, за да изберете друг тип.",
 	"confirm.startFresh": "Това създава нов файл с настройки от типовете callout и настройките, показани в момента. Всяко предишно четимо копие за възстановяване се запазва в резервно копие. Ако липсващият файл все още пътува от друго устройство или все още се синхронизира, той ще бъде заменен навсякъде — включително на устройствата, които все още имат вашите callout.\nНаправете това само ако сте изтрили файла сами или сте сигурни, че той няма да се появи отново.",

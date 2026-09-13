@@ -997,8 +997,7 @@ export const de: Record<string, string> = {
 	"quickInsert.readingView": "Wechsle in den Quellmodus oder die Live-Vorschau, um einen Callout einzufügen.",
 	"quickInsert.noCursorHint": "In dieser Notiz gibt es keinen Cursor, daher gibt es keine Einfügeposition.",
 	"quickInsert.noCursor": "Platziere den Cursor in der Notiz an der Stelle, an der du den Callout einfügen möchtest, und versuche es erneut.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Die Wiederherstellungskopie für das Upgrade konnte nicht abgeschlossen werden. Der bisherige lokale Erkennungs-Cache und das Start-CSS wurden unverändert beibehalten. Prüfe Schreib- und Speicherzugriff sowie den freien Speicherplatz und starte Obsidian anschließend neu, um es erneut zu versuchen.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Pausiert: Der Callout fehlt. Finde oder erstelle ihn, um diesen Befehl wiederherzustellen, oder bearbeite den Befehl, um einen anderen Typ zu wählen.",
 	"confirm.startFresh": "Dies erstellt eine neue Einstellungsdatei aus den aktuell angezeigten Callout-Typen und Einstellungen. Eine vorhandene lesbare Wiederherstellungskopie bleibt in einer Sicherung erhalten. Wenn die fehlende Datei noch von einem anderen Gerät unterwegs ist oder noch synchronisiert wird, wird sie überall ersetzt — auch auf den Geräten, die deine Callouts noch haben.\nMach das nur, wenn du die Datei selbst gelöscht hast oder sicher bist, dass sie nicht zurückkommt.",

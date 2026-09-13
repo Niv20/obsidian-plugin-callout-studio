@@ -974,8 +974,7 @@ export const sv: Record<string, string> = {
 	"quickInsert.readingView": "Växla till källäge eller Live Preview för att infoga en callout.",
 	"quickInsert.noCursorHint": "Det finns ingen markör i den här anteckningen, så det finns ingenstans att infoga.",
 	"quickInsert.noCursor": "Placera markören i anteckningen där du vill infoga callouten och försök igen.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Återställningskopian för uppgraderingen kunde inte slutföras. Den tidigare lokala identifieringscachen och CSS-koden för uppstart har behållits oförändrade. Kontrollera skrivbehörighet till lagringen och ledigt utrymme och starta sedan om Obsidian för att försöka igen.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Pausad: callout saknas. Upptäck eller skapa den för att återställa det här kommandot, eller redigera kommandot för att välja en annan typ.",
 	"confirm.startFresh": "Detta skapar en ny inställningsfil från de callout-typer och inställningar som visas nu. En eventuell tidigare läsbar återställningskopia behålls i en säkerhetskopia. Om den saknade filen fortfarande är på väg från en annan enhet, eller fortfarande synkroniserar, kommer den att ersättas överallt — även på enheter som fortfarande har dina callouts.\nGör bara detta om du själv raderade filen, eller är säker på att den inte kommer tillbaka.",

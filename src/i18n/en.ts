@@ -1086,6 +1086,5 @@ export const en: Record<string, string> = {
 		'These colors are identical to "{{name}}". Two saved colors cannot be the same — change a color, or {{link}}.',
 	"palette.colorExistsUseLink": "use the existing one",
 	"footer.madeBy": "Made by Niv  •  ",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check write access and free space, then restart Obsidian to retry.",
 };

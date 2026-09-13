@@ -970,8 +970,7 @@ export const fa: Record<string, string> = {
 	"quickInsert.readingView": "برای درج callout به حالت منبع یا Live Preview بروید.",
 	"quickInsert.noCursorHint": "در این یادداشت مکان‌نمایی وجود ندارد، بنابراین جایی برای درج نیست.",
 	"quickInsert.noCursor": "مکان‌نما را در یادداشت، در جایی که می‌خواهید callout را درج کنید، قرار دهید و دوباره امتحان کنید.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "نسخهٔ بازیابی ارتقا تکمیل نشد. حافظهٔ نهان محلی قدیمیِ شناسایی و CSS راه‌اندازی بدون تغییر باقی مانده‌اند. مجوز نوشتن، دسترسی به فضای ذخیره‌سازی و فضای خالی را بررسی کنید، سپس برای تلاش دوباره Obsidian را راه‌اندازی مجدد کنید.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "متوقف‌شده: callout وجود ندارد. برای بازیابی این دستور آن را کشف یا ایجاد کنید، یا دستور را ویرایش کنید تا نوع دیگری انتخاب شود.",
 	"confirm.startFresh": "این کار یک فایل تنظیمات جدید از انواع callout و تنظیمات نمایش‌داده‌شده کنونی می‌سازد. هر نسخهٔ بازیابی قابل‌خواندن قبلی در یک نسخهٔ پشتیبان نگه داشته می‌شود. اگر فایل گم‌شده هنوز از دستگاه دیگری در راه است، یا هنوز همگام‌سازی می‌شود، در همه‌جا جایگزین خواهد شد — از جمله در دستگاه‌هایی که هنوز callout‌های شما را دارند.\nاین کار را فقط زمانی انجام دهید که خودتان فایل را حذف کرده‌اید، یا مطمئنید که دیگر برنمی‌گردد.",

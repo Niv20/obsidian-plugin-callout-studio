@@ -949,8 +949,7 @@ export const da: Record<string, string> = {
 	"quickInsert.readingView": "Skift til kildetilstand eller Live Preview for at indsætte en callout.",
 	"quickInsert.noCursorHint": "Der er ingen markør i denne note, så der er intet sted at indsætte.",
 	"quickInsert.noCursor": "Placer markøren i noten der, hvor du vil indsætte callout'en, og prøv igen.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Gendannelseskopien til opgraderingen kunne ikke fuldføres. Den tidligere lokale registreringscache og opstarts-CSS er bevaret uændret. Kontrollér skriveadgang, lageradgang og ledig plads, og genstart derefter Obsidian for at prøve igen.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Sat på pause: callout'en mangler. Find eller opret den for at gendanne denne kommando, eller rediger kommandoen for at vælge en anden type.",
 	"confirm.startFresh": "Dette opretter en ny indstillingsfil ud fra de callout-typer og indstillinger, der vises nu. En eventuel tidligere læsbar gendannelseskopi bevares i en sikkerhedskopi. Hvis den manglende fil stadig er undervejs fra en anden enhed, eller stadig synkroniserer, bliver den erstattet overalt — også på de enheder, der stadig har dine callouts.\nGør kun dette, hvis du selv har slettet filen, eller er sikker på, at den ikke kommer tilbage.",

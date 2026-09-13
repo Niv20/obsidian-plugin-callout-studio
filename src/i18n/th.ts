@@ -957,8 +957,7 @@ export const th: Record<string, string> = {
 	"quickInsert.readingView": "สลับไปยังโหมดต้นฉบับหรือ Live Preview เพื่อแทรก callout",
 	"quickInsert.noCursorHint": "ไม่มีเคอร์เซอร์ในบันทึกนี้ จึงไม่มีตำแหน่งให้แทรก",
 	"quickInsert.noCursor": "วางเคอร์เซอร์ในบันทึกตรงตำแหน่งที่ต้องการแทรก callout แล้วลองอีกครั้ง",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "ไม่สามารถดำเนินการสร้างสำเนาการกู้คืนสำหรับการอัปเกรดให้เสร็จสมบูรณ์ได้ ระบบได้เก็บแคชการค้นหาในเครื่องและ CSS เริ่มต้นเดิมไว้โดยไม่เปลี่ยนแปลง โปรดตรวจสอบสิทธิ์การเขียนข้อมูลและพื้นที่ว่างในพื้นที่จัดเก็บข้อมูล แล้วเริ่ม Obsidian ใหม่เพื่อลองอีกครั้ง",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "หยุดชั่วคราว: ไม่มี callout นี้ ค้นหาหรือสร้างเพื่อกู้คืนคำสั่งนี้ หรือแก้ไขคำสั่งเพื่อเลือกประเภทอื่น",
 	"confirm.startFresh": "การทำเช่นนี้จะสร้างไฟล์การตั้งค่าใหม่จากประเภท callout และการตั้งค่าที่แสดงอยู่ในขณะนี้ สำเนากู้คืนที่อ่านได้ก่อนหน้านี้จะถูกเก็บไว้ในข้อมูลสำรอง หากไฟล์ที่หายไปยังคงเดินทางมาจากอุปกรณ์อื่น หรือยังซิงค์อยู่ ไฟล์นั้นจะถูกแทนที่ทุกที่ — รวมถึงในอุปกรณ์ที่ยังมี callout ของคุณอยู่\nทำเช่นนี้เฉพาะเมื่อคุณลบไฟล์นั้นด้วยตัวเอง หรือแน่ใจว่าไฟล์จะไม่กลับมาอีก",

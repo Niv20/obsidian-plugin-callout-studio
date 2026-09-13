@@ -981,8 +981,7 @@ export const id: Record<string, string> = {
 	"quickInsert.readingView": "Beralihlah ke mode sumber atau Pratinjau Langsung untuk menyisipkan callout.",
 	"quickInsert.noCursorHint": "Tidak ada kursor di catatan ini, jadi tidak ada tempat untuk menyisipkan.",
 	"quickInsert.noCursor": "Tempatkan kursor di catatan pada posisi tempat Anda ingin menyisipkan callout, lalu coba lagi.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "Salinan pemulihan pemutakhiran tidak dapat diselesaikan. Cache penemuan lokal sebelumnya dan CSS saat mulai dijalankan tetap tidak berubah. Periksa izin menulis, akses penyimpanan, dan ruang kosong, lalu mulai ulang Obsidian untuk mencoba lagi.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Dijeda: callout tidak ada. Temukan atau buat untuk memulihkan perintah ini, atau edit perintah untuk memilih jenis lain.",
 	"confirm.startFresh": "Ini membuat file pengaturan baru dari jenis callout dan pengaturan yang sedang ditampilkan. Salinan pemulihan yang dapat dibaca sebelumnya disimpan dalam cadangan. Jika file yang hilang masih dalam perjalanan dari perangkat lain, atau masih menyinkronkan, file itu akan diganti di mana pun — termasuk pada perangkat yang masih memiliki callout Anda.\nLakukan ini hanya jika Anda menghapus file itu sendiri, atau Anda yakin file itu tidak akan kembali.",

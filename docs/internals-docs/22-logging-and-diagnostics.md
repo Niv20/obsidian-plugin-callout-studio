@@ -86,6 +86,7 @@ the UI. None of these are user-actionable, so none raise a `Notice`.
 | [CalloutRegistry.ts](../../src/manager/CalloutRegistry.ts) | `load()` → `reconcileIdCollisions()` | it actually merged ≥1 colliding row — logs the merged ids |
 | [CustomCommandManager.ts](../../src/editor/CustomCommandManager.ts) | `syncAll()` | it drops ≥1 structurally malformed stored command — logs the dropped count |
 | [CustomCommandManager.ts](../../src/editor/CustomCommandManager.ts) | `syncAll()` | its **first** sweep only drops a command whose callout no longer exists — logs the dropped count |
+| [legacyDiscoveryNotices.ts](../../src/manager/legacyDiscoveryNotices.ts) | `reportLegacyDiscoveryMigration()` | a one-time legacy discovery recovery copy was verified — logs its path without raising a success `Notice` |
 
 `CustomCommandManager.ts`'s pair implements a split written into the code's
 own comments: nothing in the UI exists for the user to fix a malformed

@@ -965,8 +965,7 @@ export const ar: Record<string, string> = {
 	"quickInsert.readingView": "بدّل إلى وضع المصدر أو المعاينة المباشرة لإدراج callout.",
 	"quickInsert.noCursorHint": "لا يوجد مؤشر في هذه الملاحظة، لذا لا يوجد مكان للإدراج.",
 	"quickInsert.noCursor": "ضع المؤشر في الملاحظة في المكان الذي تريد إدراج الـ callout فيه، ثم حاول مرة أخرى.",
-	"notice.legacyDiscoveryArchived": "Upgrade recovery copy saved: {{path}}. It contains the previous discovery cache and startup CSS for recovery only; no callout types were restored automatically.",
-	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check storage access and free space, then restart Obsidian to retry.",
+	"notice.legacyDiscoveryArchiveFailed": "تعذّر إكمال نسخة الاسترداد الخاصة بالترقية. بقيت ذاكرة التخزين المؤقت المحلية القديمة للاكتشاف وملف CSS لبدء التشغيل دون تغيير. تحقّق من صلاحيات الكتابة والوصول إلى مساحة التخزين ومن توفّر مساحة خالية، ثم أعد تشغيل Obsidian لإعادة المحاولة.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "متوقف مؤقتًا: الـ callout غير موجود. اكتشفه أو أنشئه لاستعادة هذا الأمر، أو عدّل الأمر لاختيار نوع آخر.",
 	"confirm.startFresh": "هذا ينشئ ملف إعدادات جديدًا من أنواع الـ callout والإعدادات المعروضة حاليًا. أي نسخة استرداد قابلة للقراءة محفوظة في نسخة احتياطية. إذا كان الملف المفقود ما زال في طريقه من جهاز آخر، أو ما زال قيد المزامنة، فسيُستبدل في كل مكان — بما في ذلك على الأجهزة التي لا تزال تحتفظ بأنواع الـ callout الخاصة بك.\nافعل هذا فقط إذا حذفت الملف بنفسك، أو إذا كنت متأكدًا من أنه لن يعود.",
