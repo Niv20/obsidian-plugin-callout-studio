@@ -236,9 +236,9 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	}
 
 	renderSuggestion(item: CalloutSuggestion, el: HTMLElement): void {
+		el.closest<HTMLElement>(".suggestion")?.addClass("callout-studio-suggestion-list");
 		if (isCreateNew(item)) {
-			el.addClass("callout-studio-suggestion");
-			el.addClass("callout-studio-suggestion-create-new");
+			el.addClass("callout-studio-suggestion", "callout-studio-suggestion-create-new");
 			const iconEl = el.createDiv({
 				cls: "callout-studio-suggestion-icon",
 			});

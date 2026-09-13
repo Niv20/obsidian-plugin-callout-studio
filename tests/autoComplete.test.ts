@@ -696,6 +696,18 @@ describe("renderSuggestion", () => {
 	const children = (element: unknown): unknown[] =>
 		(element as { children: unknown[] }).children;
 
+	it("marks its owning list for scoped overflow styles", () => {
+		const h = harness();
+		const list = el({ tag: "div", cls: "suggestion" });
+		const item = list.createDiv({ cls: "suggestion-item" });
+		h.suggest.renderSuggestion(
+			{ __createNew: true, query: "brand new" },
+			asEl(item),
+		);
+
+		assert.ok(classes(list).includes("callout-studio-suggestion-list"));
+	});
+
 	it("paints the Create-new row with its own marker class", () => {
 		const h = harness();
 		const el = row();

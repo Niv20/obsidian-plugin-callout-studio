@@ -3177,7 +3177,7 @@ button.callout-studio-icon-picker-loading {
 
 /* ─── Combobox (type-to-filter picker) ───────────────────────── */
 
-.suggestion:has(.callout-studio-suggestion) {
+.suggestion.callout-studio-suggestion-list {
 	max-width: 100%;
 	overflow-x: hidden;
 }
