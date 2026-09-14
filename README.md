@@ -1,8 +1,8 @@
 # Callout Studio
 
-Callout Studio is a powerful callout management **plugin** for [Obsidian.](https://obsidian.md)
+Callout Studio is a callout management **plugin** for [Obsidian](https://obsidian.md).
 
-It lets you create, edit, and style your own callout types, override the built-in ones, pick icons from large libraries, and use every callout as a Block Callout, a Heading Callout, or an Inline Callout - all from a single settings tab!
+Create and style your own callout types, customize Obsidian's built-in callouts, and choose icons from several libraries. Every callout can appear as a block, heading, or inline callout, all managed from one settings tab.
 
 <img alt="hero" src="https://github.com/user-attachments/assets/e24ff986-cf0c-4f18-95be-33a75283d83a" />
 
@@ -18,15 +18,15 @@ The same callout type can be written three ways:
 
 <img alt="Three ways to use a callout" src="https://github.com/user-attachments/assets/3cf88262-184d-42e6-b810-d43889629afb" />
 
-Unlock the full potential of Callout Studio! Explore the [User Guide](docs/user-guide/README.md) to discover advanced features like custom color palettes, icon management, global styling, context menus, vault discovery, themes, and more.
+The [User Guide](docs/user-guide/README.md) covers color palettes, icons, global styles, context menus, vault discovery, theme compatibility, and more.
 
 ## 💖 Special Thanks
 
-A huge thank you to everyone who took the time to report bugs, identify issues, and help make Callout Studio more stable and reliable. Your reports, testing, and detailed feedback have been incredibly helpful:
+Thank you to everyone who reported bugs, tested fixes, and shared detailed feedback:
 
 [brianjwalton](https://github.com/brianjwalton) · [astreloff](https://github.com/astreloff) · [rubcap](https://github.com/rubcap) · [Xto-tT0](https://github.com/Xto-tT0) · [Jarsgon](https://github.com/Jarsgon) · [Ravencaller213](https://github.com/Ravencaller213) · [frudolph77](https://github.com/frudolph77) · [DesertSnak3](https://github.com/DesertSnak3) · [alythobani](https://github.com/alythobani) · [dragonish](https://github.com/dragonish) · [Ana-Mendes123](https://github.com/Ana-Mendes123) · [EddyCurrrent](https://github.com/EddyCurrrent) · [Indra-Reaper](https://github.com/Indra-Reaper) · [hisbo](https://github.com/hisbo)
 
-And a huge thank you to everyone who shared ideas, suggested enhancements, and helped shape the direction of Callout Studio. Many of the features and improvements in the plugin have been inspired by your feedback and suggestions:
+And thank you to everyone whose ideas and suggestions helped shape the plugin:
 
 [ericxob77](https://github.com/ericxob77) · [TechnoMaverick](https://github.com/TechnoMaverick) · [epilo9er](https://github.com/epilo9er) · [Xto-tT0](https://github.com/Xto-tT0) · [TyceHerrman](https://github.com/TyceHerrman) · [eth-p](https://github.com/eth-p) · [kwhsiung](https://github.com/kwhsiung) · [archangelglass](https://github.com/archangelglass) · [quantumstargazer](https://github.com/quantumstargazer) · [BloatedBlowfish](https://github.com/BloatedBlowfish) · [Camouflagee](https://github.com/Camouflagee)
 
@@ -34,9 +34,9 @@ Thank you all for helping make Callout Studio better!
 
 ## Privacy, in short
 
-A device-local recovery copy protects plugin settings when a synced `data.json` is replaced while the plugin is closed. Concurrent edits and recognized conflict copies are merged automatically when valid; damaged or unsupported data is kept for recovery. Install the same updated build on every device. See [multi-device editing and recovery](docs/user-guide/13-resetting-callouts-and-settings.md#editing-on-more-than-one-device).
+Callout Studio keeps a local recovery copy of its settings in case sync replaces `data.json` while the plugin is closed. It can merge valid concurrent edits and recognized conflict copies, while preserving damaged or unsupported data for recovery. For the safest sync setup, install the same up-to-date build on every device. See [multi-device editing and recovery](docs/user-guide/13-resetting-callouts-and-settings.md#editing-on-more-than-one-device).
 
-Callout Studio never sends vault content anywhere, and collects no telemetry or analytics. The only things it ever downloads are icon artwork you actually pick and, when needed, the plugin's own UI translation — both explained in full, with exactly what's stored where, in [Privacy & permissions](docs/user-guide/16-privacy-and-permissions.md).
+Callout Studio never sends your vault content anywhere and collects no telemetry or analytics. It only downloads icon artwork you choose and, when needed, a translation for the plugin interface. See [Privacy & permissions](docs/user-guide/16-privacy-and-permissions.md) for a full explanation of every download and where data is stored.
 
 ## Install
 
@@ -62,7 +62,7 @@ npm run lint   # ESLint with the official obsidianmd plugin rules
 
 Source lives under `src/` and is bundled by esbuild into `main.js`. The release artifacts are `main.js`, `manifest.json`, and `styles.css`.
 
-Digging into how it's built, or preparing a pull request? See [`docs/internals-docs/`](docs/internals-docs/00-index.md) for the architecture, and [CONTRIBUTING.md](CONTRIBUTING.md) for the process.
+Digging into how it's built, or preparing a pull request? See [`docs/internals-docs/`](docs/internals-docs/README.md) for the architecture, and [CONTRIBUTING.md](CONTRIBUTING.md) for the process.
 
 ### Plugin API
 
@@ -70,6 +70,6 @@ Callout Studio exposes a small read-only API so other plugins can list the user'
 
 ## License & Third-Party Assets
 
-Callout Studio's code is available under a permissive [license](LICENSE) — use it however you like, no attribution required. There is one informal ask, and it is not a license term: please don't repackage this code and publish it as a new plugin in Obsidian's Community Plugins directory. Reuse it, learn from it, build on it — just not that.
+Callout Studio's code is available under a permissive [license](LICENSE), with no attribution required. One informal request, which is not a license term: please do not repackage the code and publish it as a new plugin in Obsidian's Community Plugins directory. You are welcome to reuse it, learn from it, and build on it in other ways.
 
 The icon libraries offered within the plugin are separate works and retain their own licenses. You can view the full text for each in **[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)** or directly through the plugin via _Settings → Icon licences and credits_.
