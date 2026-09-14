@@ -1,18 +1,18 @@
 # Fallback callouts and manual discovery
 
-Callout Studio creates discovered callout types only when you press **Scan for callouts** in **Settings → Callout Studio → My callout types**, just inside **Add new callout**. Opening notes or settings, editing notes, starting Obsidian, and changing themes never add or remove callout definitions.
+Callout Studio discovers and saves callout types only when you press **Scan for callouts** beside **Add new callout** in **Settings → Callout Studio → My callout types**. Opening or editing notes, starting Obsidian, and changing themes never add or remove saved definitions.
 
-The one thing that appears without asking is your **theme's own** callout types, which are listed under *Callouts from your theme* for as long as that theme is active — see [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md). Those are listed, not saved: they are in no backup or export, they never reach your settings file, and pressing **Scan for callouts** is what turns one into a saved type of your own.
+Your theme's callout types are the only ones that appear automatically. They remain under **Callouts from your theme** while that theme is active. They are listed but not saved, so they are not written to settings, backups, or exports. Press **Scan for callouts** if you want to save one as your own. See [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md).
 
 The button performs one scan of saved Markdown notes and the current theme's declared callout types. Save your notes first. New types receive the selected fallback style; existing types, aliases, customizations, and commands are preserved. Repeating a scan does not duplicate existing types. A scan does not edit your notes or remove unused types.
 
-On narrow panes and phones, the actions wrap below the heading — keeping to the same side of the pane they started on — and, when there is no longer room for both side by side, stack with **Add new callout** on top and **Scan for callouts** beneath it. The heading keeps its full width either way, rather than being squeezed to make room for the buttons. Both retain their text labels and remain available when the list is folded. During a scan, the **Scan for callouts** button shows progress and cannot start a second scan; reopening settings preserves this state.
+On narrow panes and phones, the buttons move below the heading. If they no longer fit side by side, **Add new callout** appears above **Scan for callouts**. Both buttons keep their labels and remain available when the list is folded. During a scan, **Scan for callouts** shows progress and cannot start a second scan. Reopening settings preserves that state.
 
 ## Fallback styling
 
 An unrecognized callout can still use the configured **Fallback callout** appearance without becoming a saved definition. Changing that appearance also updates saved fallback rows that you have not customized. Theme-owned callouts continue to use the active theme's appearance.
 
-To choose it, click the **Fallback callout** field — the whole label is selected, so you can just start typing. The list narrows as you type and matches a callout's name, its ID, or any of its aliases, with the closest match first; typing `summary` finds **Abstract**. Each row shows the callout's own icon in its own colour, with its ID and aliases underneath. If nothing matches what you typed, the list offers to create that callout for you, and selects it once you save. Callouts your theme adds are not offered here: they exist only while that theme is active, and this setting is synced to your other devices.
+Click **Fallback callout** and start typing. The list matches callout names, IDs, and aliases, with the closest result first; for example, `summary` finds **Abstract**. Each result shows its icon and color, with its ID and aliases below. If nothing matches, you can create a callout with the text you entered. Theme-only callouts are not offered because this setting syncs to other devices while theme callouts may exist on only one of them.
 
 ## Saving and recovery
 
@@ -22,7 +22,7 @@ Every manually discovered type is saved in `data.json`, included in JSON exports
 
 ## Upgrading from the automatic-discovery versions
 
-Before resuming sync or editing, install this build on **both devices** and keep a copy of each device's existing plugin folder. The released versions **2.12.0, 2.12.1 and 2.12.2** write settings format 4 and do not have the later protection against newer settings formats. An old device can therefore remove new manually discovered definitions on its next save even after the other device has upgraded.
+Before resuming sync or editing, install this build on **both devices** and keep a copy of each device's existing plugin folder. Released versions **2.12.0, 2.12.1, and 2.12.2** use settings format 4 and do not protect newer settings formats. A device running one of those versions can remove newly discovered definitions on its next save, even after the other device has been upgraded.
 
 On the first upgraded launch, the plugin saves a verified recovery file named `backups/legacy-discovery-v1-<hash>.json` inside its plugin folder. It contains the exact previous local discovery payload and the previous startup CSS. Only after that copy is verified does it remove the old local discovery fields. Reopening or retrying the same upgrade reuses that copy. This recovery file is never automatically imported and is not removed by the routine rotation of settings backups.
 

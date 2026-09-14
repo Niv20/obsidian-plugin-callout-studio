@@ -1,106 +1,106 @@
 # Using Callout Studio with your theme
 
-One rule decides everything on this page, and it has no settings:
+One rule explains how Callout Studio works with themes:
 
-> **If your theme styles a callout, your theme keeps it.** Callout Studio will not override it, partly override it, or flash its own design before your theme wins.
+> **If your theme styles a callout, the theme stays in control.** Callout Studio does not override any part of that design or briefly show a different style while the note loads.
 
-You never have to look up who draws a callout, because it is the list the callout is in:
+You can tell which stylesheet controls a callout from the list it appears in:
 
-- **Callouts from your theme** — your theme draws these. Read-only here.
-- **My callout types** — the ones you made. Callout Studio draws them.
-- **Built-in callouts** — Obsidian's thirteen, minus any your theme restyles.
+- **Callouts from your theme:** drawn by your theme and read-only in Callout Studio.
+- **My callout types:** created by you and drawn by Callout Studio.
+- **Built-in callouts:** Obsidian's thirteen built-in types, except those restyled by your theme.
 
-There is nothing to set. Change your theme and the lists rearrange themselves.
+The lists update automatically when you change themes.
 
 ## Getting a long list out of the way
 
-Each of the three headings folds its own list. Click the heading — or reach it with `Tab` and press `Enter` or `Space` — and the chevron turns and the rows tuck away. The other two sections stay exactly as you left them, and the count in the heading stays on screen while the section is folded, so you can still see how many are in there.
+Each heading can collapse its own list. Click it, or focus it with `Tab` and press `Enter` or `Space`. The other sections keep their current state, and the heading continues to show the total number of items while collapsed.
 
-A list longer than twenty rows shows the first twenty and a **Load more** button that says how many are waiting: **Load more (14)**. One click brings the rest in and the button goes away — there is no second page. Nothing is faded or dimmed; every row you can see is a row you can use.
+A list with more than twenty rows initially shows the first twenty. **Load more** includes the number of hidden rows, such as **Load more (14)**, and reveals all of them with one click.
 
 The count beside a heading is always the **total**. It does not change when you fold the section or when rows are still behind **Load more**.
 
-Folding is remembered — close the settings tab, or restart Obsidian, and each section comes back exactly as you left it. **Load more** is not: every list opens capped at twenty again the next time you visit. It does hold for as long as you stay on the tab, though — a list you have opened up stays open even if the settings redraw themselves while you are reading, which they can do on their own when a theme changes or another device syncs a change across.
+Callout Studio remembers which sections are folded when you close settings or restart Obsidian. The **Load more** state resets when you leave the tab, but remains in place while the tab is open, even if a theme change or incoming sync refreshes the settings page.
 
 ## The heading stays with you while you scroll
 
-Scroll into a long list and its heading stops at the top of the settings pane and stays there, so you can always see which group the rows in front of you belong to — and, on **My callout types**, the **Add new callout** button stays within reach with it. When you reach the next section, its heading pushes the old one out of the way and takes over. Past the end of **Built-in callouts** the last heading scrolls away like anything else, so nothing hangs over the settings below.
+When you scroll through a long list, its heading stays at the top of the settings pane. In **My callout types**, this also keeps **Add new callout** within reach. The next section replaces the pinned heading when it reaches the top, and the final heading scrolls away after the built-in list ends.
 
-The parked heading takes its colour from whatever your theme paints the settings pane, so it matches the rows sliding under it. A few themes paint that area with a window-wide gradient or leave it see-through altogether; there the heading falls back to your theme's own window colour rather than letting the rows show through it, so it may read as a slightly different shade from the pane around it. On a theme that makes every surface transparent on purpose, the heading stays transparent with them.
+The pinned heading uses the background of your theme's settings pane. If that pane uses a window-wide gradient or is partly transparent, the heading falls back to the theme's window color so rows do not show through it. Themes that intentionally make every surface transparent keep the heading transparent as well.
 
 Folding a section while its heading is parked at the top leaves the heading under your pointer instead of letting the page jump.
 
-The note under **Callouts from your theme** naming your active theme is not part of the heading that pins — scroll and it goes with the rows underneath, out of sight behind the heading, rather than staying parked next to the title.
+The note naming your active theme scrolls with the rows under **Callouts from your theme**; it is not part of the pinned heading.
 
-The heading stops flush with the top of the pane whatever spacing your theme gives the settings screen. Some themes — ITS Theme among them — set their own padding there, and the heading used to stop short of the top and leave a gap with the rows sliding past behind it. It doesn't any more, on any theme.
+The heading stays flush with the top of the pane, including in themes such as ITS Theme that add their own settings-page padding.
 
-On iPhone the headings scroll normally — the top of the settings screen there belongs to Obsidian's own back and close buttons, and a pinned heading has nowhere to sit that does not collide with them. iPad and desktop both pin.
+On iPhone, headings scroll normally to avoid Obsidian's back and close buttons. They remain pinned on iPad and desktop.
 
 ## Callouts from your theme
 
 Two kinds of callout end up here, and the section says so:
 
-**Callout types your theme invents.** Some themes don't only repaint `note` and `warning` — they add types of their own, with names Obsidian has never heard of. ITS Theme adds `recite`, `infobox`, `cards`, `timeline` and a dozen more. **They are listed here for as long as that theme is active — you don't have to scan, or do anything at all.** They show up in autocomplete and Quick insert too, and your theme keeps drawing them exactly as it always did.
+**Callout types created by your theme.** Some themes do more than restyle `note` and `warning`; they add new types. ITS Theme, for example, adds `recite`, `infobox`, `cards`, `timeline`, and others. These types appear automatically while the theme is active and are available in autocomplete and Quick Insert. The theme continues to draw them.
 
-They are listed, not saved. Nothing about them is written into your settings, they are in no backup or export, and **Reset everything** leaves them alone, because they are not yours to reset — they belong to the theme. Switch to a theme that doesn't have them and they simply stop being listed; your notes are untouched, and switching back brings them straight back.
+Theme types are listed but not saved. They are not written to settings, backups, or exports, and **Reset everything** does not affect them. Switching to a theme that does not provide those types removes them from the list without changing your notes. Switching back restores the list.
 
-That also means they cost you nothing on your other devices. A laptop running a different theme lists different types, and neither machine writes anything because of it — which is what stops your two devices arguing over the same settings file.
+Each device lists the types provided by its own active theme. Because theme-only types are not saved, devices with different themes do not create sync conflicts over them.
 
-**Keeping one for good.** If you want a theme's callout type to stay yours — to recolour it on a device without that theme, or to keep using it after you change theme — press **Scan for callouts**. That saves it as a real callout type of your own, and from then on it behaves like any other: it syncs, it is in your backups, and it survives a theme change wearing its saved appearance.
+**Saving a theme type.** Press **Scan for callouts** if you want to keep a theme type after changing themes or use your own colors on a device without that theme. The saved type then syncs, appears in backups, and keeps its saved appearance when the theme no longer controls it.
 
-**Built-in callouts your theme replaces.** If your theme restyles `[!note]`, then your theme is what you see, so `note` is listed here rather than under **Built-in callouts**. On a theme that restyles all thirteen — and a fair number do — the built-in section will be empty and say so.
+**Built-in callouts restyled by your theme.** If a theme restyles `[!note]`, `note` appears here instead of under **Built-in callouts**. The built-in section is empty when a theme restyles all thirteen types.
 
-Each row shows your theme's **real icon and colours**, read back from a callout your theme has actually drawn. Not the ones stored in Callout Studio; those describe a design you would never see.
+Each row shows the icon and colors from a callout actually drawn by your theme, rather than any unused values stored in Callout Studio.
 
 ### What you can do with one
 
 A theme row has the same two controls as every other row.
 
-**The pencil** opens a preview rather than an editor. It shows how your theme draws the callout and says plainly that Callout Studio won't override it. It changes nothing — there is no control in it, because there is nothing a control could change.
+**The pencil** opens a read-only preview of the theme's design. It does not offer editing controls because Callout Studio does not override the theme.
 
-**The ⋯ menu** has only things that actually work, and they are all about your vault rather than about the design:
+**The ⋯ menu** contains actions that affect uses in your vault:
 
 - how much your vault uses it
-- **Replace in vault** — swap every use for another callout type
-- **Clear uses in your notes** — turn those `[!type]` blocks into plain paragraphs. It is not called *Delete*, because nothing is deleted: your theme keeps supplying the type, and none of your theme's files are touched.
+- **Replace in vault:** replace every use with another callout type.
+- **Clear uses in your notes:** turn `[!type]` blocks into plain paragraphs. The theme continues to provide the type, and its files are not changed.
 
-There is no *Customize* and no colour picker. The row itself is deliberately plain too — no *Default fallback* label, no use count beside the name — because both of those describe a callout you cannot act on.
+Theme rows do not include **Customize**, a color picker, a **Default fallback** label, or a use count beside the name because those controls would not change the theme's design.
 
 ### If you want a theme callout to look different
 
-Make a new callout with a **different ID**. That is the honest answer: while your theme supplies `recite`, `recite` is your theme's. Create `my-recite`, style it however you like, and use **Replace in vault** if you want your existing notes to switch over.
+Create a new callout with a **different ID**. If your theme supplies `recite`, you could create `my-recite`, style it yourself, and use **Replace in vault** to update existing notes.
 
-Callout Studio will stop you creating a callout whose ID your theme already supplies, and tell you why — otherwise you would fill in a whole form and find the result read-only.
+Callout Studio prevents you from creating a callout with an ID already supplied by the theme and explains the conflict before you fill in the form.
 
 ### Block callouts only
 
 A callout your theme supplies has **one** format: the ordinary block callout, `> [!recite]`, drawn in your theme's own style.
 
-Heading Callouts (`## [!recite] Title`) and Inline Callouts (`word [!recite] word`) are Callout Studio's own formats, and they are **not** available for a theme's callout types. Written anyway, they stay as plain text rather than rendering. Your theme has no design for them and no way to follow one, so drawing them would mean showing you two versions Callout Studio invented next to a third your theme drew — three looks for one callout.
+Heading Callouts (`## [!recite] Title`) and Inline Callouts (`word [!recite] word`) are Callout Studio formats, so they are **not** available for theme-only types. If you write them anyway, they remain plain text. Rendering them would require Callout Studio to invent heading and inline styles that might not match the theme's block style.
 
-For the same reason they are not offered where you would reach for them: the `[!` popup skips theme callouts when you are typing a heading or an inline one, and the command builder offers only **Block** for them. A heading or inline command you built earlier, on a callout your theme has since taken over, is **paused** rather than deleted — it leaves the command palette, says so in *Manage commands*, and comes back with your keyboard shortcut intact as soon as your theme stops supplying that callout.
+The `[!` popup therefore skips theme types for heading and inline callouts, and the command builder offers only **Block**. If a theme takes over a type used by an existing heading or inline command, Callout Studio pauses the command instead of deleting it. The command disappears from the palette, shows as paused in **Manage commands**, and returns with its shortcut intact when the theme stops supplying that type.
 
 Callouts of your own keep all three formats, of course.
 
 ## Styling a callout with your own CSS
 
-Separate from all of the above, and still yours to decide: any callout in **My callout types** or **Built-in callouts** has **Style with my own CSS** in its ⋯ menu. Callout Studio then emits nothing for it and your snippet decides.
+For any type under **My callout types** or **Built-in callouts**, choose **Style with my own CSS** from the ⋯ menu to let your CSS snippet control its appearance. Callout Studio then stops generating styles for that type.
 
-The row stays where it is and wears an **External CSS** label, so you can tell at a glance why it has no icon or colours here. Choose **Let Callout Studio style this again** to take it back — nothing you saved was thrown away, and it all comes straight back.
+The row stays in place with an **External CSS** label. Choose **Let Callout Studio style this again** to restore its saved icon and colors.
 
 ## Switching themes
 
-Everything recalculates, and nothing of *yours* is lost, because none of it is stored.
+When you switch themes, the lists and active styles update without deleting saved callout data.
 
 There are three different things in that top section, and they behave differently when the theme goes away.
 
-**A type the theme itself invented, that you never saved** is listed only while that theme is active. Switch away and it stops being listed. Nothing is deleted, because nothing was ever saved — your notes still contain it, and the new theme's own types take its place in the list. A theme change never adds or removes a *saved* definition.
+**A theme type you never saved** is listed only while that theme is active. Switching themes removes it from the list but leaves your notes untouched. A theme change never adds or removes saved definitions.
 
 **A type your theme invented that you kept with Scan for callouts** stays saved when you switch themes. It moves to the appropriate list and uses its saved fallback appearance when the new theme does not own it. Your notes remain unchanged.
 
-**A callout that was already yours** is only *borrowed* while the theme claims the same ID. Switch away and it returns to **My callout types** exactly as it was: same name, colours, icon, aliases, everything — and its Heading and Inline formats work again. Built-ins behave the same way: ones your new theme leaves alone return to **Built-in callouts** wearing whatever you had saved on them. If you customised `[!note]` years ago and then switched to a theme that restyles it, your colours were kept the whole time, unused, and reappear the moment you switch away again.
+**A callout that was already yours** is temporarily controlled by the theme when both use the same ID. Switch away and it returns to **My callout types** with its saved name, colors, icon, and aliases, and its Heading and Inline formats work again. Built-ins behave the same way. Saved customizations remain available while a theme's version is active and return when the theme stops controlling the type.
 
-Switching straight from one theme to another does all of this in one pass — including the case where both themes define the same ID, which simply stays where it is.
+Switching directly between themes applies these changes in one pass. A type defined by both themes stays in the theme list.
 
 ## Different themes on different devices
 
@@ -123,55 +123,59 @@ while callouts supplied by each device's current theme remain listed.
 
 Say you made a `recite` callout yourself, before you knew ITS Theme had one. It now appears under **Callouts from your theme**, because that is the truth: the theme is drawing it.
 
-Nothing about it changed. It is still your row, with your name, aliases and colours saved on it, it still appears in your backups, and it appears exactly once.
+Your saved name, aliases, and colors remain in settings and backups, and the type appears only once.
 
 ## Why it works this way
 
-Worth knowing if you have ever seen a callout come out half-right.
+The details below explain why Callout Studio gives complete control to one stylesheet at a time.
 
-Callout Studio's CSS is applied after your theme's, so where the two write rules of equal strength, Callout Studio's wins. But that only settles ties — a rule written more *specifically* wins outright whatever the order, and themes built around callouts write very specifically indeed.
+Callout Studio's CSS loads after the theme, so it wins when both stylesheets use selectors of equal strength. A more specific selector still wins regardless of load order, and callout-heavy themes often use highly specific selectors.
 
-The old result was neither side winning cleanly, but a split: some colours and icons applied and some didn't. That reads as the plugin being broken, when it is really two stylesheets disagreeing. An in-between setting cannot fix it, because winning *some* properties **is** the failure.
+When both stylesheets compete, some colors and icons may apply while others do not. Giving one side full control avoids this inconsistent result.
 
-So there is no in-between. For the callouts it does own, Callout Studio takes every property outright, and measures how hard it has to push from the theme you actually have on. For the callouts your theme owns, it takes nothing at all.
+Callout Studio therefore controls all supported properties for the callouts it owns and none of the properties for callouts owned by your theme.
 
-Two limits worth stating plainly. It wins the properties Callout Studio actually sets — it does not undo *layout* your theme adds, which is part of why a theme that names a callout keeps it entirely. And the colours shown for a theme callout are read from your **current** light/dark mode; switching mode re-reads them.
+Two limits apply. Callout Studio controls only the properties it sets; it does not undo extra layout added by your theme. Also, colors shown for theme callouts are read from the current light or dark mode and update when the mode changes.
 
 ## Themes written for an older Obsidian
 
-Obsidian changed how a callout's colour is written down in version 1.13. Themes that have been updated since use the new way; plenty of excellent themes have not, and still use the old one. They are not interchangeable — a colour written the new way means nothing to a theme expecting the old way, and the effect is silent: a background simply doesn't appear, or a coloured line down the side of a callout doesn't draw.
+Obsidian changed the way callout colors are defined in version 1.13. Updated themes use the new format, while some themes still use the old one. The formats are not interchangeable: using the wrong format can make a background or colored border disappear without showing an error.
 
-Callout Studio reads your theme and writes whichever way **your** theme is expecting. You don't set this anywhere and there is nothing to configure; it re-checks whenever you switch themes.
+Callout Studio detects the format expected by your theme and checks again whenever you switch themes. No setting is required.
 
-What you should see as a result:
+What you should see:
 
-- A callout you made picks up your theme's own callout design — its background treatment, its side accents, its title bar — in the colour *you* chose.
+- A callout you made uses the theme's callout design, including its background treatment, side accents, and title bar, in the color you chose.
 - Changing a callout option in **Style Settings** takes effect on your callouts immediately, the same as it does on your theme's own callouts. No restart, no reopening the note.
 - If your theme deliberately paints callout backgrounds itself, it keeps doing that. Callout Studio only fills in a background where nothing else is providing one.
 
-A colour you picked from **Saved color palettes** is treated differently from one you picked out of the preset swatches, and this is deliberate. A palette colour includes a background you chose, so it is applied over whatever your theme would have done. A preset is just a colour — the background is worked out from it, so your theme's own background design wins where it has one. If you want a callout to keep a specific background under every theme, save it as a palette.
+Colors from **Saved color palettes** include a background chosen by you, so that background overrides the theme. A preset supplies only a color; the theme's background design still applies where available. Save a palette if you want a callout to keep a specific background across themes.
 
-This is worked out separately for light and dark mode, because a number of themes only set their callout colours in one of the two and leave the other on Obsidian's. So a built-in callout follows your theme in whichever mode your theme actually has an opinion in, and Obsidian's own colour in the other — which is exactly what you would see without Callout Studio installed.
+Light and dark mode are evaluated separately because some themes define callout colors for only one mode. A built-in callout uses the theme's color where one is defined and Obsidian's color in the other mode.
 
-Three things Callout Studio cannot work around. A theme that mixes both ways of writing colours in the same stylesheet will have the smaller half not work — that is a bug in the theme, and only the theme can fix it. Callout types you use in notes but have never added to Callout Studio get your theme's design but not a background of their own; adding them fixes that. And if your theme puts its callout colours behind one of its own **Style Settings options** — a layout or a palette you have to switch on — Callout Studio treats those colours as not in use, because from the stylesheet alone there is no way to tell whether you switched it on. Built-in callouts then follow Obsidian's colours rather than your theme's. Two themes in a 257-theme survey do this (Aura's "Origin" layout, TerraFlow's "Academia" palette); your own callouts are unaffected either way, since they carry the colour you picked.
+Callout Studio cannot work around three cases:
+
+1. A theme mixes both color formats in one stylesheet. The less-used format may fail, and the theme must correct it.
+2. A type appears in your notes but has never been added to Callout Studio. It receives the theme's design but has no background of its own until you add it.
+3. A theme places callout colors behind one of its **Style Settings** options. Callout Studio cannot tell from the stylesheet whether that option is enabled, so built-in types use Obsidian's colors instead. In a survey of 257 themes, this affected Aura's **Origin** layout and TerraFlow's **Academia** palette. Your own types still use the colors you chose.
 
 ## Themes that give callouts no background
 
-Some themes deliberately draw callouts with no fill at all — the colour lives in the icon, the title and a line or a frame, and the body of the callout is simply the page. **GitHub Theme** does it when you switch on **GitHub callout style** in Style Settings; **Minimal** and **Oxygen** do it under **Outlined callouts**; **Prism**, **Cybertron** and a dozen others do it too, some of them by default.
+Some themes intentionally draw callouts without a background fill, using color only in the icon, title, border, or frame. **GitHub Theme** does this when **GitHub callout style** is enabled; **Minimal** and **Oxygen** use the same approach under **Outlined callouts**. **Prism**, **Cybertron**, and several other themes also support it.
 
 Callout Studio follows. On those themes a callout you made drops its background and sits flat like the theme's own, while keeping the things that make it yours: your icon, and your colour on the icon, the title, and any frame the theme draws.
 
 Three details worth knowing:
 
-- **It follows the theme's own switch.** Turn **GitHub callout style** (or **Outlined callouts**) on and your callouts go flat with everything else; turn it off and your background comes straight back. It happens the moment you flip the toggle — no restart, no reopening the note.
+- **It follows the theme's setting.** Turn **GitHub callout style** or **Outlined callouts** on to remove the fill, and turn it off to restore the background. The change is immediate.
 - **A background you chose is set aside, not forgotten.** If your callout came from a Saved palette with a background or a gradient, that background is what gets stood down. Switch to a theme that fills callouts, or switch the theme's option off, and it returns exactly as you saved it. Nothing is rewritten.
-- **Text colour goes back to the theme's.** Callout Studio fills the text-colour boxes in the editor with a readable default so the swatch has something to show. On these themes that default is dropped and your theme's own text colour is used, so your callout reads like the ones beside it. A text colour you actually picked yourself is kept.
+- **Default text color comes from the theme.** Callout Studio shows a readable default in the editor, but background-free themes use their own text color. A text color you chose yourself is preserved.
 
-Themes that fill callout backgrounds normally are untouched by any of this — 240 of the 257 themes surveyed emit exactly what they did before.
+Themes that normally fill callout backgrounds are unaffected. This was true for 240 of the 257 themes surveyed.
 
 ## Writing a theme yourself?
 
-There is a compatibility guide for theme authors in the developer docs — which CSS patterns Callout Studio reads correctly, which ones hide your callouts from it, and how to check your theme against it: [Theme callout discovery](../internals-docs/21-theme-callout-discovery.md#for-theme-authors).
+Theme authors can find supported CSS patterns, discovery limitations, and testing steps in [Theme callout discovery](../internals-docs/17-theme-callout-discovery.md#for-theme-authors).
 
 ---
 **Next:** [Resetting callouts and settings](13-resetting-callouts-and-settings.md)

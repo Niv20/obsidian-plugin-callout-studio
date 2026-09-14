@@ -1,6 +1,6 @@
 # Vault insights & maintenance
 
-Callout Studio can look across your entire vault and tell you exactly how your callouts are being used. This chapter covers the statistics view and the maintenance tools that live alongside it.
+The statistics view shows how callouts are used across your vault and provides tools for maintaining them.
 
 ## Manual discovery
 
@@ -11,19 +11,19 @@ The **Scan for callouts** button lives at the top beside **My callout types**, j
 
 Callout statistics scans every markdown file in your vault and builds a complete picture of your callouts. For each callout type you use, it shows:
 
-- **Usage count** — how many times that callout type appears across your vault.
-- **Files** — how many separate files it shows up in.
-- **Source** — where the callout type comes from: built-in, custom, manually discovered fallback, from a CSS snippet, or unknown.
+- **Usage count:** how many times the callout type appears.
+- **Files:** how many files contain it.
+- **Source:** whether the type is built in, custom, manually discovered, from a CSS snippet, or unknown.
 
-This is a quick way to see which callout types you actually rely on, spot ones you forgot you were using, and notice any unfamiliar IDs that might need a closer look.
+Use these statistics to find the types you rely on, spot forgotten callouts, and investigate unfamiliar IDs.
 
 ## Convert to plain text
 
-If a callout has done its job and you'd rather it read as a normal paragraph, use **Convert to plain text**. It strips the callout's formatting - the box, the icon, the title bar - while keeping everything you wrote inside it. Nothing is lost; the content simply becomes ordinary prose instead of a callout.
+Use **Convert to plain text** to remove the box, icon, and title bar while keeping the text inside the callout. The content becomes ordinary prose.
 
 ## Replacing a callout ID
 
-The statistics view also gives you access to replacing every occurrence of one callout ID with another in a single pass. This is covered in full in [Deleting and replacing callouts](09-deleting-and-replacing-callouts.md), so head there for the details.
+You can also replace every occurrence of one callout ID with another. See [Deleting and replacing callouts](09-deleting-and-replacing-callouts.md) for details.
 
 ---
 **Next:** [Import, export & sharing](11-import-export-and-sharing.md)

@@ -1,12 +1,12 @@
 # Global callout style
 
-Beyond the color of each individual callout type, Callout Studio lets you shape how every callout of a given form looks and behaves, all at once. Set it once, and it applies everywhere — no need to repeat the same tweak on every callout type you use.
+Global styles control the shape and spacing of each callout form across your vault. Set them once instead of repeating the same changes for every callout type.
 
 ![Global callout style](https://github.com/user-attachments/assets/7558c077-1396-43de-9715-6538b4ca8297)
 
 ## What it applies to
 
-These settings shape the callouts **Callout Studio draws**. A callout your theme supplies or restyles keeps your theme's geometry along with everything else — border, radius and text size included — so if a setting here seems to skip a callout, check which list it is in. See [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md).
+These settings apply only to callouts **drawn by Callout Studio**. Callouts supplied or restyled by your theme keep the theme's border, corner radius, text size, and other geometry. If a setting seems to skip a callout, check which list contains it. See [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md).
 
 ## Where to find it
 

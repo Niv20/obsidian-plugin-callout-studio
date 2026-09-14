@@ -1,6 +1,6 @@
 # Import, export & sharing
 
-Callout Studio makes it easy to take your callout styling with you, hand it off to a theme or a published site, or bring in work from other tools. This chapter covers exporting your setup, and importing it back in — whether from a Callout Studio backup, from another plugin, or from CSS snippets already sitting in your vault.
+Export your Callout Studio setup to move it to another vault, use it on a published site, or keep a backup. You can also import a previous backup, settings from another plugin, or callouts found in your vault's CSS snippets.
 
 Importing a backup replaces the appearance of matching callout types, including
 clearing optional colors, icon adjustments and palette links absent from the
@@ -12,12 +12,12 @@ the callout type after importing.
 
 Export offers two formats, and they serve different purposes:
 
-- **Callout Studio backup** — a JSON file holding your callout definitions, your saved color palettes, and your settings. This is the format to use when you want to move everything into another vault.
-- **CSS snippet** — the same styling written out as plain CSS, saved into this vault's snippets folder. Use this when you need your callouts to look right somewhere Callout Studio itself isn't running: another vault, Obsidian Publish, or a static-site build.
+- **Callout Studio backup:** a JSON file containing your callout definitions, saved color palettes, and settings. Use this format to move the complete setup to another vault.
+- **CSS snippet:** a plain CSS copy of your styling, saved in the vault's snippets folder. Use it where Callout Studio is not running, such as another vault, Obsidian Publish, or a static site.
 
 ## What the CSS snippet covers
 
-The CSS snippet is a snapshot, not a live link. It captures your styling at the moment you export it, and it does not update automatically afterwards. If you change a color or icon later, the file still holds the old look — export again to bring it up to date. Re-exporting only replaces that one file, and if you've hand-edited it since the last export, you're asked before anything is overwritten.
+The CSS snippet is a snapshot of your styling at the time of export. It does not update when you later change a color or icon, so export it again when you need a fresh copy. Re-exporting replaces only that file, and Callout Studio asks before overwriting a copy you edited by hand.
 
 The snippet covers the classic **Block Callout** form only:
 
@@ -39,7 +39,7 @@ placeholder; ordinary icon names and emoji keep their usual appearance.
 After upgrading, the old local startup style snapshot is ignored and regenerated
 from your settings. Your callout definitions and recovery data are preserved.
 
-If you have a JSON backup file that Callout Studio produced — from this vault or another one — you can bring it back in:
+To import a Callout Studio JSON backup from this vault or another one:
 
 1. The importer checks every entry in the file.
 2. It reports any problems row by row, so you can see exactly what didn't pass.
@@ -70,7 +70,7 @@ Anything that has no equivalent in Callout Studio is listed before the import ru
 
 **Admonition**
 
-This brings over your custom admonitions — names, icons and colors — from the Admonition plugin. You can import it in any of these ways:
+This imports custom admonition names, icons, and colors from the Admonition plugin. You can import them in any of these ways:
 
 - Reading that plugin's settings directly out of this vault.
 - An `admonitions.json` file.
@@ -80,7 +80,7 @@ Pictures you'd uploaded to Admonition come across into Callout Studio's own imag
 
 ## Importing from your vault's CSS snippets
 
-Callout Studio can also pick up callout definitions it detects sitting in your vault's own CSS snippets folder, and offer to import them the same way. This is a handy way to bring in callout styling you (or someone else) already wrote by hand, without starting over.
+Callout Studio can also detect callout definitions in your vault's CSS snippets folder and offer to import them. This lets you reuse existing hand-written styles without starting over.
 
 ---
 **Next:** [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md)

@@ -1,6 +1,6 @@
 # Three ways to use a callout
 
-Welcome to Callout Studio. Every callout type you create or customize can show up in your notes in three different forms — Block Callout, Heading Callout, and Inline Callout — and each one has its own vault-wide style controls. This chapter introduces all three, since they're the foundation everything else in this guide builds on.
+Every callout type you create or customize can appear in three forms: Block Callout, Heading Callout, and Inline Callout. Each form has its own vault-wide style controls. This chapter shows how all three work.
 
 ![Three ways to use a callout](https://github.com/user-attachments/assets/3cf88262-184d-42e6-b810-d43889629afb)
 
@@ -23,7 +23,7 @@ Put the token right after the heading marks, and the whole heading turns into a 
 ## [!note] My heading title
 ```
 
-Everything after the token becomes the heading's own title text, exactly like a normal heading. This lets you turn any heading in your note into a callout-styled section header without wrapping content in a blockquote.
+Everything after the token becomes the title, just as it would in a normal heading. You get a callout-styled section header without wrapping the section in a blockquote.
 
 ## Inline Callout
 
@@ -43,21 +43,21 @@ Add text in curly braces straight after the token, and it goes **inside** the pi
 Want an [!note]{Inline Callout}? Just add [!type]{text} right in a sentence.
 ```
 
-The `{` has to touch the `]` — `[!note] {text}` with a space is an ordinary pill followed by the literal words ` {text}`. Braces nest, so `{a {b} c}` is one piece of text, and the first `}` that closes the outer brace ends it.
+The `{` must touch the `]`. With a space, `[!note] {text}` becomes an ordinary pill followed by the literal text ` {text}`. Braces can be nested, so `{a {b} c}` is treated as one piece of text.
 
-Curly braces have no backslash escape. If you need a literal brace right after a pill, put it in backticks — inline code is ignored when the pill's text is worked out.
+Curly braces do not support backslash escapes. If you need a literal brace after a pill, put it in backticks. Inline code is ignored when Callout Studio determines the pill text.
 
 To show a token as literal text, escape its opening bracket: `\[!note]` or `\[!note]{literal text}`. Reading view preserves that escape for both ordinary pills and pills with their own text.
 
 ## The same look everywhere
 
-All three forms render the same way in Live Preview, Reading view, and PDF export — so however you choose to write a callout, it will look consistent no matter how your note is viewed or exported.
+All three forms render consistently in Live Preview, Reading view, and PDF exports.
 
 ## Metadata and callout type
 
 Obsidian lets you attach metadata to a callout after a pipe character, for example `> [!note|purple]`. That's the **note** callout carrying the metadata **purple**, which themes and CSS snippets can use to style it separately.
 
-Callout Studio ignores that metadata when deciding which callout type you meant. That means `[!note]`, `[!note|purple]`, and `[!note|green]` are all treated as the same single **Note** callout type, with just one row in your callout list. This holds true across all three forms — Block, Heading, and Inline callouts can all carry metadata this way.
+Callout Studio ignores metadata when identifying the callout type. As a result, `[!note]`, `[!note|purple]`, and `[!note|green]` all refer to the same **Note** callout and share one row in your callout list. Block, Heading, and Inline callouts can all carry metadata this way.
 
 ---
 **Next:** [Creating your first callout](02-creating-your-first-callout.md)

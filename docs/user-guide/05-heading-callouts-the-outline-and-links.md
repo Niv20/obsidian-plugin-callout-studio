@@ -1,18 +1,18 @@
 # Heading callouts, the Outline, and links
 
-A Heading Callout is still a completely real Obsidian heading underneath its colored bar. Turning a heading into a callout does not cost you anything about how that heading behaves elsewhere in Obsidian - it keeps working in the Outline pane and in links exactly as it always did.
+A Heading Callout is a regular Obsidian heading with a callout style. It still appears in the Outline pane and works in links like any other heading.
 
 ## It's your heading, styled
 
-When you write something like `## [!tip] My title`, you are not creating a special separate object - you are writing a normal Obsidian heading and giving it a callout style. Everywhere else in Obsidian, it is simply a heading with that title.
+When you write `## [!tip] My title`, Callout Studio styles a normal Obsidian heading. Elsewhere in Obsidian, its title remains simply **My title**.
 
 ## It still shows up in the Outline
 
-Because a Heading Callout is a real heading, it appears in Obsidian's Outline pane on the right side of the window, exactly like any other heading in your note. Callout Studio automatically keeps the raw `[!tip]` token out of the Outline - what you see there is your clean heading title, never the plugin's own bracket syntax.
+Heading Callouts appear in Obsidian's Outline pane. Callout Studio hides the raw `[!tip]` token there, so the Outline shows only the heading title.
 
 ## It still works with links
 
-Other notes can link to a Heading Callout the same way they'd link to any heading, using a normal `[[#heading]]` style link. When Obsidian shows you the popup of matching headings while you type that kind of link, it displays the same clean title instead of the raw token - so the link suggestion reads like an ordinary heading, not like plugin markup.
+Link to a Heading Callout with the usual `[[#heading]]` syntax. Obsidian's link suggestions show the clean title without the raw callout token.
 
 ## Headings that start with a link are left alone
 
@@ -20,7 +20,7 @@ If a heading begins with a normal markdown link, such as `# [some link](url)`, C
 
 ## The takeaway
 
-Outside of the note itself - where it renders as a colored bar - a Heading Callout reads like an ordinary heading everywhere in Obsidian: in the Outline pane, and in every link suggestion pointing to it. You get the callout's styling in the note without losing anything about how the heading behaves elsewhere.
+In the note, a Heading Callout appears as a colored bar. In the Outline and link suggestions, it behaves and reads like an ordinary heading.
 
 ---
 **Next:** [The right-click menu](06-the-right-click-menu.md)

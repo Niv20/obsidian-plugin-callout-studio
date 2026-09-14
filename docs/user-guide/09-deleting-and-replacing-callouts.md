@@ -1,12 +1,12 @@
 # Deleting and replacing callouts
 
-Sooner or later you'll want to retire a callout type or swap one for another across your notes. Callout Studio gives you safe, guided ways to do both, whether the callout is one you created yourself or one of the built-in types.
+You can remove a callout type or replace every use of it across your notes. The available action depends on whether the callout is custom, built into Obsidian, or supplied by your theme.
 
 ## Finding the menu
 
 Every callout row in **My callout types** and **Built-in callouts** has a **⋯** menu. Open it to see the actions available for that row, including replacing it or removing it.
 
-Rows under **Callouts from your theme** carry their actions as buttons on the row itself instead, because there are only ever three of them - see [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md).
+Rows under **Callouts from your theme** show their three available actions directly on the row. See [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md).
 
 ## Replacing a callout everywhere
 
@@ -14,7 +14,7 @@ Use **Replace in vault** when you want every occurrence of one callout type to b
 
 1. Open the **⋯** menu on the callout you want to replace.
 2. Choose **Replace in vault**.
-3. Pick the callout type you want it replaced with. Start typing in the search box above the list to narrow it — it matches a callout's name, its ID, or any of its aliases.
+3. Pick the replacement callout type. Use the search box to match its name, ID, or aliases.
 4. Confirm.
 
 Callout Studio then goes through your whole vault in a single pass and swaps every occurrence of the original callout for the one you picked.
@@ -24,28 +24,28 @@ Callout Studio then goes through your whole vault in a single pass and swaps eve
 If the callout is one you created yourself, choosing **Delete** first tells you how many notes currently use it. From there you can:
 
 - **Cancel** and leave everything as it is.
-- **Replace it with another callout instead** - this hands you off to the same replace flow described above, so you don't lose the content.
-- **Go ahead and delete it.** If the callout is used anywhere, those existing occurrences are converted into plain ordinary paragraphs first - they keep their text, they just lose the callout styling. Only after that does the row disappear from your list.
+- **Replace it with another callout instead.** This opens the replacement flow described above and keeps the content.
+- **Delete it.** Existing uses are converted to ordinary paragraphs before the type is removed. The text stays in place, but the callout styling is removed.
 
 ## Deleting a callout Callout Studio didn't create
 
 Two kinds of callout can't really be deleted: **one of Obsidian's 13 built-ins**, and **a callout type your theme supplies**. In both cases something outside Callout Studio keeps declaring the type, so removing the row would only bring it straight back.
 
-Because of that, the action only appears on those once the callout is actually in use somewhere in your vault, and what it does is narrower: it converts those existing occurrences into plain paragraphs and leaves the type itself alone. The confirmation says so before you commit, and for a theme callout it says the other half too — **nothing belonging to your theme is read, changed or removed.** Callout Studio only ever writes to notes inside your vault.
+For those callouts, the action appears only when the type is used in your vault. It converts existing uses to plain paragraphs but leaves the type itself available. For theme callouts, the confirmation also explains that Callout Studio does not read, change, or remove theme files. It writes only to notes in your vault.
 
 On a callout your theme supplies, the menu item is called **Clear uses in your notes** rather than *Delete*, because that is what happens. On a built-in it is still called Delete, and the confirmation explains that the type stays.
 
-Afterwards the row is still in your list, ready to use again.
+Afterward, the row remains in the list and can be used again.
 
-Turning a customized built-in callout back to its original look, without touching any of its usages in your notes, is a different action - see [Resetting callouts and settings](13-resetting-callouts-and-settings.md). Which callouts your theme owns in the first place is explained in [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md).
+To restore a customized built-in callout without changing your notes, see [Resetting callouts and settings](13-resetting-callouts-and-settings.md). To learn which callouts your theme controls, see [Using Callout Studio with your theme](12-using-callout-studio-with-your-theme.md).
 
 ## While your notes are being updated
 
-Renaming, replacing and deleting all rewrite the notes that use the callout, and on a large vault that takes a moment. You can keep working while it runs — each note is updated as one atomic step against whatever is on disk at that instant, so a paragraph you type mid-way through is not overwritten by the update.
+Renaming, replacing, and deleting can rewrite every note that uses a callout, which may take a moment in a large vault. You can keep working while the update runs. Each note is changed as a single operation based on its current contents, so new work is not overwritten.
 
-Notes that don't use the callout are not touched at all, and are never even opened for writing — so nothing needless is handed to Sync.
+Notes that do not use the callout are never opened for writing, so they do not create unnecessary sync activity.
 
-If a note genuinely can't be updated — it was deleted moments earlier, or Sync has it locked — that note is skipped and the rest still go through. You'll get a notice saying how many were left alone, and those notes keep their original text; re-running the same action later picks them up.
+If a note cannot be updated because it was deleted or locked by sync, Callout Studio skips it and continues with the rest. A notice reports how many notes were skipped. Run the action again later to update them.
 
 For **Delete**, an incomplete conversion keeps the callout type in your list and
 preserves its styling for the remaining notes. Notes already converted stay

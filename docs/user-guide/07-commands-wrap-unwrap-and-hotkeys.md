@@ -1,22 +1,22 @@
 # Commands, wrap/unwrap & hotkeys
 
-Callout Studio works with Obsidian's command palette instead of adding buttons or menus everywhere, so you can insert, wrap, and unwrap callouts entirely from the keyboard. This chapter covers the five built-in commands, how to give them shortcuts, and how to build your own commands for the callout types you use most.
+Callout Studio uses Obsidian's command palette, so you can insert, wrap, and unwrap callouts from the keyboard. It includes five built-in commands, and you can create commands for the callout types you use most.
 
 ## The five built-in commands
 
 Callout Studio adds exactly five commands to Obsidian's command palette. None of them has a keyboard shortcut assigned by default.
 
-- **Open settings** — opens the Callout Studio settings tab.
-- **Create new callout type** — opens the callout editor so you can design a new callout type.
-- **Insert empty callout** — starts a new callout at the cursor, then shows the same suggestion list you'd get by typing `[!`, so you can pick the type right away.
-- **Wrap in callout** — wraps the current paragraph or selection in a callout, then shows that same suggestion list.
-- **Unwrap from callout** — removes one callout level around the cursor or selection.
+- **Open settings:** opens the Callout Studio settings tab.
+- **Create new callout type:** opens the editor for a new callout type.
+- **Insert empty callout:** starts a callout at the cursor and opens the same suggestions you see after typing `[!`.
+- **Wrap in callout:** wraps the current paragraph or selection, then opens the callout suggestions.
+- **Unwrap from callout:** removes one callout level around the cursor or selection.
 
 ## Assigning shortcuts
 
-Quick Insert writes into the note it was opened from. If that note closes or
-the pane switches to another file, reopen Quick Insert in the intended note;
-the old window will leave the replacement note untouched.
+Quick Insert always writes to the note from which you opened it. If that note
+closes or the pane switches to another file, reopen Quick Insert from the
+intended note. The existing window will not change the replacement note.
 
 To give any of these commands a keyboard shortcut:
 
@@ -28,24 +28,24 @@ From there you assign the key combination the same way you would for any other O
 
 ## Why there isn't one command per callout type
 
-Callout Studio deliberately does not add a separate command for every callout type — with dozens of types in play, that would flood the command palette with hundreds of entries. Instead, the same **Manage commands** window lets you build your own specific commands, tailored to exactly the callout types you use.
+Adding a command for every callout type would quickly clutter the command palette. Instead, **Manage commands** lets you create only the specific commands you need.
 
 To build one, you pick:
 
-- A **format** — heading, inline, or block.
-- A **callout type** — any callout type you've defined.
-- Where the format offers a choice — a **heading level**, or whether the command **wraps a selection** or **inserts a new callout**.
-- For block callouts, a **fold state** — see below.
+- A **format:** heading, inline, or block.
+- A **callout type:** any callout type you've defined.
+- A **heading level**, or whether the command **wraps a selection** or **inserts a new callout**, when the selected format supports that choice.
+- A **fold state** for block callouts, as described below.
 
 ### Fold state
 
-Block callouts can be foldable, and a command can decide that for you. The **Fold state** option offers three choices, and applies to both block actions — wrapping a selection and inserting a new callout:
+Block callouts can be foldable, and a command can set the initial state. The **Fold state** option applies both when wrapping a selection and when inserting a new callout:
 
 | Choice | What the command writes |
 | --- | --- |
-| **Non-foldable** | `> [!note]` — the callout is always open. |
-| **Foldable, expanded (+)** | `> [!note]+` — foldable, and starts open. |
-| **Foldable, collapsed (-)** | `> [!note]-` — foldable, and starts folded. |
+| **Non-foldable** | `> [!note]`; the callout is always open. |
+| **Foldable, expanded (+)** | `> [!note]+`; the callout can fold and starts open. |
+| **Foldable, collapsed (-)** | `> [!note]-`; the callout can fold and starts closed. |
 
 So a command set to *Foldable, collapsed* turns a selected paragraph straight into:
 
@@ -54,7 +54,7 @@ So a command set to *Foldable, collapsed* turns a selected paragraph straight in
 > Selected content
 ```
 
-Heading and inline callouts don't have this option, because they have no fold marker: in a heading, `### [!note]- Title` isn't a folded callout at all — the `-` is just the first character of the title.
+Heading and inline callouts do not have a fold option. In `### [!note]- Title`, the `-` is simply the first character of the heading title.
 
 Existing commands are unaffected. Every command built before this option existed is **Non-foldable**, keeps the exact name it had, and keeps whatever shortcut you assigned to it.
 
@@ -67,7 +67,7 @@ Each custom command you build gets registered with Obsidian just like any other 
 - Insert H2 Note heading callout
 - Insert Important inline callout
 
-Custom commands behave exactly like the five generic commands above — the same handling of selections, cursor position, nesting, code blocks, and frontmatter. The only difference is that the callout type is already chosen, so there's no suggestion-list step; the command does its job immediately.
+Custom commands handle selections, cursor position, nesting, code blocks, and frontmatter in the same way as the built-in commands. Because the callout type is already selected, they run immediately without opening suggestions.
 
 In a note containing only properties, a heading command adds the heading below the properties and keeps their closing delimiter intact.
 

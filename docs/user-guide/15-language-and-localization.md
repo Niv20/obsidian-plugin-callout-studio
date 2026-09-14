@@ -1,6 +1,6 @@
 # Language and localization
 
-Callout Studio's own interface — its settings, buttons, and messages — can display in 32 languages. By default it follows Obsidian's interface language automatically, but you can also set a different language for the plugin on its own, independent of whatever language Obsidian itself is using.
+Callout Studio's settings, buttons, and messages are available in 32 languages. The plugin follows Obsidian's interface language by default, but you can choose a different language for Callout Studio alone.
 
 ## Supported languages
 
@@ -18,7 +18,7 @@ This choice only affects Callout Studio's own interface. It does not change Obsi
 
 ## About translation quality
 
-Every translation except English was produced with AI assistance. Most of the interface should read naturally, but you may occasionally spot an awkward phrase or a small error in your language.
+Every non-English translation was created with AI assistance and may contain an awkward phrase or minor error.
 
 ## Reporting or fixing a translation issue
 
