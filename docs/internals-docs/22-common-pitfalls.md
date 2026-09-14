@@ -74,7 +74,7 @@ that feels like it "should just work."
 > (`plugin.api`).** Everything it returns is frozen at every depth
 > specifically to prevent this — but if you're the one *implementing* a new
 > API mapper, remember to freeze it too. See
-> [Public API § nothing live escapes](18-public-api.md#nothing-live-escapes).
+> [Public API § nothing live escapes](20-public-api.md#nothing-live-escapes).
 
 ## Helpers that must always be used
 
@@ -335,4 +335,4 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   cycle even with no real change.
 
 ---
-Next chapter: [21-theme-callout-discovery.md](21-theme-callout-discovery.md)
+Next chapter: [23-logging-and-diagnostics.md](23-logging-and-diagnostics.md)

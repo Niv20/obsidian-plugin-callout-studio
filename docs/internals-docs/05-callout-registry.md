@@ -240,7 +240,7 @@ rebuilds collision groups until no merge remains: an alias inherited from a
 deleted bridge row can connect another group, and must resolve in the same load.
 Each successful pass removes at least one row; fallback/command references follow
 every merge. See
-[Logging and diagnostics](22-logging-and-diagnostics.md#background-discovery-and-load-time-migrations--consoledebug)
+[Logging and diagnostics](23-logging-and-diagnostics.md#background-discovery-and-load-time-migrations--consoledebug)
 for the full catalog of these traces and why they stay at `console.debug`.
 
 ## `isModified` and the built-in-deference mechanism

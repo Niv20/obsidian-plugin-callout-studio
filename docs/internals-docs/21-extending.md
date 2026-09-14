@@ -123,7 +123,7 @@ command and any custom command sharing the same operation can't drift apart.
    it and commit the regenerated `locales/*.json` +
    `src/i18n/localeManifest.ts`, or CI's `git diff --exit-code` check fails
    the build. See [Localization](16-i18n.md) and
-   [Build, test, and release](17-build-test-release.md).
+   [Build, test, and release](19-build-test-release.md).
 4. **Never hardcode UI-facing text.** `tests/repoSourceRules.test.ts`
    ("no hardcoded UI copy") enforces this mechanically — a bare English
    literal handed to a text setter, `Notice`, or `aria-label` fails the
@@ -216,4 +216,4 @@ Before considering a registry-touching change done, verify:
       doesn't itself call `notifyChange()`?
 
 ---
-Next chapter: [20-common-pitfalls.md](20-common-pitfalls.md)
+Next chapter: [22-common-pitfalls.md](22-common-pitfalls.md)

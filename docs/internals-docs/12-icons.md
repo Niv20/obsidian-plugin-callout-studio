@@ -171,7 +171,7 @@ download(id): Promise<boolean>               // fetches, verifies, persists
 `PACK_MANIFEST` baked into the build.** Two URLs are tried in order
 (`packUrls(id)` — jsDelivr first, `raw.githubusercontent.com` fallback), each
 pinned to the **`packs-v2`** immutable tag (see
-[Adding or modifying features](19-extending.md#refreshing-icon-pack-artwork)
+[Adding or modifying features](21-extending.md#refreshing-icon-pack-artwork)
 for what "refreshing" a pack actually requires).
 
 > [!CAUTION]
@@ -410,8 +410,8 @@ before any artwork download. **Artwork itself is never bundled** (beyond
 Lucide, which Obsidian already ships). Regeneration is a deliberately
 separate, manual step — `npm run icons:generate` — **never** part of
 `npm run build`, and its output **is committed to the repo**. See
-[Build, test, and release](17-build-test-release.md#regenerating-icon-and-locale-data)
-and [Adding or modifying features](19-extending.md#refreshing-icon-pack-artwork).
+[Build, test, and release](19-build-test-release.md#regenerating-icon-and-locale-data)
+and [Adding or modifying features](21-extending.md#refreshing-icon-pack-artwork).
 
 ---
 Next chapter: [13-callout-editor.md](13-callout-editor.md)

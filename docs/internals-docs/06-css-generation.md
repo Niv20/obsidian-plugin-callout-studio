@@ -482,7 +482,7 @@ otherwise                 → this plugin paints it, outright, with !important
 
 *How* the theme is read, which selectors count as naming an id, and what happens
 to the rows on a theme switch is its own chapter:
-[21-theme-callout-discovery.md](21-theme-callout-discovery.md). This section is
+[17-theme-callout-discovery.md](17-theme-callout-discovery.md). This section is
 only what the injector does once that question has an answer.
 
 Three consequences worth stating separately, because each was a decision.
@@ -516,7 +516,7 @@ Ownership is **derived on every read**, never written onto the row. Writing
 loses data three ways — the row stops being exported, the next theme switch
 deletes it, and an import re-stamps it back. The derivation, and why the empty
 owned-set at startup is the safe direction rather than a gap, is
-[21-theme-callout-discovery.md § Stage 3](21-theme-callout-discovery.md#stage-3--ownership).
+[17-theme-callout-discovery.md § Stage 3](17-theme-callout-discovery.md#stage-3--ownership).
 
 `source` moves in exactly one place: a one-shot re-home of pre-existing
 `source: "theme"` rows in
@@ -606,7 +606,7 @@ nothing left the definition, only what the renderer acts on.
 A user-requested scan may add the theme's declared ids as durable fallback rows.
 Automatic theme appearance inspection updates only ownership and measured artwork.
 Switching themes never adds or removes definitions, writes a retirement list, or
-starts a vault discovery pass. See [theme appearance](21-theme-callout-discovery.md).
+starts a vault discovery pass. See [theme appearance](17-theme-callout-discovery.md).
 
 
 ## Reading the theme back
@@ -623,7 +623,7 @@ surfaces that *list* a callout this plugin does not paint — the settings row's
 two swatches and its icon, the small-list icon, the preview window. The probe's
 scheduling, the node ladder (`readCalloutStyle.ts`), the accent ladder and the
 five-rung icon ladder are all
-[21-theme-callout-discovery.md § Stage 5](21-theme-callout-discovery.md#stage-5--reading-the-colours-and-the-icon-back).
+[17-theme-callout-discovery.md § Stage 5](17-theme-callout-discovery.md#stage-5--reading-the-colours-and-the-icon-back).
 
 One rule from there that everything else depends on: **the fallback is never the
 row's stored icon or colour.** Those describe a design that is not on screen.
@@ -685,11 +685,11 @@ scan asked two different questions:
 
 Collapsing the two breaks both. The scanner itself, the operator rules, what it
 can and cannot see, and the row-minting sweep built on top of it are
-[21-theme-callout-discovery.md § Stage 2](21-theme-callout-discovery.md#stage-2--scanning-the-stylesheet-for-callout-claims)
+[17-theme-callout-discovery.md § Stage 2](17-theme-callout-discovery.md#stage-2--scanning-the-stylesheet-for-callout-claims)
 and
-[§ Stage 4](21-theme-callout-discovery.md#stage-4--minting-rows-for-the-types-a-theme-invents);
+[§ Stage 4](17-theme-callout-discovery.md#stage-4--minting-rows-for-the-types-a-theme-invents);
 when the scan re-runs is
-[§ When discovery re-runs](21-theme-callout-discovery.md#when-discovery-re-runs).
+[§ When discovery re-runs](17-theme-callout-discovery.md#when-discovery-re-runs).
 
 > [!WARNING]
 > `StudioWeightCache.resolve()` advances `ThemeCalloutStore`'s signature memo as

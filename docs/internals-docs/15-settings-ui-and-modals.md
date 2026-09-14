@@ -240,7 +240,7 @@ subscription from silently accumulating across repeated `display()` calls.
 [`CalloutListsSection.ts`](../../src/settings/sections/CalloutListsSection.ts)
 builds *Callouts from your theme*, *My callout types* and *Built-in
 callouts*, in that order, from one pass over one combined list (see
-[Theme callout discovery](21-theme-callout-discovery.md) for who lands
+[Theme callout discovery](17-theme-callout-discovery.md) for who lands
 where). Two behaviours sit on top of that split, each in its own helper —
 and [`CustomPalettesSection.ts`](../../src/settings/sections/CustomPalettesSection.ts)'s
 *Saved color palettes* heading is a fourth member of the same family rather than
@@ -1083,7 +1083,7 @@ Two rules follow from this, and both have already been broken once:
 > [!TIP]
 > This is a cascade question, not a reading-the-file question, and it is worth
 > answering with the harness in
-> [21 — Checking a theme against the real cascade](21-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade):
+> [17 — Checking a theme against the real cascade](17-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade):
 > extract `app.css` from the installer asar, load it beside the live
 > `styles.css`, rebuild the DOM chain, focus the field and read
 > `getComputedStyle`. Comparing a field against the Name box that way is how

@@ -1095,4 +1095,4 @@ Suites: `themeCalloutScan`, `themeOwnership`, `manualDiscovery`,
 `themeAppearanceProbe`, `themeRowActions`, `themeReport`, `cssSpecificity`.
 
 ---
-Next chapter: [00-index.md](00-index.md)
+Next chapter: [18-upgrading-manual-discovery.md](18-upgrading-manual-discovery.md)

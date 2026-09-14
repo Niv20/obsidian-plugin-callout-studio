@@ -36,3 +36,6 @@ Saved definitions remain authoritative; stale same-id cache observations never
 override saved colors, icons, aliases or commands. A later manual scan can recover
 ids still present in notes or a theme. Archived CSS is a limited recovery aid,
 not a replacement for lost metadata or a complete settings backup.
+
+---
+Next chapter: [19-build-test-release.md](19-build-test-release.md)

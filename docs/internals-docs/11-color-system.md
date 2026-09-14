@@ -364,7 +364,7 @@ this machinery invisible in those vaults: their generated CSS is byte-identical
 to what it was before any of it existed.
 
 Measured across all 257: **36** themes read a triplet, **25** read a colour,
-**0** tie. See [21-theme-callout-discovery.md](21-theme-callout-discovery.md)
+**0** tie. See [17-theme-callout-discovery.md](17-theme-callout-discovery.md)
 for the scan itself, the per-theme matrix and the known limitations.
 
 `parseCssColorToHex()` is the inverse — used by CSS-snippet import — and

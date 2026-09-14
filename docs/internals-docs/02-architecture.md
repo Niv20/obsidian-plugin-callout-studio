@@ -59,7 +59,7 @@ the modals — **reads** the registry and **calls its mutators**; none of it hol
 authoritative state of its own. This matters for a simple reason: if you find
 yourself caching a `CalloutDefinition` anywhere outside the registry's map, you
 are one edit away from it going stale. The public API guards against exactly this
-(see [Public API](18-public-api.md)) by handing out frozen copies rather than
+(see [Public API](20-public-api.md)) by handing out frozen copies rather than
 live references.
 
 ## The data-flow loop

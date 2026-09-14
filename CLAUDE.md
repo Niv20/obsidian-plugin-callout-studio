@@ -1,14 +1,14 @@
 # CLAUDE.md
 
-This file gives Claude Code, and other AI coding agents, the minimum orientation needed to work in this repository — it is a map, not the territory. For anything beyond the essentials below, follow the pointers to the real documentation; if it and this file ever disagree, the documentation wins.
+This file gives Claude Code, and other AI coding agents, the minimum orientation needed to work in this repository --- it is a map, not the territory. For anything beyond the essentials below, follow the pointers to the real documentation; if it and this file ever disagree, the documentation wins.
 
-Callout Studio is an Obsidian plugin for creating and managing custom callout types — icons, colors, and styles — with a settings UI, editor integrations, and a small read-only public API for other plugins. Its core loop is *mutate → CSS → repaint*: `CalloutRegistry` (`src/manager/`) is the single source of truth for callout definitions, `CSSInjector` reads it and writes one generated stylesheet, and everything else — settings UI, editor integrations, icon sources, discovery, import/export, theming — hangs off that registry and that stylesheet. It bundles `src/main.ts` → `main.js` via esbuild.
+Callout Studio is an Obsidian plugin for creating and managing custom callout types --- icons, colors, and styles --- with a settings UI, editor integrations, and a small read-only public API for other plugins. Its core loop is *mutate → CSS → repaint*: `CalloutRegistry` (`src/manager/`) is the single source of truth for callout definitions, `CSSInjector` reads it and writes one generated stylesheet, and everything else --- settings UI, editor integrations, icon sources, discovery, import/export, theming --- hangs off that registry and that stylesheet. It bundles `src/main.ts` → `main.js` via esbuild.
 
 ## Where the documentation lives
 
-- **[`docs/internals-docs/`](docs/internals-docs/00-index.md)** is the authoritative source for architecture, internal behavior, data models, lifecycle, the CSS/theme system, icons, the public API, and everything else a programmer needs before changing source or preparing a PR. Start at [`00-index.md`](docs/internals-docs/00-index.md) — it has a reading order and a full table of contents.
-- **[`docs/user-guide/`](docs/user-guide/README.md)** is the authoritative source for user-visible behavior — features, settings, workflows, compatibility, limitations.
-- A handful of narrow subsystems have their own `.claude/skills/` entry instead of an internals-docs chapter (Tabler's outline icons, the "Your images" source, callout colour nesting, the metadata-pipe id split) — see each skill's description for when it applies.
+- **[`docs/internals-docs/`](docs/internals-docs/README.md)** is the authoritative source for architecture, internal behavior, data models, lifecycle, the CSS/theme system, icons, the public API, and everything else a programmer needs before changing source or preparing a PR. Start at [`README.md`](docs/internals-docs/README.md) --- it has a reading order and a full table of contents.
+- **[`docs/user-guide/`](docs/user-guide/README.md)** is the authoritative source for user-visible behavior --- features, settings, workflows, compatibility, limitations.
+- A handful of narrow subsystems have their own `.claude/skills/` entry instead of an internals-docs chapter (Tabler's outline icons, the "Your images" source, callout colour nesting, the metadata-pipe id split) --- see each skill's description for when it applies.
 
 ## Documentation maintenance
 
@@ -26,24 +26,24 @@ npm run lint      # ESLint across src/
 npm test          # every tests/*.test.ts, bundled by esbuild and run by node:test
 ```
 
-`npm test` is a gate, not a courtesy — CI runs it beside the lint (`.github/workflows/lint.yml`), and it covers the pure utilities, the registry, the CSS it generates, both editor surfaces, the public API and the repo's own rules. Take it as the first place a change is proved, and add to it: a `todo` entry in a suite is a known bug someone wrote down, not a test that is allowed to stay red.
+`npm test` is a gate, not a courtesy --- CI runs it beside the lint (`.github/workflows/lint.yml`), and it covers the pure utilities, the registry, the CSS it generates, both editor surfaces, the public API and the repo's own rules. Take it as the first place a change is proved, and add to it: a `todo` entry in a suite is a known bug someone wrote down, not a test that is allowed to stay red.
 
-The suites are also **inside** the build's typecheck rather than beside it: `tsconfig.json` includes `tests/` as well as `src/`, so `npm run build` compiles them too — a test that no longer typechecks fails the build, and `target: ES6` rules out top-level `await` in a test file. `tests/repoTestGate.test.ts` holds both to it.
+The suites are also **inside** the build's typecheck rather than beside it: `tsconfig.json` includes `tests/` as well as `src/`, so `npm run build` compiles them too --- a test that no longer typechecks fails the build, and `target: ES6` rules out top-level `await` in a test file. `tests/repoTestGate.test.ts` holds both to it.
 
 What it deliberately cannot see is Obsidian. The DOM is the stand-in in `tests/support/fakeDom.ts` and the `obsidian` module is a stub (`tests/support/obsidianStub.ts`), so anything that has to *look* right is still checked by hand: copy `main.js`, `manifest.json`, and `styles.css` to `<Vault>/.obsidian/plugins/callout-studio/` and reload Obsidian.
 
 Versions: bump `manifest.json` + `versions.json` together. Tag must match `manifest.json` version exactly (no leading `v`).
 
-Releases are cut with the `/release` skill (`.claude/skills/release/SKILL.md`) — it bumps all four version files, tags, pushes, waits for the build, and publishes. Don't bump or tag by hand.
+Releases are cut with the `/release` skill (`.claude/skills/release/SKILL.md`) --- it bumps all four version files, tags, pushes, waits for the build, and publishes. Don't bump or tag by hand.
 
 ## Coding conventions
 
-- Keep `src/main.ts` minimal — lifecycle and wiring only. All logic lives in sub-modules.
+- Keep `src/main.ts` minimal --- lifecycle and wiring only. All logic lives in sub-modules.
 - Files over ~300 lines should be split by responsibility.
 - All listeners and intervals must use `this.registerEvent` / `this.registerInterval` / `this.registerDomEvent` so they are cleaned up on unload.
-- Command IDs are stable API — never rename after release. So is `manifest.json`'s `id`: changing it breaks every existing install, since both the vault folder name and the community-plugins registry key off it.
-- Network calls must remain opt-graceful: always have an offline fallback, and never fetch without an explicit user action. No new network call without disclosure in the README's privacy section. The one existing exception — the background UI-translation fetch — is documented in [`docs/internals-docs/16-i18n.md`](docs/internals-docs/16-i18n.md). Never execute remote code or eval a fetched script; read/write only what's necessary inside the vault, never files outside it.
-- `isDesktopOnly` is `false` (`manifest.json`) — avoid Node/Electron-only APIs.
+- Command IDs are stable API --- never rename after release. So is `manifest.json`'s `id`: changing it breaks every existing install, since both the vault folder name and the community-plugins registry key off it.
+- Network calls must remain opt-graceful: always have an offline fallback, and never fetch without an explicit user action. No new network call without disclosure in the README's privacy section. The one existing exception --- the background UI-translation fetch --- is documented in [`docs/internals-docs/16-i18n.md`](docs/internals-docs/16-i18n.md). Never execute remote code or eval a fetched script; read/write only what's necessary inside the vault, never files outside it.
+- `isDesktopOnly` is `false` (`manifest.json`) --- avoid Node/Electron-only APIs.
 - TypeScript strict mode is enforced. No `any` without explicit ESLint disable comment.
 - UI copy: sentence case for headings/buttons; **bold** for UI labels; arrow notation (`Settings → Hotkeys`) for navigation.
 

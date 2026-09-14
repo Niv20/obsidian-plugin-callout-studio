@@ -136,7 +136,7 @@ mixing them up is a real trap:
   `src/icons/data/packManifest.ts` — jsDelivr caches a tag's contents
   permanently, so re-pushing to the *same* tag would not actually refresh
   anything a user's cached copy sees. See
-  [Adding or modifying features](19-extending.md#refreshing-icon-pack-artwork).
+  [Adding or modifying features](21-extending.md#refreshing-icon-pack-artwork).
 
 ## CI
 
@@ -230,4 +230,4 @@ against staged `*.ts`/`*.mts` files only — most style issues are caught
 before a push ever reaches CI.
 
 ---
-Next chapter: [18-public-api.md](18-public-api.md)
+Next chapter: [20-public-api.md](20-public-api.md)

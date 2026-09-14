@@ -68,7 +68,7 @@ one of the ~40 sites below is `debug`, `warn`, or `error`.)
 > `console.warn`/`console.error` carrying the raw error for diagnosis — never
 > replace one with the other, and never raise a Notice a user has no way to
 > act on (that's noise, not help). See
-> [Common pitfalls § UI strings that must go through i18n](20-common-pitfalls.md#ui-strings-that-must-go-through-i18n)
+> [Common pitfalls § UI strings that must go through i18n](22-common-pitfalls.md#ui-strings-that-must-go-through-i18n)
 > — every `Notice` string goes through `t()`, mechanically enforced.
 
 ## Full catalog
@@ -166,7 +166,7 @@ and
 
 `LiveCalloutPreview.ts`'s `build()` guards an undocumented internal Obsidian
 API with a working fallback — see
-[Common pitfalls § Obsidian APIs with special lifecycle requirements](20-common-pitfalls.md#obsidian-apis-with-special-lifecycle-requirements).
+[Common pitfalls § Obsidian APIs with special lifecycle requirements](22-common-pitfalls.md#obsidian-apis-with-special-lifecycle-requirements).
 `legacyStartupSnippet.ts` is marked for deletion once vaults finish migrating
 past the file it cleans up — not a candidate for further logging investment.
 
@@ -189,4 +189,4 @@ real bug reports as confusing, or if more than two modules start hand-rolling
 their own ad hoc "should I log this" logic.
 
 ---
-Next chapter: [00-index.md](00-index.md)
+Next chapter: [README.md](README.md)

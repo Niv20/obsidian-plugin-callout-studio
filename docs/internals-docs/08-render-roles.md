@@ -138,7 +138,7 @@ deleted.
 
 See [Callout registry § externalStyle](05-callout-registry.md),
 [CSS generation § standing down](06-css-generation.md#standing-down--why-emit-nothing-needs-three-separate-mechanisms), and
-[Theme callout discovery § Block only](21-theme-callout-discovery.md#where-theme-callouts-appear--and-why-block-only).
+[Theme callout discovery § Block only](17-theme-callout-discovery.md#where-theme-callouts-appear--and-why-block-only).
 
 ### `hideIcon` and flex-gap collapse
 

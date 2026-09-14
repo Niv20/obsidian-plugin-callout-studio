@@ -15,7 +15,7 @@ already covers that ground for end users, and duplicating it here would just
 give it a second place to go stale. If you're looking for that, start there
 instead.
 
-One chapter has a third audience. [21-theme-callout-discovery.md](21-theme-callout-discovery.md)
+One chapter has a third audience. [17-theme-callout-discovery.md](17-theme-callout-discovery.md)
 ends with a compatibility section written for **Obsidian theme authors** — which
 CSS patterns Callout Studio reads correctly, which ones hide a theme's callouts
 from it, and how to check a theme against it. No plugin internals needed to read
@@ -25,7 +25,7 @@ It complements, rather than replaces, two other documents already in the
 repo:
 
 - **[`API.md`](../../API.md)** — the public plugin API contract for other
-  Obsidian plugins. [18-public-api.md](18-public-api.md) explains how the
+  Obsidian plugins. [20-public-api.md](20-public-api.md) explains how the
   implementation enforces what that document promises.
 - **`CLAUDE.md`** (repo root) — a short entry point for AI coding assistants:
   a one-paragraph project summary, essential project-level conventions, and
@@ -73,8 +73,8 @@ covering whatever you're touching.
 | [14-import-export.md](14-import-export.md) | The JSON backup format and validator, the CSS-snippet export, and the Callout Manager / Admonition importers. |
 | [15-settings-ui-and-modals.md](15-settings-ui-and-modals.md) | The settings tab's composition, the shared modal chrome and autofocus, and the individual modals. |
 | [16-i18n.md](16-i18n.md) | How `t()` resolves strings, the locale download/verification pipeline, and the contribution workflow. |
-| [21-theme-callout-discovery.md](21-theme-callout-discovery.md) | How the active theme's callout types are found, read back and represented — and the compatibility guide for **theme authors**. |
-| [22-upgrading-manual-discovery.md](22-upgrading-manual-discovery.md) | Released 2.12.x compatibility, verified one-time recovery archives, and safe removal of legacy local discovery state. |
+| [17-theme-callout-discovery.md](17-theme-callout-discovery.md) | How the active theme's callout types are found, read back and represented — and the compatibility guide for **theme authors**. |
+| [18-upgrading-manual-discovery.md](18-upgrading-manual-discovery.md) | Released 2.12.x compatibility, verified one-time recovery archives, and safe removal of legacy local discovery state. |
 
 ## Shipping a change
 
@@ -84,11 +84,11 @@ codebase has already been bitten by once.
 
 | File | What it covers |
 | --- | --- |
-| [17-build-test-release.md](17-build-test-release.md) | Build tooling, the test harness and what it can't see, CI, and the release process. |
-| [18-public-api.md](18-public-api.md) | How the read-only public API is actually enforced — real privacy, frozen copies, the committed-state guarantee. |
-| [19-extending.md](19-extending.md) | Step-by-step checklists for adding a setting, a command, a callout field, a menu item, an icon source, and more. |
-| [20-common-pitfalls.md](20-common-pitfalls.md) | Concentrated warnings: state sync, id normalization, helpers that must always be used, mobile quirks, backward compatibility. |
-| [22-logging-and-diagnostics.md](22-logging-and-diagnostics.md) | Every `console.debug`/`warn`/`error` call site, the policy behind which one and when to use a `Notice` instead, and why there's no centralized logger. |
+| [19-build-test-release.md](19-build-test-release.md) | Build tooling, the test harness and what it can't see, CI, and the release process. |
+| [20-public-api.md](20-public-api.md) | How the read-only public API is actually enforced — real privacy, frozen copies, the committed-state guarantee. |
+| [21-extending.md](21-extending.md) | Step-by-step checklists for adding a setting, a command, a callout field, a menu item, an icon source, and more. |
+| [22-common-pitfalls.md](22-common-pitfalls.md) | Concentrated warnings: state sync, id normalization, helpers that must always be used, mobile quirks, backward compatibility. |
+| [23-logging-and-diagnostics.md](23-logging-and-diagnostics.md) | Every `console.debug`/`warn`/`error` call site, the policy behind which one and when to use a `Notice` instead, and why there's no centralized logger. |
 
 Opening a PR? [`CONTRIBUTING.md`](../../CONTRIBUTING.md) (repo root) has the
 process — fork, branch, lint, test, commit style. This guide is what to read
