@@ -622,8 +622,11 @@ export const zh: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "图标许可证与致谢",
 	"credits.intro":
-		"Callout Studio 使用了多个开源图标库。其许可证以及为在此使用所做的更改均已在下方列出。",
+		"Callout Studio 使用开源图标库。请在下方查看每个库的许可证、署名和修改内容。",
 	"credits.fullNotices": "完整的第三方声明",
+	"credits.introBeforeNotices":
+		"Callout Studio 使用开源图标库；请在下方查看每个库的许可证、署名和修改内容，或阅读",
+	"credits.fullNoticesInline": "完整的第三方声明",
 	"credits.pluginLicense":
 		"Callout Studio 自身代码采用 permissive 许可证；图标库保留各自的许可证。",
 
@@ -889,6 +892,14 @@ export const zh: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"标题长度为 {{length}} 个字符；已缩短至 {{max}}。",
 
+	"footer.prompt":
+		"有问题、错误或想法？欢迎告诉我！{{break}} {{issue}} 或 {{email}}。",
+	"footer.openIssue": "打开 GitHub issue",
+	"footer.sendEmail": "给我发邮件",
+	"footer.sourceCode": "源代码",
+	"footer.contribute": "参与贡献",
+	"footer.license": "插件许可证",
+	"footer.iconCredits": "图标许可证",
 	"footer.tagline": "有反馈、意见或建议？欢迎告诉我！",
 	"footer.madeBy": "由 Niv 制作  •  ",
 	"settings.deletePaletteConfirmLinkedOne":

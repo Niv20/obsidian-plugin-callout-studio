@@ -621,10 +621,13 @@ export const ar: Record<string, string> = {
 		"تعذر على Callout Studio حفظ حزمة الأيقونات على القرص، لذا ستحتاج إلى تنزيلها مرة أخرى في المرة القادمة. الأيقونات التي تختارها لا تزال محفوظة في إعداداتك.",
 
 	// Icon licences & credits
-	"credits.title": "تراخيص الأيقونات والإسهامات",
+	"credits.title": "تراخيص الأيقونات والاعتمادات",
 	"credits.intro":
-		"يستخدم Callout Studio عدة مكتبات أيقونات مفتوحة. تراخيصها مستنسخة أدناه، مع ما تم تغييره لاستخدامها هنا.",
+		"يستخدم Callout Studio مكتبات أيقونات مفتوحة المصدر. اعرض أدناه ترخيص كل مكتبة ونسبتها والتعديلات التي أُجريت عليها.",
 	"credits.fullNotices": "إشعارات الأطراف الثالثة الكاملة",
+	"credits.introBeforeNotices":
+		"يستخدم Callout Studio مكتبات أيقونات مفتوحة المصدر؛ اعرض أدناه ترخيص كل مكتبة ونسبتها والتعديلات التي أُجريت عليها، أو اقرأ ",
+	"credits.fullNoticesInline": "إشعارات الأطراف الثالثة الكاملة",
 	"credits.pluginLicense":
 		"يخضع كود Callout Studio الخاص لرخصة permissive؛ وتحتفظ مكتبات الأيقونات برخصاتها الخاصة.",
 
@@ -915,6 +918,14 @@ export const ar: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"طول العنوان {{length}} حرفًا؛ تم اختصاره إلى {{max}}.",
 
+	"footer.prompt":
+		"أسئلة أو أخطاء أو أفكار؟ يسعدني سماعها!{{break}} {{issue}} أو {{email}}.",
+	"footer.openIssue": "افتح مشكلة على GitHub",
+	"footer.sendEmail": "أرسل لي بريدًا إلكترونيًا",
+	"footer.sourceCode": "الشيفرة المصدرية",
+	"footer.contribute": "المساهمة",
+	"footer.license": "ترخيص الإضافة",
+	"footer.iconCredits": "تراخيص الأيقونات",
 	"footer.tagline": "هل لديك ملاحظات أو تعليقات أو اقتراحات؟ يسعدني سماعها!",
 	"footer.madeBy": "صنعه Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":

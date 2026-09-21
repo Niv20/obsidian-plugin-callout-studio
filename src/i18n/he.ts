@@ -658,8 +658,11 @@ export const he: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "רישיונות וקרדיטים לאייקונים",
 	"credits.intro":
-		"Callout Studio נעזר בכמה ספריות אייקונים פתוחות. הרישיונות שלהן מופיעים כאן, יחד עם פירוט השינויים שנעשו כדי לשלב אותן.",
+		"Callout Studio משתמש בספריות אייקונים בקוד פתוח. אפשר לראות למטה את הרישיון, הייחוס והשינויים של כל ספרייה.",
 	"credits.fullNotices": "הודעות צד־שלישי המלאות",
+	"credits.introBeforeNotices":
+		"Callout Studio משתמש בספריות אייקונים בקוד פתוח; אפשר לראות למטה את הרישיון, הייחוס והשינויים של כל ספרייה, או לקרוא את ",
+	"credits.fullNoticesInline": "הודעות צד־שלישי המלאות",
 	"credits.pluginLicense":
 		"הקוד של Callout Studio עצמו מופץ ברישיון permissive; ספריות האייקונים שומרות על הרישיונות שלהן.",
 
@@ -868,6 +871,14 @@ export const he: Record<string, string> = {
 	"import.err.aliasConflict":
 		'הכינוי "{{value}}" כבר נמצא בשימוש בתיבת־הבלטה אחרת ("{{other}}") בכספת שלכם.',
 	// Footer
+	"footer.prompt":
+		"שאלות, באגים או רעיונות? אשמח לשמוע!{{break}} {{issue}} או {{email}}.",
+	"footer.openIssue": "פתיחת issue ב־GitHub",
+	"footer.sendEmail": "שלחו לי אימייל",
+	"footer.sourceCode": "קוד מקור",
+	"footer.contribute": "תרומה",
+	"footer.license": "רישיון התוסף",
+	"footer.iconCredits": "רישיונות אייקונים",
 	"footer.tagline": "יש לכם משוב, הערות או הצעות? אשמח לשמוע!",
 	"footer.madeBy": "נוצר על־ידי ניב  •  ",
 

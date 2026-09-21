@@ -624,10 +624,13 @@ export const fa: Record<string, string> = {
 		"Callout Studio نتوانست بسته آیکون را روی دیسک ذخیره کند، بنابراین دفعه بعد باید دوباره دانلود شود. آیکون‌هایی که انتخاب می‌کنید همچنان در تنظیمات شما ذخیره هستند.",
 
 	// Icon licences & credits
-	"credits.title": "مجوزها و اعتبارات آیکون",
+	"credits.title": "مجوزها و اعتباردهی آیکون‌ها",
 	"credits.intro":
-		"Callout Studio از چندین کتابخانه آیکون آزاد بهره می‌برد. مجوزهای آن‌ها در زیر بازتولید شده‌اند، همراه با تغییراتی که برای استفاده از آن‌ها اینجا انجام شده است.",
+		"Callout Studio از کتابخانه‌های آیکون متن‌باز استفاده می‌کند. مجوز، انتساب و تغییرات هر کتابخانه را در زیر ببینید.",
 	"credits.fullNotices": "اطلاعیه‌های کامل شخص ثالث",
+	"credits.introBeforeNotices":
+		"Callout Studio از کتابخانه‌های آیکون متن‌باز استفاده می‌کند؛ مجوز، انتساب و تغییرات هر کتابخانه را در زیر ببینید، یا ",
+	"credits.fullNoticesInline": "اطلاعیه‌های کامل شخص ثالث",
 	"credits.pluginLicense":
 		"کد خاص Callout Studio تحت یک مجوز permissive است؛ کتابخانه‌های آیکون مجوزهای خود را حفظ می‌کنند.",
 
@@ -920,6 +923,14 @@ export const fa: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"عنوان {{length}} نویسه است؛ به {{max}} کوتاه شد.",
 
+	"footer.prompt":
+		"سؤال، باگ یا ایده‌ای دارید؟ خوشحال می‌شوم از شما بشنوم!{{break}} {{issue}} یا {{email}}.",
+	"footer.openIssue": "ثبت یک issue در GitHub",
+	"footer.sendEmail": "برایم ایمیل بفرستید",
+	"footer.sourceCode": "کد منبع",
+	"footer.contribute": "مشارکت",
+	"footer.license": "مجوز افزونه",
+	"footer.iconCredits": "مجوزهای آیکون",
 	"footer.tagline": "بازخورد، نظر یا پیشنهادی دارید؟ خوشحال می‌شوم بشنوم!",
 	"footer.madeBy": "ساخته شده توسط Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":

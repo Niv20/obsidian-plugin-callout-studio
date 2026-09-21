@@ -627,8 +627,11 @@ export const fi: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Kuvakkeiden lisenssit ja kiitokset",
 	"credits.intro":
-		"Callout Studio hyödyntää useita avoimia kuvakekirjastoja. Niiden lisenssit on toistettu alla, yhdessä sen kanssa, mitä muutettiin niiden käyttämiseksi täällä.",
+		"Callout Studio käyttää avoimen lähdekoodin kuvakekirjastoja. Katso alta kunkin kirjaston lisenssi, tekijämerkinnät ja tehdyt muutokset.",
 	"credits.fullNotices": "Täydelliset kolmannen osapuolen ilmoitukset",
+	"credits.introBeforeNotices":
+		"Callout Studio käyttää avoimen lähdekoodin kuvakekirjastoja; katso alta kunkin kirjaston lisenssi, tekijämerkinnät ja tehdyt muutokset, tai lue ",
+	"credits.fullNoticesInline": "täydelliset kolmannen osapuolen ilmoitukset",
 	"credits.pluginLicense":
 		"Callout Studion oma koodi on permissive-lisenssissä; kuvakekirjastot säilyttävät omat lisenssinsä.",
 	"contextMenu.editCallout": "Muokkaa callout-asetuksia",
@@ -911,6 +914,14 @@ export const fi: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Otsikko on {{length}} merkkiä; se lyhennettiin {{max}} merkkiin.",
 
+	"footer.prompt":
+		"Kysymyksiä, virheitä tai ideoita? Kuulen niistä mielelläni!{{break}} {{issue}} tai {{email}}.",
+	"footer.openIssue": "Avaa GitHub-issue",
+	"footer.sendEmail": "lähetä minulle sähköpostia",
+	"footer.sourceCode": "Lähdekoodi",
+	"footer.contribute": "Osallistu",
+	"footer.license": "Lisäosan lisenssi",
+	"footer.iconCredits": "Kuvakkeiden lisenssit",
 	"footer.tagline":
 		"Onko sinulla palautetta, kommentteja tai ehdotuksia? Kuulisin mielelläni!",
 	"footer.madeBy": "Luonut Niv  •  ",

@@ -627,8 +627,11 @@ export const th: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "ใบอนุญาตไอคอนและเครดิต",
 	"credits.intro":
-		"Callout Studio ใช้ไลบรารีไอคอนแบบเปิดหลายแห่ง ใบอนุญาตของไลบรารีเหล่านั้นจะปรากฏด้านล่าง พร้อมกับสิ่งที่เปลี่ยนแปลงเพื่อใช้งานที่นี่",
+		"Callout Studio ใช้ไลบรารีไอคอนโอเพนซอร์ส ดูใบอนุญาต การระบุที่มา และการปรับแก้ของแต่ละไลบรารีได้ด้านล่าง",
 	"credits.fullNotices": "ประกาศบุคคลที่สามฉบับเต็ม",
+	"credits.introBeforeNotices":
+		"Callout Studio ใช้ไลบรารีไอคอนโอเพนซอร์ส ดูใบอนุญาต การระบุที่มา และการปรับแก้ของแต่ละไลบรารีได้ด้านล่าง หรืออ่าน",
+	"credits.fullNoticesInline": "ประกาศบุคคลที่สามฉบับเต็ม",
 	"credits.pluginLicense":
 		"โค้ดของ Callout Studio เองอยู่ภายใต้สัญญาอนุญาต permissive ไลบรารีไอคอนยังคงใบอนุญาตของตนเอง",
 
@@ -906,6 +909,14 @@ export const th: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"หัวเรื่องยาว {{length}} อักขระ ถูกย่อเหลือ {{max}}",
 
+	"footer.prompt":
+		"มีคำถาม บั๊ก หรือไอเดียไหม? ยินดีรับฟัง!{{break}} {{issue}} หรือ {{email}}.",
+	"footer.openIssue": "เปิด issue บน GitHub",
+	"footer.sendEmail": "ส่งอีเมลถึงฉัน",
+	"footer.sourceCode": "ซอร์สโค้ด",
+	"footer.contribute": "มีส่วนร่วม",
+	"footer.license": "ใบอนุญาตปลั๊กอิน",
+	"footer.iconCredits": "ใบอนุญาตไอคอน",
 	"footer.tagline":
 		"มีคำติชม ความคิดเห็น หรือข้อเสนอแนะหรือไม่? ยินดีรับฟัง!",
 	"footer.madeBy": "สร้างโดย Niv  •  ",

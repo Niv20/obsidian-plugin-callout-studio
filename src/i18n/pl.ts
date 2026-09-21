@@ -634,8 +634,11 @@ export const pl: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Licencje ikon i podziękowania",
 	"credits.intro":
-		"Callout Studio korzysta z kilku otwartych bibliotek ikon. Ich licencje są odtworzone poniżej wraz z informacją, co zostało zmienione na potrzeby użycia tutaj.",
+		"Callout Studio korzysta z bibliotek ikon open source. Poniżej znajdziesz licencję, informacje o autorstwie i modyfikacje każdej biblioteki.",
 	"credits.fullNotices": "Pełne informacje o stronach trzecich",
+	"credits.introBeforeNotices":
+		"Callout Studio korzysta z bibliotek ikon open source; poniżej znajdziesz licencję, informacje o autorstwie i modyfikacje każdej biblioteki, albo przeczytaj ",
+	"credits.fullNoticesInline": "pełne informacje o stronach trzecich",
 	"credits.pluginLicense":
 		"Własny kod Callout Studio jest objęty licencją permissive; biblioteki ikon zachowują własne licencje.",
 
@@ -930,6 +933,14 @@ export const pl: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Tytuł ma {{length}} znaków; skrócono go do {{max}}.",
 
+	"footer.prompt":
+		"Pytania, błędy albo pomysły? Chętnie o nich usłyszę!{{break}} {{issue}} albo {{email}}.",
+	"footer.openIssue": "Otwórz issue na GitHubie",
+	"footer.sendEmail": "wyślij mi e-mail",
+	"footer.sourceCode": "Kod źródłowy",
+	"footer.contribute": "Współtwórz",
+	"footer.license": "Licencja wtyczki",
+	"footer.iconCredits": "Licencje ikon",
 	"footer.tagline": "Masz uwagi, komentarze lub sugestie? Chętnie wysłucham!",
 	"footer.madeBy": "Stworzone przez Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":

@@ -637,8 +637,11 @@ export const ja: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "アイコンライセンスとクレジット",
 	"credits.intro":
-		"Callout Studioはいくつかのオープンなアイコンライブラリを使用しています。それらのライセンスと、ここでの使用のために変更された点を以下に掲載します。",
+		"Callout Studio はオープンソースのアイコンライブラリを使用しています。各ライブラリのライセンス、帰属表示、変更点を以下で確認できます。",
 	"credits.fullNotices": "サードパーティの完全な通知",
+	"credits.introBeforeNotices":
+		"Callout Studio はオープンソースのアイコンライブラリを使用しています。各ライブラリのライセンス、帰属表示、変更点を以下で確認するか、",
+	"credits.fullNoticesInline": "サードパーティの完全な通知",
 	"credits.pluginLicense":
 		"Callout Studio自体のコードは permissive ライセンスです。アイコン ライブラリはそれぞれのライセンスを保持します。",
 
@@ -929,6 +932,14 @@ export const ja: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"タイトルは {{length}} 文字です。{{max}} 文字に短縮しました。",
 
+	"footer.prompt":
+		"質問、不具合、アイデアがありますか？ぜひお聞かせください！{{break}} {{issue}} または {{email}}。",
+	"footer.openIssue": "GitHub issue を開く",
+	"footer.sendEmail": "メールを送る",
+	"footer.sourceCode": "ソースコード",
+	"footer.contribute": "貢献する",
+	"footer.license": "プラグインライセンス",
+	"footer.iconCredits": "アイコンライセンス",
 	"footer.tagline":
 		"フィードバック、コメント、提案はありますか？ぜひお聞かせください！",
 	"footer.madeBy": "Nivが作成  •  ",

@@ -643,8 +643,11 @@ export const nl: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Iconlicenties en credits",
 	"credits.intro":
-		"Callout Studio maakt gebruik van verschillende open iconbibliotheken. Hun licenties worden hieronder weergegeven, samen met wat er is aangepast voor gebruik hier.",
+		"Callout Studio gebruikt opensource-iconenbibliotheken. Bekijk hieronder de licentie, naamsvermelding en wijzigingen van elke bibliotheek.",
 	"credits.fullNotices": "Volledige berichten van derden",
+	"credits.introBeforeNotices":
+		"Callout Studio gebruikt opensource-iconenbibliotheken; bekijk hieronder de licentie, naamsvermelding en wijzigingen van elke bibliotheek, of lees de ",
+	"credits.fullNoticesInline": "volledige berichten van derden",
 	"credits.pluginLicense":
 		"De eigen code van Callout Studio valt onder een permissieve licentie; de pictogrambibliotheken behouden hun eigen licenties.",
 
@@ -937,6 +940,14 @@ export const nl: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"De titel is {{length}} tekens; hij is ingekort tot {{max}}.",
 
+	"footer.prompt":
+		"Vragen, bugs of ideeën? Ik hoor graag van je!{{break}} {{issue}} of {{email}}.",
+	"footer.openIssue": "Een GitHub-issue openen",
+	"footer.sendEmail": "stuur me een e-mail",
+	"footer.sourceCode": "Broncode",
+	"footer.contribute": "Bijdragen",
+	"footer.license": "Pluginlicentie",
+	"footer.iconCredits": "Iconlicenties",
 	"footer.tagline":
 		"Hebt u feedback, opmerkingen of suggesties? Ik hoor het graag!",
 	"footer.madeBy": "Gemaakt door Niv  •  ",

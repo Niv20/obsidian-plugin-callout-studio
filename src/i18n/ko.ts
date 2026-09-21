@@ -634,8 +634,11 @@ export const ko: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "아이콘 라이선스 및 크레딧",
 	"credits.intro":
-		"Callout Studio는 여러 오픈 아이콘 라이브러리를 사용합니다. 라이선스는 아래에 재현되어 있으며, 여기서 사용하기 위해 변경된 내용도 포함되어 있습니다.",
+		"Callout Studio는 오픈 소스 아이콘 라이브러리를 사용합니다. 각 라이브러리의 라이선스, 저작자 표시, 수정 사항을 아래에서 확인하세요.",
 	"credits.fullNotices": "전체 서드파티 고지사항",
+	"credits.introBeforeNotices":
+		"Callout Studio는 오픈 소스 아이콘 라이브러리를 사용합니다. 각 라이브러리의 라이선스, 저작자 표시, 수정 사항을 아래에서 확인하거나 ",
+	"credits.fullNoticesInline": "전체 서드파티 고지사항",
 	"credits.pluginLicense":
 		"Callout Studio 자체 코드는 permissive 라이선스입니다. 아이콘 라이브러리는 각자의 라이선스를 유지합니다.",
 
@@ -923,6 +926,14 @@ export const ko: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"제목이 {{length}}자입니다. {{max}}자로 줄였습니다.",
 
+	"footer.prompt":
+		"질문, 버그, 아이디어가 있나요? 언제든 들려주세요!{{break}} {{issue}} 또는 {{email}}.",
+	"footer.openIssue": "GitHub issue 열기",
+	"footer.sendEmail": "이메일 보내기",
+	"footer.sourceCode": "소스 코드",
+	"footer.contribute": "기여하기",
+	"footer.license": "플러그인 라이선스",
+	"footer.iconCredits": "아이콘 라이선스",
 	"footer.tagline": "피드백, 의견 또는 제안이 있으신가요? 꼭 들려주세요!",
 	"footer.madeBy": "Niv 제작  •  ",
 	"settings.deletePaletteConfirmLinkedOne":

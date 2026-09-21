@@ -630,8 +630,11 @@ export const sv: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Ikonlicenser och erkännanden",
 	"credits.intro":
-		"Callout Studio använder flera öppna ikonbibliotek. Deras licenser återges nedan, tillsammans med vad som ändrades för att använda dem här.",
+		"Callout Studio använder ikonbibliotek med öppen källkod. Se varje biblioteks licens, attribution och ändringar nedan.",
 	"credits.fullNotices": "Fullständiga tredjepartsmeddelanden",
+	"credits.introBeforeNotices":
+		"Callout Studio använder ikonbibliotek med öppen källkod; se varje biblioteks licens, attribution och ändringar nedan, eller läs ",
+	"credits.fullNoticesInline": "fullständiga tredjepartsmeddelanden",
 	"credits.pluginLicense":
 		"Callout Studios egen kod är under en permissiv licens; ikonbiblioteken behåller sina egna licenser.",
 
@@ -923,6 +926,14 @@ export const sv: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Titeln är {{length}} tecken; den kortades till {{max}}.",
 
+	"footer.prompt":
+		"Frågor, buggar eller idéer? Jag vill gärna höra från dig!{{break}} {{issue}} eller {{email}}.",
+	"footer.openIssue": "Öppna ett GitHub-issue",
+	"footer.sendEmail": "skicka ett mejl till mig",
+	"footer.sourceCode": "Källkod",
+	"footer.contribute": "Bidra",
+	"footer.license": "Pluginlicens",
+	"footer.iconCredits": "Ikonlicenser",
 	"footer.tagline":
 		"Har du feedback, kommentarer eller förslag? Jag vill gärna höra!",
 	"footer.madeBy": "Skapad av Niv  •  ",

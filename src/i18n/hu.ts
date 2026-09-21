@@ -636,10 +636,13 @@ export const hu: Record<string, string> = {
 		"A Callout Studio nem tudta menteni az ikoncsomagot a lemezre, ezért legközelebb újra le kell tölteni. A választott ikonok továbbra is mentve vannak a beállításaiban.",
 
 	// Icon licences & credits
-	"credits.title": "Ikon licenszek és köszönet",
+	"credits.title": "Ikonlicencek és köszönet",
 	"credits.intro":
-		"A Callout Studio számos nyílt ikonkönyvtárra támaszkodik. Licenszeik alább találhatók, a felhasználáshoz szükséges módosításokkal együtt.",
+		"A Callout Studio nyílt forráskódú ikonkönyvtárakat használ. Alább megtekintheted az egyes könyvtárak licencét, szerzőmegjelölését és módosításait.",
 	"credits.fullNotices": "Teljes harmadik féltől származó megjegyzések",
+	"credits.introBeforeNotices":
+		"A Callout Studio nyílt forráskódú ikonkönyvtárakat használ; alább megtekintheted az egyes könyvtárak licencét, szerzőmegjelölését és módosításait, vagy olvasd el a ",
+	"credits.fullNoticesInline": "teljes harmadik féltől származó megjegyzéseket",
 	"credits.pluginLicense":
 		"A Callout Studio saját kódja egy permissive licenc alatt áll; az ikonkönyvtárak megőrzik saját licencüket.",
 
@@ -935,6 +938,14 @@ export const hu: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"A cím {{length}} karakter; {{max}} karakterre rövidült.",
 
+	"footer.prompt":
+		"Kérdésed, hibajelentésed vagy ötleted van? Örömmel hallok rólad!{{break}} {{issue}} vagy {{email}}.",
+	"footer.openIssue": "GitHub-issue megnyitása",
+	"footer.sendEmail": "írj nekem e-mailt",
+	"footer.sourceCode": "Forráskód",
+	"footer.contribute": "Közreműködés",
+	"footer.license": "Bővítmény licence",
+	"footer.iconCredits": "Ikonlicencek",
 	"footer.tagline":
 		"Van visszajelzése, megjegyzése vagy javaslata? Szívesen meghallgatom!",
 	"footer.madeBy": "Készítette: Niv  •  ",

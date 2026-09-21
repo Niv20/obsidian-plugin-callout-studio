@@ -617,10 +617,13 @@ export const bg: Record<string, string> = {
 		"Callout Studio не успя да запази пакета с икони на диска, затова ще трябва да бъде изтеглен отново следващия път. Избраните от вас икони са все още запазени с настройките ви.",
 
 	// Icon licences & credits
-	"credits.title": "Лицензи на икони и авторски права",
+	"credits.title": "Лицензи и кредити за икони",
 	"credits.intro":
-		"Callout Studio използва няколко отворени библиотеки с икони. Техните лицензи са възпроизведени по-долу, заедно с промените за използването им тук.",
+		"Callout Studio използва библиотеки с икони с отворен код. Вижте по-долу лиценза, атрибуцията и промените за всяка библиотека.",
 	"credits.fullNotices": "Пълни известия за трети страни",
+	"credits.introBeforeNotices":
+		"Callout Studio използва библиотеки с икони с отворен код; вижте по-долу лиценза, атрибуцията и промените за всяка библиотека или прочетете ",
+	"credits.fullNoticesInline": "пълните известия за трети страни",
 	"credits.pluginLicense":
 		"Собственият код на Callout Studio е под лиценз permissive; библиотеките с икони запазват своите собствени лицензи.",
 	"contextMenu.editCallout": "Редактиране на настройките на callout",
@@ -911,6 +914,14 @@ export const bg: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Заглавието е {{length}} знака; беше съкратено до {{max}}.",
 
+	"footer.prompt":
+		"Въпроси, грешки или идеи? Ще се радвам да чуя от вас!{{break}} {{issue}} или {{email}}.",
+	"footer.openIssue": "Отворете проблем в GitHub",
+	"footer.sendEmail": "изпратете ми имейл",
+	"footer.sourceCode": "Изходен код",
+	"footer.contribute": "Принос",
+	"footer.license": "Лиценз на плъгина",
+	"footer.iconCredits": "Лицензи на икони",
 	"footer.tagline":
 		"Имате коментари, забележки или предложения? Ще се радвам да ги чуя!",
 	"footer.madeBy": "Създадено от Niv  •  ",

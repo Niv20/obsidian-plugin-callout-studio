@@ -635,8 +635,11 @@ export const hi: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "आइकन लाइसेंस और श्रेय",
 	"credits.intro":
-		"Callout Studio कई खुली आइकन लाइब्रेरी पर निर्भर करता है। उनके लाइसेंस नीचे पुनः प्रस्तुत किए गए हैं, साथ ही यहां उनके उपयोग के लिए क्या बदला गया।",
+		"Callout Studio ओपन-सोर्स आइकन लाइब्रेरी का उपयोग करता है। नीचे हर लाइब्रेरी का लाइसेंस, श्रेय और किए गए बदलाव देखें।",
 	"credits.fullNotices": "पूर्ण तृतीय-पक्ष सूचनाएं",
+	"credits.introBeforeNotices":
+		"Callout Studio ओपन-सोर्स आइकन लाइब्रेरी का उपयोग करता है; नीचे हर लाइब्रेरी का लाइसेंस, श्रेय और किए गए बदलाव देखें, या ",
+	"credits.fullNoticesInline": "पूर्ण तृतीय-पक्ष सूचनाएं",
 	"credits.pluginLicense":
 		"Callout Studio का अपना कोड permissive लाइसेंस के अंतर्गत है; आइकन लाइब्रेरी अपने अपने लाइसेंस बनाए रखती हैं।",
 
@@ -919,6 +922,14 @@ export const hi: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"शीर्षक {{length}} वर्णों का है; इसे {{max}} तक छोटा किया गया।",
 
+	"footer.prompt":
+		"प्रश्न, बग या विचार हैं? मुझे आपसे सुनकर खुशी होगी!{{break}} {{issue}} या {{email}}.",
+	"footer.openIssue": "GitHub issue खोलें",
+	"footer.sendEmail": "मुझे ईमेल भेजें",
+	"footer.sourceCode": "स्रोत कोड",
+	"footer.contribute": "योगदान दें",
+	"footer.license": "प्लगइन लाइसेंस",
+	"footer.iconCredits": "आइकन लाइसेंस",
 	"footer.tagline": "कोई फ़ीडबैक, टिप्पणी या सुझाव है? मुझे बताएँ!",
 	"footer.madeBy": "Niv द्वारा निर्मित  •  ",
 	"settings.deletePaletteConfirmLinkedOne":

@@ -374,26 +374,25 @@
 
 /* ─── Foldable section headings ───────────────────────────────── */
 
-/* The chevron's footprint, declared once on every element that hosts one: its
-   own box, and the gap between it and the text it sits beside. Both numbers
-   are read back below — by the chevron, which is sized to them, and by the
-   foldable headings, which offset themselves by their sum. One source, so the
-   two can't drift apart.
+/* The chevron's footprint, declared once on the foldable headings: its own
+   box, and the gap between it and the text it sits beside. Both numbers are
+   read back below — by the chevron, which is sized to them, and by the
+   headings, which offset themselves by their sum. One source, so the two
+   can't drift apart.
 
    `em`, not px: a custom property is substituted where it is *used*, so each
    heading resolves this against its own font-size and gets a chevron and a
    gutter in proportion to its own type. That is what lets the three sections
    share one rule instead of carrying one offset each. */
-.callout-studio-settings .cs-collapsible-heading,
-.callout-studio-credits {
+.callout-studio-settings .cs-collapsible-heading {
 	--cs-disclosure-size: 1em;
 	--cs-disclosure-gap: 6px;
 }
 
-/* The same chevron the credits block has had since it shipped, on the three
-   callout-list headings — which cannot be <details>/<summary>, because "My
-   callout types" carries the Add-new button and a <summary> wrapping a button
-   is a button that folds the section. See sections/sectionDisclosure.ts.
+/* One shared chevron for the foldable settings headings, which cannot be
+   <details>/<summary> because "My callout types" carries the Add-new button
+   and a <summary> wrapping a button is a button that folds the section. See
+   sections/sectionDisclosure.ts.
 
    The name element is the control, not the row: it spans the title line and
    stops short of .setting-item-control, so the CTA stays pressable and the
@@ -6038,105 +6037,235 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	}
 }
 
-/* ── Icon licences & credits ────────────────────────────────── */
-.callout-studio-credits {
-	margin-top: 2rem;
-	padding-top: 1rem;
-	border-top: 1px solid var(--background-modifier-border);
+/* ── Icon licenses & credits modal ───────────────────────────── */
+.modal.callout-studio-credits-modal {
+	--dialog-width: 620px;
+	width: min(var(--dialog-width), 95vw);
+	max-width: min(var(--dialog-width), 95vw);
+}
+
+.callout-studio-credits-content {
 	color: var(--text-muted);
 	font-size: var(--font-ui-smaller);
 }
-.callout-studio-credits-summary {
-	display: flex;
-	align-items: center;
-	gap: 0.4em;
-	cursor: pointer;
-	color: var(--text-normal);
-	font-size: var(--font-ui-small);
-	font-weight: var(--font-medium);
-	list-style: none;
+
+.callout-studio-credits-intro {
+	line-height: 1.55;
 }
-.callout-studio-credits-summary::-webkit-details-marker {
-	display: none;
+
+.callout-studio-credits-intro {
+	margin: 0 0 var(--size-4-4);
 }
-/* Size, inline-flex and the 120ms rotate come from `.cs-disclosure-chevron`,
-   which this chevron also carries — see the settings-panel block above. Only
-   the trigger is local: `<details open>` rather than a class. */
-.callout-studio-credits[open] .callout-studio-credits-chevron {
-	transform: rotate(90deg);
-}
-/* The chevron points at the content, so it flips with the writing direction. */
-[dir="rtl"] .callout-studio-credits-chevron {
-	transform: scaleX(-1);
-}
-[dir="rtl"] .callout-studio-credits[open] .callout-studio-credits-chevron {
-	transform: scaleX(-1) rotate(90deg);
-}
-.callout-studio-credits-intro,
-.callout-studio-credits-more {
-	margin: 0.6em 0;
-	line-height: 1.5;
-}
+
 .callout-studio-credit {
-	margin: 0.9em 0;
-	padding-inline-start: 0.8em;
-	border-inline-start: 2px solid var(--background-modifier-border);
+	margin-block: var(--size-2-3);
+	padding: var(--size-4-3) var(--size-4-4);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	background: var(--cs-surface-raised, var(--background-secondary));
 	line-height: 1.5;
 }
+
 .callout-studio-credit-name {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.2em 0.4em;
+	margin: 0 0 var(--size-2-1);
 	color: var(--text-normal);
+	font-size: inherit;
 	font-weight: var(--font-medium);
+	line-height: inherit;
 }
+
 .callout-studio-credit-version,
 .callout-studio-credit-scope {
 	color: var(--text-faint);
 	font-weight: normal;
 }
-.callout-studio-credit-modifications {
-	margin-top: 0.25em;
+
+.callout-studio-credit-license + .callout-studio-credit-license {
+	margin-top: var(--size-2-1);
+}
+
+.callout-studio-credit-modifications,
+.callout-studio-credit-notice {
+	margin-top: var(--size-2-2);
 	color: var(--text-faint);
 }
-.callout-studio-credit-notice {
-	margin-top: 0.4em;
-	padding: 0.4em 0.6em;
-	border-radius: var(--radius-s);
-	background-color: var(--background-modifier-hover);
-	color: var(--text-muted);
-}
-.callout-studio-credits a {
+
+.callout-studio-credits-content a {
 	color: var(--text-accent);
 	text-decoration: none;
 }
-.callout-studio-credits a:hover {
-	text-decoration: underline;
+
+@media (hover: hover) {
+	.callout-studio-credits-content a:hover {
+		color: var(--text-accent-hover);
+		text-decoration: underline;
+	}
+}
+
+.callout-studio-credits-content a:focus-visible {
+	border-radius: var(--radius-s);
+	outline: 2px solid var(--text-accent);
+	outline-offset: 2px;
 }
 
 /* ── Footer ─────────────────────────────────────────────────── */
-/* Always immediately follows .callout-studio-credits (see SettingsTab.ts),
- * which already opens its own full-strength divider above it — a second
- * 2rem/1rem divider back-to-back left a big empty gap under the collapsed
- * "Icon licences and credits" summary, so this one is kept lighter. */
+/* Obsidian's settings pane carries its own trailing inset. The footer already
+   owns the space after its final row, so keeping both would leave a much
+   larger gap below the footer than above its first row. Phones retain the
+   native inset because it may also reserve space for device chrome. */
+body:not(.is-phone)
+	.callout-studio-settings.callout-studio-settings.callout-studio-settings {
+	padding-bottom: 0 !important;
+}
+
 .callout-studio-footer {
-	margin-top: 1rem;
-	padding-top: 0.75rem;
-	border-top: 1px solid var(--background-modifier-border);
-	text-align: center;
+	inline-size: min(100%, 44rem);
+	margin: var(--size-4-8) auto 0;
+	padding-block: var(--size-4-5);
+	padding-inline: var(--size-4-2);
+	border-block-start: 1px solid var(--background-modifier-border);
 	color: var(--text-muted);
-	font-size: 0.85em;
+	font-weight: 300;
+	text-align: center;
 }
-.callout-studio-footer-links {
-	margin-bottom: 0;
+
+.callout-studio-footer-contact {
+	max-inline-size: 40rem;
+	margin: 0 auto;
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	line-height: 1.4;
 }
+
+.callout-studio-footer-contact-links {
+	display: block;
+	margin-block-start: 0.3em;
+}
+
+.callout-studio-footer-contact-link {
+	white-space: nowrap;
+	color: var(--text-normal);
+	font-weight: var(--font-medium);
+	text-decoration-line: none;
+	text-decoration-color: var(--text-faint);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.16em;
+	transition:
+		color 120ms ease,
+		text-decoration-color 120ms ease;
+}
+
+.callout-studio-footer-contact-links
+	.callout-studio-footer-contact-link:first-of-type {
+	margin-inline-end: 0.35em;
+}
+
+.callout-studio-footer-contact-links
+	.callout-studio-footer-contact-link:last-of-type {
+	margin-inline-start: 0.35em;
+}
+
+@media (hover: hover) {
+	.callout-studio-footer-contact-link:hover {
+		color: var(--text-accent);
+		text-decoration-line: underline;
+		text-decoration-color: currentColor;
+	}
+}
+
+.callout-studio-footer-contact-link:focus-visible {
+	border-radius: var(--radius-s);
+	outline: 2px solid var(--text-accent);
+	outline-offset: 2px;
+}
+
+.callout-studio-footer-meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	column-gap: 2px;
+	row-gap: 0;
+	margin-top: var(--size-4-2);
+	color: var(--text-faint);
+	font-size: var(--font-smallest);
+	line-height: 1.25;
+}
+
+.callout-studio-footer-meta > * {
+	display: inline-flex;
+	align-items: center;
+	min-inline-size: 0;
+}
+
+.callout-studio-footer .callout-studio-footer-meta-link {
+	appearance: none;
+	min-block-size: 24px;
+	block-size: auto;
+	padding: 0 1px;
+	border: 0;
+	border-radius: var(--radius-s);
+	background: transparent;
+	color: var(--text-faint);
+	box-shadow: none;
+	font: inherit;
+	line-height: inherit;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+@media (hover: hover) {
+	.callout-studio-footer .callout-studio-footer-meta-link:hover {
+		background: transparent;
+		color: var(--text-accent);
+		text-decoration: underline;
+	}
+}
+
+.callout-studio-footer .callout-studio-footer-meta-link:focus-visible {
+	outline: 2px solid var(--text-accent);
+	outline-offset: 2px;
+	box-shadow: none;
+}
+
+.callout-studio-footer-version {
+	color: var(--text-faint);
+	font-variant-numeric: tabular-nums;
+}
+
+.callout-studio-footer-meta-separator {
+	color: var(--text-faint);
+	user-select: none;
+}
+
 .cs-reset-warning {
 	color: var(--text-error);
 	font-weight: bold;
 }
-.callout-studio-footer a {
-	color: var(--text-accent);
-	text-decoration: none;
+
+@media (max-width: 420px) {
+	.callout-studio-footer {
+		padding-inline: 0;
+	}
+
+	.callout-studio-footer-meta {
+		column-gap: var(--size-4-3);
+		row-gap: 0;
+	}
+
+	.callout-studio-footer-meta-separator {
+		display: none;
+	}
 }
-.callout-studio-footer a:hover {
-	text-decoration: underline;
+
+@media (prefers-reduced-motion: reduce) {
+	.callout-studio-footer-contact-link {
+		transition: none;
+	}
 }
 
 /* ══ Regular callout title ═════════════════════════════════════ */

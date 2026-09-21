@@ -1,17 +1,12 @@
 /**
  * settings/sections/sectionDisclosure.ts — a heading you can fold away.
  *
- * The "Icon licences and credits" block has had a chevron and a fold since it
- * shipped, and it gets both for free: it is a native `<details>`/`<summary>`,
- * so the browser owns the state, the toggle and the accessibility mapping.
- *
- * The three callout lists cannot be. Their headings are Obsidian `Setting`
- * rows — "My callout types" carries the **Add new callout** CTA in its control
- * slot — and a `<summary>` wrapping a button is a button that folds the
- * section every time it is pressed. So this is the same affordance built by
- * hand: same `chevron-right`, same 120ms rotate (`.cs-disclosure-chevron`,
- * shared with credits), with the state, the keyboard and the aria mapping
- * written out because nothing else supplies them.
+ * The callout-list and palette headings are Obsidian `Setting` rows — "My
+ * callout types" carries the **Add new callout** CTA in its control slot — so
+ * they cannot use a native `<details>`/`<summary>` without turning that CTA
+ * into part of the disclosure trigger. This helper builds the affordance by
+ * hand: `chevron-right`, the shared 120ms rotate, and the state, keyboard and
+ * aria mapping that the browser would otherwise supply.
  *
  * Two consequences worth knowing before changing this file:
  *

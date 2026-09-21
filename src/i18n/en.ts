@@ -746,11 +746,14 @@ export const en: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio could not save the icon pack to disk, so it will need downloading again next time. The icons you pick are still saved with your settings.",
 
-	// Icon licences & credits
-	"credits.title": "Icon licences and credits",
+	// Icon licenses & credits
+	"credits.title": "Icon licenses & credits",
 	"credits.intro":
-		"Callout Studio draws on several open icon libraries. Their licences are reproduced below, along with what was changed to use them here.",
+		"Callout Studio uses open-source icon libraries. View each library's license, attribution, and modifications below.",
 	"credits.fullNotices": "Full third-party notices",
+	"credits.introBeforeNotices":
+		"Callout Studio uses open-source icon libraries; view each library's license, attribution, and modifications below, or read the ",
+	"credits.fullNoticesInline": "full third-party notices",
 	"credits.pluginLicense":
 		"Callout Studio's own code is under a permissive license; the icon libraries keep their own licences.",
 
@@ -1062,6 +1065,14 @@ export const en: Record<string, string> = {
 		"The title is {{length}} characters; it was shortened to {{max}}.",
 
 	// Footer
+	"footer.prompt":
+		"Questions, bugs, or ideas? I'd love to hear from you!{{break}} {{issue}} or {{email}}.",
+	"footer.openIssue": "Open a GitHub issue",
+	"footer.sendEmail": "send me an email",
+	"footer.sourceCode": "Source code",
+	"footer.contribute": "Contribute",
+	"footer.license": "Plugin license",
+	"footer.iconCredits": "Icon licenses",
 	"footer.tagline":
 		"Have feedback, comments, or suggestions? I'd love to hear from you!",
 	"settings.deletePaletteConfirmLinkedOne":

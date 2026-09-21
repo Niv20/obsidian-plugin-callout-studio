@@ -643,8 +643,11 @@ export const uk: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Ліцензії іконок та авторство",
 	"credits.intro":
-		"Callout Studio використовує кілька відкритих бібліотек іконок. Їхні ліцензії відтворено нижче разом зі змінами для використання тут.",
+		"Callout Studio використовує бібліотеки іконок із відкритим кодом. Нижче можна переглянути ліцензію, зазначення авторства та зміни для кожної бібліотеки.",
 	"credits.fullNotices": "Повні сповіщення третіх сторін",
+	"credits.introBeforeNotices":
+		"Callout Studio використовує бібліотеки іконок із відкритим кодом; нижче можна переглянути ліцензію, зазначення авторства та зміни для кожної бібліотеки або прочитати ",
+	"credits.fullNoticesInline": "повні сповіщення третіх сторін",
 	"credits.pluginLicense":
 		"Власний код Callout Studio знаходиться під permissive-ліцензією; бібліотеки іконок зберігають свої ліцензії.",
 
@@ -936,6 +939,14 @@ export const uk: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Заголовок має {{length}} символів; скорочено до {{max}}.",
 
+	"footer.prompt":
+		"Є питання, помилки або ідеї? Буду радий почути!{{break}} {{issue}} або {{email}}.",
+	"footer.openIssue": "Відкрити issue на GitHub",
+	"footer.sendEmail": "написати мені електронного листа",
+	"footer.sourceCode": "Вихідний код",
+	"footer.contribute": "Долучитися",
+	"footer.license": "Ліцензія плагіна",
+	"footer.iconCredits": "Ліцензії іконок",
 	"footer.tagline": "Є відгуки, коментарі або пропозиції? Буду радий почути!",
 	"footer.madeBy": "Створено Нівом  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
