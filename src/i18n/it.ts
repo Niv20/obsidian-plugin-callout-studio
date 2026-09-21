@@ -81,7 +81,7 @@ export const it: Record<string, string> = {
 	"settings.builtInCallouts": "Callout integrati",
 	"settings.contextMenu": "Menu contestuale",
 	"settings.autocomplete": "Completamento automatico",
-	"settings.keyboardShortcuts": "Scorciatoie da tastiera",
+	"settings.keyboardShortcuts": "Comandi",
 	"settings.language": "Lingua",
 	"settings.languageDesc":
 		"Lingua di visualizzazione di Callout Studio. Per impostazione predefinita segue la lingua dell'interfaccia di Obsidian.",
@@ -167,7 +167,7 @@ export const it: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		"Mostra suggerimenti quando si digita \"[!\" in una citazione nell'editor. Scegli un tipo di callout dall'elenco per inserire un'intestazione callout completa.",
 
-	"settings.customCommands": "Comandi e scorciatoie",
+	"settings.customCommands": "Comandi e tasti di scelta rapida",
 	"settings.customCommandsDesc":
 		"Visualizza ogni comando di Callout Studio e la scorciatoia a cui è associato, e crea i tuoi comandi personalizzati per i callout che usi di più. Nessuna scorciatoia è assegnata per impostazione predefinita.",
 	"settings.customCommandsButton": "Gestisci comandi",

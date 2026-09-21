@@ -80,7 +80,7 @@ export const ro: Record<string, string> = {
 	"settings.builtInCallouts": "Callouts integrate",
 	"settings.contextMenu": "Meniu contextual",
 	"settings.autocomplete": "Completare automată",
-	"settings.keyboardShortcuts": "Scurtături de tastatură",
+	"settings.keyboardShortcuts": "Comenzi",
 	"settings.language": "Limbă",
 	"settings.languageDesc":
 		"Limba de afișare pentru Callout Studio. În mod implicit urmează limba interfeței Obsidian.",
@@ -165,7 +165,7 @@ export const ro: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Afișează sugestii când tastați "[!" într-un citat bloc în editor. Alegeți un tip de callout din listă pentru a insera un antet callout complet.',
 
-	"settings.customCommands": "Comenzi și scurtături",
+	"settings.customCommands": "Comenzi și taste rapide",
 	"settings.customCommandsDesc":
 		"Vedeți fiecare comandă Callout Studio și scurtătura la care este asociată, și creați-vă propriile comenzi pentru callouts pe care le folosiți cel mai mult. Implicit nu sunt atribuite scurtături.",
 	"settings.customCommandsButton": "Gestionați comenzile",

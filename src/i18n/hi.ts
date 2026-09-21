@@ -80,7 +80,7 @@ export const hi: Record<string, string> = {
 	"settings.builtInCallouts": "बिल्ट-इन callouts",
 	"settings.contextMenu": "संदर्भ मेनू",
 	"settings.autocomplete": "स्वतः पूर्णता",
-	"settings.keyboardShortcuts": "कीबोर्ड शॉर्टकट",
+	"settings.keyboardShortcuts": "कमांड",
 	"settings.language": "भाषा",
 	"settings.languageDesc":
 		"Callout Studio के लिए प्रदर्शन भाषा। डिफ़ॉल्ट रूप से Obsidian की इंटरफ़ेस भाषा का अनुसरण करती है।",
@@ -165,7 +165,7 @@ export const hi: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'एडिटर में ब्लॉककोट के अंदर "[!" टाइप करने पर सुझाव दिखाता है। पूरा callout हेडर डालने के लिए सूची से callout प्रकार चुनें।',
 
-	"settings.customCommands": "कमांड और शॉर्टकट",
+	"settings.customCommands": "कमांड और हॉटकी",
 	"settings.customCommandsDesc":
 		"हर Callout Studio कमांड और उसे सौंपा गया शॉर्टकट देखें, और अपने सबसे ज़्यादा इस्तेमाल किए जाने वाले callouts के लिए अपने खुद के कमांड बनाएँ। डिफ़ॉल्ट रूप से कोई शॉर्टकट असाइन नहीं है।",
 	"settings.customCommandsButton": "कमांड प्रबंधित करें",

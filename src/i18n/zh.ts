@@ -79,7 +79,7 @@ export const zh: Record<string, string> = {
 	"settings.builtInCallouts": "内置 callout",
 	"settings.contextMenu": "右键菜单",
 	"settings.autocomplete": "自动完成",
-	"settings.keyboardShortcuts": "键盘快捷键",
+	"settings.keyboardShortcuts": "命令",
 	"settings.language": "语言",
 	"settings.languageDesc":
 		"Callout Studio 的显示语言。默认跟随 Obsidian 的界面语言。",
@@ -164,7 +164,7 @@ export const zh: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'在编辑器块引用中输入"[!"时显示建议。从列表中选择 callout 类型以插入完整的 callout 标题。',
 
-	"settings.customCommands": "命令与快捷键",
+	"settings.customCommands": "命令与热键",
 	"settings.customCommandsDesc":
 		"查看每个 Callout Studio 命令及其绑定的快捷键，并为您最常用的 callout 创建自己的命令。默认不分配快捷键。",
 	"settings.customCommandsButton": "管理命令",

@@ -81,7 +81,7 @@ export const hu: Record<string, string> = {
 	"settings.builtInCallouts": "Beépített callout-ok",
 	"settings.contextMenu": "Helyi menü",
 	"settings.autocomplete": "Automatikus kiegészítés",
-	"settings.keyboardShortcuts": "Billentyűparancsok",
+	"settings.keyboardShortcuts": "Parancsok",
 	"settings.language": "Nyelv",
 	"settings.languageDesc":
 		"A Callout Studio megjelenítési nyelve. Alapértelmezés szerint az Obsidian felületi nyelvét követi.",
@@ -166,7 +166,7 @@ export const hu: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Javaslatokat jelenít meg, amikor "[!" szöveget gépel egy blokkidézet-belsejébe a szerkesztőben. Válasszon callout-típust a listából egy teljes callout fejléc beillesztéséhez.',
 
-	"settings.customCommands": "Parancsok és billentyűparancsok",
+	"settings.customCommands": "Parancsok és gyorsbillentyűk",
 	"settings.customCommandsDesc":
 		"Tekintse meg az összes Callout Studio parancsot és a hozzájuk rendelt billentyűparancsot, valamint hozzon létre saját parancsokat a leggyakrabban használt callout-okhoz. Alapértelmezés szerint nincs hozzárendelt billentyűparancs.",
 	"settings.customCommandsButton": "Parancsok kezelése",

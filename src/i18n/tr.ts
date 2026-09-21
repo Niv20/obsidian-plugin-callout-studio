@@ -80,7 +80,7 @@ export const tr: Record<string, string> = {
 	"settings.builtInCallouts": "Yerleşik callout'lar",
 	"settings.contextMenu": "Bağlam menüsü",
 	"settings.autocomplete": "Otomatik tamamlama",
-	"settings.keyboardShortcuts": "Klavye kısayolları",
+	"settings.keyboardShortcuts": "Komutlar",
 	"settings.language": "Dil",
 	"settings.languageDesc":
 		"Callout Studio görüntüleme dili. Varsayılan olarak Obsidian'ın arayüz dilini izler.",
@@ -165,7 +165,7 @@ export const tr: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Düzenleyicide blok alıntı içinde "[!" yazdığınızda öneriler gösterir. Tam bir callout başlığı eklemek için listeden bir callout türü seçin.',
 
-	"settings.customCommands": "Komutlar ve kısayollar",
+	"settings.customCommands": "Komutlar ve kısayol tuşları",
 	"settings.customCommandsDesc":
 		"Her Callout Studio komutunu ve bağlı olduğu kısayolu görün, en sık kullandığınız callout'lar için kendi komutlarınızı oluşturun. Varsayılan olarak kısayol atanmamıştır.",
 	"settings.customCommandsButton": "Komutları yönet",

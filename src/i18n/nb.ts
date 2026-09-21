@@ -79,7 +79,7 @@ export const nb: Record<string, string> = {
 	"settings.builtInCallouts": "Innebygde callouts",
 	"settings.contextMenu": "Kontekstmeny",
 	"settings.autocomplete": "Autofullføring",
-	"settings.keyboardShortcuts": "Tastatursnarveier",
+	"settings.keyboardShortcuts": "Kommandoer",
 	"settings.language": "Språk",
 	"settings.languageDesc":
 		"Visningsspråk for Callout Studio. Følger som standard Obsidians grensesnittspråk.",
@@ -157,7 +157,7 @@ export const nb: Record<string, string> = {
 	"settings.enableAutocomplete": "Aktiver [! autofullføring",
 	"settings.enableAutocompleteDesc":
 		'Viser forslag når du skriver "[!" inne i et blokkssitat i redigeringsprogrammet. Velg en callout-type fra listen for å sette inn en komplett callout-overskrift.',
-	"settings.customCommands": "Kommandoer og snarveier",
+	"settings.customCommands": "Kommandoer og hurtigtaster",
 	"settings.customCommandsDesc":
 		"Se alle Callout Studio-kommandoer og snarveien de er bundet til, og lag dine egne kommandoer for callouts du bruker mest. Ingen snarveier er tildelt som standard.",
 	"settings.customCommandsButton": "Administrer kommandoer",

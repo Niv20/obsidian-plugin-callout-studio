@@ -98,7 +98,7 @@ export const he: Record<string, string> = {
 	"settings.builtInCallouts": "תיבות־הבלטה מובנות",
 	"settings.contextMenu": "תפריט ההקשר",
 	"settings.autocomplete": "השלמה אוטומטית",
-	"settings.keyboardShortcuts": "קיצורי מקלדת",
+	"settings.keyboardShortcuts": "פקודות",
 	"settings.language": "שפה",
 	"settings.languageDesc":
 		"שפת התצוגה של Callout Studio. ברירת־המחדל היא שפת הממשק של Obsidian.",
@@ -190,7 +190,7 @@ export const he: Record<string, string> = {
 		'מציג הצעות בעת הקלדת "[!" בתוך בלוק ציטוט בעורך. בחירה של סוג מתוך הרשימה תשלים אוטומטית את כותרת תיבת־ההבלטה.',
 
 	// Settings — Keyboard shortcuts
-	"settings.customCommands": "פקודות וקיצורי מקלדת",
+	"settings.customCommands": "פקודות ומקשי קיצור",
 	"settings.customCommandsDesc":
 		"צפו בכל פקודה של Callout Studio ובקיצור המקלדת המשויך לה, וצרו פקודות משלכם לתיבות־ההבלטה שבהן אתם משתמשים הכי הרבה. כברירת־מחדל, לא מוגדרים קיצורי מקלדת.",
 	"settings.customCommandsButton": "ניהול פקודות",

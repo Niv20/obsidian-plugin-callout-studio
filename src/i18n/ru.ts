@@ -81,7 +81,7 @@ export const ru: Record<string, string> = {
 	"settings.builtInCallouts": "Встроенные callout",
 	"settings.contextMenu": "Контекстное меню",
 	"settings.autocomplete": "Автодополнение",
-	"settings.keyboardShortcuts": "Сочетания клавиш",
+	"settings.keyboardShortcuts": "Команды",
 	"settings.language": "Язык",
 	"settings.languageDesc":
 		"Язык интерфейса Callout Studio. По умолчанию совпадает с языком интерфейса Obsidian.",
@@ -166,7 +166,7 @@ export const ru: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Показывает предложения при вводе "[!" в блочной цитате в редакторе. Выберите тип callout из списка, чтобы вставить полный заголовок callout.',
 
-	"settings.customCommands": "Команды и сочетания клавиш",
+	"settings.customCommands": "Команды и горячие клавиши",
 	"settings.customCommandsDesc":
 		"Просмотрите все команды Callout Studio и назначенные им сочетания клавиш, а также создайте собственные команды для callout, которые вы используете чаще всего. По умолчанию сочетания не назначены.",
 	"settings.customCommandsButton": "Управление командами",

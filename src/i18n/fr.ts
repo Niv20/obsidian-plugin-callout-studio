@@ -81,7 +81,7 @@ export const fr: Record<string, string> = {
 	"settings.builtInCallouts": "Callouts intégrés",
 	"settings.contextMenu": "Menu contextuel",
 	"settings.autocomplete": "Saisie automatique",
-	"settings.keyboardShortcuts": "Raccourcis clavier",
+	"settings.keyboardShortcuts": "Commandes",
 	"settings.language": "Langue",
 	"settings.languageDesc":
 		"Langue d'affichage de Callout Studio. Suit par défaut la langue de l'interface d'Obsidian.",
@@ -168,7 +168,7 @@ export const fr: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Affiche des suggestions lorsque vous tapez "[!" dans une citation de l\'éditeur. Choisissez un type de callout dans la liste pour insérer un en-tête de callout complet.',
 
-	"settings.customCommands": "Commandes et raccourcis",
+	"settings.customCommands": "Commandes et raccourcis clavier",
 	"settings.customCommandsDesc":
 		"Consultez chaque commande de Callout Studio et le raccourci auquel elle est associée, et créez vos propres commandes pour les callouts que vous utilisez le plus. Aucun raccourci n'est attribué par défaut.",
 	"settings.customCommandsButton": "Gérer les commandes",

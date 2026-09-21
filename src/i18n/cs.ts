@@ -80,7 +80,7 @@ export const cs: Record<string, string> = {
 	"settings.builtInCallouts": "Vestavěné callouts",
 	"settings.contextMenu": "Kontextové menu",
 	"settings.autocomplete": "Automatické doplňování",
-	"settings.keyboardShortcuts": "Klávesové zkratky",
+	"settings.keyboardShortcuts": "Příkazy",
 	"settings.language": "Jazyk",
 	"settings.languageDesc":
 		"Jazyk zobrazení Callout Studio. Ve výchozím nastavení odpovídá jazyku rozhraní Obsidianu.",
@@ -165,7 +165,7 @@ export const cs: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Zobrazuje návrhy při psaní "[!" v bloku citace v editoru. Vyberte typ callout ze seznamu a vložte úplnou hlavičku callout.',
 
-	"settings.customCommands": "Příkazy a zkratky",
+	"settings.customCommands": "Příkazy a klávesové zkratky",
 	"settings.customCommandsDesc":
 		"Prohlédněte si všechny příkazy Callout Studio a zkratku, ke které je každý přiřazen, a vytvořte si vlastní příkazy pro callouty, které používáte nejčastěji. Ve výchozím nastavení nejsou přiřazeny žádné zkratky.",
 	"settings.customCommandsButton": "Spravovat příkazy",

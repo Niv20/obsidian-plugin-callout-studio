@@ -81,7 +81,7 @@ export const ar: Record<string, string> = {
 	"settings.builtInCallouts": "Callouts المدمجة",
 	"settings.contextMenu": "قائمة السياق",
 	"settings.autocomplete": "الإكمال التلقائي",
-	"settings.keyboardShortcuts": "اختصارات لوحة المفاتيح",
+	"settings.keyboardShortcuts": "الأوامر",
 	"settings.language": "اللغة",
 	"settings.languageDesc":
 		"لغة عرض Callout Studio. تتبع افتراضيًا لغة واجهة Obsidian.",
@@ -165,7 +165,7 @@ export const ar: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'يعرض اقتراحات عند كتابة "[!" داخل اقتباس محظور في المحرر. اختر نوع callout من القائمة لإدراج عنوان callout كامل.',
 
-	"settings.customCommands": "الأوامر والاختصارات",
+	"settings.customCommands": "الأوامر والمفاتيح السريعة",
 	"settings.customCommandsDesc":
 		"اطّلع على كل أوامر Callout Studio والاختصار المرتبط بكل منها، وأنشئ أوامرك الخاصة للـ callouts التي تستخدمها كثيرًا. لا يتم تعيين أي اختصارات افتراضياً.",
 	"settings.customCommandsButton": "إدارة الأوامر",

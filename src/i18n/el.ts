@@ -77,7 +77,7 @@ export const el: Record<string, string> = {
 	"settings.builtInCallouts": "Ενσωματωμένα callouts",
 	"settings.contextMenu": "Μενού περιβάλλοντος",
 	"settings.autocomplete": "Αυτόματη συμπλήρωση",
-	"settings.keyboardShortcuts": "Συντομεύσεις πληκτρολογίου",
+	"settings.keyboardShortcuts": "Εντολές",
 	"settings.language": "Γλώσσα",
 	"settings.languageDesc":
 		"Γλώσσα εμφάνισης για το Callout Studio. Ακολουθεί από προεπιλογή τη γλώσσα διεπαφής του Obsidian.",
@@ -157,7 +157,7 @@ export const el: Record<string, string> = {
 	"settings.enableAutocomplete": "Ενεργοποίηση αυτόματης συμπλήρωσης [!",
 	"settings.enableAutocompleteDesc":
 		'Εμφανίζει προτάσεις όταν πληκτρολογείτε "[!" μέσα σε αποσπασματική παράθεση στον επεξεργαστή. Επιλέξτε τύπο callout από τη λίστα για εισαγωγή πλήρους επικεφαλίδας callout.',
-	"settings.customCommands": "Εντολές και συντομεύσεις",
+	"settings.customCommands": "Εντολές & πλήκτρα συντόμευσης",
 	"settings.customCommandsDesc":
 		"Δείτε κάθε εντολή του Callout Studio και τη συντόμευση στην οποία είναι δεσμευμένη, και δημιουργήστε τις δικές σας εντολές για τα callouts που χρησιμοποιείτε περισσότερο. Καμία συντόμευση δεν έχει ανατεθεί από προεπιλογή.",
 	"settings.customCommandsButton": "Διαχείριση εντολών",

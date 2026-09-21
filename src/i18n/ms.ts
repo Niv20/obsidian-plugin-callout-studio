@@ -80,7 +80,7 @@ export const ms: Record<string, string> = {
 	"settings.builtInCallouts": "Callouts terbina dalam",
 	"settings.contextMenu": "Menu konteks",
 	"settings.autocomplete": "Lengkap automatik",
-	"settings.keyboardShortcuts": "Pintasan papan kekunci",
+	"settings.keyboardShortcuts": "Arahan",
 	"settings.language": "Bahasa",
 	"settings.languageDesc":
 		"Bahasa paparan untuk Callout Studio. Secara lalai mengikut bahasa antara muka Obsidian.",
@@ -161,7 +161,7 @@ export const ms: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Menunjukkan cadangan apabila anda menaip "[!" dalam sebutan blok dalam editor. Pilih jenis callout dari senarai untuk memasukkan pengepala callout lengkap.',
 
-	"settings.customCommands": "Arahan dan pintasan",
+	"settings.customCommands": "Arahan & kekunci pintas",
 	"settings.customCommandsDesc":
 		"Lihat setiap arahan Callout Studio dan pintasan yang ditetapkan padanya, dan cipta arahan anda sendiri untuk callout yang paling kerap anda gunakan. Tiada pintasan ditetapkan secara lalai.",
 	"settings.customCommandsButton": "Urus arahan",

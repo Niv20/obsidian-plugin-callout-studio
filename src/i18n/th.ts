@@ -80,7 +80,7 @@ export const th: Record<string, string> = {
 	"settings.builtInCallouts": "Callout ในตัว",
 	"settings.contextMenu": "เมนูบริบท",
 	"settings.autocomplete": "เติมข้อความอัตโนมัติ",
-	"settings.keyboardShortcuts": "แป้นพิมพ์ลัด",
+	"settings.keyboardShortcuts": "คำสั่ง",
 	"settings.language": "ภาษา",
 	"settings.languageDesc":
 		"ภาษาที่แสดงผลสำหรับ Callout Studio ค่าเริ่มต้นจะใช้ตามภาษาอินเทอร์เฟซของ Obsidian",
@@ -165,7 +165,7 @@ export const th: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'แสดงคำแนะนำเมื่อพิมพ์ "[!" ในบล็อกอ้างอิงในตัวแก้ไข เลือกประเภท callout จากรายการเพื่อแทรกส่วนหัว callout ที่สมบูรณ์',
 
-	"settings.customCommands": "คำสั่งและแป้นพิมพ์ลัด",
+	"settings.customCommands": "คำสั่งและปุ่มลัด",
 	"settings.customCommandsDesc":
 		"ดูคำสั่งทั้งหมดของ Callout Studio และแป้นพิมพ์ลัดที่ผูกไว้ พร้อมสร้างคำสั่งของคุณเองสำหรับ callout ที่คุณใช้บ่อยที่สุด ไม่มีการกำหนดแป้นพิมพ์ลัดโดยค่าเริ่มต้น",
 	"settings.customCommandsButton": "จัดการคำสั่ง",

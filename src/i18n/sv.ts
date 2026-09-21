@@ -81,7 +81,7 @@ export const sv: Record<string, string> = {
 	"settings.builtInCallouts": "Inbyggda callouts",
 	"settings.contextMenu": "Snabbmeny",
 	"settings.autocomplete": "Autokomplettera",
-	"settings.keyboardShortcuts": "Tangentbordsgenvägar",
+	"settings.keyboardShortcuts": "Kommandon",
 	"settings.language": "Språk",
 	"settings.languageDesc":
 		"Visningsspråk för Callout Studio. Följer som standard Obsidians gränssnittsspråk.",
@@ -166,7 +166,7 @@ export const sv: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Visar förslag när du skriver "[!" i ett blockcitat i editorn. Välj en callout-typ från listan för att infoga en komplett callout-rubrik.',
 
-	"settings.customCommands": "Kommandon och genvägar",
+	"settings.customCommands": "Kommandon och kortkommandon",
 	"settings.customCommandsDesc":
 		"Se alla Callout Studio-kommandon och genvägen de är bundna till, och skapa egna kommandon för de callouts du använder mest. Inga genvägar tilldelas som standard.",
 	"settings.customCommandsButton": "Hantera kommandon",

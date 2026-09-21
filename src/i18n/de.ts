@@ -81,7 +81,7 @@ export const de: Record<string, string> = {
 	"settings.builtInCallouts": "Integrierte Callouts",
 	"settings.contextMenu": "Kontextmenü",
 	"settings.autocomplete": "Autovervollständigung",
-	"settings.keyboardShortcuts": "Tastaturkürzel",
+	"settings.keyboardShortcuts": "Befehle",
 	"settings.language": "Sprache",
 	"settings.languageDesc":
 		"Anzeigesprache für Callout Studio. Folgt standardmäßig der Oberflächensprache von Obsidian.",
@@ -166,7 +166,7 @@ export const de: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Zeigt Vorschläge an, wenn Sie "[!" in einem Blockzitat im Editor eingeben. Wählen Sie einen Callout-Typ aus der Liste, um eine vollständige Callout-Überschrift einzufügen.',
 
-	"settings.customCommands": "Befehle und Tastaturkürzel",
+	"settings.customCommands": "Befehle & Tastenkürzel",
 	"settings.customCommandsDesc":
 		"Sehen Sie jeden Callout Studio-Befehl und das Tastaturkürzel, an das er gebunden ist, und erstellen Sie eigene Befehle für die Callouts, die Sie am häufigsten verwenden. Standardmäßig sind keine Kürzel zugewiesen.",
 	"settings.customCommandsButton": "Befehle verwalten",

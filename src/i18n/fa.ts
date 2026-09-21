@@ -80,7 +80,7 @@ export const fa: Record<string, string> = {
 	"settings.builtInCallouts": "Callout‌های داخلی",
 	"settings.contextMenu": "منوی زمینه",
 	"settings.autocomplete": "تکمیل خودکار",
-	"settings.keyboardShortcuts": "میانبرهای صفحه‌کلید",
+	"settings.keyboardShortcuts": "دستورها",
 	"settings.language": "زبان",
 	"settings.languageDesc":
 		"زبان نمایش Callout Studio. به‌طور پیش‌فرض از زبان رابط Obsidian پیروی می‌کند.",
@@ -160,7 +160,7 @@ export const fa: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'هنگام تایپ "[!" در یک بلوک نقل‌قول در ویرایشگر، پیشنهادات نمایش می‌دهد. یک نوع callout از لیست انتخاب کنید تا سرتیتر کامل callout درج شود.',
 
-	"settings.customCommands": "دستورات و میانبرها",
+	"settings.customCommands": "دستورها و کلیدهای میانبر",
 	"settings.customCommandsDesc":
 		"همه دستورات Callout Studio و میانبری که به آن‌ها متصل است را ببینید، و برای callout‌هایی که بیشتر استفاده می‌کنید دستورات خودتان را بسازید. به صورت پیش‌فرض هیچ میانبری اختصاص داده نشده است.",
 	"settings.customCommandsButton": "مدیریت دستورات",

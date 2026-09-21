@@ -125,7 +125,7 @@ export const en: Record<string, string> = {
 	"settings.builtInCallouts": "Built-in callouts",
 	"settings.contextMenu": "Context menu",
 	"settings.autocomplete": "Autocomplete",
-	"settings.keyboardShortcuts": "Keyboard shortcuts",
+	"settings.keyboardShortcuts": "Commands",
 	"settings.language": "Language",
 	"settings.languageDesc":
 		"Display language for Callout Studio. Defaults to Obsidian's interface language.",
@@ -233,7 +233,7 @@ export const en: Record<string, string> = {
 		'Show suggestions when you type "[!" inside a block callout in the editor. Pick a callout type from the list to insert a complete callout header.',
 
 	// Settings — Keyboard shortcuts
-	"settings.customCommands": "Commands and shortcuts",
+	"settings.customCommands": "Commands & Hotkeys",
 	"settings.customCommandsDesc":
 		"See every Callout Studio command and the shortcut it is bound to, and create your own commands for the callouts you use most. No shortcuts are assigned by default.",
 	"settings.customCommandsButton": "Manage commands",

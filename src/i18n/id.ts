@@ -80,7 +80,7 @@ export const id: Record<string, string> = {
 	"settings.builtInCallouts": "Callout bawaan",
 	"settings.contextMenu": "Menu konteks",
 	"settings.autocomplete": "Pelengkapan otomatis",
-	"settings.keyboardShortcuts": "Pintasan keyboard",
+	"settings.keyboardShortcuts": "Perintah",
 	"settings.language": "Bahasa",
 	"settings.languageDesc":
 		"Bahasa tampilan untuk Callout Studio. Secara default mengikuti bahasa antarmuka Obsidian.",
@@ -165,7 +165,7 @@ export const id: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Menampilkan saran saat Anda mengetik "[!" di dalam Block Callout di editor. Pilih tipe callout dari daftar untuk menyisipkan header callout lengkap.',
 
-	"settings.customCommands": "Perintah dan pintasan",
+	"settings.customCommands": "Perintah & tombol pintas",
 	"settings.customCommandsDesc":
 		"Lihat setiap perintah Callout Studio dan pintasan yang ditetapkan padanya, serta buat perintah Anda sendiri untuk callout yang paling sering Anda gunakan. Tidak ada pintasan yang ditetapkan secara default.",
 	"settings.customCommandsButton": "Kelola perintah",

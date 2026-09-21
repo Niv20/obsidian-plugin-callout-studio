@@ -81,7 +81,7 @@ export const nl: Record<string, string> = {
 	"settings.builtInCallouts": "Ingebouwde callouts",
 	"settings.contextMenu": "Contextmenu",
 	"settings.autocomplete": "Automatisch aanvullen",
-	"settings.keyboardShortcuts": "Sneltoetsen",
+	"settings.keyboardShortcuts": "Opdrachten",
 	"settings.language": "Taal",
 	"settings.languageDesc":
 		"Weergavetaal voor Callout Studio. Volgt standaard de interfacetaal van Obsidian.",
@@ -167,7 +167,7 @@ export const nl: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Toont suggesties wanneer u "[!" typt in een Block Callout in de editor. Kies een callout-type uit de lijst om een volledig callout-koptekst in te voegen.',
 
-	"settings.customCommands": "Opdrachten en sneltoetsen",
+	"settings.customCommands": "Opdrachten & sneltoetsen",
 	"settings.customCommandsDesc":
 		"Bekijk elke Callout Studio-opdracht en de sneltoets waaraan die is gekoppeld, en maak uw eigen opdrachten voor de callouts die u het meest gebruikt. Standaard zijn er geen sneltoetsen toegewezen.",
 	"settings.customCommandsButton": "Opdrachten beheren",

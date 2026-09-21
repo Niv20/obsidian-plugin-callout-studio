@@ -81,7 +81,7 @@ export const es: Record<string, string> = {
 	"settings.builtInCallouts": "Callouts integrados",
 	"settings.contextMenu": "Menú contextual",
 	"settings.autocomplete": "Autocompletar",
-	"settings.keyboardShortcuts": "Atajos de teclado",
+	"settings.keyboardShortcuts": "Comandos",
 	"settings.language": "Idioma",
 	"settings.languageDesc":
 		"Idioma de visualización de Callout Studio. Por defecto sigue el idioma de la interfaz de Obsidian.",
@@ -167,7 +167,7 @@ export const es: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Muestra sugerencias cuando escribe "[!" dentro de una cita en el editor. Elija un tipo de callout de la lista para insertar un encabezado de callout completo.',
 
-	"settings.customCommands": "Comandos y atajos",
+	"settings.customCommands": "Comandos y teclas de acceso rápido",
 	"settings.customCommandsDesc":
 		"Vea todos los comandos de Callout Studio y el atajo al que están vinculados, y cree sus propios comandos para los callouts que más usa. No hay atajos asignados por defecto.",
 	"settings.customCommandsButton": "Gestionar comandos",

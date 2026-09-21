@@ -76,7 +76,7 @@ export const zhTW: Record<string, string> = {
 	"settings.builtInCallouts": "內建 callout",
 	"settings.contextMenu": "右鍵選單",
 	"settings.autocomplete": "自動完成",
-	"settings.keyboardShortcuts": "鍵盤快速鍵",
+	"settings.keyboardShortcuts": "指令",
 	"settings.language": "語言",
 	"settings.languageDesc":
 		"Callout Studio 的顯示語言。預設跟隨 Obsidian 的介面語言。",

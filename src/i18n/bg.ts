@@ -77,7 +77,7 @@ export const bg: Record<string, string> = {
 	"settings.builtInCallouts": "Вградени callout-и",
 	"settings.contextMenu": "Контекстно меню",
 	"settings.autocomplete": "Автоматично довършване",
-	"settings.keyboardShortcuts": "Клавишни комбинации",
+	"settings.keyboardShortcuts": "Команди",
 	"settings.language": "Език",
 	"settings.languageDesc":
 		"Език на показване за Callout Studio. По подразбиране следва езика на интерфейса на Obsidian.",
@@ -155,7 +155,7 @@ export const bg: Record<string, string> = {
 	"settings.enableAutocomplete": "Активиране на автоматично довършване [!",
 	"settings.enableAutocompleteDesc":
 		'Показва предложения при въвеждане на "[!" в блоков цитат в редактора. Изберете тип callout от списъка, за да вмъкнете пълно заглавие на callout.',
-	"settings.customCommands": "Команди и клавишни комбинации",
+	"settings.customCommands": "Команди и бързи клавиши",
 	"settings.customCommandsDesc":
 		"Вижте всяка команда на Callout Studio и клавишната комбинация, към която е обвързана, и създайте свои команди за callout-ите, които използвате най-често. По подразбиране не са зададени комбинации.",
 	"settings.customCommandsButton": "Управление на командите",

@@ -80,7 +80,7 @@ export const pl: Record<string, string> = {
 	"settings.builtInCallouts": "Wbudowane callouts",
 	"settings.contextMenu": "Menu kontekstowe",
 	"settings.autocomplete": "Autouzupełnianie",
-	"settings.keyboardShortcuts": "Skróty klawiszowe",
+	"settings.keyboardShortcuts": "Polecenia",
 	"settings.language": "Język",
 	"settings.languageDesc":
 		"Język wyświetlania Callout Studio. Domyślnie zgodny z językiem interfejsu Obsidian.",
@@ -165,7 +165,7 @@ export const pl: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Wyświetla sugestie przy wpisywaniu "[!" w bloku cytatu w edytorze. Wybierz typ callout z listy, aby wstawić pełny nagłówek callout.',
 
-	"settings.customCommands": "Polecenia i skróty",
+	"settings.customCommands": "Polecenia i skróty klawiszowe",
 	"settings.customCommandsDesc":
 		"Zobacz każde polecenie Callout Studio i skrót, do którego jest przypisane, i twórz własne polecenia dla najczęściej używanych callouts. Domyślnie nie są przypisane żadne skróty.",
 	"settings.customCommandsButton": "Zarządzaj poleceniami",

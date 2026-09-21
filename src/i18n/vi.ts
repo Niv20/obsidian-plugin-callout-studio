@@ -81,7 +81,7 @@ export const vi: Record<string, string> = {
 	"settings.builtInCallouts": "Callouts tích hợp",
 	"settings.contextMenu": "Menu ngữ cảnh",
 	"settings.autocomplete": "Tự động hoàn thành",
-	"settings.keyboardShortcuts": "Phím tắt",
+	"settings.keyboardShortcuts": "Lệnh",
 	"settings.language": "Ngôn ngữ",
 	"settings.languageDesc":
 		"Ngôn ngữ hiển thị cho Callout Studio. Mặc định theo ngôn ngữ giao diện của Obsidian.",
@@ -168,7 +168,7 @@ export const vi: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'Hiển thị gợi ý khi bạn gõ "[!" trong trích dẫn khối trong trình soạn thảo. Chọn loại callout từ danh sách để chèn tiêu đề callout đầy đủ.',
 
-	"settings.customCommands": "Lệnh và phím tắt",
+	"settings.customCommands": "Lệnh và phím nóng",
 	"settings.customCommandsDesc":
 		"Xem mọi lệnh của Callout Studio và phím tắt được gán cho lệnh đó, đồng thời tạo lệnh riêng cho những callout bạn dùng nhiều nhất. Không có phím tắt nào được gán theo mặc định.",
 	"settings.customCommandsButton": "Quản lý lệnh",

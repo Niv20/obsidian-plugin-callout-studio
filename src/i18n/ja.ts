@@ -81,7 +81,7 @@ export const ja: Record<string, string> = {
 	"settings.builtInCallouts": "組み込みcallout",
 	"settings.contextMenu": "コンテキストメニュー",
 	"settings.autocomplete": "オートコンプリート",
-	"settings.keyboardShortcuts": "キーボードショートカット",
+	"settings.keyboardShortcuts": "コマンド",
 	"settings.language": "言語",
 	"settings.languageDesc":
 		"Callout Studio の表示言語。デフォルトでは Obsidian のインターフェース言語に従います。",
@@ -168,7 +168,7 @@ export const ja: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'エディターの引用ブロック内で"[!"と入力すると候補を表示します。リストからcalloutタイプを選択して完全なcalloutヘッダーを挿入します。',
 
-	"settings.customCommands": "コマンドとショートカット",
+	"settings.customCommands": "コマンドとホットキー",
 	"settings.customCommandsDesc":
 		"すべてのCallout Studioコマンドと割り当てられたショートカットを確認し、よく使うcalloutのために独自のコマンドを作成できます。デフォルトではショートカットは割り当てられていません。",
 	"settings.customCommandsButton": "コマンドを管理",

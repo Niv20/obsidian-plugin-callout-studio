@@ -81,7 +81,7 @@ export const uk: Record<string, string> = {
 	"settings.builtInCallouts": "Вбудовані callout",
 	"settings.contextMenu": "Контекстне меню",
 	"settings.autocomplete": "Автодоповнення",
-	"settings.keyboardShortcuts": "Гарячі клавіші",
+	"settings.keyboardShortcuts": "Команди",
 	"settings.language": "Мова",
 	"settings.languageDesc":
 		"Мова інтерфейсу Callout Studio. За замовчуванням відповідає мові інтерфейсу Obsidian.",

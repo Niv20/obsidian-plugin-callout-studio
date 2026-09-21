@@ -78,7 +78,7 @@ export const fi: Record<string, string> = {
 	"settings.builtInCallouts": "Sisäänrakennetut calloutit",
 	"settings.contextMenu": "Kontekstivalikko",
 	"settings.autocomplete": "Automaattinen täydennys",
-	"settings.keyboardShortcuts": "Näppäinoikotiet",
+	"settings.keyboardShortcuts": "Komennot",
 	"settings.language": "Kieli",
 	"settings.languageDesc":
 		"Callout Studion näyttökieli. Seuraa oletuksena Obsidianin käyttöliittymän kieltä.",

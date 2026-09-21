@@ -81,7 +81,7 @@ export const ko: Record<string, string> = {
 	"settings.builtInCallouts": "기본 제공 callout",
 	"settings.contextMenu": "컨텍스트 메뉴",
 	"settings.autocomplete": "자동 완성",
-	"settings.keyboardShortcuts": "키보드 단축키",
+	"settings.keyboardShortcuts": "명령",
 	"settings.language": "언어",
 	"settings.languageDesc":
 		"Callout Studio의 표시 언어입니다. 기본값은 Obsidian의 인터페이스 언어를 따릅니다.",
@@ -168,7 +168,7 @@ export const ko: Record<string, string> = {
 	"settings.enableAutocompleteDesc":
 		'편집기의 인용 블록에서 "[!"를 입력하면 제안을 표시합니다. 목록에서 callout 유형을 선택하여 완전한 callout 헤더를 삽입합니다.',
 
-	"settings.customCommands": "명령 및 단축키",
+	"settings.customCommands": "명령 및 핫키",
 	"settings.customCommandsDesc":
 		"모든 Callout Studio 명령어와 여기에 지정된 단축키를 확인하고, 자주 사용하는 callout을 위해 직접 명령어를 만들어 보세요. 기본적으로 지정된 단축키는 없습니다.",
 	"settings.customCommandsButton": "명령어 관리",
