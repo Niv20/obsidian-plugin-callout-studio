@@ -260,8 +260,6 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-source-name",
 		"cs-welcome-hero",
 		"cs-welcome-panel",
-		"callout-studio-firstrun-heavy-note", // semantic copy; modal typography supplies its presentation
-		"callout-studio-firstrun-later-hint", // semantic copy; modal typography supplies its presentation
 	]);
 
 	/**
