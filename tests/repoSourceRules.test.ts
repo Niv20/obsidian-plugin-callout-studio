@@ -876,7 +876,11 @@ describe("no new oversized files", () => {
 		// editor/quotePrefix.ts and editor/fenceBlocks.ts.
 		// Frontmatter protection moved to editor/frontmatter.ts.
 		"src/editor/CalloutBlockTools.ts": 566,
-		"src/utils/vaultCalloutScanner.ts": 409,
+<<<<<<< HEAD
+		"src/utils/vaultCalloutScanner.ts": 522,
+=======
+		"src/utils/vaultCalloutScanner.ts": 522,
+>>>>>>> 13937d5ad5e1aa0b2be9cb6652f314b6702b84eb
 		// Lowered from 593: the suggestion row's icon and accent go through
 		// manager/theme/calloutListIcon.ts, shared with the three other lists
 		// that draw a callout small.
