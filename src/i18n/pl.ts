@@ -463,25 +463,25 @@ export const pl: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Marki (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Szukaj w RPG Awesome",
-	"iconPicker.image": "Twoje obrazy",
-	"iconPicker.searchImage": "Szukaj w swoich obrazach",
-	"iconPicker.imageTooLarge":
-		"{{name}} jest za duży. Obrazy muszą być poniżej 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} nie jest obsługiwanym formatem obrazu. Użyj SVG, PNG, JPEG lub WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Ikony niestandardowe",
+	"iconPicker.searchCustom": "Szukaj ikon niestandardowych",
+	"iconPicker.customTooLarge":
+		"{{name}} jest za duży. Ikony niestandardowe muszą mieć mniej niż 5 MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} nie jest obsługiwanym plikiem ikony niestandardowej. Użyj SVG, PNG, JPEG lub WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} nie można odczytać jako bezpiecznego SVG i nie został dodany.",
-	"iconPicker.imageDecodeFailed": "{{name}} nie można odczytać jako obrazu.",
-	"iconPicker.imageDuplicate":
-		"{{name}} jest już w twoich obrazach. Zmień nazwę pliku lub usuń istniejący obraz.",
-	"iconPicker.imageAdd": "Dodaj obrazy",
-	"iconPicker.imageEmpty":
-		"Brak obrazów. Dodaj plik SVG, PNG, JPEG lub WebP ze swojego komputera lub upuść go tutaj.",
-	"iconPicker.imageDelete": "Usuń",
-	"iconPicker.imageDeleteConfirm": "Usunąć „{{name}}”?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} calloutów używa tego obrazu. Będą wyświetlać ikonę zastępczą, dopóki nie podasz nowego obrazu.",
-	"iconPicker.imageRecolor": "Podążaj za kolorem Callout",
+	"iconPicker.customDecodeFailed": "{{name}} nie może zostać odczytany jako ikona niestandardowa.",
+	"iconPicker.customDuplicate":
+		"{{name}} jest już w ikonach niestandardowych. Zmień nazwę pliku albo usuń istniejącą ikonę.",
+	"iconPicker.customAdd": "Dodaj ikony niestandardowe",
+	"iconPicker.customEmpty":
+		"Nie ma jeszcze ikon niestandardowych. Dodaj plik SVG, PNG, JPEG lub WebP z komputera albo upuść go tutaj.",
+	"iconPicker.customDelete": "Usuń",
+	"iconPicker.customDeleteConfirm": "Usunąć „{{name}}”?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} calloutów używa tej ikony niestandardowej. Do czasu wybrania nowej będą używać ikony zastępczej.",
+	"iconPicker.customRecolor": "Podążaj za kolorem Callout",
 	"iconPicker.allSources": "Wszystkie źródła",
 	"iconPicker.searchAllSources": "Szukaj we wszystkich źródłach ikon",
 	"iconPicker.sourcesNotDownloaded":
@@ -500,7 +500,7 @@ export const pl: Record<string, string> = {
 	"iconPicker.descOcticons": "ikony interfejsu GitHub",
 	"iconPicker.descFa": "wypełniona, regularna i marki",
 	"iconPicker.descRpgAwesome": "ikony fantasy i gier planszowych",
-	"iconPicker.descImage": "obrazy dodane z komputera",
+	"iconPicker.descCustom": "ikony niestandardowe dodane z komputera",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Dostępność",

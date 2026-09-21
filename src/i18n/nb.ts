@@ -451,25 +451,25 @@ export const nb: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Merkevarer (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Søk i RPG Awesome",
-	"iconPicker.image": "Dine bilder",
-	"iconPicker.searchImage": "Søk i dine bilder",
-	"iconPicker.imageTooLarge":
-		"{{name}} er for stor. Bilder må være under 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} er ikke et støttet bildeformat. Bruk SVG, PNG, JPEG eller WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Egendefinerte ikoner",
+	"iconPicker.searchCustom": "Søk i egendefinerte ikoner",
+	"iconPicker.customTooLarge":
+		"{{name}} er for stor. Egendefinerte ikoner må være under 5 MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} er ikke en støttet egendefinert ikonfil. Bruk SVG, PNG, JPEG eller WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} kunne ikke leses som en sikker SVG og ble ikke lagt til.",
-	"iconPicker.imageDecodeFailed": "{{name}} kunne ikke leses som et bilde.",
-	"iconPicker.imageDuplicate":
-		"{{name}} finnes allerede i bildene dine. Endre filnavnet eller slett det eksisterende bildet.",
-	"iconPicker.imageAdd": "Legg til bilder",
-	"iconPicker.imageEmpty":
-		"Ingen bilder ennå. Legg til en SVG-, PNG-, JPEG- eller WebP-fil fra datamaskinen din, eller dra den hit.",
-	"iconPicker.imageDelete": "Slett",
-	"iconPicker.imageDeleteConfirm": "Slett «{{name}}»?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callouts bruker dette bildet. De vil vise et plassholderikonikon inntil du gir dem et nytt.",
-	"iconPicker.imageRecolor": "Følg Callout-fargen",
+	"iconPicker.customDecodeFailed": "{{name}} kunne ikke leses som et egendefinert ikon.",
+	"iconPicker.customDuplicate":
+		"{{name}} finnes allerede blant de egendefinerte ikonene dine. Gi filen nytt navn eller slett det eksisterende ikonet.",
+	"iconPicker.customAdd": "Legg til egendefinerte ikoner",
+	"iconPicker.customEmpty":
+		"Ingen egendefinerte ikoner ennå. Legg til en SVG-, PNG-, JPEG- eller WebP-fil fra datamaskinen, eller slipp den her.",
+	"iconPicker.customDelete": "Slett",
+	"iconPicker.customDeleteConfirm": "Slett «{{name}}»?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callouts bruker dette egendefinerte ikonet. De faller tilbake til et plassholderikon til du velger et nytt.",
+	"iconPicker.customRecolor": "Følg Callout-fargen",
 	"iconPicker.allSources": "Alle kilder",
 	"iconPicker.searchAllSources": "Søk i alle ikonkilder",
 	"iconPicker.sourcesNotDownloaded":
@@ -486,7 +486,7 @@ export const nb: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHubs grensesnittikoner",
 	"iconPicker.descFa": "fast, vanlig og merkevarer",
 	"iconPicker.descRpgAwesome": "fantasy- og brettspillikoner",
-	"iconPicker.descImage": "bilder du legger til fra datamaskinen",
+	"iconPicker.descCustom": "egendefinerte ikoner du legger til fra datamaskinen",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Tilgjengelighet",

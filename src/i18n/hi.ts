@@ -465,26 +465,26 @@ export const hi: Record<string, string> = {
 	"iconPicker.faStyleBrands": "ब्रांड (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "RPG Awesome में खोजें",
-	"iconPicker.image": "आपकी छवियां",
-	"iconPicker.searchImage": "आपकी छवियों में खोजें",
-	"iconPicker.imageTooLarge":
-		"{{name}} बहुत बड़ा है। चित्र 5 MB से कम होने चाहिए।",
-	"iconPicker.imageUnsupported":
-		"{{name}} एक समर्थित चित्र प्रारूप नहीं है। SVG, PNG, JPEG या WebP उपयोग करें।",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "कस्टम आइकन",
+	"iconPicker.searchCustom": "कस्टम आइकन खोजें",
+	"iconPicker.customTooLarge":
+		"{{name}} बहुत बड़ा है। कस्टम आइकन 5 MB से कम होने चाहिए।",
+	"iconPicker.customUnsupported":
+		"{{name}} समर्थित कस्टम आइकन फ़ाइल नहीं है। SVG, PNG, JPEG या WebP का उपयोग करें।",
+	"iconPicker.customInvalidSvg":
 		"{{name}} को सुरक्षित SVG के रूप में नहीं पढ़ा जा सका, इसलिए इसे नहीं जोड़ा गया।",
-	"iconPicker.imageDecodeFailed":
-		"{{name}} को चित्र के रूप में नहीं पढ़ा जा सका।",
-	"iconPicker.imageDuplicate":
-		"{{name}} पहले से ही आपकी छवियों में है। फ़ाइल का नाम बदलें या मौजूदा चित्र हटाएं।",
-	"iconPicker.imageAdd": "छवियां जोड़ें",
-	"iconPicker.imageEmpty":
-		"अभी तक कोई चित्र नहीं। अपने कंप्यूटर से SVG, PNG, JPEG या WebP फ़ाइल जोड़ें या यहां खींचें।",
-	"iconPicker.imageDelete": "हटाएं",
-	"iconPicker.imageDeleteConfirm": "“{{name}}” हटाएं?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callouts इस चित्र का उपयोग करते हैं। नया देने तक वे एक प्लेसहोल्डर आइकन दिखाएंगे।",
-	"iconPicker.imageRecolor": "Callout रंग अनुसरण करें",
+	"iconPicker.customDecodeFailed":
+		"{{name}} को कस्टम आइकन के रूप में पढ़ा नहीं जा सका।",
+	"iconPicker.customDuplicate":
+		"{{name}} आपके कस्टम आइकन में पहले से है। फ़ाइल का नाम बदलें या मौजूदा आइकन हटाएँ।",
+	"iconPicker.customAdd": "कस्टम आइकन जोड़ें",
+	"iconPicker.customEmpty":
+		"अभी कोई कस्टम आइकन नहीं है। अपने कंप्यूटर से SVG, PNG, JPEG या WebP फ़ाइल जोड़ें, या उसे यहाँ छोड़ें।",
+	"iconPicker.customDelete": "हटाएं",
+	"iconPicker.customDeleteConfirm": "“{{name}}” हटाएं?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callouts इस कस्टम आइकन का उपयोग करते हैं। नया आइकन चुनने तक वे प्लेसहोल्डर आइकन पर लौटेंगे।",
+	"iconPicker.customRecolor": "Callout रंग अनुसरण करें",
 	"iconPicker.allSources": "सभी स्रोत",
 	"iconPicker.searchAllSources": "सभी आइकन स्रोतों में खोजें",
 	"iconPicker.sourcesNotDownloaded":
@@ -501,7 +501,7 @@ export const hi: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub के इंटरफ़ेस आइकन",
 	"iconPicker.descFa": "ठोस, सामान्य और ब्रांड",
 	"iconPicker.descRpgAwesome": "फंतासी और टेबलटॉप आइकन",
-	"iconPicker.descImage": "आपके कंप्यूटर से जोड़े गए चित्र",
+	"iconPicker.descCustom": "आपके कंप्यूटर से जोड़े गए कस्टम आइकन",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "पहुँच",

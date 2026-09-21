@@ -443,24 +443,24 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.faStyleBrands": "品牌",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "搜尋 RPG Awesome",
-	"iconPicker.image": "您的圖片",
-	"iconPicker.searchImage": "搜尋您的圖片",
-	"iconPicker.imageTooLarge": "{{name}} 太大。圖片必須小於 5 MB。",
-	"iconPicker.imageUnsupported":
-		"{{name}} 不是受支援的圖片格式。請使用 SVG、PNG、JPEG 或 WebP。",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "自訂圖示",
+	"iconPicker.searchCustom": "搜尋自訂圖示",
+	"iconPicker.customTooLarge": "{{name}} 太大。自訂圖示必須小於 5 MB。",
+	"iconPicker.customUnsupported":
+		"{{name}} 不是支援的自訂圖示檔案。請使用 SVG、PNG、JPEG 或 WebP。",
+	"iconPicker.customInvalidSvg":
 		"{{name}} 無法作為安全的 SVG 讀取，因此未新增。",
-	"iconPicker.imageDecodeFailed": "{{name}} 無法作為圖片讀取。",
-	"iconPicker.imageDuplicate":
-		"{{name}} 已在您的圖片中。請重新命名檔案或刪除現有圖片。",
-	"iconPicker.imageAdd": "新增圖片",
-	"iconPicker.imageEmpty":
-		"尚無圖片。從您的電腦新增 SVG、PNG、JPEG 或 WebP 檔案，或將其拖曳至此。",
-	"iconPicker.imageDelete": "刪除",
-	"iconPicker.imageDeleteConfirm": "刪除「{{name}}」？",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} 個 callout 使用了這張圖片。在您提供新圖片之前，它們將顯示佔位圖示。",
-	"iconPicker.imageRecolor": "跟隨 Callout 色彩",
+	"iconPicker.customDecodeFailed": "無法將 {{name}} 讀取為自訂圖示。",
+	"iconPicker.customDuplicate":
+		"{{name}} 已在你的自訂圖示中。請重新命名檔案，或刪除現有圖示。",
+	"iconPicker.customAdd": "新增自訂圖示",
+	"iconPicker.customEmpty":
+		"還沒有自訂圖示。請從電腦新增 SVG、PNG、JPEG 或 WebP 檔案，或將檔案拖到這裡。",
+	"iconPicker.customDelete": "刪除",
+	"iconPicker.customDeleteConfirm": "刪除「{{name}}」？",
+	"iconPicker.customDeleteInUse":
+		"{{count}} 個 callout 正在使用此自訂圖示。在你選擇新圖示之前，它們會回退到佔位圖示。",
+	"iconPicker.customRecolor": "跟隨 Callout 色彩",
 	"iconPicker.allSources": "所有來源",
 	"iconPicker.searchAllSources": "搜尋所有圖示來源",
 	"iconPicker.sourcesNotDownloaded":
@@ -477,7 +477,7 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub 介面圖示",
 	"iconPicker.descFa": "實心、一般和品牌",
 	"iconPicker.descRpgAwesome": "奇幻和桌遊圖示",
-	"iconPicker.descImage": "從您的電腦新增的圖片",
+	"iconPicker.descCustom": "你從電腦新增的自訂圖示",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "無障礙功能",

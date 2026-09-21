@@ -205,7 +205,7 @@ const EXTENSION_OF_MIME: Readonly<Record<string, string>> = Object.freeze({
  *
  * One caveat is worth knowing and is stated in the import report: Admonition
  * stores these at 24px, so they arrive soft. Re-adding the original file under
- * **Your images** gives a crisp one.
+ * **Custom Icons** gives a crisp one.
  *
  * Returns null for anything that is not a decodable picture. Never throws.
  */

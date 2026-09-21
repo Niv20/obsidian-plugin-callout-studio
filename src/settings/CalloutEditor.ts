@@ -789,7 +789,7 @@ export class CalloutEditor extends Modal {
 			"cs-layout-group",
 		);
 		new Setting(pictureBox)
-			.setName(t("iconPicker.imageRecolor"))
+			.setName(t("iconPicker.customRecolor"))
 			.addToggle((toggle) => {
 				this.recolorToggle = toggle;
 				toggle.onChange((value: boolean) => {

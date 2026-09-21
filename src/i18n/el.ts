@@ -452,26 +452,26 @@ export const el: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Εμπορικά σήματα (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Αναζήτηση στο RPG Awesome",
-	"iconPicker.image": "Οι εικόνες σας",
-	"iconPicker.searchImage": "Αναζήτηση στις εικόνες σας",
-	"iconPicker.imageTooLarge":
-		"{{name}} είναι πολύ μεγάλο. Οι εικόνες πρέπει να είναι κάτω από 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} δεν είναι υποστηριζόμενη μορφή εικόνας. Χρησιμοποιήστε SVG, PNG, JPEG ή WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Προσαρμοσμένα εικονίδια",
+	"iconPicker.searchCustom": "Αναζήτηση στα προσαρμοσμένα εικονίδια",
+	"iconPicker.customTooLarge":
+		"Το {{name}} είναι πολύ μεγάλο. Τα προσαρμοσμένα εικονίδια πρέπει να είναι κάτω από 5 MB.",
+	"iconPicker.customUnsupported":
+		"Το {{name}} δεν είναι υποστηριζόμενο αρχείο προσαρμοσμένου εικονιδίου. Χρησιμοποιήστε SVG, PNG, JPEG ή WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} δεν ήταν δυνατή η ανάγνωσή του ως ασφαλές SVG, γι' αυτό δεν προστέθηκε.",
-	"iconPicker.imageDecodeFailed":
-		"{{name}} δεν ήταν δυνατή η ανάγνωσή του ως εικόνα.",
-	"iconPicker.imageDuplicate":
-		"{{name}} υπάρχει ήδη στις εικόνες σας. Μετονομάστε το αρχείο ή διαγράψτε την υπάρχουσα εικόνα.",
-	"iconPicker.imageAdd": "Προσθήκη εικόνων",
-	"iconPicker.imageEmpty":
-		"Δεν υπάρχουν εικόνες ακόμα. Προσθέστε ένα αρχείο SVG, PNG, JPEG ή WebP από τον υπολογιστή σας ή σύρτε το εδώ.",
-	"iconPicker.imageDelete": "Διαγραφή",
-	"iconPicker.imageDeleteConfirm": "Διαγραφή “{{name}}”;",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callouts χρησιμοποιούν αυτή την εικόνα. Θα εμφανίσουν ένα εικονίδιο κράτησης θέσης έως ότου δώσετε νέο.",
-	"iconPicker.imageRecolor": "Παρακολούθηση χρώματος Callout",
+	"iconPicker.customDecodeFailed":
+		"Το {{name}} δεν μπόρεσε να διαβαστεί ως προσαρμοσμένο εικονίδιο.",
+	"iconPicker.customDuplicate":
+		"Το {{name}} υπάρχει ήδη στα προσαρμοσμένα εικονίδιά σας. Μετονομάστε το αρχείο ή διαγράψτε το υπάρχον εικονίδιο.",
+	"iconPicker.customAdd": "Προσθήκη προσαρμοσμένων εικονιδίων",
+	"iconPicker.customEmpty":
+		"Δεν υπάρχουν ακόμη προσαρμοσμένα εικονίδια. Προσθέστε ένα αρχείο SVG, PNG, JPEG ή WebP από τον υπολογιστή σας ή αποθέστε το εδώ.",
+	"iconPicker.customDelete": "Διαγραφή",
+	"iconPicker.customDeleteConfirm": "Διαγραφή “{{name}}”;",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callouts χρησιμοποιούν αυτό το προσαρμοσμένο εικονίδιο. Θα επιστρέψουν σε εικονίδιο κράτησης θέσης μέχρι να επιλέξετε νέο.",
+	"iconPicker.customRecolor": "Παρακολούθηση χρώματος Callout",
 	"iconPicker.allSources": "Όλες οι πηγές",
 	"iconPicker.searchAllSources": "Αναζήτηση σε όλες τις πηγές εικονιδίων",
 	"iconPicker.sourcesNotDownloaded":
@@ -492,7 +492,7 @@ export const el: Record<string, string> = {
 	"iconPicker.descFa": "συμπαγές, κανονικό και εμπορικά σήματα",
 	"iconPicker.descRpgAwesome":
 		"εικονίδια φαντασίας και επιτραπέζιων παιχνιδιών",
-	"iconPicker.descImage": "εικόνες που προσθέτετε από τον υπολογιστή σας",
+	"iconPicker.descCustom": "προσαρμοσμένα εικονίδια που προσθέτετε από τον υπολογιστή σας",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Προσβασιμότητα",

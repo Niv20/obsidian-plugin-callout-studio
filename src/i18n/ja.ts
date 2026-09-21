@@ -465,26 +465,26 @@ export const ja: Record<string, string> = {
 	"iconPicker.faStyleBrands": "ブランド (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "RPG Awesomeを検索",
-	"iconPicker.image": "あなたの画像",
-	"iconPicker.searchImage": "画像を検索",
-	"iconPicker.imageTooLarge":
-		"{{name}}は大きすぎます。画像は5MB未満にしてください。",
-	"iconPicker.imageUnsupported":
-		"{{name}}はサポートされている画像形式ではありません。SVG、PNG、JPEG、またはWebPを使用してください。",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "カスタムアイコン",
+	"iconPicker.searchCustom": "カスタムアイコンを検索",
+	"iconPicker.customTooLarge":
+		"{{name}}は大きすぎます。カスタムアイコンは5MB未満にしてください。",
+	"iconPicker.customUnsupported":
+		"{{name}}はサポートされているカスタムアイコンファイルではありません。SVG、PNG、JPEG、またはWebPを使用してください。",
+	"iconPicker.customInvalidSvg":
 		"{{name}}は安全なSVGとして読み取れなかったため、追加されませんでした。",
-	"iconPicker.imageDecodeFailed":
-		"{{name}}は画像として読み取れませんでした。",
-	"iconPicker.imageDuplicate":
-		"{{name}}はすでにあなたの画像にあります。ファイル名を変更するか、既存の画像を削除してください。",
-	"iconPicker.imageAdd": "画像を追加",
-	"iconPicker.imageEmpty":
-		"画像がまだありません。コンピューターからSVG、PNG、JPEG、またはWebPファイルを追加するか、ここにドロップしてください。",
-	"iconPicker.imageDelete": "削除",
-	"iconPicker.imageDeleteConfirm": "「{{name}}」を削除しますか？",
-	"iconPicker.imageDeleteInUse":
-		"{{count}}個のcalloutがこの画像を使用しています。新しい画像を指定するまで、プレースホルダーアイコンが表示されます。",
-	"iconPicker.imageRecolor": "Calloutのカラーに合わせる",
+	"iconPicker.customDecodeFailed":
+		"{{name}}をカスタムアイコンとして読み取れませんでした。",
+	"iconPicker.customDuplicate":
+		"{{name}}はすでにカスタムアイコンにあります。ファイル名を変更するか、既存のアイコンを削除してください。",
+	"iconPicker.customAdd": "カスタムアイコンを追加",
+	"iconPicker.customEmpty":
+		"カスタムアイコンはまだありません。コンピューターからSVG、PNG、JPEG、またはWebPファイルを追加するか、ここにドロップしてください。",
+	"iconPicker.customDelete": "削除",
+	"iconPicker.customDeleteConfirm": "「{{name}}」を削除しますか？",
+	"iconPicker.customDeleteInUse":
+		"{{count}}個のcalloutがこのカスタムアイコンを使用しています。新しいアイコンを指定するまで、プレースホルダーアイコンが表示されます。",
+	"iconPicker.customRecolor": "Calloutのカラーに合わせる",
 	"iconPicker.allSources": "すべてのソース",
 	"iconPicker.searchAllSources": "すべてのアイコンソースを検索",
 	"iconPicker.sourcesNotDownloaded":
@@ -502,7 +502,7 @@ export const ja: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHubのインターフェイスアイコン",
 	"iconPicker.descFa": "Solid、Regular、ブランド",
 	"iconPicker.descRpgAwesome": "ファンタジーとテーブルトップのアイコン",
-	"iconPicker.descImage": "コンピューターから追加した画像",
+	"iconPicker.descCustom": "コンピューターから追加したカスタムアイコン",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "アクセシビリティ",

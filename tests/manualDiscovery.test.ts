@@ -5,7 +5,7 @@ import { discoveryHarness, definition } from "./support/discoveryHarness";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { syncThemeOverlayRows } from "../src/manager/theme/themeOverlayRows";
 import { CURRENT_DATA_VERSION } from "../src/constants";
-import { readRepoFile, repoFileExists } from "./support/sourceScan";
+import { readRepoFile } from "./support/sourceScan";
 
 function gate() {
 	let release!: () => void;
@@ -145,10 +145,11 @@ describe("manual discovery is an explicit additive transaction", () => {
 	});
 });
 
-describe("automatic discovery is removed from production wiring", () => {
-	it("has no scheduler, prune, startup scanner or local index module", () => {
+describe("automatic discovery remains outside production wiring", () => {
+	it("does not import its scheduler, prune, startup scanner or local index", () => {
+		const production = `${readRepoFile("src/main.ts")}\n${readRepoFile("src/manager/launchSequence.ts")}`;
 		for (const name of ["CalloutDiscovery", "CalloutPrune", "discoveryScheduler", "rediscoveryHold", "discoveryIndexBoot", "firstRunDiscovery"]) {
-			assert.equal(repoFileExists(`src/manager/${name}.ts`), false, name);
+			assert.doesNotMatch(production, new RegExp(`\\b${name}\\b`), name);
 		}
 	});
 	it("only the settings button calls the manual scan", () => {

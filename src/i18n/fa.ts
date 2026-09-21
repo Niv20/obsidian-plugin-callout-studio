@@ -458,25 +458,25 @@ export const fa: Record<string, string> = {
 	"iconPicker.faStyleBrands": "برندها (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "جستجو در RPG Awesome",
-	"iconPicker.image": "تصاویر شما",
-	"iconPicker.searchImage": "جستجو در تصاویر شما",
-	"iconPicker.imageTooLarge":
-		"{{name}} خیلی بزرگ است. تصاویر باید کمتر از ۵ مگابایت باشند.",
-	"iconPicker.imageUnsupported":
-		"{{name}} فرمت تصویر پشتیبانی‌شده‌ای نیست. از SVG، PNG، JPEG یا WebP استفاده کنید.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "نمادهای سفارشی",
+	"iconPicker.searchCustom": "جستجو در نمادهای سفارشی",
+	"iconPicker.customTooLarge":
+		"{{name}} خیلی بزرگ است. نمادهای سفارشی باید کمتر از ۵ مگابایت باشند.",
+	"iconPicker.customUnsupported":
+		"{{name}} فایل نماد سفارشی پشتیبانی‌شده‌ای نیست. از SVG، PNG، JPEG یا WebP استفاده کنید.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} به عنوان SVG امن قابل خواندن نبود و اضافه نشد.",
-	"iconPicker.imageDecodeFailed": "{{name}} به عنوان تصویر قابل خواندن نبود.",
-	"iconPicker.imageDuplicate":
-		"{{name}} قبلاً در تصاویر شما وجود دارد. نام فایل را تغییر دهید یا تصویر موجود را حذف کنید.",
-	"iconPicker.imageAdd": "افزودن تصاویر",
-	"iconPicker.imageEmpty":
-		"هنوز تصویری وجود ندارد. یک فایل SVG، PNG، JPEG یا WebP از رایانه خود اضافه کنید یا اینجا رها کنید.",
-	"iconPicker.imageDelete": "حذف",
-	"iconPicker.imageDeleteConfirm": "حذف «{{name}}»؟",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callout از این تصویر استفاده می‌کنند. تا زمانی که تصویر جدیدی تعیین کنید، آیکون جایگزین نمایش داده می‌شود.",
-	"iconPicker.imageRecolor": "پیروی از رنگ Callout",
+	"iconPicker.customDecodeFailed": "{{name}} به عنوان نماد سفارشی قابل خواندن نبود.",
+	"iconPicker.customDuplicate":
+		"{{name}} از قبل در نمادهای سفارشی شما وجود دارد. نام فایل را تغییر دهید یا نماد موجود را حذف کنید.",
+	"iconPicker.customAdd": "افزودن نمادهای سفارشی",
+	"iconPicker.customEmpty":
+		"هنوز نماد سفارشی‌ای وجود ندارد. یک فایل SVG، PNG، JPEG یا WebP از رایانه خود اضافه کنید یا آن را اینجا رها کنید.",
+	"iconPicker.customDelete": "حذف",
+	"iconPicker.customDeleteConfirm": "حذف «{{name}}»؟",
+	"iconPicker.customDeleteInUse":
+		"{{count}} کال‌اوت از این نماد سفارشی استفاده می‌کنند. تا زمانی که نماد جدیدی انتخاب کنید، از نماد جایگزین استفاده خواهند کرد.",
+	"iconPicker.customRecolor": "پیروی از رنگ Callout",
 	"iconPicker.allSources": "همه منابع",
 	"iconPicker.searchAllSources": "جستجو در همه منابع آیکون",
 	"iconPicker.sourcesNotDownloaded":
@@ -493,7 +493,7 @@ export const fa: Record<string, string> = {
 	"iconPicker.descOcticons": "آیکون‌های رابط GitHub",
 	"iconPicker.descFa": "توپر، معمولی و برندها",
 	"iconPicker.descRpgAwesome": "آیکون‌های فانتزی و بازی‌های رومیزی",
-	"iconPicker.descImage": "تصاویری که از رایانه خود اضافه می‌کنید",
+	"iconPicker.descCustom": "نمادهای سفارشی که از رایانه خود اضافه می‌کنید",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "دسترسی‌پذیری",

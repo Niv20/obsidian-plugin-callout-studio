@@ -446,26 +446,26 @@ export const bg: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Марки (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Търсене в RPG Awesome",
-	"iconPicker.image": "Вашите изображения",
-	"iconPicker.searchImage": "Търсене в изображенията",
-	"iconPicker.imageTooLarge":
-		"{{name}} е твърде голям. Изображенията трябва да са под 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} не е поддържан формат на изображение. Използвайте SVG, PNG, JPEG или WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Персонализирани икони",
+	"iconPicker.searchCustom": "Търсене в персонализирани икони",
+	"iconPicker.customTooLarge":
+		"{{name}} е твърде голяма. Персонализираните икони трябва да са под 5 MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} не е поддържан файл за персонализирана икона. Използвайте SVG, PNG, JPEG или WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} не може да бъде прочетен като сигурен SVG, затова не беше добавен.",
-	"iconPicker.imageDecodeFailed":
-		"{{name}} не може да бъде прочетен като изображение.",
-	"iconPicker.imageDuplicate":
-		"{{name}} вече е в изображенията ви. Преименувайте файла или изтрийте съществуващото изображение.",
-	"iconPicker.imageAdd": "Добавяне на изображения",
-	"iconPicker.imageEmpty":
-		"Все още няма изображения. Добавете SVG, PNG, JPEG или WebP файл от компютъра си или го пуснете тук.",
-	"iconPicker.imageDelete": "Изтриване",
-	"iconPicker.imageDeleteConfirm": "Изтриване на „{{name}}“?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callout(s) използва(т) това изображение. Ще показват заместваща иконка, докато не добавите нова.",
-	"iconPicker.imageRecolor": "Следване цвета на Callout",
+	"iconPicker.customDecodeFailed":
+		"{{name}} не може да бъде прочетен като персонализирана икона.",
+	"iconPicker.customDuplicate":
+		"{{name}} вече е сред персонализираните ви икони. Преименувайте файла или изтрийте съществуващата икона.",
+	"iconPicker.customAdd": "Добавяне на персонализирани икони",
+	"iconPicker.customEmpty":
+		"Все още няма персонализирани икони. Добавете SVG, PNG, JPEG или WebP файл от компютъра си или го пуснете тук.",
+	"iconPicker.customDelete": "Изтриване",
+	"iconPicker.customDeleteConfirm": "Изтриване на „{{name}}“?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callout(s) използва(т) тази персонализирана икона. Ще показват заместваща икона, докато не изберете нова.",
+	"iconPicker.customRecolor": "Следване цвета на Callout",
 	"iconPicker.allSources": "Всички източници",
 	"iconPicker.searchAllSources": "Търсене във всички източници на икони",
 	"iconPicker.sourcesNotDownloaded":
@@ -484,7 +484,7 @@ export const bg: Record<string, string> = {
 	"iconPicker.descOcticons": "иконите на интерфейса на GitHub",
 	"iconPicker.descFa": "плътни, редовни и марки",
 	"iconPicker.descRpgAwesome": "фентъзи и настолни игри икони",
-	"iconPicker.descImage": "изображения, добавени от компютъра ви",
+	"iconPicker.descCustom": "персонализирани икони, които добавяте от компютъра си",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Достъпност",

@@ -467,25 +467,25 @@ export const vi: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Thương hiệu",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Tìm kiếm RPG Awesome",
-	"iconPicker.image": "Hình ảnh của bạn",
-	"iconPicker.searchImage": "Tìm kiếm hình ảnh của bạn",
-	"iconPicker.imageTooLarge": "{{name}} quá lớn. Hình ảnh phải nhỏ hơn 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} không phải định dạng hình ảnh được hỗ trợ. Sử dụng SVG, PNG, JPEG hoặc WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Biểu tượng tùy chỉnh",
+	"iconPicker.searchCustom": "Tìm kiếm biểu tượng tùy chỉnh",
+	"iconPicker.customTooLarge": "{{name}} quá lớn. Biểu tượng tùy chỉnh phải nhỏ hơn 5 MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} không phải là tệp biểu tượng tùy chỉnh được hỗ trợ. Dùng SVG, PNG, JPEG hoặc WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} không thể đọc được như một SVG an toàn và đã không được thêm vào.",
-	"iconPicker.imageDecodeFailed":
-		"{{name}} không thể đọc được như một hình ảnh.",
-	"iconPicker.imageDuplicate":
-		"{{name}} đã có trong hình ảnh của bạn. Đổi tên tệp hoặc xóa hình ảnh hiện có.",
-	"iconPicker.imageAdd": "Thêm hình ảnh",
-	"iconPicker.imageEmpty":
-		"Chưa có hình ảnh nào. Thêm tệp SVG, PNG, JPEG hoặc WebP từ máy tính của bạn hoặc kéo thả vào đây.",
-	"iconPicker.imageDelete": "Xóa",
-	"iconPicker.imageDeleteConfirm": "Xóa “{{name}}”?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callout đang sử dụng hình ảnh này. Chúng sẽ hiển thị biểu tượng giữ chỗ cho đến khi bạn cung cấp hình ảnh mới.",
-	"iconPicker.imageRecolor": "Theo màu Callout",
+	"iconPicker.customDecodeFailed":
+		"Không thể đọc {{name}} dưới dạng biểu tượng tùy chỉnh.",
+	"iconPicker.customDuplicate":
+		"{{name}} đã có trong biểu tượng tùy chỉnh của bạn. Đổi tên tệp hoặc xóa biểu tượng hiện có.",
+	"iconPicker.customAdd": "Thêm biểu tượng tùy chỉnh",
+	"iconPicker.customEmpty":
+		"Chưa có biểu tượng tùy chỉnh. Thêm tệp SVG, PNG, JPEG hoặc WebP từ máy tính, hoặc thả vào đây.",
+	"iconPicker.customDelete": "Xóa",
+	"iconPicker.customDeleteConfirm": "Xóa “{{name}}”?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callout đang dùng biểu tượng tùy chỉnh này. Chúng sẽ quay về biểu tượng giữ chỗ cho đến khi bạn chọn biểu tượng mới.",
+	"iconPicker.customRecolor": "Theo màu Callout",
 	"iconPicker.allSources": "Tất cả nguồn",
 	"iconPicker.searchAllSources": "Tìm kiếm trong tất cả nguồn biểu tượng",
 	"iconPicker.sourcesNotDownloaded":
@@ -503,7 +503,7 @@ export const vi: Record<string, string> = {
 	"iconPicker.descOcticons": "biểu tượng giao diện GitHub",
 	"iconPicker.descFa": "đặc, thường và thương hiệu",
 	"iconPicker.descRpgAwesome": "biểu tượng fantasy và trò chơi bàn",
-	"iconPicker.descImage": "hình ảnh bạn thêm từ máy tính",
+	"iconPicker.descCustom": "biểu tượng tùy chỉnh bạn thêm từ máy tính",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Trợ năng",

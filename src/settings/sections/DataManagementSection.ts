@@ -132,7 +132,7 @@ async function showVaultStatistics(ctx: SettingsSectionContext): Promise<void> {
  * Parses and applies a Callout Studio JSON export. Takes an already-chosen
  * `File` rather than owning a file input itself — see ImportSourceModal,
  * which keeps one persistent, DOM-attached input alive for its lifetime
- * (mirroring ImagePanel's "Your images" add button) rather than creating one
+ * (mirroring ImagePanel's "Custom Icons" add button) rather than creating one
  * fresh per click, since a detached input built inside the click handler was
  * unreliable for actually showing Chromium's file chooser.
  */

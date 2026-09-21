@@ -197,17 +197,16 @@ function code(text: string): string {
 }
 
 describe("theme overlay rows — the guards that keep them off disk", () => {
-	it("is the only place in src/ that mints a theme row", () => {
-		// The overlay is safe because exactly one function can create one and
-		// that function is covered above. A second minter somewhere else would
-		// be a row nobody has reasoned about reaching a persisted field.
+	it("limits theme-row minting to the overlay and theme-provided sweep", () => {
+		// Both paths are covered above. A third minter would be a row nobody has
+		// reasoned about reaching a persisted field.
 		const offenders = pluginSourceFiles()
 			.filter((f) => f.path !== "src/manager/theme/themeOverlayRows.ts")
 			.filter((f) => /source:\s*"theme"/.test(code(f.text)))
 			.map((f) => f.path);
 		assert.deepStrictEqual(
 			offenders,
-			[],
+			["src/manager/theme/themeProvidedRows.ts"],
 			report("Files minting a theme row", offenders),
 		);
 	});

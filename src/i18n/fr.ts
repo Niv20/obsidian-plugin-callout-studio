@@ -473,26 +473,26 @@ export const fr: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Marques (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Rechercher dans RPG Awesome",
-	"iconPicker.image": "Vos images",
-	"iconPicker.searchImage": "Rechercher dans vos images",
-	"iconPicker.imageTooLarge":
-		"{{name}} est trop volumineux. Les images doivent faire moins de 5 Mo.",
-	"iconPicker.imageUnsupported":
-		"{{name}} n'est pas un format d'image pris en charge. Utilisez SVG, PNG, JPEG ou WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Icônes personnalisées",
+	"iconPicker.searchCustom": "Rechercher dans les icônes personnalisées",
+	"iconPicker.customTooLarge":
+		"{{name}} est trop volumineux. Les icônes personnalisées doivent faire moins de 5 Mo.",
+	"iconPicker.customUnsupported":
+		"{{name}} n'est pas un fichier d'icône personnalisée pris en charge. Utilisez SVG, PNG, JPEG ou WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} ne peut pas être lu comme un SVG sécurisé et n'a pas été ajouté.",
-	"iconPicker.imageDecodeFailed":
-		"{{name}} ne peut pas être lu comme une image.",
-	"iconPicker.imageDuplicate":
-		"{{name}} est déjà dans vos images. Renommez le fichier ou supprimez l'image existante.",
-	"iconPicker.imageAdd": "Ajouter des images",
-	"iconPicker.imageEmpty":
-		"Pas encore d'images. Ajoutez un fichier SVG, PNG, JPEG ou WebP depuis votre ordinateur, ou déposez-en un ici.",
-	"iconPicker.imageDelete": "Supprimer",
-	"iconPicker.imageDeleteConfirm": "Supprimer « {{name}} » ?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callout(s) utilisent cette image. Ils afficheront une icône de remplacement jusqu'à ce que vous en fournissiez une nouvelle.",
-	"iconPicker.imageRecolor": "Suivre la couleur du Callout",
+	"iconPicker.customDecodeFailed":
+		"{{name}} ne peut pas être lu comme une icône personnalisée.",
+	"iconPicker.customDuplicate":
+		"{{name}} existe déjà dans vos icônes personnalisées. Renommez le fichier ou supprimez l’icône existante.",
+	"iconPicker.customAdd": "Ajouter des icônes personnalisées",
+	"iconPicker.customEmpty":
+		"Aucune icône personnalisée pour le moment. Ajoutez un fichier SVG, PNG, JPEG ou WebP depuis votre ordinateur, ou déposez-en un ici.",
+	"iconPicker.customDelete": "Supprimer",
+	"iconPicker.customDeleteConfirm": "Supprimer « {{name}} » ?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callout(s) utilisent cette icône personnalisée. Ils afficheront une icône de remplacement jusqu’à ce que vous en choisissiez une nouvelle.",
+	"iconPicker.customRecolor": "Suivre la couleur du Callout",
 	"iconPicker.allSources": "Toutes les sources",
 	"iconPicker.searchAllSources":
 		"Rechercher dans toutes les sources d'icônes",
@@ -513,7 +513,7 @@ export const fr: Record<string, string> = {
 	"iconPicker.descOcticons": "icônes d'interface de GitHub",
 	"iconPicker.descFa": "plein, régulier et marques",
 	"iconPicker.descRpgAwesome": "icônes de fantaisie et jeux de plateau",
-	"iconPicker.descImage": "images que vous ajoutez depuis votre ordinateur",
+	"iconPicker.descCustom": "icônes personnalisées ajoutées depuis votre ordinateur",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Accessibilité",

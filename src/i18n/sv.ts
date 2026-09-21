@@ -461,25 +461,25 @@ export const sv: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Varumärken",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Sök i RPG Awesome",
-	"iconPicker.image": "Dina bilder",
-	"iconPicker.searchImage": "Sök i dina bilder",
-	"iconPicker.imageTooLarge":
-		"{{name}} är för stor. Bilder måste vara under 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} är inte ett format som stöds. Använd SVG, PNG, JPEG eller WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Anpassade ikoner",
+	"iconPicker.searchCustom": "Sök i anpassade ikoner",
+	"iconPicker.customTooLarge":
+		"{{name}} är för stor. Anpassade ikoner måste vara under 5 MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} är inte en stödd fil för anpassad ikon. Använd SVG, PNG, JPEG eller WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} kunde inte läsas som en säker SVG och lades inte till.",
-	"iconPicker.imageDecodeFailed": "{{name}} kunde inte läsas som en bild.",
-	"iconPicker.imageDuplicate":
-		"{{name}} finns redan i dina bilder. Byt namn på filen eller ta bort den befintliga bilden.",
-	"iconPicker.imageAdd": "Lägg till bilder",
-	"iconPicker.imageEmpty":
-		"Inga bilder ännu. Lägg till en SVG-, PNG-, JPEG- eller WebP-fil från din dator eller dra den hit.",
-	"iconPicker.imageDelete": "Ta bort",
-	"iconPicker.imageDeleteConfirm": "Ta bort „{{name}}“?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callouts använder den här bilden. De visar en platshållarikon tills du ger dem en ny.",
-	"iconPicker.imageRecolor": "Följ Callout-färg",
+	"iconPicker.customDecodeFailed": "{{name}} kunde inte läsas som en anpassad ikon.",
+	"iconPicker.customDuplicate":
+		"{{name}} finns redan bland dina anpassade ikoner. Byt namn på filen eller ta bort den befintliga ikonen.",
+	"iconPicker.customAdd": "Lägg till anpassade ikoner",
+	"iconPicker.customEmpty":
+		"Inga anpassade ikoner ännu. Lägg till en SVG-, PNG-, JPEG- eller WebP-fil från datorn, eller släpp den här.",
+	"iconPicker.customDelete": "Ta bort",
+	"iconPicker.customDeleteConfirm": "Ta bort „{{name}}“?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callouts använder den här anpassade ikonen. De återgår till en platshållarikon tills du väljer en ny.",
+	"iconPicker.customRecolor": "Följ Callout-färg",
 	"iconPicker.allSources": "Alla källor",
 	"iconPicker.searchAllSources": "Sök i alla ikonfontskällor",
 	"iconPicker.sourcesNotDownloaded":
@@ -496,7 +496,7 @@ export const sv: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHubs gränssnittsikoner",
 	"iconPicker.descFa": "solid, regular och varumärken",
 	"iconPicker.descRpgAwesome": "fantasy- och sällskapsspelsikoner",
-	"iconPicker.descImage": "bilder du lägger till från din dator",
+	"iconPicker.descCustom": "anpassade ikoner som du lägger till från datorn",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Tillgänglighet",

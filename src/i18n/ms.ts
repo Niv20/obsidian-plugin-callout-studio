@@ -459,26 +459,26 @@ export const ms: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Jenama (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Cari RPG Awesome",
-	"iconPicker.image": "Gambar anda",
-	"iconPicker.searchImage": "Cari gambar anda",
-	"iconPicker.imageTooLarge":
-		"{{name}} terlalu besar. Gambar mesti kurang daripada 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} bukan format gambar yang disokong. Gunakan SVG, PNG, JPEG atau WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Ikon tersuai",
+	"iconPicker.searchCustom": "Cari ikon tersuai",
+	"iconPicker.customTooLarge":
+		"{{name}} terlalu besar. Ikon tersuai mesti kurang daripada 5 MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} bukan fail ikon tersuai yang disokong. Gunakan SVG, PNG, JPEG atau WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} tidak dapat dibaca sebagai SVG selamat dan tidak ditambahkan.",
-	"iconPicker.imageDecodeFailed":
-		"{{name}} tidak dapat dibaca sebagai gambar.",
-	"iconPicker.imageDuplicate":
-		"{{name}} sudah ada dalam gambar anda. Namakan semula fail atau padamkan gambar sedia ada.",
-	"iconPicker.imageAdd": "Tambah gambar",
-	"iconPicker.imageEmpty":
-		"Belum ada gambar. Tambah fail SVG, PNG, JPEG atau WebP dari komputer anda atau seret ke sini.",
-	"iconPicker.imageDelete": "Padam",
-	"iconPicker.imageDeleteConfirm": "Padam “{{name}}”?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callout menggunakan gambar ini. Mereka akan menunjukkan ikon pemegang tempat sehingga anda memberikan yang baru.",
-	"iconPicker.imageRecolor": "Ikut warna Callout",
+	"iconPicker.customDecodeFailed":
+		"{{name}} tidak dapat dibaca sebagai ikon tersuai.",
+	"iconPicker.customDuplicate":
+		"{{name}} sudah ada dalam ikon tersuai anda. Namakan semula fail atau padam ikon sedia ada.",
+	"iconPicker.customAdd": "Tambah ikon tersuai",
+	"iconPicker.customEmpty":
+		"Belum ada ikon tersuai. Tambah fail SVG, PNG, JPEG atau WebP daripada komputer anda, atau lepaskan di sini.",
+	"iconPicker.customDelete": "Padam",
+	"iconPicker.customDeleteConfirm": "Padam “{{name}}”?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callout menggunakan ikon tersuai ini. Ia akan kembali kepada ikon pemegang tempat sehingga anda memilih yang baharu.",
+	"iconPicker.customRecolor": "Ikut warna Callout",
 	"iconPicker.allSources": "Semua sumber",
 	"iconPicker.searchAllSources": "Cari semua sumber ikon",
 	"iconPicker.sourcesNotDownloaded":
@@ -496,7 +496,7 @@ export const ms: Record<string, string> = {
 	"iconPicker.descOcticons": "ikon antara muka GitHub",
 	"iconPicker.descFa": "padu, biasa dan jenama",
 	"iconPicker.descRpgAwesome": "ikon fantasi dan permainan meja",
-	"iconPicker.descImage": "gambar yang anda tambah dari komputer",
+	"iconPicker.descCustom": "ikon tersuai yang anda tambah daripada komputer",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Kebolehcapaian",

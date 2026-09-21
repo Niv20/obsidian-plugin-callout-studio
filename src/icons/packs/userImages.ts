@@ -71,17 +71,17 @@ export function followsCalloutColor(
 export const userImagesPack: IconPack = {
 	id: "image",
 	kind: "local",
-	labelKey: "iconPicker.image",
-	descriptionKey: "iconPicker.descImage",
+	labelKey: "iconPicker.custom",
+	descriptionKey: "iconPicker.descCustom",
 	emblemIcon: "image",
-	searchPlaceholderKey: "iconPicker.searchImage",
+	searchPlaceholderKey: "iconPicker.searchCustom",
 	// The user's own handful of pictures; a category filter would be noise.
 	hasCategories: false,
 
 	// No third-party artwork, so nothing to credit. An empty licence list is the
 	// existing signal for "show no attribution block" (see allSources).
 	attribution: {
-		title: "Your images",
+		title: "Custom Icons",
 		homepage: "",
 		version: "",
 		licenses: [],

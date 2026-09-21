@@ -214,7 +214,7 @@ describe("the palette editor's Name field does not repaint when the pointer cros
 /**
  * The icon picker's search box — the toolbar at the top of every source panel
  * (PackPanel: Lucide, Tabler, Material, Font Awesome, emoji, the pooled "All
- * sources" list; ImagePanel: "Your images"), all sharing one
+ * sources" list; ImagePanel: "Custom Icons"), all sharing one
  * `.icon-picker-search-input` class. Same shape of bug as the palette Name
  * field: no rule of its own, so it fell straight through to Obsidian's hover
  * rule and repainted mid-search, unfocused, while the callout editor's fields

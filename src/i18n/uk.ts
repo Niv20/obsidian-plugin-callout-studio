@@ -472,26 +472,26 @@ export const uk: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Бренди",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Пошук в RPG Awesome",
-	"iconPicker.image": "Ваші зображення",
-	"iconPicker.searchImage": "Пошук у ваших зображеннях",
-	"iconPicker.imageTooLarge":
-		"{{name}} занадто великий. Зображення мають бути менше 5 МБ.",
-	"iconPicker.imageUnsupported":
-		"{{name}} — непідтримуваний формат зображення. Використовуйте SVG, PNG, JPEG або WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Користувацькі піктограми",
+	"iconPicker.searchCustom": "Пошук користувацьких піктограм",
+	"iconPicker.customTooLarge":
+		"{{name}} завеликий. Користувацькі піктограми мають бути менше 5 МБ.",
+	"iconPicker.customUnsupported":
+		"{{name}} не є підтримуваним файлом користувацької піктограми. Використовуйте SVG, PNG, JPEG або WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} не вдалося прочитати як безпечний SVG, тому він не був доданий.",
-	"iconPicker.imageDecodeFailed":
-		"{{name}} не вдалося прочитати як зображення.",
-	"iconPicker.imageDuplicate":
-		"{{name}} вже є у ваших зображеннях. Перейменуйте файл або видаліть наявне зображення.",
-	"iconPicker.imageAdd": "Додати зображення",
-	"iconPicker.imageEmpty":
-		"Зображень поки немає. Додайте файл SVG, PNG, JPEG або WebP зі свого комп'ютера або перетягніть сюди.",
-	"iconPicker.imageDelete": "Видалити",
-	"iconPicker.imageDeleteConfirm": "Видалити «{{name}}»?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callout(ів) використовують це зображення. Вони показуватимуть іконку-замінник, доки ви не вкажете нову.",
-	"iconPicker.imageRecolor": "Слідувати кольору Callout",
+	"iconPicker.customDecodeFailed":
+		"{{name}} не вдалося прочитати як користувацьку піктограму.",
+	"iconPicker.customDuplicate":
+		"{{name}} уже є серед ваших користувацьких піктограм. Перейменуйте файл або видаліть наявну піктограму.",
+	"iconPicker.customAdd": "Додати користувацькі піктограми",
+	"iconPicker.customEmpty":
+		"Користувацьких піктограм ще немає. Додайте файл SVG, PNG, JPEG або WebP з компʼютера чи перетягніть його сюди.",
+	"iconPicker.customDelete": "Видалити",
+	"iconPicker.customDeleteConfirm": "Видалити «{{name}}»?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callout(ів) використовують цю користувацьку піктограму. Вони повернуться до піктограми-заповнювача, доки ви не виберете нову.",
+	"iconPicker.customRecolor": "Слідувати кольору Callout",
 	"iconPicker.allSources": "Всі джерела",
 	"iconPicker.searchAllSources": "Пошук у всіх джерелах іконок",
 	"iconPicker.sourcesNotDownloaded":
@@ -509,7 +509,7 @@ export const uk: Record<string, string> = {
 	"iconPicker.descOcticons": "іконки інтерфейсу GitHub",
 	"iconPicker.descFa": "заповнений, звичайний та бренди",
 	"iconPicker.descRpgAwesome": "іконки фентезі та настільних ігор",
-	"iconPicker.descImage": "зображення, додані з вашого комп'ютера",
+	"iconPicker.descCustom": "користувацькі піктограми, додані з компʼютера",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Доступність",

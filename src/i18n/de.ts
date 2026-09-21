@@ -467,26 +467,26 @@ export const de: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Marken (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "RPG Awesome durchsuchen",
-	"iconPicker.image": "Ihre Bilder",
-	"iconPicker.searchImage": "Bilder durchsuchen",
-	"iconPicker.imageTooLarge":
-		"{{name}} ist zu groß. Bilder müssen kleiner als 5 MB sein.",
-	"iconPicker.imageUnsupported":
-		"{{name}} ist kein unterstütztes Bildformat. Verwenden Sie SVG, PNG, JPEG oder WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Benutzerdefinierte Symbole",
+	"iconPicker.searchCustom": "Benutzerdefinierte Symbole durchsuchen",
+	"iconPicker.customTooLarge":
+		"{{name}} ist zu groß. Benutzerdefinierte Symbole müssen kleiner als 5 MB sein.",
+	"iconPicker.customUnsupported":
+		"{{name}} ist keine unterstützte Datei für ein benutzerdefiniertes Symbol. Verwenden Sie SVG, PNG, JPEG oder WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} konnte nicht als sicheres SVG gelesen werden und wurde nicht hinzugefügt.",
-	"iconPicker.imageDecodeFailed":
-		"{{name}} konnte nicht als Bild gelesen werden.",
-	"iconPicker.imageDuplicate":
-		"{{name}} ist bereits in Ihren Bildern. Benennen Sie die Datei um oder löschen Sie das vorhandene Bild.",
-	"iconPicker.imageAdd": "Bilder hinzufügen",
-	"iconPicker.imageEmpty":
-		"Noch keine Bilder. Fügen Sie eine SVG-, PNG-, JPEG- oder WebP-Datei von Ihrem Computer hinzu oder ziehen Sie eine hierher.",
-	"iconPicker.imageDelete": "Löschen",
-	"iconPicker.imageDeleteConfirm": "„{{name}}“ löschen?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} Callout(s) verwendet dieses Bild. Es wird ein Platzhalter-Symbol angezeigt, bis Sie ein neues festlegen.",
-	"iconPicker.imageRecolor": "Callout-Farbe übernehmen",
+	"iconPicker.customDecodeFailed":
+		"{{name}} konnte nicht als benutzerdefiniertes Symbol gelesen werden.",
+	"iconPicker.customDuplicate":
+		"{{name}} ist bereits in Ihren benutzerdefinierten Symbolen. Benennen Sie die Datei um oder löschen Sie das vorhandene Symbol.",
+	"iconPicker.customAdd": "Benutzerdefinierte Symbole hinzufügen",
+	"iconPicker.customEmpty":
+		"Noch keine benutzerdefinierten Symbole. Fügen Sie eine SVG-, PNG-, JPEG- oder WebP-Datei von Ihrem Computer hinzu oder ziehen Sie sie hierher.",
+	"iconPicker.customDelete": "Löschen",
+	"iconPicker.customDeleteConfirm": "„{{name}}“ löschen?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} Callout(s) verwenden dieses benutzerdefinierte Symbol. Sie fallen auf ein Platzhalter-Symbol zurück, bis Sie ein neues auswählen.",
+	"iconPicker.customRecolor": "Callout-Farbe übernehmen",
 	"iconPicker.allSources": "Alle Quellen",
 	"iconPicker.searchAllSources": "Alle Symbol-Quellen durchsuchen",
 	"iconPicker.sourcesNotDownloaded":
@@ -505,7 +505,7 @@ export const de: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHubs Interface-Symbole",
 	"iconPicker.descFa": "ausgefüllt, regulär und Marken",
 	"iconPicker.descRpgAwesome": "Fantasy- und Tabletop-Symbole",
-	"iconPicker.descImage": "Bilder, die Sie von Ihrem Computer hinzufügen",
+	"iconPicker.descCustom": "benutzerdefinierte Symbole, die Sie von Ihrem Computer hinzufügen",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Barrierefreiheit",

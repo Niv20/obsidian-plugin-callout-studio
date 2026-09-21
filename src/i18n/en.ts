@@ -580,28 +580,25 @@ export const en: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Brands",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Search RPG Awesome",
-	"iconPicker.image": "Your images",
-	"iconPicker.searchImage": "Search your images",
-	"iconPicker.imageTooLarge":
-		"{{name}} is too large. Pictures must be under 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} is not a supported picture. Use SVG, PNG, JPEG or WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Custom Icons",
+	"iconPicker.searchCustom": "Search custom icons",
+	"iconPicker.customTooLarge":
+		"{{name}} is too large. Custom icons must be under 5 MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} is not a supported custom icon file. Use SVG, PNG, JPEG or WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} could not be read as a safe SVG, so it was not added.",
-	"iconPicker.imageDecodeFailed": "{{name}} could not be read as a picture.",
-	"iconPicker.imageDuplicate":
-		"{{name}} is already in your images. Rename the file, or delete the " +
-		"picture you already have.",
-	"iconPicker.imageAdd": "Add images",
-	"iconPicker.imageEmpty":
-		"No pictures yet. Add an SVG, PNG, JPEG or WebP file from your computer, " +
-		"or drop one here.",
-	"iconPicker.imageDelete": "Delete",
-	"iconPicker.imageDeleteConfirm": "Delete “{{name}}”?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callouts use this picture. They will fall back to a " +
-		"placeholder icon until you give them a new one.",
-	"iconPicker.imageRecolor": "Follow callout color",
+	"iconPicker.customDecodeFailed": "{{name}} could not be read as a custom icon.",
+	"iconPicker.customDuplicate":
+		"{{name}} is already in your custom icons. Rename the file, or delete the custom icon you already have.",
+	"iconPicker.customAdd": "Add custom icons",
+	"iconPicker.customEmpty":
+		"No custom icons yet. Add an SVG, PNG, JPEG or WebP file from your computer, or drop one here.",
+	"iconPicker.customDelete": "Delete",
+	"iconPicker.customDeleteConfirm": "Delete “{{name}}”?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callouts use this custom icon. They will fall back to a placeholder icon until you give them a new one.",
+	"iconPicker.customRecolor": "Follow callout color",
 	"iconPicker.allSources": "All sources",
 	"iconPicker.searchAllSources": "Search all icon sources",
 	"iconPicker.sourcesNotDownloaded":
@@ -619,7 +616,7 @@ export const en: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub's interface icons",
 	"iconPicker.descFa": "solid, regular and brand marks",
 	"iconPicker.descRpgAwesome": "fantasy and tabletop icons",
-	"iconPicker.descImage": "pictures you add from your computer",
+	"iconPicker.descCustom": "custom icons you add from your computer",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Accessibility",

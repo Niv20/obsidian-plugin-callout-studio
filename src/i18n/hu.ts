@@ -467,25 +467,25 @@ export const hu: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Márkák (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Keresés az RPG Awesome-ban",
-	"iconPicker.image": "Saját képek",
-	"iconPicker.searchImage": "Keresés a képek között",
-	"iconPicker.imageTooLarge":
-		"{{name}} túl nagy. A képeknek 5 MB alatt kell lenniük.",
-	"iconPicker.imageUnsupported":
-		"{{name}} nem támogatott képformátum. Használjon SVG, PNG, JPEG vagy WebP formátumot.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Egyéni ikonok",
+	"iconPicker.searchCustom": "Keresés az egyéni ikonok között",
+	"iconPicker.customTooLarge":
+		"{{name}} túl nagy. Az egyéni ikonoknak 5 MB alatt kell lenniük.",
+	"iconPicker.customUnsupported":
+		"{{name}} nem támogatott egyéni ikonfájl. Használjon SVG, PNG, JPEG vagy WebP fájlt.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} nem olvasható biztonságos SVG-ként, ezért nem lett hozzáadva.",
-	"iconPicker.imageDecodeFailed": "{{name}} nem olvasható képként.",
-	"iconPicker.imageDuplicate":
-		"{{name}} már szerepel a képei között. Nevezze át a fájlt, vagy törölje a meglévő képet.",
-	"iconPicker.imageAdd": "Képek hozzáadása",
-	"iconPicker.imageEmpty":
-		"Még nincsenek képek. Adjon hozzá SVG, PNG, JPEG vagy WebP fájlt a számítógépéről, vagy húzza ide.",
-	"iconPicker.imageDelete": "Törlés",
-	"iconPicker.imageDeleteConfirm": "„{{name}}” törlése?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callout használja ezt a képet. Helyőrző ikont fognak megjeleníteni, amíg nem ad meg egy újat.",
-	"iconPicker.imageRecolor": "Callout szín követése",
+	"iconPicker.customDecodeFailed": "{{name}} nem olvasható egyéni ikonként.",
+	"iconPicker.customDuplicate":
+		"{{name}} már szerepel az egyéni ikonok között. Nevezze át a fájlt, vagy törölje a meglévő ikont.",
+	"iconPicker.customAdd": "Egyéni ikonok hozzáadása",
+	"iconPicker.customEmpty":
+		"Még nincsenek egyéni ikonok. Adjon hozzá SVG-, PNG-, JPEG- vagy WebP-fájlt a számítógépről, vagy húzza ide.",
+	"iconPicker.customDelete": "Törlés",
+	"iconPicker.customDeleteConfirm": "„{{name}}” törlése?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callout használja ezt az egyéni ikont. Új ikon kiválasztásáig helyőrző ikonra váltanak.",
+	"iconPicker.customRecolor": "Callout szín követése",
 	"iconPicker.allSources": "Minden forrás",
 	"iconPicker.searchAllSources": "Keresés az összes ikonforrásban",
 	"iconPicker.sourcesNotDownloaded":
@@ -504,7 +504,7 @@ export const hu: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub felületi ikonjai",
 	"iconPicker.descFa": "tömör, normál és márkák",
 	"iconPicker.descRpgAwesome": "fantasy és asztali játék ikonok",
-	"iconPicker.descImage": "képek, amelyeket a számítógépéről ad hozzá",
+	"iconPicker.descCustom": "a számítógépről hozzáadott egyéni ikonok",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Akadálymentesség",

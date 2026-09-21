@@ -456,24 +456,24 @@ export const zh: Record<string, string> = {
 	"iconPicker.faStyleBrands": "品牌",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "搜索 RPG Awesome",
-	"iconPicker.image": "您的图片",
-	"iconPicker.searchImage": "搜索您的图片",
-	"iconPicker.imageTooLarge": "{{name}} 太大。图片必须小于 5 MB。",
-	"iconPicker.imageUnsupported":
-		"{{name}} 不是受支持的图片格式。请使用 SVG、PNG、JPEG 或 WebP。",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "自定义图标",
+	"iconPicker.searchCustom": "搜索自定义图标",
+	"iconPicker.customTooLarge": "{{name}} 太大。自定义图标必须小于 5 MB。",
+	"iconPicker.customUnsupported":
+		"{{name}} 不是受支持的自定义图标文件。请使用 SVG、PNG、JPEG 或 WebP。",
+	"iconPicker.customInvalidSvg":
 		"{{name}} 无法作为安全的 SVG 读取，因此未添加。",
-	"iconPicker.imageDecodeFailed": "{{name}} 无法作为图片读取。",
-	"iconPicker.imageDuplicate":
-		"{{name}} 已在您的图片中。请重命名文件或删除已有的图片。",
-	"iconPicker.imageAdd": "添加图片",
-	"iconPicker.imageEmpty":
-		"还没有图片。从您的计算机添加 SVG、PNG、JPEG 或 WebP 文件，或将其拖到此处。",
-	"iconPicker.imageDelete": "删除",
-	"iconPicker.imageDeleteConfirm": "删除“{{name}}”？",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} 个 callout 使用了这张图片。在您提供新图片之前，它们将显示占位图标。",
-	"iconPicker.imageRecolor": "跟随 Callout 颜色",
+	"iconPicker.customDecodeFailed": "无法将 {{name}} 读取为自定义图标。",
+	"iconPicker.customDuplicate":
+		"{{name}} 已在你的自定义图标中。请重命名文件，或删除现有图标。",
+	"iconPicker.customAdd": "添加自定义图标",
+	"iconPicker.customEmpty":
+		"还没有自定义图标。请从电脑添加 SVG、PNG、JPEG 或 WebP 文件，或将文件拖到这里。",
+	"iconPicker.customDelete": "删除",
+	"iconPicker.customDeleteConfirm": "删除“{{name}}”？",
+	"iconPicker.customDeleteInUse":
+		"{{count}} 个 callout 正在使用此自定义图标。在你选择新图标之前，它们将回退到占位图标。",
+	"iconPicker.customRecolor": "跟随 Callout 颜色",
 	"iconPicker.allSources": "所有来源",
 	"iconPicker.searchAllSources": "搜索所有图标来源",
 	"iconPicker.sourcesNotDownloaded":
@@ -490,7 +490,7 @@ export const zh: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub 界面图标",
 	"iconPicker.descFa": "实心、常规和品牌",
 	"iconPicker.descRpgAwesome": "奇幻和桌游图标",
-	"iconPicker.descImage": "从您的计算机添加的图片",
+	"iconPicker.descCustom": "你从电脑添加的自定义图标",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "无障碍功能",

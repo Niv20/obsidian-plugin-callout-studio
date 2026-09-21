@@ -217,14 +217,14 @@ describe("importImageFile — the size ceiling", () => {
 	it("refuses a file too big to be an icon, before decoding it", async () => {
 		const result = await importImageFile(file("huge.png", PNG, 5 * 1024 * 1024 + 1));
 		assert.equal(result.ok, false);
-		assert.equal(result.ok ? "" : result.reason, "iconPicker.imageTooLarge");
+		assert.equal(result.ok ? "" : result.reason, "iconPicker.customTooLarge");
 	});
 
 	it("accepts a file of exactly the ceiling as far as the size check", async () => {
 		// The guard is `>`, not `>=`; anything past it here fails for a later
 		// reason, which is what the next block is about.
 		const result = await importImageFile(file("big.png", PNG, 5 * 1024 * 1024));
-		assert.notEqual(result.ok ? "" : result.reason, "iconPicker.imageTooLarge");
+		assert.notEqual(result.ok ? "" : result.reason, "iconPicker.customTooLarge");
 	});
 });
 
@@ -238,25 +238,25 @@ describe("importImageFile — what the file actually is", () => {
 	it("refuses a file whose first bytes are no picture at all", async () => {
 		assert.equal(
 			await reason(file("notes.txt", "just some text")),
-			"iconPicker.imageUnsupported",
+			"iconPicker.customUnsupported",
 		);
-		assert.equal(await reason(file("empty.png", "")), "iconPicker.imageUnsupported");
+		assert.equal(await reason(file("empty.png", "")), "iconPicker.customUnsupported");
 	});
 
 	it("refuses a PDF, whatever it has been renamed to", async () => {
 		assert.equal(
 			await reason(file("logo.png", "%PDF-1.7\n")),
-			"iconPicker.imageUnsupported",
+			"iconPicker.customUnsupported",
 		);
 	});
 
 	it("refuses a GIF — a real picture, but not one of the four offered", async () => {
-		assert.equal(await reason(file("anim.gif", "GIF89a")), "iconPicker.imageUnsupported");
+		assert.equal(await reason(file("anim.gif", "GIF89a")), "iconPicker.customUnsupported");
 	});
 
 	it("refuses a RIFF container that is not WebP", async () => {
 		const wav = [0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x41, 0x56, 0x45];
-		assert.equal(await reason(file("sound.webp", wav)), "iconPicker.imageUnsupported");
+		assert.equal(await reason(file("sound.webp", wav)), "iconPicker.customUnsupported");
 	});
 
 	it("reads the signature, not the extension somebody typed", async () => {
@@ -271,7 +271,7 @@ describe("importImageFile — what the file actually is", () => {
 		] as const) {
 			assert.equal(
 				await reason(file(name, [...bytes])),
-				"iconPicker.imageDecodeFailed",
+				"iconPicker.customDecodeFailed",
 				name,
 			);
 		}
@@ -292,7 +292,7 @@ describe("importImageFile — what the file actually is", () => {
 			assert.equal(result.ok, false);
 			assert.notEqual(
 				result.ok ? "" : result.reason,
-				"iconPicker.imageUnsupported",
+				"iconPicker.customUnsupported",
 				`not recognised as SVG: ${head.slice(0, 30)}`,
 			);
 		}

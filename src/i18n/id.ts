@@ -464,26 +464,26 @@ export const id: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Merek (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Cari RPG Awesome",
-	"iconPicker.image": "Gambar Anda",
-	"iconPicker.searchImage": "Cari gambar Anda",
-	"iconPicker.imageTooLarge":
-		"{{name}} terlalu besar. Gambar harus di bawah 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} bukan format gambar yang didukung. Gunakan SVG, PNG, JPEG, atau WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Ikon kustom",
+	"iconPicker.searchCustom": "Cari ikon kustom",
+	"iconPicker.customTooLarge":
+		"{{name}} terlalu besar. Ikon kustom harus di bawah 5 MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} bukan berkas ikon kustom yang didukung. Gunakan SVG, PNG, JPEG, atau WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} tidak dapat dibaca sebagai SVG aman, sehingga tidak ditambahkan.",
-	"iconPicker.imageDecodeFailed":
-		"{{name}} tidak dapat dibaca sebagai gambar.",
-	"iconPicker.imageDuplicate":
-		"{{name}} sudah ada di gambar Anda. Ganti nama file atau hapus gambar yang sudah ada.",
-	"iconPicker.imageAdd": "Tambah gambar",
-	"iconPicker.imageEmpty":
-		"Belum ada gambar. Tambahkan file SVG, PNG, JPEG, atau WebP dari komputer Anda, atau seret ke sini.",
-	"iconPicker.imageDelete": "Hapus",
-	"iconPicker.imageDeleteConfirm": "Hapus “{{name}}”?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callout menggunakan gambar ini. Mereka akan menampilkan ikon placeholder hingga Anda memberikan yang baru.",
-	"iconPicker.imageRecolor": "Ikuti warna Callout",
+	"iconPicker.customDecodeFailed":
+		"{{name}} tidak dapat dibaca sebagai ikon kustom.",
+	"iconPicker.customDuplicate":
+		"{{name}} sudah ada di ikon kustom Anda. Ganti nama berkas, atau hapus ikon yang sudah ada.",
+	"iconPicker.customAdd": "Tambah ikon kustom",
+	"iconPicker.customEmpty":
+		"Belum ada ikon kustom. Tambahkan berkas SVG, PNG, JPEG, atau WebP dari komputer Anda, atau jatuhkan di sini.",
+	"iconPicker.customDelete": "Hapus",
+	"iconPicker.customDeleteConfirm": "Hapus “{{name}}”?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callout menggunakan ikon kustom ini. Mereka akan kembali ke ikon placeholder sampai Anda memilih yang baru.",
+	"iconPicker.customRecolor": "Ikuti warna Callout",
 	"iconPicker.allSources": "Semua sumber",
 	"iconPicker.searchAllSources": "Cari semua sumber ikon",
 	"iconPicker.sourcesNotDownloaded":
@@ -501,7 +501,7 @@ export const id: Record<string, string> = {
 	"iconPicker.descOcticons": "ikon antarmuka GitHub",
 	"iconPicker.descFa": "solid, regular, dan merek",
 	"iconPicker.descRpgAwesome": "ikon fantasi dan permainan meja",
-	"iconPicker.descImage": "gambar yang Anda tambahkan dari komputer",
+	"iconPicker.descCustom": "ikon kustom yang Anda tambahkan dari komputer",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Aksesibilitas",

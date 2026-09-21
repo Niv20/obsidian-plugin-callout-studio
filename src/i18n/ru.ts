@@ -462,26 +462,26 @@ export const ru: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Бренды (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Поиск в RPG Awesome",
-	"iconPicker.image": "Ваши изображения",
-	"iconPicker.searchImage": "Поиск в изображениях",
-	"iconPicker.imageTooLarge":
-		"{{name}} слишком большой. Изображения должны быть меньше 5 МБ.",
-	"iconPicker.imageUnsupported":
-		"{{name}} — неподдерживаемый формат изображения. Используйте SVG, PNG, JPEG или WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Пользовательские значки",
+	"iconPicker.searchCustom": "Поиск пользовательских значков",
+	"iconPicker.customTooLarge":
+		"{{name}} слишком большой. Пользовательские значки должны быть меньше 5 МБ.",
+	"iconPicker.customUnsupported":
+		"{{name}} — неподдерживаемый файл пользовательского значка. Используйте SVG, PNG, JPEG или WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} не удалось прочитать как безопасный SVG, поэтому он не был добавлен.",
-	"iconPicker.imageDecodeFailed":
-		"{{name}} не удалось прочитать как изображение.",
-	"iconPicker.imageDuplicate":
-		"{{name}} уже есть в ваших изображениях. Переименуйте файл или удалите существующее изображение.",
-	"iconPicker.imageAdd": "Добавить изображения",
-	"iconPicker.imageEmpty":
-		"Изображений пока нет. Добавьте файл SVG, PNG, JPEG или WebP с компьютера или перетащите его сюда.",
-	"iconPicker.imageDelete": "Удалить",
-	"iconPicker.imageDeleteConfirm": "Удалить «{{name}}»?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callout(ов) используют это изображение. Они будут показывать замещающую иконку, пока вы не укажете новое.",
-	"iconPicker.imageRecolor": "Следовать цвету Callout",
+	"iconPicker.customDecodeFailed":
+		"{{name}} не удалось прочитать как пользовательский значок.",
+	"iconPicker.customDuplicate":
+		"{{name}} уже есть среди ваших пользовательских значков. Переименуйте файл или удалите существующий значок.",
+	"iconPicker.customAdd": "Добавить пользовательские значки",
+	"iconPicker.customEmpty":
+		"Пользовательских значков пока нет. Добавьте файл SVG, PNG, JPEG или WebP с компьютера либо перетащите его сюда.",
+	"iconPicker.customDelete": "Удалить",
+	"iconPicker.customDeleteConfirm": "Удалить «{{name}}»?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callout(ов) используют этот пользовательский значок. Они будут показывать замещающий значок, пока вы не выберете новый.",
+	"iconPicker.customRecolor": "Следовать цвету Callout",
 	"iconPicker.allSources": "Все источники",
 	"iconPicker.searchAllSources": "Поиск во всех источниках иконок",
 	"iconPicker.sourcesNotDownloaded":
@@ -499,7 +499,7 @@ export const ru: Record<string, string> = {
 	"iconPicker.descOcticons": "иконки интерфейса GitHub",
 	"iconPicker.descFa": "заполненный, обычный и бренды",
 	"iconPicker.descRpgAwesome": "иконки фэнтези и настольных игр",
-	"iconPicker.descImage": "изображения, добавленные с вашего компьютера",
+	"iconPicker.descCustom": "пользовательские значки, добавленные с компьютера",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Доступность",

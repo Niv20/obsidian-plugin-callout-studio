@@ -458,25 +458,25 @@ export const th: Record<string, string> = {
 	"iconPicker.faStyleBrands": "แบรนด์",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "ค้นหา RPG Awesome",
-	"iconPicker.image": "รูปภาพของคุณ",
-	"iconPicker.searchImage": "ค้นหารูปภาพของคุณ",
-	"iconPicker.imageTooLarge":
-		"{{name}} มีขนาดใหญ่เกินไป รูปภาพต้องมีขนาดน้อยกว่า 5 MB",
-	"iconPicker.imageUnsupported":
-		"{{name}} ไม่ใช่รูปแบบรูปภาพที่รองรับ ใช้ SVG, PNG, JPEG หรือ WebP",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "ไอคอนกำหนดเอง",
+	"iconPicker.searchCustom": "ค้นหาไอคอนกำหนดเอง",
+	"iconPicker.customTooLarge":
+		"{{name}} มีขนาดใหญ่เกินไป ไอคอนกำหนดเองต้องมีขนาดน้อยกว่า 5 MB",
+	"iconPicker.customUnsupported":
+		"{{name}} ไม่ใช่ไฟล์ไอคอนกำหนดเองที่รองรับ ใช้ SVG, PNG, JPEG หรือ WebP",
+	"iconPicker.customInvalidSvg":
 		"ไม่สามารถอ่าน {{name}} เป็น SVG ที่ปลอดภัยได้จึงไม่ได้เพิ่ม",
-	"iconPicker.imageDecodeFailed": "ไม่สามารถอ่าน {{name}} เป็นรูปภาพได้",
-	"iconPicker.imageDuplicate":
-		"{{name}} มีอยู่ในรูปภาพของคุณแล้ว เปลี่ยนชื่อไฟล์หรือลบรูปภาพที่มีอยู่",
-	"iconPicker.imageAdd": "เพิ่มรูปภาพ",
-	"iconPicker.imageEmpty":
-		"ยังไม่มีรูปภาพ เพิ่มไฟล์ SVG, PNG, JPEG หรือ WebP จากคอมพิวเตอร์ของคุณ หรือลากมาที่นี่",
-	"iconPicker.imageDelete": "ลบ",
-	"iconPicker.imageDeleteConfirm": "ลบ “{{name}}” หรือไม่?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callout ใช้รูปภาพนี้ จะแสดงไอคอนตัวแทนจนกว่าคุณจะกำหนดใหม่",
-	"iconPicker.imageRecolor": "ตามสี Callout",
+	"iconPicker.customDecodeFailed": "ไม่สามารถอ่าน {{name}} เป็นไอคอนกำหนดเองได้",
+	"iconPicker.customDuplicate":
+		"{{name}} มีอยู่แล้วในไอคอนกำหนดเองของคุณ เปลี่ยนชื่อไฟล์หรือลบไอคอนที่มีอยู่",
+	"iconPicker.customAdd": "เพิ่มไอคอนกำหนดเอง",
+	"iconPicker.customEmpty":
+		"ยังไม่มีไอคอนกำหนดเอง เพิ่มไฟล์ SVG, PNG, JPEG หรือ WebP จากคอมพิวเตอร์ของคุณ หรือลากมาวางที่นี่",
+	"iconPicker.customDelete": "ลบ",
+	"iconPicker.customDeleteConfirm": "ลบ “{{name}}” หรือไม่?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callouts ใช้ไอคอนกำหนดเองนี้ จะกลับไปใช้ไอคอนตัวแทนจนกว่าคุณจะเลือกไอคอนใหม่",
+	"iconPicker.customRecolor": "ตามสี Callout",
 	"iconPicker.allSources": "ทุกแหล่งข้อมูล",
 	"iconPicker.searchAllSources": "ค้นหาในทุกแหล่งไอคอน",
 	"iconPicker.sourcesNotDownloaded":
@@ -493,7 +493,7 @@ export const th: Record<string, string> = {
 	"iconPicker.descOcticons": "ไอคอนอินเทอร์เฟซ GitHub",
 	"iconPicker.descFa": "ทึบ ปกติ และแบรนด์",
 	"iconPicker.descRpgAwesome": "ไอคอนแฟนตาซีและเกมกระดาน",
-	"iconPicker.descImage": "รูปภาพที่คุณเพิ่มจากคอมพิวเตอร์",
+	"iconPicker.descCustom": "ไอคอนกำหนดเองที่คุณเพิ่มจากคอมพิวเตอร์",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "การช่วยเหลือพิเศษ",

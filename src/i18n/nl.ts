@@ -472,26 +472,26 @@ export const nl: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Merken (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Zoek in RPG Awesome",
-	"iconPicker.image": "Uw afbeeldingen",
-	"iconPicker.searchImage": "Zoek in uw afbeeldingen",
-	"iconPicker.imageTooLarge":
-		"{{name}} is te groot. Afbeeldingen moeten kleiner zijn dan 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} is geen ondersteund afbeeldingsformaat. Gebruik SVG, PNG, JPEG of WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Aangepaste pictogrammen",
+	"iconPicker.searchCustom": "Aangepaste pictogrammen zoeken",
+	"iconPicker.customTooLarge":
+		"{{name}} is te groot. Aangepaste pictogrammen moeten kleiner zijn dan 5 MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} is geen ondersteund bestand voor een aangepast pictogram. Gebruik SVG, PNG, JPEG of WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} kon niet worden gelezen als veilige SVG en is niet toegevoegd.",
-	"iconPicker.imageDecodeFailed":
-		"{{name}} kon niet worden gelezen als afbeelding.",
-	"iconPicker.imageDuplicate":
-		"{{name}} staat al in uw afbeeldingen. Hernoem het bestand of verwijder de bestaande afbeelding.",
-	"iconPicker.imageAdd": "Afbeeldingen toevoegen",
-	"iconPicker.imageEmpty":
-		"Nog geen afbeeldingen. Voeg een SVG-, PNG-, JPEG- of WebP-bestand toe vanaf uw computer of sleep het hier naartoe.",
-	"iconPicker.imageDelete": "Verwijderen",
-	"iconPicker.imageDeleteConfirm": "“{{name}}” verwijderen?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callouts gebruiken deze afbeelding. Ze tonen een plaatshouder-icoon totdat u een nieuw icon opgeeft.",
-	"iconPicker.imageRecolor": "Callout-kleur volgen",
+	"iconPicker.customDecodeFailed":
+		"{{name}} kon niet als aangepast pictogram worden gelezen.",
+	"iconPicker.customDuplicate":
+		"{{name}} staat al bij uw aangepaste pictogrammen. Hernoem het bestand of verwijder het bestaande pictogram.",
+	"iconPicker.customAdd": "Aangepaste pictogrammen toevoegen",
+	"iconPicker.customEmpty":
+		"Nog geen aangepaste pictogrammen. Voeg een SVG-, PNG-, JPEG- of WebP-bestand vanaf uw computer toe, of sleep het hierheen.",
+	"iconPicker.customDelete": "Verwijderen",
+	"iconPicker.customDeleteConfirm": "“{{name}}” verwijderen?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callouts gebruiken dit aangepaste pictogram. Ze vallen terug op een plaatsaanduidingspictogram totdat u een nieuw pictogram kiest.",
+	"iconPicker.customRecolor": "Callout-kleur volgen",
 	"iconPicker.allSources": "Alle bronnen",
 	"iconPicker.searchAllSources": "Zoek in alle iconbronnen",
 	"iconPicker.sourcesNotDownloaded":
@@ -509,7 +509,7 @@ export const nl: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHubs interface-iconen",
 	"iconPicker.descFa": "gevuld, regulier en merken",
 	"iconPicker.descRpgAwesome": "fantasy- en bordspeliconen",
-	"iconPicker.descImage": "afbeeldingen die u toevoegt vanaf uw computer",
+	"iconPicker.descCustom": "aangepaste pictogrammen die u vanaf uw computer toevoegt",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Toegankelijkheid",

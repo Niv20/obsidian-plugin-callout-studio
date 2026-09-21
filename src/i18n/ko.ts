@@ -464,25 +464,25 @@ export const ko: Record<string, string> = {
 	"iconPicker.faStyleBrands": "브랜드 (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "RPG Awesome 검색",
-	"iconPicker.image": "내 이미지",
-	"iconPicker.searchImage": "이미지 검색",
-	"iconPicker.imageTooLarge":
-		"{{name}}이(가) 너무 큽니다. 이미지는 5MB 미만이어야 합니다.",
-	"iconPicker.imageUnsupported":
-		"{{name}}은(는) 지원되지 않는 이미지 형식입니다. SVG, PNG, JPEG 또는 WebP를 사용하세요.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "사용자 지정 아이콘",
+	"iconPicker.searchCustom": "사용자 지정 아이콘 검색",
+	"iconPicker.customTooLarge":
+		"{{name}}이(가) 너무 큽니다. 사용자 지정 아이콘은 5MB 미만이어야 합니다.",
+	"iconPicker.customUnsupported":
+		"{{name}}은(는) 지원되는 사용자 지정 아이콘 파일이 아닙니다. SVG, PNG, JPEG 또는 WebP를 사용하세요.",
+	"iconPicker.customInvalidSvg":
 		"{{name}}을(를) 안전한 SVG로 읽을 수 없어 추가되지 않았습니다.",
-	"iconPicker.imageDecodeFailed": "{{name}}을(를) 이미지로 읽을 수 없습니다.",
-	"iconPicker.imageDuplicate":
-		"{{name}}이(가) 이미 이미지에 있습니다. 파일 이름을 변경하거나 기존 이미지를 삭제하세요.",
-	"iconPicker.imageAdd": "이미지 추가",
-	"iconPicker.imageEmpty":
-		"아직 이미지가 없습니다. 컴퓨터에서 SVG, PNG, JPEG 또는 WebP 파일을 추가하거나 여기에 끌어다 놓으세요.",
-	"iconPicker.imageDelete": "삭제",
-	"iconPicker.imageDeleteConfirm": "“{{name}}” 삭제하시겠습니까?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}}개의 callout이 이 이미지를 사용합니다. 새 이미지를 지정할 때까지 자리 표시자 아이콘이 표시됩니다.",
-	"iconPicker.imageRecolor": "Callout 색상 따르기",
+	"iconPicker.customDecodeFailed": "{{name}}을(를) 사용자 지정 아이콘으로 읽을 수 없습니다.",
+	"iconPicker.customDuplicate":
+		"{{name}}이(가) 이미 사용자 지정 아이콘에 있습니다. 파일 이름을 변경하거나 기존 아이콘을 삭제하세요.",
+	"iconPicker.customAdd": "사용자 지정 아이콘 추가",
+	"iconPicker.customEmpty":
+		"아직 사용자 지정 아이콘이 없습니다. 컴퓨터에서 SVG, PNG, JPEG 또는 WebP 파일을 추가하거나 여기에 끌어다 놓으세요.",
+	"iconPicker.customDelete": "삭제",
+	"iconPicker.customDeleteConfirm": "“{{name}}” 삭제하시겠습니까?",
+	"iconPicker.customDeleteInUse":
+		"{{count}}개의 callout이 이 사용자 지정 아이콘을 사용합니다. 새 아이콘을 선택할 때까지 자리 표시자 아이콘이 표시됩니다.",
+	"iconPicker.customRecolor": "Callout 색상 따르기",
 	"iconPicker.allSources": "모든 소스",
 	"iconPicker.searchAllSources": "모든 아이콘 소스 검색",
 	"iconPicker.sourcesNotDownloaded":
@@ -500,7 +500,7 @@ export const ko: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub 인터페이스 아이콘",
 	"iconPicker.descFa": "솔리드, 레귤러 및 브랜드",
 	"iconPicker.descRpgAwesome": "판타지 및 테이블탑 아이콘",
-	"iconPicker.descImage": "컴퓨터에서 추가한 이미지",
+	"iconPicker.descCustom": "컴퓨터에서 추가한 사용자 지정 아이콘",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "접근성",

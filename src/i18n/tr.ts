@@ -462,25 +462,25 @@ export const tr: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Markalar",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "RPG Awesome ara",
-	"iconPicker.image": "Resimleriniz",
-	"iconPicker.searchImage": "Resimlerinizde ara",
-	"iconPicker.imageTooLarge":
-		"{{name}} çok büyük. Resimler 5 MB'ın altında olmalıdır.",
-	"iconPicker.imageUnsupported":
-		"{{name}} desteklenen bir resim biçimi değil. SVG, PNG, JPEG veya WebP kullanın.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Özel simgeler",
+	"iconPicker.searchCustom": "Özel simgelerde ara",
+	"iconPicker.customTooLarge":
+		"{{name}} çok büyük. Özel simgeler 5 MB altında olmalıdır.",
+	"iconPicker.customUnsupported":
+		"{{name}} desteklenen bir özel simge dosyası değil. SVG, PNG, JPEG veya WebP kullanın.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} güvenli SVG olarak okunamadı ve eklenmedi.",
-	"iconPicker.imageDecodeFailed": "{{name}} resim olarak okunamadı.",
-	"iconPicker.imageDuplicate":
-		"{{name}} zaten resimlerinizde var. Dosyayı yeniden adlandırın veya mevcut resmi silin.",
-	"iconPicker.imageAdd": "Resim ekle",
-	"iconPicker.imageEmpty":
-		"Henüz resim yok. Bilgisayarınızdan SVG, PNG, JPEG veya WebP dosyası ekleyin ya da buraya sürükleyin.",
-	"iconPicker.imageDelete": "Sil",
-	"iconPicker.imageDeleteConfirm": "“{{name}}” silinsin mi?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callout bu resmi kullanıyor. Yeni bir resim belirtene kadar yer tutucu simge gösterilecek.",
-	"iconPicker.imageRecolor": "Callout rengini izle",
+	"iconPicker.customDecodeFailed": "{{name}} özel simge olarak okunamadı.",
+	"iconPicker.customDuplicate":
+		"{{name}} özel simgelerinizde zaten var. Dosyayı yeniden adlandırın veya mevcut simgeyi silin.",
+	"iconPicker.customAdd": "Özel simgeler ekle",
+	"iconPicker.customEmpty":
+		"Henüz özel simge yok. Bilgisayarınızdan bir SVG, PNG, JPEG veya WebP dosyası ekleyin ya da buraya bırakın.",
+	"iconPicker.customDelete": "Sil",
+	"iconPicker.customDeleteConfirm": "“{{name}}” silinsin mi?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callout bu özel simgeyi kullanıyor. Yeni bir simge seçene kadar yer tutucu simgeye dönerler.",
+	"iconPicker.customRecolor": "Callout rengini izle",
 	"iconPicker.allSources": "Tüm kaynaklar",
 	"iconPicker.searchAllSources": "Tüm simge kaynaklarında ara",
 	"iconPicker.sourcesNotDownloaded":
@@ -497,7 +497,7 @@ export const tr: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub arayüz simgeleri",
 	"iconPicker.descFa": "düz, normal ve markalar",
 	"iconPicker.descRpgAwesome": "fantezi ve masa oyunları simgeleri",
-	"iconPicker.descImage": "bilgisayarınızdan eklediğiniz resimler",
+	"iconPicker.descCustom": "bilgisayarınızdan eklediğiniz özel simgeler",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Erişilebilirlik",

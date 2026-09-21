@@ -513,14 +513,14 @@ describe("describeIcon", () => {
 	it("resolves a user's picture to the name they gave it", () => {
 		assert.equal(
 			describeIcon(icon("image", "img-1"), [image()]),
-			"Your images: logo.svg",
+			"Custom Icons: logo.svg",
 		);
 	});
 
 	it("falls back to the id when the picture has been deleted", () => {
 		// The id is not useful, but it is honest — and it is what the row still
 		// points at, so it is what has to be fixed.
-		assert.equal(describeIcon(icon("image", "img-1"), []), "Your images: img-1");
+		assert.equal(describeIcon(icon("image", "img-1"), []), "Custom Icons: img-1");
 	});
 
 	it("names an emoji rather than only showing it", () => {

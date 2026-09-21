@@ -455,25 +455,25 @@ export const ar: Record<string, string> = {
 	"iconPicker.faStyleBrands": "العلامات التجارية (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "البحث في RPG Awesome",
-	"iconPicker.image": "صورك",
-	"iconPicker.searchImage": "البحث في صورك",
-	"iconPicker.imageTooLarge":
-		"{{name}} كبير جدًا. يجب أن تكون الصور أقل من 5 ميغابايت.",
-	"iconPicker.imageUnsupported":
-		"{{name}} ليس صيغة صورة مدعومة. استخدم SVG أو PNG أو JPEG أو WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "أيقونات مخصصة",
+	"iconPicker.searchCustom": "البحث في الأيقونات المخصصة",
+	"iconPicker.customTooLarge":
+		"{{name}} كبير جدًا. يجب أن تكون الأيقونات المخصصة أقل من 5 ميغابايت.",
+	"iconPicker.customUnsupported":
+		"{{name}} ليس ملف أيقونة مخصصة مدعومًا. استخدم SVG أو PNG أو JPEG أو WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} لا يمكن قراءته كـ SVG آمن، لذا لم تتم إضافته.",
-	"iconPicker.imageDecodeFailed": "{{name}} لا يمكن قراءته كصورة.",
-	"iconPicker.imageDuplicate":
-		"{{name}} موجود بالفعل في صورك. أعد تسمية الملف أو احذف الصورة الموجودة.",
-	"iconPicker.imageAdd": "إضافة صور",
-	"iconPicker.imageEmpty":
-		"لا توجد صور بعد. أضف ملف SVG أو PNG أو JPEG أو WebP من جهازك أو اسحبه هنا.",
-	"iconPicker.imageDelete": "حذف",
-	"iconPicker.imageDeleteConfirm": "حذف “{{name}}”؟",
-	"iconPicker.imageDeleteInUse":
-		"تستخدم {{count}} من Callouts هذه الصورة. ستعرض أيقونة بديلة حتى تحدد صورة جديدة.",
-	"iconPicker.imageRecolor": "اتباع لون Callout",
+	"iconPicker.customDecodeFailed": "تعذّرت قراءة {{name}} كأيقونة مخصصة.",
+	"iconPicker.customDuplicate":
+		"{{name}} موجودة بالفعل ضمن الأيقونات المخصصة. أعد تسمية الملف أو احذف الأيقونة الموجودة.",
+	"iconPicker.customAdd": "إضافة أيقونات مخصصة",
+	"iconPicker.customEmpty":
+		"لا توجد أيقونات مخصصة بعد. أضف ملف SVG أو PNG أو JPEG أو WebP من جهازك، أو اسحبه إلى هنا.",
+	"iconPicker.customDelete": "حذف",
+	"iconPicker.customDeleteConfirm": "حذف “{{name}}”؟",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callouts تستخدم هذه الأيقونة المخصصة. ستعود إلى أيقونة بديلة حتى تختار لها أيقونة جديدة.",
+	"iconPicker.customRecolor": "اتباع لون Callout",
 	"iconPicker.allSources": "جميع المصادر",
 	"iconPicker.searchAllSources": "البحث في جميع مصادر الأيقونات",
 	"iconPicker.sourcesNotDownloaded":
@@ -490,7 +490,7 @@ export const ar: Record<string, string> = {
 	"iconPicker.descOcticons": "أيقونات واجهة GitHub",
 	"iconPicker.descFa": "صلبة وعادية وعلامات تجارية",
 	"iconPicker.descRpgAwesome": "أيقونات الخيال والألعاب المصغرة",
-	"iconPicker.descImage": "الصور التي تضيفها من جهازك",
+	"iconPicker.descCustom": "أيقونات مخصصة تضيفها من جهازك",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "إمكانية الوصول",

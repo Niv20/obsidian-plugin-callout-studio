@@ -35,7 +35,7 @@ export class ImportSourceModal extends Modal {
 		this.setTitle(t("import.chooseSource"));
 
 		// Created once, attached to the DOM, and hidden — like ImagePanel's
-		// "Your images" add button. A file input built fresh (and left
+		// "Custom Icons" add button. A file input built fresh (and left
 		// detached) inside the row's click handler was unreliable for
 		// actually showing Chromium's file chooser; calling .click() on a
 		// real, DOM-connected input directly from the trusted click listener

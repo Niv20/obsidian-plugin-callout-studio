@@ -456,25 +456,25 @@ export const fi: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Brändit (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Hae RPG Awesome -kuvakkeita",
-	"iconPicker.image": "Kuvasi",
-	"iconPicker.searchImage": "Hae kuvistasi",
-	"iconPicker.imageTooLarge":
-		"{{name}} on liian suuri. Kuvien on oltava alle 5 Mt.",
-	"iconPicker.imageUnsupported":
-		"{{name}} ei ole tuettu kuvamuoto. Käytä SVG-, PNG-, JPEG- tai WebP-muotoa.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Mukautetut kuvakkeet",
+	"iconPicker.searchCustom": "Hae mukautettuja kuvakkeita",
+	"iconPicker.customTooLarge":
+		"{{name}} on liian suuri. Mukautettujen kuvakkeiden on oltava alle 5 Mt.",
+	"iconPicker.customUnsupported":
+		"{{name}} ei ole tuettu mukautetun kuvakkeen tiedosto. Käytä SVG-, PNG-, JPEG- tai WebP-tiedostoa.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} ei voitu lukea turvallisena SVG-tiedostona, joten sitä ei lisätty.",
-	"iconPicker.imageDecodeFailed": "{{name}} ei voitu lukea kuvana.",
-	"iconPicker.imageDuplicate":
-		"{{name}} on jo kuvissasi. Nimeä tiedosto uudelleen tai poista olemassa oleva kuva.",
-	"iconPicker.imageAdd": "Lisää kuvia",
-	"iconPicker.imageEmpty":
-		"Ei vielä kuvia. Lisää SVG-, PNG-, JPEG- tai WebP-tiedosto tietokoneeltasi tai pudota se tähän.",
-	"iconPicker.imageDelete": "Poista",
-	"iconPicker.imageDeleteConfirm": "Poistetaanko „{{name}}“?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} calloutia käyttää tätä kuvaa. Ne näyttävät paikkamerkkikuvakkeen, kunnes annat uuden.",
-	"iconPicker.imageRecolor": "Seuraa Callout-väriä",
+	"iconPicker.customDecodeFailed": "{{name}} ei voitu lukea mukautettuna kuvakkeena.",
+	"iconPicker.customDuplicate":
+		"{{name}} on jo mukautetuissa kuvakkeissasi. Nimeä tiedosto uudelleen tai poista olemassa oleva kuvake.",
+	"iconPicker.customAdd": "Lisää mukautettuja kuvakkeita",
+	"iconPicker.customEmpty":
+		"Ei vielä mukautettuja kuvakkeita. Lisää SVG-, PNG-, JPEG- tai WebP-tiedosto tietokoneeltasi tai pudota se tähän.",
+	"iconPicker.customDelete": "Poista",
+	"iconPicker.customDeleteConfirm": "Poistetaanko „{{name}}“?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} calloutia käyttää tätä mukautettua kuvaketta. Ne palaavat paikkamerkkikuvakkeeseen, kunnes valitset uuden.",
+	"iconPicker.customRecolor": "Seuraa Callout-väriä",
 	"iconPicker.allSources": "Kaikki lähteet",
 	"iconPicker.searchAllSources": "Hae kaikista kuvakelähteis",
 	"iconPicker.sourcesNotDownloaded":
@@ -493,7 +493,7 @@ export const fi: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHubin käyttöliittymäkuvakkeet",
 	"iconPicker.descFa": "täytetty, tavallinen ja brändit",
 	"iconPicker.descRpgAwesome": "fantasia- ja lautapelikuvakkeet",
-	"iconPicker.descImage": "kuvat, jotka lisäät tietokoneeltasi",
+	"iconPicker.descCustom": "mukautetut kuvakkeet, jotka lisäät tietokoneeltasi",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Saavutettavuus",

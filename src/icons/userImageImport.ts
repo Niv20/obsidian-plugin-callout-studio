@@ -59,12 +59,12 @@ export async function importImageFile(
 	file: File,
 ): Promise<UserImageImportResult> {
 	if (file.size > MAX_SOURCE_BYTES) {
-		return { ok: false, reason: "iconPicker.imageTooLarge" };
+		return { ok: false, reason: "iconPicker.customTooLarge" };
 	}
 
 	try {
 		const format = await detectFormat(file);
-		if (!format) return { ok: false, reason: "iconPicker.imageUnsupported" };
+		if (!format) return { ok: false, reason: "iconPicker.customUnsupported" };
 
 		const artwork =
 			format === "svg"
@@ -75,8 +75,8 @@ export async function importImageFile(
 				ok: false,
 				reason:
 					format === "svg"
-						? "iconPicker.imageInvalidSvg"
-						: "iconPicker.imageDecodeFailed",
+						? "iconPicker.customInvalidSvg"
+						: "iconPicker.customDecodeFailed",
 			};
 		}
 
@@ -101,7 +101,7 @@ export async function importImageFile(
 			},
 		};
 	} catch {
-		return { ok: false, reason: "iconPicker.imageDecodeFailed" };
+		return { ok: false, reason: "iconPicker.customDecodeFailed" };
 	}
 }
 

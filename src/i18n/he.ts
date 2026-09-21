@@ -490,28 +490,25 @@ export const he: Record<string, string> = {
 	"iconPicker.faStyleBrands": "מותגים (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "חיפוש ב־RPG Awesome",
-	"iconPicker.image": "התמונות שלי",
-	"iconPicker.searchImage": "חיפוש בתמונות שלי",
-	"iconPicker.imageTooLarge":
-		"{{name}} גדולה מדי. תמונות חייבות להיות עד 5MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} אינה סוג תמונה נתמך. יש להשתמש ב־SVG, PNG, JPEG או WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "אייקונים מותאמים אישית",
+	"iconPicker.searchCustom": "חיפוש באייקונים מותאמים אישית",
+	"iconPicker.customTooLarge":
+		"{{name}} גדול מדי. אייקונים מותאמים אישית חייבים להיות עד 5MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} אינו קובץ אייקון מותאם אישית נתמך. יש להשתמש ב־SVG, PNG, JPEG או WebP.",
+	"iconPicker.customInvalidSvg":
 		"לא ניתן לקרוא את {{name}} כקובץ SVG בטוח, ולכן היא לא נוספה.",
-	"iconPicker.imageDecodeFailed": "לא ניתן לקרוא את {{name}} כתמונה.",
-	"iconPicker.imageDuplicate":
-		"{{name}} כבר נמצאת בתמונות שלך. אפשר לשנות את שם הקובץ, " +
-		"או למחוק את התמונה הקיימת.",
-	"iconPicker.imageAdd": "הוספת תמונות",
-	"iconPicker.imageEmpty":
-		"עדיין אין תמונות. אפשר להוסיף קובץ SVG, PNG, JPEG או WebP מהמחשב, " +
-		"או פשוט לגרור אותו לכאן.",
-	"iconPicker.imageDelete": "מחיקה",
-	"iconPicker.imageDeleteConfirm": "למחוק את „{{name}}”?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callouts משתמשים בתמונה הזו. הם יחזרו לאייקון ברירת מחדל " +
-		"עד שייבחר להם אייקון חדש.",
-	"iconPicker.imageRecolor": "לצבוע בצבע ה־callout",
+	"iconPicker.customDecodeFailed": "לא ניתן לקרוא את {{name}} כאייקון מותאם אישית.",
+	"iconPicker.customDuplicate":
+		"{{name}} כבר נמצא באייקונים המותאמים אישית שלך. אפשר לשנות את שם הקובץ או למחוק את האייקון הקיים.",
+	"iconPicker.customAdd": "הוספת אייקונים מותאמים אישית",
+	"iconPicker.customEmpty":
+		"עדיין אין אייקונים מותאמים אישית. אפשר להוסיף קובץ SVG, PNG, JPEG או WebP מהמחשב, או לגרור אותו לכאן.",
+	"iconPicker.customDelete": "מחיקה",
+	"iconPicker.customDeleteConfirm": "למחוק את „{{name}}”?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callouts משתמשים באייקון המותאם אישית הזה. הם יחזרו לאייקון ברירת מחדל עד שייבחר להם אייקון חדש.",
+	"iconPicker.customRecolor": "לצבוע בצבע ה־callout",
 	"iconPicker.allSources": "כל המקורות",
 	"iconPicker.searchAllSources": "חיפוש בכל מקורות האייקונים",
 	"iconPicker.sourcesNotDownloaded":
@@ -528,7 +525,7 @@ export const he: Record<string, string> = {
 	"iconPicker.descOcticons": "אייקוני הממשק של GitHub",
 	"iconPicker.descFa": "אייקונים מלאים, מתאר וסמלי מותגים",
 	"iconPicker.descRpgAwesome": "אייקוני פנטזיה ומשחקי תפקידים",
-	"iconPicker.descImage": "תמונות שהוספת מהמחשב שלך",
+	"iconPicker.descCustom": "אייקונים מותאמים אישית שהוספת מהמחשב שלך",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "נגישות",

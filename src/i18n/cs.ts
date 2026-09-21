@@ -461,25 +461,25 @@ export const cs: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Značky (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Hledat v RPG Awesome",
-	"iconPicker.image": "Vaše obrázky",
-	"iconPicker.searchImage": "Hledat ve vašich obrázcích",
-	"iconPicker.imageTooLarge":
-		"{{name}} je příliš velký. Obrázky musí být menší než 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} není podporovaný formát obrázku. Použijte SVG, PNG, JPEG nebo WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Vlastní ikony",
+	"iconPicker.searchCustom": "Hledat ve vlastních ikonách",
+	"iconPicker.customTooLarge":
+		"{{name}} je příliš velká. Vlastní ikony musí být menší než 5 MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} není podporovaný soubor vlastní ikony. Použijte SVG, PNG, JPEG nebo WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} nelze načíst jako bezpečný SVG, proto nebyl přidán.",
-	"iconPicker.imageDecodeFailed": "{{name}} nelze načíst jako obrázek.",
-	"iconPicker.imageDuplicate":
-		"{{name}} je již ve vašich obrázcích. Přejmenujte soubor nebo odstraňte stávající obrázek.",
-	"iconPicker.imageAdd": "Přidat obrázky",
-	"iconPicker.imageEmpty":
-		"Zatím žádné obrázky. Přidejte soubor SVG, PNG, JPEG nebo WebP z počítače nebo jej sem přetáhněte.",
-	"iconPicker.imageDelete": "Smazat",
-	"iconPicker.imageDeleteConfirm": "Smazat „{{name}}“?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callout(ů) používá tento obrázek. Zobrazí zástupnou ikonu, dokud neuvedete nový obrázek.",
-	"iconPicker.imageRecolor": "Sledovat barvu Callout",
+	"iconPicker.customDecodeFailed": "{{name}} nelze načíst jako vlastní ikonu.",
+	"iconPicker.customDuplicate":
+		"{{name}} už je mezi vašimi vlastními ikonami. Přejmenujte soubor nebo smažte stávající ikonu.",
+	"iconPicker.customAdd": "Přidat vlastní ikony",
+	"iconPicker.customEmpty":
+		"Zatím tu nejsou žádné vlastní ikony. Přidejte soubor SVG, PNG, JPEG nebo WebP z počítače, nebo ho sem přetáhněte.",
+	"iconPicker.customDelete": "Smazat",
+	"iconPicker.customDeleteConfirm": "Smazat „{{name}}“?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} calloutů používá tuto vlastní ikonu. Dokud jim nevyberete novou, budou používat zástupnou ikonu.",
+	"iconPicker.customRecolor": "Sledovat barvu Callout",
 	"iconPicker.allSources": "Všechny zdroje",
 	"iconPicker.searchAllSources": "Hledat ve všech zdrojích ikon",
 	"iconPicker.sourcesNotDownloaded":
@@ -496,7 +496,7 @@ export const cs: Record<string, string> = {
 	"iconPicker.descOcticons": "ikony rozhraní GitHub",
 	"iconPicker.descFa": "plné, normální a značky",
 	"iconPicker.descRpgAwesome": "ikony pro fantasy a stolní hry",
-	"iconPicker.descImage": "obrázky přidané z vašeho počítače",
+	"iconPicker.descCustom": "vlastní ikony přidané z počítače",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Přístupnost",

@@ -465,25 +465,25 @@ export const ro: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Mărci (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Caută în RPG Awesome",
-	"iconPicker.image": "Imaginile tale",
-	"iconPicker.searchImage": "Caută în imaginile tale",
-	"iconPicker.imageTooLarge":
-		"{{name}} este prea mare. Imaginile trebuie să fie sub 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} nu este un format de imagine acceptat. Folosiți SVG, PNG, JPEG sau WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Pictograme personalizate",
+	"iconPicker.searchCustom": "Caută în pictogramele personalizate",
+	"iconPicker.customTooLarge":
+		"{{name}} este prea mare. Pictogramele personalizate trebuie să fie sub 5 MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} nu este un fișier de pictogramă personalizată acceptat. Folosiți SVG, PNG, JPEG sau WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} nu a putut fi citit ca SVG sigur și nu a fost adăugat.",
-	"iconPicker.imageDecodeFailed": "{{name}} nu a putut fi citit ca imagine.",
-	"iconPicker.imageDuplicate":
-		"{{name}} există deja în imaginile tale. Redenumiți fișierul sau ștergeți imaginea existentă.",
-	"iconPicker.imageAdd": "Adaugă imagini",
-	"iconPicker.imageEmpty":
-		"Nicio imagine încă. Adaugă un fișier SVG, PNG, JPEG sau WebP de pe calculatorul tău sau trage-l aici.",
-	"iconPicker.imageDelete": "Șterge",
-	"iconPicker.imageDeleteConfirm": "Ștergeți „{{name}}”?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callouts folosesc această imagine. Vor afișa o pictogramă substituent până când furnizați una nouă.",
-	"iconPicker.imageRecolor": "Urmează culoarea Callout",
+	"iconPicker.customDecodeFailed": "{{name}} nu a putut fi citit ca pictogramă personalizată.",
+	"iconPicker.customDuplicate":
+		"{{name}} există deja în pictogramele personalizate. Redenumiți fișierul sau ștergeți pictograma existentă.",
+	"iconPicker.customAdd": "Adaugă pictograme personalizate",
+	"iconPicker.customEmpty":
+		"Nu există încă pictograme personalizate. Adăugați un fișier SVG, PNG, JPEG sau WebP de pe computer sau plasați-l aici.",
+	"iconPicker.customDelete": "Șterge",
+	"iconPicker.customDeleteConfirm": "Ștergeți „{{name}}”?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callout-uri folosesc această pictogramă personalizată. Vor reveni la o pictogramă substituent până când alegeți una nouă.",
+	"iconPicker.customRecolor": "Urmează culoarea Callout",
 	"iconPicker.allSources": "Toate sursele",
 	"iconPicker.searchAllSources": "Caută în toate sursele de pictograme",
 	"iconPicker.sourcesNotDownloaded":
@@ -501,7 +501,7 @@ export const ro: Record<string, string> = {
 	"iconPicker.descOcticons": "pictogramele de interfață GitHub",
 	"iconPicker.descFa": "solid, normal și mărci",
 	"iconPicker.descRpgAwesome": "pictograme fantasy și jocuri de masă",
-	"iconPicker.descImage": "imagini adăugate de pe calculatorul tău",
+	"iconPicker.descCustom": "pictograme personalizate adăugate de pe computer",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Accesibilitate",

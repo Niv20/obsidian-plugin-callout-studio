@@ -467,25 +467,25 @@ export const es: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Marcas (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Buscar en RPG Awesome",
-	"iconPicker.image": "Tus imágenes",
-	"iconPicker.searchImage": "Buscar en tus imágenes",
-	"iconPicker.imageTooLarge":
-		"{{name}} es demasiado grande. Las imágenes deben ser menores de 5 MB.",
-	"iconPicker.imageUnsupported":
-		"{{name}} no es un formato de imagen compatible. Usa SVG, PNG, JPEG o WebP.",
-	"iconPicker.imageInvalidSvg":
+	"iconPicker.custom": "Iconos personalizados",
+	"iconPicker.searchCustom": "Buscar iconos personalizados",
+	"iconPicker.customTooLarge":
+		"{{name}} es demasiado grande. Los iconos personalizados deben ser menores de 5 MB.",
+	"iconPicker.customUnsupported":
+		"{{name}} no es un archivo de icono personalizado compatible. Usa SVG, PNG, JPEG o WebP.",
+	"iconPicker.customInvalidSvg":
 		"{{name}} no se pudo leer como SVG seguro y no se añadió.",
-	"iconPicker.imageDecodeFailed": "{{name}} no se pudo leer como imagen.",
-	"iconPicker.imageDuplicate":
-		"{{name}} ya está en tus imágenes. Renombra el archivo o elimina la imagen existente.",
-	"iconPicker.imageAdd": "Añadir imágenes",
-	"iconPicker.imageEmpty":
-		"Todavía no hay imágenes. Añade un archivo SVG, PNG, JPEG o WebP desde tu ordenador o arrástralo aquí.",
-	"iconPicker.imageDelete": "Eliminar",
-	"iconPicker.imageDeleteConfirm": "¿Eliminar “{{name}}”?",
-	"iconPicker.imageDeleteInUse":
-		"{{count}} callouts usan esta imagen. Mostrarán un icono de marcador de posición hasta que proporciones uno nuevo.",
-	"iconPicker.imageRecolor": "Seguir color del Callout",
+	"iconPicker.customDecodeFailed": "{{name}} no se pudo leer como icono personalizado.",
+	"iconPicker.customDuplicate":
+		"{{name}} ya está en tus iconos personalizados. Renombra el archivo o elimina el icono existente.",
+	"iconPicker.customAdd": "Añadir iconos personalizados",
+	"iconPicker.customEmpty":
+		"Todavía no hay iconos personalizados. Añade un archivo SVG, PNG, JPEG o WebP desde tu ordenador o arrástralo aquí.",
+	"iconPicker.customDelete": "Eliminar",
+	"iconPicker.customDeleteConfirm": "¿Eliminar “{{name}}”?",
+	"iconPicker.customDeleteInUse":
+		"{{count}} callouts usan este icono personalizado. Mostrarán un icono de marcador de posición hasta que elijas uno nuevo.",
+	"iconPicker.customRecolor": "Seguir color del Callout",
 	"iconPicker.allSources": "Todas las fuentes",
 	"iconPicker.searchAllSources": "Buscar en todas las fuentes de iconos",
 	"iconPicker.sourcesNotDownloaded":
@@ -505,7 +505,7 @@ export const es: Record<string, string> = {
 	"iconPicker.descOcticons": "iconos de interfaz de GitHub",
 	"iconPicker.descFa": "sólido, regular y marcas",
 	"iconPicker.descRpgAwesome": "iconos de fantasía y juegos de mesa",
-	"iconPicker.descImage": "imágenes que añades desde tu ordenador",
+	"iconPicker.descCustom": "iconos personalizados que añades desde tu ordenador",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Accesibilidad",

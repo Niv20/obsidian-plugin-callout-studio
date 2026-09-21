@@ -1,5 +1,5 @@
 /**
- * settings/iconpicker/ImagePanel.ts — The "Your images" source's panel.
+ * settings/iconpicker/ImagePanel.ts — The "Custom Icons" source's panel.
  *
  * Every other source is a fixed library, so one PackPanel driven by the IconPack
  * covers them all. This one is a library the user writes to, and that needs
@@ -88,7 +88,7 @@ export class ImagePanel {
 			cellClass: () => "icon-picker-image-cell",
 			// Only ever seen when the collection itself is empty; a search that
 			// matches nothing is handled in refresh(), which knows the query.
-			emptyText: t("iconPicker.imageEmpty"),
+			emptyText: t("iconPicker.customEmpty"),
 			loadMoreText: t("iconPicker.loadMore"),
 		});
 		this.enableDrop();
@@ -105,7 +105,7 @@ export class ImagePanel {
 		const search = this.toolbarEl.createEl("input", {
 			type: "text",
 			cls: "icon-picker-search-input",
-			placeholder: t("iconPicker.searchImage"),
+			placeholder: t("iconPicker.searchCustom"),
 			value: this.query,
 		});
 		search.addEventListener("input", () => {
@@ -124,7 +124,7 @@ export class ImagePanel {
 			attr: { type: "button" },
 		});
 		setIcon(deleteBtn.createSpan("icon-picker-image-btn-icon"), "trash-2");
-		deleteBtn.createSpan({ text: t("iconPicker.imageDelete") });
+		deleteBtn.createSpan({ text: t("iconPicker.customDelete") });
 		deleteBtn.addEventListener("click", () => {
 			const active = this.activeImage();
 			if (active) void this.confirmDelete(active);
@@ -137,7 +137,7 @@ export class ImagePanel {
 			attr: { type: "button" },
 		});
 		setIcon(addBtn.createSpan("icon-picker-image-btn-icon"), "image-plus");
-		addBtn.createSpan({ text: t("iconPicker.imageAdd") });
+		addBtn.createSpan({ text: t("iconPicker.customAdd") });
 		addBtn.addEventListener("click", () => this.fileInput?.click());
 
 		// The real input stays out of the layout; the styled button drives it.
@@ -207,7 +207,7 @@ export class ImagePanel {
 		for (const file of files) {
 			const name = userImageNameFromFilename(file.name);
 			if (taken.has(normalizeUserImageName(name))) {
-				new Notice(t("iconPicker.imageDuplicate", { name }));
+				new Notice(t("iconPicker.customDuplicate", { name }));
 				continue;
 			}
 
@@ -329,11 +329,11 @@ export class ImagePanel {
 
 		const message = createFragment();
 		message.createEl("p", {
-			text: t("iconPicker.imageDeleteConfirm", { name: image.name }),
+			text: t("iconPicker.customDeleteConfirm", { name: image.name }),
 		});
 		if (inUse > 0) {
 			message.createEl("p", {
-				text: t("iconPicker.imageDeleteInUse", { count: String(inUse) }),
+				text: t("iconPicker.customDeleteInUse", { count: String(inUse) }),
 				cls: "cs-reset-warning",
 			});
 		}

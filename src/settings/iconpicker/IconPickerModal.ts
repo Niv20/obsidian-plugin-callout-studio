@@ -45,7 +45,7 @@ import type { LocaleKey } from "../../i18n";
 
 /**
  * What the modal needs of whichever panel is on screen. Every source but one is
- * a PackPanel; "Your images" is an ImagePanel, because it is the only library
+ * a PackPanel; "Custom Icons" is an ImagePanel, because it is the only library
  * the user can write to (see ImagePanel's header).
  */
 interface PickerPanel {
@@ -85,7 +85,7 @@ export interface IconPickerPlugin {
 	ensureIconArtwork(icon: CalloutIcon): Promise<void>;
 	icons: { packs: PackDataStore };
 	/**
-	 * The slice of the registry the "Your images" panel needs: the picture list
+	 * The slice of the registry the "Custom Icons" panel needs: the picture list
 	 * and its one writer, plus the callouts, so deleting a picture can say how
 	 * many callouts are about to lose their icon.
 	 */
@@ -429,7 +429,7 @@ export class IconPicker extends Modal {
 
 	/**
 	 * One source's count. Every library is fixed, so the number loaded once on
-	 * open holds for the life of the modal — but "Your images" is the one source
+	 * open holds for the life of the modal — but "Custom Icons" is the one source
 	 * the user writes to, and a count cached on open would still claim four
 	 * pictures after a fifth was added. That one is read live instead.
 	 */
