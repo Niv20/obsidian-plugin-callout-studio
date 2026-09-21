@@ -21,6 +21,9 @@ main.js
 # Bundled test output (npm test)
 .test-out
 
+# Local audit bundles; generated artifacts, never source.
+.test-audit
+
 # obsidian
 data.json
 

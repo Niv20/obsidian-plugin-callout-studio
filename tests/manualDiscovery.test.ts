@@ -5,7 +5,7 @@ import { discoveryHarness, definition } from "./support/discoveryHarness";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { syncThemeOverlayRows } from "../src/manager/theme/themeOverlayRows";
 import { CURRENT_DATA_VERSION } from "../src/constants";
-import { readRepoFile } from "./support/sourceScan";
+import { readRepoFile, repoFileExists } from "./support/sourceScan";
 
 function gate() {
 	let release!: () => void;
@@ -145,17 +145,41 @@ describe("manual discovery is an explicit additive transaction", () => {
 	});
 });
 
-describe("automatic discovery remains outside production wiring", () => {
-	it("does not import its scheduler, prune, startup scanner or local index", () => {
-		const production = `${readRepoFile("src/main.ts")}\n${readRepoFile("src/manager/launchSequence.ts")}`;
-		for (const name of ["CalloutDiscovery", "CalloutPrune", "discoveryScheduler", "rediscoveryHold", "discoveryIndexBoot", "firstRunDiscovery"]) {
-			assert.doesNotMatch(production, new RegExp(`\\b${name}\\b`), name);
+describe("automatic discovery is removed from production wiring", () => {
+	it("has none of its retired source modules", () => {
+		for (const path of [
+			"src/editor/activeTypingIds.ts",
+			"src/manager/CalloutDiscovery.ts",
+			"src/manager/CalloutPrune.ts",
+			"src/manager/discoveryIndexBoot.ts",
+			"src/manager/discoveryScheduler.ts",
+			"src/manager/firstRunDiscovery.ts",
+			"src/manager/ignoredCallouts.ts",
+			"src/manager/rediscoveryHold.ts",
+			"src/manager/theme/retiredThemeIds.ts",
+			"src/manager/theme/themeProvidedRows.ts",
+			"src/manager/theme/themeRowSync.ts",
+			"src/settings/sections/openEditorDiscovery.ts",
+			"src/utils/FirstRunScanModal.ts",
+		]) {
+			assert.equal(repoFileExists(path), false, path);
 		}
 	});
 	it("only the settings button calls the manual scan", () => {
 		assert.doesNotMatch(readRepoFile("src/manager/launchSequence.ts"), /discovery|runVaultScan|schedulePrune/);
 		assert.doesNotMatch(readRepoFile("src/settings/SettingsTab.ts"), /scanOpenEditors|schedulePrune/);
 		assert.doesNotMatch(readRepoFile("src/utils/VaultCalloutStatisticsModal.ts"), /runVaultScan/);
+	});
+});
+
+describe("superseded integration modules stay removed", () => {
+	it("does not restore source files with no production owner", () => {
+		for (const path of [
+			"src/manager/settingsFirstWrite.ts",
+			"src/settings/sections/PaletteOrphanGroups.ts",
+		]) {
+			assert.equal(repoFileExists(path), false, path);
+		}
 	});
 });
 
