@@ -636,8 +636,11 @@ export const ro: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Licențe pictograme și credite",
 	"credits.intro":
-		"Callout Studio folosește mai multe biblioteci deschise de pictograme. Licențele lor sunt reproduse mai jos, împreună cu ce a fost schimbat pentru utilizarea lor aici.",
+		"Callout Studio folosește biblioteci de pictograme open-source. Vezi mai jos licența, atribuirea și modificările fiecărei biblioteci.",
 	"credits.fullNotices": "Notificări complete ale terților",
+	"credits.introBeforeNotices":
+		"Callout Studio folosește biblioteci de pictograme open-source; vezi mai jos licența, atribuirea și modificările fiecărei biblioteci sau citește ",
+	"credits.fullNoticesInline": "notificările complete ale terților",
 	"credits.pluginLicense":
 		"Codul propriu al Callout Studio este sub o licență permissive; bibliotecile de pictograme păstrează propriile licențe.",
 
@@ -931,6 +934,14 @@ export const ro: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Titlul are {{length}} caractere; a fost scurtat la {{max}}.",
 
+	"footer.prompt":
+		"Întrebări, buguri sau idei? Mi-ar plăcea să aud de la tine!{{break}} {{issue}} sau {{email}}.",
+	"footer.openIssue": "Deschide un issue pe GitHub",
+	"footer.sendEmail": "trimite-mi un e-mail",
+	"footer.sourceCode": "Cod sursă",
+	"footer.contribute": "Contribuie",
+	"footer.license": "Licența pluginului",
+	"footer.iconCredits": "Licențe pictograme",
 	"footer.tagline":
 		"Aveți feedback, comentarii sau sugestii? Mi-ar plăcea să aud!",
 	"footer.madeBy": "Creat de Niv  •  ",

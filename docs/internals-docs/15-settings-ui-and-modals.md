@@ -7,10 +7,18 @@ the individual modals not already covered by
 
 ## `SettingsTab` — composition and refresh plumbing
 
-`CalloutStudioSettingsTab.display()` renders 11 sections in a fixed order
-into one scrollable tab: callout lists → fallback → custom palettes → global
-settings → autocomplete → context menu → hotkeys → import/export → language →
-reset → credits → footer.
+`CalloutStudioSettingsTab.display()` renders its sections in a fixed order into
+one scrollable tab: callout lists → fallback → custom palettes → global settings
+→ autocomplete → context menu → hotkeys → import/export → language → reset →
+footer.
+
+The footer owns the contact and project links: one friendly sentence embeds an
+inline GitHub issue link for either a bug or an idea and an inline email link.
+The quieter row links to the source, contribution guide, plugin license and the
+GitHub release matching the displayed plugin version. The
+**Icon licenses & credits** control opens `IconCreditsModal`; that modal renders
+the registry-backed icon attributions and links to the full third-party notices
+without reserving a long disclosure row at the bottom of the settings page.
 
 ### Manual discovery in the callout-list heading
 
@@ -254,8 +262,8 @@ list of saved palettes and no additional orphan groups.
 ### `sectionDisclosure.ts` — a heading you can fold
 
 `attachSectionDisclosure(setting, bodyEl, initiallyExpanded = true, onToggle?)`
-gives a heading the same chevron the credits block has had since it shipped,
-and returns `{ setName, setExpanded, isExpanded }`. `onToggle`, if given,
+gives a heading a compact rotating chevron and returns
+`{ setName, setExpanded, isExpanded }`. `onToggle`, if given,
 fires with the new state on a user-driven click or keypress only — not when a
 caller drives the returned `setExpanded` — which is what lets a caller
 persist just the user's own choice; see
@@ -264,12 +272,11 @@ for the one caller that does.
 
 Three things about it are decisions, not incidentals:
 
-- **It is not `<details>`/`<summary>`.** The credits block is, and gets its
-  state, its toggle and its AT mapping free from the browser. These headings
-  are `Setting` rows, and *My callout types* carries the **Add new callout**
-  CTA in its control slot — a `<summary>` wrapping a button is a button that
-  folds the section every time it is pressed. So the state, the keyboard
-  (`Enter`, `Space`) and the aria contract are written out here.
+- **It is not `<details>`/`<summary>`.** These headings are `Setting` rows, and
+  *My callout types* carries the **Add new callout** CTA in its control slot —
+  a `<summary>` wrapping a button is a button that folds the section every time
+  it is pressed. So the state, the keyboard (`Enter`, `Space`) and the aria
+  contract are written out here.
 - **The control is `setting.nameEl`, not `settingEl`.** The name element
   spans the title line and stops short of `.setting-item-control`, which is
   what keeps that CTA pressable without a target check. It also keeps the
@@ -590,10 +597,9 @@ and the first glyph of the title — and the `(N)` after it — lands back on th
 x it had before there was anything to fold.
 
 Two properties, `--cs-disclosure-size` and `--cs-disclosure-gap`, are the
-single source for that: declared once on `.cs-collapsible-heading` (and on
-`.callout-studio-credits`, whose chevron shares the class), read back by the
-chevron, which is sized to them, and by the heading, which offsets itself by
-their sum. Because a custom property is substituted where it is *used*, the
+single source for that: declared once on `.cs-collapsible-heading`, read back
+by the chevron, which is sized to them, and by the heading, which offsets itself
+by their sum. Because a custom property is substituted where it is *used*, the
 `1em` size resolves against each heading's own font-size — 15.75px under
 `cs-subheader-row`, 15px for *Built-in callouts* — so one rule serves all
 three sections and no section carries an offset of its own. The chevron's box

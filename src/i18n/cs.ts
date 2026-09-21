@@ -630,8 +630,11 @@ export const cs: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Licence ikon a poděkování",
 	"credits.intro":
-		"Callout Studio čerpá z několika otevřených knihoven ikon. Jejich licence jsou reprodukovány níže, spolu s tím, co bylo změněno pro jejich použití zde.",
+		"Callout Studio používá open-source knihovny ikon. Níže si zobrazte licenci, uvedení autorství a úpravy každé knihovny.",
 	"credits.fullNotices": "Úplná oznámení třetích stran",
+	"credits.introBeforeNotices":
+		"Callout Studio používá open-source knihovny ikon; níže si zobrazte licenci, uvedení autorství a úpravy každé knihovny, nebo si přečtěte ",
+	"credits.fullNoticesInline": "úplná oznámení třetích stran",
 	"credits.pluginLicense":
 		"Vlastní kód Callout Studio je pod licencí permissive; knihovny ikon si zachovávají své vlastní licence.",
 
@@ -926,6 +929,14 @@ export const cs: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Název má {{length}} znaků; byl zkrácen na {{max}}.",
 
+	"footer.prompt":
+		"Máte otázky, našli jste chybu nebo máte nápad? Rád si to poslechnu!{{break}} {{issue}} nebo {{email}}.",
+	"footer.openIssue": "Otevřít issue na GitHubu",
+	"footer.sendEmail": "pošlete mi e-mail",
+	"footer.sourceCode": "Zdrojový kód",
+	"footer.contribute": "Přispět",
+	"footer.license": "Licence pluginu",
+	"footer.iconCredits": "Licence ikon",
 	"footer.tagline":
 		"Máte zpětnou vazbu, komentáře nebo návrhy? Rád je uslyším!",
 	"footer.madeBy": "Vytvořil Niv  •  ",

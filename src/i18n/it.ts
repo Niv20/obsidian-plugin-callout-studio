@@ -642,8 +642,11 @@ export const it: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Licenze icone e crediti",
 	"credits.intro":
-		"Callout Studio si basa su diverse librerie di icone aperte. Le loro licenze sono riprodotte di seguito, insieme a ciò che è stato modificato per usarle qui.",
+		"Callout Studio usa librerie di icone open source. Visualizza di seguito la licenza, l’attribuzione e le modifiche di ciascuna libreria.",
 	"credits.fullNotices": "Avvisi terze parti completi",
+	"credits.introBeforeNotices":
+		"Callout Studio usa librerie di icone open source; visualizza di seguito la licenza, l’attribuzione e le modifiche di ciascuna libreria, oppure leggi gli ",
+	"credits.fullNoticesInline": "avvisi completi di terze parti",
 	"credits.pluginLicense":
 		"Il codice proprio di Callout Studio è rilasciato con una licenza permissive; le librerie di icone mantengono le proprie licenze.",
 
@@ -944,6 +947,14 @@ export const it: Record<string, string> = {
 		"Il titolo è di {{length}} caratteri; è stato accorciato a " +
 		"{{max}}.",
 
+	"footer.prompt":
+		"Domande, bug o idee? Mi farebbe piacere sentirti!{{break}} {{issue}} oppure {{email}}.",
+	"footer.openIssue": "Apri un issue su GitHub",
+	"footer.sendEmail": "mandami un’e-mail",
+	"footer.sourceCode": "Codice sorgente",
+	"footer.contribute": "Contribuisci",
+	"footer.license": "Licenza del plugin",
+	"footer.iconCredits": "Licenze delle icone",
 	"footer.tagline":
 		"Hai feedback, commenti o suggerimenti? Mi farebbe piacere sentirti!",
 	"footer.madeBy": "Creato da Niv  •  ",

@@ -639,8 +639,11 @@ export const es: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Licencias de iconos y créditos",
 	"credits.intro":
-		"Callout Studio se basa en varias bibliotecas de iconos abiertas. Sus licencias se reproducen a continuación, junto con lo que se modificó para usarlas aquí.",
+		"Callout Studio usa bibliotecas de iconos de código abierto. Consulta abajo la licencia, atribución y modificaciones de cada biblioteca.",
 	"credits.fullNotices": "Avisos completos de terceros",
+	"credits.introBeforeNotices":
+		"Callout Studio usa bibliotecas de iconos de código abierto; consulta abajo la licencia, atribución y modificaciones de cada biblioteca, o lee los ",
+	"credits.fullNoticesInline": "avisos completos de terceros",
 	"credits.pluginLicense":
 		"El código propio de Callout Studio está bajo una licencia permissive; las bibliotecas de iconos conservan sus propias licencias.",
 
@@ -941,6 +944,14 @@ export const es: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"El título tiene {{length}} caracteres; se acortó a {{max}}.",
 
+	"footer.prompt":
+		"¿Preguntas, errores o ideas? ¡Me encantará saber de ti!{{break}} {{issue}} o {{email}}.",
+	"footer.openIssue": "Abrir un issue en GitHub",
+	"footer.sendEmail": "envíame un correo",
+	"footer.sourceCode": "Código fuente",
+	"footer.contribute": "Contribuir",
+	"footer.license": "Licencia del plugin",
+	"footer.iconCredits": "Licencias de iconos",
 	"footer.tagline":
 		"¿Tiene comentarios, sugerencias o ideas? ¡Me encantaría escucharle!",
 	"footer.madeBy": "Creado por Niv  •  ",

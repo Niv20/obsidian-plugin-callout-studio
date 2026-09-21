@@ -609,8 +609,11 @@ export const zhTW: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "圖示授權與致謝",
 	"credits.intro":
-		"Callout Studio 使用了多個開源圖示庫。其授權條款以及為在此使用所做的更改均已在下方列出。",
+		"Callout Studio 使用開源圖示庫。請在下方查看每個庫的授權、署名與修改內容。",
 	"credits.fullNotices": "完整的第三方聲明",
+	"credits.introBeforeNotices":
+		"Callout Studio 使用開源圖示庫；請在下方查看每個庫的授權、署名與修改內容，或閱讀",
+	"credits.fullNoticesInline": "完整的第三方聲明",
 	"credits.pluginLicense":
 		"Callout Studio 自身的程式碼採用 permissive 授權；圖示庫保留各自的授權。",
 	"contextMenu.editCallout": "編輯 callout 設定",
@@ -866,6 +869,14 @@ export const zhTW: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"標題長度為 {{length}} 個字元；已縮短至 {{max}}。",
 
+	"footer.prompt":
+		"有問題、錯誤或想法？歡迎告訴我！{{break}} {{issue}} 或 {{email}}。",
+	"footer.openIssue": "開啟 GitHub issue",
+	"footer.sendEmail": "寄電子郵件給我",
+	"footer.sourceCode": "原始碼",
+	"footer.contribute": "參與貢獻",
+	"footer.license": "外掛授權",
+	"footer.iconCredits": "圖示授權",
 	"footer.tagline": "有反饋、意見或建議？歡迎告訴我！",
 	"footer.madeBy": "由 Niv 製作  •  ",
 	"settings.deletePaletteConfirmLinkedOne":

@@ -620,8 +620,11 @@ export const nb: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Ikonlisenser og kreditering",
 	"credits.intro":
-		"Callout Studio bruker flere åpne ikonbiblioteker. Lisensene deres er gjengitt nedenfor, sammen med hva som ble endret for å bruke dem her.",
+		"Callout Studio bruker ikonbiblioteker med åpen kildekode. Se lisens, kreditering og endringer for hvert bibliotek nedenfor.",
 	"credits.fullNotices": "Fullstendige tredjeparts meldinger",
+	"credits.introBeforeNotices":
+		"Callout Studio bruker ikonbiblioteker med åpen kildekode; se lisens, kreditering og endringer for hvert bibliotek nedenfor, eller les ",
+	"credits.fullNoticesInline": "de fullstendige tredjepartsmerknadene",
 	"credits.pluginLicense":
 		"Callout Studios egen kode er under en permissiv lisens; ikonbibliotekene beholder sine egne lisenser.",
 	"contextMenu.editCallout": "Rediger callout-innstillinger",
@@ -898,6 +901,14 @@ export const nb: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Tittelen er på {{length}} tegn; den ble forkortet til {{max}}.",
 
+	"footer.prompt":
+		"Spørsmål, feil eller ideer? Jeg vil gjerne høre fra deg!{{break}} {{issue}} eller {{email}}.",
+	"footer.openIssue": "Åpne en GitHub-issue",
+	"footer.sendEmail": "send meg en e-post",
+	"footer.sourceCode": "Kildekode",
+	"footer.contribute": "Bidra",
+	"footer.license": "Plugin-lisens",
+	"footer.iconCredits": "Ikonlisenser",
 	"footer.tagline":
 		"Har du tilbakemeldinger, kommentarer eller forslag? Jeg vil gjerne høre det!",
 	"footer.madeBy": "Laget av Niv  •  ",

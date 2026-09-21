@@ -14,7 +14,6 @@ import type { App } from "obsidian";
 import { CalloutEditor } from "./CalloutEditor";
 import { openCalloutEditorFor } from "./openCalloutEditor";
 import { renderHotkeySection } from "./sections/HotkeySection";
-import { renderCreditsSection } from "./sections/CreditsSection";
 import { renderFooterSection } from "./sections/FooterSection";
 import {
 	renderImportExportSection,
@@ -164,7 +163,6 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		const importTarget = renderImportExportSection(sectionCtx, containerEl);
 		renderLanguageSection(sectionCtx, containerEl);
 		renderResetSection(sectionCtx, containerEl);
-		renderCreditsSection(sectionCtx, containerEl);
 		renderFooterSection(sectionCtx, containerEl);
 
 		// Both notices belong directly under the title. Rendering them after the

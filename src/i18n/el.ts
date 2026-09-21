@@ -625,8 +625,11 @@ export const el: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Άδειες εικονιδίων και αναφορές",
 	"credits.intro":
-		"Το Callout Studio αντλεί από αρκετές ανοιχτές βιβλιοθήκες εικονιδίων. Οι άδειές τους αναπαράγονται παρακάτω, μαζί με ό,τι άλλαξε για τη χρήση τους εδώ.",
+		"Το Callout Studio χρησιμοποιεί βιβλιοθήκες εικονιδίων ανοιχτού κώδικα. Δείτε παρακάτω την άδεια, την αναφορά και τις τροποποιήσεις κάθε βιβλιοθήκης.",
 	"credits.fullNotices": "Πλήρεις ανακοινώσεις τρίτων μερών",
+	"credits.introBeforeNotices":
+		"Το Callout Studio χρησιμοποιεί βιβλιοθήκες εικονιδίων ανοιχτού κώδικα· δείτε παρακάτω την άδεια, την αναφορά και τις τροποποιήσεις κάθε βιβλιοθήκης ή διαβάστε τις ",
+	"credits.fullNoticesInline": "πλήρεις ανακοινώσεις τρίτων μερών",
 	"credits.pluginLicense":
 		"Ο κώδικας του Callout Studio είναι υπό μια permissive άδεια· οι βιβλιοθήκες εικονιδίων διατηρούν τις δικές τους άδειες.",
 	"contextMenu.editCallout": "Επεξεργασία ρυθμίσεων callout",
@@ -925,6 +928,14 @@ export const el: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Ο τίτλος έχει {{length}} χαρακτήρες· συντομεύτηκε στους {{max}}.",
 
+	"footer.prompt":
+		"Ερωτήσεις, σφάλματα ή ιδέες; Θα χαρώ να σας ακούσω!{{break}} {{issue}} ή {{email}}.",
+	"footer.openIssue": "Άνοιγμα ζητήματος στο GitHub",
+	"footer.sendEmail": "στείλτε μου email",
+	"footer.sourceCode": "Πηγαίος κώδικας",
+	"footer.contribute": "Συνεισφορά",
+	"footer.license": "Άδεια προσθέτου",
+	"footer.iconCredits": "Άδειες εικονιδίων",
 	"footer.tagline":
 		"Έχετε σχόλια, απόψεις ή προτάσεις; Θα χαρώ να τα ακούσω!",
 	"footer.madeBy": "Δημιουργήθηκε από τον Niv  •  ",

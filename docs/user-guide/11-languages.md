@@ -16,8 +16,8 @@ The first time you select a language that is not already stored on the device, C
 
 Non-English translations were created with AI assistance, so an awkward phrase or small error may remain. Links at the bottom of the plugin settings let you:
 
-- Submit a pull request on GitHub.
-- Open an issue.
+- Open a GitHub issue for a correction or suggestion.
+- Read the contribution guide before submitting a pull request.
 - Send an email describing the language and the text that should change.
 
 See [Privacy & permissions](../internals-docs/24-privacy-and-permissions.md) for how translation files are downloaded and stored.

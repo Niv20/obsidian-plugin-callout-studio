@@ -631,8 +631,11 @@ export const tr: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Simge lisansları ve katkılar",
 	"credits.intro":
-		"Callout Studio birçok açık simge kitaplığından yararlanır. Lisansları aşağıda yeniden üretilmiştir; burada kullanım için yapılan değişikliklerle birlikte.",
+		"Callout Studio açık kaynak simge kitaplıkları kullanır. Her kitaplığın lisansını, atıf bilgisini ve değişikliklerini aşağıda görüntüleyin.",
 	"credits.fullNotices": "Tam üçüncü taraf bildirimleri",
+	"credits.introBeforeNotices":
+		"Callout Studio açık kaynak simge kitaplıkları kullanır; her kitaplığın lisansını, atıf bilgisini ve değişikliklerini aşağıda görüntüleyin veya ",
+	"credits.fullNoticesInline": "tam üçüncü taraf bildirimlerini",
 	"credits.pluginLicense":
 		"Callout Studio'nun kendi kodu permissive lisansı altında; simge kütüphaneleri kendi lisanslarını korur.",
 
@@ -919,6 +922,14 @@ export const tr: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Başlık {{length}} karakter; {{max}} karaktere kısaltıldı.",
 
+	"footer.prompt":
+		"Sorular, hatalar veya fikirler mi var? Sizden haber almayı çok isterim!{{break}} {{issue}} veya {{email}}.",
+	"footer.openIssue": "GitHub issue aç",
+	"footer.sendEmail": "bana e-posta gönder",
+	"footer.sourceCode": "Kaynak kod",
+	"footer.contribute": "Katkıda bulun",
+	"footer.license": "Eklenti lisansı",
+	"footer.iconCredits": "Simge lisansları",
 	"footer.tagline":
 		"Geri bildiriminiz, yorumlarınız veya önerileriniz var mı? Duymak isterim!",
 	"footer.madeBy": "Niv tarafından yapıldı  •  ",

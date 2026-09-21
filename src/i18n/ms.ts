@@ -629,8 +629,11 @@ export const ms: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Lesen ikon dan kredit",
 	"credits.intro":
-		"Callout Studio menggunakan beberapa pustaka ikon terbuka. Lesen mereka dihasilkan semula di bawah, bersama dengan apa yang diubah untuk menggunakannya di sini.",
+		"Callout Studio menggunakan pustaka ikon sumber terbuka. Lihat lesen, atribusi dan pengubahsuaian setiap pustaka di bawah.",
 	"credits.fullNotices": "Notis pihak ketiga penuh",
+	"credits.introBeforeNotices":
+		"Callout Studio menggunakan pustaka ikon sumber terbuka; lihat lesen, atribusi dan pengubahsuaian setiap pustaka di bawah, atau baca ",
+	"credits.fullNoticesInline": "notis pihak ketiga penuh",
 	"credits.pluginLicense":
 		"Kod Callout Studio sendiri adalah di bawah lesen permissive; pustaka ikon mengekalkan lesen mereka sendiri.",
 	"contextMenu.editCallout": "Edit tetapan callout",
@@ -913,6 +916,14 @@ export const ms: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Tajuk ialah {{length}} aksara; ia dipendekkan kepada {{max}}.",
 
+	"footer.prompt":
+		"Soalan, pepijat atau idea? Saya sangat ingin mendengarnya!{{break}} {{issue}} atau {{email}}.",
+	"footer.openIssue": "Buka isu GitHub",
+	"footer.sendEmail": "hantar e-mel kepada saya",
+	"footer.sourceCode": "Kod sumber",
+	"footer.contribute": "Sumbang",
+	"footer.license": "Lesen pemalam",
+	"footer.iconCredits": "Lesen ikon",
 	"footer.tagline":
 		"Ada maklum balas, komen atau cadangan? Saya ingin mendengarnya!",
 	"footer.madeBy": "Dicipta oleh Niv  •  ",

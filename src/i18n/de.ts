@@ -640,8 +640,11 @@ export const de: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Symbol-Lizenzen und Quellenangaben",
 	"credits.intro":
-		"Callout Studio nutzt mehrere offene Symbol-Bibliotheken. Ihre Lizenzen sind nachfolgend wiedergegeben, zusammen mit den vorgenommenen Anpassungen für die hiesige Verwendung.",
+		"Callout Studio verwendet Open-Source-Icon-Bibliotheken. Sieh dir unten die Lizenz, Namensnennung und Änderungen jeder Bibliothek an.",
 	"credits.fullNotices": "Vollständige Drittanbieter-Hinweise",
+	"credits.introBeforeNotices":
+		"Callout Studio verwendet Open-Source-Icon-Bibliotheken; sieh dir unten die Lizenz, Namensnennung und Änderungen jeder Bibliothek an oder lies die ",
+	"credits.fullNoticesInline": "vollständigen Drittanbieter-Hinweise",
 	"credits.pluginLicense":
 		"Callout Studios eigener Code steht unter einer permissiven Lizenz; die Symbol-Bibliotheken behalten ihre eigenen Lizenzen.",
 
@@ -945,6 +948,14 @@ export const de: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Der Titel hat {{length}} Zeichen; er wurde auf {{max}} gekürzt.",
 
+	"footer.prompt":
+		"Fragen, Fehler oder Ideen? Ich freue mich, von dir zu hören!{{break}} {{issue}} oder {{email}}.",
+	"footer.openIssue": "Ein GitHub-Issue öffnen",
+	"footer.sendEmail": "mir eine E-Mail schicken",
+	"footer.sourceCode": "Quellcode",
+	"footer.contribute": "Mitwirken",
+	"footer.license": "Plugin-Lizenz",
+	"footer.iconCredits": "Icon-Lizenzen",
 	"footer.tagline":
 		"Feedback, Kommentare oder Vorschläge? Ich würde mich freuen, von Ihnen zu hören!",
 	"footer.madeBy": "Erstellt von Niv  •  ",

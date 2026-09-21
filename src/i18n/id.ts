@@ -635,8 +635,11 @@ export const id: Record<string, string> = {
 	// Icon licences & credits
 	"credits.title": "Lisensi ikon dan kredit",
 	"credits.intro":
-		"Callout Studio menggunakan beberapa pustaka ikon terbuka. Lisensinya direproduksi di bawah, bersama dengan apa yang diubah untuk menggunakannya di sini.",
+		"Callout Studio menggunakan pustaka ikon sumber terbuka. Lihat lisensi, atribusi, dan modifikasi tiap pustaka di bawah.",
 	"credits.fullNotices": "Pemberitahuan pihak ketiga lengkap",
+	"credits.introBeforeNotices":
+		"Callout Studio menggunakan pustaka ikon sumber terbuka; lihat lisensi, atribusi, dan modifikasi tiap pustaka di bawah, atau baca ",
+	"credits.fullNoticesInline": "pemberitahuan pihak ketiga lengkap",
 	"credits.pluginLicense":
 		"Kode milik Callout Studio sendiri berada di bawah lisensi permissive; pustaka ikon mempertahankan lisensinya sendiri.",
 
@@ -930,6 +933,14 @@ export const id: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Judul memiliki {{length}} karakter; dipendekkan menjadi {{max}}.",
 
+	"footer.prompt":
+		"Pertanyaan, bug, atau ide? Saya senang mendengarnya!{{break}} {{issue}} atau {{email}}.",
+	"footer.openIssue": "Buka issue GitHub",
+	"footer.sendEmail": "kirim email kepada saya",
+	"footer.sourceCode": "Kode sumber",
+	"footer.contribute": "Berkontribusi",
+	"footer.license": "Lisensi plugin",
+	"footer.iconCredits": "Lisensi ikon",
 	"footer.tagline":
 		"Ada umpan balik, komentar, atau saran? Saya ingin mendengarnya!",
 	"footer.madeBy": "Dibuat oleh Niv  •  ",

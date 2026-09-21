@@ -636,10 +636,13 @@ export const vi: Record<string, string> = {
 		"Callout Studio không thể lưu gói biểu tượng vào đĩa, vì vậy cần tải xuống lại lần sau. Các biểu tượng bạn chọn vẫn được lưu cùng cài đặt.",
 
 	// Icon licences & credits
-	"credits.title": "Giấy phép biểu tượng và nhận định",
+	"credits.title": "Giấy phép biểu tượng và ghi công",
 	"credits.intro":
-		"Callout Studio sử dụng một số thư viện biểu tượng mở. Giấy phép của chúng được tái bản dưới đây, cùng với những gì đã được thay đổi để sử dụng ở đây.",
+		"Callout Studio sử dụng các thư viện biểu tượng mã nguồn mở. Xem giấy phép, ghi công và các sửa đổi của từng thư viện bên dưới.",
 	"credits.fullNotices": "Thông báo đầy đủ của bên thứ ba",
+	"credits.introBeforeNotices":
+		"Callout Studio sử dụng các thư viện biểu tượng mã nguồn mở; xem giấy phép, ghi công và các sửa đổi của từng thư viện bên dưới, hoặc đọc ",
+	"credits.fullNoticesInline": "thông báo đầy đủ của bên thứ ba",
 	"credits.pluginLicense":
 		"Mã nguồn của Callout Studio thuộc giấy phép permissive; các thư viện biểu tượng giữ nguyên giấy phép riêng.",
 
@@ -932,6 +935,14 @@ export const vi: Record<string, string> = {
 	"import.warn.admTitleTruncated":
 		"Tiêu đề dài {{length}} ký tự; đã được rút ngắn còn {{max}}.",
 
+	"footer.prompt":
+		"Có câu hỏi, lỗi hoặc ý tưởng? Tôi rất muốn nghe từ bạn!{{break}} {{issue}} hoặc {{email}}.",
+	"footer.openIssue": "Mở issue trên GitHub",
+	"footer.sendEmail": "gửi email cho tôi",
+	"footer.sourceCode": "Mã nguồn",
+	"footer.contribute": "Đóng góp",
+	"footer.license": "Giấy phép plugin",
+	"footer.iconCredits": "Giấy phép biểu tượng",
 	"footer.tagline": "Có phản hồi, nhận xét hoặc đề xuất? Tôi rất muốn nghe!",
 	"footer.madeBy": "Được tạo bởi Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":

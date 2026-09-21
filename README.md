@@ -72,4 +72,4 @@ Callout Studio exposes a small read-only API so other plugins can list the user'
 
 Callout Studio's code is available under a permissive [license](LICENSE), with no attribution required. One informal request, which is not a license term: please do not repackage the code and publish it as a new plugin in Obsidian's Community Plugins directory. You are welcome to reuse it, learn from it, and build on it in other ways.
 
-The icon libraries offered within the plugin are separate works and retain their own licenses. You can view the full text for each in **[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)** or directly through the plugin via _Settings → Icon licences and credits_.
+The icon libraries offered within the plugin are separate works and retain their own licenses. You can view the full text for each in **[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)** or select **Icon licenses & credits** at the bottom of the plugin settings.
