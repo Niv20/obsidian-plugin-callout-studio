@@ -24,7 +24,7 @@ The [User Guide](docs/user-guide/README.md) covers color palettes, icons, global
 
 Thank you to everyone who reported bugs, tested fixes, and shared detailed feedback:
 
-[brianjwalton](https://github.com/brianjwalton) · [astreloff](https://github.com/astreloff) · [rubcap](https://github.com/rubcap) · [Xto-tT0](https://github.com/Xto-tT0) · [Jarsgon](https://github.com/Jarsgon) · [Ravencaller213](https://github.com/Ravencaller213) · [frudolph77](https://github.com/frudolph77) · [DesertSnak3](https://github.com/DesertSnak3) · [alythobani](https://github.com/alythobani) · [dragonish](https://github.com/dragonish) · [Ana-Mendes123](https://github.com/Ana-Mendes123) · [EddyCurrrent](https://github.com/EddyCurrrent) · [Indra-Reaper](https://github.com/Indra-Reaper) · [hisbo](https://github.com/hisbo)
+[brianjwalton](https://github.com/brianjwalton) · [astreloff](https://github.com/astreloff) · [rubcap](https://github.com/rubcap) · [Xto-tT0](https://github.com/Xto-tT0) · [Jarsgon](https://github.com/Jarsgon) · [Ravencaller213](https://github.com/Ravencaller213) · [frudolph77](https://github.com/frudolph77) · [DesertSnak3](https://github.com/DesertSnak3) · [alythobani](https://github.com/alythobani) · [dragonish](https://github.com/dragonish) · [Ana-Mendes123](https://github.com/Ana-Mendes123) · [EddyCurrrent](https://github.com/EddyCurrrent) · [Indra-Reaper](https://github.com/Indra-Reaper) · [hisbo](https://github.com/hisbo) · [engineeringbees](https://github.com/engineeringbees)
 
 And thank you to everyone whose ideas and suggestions helped shape the plugin:
 
