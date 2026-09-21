@@ -34,9 +34,9 @@ Thank you all for helping make Callout Studio better!
 
 ## Privacy, in short
 
-Callout Studio keeps a local recovery copy of its settings in case sync replaces `data.json` while the plugin is closed. It can merge valid concurrent edits and recognized conflict copies, while preserving damaged or unsupported data for recovery. For the safest sync setup, install the same up-to-date build on every device. See [multi-device editing and recovery](docs/user-guide/13-resetting-callouts-and-settings.md#editing-on-more-than-one-device).
+Callout Studio keeps a local recovery copy of its settings in case sync replaces `data.json` while the plugin is closed. It can merge valid concurrent edits and recognized conflict copies, while preserving damaged or unsupported data for recovery. For the safest sync setup, install the same up-to-date build on every device. See [persistence and recovery](docs/internals-docs/07-persistence-and-caching.md).
 
-Callout Studio never sends your vault content anywhere and collects no telemetry or analytics. It only downloads icon artwork you choose and, when needed, a translation for the plugin interface. See [Privacy & permissions](docs/user-guide/16-privacy-and-permissions.md) for a full explanation of every download and where data is stored.
+Callout Studio never sends your vault content anywhere and collects no telemetry or analytics. It only downloads icon artwork you choose and, when needed, a translation for the plugin interface. See [Privacy & permissions](docs/internals-docs/24-privacy-and-permissions.md) for a full explanation of every download and where data is stored.
 
 ## Install
 

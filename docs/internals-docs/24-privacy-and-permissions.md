@@ -16,7 +16,7 @@ No vault content, clipboard data, or usage information is ever transmitted off y
 
 Nothing is fetched just by opening a note, and nothing is fetched just by opening the icon picker. Searching and browsing every icon source works offline from the moment you install the plugin, because the names, keywords and categories for every icon ship with the plugin itself. The only thing ever downloaded is artwork, and only for icons you actually choose.
 
-There is exactly one exception that isn't tied to pressing a button: downloading the interface's own translation, and only when your language isn't already saved on your device. See [Language and localization](15-language-and-localization.md) for how that works from your side.
+There is exactly one exception that isn't tied to pressing a button: downloading the interface's own translation, and only when your language isn't already saved on your device. See [Languages](../user-guide/11-languages.md) for how that works from the user's side.
 
 ## Downloadable icon libraries
 
@@ -42,7 +42,7 @@ If the preview font can't be reached, the grid falls back to showing icon names 
 
 ## Translations
 
-Translations are the only files Callout Studio may request without a button press, and only when your language is not already saved on the device. The request runs after the plugin loads, so it does not delay startup. If it fails, the interface stays in English and retries at the next launch. Translation files come from the plugin's repository, are pinned to the installed release, and use the same checksum verification as icon packs. See [Language and localization](15-language-and-localization.md) for the related settings.
+Translations are the only files Callout Studio may request without a button press, and only when your language is not already saved on the device. The request runs after the plugin loads, so it does not delay startup. If it fails, the interface stays in English and retries at the next launch. Translation files come from the plugin's repository, are pinned to the installed release, and use the same checksum verification as icon packs. See [Languages](../user-guide/11-languages.md) for the related settings.
 
 ## Your own pictures
 
@@ -68,7 +68,7 @@ is removed; a damaged drawing uses the usual missing-icon display.
 - **The Material Symbols preview font:** used only for the icon picker's grid, never for your notes.
 - **A small local snapshot of the plugin's generated CSS**, purely to shorten the flash of unstyled callouts on a slow startup (mainly on mobile). It lives in the app's own local storage, never in the vault, and never leaves the device.
 - **Local interface preferences and an installation marker.** Folded-section states stay on this device. The marker protects settings when an existing installation temporarily cannot find its settings file. Discovery has no local cache; manually saved results live in `data.json`.
-- **The exported CSS snippet file**, only if you've explicitly asked for one (see [Import, export & sharing](11-import-export-and-sharing.md)). It's never turned on automatically, and it's safe to delete.
+- **The exported CSS snippet file**, only if you've explicitly asked for one (see [Import, export & sharing](../user-guide/10-import-export-and-sharing.md)). It's never turned on automatically, and it's safe to delete.
 - **Recovery copies of the old startup snippet**, if upgrading from a version
   that created `callout-studio-do-not-delete.css`. Cleanup preserves its exact
   contents, including personal edits, as `.txt` files in
@@ -77,4 +77,4 @@ is removed; a damaged drawing uses the usual missing-icon display.
   cannot be verified, the original snippet is left alone for a later retry.
 
 ---
-**Next:** [Back to the guide overview](README.md)
+**Next:** [Back to the internals overview](README.md)

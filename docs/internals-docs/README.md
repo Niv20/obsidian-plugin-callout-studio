@@ -15,11 +15,13 @@ already covers that ground for end users, and duplicating it here would just
 give it a second place to go stale. If you're looking for that, start there
 instead.
 
-One chapter has a third audience. [17-theme-callout-discovery.md](17-theme-callout-discovery.md)
-ends with a compatibility section written for **Obsidian theme authors** — which
-CSS patterns Callout Studio reads correctly, which ones hide a theme's callouts
-from it, and how to check a theme against it. No plugin internals needed to read
-that half.
+Two chapters also serve readers outside the core contributor audience.
+[17-theme-callout-discovery.md](17-theme-callout-discovery.md) ends with a
+compatibility section for **Obsidian theme authors**: which CSS patterns Callout
+Studio reads correctly, which ones hide a theme's callouts from it, and how to
+check a theme against it. [24-privacy-and-permissions.md](24-privacy-and-permissions.md)
+is the complete privacy reference for anyone who needs to audit vault access,
+network requests, downloaded assets, and local storage.
 
 It complements, rather than replaces, two other documents already in the
 repo:
@@ -89,6 +91,7 @@ codebase has already been bitten by once.
 | [21-extending.md](21-extending.md) | Step-by-step checklists for adding a setting, a command, a callout field, a menu item, an icon source, and more. |
 | [22-common-pitfalls.md](22-common-pitfalls.md) | Concentrated warnings: state sync, id normalization, helpers that must always be used, mobile quirks, backward compatibility. |
 | [23-logging-and-diagnostics.md](23-logging-and-diagnostics.md) | Every `console.debug`/`warn`/`error` call site, the policy behind which one and when to use a `Notice` instead, and why there's no centralized logger. |
+| [24-privacy-and-permissions.md](24-privacy-and-permissions.md) | Vault access, network requests, downloaded assets, local storage, and the privacy boundaries around each one. |
 
 Opening a PR? [`CONTRIBUTING.md`](../../CONTRIBUTING.md) (repo root) has the
 process — fork, branch, lint, test, commit style. This guide is what to read

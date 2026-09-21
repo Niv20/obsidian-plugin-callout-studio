@@ -1,0 +1,30 @@
+# Custom icons & emojis
+
+Open a callout for editing and click its current icon to open the icon picker. You can search every source at once or select one library first.
+
+## Built-in sources
+
+The picker includes Lucide, Tabler Icons, Material Symbols, Emoji, Font Awesome, Octicons, and RPG Awesome.
+
+- **Lucide and Emoji** are available immediately and need no download.
+- **Most third-party libraries** need one quick download, after which they work offline.
+- **Material Symbols** downloads only the specific SVG you select, keeping its stored footprint small.
+
+Search works offline. Depending on the selected source, the filters at the top can narrow icons by category, style, stroke weight, or emoji skin tone.
+
+## Use your own graphic
+
+Select **Custom Icons** to upload an SVG, PNG, JPEG, or WebP file.
+
+For SVG files, choose whether the artwork keeps its original colors or inherits the callout color. Inheriting the callout color works especially well for flat icons and monochrome logos. Raster images keep their original colors.
+
+Uploaded files remain on your device and are stored with the plugin settings. See [Privacy & permissions](../internals-docs/24-privacy-and-permissions.md) for the storage and download details.
+
+## Adjust or remove the icon
+
+After choosing an icon, adjust its size and horizontal or vertical offset separately for the Block, Heading, and Inline previews.
+
+If you do not want an icon, hover over the icon tile and click the **X**. The title and content realign automatically.
+
+---
+**Next:** [Fallback styles & discovery](05-fallback-styles-and-discovery.md)
