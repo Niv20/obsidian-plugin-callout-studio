@@ -6,8 +6,8 @@
  * Callout Studio will not override it. So every control here has to pass one
  * test: does it do what it says? The two that failed have gone.
  *
- * - The **pencil** used to open the full editor, whose colour, icon, name and
- *   ID fields changed nothing that renders. It now opens
+ * - The **view icon** replaces the pencil that used to open the full editor,
+ *   whose colour, icon, name and ID fields changed nothing that renders. It opens
  *   {@link ThemeCalloutPreviewModal} instead — a window that shows what the
  *   callout looks like and says who owns it, and writes nothing at all.
  * - **Customize in Callout Studio** took the callout over. There is no taking
@@ -31,7 +31,7 @@ import {
 import { invalidateThemeRowUsage, themeRowUsage } from "./themeRowUsage";
 import { ThemeCalloutPreviewModal } from "../ThemeCalloutPreviewModal";
 
-/** One 32×32 icon button, in the same shape the pencil and `⋯` already use. */
+/** One 32×32 icon button, in the same shape the view and `⋯` actions use. */
 function addRowButton(
 	host: HTMLElement,
 	icon: string,
@@ -119,9 +119,9 @@ export async function openThemeRowMenu(
  * actionable. The count moved into the `⋯` menu, next to the two actions it is
  * actually about.
  *
- * The preview button keeps the pencil glyph the row has always had there, so
- * every row in the tab has the same two controls in the same two places and the
- * eye does not have to re-learn the list at each section boundary.
+ * The preview button uses an eye rather than a pencil so its glyph agrees with
+ * its read-only behaviour, while keeping the same position as the edit action
+ * on rows that Callout Studio owns.
  */
 export function renderThemeRowControls(
 	ctx: SettingsSectionContext,
@@ -130,7 +130,7 @@ export function renderThemeRowControls(
 ): void {
 	addRowButton(
 		buttonsEl,
-		"pencil",
+		"eye",
 		t("settings.themePreviewAria", { name: def.displayName }),
 		() => {
 			new ThemeCalloutPreviewModal(ctx.plugin, def).open();

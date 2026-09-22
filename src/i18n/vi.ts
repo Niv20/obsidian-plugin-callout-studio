@@ -350,12 +350,8 @@ export const vi: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — do giao diện của bạn cung cấp',
-	"themePreview.owned":
-		'{{theme}} cung cấp và tạo kiểu cho "{{name}}". Callout Studio sẽ không ghi đè nó, vì vậy callout khối của nó trông giống hệt như giao diện của bạn vẽ.',
-	"themePreview.readOnly":
-		"Điều đó có nghĩa là màu sắc, biểu tượng, tên và ID của nó không thể thay đổi ở đây. Nếu bạn muốn một thiết kế riêng, hãy tạo một callout mới với ID khác.",
-	"themePreview.blockOnly":
-		"Định dạng Tiêu đề và Nội dòng không khả dụng cho các callout do giao diện của bạn cung cấp. Callout khối sử dụng kiểu gốc của giao diện.",
+	"themePreview.summary":
+		"Do {{theme}} cung cấp (chỉ đọc). Không thể thay đổi màu sắc, biểu tượng và ID tại đây; các định dạng Tiêu đề/Nội dòng không khả dụng. Để tùy chỉnh, hãy tạo một callout mới.",
 	"themePreview.previewTitle": "Cách nó hiển thị hiện tại",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

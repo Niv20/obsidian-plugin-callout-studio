@@ -343,12 +343,8 @@ export const ms: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — dibekalkan oleh tema anda',
-	"themePreview.owned":
-		'{{theme}} membekalkan dan menggayakan "{{name}}". Callout Studio tidak akan mengatasinya, jadi callout bloknya kelihatan tepat seperti yang dilukis oleh tema anda.',
-	"themePreview.readOnly":
-		"Ini bermakna warna, ikon, nama dan IDnya tidak boleh diubah di sini. Jika anda mahukan reka bentuk sendiri, cipta callout baharu dengan ID yang berbeza.",
-	"themePreview.blockOnly":
-		"Format Tajuk dan Sebaris tidak tersedia untuk callouts yang dibekalkan oleh tema anda. Callout blok menggunakan gaya asli tema.",
+	"themePreview.summary":
+		"Dibekalkan oleh {{theme}} (baca sahaja). Warna, ikon dan ID tidak boleh diubah di sini, dan format Tajuk/Sebaris tidak tersedia. Untuk menyesuaikannya, cipta callout baharu.",
 	"themePreview.previewTitle": "Cara ia dipaparkan sekarang",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

@@ -372,12 +372,8 @@ export const he: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — מסופקת על־ידי ערכת הנושא שלכם',
-	"themePreview.owned":
-		'{{theme}} מספקת ומעצבת את "{{name}}". Callout Studio לא יעקוף זאת, כך שתיבת־ההבלטה שלה מסוג בלוק נראית בדיוק כפי שערכת הנושא שלכם מציירת אותה.',
-	"themePreview.readOnly":
-		"המשמעות היא שאי אפשר לשנות כאן את הצבע, האייקון, השם והמזהה שלה. אם אתם רוצים עיצוב משלכם, צרו תיבת־הבלטה חדשה עם מזהה אחר.",
-	"themePreview.blockOnly":
-		"הפורמטים כותרת ומוטבע אינם זמינים לתיבות־הבלטה שמסופקות על־ידי ערכת הנושא שלכם. תיבות־הבלטה מסוג בלוק משתמשות בעיצוב המקורי של ערכת הנושא.",
+	"themePreview.summary":
+		"מסופקת על־ידי {{theme}} (לקריאה בלבד). אי אפשר לשנות כאן את הצבע, האייקון או המזהה, והפורמטים כותרת/מוטבעת אינם זמינים. להתאמה אישית, צרו תיבת־הבלטה חדשה.",
 	"themePreview.previewTitle": "איך היא נראית כרגע",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

@@ -348,12 +348,8 @@ export const ja: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — あなたのテーマが提供',
-	"themePreview.owned":
-		'{{theme}}が"{{name}}"を提供しスタイル設定しています。Callout Studioはこれを上書きしないため、そのBlock calloutはテーマの描画どおりに表示されます。',
-	"themePreview.readOnly":
-		"そのため、色・アイコン・名前・IDはここでは変更できません。独自のデザインにしたい場合は、別のIDで新しいcalloutを作成してください。",
-	"themePreview.blockOnly":
-		"テーマが提供するcalloutでは、見出しとインラインの形式は利用できません。Block calloutはテーマ本来のスタイルを使用します。",
+	"themePreview.summary":
+		"{{theme}}が提供（読み取り専用）。色、アイコン、IDはここでは変更できず、見出し／インライン形式は使用できません。カスタマイズするには、新しいcalloutを作成してください。",
 	"themePreview.previewTitle": "現在の表示",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

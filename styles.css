@@ -1449,6 +1449,18 @@ body:not(.is-phone)
 	overflow: visible;
 }
 
+/* A theme-owned preview keeps its final blank document line as a safe place to
+   park CodeMirror's caret outside the callout, but does not show that line as
+   extra space. No other preview receives this opt-in class. */
+.cs-live-preview-body.cs-live-preview-editable.cs-live-preview-collapse-trailing-line
+	.cm-content
+	> .cm-line:last-child {
+	height: 0;
+	min-height: 0;
+	line-height: 0;
+	overflow: hidden;
+}
+
 /* Fallback (static render) path: contain reading-view chrome inside the card and
    trim only the outermost block margins so the card edges stay tight; interior
    spacing is left to Obsidian's own rules so it matches a real note. */

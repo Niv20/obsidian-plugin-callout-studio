@@ -348,12 +348,8 @@ export const hi: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — आपकी थीम द्वारा प्रदान किया गया',
-	"themePreview.owned":
-		'{{theme}} "{{name}}" प्रदान और स्टाइल करती है। Callout Studio इसे ओवरराइड नहीं करेगा, इसलिए इसका ब्लॉक callout बिल्कुल वैसा दिखता है जैसा आपकी थीम इसे बनाती है।',
-	"themePreview.readOnly":
-		"इसका मतलब है कि इसका रंग, आइकन, नाम और ID यहाँ नहीं बदले जा सकते। यदि आप अपना खुद का डिज़ाइन चाहते हैं, तो किसी दूसरी ID के साथ एक नया callout बनाएँ।",
-	"themePreview.blockOnly":
-		"आपकी थीम द्वारा प्रदान किए गए callouts के लिए हेडिंग और इनलाइन प्रारूप उपलब्ध नहीं हैं। ब्लॉक callout थीम की मूल स्टाइल का उपयोग करते हैं।",
+	"themePreview.summary":
+		"{{theme}} द्वारा प्रदान किया गया (केवल पढ़ने के लिए)। रंग, आइकन और ID को यहाँ संशोधित नहीं किया जा सकता, और हेडिंग/इनलाइन प्रारूप उपलब्ध नहीं हैं। अनुकूलित करने के लिए, एक नया callout बनाएँ।",
 	"themePreview.previewTitle": "यह अभी कैसा दिखता है",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

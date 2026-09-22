@@ -341,12 +341,8 @@ export const ar: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — يوفّره القالب الخاص بك',
-	"themePreview.owned":
-		'{{theme}} يوفّر وينسّق "{{name}}". لن يتجاوزه Callout Studio، لذا يبدو الـ Block callout الخاص به تمامًا كما يرسمه القالب.',
-	"themePreview.readOnly":
-		"هذا يعني أنه لا يمكن تغيير لونه أو أيقونته أو اسمه أو معرّفه هنا. إذا كنت تريد تصميمًا خاصًا بك، أنشئ callout جديدًا بمعرّف مختلف.",
-	"themePreview.blockOnly":
-		"تنسيقا العنوان والمضمّن غير متاحين للـ callouts التي يوفّرها القالب الخاص بك. تستخدم الـ Block callouts النمط الأصلي للقالب.",
+	"themePreview.summary":
+		"مقدّم من {{theme}} (للقراءة فقط). لا يمكن تعديل اللون أو الأيقونة أو المعرّف هنا، كما أن تنسيقي العنوان وضمن السطر غير متاحين. للتخصيص، أنشئ callout جديدًا.",
 	"themePreview.previewTitle": "كيف يظهر الآن",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

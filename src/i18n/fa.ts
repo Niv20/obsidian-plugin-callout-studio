@@ -343,12 +343,8 @@ export const fa: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — ارائه‌شده توسط پوسته‌ی شما',
-	"themePreview.owned":
-		'{{theme}} "{{name}}" را ارائه می‌دهد و استایل می‌دهد. Callout Studio آن را بازنویسی نمی‌کند، بنابراین Block callout آن دقیقاً همان‌طور که پوسته‌تان ترسیم می‌کند به نظر می‌رسد.',
-	"themePreview.readOnly":
-		"این یعنی رنگ، آیکون، نام و شناسه‌ی آن اینجا قابل تغییر نیست. اگر طرحی از آنِ خودتان می‌خواهید، یک callout جدید با شناسه‌ای متفاوت بسازید.",
-	"themePreview.blockOnly":
-		"قالب‌های Heading و Inline برای callout هایی که پوسته‌تان ارائه می‌دهد در دسترس نیستند. Block callout ها از استایل بومی پوسته استفاده می‌کنند.",
+	"themePreview.summary":
+		"ارائه‌شده توسط {{theme}} (فقط خواندنی). رنگ، آیکون و شناسه را نمی‌توان اینجا تغییر داد و قالب‌های سرتیتر/درون‌خطی در دسترس نیستند. برای سفارشی‌سازی، یک callout جدید بسازید.",
 	"themePreview.previewTitle": "اکنون چگونه رندر می‌شود",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

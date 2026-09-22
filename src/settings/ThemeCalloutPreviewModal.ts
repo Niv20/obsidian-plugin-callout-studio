@@ -2,7 +2,7 @@
  * settings/ThemeCalloutPreviewModal.ts — what a theme-owned callout looks like,
  * and why there is nothing here to change.
  *
- * Opened by the pencil on a row under *Callouts from your theme*. It replaces
+ * Opened by the view button on a row under *Callouts from your theme*. It replaces
  * the full editor, which used to open there and was a trap: every control in it
  * — colour, icon, name, ID — wrote a value the plugin had stopped emitting, so
  * the user could change six things, press Save, and see nothing happen.
@@ -17,14 +17,11 @@
  * That is worth stating because it is what makes the theme row an ephemeral
  * overlay rather than a row with a hidden way to become permanent.
  *
- * What is left is three statements and a live rendering:
+ * What is left is one concise explanation and a live rendering:
  *
- * - **Who owns it.** Which theme paints this callout, and that Callout Studio
- *   will not override it.
- * - **That its appearance is not editable here**, and what to do instead.
- * - **That Block is its only format** — because a user who has been writing
- *   `## [!recite]` needs to know why it stopped rendering, and a user who has
- *   not needs to know not to start.
+ * - **Who owns it and what read-only means.** The active theme paints it;
+ *   colour, icon and ID are unavailable here, as are Heading and Inline.
+ * - **What to do instead.** Create a new callout under a different ID.
  * - **A live preview** of the Block callout, rendered by Obsidian itself through
  *   `LiveCalloutPreview`, so it is drawn by the theme's own CSS rather than by
  *   an imitation of it.
@@ -41,7 +38,7 @@ export class ThemeCalloutPreviewModal extends Modal {
 	private preview: LiveCalloutPreview | null = null;
 
 	constructor(
-		plugin: CalloutEditorPlugin,
+		private readonly plugin: CalloutEditorPlugin,
 		private readonly def: CalloutDefinition,
 	) {
 		super(plugin.app);
@@ -54,23 +51,23 @@ export class ThemeCalloutPreviewModal extends Modal {
 		const footer = applyModalChrome(this, { footer: true, wide: true });
 		const { contentEl } = this;
 
-		for (const key of [
-			"themePreview.owned",
-			"themePreview.readOnly",
-			"themePreview.blockOnly",
-		] as const) {
-			contentEl.createEl("p", {
-				cls: "cs-theme-preview-note",
-				text: t(key, { name: this.def.displayName, theme: themeName }),
-			});
-		}
+		contentEl.createEl("p", {
+			cls: "cs-theme-preview-note",
+			text: t("themePreview.summary", { theme: themeName }),
+		});
+
+		const sample = t("themePreview.blockSample", {
+			id: this.def.id,
+			name: this.def.displayName,
+		});
 
 		this.preview = new LiveCalloutPreview(this.app, contentEl, {
 			title: t("themePreview.previewTitle"),
-			initialText: t("themePreview.blockSample", {
-				id: this.def.id,
-				name: this.def.displayName,
-			}),
+			initialText: sample,
+			// Keep the document's final line so the parked caret remains safely
+			// outside the callout; only collapse that line visually for a callout
+			// the active theme actually owns.
+			collapseTrailingBlankLine: this.plugin.registry.themeOwns(this.def),
 		});
 
 		new Setting(footer).addButton((btn) =>

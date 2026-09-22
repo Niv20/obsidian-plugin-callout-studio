@@ -341,12 +341,8 @@ export const th: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — กำหนดโดยธีมของคุณ',
-	"themePreview.owned":
-		'{{theme}} กำหนดและจัดสไตล์ "{{name}}" Callout Studio จะไม่แทนที่มัน ดังนั้น Block callout จึงมีรูปลักษณ์ตามที่ธีมของคุณวาดไว้ทุกประการ',
-	"themePreview.readOnly":
-		"หมายความว่าไม่สามารถเปลี่ยนสี ไอคอน ชื่อ และ ID ได้ที่นี่ หากต้องการออกแบบของคุณเอง ให้สร้าง callout ใหม่ด้วย ID ที่ต่างออกไป",
-	"themePreview.blockOnly":
-		"รูปแบบ Heading และ Inline ไม่สามารถใช้ได้กับ callout ที่ธีมของคุณกำหนดไว้ Block callout จะใช้สไตล์ดั้งเดิมของธีม",
+	"themePreview.summary":
+		"กำหนดโดย {{theme}} (อ่านอย่างเดียว) ไม่สามารถแก้ไขสี ไอคอน และ ID ได้ที่นี่ และไม่มีรูปแบบหัวข้อ/อินไลน์ หากต้องการปรับแต่ง ให้สร้าง callout ใหม่",
 	"themePreview.previewTitle": "รูปลักษณ์ปัจจุบัน",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

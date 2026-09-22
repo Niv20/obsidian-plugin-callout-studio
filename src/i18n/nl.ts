@@ -356,12 +356,8 @@ export const nl: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — geleverd door uw thema',
-	"themePreview.owned":
-		'{{theme}} levert en stijlt "{{name}}". Callout Studio zal dit niet overschrijven, dus de Block Callout ziet er precies zo uit als uw thema deze tekent.',
-	"themePreview.readOnly":
-		"Dat betekent dat de kleur, het pictogram, de naam en de ID hier niet kunnen worden gewijzigd. Als u een eigen ontwerp wilt, maak dan een nieuwe callout met een andere ID.",
-	"themePreview.blockOnly":
-		"Kop- en Inline-indelingen zijn niet beschikbaar voor callouts die door uw thema worden geleverd. Block Callouts gebruiken de eigen stijl van het thema.",
+	"themePreview.summary":
+		"Geleverd door {{theme}} (alleen-lezen). Kleur, pictogram en ID kunnen hier niet worden gewijzigd en de indelingen Kop/Inline zijn niet beschikbaar. Maak een nieuwe callout om deze aan te passen.",
 	"themePreview.previewTitle": "Hoe het er nu uitziet",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

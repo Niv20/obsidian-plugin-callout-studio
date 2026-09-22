@@ -684,11 +684,14 @@ nothing left the definition, only what the renderer acts on.
 **The row itself is read-only**, and the refusal lives in
 [`openCalloutEditor.ts`](../../src/settings/openCalloutEditor.ts) because the
 settings row, the context menu, quick insert and the public API all reach the
-editor through it. The pencil opens
+editor through it. The eye icon opens
 [`ThemeCalloutPreviewModal`](../../src/settings/ThemeCalloutPreviewModal.ts), which
 states who owns the callout, that Heading and Inline are unavailable, and shows
 a Block-only live preview that **writes nothing at all**. The saved definition
-remains intact while its current theme owns the appearance. Its `⋯` menu
+remains intact while its current theme owns the appearance. This theme-only
+preview visually collapses its terminal blank editor row so the box ends with
+content, while retaining the underlying line as a safe caret target; every
+ordinary preview remains unchanged. Its `⋯` menu
 ([`themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts)) carries
 usage information, and — only when the callout is actually written somewhere —
 *Replace in vault* and *Clear uses in your notes*. Never *Delete*, which would
@@ -1088,7 +1091,7 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 | [`manager/theme/themeReport*.ts`](../../src/manager/theme/themeReport.ts) | The `themes:report` worksheet — not bundled into `main.js` |
 | [`settings/sections/rowOwnership.ts`](../../src/settings/sections/rowOwnership.ts) | Which of the three lists a row belongs in |
 | [`settings/sections/themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts), [`themeRowUsage.ts`](../../src/settings/sections/themeRowUsage.ts) | The theme row's controls and its cached use counts |
-| [`settings/ThemeCalloutPreviewModal.ts`](../../src/settings/ThemeCalloutPreviewModal.ts) | The read-only window behind the pencil |
+| [`settings/ThemeCalloutPreviewModal.ts`](../../src/settings/ThemeCalloutPreviewModal.ts) | The read-only window behind the eye icon |
 
 Suites: `themeCalloutScan`, `themeOwnership`, `manualDiscovery`,
 `themeOverlayRows`, `themeRowSync`, `syncThemeOverlay`, `themeAppearance`,

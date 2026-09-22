@@ -342,12 +342,8 @@ export const fi: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — teemasi tarjoama',
-	"themePreview.owned":
-		'{{theme}} tarjoaa ja tyylittelee calloutin "{{name}}". Callout Studio ei ohita sitä, joten sen lohko-callout näyttää täsmälleen siltä, miltä teemasi sen piirtää.',
-	"themePreview.readOnly":
-		"Tämä tarkoittaa, ettei sen väriä, kuvaketta, nimeä tai tunnusta voi muuttaa täällä. Jos haluat oman suunnittelun, luo uusi callout eri tunnuksella.",
-	"themePreview.blockOnly":
-		"Otsikko- ja rivinsisäinen muoto eivät ole käytettävissä teemasi tarjoamille callouteille. Lohko-calloutit käyttävät teeman omaa tyyliä.",
+	"themePreview.summary":
+		"{{theme}}-teeman tarjoama (vain luku). Väriä, kuvaketta tai tunnusta ei voi muokata täällä, eivätkä otsikko- ja rivinsisäiset muodot ole käytettävissä. Luo mukauttamista varten uusi callout.",
 	"themePreview.previewTitle": "Miltä se näyttää nyt",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

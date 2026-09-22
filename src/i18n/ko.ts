@@ -347,12 +347,8 @@ export const ko: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — 테마에서 제공',
-	"themePreview.owned":
-		'{{theme}}이(가) "{{name}}"을(를) 제공하고 스타일을 지정합니다. Callout Studio는 이를 재정의하지 않으므로, Block callout은 테마가 그리는 그대로 표시됩니다.',
-	"themePreview.readOnly":
-		"즉, 색상·아이콘·이름·ID를 여기서 변경할 수 없습니다. 직접 디자인하려면 다른 ID로 새 callout을 만드세요.",
-	"themePreview.blockOnly":
-		"테마가 제공하는 callout에는 제목과 인라인 형식을 사용할 수 없습니다. Block callout은 테마 고유의 스타일을 사용합니다.",
+	"themePreview.summary":
+		"{{theme}}에서 제공(읽기 전용). 여기서는 색상, 아이콘 및 ID를 변경할 수 없으며 제목/인라인 형식을 사용할 수 없습니다. 사용자 지정하려면 새 callout을 만드세요.",
 	"themePreview.previewTitle": "현재 렌더링 모습",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

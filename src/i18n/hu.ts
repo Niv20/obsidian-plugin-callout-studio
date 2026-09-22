@@ -350,12 +350,8 @@ export const hu: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": 'A(z) {{name}} — a témája biztosítja',
-	"themePreview.owned":
-		'A(z) {{theme}} biztosítja és stílusozza a(z) "{{name}}"-t. A Callout Studio nem írja felül, ezért a Block callout-ja pontosan úgy néz ki, ahogy a témája megrajzolja.',
-	"themePreview.readOnly":
-		"Ez azt jelenti, hogy a színe, ikonja, neve és azonosítója itt nem módosítható. Ha saját tervezésűt szeretne, hozzon létre egy új callout-ot másik azonosítóval.",
-	"themePreview.blockOnly":
-		"A Címsor és a Beágyazott formátum nem elérhető a témája által biztosított callout-oknál. A Block callout-ok a téma natív stílusát használják.",
+	"themePreview.summary":
+		"A(z) {{theme}} biztosítja (csak olvasható). A szín, az ikon és az azonosító itt nem módosítható, a Címsor/Beágyazott formátumok pedig nem érhetők el. A testreszabáshoz hozzon létre egy új callout-ot.",
 	"themePreview.previewTitle": "Hogyan jelenik meg most",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

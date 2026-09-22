@@ -13,11 +13,11 @@
  * while an adopted theme callout is drawn as one of the user's. So `kind` says
  * where the row is and `def.builtIn` says what it is, and both are consulted.
  *
- * A theme row carries no pencil and no `⋯` — see `themeRowActions.ts` for why
- * each of those would be a lie — and nothing on any row labels who paints it,
- * because the group already did. Its icon and swatches are real, but they come
- * from `registry.themeAppearanceOf(def)` rather than from the row: what the
- * theme was measured drawing, never what the row stores.
+ * A theme row replaces the edit pencil with a read-only view action; its `⋯`
+ * contains vault actions rather than appearance controls. Nothing on any row
+ * labels who paints it, because the group already did. Its icon and swatches
+ * are real, but they come from `registry.themeAppearanceOf(def)` rather than
+ * from the row: what the theme was measured drawing, never what the row stores.
  */
 import { setIcon } from "obsidian";
 import { getLocale, t } from "../../i18n";

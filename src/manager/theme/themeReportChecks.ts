@@ -37,7 +37,7 @@ export function buildChecks(report: ThemeReport): string[] {
 			`Expect ${String(report.addedIds.length)} type(s) under Callouts from your theme: ${report.addedIds.join(", ")}. Write \`> [!${first}]\` in a note and confirm the theme draws it.`,
 		);
 		checks.push(
-			`Open ${first} with the pencil: expect the read-only preview naming the theme, not the editor — there is no Customize, and no colour or icon on that row is editable. Creating a callout of your own with the ID ${first} should be refused, and say the theme supplies it.`,
+			`Open ${first} with the eye icon: expect the read-only preview naming the theme, not the editor — there is no Customize, and no colour or icon on that row is editable. Creating a callout of your own with the ID ${first} should be refused, and say the theme supplies it.`,
 		);
 		checks.push(
 			`Write \`## [!${first}]\` and \`text [!${first}] text\`: both should stay literal text. A theme callout is Block only, so the [! popup should not offer ${first} in either position and the command builder should offer it Block only.`,

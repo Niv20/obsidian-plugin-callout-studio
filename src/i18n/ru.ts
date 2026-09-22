@@ -348,12 +348,8 @@ export const ru: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — предоставлено вашей темой',
-	"themePreview.owned":
-		'{{theme}} предоставляет и оформляет "{{name}}". Callout Studio не будет его переопределять, поэтому его блочный callout выглядит точно так, как рисует его ваша тема.',
-	"themePreview.readOnly":
-		"Это значит, что его цвет, значок, название и ID нельзя изменить здесь. Если хотите собственный дизайн, создайте новый callout с другим ID.",
-	"themePreview.blockOnly":
-		"Форматы Callout-заголовок и Встроенный callout недоступны для callout, предоставляемых вашей темой. Блочные callout используют собственный стиль темы.",
+	"themePreview.summary":
+		"Предоставлено темой {{theme}} (только для чтения). Цвет, значок и ID нельзя изменить здесь; форматы «Заголовок» и «Встроенный» недоступны. Чтобы настроить по-своему, создайте новый callout.",
 	"themePreview.previewTitle": "Как он выглядит сейчас",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

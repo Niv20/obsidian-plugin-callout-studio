@@ -347,12 +347,8 @@ export const sv: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} – tillhandahålls av ditt tema',
-	"themePreview.owned":
-		'{{theme}} tillhandahåller och stilar "{{name}}". Callout Studio åsidosätter den inte, så blockcalloutens utseende är exakt som ditt tema ritar den.',
-	"themePreview.readOnly":
-		"Det betyder att dess färg, ikon, namn och ID inte kan ändras här. Om du vill ha en egen design, skapa en ny callout med ett annat ID.",
-	"themePreview.blockOnly":
-		"Rubrik- och inline-format är inte tillgängliga för callouts som tillhandahålls av ditt tema. Blockcallouts använder temats egen stil.",
+	"themePreview.summary":
+		"Tillhandahålls av {{theme}} (skrivskyddad). Färg, ikon och ID kan inte ändras här, och formaten Rubrik/Infogad är inte tillgängliga. Skapa en ny callout för att anpassa den.",
 	"themePreview.previewTitle": "Så ser den ut nu",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

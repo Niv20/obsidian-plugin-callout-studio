@@ -347,12 +347,8 @@ export const tr: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — temanız tarafından sağlanıyor',
-	"themePreview.owned":
-		'{{theme}}, "{{name}}" öğesini sağlıyor ve biçimlendiriyor. Callout Studio onu geçersiz kılmaz, bu yüzden Blok callout\'u tam olarak temanızın çizdiği gibi görünür.',
-	"themePreview.readOnly":
-		"Bu, rengin, simgenin, adın ve kimliğin burada değiştirilemeyeceği anlamına gelir. Kendi tasarımınızı istiyorsanız, farklı bir kimlikle yeni bir callout oluşturun.",
-	"themePreview.blockOnly":
-		"Temanız tarafından sağlanan callout'lar için Başlık ve Satır İçi biçimleri kullanılamaz. Blok callout'lar temanın kendi stilini kullanır.",
+	"themePreview.summary":
+		"{{theme}} tarafından sağlanıyor (salt okunur). Renk, simge ve ID burada değiştirilemez; Başlık/Satır içi biçimleri kullanılamaz. Özelleştirmek için yeni bir callout oluşturun.",
 	"themePreview.previewTitle": "Şu anda nasıl görünüyor",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

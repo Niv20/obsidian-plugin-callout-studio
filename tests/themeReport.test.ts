@@ -294,7 +294,7 @@ describe("the checks are entailed by the columns", () => {
 		assert.deepStrictEqual(
 			stale,
 			[
-				"Open recite with the pencil: expect the read-only preview naming the theme, not the editor — there is no Customize, and no colour or icon on that row is editable. Creating a callout of your own with the ID recite should be refused, and say the theme supplies it.",
+				"Open recite with the eye icon: expect the read-only preview naming the theme, not the editor — there is no Customize, and no colour or icon on that row is editable. Creating a callout of your own with the ID recite should be refused, and say the theme supplies it.",
 			],
 			"the only mention left may be the one saying it does not exist",
 		);

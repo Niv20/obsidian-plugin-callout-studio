@@ -337,12 +337,8 @@ export const el: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — παρέχεται από το θέμα σας',
-	"themePreview.owned":
-		'Το {{theme}} παρέχει και μορφοποιεί το "{{name}}". Το Callout Studio δεν θα το παρακάμψει, οπότε το Block callout του εμφανίζεται ακριβώς όπως το σχεδιάζει το θέμα σας.',
-	"themePreview.readOnly":
-		"Αυτό σημαίνει ότι το χρώμα, το εικονίδιο, το όνομα και το ID του δεν μπορούν να αλλάξουν εδώ. Αν θέλετε έναν δικό σας σχεδιασμό, δημιουργήστε ένα νέο callout με διαφορετικό ID.",
-	"themePreview.blockOnly":
-		"Οι μορφές Heading και Inline δεν είναι διαθέσιμες για callouts που παρέχει το θέμα σας. Τα Block callouts χρησιμοποιούν το εγγενές στυλ του θέματος.",
+	"themePreview.summary":
+		"Παρέχεται από το {{theme}} (μόνο για ανάγνωση). Το χρώμα, το εικονίδιο και το ID δεν μπορούν να τροποποιηθούν εδώ, ενώ οι μορφές Επικεφαλίδα/Ενσωματωμένο δεν είναι διαθέσιμες. Για προσαρμογή, δημιουργήστε ένα νέο callout.",
 	"themePreview.previewTitle": "Πώς αποδίδεται τώρα",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

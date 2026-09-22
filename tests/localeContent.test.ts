@@ -204,6 +204,27 @@ describe("no locale carries a key English lacks", () => {
 	});
 });
 
+describe("the concise theme preview summary is translated everywhere", () => {
+	const key = "themePreview.summary";
+	const english = en[key];
+
+	for (const [fileId, table] of entries) {
+		it(`${fileId}.ts`, () => {
+			const localized = table[key];
+			assert.strictEqual(
+				typeof localized,
+				"string",
+				`${fileId}.ts is missing ${key}`,
+			);
+			assert.notStrictEqual(
+				localized,
+				english,
+				`${fileId}.ts still shows the English theme preview summary`,
+			);
+		});
+	}
+});
+
 /* -------------------------------------------------------------------------- */
 /* Upgrade recovery failure                                                   */
 /* -------------------------------------------------------------------------- */

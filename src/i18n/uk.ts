@@ -357,12 +357,8 @@ export const uk: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — надається вашою темою',
-	"themePreview.owned":
-		'{{theme}} надає та стилізує "{{name}}". Callout Studio не перевизначатиме його, тому блоковий callout виглядає точно так, як його малює ваша тема.',
-	"themePreview.readOnly":
-		"Це означає, що його колір, іконку, назву та ID тут змінити не можна. Якщо хочете власний дизайн, створіть новий callout з іншим ID.",
-	"themePreview.blockOnly":
-		"Формати Callout-заголовок і Вбудований callout недоступні для callout, які надає ваша тема. Блокові callout використовують рідний стиль теми.",
+	"themePreview.summary":
+		"Надається темою {{theme}} (лише для читання). Колір, іконку та ID тут змінити не можна, а формати «Заголовок» і «Вбудований» недоступні. Для налаштування створіть новий callout.",
 	"themePreview.previewTitle": "Як це виглядає зараз",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

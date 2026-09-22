@@ -49,6 +49,8 @@ export interface LiveCalloutPreviewOptions {
 	title?: string;
 	/** Initial sample markdown to render. */
 	initialText: string;
+	/** Visually collapse one terminal blank line while retaining it for the caret. */
+	collapseTrailingBlankLine?: boolean;
 	/**
 	 * Invoked immediately before each refresh (and once on construction). The
 	 * editor modal uses this to push its in-progress definition into the
@@ -166,6 +168,12 @@ export class LiveCalloutPreview {
 		const body = container.createDiv({
 			cls: "cs-live-preview-body",
 		});
+		if (
+			this.opts.collapseTrailingBlankLine &&
+			this.text.endsWith("\n")
+		) {
+			body.addClass("cs-live-preview-collapse-trailing-line");
+		}
 
 		// Primary path: a real, editable Obsidian editor. If the undocumented
 		// embed API is unavailable/changed, fall back to a static render.

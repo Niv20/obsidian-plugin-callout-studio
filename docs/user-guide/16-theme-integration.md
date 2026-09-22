@@ -10,7 +10,7 @@ If the theme styles a callout, the theme stays in complete control. Callout Stud
 
 ## Read-only theme callouts
 
-Because the theme draws these callouts, their rows are read-only in Callout Studio. You can preview them and use vault actions, but you will not see Callout Studio's normal color picker or customization controls.
+Because the theme draws these callouts, their rows are read-only in Callout Studio. Click the eye icon to preview one; vault actions remain available from its three-dot menu, but you will not see Callout Studio's normal color picker or customization controls.
 
 To change a theme-owned callout, use the community **Style Settings** plugin if the theme author provides a setting for it. Otherwise, the theme's CSS must be changed.
 

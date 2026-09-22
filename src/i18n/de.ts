@@ -352,12 +352,8 @@ export const de: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — von Ihrem Theme geliefert',
-	"themePreview.owned":
-		'{{theme}} liefert und gestaltet "{{name}}". Callout Studio überschreibt ihn nicht, daher sieht sein Block-Callout genauso aus, wie Ihr Theme ihn zeichnet.',
-	"themePreview.readOnly":
-		"Das bedeutet, dass Farbe, Symbol, Name und ID hier nicht geändert werden können. Wenn Sie ein eigenes Design möchten, erstellen Sie einen neuen Callout mit einer anderen ID.",
-	"themePreview.blockOnly":
-		"Die Formate Überschrift und Inline sind für von Ihrem Theme gelieferte Callouts nicht verfügbar. Block-Callouts verwenden den nativen Stil des Themes.",
+	"themePreview.summary":
+		"Bereitgestellt von {{theme}} (schreibgeschützt). Farbe, Symbol und ID können hier nicht geändert werden; die Formate Überschrift/Inline sind nicht verfügbar. Erstellen Sie zum Anpassen einen neuen Callout.",
 	"themePreview.previewTitle": "So sieht er derzeit aus",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

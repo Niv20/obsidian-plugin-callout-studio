@@ -341,12 +341,8 @@ export const zh: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — 由您的主题提供',
-	"themePreview.owned":
-		'{{theme}} 提供并设置了 "{{name}}" 的样式。Callout Studio 不会覆盖它，因此其 Block callout 的外观与您主题绘制的完全一致。',
-	"themePreview.readOnly":
-		"这意味着它的颜色、图标、名称和 ID 在此处无法更改。如果您想要自己的设计，请创建一个使用不同 ID 的新 callout。",
-	"themePreview.blockOnly":
-		"标题和行内格式不适用于您主题提供的 callout。Block callout 使用主题的原生样式。",
+	"themePreview.summary":
+		"由 {{theme}} 提供（只读）。无法在此修改颜色、图标和 ID，也无法使用标题/行内格式。若要自定义，请创建新的 callout。",
 	"themePreview.previewTitle": "当前的渲染效果",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

@@ -346,12 +346,8 @@ export const cs: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — poskytnuto vaším tématem',
-	"themePreview.owned":
-		'{{theme}} poskytuje a stylizuje "{{name}}". Callout Studio ho nepřepisuje, takže jeho blokový callout vypadá přesně tak, jak jej vykresluje vaše téma.',
-	"themePreview.readOnly":
-		"To znamená, že jeho barvu, ikonu, název ani ID zde nelze změnit. Pokud chcete vlastní návrh, vytvořte nový callout s jiným ID.",
-	"themePreview.blockOnly":
-		"Formáty Nadpis a Vložený nejsou pro callouts poskytované vaším tématem k dispozici. Blokové callouts používají nativní styl tématu.",
+	"themePreview.summary":
+		"Poskytuje téma {{theme}} (pouze pro čtení). Barvu, ikonu ani ID zde nelze změnit a formáty Nadpis/Vložený nejsou k dispozici. Chcete-li jej přizpůsobit, vytvořte nový callout.",
 	"themePreview.previewTitle": "Jak vypadá nyní",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

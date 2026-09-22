@@ -333,12 +333,8 @@ export const da: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — leveret af dit tema',
-	"themePreview.owned":
-		'{{theme}} leverer og styler "{{name}}". Callout Studio tilsidesætter den ikke, så dens blok-callout ser præcis ud, som dit tema tegner den.',
-	"themePreview.readOnly":
-		"Det betyder, at dens farve, ikon, navn og ID ikke kan ændres her. Hvis du vil have dit eget design, så opret en ny callout med et andet ID.",
-	"themePreview.blockOnly":
-		"Overskrift- og Inline-formater er ikke tilgængelige for callouts leveret af dit tema. Blok-callouts bruger temaets egen native stil.",
+	"themePreview.summary":
+		"Leveret af {{theme}} (skrivebeskyttet). Farve, ikon og ID kan ikke ændres her, og formaterne Overskrift/Inline er ikke tilgængelige. Hvis du vil tilpasse den, skal du oprette en ny callout.",
 	"themePreview.previewTitle": "Sådan ser den ud nu",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

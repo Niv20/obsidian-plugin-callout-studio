@@ -351,12 +351,8 @@ export const ro: Record<string, string> = {
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} — furnizat de tema dvs.',
-	"themePreview.owned":
-		'{{theme}} furnizează și stilizează "{{name}}". Callout Studio nu îl va suprascrie, așa că callout-ul său bloc arată exact așa cum îl desenează tema dvs.',
-	"themePreview.readOnly":
-		"Asta înseamnă că nu i se pot schimba aici culoarea, pictograma, numele și ID-ul. Dacă doriți un design propriu, creați un callout nou cu un ID diferit.",
-	"themePreview.blockOnly":
-		"Formatele Callout tip titlu și Callout inline nu sunt disponibile pentru callouts furnizate de tema dvs. Callouts de tip bloc folosesc stilul nativ al temei.",
+	"themePreview.summary":
+		"Furnizat de {{theme}} (doar în citire). Culoarea, pictograma și ID-ul nu pot fi modificate aici, iar formatele Titlu/Inline nu sunt disponibile. Pentru personalizare, creați un callout nou.",
 	"themePreview.previewTitle": "Cum este redat acum",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +

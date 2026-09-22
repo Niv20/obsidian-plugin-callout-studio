@@ -6,7 +6,7 @@
  * **The row must not offer to edit what it cannot change.** Under the absolute
  * rule the plugin emits nothing onto a theme-owned callout, so the full editor
  * there is a trap: a user changes colour, icon, name and ID, presses Save, and
- * sees nothing happen. The pencil opens the preview window instead, and every
+ * sees nothing happen. The eye opens the preview window instead, and every
  * route to the editor — settings, context menu, quick insert, the public API —
  * goes through `openCalloutEditorFor`, so the refusal has to live there rather
  * than in the row.
@@ -107,11 +107,16 @@ describe("a theme row is not editable", () => {
 		});
 
 		// Same two controls, same two places, as every other row in the tab —
-		// the pencil just leads somewhere honest.
+		// but the eye makes the read-only action explicit.
 		assert.strictEqual(host.querySelectorAll(".callout-studio-more-btn").length, 1);
 		assert.strictEqual(
 			host.querySelectorAll(".callout-studio-row-buttons button").length,
 			2,
+		);
+		assert.match(
+			readRepoFile("src/settings/sections/themeRowActions.ts"),
+			/addRowButton\(\s*buttonsEl,\s*"eye"/,
+			"the theme-only preview action must use a view icon",
 		);
 	});
 
@@ -439,12 +444,43 @@ describe("the theme preview window writes nothing", () => {
 		}
 	});
 
-	it("says Heading and Inline are unavailable", () => {
-		// The key is a string literal, so this one reads the file as written.
+	it("gives one concise, theme-named read-only explanation", () => {
 		const raw = readRepoFile("src/settings/ThemeCalloutPreviewModal.ts");
-		assert.ok(raw.includes("themePreview.blockOnly"));
+		assert.ok(raw.includes("themePreview.summary"));
+		assert.ok(!raw.includes('t("themePreview.owned"'));
+		assert.ok(!raw.includes('t("themePreview.readOnly"'));
+		assert.ok(!raw.includes('t("themePreview.blockOnly"'));
 		const en = readRepoFile("src/i18n/en.ts");
-		assert.match(en, /Heading and Inline formats are unavailable/);
+		assert.match(en, /Supplied by \{\{theme\}\} \(Read-only\)/);
+		assert.match(en, /Color, icon, and ID cannot be modified here/);
+		assert.match(en, /Heading\/Inline formats are unavailable/);
+		assert.match(en, /To customize, create a new callout/);
+	});
+
+	it("collapses only the theme preview's final blank line", () => {
+		const modal = readRepoFile("src/settings/ThemeCalloutPreviewModal.ts");
+		assert.match(
+			modal,
+			/collapseTrailingBlankLine:\s*this\.plugin\.registry\.themeOwns\(this\.def\)/,
+			"theme ownership must decide whether the final preview line is hidden",
+		);
+		assert.match(
+			modal,
+			/initialText:\s*sample/,
+			"retain the terminal line in the document as a safe caret target",
+		);
+		const preview = readRepoFile("src/settings/LiveCalloutPreview.ts");
+		assert.match(preview, /this\.text\.endsWith\("\\n"\)/);
+		const optInFiles = pluginSourceFiles()
+			.filter((file) => file.text.includes("collapseTrailingBlankLine:"))
+			.map((file) => file.path);
+		assert.deepStrictEqual(optInFiles, [
+			"src/settings/ThemeCalloutPreviewModal.ts",
+		]);
+		assert.match(
+			readRepoFile("styles.css"),
+			/\.cs-live-preview-body\.cs-live-preview-editable\.cs-live-preview-collapse-trailing-line\s+\.cm-content\s+> \.cm-line:last-child/,
+		);
 	});
 
 	it("previews the Block callout alone", () => {
