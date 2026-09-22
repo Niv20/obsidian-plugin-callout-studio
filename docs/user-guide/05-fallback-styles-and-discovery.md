@@ -8,7 +8,18 @@ Open **Settings → Callout Studio → My callout types** and click **Scan for c
 
 ## Choose the fallback appearance
 
-An unknown callout still renders using the **Default fallback** style. By default, that is Obsidian's **Note** appearance, marked with the **Default** label.
+An unknown callout still receives the **Default fallback** appearance. By
+default, that is Obsidian's **Note** appearance, marked with the **Default**
+label.
+
+For a standard Block callout, this is a gentle baseline for its color,
+background, icon, and optional content color. An exact callout rule in your
+theme or an enabled CSS snippet takes precedence, including its native icon;
+Callout Studio does not register or import that snippet as a callout definition.
+Strong global
+geometry such as Callout Studio's border, radius, scaling, and alignment is
+applied only after the type is saved in Callout Studio. Unknown Heading and
+Inline tokens remain Callout Studio surfaces and use the full fallback design.
 
 To change it, find **Default fallback callout** in the settings and choose the style that unknown callouts should inherit. The fallback can be one of your own custom callouts.
 

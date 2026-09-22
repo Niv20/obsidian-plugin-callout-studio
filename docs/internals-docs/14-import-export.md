@@ -76,10 +76,13 @@ picture at once rather than one error at a time across repeated attempts.
   to the type without adding it here is a compile error, which is what stops
   the plugin from warning about its *own* export the moment a new field
   ships.
-- **`RETIRED_FIELDS`** (currently just `solidBackground`) are dropped
+- **`RETIRED_FIELDS`** (`solidBackground`, `styleMode`, and `externalStyle`) are dropped
   **silently**, with no warning — an export from an older build of the
   plugin itself carrying a since-retired field isn't a file the plugin
   "doesn't understand," so it doesn't get the generic unknown-field warning.
+  In particular, an old `externalStyle: true` does not restore the removed
+  personal-CSS ownership mode: the imported callout uses its stored appearance
+  normally, and an import does not trigger the load-migration notice.
 
 ### `missingImageIssues` — pictures that didn't travel with their callout
 
@@ -106,7 +109,7 @@ duplicated — this is what makes re-importing the same backup, or importing
 one vault's export into another that shares some built-in customizations,
 converge rather than error.
 
-`applyImportedCallout` clears optional appearance, palette-link, ownership-override
+`applyImportedCallout` clears optional appearance, palette-link, customization
 and metadata fields omitted by a backup before merging the validated definition.
 Thus restoring a backup does not retain later text colors, icon adjustments or
 palette links. Aliases are the intentional exception: importing does not rewrite

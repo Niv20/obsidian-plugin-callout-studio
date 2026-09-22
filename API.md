@@ -8,7 +8,7 @@ It answers three questions — *which callouts exist*, *what are they called*, a
 inserting a callout is one line of text, and every plugin wants to place it
 differently.
 
-**API version: 1** · Plugin id: `callout-studio`
+**API version: 2** · Plugin id: `callout-studio`
 
 ---
 
@@ -21,7 +21,7 @@ import type { CalloutStudioApi } from "./calloutStudio";
 function getCalloutStudio(app: App): CalloutStudioApi | null {
 	const plugin = app.plugins.plugins["callout-studio"];
 	const api = plugin?.api as CalloutStudioApi | undefined;
-	return api?.version ? api : null;
+	return api && api.version >= 2 ? api : null;
 }
 ```
 
@@ -82,8 +82,7 @@ export interface CalloutDetails extends Callout {
 	readonly defaultFolded: boolean;
 	readonly builtIn: boolean;
 	readonly source: "builtin" | "user" | "fallback" | "theme" | "plugin";
-	readonly externalStyle: boolean; // Callout Studio emits nothing for it
-	readonly themeStyled: boolean;   // ...because the active theme owns it
+	readonly themeStyled: boolean; // the active theme owns the Block appearance
 }
 
 export interface CalloutIconInfo {
@@ -205,43 +204,42 @@ The list contains:
 * Manually discovered theme types and saved types from another plugin.
 * All manually discovered callouts, including uncustomized or unused types.
 
-Callouts Callout Studio does not style **are** included — whether because the
-active theme owns them or because the user styles them in their own CSS. It
-stops painting them, but the id is still perfectly valid to write into a note.
-Manually discovered types declared by the active theme are listed without
-Callout Studio painting over them.
+Callouts the active theme owns **are** included. Callout Studio stops painting
+them, but the id is still perfectly valid to write into a note. Manually
+discovered types declared by the active theme are listed without Callout Studio
+painting over them.
 
-### `externalStyle` and `themeStyled`
+### `themeStyled`
 
-Two booleans about the same thing at two widths, and the difference matters if
-you draw callouts yourself.
+`themeStyled` is true when the active theme names this callout and therefore
+controls its Block appearance. Callout Studio emits no Block CSS, including its
+global geometry, for that callout.
 
-| Member | True when |
-|---|---|
-| `externalStyle` | Callout Studio emits **no CSS** for this callout. |
-| `themeStyled` | ...and the reason is that the **active theme** supplies or restyles it. |
-
-`themeStyled` implies `externalStyle`. The gap between them is a callout the
-user has handed to their own CSS snippet.
-
-`themeStyled` also means the callout has **only** its block form: Callout
+It also means the callout has **only** its block form: Callout
 Studio's own Heading and Inline syntaxes are not rendered for a callout the
 theme supplies, so `## [!id]` and a mid-line `[!id]` stay as literal text until
 the theme stops claiming the id.
 
-**When `externalStyle` is true, the colours and icon on this object are what is
+**When `themeStyled` is true, the colours and icon on this object are what is
 *stored*, not what renders.** Do not draw them. There is no API for reading back
 what the theme actually draws; if you need that, render a real callout and let
 the cascade do it, which is what Callout Studio itself does.
 
-Both report the **resolved** answer. Theme ownership in particular is derived
-from the active theme's stylesheet and is recorded nowhere on the definition, so
-do not try to work it out from a definition yourself — and expect it to change
-when the user changes theme.
+The member reports the **resolved** answer. Theme ownership is derived from the
+active theme's stylesheet and is recorded nowhere on the definition, so do not
+try to work it out from a definition yourself — and expect it to change when
+the user changes theme.
 
-`themeStyled` was added after `externalStyle`; feature-detect it before relying
-on it, and keep reading `externalStyle` if that is all you need — it is not
-going away.
+API v2 retired v1's `externalStyle` member together with the personal CSS
+ownership option. There is no replacement snippet flag: snippets participate in
+the normal CSS cascade, not in the registry model. Consumers that used
+`externalStyle` only to avoid drawing a theme-owned appearance should use
+`themeStyled`; consumers that need to reproduce arbitrary snippet styling must
+render a real Block callout and let the browser resolve the cascade.
+
+When supporting API v1 and v2 together, feature-detect `themeStyled` and treat a
+v1-only `externalStyle` value as legacy compatibility rather than as a field a
+v2 object will provide.
 
 ---
 
@@ -300,9 +298,10 @@ own naming silently disappears.
 
 ## Stability
 
-Version `1` guarantees the members above keep their names, signatures and
-meaning. New members may be added without bumping the version, so feature-detect
-those:
+Version `2` guarantees the members above keep their names, signatures and
+meaning. It differs from v1 by removing `CalloutDetails.externalStyle` together
+with the retired personal-CSS ownership mode. New members may be added without
+bumping the version, so feature-detect those:
 
 ```ts
 if (typeof api.somethingNew === "function") { … }

@@ -77,8 +77,8 @@ command and any custom command sharing the same operation can't drift apart.
    Skipping this reintroduces the exact "opening the editor restyles the
    vault behind the modal" bug class documented there.
 4. If it's `true`-or-absent (not a real boolean), follow the
-   `transparentBg`/`externalStyle` convention: writers must **omit the key**
-   to turn it off, never write `false` — see
+   `transparentBg` convention: writers must **omit the key** to turn it off,
+   never write `false` — see
    [Data model](04-data-model.md#calloutdefinition).
 5. **`src/utils/importValidator.ts`** — add the field to `KNOWN_FIELD_MAP`
    (a total `Record`, so this is a compile error if skipped) and add

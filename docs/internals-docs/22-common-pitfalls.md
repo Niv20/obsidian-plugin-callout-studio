@@ -87,8 +87,8 @@ that feels like it "should just work."
   CSS colours disagree about which definition a token means.
 - **`shouldRenderToken(resolved)`** — call this before building **any** DOM
   for the heading/inline/ref roles. Skipping it for a new render surface
-  means an `externalStyle` callout gets painted anyway, defeating the whole
-  point of handing it to the theme.
+  means a theme-owned callout gets painted anyway, defeating the Block-only
+  ownership rule.
 - **`buildCalloutTokenDom` / `buildContentPillDom`** (`renderShared.ts`) —
   the one place heading/inline/ref token DOM is built. A new rendering
   surface that builds its own competing DOM shape breaks the icon-repaint
@@ -137,23 +137,21 @@ sufficient**. Common cases that also need an explicit follow-up call:
 | --- | --- |
 | Anything affecting generated CSS | `cssInjector.inject()` (usually automatic via `onChange`, but a **preview-only** or **out-of-band** mutation must call it explicitly with `inject(false)`) |
 | `headingCallouts.enabled` / `inlineCallouts.enabled` toggled | `plugin.refreshRenderModes()` — re-runs reading-view post-processors so already-baked DOM is added/stripped immediately, not just on next file open |
-| `externalStyle` toggled on a callout | Both `refreshCallouts()` **and** `refreshRenderModes()` — the reading-view heading/inline DOM is baked, not live-CSS-driven, and needs the post-processor to re-run |
 | Language changed, or a locale download lands mid-session | `plugin.applyLocaleChange()` — re-renders the three surfaces that snapshot translated text (see [Localization § three surfaces](16-i18n.md#three-surfaces-that-snapshot-translated-text-and-need-a-manual-refresh)) |
 | Fallback callout id changed | `restyleUncustomizedFallbackRows()` before saving, or every uncustomized fallback row keeps its stale look until some unrelated edit happens to trigger a re-mirror |
 
 ## CSS ordering/specificity assumptions
 
-- **The global rules' `externalExclusion()` uses `:not(:where(...))`
-  specifically to keep specificity flat** regardless of how many callouts
-  opt out — using a plain `:not()` chain there would make the vault-wide
-  rules progressively harder for a theme to override as more callouts
-  become external-styled. See
+- **The strong global rules use `studioCalloutSelectors()` as an explicit
+  allow-list.** Do not replace it with a generic `.callout` selector plus theme
+  exclusions: that would put Studio border/radius/scale/alignment onto every
+  unrecognized native Block and defeat the deliberately weak fallback. See
   [CSS generation § standing down](06-css-generation.md#standing-down--why-emit-nothing-needs-three-separate-mechanisms).
-- **The fallback block's `:not()` chain does the opposite on purpose** —
-  its growing specificity (one class-unit per known id/alias) is what lets
-  it outrank every per-callout rule and correctly restyle truly unknown
-  callouts, at the cost of also needing `!important` won't save you if you
-  add a new per-callout rule that isn't equally specific.
+- **The unknown Block fallback also wraps its complete exclusion list in
+  `:where()`**, leaving the selector at exactly `(0,1,0)` regardless of how
+  many known ids and aliases exist. Do not replace it with a growing `:not()`
+  chain or add `!important`: an ordinary exact theme/snippet definition must
+  be able to override the fallback without Callout Studio detecting it.
 - **A callout's own accent variables (`--callout-color`) are deliberately
   *omitted*, not set to a theme value, for an untouched built-in.** Setting
   it to `var(--callout-info)` explicitly instead of omitting it would work

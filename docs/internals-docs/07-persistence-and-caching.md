@@ -242,9 +242,10 @@ stays unreadable even if a later existence check would see the file disappear.
 An explicit data version must be a finite number before migrations run; older
 files without a version and numeric future versions retain their existing handling.
 
-No discovery cache is used to decide this. `DeviceLocalStore` v2 keeps only
-`initialized` and `listsExpanded`. A recognized v1 blob and the old startup CSS
-are copied to a verified, content-addressed recovery archive before v2 cleanup
+No discovery cache is used to decide this. `DeviceLocalStore` v3 keeps the
+prior-install/welcome markers, list folds, and the optional one-time
+personal-CSS-retirement notice state. A recognized v1 blob and the old startup
+CSS are copied to a verified, content-addressed recovery archive before cleanup
 removes `discovered`, `firstRunCompleted` and `retiredThemeIds`. Neither is a
 source of live definitions. Failed archive/verification keeps the old local
 data and protects the old CSS from replacement. Unknown/corrupt or unavailable
@@ -252,6 +253,16 @@ local storage is treated as evidence of prior use, so missing `data.json`
 cannot silently become a fresh writable installation. None of these paths scans
 notes. Released 2.12.x builds lack the newer-format guard; upgrade both devices
 before resuming work, since schema 5 cannot control an old device's writes.
+
+The retirement notice marker is best-effort device UI state, not authority over
+`data.json`. In the normal writable case, `pending` is persisted before the
+migration write is awaited, survives reload/unload, and becomes `seen` only
+after the durability and UI-readiness gates pass. If local storage is corrupt,
+unavailable, or refuses a write, the same gates still prevent a false success
+and the in-memory marker limits the current session, but persistence cannot be
+promised: an unload before display may lose `pending`, and a refused `seen`
+write can repeat a previously displayed notice on a later launch. That failure
+never changes the migration result or the synchronized settings file.
 
 Settings always come from the current `registry.settings` object; adoption replaces
 that object, so managers must not retain an earlier settings reference.
@@ -311,7 +322,7 @@ doesn't silently switch a hidden menu item back on.
 | `LocaleStore`'s per-file load state and in-flight map | `LocaleStore` | Re-derived by `prepare()`/`ensure()` on next launch |
 | The `i18n/index.ts` module-level locale table map | `i18n/index.ts` | Re-populated by `registerLocaleFile` when a file is read/downloaded again |
 | `startupEntranceActive` flag | `renderShared.ts` | Reset every launch; closes itself after `STARTUP_ENTRANCE_MS` |
-| The Live Preview content-pill render cache | `contentPillRender.ts` | Cleared on unload and by `plugin.refreshCallouts()` — **not** by every registry change; the generic `registry.onChange` listener in `main.ts` only re-injects CSS, it never calls `refreshCallouts()`. An ordinary `CalloutEditor` save does not clear this cache. Explicit callers include the external-style toggle, fallback-callout changes, row delete/reset. |
+| The Live Preview content-pill render cache | `contentPillRender.ts` | Cleared on unload and by `plugin.refreshCallouts()` — **not** by every registry change; the generic `registry.onChange` listener in `main.ts` only re-injects CSS, it never calls `refreshCallouts()`. An ordinary `CalloutEditor` save does not clear this cache. Explicit callers include fallback-callout changes and row delete/reset. |
 
 All of these share one property: losing them costs nothing but a moment of
 recomputation. None of them is a source of truth for anything the user would
@@ -334,9 +345,17 @@ notice missing after a restart.
 
 ## The device-local store
 
-`DeviceLocalStore` v2 stores only section folds and the prior-install marker in
-vault-scoped browser storage. It never holds callout ids, scan status or theme
-retirement state. A failed write does not advance the write memo, allowing retry.
+`DeviceLocalStore` v3 stores section folds, prior-install/welcome markers, and
+an optional `pending | seen` marker for the one-time personal-CSS-retirement
+notice in vault-scoped browser storage. The marker is absent for unaffected
+users and carries no callout id or appearance. `pending` is only displayed once
+the settings writer proves the cleaned registry snapshot is durable; it can
+survive a restart before layout is ready, and `seen` suppresses a repeat if an
+older synced file later reintroduces the retired field. See
+[Callout registry § Retiring personal-CSS ownership](05-callout-registry.md#retiring-personal-css-ownership-without-losing-the-saved-design).
+
+The store never holds scan results or theme ownership. A failed local-storage
+write does not advance the write memo, allowing retry.
 
 ## The startup CSS snapshot
 
