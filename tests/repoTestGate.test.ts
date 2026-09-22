@@ -2,7 +2,7 @@
  * tests/repoTestGate.test.ts — where the suites sit relative to the build.
  *
  * `tsconfig.json` includes `tests/**` as well as `src/**`, so `tsc -noEmit` in
- * `npm run build` typechecks the suites. Both `CLAUDE.md` and
+ * `npm run build` typechecks the suites. Both `AGENTS.md` and
  * `scripts/run-tests.mjs` used to say the opposite — that tests live outside
  * `src/` precisely so they stay out of that gate — and a reader who believed it
  * would draw two wrong conclusions: that a broken test signature is a test-only
@@ -84,11 +84,11 @@ describe("no document claims otherwise", () => {
 		});
 	}
 
-	it("CLAUDE.md says the suites are typechecked with the build", () => {
-		// That CLAUDE.md mentions `npm test` at all is checked next door, in
+	it("AGENTS.md says the suites are typechecked with the build", () => {
+		// That AGENTS.md mentions `npm test` at all is checked next door, in
 		// repoSourceRules — this is the other half: knowing the command exists
 		// still leaves a reader thinking a broken test is a test-only problem.
-		assert.match(readRepoFile("CLAUDE.md"), /typecheck[^\n]*`tests\/`/);
+		assert.match(readRepoFile("AGENTS.md"), /typecheck[^\n]*`tests\/`/);
 	});
 });
 

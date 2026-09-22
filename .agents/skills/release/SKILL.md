@@ -33,10 +33,10 @@ prefix, ever. The workflow now fails loudly if they drift apart.
 
 | Invocation | Meaning |
 |---|---|
-| `/release` | Infer the bump from the commits since the last tag |
-| `/release patch` / `minor` / `major` | Force the bump level |
-| `/release 2.4.0` | Use this exact version |
-| `/release --dry-run` | Run steps 0–4 only. Nothing is committed, tagged, or pushed |
+| `$release` | Infer the bump from the commits since the last tag |
+| `$release patch` / `minor` / `major` | Force the bump level |
+| `$release 2.4.0` | Use this exact version |
+| `$release --dry-run` | Run steps 0–4 only. Nothing is committed, tagged, or pushed |
 
 `--dry-run` combines with any of the above.
 
@@ -52,7 +52,8 @@ git rev-parse --abbrev-ref HEAD          # expect: master
 git status --porcelain                   # expect: empty
 git rev-list --left-right --count origin/master...HEAD   # expect: 0 <n>
 git describe --tags --abbrev=0           # last released tag
-jq -r .version manifest.json package.json
+jq -r .version manifest.json package.json package-lock.json
+jq -r '.packages[""].version' package-lock.json
 gh auth status
 ```
 
@@ -67,17 +68,18 @@ what to do about it, then **end the turn** — do not attempt a workaround.
 3. **Not behind `origin/master`.** The left number from the `rev-list` above must be
    `0`. Being behind means the release would drop someone else's commits.
 4. **There is something to release.** At least one commit since the last tag.
-5. **Version files are consistent.** `manifest.json`, `package.json`, and the newest
-   key in `versions.json` all agree with each other right now. If they don't, a
-   previous release was interrupted — say so and stop.
+5. **Version files are consistent.** `manifest.json`, `package.json`, both
+   version fields in `package-lock.json`, and the newest key in `versions.json`
+   all agree with each other right now. If they don't, a previous release was
+   interrupted — say so and stop.
 6. **The target tag does not exist**, locally or on the remote:
    ```bash
    git rev-parse -q --verify "refs/tags/$VERSION"        # must fail
    git ls-remote --exit-code --tags origin "$VERSION"    # must fail
    ```
-7. **Lint and build pass locally:**
+7. **Lint, build, and tests pass locally:**
    ```bash
-   npm run lint && npm run build
+   npm run lint && npm run build && npm test
    ```
    This runs before anything is tagged. A failure here costs seconds; a failure
    after the tag is pushed means a red Actions run against a tag that already
@@ -142,8 +144,10 @@ Show the user, in one message:
 - the commit subjects included in the range
 - the drafted release notes, verbatim
 
-Then ask with `AskUserQuestion`: **publish** / **edit the notes** / **change the
-version** / **cancel**. If they choose to edit, revise and ask again.
+Ask the user directly to choose **publish**, **edit the notes**, **change the
+version**, or **cancel**, then stop and wait for their reply. Continue only after
+an unambiguous **publish** confirmation. If they choose to edit, revise and ask
+again.
 
 Nothing is committed, tagged, or pushed before this gate returns approval. If the
 invocation was `--dry-run`, stop here and report what *would* have happened.
@@ -214,13 +218,15 @@ Report the release URL to the user.
 Do not silently retry, and do not run any of these on your own. Show the user the
 situation and the exact recovery commands, and ask before running them.
 
-Tag pushed but the build failed, nothing published yet:
+Tag pushed but the build failed, nothing published yet. Resolve the bump commit
+before deleting the tag, then preserve branch history with a revert:
 
 ```bash
+BUMP_COMMIT=$(git rev-list -n 1 "$VERSION")
 gh release delete "$VERSION" --yes --cleanup-tag   # removes draft + remote tag
 git tag -d "$VERSION"                              # remove the local tag
-git reset --hard HEAD~1                            # drop the bump commit
-git push --force-with-lease origin master          # only if the bump was pushed
+git revert --no-edit "$BUMP_COMMIT"                # undo the bump without rewriting history
+git push origin master                             # only if the bump was pushed
 ```
 
 If the release was already **published**, do not delete it — users may have pulled

@@ -48,17 +48,20 @@ icon-fonts/
 .serena/
 graphify-out/
 
-# .claude is local-only, except the skills below — the release process and
-# the deep-dive architecture skills split out of CLAUDE.md — which belong
+# Codex runtime state and hooks are local-only.
+.codex/
+
+# .agents is local-only, except the skills below — the release process and
+# the deep-dive architecture skills split out of AGENTS.md — which belong
 # in version control.
-.claude/*
-!.claude/skills/
-.claude/skills/*
-!.claude/skills/release/
-!.claude/skills/tabler-outline-stroke/
-!.claude/skills/user-image-icons/
-!.claude/skills/callout-color-nesting/
-!.claude/skills/callout-metadata-pipe/
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/release/
+!.agents/skills/tabler-outline-stroke/
+!.agents/skills/user-image-icons/
+!.agents/skills/callout-color-nesting/
+!.agents/skills/callout-metadata-pipe/
 
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store

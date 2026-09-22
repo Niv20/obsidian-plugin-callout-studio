@@ -16,7 +16,7 @@
  *   heading/inline tokens, while the recoloured one kept its uploaded yellows on
  *   exactly the shapes that carry a class. The block callout body was right
  *   the whole time, because that path is a data-URI background image (see
- *   CSSInjector.generateImageOverride) and a data URI is its own document.
+ *   `imageOverrideCSS`) and a data URI is its own document.
  * - `id` attributes. `url(#grad)` resolves against the whole document, so the
  *   second copy of a picture paints itself out of the first copy's gradients.
  *

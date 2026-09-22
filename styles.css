@@ -5791,7 +5791,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
    NOT painted --background-primary the way .cs-live-preview-body is: that is a
    card standing apart from the modal, this is a row inside it, and the two
    variables are the same colour everywhere except mobile dark — where painting
-   it would turn every row into a pure-black stripe (see CLAUDE.md) for a
+   it would turn every row into a pure-black stripe (see AGENTS.md) for a
    fidelity nobody can see. Translucent tints composite over the modal surface
    instead, which is the same colour a note's would.
 
@@ -5825,7 +5825,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
    arrowing through the rows and pointing at them never compete.
 
    A ring, never a fill. Every callout background in this plugin is a
-   translucent tint by design (there is no opaque option — see CLAUDE.md), so
+   translucent tint by design (there is no opaque option — see AGENTS.md), so
    ANYTHING painted behind a row composites into the callout and changes the
    colour the row exists to show. The accent shade that used to sit here tinted
    every preview purple; a neutral grey would have been a quieter version of the

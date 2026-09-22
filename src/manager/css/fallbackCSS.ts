@@ -1,7 +1,7 @@
 /**
  * manager/css/fallbackCSS.ts — the style an *unrecognized* callout id gets.
  *
- * Moved out of `CSSInjector`, which CLAUDE.md's ~300-line rule froze long ago.
+ * Moved out of `CSSInjector`, which AGENTS.md's ~300-line rule froze long ago.
  * It leaves cleanly because it was already parameterised on the callout list
  * rather than reaching into the injector's state: everything else it needs is
  * one of nine emitters, now named by {@link FallbackCssContext} instead of
@@ -217,7 +217,7 @@ export function generateFallbackCSS(
 			`  width: ${iconBoxWidth(picture)};\n` +
 			`  height: var(--icon-size, 1.2em);\n`;
 		// A picture that keeps its own colours is painted, not stencilled —
-		// same split as generateIconOverride, which this mirrors for the
+		// same split as iconOverrideCSS, which this mirrors for the
 		// unknown-id fallback.
 		const paint =
 			picture && !followsCalloutColor(fallbackDef.icon, picture)

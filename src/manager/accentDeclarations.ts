@@ -20,8 +20,8 @@
  *   to `--cs-accent` — see that `@property` rule for the whole derivation. Only
  *   emitted when there IS a theme value to launder; our own hexes are validated
  *   into and out of storage (`savedCalloutRows`, the importer) and go direct.
- * - `--cs-color-rgb` is the legacy bare triplet, kept for one release for
- *   anything outside this plugin still reading it. It cannot follow a theme — a
+ * - `--cs-color-rgb` is the legacy bare triplet, retained for external
+ *   consumers that still read it. It cannot follow a theme — a
  *   triplet cannot be derived from a `var()` — so on an untouched built-in it
  *   carries the shipped default as a best effort. Nothing in this plugin
  *   depends on it any more.

@@ -4,7 +4,7 @@
  *
  * One question, asked from three places in `CalloutRegistry` (`toSaveData`,
  * `isBuiltInModified`, `isUnmodifiedBuiltIn`) and from nowhere else. Split out
- * of that file, which CLAUDE.md's ~300-line rule has long since had to freeze.
+ * of that file, which AGENTS.md's ~300-line rule has long since had to freeze.
  *
  * The two tables are the point of the module, and both are load-bearing in
  * opposite directions — one decides what gets *persisted*, the other decides

@@ -799,8 +799,8 @@ describe("nothing documents a scheduleInject the injector does not have", () => 
 		);
 	});
 
-	it("internals-docs names inject() instead — CLAUDE.md is a short entry point and states neither", () => {
-		// CLAUDE.md deliberately carries no implementation detail (see its
+	it("internals-docs names inject() instead — AGENTS.md is a short entry point and states neither", () => {
+		// AGENTS.md deliberately carries no implementation detail (see its
 		// "Documentation maintenance" section), so the mutate → CSS → repaint
 		// loop is documented in internals-docs, not there.
 		const docs = [
@@ -817,8 +817,8 @@ describe("nothing documents a scheduleInject the injector does not have", () => 
 			"internals-docs no longer names the method that does exist",
 		);
 		assert.ok(
-			!NAMED_AS_API.test(readRepoFile("CLAUDE.md")),
-			"CLAUDE.md still documents cssInjector.scheduleInject()",
+			!NAMED_AS_API.test(readRepoFile("AGENTS.md")),
+			"AGENTS.md still documents cssInjector.scheduleInject()",
 		);
 	});
 });

@@ -1,5 +1,5 @@
 /**
- * tests/repoSourceRules.test.ts — the rules CLAUDE.md states about how `src/`
+ * tests/repoSourceRules.test.ts — the rules AGENTS.md states about how `src/`
  * is written, turned into something that fails.
  *
  * A convention in a document is a convention until something checks it. Each
@@ -29,7 +29,7 @@
  *   today's size is what makes the number mean something: nothing new joins the
  *   list, and nothing on it grows.
  *
- * A seventh suite turns the document around and checks *it* instead: CLAUDE.md
+ * A seventh suite turns the document around and checks *it* instead: AGENTS.md
  * spent a long release cycle stating that this repository has no automated
  * tests, while `npm test` was the thing every one of the rules above ran under.
  * A stale sentence there is worse than no sentence, because it is read as the
@@ -599,7 +599,7 @@ describe("the network surface is exactly what the README discloses", () => {
 		"src/icons/packs/materialFont.ts":
 			"the Material Symbols webfont, for the picker grid",
 		"src/i18n/LocaleStore.ts":
-			"the user's UI language — the one background fetch, argued for in CLAUDE.md",
+			"the user's UI language — the one background fetch, argued for in AGENTS.md",
 	};
 
 	it("only the disclosed files call requestUrl", () => {
@@ -614,7 +614,7 @@ describe("the network surface is exactly what the README discloses", () => {
 		assert.deepStrictEqual(
 			callers,
 			Object.keys(ALLOWED_REQUEST_URL).sort(),
-			"the set of files that reach the network changed. Every addition needs a line in the README's 'Network usage and privacy' section and an entry here — and per CLAUDE.md, must be triggered by an explicit user action with an offline fallback.",
+			"the set of files that reach the network changed. Every addition needs a line in the README's 'Network usage and privacy' section and an entry here — and per AGENTS.md, must be triggered by an explicit user action with an offline fallback.",
 		);
 	});
 
@@ -721,7 +721,7 @@ describe("the network surface is exactly what the README discloses", () => {
 
 describe("no new oversized files", () => {
 	/**
-	 * The files already over CLAUDE.md's ~300-line line, frozen at the size
+	 * The files already over AGENTS.md's ~300-line line, frozen at the size
 	 * they were when this test was written.
 	 *
 	 * This is a ratchet, not a rule, and saying so plainly matters: 40 files are
@@ -894,7 +894,7 @@ describe("no new oversized files", () => {
 		// the data.json write policy to manager/SettingsWriter.ts, reading it
 		// back into a live registry to manager/settingsBoot.ts, and the two
 		// repaint passes to editor/renderRefresh.ts. What is left is lifecycle
-		// and wiring, which is all CLAUDE.md asks of this file.
+		// and wiring, which is all AGENTS.md asks of this file.
 		// Lowered again from 512: the post-layout half of startup — confirm the
 		// fresh install, greet, run first-run discovery — moved to
 		// manager/launchSequence.ts, which is where the ordering rule between
@@ -1015,17 +1015,17 @@ describe("no new oversized files", () => {
 /* The document itself                                                        */
 /* -------------------------------------------------------------------------- */
 
-describe("CLAUDE.md describes the checks that exist", () => {
-	const doc = readRepoFile("CLAUDE.md");
+describe("AGENTS.md describes the checks that exist", () => {
+	const doc = readRepoFile("AGENTS.md");
 
 	it("does not claim the repository is untested", () => {
 		// It said exactly this while every suite above was already running under
-		// `npm test`. The damage is not the inaccuracy: CLAUDE.md is read as the
+		// `npm test`. The damage is not the inaccuracy: AGENTS.md is read as the
 		// instruction, so a contributor who believes the sentence writes no test.
 		assert.strictEqual(
 			/no automated test/i.test(doc),
 			false,
-			"CLAUDE.md still says there is no automated test suite",
+			"AGENTS.md still says there is no automated test suite",
 		);
 	});
 
@@ -1034,7 +1034,7 @@ describe("CLAUDE.md describes the checks that exist", () => {
 
 		assert.ok(
 			/^npm test\b/m.test(commands),
-			"CLAUDE.md's Commands block does not mention `npm test`",
+			"AGENTS.md's Commands block does not mention `npm test`",
 		);
 	});
 
@@ -1045,7 +1045,7 @@ describe("CLAUDE.md describes the checks that exist", () => {
 		// instruction for another.
 		assert.ok(
 			doc.includes("reload Obsidian"),
-			"CLAUDE.md no longer tells anyone to check the result in Obsidian",
+			"AGENTS.md no longer tells anyone to check the result in Obsidian",
 		);
 	});
 });

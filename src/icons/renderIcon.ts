@@ -35,7 +35,7 @@ const SHAPE_SELECTOR = "path, circle, rect, polygon, ellipse, line, polyline, g"
 /**
  * SVG's initial `color`, which is what a `currentColor` written *inside* the
  * artwork resolves against when the picture is painted as a background image
- * (see CSSInjector.generateImageOverride): an image renders in a context of its
+ * (see `imageOverrideCSS`): an image renders in a context of its
  * own, so the surrounding text colour never reaches it. A DOM copy has no such
  * boundary, so it has to state the same starting point to show the same picture.
  */

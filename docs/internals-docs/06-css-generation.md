@@ -123,7 +123,7 @@ hand-off point:
 | `--callout-color` | Obsidian core | Spelled the way the **active theme's** read sites expect, not the way the running Obsidian does — `calloutColorValue(hex, dialect)`, see [Accent dialect](11-color-system.md#accent-dialect-version-drift-and-theme-drift). **Omitted entirely for an untouched built-in** — that's what lets core's own rule (and any theme overriding it) keep deciding the accent. |
 | `--cs-accent` | This plugin | Always a real colour on every Obsidian version, so it can feed `color-mix()`. On an untouched built-in it follows the same core variable (`--callout-info` etc.) so the plugin's own surfaces (heading bars, inline pills, borders, icon tints) move with the active theme in lockstep with the block callout itself. |
 | `--cs-accent-theme` | This plugin | What makes "always a real colour" true rather than merely intended. Registered `<color>` via `@property` in `styles.css`; a theme's value passes through it on the way to `--cs-accent`. The registration is the *last* line of defence, not the first: `calloutAccentVarRef` wraps the read in `rgb()` when the dialect says that theme declares the variable as a triplet, so the value arrives already a colour. Degrading to the registration's grey is what happens when that fails, and it is why the per-variable half of the dialect exists at all. Emitted **only** when there is a theme value to launder — the plugin's own hexes are validated into and out of storage and go direct. Deliberately a separate name, not a registration of `--cs-accent` itself: a registered property is never "undefined", which would kill the `var(--cs-accent, currentColor)` fallback the global border rule relies on. |
-| `--cs-color-rgb` | Legacy | Bare triplet, kept one release for external consumers still reading it. Cannot follow a theme (a triplet can't be derived from a `var()`), so on an untouched built-in it's a best-effort snapshot of the shipped default. Nothing inside this plugin depends on it anymore. |
+| `--cs-color-rgb` | Legacy | Bare triplet retained for external consumers still reading it. Cannot follow a theme (a triplet can't be derived from a `var()`), so on an untouched built-in it's a best-effort snapshot of the shipped default. Nothing inside this plugin depends on it anymore. |
 
 `themeAccentVar(def)` returns the Obsidian variable name
 (`OBSIDIAN_CALLOUT_VAR[def.id]`, e.g. `--callout-info`) **only** when
@@ -259,8 +259,8 @@ elements, and macOS Preview truncating vector shadings).
 Icons reach the screen through **two separate mechanisms**, and understanding
 why both exist matters for anyone touching icon rendering:
 
-1. **CSS `::after` mask/background-image** (`generateIconMaskOverride` /
-   `generateImageOverride`), wrapped in `@media screen` — the live-view path.
+1. **CSS `::after` mask/background-image** (`iconMaskOverrideCSS` /
+   `imageOverrideCSS`, routed by `iconOverrideCSS`), wrapped in `@media screen` — the live-view path.
    A library icon (monochrome glyph) is drawn as a `mask-image` tinted with
    `--cs-accent`; a user-uploaded picture that keeps its own colours is drawn
    as a plain `background-image` instead (a mask is a stencil — running a

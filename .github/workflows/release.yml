@@ -115,7 +115,7 @@ jobs:
                   echo "::error::Tag $tag never became visible via the GitHub API."
                   exit 1
 
-            # Published as a draft on purpose: the /release skill writes the
+            # Published as a draft on purpose: the $release skill writes the
             # user-facing notes and flips it public. A failure mid-way leaves a
             # draft rather than a half-finished release.
             - name: Create release

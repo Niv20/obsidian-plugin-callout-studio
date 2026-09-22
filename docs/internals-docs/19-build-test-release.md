@@ -96,7 +96,7 @@ the repo's own conventions (below).
 
 Several test files check the **repository itself**, not runtime behaviour —
 these are the project's coding conventions turned into assertions rather
-than left as unenforced prose in `CLAUDE.md`. Notable ones, by what they
+than left as unenforced prose in `AGENTS.md`. Notable ones, by what they
 check (not exhaustive — see each file directly for the full list):
 
 | File | Enforces |
@@ -107,10 +107,10 @@ check (not exhaustive — see each file directly for the full list):
 | `repoRelease.test.ts` | `manifest.json`/`package.json`/`versions.json` agree on one version; the plugin id can never change; `manifest.json` has every required field and no unknown ones; the five fixed command ids match what's actually registered; bundle-size limit is still declared where CI reads it |
 | `repoTestGate.test.ts` | `tsconfig.json` includes `tests/`; the build actually runs that typecheck; no test file uses top-level `await`; test setup/teardown hooks run in the right order |
 | `repoLicenseDocs.test.ts` | `LICENSE` is the plain 0BSD grant with no conditions attached; README/CONTRIBUTING both state the "don't republish as a new plugin" ask is *not* a license term |
-| `repoTestGate.test.ts` ("CLAUDE.md describes the checks that exist") | `CLAUDE.md` doesn't claim the repo is untested, lists `npm test`, and still describes what the suite structurally cannot see |
+| `repoSourceRules.test.ts` ("AGENTS.md describes the checks that exist") | `AGENTS.md` doesn't claim the repo is untested, lists `npm test`, and still describes what the suite structurally cannot see |
 
 > [!TIP]
-> `npm run test`'s output is the single source of truth for whether a
+> `npm test`'s output is the single source of truth for whether a
 > proposed change violates one of these conventions — don't try to
 > re-derive "is this file over 300 lines" or "is this listener registered
 > correctly" by inspection when the corresponding repo test will simply tell
@@ -142,7 +142,7 @@ mixing them up is a real trap:
 
 Three workflows, `.github/workflows/`:
 
-### `lint.yml` — every push, every branch, Node 20.x and 22.x
+### `lint.yml` — pushes to `master` and all pull requests, Node 20.x and 22.x
 
 ```text
 npm ci → npm run build → verify locales/ has no diff → npm run lint → npm test
@@ -203,8 +203,8 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > to 1.70 MiB.
 
 > [!NOTE]
-> **The release is created as a `draft`, on purpose.** The `/release` skill
-> (`.claude/skills/release/SKILL.md`) is what writes the user-facing release
+> **The release is created as a `draft`, on purpose.** The `$release` skill
+> (`.agents/skills/release/SKILL.md`) is what writes the user-facing release
 > notes and flips it public — a workflow failure partway through therefore
 > leaves a harmless draft rather than a half-published, half-broken public
 > release.
@@ -218,8 +218,8 @@ Bumping `manifest.json`/`package.json`/`versions.json` happens together, via
 
 > [!IMPORTANT]
 > **Never bump or tag by hand, and never do it inside a feature/fix PR.**
-> Both `CLAUDE.md` and `CONTRIBUTING.md` say releases are cut separately —
-> use the `/release` skill, which bumps all four version-bearing files
+> Both `AGENTS.md` and `CONTRIBUTING.md` say releases are cut separately —
+> use the `$release` skill, which bumps all four version-bearing files
 > together, tags, pushes, waits for the CI build, writes release notes, and
 > publishes. Tags are bare semver (`1.5.0`), never `v1.5.0`.
 

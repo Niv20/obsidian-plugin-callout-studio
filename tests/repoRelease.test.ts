@@ -114,7 +114,7 @@ describe("version files agree", () => {
 
 	it("the package name is the plugin id", () => {
 		// Not cosmetic: the lockfile, the vault folder and the community
-		// registry key are all this string, and CLAUDE.md pins the manifest id
+		// registry key are all this string, and AGENTS.md pins the manifest id
 		// as unrenameable. Keeping package.json on the same value means one
 		// grep finds every place it has to change if that ever stops being true.
 		assert.strictEqual(pkg.name, manifest.id);

@@ -1,7 +1,7 @@
 /**
  * utils/importFields.ts — Which keys an imported `CalloutDefinition` may carry.
  *
- * Split out of `importValidator.ts`, which is one of the files CLAUDE.md's
+ * Split out of `importValidator.ts`, which is one of the files AGENTS.md's
  * ~300-line rule has already had to freeze. This is a self-contained question —
  * "is this key one we know?" — asked from two places in the validator and from
  * nowhere else, so it moves without a seam.

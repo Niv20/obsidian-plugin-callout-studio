@@ -21,7 +21,7 @@ You'll need a current Node LTS.
 npm test        # every tests/*.test.ts, bundled by esbuild and run by node:test
 ```
 
-The suite covers the pure utilities, the registry, the CSS it generates, both editor surfaces, the public API and the repo's own rules. It runs in CI on every push and PR, so a failure there is a failure here. `tsconfig.json` includes `tests/` as well as `src/`, so `npm run build` typechecks the suites too — a test that no longer compiles fails the build.
+The suite covers the pure utilities, the registry, the CSS it generates, both editor surfaces, the public API and the repo's own rules. It runs in CI on pushes to `master` and on every PR, so a failure there is a failure here. `tsconfig.json` includes `tests/` as well as `src/`, so `npm run build` typechecks the suites too — a test that no longer compiles fails the build.
 
 What it deliberately cannot see is Obsidian: the DOM is a stand-in (`tests/support/fakeDom.ts`) and the `obsidian` module is a stub (`tests/support/obsidianStub.ts`). So anything that has to *look* right is still checked by hand — build, copy `main.js`, `manifest.json`, and `styles.css` into `<Vault>/.obsidian/plugins/callout-studio/`, and reload Obsidian.
 
@@ -40,7 +40,7 @@ Describe the problem you're trying to solve rather than a finished spec. There's
 ## Submitting a change
 
 1. Fork the repo, branch off `master` (`feature/short-description` or `fix/short-description`).
-2. Make your change. [`docs/internals-docs/README.md`](docs/internals-docs/README.md) is the architecture reference — read [03-plugin-lifecycle.md](docs/internals-docs/03-plugin-lifecycle.md) and [06-css-generation.md](docs/internals-docs/06-css-generation.md) for the registry → CSS injector → re-render loop before touching anything under `src/manager/`; a couple of real bugs here have come from missing one of those steps. It also has step-by-step checklists for adding a setting/command/callout field/icon source ([21-extending.md](docs/internals-docs/21-extending.md)). [CLAUDE.md](CLAUDE.md) is just the short entry point that links here.
+2. Make your change. [`docs/internals-docs/README.md`](docs/internals-docs/README.md) is the architecture reference — read [03-plugin-lifecycle.md](docs/internals-docs/03-plugin-lifecycle.md) and [06-css-generation.md](docs/internals-docs/06-css-generation.md) for the registry → CSS injector → re-render loop before touching anything under `src/manager/`; a couple of real bugs here have come from missing one of those steps. It also has step-by-step checklists for adding a setting/command/callout field/icon source ([21-extending.md](docs/internals-docs/21-extending.md)). [AGENTS.md](AGENTS.md) is just the short entry point that links here.
 3. Run `npm run lint`, `npm run build` and `npm test` before pushing. CI runs the same three commands on every push and PR, so anything that fails locally will fail there too. A `todo` entry in a suite is a known bug someone wrote down, not a test that's allowed to stay red.
 4. Add or extend a test where the change is testable without Obsidian — that's the first place a change is proved. Then check it in Obsidian too (see Setup above), and say how you tested it in the PR description; for anything visual that's the only signal a reviewer has.
 
@@ -48,7 +48,7 @@ Keep PRs to one change. A fix bundled with an unrelated refactor just makes both
 
 ## Code conventions
 
-Full list in [CLAUDE.md](CLAUDE.md). The ones that bite most often:
+Full list in [AGENTS.md](AGENTS.md). The ones that bite most often:
 - Strict TypeScript — no `any` without an ESLint-disable comment explaining why.
 - Split files once they pass ~300 lines.
 - Listeners and intervals go through `this.registerEvent` / `registerInterval` / `registerDomEvent`, not raw `addEventListener` or `setInterval`, so they don't leak past plugin unload.
