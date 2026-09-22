@@ -94,7 +94,7 @@ export const ms: Record<string, string> = {
 		"Simpan semua jenis callout tersuai anda dalam format JSON.",
 	"settings.importConflictNotice":
 		"{{count}} jenis callout diimport; {{overwritten}} entri sedia ada ditimpa.",
-	"settings.addNewCallout": "+ tambah callout",
+	"settings.addNewCallout": "tambah callout",
 	"settings.noCalloutsNow": "Tiada callout tersuai buat masa ini.",
 	"settings.editAria": "Edit {{name}}",
 	"settings.moreRowActionsAria": "Tindakan lain untuk {{name}}",

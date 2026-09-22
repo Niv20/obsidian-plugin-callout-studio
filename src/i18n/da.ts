@@ -90,7 +90,7 @@ export const da: Record<string, string> = {
 		"Gem alle dine brugerdefinerede callout-typer i JSON-format.",
 	"settings.importConflictNotice":
 		"{{count}} callout-type(r) importeret; {{overwritten}} eksisterende post(er) overskrevet.",
-	"settings.addNewCallout": "+ tilføj callout",
+	"settings.addNewCallout": "tilføj callout",
 	"settings.noCalloutsNow": "Ingen brugerdefinerede callouts i øjeblikket.",
 	"settings.editAria": "Rediger {{name}}",
 	"settings.moreRowActionsAria": "Flere handlinger for {{name}}",

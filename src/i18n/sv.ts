@@ -96,7 +96,7 @@ export const sv: Record<string, string> = {
 	"settings.importConflictNotice":
 		"{{count}} callout-typ(er) importerade; {{overwritten}} befintlig(a) post(er) skrevs över.",
 
-	"settings.addNewCallout": "+ lägg till callout",
+	"settings.addNewCallout": "lägg till callout",
 
 	"settings.noCalloutsNow": "Inga anpassade callouts för tillfället.",
 

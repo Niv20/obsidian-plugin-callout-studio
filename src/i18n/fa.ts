@@ -95,7 +95,7 @@ export const fa: Record<string, string> = {
 	"settings.importConflictNotice":
 		"{{count}} نوع callout وارد شد؛ {{overwritten}} ورودی موجود بازنویسی شد.",
 
-	"settings.addNewCallout": "+ افزودن callout",
+	"settings.addNewCallout": "افزودن callout",
 
 	"settings.noCalloutsNow": "در حال حاضر callout سفارشی وجود ندارد.",
 

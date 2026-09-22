@@ -96,7 +96,7 @@ export const ko: Record<string, string> = {
 	"settings.importConflictNotice":
 		"{{count}}개의 callout 유형을 가져왔습니다. {{overwritten}}개의 기존 항목을 덮어썼습니다.",
 
-	"settings.addNewCallout": "+ callout 추가",
+	"settings.addNewCallout": "callout 추가",
 
 	"settings.noCalloutsNow": "현재 사용자 정의 callout이 없습니다.",
 

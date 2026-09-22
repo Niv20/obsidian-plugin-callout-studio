@@ -95,7 +95,7 @@ export const hi: Record<string, string> = {
 	"settings.importConflictNotice":
 		"{{count}} callout प्रकार आयात किए गए; {{overwritten}} मौजूदा प्रविष्टियाँ ओवरराइट की गईं।",
 
-	"settings.addNewCallout": "+ callout जोड़ें",
+	"settings.addNewCallout": "callout जोड़ें",
 
 	"settings.noCalloutsNow": "फिलहाल कोई कस्टम callout नहीं।",
 

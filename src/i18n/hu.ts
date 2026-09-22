@@ -96,7 +96,7 @@ export const hu: Record<string, string> = {
 	"settings.importConflictNotice":
 		"{{count}} callout-típus importálva; {{overwritten}} meglévő bejegyzés felülírva.",
 
-	"settings.addNewCallout": "+ callout hozzáadása",
+	"settings.addNewCallout": "callout hozzáadása",
 
 	"settings.noCalloutsNow": "Jelenleg nincs egyéni callout.",
 

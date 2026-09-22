@@ -95,7 +95,7 @@ export const cs: Record<string, string> = {
 	"settings.importConflictNotice":
 		"Importováno {{count}} typ(ů) callout; {{overwritten}} stávajících záznamů bylo přepsáno.",
 
-	"settings.addNewCallout": "+ přidat callout",
+	"settings.addNewCallout": "přidat callout",
 
 	"settings.noCalloutsNow": "Momentálně žádné vlastní callouts.",
 

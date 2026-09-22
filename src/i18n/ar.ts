@@ -95,7 +95,7 @@ export const ar: Record<string, string> = {
 	"settings.importConflictNotice":
 		"تم استيراد {{count}} نوع callout؛ تم الكتابة فوق {{overwritten}} إدخال موجود.",
 
-	"settings.addNewCallout": "+ إضافة callout جديد",
+	"settings.addNewCallout": "إضافة callout جديد",
 
 	"settings.noCalloutsNow": "لا توجد callouts مخصصة حالياً.",
 

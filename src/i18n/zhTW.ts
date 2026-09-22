@@ -89,7 +89,7 @@ export const zhTW: Record<string, string> = {
 	"settings.exportDesc": "以 JSON 格式儲存所有自訂 callout 類型。",
 	"settings.importConflictNotice":
 		"已匯入 {{count}} 個 callout 類型；{{overwritten}} 個現有項目已被覆寫。",
-	"settings.addNewCallout": "+ 新增 callout",
+	"settings.addNewCallout": "新增 callout",
 	"settings.noCalloutsNow": "目前沒有自訂 callout。",
 	"settings.editAria": "編輯 {{name}}",
 	"settings.moreRowActionsAria": "{{name}} 的更多動作",

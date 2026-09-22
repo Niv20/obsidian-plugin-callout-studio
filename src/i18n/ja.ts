@@ -96,7 +96,7 @@ export const ja: Record<string, string> = {
 	"settings.importConflictNotice":
 		"{{count}}件のcalloutタイプをインポートしました。{{overwritten}}件の既存エントリが上書きされました。",
 
-	"settings.addNewCallout": "+ calloutを追加",
+	"settings.addNewCallout": "calloutを追加",
 
 	"settings.noCalloutsNow": "現在カスタムcalloutはありません。",
 

@@ -92,7 +92,7 @@ export const nb: Record<string, string> = {
 	"settings.exportDesc": "Lagre alle tilpassede callout-typer i JSON-format.",
 	"settings.importConflictNotice":
 		"{{count}} callout-type(r) importert; {{overwritten}} eksisterende oppføring(er) overskrevet.",
-	"settings.addNewCallout": "+ legg til callout",
+	"settings.addNewCallout": "legg til callout",
 	"settings.noCalloutsNow": "Ingen tilpassede callouts for øyeblikket.",
 	"settings.editAria": "Rediger {{name}}",
 	"settings.moreRowActionsAria": "Flere handlinger for {{name}}",

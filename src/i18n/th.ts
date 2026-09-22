@@ -95,7 +95,7 @@ export const th: Record<string, string> = {
 	"settings.importConflictNotice":
 		"นำเข้า {{count}} ประเภท callout แล้ว; เขียนทับ {{overwritten}} รายการที่มีอยู่",
 
-	"settings.addNewCallout": "+ เพิ่ม callout",
+	"settings.addNewCallout": "เพิ่ม callout",
 
 	"settings.noCalloutsNow": "ยังไม่มี callout แบบกำหนดเองในขณะนี้",
 

@@ -114,7 +114,7 @@ export const he: Record<string, string> = {
 		"יובאו {{count}} תיבות־הבלטה; {{overwritten}} רשומות קיימות עודכנו.",
 
 	// Settings — Toolbar
-	"settings.addNewCallout": "+ הוספת תיבת־הבלטה חדשה",
+	"settings.addNewCallout": "הוספת תיבת־הבלטה חדשה",
 
 	// Settings — Empty states
 	"settings.noCalloutsNow": "כרגע אין תיבות־הבלטה מותאמות־אישית.",

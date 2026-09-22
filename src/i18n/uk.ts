@@ -96,7 +96,7 @@ export const uk: Record<string, string> = {
 	"settings.importConflictNotice":
 		"Імпортовано {{count}} тип(ів) callout; {{overwritten}} існуючих записів перезаписано.",
 
-	"settings.addNewCallout": "+ додати callout",
+	"settings.addNewCallout": "додати callout",
 
 	"settings.noCalloutsNow": "Наразі немає користувацьких callout.",
 

@@ -95,7 +95,7 @@ export const ro: Record<string, string> = {
 	"settings.importConflictNotice":
 		"Au fost importate {{count}} tip(uri) de callout; {{overwritten}} înregistrare(i) existentă(e) au fost suprascrisă(e).",
 
-	"settings.addNewCallout": "+ adaugă callout",
+	"settings.addNewCallout": "adaugă callout",
 
 	"settings.noCalloutsNow": "Niciun callout personalizat deocamdată.",
 

@@ -95,7 +95,7 @@ export const tr: Record<string, string> = {
 	"settings.importConflictNotice":
 		"{{count}} callout türü içe aktarıldı; {{overwritten}} mevcut kayıt üzerine yazıldı.",
 
-	"settings.addNewCallout": "+ callout ekle",
+	"settings.addNewCallout": "callout ekle",
 
 	"settings.noCalloutsNow": "Şu an özel callout yok.",
 

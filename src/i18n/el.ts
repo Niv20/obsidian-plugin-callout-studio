@@ -91,7 +91,7 @@ export const el: Record<string, string> = {
 		"Αποθηκεύστε όλους τους προσαρμοσμένους τύπους callout σε μορφή JSON.",
 	"settings.importConflictNotice":
 		"Εισήχθησαν {{count}} τύπος/τύποι callout· {{overwritten}} υπάρχουσα/-ες καταχώρηση/-εις αντικαταστάθηκε/-αν.",
-	"settings.addNewCallout": "+ προσθήκη callout",
+	"settings.addNewCallout": "προσθήκη callout",
 	"settings.noCalloutsNow":
 		"Δεν υπάρχουν προσαρμοσμένα callouts προς το παρόν.",
 	"settings.editAria": "Επεξεργασία {{name}}",

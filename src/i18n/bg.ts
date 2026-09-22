@@ -91,7 +91,7 @@ export const bg: Record<string, string> = {
 		"Запазете всички персонализирани типове callout в JSON формат.",
 	"settings.importConflictNotice":
 		"Импортирани са {{count}} тип(а) callout; {{overwritten}} съществуващ(и) запис(а) са презаписани.",
-	"settings.addNewCallout": "+ добавяне на callout",
+	"settings.addNewCallout": "добавяне на callout",
 	"settings.noCalloutsNow": "Засега няма персонализирани callout-и.",
 	"settings.editAria": "Редактиране на {{name}}",
 	"settings.moreRowActionsAria": "Още действия за {{name}}",

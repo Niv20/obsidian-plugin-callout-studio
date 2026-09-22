@@ -95,7 +95,7 @@ export const id: Record<string, string> = {
 	"settings.importConflictNotice":
 		"{{count}} tipe callout diimpor; {{overwritten}} entri yang ada ditimpa.",
 
-	"settings.addNewCallout": "+ tambah callout",
+	"settings.addNewCallout": "tambah callout",
 
 	"settings.noCalloutsNow": "Tidak ada callout kustom untuk saat ini.",
 

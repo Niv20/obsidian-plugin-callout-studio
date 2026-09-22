@@ -96,7 +96,7 @@ export const de: Record<string, string> = {
 	"settings.importConflictNotice":
 		"{{count}} Callout-Typ(en) importiert; {{overwritten}} bestehende Einträge wurden überschrieben.",
 
-	"settings.addNewCallout": "+ Callout hinzufügen",
+	"settings.addNewCallout": "Callout hinzufügen",
 
 	"settings.noCalloutsNow": "Derzeit keine benutzerdefinierten Callouts.",
 

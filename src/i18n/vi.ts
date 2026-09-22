@@ -96,7 +96,7 @@ export const vi: Record<string, string> = {
 	"settings.importConflictNotice":
 		"Đã nhập {{count}} loại callout; {{overwritten}} mục hiện có đã bị ghi đè.",
 
-	"settings.addNewCallout": "+ thêm callout",
+	"settings.addNewCallout": "thêm callout",
 
 	"settings.noCalloutsNow": "Hiện không có callout tùy chỉnh.",
 

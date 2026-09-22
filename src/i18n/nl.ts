@@ -96,7 +96,7 @@ export const nl: Record<string, string> = {
 	"settings.importConflictNotice":
 		"{{count}} callout-type(s) geïmporteerd; {{overwritten}} bestaande vermelding(en) overschreven.",
 
-	"settings.addNewCallout": "+ callout toevoegen",
+	"settings.addNewCallout": "callout toevoegen",
 
 	"settings.noCalloutsNow": "Momenteel geen aangepaste callouts.",
 

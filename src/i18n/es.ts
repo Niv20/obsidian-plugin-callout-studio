@@ -96,7 +96,7 @@ export const es: Record<string, string> = {
 	"settings.importConflictNotice":
 		"Se importaron {{count}} tipo(s) de callout; se sobrescribieron {{overwritten}} entradas existentes.",
 
-	"settings.addNewCallout": "+ añadir nuevo callout",
+	"settings.addNewCallout": "añadir nuevo callout",
 
 	"settings.noCalloutsNow": "Por ahora no hay callouts personalizados.",
 

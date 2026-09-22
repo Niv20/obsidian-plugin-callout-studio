@@ -92,7 +92,7 @@ export const fi: Record<string, string> = {
 		"Tallenna kaikki mukautetut callout-tyypit JSON-muodossa.",
 	"settings.importConflictNotice":
 		"{{count}} callout-tyyppiä tuotu; {{overwritten}} olemassa olevaa merkintää ylikirjoitettu.",
-	"settings.addNewCallout": "+ lisää callout",
+	"settings.addNewCallout": "lisää callout",
 	"settings.noCalloutsNow": "Ei mukautettuja callouteja tällä hetkellä.",
 	"settings.editAria": "Muokkaa {{name}}",
 	"settings.moreRowActionsAria": "Lisää toimintoja kohteelle {{name}}",

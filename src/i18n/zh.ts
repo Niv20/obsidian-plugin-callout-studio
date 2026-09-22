@@ -93,7 +93,7 @@ export const zh: Record<string, string> = {
 	"settings.importConflictNotice":
 		"已导入 {{count}} 个 callout 类型；{{overwritten}} 个现有条目已被覆盖。",
 
-	"settings.addNewCallout": "+ 添加新 callout",
+	"settings.addNewCallout": "添加新 callout",
 
 	"settings.noCalloutsNow": "当前没有自定义 callout。",
 
