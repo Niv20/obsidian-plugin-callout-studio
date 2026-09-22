@@ -188,9 +188,10 @@ describe("generateCalloutCSS — structural snapshot", () => {
 	 * properties. Values are pinned by the other four suites, on the unit that
 	 * decides each one.
 	 */
-	const snap = (def: Partial<CalloutDefinition>) => {
+	const snap = (def: Partial<CalloutDefinition>, themeOwned = false) => {
 		const registry = new CalloutRegistry();
 		registry.load(null);
+		if (themeOwned) registry.setThemeOwnedIds(new Set([def.id ?? "quiet"]));
 		const injector = new CSSInjector({} as App, registry);
 		const css = injector as unknown as {
 			generateCalloutCSS(d: ReturnType<typeof definition>): string;
@@ -285,16 +286,12 @@ describe("generateCalloutCSS — structural snapshot", () => {
 		assert.strictEqual(chevrons.length, 2);
 	});
 
-	it("a callout handed to the user's own CSS emits nothing whatsoever", () => {
-		assert.deepStrictEqual(snap({ externalStyle: true }), []);
+	it("a callout owned by the theme emits nothing whatsoever", () => {
+		assert.deepStrictEqual(snap({}, true), []);
 	});
 
 	it("with no exception, not even for hideIcon", () => {
-		// This used to emit the single `display: none`, on the argument that a
-		// theme has no way to say "draw no icon". Under an absolute rule that is
-		// an override like any other — and the one most likely to read as the
-		// plugin breaking someone's theme. The flag is kept on the row.
-		assert.deepStrictEqual(snap({ externalStyle: true, hideIcon: true }), []);
+		assert.deepStrictEqual(snap({ hideIcon: true }, true), []);
 	});
 
 	it("every alias gets a full copy of the block rules", () => {
@@ -709,10 +706,9 @@ describe("SECURITY — a callout id in a selector is escaped, not concatenated",
 		assert.ok(!css.includes('data-callout="back\\"'));
 	});
 
-	it("keeps the fallback's :not() chain from swallowing the sheet", () => {
+	it("keeps the fallback's zero-specificity exclusion from swallowing the sheet", () => {
 		// The catch-all lists every known id, so ONE hostile row breaks the
-		// exclusion for all of them — and these rules carry `!important`, so a
-		// broken chain repaints callouts the user did define.
+		// selector for all of them unless the shared attribute escaper is used.
 		const registry = new CalloutRegistry();
 		registry.load(null);
 		registry.add(definition({ id: "back\\" }));
@@ -724,7 +720,8 @@ describe("SECURITY — a callout id in a selector is escaped, not concatenated",
 			}
 		).generateFallbackCSS(registry.getAll());
 		assert.strictEqual(bracesInsideStrings(css), 0);
-		assert.ok(css.includes(':not([data-callout="back\\\\"])'));
+		assert.ok(css.includes(".callout:not(:where("));
+		assert.ok(css.includes('[data-callout="back\\\\"]'));
 	});
 
 	it("the two ways such an id reaches the registry are both open", () => {

@@ -186,7 +186,6 @@ function sourceVault(): CalloutRegistry {
 			source: "user",
 			customized: true,
 			hideIcon: true,
-			externalStyle: true,
 		},
 		// A built-in the user recoloured and renamed. `toSaveData` persists it,
 		// so the export has to carry it too.
@@ -505,18 +504,12 @@ describe("export → import — a fresh vault becomes the exporting one", () => 
 		assert.deepStrictEqual(parse(target.exportToJSONv2()), parse(json));
 	});
 
-	it("spells out a built-in's style mode the reader would not have assumed", () => {
-		// The one field an import may legitimately *add*, and the reason the
-		// round trip above is run into a vault of the same era. There is no vault
-		// default to carry any more — a built-in is painted by this plugin
-		// unless the active theme names it, which no file can record — so the
-		// only style-mode key that crosses an export is `externalStyle`, and a
-		// row that never had one arrives without one.
+	it("exports no retired personal CSS ownership flag", () => {
 		const imported = sourceVault().exportToJSONv2();
 		const rows = (parse(imported) as { callouts: CalloutDefinition[] }).callouts;
 		const note = rows.find((c) => c.id === "note");
 		assert.ok(note, "the source vault carries a modified built-in");
-		assert.strictEqual(note.externalStyle, undefined, "not in the file");
+		assert.ok(!("externalStyle" in note), "not in the file");
 	});
 
 	it("lands the modified built-in ON the built-in, not beside it", async () => {
@@ -559,7 +552,7 @@ describe("export → import — a fresh vault becomes the exporting one", () => 
 		assert.strictEqual(target.get("beta")?.transparentBg, true);
 		assert.deepStrictEqual(target.get("beta")?.icon, { type: "emoji", value: "🔥" });
 		assert.strictEqual(target.get("gamma")?.hideIcon, true);
-		assert.strictEqual(target.get("gamma")?.externalStyle, true);
+		assert.ok(!("externalStyle" in target.get("gamma")!));
 	});
 
 	it("restores the global settings wholesale", async () => {

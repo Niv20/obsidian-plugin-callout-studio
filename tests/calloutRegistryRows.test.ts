@@ -8,10 +8,6 @@
  *   whole appearance onto every uncustomized discovery row. Its skip list is the
  *   interesting part — each entry there is a row someone else owns.
  * - **`convertToFallback`** re-adopts a row into that mirror.
- * - **`setStyleMode`** is the ONLY writer of `externalStyle` and `styleMode`,
- *   so the rules it enforces (at most one field, delete rather than write a
- *   falsy value, never `theme` on the fallback target) cannot drift to a call
- *   site.
  * - **`resetBuiltIn` / `isBuiltInModified`** are the persistence gate's two ends.
  *
  * The mirror is spelled out field by field in the source, `undefined` included,
@@ -92,22 +88,17 @@ describe("restyleUncustomizedFallbackRows — who is mirrored", () => {
 		assert.strictEqual(registry.get("mine")?.colorLight, "#336699");
 	});
 
-	it("skips a row the theme owns", () => {
-		// Nothing reads its colours while `externalStyle` is set, so mirroring
-		// would only churn data.json on every fallback change and make the row
-		// look edited in an export.
-		const { registry } = withFallback({}, [
-			def({ id: "themed", source: "fallback", externalStyle: true }),
-		]);
+	it("mirrors a row after retiring its personal CSS handoff", () => {
+		const oldRow = { ...def({ id: "themed", source: "fallback" }), externalStyle: true };
+		const { registry } = withFallback({}, [oldRow]);
 		registry.restyleUncustomizedFallbackRows();
-		assert.strictEqual(registry.get("themed")?.colorLight, "#336699");
+		assert.strictEqual(registry.get("themed")?.colorLight, "#ff0000");
 	});
 
 	it("mirrors the same row on two devices running different themes", () => {
 		// `themeOwns` is derived from the theme active on *this* machine, so
 		// asking it inside a mutation that reaches data.json would make one
-		// user action write two different files — the issue #41 shape. Only
-		// `externalStyle` may skip: it is stored, so every device agrees.
+		// user action write two different files — the issue #41 shape.
 		const withTheme = withFallback().registry;
 		const withoutTheme = withFallback().registry;
 		withTheme.setThemeOwnedIds(new Set(["f1"]));
@@ -416,70 +407,6 @@ describe("convertToFallback", () => {
 		const { registry, events } = withFallback();
 		assert.strictEqual(registry.convertToFallback("nope"), false);
 		assert.strictEqual(events(), 0);
-	});
-});
-
-describe("setExternalStyle", () => {
-	it("hands a callout to the user's own CSS and announces it", () => {
-		const { registry, events } = loaded(saved([def({ id: "mine" })]));
-		assert.strictEqual(registry.setExternalStyle("mine", true), true);
-		assert.strictEqual(registry.get("mine")?.externalStyle, true);
-		assert.strictEqual(events(), 1);
-	});
-
-	it("DELETES the key it is leaving, never writes a falsy one", () => {
-		// `isModified` compares `JSON.stringify(value ?? null)`, so an explicit
-		// `false` would leave a built-in nobody edited looking customized
-		// forever — and being written to data.json forever with it.
-		const { registry } = loaded(saved([def({ id: "mine", externalStyle: true })]));
-		assert.strictEqual(registry.setExternalStyle("mine", false), true);
-		assert.ok(!("externalStyle" in (registry.get("mine") as object)));
-	});
-
-	it("leaves a built-in pristine after a there-and-back trip", () => {
-		// Coming back carries no field at all, which is what keeps an untouched
-		// built-in out of data.json and out of "Reset to default".
-		const { registry } = loaded(null);
-		registry.setExternalStyle("note", true);
-		registry.setExternalStyle("note", false);
-
-		assert.strictEqual(registry.isBuiltInModified("note"), false);
-		assert.deepStrictEqual(registry.toSaveData().callouts, []);
-	});
-
-	it("returns false and announces nothing when already there", () => {
-		const { registry, events } = loaded(saved([def({ id: "mine" })]));
-		assert.strictEqual(registry.setExternalStyle("mine", false), false);
-		assert.strictEqual(events(), 0);
-
-		registry.setExternalStyle("mine", true);
-		assert.strictEqual(registry.setExternalStyle("mine", true), false);
-		assert.strictEqual(events(), 1, "only the one real change");
-	});
-
-	it("has no special case for the active fallback callout", () => {
-		// It used to refuse. `generateFallbackCSS` now asks the template
-		// whether the plugin paints it and emits nothing when it does not, so
-		// the contradiction the refusal guarded against no longer exists.
-		const { registry } = withFallback();
-		assert.strictEqual(registry.setExternalStyle("base", true), true);
-		assert.strictEqual(registry.standsDown(registry.get("base")!), true);
-		assert.strictEqual(registry.setExternalStyle("base", false), true);
-	});
-
-	it("returns false for an id that does not exist", () => {
-		const { registry, events } = loaded(null);
-		assert.strictEqual(registry.setExternalStyle("nope", true), false);
-		assert.strictEqual(events(), 0);
-	});
-
-	it("says nothing about the theme, which is derived and not settable", () => {
-		// The two were briefly one field. Keeping them apart is what lets an
-		// External CSS row stay in the user's own section, keep its pencil, and
-		// be handed back — none of which is true of a theme-owned callout.
-		const { registry } = loaded(saved([def({ id: "mine" })]));
-		registry.setExternalStyle("mine", true);
-		assert.strictEqual(registry.themeOwns(registry.get("mine")!), false);
 	});
 });
 

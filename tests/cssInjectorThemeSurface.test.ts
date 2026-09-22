@@ -374,43 +374,31 @@ describe("a theme with no opinion is untouched", () => {
 		);
 	});
 
-	it("but the fallback DOES stand down when the styling claims the surface", () => {
-		// An unknown id is painted by that block, so it inherits the block's
-		// quarrel with a theme that blanks the callout background.
+	it("keeps theme-surface cancellation out of the weak native fallback", () => {
+		// The fallback cannot both carry high-specificity theme cancels and remain
+		// overridable by an ordinary exact snippet. Registered callouts keep the
+		// compatibility cancel; unknown native blocks stay in the weak register.
 		const themed = themedHarness(PRISM);
 		const def = palette();
 		themed.registry.add(def);
 		themed.registry.settings.fallbackCalloutId = def.id;
 		const out = themed.css.generateFallbackCSS(themed.registry.getAll());
-		assert.strictEqual(
-			valueOf(ruleDeclaring(out, PRISM_GUARD, "background-color"), "background-color"),
-			"transparent !important",
+		assert.ok(!out.includes(PRISM_GUARD));
+		const root = parseRules(out).find((r) =>
+			r.selector.startsWith(".callout:not(:where("),
 		);
-		// The guard replaces this block's own `body`. Prefixing it instead asks for
-		// a body inside a body, which matches nothing — and matched nothing
-		// silently, which is how it survived the first draft.
-		assert.ok(!out.includes("body:not(.pt-disable-callout-styling) body"));
-		assert.ok(
-			ruleDeclaring(out, PRISM_GUARD, "background-color").selector.includes(
-				":not(",
-			),
-			"the fallback keeps its exclusion chain",
-		);
+		assert.ok(root);
+		assert.ok(root.props.includes("background-color"));
+		assert.ok(root.decls.every((decl) => !decl.includes("!important")));
 	});
 
-	it("keeps the plain `body` prefix when the guard is empty", () => {
+	it("does not emit an unguarded high-priority surface cancel either", () => {
 		const themed = themedHarness(`.callout { background: none; }`);
 		const def = palette();
 		themed.registry.add(def);
 		themed.registry.settings.fallbackCalloutId = def.id;
 		const out = themed.css.generateFallbackCSS(themed.registry.getAll());
-		assert.ok(
-			parseRules(out).some(
-				(r) =>
-					r.selector.startsWith("body .callout.callout.callout") &&
-					valueOf(r, "background-color") === "transparent !important",
-			),
-			out,
-		);
+		assert.ok(!out.includes(".callout.callout.callout"), out);
+		assert.ok(!out.includes("background-color: transparent !important"), out);
 	});
 });

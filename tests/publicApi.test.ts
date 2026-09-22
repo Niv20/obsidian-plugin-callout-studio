@@ -238,21 +238,30 @@ describe("getCalloutsDetailed — what a row carries", () => {
 		assert.equal(mine?.textColorDark, "#f0f0f0");
 	});
 
-	it("normalizes the true-or-absent flags to real booleans", () => {
-		// `hideIcon` and `externalStyle` are stored `true`-or-absent internally.
-		// A consumer told they are `boolean` must never be handed `undefined`.
+	it("normalizes the true-or-absent hideIcon flag to a real boolean", () => {
+		// A consumer told `hideIcon` is boolean must never receive undefined.
 		const { api, registry } = apiHarness();
 		registry.add(definition({ id: "plain" }));
-		registry.add(
-			definition({ id: "bare", hideIcon: true, externalStyle: true }),
-		);
+		registry.add(definition({ id: "bare", hideIcon: true }));
 		const detailed = api.getCalloutsDetailed();
 		const plain = detailed.find((d) => d.id === "plain");
 		const bare = detailed.find((d) => d.id === "bare");
 		assert.equal(plain?.hideIcon, false);
-		assert.equal(plain?.externalStyle, false);
 		assert.equal(bare?.hideIcon, true);
-		assert.equal(bare?.externalStyle, true);
+	});
+
+	it("publishes only resolved theme ownership", () => {
+		const { api, registry } = apiHarness();
+		registry.add(definition({ id: "themed" }));
+		registry.add(definition({ id: "studio" }));
+		registry.setThemeOwnedIds(new Set(["themed"]));
+		const detailed = api.getCalloutsDetailed();
+		const themed = detailed.find((d) => d.id === "themed");
+		const studio = detailed.find((d) => d.id === "studio");
+		assert.equal(themed?.themeStyled, true);
+		assert.equal(studio?.themeStyled, false);
+		assert.ok(themed && !("externalStyle" in themed));
+		assert.ok(studio && !("externalStyle" in studio));
 	});
 
 	it("still names the drawing of a callout whose icon is hidden", () => {
@@ -583,14 +592,6 @@ describe("the published list — what is in it", () => {
 		for (const id of ["mine", "theirs", "other", ...BUILT_IN_IDS]) {
 			assert.ok(list.includes(id), `${id} was missing`);
 		}
-	});
-
-	it("includes a callout handed over to the user's theme", () => {
-		// Callout Studio stops styling an `externalStyle` callout, but the id is
-		// still perfectly valid to write into a note.
-		const { api, registry } = apiHarness();
-		registry.add(definition({ id: "themed", externalStyle: true }));
-		assert.ok(ids(api.getCallouts()).includes("themed"));
 	});
 
 	it("returns a new array on every call", () => {

@@ -255,7 +255,8 @@ describe("writing the snippet", () => {
 		// Global style alone would still emit rules, which is exactly the trap:
 		// the file would look like a successful export of nothing.
 		const f = fake();
-		f.registry.add(definition({ id: "theirs", externalStyle: true }));
+		f.registry.add(definition({ id: "theirs" }));
+		f.registry.setThemeOwnedIds(new Set(["theirs"]));
 		f.registry.settings.globalStyle.borderRadius = 12;
 
 		const out = await exportCssSnippet(f.app, f.plugin, noPrompt);
@@ -422,8 +423,8 @@ describe("the generated stylesheet", () => {
 	it("leaves out the fallback catch-all", () => {
 		const f = seeded();
 		// It would restyle callouts on the target this export knows nothing
-		// about, and its :not() chain is enormous.
-		assert.ok(!buildSnippetCss(f.plugin).includes(":not([data-callout="));
+		// about. Only explicit registered ids belong in an exported snippet.
+		assert.ok(!buildSnippetCss(f.plugin).includes(".callout:not(:where("));
 	});
 
 	it("keeps the plugin's live sheet unchanged", () => {
@@ -569,11 +570,11 @@ describe("which callouts are covered", () => {
 
 	it("styles nothing for a callout handed to the theme", () => {
 		const f = seeded();
-		f.registry.add(definition({ id: "theirs", externalStyle: true }));
+		f.registry.add(definition({ id: "theirs" }));
+		f.registry.setThemeOwnedIds(new Set(["theirs"]));
 
-		// The id does still appear — inside the global block's
-		// `:not(:where(…))`, which is what keeps our own global rules off it.
-		// What must not exist is a rule that targets it.
+		// Strong global geometry is an allow-list of registered Studio-owned ids,
+		// so a theme-owned id is absent there as well as from its own block.
 		assert.ok(
 			!selectors(buildSnippetCss(f.plugin)).some((s) =>
 				s.includes('.callout[data-callout="theirs"]'),
@@ -621,10 +622,10 @@ describe("styles that are easy to drop", () => {
 		f.registry.add(definition({ id: "bare", hideIcon: true }));
 
 		const css = buildSnippetCss(f.plugin);
-		const icon = parseRules(css).find((r) =>
-			r.selector.includes('[data-callout="bare"] > .callout-title > .callout-icon'),
-		);
-		assert.ok(icon?.decls.includes("display: none !important"));
+		assert.ok(parseRules(css).some((r) =>
+			r.selector.includes('[data-callout="bare"] > .callout-title > .callout-icon') &&
+			r.decls.includes("display: none !important"),
+		));
 		// Only correct because the export carries the global indent as well.
 		assert.ok(
 			parseRules(css).some(
@@ -711,8 +712,10 @@ describe("hostile callout ids", () => {
 
 		const css = buildSnippetCss(f.plugin);
 		// A trailing backslash that escaped the selector's own closing quote
-		// would swallow every rule generated after it.
-		const quotes = (css.match(/(?<!\\)"/g) ?? []).length;
+		// would swallow every rule generated after it. Consume escaped pairs
+		// first: a quote after TWO backslashes is a real closing quote, not an
+		// escaped quote (a single-character negative lookbehind gets this wrong).
+		const quotes = (css.replace(/\\[\s\S]/g, "").match(/"/g) ?? []).length;
 		assert.strictEqual(quotes % 2, 0, "quotes should be balanced");
 		assert.ok(parseRules(css).length > HOSTILE.length);
 	});

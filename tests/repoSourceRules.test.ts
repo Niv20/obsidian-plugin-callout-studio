@@ -774,7 +774,7 @@ describe("no new oversized files", () => {
 		// the injector — and part of the room that bought went to `themeSurface`,
 		// which asks manager/theme/calloutSurface.ts whether the active styling
 		// owns the callout surface.
-		"src/manager/CSSInjector.ts": 1836,
+		"src/manager/CSSInjector.ts": 1793,
 		// Lowered from 2014: what "mirror the fallback callout" means now lives
 		// entirely in manager/discoveredRow.ts, beside the other half of the same
 		// agreement, and the two-mode migration in manager/styleModeMigration.ts.
@@ -809,12 +809,12 @@ describe("no new oversized files", () => {
 		// stylesheet, not saved anywhere, and only a sweep can put them back.
 		// The rule belongs where the map is cleared — moving it out would mean
 		// a caller had to remember, which is the bug.
-		"src/manager/CalloutRegistry.ts": 1898,
+		"src/manager/CalloutRegistry.ts": 1874,
 		// Raised from 1184 for the same set, rejected in `validateIdString`.
 		// Same reasoning: "which id strings are valid on import" is the one
 		// thing this file is for, so the rule cannot move out of it without
 		// splitting the answer in two.
-		"src/utils/importValidator.ts": 1199,
+		"src/utils/importValidator.ts": 1184,
 		// Lowered from 1190: the style-mode pair's import rules moved to
 		// utils/importStyleMode.ts.
 		// Lowered from 1106: the Base color row moved to
@@ -862,7 +862,7 @@ describe("no new oversized files", () => {
 		// `CustomCommandAction` already sits beside it. Everything the field
 		// means — the default that keeps older commands writing what they always
 		// wrote, and the marks it maps to — lives in utils/customCommands.ts.
-		"src/types.ts": 846,
+		"src/types.ts": 824,
 		"src/editor/livepreview/widgets.ts": 793,
 		"src/reading/calloutPostProcessor.ts": 721,
 		"src/settings/iconpicker/PackPanel.ts": 736,
@@ -910,7 +910,7 @@ describe("no new oversized files", () => {
 		// Lowered again from 501: serializing external reloads and retrying a
 		// deferred one moved to manager/reloadQueue.ts, and the discovery host
 		// stopped being handed a `settings` object it would only hold stale.
-		"src/main.ts": 451,
+		"src/main.ts": 450,
 		"src/icons/renderIcon.ts": 545,
 		// Lowered from 528: `STYLE_DEMO_ID` moved to constants.ts, where the
 		// discovery/import/autocomplete filters that now consult it can reach
@@ -922,7 +922,7 @@ describe("no new oversized files", () => {
 		"src/settings/GlobalStyleModal.ts": 516,
 		// Lowered from 497: the two role-icon helpers moved to editor/roleIcon.ts,
 		// beside the theme-artwork renderer they now both consult.
-		"src/editor/renderShared.ts": 475,
+		"src/editor/renderShared.ts": 459,
 		// Lowered from 454: the two reasons automatic discovery is held back from
 		// an id — an explicit delete seconds ago, and a callout type the active
 		// theme stopped supplying — are one question now, in
@@ -942,7 +942,7 @@ describe("no new oversized files", () => {
 		"src/ui/TagInput.ts": 414,
 		// Lowered from 368: preview and save now share the built-in-aware icon
 		// adjustment serializer instead of maintaining parallel persistence rules.
-		"src/settings/editor/CalloutEditorSave.ts": 353,
+		"src/settings/editor/CalloutEditorSave.ts": 350,
 		"src/icons/isolateSvg.ts": 402,
 		"src/outline/OutlineDecorator.ts": 382,
 		// Lowered from 357: the read-only rule — and the transaction filter

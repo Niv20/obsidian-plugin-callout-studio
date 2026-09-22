@@ -175,9 +175,9 @@ describe("the API surface", () => {
 /* -------------------------------------------------------------------------- */
 
 describe("version", () => {
-	it("is 1", () => {
+	it("is 2", () => {
 		const { api } = apiHarness();
-		assert.equal(api.version, 1);
+		assert.equal(api.version, 2);
 		assert.ok(Number.isInteger(api.version));
 	});
 

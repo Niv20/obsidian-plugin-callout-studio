@@ -92,7 +92,6 @@ export interface InjectorInternals {
 		hideElementGradient: boolean,
 	): string;
 	needsDarkBlock(def: CalloutDefinition): boolean;
-	externalExclusion(): string;
 }
 
 export interface Harness {

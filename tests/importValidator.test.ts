@@ -183,9 +183,7 @@ function fakeRegistry(): CalloutRegistry {
 		findByAlias: () => undefined,
 		findByIdentity: () => undefined,
 		get: () => undefined,
-		// The reader's own default decides whether an imported row needs its
-		// style mode spelled out at all — see utils/importStyleMode.ts.
-		settings: { defaultStyleMode: "theme" },
+		settings: {},
 	} as unknown as CalloutRegistry;
 }
 

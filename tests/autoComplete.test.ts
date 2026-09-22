@@ -774,12 +774,13 @@ describe("renderSuggestion", () => {
 		fakeDom.light();
 	});
 
-	it("names no colour at all for a callout handed to the theme", () => {
+	it("names no colour at all for a theme-owned callout before measurement", () => {
 		// It keeps its place in the list — still a real id worth inserting — but
 		// naming a colour the callout will not have on the page is the one thing
 		// the row must not do.
 		const h = harness();
-		addCallout(h.registry, { externalStyle: true, colorLight: "#111111" });
+		addCallout(h.registry, { colorLight: "#111111" });
+		h.registry.setThemeOwnedIds(new Set(["quiet"]));
 		const el = row();
 		h.suggest.renderSuggestion(h.registry.get("quiet")!, el);
 

@@ -457,7 +457,7 @@ describe("transparentBorderProps — the outline half", () => {
 		assert.ok(!dark.props.includes("box-shadow"));
 	});
 
-	it("reaches the fallback block too, with !important", () => {
+	it("reaches the weak fallback block without escalating it", () => {
 		const { registry, css } = harness();
 		registry.add(
 			definition({
@@ -470,8 +470,9 @@ describe("transparentBorderProps — the outline half", () => {
 		const out = css.generateFallbackCSS(registry.getAll());
 		// An unknown id must inherit a transparent fallback whole, rather than as
 		// a frame with nothing in it.
-		assert.ok(out.includes("box-shadow: none !important;"));
-		assert.ok(out.includes("border-color: transparent !important;"));
+		assert.ok(out.includes("box-shadow: none;"));
+		assert.ok(out.includes("border-color: transparent;"));
+		assert.ok(!out.includes("box-shadow: none !important;"));
 	});
 });
 

@@ -336,9 +336,10 @@ describe("heading callouts — what the source vetoes", () => {
 	});
 
 	it("leaves a theme-owned callout's heading completely alone", () => {
-		// No theme styles a `## [!id]` heading, so there is nothing for "external
-		// style" to hand it to — the raw text stays, and none of our classes land.
-		const h = withQuiet({ externalStyle: true });
+		// No theme styles a `## [!id]` heading, so the raw text stays and none of
+		// our classes land.
+		const h = withQuiet();
+		h.registry.setThemeOwnedIds(new Set(["quiet"]));
 		const root = h.render(
 			"<div><h2>[!quiet] My title</h2></div>",
 			"## [!quiet] My title",
@@ -617,7 +618,8 @@ describe("heading references — what it leaves alone", () => {
 	});
 
 	it("a reference to a theme-owned callout", () => {
-		const h = withQuiet({ externalStyle: true });
+		const h = withQuiet();
+		h.registry.setThemeOwnedIds(new Set(["quiet"]));
 		const anchor = one(h.render(WHOLE_LINK), "a");
 
 		assert.strictEqual(anchor.textContent, "#[!quiet] My Title");
@@ -681,7 +683,8 @@ describe("inline pills", () => {
 	});
 
 	it("leaves a theme-owned callout as the literal text it already is", () => {
-		const h = withQuiet({ externalStyle: true });
+		const h = withQuiet();
+		h.registry.setThemeOwnedIds(new Set(["quiet"]));
 		const root = h.render("<p>see [!quiet] here</p>", "see [!quiet] here");
 
 		assert.strictEqual(root.textContent, "see [!quiet] here");
@@ -1040,7 +1043,8 @@ describe("content pills — the shapes it refuses", () => {
 	});
 
 	it("a payload on a theme-owned callout", () => {
-		const h = withQuiet({ externalStyle: true });
+		const h = withQuiet();
+		h.registry.setThemeOwnedIds(new Set(["quiet"]));
 		const root = h.render(
 			"<p>x [!quiet]{be careful} y</p>",
 			"x [!quiet]{be careful} y",

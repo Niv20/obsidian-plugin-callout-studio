@@ -3,9 +3,8 @@
  *
  * There is no setting for this any more. The active theme either names a
  * callout id or it does not, `CalloutRegistry.themeOwns` derives the answer,
- * and the row's section in the settings tab reports it. The one thing the user
- * still decides is the separate, narrower "I style this one in my own CSS"
- * (`externalStyle`), which is why the two predicates are pinned apart here.
+ * and the row's section in the settings tab reports it. There is no second,
+ * stored ownership mode: ordinary snippets participate through the cascade.
  *
  * The load-bearing behaviours further down are the ones a regression would be
  * quiet about. **Callout Studio takes everything it owns**: `!important` on
@@ -92,54 +91,6 @@ describe("themeOwns — derived from the theme, never stored", () => {
 	});
 });
 
-describe("standsDown — the two reasons to emit nothing", () => {
-	it("is true for a theme-owned callout", () => {
-		const { registry } = harness();
-		registry.setThemeOwnedIds(new Set(["note"]));
-		assert.strictEqual(registry.standsDown(registry.get("note")!), true);
-	});
-
-	it("is true for a callout the user styles in their own CSS", () => {
-		const { registry } = harness();
-		registry.add(definition({ id: "mine", externalStyle: true }));
-		assert.strictEqual(registry.standsDown(registry.get("mine")!), true);
-	});
-
-	it("keeps the two apart, because only one is read-only", () => {
-		// An External CSS row is still the user's: it stays in their own
-		// section, keeps its pencil, and can be taken back. Collapsing the two
-		// would file it under a theme that has never heard of it.
-		const { registry } = harness();
-		registry.add(definition({ id: "mine", externalStyle: true }));
-		assert.strictEqual(registry.themeOwns(registry.get("mine")!), false);
-	});
-});
-
-describe("setExternalStyle — the one styling choice still the user's", () => {
-	it("sets and clears, and deletes rather than writing false", () => {
-		// An explicit `false` would leave a built-in nobody edited reading as
-		// customized forever: `isCalloutModified` compares `value ?? null`.
-		const { registry } = harness();
-		assert.strictEqual(registry.setExternalStyle("note", true), true);
-		assert.strictEqual(registry.get("note")?.externalStyle, true);
-
-		assert.strictEqual(registry.setExternalStyle("note", false), true);
-		assert.ok(!("externalStyle" in (registry.get("note") as object)));
-	});
-
-	it("returns false when the row is already there", () => {
-		const { registry } = harness();
-		assert.strictEqual(registry.setExternalStyle("note", false), false);
-		registry.setExternalStyle("note", true);
-		assert.strictEqual(registry.setExternalStyle("note", true), false);
-	});
-
-	it("refuses an id it does not have", () => {
-		const { registry } = harness();
-		assert.strictEqual(registry.setExternalStyle("nope", true), false);
-	});
-});
-
 describe("the unknown-id fallback follows its template", () => {
 	it("goes quiet when the fallback callout is the theme's", () => {
 		const { registry, css } = harness();
@@ -152,8 +103,12 @@ describe("the unknown-id fallback follows its template", () => {
 		const { registry, css } = harness();
 		registry.settings.fallbackCalloutId = "note";
 		const out = css.generateFallbackCSS(registry.getAll());
-		assert.match(out, /body \.callout:not\(/);
-		assert.match(out, /!important/);
+		assert.match(out, /\.callout:not\(:where\(/);
+		const native = parseRules(out).find((rule) =>
+			rule.selector.startsWith(".callout:not(:where("),
+		);
+		assert.ok(native);
+		assert.ok(native.decls.every((decl) => !decl.includes("!important")));
 	});
 });
 
@@ -268,12 +223,14 @@ describe("studio mode — taking the callout completely", () => {
 	});
 
 	it("does not leak its weight into the next callout", () => {
-		const { css } = harness();
+		const { registry, css } = harness();
 		css.generateCalloutCSS(definition());
-		const after = css.generateCalloutCSS(
-			definition({ id: "second", externalStyle: true, hideIcon: true }),
-		);
-		assert.ok(!after.includes(".callout.callout"), after);
+		registry.add(definition({ id: "themed" }));
+		registry.setThemeOwnedIds(new Set(["themed"]));
+		assert.strictEqual(css.generateCalloutCSS(registry.get("themed")!), "");
+		registry.setThemeOwnedIds(new Set());
+		const after = css.generateCalloutCSS(definition({ id: "second" }));
+		assert.match(after, /data-callout="second"/);
 	});
 });
 
@@ -286,14 +243,6 @@ describe("a theme-owned callout — emitting nothing at all", () => {
 		assert.strictEqual(rulesMatching(out, ".callout[").length, 0);
 		assert.doesNotMatch(out, /--callout-color/);
 		assert.doesNotMatch(out, /background/);
-	});
-
-	it("emits nothing at all for a callout the user styles themselves", () => {
-		const { css } = harness();
-		assert.strictEqual(
-			css.generateCalloutCSS(definition({ externalStyle: true })),
-			"",
-		);
 	});
 
 	it("no longer makes the hideIcon exception", () => {
@@ -353,27 +302,15 @@ describe("a theme-owned callout — emitting nothing at all", () => {
 		assert.match(back, /#ff0000|255, 0, 0/);
 	});
 
-	it("renders no token DOM for a callout the user styles themselves", () => {
-		// Unlike the theme case: they asked to style it, and there is nothing
-		// here for them to style, so the `[!id]` stays as literal text.
-		const { css } = harness();
-		const out = css.generateCalloutCSS(definition({ externalStyle: true }));
-		assert.strictEqual(rulesMatching(out, ".cs-heading-callout").length, 0);
-		assert.strictEqual(rulesMatching(out, ".cs-inline-callout").length, 0);
-	});
-
 	it("is lifted out of the global frame rules", () => {
 		const { registry, css } = harness();
-		registry.add(definition({ id: "handed", externalStyle: true }));
+		registry.add(definition({ id: "handed", aliases: ["handed-alt"] }));
+		registry.setThemeOwnedIds(new Set(["handed"]));
 		registry.settings.globalStyle.borderRadius = 12;
-		const excl = css.externalExclusion();
-		assert.match(excl, /:not\(:where\(/);
-		assert.ok(excl.includes('[data-callout="handed"]'));
-		// `:where()` contributes zero specificity, so the list can grow to
-		// every callout in the vault without making the global rules harder for
-		// the very theme they are stepping aside for.
 		const global = css.generateGlobalStyleCSS();
-		assert.ok(global.includes(excl));
+		assert.ok(global.includes('[data-callout="note"]'));
+		assert.ok(!global.includes('[data-callout="handed"]'));
+		assert.ok(!global.includes('[data-callout="handed-alt"]'));
 	});
 });
 

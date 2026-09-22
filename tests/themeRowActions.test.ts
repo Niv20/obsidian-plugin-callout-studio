@@ -196,41 +196,55 @@ describe("a theme row is not editable", () => {
 	});
 });
 
-describe("the External CSS label", () => {
-	it("marks a row the user handed to their own snippet", async () => {
-		// The one label on any row, and the only state the list's structure
-		// cannot express: a callout among the user's own that Callout Studio
-		// has nonetheless stopped painting.
+describe("the retired personal-CSS handoff", () => {
+	it("leaves a Studio row showing its stored icon and colours", async () => {
 		const { renderCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
-		const registry = vaultWithThemeRow({ source: "user", externalStyle: true });
+		const registry = vaultWithThemeRow({ source: "user" });
+		const rowDef = def({
+			source: "user",
+			icon: { type: "emoji", value: "📌" },
+		});
 		const { ctx } = fakeCtx(registry, []);
 		const host = createDiv();
-		renderCalloutRow(ctx, host, registry.get("recite")!, "user", {
+		renderCalloutRow(ctx, host, rowDef, "user", {
 			onEdit: () => {},
 			onOpenBuiltInMenu: () => {},
 			onOpenUserMenu: () => {},
 		});
-		assert.strictEqual(host.querySelectorAll(".cs-external-tag").length, 1);
-		// And no icon or swatches: there is no rendered element of ours to
-		// measure, and the stored pair is not what the snippet draws.
-		assert.strictEqual(host.querySelector(".callout-studio-row-colors"), null);
+		assert.equal(
+			host.querySelector(".callout-studio-row-icon")?.textContent,
+			"📌",
+		);
+		assert.ok(host.querySelector(".callout-studio-row-colors"));
 	});
 
-	it("does not mark a theme row, whose section already says it", async () => {
-		const { renderCalloutRow } = await import(
-			"../src/settings/sections/CalloutRowRenderer"
+	it("leaves no control, row tag, or locale key behind", () => {
+		const settingsSources = pluginSourceFiles().filter((file) =>
+			file.path.startsWith("src/settings/"),
 		);
-		const registry = vaultWithThemeRow();
-		const { ctx } = fakeCtx(registry, ["recite"]);
-		const host = createDiv();
-		renderCalloutRow(ctx, host, registry.get("recite")!, "theme", {
-			onEdit: () => {},
-			onOpenBuiltInMenu: () => {},
-			onOpenUserMenu: () => {},
-		});
-		assert.strictEqual(host.querySelectorAll(".cs-external-tag").length, 0);
+		const offenders = settingsSources
+			.filter((file) =>
+				/externalCssMenu|settings\.externalCss|notice\.externalCss(?:On|Off)|cs-external-tag/.test(
+					file.text,
+				),
+			)
+			.map((file) => file.path);
+		assert.deepStrictEqual(offenders, []);
+		assert.ok(!readRepoFile("styles.css").includes("cs-external-tag"));
+		for (const file of pluginSourceFiles().filter((candidate) =>
+			candidate.path.startsWith("src/i18n/"),
+		)) {
+			assert.ok(!/settings\.externalCss|notice\.externalCss(?:On|Off)/.test(file.text));
+		}
+	});
+
+	it("does not leave an empty divider on an unmodified, unused built-in", () => {
+		assert.match(
+			readRepoFile("src/settings/sections/CalloutRowActions.ts"),
+			/if \(modified \|\| usage\.fileCount > 0\) menu\.addSeparator\(\)/,
+		);
 	});
 });
 

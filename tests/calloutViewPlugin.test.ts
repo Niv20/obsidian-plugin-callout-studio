@@ -531,8 +531,8 @@ describe("what it leaves alone", () => {
 					defaultFolded: false,
 					builtIn: false,
 					source: "user",
-					externalStyle: true,
 				});
+				registry.setThemeOwnedIds(new Set(["quiet"]));
 			},
 		});
 

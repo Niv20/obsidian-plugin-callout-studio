@@ -42,6 +42,12 @@ import {
 } from "./support/cssInjectorHarness";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CSSInjector } from "../src/manager/CSSInjector";
+import { FALLBACK_ICON_SENTINEL } from "../src/manager/css/calloutIconProp";
+import {
+	CSS_FALLBACK_ICON,
+	CSS_FALLBACK_ICON_HIDDEN,
+	fallbackIconRootStyle,
+} from "../src/manager/css/fallbackIcon";
 import type { App } from "obsidian";
 import type { CalloutDefinition } from "../src/types";
 
@@ -172,13 +178,12 @@ describe("the fallback template drawn with no icon", () => {
 		]);
 	};
 
-	it("hides the icon of every unknown callout in every medium", () => {
-		const rules = hideRules(allMedia(fallbackCss()));
-		assert.strictEqual(rules.length, 1);
-		assert.ok(rules[0]?.selector.startsWith("body .callout:not("));
-		assert.ok(
-			rules[0]?.decls.some((d) => d === "display: none !important"),
-			"the :not() chain speaks in !important; the hide rule has to as well",
+	it("marks the fallback winner without a high-specificity hide rule", () => {
+		const out = fallbackCss();
+		assert.deepStrictEqual(hideRules(allMedia(out)), []);
+		assert.match(
+			out,
+			/--callout-icon: __callout-studio-fallback-icon__;/,
 		);
 	});
 
@@ -189,7 +194,7 @@ describe("the fallback template drawn with no icon", () => {
 		);
 	});
 
-	it("resets the align indent in every medium as well", () => {
+	it("needs no align reset because strong global geometry excludes unknown ids", () => {
 		const { registry, css } = harness();
 		registry.settings.fallbackCalloutId = "note";
 		registry.settings.globalStyle.alignContentWithTitle = true;
@@ -198,8 +203,8 @@ describe("the fallback template drawn with no icon", () => {
 		]);
 
 		assert.ok(
-			allMedia(out).some((r) =>
-				r.decls.some((d) => /^padding-inline-start:\s*0/.test(d)),
+			!allMedia(out).some((r) =>
+				r.props.includes("padding-inline-start"),
 			),
 		);
 	});
@@ -236,6 +241,122 @@ describe("paintIcon, the print-side half", () => {
 		assert.strictEqual(iconEl.children.length, 1);
 		assert.ok(iconEl.children[0]?.classList.contains("cs-export-icon"));
 		assert.strictEqual(iconEl.textContent, EMOJI.value);
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* Unknown native icons — computed cascade gate                               */
+/* -------------------------------------------------------------------------- */
+
+describe("paintIcons — weak unknown-callout fallback", () => {
+	const block = (id = "mystery") => {
+		const callout = el({ cls: "callout", attrs: { "data-callout": id } });
+		const title = callout.createDiv({ cls: "callout-title" });
+		const icon = title.createDiv({ cls: "callout-icon" });
+		return { callout, icon };
+	};
+
+	const emojiFallback = (hideIcon = false) => {
+		const h = harness();
+		h.registry.add(
+			definition({ id: "fallback", icon: EMOJI, hideIcon }),
+		);
+		h.registry.settings.fallbackCalloutId = "fallback";
+		return h;
+	};
+
+	it("keeps a non-Lucide fallback while its sentinel wins", () => {
+		const { injector } = emojiFallback();
+		const { callout, icon } = block();
+		callout.setCssProp("--callout-icon", FALLBACK_ICON_SENTINEL);
+
+		injector.paintIcons(asEl(callout));
+
+		assert.strictEqual(icon.textContent, EMOJI.value);
+		assert.ok(icon.children[0]?.classList.contains(CSS_FALLBACK_ICON));
+	});
+
+	it("lets an exact snippet icon win, then restores fallback when removed", () => {
+		const { injector } = emojiFallback();
+		const { callout, icon } = block();
+		callout.setCssProp("--callout-icon", FALLBACK_ICON_SENTINEL);
+		injector.paintIcons(asEl(callout));
+		assert.strictEqual(icon.textContent, EMOJI.value);
+
+		// Fake Obsidian's setIcon is intentionally a no-op; an empty slot here
+		// proves the fallback child was removed and the native path was chosen.
+		callout.setCssProp("--callout-icon", "lucide-star");
+		injector.paintIcons(asEl(callout));
+		assert.strictEqual(icon.textContent, "");
+		assert.deepStrictEqual(icon.children, []);
+
+		callout.setCssProp("--callout-icon", FALLBACK_ICON_SENTINEL);
+		injector.paintIcons(asEl(callout));
+		assert.strictEqual(icon.textContent, EMOJI.value);
+	});
+
+	it("restores and reapplies no-icon layout across snippet changes", () => {
+		const { injector } = emojiFallback(true);
+		const { callout, icon } = block();
+		callout.setCssProp("--callout-icon", FALLBACK_ICON_SENTINEL);
+		injector.paintIcons(asEl(callout));
+		assert.ok(icon.classList.contains(CSS_FALLBACK_ICON_HIDDEN));
+
+		callout.setCssProp("--callout-icon", "lucide-star");
+		injector.paintIcons(asEl(callout));
+		assert.ok(!icon.classList.contains(CSS_FALLBACK_ICON_HIDDEN));
+
+		callout.setCssProp("--callout-icon", FALLBACK_ICON_SENTINEL);
+		injector.paintIcons(asEl(callout));
+		assert.ok(icon.classList.contains(CSS_FALLBACK_ICON_HIDDEN));
+	});
+
+	it("decides each nested callout from its own computed value", () => {
+		const { injector } = emojiFallback();
+		const host = el();
+		const outer = block("outer");
+		const inner = block("inner");
+		host.appendChild(outer.callout);
+		outer.callout.createDiv({ cls: "callout-content" }).appendChild(inner.callout);
+		outer.callout.setCssProp("--callout-icon", "lucide-star");
+		inner.callout.setCssProp("--callout-icon", FALLBACK_ICON_SENTINEL);
+
+		injector.paintIcons(asEl(host));
+
+		assert.strictEqual(outer.icon.textContent, "");
+		assert.strictEqual(inner.icon.textContent, EMOJI.value);
+	});
+
+	it("preserves a wide uploaded picture's live fallback aspect", () => {
+		const h = harness();
+		h.registry.setUserImages([
+			{
+				id: "img-pic",
+				name: "banner.svg",
+				format: "svg",
+				svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 30"><rect width="90" height="30"/></svg>',
+				width: 90,
+				height: 30,
+				monochrome: true,
+				rev: 1,
+				addedAt: 1,
+			},
+		]);
+		h.registry.add(
+			definition({
+				id: "fallback",
+				icon: { type: "image", value: "img-pic", recolor: true },
+			}),
+		);
+		h.registry.settings.fallbackCalloutId = "fallback";
+		assert.strictEqual(
+			fallbackIconRootStyle({
+				type: "image",
+				value: "img-pic",
+				recolor: true,
+			}),
+			"width:calc(var(--icon-size, 1.2em) * 3.000);height:var(--icon-size, 1.2em)",
+		);
 	});
 });
 

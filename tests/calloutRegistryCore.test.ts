@@ -381,18 +381,16 @@ describe("toSaveData() — what reaches data.json", () => {
 	it("persists a discovered row the moment somebody claims it", () => {
 		const { registry } = loaded(null);
 		registry.add(def({ id: "adopted", source: "fallback" }));
-		registry.add(def({ id: "handed-off", source: "fallback" }));
 		registry.add(def({ id: "commanded", source: "fallback" }));
 
 		registry.update("adopted", { customized: true });
-		registry.setExternalStyle("handed-off", true);
 		registry.settings.customCommands = [
 			{ id: "c1", calloutId: "commanded" } as never,
 		];
 
 		assert.deepStrictEqual(
 			ids(registry.toSaveData().callouts).sort(),
-			["adopted", "commanded", "handed-off"],
+			["adopted", "commanded"],
 		);
 	});
 

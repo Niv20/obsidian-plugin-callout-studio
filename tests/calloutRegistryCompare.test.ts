@@ -68,7 +68,6 @@ const CHANGED: Record<string, Partial<CalloutDefinition>> = {
 	aliases: { aliases: ["zzz"] },
 	paletteId: { paletteId: "cp-zzz" },
 	customized: { customized: true },
-	externalStyle: { externalStyle: true },
 	metadata: { metadata: { k: "v" } },
 };
 
@@ -102,10 +101,7 @@ describe("the field tables themselves", () => {
 	});
 
 	it("declares exactly hideIcon as colour-neutral", () => {
-		// An edit the user can see that says nothing about what colour the
-		// callout should be. `externalStyle` is deliberately NOT one: handing a
-		// callout to your own CSS is a real decision about the row, and a
-		// built-in wearing it should read as edited.
+		// An edit the user can see that says nothing about the callout's colour.
 		assert.deepStrictEqual(
 			[...TABLES.COLOUR_NEUTRAL_FIELDS].sort(),
 			["hideIcon"],
