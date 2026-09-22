@@ -267,7 +267,7 @@ describe("class names in styles.css and src/ agree", () => {
 	 *
 	 * `styles.css` is only half of this plugin's CSS. `CSSInjector` builds the
 	 * other half as strings and hands it to `adoptedStyleSheets`, and a rule
-	 * that has to name a *user's* callout id can only be written there. Two
+	 * that has to name a *user's* callout id can only be written there. These
 	 * classes are dressed entirely from that side:
 	 *
 	 * - `cs-export-icon` — the baked print copy of a callout's artwork, hidden
@@ -275,13 +275,17 @@ describe("class names in styles.css and src/ agree", () => {
 	 * - `cs-unknown` — the accent and background an unresolved `[!id]` token
 	 *   borrows from the fallback callout, which is a *setting*, so the rule
 	 *   cannot be static (`CSSInjector.ts:2172` onwards).
+	 * - `cs-fallback-icon` and `cs-fallback-icon-hidden` — native unknown-id
+	 *   artwork/hiding that applies only while the weak fallback icon wins.
 	 *
 	 * Kept apart from `EMITTED_WITHOUT_RULES` because the two say opposite
 	 * things: that list is debt, and this one is the design working. Merging
 	 * them would mean a genuinely unstyled class could be waved through by
 	 * citing the wrong reason.
 	 */
-	const STYLED_BY_GENERATED_CSS = new Set(["cs-export-icon", "cs-unknown"]);
+	const STYLED_BY_GENERATED_CSS = new Set([
+		"cs-export-icon", "cs-unknown", "cs-fallback-icon", "cs-fallback-icon-hidden",
+	]);
 
 	/**
 	 * Rules in `styles.css` that nothing in `src/` applies.

@@ -130,13 +130,6 @@ export const he: Record<string, string> = {
 
 	// Settings — Fallback callout
 	"settings.colorSwatchAria": "הדגשה: {{accent}} · רקע: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "עיצוב באמצעות CSS משלי",
-	"settings.externalCssStopAction": "לאפשר ל-Callout Studio לעצב זאת שוב",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "CSS חיצוני",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "תיבות־הבלטה מערכת הנושא שלכם",
 	"settings.themeCalloutsDesc":
@@ -277,9 +270,8 @@ export const he: Record<string, string> = {
 		"לא יובאו תיבות־הבלטה חדשות (ייתכן שהמזהים כבר קיימים).",
 	"notice.iconDownloadFailed":
 		'לא ניתן להוריד את אייקון Material "{{name}}". ייתכן שאינו זמין בסגנון/משקל הזה, או שאין חיבור לאינטרנט.',
-	"notice.externalCssOn":
-		'Callout Studio כבר לא מעצב את "{{name}}" — ה-CSS שלכם קובע איך היא נראית. הצורות שלה ככותרת ומוטבעת לא יוצגו.',
-	"notice.externalCssOff": 'Callout Studio מעצב שוב את "{{name}}".',
+	"notice.externalCssRetired":
+		"האפשרות לעיצוב באמצעות CSS משלכם הוסרה. תיבות־ההבלטה האלה משתמשות כעת בעיצוב השמור שלהן ב־Callout Studio, אלא אם ערכת הנושא שלכם מעצבת אותן. הפתקים וקטעי ה־CSS האישיים שלכם לא השתנו.",
 	"notice.vaultScanFailed":
 		"לא ניתן להשלים את ספירת השימושים בקריאות, כי לא ניתן לקרוא {{count}} פתקים. יש לבדוק את האחסון והסנכרון ולנסות שוב.",
 	"notice.vaultRewritePartial":
@@ -379,9 +371,8 @@ export const he: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> כך נראה התוכן של תיבת־ההבלטה.\n",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleClose": "הבנתי",
+	// Theme callout preview window
+	"editor.themePreviewClose": "הבנתי",
 
 	// Icon Picker
 	// Palette editor modal

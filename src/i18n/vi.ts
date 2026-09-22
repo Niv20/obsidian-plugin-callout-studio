@@ -110,13 +110,6 @@ export const vi: Record<string, string> = {
 
 	"settings.colorSwatchAria": "Điểm nhấn: {{accent}} · Nền: {{bg}}",
 
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Tạo kiểu bằng CSS của riêng tôi",
-	"settings.externalCssStopAction": "Để Callout Studio tạo kiểu cho callout này trở lại",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "CSS bên ngoài",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout từ giao diện của bạn",
 	"settings.themeCalloutsDesc":
@@ -253,9 +246,6 @@ export const vi: Record<string, string> = {
 	"notice.iconDownloadFailed":
 		'Không thể tải biểu tượng Material "{{name}}". Nó có thể không có sẵn cho kiểu/độ dày này, hoặc kết nối của bạn đang ngoại tuyến.',
 
-	"notice.externalCssOn":
-		'Callout Studio không còn tạo kiểu cho "{{name}}" nữa — CSS của riêng bạn quyết định hình thức của nó. Các dạng Callout tiêu đề và Callout nội dòng của nó sẽ không hiển thị.',
-	"notice.externalCssOff": 'Callout Studio lại tạo kiểu cho "{{name}}".',
 	"notice.vaultScanFailed": "Không thể đếm số lần sử dụng callout vì không thể đọc được {{count}} ghi chú. Hãy kiểm tra bộ nhớ lưu trữ và đồng bộ hóa, sau đó thử lại.",
 
 	"notice.vaultRewritePartial":
@@ -357,7 +347,7 @@ export const vi: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> Đây là hình thức nội dung của callout.\n",
 
-	"editor.externalStyleClose": "Đã hiểu",
+	"editor.themePreviewClose": "Đã hiểu",
 
 	// Palette editor modal
 	"palette.newTitle": "Bảng màu mới",

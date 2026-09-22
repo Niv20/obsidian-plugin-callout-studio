@@ -52,21 +52,23 @@ Order matters here — every step depends on the ones before it:
 
 ```text
 1. clear the map
-2. seed all 13 built-ins from builtInDefaults (unconditionally — this always happens)
-3. if no data: return (fresh install; done)
-4. fold each saved row over the matching seeded built-in via reconcileSavedRow()
-5. merge settings via mergeSavedSettings()
-6. restore iconSvgCache; fold pre-2.4 materialSvgCache into it (migration)
-7. migrate any icon.type === "svg" (removed pack) → lucide pencil
-8. migrate v2.7.0–2.7.1's over-eager "lucide-" prefixing (resolveLucideId)
-9. migrate recolor from picture-level to per-callout (icon.recolor)
-10. dropStaleTransparencyFlags()          — BEFORE step 12, see below
-11. consolidateDuplicatePalettes()         — BEFORE step 12
-12. adoptOrphansMatchingPalettes()
-13. dropDerivedBackgrounds()
-14. dropSolidBackgroundFlags()
-15. stripMetadataFromIds()                 — BEFORE step 16
-16. reconcileIdCollisions()               — manager/idCollisionMigration.ts
+2. rebuild settings/cache state and inspect raw rows for retired personal-CSS flags
+3. seed all 13 built-ins from builtInDefaults (unconditionally — this always happens)
+4. if no data: return (fresh install; done)
+5. fold each saved row over the matching seeded built-in via reconcileSavedRow();
+   the `setCallout` seam strips the retired `externalStyle` key
+6. migrate the remaining retired manual style-mode fields
+7. restore iconSvgCache; fold pre-2.4 materialSvgCache into it (migration)
+8. migrate any icon.type === "svg" (removed pack) → lucide pencil
+9. migrate v2.7.0–2.7.1's over-eager "lucide-" prefixing (resolveLucideId)
+10. migrate recolor from picture-level to per-callout (icon.recolor)
+11. dropStaleTransparencyFlags()          — BEFORE step 13, see below
+12. consolidateDuplicatePalettes()         — BEFORE step 13
+13. adoptOrphansMatchingPalettes()
+14. dropDerivedBackgrounds()
+15. dropSolidBackgroundFlags()
+16. stripMetadataFromIds()                 — BEFORE step 17
+17. reconcileIdCollisions()               — manager/idCollisionMigration.ts
 ```
 
 > [!IMPORTANT]
@@ -129,11 +131,48 @@ and every JSON import.
 | `adoptOrphansMatchingPalettes` | Links a callout whose baked colours exactly match a saved palette but whose `paletteId` names nothing |
 | `dropDerivedBackgrounds` | Drops a background the plugin *derived* rather than the user *chose* — see below |
 | `dropSolidBackgroundFlags` | Removes the retired `solidBackground` field entirely (nesting invariant) |
+| Personal-CSS retirement | Removes the retired `externalStyle` ownership flag and restores Callout Studio rendering; see below |
 | `stripMetadataFromIds` | Retires rows whose stored id itself carries `\|metadata` — see below |
 | `reconcileIdCollisions` | Merges rows that are one callout in two spellings — dash/space, repeated whitespace, case. Lives in `manager/idCollisionMigration.ts`; see below |
 
-Three of these are worth understanding in more depth because the reasoning is
+Several are worth understanding in more depth because the reasoning is
 genuinely non-obvious:
+
+### Retiring personal-CSS ownership without losing the saved design
+
+`externalStyle: true` used to suppress every Callout Studio rendering path for
+one row. [`externalCssRetirement.ts`](../../src/manager/externalCssRetirement.ts)
+now recognizes that released field from raw saved rows and removes it before a
+definition enters the registry. It clones instead of mutating the object read
+from disk, and `setCallout` applies the same cleanup at the registry seam so an
+old synced file cannot resurrect the field through another write path.
+
+The migration removes only personal-CSS ownership, not appearance. Unless the
+active theme owns the id, the row's saved colour, icon, background, fold
+settings and role adjustments become active again; Studio's registered-Block
+geometry applies again; and Heading and Inline tokens are rendered again. Theme
+ownership remains the sole stand-down gate. Neither Markdown nor any personal
+CSS snippet file is read or changed by this migration.
+
+Only a literal saved `true` means the user was affected. A `false`, malformed,
+or merely present legacy value is cleaned but does not qualify for a notice.
+[`externalCssRetirementNotice.ts`](../../src/manager/externalCssRetirementNotice.ts)
+subscribes before the initial load. On a healthy adoption carrying literal
+`true` evidence it first records device-local `pending` **before** awaiting the
+migration write. That marker is evidence that this device was affected, not
+permission to announce success; recording it early covers an adapter write that
+lands only after plugin unload.
+
+The localized notice is released only after locale setup and active layout
+readiness **and** after `SettingsWriter` proves that the current cleaned
+`toSaveData()` exactly matches its durable adopted/committed content. An old raw
+adoption, a held or failed save, frozen settings, and a newer-version file cannot
+satisfy that proof. A successful local write can; so can adopting the same clean
+snapshot after another device completed the migration. Display changes the
+marker to `seen`, suppressing repeats if an older device later reintroduces the
+retired field. With writable device-local storage, `pending` also survives a
+crash before UI readiness; the best-effort storage failure boundary is recorded
+in [Persistence and caching](07-persistence-and-caching.md#missing-or-unsupported-settings).
 
 ### `dropDerivedBackgrounds` — the nesting invariant, retroactively
 

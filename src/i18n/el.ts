@@ -102,13 +102,6 @@ export const el: Record<string, string> = {
 	"settings.resetAction": "Επαναφορά στις προεπιλογές",
 	"settings.makeFallbackAction": "Χρήση προεπιλεγμένου εφεδρικού στυλ",
 	"settings.colorSwatchAria": "Έμφαση: {{accent}} · Φόντο: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Μορφοποίηση με το δικό μου CSS",
-	"settings.externalCssStopAction": "Να μορφοποιεί ξανά το Callout Studio",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "Εξωτερικό CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts από το θέμα σας",
 	"settings.themeCalloutsDesc":
@@ -238,9 +231,6 @@ export const el: Record<string, string> = {
 		"Δεν εισήχθησαν νέοι τύποι callout (τα IDs μπορεί να υπάρχουν ήδη).",
 	"notice.iconDownloadFailed":
 		'Αποτυχία λήψης εικονιδίου Material "{{name}}". Ενδέχεται να μην είναι διαθέσιμο για αυτό το στυλ/βάρος ή η σύνδεσή σας να είναι εκτός σύνδεσης.',
-	"notice.externalCssOn":
-		'Το Callout Studio δεν μορφοποιεί πλέον το "{{name}}" — το δικό σας CSS καθορίζει πώς εμφανίζεται. Οι μορφές Heading Callout και Inline Callout του δεν θα αποδίδονται.',
-	"notice.externalCssOff": 'Το Callout Studio μορφοποιεί ξανά το "{{name}}".',
 	"notice.vaultScanFailed": "Δεν ήταν δυνατή η καταμέτρηση της χρήσης callout, επειδή δεν ήταν δυνατή η ανάγνωση {{count}} σημειώσεων. Ελέγξτε την αποθήκευση και τον συγχρονισμό και δοκιμάστε ξανά.",
 
 	"notice.vaultRewritePartial":
@@ -343,7 +333,7 @@ export const el: Record<string, string> = {
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> Έτσι φαίνεται το περιεχόμενο του callout.\n",
-	"editor.externalStyleClose": "Το κατάλαβα",
+	"editor.themePreviewClose": "Το κατάλαβα",
 	// Palette editor modal
 	"palette.newTitle": "Νέα παλέτα χρωμάτων",
 	"palette.groupPalette": "Παλέτα",

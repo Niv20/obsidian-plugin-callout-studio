@@ -48,11 +48,6 @@ export function renderCalloutRow(
 	handlers: RowRendererHandlers,
 ): void {
 	const fromTheme = kind === "theme";
-	// The user handed this one to their own snippet. Unlike a theme row there
-	// is nothing to read back — a snippet can style the callout, or not, and
-	// either way the plugin has no rendered element of its own to measure — so
-	// the slot stays empty and the label carries the explanation.
-	const ownCss = !fromTheme && def.externalStyle === true;
 	const row = containerEl.createDiv({ cls: "callout-studio-row" });
 
 	const iconEl = row.createDiv({ cls: "callout-studio-row-icon" });
@@ -63,7 +58,7 @@ export function renderCalloutRow(
 		// never see. An unmeasured row gets the neutral dashed ring rather than
 		// a guess.
 		renderThemeIconInto(iconEl, ctx.plugin.registry.themeAppearanceOf(def).icon);
-	} else if (!ownCss) {
+	} else {
 		renderRowIcon(ctx, iconEl, def);
 	}
 
@@ -95,17 +90,6 @@ export function renderCalloutRow(
 			});
 		}
 	}
-	// The one label on any row, and the only state the list's own structure
-	// cannot express. Theme ownership is spelled by the section a row is in;
-	// this is a callout sitting among the user's own, in their own section,
-	// that Callout Studio has nonetheless stopped painting — and unexplained,
-	// that is the most confusing row in the tab.
-	if (ownCss) {
-		nameLine.createSpan({
-			cls: "cs-fallback-tag cs-external-tag",
-			text: t("settings.externalCssTag"),
-		});
-	}
 	const syntaxLine = infoEl.createDiv({
 		cls: "callout-studio-row-syntax-line",
 	});
@@ -117,13 +101,11 @@ export function renderCalloutRow(
 		});
 	}
 
-	// Three sources, three answers. A Studio row shows its own stored colours.
-	// A theme row shows the two the probe actually measured off the rendered
+	// Two sources, two answers. A Studio row shows its own stored colours. A
+	// theme row shows the two the probe actually measured off the rendered
 	// callout — the accent and the surface behind it — which are real used
 	// values rather than a reading of the theme's CSS, and so are right however
-	// the theme arrived at them. A row the user handed to their own CSS shows
-	// none: there is no rendered element of ours to measure, and the stored pair
-	// would name colours that are not in effect.
+	// the theme arrived at them.
 	if (fromTheme) {
 		const { accent, background } =
 			ctx.plugin.registry.themeAppearanceOf(def);
@@ -143,7 +125,7 @@ export function renderCalloutRow(
 				},
 			);
 		}
-	} else if (!ownCss) {
+	} else {
 		const colorsEl = row.createDiv({ cls: "callout-studio-row-colors" });
 		const colors = resolveCurrentModeColors(def);
 		renderColorCircles(colorsEl, colors, {

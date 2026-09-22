@@ -111,13 +111,6 @@ export const uk: Record<string, string> = {
 
 	"settings.colorSwatchAria": "Акцент: {{accent}} · Фон: {{bg}}",
 
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Стилізувати власним CSS",
-	"settings.externalCssStopAction": "Дозволити Callout Studio знову стилізувати це",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "Зовнішній CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout з вашої теми",
 	"settings.themeCalloutsDesc":
@@ -256,9 +249,6 @@ export const uk: Record<string, string> = {
 	"notice.iconDownloadFailed":
 		"Не вдалося завантажити іконку Material «{{name}}». Вона може бути недоступна для цього стилю/товщини або відсутнє підключення до мережі.",
 
-	"notice.externalCssOn":
-		'Callout Studio більше не стилізує "{{name}}" — тепер його вигляд визначає ваш власний CSS. Його форми Callout-заголовок та Вбудований callout не відображатимуться.',
-	"notice.externalCssOff": 'Callout Studio знову стилізує "{{name}}".',
 	"notice.vaultScanFailed": "Не вдалося порахувати використання callout, оскільки не вдалося прочитати {{count}} нотаток. Перевірте сховище й синхронізацію, потім спробуйте ще раз.",
 
 	"notice.vaultRewritePartial":
@@ -364,7 +354,7 @@ export const uk: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> Так виглядає вміст цього callout.\n",
 
-	"editor.externalStyleClose": "Зрозуміло",
+	"editor.themePreviewClose": "Зрозуміло",
 
 	// Palette editor modal
 	"palette.newTitle": "Нова кольорова палітра",

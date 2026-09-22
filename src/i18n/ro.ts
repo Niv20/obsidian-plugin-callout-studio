@@ -108,13 +108,6 @@ export const ro: Record<string, string> = {
 	"settings.makeFallbackAction": "Utilizați stilul de rezervă implicit",
 
 	"settings.colorSwatchAria": "Accent: {{accent}} · Fundal: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Stilizează cu CSS-ul meu propriu",
-	"settings.externalCssStopAction": "Lasă Callout Studio să stilizeze din nou acest lucru",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "CSS extern",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts din tema dvs.",
 	"settings.themeCalloutsDesc":
@@ -253,9 +246,6 @@ export const ro: Record<string, string> = {
 		"Nu au fost importate tipuri noi de callout (ID-urile pot exista deja).",
 	"notice.iconDownloadFailed":
 		'Nu s-a putut descărca pictograma Material "{{name}}". Poate fi indisponibilă pentru acest stil/grosime sau conexiunea este offline.',
-	"notice.externalCssOn":
-		'Callout Studio nu mai stilizează "{{name}}" — CSS-ul dvs. propriu decide cum arată. Formele sale Callout tip titlu și Callout inline nu se vor reda.',
-	"notice.externalCssOff": 'Callout Studio stilizează din nou "{{name}}".',
 	"notice.vaultScanFailed": "Nu s-a putut număra utilizarea callout pentru că {{count}} notițe nu au putut fi citite. Verificați stocarea și sincronizarea, apoi încercați din nou.",
 
 	"notice.vaultRewritePartial":
@@ -357,7 +347,7 @@ export const ro: Record<string, string> = {
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> Așa arată conținutul acestui callout.\n",
-	"editor.externalStyleClose": "Am înțeles",
+	"editor.themePreviewClose": "Am înțeles",
 
 	// Palette editor modal
 	"palette.newTitle": "Paletă de culori nouă",

@@ -26,6 +26,7 @@ import { createSettingsWriter } from "./manager/settingsWriterHost";
 import { saveSettingsWithFeedback } from "./manager/settingsSaveFeedback";
 import { DeviceLocalStore } from "./manager/DeviceLocalStore";
 import { reportLegacyDiscoveryMigration } from "./manager/legacyDiscoveryNotices";
+import { trackExternalCssRetirement } from "./manager/externalCssRetirementNotice";
 import { loadSettingsInto } from "./manager/settingsBoot";
 import { ReloadQueue } from "./manager/reloadQueue";
 import { registerThemeAppearance } from "./manager/theme/themeAppearanceSync";
@@ -130,6 +131,7 @@ export default class CalloutStudioPlugin extends Plugin {
 
 		// Load saved definitions and device-only UI preferences.
 		this.localState = new DeviceLocalStore(this.app);
+		const showExternalCssUpgradeNotice = trackExternalCssRetirement(this);
 		this.reloads = new ReloadQueue(this);
 		// The other seam. Cheap: a no-op unless a reload is actually waiting.
 		this.registry.onPreviewChange(() => this.reloads.release());
@@ -154,12 +156,8 @@ export default class CalloutStudioPlugin extends Plugin {
 		setLocale(this.settings.language);
 		reportLegacyDiscoveryMigration(legacyRecovery);
 
-		// After setLocale, since this is the first user-facing string of the
-		// session. Saved palettes that turned out to hold identical colors were
-		// folded together during load — the callouts using them kept both their
-		// appearance and their link, but one palette's NAME is gone, and that is
-		// worth saying out loud rather than letting the user find a color
-		// missing from the list later.
+		// Identical palettes were merged on load. Their callouts keep their
+		// appearance and link; explain the missing palette names after locale setup.
 		const paletteMerges = this.registry.takePaletteMerges();
 		if (paletteMerges.length > 0) {
 			new Notice(
@@ -318,6 +316,7 @@ export default class CalloutStudioPlugin extends Plugin {
 
 		// Confirm the fresh install after layout without blocking first render.
 		onActiveLayoutReady(this, () => {
+			showExternalCssUpgradeNotice();
 			void runLaunchSequence(this, boot);
 		});
 	}

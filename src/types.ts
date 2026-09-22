@@ -291,28 +291,6 @@ export interface CalloutDefinition {
 	 * has no effect on built-in callouts.
 	 */
 	customized?: boolean;
-	/**
-	 * Style this callout with your own CSS: Callout Studio emits nothing for it
-	 * and the user's snippet, or plain Obsidian, decides how it looks.
-	 *
-	 * Deliberately **not** a statement about the theme. Whether the active theme
-	 * owns a callout is derived by `CalloutRegistry.themeOwns` from the theme's
-	 * own stylesheet and is not the user's to set; this flag is the separate,
-	 * user-chosen "I handle this one myself" that keeps such a row in the user's
-	 * own section wearing an *External CSS* label.
-	 *
-	 * "No styling" is broader than dropping the per-callout block, so several
-	 * paths check it — always through `CalloutRegistry.standsDown`, never off
-	 * this field, because a theme-owned callout gets no CSS either without ever
-	 * carrying it.
-	 *
-	 * Typed `true` rather than `boolean` for the same reason as
-	 * {@link transparentBg}: `isCalloutModified` compares
-	 * `JSON.stringify(value ?? null)`, so an explicit `false` would read as a
-	 * modification. `CalloutRegistry.setExternalStyle` is the only writer and
-	 * deletes the key rather than writing `false`.
-	 */
-	externalStyle?: true;
 	metadata?: Record<string, string>;
 }
 

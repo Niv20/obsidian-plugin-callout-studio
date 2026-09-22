@@ -18,7 +18,6 @@ import { countCalloutUsages } from "../../utils/vaultCalloutScanner";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
-import { addExternalCssMenuItem } from "./externalCssMenu";
 import { addDeleteItem } from "./rowOwnership";
 import {
 	handleCalloutReplace,
@@ -41,7 +40,7 @@ export async function openBuiltInRowMenu(
 	const modified = ctx.plugin.registry.isBuiltInModified(def.id);
 
 	addUsageInfoMenuItem(menu, usage);
-	menu.addSeparator();
+	if (modified || usage.fileCount > 0) menu.addSeparator();
 
 	if (modified) {
 		menu.addItem((item) =>
@@ -73,10 +72,6 @@ export async function openBuiltInRowMenu(
 				}),
 		);
 	}
-
-	// The two blocks above are both conditional, so an unmodified, unused
-	// built-in has added nothing since the separator after the usage line.
-	addExternalCssMenuItem(menu, ctx, def, modified || usage.fileCount > 0);
 
 	menu.showAtMouseEvent(event);
 }
@@ -119,10 +114,6 @@ export async function openRowMenu(
 				}),
 		);
 	}
-
-	// A user row always has at least the usage line above, so the divider
-	// always lands on something.
-	addExternalCssMenuItem(menu, ctx, def, true);
 
 	menu.showAtMouseEvent(event);
 }

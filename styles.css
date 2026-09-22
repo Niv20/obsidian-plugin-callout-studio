@@ -5606,14 +5606,6 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	contain: layout style;
 }
 
-/* The *External CSS* label — the only label on any row. It reuses the fallback
-   tag's silhouette because it is the same kind of statement (a fact about this
-   row that its position cannot express), and takes the muted palette because,
-   unlike *Default*, it is not something the user navigates by. */
-.cs-external-tag {
-	color: var(--text-faint);
-}
-
 /* Theme callout preview window */
 .cs-theme-preview-note {
 	margin: 0 0 var(--size-4-2);

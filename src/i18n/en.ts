@@ -166,13 +166,6 @@ export const en: Record<string, string> = {
 	"settings.resetAction": "Reset to default",
 	"settings.makeFallbackAction": "Use default fallback style",
 	"settings.colorSwatchAria": "Accent: {{accent}} · Background: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Style with my own CSS",
-	"settings.externalCssStopAction": "Let Callout Studio style this again",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "External CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts from your theme",
 	"settings.themeCalloutsDesc":
@@ -357,9 +350,8 @@ export const en: Record<string, string> = {
 		"No new callout types were imported (ids may already exist).",
 	"notice.iconDownloadFailed":
 		'Could not download Material icon "{{name}}". It may be unavailable for this style/weight, or your connection may be offline.',
-	"notice.externalCssOn":
-		'Callout Studio no longer styles "{{name}}" — your own CSS decides how it looks. Its Heading Callout and Inline Callout forms won\'t render.',
-	"notice.externalCssOff": 'Callout Studio now styles "{{name}}" again.',
+	"notice.externalCssRetired":
+		"The personal CSS styling option was removed. These callouts now use their saved Callout Studio design unless your theme styles them. Your notes and personal CSS snippets were not changed.",
 	"notice.vaultRewritePartial":
 		"{{count}} note(s) could not be updated and were left unchanged. See the developer console for details.",
 	"notice.calloutDeleteIncomplete":
@@ -469,7 +461,7 @@ export const en: Record<string, string> = {
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> This is what the callout's content looks like.\n",
-	"editor.externalStyleClose": "Got it",
+	"editor.themePreviewClose": "Got it",
 
 	// Palette editor modal
 	"palette.newTitle": "New color palette",

@@ -694,6 +694,16 @@ export class FakeElement {
 		}
 	}
 
+	/**
+	 * Obsidian's HTMLElement helper for a computed custom property. There is no
+	 * cascade in this fake DOM, so suites state the already-resolved winner with
+	 * {@link setCssProp}; production code then reads it through the same API it
+	 * uses in the app.
+	 */
+	getCssPropertyValue(name: string): string {
+		return this.cssProps.get(name) ?? "";
+	}
+
 	/* ---- form controls ---- */
 
 	/**

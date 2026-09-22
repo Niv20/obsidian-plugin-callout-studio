@@ -19,14 +19,14 @@ describe("backup callout replacement", () => {
 			textColorLight: "#ff0000", textColorDark: "#00ff00", iconSize: 1.5,
 			iconAdjust: { heading: { size: 1.2 } }, iconOffsetX: 4, iconOffsetY: 2,
 			paletteId: "later-palette", metadata: { later: "value" },
-			customized: true, externalStyle: true, aliases: ["still used"],
+			customized: true, aliases: ["still used"],
 		});
 		const result = await validateImportPayload(backup, registry);
 		assert.equal(result.fatal, false); assert.equal(result.validDefs.length, 1);
 		assert.equal(applyImportedCallout(registry, result.validDefs[0]!), true);
 		const restored = registry.getReal("saved")!;
 		for (const key of ["textColorLight", "textColorDark", "iconSize", "iconAdjust",
-			"iconOffsetX", "iconOffsetY", "paletteId", "metadata", "customized", "externalStyle"] as const) {
+			"iconOffsetX", "iconOffsetY", "paletteId", "metadata", "customized"] as const) {
 			assert.equal(restored[key], undefined, key);
 		}
 		assert.equal(registry.findByIdentity("still-used")?.id, "saved");

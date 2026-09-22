@@ -16,6 +16,8 @@ interface DeviceLocalState {
 	initialized: boolean;
 	/** Prevent the automatic welcome from reopening before data.json exists. */
 	welcomeSeen: boolean;
+	/** Pending is affected-user evidence; display waits for a durable migration. */
+	externalCssRetirement?: "pending" | "seen";
 	listsExpanded: CalloutListsFoldState;
 }
 
@@ -39,12 +41,14 @@ export class DeviceLocalStore {
 			// Unknown/corrupt data must not be overwritten by UI preferences.
 			this.writable = false;
 			this.state.initialized = true;
-			const parsed = JSON.parse(raw) as { v?: number; initialized?: boolean; welcomeSeen?: boolean; listsExpanded?: Partial<CalloutListsFoldState> };
+			const parsed = JSON.parse(raw) as { v?: number; initialized?: boolean; welcomeSeen?: boolean; externalCssRetirement?: unknown; listsExpanded?: Partial<CalloutListsFoldState> };
 			if (!parsed || (parsed.v !== 1 && parsed.v !== 2 && parsed.v !== 3)) return;
 			this.state = {
 				v: 3,
 				initialized: parsed.v === 1 || parsed.initialized === true,
 				welcomeSeen: parsed.v === 3 && parsed.welcomeSeen === true,
+				...(parsed.externalCssRetirement === "pending" || parsed.externalCssRetirement === "seen"
+					? { externalCssRetirement: parsed.externalCssRetirement } : {}),
 				listsExpanded: {
 					theme: parsed.listsExpanded?.theme !== false,
 					user: parsed.listsExpanded?.user !== false,
@@ -110,6 +114,21 @@ export class DeviceLocalStore {
 
 	markWelcomeSeen(): void {
 		this.state.welcomeSeen = true;
+		this.persist();
+	}
+
+	get hasPendingExternalCssNotice(): boolean {
+		return this.state.externalCssRetirement === "pending";
+	}
+
+	queueExternalCssNotice(): void {
+		if (this.state.externalCssRetirement === "seen") return;
+		this.state.externalCssRetirement = "pending";
+		this.persist();
+	}
+
+	markExternalCssNoticeSeen(): void {
+		this.state.externalCssRetirement = "seen";
 		this.persist();
 	}
 

@@ -3,9 +3,9 @@
  * OWN token DOM for ids nothing recognises.
  *
  * Split from `fallbackCSS.ts`, which paints Obsidian's block callouts. The two
- * halves shared a definition, not a job: the block half writes a `:not()` chain
- * naming every known id and speaks in `!important` because it has a theme to
- * outrank, while everything here is `.cs-inline-callout` / `.cs-heading-callout`
+ * halves shared a definition, not a job: the block half writes a weak selector
+ * with a zero-specificity exclusion list naming every known id, while everything
+ * here is `.cs-inline-callout` / `.cs-heading-callout`
  * / `.cs-ref-token` — DOM this plugin invents, which no theme selector can match
  * and which therefore needs neither the chain nor the importance. Keeping them
  * in one function meant every reader of either had to hold both registers in

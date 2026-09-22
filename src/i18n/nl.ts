@@ -109,13 +109,6 @@ export const nl: Record<string, string> = {
 	"settings.makeFallbackAction": "Standaard fallback-stijl gebruiken",
 	"settings.colorSwatchAria": "Accent: {{accent}} · Achtergrond: {{bg}}",
 
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Stijl geven met mijn eigen CSS",
-	"settings.externalCssStopAction": "Callout Studio dit weer laten stijlen",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "Externe CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts van uw thema",
 	"settings.themeCalloutsDesc":
@@ -254,9 +247,6 @@ export const nl: Record<string, string> = {
 	"notice.iconDownloadFailed":
 		'Kan Material-pictogram "{{name}}" niet downloaden. Het is mogelijk niet beschikbaar voor deze stijl/dikte, of uw verbinding is offline.',
 
-	"notice.externalCssOn":
-		'Callout Studio stijlt "{{name}}" niet meer — uw eigen CSS bepaalt het uiterlijk. De Kop-callout- en Inline-callout-vormen worden niet weergegeven.',
-	"notice.externalCssOff": 'Callout Studio stijlt "{{name}}" weer.',
 	"notice.vaultScanFailed": "Het gebruik van callouts kon niet worden geteld omdat {{count}} notitie(s) niet konden worden gelezen. Controleer opslag en synchronisatie en probeer het opnieuw.",
 
 	"notice.vaultRewritePartial":
@@ -363,7 +353,7 @@ export const nl: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> Zo ziet de inhoud van de callout eruit.\n",
 
-	"editor.externalStyleClose": "Begrepen",
+	"editor.themePreviewClose": "Begrepen",
 
 	// Palette editor modal
 	"palette.newTitle": "Nieuw kleurenpalet",

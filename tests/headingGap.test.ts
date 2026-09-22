@@ -20,8 +20,8 @@
  *   refresh effect, or the parse worker advanced the syntax tree — never on a
  *   bare selection change.
  *
- * And where the gap goes: "wherever the bar goes". A heading whose callout was
- * handed to the theme renders as plain text, so a gap above it would be a blank
+ * And where the gap goes: "wherever the bar goes". A heading whose callout is
+ * owned by the theme renders as plain text, so a gap above it would be a blank
  * band with nothing under it; a native `> [!id]` header belongs to Obsidian's
  * own rendering and gets nothing at all.
  */
@@ -233,12 +233,13 @@ describe("createHeadingGapField — which lines get a gap", () => {
 		assert.deepStrictEqual(h.gaps(), []);
 	});
 
-	it("gives none to a heading whose callout was handed to the theme", () => {
+	it("gives none to a heading whose callout is owned by the theme", () => {
 		// It renders as plain text, so a gap above it would be a blank band with
 		// nothing under it.
 		setLivePreview(true);
 		const h = harness("## [!quiet] Title");
-		addCallout(h.registry, { externalStyle: true });
+		addCallout(h.registry);
+		h.registry.setThemeOwnedIds(new Set(["quiet"]));
 
 		// Rebuilt from scratch so the registry change is visible.
 		const rebuilt = h.state.update({

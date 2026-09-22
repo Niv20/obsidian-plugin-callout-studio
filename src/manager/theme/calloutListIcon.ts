@@ -5,11 +5,9 @@
  * Autocomplete, *Replace in vault*, the vault-stats rows, the command builder
  * and the settings callout picker (`settings/calloutComboboxRow.ts`) all draw
  * the same thing: a small icon and an accent beside a name.
- * They had drifted into three different answers about theme-owned callouts —
- * autocomplete tested the raw `externalStyle` field (so it missed every callout
- * the theme owns and cheerfully showed the stored colour), and the other two
- * tested nothing at all. Each was a place the plugin confidently named an
- * appearance that is not on the page.
+ * They had drifted into three different answers about theme-owned callouts.
+ * Each was a place the plugin confidently named an appearance that is not on
+ * the page.
  *
  * Quick Insert is deliberately not a caller. It renders a real callout through
  * `MarkdownRenderer`, so the theme paints it directly and there is nothing to
@@ -27,14 +25,11 @@ const MUTED = "var(--text-muted)";
 
 /**
  * Draw `def`'s icon into `iconEl` and return the accent a caller should use for
- * it — three sources, chosen by who actually paints the callout.
+ * it — two sources, chosen by who actually paints the callout.
  *
  * - **The theme owns it** → the icon measured off a rendered callout, and the
  *   accent measured with it. Falls to a neutral placeholder and the muted
  *   colour when nothing legible came back, never to `def.icon`.
- * - **The user styles it in their own CSS** → neutral placeholder, muted. There
- *   is no rendered element of ours to measure and the snippet may draw anything
- *   at all, so the only honest answer is to decline to guess.
  * - **Callout Studio paints it** → the stored icon and colour, which is exactly
  *   what will be on the page.
  */
@@ -48,10 +43,6 @@ export function paintCalloutListIcon(
 		const { accent, icon } = registry.themeAppearanceOf(def);
 		renderThemeIconInto(iconEl, icon);
 		return accent ?? MUTED;
-	}
-	if (def.externalStyle === true) {
-		renderNoIcon(iconEl);
-		return MUTED;
 	}
 	if (def.hideIcon === true) {
 		renderNoIcon(iconEl);

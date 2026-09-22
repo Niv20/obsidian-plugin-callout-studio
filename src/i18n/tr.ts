@@ -108,13 +108,6 @@ export const tr: Record<string, string> = {
 	"settings.makeFallbackAction": "Varsayılan geri dönüş stilini kullan",
 
 	"settings.colorSwatchAria": "Vurgu: {{accent}} · Arka plan: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Kendi CSS'imle biçimlendir",
-	"settings.externalCssStopAction": "Callout Studio bunu tekrar biçimlendirsin",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "Harici CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Temanızdaki callout'lar",
 	"settings.themeCalloutsDesc":
@@ -251,9 +244,6 @@ export const tr: Record<string, string> = {
 		"Yeni callout türü içe aktarılmadı (ID'ler zaten mevcut olabilir).",
 	"notice.iconDownloadFailed":
 		'"{{name}}" Material simgesi indirilemedi. Bu stil/ağırlık için mevcut olmayabilir veya bağlantınız çevrimdışı olabilir.',
-	"notice.externalCssOn":
-		'Callout Studio artık "{{name}}" öğesini biçimlendirmiyor — görünümüne kendi CSS\'iniz karar veriyor. Başlık Callout ve Satır İçi Callout biçimleri işlenmeyecek.',
-	"notice.externalCssOff": 'Callout Studio artık "{{name}}" öğesini yeniden biçimlendiriyor.',
 	"notice.vaultScanFailed": "Callout kullanımı, {{count}} not okunamadığı için sayılmadı. Depolamayı ve senkronizasyonu kontrol edip tekrar deneyin.",
 
 	"notice.vaultRewritePartial":
@@ -353,7 +343,7 @@ export const tr: Record<string, string> = {
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> Callout'un içeriği böyle görünür.\n",
-	"editor.externalStyleClose": "Anladım",
+	"editor.themePreviewClose": "Anladım",
 
 	// Palette editor modal
 	"palette.newTitle": "Yeni renk paleti",

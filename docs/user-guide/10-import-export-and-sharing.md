@@ -13,8 +13,8 @@ The importer brings over the available custom callout names, colors, icons, and 
 - Callout Manager can be read directly from the current vault or imported from the styles copied by its own export action.
 
 The importer reports unsupported or invalid entries before applying the valid data.
-
-Callout Studio can also detect callout definitions in the vault's CSS snippets folder and import them directly.
+It does not scan, import, enable, disable, or modify existing files in the
+vault's CSS snippets folder.
 
 ## Export a complete backup
 

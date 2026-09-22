@@ -30,7 +30,6 @@ interface CalloutDefinition {
   aliases?: string[];
   paletteId?: string;
   customized?: boolean;
-  externalStyle?: true;
   metadata?: Record<string, string>;
 }
 ```
@@ -50,8 +49,8 @@ Field-by-field notes on the ones that are not self-explanatory:
   to the flat trio, which is exactly what the trio meant before `iconAdjust`
   existed. Always resolve through `resolveIconAdjust()` in
   `utils/iconAdjust.ts`, never by reading either layer directly.
-- **`transparentBg`** and **`externalStyle`** are typed `true` (not `boolean`)
-  on purpose — see the callout below.
+- **`transparentBg`** is typed `true` (not `boolean`) on purpose — see the
+  callout below.
 - **`customized`** marks a row the user explicitly created or edited. It prevents
   fallback restyling from replacing the authored appearance. Manually discovered
   rows start with it unset but remain durable regardless of note usage.
@@ -75,14 +74,14 @@ Field-by-field notes on the ones that are not self-explanatory:
 > in use.
 
 > [!IMPORTANT]
-> **Why `transparentBg`/`externalStyle` are `true`-or-absent, never `false`.**
+> **Why `transparentBg` is `true`-or-absent, never `false`.**
 > `CalloutRegistry.isModified()` compares
 > `JSON.stringify(value ?? null)` between the current definition and the
 > shipped built-in default. If the field could be written as literal `false`,
 > an explicit `false` would read as *different* from a pristine `undefined` —
 > and a built-in nobody actually edited would start being persisted to
-> `data.json` and copied into every export forever. Every writer of these two
-> fields omits the key to turn it off, rather than assigning `false`. If you
+> `data.json` and copied into every export forever. Every writer omits the key
+> to turn it off, rather than assigning `false`. If you
 > add a new true-or-absent flag to `CalloutDefinition`, follow the same
 > convention or `isModified` will silently misfire.
 

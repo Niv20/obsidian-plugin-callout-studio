@@ -108,13 +108,6 @@ export const th: Record<string, string> = {
 	"settings.makeFallbackAction": "ใช้สไตล์สำรองเริ่มต้น",
 
 	"settings.colorSwatchAria": "จุดเน้น: {{accent}} · พื้นหลัง: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "จัดสไตล์ด้วย CSS ของฉันเอง",
-	"settings.externalCssStopAction": "ให้ Callout Studio จัดสไตล์นี้อีกครั้ง",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "CSS ภายนอก",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout จากธีมของคุณ",
 	"settings.themeCalloutsDesc":
@@ -247,9 +240,6 @@ export const th: Record<string, string> = {
 	"notice.noNewJSON": "ไม่มีประเภท callout ใหม่ที่นำเข้า (ID อาจมีอยู่แล้ว)",
 	"notice.iconDownloadFailed":
 		'ไม่สามารถดาวน์โหลดไอคอน Material "{{name}}" ได้ อาจไม่มีให้บริการสำหรับสไตล์/น้ำหนักนี้ หรือการเชื่อมต่อของคุณออฟไลน์อยู่',
-	"notice.externalCssOn":
-		'Callout Studio จะไม่จัดสไตล์ "{{name}}" อีกต่อไป — CSS ของคุณเองจะเป็นตัวกำหนดรูปลักษณ์ รูปแบบ Heading Callout และ Inline Callout จะไม่แสดงผล',
-	"notice.externalCssOff": 'ตอนนี้ Callout Studio จัดสไตล์ "{{name}}" อีกครั้งแล้ว',
 	"notice.vaultScanFailed": "ไม่สามารถนับการใช้งานคอลเอาท์ได้ เนื่องจากไม่สามารถอ่านโน้ต {{count}} รายการได้ กรุณาตรวจสอบการจัดเก็บและการซิงก์แล้วลองอีกครั้ง",
 
 	"notice.vaultRewritePartial":
@@ -348,9 +338,8 @@ export const th: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> นี่คือลักษณะเนื้อหาของ callout\n",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleClose": "เข้าใจแล้ว",
+	// Theme callout preview window
+	"editor.themePreviewClose": "เข้าใจแล้ว",
 
 	// Palette editor modal
 	"palette.newTitle": "ชุดสีใหม่",

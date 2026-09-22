@@ -98,34 +98,31 @@ token, which is what lets `CSSInjector`'s icon-repaint sweep target both with
 one selector.
 
 ```ts
-resolveCalloutDef(registry, rawId): ResolvedCalloutDef  // { def, unknown, external }
-shouldRenderToken(resolved): boolean                      // false ⟺ externalStyle
+resolveCalloutDef(registry, rawId): ResolvedCalloutDef  // { def, unknown, themeOwned }
+shouldRenderToken(resolved): boolean                    // false ⟺ themeOwned
 buildCalloutTokenDom(options): HTMLElement                 // the pill / heading-token DOM
 buildContentPillDom(options): { root, payload }             // the empty shell for a {…} pill
 ```
 
-`resolveCalloutDef` mirrors `CSSInjector`'s own resolution ladder exactly (id
-→ alias → `data-callout` attribute form → configured fallback), which is what
-keeps DOM icons and generated CSS colours from disagreeing about which
-definition a token means.
+`resolveCalloutDef` owns the plugin-token resolution ladder (id → alias →
+`data-callout` attribute form → configured fallback). Native Blocks now take a
+different final route: `paintIcons` resolves registered ids directly, while an
+unrecognized id is governed by the weak fallback CSS and its computed icon
+sentinel. Both routes still agree on which exact definitions are known and
+which unresolved ids use the configured fallback; the split exists so native
+theme/snippet CSS can outrank that baseline without being turned into registry
+ownership.
 
-### `shouldRenderToken` — the two cutoffs
+### `shouldRenderToken` — the theme-ownership cutoff
 
 ```ts
 export function shouldRenderToken(resolved: ResolvedCalloutDef): boolean {
-  return !resolved.external && !resolved.themeOwned;
+  return !resolved.themeOwned;
 }
 ```
 
-Every renderer of the heading/inline/ref surfaces calls this **first**, and two
-quite different facts land here.
-
-**`external`** — the user styles this callout in their own snippet. These three
-roles get **no DOM at all**, and the `[!id]` stays literal text: unlike the
-block role, there is nothing here for a snippet to style, so a half-painted
-token would just look broken.
-
-**`themeOwned`** — the active theme supplies this callout, and a theme callout is
+Every renderer of the heading/inline/ref surfaces calls this **first**.
+`themeOwned` means the active theme supplies this callout, and a theme callout is
 **Block only**. The plugin *could* paint `.cs-heading-token` (no theme selector
 can match it, and an earlier build did exactly that), but it would be offering
 two formats the theme has no design for and cannot follow, beside a Block
@@ -136,8 +133,7 @@ offering theme callouts in those positions, the command builder drops the two
 options, and an existing heading/inline command is *suspended* rather than
 deleted.
 
-See [Callout registry § externalStyle](05-callout-registry.md),
-[CSS generation § standing down](06-css-generation.md#standing-down--why-emit-nothing-needs-three-separate-mechanisms), and
+See [CSS generation § standing down](06-css-generation.md#standing-down--why-emit-nothing-needs-three-separate-mechanisms) and
 [Theme callout discovery § Block only](17-theme-callout-discovery.md#where-theme-callouts-appear--and-why-block-only).
 
 ### `hideIcon` and flex-gap collapse

@@ -108,13 +108,6 @@ export const de: Record<string, string> = {
 	"settings.resetAction": "Auf Standard zurücksetzen",
 	"settings.makeFallbackAction": "Standard-Fallback-Stil verwenden",
 	"settings.colorSwatchAria": "Akzent: {{accent}} · Hintergrund: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Mit eigenem CSS gestalten",
-	"settings.externalCssStopAction": "Wieder von Callout Studio gestalten lassen",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "Externes CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts aus Ihrem Theme",
 	"settings.themeCalloutsDesc":
@@ -252,9 +245,6 @@ export const de: Record<string, string> = {
 		"Keine neuen Callout-Typen importiert (IDs möglicherweise bereits vorhanden).",
 	"notice.iconDownloadFailed":
 		'Material-Symbol "{{name}}" konnte nicht heruntergeladen werden. Es ist möglicherweise für diesen Stil/diese Stärke nicht verfügbar oder Sie sind offline.',
-	"notice.externalCssOn":
-		'Callout Studio gestaltet "{{name}}" nicht mehr — Ihr eigenes CSS bestimmt jetzt das Aussehen. Die Formate Überschrift-Callout und Inline-Callout werden nicht mehr dargestellt.',
-	"notice.externalCssOff": 'Callout Studio gestaltet "{{name}}" wieder.',
 	"notice.vaultScanFailed": "Die Callout-Nutzung konnte nicht gezählt werden, da {{count}} Notiz(en) nicht gelesen werden konnten. Überprüfen Sie Speicher und Synchronisierung und versuchen Sie es erneut.",
 
 	"notice.vaultRewritePartial":
@@ -358,7 +348,7 @@ export const de: Record<string, string> = {
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> So sieht der Inhalt dieses Callouts aus.\n",
-	"editor.externalStyleClose": "Verstanden",
+	"editor.themePreviewClose": "Verstanden",
 
 	// Palette editor modal
 	"palette.newTitle": "Neue Farbpalette",

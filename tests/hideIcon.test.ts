@@ -157,9 +157,9 @@ describe("hideIcon — the 'Align content with title' indent", () => {
 		const own = css.generateCalloutCSS(definition({ hideIcon: true }));
 		assert.match(own, /padding-inline-start: 0 !important;/);
 
-		const handed = css.generateCalloutCSS(
-			definition({ hideIcon: true, externalStyle: true }),
-		);
+		registry.add(definition({ id: "themed", hideIcon: true }));
+		registry.setThemeOwnedIds(new Set(["themed"]));
+		const handed = css.generateCalloutCSS(registry.get("themed")!);
 		assert.strictEqual(handed, "");
 	});
 
@@ -173,14 +173,6 @@ describe("hideIcon — the 'Align content with title' indent", () => {
 });
 
 describe("hideIcon — callouts this plugin does not paint", () => {
-	it("emits nothing for a callout the user styles in their own CSS", () => {
-		const { css } = harness();
-		assert.strictEqual(
-			css.generateCalloutCSS(definition({ externalStyle: true })),
-			"",
-		);
-	});
-
 	it("no longer makes an exception for the hide rule", () => {
 		// This used to be the one thing theme mode still emitted, on the
 		// argument that a theme cannot express "no icon" on the owner's behalf.
@@ -189,10 +181,10 @@ describe("hideIcon — callouts this plugin does not paint", () => {
 		// most likely to read as the plugin breaking their theme. The flag is
 		// preserved on the row and applies again the moment the plugin is
 		// painting the callout.
-		const { css } = harness();
-		const out = css.generateCalloutCSS(
-			definition({ externalStyle: true, hideIcon: true }),
-		);
+		const { registry, css } = harness();
+		registry.add(definition({ id: "themed", hideIcon: true }));
+		registry.setThemeOwnedIds(new Set(["themed"]));
+		const out = css.generateCalloutCSS(registry.get("themed")!);
 		assert.strictEqual(out, "");
 	});
 
@@ -227,19 +219,21 @@ describe("hideIcon — the unknown-id fallback", () => {
 	const unknownIdRule = (out: string, needle: string): boolean =>
 		out
 			.split("\n\n")
-			.some((rule) => rule.startsWith("body .callout:not(") && rule.includes(needle));
+			.some((rule) =>
+				rule.startsWith(".callout:not(:where(") && rule.includes(needle),
+			);
 
-	it("propagates from the fallback template to every unknown callout", () => {
+	it("marks the computed icon path for DOM-level hiding", () => {
 		const { registry, css } = harness();
 		const fallback = definition({ id: "note", hideIcon: true });
 		registry.settings.fallbackCalloutId = "note";
 
 		const out = css.generateFallbackCSS([fallback]);
 		assert.ok(
-			unknownIdRule(out, "display: none !important"),
-			"expected the fallback chain to hide the icon",
+			unknownIdRule(out, "--callout-icon: __callout-studio-fallback-icon__"),
+			"expected the fallback sentinel",
 		);
-		assert.doesNotMatch(out, /--callout-icon:/);
+		assert.doesNotMatch(out, /display:\s*none/);
 	});
 
 	it("leaves unknown callouts alone when the template keeps its icon", () => {
@@ -248,7 +242,7 @@ describe("hideIcon — the unknown-id fallback", () => {
 
 		const out = css.generateFallbackCSS([definition({ id: "note" })]);
 		assert.ok(!unknownIdRule(out, "> .callout-icon {"));
-		assert.match(out, /--callout-icon:/);
+		assert.match(out, /--callout-icon: lucide-pencil;/);
 	});
 });
 

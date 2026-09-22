@@ -82,10 +82,10 @@ export function ownAccentDeclarations(
  *
  * On 1.13+ that value is the `<color>`-typed hand-off declared alongside it in
  * the same rule, so a theme still writing ≤1.12 triplets cannot reach core
- * through us — this block paints every undefined id at an `!important` no
- * per-callout rule outranks, so forwarding a value core cannot parse would take
- * all of them down at once. On ≤1.12 core wants the triplet, and its own
- * variable is already spelled in whatever format that version expects.
+ * through us. The fallback is deliberately weak enough for an exact snippet
+ * to override, but its own value still has to parse whenever it wins. On ≤1.12
+ * core wants the triplet, and its own variable is already spelled in whatever
+ * format that version expects.
  */
 export function accentDeclarations(
 	hex: string,
@@ -119,10 +119,9 @@ export function accentDeclarations(
  *   the accent keeps following the theme.
  * - Read sites want a triplet and the theme's variable is a colour: there is no
  *   spelling that both follows the theme and parses, so stop following it and
- *   spell out our own triplet. This block paints every undefined id at an
- *   `!important` no per-callout rule outranks, so forwarding a value the read
- *   sites cannot parse would take all of them down at once — the same reasoning
- *   that put `--cs-accent-theme` in the first case.
+ *   spell out our own triplet. Even though an exact snippet can override this
+ *   weak fallback, every unknown callout on which it wins still needs a valid
+ *   value — the same reasoning that put `--cs-accent-theme` in the first case.
  */
 function imposedValue(
 	hex: string,

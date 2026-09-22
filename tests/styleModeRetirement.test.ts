@@ -11,12 +11,8 @@
  * `"studio"` and the retired rungs `"blend"`, `"force"`, `"standard"` — meant
  * "this plugin paints it", which is exactly what its absence means now.
  *
- * **What stays.** `externalStyle`, which shipped in 2.11.0 and is translated
- * into all 32 locales. It survives the model that briefly absorbed it because
- * it never really belonged to it: it means "I style this one myself, in a
- * snippet", which is still a real, user-owned choice. Deleting it would make
- * this plugin start overriding the CSS of everyone who used the shipped action,
- * with `!important`, on upgrade.
+ * The separately released `externalStyle` handoff is also retired now. Its
+ * migration/notice durability is covered by externalCssRetirement.test.ts.
  *
  * And the row itself is not touched. `styleMode` was compared by the
  * full-strength `isCalloutModified`, so stamping anything in its place would
@@ -112,23 +108,21 @@ describe("the retired row field", () => {
 	});
 });
 
-describe("externalStyle survives", () => {
-	it("keeps the flag a shipped release wrote", () => {
-		// The regression this guards is silent and large: dropping it makes the
-		// plugin start overriding a user's own snippet with `!important`.
+describe("externalStyle retirement alongside older style modes", () => {
+	it("removes the flag a shipped release wrote", () => {
 		const registry = load(withModes([{ ...def({ id: "a" }), externalStyle: true }]));
-		assert.strictEqual(registry.get("a")?.externalStyle, true);
-		assert.strictEqual(registry.standsDown(registry.get("a")!), true);
+		assert.ok(!("externalStyle" in registry.get("a")!));
+		assert.strictEqual(registry.themeOwns(registry.get("a")!), false);
 	});
 
-	it("keeps it even when a stale styleMode sat beside it", () => {
+	it("removes both flags when a stale styleMode sat beside it", () => {
 		const registry = load(
 			withModes([
 				{ ...def({ id: "a" }), externalStyle: true, styleMode: "studio" },
 			]),
 		);
 		const row = retired(registry.get("a"));
-		assert.strictEqual(row.externalStyle, true);
+		assert.strictEqual(row.externalStyle, undefined);
 		assert.ok(!("styleMode" in row));
 	});
 });

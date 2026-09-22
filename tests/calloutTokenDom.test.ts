@@ -468,29 +468,12 @@ describe("buildCalloutTokenDom — what it does not do", () => {
 
 describe("theme-styled callouts and the two Callout Studio-only syntaxes", () => {
 	// `## [!id] Title` and `word [!id] word` are this plugin's own invented
-	// markdown, and a callout that stands down gets neither of them — for two
-	// unrelated reasons that happen to give the same answer.
-	//
-	// `externalStyle` is the obvious one: there is nothing here for the user's
-	// snippet to style. Theme ownership is the deliberate one. The plugin
+	// markdown, and a theme-owned callout gets neither of them. The plugin
 	// *could* paint `.cs-heading-token` for a theme callout — no theme selector
 	// can match it — and for one release it did. But that offers two formats
 	// the theme has no design for beside a Block callout it draws itself:
 	// three renderings of one callout with two of them invented. A theme
 	// callout is Block only, and the raw text stays as written.
-
-	it("renders no token for a callout the user handed over", () => {
-		const registry = harness();
-		addCallout(registry, { id: "handed", externalStyle: true });
-		const resolved = resolveCalloutDef(registry, "handed");
-
-		assert.strictEqual(resolved.external, true);
-		assert.strictEqual(shouldRenderToken(resolved), false);
-		// Not "unknown": the id resolved perfectly well, and an unknown token
-		// would get `.cs-unknown` styling and its raw id as a label — both of
-		// which are still this plugin painting something.
-		assert.strictEqual(resolved.unknown, false);
-	});
 
 	it("renders one for an untouched built-in on a clean install", () => {
 		// The case a reader is most likely to meet first. Nothing is theme-owned
@@ -507,10 +490,6 @@ describe("theme-styled callouts and the two Callout Studio-only syntaxes", () =>
 
 		const resolved = resolveCalloutDef(registry, "recite");
 		assert.strictEqual(resolved.themeOwned, true);
-		// Not `external`, and the two must stay apart: this row is nobody's
-		// snippet, and every surface that decides where it is *listed* asks
-		// ownership rather than this.
-		assert.strictEqual(resolved.external, false);
 		assert.strictEqual(shouldRenderToken(resolved), false);
 	});
 
@@ -532,25 +511,15 @@ describe("theme-styled callouts and the two Callout Studio-only syntaxes", () =>
 		assert.strictEqual(back.def?.displayName, "Mine");
 	});
 
-	it("renders one again the moment Callout Studio takes it back", () => {
-		const registry = harness();
-		addCallout(registry, { id: "handed", externalStyle: true });
-		assert.strictEqual(shouldRenderToken(resolveCalloutDef(registry, "handed")), false);
-		registry.setExternalStyle("handed", false);
-
-		const resolved = resolveCalloutDef(registry, "handed");
-		assert.strictEqual(resolved.external, false);
-		assert.strictEqual(shouldRenderToken(resolved), true);
-	});
-
 	it("still renders one for an unknown id borrowing a theme-styled fallback", () => {
-		// `external` describes the token's OWN callout. An unrecognized id is
-		// this plugin's to draw whatever the fallback template is doing.
+		// Theme ownership describes the token's own id. An unrecognized id is this
+		// plugin's to draw whatever the fallback template is doing.
 		const registry = harness();
 		registry.settings.fallbackCalloutId = "note";
+		registry.setThemeOwnedIds(new Set(["note"]));
 		const resolved = resolveCalloutDef(registry, "never-seen");
 		assert.strictEqual(resolved.unknown, true);
-		assert.strictEqual(resolved.external, false);
+		assert.strictEqual(resolved.themeOwned, false);
 		assert.strictEqual(shouldRenderToken(resolved), true);
 	});
 });

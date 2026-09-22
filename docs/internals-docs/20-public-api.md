@@ -20,11 +20,15 @@ interface CalloutStudioApi {
 }
 ```
 
-`version: 1` today. `tests/publicApiContract.test.ts` pins the exact member
+`version: 2` today. `tests/publicApiContract.test.ts` pins the exact member
 count, each one's kind and arity, and — separately — that `API.md`'s stated
-member count agrees with the implementation. New members may be **added**
-without a version bump (consumers are told to feature-detect); renaming or
-changing the meaning of an existing member requires bumping `version`.
+member count agrees with the implementation. New detail members may be
+**added** without a version bump, and consumers are told to feature-detect
+them. Removing v1's `CalloutDetails.externalStyle` was a breaking shape change,
+so the contract moved to v2 even though the five-method surface stayed the
+same. `themeStyled` is now the sole published signal that Callout Studio is not
+drawing a callout; arbitrary snippet styling is observable only by rendering a
+real Block callout and letting the cascade resolve it.
 
 **It deliberately does not write markdown for you.** Inserting a callout
 into a note is one line of text, and every consuming plugin wants to place
@@ -54,7 +58,7 @@ hand back anything the registry itself is still holding onto.
 
 ```ts
 export class CalloutStudioAPI implements CalloutStudioApi {
-  readonly version = 1;
+  readonly version = 2;
   readonly #plugin: CalloutStudioPlugin;   // ← private field, not `private plugin`
   ...
 }
@@ -117,10 +121,10 @@ Three deliberate steps, each closing a real gap:
 - **Everything the user created themselves.**
 - **Manually discovered theme types and saved plugin-provided definitions.**
 - **All manually discovered callouts**, including uncustomized or unused types.
-- **Callouts handed to the theme (`externalStyle: true`) — deliberately
-  included**, even though Callout Studio itself no longer styles them: the
-  id is still perfectly valid markdown to write, so hiding it from the API
-  would make it impossible for a consumer to offer it as a choice.
+- **Theme-owned callouts** — deliberately included even though Callout Studio
+  does not draw them: the id is still valid Markdown, and `themeStyled` tells a
+  consumer not to substitute the stored icon and colours for the theme's live
+  appearance.
 
 ## `getCallout(id)` — the lookup ladder, deliberately shallower than the renderer's
 

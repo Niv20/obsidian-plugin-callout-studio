@@ -182,13 +182,17 @@ function addCallout(
  * The common setup: one pane over `note.md` whose only heading is
  * `## [!quiet] My Title`, already attached and processed.
  */
-function decorated(over: Partial<CalloutDefinition> = {}): {
+function decorated(
+	over: Partial<CalloutDefinition> = {},
+	themeOwned = false,
+): {
 	h: OutlineHarness;
 	pane: Pane;
 	row: FakeElement;
 } {
 	const h = outlineHarness();
 	addCallout(h.registry, over);
+	if (themeOwned) h.registry.setThemeOwnedIds(new Set(["quiet"]));
 	h.headings("note.md", "[!quiet] My Title");
 	const pane = h.pane();
 	const [row] = pane.items("!quiet My Title");
@@ -456,8 +460,8 @@ describe("what it refuses to touch", () => {
 		assert.strictEqual(tokenOf(row), null);
 	});
 
-	it("a heading whose callout was handed to the theme", () => {
-		const { row } = decorated({ externalStyle: true });
+	it("a heading whose callout is owned by the theme", () => {
+		const { row } = decorated({}, true);
 
 		assert.strictEqual(row.textContent, "!quiet My Title");
 		assert.strictEqual(tokenOf(row), null);
@@ -504,11 +508,11 @@ describe("restoring", () => {
 		assert.strictEqual(row.dataset.csOrig, undefined);
 	});
 
-	it("puts one back when its callout is handed to the theme", () => {
+	it("puts one back when its callout becomes theme-owned", () => {
 		// Routed through restoreItem rather than an early return, precisely so an
-		// entry decorated before the flag moved is not left stale.
+		// entry decorated before ownership moved is not left stale.
 		const { h, row } = decorated();
-		h.registry.update("quiet", { externalStyle: true });
+		h.registry.setThemeOwnedIds(new Set(["quiet"]));
 		h.decorator.refreshAll();
 		h.settle();
 

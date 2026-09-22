@@ -386,11 +386,12 @@ describe("what it refuses to touch", () => {
 		assert.strictEqual(title.textContent, "[!quiet] My Title");
 	});
 
-	it("a heading whose callout was handed to the theme", () => {
+	it("a heading whose callout is owned by the theme", () => {
 		// No token DOM is invented for it anywhere, so the suggestion keeps the
 		// heading's raw text.
 		const h = harness();
-		addCallout(h.registry, { externalStyle: true });
+		addCallout(h.registry);
+		h.registry.setThemeOwnedIds(new Set(["quiet"]));
 		h.decorator.install([]);
 
 		unchanged(h, heading("[!quiet] My Title"));

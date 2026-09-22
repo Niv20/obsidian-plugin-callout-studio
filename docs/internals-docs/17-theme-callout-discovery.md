@@ -332,17 +332,15 @@ one, which is exactly the bug this replaced.
 
 ```ts
 registry.themeOwns(def)   // does the ACTIVE THEME name this callout's id?
-registry.standsDown(def)  // themeOwns(def) || def.externalStyle === true
 ```
 
 | | Reason | Listed under | Editable | Emits CSS |
 | --- | --- | --- | --- | --- |
 | `themeOwns(def)` | the active theme names the id | *Callouts from your theme* | no | no |
-| `def.externalStyle === true` | the user styles it in their own snippet | their own section, **External CSS** label | yes | no |
 
-`standsDown` is the **emission** gate, so every CSS path asks it. Anything
-deciding where a row is *listed*, or whether it is read-only, must ask
-`themeOwns` — an External CSS row is still the user's.
+`themeOwns` is both the ownership fact and the sole emission gate. A saved
+personal-CSS flag is no longer part of the definition model; ordinary snippets
+participate through the cascade rather than by changing registry ownership.
 
 Three properties of ownership, each of which was a decision:
 
@@ -373,11 +371,11 @@ uncustomized theme row on the next theme switch; and `importValidator` re-stamps
 
 ## Stage 4 — The overlay, and adding theme types permanently
 
-A theme-declared id with **no row at all** is worse than unlisted. The `:not()`
-chain in `generateFallbackCSS` is built from `getAll()`, and everything below it
-carries `!important` at a specificity no theme can reach — so an id the registry
-has never heard of is not merely missing from the settings list, it is actively
-**overpainted** with the fallback template.
+A theme-declared id with **no row at all** is also treated as unknown by
+`generateFallbackCSS`, whose exclusion list is built from `getAll()`. The
+fallback is deliberately weak now, so the theme's exact selector wins; however,
+the fallback could still fill properties the theme leaves open, and the id would
+remain absent from settings, autocomplete and the public API.
 
 [`syncThemeOverlayRows`](../../src/manager/theme/themeOverlayRows.ts) closes that.
 A sweep on startup, CSS events, or settings adoption mints an in-memory row in
@@ -451,7 +449,7 @@ Nor can the active theme's rule be reused for unknown ids. Theme CSS names the
 original attribute, for example `[data-callout="recite"]`; an unknown callout
 keeps its own `data-callout`, so that selector does not match it. CSS has no
 "extend this unrelated selector" operation. More importantly, a theme-owned
-definition makes `registry.standsDown(def)` true, and `generateFallbackCSS`
+definition makes `registry.themeOwns(def)` true, and `generateFallbackCSS`
 returns before emitting either the Block fallback or `fallbackTokenCSS`. Merely
 removing the picker filter would therefore expose a choice that disables the
 Studio fallback without making unknown callouts look like the selected theme
@@ -690,14 +688,13 @@ anything about colour.
 [`calloutListIcon.ts`](../../src/manager/theme/calloutListIcon.ts) is the single
 answer for every list that draws a callout *small* — autocomplete, *Replace in
 vault*, vault stats, the command builder, and the settings callout picker
-([`calloutComboboxRow.ts`](../../src/settings/calloutComboboxRow.ts)). The first
-four had drifted into three different answers, two with no ownership check at
+([`calloutComboboxRow.ts`](../../src/settings/calloutComboboxRow.ts)). These
+surfaces once drifted into different answers, some with no ownership check at
 all:
 
 | Who paints the callout | Icon | Accent |
 | --- | --- | --- |
 | The theme | measured (`renderThemeIconInto`) | measured, else `var(--text-muted)` |
-| The user's own CSS | dashed placeholder | `var(--text-muted)` |
 | Callout Studio | the stored icon | the stored colour for the current mode |
 
 **Quick Insert is deliberately not a caller.** It renders a *real* callout
@@ -1025,8 +1022,11 @@ The columns worth checking for your own theme:
 - **Enumeration reads the theme only.** A user snippet that declares
   `[data-callout="foo"]` does *not* create a theme row and does not make the
   plugin stand down — snippets count only toward the `!important` escalation
-  measurement. Handing a callout to a snippet is the explicit *Style with my own
-  CSS* choice instead.
+  measurement. For an unrecognized native Block callout, the generated fallback
+  deliberately has only one class of specificity and no `!important`, so an
+  ordinary exact snippet definition wins without being inferred as registry
+  ownership. A known Studio definition remains Studio-owned and uses the
+  measured `!important` register.
 - **Quick Insert's source filter partitions on `builtIn`**, so a theme-invented
   row appears under the *user* filter. There is no theme filter.
 - **`source: "theme"` in an imported file is not authority.** `importValidator`
@@ -1100,7 +1100,7 @@ result:
 
 - **Extract `app.css` from the *running* asar** — `~/Library/Application Support/obsidian/obsidian-<v>.asar`, not the copy inside `Obsidian.app`, which lags badly. The two disagree about whether `--callout-color` is a triplet or a colour, which is the whole subject.
 - **Link every sheet, never inline it into a `<style>`.** Several installed themes — Border, NeuBorder, Tokyo Night, Poimandres Extended, Glass Robo and Olivier's Theme — carry a literal `</style>` inside their Style Settings YAML comment; inlined, that ends the element early and Chrome parses 301 of Border's rules and silently drops the rest, including the entire `callout-style-N` family. It is not only a callout question: inlined, Glass Robo lost the `--modal-background` its whole window is painted with, and read as a theme with no surface at all. Obsidian assigns theme CSS through `styleEl.textContent`, which never re-enters the HTML parser.
-- **Publish theme ownership.** `registerThemeAppearance` hands `registry.setThemeOwnedIds` every id the theme names, built-ins included, so `standsDown` silences the plugin for them. Measuring without it measures a configuration that cannot occur.
+- **Publish theme ownership.** `registerThemeAppearance` hands `registry.setThemeOwnedIds` every id the theme names, built-ins included, so the emission gates silence the plugin for them. Measuring without it measures a configuration that cannot occur.
 - **Model Style Settings exactly.** Class toggles and class selects add classes to `<body>`; variables land in `body.css-settings-manager` and `body.theme-{light,dark}.css-settings-manager`, in a `<style>` appended last to `<head>`. Read them out of the theme's own `/* @settings */` YAML rather than guessing.
 - **Read numbers, not pixels.** Without real CodeMirror the layout collapses, so a screenshot lies where `getComputedStyle` does not. (Settings-pane questions are the exception: that DOM is plain markup and a screenshot of it is real — which is how the sticky band's paint was verified pixel-identical before and after a change.)
 - **A width question needs the modal chain's own widths overridden.** `.modal` is `width: var(--dialog-width)` with a `max-width`, and `.vertical-tab-content` adds `padding-inline: var(--size-4-12)` and `container-type: inline-size`. So sizing the *host* element proves nothing: a sweep from 900px down to 220px reports byte-identical geometry at every step, because the pane never actually narrowed. Set `width: 100% !important; max-width: none; min-width: 0` on `.modal`, `.vertical-tab-content-container` and `.vertical-tab-content`, then size the wrapper — that is what makes a responsive question measurable. Read logical edges, too: `getBoundingClientRect` is physical, so an assertion written as "16px from the right" passes in LTR and fails in RTL for a layout that is correct in both.

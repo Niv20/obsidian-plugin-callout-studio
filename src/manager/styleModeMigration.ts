@@ -20,11 +20,8 @@
  *
  * ## What it deliberately leaves alone
  *
- * **`externalStyle`.** It survives the model that briefly absorbed it, because
- * it never really belonged to it: it means "I style this one myself, in a
- * snippet", which is still a real, user-owned choice. Deleting it would make
- * this plugin start overriding the CSS of everyone who had used the shipped
- * *Use theme style* action, with `!important`, on upgrade.
+ * `externalStyle` is retired separately by `externalCssRetirement.ts`, which
+ * records the affected users for a notice after their migration is saved.
  *
  * **Anything else on a row.** It stamps nothing: `styleMode` was compared by
  * the full-strength `isCalloutModified`, so a stamped built-in would be written

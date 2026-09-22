@@ -1,6 +1,6 @@
 # CSS generation
 
-[`src/manager/CSSInjector.ts`](../../src/manager/CSSInjector.ts) (~1,950 lines,
+[`src/manager/CSSInjector.ts`](../../src/manager/CSSInjector.ts) (~1,800 lines,
 one of the frozen oversized-file exceptions) reads every `CalloutDefinition`
 from the registry and writes one CSS stylesheet that restyles Obsidian's block
 callouts and paints the plugin's own heading/inline DOM. It also paints icon
@@ -103,7 +103,7 @@ registry actually holds data) replaces it with a real generated pass.
 
 ```text
 1. header comment
-2. generateGlobalStyleCSS()        — vault-wide border/radius/scale + icon gap default
+2. generateGlobalStyleCSS()        — border/radius/scale + icon gap for registered Studio blocks
 3. @media screen { .cs-export-icon { display: none } }   — hides the PDF-only DOM icon copies on screen
 4. generateCalloutCSS(def) for every callout in registry.getAll()
      └─ within it, coreAccentShimCSS(def) — only when the active theme spells the
@@ -141,7 +141,7 @@ in one of three shapes depending on the dialect:
 | --- | --- | --- |
 | reads a colour | `var(--cs-accent-theme)` | the `<color>`-typed hand-off, so a theme writing triplets cannot reach core through us |
 | reads a triplet, theme declares one | `var(--callout-error)` | forward it; the accent keeps following the theme |
-| reads a triplet, theme declares a colour | a spelled-out triplet | no spelling both follows the theme and parses. This block paints *every* unknown id at an `!important` nothing outranks, so forwarding an unparseable value would take all of them down at once — better to lose the theme-following for these rows than lose the rows |
+| reads a triplet, theme declares a colour | a spelled-out triplet | no spelling both follows the theme and parses. Forwarding an unparseable value would remove the baseline from every unknown id not otherwise claimed, so these rows lose theme-following rather than lose their colour |
 
 ### The core accent shim
 
@@ -194,12 +194,11 @@ Three properties of that rule are the whole design, and each is load-bearing:
   recording-site fixes would not.
 
 It is emitted only when `dialect.read !== coreAccentDialect()`, and never for a
-row `standsDown` covers. **The fallback block deliberately gets no shim**: its
-selector is a `:not()` chain already at `(0,26,1)` in a modest vault, so a
-non-important rule on it would still outrank every theme — the opposite of what
-this is for. Unknown ids under a legacy theme keep a correct `--callout-color`,
-so the theme's own rules work; only core's default background is missing, and
-registering the callout is the fix.
+theme-owned row. **The fallback block deliberately gets no shim**: its native
+Block selector is an optional one-class baseline that must remain weaker than an
+ordinary exact theme or snippet definition. Unknown ids still receive a
+correctly-spelled `--callout-color`; registering the callout is the route to the
+full per-id repair and Studio-strength styling.
 
 ### Backgrounds are always translucent tints — never the authored hex
 
@@ -256,8 +255,8 @@ elements, and macOS Preview truncating vector shadings).
 
 ### Icon painting
 
-Icons reach the screen through **two separate mechanisms**, and understanding
-why both exist matters for anyone touching icon rendering:
+Registered callout icons reach the screen through **two separate mechanisms**,
+and understanding why both exist matters for anyone touching icon rendering:
 
 1. **CSS `::after` mask/background-image** (`iconMaskOverrideCSS` /
    `imageOverrideCSS`, routed by `iconOverrideCSS`), wrapped in `@media screen` — the live-view path.
@@ -288,29 +287,39 @@ Called from `injectNow()` on every inject, and separately registered as a
 icons painted too. Omitting `root` sweeps **every open window**, not just
 `activeDocument` — with a pop-out window focused, `activeDocument` is the
 pop-out's document, so a naive default would silently skip the main window (or
-vice versa). It handles four separate surfaces per pass: `.callout[data-callout]`
-elements (block callouts — via `resolveDef`, which falls back to the
-configured fallback callout for unknown ids), heading-bar title spans (for
-gradient sync only, not icons — Live Preview's heading bars are CodeMirror's
-own DOM and are explicitly skipped), and heading/inline **token** DOM shared
-between Live Preview widgets and reading view — with CodeMirror-owned widget
-DOM (marked `CSS_CM_WIDGET`) explicitly excluded, because CM rebuilds those
-itself when the decoration set changes (see
+vice versa). It handles four separate surfaces per pass:
+`.callout[data-callout]` elements, heading-bar title spans (for gradient sync
+only, not icons — Live Preview's heading bars are CodeMirror's own DOM and are
+explicitly skipped), and heading/inline **token** DOM shared between Live
+Preview widgets and reading view — with CodeMirror-owned widget DOM (marked
+`CSS_CM_WIDGET`) explicitly excluded, because CM rebuilds those itself when the
+decoration set changes (see
 [Render roles](08-render-roles.md#the-css_cm_widget-marker)).
 
+Native Block icons split again by ownership. A registered Studio definition
+uses the two-path machinery above. A theme-owned definition is restored through
+`restoreCoreIcon()`. An unknown id delegates to
+[`paintUnknownFallbackIcon()`](../../src/manager/css/fallbackIcon.ts), which
+paints a pack icon, picture, emoji, or hidden-icon state as visible DOM only
+while the weak fallback's private `--callout-icon` sentinel is the computed
+winner. Lucide fallback icons stay entirely in Obsidian's native path. This
+conditional DOM path is what lets an exact CSS snippet replace an unknown
+fallback icon without Callout Studio reading the snippet file.
+
 > [!WARNING]
-> **Restoring a callout back to the theme is not just "stop emitting CSS."**
+> **Returning a native icon slot is not just "stop emitting CSS."**
 > Obsidian resolves a block callout's icon **once**, the first time it renders
 > the element, and never looks at `--callout-icon` again — its own
 > post-processor bails early if the icon element already has a child. If this
-> plugin already painted a callout's icon and the user later hands it
-> to the theme, the plugin's baked SVG would sit there forever unless
-> something puts Obsidian's own icon back. `restoreCoreIcon()` exists
+> plugin already painted a callout's icon and a theme or exact snippet later
+> owns that slot, the plugin's baked SVG would sit there forever unless
+> something puts the winning native icon back. `restoreCoreIcon()` exists
 > specifically for this: it re-derives what core *would* draw
 > (`data-callout-icon` attribute, or `--callout-icon` computed style,
 > unwrapped the same way core's renderer unwraps CSS string quoting) and draws
-> that instead. It runs **unconditionally**, every pass, for every externally
-> styled callout — there's no "did we already fix this one" flag, because
+> that instead. It runs on every pass for theme-owned definitions and whenever
+> an unknown id's fallback sentinel is not the computed winner — there's no
+> "did we already fix this one" flag, because
 > Live Preview's native callout widget has no forced-rebuild hook this plugin
 > can reach, so re-deriving and comparing is cheaper than tracking state.
 
@@ -333,8 +342,8 @@ immediately behind it and beat it. The full order, later winning ties:
 5. `document.adoptedStyleSheets` — per CSSOM, after *all* document stylesheets
 
 This plugin's generated CSS is (5), so it beats a theme **and** a snippet at
-equal specificity. That is the whole reason theme mode has to exist: load
-order cannot save a theme, so something else has to.
+equal specificity. That is why theme ownership needs an explicit emission gate:
+load order cannot save a theme, so something else has to.
 
 **But source order only breaks ties at equal specificity, and the themes that
 motivate this flag do not write at equal specificity.** Measured against ITS
@@ -355,34 +364,36 @@ cleanly — it is a **split render**, this plugin carrying the properties the
 theme did not escalate and the theme carrying the rest. That is why the
 symptom reads as broken rather than merely overridden.
 
-### The three registers this sheet writes in
+### The four registers this sheet writes in
 
-Everything the generated stylesheet emits sits in one of exactly three bands,
-and which band a declaration belongs in is a question about **whose choice it
-is**, not about how badly we want it to apply:
+Everything the generated stylesheet emits sits in one of four bands, with a
+fifth no-output row for theme ownership. Which band a declaration belongs in is
+a question about **whose choice it is**, not about how badly we want it to
+apply:
 
 | Band | Emitted as | Beats | Loses to |
 | --- | --- | --- | --- |
-| **Theme-owned row** (`registry.standsDown`) | nothing at all | — | everything |
+| **Theme-owned row** (`registry.themeOwns`) | nothing at all | — | everything |
+| **Unknown native Block fallback** | `.callout:not(:where(<known ids>))` = `(0,1,0)`, **no `!important`** | generic core/theme defaults on a later-source tie | every ordinary exact `[data-callout="x"]` definition |
 | **Derived surface** — core's own defaults, restated because the accent spelling broke them | `:where(.callout)[data-callout="x"]` = `(0,1,0)`, **no `!important`** | core, on source order | every theme rule from `(0,2,0)` up |
 | **Explicit Studio choice** — chosen accent, authored background, gradient, transparency, icon, global style | `CSSInjector.sel()` at the studio weight, **`!important`** | theme and snippets | a user snippet at `!important` plus one more class-unit |
 | **Theme-owned surface** — the active styling says a callout has no background, or frames it in `currentColor` | the theme's own guard + `.callout` at **`weight + 2`**, `!important` | the row above, which is the point | nothing this sheet emits |
 
-The line between the middle two rows is the one that is easy to get wrong: **a
-chosen accent colour is not a chosen background.** A background *derived* from
+The line between the derived-surface and explicit-Studio rows is the one that
+is easy to get wrong: **a chosen accent colour is not a chosen background.** A background *derived* from
 the accent defers to the theme; a background the user authored — a Saved
 Palette, a custom colour, a gradient, "transparent" — wins, for that one
 property and no other.
 
-And the fourth band inverts the third: **an authored background is still not a
-claim on a surface the theme has taken away.** See
+And the theme-owned-surface band inverts the explicit-Studio band: **an authored
+background is still not a claim on a surface the theme has taken away.** See
 [The theme-owned surface](#the-theme-owned-surface) below.
 
 Two consequences worth keeping in mind before touching any of this:
 
-- A rule emitted here is *not* guaranteed to apply. Anything that must hold
-  needs either specificity above what the active theme writes, or the
-  `!important` register `generateFallbackCSS` speaks in.
+- A rule emitted here is *not* guaranteed to apply. Explicit Studio choices
+  use measured specificity plus `!important`; the unknown Block fallback does
+  the opposite deliberately, so normal Obsidian CSS can replace it.
 - Core's own contract is the cheapest thing to win, because core declares at
   `(0,2,0)` and derives everything else from two custom properties. On
   Obsidian 1.13+, `--callout-color` alone drives the accent, the border, the
@@ -448,21 +459,20 @@ frame from the very variable this plugin sets, so it already works. A per-guard
 veto would catch that one and miss a theme that states the colour in a separate
 rule under a different guard.
 
-> [!WARNING]
-> `generateFallbackCSS` writes `body .callout<chain>`, and every guard the
-> scanner accepts is a compound on `<body>` itself — so the guard **replaces**
-> that `body` rather than sitting in front of it. `body.callout-on body .callout`
-> asks for a body inside a body and matches nothing, silently.
+The unknown native-Block fallback does not participate in this surface-cancel
+band. It is intentionally weak and leaves generic theme geometry intact; an
+exact CSS definition for that unknown id outranks it without a scanner, a body
+guard rewrite, or `!important`.
 
 240 of the 257 installed themes resolve to no claim at all and emit
 byte-identical text to before this existed.
 
 ## One rule, and why there is no setting
 
-`externalStyle` alone could only say "all or nothing", which looked like the
-whole answer until the corpus was measured. A callout-heavy theme does not lose
-quietly: it takes the properties it escalated and leaves the rest, and the user
-sees a **split**, which reads as this plugin being broken.
+The retired personal-CSS switch could only say "all or nothing", which looked
+like the whole answer until the corpus was measured. A callout-heavy theme does
+not lose quietly: it takes the properties it escalated and leaves the rest, and
+the user sees a **split**, which reads as this plugin being broken.
 
 An intermediate mode cannot fix that, because a mode that wins *some* properties
 **is** the failure. A *manual* mode could not fix it either, for a different
@@ -497,17 +507,12 @@ vault style callouts without naming a single id. Counting those would hand the
 plugin's entire job to the theme on half the corpus, for rules that mostly set a
 radius.
 
-**`standsDown` is the emission gate and is deliberately broader than
-`themeOwns`:**
-
-| | reason | listed under | editable |
-|---|---|---|---|
-| `themeOwns(def)` | the active theme names the id | *Callouts from your theme* | no |
-| `def.externalStyle === true` | the user styles it in their own CSS | their own section, **External CSS** label | yes |
-
-Both mean "emit nothing", so every CSS path asks `standsDown`. Anything deciding
-where a row is *listed*, or whether it is read-only, must ask `themeOwns` — an
-External CSS row is still the user's.
+**`themeOwns` is the sole emission gate.** If the active theme names the id,
+the row appears under *Callouts from your theme*, is read-only, and the plugin
+emits nothing for it. Otherwise the saved definition is an ordinary editable
+Studio callout. Enabled snippet CSS still contributes to the existing
+specificity/dialect scan, but snippets are not scanned for definitions or
+promoted into an ownership model; they participate through the normal cascade.
 
 ### Nothing is stored, and that is the design
 
@@ -537,14 +542,18 @@ translate. It stamps **nothing** onto a row: `styleMode` was compared by the
 full-strength `isCalloutModified`, so a stamped built-in would be written to
 `data.json`, enter exports, and grow a spurious *Reset to default*.
 
-`externalStyle` survives, because it never belonged to that model. It shipped in
-2.11.0 and is translated into all 32 locales, and it means something still true
-and still the user's: *I style this one myself.* Deleting it would make the
-plugin start overriding those users' snippets, with `!important`, on upgrade.
+The released `externalStyle` field is retired too, but through a separate
+content-keyed migration because literal `true` identifies users whose rendering
+will change. The field is removed on load and import rather than translated to
+another ownership abstraction. Saved colours, icons, backgrounds, global Block
+geometry, and Heading/Inline rendering become active again; Markdown and CSS
+snippet files are untouched. Affected upgrades receive one localized notice
+only after the cleaned settings state is known to be durable. See
+[Callout registry § Retiring personal-CSS ownership](05-callout-registry.md#retiring-personal-css-ownership-without-losing-the-saved-design).
 
 ### The one exception that was removed
 
-`hideIcon` used to keep emitting its `display: none` even in theme mode, on the
+`hideIcon` used to keep emitting its `display: none` for theme-owned rows, on the
 argument that a theme cannot express "draw no icon" on the owner's behalf. Under
 an absolute rule that does not survive: it is an override like any other, and
 the one a user is most likely to read as the plugin breaking their theme. The
@@ -572,7 +581,7 @@ section is now exact rather than nearly-exact. One gate enforces it:
 ```ts
 // editor/renderShared.ts
 export function shouldRenderToken(resolved: ResolvedCalloutDef): boolean {
-	return !resolved.external && !resolved.themeOwned;
+	return !resolved.themeOwned;
 }
 ```
 
@@ -608,6 +617,71 @@ Automatic theme appearance inspection updates only ownership and measured artwor
 Switching themes never adds or removes definitions, writes a retirement list, or
 starts a vault discovery pass. See [theme appearance](17-theme-callout-discovery.md).
 
+## Unknown-callout fallback: deliberately weak on native Blocks
+
+An unrecognized id has two different rendering surfaces, and treating them as
+one is what previously made normal CSS impossible to compose with the fallback.
+
+For Obsidian's native Block DOM, `generateFallbackCSS` emits:
+
+```css
+.callout:not(:where(<every known id and alias>)) { /* light baseline */ }
+:where(.theme-dark) .callout:not(:where(<every known id and alias>)) { /* dark */ }
+```
+
+Both selectors remain at `(0,1,0)` no matter how many definitions exist, and
+none of their declarations is `!important`. The native block receives only the
+fallback accent/background/transparency values and an optional direct content
+colour. It receives no Studio global icon gap, border, radius, title/content
+scale, alignment, theme-surface cancel, icon pseudo-element, or special print
+gradient repaint. `bgProps` still expresses an authored background as a
+translucent tint, so nested unknown blocks preserve Obsidian's stepped
+compositing.
+
+An ordinary exact rule such as `.callout[data-callout="third-party"]` has
+specificity `(0,2,0)` and therefore wins whether it came from the theme or an
+enabled snippet. This is the interoperability mechanism: snippet selectors are
+not parsed into definitions, imported, or converted into registry ownership.
+The cascade decides, property by property. The fallback's `--cs-accent` follows the
+computed winning standard `--callout-color`, so a CSS-defined native accent is
+also the accent its remaining baseline surfaces see.
+
+Icons need one extra handshake because Obsidian resolves the native SVG DOM
+once. A Lucide fallback icon stays in the normal `--callout-icon` path. A pack
+icon, picture, emoji, or explicit hidden-icon fallback writes a private sentinel
+at the same weak specificity; `paintIcons` acts only if that sentinel is still
+the computed winner. If an exact rule supplies its own `--callout-icon`, the
+sentinel disappears and the painter restores/re-resolves the native icon rather
+than covering it. If that rule is later disabled, the sentinel wins again and
+the stored fallback artwork is restored on repaint.
+
+Heading, Inline, and reference tokens are different: they are plugin-owned
+`.cs-*` DOM and an unresolved token carries `.cs-unknown`. `fallbackTokenCSS`
+continues to give those surfaces the full Studio fallback appearance. A
+theme-owned fallback template still suppresses both halves entirely, because a
+theme's exact design cannot be portably copied onto unrelated unknown ids.
+
+### Verifying the real browser cascade
+
+The string-level unit suites prove what CSS is emitted, but selector
+specificity, source order, custom-property substitution, and computed values are
+also exercised in an isolated Chromium page:
+
+```bash
+PLAYWRIGHT_MODULE=/absolute/path/to/playwright node scripts/test-fallback-cascade.mjs
+```
+
+The environment variable can be omitted when Playwright is installed locally.
+The script bundles `tests/browser/fallbackCascade.ts`, blocks network requests,
+and currently runs 52 light/dark checks across full-colour and legacy RGB-triplet
+dialects: exact-snippet precedence, snippet removal, known ids, a large alias set,
+hostile quoted/backslashed ids, theme/unknown geometry exclusion, and fallback
+restoration. It is a browser
+cascade regression, **not** an Obsidian integration test, and it is not part of
+`npm test`; the real-app visual pass described in
+[Build, test, and release](19-build-test-release.md#what-the-test-harness-can-and-cannot-see)
+is still required.
+
 
 ## Reading the theme back
 
@@ -628,7 +702,7 @@ five-rung icon ladder are all
 One rule from there that everything else depends on: **the fallback is never the
 row's stored icon or colour.** Those describe a design that is not on screen.
 
-### Why studio mode uses `!important`
+### Why Studio styling uses `!important`
 
 This file used to argue the opposite, and the argument was: our sheet already
 cascades after the user's own snippets, so `!important` would leave a user
@@ -716,31 +790,27 @@ needs enforcement in three places:
    any other, and the one a user is most likely to read as the plugin breaking
    their theme. The flag is preserved on the row and applies again the moment
    the plugin is painting the callout.
-2. **`generateGlobalStyleCSS()`'s vault-wide rules exclude it by selector** via
-   `externalExclusion()`, which builds a `:not(:where(...))` suffix listing every
-   theme-styled callout's attribute form. The `:where()` wrapper is deliberate: a
-   plain `:not()` chain takes the specificity of its argument, so a naive chain
-   would make these global rules progressively *harder* for the theme to
-   override as more callouts opt out — exactly backwards. `:where()` contributes
-   zero specificity, so the rules stay exactly as easy to override no matter how
-   many rows carry the flag. (`generateFallbackCSS`'s own `:not()` chain
-   deliberately does the **opposite** — there the growing specificity is what
-   lets the catch-all outrank every per-callout rule.) This is also what makes
-   the global frame settings part of what "Callout Studio style" *means*: a
-   callout handed to the theme is handed over whole, geometry included.
+2. **`generateGlobalStyleCSS()` uses an explicit allow-list** from
+   `studioCalloutSelectors()`: one selector per registered, non-theme-owned id
+   and alias. The global declarations are strong, so a generic `.callout` rule
+   with exclusions would still leak Studio geometry onto every unknown id. The
+   allow-list gives registered Studio callouts the icon gap, border, radius,
+   scale, and alignment while both theme-owned and unrecognized native Blocks
+   get none of them. This is also what makes global frame settings part of what
+   "Callout Studio style" means: theme ownership hands over the whole Block,
+   geometry included.
 3. **The heading-bar / inline-pill / ref-token render paths skip the token
    entirely** (`shouldRenderToken()` in `renderShared.ts`). Those are the
-   plugin's own invented syntax: for an External CSS row there is nothing there
-   for the user's snippet to style, and for a theme-owned callout the two
+   plugin's own invented syntax, so a theme-owned callout's two non-native
    formats are withdrawn outright — see *What it emits for a theme callout*
    above. This is a real cost, and the UI states it rather than hiding it.
 
 The row **stays in the registry** deliberately — `generateFallbackCSS` builds its
 `:not()` exclusion chain from every *known* id including theme-owned ones, so
-removing one would hand it to the `!important` catch-all instead, which is the
-opposite of "hands off." That catch-all also asks the fallback *template*
-whether it stands down and emits nothing when it does, so the fallback target
-needs no special case of its own.
+removing one would let the unknown baseline leak onto an id the theme already
+owns. The catch-all also asks whether the fallback *template* is theme-owned and
+emits nothing when it is, so the fallback target needs no special case of its
+own.
 
 ## `calloutSel` vs. `tokenAttrSel` — the selector escaping rule
 

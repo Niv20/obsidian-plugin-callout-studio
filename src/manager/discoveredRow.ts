@@ -37,8 +37,6 @@ export function buildDiscoveredRow(
 		source: "fallback",
 
 		customized: undefined,
-
-		externalStyle: undefined,
 	};
 }
 

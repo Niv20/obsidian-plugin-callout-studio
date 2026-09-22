@@ -37,6 +37,7 @@ import {
 } from "./discoveredRowPersistence";
 import { COLOUR_NEUTRAL_FIELDS, isCalloutModified } from "./calloutCompare";
 import { migrateStyleModes } from "./styleModeMigration";
+import { withoutExternalStyle, retiredExternalCssState } from "./externalCssRetirement";
 import { reconcileIdCollisions } from "./idCollisionMigration";
 import {
 	findAttrIdConflict,
@@ -169,6 +170,8 @@ export class CalloutRegistry {
 	 * save. Read (and cleared) through {@link needsSaveAfterLoad}.
 	 */
 	private pendingLoadMigrationSave = false;
+	/** Evidence from an affected saved file, consumed only after a durable save. */
+	private pendingExternalCssRetirement = false;
 	/** Palette merges from the last load, awaiting {@link takePaletteMerges}. */
 	private pendingPaletteMerges: Array<{ from: string; to: string }> = [];
 	/** What a newer build wrote and this one must hand back — see foreignFields. */
@@ -196,7 +199,7 @@ export class CalloutRegistry {
 	 * stored value stays exactly as `getIconIds()` spelled it.
 	 */
 	private setCallout(id: string, def: CalloutDefinition): void {
-		this.callouts.set(id, def);
+		this.callouts.set(id, withoutExternalStyle(def));
 	}
 
 	load(data: Partial<PluginData> | null): void {
@@ -209,7 +212,9 @@ export class CalloutRegistry {
 		this.previewShadowedDef = null;
 		this.previewIsDemo = false;
 		this.syncUserImages();
-		this.pendingLoadMigrationSave = false;
+		const externalCss = retiredExternalCssState(data);
+		this.pendingExternalCssRetirement = externalCss.affected;
+		this.pendingLoadMigrationSave = externalCss.changed;
 		this.pendingPaletteMerges = [];
 		// Before the early return below, so a load of nothing clears it too.
 		this.foreign = collectForeignFields(data);
@@ -524,6 +529,14 @@ export class CalloutRegistry {
 		return pending;
 	}
 
+	get hasExternalCssRetirement(): boolean {
+		return this.pendingExternalCssRetirement;
+	}
+
+	acknowledgeExternalCssRetirement(): void {
+		this.pendingExternalCssRetirement = false;
+	}
+
 	/**
 	 * Migration: fold rows that are one callout in two spellings.
 	 * `manager/idCollisionMigration.ts` owns the merge rule and the reasoning.
@@ -693,10 +706,7 @@ export class CalloutRegistry {
 			if (def.builtIn) continue;
 			if (def.source !== "fallback") continue;
 			if (def.customized === true) continue;
-			// Only `externalStyle` may skip here: it is a stored per-row field,
-			// so every device agrees. `themeOwns` must not be asked — it would
-			// let this machine's theme decide what data.json says (issue #41).
-			if (def.externalStyle === true) continue;
+			// Local theme ownership cannot decide what synchronized rows store.
 			if (def.id === fallbackId) continue;
 			const next = mirroredFallbackRow(def, fallback);
 			if (!next) continue;
@@ -993,27 +1003,6 @@ export class CalloutRegistry {
 		return true;
 	}
 
-	/**
-	 * Hand a callout to the user's own CSS, or take it back — the only writer of
-	 * {@link CalloutDefinition.externalStyle}, and not a statement about the
-	 * theme, which {@link themeOwns} derives and nobody sets.
-	 *
-	 * Writes `true` or **deletes** the key, never `false`: `isCalloutModified`
-	 * compares `JSON.stringify(value ?? null)`, so an explicit falsy value would
-	 * leave a built-in nobody edited reading as customized forever.
-	 */
-	setExternalStyle(id: string, external: boolean): boolean {
-		const existing = this.callouts.get(id);
-		if (!existing) return false;
-		if ((existing.externalStyle === true) === external) return false;
-		const next: CalloutDefinition = { ...existing };
-		if (external) next.externalStyle = true;
-		else delete next.externalStyle;
-		this.setCallout(id, next);
-		this.notifyChange();
-		return true;
-	}
-
 	/** What the theme claims and draws. Derived, never stored: {@link ThemeFacts}. */
 	private readonly themeFacts = new ThemeFacts();
 
@@ -1047,19 +1036,6 @@ export class CalloutRegistry {
 	/** How the theme paints `def`. See {@link ThemeFacts.appearanceOf}. */
 	themeAppearanceOf(def: CalloutDefinition): ThemeAppearance {
 		return this.themeFacts.appearanceOf(this.vaultIdFormsFor(def));
-	}
-
-	/**
-	 * True when this plugin emits no CSS at all for `def` — the one question
-	 * every CSS path asks. Two quite different reasons land here, and emitters
-	 * are right not to distinguish them: the theme owns the callout
-	 * ({@link themeOwns}), or the user has handed this one to their own snippet
-	 * ({@link setExternalStyle}). Callers deciding where a row is *listed*, or
-	 * whether it is read-only, must ask `themeOwns` — an External CSS row is
-	 * still the user's.
-	 */
-	standsDown(def: CalloutDefinition): boolean {
-		return def.externalStyle === true || this.themeOwns(def);
 	}
 
 	isBuiltInModified(id: string): boolean {

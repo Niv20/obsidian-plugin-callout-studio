@@ -109,13 +109,6 @@ export const ru: Record<string, string> = {
 	"settings.makeFallbackAction": "Использовать резервный стиль по умолчанию",
 
 	"settings.colorSwatchAria": "Акцент: {{accent}} · Фон: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Оформлять своим CSS",
-	"settings.externalCssStopAction": "Снова позволить Callout Studio оформлять это",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "Внешний CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout из вашей темы",
 	"settings.themeCalloutsDesc":
@@ -252,9 +245,6 @@ export const ru: Record<string, string> = {
 		"Новые типы callout не импортированы (ID могут уже существовать).",
 	"notice.iconDownloadFailed":
 		'Не удалось загрузить иконку Material "{{name}}". Она может быть недоступна для данного стиля/насыщенности или отсутствует подключение к сети.',
-	"notice.externalCssOn":
-		'Callout Studio больше не оформляет "{{name}}" — его вид теперь определяет ваш собственный CSS. Его формы Callout-заголовок и Встроенный callout не будут отображаться.',
-	"notice.externalCssOff": 'Callout Studio снова оформляет "{{name}}".',
 	"notice.vaultScanFailed": "Не удалось посчитать использование callout, потому что нельзя прочитать {{count}} заметку(к). Проверьте хранилище и синхронизацию, затем попробуйте снова.",
 
 	"notice.vaultRewritePartial":
@@ -354,7 +344,7 @@ export const ru: Record<string, string> = {
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> Так выглядит содержимое этого callout.\n",
-	"editor.externalStyleClose": "Понятно",
+	"editor.themePreviewClose": "Понятно",
 
 	// Palette editor modal
 	"palette.newTitle": "Новая цветовая палитра",

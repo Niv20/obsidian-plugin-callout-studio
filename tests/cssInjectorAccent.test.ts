@@ -463,22 +463,24 @@ describe("generateTokenColorCSS — the accent on this plugin's own DOM", () => 
 });
 
 describe("generateFallbackCSS — the accent for ids nobody defined", () => {
-	it("imposes the fallback's colour with !important", () => {
+	it("imposes the fallback's colour weakly and derives Studio accent from it", () => {
 		const { registry, css } = harness();
 		registry.settings.fallbackCalloutId = "note";
 		const out = css.generateFallbackCSS(registry.getAll());
 		const rule = parseRules(out).find(
-			(r) => r.selector.startsWith("body .callout:not(") && !r.at.length,
+			(r) => r.selector.startsWith(".callout:not(:where(") && !r.at.length,
 		);
 		assert.ok(rule);
 		assert.strictEqual(
 			valueOf(rule, "--callout-color"),
-			"var(--cs-accent-theme) !important",
+			"var(--cs-accent-theme)",
 		);
 		assert.strictEqual(
 			valueOf(rule, "--cs-accent-theme"),
-			"var(--callout-default) !important",
+			"var(--callout-default)",
 		);
+		assert.strictEqual(valueOf(rule, "--cs-accent"), "var(--callout-color)");
+		assert.ok(rule.decls.every((decl) => !decl.includes("!important")));
 	});
 
 	it("excludes every known id AND alias, in Obsidian's attr form", () => {
@@ -486,14 +488,14 @@ describe("generateFallbackCSS — the accent for ids nobody defined", () => {
 		registry.settings.fallbackCalloutId = "note";
 		registry.add(definition({ id: "multi word callout" }));
 		const out = css.generateFallbackCSS(registry.getAll());
-		// A space-form :not() would never exclude the element Obsidian tagged
-		// `multi-word-callout`, and these rules carry !important at a
-		// specificity no per-callout rule can reach — so the miss would forcibly
-		// repaint a callout the user did define.
-		assert.ok(out.includes(':not([data-callout="multi-word-callout"])'));
-		assert.ok(!out.includes(':not([data-callout="multi word callout"])'));
+		// A space-form exclusion would never exclude the element Obsidian tagged
+		// `multi-word-callout`. The whole comma list lives in :where(), so adding
+		// definitions cannot increase the fallback selector's specificity.
+		assert.ok(out.includes('[data-callout="multi-word-callout"]'));
+		assert.ok(!out.includes('[data-callout="multi word callout"]'));
+		assert.ok(out.includes(".callout:not(:where("));
 		// Aliases too: `abstract` ships with `summary`/`tldr`.
-		assert.ok(out.includes(':not([data-callout="tldr"])'));
+		assert.ok(out.includes('[data-callout="tldr"]'));
 	});
 
 	it("emits nothing at all when no fallback is configured", () => {
@@ -511,19 +513,14 @@ describe("generateFallbackCSS — the accent for ids nobody defined", () => {
 	it("still excludes a row handed to the theme", () => {
 		const { registry, css } = harness();
 		registry.settings.fallbackCalloutId = "note";
-		registry.add(definition({ id: "themed", externalStyle: true }));
-		// Load-bearing rather than an oversight: everything in this block carries
-		// !important at a specificity no theme can reach, so dropping the row
-		// from the :not() chain would paint it *harder* than a normal callout —
-		// the exact opposite of handing it over. "Emit nothing for it" is
-		// achieved by generateCalloutCSS returning early instead.
+		registry.add(definition({ id: "themed" }));
+		registry.setThemeOwnedIds(new Set(["themed"]));
+		// Recognized remains recognized even while its own generated block is
+		// absent; the unknown-id fallback must not leak onto it.
 		assert.ok(css.generateFallbackCSS(registry.getAll()).includes(
-			':not([data-callout="themed"])',
+			'[data-callout="themed"]',
 		));
-		assert.strictEqual(
-			css.generateCalloutCSS(definition({ id: "themed", externalStyle: true })),
-			"",
-		);
+		assert.strictEqual(css.generateCalloutCSS(registry.get("themed")!), "");
 	});
 
 	it("tags unknown tokens by class, with no :not() chain", () => {
@@ -544,41 +541,42 @@ describe("generateFallbackCSS — the accent for ids nobody defined", () => {
 	});
 });
 
-describe("externalExclusion — lifting themed callouts out of the global rules", () => {
-	it("is empty when the user has handed none over", () => {
-		const { css } = harness();
-		assert.strictEqual(css.externalExclusion(), "");
-	});
-
-	it("wraps the list in :where() so the global rules keep their weight", () => {
+describe("global block geometry — registered Studio ids only", () => {
+	it("names registered ids and aliases explicitly", () => {
 		const { registry, css } = harness();
 		registry.add(
-			definition({ id: "themed", externalStyle: true, aliases: ["themed alt"] }),
+			definition({ id: "mine", aliases: ["mine alt"] }),
 		);
-		const excl = css.externalExclusion();
-		// A plain :not([a]):not([b]) chain takes the specificity of each
-		// argument, so every row the user hands over would make these rules
-		// *harder* for the very theme they are handing them to. :where()
-		// contributes zero. (generateFallbackCSS deliberately does the opposite —
-		// there the inflation is what lets the catch-all outrank per-callout
-		// rules.)
-		assert.match(excl, /^:not\(:where\(.+\)\)$/);
-		assert.ok(excl.includes('[data-callout="themed"]'));
-		assert.ok(excl.includes('[data-callout="themed-alt"]'));
+		const out = css.generateGlobalStyleCSS();
+		assert.ok(out.includes('.callout[data-callout="mine"]'));
+		assert.ok(out.includes('.callout[data-callout="mine-alt"]'));
+		assert.doesNotMatch(out, /(?:^|\n)\.callout(?:\s|\{|>)/);
 	});
 
-	it("reaches every global rule that is keyed on nothing but .callout", () => {
+	it("omits every id and alias owned by the theme", () => {
 		const { registry, css } = harness();
-		registry.add(definition({ id: "themed", externalStyle: true }));
+		registry.add(definition({ id: "themed", aliases: ["themed alt"] }));
+		registry.setThemeOwnedIds(new Set(["themed-alt"]));
 		registry.settings.globalStyle.titleScale = 1.2;
 		registry.settings.globalStyle.alignContentWithTitle = true;
 		const out = css.generateGlobalStyleCSS();
+		assert.ok(out.includes('.callout[data-callout="note"]'));
+		assert.ok(!out.includes('[data-callout="themed"]'));
+		assert.ok(!out.includes('[data-callout="themed-alt"]'));
+	});
+
+	it("never emits a strong generic selector that can capture an unknown id", () => {
+		const { registry, css } = harness();
+		registry.settings.globalStyle.borderRadius = 12;
+		registry.settings.globalStyle.titleScale = 1.2;
+		registry.settings.globalStyle.contentScale = 1.1;
+		registry.settings.globalStyle.alignContentWithTitle = true;
+		const out = css.generateGlobalStyleCSS();
 		for (const rule of parseRules(out)) {
-			assert.ok(
-				rule.selector.includes(":not(:where(") ||
-					!rule.selector.startsWith(".callout"),
-				`global rule escapes the exclusion: ${rule.selector}`,
-			);
+			for (const selector of rule.selector.split(",\n")) {
+				if (!selector.startsWith(".callout")) continue;
+				assert.ok(selector.includes("[data-callout="), selector);
+			}
 		}
 	});
 });

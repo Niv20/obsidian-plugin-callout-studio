@@ -110,13 +110,6 @@ export const ja: Record<string, string> = {
 
 	"settings.colorSwatchAria": "アクセント: {{accent}} · 背景: {{bg}}",
 
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "自分のCSSでスタイル設定する",
-	"settings.externalCssStopAction": "Callout Studioに再度スタイルさせる",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "外部CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "テーマ由来のcallout",
 	"settings.themeCalloutsDesc":
@@ -255,9 +248,6 @@ export const ja: Record<string, string> = {
 		"新しいcalloutタイプはインポートされませんでした（IDがすでに存在する可能性があります）。",
 	"notice.iconDownloadFailed":
 		'Materialアイコン"{{name}}"をダウンロードできませんでした。このスタイル/ウェイトでは利用できないか、接続がオフラインの可能性があります。',
-	"notice.externalCssOn":
-		'"{{name}}"はCallout Studioによるスタイル設定の対象外になりました — 見た目は自分のCSSで決まります。見出しcalloutとインラインcalloutの形式は描画されません。',
-	"notice.externalCssOff": '"{{name}}"は再びCallout Studioがスタイル設定します。',
 	"notice.vaultScanFailed": "コールアウトの使用数を集計できませんでした。{{count}} 件のノートを読み取れませんでした。ストレージと同期を確認してから再試行してください。",
 
 	"notice.vaultRewritePartial":
@@ -355,9 +345,8 @@ export const ja: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> これはcalloutの内容の見た目です。\n",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleClose": "了解",
+	// Theme callout preview window
+	"editor.themePreviewClose": "了解",
 
 	// Palette editor modal
 	"palette.newTitle": "新しいカラーパレット",

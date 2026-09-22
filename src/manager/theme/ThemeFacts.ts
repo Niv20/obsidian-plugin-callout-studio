@@ -12,11 +12,10 @@
  *
  * Because every surface that draws a callout already has the registry, and
  * threading a theme store through the eight that draw an icon is eight chances
- * for one of them to keep drawing the stored one — which is exactly the bug
- * this replaced (`AutoComplete` tested the raw `externalStyle` field and so
- * missed every theme-owned callout). Holding them here rather than inside
- * `CalloutRegistry` keeps that file from growing a second responsibility, and
- * keeps this one honest: it never touches the DOM, it is handed plain data.
+ * for one of them to keep drawing the stored one. Holding the facts here rather
+ * than inside `CalloutRegistry` keeps that file from growing a second
+ * responsibility, and keeps this one honest: it never touches the DOM, it is
+ * handed plain data.
  *
  * ## Why the empty state is the right default
  *

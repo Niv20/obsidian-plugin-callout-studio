@@ -93,9 +93,8 @@ export interface ThemeSurfaceInput {
 	 * `.callout…[data-callout="x"]` for the id and every alias, comma-joined,
 	 * already built at the cancel weight and behind `guardPrefix(guard)`.
 	 *
-	 * A callback because the two callers spell a callout differently: the
-	 * per-callout block names ids, and `fallbackCSS` writes one `:not()` chain
-	 * that names none of them.
+	 * A callback because each per-callout block supplies its own id and aliases
+	 * at the required cancellation weight.
 	 */
 	selectorsFor(guard: string): string;
 	/** What the active styling says. */
