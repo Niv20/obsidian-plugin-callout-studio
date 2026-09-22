@@ -22,6 +22,7 @@ export function buildHeadingLevelRow(
 ): HTMLElement {
 	return new Setting(parent)
 		.setName(t("commandBuilder.headingLevel"))
+		.setClass("cs-command-field")
 		.setDesc(t("commandBuilder.headingLevelDesc"))
 		.addDropdown((dd) => {
 			for (const level of HEADING_LEVELS) {
@@ -38,6 +39,7 @@ export function buildActionRow(
 ): HTMLElement {
 	return new Setting(parent)
 		.setName(t("commandBuilder.action"))
+		.setClass("cs-command-field")
 		.setDesc(t("commandBuilder.actionDesc"))
 		.addDropdown((dd) => {
 			dd.addOption("wrap", t("commandBuilder.actionWrap"));

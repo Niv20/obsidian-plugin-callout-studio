@@ -32,7 +32,13 @@ class LayoutObserver {
 	disconnect(): void { this.disconnected = true; }
 }
 
-function mount(options: { height?: number; offsetTop?: number; clipBottom?: number; observe?: boolean } = {}) {
+function mount(options: {
+	height?: number;
+	offsetTop?: number;
+	clipBottom?: number;
+	autoClip?: "modal-content" | "vertical-tab-content";
+	observe?: boolean;
+} = {}) {
 	const view = new LayoutWindow();
 	view.visualViewport.height = options.height ?? 720;
 	Object.assign(view.visualViewport, { offsetTop: options.offsetTop ?? 0 });
@@ -42,6 +48,11 @@ function mount(options: { height?: number; offsetTop?: number; clipBottom?: numb
 	const control = doc.createElement("div");
 	const menu = doc.createElement("div");
 	const clip = options.clipBottom === undefined ? undefined : doc.createElement("div");
+	if (clip && options.autoClip) {
+		clip.addClass(options.autoClip);
+		clip.appendChild(control);
+		clip.appendChild(menu);
+	}
 	let controlBottom = 200;
 	control.getBoundingClientRect = () => ({ bottom: controlBottom } as DOMRect);
 	if (clip) clip.getBoundingClientRect = () => ({ bottom: options.clipBottom } as DOMRect);
@@ -49,7 +60,13 @@ function mount(options: { height?: number; offsetTop?: number; clipBottom?: numb
 	let updates = 0;
 	const refresh = (): void => {
 		updates++;
-		teardown = syncListboxMenuHeightCap(asEl(control), asEl(menu), teardown, refresh, clip && asEl(clip));
+		teardown = syncListboxMenuHeightCap(
+			asEl(control),
+			asEl(menu),
+			teardown,
+			refresh,
+			options.autoClip ? undefined : clip && asEl(clip),
+		);
 	};
 	refresh();
 	return {
@@ -91,6 +108,18 @@ describe("listbox popup height — visible space", () => {
 			assert.equal(h.cap(), "23px");
 		} finally { h.dispose(); }
 	});
+
+	for (const clipClass of ["modal-content", "vertical-tab-content"] as const) {
+		it(`discovers its ${clipClass} boundary without caller-specific wiring`, () => {
+			const h = mount({ clipBottom: 310.8, autoClip: clipClass });
+			try {
+				assert.equal(h.cap(), "98px");
+				h.setControlBottom(275);
+				h.refresh();
+				assert.equal(h.cap(), "23px");
+			} finally { h.dispose(); }
+		});
+	}
 
 	it("recalculates on window and visual viewport changes without duplicating listeners", () => {
 		const h = mount();

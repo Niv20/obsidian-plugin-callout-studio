@@ -68,7 +68,7 @@ export function buildComboboxSkeleton(
 	setIcon(caret, "chevrons-up-down");
 
 	const menu = root.createDiv({
-		cls: "cs-combobox-menu cs-combobox-menu-hidden",
+		cls: "cs-combobox-menu cs-scrollable-dropdown-menu cs-combobox-menu-hidden",
 		attr: { role: "listbox", id: options.listboxId },
 	});
 

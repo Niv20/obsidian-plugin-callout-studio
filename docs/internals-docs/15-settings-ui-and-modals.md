@@ -1455,10 +1455,14 @@ plugin's general save-on-change convention.
 
 #### `CommandEditorModal` — the rows, and where each one's rule lives
 
-The form is *Callout format*, *Callout type*, *Heading level*, *Action*, *Fold
-state*, then a live preview of the palette name. Every row is built
+The form is *Callout type*, *Callout format*, *Heading level*, *Action*, *Fold
+state*, then a live preview of the command name. Every row is built
 unconditionally and hidden with `cs-row-hidden`; one `syncVisibility()` decides
-all of it, so the controls can never disagree about the current format.
+all of it, so the controls can never disagree about the current format. Every
+configuration row also carries `cs-command-field`: the four format-specific
+native dropdowns share one compact control-column width. The callout picker adds
+`cs-command-callout-setting` for a wider searchable field, and both widths
+become full-width when Obsidian stacks rows on a phone.
 
 Three of those rows are their own modules under `settings/command/` rather than
 methods on the modal, because each carries a rule that only makes sense next to
@@ -1538,6 +1542,16 @@ Insert follows the same pointer/keyboard distinction.
 Callers **must** call `destroy()` — a modal from `onClose`, a settings section
 through `registerDisposer` — because the popup holds a document-level
 click listener.
+
+Every custom dropdown menu carries `cs-scrollable-dropdown-menu`, whose 320px
+maximum and vertical scrolling are the common fallback. For the long shared
+listboxes and the icon-source picker, `listboxPopupLayout.ts` lowers that limit
+while the menu is open to the space actually visible below the control. It is
+bounded by both the visual viewport and the nearest modal or settings scroll
+container, and recalculates on resize and surrounding scroll. This keeps the
+command editor, **Default fallback callout**, palette, language, and icon-source
+pickers on the same overflow contract; the hidden three-item Fold menu needs
+only the shared static cap.
 
 Two details in [`listboxPopupEvents.ts`](../../src/ui/listboxPopupEvents.ts) are
 load-bearing and have already been bugs. Selecting the label on click has to

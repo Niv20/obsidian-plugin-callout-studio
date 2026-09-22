@@ -1,7 +1,7 @@
 /**
  * settings/CommandEditorModal.ts — Build or edit one custom command.
  *
- * A small form: which format to write, which callout, and — where the format
+ * A small form: which callout to use, which format to write, and — where the format
  * gives a real choice — the heading level, the action and the fold state.
  * Returns the draft to its caller, which owns the list and mints the identity;
  * this modal never touches settings itself.
@@ -134,10 +134,6 @@ export class CommandEditorModal extends Modal {
 			});
 		}
 
-		this.formatRow = buildFormatRow(contentEl, (role) => {
-			this.role = role;
-			this.syncVisibility();
-		});
 		this.calloutRow = buildCalloutRow(
 			contentEl,
 			this.host,
@@ -148,6 +144,10 @@ export class CommandEditorModal extends Modal {
 				this.syncVisibility();
 			},
 		);
+		this.formatRow = buildFormatRow(contentEl, (role) => {
+			this.role = role;
+			this.syncVisibility();
+		});
 		this.headingRowEl = buildHeadingLevelRow(contentEl, this.headingLevel, (level) => {
 			this.headingLevel = level;
 			this.syncVisibility();

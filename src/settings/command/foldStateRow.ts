@@ -45,6 +45,7 @@ export function buildFoldStateRow(
 ): FoldStateRow {
 	const setting = new Setting(parent)
 		.setName(t("commandBuilder.foldState"))
+		.setClass("cs-command-field")
 		.setDesc(t("commandBuilder.foldStateDesc"))
 		.addDropdown((dd) => {
 			for (const fold of FOLD_ORDER) {

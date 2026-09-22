@@ -53,7 +53,7 @@ Obsidian owns the shortcut itself; Callout Studio provides the command.
 
 ## Create a custom command
 
-Under **Your commands**, click **New command**. Choose the callout format and type, then configure the options for that format.
+Under **Your commands**, click **New command**. Choose the callout type first, then its format and the options for that format. The configuration fields use one compact, aligned width while the searchable callout picker stays wider. Long picker menus stay inside the window and scroll.
 
 A Heading command can insert a chosen callout at a specific heading level. An Inline command inserts a chosen inline callout. A Block command can either insert a new block or wrap the current selection, and it can set the initial fold state:
 

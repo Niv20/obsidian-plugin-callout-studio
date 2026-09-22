@@ -33,6 +33,7 @@ export function buildCalloutRow(
 ): CalloutRow {
 	const setting = new Setting(parent)
 		.setName(t("commandBuilder.callout"))
+		.setClass("cs-command-field")
 		.setClass("cs-command-callout-setting")
 		.setDesc(t("commandBuilder.calloutDesc"));
 

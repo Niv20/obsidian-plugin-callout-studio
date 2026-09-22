@@ -1273,7 +1273,7 @@ export class CalloutEditor extends Modal {
 			text: "▾",
 		});
 		const foldMenu = foldDropdown.createDiv({
-			cls: "cs-palette-menu cs-palette-menu-up cs-fold-menu cs-palette-menu-hidden",
+			cls: "cs-palette-menu cs-palette-menu-up cs-fold-menu cs-scrollable-dropdown-menu cs-palette-menu-hidden",
 			attr: { role: "listbox", tabindex: "-1" },
 		});
 		const foldOptions: {

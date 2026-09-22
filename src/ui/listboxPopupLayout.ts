@@ -17,6 +17,9 @@ export function syncListboxMenuHeightCap(
 	const doc = menuEl.ownerDocument;
 	const view = doc.defaultView;
 	if (!view) return currentTeardown;
+	const resolvedClipEl = clipEl ?? menuEl.closest<HTMLElement>(
+		".modal-content, .vertical-tab-content",
+	) ?? undefined;
 
 	const rect = controlEl.getBoundingClientRect();
 	const viewport = view.visualViewport;
@@ -26,10 +29,10 @@ export function syncListboxMenuHeightCap(
 		return currentTeardown;
 	}
 
-	// A modal body may clip the menu before the visible viewport ends.
+	// A modal or settings scroll body may clip before the viewport ends.
 	const bottom = Math.min(
 		(viewport?.offsetTop ?? 0) + viewportHeight,
-		clipEl?.getBoundingClientRect().bottom ?? Infinity,
+		resolvedClipEl?.getBoundingClientRect().bottom ?? Infinity,
 	);
 	const available = bottom - MENU_EDGE_GAP_PX - rect.bottom - COMBOBOX_MENU_OFFSET_PX;
 	const cap = Math.max(
@@ -49,7 +52,7 @@ export function syncListboxMenuHeightCap(
 	const observer = typeof view.ResizeObserver === "function"
 		? new view.ResizeObserver(onResize) : undefined;
 	observer?.observe(controlEl);
-	if (clipEl) observer?.observe(clipEl);
+	if (resolvedClipEl) observer?.observe(resolvedClipEl);
 	return () => {
 		view.removeEventListener("resize", onResize);
 		viewport?.removeEventListener("resize", onResize);

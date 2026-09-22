@@ -2860,8 +2860,6 @@ button.callout-studio-icon-picker-loading {
 	top: calc(100% + 4px);
 	inset-inline-start: 0;
 	inset-inline-end: 0;
-	max-height: 320px;
-	overflow-y: auto;
 	z-index: 1000;
 	padding: 6px 0;
 	border-radius: var(--radius-s);
@@ -3397,14 +3395,10 @@ button.callout-studio-icon-picker-loading {
    free to end up narrower than the field that opened it. */
 .cs-combobox-menu {
 	position: absolute;
-	box-sizing: border-box;
 	top: calc(100% + 4px);
 	inset-inline-start: 0;
 	inset-inline-end: 0;
 	max-width: 100%;
-	max-height: var(--cs-combobox-menu-max-height, 320px);
-	overflow-x: hidden;
-	overflow-y: auto;
 	z-index: 1000;
 	padding: 6px 0;
 	border-radius: var(--radius-s);
@@ -3415,6 +3409,17 @@ button.callout-studio-icon-picker-loading {
 		0 2px 6px rgba(0, 0, 0, 0.18);
 	outline: none;
 	text-align: start;
+}
+
+/* Every custom dropdown uses one bounded scroll surface. The fallback is the
+   normal desktop limit; long menus lower the custom property live when the
+   viewport or the nearest modal/settings scroll container leaves less room. */
+.cs-scrollable-dropdown-menu {
+	box-sizing: border-box;
+	max-height: var(--cs-combobox-menu-max-height, 320px);
+	overflow-x: hidden;
+	overflow-y: auto;
+	overscroll-behavior: contain;
 }
 
 .cs-combobox-menu-hidden {
@@ -3556,10 +3561,30 @@ button.callout-studio-icon-picker-loading {
 	min-width: 0;
 }
 
-.cs-command-callout-setting .cs-combobox {
-	flex: 0 1 auto;
-	width: 220px;
+/* The four configuration selects share one compact width. Callout type keeps
+   more room for its icon, searchable name and caret. Both become full-width
+   when Obsidian stacks setting rows on a phone. */
+.cs-command-field {
+	--cs-command-control-width: 180px;
+}
+
+.cs-command-field.cs-command-callout-setting {
+	--cs-command-control-width: 220px;
+}
+
+.is-phone .cs-command-field {
+	--cs-command-control-width: 100%;
+}
+
+.cs-command-field .setting-item-control {
+	flex: 0 0 auto;
+	width: var(--cs-command-control-width);
 	max-width: 100%;
+}
+
+.cs-command-field .setting-item-control > :is(.cs-combobox, select.dropdown) {
+	width: 100%;
+	min-width: 0;
 }
 
 /* The shared empty state is a page-level block elsewhere; inside a popup it
@@ -3575,12 +3600,8 @@ button.callout-studio-icon-picker-loading {
 
 /* A fixed 320px is most of a phone screen with the keyboard up. */
 @media (max-width: 600px) {
-	.cs-combobox-menu {
+	.cs-scrollable-dropdown-menu {
 		max-height: min(50vh, var(--cs-combobox-menu-max-height, 320px));
-	}
-
-	.is-phone .cs-command-callout-setting .cs-combobox {
-		width: 100%;
 	}
 }
 
@@ -3679,12 +3700,9 @@ button.callout-studio-icon-picker-loading {
    follows the mouse. */
 .icon-picker-source-menu {
 	position: absolute;
-	box-sizing: border-box;
 	top: calc(100% + 4px);
 	inset-inline-start: 0;
 	inset-inline-end: 0;
-	max-height: var(--cs-combobox-menu-max-height, 320px);
-	overflow-y: auto;
 	z-index: 1000;
 	padding: 6px 0;
 	border-radius: var(--radius-s);

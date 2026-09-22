@@ -231,7 +231,7 @@ export class IconPicker extends Modal {
 		});
 		this.paintSourceButton();
 		this.sourceMenuEl = this.sourceDropdownEl.createDiv({
-			cls: "icon-picker-source-menu icon-picker-source-menu-hidden",
+			cls: "icon-picker-source-menu cs-scrollable-dropdown-menu icon-picker-source-menu-hidden",
 			attr: { role: "listbox", tabindex: "-1", "aria-labelledby": "icon-picker-source-label" },
 		});
 		this.sourceDropdownEl.addEventListener("focusout", (ev) => {

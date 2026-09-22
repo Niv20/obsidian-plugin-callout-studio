@@ -85,6 +85,7 @@ export function buildFormatRow(
 ): FormatRow {
 	const setting = new Setting(parent)
 		.setName(t("commandBuilder.format"))
+		.setClass("cs-command-field")
 		.setDesc(t("commandBuilder.formatDesc"));
 	let dd: DropdownComponent | undefined;
 	// Options are filled by sync, not here: which formats exist depends on the
