@@ -17,7 +17,7 @@
  * editor state, and pulling them here would have meant handing this module the
  * editor — which is not an extraction, only a longer argument list.
  *
- * So the editor drives this through {@link PaletteCombobox.setLabel} and
+ * So the editor drives this through {@link PaletteCombobox.setSelection} and
  * {@link PaletteCombobox.renderLead} and is told about choices through the
  * callbacks. It never has to know the popup exists.
  */
@@ -123,8 +123,7 @@ export class PaletteCombobox {
 	 * knows which case it is in, so it says both.
 	 */
 	setSelection(id: string, label: string): void {
-		this.popup.setSelected(id);
-		this.popup.inputEl.value = label;
+		this.popup.setSelected(id, label);
 	}
 
 	/** Draw the swatch left of the field, from the form's own colours. */
