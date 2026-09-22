@@ -26,7 +26,7 @@ import { createSettingsWriter } from "./manager/settingsWriterHost";
 import { saveSettingsWithFeedback } from "./manager/settingsSaveFeedback";
 import { DeviceLocalStore } from "./manager/DeviceLocalStore";
 import { reportLegacyDiscoveryMigration } from "./manager/legacyDiscoveryNotices";
-import { trackExternalCssRetirement } from "./manager/externalCssRetirementNotice";
+import { trackStartupMigrationNotices } from "./manager/startupMigrationNotices";
 import { loadSettingsInto } from "./manager/settingsBoot";
 import { ReloadQueue } from "./manager/reloadQueue";
 import { registerThemeAppearance } from "./manager/theme/themeAppearanceSync";
@@ -131,7 +131,7 @@ export default class CalloutStudioPlugin extends Plugin {
 
 		// Load saved definitions and device-only UI preferences.
 		this.localState = new DeviceLocalStore(this.app);
-		const showExternalCssUpgradeNotice = trackExternalCssRetirement(this);
+		const showStartupMigrationNotices = trackStartupMigrationNotices(this);
 		this.reloads = new ReloadQueue(this);
 		// The other seam. Cheap: a no-op unless a reload is actually waiting.
 		this.registry.onPreviewChange(() => this.reloads.release());
@@ -316,7 +316,7 @@ export default class CalloutStudioPlugin extends Plugin {
 
 		// Confirm the fresh install after layout without blocking first render.
 		onActiveLayoutReady(this, () => {
-			showExternalCssUpgradeNotice();
+			showStartupMigrationNotices();
 			void runLaunchSequence(this, boot);
 		});
 	}

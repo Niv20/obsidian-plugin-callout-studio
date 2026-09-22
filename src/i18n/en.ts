@@ -124,7 +124,6 @@ export const en: Record<string, string> = {
 	"settings.myCalloutTypes": "My callout types",
 	"settings.builtInCallouts": "Built-in callouts",
 	"settings.contextMenu": "Context menu",
-	"settings.autocomplete": "Autocomplete",
 	"settings.keyboardShortcuts": "Commands",
 	"settings.language": "Language",
 	"settings.languageDesc":
@@ -219,11 +218,6 @@ export const en: Record<string, string> = {
 	"settings.deletePaletteAria": "Delete palette {{name}}",
 	"settings.deletePaletteConfirm":
 		'Delete palette "{{name}}"?\nCallouts that use its colors are not affected.',
-
-	// Settings — Autocomplete
-	"settings.enableAutocomplete": "Enable [! Autocomplete",
-	"settings.enableAutocompleteDesc":
-		'Show suggestions when you type "[!" inside a block callout in the editor. Pick a callout type from the list to insert a complete callout header.',
 
 	// Settings — Keyboard shortcuts
 	"settings.customCommands": "Commands & Hotkeys",
@@ -373,6 +367,8 @@ export const en: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "Cursor is not inside a callout.",
 	"notice.autocompleteTargetMoved":
 		"Nothing was inserted — the line changed while the editor was open.",
+	"notice.autocompleteAlwaysEnabled":
+		"Autocomplete is now a core feature and is always enabled.",
 	"notice.openHotkeysFailed": "Could not open Obsidian hotkeys settings.",
 	"notice.filterHotkeysFailed":
 		"Opened Obsidian hotkeys, but could not apply the Callout Studio filter.",

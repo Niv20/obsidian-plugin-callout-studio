@@ -79,7 +79,6 @@ export const cs: Record<string, string> = {
 	"settings.myCalloutTypes": "Moje typy callout",
 	"settings.builtInCallouts": "Vestavěné callouts",
 	"settings.contextMenu": "Kontextové menu",
-	"settings.autocomplete": "Automatické doplňování",
 	"settings.keyboardShortcuts": "Příkazy",
 	"settings.language": "Jazyk",
 	"settings.languageDesc":
@@ -154,9 +153,6 @@ export const cs: Record<string, string> = {
 	"settings.deletePaletteAria": "Smazat paletu {{name}}",
 	"settings.deletePaletteConfirm":
 		'Smazat paletu "{{name}}"?\nCallouty používající její barvy nebudou ovlivněny.',
-	"settings.enableAutocomplete": "Povolit automatické doplňování [!",
-	"settings.enableAutocompleteDesc":
-		'Zobrazuje návrhy při psaní "[!" v bloku citace v editoru. Vyberte typ callout ze seznamu a vložte úplnou hlavičku callout.',
 
 	"settings.customCommands": "Příkazy a klávesové zkratky",
 	"settings.customCommandsDesc":

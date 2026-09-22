@@ -205,7 +205,7 @@ deferring to them: the command carries its own answer, so a callout created by
 interface PluginSettings {
   globalStyle: GlobalStyleSettings;
   contextMenu: ContextMenuSettings;
-  autocomplete: AutocompleteSettings;
+  autocomplete: AutocompleteSettings;    // compatibility marker; enabled is always true
   iconSources: IconSourceSettings;
   headingCallouts: HeadingCalloutSettings;
   inlineCallouts: InlineCalloutSettings;
@@ -219,6 +219,11 @@ interface PluginSettings {
   quickInsertSource: string;
 }
 ```
+
+`autocomplete.enabled` remains in the serialized shape so older settings files
+and exports have an explicit upgrade target, but it is no longer mutable
+application state. The merge always produces `true`, the editor does not gate
+autocomplete on it, and a saved legacy `false` schedules a migration write.
 
 Discovery has no saved preferences or device index. Manual results are ordinary
 fallback definitions in `data.json` (data format 5). The retired automatic-discovery,

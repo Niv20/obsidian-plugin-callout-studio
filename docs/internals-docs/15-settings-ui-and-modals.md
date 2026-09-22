@@ -9,8 +9,7 @@ the individual modals not already covered by
 
 `CalloutStudioSettingsTab.display()` renders its sections in a fixed order into
 one scrollable tab: callout lists → fallback → custom palettes → global settings
-→ autocomplete → context menu → hotkeys → import/export → language → reset →
-footer.
+→ context menu → hotkeys → import/export → language → reset → footer.
 
 The footer owns the contact and project links: one friendly sentence embeds an
 inline GitHub issue link for either a bug or an idea and an inline email link.

@@ -617,7 +617,7 @@ export interface LegacyPopupSettings extends ContextMenuSettings {
 }
 
 export interface AutocompleteSettings {
-	enabled: boolean;
+	readonly enabled: true;
 }
 
 export interface IconSourceSettings {

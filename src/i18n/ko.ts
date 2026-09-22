@@ -80,7 +80,6 @@ export const ko: Record<string, string> = {
 	"settings.myCalloutTypes": "내 callout 유형",
 	"settings.builtInCallouts": "기본 제공 callout",
 	"settings.contextMenu": "컨텍스트 메뉴",
-	"settings.autocomplete": "자동 완성",
 	"settings.keyboardShortcuts": "명령",
 	"settings.language": "언어",
 	"settings.languageDesc":
@@ -157,9 +156,6 @@ export const ko: Record<string, string> = {
 	"settings.deletePaletteAria": "팔레트 {{name}} 삭제",
 	"settings.deletePaletteConfirm":
 		'팔레트 "{{name}}"을(를) 삭제하시겠습니까?\n이 색상을 사용하는 callout은 영향을 받지 않습니다.',
-	"settings.enableAutocomplete": "[! 자동 완성 활성화",
-	"settings.enableAutocompleteDesc":
-		'편집기의 인용 블록에서 "[!"를 입력하면 제안을 표시합니다. 목록에서 callout 유형을 선택하여 완전한 callout 헤더를 삽입합니다.',
 
 	"settings.customCommands": "명령 및 핫키",
 	"settings.customCommandsDesc":

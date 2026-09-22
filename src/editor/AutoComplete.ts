@@ -127,8 +127,6 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		editor: Editor,
 		_file: TFile | null,
 	): EditorSuggestTriggerInfo | null {
-		if (!this.plugin.settings.autocomplete.enabled) return null;
-
 		const line = editor.getLine(cursor.line);
 		// Look for the `[!` trigger by scanning backward from the cursor. Its
 		// position on the line decides which render role is being typed.

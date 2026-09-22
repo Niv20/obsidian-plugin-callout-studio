@@ -20,6 +20,9 @@ The saved callout is now available in all three formats.
 
 Type a block or heading token for a callout that does not exist yet. When the autocomplete menu offers **Create new callout**, select it. The editor opens with the name already filled in, ready for you to choose its color and icon.
 
+Autocomplete is a core editor feature and is always enabled; there is no
+settings switch for it.
+
 ![autocomplete](https://github.com/user-attachments/assets/f3fd6c6c-e5de-4847-b46f-c7b42856d2fc)
 
 Nothing is saved until you click **Create callout**. If you close the editor, the unknown token remains in the note and uses the default fallback style.

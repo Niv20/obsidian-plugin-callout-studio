@@ -78,7 +78,6 @@ export const zh: Record<string, string> = {
 	"settings.myCalloutTypes": "我的 callout 类型",
 	"settings.builtInCallouts": "内置 callout",
 	"settings.contextMenu": "右键菜单",
-	"settings.autocomplete": "自动完成",
 	"settings.keyboardShortcuts": "命令",
 	"settings.language": "语言",
 	"settings.languageDesc":
@@ -153,9 +152,6 @@ export const zh: Record<string, string> = {
 	"settings.deletePaletteAria": "删除调色板 {{name}}",
 	"settings.deletePaletteConfirm":
 		'删除调色板 "{{name}}"？\n使用其颜色的 callout 不受影响。',
-	"settings.enableAutocomplete": "启用 [! 自动完成",
-	"settings.enableAutocompleteDesc":
-		'在编辑器块引用中输入"[!"时显示建议。从列表中选择 callout 类型以插入完整的 callout 标题。',
 
 	"settings.customCommands": "命令与热键",
 	"settings.customCommandsDesc":

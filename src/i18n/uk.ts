@@ -80,7 +80,6 @@ export const uk: Record<string, string> = {
 	"settings.myCalloutTypes": "Мої типи callout",
 	"settings.builtInCallouts": "Вбудовані callout",
 	"settings.contextMenu": "Контекстне меню",
-	"settings.autocomplete": "Автодоповнення",
 	"settings.keyboardShortcuts": "Команди",
 	"settings.language": "Мова",
 	"settings.languageDesc":
@@ -158,9 +157,6 @@ export const uk: Record<string, string> = {
 	"settings.deletePaletteAria": "Видалити палітру {{name}}",
 	"settings.deletePaletteConfirm":
 		'Видалити палітру "{{name}}"?\nБлоки callout, які використовують її кольори, не зміняться.',
-	"settings.enableAutocomplete": "Увімкнути автодоповнення [!",
-	"settings.enableAutocompleteDesc":
-		"Показує підказки при введенні «[!» у блоку цитати в редакторі. Виберіть тип callout зі списку, щоб вставити повний заголовок callout.",
 
 	"settings.customCommands": "Команди та гарячі клавіші",
 	"settings.customCommandsDesc":

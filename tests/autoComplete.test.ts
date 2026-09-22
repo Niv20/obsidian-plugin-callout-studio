@@ -179,10 +179,14 @@ function pick(h: Harness, source: string, calloutId: string): FakeEditor {
 /* -------------------------------------------------------------------------- */
 
 describe("onTrigger — when it opens at all", () => {
-	it("stays shut while the feature is off", () => {
+	it("cannot be suppressed by a legacy in-memory false setting", () => {
 		const h = harness();
-		h.settings.autocomplete.enabled = false;
-		assert.strictEqual(triggerAt(h, "> [!⎸").info, null);
+		// A pre-migration object can still be handed to the editor in a test or by
+		// an older synced device. Runtime behaviour is unconditional now: the
+		// compatibility field is normalized on load, not consulted as a gate.
+		const legacy = h.settings.autocomplete as unknown as { enabled: boolean };
+		legacy.enabled = false;
+		assert.ok(triggerAt(h, "> [!⎸").info);
 	});
 
 	it("stays shut on a line with no token", () => {

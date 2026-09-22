@@ -75,7 +75,6 @@ export const zhTW: Record<string, string> = {
 	"settings.myCalloutTypes": "我的 callout 類型",
 	"settings.builtInCallouts": "內建 callout",
 	"settings.contextMenu": "右鍵選單",
-	"settings.autocomplete": "自動完成",
 	"settings.keyboardShortcuts": "指令",
 	"settings.language": "語言",
 	"settings.languageDesc":
@@ -145,9 +144,6 @@ export const zhTW: Record<string, string> = {
 	"settings.deletePaletteAria": "刪除調色盤 {{name}}",
 	"settings.deletePaletteConfirm":
 		"刪除調色盤「{{name}}」？\n使用其顏色的 callout 不受影響。",
-	"settings.enableAutocomplete": "啟用 [! 自動完成",
-	"settings.enableAutocompleteDesc":
-		"在編輯器區塊引用中輸入「[!」時顯示建議。從清單中選擇 callout 類型以插入完整的 callout 標題。",
 	"settings.customCommands": "指令與快速鍵",
 	"settings.customCommandsDesc":
 		"查看每個 Callout Studio 指令及其綁定的快速鍵，並為您最常用的 callout 建立自己的指令。預設不分配快速鍵。",

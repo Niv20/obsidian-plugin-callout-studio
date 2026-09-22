@@ -80,7 +80,6 @@ export const nl: Record<string, string> = {
 	"settings.myCalloutTypes": "Mijn callout-types",
 	"settings.builtInCallouts": "Ingebouwde callouts",
 	"settings.contextMenu": "Contextmenu",
-	"settings.autocomplete": "Automatisch aanvullen",
 	"settings.keyboardShortcuts": "Opdrachten",
 	"settings.language": "Taal",
 	"settings.languageDesc":
@@ -156,9 +155,6 @@ export const nl: Record<string, string> = {
 	"settings.deletePaletteAria": "Palet {{name}} verwijderen",
 	"settings.deletePaletteConfirm":
 		'Palet "{{name}}" verwijderen?\nCallouts die de kleuren ervan gebruiken, worden niet beïnvloed.',
-	"settings.enableAutocomplete": "[! Automatisch aanvullen inschakelen",
-	"settings.enableAutocompleteDesc":
-		'Toont suggesties wanneer u "[!" typt in een Block Callout in de editor. Kies een callout-type uit de lijst om een volledig callout-koptekst in te voegen.',
 
 	"settings.customCommands": "Opdrachten & sneltoetsen",
 	"settings.customCommandsDesc":

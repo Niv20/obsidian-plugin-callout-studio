@@ -79,7 +79,6 @@ export const fa: Record<string, string> = {
 	"settings.myCalloutTypes": "انواع callout من",
 	"settings.builtInCallouts": "Callout‌های داخلی",
 	"settings.contextMenu": "منوی زمینه",
-	"settings.autocomplete": "تکمیل خودکار",
 	"settings.keyboardShortcuts": "دستورها",
 	"settings.language": "زبان",
 	"settings.languageDesc":
@@ -153,9 +152,6 @@ export const fa: Record<string, string> = {
 	"settings.deletePaletteAria": "حذف پالت {{name}}",
 	"settings.deletePaletteConfirm":
 		'پالت "{{name}}" حذف شود؟\nبلوک‌های callout که از رنگ‌های آن استفاده می‌کنند تغییر نمی‌کنند.',
-	"settings.enableAutocomplete": "فعال‌سازی تکمیل خودکار [!",
-	"settings.enableAutocompleteDesc":
-		'هنگام تایپ "[!" در یک بلوک نقل‌قول در ویرایشگر، پیشنهادات نمایش می‌دهد. یک نوع callout از لیست انتخاب کنید تا سرتیتر کامل callout درج شود.',
 
 	"settings.customCommands": "دستورها و کلیدهای میانبر",
 	"settings.customCommandsDesc":

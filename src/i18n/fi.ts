@@ -77,7 +77,6 @@ export const fi: Record<string, string> = {
 	"settings.myCalloutTypes": "Omat callout-tyypit",
 	"settings.builtInCallouts": "Sisäänrakennetut calloutit",
 	"settings.contextMenu": "Kontekstivalikko",
-	"settings.autocomplete": "Automaattinen täydennys",
 	"settings.keyboardShortcuts": "Komennot",
 	"settings.language": "Kieli",
 	"settings.languageDesc":
@@ -149,9 +148,6 @@ export const fi: Record<string, string> = {
 	"settings.deletePaletteAria": "Poista paletti {{name}}",
 	"settings.deletePaletteConfirm":
 		'Poistetaanko paletti "{{name}}"?\nSen värejä käyttävät callout-tyypit eivät muutu.',
-	"settings.enableAutocomplete": "Ota [! automaattinen täydennys käyttöön",
-	"settings.enableAutocompleteDesc":
-		'Näyttää ehdotuksia, kun kirjoitat "[!" lainausblokissa editorissa. Valitse callout-tyyppi luettelosta lisätäksesi täydellisen callout-otsikon.',
 	"settings.customCommands": "Komennot ja pikanäppäimet",
 	"settings.customCommandsDesc":
 		"Näytä jokainen Callout Studion komento ja sen pikanäppäin, ja luo omia komentoja eniten käyttämillesi callouteille. Oletuksena ei ole määritetty pikanäppäimiä.",

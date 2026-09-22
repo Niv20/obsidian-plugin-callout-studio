@@ -80,7 +80,6 @@ export const sv: Record<string, string> = {
 	"settings.myCalloutTypes": "Mina callout-typer",
 	"settings.builtInCallouts": "Inbyggda callouts",
 	"settings.contextMenu": "Snabbmeny",
-	"settings.autocomplete": "Autokomplettera",
 	"settings.keyboardShortcuts": "Kommandon",
 	"settings.language": "Språk",
 	"settings.languageDesc":
@@ -155,9 +154,6 @@ export const sv: Record<string, string> = {
 	"settings.deletePaletteAria": "Ta bort palett {{name}}",
 	"settings.deletePaletteConfirm":
 		'Ta bort paletten "{{name}}"?\nCallouts som använder dess färger påverkas inte.',
-	"settings.enableAutocomplete": "Aktivera [! autokomplettering",
-	"settings.enableAutocompleteDesc":
-		'Visar förslag när du skriver "[!" i ett blockcitat i editorn. Välj en callout-typ från listan för att infoga en komplett callout-rubrik.',
 
 	"settings.customCommands": "Kommandon och kortkommandon",
 	"settings.customCommandsDesc":

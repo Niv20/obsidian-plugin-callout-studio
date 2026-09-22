@@ -79,7 +79,6 @@ export const hi: Record<string, string> = {
 	"settings.myCalloutTypes": "मेरे callout प्रकार",
 	"settings.builtInCallouts": "बिल्ट-इन callouts",
 	"settings.contextMenu": "संदर्भ मेनू",
-	"settings.autocomplete": "स्वतः पूर्णता",
 	"settings.keyboardShortcuts": "कमांड",
 	"settings.language": "भाषा",
 	"settings.languageDesc":
@@ -154,9 +153,6 @@ export const hi: Record<string, string> = {
 	"settings.deletePaletteAria": "पैलेट {{name}} हटाएँ",
 	"settings.deletePaletteConfirm":
 		'पैलेट "{{name}}" हटाएँ?\nइसके रंगों का उपयोग करने वाले callout प्रभावित नहीं होंगे.',
-	"settings.enableAutocomplete": "[! स्वतः पूर्णता सक्षम करें",
-	"settings.enableAutocompleteDesc":
-		'एडिटर में ब्लॉककोट के अंदर "[!" टाइप करने पर सुझाव दिखाता है। पूरा callout हेडर डालने के लिए सूची से callout प्रकार चुनें।',
 
 	"settings.customCommands": "कमांड और हॉटकी",
 	"settings.customCommandsDesc":

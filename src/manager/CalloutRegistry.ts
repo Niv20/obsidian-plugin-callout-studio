@@ -32,9 +32,7 @@ import {
 } from "../constants";
 import { iconCacheKey, packFor } from "../icons/registry";
 import { migrateSavedIcons } from "./iconMigrations";
-import {
-	selectPersistedRows,
-} from "./discoveredRowPersistence";
+import { selectPersistedRows } from "./discoveredRowPersistence";
 import { COLOUR_NEUTRAL_FIELDS, isCalloutModified } from "./calloutCompare";
 import { migrateStyleModes } from "./styleModeMigration";
 import { withoutExternalStyle, retiredExternalCssState } from "./externalCssRetirement";
@@ -70,6 +68,7 @@ import { reconcileSavedRow } from "./savedCalloutRows";
 import { mergeSavedSettings } from "../utils/settingsMerge";
 import { setUserImages } from "../icons/packs/userImages";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
+import { recordAutocompleteEnablement } from "./autocompleteEnablementMigration";
 
 /**
  * Stamped into `data.json` for provenance. Migrations deliberately key on
@@ -204,6 +203,7 @@ export class CalloutRegistry {
 
 	load(data: Partial<PluginData> | null): void {
 		this.callouts.clear();
+		const autocompleteWasDisabled = recordAutocompleteEnablement(this, data);
 		// Loading is replacement, including keys absent from older files. Never
 		// carry a previous device's settings, artwork or shadowed preview across.
 		this.settings = mergeSavedSettings(data?.settings ?? {});
@@ -214,7 +214,7 @@ export class CalloutRegistry {
 		this.syncUserImages();
 		const externalCss = retiredExternalCssState(data);
 		this.pendingExternalCssRetirement = externalCss.affected;
-		this.pendingLoadMigrationSave = externalCss.changed;
+		this.pendingLoadMigrationSave = externalCss.changed || autocompleteWasDisabled;
 		this.pendingPaletteMerges = [];
 		// Before the early return below, so a load of nothing clears it too.
 		this.foreign = collectForeignFields(data);

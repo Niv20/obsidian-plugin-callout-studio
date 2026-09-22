@@ -97,7 +97,6 @@ export const he: Record<string, string> = {
 	"settings.myCalloutTypes": "סוגי תיבות־ההבלטה שלי",
 	"settings.builtInCallouts": "תיבות־הבלטה מובנות",
 	"settings.contextMenu": "תפריט ההקשר",
-	"settings.autocomplete": "השלמה אוטומטית",
 	"settings.keyboardShortcuts": "פקודות",
 	"settings.language": "שפה",
 	"settings.languageDesc":
@@ -173,14 +172,10 @@ export const he: Record<string, string> = {
 	"settings.customPalettes": "פלטות צבעים שמורות",
 	"settings.newPalette": "פלטה חדשה",
 	"settings.customPalettesEmpty": "כרגע אין פלטות צבעים שמורות.",
-	// Settings — Autocomplete
 	"settings.editPaletteAria": "עריכת פלטה {{name}}",
 	"settings.deletePaletteAria": "מחיקת פלטה {{name}}",
 	"settings.deletePaletteConfirm":
 		'למחוק את הפלטה "{{name}}"?\nתיבות־הבלטה שמשתמשות בצבעים שלה לא יושפעו.',
-	"settings.enableAutocomplete": "השלמה אוטומטית בעת הקלדת [!",
-	"settings.enableAutocompleteDesc":
-		'מציג הצעות בעת הקלדת "[!" בתוך בלוק ציטוט בעורך. בחירה של סוג מתוך הרשימה תשלים אוטומטית את כותרת תיבת־ההבלטה.',
 
 	// Settings — Keyboard shortcuts
 	"settings.customCommands": "פקודות ומקשי קיצור",

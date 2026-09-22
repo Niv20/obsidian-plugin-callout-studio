@@ -226,9 +226,10 @@ export function mergeSavedSettings(
 			},
 		},
 		autocomplete: {
-			enabled:
-				savedSettings.autocomplete?.enabled ??
-				DEFAULT_SETTINGS.autocomplete.enabled,
+			// Autocomplete is a core editor feature now. Keep the persisted
+			// compatibility shape for older builds, but never let an old saved
+			// opt-out disable it in this one.
+			enabled: true,
 		},
 		iconSources: mergeIconSources(savedSettings.iconSources),
 		headingCallouts: {

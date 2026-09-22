@@ -19,10 +19,7 @@ import {
 	renderImportExportSection,
 	renderResetSection,
 } from "./sections/DataManagementSection";
-import {
-	renderAutocompleteSettingsSection,
-	renderContextMenuSettingsSection,
-} from "./sections/EditorFeaturesSection";
+import { renderContextMenuSettingsSection } from "./sections/EditorFeaturesSection";
 import { renderFallbackSection } from "./sections/FallbackSection";
 import { renderReadOnlyBanner } from "./sections/ReadOnlyBanner";
 import { renderCompetitorImportBanner } from "./competitorImportBanner";
@@ -157,7 +154,6 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		renderFallbackSection(sectionCtx, containerEl);
 		renderCustomPalettesSection(sectionCtx, containerEl);
 		renderGlobalSettingsSection(sectionCtx, containerEl);
-		renderAutocompleteSettingsSection(sectionCtx, containerEl);
 		renderContextMenuSettingsSection(sectionCtx, containerEl);
 		renderHotkeySection(sectionCtx, containerEl);
 		const importTarget = renderImportExportSection(sectionCtx, containerEl);

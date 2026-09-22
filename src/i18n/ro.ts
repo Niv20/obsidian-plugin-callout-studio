@@ -79,7 +79,6 @@ export const ro: Record<string, string> = {
 	"settings.myCalloutTypes": "Tipurile mele de callout",
 	"settings.builtInCallouts": "Callouts integrate",
 	"settings.contextMenu": "Meniu contextual",
-	"settings.autocomplete": "Completare automată",
 	"settings.keyboardShortcuts": "Comenzi",
 	"settings.language": "Limbă",
 	"settings.languageDesc":
@@ -154,9 +153,6 @@ export const ro: Record<string, string> = {
 	"settings.deletePaletteAria": "Ștergeți paleta {{name}}",
 	"settings.deletePaletteConfirm":
 		'Ștergeți paleta "{{name}}"?\nCallout-urile care îi folosesc culorile nu sunt afectate.',
-	"settings.enableAutocomplete": "Activați completarea automată [!",
-	"settings.enableAutocompleteDesc":
-		'Afișează sugestii când tastați "[!" într-un citat bloc în editor. Alegeți un tip de callout din listă pentru a insera un antet callout complet.',
 
 	"settings.customCommands": "Comenzi și taste rapide",
 	"settings.customCommandsDesc":

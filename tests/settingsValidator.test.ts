@@ -99,14 +99,14 @@ describe("sanitizeImportedSettings — the merge against defaults", () => {
 		assert.equal(settings.language, DEFAULT_SETTINGS.language);
 	});
 
-	it("keeps a value the file did supply", () => {
+	it("keeps supported values but forces retired autocomplete opt-outs on", () => {
 		const { settings } = sanitizeImportedSettings({
 			globalStyle: { borderRadius: 12 },
 			autocomplete: { enabled: false },
 			language: "he",
 		});
 		assert.equal(settings?.globalStyle.borderRadius, 12);
-		assert.equal(settings?.autocomplete.enabled, false);
+		assert.equal(settings?.autocomplete.enabled, true);
 		assert.equal(settings?.language, "he");
 	});
 

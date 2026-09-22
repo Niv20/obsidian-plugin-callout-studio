@@ -75,7 +75,6 @@ export const da: Record<string, string> = {
 	"settings.myCalloutTypes": "Mine callout-typer",
 	"settings.builtInCallouts": "Indbyggede callouts",
 	"settings.contextMenu": "Kontekstmenu",
-	"settings.autocomplete": "Autofuldførelse",
 	"settings.keyboardShortcuts": "Kommandoer",
 	"settings.language": "Sprog",
 	"settings.languageDesc":
@@ -144,9 +143,6 @@ export const da: Record<string, string> = {
 	"settings.deletePaletteAria": "Slet palet {{name}}",
 	"settings.deletePaletteConfirm":
 		'Slet paletten "{{name}}"?\nCallouts, der bruger dens farver, påvirkes ikke.',
-	"settings.enableAutocomplete": "Aktivér [! autofuldførelse",
-	"settings.enableAutocompleteDesc":
-		'Viser forslag, når du skriver "[!" inde i et blokcitat i editoren. Vælg en callout-type fra listen for at indsætte en komplet callout-overskrift.',
 	"settings.customCommands": "Kommandoer og genvejstaster",
 	"settings.customCommandsDesc":
 		"Se alle Callout Studio-kommandoer og den genvej, de er bundet til, og opret dine egne kommandoer til de callouts, du bruger mest. Der er som standard ikke tildelt nogen genveje.",

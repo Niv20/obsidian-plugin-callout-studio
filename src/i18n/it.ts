@@ -80,7 +80,6 @@ export const it: Record<string, string> = {
 	"settings.myCalloutTypes": "I miei tipi di callout",
 	"settings.builtInCallouts": "Callout integrati",
 	"settings.contextMenu": "Menu contestuale",
-	"settings.autocomplete": "Completamento automatico",
 	"settings.keyboardShortcuts": "Comandi",
 	"settings.language": "Lingua",
 	"settings.languageDesc":
@@ -156,9 +155,6 @@ export const it: Record<string, string> = {
 	"settings.deletePaletteAria": "Elimina tavolozza {{name}}",
 	"settings.deletePaletteConfirm":
 		'Eliminare la tavolozza "{{name}}"?\nI callout che usano i suoi colori non vengono modificati.',
-	"settings.enableAutocomplete": "Abilita completamento automatico [!",
-	"settings.enableAutocompleteDesc":
-		"Mostra suggerimenti quando si digita \"[!\" in una citazione nell'editor. Scegli un tipo di callout dall'elenco per inserire un'intestazione callout completa.",
 
 	"settings.customCommands": "Comandi e tasti di scelta rapida",
 	"settings.customCommandsDesc":

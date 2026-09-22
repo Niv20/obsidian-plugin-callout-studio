@@ -80,7 +80,6 @@ export const vi: Record<string, string> = {
 	"settings.myCalloutTypes": "Các loại callout của tôi",
 	"settings.builtInCallouts": "Callouts tích hợp",
 	"settings.contextMenu": "Menu ngữ cảnh",
-	"settings.autocomplete": "Tự động hoàn thành",
 	"settings.keyboardShortcuts": "Lệnh",
 	"settings.language": "Ngôn ngữ",
 	"settings.languageDesc":
@@ -157,9 +156,6 @@ export const vi: Record<string, string> = {
 	"settings.deletePaletteAria": "Xóa bảng màu {{name}}",
 	"settings.deletePaletteConfirm":
 		'Xóa bảng màu "{{name}}"?\nCác callout dùng màu này sẽ không bị ảnh hưởng.',
-	"settings.enableAutocomplete": "Bật tự động hoàn thành [!",
-	"settings.enableAutocompleteDesc":
-		'Hiển thị gợi ý khi bạn gõ "[!" trong trích dẫn khối trong trình soạn thảo. Chọn loại callout từ danh sách để chèn tiêu đề callout đầy đủ.',
 
 	"settings.customCommands": "Lệnh và phím nóng",
 	"settings.customCommandsDesc":

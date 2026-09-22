@@ -79,7 +79,6 @@ export const th: Record<string, string> = {
 	"settings.myCalloutTypes": "ประเภท callout ของฉัน",
 	"settings.builtInCallouts": "Callout ในตัว",
 	"settings.contextMenu": "เมนูบริบท",
-	"settings.autocomplete": "เติมข้อความอัตโนมัติ",
 	"settings.keyboardShortcuts": "คำสั่ง",
 	"settings.language": "ภาษา",
 	"settings.languageDesc":
@@ -154,9 +153,6 @@ export const th: Record<string, string> = {
 	"settings.deletePaletteAria": "ลบชุดสี {{name}}",
 	"settings.deletePaletteConfirm":
 		'ลบชุดสี "{{name}}" หรือไม่?\nCallout ที่ใช้สีนี้จะไม่ได้รับผลกระทบ',
-	"settings.enableAutocomplete": "เปิดใช้การเติมข้อความอัตโนมัติ [!",
-	"settings.enableAutocompleteDesc":
-		'แสดงคำแนะนำเมื่อพิมพ์ "[!" ในบล็อกอ้างอิงในตัวแก้ไข เลือกประเภท callout จากรายการเพื่อแทรกส่วนหัว callout ที่สมบูรณ์',
 
 	"settings.customCommands": "คำสั่งและปุ่มลัด",
 	"settings.customCommandsDesc":

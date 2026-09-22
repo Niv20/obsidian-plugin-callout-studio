@@ -80,7 +80,6 @@ export const de: Record<string, string> = {
 	"settings.myCalloutTypes": "Meine Callout-Typen",
 	"settings.builtInCallouts": "Integrierte Callouts",
 	"settings.contextMenu": "Kontextmenü",
-	"settings.autocomplete": "Autovervollständigung",
 	"settings.keyboardShortcuts": "Befehle",
 	"settings.language": "Sprache",
 	"settings.languageDesc":
@@ -155,9 +154,6 @@ export const de: Record<string, string> = {
 	"settings.deletePaletteAria": "Palette {{name}} löschen",
 	"settings.deletePaletteConfirm":
 		'Palette "{{name}}" löschen?\nCallouts, die ihre Farben verwenden, sind davon nicht betroffen.',
-	"settings.enableAutocomplete": "[! Autovervollständigung aktivieren",
-	"settings.enableAutocompleteDesc":
-		'Zeigt Vorschläge an, wenn Sie "[!" in einem Blockzitat im Editor eingeben. Wählen Sie einen Callout-Typ aus der Liste, um eine vollständige Callout-Überschrift einzufügen.',
 
 	"settings.customCommands": "Befehle & Tastenkürzel",
 	"settings.customCommandsDesc":

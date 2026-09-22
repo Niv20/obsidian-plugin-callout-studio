@@ -80,7 +80,6 @@ export const es: Record<string, string> = {
 	"settings.myCalloutTypes": "Mis tipos de callout",
 	"settings.builtInCallouts": "Callouts integrados",
 	"settings.contextMenu": "Menú contextual",
-	"settings.autocomplete": "Autocompletar",
 	"settings.keyboardShortcuts": "Comandos",
 	"settings.language": "Idioma",
 	"settings.languageDesc":
@@ -155,9 +154,6 @@ export const es: Record<string, string> = {
 	"settings.deletePaletteAria": "Eliminar paleta {{name}}",
 	"settings.deletePaletteConfirm":
 		'¿Eliminar la paleta "{{name}}"?\nLos callouts que usan sus colores no se ven afectados.',
-	"settings.enableAutocomplete": "Habilitar autocompletar [!",
-	"settings.enableAutocompleteDesc":
-		'Muestra sugerencias cuando escribe "[!" dentro de una cita en el editor. Elija un tipo de callout de la lista para insertar un encabezado de callout completo.',
 
 	"settings.customCommands": "Comandos y teclas de acceso rápido",
 	"settings.customCommandsDesc":

@@ -80,7 +80,6 @@ export const ja: Record<string, string> = {
 	"settings.myCalloutTypes": "マイcalloutタイプ",
 	"settings.builtInCallouts": "組み込みcallout",
 	"settings.contextMenu": "コンテキストメニュー",
-	"settings.autocomplete": "オートコンプリート",
 	"settings.keyboardShortcuts": "コマンド",
 	"settings.language": "言語",
 	"settings.languageDesc":
@@ -157,9 +156,6 @@ export const ja: Record<string, string> = {
 	"settings.deletePaletteAria": "パレット {{name}} を削除",
 	"settings.deletePaletteConfirm":
 		'パレット "{{name}}" を削除しますか？\nこの色を使用しているcalloutには影響しません。',
-	"settings.enableAutocomplete": "[! オートコンプリートを有効にする",
-	"settings.enableAutocompleteDesc":
-		'エディターの引用ブロック内で"[!"と入力すると候補を表示します。リストからcalloutタイプを選択して完全なcalloutヘッダーを挿入します。',
 
 	"settings.customCommands": "コマンドとホットキー",
 	"settings.customCommandsDesc":

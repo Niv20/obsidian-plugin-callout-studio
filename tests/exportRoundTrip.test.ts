@@ -247,7 +247,7 @@ function sourceVault(): CalloutRegistry {
 				],
 			},
 		},
-		autocomplete: { enabled: false },
+		autocomplete: { enabled: true },
 		iconSources: {
 			materialStyleDefault: "sharp",
 			materialWeightDefault: 500,
@@ -562,6 +562,7 @@ describe("export → import — a fresh vault becomes the exporting one", () => 
 
 		assert.deepStrictEqual(target.settings.globalStyle, source.settings.globalStyle);
 		assert.deepStrictEqual(target.settings.contextMenu, source.settings.contextMenu);
+		assert.strictEqual(target.settings.autocomplete.enabled, true);
 		assert.strictEqual(target.settings.language, "he");
 		assert.strictEqual(target.settings.fallbackCalloutId, "alpha");
 		assert.deepStrictEqual(target.settings.disabledFixedCommands, [

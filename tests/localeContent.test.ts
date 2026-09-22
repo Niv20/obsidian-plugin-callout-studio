@@ -204,6 +204,23 @@ describe("no locale carries a key English lacks", () => {
 	});
 });
 
+describe("the retired autocomplete toggle copy stays removed", () => {
+	const retiredKeys = [
+		"settings.autocomplete",
+		"settings.enableAutocomplete",
+		"settings.enableAutocompleteDesc",
+	] as const;
+	const all: [string, LocaleTable][] = [["en", en], ...entries];
+
+	for (const [fileId, table] of all) {
+		it(`${fileId}.ts`, () => {
+			for (const key of retiredKeys) {
+				assert.ok(!(key in table), `${fileId}.ts still carries ${key}`);
+			}
+		});
+	}
+});
+
 describe("export format guidance is translated everywhere", () => {
 	const keys = [
 		"export.formatJson",

@@ -79,7 +79,6 @@ export const tr: Record<string, string> = {
 	"settings.myCalloutTypes": "Callout türlerim",
 	"settings.builtInCallouts": "Yerleşik callout'lar",
 	"settings.contextMenu": "Bağlam menüsü",
-	"settings.autocomplete": "Otomatik tamamlama",
 	"settings.keyboardShortcuts": "Komutlar",
 	"settings.language": "Dil",
 	"settings.languageDesc":
@@ -154,9 +153,6 @@ export const tr: Record<string, string> = {
 	"settings.deletePaletteAria": "{{name}} paletini sil",
 	"settings.deletePaletteConfirm":
 		'"{{name}}" paletini sil?\nBu renkleri kullanan callout öğeleri etkilenmez.',
-	"settings.enableAutocomplete": "[! Otomatik tamamlamayı etkinleştir",
-	"settings.enableAutocompleteDesc":
-		'Düzenleyicide blok alıntı içinde "[!" yazdığınızda öneriler gösterir. Tam bir callout başlığı eklemek için listeden bir callout türü seçin.',
 
 	"settings.customCommands": "Komutlar ve kısayol tuşları",
 	"settings.customCommandsDesc":

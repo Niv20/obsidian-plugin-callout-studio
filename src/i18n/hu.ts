@@ -80,7 +80,6 @@ export const hu: Record<string, string> = {
 	"settings.myCalloutTypes": "Callout-típusaim",
 	"settings.builtInCallouts": "Beépített callout-ok",
 	"settings.contextMenu": "Helyi menü",
-	"settings.autocomplete": "Automatikus kiegészítés",
 	"settings.keyboardShortcuts": "Parancsok",
 	"settings.language": "Nyelv",
 	"settings.languageDesc":
@@ -155,9 +154,6 @@ export const hu: Record<string, string> = {
 	"settings.deletePaletteAria": "{{name}} paletta törlése",
 	"settings.deletePaletteConfirm":
 		'"{{name}}" paletta törlése?\nAz ezt a színt használó callout-ok nem változnak.',
-	"settings.enableAutocomplete": "[! Automatikus kiegészítés engedélyezése",
-	"settings.enableAutocompleteDesc":
-		'Javaslatokat jelenít meg, amikor "[!" szöveget gépel egy blokkidézet-belsejébe a szerkesztőben. Válasszon callout-típust a listából egy teljes callout fejléc beillesztéséhez.',
 
 	"settings.customCommands": "Parancsok és gyorsbillentyűk",
 	"settings.customCommandsDesc":

@@ -180,13 +180,17 @@ const EXPECTED_LEAVES: string[] = [
 ];
 
 /**
- * The two leaves the merge deliberately does NOT take from the file.
+ * Leaves the merge deliberately does NOT take from the file.
  *
- * Outline/link cleaning and heading icons stopped being user-configurable; a
- * saved `false` from a build where they were is ignored rather than migrated,
+ * Autocomplete, Outline/link cleaning and heading icons stopped being
+ * user-configurable; a saved `false` from a build where they were is ignored
  * because the feature it switched off no longer exists to switch off.
  */
-const FORCED = new Set(["headingCallouts.refCleanTitles", "headingCallouts.refShowIcon"]);
+const FORCED = new Set([
+	"autocomplete.enabled",
+	"headingCallouts.refCleanTitles",
+	"headingCallouts.refShowIcon",
+]);
 
 /**
  * Leaves whose accepted values are an enum rather than free text, so the

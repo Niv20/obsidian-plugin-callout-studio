@@ -223,7 +223,6 @@ describe("a data.json written by 1.0.0", () => {
 	it("keeps the settings it can still honour", () => {
 		const settings = load(vaultFrom_1_0_0()).settings;
 
-		assert.strictEqual(settings.autocomplete.enabled, false);
 		assert.strictEqual(settings.contextMenu.enabled, true);
 		// Retired from the settings file: it is a per-device claim now, adopted
 		// into DeviceLocalStore on the launch that migrates the vault over.
@@ -282,14 +281,18 @@ describe("a data.json written by 1.0.0", () => {
 		assert.strictEqual(saved.version, CURRENT_DATA_VERSION);
 	});
 
-	it("is not flushed at all, because nothing has to be re-derived", () => {
-		// The retired 1.x settings keys need no forced save: they are already
-		// gone from the in-memory object, the first ordinary save writes the
-		// cleaned-up shape, and until then `data.json` keeps the 1.x one — which
-		// is what makes downgrading harmless. A 1.0.0 file predates every key
-		// the load-time migration looks for, so it asks for nothing.
-		const registry = load(vaultFrom_1_0_0());
-		assert.strictEqual(registry.needsSaveAfterLoad(), false);
+	it("forces the retired autocomplete switch on and flushes it once", () => {
+		// This real 1.0.0 shape explicitly disabled autocomplete. The compatibility
+		// field stays in data.json, but false is no longer a valid runtime state.
+		const first = load(vaultFrom_1_0_0());
+		assert.strictEqual(first.settings.autocomplete.enabled, true);
+		assert.strictEqual(first.needsSaveAfterLoad(), true);
+
+		// Once the normalized value is durable, later launches have nothing left
+		// to migrate and therefore cannot repeat the migration notification.
+		const second = load(first.toSaveData());
+		assert.strictEqual(second.settings.autocomplete.enabled, true);
+		assert.strictEqual(second.needsSaveAfterLoad(), false);
 	});
 });
 

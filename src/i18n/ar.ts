@@ -80,7 +80,6 @@ export const ar: Record<string, string> = {
 	"settings.myCalloutTypes": "أنواع الـ callout الخاصة بي",
 	"settings.builtInCallouts": "Callouts المدمجة",
 	"settings.contextMenu": "قائمة السياق",
-	"settings.autocomplete": "الإكمال التلقائي",
 	"settings.keyboardShortcuts": "الأوامر",
 	"settings.language": "اللغة",
 	"settings.languageDesc":
@@ -154,9 +153,6 @@ export const ar: Record<string, string> = {
 	"settings.deletePaletteAria": "حذف لوحة الألوان {{name}}",
 	"settings.deletePaletteConfirm":
 		'حذف لوحة الألوان "{{name}}"؟\nلن تتأثر عناصر callout التي تستخدم هذه الألوان.',
-	"settings.enableAutocomplete": "تفعيل الإكمال التلقائي [!",
-	"settings.enableAutocompleteDesc":
-		'يعرض اقتراحات عند كتابة "[!" داخل اقتباس محظور في المحرر. اختر نوع callout من القائمة لإدراج عنوان callout كامل.',
 
 	"settings.customCommands": "الأوامر والمفاتيح السريعة",
 	"settings.customCommandsDesc":

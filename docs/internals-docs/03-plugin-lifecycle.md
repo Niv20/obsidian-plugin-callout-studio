@@ -8,9 +8,11 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
 1. Read `workspace.layoutReady`, create the registry and inject the previous
    startup CSS snapshot synchronously before the first await.
 2. Create `SettingsWriter`, `DeviceLocalStore` and `ReloadQueue`. Read and
-   validate `data.json`; load definitions and ordinary settings. Unreadable,
-   unsupported or unexpectedly missing settings freeze writes. A first install
-   stays provisionally frozen until the layout-ready check.
+   validate `data.json`; load definitions and ordinary settings. A legacy
+   `autocomplete.enabled: false` is normalized to `true` and flushed through the
+   ordinary migration-save path. Unreadable, unsupported or unexpectedly missing
+   settings freeze writes. A first install stays provisionally frozen until the
+   layout-ready check.
 3. Prepare the saved language, report any palette consolidation, publish the
    active theme's rendering ownership, and initialize real CSS. Theme inspection
    only affects appearance and grouping of existing definitions.
@@ -20,10 +22,13 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
 5. Register Outline integration, custom commands, registry change listeners,
    settings UI, fixed commands, ribbon, autocomplete, context menu and public API.
    Missing custom-command targets are paused, never deleted as part of startup.
-6. Begin existing icon/locale preparation. At layout-ready,
-   `runLaunchSequence` confirms whether this is a fresh install, shows the welcome
-   screen where appropriate, and writes no welcome-only settings file. A successful
-   settings load or actual write marks the installation initialized. It does not scan.
+6. Begin existing icon/locale preparation. At layout-ready, release the startup
+   migration notices and run `runLaunchSequence`, which confirms whether this is
+   a fresh install, shows the welcome screen where appropriate, and writes no
+   welcome-only settings file. The affected-user-only autocomplete notice is
+   released only after the writer proves the normalized settings are durable.
+   A successful settings load or actual write marks the installation initialized.
+   Startup does not scan.
 
 The registry change loop remains mutation → CSS/repaint → save. The manual
 scan stages results outside that loop, saves once using `SettingsWriter.commit`,

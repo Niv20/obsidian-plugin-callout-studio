@@ -76,7 +76,6 @@ export const el: Record<string, string> = {
 	"settings.myCalloutTypes": "Οι τύποι callout μου",
 	"settings.builtInCallouts": "Ενσωματωμένα callouts",
 	"settings.contextMenu": "Μενού περιβάλλοντος",
-	"settings.autocomplete": "Αυτόματη συμπλήρωση",
 	"settings.keyboardShortcuts": "Εντολές",
 	"settings.language": "Γλώσσα",
 	"settings.languageDesc":
@@ -147,9 +146,6 @@ export const el: Record<string, string> = {
 	"settings.deletePaletteAria": "Διαγραφή παλέτας {{name}}",
 	"settings.deletePaletteConfirm":
 		'Διαγραφή παλέτας "{{name}}";\nΤα callout που χρησιμοποιούν τα χρώματά της δεν επηρεάζονται.',
-	"settings.enableAutocomplete": "Ενεργοποίηση αυτόματης συμπλήρωσης [!",
-	"settings.enableAutocompleteDesc":
-		'Εμφανίζει προτάσεις όταν πληκτρολογείτε "[!" μέσα σε αποσπασματική παράθεση στον επεξεργαστή. Επιλέξτε τύπο callout από τη λίστα για εισαγωγή πλήρους επικεφαλίδας callout.',
 	"settings.customCommands": "Εντολές & πλήκτρα συντόμευσης",
 	"settings.customCommandsDesc":
 		"Δείτε κάθε εντολή του Callout Studio και τη συντόμευση στην οποία είναι δεσμευμένη, και δημιουργήστε τις δικές σας εντολές για τα callouts που χρησιμοποιείτε περισσότερο. Καμία συντόμευση δεν έχει ανατεθεί από προεπιλογή.",

@@ -79,7 +79,6 @@ export const pl: Record<string, string> = {
 	"settings.myCalloutTypes": "Moje typy callout",
 	"settings.builtInCallouts": "Wbudowane callouts",
 	"settings.contextMenu": "Menu kontekstowe",
-	"settings.autocomplete": "Autouzupełnianie",
 	"settings.keyboardShortcuts": "Polecenia",
 	"settings.language": "Język",
 	"settings.languageDesc":
@@ -154,9 +153,6 @@ export const pl: Record<string, string> = {
 	"settings.deletePaletteAria": "Usuń paletę {{name}}",
 	"settings.deletePaletteConfirm":
 		'Usunąć paletę "{{name}}"?\nCallouty korzystające z jej kolorów nie zostaną zmienione.',
-	"settings.enableAutocomplete": "Włącz autouzupełnianie [!",
-	"settings.enableAutocompleteDesc":
-		'Wyświetla sugestie przy wpisywaniu "[!" w bloku cytatu w edytorze. Wybierz typ callout z listy, aby wstawić pełny nagłówek callout.',
 
 	"settings.customCommands": "Polecenia i skróty klawiszowe",
 	"settings.customCommandsDesc":

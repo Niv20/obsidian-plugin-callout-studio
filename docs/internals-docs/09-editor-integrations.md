@@ -124,6 +124,12 @@ from every line of its body, and replaces the whole block. Fails with a
 Obsidian's `EditorSuggest`, triggered by typing `[!` in any of the three role
 positions.
 
+Historically, autocomplete could be toggled off by the user. As of 2.14.1, this
+UI toggle was removed and autocomplete is permanently enabled. The legacy saved
+field is normalized to `true` during load, but the trigger path itself does not
+consult settings; only the heading and inline role switches can suppress their
+respective non-block suggestions.
+
 ### Trigger classification
 
 `onTrigger` scans backward from the cursor for the most recent `[!`, then

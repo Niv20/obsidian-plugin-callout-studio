@@ -18,6 +18,8 @@ interface DeviceLocalState {
 	welcomeSeen: boolean;
 	/** Pending is affected-user evidence; display waits for a durable migration. */
 	externalCssRetirement?: "pending" | "seen";
+	/** Pending is an explicit saved autocomplete opt-out awaiting its notice. */
+	autocompleteAlwaysEnabled?: "pending" | "seen";
 	listsExpanded: CalloutListsFoldState;
 }
 
@@ -41,7 +43,7 @@ export class DeviceLocalStore {
 			// Unknown/corrupt data must not be overwritten by UI preferences.
 			this.writable = false;
 			this.state.initialized = true;
-			const parsed = JSON.parse(raw) as { v?: number; initialized?: boolean; welcomeSeen?: boolean; externalCssRetirement?: unknown; listsExpanded?: Partial<CalloutListsFoldState> };
+			const parsed = JSON.parse(raw) as { v?: number; initialized?: boolean; welcomeSeen?: boolean; externalCssRetirement?: unknown; autocompleteAlwaysEnabled?: unknown; listsExpanded?: Partial<CalloutListsFoldState> };
 			if (!parsed || (parsed.v !== 1 && parsed.v !== 2 && parsed.v !== 3)) return;
 			this.state = {
 				v: 3,
@@ -49,6 +51,8 @@ export class DeviceLocalStore {
 				welcomeSeen: parsed.v === 3 && parsed.welcomeSeen === true,
 				...(parsed.externalCssRetirement === "pending" || parsed.externalCssRetirement === "seen"
 					? { externalCssRetirement: parsed.externalCssRetirement } : {}),
+				...(parsed.autocompleteAlwaysEnabled === "pending" || parsed.autocompleteAlwaysEnabled === "seen"
+					? { autocompleteAlwaysEnabled: parsed.autocompleteAlwaysEnabled } : {}),
 				listsExpanded: {
 					theme: parsed.listsExpanded?.theme !== false,
 					user: parsed.listsExpanded?.user !== false,
@@ -129,6 +133,21 @@ export class DeviceLocalStore {
 
 	markExternalCssNoticeSeen(): void {
 		this.state.externalCssRetirement = "seen";
+		this.persist();
+	}
+
+	get hasPendingAutocompleteNotice(): boolean {
+		return this.state.autocompleteAlwaysEnabled === "pending";
+	}
+
+	queueAutocompleteNotice(): void {
+		if (this.state.autocompleteAlwaysEnabled === "seen") return;
+		this.state.autocompleteAlwaysEnabled = "pending";
+		this.persist();
+	}
+
+	markAutocompleteNoticeSeen(): void {
+		this.state.autocompleteAlwaysEnabled = "seen";
 		this.persist();
 	}
 

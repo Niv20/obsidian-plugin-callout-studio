@@ -887,7 +887,9 @@ describe("no new oversized files", () => {
 		// settings/calloutComboboxRow.ts `renderCalloutIdLine`, which the
 		// settings callout picker draws too — the popover and the picker must
 		// not describe the same callout differently.
-		"src/editor/AutoComplete.ts": 540,
+		// Lowered from 540 when autocomplete became permanently enabled and the
+		// obsolete settings gate left the trigger path.
+		"src/editor/AutoComplete.ts": 538,
 		// Lowered from 537: everything that has to happen when the active theme
 		// changes — re-derive its callout rows, then re-inject, in that order —
 		// moved to manager/theme/themeProvidedRows.ts, which is where the rule

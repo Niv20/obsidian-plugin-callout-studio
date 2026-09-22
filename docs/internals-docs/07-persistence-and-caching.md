@@ -244,25 +244,27 @@ files without a version and numeric future versions retain their existing handli
 
 No discovery cache is used to decide this. `DeviceLocalStore` v3 keeps the
 prior-install/welcome markers, list folds, and the optional one-time
-personal-CSS-retirement notice state. A recognized v1 blob and the old startup
-CSS are copied to a verified, content-addressed recovery archive before cleanup
-removes `discovered`, `firstRunCompleted` and `retiredThemeIds`. Neither is a
-source of live definitions. Failed archive/verification keeps the old local
-data and protects the old CSS from replacement. Unknown/corrupt or unavailable
-local storage is treated as evidence of prior use, so missing `data.json`
-cannot silently become a fresh writable installation. None of these paths scans
-notes. Released 2.12.x builds lack the newer-format guard; upgrade both devices
-before resuming work, since schema 5 cannot control an old device's writes.
+personal-CSS-retirement and autocomplete-migration notice states. A recognized
+v1 blob and the old startup CSS are copied to a verified, content-addressed
+recovery archive before cleanup removes `discovered`, `firstRunCompleted` and
+`retiredThemeIds`. Neither is a source of live definitions. Failed
+archive/verification keeps the old local data and protects the old CSS from
+replacement. Unknown/corrupt or unavailable local storage is treated as
+evidence of prior use, so missing `data.json` cannot silently become a fresh
+writable installation. None of these paths scans notes. Released 2.12.x builds
+lack the newer-format guard; upgrade both devices before resuming work, since
+schema 5 cannot control an old device's writes.
 
-The retirement notice marker is best-effort device UI state, not authority over
+The one-time notice markers are best-effort device UI state, not authority over
 `data.json`. In the normal writable case, `pending` is persisted before the
-migration write is awaited, survives reload/unload, and becomes `seen` only
-after the durability and UI-readiness gates pass. If local storage is corrupt,
-unavailable, or refuses a write, the same gates still prevent a false success
-and the in-memory marker limits the current session, but persistence cannot be
-promised: an unload before display may lose `pending`, and a refused `seen`
-write can repeat a previously displayed notice on a later launch. That failure
-never changes the migration result or the synchronized settings file.
+corresponding migration write is awaited, survives reload/unload, and becomes
+`seen` only after the durability and UI-readiness gates pass. If local storage
+is corrupt, unavailable, or refuses a write, the same gates still prevent a
+false success and the in-memory marker limits the current session, but
+persistence cannot be promised: an unload before display may lose `pending`,
+and a refused `seen` write can repeat a previously displayed notice on a later
+launch. That failure never changes the migration result or the synchronized
+settings file.
 
 Settings always come from the current `registry.settings` object; adoption replaces
 that object, so managers must not retain an earlier settings reference.
@@ -303,6 +305,12 @@ The same function is shared by two callers that ask the identical question —
 "what does this possibly-partial, possibly-ancient blob mean under the current
 version" — the registry's `load()` on startup, and `settingsValidator` on
 every JSON import.
+
+`autocomplete.enabled` is a deliberate forced field in this merge. A historical
+`false` is read only as migration evidence; the resulting settings object and
+the next serialized snapshot both carry `true`. `CalloutAutoComplete` does not
+read the field, so neither a stale object nor an older synced snapshot can turn
+the core editor integration off in memory.
 
 `mergeMenuItems()` inside the same file is the other notable piece: it merges
 a saved per-role context-menu item **list** (order matters) against that
@@ -346,13 +354,15 @@ notice missing after a restart.
 ## The device-local store
 
 `DeviceLocalStore` v3 stores section folds, prior-install/welcome markers, and
-an optional `pending | seen` marker for the one-time personal-CSS-retirement
-notice in vault-scoped browser storage. The marker is absent for unaffected
-users and carries no callout id or appearance. `pending` is only displayed once
-the settings writer proves the cleaned registry snapshot is durable; it can
-survive a restart before layout is ready, and `seen` suppresses a repeat if an
-older synced file later reintroduces the retired field. See
-[Callout registry § Retiring personal-CSS ownership](05-callout-registry.md#retiring-personal-css-ownership-without-losing-the-saved-design).
+optional `pending | seen` markers for the one-time personal-CSS-retirement and
+autocomplete-migration notices in vault-scoped browser storage. Each marker is
+absent for unaffected users and carries no callout id or appearance. `pending`
+is only displayed once the settings writer proves the cleaned registry snapshot
+is durable; it can survive a restart before the UI is ready, and `seen`
+suppresses a repeat if an older synced file later reintroduces the migrated
+field. See
+[Callout registry § Retiring personal-CSS ownership](05-callout-registry.md#retiring-personal-css-ownership-without-losing-the-saved-design)
+and [Editor integrations § Autocomplete](09-editor-integrations.md#autocomplete).
 
 The store never holds scan results or theme ownership. A failed local-storage
 write does not advance the write memo, allowing retry.

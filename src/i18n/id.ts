@@ -79,7 +79,6 @@ export const id: Record<string, string> = {
 	"settings.myCalloutTypes": "Tipe callout saya",
 	"settings.builtInCallouts": "Callout bawaan",
 	"settings.contextMenu": "Menu konteks",
-	"settings.autocomplete": "Pelengkapan otomatis",
 	"settings.keyboardShortcuts": "Perintah",
 	"settings.language": "Bahasa",
 	"settings.languageDesc":
@@ -154,9 +153,6 @@ export const id: Record<string, string> = {
 	"settings.deletePaletteAria": "Hapus palet {{name}}",
 	"settings.deletePaletteConfirm":
 		'Hapus palet "{{name}}"?\nCallout yang menggunakan warna ini tidak terpengaruh.',
-	"settings.enableAutocomplete": "Aktifkan pelengkapan otomatis [!",
-	"settings.enableAutocompleteDesc":
-		'Menampilkan saran saat Anda mengetik "[!" di dalam Block Callout di editor. Pilih tipe callout dari daftar untuk menyisipkan header callout lengkap.',
 
 	"settings.customCommands": "Perintah & tombol pintas",
 	"settings.customCommandsDesc":
