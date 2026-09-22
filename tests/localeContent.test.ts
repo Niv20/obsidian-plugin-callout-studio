@@ -225,6 +225,32 @@ describe("the concise theme preview summary is translated everywhere", () => {
 	}
 });
 
+describe("deleted color recovery is translated everywhere", () => {
+	const keys = [
+		"editor.paletteDeleted",
+		"editor.colorsDescDeleted",
+		"editor.colorsDescDeletedLink",
+	] as const;
+
+	for (const [fileId, table] of entries) {
+		it(`${fileId}.ts has its own deleted-color text`, () => {
+			for (const key of keys) {
+				const localized = table[key];
+				assert.strictEqual(
+					typeof localized,
+					"string",
+					`${fileId}.ts is missing ${key}`,
+				);
+				assert.notStrictEqual(
+					localized,
+					en[key],
+					`${fileId}.ts still shows the English ${key}`,
+				);
+			}
+		});
+	}
+});
+
 /* -------------------------------------------------------------------------- */
 /* Upgrade recovery failure                                                   */
 /* -------------------------------------------------------------------------- */

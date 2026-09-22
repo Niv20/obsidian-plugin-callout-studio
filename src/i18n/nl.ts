@@ -955,12 +955,8 @@ export const nl: Record<string, string> = {
 	"notice.palettesMerged":
 		"{{count}} opgeslagen kleur(en) met identieke kleuren samengevoegd: {{names}}. De callouts die ze gebruiken behouden hun kleuren en zijn nu gekoppeld aan de kleur die is overgebleven.",
 	"editor.colorsDescDeleted":
-		"De opgeslagen kleur van deze callout is verwijderd. Je kunt deze opnieuw opslaan door {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"De opgeslagen kleur van deze callout is verwijderd. Je kunt deze opnieuw opslaan door {{link}} — 1 andere callout die deze kleur gebruikt wordt ook opnieuw gekoppeld.",
-	"editor.colorsDescDeletedOthers":
-		"De opgeslagen kleur van deze callout is verwijderd. Je kunt deze opnieuw opslaan door {{link}} — {{count}} andere callouts die deze kleur gebruiken worden ook opnieuw gekoppeld.",
-	"editor.colorsDescDeletedLink": "hier te klikken",
+		"De opgeslagen kleur van deze callout is verwijderd. {{link}}",
+	"editor.colorsDescDeletedLink": "Herstellen",
 	"palette.colorExists":
 		'Deze kleuren zijn identiek aan "{{name}}". Twee opgeslagen kleuren mogen niet hetzelfde zijn — wijzig een kleur om ze te onderscheiden.',
 	"palette.colorExistsUse":

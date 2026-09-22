@@ -937,12 +937,8 @@ export const tr: Record<string, string> = {
 	"notice.palettesMerged":
 		"Aynı renklere sahip {{count}} kayıtlı renk birleştirildi: {{names}}. Bunları kullanan callout'lar renklerini korur ve artık kalan renge bağlıdır.",
 	"editor.colorsDescDeleted":
-		"Bu callout'un kaydedilmiş rengi silindi. {{link}} tekrar kaydedebilirsiniz.",
-	"editor.colorsDescDeletedOther":
-		"Bu callout'un kaydedilmiş rengi silindi. {{link}} tekrar kaydedebilirsiniz — bunu kullanan 1 diğer callout da yeniden bağlanacaktır.",
-	"editor.colorsDescDeletedOthers":
-		"Bu callout'un kaydedilmiş rengi silindi. {{link}} tekrar kaydedebilirsiniz — bunu kullanan {{count}} diğer callout da yeniden bağlanacaktır.",
-	"editor.colorsDescDeletedLink": "buraya tıklayarak",
+		"Bu callout'un kaydedilmiş rengi silindi. {{link}}",
+	"editor.colorsDescDeletedLink": "Geri yükle",
 	"palette.colorExists":
 		'Bu renkler "{{name}}" ile aynı. İki kayıtlı renk aynı olamaz — ayırt etmek için bir rengi değiştirin.',
 	"palette.colorExistsUse":

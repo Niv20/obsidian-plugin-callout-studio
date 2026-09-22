@@ -953,12 +953,8 @@ export const uk: Record<string, string> = {
 	"notice.palettesMerged":
 		"Об’єднано {{count}} збережених кольорів із однаковими кольорами: {{names}}. Callout-и, що їх використовують, зберігають свої кольори й тепер прив’язані до кольору, який залишився.",
 	"editor.colorsDescDeleted":
-		"Збережений колір цього callout-а було видалено. Ви можете зберегти його знову, {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Збережений колір цього callout-а було видалено. Ви можете зберегти його знову, {{link}} — також буде переприв’язано ще 1 callout, що його використовує.",
-	"editor.colorsDescDeletedOthers":
-		"Збережений колір цього callout-а було видалено. Ви можете зберегти його знову, {{link}} — також буде переприв’язано ще {{count}} callout-ів, що його використовують.",
-	"editor.colorsDescDeletedLink": "натиснувши тут",
+		"Збережений колір цього callout-а було видалено. {{link}}",
+	"editor.colorsDescDeletedLink": "Відновити",
 	"palette.colorExists":
 		'Ці кольори збігаються з "{{name}}". Два збережені кольори не можуть бути однаковими — змініть один колір, щоб розрізняти їх.',
 	"palette.colorExistsUse":

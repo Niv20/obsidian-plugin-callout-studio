@@ -764,8 +764,8 @@ export class CalloutRegistry {
 	/**
 	 * How many callouts still carry `paletteId`, optionally ignoring one.
 	 *
-	 * Used to tell the user how many *other* callouts a revive will regroup, so
-	 * it counts committed callouts and nothing else — {@link realDefinitions}
+	 * Used by the saved-color deletion confirmation, so it counts committed
+	 * callouts and nothing else — {@link realDefinitions}
 	 * rather than the raw map. A number shown to the user must not include the
 	 * callout editor's in-progress draft: a brand-new one is not a callout yet,
 	 * and one shadowing a real row would be counted twice over if it and the row

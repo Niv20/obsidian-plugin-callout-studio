@@ -940,12 +940,8 @@ export const ko: Record<string, string> = {
 	"notice.palettesMerged":
 		"동일한 색상을 가진 저장된 색상 {{count}}개를 병합했습니다: {{names}}. 이를 사용하는 callout은 색상을 유지하며, 이제 남은 색상에 연결됩니다.",
 	"editor.colorsDescDeleted":
-		"이 callout의 저장된 색상이 삭제되었습니다. {{link}} 다시 저장할 수 있습니다.",
-	"editor.colorsDescDeletedOther":
-		"이 callout의 저장된 색상이 삭제되었습니다. {{link}} 다시 저장할 수 있으며, 이를 사용하는 다른 callout 1개도 다시 연결됩니다.",
-	"editor.colorsDescDeletedOthers":
-		"이 callout의 저장된 색상이 삭제되었습니다. {{link}} 다시 저장할 수 있으며, 이를 사용하는 다른 callout {{count}}개도 다시 연결됩니다.",
-	"editor.colorsDescDeletedLink": "여기를 클릭해",
+		"이 callout의 저장된 색상이 삭제되었습니다. {{link}}",
+	"editor.colorsDescDeletedLink": "복원",
 	"palette.colorExists":
 		'이 색상은 "{{name}}"과 동일합니다. 저장된 색상 두 개는 같을 수 없습니다. 구분하려면 색상 하나를 변경하세요.',
 	"palette.colorExistsUse":

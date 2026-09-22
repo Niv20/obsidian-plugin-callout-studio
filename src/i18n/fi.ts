@@ -929,12 +929,8 @@ export const fi: Record<string, string> = {
 	"notice.palettesMerged":
 		"Yhdistettiin {{count}} tallennettua väriä, joilla oli samat värit: {{names}}. Niitä käyttävät calloutit säilyttävät värinsä ja ovat nyt linkitetty jäljelle jääneeseen väriin.",
 	"editor.colorsDescDeleted":
-		"Tämän calloutin tallennettu väri poistettiin. Voit tallentaa sen uudelleen {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Tämän calloutin tallennettu väri poistettiin. Voit tallentaa sen uudelleen {{link}} — myös 1 muu sitä käyttävä callout yhdistetään uudelleen.",
-	"editor.colorsDescDeletedOthers":
-		"Tämän calloutin tallennettu väri poistettiin. Voit tallentaa sen uudelleen {{link}} — myös {{count}} muuta sitä käyttävää calloutia yhdistetään uudelleen.",
-	"editor.colorsDescDeletedLink": "klikkaamalla tästä",
+		"Tämän calloutin tallennettu väri poistettiin. {{link}}",
+	"editor.colorsDescDeletedLink": "Palauta",
 	"palette.colorExists":
 		'Nämä värit ovat samat kuin "{{name}}". Kaksi tallennettua väriä ei voi olla sama — muuta yhtä väriä erottaaksesi ne.',
 	"palette.colorExistsUse":

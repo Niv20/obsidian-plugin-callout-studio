@@ -915,12 +915,8 @@ export const da: Record<string, string> = {
 	"notice.palettesMerged":
 		"Flettede {{count}} gemte farve(r) med identiske farver: {{names}}. Callouts, der bruger dem, beholder deres farver og er nu knyttet til farven, der blev tilbage.",
 	"editor.colorsDescDeleted":
-		"Denne callouts gemte farve blev slettet. Du kan gemme den igen ved {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Denne callouts gemte farve blev slettet. Du kan gemme den igen ved {{link}} — 1 anden callout, der bruger den, bliver også forbundet igen.",
-	"editor.colorsDescDeletedOthers":
-		"Denne callouts gemte farve blev slettet. Du kan gemme den igen ved {{link}} — {{count}} andre callouts, der bruger den, bliver også forbundet igen.",
-	"editor.colorsDescDeletedLink": "at klikke her",
+		"Denne callouts gemte farve blev slettet. {{link}}",
+	"editor.colorsDescDeletedLink": "Gendan",
 	"palette.colorExists":
 		'Disse farver er identiske med "{{name}}". To gemte farver kan ikke være ens — ændr en farve for at skelne dem.',
 	"palette.colorExistsUse":

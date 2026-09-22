@@ -947,12 +947,8 @@ export const pl: Record<string, string> = {
 	"notice.palettesMerged":
 		"Scalono {{count}} zapisanych kolorów o identycznych kolorach: {{names}}. Callouty, które ich używają, zachowują swoje kolory i są teraz połączone z kolorem, który pozostał.",
 	"editor.colorsDescDeleted":
-		"Zapisany kolor tego callouta został usunięty. Możesz zapisać go ponownie, {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Zapisany kolor tego callouta został usunięty. Możesz zapisać go ponownie, {{link}} — 1 inny callout, który go używa, też zostanie ponownie połączony.",
-	"editor.colorsDescDeletedOthers":
-		"Zapisany kolor tego callouta został usunięty. Możesz zapisać go ponownie, {{link}} — {{count}} innych calloutów, które go używają, też zostanie ponownie połączonych.",
-	"editor.colorsDescDeletedLink": "klikając tutaj",
+		"Zapisany kolor tego callouta został usunięty. {{link}}",
+	"editor.colorsDescDeletedLink": "Przywróć",
 	"palette.colorExists":
 		'Te kolory są identyczne jak "{{name}}". Dwa zapisane kolory nie mogą być takie same — zmień jeden kolor, aby je rozróżnić.',
 	"palette.colorExistsUse":

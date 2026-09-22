@@ -924,12 +924,8 @@ export const th: Record<string, string> = {
 	"notice.palettesMerged":
 		"รวมสีที่บันทึกไว้ {{count}} รายการที่มีสีเหมือนกัน: {{names}} callout ที่ใช้สีเหล่านี้จะยังคงสีเดิม และตอนนี้เชื่อมโยงกับสีที่เหลืออยู่แล้ว",
 	"editor.colorsDescDeleted":
-		"สีที่บันทึกไว้ของ callout นี้ถูกลบแล้ว คุณสามารถบันทึกอีกครั้งได้โดย {{link}}",
-	"editor.colorsDescDeletedOther":
-		"สีที่บันทึกไว้ของ callout นี้ถูกลบแล้ว คุณสามารถบันทึกอีกครั้งได้โดย {{link}} — และอีก 1 callout ที่ใช้สีนี้จะถูกเชื่อมโยงกลับด้วย",
-	"editor.colorsDescDeletedOthers":
-		"สีที่บันทึกไว้ของ callout นี้ถูกลบแล้ว คุณสามารถบันทึกอีกครั้งได้โดย {{link}} — และอีก {{count}} callout ที่ใช้สีนี้จะถูกเชื่อมโยงกลับด้วย",
-	"editor.colorsDescDeletedLink": "คลิกที่นี่",
+		"สีที่บันทึกไว้ของ callout นี้ถูกลบแล้ว {{link}}",
+	"editor.colorsDescDeletedLink": "กู้คืน",
 	"palette.colorExists":
 		'สีเหล่านี้เหมือนกับ "{{name}}" ทุกประการ ไม่สามารถมีสีที่บันทึกไว้สองรายการที่เหมือนกันได้ — เปลี่ยนสีหนึ่งสีเพื่อให้แยกกันได้',
 	"palette.colorExistsUse":

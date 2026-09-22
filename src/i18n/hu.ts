@@ -953,12 +953,8 @@ export const hu: Record<string, string> = {
 	"notice.palettesMerged":
 		"{{count}} azonos színű mentett szín összevonva: {{names}}. Az ezeket használó calloutok megtartják a színeiket, és most a megmaradt színhez kapcsolódnak.",
 	"editor.colorsDescDeleted":
-		"Ennek a calloutnak a mentett színe törölve lett. Újra elmentheted {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Ennek a calloutnak a mentett színe törölve lett. Újra elmentheted {{link}} — 1 másik, ezt használó callout is újra kapcsolódik.",
-	"editor.colorsDescDeletedOthers":
-		"Ennek a calloutnak a mentett színe törölve lett. Újra elmentheted {{link}} — {{count}} másik, ezt használó callout is újra kapcsolódik.",
-	"editor.colorsDescDeletedLink": "ide kattintva",
+		"Ennek a calloutnak a mentett színe törölve lett. {{link}}",
+	"editor.colorsDescDeletedLink": "Visszaállítás",
 	"palette.colorExists":
 		'Ezek a színek megegyeznek ezzel: "{{name}}". Két mentett szín nem lehet ugyanaz — módosíts egy színt, hogy megkülönböztesd őket.',
 	"palette.colorExistsUse":

@@ -941,12 +941,8 @@ export const sv: Record<string, string> = {
 	"notice.palettesMerged":
 		"Slog ihop {{count}} sparade färg(er) som hade identiska färger: {{names}}. Callouts som använder dem behåller sina färger och är nu länkade till färgen som blev kvar.",
 	"editor.colorsDescDeleted":
-		"Den sparade färgen för denna callout togs bort. Du kan spara den igen genom {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Den sparade färgen för denna callout togs bort. Du kan spara den igen genom {{link}} — 1 annan callout som använder den återansluts också.",
-	"editor.colorsDescDeletedOthers":
-		"Den sparade färgen för denna callout togs bort. Du kan spara den igen genom {{link}} — {{count}} andra callouts som använder den återansluts också.",
-	"editor.colorsDescDeletedLink": "att klicka här",
+		"Den sparade färgen för denna callout togs bort. {{link}}",
+	"editor.colorsDescDeletedLink": "Återställ",
 	"palette.colorExists":
 		'Dessa färger är identiska med "{{name}}". Två sparade färger kan inte vara samma — ändra en färg för att skilja dem åt.',
 	"palette.colorExistsUse":

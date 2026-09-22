@@ -929,12 +929,8 @@ export const bg: Record<string, string> = {
 	"notice.palettesMerged":
 		"Сля {{count}} запазени цвята с еднакви цветове: {{names}}. Callout-ите, които ги използват, запазват цветовете си и сега са свързани с останалия цвят.",
 	"editor.colorsDescDeleted":
-		"Запазеният цвят на този callout беше изтрит. Можете да го запишете отново чрез {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Запазеният цвят на този callout беше изтрит. Можете да го запишете отново чрез {{link}} — още 1 друг callout, който го използва, също ще бъде свързан отново.",
-	"editor.colorsDescDeletedOthers":
-		"Запазеният цвят на този callout беше изтрит. Можете да го запишете отново чрез {{link}} — още {{count}} други callout-и, които го използват, също ще бъдат свързани отново.",
-	"editor.colorsDescDeletedLink": "като щракнете тук",
+		"Запазеният цвят на този callout беше изтрит. {{link}}",
+	"editor.colorsDescDeletedLink": "Възстановяване",
 	"palette.colorExists":
 		'Тези цветове са идентични с "{{name}}". Два запазени цвята не могат да бъдат еднакви — променете цвят, за да ги различите.',
 	"palette.colorExistsUse":

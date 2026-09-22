@@ -1079,12 +1079,8 @@ export const en: Record<string, string> = {
 	"notice.palettesMerged":
 		"Merged {{count}} saved color(s) that had identical colors: {{names}}. The callouts using them keep their colors and are now linked to the color that remains.",
 	"editor.colorsDescDeleted":
-		"This callout's saved color was deleted. You can save it again by {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"This callout's saved color was deleted. You can save it again by {{link}} — 1 other callout using it will be reconnected too.",
-	"editor.colorsDescDeletedOthers":
-		"This callout's saved color was deleted. You can save it again by {{link}} — {{count}} other callouts using it will be reconnected too.",
-	"editor.colorsDescDeletedLink": "clicking here",
+		"This callout's saved color was deleted. {{link}}",
+	"editor.colorsDescDeletedLink": "Restore",
 	"palette.colorExists":
 		'These colors are identical to "{{name}}". Two saved colors cannot be the same — change a color to tell them apart.',
 	"palette.colorExistsUse":

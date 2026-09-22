@@ -943,12 +943,8 @@ export const el: Record<string, string> = {
 	"notice.palettesMerged":
 		"Συγχωνεύτηκαν {{count}} αποθηκευμένα χρώματα με πανομοιότυπα χρώματα: {{names}}. Τα callouts που τα χρησιμοποιούν κρατούν τα χρώματά τους και τώρα συνδέονται με το χρώμα που έμεινε.",
 	"editor.colorsDescDeleted":
-		"Το αποθηκευμένο χρώμα αυτού του callout διαγράφηκε. Μπορείτε να το αποθηκεύσετε ξανά {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Το αποθηκευμένο χρώμα αυτού του callout διαγράφηκε. Μπορείτε να το αποθηκεύσετε ξανά {{link}} — θα επανασυνδεθεί και 1 ακόμη callout που το χρησιμοποιεί.",
-	"editor.colorsDescDeletedOthers":
-		"Το αποθηκευμένο χρώμα αυτού του callout διαγράφηκε. Μπορείτε να το αποθηκεύσετε ξανά {{link}} — θα επανασυνδεθούν και {{count}} ακόμη callouts που το χρησιμοποιούν.",
-	"editor.colorsDescDeletedLink": "κάνοντας κλικ εδώ",
+		"Το αποθηκευμένο χρώμα αυτού του callout διαγράφηκε. {{link}}",
+	"editor.colorsDescDeletedLink": "Επαναφορά",
 	"palette.colorExists":
 		'Αυτά τα χρώματα είναι ίδια με το "{{name}}". Δύο αποθηκευμένα χρώματα δεν μπορούν να είναι ίδια — αλλάξτε ένα χρώμα για να ξεχωρίζουν.',
 	"palette.colorExistsUse":
