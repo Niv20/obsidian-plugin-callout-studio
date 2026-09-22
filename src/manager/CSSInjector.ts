@@ -67,6 +67,9 @@ import {
 	fallbackCalloutIconProp,
 } from "./css/calloutIconProp";
 import { emojiOverrideCSS, iconOverrideCSS } from "./css/iconOverrides";
+import { iconBoxWidth } from "./css/iconBox";
+import { blockAlignmentCSS } from "./css/alignmentCSS";
+import { userImageFor } from "../icons/packs/userImages";
 import { transparentBorderProps } from "./css/transparentBorder";
 import {
 	CSS_FALLBACK_ICON,
@@ -680,6 +683,15 @@ export class CSSInjector {
 		// variables are and why an untouched built-in gets only two of them.
 		const lightProps: string[] = [...this.accentProps(def, "light", true)];
 		if (iconCSS) lightProps.push(`  --callout-icon: ${iconCSS}${imp};`);
+		// The icon's actual box can be wider or narrower than a square when the
+		// callout uses one of the user's pictures. Keep the title's reserved
+		// column and the content indent on that same width (also for aliases).
+		const picture = hidesIcon ? undefined : userImageFor(def.icon);
+		if (this.registry.settings.globalStyle.alignContentWithTitle && picture) {
+			lightProps.push(
+				`  --cs-align-icon-inline-size: ${iconBoxWidth(picture)}${imp};`,
+			);
+		}
 		lightProps.push(...this.bgProps(def, "light", true));
 		// Only in the light rule, which is unscoped and so matches both themes:
 		// the frame's colour is the same in either one, and the dark block below
@@ -1273,9 +1285,9 @@ export class CSSInjector {
 	 * take over in print; here there is nothing to take over, and the icon has to
 	 * be just as absent in a PDF as it is on screen.
 	 *
-	 * The second rule undoes the global "Align content with title" indent, which
-	 * is a fixed `calc(--icon-size + gap)` on `.callout-content` and knows nothing
-	 * about whether this callout has an icon to align past. Left standing it would
+	 * The second rule undoes the global "Align content with title" indent. That
+	 * indent follows the icon width and gaps, but the hidden icon is no longer a
+	 * flex item for the title to align past. Left standing the indent would
 	 * indent the body under empty space. One class-unit more specific than the
 		 * global registered-id rule, so it beats that rule on weight alone. A
 		 * theme-owned callout never reaches this emitter; Studio-owned callouts take
@@ -1529,8 +1541,7 @@ export class CSSInjector {
 			fill: { literal: isDark ? def.colorDark : def.colorLight },
 			missing: { kind: "leave" },
 			className: "cs-export-icon",
-			rootStyle:
-				"width:var(--icon-size, 1.2em);height:var(--icon-size, 1.2em)",
+			rootStyle: `width:${iconBoxWidth(userImageFor(def.icon))};height:var(--icon-size, 1.2em)`,
 		});
 	}
 
@@ -1564,37 +1575,9 @@ export class CSSInjector {
 		const selectorsFor = (tail: string): string =>
 			calloutSelectors.map((selector) => `${selector}${tail}`).join(",\n");
 
-		// Space between the icon and the title text. Obsidian core sets
-		// `.callout-title { gap: var(--size-4-1) }` — a fixed 4px — while this
-		// plugin's own tokens use em-relative gaps (0.35em heading, 0.3em
-		// inline), and the regular icon box is the largest of the three
-		// (--icon-size, 1.2em, against 1em). The regular icon therefore reads as
-		// the most cramped of the three roles, and grows tighter still as a
-		// theme's base font size rises, because px does not scale. Top up the
-		// icon's own trailing side so the three match optically.
-		//
-		// Deliberately on the icon rather than on the title's `gap`: the title
-		// row's other flex gap — the one before the fold chevron — is left
-		// exactly as the theme set it. Baked-in default, overridable via
-		// --cs-regular-icon-gap in a CSS snippet, same as --cs-heading-icon-offset.
-		//
-		// Generated rather than shipped in styles.css, where it used to live: the
-		// explicit selector list is what keeps the default on registered Studio
-		// callouts without leaking strong geometry onto unknown ids or callouts
-		// handed to the theme.
-		//
-		// Every declaration below carries `!important`, like the per-callout block:
-		// registered Studio-owned callouts take their geometry whole. These
-		// selectors stay below weighted per-callout rules among important
-		// declarations, because specificity is compared again there.
 		const imp = " !important";
-		if (calloutSelectors.length > 0) {
-			parts.push(
-				`${selectorsFor(" > .callout-title > .callout-icon")} {\n` +
-					`  margin-inline-end: var(--cs-regular-icon-gap, 0.15em)${imp};\n` +
-					`}`,
-			);
-		}
+		const alignment = blockAlignmentCSS(calloutSelectors, gs.alignContentWithTitle);
+		parts.push(...alignment.iconRules);
 
 		const props: string[] = [];
 
@@ -1646,20 +1629,7 @@ export class CSSInjector {
 			);
 		}
 
-		// Indent the body so it lines up under the title text (icon width +
-		// title gap) instead of under the icon. Logical property keeps it
-		// correct in RTL; written to both adoptedStyleSheets and the <style>
-		// element so it applies in Reading view, Live Preview, and PDF export.
-		// The --cs-regular-icon-gap term mirrors the icon's own trailing margin
-		// from styles.css: without it this indent would fall short by exactly
-		// that margin and the body would sit left of the title text.
-		if (gs.alignContentWithTitle && calloutSelectors.length > 0) {
-			parts.push(
-				`${selectorsFor(" > .callout-content")} {\n` +
-					`  padding-inline-start: calc(var(--icon-size, 1.2em) + 0.2em + var(--cs-regular-icon-gap, 0.15em))${imp};\n` +
-					`}`,
-			);
-		}
+		parts.push(...alignment.contentRules);
 
 		// Heading-bar frame. Borders are drawn directly; radius and vertical
 		// text spacing go through CSS variables consumed by the static

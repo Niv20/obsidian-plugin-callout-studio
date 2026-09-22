@@ -29,7 +29,7 @@ Block callouts include the broadest set of controls:
 
 - Border sides, thickness, and corner rounding.
 - Separate title and content scale.
-- **Align content with title**, which lines up multi-line content with the title instead of the icon.
+- **Align content with title**, which starts the content text at the same inline edge as the title text, in both left-to-right and right-to-left layouts. The spacing follows the icon's width, including wider images.
 
 These settings shape callouts drawn by Callout Studio. If your active theme owns a callout, the theme keeps control of its appearance; see [Theme integration](16-theme-integration.md).
 

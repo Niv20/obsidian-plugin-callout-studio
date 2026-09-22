@@ -774,7 +774,9 @@ describe("no new oversized files", () => {
 		// the injector — and part of the room that bought went to `themeSurface`,
 		// which asks manager/theme/calloutSurface.ts whether the active styling
 		// owns the callout surface.
-		"src/manager/CSSInjector.ts": 1793,
+		// Lowered from 1793: the block title/content geometry moved to
+		// manager/css/alignmentCSS.ts.
+		"src/manager/CSSInjector.ts": 1763,
 		// Lowered from 2014: what "mirror the fallback callout" means now lives
 		// entirely in manager/discoveredRow.ts, beside the other half of the same
 		// agreement, and the two-mode migration in manager/styleModeMigration.ts.

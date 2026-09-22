@@ -107,8 +107,8 @@ describe("a callout the user set to draw no icon", () => {
 	});
 
 	it("undoes the align-content indent in every medium too", () => {
-		// The indent is a fixed `calc(--icon-size + gap)` that knows nothing
-		// about whether there is an icon to align past. Reset only on screen, a
+		// The indent follows the icon width and gaps, but the hidden icon is
+		// removed from the title row. Reset only on screen, a
 		// printed no-icon callout would have its body indented under nothing.
 		const { registry, css } = harness();
 		registry.settings.globalStyle.alignContentWithTitle = true;

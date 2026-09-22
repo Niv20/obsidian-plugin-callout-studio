@@ -103,7 +103,7 @@ registry actually holds data) replaces it with a real generated pass.
 
 ```text
 1. header comment
-2. generateGlobalStyleCSS()        — border/radius/scale + icon gap for registered Studio blocks
+2. generateGlobalStyleCSS()        — border/radius/scale + icon gap and title/content alignment for registered Studio blocks
 3. @media screen { .cs-export-icon { display: none } }   — hides the PDF-only DOM icon copies on screen
 4. generateCalloutCSS(def) for every callout in registry.getAll()
      └─ within it, coreAccentShimCSS(def) — only when the active theme spells the
@@ -111,6 +111,20 @@ registry actually holds data) replaces it with a real generated pass.
 5. generateFallbackCSS(callouts)   — styles any data-callout Obsidian rendered that this
                                        plugin does not recognize
 ```
+
+### Block title/content alignment
+
+When **Align content with title** is enabled, `manager/css/alignmentCSS.ts`
+generates global rules that give
+the icon box an `inline-size`, give the title a `column-gap`, and indent the
+content with `padding-inline-start`. All three use the same inherited icon
+width, icon trailing gap, and title gap, so the content's inline start matches
+the title text in LTR and RTL. These lengths are registered with `@property`
+and computed on the callout root before the content's independent font scale
+can change the meaning of `em`. A user's image supplies its aspect-adjusted
+`iconBoxWidth` for the root and its PDF icon copy; a callout with `hideIcon`
+resets the content indent to zero. The registrations are emitted in the global
+CSS so a standalone snippet gets the same geometry without `styles.css`.
 
 ### The three accent variables (`accentProps`)
 
