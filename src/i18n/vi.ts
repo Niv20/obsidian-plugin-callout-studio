@@ -966,12 +966,12 @@ export const vi: Record<string, string> = {
 		"Đoạn CSS trong thư mục snippets đã thay đổi kể từ khi Callout Studio ghi nó. Xuất lại sẽ thay thế toàn bộ tệp.",
 	"confirm.overwriteSnippetOk": "Ghi đè",
 	"export.chooseFormat": "Xuất dưới dạng",
-	"export.formatJson": "Bản sao lưu Callout Studio",
+	"export.formatJson": "Bản sao lưu Callout Studio (khuyên dùng)",
 	"export.formatJsonDesc":
-		"Tệp .json chứa callout và cài đặt của bạn để nhập vào vault khác.",
-	"export.formatCss": "Đoạn CSS",
+		"Tệp .json là cách duy nhất được hỗ trợ để khôi phục đầy đủ hoặc chuyển dữ liệu Callout Studio sang một vault mới đã cài plugin.",
+	"export.formatCss": "Ảnh chụp CSS độc lập",
 	"export.formatCssDesc":
-		"Tệp .css được lưu trong thư mục snippets của vault này để dùng ở nơi chưa cài Callout Studio. Chỉ bao gồm callout thông thường và là ảnh chụp; hãy xuất lại sau khi thay đổi.",
+		"Dành cho trang web hoặc vault không chạy Callout Studio. Chỉ bao gồm callout dạng khối và phải xuất lại sau khi có thay đổi.",
 	"quickInsert.readingViewHint": "Ghi chú này đang mở ở chế độ đọc, nên không thể chèn gì cả.",
 	"quickInsert.readingView": "Chuyển sang chế độ nguồn hoặc Xem trước trực tiếp để chèn callout.",
 	"quickInsert.noCursorHint": "Không có con trỏ nào trong ghi chú này, nên không có chỗ để chèn.",

@@ -204,6 +204,33 @@ describe("no locale carries a key English lacks", () => {
 	});
 });
 
+describe("export format guidance is translated everywhere", () => {
+	const keys = [
+		"export.formatJson",
+		"export.formatJsonDesc",
+		"export.formatCss",
+		"export.formatCssDesc",
+	] as const;
+
+	for (const [fileId, table] of entries) {
+		it(`${fileId}.ts has its own export guidance`, () => {
+			for (const key of keys) {
+				const localized = table[key];
+				assert.strictEqual(
+					typeof localized,
+					"string",
+					`${fileId}.ts is missing ${key}`,
+				);
+				assert.notStrictEqual(
+					localized,
+					en[key],
+					`${fileId}.ts still shows the English ${key}`,
+				);
+			}
+		});
+	}
+});
+
 describe("the concise theme preview summary is translated everywhere", () => {
 	const key = "themePreview.summary";
 	const english = en[key];

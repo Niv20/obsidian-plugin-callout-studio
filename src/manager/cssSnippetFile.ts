@@ -38,10 +38,10 @@ async function sha256(text: string): Promise<string> {
  * diff. Deliberately no timestamp and no version: identical settings must
  * produce identical bytes, or every export would rewrite the file and sync it.
  *
- * The prose is the short form of the README's *Export as a CSS snippet*, and
- * says the three things someone who finds this file without that page still
- * needs: it does not update itself, nothing here switched it on, and it covers
- * the block form of a callout only.
+ * The prose is the short form of the user guide's *Export a CSS snippet*, and
+ * says the four things someone who finds this file without that page still
+ * needs: it is not a backup, it does not update itself, nothing here switched
+ * it on, and it covers the block form of a callout only.
  */
 export async function buildSnippetFile(body: string): Promise<string> {
 	const fingerprint = await sha256(body);
@@ -52,12 +52,15 @@ export async function buildSnippetFile(body: string): Promise<string> {
 		" * changing a callout, export again from Settings → Callout Studio →\n" +
 		" * Import / export, which replaces this file.\n" +
 		" *\n" +
+		" * This standalone CSS is NOT a Callout Studio backup and cannot restore\n" +
+		" * your setup in another installation. Export a .json backup for that.\n" +
+		" *\n" +
 		" * Callout Studio never switches this snippet on. Obsidian, though,\n" +
 		" * remembers enabled snippets by NAME and keeps the name after the file is\n" +
 		" * gone — so if you enabled an earlier copy, this one is live the moment it\n" +
 		" * appears. Check under Settings → Appearance → CSS snippets.\n" +
 		" *\n" +
-		" * Covers regular callouts (> [!type]) only: colours, backgrounds (flat,\n" +
+		" * Covers block callouts (> [!type]) only: colours, backgrounds (flat,\n" +
 		" * gradient or transparent), icons, borders, sizes and aliases, in both\n" +
 		" * modes. Heading and inline callouts are Callout Studio's own elements and\n" +
 		" * cannot be reproduced in plain CSS, so they are absent, as is the\n" +

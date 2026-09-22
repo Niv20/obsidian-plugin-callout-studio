@@ -961,12 +961,12 @@ export const cs: Record<string, string> = {
 		"CSS fragment ve složce snippets se od posledního zápisu Callout Studiem změnil. Další export nahradí celý soubor.",
 	"confirm.overwriteSnippetOk": "Přepsat",
 	"export.chooseFormat": "Exportovat jako",
-	"export.formatJson": "Záloha Callout Studio",
+	"export.formatJson": "Záloha Callout Studio (doporučeno)",
 	"export.formatJsonDesc":
-		"Soubor .json s callouty a nastavením pro import do jiného vaultu.",
-	"export.formatCss": "CSS fragment",
+		"Soubor .json je jediný podporovaný způsob, jak plně obnovit nebo přenést data Callout Studia do nového vaultu s nainstalovaným pluginem.",
+	"export.formatCss": "Samostatný snímek CSS",
 	"export.formatCssDesc":
-		"Soubor .css uložený ve složce snippets tohoto vaultu pro použití tam, kde není Callout Studio nainstalováno. Pokrývá pouze běžné callouty a je snímkem; po změně calloutu jej exportujte znovu.",
+		"Pro weby nebo vaulty, kde Callout Studio neběží. Zahrnuje pouze blokové callouty a po změnách je nutné jej znovu exportovat.",
 	"quickInsert.readingViewHint": "Tato poznámka je otevřena v režimu čtení, takže nelze nic vložit.",
 	"quickInsert.readingView": "Přepněte do zdrojového režimu nebo živého náhledu a vložte callout.",
 	"quickInsert.noCursorHint": "V této poznámce není žádný kurzor, takže není kam vložit.",

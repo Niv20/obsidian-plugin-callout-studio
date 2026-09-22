@@ -973,12 +973,12 @@ export const nl: Record<string, string> = {
 		"Het CSS-fragment in je snippets-map is gewijzigd sinds Callout Studio het schreef. Opnieuw exporteren vervangt het hele bestand.",
 	"confirm.overwriteSnippetOk": "Overschrijven",
 	"export.chooseFormat": "Exporteren als",
-	"export.formatJson": "Callout Studio-back-up",
+	"export.formatJson": "Callout Studio-back-up (aanbevolen)",
 	"export.formatJsonDesc":
-		"Een .json-bestand met je callouts en instellingen om in een andere vault te importeren.",
-	"export.formatCss": "CSS-fragment",
+		"Een .json-bestand is de enige ondersteunde manier om alle Callout Studio-gegevens volledig te herstellen of over te zetten naar een nieuwe vault waarin de plugin is geïnstalleerd.",
+	"export.formatCss": "Zelfstandige CSS-momentopname",
 	"export.formatCssDesc":
-		"Een .css-bestand in de snippets-map van deze vault, voor gebruik waar Callout Studio niet is geïnstalleerd. Het bevat alleen gewone callouts en is een momentopname; exporteer opnieuw na wijzigingen.",
+		"Voor websites of vaults waar Callout Studio niet draait. Bevat alleen blokcallouts en moet na wijzigingen opnieuw worden geëxporteerd.",
 	"quickInsert.readingViewHint": "Deze notitie is geopend in leesmodus, dus er kan niets worden ingevoegd.",
 	"quickInsert.readingView": "Schakel over naar bronmodus of Live Preview om een callout in te voegen.",
 	"quickInsert.noCursorHint": "Er is geen cursor in deze notitie, dus er is nergens om in te voegen.",

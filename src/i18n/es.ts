@@ -975,12 +975,12 @@ export const es: Record<string, string> = {
 		"El fragmento CSS de la carpeta de snippets ha cambiado desde que Callout Studio lo escribió. Volver a exportarlo reemplaza todo el archivo.",
 	"confirm.overwriteSnippetOk": "Sobrescribir",
 	"export.chooseFormat": "Exportar como",
-	"export.formatJson": "Copia de seguridad de Callout Studio",
+	"export.formatJson": "Copia de seguridad de Callout Studio (recomendada)",
 	"export.formatJsonDesc":
-		"Un archivo .json con tus callouts y ajustes para importarlos en otra vault.",
-	"export.formatCss": "Fragmento CSS",
+		"Un archivo .json es la única forma compatible de restaurar por completo o transferir los datos de Callout Studio a una vault nueva con el complemento instalado.",
+	"export.formatCss": "Instantánea CSS independiente",
 	"export.formatCssDesc":
-		"Un archivo .css guardado en la carpeta de snippets de esta vault, para usarlo donde Callout Studio no esté instalado. Solo cubre callouts normales y es una instantánea; vuelve a exportarlo después de cambiar un callout.",
+		"Para sitios web o vaults donde Callout Studio no se esté ejecutando. Solo incluye callouts de bloque y debe volver a exportarse después de hacer cambios.",
 	"quickInsert.readingViewHint": "Esta nota está abierta en modo de lectura, así que no se puede insertar nada.",
 	"quickInsert.readingView": "Cambia al modo fuente o a la Vista previa en vivo para insertar un callout.",
 	"quickInsert.noCursorHint": "No hay cursor en esta nota, así que no hay dónde insertar.",

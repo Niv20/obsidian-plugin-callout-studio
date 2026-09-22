@@ -958,12 +958,12 @@ export const fa: Record<string, string> = {
 		"قطعه CSS در پوشه snippets از زمانی که Callout Studio آن را نوشته تغییر کرده است. خروجی گرفتن دوباره کل فایل را جایگزین می‌کند.",
 	"confirm.overwriteSnippetOk": "بازنویسی",
 	"export.chooseFormat": "خروجی به‌صورت",
-	"export.formatJson": "پشتیبان Callout Studio",
+	"export.formatJson": "پشتیبان Callout Studio (توصیه‌شده)",
 	"export.formatJsonDesc":
-		"یک فایل .json شامل کال‌اوت‌ها و تنظیمات شما برای وارد کردن به vault دیگر.",
-	"export.formatCss": "قطعه CSS",
+		"فایل ‎.json تنها روش پشتیبانی‌شده برای بازیابی کامل یا انتقال داده‌های Callout Studio به vault جدیدی است که افزونه در آن نصب شده است.",
+	"export.formatCss": "عکس فوری CSS مستقل",
 	"export.formatCssDesc":
-		"یک فایل .css ذخیره‌شده در پوشه snippets این vault، برای استفاده جایی که Callout Studio نصب نیست. فقط کال‌اوت‌های معمولی را پوشش می‌دهد و یک عکس فوری است؛ پس از تغییر دوباره خروجی بگیرید.",
+		"برای وب‌سایت‌ها یا vaultهایی که Callout Studio در آن‌ها اجرا نمی‌شود. فقط کال‌اوت‌های بلوکی را پوشش می‌دهد و پس از هر تغییر باید دوباره صادر شود.",
 	"quickInsert.readingViewHint": "این یادداشت در حالت خواندن باز است، بنابراین چیزی قابل درج نیست.",
 	"quickInsert.readingView": "برای درج callout به حالت منبع یا Live Preview بروید.",
 	"quickInsert.noCursorHint": "در این یادداشت مکان‌نمایی وجود ندارد، بنابراین جایی برای درج نیست.",

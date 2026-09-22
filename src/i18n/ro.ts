@@ -966,12 +966,12 @@ export const ro: Record<string, string> = {
 		"Fragmentul CSS din folderul snippets s-a schimbat de când a fost scris de Callout Studio. Un nou export va înlocui întregul fișier.",
 	"confirm.overwriteSnippetOk": "Suprascrie",
 	"export.chooseFormat": "Exportă ca",
-	"export.formatJson": "Copie de siguranță Callout Studio",
+	"export.formatJson": "Copie de siguranță Callout Studio (recomandată)",
 	"export.formatJsonDesc":
-		"Un fișier .json cu callouturile și setările tale, pentru import într-un alt vault.",
-	"export.formatCss": "Fragment CSS",
+		"Un fișier .json este singura metodă acceptată pentru restaurarea completă sau transferul datelor Callout Studio într-un vault nou în care este instalat pluginul.",
+	"export.formatCss": "Instantaneu CSS autonom",
 	"export.formatCssDesc":
-		"Un fișier .css salvat în folderul snippets al acestui vault, pentru utilizare unde Callout Studio nu este instalat. Acoperă doar callouturile obișnuite și este un instantaneu; exportă din nou după modificare.",
+		"Pentru site-uri web sau vaulturi în care Callout Studio nu rulează. Include numai callouturi de tip bloc și trebuie exportat din nou după modificări.",
 	"quickInsert.readingViewHint": "Această notă este deschisă în modul de citire, așa că nimic nu poate fi inserat.",
 	"quickInsert.readingView": "Comută la modul sursă sau la Live Preview pentru a insera un callout.",
 	"quickInsert.noCursorHint": "Nu există niciun cursor în această notă, așa că nu există unde să inserezi.",

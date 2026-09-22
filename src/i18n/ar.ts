@@ -949,12 +949,12 @@ export const ar: Record<string, string> = {
 		"تغير مقطع CSS في مجلد المقاطع منذ أن كتبه Callout Studio. سيؤدي التصدير مرة أخرى إلى استبدال الملف بالكامل.",
 	"confirm.overwriteSnippetOk": "استبدال",
 	"export.chooseFormat": "تصدير كـ",
-	"export.formatJson": "نسخة Callout Studio الاحتياطية",
+	"export.formatJson": "نسخة Callout Studio الاحتياطية (موصى بها)",
 	"export.formatJsonDesc":
-		"ملف ‎.json يحتوي على النداءات والإعدادات لاستيرادها إلى خزنة أخرى.",
-	"export.formatCss": "مقطع CSS",
+		"ملف ‎.json هو الطريقة الوحيدة المدعومة لاستعادة بيانات Callout Studio بالكامل أو نقلها إلى خزنة جديدة مثبّت فيها المكوّن الإضافي.",
+	"export.formatCss": "لقطة CSS مستقلة بذاتها",
 	"export.formatCssDesc":
-		"ملف ‎.css محفوظ في مجلد المقاطع بهذه الخزنة، لاستخدامه حيث لا يكون Callout Studio مثبتًا. يغطي النداءات العادية فقط، وهو لقطة؛ صدّره مرة أخرى بعد تغيير نداء.",
+		"للمواقع أو الخزائن التي لا يعمل فيها Callout Studio. تشمل نداءات الكتل فقط، ويجب تصديرها مجددًا بعد أي تغييرات.",
 	"quickInsert.readingViewHint": "هذه الملاحظة مفتوحة في وضع القراءة، لذا لا يمكن إدراج أي شيء.",
 	"quickInsert.readingView": "بدّل إلى وضع المصدر أو المعاينة المباشرة لإدراج callout.",
 	"quickInsert.noCursorHint": "لا يوجد مؤشر في هذه الملاحظة، لذا لا يوجد مكان للإدراج.",

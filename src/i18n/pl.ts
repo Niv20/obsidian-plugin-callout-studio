@@ -965,12 +965,12 @@ export const pl: Record<string, string> = {
 		"Fragment CSS w folderze snippets zmienił się od czasu zapisu przez Callout Studio. Ponowny eksport zastąpi cały plik.",
 	"confirm.overwriteSnippetOk": "Zastąp",
 	"export.chooseFormat": "Eksportuj jako",
-	"export.formatJson": "Kopia zapasowa Callout Studio",
+	"export.formatJson": "Kopia zapasowa Callout Studio (zalecana)",
 	"export.formatJsonDesc":
-		"Plik .json z calloutami i ustawieniami do zaimportowania w innym vault.",
-	"export.formatCss": "Fragment CSS",
+		"Plik .json to jedyny obsługiwany sposób pełnego przywrócenia danych Callout Studio lub przeniesienia ich do nowego vaultu z zainstalowaną wtyczką.",
+	"export.formatCss": "Samodzielna migawka CSS",
 	"export.formatCssDesc":
-		"Plik .css zapisany w folderze snippets tego vaultu, do użycia tam, gdzie Callout Studio nie jest zainstalowane. Obejmuje tylko zwykłe callouty i jest migawką; po zmianie wyeksportuj go ponownie.",
+		"Do witryn internetowych lub vaultów, w których Callout Studio nie działa. Obejmuje tylko callouty blokowe i po zmianach trzeba ją ponownie wyeksportować.",
 	"quickInsert.readingViewHint": "Ta notatka jest otwarta w trybie odczytu, więc nic nie można wstawić.",
 	"quickInsert.readingView": "Przełącz się na tryb źródłowy lub podgląd na żywo, aby wstawić callout.",
 	"quickInsert.noCursorHint": "W tej notatce nie ma kursora, więc nie ma gdzie wstawić.",

@@ -922,12 +922,12 @@ export const zh: Record<string, string> = {
 		"snippets 文件夹中的 CSS 片段自 Callout Studio 写入后已发生变化。再次导出会替换整个文件。",
 	"confirm.overwriteSnippetOk": "覆盖",
 	"export.chooseFormat": "导出为",
-	"export.formatJson": "Callout Studio 备份",
+	"export.formatJson": "Callout Studio 备份（推荐）",
 	"export.formatJsonDesc":
-		"包含 callout 和设置的 .json 文件，可导入到其他 vault。",
-	"export.formatCss": "CSS 片段",
+		".json 文件是完整恢复 Callout Studio 数据，或将其迁移到已安装该插件的新 vault 的唯一受支持方式。",
+	"export.formatCss": "独立 CSS 快照",
 	"export.formatCssDesc":
-		"保存在此 vault 的 snippets 文件夹中的 .css 文件，可在未安装 Callout Studio 的地方使用。仅涵盖普通 callout，是一个快照；更改 callout 后请重新导出。",
+		"适用于未运行 Callout Studio 的网站或 vault。仅包含块级 callout，更改后必须重新导出。",
 	"quickInsert.readingViewHint": "此笔记以阅读模式打开，因此无法插入任何内容。",
 	"quickInsert.readingView": "切换到源代码模式或实时预览以插入 callout。",
 	"quickInsert.noCursorHint": "此笔记中没有光标，因此没有可插入的位置。",

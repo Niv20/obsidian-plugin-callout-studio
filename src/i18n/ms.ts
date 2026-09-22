@@ -947,12 +947,12 @@ export const ms: Record<string, string> = {
 		"Coretan CSS dalam folder snippets telah berubah sejak Callout Studio menulisnya. Mengeksport semula akan menggantikan keseluruhan fail.",
 	"confirm.overwriteSnippetOk": "Tulis ganti",
 	"export.chooseFormat": "Eksport sebagai",
-	"export.formatJson": "Sandaran Callout Studio",
+	"export.formatJson": "Sandaran Callout Studio (disyorkan)",
 	"export.formatJsonDesc":
-		"Fail .json dengan callout dan tetapan anda untuk diimport ke vault lain.",
-	"export.formatCss": "Coretan CSS",
+		"Fail .json ialah satu-satunya cara yang disokong untuk memulihkan sepenuhnya atau memindahkan data Callout Studio ke vault baharu dengan pemalam terpasang.",
+	"export.formatCss": "Petikan CSS kendiri",
 	"export.formatCssDesc":
-		"Fail .css yang disimpan dalam folder snippets vault ini, untuk digunakan apabila Callout Studio tidak dipasang. Ia hanya meliputi callout biasa dan merupakan petikan keadaan; eksport semula selepas perubahan.",
+		"Untuk laman web atau vault yang tidak menjalankan Callout Studio. Hanya meliputi callout blok dan mesti dieksport semula selepas perubahan.",
 	"quickInsert.readingViewHint": "Nota ini dibuka dalam mod bacaan, jadi tiada apa yang boleh disisipkan.",
 	"quickInsert.readingView": "Tukar ke mod sumber atau Pratonton Langsung untuk menyisipkan callout.",
 	"quickInsert.noCursorHint": "Tiada kursor dalam nota ini, jadi tiada tempat untuk menyisipkan.",

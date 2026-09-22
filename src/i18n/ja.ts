@@ -963,12 +963,12 @@ export const ja: Record<string, string> = {
 		"snippetsフォルダのCSSスニペットは、Callout Studioが書き込んだ後に変更されています。再度エクスポートするとファイル全体が置き換えられます。",
 	"confirm.overwriteSnippetOk": "上書き",
 	"export.chooseFormat": "エクスポート形式",
-	"export.formatJson": "Callout Studioバックアップ",
+	"export.formatJson": "Callout Studioバックアップ（推奨）",
 	"export.formatJsonDesc":
-		"calloutと設定を含む.jsonファイル。他のvaultにインポートできます。",
-	"export.formatCss": "CSSスニペット",
+		".jsonファイルは、Callout Studioのデータを完全に復元したり、プラグインがインストールされた新しいvaultへ移行したりするためにサポートされている唯一の方法です。",
+	"export.formatCss": "単独で使用できるCSSスナップショット",
 	"export.formatCssDesc":
-		"このvaultのsnippetsフォルダに保存する.cssファイル。Callout Studioがインストールされていない場所で使用できます。通常のcalloutのみを対象とするスナップショットです。変更後に再度エクスポートしてください。",
+		"Callout Studioが動作していないWebサイトやvault向けです。ブロックcalloutのみが対象で、変更後は再度エクスポートする必要があります。",
 	"quickInsert.readingViewHint": "このノートは閲覧モードで開かれているため、何も挿入できません。",
 	"quickInsert.readingView": "calloutを挿入するには、ソースモードまたはライブプレビューに切り替えてください。",
 	"quickInsert.noCursorHint": "このノートにはカーソルがないため、挿入する場所がありません。",

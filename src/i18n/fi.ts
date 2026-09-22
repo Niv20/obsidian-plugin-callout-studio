@@ -946,12 +946,12 @@ export const fi: Record<string, string> = {
 		"Snippets-kansiossa oleva CSS-katkelma on muuttunut sen jälkeen, kun Callout Studio kirjoitti sen. Uusi vienti korvaa koko tiedoston.",
 	"confirm.overwriteSnippetOk": "Korvaa",
 	"export.chooseFormat": "Vie muodossa",
-	"export.formatJson": "Callout Studion varmuuskopio",
+	"export.formatJson": "Callout Studion varmuuskopio (suositeltu)",
 	"export.formatJsonDesc":
-		".json-tiedosto, joka sisältää calloutit ja asetukset tuontia varten toiseen vaultiin.",
-	"export.formatCss": "CSS-katkelma",
+		".json-tiedosto on ainoa tuettu tapa palauttaa Callout Studion tiedot kokonaan tai siirtää ne uuteen vaultiin, johon lisäosa on asennettu.",
+	"export.formatCss": "Erillinen CSS-tilannekuva",
 	"export.formatCssDesc":
-		".css-tiedosto tämän vaultin snippets-kansiossa käytettäväksi siellä, missä Callout Studioa ei ole asennettu. Se kattaa vain tavalliset calloutit ja on tilannekuva; vie uudelleen muutoksen jälkeen.",
+		"Verkkosivustoille tai vaulteihin, joissa Callout Studio ei ole käynnissä. Kattaa vain lohkocalloutit, ja se on vietävä uudelleen muutosten jälkeen.",
 	"quickInsert.readingViewHint": "Tämä muistiinpano on avoinna lukutilassa, joten mitään ei voida lisätä.",
 	"quickInsert.readingView": "Vaihda lähdetilaan tai Live Previewiin lisätäksesi calloutin.",
 	"quickInsert.noCursorHint": "Tässä muistiinpanossa ei ole kohdistinta, joten lisäämiselle ei ole paikkaa.",

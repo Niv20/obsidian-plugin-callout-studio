@@ -954,12 +954,12 @@ export const tr: Record<string, string> = {
 		"Snippets klasöründeki CSS snippet, Callout Studio yazdıktan sonra değişti. Yeniden dışa aktarma dosyanın tamamını değiştirir.",
 	"confirm.overwriteSnippetOk": "Üzerine yaz",
 	"export.chooseFormat": "Şu biçimde dışa aktar",
-	"export.formatJson": "Callout Studio yedeği",
+	"export.formatJson": "Callout Studio yedeği (önerilir)",
 	"export.formatJsonDesc":
-		"Callout'larınızı ve ayarlarınızı başka bir vault'a aktarmak için bir .json dosyası.",
-	"export.formatCss": "CSS snippet",
+		".json dosyası, Callout Studio verilerini tamamen geri yüklemenin veya eklentinin kurulu olduğu yeni bir vault'a aktarmanın desteklenen tek yoludur.",
+	"export.formatCss": "Bağımsız CSS anlık görüntüsü",
 	"export.formatCssDesc":
-		"Callout Studio'nun kurulu olmadığı yerlerde kullanmak üzere bu vault'un snippets klasörüne kaydedilen .css dosyası. Yalnızca normal callout'ları kapsar ve bir anlık görüntüdür; değişiklikten sonra yeniden dışa aktarın.",
+		"Callout Studio'nun çalışmadığı web siteleri veya vault'lar içindir. Yalnızca blok callout'larını kapsar ve değişikliklerden sonra yeniden dışa aktarılmalıdır.",
 	"quickInsert.readingViewHint": "Bu not okuma modunda açık, bu yüzden hiçbir şey eklenemez.",
 	"quickInsert.readingView": "Bir callout eklemek için kaynak moduna veya Canlı Önizleme'ye geçin.",
 	"quickInsert.noCursorHint": "Bu notta imleç yok, bu yüzden eklenecek bir yer yok.",

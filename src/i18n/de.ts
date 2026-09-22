@@ -981,12 +981,12 @@ export const de: Record<string, string> = {
 		"Das CSS-Snippet in Ihrem Snippets-Ordner wurde geändert, seit Callout Studio es geschrieben hat. Ein erneuter Export ersetzt die gesamte Datei.",
 	"confirm.overwriteSnippetOk": "Überschreiben",
 	"export.chooseFormat": "Exportieren als",
-	"export.formatJson": "Callout-Studio-Sicherung",
+	"export.formatJson": "Callout-Studio-Sicherung (empfohlen)",
 	"export.formatJsonDesc":
-		"Eine .json-Datei mit Ihren Callouts und Einstellungen zum Import in einen anderen Vault.",
-	"export.formatCss": "CSS-Snippet",
+		"Eine .json-Datei ist die einzige unterstützte Möglichkeit, Callout-Studio-Daten vollständig wiederherzustellen oder in einen neuen Vault mit installiertem Plugin zu übertragen.",
+	"export.formatCss": "Eigenständige CSS-Momentaufnahme",
 	"export.formatCssDesc":
-		"Eine .css-Datei im Snippets-Ordner dieses Vaults, für die Verwendung ohne installiertes Callout Studio. Sie umfasst nur reguläre Callouts und ist eine Momentaufnahme; nach Änderungen erneut exportieren.",
+		"Für Websites oder Vaults ohne laufendes Callout Studio. Deckt nur Block-Callouts ab und muss nach Änderungen erneut exportiert werden.",
 	"quickInsert.readingViewHint": "Diese Notiz ist im Lesemodus geöffnet, daher kann nichts eingefügt werden.",
 	"quickInsert.readingView": "Wechsle in den Quellmodus oder die Live-Vorschau, um einen Callout einzufügen.",
 	"quickInsert.noCursorHint": "In dieser Notiz gibt es keinen Cursor, daher gibt es keine Einfügeposition.",

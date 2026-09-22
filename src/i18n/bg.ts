@@ -946,12 +946,12 @@ export const bg: Record<string, string> = {
 		"CSS фрагментът в папката със snippets е променен, след като Callout Studio го записа. Новият експорт ще замени целия файл.",
 	"confirm.overwriteSnippetOk": "Замени",
 	"export.chooseFormat": "Експортиране като",
-	"export.formatJson": "Архив на Callout Studio",
+	"export.formatJson": "Архив на Callout Studio (препоръчително)",
 	"export.formatJsonDesc":
-		".json файл с вашите callout-и и настройки за импортиране в друга vault.",
-	"export.formatCss": "CSS фрагмент",
+		".json файлът е единственият поддържан начин за пълно възстановяване или прехвърляне на данните на Callout Studio в нова vault с инсталиран плъгин.",
+	"export.formatCss": "Самостоятелна CSS моментна снимка",
 	"export.formatCssDesc":
-		".css файл, записан в папката със snippets на тази vault, за използване там, където Callout Studio не е инсталиран. Обхваща само обикновени callout-и и е моментна снимка; експортирайте отново след промяна.",
+		"За уебсайтове или vault-ове, в които Callout Studio не работи. Обхваща само блокови callout-и и трябва да се експортира отново след промени.",
 	"quickInsert.readingViewHint": "Тази бележка е отворена в режим на четене, затова нищо не може да бъде вмъкнато.",
 	"quickInsert.readingView": "Превключете към режим на изходен код или Live Preview, за да вмъкнете callout.",
 	"quickInsert.noCursorHint": "В тази бележка няма курсор, затова няма къде да се вмъкне.",

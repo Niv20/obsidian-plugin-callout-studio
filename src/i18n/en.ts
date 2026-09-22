@@ -976,12 +976,12 @@ export const en: Record<string, string> = {
 
 	// Export — format chooser
 	"export.chooseFormat": "Export as",
-	"export.formatJson": "Callout Studio backup",
+	"export.formatJson": "Callout Studio backup (recommended)",
 	"export.formatJsonDesc":
-		"A .json file with your callouts and settings, for importing into another vault.",
-	"export.formatCss": "CSS snippet",
+		"A .json file — the only supported format for fully restoring your callouts and settings in another vault with Callout Studio.",
+	"export.formatCss": "Standalone CSS snapshot",
 	"export.formatCssDesc":
-		"A .css file saved into this vault's snippets folder, for use where Callout Studio isn't installed. It covers regular callouts only, and is a snapshot — export again after you change a callout.",
+		"For websites or vaults where Callout Studio isn't running. Covers block callouts only; export again after changes.",
 
 	// Import — Callout Manager
 	"import.cmTitle": "Import from Callout Manager",

@@ -900,12 +900,12 @@ export const zhTW: Record<string, string> = {
 		"snippets 資料夾中的 CSS 片段自 Callout Studio 寫入後已變更。再次匯出會取代整個檔案。",
 	"confirm.overwriteSnippetOk": "覆寫",
 	"export.chooseFormat": "匯出為",
-	"export.formatJson": "Callout Studio 備份",
+	"export.formatJson": "Callout Studio 備份（建議）",
 	"export.formatJsonDesc":
-		"包含 callout 和設定的 .json 檔案，可匯入其他儲存庫。",
-	"export.formatCss": "CSS 片段",
+		".json 檔案是完整還原 Callout Studio 資料，或將其移轉到已安裝此外掛程式的新儲存庫的唯一受支援方式。",
+	"export.formatCss": "獨立 CSS 快照",
 	"export.formatCssDesc":
-		"儲存在此儲存庫 snippets 資料夾中的 .css 檔案，可在未安裝 Callout Studio 的地方使用。僅涵蓋一般 callout，是一份快照；變更 callout 後請重新匯出。",
+		"適用於未執行 Callout Studio 的網站或儲存庫。僅包含區塊 callout，變更後必須重新匯出。",
 	"quickInsert.readingViewHint": "此筆記以閱讀模式開啟，因此無法插入任何內容。",
 	"quickInsert.readingView": "切換到原始碼模式或即時預覽以插入 callout。",
 	"quickInsert.noCursorHint": "此筆記中沒有游標，因此沒有可插入的位置。",

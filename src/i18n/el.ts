@@ -960,12 +960,12 @@ export const el: Record<string, string> = {
 		"Το απόσπασμα CSS στον φάκελο snippets άλλαξε από τότε που το έγραψε το Callout Studio. Η νέα εξαγωγή αντικαθιστά ολόκληρο το αρχείο.",
 	"confirm.overwriteSnippetOk": "Αντικατάσταση",
 	"export.chooseFormat": "Εξαγωγή ως",
-	"export.formatJson": "Αντίγραφο ασφαλείας Callout Studio",
+	"export.formatJson": "Αντίγραφο ασφαλείας Callout Studio (προτείνεται)",
 	"export.formatJsonDesc":
-		"Αρχείο .json με τα callout και τις ρυθμίσεις σας για εισαγωγή σε άλλο vault.",
-	"export.formatCss": "Απόσπασμα CSS",
+		"Το αρχείο .json είναι ο μόνος υποστηριζόμενος τρόπος για πλήρη επαναφορά ή μεταφορά των δεδομένων του Callout Studio σε νέο vault όπου είναι εγκατεστημένο το πρόσθετο.",
+	"export.formatCss": "Αυτόνομο στιγμιότυπο CSS",
 	"export.formatCssDesc":
-		"Αρχείο .css στον φάκελο snippets αυτού του vault, για χρήση όπου δεν είναι εγκατεστημένο το Callout Studio. Καλύπτει μόνο τα κανονικά callout και είναι στιγμιότυπο· κάντε νέα εξαγωγή μετά από αλλαγή.",
+		"Για ιστότοπους ή vault όπου δεν εκτελείται το Callout Studio. Καλύπτει μόνο callout τύπου block και πρέπει να εξαχθεί ξανά μετά από αλλαγές.",
 	"quickInsert.readingViewHint": "Αυτή η σημείωση είναι ανοιχτή σε λειτουργία ανάγνωσης, οπότε δεν μπορεί να γίνει εισαγωγή.",
 	"quickInsert.readingView": "Μεταβείτε σε λειτουργία πηγής ή στη Ζωντανή Προεπισκόπηση για να εισαγάγετε ένα callout.",
 	"quickInsert.noCursorHint": "Δεν υπάρχει δρομέας σε αυτή τη σημείωση, οπότε δεν υπάρχει σημείο εισαγωγής.",

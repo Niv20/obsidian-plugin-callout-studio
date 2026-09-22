@@ -25,17 +25,33 @@ halves of one section shaped differently").
    ```
    `getExportableDefinitions()` is `getUserDefined()` **plus every modified
    built-in** — see [Callout registry](05-callout-registry.md#which-rows-are-persisted-the-built-in-rule).
+   The v2 JSON backup is the **only supported full-fidelity restore and
+   cross-vault transfer format** for Callout Studio. It is the format users
+   should choose when the destination vault also has the plugin installed.
    A legacy `exportToJSON()` (flat array, no envelope, no settings) still
    exists and is kept **because it's part of the public plugin API surface**
-   — the importer accepts both shapes.
+   — the importer accepts both shapes, but the legacy array is not a complete
+   setup backup because it carries no settings.
 2. **CSS snippet (`.css`)** — see
    [Persistence and caching](07-persistence-and-caching.md#the-user-requested-css-snippet-export)
    for the full write/overwrite/fingerprint mechanics. In short: block-role
    callouts only, a snapshot (not live-linked), byte-identical re-export
    writes nothing, and a foreign/hand-edited file at the target path prompts
-   before overwriting.
+   before overwriting. This is a **one-way deployment artifact, not a backup**:
+   there is no direct Callout Studio import from the generated CSS file and no
+   importer scans the snippets folder.
+
+The Callout Manager importer's paste box can parse a limited subset from either
+Callout Manager CSS or a pasted Callout Studio snapshot. This is a partial
+recovery/migration path, not a direct CSS-file import or a full-fidelity
+restore: CSS cannot carry the complete definitions, settings, palettes,
+commands, or stored image data in the JSON backup.
 
 ## Import — the JSON backup
+
+This is the matching restore path for Callout Studio's own exported state.
+Users select a JSON backup explicitly; the plugin does not infer an import from
+a CSS file placed in the vault or from anything in the snippets folder.
 
 [`src/utils/importValidator.ts`](../../src/utils/importValidator.ts) (~1,250
 lines) is the gate every import file passes through before a single

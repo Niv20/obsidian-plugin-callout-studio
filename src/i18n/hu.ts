@@ -969,12 +969,12 @@ export const hu: Record<string, string> = {
 		"A snippets mappában lévő CSS-részlet megváltozott azóta, hogy a Callout Studio létrehozta. Az újbóli exportálás a teljes fájlt lecseréli.",
 	"confirm.overwriteSnippetOk": "Felülírás",
 	"export.chooseFormat": "Exportálás mint",
-	"export.formatJson": "Callout Studio biztonsági mentés",
+	"export.formatJson": "Callout Studio biztonsági mentés (ajánlott)",
 	"export.formatJsonDesc":
-		".json fájl a calloutokkal és beállításokkal, másik vaultba való importáláshoz.",
-	"export.formatCss": "CSS-részlet",
+		"A .json fájl az egyetlen támogatott mód a Callout Studio adatainak teljes visszaállítására vagy egy új, telepített pluginnal rendelkező vaultba való átvitelére.",
+	"export.formatCss": "Önálló CSS-pillanatkép",
 	"export.formatCssDesc":
-		".css fájl a vault snippets mappájában való használatra ott, ahol a Callout Studio nincs telepítve. Csak a normál calloutokat fedi le, és pillanatkép; módosítás után exportáld újra.",
+		"Olyan webhelyekhez vagy vaultokhoz, ahol a Callout Studio nem fut. Csak a blokk-calloutokat tartalmazza, és módosítások után újra exportálni kell.",
 	"quickInsert.readingViewHint": "Ez a jegyzet olvasó módban van megnyitva, ezért semmit sem lehet beszúrni.",
 	"quickInsert.readingView": "Váltson forrás módra vagy élő előnézetre a callout beszúrásához.",
 	"quickInsert.noCursorHint": "Ebben a jegyzetben nincs kurzor, ezért nincs hova beszúrni.",

@@ -970,12 +970,12 @@ export const uk: Record<string, string> = {
 		"Фрагмент CSS у папці snippets змінився після того, як Callout Studio його записав. Повторний експорт замінить увесь файл.",
 	"confirm.overwriteSnippetOk": "Перезаписати",
 	"export.chooseFormat": "Експортувати як",
-	"export.formatJson": "Резервна копія Callout Studio",
+	"export.formatJson": "Резервна копія Callout Studio (рекомендовано)",
 	"export.formatJsonDesc":
-		"Файл .json із вашими callout і налаштуваннями для імпорту в інший vault.",
-	"export.formatCss": "Фрагмент CSS",
+		"Файл .json — єдиний підтримуваний спосіб повністю відновити дані Callout Studio або перенести їх до нового vault зі встановленим плагіном.",
+	"export.formatCss": "Автономний знімок CSS",
 	"export.formatCssDesc":
-		"Файл .css, збережений у папці snippets цього vault для використання там, де Callout Studio не встановлено. Він охоплює лише звичайні callout і є знімком; експортуйте його знову після змін.",
+		"Для вебсайтів або vault, де Callout Studio не працює. Охоплює лише блокові callout і після змін має бути експортований повторно.",
 	"quickInsert.readingViewHint": "Ця нотатка відкрита в режимі читання, тому нічого не можна вставити.",
 	"quickInsert.readingView": "Перемкніться в режим джерела або живий попередній перегляд, щоб вставити callout.",
 	"quickInsert.noCursorHint": "У цій нотатці немає курсора, тому нема куди вставити.",

@@ -959,12 +959,12 @@ export const ru: Record<string, string> = {
 		"Фрагмент CSS в папке snippets изменился с момента записи Callout Studio. Повторный экспорт заменит весь файл.",
 	"confirm.overwriteSnippetOk": "Перезаписать",
 	"export.chooseFormat": "Экспортировать как",
-	"export.formatJson": "Резервная копия Callout Studio",
+	"export.formatJson": "Резервная копия Callout Studio (рекомендуется)",
 	"export.formatJsonDesc":
-		"Файл .json с вашими callout и настройками для импорта в другой vault.",
-	"export.formatCss": "Фрагмент CSS",
+		"Файл .json — единственный поддерживаемый способ полностью восстановить данные Callout Studio или перенести их в новый vault, где установлен плагин.",
+	"export.formatCss": "Автономный снимок CSS",
 	"export.formatCssDesc":
-		"Файл .css, сохранённый в папке snippets этого vault для использования там, где Callout Studio не установлен. Он охватывает только обычные callout и является снимком; после изменений экспортируйте его снова.",
+		"Для веб-сайтов или vault, где Callout Studio не работает. Содержит только блочные callout и требует повторного экспорта после изменений.",
 	"quickInsert.readingViewHint": "Эта заметка открыта в режиме чтения, поэтому ничего нельзя вставить.",
 	"quickInsert.readingView": "Переключитесь в режим источника или в живой предпросмотр, чтобы вставить callout.",
 	"quickInsert.noCursorHint": "В этой заметке нет курсора, поэтому вставлять некуда.",

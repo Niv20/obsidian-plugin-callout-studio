@@ -956,12 +956,12 @@ export const ko: Record<string, string> = {
 		"Callout Studio가 작성한 후 snippets 폴더의 CSS 스니펫이 변경되었습니다. 다시 내보내면 파일 전체를 교체합니다.",
 	"confirm.overwriteSnippetOk": "덮어쓰기",
 	"export.chooseFormat": "내보내기 형식",
-	"export.formatJson": "Callout Studio 백업",
+	"export.formatJson": "Callout Studio 백업(권장)",
 	"export.formatJsonDesc":
-		"다른 vault로 가져올 수 있도록 callout과 설정을 담은 .json 파일입니다.",
-	"export.formatCss": "CSS 스니펫",
+		".json 파일은 Callout Studio 데이터를 완전히 복원하거나 플러그인이 설치된 새 vault로 이전할 수 있는 유일하게 지원되는 방법입니다.",
+	"export.formatCss": "독립형 CSS 스냅샷",
 	"export.formatCssDesc":
-		"Callout Studio가 설치되지 않은 곳에서 사용할 수 있도록 이 vault의 snippets 폴더에 저장되는 .css 파일입니다. 일반 callout만 포함하며 스냅샷이므로 변경 후 다시 내보내야 합니다.",
+		"Callout Studio가 실행되지 않는 웹사이트나 vault에서 사용합니다. 블록 callout만 포함하며 변경 후에는 다시 내보내야 합니다.",
 	"quickInsert.readingViewHint": "이 노트는 읽기 모드로 열려 있어 아무것도 삽입할 수 없습니다.",
 	"quickInsert.readingView": "callout을 삽입하려면 소스 모드 또는 라이브 미리 보기로 전환하세요.",
 	"quickInsert.noCursorHint": "이 노트에는 커서가 없어 삽입할 위치가 없습니다.",

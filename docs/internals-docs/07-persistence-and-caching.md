@@ -448,6 +448,10 @@ above. Key properties:
   enabled** by the plugin.
 - **A snapshot, not a live link.** Nothing updates the file after export;
   re-export to bring it current.
+- **A one-way deployment artifact, not a backup.** No Callout Studio importer
+  reads this file, and nothing scans the snippets folder to restore it. The v2
+  JSON backup is the only supported full-fidelity restore and cross-vault
+  transfer format.
 - **Byte-identical re-export writes nothing at all** — `classifyExisting()`
   hashes the file's own body (SHA-256, stored in its header as a
   `fingerprint:` line) and compares against a freshly rebuilt body. If they

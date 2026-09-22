@@ -964,12 +964,12 @@ export const id: Record<string, string> = {
 		"Cuplikan CSS di folder snippets berubah sejak ditulis oleh Callout Studio. Mengekspor lagi akan mengganti seluruh file.",
 	"confirm.overwriteSnippetOk": "Timpa",
 	"export.chooseFormat": "Ekspor sebagai",
-	"export.formatJson": "Cadangan Callout Studio",
+	"export.formatJson": "Cadangan Callout Studio (direkomendasikan)",
 	"export.formatJsonDesc":
-		"File .json berisi callout dan pengaturan Anda untuk diimpor ke vault lain.",
-	"export.formatCss": "Cuplikan CSS",
+		"File .json adalah satu-satunya cara yang didukung untuk memulihkan sepenuhnya atau memindahkan data Callout Studio ke vault baru dengan plugin terpasang.",
+	"export.formatCss": "Snapshot CSS mandiri",
 	"export.formatCssDesc":
-		"File .css yang disimpan di folder snippets vault ini, untuk digunakan saat Callout Studio tidak terpasang. Hanya mencakup callout biasa dan merupakan snapshot; ekspor lagi setelah mengubah callout.",
+		"Untuk situs web atau vault tempat Callout Studio tidak berjalan. Hanya mencakup callout blok dan harus diekspor ulang setelah ada perubahan.",
 	"quickInsert.readingViewHint": "Catatan ini terbuka dalam mode baca, jadi tidak ada yang dapat disisipkan.",
 	"quickInsert.readingView": "Beralihlah ke mode sumber atau Pratinjau Langsung untuk menyisipkan callout.",
 	"quickInsert.noCursorHint": "Tidak ada kursor di catatan ini, jadi tidak ada tempat untuk menyisipkan.",

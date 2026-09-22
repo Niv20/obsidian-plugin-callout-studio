@@ -18,13 +18,15 @@ vault's CSS snippets folder.
 
 ## Export a complete backup
 
-Choose the Callout Studio backup format to save your full setup as JSON, including callout definitions, saved color palettes, and plugin settings. Use this file to restore the same setup in another vault.
+Choose the Callout Studio backup format to save your full setup as JSON, including callout definitions, saved color palettes, and plugin settings. This is the recommended and only supported way to fully restore a Callout Studio setup or transfer it to another vault where the plugin is installed.
 
 When importing a Callout Studio backup, matching entries are updated and valid saved palettes are merged into the destination setup without overwriting unrelated palettes.
 
 ## Export a CSS snippet
 
 Choose the CSS option to generate a standalone copy of your Block callout styles. Callout Studio saves the file in the vault's CSS snippets folder.
+
+The CSS file is a one-way styling snapshot, **not a Callout Studio backup**. Callout Studio cannot import this snapshot directly from a CSS file and does not scan the snippets folder for it. To restore or move an editable Callout Studio setup, use the JSON backup instead.
 
 Use the snippet for Obsidian Publish, a static website, or another place where the plugin itself is not running. The export is a snapshot: export it again after changing your designs.
 

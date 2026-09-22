@@ -958,12 +958,12 @@ export const sv: Record<string, string> = {
 		"CSS-utdraget i snippets-mappen har ändrats sedan Callout Studio skrev det. En ny export ersätter hela filen.",
 	"confirm.overwriteSnippetOk": "Skriv över",
 	"export.chooseFormat": "Exportera som",
-	"export.formatJson": "Callout Studio-säkerhetskopia",
+	"export.formatJson": "Callout Studio-säkerhetskopia (rekommenderas)",
 	"export.formatJsonDesc":
-		"En .json-fil med dina callouts och inställningar för import till en annan vault.",
-	"export.formatCss": "CSS-utdrag",
+		"En .json-fil är det enda sättet som stöds för att helt återställa eller överföra Callout Studio-data till en ny vault där pluginet är installerat.",
+	"export.formatCss": "Fristående CSS-ögonblicksbild",
 	"export.formatCssDesc":
-		"En .css-fil som sparas i den här vaultens snippets-mapp för användning där Callout Studio inte är installerat. Den omfattar bara vanliga callouts och är en ögonblicksbild; exportera igen efter ändringar.",
+		"För webbplatser eller vaults där Callout Studio inte körs. Omfattar endast block-callouts och måste exporteras igen efter ändringar.",
 	"quickInsert.readingViewHint": "Den här anteckningen är öppen i läsläge, så inget kan infogas.",
 	"quickInsert.readingView": "Växla till källäge eller Live Preview för att infoga en callout.",
 	"quickInsert.noCursorHint": "Det finns ingen markör i den här anteckningen, så det finns ingenstans att infoga.",

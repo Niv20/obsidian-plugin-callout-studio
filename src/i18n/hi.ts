@@ -952,12 +952,12 @@ export const hi: Record<string, string> = {
 		"snippets फ़ोल्डर में CSS स्निपेट Callout Studio द्वारा लिखे जाने के बाद बदल गया है। दोबारा निर्यात करने पर पूरी फ़ाइल बदल जाएगी।",
 	"confirm.overwriteSnippetOk": "ओवरराइट करें",
 	"export.chooseFormat": "इस रूप में निर्यात करें",
-	"export.formatJson": "Callout Studio बैकअप",
+	"export.formatJson": "Callout Studio बैकअप (अनुशंसित)",
 	"export.formatJsonDesc":
-		"आपके callout और सेटिंग वाला .json फ़ाइल, जिसे दूसरी vault में आयात किया जा सकता है।",
-	"export.formatCss": "CSS स्निपेट",
+		".json फ़ाइल Callout Studio के डेटा को पूरी तरह पुनर्स्थापित करने या उसे प्लगइन इंस्टॉल वाली नई vault में स्थानांतरित करने का एकमात्र समर्थित तरीका है।",
+	"export.formatCss": "स्वतंत्र CSS स्नैपशॉट",
 	"export.formatCssDesc":
-		"इस vault के snippets फ़ोल्डर में सहेजी गई .css फ़ाइल, जहाँ Callout Studio इंस्टॉल नहीं है वहाँ उपयोग के लिए। यह केवल नियमित callout को कवर करती है और एक स्नैपशॉट है; बदलाव के बाद फिर निर्यात करें।",
+		"वेबसाइटों या ऐसे vault के लिए जहाँ Callout Studio नहीं चल रहा है। इसमें केवल block callout शामिल होते हैं और बदलावों के बाद इसे फिर से निर्यात करना ज़रूरी है।",
 	"quickInsert.readingViewHint": "यह नोट रीडिंग व्यू में खुला है, इसलिए कुछ भी नहीं डाला जा सकता।",
 	"quickInsert.readingView": "callout डालने के लिए सोर्स मोड या लाइव प्रीव्यू पर स्विच करें।",
 	"quickInsert.noCursorHint": "इस नोट में कोई कर्सर नहीं है, इसलिए डालने के लिए कोई स्थान नहीं है।",

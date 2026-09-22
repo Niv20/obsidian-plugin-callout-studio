@@ -997,12 +997,12 @@ export const he: Record<string, string> = {
 		"קטע ה־CSS בתיקיית הקטעים השתנה מאז ש־Callout Studio כתב אותו. ייצוא נוסף יחליף את כל הקובץ.",
 	"confirm.overwriteSnippetOk": "שכתוב",
 	"export.chooseFormat": "ייצוא בתור",
-	"export.formatJson": "גיבוי של Callout Studio",
+	"export.formatJson": "גיבוי של Callout Studio (מומלץ)",
 	"export.formatJsonDesc":
-		"קובץ ‎.json עם תיבות־ההבלטה וההגדרות שלכם, לייבוא בכספת אחרת.",
-	"export.formatCss": "קטע CSS",
+		"קובץ ‎.json הוא הדרך היחידה הנתמכת לשחזור מלא של נתוני Callout Studio או להעברתם לכספת חדשה שבה התוסף מותקן.",
+	"export.formatCss": "תמונת מצב עצמאית ב־CSS",
 	"export.formatCssDesc":
-		"קובץ ‎.css שנשמר בתיקיית הקטעים של הכספת הזו, לשימוש במקום שבו Callout Studio אינו מותקן. הוא מכסה תיבות־הבלטה רגילות בלבד ומהווה תמונת מצב; ייצאו אותו שוב לאחר שינוי.",
+		"מיועדת לאתרים או לכספות שבהם Callout Studio אינו פועל. היא כוללת תיבות־הבלטה מסוג בלוק בלבד, ויש לייצא אותה מחדש לאחר שינויים.",
 	"quickInsert.readingViewHint": "הפתק הזה פתוח במצב קריאה, ולכן אי אפשר להוסיף דבר.",
 	"quickInsert.readingView": "עברו ל-Source mode או ל-Live Preview כדי להוסיף תיבת־הבלטה.",
 	"quickInsert.noCursorHint": "אין סמן בפתק הזה, ולכן אין היכן להוסיף.",

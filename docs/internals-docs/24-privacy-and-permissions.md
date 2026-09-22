@@ -68,7 +68,7 @@ is removed; a damaged drawing uses the usual missing-icon display.
 - **The Material Symbols preview font:** used only for the icon picker's grid, never for your notes.
 - **A small local snapshot of the plugin's generated CSS**, purely to shorten the flash of unstyled callouts on a slow startup (mainly on mobile). It lives in the app's own local storage, never in the vault, and never leaves the device.
 - **Local interface preferences and an installation marker.** Folded-section states stay on this device. The marker protects settings when an existing installation temporarily cannot find its settings file. Discovery has no local cache; manually saved results live in `data.json`.
-- **The exported CSS snippet file**, only if you've explicitly asked for one (see [Import, export & sharing](../user-guide/10-import-export-and-sharing.md)). It's never turned on automatically, and it's safe to delete.
+- **The exported CSS snippet file**, only if you've explicitly asked for one (see [Import, export & sharing](../user-guide/10-import-export-and-sharing.md)). It's a one-way styling snapshot rather than a Callout Studio backup, is never turned on automatically, and is safe to delete.
 - **Recovery copies of the old startup snippet**, if upgrading from a version
   that created `callout-studio-do-not-delete.css`. Cleanup preserves its exact
   contents, including personal edits, as `.txt` files in

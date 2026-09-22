@@ -933,12 +933,12 @@ export const da: Record<string, string> = {
 		"CSS-udsnittet i din snippets-mappe er ændret, siden Callout Studio skrev det. En ny eksport erstatter hele filen.",
 	"confirm.overwriteSnippetOk": "Overskriv",
 	"export.chooseFormat": "Eksportér som",
-	"export.formatJson": "Callout Studio-sikkerhedskopi",
+	"export.formatJson": "Callout Studio-sikkerhedskopi (anbefalet)",
 	"export.formatJsonDesc":
-		"En .json-fil med dine callouts og indstillinger til import i en anden vault.",
-	"export.formatCss": "CSS-udsnit",
+		"En .json-fil er den eneste understøttede måde at gendanne eller overføre alle Callout Studio-data til en ny vault, hvor pluginet er installeret.",
+	"export.formatCss": "Selvstændigt CSS-øjebliksbillede",
 	"export.formatCssDesc":
-		"En .css-fil gemt i denne vaults snippets-mappe til brug, hvor Callout Studio ikke er installeret. Den dækker kun almindelige callouts og er et øjebliksbillede; eksportér igen efter ændringer.",
+		"Til websteder eller vaults, hvor Callout Studio ikke kører. Omfatter kun blok-callouts og skal eksporteres igen efter ændringer.",
 	"quickInsert.readingViewHint": "Denne note er åben i læsetilstand, så intet kan indsættes.",
 	"quickInsert.readingView": "Skift til kildetilstand eller Live Preview for at indsætte en callout.",
 	"quickInsert.noCursorHint": "Der er ingen markør i denne note, så der er intet sted at indsætte.",

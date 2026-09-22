@@ -940,12 +940,12 @@ export const th: Record<string, string> = {
 		"CSS snippet ในโฟลเดอร์ snippets เปลี่ยนไปตั้งแต่ Callout Studio เขียนไว้ การส่งออกอีกครั้งจะแทนที่ทั้งไฟล์",
 	"confirm.overwriteSnippetOk": "เขียนทับ",
 	"export.chooseFormat": "ส่งออกเป็น",
-	"export.formatJson": "ข้อมูลสำรอง Callout Studio",
+	"export.formatJson": "ข้อมูลสำรอง Callout Studio (แนะนำ)",
 	"export.formatJsonDesc":
-		"ไฟล์ .json ที่มี callout และการตั้งค่าของคุณสำหรับนำเข้าใน vault อื่น",
-	"export.formatCss": "CSS snippet",
+		"ไฟล์ .json เป็นวิธีเดียวที่รองรับสำหรับการกู้คืนข้อมูล Callout Studio อย่างครบถ้วนหรือถ่ายโอนไปยัง vault ใหม่ที่ติดตั้งปลั๊กอินไว้",
+	"export.formatCss": "สแนปช็อต CSS แบบสแตนด์อโลน",
 	"export.formatCssDesc":
-		"ไฟล์ .css ที่บันทึกในโฟลเดอร์ snippets ของ vault นี้ เพื่อใช้ในที่ที่ไม่ได้ติดตั้ง Callout Studio ครอบคลุมเฉพาะ callout ปกติและเป็นภาพ snapshot; ส่งออกอีกครั้งหลังเปลี่ยนแปลง callout",
+		"สำหรับเว็บไซต์หรือ vault ที่ไม่ได้เรียกใช้ Callout Studio ครอบคลุมเฉพาะ block callout และต้องส่งออกใหม่หลังการเปลี่ยนแปลง",
 	"quickInsert.readingViewHint": "บันทึกนี้เปิดอยู่ในโหมดอ่าน จึงไม่สามารถแทรกอะไรได้",
 	"quickInsert.readingView": "สลับไปยังโหมดต้นฉบับหรือ Live Preview เพื่อแทรก callout",
 	"quickInsert.noCursorHint": "ไม่มีเคอร์เซอร์ในบันทึกนี้ จึงไม่มีตำแหน่งให้แทรก",
