@@ -1,8 +1,8 @@
 # Callout editor
 
 The edit/create modal — [`src/settings/CalloutEditor.ts`](../../src/settings/CalloutEditor.ts)
-(~2,330 lines, one of the frozen oversized-file exceptions) plus its three
-focused helper modules under `src/settings/editor/`. This is the most
+(~2,100 lines, one of the frozen oversized-file exceptions) plus its focused
+helper modules under `src/settings/editor/`. This is the most
 state-heavy UI in the plugin, and understanding *why* is the point of this
 document: a `CalloutDefinition` distinguishes "the user picked white" from
 "nothing was picked, so it renders as Obsidian's default" via field
@@ -57,6 +57,44 @@ against one fixed tint strength — it calls `derivedBgAmount()` (see
 **solves** as *some* tint strength of the current accent, because the
 palette editor's intensity slider produces tints at any strength between
 `MIN_BG_COLOR_AMOUNT` and `MAX_BG_COLOR_AMOUNT`.
+
+## Field-level reset for built-ins
+
+The editor keeps a separate `builtInDefault` alongside `baselineDef`.
+`baselineDef` is the possibly customized row the form opened on; using it as a
+reset target would simply restore the customization. `builtInDefault` is the
+pristine shipped definition returned by `CalloutRegistry.getBuiltInDefault()`
+and is the target for the conditional return arrows on IDs, icon, color, and
+each render role's icon-adjustment card.
+
+The IDs reset restores `[default.id, ...default.aliases]`. Only those shipped
+IDs are passed to `TagInput` as read-only: a custom alias saved during an
+earlier session must still have a remove action when the editor reopens. The
+reset first checks that every shipped ID is still available; an exact or
+dasherized conflict leaves the draft unchanged and reports the problem on the
+row. A successful reset changes form state only. On Save, the ordinary
+removed-ID plan temporarily retains any dropped aliases, rewrites their vault
+usages to the primary ID, and then releases them, so this path inherits the same
+partial-failure safety as a manual alias removal.
+
+Each icon-adjustment card owns one return arrow for its Size / Horizontal /
+Vertical trio. It resets only that render role and calls the preview once;
+other roles keep their values. The target is
+`resolveIconAdjust(builtInDefault, role)`, not hard-coded `0 / 0 / 1`, so a
+future built-in with a non-neutral shipped adjustment remains correct.
+
+There is a storage trap here: moving every thumb back to its shipped position
+does not by itself reset the definition. A customized baseline already carried
+adjustment fields, so `hasAuthoredIconAdjust()` would preserve explicit neutral
+numbers, leaving `isBuiltInModified()` true. `definitionIconAdjust.ts`,
+shared by preview and save, compares the resolved result in all three roles.
+When it render-matches the built-in default, it copies the default's four raw
+fields (`iconAdjust`, `iconOffsetX`, `iconOffsetY`, `iconSize`) exactly,
+including `undefined`. This is what restores theme deference and removes an
+otherwise-pristine built-in from persisted data. While even one role still
+differs, normal `buildIconAdjust()` output is retained; that preserves explicit
+neutral overrides needed to stop a reset Heading or Inline role from inheriting
+a still-nudged Regular role.
 
 ## The live preview: a real embedded Obsidian editor
 

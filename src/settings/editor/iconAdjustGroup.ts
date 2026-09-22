@@ -12,13 +12,30 @@
  * move through `onChange`, so the caller owns both the state and what to do
  * about it — a live preview in one window, a save in the other.
  */
-import { Setting, type SliderComponent } from "obsidian";
-import { t } from "../../i18n";
 import {
+	Setting,
+	setIcon,
+	setTooltip,
+	type SliderComponent,
+} from "obsidian";
+import { t } from "../../i18n";
+import type { CalloutRenderRole } from "../../types";
+import {
+	equalIconAdjust,
 	ICON_ADJUST_LIMITS,
 	type ResolvedIconAdjust,
 } from "../../utils/iconAdjust";
 import { setSliderDisplay } from "../styleControls";
+
+/** Compose a role-specific header from strings every locale already has. */
+function groupHeader(role: CalloutRenderRole): string {
+	const roleLabels: Record<CalloutRenderRole, string> = {
+		regular: t("settings.calloutTypeRegular"),
+		heading: t("settings.calloutTypeHeading"),
+		inline: t("settings.calloutTypeInline"),
+	};
+	return `${t("editor.iconAdjustment")} — ${roleLabels[role]}`;
+}
 
 /**
  * Build one role's adjustment box into `parent` and return it, so the caller
@@ -30,12 +47,28 @@ import { setSliderDisplay } from "../styleControls";
  */
 export function renderIconAdjustGroup(
 	parent: HTMLElement,
-	header: string,
+	role: CalloutRenderRole,
 	adjust: ResolvedIconAdjust,
 	onChange: () => void,
+	defaults?: ResolvedIconAdjust,
 ): HTMLElement {
 	const box = parent.createDiv({ cls: "callout-studio-adjust-section" });
-	box.createDiv({ cls: "callout-studio-adjust-header", text: header });
+	const header = groupHeader(role);
+	const headerEl = box.createDiv({
+		cls: "callout-studio-adjust-header cs-icon-adjust-header",
+	});
+	headerEl.createSpan({ text: header });
+	const resetLabel = `${t("settings.resetAction")}: ${header}`;
+	const resetBtn = defaults
+		? headerEl.createEl("button", {
+				cls: "clickable-icon cs-icon-adjust-reset cs-hidden",
+				attr: { type: "button", "aria-label": resetLabel },
+			})
+		: null;
+	if (resetBtn) {
+		setIcon(resetBtn, "rotate-ccw");
+		setTooltip(resetBtn, resetLabel);
+	}
 
 	const { offset, size } = ICON_ADJUST_LIMITS;
 
@@ -46,13 +79,16 @@ export function renderIconAdjustGroup(
 		suffix: string;
 		limits: [number, number, number];
 		get: () => number;
+		getDefault: () => number;
 		set: (value: number) => void;
+		slider?: SliderComponent;
 	}[] = [
 		{
 			label: t("editor.size"),
 			suffix: "%",
 			limits: [size.min * 100, size.max * 100, 5],
 			get: () => Math.round(adjust.size * 100),
+			getDefault: () => Math.round((defaults?.size ?? adjust.size) * 100),
 			set: (value) => {
 				adjust.size = value / 100;
 			},
@@ -62,6 +98,7 @@ export function renderIconAdjustGroup(
 			suffix: "px",
 			limits: [offset.min, offset.max, offset.step],
 			get: () => adjust.offsetX,
+			getDefault: () => defaults?.offsetX ?? adjust.offsetX,
 			set: (value) => {
 				adjust.offsetX = value;
 			},
@@ -71,11 +108,18 @@ export function renderIconAdjustGroup(
 			suffix: "px",
 			limits: [offset.min, offset.max, offset.step],
 			get: () => adjust.offsetY,
+			getDefault: () => defaults?.offsetY ?? adjust.offsetY,
 			set: (value) => {
 				adjust.offsetY = value;
 			},
 		},
 	];
+	const syncReset = (): void => {
+		resetBtn?.toggleClass(
+			"cs-hidden",
+			!defaults || equalIconAdjust(adjust, defaults),
+		);
+	};
 
 	for (const control of controls) {
 		const row = box.createDiv({ cls: "callout-studio-slider-row" });
@@ -85,6 +129,7 @@ export function renderIconAdjustGroup(
 		// it in sync, so this only says how to spell it. All three values are
 		// whole numbers, so there are no decimals to pad.
 		new Setting(row).addSlider((slider: SliderComponent) => {
+			control.slider = slider;
 			setSliderDisplay(slider, (v) => `${v}${control.suffix}`);
 			slider
 				.setLimits(...control.limits)
@@ -92,10 +137,22 @@ export function renderIconAdjustGroup(
 				.setInstant(true)
 				.onChange((value: number) => {
 					control.set(value);
+					syncReset();
 					onChange();
 				});
 		});
 	}
+
+	resetBtn?.addEventListener("click", () => {
+		if (!defaults) return;
+		Object.assign(adjust, defaults);
+		for (const control of controls) {
+			control.slider?.setValue(control.getDefault());
+		}
+		syncReset();
+		onChange();
+	});
+	syncReset();
 
 	return box;
 }

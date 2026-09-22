@@ -42,7 +42,10 @@ import {
 	DEFAULT_TEXT_COLOR_LIGHT,
 	bgTintFor,
 } from "../src/utils/colorUtils";
-import { DEFAULT_ICON_ADJUST } from "../src/utils/iconAdjust";
+import {
+	DEFAULT_ICON_ADJUST,
+	resolveIconAdjust,
+} from "../src/utils/iconAdjust";
 import type { App } from "obsidian";
 import type { CalloutDefinition, PluginData } from "../src/types";
 
@@ -91,6 +94,37 @@ function formState(
 		aliases: [],
 		...over,
 	};
+}
+
+/** The concrete values CalloutEditor shows for an existing definition. */
+function stateFor(
+	def: CalloutDefinition,
+	over: Partial<CalloutEditorSaveState> = {},
+): CalloutEditorSaveState {
+	const regular = resolveIconAdjust(def, "regular");
+	return formState({
+		displayName: def.displayName,
+		calloutId: def.id,
+		icon: def.icon,
+		hideIcon: def.hideIcon === true,
+		colorLight: def.colorLight,
+		colorDark: def.colorDark,
+		bgColorLight: def.bgColorLight ?? bgTintFor(def.colorLight, false),
+		bgColorDark: def.bgColorDark ?? bgTintFor(def.colorDark, true),
+		bgGradient: def.bgGradient,
+		transparentBg: def.transparentBg === true,
+		textColorLight: def.textColorLight ?? DEFAULT_TEXT_COLOR_LIGHT,
+		textColorDark: def.textColorDark ?? DEFAULT_TEXT_COLOR_DARK,
+		foldable: def.foldable,
+		defaultFolded: def.defaultFolded,
+		iconAdjust: def.iconAdjust,
+		iconOffsetX: regular.offsetX,
+		iconOffsetY: regular.offsetY,
+		iconSize: regular.size,
+		aliases: [...(def.aliases ?? [])],
+		paletteId: def.paletteId,
+		...over,
+	});
 }
 
 type Harness = {
@@ -307,6 +341,25 @@ describe("performCalloutEditorSave — renaming a callout's ID", () => {
 		});
 		assert.strictEqual(h.file("note.md"), "> [!keep] X");
 	});
+
+	it("rewrites a removed custom built-in alias to its primary ID", async () => {
+		const h = harness([], { "note.md": "> [!mine] Note" });
+		h.registry.update("note", { aliases: ["mine"] });
+		const baseline = h.registry.get("note");
+		assert.ok(baseline);
+
+		const saved = await h.save({
+			isBuiltIn: true,
+			existingId: "note",
+			baselineDef: baseline,
+			state: stateFor(baseline, { aliases: [] }),
+		});
+
+		assert.strictEqual(h.file("note.md"), "> [!note] Note");
+		assert.strictEqual(saved?.aliases, undefined);
+		assert.strictEqual(h.registry.isBuiltInModified("note"), false);
+		assert.deepStrictEqual(h.registry.toSaveData().callouts, []);
+	});
 });
 
 describe("performCalloutEditorSave — the other vault rewrites", () => {
@@ -433,17 +486,7 @@ describe("performCalloutEditorSave — style the user never authored", () => {
 			isBuiltIn: true,
 			existingId: "note",
 			baselineDef: shipped,
-			state: formState({
-				calloutId: shipped.id,
-				displayName: shipped.displayName,
-				icon: shipped.icon,
-				colorLight: shipped.colorLight,
-				colorDark: shipped.colorDark,
-				bgColorLight: bgTintFor(shipped.colorLight, false),
-				bgColorDark: bgTintFor(shipped.colorDark, true),
-				foldable: shipped.foldable,
-				defaultFolded: shipped.defaultFolded,
-			}),
+			state: stateFor(shipped),
 		});
 		assert.strictEqual(h.registry.isBuiltInModified("note"), false);
 		// The narrower question, and the one CSSInjector actually asks before it
@@ -451,6 +494,105 @@ describe("performCalloutEditorSave — style the user never authored", () => {
 		const after = h.registry.get("note");
 		assert.ok(after);
 		assert.strictEqual(h.registry.isUnmodifiedBuiltIn(after), true);
+	});
+});
+
+describe("performCalloutEditorSave — resetting built-in icon adjustment", () => {
+	it("restores the shipped raw fields, not explicit neutral numbers", async () => {
+		const h = harness();
+		const shipped = h.registry.getBuiltInDefault("note");
+		assert.ok(shipped);
+		h.registry.update("note", {
+			iconAdjust: { heading: { offsetX: -2, offsetY: 1, size: 1.2 } },
+			iconOffsetX: 4,
+			iconOffsetY: 3,
+			iconSize: 1.25,
+		});
+		const baseline = h.registry.get("note");
+		assert.ok(baseline);
+
+		const saved = await h.save({
+			isBuiltIn: true,
+			existingId: "note",
+			baselineDef: baseline,
+			hasStyleChanges: true,
+			state: stateFor(shipped),
+		});
+
+		assert.strictEqual(saved?.iconAdjust, shipped.iconAdjust);
+		assert.strictEqual(saved?.iconOffsetX, shipped.iconOffsetX);
+		assert.strictEqual(saved?.iconOffsetY, shipped.iconOffsetY);
+		assert.strictEqual(saved?.iconSize, shipped.iconSize);
+		assert.strictEqual(h.registry.isBuiltInModified("note"), false);
+		assert.deepStrictEqual(h.registry.toSaveData().callouts, []);
+	});
+
+	it("keeps a neutral role override while another role stays nudged", async () => {
+		const h = harness();
+		const shipped = h.registry.getBuiltInDefault("note");
+		assert.ok(shipped);
+		h.registry.update("note", {
+			iconOffsetX: 4,
+			iconOffsetY: 0,
+			iconSize: 1,
+		});
+		const baseline = h.registry.get("note");
+		assert.ok(baseline);
+		const neutral = { ...DEFAULT_ICON_ADJUST };
+
+		const saved = await h.save({
+			isBuiltIn: true,
+			existingId: "note",
+			baselineDef: baseline,
+			hasStyleChanges: true,
+			state: stateFor(baseline, {
+				iconAdjust: { heading: neutral },
+			}),
+		});
+
+		assert.ok(saved);
+		assert.deepStrictEqual(resolveIconAdjust(saved, "regular"), {
+			offsetX: 4,
+			offsetY: 0,
+			size: 1,
+		});
+		assert.deepStrictEqual(resolveIconAdjust(saved, "heading"), neutral);
+		assert.strictEqual(h.registry.isBuiltInModified("note"), true);
+	});
+
+	it("keeps Regular neutral while Heading stays nudged", async () => {
+		const h = harness();
+		const shipped = h.registry.getBuiltInDefault("note");
+		assert.ok(shipped);
+		const heading = { offsetX: 2, offsetY: -1, size: 1.1 };
+		h.registry.update("note", {
+			iconAdjust: { heading },
+			iconOffsetX: 4,
+			iconOffsetY: 0,
+			iconSize: 1,
+		});
+		const baseline = h.registry.get("note");
+		assert.ok(baseline);
+
+		const saved = await h.save({
+			isBuiltIn: true,
+			existingId: "note",
+			baselineDef: baseline,
+			hasStyleChanges: true,
+			state: stateFor(baseline, {
+				iconAdjust: { heading },
+				iconOffsetX: 0,
+			}),
+		});
+
+		assert.ok(saved);
+		assert.deepStrictEqual(
+			resolveIconAdjust(saved, "regular"),
+			DEFAULT_ICON_ADJUST,
+		);
+		assert.deepStrictEqual(resolveIconAdjust(saved, "heading"), heading);
+		assert.strictEqual(saved.iconOffsetX, 0);
+		assert.strictEqual(h.registry.isBuiltInModified("note"), true);
 	});
 });
 

@@ -242,6 +242,10 @@ export class SliderComponent {
 		return this;
 	}
 
+	setInstant(): this {
+		return this;
+	}
+
 	setDisplayFormat(format: (value: number) => string): this {
 		this.displayFormat = format;
 		return this;
@@ -249,7 +253,8 @@ export class SliderComponent {
 
 	/** Test seam: the component telling its consumer the value changed. */
 	commit(value: number): unknown {
-		return this.changeCb?.(value);
+		this.setValue(value);
+		return this.changeCb?.(this.getValue());
 	}
 }
 
@@ -262,10 +267,12 @@ export class SliderComponent {
 /** The chainable shape `Setting.addButton` / `addExtraButton` hand out. */
 export class ButtonLike {
 	readonly buttonEl: ElementLike;
+	readonly extraSettingsEl: ElementLike;
 	private click: (() => void) | null = null;
 
 	constructor(containerEl: ElementLike) {
 		this.buttonEl = containerEl.createDiv({ cls: "clickable-icon" });
+		this.extraSettingsEl = this.buttonEl;
 	}
 
 	setButtonText(text: string): this {
@@ -304,6 +311,8 @@ export class Setting {
 	readonly controlEl: ElementLike;
 	/** Every slider this row created, in order. */
 	readonly sliders: SliderComponent[] = [];
+	/** Extra buttons are exposed so component tests can press their callbacks. */
+	readonly extraButtons: ButtonLike[] = [];
 
 	constructor(containerEl: ElementLike) {
 		this.settingEl = containerEl.createDiv({ cls: "setting-item" });
@@ -359,7 +368,9 @@ export class Setting {
 	}
 
 	addExtraButton(cb: (button: ButtonLike) => unknown): this {
-		cb(new ButtonLike(this.controlEl));
+		const button = new ButtonLike(this.controlEl);
+		this.extraButtons.push(button);
+		cb(button);
 		return this;
 	}
 

@@ -1,4 +1,9 @@
-import type { CalloutDefinition, CalloutRenderRole, IconAdjust } from "../types";
+import {
+	CALLOUT_RENDER_ROLES,
+	type CalloutDefinition,
+	type CalloutRenderRole,
+	type IconAdjust,
+} from "../types";
 
 /**
  * Icon size and offsets, per render role.
@@ -35,7 +40,7 @@ export const ICON_ADJUST_LIMITS = {
 } as const;
 
 /** The subset of a definition this module reads. */
-type IconAdjustSource = Pick<
+export type IconAdjustSource = Pick<
 	CalloutDefinition,
 	"iconAdjust" | "iconOffsetX" | "iconOffsetY" | "iconSize"
 >;
@@ -107,6 +112,39 @@ export function equalIconAdjust(
 	return (
 		a.offsetX === b.offsetX && a.offsetY === b.offsetY && a.size === b.size
 	);
+}
+
+/**
+ * Whether two stored adjustment shapes render identically in every role.
+ *
+ * This intentionally compares resolved values rather than raw storage. The
+ * editor mirrors Regular into the legacy flat trio and stores role-specific
+ * departures in `iconAdjust`, while imported or older data may spell the same
+ * result with a partial role object. Built-in reset needs to recognise all of
+ * those as the shipped result so it can restore the shipped raw fields exactly
+ * instead of persisting explicit 0 / 0 / 1 values as a customization.
+ */
+export function iconAdjustSourcesEqual(
+	a: IconAdjustSource,
+	b: IconAdjustSource,
+): boolean {
+	return CALLOUT_RENDER_ROLES.every((role) =>
+		equalIconAdjust(resolveIconAdjust(a, role), resolveIconAdjust(b, role)),
+	);
+}
+
+/** Clone the four raw fields without materializing defaults for absent values. */
+export function cloneIconAdjustFields(
+	source: IconAdjustSource,
+): IconAdjustSource {
+	return {
+		iconAdjust: source.iconAdjust
+			? structuredClone(source.iconAdjust)
+			: undefined,
+		iconOffsetX: source.iconOffsetX,
+		iconOffsetY: source.iconOffsetY,
+		iconSize: source.iconSize,
+	};
 }
 
 /**

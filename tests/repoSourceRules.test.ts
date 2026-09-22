@@ -752,7 +752,10 @@ describe("no new oversized files", () => {
 		// movable already moved — settings/modalAutofocus.ts owns the focus and
 		// the platform gate whole — and what is left is the one thing only this
 		// class can answer: whether this window is creating a callout.
-		"src/settings/CalloutEditor.ts": 2128,
+		// Lowered from 2128: the shared field reset button and the icon-adjust
+		// storage decision moved into focused editor helpers while the editor now
+		// wires the built-in ID and per-role adjustment resets to them.
+		"src/settings/CalloutEditor.ts": 2121,
 		// Lowered repeatedly, per this ratchet's own ask: `bgAlphaFor`'s solve moved
 		// to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the many
 		// that render the callout identically; `generateFallbackCSS` to
@@ -937,7 +940,9 @@ describe("no new oversized files", () => {
 
 		"src/editor/contextmenu/resolve.ts": 455,
 		"src/ui/TagInput.ts": 414,
-		"src/settings/editor/CalloutEditorSave.ts": 368,
+		// Lowered from 368: preview and save now share the built-in-aware icon
+		// adjustment serializer instead of maintaining parallel persistence rules.
+		"src/settings/editor/CalloutEditorSave.ts": 353,
 		"src/icons/isolateSvg.ts": 402,
 		"src/outline/OutlineDecorator.ts": 382,
 		// Lowered from 357: the read-only rule — and the transaction filter

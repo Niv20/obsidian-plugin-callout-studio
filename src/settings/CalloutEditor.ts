@@ -1,5 +1,7 @@
 import { recoverEditorSaving } from "./editor/recoverEditorSaving";
 import { renderSaveStatusBanner } from "./saveStatusBanner";
+import { addFieldResetButton } from "./editor/fieldResetButton";
+import { addBuiltInIdReset, builtInDefaultIds } from "./editor/builtInIdReset";
 /**
  * settings/CalloutEditor.ts — Modal dialog for creating and editing callouts.
  *
@@ -10,11 +12,7 @@ import { renderSaveStatusBanner } from "./saveStatusBanner";
  * CalloutEditorSave; validation to CalloutEditorValidation.
  */
 import { Modal, Notice, Setting, setIcon } from "obsidian";
-import type {
-	ExtraButtonComponent,
-	TextComponent,
-	ToggleComponent,
-} from "obsidian";
+import type { TextComponent, ToggleComponent } from "obsidian";
 import type {
 	BgGradient,
 	CalloutDefinition,
@@ -70,9 +68,9 @@ import { performCalloutEditorSave } from "./editor/CalloutEditorSave";
 import { EditorSaveSession } from "./editor/EditorSaveSession";
 import {
 	hasAuthoredBackground,
-	hasAuthoredIconAdjust,
 	hasAuthoredTextColors,
 } from "./editor/authoredStyle";
+import { definitionIconAdjustFields } from "./editor/definitionIconAdjust";
 import { findUserImage } from "../icons/packs/userImages";
 import { describeIcon } from "../icons/describeIcon";
 import { iconsEqual } from "../icons/lucideId";
@@ -91,31 +89,6 @@ import { obsidianCalloutAttrId } from "../utils/calloutId";
 // sanitizer just lowercases, restricts the charset, and collapses/trims runs.
 function generateId(displayName: string): string {
 	return sanitizeCalloutIdInput(displayName);
-}
-
-/**
- * Header for each icon-adjustment box: what is being adjusted, then which
- * callout's icon it belongs to — "Icon adjustment — Heading callout". The role
- * name alone read as a section about the whole heading callout rather than
- * about its icon, which is all these three sliders touch.
- *
- * Composed from the two strings that already say each half in all 32 locales
- * (the role names are the ones the Global settings section heads its three rows
- * with, so the two panels name the same three things identically) rather than
- * from a new per-role phrase, which would need translating 32 times to say
- * something both halves already say.
- *
- * A thunk rather than a plain string map: `t()` must run after the locale is
- * resolved, not at module load.
- */
-const ICON_ADJUST_ROLE_LABEL: Record<CalloutRenderRole, () => string> = {
-	regular: () => t("settings.calloutTypeRegular"),
-	heading: () => t("settings.calloutTypeHeading"),
-	inline: () => t("settings.calloutTypeInline"),
-};
-
-function iconAdjustHeader(role: CalloutRenderRole): string {
-	return `${t("editor.iconAdjustment")} — ${ICON_ADJUST_ROLE_LABEL[role]()}`;
 }
 
 /**
@@ -252,6 +225,8 @@ export class CalloutEditor extends Modal {
 	 * concrete colour.
 	 */
 	private readonly baselineDef: CalloutDefinition | undefined;
+	/** Pristine shipped row, used only by field-level built-in resets. */
+	private readonly builtInDefault: CalloutDefinition | undefined;
 	private resolve: ((result: CalloutDefinition | null) => void) | null = null;
 
 	// Form state
@@ -355,6 +330,9 @@ export class CalloutEditor extends Modal {
 		// from the fallback is omitted from the save rather than baked on.
 		const seed = existing ?? fallbackBase;
 		this.baselineDef = seed;
+		this.builtInDefault = this.isBuiltIn && this.existingId
+			? plugin.registry.getBuiltInDefault(this.existingId)
+			: undefined;
 		// Last resort for the accents, only reachable if the registry somehow holds
 		// neither the configured fallback nor `note`. It must be a real palette:
 		// colours matching none open the dropdown reading "Deleted color".
@@ -489,6 +467,11 @@ export class CalloutEditor extends Modal {
 				}
 			});
 
+		// The pristine shipped row gates every field-level built-in reset.
+		const originalDef = this.builtInDefault;
+		const defaultIds = originalDef
+			? builtInDefaultIds(originalDef) : [];
+		let syncIdsRevert = (): void => undefined;
 		// Callout IDs (primary + aliases) — unified tag input
 		const initialIds = [this.calloutId, ...this.aliases].filter(Boolean);
 		const idsSetting = new Setting(contentEl)
@@ -516,7 +499,9 @@ export class CalloutEditor extends Modal {
 				!this.isBuiltIn && this.calloutId ? this.calloutId : undefined,
 			placeholder: t("editor.calloutIdsPlaceholder"),
 			errorEl: idsErrorEl,
-			readonlyTags: this.isBuiltIn ? initialIds : undefined,
+			// A saved custom alias must stay removable on the next open. Only the
+			// identifiers Obsidian itself ships are permanent.
+			readonlyTags: originalDef ? defaultIds : undefined,
 			onChange: (tags) => {
 				if (tags.length > 0) this.hasHadCalloutId = true;
 				const pinned = this.idsTagInput?.getPinnedTag() ?? null;
@@ -535,6 +520,7 @@ export class CalloutEditor extends Modal {
 				this.updateIdWarning();
 				this.updatePreview();
 				this.updateSaveState();
+				syncIdsRevert();
 			},
 			onTagAdded: (tag) => {
 				// Reverse sync: while there is no pinned primary, the first ID
@@ -574,17 +560,34 @@ export class CalloutEditor extends Modal {
 				return null;
 			},
 		});
+		if (originalDef) {
+			syncIdsRevert = addBuiltInIdReset({
+				setting: idsSetting,
+				tagInput: this.idsTagInput,
+				defaultDef: originalDef,
+				read: () => ({ calloutId: this.calloutId, aliases: this.aliases }),
+				write: ({ calloutId, aliases }) => {
+					this.calloutId = calloutId;
+					this.aliases = aliases;
+				},
+				onReset: () => {
+					this.updateIdWarning();
+					this.updatePreview();
+					this.updateSaveState();
+				},
+				validate: (id, role) => {
+					if (!this.canUseCalloutId(id, role)) return t("editor.idConflict");
+					const clash = this.findAttrIdCollision(id);
+					return clash ? t("editor.idDashConflict", { other: clash }) : null;
+				},
+				onBlocked: (message) => {
+					this.idsTagInput?.showExternalError(message);
+				},
+			});
+		}
 
 		// Sync initial warning state without showing an empty-ID warning before interaction.
 		this.updateIdWarning();
-
-		// The pristine shipped definition, only for a built-in being edited. Its
-		// mere presence is the single gate for the icon/colour revert buttons —
-		// a new callout or a user/fallback/theme/plugin row never gets one.
-		const originalDef =
-			this.isBuiltIn && this.existingId
-				? this.plugin.registry.getBuiltInDefault(this.existingId)
-				: undefined;
 
 		// ── Color row ───────────────────────────────────────────────
 		// Standard setting row (matching Display name / Callout IDs / Icon).
@@ -638,17 +641,11 @@ export class CalloutEditor extends Modal {
 		// (`pencil`) and the picker spells the same drawing `lucide-pencil` — on
 		// a raw compare every built-in offered this button the moment its editor
 		// opened, having changed nothing.
-		let iconRevertBtn: ExtraButtonComponent | null = null;
 		const iconMatchesDefault = (): boolean =>
 			!originalDef ||
 			(iconsEqual(this.icon, originalDef.icon) &&
 				this.hideIcon === (originalDef.hideIcon === true));
-		const syncIconRevert = (): void => {
-			iconRevertBtn?.extraSettingsEl.toggleClass(
-				"cs-hidden",
-				iconMatchesDefault(),
-			);
-		};
+		let syncIconRevert = (): void => undefined;
 
 		// Everything the icon row shows, in one place: three call sites used to
 		// repeat four of these lines each and the fifth kept being forgotten.
@@ -699,18 +696,19 @@ export class CalloutEditor extends Modal {
 			this.updatePreview();
 		});
 
-		iconSetting.addExtraButton((btn) => {
-			iconRevertBtn = btn;
-			btn.setIcon("rotate-ccw")
-				.setTooltip(t("editor.resetIcon"))
-				.onClick(() => {
-					if (!originalDef) return;
+		if (originalDef) {
+			syncIconRevert = addFieldResetButton(
+				iconSetting,
+				t("editor.resetIcon"),
+				iconMatchesDefault,
+				() => {
 					this.icon = { ...originalDef.icon };
 					this.hideIcon = originalDef.hideIcon === true;
 					syncIconTile();
 					this.updatePreview();
-				});
-		});
+				},
+			);
+		}
 		// First paint. `syncPictureBox`/`syncIconAdjust` are still their no-op
 		// defaults here — the boxes they hide do not exist yet — so both are
 		// called again at the bottom of their own sections.
@@ -875,17 +873,11 @@ export class CalloutEditor extends Modal {
 		// Reverts colours (and background/text) to the built-in's shipped
 		// values; only shown once they have actually diverged from that
 		// default. Mirrors `iconMatchesDefault`/`syncIconRevert` above.
-		let colorRevertBtn: ExtraButtonComponent | null = null;
 		const colorMatchesDefault = (): boolean =>
 			!originalDef ||
 			JSON.stringify(readColorState()) ===
 				JSON.stringify(defaultColorStateFor(originalDef));
-		const syncColorRevert = (): void => {
-			colorRevertBtn?.extraSettingsEl.toggleClass(
-				"cs-hidden",
-				colorMatchesDefault(),
-			);
-		};
+		let syncColorRevert = (): void => undefined;
 
 		/**
 		 * Commit colours to the form state — the only path that may mark the
@@ -1042,21 +1034,21 @@ export class CalloutEditor extends Modal {
 		// unsaved changes.
 		this.initialSnapshot = this.stateSnapshot();
 
-		colorSetting.addExtraButton((btn) => {
-			colorRevertBtn = btn;
-			btn.setIcon("rotate-ccw")
-				.setTooltip(t("editor.resetColors"))
-				.onClick(() => {
-					if (!originalDef) return;
+		if (originalDef) {
+			syncColorRevert = addFieldResetButton(
+				colorSetting,
+				t("editor.resetColors"),
+				colorMatchesDefault,
+				() => {
 					// Otherwise refreshTriggerFromCurrentColors resolves the stale
 					// id first and keeps showing whatever palette was last picked,
 					// even though the colors underneath just reverted.
 					this.paletteId = originalDef.paletteId;
 					applyColorState(defaultColorStateFor(originalDef));
 					refreshTriggerFromCurrentColors();
-				});
-		});
-		syncColorRevert();
+				},
+			);
+		}
 
 		/**
 		 * The colours a palette would produce, resolved against the current
@@ -1453,11 +1445,14 @@ export class CalloutEditor extends Modal {
 	): HTMLElement {
 		return renderIconAdjustGroup(
 			parent,
-			iconAdjustHeader(role),
+			role,
 			this.iconAdjust[role],
 			() => {
 				this.scheduleUpdatePreview();
 			},
+			this.builtInDefault
+				? resolveIconAdjust(this.builtInDefault, role)
+				: undefined,
 		);
 	}
 
@@ -1972,6 +1967,12 @@ export class CalloutEditor extends Modal {
 		// the form state.
 		const colors = this.previewColorOverride ?? this.colorState();
 		const adjust = this.iconAdjustState();
+		const storedAdjust = definitionIconAdjustFields(
+			adjust,
+			this.baselineDef,
+			undefined,
+			this.builtInDefault,
+		);
 		return {
 			id: this.currentPreviewId(),
 			displayName: this.displayName.trim() || t("editor.untitledCallout"),
@@ -2006,17 +2007,9 @@ export class CalloutEditor extends Modal {
 				: {}),
 			foldable: this.foldable,
 			defaultFolded: this.defaultFolded,
-			// The per-role map is never a mere default (`buildIconAdjust` returns
-			// undefined once every role agrees), so only the flat trio below —
-			// the Regular role's own values — needs the gate.
-			iconAdjust: adjust.iconAdjust,
-			...(hasAuthoredIconAdjust(this.baselineDef, this.iconAdjust.regular)
-				? {
-						iconOffsetX: adjust.iconOffsetX,
-						iconOffsetY: adjust.iconOffsetY,
-						iconSize: adjust.iconSize,
-					}
-				: {}),
+			// A full built-in reset restores the shipped raw fields too: explicit
+			// 0 / 0 / 1 would render the same but still count as a customization.
+			...storedAdjust,
 			aliases: [],
 			builtIn: false,
 			source: "user",

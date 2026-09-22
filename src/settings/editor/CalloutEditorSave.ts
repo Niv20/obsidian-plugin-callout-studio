@@ -15,9 +15,9 @@ import {
 	authoredCustomizedFlag,
 	authoredStyleMode,
 	hasAuthoredBackground,
-	hasAuthoredIconAdjust,
 	hasAuthoredTextColors,
 } from "./authoredStyle";
+import { definitionIconAdjustFields } from "./definitionIconAdjust";
 import type { CalloutEditorPlugin } from "./types";
 import { createCalloutVaultSavePlan, stageRenameAliases, type CalloutVaultSavePlan } from "./calloutVaultSavePlan";
 
@@ -204,11 +204,16 @@ export async function performCalloutEditorSave(
 		state.textColorLight,
 		state.textColorDark,
 	);
-	const authoredAdjust = hasAuthoredIconAdjust(baselineDef, {
-		offsetX: state.iconOffsetX,
-		offsetY: state.iconOffsetY,
-		size: state.iconSize,
-	});
+	const builtInDefault =
+		isBuiltIn && existingId
+			? plugin.registry.getBuiltInDefault(existingId)
+			: undefined;
+	const storedAdjust = definitionIconAdjustFields(
+		state,
+		baselineDef,
+		fallbackBase,
+		builtInDefault,
+	);
 
 	const def: CalloutDefinition = {
 		id: state.calloutId,
@@ -266,31 +271,11 @@ export async function performCalloutEditorSave(
 		defaultFolded: fallbackBase?.defaultFolded ?? state.defaultFolded,
 		builtIn: isBuiltIn,
 		source: nextSource,
-		// Like paletteId and bgGradient: when mirroring the fallback style its
-		// (possibly absent) per-role map wins outright rather than falling
-		// through to the form, so the two adjustment layers stay from one row.
-		//
-		// Only the flat trio below needs the authored gate: `buildIconAdjust`
-		// already returns undefined once every role agrees, so the map is never
-		// a mere default. Dropping the trio is lossless — `resolveIconAdjust`
-		// falls an absent one back to DEFAULT_ICON_ADJUST, which is exactly the
-		// value being dropped.
-		iconAdjust: fallbackBase ? fallbackBase.iconAdjust : state.iconAdjust,
-		iconOffsetX: fallbackBase
-			? fallbackBase.iconOffsetX
-			: authoredAdjust
-				? state.iconOffsetX
-				: undefined,
-		iconOffsetY: fallbackBase
-			? fallbackBase.iconOffsetY
-			: authoredAdjust
-				? state.iconOffsetY
-				: undefined,
-		iconSize: fallbackBase
-			? fallbackBase.iconSize
-			: authoredAdjust
-				? state.iconSize
-				: undefined,
+		// Preview and save share this serialization decision. In particular, a
+		// built-in that renders exactly like its shipped definition gets that
+		// definition's raw fields back, while a partial role reset remains an
+		// explicit neutral override when another role still differs.
+		...storedAdjust,
 		aliases: state.aliases.length > 0 ? [...state.aliases] : undefined,
 		paletteId: fallbackBase ? fallbackBase.paletteId : state.paletteId,
 		...(existingDef?.metadata ? { metadata: structuredClone(existingDef.metadata) } : {}),

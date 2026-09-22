@@ -6,7 +6,9 @@ Changes to a callout's color, icon, name, or ID take effect across the vault. Ca
 
 Click the pencil beside a callout to open its editor. Save the new color, icon, name, IDs, or icon adjustments when you are finished.
 
-When you customize one of Obsidian's thirteen built-in callouts, small return arrows appear beside changed fields. Use one to restore just that icon or color. To undo every customization on that built-in type at once, open its three-dot menu and choose **Reset to default**.
+When you customize one of Obsidian's thirteen built-in callouts, small return arrows appear beside changed IDs, icons, and colors. Each icon-adjustment card also gets its own return arrow when its sliders change; it resets the size and both offsets for that callout format without touching the other two formats. To undo every customization on that built-in type at once, open its three-dot menu and choose **Reset to default**.
+
+Resetting **Callout IDs** restores Obsidian's original ID and aliases. Any custom aliases it removes are rewritten to the primary ID in your notes when you save, so existing callouts keep working. If another callout already uses one of the original aliases, the draft stays unchanged and the IDs field shows the conflict.
 
 ## Replace a callout across the vault
 

@@ -23,11 +23,14 @@ import {
 	DEFAULT_ICON_ADJUST,
 	ICON_ADJUST_LIMITS,
 	buildIconAdjust,
+	cloneIconAdjustFields,
 	equalIconAdjust,
+	iconAdjustSourcesEqual,
 	isDefaultIconAdjust,
 	resolveIconAdjust,
 	type ResolvedIconAdjust,
 } from "../src/utils/iconAdjust";
+import { definitionIconAdjustFields } from "../src/settings/editor/definitionIconAdjust";
 import type { CalloutDefinition, CalloutRenderRole } from "../src/types";
 
 type Source = Pick<
@@ -204,6 +207,73 @@ describe("resolveIconAdjust — clamping untrusted values", () => {
 			assert.ok(Number.isFinite(a.offsetX) && Number.isFinite(a.offsetY));
 			assert.ok(a.size >= size.min && a.size <= size.max);
 		}
+	});
+});
+
+describe("iconAdjustSourcesEqual — rendered equality", () => {
+	it("accepts different raw shapes that resolve identically", () => {
+		assert.equal(
+			iconAdjustSourcesEqual(
+				{ iconOffsetX: 2, iconOffsetY: 0, iconSize: 1 },
+				{
+					iconAdjust: {
+						regular: { offsetX: 2 },
+						heading: { offsetX: 2 },
+						inline: { offsetX: 2 },
+					},
+				},
+			),
+			true,
+		);
+	});
+
+	it("rejects a difference in any one role", () => {
+		assert.equal(
+			iconAdjustSourcesEqual(
+				{},
+				{ iconAdjust: { heading: { offsetY: 1 } } },
+			),
+			false,
+		);
+	});
+
+	it("clones the raw fields without inventing absent defaults", () => {
+		const source: Source = {
+			iconAdjust: { heading: { offsetX: 2 } },
+		};
+		const cloned = cloneIconAdjustFields(source);
+		assert.deepStrictEqual(cloned, {
+			iconAdjust: { heading: { offsetX: 2 } },
+			iconOffsetX: undefined,
+			iconOffsetY: undefined,
+			iconSize: undefined,
+		});
+		assert.notStrictEqual(cloned.iconAdjust, source.iconAdjust);
+	});
+
+	it("restores a future non-neutral built-in's raw storage shape", () => {
+		const shipped = {
+			iconOffsetX: 2,
+			iconOffsetY: -1,
+			iconSize: 1.1,
+			iconAdjust: { heading: { offsetX: 0, offsetY: 3, size: 0.9 } },
+		} as CalloutDefinition;
+		const stored = definitionIconAdjustFields(
+			{
+				iconOffsetX: 2,
+				iconOffsetY: -1,
+				iconSize: 1.1,
+				iconAdjust: {
+					heading: { offsetX: 0, offsetY: 3, size: 0.9 },
+				},
+			},
+			{ ...shipped, iconOffsetX: 5 },
+			undefined,
+			shipped,
+		);
+
+		assert.deepStrictEqual(stored, cloneIconAdjustFields(shipped));
+		assert.notStrictEqual(stored.iconAdjust, shipped.iconAdjust);
 	});
 });
 

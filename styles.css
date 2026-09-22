@@ -2597,6 +2597,32 @@ button.callout-studio-icon-picker-loading {
 	border-radius: 7px 7px 0 0;
 }
 
+/* Built-in icon-adjustment cards put one role-scoped reset in the header. With
+   that button hidden, this strip deliberately keeps the shared header's natural
+   height so it matches Live preview beside it. The visible 28px button grows
+   only its own strip when a reset is actually available. */
+.cs-icon-adjust-header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	box-sizing: border-box;
+}
+
+.cs-icon-adjust-header > span {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.cs-icon-adjust-reset {
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	padding: 5px;
+}
+
 /* Slider rows: roomy label above full-width slider */
 .callout-studio-slider-row {
 	display: flex;
@@ -2711,9 +2737,9 @@ button.callout-studio-icon-picker-loading {
 	position: relative;
 }
 
-/* The shared control width is put on the Color row's control COLUMN, not on the
-   dropdown inside it — because that column holds two things once a built-in has
-   been customized (dropdown + revert button) and the width belongs to the pair.
+/* The shared control width is put on the IDs / Color control COLUMNS, not on
+   their inner controls — because either column holds two things once a built-in
+   has been customized (field + revert button) and the width belongs to the pair.
    Pinning the pair is what keeps the row's right edge on the same line as the
    display-name and IDs fields whether or not the button is there: the button
    takes its slice out of the shared width and the dropdown flexes into the
@@ -2722,10 +2748,32 @@ button.callout-studio-icon-picker-loading {
 
    `flex: 0 0 auto` because Obsidian's own `.setting-item-control` is a growing
    flex item — left alone it would ignore the width and fill the row. */
+.callout-studio-editor .cs-callout-ids-setting .setting-item-control,
 .callout-studio-editor .cs-color-setting .setting-item-control {
 	flex: 0 0 auto;
 	width: var(--cs-editor-control-width);
 	max-width: 100%;
+}
+
+/* TagInput normally owns the whole fixed control width. Inside the IDs setting
+   the column owns it instead, so a conditional reset button takes its slice
+   from the field rather than widening the row or overflowing on phone. */
+.callout-studio-editor .cs-callout-ids-setting .cs-tag-wrapper {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 0;
+}
+
+/* The IDs control is taller than its text field once chips wrap underneath it.
+   Obsidian normally centres an ExtraButton against that whole column, which
+   makes the reset arrow drift downward as aliases are added. Pin it to the top
+   and centre its 24px box inside the field's 36px first row instead. */
+.callout-studio-editor
+	.cs-callout-ids-setting
+	.setting-item-control
+	> .extra-setting-button {
+	align-self: flex-start;
+	margin-block-start: 6px;
 }
 
 /* `width: auto` + `flex: 1` rather than a width of its own: whatever the column
@@ -2741,7 +2789,7 @@ button.callout-studio-icon-picker-loading {
 	min-width: 0;
 }
 
-/* The "revert to default" buttons on the Colors and Icon rows — shown only once
+/* The "revert to default" buttons on the IDs, Colors and Icon rows — shown once
    a built-in has actually diverged, so they join a row that was already laid
    out without them. They are the one thing in that row that must not absorb the
    difference: a squeezed icon button is still a button, a squeezed 24px
