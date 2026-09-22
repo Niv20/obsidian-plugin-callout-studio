@@ -278,11 +278,9 @@ function buildDecorations(
 	if (!view.state.field(editorLivePreviewField, false)) {
 		return Decoration.none;
 	}
-
 	const builder = new RangeSetBuilder<Decoration>();
 	const doc = view.state.doc;
 	const tree = syntaxTree(view.state);
-
 	// Owning file, for resolving links and embeds inside a content pill's
 	// payload. Resolved once per rebuild rather than per pill (it walks the open
 	// markdown leaves), and "" is a fine answer: an unowned editor — a settings
@@ -292,7 +290,6 @@ function buildDecorations(
 		inlineEnabled && host.settings.inlineCallouts.allowContent
 			? (resolveMarkdownView(host.app, view)?.file?.path ?? "")
 			: "";
-
 	// Heading fold state: only relevant when heading callouts render, the user
 	// wants our trailing chevron, AND the core "Fold heading" setting is on
 	// (native folding is otherwise absent, so we draw no chevron). Resolved
@@ -304,7 +301,6 @@ function buildDecorations(
 	const foldedLines: ReadonlySet<number> = foldEnabled
 		? getFoldedLines(view)
 		: NO_FOLDS;
-
 	// `visibleRanges` is NOT the viewport: CodeMirror subtracts every state-level
 	// point decoration of 20 chars or more from it, so one line can be split
 	// across two spans (a fold ending at end-of-line, or a line gap inside a very
