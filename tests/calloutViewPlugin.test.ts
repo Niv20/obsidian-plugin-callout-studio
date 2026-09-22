@@ -39,7 +39,7 @@ import type { DecorationSet, EditorView } from "@codemirror/view";
 import { codeFolding, foldEffect } from "@codemirror/language";
 // Listed first: importing it installs the DOM globals before anything under
 // test loads (see tests/support/fakeDom.ts).
-import "./support/fakeDom";
+import { el, FakeDocument, type FakeElement } from "./support/fakeDom";
 import {
 	lineAttrs,
 	markClass,
@@ -81,23 +81,21 @@ interface PluginInstance {
 class FakeView {
 	hasFocus = true;
 	mousedown = false;
-	readonly dom: unknown;
+	readonly dom = el({ cls: "cm-editor" });
 	/** Mouseup listeners the plugin installed on the shared document. */
 	readonly listeners: Array<() => void> = [];
 
 	constructor(public state: EditorState) {
 		const listeners = this.listeners;
-		this.dom = {
-			isConnected: true,
-			ownerDocument: {
-				addEventListener: (_type: string, fn: () => void) =>
-					void listeners.push(fn),
-				removeEventListener: (_type: string, fn: () => void) => {
-					const at = listeners.indexOf(fn);
-					if (at >= 0) listeners.splice(at, 1);
-				},
+		this.dom.isConnected = true;
+		this.dom.ownerDocument = Object.assign(new FakeDocument(), {
+			addEventListener: (_type: string, fn: () => void) =>
+				void listeners.push(fn),
+			removeEventListener: (_type: string, fn: () => void) => {
+				const at = listeners.indexOf(fn);
+				if (at >= 0) listeners.splice(at, 1);
 			},
-		};
+		});
 	}
 
 	get visibleRanges(): ReadonlyArray<{ from: number; to: number }> {
@@ -131,6 +129,7 @@ interface Harness {
 	registry: Registry;
 	view: FakeView;
 	instance: PluginInstance;
+	handleEvent(type: string, target: FakeElement, button?: number): boolean;
 	/** `[from, to, decoration]` for every decoration currently emitted. */
 	decorations(): Array<[number, number, Decoration]>;
 	/** Classes on the line decoration at a line's start offset. */
@@ -188,6 +187,15 @@ function harness(
 		registry,
 		view,
 		instance,
+		handleEvent: (type, target, button = 2) => {
+			const event = new Event(type, { cancelable: true });
+			Object.defineProperties(event, {
+				target: { value: target },
+				button: { value: button },
+			});
+			view.dom.fire(type, event);
+			return event.defaultPrevented;
+		},
 		decorations,
 		lineClasses: (from) => {
 			const line = decorations().find(
@@ -549,6 +557,62 @@ describe("what it leaves alone", () => {
 			h.decorations().filter(([, , deco]) => widgetOf(deco)).length,
 			2,
 		);
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* Right-clicking rendered headings                                            */
+/* -------------------------------------------------------------------------- */
+
+describe("heading right-clicks", () => {
+	const DOC = "## [!note] Title\nbody";
+	const renderedLine = (h: Harness, children: FakeElement[] = []) => {
+		const line = el({ cls: ["cm-line", ...h.lineClasses(0)], children });
+		h.view.dom.appendChild(line);
+		return line;
+	};
+
+	it("handles right presses on the title and empty bar space before native selection", () => {
+		const h = harness(DOC, { selection: DOC.length });
+		const nested = el({ tag: "strong", text: "Title" });
+		const title = el({ cls: CSS_HEADING_TITLE, children: [nested] });
+		const line = renderedLine(h, [title]);
+		for (const target of [line, title, nested]) {
+			// The capture listener cancels native selection before the editor
+			// or a widget can process the press.
+			assert.strictEqual(h.handleEvent("mousedown", target), true);
+		}
+		assert.strictEqual(h.view.state.selection.main.head, DOC.length);
+		assert.ok(h.lineClasses(0).includes(CSS_HEADING_HIDE_MARKS));
+	});
+
+	it("leaves the contextmenu event available for the callout menu", () => {
+		const h = harness(DOC, { selection: DOC.length });
+		assert.strictEqual(h.handleEvent("contextmenu", renderedLine(h)), false);
+	});
+
+	it("keeps left-click editing and middle presses unchanged", () => {
+		const h = harness(DOC, { selection: DOC.length });
+		const line = renderedLine(h);
+		assert.strictEqual(h.handleEvent("mousedown", line, 0), false);
+		assert.strictEqual(h.handleEvent("mousedown", line, 1), false);
+		update(h, { transaction: { selection: { anchor: 12 } } });
+		assert.ok(!h.lineClasses(0).includes(CSS_HEADING_HIDE_MARKS));
+		assert.ok(!widgets(h).some((w) => w instanceof CalloutTokenWidget));
+	});
+
+	it("does not intercept a heading already showing its source", () => {
+		const h = harness(DOC, { selection: 5 });
+		assert.strictEqual(h.handleEvent("mousedown", renderedLine(h)), false);
+	});
+
+	it("does not intercept ordinary lines or headings in Source mode", () => {
+		for (const h of [
+			harness("## Ordinary heading\nbody", { selection: 24 }),
+			harness(DOC, { selection: DOC.length, extensions: [] }),
+		]) {
+			assert.strictEqual(h.handleEvent("mousedown", renderedLine(h)), false);
+		}
 	});
 });
 

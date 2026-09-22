@@ -57,6 +57,7 @@ import {
 	HeadingRefLinkWidget,
 } from "./widgets";
 import { getFoldedLines, foldsChanged } from "./fold";
+import { registerCalloutContextClickGuard } from "./contextClick";
 import {
 	calloutStudioCaretDrop,
 	calloutStudioRefresh,
@@ -117,6 +118,7 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 			private mouseUpTimer: number | null = null;
 			private readonly ownerDoc: Document;
 			private readonly onDocMouseUp: () => void;
+			private readonly removeContextClickGuard: () => void;
 
 			constructor(private readonly view: EditorView) {
 				this.selection = view.state.selection;
@@ -128,6 +130,7 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 					this.focused,
 				);
 				this.ownerDoc = view.dom.ownerDocument;
+				this.removeContextClickGuard = registerCalloutContextClickGuard(view.dom);
 				// Registry edits don't touch the document, so this view only
 				// rebuilds when something dispatches the refresh effect into
 				// it — which needs it to be findable. Leaf or not (table cell,
@@ -241,6 +244,7 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 
 			destroy(): void {
 				this.destroyed = true;
+				this.removeContextClickGuard();
 				unregisterCalloutEditorView(this.view);
 				if (this.mouseUpTimer !== null) {
 					window.clearTimeout(this.mouseUpTimer);
