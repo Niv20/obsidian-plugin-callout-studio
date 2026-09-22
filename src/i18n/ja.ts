@@ -947,12 +947,8 @@ export const ja: Record<string, string> = {
 	"notice.palettesMerged":
 		"同一の色を持つ保存済み色 {{count}} 件を統合しました: {{names}}。それらを使用している callout は色を保持し、残った色にリンクされました。",
 	"editor.colorsDescDeleted":
-		"この callout の保存済み色は削除されました。{{link}}ことで再保存できます。",
-	"editor.colorsDescDeletedOther":
-		"この callout の保存済み色は削除されました。{{link}}ことで再保存できます — 同じ色を使う他の 1 件の callout も再リンクされます。",
-	"editor.colorsDescDeletedOthers":
-		"この callout の保存済み色は削除されました。{{link}}ことで再保存できます — 同じ色を使う他の {{count}} 件の callout も再リンクされます。",
-	"editor.colorsDescDeletedLink": "ここをクリックする",
+		"この callout の保存済み色は削除されました。{{link}}",
+	"editor.colorsDescDeletedLink": "復元",
 	"palette.colorExists":
 		"これらの色は「{{name}}」と同じです。保存済みの色を 2 つ同じにすることはできません — 区別するために色を変更してください。",
 	"palette.colorExistsUse":

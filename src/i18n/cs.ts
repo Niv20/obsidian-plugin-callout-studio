@@ -944,12 +944,8 @@ export const cs: Record<string, string> = {
 	"notice.palettesMerged":
 		"Sloučeno {{count}} uložených barev se stejnými barvami: {{names}}. Callouty, které je používají, si ponechají své barvy a nyní jsou propojené se zbývající barvou.",
 	"editor.colorsDescDeleted":
-		"Uložená barva tohoto calloutu byla smazána. Můžete ji znovu uložit {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Uložená barva tohoto calloutu byla smazána. Můžete ji znovu uložit {{link}} — znovu se propojí také 1 další callout, který ji používá.",
-	"editor.colorsDescDeletedOthers":
-		"Uložená barva tohoto calloutu byla smazána. Můžete ji znovu uložit {{link}} — znovu se propojí také {{count}} dalších calloutů, které ji používají.",
-	"editor.colorsDescDeletedLink": "kliknutím sem",
+		"Uložená barva tohoto calloutu byla smazána. {{link}}",
+	"editor.colorsDescDeletedLink": "Obnovit",
 	"palette.colorExists":
 		'Tyto barvy jsou stejné jako "{{name}}". Dvě uložené barvy nemohou být stejné — změňte jednu barvu, aby se odlišily.',
 	"palette.colorExistsUse":

@@ -949,12 +949,8 @@ export const ro: Record<string, string> = {
 	"notice.palettesMerged":
 		"A fuzionat {{count}} culoare/culori salvată/salvate cu culori identice: {{names}}. Callout-urile care le folosesc își păstrează culorile și acum sunt legate de culoarea rămasă.",
 	"editor.colorsDescDeleted":
-		"Culoarea salvată a acestui callout a fost ștearsă. O puteți salva din nou {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Culoarea salvată a acestui callout a fost ștearsă. O puteți salva din nou {{link}} — încă 1 alt callout care o folosește va fi reconectat.",
-	"editor.colorsDescDeletedOthers":
-		"Culoarea salvată a acestui callout a fost ștearsă. O puteți salva din nou {{link}} — încă {{count}} alte callout-uri care o folosesc vor fi reconectate.",
-	"editor.colorsDescDeletedLink": "făcând clic aici",
+		"Culoarea salvată a acestui callout a fost ștearsă. {{link}}",
+	"editor.colorsDescDeletedLink": "Restaurați",
 	"palette.colorExists":
 		'Aceste culori sunt identice cu "{{name}}". Două culori salvate nu pot fi la fel — schimbați o culoare ca să le diferențiați.',
 	"palette.colorExistsUse":

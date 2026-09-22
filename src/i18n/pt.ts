@@ -954,12 +954,8 @@ export const pt: Record<string, string> = {
 	"notice.palettesMerged":
 		"Mesclou {{count}} cor(es) salva(s) com cores idênticas: {{names}}. Os callouts que as usam mantêm suas cores e agora estão vinculados à cor que permaneceu.",
 	"editor.colorsDescDeleted":
-		"A cor salva deste callout foi excluída. Você pode salvá-la novamente {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"A cor salva deste callout foi excluída. Você pode salvá-la novamente {{link}} — 1 outro callout que a usa também será reconectado.",
-	"editor.colorsDescDeletedOthers":
-		"A cor salva deste callout foi excluída. Você pode salvá-la novamente {{link}} — {{count}} outros callouts que a usam também serão reconectados.",
-	"editor.colorsDescDeletedLink": "clicando aqui",
+		"A cor salva deste callout foi excluída. {{link}}",
+	"editor.colorsDescDeletedLink": "Restaurar",
 	"palette.colorExists":
 		'Estas cores são idênticas a "{{name}}". Duas cores salvas não podem ser iguais — altere uma cor para diferenciá-las.',
 	"palette.colorExistsUse":

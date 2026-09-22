@@ -932,12 +932,8 @@ export const ar: Record<string, string> = {
 	"notice.palettesMerged":
 		"تم دمج {{count}} لون محفوظ كان يحمل ألوانًا متطابقة: {{names}}. الـ callouts التي تستخدمها تحتفظ بألوانها وهي الآن مرتبطة باللون المتبقي.",
 	"editor.colorsDescDeleted":
-		"تم حذف اللون المحفوظ لهذا الـ callout. يمكنك حفظه مرة أخرى عبر {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"تم حذف اللون المحفوظ لهذا الـ callout. يمكنك حفظه مرة أخرى عبر {{link}} — وسيُعاد أيضًا ربط 1 callout آخر يستخدمه.",
-	"editor.colorsDescDeletedOthers":
-		"تم حذف اللون المحفوظ لهذا الـ callout. يمكنك حفظه مرة أخرى عبر {{link}} — وسيُعاد أيضًا ربط {{count}} callouts أخرى تستخدمه.",
-	"editor.colorsDescDeletedLink": "النقر هنا",
+		"تم حذف اللون المحفوظ لهذا الـ callout. {{link}}",
+	"editor.colorsDescDeletedLink": "استعادة",
 	"palette.colorExists":
 		'هذه الألوان مطابقة لـ "{{name}}". لا يمكن أن يكون لونان محفوظان متطابقين — غيّر لونًا واحدًا لتمييزهما.',
 	"palette.colorExistsUse":

@@ -949,12 +949,8 @@ export const vi: Record<string, string> = {
 	"notice.palettesMerged":
 		"Đã gộp {{count}} màu đã lưu có màu giống hệt nhau: {{names}}. Các callout dùng chúng vẫn giữ màu và giờ được liên kết với màu còn lại.",
 	"editor.colorsDescDeleted":
-		"Màu đã lưu của callout này đã bị xóa. Bạn có thể lưu lại bằng cách {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Màu đã lưu của callout này đã bị xóa. Bạn có thể lưu lại bằng cách {{link}} — 1 callout khác đang dùng màu này cũng sẽ được liên kết lại.",
-	"editor.colorsDescDeletedOthers":
-		"Màu đã lưu của callout này đã bị xóa. Bạn có thể lưu lại bằng cách {{link}} — {{count}} callout khác đang dùng màu này cũng sẽ được liên kết lại.",
-	"editor.colorsDescDeletedLink": "nhấp vào đây",
+		"Màu đã lưu của callout này đã bị xóa. {{link}}",
+	"editor.colorsDescDeletedLink": "Khôi phục",
 	"palette.colorExists":
 		'Những màu này giống hệt "{{name}}". Hai màu đã lưu không thể giống nhau — hãy đổi một màu để phân biệt.',
 	"palette.colorExistsUse":

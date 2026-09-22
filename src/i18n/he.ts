@@ -979,12 +979,8 @@ export const he: Record<string, string> = {
 	"notice.palettesMerged":
 		"מוזגו {{count}} צבעים שמורים שהיו עם צבעים זהים: {{names}}. תיבות־ההבלטה שמשתמשות בהם שומרות על הצבעים שלהן וכעת מקושרות לצבע שנשאר.",
 	"editor.colorsDescDeleted":
-		"הצבע השמור של תיבת־הבלטה זו נמחק. אפשר לשמור אותו מחדש על ידי {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"הצבע השמור של תיבת־הבלטה זו נמחק. אפשר לשמור אותו מחדש על ידי {{link}} — גם תיבת־הבלטה אחת נוספת שמשתמשת בו תחובר מחדש.",
-	"editor.colorsDescDeletedOthers":
-		"הצבע השמור של תיבת־הבלטה זו נמחק. אפשר לשמור אותו מחדש על ידי {{link}} — גם {{count}} תיבות־הבלטה נוספות שמשתמשות בו יחוברו מחדש.",
-	"editor.colorsDescDeletedLink": "לחיצה כאן",
+		"הצבע השמור של תיבת־הבלטה זו נמחק. {{link}}",
+	"editor.colorsDescDeletedLink": "שחזור",
 	"palette.colorExists":
 		'הצבעים האלה זהים ל־"{{name}}". שני צבעים שמורים לא יכולים להיות זהים — שנה צבע כדי להבדיל ביניהם.',
 	"palette.colorExistsUse":

@@ -948,12 +948,8 @@ export const id: Record<string, string> = {
 	"notice.palettesMerged":
 		"Menggabungkan {{count}} warna tersimpan yang memiliki warna identik: {{names}}. Callout yang menggunakannya tetap mempertahankan warnanya dan sekarang tertaut ke warna yang tersisa.",
 	"editor.colorsDescDeleted":
-		"Warna tersimpan callout ini telah dihapus. Anda bisa menyimpannya lagi dengan {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Warna tersimpan callout ini telah dihapus. Anda bisa menyimpannya lagi dengan {{link}} — 1 callout lain yang menggunakannya juga akan tersambung kembali.",
-	"editor.colorsDescDeletedOthers":
-		"Warna tersimpan callout ini telah dihapus. Anda bisa menyimpannya lagi dengan {{link}} — {{count}} callout lain yang menggunakannya juga akan tersambung kembali.",
-	"editor.colorsDescDeletedLink": "klik di sini",
+		"Warna tersimpan callout ini telah dihapus. {{link}}",
+	"editor.colorsDescDeletedLink": "Pulihkan",
 	"palette.colorExists":
 		'Warna-warna ini identik dengan "{{name}}". Dua warna tersimpan tidak boleh sama — ubah satu warna untuk membedakannya.',
 	"palette.colorExistsUse":

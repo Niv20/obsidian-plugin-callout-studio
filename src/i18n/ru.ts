@@ -942,12 +942,8 @@ export const ru: Record<string, string> = {
 	"notice.palettesMerged":
 		"Объединено {{count}} сохранённых цветов с одинаковыми цветами: {{names}}. Callout-ы, которые их используют, сохраняют свои цвета и теперь привязаны к оставшемуся цвету.",
 	"editor.colorsDescDeleted":
-		"Сохранённый цвет этого callout-а был удалён. Вы можете сохранить его снова, {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Сохранённый цвет этого callout-а был удалён. Вы можете сохранить его снова, {{link}} — также будет перепривязан ещё 1 callout, который его использует.",
-	"editor.colorsDescDeletedOthers":
-		"Сохранённый цвет этого callout-а был удалён. Вы можете сохранить его снова, {{link}} — также будут перепривязаны ещё {{count}} callout-ов, которые его используют.",
-	"editor.colorsDescDeletedLink": "нажав здесь",
+		"Сохранённый цвет этого callout-а был удалён. {{link}}",
+	"editor.colorsDescDeletedLink": "Восстановить",
 	"palette.colorExists":
 		'Эти цвета совпадают с "{{name}}". Два сохранённых цвета не могут быть одинаковыми — измените один цвет, чтобы различать их.',
 	"palette.colorExistsUse":

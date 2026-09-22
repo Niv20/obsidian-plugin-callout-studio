@@ -936,12 +936,8 @@ export const hi: Record<string, string> = {
 	"notice.palettesMerged":
 		"समान रंग वाले {{count}} सहेजे गए रंगों को मिला दिया गया: {{names}}। इन्हें उपयोग करने वाले callout अपने रंग बनाए रखते हैं और अब बचे हुए रंग से लिंक हैं।",
 	"editor.colorsDescDeleted":
-		"इस callout का सहेजा गया रंग हट गया है। आप इसे {{link}} फिर से सहेज सकते हैं।",
-	"editor.colorsDescDeletedOther":
-		"इस callout का सहेजा गया रंग हट गया है। आप इसे {{link}} फिर से सहेज सकते हैं — इसे उपयोग करने वाला 1 अन्य callout भी फिर से लिंक हो जाएगा।",
-	"editor.colorsDescDeletedOthers":
-		"इस callout का सहेजा गया रंग हट गया है। आप इसे {{link}} फिर से सहेज सकते हैं — इसे उपयोग करने वाले {{count}} अन्य callout भी फिर से लिंक हो जाएंगे।",
-	"editor.colorsDescDeletedLink": "यहाँ क्लिक करके",
+		"इस callout का सहेजा गया रंग हटा दिया गया है। {{link}}",
+	"editor.colorsDescDeletedLink": "पुनर्स्थापित करें",
 	"palette.colorExists":
 		'ये रंग "{{name}}" के समान हैं। दो सहेजे गए रंग एक जैसे नहीं हो सकते — अलग दिखाने के लिए एक रंग बदलें।',
 	"palette.colorExistsUse":

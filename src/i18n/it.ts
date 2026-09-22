@@ -962,12 +962,8 @@ export const it: Record<string, string> = {
 	"notice.palettesMerged":
 		"Uniti {{count}} colori salvati con colori identici: {{names}}. I callout che li usano mantengono i loro colori e ora sono collegati al colore rimasto.",
 	"editor.colorsDescDeleted":
-		"Il colore salvato di questo callout è stato eliminato. Puoi salvarlo di nuovo {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Il colore salvato di questo callout è stato eliminato. Puoi salvarlo di nuovo {{link}} — verrà ricollegato anche 1 altro callout che lo usa.",
-	"editor.colorsDescDeletedOthers":
-		"Il colore salvato di questo callout è stato eliminato. Puoi salvarlo di nuovo {{link}} — verranno ricollegati anche altri {{count}} callout che lo usano.",
-	"editor.colorsDescDeletedLink": "facendo clic qui",
+		"Il colore salvato di questo callout è stato eliminato. {{link}}",
+	"editor.colorsDescDeletedLink": "Ripristina",
 	"palette.colorExists":
 		'Questi colori sono identici a "{{name}}". Due colori salvati non possono essere uguali: cambia un colore per distinguerli.',
 	"palette.colorExistsUse":

@@ -965,12 +965,8 @@ export const fr: Record<string, string> = {
 	"notice.palettesMerged":
 		"{{count}} couleur(s) enregistrée(s) avec des couleurs identiques ont été fusionnées : {{names}}. Les callouts qui les utilisent conservent leurs couleurs et sont maintenant liés à la couleur restante.",
 	"editor.colorsDescDeleted":
-		"La couleur enregistrée de ce callout a été supprimée. Vous pouvez l’enregistrer à nouveau en {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"La couleur enregistrée de ce callout a été supprimée. Vous pouvez l’enregistrer à nouveau en {{link}} — 1 autre callout qui l’utilise sera aussi reconnecté.",
-	"editor.colorsDescDeletedOthers":
-		"La couleur enregistrée de ce callout a été supprimée. Vous pouvez l’enregistrer à nouveau en {{link}} — {{count}} autres callouts qui l’utilisent seront aussi reconnectés.",
-	"editor.colorsDescDeletedLink": "cliquant ici",
+		"La couleur enregistrée de ce callout a été supprimée. {{link}}",
+	"editor.colorsDescDeletedLink": "Restaurer",
 	"palette.colorExists":
 		'Ces couleurs sont identiques à "{{name}}". Deux couleurs enregistrées ne peuvent pas être identiques — modifiez une couleur pour les différencier.',
 	"palette.colorExistsUse":

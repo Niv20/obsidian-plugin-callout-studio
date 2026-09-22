@@ -1513,6 +1513,16 @@ changing it:
   is persisted *and* synced, so a picker that guessed "probably the first match"
   would write an id the user never chose onto every device.
 
+`setSelected(key, missingLabel)` can supply a display label when no list item
+resolves. The value remains `undefined`, but the field retains that label and
+keeps its leading swatches visible; dismissing a search returns to the same
+label. `PaletteCombobox.setSelection` uses this for **Deleted color**, so a
+missing palette does not mark the control `is-empty` or fall back to the search
+placeholder. Opening that unresolved selection leaves every option inactive;
+once open, pointer hover or keyboard navigation establishes the active row.
+This prevents the first saved colour from looking preselected when none is
+selected.
+
 Pointer highlights and keyboard highlights have separate origins. Leaving a
 row or the menu clears a pointer highlight and the temporary colour preview;
 the committed value stays unchanged. Arrow-key highlights survive pointer

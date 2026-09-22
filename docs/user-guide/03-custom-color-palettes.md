@@ -32,7 +32,9 @@ The **Style** menu offers three choices:
 
 Click the pencil beside a saved palette to edit it. When you save the changes, every callout linked to that palette updates across the vault.
 
-Deleting a palette does not change the callouts that already use it. They keep their exact colors and show **Deleted color** in the color menu. Select **Restore** there if you want to return that palette to **Saved color palettes**.
+Deleting a palette does not change the callouts that already use it. They keep their exact colors. The callout editor's **Color** row shows the color circles and the message “This callout's saved color was deleted.” Click **Restore** beside the message to open the palette save popup with those colors filled in.
+
+Clicking the color field and then clicking away keeps **Deleted color**, the warning, and the color circles visible. When the color list opens, no saved color is highlighted until you point to one or move through the list with the keyboard. The deleted state also remains if you cancel the restore popup. Save a palette or choose another color to leave this state.
 
 ---
 **Next:** [Custom icons & emojis](04-custom-icons-and-emojis.md)

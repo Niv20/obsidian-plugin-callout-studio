@@ -906,12 +906,8 @@ export const zh: Record<string, string> = {
 	"notice.palettesMerged":
 		"已合并 {{count}} 个颜色完全相同的已保存颜色：{{names}}。使用它们的 callout 会保留原有颜色，并已关联到保留的颜色。",
 	"editor.colorsDescDeleted":
-		"此 callout 的已保存颜色已被删除。你可以通过{{link}}重新保存。",
-	"editor.colorsDescDeletedOther":
-		"此 callout 的已保存颜色已被删除。你可以通过{{link}}重新保存——另外 1 个使用该颜色的 callout 也会重新关联。",
-	"editor.colorsDescDeletedOthers":
-		"此 callout 的已保存颜色已被删除。你可以通过{{link}}重新保存——另外 {{count}} 个使用该颜色的 callout 也会重新关联。",
-	"editor.colorsDescDeletedLink": "点击这里",
+		"此 callout 的已保存颜色已被删除。{{link}}",
+	"editor.colorsDescDeletedLink": "还原",
 	"palette.colorExists":
 		"这些颜色与“{{name}}”完全相同。两个已保存颜色不能相同——请修改一个颜色以区分它们。",
 	"palette.colorExistsUse":

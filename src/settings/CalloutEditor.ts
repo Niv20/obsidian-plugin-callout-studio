@@ -950,31 +950,16 @@ export class CalloutEditor extends Modal {
 		 * `setDesc` replaces `descEl` wholesale, which is safe *here* only
 		 * because this row's description holds nothing else — unlike the callout
 		 * IDs row, which appends its own error element into `descEl`.
-		 *
-		 * The sibling count comes from the registry rather than from anything
-		 * the editor holds, so the number the user is promised is measured
-		 * against the same map the relink will walk.
 		 */
 		const updateColorDesc = (): void => {
 			if (!isOrphanColor) {
 				colorSetting.setDesc(t("editor.colorsDesc"));
 				return;
 			}
-			const others = orphanPaletteId
-				? this.plugin.registry.countPaletteLinks(
-						orphanPaletteId,
-						this.existingId,
-					)
-				: 0;
-			const textKey =
-				others === 0 ? "editor.colorsDescDeleted"
-				: others === 1 ? "editor.colorsDescDeletedOther"
-				: "editor.colorsDescDeletedOthers";
 			colorSetting.setDesc("");
 			renderInlineLinkHint(colorSetting.descEl, {
-				textKey,
+				textKey: "editor.colorsDescDeleted",
 				linkKey: "editor.colorsDescDeletedLink",
-				vars: { count: others },
 				onClick: () => void reviveDeletedPalette(),
 			});
 		};

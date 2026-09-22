@@ -931,12 +931,8 @@ export const ms: Record<string, string> = {
 	"notice.palettesMerged":
 		"Menggabungkan {{count}} warna tersimpan yang mempunyai warna serupa: {{names}}. Callout yang menggunakannya mengekalkan warna masing-masing dan kini dipautkan kepada warna yang tinggal.",
 	"editor.colorsDescDeleted":
-		"Warna tersimpan untuk callout ini telah dipadam. Anda boleh simpan semula dengan {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Warna tersimpan untuk callout ini telah dipadam. Anda boleh simpan semula dengan {{link}} — 1 callout lain yang menggunakannya juga akan dipautkan semula.",
-	"editor.colorsDescDeletedOthers":
-		"Warna tersimpan untuk callout ini telah dipadam. Anda boleh simpan semula dengan {{link}} — {{count}} callout lain yang menggunakannya juga akan dipautkan semula.",
-	"editor.colorsDescDeletedLink": "klik di sini",
+		"Warna tersimpan untuk callout ini telah dipadam. {{link}}",
+	"editor.colorsDescDeletedLink": "Pulihkan",
 	"palette.colorExists":
 		'Warna-warna ini sama dengan "{{name}}". Dua warna tersimpan tidak boleh sama — ubah satu warna untuk membezakannya.',
 	"palette.colorExistsUse":

@@ -1,8 +1,7 @@
 /**
  * ui/listboxPopup.ts — a text input with a filtering listbox under it.
  *
- * Shared by callout and colour pickers. Markup and ARIA live in
- * `listboxPopupDom.ts`; row content comes from the caller's `renderRow`.
+ * Shared picker. `listboxPopupDom.ts` owns markup; `renderRow` supplies content.
  *
  * Two rules hold the whole design up. **The query is separate state from
  * `input.value`**: opening does not treat the committed label as a search for
@@ -44,6 +43,8 @@ export class ListboxPopup<T> {
 
 	/** What is committed. `undefined` while nothing ever has been. */
 	private selected?: T;
+	/** Display state for an unresolved selection, such as a deleted palette. */
+	private missingSelectionLabel = "";
 	private items: readonly T[] = [];
 	private rowEls: HTMLElement[] = [];
 	/** Into `items`, or -1 for "nothing highlighted". */
@@ -90,16 +91,17 @@ export class ListboxPopup<T> {
 	}
 
 	/**
-	 * Move the committed selection *without* firing `onCommit`. A key matching
-	 * nothing reads as nothing selected: empty input, plus `is-empty` on the root.
+	 * Move the selection without firing `onCommit`. An unresolved key keeps
+	 * `missingLabel` on dismissal; a nonempty label also keeps the lead visible.
 	 */
-	setSelected(key: string): void {
+	setSelected(key: string, missingLabel = ""): void {
 		const match = this.options
 			.itemsFor("")
 			.find((item) => this.options.keyOf(item) === key);
 		this.selected = match;
-		this.inputEl.value = match ? this.options.labelOf(match) : "";
-		this.el.toggleClass("is-empty", !match);
+		this.missingSelectionLabel = missingLabel;
+		this.inputEl.value = match ? this.options.labelOf(match) : missingLabel;
+		this.el.toggleClass("is-empty", !match && !missingLabel);
 	}
 
 	/** The committed item, or `undefined`. */
@@ -160,7 +162,7 @@ export class ListboxPopup<T> {
 		clearListboxMenuHeightCap(this.menuEl);
 		this.inputEl.value = this.selected
 			? this.options.labelOf(this.selected)
-			: "";
+			: this.missingSelectionLabel;
 		this.setActive(-1);
 		this.options.onHighlight?.(null);
 		this.removeWindowResize?.();
@@ -219,15 +221,14 @@ export class ListboxPopup<T> {
 			);
 		}
 
-		// Open on the committed row when it survived the filter, else the first.
-		// Highlight only: opening has changed nothing, so previewing here would
-		// repaint the callout on a mere glance at the list.
+		// Open on the committed row. An unresolved selection opens idle rather
+		// than making the first real option look chosen; typing still activates it.
 		const at = this.items.findIndex(
 			(item) => this.options.keyOf(item) === selectedKey,
 		);
-		this.setActive(at >= 0 ? at : this.items.length > 0 ? 0 : -1, {
-			preview: false,
-		});
+		const idleMissing = query === "" && this.missingSelectionLabel !== "";
+		const active = at >= 0 ? at : idleMissing ? -1 : this.items.length > 0 ? 0 : -1;
+		this.setActive(active, { preview: false });
 	}
 
 	private clearPointerHighlight(): void {

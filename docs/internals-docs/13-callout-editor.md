@@ -183,6 +183,22 @@ mechanics in [Callout registry](05-callout-registry.md#the-transient-live-previe
   see [Data model](04-data-model.md) for why it can't be a real callout id
   like the old `"example"` placeholder.
 
+## Deleted saved colours
+
+The editor keeps the deleted-palette state when its colours resolve to no
+saved palette. It retains the dangling `paletteId` so a restoration can
+relink the group, while the **Color** row shows the current form's colour
+circles, **Deleted color**, and “This callout's saved color was deleted.”
+The inline **Restore** action opens `PaletteEditorModal` seeded from those
+same colours. The warning has no linked-callout count.
+
+The picker must retain the label even when there is no selected palette
+entry: opening and dismissing the search, losing focus, or cancelling the
+restore popup must leave the deleted label, warning, and colour circles
+intact. Choosing a palette or completing restoration clears this state.
+An already-saved palette with identical colours can be adopted directly
+instead of creating a duplicate.
+
 ## Validation
 
 [`src/settings/editor/CalloutEditorValidation.ts`](../../src/settings/editor/CalloutEditorValidation.ts)

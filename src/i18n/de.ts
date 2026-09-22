@@ -963,12 +963,8 @@ export const de: Record<string, string> = {
 	"notice.palettesMerged":
 		"{{count}} gespeicherte Farbe(n) mit identischen Farben wurden zusammengeführt: {{names}}. Die Callouts, die sie verwenden, behalten ihre Farben und sind jetzt mit der verbleibenden Farbe verknüpft.",
 	"editor.colorsDescDeleted":
-		"Die gespeicherte Farbe dieses Callouts wurde gelöscht. Du kannst sie wieder speichern, indem du {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Die gespeicherte Farbe dieses Callouts wurde gelöscht. Du kannst sie wieder speichern, indem du {{link}} — 1 weiteres Callout, das sie nutzt, wird ebenfalls wieder verknüpft.",
-	"editor.colorsDescDeletedOthers":
-		"Die gespeicherte Farbe dieses Callouts wurde gelöscht. Du kannst sie wieder speichern, indem du {{link}} — {{count}} weitere Callouts, die sie nutzen, werden ebenfalls wieder verknüpft.",
-	"editor.colorsDescDeletedLink": "hier klickst",
+		"Die gespeicherte Farbe dieses Callouts wurde gelöscht. {{link}}",
+	"editor.colorsDescDeletedLink": "Wiederherstellen",
 	"palette.colorExists":
 		'Diese Farben sind identisch mit "{{name}}". Zwei gespeicherte Farben dürfen nicht gleich sein — ändere eine Farbe, um sie zu unterscheiden.',
 	"palette.colorExistsUse":

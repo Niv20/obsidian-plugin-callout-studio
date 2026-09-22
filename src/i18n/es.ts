@@ -959,12 +959,8 @@ export const es: Record<string, string> = {
 	"notice.palettesMerged":
 		"Se fusionaron {{count}} color(es) guardado(s) que tenían colores idénticos: {{names}}. Los callouts que los usan conservan sus colores y ahora están vinculados al color que permanece.",
 	"editor.colorsDescDeleted":
-		"El color guardado de este callout fue eliminado. Puedes guardarlo de nuevo {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"El color guardado de este callout fue eliminado. Puedes guardarlo de nuevo {{link}} — también se volverá a conectar 1 callout más que lo usa.",
-	"editor.colorsDescDeletedOthers":
-		"El color guardado de este callout fue eliminado. Puedes guardarlo de nuevo {{link}} — también se volverán a conectar {{count}} callouts más que lo usan.",
-	"editor.colorsDescDeletedLink": "haciendo clic aquí",
+		"El color guardado de este callout fue eliminado. {{link}}",
+	"editor.colorsDescDeletedLink": "Restaurar",
 	"palette.colorExists":
 		'Estos colores son idénticos a "{{name}}". Dos colores guardados no pueden ser iguales — cambia un color para diferenciarlos.',
 	"palette.colorExistsUse":

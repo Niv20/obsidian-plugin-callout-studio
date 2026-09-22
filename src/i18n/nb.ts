@@ -916,12 +916,8 @@ export const nb: Record<string, string> = {
 	"notice.palettesMerged":
 		"Flettet {{count}} lagrede farge(r) som hadde identiske farger: {{names}}. Calloutene som bruker dem beholder fargene sine og er nå koblet til fargen som ble igjen.",
 	"editor.colorsDescDeleted":
-		"Denne calloutens lagrede farge ble slettet. Du kan lagre den på nytt ved å {{link}}.",
-	"editor.colorsDescDeletedOther":
-		"Denne calloutens lagrede farge ble slettet. Du kan lagre den på nytt ved å {{link}} — 1 annen callout som bruker den blir også koblet til igjen.",
-	"editor.colorsDescDeletedOthers":
-		"Denne calloutens lagrede farge ble slettet. Du kan lagre den på nytt ved å {{link}} — {{count}} andre callouts som bruker den blir også koblet til igjen.",
-	"editor.colorsDescDeletedLink": "klikke her",
+		"Denne calloutens lagrede farge ble slettet. {{link}}",
+	"editor.colorsDescDeletedLink": "Gjenopprett",
 	"palette.colorExists":
 		'Disse fargene er identiske med "{{name}}". To lagrede farger kan ikke være like — endre en farge for å skille dem.',
 	"palette.colorExistsUse":
