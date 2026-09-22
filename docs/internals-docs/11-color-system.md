@@ -255,8 +255,10 @@ colour the palette never had.
 - **Deleting** a palette leaves linked callouts with their last-baked colours,
   **unlinked** — `paletteId` goes dangling rather than being cleared, which
   is what lets `listOrphanPaletteGroups()` reconstitute the group later (the
-  UI can offer to "revive" a deleted palette from one surviving member, and
-  `relinkPalette` regroups the rest). See
+  editor's **Restore** action can recreate a deleted palette from one surviving
+  member, and `relinkPalette` regroups the rest). The warning does not count
+  linked callouts; it shows the callout's retained colour circles and opens
+  the palette save popup. See
   [Callout registry](05-callout-registry.md) for the mechanics.
 - **Consolidation on load**: `consolidateDuplicatePalettes()` merges any two
   saved palettes with identical colours (by the same equality test the
