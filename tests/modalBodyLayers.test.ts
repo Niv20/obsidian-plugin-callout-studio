@@ -595,6 +595,36 @@ function firstComponent(value: string): string {
 	return value;
 }
 
+describe("the quick-insert sticky toolbar's scrollport inset", () => {
+	const body = (): Rule =>
+		ruleFor(".cs-quick-insert.cs-modal > .modal-content");
+	const intro = (): Rule =>
+		ruleFor(
+			".cs-quick-insert.cs-modal > .modal-content > .setting-item-description:first-child",
+		);
+	const toolbar = (): Rule => ruleFor(".cs-quick-insert-toolbar");
+
+	it("starts the scrollport at zero so rows cannot pass through a gap", () => {
+		assert.strictEqual(topPaddingOf(body())?.value, "0");
+	});
+
+	it("moves the resting inset onto content that scrolls away", () => {
+		assert.strictEqual(
+			valueOf(intro(), "padding-top"),
+			"var(--size-4-4)",
+		);
+	});
+
+	it("keeps the search focus ring inside the toolbar's own opaque paint", () => {
+		assert.strictEqual(valueOf(toolbar(), "padding-top"), "12px");
+		assert.strictEqual(
+			paintOf(toolbar()),
+			"var(--cs-surface, var(--background-primary))",
+		);
+		assert.ok(valueOf(toolbar(), "z-index"));
+	});
+});
+
 /** Every rule written with exactly this selector — several are written twice. */
 function rulesFor(selector: string): Rule[] {
 	const found = rules.filter((r) => r.selector === selector);

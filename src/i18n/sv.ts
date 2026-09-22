@@ -242,6 +242,8 @@ export const sv: Record<string, string> = {
 		'Det gick inte att ladda ned Material-ikonen "{{name}}". Den kanske inte är tillgänglig för den här stilen/vikten, eller så är anslutningen offline.',
 	"notice.vaultScanFailed": "Det gick inte att räkna callout-användning eftersom {{count}} anteckning(ar) inte gick att läsa. Kontrollera lagring och synkronisering och försök igen.",
 
+	"notice.externalCssRetired":
+		"Alternativet för personlig CSS-styling togs bort. Dessa callouts använder nu sin sparade Callout Studio-design, om inte ditt tema stylar dem. Dina anteckningar och personliga CSS-snippets ändrades inte.",
 	"notice.vaultRewritePartial":
 		"{{count}} anteckning(ar) kunde inte uppdateras och lämnades oförändrade. Se utvecklarkonsolen för detaljer.",
 	"notice.calloutDeleteIncomplete": "Vissa anteckningar kunde inte konverteras. Callout-typen behölls. Slutförda konverteringar har sparats; åtgärda filproblemet och kör åtgärden igen för att slutföra.",
@@ -254,6 +256,7 @@ export const sv: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "Markören är inte inne i en callout.",
 	"notice.autocompleteTargetMoved":
 		"Ingenting infogades — raden ändrades medan redigeraren var öppen.",
+	"notice.autocompleteAlwaysEnabled": "Autokomplettering är nu en kärnfunktion och är alltid aktiverad.",
 	"notice.openHotkeysFailed":
 		"Det gick inte att öppna Obsidians genväginställningar.",
 	"notice.filterHotkeysFailed":
@@ -704,13 +707,19 @@ export const sv: Record<string, string> = {
 	"quickInsert.sourceAria": "Filtrera efter callout-källa",
 	"quickInsert.sourceAll": "Alla",
 	"quickInsert.sourceBuiltIn": "Inbyggd",
+	"quickInsert.sourceTheme": "Tema-callouts",
 	"quickInsert.sourceUser": "Mina callouts",
 	"quickInsert.editAria": "Redigera {{name}}",
 	"quickInsert.insertAria": "Infoga {{name}} som block-callout",
 	"quickInsert.noResults": "Inga callouts hittades",
+	"quickInsert.noBuiltInCallouts": "Inga inbyggda callouts är tillgängliga just nu.",
+	"quickInsert.noThemeCallouts": "Inga temaspecifika callouts är tillgängliga just nu.",
 	"quickInsert.targetMoved": "Anteckningen som du öppnade Snabbinfoga från har ändrats eller stängts. Öppna Snabbinfoga igen i anteckningen du vill redigera.",
 	"quickInsert.targetMovedHint": "Den ursprungliga anteckningen är inte längre tillgänglig för den här infogningen.",
-	"quickInsert.noUserCallouts": "Du har inte skapat några callouts än.",
+	"quickInsert.noUserCallouts":
+		"Du har inte skapat några anpassade callouts än. Kör “Callout Studio: Create new callout type” från kommandopaletten.",
+	"quickInsert.noAvailableUserCallouts":
+		"Dina anpassade callouts visas för närvarande under temafiltret eftersom det aktiva temat styr dem.",
 	"quickInsert.noEditorHint": "Ingen anteckning är öppen i redigeringsläge, så inget kan infogas.",
 	"quickInsert.noEditor": "Öppna en anteckning i redigeringsläge för att infoga en callout.",
 

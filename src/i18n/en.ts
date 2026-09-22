@@ -286,13 +286,21 @@ export const en: Record<string, string> = {
 	"quickInsert.sourceAria": "Filter by callout source",
 	"quickInsert.sourceAll": "All",
 	"quickInsert.sourceBuiltIn": "Built-in",
+	"quickInsert.sourceTheme": "Theme callouts",
 	"quickInsert.sourceUser": "My callouts",
 	"quickInsert.editAria": "Edit {{name}}",
 	"quickInsert.insertAria": "Insert {{name}} as a block callout",
 	"quickInsert.noResults": "No callouts found",
+	"quickInsert.noBuiltInCallouts":
+		"No built-in callouts are currently available.",
+	"quickInsert.noThemeCallouts":
+		"No theme-specific callouts are currently available.",
 	"quickInsert.targetMoved": "The note you opened Quick insert from changed or closed. Reopen Quick insert in the note you want to edit.",
 	"quickInsert.targetMovedHint": "The original note is no longer available for this insertion.",
-	"quickInsert.noUserCallouts": "You haven't created any callouts yet.",
+	"quickInsert.noUserCallouts":
+		"You haven't created any custom callouts yet. Run “Callout Studio: Create new callout type” from the Command Palette.",
+	"quickInsert.noAvailableUserCallouts":
+		"Your custom callouts are currently listed under the theme filter because the active theme controls them.",
 	"quickInsert.noEditorHint":
 		"No note is open in editing mode, so nothing can be inserted.",
 	"quickInsert.noEditor": "Open a note in editing mode to insert a callout.",

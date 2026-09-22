@@ -226,6 +226,28 @@ reused view, closed leaf or replaced editor produces a refusal instead of
 redirecting the edit to the active note. A mode-only change retains the
 specific Reading view message. With no captured note, normal resolution applies.
 
+The first modal starts with the default `all` source filter. Changing the
+source updates `settings.quickInsertSource`, and later modals restore that
+choice. The filters use the same style-owner precedence as the settings lists:
+
+```text
+registry.themeOwns(def) → theme
+otherwise def.builtIn   → builtin
+otherwise               → user
+```
+
+The toolbar includes `theme` only when
+`usable.some((def) => registry.themeOwns(def))`. If `theme` is remembered while
+that option is unavailable, the modal uses `all` as its effective filter without
+overwriting the saved preference.
+
+The live ownership check is essential: `source: "theme"` finds a row minted
+from a stylesheet, but cannot find a built-in or saved row the active theme has
+temporarily taken over. The three buckets are therefore mutually exclusive,
+and switching themes can move a row without mutating its definition. With a
+blank query, an empty visible bucket gets a source-specific explanation; once a
+query is present, every empty result uses the ordinary no-match message.
+
 ## `CustomCommandManager` — one idempotent sweep
 
 [`src/editor/CustomCommandManager.ts`](../../src/editor/CustomCommandManager.ts)

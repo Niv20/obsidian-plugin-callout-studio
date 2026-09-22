@@ -245,6 +245,8 @@ export const nl: Record<string, string> = {
 
 	"notice.vaultScanFailed": "Het gebruik van callouts kon niet worden geteld omdat {{count}} notitie(s) niet konden worden gelezen. Controleer opslag en synchronisatie en probeer het opnieuw.",
 
+	"notice.externalCssRetired":
+		"De optie voor persoonlijke CSS-styling is verwijderd. Deze callouts gebruiken nu hun opgeslagen Callout Studio-ontwerp, tenzij uw thema ze stijlt. Uw notities en persoonlijke CSS-snippets zijn niet gewijzigd.",
 	"notice.vaultRewritePartial":
 		"{{count}} notitie(s) konden niet worden bijgewerkt en zijn ongewijzigd gebleven. Zie de ontwikkelaarsconsole voor details.",
 	"notice.calloutDeleteIncomplete": "Sommige notities konden niet worden geconverteerd. Het callout-type is behouden. Voltooide conversies zijn opgeslagen; los het bestandsprobleem op en voer de actie opnieuw uit om te voltooien.",
@@ -259,6 +261,7 @@ export const nl: Record<string, string> = {
 		"De cursor bevindt zich niet in een callout.",
 	"notice.autocompleteTargetMoved":
 		"Er is niets ingevoegd — de regel is gewijzigd terwijl de editor open was.",
+	"notice.autocompleteAlwaysEnabled": "Automatisch aanvullen is nu een kernfunctie en staat altijd aan.",
 	"notice.openHotkeysFailed":
 		"Kan de sneltoetseninstellingen van Obsidian niet openen.",
 	"notice.filterHotkeysFailed":
@@ -718,13 +721,19 @@ export const nl: Record<string, string> = {
 	"quickInsert.sourceAria": "Filteren op callout-bron",
 	"quickInsert.sourceAll": "Alle",
 	"quickInsert.sourceBuiltIn": "Ingebouwd",
+	"quickInsert.sourceTheme": "Thema-callouts",
 	"quickInsert.sourceUser": "Mijn callouts",
 	"quickInsert.editAria": "{{name}} bewerken",
 	"quickInsert.insertAria": "{{name}} invoegen als blok-callout",
 	"quickInsert.noResults": "Geen callouts gevonden",
+	"quickInsert.noBuiltInCallouts": "Er zijn momenteel geen ingebouwde callouts beschikbaar.",
+	"quickInsert.noThemeCallouts": "Er zijn momenteel geen themaspecifieke callouts beschikbaar.",
 	"quickInsert.targetMoved": "De notitie van waaruit je Snel invoegen hebt geopend, is gewijzigd of gesloten. Open Snel invoegen opnieuw in de notitie die je wilt bewerken.",
 	"quickInsert.targetMovedHint": "De oorspronkelijke notitie is niet meer beschikbaar voor deze invoeging.",
-	"quickInsert.noUserCallouts": "Je hebt nog geen callouts gemaakt.",
+	"quickInsert.noUserCallouts":
+		"Je hebt nog geen aangepaste callouts gemaakt. Voer “Callout Studio: Create new callout type” uit via het opdrachtenpalet.",
+	"quickInsert.noAvailableUserCallouts":
+		"Je aangepaste callouts staan momenteel onder het themafilter omdat het actieve thema ze beheert.",
 	"quickInsert.noEditorHint": "Er is geen notitie geopend in bewerkingsmodus, dus er kan niets worden ingevoegd.",
 	"quickInsert.noEditor": "Open een notitie in bewerkingsmodus om een callout in te voegen.",
 

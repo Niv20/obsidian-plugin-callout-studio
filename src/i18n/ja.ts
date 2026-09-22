@@ -246,6 +246,8 @@ export const ja: Record<string, string> = {
 		'Materialアイコン"{{name}}"をダウンロードできませんでした。このスタイル/ウェイトでは利用できないか、接続がオフラインの可能性があります。',
 	"notice.vaultScanFailed": "コールアウトの使用数を集計できませんでした。{{count}} 件のノートを読み取れませんでした。ストレージと同期を確認してから再試行してください。",
 
+	"notice.externalCssRetired":
+		"個人用CSSスタイル設定オプションは削除されました。これらのcalloutは、テーマがスタイルを適用しない限り、保存済みのCallout Studioデザインを使用します。ノートと個人用CSSスニペットは変更されていません。",
 	"notice.vaultRewritePartial":
 		"{{count}} 件のノートを更新できなかったため、変更されずに残されました。詳細は開発者コンソールを確認してください。",
 	"notice.calloutDeleteIncomplete": "一部のノートを変換できませんでした。callout タイプは保持されました。完了した変換は保存されています。ファイルの問題を解決してから、操作をもう一度実行して完了してください。",
@@ -258,6 +260,7 @@ export const ja: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "カーソルがcallout内にありません。",
 	"notice.autocompleteTargetMoved":
 		"何も挿入されませんでした — エディタを開いている間に行が変更されました。",
+	"notice.autocompleteAlwaysEnabled": "オートコンプリートはコア機能になり、常に有効です。",
 	"notice.openHotkeysFailed": "Obsidianのホットキー設定を開けませんでした。",
 	"notice.filterHotkeysFailed":
 		"Obsidianのホットキーを開きましたが、Callout Studioフィルターを適用できませんでした。",
@@ -714,13 +717,17 @@ export const ja: Record<string, string> = {
 	"quickInsert.sourceAria": "calloutのソースで絞り込み",
 	"quickInsert.sourceAll": "すべて",
 	"quickInsert.sourceBuiltIn": "組み込み",
+	"quickInsert.sourceTheme": "テーマのcallout",
 	"quickInsert.sourceUser": "自分のcallout",
 	"quickInsert.editAria": "{{name}}を編集",
 	"quickInsert.insertAria": "{{name}}をブロックcalloutとして挿入",
 	"quickInsert.noResults": "calloutが見つかりません",
+	"quickInsert.noBuiltInCallouts": "現在利用できる組み込みcalloutはありません。",
+	"quickInsert.noThemeCallouts": "現在利用できるテーマ固有のcalloutはありません。",
 	"quickInsert.targetMoved": "クイック挿入を開いたノートが変更されたか閉じられました。編集したいノートでクイック挿入を開き直してください。",
 	"quickInsert.targetMovedHint": "この挿入には元のノートが利用できなくなりました。",
-	"quickInsert.noUserCallouts": "まだcalloutを作成していません。",
+	"quickInsert.noUserCallouts": "まだカスタムcalloutを作成していません。コマンドパレットから “Callout Studio: Create new callout type” を実行してください。",
+	"quickInsert.noAvailableUserCallouts": "カスタムcalloutは現在、アクティブなテーマが制御しているためテーマフィルターの下に表示されています。",
 	"quickInsert.noEditorHint": "編集モードで開いているノートがないため、何も挿入できません。",
 	"quickInsert.noEditor": "calloutを挿入するには、ノートを編集モードで開いてください。",
 

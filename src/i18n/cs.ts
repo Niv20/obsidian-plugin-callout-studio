@@ -240,6 +240,8 @@ export const cs: Record<string, string> = {
 		'Ikonu Material "{{name}}" nelze stáhnout. Může být nedostupná pro tento styl/tloušťku nebo jste offline.',
 	"notice.vaultScanFailed": "Počet použití calloutu nebylo možné zjistit, protože nebylo možné přečíst {{count}} poznámku/poznámek. Zkontrolujte ukládání a synchronizaci a zkuste to znovu.",
 
+	"notice.externalCssRetired":
+		"Možnost osobního CSS stylování byla odstraněna. Tyto callouty nyní používají svůj uložený design v Callout Studio, pokud je nestyluje vaše téma. Vaše poznámky ani osobní CSS snippety nebyly změněny.",
 	"notice.vaultRewritePartial":
 		"{{count}} poznámku(y) se nepodařilo aktualizovat a zůstaly beze změny. Podrobnosti najdete v konzoli pro vývojáře.",
 	"notice.calloutDeleteIncomplete": "Některé poznámky se nepodařilo převést. Typ calloutu byl zachován. Dokončené převody jsou uloženy; vyřešte problém se souborem a poté akci spusťte znovu, abyste ji dokončili.",
@@ -252,6 +254,7 @@ export const cs: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "Kurzor není uvnitř callout.",
 	"notice.autocompleteTargetMoved":
 		"Nic nebylo vloženo — řádek se změnil, zatímco byl editor otevřený.",
+	"notice.autocompleteAlwaysEnabled": "Automatické doplňování je nyní základní funkce a je vždy zapnuté.",
 	"notice.openHotkeysFailed":
 		"Nelze otevřít nastavení klávesových zkratek Obsidian.",
 	"notice.filterHotkeysFailed":
@@ -706,13 +709,19 @@ export const cs: Record<string, string> = {
 	"quickInsert.sourceAria": "Filtrovat podle zdroje callout",
 	"quickInsert.sourceAll": "Vše",
 	"quickInsert.sourceBuiltIn": "Vestavěný",
+	"quickInsert.sourceTheme": "Callouty tématu",
 	"quickInsert.sourceUser": "Moje callouty",
 	"quickInsert.editAria": "Upravit {{name}}",
 	"quickInsert.insertAria": "Vložit {{name}} jako blokový callout",
 	"quickInsert.noResults": "Nebyly nalezeny žádné callouty",
+	"quickInsert.noBuiltInCallouts": "Momentálně nejsou k dispozici žádné vestavěné callouty.",
+	"quickInsert.noThemeCallouts": "Momentálně nejsou k dispozici žádné callouty specifické pro téma.",
 	"quickInsert.targetMoved": "Poznámka, ze které jste otevřeli Rychlé vložení, se změnila nebo byla zavřena. Otevřete Rychlé vložení znovu v poznámce, kterou chcete upravit.",
 	"quickInsert.targetMovedHint": "Původní poznámka již není pro toto vložení k dispozici.",
-	"quickInsert.noUserCallouts": "Zatím jste nevytvořili žádný callout.",
+	"quickInsert.noUserCallouts":
+		"Zatím jste nevytvořili žádné vlastní callouty. Spusťte “Callout Studio: Create new callout type” z palety příkazů.",
+	"quickInsert.noAvailableUserCallouts":
+		"Vaše vlastní callouty jsou nyní uvedeny pod filtrem tématu, protože je ovládá aktivní téma.",
 	"quickInsert.noEditorHint": "Není otevřena žádná poznámka v režimu úprav, takže nelze nic vložit.",
 	"quickInsert.noEditor": "Otevřete poznámku v režimu úprav pro vložení callout.",
 

@@ -244,6 +244,8 @@ export const vi: Record<string, string> = {
 
 	"notice.vaultScanFailed": "Không thể đếm số lần sử dụng callout vì không thể đọc được {{count}} ghi chú. Hãy kiểm tra bộ nhớ lưu trữ và đồng bộ hóa, sau đó thử lại.",
 
+	"notice.externalCssRetired":
+		"Tùy chọn tạo kiểu CSS cá nhân đã bị gỡ bỏ. Các callout này hiện dùng thiết kế Callout Studio đã lưu, trừ khi giao diện của bạn tạo kiểu cho chúng. Ghi chú và đoạn CSS cá nhân của bạn không bị thay đổi.",
 	"notice.vaultRewritePartial":
 		"{{count}} ghi chú không thể cập nhật và được giữ nguyên. Xem bảng điều khiển nhà phát triển để biết chi tiết.",
 	"notice.calloutDeleteIncomplete": "Không thể chuyển đổi một số ghi chú. Loại callout đã được giữ lại. Các chuyển đổi đã hoàn tất được lưu; hãy khắc phục sự cố tệp, sau đó chạy lại hành động để hoàn tất.",
@@ -257,6 +259,7 @@ export const vi: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "Con trỏ không nằm trong callout.",
 	"notice.autocompleteTargetMoved":
 		"Không có gì được chèn — dòng đã thay đổi khi trình chỉnh sửa đang mở.",
+	"notice.autocompleteAlwaysEnabled": "Tự động hoàn thành hiện là tính năng cốt lõi và luôn được bật.",
 	"notice.openHotkeysFailed": "Không thể mở cài đặt phím tắt Obsidian.",
 	"notice.filterHotkeysFailed":
 		"Đã mở phím tắt Obsidian, nhưng không thể áp dụng bộ lọc Callout Studio.",
@@ -716,13 +719,19 @@ export const vi: Record<string, string> = {
 	"quickInsert.sourceAria": "Lọc theo nguồn callout",
 	"quickInsert.sourceAll": "Tất cả",
 	"quickInsert.sourceBuiltIn": "Tích hợp",
+	"quickInsert.sourceTheme": "Callout của giao diện",
 	"quickInsert.sourceUser": "Callout của tôi",
 	"quickInsert.editAria": "Chỉnh sửa {{name}}",
 	"quickInsert.insertAria": "Chèn {{name}} dưới dạng callout khối",
 	"quickInsert.noResults": "Không tìm thấy callout nào",
+	"quickInsert.noBuiltInCallouts": "Hiện không có callout tích hợp nào khả dụng.",
+	"quickInsert.noThemeCallouts": "Hiện không có callout dành riêng cho giao diện nào khả dụng.",
 	"quickInsert.targetMoved": "Ghi chú mà bạn đã mở Chèn nhanh từ đó đã thay đổi hoặc đã đóng. Hãy mở lại Chèn nhanh trong ghi chú bạn muốn chỉnh sửa.",
 	"quickInsert.targetMovedHint": "Ghi chú gốc không còn khả dụng cho lần chèn này.",
-	"quickInsert.noUserCallouts": "Bạn chưa tạo callout nào.",
+	"quickInsert.noUserCallouts":
+		"Bạn chưa tạo callout tùy chỉnh nào. Chạy “Callout Studio: Create new callout type” từ bảng lệnh.",
+	"quickInsert.noAvailableUserCallouts":
+		"Các callout tùy chỉnh của bạn hiện được liệt kê dưới bộ lọc giao diện vì giao diện đang hoạt động kiểm soát chúng.",
 	"quickInsert.noEditorHint": "Không có ghi chú nào đang mở ở chế độ chỉnh sửa, nên không thể chèn gì cả.",
 	"quickInsert.noEditor": "Mở một ghi chú ở chế độ chỉnh sửa để chèn callout.",
 

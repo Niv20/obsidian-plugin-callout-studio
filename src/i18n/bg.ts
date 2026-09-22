@@ -228,6 +228,8 @@ export const bg: Record<string, string> = {
 		'Неуспешно изтегляне на икона Material "{{name}}". Може да е недостъпна за този стил/тегло или да нямате интернет връзка.',
 	"notice.vaultScanFailed": "Не може да се преброи използването на callout, защото не могат да се прочетат {{count}} бележки. Проверете съхранението и синхронизацията и опитайте отново.",
 
+	"notice.externalCssRetired":
+		"Опцията за лично CSS стилизиране беше премахната. Тези callout-и сега използват запазения си дизайн от Callout Studio, освен ако темата ви не ги стилизира. Вашите бележки и лични CSS фрагменти не са променени.",
 	"notice.vaultRewritePartial":
 		"{{count}} бележка(и) не можаха да бъдат актуализирани и останаха непроменени. Вижте конзолата за разработчици за подробности.",
 	"notice.calloutDeleteIncomplete": "Някои бележки не можаха да бъдат преобразувани. Типът callout беше запазен. Завършените преобразувания са запазени; отстранете проблема с файла и стартирайте действието отново, за да го завършите.",
@@ -240,6 +242,7 @@ export const bg: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "Курсорът не е вътре в callout.",
 	"notice.autocompleteTargetMoved":
 		"Нищо не беше вмъкнато — редът се промени, докато редакторът беше отворен.",
+	"notice.autocompleteAlwaysEnabled": "Автодовършването вече е основна функция и винаги е включено.",
 	"notice.openHotkeysFailed":
 		"Не може да се отворят настройките за клавишни комбинации на Obsidian.",
 	"notice.filterHotkeysFailed":
@@ -689,13 +692,19 @@ export const bg: Record<string, string> = {
 	"quickInsert.sourceAria": "Филтриране по източник на callout",
 	"quickInsert.sourceAll": "Всички",
 	"quickInsert.sourceBuiltIn": "Вграден",
+	"quickInsert.sourceTheme": "Callout-и от тема",
 	"quickInsert.sourceUser": "Моите callout",
 	"quickInsert.editAria": "Редактиране на {{name}}",
 	"quickInsert.insertAria": "Вмъкване на {{name}} като блоков callout",
 	"quickInsert.noResults": "Не бяха намерени callout",
+	"quickInsert.noBuiltInCallouts": "В момента няма налични вградени callout-и.",
+	"quickInsert.noThemeCallouts": "В момента няма налични callout-и, специфични за темата.",
 	"quickInsert.targetMoved": "Бележката, от която отворихте Бързото вмъкване, е променена или затворена. Отворете отново Бързото вмъкване в бележката, която искате да редактирате.",
 	"quickInsert.targetMovedHint": "Първоначалната бележка вече не е налична за това вмъкване.",
-	"quickInsert.noUserCallouts": "Все още не сте създали никакви callout.",
+	"quickInsert.noUserCallouts":
+		"Все още не сте създали персонализирани callout-и. Изпълнете “Callout Studio: Create new callout type” от командната палитра.",
+	"quickInsert.noAvailableUserCallouts":
+		"Вашите персонализирани callout-и в момента са под филтъра за тема, защото активната тема ги контролира.",
 	"quickInsert.noEditorHint": "Няма отворена бележка в режим на редактиране, затова нищо не може да бъде вмъкнато.",
 	"quickInsert.noEditor": "Отворете бележка в режим на редактиране, за да вмъкнете callout.",
 

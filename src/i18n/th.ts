@@ -238,6 +238,8 @@ export const th: Record<string, string> = {
 		'ไม่สามารถดาวน์โหลดไอคอน Material "{{name}}" ได้ อาจไม่มีให้บริการสำหรับสไตล์/น้ำหนักนี้ หรือการเชื่อมต่อของคุณออฟไลน์อยู่',
 	"notice.vaultScanFailed": "ไม่สามารถนับการใช้งานคอลเอาท์ได้ เนื่องจากไม่สามารถอ่านโน้ต {{count}} รายการได้ กรุณาตรวจสอบการจัดเก็บและการซิงก์แล้วลองอีกครั้ง",
 
+	"notice.externalCssRetired":
+		"ตัวเลือกการกำหนดสไตล์ CSS ส่วนตัวถูกลบออกแล้ว callout เหล่านี้จะใช้ดีไซน์ Callout Studio ที่บันทึกไว้ เว้นแต่ธีมของคุณจะกำหนดสไตล์ให้ โน้ตและ snippet CSS ส่วนตัวของคุณไม่ได้ถูกเปลี่ยนแปลง",
 	"notice.vaultRewritePartial":
 		"ไม่สามารถอัปเดตโน้ตได้ {{count}} รายการ และถูกปล่อยไว้โดยไม่มีการเปลี่ยนแปลง ดูรายละเอียดในคอนโซลสำหรับนักพัฒนา",
 	"notice.calloutDeleteIncomplete": "ไม่สามารถแปลงบางโน้ตได้ ระบบเก็บประเภท callout ไว้ การแปลงที่เสร็จแล้วถูกบันทึกไว้ แก้ไขปัญหาไฟล์แล้วเรียกใช้การกระทำนี้อีกครั้งเพื่อให้เสร็จสมบูรณ์",
@@ -250,6 +252,7 @@ export const th: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "เคอร์เซอร์ไม่อยู่ใน callout",
 	"notice.autocompleteTargetMoved":
 		"ไม่ได้แทรกสิ่งใด — บรรทัดเปลี่ยนไปขณะที่ตัวแก้ไขเปิดอยู่",
+	"notice.autocompleteAlwaysEnabled": "การเติมข้อความอัตโนมัติเป็นฟีเจอร์หลักแล้ว และเปิดใช้งานอยู่เสมอ",
 	"notice.openHotkeysFailed":
 		"ไม่สามารถเปิดการตั้งค่าแป้นพิมพ์ลัดของ Obsidian ได้",
 	"notice.filterHotkeysFailed":
@@ -704,13 +707,19 @@ export const th: Record<string, string> = {
 	"quickInsert.sourceAria": "กรองตามแหล่งที่มาของ callout",
 	"quickInsert.sourceAll": "ทั้งหมด",
 	"quickInsert.sourceBuiltIn": "ในตัว",
+	"quickInsert.sourceTheme": "callout ของธีม",
 	"quickInsert.sourceUser": "callout ของฉัน",
 	"quickInsert.editAria": "แก้ไข {{name}}",
 	"quickInsert.insertAria": "แทรก {{name}} เป็น callout แบบบล็อก",
 	"quickInsert.noResults": "ไม่พบ callout",
+	"quickInsert.noBuiltInCallouts": "ไม่มี callout ในตัวที่พร้อมใช้งานในขณะนี้",
+	"quickInsert.noThemeCallouts": "ไม่มี callout เฉพาะธีมที่พร้อมใช้งานในขณะนี้",
 	"quickInsert.targetMoved": "โน้ตที่คุณเปิดแทรกอย่างรวดเร็วมามีการเปลี่ยนแปลงหรือถูกปิดไปแล้ว เปิดแทรกอย่างรวดเร็วอีกครั้งในโน้ตที่คุณต้องการแก้ไข",
 	"quickInsert.targetMovedHint": "โน้ตต้นฉบับไม่พร้อมใช้งานสำหรับการแทรกนี้อีกต่อไป",
-	"quickInsert.noUserCallouts": "คุณยังไม่ได้สร้าง callout ใดๆ",
+	"quickInsert.noUserCallouts":
+		"คุณยังไม่ได้สร้าง callout แบบกำหนดเองใดๆ เรียกใช้ “Callout Studio: Create new callout type” จากพาเล็ตคำสั่ง",
+	"quickInsert.noAvailableUserCallouts":
+		"callout แบบกำหนดเองของคุณถูกแสดงอยู่ใต้ตัวกรองธีมในขณะนี้ เพราะธีมที่ใช้งานอยู่ควบคุม callout เหล่านั้น",
 	"quickInsert.noEditorHint": "ไม่มีบันทึกที่เปิดอยู่ในโหมดแก้ไข จึงไม่สามารถแทรกอะไรได้",
 	"quickInsert.noEditor": "เปิดบันทึกในโหมดแก้ไขเพื่อแทรก callout",
 

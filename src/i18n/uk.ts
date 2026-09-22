@@ -247,6 +247,8 @@ export const uk: Record<string, string> = {
 
 	"notice.vaultScanFailed": "Не вдалося порахувати використання callout, оскільки не вдалося прочитати {{count}} нотаток. Перевірте сховище й синхронізацію, потім спробуйте ще раз.",
 
+	"notice.externalCssRetired":
+		"Опцію персонального CSS-оформлення вилучено. Ці callout тепер використовують збережений дизайн Callout Studio, якщо ваша тема не стилізує їх. Ваші нотатки та персональні CSS-фрагменти не змінено.",
 	"notice.vaultRewritePartial":
 		"{{count}} нотатку(и) не вдалося оновити, вони залишилися без змін. Подробиці в консолі розробника.",
 	"notice.calloutDeleteIncomplete": "Деякі нотатки не вдалося перетворити. Тип callout збережено. Завершені перетворення збережено; усуньте проблему з файлом, а потім запустіть дію знову, щоб завершити.",
@@ -260,6 +262,7 @@ export const uk: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "Курсор не знаходиться всередині callout.",
 	"notice.autocompleteTargetMoved":
 		"Нічого не вставлено — рядок змінився, поки редактор був відкритий.",
+	"notice.autocompleteAlwaysEnabled": "Автодоповнення тепер є основною функцією і завжди ввімкнене.",
 	"notice.openHotkeysFailed":
 		"Не вдалося відкрити налаштування гарячих клавіш Obsidian.",
 	"notice.filterHotkeysFailed":
@@ -721,13 +724,19 @@ export const uk: Record<string, string> = {
 	"quickInsert.sourceAria": "Фільтрувати за джерелом callout",
 	"quickInsert.sourceAll": "Усі",
 	"quickInsert.sourceBuiltIn": "Вбудований",
+	"quickInsert.sourceTheme": "Callout теми",
 	"quickInsert.sourceUser": "Мої callout",
 	"quickInsert.editAria": "Редагувати {{name}}",
 	"quickInsert.insertAria": "Вставити {{name}} як блоковий callout",
 	"quickInsert.noResults": "Callout не знайдено",
+	"quickInsert.noBuiltInCallouts": "Наразі немає доступних вбудованих callout.",
+	"quickInsert.noThemeCallouts": "Наразі немає доступних callout, специфічних для теми.",
 	"quickInsert.targetMoved": "Нотатка, з якої ви відкрили швидку вставку, змінилася або закрита. Відкрийте швидку вставку знову в нотатці, яку хочете редагувати.",
 	"quickInsert.targetMovedHint": "Початкова нотатка більше недоступна для цієї вставки.",
-	"quickInsert.noUserCallouts": "Ви ще не створили жодного callout.",
+	"quickInsert.noUserCallouts":
+		"Ви ще не створили жодного користувацького callout. Запустіть “Callout Studio: Create new callout type” з палітри команд.",
+	"quickInsert.noAvailableUserCallouts":
+		"Ваші користувацькі callout зараз перелічені під фільтром теми, тому що активна тема керує ними.",
 	"quickInsert.noEditorHint": "Жодна нотатка не відкрита в режимі редагування, тому нічого вставити не можна.",
 	"quickInsert.noEditor": "Відкрийте нотатку в режимі редагування, щоб вставити callout.",
 

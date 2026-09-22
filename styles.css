@@ -5751,11 +5751,26 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	--dialog-width: 560px;
 }
 
+/* The generic modal body owns a top inset, but a sticky child measures `top: 0`
+   from below that inset. Leaving it there creates a transparent strip through
+   which rows keep scrolling. Quick Insert moves the resting inset onto its
+   intro instead, so the scrollport itself begins at the header rule. */
+.cs-quick-insert.cs-modal > .modal-content {
+	padding-top: 0;
+}
+
+.cs-quick-insert.cs-modal
+	> .modal-content
+	> .setting-item-description:first-child {
+	padding-top: var(--size-4-4);
+}
+
 /* Sticky at top: 0 and nowhere else. A positive offset parks this opaque band
    below the header's rule, which then eats the rows scrolling behind it — the
    same trap `.callout-studio-preview-col` documents. It is painted with the
    window's own surface, never --background-primary, because those are not the
-   same colour on an iPad in dark mode. */
+   same colour on an iPad in dark mode. The small painted top inset protects the
+   autofocused search field's focus ring without reopening a transparent gap. */
 .cs-quick-insert-toolbar {
 	position: sticky;
 	top: 0;
@@ -5764,6 +5779,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	gap: 8px;
 	flex-wrap: wrap;
 	align-items: center;
+	padding-top: 12px;
 	padding-bottom: 12px;
 	background: var(--cs-surface, var(--background-primary));
 }
@@ -5775,6 +5791,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 
 .cs-quick-insert-filter {
 	flex-shrink: 0;
+	max-width: 100%;
 }
 
 /* Both controls take the full row on a phone, where 150px of search plus a

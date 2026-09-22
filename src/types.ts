@@ -769,12 +769,12 @@ export interface PluginSettings {
 	 */
 	disabledFixedCommands: string[];
 	/**
-	 * Which callouts the quick-insert window lists: all, built-in, or the user's
-	 * own. A standing preference, so it is remembered between openings — unlike
-	 * the search box, which is cleared on every open because a query is about one
-	 * insertion. A plain `string` for the same reason `disabledFixedCommands` is:
-	 * the union and its guard live in `utils/calloutSearch.ts`, keeping this a
-	 * leaf module.
+	 * Which source Quick Insert last showed. `"all"` is the first-run default;
+	 * each later window restores the user's most recent choice. A plain `string`
+	 * keeps this leaf module from importing the union and guard in
+	 * `utils/calloutSearch.ts`; the settings merge sanitizes it before use. The
+	 * choice is saved as soon as the filter changes, so it survives closing the
+	 * window and restarting Obsidian.
 	 */
 	quickInsertSource: string;
 }

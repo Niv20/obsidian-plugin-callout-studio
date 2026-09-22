@@ -239,6 +239,8 @@ export const ar: Record<string, string> = {
 		'تعذّر تنزيل أيقونة Material "{{name}}". قد تكون غير متاحة لهذا الأسلوب/الوزن، أو قد يكون اتصالك بالإنترنت منقطعًا.',
 	"notice.vaultScanFailed": "تعذّرت عملية عدّ استخدامات الـcallout لأن {{count}} ملاحظة/ملاحظات لا يمكن قراءتها. تحقق من التخزين والمزامنة ثم أعد المحاولة.",
 
+	"notice.externalCssRetired":
+		"تمت إزالة خيار تنسيق CSS الشخصي. تستخدم هذه الـ callouts الآن تصميم Callout Studio المحفوظ لها ما لم تكن سمتك تنسقها. لم يتم تغيير ملاحظاتك ولا مقتطفات CSS الشخصية لديك.",
 	"notice.vaultRewritePartial":
 		"تعذّر تحديث {{count}} ملاحظة (ملاحظات) وبقيت دون تغيير. راجع وحدة تحكم المطور للتفاصيل.",
 	"notice.calloutDeleteIncomplete": "تعذّر تحويل بعض الملاحظات. تم الاحتفاظ بنوع الـ callout. التحويلات المكتملة محفوظة؛ عالج مشكلة الملف ثم شغّل الإجراء مرة أخرى لإتمامه.",
@@ -251,6 +253,7 @@ export const ar: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "المؤشر ليس داخل callout.",
 	"notice.autocompleteTargetMoved":
 		"لم يُدرج أي شيء — تغيّر السطر أثناء فتح المحرّر.",
+	"notice.autocompleteAlwaysEnabled": "أصبح الإكمال التلقائي الآن ميزة أساسية وهو مفعّل دائمًا.",
 	"notice.openHotkeysFailed": "تعذّر فتح إعدادات الاختصارات في Obsidian.",
 	"notice.filterHotkeysFailed":
 		"تم فتح اختصارات Obsidian، لكن تعذّر تطبيق مرشح Callout Studio.",
@@ -699,13 +702,18 @@ export const ar: Record<string, string> = {
 	"quickInsert.sourceAria": "التصفية حسب مصدر الـ callout",
 	"quickInsert.sourceAll": "الكل",
 	"quickInsert.sourceBuiltIn": "مدمج",
+	"quickInsert.sourceTheme": "Callouts من السمة",
 	"quickInsert.sourceUser": "الـ callouts الخاصة بي",
 	"quickInsert.editAria": "تعديل {{name}}",
 	"quickInsert.insertAria": "إدراج {{name}} كـ callout كتلة",
 	"quickInsert.noResults": "لم يتم العثور على أي callout",
+	"quickInsert.noBuiltInCallouts": "لا تتوفر أي callouts مدمجة حاليًا.",
+	"quickInsert.noThemeCallouts": "لا تتوفر أي callouts خاصة بالسمة حاليًا.",
 	"quickInsert.targetMoved": "الملاحظة التي فتحت منها الإدراج السريع تغيّرت أو أُغلقت. أعد فتح الإدراج السريع في الملاحظة التي تريد تحريرها.",
 	"quickInsert.targetMovedHint": "الملاحظة الأصلية لم تعد متاحة لهذا الإدراج.",
-	"quickInsert.noUserCallouts": "لم تُنشئ أي callout خاص بك بعد.",
+	"quickInsert.noUserCallouts":
+		"لم تُنشئ أي callout مخصص بعد. شغّل “Callout Studio: Create new callout type” من لوحة الأوامر.",
+	"quickInsert.noAvailableUserCallouts": "تظهر الـ callouts المخصصة لديك حاليًا ضمن فلتر السمة لأن السمة النشطة تتحكم بها.",
 	"quickInsert.noEditorHint": "لا توجد ملاحظة مفتوحة في وضع التحرير، لذا لا يمكن إدراج شيء.",
 	"quickInsert.noEditor": "افتح ملاحظة في وضع التحرير لإدراج callout.",
 

@@ -201,7 +201,7 @@ const FORCED = new Set([
  * (`iconSources.materialStyleDefault`) are stored as written.
  */
 const ENUM_LEAVES: Record<string, Scalar> = {
-	quickInsertSource: "user",
+	quickInsertSource: "theme",
 };
 
 /** A value definitely different from `value`, of the same type. */
@@ -358,9 +358,9 @@ describe("mergeSavedSettings — every saved value comes back", () => {
 
 describe("mergeSavedSettings — keys that must NOT survive", () => {
 	it("falls back to `all` for a quick-insert filter it does not know", () => {
-		// The value is persisted, so it can come back from a newer build, a
-		// hand-edit or another vault's export. "all" is the one state that can
-		// never look broken — every other choice can render an empty list.
+		// A value can come back from a newer build, a hand-edit or another vault's
+		// export. "all" is the safest first-run/fallback state because it cannot
+		// make the list look unexpectedly empty.
 		const merged = mergeSavedSettings({
 			quickInsertSource: "only-the-purple-ones",
 		} as unknown as Partial<PluginSettings>);

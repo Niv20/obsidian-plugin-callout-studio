@@ -238,6 +238,8 @@ export const ms: Record<string, string> = {
 		'Gagal memuat turun ikon Material "{{name}}". Ikon ini mungkin tidak tersedia untuk gaya/ketebalan ini, atau sambungan anda tidak tersambung.',
 	"notice.vaultScanFailed": "Penggunaan callout tidak dapat dikira kerana {{count}} nota tidak dapat dibaca. Semak storan dan penyegerakan, kemudian cuba lagi.",
 
+	"notice.externalCssRetired":
+		"Pilihan penggayaan CSS peribadi telah dialih keluar. Callout ini kini menggunakan reka bentuk Callout Studio yang disimpan, melainkan tema anda menggayakannya. Nota dan coretan CSS peribadi anda tidak diubah.",
 	"notice.vaultRewritePartial":
 		"{{count}} nota tidak dapat dikemas kini dan dibiarkan tanpa perubahan. Lihat konsol pembangun untuk butiran.",
 	"notice.calloutDeleteIncomplete": "Sesetengah nota tidak dapat ditukar. Jenis callout dikekalkan. Penukaran yang selesai telah disimpan; selesaikan masalah fail, kemudian jalankan tindakan itu semula untuk menyelesaikannya.",
@@ -250,6 +252,7 @@ export const ms: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "Kursor tidak berada dalam callout.",
 	"notice.autocompleteTargetMoved":
 		"Tiada apa-apa disisipkan — baris berubah semasa penyunting dibuka.",
+	"notice.autocompleteAlwaysEnabled": "Autolengkap kini merupakan ciri teras dan sentiasa didayakan.",
 	"notice.openHotkeysFailed":
 		"Tidak dapat membuka tetapan pintasan Obsidian.",
 	"notice.filterHotkeysFailed":
@@ -698,13 +701,19 @@ export const ms: Record<string, string> = {
 	"quickInsert.sourceAria": "Tapis mengikut sumber callout",
 	"quickInsert.sourceAll": "Semua",
 	"quickInsert.sourceBuiltIn": "Terbina dalam",
+	"quickInsert.sourceTheme": "Callout tema",
 	"quickInsert.sourceUser": "Callout saya",
 	"quickInsert.editAria": "Sunting {{name}}",
 	"quickInsert.insertAria": "Sisipkan {{name}} sebagai callout blok",
 	"quickInsert.noResults": "Tiada callout ditemui",
+	"quickInsert.noBuiltInCallouts": "Tiada callout terbina dalam tersedia pada masa ini.",
+	"quickInsert.noThemeCallouts": "Tiada callout khusus tema tersedia pada masa ini.",
 	"quickInsert.targetMoved": "Nota tempat anda membuka Sisipan pantas telah berubah atau ditutup. Buka semula Sisipan pantas dalam nota yang anda mahu edit.",
 	"quickInsert.targetMovedHint": "Nota asal tidak lagi tersedia untuk sisipan ini.",
-	"quickInsert.noUserCallouts": "Anda belum mencipta sebarang callout.",
+	"quickInsert.noUserCallouts":
+		"Anda belum mencipta sebarang callout tersuai. Jalankan “Callout Studio: Create new callout type” daripada palet arahan.",
+	"quickInsert.noAvailableUserCallouts":
+		"Callout tersuai anda kini disenaraikan di bawah penapis tema kerana tema aktif mengawalnya.",
 	"quickInsert.noEditorHint": "Tiada nota dibuka dalam mod penyuntingan, jadi tiada apa yang boleh disisipkan.",
 	"quickInsert.noEditor": "Buka nota dalam mod penyuntingan untuk menyisipkan callout.",
 

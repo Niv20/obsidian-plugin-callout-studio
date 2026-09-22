@@ -246,6 +246,8 @@ export const es: Record<string, string> = {
 		'No se pudo descargar el icono Material "{{name}}". Es posible que no esté disponible para este estilo/grosor, o que la conexión esté sin conexión.',
 	"notice.vaultScanFailed": "No se pudo contar el uso de callout porque no se pudo leer {{count}} nota(s). Revisa el almacenamiento y la sincronización y vuelve a intentarlo.",
 
+	"notice.externalCssRetired":
+		"Se eliminó la opción de estilos CSS personales. Estos callouts ahora usan su diseño guardado de Callout Studio, salvo que el tema les aplique estilo. Tus notas y fragmentos CSS personales no cambiaron.",
 	"notice.vaultRewritePartial":
 		"{{count}} nota(s) no se pudieron actualizar y quedaron sin cambios. Consulta la consola de desarrollador para más detalles.",
 	"notice.calloutDeleteIncomplete": "Algunas notas no se pudieron convertir. Se conservó el tipo de callout. Las conversiones completadas se han guardado; resuelve el problema del archivo y vuelve a ejecutar la acción para terminar.",
@@ -258,6 +260,7 @@ export const es: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "El cursor no está dentro de un callout.",
 	"notice.autocompleteTargetMoved":
 		"No se insertó nada: la línea cambió mientras el editor estaba abierto.",
+	"notice.autocompleteAlwaysEnabled": "El autocompletado ahora es una función principal y siempre está activado.",
 	"notice.openHotkeysFailed":
 		"No se pudo abrir los ajustes de atajos de Obsidian.",
 	"notice.filterHotkeysFailed":
@@ -713,13 +716,19 @@ export const es: Record<string, string> = {
 	"quickInsert.sourceAria": "Filtrar por origen del callout",
 	"quickInsert.sourceAll": "Todos",
 	"quickInsert.sourceBuiltIn": "Integrado",
+	"quickInsert.sourceTheme": "Callouts del tema",
 	"quickInsert.sourceUser": "Mis callouts",
 	"quickInsert.editAria": "Editar {{name}}",
 	"quickInsert.insertAria": "Insertar {{name}} como callout de bloque",
 	"quickInsert.noResults": "No se encontraron callouts",
+	"quickInsert.noBuiltInCallouts": "No hay callouts integrados disponibles en este momento.",
+	"quickInsert.noThemeCallouts": "No hay callouts específicos del tema disponibles en este momento.",
 	"quickInsert.targetMoved": "La nota desde la que abriste la Inserción rápida cambió o se cerró. Vuelve a abrir la Inserción rápida en la nota que quieres editar.",
 	"quickInsert.targetMovedHint": "La nota original ya no está disponible para esta inserción.",
-	"quickInsert.noUserCallouts": "Todavía no has creado ningún callout.",
+	"quickInsert.noUserCallouts":
+		"Todavía no has creado ningún callout personalizado. Ejecuta “Callout Studio: Create new callout type” desde la paleta de comandos.",
+	"quickInsert.noAvailableUserCallouts":
+		"Tus callouts personalizados aparecen ahora bajo el filtro de tema porque el tema activo los controla.",
 	"quickInsert.noEditorHint": "No hay ninguna nota abierta en modo de edición, así que no se puede insertar nada.",
 	"quickInsert.noEditor": "Abre una nota en modo de edición para insertar un callout.",
 

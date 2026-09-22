@@ -44,18 +44,22 @@ export function calloutMatchesQuery(
 	);
 }
 
-/** The three states of the quick-insert window's source filter. */
-export const CALLOUT_SOURCE_FILTERS = ["all", "builtin", "user"] as const;
+/** The four states of the quick-insert window's source filter. */
+export const CALLOUT_SOURCE_FILTERS = [
+	"all",
+	"builtin",
+	"theme",
+	"user",
+] as const;
 
 export type CalloutSourceFilter = (typeof CALLOUT_SOURCE_FILTERS)[number];
 
 /**
  * Is this a filter the plugin still understands?
  *
- * The value is persisted, so it can come back from a `data.json` written by a
- * future build, hand-edited, or imported from another vault. Anything else
- * falls back to `"all"` at the two places that read it — the settings merge and
- * the window itself — rather than showing an empty list nobody can explain.
+	 * Besides validating the live dropdown, this sanitizes the remembered
+	 * `quickInsertSource` setting. Anything else falls back to `"all"` rather than
+	 * opening the window on a category this build cannot explain.
  */
 export function isCalloutSourceFilter(
 	value: unknown,
@@ -67,23 +71,34 @@ export function isCalloutSourceFilter(
 }
 
 /**
- * Partition on `builtIn`, the same boolean `getBuiltIn()`/`getUserDefined()`
- * split on — not on `source`, which is provenance: a *customized* built-in is
- * still a built-in, and a discovered row the user adopted is still theirs.
+ * Partition by who paints the callout **now**, then by whether Obsidian ships
+ * it. Theme ownership has to win: a theme can restyle a built-in or temporarily
+ * take over a saved user/discovery row without changing either one's stored
+ * identity. `source` alone is provenance and cannot answer that question.
+ *
+ * The fallback recognizes a minted `source: "theme"` row for pure callers that
+ * have no registry. Quick Insert always supplies `registry.themeOwns`, which is
+ * what also catches theme-restyled built-ins and pre-existing user rows.
  */
 export function matchesSourceFilter(
 	def: CalloutDefinition,
 	filter: CalloutSourceFilter,
+	themeOwns: (def: CalloutDefinition) => boolean = (candidate) =>
+		candidate.source === "theme",
 ): boolean {
-	if (filter === "builtin") return def.builtIn;
-	if (filter === "user") return !def.builtIn;
-	return true;
+	if (filter === "all") return true;
+	const fromTheme = themeOwns(def);
+	if (filter === "theme") return fromTheme;
+	if (filter === "builtin") return !fromTheme && def.builtIn;
+	return !fromTheme && !def.builtIn;
 }
 
 export interface CalloutListOptions {
 	/** Raw text from the search box; trimmed and lowercased here. */
 	query: string;
 	filter: CalloutSourceFilter;
+	/** Live ownership of a row by the active theme. Required for a full split. */
+	themeOwns?: (def: CalloutDefinition) => boolean;
 	locale?: string;
 }
 
@@ -123,7 +138,7 @@ export function filterCalloutList(
 	const query = options.query.trim().toLowerCase();
 	const matched = defs.filter(
 		(def) =>
-			matchesSourceFilter(def, options.filter) &&
+			matchesSourceFilter(def, options.filter, options.themeOwns) &&
 			(query === "" || calloutMatchesQuery(def, query)),
 	);
 	const byName = sortCalloutsByDisplayName(matched, options.locale);

@@ -243,6 +243,8 @@ export const hu: Record<string, string> = {
 		'A "{{name}}" Material ikon letöltése nem sikerült. Lehet, hogy ez a stílus/vastagság nem érhető el, vagy nincs internetkapcsolata.',
 	"notice.vaultScanFailed": "A callout használatot nem sikerült megszámolni, mert {{count}} jegyzet nem volt olvasható. Ellenőrizze a tárolót és a szinkronizálást, majd próbálja újra.",
 
+	"notice.externalCssRetired":
+		"A személyes CSS-stílusozási lehetőség el lett távolítva. Ezek a callout-ok most a mentett Callout Studio-dizájnjukat használják, hacsak a témád nem formázza őket. A jegyzeteid és a személyes CSS-részleteid nem változtak.",
 	"notice.vaultRewritePartial":
 		"{{count}} jegyzetet nem sikerült frissíteni, ezek változatlanok maradtak. A részletekért lásd a fejlesztői konzolt.",
 	"notice.calloutDeleteIncomplete": "Néhány jegyzetet nem sikerült átalakítani. A callout típusa megmaradt. A befejezett átalakítások mentve vannak; oldja meg a fájlproblémát, majd futtassa újra a műveletet a befejezéshez.",
@@ -255,6 +257,7 @@ export const hu: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "A kurzor nem callout-on belül van.",
 	"notice.autocompleteTargetMoved":
 		"Semmi nem lett beszúrva — a sor megváltozott, amíg a szerkesztő nyitva volt.",
+	"notice.autocompleteAlwaysEnabled": "Az automatikus kiegészítés mostantól alapfunkció, és mindig be van kapcsolva.",
 	"notice.openHotkeysFailed":
 		"Az Obsidian billentyűparancs-beállításai nem nyithatók meg.",
 	"notice.filterHotkeysFailed":
@@ -713,13 +716,19 @@ export const hu: Record<string, string> = {
 	"quickInsert.sourceAria": "Szűrés callout forrás szerint",
 	"quickInsert.sourceAll": "Összes",
 	"quickInsert.sourceBuiltIn": "Beépített",
+	"quickInsert.sourceTheme": "Téma callout-ok",
 	"quickInsert.sourceUser": "Saját callout-jaim",
 	"quickInsert.editAria": "{{name}} szerkesztése",
 	"quickInsert.insertAria": "{{name}} beszúrása blokk callout-ként",
 	"quickInsert.noResults": "Nem található callout",
+	"quickInsert.noBuiltInCallouts": "Jelenleg nem érhetők el beépített callout-ok.",
+	"quickInsert.noThemeCallouts": "Jelenleg nem érhetők el témaspecifikus callout-ok.",
 	"quickInsert.targetMoved": "A jegyzet, amelyből a Gyors beszúrást megnyitotta, megváltozott vagy bezárult. Nyissa meg újra a Gyors beszúrást abban a jegyzetben, amelyet szerkeszteni szeretne.",
 	"quickInsert.targetMovedHint": "Az eredeti jegyzet már nem érhető el ehhez a beszúráshoz.",
-	"quickInsert.noUserCallouts": "Még nem hoztál létre callout-ot.",
+	"quickInsert.noUserCallouts":
+		"Még nem hoztál létre egyéni callout-ot. Futtasd a “Callout Studio: Create new callout type” parancsot a parancspalettáról.",
+	"quickInsert.noAvailableUserCallouts":
+		"Az egyéni callout-jaid jelenleg a téma szűrő alatt vannak felsorolva, mert az aktív téma vezérli őket.",
 	"quickInsert.noEditorHint": "Nincs szerkesztési módban megnyitott jegyzet, ezért semmit sem lehet beszúrni.",
 	"quickInsert.noEditor": "Nyiss meg egy jegyzetet szerkesztési módban a callout beszúrásához.",
 

@@ -235,6 +235,8 @@ export const fi: Record<string, string> = {
 
 	"notice.vaultScanFailed": "Calloutien käyttöä ei voitu laskea, koska {{count}} muistiinpanoa ei voitu lukea. Tarkista tallennustila ja synkronointi ja yritä uudelleen.",
 
+	"notice.externalCssRetired":
+		"Henkilökohtainen CSS-tyylivaihtoehto poistettiin. Nämä calloutit käyttävät nyt tallennettua Callout Studio -ulkoasuaan, ellei teemasi tyyli niitä. Muistiinpanojasi ja henkilökohtaisia CSS-snippettejäsi ei muutettu.",
 	"notice.vaultRewritePartial":
 		"{{count}} muistiinpanoa ei voitu päivittää ja ne jätettiin ennalleen. Katso lisätietoja kehittäjäkonsolista.",
 	"notice.calloutDeleteIncomplete": "Joitakin muistiinpanoja ei voitu muuntaa. Callout-tyyppi säilytettiin. Valmiit muunnokset on tallennettu; korjaa tiedosto-ongelma ja suorita toiminto uudelleen, niin se valmistuu.",
@@ -248,6 +250,7 @@ export const fi: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "Kursori ei ole calloutin sisällä.",
 	"notice.autocompleteTargetMoved":
 		"Mitään ei lisätty — rivi muuttui, kun editori oli auki.",
+	"notice.autocompleteAlwaysEnabled": "Automaattinen täydennys on nyt ydintoiminto ja aina käytössä.",
 	"notice.openHotkeysFailed": "Obsidianin oikotieasetuksia ei voitu avata.",
 	"notice.filterHotkeysFailed":
 		"Obsidianin oikotiet avattiin, mutta Callout Studio -suodatinta ei voitu käyttää.",
@@ -697,13 +700,19 @@ export const fi: Record<string, string> = {
 	"quickInsert.sourceAria": "Suodata callout-lähteen mukaan",
 	"quickInsert.sourceAll": "Kaikki",
 	"quickInsert.sourceBuiltIn": "Sisäänrakennettu",
+	"quickInsert.sourceTheme": "Teeman calloutit",
 	"quickInsert.sourceUser": "Omat calloutini",
 	"quickInsert.editAria": "Muokkaa {{name}}",
 	"quickInsert.insertAria": "Lisää {{name}} lohko-callout'ina",
 	"quickInsert.noResults": "Ei löytyneitä callouteja",
+	"quickInsert.noBuiltInCallouts": "Sisäänrakennettuja callouteja ei ole tällä hetkellä saatavilla.",
+	"quickInsert.noThemeCallouts": "Teemakohtaisia callouteja ei ole tällä hetkellä saatavilla.",
 	"quickInsert.targetMoved": "Muistiinpano, josta avasit pikalisäyksen, on muuttunut tai suljettu. Avaa pikalisäys uudelleen muistiinpanossa, jota haluat muokata.",
 	"quickInsert.targetMovedHint": "Alkuperäinen muistiinpano ei ole enää käytettävissä tähän lisäykseen.",
-	"quickInsert.noUserCallouts": "Et ole vielä luonut yhtään calloutia.",
+	"quickInsert.noUserCallouts":
+		"Et ole vielä luonut yhtään mukautettua calloutia. Suorita “Callout Studio: Create new callout type” komentopaletista.",
+	"quickInsert.noAvailableUserCallouts":
+		"Mukautetut calloutisi näkyvät tällä hetkellä teemasuodattimen alla, koska aktiivinen teema hallitsee niitä.",
 	"quickInsert.noEditorHint": "Yhtään muistiinpanoa ei ole avoinna muokkaustilassa, joten mitään ei voida lisätä.",
 	"quickInsert.noEditor": "Avaa muistiinpano muokkaustilassa lisätäksesi calloutin.",
 

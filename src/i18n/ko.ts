@@ -244,6 +244,8 @@ export const ko: Record<string, string> = {
 		'Material 아이콘 "{{name}}"을(를) 다운로드할 수 없습니다. 이 스타일/굵기에서 사용할 수 없거나 연결이 오프라인 상태일 수 있습니다.',
 	"notice.vaultScanFailed": "callout 사용량을 계산할 수 없었습니다. {{count}}개의 노트를 읽을 수 없었습니다. 저장소 및 동기화를 확인하고 다시 시도하세요.",
 
+	"notice.externalCssRetired":
+		"개인 CSS 스타일링 옵션이 제거되었습니다. 이제 이 callout들은 테마가 스타일을 지정하지 않는 한 저장된 Callout Studio 디자인을 사용합니다. 노트와 개인 CSS 스니펫은 변경되지 않았습니다.",
 	"notice.vaultRewritePartial":
 		"{{count}}개의 노트를 업데이트할 수 없어 변경되지 않은 상태로 남았습니다. 자세한 내용은 개발자 콘솔을 확인하세요.",
 	"notice.calloutDeleteIncomplete": "일부 노트를 변환하지 못했습니다. callout 유형은 유지되었습니다. 완료된 변환은 저장되었습니다. 파일 문제를 해결한 다음 작업을 다시 실행하여 완료하세요.",
@@ -256,6 +258,7 @@ export const ko: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "커서가 callout 안에 있지 않습니다.",
 	"notice.autocompleteTargetMoved":
 		"아무것도 삽입되지 않았습니다 — 편집기가 열려 있는 동안 줄이 변경되었습니다.",
+	"notice.autocompleteAlwaysEnabled": "자동 완성은 이제 핵심 기능이며 항상 켜져 있습니다.",
 	"notice.openHotkeysFailed": "Obsidian 단축키 설정을 열 수 없습니다.",
 	"notice.filterHotkeysFailed":
 		"Obsidian 단축키를 열었지만 Callout Studio 필터를 적용할 수 없습니다.",
@@ -711,13 +714,18 @@ export const ko: Record<string, string> = {
 	"quickInsert.sourceAria": "callout 출처로 필터링",
 	"quickInsert.sourceAll": "전체",
 	"quickInsert.sourceBuiltIn": "기본 제공",
+	"quickInsert.sourceTheme": "테마 callout",
 	"quickInsert.sourceUser": "내 callout",
 	"quickInsert.editAria": "{{name}} 편집",
 	"quickInsert.insertAria": "{{name}}을(를) 블록 callout으로 삽입",
 	"quickInsert.noResults": "callout을 찾을 수 없습니다",
+	"quickInsert.noBuiltInCallouts": "현재 사용할 수 있는 기본 제공 callout이 없습니다.",
+	"quickInsert.noThemeCallouts": "현재 사용할 수 있는 테마별 callout이 없습니다.",
 	"quickInsert.targetMoved": "빠른 삽입을 연 노트가 변경되었거나 닫혔습니다. 편집하려는 노트에서 빠른 삽입을 다시 여세요.",
 	"quickInsert.targetMovedHint": "이 삽입에 사용할 원본 노트를 더 이상 사용할 수 없습니다.",
-	"quickInsert.noUserCallouts": "아직 만든 callout이 없습니다.",
+	"quickInsert.noUserCallouts":
+		"아직 사용자 지정 callout을 만들지 않았습니다. 명령 팔레트에서 “Callout Studio: Create new callout type”을 실행하세요.",
+	"quickInsert.noAvailableUserCallouts": "사용자 지정 callout은 활성 테마가 제어하고 있기 때문에 현재 테마 필터 아래에 표시됩니다.",
 	"quickInsert.noEditorHint": "편집 모드로 열린 노트가 없어 아무것도 삽입할 수 없습니다.",
 	"quickInsert.noEditor": "callout을 삽입하려면 노트를 편집 모드로 여세요.",
 

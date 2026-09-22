@@ -244,6 +244,8 @@ export const ro: Record<string, string> = {
 		'Nu s-a putut descărca pictograma Material "{{name}}". Poate fi indisponibilă pentru acest stil/grosime sau conexiunea este offline.',
 	"notice.vaultScanFailed": "Nu s-a putut număra utilizarea callout pentru că {{count}} notițe nu au putut fi citite. Verificați stocarea și sincronizarea, apoi încercați din nou.",
 
+	"notice.externalCssRetired":
+		"Opțiunea de stilizare CSS personală a fost eliminată. Aceste callout-uri folosesc acum designul Callout Studio salvat, cu excepția cazului în care tema le stilizează. Notele și fragmentele CSS personale nu au fost modificate.",
 	"notice.vaultRewritePartial":
 		"{{count}} notă/note nu au putut fi actualizate și au rămas neschimbate. Vezi consola pentru dezvoltatori pentru detalii.",
 	"notice.calloutDeleteIncomplete": "Unele notițe nu au putut fi convertite. Tipul de callout a fost păstrat. Conversiile finalizate sunt salvate; rezolvați problema fișierului, apoi rulați din nou acțiunea pentru a finaliza.",
@@ -257,6 +259,7 @@ export const ro: Record<string, string> = {
 		"Cursorul nu este în interiorul unui callout.",
 	"notice.autocompleteTargetMoved":
 		"Nu s-a inserat nimic — linia s-a schimbat cât timp editorul a fost deschis.",
+	"notice.autocompleteAlwaysEnabled": "Completarea automată este acum o funcție de bază și este întotdeauna activată.",
 	"notice.openHotkeysFailed":
 		"Nu s-au putut deschide setările de scurtături Obsidian.",
 	"notice.filterHotkeysFailed":
@@ -712,13 +715,19 @@ export const ro: Record<string, string> = {
 	"quickInsert.sourceAria": "Filtrează după sursa callout",
 	"quickInsert.sourceAll": "Toate",
 	"quickInsert.sourceBuiltIn": "Integrat",
+	"quickInsert.sourceTheme": "Callout-uri din temă",
 	"quickInsert.sourceUser": "Callout-urile mele",
 	"quickInsert.editAria": "Editează {{name}}",
 	"quickInsert.insertAria": "Inserează {{name}} ca callout bloc",
 	"quickInsert.noResults": "Nu s-au găsit callout-uri",
+	"quickInsert.noBuiltInCallouts": "Momentan nu este disponibil niciun callout integrat.",
+	"quickInsert.noThemeCallouts": "Momentan nu este disponibil niciun callout specific temei.",
 	"quickInsert.targetMoved": "Notița din care ați deschis Inserarea rapidă s-a modificat sau a fost închisă. Redeschideți Inserarea rapidă în notița pe care doriți să o editați.",
 	"quickInsert.targetMovedHint": "Notița originală nu mai este disponibilă pentru această inserare.",
-	"quickInsert.noUserCallouts": "Nu ai creat încă niciun callout.",
+	"quickInsert.noUserCallouts":
+		"Nu ai creat încă niciun callout personalizat. Rulează “Callout Studio: Create new callout type” din paleta de comenzi.",
+	"quickInsert.noAvailableUserCallouts":
+		"Callout-urile tale personalizate sunt listate momentan sub filtrul temei, deoarece tema activă le controlează.",
 	"quickInsert.noEditorHint": "Nicio notă nu este deschisă în modul de editare, așa că nimic nu poate fi inserat.",
 	"quickInsert.noEditor": "Deschide o notă în modul de editare pentru a insera un callout.",
 

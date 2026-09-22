@@ -243,6 +243,8 @@ export const de: Record<string, string> = {
 		'Material-Symbol "{{name}}" konnte nicht heruntergeladen werden. Es ist möglicherweise für diesen Stil/diese Stärke nicht verfügbar oder Sie sind offline.',
 	"notice.vaultScanFailed": "Die Callout-Nutzung konnte nicht gezählt werden, da {{count}} Notiz(en) nicht gelesen werden konnten. Überprüfen Sie Speicher und Synchronisierung und versuchen Sie es erneut.",
 
+	"notice.externalCssRetired":
+		"Die Option für persönliche CSS-Stile wurde entfernt. Diese Callouts verwenden jetzt ihr gespeichertes Callout Studio-Design, sofern Ihr Theme sie nicht gestaltet. Ihre Notizen und persönlichen CSS-Snippets wurden nicht geändert.",
 	"notice.vaultRewritePartial":
 		"{{count}} Notiz(en) konnten nicht aktualisiert werden und blieben unverändert. Details in der Entwicklerkonsole.",
 	"notice.calloutDeleteIncomplete": "Einige Notizen konnten nicht konvertiert werden. Der Callout-Typ wurde beibehalten. Abgeschlossene Konvertierungen sind gespeichert; behebe das Dateiproblem und führe die Aktion dann erneut aus, um sie abzuschließen.",
@@ -256,6 +258,7 @@ export const de: Record<string, string> = {
 		"Der Cursor befindet sich nicht in einem Callout.",
 	"notice.autocompleteTargetMoved":
 		"Nichts wurde eingefügt – die Zeile hat sich geändert, während der Editor geöffnet war.",
+	"notice.autocompleteAlwaysEnabled": "Autovervollständigung ist jetzt eine Kernfunktion und immer aktiviert.",
 	"notice.openHotkeysFailed":
 		"Obsidians Tastaturkürzel-Einstellungen konnten nicht geöffnet werden.",
 	"notice.filterHotkeysFailed":
@@ -716,13 +719,19 @@ export const de: Record<string, string> = {
 	"quickInsert.sourceAria": "Nach Callout-Quelle filtern",
 	"quickInsert.sourceAll": "Alle",
 	"quickInsert.sourceBuiltIn": "Integriert",
+	"quickInsert.sourceTheme": "Theme-Callouts",
 	"quickInsert.sourceUser": "Meine Callouts",
 	"quickInsert.editAria": "{{name}} bearbeiten",
 	"quickInsert.insertAria": "{{name}} als Block-Callout einfügen",
 	"quickInsert.noResults": "Keine Callouts gefunden",
+	"quickInsert.noBuiltInCallouts": "Derzeit sind keine integrierten Callouts verfügbar.",
+	"quickInsert.noThemeCallouts": "Derzeit sind keine Theme-spezifischen Callouts verfügbar.",
 	"quickInsert.targetMoved": "Die Notiz, aus der du das Schnelleinfügen geöffnet hast, wurde geändert oder geschlossen. Öffne das Schnelleinfügen erneut in der Notiz, die du bearbeiten möchtest.",
 	"quickInsert.targetMovedHint": "Die ursprüngliche Notiz ist für diese Einfügung nicht mehr verfügbar.",
-	"quickInsert.noUserCallouts": "Du hast noch keine Callouts erstellt.",
+	"quickInsert.noUserCallouts":
+		"Du hast noch keine eigenen Callouts erstellt. Führe “Callout Studio: Create new callout type” über die Befehlspalette aus.",
+	"quickInsert.noAvailableUserCallouts":
+		"Deine eigenen Callouts werden derzeit unter dem Theme-Filter aufgeführt, weil das aktive Theme sie steuert.",
 	"quickInsert.noEditorHint": "Keine Notiz ist im Bearbeitungsmodus geöffnet, daher kann nichts eingefügt werden.",
 	"quickInsert.noEditor": "Öffne eine Notiz im Bearbeitungsmodus, um einen Callout einzufügen.",
 

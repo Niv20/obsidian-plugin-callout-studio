@@ -904,6 +904,13 @@ is doing.
 > `background-color: inherit` is the third sanctioned paint beside the two
 > surface tokens — it is the only one available to a band sitting *on* a pane
 > whose colour the plugin does not choose. See [The three sections pin their headings](#the-three-sections-pin-their-headings).
+>
+> Quick Insert applies the same padding rule inside the modal chrome: its
+> `.modal-content` top padding is zero, the introductory paragraph owns the
+> resting inset that scrolls away, and the toolbar owns a painted top inset that
+> gives the search field breathing room while stuck and contains its focus ring.
+> Putting the inset back on the scroller reopens a transparent strip above the
+> sticky toolbar, allowing list rows to show through it.
 
 ## How an input field focuses
 

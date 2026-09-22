@@ -237,6 +237,7 @@ export const zh: Record<string, string> = {
 
 	"notice.vaultScanFailed": "无法统计 callout 使用次数，因为无法读取 {{count}} 篇笔记。请检查存储和同步后重试。",
 
+	"notice.externalCssRetired": "个人 CSS 样式选项已移除。除非主题为这些 callout 设置样式，否则它们现在会使用保存的 Callout Studio 设计。您的笔记和个人 CSS 片段未被更改。",
 	"notice.vaultRewritePartial":
 		"有 {{count}} 条笔记无法更新，已保持不变。详情请查看开发者控制台。",
 	"notice.calloutDeleteIncomplete": "部分笔记无法转换。callout 类型已保留。已完成的转换已保存；请解决文件问题，然后再次运行该操作以完成。",
@@ -250,6 +251,7 @@ export const zh: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "光标不在 callout 内部。",
 	"notice.autocompleteTargetMoved":
 		"未插入任何内容 — 编辑器打开期间该行已更改。",
+	"notice.autocompleteAlwaysEnabled": "自动补全现在是核心功能，并且始终启用。",
 	"notice.openHotkeysFailed": "无法打开 Obsidian 快捷键设置。",
 	"notice.filterHotkeysFailed":
 		"已打开 Obsidian 快捷键，但无法应用 Callout Studio 过滤器。",
@@ -698,13 +700,17 @@ export const zh: Record<string, string> = {
 	"quickInsert.sourceAria": "按 callout 来源筛选",
 	"quickInsert.sourceAll": "全部",
 	"quickInsert.sourceBuiltIn": "内置",
+	"quickInsert.sourceTheme": "主题 callout",
 	"quickInsert.sourceUser": "我的 callout",
 	"quickInsert.editAria": "编辑 {{name}}",
 	"quickInsert.insertAria": "将 {{name}} 作为块级 callout 插入",
 	"quickInsert.noResults": "未找到 callout",
+	"quickInsert.noBuiltInCallouts": "当前没有可用的内置 callout。",
+	"quickInsert.noThemeCallouts": "当前没有可用的主题专属 callout。",
 	"quickInsert.targetMoved": "打开快速插入时所在的笔记已更改或已关闭。请在你要编辑的笔记中重新打开快速插入。",
 	"quickInsert.targetMovedHint": "原始笔记已不再可用于此次插入。",
-	"quickInsert.noUserCallouts": "您还没有创建任何 callout。",
+	"quickInsert.noUserCallouts": "您还没有创建任何自定义 callout。请从命令面板运行 “Callout Studio: Create new callout type”。",
+	"quickInsert.noAvailableUserCallouts": "您的自定义 callout 当前列在主题筛选器下，因为活动主题正在控制它们。",
 	"quickInsert.noEditorHint": "没有笔记以编辑模式打开，因此无法插入任何内容。",
 	"quickInsert.noEditor": "以编辑模式打开一篇笔记来插入 callout。",
 

@@ -242,6 +242,8 @@ export const tr: Record<string, string> = {
 		'"{{name}}" Material simgesi indirilemedi. Bu stil/ağırlık için mevcut olmayabilir veya bağlantınız çevrimdışı olabilir.',
 	"notice.vaultScanFailed": "Callout kullanımı, {{count}} not okunamadığı için sayılmadı. Depolamayı ve senkronizasyonu kontrol edip tekrar deneyin.",
 
+	"notice.externalCssRetired":
+		"Kişisel CSS stili seçeneği kaldırıldı. Bu callout'lar artık temanız onları biçimlendirmediği sürece kaydedilmiş Callout Studio tasarımlarını kullanır. Notlarınız ve kişisel CSS parçacıklarınız değiştirilmedi.",
 	"notice.vaultRewritePartial":
 		"{{count}} not güncellenemedi ve değiştirilmeden bırakıldı. Ayrıntılar için geliştirici konsolunu kontrol edin.",
 	"notice.calloutDeleteIncomplete": "Bazı notlar dönüştürülemedi. Callout türü korundu. Tamamlanan dönüştürmeler kaydedildi; dosya sorununu çözün, ardından işlemi bitirmek için yeniden çalıştırın.",
@@ -254,6 +256,7 @@ export const tr: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "İmleç callout içinde değil.",
 	"notice.autocompleteTargetMoved":
 		"Hiçbir şey eklenmedi — düzenleyici açıkken satır değişti.",
+	"notice.autocompleteAlwaysEnabled": "Otomatik tamamlama artık temel bir özelliktir ve her zaman etkindir.",
 	"notice.openHotkeysFailed": "Obsidian kısayol ayarları açılamadı.",
 	"notice.filterHotkeysFailed":
 		"Obsidian kısayolları açıldı, ancak Callout Studio filtresi uygulanamadı.",
@@ -709,13 +712,19 @@ export const tr: Record<string, string> = {
 	"quickInsert.sourceAria": "Callout kaynağına göre filtrele",
 	"quickInsert.sourceAll": "Tümü",
 	"quickInsert.sourceBuiltIn": "Yerleşik",
+	"quickInsert.sourceTheme": "Tema callout'ları",
 	"quickInsert.sourceUser": "Callout'larım",
 	"quickInsert.editAria": "{{name}} düzenle",
 	"quickInsert.insertAria": "{{name}} öğesini blok callout olarak ekle",
 	"quickInsert.noResults": "Callout bulunamadı",
+	"quickInsert.noBuiltInCallouts": "Şu anda kullanılabilir yerleşik callout yok.",
+	"quickInsert.noThemeCallouts": "Şu anda kullanılabilir temaya özel callout yok.",
 	"quickInsert.targetMoved": "Hızlı eklemeyi açtığınız not değişti veya kapatıldı. Düzenlemek istediğiniz notta Hızlı eklemeyi yeniden açın.",
 	"quickInsert.targetMovedHint": "Bu ekleme için orijinal not artık kullanılamıyor.",
-	"quickInsert.noUserCallouts": "Henüz herhangi bir callout oluşturmadınız.",
+	"quickInsert.noUserCallouts":
+		"Henüz özel bir callout oluşturmadınız. Komut paletinden “Callout Studio: Create new callout type” komutunu çalıştırın.",
+	"quickInsert.noAvailableUserCallouts":
+		"Özel callout'larınız şu anda tema filtresinin altında listeleniyor çünkü etkin tema onları kontrol ediyor.",
 	"quickInsert.noEditorHint": "Düzenleme modunda açık bir not yok, bu yüzden hiçbir şey eklenemez.",
 	"quickInsert.noEditor": "Bir callout eklemek için bir notu düzenleme modunda açın.",
 

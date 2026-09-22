@@ -45,11 +45,16 @@ import {
 } from "../src/editor/targetMarkdownEditor";
 import { en } from "../src/i18n/en";
 import {
+	quickInsertEmptyMessage,
 	quickInsertHint,
 	quickInsertNotice,
 } from "../src/settings/quickInsertMessages";
 import { previewMarkdown } from "../src/settings/quickInsertPreview";
 import { renderQuickInsertRow } from "../src/settings/quickInsertRow";
+import {
+	buildQuickInsertToolbar,
+	syncQuickInsertThemeOption,
+} from "../src/settings/quickInsertToolbar";
 import { QuickInsertModal } from "../src/settings/QuickInsertModal";
 import { asEl, el } from "./support/fakeDom";
 import { readRepoFile } from "./support/sourceScan";
@@ -60,6 +65,7 @@ import {
 	filterCalloutList,
 	isCalloutSourceFilter,
 	matchesSourceFilter,
+	type CalloutSourceFilter,
 } from "../src/utils/calloutSearch";
 
 /* -------------------------------------------------------------------------- */
@@ -133,11 +139,17 @@ describe("calloutMatchesQuery", () => {
 });
 
 describe("isCalloutSourceFilter", () => {
-	it("accepts exactly the three it declares", () => {
+	it("accepts exactly the four it declares, in UI order", () => {
+		assert.deepStrictEqual(CALLOUT_SOURCE_FILTERS, [
+			"all",
+			"builtin",
+			"theme",
+			"user",
+		]);
 		for (const value of CALLOUT_SOURCE_FILTERS) {
 			assert.ok(isCalloutSourceFilter(value), value);
 		}
-		assert.strictEqual(CALLOUT_SOURCE_FILTERS.length, 3);
+		assert.strictEqual(CALLOUT_SOURCE_FILTERS.length, 4);
 	});
 
 	it("rejects anything else, including near misses and non-strings", () => {
@@ -150,27 +162,45 @@ describe("isCalloutSourceFilter", () => {
 });
 
 describe("matchesSourceFilter", () => {
-	it("partitions on builtIn, not on source", () => {
-		// A customized built-in is still a built-in, and a discovered row the
-		// user adopted is still theirs — `source` says where a row came from,
-		// which is a different question.
-		const customizedBuiltIn = def({ builtIn: true, customized: true });
-		const adoptedDiscovery = def({
-			id: "mine",
-			builtIn: false,
-			source: "fallback",
-			customized: true,
-		});
+	it("gives live theme ownership precedence over stored identity", () => {
+		const rows = [
+			def({ id: "plain-built-in", builtIn: true }),
+			def({ id: "themed-built-in", builtIn: true }),
+			def({ id: "plain-user", builtIn: false, source: "user" }),
+			def({ id: "themed-user", builtIn: false, source: "user" }),
+			def({ id: "minted-theme", builtIn: false, source: "theme" }),
+		];
+		const themed = new Set(["themed-built-in", "themed-user", "minted-theme"]);
+		const themeOwns = (candidate: CalloutDefinition): boolean =>
+			themed.has(candidate.id);
 
-		assert.ok(matchesSourceFilter(customizedBuiltIn, "builtin"));
-		assert.ok(!matchesSourceFilter(customizedBuiltIn, "user"));
-		assert.ok(matchesSourceFilter(adoptedDiscovery, "user"));
-		assert.ok(!matchesSourceFilter(adoptedDiscovery, "builtin"));
+		const expected: Record<string, string> = {
+			"plain-built-in": "builtin",
+			"themed-built-in": "theme",
+			"plain-user": "user",
+			"themed-user": "theme",
+			"minted-theme": "theme",
+		};
+		for (const row of rows) {
+			const buckets = (["builtin", "theme", "user"] as const).filter(
+				(filter) => matchesSourceFilter(row, filter, themeOwns),
+			);
+			assert.deepStrictEqual(buckets, [expected[row.id]], row.id);
+		}
 	});
 
 	it("keeps everything under `all`", () => {
-		assert.ok(matchesSourceFilter(def({ builtIn: true }), "all"));
-		assert.ok(matchesSourceFilter(def({ builtIn: false }), "all"));
+		const throws = (): boolean => {
+			throw new Error("all must not need ownership");
+		};
+		assert.ok(matchesSourceFilter(def({ builtIn: true }), "all", throws));
+		assert.ok(matchesSourceFilter(def({ builtIn: false }), "all", throws));
+	});
+
+	it("recognizes a minted theme row without a registry callback", () => {
+		const themed = def({ builtIn: false, source: "theme" });
+		assert.ok(matchesSourceFilter(themed, "theme"));
+		assert.ok(!matchesSourceFilter(themed, "user"));
 	});
 });
 
@@ -209,6 +239,36 @@ describe("filterCalloutList", () => {
 			names(filterCalloutList(list, { query: "", filter: "builtin" })),
 			["Abstract", "Note", "Warning"],
 		);
+		assert.deepStrictEqual(
+			filterCalloutList(list, { query: "", filter: "theme" }),
+			[],
+		);
+	});
+
+	it("puts theme-restyled built-ins and saved rows only in the theme bucket", () => {
+		const styled = [
+			def({ id: "warning", displayName: "Warning", builtIn: true }),
+			def({ id: "note", displayName: "Note", builtIn: true }),
+			def({ id: "recipe", displayName: "Recipe", builtIn: false, source: "user" }),
+			def({ id: "budget", displayName: "Budget", builtIn: false, source: "fallback" }),
+			def({ id: "cards", displayName: "Cards", builtIn: false, source: "theme" }),
+		];
+		const owned = new Set(["warning", "recipe", "cards"]);
+		const themeOwns = (candidate: CalloutDefinition): boolean =>
+			owned.has(candidate.id);
+		const filtered = (filter: CalloutSourceFilter): string[] =>
+			names(filterCalloutList(styled, { query: "", filter, themeOwns }));
+
+		assert.deepStrictEqual(filtered("theme"), ["Cards", "Recipe", "Warning"]);
+		assert.deepStrictEqual(filtered("builtin"), ["Note"]);
+		assert.deepStrictEqual(filtered("user"), ["Budget"]);
+		assert.deepStrictEqual(filtered("all"), [
+			"Budget",
+			"Cards",
+			"Note",
+			"Recipe",
+			"Warning",
+		]);
 	});
 
 	it("applies the filter and the query together", () => {
@@ -301,6 +361,214 @@ describe("filterCalloutList", () => {
 		const original = [...list];
 		filterCalloutList(list, { query: "", filter: "all" });
 		assert.deepStrictEqual(list, original);
+	});
+});
+
+describe("quick-insert source controls and empty states", () => {
+	it("keeps the optional live theme source in the right position", () => {
+		const host = asEl(el());
+		const chosen: string[] = [];
+		buildQuickInsertToolbar(host, {
+			filter: "all",
+			themeLabel: "Nord",
+			onQuery: () => {},
+			onFilter: (filter) => chosen.push(filter),
+			onKey: () => {},
+		});
+		const select = host.querySelector<HTMLSelectElement>("select");
+		assert.ok(select);
+		assert.strictEqual(select.value, "all");
+		assert.deepStrictEqual(
+			Array.from(select.querySelectorAll("option")).map((option) => ({
+				value: option.value,
+				text: option.textContent,
+			})),
+			[
+				{ value: "all", text: "All" },
+				{ value: "builtin", text: "Built-in" },
+				{ value: "theme", text: "Nord" },
+				{ value: "user", text: "My callouts" },
+			],
+		);
+
+		select.value = "theme";
+		select.dispatchEvent({ type: "change" } as Event);
+		assert.deepStrictEqual(chosen, ["theme"]);
+
+		assert.strictEqual(
+			syncQuickInsertThemeOption(host, "Minimal", true, "theme"),
+			"theme",
+		);
+		assert.strictEqual(
+			Array.from(select.querySelectorAll("option")).find(
+				(option) => option.value === "theme",
+			)?.textContent,
+			"Minimal",
+		);
+
+		assert.strictEqual(
+			syncQuickInsertThemeOption(host, "Minimal", false, "theme"),
+			"all",
+		);
+		assert.deepStrictEqual(
+			Array.from(select.querySelectorAll("option")).map((option) => option.value),
+			["all", "builtin", "user"],
+		);
+		assert.strictEqual(select.value, "all");
+
+		syncQuickInsertThemeOption(host, "Solarized", true, "theme");
+		assert.deepStrictEqual(
+			Array.from(select.querySelectorAll("option")).map((option) => option.value),
+			["all", "builtin", "theme", "user"],
+		);
+		assert.strictEqual(select.value, "theme");
+	});
+
+	it("omits the theme source when no usable callout is theme-owned", () => {
+		const contentEl = asEl(el());
+		buildQuickInsertToolbar(contentEl, {
+			filter: "theme",
+			themeLabel: "Lumines",
+			onQuery: () => {},
+			onFilter: () => {},
+			onKey: () => {},
+		});
+		const listEl = contentEl.createDiv();
+		let themeOwns = false;
+		const modal = Object.assign(Object.create(QuickInsertModal.prototype), {
+			contentEl,
+			listEl,
+			rows: [],
+			activeIndex: -1,
+			pointerActive: false,
+			query: "",
+			filter: "theme",
+			captured: { ok: true },
+			previews: null,
+			plugin: {
+				app: { customCss: { theme: "Lumines" } },
+				registry: {
+					themeOwns: () => themeOwns,
+					getUserDefined: () => [],
+				},
+			},
+		}) as {
+			filter: CalloutSourceFilter;
+			renderList(items: CalloutDefinition[]): void;
+		};
+		const styledBuiltIn = def({ id: "note", builtIn: true, source: "builtin" });
+		const select = contentEl.querySelector<HTMLSelectElement>("select");
+		assert.ok(select);
+
+		modal.renderList([styledBuiltIn]);
+		assert.deepStrictEqual(
+			Array.from(select.querySelectorAll("option")).map((option) => option.value),
+			["all", "builtin", "user"],
+		);
+		assert.strictEqual(select.value, "all");
+		assert.strictEqual(modal.filter, "theme", "remembered preference was erased");
+		assert.strictEqual(listEl.querySelectorAll(".cs-qi-row").length, 1);
+
+		themeOwns = true;
+		modal.renderList([styledBuiltIn]);
+		assert.deepStrictEqual(
+			Array.from(select.querySelectorAll("option")).map((option) => option.value),
+			["all", "builtin", "theme", "user"],
+		);
+		assert.strictEqual(select.value, "theme");
+		assert.strictEqual(listEl.querySelectorAll(".cs-qi-row").length, 1);
+	});
+
+	it("explains an empty category, but keeps failed searches generic", () => {
+		assert.strictEqual(
+			quickInsertEmptyMessage("builtin", ""),
+			en["quickInsert.noBuiltInCallouts"],
+		);
+		assert.strictEqual(
+			quickInsertEmptyMessage("theme", "   "),
+			en["quickInsert.noThemeCallouts"],
+		);
+		assert.strictEqual(
+			quickInsertEmptyMessage("user", ""),
+			en["quickInsert.noUserCallouts"],
+		);
+		assert.strictEqual(
+			quickInsertEmptyMessage("user", "", true),
+			en["quickInsert.noAvailableUserCallouts"],
+		);
+		for (const filter of CALLOUT_SOURCE_FILTERS) {
+			assert.strictEqual(
+				quickInsertEmptyMessage(filter, "missing"),
+				en["quickInsert.noResults"],
+				filter,
+			);
+		}
+		assert.match(
+			quickInsertEmptyMessage("user", ""),
+			/Create new callout type/,
+		);
+	});
+
+	it("starts on All once, then restores and persists the last source", () => {
+		const firstPlugin = {
+			app: {
+				workspace: {
+					getActiveViewOfType: () => null,
+					getMostRecentLeaf: () => null,
+				},
+			},
+			settings: { quickInsertSource: "all" },
+		} as unknown as ConstructorParameters<typeof QuickInsertModal>[0];
+		const first = new QuickInsertModal(firstPlugin) as unknown as {
+			filter: CalloutSourceFilter;
+		};
+		assert.strictEqual(first.filter, "all");
+
+		let saves = 0;
+		const settings = { quickInsertSource: "user" };
+		const plugin = {
+			app: {
+				workspace: {
+					getActiveViewOfType: () => null,
+					getMostRecentLeaf: () => null,
+				},
+			},
+			settings,
+			registry: {
+				getBuiltIn: () => [],
+				getUserDefined: () => [],
+				getThemeProvided: () => [],
+				getReal: () => undefined,
+			},
+			saveSettings: async () => {
+				saves += 1;
+			},
+		} as unknown as ConstructorParameters<typeof QuickInsertModal>[0];
+		const instance = new QuickInsertModal(plugin) as unknown as {
+			filter: CalloutSourceFilter;
+			buildToolbar(parent: HTMLElement): void;
+		};
+		assert.strictEqual(instance.filter, "user");
+
+		const host = asEl(el());
+		instance.buildToolbar(host);
+		const select = host.querySelector<HTMLSelectElement>("select");
+		assert.ok(select);
+		select.value = "theme";
+		select.dispatchEvent({ type: "change" } as Event);
+		assert.strictEqual(settings.quickInsertSource, "theme");
+		assert.strictEqual(saves, 1);
+
+		const modal = readRepoFile("src/settings/QuickInsertModal.ts");
+		const code = modal.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, "");
+		assert.match(code, /private filter:\s*CalloutSourceFilter\s*=\s*"all"/);
+		assert.match(code, /settings\.quickInsertSource\s*=\s*filter/);
+		assert.match(code, /void this\.plugin\.saveSettings\(\)/);
+		assert.match(code, /registry\.themeOwns\(def\)/);
+		assert.match(code, /usable\.some\(\(def\)\s*=>\s*this\.plugin\.registry\.themeOwns\(def\)\)/);
+		assert.match(code, /workspace\.on\("css-change",\s*this\.onRegistryChange\)/);
+		assert.match(code, /workspace\.offref\(this\.cssChangeRef\)/);
+		assert.match(code, /await this\.previews\?\.build\(usable\)[\s\S]*?this\.renderList\(\)/);
 	});
 });
 
@@ -1245,11 +1513,16 @@ describe("the row keeps its controls outside the callout", () => {
 describe("quick-insert pointer highlights", () => {
 	function harness() {
 		const inserted: string[] = [];
+		const listEl = asEl(el());
 		// Exercise the real row wiring and keyboard handlers without opening a
 		// host Modal: the stub has no modal DOM or workspace focus lifecycle.
 		const modal = Object.assign(Object.create(QuickInsertModal.prototype), {
-			listEl: asEl(el()), rows: [], activeIndex: -1, pointerActive: false,
+			listEl, contentEl: asEl(el()), rows: [], activeIndex: -1, pointerActive: false,
 			query: "", filter: "all", captured: { ok: true }, previews: null,
+			plugin: {
+				app: {},
+				registry: { themeOwns: () => false, getUserDefined: () => [] },
+			},
 			insert: (item: CalloutDefinition) => inserted.push(item.id),
 		}) as {
 			listEl: HTMLElement;

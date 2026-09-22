@@ -728,7 +728,7 @@ in saved data are preserved as durable fallback definitions.
 | Surface | Theme callouts appear? |
 | --- | --- |
 | Settings → *Callouts from your theme* | yes, one row each, read-only |
-| *Quick insert block callout* | yes — rendered by Obsidian, so the theme draws the row itself |
+| *Quick insert block callout* | yes — rendered by Obsidian, so the theme draws the row itself, and grouped under a named filter that appears only while at least one theme-owned row exists |
 | The `[!` autocomplete, **block** position | yes |
 | The `[!` autocomplete, **heading / inline** position | no (`suggestableCallouts`) |
 | *Replace in vault*, vault stats, command builder and settings pickers | yes, drawn through `calloutListIcon` |
@@ -1027,8 +1027,10 @@ The columns worth checking for your own theme:
   ordinary exact snippet definition wins without being inferred as registry
   ownership. A known Studio definition remains Studio-owned and uses the
   measured `!important` register.
-- **Quick Insert's source filter partitions on `builtIn`**, so a theme-invented
-  row appears under the *user* filter. There is no theme filter.
+- **Quick Insert partitions by live style owner**, using `themeOwns` before
+  `builtIn`, so theme-invented rows, restyled built-ins and temporarily claimed
+  saved rows all appear under the active-theme filter and nowhere else. The
+  filter is omitted entirely when that live theme-owned set is empty.
 - **`source: "theme"` in an imported file is not authority.** `importValidator`
   re-stamps `source: "user"`; only the live sweep can make a row a theme row.
 - **A `"` or `\` can reach a callout id** without the user typing it, so every

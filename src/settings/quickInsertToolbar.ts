@@ -11,20 +11,43 @@ import {
 	type CalloutSourceFilter,
 } from "../utils/calloutSearch";
 
-/** The three source choices, in the order they appear in the dropdown. */
-const SOURCE_OPTIONS: readonly { value: CalloutSourceFilter; key: string }[] = [
-	{ value: "all", key: "quickInsert.sourceAll" },
-	{ value: "builtin", key: "quickInsert.sourceBuiltIn" },
-	{ value: "user", key: "quickInsert.sourceUser" },
-];
-
 export interface QuickInsertToolbarHandlers {
-	/** The filter to show as selected — the one restored from settings. */
+	/** The filter to show as selected: All initially, then the remembered choice. */
 	filter: CalloutSourceFilter;
+	/** Active theme name, or the localized generic fallback. */
+	themeLabel: string;
 	onQuery: (query: string) => void;
 	onFilter: (filter: CalloutSourceFilter) => void;
 	/** Arrow and Enter keys, handled by the window's list. */
 	onKey: (ev: KeyboardEvent) => void;
+}
+
+/** Keep the optional theme choice in step with live ownership and theme changes. */
+export function syncQuickInsertThemeOption(
+	parent: HTMLElement,
+	label: string,
+	showTheme: boolean,
+	filter: CalloutSourceFilter,
+): CalloutSourceFilter {
+	const effective = !showTheme && filter === "theme" ? "all" : filter;
+	const select = parent.querySelector<HTMLSelectElement>(
+		".cs-quick-insert-filter",
+	);
+	if (!select) return effective;
+	const options = Array.from(select.querySelectorAll<HTMLOptionElement>("option"));
+	const theme = options.find((option) => option.value === "theme");
+	if (!showTheme) {
+		theme?.remove();
+	} else if (theme) {
+		theme.setText(label);
+	} else {
+		const option = select.createEl("option", { text: label });
+		option.value = "theme";
+		const user = options.find((candidate) => candidate.value === "user");
+		select.insertBefore(option, user ?? null);
+	}
+	select.value = effective;
+	return effective;
 }
 
 /** Build the toolbar into `parent` and return its search field to focus. */
@@ -34,8 +57,7 @@ export function buildQuickInsertToolbar(
 ): HTMLInputElement {
 	const toolbar = parent.createDiv({ cls: "cs-quick-insert-toolbar" });
 
-	// Always empty on open: the filter is a standing preference, a query is
-	// about one insertion.
+	// The query is scoped to one insertion; the source choice is remembered.
 	const search = toolbar.createEl("input", {
 		type: "text",
 		cls: "cs-quick-insert-search",
@@ -51,8 +73,14 @@ export function buildQuickInsertToolbar(
 		cls: "cs-quick-insert-filter dropdown",
 		attr: { "aria-label": t("quickInsert.sourceAria") },
 	});
-	for (const option of SOURCE_OPTIONS) {
-		select.createEl("option", { value: option.value, text: t(option.key) });
+	const sourceOptions: readonly [CalloutSourceFilter, string][] = [
+		["all", t("quickInsert.sourceAll")],
+		["builtin", t("quickInsert.sourceBuiltIn")],
+		["theme", handlers.themeLabel],
+		["user", t("quickInsert.sourceUser")],
+	];
+	for (const [value, text] of sourceOptions) {
+		select.createEl("option", { text }).value = value;
 	}
 	select.value = handlers.filter;
 	select.addEventListener("change", () => {

@@ -281,6 +281,7 @@ export const he: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "הסמן אינו נמצא בתוך תיבת־הבלטה.",
 	"notice.autocompleteTargetMoved":
 		"לא נוסף דבר — השורה השתנתה בזמן שהעורך היה פתוח.",
+	"notice.autocompleteAlwaysEnabled": "ההשלמה האוטומטית היא כעת תכונת ליבה והיא מופעלת תמיד.",
 	"notice.openHotkeysFailed":
 		"לא ניתן לפתוח את מסך קיצורי המקלדת של Obsidian.",
 	"notice.filterHotkeysFailed":
@@ -746,13 +747,19 @@ export const he: Record<string, string> = {
 	"quickInsert.sourceAria": "סינון לפי מקור תיבת־הבלטה",
 	"quickInsert.sourceAll": "הכול",
 	"quickInsert.sourceBuiltIn": "מובנה",
+	"quickInsert.sourceTheme": "תיבות־הבלטה של ערכת הנושא",
 	"quickInsert.sourceUser": "תיבות־ההבלטה שלי",
 	"quickInsert.editAria": "עריכת {{name}}",
 	"quickInsert.insertAria": "הוספת {{name}} כתיבת־הבלטה מסוג בלוק",
 	"quickInsert.noResults": "לא נמצאו תיבות־הבלטה",
+	"quickInsert.noBuiltInCallouts": "אין כרגע תיבות־הבלטה מובנות זמינות.",
+	"quickInsert.noThemeCallouts": "אין כרגע תיבות־הבלטה ייעודיות לערכת הנושא זמינות.",
 	"quickInsert.targetMoved": "הפתק שממנו פתחתם את ההוספה המהירה השתנה או נסגר. פתחו מחדש את ההוספה המהירה בפתק שברצונכם לערוך.",
 	"quickInsert.targetMovedHint": "הפתק המקורי כבר אינו זמין להוספה זו.",
-	"quickInsert.noUserCallouts": "עדיין לא יצרתם אף תיבת־הבלטה.",
+	"quickInsert.noUserCallouts":
+		"עדיין לא יצרתם תיבות־הבלטה מותאמות־אישית. הפעילו את “Callout Studio: Create new callout type” מלוח הפקודות.",
+	"quickInsert.noAvailableUserCallouts":
+		"תיבות־ההבלטה המותאמות־אישית שלכם מופיעות כרגע תחת מסנן ערכת הנושא, מפני שערכת הנושא הפעילה שולטת בהן.",
 	"quickInsert.noEditorHint": "אין פתק פתוח במצב עריכה, ולכן לא ניתן להוסיף דבר.",
 	"quickInsert.noEditor": "פתחו פתק במצב עריכה כדי להוסיף תיבת־הבלטה.",
 

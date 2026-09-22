@@ -1,12 +1,12 @@
 /**
- * settings/quickInsertMessages.ts — what the quick-insert window says when
- * there is nowhere to insert.
+ * settings/quickInsertMessages.ts — the quick-insert window's empty and
+ * unavailable states.
  *
  * Split from `QuickInsertModal` on the same line `quickInsertRow` and
  * `quickInsertToolbar` are: the window owns the state and the decisions, and
- * this owns one thing it renders. Here that thing is the wording of a refusal,
- * which is the part most likely to be edited on its own — and the part a test
- * wants to read without constructing a `Modal`.
+ * this owns the wording that depends on state, which is the part most likely to
+ * be edited on its own — and the part a test wants to read without constructing
+ * a `Modal`.
  *
  * **Two tables over the same three problems**, because the two are said at
  * different moments and are doing different jobs. The *hint* sits in the window
@@ -21,6 +21,7 @@
  */
 import type { TargetEditorProblem } from "../editor/targetMarkdownEditor";
 import { t } from "../i18n";
+import type { CalloutSourceFilter } from "../utils/calloutSearch";
 
 /** Stated in the window itself, from the moment it opens. */
 const HINT_KEY: Record<TargetEditorProblem, string> = {
@@ -46,4 +47,26 @@ export function quickInsertHint(problem: TargetEditorProblem): string {
 /** The notice for a press of Insert: what to do about it. */
 export function quickInsertNotice(problem: TargetEditorProblem): string {
 	return t(NOTICE_KEY[problem]);
+}
+
+/**
+ * What an empty list means. A non-blank query always wins: an empty category is
+ * useful guidance, while a search inside any category is simply a failed match.
+ */
+export function quickInsertEmptyMessage(
+	filter: CalloutSourceFilter,
+	query: string,
+	hasUserCallouts = false,
+): string {
+	if (query.trim() !== "") return t("quickInsert.noResults");
+	if (filter === "builtin") return t("quickInsert.noBuiltInCallouts");
+	if (filter === "theme") return t("quickInsert.noThemeCallouts");
+	if (filter === "user") {
+		return t(
+			hasUserCallouts
+				? "quickInsert.noAvailableUserCallouts"
+				: "quickInsert.noUserCallouts",
+		);
+	}
+	return t("quickInsert.noResults");
 }

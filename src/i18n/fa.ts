@@ -242,6 +242,8 @@ export const fa: Record<string, string> = {
 		'دانلود آیکون Material "{{name}}" ناموفق بود. ممکن است برای این سبک/وزن در دسترس نباشد، یا اتصال شما قطع باشد.',
 	"notice.vaultScanFailed": "نمی‌توان شمارش استفاده از کال‌اوت را انجام داد چون {{count}} یادداشت(ها) قابل خواندن نبودند. لطفاً ذخیره‌سازی و همگام‌سازی را بررسی کرده و دوباره تلاش کنید.",
 
+	"notice.externalCssRetired":
+		"گزینهٔ استایل‌دهی CSS شخصی حذف شد. این calloutها اکنون از طراحی ذخیره‌شدهٔ خود در Callout Studio استفاده می‌کنند، مگر اینکه پوستهٔ شما به آن‌ها استایل بدهد. یادداشت‌ها و قطعه‌های CSS شخصی شما تغییر نکرده‌اند.",
 	"notice.vaultRewritePartial":
 		"{{count}} یادداشت به‌روزرسانی نشد و بدون تغییر باقی ماند. برای جزئیات به کنسول توسعه‌دهنده مراجعه کنید.",
 	"notice.calloutDeleteIncomplete": "برخی یادداشت‌ها قابل تبدیل نبودند. نوع callout حفظ شد. تبدیل‌های کامل‌شده ذخیره شده‌اند؛ مشکل فایل را برطرف کنید و سپس برای تکمیل، دوباره این کنش را اجرا کنید.",
@@ -254,6 +256,7 @@ export const fa: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "مکان‌نما داخل callout نیست.",
 	"notice.autocompleteTargetMoved":
 		"چیزی درج نشد — خط در حالی که ویرایشگر باز بود تغییر کرد.",
+	"notice.autocompleteAlwaysEnabled": "تکمیل خودکار اکنون یک ویژگی اصلی است و همیشه فعال است.",
 	"notice.openHotkeysFailed":
 		"باز کردن تنظیمات میانبرهای Obsidian امکان‌پذیر نبود.",
 	"notice.filterHotkeysFailed":
@@ -709,13 +712,19 @@ export const fa: Record<string, string> = {
 	"quickInsert.sourceAria": "فیلتر بر اساس منبع callout",
 	"quickInsert.sourceAll": "همه",
 	"quickInsert.sourceBuiltIn": "داخلی",
+	"quickInsert.sourceTheme": "Calloutهای پوسته",
 	"quickInsert.sourceUser": "callout‌های من",
 	"quickInsert.editAria": "ویرایش {{name}}",
 	"quickInsert.insertAria": "درج {{name}} به‌عنوان callout بلوکی",
 	"quickInsert.noResults": "هیچ callout‌ای یافت نشد",
+	"quickInsert.noBuiltInCallouts": "در حال حاضر هیچ callout داخلی‌ای در دسترس نیست.",
+	"quickInsert.noThemeCallouts": "در حال حاضر هیچ callout ویژهٔ پوسته‌ای در دسترس نیست.",
 	"quickInsert.targetMoved": "یادداشتی که درج سریع را از آن باز کردید تغییر کرده یا بسته شده است. درج سریع را دوباره در یادداشتی که می‌خواهید ویرایش کنید باز کنید.",
 	"quickInsert.targetMovedHint": "یادداشت اصلی دیگر برای این درج در دسترس نیست.",
-	"quickInsert.noUserCallouts": "هنوز هیچ callout‌ای نساخته‌اید.",
+	"quickInsert.noUserCallouts":
+		"هنوز هیچ callout سفارشی‌ای نساخته‌اید. “Callout Studio: Create new callout type” را از پالت دستور اجرا کنید.",
+	"quickInsert.noAvailableUserCallouts":
+		"calloutهای سفارشی شما در حال حاضر زیر فیلتر پوسته فهرست شده‌اند، چون پوستهٔ فعال آن‌ها را کنترل می‌کند.",
 	"quickInsert.noEditorHint": "هیچ یادداشتی در حالت ویرایش باز نیست، بنابراین چیزی قابل درج نیست.",
 	"quickInsert.noEditor": "برای درج callout یک یادداشت را در حالت ویرایش باز کنید.",
 

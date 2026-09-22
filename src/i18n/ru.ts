@@ -243,6 +243,8 @@ export const ru: Record<string, string> = {
 		'Не удалось загрузить иконку Material "{{name}}". Она может быть недоступна для данного стиля/насыщенности или отсутствует подключение к сети.',
 	"notice.vaultScanFailed": "Не удалось посчитать использование callout, потому что нельзя прочитать {{count}} заметку(к). Проверьте хранилище и синхронизацию, затем попробуйте снова.",
 
+	"notice.externalCssRetired":
+		"Опция личного CSS-оформления удалена. Эти callout теперь используют сохранённый дизайн Callout Studio, если только ваша тема не оформляет их сама. Ваши заметки и личные CSS-фрагменты не изменены.",
 	"notice.vaultRewritePartial":
 		"{{count}} заметку(и) не удалось обновить, они остались без изменений. Подробности см. в консоли разработчика.",
 	"notice.calloutDeleteIncomplete": "Некоторые заметки не удалось преобразовать. Тип callout сохранён. Завершённые преобразования сохранены; устраните проблему с файлом и запустите действие снова, чтобы завершить его.",
@@ -255,6 +257,7 @@ export const ru: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "Курсор не находится внутри callout.",
 	"notice.autocompleteTargetMoved":
 		"Ничего не вставлено — строка изменилась, пока редактор был открыт.",
+	"notice.autocompleteAlwaysEnabled": "Автодополнение теперь является основной функцией и всегда включено.",
 	"notice.openHotkeysFailed":
 		"Не удалось открыть настройки сочетаний клавиш Obsidian.",
 	"notice.filterHotkeysFailed":
@@ -707,13 +710,19 @@ export const ru: Record<string, string> = {
 	"quickInsert.sourceAria": "Фильтр по источнику callout",
 	"quickInsert.sourceAll": "Все",
 	"quickInsert.sourceBuiltIn": "Встроенный",
+	"quickInsert.sourceTheme": "Callout темы",
 	"quickInsert.sourceUser": "Мои callout",
 	"quickInsert.editAria": "Редактировать {{name}}",
 	"quickInsert.insertAria": "Вставить {{name}} как блочный callout",
 	"quickInsert.noResults": "Callout не найдены",
+	"quickInsert.noBuiltInCallouts": "Встроенные callout сейчас недоступны.",
+	"quickInsert.noThemeCallouts": "Callout, относящиеся к теме, сейчас недоступны.",
 	"quickInsert.targetMoved": "Заметка, из которой вы открыли быструю вставку, изменилась или закрыта. Откройте быструю вставку заново в заметке, которую хотите редактировать.",
 	"quickInsert.targetMovedHint": "Исходная заметка больше недоступна для этой вставки.",
-	"quickInsert.noUserCallouts": "Вы ещё не создали ни одного callout.",
+	"quickInsert.noUserCallouts":
+		"Вы ещё не создали ни одного пользовательского callout. Запустите “Callout Studio: Create new callout type” из палитры команд.",
+	"quickInsert.noAvailableUserCallouts":
+		"Ваши пользовательские callout сейчас отображаются под фильтром темы, потому что активная тема управляет ими.",
 	"quickInsert.noEditorHint": "Нет заметки, открытой в режиме редактирования, поэтому вставить ничего нельзя.",
 	"quickInsert.noEditor": "Откройте заметку в режиме редактирования, чтобы вставить callout.",
 

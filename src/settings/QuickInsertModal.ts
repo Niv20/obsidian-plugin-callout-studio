@@ -5,21 +5,18 @@
  * filterable by source, each row offering exactly two things: edit it, or drop
  * it into the note.
  *
- * **Block callouts only, and the title says so.** The same definition also
- * renders as a heading callout and an inline one, so a window that just said
- * "insert callout" would be ambiguous in a way the user only discovers after
- * pressing the button. Heading and inline stay where they already are — the
- * `[!` popover and the user's own commands.
+ * **Block callouts only, and the title says so.** Definitions also render as
+ * heading and inline callouts, so plain "insert callout" would be ambiguous.
+ * Those two formats stay in the `[!` popover and the user's own commands.
  *
  * Every row is the callout **as Obsidian renders it** (`quickInsertPreview.ts`),
  * so this window has no idea what a callout looks like — the point of it.
  *
- * It writes nothing itself. {@link wrapSelectionInCallout} is the one function
- * that turns a definition into block markdown, shared with the `Wrap in
- * callout` command and every user-built wrap command, so all three cannot
- * disagree about what a selection, a paragraph or a blank line becomes.
+ * It writes nothing itself. {@link wrapSelectionInCallout} turns a definition
+ * into block markdown for this window, `Wrap in callout`, and user-built wrap
+ * commands, so they cannot disagree about what the selected text becomes.
  */
-import { Modal, Notice } from "obsidian";
+import { Modal, Notice, type EventRef } from "obsidian";
 import { wrapSelectionInCallout } from "../editor/CalloutBlockTools";
 import {
 	currentTargetEditor,
@@ -27,6 +24,7 @@ import {
 	type TargetEditorResult,
 } from "../editor/targetMarkdownEditor";
 import { getLocale, t } from "../i18n";
+import { activeThemeName } from "../manager/theme/customCssApi";
 import type { CalloutDefinition } from "../types";
 import {
 	filterCalloutList,
@@ -37,15 +35,23 @@ import { committedDefinitions } from "../utils/usableCallouts";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
 import { autofocusOnOpen } from "./modalAutofocus";
 import { openCalloutEditorFor } from "./openCalloutEditor";
-import { quickInsertHint, quickInsertNotice } from "./quickInsertMessages";
+import {
+	quickInsertEmptyMessage,
+	quickInsertHint,
+	quickInsertNotice,
+} from "./quickInsertMessages";
 import { QuickInsertPreviews } from "./quickInsertPreview";
-import { buildQuickInsertToolbar } from "./quickInsertToolbar";
+import {
+	buildQuickInsertToolbar,
+	syncQuickInsertThemeOption,
+} from "./quickInsertToolbar";
 import { renderQuickInsertRow } from "./quickInsertRow";
 import type { SettingsTabPlugin } from "./sections/types";
 
 export class QuickInsertModal extends Modal {
 	private query = "";
-	private filter: CalloutSourceFilter;
+	/** Starts on All once, then follows the user's last source choice. */
+	private filter: CalloutSourceFilter = "all";
 
 	/**
 	 * The editor this window was opened beside, resolved once, before any modal
@@ -63,9 +69,8 @@ export class QuickInsertModal extends Modal {
 	private rows: { def: CalloutDefinition; el: HTMLElement }[] = [];
 	private activeIndex = -1;
 	private pointerActive = false;
-
 	private previews: QuickInsertPreviews | null = null;
-
+	private cssChangeRef!: EventRef;
 	private readonly onRegistryChange = (): void => {
 		void this.refresh();
 	};
@@ -73,9 +78,7 @@ export class QuickInsertModal extends Modal {
 
 	constructor(private readonly plugin: SettingsTabPlugin) {
 		super(plugin.app);
-		this.filter = isCalloutSourceFilter(plugin.settings.quickInsertSource)
-			? plugin.settings.quickInsertSource
-			: "all";
+		if (isCalloutSourceFilter(plugin.settings.quickInsertSource)) this.filter = plugin.settings.quickInsertSource;
 		this.captured = resolveTargetEditor(plugin.app);
 	}
 
@@ -106,22 +109,20 @@ export class QuickInsertModal extends Modal {
 		void this.refresh();
 
 		this.plugin.registry.onChange(this.onRegistryChange);
+		this.cssChangeRef = this.plugin.app.workspace.on("css-change", this.onRegistryChange);
 		// Artwork that lands after the window is up must repaint the rows it
 		// belongs to; without this a freshly picked icon stays a spinner.
 		this.disposeIconListener = this.plugin.onIconCacheChange(() => {
 			void this.refresh();
 		});
 
-		// No create/edit gate here — this window exists to be typed into, so it
-		// always takes the cursor, on a phone as much as on the desktop. That is
-		// the opposite call to the create windows, which stay hands-off on a
-		// phone: nothing else in THIS window does anything until a query is
-		// there, so the keyboard arriving with it is the point.
+		// Quick Insert always focuses search, on mobile too: typing is its first action.
 		autofocusOnOpen(this.searchEl);
 	}
 
 	onClose(): void {
 		this.plugin.registry.offChange(this.onRegistryChange);
+		this.plugin.app.workspace.offref(this.cssChangeRef);
 		this.disposeIconListener?.();
 		this.disposeIconListener = null;
 		this.previews?.destroy();
@@ -132,10 +133,11 @@ export class QuickInsertModal extends Modal {
 	}
 
 	// ── Toolbar ─────────────────────────────────────────────────────────
-
 	private buildToolbar(parent: HTMLElement): void {
 		this.searchEl = buildQuickInsertToolbar(parent, {
 			filter: this.filter,
+			themeLabel:
+				activeThemeName(this.plugin.app) ?? t("quickInsert.sourceTheme"),
 			onQuery: (query) => {
 				this.query = query;
 				this.renderList();
@@ -180,7 +182,6 @@ export class QuickInsertModal extends Modal {
 	}
 
 	// ── List ────────────────────────────────────────────────────────────
-
 	private usableCallouts(): CalloutDefinition[] {
 		const { registry } = this.plugin;
 		const committed = committedDefinitions(registry).map(
@@ -200,12 +201,18 @@ export class QuickInsertModal extends Modal {
 		this.renderList(usable);
 		await this.previews?.build(usable);
 		if (!this.previews) return; // closed while rendering
-		this.renderList(usable);
+		this.renderList(); // Re-read after concurrent theme or registry changes.
 	}
 
 	private renderList(usable = this.usableCallouts()): void {
 		const listEl = this.listEl;
 		if (!listEl) return;
+		const filter = syncQuickInsertThemeOption(
+			this.contentEl,
+			activeThemeName(this.plugin.app) ?? t("quickInsert.sourceTheme"),
+			usable.some((def) => this.plugin.registry.themeOwns(def)),
+			this.filter,
+		);
 		listEl.empty();
 		this.rows = [];
 		this.activeIndex = -1;
@@ -213,17 +220,15 @@ export class QuickInsertModal extends Modal {
 
 		const visible = filterCalloutList(usable, {
 			query: this.query,
-			filter: this.filter,
+			filter,
+			themeOwns: (def) => this.plugin.registry.themeOwns(def),
 			locale: getLocale(),
 		});
 
 		if (visible.length === 0) {
 			// Two different nothings: a query that found none, and a filter with
 			// none to find. The second is not a failed search.
-			const empty =
-				this.query.trim() === "" && this.filter === "user"
-					? t("quickInsert.noUserCallouts")
-					: t("quickInsert.noResults");
+			const empty = quickInsertEmptyMessage(filter, this.query, this.plugin.registry.getUserDefined().length > 0);
 			listEl.createDiv({ cls: "callout-studio-empty-state", text: empty });
 			return;
 		}
@@ -243,7 +248,6 @@ export class QuickInsertModal extends Modal {
 			this.rows.push({ def, el });
 		}
 	}
-
 	// ── Actions ─────────────────────────────────────────────────────────
 
 	/**

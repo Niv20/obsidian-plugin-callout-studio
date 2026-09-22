@@ -243,6 +243,8 @@ export const pl: Record<string, string> = {
 		'Nie można pobrać ikony Material "{{name}}". Może być niedostępna dla tego stylu/grubości lub połączenie jest offline.',
 	"notice.vaultScanFailed": "Nie można policzyć użycia calloutów, ponieważ nie udało się odczytać {{count}} notatek. Sprawdź pamięć i synchronizację, a następnie spróbuj ponownie.",
 
+	"notice.externalCssRetired":
+		"Opcja osobistego stylowania CSS została usunięta. Te callout używają teraz zapisanego projektu Callout Studio, chyba że stylizuje je Twój motyw. Twoje notatki i osobiste fragmenty CSS nie zostały zmienione.",
 	"notice.vaultRewritePartial":
 		"Nie udało się zaktualizować {{count}} notatek — pozostały bez zmian. Szczegóły w konsoli deweloperskiej.",
 	"notice.calloutDeleteIncomplete": "Niektórych notatek nie udało się przekonwertować. Typ callout został zachowany. Ukończone konwersje są zapisane; rozwiąż problem z plikiem, a następnie ponownie uruchom akcję, aby ją zakończyć.",
@@ -255,6 +257,7 @@ export const pl: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "Kursor nie jest wewnątrz callout.",
 	"notice.autocompleteTargetMoved":
 		"Nic nie wstawiono — wiersz zmienił się, gdy edytor był otwarty.",
+	"notice.autocompleteAlwaysEnabled": "Autouzupełnianie jest teraz funkcją podstawową i jest zawsze włączone.",
 	"notice.openHotkeysFailed":
 		"Nie można otworzyć ustawień skrótów klawiszowych Obsidian.",
 	"notice.filterHotkeysFailed":
@@ -708,13 +711,19 @@ export const pl: Record<string, string> = {
 	"quickInsert.sourceAria": "Filtruj według źródła callout",
 	"quickInsert.sourceAll": "Wszystkie",
 	"quickInsert.sourceBuiltIn": "Wbudowany",
+	"quickInsert.sourceTheme": "Callout motywu",
 	"quickInsert.sourceUser": "Moje callout",
 	"quickInsert.editAria": "Edytuj {{name}}",
 	"quickInsert.insertAria": "Wstaw {{name}} jako callout blokowy",
 	"quickInsert.noResults": "Nie znaleziono żadnych callout",
+	"quickInsert.noBuiltInCallouts": "Obecnie nie są dostępne żadne wbudowane callout.",
+	"quickInsert.noThemeCallouts": "Obecnie nie są dostępne żadne callout specyficzne dla motywu.",
 	"quickInsert.targetMoved": "Notatka, z której otwarto Szybkie wstawianie, została zmieniona lub zamknięta. Otwórz Szybkie wstawianie ponownie w notatce, którą chcesz edytować.",
 	"quickInsert.targetMovedHint": "Pierwotna notatka nie jest już dostępna dla tego wstawienia.",
-	"quickInsert.noUserCallouts": "Nie utworzono jeszcze żadnego callout.",
+	"quickInsert.noUserCallouts":
+		"Nie utworzono jeszcze żadnego niestandardowego callout. Uruchom “Callout Studio: Create new callout type” z palety poleceń.",
+	"quickInsert.noAvailableUserCallouts":
+		"Twoje niestandardowe callout są obecnie widoczne pod filtrem motywu, ponieważ aktywny motyw nimi zarządza.",
 	"quickInsert.noEditorHint": "Żadna notatka nie jest otwarta w trybie edycji, więc nic nie można wstawić.",
 	"quickInsert.noEditor": "Otwórz notatkę w trybie edycji, aby wstawić callout.",
 

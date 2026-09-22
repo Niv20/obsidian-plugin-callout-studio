@@ -229,6 +229,8 @@ export const el: Record<string, string> = {
 		'Αποτυχία λήψης εικονιδίου Material "{{name}}". Ενδέχεται να μην είναι διαθέσιμο για αυτό το στυλ/βάρος ή η σύνδεσή σας να είναι εκτός σύνδεσης.',
 	"notice.vaultScanFailed": "Δεν ήταν δυνατή η καταμέτρηση της χρήσης callout, επειδή δεν ήταν δυνατή η ανάγνωση {{count}} σημειώσεων. Ελέγξτε την αποθήκευση και τον συγχρονισμό και δοκιμάστε ξανά.",
 
+	"notice.externalCssRetired":
+		"Η επιλογή προσωπικού στυλ CSS αφαιρέθηκε. Αυτά τα callouts χρησιμοποιούν πλέον το αποθηκευμένο σχέδιο του Callout Studio, εκτός αν το θέμα σας τα μορφοποιεί. Οι σημειώσεις και τα προσωπικά σας αποσπάσματα CSS δεν άλλαξαν.",
 	"notice.vaultRewritePartial":
 		"{{count}} σημείωση/-εις δεν ήταν δυνατό να ενημερωθούν και παρέμειναν αμετάβλητες. Δείτε την κονσόλα προγραμματιστή για λεπτομέρειες.",
 	"notice.calloutDeleteIncomplete": "Ορισμένες σημειώσεις δεν ήταν δυνατό να μετατραπούν. Ο τύπος callout διατηρήθηκε. Οι ολοκληρωμένες μετατροπές αποθηκεύτηκαν. Επιλύστε το πρόβλημα του αρχείου και, στη συνέχεια, εκτελέστε ξανά την ενέργεια για να ολοκληρωθεί.",
@@ -242,6 +244,7 @@ export const el: Record<string, string> = {
 		"Ο κέρσορας δεν βρίσκεται μέσα σε callout.",
 	"notice.autocompleteTargetMoved":
 		"Δεν εισήχθη τίποτα — η γραμμή άλλαξε ενώ ο επεξεργαστής ήταν ανοιχτός.",
+	"notice.autocompleteAlwaysEnabled": "Η αυτόματη συμπλήρωση είναι πλέον βασική λειτουργία και είναι πάντα ενεργή.",
 	"notice.openHotkeysFailed":
 		"Αδυναμία ανοίγματος ρυθμίσεων συντομεύσεων Obsidian.",
 	"notice.filterHotkeysFailed":
@@ -697,13 +700,19 @@ export const el: Record<string, string> = {
 	"quickInsert.sourceAria": "Φιλτράρισμα κατά πηγή callout",
 	"quickInsert.sourceAll": "Όλα",
 	"quickInsert.sourceBuiltIn": "Ενσωματωμένο",
+	"quickInsert.sourceTheme": "Callouts θέματος",
 	"quickInsert.sourceUser": "Τα callout μου",
 	"quickInsert.editAria": "Επεξεργασία {{name}}",
 	"quickInsert.insertAria": "Εισαγωγή {{name}} ως callout μπλοκ",
 	"quickInsert.noResults": "Δεν βρέθηκαν callout",
+	"quickInsert.noBuiltInCallouts": "Δεν υπάρχουν διαθέσιμα ενσωματωμένα callouts αυτήν τη στιγμή.",
+	"quickInsert.noThemeCallouts": "Δεν υπάρχουν διαθέσιμα callouts ειδικά για το θέμα αυτήν τη στιγμή.",
 	"quickInsert.targetMoved": "Η σημείωση από την οποία ανοίξατε τη Γρήγορη εισαγωγή άλλαξε ή έκλεισε. Ανοίξτε ξανά τη Γρήγορη εισαγωγή στη σημείωση που θέλετε να επεξεργαστείτε.",
 	"quickInsert.targetMovedHint": "Η αρχική σημείωση δεν είναι πλέον διαθέσιμη για αυτήν την εισαγωγή.",
-	"quickInsert.noUserCallouts": "Δεν έχετε δημιουργήσει ακόμα κανένα callout.",
+	"quickInsert.noUserCallouts":
+		"Δεν έχετε δημιουργήσει ακόμα κανένα προσαρμοσμένο callout. Εκτελέστε “Callout Studio: Create new callout type” από την παλέτα εντολών.",
+	"quickInsert.noAvailableUserCallouts":
+		"Τα προσαρμοσμένα callouts σας εμφανίζονται προς το παρόν κάτω από το φίλτρο θέματος, επειδή τα ελέγχει το ενεργό θέμα.",
 	"quickInsert.noEditorHint": "Δεν υπάρχει ανοιχτή σημείωση σε λειτουργία επεξεργασίας, οπότε δεν μπορεί να γίνει εισαγωγή.",
 	"quickInsert.noEditor": "Ανοίξτε μια σημείωση σε λειτουργία επεξεργασίας για να εισαγάγετε ένα callout.",
 

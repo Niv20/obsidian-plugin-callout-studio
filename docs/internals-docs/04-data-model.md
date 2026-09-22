@@ -220,6 +220,12 @@ interface PluginSettings {
 }
 ```
 
+`quickInsertSource` stores the last source selected in Quick Insert. Its default
+is `all`, so the first window starts complete; each later window restores the
+saved choice. Unknown values are sanitized back to `all` during settings merge.
+`theme` remains a valid saved choice when the current theme owns no usable
+rows; that modal temporarily resolves it to `all` without erasing the preference.
+
 `autocomplete.enabled` remains in the serialized shape so older settings files
 and exports have an explicit upgrade target, but it is no longer mutable
 application state. The merge always produces `true`, the editor does not gate

@@ -6,6 +6,8 @@ Callout Studio is designed to work with the active Obsidian theme without fighti
 
 Some themes define their own callout types or restyle Obsidian's built-in types. Callout Studio detects them automatically and lists them under **Callouts from your theme**.
 
+Quick Insert gives the same rows their own source filter, labelled with the active theme's name (or **Theme callouts** when no name is available). This includes built-in and saved callouts that the theme restyles, not only new types invented by the theme. The filter is omitted when the active theme owns no available callouts.
+
 If the theme styles a callout, the theme stays in complete control. Callout Studio does not override the theme's intended color, icon, border, or layout.
 
 Older versions included a setting that let an individual callout yield to external CSS. That option has been removed: theme and snippet CSS already participate in Obsidian's normal cascade, and keeping a separate Callout Studio setting for the same job proved redundant and not useful in practice.
@@ -31,7 +33,7 @@ Theme-controlled callouts support the standard Block format:
 
 Heading and Inline callouts are Callout Studio features, so they are unavailable for a type that exists only in the theme. Create a callout with a different ID if you want your own design in all three formats.
 
-Switching themes updates the **Callouts from your theme** list without changing note content.
+Switching themes updates the **Callouts from your theme** list and makes Quick Insert's theme filter appear, disappear, or change its label as needed, without changing note content.
 
 ---
 **Next:** [Back to the guide overview](README.md)

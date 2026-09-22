@@ -272,9 +272,9 @@ export function mergeSavedSettings(
 					),
 				]
 			: [],
-		// An unknown value here is not corruption to report — it is a filter
-		// this build no longer has (or never had). Falling back to "all" shows
-		// every callout, which is the one state that can never look broken.
+		// An unknown value is not corruption to report — it may come from a newer
+		// build. "all" is the safe first-run/fallback state because it cannot make
+		// the list look unexpectedly empty.
 		quickInsertSource: isCalloutSourceFilter(savedSettings.quickInsertSource)
 			? savedSettings.quickInsertSource
 			: DEFAULT_SETTINGS.quickInsertSource,

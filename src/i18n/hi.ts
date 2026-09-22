@@ -244,6 +244,8 @@ export const hi: Record<string, string> = {
 		'Material आइकन "{{name}}" डाउनलोड नहीं हो सका। यह इस स्टाइल/वेट के लिए उपलब्ध नहीं हो सकता, या आपका कनेक्शन ऑफलाइन हो सकता है।',
 	"notice.vaultScanFailed": "कॉलआउट उपयोग की गणना नहीं की जा सकी क्योंकि {{count}} नोट(ों) को पढ़ा नहीं जा सका। भंडारण और सिंक्रोनाइज़ेशन की जाँच करें, फिर दोबारा प्रयास करें।",
 
+	"notice.externalCssRetired":
+		"व्यक्तिगत CSS स्टाइलिंग विकल्प हटा दिया गया है। ये callout अब अपना सहेजा हुआ Callout Studio डिज़ाइन उपयोग करते हैं, जब तक कि आपकी थीम उन्हें स्टाइल न करे। आपके नोट और व्यक्तिगत CSS स्निपेट नहीं बदले गए।",
 	"notice.vaultRewritePartial":
 		"{{count}} नोट अपडेट नहीं हो सके और बिना बदलाव के रह गए। विवरण के लिए डेवलपर कंसोल देखें।",
 	"notice.calloutDeleteIncomplete": "कुछ नोट रूपांतरित नहीं किए जा सके। callout प्रकार रखा गया। पूर्ण हो चुके रूपांतरण सहेजे गए हैं; फ़ाइल समस्या हल करें, फिर पूरा करने के लिए क्रिया दोबारा चलाएँ।",
@@ -256,6 +258,7 @@ export const hi: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "कर्सर callout के अंदर नहीं है।",
 	"notice.autocompleteTargetMoved":
 		"कुछ भी नहीं जोड़ा गया — संपादक खुला रहते हुए पंक्ति बदल गई।",
+	"notice.autocompleteAlwaysEnabled": "Autocomplete अब एक मुख्य सुविधा है और हमेशा सक्षम रहता है।",
 	"notice.openHotkeysFailed": "Obsidian हॉटकी सेटिंग नहीं खुल सकी।",
 	"notice.filterHotkeysFailed":
 		"Obsidian हॉटकी खुल गई, लेकिन Callout Studio फ़िल्टर लागू नहीं हो सका।",
@@ -708,13 +711,19 @@ export const hi: Record<string, string> = {
 	"quickInsert.sourceAria": "callout स्रोत के अनुसार फ़िल्टर करें",
 	"quickInsert.sourceAll": "सभी",
 	"quickInsert.sourceBuiltIn": "बिल्ट-इन",
+	"quickInsert.sourceTheme": "थीम callouts",
 	"quickInsert.sourceUser": "मेरे callout",
 	"quickInsert.editAria": "{{name}} संपादित करें",
 	"quickInsert.insertAria": "{{name}} को ब्लॉक callout के रूप में डालें",
 	"quickInsert.noResults": "कोई callout नहीं मिला",
+	"quickInsert.noBuiltInCallouts": "अभी कोई बिल्ट-इन callout उपलब्ध नहीं है।",
+	"quickInsert.noThemeCallouts": "अभी कोई थीम-विशिष्ट callout उपलब्ध नहीं है।",
 	"quickInsert.targetMoved": "जिस नोट से आपने क्विक इंसर्ट खोला था वह बदल गया या बंद हो गया। जिस नोट को आप संपादित करना चाहते हैं उसमें क्विक इंसर्ट फिर से खोलें।",
 	"quickInsert.targetMovedHint": "मूल नोट अब इस सम्मिलन के लिए उपलब्ध नहीं है।",
-	"quickInsert.noUserCallouts": "आपने अभी तक कोई callout नहीं बनाया है।",
+	"quickInsert.noUserCallouts":
+		"आपने अभी तक कोई कस्टम callout नहीं बनाया है। कमांड पैलेट से “Callout Studio: Create new callout type” चलाएँ।",
+	"quickInsert.noAvailableUserCallouts":
+		"आपके कस्टम callout अभी थीम फ़िल्टर के अंतर्गत सूचीबद्ध हैं, क्योंकि सक्रिय थीम उन्हें नियंत्रित कर रही है।",
 	"quickInsert.noEditorHint": "संपादन मोड में कोई नोट खुला नहीं है, इसलिए कुछ भी नहीं डाला जा सकता।",
 	"quickInsert.noEditor": "callout डालने के लिए एक नोट संपादन मोड में खोलें।",
 

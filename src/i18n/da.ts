@@ -228,6 +228,8 @@ export const da: Record<string, string> = {
 		'Kunne ikke downloade Material-ikonet "{{name}}". Det er muligvis ikke tilgængeligt for denne stil/vægt, eller din forbindelse er offline.',
 	"notice.vaultScanFailed": "Kunne ikke tælle callout-brugen, fordi {{count}} note(r) ikke kunne læses. Tjek lager og synkronisering, og prøv igen.",
 
+	"notice.externalCssRetired":
+		"Muligheden for personlig CSS-styling er fjernet. Disse callouts bruger nu deres gemte Callout Studio-design, medmindre dit tema styler dem. Dine noter og personlige CSS-snippets blev ikke ændret.",
 	"notice.vaultRewritePartial":
 		"{{count}} note(r) kunne ikke opdateres og blev efterladt uændret. Se udviklerkonsollen for detaljer.",
 	"notice.calloutDeleteIncomplete": "Nogle noter kunne ikke konverteres. Callout-typen blev bevaret. Gennemførte konverteringer er gemt; løs filproblemet, og kør handlingen igen for at afslutte.",
@@ -240,6 +242,7 @@ export const da: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "Markøren er ikke inde i en callout.",
 	"notice.autocompleteTargetMoved":
 		"Intet blev indsat — linjen blev ændret, mens editoren var åben.",
+	"notice.autocompleteAlwaysEnabled": "Autofuldførelse er nu en kernefunktion og er altid aktiveret.",
 	"notice.openHotkeysFailed":
 		"Kunne ikke åbne Obsidians genvejsindstillinger.",
 	"notice.filterHotkeysFailed":
@@ -685,13 +688,19 @@ export const da: Record<string, string> = {
 	"quickInsert.sourceAria": "Filtrer efter callout-kilde",
 	"quickInsert.sourceAll": "Alle",
 	"quickInsert.sourceBuiltIn": "Indbygget",
+	"quickInsert.sourceTheme": "Tema-callouts",
 	"quickInsert.sourceUser": "Mine callouts",
 	"quickInsert.editAria": "Rediger {{name}}",
 	"quickInsert.insertAria": "Indsæt {{name}} som blok-callout",
 	"quickInsert.noResults": "Ingen callouts fundet",
+	"quickInsert.noBuiltInCallouts": "Der er i øjeblikket ingen indbyggede callouts tilgængelige.",
+	"quickInsert.noThemeCallouts": "Der er i øjeblikket ingen temaspecifikke callouts tilgængelige.",
 	"quickInsert.targetMoved": "Den note, du åbnede Hurtig indsættelse fra, er ændret eller lukket. Åbn Hurtig indsættelse igen i den note, du vil redigere.",
 	"quickInsert.targetMovedHint": "Den oprindelige note er ikke længere tilgængelig for denne indsættelse.",
-	"quickInsert.noUserCallouts": "Du har endnu ikke oprettet nogen callouts.",
+	"quickInsert.noUserCallouts":
+		"Du har endnu ikke oprettet nogen brugerdefinerede callouts. Kør “Callout Studio: Create new callout type” fra kommandopaletten.",
+	"quickInsert.noAvailableUserCallouts":
+		"Dine brugerdefinerede callouts vises i øjeblikket under temafilteret, fordi det aktive tema styrer dem.",
 	"quickInsert.noEditorHint": "Ingen note er åben i redigeringstilstand, så intet kan indsættes.",
 	"quickInsert.noEditor": "Åbn en note i redigeringstilstand for at indsætte en callout.",
 

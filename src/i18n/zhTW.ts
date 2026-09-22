@@ -226,6 +226,8 @@ export const zhTW: Record<string, string> = {
 
 	"notice.vaultScanFailed": "無法統計 Callout 使用次數，因為無法讀取 {{count}} 篇筆記。請檢查儲存與同步後再試。",
 
+	"notice.externalCssRetired":
+		"個人 CSS 樣式選項已移除。除非您的佈景主題為這些 callout 設定樣式，否則它們現在會使用已儲存的 Callout Studio 設計。您的筆記和個人 CSS 片段未被變更。",
 	"notice.vaultRewritePartial":
 		"有 {{count}} 則筆記無法更新，已保持不變。詳情請查看開發者主控台。",
 	"notice.calloutDeleteIncomplete": "部分筆記無法轉換。callout 類型已保留。已完成的轉換已儲存；請解決檔案問題，然後再次執行該動作以完成。",
@@ -239,6 +241,7 @@ export const zhTW: Record<string, string> = {
 	"notice.cursorNotInsideCallout": "游標不在 callout 內部。",
 	"notice.autocompleteTargetMoved":
 		"未插入任何內容 — 編輯器開啟期間該行已變更。",
+	"notice.autocompleteAlwaysEnabled": "自動補全現在是核心功能，且一律啟用。",
 	"notice.openHotkeysFailed": "無法開啟 Obsidian 快速鍵設定。",
 	"notice.filterHotkeysFailed":
 		"已開啟 Obsidian 快速鍵，但無法套用 Callout Studio 篩選器。",
@@ -677,13 +680,17 @@ export const zhTW: Record<string, string> = {
 	"quickInsert.sourceAria": "依 callout 來源篩選",
 	"quickInsert.sourceAll": "全部",
 	"quickInsert.sourceBuiltIn": "內建",
+	"quickInsert.sourceTheme": "佈景主題 callout",
 	"quickInsert.sourceUser": "我的 callout",
 	"quickInsert.editAria": "編輯 {{name}}",
 	"quickInsert.insertAria": "將 {{name}} 作為區塊 callout 插入",
 	"quickInsert.noResults": "找不到 callout",
+	"quickInsert.noBuiltInCallouts": "目前沒有可用的內建 callout。",
+	"quickInsert.noThemeCallouts": "目前沒有可用的佈景主題專屬 callout。",
 	"quickInsert.targetMoved": "開啟快速插入時所在的筆記已變更或關閉。請在你要編輯的筆記中重新開啟快速插入。",
 	"quickInsert.targetMovedHint": "原始筆記已無法用於這次插入。",
-	"quickInsert.noUserCallouts": "您尚未建立任何 callout。",
+	"quickInsert.noUserCallouts": "您尚未建立任何自訂 callout。請從指令面板執行 “Callout Studio: Create new callout type”。",
+	"quickInsert.noAvailableUserCallouts": "您的自訂 callout 目前列在佈景主題篩選器下，因為作用中的佈景主題正在控制它們。",
 	"quickInsert.noEditorHint": "沒有筆記以編輯模式開啟，因此無法插入任何內容。",
 	"quickInsert.noEditor": "以編輯模式開啟一篇筆記以插入 callout。",
 
