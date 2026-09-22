@@ -4,7 +4,9 @@ Callout Studio includes Obsidian's native callout colors and its own built-in pr
 
 Hovering a colour temporarily previews it. Moving the pointer away from the
 row restores the current colour; click a row or use the arrow keys and Enter
-to choose it.
+to choose it. If the pointer rests over one row while you use the arrow keys,
+only the keyboard's row is highlighted. Move the pointer again to return the
+highlight and preview to the row under it.
 
 ![Per-mode colors](https://github.com/user-attachments/assets/8a37477c-2323-4464-9494-f3ed35e56f18)
 

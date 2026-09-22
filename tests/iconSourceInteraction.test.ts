@@ -62,6 +62,26 @@ describe("icon library pointer navigation", () => {
 		} finally { h.destroy(); }
 	});
 
+	it("returns to the library under the mouse when it moves after an arrow key", () => {
+		const h = mount();
+		try {
+			const [all, lucide] = h.rows;
+			assert.ok(all && lucide);
+			all.fire("mouseenter");
+			h.key("ArrowDown");
+			assert.ok(lucide.classList.contains("is-active"));
+			assert.ok(!all.classList.contains("is-active"));
+
+			// The pointer stays within All sources, so there is no second enter.
+			all.fire("mousemove");
+			assert.ok(all.classList.contains("is-active"));
+			assert.ok(!lucide.classList.contains("is-active"));
+			assert.equal(h.rows.filter((row) => row.classList.contains("is-active")).length, 1);
+			assert.equal(h.menu.getAttribute("aria-activedescendant"), all.id);
+			assert.equal(lucide.getAttribute("aria-selected"), "true");
+		} finally { h.destroy(); }
+	});
+
 	it("does not move the scroll position just because a row is hovered", () => {
 		const h = mount();
 		try {

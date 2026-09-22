@@ -2917,8 +2917,10 @@ button.callout-studio-icon-picker-loading {
 	gap: 14px;
 }
 
+/* The fold menu has no arrow navigation; combobox rows take their pointer
+   highlight from .is-active so stationary :hover cannot compete with arrows. */
 .cs-palette-menu-item.is-active,
-.cs-palette-menu-item:hover {
+:where(.cs-fold-menu) .cs-palette-menu-item:hover {
 	background-color: var(--background-modifier-hover);
 }
 
@@ -3450,9 +3452,8 @@ button.callout-studio-icon-picker-loading {
 	overflow-x: hidden;
 }
 
-/* `is-active` is where the keyboard is; `is-selected` is what is committed.
-   Two states, two weights — a highlighted row must not look chosen. */
-.cs-combobox-option:hover,
+/* Both pointer and keyboard put their highlight on this one class. A stationary
+   pointer must not leave a second :hover highlight behind after an arrow key. */
 .cs-combobox-option.is-active {
 	background-color: var(--background-modifier-hover);
 }
@@ -3541,6 +3542,13 @@ button.callout-studio-icon-picker-loading {
 .cs-combobox-footer-row:hover {
 	background-color: var(--background-modifier-hover);
 	color: var(--text-normal);
+}
+
+/* The footer is not arrow-navigable, but its hover must also yield while an
+   option is keyboard-active under a stationary pointer. */
+.cs-combobox-menu.is-keyboard-active .cs-combobox-footer-row:hover {
+	background-color: transparent;
+	color: var(--text-muted);
 }
 
 .cs-combobox-footer-row-icon {
@@ -3733,8 +3741,7 @@ button.callout-studio-icon-picker-loading {
 /* Hover/keyboard-focus gets the same subtle tint as everywhere else; the
    current source stays visibly marked underneath it via a stronger fill —
    same pairing as the color palette dropdown's .is-active/.is-selected. */
-.icon-picker-source-menu-item.is-active,
-.icon-picker-source-menu-item:hover {
+.icon-picker-source-menu-item.is-active {
 	background-color: var(--background-modifier-hover);
 }
 

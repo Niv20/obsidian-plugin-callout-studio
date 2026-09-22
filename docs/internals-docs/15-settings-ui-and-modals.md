@@ -1536,8 +1536,12 @@ selected.
 Pointer highlights and keyboard highlights have separate origins. Leaving a
 row or the menu clears a pointer highlight and the temporary colour preview;
 the committed value stays unchanged. Arrow-key highlights survive pointer
-exit. Hover never scrolls a row into view; keyboard navigation does. Quick
-Insert follows the same pointer/keyboard distinction.
+exit. The last active input method owns the one visual highlight: an arrow key
+suppresses `:hover` on a stationary pointer row, and actual pointer movement
+returns the highlight to the row beneath it, even without another `mouseenter`.
+Hover never scrolls a row into view; keyboard navigation does. The icon-source
+menu follows the same rule. Quick Insert follows the same pointer/keyboard
+distinction through its single `is-active` highlight.
 
 Callers **must** call `destroy()` — a modal from `onClose`, a settings section
 through `registerDisposer` — because the popup holds a document-level

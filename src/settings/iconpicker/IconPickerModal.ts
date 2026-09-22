@@ -292,7 +292,7 @@ export class IconPicker extends Modal {
 		);
 		// Searching everything is first: knowing which library has "swords" is hard.
 		const ids: PickerSourceId[] = [ALL_SOURCES, ...ICON_SOURCE_IDS];
-		for (const id of ids) {
+		for (const [index, id] of ids.entries()) {
 			const meta = this.sourceMeta(id);
 			const item = this.sourceMenuEl.createDiv({
 				cls: "icon-picker-source-menu-item",
@@ -317,12 +317,12 @@ export class IconPicker extends Modal {
 				}),
 			);
 			item.toggleClass("is-selected", id === this.activeSource);
-			item.addEventListener("mouseenter", () =>
-				this.setActiveSourceMenuItem(
-					this.sourceMenuItems.findIndex((i) => i.id === id),
-					{ pointer: true },
-				),
-			);
+			const onPointer = (): void => {
+				if (!this.sourceMenuPointerActive || this.activeSourceMenuIndex !== index)
+					this.setActiveSourceMenuItem(index, { pointer: true });
+			};
+			item.addEventListener("mouseenter", onPointer);
+			item.addEventListener("mousemove", onPointer);
 			item.addEventListener("mouseleave", () => {
 				if (this.sourceMenuPointerActive) this.setActiveSourceMenuItem(-1);
 			});

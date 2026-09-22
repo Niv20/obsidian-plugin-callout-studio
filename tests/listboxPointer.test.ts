@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { ListboxPopup } from "../src/ui/listboxPopup";
 import { asEl, el, fakeDom } from "./support/fakeDom";
+import { readRepoFile } from "./support/sourceScan";
 
-function mount() {
+function mount(withFooter = false) {
 	fakeDom.light();
 	const host = el();
 	const previews: Array<string | null> = [];
@@ -23,6 +24,11 @@ function mount() {
 			label: (query) => query,
 			onSelect: (query) => created.push(query),
 		},
+		footerRow: withFooter ? {
+			icon: "plus",
+			label: "New color",
+			onClick: () => created.push("footer"),
+		} : undefined,
 	});
 	popup.setSelected("Beta");
 	const input = host.querySelector(".cs-combobox-input")!;
@@ -80,6 +86,56 @@ describe("ListboxPopup — pointer and keyboard highlights", () => {
 		}
 	});
 
+	it("returns to the row under the mouse when it moves after an arrow key", () => {
+		const h = mount();
+		try {
+			const [alpha, beta] = h.rows();
+			assert.ok(alpha && beta);
+			alpha.fire("mouseenter");
+			h.key("ArrowDown");
+			assert.ok(beta.classList.contains("is-active"));
+			assert.ok(!alpha.classList.contains("is-active"));
+			assert.deepEqual(h.previews, ["Alpha", "Beta"]);
+
+			// The pointer is still inside Alpha: moving within it emits no new enter.
+			alpha.fire("mousemove");
+			assert.ok(alpha.classList.contains("is-active"));
+			assert.ok(!beta.classList.contains("is-active"));
+			assert.equal(h.rows().filter((row) => row.classList.contains("is-active")).length, 1);
+			assert.equal(h.input.getAttribute("aria-activedescendant"), alpha.id);
+			assert.deepEqual(h.previews, ["Alpha", "Beta", "Alpha"]);
+
+			alpha.fire("mousemove");
+			assert.deepEqual(h.previews, ["Alpha", "Beta", "Alpha"]);
+		} finally {
+			h.popup.destroy();
+		}
+	});
+
+	it("suppresses stationary footer hover while arrows navigate options", () => {
+		const h = mount(true);
+		try {
+			const footer = h.menu.querySelector(".cs-combobox-footer-row");
+			assert.ok(footer);
+			footer.fire("mouseenter");
+			assert.ok(!h.menu.classList.contains("is-keyboard-active"));
+
+			h.key("ArrowDown");
+			assert.ok(h.rows()[0]?.classList.contains("is-active"));
+			assert.ok(h.menu.classList.contains("is-keyboard-active"));
+			assert.equal(h.input.getAttribute("aria-activedescendant"), h.rows()[0]?.id);
+
+			// Still over the footer: movement restores mouse mode without re-entering.
+			footer.fire("mousemove");
+			assert.ok(!h.menu.classList.contains("is-keyboard-active"));
+			assert.ok(h.rows().every((row) => !row.classList.contains("is-active")));
+			assert.equal(h.input.getAttribute("aria-activedescendant"), null);
+			assert.deepEqual(h.previews, [null, "Alpha", null]);
+		} finally {
+			h.popup.destroy();
+		}
+	});
+
 	it("does not scroll hovered rows into view, while keyboard navigation still does", () => {
 		const h = mount();
 		try {
@@ -111,4 +167,20 @@ describe("ListboxPopup — pointer and keyboard highlights", () => {
 			h.popup.destroy();
 		}
 	});
+});
+
+it("dropdown option styling has no independent mouse hover highlight", () => {
+	const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "");
+	assert.doesNotMatch(
+		css,
+		/\.(?:cs-combobox-option|icon-picker-source-menu-item):hover\b/,
+	);
+	for (const [, selector] of css.matchAll(/([^,{}]*\.cs-palette-menu-item:hover)\b/g)) {
+		assert.ok(selector);
+		assert.match(selector, /\.cs-fold-menu\b/);
+	}
+	assert.match(
+		css,
+		/\.cs-combobox-menu\.is-keyboard-active\s+\.cs-combobox-footer-row:hover\s*\{[^}]*background-color:\s*transparent/,
+	);
 });

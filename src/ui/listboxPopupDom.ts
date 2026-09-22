@@ -107,7 +107,8 @@ export interface ComboboxRowsSpec<T> extends ComboboxRowContract<T> {
 	listboxId: string;
 	/** The committed item's key, or `undefined` — drawn as `is-selected`. */
 	selectedKey: string | undefined;
-	onEnterRow(index: number): void;
+	/** Both entering a row and moving inside it can take over from arrow keys. */
+	onPointerRow(index: number): void;
 	onLeaveRow(): void;
 	onClickRow(index: number): void;
 }
@@ -149,7 +150,8 @@ export function renderComboboxRows<T>(
 		}
 		// mouseenter rather than hover CSS alone, because the popup's
 		// `onHighlight` live-previews and CSS cannot call it.
-		rowEl.addEventListener("mouseenter", () => spec.onEnterRow(i));
+		rowEl.addEventListener("mouseenter", () => spec.onPointerRow(i));
+		rowEl.addEventListener("mousemove", () => spec.onPointerRow(i));
 		rowEl.addEventListener("mouseleave", () => spec.onLeaveRow());
 		rowEl.addEventListener("click", () => spec.onClickRow(i));
 		rowEls.push(rowEl);
@@ -210,7 +212,7 @@ export interface FooterRowSpec {
 export function renderComboboxFooterRow(
 	menuEl: HTMLElement,
 	footer: FooterRowSpec,
-	onEnter: () => void,
+	onPointer: () => void,
 ): void {
 	const rowEl = menuEl.createDiv({
 		cls: "cs-combobox-footer-row",
@@ -224,6 +226,7 @@ export function renderComboboxFooterRow(
 	});
 	// Moving onto this row leaves the real ones, which also ends whatever they
 	// were previewing.
-	rowEl.addEventListener("mouseenter", onEnter);
+	rowEl.addEventListener("mouseenter", onPointer);
+	rowEl.addEventListener("mousemove", onPointer);
 	rowEl.addEventListener("click", () => footer.onClick());
 }

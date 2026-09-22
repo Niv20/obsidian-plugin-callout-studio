@@ -189,7 +189,7 @@ export class ListboxPopup<T> {
 			renderRow: (rowEl, item, q) => this.options.renderRow(rowEl, item, q),
 			emptyText: (q) => this.options.emptyText(q),
 			groupOf: this.options.groupOf && ((i) => this.groupOf(i)),
-			onEnterRow: (i) => this.setActive(i, { pointer: true }),
+			onPointerRow: (i) => this.restorePointerHighlight(i),
 			onLeaveRow: () => this.clearPointerHighlight(),
 			onClickRow: (i) => this.commit(i),
 		});
@@ -205,7 +205,8 @@ export class ListboxPopup<T> {
 					action.label(query.trim()),
 					`${this.listboxId}-create`,
 				);
-				rowEl.addEventListener("mouseenter", () => this.setActive(0, { pointer: true }));
+				rowEl.addEventListener("mouseenter", () => this.restorePointerHighlight(0));
+				rowEl.addEventListener("mousemove", () => this.restorePointerHighlight(0));
 				rowEl.addEventListener("mouseleave", () => this.clearPointerHighlight());
 				rowEl.addEventListener("click", () => this.commit(0));
 				this.rowEls.push(rowEl);
@@ -215,11 +216,8 @@ export class ListboxPopup<T> {
 			}
 		}
 
-		if (this.options.footerRow) {
-			renderComboboxFooterRow(this.menuEl, this.options.footerRow, () =>
-				this.setActive(-1),
-			);
-		}
+		if (this.options.footerRow)
+			renderComboboxFooterRow(this.menuEl, this.options.footerRow, () => this.restorePointerHighlight(-1));
 
 		// Open on the committed row. An unresolved selection opens idle rather
 		// than making the first real option look chosen; typing still activates it.
@@ -231,13 +229,16 @@ export class ListboxPopup<T> {
 		this.setActive(active, { preview: false });
 	}
 
-	private clearPointerHighlight(): void {
-		if (this.pointerActive) this.setActive(-1);
+	private clearPointerHighlight(): void { if (this.pointerActive) this.setActive(-1); }
+	private restorePointerHighlight(index: number): void {
+		if (!this.pointerActive || this.activeIndex !== index)
+			this.setActive(index, { pointer: true });
 	}
 	private setActive(index: number, opts?: { preview?: boolean; pointer?: boolean }): void {
 		this.rowEls[this.activeIndex]?.removeClass("is-active");
 		this.activeIndex = index >= 0 && index < this.rowEls.length ? index : -1;
 		this.pointerActive = opts?.pointer ?? false;
+		this.menuEl.toggleClass("is-keyboard-active", !this.pointerActive && this.activeIndex >= 0);
 
 		const el = this.rowEls[this.activeIndex];
 		if (el) {

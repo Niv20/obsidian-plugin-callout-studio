@@ -10,7 +10,9 @@ The source menu keeps catalog sizes easy to scan with rounded counts such as **3
 
 The menu fits the available window height and scrolls internally, including
 with larger interface text. Moving the pointer away clears its hover highlight;
-keyboard navigation and the selected library remain available.
+keyboard navigation and the selected library remain available. Arrow keys
+highlight only the keyboard's row, even if the pointer rests over another.
+Moving the pointer again highlights the row under it.
 
 - **Lucide and Emoji** are available immediately and need no download.
 - **Most third-party libraries** need one quick download, after which they work offline.
