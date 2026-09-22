@@ -15,20 +15,12 @@
  * move; there is no state to migrate because there is no state.
  *
  * {@link isThemeStyled} is that rule, and it is one clause — `themeOwns`. The
- * three-clause version it replaced existed to support a manual mode that no
- * longer exists, and each clause it lost is worth recording:
- *
- * - `standsDown` also answers true for a callout the user handed to **their
- *   own CSS**, and those rows stay in the user's own section wearing an
- *   *External CSS* label. Grouping them under the theme would name the wrong
- *   owner.
- * - *"…or it is a built-in"* let a built-in be filed under the theme merely
- *   because nobody had configured it. A built-in now moves only when the theme
- *   genuinely names it — which, measured across the 257 themes in the dev
- *   vault, 48 of them do, 27 of those for every single built-in id.
- * - *"the theme styles callouts at all"* was a guard against exactly that
- *   over-reach and is now implied: an id cannot be named by a theme that says
- *   nothing about callouts.
+ * earlier multi-clause rule also filed a built-in under the theme merely
+ * because nobody had configured it. A built-in now moves only when the theme
+ * genuinely names it — which, measured across the 257 themes in the dev
+ * vault, 48 of them do, 27 of those for every single built-in id.
+ * The earlier *"the theme styles callouts at all"* guard is now implied: an id
+ * cannot be named by a theme that says nothing about callouts.
  *
  * Its own module because `CalloutRowActions.ts` sits at the line cap the
  * repo's ratchet freezes it at.

@@ -5,11 +5,9 @@
  * A theme like AnuPpuccin or ITS does not only repaint `note` and `warning`; it
  * declares callout ids Obsidian has never heard of. Without a row they are
  * invisible to the plugin — absent from the settings list, from autocomplete
- * and from quick insert — and, worse, absent from the `:not()` chain that
- * `generateFallbackCSS` builds out of `getAll()`. Everything in that chain
- * carries `!important` at a specificity no theme can reach, so a theme callout
- * with no row is not merely unlisted: it is actively overpainted with the
- * fallback template. Minting the row is what hands it back.
+ * and from quick insert. It would also look unrecognized to the weak fallback.
+ * Minting a theme-owned row lists the id and excludes it from that fallback
+ * without asking Studio to paint over the theme.
  *
  * ## Why this can never reach `data.json`
  *
@@ -27,7 +25,7 @@
  *
  * 1. **It never touches a row it did not mint.** The mint step skips any id
  *    that already has a row or is somebody's alias, so a callout the user
- *    created keeps `source: "user"`, its colours and its style mode even when
+ *    created keeps `source: "user"` and its stored appearance even when
  *    the theme happens to declare the same id. The settings tab groups such a
  *    row under the theme anyway — grouping is by `themeOwns`, not by `source`.
  * 2. **Only rows it minted are removed.** `stale` filters on

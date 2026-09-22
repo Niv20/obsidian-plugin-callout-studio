@@ -51,7 +51,6 @@ export const COMPARED_FIELDS: Record<
 	aliases: true,
 	paletteId: true,
 	customized: true,
-	externalStyle: true,
 	metadata: true,
 };
 
@@ -66,9 +65,7 @@ export const COMPARED_FIELDS: Record<
  * hard-coded hex — silently ending the built-in's deference to whatever the
  * theme says blue is.
  *
- * It is the only such field. `externalStyle` deliberately is *not* one: it
- * is a real decision about the callout, and a built-in the user handed to
- * their own CSS should read as edited.
+ * It is the only such field.
  */
 export const COLOUR_NEUTRAL_FIELDS: ReadonlySet<keyof CalloutDefinition> =
 	new Set(["hideIcon"]);

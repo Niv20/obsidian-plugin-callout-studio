@@ -134,7 +134,7 @@ export interface CoreAccentShimInput {
 	 *   This is the suppression that has to exist;
 	 * - a family claim like `[data-callout*=note]`, which does not make the row
 	 *   theme-owned (`themeDefinedIds` excludes `*=` on purpose) and so is
-	 *   invisible to `standsDown`. At `(0,2,0)` it already outranks this rule,
+	 *   not theme-owned. At `(0,2,0)` it already outranks this rule,
 	 *   so this is belt to that braces — kept because a one-class family
 	 *   selector would not.
 	 *

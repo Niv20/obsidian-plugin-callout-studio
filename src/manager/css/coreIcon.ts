@@ -1,7 +1,7 @@
 /**
  * manager/css/coreIcon.ts — reading back the icon *Obsidian* would draw.
  *
- * Needed only by `CSSInjector.restoreCoreIcon`, which puts core's own icon back
+ * Needed by `fallbackIcon.restoreCoreIcon`, which puts core's own icon back
  * after this plugin has painted over it: core resolves a callout's icon once,
  * the first time it builds the element, and its post-processor bails early if
  * `.callout-icon` already has a child — so nothing puts it back on its own.

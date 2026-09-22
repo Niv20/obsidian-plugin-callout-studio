@@ -187,17 +187,6 @@ export interface ResolvedCalloutDef {
 	def: CalloutDefinition | undefined;
 	/** True when the id matched neither a definition nor an alias. */
 	unknown: boolean;
-	/**
-	 * True when the user has handed this callout to their own CSS — render
-	 * nothing at all for it (see {@link shouldRenderToken}). Read off
-	 * `externalStyle`, not `standsDown`: the two suppress the same DOM here but
-	 * are different facts, and a row can be one without being the other.
-	 *
-	 * Deliberately separate from `unknown`, which stays false: an unknown token
-	 * gets `.cs-unknown` styling and keeps the raw id as its label — both of
-	 * which are still this plugin painting something.
-	 */
-	external: boolean;
 	/** True when the active theme owns this callout. See {@link shouldRenderToken}. */
 	themeOwned: boolean;
 }
@@ -206,14 +195,12 @@ export interface ResolvedCalloutDef {
  * Whether the heading-callout / inline-callout / ref-token DOM should be built
  * for a resolved token at all.
  *
- * These three surfaces are Callout Studio's own invented syntax, and neither
- * kind of stand-down gets them. **The user's own CSS** (`external`): there is
- * nothing here for them to style. **The theme** (`themeOwned`): a theme callout
- * is Block only. The plugin could paint `.cs-heading-token` — no theme selector
- * can match it, and an earlier version did — but that offers two formats the
- * theme has no design for beside a Block callout it draws itself, three
- * renderings of one callout with two invented. Literal text is the honest
- * answer, and it makes "nothing is emitted for a theme callout" literal.
+ * These three surfaces are Callout Studio's own invented syntax. A
+ * theme-owned callout is Block only: the plugin could paint
+ * `.cs-heading-token`, but no theme selector can match it, producing two
+ * invented renderings beside the block the theme actually designed. Literal
+ * text is the honest answer and makes "nothing is emitted for a theme
+ * callout" literal.
  *
  * A pre-existing callout that becomes theme-owned loses the two formats for as
  * long as the theme claims it, then gets them back with no migration.
@@ -221,13 +208,14 @@ export interface ResolvedCalloutDef {
  * Every consumer of {@link resolveCalloutDef} that builds DOM calls this first.
  */
 export function shouldRenderToken(resolved: ResolvedCalloutDef): boolean {
-	return !resolved.external && !resolved.themeOwned;
+	return !resolved.themeOwned;
 }
 
 /**
  * Resolve a raw `[!id]` token id to a definition: direct id → alias →
- * `data-callout` attribute form → the configured fallback callout. Mirrors
- * CSSInjector.resolveDef so DOM icons and CSS colors always agree.
+ * `data-callout` attribute form → the configured fallback callout. Native
+ * blocks use the same lookup order before CSSInjector applies the weak
+ * unknown-id fallback.
  *
  * The attribute-form step is what keeps the three roles consistent: a
  *   block callout `> [!a-b]` already picks up `a b`'s styling, because Obsidian
@@ -247,15 +235,11 @@ export function resolveCalloutDef(
 		return {
 			def: direct,
 			unknown: false,
-			external: direct.externalStyle === true,
 			themeOwned: registry.themeOwns(direct),
 		};
-	// An unrecognized id is NOT external even when the fallback callout it
-	// borrows happens to be: `external` describes the token's own callout.
 	return {
 		def: registry.get(registry.settings.fallbackCalloutId),
 		unknown: true,
-		external: false,
 		themeOwned: false,
 	};
 }

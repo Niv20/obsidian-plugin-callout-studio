@@ -14,7 +14,6 @@
  * the network policy requires. An injector that warmed a family per pass would
  * fetch from fonts.gstatic.com on every startup for artwork it does not draw.
  */
-import { setIcon } from "obsidian";
 import type { App } from "obsidian";
 import type {
 	CalloutDefinition,
@@ -58,15 +57,23 @@ import {
 } from "../editor/renderShared";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { obsidianCalloutAttrId } from "../utils/calloutId";
-import { coreIconValue, importCoreIconSvg } from "./css/coreIcon";
 import { StudioWeightCache } from "./theme/StudioWeightCache";
 import type { ThemeCalloutStore } from "./theme/ThemeCalloutStore";
 import { generateFallbackCSS } from "./css/fallbackCSS";
 import { bgImageFor, bgProps, type BgLayer } from "./css/backgroundProps";
 import { themeSurfaceCSS } from "./css/themeSurfaceCSS";
-import { calloutIconProp } from "./css/calloutIconProp";
+import {
+	calloutIconProp,
+	fallbackCalloutIconProp,
+} from "./css/calloutIconProp";
 import { emojiOverrideCSS, iconOverrideCSS } from "./css/iconOverrides";
 import { transparentBorderProps } from "./css/transparentBorder";
+import {
+	CSS_FALLBACK_ICON,
+	CSS_FALLBACK_ICON_HIDDEN,
+	paintUnknownFallbackIcon,
+	restoreCoreIcon,
+} from "./css/fallbackIcon";
 import {
 	calloutSelAt,
 	calloutSelDeferring,
@@ -296,7 +303,12 @@ export class CSSInjector {
 				// Size the baked emoji copy via a class instead of an inline style;
 				// this rule ships in the same <style> element Obsidian honors when
 				// exporting to PDF (see bakeEmojiExportIcon).
-				".callout > .callout-title > .callout-icon > span.cs-export-icon { font-size: var(--icon-size, 1.2em); line-height: 1; }",
+				".callout > .callout-title > .callout-icon > span.cs-export-icon { font-size: var(--icon-size, 1.2em); line-height: 1; }\n" +
+				// Unknown-callout fallback artwork lives in the DOM rather than a
+				// high-specificity pseudo-element. The class is present only while
+				// the fallback sentinel wins the computed --callout-icon cascade.
+				`.callout > .callout-title > .callout-icon > span.${CSS_FALLBACK_ICON} { font-size: var(--icon-size, 1.2em); line-height: 1; }\n` +
+				`.callout > .callout-title > .callout-icon.${CSS_FALLBACK_ICON_HIDDEN} { display: none; }`,
 		);
 
 		for (const def of callouts) {
@@ -385,6 +397,33 @@ export class CSSInjector {
 			imposed,
 			this.studioWeights.dialect(),
 			mode,
+		);
+	}
+
+	/**
+	 * Accent declarations for the weak unknown-id fallback.
+	 *
+	 * `accentProps(..., imposed=true)` supplies a real native
+	 * `--callout-color` even when the template is an untouched built-in. The
+	 * important difference here is that Studio's own accent derives from the
+	 * *winning* native variable rather than repeating the template's fixed
+	 * value. An exact snippet that declares only Obsidian's standard
+	 * `--callout-color` therefore also updates any downstream Studio tint. The
+	 * wrapper follows the active dialect because old themes store a bare RGB
+	 * triplet in that variable while current core stores a full colour.
+	 */
+	private fallbackAccentProps(
+		def: CalloutDefinition,
+		mode: "light" | "dark",
+	): string[] {
+		const accentRef =
+			this.studioWeights.dialect().read === "triplet"
+				? "rgb(var(--callout-color))"
+				: "var(--callout-color)";
+		return this.accentProps(def, mode, false, true).map((prop) =>
+			prop.startsWith("  --cs-accent:")
+				? `  --cs-accent: ${accentRef};`
+				: prop,
 		);
 	}
 
@@ -602,7 +641,7 @@ export class CSSInjector {
 	}
 
 	generateCalloutCSS(def: CalloutDefinition, standalone = false): string {
-		// The theme, or a CSS snippet, owns this one. Guarding the whole
+		// The theme owns this one. Guarding the whole
 		// function rather than its one call site means every block below goes
 		// quiet together: accent variables, --callout-icon, background and
 		// gradient, content colour, the ::after icon override that hides core's
@@ -613,7 +652,7 @@ export class CSSInjector {
 		// emitted its `display: none`. Under an absolute rule that is an
 		// override like any other. The flag is preserved on the row and applies
 		// again the moment this plugin is painting the callout.
-		const theme = this.registry.standsDown(def);
+		const theme = this.registry.themeOwns(def);
 		// Both axes are set before the early return, so a leftover value cannot
 		// reach the next callout even if something below throws. See
 		// manager/theme/studioWeight.ts for why it takes both.
@@ -1238,13 +1277,9 @@ export class CSSInjector {
 	 * is a fixed `calc(--icon-size + gap)` on `.callout-content` and knows nothing
 	 * about whether this callout has an icon to align past. Left standing it would
 	 * indent the body under empty space. One class-unit more specific than the
-	 * global rule (whose `:where()` exclusion suffix contributes zero), so it
-	 * beats it on weight alone.
-	 *
-	 * This is the one thing theme mode still emits, and there it stays ordinary:
-	 * the whole promise of theme mode is that nothing of ours competes, and a
-	 * theme that positions `.callout-icon` itself has to keep being able to.
-	 * Under studio mode it takes the same `!important` as everything else.
+		 * global registered-id rule, so it beats that rule on weight alone. A
+		 * theme-owned callout never reaches this emitter; Studio-owned callouts take
+		 * the same `!important` here as every other declaration on native DOM.
 	 */
 	private iconHiddenCSS(def: CalloutDefinition): string {
 		const aligned =
@@ -1307,7 +1342,7 @@ export class CSSInjector {
 		for (const calloutEl of calloutEls) {
 			const id = calloutEl.getAttribute("data-callout");
 			if (!id) continue;
-			const def = this.resolveDef(id);
+			const def = this.registry.findByAttrId(id);
 			const iconEl = calloutEl.querySelector<HTMLElement>(
 				".callout-title .callout-icon",
 			);
@@ -1317,11 +1352,18 @@ export class CSSInjector {
 				".callout-title .callout-title-inner",
 			);
 			if (!def) {
-				// Handed to the theme (see resolveDef). Skipping this callout is
-				// not enough, because an earlier pass may already have painted
-				// it and nothing else will ever take that back — see
-				// restoreCoreIcon.
-				if (iconEl) this.restoreCoreIcon(calloutEl, iconEl);
+				// An unknown id is the one icon path where CSS decides whether the
+				// fallback or an exact snippet owns the slot. The fallback painter
+				// reads the computed sentinel only after the new sheet is installed.
+				if (iconEl) paintUnknownFallbackIcon(calloutEl, iconEl, this.registry);
+				if (titleInner) clearGradientChars(titleInner);
+				continue;
+			}
+			if (this.registry.themeOwns(def)) {
+				// Skipping is not enough: an earlier pass may already have painted
+				// this element and core resolves its icon only once. Restore from the
+				// now-winning theme/core property on every pass.
+				if (iconEl) restoreCoreIcon(calloutEl, iconEl);
 				if (titleInner) clearGradientChars(titleInner);
 				continue;
 			}
@@ -1448,32 +1490,6 @@ export class CSSInjector {
 	}
 
 	/**
-	 * Resolve an ID read off Obsidian's OWN `data-callout` attribute — the dash
-	 * form (see obsidianCalloutAttrId) — to its definition, falling back to the
-	 * configured fallback callout so unknown IDs paint the fallback icon (the
-	 * DOM equivalent of generateFallbackCSS).
-	 *
-	 * Returns undefined for a theme-styled callout, which is the one case where
-	 * a *recognized* ID resolves to nothing: the caller's job is to paint, and
-	 * there is nothing of ours to paint there.
-	 *
-	 * Only for `.callout[data-callout]` elements. Heading-bar and inline-pill
-	 * DOM is ours and carries the space-form ID; those go through
-	 * renderShared.resolveCalloutDef instead, which tries the exact ID and alias
-	 * first and only then the attribute form, so unknown IDs still earn their
-	 * `.cs-unknown` class.
-	 */
-	private resolveDef(attrId: string): CalloutDefinition | undefined {
-		const direct = this.registry.findByAttrId(attrId);
-		// A theme-styled callout resolves to nothing, sending paintIcons down its
-		// restore path: `renderIconInto` REPLACES whatever <svg> is in the slot,
-		// and swapping core's own icon for one of ours is exactly what theme
-		// mode exists not to do.
-		if (direct) return this.registry.standsDown(direct) ? undefined : direct;
-		return this.registry.get(this.registry.settings.fallbackCalloutId);
-	}
-
-	/**
 	 * Prepare a `.callout-icon` for PDF export.
 	 *
 	 * Live view (Reading view / Live Preview = screen media) renders pack icons
@@ -1501,6 +1517,7 @@ export class CSSInjector {
 	 * artwork the callout does not own.
 	 */
 	private paintIcon(iconEl: HTMLElement, def: CalloutDefinition): void {
+		iconEl.removeClass(CSS_FALLBACK_ICON_HIDDEN);
 		// Nothing to bake for print when the icon is off: iconHiddenCSS takes the
 		// whole box out of the layout in every medium, so a DOM copy here would
 		// only be an invisible child of a display:none parent.
@@ -1518,87 +1535,34 @@ export class CSSInjector {
 	}
 
 	/**
-	 * Put a `.callout-icon` back the way Obsidian drew it.
+	 * Every registered block-callout selector that Studio owns, one per attr id.
 	 *
-	 * Obsidian resolves that element once and never again: its callout
-	 * post-processor returns early on an icon element that already has a child,
-	 * so `--callout-icon` is read exactly once per rendered callout and no
-	 * amount of `css-change` makes it look a second time. Everything else about
-	 * handing a callout to the theme is CSS and lands on the next frame; this
-	 * one node would keep our artwork until the user edited the block into a
-	 * re-render — and in fact would show *nothing*, since `renderIconInto`
-	 * replaced Obsidian's `<svg>` and the `@media screen` rule that reveals the
-	 * replacement went away with the rest of the callout's block.
-	 *
-	 * So the resolution is re-run here the way core runs it (see
-	 * {@link coreIconValue}). Re-read rather than stashed at paint time, so a
-	 * theme swapped in between is picked up; safe to read now because
-	 * `injectNow` paints only once the new stylesheet is in place, which means
-	 * the property already resolves to whatever the theme, a snippet or
-	 * Obsidian itself says rather than to the block we just stopped emitting.
-	 *
-	 * Unconditional — no "did we paint this one" flag gating it. Reading view's
-	 * block callouts get a fresh element from `previewMode.rerender(true)`
-	 * (see `refreshRenderModes`) where core resolves the icon itself and this
-	 * is a no-op either way, but Live Preview's native callout widget has no
-	 * equivalent forced rebuild this plugin can reach: the very element the
-	 * user is looking at when they flip the toggle is the one this has to fix,
-	 * and there is no reliable signal for "has *this* element been corrected
-	 * since the last flip" cheaper than just re-deriving and comparing. Runs on
-	 * every inject for every externally-styled callout as a result — the same
-	 * price {@link paintIcon} already pays, unconditionally, for every callout
-	 * this plugin *does* still style.
+	 * Global frame settings are strong (`!important`) by design, so a generic
+	 * `.callout` rule would also seize unknown ids and make the weak fallback a
+	 * fiction. An explicit allow-list keeps the contract sharp: registered
+	 * Studio callouts get Studio geometry, theme-owned and unregistered callouts
+	 * do not. A Set folds aliases that normalize to the same Obsidian attr form.
 	 */
-	private restoreCoreIcon(calloutEl: HTMLElement, iconEl: HTMLElement): void {
-		iconEl.empty();
-		const value = coreIconValue(calloutEl);
-		if (!value) return;
-		if (value.startsWith("<svg")) {
-			const svg = importCoreIconSvg(value, iconEl.ownerDocument);
-			if (svg) iconEl.appendChild(svg);
-			return;
-		}
-		setIcon(iconEl, value);
-	}
-
-	/**
-	 * Selector suffix that lifts every theme-styled callout out of a rule keyed
-	 * on nothing but `.callout` — `""` when the theme owns none of them.
-	 *
-	 * This is what makes the global frame settings (border, radius, text scale)
-	 * part of what "Callout Studio style" *means*: a callout handed to the theme
-	 * is handed over whole, geometry included.
-	 *
-	 * The `:where()` is the whole point. `:not()` normally takes the specificity
-	 * of its argument, so a plain `:not([data-callout="a"]):not([data-callout="b"])`
-	 * chain would add one class-unit per excluded callout and make these global
-	 * rules progressively *harder* for the very theme the user is handing them
-	 * to. `:where()` contributes zero, so the rules keep the exact weight they
-	 * have today no matter how many rows carry the flag.
-	 *
-	 * (`generateFallbackCSS` builds a chain that deliberately does the opposite —
-	 * there the inflation is what lets the catch-all outrank per-callout rules.)
-	 */
-	private externalExclusion(): string {
+	private studioCalloutSelectors(): string[] {
 		const attrIds = new Set<string>();
 		for (const def of this.registry.getAll()) {
-			if (!this.registry.standsDown(def)) continue;
+			if (this.registry.themeOwns(def)) continue;
 			attrIds.add(obsidianCalloutAttrId(def.id));
 			for (const alias of def.aliases ?? []) {
 				attrIds.add(obsidianCalloutAttrId(alias));
 			}
 		}
-		if (attrIds.size === 0) return "";
-		const list = Array.from(attrIds)
-			.map((id) => tokenAttrSel(id))
-			.join(",");
-		return `:not(:where(${list}))`;
+		return Array.from(attrIds)
+			.sort()
+			.map((id) => `.callout${tokenAttrSel(id)}`);
 	}
 
 	generateGlobalStyleCSS(standalone = false): string {
 		const gs = this.registry.settings.globalStyle;
 		const parts: string[] = ["/* Global callout style */"];
-		const excl = this.externalExclusion();
+		const calloutSelectors = this.studioCalloutSelectors();
+		const selectorsFor = (tail: string): string =>
+			calloutSelectors.map((selector) => `${selector}${tail}`).join(",\n");
 
 		// Space between the icon and the title text. Obsidian core sets
 		// `.callout-title { gap: var(--size-4-1) }` — a fixed 4px — while this
@@ -1614,25 +1578,23 @@ export class CSSInjector {
 		// exactly as the theme set it. Baked-in default, overridable via
 		// --cs-regular-icon-gap in a CSS snippet, same as --cs-heading-icon-offset.
 		//
-		// Generated rather than shipped in styles.css, where it used to live: it
-		// is the only rule the plugin puts on a real vault callout
-		// unconditionally, and a static rule has no way to exclude one the user
-		// handed to their theme. Emitted unconditionally here for the same reason
-		// it was static before — it is a default, not a setting.
+		// Generated rather than shipped in styles.css, where it used to live: the
+		// explicit selector list is what keeps the default on registered Studio
+		// callouts without leaking strong geometry onto unknown ids or callouts
+		// handed to the theme.
 		//
-		// Every declaration below carries `!important`, and for the same reason
-		// the per-callout block does: these rules are keyed on `.callout` alone,
-		// which is the weakest selector in the file, so a theme with any opinion
-		// at all about callout geometry beat them outright. See
-		// manager/styleMode.ts. They stay *below* the per-callout rules among
-		// important declarations, because specificity is compared again there
-		// and `(0,1,0)` loses to `(0,w+1,0)`.
+		// Every declaration below carries `!important`, like the per-callout block:
+		// registered Studio-owned callouts take their geometry whole. These
+		// selectors stay below weighted per-callout rules among important
+		// declarations, because specificity is compared again there.
 		const imp = " !important";
-		parts.push(
-			`.callout${excl} > .callout-title > .callout-icon {\n` +
-				`  margin-inline-end: var(--cs-regular-icon-gap, 0.15em)${imp};\n` +
-				`}`,
-		);
+		if (calloutSelectors.length > 0) {
+			parts.push(
+				`${selectorsFor(" > .callout-title > .callout-icon")} {\n` +
+					`  margin-inline-end: var(--cs-regular-icon-gap, 0.15em)${imp};\n` +
+					`}`,
+			);
+		}
 
 		const props: string[] = [];
 
@@ -1659,28 +1621,26 @@ export class CSSInjector {
 			if (left) props.push(`  border-left: ${bStyle}${imp};`);
 		}
 
-		// Every rule from here down is keyed on nothing but `.callout`, so each
-		// carries the exclusion — a callout handed to the theme must not keep
-		// the plugin's border, radius or text scale. The border especially:
-		// it reads `var(--cs-accent, currentColor)`, so merely withholding the
-		// accent would leave a border in the *wrong* colour rather than none.
-		if (props.length > 0) {
-			parts.push(`.callout${excl} {\n${props.join("\n")}\n}`);
+		// Every strong geometry rule below uses the same explicit list. Merely
+		// withholding `--cs-accent` would not be enough: the border falls back to
+		// currentColor and would still leak onto an unknown or theme-owned block.
+		if (props.length > 0 && calloutSelectors.length > 0) {
+			parts.push(`${selectorsFor("")} {\n${props.join("\n")}\n}`);
 		}
 
 		// Title scale
-		if (gs.titleScale !== 1) {
+		if (gs.titleScale !== 1 && calloutSelectors.length > 0) {
 			parts.push(
-				`.callout${excl} > .callout-title > .callout-title-inner {\n` +
+				`${selectorsFor(" > .callout-title > .callout-title-inner")} {\n` +
 					`  font-size: ${gs.titleScale}em${imp};\n` +
 					`}`,
 			);
 		}
 
 		// Content scale
-		if (gs.contentScale !== 1) {
+		if (gs.contentScale !== 1 && calloutSelectors.length > 0) {
 			parts.push(
-				`.callout${excl} > .callout-content {\n` +
+				`${selectorsFor(" > .callout-content")} {\n` +
 					`  font-size: ${gs.contentScale}em${imp};\n` +
 					`}`,
 			);
@@ -1693,9 +1653,9 @@ export class CSSInjector {
 		// The --cs-regular-icon-gap term mirrors the icon's own trailing margin
 		// from styles.css: without it this indent would fall short by exactly
 		// that margin and the body would sit left of the title text.
-		if (gs.alignContentWithTitle) {
+		if (gs.alignContentWithTitle && calloutSelectors.length > 0) {
 			parts.push(
-				`.callout${excl} > .callout-content {\n` +
+				`${selectorsFor(" > .callout-content")} {\n` +
 					`  padding-inline-start: calc(var(--icon-size, 1.2em) + 0.2em + var(--cs-regular-icon-gap, 0.15em))${imp};\n` +
 					`}`,
 			);
@@ -1793,11 +1753,10 @@ export class CSSInjector {
 	private generateFallbackCSS(callouts: CalloutDefinition[]): string {
 		return generateFallbackCSS(callouts, {
 			settings: this.registry.settings,
-			standsDown: (def) => this.registry.standsDown(def),
-			resolveSvg: (icon, role) => this.icons.resolveSvg(icon, role),
-			getIconCSS: (def) => calloutIconProp(def),
-			accentProps: (def, mode, important, imposed) =>
-				this.accentProps(def, mode, important, imposed),
+			themeOwns: (def) => this.registry.themeOwns(def),
+			getIconCSS: (def) => fallbackCalloutIconProp(def),
+			fallbackAccentProps: (def, mode) =>
+				this.fallbackAccentProps(def, mode),
 			ownAccentProps: (def, mode) => this.ownAccentProps(def, mode),
 			bgProps: (def, mode, important) =>
 				this.bgProps(def, mode, important),
@@ -1807,8 +1766,6 @@ export class CSSInjector {
 					important,
 				),
 			needsDarkBlock: (def) => this.needsDarkBlock(def),
-			themeSurface: (def, selectorsAt) =>
-				this.themeSurface(def, selectorsAt),
 			printGradientCSS: (def, selector, isPill) =>
 				this.printGradientCSS(def, selector, isPill),
 		});

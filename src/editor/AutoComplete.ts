@@ -261,8 +261,8 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		// real id worth inserting — but wears the theme's icon and colour, not
 		// the ones stored on its row. Naming an appearance here that the callout
 		// will not have on the page is the one thing the entry must not do, and
-		// this line used to do it: it tested the raw `externalStyle` field,
-		// which a theme-owned callout never carries.
+		// The list-icon painter asks derived theme ownership directly, so the
+		// answer moves immediately when the active theme changes.
 		const iconEl = el.createDiv({
 			cls: "callout-studio-suggestion-icon",
 		});

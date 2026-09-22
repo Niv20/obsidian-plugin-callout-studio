@@ -1,9 +1,9 @@
 /**
- * manager/css/iconBox.ts — the width of an icon's `::after` box.
+ * manager/css/iconBox.ts — the width of a regular callout icon box.
  *
- * Lived in `CSSInjector` until `generateFallbackCSS` moved out to
- * `./fallbackCSS.ts`; both need it, and importing it back out of the injector
- * would put a runtime cycle between the two. One tiny shared leaf instead.
+ * Shared by the per-id CSS pseudo-element painter and the unknown-fallback DOM
+ * painter. Keeping the aspect calculation in one leaf makes those two live
+ * paths agree for wide uploaded pictures.
  */
 import type { UserImageIcon } from "../../types";
 
@@ -18,7 +18,7 @@ import type { UserImageIcon } from "../../types";
  */
 const MAX_ICON_ASPECT = 4;
 
-/** The `::after` box's width for a picture, or the plain square for a glyph. */
+/** A picture's icon-box width, or the plain square for a glyph. */
 export function iconBoxWidth(picture: UserImageIcon | undefined): string {
 	const size = "var(--icon-size, 1.2em)";
 	if (!picture || picture.height <= 0) return size;

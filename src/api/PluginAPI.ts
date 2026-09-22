@@ -38,7 +38,7 @@ import { normalizeCalloutId } from "../utils/calloutId";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
 
 export class CalloutStudioAPI implements CalloutStudioApi {
-	readonly version = 1;
+	readonly version = 2;
 
 	/** Real ECMAScript privacy — see the file header for why it has to be. */
 	readonly #plugin: CalloutStudioPlugin;
@@ -55,12 +55,7 @@ export class CalloutStudioAPI implements CalloutStudioApi {
 		const dark = isDarkMode();
 		return Object.freeze(
 			usableDefinitions(this.#plugin).map((def) =>
-				toDetails(
-				def,
-				dark,
-				this.#plugin.registry.standsDown(def),
-				this.#plugin.registry.themeOwns(def),
-			),
+				toDetails(def, dark, this.#plugin.registry.themeOwns(def)),
 			),
 		);
 	}
@@ -165,11 +160,9 @@ const toCallout = (def: CalloutDefinition): Callout =>
 const toDetails = (
 	def: CalloutDefinition,
 	dark: boolean,
-	// Both resolved by the registry rather than read off the definition. The
-	// stored `externalStyle` field answers only half of `standsDown`, and
-	// nothing on the row records theme ownership at all — it is derived from
-	// the active theme's stylesheet. See `CalloutRegistry.themeOwns`.
-	standsDown: boolean,
+	// Resolved by the registry rather than read off the definition: nothing on
+	// the row records theme ownership because it is derived from the active
+	// theme's stylesheet. See `CalloutRegistry.themeOwns`.
 	themeStyled: boolean,
 ): CalloutDetails => {
 	const details: {
@@ -185,7 +178,6 @@ const toDetails = (
 		defaultFolded: def.defaultFolded,
 		builtIn: def.builtIn,
 		source: def.source,
-		externalStyle: standsDown,
 		themeStyled,
 	};
 	// Left absent rather than set to undefined: "no authored background" is a

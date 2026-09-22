@@ -28,17 +28,15 @@
  * - Among `!important` declarations the cascade compares specificity again, so
  *   the derived weight is what beats a theme that also shipped `!important`.
  *
- * The escape hatch survives: a user snippet can still overrule us with
- * `!important` plus one more class-unit than {@link studioWeightFor} emitted,
- * and the emitted weight is readable straight off the generated CSS. The
- * signposted route, though, is *Style with my own CSS* on the row itself, which
- * stops the plugin emitting anything for that callout at all.
+ * A user snippet can still overrule a registered Studio callout with
+ * `!important` plus one more class-unit than {@link studioWeightFor} emitted;
+ * the emitted weight is readable straight off the generated CSS. Unknown ids
+ * use the separate weak fallback and need no such escalation.
  *
  * Deliberately *not* covered by any of this: the `.cs-*` DOM this plugin
  * invents for heading and inline callouts. No theme selector can match it, so
- * those rules stay plain, stay correctable, and — since they cannot collide with
- * a theme — are the one thing the plugin still draws for a callout its theme
- * owns.
+ * those rules stay plain and correctable. A theme-owned callout does not get
+ * those invented formats at all; its block remains the theme's alone.
  */
 
 /**

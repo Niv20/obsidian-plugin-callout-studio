@@ -89,6 +89,15 @@ export default tseslint.config(
 			],
 		},
 	},
+	{
+		// Browser cascade fixtures deliberately use native DOM nodes and style
+		// sheets in an isolated page; they neither ship nor run inside Obsidian.
+		files: ["tests/browser/**/*.ts"],
+		rules: {
+			"obsidianmd/no-forbidden-elements": "off",
+			"obsidianmd/prefer-create-el": "off",
+		},
+	},
 	globalIgnores([
 		"node_modules",
 		"dist",

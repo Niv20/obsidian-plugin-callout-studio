@@ -48,7 +48,6 @@ const KNOWN_FIELD_MAP: Record<keyof CalloutDefinition, true> = {
 	aliases: true,
 	paletteId: true,
 	customized: true,
-	externalStyle: true,
 	metadata: true,
 };
 
@@ -71,8 +70,11 @@ export const KNOWN_FIELDS = new Set<string>(Object.keys(KNOWN_FIELD_MAP));
  * (`CalloutRegistry.themeOwns`), so the field describes a decision that is no
  * longer the user's to make. Its every value meant "this plugin paints it",
  * which is also what its absence means.
+ *
+ * `externalStyle` was a released personal-CSS handoff. It is retired separately:
+ * older backups keep their designs, but cannot restore that ownership switch.
  */
-export const RETIRED_FIELDS = new Set<string>(["solidBackground", "styleMode"]);
+export const RETIRED_FIELDS = new Set<string>(["solidBackground", "styleMode", "externalStyle"]);
 
 /** Recognized `CalloutIcon` keys. Total for the same reason as `KNOWN_FIELD_MAP`. */
 const KNOWN_ICON_FIELD_MAP: Record<keyof CalloutIcon, true> = {

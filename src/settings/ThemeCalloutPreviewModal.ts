@@ -72,7 +72,7 @@ export class ThemeCalloutPreviewModal extends Modal {
 
 		new Setting(footer).addButton((btn) =>
 			btn
-				.setButtonText(t("editor.externalStyleClose"))
+				.setButtonText(t("editor.themePreviewClose"))
 				.setCta()
 				.onClick(() => {
 					this.close();

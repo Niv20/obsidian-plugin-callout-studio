@@ -49,7 +49,7 @@ function replaceSavedCallout(
 		textColorLight: undefined, textColorDark: undefined,
 		iconAdjust: undefined, iconOffsetX: undefined, iconOffsetY: undefined,
 		iconSize: undefined, paletteId: undefined, customized: undefined,
-		externalStyle: undefined, metadata: undefined,
+		metadata: undefined,
 		...def,
 	};
 	// Importing a backup does not rewrite notes. Keep every previously accepted

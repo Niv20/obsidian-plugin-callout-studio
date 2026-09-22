@@ -19,10 +19,6 @@ import { ICON_ADJUST_LIMITS } from "./iconAdjust";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { EXPORT_FORMAT_ID } from "../manager/CalloutRegistry";
 import {
-	applyImportedStyleMode,
-	styleModeImportIssue,
-} from "./importStyleMode";
-import {
 	FALLBACK_ICON,
 	MAX_TAG_LENGTH,
 	MAX_TAGS_COUNT,
@@ -977,13 +973,6 @@ function validateCalloutArray(
 			entryOk = false;
 		}
 
-		// ── style mode: the externalStyle / styleMode pair (optional) ──
-		const modeIssue = styleModeImportIssue(entry);
-		if (modeIssue) {
-			push(modeIssue);
-			if (modeIssue.fatal) entryOk = false;
-		}
-
 		// ── metadata ─────────────────────────────────────────
 		if (entry.metadata !== undefined) {
 			if (!validateMetadata(entry.metadata, push)) entryOk = false;
@@ -1181,10 +1170,6 @@ function validateCalloutArray(
 			if (!isBuiltIn && entry.customized === true) {
 				def.customized = true;
 			}
-			// Same `true`-only rule. Unlike `customized` this one *does* apply to
-			// a built-in: handing `[!note]` to the reader's theme is exactly the
-			// kind of thing a shared file is worth carrying.
-			applyImportedStyleMode(def, entry);
 			if (isPlainObject(entry.metadata)) {
 				// Literal metadata names must survive, including __proto__. Ordinary
 				// indexed assignment would invoke the inherited prototype setter.

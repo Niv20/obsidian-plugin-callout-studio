@@ -13,7 +13,6 @@ import type { CalloutDefinition } from "../../types";
 import { packFor } from "../../icons/registry";
 import {
 	authoredCustomizedFlag,
-	authoredStyleMode,
 	hasAuthoredBackground,
 	hasAuthoredTextColors,
 } from "./authoredStyle";
@@ -221,8 +220,7 @@ export async function performCalloutEditorSave(
 		icon: { ...(fallbackBase?.icon ?? state.icon) },
 		// `true` or absent, never `false` — an explicit `false` would leave a
 		// built-in nobody edited reading as customized forever (isModified
-		// compares `value ?? null`), which is the same trap setExternalStyle
-		// deletes its key to avoid.
+		// compares `value ?? null`).
 		hideIcon:
 			(fallbackBase ? fallbackBase.hideIcon === true : state.hideIcon) ||
 			undefined,
@@ -280,7 +278,6 @@ export async function performCalloutEditorSave(
 		paletteId: fallbackBase ? fallbackBase.paletteId : state.paletteId,
 		...(existingDef?.metadata ? { metadata: structuredClone(existingDef.metadata) } : {}),
 		...(customized === true ? { customized: true } : {}),
-		...authoredStyleMode(hasStyleChanges),
 	};
 
 	const protectedRename = stageRenameAliases(def, input.onVaultChangesReady ? removedIds : []);

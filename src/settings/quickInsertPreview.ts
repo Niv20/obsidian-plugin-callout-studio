@@ -10,12 +10,11 @@
  * border, a tint or a radius, which is what makes the preview unable to drift
  * from the note: there is no second implementation to drift *from*.
  *
- * That also covers the cases an imitation would quietly get wrong — a callout
- * marked `externalStyle` (which the injector deliberately skips, leaving the
- * theme in charge), a `hideIcon` row, a snippet the user wrote by hand, a fold
- * mark, a gradient title. The registered markdown post-processor runs on this
- * output too, so `CSSInjector.paintIcons` bakes the artwork in exactly as it
- * does in a note.
+ * That also covers the cases an imitation would quietly get wrong — a
+ * theme-owned callout, a `hideIcon` row, a snippet the user wrote by hand, a
+ * fold mark, a gradient title. The registered markdown post-processor runs on
+ * this output too, so `CSSInjector.paintIcons` bakes the artwork in exactly as
+ * it does in a note.
  *
  * **One render for the whole list, cached by id.** A render per row per
  * keystroke would be absurd, and the content depends only on the definition, so
