@@ -103,13 +103,6 @@ export const fi: Record<string, string> = {
 	"settings.makeFallbackAction": "Käytä oletusvaratyyliä",
 	"settings.colorSwatchAria": "Aksentti: {{accent}} · Tausta: {{bg}}",
 
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Tyylittele omalla CSS:llä",
-	"settings.externalCssStopAction": "Anna Callout Studion tyylitellä tämä taas",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "Ulkoinen CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Teemasi calloutit",
 	"settings.themeCalloutsDesc":
@@ -244,9 +237,6 @@ export const fi: Record<string, string> = {
 	"notice.iconDownloadFailed":
 		'Material-kuvakkeen "{{name}}" lataaminen epäonnistui. Se ei ehkä ole saatavilla tälle tyylille/painolle tai yhteys on poikki.',
 
-	"notice.externalCssOn":
-		'Callout Studio ei enää tyylittele calloutia "{{name}}" — oma CSS:äsi päättää sen ulkoasun. Sen otsikko- ja rivinsisäinen callout-muoto eivät näy.',
-	"notice.externalCssOff": 'Callout Studio tyylittelee taas calloutia "{{name}}".',
 	"notice.vaultScanFailed": "Calloutien käyttöä ei voitu laskea, koska {{count}} muistiinpanoa ei voitu lukea. Tarkista tallennustila ja synkronointi ja yritä uudelleen.",
 
 	"notice.vaultRewritePartial":
@@ -349,7 +339,7 @@ export const fi: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> Tältä calloutin sisältö näyttää.\n",
 
-	"editor.externalStyleClose": "Selvä",
+	"editor.themePreviewClose": "Selvä",
 	// Palette editor modal
 	"palette.newTitle": "Uusi väripaletti",
 	"palette.groupPalette": "Paletti",

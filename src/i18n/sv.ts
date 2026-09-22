@@ -108,13 +108,6 @@ export const sv: Record<string, string> = {
 	"settings.resetAction": "Återställ till standard",
 	"settings.makeFallbackAction": "Använd standard reservstil",
 	"settings.colorSwatchAria": "Accent: {{accent}} · Bakgrund: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Style med min egen CSS",
-	"settings.externalCssStopAction": "Låt Callout Studio style detta igen",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "Extern CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts från ditt tema",
 	"settings.themeCalloutsDesc":
@@ -251,9 +244,6 @@ export const sv: Record<string, string> = {
 		"Inga nya callout-typer importerades (ID:n kan redan finnas).",
 	"notice.iconDownloadFailed":
 		'Det gick inte att ladda ned Material-ikonen "{{name}}". Den kanske inte är tillgänglig för den här stilen/vikten, eller så är anslutningen offline.',
-	"notice.externalCssOn":
-		'Callout Studio stylar inte längre "{{name}}" — din egen CSS avgör hur den ser ut. Dess Rubrik-callout- och Infogad callout-format renderas inte.',
-	"notice.externalCssOff": 'Callout Studio stylar nu "{{name}}" igen.',
 	"notice.vaultScanFailed": "Det gick inte att räkna callout-användning eftersom {{count}} anteckning(ar) inte gick att läsa. Kontrollera lagring och synkronisering och försök igen.",
 
 	"notice.vaultRewritePartial":
@@ -353,7 +343,7 @@ export const sv: Record<string, string> = {
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> Så här ser calloutens innehåll ut.\n",
-	"editor.externalStyleClose": "Förstått",
+	"editor.themePreviewClose": "Förstått",
 
 	// Palette editor modal
 	"palette.newTitle": "Ny färgpalett",

@@ -108,13 +108,6 @@ export const id: Record<string, string> = {
 	"settings.makeFallbackAction": "Gunakan gaya fallback default",
 
 	"settings.colorSwatchAria": "Aksen: {{accent}} · Latar belakang: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Gaya dengan CSS saya sendiri",
-	"settings.externalCssStopAction": "Biarkan Callout Studio menata gaya ini lagi",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "CSS eksternal",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout dari tema Anda",
 	"settings.themeCalloutsDesc":
@@ -251,9 +244,6 @@ export const id: Record<string, string> = {
 		"Tidak ada tipe callout baru yang diimpor (ID mungkin sudah ada).",
 	"notice.iconDownloadFailed":
 		'Gagal mengunduh ikon Material "{{name}}". Ikon ini mungkin tidak tersedia untuk gaya/ketebalan ini, atau koneksi Anda sedang offline.',
-	"notice.externalCssOn":
-		'Callout Studio tidak lagi menata gaya "{{name}}" — CSS Anda sendiri yang menentukan tampilannya. Bentuk Heading Callout dan Inline Callout-nya tidak akan dirender.',
-	"notice.externalCssOff": 'Callout Studio kini menata gaya "{{name}}" lagi.',
 	"notice.vaultScanFailed": "Tidak dapat menghitung penggunaan callout karena {{count}} catatan tidak dapat dibaca. Periksa penyimpanan dan sinkronisasi, lalu coba lagi.",
 
 	"notice.vaultRewritePartial":
@@ -354,9 +344,8 @@ export const id: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> Beginilah tampilan konten callout ini.\n",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleClose": "Mengerti",
+	// Theme callout preview window
+	"editor.themePreviewClose": "Mengerti",
 
 	// Palette editor modal
 	"palette.newTitle": "Palet warna baru",

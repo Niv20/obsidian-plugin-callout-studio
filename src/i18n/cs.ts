@@ -108,13 +108,6 @@ export const cs: Record<string, string> = {
 	"settings.makeFallbackAction": "Použít výchozí záložní styl",
 
 	"settings.colorSwatchAria": "Akcent: {{accent}} · Pozadí: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Stylizovat vlastním CSS",
-	"settings.externalCssStopAction": "Nechat Callout Studio opět stylizovat",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "Vlastní CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts z vašeho tématu",
 	"settings.themeCalloutsDesc":
@@ -249,9 +242,6 @@ export const cs: Record<string, string> = {
 		"Žádné nové typy callout nebyly importovány (ID mohou již existovat).",
 	"notice.iconDownloadFailed":
 		'Ikonu Material "{{name}}" nelze stáhnout. Může být nedostupná pro tento styl/tloušťku nebo jste offline.',
-	"notice.externalCssOn":
-		'Callout Studio už nestylizuje "{{name}}" — jeho vzhled určuje vaše vlastní CSS. Jeho formáty Nadpis a Vložený se nebudou vykreslovat.',
-	"notice.externalCssOff": 'Callout Studio nyní opět stylizuje "{{name}}".',
 	"notice.vaultScanFailed": "Počet použití calloutu nebylo možné zjistit, protože nebylo možné přečíst {{count}} poznámku/poznámek. Zkontrolujte ukládání a synchronizaci a zkuste to znovu.",
 
 	"notice.vaultRewritePartial":
@@ -352,7 +342,7 @@ export const cs: Record<string, string> = {
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> Takto vypadá obsah tohoto callout.\n",
-	"editor.externalStyleClose": "Rozumím",
+	"editor.themePreviewClose": "Rozumím",
 
 	// Palette editor modal
 	"palette.newTitle": "Nová barevná paleta",

@@ -110,13 +110,6 @@ export const ko: Record<string, string> = {
 
 	"settings.colorSwatchAria": "강조색: {{accent}} · 배경: {{bg}}",
 
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "직접 CSS로 스타일 지정",
-	"settings.externalCssStopAction": "Callout Studio가 다시 스타일 지정하도록 하기",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "외부 CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "테마에서 제공하는 callout",
 	"settings.themeCalloutsDesc":
@@ -253,9 +246,6 @@ export const ko: Record<string, string> = {
 		"새로운 callout 유형을 가져오지 못했습니다 (ID가 이미 존재할 수 있습니다).",
 	"notice.iconDownloadFailed":
 		'Material 아이콘 "{{name}}"을(를) 다운로드할 수 없습니다. 이 스타일/굵기에서 사용할 수 없거나 연결이 오프라인 상태일 수 있습니다.',
-	"notice.externalCssOn":
-		'더 이상 Callout Studio가 "{{name}}"을(를) 스타일 지정하지 않습니다 — 이제 직접 작성한 CSS가 모양을 결정합니다. 제목 callout과 인라인 callout 형식은 렌더링되지 않습니다.',
-	"notice.externalCssOff": 'Callout Studio가 "{{name}}"을(를) 다시 스타일 지정합니다.',
 	"notice.vaultScanFailed": "callout 사용량을 계산할 수 없었습니다. {{count}}개의 노트를 읽을 수 없었습니다. 저장소 및 동기화를 확인하고 다시 시도하세요.",
 
 	"notice.vaultRewritePartial":
@@ -354,9 +344,8 @@ export const ko: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> callout 내용은 이렇게 보입니다.\n",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleClose": "확인",
+	// Theme callout preview window
+	"editor.themePreviewClose": "확인",
 
 	// Palette editor modal
 	"palette.newTitle": "새 색상 팔레트",

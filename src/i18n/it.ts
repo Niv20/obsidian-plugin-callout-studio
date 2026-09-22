@@ -109,13 +109,6 @@ export const it: Record<string, string> = {
 	"settings.makeFallbackAction": "Usa stile di fallback predefinito",
 	"settings.colorSwatchAria": "Accento: {{accent}} · Sfondo: {{bg}}",
 
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Applica uno stile con il mio CSS",
-	"settings.externalCssStopAction": "Lascia che Callout Studio applichi di nuovo lo stile",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "CSS esterno",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout dal tuo tema",
 	"settings.themeCalloutsDesc":
@@ -255,9 +248,6 @@ export const it: Record<string, string> = {
 	"notice.iconDownloadFailed":
 		'Impossibile scaricare l\'icona Material "{{name}}". Potrebbe non essere disponibile per questo stile/peso, o la connessione è offline.',
 
-	"notice.externalCssOn":
-		"Callout Studio non applica più uno stile a \"{{name}}\" — il tuo CSS decide il suo aspetto. Le sue forme Callout di intestazione e Callout in linea non verranno visualizzate.",
-	"notice.externalCssOff": 'Callout Studio applica di nuovo uno stile a "{{name}}".',
 	"notice.vaultScanFailed": "Impossibile contare l'uso dei callout perché non è stato possibile leggere {{count}} nota/e. Controlla lo spazio di archiviazione e la sincronizzazione, quindi riprova.",
 
 	"notice.vaultRewritePartial":
@@ -362,7 +352,7 @@ export const it: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> Ecco come appare il contenuto del callout.\n",
 
-	"editor.externalStyleClose": "Capito",
+	"editor.themePreviewClose": "Capito",
 
 	// Palette editor modal
 	"palette.newTitle": "Nuova tavolozza di colori",

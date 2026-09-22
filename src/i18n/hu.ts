@@ -109,13 +109,6 @@ export const hu: Record<string, string> = {
 	"settings.makeFallbackAction": "Alapértelmezett tartalékstílus használata",
 
 	"settings.colorSwatchAria": "Kiemelés: {{accent}} · Háttér: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Stílus saját CSS-sel",
-	"settings.externalCssStopAction": "A Callout Studio ismét stílust adhat neki",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "Külső CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "A témájából származó callout-ok",
 	"settings.themeCalloutsDesc":
@@ -252,9 +245,6 @@ export const hu: Record<string, string> = {
 		"Nem importáltunk új callout-típust (az azonosítók már létezhetnek).",
 	"notice.iconDownloadFailed":
 		'A "{{name}}" Material ikon letöltése nem sikerült. Lehet, hogy ez a stílus/vastagság nem érhető el, vagy nincs internetkapcsolata.',
-	"notice.externalCssOn":
-		'A Callout Studio többé nem stílusozza a(z) "{{name}}"-t — a saját CSS-e dönti el, hogyan néz ki. A Címsor callout és a Beágyazott callout formája nem jelenik meg.',
-	"notice.externalCssOff": 'A Callout Studio ismét stílust ad a(z) "{{name}}"-nek.',
 	"notice.vaultScanFailed": "A callout használatot nem sikerült megszámolni, mert {{count}} jegyzet nem volt olvasható. Ellenőrizze a tárolót és a szinkronizálást, majd próbálja újra.",
 
 	"notice.vaultRewritePartial":
@@ -357,9 +347,8 @@ export const hu: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> Így néz ki a callout tartalma.\n",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleClose": "Értem",
+	// Theme callout preview window
+	"editor.themePreviewClose": "Értem",
 
 	// Palette editor modal
 	"palette.newTitle": "Új színpaletta",

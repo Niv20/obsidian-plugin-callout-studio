@@ -100,13 +100,6 @@ export const zhTW: Record<string, string> = {
 	"settings.makeFallbackAction": "使用預設備用樣式",
 	"settings.colorSwatchAria": "強調色：{{accent}} · 背景：{{bg}}",
 
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "以我自己的 CSS 設定樣式",
-	"settings.externalCssStopAction": "讓 Callout Studio 重新為此設定樣式",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "外部 CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "來自您佈景主題的 callout",
 	"settings.themeCalloutsDesc":
@@ -235,9 +228,6 @@ export const zhTW: Record<string, string> = {
 	"notice.iconDownloadFailed":
 		"無法下載 Material 圖示「{{name}}」。該圖示可能不支援此樣式/字重，或您的網路連線已中斷。",
 
-	"notice.externalCssOn":
-		"Callout Studio 不再為「{{name}}」設定樣式——由您自己的 CSS 決定它的外觀。它的標題 callout 和行內 callout 形式將不會顯示。",
-	"notice.externalCssOff": "Callout Studio 現在再次為「{{name}}」設定樣式。",
 	"notice.vaultScanFailed": "無法統計 Callout 使用次數，因為無法讀取 {{count}} 篇筆記。請檢查儲存與同步後再試。",
 
 	"notice.vaultRewritePartial":
@@ -336,7 +326,7 @@ export const zhTW: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> 這是該 callout 內容的顯示效果。\n",
 
-	"editor.externalStyleClose": "知道了",
+	"editor.themePreviewClose": "知道了",
 	// Palette editor modal
 	"palette.newTitle": "新增調色盤",
 	"palette.groupPalette": "調色盤",

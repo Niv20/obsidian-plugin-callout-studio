@@ -108,13 +108,6 @@ export const hi: Record<string, string> = {
 	"settings.makeFallbackAction": "डिफ़ॉल्ट फ़ॉलबैक स्टाइल उपयोग करें",
 
 	"settings.colorSwatchAria": "एक्सेंट: {{accent}} · पृष्ठभूमि: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "अपने खुद के CSS से स्टाइल करें",
-	"settings.externalCssStopAction": "Callout Studio को इसे फिर से स्टाइल करने दें",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "बाहरी CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "आपकी थीम के callouts",
 	"settings.themeCalloutsDesc":
@@ -253,9 +246,6 @@ export const hi: Record<string, string> = {
 		"कोई नए callout प्रकार आयात नहीं हुए (ID पहले से मौजूद हो सकते हैं)।",
 	"notice.iconDownloadFailed":
 		'Material आइकन "{{name}}" डाउनलोड नहीं हो सका। यह इस स्टाइल/वेट के लिए उपलब्ध नहीं हो सकता, या आपका कनेक्शन ऑफलाइन हो सकता है।',
-	"notice.externalCssOn":
-		'Callout Studio अब "{{name}}" को स्टाइल नहीं करता — इसका रूप अब आपका खुद का CSS तय करता है। इसके हेडिंग callout और इनलाइन callout रूप नहीं दिखेंगे।',
-	"notice.externalCssOff": 'Callout Studio अब फिर से "{{name}}" को स्टाइल करता है।',
 	"notice.vaultScanFailed": "कॉलआउट उपयोग की गणना नहीं की जा सकी क्योंकि {{count}} नोट(ों) को पढ़ा नहीं जा सका। भंडारण और सिंक्रोनाइज़ेशन की जाँच करें, फिर दोबारा प्रयास करें।",
 
 	"notice.vaultRewritePartial":
@@ -355,9 +345,8 @@ export const hi: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> callout की सामग्री ऐसी दिखती है।\n",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleClose": "समझ गया",
+	// Theme callout preview window
+	"editor.themePreviewClose": "समझ गया",
 
 	// Palette editor modal
 	"palette.newTitle": "नया रंग पैलेट",

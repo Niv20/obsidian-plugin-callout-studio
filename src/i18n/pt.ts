@@ -107,13 +107,6 @@ export const pt: Record<string, string> = {
 	"settings.resetAction": "Redefinir para padrão",
 	"settings.makeFallbackAction": "Usar estilo de fallback padrão",
 	"settings.colorSwatchAria": "Destaque: {{accent}} · Fundo: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Estilizar com meu próprio CSS",
-	"settings.externalCssStopAction": "Deixar o Callout Studio estilizar isso de novo",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "CSS externo",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts do seu tema",
 	"settings.themeCalloutsDesc":
@@ -251,9 +244,6 @@ export const pt: Record<string, string> = {
 		"Nenhum novo tipo de callout foi importado (os IDs podem já existir).",
 	"notice.iconDownloadFailed":
 		'Não foi possível baixar o ícone Material "{{name}}". Pode estar indisponível para este estilo/peso, ou sua conexão pode estar offline.',
-	"notice.externalCssOn":
-		'O Callout Studio não estiliza mais "{{name}}" — o seu próprio CSS decide sua aparência. As formas Callout de cabeçalho e Callout em linha não serão renderizadas.',
-	"notice.externalCssOff": 'O Callout Studio volta a estilizar "{{name}}".',
 	"notice.vaultScanFailed": "Não foi possível contar o uso do callout porque {{count}} nota(s) não puderam ser lidas. Verifique o armazenamento e a sincronização e tente novamente.",
 
 	"notice.vaultRewritePartial":
@@ -354,7 +344,7 @@ export const pt: Record<string, string> = {
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> É assim que o conteúdo deste callout se parece.\n",
-	"editor.externalStyleClose": "Entendi",
+	"editor.themePreviewClose": "Entendi",
 
 	// Palette editor modal
 	"palette.newTitle": "Nova paleta de cores",

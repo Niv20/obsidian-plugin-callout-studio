@@ -108,9 +108,6 @@ export const fa: Record<string, string> = {
 	"settings.makeFallbackAction": "استفاده از سبک پشتیبان پیش‌فرض",
 
 	"settings.colorSwatchAria": "برجسته: {{accent}} · پس‌زمینه: {{bg}}",
-	"settings.externalCssAction": "با CSS شخصی خودم استایل بده",
-	"settings.externalCssStopAction": "اجازه بده Callout Studio دوباره این را استایل بدهد",
-	"settings.externalCssTag": "CSS خارجی",
 	"settings.themeCalloutsHeading": "Callout های پوسته‌ی شما",
 	"settings.themeCalloutsDesc":
 		"{{theme}} این‌ها را ارائه می‌دهد یا دوباره استایل می‌دهد، بنابراین Callout Studio آن‌ها را دقیقاً همان‌طور که پوسته‌تان ترسیم می‌کند رها می‌کند و فقط به‌صورت Block callout ارائه می‌دهد. هر دو نوع اینجا نمایش داده می‌شوند: انواع callout که پوسته‌تان اضافه می‌کند، و callout های داخلی که ظاهرشان را جایگزین می‌کند. انواع callout که پوسته‌تان اضافه می‌کند فقط زمانی که فعال است فهرست می‌شوند.",
@@ -247,9 +244,6 @@ export const fa: Record<string, string> = {
 		"هیچ نوع callout جدیدی وارد نشد (شناسه‌ها ممکن است از قبل وجود داشته باشند).",
 	"notice.iconDownloadFailed":
 		'دانلود آیکون Material "{{name}}" ناموفق بود. ممکن است برای این سبک/وزن در دسترس نباشد، یا اتصال شما قطع باشد.',
-	"notice.externalCssOn":
-		'Callout Studio دیگر "{{name}}" را استایل نمی‌دهد — CSS شخصی خودتان تعیین می‌کند که چگونه به نظر برسد. قالب‌های Heading Callout و Inline Callout آن رندر نخواهند شد.',
-	"notice.externalCssOff": 'Callout Studio اکنون دوباره "{{name}}" را استایل می‌دهد.',
 	"notice.vaultScanFailed": "نمی‌توان شمارش استفاده از کال‌اوت را انجام داد چون {{count}} یادداشت(ها) قابل خواندن نبودند. لطفاً ذخیره‌سازی و همگام‌سازی را بررسی کرده و دوباره تلاش کنید.",
 
 	"notice.vaultRewritePartial":
@@ -349,7 +343,7 @@ export const fa: Record<string, string> = {
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> محتوای این callout این‌طور به نظر می‌رسد.\n",
-	"editor.externalStyleClose": "متوجه شدم",
+	"editor.themePreviewClose": "متوجه شدم",
 
 	// Palette editor modal
 	"palette.newTitle": "پالت رنگ جدید",

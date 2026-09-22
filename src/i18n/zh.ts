@@ -107,13 +107,6 @@ export const zh: Record<string, string> = {
 
 	"settings.colorSwatchAria": "强调色：{{accent}} · 背景：{{bg}}",
 
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "用我自己的 CSS 设置样式",
-	"settings.externalCssStopAction": "让 Callout Studio 重新为此设置样式",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "外部 CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "来自主题的 callout",
 	"settings.themeCalloutsDesc":
@@ -246,9 +239,6 @@ export const zh: Record<string, string> = {
 	"notice.iconDownloadFailed":
 		'无法下载 Material 图标"{{name}}"。该图标可能不支持此样式/字重，或您的网络连接已断开。',
 
-	"notice.externalCssOn":
-		'Callout Studio 不再为 "{{name}}" 设置样式——由您自己的 CSS 决定它的外观。它的标题 callout 和行内 callout 形式将不会渲染。',
-	"notice.externalCssOff": 'Callout Studio 现在再次为 "{{name}}" 设置样式。',
 	"notice.vaultScanFailed": "无法统计 callout 使用次数，因为无法读取 {{count}} 篇笔记。请检查存储和同步后重试。",
 
 	"notice.vaultRewritePartial":
@@ -348,7 +338,7 @@ export const zh: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> 这是该 callout 内容的显示效果。\n",
 
-	"editor.externalStyleClose": "知道了",
+	"editor.themePreviewClose": "知道了",
 
 	// Palette editor modal
 	"palette.newTitle": "新建调色板",

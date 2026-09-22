@@ -108,13 +108,6 @@ export const ar: Record<string, string> = {
 	"settings.makeFallbackAction": "استخدام النمط الاحتياطي الافتراضي",
 
 	"settings.colorSwatchAria": "التمييز: {{accent}} · الخلفية: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "التنسيق بـ CSS الخاص بي",
-	"settings.externalCssStopAction": "السماح لـ Callout Studio بتنسيق هذا مجددًا",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "CSS خارجي",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts من سمتك",
 	"settings.themeCalloutsDesc":
@@ -248,9 +241,6 @@ export const ar: Record<string, string> = {
 		"لم يتم استيراد أنواع callout جديدة (قد تكون المعرّفات موجودة بالفعل).",
 	"notice.iconDownloadFailed":
 		'تعذّر تنزيل أيقونة Material "{{name}}". قد تكون غير متاحة لهذا الأسلوب/الوزن، أو قد يكون اتصالك بالإنترنت منقطعًا.',
-	"notice.externalCssOn":
-		'لم يعد Callout Studio ينسّق "{{name}}" — كود CSS الخاص بك هو من يحدّد شكله الآن. لن يتم عرض شكلَي callout العنوان وcallout المضمّن الخاصين به.',
-	"notice.externalCssOff": 'يقوم Callout Studio بتنسيق "{{name}}" مرة أخرى.',
 	"notice.vaultScanFailed": "تعذّرت عملية عدّ استخدامات الـcallout لأن {{count}} ملاحظة/ملاحظات لا يمكن قراءتها. تحقق من التخزين والمزامنة ثم أعد المحاولة.",
 
 	"notice.vaultRewritePartial":
@@ -347,7 +337,7 @@ export const ar: Record<string, string> = {
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> هذا هو شكل محتوى الـ callout.\n",
-	"editor.externalStyleClose": "فهمت",
+	"editor.themePreviewClose": "فهمت",
 
 	// Palette editor modal
 	"palette.newTitle": "لوحة ألوان جديدة",

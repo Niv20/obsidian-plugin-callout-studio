@@ -105,13 +105,6 @@ export const ms: Record<string, string> = {
 	"settings.makeFallbackAction": "Gunakan gaya sandaran lalai",
 	"settings.colorSwatchAria": "Aksen: {{accent}} · Latar belakang: {{bg}}",
 
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Gayakan dengan CSS saya sendiri",
-	"settings.externalCssStopAction": "Biarkan Callout Studio menggayakannya semula",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "CSS Luaran",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts daripada tema anda",
 	"settings.themeCalloutsDesc":
@@ -247,9 +240,6 @@ export const ms: Record<string, string> = {
 		"Tiada jenis callout baharu diimport (ID mungkin sudah wujud).",
 	"notice.iconDownloadFailed":
 		'Gagal memuat turun ikon Material "{{name}}". Ikon ini mungkin tidak tersedia untuk gaya/ketebalan ini, atau sambungan anda tidak tersambung.',
-	"notice.externalCssOn":
-		'Callout Studio tidak lagi menggayakan "{{name}}" — CSS anda sendiri menentukan rupanya. Bentuk Callout Tajuk dan Callout Sebarisnya tidak akan dipaparkan.',
-	"notice.externalCssOff": 'Callout Studio kini menggayakan "{{name}}" semula.',
 	"notice.vaultScanFailed": "Penggunaan callout tidak dapat dikira kerana {{count}} nota tidak dapat dibaca. Semak storan dan penyegerakan, kemudian cuba lagi.",
 
 	"notice.vaultRewritePartial":
@@ -350,9 +340,8 @@ export const ms: Record<string, string> = {
 		"> [!{{id}}] {{name}}\n" +
 		"> Beginilah rupa kandungan callout ini.\n",
 
-	// External style window (opens instead of the editor for a callout the
-	// user handed to their theme / a CSS snippet)
-	"editor.externalStyleClose": "Faham",
+	// Theme callout preview window
+	"editor.themePreviewClose": "Faham",
 	// Palette editor modal
 	"palette.newTitle": "Palet warna baharu",
 	"palette.groupPalette": "Palet",

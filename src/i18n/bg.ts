@@ -101,13 +101,6 @@ export const bg: Record<string, string> = {
 	"settings.resetAction": "Нулиране до стандартното",
 	"settings.makeFallbackAction": "Използване на стандартния резервен стил",
 	"settings.colorSwatchAria": "Акцент: {{accent}} · Фон: {{bg}}",
-	// Handing a callout to the user's own CSS. Not a statement about the theme —
-	// that is derived and has no action — so the wording names the snippet.
-	"settings.externalCssAction": "Стилизиране с моя собствен CSS",
-	"settings.externalCssStopAction": "Callout Studio да стилизира отново това",
-	// The one label on any row: a callout sitting among the user's own that
-	// Callout Studio has nonetheless stopped painting.
-	"settings.externalCssTag": "Външен CSS",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout-и от вашата тема",
 	"settings.themeCalloutsDesc":
@@ -237,9 +230,6 @@ export const bg: Record<string, string> = {
 		"Не са импортирани нови типове callout (ID-тата може вече да съществуват).",
 	"notice.iconDownloadFailed":
 		'Неуспешно изтегляне на икона Material "{{name}}". Може да е недостъпна за този стил/тегло или да нямате интернет връзка.',
-	"notice.externalCssOn":
-		'Callout Studio вече не стилизира "{{name}}" — собственият ви CSS решава как изглежда. Формите му Заглавие и Вграден callout няма да се визуализират.',
-	"notice.externalCssOff": 'Callout Studio отново стилизира "{{name}}".',
 	"notice.vaultScanFailed": "Не може да се преброи използването на callout, защото не могат да се прочетат {{count}} бележки. Проверете съхранението и синхронизацията и опитайте отново.",
 
 	"notice.vaultRewritePartial":
@@ -338,7 +328,7 @@ export const bg: Record<string, string> = {
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
 		"> Ето как изглежда съдържанието на callout-а.\n",
-	"editor.externalStyleClose": "Разбрах",
+	"editor.themePreviewClose": "Разбрах",
 	// Palette editor modal
 	"palette.newTitle": "Нова цветова палитра",
 	"palette.groupPalette": "Палитра",
