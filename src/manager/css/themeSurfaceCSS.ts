@@ -8,13 +8,14 @@
  *
  * ## The surface
  *
- *     <guard> .callout…[data-callout="x"] {
- *       background-color: transparent !important;
+ *     <guard> .callout…[data-callout="x"]<root conditions> {
+ *       background-color: <theme root colour> !important;
  *       background-image: none !important;
  *     }
  *
- * GitHub Theme with **GitHub callout style** on, Prism, Cybertron and thirteen
- * others blank `.callout` at ordinary importance; this plugin paints it with
+ * GitHub Theme with **GitHub callout style** on, Prism, Cybertron and others
+ * blank `.callout` at ordinary importance. AnuPpuccin Sleek instead paints a
+ * neutral root from a theme variable. This plugin paints its own root with
  * `!important`, so the studio callout is the only filled box on the page. In
  * Prism the damage is worse than a mismatch: Prism draws no frame on `.callout`
  * at all — the visible box is `.callout-title`'s 2px border over
@@ -27,8 +28,8 @@
  * and that is the whole reason a Style Settings toggle works live. Style
  * Settings' `setSetting` adds and removes body classes and fires no
  * `css-change`, so a decision taken in JS would never be revisited. Restating
- * the theme's guard in front of our own selector puts the decision back in the
- * cascade: one stylesheet carries both states and the browser picks, instantly,
+ * the theme's guard and root conditions in our selector puts the decision back
+ * in the cascade: one stylesheet carries both states and the browser picks, instantly,
  * with nothing re-injected. It also covers the light rule, the `.theme-dark`
  * rule and every alias copy in one block rather than three.
  *
@@ -87,6 +88,7 @@
  */
 import type { CalloutSurface } from "../theme/calloutSurface";
 import { guardPrefix } from "../theme/calloutSurface";
+import { splitSelectorList } from "../../utils/selectorText";
 
 export interface ThemeSurfaceInput {
 	/**
@@ -96,7 +98,7 @@ export interface ThemeSurfaceInput {
 	 * A callback because each per-callout block supplies its own id and aliases
 	 * at the required cancellation weight.
 	 */
-	selectorsFor(guard: string): string;
+	selectorsFor(guard: string, rootQualifier: string): string;
 	/** What the active styling says. */
 	surface: CalloutSurface;
 	/** True when this def emits background declarations there would be anything to cancel. */
@@ -109,8 +111,7 @@ export interface ThemeSurfaceInput {
 
 /** Re-point a comma-joined selector list at one child or pseudo of each part. */
 function each(sels: string, tail: string): string {
-	return sels
-		.split(",\n")
+	return splitSelectorList(sels)
 		.map((s) => `${s}${tail}`)
 		.join(",\n");
 }
@@ -124,12 +125,15 @@ function before(sels: string): string {
 export function themeSurfaceCSS(input: ThemeSurfaceInput): string {
 	const parts: string[] = [];
 
-	for (const guard of input.surface.neutralBackground) {
-		const sels = input.selectorsFor(guardPrefix(guard));
+	for (const background of input.surface.neutralBackground) {
+		const sels = input.selectorsFor(
+			guardPrefix(background.guard),
+			background.rootQualifier,
+		);
 		if (input.paintsBackground) {
 			parts.push(
 				`${sels} {\n` +
-					`  background-color: transparent !important;\n` +
+					`  background-color: ${background.color} !important;\n` +
 					`  background-image: none !important;\n` +
 					`}`,
 			);
@@ -154,7 +158,7 @@ export function themeSurfaceCSS(input: ThemeSurfaceInput): string {
 
 	if (!input.transparentBg) {
 		for (const guard of input.surface.colorlessFrame) {
-			const sels = input.selectorsFor(guardPrefix(guard));
+			const sels = input.selectorsFor(guardPrefix(guard), "");
 			const boxes = [
 				each(sels, " > .callout-title"),
 				each(sels, " > .callout-content"),

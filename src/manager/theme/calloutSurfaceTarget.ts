@@ -20,7 +20,7 @@
  * not be restated faithfully, and a guard that means something *else* in front
  * of our selector is worse than no fact at all.
  */
-import { matchParen, skipBrackets } from "../../utils/selectorText";
+import { blankNegations, matchParen, skipBrackets } from "../../utils/selectorText";
 
 /** Which box a generic callout selector ends on. */
 export type SurfaceTarget = "root" | "child";
@@ -30,6 +30,20 @@ export interface SurfaceHit {
 	target: SurfaceTarget;
 	/** The ancestor steps, verbatim. `""` when the rule has no guard at all. */
 	guard: string;
+	/** Conditions on `.callout` itself, replayed after our `[data-callout]`. */
+	rootQualifier: string;
+}
+
+/** A positive id selector names a theme-owned row; exclusions do not. */
+function namesCalloutId(part: string): boolean {
+	return /\[\s*data-callout(?![\w-])/i.test(blankNegations(part));
+}
+
+/** Preserve root metadata/state predicates without repeating its type or class. */
+function rootQualifier(step: string): string {
+	return step
+		.replace(/^[a-z][\w-]*/i, "")
+		.replace(/\.callout(?![\w-])/, "");
 }
 
 /**
@@ -76,24 +90,23 @@ export function selectorSteps(sel: string): string[] | null {
  * The class names one compound states outright, or `null` when the compound is
  * something this module will not reason about.
  *
- * A pseudo-class's contents are skipped rather than read. `:not(.is-collapsed)`
- * narrows *which* callouts a rule reaches, and this plugin cannot know which of
- * those states its own callout is in on any given render; treating the compound
- * as satisfied is the call `reachable()` already makes in `accentDialectScan.ts`.
- * It is safe in both directions here — a background cancel is what the theme
- * asked for in the state it named, and a `border-color` on a box with no border
- * width draws nothing at all.
- *
- * An id, an attribute or a universal selector returns `null`. None of the three
- * appears on a generic callout rule anywhere in the corpus, and each would make
- * the guard something that cannot be restated as written.
+ * A pseudo-class's contents are skipped when identifying the compound's
+ * classes; the root's complete predicate is carried separately in
+ * `rootQualifier`. Attributes are accepted only on the callout root. An
+ * attribute on an ancestor cannot be safely replayed as a guard, so it still
+ * returns `null` when `allowAttributes` is false.
  */
-export function compoundClasses(step: string): string[] | null {
+export function compoundClasses(step: string, allowAttributes = false): string[] | null {
 	const classes: string[] = [];
 	let i = 0;
 	while (i < step.length) {
 		const ch = step[i] ?? "";
-		if (ch === "#" || ch === "[" || ch === "*") return null;
+		if (ch === "#" || ch === "*") return null;
+		if (ch === "[") {
+			if (!allowAttributes) return null;
+			i = skipBrackets(step, i);
+			continue;
+		}
 		if (ch === ":") {
 			if (step[i + 1] === ":") return null; // ::before — not a compound
 			const open = step.indexOf("(", i);
@@ -139,18 +152,18 @@ function isCalloutChild(classes: readonly string[]): boolean {
  *
  * Two cuts, and both matter:
  *
- * - **`[data-callout=…]` anywhere disqualifies the part.** A rule that names an
- *   id cannot reach a callout the user invented, so it is not evidence about
- *   what happens to one.
+ * - A **positive** `[data-callout=…]` disqualifies the part. An exclusion in
+ *   `:not()` still reaches invented ids and is replayed with the root predicate.
+ *   `[data-callout-metadata*=…]` is also generic and must be kept.
  * - **The guard stops at the LAST callout-root step**, because that is the step
  *   this plugin's own selector replaces. A child target with no root above it —
  *   Cyber Glow writes a bare `.callout-content` — keeps everything before it.
  */
 export function surfaceTargetOf(part: string): SurfaceHit | null {
-	if (part.includes("[data-callout")) return null;
+	if (namesCalloutId(part)) return null;
 	const steps = selectorSteps(part);
 	if (steps === null) return null;
-	const classes = steps.map(compoundClasses);
+	const classes = steps.map((step) => compoundClasses(step, true));
 	const lastIndex = classes.length - 1;
 	const last = classes[lastIndex];
 	if (last === undefined || last === null) return null;
@@ -175,5 +188,9 @@ export function surfaceTargetOf(part: string): SurfaceHit | null {
 	const guardSteps = steps.slice(0, cut);
 	// One unrestatable step drops the whole fact. See the module header.
 	if (guardSteps.some((step) => compoundClasses(step) === null)) return null;
-	return { target, guard: guardSteps.join(" ") };
+	return {
+		target,
+		guard: guardSteps.join(" "),
+		rootQualifier: rootQualifier(steps[cut] ?? ""),
+	};
 }

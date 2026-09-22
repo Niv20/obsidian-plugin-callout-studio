@@ -198,8 +198,8 @@ apply its extra class-unit already beats the shim.
 
 A third question off the same text, and the mirror image of ownership: **what
 does the active styling say about a callout it has never heard of?** Every
-callout this plugin invents is one of those, and sixteen of the 257 installed
-themes answer with some form of "a callout has no background of its own".
+callout this plugin invents is one of those, and several installed themes
+answer with some form of "a callout has no background of its own".
 
 [`calloutSurfaceTarget.ts`](../../src/manager/theme/calloutSurfaceTarget.ts) reads
 the selector, [`calloutSurfaceScan.ts`](../../src/manager/theme/calloutSurfaceScan.ts)
@@ -210,31 +210,34 @@ sheets into the answer `StudioWeightCache.surface()` memoises beside the dialect
 for the same reason the dialect does: what has to work is what is on the page,
 whoever wrote it.
 
-Two facts come out, both keyed by the **guard** the theme wrote them under:
+Two facts come out. Background claims keep the **guard** and conditions on the
+callout root; frame claims keep the ancestor guard:
 
-| Fact | Recorded when | Themes |
+| Fact | Recorded when | Examples |
 | --- | --- | --- |
-| `neutralBackground` | a generic `.callout` rule sets `background`/`background-color` to `transparent`, `unset`, `initial`, `revert`, `rgba(0,0,0,0)`, or (shorthand only) `none` | 16 |
-| `colorlessFrame` | a generic `.callout-title` / `.callout-content` rule uses a `border` shorthand with a line style and **no colour token** | 4, after the veto |
+| `neutralBackground` | a generic `.callout` rule removes the root background, or paints a neutral root while a matching title rule uses `--callout-color`; the root's CSS value is retained | GitHub Theme, Prism, AnuPpuccin Vanilla Normal/Plus/Sleek, Soft Paper |
+| `colorlessFrame` | a generic `.callout-title` / `.callout-content` rule uses a `border` shorthand with a line style and **no colour token** | Prism, Cybertron |
 
 `background-color: none` is deliberately *not* accepted: it is invalid and the
 parser drops it, so reading it as "no background" would be believing a
 declaration that never applied.
 
-The **guard** is every selector step before the callout compound, verbatim — the
-guard stops at the *last* `.callout` step, because that is the step this plugin's
-own selector replaces. Qualifiers *on* that compound
-(`:not(.cg-note-toolbar-callout)`, `.is-collapsible`) are dropped, the same call
-`reachable()` makes in `accentDialectScan.ts`, and it is safe in both directions
-here: a background cancel is what the theme asked for in the state it named, and
-a `border-color` on a box with no border width draws nothing.
+The **guard** is every selector step before the callout compound, verbatim — it
+stops at the *last* `.callout` step, because this plugin replaces that step with
+its own selector. Conditions on the callout root are kept on the generated
+cancel. AnuPpuccin's Vanilla Normal rule excludes callouts marked
+`anp-sleek`, `anp-vanilla-plus`, `anp-block`, or `revert`, while another branch
+opts a callout into Vanilla Normal through metadata. Keeping those conditions
+lets the theme's neutral content surface show only in the matching layout.
 
-A guard is only recorded when every step is a plain compound — an element name,
-classes, and `:not()`. A child combinator, an id, an attribute, a universal
-selector or a pseudo-element **drops the fact entirely**, because the guard is
-re-stated in front of a selector this plugin writes, and a guard that means
-something different there is worse than no fact at all. Nothing in the corpus
-needs any of them.
+An ancestor guard is only recorded when every step is a plain compound — an
+element name, classes, and `:not()`. A child combinator, an id, an attribute on
+an ancestor, a universal selector or a pseudo-element **drops the fact
+entirely**, because the guard is re-stated in front of a selector this plugin
+writes. A positive callout-id condition also names a specific type rather than
+a generic surface; callout metadata conditions can apply to any type and remain
+attached to the root selector. This also covers themed metadata variants in
+ITS Theme, Ukiyo, Willemstad, and flexcyon without affecting unrelated callouts.
 
 What the emitter does with the pair, the global veto that Shiba Inu justifies,
 and why this is a *cancel* rule rather than a suppression is
@@ -244,7 +247,9 @@ The corpus, for anyone re-measuring it: unguarded (Cyber Glow, Notation 2,
 Polka); behind a `body:not(…)` the reader opts out of (Prism, Cybertron, LYT
 Mode, Ultra Lobster); behind an opt-in class (GitHub Theme `callout-on`, Minimal
 and Oxygen `callouts-outlined`, Composer, Glass Robo, Iridium, ITS Theme, Shiba
-Inu, Typomagical, Underwater).
+Inu, Typomagical, Underwater); behind a class and callout metadata conditions
+(AnuPpuccin Vanilla Normal/Plus/Sleek). AnuPpuccin Sleek and Soft Paper also
+provide neutral root colours paired with accent-tinted titles.
 
 ### The accent dialect
 

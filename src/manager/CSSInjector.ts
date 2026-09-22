@@ -869,10 +869,10 @@ export class CSSInjector {
 		// under every theme, for good. See cssSnippetExport's `standalone` note.
 		const surface = standalone
 			? ""
-			: this.themeSurface(def, (guard, weight) =>
-					[def.id, ...(def.aliases ?? [])]
-						.map((id) => calloutSelAt(id, weight, guard))
-						.join(",\n"),
+			: this.themeSurface(def, (guard, weight, rootQualifier) =>
+				[def.id, ...(def.aliases ?? [])]
+					.map((id) => `${calloutSelAt(id, weight, guard)}${rootQualifier}`)
+					.join(",\n"),
 				);
 		if (surface) parts.push(surface);
 
@@ -897,7 +897,7 @@ export class CSSInjector {
 	 */
 	private themeSurface(
 		def: CalloutDefinition,
-		selectorsAt: (guard: string, weight: number) => string,
+		selectorsAt: (guard: string, weight: number, rootQualifier: string) => string,
 	): string {
 		const surface = this.studioWeights.surface();
 		if (
@@ -908,7 +908,7 @@ export class CSSInjector {
 		}
 		const weight = this.emitWeight + 2;
 		return themeSurfaceCSS({
-			selectorsFor: (guard) => selectorsAt(guard, weight),
+			selectorsFor: (guard, rootQualifier) => selectorsAt(guard, weight, rootQualifier),
 			surface,
 			paintsBackground:
 				def.transparentBg !== true &&

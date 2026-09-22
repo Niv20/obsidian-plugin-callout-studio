@@ -12,17 +12,18 @@
  * `themeCalloutScan` reads the ids a theme **names**, which is what decides
  * ownership. This reads the opposite: what a theme says about *every* callout,
  * including the ones it has never heard of — which is every callout this plugin
- * invents. Fifteen of the 257 themes in the development vault answer that with
- * some form of "a callout has no background of its own", and then build the
- * visible box out of the title and content boxes instead:
+ * invents. Several themes in the development vault make the callout root
+ * transparent, then build the visible box out of the title and content boxes:
  *
  *     body.callout-on .callout                    { background-color: transparent }   GitHub Theme
  *     body:not(.pt-disable-callout-styling)
  *       .callout:not(.cg-note-toolbar-callout)    { background-color: unset }         Prism
  *     .callouts-outlined .callout                 { background-color: transparent }   Minimal, Oxygen
  *
- * A studio callout is painted at the studio weight with `!important`, so it wins
- * that declaration and ends up the only filled box in the note. Prism and
+ * AnuPpuccin Sleek paints a neutral root and an accent-tinted title instead;
+ * the paired title rule identifies that surface without treating every fixed
+ * root colour in every theme as a claim. A studio callout is painted at the
+ * studio weight with `!important`, so it can overwrite either kind. Prism and
  * Cybertron go further: their frame is `border: 2px solid` with **no colour** on
  * the title and content, i.e. `currentColor` — which this plugin then overwrites
  * through `.callout-content { color }`, drawing the theme's own frame in the
@@ -32,13 +33,25 @@ import { eachBlock, stripComments } from "./cssBlocks";
 import { splitSelectorList } from "../../utils/selectorText";
 import { surfaceTargetOf } from "./calloutSurfaceTarget";
 
+/** A theme's root surface, with the exact conditions under which it applies. */
+export interface SurfaceBackground {
+	guard: string;
+	rootQualifier: string;
+	color: string;
+}
+
+interface RootBackgroundCandidate {
+	background: SurfaceBackground;
+	requiresAccentTitle: boolean;
+}
+
 /** What one stylesheet says about the generic callout surface. */
 export interface SurfaceEvidence {
 	/**
-	 * Ancestor guards under which the sheet blanks the callout background.
-	 * `""` is a rule with no guard at all, which applies always.
+	 * Root backgrounds to restore when the theme paints the content separately
+	 * or gives the root a neutral colour and tints only the title.
 	 */
-	neutralBackground: Set<string>;
+	neutralBackground: SurfaceBackground[];
 	/**
 	 * Ancestor guards under which it frames `.callout-title` / `.callout-content`
 	 * with a border whose colour it never states.
@@ -55,7 +68,7 @@ export interface SurfaceEvidence {
 /** An empty result, for the sheets that never mention a callout. */
 export function emptySurfaceEvidence(): SurfaceEvidence {
 	return {
-		neutralBackground: new Set(),
+		neutralBackground: [],
 		colorlessFrame: new Set(),
 		framePainted: new Set(),
 	};
@@ -111,12 +124,38 @@ function declarations(body: string): Array<[string, string]> {
 	return out;
 }
 
-/** Record what one declaration on the callout root says, if anything. */
-function readRoot(name: string, value: string, guard: string, ev: SurfaceEvidence): void {
-	if (name === "background-color" && NEUTRAL_BG.test(value)) {
-		ev.neutralBackground.add(guard);
-	} else if (name === "background" && (NEUTRAL_BG.test(value) || /^none$/i.test(value))) {
-		ev.neutralBackground.add(guard);
+/** The identity of a selector's conditions, independent of its declarations. */
+function scopeKey(guard: string, rootQualifier: string): string {
+	return `${guard}\u0000${rootQualifier}`;
+}
+
+/** Record a blank root, or a possible neutral surface painted by the theme. */
+function readRoot(
+	name: string,
+	value: string,
+	guard: string,
+	rootQualifier: string,
+	backgrounds: RootBackgroundCandidate[],
+): void {
+	if (
+		(name === "background-color" && NEUTRAL_BG.test(value)) ||
+		(name === "background" && (NEUTRAL_BG.test(value) || /^none$/i.test(value)))
+	) {
+		backgrounds.push({
+			background: { guard, rootQualifier, color: "transparent" },
+			requiresAccentTitle: false,
+		});
+	} else if (
+		name === "background-color" &&
+		!/(?:--callout-color\b|currentcolor\b)/i.test(value)
+	) {
+		// A fixed or theme-variable root colour is only a neutral surface if
+		// the matching title rule uses the callout accent. Checked after scanning
+		// so source order between the two rules does not matter.
+		backgrounds.push({
+			background: { guard, rootQualifier, color: value },
+			requiresAccentTitle: true,
+		});
 	}
 }
 
@@ -135,6 +174,8 @@ function readChild(name: string, value: string, guard: string, ev: SurfaceEviden
 export function scanCalloutSurface(css: string): SurfaceEvidence {
 	const ev = emptySurfaceEvidence();
 	if (!css.includes(".callout")) return ev;
+	const backgrounds: RootBackgroundCandidate[] = [];
+	const accentTitles = new Set<string>();
 
 	eachBlock(stripComments(css), (prelude, body) => {
 		// The pre-filter the other scanners use: `.callout` in the prelude keeps
@@ -142,14 +183,42 @@ export function scanCalloutSurface(css: string): SurfaceEvidence {
 		if (!prelude.includes(".callout")) return;
 		let decls: Array<[string, string]> | null = null;
 		for (const part of splitSelectorList(prelude)) {
+			// A theme that paints the title from the accent while using a fixed
+			// surface on the root (AnuPpuccin Sleek, for example) owns that
+			// surface. Preserve its exact CSS value so light/dark variables follow
+			// the theme; transparent would change the native appearance.
+			const titleRoot = part.replace(/\s*>\s*\.callout-title\s*$/, "");
+			if (titleRoot !== part) {
+				const titleHit = surfaceTargetOf(titleRoot);
+				if (titleHit?.target === "root") {
+					decls ??= declarations(body);
+					if (decls.some(([name, value]) =>
+						(name === "background-color" || name === "background") &&
+						/--callout-color\b/i.test(value),
+					)) {
+						accentTitles.add(scopeKey(titleHit.guard, titleHit.rootQualifier));
+					}
+				}
+			}
 			const hit = surfaceTargetOf(part);
 			if (hit === null) continue;
 			decls ??= declarations(body);
 			for (const [name, value] of decls) {
-				if (hit.target === "root") readRoot(name, value, hit.guard, ev);
+				if (hit.target === "root") {
+					readRoot(name, value, hit.guard, hit.rootQualifier, backgrounds);
+				}
 				else readChild(name, value, hit.guard, ev);
 			}
 		}
 	});
+	for (const candidate of backgrounds) {
+		const bg = candidate.background;
+		if (
+			!candidate.requiresAccentTitle ||
+			accentTitles.has(scopeKey(bg.guard, bg.rootQualifier))
+		) {
+			ev.neutralBackground.push(bg);
+		}
+	}
 	return ev;
 }

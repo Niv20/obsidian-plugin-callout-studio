@@ -52,7 +52,7 @@ const PRISM = `
 	}
 `;
 
-/** A theme with a real callout background — the 240-of-257 case. */
+/** A theme with an ordinary accent-independent root and no tinted title. */
 const OPINIONLESS = `.callout { background-color: rgba(0, 0, 0, 0.05); }`;
 
 const PRISM_GUARD = "body:not(.pt-disable-callout-styling)";
@@ -351,8 +351,8 @@ describe("a standalone CSS-snippet export carries none of this", () => {
 
 describe("a theme with no opinion is untouched", () => {
 	it("emits byte-identical text to a vault with no theme at all", () => {
-		// 240 of the 257 installed themes. This is the assertion that keeps the
-		// mechanism invisible everywhere it was not asked for.
+		// This keeps the mechanism invisible wherever the theme has no
+		// title/body surface split to preserve.
 		const def = palette();
 		assert.strictEqual(
 			themedHarness(OPINIONLESS).css.generateCalloutCSS(def),

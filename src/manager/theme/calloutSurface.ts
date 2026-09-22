@@ -10,16 +10,18 @@
  *
  * ## Fact one: the surface is the theme's
  *
- * Sixteen of the 257 themes in the development vault blank the callout
- * background generically. Three do it unconditionally (Cyber Glow, Notation 2,
+ * Several themes in the development vault blank the callout background
+ * generically. Three do it unconditionally (Cyber Glow, Notation 2,
  * Polka); the rest sit behind a class — Prism, Cybertron, LYT Mode and Ultra
  * Lobster behind a `body:not(…)` the reader has to opt *out* of, GitHub Theme's
  * `callout-on`, Minimal's and Oxygen's `callouts-outlined`, and one each from
  * Composer, Glass Robo, Iridium, ITS, Shiba Inu, Typomagical and Underwater.
  *
- * Where that holds, this plugin's `!important` background is the one filled box
- * in the note. It stands down there — and only there, and only under the guard
- * the theme itself wrote, which is what makes a Style Settings toggle work live.
+ * AnuPpuccin's Vanilla variants do the same behind metadata conditions; its
+ * Sleek variant instead paints a neutral root and an accent-tinted title. In
+ * each case this plugin's `!important` tint would make the body the only
+ * accent-coloured box in the note. It restores the theme's root colour only
+ * under the original guard and root conditions, so Style Settings works live.
  *
  * ## Fact two: the frame's ink is `currentColor`
  *
@@ -39,20 +41,20 @@
  * over a colour the theme chose. One coloured generic frame anywhere in the
  * active styling is enough to keep this plugin's hands off all of them.
  */
-import type { SurfaceEvidence } from "./calloutSurfaceScan";
+import type { SurfaceBackground, SurfaceEvidence } from "./calloutSurfaceScan";
 
 /** What the active styling says, resolved. */
 export interface CalloutSurface {
 	/**
-	 * Guards under which this plugin must not paint the callout surface.
-	 * A single `""` means "always"; empty means the plugin paints as it always has.
+	 * Theme root surfaces to restore under the exact conditions the theme used.
+	 * Empty means the plugin paints as it always has.
 	 */
-	neutralBackground: readonly string[];
+	neutralBackground: readonly SurfaceBackground[];
 	/** Guards under which this plugin supplies the frame's ink from its accent. */
 	colorlessFrame: readonly string[];
 }
 
-/** Nothing to defer to — the answer for 241 of the 257 installed themes. */
+/** Nothing to defer to — the answer for themes with no surface claim. */
 export const NO_SURFACE_CLAIM: CalloutSurface = {
 	neutralBackground: [],
 	colorlessFrame: [],
@@ -77,16 +79,27 @@ function collapse(guards: ReadonlySet<string>): string[] {
 export function resolveCalloutSurface(
 	evidence: readonly SurfaceEvidence[],
 ): CalloutSurface {
-	const neutral = new Set<string>();
+	const neutral = new Map<string, SurfaceBackground>();
 	const colorless = new Set<string>();
 	let painted = false;
 	for (const ev of evidence) {
-		for (const g of ev.neutralBackground) neutral.add(g);
+		for (const bg of ev.neutralBackground) {
+			neutral.set(`${bg.guard}\u0000${bg.rootQualifier}`, bg);
+		}
 		for (const g of ev.colorlessFrame) colorless.add(g);
 		if (ev.framePainted.size > 0) painted = true;
 	}
+	const backgrounds = [...neutral.values()];
+	// An unconditional claim makes only identical-colour narrower claims
+	// redundant. A guarded neutral colour still has to override a transparent
+	// default when the theme's Style Settings class or metadata selects it.
+	const unconditional = neutral.get("\u0000");
 	return {
-		neutralBackground: collapse(neutral),
+		neutralBackground: backgrounds
+			.filter((bg) => bg === unconditional || bg.color !== unconditional?.color)
+			.sort((a, b) =>
+				`${a.guard}\u0000${a.rootQualifier}`.localeCompare(`${b.guard}\u0000${b.rootQualifier}`),
+			),
 		colorlessFrame: painted ? [] : collapse(colorless),
 	};
 }

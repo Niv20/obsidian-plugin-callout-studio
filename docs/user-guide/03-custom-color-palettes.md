@@ -28,7 +28,12 @@ The **Style** menu offers three choices:
 
 - **Solid** uses a single background color.
 - **Gradient** adds a second color and a direction control. You can also enable **Gradient title text**.
-- **Transparent** removes the background while keeping the base color on the title and icon.
+- **Transparent** removes Callout Studio's background while keeping the base color on the title and icon. Your theme may still paint the content area.
+
+In AnuPpuccin's Vanilla Normal, Vanilla Plus, and Sleek layouts, Block callouts
+keep the theme's neutral content background with a custom palette. The palette's
+base color still colors the title, icon, and border, and the neutral surface
+follows the theme in light and dark mode.
 
 ## Edit, delete, and restore palettes
 

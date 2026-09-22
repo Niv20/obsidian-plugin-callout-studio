@@ -391,7 +391,7 @@ apply:
 | **Unknown native Block fallback** | `.callout:not(:where(<known ids>))` = `(0,1,0)`, **no `!important`** | generic core/theme defaults on a later-source tie | every ordinary exact `[data-callout="x"]` definition |
 | **Derived surface** — core's own defaults, restated because the accent spelling broke them | `:where(.callout)[data-callout="x"]` = `(0,1,0)`, **no `!important`** | core, on source order | every theme rule from `(0,2,0)` up |
 | **Explicit Studio choice** — chosen accent, authored background, gradient, transparency, icon, global style | `CSSInjector.sel()` at the studio weight, **`!important`** | theme and snippets | a user snippet at `!important` plus one more class-unit |
-| **Theme-owned surface** — the active styling says a callout has no background, or frames it in `currentColor` | the theme's own guard + `.callout` at **`weight + 2`**, `!important` | the row above, which is the point | nothing this sheet emits |
+| **Theme-owned surface** — the active styling makes the root transparent or gives it a neutral colour while tinting the title, or frames it in `currentColor` | the theme's own guard and callout-root conditions + `.callout` at **`weight + 2`**, `!important` | the row above, where the theme's condition matches | nothing this sheet emits |
 
 The line between the derived-surface and explicit-Studio rows is the one that
 is easy to get wrong: **a chosen accent colour is not a chosen background.** A background *derived* from
@@ -417,12 +417,17 @@ Two consequences worth keeping in mind before touching any of this:
 
 ### The theme-owned surface
 
-Sixteen of the 257 themes in the dev vault blank the callout background on a
+Several themes in the dev vault blank the callout background on a
 selector that names no id — `body.callout-on .callout { background-color:
 transparent }` (GitHub Theme), `body:not(.pt-disable-callout-styling) .callout
 { background-color: unset }` (Prism, Cybertron), `.callouts-outlined .callout`
 (Minimal, Oxygen) — and then draw the visible box out of `.callout-title` and
-`.callout-content` instead. Four of them leave those two borders **colourless**,
+`.callout-content` instead. AnuPpuccin's Vanilla Normal and Vanilla Plus styles
+similarly make the root transparent, tint the title, and paint the content with
+the theme's neutral `--ctp-mantle` colour. Its Sleek style paints a translucent
+neutral mantle on the root and tints the title; the generated rule restores
+that exact theme expression so light and dark mode keep their own values. Four of the surveyed themes leave
+the title/content borders **colourless**,
 so the frame draws in `currentColor`.
 
 A studio callout is painted at the studio weight with `!important`, so it wins
@@ -439,18 +444,25 @@ cyan `--text-normal`, the studio callout's frame measured `rgb(224,224,224)` —
 So [`manager/theme/calloutSurface.ts`](../../src/manager/theme/calloutSurface.ts)
 resolves two facts and
 [`manager/css/themeSurfaceCSS.ts`](../../src/manager/css/themeSurfaceCSS.ts) emits
-what they cost. Four properties of that block are the whole design:
+what they cost. Five properties of that block are the whole design:
 
-- **The guard travels with the fact, and is re-stated in the selector.** Twelve
-  of the sixteen hide this behind a Style Settings class, and Style Settings'
+- **The guard and callout-root conditions travel with the fact.** Many themes
+  hide this behind a Style Settings class, and Style Settings'
   `setSetting` only calls `removeClasses()/initClasses()` — **it fires no
   `css-change`**, so a decision taken in JS would never be revisited. Putting the
-  theme's own ancestor compound in front of our selector hands the decision back
-  to the cascade: one stylesheet carries both states and the browser picks,
-  instantly, with no re-inject and no MutationObserver. It is also why this is
+  theme's ancestor compound in front of our selector and keeping its conditions
+  on `.callout` hands the decision back to the cascade. In AnuPpuccin, those
+  conditions exclude `anp-sleek`, `anp-block`, and other metadata overrides;
+  dropping them would blank a different callout style. One stylesheet carries
+  each state and the browser picks instantly, with no re-inject and no
+  MutationObserver. It is also why this is
   emitted as a *cancel* rather than by suppressing `bgProps` at the source — one
   block covers the light rule, the dark rule, every alias, and the print
   `::before` that `printGradientCSS` paints a second copy of the surface onto.
+- **The restored root colour is the theme's own value.** Transparent and unset
+  root rules become `transparent`; a neutral root paired with an accent-tinted
+  title keeps its theme variable or colour expression. No page colour is baked
+  into the generated stylesheet.
 - **`weight + 2`, not `weight + 1`.** The heaviest thing being cancelled is the
   dark block, whose `.theme-dark` is a class of its own. `weight + 1` would only
   tie it and win on source order.
@@ -478,8 +490,7 @@ band. It is intentionally weak and leaves generic theme geometry intact; an
 exact CSS definition for that unknown id outranks it without a scanner, a body
 guard rewrite, or `!important`.
 
-240 of the 257 installed themes resolve to no claim at all and emit
-byte-identical text to before this existed.
+Themes with no surface claim emit byte-identical text to a vault with no theme.
 
 ## One rule, and why there is no setting
 

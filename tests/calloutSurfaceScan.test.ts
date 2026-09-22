@@ -18,7 +18,7 @@ import {
 } from "../src/manager/theme/calloutSurface";
 
 const guards = (css: string): string[] => [
-	...scanCalloutSurface(css).neutralBackground,
+	...scanCalloutSurface(css).neutralBackground.map((bg) => bg.guard),
 ];
 const frames = (css: string): string[] => [
 	...scanCalloutSurface(css).colorlessFrame,
@@ -43,16 +43,56 @@ describe("the surface scan — blanked backgrounds", () => {
 		);
 	});
 
-	it("reads Prism's opt-out guard, and drops the state qualifier on .callout", () => {
+	it("reads Prism's opt-out guard and keeps the root state qualifier", () => {
 		// The `:not(.cg-note-toolbar-callout)` sits on the callout compound this
 		// plugin's own selector replaces, so it is not part of the guard. The
-		// `body:not(…)` one is, and it is what lets Prism's own "disable callout
-		// styling" option put the plugin's background back.
+		// `body:not(…)` one is the ancestor guard; the root condition is kept
+		// separately so Prism's opt-out and toolbar exclusions both work.
 		assert.deepStrictEqual(
 			guards(`body:not(.pt-disable-callout-styling) .callout:not(.cg-note-toolbar-callout) {
 				background-color: unset;
 			}`),
 			["body:not(.pt-disable-callout-styling)"],
+		);
+	});
+
+	it("keeps AnuPpuccin Vanilla's metadata conditions on both selector branches", () => {
+		const css = `
+			.anp-callout-vanilla-normal .callout:not([data-callout-metadata*=anp-sleek],
+			[data-callout-metadata*=anp-block]):not([data-callout-metadata*=revert],
+			[data-callout=blank-container], [data-callout=multi-column]),
+			.callout[data-callout-metadata*=anp-vanilla-normal]:not([data-callout-metadata*=revert],
+			[data-callout=blank-container], [data-callout=multi-column]) {
+				background-color: transparent;
+			}`;
+		const backgrounds = scanCalloutSurface(css).neutralBackground;
+		assert.strictEqual(backgrounds.length, 2);
+		assert.strictEqual(backgrounds[0]?.guard, ".anp-callout-vanilla-normal");
+		assert.ok(backgrounds[0]?.rootQualifier.includes("anp-sleek"));
+		assert.ok(backgrounds[0]?.rootQualifier.includes("anp-block"));
+		assert.ok(backgrounds[0]?.rootQualifier.includes("data-callout=multi-column"));
+		assert.strictEqual(backgrounds[1]?.guard, "");
+		assert.ok(backgrounds[1]?.rootQualifier.startsWith("[data-callout-metadata*=anp-vanilla-normal]"));
+		assert.ok(backgrounds.every((bg) => bg.color === "transparent"));
+	});
+
+	it("restores a neutral root only when the matching title uses the accent", () => {
+		const sleek = `.anp-callout-sleek .callout:not([data-callout-metadata*=anp-block]) {
+			background-color: rgba(var(--ctp-mantle), 0.4);
+		}
+		.anp-callout-sleek .callout:not([data-callout-metadata*=anp-block]) > .callout-title {
+			background-color: rgba(var(--callout-color), var(--callout-title-opacity, 0.1));
+		}`;
+		assert.deepStrictEqual(scanCalloutSurface(sleek).neutralBackground, [
+			{
+				guard: ".anp-callout-sleek",
+				rootQualifier: ":not([data-callout-metadata*=anp-block])",
+				color: "rgba(var(--ctp-mantle), 0.4)",
+			},
+		]);
+		assert.deepStrictEqual(
+			scanCalloutSurface(`.callout { background-color: rgba(0, 0, 0, 0.05); }`).neutralBackground,
+			[],
 		);
 	});
 
@@ -116,7 +156,7 @@ describe("the surface scan — blanked backgrounds", () => {
 		);
 	});
 
-	it("says nothing about a rule that names an id", () => {
+	it("rejects a named id but retains a negative id condition", () => {
 		// A per-id rule cannot reach a callout the user invented, so it is not
 		// evidence about what happens to one. This is the asymmetry the whole
 		// module rests on.
@@ -124,10 +164,12 @@ describe("the surface scan — blanked backgrounds", () => {
 			guards(`.callout[data-callout="note"] { background-color: transparent; }`),
 			[],
 		);
-		assert.deepStrictEqual(
-			guards(`.callout:not([data-callout="note"]) { background-color: transparent; }`),
-			[],
+		const excluded = scanCalloutSurface(
+			`.callout:not([data-callout="note"]) { background-color: transparent; }`,
 		);
+		assert.deepStrictEqual(excluded.neutralBackground, [
+			{ guard: "", rootQualifier: ':not([data-callout="note"])', color: "transparent" },
+		]);
 	});
 
 	it("refuses a guard it could not restate", () => {
@@ -204,7 +246,7 @@ describe("folding several sheets", () => {
 			scanCalloutSurface(`.callout { background-color: color-mix(in oklch, var(--callout-color) 10%, transparent); }`),
 			scanCalloutSurface(`body.flat .callout { background-color: transparent; }`),
 		]);
-		assert.deepStrictEqual(surface.neutralBackground, ["body.flat"]);
+		assert.deepStrictEqual(surface.neutralBackground.map((bg) => bg.guard), ["body.flat"]);
 	});
 
 	it("lets an unguarded rule swallow every guarded one", () => {
@@ -216,7 +258,7 @@ describe("folding several sheets", () => {
 				.callout { background-color: unset; }
 				.b .callout { background: none; }`),
 		]);
-		assert.deepStrictEqual(surface.neutralBackground, [""]);
+		assert.deepStrictEqual(surface.neutralBackground.map((bg) => bg.guard), [""]);
 	});
 
 	it("sorts the guards, because the stylesheet is compared byte-for-byte", () => {
@@ -229,7 +271,10 @@ describe("folding several sheets", () => {
 				.aaa .callout { background: none; }
 				.mmm .callout { background: none; }`),
 		]);
-		assert.deepStrictEqual(surface.neutralBackground, [".aaa", ".mmm", ".zzz"]);
+		assert.deepStrictEqual(
+			surface.neutralBackground.map((bg) => bg.guard),
+			[".aaa", ".mmm", ".zzz"],
+		);
 	});
 
 	it("one coloured frame anywhere vetoes every colourless one", () => {
@@ -244,7 +289,7 @@ describe("folding several sheets", () => {
 		assert.deepStrictEqual(surface.neutralBackground, []);
 	});
 
-	it("says nothing at all for a theme with no opinion — 240 of 257", () => {
+	it("says nothing at all for a theme with no surface opinion", () => {
 		const surface = resolveCalloutSurface([scanCalloutSurface("")]);
 		assert.deepStrictEqual(surface.neutralBackground, []);
 		assert.deepStrictEqual(surface.colorlessFrame, []);
