@@ -487,6 +487,7 @@ export const hi: Record<string, string> = {
 		"अभी तक शामिल नहीं: {{names}}। डाउनलोड करने के लिए ऊपर एक स्रोत चुनें।",
 	"iconPicker.chooseSource": "स्रोत चुनें",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "डाउनलोड नहीं किया गया",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "एक साथ सभी लाइब्रेरी में खोजें",

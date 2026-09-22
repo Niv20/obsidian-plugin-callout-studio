@@ -482,6 +482,7 @@ export const sv: Record<string, string> = {
 		"Inte inkluderat ännu: {{names}}. Välj en källa ovan för att ladda ner den.",
 	"iconPicker.chooseSource": "Välj källa",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Inte nedladdat",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "sök i alla bibliotek på en gång",

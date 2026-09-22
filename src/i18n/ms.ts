@@ -481,6 +481,7 @@ export const ms: Record<string, string> = {
 		"Belum disertakan: {{names}}. Pilih sumber di atas untuk memuat turunnya.",
 	"iconPicker.chooseSource": "Pilih sumber",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Belum dimuat turun",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "cari semua pustaka serentak",

@@ -494,6 +494,7 @@ export const uk: Record<string, string> = {
 		"Ще не включено: {{names}}. Виберіть джерело вище, щоб завантажити.",
 	"iconPicker.chooseSource": "Вибрати джерело",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Не завантажено",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "пошук в усіх бібліотеках одночасно",

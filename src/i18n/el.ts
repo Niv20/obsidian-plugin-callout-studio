@@ -474,6 +474,7 @@ export const el: Record<string, string> = {
 		"Δεν έχει ληφθεί ακόμα: {{names}}. Επιλέξτε μια πηγή παραπάνω για να τη λάβετε.",
 	"iconPicker.chooseSource": "Επιλογή πηγής",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Δεν έχει ληφθεί",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "αναζήτηση σε όλες τις βιβλιοθήκες ταυτόχρονα",

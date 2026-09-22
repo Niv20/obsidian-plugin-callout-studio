@@ -494,6 +494,7 @@ export const nl: Record<string, string> = {
 		"Nog niet opgenomen: {{names}}. Kies hierboven een bron om te downloaden.",
 	"iconPicker.chooseSource": "Bron kiezen",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Niet gedownload",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "zoek in alle bibliotheken tegelijk",

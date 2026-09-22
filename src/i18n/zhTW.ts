@@ -463,6 +463,7 @@ export const zhTW: Record<string, string> = {
 		"尚未包含：{{names}}。請在上方選擇來源以下載。",
 	"iconPicker.chooseSource": "選擇來源",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "尚未下載",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "同時搜尋所有圖示庫",

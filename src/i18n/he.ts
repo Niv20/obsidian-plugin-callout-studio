@@ -511,6 +511,7 @@ export const he: Record<string, string> = {
 		"עדיין לא נכללים: {{names}}. בחרו מקור מהרשימה למעלה כדי להוריד אותו.",
 	"iconPicker.chooseSource": "בחירת מקור",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "לא הורד",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "חיפוש בכל הספריות בבת אחת",

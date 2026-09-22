@@ -343,8 +343,19 @@ needs **no special case** to render it; it's just another source as far as
 draws from is present — not "any": Font Awesome pools names across three
 separate files (Solid/Regular/Brands), and a missing file would silently drop
 every name only that file can draw, producing an inconsistent pooled list.
-`missingSources(packs)` is the complement, used to show a "Some sources
-aren't downloaded yet" hint.
+`missingSources(packs)` is the complement, used both for the source menu's
+**Not downloaded** badges and its "Some sources aren't downloaded yet" hint.
+The badge waits for `loadAllFromDisk()` before appearing, so a cached but unused
+pack is never briefly mislabeled while the picker warms its disk state. Fixed
+catalog sizes use locale-aware, hundred-icon lower bounds (compact where the
+locale supports them); the user-owned **Custom Icons** count remains exact.
+
+The source list uses `listboxPopupLayout.ts` to cap its border-box height at
+320px or the remaining space below the trigger, whichever is smaller. The
+visible viewport and the clipping modal body both limit that space; resize,
+zoom and layout changes refresh the cap while open, with observers removed on
+close. Pointer highlights clear on row/menu exit without clearing committed
+selection; arrow-key highlights persist until navigation or dismissal.
 
 ### Downloads happen on confirm, not on browse
 

@@ -483,6 +483,7 @@ export const tr: Record<string, string> = {
 		"Henüz dahil edilmedi: {{names}}. İndirmek için yukarıdan bir kaynak seçin.",
 	"iconPicker.chooseSource": "Kaynak seç",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "İndirilmedi",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "tüm kütüphanelerde aynı anda ara",

@@ -488,6 +488,7 @@ export const hu: Record<string, string> = {
 		"Még nem tartalmazza: {{names}}. Válasszon fent egy forrást a letöltéshez.",
 	"iconPicker.chooseSource": "Forrás kiválasztása",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Nincs letöltve",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "egyszerre keresés az összes könyvtárban",

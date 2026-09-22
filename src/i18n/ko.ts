@@ -485,6 +485,7 @@ export const ko: Record<string, string> = {
 		"아직 포함되지 않음: {{names}}. 위에서 소스를 선택하여 다운로드하세요.",
 	"iconPicker.chooseSource": "소스 선택",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "다운로드 안 됨",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "모든 라이브러리를 한 번에 검색",

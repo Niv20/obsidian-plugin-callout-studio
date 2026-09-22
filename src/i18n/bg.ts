@@ -468,6 +468,7 @@ export const bg: Record<string, string> = {
 		"Все още не е включен: {{names}}. Изберете източник по-горе, за да го изтеглите.",
 	"iconPicker.chooseSource": "Изберете източник",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Не е изтеглен",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "търсене в всички библиотеки едновременно",

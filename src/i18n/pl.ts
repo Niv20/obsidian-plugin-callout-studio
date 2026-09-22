@@ -484,6 +484,7 @@ export const pl: Record<string, string> = {
 		"Jeszcze nie pobrano: {{names}}. Wybierz powyżej źródło, aby je pobrać.",
 	"iconPicker.chooseSource": "Wybierz źródło",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Nie pobrano",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources":

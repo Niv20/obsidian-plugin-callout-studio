@@ -479,6 +479,7 @@ export const th: Record<string, string> = {
 		"ยังไม่ได้รวม: {{names}} เลือกแหล่งข้อมูลด้านบนเพื่อดาวน์โหลด",
 	"iconPicker.chooseSource": "เลือกแหล่งข้อมูล",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "ยังไม่ได้ดาวน์โหลด",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "ค้นหาทุกไลบรารีพร้อมกัน",

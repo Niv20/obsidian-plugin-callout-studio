@@ -486,6 +486,7 @@ export const id: Record<string, string> = {
 		"Belum disertakan: {{names}}. Pilih sumber di atas untuk mengunduhnya.",
 	"iconPicker.chooseSource": "Pilih sumber",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Belum diunduh",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "cari semua pustaka sekaligus",

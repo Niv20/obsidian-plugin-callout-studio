@@ -479,6 +479,7 @@ export const fa: Record<string, string> = {
 		"هنوز دانلود نشده: {{names}}. یک منبع را در بالا انتخاب کنید تا دانلود شود.",
 	"iconPicker.chooseSource": "انتخاب منبع",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "دانلود نشده",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "جستجو در همه کتابخانه‌ها به یکباره",
