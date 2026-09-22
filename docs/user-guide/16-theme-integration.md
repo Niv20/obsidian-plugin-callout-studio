@@ -14,6 +14,10 @@ Because the theme draws these callouts, their rows are read-only in Callout Stud
 
 To change a theme-owned callout, use the community **Style Settings** plugin if the theme author provides a setting for it. Otherwise, the theme's CSS must be changed.
 
+## Default fallback
+
+A callout type that exists only in the active theme cannot be selected as the **Default fallback callout**. Use a built-in type or create a Callout Studio callout with an ID the theme does not define if you need a fallback that remains available after switching themes.
+
 ## Block format only
 
 Theme-controlled callouts support the standard Block format:

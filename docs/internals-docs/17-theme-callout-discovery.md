@@ -423,6 +423,99 @@ checks all id/alias conflicts before removing any overlay and publishes one
 batched change. A planned create never overwrites a saved row added in the meantime.
 These explicit actions sync like other settings; theme ownership remains local.
 
+### Why a theme overlay cannot be the default fallback
+
+The **Default fallback callout** is not an alias or a request for Obsidian to
+pretend that every unknown id has another `data-callout` value. It is a
+persisted `fallbackCalloutId` whose durable `CalloutDefinition` is used by
+`generateFallbackCSS` and by the plugin's own Heading/Inline renderers as a
+template. For a target to act as a portable appearance template, it therefore
+has to satisfy three invariants:
+
+1. its definition exists on every device that reads the synced setting;
+2. Callout Studio owns enough of its appearance to reproduce it for a different
+   id; and
+3. choosing it cannot let a machine-local theme fact change `data.json`.
+
+A `source: "theme"` overlay satisfies none of them. The row exists only on the
+machine whose active theme declares the id, is omitted from saved data and
+exports, and is removed when that declaration disappears. Persisting its id in
+`fallbackCalloutId` would therefore create a setting whose target is absent on a
+second device, after a cold start with another theme, or after importing the
+backup without that theme. `CalloutRegistry.load()` does not invent a missing
+definition, and `generateFallbackCSS` deliberately returns an empty string for
+a missing target, so the result would be a blank picker and no Studio fallback
+CSS rather than a portable theme fallback.
+
+Nor can the active theme's rule be reused for unknown ids. Theme CSS names the
+original attribute, for example `[data-callout="recite"]`; an unknown callout
+keeps its own `data-callout`, so that selector does not match it. CSS has no
+"extend this unrelated selector" operation. More importantly, a theme-owned
+definition makes `registry.standsDown(def)` true, and `generateFallbackCSS`
+returns before emitting either the Block fallback or `fallbackTokenCSS`. Merely
+removing the picker filter would therefore expose a choice that disables the
+Studio fallback without making unknown callouts look like the selected theme
+callout. `tests/themeOwnership.test.ts` pins that stand-down behaviour.
+
+The fields stored on the overlay row are not a hidden portable copy of the
+theme. `syncThemeOverlayRows` seeds them from the fallback that existed when the
+row was minted only to construct a complete `CalloutDefinition`. Those fields
+are inert placeholders: theme-aware UI uses `ThemeAppearance` (or a neutral
+placeholder when measurement is unavailable), and every CSS emitter stands
+down. The probe captures only the current mode's accent, one surface colour (or
+one gradient stop), and an icon representation for compact UI; it is not a
+portable callout design. It does not capture descendant layout, borders,
+spacing, fonts, hover/fold states, pseudo-elements, metadata selectors, Style
+Settings guards or the other colour mode. Nor can its computed surface be
+copied naively into `bgColor*`: the persisted model needs an authored colour
+that the injector can re-solve as a translucent tint, while a used value does
+not carry enough intent to preserve nested-callout compositing. Calling
+`restyleUncustomizedFallbackRows` with the overlay as its source would copy the
+placeholder into durable rows, making synced data depend on which fallback the
+local machine happened to have when it first saw the theme.
+
+The lifecycle failures are deliberately avoided rather than repaired after the
+fact:
+
+| Event | Failure if an overlay id were selectable |
+| --- | --- |
+| Another device uses a different theme | The persisted id has no definition there; repairing it to `note` would sync back and erase the first device's choice. |
+| The active theme stops declaring the id through a switch, disable, removal or update | A live overlay removal resets the target to `note`; if the plugin was not running, the next load instead starts with a dangling target. |
+| A new theme or theme update still declares the same id | The saved choice silently acquires a different appearance and possibly a different meaning. |
+| An in-place CSS reload removes the selector | It is indistinguishable from the theme relinquishing the id and has the same reset/dangling split. |
+| Scan, import or another durable create promotes the id | Promotion first retires the overlay; allowing it to be the target would make that maintenance action reset the fallback mid-operation. |
+| The fallback is needed for Heading or Inline | Theme callouts are Block-only, so the theme has no design that can be reproduced on those plugin-owned DOM surfaces. |
+
+This is why `FallbackSection` filters on `source !== "theme"`, rather than
+showing theme rows disabled after selection, and why a theme row carries no
+*Default fallback* badge. `tests/calloutCombobox.test.ts` pins the picker
+boundary; `tests/themeRowActions.test.ts` pins the missing badge; and
+`tests/syncThemeOverlay.test.ts` pins the stronger cross-device rule that
+changing a theme on one machine never changes the synced settings body.
+
+There is one related but different case: a built-in, user or manually discovered
+row may be durable while the active theme temporarily owns its id. Such a row is
+eligible for the picker because its definition survives on every device, but
+while `themeOwns` is true the emission gate still stands down; the theme's live
+CSS is not converted into a fallback template. When the theme releases the id,
+the stored Studio definition becomes active again. Core's `note` target remains
+a natural default because Obsidian itself renders unsupported block types with
+the Note appearance, but that native behaviour must not be generalized into a
+promise that an arbitrary theme-owned type can be spread.
+
+**The supported durable routes stay explicit.** **Scan for callouts** can
+promote a theme id to a saved `source: "fallback"` definition, but it preserves
+the id by copying the current Studio fallback appearance; it does not copy the
+theme's CSS. While the active theme still claims that id, the emission gate
+continues to stand down. For a stable selectable target, use a built-in or
+create/import a Callout Studio-owned type under an id the theme does not claim.
+If the goal is only to keep a theme look across theme changes, maintain the
+complete rules in a vault-owned CSS snippet; the snippet styles its selectors
+directly and is not a **Default fallback callout** template. A future *copy
+theme appearance* feature would need to create a new durable definition and
+disclose that it is only a partial snapshot; it cannot be implemented as a live
+reference from `fallbackCalloutId` to the overlay.
+
 
 ## Stage 5 — Reading the colours and the icon back
 
