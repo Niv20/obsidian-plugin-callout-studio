@@ -157,19 +157,15 @@ export class CommandBuilderModal extends Modal {
 	}
 
 	/**
-	 * The fixed commands, in the same row as the user's own.
+	 * The fixed commands carry no icon column: there is no callout behind a
+	 * built-in command. Each row contains its name, shortcut pills, the button
+	 * that binds one, and an on/off toggle.
 	 *
-	 * They carry no icon column: there is no callout behind a built-in
-	 * command, and an empty icon slot would read as artwork that failed to
-	 * load rather than as a column that was never there. What is left — the
-	 * name, its shortcut pills, the button that binds one, and the on/off
-	 * toggle — is all there is to do to them.
-	 *
-	 * A toggle turned off does not remove the row: the fixed commands are a
-	 * fixed set the user is choosing among, not a list they're pruning, so a
-	 * row moving or disappearing on toggle would make it hard to find again.
-	 * It fades in place instead, and keeps showing whatever shortcut is
-	 * already bound to it — turning it back on must not have lost that.
+	 * A disabled row fades in place and keeps showing its bound shortcuts.
+	 * The row and its controls must stay attached when toggled: rebuilding
+	 * the list removes the focused control and temporarily shrinks the
+	 * scroller, losing its position. Update the row's class and existing
+	 * hotkey button instead.
 	 */
 	private renderFixedList(): void {
 		const listEl = this.fixedListEl;
@@ -195,15 +191,19 @@ export class CommandBuilderModal extends Modal {
 			// Blocked, not hidden: there is nowhere left for the click to lead
 			// while the command isn't registered.
 			const buttonsEl = row.createDiv({ cls: "callout-studio-row-buttons" });
-			this.hotkeyButton(buttonsEl, name, !enabled);
+			const hotkeyButton = this.hotkeyButton(buttonsEl, name, !enabled);
 
 			const toggleWrap = row.createDiv({ cls: "cs-command-row-toggle" });
-			new ToggleComponent(toggleWrap)
+			const toggle = new ToggleComponent(toggleWrap)
 				.setValue(enabled)
 				.setTooltip(t("commandBuilder.toggleAria", { name }))
 				.onChange(async (value) => {
 					await this.host.setFixedCommandEnabled(id, value);
-					this.renderFixedList();
+					// A newer toggle may have landed while this save was pending.
+					const enabled = isFixedCommandEnabled(this.host.settings, id);
+					row.toggleClass("is-disabled", !enabled);
+					hotkeyButton.disabled = !enabled;
+					toggle.setValue(enabled);
 				});
 		}
 	}
@@ -218,8 +218,8 @@ export class CommandBuilderModal extends Modal {
 		buttonsEl: HTMLElement,
 		name: string,
 		disabled = false,
-	): void {
-		addHotkeyButton(
+	): HTMLButtonElement {
+		return addHotkeyButton(
 			this.app,
 			this.host.manifest.name,
 			() => this.close(),

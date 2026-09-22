@@ -62,21 +62,19 @@ export function addHotkeyButton(
 	buttonsEl: HTMLElement,
 	name: string,
 	disabled = false,
-): void {
+): HTMLButtonElement {
 	const btn = buttonsEl.createEl("button", {
 		attr: { "aria-label": t("commandBuilder.hotkeyAria", { name }) },
 	});
 	setIcon(btn, "circle-plus");
-	if (disabled) {
-		btn.disabled = true;
-		return;
-	}
+	btn.disabled = disabled;
 	btn.addEventListener("click", () => {
+		if (btn.disabled) return;
 		// The pane opens in the settings window behind this one, so staying
 		// open would leave the user looking at a modal over what they asked
 		// for. Search by the rendered name, which is what the pane matches on.
 		close();
 		openHotkeySettings(app, `${pluginName}: ${name}`);
 	});
+	return btn;
 }
-
