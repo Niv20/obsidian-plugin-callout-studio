@@ -36,6 +36,8 @@ export interface PopupEventTarget {
 	refilter(): void;
 	/** Move the highlight by `delta`, clamped, without wrapping. */
 	moveActive(delta: number): void;
+	/** End a pointer preview without disturbing keyboard navigation. */
+	clearPointerHighlight(): void;
 	/** Take the highlighted row. */
 	commitActive(): void;
 }
@@ -73,6 +75,7 @@ export function wirePopupEvents(popup: PopupEventTarget): () => void {
 
 	// See the header — this one line is what lets a mouse selection commit.
 	popup.menuEl.addEventListener("mousedown", (ev) => ev.preventDefault());
+	popup.menuEl.addEventListener("mouseleave", () => popup.clearPointerHighlight());
 
 	popup.inputEl.addEventListener("blur", () => popup.close());
 

@@ -3349,6 +3349,7 @@ button.callout-studio-icon-picker-loading {
    free to end up narrower than the field that opened it. */
 .cs-combobox-menu {
 	position: absolute;
+	box-sizing: border-box;
 	top: calc(100% + 4px);
 	inset-inline-start: 0;
 	inset-inline-end: 0;
@@ -3527,7 +3528,7 @@ button.callout-studio-icon-picker-loading {
 /* A fixed 320px is most of a phone screen with the keyboard up. */
 @media (max-width: 600px) {
 	.cs-combobox-menu {
-		max-height: 50vh;
+		max-height: min(50vh, var(--cs-combobox-menu-max-height, 320px));
 	}
 
 	.is-phone .cs-command-callout-setting .cs-combobox {

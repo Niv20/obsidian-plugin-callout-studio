@@ -108,6 +108,7 @@ export interface ComboboxRowsSpec<T> extends ComboboxRowContract<T> {
 	/** The committed item's key, or `undefined` — drawn as `is-selected`. */
 	selectedKey: string | undefined;
 	onEnterRow(index: number): void;
+	onLeaveRow(): void;
 	onClickRow(index: number): void;
 }
 
@@ -149,6 +150,7 @@ export function renderComboboxRows<T>(
 		// mouseenter rather than hover CSS alone, because the popup's
 		// `onHighlight` live-previews and CSS cannot call it.
 		rowEl.addEventListener("mouseenter", () => spec.onEnterRow(i));
+		rowEl.addEventListener("mouseleave", () => spec.onLeaveRow());
 		rowEl.addEventListener("click", () => spec.onClickRow(i));
 		rowEls.push(rowEl);
 	});

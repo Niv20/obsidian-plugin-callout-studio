@@ -62,6 +62,7 @@ export class QuickInsertModal extends Modal {
 	/** Rows currently on screen, in view order — what the arrow keys walk. */
 	private rows: { def: CalloutDefinition; el: HTMLElement }[] = [];
 	private activeIndex = -1;
+	private pointerActive = false;
 
 	private previews: QuickInsertPreviews | null = null;
 
@@ -165,7 +166,8 @@ export class QuickInsertModal extends Modal {
 		}
 	}
 
-	private setActive(index: number): void {
+	private setActive(index: number, pointer = false): void {
+		this.pointerActive = pointer && index >= 0;
 		this.rows[this.activeIndex]?.el.removeClass("is-active");
 		if (index < 0 || index >= this.rows.length) {
 			this.activeIndex = -1;
@@ -174,7 +176,7 @@ export class QuickInsertModal extends Modal {
 		this.activeIndex = index;
 		const row = this.rows[index];
 		row?.el.addClass("is-active");
-		row?.el.scrollIntoView({ block: "nearest" });
+		if (!pointer) row?.el.scrollIntoView({ block: "nearest" });
 	}
 
 	// ── List ────────────────────────────────────────────────────────────
@@ -207,6 +209,7 @@ export class QuickInsertModal extends Modal {
 		listEl.empty();
 		this.rows = [];
 		this.activeIndex = -1;
+		this.pointerActive = false;
 
 		const visible = filterCalloutList(usable, {
 			query: this.query,
@@ -231,8 +234,11 @@ export class QuickInsertModal extends Modal {
 				preview: (target) => this.previews?.get(target.id) ?? null,
 				onEdit: (target) => void this.edit(target),
 				onInsert: (target) => this.insert(target),
-				onHover: (rowEl) =>
-					this.setActive(this.rows.findIndex((r) => r.el === rowEl)),
+				onHover: (rowEl) => {
+					if (rowEl || this.pointerActive) {
+						this.setActive(this.rows.findIndex((r) => r.el === rowEl), true);
+					}
+				},
 			});
 			this.rows.push({ def, el });
 		}
