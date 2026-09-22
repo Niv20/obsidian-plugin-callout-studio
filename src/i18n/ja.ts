@@ -487,6 +487,7 @@ export const ja: Record<string, string> = {
 		"未取得: {{names}}。上からソースを選んでダウンロードしてください。",
 	"iconPicker.chooseSource": "ソースを選択",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "未ダウンロード",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "すべてのライブラリを一度に検索",

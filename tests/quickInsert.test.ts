@@ -50,6 +50,7 @@ import {
 } from "../src/settings/quickInsertMessages";
 import { previewMarkdown } from "../src/settings/quickInsertPreview";
 import { renderQuickInsertRow } from "../src/settings/quickInsertRow";
+import { QuickInsertModal } from "../src/settings/QuickInsertModal";
 import { asEl, el } from "./support/fakeDom";
 import { readRepoFile } from "./support/sourceScan";
 import type { CalloutDefinition } from "../src/types";
@@ -1238,5 +1239,52 @@ describe("the row keeps its controls outside the callout", () => {
 		rowEl.dispatchEvent(clickOn(editBtn ?? null));
 		assert.deepEqual(inserted, ["warning"], "row stole the Edit click");
 		assert.deepEqual(edited, []);
+	});
+});
+
+describe("quick-insert pointer highlights", () => {
+	function harness() {
+		const inserted: string[] = [];
+		// Exercise the real row wiring and keyboard handlers without opening a
+		// host Modal: the stub has no modal DOM or workspace focus lifecycle.
+		const modal = Object.assign(Object.create(QuickInsertModal.prototype), {
+			listEl: asEl(el()), rows: [], activeIndex: -1, pointerActive: false,
+			query: "", filter: "all", captured: { ok: true }, previews: null,
+			insert: (item: CalloutDefinition) => inserted.push(item.id),
+		}) as {
+			listEl: HTMLElement;
+			renderList(items: CalloutDefinition[]): void;
+			onSearchKey(event: KeyboardEvent): void;
+		};
+		modal.renderList([
+			def({ id: "alpha", displayName: "Alpha" }),
+			def({ id: "beta", displayName: "Beta" }),
+		]);
+		const rows = Array.from(modal.listEl.querySelectorAll<HTMLElement>(".cs-qi-row"));
+		const key = (key: string) => modal.onSearchKey({ key, preventDefault() {} } as KeyboardEvent);
+		return { rows, key, inserted };
+	}
+
+	it("clears a pointer highlight on leaving without inserting or scrolling", () => {
+		const { rows, inserted } = harness();
+		const row = rows[1]!;
+		let scrolled = false;
+		row.scrollIntoView = () => { scrolled = true; };
+		row.dispatchEvent({ type: "mouseenter" } as Event);
+		assert.ok(row.hasClass("is-active"));
+		row.dispatchEvent({ type: "mouseleave" } as Event);
+		assert.ok(!row.hasClass("is-active"));
+		assert.strictEqual(scrolled, false);
+		assert.deepStrictEqual(inserted, []);
+	});
+
+	it("preserves keyboard navigation when the pointer subsequently leaves", () => {
+		const { rows, key, inserted } = harness();
+		rows[0]!.dispatchEvent({ type: "mouseenter" } as Event);
+		key("ArrowDown");
+		rows[0]!.dispatchEvent({ type: "mouseleave" } as Event);
+		assert.ok(rows[1]!.hasClass("is-active"));
+		key("Enter");
+		assert.deepStrictEqual(inserted, ["beta"]);
 	});
 });

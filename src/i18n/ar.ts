@@ -476,6 +476,7 @@ export const ar: Record<string, string> = {
 		"لم يتم تضمينها بعد: {{names}}. اختر مصدرًا أعلاه لتنزيله.",
 	"iconPicker.chooseSource": "اختر مصدرًا",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "لم يتم تنزيله",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "البحث في جميع المكتبات دفعة واحدة",

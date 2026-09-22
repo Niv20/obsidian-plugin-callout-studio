@@ -486,6 +486,7 @@ export const ro: Record<string, string> = {
 		"Neincluși încă: {{names}}. Alege o sursă de mai sus pentru a o descărca.",
 	"iconPicker.chooseSource": "Alege sursa",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Nedescărcat",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "caută în toate bibliotecile deodată",

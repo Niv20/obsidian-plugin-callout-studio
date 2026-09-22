@@ -468,6 +468,7 @@ export const da: Record<string, string> = {
 		"Ikke inkluderet endnu: {{names}}. Vælg en kilde ovenfor for at downloade den.",
 	"iconPicker.chooseSource": "Vælg kilde",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Ikke downloadet",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "søg i alle biblioteker på én gang",

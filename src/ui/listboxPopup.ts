@@ -1,14 +1,8 @@
 /**
  * ui/listboxPopup.ts — a text input with a filtering listbox under it.
  *
- * The plugin asks the user to pick one row out of a named list in several
- * places, and until this existed each one answered differently: a native
- * `<select>` for the fallback callout and the command editor (no icon, no
- * colour, no typing), a click-only button-and-menu for the colour palette, and
- * the `[!` popover in the editor — the one that got it right. This is that
- * popover's behaviour made reusable, so a picker cannot be worse just because
- * of where it sits. Markup and ARIA live in `listboxPopupDom.ts`; what a row
- * looks like is the caller's, through {@link ListboxPopupOptions.renderRow}.
+ * Shared by callout and colour pickers. Markup and ARIA live in
+ * `listboxPopupDom.ts`; row content comes from the caller's `renderRow`.
  *
  * Two rules hold the whole design up. **The query is separate state from
  * `input.value`**: opening does not treat the committed label as a search for
@@ -18,8 +12,6 @@
  * here and is persisted *and synced to every device*, so a picker that guessed
  * "probably the first match" would write a value nobody chose. A click and
  * Enter are the only two commits there are.
- *
- * The gestures that trigger all that live in `listboxPopupEvents.ts`.
  */
 import {
 	buildComboboxSkeleton,
@@ -56,6 +48,7 @@ export class ListboxPopup<T> {
 	private rowEls: HTMLElement[] = [];
 	/** Into `items`, or -1 for "nothing highlighted". */
 	private activeIndex = -1;
+	private pointerActive = false;
 	/** Index in `rowEls` of the "create it" row, when one is drawn. */
 	private createRowIndex: number | null = null;
 	private open = false;
@@ -194,7 +187,8 @@ export class ListboxPopup<T> {
 			renderRow: (rowEl, item, q) => this.options.renderRow(rowEl, item, q),
 			emptyText: (q) => this.options.emptyText(q),
 			groupOf: this.options.groupOf && ((i) => this.groupOf(i)),
-			onEnterRow: (i) => this.setActive(i),
+			onEnterRow: (i) => this.setActive(i, { pointer: true }),
+			onLeaveRow: () => this.clearPointerHighlight(),
 			onClickRow: (i) => this.commit(i),
 		});
 
@@ -209,7 +203,8 @@ export class ListboxPopup<T> {
 					action.label(query.trim()),
 					`${this.listboxId}-create`,
 				);
-				rowEl.addEventListener("mouseenter", () => this.setActive(0));
+				rowEl.addEventListener("mouseenter", () => this.setActive(0, { pointer: true }));
+				rowEl.addEventListener("mouseleave", () => this.clearPointerHighlight());
 				rowEl.addEventListener("click", () => this.commit(0));
 				this.rowEls.push(rowEl);
 				this.createRowIndex = 0;
@@ -235,14 +230,18 @@ export class ListboxPopup<T> {
 		});
 	}
 
-	private setActive(index: number, opts?: { preview?: boolean }): void {
+	private clearPointerHighlight(): void {
+		if (this.pointerActive) this.setActive(-1);
+	}
+	private setActive(index: number, opts?: { preview?: boolean; pointer?: boolean }): void {
 		this.rowEls[this.activeIndex]?.removeClass("is-active");
 		this.activeIndex = index >= 0 && index < this.rowEls.length ? index : -1;
+		this.pointerActive = opts?.pointer ?? false;
 
 		const el = this.rowEls[this.activeIndex];
 		if (el) {
 			el.addClass("is-active");
-			el.scrollIntoView({ block: "nearest" });
+			if (!this.pointerActive) el.scrollIntoView({ block: "nearest" });
 			this.inputEl.setAttribute("aria-activedescendant", el.id);
 		} else {
 			// Removed, not emptied: an empty `aria-activedescendant` still names
@@ -286,6 +285,7 @@ export class ListboxPopup<T> {
 			close: () => this.close(),
 			searchable: () => this.searchable,
 			refilter: () => this.rebuild(),
+			clearPointerHighlight: () => this.clearPointerHighlight(),
 			moveActive: (delta) =>
 				this.setActive(
 					delta > 0

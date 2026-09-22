@@ -476,6 +476,7 @@ export const zh: Record<string, string> = {
 		"尚未包含：{{names}}。请在上方选择来源以下载。",
 	"iconPicker.chooseSource": "选择来源",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "尚未下载",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "同时搜索所有图标库",

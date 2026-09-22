@@ -6,6 +6,12 @@ Open a callout for editing and click its current icon to open the icon picker. Y
 
 The picker includes Lucide, Tabler Icons, Material Symbols, Emoji, Font Awesome, Octicons, and RPG Awesome.
 
+The source menu keeps catalog sizes easy to scan with rounded counts such as **3.8K+**. A grey outlined **Not downloaded** badge marks whole-library packs that are not stored on this device yet; selecting one opens its one-time download prompt.
+
+The menu fits the available window height and scrolls internally, including
+with larger interface text. Moving the pointer away clears its hover highlight;
+keyboard navigation and the selected library remain available.
+
 - **Lucide and Emoji** are available immediately and need no download.
 - **Most third-party libraries** need one quick download, after which they work offline.
 - **Material Symbols** downloads only the specific SVG you select, keeping its stored footprint small.

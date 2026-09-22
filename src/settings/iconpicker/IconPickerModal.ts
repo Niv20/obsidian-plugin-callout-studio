@@ -39,8 +39,10 @@ import {
 } from "./allSources";
 import { PackPanel } from "./PackPanel";
 import { ImagePanel } from "./ImagePanel";
+import { createSourceMenuTitle } from "./sourceMenuPresentation";
+import { clearListboxMenuHeightCap, syncListboxMenuHeightCap } from "../../ui/listboxPopupLayout";
 import { applyModalChrome, removeModalChrome } from "../modalChrome";
-import { t } from "../../i18n";
+import { getLocale, t } from "../../i18n";
 import type { LocaleKey } from "../../i18n";
 
 /**
@@ -112,8 +114,11 @@ export class IconPicker extends Modal {
 	private sourceMenuOpen = false;
 	private sourceMenuItems: { id: PickerSourceId; el: HTMLElement }[] = [];
 	private activeSourceMenuIndex = -1;
-	/** Modal does not extend Component, so this listener has no auto-cleanup —
-	 * removed by hand in onClose(). */
+	private sourceMenuPointerActive = false;
+	private sourceMenuResizeDisposer?: () => void;
+	private packStatesLoaded = false;
+	private packStateDisposer: (() => void) | null = null;
+	/** Removed by hand in onClose because Modal has no auto-cleanup. */
 	private sourceMenuOutsideClick: ((ev: MouseEvent) => void) | null = null;
 	/** How many icons each source offers; filled in the background on open. */
 	private sourceCounts = new Map<IconSourceId, number>();
@@ -125,9 +130,7 @@ export class IconPicker extends Modal {
 		super(plugin.app);
 		this.currentIcon = currentIcon ?? null;
 		this.selectedIcon = currentIcon ? { ...currentIcon } : null;
-		// Re-opening lands on the source the current icon came from, with that
-		// icon selected and later scrolled into view. An icon from a source this
-		// build does not know falls back to the default.
+		// Re-open on the icon's source; an unknown imported source falls back.
 		this.activeSource = (currentIcon && packFor(currentIcon)?.id) ?? ALL_SOURCES;
 	}
 
@@ -146,12 +149,16 @@ export class IconPicker extends Modal {
 
 		const container = this.contentEl.createDiv("icon-picker-container");
 		this.buildSourcePicker(container);
+		this.packStateDisposer = this.plugin.icons.packs.onChange(() => {
+			if (this.packStatesLoaded && this.sourceMenuOpen) {
+				this.closeSourceMenu();
+				this.sourceButtonEl.focus();
+			}
+		});
 		this.panelHostEl = container.createDiv("icon-picker-content");
-		// Counts come from the bundled indexes, so this reaches no network and
-		// is normally done long before the source menu is first opened.
+		// Bundled indexes make counting offline and normally finish before first open.
 		void this.loadSourceCounts();
 
-		// The chosen icon previews in the bar beside the two buttons.
 		this.previewEl = footer.createDiv("icon-picker-preview");
 		this.updatePreview();
 
@@ -176,12 +183,17 @@ export class IconPicker extends Modal {
 	 */
 	private async openInitialPanel(): Promise<void> {
 		await this.plugin.icons.packs.loadAllFromDisk();
+		this.packStatesLoaded = true;
 		await this.showPanel();
+		if (this.sourceMenuOpen) this.openSourceMenu();
 	}
 
 	onClose(): void {
+		this.closeSourceMenu();
 		this.panel?.dispose();
 		this.panel = null;
+		this.packStateDisposer?.();
+		this.packStateDisposer = null;
 		// The bar is a sibling of contentEl, so it outlives the usual teardown.
 		removeModalChrome(this);
 		if (this.sourceMenuOutsideClick) {
@@ -199,22 +211,13 @@ export class IconPicker extends Modal {
 
 	// ── Source selection ────────────────────────────────────────────────
 
-	/**
-	 * A button opening a menu, not a `<select>`: an `<option>` can hold text and
-	 * nothing else, and a list of bare library names asks the reader to already
-	 * know which one holds "swords".
-	 *
-	 * The menu is a plain positioned div (like the callout editor's palette
-	 * dropdown), not an Obsidian `Menu` — a native menu anchors to the mouse
-	 * and gives us no hook to paint a "this is the current source" background,
-	 * only a checkmark.
-	 */
+	/** A button-anchored listbox with library descriptions and selection marks. */
 	private buildSourcePicker(container: HTMLElement): void {
 		const row = container.createDiv("icon-picker-source-row");
 		row.createEl("label", {
 			text: t("iconPicker.chooseSource"),
 			cls: "icon-picker-source-label",
-			attr: { for: "cs-icon-source" },
+			attr: { for: "cs-icon-source", id: "icon-picker-source-label" },
 		});
 		this.sourceDropdownEl = row.createDiv("icon-picker-source-dropdown");
 		this.sourceButtonEl = this.sourceDropdownEl.createEl("button", {
@@ -229,7 +232,11 @@ export class IconPicker extends Modal {
 		this.paintSourceButton();
 		this.sourceMenuEl = this.sourceDropdownEl.createDiv({
 			cls: "icon-picker-source-menu icon-picker-source-menu-hidden",
-			attr: { role: "listbox", tabindex: "-1" },
+			attr: { role: "listbox", tabindex: "-1", "aria-labelledby": "icon-picker-source-label" },
+		});
+		this.sourceDropdownEl.addEventListener("focusout", (ev) => {
+			const next = ev.relatedTarget as Node | null;
+			if (!next || !this.sourceDropdownEl.contains(next)) this.closeSourceMenu();
 		});
 
 		this.sourceButtonEl.addEventListener("click", () => {
@@ -239,6 +246,9 @@ export class IconPicker extends Modal {
 		this.sourceMenuEl.addEventListener("keydown", (ev) =>
 			this.onSourceMenuKeydown(ev),
 		);
+		this.sourceMenuEl.addEventListener("mouseleave", () => {
+			if (this.sourceMenuPointerActive) this.setActiveSourceMenuItem(-1);
+		});
 		// Nothing closes a plain div for us the way a real Menu would.
 		this.sourceMenuOutsideClick = (ev) => {
 			if (!this.sourceMenuOpen) return;
@@ -271,34 +281,51 @@ export class IconPicker extends Modal {
 		setIcon(chevron, "chevron-down");
 	}
 
-	/** Rebuilt on every open, so counts (and a source picked elsewhere) are never
-	 * stale by the time the menu is seen — see `sourceCount`. */
+	/** Rebuilt on every open so counts and download state are never stale. */
 	private buildSourceMenuItems(): void {
 		this.sourceMenuEl.empty();
 		this.sourceMenuItems = [];
-		// Searching everything at once comes first, and is the default: with six
-		// libraries, knowing which one holds "swords" is its own puzzle.
+		const missing = new Set(
+			this.packStatesLoaded
+				? missingSources(this.plugin.icons.packs).map((pack) => pack.id)
+				: [],
+		);
+		// Searching everything is first: knowing which library has "swords" is hard.
 		const ids: PickerSourceId[] = [ALL_SOURCES, ...ICON_SOURCE_IDS];
 		for (const id of ids) {
 			const meta = this.sourceMeta(id);
 			const item = this.sourceMenuEl.createDiv({
 				cls: "icon-picker-source-menu-item",
-				attr: { role: "option" },
+				attr: { id: `cs-icon-source-option-${id}`, role: "option",
+					"aria-selected": String(id === this.activeSource) },
 			});
 			const emblem = item.createSpan({
 				cls: "icon-picker-source-menu-item-emblem",
 			});
-			// Every emblem is a Lucide id, which Obsidian ships — so the row
-			// draws even for a source that has never been downloaded.
+			// Lucide emblems draw even when the source itself is not downloaded.
 			setIcon(emblem, meta.emblemIcon);
-			item.appendChild(this.sourceMenuTitle(id, meta));
+			item.appendChild(
+				createSourceMenuTitle({
+					label: t(meta.labelKey),
+					description: t(meta.descriptionKey),
+					count: this.countFor(id),
+					locale: getLocale(),
+					exactCount: id === "image",
+					notDownloaded: id !== ALL_SOURCES && missing.has(id),
+					notDownloadedLabel: t("iconPicker.notDownloaded"),
+					selected: id === this.activeSource,
+				}),
+			);
 			item.toggleClass("is-selected", id === this.activeSource);
 			item.addEventListener("mouseenter", () =>
 				this.setActiveSourceMenuItem(
 					this.sourceMenuItems.findIndex((i) => i.id === id),
-					{ scroll: false },
+					{ pointer: true },
 				),
 			);
+			item.addEventListener("mouseleave", () => {
+				if (this.sourceMenuPointerActive) this.setActiveSourceMenuItem(-1);
+			});
 			item.addEventListener("click", () => {
 				this.selectSource(id);
 				this.closeSourceMenu();
@@ -307,22 +334,25 @@ export class IconPicker extends Modal {
 		}
 	}
 
-	/**
-	 * Opens directly under the button, at the button's own width, every time —
-	 * a plain positioned div anchored to its trigger, unlike Obsidian's native
-	 * Menu which lands wherever the mouse happened to be inside the button.
-	 */
+	/** Open below the trigger, capped to the visible modal body. */
 	private openSourceMenu(): void {
 		this.buildSourceMenuItems();
 		this.sourceMenuOpen = true;
 		this.sourceMenuEl.removeClass("icon-picker-source-menu-hidden");
 		this.sourceButtonEl.addClass("is-open");
 		this.sourceButtonEl.setAttribute("aria-expanded", "true");
+		this.applySourceMenuHeightCap();
 		const startIdx = this.sourceMenuItems.findIndex(
 			(i) => i.id === this.activeSource,
 		);
 		this.setActiveSourceMenuItem(startIdx >= 0 ? startIdx : 0);
 		this.sourceMenuEl.focus();
+	}
+
+	private applySourceMenuHeightCap(): void {
+		this.sourceMenuResizeDisposer = syncListboxMenuHeightCap(this.sourceButtonEl,
+			this.sourceMenuEl, this.sourceMenuResizeDisposer,
+			() => this.applySourceMenuHeightCap(), this.contentEl);
 	}
 
 	private closeSourceMenu(): void {
@@ -331,17 +361,22 @@ export class IconPicker extends Modal {
 		this.sourceMenuEl.addClass("icon-picker-source-menu-hidden");
 		this.sourceButtonEl.removeClass("is-open");
 		this.sourceButtonEl.setAttribute("aria-expanded", "false");
-		this.activeSourceMenuIndex = -1;
+		this.setActiveSourceMenuItem(-1);
+		this.sourceMenuResizeDisposer?.();
+		this.sourceMenuResizeDisposer = undefined;
+		clearListboxMenuHeightCap(this.sourceMenuEl);
 	}
 
 	private setActiveSourceMenuItem(
 		index: number,
-		opts?: { scroll?: boolean },
+		opts?: { pointer?: boolean },
 	): void {
+		this.sourceMenuPointerActive = opts?.pointer ?? false;
 		const prev = this.sourceMenuItems[this.activeSourceMenuIndex];
 		prev?.el.removeClass("is-active");
 		if (index < 0 || index >= this.sourceMenuItems.length) {
 			this.activeSourceMenuIndex = -1;
+			this.sourceMenuEl.removeAttribute("aria-activedescendant");
 			return;
 		}
 		const entry = this.sourceMenuItems[index];
@@ -351,7 +386,8 @@ export class IconPicker extends Modal {
 		}
 		this.activeSourceMenuIndex = index;
 		entry.el.addClass("is-active");
-		if (opts?.scroll !== false) entry.el.scrollIntoView({ block: "nearest" });
+		this.sourceMenuEl.setAttribute("aria-activedescendant", entry.el.id);
+		if (!opts?.pointer) entry.el.scrollIntoView({ block: "nearest" });
 	}
 
 	private onSourceMenuKeydown(ev: KeyboardEvent): void {
@@ -381,42 +417,7 @@ export class IconPicker extends Modal {
 		}
 	}
 
-	/**
-	 * Name, then what the library holds and how many icons that is, always on
-	 * its own line below the name — a fragment so the description can be styled
-	 * down and given room to breathe instead of squeezing onto the name's line.
-	 * The check sits outside the two-line text stack so it centers on the
-	 * emblem icon's row rather than pinning to either line.
-	 */
-	private sourceMenuTitle(id: PickerSourceId, meta: SourceMeta): DocumentFragment {
-		const frag = createFragment();
-		const wrap = frag.createDiv("cs-source-item");
-		const text = wrap.createDiv("cs-source-text");
-		text.createSpan({ cls: "cs-source-name", text: t(meta.labelKey) });
-
-		const count = this.countFor(id);
-		const description = t(meta.descriptionKey);
-		text.createSpan({
-			cls: "cs-source-desc",
-			text:
-				count === undefined
-					? `(${description})`
-					: `(${description} · ${count.toLocaleString()})`,
-		});
-
-		if (id === this.activeSource) {
-			const check = wrap.createSpan({ cls: "cs-source-check" });
-			setIcon(check, "check");
-		}
-		return frag;
-	}
-
-	/**
-	 * Icons a source offers — distinct names, never style or weight
-	 * combinations: one Font Awesome name drawn in three styles is one icon to
-	 * choose from, and Material's 3,870 do not become 100,000 because the
-	 * toolbar can restyle them.
-	 */
+	/** Distinct icon names; style and weight variants do not inflate the count. */
 	private countFor(id: PickerSourceId): number | undefined {
 		if (id !== ALL_SOURCES) return this.sourceCount(id);
 		if (this.sourceCounts.size === 0) return undefined;
@@ -427,12 +428,7 @@ export class IconPicker extends Modal {
 		);
 	}
 
-	/**
-	 * One source's count. Every library is fixed, so the number loaded once on
-	 * open holds for the life of the modal — but "Custom Icons" is the one source
-	 * the user writes to, and a count cached on open would still claim four
-	 * pictures after a fifth was added. That one is read live instead.
-	 */
+	/** Fixed catalog counts are cached; user-owned Custom Icons are counted live. */
 	private sourceCount(id: IconSourceId): number | undefined {
 		if (id === "image") return this.plugin.registry.getUserImages().length;
 		return this.sourceCounts.get(id);
@@ -678,4 +674,3 @@ export class IconPicker extends Modal {
 		this.close();
 	}
 }
-

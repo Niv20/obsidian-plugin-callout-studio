@@ -492,6 +492,7 @@ export const it: Record<string, string> = {
 		"Non ancora incluso: {{names}}. Scegli una fonte sopra per scaricarlo.",
 	"iconPicker.chooseSource": "Scegli fonte",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Non scaricata",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources":

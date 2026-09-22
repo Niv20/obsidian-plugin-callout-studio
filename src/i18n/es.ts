@@ -488,6 +488,7 @@ export const es: Record<string, string> = {
 		"Aún no incluido: {{names}}. Selecciona una fuente arriba para descargarlo.",
 	"iconPicker.chooseSource": "Elegir fuente",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Sin descargar",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "buscar en todas las bibliotecas a la vez",

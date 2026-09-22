@@ -472,6 +472,7 @@ export const nb: Record<string, string> = {
 		"Ikke inkludert ennå: {{names}}. Velg en kilde ovenfor for å laste den ned.",
 	"iconPicker.chooseSource": "Velg kilde",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Ikke lastet ned",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "søk i alle biblioteker på én gang",

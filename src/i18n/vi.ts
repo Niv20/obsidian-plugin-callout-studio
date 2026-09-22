@@ -488,6 +488,7 @@ export const vi: Record<string, string> = {
 		"Chưa có: {{names}}. Chọn nguồn ở trên để tải xuống.",
 	"iconPicker.chooseSource": "Chọn nguồn",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Chưa tải xuống",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "tìm kiếm mọi thư viện cùng lúc",

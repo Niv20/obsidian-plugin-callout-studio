@@ -22,7 +22,7 @@ export interface QuickInsertRowHandlers {
 	preview: (def: CalloutDefinition) => HTMLElement | null;
 	onEdit: (def: CalloutDefinition) => void;
 	onInsert: (def: CalloutDefinition) => void;
-	onHover: (el: HTMLElement) => void;
+	onHover: (el: HTMLElement | null) => void;
 	/** Whether an editor is available to insert into, for the button's state. */
 	canInsert: boolean;
 }
@@ -82,5 +82,6 @@ export function renderQuickInsertRow(
 	// The pointer and the keyboard share one highlight rather than showing two
 	// at once.
 	row.addEventListener("mouseenter", () => handlers.onHover(row));
+	row.addEventListener("mouseleave", () => handlers.onHover(null));
 	return row;
 }

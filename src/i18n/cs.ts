@@ -482,6 +482,7 @@ export const cs: Record<string, string> = {
 		"Zatím není součástí: {{names}}. Vyberte zdroj výše a stáhněte ho.",
 	"iconPicker.chooseSource": "Vybrat zdroj",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Nestaženo",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "prohledávat všechny knihovny najednou",

@@ -601,6 +601,7 @@ export const en: Record<string, string> = {
 		"Not included yet: {{names}}. Pick a source above to download it.",
 	"iconPicker.chooseSource": "Choose source",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Not downloaded",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "search every library at once",

@@ -484,6 +484,7 @@ export const ru: Record<string, string> = {
 		"Ещё не включено: {{names}}. Выберите источник выше, чтобы загрузить.",
 	"iconPicker.chooseSource": "Выбрать источник",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.notDownloaded": "Не загружено",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "поиск во всех библиотеках сразу",
