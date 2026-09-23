@@ -17,16 +17,16 @@ export const sv: Record<string, string> = {
 
 	"autocomplete.createNew": 'Skapa "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Ingen callout matchar ”{{query}}”.",
 	"calloutPicker.placeholder": "Sök callouts",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Ingen färg matchar ”{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Sök färger…",
 	"replaceModal.searchPlaceholder": "Sök callouts",
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
 	"settings.rescanVaultDesc": "Lägger till callout-typer som används i dina anteckningar och som inte redan finns i den här listan. Dina befintliga callouts och anteckningar ändras inte.",
 	"settings.rescanVaultHintAction": "Sök efter callouts",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Sökresultatet sparades inte. Kontrollera att inställningarna kan skrivas och att synkroniseringen är klar. Försök sedan igen via Inställningar → Mina callout-typer → Sök efter callouts. Befintliga callouts har inte ersatts.",
 	"manualDiscovery.scanning": "Skannar…",
 	"settings.rescanComplete":
 		"Skanning klar: {{count}} ny(a) callout-typ(er) tillagd(a).",
@@ -89,9 +89,9 @@ export const sv: Record<string, string> = {
 	"settings.import": "Importera",
 	"settings.export": "Exportera",
 	"settings.importDesc":
-		"Importera dina Callout Studio-data från ett annat vault med en JSON-fil.",
+		"Importera dina Callout Studio-data från ett annat vault eller hämta dina callouts från ett annat tillägg.",
 	"settings.exportDesc":
-		"Spara alla dina anpassade callout-typer i JSON-format.",
+		"Spara dina callouts som en säkerhetskopia för Callout Studio eller som ett CSS-kodavsnitt som du kan använda någon annanstans.",
 	"settings.importConflictNotice":
 		"{{count}} callout-typ(er) importerade; {{overwritten}} befintlig(a) post(er) skrevs över.",
 
@@ -297,7 +297,7 @@ export const sv: Record<string, string> = {
 	"editor.verticalOffset": "Vertikal förskjutning",
 	"editor.colors": "Färger",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Anger färgerna för den här calloutens kantlinje, bakgrund och text.",
 	"editor.resetColors": "Återställ färger till standard",
 	"editor.paletteDeleted": "Borttagen färg",
 	"editor.paletteGroupObsidian": "Obsidian-callouts",
@@ -314,9 +314,9 @@ export const sv: Record<string, string> = {
 	"editor.foldClosed": "Stängd som standard",
 	"editor.cancel": "Avbryt",
 	"editor.saveChanges": "Spara ändringar",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Sparar…",
+	"editor.saveFailed": "Det gick inte att slutföra sparandet. Om den här redigeraren fortfarande är öppen, låt den vara öppen och försök igen efter att du har kontrollerat lagringen och synkroniseringen. Vissa inställningar eller ändringar i anteckningar kan redan ha sparats.",
+	"notice.settingsSaveFailed": "Callout Studio kunde inte spara dina ändringar. Kontrollera ledigt lagringsutrymme och synkronisering och försök igen innan du stänger Obsidian.",
 	"editor.createCallout": "Skapa callout",
 	"editor.nameRequired": "Ett visningsnamn krävs innan du skapar en callout.",
 	"editor.noChangesToSave": "Inga ändringar gjordes.",
@@ -455,7 +455,7 @@ export const sv: Record<string, string> = {
 	"iconPicker.custom": "Anpassade ikoner",
 	"iconPicker.searchCustom": "Sök i anpassade ikoner",
 	"iconPicker.customTooLarge":
-		"{{name}} är för stor. Anpassade ikoner måste vara under 5 MB.",
+		"{{name}} är för stor. Anpassade ikoner får vara högst 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} är inte en stödd fil för anpassad ikon. Använd SVG, PNG, JPEG eller WebP.",
 	"iconPicker.customInvalidSvg":
@@ -652,7 +652,7 @@ export const sv: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Justera kant och form för varje infogad callout i ditt vault.",
 	"settings.globalSettingsCustomize": "Anpassa",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Block-callout",
 	"settings.calloutTypeHeading": "Rubrik-callout",
 	"settings.calloutTypeInline": "Infogad callout",
 	"settings.customizeMenu": "Anpassa menyalternativ",
@@ -662,7 +662,7 @@ export const sv: Record<string, string> = {
 	"menuCustomize.title": "Anpassa högerklicksmenyn",
 	"menuCustomize.desc":
 		"Aktivera eller inaktivera åtgärder och dra i handtaget för att ändra ordningen. Ändringar sparas automatiskt.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Block-callout",
 	"menuCustomize.heading": "Rubrik-callout",
 	"menuCustomize.inline": "Infogad callout",
 	"menuCustomize.dragHandle": "Dra för att ändra ordning",
@@ -723,7 +723,7 @@ export const sv: Record<string, string> = {
 	"quickInsert.targetMoved": "Anteckningen som du öppnade Snabbinfoga från har ändrats eller stängts. Öppna Snabbinfoga igen i anteckningen du vill redigera.",
 	"quickInsert.targetMovedHint": "Den ursprungliga anteckningen är inte längre tillgänglig för den här infogningen.",
 	"quickInsert.noUserCallouts":
-		"Du har inte skapat några anpassade callouts än. Kör “Callout Studio: Create new callout type” från kommandopaletten.",
+		"Du har inte skapat några anpassade callouts än. Kör ”Callout Studio: Skapa ny callout-typ” från kommandopaletten.",
 	"quickInsert.noAvailableUserCallouts":
 		"Dina anpassade callouts visas för närvarande under temafiltret eftersom det aktiva temat styr dem.",
 	"quickInsert.noEditorHint": "Ingen anteckning är öppen i redigeringsläge, så inget kan infogas.",
@@ -755,9 +755,9 @@ export const sv: Record<string, string> = {
 
 	"import.title": "Importproblem",
 	"import.reportLeadIn":
-		"Det verkar som att den importerade filen har ändrats. Här är problemlistan:",
+		"Granska dessa importproblem innan du fortsätter:",
 	"import.reportLeadInFatal":
-		"Den här filen ser inte ut som en Callout Studio-export. Den kan inte importeras:",
+		"Det gick inte att importera dessa data:",
 	"import.entryHeading": "Post {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} av {{total}} poster är giltiga · {{issues}} problem hittades.",
@@ -795,7 +795,7 @@ export const sv: Record<string, string> = {
 		'"{{field}}" gäller bara för Material-ikoner och ignoreras för ikontyp {{type}}.',
 	"import.err.iconValueEmpty": "Ikonvärdet måste vara en icke-tom sträng.",
 	"import.err.iconValueTooLong":
-		"Ikonvärdet är ovanligt långt ({{length}} tecken).",
+		"Ikonvärdet överskrider gränsen på 200 tecken ({{length}} tecken).",
 	"import.err.materialStyle":
 		'Material-ikonstilen "{{value}}" är inte en av: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -811,7 +811,7 @@ export const sv: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" måste vara ett tal mellan {{min}} och {{max}} (fick "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" måste vara ett objekt som kopplar en callout-typ (\"regular\", \"heading\", \"inline\") till ikonens storlek och förskjutningar.",
 	"import.err.aliasesNotArray": '"aliases" måste vara en array av strängar.',
 	"import.err.aliasNotString": "Aliaset måste vara en sträng.",
 	"import.err.aliasDup":

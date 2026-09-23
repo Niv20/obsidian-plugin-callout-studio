@@ -17,16 +17,16 @@ export const hu: Record<string, string> = {
 
 	"autocomplete.createNew": 'Létrehozás "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Nincs a(z) „{{query}}” keresésnek megfelelő callout.",
 	"calloutPicker.placeholder": "Callout-ok keresése",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Nincs a(z) „{{query}}” keresésnek megfelelő szín.",
+	"editor.paletteSearchPlaceholder": "Színek keresése…",
 	"replaceModal.searchPlaceholder": "Callout-ok keresése",
 	"settings.fallbackTag": "Alapértelmezett",
 	"settings.fallbackTagAuto": "Aut. alapértelmezett",
 	"settings.rescanVaultDesc": "Hozzáadja a jegyzeteidben használt, ezen a listán még nem szereplő callout-típusokat. A meglévő calloutjaid és jegyzeteid nem változnak.",
 	"settings.rescanVaultHintAction": "Calloutok keresése",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "A keresés eredményét nem sikerült menteni. Ellenőrizze, hogy a beállítások írhatók-e, és befejeződött-e a szinkronizálás, majd próbálja újra: Beállítások → Callout-típusaim → Calloutok keresése. A meglévő calloutok nem lettek lecserélve.",
 	"manualDiscovery.scanning": "Keresés…",
 	"settings.rescanComplete":
 		"Keresés kész: {{count}} új callout-típus hozzáadva.",
@@ -89,9 +89,9 @@ export const hu: Record<string, string> = {
 	"settings.import": "Importálás",
 	"settings.export": "Exportálás",
 	"settings.importDesc":
-		"Importálja a Callout Studio adatait egy másik tárból JSON-fájl segítségével.",
+		"Importálja a Callout Studio adatait egy másik tárból, vagy hozza át a calloutokat egy másik bővítményből.",
 	"settings.exportDesc":
-		"Mentse el az összes egyéni callout-típust JSON formátumban.",
+		"Mentse el a calloutokat Callout Studio-biztonsági mentésként vagy máshol használható CSS-kódrészletként.",
 	"settings.importConflictNotice":
 		"{{count}} callout-típus importálva; {{overwritten}} meglévő bejegyzés felülírva.",
 
@@ -187,7 +187,7 @@ export const hu: Record<string, string> = {
 	"commandBuilder.formatDesc": "Milyen típusú callout-ot ír be a parancs.",
 	"commandBuilder.formatHeading": "Címsor",
 	"commandBuilder.formatInline": "Beágyazott",
-	"commandBuilder.formatBlock": "Block",
+	"commandBuilder.formatBlock": "Blokk",
 	"commandBuilder.roleDisabled":
 		"Ez a formátum ki van kapcsolva, ezért a parancs egyszerű szöveget szúr be, amíg vissza nem kapcsolja.",
 	"commandBuilder.roleThemeOwned":
@@ -299,7 +299,7 @@ export const hu: Record<string, string> = {
 	"editor.verticalOffset": "Függőleges eltolás",
 	"editor.colors": "Színek",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Beállítja a callout szegélyének, hátterének és szövegének színét.",
 	"editor.resetColors": "Színek visszaállítása alapértelmezettre",
 	"editor.paletteDeleted": "Törölt szín",
 	"editor.paletteGroupObsidian": "Obsidian callout-ok",
@@ -316,9 +316,9 @@ export const hu: Record<string, string> = {
 	"editor.foldClosed": "Alapértelmezetten zárva",
 	"editor.cancel": "Mégse",
 	"editor.saveChanges": "Változtatások mentése",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Mentés…",
+	"editor.saveFailed": "A mentést nem sikerült befejezni. Ha ez a szerkesztő még nyitva van, hagyja nyitva, és a tárhely és a szinkronizálás ellenőrzése után próbálja újra. Egyes beállítások vagy jegyzetmódosítások már mentésre kerülhettek.",
+	"notice.settingsSaveFailed": "A Callout Studio nem tudta menteni a módosításokat. Ellenőrizze a rendelkezésre álló tárhelyet és a szinkronizálást, majd az Obsidian bezárása előtt próbálja újra.",
 	"editor.createCallout": "Callout létrehozása",
 	"editor.nameRequired":
 		"Callout létrehozása előtt megjelenítési név szükséges.",
@@ -460,7 +460,7 @@ export const hu: Record<string, string> = {
 	"iconPicker.custom": "Egyéni ikonok",
 	"iconPicker.searchCustom": "Keresés az egyéni ikonok között",
 	"iconPicker.customTooLarge":
-		"{{name}} túl nagy. Az egyéni ikonoknak 5 MB alatt kell lenniük.",
+		"{{name}} túl nagy. Az egyéni ikonok mérete legfeljebb 5 MB lehet.",
 	"iconPicker.customUnsupported":
 		"{{name}} nem támogatott egyéni ikonfájl. Használjon SVG, PNG, JPEG vagy WebP fájlt.",
 	"iconPicker.customInvalidSvg":
@@ -659,7 +659,7 @@ export const hu: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Állítsa be a tárában lévő összes beágyazott callout szegélyét és alakját.",
 	"settings.globalSettingsCustomize": "Testreszabás",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Blokk callout",
 	"settings.calloutTypeHeading": "Címsor callout",
 	"settings.calloutTypeInline": "Beágyazott callout",
 	"settings.customizeMenu": "Menüelemek testreszabása",
@@ -669,7 +669,7 @@ export const hu: Record<string, string> = {
 	"menuCustomize.title": "Jobb gombos menü testreszabása",
 	"menuCustomize.desc":
 		"Kapcsolja be vagy ki a műveleteket, és húzza a fogantyút az átrendezéshez. A módosítások automatikusan mentésre kerülnek.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Blokk callout",
 	"menuCustomize.heading": "Címsor callout",
 	"menuCustomize.inline": "Beágyazott callout",
 	"menuCustomize.dragHandle": "Húzás az átrendezéshez",
@@ -732,7 +732,7 @@ export const hu: Record<string, string> = {
 	"quickInsert.targetMoved": "A jegyzet, amelyből a Gyors beszúrást megnyitotta, megváltozott vagy bezárult. Nyissa meg újra a Gyors beszúrást abban a jegyzetben, amelyet szerkeszteni szeretne.",
 	"quickInsert.targetMovedHint": "Az eredeti jegyzet már nem érhető el ehhez a beszúráshoz.",
 	"quickInsert.noUserCallouts":
-		"Még nem hoztál létre egyéni callout-ot. Futtasd a “Callout Studio: Create new callout type” parancsot a parancspalettáról.",
+		"Még nem hoztál létre egyéni callout-ot. Futtasd a „Callout Studio: Új callout-típus létrehozása” parancsot a parancspalettáról.",
 	"quickInsert.noAvailableUserCallouts":
 		"Az egyéni callout-jaid jelenleg a téma szűrő alatt vannak felsorolva, mert az aktív téma vezérli őket.",
 	"quickInsert.noEditorHint": "Nincs szerkesztési módban megnyitott jegyzet, ezért semmit sem lehet beszúrni.",
@@ -764,9 +764,9 @@ export const hu: Record<string, string> = {
 
 	"import.title": "Importálási problémák",
 	"import.reportLeadIn":
-		"Úgy tűnik, az importált fájlt módosították. Íme a problémák listája:",
+		"A folytatás előtt tekintse át az importálás során talált problémákat:",
 	"import.reportLeadInFatal":
-		"Ez a fájl nem tűnik Callout Studio exportnak. Nem importálható:",
+		"Ezeket az adatokat nem sikerült importálni:",
 	"import.entryHeading": "Bejegyzés {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} / {{total}} bejegyzés érvényes · {{issues}} probléma találva.",
@@ -804,7 +804,7 @@ export const hu: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"Az ikonértéknek nem üres karakterláncnak kell lennie.",
 	"import.err.iconValueTooLong":
-		"Az ikonérték szokatlanul hosszú ({{length}} karakter).",
+		"Az ikon értéke meghaladja a 200 karakteres korlátot ({{length}} karakter).",
 	"import.err.materialStyle":
 		'A "{{value}}" Material ikonstílus nem egyike a következőknek: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -820,7 +820,7 @@ export const hu: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" {{min}} és {{max}} közötti szám kell legyen (kapott: "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		'Az "iconAdjust" objektumnak a callout-típusokat ("regular", "heading", "inline") az ikonméretükhöz és eltolásaikhoz kell rendelnie.',
 	"import.err.aliasesNotArray":
 		'"aliases" karakterláncok tömbje kell legyen.',
 	"import.err.aliasNotString": "Az aliasnak karakterláncnak kell lennie.",
@@ -870,7 +870,7 @@ export const hu: Record<string, string> = {
 	"import.cmPasteLabel":
 		"Vagy illeszd be ide a Callout Manager Copy gombjáról másolt stílusokat:",
 	"import.cmPlaceholder":
-		"Illeszd be a másolt stílusokat, vagy egy data.json fájlt, ide…",
+		"Illeszd be ide a másolt stílusokat vagy a data.json tartalmát…",
 	"import.cmBtnCancel": "Mégse",
 	"import.cmBtnImport": "Importálás",
 	"import.err.cmNoBlocksFound":

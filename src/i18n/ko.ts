@@ -17,16 +17,16 @@ export const ko: Record<string, string> = {
 
 	"autocomplete.createNew": '만들기 "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "“{{query}}”와 일치하는 callout이 없습니다.",
 	"calloutPicker.placeholder": "callout 검색",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "“{{query}}”와 일치하는 색상이 없습니다.",
+	"editor.paletteSearchPlaceholder": "색상 검색…",
 	"replaceModal.searchPlaceholder": "callout 검색",
 	"settings.fallbackTag": "기본값",
 	"settings.fallbackTagAuto": "자동 기본값",
 	"settings.rescanVaultDesc": "노트에서 사용 중이지만 아직 이 목록에 없는 callout 유형을 추가합니다. 기존 callout과 노트는 변경되지 않습니다.",
 	"settings.rescanVaultHintAction": "callout 스캔",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "스캔 결과를 저장하지 못했습니다. 설정 파일에 쓸 수 있고 동기화가 완료되었는지 확인한 다음 설정 → 내 callout 유형 → callout 스캔에서 다시 시도하세요. 기존 callout은 교체되지 않았습니다.",
 	"manualDiscovery.scanning": "스캔 중…",
 	"settings.rescanComplete":
 		"스캔 완료: {{count}}개의 새 callout 유형이 추가되었습니다.",
@@ -89,9 +89,9 @@ export const ko: Record<string, string> = {
 	"settings.import": "가져오기",
 	"settings.export": "내보내기",
 	"settings.importDesc":
-		"JSON 파일을 사용하여 다른 볼트에서 Callout Studio 데이터를 가져옵니다.",
+		"다른 볼트에서 Callout Studio 데이터를 가져오거나 다른 플러그인에서 callout을 가져옵니다.",
 	"settings.exportDesc":
-		"모든 사용자 정의 callout 유형을 JSON 형식으로 저장합니다.",
+		"callout을 Callout Studio 백업이나 다른 곳에서 사용할 수 있는 CSS 스니펫으로 저장합니다.",
 	"settings.importConflictNotice":
 		"{{count}}개의 callout 유형을 가져왔습니다. {{overwritten}}개의 기존 항목을 덮어썼습니다.",
 
@@ -189,7 +189,7 @@ export const ko: Record<string, string> = {
 	"commandBuilder.formatDesc": "명령어가 작성하는 callout의 종류입니다.",
 	"commandBuilder.formatHeading": "제목",
 	"commandBuilder.formatInline": "인라인",
-	"commandBuilder.formatBlock": "Block",
+	"commandBuilder.formatBlock": "블록",
 	"commandBuilder.roleDisabled":
 		"이 형식은 꺼져 있어서, 다시 켜기 전까지 명령어는 일반 텍스트를 삽입합니다.",
 	"commandBuilder.roleThemeOwned":
@@ -298,7 +298,7 @@ export const ko: Record<string, string> = {
 	"editor.verticalOffset": "수직 오프셋",
 	"editor.colors": "색상",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"이 callout의 테두리, 배경, 텍스트 색상을 설정합니다.",
 	"editor.resetColors": "색상을 기본값으로 재설정",
 	"editor.paletteDeleted": "삭제된 색상",
 	"editor.paletteGroupObsidian": "Obsidian callout",
@@ -315,9 +315,9 @@ export const ko: Record<string, string> = {
 	"editor.foldClosed": "기본적으로 닫기",
 	"editor.cancel": "취소",
 	"editor.saveChanges": "변경 사항 저장",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "저장 중…",
+	"editor.saveFailed": "저장을 완료하지 못했습니다. 이 편집기가 아직 열려 있다면 닫지 말고 저장 공간과 동기화 상태를 확인한 후 다시 시도하세요. 일부 설정이나 노트 변경 사항은 이미 저장되었을 수 있습니다.",
+	"notice.settingsSaveFailed": "Callout Studio가 변경 사항을 저장하지 못했습니다. 저장 공간과 동기화 상태를 확인하고 Obsidian을 닫기 전에 다시 시도하세요.",
 	"editor.createCallout": "callout 만들기",
 	"editor.nameRequired": "callout을 만들기 전에 표시 이름이 필요합니다.",
 	"editor.noChangesToSave": "변경 사항이 없습니다.",
@@ -457,7 +457,7 @@ export const ko: Record<string, string> = {
 	"iconPicker.custom": "사용자 지정 아이콘",
 	"iconPicker.searchCustom": "사용자 지정 아이콘 검색",
 	"iconPicker.customTooLarge":
-		"{{name}}이(가) 너무 큽니다. 사용자 지정 아이콘은 5MB 미만이어야 합니다.",
+		"{{name}}이(가) 너무 큽니다. 사용자 지정 아이콘은 최대 5 MB까지 허용됩니다.",
 	"iconPicker.customUnsupported":
 		"{{name}}은(는) 지원되는 사용자 지정 아이콘 파일이 아닙니다. SVG, PNG, JPEG 또는 WebP를 사용하세요.",
 	"iconPicker.customInvalidSvg":
@@ -658,7 +658,7 @@ export const ko: Record<string, string> = {
 		"볼트에 있는 모든 인라인 callout의 테두리와 모양을 조정합니다.",
 	"settings.globalSettingsCustomize": "사용자 지정",
 
-	"settings.calloutTypeRegular": "Block Callout",
+	"settings.calloutTypeRegular": "블록 callout",
 	"settings.calloutTypeHeading": "제목 callout",
 	"settings.calloutTypeInline": "인라인 callout",
 
@@ -669,7 +669,7 @@ export const ko: Record<string, string> = {
 	"menuCustomize.title": "마우스 오른쪽 버튼 메뉴 사용자 지정",
 	"menuCustomize.desc":
 		"작업을 켜거나 끄고 핸들을 드래그하여 순서를 변경합니다. 변경 사항은 자동으로 저장됩니다.",
-	"menuCustomize.regular": "Block Callout",
+	"menuCustomize.regular": "블록 callout",
 	"menuCustomize.heading": "제목 callout",
 	"menuCustomize.inline": "인라인 callout",
 	"menuCustomize.dragHandle": "드래그하여 순서 변경",
@@ -730,7 +730,7 @@ export const ko: Record<string, string> = {
 	"quickInsert.targetMoved": "빠른 삽입을 연 노트가 변경되었거나 닫혔습니다. 편집하려는 노트에서 빠른 삽입을 다시 여세요.",
 	"quickInsert.targetMovedHint": "이 삽입에 사용할 원본 노트를 더 이상 사용할 수 없습니다.",
 	"quickInsert.noUserCallouts":
-		"아직 사용자 지정 callout을 만들지 않았습니다. 명령 팔레트에서 “Callout Studio: Create new callout type”을 실행하세요.",
+		"아직 사용자 지정 callout을 만들지 않았습니다. 명령 팔레트에서 “Callout Studio: 새 callout 유형 만들기”를 실행하세요.",
 	"quickInsert.noAvailableUserCallouts": "사용자 지정 callout은 활성 테마가 제어하고 있기 때문에 현재 테마 필터 아래에 표시됩니다.",
 	"quickInsert.noEditorHint": "편집 모드로 열린 노트가 없어 아무것도 삽입할 수 없습니다.",
 	"quickInsert.noEditor": "callout을 삽입하려면 노트를 편집 모드로 여세요.",
@@ -760,9 +760,9 @@ export const ko: Record<string, string> = {
 	"vaultStats.close": "닫기",
 
 	"import.title": "가져오기 문제",
-	"import.reportLeadIn": "가져온 파일이 수정된 것 같습니다. 문제 목록입니다:",
+	"import.reportLeadIn": "계속하기 전에 다음 가져오기 문제를 확인하세요:",
 	"import.reportLeadInFatal":
-		"이 파일은 Callout Studio 내보내기 파일이 아닌 것 같습니다. 가져올 수 없습니다:",
+		"이 데이터를 가져올 수 없습니다:",
 	"import.entryHeading": "항목 {{index}} — {{label}}",
 	"import.summary":
 		"{{total}}개 중 {{valid}}개 항목이 유효합니다 · {{issues}}개의 문제가 발견되었습니다.",
@@ -801,7 +801,7 @@ export const ko: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"아이콘 값은 비어 있지 않은 문자열이어야 합니다.",
 	"import.err.iconValueTooLong":
-		"아이콘 값이 비정상적으로 깁니다 ({{length}}자).",
+		"아이콘 값이 200자 제한을 초과했습니다 ({{length}}자).",
 	"import.err.materialStyle":
 		'Material 아이콘 스타일 "{{value}}"은(는) outlined, filled, rounded, sharp 중 하나여야 합니다.',
 	"import.err.materialWeight":
@@ -817,7 +817,7 @@ export const ko: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}"은(는) {{min}}에서 {{max}} 사이의 숫자여야 합니다 ("{{value}}"을(를) 받았습니다).',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		'"iconAdjust"는 callout 유형("regular", "heading", "inline")을 아이콘 크기와 위치 오프셋에 매핑하는 객체여야 합니다.',
 	"import.err.aliasesNotArray": '"aliases"는 문자열 배열이어야 합니다.',
 	"import.err.aliasNotString": "별칭은 문자열이어야 합니다.",
 	"import.err.aliasDup": '"{{value}}" 별칭이 이 항목 내에서 중복됩니다.',
@@ -865,7 +865,7 @@ export const ko: Record<string, string> = {
 	"import.cmPasteLabel":
 		"또는 Callout Manager에서 복사한 스타일을 여기에 붙여넣으세요:",
 	"import.cmPlaceholder":
-		"복사한 스타일 또는 data.json을 여기에 붙여넣으세요…",
+		"복사한 스타일 또는 data.json의 내용을 여기에 붙여넣으세요…",
 	"import.cmBtnCancel": "취소",
 	"import.cmBtnImport": "가져오기",
 	"import.err.cmNoBlocksFound":

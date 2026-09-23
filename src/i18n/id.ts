@@ -17,16 +17,16 @@ export const id: Record<string, string> = {
 
 	"autocomplete.createNew": 'Buat "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Tidak ada callout yang cocok dengan “{{query}}”.",
 	"calloutPicker.placeholder": "Cari callout",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Tidak ada warna yang cocok dengan “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Cari warna…",
 	"replaceModal.searchPlaceholder": "Cari callout",
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default otomatis",
 	"settings.rescanVaultDesc": "Menambahkan tipe callout yang digunakan di catatan Anda yang belum ada di daftar ini. Callout dan catatan Anda yang sudah ada tidak diubah.",
 	"settings.rescanVaultHintAction": "Pindai callout",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Hasil pemindaian tidak tersimpan. Pastikan pengaturan dapat ditulis dan sinkronisasi telah selesai, lalu coba lagi melalui Pengaturan → Tipe callout saya → Pindai callout. Callout yang ada tidak diganti.",
 	"manualDiscovery.scanning": "Memindai…",
 	"settings.rescanComplete":
 		"Pemindaian selesai: {{count}} tipe callout baru ditambahkan.",
@@ -88,9 +88,9 @@ export const id: Record<string, string> = {
 	"settings.import": "Impor",
 	"settings.export": "Ekspor",
 	"settings.importDesc":
-		"Impor kemajuan Callout Studio Anda dari vault lain menggunakan file JSON.",
+		"Impor data Callout Studio Anda dari vault lain, atau pindahkan callout dari plugin lain.",
 	"settings.exportDesc":
-		"Simpan semua tipe callout kustom Anda dalam format JSON.",
+		"Simpan callout sebagai cadangan Callout Studio atau cuplikan CSS yang dapat digunakan di tempat lain.",
 	"settings.importConflictNotice":
 		"{{count}} tipe callout diimpor; {{overwritten}} entri yang ada ditimpa.",
 
@@ -98,7 +98,7 @@ export const id: Record<string, string> = {
 
 	"settings.noCalloutsNow": "Tidak ada callout kustom untuk saat ini.",
 
-	"settings.editAria": "Edit {{name}}",
+	"settings.editAria": "Sunting {{name}}",
 	"settings.moreRowActionsAria": "Tindakan lainnya untuk {{name}}",
 	"settings.usageInfo": "{{count}} penggunaan di {{files}} file",
 	"settings.replaceAction": "Ganti di vault",
@@ -176,7 +176,7 @@ export const id: Record<string, string> = {
 	"commandBuilder.newCommand": "Perintah baru",
 	"commandBuilder.empty": "Belum ada perintah kustom.",
 	"commandBuilder.unknownCommand": "perintah ini",
-	"commandBuilder.editAria": "Edit {{name}}",
+	"commandBuilder.editAria": "Sunting {{name}}",
 	"commandBuilder.deleteAria": "Hapus {{name}}",
 	"commandBuilder.deleteConfirm":
 		"Hapus perintah {{name}}? Pintasan apa pun yang ditetapkan padanya akan berhenti berfungsi.",
@@ -184,9 +184,9 @@ export const id: Record<string, string> = {
 	"commandBuilder.editTitle": "Edit perintah",
 	"commandBuilder.format": "Format callout",
 	"commandBuilder.formatDesc": "Jenis callout apa yang ditulis perintah ini.",
-	"commandBuilder.formatHeading": "Heading",
-	"commandBuilder.formatInline": "Inline",
-	"commandBuilder.formatBlock": "Block",
+	"commandBuilder.formatHeading": "Judul",
+	"commandBuilder.formatInline": "Sebaris",
+	"commandBuilder.formatBlock": "Blok",
 	"commandBuilder.roleDisabled":
 		"Format ini dimatikan, sehingga perintah akan menyisipkan teks biasa sampai Anda mengaktifkannya kembali.",
 	"commandBuilder.roleThemeOwned":
@@ -268,7 +268,7 @@ export const id: Record<string, string> = {
 	"notice.filterHotkeysFailed":
 		"Pintasan Obsidian dibuka, tetapi filter Callout Studio tidak dapat diterapkan.",
 
-	"editor.editCallout": "Edit callout",
+	"editor.editCallout": "Sunting callout",
 	"editor.newCallout": "Callout baru",
 	"editor.displayName": "Nama tampilan",
 	"editor.displayNameDesc": "Label yang dapat dibaca yang ditampilkan di UI",
@@ -297,7 +297,7 @@ export const id: Record<string, string> = {
 	"editor.verticalOffset": "Offset vertikal",
 	"editor.colors": "Warna",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Mengatur warna batas, latar belakang, dan teks callout ini.",
 	"editor.resetColors": "Setel ulang warna ke default",
 	"editor.paletteDeleted": "Warna yang dihapus",
 	"editor.paletteGroupObsidian": "Callout Obsidian",
@@ -314,9 +314,9 @@ export const id: Record<string, string> = {
 	"editor.foldClosed": "Tertutup secara default",
 	"editor.cancel": "Batal",
 	"editor.saveChanges": "Simpan perubahan",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Menyimpan…",
+	"editor.saveFailed": "Penyimpanan tidak dapat diselesaikan. Jika editor ini masih terbuka, biarkan tetap terbuka dan coba lagi setelah memeriksa penyimpanan serta sinkronisasi. Beberapa pengaturan atau perubahan catatan mungkin sudah tersimpan.",
+	"notice.settingsSaveFailed": "Callout Studio tidak dapat menyimpan perubahan Anda. Periksa ruang penyimpanan dan sinkronisasi, lalu coba lagi sebelum menutup Obsidian.",
 	"editor.createCallout": "Buat callout",
 	"editor.nameRequired": "Nama tampilan diperlukan sebelum membuat callout.",
 	"editor.noChangesToSave": "Tidak ada perubahan yang dibuat.",
@@ -457,7 +457,7 @@ export const id: Record<string, string> = {
 	"iconPicker.custom": "Ikon kustom",
 	"iconPicker.searchCustom": "Cari ikon kustom",
 	"iconPicker.customTooLarge":
-		"{{name}} terlalu besar. Ikon kustom harus di bawah 5 MB.",
+		"{{name}} terlalu besar. Ikon kustom berukuran maksimal 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} bukan berkas ikon kustom yang didukung. Gunakan SVG, PNG, JPEG, atau WebP.",
 	"iconPicker.customInvalidSvg":
@@ -659,7 +659,7 @@ export const id: Record<string, string> = {
 		"Sesuaikan batas dan bentuk setiap callout sebaris di vault Anda.",
 	"settings.globalSettingsCustomize": "Sesuaikan",
 
-	"settings.calloutTypeRegular": "Block Callout",
+	"settings.calloutTypeRegular": "Callout blok",
 	"settings.calloutTypeHeading": "Callout heading",
 	"settings.calloutTypeInline": "Callout sebaris",
 
@@ -670,7 +670,7 @@ export const id: Record<string, string> = {
 	"menuCustomize.title": "Sesuaikan menu klik kanan",
 	"menuCustomize.desc":
 		"Aktifkan atau nonaktifkan tindakan dan seret gagang untuk mengatur ulang urutannya. Perubahan disimpan secara otomatis.",
-	"menuCustomize.regular": "Block Callout",
+	"menuCustomize.regular": "Callout blok",
 	"menuCustomize.heading": "Callout heading",
 	"menuCustomize.inline": "Callout sebaris",
 	"menuCustomize.dragHandle": "Seret untuk mengatur ulang urutan",
@@ -688,7 +688,7 @@ export const id: Record<string, string> = {
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Hapus perintah",
 	"confirm.titleResetAll": "Reset semua callout",
-	"confirm.titleResetCallout": "Reset callout",
+	"confirm.titleResetCallout": "Setel ulang callout",
 	"confirm.titleDeletePalette": "Hapus palet",
 	"confirm.titleDeleteImage": "Hapus gambar",
 
@@ -723,7 +723,7 @@ export const id: Record<string, string> = {
 	"quickInsert.sourceBuiltIn": "Bawaan",
 	"quickInsert.sourceTheme": "Callout tema",
 	"quickInsert.sourceUser": "Callout saya",
-	"quickInsert.editAria": "Edit {{name}}",
+	"quickInsert.editAria": "Sunting {{name}}",
 	"quickInsert.insertAria": "Sisipkan {{name}} sebagai callout blok",
 	"quickInsert.noResults": "Tidak ada callout yang ditemukan",
 	"quickInsert.noBuiltInCallouts": "Tidak ada callout bawaan yang tersedia saat ini.",
@@ -731,7 +731,7 @@ export const id: Record<string, string> = {
 	"quickInsert.targetMoved": "Catatan tempat Anda membuka Sisipan cepat telah berubah atau ditutup. Buka kembali Sisipan cepat di catatan yang ingin Anda edit.",
 	"quickInsert.targetMovedHint": "Catatan asli tidak lagi tersedia untuk penyisipan ini.",
 	"quickInsert.noUserCallouts":
-		"Anda belum membuat callout kustom apa pun. Jalankan “Callout Studio: Create new callout type” dari palet perintah.",
+		"Anda belum membuat callout kustom apa pun. Jalankan “Callout Studio: Buat tipe callout baru” dari palet perintah.",
 	"quickInsert.noAvailableUserCallouts":
 		"Callout kustom Anda saat ini tercantum di bawah filter tema karena tema aktif mengendalikannya.",
 	"quickInsert.noEditorHint": "Tidak ada catatan yang terbuka dalam mode edit, jadi tidak ada yang dapat disisipkan.",
@@ -758,14 +758,14 @@ export const id: Record<string, string> = {
 	"vaultStats.byRole": "Ditulis sebagai",
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Judul",
-	"vaultStats.roleInline": "Inline",
+	"vaultStats.roleInline": "Sebaris",
 	"vaultStats.close": "Tutup",
 
 	"import.title": "Masalah impor",
 	"import.reportLeadIn":
-		"Sepertinya file yang Anda impor telah dimodifikasi. Berikut daftar masalahnya:",
+		"Tinjau masalah impor berikut sebelum melanjutkan:",
 	"import.reportLeadInFatal":
-		"File ini tidak terlihat seperti ekspor Callout Studio. Tidak dapat diimpor:",
+		"Data ini tidak dapat diimpor:",
 	"import.entryHeading": "Entri {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} dari {{total}} entri valid · {{issues}} masalah ditemukan.",
@@ -804,7 +804,7 @@ export const id: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"Nilai ikon harus berupa string yang tidak kosong.",
 	"import.err.iconValueTooLong":
-		"Nilai ikon sangat panjang ({{length}} karakter).",
+		"Nilai ikon melebihi batas 200 karakter ({{length}} karakter).",
 	"import.err.materialStyle":
 		'Gaya ikon Material "{{value}}" bukan salah satu dari: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -820,7 +820,7 @@ export const id: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" harus berupa angka antara {{min}} dan {{max}} (diterima "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		'"iconAdjust" harus berupa objek yang memetakan tipe callout ("regular", "heading", "inline") ke ukuran dan pergeseran ikonnya.',
 	"import.err.aliasesNotArray": '"aliases" harus berupa array string.',
 	"import.err.aliasNotString": "Alias harus berupa string.",
 	"import.err.aliasDup": 'Alias "{{value}}" duplikat dalam entri ini.',
@@ -867,7 +867,7 @@ export const id: Record<string, string> = {
 	"import.cmPasteLabel":
 		"Atau tempel gaya yang disalin dari Callout Manager di sini:",
 	"import.cmPlaceholder":
-		"Tempel gaya yang disalin, atau file data.json, di sini…",
+		"Tempel gaya yang disalin atau isi data.json di sini…",
 	"import.cmBtnCancel": "Batal",
 	"import.cmBtnImport": "Impor",
 	"import.err.cmNoBlocksFound":

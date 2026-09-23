@@ -18,16 +18,16 @@ export const de: Record<string, string> = {
 
 	"autocomplete.createNew": 'Erstellen "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Kein Callout entspricht „{{query}}“.",
 	"calloutPicker.placeholder": "Callouts durchsuchen",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Keine Farbe entspricht „{{query}}“.",
+	"editor.paletteSearchPlaceholder": "Farben suchen…",
 	"replaceModal.searchPlaceholder": "Callouts durchsuchen",
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatischer Standard",
 	"settings.rescanVaultDesc": "Fügt Callout-Typen hinzu, die in deinen Notizen verwendet werden und noch nicht in dieser Liste stehen. Deine vorhandenen Callouts und Notizen werden nicht geändert.",
 	"settings.rescanVaultHintAction": "Nach Callouts suchen",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Die gefundenen Callouts wurden nicht gespeichert. Prüfe, ob die Einstellungen beschreibbar sind und die Synchronisierung abgeschlossen ist. Versuche es dann erneut über Einstellungen → Meine Callout-Typen → Nach Callouts suchen. Vorhandene Callouts wurden nicht ersetzt.",
 	"manualDiscovery.scanning": "Suche läuft…",
 	"settings.rescanComplete":
 		"Suche abgeschlossen: {{count}} neue(r) Callout-Typ(en) hinzugefügt.",
@@ -89,9 +89,9 @@ export const de: Record<string, string> = {
 	"settings.import": "Importieren",
 	"settings.export": "Exportieren",
 	"settings.importDesc":
-		"Importieren Sie Ihren Callout Studio-Fortschritt aus einem anderen Vault per JSON-Datei.",
+		"Importiere deine Callout-Studio-Daten aus einem anderen Vault oder übernimm deine Callouts aus einem anderen Plugin.",
 	"settings.exportDesc":
-		"Alle benutzerdefinierten Callout-Typen im JSON-Format speichern.",
+		"Speichere deine Callouts als Callout-Studio-Sicherung oder als CSS-Snippet zur Verwendung an anderer Stelle.",
 	"settings.importConflictNotice":
 		"{{count}} Callout-Typ(en) importiert; {{overwritten}} bestehende Einträge wurden überschrieben.",
 
@@ -186,8 +186,8 @@ export const de: Record<string, string> = {
 	"commandBuilder.format": "Callout-Format",
 	"commandBuilder.formatDesc": "Welche Art von Callout der Befehl schreibt.",
 	"commandBuilder.formatHeading": "Überschrift",
-	"commandBuilder.formatInline": "Inline",
-	"commandBuilder.formatBlock": "Block",
+	"commandBuilder.formatInline": "Eingebettet",
+	"commandBuilder.formatBlock": "Block-Callout",
 	"commandBuilder.roleDisabled":
 		"Dieses Format ist deaktiviert, daher fügt der Befehl reinen Text ein, bis Sie es wieder aktivieren.",
 	"commandBuilder.callout": "Callout-Typ",
@@ -300,7 +300,7 @@ export const de: Record<string, string> = {
 	"editor.verticalOffset": "Vertikaler Versatz",
 	"editor.colors": "Farben",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Legt die Rahmen-, Hintergrund- und Textfarben dieses Callouts fest.",
 	"editor.resetColors": "Farben auf Standard zurücksetzen",
 	"editor.paletteDeleted": "Gelöschte Farbe",
 	"editor.paletteGroupObsidian": "Obsidian-Callouts",
@@ -317,9 +317,9 @@ export const de: Record<string, string> = {
 	"editor.foldClosed": "Standardmäßig geschlossen",
 	"editor.cancel": "Abbrechen",
 	"editor.saveChanges": "Änderungen speichern",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Wird gespeichert…",
+	"editor.saveFailed": "Das Speichern konnte nicht abgeschlossen werden. Falls dieser Editor noch geöffnet ist, lasse ihn offen und versuche es nach Prüfung von Speicherplatz und Synchronisierung erneut. Einige Einstellungen oder Notizänderungen wurden möglicherweise bereits gespeichert.",
+	"notice.settingsSaveFailed": "Callout Studio konnte deine Änderungen nicht speichern. Prüfe freien Speicherplatz und Synchronisierung und versuche es erneut, bevor du Obsidian schließt.",
 	"editor.createCallout": "Callout erstellen",
 	"editor.nameRequired":
 		"Vor dem Erstellen eines Callouts ist ein Anzeigename erforderlich.",
@@ -461,7 +461,7 @@ export const de: Record<string, string> = {
 	"iconPicker.custom": "Benutzerdefinierte Symbole",
 	"iconPicker.searchCustom": "Benutzerdefinierte Symbole durchsuchen",
 	"iconPicker.customTooLarge":
-		"{{name}} ist zu groß. Benutzerdefinierte Symbole müssen kleiner als 5 MB sein.",
+		"{{name}} ist zu groß. Benutzerdefinierte Symbole dürfen höchstens 5 MB groß sein.",
 	"iconPicker.customUnsupported":
 		"{{name}} ist keine unterstützte Datei für ein benutzerdefiniertes Symbol. Verwenden Sie SVG, PNG, JPEG oder WebP.",
 	"iconPicker.customInvalidSvg":
@@ -662,7 +662,7 @@ export const de: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Passen Sie Rahmen und Form jedes Inline-Callouts in Ihrem Tresor an.",
 	"settings.globalSettingsCustomize": "Anpassen",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Block-Callout",
 	"settings.calloutTypeHeading": "Überschrift-Callout",
 	"settings.calloutTypeInline": "Inline-Callout",
 	"settings.customizeMenu": "Menüelemente anpassen",
@@ -672,7 +672,7 @@ export const de: Record<string, string> = {
 	"menuCustomize.title": "Rechtsklickmenü anpassen",
 	"menuCustomize.desc":
 		"Aktionen ein- oder ausschalten und den Griff ziehen, um sie neu anzuordnen. Änderungen werden automatisch gespeichert.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Block-Callout",
 	"menuCustomize.heading": "Überschrift-Callout",
 	"menuCustomize.inline": "Inline-Callout",
 	"menuCustomize.dragHandle": "Zum Neuanordnen ziehen",
@@ -735,7 +735,7 @@ export const de: Record<string, string> = {
 	"quickInsert.targetMoved": "Die Notiz, aus der du das Schnelleinfügen geöffnet hast, wurde geändert oder geschlossen. Öffne das Schnelleinfügen erneut in der Notiz, die du bearbeiten möchtest.",
 	"quickInsert.targetMovedHint": "Die ursprüngliche Notiz ist für diese Einfügung nicht mehr verfügbar.",
 	"quickInsert.noUserCallouts":
-		"Du hast noch keine eigenen Callouts erstellt. Führe “Callout Studio: Create new callout type” über die Befehlspalette aus.",
+		"Du hast noch keine eigenen Callouts erstellt. Führe „Callout Studio: Neuen Callout-Typ erstellen“ über die Befehlspalette aus.",
 	"quickInsert.noAvailableUserCallouts":
 		"Deine eigenen Callouts werden derzeit unter dem Theme-Filter aufgeführt, weil das aktive Theme sie steuert.",
 	"quickInsert.noEditorHint": "Keine Notiz ist im Bearbeitungsmodus geöffnet, daher kann nichts eingefügt werden.",
@@ -760,16 +760,16 @@ export const de: Record<string, string> = {
 	"vaultStats.sourceAlias": "Alias von {{id}}",
 	"vaultStats.sourceUnknown": "Unbekannt",
 	"vaultStats.byRole": "Geschrieben als",
-	"vaultStats.roleBlock": "Block",
+	"vaultStats.roleBlock": "Block-Callout",
 	"vaultStats.roleHeading": "Überschrift",
-	"vaultStats.roleInline": "Inline",
+	"vaultStats.roleInline": "Eingebettet",
 	"vaultStats.close": "Schließen",
 
 	"import.title": "Importprobleme",
 	"import.reportLeadIn":
-		"Die importierte Datei scheint verändert worden zu sein. Hier ist die Liste der Probleme:",
+		"Prüfe diese Importprobleme, bevor du fortfährst:",
 	"import.reportLeadInFatal":
-		"Diese Datei sieht nicht wie ein Callout Studio-Export aus. Sie kann nicht importiert werden:",
+		"Diese Daten konnten nicht importiert werden:",
 	"import.entryHeading": "Eintrag {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} von {{total}} Einträgen sind gültig · {{issues}} Problem(e) gefunden.",
@@ -808,7 +808,7 @@ export const de: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"Der Symbolwert muss eine nicht leere Zeichenkette sein.",
 	"import.err.iconValueTooLong":
-		"Der Symbolwert ist ungewöhnlich lang ({{length}} Zeichen).",
+		"Der Symbolwert überschreitet die Grenze von 200 Zeichen ({{length}} Zeichen).",
 	"import.err.materialStyle":
 		'Der Material-Symbolstil "{{value}}" ist keiner der folgenden: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -824,7 +824,7 @@ export const de: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" muss eine Zahl zwischen {{min}} und {{max}} sein (erhalten: "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" muss ein Objekt sein, das einem Callout-Typ (\"regular\", \"heading\", \"inline\") die Symbolgröße und -verschiebungen zuordnet.",
 	"import.err.aliasesNotArray":
 		'"aliases" muss ein Array von Zeichenketten sein.',
 	"import.err.aliasNotString": "Der Alias muss eine Zeichenkette sein.",

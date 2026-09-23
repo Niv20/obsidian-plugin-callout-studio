@@ -17,16 +17,16 @@ export const zh: Record<string, string> = {
 
 	"autocomplete.createNew": '创建 "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "没有与“{{query}}”匹配的 callout。",
 	"calloutPicker.placeholder": "搜索 callout",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "没有与“{{query}}”匹配的颜色。",
+	"editor.paletteSearchPlaceholder": "搜索颜色…",
 	"replaceModal.searchPlaceholder": "搜索 callout",
 	"settings.fallbackTag": "默认",
 	"settings.fallbackTagAuto": "自动默认",
 	"settings.rescanVaultDesc": "添加你笔记中使用但尚未在此列表中的 callout 类型。你现有的 callout 和笔记不会被更改。",
 	"settings.rescanVaultHintAction": "扫描 callout",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "扫描结果未保存。请确认设置文件可写且同步已完成，然后前往“设置 → 我的 callout 类型 → 扫描 callout”重试。现有 callout 未被替换。",
 	"manualDiscovery.scanning": "扫描中…",
 	"settings.rescanComplete": "扫描完成：已添加 {{count}} 个新的 callout 类型。",
 	"replaceModal.deleteWithoutReplaceSuffix": "（回退到默认值）",
@@ -87,8 +87,8 @@ export const zh: Record<string, string> = {
 	"settings.import": "导入",
 	"settings.export": "导出",
 	"settings.importDesc":
-		"使用 JSON 文件从另一个库导入您的 Callout Studio 数据。",
-	"settings.exportDesc": "以 JSON 格式保存所有自定义 callout 类型。",
+		"从其他库导入您的 Callout Studio 数据，或从其他插件迁移 callout。",
+	"settings.exportDesc": "将您的 callout 保存为 Callout Studio 备份，或导出为可在其他地方使用的 CSS 代码片段。",
 	"settings.importConflictNotice":
 		"已导入 {{count}} 个 callout 类型；{{overwritten}} 个现有条目已被覆盖。",
 
@@ -290,7 +290,7 @@ export const zh: Record<string, string> = {
 	"editor.verticalOffset": "垂直偏移",
 	"editor.colors": "颜色",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"设置此 callout 的边框、背景和文字颜色。",
 	"editor.resetColors": "重置颜色为默认",
 	"editor.paletteDeleted": "已删除的颜色",
 	"editor.paletteGroupObsidian": "Obsidian callout",
@@ -306,9 +306,9 @@ export const zh: Record<string, string> = {
 	"editor.foldClosed": "默认折叠",
 	"editor.cancel": "取消",
 	"editor.saveChanges": "保存更改",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "正在保存…",
+	"editor.saveFailed": "无法完成保存。如果此编辑器仍处于打开状态，请保持打开，检查存储空间和同步状态后重试。部分设置或笔记更改可能已经保存。",
+	"notice.settingsSaveFailed": "Callout Studio 无法保存您的更改。请检查可用存储空间和同步状态，并在关闭 Obsidian 前重试。",
 	"editor.createCallout": "创建 callout",
 	"editor.nameRequired": "创建 callout 前需要提供显示名称。",
 	"editor.noChangesToSave": "没有做任何更改。",
@@ -448,7 +448,7 @@ export const zh: Record<string, string> = {
 	"iconPicker.searchRpgAwesome": "搜索 RPG Awesome",
 	"iconPicker.custom": "自定义图标",
 	"iconPicker.searchCustom": "搜索自定义图标",
-	"iconPicker.customTooLarge": "{{name}} 太大。自定义图标必须小于 5 MB。",
+	"iconPicker.customTooLarge": "{{name}} 太大。自定义图标的大小不得超过 5 MB。",
 	"iconPicker.customUnsupported":
 		"{{name}} 不是受支持的自定义图标文件。请使用 SVG、PNG、JPEG 或 WebP。",
 	"iconPicker.customInvalidSvg":
@@ -646,7 +646,7 @@ export const zh: Record<string, string> = {
 		"调整库中每个行内 callout 的边框和形状。",
 	"settings.globalSettingsCustomize": "自定义",
 
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "块级 callout",
 	"settings.calloutTypeHeading": "标题 callout",
 	"settings.calloutTypeInline": "行内 callout",
 
@@ -657,7 +657,7 @@ export const zh: Record<string, string> = {
 	"menuCustomize.title": "自定义右键菜单",
 	"menuCustomize.desc":
 		"启用或禁用操作，并拖动手柄调整顺序。更改会自动保存。",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "块级 callout",
 	"menuCustomize.heading": "标题 callout",
 	"menuCustomize.inline": "行内 callout",
 	"menuCustomize.dragHandle": "拖动以重新排序",
@@ -715,7 +715,7 @@ export const zh: Record<string, string> = {
 	"quickInsert.noThemeCallouts": "当前没有可用的主题专属 callout。",
 	"quickInsert.targetMoved": "打开快速插入时所在的笔记已更改或已关闭。请在你要编辑的笔记中重新打开快速插入。",
 	"quickInsert.targetMovedHint": "原始笔记已不再可用于此次插入。",
-	"quickInsert.noUserCallouts": "您还没有创建任何自定义 callout。请从命令面板运行 “Callout Studio: Create new callout type”。",
+	"quickInsert.noUserCallouts": "您还没有创建自定义 callout。请从命令面板运行“Callout Studio: 创建新的 callout 类型”。",
 	"quickInsert.noAvailableUserCallouts": "您的自定义 callout 当前列在主题筛选器下，因为活动主题正在控制它们。",
 	"quickInsert.noEditorHint": "没有笔记以编辑模式打开，因此无法插入任何内容。",
 	"quickInsert.noEditor": "以编辑模式打开一篇笔记来插入 callout。",
@@ -745,9 +745,9 @@ export const zh: Record<string, string> = {
 	"vaultStats.close": "关闭",
 
 	"import.title": "导入问题",
-	"import.reportLeadIn": "看起来您导入的文件已被修改。以下是问题列表：",
+	"import.reportLeadIn": "继续之前，请检查以下导入问题：",
 	"import.reportLeadInFatal":
-		"此文件看起来不像 Callout Studio 的导出文件，无法导入：",
+		"无法导入这些数据：",
 	"import.entryHeading": "条目 {{index}} — {{label}}",
 	"import.summary":
 		"{{total}} 个条目中 {{valid}} 个有效 · 发现 {{issues}} 个问题。",
@@ -779,7 +779,7 @@ export const zh: Record<string, string> = {
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" 仅适用于 Material 图标，对于图标类型 {{type}} 将被忽略。',
 	"import.err.iconValueEmpty": "图标值必须是非空字符串。",
-	"import.err.iconValueTooLong": "图标值异常过长（{{length}} 个字符）。",
+	"import.err.iconValueTooLong": "图标值超过 200 个字符的上限（{{length}} 个字符）。",
 	"import.err.materialStyle":
 		'Material 图标样式"{{value}}"不是以下之一：outlined、filled、rounded、sharp。',
 	"import.err.materialWeight":
@@ -795,7 +795,7 @@ export const zh: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}"必须是 {{min}} 到 {{max}} 之间的数字（收到"{{value}}"）。',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" 必须是一个对象，将 callout 类型（\"regular\"、\"heading\"、\"inline\"）映射到图标大小和偏移量。",
 	"import.err.aliasesNotArray": '"aliases"必须是字符串数组。',
 	"import.err.aliasNotString": "别名必须是字符串。",
 	"import.err.aliasDup": '"{{value}}"别名在此条目中重复。',

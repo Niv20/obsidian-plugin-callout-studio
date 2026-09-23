@@ -14,16 +14,16 @@ export const fi: Record<string, string> = {
 	"cmd.customInsertInline": "Lisää {{name}}-rivin sisäinen callout",
 	"cmd.openQuickInsert": "Lisää lohko-callout nopeasti",
 	"autocomplete.createNew": 'Luo "{{name}}"',
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Yksikään callout ei vastaa hakua ”{{query}}”.",
 	"calloutPicker.placeholder": "Hae callouteja",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Yksikään väri ei vastaa hakua ”{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Hae värejä…",
 	"replaceModal.searchPlaceholder": "Hae callouteja",
 	"settings.fallbackTag": "Oletus",
 	"settings.fallbackTagAuto": "Automaattinen oletus",
 	"settings.rescanVaultDesc": "Lisää muistiinpanoissasi käytetyt callout-tyypit, joita ei vielä ole tässä luettelossa. Nykyisiä calloutejasi ja muistiinpanojasi ei muuteta.",
 	"settings.rescanVaultHintAction": "Etsi callouteja",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Löydettyjä callouteja ei tallennettu. Varmista, että asetuksiin voi kirjoittaa ja että synkronointi on valmis. Yritä sitten uudelleen kohdasta Asetukset → Omat callout-tyypit → Etsi callouteja. Olemassa olevia callouteja ei korvattu.",
 	"manualDiscovery.scanning": "Skannataan…",
 	"settings.rescanComplete":
 		"Skannaus valmis: lisätty {{count}} uutta callout-tyyppiä.",
@@ -86,9 +86,9 @@ export const fi: Record<string, string> = {
 	"settings.import": "Tuo",
 	"settings.export": "Vie",
 	"settings.importDesc":
-		"Tuo Callout Studio -tietosi toisesta holvista JSON-tiedoston avulla.",
+		"Tuo Callout Studio -tietosi toisesta holvista tai siirrä calloutisi toisesta lisäosasta.",
 	"settings.exportDesc":
-		"Tallenna kaikki mukautetut callout-tyypit JSON-muodossa.",
+		"Tallenna calloutisi Callout Studion varmuuskopiona tai muualla käytettävänä CSS-koodikatkelmana.",
 	"settings.importConflictNotice":
 		"{{count}} callout-tyyppiä tuotu; {{overwritten}} olemassa olevaa merkintää ylikirjoitettu.",
 	"settings.addNewCallout": "lisää callout",
@@ -289,7 +289,7 @@ export const fi: Record<string, string> = {
 	"editor.verticalOffset": "Pystysuuntainen siirtymä",
 	"editor.colors": "Värit",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Määrittää tämän calloutin reunuksen, taustan ja tekstin värit.",
 	"editor.resetColors": "Palauta värit oletukseksi",
 	"editor.paletteDeleted": "Poistettu väri",
 	"editor.paletteGroupObsidian": "Obsidian-calloutit",
@@ -306,9 +306,9 @@ export const fi: Record<string, string> = {
 	"editor.foldClosed": "Kiinni oletuksena",
 	"editor.cancel": "Peruuta",
 	"editor.saveChanges": "Tallenna muutokset",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Tallennetaan…",
+	"editor.saveFailed": "Tallennusta ei voitu viimeistellä. Jos tämä muokkain on yhä auki, pidä se auki ja yritä uudelleen tarkistettuasi tallennustilan ja synkronoinnin. Osa asetuksista tai muistiinpanojen päivityksistä on voitu jo tallentaa.",
+	"notice.settingsSaveFailed": "Callout Studio ei voinut tallentaa muutoksiasi. Tarkista vapaa tallennustila ja synkronointi ja yritä uudelleen ennen Obsidianin sulkemista.",
 	"editor.createCallout": "Luo callout",
 	"editor.nameRequired": "Näyttönimi vaaditaan ennen calloutin luomista.",
 	"editor.noChangesToSave": "Muutoksia ei tehty.",
@@ -450,7 +450,7 @@ export const fi: Record<string, string> = {
 	"iconPicker.custom": "Mukautetut kuvakkeet",
 	"iconPicker.searchCustom": "Hae mukautettuja kuvakkeita",
 	"iconPicker.customTooLarge":
-		"{{name}} on liian suuri. Mukautettujen kuvakkeiden on oltava alle 5 Mt.",
+		"{{name}} on liian suuri. Mukautettujen kuvakkeiden enimmäiskoko on 5 Mt.",
 	"iconPicker.customUnsupported":
 		"{{name}} ei ole tuettu mukautetun kuvakkeen tiedosto. Käytä SVG-, PNG-, JPEG- tai WebP-tiedostoa.",
 	"iconPicker.customInvalidSvg":
@@ -648,7 +648,7 @@ export const fi: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Säädä jokaisen holvisi rivinsisäisen calloutin reunaa ja muotoa.",
 	"settings.globalSettingsCustomize": "Mukauta",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Lohkocallout",
 	"settings.calloutTypeHeading": "Otsikko-callout",
 	"settings.calloutTypeInline": "Rivinsisäinen callout",
 	"settings.customizeMenu": "Mukauta valikon kohteita",
@@ -658,7 +658,7 @@ export const fi: Record<string, string> = {
 	"menuCustomize.title": "Mukauta hiiren kakkospainikkeen valikkoa",
 	"menuCustomize.desc":
 		"Ota toimintoja käyttöön tai pois käytöstä ja järjestä niitä uudelleen vetämällä kahvasta. Muutokset tallennetaan automaattisesti.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Lohkocallout",
 	"menuCustomize.heading": "Otsikko-callout",
 	"menuCustomize.inline": "Rivinsisäinen callout",
 	"menuCustomize.dragHandle": "Vedä järjestääksesi uudelleen",
@@ -716,7 +716,7 @@ export const fi: Record<string, string> = {
 	"quickInsert.targetMoved": "Muistiinpano, josta avasit pikalisäyksen, on muuttunut tai suljettu. Avaa pikalisäys uudelleen muistiinpanossa, jota haluat muokata.",
 	"quickInsert.targetMovedHint": "Alkuperäinen muistiinpano ei ole enää käytettävissä tähän lisäykseen.",
 	"quickInsert.noUserCallouts":
-		"Et ole vielä luonut yhtään mukautettua calloutia. Suorita “Callout Studio: Create new callout type” komentopaletista.",
+		"Et ole vielä luonut yhtään mukautettua calloutia. Suorita ”Callout Studio: Luo uusi callout-tyyppi” komentopaletista.",
 	"quickInsert.noAvailableUserCallouts":
 		"Mukautetut calloutisi näkyvät tällä hetkellä teemasuodattimen alla, koska aktiivinen teema hallitsee niitä.",
 	"quickInsert.noEditorHint": "Yhtään muistiinpanoa ei ole avoinna muokkaustilassa, joten mitään ei voida lisätä.",
@@ -747,9 +747,9 @@ export const fi: Record<string, string> = {
 	"vaultStats.close": "Sulje",
 	"import.title": "Tuontiongelmat",
 	"import.reportLeadIn":
-		"Näyttää siltä, että tuomasi tiedosto on muokattu. Tässä on ongelmaluettelo:",
+		"Tarkista nämä tuontiongelmat ennen jatkamista:",
 	"import.reportLeadInFatal":
-		"Tämä tiedosto ei näytä Callout Studio -vienniltä. Sitä ei voi tuoda:",
+		"Näitä tietoja ei voitu tuoda:",
 	"import.entryHeading": "Merkintä {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}}/{{total}} merkintää on kelvollisia · löydetty {{issues}} ongelma(a).",
@@ -788,7 +788,7 @@ export const fi: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"Kuvakkeen arvon on oltava ei-tyhjä merkkijono.",
 	"import.err.iconValueTooLong":
-		"Kuvakkeen arvo on epätavallisen pitkä ({{length}} merkkiä).",
+		"Kuvakkeen arvo ylittää 200 merkin rajan ({{length}} merkkiä).",
 	"import.err.materialStyle":
 		'Material-kuvaketyyli "{{value}}" ei ole yksi seuraavista: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -804,7 +804,7 @@ export const fi: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" on oltava luku välillä {{min}}–{{max}} (saatiin "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" on oltava olio, joka yhdistää callout-tyypin (\"regular\", \"heading\", \"inline\") kuvakkeen kokoon ja siirtymiin.",
 	"import.err.aliasesNotArray": '"aliases" on oltava merkkijonotaulukko.',
 	"import.err.aliasNotString": "Aliaksen on oltava merkkijono.",
 	"import.err.aliasDup": 'Alias "{{value}}" on tässä merkinnässä kahdesti.',

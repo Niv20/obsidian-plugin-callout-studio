@@ -15,16 +15,16 @@ export const bg: Record<string, string> = {
 	"cmd.customInsertInline": "Вмъкване на вграден callout {{name}}",
 	"cmd.openQuickInsert": "Бързо вмъкване на блоков callout",
 	"autocomplete.createNew": 'Създаване "{{name}}"',
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Няма callout, който да съответства на „{{query}}“.",
 	"calloutPicker.placeholder": "Търсене на callout",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Няма цвят, който да съответства на „{{query}}“.",
+	"editor.paletteSearchPlaceholder": "Търсене на цветове…",
 	"replaceModal.searchPlaceholder": "Търсене на callout",
 	"settings.fallbackTag": "По подразбиране",
 	"settings.fallbackTagAuto": "Авт. по подразбиране",
 	"settings.rescanVaultDesc": "Добавя типовете callout, използвани в бележките ви, които още ги няма в този списък. Съществуващите ви callout и бележки не се променят.",
 	"settings.rescanVaultHintAction": "Сканиране за callout",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Откритите callout-и не бяха запазени. Проверете дали настройките могат да се записват и дали синхронизацията е завършила, след което опитайте отново от Настройки → Моите типове callout → Сканиране за callout. Съществуващите callout-и не са заменени.",
 	"manualDiscovery.scanning": "Сканиране…",
 	"settings.rescanComplete":
 		"Сканирането завърши: добавени са {{count}} нови типа callout.",
@@ -85,9 +85,9 @@ export const bg: Record<string, string> = {
 	"settings.import": "Импортиране",
 	"settings.export": "Експортиране",
 	"settings.importDesc":
-		"Импортирайте данните на Callout Studio от друго хранилище с JSON файл.",
+		"Импортирайте данните си от Callout Studio от друго хранилище или пренесете callout-ите си от друга приставка.",
 	"settings.exportDesc":
-		"Запазете всички персонализирани типове callout в JSON формат.",
+		"Запазете своите callout-и като резервно копие на Callout Studio или като CSS фрагмент за използване другаде.",
 	"settings.importConflictNotice":
 		"Импортирани са {{count}} тип(а) callout; {{overwritten}} съществуващ(и) запис(а) са презаписани.",
 	"settings.addNewCallout": "добавяне на callout",
@@ -282,7 +282,7 @@ export const bg: Record<string, string> = {
 	"editor.verticalOffset": "Вертикално отместване",
 	"editor.colors": "Цветове",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Задава цветовете на рамката, фона и текста на този callout.",
 	"editor.resetColors": "Нулиране на цветовете по подразбиране",
 	"editor.paletteDeleted": "Изтрит цвят",
 	"editor.paletteGroupObsidian": "Callout-и на Obsidian",
@@ -299,9 +299,9 @@ export const bg: Record<string, string> = {
 	"editor.foldClosed": "Затворен по подразбиране",
 	"editor.cancel": "Отказ",
 	"editor.saveChanges": "Запазване на промените",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Запазване…",
+	"editor.saveFailed": "Запазването не можа да завърши. Ако този редактор все още е отворен, оставете го отворен и опитайте отново, след като проверите хранилището и синхронизацията. Някои настройки или промени в бележките може вече да са запазени.",
+	"notice.settingsSaveFailed": "Callout Studio не успя да запази промените ви. Проверете свободното пространство и синхронизацията, след което опитайте отново, преди да затворите Obsidian.",
 	"editor.createCallout": "Създаване на callout",
 	"editor.nameRequired":
 		"Необходимо е показвано име преди създаването на callout.",
@@ -440,7 +440,7 @@ export const bg: Record<string, string> = {
 	"iconPicker.custom": "Персонализирани икони",
 	"iconPicker.searchCustom": "Търсене в персонализирани икони",
 	"iconPicker.customTooLarge":
-		"{{name}} е твърде голяма. Персонализираните икони трябва да са под 5 MB.",
+		"{{name}} е твърде голяма. Персонализираните икони могат да бъдат най-много 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} не е поддържан файл за персонализирана икона. Използвайте SVG, PNG, JPEG или WebP.",
 	"iconPicker.customInvalidSvg":
@@ -640,7 +640,7 @@ export const bg: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Регулирайте границата и формата на всеки вграден callout в трезора ви.",
 	"settings.globalSettingsCustomize": "Персонализиране",
-	"settings.calloutTypeRegular": "Block Callout",
+	"settings.calloutTypeRegular": "Блоков callout",
 	"settings.calloutTypeHeading": "Callout-заглавие",
 	"settings.calloutTypeInline": "Вграден callout",
 	"settings.customizeMenu": "Персонализиране на елементите на менюто",
@@ -650,7 +650,7 @@ export const bg: Record<string, string> = {
 	"menuCustomize.title": "Персонализиране на контекстното меню",
 	"menuCustomize.desc":
 		"Включвайте или изключвайте действията и плъзгайте дръжката, за да ги пренаредите. Промените се запазват автоматично.",
-	"menuCustomize.regular": "Block Callout",
+	"menuCustomize.regular": "Блоков callout",
 	"menuCustomize.heading": "Callout-заглавие",
 	"menuCustomize.inline": "Вграден callout",
 	"menuCustomize.dragHandle": "Плъзгане за пренареждане",
@@ -708,7 +708,7 @@ export const bg: Record<string, string> = {
 	"quickInsert.targetMoved": "Бележката, от която отворихте Бързото вмъкване, е променена или затворена. Отворете отново Бързото вмъкване в бележката, която искате да редактирате.",
 	"quickInsert.targetMovedHint": "Първоначалната бележка вече не е налична за това вмъкване.",
 	"quickInsert.noUserCallouts":
-		"Все още не сте създали персонализирани callout-и. Изпълнете “Callout Studio: Create new callout type” от командната палитра.",
+		"Все още не сте създали персонализирани callout-и. Изпълнете „Callout Studio: Създаване на нов тип callout“ от командната палитра.",
 	"quickInsert.noAvailableUserCallouts":
 		"Вашите персонализирани callout-и в момента са под филтъра за тема, защото активната тема ги контролира.",
 	"quickInsert.noEditorHint": "Няма отворена бележка в режим на редактиране, затова нищо не може да бъде вмъкнато.",
@@ -739,9 +739,9 @@ export const bg: Record<string, string> = {
 	"vaultStats.close": "Затваряне",
 	"import.title": "Проблеми с импортирането",
 	"import.reportLeadIn":
-		"Изглежда, че импортираният файл е бил модифициран. Ето списъка с проблеми:",
+		"Прегледайте тези проблеми при импортирането, преди да продължите:",
 	"import.reportLeadInFatal":
-		"Този файл не изглежда като експорт на Callout Studio. Не може да бъде импортиран:",
+		"Тези данни не можаха да бъдат импортирани:",
 	"import.entryHeading": "Запис {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} от {{total}} записа са валидни · намерени са {{issues}} проблема/и.",
@@ -780,7 +780,7 @@ export const bg: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"Стойността на иконата трябва да е непразен низ.",
 	"import.err.iconValueTooLong":
-		"Стойността на иконата е необичайно дълга ({{length}} символа).",
+		"Стойността на иконата надвишава ограничението от 200 символа ({{length}} символа).",
 	"import.err.materialStyle":
 		'Стилът на иконата Material "{{value}}" не е едно от: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -796,7 +796,7 @@ export const bg: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" трябва да е число между {{min}} и {{max}} (получено "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" трябва да бъде обект, който свързва тип callout (\"regular\", \"heading\", \"inline\") с размера и отместванията на иконата му.",
 	"import.err.aliasesNotArray": '"aliases" трябва да е масив от низове.',
 	"import.err.aliasNotString": "Псевдонимът трябва да е низ.",
 	"import.err.aliasDup": 'Псевдонимът "{{value}}" е дублиран в този запис.',

@@ -17,16 +17,16 @@ export const nl: Record<string, string> = {
 
 	"autocomplete.createNew": 'Nieuwe "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Geen callouts gevonden voor ‘{{query}}’.",
 	"calloutPicker.placeholder": "Callouts zoeken",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Geen kleuren gevonden voor ‘{{query}}’.",
+	"editor.paletteSearchPlaceholder": "Kleuren zoeken…",
 	"replaceModal.searchPlaceholder": "Callouts zoeken",
 	"settings.fallbackTag": "Standaard",
 	"settings.fallbackTagAuto": "Automatisch standaard",
 	"settings.rescanVaultDesc": "Voegt callouttypen toe die in je notities worden gebruikt en nog niet in deze lijst staan. Je bestaande callouts en notities worden niet gewijzigd.",
 	"settings.rescanVaultHintAction": "Scannen op callouts",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "De scan is niet opgeslagen. Controleer of de instellingen kunnen worden weggeschreven en of de synchronisatie is voltooid. Probeer het daarna opnieuw via Instellingen → Mijn callout-types → Scannen op callouts. Bestaande callouts zijn niet vervangen.",
 	"manualDiscovery.scanning": "Scannen…",
 	"settings.rescanComplete":
 		"Scan voltooid: {{count}} nieuw(e) callout-type(n) toegevoegd.",
@@ -89,9 +89,9 @@ export const nl: Record<string, string> = {
 	"settings.import": "Importeren",
 	"settings.export": "Exporteren",
 	"settings.importDesc":
-		"Importeer uw Callout Studio-voortgang uit een andere vault via een JSON-bestand.",
+		"Importeer je Callout Studio-gegevens uit een andere vault of neem callouts over uit een andere plug-in.",
 	"settings.exportDesc":
-		"Sla al uw aangepaste callout-types op in JSON-formaat.",
+		"Sla je callouts op als een Callout Studio-back-up of als een CSS-fragment dat je elders kunt gebruiken.",
 	"settings.importConflictNotice":
 		"{{count}} callout-type(s) geïmporteerd; {{overwritten}} bestaande vermelding(en) overschreven.",
 
@@ -187,7 +187,7 @@ export const nl: Record<string, string> = {
 	"commandBuilder.format": "Callout-formaat",
 	"commandBuilder.formatDesc": "Welk type callout de opdracht schrijft.",
 	"commandBuilder.formatHeading": "Kop",
-	"commandBuilder.formatInline": "Inline",
+	"commandBuilder.formatInline": "In de tekst",
 	"commandBuilder.formatBlock": "Blok",
 	"commandBuilder.roleDisabled":
 		"Dit formaat is uitgeschakeld, dus de opdracht voegt gewone tekst in totdat u het weer inschakelt.",
@@ -303,7 +303,7 @@ export const nl: Record<string, string> = {
 	"editor.verticalOffset": "Verticale offset",
 	"editor.colors": "Kleuren",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Stelt de rand-, achtergrond- en tekstkleuren van deze callout in.",
 	"editor.resetColors": "Kleuren terugzetten naar standaard",
 	"editor.paletteDeleted": "Verwijderde kleur",
 	"editor.paletteGroupObsidian": "Obsidian-callouts",
@@ -320,9 +320,9 @@ export const nl: Record<string, string> = {
 	"editor.foldClosed": "Standaard gesloten",
 	"editor.cancel": "Annuleren",
 	"editor.saveChanges": "Wijzigingen opslaan",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Opslaan…",
+	"editor.saveFailed": "Opslaan is niet voltooid. Als deze editor nog open is, laat hem dan open en probeer het opnieuw nadat je de opslagruimte en synchronisatie hebt gecontroleerd. Sommige instellingen of wijzigingen in notities zijn mogelijk al opgeslagen.",
+	"notice.settingsSaveFailed": "Callout Studio kon je wijzigingen niet opslaan. Controleer de beschikbare opslagruimte en synchronisatie en probeer het opnieuw voordat je Obsidian sluit.",
 	"editor.createCallout": "Callout aanmaken",
 	"editor.nameRequired":
 		"Een weergavenaam is vereist voordat u een callout aanmaakt.",
@@ -466,7 +466,7 @@ export const nl: Record<string, string> = {
 	"iconPicker.custom": "Aangepaste pictogrammen",
 	"iconPicker.searchCustom": "Aangepaste pictogrammen zoeken",
 	"iconPicker.customTooLarge":
-		"{{name}} is te groot. Aangepaste pictogrammen moeten kleiner zijn dan 5 MB.",
+		"{{name}} is te groot. Aangepaste pictogrammen mogen maximaal 5 MB groot zijn.",
 	"iconPicker.customUnsupported":
 		"{{name}} is geen ondersteund bestand voor een aangepast pictogram. Gebruik SVG, PNG, JPEG of WebP.",
 	"iconPicker.customInvalidSvg":
@@ -665,7 +665,7 @@ export const nl: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Pas de rand en vorm van elke inline callout in uw vault aan.",
 	"settings.globalSettingsCustomize": "Aanpassen",
-	"settings.calloutTypeRegular": "Block Callout",
+	"settings.calloutTypeRegular": "Blok-callout",
 	"settings.calloutTypeHeading": "Kop-callout",
 	"settings.calloutTypeInline": "Inline callout",
 	"settings.customizeMenu": "Menu-items aanpassen",
@@ -675,7 +675,7 @@ export const nl: Record<string, string> = {
 	"menuCustomize.title": "Rechtsklikmenu aanpassen",
 	"menuCustomize.desc":
 		"Schakel acties in of uit en sleep de handgreep om de volgorde te wijzigen. Wijzigingen worden automatisch opgeslagen.",
-	"menuCustomize.regular": "Block Callout",
+	"menuCustomize.regular": "Blok-callout",
 	"menuCustomize.heading": "Kop-callout",
 	"menuCustomize.inline": "Inline callout",
 	"menuCustomize.dragHandle": "Sleep om te herschikken",
@@ -737,7 +737,7 @@ export const nl: Record<string, string> = {
 	"quickInsert.targetMoved": "De notitie van waaruit je Snel invoegen hebt geopend, is gewijzigd of gesloten. Open Snel invoegen opnieuw in de notitie die je wilt bewerken.",
 	"quickInsert.targetMovedHint": "De oorspronkelijke notitie is niet meer beschikbaar voor deze invoeging.",
 	"quickInsert.noUserCallouts":
-		"Je hebt nog geen aangepaste callouts gemaakt. Voer “Callout Studio: Create new callout type” uit via het opdrachtenpalet.",
+		"Je hebt nog geen aangepaste callouts gemaakt. Voer “Callout Studio: Nieuw callout-type aanmaken” uit via het opdrachtenpalet.",
 	"quickInsert.noAvailableUserCallouts":
 		"Je aangepaste callouts staan momenteel onder het themafilter omdat het actieve thema ze beheert.",
 	"quickInsert.noEditorHint": "Er is geen notitie geopend in bewerkingsmodus, dus er kan niets worden ingevoegd.",
@@ -764,14 +764,14 @@ export const nl: Record<string, string> = {
 	"vaultStats.byRole": "Geschreven als",
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Kop",
-	"vaultStats.roleInline": "Inline",
+	"vaultStats.roleInline": "In de tekst",
 	"vaultStats.close": "Sluiten",
 
 	"import.title": "Importeerproblemen",
 	"import.reportLeadIn":
-		"Het lijkt erop dat het geïmporteerde bestand is gewijzigd. Hier is de lijst met problemen:",
+		"Bekijk deze importproblemen voordat je verdergaat:",
 	"import.reportLeadInFatal":
-		"Dit bestand ziet er niet uit als een Callout Studio-export. Het kan niet worden geïmporteerd:",
+		"Deze gegevens konden niet worden geïmporteerd:",
 	"import.entryHeading": "Vermelding {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} van {{total}} vermeldingen zijn geldig · {{issues}} probleem/problemen gevonden.",
@@ -810,7 +810,7 @@ export const nl: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"De pictogramwaarde moet een niet-lege tekenreeks zijn.",
 	"import.err.iconValueTooLong":
-		"De pictogramwaarde is ongewoon lang ({{length}} tekens).",
+		"De pictogramwaarde overschrijdt de limiet van 200 tekens ({{length}} tekens).",
 	"import.err.materialStyle":
 		'De Material-pictogramstijl "{{value}}" is geen van: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -826,7 +826,7 @@ export const nl: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" moet een getal zijn tussen {{min}} en {{max}} ("{{value}}" ontvangen).',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		'"iconAdjust" moet een object zijn dat een callout-type ("regular", "heading", "inline") koppelt aan de pictogramgrootte en verschuivingen.',
 	"import.err.aliasesNotArray":
 		'"aliases" moet een array van tekenreeksen zijn.',
 	"import.err.aliasNotString": "De alias moet een tekenreeks zijn.",
@@ -851,16 +851,16 @@ export const nl: Record<string, string> = {
 	"import.warn.iconNameUnknown":
 		'Er is geen "{{value}}" icoon in {{type}}, dus het standaardicoon is gebruikt.',
 	"import.warn.cmIconUnknownNew":
-		'Er is geen "{{value}}" icoon in Obsidian, dus het standaardicoon is gebruikt.',
+		'Het pictogram ‘{{value}}’ is niet beschikbaar in deze vault; daarom is het standaardpictogram gebruikt.',
 	"import.warn.cmIconUnknownExisting":
-		'Er is geen "{{value}}" icoon in Obsidian, dus "{{id}}" heeft het icoon behouden dat het al had.',
+		'Het pictogram ‘{{value}}’ is niet beschikbaar in deze vault; daarom heeft ‘{{id}}’ het bestaande pictogram behouden.',
 	"import.chooseSource": "Importeren uit",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc":
 		"Laad een .json-bestand dat is geëxporteerd uit Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"Plak de stijlen die je hebt gekopieerd via de Copy-knop van Callout Manager.",
+		"Neem je aangepaste callouts over uit de plug-in Callout Manager.",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Haal je eigen admonitions op uit de Admonition-plug-in.",
@@ -873,8 +873,8 @@ export const nl: Record<string, string> = {
 	"import.cmPasteLabel":
 		"Of plak hier de gekopieerde stijlen uit Callout Manager:",
 	"import.cmInstructions":
-		"Gebruik in Callout Manager de Copy-knop om je aangepaste callout-stijlen te kopiëren en plak ze vervolgens hieronder.",
-	"import.cmPlaceholder": "Plak de gekopieerde stijlen hier…",
+		"Elke aangepaste callout wordt met pictogram en kleur overgenomen. Stijlen per thema en aangepaste CSS hebben hier geen equivalent en worden niet overgenomen.",
+	"import.cmPlaceholder": "Plak hier de gekopieerde stijlen of de inhoud van data.json…",
 	"import.cmBtnCancel": "Annuleren",
 	"import.cmBtnImport": "Importeren",
 	"import.err.cmNotRecognized":

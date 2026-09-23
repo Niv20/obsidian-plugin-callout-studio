@@ -17,16 +17,16 @@ export const hi: Record<string, string> = {
 
 	"autocomplete.createNew": 'नया "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "“{{query}}” से मेल खाने वाला कोई callout नहीं मिला।",
 	"calloutPicker.placeholder": "callout खोजें",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "“{{query}}” से मेल खाने वाला कोई रंग नहीं मिला।",
+	"editor.paletteSearchPlaceholder": "रंग खोजें…",
 	"replaceModal.searchPlaceholder": "callout खोजें",
 	"settings.fallbackTag": "डिफ़ॉल्ट",
 	"settings.fallbackTagAuto": "स्वतः डिफ़ॉल्ट",
 	"settings.rescanVaultDesc": "आपके नोट्स में इस्तेमाल हो रहे ऐसे callout प्रकार जोड़ता है जो अभी इस सूची में नहीं हैं। आपके मौजूदा callout और नोट्स नहीं बदले जाते।",
 	"settings.rescanVaultHintAction": "callout के लिए स्कैन करें",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "स्कैन के परिणाम सहेजे नहीं जा सके। जाँचें कि सेटिंग लिखी जा सकती हैं और सिंक पूरा हो गया है, फिर सेटिंग → मेरे callout प्रकार → callout के लिए स्कैन करें से दोबारा प्रयास करें। मौजूदा callout नहीं बदले गए हैं।",
 	"manualDiscovery.scanning": "स्कैन हो रहा है…",
 	"settings.rescanComplete":
 		"स्कैन पूर्ण: {{count}} नए callout प्रकार जोड़े गए।",
@@ -88,9 +88,9 @@ export const hi: Record<string, string> = {
 	"settings.import": "आयात",
 	"settings.export": "निर्यात",
 	"settings.importDesc":
-		"JSON फ़ाइल का उपयोग करके दूसरे vault से Callout Studio डेटा आयात करें।",
+		"दूसरे vault से अपनी Callout Studio की प्रगति आयात करें, या किसी दूसरे प्लगइन से अपने callout लाएँ।",
 	"settings.exportDesc":
-		"अपने सभी कस्टम callout प्रकार JSON फ़ॉर्मेट में सहेजें।",
+		"अपने callout को Callout Studio बैकअप के रूप में या अन्य जगह उपयोग करने के लिए CSS स्निपेट के रूप में सहेजें।",
 	"settings.importConflictNotice":
 		"{{count}} callout प्रकार आयात किए गए; {{overwritten}} मौजूदा प्रविष्टियाँ ओवरराइट की गईं।",
 
@@ -298,10 +298,10 @@ export const hi: Record<string, string> = {
 	"editor.verticalOffset": "ऊर्ध्वाधर ऑफसेट",
 	"editor.colors": "रंग",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"इस callout की सीमा, पृष्ठभूमि और पाठ के रंग सेट करता है।",
 	"editor.resetColors": "रंगों को डिफ़ॉल्ट पर रीसेट करें",
 	"editor.paletteDeleted": "हटाया गया रंग",
-	"editor.paletteGroupObsidian": "Obsidian callouts",
+	"editor.paletteGroupObsidian": "Obsidian के callout",
 	"editor.paletteGroupPresets": "रंग प्रीसेट",
 	"editor.paletteGroupCustom": "कस्टम",
 	"editor.paletteNewColor": "नया रंग…",
@@ -315,9 +315,9 @@ export const hi: Record<string, string> = {
 	"editor.foldClosed": "डिफ़ॉल्ट रूप से बंद",
 	"editor.cancel": "रद्द करें",
 	"editor.saveChanges": "परिवर्तन सहेजें",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "सहेजा जा रहा है…",
+	"editor.saveFailed": "सहेजना पूरा नहीं हो सका। यदि यह संपादक अभी खुला है, तो इसे खुला रखें और संग्रहण व सिंक की जाँच के बाद फिर से प्रयास करें। कुछ सेटिंग या नोट अपडेट पहले ही सहेजे जा चुके हो सकते हैं।",
+	"notice.settingsSaveFailed": "Callout Studio आपके बदलाव सहेज नहीं सका। उपलब्ध संग्रहण और सिंक की जाँच करें, फिर Obsidian बंद करने से पहले दोबारा प्रयास करें।",
 	"editor.createCallout": "callout बनाएँ",
 	"editor.nameRequired": "callout बनाने से पहले प्रदर्शन नाम आवश्यक है।",
 	"editor.noChangesToSave": "कोई परिवर्तन नहीं हुआ।",
@@ -458,7 +458,7 @@ export const hi: Record<string, string> = {
 	"iconPicker.custom": "कस्टम आइकन",
 	"iconPicker.searchCustom": "कस्टम आइकन खोजें",
 	"iconPicker.customTooLarge":
-		"{{name}} बहुत बड़ा है। कस्टम आइकन 5 MB से कम होने चाहिए।",
+		"{{name}} बहुत बड़ा है। कस्टम आइकन का आकार अधिकतम 5 MB होना चाहिए।",
 	"iconPicker.customUnsupported":
 		"{{name}} समर्थित कस्टम आइकन फ़ाइल नहीं है। SVG, PNG, JPEG या WebP का उपयोग करें।",
 	"iconPicker.customInvalidSvg":
@@ -656,7 +656,7 @@ export const hi: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"अपने वॉल्ट के हर इनलाइन callout का बॉर्डर और आकार समायोजित करें।",
 	"settings.globalSettingsCustomize": "कस्टमाइज़ करें",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "ब्लॉक callout",
 	"settings.calloutTypeHeading": "शीर्षक callout",
 	"settings.calloutTypeInline": "इनलाइन callout",
 	"settings.customizeMenu": "मेनू आइटम कस्टमाइज़ करें",
@@ -666,7 +666,7 @@ export const hi: Record<string, string> = {
 	"menuCustomize.title": "राइट-क्लिक मेनू कस्टमाइज़ करें",
 	"menuCustomize.desc":
 		"क्रियाओं को चालू या बंद करें और उन्हें पुनः क्रमबद्ध करने के लिए हैंडल को खींचें। परिवर्तन स्वतः सहेजे जाते हैं।",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "ब्लॉक callout",
 	"menuCustomize.heading": "शीर्षक callout",
 	"menuCustomize.inline": "इनलाइन callout",
 	"menuCustomize.dragHandle": "पुनः क्रमबद्ध करने के लिए खींचें",
@@ -727,7 +727,7 @@ export const hi: Record<string, string> = {
 	"quickInsert.targetMoved": "जिस नोट से आपने क्विक इंसर्ट खोला था वह बदल गया या बंद हो गया। जिस नोट को आप संपादित करना चाहते हैं उसमें क्विक इंसर्ट फिर से खोलें।",
 	"quickInsert.targetMovedHint": "मूल नोट अब इस सम्मिलन के लिए उपलब्ध नहीं है।",
 	"quickInsert.noUserCallouts":
-		"आपने अभी तक कोई कस्टम callout नहीं बनाया है। कमांड पैलेट से “Callout Studio: Create new callout type” चलाएँ।",
+		"आपने अभी तक कोई कस्टम callout नहीं बनाया है। कमांड पैलेट से “Callout Studio: नया callout प्रकार बनाएँ” चलाएँ।",
 	"quickInsert.noAvailableUserCallouts":
 		"आपके कस्टम callout अभी थीम फ़िल्टर के अंतर्गत सूचीबद्ध हैं, क्योंकि सक्रिय थीम उन्हें नियंत्रित कर रही है।",
 	"quickInsert.noEditorHint": "संपादन मोड में कोई नोट खुला नहीं है, इसलिए कुछ भी नहीं डाला जा सकता।",
@@ -759,9 +759,9 @@ export const hi: Record<string, string> = {
 
 	"import.title": "आयात समस्याएँ",
 	"import.reportLeadIn":
-		"लगता है आयात की गई फ़ाइल संशोधित की गई है। समस्याओं की सूची यहाँ है:",
+		"आगे बढ़ने से पहले आयात की इन समस्याओं की समीक्षा करें:",
 	"import.reportLeadInFatal":
-		"यह फ़ाइल Callout Studio निर्यात जैसी नहीं लगती। इसे आयात नहीं किया जा सकता:",
+		"यह डेटा आयात नहीं किया जा सका:",
 	"import.entryHeading": "प्रविष्टि {{index}} — {{label}}",
 	"import.summary":
 		"{{total}} में से {{valid}} प्रविष्टियाँ वैध हैं · {{issues}} समस्या मिली।",
@@ -798,7 +798,7 @@ export const hi: Record<string, string> = {
 		'"{{field}}" केवल Material आइकन पर लागू होता है और आइकन प्रकार {{type}} के लिए अनदेखा किया जाता है।',
 	"import.err.iconValueEmpty": "आइकन मान एक गैर-खाली स्ट्रिंग होना चाहिए।",
 	"import.err.iconValueTooLong":
-		"आइकन मान असामान्य रूप से लंबा है ({{length}} अक्षर)।",
+		"आइकन मान 200 अक्षरों की सीमा से अधिक है ({{length}} अक्षर)।",
 	"import.err.materialStyle":
 		'Material आइकन शैली "{{value}}" इनमें से एक होनी चाहिए: outlined, filled, rounded, sharp।',
 	"import.err.materialWeight":
@@ -814,7 +814,7 @@ export const hi: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" {{min}} से {{max}} के बीच संख्या होनी चाहिए ("{{value}}" मिला)।',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		'"iconAdjust" ऐसा ऑब्जेक्ट होना चाहिए जो callout प्रकार ("regular", "heading", "inline") को उसके आइकन के आकार और स्थान के समायोजन से जोड़े।',
 	"import.err.aliasesNotArray": '"aliases" स्ट्रिंग्स का array होना चाहिए।',
 	"import.err.aliasNotString": "उपनाम एक स्ट्रिंग होना चाहिए।",
 	"import.err.aliasDup": '"{{value}}" उपनाम इस प्रविष्टि में दोहराया गया है।',
@@ -837,16 +837,16 @@ export const hi: Record<string, string> = {
 	"import.warn.iconNameUnknown":
 		'"{{value}}" आइकन {{type}} में नहीं है, इसलिए डिफ़ॉल्ट आइकन का उपयोग किया गया।',
 	"import.warn.cmIconUnknownNew":
-		'"{{value}}" आइकन Obsidian में नहीं है, इसलिए डिफ़ॉल्ट आइकन का उपयोग किया गया।',
+		'"{{value}}" आइकन इस vault में उपलब्ध नहीं है, इसलिए डिफ़ॉल्ट आइकन का उपयोग किया गया।',
 	"import.warn.cmIconUnknownExisting":
-		'"{{value}}" आइकन Obsidian में नहीं है, इसलिए "{{id}}" ने अपना पुराना आइकन बनाए रखा।',
+		'"{{value}}" आइकन इस vault में उपलब्ध नहीं है, इसलिए "{{id}}" का मौजूदा आइकन बना रहा।',
 	"import.chooseSource": "इससे आयात करें",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc":
 		"Callout Studio से निर्यात की गई .json फ़ाइल लोड करें।",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"Callout Manager के Copy बटन से कॉपी किए गए स्टाइल यहाँ पेस्ट करें।",
+		"Callout Manager प्लगइन से अपने कस्टमाइज़ किए गए callout यहाँ लाएँ।",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Admonition प्लगइन से अपने कस्टम admonition यहाँ ले आएँ।",
@@ -858,8 +858,8 @@ export const hi: Record<string, string> = {
 	"import.cmPasteLabel":
 		"या Callout Manager से कॉपी किए गए स्टाइल यहाँ पेस्ट करें:",
 	"import.cmInstructions":
-		"Callout Manager में, अपने कस्टमाइज़ किए गए callout स्टाइल कॉपी करने के लिए Copy बटन का उपयोग करें, फिर उन्हें नीचे पेस्ट करें।",
-	"import.cmPlaceholder": "कॉपी किए गए स्टाइल यहाँ पेस्ट करें…",
+		"हर कस्टमाइज़ किया गया callout अपने आइकन और रंग के साथ आयात होता है। थीम के अनुसार स्टाइल और कस्टम CSS का यहाँ समकक्ष नहीं है, इसलिए वे आयात नहीं होते।",
+	"import.cmPlaceholder": "कॉपी किए गए स्टाइल या data.json की सामग्री यहाँ पेस्ट करें…",
 	"import.cmBtnCancel": "रद्द करें",
 	"import.cmBtnImport": "आयात",
 	"import.err.cmNoBlocksFound":

@@ -15,16 +15,16 @@ export const nb: Record<string, string> = {
 	"cmd.customInsertInline": "Sett inn {{name}}-inline-callout",
 	"cmd.openQuickInsert": "Hurtiginnsetting av blokk-callout",
 	"autocomplete.createNew": 'Opprett "{{name}}"',
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Ingen callouter samsvarer med «{{query}}».",
 	"calloutPicker.placeholder": "Søk i callouter",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Ingen farger samsvarer med «{{query}}».",
+	"editor.paletteSearchPlaceholder": "Søk etter farger…",
 	"replaceModal.searchPlaceholder": "Søk i callouter",
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
 	"settings.rescanVaultDesc": "Legger til callout-typer som brukes i notatene dine og som ennå ikke er i denne listen. Dine eksisterende callouts og notater endres ikke.",
 	"settings.rescanVaultHintAction": "Skann etter callouts",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Skanningen ble ikke lagret. Kontroller at innstillingene kan skrives til, og at synkroniseringen er fullført. Prøv deretter på nytt via Innstillinger → Mine callout-typer → Skann etter callouts. Eksisterende callouter er ikke erstattet.",
 	"manualDiscovery.scanning": "Skanner…",
 	"settings.rescanComplete":
 		"Skanning fullført: {{count}} ny(e) callout-type(r) lagt til.",
@@ -47,7 +47,7 @@ export const nb: Record<string, string> = {
 		"Du kan bruke denne callout-en på **tre** forskjellige måter:\n\n" +
 		"## [!{{id}}] Callout som overskrift\n" +
 		"For å gjøre en overskrift om til en overskrift i callout-stil, legg til `[!type]` rett etter `#`-tegnene.\n\n" +
-		"Vil du ha en [!{{id}}]{innebygd callout} som denne? Bare legg til `[!type]{text}` midt i en setning, uten å bryte skriveflyten.\n\n" +
+		"Vil du ha en [!{{id}}]{callout i teksten} som denne? Bare legg til `[!type]{text}` midt i en setning, uten å bryte skriveflyten.\n\n" +
 		"> [!{{id}}] Blokk-callout\n" +
 		"> Den klassiske callout-en fungerer med akkurat den samme syntaksen du allerede er vant til: `> [!type]`.\n\n" +
 		"Callout Studio har mye mer å tilby! [Les mer]({{repoUrl}}).\n",
@@ -87,8 +87,8 @@ export const nb: Record<string, string> = {
 	"settings.import": "Importer",
 	"settings.export": "Eksporter",
 	"settings.importDesc":
-		"Importer Callout Studio-dataene dine fra et annet vault ved hjelp av en JSON-fil.",
-	"settings.exportDesc": "Lagre alle tilpassede callout-typer i JSON-format.",
+		"Importer Callout Studio-dataene dine fra et annet hvelv, eller hent callouter fra en annen utvidelse.",
+	"settings.exportDesc": "Lagre calloutene som en Callout Studio-sikkerhetskopi eller som en CSS-kodebit du kan bruke andre steder.",
 	"settings.importConflictNotice":
 		"{{count}} callout-type(r) importert; {{overwritten}} eksisterende oppføring(er) overskrevet.",
 	"settings.addNewCallout": "legg til callout",
@@ -118,7 +118,7 @@ export const nb: Record<string, string> = {
 	"settings.globalStyle": "Global callout-stil",
 	"settings.globalStyleRegularTitle": "Global stil for blokk-callouts",
 	"settings.globalStyleHeadingTitle": "Global stil for overskrift-callouts",
-	"settings.globalStyleInlineTitle": "Global stil for innebygde callouts",
+	"settings.globalStyleInlineTitle": "Global stil for callouts i teksten",
 	"settings.border": "Kanter",
 	"settings.borderAll": "Alle",
 	"settings.borderTop": "Topp",
@@ -176,7 +176,7 @@ export const nb: Record<string, string> = {
 	"commandBuilder.format": "Callout-format",
 	"commandBuilder.formatDesc": "Hvilken type callout kommandoen skriver.",
 	"commandBuilder.formatHeading": "Overskrift",
-	"commandBuilder.formatInline": "Inline",
+	"commandBuilder.formatInline": "I teksten",
 	"commandBuilder.formatBlock": "Blokk",
 	"commandBuilder.roleDisabled":
 		"Dette formatet er slått av, så kommandoen setter inn ren tekst til du slår det på igjen.",
@@ -285,7 +285,7 @@ export const nb: Record<string, string> = {
 	"editor.verticalOffset": "Vertikal forskyvning",
 	"editor.colors": "Farger",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Angir fargene på rammen, bakgrunnen og teksten til denne callouten.",
 	"editor.resetColors": "Tilbakestill farger til standard",
 	"editor.paletteDeleted": "Slettet farge",
 	"editor.paletteGroupObsidian": "Obsidian-callouts",
@@ -302,9 +302,9 @@ export const nb: Record<string, string> = {
 	"editor.foldClosed": "Lukket som standard",
 	"editor.cancel": "Avbryt",
 	"editor.saveChanges": "Lagre endringer",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Lagrer…",
+	"editor.saveFailed": "Lagringen kunne ikke fullføres. Hvis dette redigeringsvinduet fortsatt er åpent, lar du det stå åpent og prøver igjen etter å ha kontrollert lagringsplass og synkronisering. Noen innstillinger eller notatoppdateringer kan allerede være lagret.",
+	"notice.settingsSaveFailed": "Callout Studio kunne ikke lagre endringene dine. Kontroller tilgjengelig lagringsplass og synkronisering, og prøv igjen før du lukker Obsidian.",
 	"editor.createCallout": "Opprett callout",
 	"editor.nameRequired":
 		"Et visningsnavn er påkrevd før du oppretter en callout.",
@@ -326,14 +326,14 @@ export const nb: Record<string, string> = {
 	"editor.loremIpsumShort":
 		"En lett bris stryker gjennom trærne.",
 	"editor.sampleInlineText":
-		"Her er en innebygd [!{id}] pille inne i et avsnitt.",
+		"Her er en [!{id}] callout i teksten, inne i et avsnitt.",
 	"editor.previewReadOnly": "Direktevisningen kan ikke redigeres",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
 	"themePreview.title": '{{name}} – levert av temaet ditt',
 	"themePreview.summary":
-		"Levert av {{theme}} (skrivebeskyttet). Farge, ikon og ID kan ikke endres her, og formatene Overskrift og Innebygd er ikke tilgjengelige. Opprett en ny callout for å tilpasse den.",
+		"Levert av {{theme}} (skrivebeskyttet). Farge, ikon og ID kan ikke endres her, og formatene Overskrift og I teksten er ikke tilgjengelige. Opprett en ny callout for å tilpasse den.",
 	"themePreview.previewTitle": "Slik ser den ut nå",
 	"themePreview.blockSample":
 		"> [!{{id}}] {{name}}\n" +
@@ -445,7 +445,7 @@ export const nb: Record<string, string> = {
 	"iconPicker.custom": "Egendefinerte ikoner",
 	"iconPicker.searchCustom": "Søk i egendefinerte ikoner",
 	"iconPicker.customTooLarge":
-		"{{name}} er for stor. Egendefinerte ikoner må være under 5 MB.",
+		"{{name}} er for stor. Egendefinerte ikoner kan være på opptil 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} er ikke en støttet egendefinert ikonfil. Bruk SVG, PNG, JPEG eller WebP.",
 	"iconPicker.customInvalidSvg":
@@ -639,11 +639,11 @@ export const nb: Record<string, string> = {
 	"settings.globalSettingsHeadingDesc":
 		"Juster kant, form og vertikal avstand for hver overskrift-callout i vaulten din.",
 	"settings.globalSettingsInlineDesc":
-		"Juster kant og form for hver innebygd callout i vaulten din.",
+		"Juster kant og form for alle callouts i teksten i vaulten din.",
 	"settings.globalSettingsCustomize": "Tilpass",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Blokk-callout",
 	"settings.calloutTypeHeading": "Overskrift-callout",
-	"settings.calloutTypeInline": "Innebygd callout",
+	"settings.calloutTypeInline": "Callout i teksten",
 	"settings.customizeMenu": "Tilpass menyelementer",
 	"settings.customizeMenuDesc":
 		"Velg hvilke høyreklikkhandlinger som vises for hver callout-type, og endre rekkefølgen på dem. Fungerer i kildemodus og Live Preview.",
@@ -651,9 +651,9 @@ export const nb: Record<string, string> = {
 	"menuCustomize.title": "Tilpass høyreklikkmenyen",
 	"menuCustomize.desc":
 		"Slå handlinger av eller på, og dra i håndtaket for å endre rekkefølgen. Endringer lagres automatisk.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Blokk-callout",
 	"menuCustomize.heading": "Overskrift-callout",
-	"menuCustomize.inline": "Innebygd callout",
+	"menuCustomize.inline": "Callout i teksten",
 	"menuCustomize.dragHandle": "Dra for å endre rekkefølge",
 	"menuItem.createOrEdit": "Opprett eller rediger callout",
 	"menuItem.openSettings": "Åpne innstillinger",
@@ -709,7 +709,7 @@ export const nb: Record<string, string> = {
 	"quickInsert.targetMoved": "Notatet du åpnet Hurtiginnsetting fra, er endret eller lukket. Åpne Hurtiginnsetting på nytt i notatet du vil redigere.",
 	"quickInsert.targetMovedHint": "Det opprinnelige notatet er ikke lenger tilgjengelig for denne innsettingen.",
 	"quickInsert.noUserCallouts":
-		"Du har ikke opprettet noen tilpassede callouter ennå. Kjør “Callout Studio: Create new callout type” fra kommandopaletten.",
+		"Du har ikke opprettet noen tilpassede callouter ennå. Kjør «Callout Studio: Opprett ny callout-type» fra kommandopaletten.",
 	"quickInsert.noAvailableUserCallouts":
 		"De tilpassede calloutene dine vises nå under temafilteret fordi det aktive temaet styrer dem.",
 	"quickInsert.noEditorHint": "Ingen notat er åpent i redigeringsmodus, så ingenting kan settes inn.",
@@ -736,13 +736,13 @@ export const nb: Record<string, string> = {
 	"vaultStats.byRole": "Skrevet som",
 	"vaultStats.roleBlock": "Blokk",
 	"vaultStats.roleHeading": "Overskrift",
-	"vaultStats.roleInline": "Inline",
+	"vaultStats.roleInline": "I teksten",
 	"vaultStats.close": "Lukk",
 	"import.title": "Importproblemer",
 	"import.reportLeadIn":
-		"Det ser ut til at den importerte filen er endret. Her er problemlisten:",
+		"Se gjennom disse importproblemene før du fortsetter:",
 	"import.reportLeadInFatal":
-		"Denne filen ser ikke ut som en Callout Studio-eksport. Den kan ikke importeres:",
+		"Disse dataene kunne ikke importeres:",
 	"import.entryHeading": "Post {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} av {{total}} poster er gyldige · {{issues}} problem(er) funnet.",
@@ -779,7 +779,7 @@ export const nb: Record<string, string> = {
 		'"{{field}}" gjelder bare for Material-ikoner og ignoreres for ikontype {{type}}.',
 	"import.err.iconValueEmpty": "Ikonverdien må være en ikke-tom streng.",
 	"import.err.iconValueTooLong":
-		"Ikonverdien er uvanlig lang ({{length}} tegn).",
+		"Ikonverdien overskrider grensen på 200 tegn ({{length}} tegn).",
 	"import.err.materialStyle":
 		'Material-ikonstilen "{{value}}" er ikke én av: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -795,7 +795,7 @@ export const nb: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" må være et tall mellom {{min}} og {{max}} (mottok "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		'"iconAdjust" må være et objekt som knytter en callout-type ("regular", "heading", "inline") til ikonstørrelse og forskyvninger.',
 	"import.err.aliasesNotArray": '"aliases" må være et array av strenger.',
 	"import.err.aliasNotString": "Aliaset må være en streng.",
 	"import.err.aliasDup": 'Aliaset "{{value}}" er duplisert i denne posten.',
@@ -817,16 +817,16 @@ export const nb: Record<string, string> = {
 	"import.warn.iconNameUnknown":
 		'Det finnes ingen "{{value}}" ikon i {{type}}, så standardikonet ble brukt i stedet.',
 	"import.warn.cmIconUnknownNew":
-		'Det finnes ingen "{{value}}" ikon i Obsidian, så standardikonet ble brukt i stedet.',
+		'Ikonet «{{value}}» er ikke tilgjengelig i dette hvelvet, så standardikonet ble brukt i stedet.',
 	"import.warn.cmIconUnknownExisting":
-		'Det finnes ingen "{{value}}" ikon i Obsidian, så "{{id}}" beholdt ikonet det allerede hadde.',
+		'Ikonet «{{value}}» er ikke tilgjengelig i dette hvelvet, så «{{id}}» beholdt ikonet det allerede hadde.',
 	"import.chooseSource": "Importer fra",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc":
 		"Last inn en .json-fil eksportert fra Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"Lim inn stilene du kopierte fra Copy-knappen i Callout Manager.",
+		"Hent de tilpassede calloutene dine fra Callout Manager-utvidelsen.",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Hent dine egne admonitions fra Admonition-tillegget.",
@@ -838,8 +838,8 @@ export const nb: Record<string, string> = {
 	"import.cmPasteLabel":
 		"Eller lim inn de kopierte stilene fra Callout Manager her:",
 	"import.cmInstructions":
-		"I Callout Manager bruker du Copy-knappen for å kopiere de tilpassede callout-stilene dine, og limer dem inn nedenfor.",
-	"import.cmPlaceholder": "Lim inn de kopierte stilene her…",
+		"Hver tilpasset callout importeres med ikon og farge. Temaspesifikke stiler og egendefinert CSS har ingen tilsvarende innstilling her og blir ikke overført.",
+	"import.cmPlaceholder": "Lim inn kopierte stiler eller innholdet i data.json her…",
 	"import.cmBtnCancel": "Avbryt",
 	"import.cmBtnImport": "Importer",
 	"import.err.cmNoBlocksFound":

@@ -17,16 +17,16 @@ export const vi: Record<string, string> = {
 
 	"autocomplete.createNew": 'Tạo "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Không có callout nào khớp với “{{query}}”.",
 	"calloutPicker.placeholder": "Tìm kiếm callout",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Không có màu nào khớp với “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Tìm màu…",
 	"replaceModal.searchPlaceholder": "Tìm kiếm callout",
 	"settings.fallbackTag": "Mặc định",
 	"settings.fallbackTagAuto": "Mặc định tự động",
 	"settings.rescanVaultDesc": "Thêm các loại callout được dùng trong ghi chú của bạn mà chưa có trong danh sách này. Các callout và ghi chú hiện có của bạn không bị thay đổi.",
 	"settings.rescanVaultHintAction": "Quét tìm callout",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Không thể lưu kết quả quét. Hãy kiểm tra quyền ghi cài đặt và đợi đồng bộ hoàn tất, rồi thử lại qua Cài đặt → Các loại callout của tôi → Quét tìm callout. Các callout hiện có không bị thay thế.",
 	"manualDiscovery.scanning": "Đang quét…",
 	"settings.rescanComplete":
 		"Quét hoàn tất: đã thêm {{count}} loại callout mới.",
@@ -89,9 +89,9 @@ export const vi: Record<string, string> = {
 	"settings.import": "Nhập",
 	"settings.export": "Xuất",
 	"settings.importDesc":
-		"Nhập dữ liệu Callout Studio từ vault khác bằng tệp JSON.",
+		"Nhập dữ liệu Callout Studio từ vault khác hoặc chuyển callout của bạn từ plugin khác sang.",
 	"settings.exportDesc":
-		"Lưu tất cả các loại callout tùy chỉnh ở định dạng JSON.",
+		"Lưu các callout của bạn dưới dạng bản sao lưu Callout Studio hoặc đoạn mã CSS để dùng ở nơi khác.",
 	"settings.importConflictNotice":
 		"Đã nhập {{count}} loại callout; {{overwritten}} mục hiện có đã bị ghi đè.",
 
@@ -299,7 +299,7 @@ export const vi: Record<string, string> = {
 	"editor.verticalOffset": "Độ lệch dọc",
 	"editor.colors": "Màu sắc",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Đặt màu viền, nền và chữ cho callout này.",
 	"editor.resetColors": "Đặt lại màu sắc về mặc định",
 	"editor.paletteDeleted": "Màu đã xóa",
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
@@ -315,9 +315,9 @@ export const vi: Record<string, string> = {
 	"editor.foldClosed": "Mặc định đóng",
 	"editor.cancel": "Hủy",
 	"editor.saveChanges": "Lưu thay đổi",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Đang lưu…",
+	"editor.saveFailed": "Không thể hoàn tất việc lưu. Nếu cửa sổ chỉnh sửa này vẫn đang mở, hãy giữ nguyên và thử lại sau khi kiểm tra bộ nhớ cùng trạng thái đồng bộ. Một số cài đặt hoặc thay đổi trong ghi chú có thể đã được lưu.",
+	"notice.settingsSaveFailed": "Callout Studio không thể lưu các thay đổi của bạn. Hãy kiểm tra dung lượng còn trống và trạng thái đồng bộ, rồi thử lại trước khi đóng Obsidian.",
 	"editor.createCallout": "Tạo callout",
 	"editor.nameRequired": "Cần có tên hiển thị trước khi tạo callout.",
 	"editor.noChangesToSave": "Không có thay đổi nào được thực hiện.",
@@ -460,7 +460,7 @@ export const vi: Record<string, string> = {
 	"iconPicker.searchRpgAwesome": "Tìm kiếm RPG Awesome",
 	"iconPicker.custom": "Biểu tượng tùy chỉnh",
 	"iconPicker.searchCustom": "Tìm kiếm biểu tượng tùy chỉnh",
-	"iconPicker.customTooLarge": "{{name}} quá lớn. Biểu tượng tùy chỉnh phải nhỏ hơn 5 MB.",
+	"iconPicker.customTooLarge": "{{name}} quá lớn. Biểu tượng tùy chỉnh có kích thước tối đa 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} không phải là tệp biểu tượng tùy chỉnh được hỗ trợ. Dùng SVG, PNG, JPEG hoặc WebP.",
 	"iconPicker.customInvalidSvg":
@@ -663,7 +663,7 @@ export const vi: Record<string, string> = {
 		"Điều chỉnh viền và hình dạng của mọi callout nội tuyến trong vault của bạn.",
 	"settings.globalSettingsCustomize": "Tùy chỉnh",
 
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Callout dạng khối",
 	"settings.calloutTypeHeading": "Callout tiêu đề",
 	"settings.calloutTypeInline": "Callout nội tuyến",
 
@@ -674,7 +674,7 @@ export const vi: Record<string, string> = {
 	"menuCustomize.title": "Tùy chỉnh menu chuột phải",
 	"menuCustomize.desc":
 		"Bật hoặc tắt các hành động và kéo tay cầm để sắp xếp lại. Thay đổi được lưu tự động.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Callout dạng khối",
 	"menuCustomize.heading": "Callout tiêu đề",
 	"menuCustomize.inline": "Callout nội tuyến",
 	"menuCustomize.dragHandle": "Kéo để sắp xếp lại",
@@ -735,7 +735,7 @@ export const vi: Record<string, string> = {
 	"quickInsert.targetMoved": "Ghi chú mà bạn đã mở Chèn nhanh từ đó đã thay đổi hoặc đã đóng. Hãy mở lại Chèn nhanh trong ghi chú bạn muốn chỉnh sửa.",
 	"quickInsert.targetMovedHint": "Ghi chú gốc không còn khả dụng cho lần chèn này.",
 	"quickInsert.noUserCallouts":
-		"Bạn chưa tạo callout tùy chỉnh nào. Chạy “Callout Studio: Create new callout type” từ bảng lệnh.",
+		"Bạn chưa tạo callout tùy chỉnh nào. Chạy “Callout Studio: Tạo loại callout mới” từ bảng lệnh.",
 	"quickInsert.noAvailableUserCallouts":
 		"Các callout tùy chỉnh của bạn hiện được liệt kê dưới bộ lọc giao diện vì giao diện đang hoạt động kiểm soát chúng.",
 	"quickInsert.noEditorHint": "Không có ghi chú nào đang mở ở chế độ chỉnh sửa, nên không thể chèn gì cả.",
@@ -767,9 +767,9 @@ export const vi: Record<string, string> = {
 
 	"import.title": "Vấn đề nhập",
 	"import.reportLeadIn":
-		"Có vẻ như tệp bạn nhập đã bị sửa đổi. Đây là danh sách vấn đề:",
+		"Hãy xem lại các vấn đề nhập dữ liệu này trước khi tiếp tục:",
 	"import.reportLeadInFatal":
-		"Tệp này trông không giống xuất khẩu Callout Studio. Không thể nhập:",
+		"Không thể nhập dữ liệu này:",
 	"import.entryHeading": "Mục {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} trong {{total}} mục hợp lệ · tìm thấy {{issues}} vấn đề.",
@@ -807,7 +807,7 @@ export const vi: Record<string, string> = {
 		'"{{field}}" chỉ áp dụng cho biểu tượng Material và bị bỏ qua cho loại biểu tượng {{type}}.',
 	"import.err.iconValueEmpty": "Giá trị biểu tượng phải là chuỗi không rỗng.",
 	"import.err.iconValueTooLong":
-		"Giá trị biểu tượng dài bất thường ({{length}} ký tự).",
+		"Giá trị biểu tượng vượt quá giới hạn 200 ký tự ({{length}} ký tự).",
 	"import.err.materialStyle":
 		'Kiểu biểu tượng Material "{{value}}" không phải một trong: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -823,7 +823,7 @@ export const vi: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" phải là số từ {{min}} đến {{max}} (nhận được "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" phải là đối tượng ánh xạ loại callout (\"regular\", \"heading\", \"inline\") tới kích thước và độ lệch của biểu tượng.",
 	"import.err.aliasesNotArray": '"aliases" phải là mảng chuỗi.',
 	"import.err.aliasNotString": "Bí danh phải là chuỗi.",
 	"import.err.aliasDup": 'Bí danh "{{value}}" bị trùng trong mục này.',

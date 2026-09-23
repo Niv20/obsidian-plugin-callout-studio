@@ -17,16 +17,16 @@ export const fa: Record<string, string> = {
 
 	"autocomplete.createNew": 'ایجاد "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "هیچ کال‌اوتی با «{{query}}» مطابقت ندارد.",
 	"calloutPicker.placeholder": "جستجوی callout‌ها",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "هیچ رنگی با «{{query}}» مطابقت ندارد.",
+	"editor.paletteSearchPlaceholder": "جستجوی رنگ‌ها…",
 	"replaceModal.searchPlaceholder": "جستجوی callout‌ها",
 	"settings.fallbackTag": "پیش‌فرض",
 	"settings.fallbackTagAuto": "پیش‌فرض خودکار",
 	"settings.rescanVaultDesc": "انواع callout به‌کاررفته در یادداشت‌های شما را که هنوز در این فهرست نیستند اضافه می‌کند. calloutها و یادداشت‌های موجود شما تغییر نمی‌کنند.",
 	"settings.rescanVaultHintAction": "جستجو برای callout",
-	"manualDiscovery.failed": "نتایج شناسایی ذخیره نشد. پس از پایان همگام‌سازی دوباره از تنظیمات ← انواع فراخوان‌های من ← جستجو برای callout تلاش کنید. فراخوان‌های موجود جایگزین نشده‌اند.",
+	"manualDiscovery.failed": "نتایج شناسایی ذخیره نشد. بررسی کنید که تنظیمات قابل‌نوشتن باشند و همگام‌سازی پایان یافته باشد؛ سپس از تنظیمات ← انواع callout من ← جستجو برای callout دوباره تلاش کنید. calloutهای موجود جایگزین نشده‌اند.",
 	"manualDiscovery.scanning": "در حال اسکن…",
 	"settings.rescanComplete":
 		"اسکن کامل شد: {{count}} نوع callout جدید اضافه شد.",
@@ -88,9 +88,9 @@ export const fa: Record<string, string> = {
 	"settings.import": "وارد کردن",
 	"settings.export": "صادر کردن",
 	"settings.importDesc":
-		"داده‌های Callout Studio را از vault دیگری با استفاده از فایل JSON وارد کنید.",
+		"داده‌های Callout Studio خود را از خزانه‌ای دیگر وارد کنید یا کال‌اوت‌هایتان را از افزونه‌ای دیگر منتقل کنید.",
 	"settings.exportDesc":
-		"همه انواع callout سفارشی را در قالب JSON ذخیره کنید.",
+		"کال‌اوت‌های خود را به‌صورت پشتیبان Callout Studio یا قطعه‌کد CSS برای استفاده در جای دیگر ذخیره کنید.",
 	"settings.importConflictNotice":
 		"{{count}} نوع callout وارد شد؛ {{overwritten}} ورودی موجود بازنویسی شد.",
 
@@ -297,7 +297,7 @@ export const fa: Record<string, string> = {
 	"editor.verticalOffset": "جابجایی عمودی",
 	"editor.colors": "رنگ‌ها",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"رنگ‌های حاشیه، پس‌زمینه و متن این کال‌اوت را تعیین می‌کند.",
 	"editor.resetColors": "بازنشانی رنگ‌ها به پیش‌فرض",
 	"editor.paletteDeleted": "رنگ حذف‌شده",
 	"editor.paletteGroupObsidian": "Callout‌های Obsidian",
@@ -314,9 +314,9 @@ export const fa: Record<string, string> = {
 	"editor.foldClosed": "به صورت پیش‌فرض بسته",
 	"editor.cancel": "لغو",
 	"editor.saveChanges": "ذخیره تغییرات",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "در حال ذخیره…",
+	"editor.saveFailed": "ذخیره کامل نشد. اگر این ویرایشگر هنوز باز است، آن را باز نگه دارید و پس از بررسی فضای ذخیره‌سازی و همگام‌سازی دوباره تلاش کنید. ممکن است برخی تنظیمات یا تغییرات یادداشت‌ها پیش‌تر ذخیره شده باشند.",
+	"notice.settingsSaveFailed": "Callout Studio نتوانست تغییرات شما را ذخیره کند. فضای خالی و همگام‌سازی را بررسی کنید و پیش از بستن Obsidian دوباره تلاش کنید.",
 	"editor.createCallout": "ایجاد callout",
 	"editor.nameRequired": "قبل از ایجاد callout، نام نمایشی لازم است.",
 	"editor.noChangesToSave": "هیچ تغییری انجام نشد.",
@@ -456,7 +456,7 @@ export const fa: Record<string, string> = {
 	"iconPicker.custom": "نمادهای سفارشی",
 	"iconPicker.searchCustom": "جستجو در نمادهای سفارشی",
 	"iconPicker.customTooLarge":
-		"{{name}} خیلی بزرگ است. نمادهای سفارشی باید کمتر از ۵ مگابایت باشند.",
+		"{{name}} خیلی بزرگ است. نمادهای سفارشی باید حداکثر ۵ مگابایت باشند.",
 	"iconPicker.customUnsupported":
 		"{{name}} فایل نماد سفارشی پشتیبانی‌شده‌ای نیست. از SVG، PNG، JPEG یا WebP استفاده کنید.",
 	"iconPicker.customInvalidSvg":
@@ -652,7 +652,7 @@ export const fa: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"حاشیه و شکلِ هر inline callout در گاوصندوق‌تان را تنظیم کنید.",
 	"settings.globalSettingsCustomize": "سفارشی‌سازی",
-	"settings.calloutTypeRegular": "Block Callout",
+	"settings.calloutTypeRegular": "کال‌اوت بلوکی",
 	"settings.calloutTypeHeading": "callout عنوان",
 	"settings.calloutTypeInline": "callout درون‌خطی",
 	"settings.customizeMenu": "سفارشی‌سازی موارد منو",
@@ -662,7 +662,7 @@ export const fa: Record<string, string> = {
 	"menuCustomize.title": "سفارشی‌سازی منوی کلیک راست",
 	"menuCustomize.desc":
 		"اقدامات را روشن یا خاموش کنید و با کشیدن دستگیره ترتیب آن‌ها را تغییر دهید. تغییرات به‌طور خودکار ذخیره می‌شوند.",
-	"menuCustomize.regular": "Block Callout",
+	"menuCustomize.regular": "کال‌اوت بلوکی",
 	"menuCustomize.heading": "callout عنوان",
 	"menuCustomize.inline": "callout درون‌خطی",
 	"menuCustomize.dragHandle": "برای تغییر ترتیب بکشید",
@@ -728,7 +728,7 @@ export const fa: Record<string, string> = {
 	"quickInsert.targetMoved": "یادداشتی که درج سریع را از آن باز کردید تغییر کرده یا بسته شده است. درج سریع را دوباره در یادداشتی که می‌خواهید ویرایش کنید باز کنید.",
 	"quickInsert.targetMovedHint": "یادداشت اصلی دیگر برای این درج در دسترس نیست.",
 	"quickInsert.noUserCallouts":
-		"هنوز هیچ callout سفارشی‌ای نساخته‌اید. “Callout Studio: Create new callout type” را از پالت دستور اجرا کنید.",
+		"هنوز هیچ کال‌اوت سفارشی‌ای نساخته‌اید. دستور «Callout Studio: ایجاد نوع callout جدید» را از پالت فرمان اجرا کنید.",
 	"quickInsert.noAvailableUserCallouts":
 		"calloutهای سفارشی شما در حال حاضر زیر فیلتر پوسته فهرست شده‌اند، چون پوستهٔ فعال آن‌ها را کنترل می‌کند.",
 	"quickInsert.noEditorHint": "هیچ یادداشتی در حالت ویرایش باز نیست، بنابراین چیزی قابل درج نیست.",
@@ -760,9 +760,9 @@ export const fa: Record<string, string> = {
 
 	"import.title": "مشکلات وارد کردن",
 	"import.reportLeadIn":
-		"به نظر می‌رسد فایل وارد شده تغییر کرده است. این لیست مشکلات است:",
+		"پیش از ادامه، این مشکلات وارد کردن را بررسی کنید:",
 	"import.reportLeadInFatal":
-		"این فایل شبیه صادرات Callout Studio نیست. قابل وارد کردن نیست:",
+		"امکان وارد کردن این داده‌ها نبود:",
 	"import.entryHeading": "ورودی {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} از {{total}} ورودی معتبر است · {{issues}} مشکل یافت شد.",
@@ -800,7 +800,7 @@ export const fa: Record<string, string> = {
 		'"{{field}}" فقط برای آیکون‌های Material اعمال می‌شود و برای نوع آیکون {{type}} نادیده گرفته می‌شود.',
 	"import.err.iconValueEmpty": "مقدار آیکون باید یک رشته غیرخالی باشد.",
 	"import.err.iconValueTooLong":
-		"مقدار آیکون به طرز غیرمعمولی طولانی است ({{length}} کاراکتر).",
+		"مقدار آیکون از حد ۲۰۰ کاراکتر فراتر می‌رود ({{length}} کاراکتر).",
 	"import.err.materialStyle":
 		'سبک آیکون Material "{{value}}" باید یکی از: outlined، filled، rounded، sharp باشد.',
 	"import.err.materialWeight":
@@ -816,7 +816,7 @@ export const fa: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" باید عددی بین {{min}} و {{max}} باشد (دریافت شده "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" باید شیئی باشد که نوع کال‌اوت (\"regular\", \"heading\", \"inline\") را به اندازه و جابه‌جایی‌های آیکون آن نگاشت می‌کند.",
 	"import.err.aliasesNotArray": '"aliases" باید آرایه‌ای از رشته‌ها باشد.',
 	"import.err.aliasNotString": "نام مستعار باید یک رشته باشد.",
 	"import.err.aliasDup": 'نام مستعار "{{value}}" در این ورودی تکراری است.',
@@ -833,23 +833,23 @@ export const fa: Record<string, string> = {
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded" در حالی که "foldable" false بود، true بود؛ defaultFolded به false بازنشانی شد.',
 	"import.warn.imageMissing":
-		"این Callout از تصویری استفاده می‌کند که نه در فایل و نه در این vault وجود دارد، بنابراین آیکون جایگزین نمایش داده می‌شود تا زمانی که تصویر جدیدی تعیین کنید.",
+		"این کال‌اوت از تصویری استفاده می‌کند که نه در فایل و نه در این خزانه وجود دارد، بنابراین تا زمانی که تصویر جدیدی برای آن انتخاب کنید، آیکون جایگزین نشان داده می‌شود.",
 
 	"import.err.paletteIdInvalid":
 		'"paletteId" باید یک شناسه متنی غیرخالی باشد (دریافت شد "{{value}}").',
 	"import.warn.iconNameUnknown":
 		'هیچ نماد "{{value}}" در {{type}} وجود ندارد، بنابراین نماد پیش‌فرض استفاده شد.',
 	"import.warn.cmIconUnknownNew":
-		'هیچ نماد "{{value}}" در Obsidian وجود ندارد، بنابراین نماد پیش‌فرض استفاده شد.',
+		"نماد «{{value}}» در این خزانه در دسترس نیست، بنابراین نماد پیش‌فرض استفاده شد.",
 	"import.warn.cmIconUnknownExisting":
-		'هیچ نماد "{{value}}" در Obsidian وجود ندارد، بنابراین "{{id}}" نماد قبلی خود را نگه داشت.',
+		"نماد «{{value}}» در این خزانه در دسترس نیست، بنابراین «{{id}}» نماد قبلی خود را نگه داشت.",
 	"import.chooseSource": "وارد کردن از",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc":
 		"بارگذاری فایل .json صادر شده از Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"استایل‌هایی را که از دکمه Copy در Callout Manager کپی کرده‌اید بچسبانید.",
+		"کال‌اوت‌های سفارشی خود را از افزونهٔ Callout Manager منتقل کنید.",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"admonition‌های سفارشی خود را از افزونهٔ Admonition به اینجا " +
@@ -862,8 +862,8 @@ export const fa: Record<string, string> = {
 	"import.cmPasteLabel":
 		"یا استایل‌های کپی‌شده از Callout Manager را اینجا بچسبانید:",
 	"import.cmInstructions":
-		"در Callout Manager، از دکمه Copy برای کپی کردن استایل‌های callout سفارشی خود استفاده کنید، سپس آن‌ها را در زیر بچسبانید.",
-	"import.cmPlaceholder": "استایل‌های کپی‌شده را اینجا بچسبانید…",
+		"هر کال‌اوت سفارشی همراه با آیکون و رنگش منتقل می‌شود. سبک‌دهی مخصوص هر پوسته و CSS سفارشی در اینجا معادلی ندارند و منتقل نمی‌شوند.",
+	"import.cmPlaceholder": "استایل‌های کپی‌شده یا محتوای فایل data.json را اینجا بچسبانید…",
 	"import.cmBtnCancel": "لغو",
 	"import.cmBtnImport": "وارد کردن",
 	"import.err.cmNoBlocksFound":

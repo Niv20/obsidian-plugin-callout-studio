@@ -17,16 +17,16 @@ export const cs: Record<string, string> = {
 
 	"autocomplete.createNew": 'Vytvořit "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Žádný callout neodpovídá dotazu „{{query}}“.",
 	"calloutPicker.placeholder": "Hledat callouty",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Žádná barva neodpovídá dotazu „{{query}}“.",
+	"editor.paletteSearchPlaceholder": "Hledat barvy…",
 	"replaceModal.searchPlaceholder": "Hledat callouty",
 	"settings.fallbackTag": "Výchozí",
 	"settings.fallbackTagAuto": "Aut. výchozí",
 	"settings.rescanVaultDesc": "Přidá typy calloutů použité ve vašich poznámkách, které zatím nejsou v tomto seznamu. Vaše stávající callouty a poznámky se nezmění.",
 	"settings.rescanVaultHintAction": "Vyhledat callouty",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Nalezené callouty se nepodařilo uložit. Ověřte, že lze zapisovat nastavení a že synchronizace skončila. Poté znovu vyberte Nastavení → Moje typy callout → Vyhledat callouty. Stávající callouty nebyly nahrazeny.",
 	"manualDiscovery.scanning": "Prohledávání…",
 	"settings.rescanComplete":
 		"Prohledávání dokončeno: přidáno {{count}} nových typů calloutů.",
@@ -84,13 +84,13 @@ export const cs: Record<string, string> = {
 	"settings.languageDesc":
 		"Jazyk zobrazení Callout Studio. Ve výchozím nastavení odpovídá jazyku rozhraní Obsidianu.",
 	"settings.languageAuto": "Automaticky (jako Obsidian)",
-	"settings.importExport": "Import / export",
+	"settings.importExport": "Import a export",
 	"settings.import": "Importovat",
 	"settings.export": "Exportovat",
 	"settings.importDesc":
-		"Importujte data Callout Studio z jiného vaultu pomocí souboru JSON.",
+		"Importujte svá data Callout Studia z jiného vaultu nebo přeneste callouty z jiného pluginu.",
 	"settings.exportDesc":
-		"Uložte všechny vlastní typy callout ve formátu JSON.",
+		"Uložte své callouty jako zálohu Callout Studia nebo jako úryvek CSS pro použití jinde.",
 	"settings.importConflictNotice":
 		"Importováno {{count}} typ(ů) callout; {{overwritten}} stávajících záznamů bylo přepsáno.",
 
@@ -295,7 +295,7 @@ export const cs: Record<string, string> = {
 	"editor.verticalOffset": "Vertikální posun",
 	"editor.colors": "Barvy",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Nastavuje barvy ohraničení, pozadí a textu tohoto calloutu.",
 	"editor.resetColors": "Obnovit barvy na výchozí",
 	"editor.paletteDeleted": "Smazaná barva",
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
@@ -312,9 +312,9 @@ export const cs: Record<string, string> = {
 	"editor.foldClosed": "Ve výchozím stavu zavřený",
 	"editor.cancel": "Zrušit",
 	"editor.saveChanges": "Uložit změny",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Ukládání…",
+	"editor.saveFailed": "Ukládání se nepodařilo dokončit. Pokud je tento editor stále otevřený, nechte ho otevřený a po kontrole úložiště a synchronizace to zkuste znovu. Některá nastavení nebo změny poznámek už mohly být uloženy.",
+	"notice.settingsSaveFailed": "Callout Studio nemohlo uložit vaše změny. Zkontrolujte volné místo a synchronizaci a zkuste to znovu před zavřením Obsidianu.",
 	"editor.createCallout": "Vytvořit callout",
 	"editor.nameRequired":
 		"Před vytvořením callout je vyžadován zobrazovaný název.",
@@ -455,7 +455,7 @@ export const cs: Record<string, string> = {
 	"iconPicker.custom": "Vlastní ikony",
 	"iconPicker.searchCustom": "Hledat ve vlastních ikonách",
 	"iconPicker.customTooLarge":
-		"{{name}} je příliš velká. Vlastní ikony musí být menší než 5 MB.",
+		"{{name}} je příliš velká. Vlastní ikony mohou mít nejvýše 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} není podporovaný soubor vlastní ikony. Použijte SVG, PNG, JPEG nebo WebP.",
 	"iconPicker.customInvalidSvg":
@@ -652,7 +652,7 @@ export const cs: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Upravte ohraničení a tvar každého vloženého callout ve vašem trezoru.",
 	"settings.globalSettingsCustomize": "Přizpůsobit",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Blokový callout",
 	"settings.calloutTypeHeading": "Callout nadpisu",
 	"settings.calloutTypeInline": "Vložený callout",
 	"settings.customizeMenu": "Přizpůsobit položky menu",
@@ -662,7 +662,7 @@ export const cs: Record<string, string> = {
 	"menuCustomize.title": "Přizpůsobit kontextovou nabídku",
 	"menuCustomize.desc":
 		"Zapínejte nebo vypínejte akce a přetažením úchytu je přeuspořádejte. Změny se ukládají automaticky.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Blokový callout",
 	"menuCustomize.heading": "Callout nadpisu",
 	"menuCustomize.inline": "Vložený callout",
 	"menuCustomize.dragHandle": "Přetažením změníte pořadí",
@@ -725,7 +725,7 @@ export const cs: Record<string, string> = {
 	"quickInsert.targetMoved": "Poznámka, ze které jste otevřeli Rychlé vložení, se změnila nebo byla zavřena. Otevřete Rychlé vložení znovu v poznámce, kterou chcete upravit.",
 	"quickInsert.targetMovedHint": "Původní poznámka již není pro toto vložení k dispozici.",
 	"quickInsert.noUserCallouts":
-		"Zatím jste nevytvořili žádné vlastní callouty. Spusťte “Callout Studio: Create new callout type” z palety příkazů.",
+		"Zatím jste nevytvořili žádné vlastní callouty. Spusťte „Callout Studio: Vytvořit nový typ callout“ z palety příkazů.",
 	"quickInsert.noAvailableUserCallouts":
 		"Vaše vlastní callouty jsou nyní uvedeny pod filtrem tématu, protože je ovládá aktivní téma.",
 	"quickInsert.noEditorHint": "Není otevřena žádná poznámka v režimu úprav, takže nelze nic vložit.",
@@ -757,9 +757,9 @@ export const cs: Record<string, string> = {
 
 	"import.title": "Problémy s importem",
 	"import.reportLeadIn":
-		"Zdá se, že importovaný soubor byl pozměněn. Zde je seznam problémů:",
+		"Než budete pokračovat, zkontrolujte tyto problémy při importu:",
 	"import.reportLeadInFatal":
-		"Tento soubor nevypadá jako export Callout Studio. Nelze ho importovat:",
+		"Tato data se nepodařilo importovat:",
 	"import.entryHeading": "Položka {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} z {{total}} položek je platných · nalezeno {{issues}} problémů.",
@@ -796,7 +796,7 @@ export const cs: Record<string, string> = {
 		'"{{field}}" se vztahuje pouze na ikony Material a je ignorováno pro typ ikony {{type}}.',
 	"import.err.iconValueEmpty": "Hodnota ikony musí být neprázdný řetězec.",
 	"import.err.iconValueTooLong":
-		"Hodnota ikony je neobvykle dlouhá ({{length}} znaků).",
+		"Hodnota ikony překračuje limit 200 znaků ({{length}} znaků).",
 	"import.err.materialStyle":
 		'Styl ikony Material "{{value}}" není jedním z: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -812,7 +812,7 @@ export const cs: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" musí být číslo mezi {{min}} a {{max}} (obdrženo "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" musí být objekt, který mapuje typ calloutu (\"regular\", \"heading\", \"inline\") na velikost a posuny jeho ikony.",
 	"import.err.aliasesNotArray": '"aliases" musí být pole řetězců.',
 	"import.err.aliasNotString": "Alias musí být řetězec.",
 	"import.err.aliasDup": 'Alias "{{value}}" je v této položce duplikován.',

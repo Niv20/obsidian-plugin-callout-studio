@@ -17,16 +17,16 @@ export const th: Record<string, string> = {
 
 	"autocomplete.createNew": 'สร้าง "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "ไม่พบ callout ที่ตรงกับ “{{query}}”",
 	"calloutPicker.placeholder": "ค้นหา callout",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "ไม่พบสีที่ตรงกับ “{{query}}”",
+	"editor.paletteSearchPlaceholder": "ค้นหาสี…",
 	"replaceModal.searchPlaceholder": "ค้นหา callout",
 	"settings.fallbackTag": "ค่าเริ่มต้น",
 	"settings.fallbackTagAuto": "ค่าเริ่มต้นอัตโนมัติ",
 	"settings.rescanVaultDesc": "เพิ่มชนิด callout ที่ใช้ในโน้ตของคุณซึ่งยังไม่อยู่ในรายการนี้ callout และโน้ตที่มีอยู่ของคุณจะไม่ถูกเปลี่ยนแปลง",
 	"settings.rescanVaultHintAction": "สแกนหา callout",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "ไม่ได้บันทึกผลการสแกน ตรวจสอบว่าสามารถเขียนไฟล์การตั้งค่าได้และการซิงค์เสร็จสิ้นแล้ว จากนั้นลองอีกครั้งผ่าน การตั้งค่า → ประเภท callout ของฉัน → สแกนหา callout โดย callout ที่มีอยู่ไม่ได้ถูกแทนที่",
 	"manualDiscovery.scanning": "กำลังสแกน…",
 	"settings.rescanComplete":
 		"สแกนเสร็จแล้ว: เพิ่มชนิด callout ใหม่ {{count}} รายการ",
@@ -88,9 +88,9 @@ export const th: Record<string, string> = {
 	"settings.import": "นำเข้า",
 	"settings.export": "ส่งออก",
 	"settings.importDesc":
-		"นำเข้าข้อมูล Callout Studio จาก vault อื่นโดยใช้ไฟล์ JSON",
+		"นำเข้าข้อมูล Callout Studio จาก vault อื่น หรือย้าย callout ของคุณมาจากปลั๊กอินอื่น",
 	"settings.exportDesc":
-		"บันทึกประเภท callout แบบกำหนดเองทั้งหมดในรูปแบบ JSON",
+		"บันทึก callout ของคุณเป็นข้อมูลสำรองของ Callout Studio หรือเป็นส่วนย่อย CSS สำหรับใช้งานที่อื่น",
 	"settings.importConflictNotice":
 		"นำเข้า {{count}} ประเภท callout แล้ว; เขียนทับ {{overwritten}} รายการที่มีอยู่",
 
@@ -293,7 +293,7 @@ export const th: Record<string, string> = {
 	"editor.verticalOffset": "ระยะเลื่อนแนวตั้ง",
 	"editor.colors": "สี",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"กำหนดสีขอบ พื้นหลัง และข้อความของ callout นี้",
 	"editor.resetColors": "รีเซ็ตสีเป็นค่าเริ่มต้น",
 	"editor.paletteDeleted": "สีที่ถูกลบ",
 	"editor.paletteGroupObsidian": "Callout Obsidian",
@@ -309,9 +309,9 @@ export const th: Record<string, string> = {
 	"editor.foldClosed": "ปิดโดยค่าเริ่มต้น",
 	"editor.cancel": "ยกเลิก",
 	"editor.saveChanges": "บันทึกการเปลี่ยนแปลง",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "กำลังบันทึก…",
+	"editor.saveFailed": "ไม่สามารถบันทึกให้เสร็จสมบูรณ์ได้ หากตัวแก้ไขนี้ยังเปิดอยู่ ให้เปิดค้างไว้และลองอีกครั้งหลังตรวจสอบพื้นที่จัดเก็บและการซิงค์ การตั้งค่าหรือการแก้ไขโน้ตบางส่วนอาจถูกบันทึกไปแล้ว",
+	"notice.settingsSaveFailed": "Callout Studio ไม่สามารถบันทึกการเปลี่ยนแปลงของคุณได้ ตรวจสอบพื้นที่จัดเก็บที่ว่างและการซิงค์ แล้วลองอีกครั้งก่อนปิด Obsidian",
 	"editor.createCallout": "สร้าง callout",
 	"editor.nameRequired": "ต้องใส่ชื่อที่แสดงก่อนสร้าง callout",
 	"editor.noChangesToSave": "ไม่มีการเปลี่ยนแปลง",
@@ -451,7 +451,7 @@ export const th: Record<string, string> = {
 	"iconPicker.custom": "ไอคอนกำหนดเอง",
 	"iconPicker.searchCustom": "ค้นหาไอคอนกำหนดเอง",
 	"iconPicker.customTooLarge":
-		"{{name}} มีขนาดใหญ่เกินไป ไอคอนกำหนดเองต้องมีขนาดน้อยกว่า 5 MB",
+		"{{name}} มีขนาดใหญ่เกินไป ไอคอนกำหนดเองต้องมีขนาดไม่เกิน 5 MB",
 	"iconPicker.customUnsupported":
 		"{{name}} ไม่ใช่ไฟล์ไอคอนกำหนดเองที่รองรับ ใช้ SVG, PNG, JPEG หรือ WebP",
 	"iconPicker.customInvalidSvg":
@@ -651,7 +651,7 @@ export const th: Record<string, string> = {
 		"ปรับขอบและรูปร่างของทุก callout อินไลน์ ใน vault ของคุณ",
 	"settings.globalSettingsCustomize": "ปรับแต่ง",
 
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "callout แบบบล็อก",
 	"settings.calloutTypeHeading": "Callout หัวข้อ",
 	"settings.calloutTypeInline": "Callout อินไลน์",
 
@@ -662,7 +662,7 @@ export const th: Record<string, string> = {
 	"menuCustomize.title": "ปรับแต่งเมนูคลิกขวา",
 	"menuCustomize.desc":
 		"เปิดหรือปิดการดำเนินการและลากที่จับเพื่อจัดลำดับใหม่ การเปลี่ยนแปลงจะถูกบันทึกโดยอัตโนมัติ",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "callout แบบบล็อก",
 	"menuCustomize.heading": "Callout หัวข้อ",
 	"menuCustomize.inline": "Callout อินไลน์",
 	"menuCustomize.dragHandle": "ลากเพื่อจัดลำดับใหม่",
@@ -723,7 +723,7 @@ export const th: Record<string, string> = {
 	"quickInsert.targetMoved": "โน้ตที่คุณเปิดแทรกอย่างรวดเร็วมามีการเปลี่ยนแปลงหรือถูกปิดไปแล้ว เปิดแทรกอย่างรวดเร็วอีกครั้งในโน้ตที่คุณต้องการแก้ไข",
 	"quickInsert.targetMovedHint": "โน้ตต้นฉบับไม่พร้อมใช้งานสำหรับการแทรกนี้อีกต่อไป",
 	"quickInsert.noUserCallouts":
-		"คุณยังไม่ได้สร้าง callout แบบกำหนดเองใดๆ เรียกใช้ “Callout Studio: Create new callout type” จากพาเล็ตคำสั่ง",
+		"คุณยังไม่ได้สร้าง callout แบบกำหนดเอง เรียกใช้ “Callout Studio: สร้างประเภท callout ใหม่” จากพาเล็ตคำสั่ง",
 	"quickInsert.noAvailableUserCallouts":
 		"callout แบบกำหนดเองของคุณถูกแสดงอยู่ใต้ตัวกรองธีมในขณะนี้ เพราะธีมที่ใช้งานอยู่ควบคุม callout เหล่านั้น",
 	"quickInsert.noEditorHint": "ไม่มีบันทึกที่เปิดอยู่ในโหมดแก้ไข จึงไม่สามารถแทรกอะไรได้",
@@ -744,7 +744,7 @@ export const th: Record<string, string> = {
 	"vaultStats.sourceBuiltIn": "ในตัว",
 	"vaultStats.sourceCustom": "กำหนดเอง",
 	"vaultStats.sourceAutoFallback": "สำรองอัตโนมัติ",
-	"vaultStats.sourceTheme": "CSS snippet",
+	"vaultStats.sourceTheme": "สไนปเป็ต CSS",
 	"vaultStats.sourceAlias": "นามแฝงของ {{id}}",
 	"vaultStats.sourceUnknown": "ไม่รู้จัก",
 	"vaultStats.byRole": "เขียนเป็น",
@@ -754,9 +754,9 @@ export const th: Record<string, string> = {
 	"vaultStats.close": "ปิด",
 
 	"import.title": "ปัญหาการนำเข้า",
-	"import.reportLeadIn": "ดูเหมือนไฟล์ที่นำเข้าถูกแก้ไข นี่คือรายการปัญหา:",
+	"import.reportLeadIn": "ตรวจสอบปัญหาการนำเข้าเหล่านี้ก่อนดำเนินการต่อ:",
 	"import.reportLeadInFatal":
-		"ไฟล์นี้ดูไม่เหมือนการส่งออกของ Callout Studio ไม่สามารถนำเข้าได้:",
+		"ไม่สามารถนำเข้าข้อมูลนี้ได้:",
 	"import.entryHeading": "รายการ {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} จาก {{total}} รายการถูกต้อง · พบ {{issues}} ปัญหา",
@@ -792,7 +792,7 @@ export const th: Record<string, string> = {
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" ใช้เฉพาะกับไอคอน Material เท่านั้น และถูกละเว้นสำหรับประเภทไอคอน {{type}}',
 	"import.err.iconValueEmpty": "ค่าไอคอนต้องเป็น string ที่ไม่ว่างเปล่า",
-	"import.err.iconValueTooLong": "ค่าไอคอนยาวผิดปกติ ({{length}} อักขระ)",
+	"import.err.iconValueTooLong": "ค่าไอคอนเกินขีดจำกัด 200 อักขระ ({{length}} อักขระ)",
 	"import.err.materialStyle":
 		'สไตล์ไอคอน Material "{{value}}" ต้องเป็นหนึ่งใน: outlined, filled, rounded, sharp',
 	"import.err.materialWeight":
@@ -808,7 +808,7 @@ export const th: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" ต้องเป็นตัวเลขระหว่าง {{min}} ถึง {{max}} (ได้รับ "{{value}}")',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" ต้องเป็นออบเจ็กต์ที่จับคู่ประเภท callout (\"regular\", \"heading\", \"inline\") กับขนาดและระยะเลื่อนของไอคอน",
 	"import.err.aliasesNotArray": '"aliases" ต้องเป็น array ของ string',
 	"import.err.aliasNotString": "นามแฝงต้องเป็น string",
 	"import.err.aliasDup": 'นามแฝง "{{value}}" ซ้ำกันในรายการนี้',
@@ -839,7 +839,7 @@ export const th: Record<string, string> = {
 	"import.sourceStudioDesc": "โหลดไฟล์ .json ที่ส่งออกจาก Callout Studio",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"วางสไตล์ที่คุณคัดลอกจากปุ่ม Copy ของ Callout Manager",
+		"นำเข้า callout ที่กำหนดเองจากปลั๊กอิน Callout Manager",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"นำ admonition ที่คุณกำหนดเองมาจากปลั๊กอิน Admonition",
@@ -850,8 +850,8 @@ export const th: Record<string, string> = {
 	"import.cmVaultNotFound": "ไม่พบ callout ที่กำหนดเองในห้องนิรภัยนี้",
 	"import.cmPasteLabel": "หรือวางสไตล์ที่คัดลอกจาก Callout Manager ที่นี่:",
 	"import.cmInstructions":
-		"ใน Callout Manager ให้ใช้ปุ่ม Copy เพื่อคัดลอกสไตล์ callout ที่กำหนดเอง จากนั้นวางด้านล่าง",
-	"import.cmPlaceholder": "วางสไตล์ที่คัดลอกไว้ที่นี่…",
+		"callout ที่กำหนดเองแต่ละรายการจะนำเข้าพร้อมไอคอนและสี แต่สไตล์เฉพาะธีมและ CSS แบบกำหนดเองไม่มีรูปแบบเทียบเท่าที่นี่ จึงไม่ถูกนำเข้า",
+	"import.cmPlaceholder": "วางสไตล์ที่คัดลอกหรือไฟล์ data.json ที่นี่…",
 	"import.cmBtnCancel": "ยกเลิก",
 	"import.cmBtnImport": "นำเข้า",
 	"import.err.cmNotRecognized":

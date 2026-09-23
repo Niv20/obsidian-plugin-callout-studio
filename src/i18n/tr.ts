@@ -17,16 +17,16 @@ export const tr: Record<string, string> = {
 
 	"autocomplete.createNew": 'Oluştur "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "“{{query}}” ile eşleşen callout bulunamadı.",
 	"calloutPicker.placeholder": "Callout ara",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "“{{query}}” ile eşleşen renk bulunamadı.",
+	"editor.paletteSearchPlaceholder": "Renk ara…",
 	"replaceModal.searchPlaceholder": "Callout ara",
 	"settings.fallbackTag": "Varsayılan",
 	"settings.fallbackTagAuto": "Otomatik varsayılan",
 	"settings.rescanVaultDesc": "Notlarınızda kullanılan ve bu listede henüz yer almayan callout türlerini ekler. Mevcut callout'larınız ve notlarınız değiştirilmez.",
 	"settings.rescanVaultHintAction": "Callout'ları tara",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Tarama sonucu kaydedilmedi. Ayarların yazılabilir ve eşitlemenin tamamlanmış olduğundan emin olun; ardından Ayarlar → Callout türlerim → Callout'ları tara yolundan yeniden deneyin. Mevcut callout'lar değiştirilmedi.",
 	"manualDiscovery.scanning": "Taranıyor…",
 	"settings.rescanComplete":
 		"Tarama tamamlandı: {{count}} yeni callout türü eklendi.",
@@ -88,9 +88,9 @@ export const tr: Record<string, string> = {
 	"settings.import": "İçe aktar",
 	"settings.export": "Dışa aktar",
 	"settings.importDesc":
-		"JSON dosyası kullanarak başka bir vault'tan Callout Studio verilerinizi içe aktarın.",
+		"Callout Studio verilerinizi başka bir vault'tan içe aktarın veya callout'larınızı başka bir eklentiden getirin.",
 	"settings.exportDesc":
-		"Tüm özel callout türlerinizi JSON formatında kaydedin.",
+		"Callout'larınızı Callout Studio yedeği olarak veya başka yerde kullanabileceğiniz bir CSS parçacığı olarak kaydedin.",
 	"settings.importConflictNotice":
 		"{{count}} callout türü içe aktarıldı; {{overwritten}} mevcut kayıt üzerine yazıldı.",
 
@@ -297,7 +297,7 @@ export const tr: Record<string, string> = {
 	"editor.verticalOffset": "Dikey uzaklık",
 	"editor.colors": "Renkler",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Bu callout'un kenarlık, arka plan ve metin renklerini ayarlar.",
 	"editor.resetColors": "Renkleri varsayılana sıfırla",
 	"editor.paletteDeleted": "Silinmiş renk",
 	"editor.paletteGroupObsidian": "Obsidian callout'ları",
@@ -314,9 +314,9 @@ export const tr: Record<string, string> = {
 	"editor.foldClosed": "Varsayılan olarak kapalı",
 	"editor.cancel": "İptal",
 	"editor.saveChanges": "Değişiklikleri kaydet",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Kaydediliyor…",
+	"editor.saveFailed": "Kaydetme tamamlanamadı. Bu düzenleyici hâlâ açıksa açık bırakın; depolamayı ve eşitlemeyi kontrol ettikten sonra yeniden deneyin. Bazı ayarlar veya not değişiklikleri kaydedilmiş olabilir.",
+	"notice.settingsSaveFailed": "Callout Studio değişikliklerinizi kaydedemedi. Kullanılabilir depolama alanını ve eşitlemeyi kontrol edin, ardından Obsidian'ı kapatmadan önce yeniden deneyin.",
 	"editor.createCallout": "Callout oluştur",
 	"editor.nameRequired": "Callout oluşturmadan önce görünen ad gereklidir.",
 	"editor.noChangesToSave": "Herhangi bir değişiklik yapılmadı.",
@@ -456,7 +456,7 @@ export const tr: Record<string, string> = {
 	"iconPicker.custom": "Özel simgeler",
 	"iconPicker.searchCustom": "Özel simgelerde ara",
 	"iconPicker.customTooLarge":
-		"{{name}} çok büyük. Özel simgeler 5 MB altında olmalıdır.",
+		"{{name}} çok büyük. Özel simgeler en fazla 5 MB olabilir.",
 	"iconPicker.customUnsupported":
 		"{{name}} desteklenen bir özel simge dosyası değil. SVG, PNG, JPEG veya WebP kullanın.",
 	"iconPicker.customInvalidSvg":
@@ -656,7 +656,7 @@ export const tr: Record<string, string> = {
 		"Vault'unuzdaki her satır içi callout'un kenarlığını ve şeklini ayarlayın.",
 	"settings.globalSettingsCustomize": "Özelleştir",
 
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Blok callout",
 	"settings.calloutTypeHeading": "Başlık callout'u",
 	"settings.calloutTypeInline": "Satır içi callout",
 
@@ -667,7 +667,7 @@ export const tr: Record<string, string> = {
 	"menuCustomize.title": "Sağ tık menüsünü özelleştir",
 	"menuCustomize.desc":
 		"Eylemleri açıp kapatın ve yeniden sıralamak için tutamacı sürükleyin. Değişiklikler otomatik olarak kaydedilir.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Blok callout",
 	"menuCustomize.heading": "Başlık callout'u",
 	"menuCustomize.inline": "Satır içi callout",
 	"menuCustomize.dragHandle": "Yeniden sıralamak için sürükleyin",
@@ -728,7 +728,7 @@ export const tr: Record<string, string> = {
 	"quickInsert.targetMoved": "Hızlı eklemeyi açtığınız not değişti veya kapatıldı. Düzenlemek istediğiniz notta Hızlı eklemeyi yeniden açın.",
 	"quickInsert.targetMovedHint": "Bu ekleme için orijinal not artık kullanılamıyor.",
 	"quickInsert.noUserCallouts":
-		"Henüz özel bir callout oluşturmadınız. Komut paletinden “Callout Studio: Create new callout type” komutunu çalıştırın.",
+		"Henüz özel bir callout oluşturmadınız. Komut paletinden “Callout Studio: Yeni callout türü oluştur” komutunu çalıştırın.",
 	"quickInsert.noAvailableUserCallouts":
 		"Özel callout'larınız şu anda tema filtresinin altında listeleniyor çünkü etkin tema onları kontrol ediyor.",
 	"quickInsert.noEditorHint": "Düzenleme modunda açık bir not yok, bu yüzden hiçbir şey eklenemez.",
@@ -760,9 +760,9 @@ export const tr: Record<string, string> = {
 
 	"import.title": "İçe aktarma sorunları",
 	"import.reportLeadIn":
-		"İçe aktardığınız dosya değiştirilmiş gibi görünüyor. İşte sorunların listesi:",
+		"Devam etmeden önce şu içe aktarma sorunlarını inceleyin:",
 	"import.reportLeadInFatal":
-		"Bu dosya bir Callout Studio dışa aktarması gibi görünmüyor. İçe aktarılamaz:",
+		"Bu veriler içe aktarılamadı:",
 	"import.entryHeading": "Giriş {{index}} — {{label}}",
 	"import.summary":
 		"{{total}} girişten {{valid}} tanesi geçerli · {{issues}} sorun bulundu.",
@@ -799,7 +799,7 @@ export const tr: Record<string, string> = {
 		'"{{field}}" yalnızca Material simgeleri için geçerlidir ve simge türü {{type}} için yoksayılır.',
 	"import.err.iconValueEmpty": "Simge değeri boş olmayan bir dize olmalıdır.",
 	"import.err.iconValueTooLong":
-		"Simge değeri olağandışı uzun ({{length}} karakter).",
+		"Simge değeri 200 karakter sınırını aşıyor ({{length}} karakter).",
 	"import.err.materialStyle":
 		'"{{value}}" Material simge stili şunlardan biri olmalıdır: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -815,7 +815,7 @@ export const tr: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" {{min}} ile {{max}} arasında bir sayı olmalıdır ("{{value}}" alındı).',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\", bir callout türünü (\"regular\", \"heading\", \"inline\") simgenin boyutu ve konum kaymalarıyla eşleyen bir nesne olmalıdır.",
 	"import.err.aliasesNotArray": '"aliases" bir dize dizisi olmalıdır.',
 	"import.err.aliasNotString": "Takma ad bir dize olmalıdır.",
 	"import.err.aliasDup": '"{{value}}" takma adı bu giriş içinde yineleniyor.',
@@ -838,16 +838,16 @@ export const tr: Record<string, string> = {
 	"import.warn.iconNameUnknown":
 		'"{{value}}" simgesi {{type}} içinde bulunmuyor, bu nedenle varsayılan simge kullanıldı.',
 	"import.warn.cmIconUnknownNew":
-		'"{{value}}" simgesi Obsidian içinde bulunmuyor, bu nedenle varsayılan simge kullanıldı.',
+		"“{{value}}” simgesi bu vault’ta kullanılamıyor; bunun yerine varsayılan simge kullanıldı.",
 	"import.warn.cmIconUnknownExisting":
-		'"{{value}}" simgesi Obsidian içinde bulunmuyor, bu nedenle "{{id}}" zaten sahip olduğu simgeyi korudu.',
+		"“{{value}}” simgesi bu vault’ta kullanılamıyor; bu nedenle “{{id}}” mevcut simgesini korudu.",
 	"import.chooseSource": "Şuradan içe aktar",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc":
 		"Callout Studio'dan dışa aktarılmış bir .json dosyası yükleyin.",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"Callout Manager'ın Copy düğmesinden kopyaladığınız stilleri yapıştırın.",
+		"Özelleştirilmiş callout'larınızı Callout Manager eklentisinden içe aktarın.",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Özel admonition'larınızı Admonition eklentisinden getirin.",
@@ -859,8 +859,8 @@ export const tr: Record<string, string> = {
 	"import.cmPasteLabel":
 		"Veya Callout Manager'dan kopyalanan stilleri buraya yapıştırın:",
 	"import.cmInstructions":
-		"Callout Manager'da, özelleştirilmiş callout stillerinizi kopyalamak için Copy düğmesini kullanın, ardından aşağıya yapıştırın.",
-	"import.cmPlaceholder": "Kopyalanan stilleri buraya yapıştırın…",
+		"Özelleştirilmiş her callout, simgesi ve rengiyle birlikte aktarılır. Temaya özel stillerin ve özel CSS'nin burada karşılığı yoktur; bunlar aktarılmaz.",
+	"import.cmPlaceholder": "Kopyalanan stilleri veya bir data.json dosyasını buraya yapıştırın…",
 	"import.cmBtnCancel": "İptal",
 	"import.cmBtnImport": "İçe aktar",
 	"import.err.cmNotRecognized":

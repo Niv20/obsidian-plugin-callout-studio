@@ -17,16 +17,16 @@ export const uk: Record<string, string> = {
 
 	"autocomplete.createNew": 'Створити "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "За запитом «{{query}}» не знайдено жодного callout.",
 	"calloutPicker.placeholder": "Пошук callout",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "За запитом «{{query}}» не знайдено кольорів.",
+	"editor.paletteSearchPlaceholder": "Пошук кольорів…",
 	"replaceModal.searchPlaceholder": "Пошук callout",
 	"settings.fallbackTag": "За замовчуванням",
 	"settings.fallbackTagAuto": "Авт. за замовчуванням",
 	"settings.rescanVaultDesc": "Додає типи callout, які використовуються у ваших нотатках і яких ще немає в цьому списку. Наявні callout і нотатки не змінюються.",
 	"settings.rescanVaultHintAction": "Пошук callout",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Результати пошуку не збережено. Переконайтеся, що файл налаштувань доступний для запису й синхронізацію завершено, а потім повторіть спробу через Налаштування → Мої типи callout → Пошук callout. Наявні callout не замінено.",
 	"manualDiscovery.scanning": "Сканування…",
 	"settings.rescanComplete":
 		"Сканування завершено: додано {{count}} нових типів callout.",
@@ -89,9 +89,9 @@ export const uk: Record<string, string> = {
 	"settings.import": "Імпорт",
 	"settings.export": "Експорт",
 	"settings.importDesc":
-		"Імпортуйте дані Callout Studio з іншого сховища за допомогою JSON-файлу.",
+		"Імпортуйте дані Callout Studio з іншого сховища або перенесіть callout з іншого плагіна.",
 	"settings.exportDesc":
-		"Збережіть усі користувацькі типи callout у форматі JSON.",
+		"Збережіть свої callout як резервну копію Callout Studio або як фрагмент CSS для використання в іншому місці.",
 	"settings.importConflictNotice":
 		"Імпортовано {{count}} тип(ів) callout; {{overwritten}} існуючих записів перезаписано.",
 
@@ -304,7 +304,7 @@ export const uk: Record<string, string> = {
 	"editor.verticalOffset": "Вертикальне зміщення",
 	"editor.colors": "Кольори",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Задає кольори рамки, тла й тексту цього callout.",
 	"editor.resetColors": "Скинути кольори до типового",
 	"editor.paletteDeleted": "Видалений колір",
 	"editor.paletteGroupObsidian": "Callout Obsidian",
@@ -321,9 +321,9 @@ export const uk: Record<string, string> = {
 	"editor.foldClosed": "Закритий за замовчуванням",
 	"editor.cancel": "Скасувати",
 	"editor.saveChanges": "Зберегти зміни",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Збереження…",
+	"editor.saveFailed": "Не вдалося завершити збереження. Якщо це вікно редагування ще відкрите, залиште його відкритим і повторіть спробу після перевірки сховища та синхронізації. Деякі налаштування або зміни нотаток уже могли зберегтися.",
+	"notice.settingsSaveFailed": "Callout Studio не вдалося зберегти зміни. Перевірте вільне місце та синхронізацію, а потім повторіть спробу перед закриттям Obsidian.",
 	"editor.createCallout": "Створити callout",
 	"editor.nameRequired":
 		"Перед створенням callout необхідно вказати відображувану назву.",
@@ -466,7 +466,7 @@ export const uk: Record<string, string> = {
 	"iconPicker.custom": "Користувацькі піктограми",
 	"iconPicker.searchCustom": "Пошук користувацьких піктограм",
 	"iconPicker.customTooLarge":
-		"{{name}} завеликий. Користувацькі піктограми мають бути менше 5 МБ.",
+		"{{name}} завеликий. Розмір користувацьких значків не має перевищувати 5 МБ.",
 	"iconPicker.customUnsupported":
 		"{{name}} не є підтримуваним файлом користувацької піктограми. Використовуйте SVG, PNG, JPEG або WebP.",
 	"iconPicker.customInvalidSvg":
@@ -668,7 +668,7 @@ export const uk: Record<string, string> = {
 		"Налаштуйте рамку та форму кожного вбудованого callout у вашому сховищі.",
 	"settings.globalSettingsCustomize": "Налаштувати",
 
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Блоковий callout",
 	"settings.calloutTypeHeading": "Callout-заголовок",
 	"settings.calloutTypeInline": "Вбудований callout",
 
@@ -679,7 +679,7 @@ export const uk: Record<string, string> = {
 	"menuCustomize.title": "Налаштування контекстного меню",
 	"menuCustomize.desc":
 		"Вмикайте або вимикайте дії та перетягуйте маркер, щоб змінити їх порядок. Зміни зберігаються автоматично.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Блоковий callout",
 	"menuCustomize.heading": "Callout-заголовок",
 	"menuCustomize.inline": "Вбудований callout",
 	"menuCustomize.dragHandle": "Перетягніть, щоб змінити порядок",
@@ -740,7 +740,7 @@ export const uk: Record<string, string> = {
 	"quickInsert.targetMoved": "Нотатка, з якої ви відкрили швидку вставку, змінилася або закрита. Відкрийте швидку вставку знову в нотатці, яку хочете редагувати.",
 	"quickInsert.targetMovedHint": "Початкова нотатка більше недоступна для цієї вставки.",
 	"quickInsert.noUserCallouts":
-		"Ви ще не створили жодного користувацького callout. Запустіть “Callout Studio: Create new callout type” з палітри команд.",
+		"Ви ще не створили жодного користувацького callout. Запустіть «Callout Studio: Створити новий тип callout» з палітри команд.",
 	"quickInsert.noAvailableUserCallouts":
 		"Ваші користувацькі callout зараз перелічені під фільтром теми, тому що активна тема керує ними.",
 	"quickInsert.noEditorHint": "Жодна нотатка не відкрита в режимі редагування, тому нічого вставити не можна.",
@@ -772,9 +772,9 @@ export const uk: Record<string, string> = {
 
 	"import.title": "Проблеми імпорту",
 	"import.reportLeadIn":
-		"Схоже, імпортований файл було змінено. Ось список проблем:",
+		"Перевірте ці проблеми імпорту, перш ніж продовжити:",
 	"import.reportLeadInFatal":
-		"Цей файл не схожий на експорт Callout Studio. Його не можна імпортувати:",
+		"Не вдалося імпортувати ці дані:",
 	"import.entryHeading": "Запис {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} з {{total}} записів дійсні · знайдено {{issues}} проблем.",
@@ -814,7 +814,7 @@ export const uk: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"Значення іконки повинно бути непорожнім рядком.",
 	"import.err.iconValueTooLong":
-		"Значення іконки незвично довге ({{length}} символів).",
+		"Значення значка перевищує обмеження у 200 символів ({{length}} символів).",
 	"import.err.materialStyle":
 		"Стиль іконки Material «{{value}}» не є одним із: outlined, filled, rounded, sharp.",
 	"import.err.materialWeight":
@@ -830,7 +830,7 @@ export const uk: Record<string, string> = {
 	"import.err.iconSizeRange":
 		"«{{field}}» повинно бути числом від {{min}} до {{max}} (отримано «{{value}}»).",
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" має бути об’єктом, який пов’язує тип callout (\"regular\", \"heading\", \"inline\") з розміром і зміщеннями значка.",
 	"import.err.aliasesNotArray": "«aliases» повинен бути масивом рядків.",
 	"import.err.aliasNotString": "Псевдонім повинен бути рядком.",
 	"import.err.aliasDup": "Псевдонім «{{value}}» дублюється в цьому записі.",
@@ -853,16 +853,16 @@ export const uk: Record<string, string> = {
 	"import.warn.iconNameUnknown":
 		'Іконки "{{value}}" немає в {{type}}, тому було використано стандартну іконку.',
 	"import.warn.cmIconUnknownNew":
-		'Іконки "{{value}}" немає в Obsidian, тому було використано стандартну іконку.',
+		"Значок «{{value}}» недоступний у цьому сховищі, тому використано типовий значок.",
 	"import.warn.cmIconUnknownExisting":
-		'Іконки "{{value}}" немає в Obsidian, тому "{{id}}" залишив іконку, яка у нього вже була.',
+		"Значок «{{value}}» недоступний у цьому сховищі, тому «{{id}}» зберіг попередній значок.",
 	"import.chooseSource": "Імпорт з",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc":
 		"Завантажте файл .json, експортований з Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"Вставте стилі, скопійовані за допомогою кнопки Copy в Callout Manager.",
+		"Імпортуйте свої налаштовані callout із плагіна Callout Manager.",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Перенесіть свої власні admonition із плагіна Admonition.",
@@ -874,8 +874,8 @@ export const uk: Record<string, string> = {
 	"import.cmPasteLabel":
 		"Або вставте сюди стилі, скопійовані з Callout Manager:",
 	"import.cmInstructions":
-		"У Callout Manager скористайтесь кнопкою Copy, щоб скопіювати налаштовані стилі callout, після чого вставте їх нижче.",
-	"import.cmPlaceholder": "Вставте скопійовані стилі сюди…",
+		"Кожен налаштований callout імпортується разом зі значком і кольором. Стилі для окремих тем і власний CSS тут не підтримуються й не імпортуються.",
+	"import.cmPlaceholder": "Вставте сюди скопійовані стилі або файл data.json…",
 	"import.cmBtnCancel": "Скасувати",
 	"import.cmBtnImport": "Імпорт",
 	"import.err.cmNotRecognized":

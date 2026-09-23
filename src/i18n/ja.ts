@@ -17,16 +17,16 @@ export const ja: Record<string, string> = {
 
 	"autocomplete.createNew": '作成 "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "「{{query}}」に一致するcalloutはありません。",
 	"calloutPicker.placeholder": "calloutを検索",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "「{{query}}」に一致する色はありません。",
+	"editor.paletteSearchPlaceholder": "色を検索…",
 	"replaceModal.searchPlaceholder": "calloutを検索",
 	"settings.fallbackTag": "デフォルト",
 	"settings.fallbackTagAuto": "自動デフォルト",
 	"settings.rescanVaultDesc": "ノートで使われていて、まだこの一覧にないcalloutタイプを追加します。既存のcalloutとノートは変更されません。",
 	"settings.rescanVaultHintAction": "calloutをスキャン",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "スキャン結果を保存できませんでした。設定ファイルに書き込めることと同期が完了していることを確認し、設定 → マイcalloutタイプ → calloutをスキャンから再試行してください。既存のcalloutは置き換えられていません。",
 	"manualDiscovery.scanning": "スキャン中…",
 	"settings.rescanComplete":
 		"スキャン完了: {{count}}件の新しいcalloutタイプを追加しました。",
@@ -89,9 +89,9 @@ export const ja: Record<string, string> = {
 	"settings.import": "インポート",
 	"settings.export": "エクスポート",
 	"settings.importDesc":
-		"JSONファイルを使って別のvaultからCallout Studioのデータをインポートします。",
+		"別のvaultからCallout Studioのデータをインポートするか、他のプラグインからcalloutを取り込みます。",
 	"settings.exportDesc":
-		"すべてのカスタムcalloutタイプをJSON形式で保存します。",
+		"calloutをCallout Studioのバックアップ、または他の場所で使えるCSSスニペットとして保存します。",
 	"settings.importConflictNotice":
 		"{{count}}件のcalloutタイプをインポートしました。{{overwritten}}件の既存エントリが上書きされました。",
 
@@ -189,7 +189,7 @@ export const ja: Record<string, string> = {
 	"commandBuilder.formatDesc": "コマンドが書き込むcalloutの種類。",
 	"commandBuilder.formatHeading": "見出し",
 	"commandBuilder.formatInline": "インライン",
-	"commandBuilder.formatBlock": "Block",
+	"commandBuilder.formatBlock": "ブロック",
 	"commandBuilder.roleDisabled":
 		"この形式はオフになっているため、再度オンにするまでコマンドはプレーンテキストを挿入します。",
 	"commandBuilder.roleThemeOwned":
@@ -299,7 +299,7 @@ export const ja: Record<string, string> = {
 	"editor.verticalOffset": "垂直オフセット",
 	"editor.colors": "カラー",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"このcalloutの枠線、背景、文字の色を設定します。",
 	"editor.resetColors": "カラーをデフォルトにリセット",
 	"editor.paletteDeleted": "削除された色",
 	"editor.paletteGroupObsidian": "Obsidian callout",
@@ -316,9 +316,9 @@ export const ja: Record<string, string> = {
 	"editor.foldClosed": "デフォルトで閉じる",
 	"editor.cancel": "キャンセル",
 	"editor.saveChanges": "変更を保存",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "保存中…",
+	"editor.saveFailed": "保存を完了できませんでした。このエディターがまだ開いている場合は閉じずに、保存先の空き容量と同期を確認してから再試行してください。設定やノートの更新の一部はすでに保存されている可能性があります。",
+	"notice.settingsSaveFailed": "Callout Studioは変更を保存できませんでした。空き容量と同期を確認し、Obsidianを閉じる前に再試行してください。",
 	"editor.createCallout": "calloutを作成",
 	"editor.nameRequired": "calloutを作成する前に表示名が必要です。",
 	"editor.noChangesToSave": "変更はありませんでした。",
@@ -458,7 +458,7 @@ export const ja: Record<string, string> = {
 	"iconPicker.custom": "カスタムアイコン",
 	"iconPicker.searchCustom": "カスタムアイコンを検索",
 	"iconPicker.customTooLarge":
-		"{{name}}は大きすぎます。カスタムアイコンは5MB未満にしてください。",
+		"{{name}}は大きすぎます。カスタムアイコンのサイズは最大5 MBです。",
 	"iconPicker.customUnsupported":
 		"{{name}}はサポートされているカスタムアイコンファイルではありません。SVG、PNG、JPEG、またはWebPを使用してください。",
 	"iconPicker.customInvalidSvg":
@@ -661,7 +661,7 @@ export const ja: Record<string, string> = {
 		"vault内のすべてのインラインcalloutのボーダーと形状を調整します。",
 	"settings.globalSettingsCustomize": "カスタマイズ",
 
-	"settings.calloutTypeRegular": "Block Callout",
+	"settings.calloutTypeRegular": "ブロックcallout",
 	"settings.calloutTypeHeading": "見出しcallout",
 	"settings.calloutTypeInline": "インラインcallout",
 
@@ -672,7 +672,7 @@ export const ja: Record<string, string> = {
 	"menuCustomize.title": "右クリックメニューをカスタマイズ",
 	"menuCustomize.desc":
 		"操作のオン/オフを切り替え、ハンドルをドラッグして並べ替えます。変更は自動的に保存されます。",
-	"menuCustomize.regular": "Block Callout",
+	"menuCustomize.regular": "ブロックcallout",
 	"menuCustomize.heading": "見出しcallout",
 	"menuCustomize.inline": "インラインcallout",
 	"menuCustomize.dragHandle": "ドラッグして並べ替え",
@@ -732,7 +732,7 @@ export const ja: Record<string, string> = {
 	"quickInsert.noThemeCallouts": "現在利用できるテーマ固有のcalloutはありません。",
 	"quickInsert.targetMoved": "クイック挿入を開いたノートが変更されたか閉じられました。編集したいノートでクイック挿入を開き直してください。",
 	"quickInsert.targetMovedHint": "この挿入には元のノートが利用できなくなりました。",
-	"quickInsert.noUserCallouts": "まだカスタムcalloutを作成していません。コマンドパレットから “Callout Studio: Create new callout type” を実行してください。",
+	"quickInsert.noUserCallouts": "まだカスタムcalloutを作成していません。コマンドパレットから「Callout Studio: 新しいcalloutタイプを作成」を実行してください。",
 	"quickInsert.noAvailableUserCallouts": "カスタムcalloutは現在、アクティブなテーマが制御しているためテーマフィルターの下に表示されています。",
 	"quickInsert.noEditorHint": "編集モードで開いているノートがないため、何も挿入できません。",
 	"quickInsert.noEditor": "calloutを挿入するには、ノートを編集モードで開いてください。",
@@ -763,9 +763,9 @@ export const ja: Record<string, string> = {
 
 	"import.title": "インポートの問題",
 	"import.reportLeadIn":
-		"インポートしたファイルが変更されているようです。問題のリストです:",
+		"続行する前に、次のインポート時の問題を確認してください:",
 	"import.reportLeadInFatal":
-		"このファイルはCallout Studioのエクスポートではないようです。インポートできません:",
+		"このデータをインポートできませんでした:",
 	"import.entryHeading": "エントリ {{index}} — {{label}}",
 	"import.summary":
 		"{{total}}件中{{valid}}件のエントリが有効 · {{issues}}件の問題が見つかりました。",
@@ -804,7 +804,7 @@ export const ja: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"アイコンの値は空でない文字列でなければなりません。",
 	"import.err.iconValueTooLong":
-		"アイコンの値が異常に長いです（{{length}}文字）。",
+		"アイコンの値が200文字の上限を超えています（{{length}}文字）。",
 	"import.err.materialStyle":
 		'Materialアイコンスタイル"{{value}}"はoutlined、filled、rounded、sharpのいずれかでなければなりません。',
 	"import.err.materialWeight":
@@ -820,7 +820,7 @@ export const ja: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}"は{{min}}〜{{max}}の数値でなければなりません（"{{value}}"を受け取りました）。',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		'"iconAdjust" はcalloutの種類（"regular"、"heading"、"inline"）ごとにアイコンのサイズと位置のオフセットを指定するオブジェクトである必要があります。',
 	"import.err.aliasesNotArray":
 		'"aliases"は文字列の配列でなければなりません。',
 	"import.err.aliasNotString": "エイリアスは文字列でなければなりません。",
@@ -846,16 +846,16 @@ export const ja: Record<string, string> = {
 	"import.warn.iconNameUnknown":
 		'"{{value}}" アイコンは {{type}} に存在しないため、デフォルトのアイコンが使用されました。',
 	"import.warn.cmIconUnknownNew":
-		'"{{value}}" アイコンは Obsidian に存在しないため、デフォルトのアイコンが使用されました。',
+		'「{{value}}」アイコンはこのvaultで利用できないため、代わりにデフォルトのアイコンを使用しました。',
 	"import.warn.cmIconUnknownExisting":
-		'"{{value}}" アイコンは Obsidian に存在しないため、"{{id}}" は既存のアイコンを保持しました。',
+		'「{{value}}」アイコンはこのvaultで利用できないため、「{{id}}」は元のアイコンを維持しました。',
 	"import.chooseSource": "インポート元",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc":
 		"Callout Studio からエクスポートされた .json ファイルを読み込みます。",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"Callout Manager の Copy ボタンでコピーしたスタイルを貼り付けてください。",
+		"Callout Managerプラグインからカスタマイズしたcalloutを取り込みます。",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Admonition プラグインからカスタム admonition を引き継ぎます。",
@@ -868,8 +868,8 @@ export const ja: Record<string, string> = {
 	"import.cmPasteLabel":
 		"または Callout Manager からコピーしたスタイルをここに貼り付け：",
 	"import.cmInstructions":
-		"Callout Manager で Copy ボタンを使用してカスタマイズされた callout スタイルをコピーし、以下に貼り付けてください。",
-	"import.cmPlaceholder": "コピーしたスタイルをここに貼り付け…",
+		"カスタマイズした各calloutのアイコンと色を取り込みます。テーマ別のスタイルとカスタムCSSにはこちらで対応する設定がないため、取り込まれません。",
+	"import.cmPlaceholder": "コピーしたスタイル、またはdata.jsonの内容をここに貼り付け…",
 	"import.cmBtnCancel": "キャンセル",
 	"import.cmBtnImport": "インポート",
 	"import.err.cmNoBlocksFound":

@@ -14,16 +14,16 @@ export const zhTW: Record<string, string> = {
 	"cmd.customInsertInline": "插入 {{name}} 行內 callout",
 	"cmd.openQuickInsert": "快速插入區塊 callout",
 	"autocomplete.createNew": '建立 "{{name}}"',
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "找不到符合「{{query}}」的 callout。",
 	"calloutPicker.placeholder": "搜尋 callout",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "找不到符合「{{query}}」的顏色。",
+	"editor.paletteSearchPlaceholder": "搜尋顏色…",
 	"replaceModal.searchPlaceholder": "搜尋 callout",
 	"settings.fallbackTag": "預設",
 	"settings.fallbackTagAuto": "自動預設",
 	"settings.rescanVaultDesc": "新增你筆記中使用但尚未在此清單中的 callout 類型。你現有的 callout 與筆記不會被變更。",
 	"settings.rescanVaultHintAction": "掃描 callout",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "掃描結果未儲存。請確認設定檔可寫入且同步已完成，再前往「設定 → 我的 callout 類型 → 掃描 callout」重試。現有 callout 未被取代。",
 	"manualDiscovery.scanning": "掃描中…",
 	"settings.rescanComplete": "掃描完成：已新增 {{count}} 個新的 callout 類型。",
 	"replaceModal.deleteWithoutReplaceSuffix": "（回復為預設值）",
@@ -84,8 +84,8 @@ export const zhTW: Record<string, string> = {
 	"settings.import": "匯入",
 	"settings.export": "匯出",
 	"settings.importDesc":
-		"使用 JSON 檔案從另一個 vault 匯入 Callout Studio 資料。",
-	"settings.exportDesc": "以 JSON 格式儲存所有自訂 callout 類型。",
+		"從其他儲存庫匯入 Callout Studio 資料，或從其他外掛程式移入您的 callout。",
+	"settings.exportDesc": "將您的 callout 儲存為 Callout Studio 備份，或匯出為可在其他地方使用的 CSS 程式碼片段。",
 	"settings.importConflictNotice":
 		"已匯入 {{count}} 個 callout 類型；{{overwritten}} 個現有項目已被覆寫。",
 	"settings.addNewCallout": "新增 callout",
@@ -279,7 +279,7 @@ export const zhTW: Record<string, string> = {
 	"editor.verticalOffset": "垂直偏移",
 	"editor.colors": "顏色",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"設定此 callout 的邊框、背景與文字顏色。",
 	"editor.resetColors": "重設顏色為預設",
 	"editor.paletteDeleted": "已刪除的顏色",
 	"editor.paletteGroupObsidian": "Obsidian callout",
@@ -295,9 +295,9 @@ export const zhTW: Record<string, string> = {
 	"editor.foldClosed": "預設折疊",
 	"editor.cancel": "取消",
 	"editor.saveChanges": "儲存變更",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "正在儲存…",
+	"editor.saveFailed": "無法完成儲存。如果此編輯器仍開啟，請保持開啟，檢查儲存空間與同步狀態後再試。部分設定或筆記變更可能已經儲存。",
+	"notice.settingsSaveFailed": "Callout Studio 無法儲存您的變更。請檢查可用儲存空間與同步狀態，並在關閉 Obsidian 前重試。",
 	"editor.createCallout": "建立 callout",
 	"editor.nameRequired": "建立 callout 前需要提供顯示名稱。",
 	"editor.noChangesToSave": "沒有做任何更改。",
@@ -436,7 +436,7 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.searchRpgAwesome": "搜尋 RPG Awesome",
 	"iconPicker.custom": "自訂圖示",
 	"iconPicker.searchCustom": "搜尋自訂圖示",
-	"iconPicker.customTooLarge": "{{name}} 太大。自訂圖示必須小於 5 MB。",
+	"iconPicker.customTooLarge": "{{name}} 太大。自訂圖示的大小不得超過 5 MB。",
 	"iconPicker.customUnsupported":
 		"{{name}} 不是支援的自訂圖示檔案。請使用 SVG、PNG、JPEG 或 WebP。",
 	"iconPicker.customInvalidSvg":
@@ -630,7 +630,7 @@ export const zhTW: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"調整 vault 中每個行內 callout 的邊框和形狀。",
 	"settings.globalSettingsCustomize": "自訂",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "區塊 callout",
 	"settings.calloutTypeHeading": "標題 callout",
 	"settings.calloutTypeInline": "行內 callout",
 	"settings.customizeMenu": "自訂選單項目",
@@ -640,7 +640,7 @@ export const zhTW: Record<string, string> = {
 	"menuCustomize.title": "自訂右鍵選單",
 	"menuCustomize.desc":
 		"啟用或停用操作，並拖曳把手調整順序。變更會自動儲存。",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "區塊 callout",
 	"menuCustomize.heading": "標題 callout",
 	"menuCustomize.inline": "行內 callout",
 	"menuCustomize.dragHandle": "拖曳以重新排序",
@@ -695,7 +695,7 @@ export const zhTW: Record<string, string> = {
 	"quickInsert.noThemeCallouts": "目前沒有可用的佈景主題專屬 callout。",
 	"quickInsert.targetMoved": "開啟快速插入時所在的筆記已變更或關閉。請在你要編輯的筆記中重新開啟快速插入。",
 	"quickInsert.targetMovedHint": "原始筆記已無法用於這次插入。",
-	"quickInsert.noUserCallouts": "您尚未建立任何自訂 callout。請從指令面板執行 “Callout Studio: Create new callout type”。",
+	"quickInsert.noUserCallouts": "您尚未建立自訂 callout。請從指令面板執行「Callout Studio: 建立新的 callout 類型」。",
 	"quickInsert.noAvailableUserCallouts": "您的自訂 callout 目前列在佈景主題篩選器下，因為作用中的佈景主題正在控制它們。",
 	"quickInsert.noEditorHint": "沒有筆記以編輯模式開啟，因此無法插入任何內容。",
 	"quickInsert.noEditor": "以編輯模式開啟一篇筆記以插入 callout。",
@@ -724,9 +724,9 @@ export const zhTW: Record<string, string> = {
 	"vaultStats.roleInline": "行內",
 	"vaultStats.close": "關閉",
 	"import.title": "匯入問題",
-	"import.reportLeadIn": "看起來您匯入的檔案已被修改。以下是問題清單：",
+	"import.reportLeadIn": "繼續之前，請檢查以下匯入問題：",
 	"import.reportLeadInFatal":
-		"此檔案看起來不像 Callout Studio 的匯出檔案，無法匯入：",
+		"無法匯入這些資料：",
 	"import.entryHeading": "條目 {{index}} — {{label}}",
 	"import.summary":
 		"{{total}} 個條目中 {{valid}} 個有效 · 發現 {{issues}} 個問題。",
@@ -758,7 +758,7 @@ export const zhTW: Record<string, string> = {
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" 僅適用於 Material 圖示，對於圖示類型 {{type}} 將被忽略。',
 	"import.err.iconValueEmpty": "圖示值必須是非空字串。",
-	"import.err.iconValueTooLong": "圖示值異常過長（{{length}} 個字元）。",
+	"import.err.iconValueTooLong": "圖示值超過 200 個字元的上限（{{length}} 個字元）。",
 	"import.err.materialStyle":
 		"Material 圖示樣式「{{value}}」不是以下之一：outlined、filled、rounded、sharp。",
 	"import.err.materialWeight":
@@ -774,7 +774,7 @@ export const zhTW: Record<string, string> = {
 	"import.err.iconSizeRange":
 		"「{{field}}」必須是 {{min}} 到 {{max}} 之間的數字（收到「{{value}}」）。",
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" 必須是物件，將 callout 類型（\"regular\"、\"heading\"、\"inline\"）對應至圖示大小與位移量。",
 	"import.err.aliasesNotArray": "「aliases」必須是字串陣列。",
 	"import.err.aliasNotString": "別名必須是字串。",
 	"import.err.aliasDup": "「{{value}}」別名在此條目中重複。",
@@ -795,15 +795,15 @@ export const zhTW: Record<string, string> = {
 	"import.warn.iconNameUnknown":
 		'"{{value}}" 圖示在 {{type}} 中不存在，因此使用了預設圖示。',
 	"import.warn.cmIconUnknownNew":
-		'"{{value}}" 圖示在 Obsidian 中不存在，因此使用了預設圖示。',
+		"「{{value}}」圖示無法在此儲存庫使用，因此改用預設圖示。",
 	"import.warn.cmIconUnknownExisting":
-		'"{{value}}" 圖示在 Obsidian 中不存在，因此 "{{id}}" 保留了原有的圖示。',
+		"「{{value}}」圖示無法在此儲存庫使用，因此「{{id}}」保留原有圖示。",
 	"import.chooseSource": "從以下位置匯入",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc": "載入從 Callout Studio 匯出的 .json 檔案。",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"貼上您從 Callout Manager 的 Copy 按鈕複製的樣式。",
+		"從 Callout Manager 外掛程式匯入您自訂的 callout。",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"從 Admonition 外掛匯入您的自訂 admonition。",
@@ -814,8 +814,8 @@ export const zhTW: Record<string, string> = {
 	"import.cmVaultNotFound": "在本儲存庫中找不到自訂 callout。",
 	"import.cmPasteLabel": "或在此貼上從 Callout Manager 複製的樣式：",
 	"import.cmInstructions":
-		"在 Callout Manager 中，使用其 Copy 按鈕複製您自訂的 callout 樣式，然後將其貼到下方。",
-	"import.cmPlaceholder": "在此貼上複製的樣式…",
+		"每個自訂 callout 都會連同圖示與顏色一起匯入。依主題設定的樣式和自訂 CSS 在此沒有對應功能，因此不會匯入。",
+	"import.cmPlaceholder": "在此貼上複製的樣式或 data.json 檔案…",
 	"import.cmBtnCancel": "取消",
 	"import.cmBtnImport": "匯入",
 	"import.err.cmNotRecognized":

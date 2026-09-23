@@ -17,16 +17,16 @@ export const ro: Record<string, string> = {
 
 	"autocomplete.createNew": 'Creează "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Niciun callout nu corespunde căutării „{{query}}”.",
 	"calloutPicker.placeholder": "Caută callout-uri",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Nicio culoare nu corespunde căutării „{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Căutați culori…",
 	"replaceModal.searchPlaceholder": "Caută callout-uri",
 	"settings.fallbackTag": "Implicit",
 	"settings.fallbackTagAuto": "Implicit automat",
 	"settings.rescanVaultDesc": "Adaugă tipurile de callout folosite în notițele tale care nu sunt încă în această listă. Callout-urile și notițele tale existente nu sunt modificate.",
 	"settings.rescanVaultHintAction": "Scanează după callout-uri",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Rezultatele scanării nu au fost salvate. Verificați dacă setările pot fi scrise și sincronizarea s-a încheiat, apoi reîncercați din Setări → Tipurile mele de callout → Scanează după callout-uri. Callout-urile existente nu au fost înlocuite.",
 	"manualDiscovery.scanning": "Se scanează…",
 	"settings.rescanComplete":
 		"Scanare completă: {{count}} tip(uri) de callout noi adăugate.",
@@ -88,9 +88,9 @@ export const ro: Record<string, string> = {
 	"settings.import": "Importați",
 	"settings.export": "Exportați",
 	"settings.importDesc":
-		"Importați progresul Callout Studio dintr-un alt vault folosind un fișier JSON.",
+		"Importați datele Callout Studio dintr-un alt vault sau aduceți callout-urile dintr-un alt plugin.",
 	"settings.exportDesc":
-		"Salvați toate tipurile de callout personalizate în format JSON.",
+		"Salvați callout-urile ca o copie de siguranță Callout Studio sau ca un fragment CSS pe care îl puteți folosi în altă parte.",
 	"settings.importConflictNotice":
 		"Au fost importate {{count}} tip(uri) de callout; {{overwritten}} înregistrare(i) existentă(e) au fost suprascrisă(e).",
 
@@ -185,7 +185,7 @@ export const ro: Record<string, string> = {
 	"commandBuilder.format": "Format callout",
 	"commandBuilder.formatDesc": "Ce fel de callout scrie comanda.",
 	"commandBuilder.formatHeading": "Titlu",
-	"commandBuilder.formatInline": "Inline",
+	"commandBuilder.formatInline": "În linie",
 	"commandBuilder.formatBlock": "Bloc",
 	"commandBuilder.roleDisabled":
 		"Acest format este dezactivat, așa că această comandă va insera text simplu până când îl reactivați.",
@@ -300,7 +300,7 @@ export const ro: Record<string, string> = {
 	"editor.verticalOffset": "Decalaj vertical",
 	"editor.colors": "Culori",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Setează culorile chenarului, fundalului și textului acestui callout.",
 	"editor.resetColors": "Resetați culorile la implicit",
 	"editor.paletteDeleted": "Culoare ștearsă",
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
@@ -317,9 +317,9 @@ export const ro: Record<string, string> = {
 	"editor.foldClosed": "Închis implicit",
 	"editor.cancel": "Anulare",
 	"editor.saveChanges": "Salvați modificările",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Se salvează…",
+	"editor.saveFailed": "Salvarea nu a putut fi finalizată. Dacă acest editor este încă deschis, păstrați-l deschis și reîncercați după ce verificați spațiul de stocare și sincronizarea. Este posibil ca unele setări sau modificări ale notelor să fi fost deja salvate.",
+	"notice.settingsSaveFailed": "Callout Studio nu a putut salva modificările. Verificați spațiul de stocare disponibil și sincronizarea, apoi reîncercați înainte de a închide Obsidian.",
 	"editor.createCallout": "Creați callout",
 	"editor.nameRequired":
 		"Este necesar un nume afișat înainte de a crea un callout.",
@@ -459,7 +459,7 @@ export const ro: Record<string, string> = {
 	"iconPicker.custom": "Pictograme personalizate",
 	"iconPicker.searchCustom": "Caută în pictogramele personalizate",
 	"iconPicker.customTooLarge":
-		"{{name}} este prea mare. Pictogramele personalizate trebuie să fie sub 5 MB.",
+		"{{name}} este prea mare. Pictogramele personalizate pot avea cel mult 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} nu este un fișier de pictogramă personalizată acceptat. Folosiți SVG, PNG, JPEG sau WebP.",
 	"iconPicker.customInvalidSvg":
@@ -658,7 +658,7 @@ export const ro: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Ajustați bordura și forma fiecărui callout inline din vault-ul dvs.",
 	"settings.globalSettingsCustomize": "Personalizați",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Callout de tip bloc",
 	"settings.calloutTypeHeading": "Callout tip titlu",
 	"settings.calloutTypeInline": "Callout inline",
 	"settings.customizeMenu": "Personalizați elementele meniului",
@@ -668,7 +668,7 @@ export const ro: Record<string, string> = {
 	"menuCustomize.title": "Personalizare meniu clic dreapta",
 	"menuCustomize.desc":
 		"Activați sau dezactivați acțiuni și trageți mânerul pentru a le reordona. Modificările sunt salvate automat.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Callout de tip bloc",
 	"menuCustomize.heading": "Callout tip titlu",
 	"menuCustomize.inline": "Callout inline",
 	"menuCustomize.dragHandle": "Trageți pentru a reordona",
@@ -731,14 +731,14 @@ export const ro: Record<string, string> = {
 	"quickInsert.targetMoved": "Notița din care ați deschis Inserarea rapidă s-a modificat sau a fost închisă. Redeschideți Inserarea rapidă în notița pe care doriți să o editați.",
 	"quickInsert.targetMovedHint": "Notița originală nu mai este disponibilă pentru această inserare.",
 	"quickInsert.noUserCallouts":
-		"Nu ai creat încă niciun callout personalizat. Rulează “Callout Studio: Create new callout type” din paleta de comenzi.",
+		"Nu ați creat încă niciun callout personalizat. Rulați „Callout Studio: Creează tip callout nou” din paleta de comenzi.",
 	"quickInsert.noAvailableUserCallouts":
 		"Callout-urile tale personalizate sunt listate momentan sub filtrul temei, deoarece tema activă le controlează.",
 	"quickInsert.noEditorHint": "Nicio notă nu este deschisă în modul de editare, așa că nimic nu poate fi inserat.",
 	"quickInsert.noEditor": "Deschide o notă în modul de editare pentru a insera un callout.",
 
 	"vaultStats.title": "Statistici callout",
-	"vaultStats.totalCallouts": "Total callouts",
+	"vaultStats.totalCallouts": "Număr total de callout-uri",
 	"vaultStats.typesFound": "Tipuri găsite",
 	"vaultStats.filesWithCallouts": "Fișiere cu callouts",
 	"vaultStats.filesScanned": "Fișiere Markdown scanate",
@@ -758,14 +758,14 @@ export const ro: Record<string, string> = {
 	"vaultStats.byRole": "Scris ca",
 	"vaultStats.roleBlock": "Bloc",
 	"vaultStats.roleHeading": "Titlu",
-	"vaultStats.roleInline": "Inline",
+	"vaultStats.roleInline": "În linie",
 	"vaultStats.close": "Închide",
 
 	"import.title": "Probleme de import",
 	"import.reportLeadIn":
-		"Se pare că fișierul importat a fost modificat. Iată lista problemelor:",
+		"Verificați aceste probleme de import înainte de a continua:",
 	"import.reportLeadInFatal":
-		"Acest fișier nu pare a fi un export Callout Studio. Nu poate fi importat:",
+		"Aceste date nu au putut fi importate:",
 	"import.entryHeading": "Intrare {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} din {{total}} intrări sunt valide · {{issues}} problemă(e) găsită(e).",
@@ -804,7 +804,7 @@ export const ro: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"Valoarea pictogramei trebuie să fie un șir nevid.",
 	"import.err.iconValueTooLong":
-		"Valoarea pictogramei este neobișnuit de lungă ({{length}} caractere).",
+		"Valoarea pictogramei depășește limita de 200 de caractere ({{length}} caractere).",
 	"import.err.materialStyle":
 		'Stilul pictogramei Material "{{value}}" nu este unul dintre: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -820,7 +820,7 @@ export const ro: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" trebuie să fie un număr între {{min}} și {{max}} (primit "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" trebuie să fie un obiect care asociază un tip de callout (\"regular\", \"heading\", \"inline\") cu dimensiunea și decalajele pictogramei.",
 	"import.err.aliasesNotArray":
 		'"aliases" trebuie să fie un array de șiruri.',
 	"import.err.aliasNotString": "Aliasul trebuie să fie un șir.",
@@ -845,16 +845,16 @@ export const ro: Record<string, string> = {
 	"import.warn.iconNameUnknown":
 		'Nu există nicio pictogramă "{{value}}" în {{type}}, deci a fost utilizată pictograma implicită.',
 	"import.warn.cmIconUnknownNew":
-		'Nu există nicio pictogramă "{{value}}" în Obsidian, deci a fost utilizată pictograma implicită.',
+		"Pictograma „{{value}}” nu este disponibilă în acest vault, așa că a fost folosită pictograma implicită.",
 	"import.warn.cmIconUnknownExisting":
-		'Nu există nicio pictogramă "{{value}}" în Obsidian, deci "{{id}}" a păstrat pictograma pe care o avea deja.',
+		"Pictograma „{{value}}” nu este disponibilă în acest vault, așa că „{{id}}” și-a păstrat pictograma existentă.",
 	"import.chooseSource": "Importați din",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc":
 		"Încărcați un fișier .json exportat din Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"Lipiți stilurile copiate din butonul Copy al Callout Manager.",
+		"Importați callout-urile personalizate din pluginul Callout Manager.",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Adu-ți admonition-urile personalizate din pluginul Admonition.",
@@ -867,8 +867,8 @@ export const ro: Record<string, string> = {
 	"import.cmPasteLabel":
 		"Sau lipește aici stilurile copiate din Callout Manager:",
 	"import.cmInstructions":
-		"În Callout Manager, utilizați butonul Copy pentru a copia stilurile de callout personalizate, apoi lipiți-le mai jos.",
-	"import.cmPlaceholder": "Lipiți stilurile copiate aici…",
+		"Fiecare callout personalizat este importat împreună cu pictograma și culoarea sa. Stilurile specifice temei și CSS-ul personalizat nu au echivalent aici și nu sunt importate.",
+	"import.cmPlaceholder": "Lipiți aici stilurile copiate sau un fișier data.json…",
 	"import.cmBtnCancel": "Anulare",
 	"import.cmBtnImport": "Importați",
 	"import.err.cmNotRecognized":

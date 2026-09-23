@@ -581,7 +581,7 @@ export const en: Record<string, string> = {
 	"iconPicker.custom": "Custom Icons",
 	"iconPicker.searchCustom": "Search custom icons",
 	"iconPicker.customTooLarge":
-		"{{name}} is too large. Custom icons must be under 5 MB.",
+		"{{name}} is too large. Custom icons must be at most 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} is not a supported custom icon file. Use SVG, PNG, JPEG or WebP.",
 	"iconPicker.customInvalidSvg":
@@ -887,9 +887,9 @@ export const en: Record<string, string> = {
 	// Import validation
 	"import.title": "Import issues",
 	"import.reportLeadIn":
-		"Hmm, looks like the file you imported has been modified. Here is the list of issues:",
+		"Review these import issues before continuing:",
 	"import.reportLeadInFatal":
-		"Hmm, this file does not look like a Callout Studio export. It cannot be imported:",
+		"This data could not be imported:",
 	"import.entryHeading": "Entry {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} of {{total}} entries are valid · {{issues}} issue(s) found.",
@@ -926,7 +926,7 @@ export const en: Record<string, string> = {
 		'"{{field}}" only applies to Material icons and is ignored for icon type {{type}}.',
 	"import.err.iconValueEmpty": "Icon value must be a non-empty string.",
 	"import.err.iconValueTooLong":
-		"Icon value is unusually long ({{length}} characters).",
+		"Icon value exceeds the 200-character limit ({{length}} characters).",
 	"import.err.materialStyle":
 		'Material icon style "{{value}}" is not one of: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -942,7 +942,7 @@ export const en: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" must be a number between {{min}} and {{max}} (got "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("block", "heading", "inline") to its icon size and offsets.',
+		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
 	"import.err.aliasesNotArray": '"aliases" must be an array of strings.',
 	"import.err.aliasNotString": "Alias must be a string.",
 	"import.err.aliasDup": 'Alias "{{value}}" is duplicated within this entry.',

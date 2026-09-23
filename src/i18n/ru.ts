@@ -18,16 +18,16 @@ export const ru: Record<string, string> = {
 
 	"autocomplete.createNew": 'Создать "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Для запроса «{{query}}» не найдено ни одного callout.",
 	"calloutPicker.placeholder": "Поиск callout",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Для запроса «{{query}}» не найдено цветов.",
+	"editor.paletteSearchPlaceholder": "Поиск цветов…",
 	"replaceModal.searchPlaceholder": "Поиск callout",
 	"settings.fallbackTag": "По умолчанию",
 	"settings.fallbackTagAuto": "Авт. по умолчанию",
 	"settings.rescanVaultDesc": "Добавляет типы callout, используемые в ваших заметках, которых ещё нет в этом списке. Ваши существующие callout и заметки не изменяются.",
 	"settings.rescanVaultHintAction": "Найти callout",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Результаты поиска не сохранены. Убедитесь, что файл настроек доступен для записи и синхронизация завершилась, затем повторите попытку через Настройки → Мои типы callout → Найти callout. Существующие callout не были заменены.",
 	"manualDiscovery.scanning": "Сканирование…",
 	"settings.rescanComplete":
 		"Сканирование завершено: добавлено {{count}} новых типов callout.",
@@ -89,9 +89,9 @@ export const ru: Record<string, string> = {
 	"settings.import": "Импорт",
 	"settings.export": "Экспорт",
 	"settings.importDesc":
-		"Импортируйте данные Callout Studio из другого хранилища с помощью JSON-файла.",
+		"Импортируйте данные Callout Studio из другого хранилища или перенесите callout из другого плагина.",
 	"settings.exportDesc":
-		"Сохранить все пользовательские типы callout в формате JSON.",
+		"Сохраните свои callout как резервную копию Callout Studio или в виде фрагмента CSS для использования вне плагина.",
 	"settings.importConflictNotice":
 		"Импортировано {{count}} типов callout; {{overwritten}} существующих записей перезаписано.",
 
@@ -298,7 +298,7 @@ export const ru: Record<string, string> = {
 	"editor.verticalOffset": "Вертикальное смещение",
 	"editor.colors": "Цвета",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Задаёт цвета рамки, фона и текста этого callout.",
 	"editor.resetColors": "Сбросить цвета по умолчанию",
 	"editor.paletteDeleted": "Цвет удалён",
 	"editor.paletteGroupObsidian": "Callout Obsidian",
@@ -315,9 +315,9 @@ export const ru: Record<string, string> = {
 	"editor.foldClosed": "Закрыт по умолчанию",
 	"editor.cancel": "Отмена",
 	"editor.saveChanges": "Сохранить изменения",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Сохранение…",
+	"editor.saveFailed": "Не удалось завершить сохранение. Если этот редактор ещё открыт, оставьте его открытым и повторите попытку после проверки хранилища и синхронизации. Некоторые настройки или изменения заметок могли уже сохраниться.",
+	"notice.settingsSaveFailed": "Callout Studio не удалось сохранить изменения. Проверьте свободное место и синхронизацию, затем повторите попытку перед закрытием Obsidian.",
 	"editor.createCallout": "Создать callout",
 	"editor.nameRequired":
 		"Перед созданием callout необходимо указать отображаемое имя.",
@@ -456,7 +456,7 @@ export const ru: Record<string, string> = {
 	"iconPicker.custom": "Пользовательские значки",
 	"iconPicker.searchCustom": "Поиск пользовательских значков",
 	"iconPicker.customTooLarge":
-		"{{name}} слишком большой. Пользовательские значки должны быть меньше 5 МБ.",
+		"{{name}} слишком большой. Размер пользовательского значка не должен превышать 5 МБ.",
 	"iconPicker.customUnsupported":
 		"{{name}} — неподдерживаемый файл пользовательского значка. Используйте SVG, PNG, JPEG или WebP.",
 	"iconPicker.customInvalidSvg":
@@ -655,7 +655,7 @@ export const ru: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Настройте рамку и форму каждого встроенного callout в вашем хранилище.",
 	"settings.globalSettingsCustomize": "Настроить",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Блочный callout",
 	"settings.calloutTypeHeading": "Callout-заголовок",
 	"settings.calloutTypeInline": "Встроенный callout",
 	"settings.customizeMenu": "Настройка пунктов меню",
@@ -665,7 +665,7 @@ export const ru: Record<string, string> = {
 	"menuCustomize.title": "Настройка контекстного меню",
 	"menuCustomize.desc":
 		"Включайте и отключайте действия и перетаскивайте маркер, чтобы изменить их порядок. Изменения сохраняются автоматически.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Блочный callout",
 	"menuCustomize.heading": "Callout-заголовок",
 	"menuCustomize.inline": "Встроенный callout",
 	"menuCustomize.dragHandle": "Перетащите для изменения порядка",
@@ -726,7 +726,7 @@ export const ru: Record<string, string> = {
 	"quickInsert.targetMoved": "Заметка, из которой вы открыли быструю вставку, изменилась или закрыта. Откройте быструю вставку заново в заметке, которую хотите редактировать.",
 	"quickInsert.targetMovedHint": "Исходная заметка больше недоступна для этой вставки.",
 	"quickInsert.noUserCallouts":
-		"Вы ещё не создали ни одного пользовательского callout. Запустите “Callout Studio: Create new callout type” из палитры команд.",
+		"Вы ещё не создали пользовательские callout. Запустите «Callout Studio: Создать новый тип callout» из палитры команд.",
 	"quickInsert.noAvailableUserCallouts":
 		"Ваши пользовательские callout сейчас отображаются под фильтром темы, потому что активная тема управляет ими.",
 	"quickInsert.noEditorHint": "Нет заметки, открытой в режиме редактирования, поэтому вставить ничего нельзя.",
@@ -758,9 +758,9 @@ export const ru: Record<string, string> = {
 
 	"import.title": "Проблемы импорта",
 	"import.reportLeadIn":
-		"Похоже, импортированный файл был изменён. Вот список проблем:",
+		"Проверьте эти проблемы импорта перед продолжением:",
 	"import.reportLeadInFatal":
-		"Этот файл не похож на экспорт Callout Studio и не может быть импортирован:",
+		"Не удалось импортировать эти данные:",
 	"import.entryHeading": "Запись {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} из {{total}} записей действительны · найдено {{issues}} проблем.",
@@ -799,7 +799,7 @@ export const ru: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"Значение иконки должно быть непустой строкой.",
 	"import.err.iconValueTooLong":
-		"Значение иконки необычно длинное ({{length}} символов).",
+		"Значение значка превышает ограничение в 200 символов ({{length}} символов).",
 	"import.err.materialStyle":
 		'Стиль иконки Material "{{value}}" не является одним из: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -815,7 +815,7 @@ export const ru: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" должен быть числом от {{min}} до {{max}} (получено "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" должен быть объектом, сопоставляющим тип callout (\"regular\", \"heading\", \"inline\") с размером и смещениями значка.",
 	"import.err.aliasesNotArray": '"aliases" должен быть массивом строк.',
 	"import.err.aliasNotString": "Псевдоним должен быть строкой.",
 	"import.err.aliasDup": 'Псевдоним "{{value}}" дублируется в этой записи.',
@@ -839,16 +839,16 @@ export const ru: Record<string, string> = {
 	"import.warn.iconNameUnknown":
 		'Иконки "{{value}}" нет в {{type}}, поэтому была использована иконка по умолчанию.',
 	"import.warn.cmIconUnknownNew":
-		'Иконки "{{value}}" нет в Obsidian, поэтому была использована иконка по умолчанию.',
+		"Значок «{{value}}» недоступен в этом хранилище, поэтому использован значок по умолчанию.",
 	"import.warn.cmIconUnknownExisting":
-		'Иконки "{{value}}" нет в Obsidian, поэтому "{{id}}" оставил иконку, которая у него уже была.',
+		"Значок «{{value}}» недоступен в этом хранилище, поэтому «{{id}}» сохранил прежний значок.",
 	"import.chooseSource": "Импорт из",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc":
 		"Загрузить файл .json, экспортированный из Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"Вставьте стили, скопированные через кнопку Copy в Callout Manager.",
+		"Импортируйте настроенные callout из плагина Callout Manager.",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Перенесите свои пользовательские admonition из плагина " +
@@ -862,8 +862,8 @@ export const ru: Record<string, string> = {
 	"import.cmPasteLabel":
 		"Или вставьте сюда стили, скопированные из Callout Manager:",
 	"import.cmInstructions":
-		"В Callout Manager нажмите кнопку Copy, чтобы скопировать настроенные стили callout, затем вставьте их ниже.",
-	"import.cmPlaceholder": "Вставьте скопированные стили сюда…",
+		"Каждый настроенный callout переносится вместе со значком и цветом. Стили для отдельных тем и пользовательский CSS здесь не поддерживаются и не импортируются.",
+	"import.cmPlaceholder": "Вставьте сюда скопированные стили или файл data.json…",
 	"import.cmBtnCancel": "Отмена",
 	"import.cmBtnImport": "Импорт",
 	"import.err.cmNotRecognized":

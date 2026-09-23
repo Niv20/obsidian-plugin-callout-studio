@@ -9,9 +9,9 @@ export const he: Record<string, string> = {
 	// Commands
 	"cmd.openSettings": "פתיחת הגדרות",
 	"cmd.createCallout": "יצירת סוג תיבת־הבלטה חדש",
-	"cmd.insertEmptyCallout": "הוספת callout ריק",
-	"cmd.calloutWrap": "עטיפה ב־callout",
-	"cmd.calloutUnwrap": "חילוץ מתוך callout",
+	"cmd.insertEmptyCallout": "הוספת תיבת־הבלטה ריקה",
+	"cmd.calloutWrap": "עטיפה בתיבת־הבלטה",
+	"cmd.calloutUnwrap": "חילוץ מתיבת־הבלטה",
 
 	// Commands — names generated for the user's own commands
 	"cmd.customWrapBlock": "עטיפה בתיבת־הבלטה בלוקית {{name}}",
@@ -25,22 +25,22 @@ export const he: Record<string, string> = {
 	"cmd.openQuickInsert": "הוספה מהירה של תיבת־הבלטה מסוג בלוק",
 
 	// Autocomplete
-	"autocomplete.createNew": 'צור "{{name}}"',
+	"autocomplete.createNew": 'יצירת „{{name}}”',
 
 	// Vault scan / fallback / delete
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "לא נמצאו תיבות־הבלטה התואמות לחיפוש „{{query}}”.",
 	"calloutPicker.placeholder": "חיפוש תיבות־הבלטה",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "לא נמצאו צבעים התואמים לחיפוש „{{query}}”.",
+	"editor.paletteSearchPlaceholder": "חיפוש צבעים…",
 	"replaceModal.searchPlaceholder": "חיפוש תיבות־הבלטה",
 	"settings.fallbackTag": "ברירת־מחדל",
 	"settings.fallbackTagAuto": "ברירת־מחדל אוטומטית",
-	"settings.rescanVaultDesc": "מוסיף סוגי תיבות־הבלטה שבשימוש בפתקים שלך ועדיין אינם ברשימה הזו. תיבות־ההבלטה והפתקים הקיימים שלך לא משתנים.",
+	"settings.rescanVaultDesc": "מוסיף סוגי תיבות־הבלטה שבשימוש בפתקים שלכם ועדיין אינם ברשימה הזו. תיבות־ההבלטה והפתקים הקיימים שלכם לא משתנים.",
 	"settings.rescanVaultHintAction": "סריקת תיבות־הבלטה",
-	"manualDiscovery.failed": "תוצאות הסריקה לא נשמרו. יש להמתין לסיום הסנכרון ולנסות שוב דרך הגדרות ← סוגי תיבות־ההבלטה שלי ← סריקת תיבות־הבלטה. תיבות־ההבלטה הקיימות לא הוחלפו.",
+	"manualDiscovery.failed": "תוצאות הסריקה לא נשמרו. יש לוודא שאפשר לכתוב לקובץ ההגדרות ושהסנכרון הסתיים, ואז לנסות שוב דרך הגדרות ← סוגי תיבות־ההבלטה שלי ← סריקת תיבות־הבלטה. תיבות־ההבלטה הקיימות לא הוחלפו.",
 	"notice.settingsBackupFailed": "שחזור ההגדרות לא יכול להמשיך מפני שלא ניתן היה לשמור גיבוי בטיחותי. יש לבדוק את מקום האחסון הפנוי ואת הרשאות הכתיבה, ולנסות שוב.",
-	"notice.settingsBackupSaved": "עותק לשחזור של הגדרות הקריאות המקומיות נשמר לפני החלת הגדרות שהגיעו ממכשיר אחר: {{path}}.",
-	"commandBuilder.missingCallout": "מושהית: הקריאה חסרה. יש לגלות או ליצור אותה כדי להפעיל מחדש את הפקודה, או לערוך את הפקודה ולבחור סוג אחר.",
+	"notice.settingsBackupSaved": "עותק לשחזור של הגדרות תיבות־ההבלטה המקומיות נשמר לפני החלת ההגדרות שהגיעו: {{path}}.",
+	"commandBuilder.missingCallout": "מושהית: תיבת־ההבלטה חסרה. יש לאתר או ליצור אותה כדי להפעיל מחדש את הפקודה, או לערוך את הפקודה ולבחור סוג אחר.",
 	"manualDiscovery.scanning": "סורק…",
 	"settings.rescanComplete": "הסריקה הסתיימה: נוספו {{count}} סוגי תיבות־הבלטה חדשים.",
 	"replaceModal.deleteWithoutReplaceSuffix": "(החלה של ברירת־מחדל)",
@@ -108,7 +108,7 @@ export const he: Record<string, string> = {
 	"settings.importDesc":
 		"ייבאו את ההגדרות שלכם ב־Callout Studio מכספת אחרת, או העבירו את תיבות־ההבלטה שלכם מתוסף אחר.",
 	"settings.exportDesc":
-		"הייצוא שומר את כל סוגי תיבות־ההבלטה המותאמות־אישית שלכם בפורמט JSON.",
+		"ייצאו את תיבות־ההבלטה כגיבוי של Callout Studio, או כקטע CSS לשימוש במקומות אחרים.",
 	"settings.importConflictNotice":
 		"יובאו {{count}} תיבות־הבלטה; {{overwritten}} רשומות קיימות עודכנו.",
 
@@ -130,22 +130,22 @@ export const he: Record<string, string> = {
 	// Settings — Fallback callout
 	"settings.colorSwatchAria": "הדגשה: {{accent}} · רקע: {{bg}}",
 	// Settings — callouts the active theme styles
-	"settings.themeCalloutsHeading": "תיבות־הבלטה מערכת הנושא שלכם",
+	"settings.themeCalloutsHeading": "תיבות־הבלטה של ערכת הנושא שלכם",
 	"settings.themeCalloutsDesc":
-		"{{theme}} מספקת או משנה את העיצוב של אלה, כך ש-Callout Studio משאיר אותן בדיוק כפי שערכת הנושא שלכם מציירת אותן, ומציע אותן כתיבות־הבלטה מסוג בלוק בלבד. שני הסוגים מופיעים כאן: סוגי תיבות־הבלטה שערכת הנושא שלכם מוסיפה, ותיבות־הבלטה מובנות שהמראה שלהן הוחלף. סוגי תיבות־הבלטה שערכת הנושא מוסיפה מופיעים ברשימה רק כל עוד היא פעילה.",
+		"{{theme}} מספקת או משנה את העיצוב של אלה, כך ש־Callout Studio משאיר אותן בדיוק כפי שערכת הנושא שלכם מציירת אותן, ומציע אותן כתיבות־הבלטה מסוג בלוק בלבד. שני הסוגים מופיעים כאן: סוגי תיבות־הבלטה שערכת הנושא שלכם מוסיפה, ותיבות־הבלטה מובנות שהמראה שלהן הוחלף. סוגי תיבות־הבלטה שערכת הנושא מוסיפה מופיעים ברשימה רק כל עוד היא פעילה.",
 	"settings.themeCalloutsDefaultTheme": "ערכת הנושא שלכם",
 	"settings.themePreviewAria":
 		'תצוגה מקדימה של "{{name}}" — לראות איך ערכת הנושא שלכם מציירת אותה',
 	"settings.clearUsesAction": "ניקוי שימושים בפתקים שלכם",
 	"settings.builtInAllThemeStyled":
-		"{{theme}} משנה את העיצוב של כל תיבות־ההבלטה המובנות, כך שכולן מופיעות למעלה ו-Callout Studio לא נוגע בהן. כדי לעצב תיבת־הבלטה משלכם, הוסיפו תיבת־הבלטה עם מזהה אחר.",
+		"{{theme}} משנה את העיצוב של כל תיבות־ההבלטה המובנות, כך שכולן מופיעות למעלה ו־Callout Studio לא נוגע בהן. כדי לעצב תיבת־הבלטה משלכם, הוסיפו תיבת־הבלטה עם מזהה אחר.",
 	"settings.fallbackCallout": "ברירת־מחדל לתיבות־הבלטה",
 	"settings.fallbackCalloutDesc":
 		"סוגי תיבות־הבלטה לא מוכרות יקבלו את העיצוב של תיבת־הבלטה זו.",
 
 	// Settings — Global style
 	"settings.globalStyle": "עיצוב גלובלי לתיבות־הבלטה",
-	"settings.globalStyleRegularTitle": "עיצוב גלובלי לתיבות־הבלטה רגילות",
+	"settings.globalStyleRegularTitle": "עיצוב גלובלי לתיבות־הבלטה מסוג בלוק",
 	"settings.globalStyleHeadingTitle": "עיצוב גלובלי לתיבות־הבלטה ככותרת",
 	"settings.globalStyleInlineTitle": "עיצוב גלובלי לתיבות־הבלטה מוטבעות",
 	"settings.border": "מסגרות",
@@ -248,7 +248,7 @@ export const he: Record<string, string> = {
 	"settings.vaultStatsScanning": "בסריקה...",
 	"settings.resetAll": "איפוס",
 	"settings.resetAllDesc":
-		"מחיקת כל תיבות־ההבלטה, איפוס תיבות מובנות, איפוס סגנונות גלובליים (מסגרות, קנה־מידה, צורה), מחיקת פלטות צבעים שמורות, איפוס התאמת תפריט הקליק־הימני ומחיקת קובצי Material SVG שהורדו.",
+		"מחיקת כל תיבות־ההבלטה המותאמות־אישית, איפוס תיבות מובנות, איפוס סגנונות גלובליים (מסגרות, קנה־מידה, צורה), מחיקת פלטות צבעים שמורות, איפוס התאמת תפריט הקליק־הימני ומחיקת קובצי Material SVG שהורדו.",
 	"settings.resetAllButton": "איפוס הכול",
 	"settings.resetAllConfirm":
 		"פעולה זו תמחק תיבות־הבלטה מותאמות־אישית, תאפס תיבות מובנות, סגנונות גלובליים, פלטות צבעים שמורות, התאמת תפריט הקליק־הימני ותמחק קובצי Material SVG שהורדו. לא ניתן לבטל פעולה זו. להמשיך?",
@@ -274,14 +274,14 @@ export const he: Record<string, string> = {
 	"notice.externalCssRetired":
 		"האפשרות לעיצוב באמצעות CSS משלכם הוסרה. תיבות־ההבלטה האלה משתמשות כעת בעיצוב השמור שלהן ב־Callout Studio, אלא אם ערכת הנושא שלכם מעצבת אותן. הפתקים וקטעי ה־CSS האישיים שלכם לא השתנו.",
 	"notice.vaultScanFailed":
-		"לא ניתן להשלים את ספירת השימושים בקריאות, כי לא ניתן לקרוא {{count}} פתקים. יש לבדוק את האחסון והסנכרון ולנסות שוב.",
+		"לא ניתן לספור את השימושים בתיבות־הבלטה משום שלא ניתן לקרוא {{count}} פתקים. בדקו את האחסון והסנכרון ונסו שוב.",
 	"notice.vaultRewritePartial":
-		"{{count}} פתק(ים) לא ניתן היה לעדכן ונשארו ללא שינוי. פרטים נוספים בקונסולת המפתחים.",
+		"לא ניתן לעדכן {{count}} פתקים, והם נשארו ללא שינוי. פרטים נוספים בקונסולת המפתחים.",
 	"notice.calloutDeleteIncomplete": "חלק מהפתקים לא ניתנים להמרה. סוג תיבת־ההבלטה נשמר. ההמרות שהושלמו נשמרו; טפלו בבעיית הקובץ והפעילו שוב את הפעולה כדי לסיים.",
 	"notice.settingsUnreadable":
-		"Callout Studio לא הצליח לקרוא את קובץ ההגדרות שלו, ולכן סוגי ה-callout שלך חסרים בהפעלה זו. שום דבר לא נכתב והקובץ בדיסק לא השתנה — טען מחדש את Obsidian כדי לנסות שוב.",
+		"Callout Studio לא הצליח לקרוא את קובץ ההגדרות שלו, ולכן סוגי תיבות־ההבלטה שלכם חסרים בהפעלה זו. דבר לא נכתב והקובץ בדיסק לא השתנה — טענו מחדש את Obsidian כדי לנסות שוב.",
 	"notice.settingsMissing":
-		"קובץ ההגדרות של Callout Studio חסר, ולכן סוגי ה-callout שלך חסרים בהפעלה זו. שום דבר לא נכתב — אם אתה מסנכרן את הכספת הזו, תן לסנכרון להסתיים וטען מחדש את Obsidian לפני ביצוע שינויים.",
+		"קובץ ההגדרות של Callout Studio חסר, ולכן סוגי תיבות־ההבלטה שלכם חסרים בהפעלה זו. דבר לא נכתב — אם אתם מסנכרנים את הכספת הזו, המתינו לסיום הסנכרון וטענו מחדש את Obsidian לפני ביצוע שינויים.",
 	"notice.settingsMissingAction": "יצירת קובץ הגדרות חדש",
 	"notice.nothingToWrap": "אין תוכן לעטוף.",
 	"notice.cursorNotInsideCallout": "הסמן אינו נמצא בתוך תיבת־הבלטה.",
@@ -310,11 +310,11 @@ export const he: Record<string, string> = {
 	"editor.idCannotDelete":
 		"לא ניתן למחוק מזהה זה — הוא מקושר לשם התצוגה. כדי לשנותו, ערכו את השם",
 	"editor.icon": "אייקון",
-	"editor.pickIcon": "שנה אייקון",
-	"editor.replaceIcon": "החלף אייקון",
-	"editor.removeIcon": "הסר אייקון",
+	"editor.pickIcon": "שינוי אייקון",
+	"editor.replaceIcon": "החלפת אייקון",
+	"editor.removeIcon": "הסרת אייקון",
 	"editor.noIcon": "ללא אייקון",
-	"editor.resetIcon": "אפס אייקון לברירת המחדל",
+	"editor.resetIcon": "איפוס האייקון לברירת המחדל",
 	"editor.livePreview": "תצוגה מקדימה בזמן אמת",
 	"editor.iconAdjustment": "התאמת אייקון",
 	"editor.picture": "תמונה",
@@ -322,8 +322,8 @@ export const he: Record<string, string> = {
 	"editor.horizontalOffset": "היסט אופקי",
 	"editor.verticalOffset": "היסט אנכי",
 	"editor.colors": "צבעים",
-	"editor.colorsDesc": "קובע את צבעי המסגרת, הרקע והטקסט של הקאלאוט הזה.",
-	"editor.resetColors": "אפס צבעים לברירת המחדל",
+	"editor.colorsDesc": "קובע את צבעי המסגרת, הרקע והטקסט של תיבת־ההבלטה הזו.",
+	"editor.resetColors": "איפוס הצבעים לברירת המחדל",
 	"editor.paletteDeleted": "צבע שנמחק",
 	"editor.paletteGroupObsidian": "תיבות־הבלטה של Obsidian",
 	"editor.paletteGroupPresets": "תבניות צבע",
@@ -340,7 +340,7 @@ export const he: Record<string, string> = {
 	"editor.cancel": "ביטול",
 	"editor.saveChanges": "שמירת שינויים",
 	"editor.saving": "שומר…",
-	"editor.saveFailed": "השמירה לא הושלמה. אם העורך עדיין פתוח, השאר אותו פתוח ונסה שוב אחרי בדיקת המקום הפנוי והסנכרון. ייתכן שחלק מההגדרות או מעדכוני הפתקים כבר נשמרו.",
+	"editor.saveFailed": "השמירה לא הושלמה. אם העורך עדיין פתוח, השאירו אותו פתוח ונסו שוב אחרי בדיקת המקום הפנוי והסנכרון. ייתכן שחלק מההגדרות או מעדכוני הפתקים כבר נשמרו.",
 	"notice.settingsSaveFailed": "Callout Studio לא הצליח לשמור את השינויים. יש לבדוק מקום פנוי וסנכרון ולנסות שוב לפני סגירת Obsidian.",
 	"editor.createCallout": "יצירת תיבת־הבלטה",
 	"editor.nameRequired": "יש להזין שם לתצוגה לפני יצירת תיבת־הבלטה.",
@@ -360,7 +360,7 @@ export const he: Record<string, string> = {
 		"רוח קלה נושבת בין העצים. אור שמש חמים מאיר שביל שקט ומפיח חיים בנוף.",
 	"editor.loremIpsumShort":
 		"רוח קלה נושבת בין העצים.",
-	"editor.sampleInlineText": "כאן יש תגית [!{id}] מוטבעת בתוך פסקה.",
+	"editor.sampleInlineText": "כאן יש תיבת־הבלטה מוטבעת מסוג [!{id}] בתוך פסקה.",
 	"editor.previewReadOnly": "לא ניתן לערוך את התצוגה המקדימה",
 
 	// Theme callout preview window — opens instead of the editor for a callout
@@ -444,22 +444,22 @@ export const he: Record<string, string> = {
 	"iconPicker.searchLucide": "חיפוש אייקוני Lucide",
 	"iconPicker.searchTabler": "חיפוש אייקוני Tabler",
 	"iconPicker.tablerStyle": "סגנון האייקון",
-	"iconPicker.tablerStyleOutline": "מתאר (Outline)",
-	"iconPicker.tablerStyleFilled": "מלא (Filled)",
+	"iconPicker.tablerStyleOutline": "קו מתאר",
+	"iconPicker.tablerStyleFilled": "מלא",
 	"iconPicker.loadMore": "טעינת עוד אייקונים",
 	"iconPicker.materialStyle": "סגנון האייקון",
-	"iconPicker.materialStyleOutlined": "מתאר (Outlined)",
-	"iconPicker.materialStyleFilled": "מלא (Filled)",
-	"iconPicker.materialStyleRounded": "מעוגל (Rounded)",
-	"iconPicker.materialStyleSharp": "חד (Sharp)",
+	"iconPicker.materialStyleOutlined": "קו מתאר",
+	"iconPicker.materialStyleFilled": "מלא",
+	"iconPicker.materialStyleRounded": "מעוגל",
+	"iconPicker.materialStyleSharp": "חד",
 	"iconPicker.materialWeight": "עובי האייקון",
-	"iconPicker.materialWeight100": "דק (Thin)",
-	"iconPicker.materialWeight200": "עדין (Extra Light)",
-	"iconPicker.materialWeight300": "קל (Light)",
-	"iconPicker.materialWeight400": "רגיל (Regular)",
-	"iconPicker.materialWeight500": "בינוני (Medium)",
-	"iconPicker.materialWeight600": "חצי-שמן (Semi Bold)",
-	"iconPicker.materialWeight700": "שמן (Bold)",
+	"iconPicker.materialWeight100": "דק",
+	"iconPicker.materialWeight200": "דק מאוד",
+	"iconPicker.materialWeight300": "קל",
+	"iconPicker.materialWeight400": "רגיל",
+	"iconPicker.materialWeight500": "בינוני",
+	"iconPicker.materialWeight600": "עבה למחצה",
+	"iconPicker.materialWeight700": "עבה",
 	"iconPicker.materialFontFailed":
 		"לא הצלחנו לטעון את תצוגת האייקונים של Material. במקומם מוצגים שמות האייקונים — חיפוש ובחירה עדיין עובדים.",
 	"iconPicker.materialFontRetry": "ניסיון חוזר",
@@ -474,30 +474,30 @@ export const he: Record<string, string> = {
 	"iconPicker.fa": "Font Awesome",
 	"iconPicker.searchFa": "חיפוש ב־Font Awesome",
 	"iconPicker.faStyle": "סגנון האייקון",
-	"iconPicker.faStyleSolid": "מלא (Solid)",
-	"iconPicker.faStyleRegular": "מתאר (Regular)",
-	"iconPicker.faStyleBrands": "מותגים (Brands)",
+	"iconPicker.faStyleSolid": "מלא",
+	"iconPicker.faStyleRegular": "קו מתאר",
+	"iconPicker.faStyleBrands": "מותגים",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "חיפוש ב־RPG Awesome",
 	"iconPicker.custom": "אייקונים מותאמים אישית",
 	"iconPicker.searchCustom": "חיפוש באייקונים מותאמים אישית",
 	"iconPicker.customTooLarge":
-		"{{name}} גדול מדי. אייקונים מותאמים אישית חייבים להיות עד 5MB.",
+		"{{name}} גדול מדי. אייקונים מותאמים אישית יכולים להיות בגודל של עד 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} אינו קובץ אייקון מותאם אישית נתמך. יש להשתמש ב־SVG, PNG, JPEG או WebP.",
 	"iconPicker.customInvalidSvg":
-		"לא ניתן לקרוא את {{name}} כקובץ SVG בטוח, ולכן היא לא נוספה.",
+		"לא ניתן לקרוא את {{name}} כקובץ SVG בטוח, ולכן הוא לא נוסף.",
 	"iconPicker.customDecodeFailed": "לא ניתן לקרוא את {{name}} כאייקון מותאם אישית.",
 	"iconPicker.customDuplicate":
-		"{{name}} כבר נמצא באייקונים המותאמים אישית שלך. אפשר לשנות את שם הקובץ או למחוק את האייקון הקיים.",
+		"{{name}} כבר נמצא באייקונים המותאמים אישית שלכם. אפשר לשנות את שם הקובץ או למחוק את האייקון הקיים.",
 	"iconPicker.customAdd": "הוספת אייקונים מותאמים אישית",
 	"iconPicker.customEmpty":
 		"עדיין אין אייקונים מותאמים אישית. אפשר להוסיף קובץ SVG, PNG, JPEG או WebP מהמחשב, או לגרור אותו לכאן.",
 	"iconPicker.customDelete": "מחיקה",
 	"iconPicker.customDeleteConfirm": "למחוק את „{{name}}”?",
 	"iconPicker.customDeleteInUse":
-		"{{count}} callouts משתמשים באייקון המותאם אישית הזה. הם יחזרו לאייקון ברירת מחדל עד שייבחר להם אייקון חדש.",
-	"iconPicker.customRecolor": "לצבוע בצבע ה־callout",
+		"{{count}} תיבות־הבלטה משתמשות באייקון המותאם אישית הזה. במקומו יוצג אייקון זמני עד שתבחרו להן אייקון חדש.",
+	"iconPicker.customRecolor": "התאמה לצבע תיבת־ההבלטה",
 	"iconPicker.allSources": "כל המקורות",
 	"iconPicker.searchAllSources": "חיפוש בכל מקורות האייקונים",
 	"iconPicker.sourcesNotDownloaded":
@@ -508,14 +508,14 @@ export const he: Record<string, string> = {
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "חיפוש בכל הספריות בבת אחת",
-	"iconPicker.descLucide": "הספרייה המובנית של אובסידיאן, תמיד זמינה",
+	"iconPicker.descLucide": "הספרייה המובנית של Obsidian, זמינה גם ללא חיבור לאינטרנט",
 	"iconPicker.descTabler": "אייקוני ממשק נקיים ועקביים, מתאר ומלאים",
 	"iconPicker.descMaterial": "הספרייה של גוגל, ארבעה סגנונות ושבעה משקלים",
 	"iconPicker.descEmoji": "אייקונים צבעוניים, בכל גווני העור",
 	"iconPicker.descOcticons": "אייקוני הממשק של GitHub",
 	"iconPicker.descFa": "אייקונים מלאים, מתאר וסמלי מותגים",
 	"iconPicker.descRpgAwesome": "אייקוני פנטזיה ומשחקי תפקידים",
-	"iconPicker.descCustom": "אייקונים מותאמים אישית שהוספת מהמחשב שלך",
+	"iconPicker.descCustom": "אייקונים מותאמים אישית שהוספתם מהמחשב שלכם",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "נגישות",
@@ -602,7 +602,7 @@ export const he: Record<string, string> = {
 	"iconPicker.cat.Photos + Images": "תמונות",
 	"iconPicker.cat.Political": "פוליטיקה",
 	"iconPicker.cat.Privacy": "פרטיות",
-	"iconPicker.cat.Punctuation + Symbols": "פיסוק ואייקונים",
+	"iconPicker.cat.Punctuation + Symbols": "פיסוק וסמלים",
 	"iconPicker.cat.Religion": "דת",
 	"iconPicker.cat.Science": "מדע",
 	"iconPicker.cat.Science Fiction": "מדע בדיוני",
@@ -613,7 +613,7 @@ export const he: Record<string, string> = {
 	"iconPicker.cat.Spinners": "ספינרים",
 	"iconPicker.cat.Sport": "ספורט",
 	"iconPicker.cat.Sports + Fitness": "ספורט וכושר",
-	"iconPicker.cat.Symbols": "אייקונים",
+	"iconPicker.cat.Symbols": "סמלים",
 	"iconPicker.cat.System": "מערכת",
 	"iconPicker.cat.Text": "טקסט",
 	"iconPicker.cat.Text Formatting": "עיצוב טקסט",
@@ -632,7 +632,7 @@ export const he: Record<string, string> = {
 	"iconPicker.cat.Zodiac": "גלגל המזלות",
 
 	// Downloadable icon packs
-	"iconPack.downloadTitle": "{{name}} עדיין לא הורדה",
+	"iconPack.downloadTitle": "חבילת האייקונים {{name}} עדיין לא הורדה",
 	"iconPack.downloadDetail": "{{count}} אייקונים · {{size}} · הורדה חד־פעמית",
 	"iconPack.download": "הורדה",
 	"iconPack.downloading": "מוריד את {{name}}…",
@@ -654,7 +654,7 @@ export const he: Record<string, string> = {
 		"Callout Studio משתמש בספריות אייקונים בקוד פתוח; אפשר לראות למטה את הרישיון, הייחוס והשינויים של כל ספרייה, או לקרוא את ",
 	"credits.fullNoticesInline": "הודעות צד־שלישי המלאות",
 	"credits.pluginLicense":
-		"הקוד של Callout Studio עצמו מופץ ברישיון permissive; ספריות האייקונים שומרות על הרישיונות שלהן.",
+		"הקוד של Callout Studio עצמו מופץ ברישיון מתירני; ספריות האייקונים שומרות על הרישיונות שלהן.",
 
 	// Context Menu
 	"contextMenu.editCallout": "עריכת הגדרות תיבת־הבלטה",
@@ -675,7 +675,7 @@ export const he: Record<string, string> = {
 	// Global settings section (per-role style popups)
 	"settings.globalSettings": "אפשרויות העיצוב הגלובליות של Callout Studio",
 	"settings.globalSettingsScope":
-		"אלה הגדרות גלובליות: כל אחת מהן משנה בבת אחת את הצורה, הריווח והגודל של כל תיבת־הבלטה ש-Callout Studio מעצב. תיבות־הבלטה שערכת הנושא שלכם מעצבת שומרות על העיצוב המקורי שלה.",
+		"אלה הגדרות גלובליות: כל אחת מהן משנה בבת אחת את הצורה, הריווח והגודל של כל תיבת־הבלטה ש־Callout Studio מעצב. תיבות־הבלטה שערכת הנושא שלכם מעצבת שומרות על העיצוב המקורי שלה.",
 	"settings.globalSettingsRegularDesc":
 		"התאמת המסגרת, עיגול הפינות, קנה־המידה של הגופן והיישור של כל תיבת־הבלטה מסוג בלוק בכספת שלכם.",
 	"settings.globalSettingsHeadingDesc":
@@ -685,19 +685,19 @@ export const he: Record<string, string> = {
 	"settings.globalSettingsCustomize": "התאמה אישית",
 
 	// Callout types section
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "תיבת־הבלטה מסוג בלוק",
 	"settings.calloutTypeHeading": "תיבת־הבלטה ככותרת",
 	"settings.calloutTypeInline": "תיבת־הבלטה מוטבעת",
 
 	// Context menu customization
 	"settings.customizeMenu": "התאמת פריטי התפריט",
 	"settings.customizeMenuDesc":
-		"בחירה אילו פעולות קליק־ימני יופיעו לכל סוג תיבת־הבלטה ושינוי סדרן. פועל ב־Source mode וב־Live Preview.",
+		"בחירה אילו פעולות קליק־ימני יופיעו לכל סוג תיבת־הבלטה ושינוי סדרן. פועל במצב מקור ובתצוגה מקדימה בזמן אמת.",
 	"settings.customizeMenuButton": "התאמת פריטי התפריט",
 	"menuCustomize.title": "התאמת תפריט הקליק־הימני",
 	"menuCustomize.desc":
 		"הפעלה או כיבוי של פעולות וגרירת הידית כדי לשנות את סדרן. השינויים נשמרים אוטומטית.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "תיבת־הבלטה מסוג בלוק",
 	"menuCustomize.heading": "תיבת־הבלטה ככותרת",
 	"menuCustomize.inline": "תיבת־הבלטה מוטבעת",
 	"menuCustomize.dragHandle": "גררו כדי לשנות סדר",
@@ -763,7 +763,7 @@ export const he: Record<string, string> = {
 	"quickInsert.targetMoved": "הפתק שממנו פתחתם את ההוספה המהירה השתנה או נסגר. פתחו מחדש את ההוספה המהירה בפתק שברצונכם לערוך.",
 	"quickInsert.targetMovedHint": "הפתק המקורי כבר אינו זמין להוספה זו.",
 	"quickInsert.noUserCallouts":
-		"עדיין לא יצרתם תיבות־הבלטה מותאמות־אישית. הפעילו את “Callout Studio: Create new callout type” מלוח הפקודות.",
+		"עדיין לא יצרתם תיבות־הבלטה מותאמות־אישית. הפעילו את הפקודה „Callout Studio: יצירת סוג תיבת־הבלטה חדש” מלוח הפקודות.",
 	"quickInsert.noAvailableUserCallouts":
 		"תיבות־ההבלטה המותאמות־אישית שלכם מופיעות כרגע תחת מסנן ערכת הנושא, מפני שערכת הנושא הפעילה שולטת בהן.",
 	"quickInsert.noEditorHint": "אין פתק פתוח במצב עריכה, ולכן לא ניתן להוסיף דבר.",
@@ -796,9 +796,9 @@ export const he: Record<string, string> = {
 	// Import validation
 	"import.title": "בעיות בייבוא",
 	"import.reportLeadIn":
-		"נראה שהקובץ שניסיתם לייבא מכיל כמה שגיאות. הנה רשימת הבעיות:",
+		"בדקו את בעיות הייבוא האלה לפני שתמשיכו:",
 	"import.reportLeadInFatal":
-		"הקובץ הזה לא נראה כמו קובץ ייצוא של Callout Studio ולכן לא ניתן לייבא אותו:",
+		"לא ניתן לייבא את הנתונים האלה:",
 	"import.entryHeading": "רשומה {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} מתוך {{total}} רשומות נמצאו תקינות · התגלו {{issues}} בעיות.",
@@ -819,7 +819,7 @@ export const he: Record<string, string> = {
 	"import.err.idBadChar":
 		'ה־ID "{{value}}" מכיל תווים לא חוקיים ("|", "[", "]", טאבים ומעברי שורה אינם מורשים).',
 	"import.err.idMetadata":
-		'ה־ID "{{value}}" מכיל "|". באובסידיאן כל מה שבא אחרי ה־"|" הראשון הוא מטא־דאטה של ה־callout ולא חלק מהסוג, ולכן הרשומה הזאת מתארת את ה־callout "{{id}}". הרשומה דולגה, כך שה־"{{id}}" הקיים שלך נשאר ללא שינוי.',
+		'ה־ID "{{value}}" מכיל "|". ב־Obsidian כל מה שאחרי ה־"|" הראשון הוא מטא־דאטה של תיבת־ההבלטה, ולא חלק מהסוג שלה. לכן הרשומה הזו מתארת את תיבת־ההבלטה "{{id}}". הרשומה דולגה, כך שהסוג "{{id}}" שכבר קיים אצלכם לא השתנה.',
 	"import.err.idReserved":
 		'ה־ID "{{value}}" שמור עבור Callout Studio לצורך התצוגות המקדימות שלו ולא ניתן לייבא אותו.',
 	"import.err.displayNameEmpty": "שם התצוגה לא יכול להיות ריק.",
@@ -827,7 +827,7 @@ export const he: Record<string, string> = {
 		"שם התצוגה ארוך מדי ({{length}} תווים); המקסימום המותר הוא {{max}}.",
 	"import.err.boolField":
 		'"{{field}}" חייב להיות ערך בוליאני (true או false).',
-	"import.err.iconNotObject": "icon חייב להיות אובייקט (Object).",
+	"import.err.iconNotObject": '"icon" חייב להיות אובייקט (Object).',
 	"import.err.iconTypeInvalid":
 		'סוג האייקון "{{value}}" אינו חוקי (חייב להיות אחד מ־{{types}}).',
 	"import.warn.iconFieldIgnored":
@@ -835,13 +835,13 @@ export const he: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"ערך האייקון חייב להיות מחרוזת (String) שאינה ריקה.",
 	"import.err.iconValueTooLong":
-		"ערך האייקון חורג מהאורך המקסימלי ({{length}} תווים).",
+		"ערך האייקון חורג מהמגבלה של 200 תווים ({{length}} תווים).",
 	"import.err.materialStyle":
 		'סגנון אייקון Material "{{value}}" אינו חוקי (חייב להיות אחד מ־outlined, filled, rounded או sharp).',
 	"import.err.materialWeight":
 		'משקל אייקון Material "{{value}}" חייב להיות מספר שלם בין 100 ל־700 (בקפיצות של 100).',
 	"import.warn.iconRecolorIgnored":
-		'השדה "recolor" רלוונטי רק לתמונות שלך, ולכן מתעלמים ממנו עבור סוג אייקון {{type}}.',
+		'השדה "recolor" רלוונטי רק לתמונות שלכם, ולכן מתעלמים ממנו עבור סוג אייקון {{type}}.',
 	"import.err.iconRecolorInvalid":
 		'השדה "recolor" חייב להיות true או false (התקבל "{{value}}").',
 	"import.err.colorInvalid":
@@ -861,7 +861,7 @@ export const he: Record<string, string> = {
 		"יותר מדי ID־ים ({{count}}); לכל תיבת־הבלטה מותרים עד {{max}} ID־ים (ראשי + כינויים).",
 	"import.err.metadataShape":
 		'"metadata" חייב להיות אובייקט (Object) שכל ערכיו הם מחרוזות.',
-	"import.warn.unknownFields": "שדות לא מוכרים הוסרו מהייבוא: {{fields}}.",
+	"import.warn.unknownFields": "התעלמנו משדות לא מוכרים: {{fields}}.",
 	"import.err.duplicateInFile":
 		'ה־ID או הכינוי "{{value}}" כבר נמצא בשימוש ברשומה #{{first}} בקובץ זה.',
 	"import.err.aliasConflict":
@@ -869,7 +869,7 @@ export const he: Record<string, string> = {
 	// Footer
 	"footer.prompt":
 		"שאלות, באגים או רעיונות? אשמח לשמוע!{{break}} {{issue}} או {{email}}.",
-	"footer.openIssue": "פתיחת issue ב־GitHub",
+	"footer.openIssue": "דיווח על בעיה ב־GitHub",
 	"footer.sendEmail": "שלחו לי אימייל",
 	"footer.sourceCode": "קוד מקור",
 	"footer.contribute": "תרומה",
@@ -881,16 +881,16 @@ export const he: Record<string, string> = {
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded" הוגדר כ־true למרות ש־"foldable" הוגדר כ־false; לכן defaultFolded אופס בחזרה ל־false.',
 	"import.warn.imageMissing":
-		"ה־callout הזה משתמש בתמונה שאינה בקובץ ואינה בכספת הזו, ולכן יוצג " +
-		"אייקון ברירת מחדל עד שייבחר לו אייקון חדש.",
+		"תיבת־ההבלטה הזו משתמשת בתמונה שאינה בקובץ ואינה בכספת הזו, ולכן יוצג " +
+		"אייקון זמני עד שתבחרו לה אייקון חדש.",
 	"import.err.paletteIdInvalid":
 		'"paletteId" חייב להיות מזהה טקסט שאינו ריק (התקבל "{{value}}").',
 	"import.warn.iconNameUnknown":
 		'אין אייקון בשם "{{value}}" ב־{{type}}, ולכן נעשה שימוש באייקון ברירת המחדל.',
 	"import.warn.cmIconUnknownNew":
-		'אין אייקון בשם "{{value}}" באובסידיאן, ולכן נעשה שימוש באייקון ברירת המחדל.',
+		'אייקון בשם "{{value}}" אינו זמין בכספת הזו, ולכן נעשה שימוש באייקון ברירת המחדל.',
 	"import.warn.cmIconUnknownExisting":
-		'אין אייקון בשם "{{value}}" באובסידיאן, ולכן "{{id}}" נשאר עם האייקון הקיים שלו.',
+		'אייקון בשם "{{value}}" אינו זמין בכספת הזו, ולכן "{{id}}" נשאר עם האייקון הקיים שלו.',
 
 	// ייבוא — בחירת מקור
 	"import.chooseSource": "ייבוא מתוך",
@@ -898,10 +898,10 @@ export const he: Record<string, string> = {
 	"import.sourceStudioDesc": "טעינת קובץ ‎.json שיוצא מתוך Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"הדביקו את הסגנונות שהעתקתם מכפתור ה־Copy של Callout Manager.",
+		"ייבאו את תיבות־ההבלטה המותאמות שלכם מהתוסף Callout Manager.",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
-		"העבירו את ההתראות המותאמות־אישית שלכם מהתוסף Admonition.",
+		"ייבאו את התיבות המותאמות־אישית שלכם מהתוסף Admonition.",
 
 	// ייבוא — הדבקה מתוך Callout Manager
 	"import.cmTitle": "ייבוא מתוך Callout Manager",
@@ -912,9 +912,8 @@ export const he: Record<string, string> = {
 	"import.cmPasteLabel":
 		"או הדביקו כאן את הסגנונות שהועתקו מ־Callout Manager:",
 	"import.cmInstructions":
-		"ב־Callout Manager, השתמשו בכפתור ה־Copy שלו כדי להעתיק את סגנונות " +
-		"תיבות־ההבלטה המותאמות־אישית שלכם, ואז הדביקו אותם למטה.",
-	"import.cmPlaceholder": "הדביקו כאן את הסגנונות שהועתקו…",
+		"כל תיבת־הבלטה מותאמת מיובאת עם האייקון והצבע שלה. עיצוב ייחודי לערכת נושא ו־CSS מותאם אישית אינם נתמכים כאן ולא ייובאו.",
+	"import.cmPlaceholder": "הדביקו כאן סגנונות שהועתקו, או תוכן של קובץ data.json…",
 	"import.cmBtnCancel": "ביטול",
 	"import.cmBtnImport": "ייבוא",
 	"import.err.cmNoBlocksFound":
@@ -936,25 +935,24 @@ export const he: Record<string, string> = {
 	// Import — Admonition
 	"import.admTitle": "ייבוא מתוך Admonition",
 	"import.admInstructions":
-		"כל התראה עוברת לתיבת־הבלטה עם השם, האייקון והצבע שלה. הגדרות " +
+		"כל תיבה של Admonition מיובאת כתיבת־הבלטה עם השם, האייקון והצבע שלה. הגדרות " +
 		"שאין להן מקבילה ב־Callout Studio (פקודה, כפתור העתקה, הסתרת " +
 		"כותרת) נשארות מאחור.",
 	"import.admFromVault": "הכספת הזו",
 	"import.admVaultChecking": "מחפש את התוסף Admonition…",
-	"import.admVaultFound": "נמצאו {{count}} התראות מותאמות־אישית.",
-	"import.admVaultNotFound": "לא נמצאו התראות מותאמות־אישית בכספת הזו.",
+	"import.admVaultFound": "נמצאו {{count}} תיבות מותאמות־אישית של Admonition.",
+	"import.admVaultNotFound": "לא נמצאו תיבות מותאמות־אישית של Admonition בכספת הזו.",
 	"import.admFromFile": "קובץ",
 	"import.admFromFileDesc": "קובץ admonitions.json, או חבילה משותפת.",
 	"import.admChooseFile": "בחירת קובץ…",
 	"import.admPasteLabel": "או הדביקו כאן את ה־JSON:",
-	"import.admPlaceholder": "הדביקו כאן את ההתראות שלכם…",
+	"import.admPlaceholder": "הדביקו כאן את נתוני Admonition שלכם…",
 	"import.admBtnCancel": "ביטול",
 	"import.admBtnImport": "ייבוא",
 	"import.err.admNotRecognized":
-		"קובץ לא מזוהה: ציפינו לרשימת התראות, או לקובץ data.json של " +
-		"Admonition.",
-	"import.err.admNoEntries": "לא נמצאו התראות לייבוא.",
-	"import.err.admTypeMissing": 'להתראה הזו אין "type", ולכן היא דולגה.',
+		"קובץ לא מזוהה: נדרשת רשימת תיבות, או קובץ data.json של Admonition.",
+	"import.err.admNoEntries": "לא נמצאו תיבות של Admonition לייבוא.",
+	"import.err.admTypeMissing": 'לתיבה הזו חסר השדה "type", ולכן היא דולגה.',
 	"import.warn.admIconUnknown":
 		'לא נמצא אייקון בשם "{{value}}" באף ספריית אייקונים, ולכן נעשה ' +
 		"שימוש באייקון ברירת המחדל.",
@@ -965,7 +963,7 @@ export const he: Record<string, string> = {
 		"לא ניתן היה לקרוא את התמונה שהועלתה, ולכן נעשה שימוש באייקון " +
 		"ברירת המחדל.",
 	"import.warn.admIconWithCss":
-		"ההתראה הזו מעוצבת על־ידי קטע CSS ב־Admonition. העיצוב הזה אינו " +
+		"התיבה הזו מעוצבת על־ידי קטע CSS ב־Admonition. העיצוב הזה אינו " +
 		"חלק מהייבוא, ולכן עברו רק השם, האייקון והצבע.",
 	"import.warn.admNoColor":
 		"לא הוגדר צבע, ולכן נעשה שימוש בכחול ברירת המחדל.",
@@ -981,12 +979,12 @@ export const he: Record<string, string> = {
 		"הצבע השמור של תיבת־הבלטה זו נמחק. {{link}}",
 	"editor.colorsDescDeletedLink": "שחזור",
 	"palette.colorExists":
-		'הצבעים האלה זהים ל־"{{name}}". שני צבעים שמורים לא יכולים להיות זהים — שנה צבע כדי להבדיל ביניהם.',
+		'הצבעים האלה זהים ל־"{{name}}". שני צבעים שמורים לא יכולים להיות זהים — שנו צבע כדי להבדיל ביניהם.',
 	"palette.colorExistsUse":
-		'הצבעים האלה זהים ל־"{{name}}". שני צבעים שמורים לא יכולים להיות זהים — שנה צבע, או {{link}}.',
+		'הצבעים האלה זהים ל־"{{name}}". שני צבעים שמורים לא יכולים להיות זהים — שנו צבע, או {{link}}.',
 	"palette.colorExistsUseLink": "להשתמש בקיים",
 	"locale.downloading": "מוריד את התרגום…",
-	"locale.notDownloaded": "{{name}} עדיין לא הורדה",
+	"locale.notDownloaded": "התרגום ל־{{name}} עדיין לא הורד",
 	"locale.notDownloadedDesc":
 		"Callout Studio מציג באנגלית עד שניתן יהיה להוריד את התרגום. הניסיון יחזור בהפעלה הבאה של Obsidian.",
 	"locale.retry": "ניסיון חוזר",
@@ -1012,7 +1010,7 @@ export const he: Record<string, string> = {
 	"export.formatCssDesc":
 		"מיועדת לאתרים או לכספות שבהם Callout Studio אינו פועל. היא כוללת תיבות־הבלטה מסוג בלוק בלבד, ויש לייצא אותה מחדש לאחר שינויים.",
 	"quickInsert.readingViewHint": "הפתק הזה פתוח במצב קריאה, ולכן אי אפשר להוסיף דבר.",
-	"quickInsert.readingView": "עברו ל-Source mode או ל-Live Preview כדי להוסיף תיבת־הבלטה.",
+	"quickInsert.readingView": "עברו למצב מקור או לתצוגה מקדימה בזמן אמת כדי להוסיף תיבת־הבלטה.",
 	"quickInsert.noCursorHint": "אין סמן בפתק הזה, ולכן אין היכן להוסיף.",
 	"quickInsert.noCursor": "מקמו את הסמן בפתק במקום שבו תרצו להוסיף את תיבת־ההבלטה, ולאחר מכן נסו שוב.",
 	"notice.legacyDiscoveryArchiveFailed": "יצירת עותק השחזור בזמן השדרוג לא הושלמה. מטמון הגילוי המקומי הקודם ועיצוב האתחול נשמרו ללא שינוי. יש לבדוק הרשאות כתיבה ומקום פנוי, ואז לפתוח מחדש את Obsidian כדי לנסות שוב.",

@@ -15,16 +15,16 @@ export const el: Record<string, string> = {
 	"cmd.customInsertInline": "Εισαγωγή ενσωματωμένου callout {{name}}",
 	"cmd.openQuickInsert": "Γρήγορη εισαγωγή callout μπλοκ",
 	"autocomplete.createNew": 'Δημιουργία "{{name}}"',
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Κανένα callout δεν αντιστοιχεί στο «{{query}}».",
 	"calloutPicker.placeholder": "Αναζήτηση callout",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Κανένα χρώμα δεν αντιστοιχεί στο «{{query}}».",
+	"editor.paletteSearchPlaceholder": "Αναζήτηση χρωμάτων…",
 	"replaceModal.searchPlaceholder": "Αναζήτηση callout",
 	"settings.fallbackTag": "Προεπιλογή",
 	"settings.fallbackTagAuto": "Αυτόματη προεπιλογή",
 	"settings.rescanVaultDesc": "Προσθέτει τύπους callout που χρησιμοποιούνται στις σημειώσεις σας και δεν βρίσκονται ακόμη σε αυτήν τη λίστα. Τα υπάρχοντα callout και οι σημειώσεις σας δεν αλλάζουν.",
 	"settings.rescanVaultHintAction": "Σάρωση για callout",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Τα callout που εντοπίστηκαν δεν αποθηκεύτηκαν. Ελέγξτε ότι οι ρυθμίσεις μπορούν να εγγραφούν και ότι ο συγχρονισμός ολοκληρώθηκε. Έπειτα δοκιμάστε ξανά από Ρυθμίσεις → Οι τύποι callout μου → Σάρωση για callout. Τα υπάρχοντα callout δεν αντικαταστάθηκαν.",
 	"manualDiscovery.scanning": "Σάρωση…",
 	"settings.rescanComplete":
 		"Η σάρωση ολοκληρώθηκε: προστέθηκαν {{count}} νέοι τύποι callout.",
@@ -85,9 +85,9 @@ export const el: Record<string, string> = {
 	"settings.import": "Εισαγωγή",
 	"settings.export": "Εξαγωγή",
 	"settings.importDesc":
-		"Εισάγετε τα δεδομένα Callout Studio από άλλο vault χρησιμοποιώντας αρχείο JSON.",
+		"Εισαγάγετε τα δεδομένα σας στο Callout Studio από άλλο vault ή μεταφέρετε τα callout σας από άλλο πρόσθετο.",
 	"settings.exportDesc":
-		"Αποθηκεύστε όλους τους προσαρμοσμένους τύπους callout σε μορφή JSON.",
+		"Αποθηκεύστε τα callout σας ως αντίγραφο ασφαλείας του Callout Studio ή ως απόσπασμα CSS για χρήση αλλού.",
 	"settings.importConflictNotice":
 		"Εισήχθησαν {{count}} τύπος/τύποι callout· {{overwritten}} υπάρχουσα/-ες καταχώρηση/-εις αντικαταστάθηκε/-αν.",
 	"settings.addNewCallout": "προσθήκη callout",
@@ -115,7 +115,7 @@ export const el: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Οι άγνωστοι τύποι callout στο vault σας θα κληρονομήσουν το στυλ αυτού του callout.",
 	"settings.globalStyle": "Καθολικό στυλ callout",
-	"settings.globalStyleRegularTitle": "Καθολικό στυλ για block callout",
+	"settings.globalStyleRegularTitle": "Καθολικό στυλ για callout μπλοκ",
 	"settings.globalStyleHeadingTitle": "Καθολικό στυλ για callout επικεφαλίδας",
 	"settings.globalStyleInlineTitle": "Καθολικό στυλ για ενσωματωμένο callout",
 	"settings.border": "Περιγράμματα",
@@ -285,7 +285,7 @@ export const el: Record<string, string> = {
 	"editor.verticalOffset": "Κατακόρυφη μετατόπιση",
 	"editor.colors": "Χρώματα",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Ορίζει τα χρώματα περιγράμματος, φόντου και κειμένου αυτού του callout.",
 	"editor.resetColors": "Επαναφορά χρωμάτων στην προεπιλογή",
 	"editor.paletteDeleted": "Διαγραμμένο χρώμα",
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
@@ -302,9 +302,9 @@ export const el: Record<string, string> = {
 	"editor.foldClosed": "Κλειστό από προεπιλογή",
 	"editor.cancel": "Ακύρωση",
 	"editor.saveChanges": "Αποθήκευση αλλαγών",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Αποθήκευση…",
+	"editor.saveFailed": "Η αποθήκευση δεν ολοκληρώθηκε. Αν αυτός ο επεξεργαστής παραμένει ανοιχτός, κρατήστε τον ανοιχτό και δοκιμάστε ξανά αφού ελέγξετε τον χώρο αποθήκευσης και τον συγχρονισμό. Ορισμένες ρυθμίσεις ή ενημερώσεις σημειώσεων μπορεί να έχουν ήδη αποθηκευτεί.",
+	"notice.settingsSaveFailed": "Το Callout Studio δεν μπόρεσε να αποθηκεύσει τις αλλαγές σας. Ελέγξτε τον διαθέσιμο χώρο και τον συγχρονισμό και δοκιμάστε ξανά πριν κλείσετε το Obsidian.",
 	"editor.createCallout": "Δημιουργία callout",
 	"editor.nameRequired":
 		"Απαιτείται εμφανιζόμενο όνομα πριν τη δημιουργία callout.",
@@ -446,7 +446,7 @@ export const el: Record<string, string> = {
 	"iconPicker.custom": "Προσαρμοσμένα εικονίδια",
 	"iconPicker.searchCustom": "Αναζήτηση στα προσαρμοσμένα εικονίδια",
 	"iconPicker.customTooLarge":
-		"Το {{name}} είναι πολύ μεγάλο. Τα προσαρμοσμένα εικονίδια πρέπει να είναι κάτω από 5 MB.",
+		"Το {{name}} είναι πολύ μεγάλο. Τα προσαρμοσμένα εικονίδια δεν πρέπει να υπερβαίνουν τα 5 MB.",
 	"iconPicker.customUnsupported":
 		"Το {{name}} δεν είναι υποστηριζόμενο αρχείο προσαρμοσμένου εικονιδίου. Χρησιμοποιήστε SVG, PNG, JPEG ή WebP.",
 	"iconPicker.customInvalidSvg":
@@ -646,7 +646,7 @@ export const el: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Προσαρμόστε το περίγραμμα και το σχήμα κάθε ενσωματωμένου callout στο vault σας.",
 	"settings.globalSettingsCustomize": "Προσαρμογή",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Callout μπλοκ",
 	"settings.calloutTypeHeading": "Callout επικεφαλίδας",
 	"settings.calloutTypeInline": "Ενσωματωμένο callout",
 	"settings.customizeMenu": "Προσαρμογή στοιχείων μενού",
@@ -656,7 +656,7 @@ export const el: Record<string, string> = {
 	"menuCustomize.title": "Προσαρμογή μενού δεξιού κλικ",
 	"menuCustomize.desc":
 		"Ενεργοποιήστε ή απενεργοποιήστε ενέργειες και σύρετε τη λαβή για να τις αναδιατάξετε. Οι αλλαγές αποθηκεύονται αυτόματα.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Callout μπλοκ",
 	"menuCustomize.heading": "Callout επικεφαλίδας",
 	"menuCustomize.inline": "Ενσωματωμένο callout",
 	"menuCustomize.dragHandle": "Σύρετε για αναδιάταξη",
@@ -716,7 +716,7 @@ export const el: Record<string, string> = {
 	"quickInsert.targetMoved": "Η σημείωση από την οποία ανοίξατε τη Γρήγορη εισαγωγή άλλαξε ή έκλεισε. Ανοίξτε ξανά τη Γρήγορη εισαγωγή στη σημείωση που θέλετε να επεξεργαστείτε.",
 	"quickInsert.targetMovedHint": "Η αρχική σημείωση δεν είναι πλέον διαθέσιμη για αυτήν την εισαγωγή.",
 	"quickInsert.noUserCallouts":
-		"Δεν έχετε δημιουργήσει ακόμα κανένα προσαρμοσμένο callout. Εκτελέστε “Callout Studio: Create new callout type” από την παλέτα εντολών.",
+		"Δεν έχετε δημιουργήσει ακόμα κανένα προσαρμοσμένο callout. Εκτελέστε το «Callout Studio: Δημιουργία νέου τύπου callout» από την παλέτα εντολών.",
 	"quickInsert.noAvailableUserCallouts":
 		"Τα προσαρμοσμένα callouts σας εμφανίζονται προς το παρόν κάτω από το φίλτρο θέματος, επειδή τα ελέγχει το ενεργό θέμα.",
 	"quickInsert.noEditorHint": "Δεν υπάρχει ανοιχτή σημείωση σε λειτουργία επεξεργασίας, οπότε δεν μπορεί να γίνει εισαγωγή.",
@@ -747,9 +747,9 @@ export const el: Record<string, string> = {
 	"vaultStats.close": "Κλείσιμο",
 	"import.title": "Προβλήματα εισαγωγής",
 	"import.reportLeadIn":
-		"Φαίνεται ότι το εισαγόμενο αρχείο έχει τροποποιηθεί. Ακολουθεί η λίστα προβλημάτων:",
+		"Ελέγξτε αυτά τα προβλήματα εισαγωγής πριν συνεχίσετε:",
 	"import.reportLeadInFatal":
-		"Αυτό το αρχείο δεν μοιάζει με εξαγωγή Callout Studio. Δεν μπορεί να εισαχθεί:",
+		"Δεν ήταν δυνατή η εισαγωγή αυτών των δεδομένων:",
 	"import.entryHeading": "Καταχώρηση {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} από {{total}} καταχωρήσεις είναι έγκυρες · βρέθηκαν {{issues}} πρόβλημα/τα.",
@@ -789,7 +789,7 @@ export const el: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"Η τιμή εικονιδίου πρέπει να είναι μη κενή συμβολοσειρά.",
 	"import.err.iconValueTooLong":
-		"Η τιμή εικονιδίου είναι ασυνήθιστα μεγάλη ({{length}} χαρακτήρες).",
+		"Η τιμή του εικονιδίου υπερβαίνει το όριο των 200 χαρακτήρων ({{length}} χαρακτήρες).",
 	"import.err.materialStyle":
 		'Το στυλ εικονιδίου Material "{{value}}" δεν είναι ένα από: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -805,7 +805,7 @@ export const el: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" πρέπει να είναι αριθμός μεταξύ {{min}} και {{max}} (ελήφθη "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"Το \"iconAdjust\" πρέπει να είναι αντικείμενο που αντιστοιχίζει έναν τύπο callout (\"regular\", \"heading\", \"inline\") στο μέγεθος και τις μετατοπίσεις του εικονιδίου του.",
 	"import.err.aliasesNotArray":
 		'"aliases" πρέπει να είναι πίνακας συμβολοσειρών.',
 	"import.err.aliasNotString": "Το ψευδώνυμο πρέπει να είναι συμβολοσειρά.",

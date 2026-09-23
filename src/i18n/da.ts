@@ -14,16 +14,16 @@ export const da: Record<string, string> = {
 	"cmd.customInsertInline": "Indsæt {{name}}-inline-callout",
 	"cmd.openQuickInsert": "Hurtig indsættelse af blok-callout",
 	"autocomplete.createNew": 'Opret "{{name}}"',
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Ingen callouts matcher “{{query}}”.",
 	"calloutPicker.placeholder": "Søg i callouts",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Ingen farver matcher “{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Søg efter farver…",
 	"replaceModal.searchPlaceholder": "Søg i callouts",
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
 	"settings.rescanVaultDesc": "Tilføjer callout-typer, der bruges i dine noter, og som endnu ikke er på denne liste. Dine eksisterende callouts og noter ændres ikke.",
 	"settings.rescanVaultHintAction": "Scan efter callouts",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "De fundne callouts blev ikke gemt. Kontrollér, at indstillingerne kan skrives, og at synkroniseringen er færdig. Prøv derefter igen via Indstillinger → Mine callout-typer → Scan efter callouts. Eksisterende callouts er ikke blevet erstattet.",
 	"manualDiscovery.scanning": "Scanner…",
 	"settings.rescanComplete":
 		"Scanning færdig: {{count}} ny(e) callout-type(r) tilføjet.",
@@ -84,9 +84,9 @@ export const da: Record<string, string> = {
 	"settings.import": "Importer",
 	"settings.export": "Eksporter",
 	"settings.importDesc":
-		"Importer dine Callout Studio-data fra en anden vault ved hjælp af en JSON-fil.",
+		"Importer dine Callout Studio-data fra en anden vault, eller overfør dine callouts fra et andet plugin.",
 	"settings.exportDesc":
-		"Gem alle dine brugerdefinerede callout-typer i JSON-format.",
+		"Gem dine callouts som en Callout Studio-sikkerhedskopi eller som et CSS-udsnit, du kan bruge andre steder.",
 	"settings.importConflictNotice":
 		"{{count}} callout-type(r) importeret; {{overwritten}} eksisterende post(er) overskrevet.",
 	"settings.addNewCallout": "tilføj callout",
@@ -173,7 +173,7 @@ export const da: Record<string, string> = {
 	"commandBuilder.format": "Callout-format",
 	"commandBuilder.formatDesc": "Hvilken slags callout kommandoen skriver.",
 	"commandBuilder.formatHeading": "Overskrift",
-	"commandBuilder.formatInline": "Inline",
+	"commandBuilder.formatInline": "Indlejret",
 	"commandBuilder.formatBlock": "Blok",
 	"commandBuilder.roleDisabled":
 		"Dette format er slået fra, så kommandoen indsætter almindelig tekst, indtil du slår det til igen.",
@@ -282,7 +282,7 @@ export const da: Record<string, string> = {
 	"editor.verticalOffset": "Lodret forskydning",
 	"editor.colors": "Farver",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Angiver farverne på denne callouts kant, baggrund og tekst.",
 	"editor.resetColors": "Nulstil farver til standard",
 	"editor.paletteDeleted": "Slettet farve",
 	"editor.paletteGroupObsidian": "Obsidian-callouts",
@@ -299,9 +299,9 @@ export const da: Record<string, string> = {
 	"editor.foldClosed": "Lukket som standard",
 	"editor.cancel": "Annuller",
 	"editor.saveChanges": "Gem ændringer",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Gemmer…",
+	"editor.saveFailed": "Lagringen kunne ikke fuldføres. Hvis denne editor stadig er åben, skal du lade den være åben og prøve igen, når du har kontrolleret lagerplads og synkronisering. Nogle indstillinger eller noteopdateringer kan allerede være gemt.",
+	"notice.settingsSaveFailed": "Callout Studio kunne ikke gemme dine ændringer. Kontroller ledig lagerplads og synkronisering, og prøv igen, før du lukker Obsidian.",
 	"editor.createCallout": "Opret callout",
 	"editor.nameRequired":
 		"Et visningsnavn er påkrævet, inden du opretter en callout.",
@@ -441,7 +441,7 @@ export const da: Record<string, string> = {
 	"iconPicker.custom": "Brugerdefinerede ikoner",
 	"iconPicker.searchCustom": "Søg i brugerdefinerede ikoner",
 	"iconPicker.customTooLarge":
-		"{{name}} er for stor. Brugerdefinerede ikoner skal være under 5 MB.",
+		"{{name}} er for stor. Brugerdefinerede ikoner må højst fylde 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} er ikke en understøttet brugerdefineret ikonfil. Brug SVG, PNG, JPEG eller WebP.",
 	"iconPicker.customInvalidSvg":
@@ -636,7 +636,7 @@ export const da: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Justér kant og form for hver inline callout i din vault.",
 	"settings.globalSettingsCustomize": "Tilpas",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Blok-callout",
 	"settings.calloutTypeHeading": "Overskrift-callout",
 	"settings.calloutTypeInline": "Indlejret callout",
 	"settings.customizeMenu": "Tilpas menupunkter",
@@ -646,7 +646,7 @@ export const da: Record<string, string> = {
 	"menuCustomize.title": "Tilpas højreklikmenuen",
 	"menuCustomize.desc":
 		"Slå handlinger til eller fra, og træk i håndtaget for at omarrangere dem. Ændringer gemmes automatisk.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Blok-callout",
 	"menuCustomize.heading": "Overskrift-callout",
 	"menuCustomize.inline": "Indlejret callout",
 	"menuCustomize.dragHandle": "Træk for at omarrangere",
@@ -704,7 +704,7 @@ export const da: Record<string, string> = {
 	"quickInsert.targetMoved": "Den note, du åbnede Hurtig indsættelse fra, er ændret eller lukket. Åbn Hurtig indsættelse igen i den note, du vil redigere.",
 	"quickInsert.targetMovedHint": "Den oprindelige note er ikke længere tilgængelig for denne indsættelse.",
 	"quickInsert.noUserCallouts":
-		"Du har endnu ikke oprettet nogen brugerdefinerede callouts. Kør “Callout Studio: Create new callout type” fra kommandopaletten.",
+		"Du har endnu ikke oprettet nogen brugerdefinerede callouts. Kør “Callout Studio: Opret ny callout-type” fra kommandopaletten.",
 	"quickInsert.noAvailableUserCallouts":
 		"Dine brugerdefinerede callouts vises i øjeblikket under temafilteret, fordi det aktive tema styrer dem.",
 	"quickInsert.noEditorHint": "Ingen note er åben i redigeringstilstand, så intet kan indsættes.",
@@ -731,13 +731,13 @@ export const da: Record<string, string> = {
 	"vaultStats.byRole": "Skrevet som",
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Overskrift",
-	"vaultStats.roleInline": "Inline",
+	"vaultStats.roleInline": "Indlejret",
 	"vaultStats.close": "Luk",
 	"import.title": "Importproblemer",
 	"import.reportLeadIn":
-		"Det ser ud til, at den importerede fil er blevet ændret. Her er problemlisten:",
+		"Gennemgå disse importproblemer, før du fortsætter:",
 	"import.reportLeadInFatal":
-		"Denne fil ligner ikke en Callout Studio-eksport. Den kan ikke importeres:",
+		"Disse data kunne ikke importeres:",
 	"import.entryHeading": "Post {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} af {{total}} poster er gyldige · {{issues}} problem(er) fundet.",
@@ -774,7 +774,7 @@ export const da: Record<string, string> = {
 		'"{{field}}" gælder kun for Material-ikoner og ignoreres for ikontype {{type}}.',
 	"import.err.iconValueEmpty": "Ikonværdien skal være en ikke-tom streng.",
 	"import.err.iconValueTooLong":
-		"Ikonværdien er usædvanligt lang ({{length}} tegn).",
+		"Ikonværdien overskrider grænsen på 200 tegn ({{length}} tegn).",
 	"import.err.materialStyle":
 		'Material-ikonstilen "{{value}}" er ikke én af: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -790,7 +790,7 @@ export const da: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" skal være et tal mellem {{min}} og {{max}} (modtog "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"\"iconAdjust\" skal være et objekt, der knytter en callout-type (\"regular\", \"heading\", \"inline\") til ikonets størrelse og forskydninger.",
 	"import.err.aliasesNotArray": '"aliases" skal være en array af strenge.',
 	"import.err.aliasNotString": "Aliaset skal være en streng.",
 	"import.err.aliasDup": 'Aliaset "{{value}}" er duplikeret i denne post.',
@@ -812,16 +812,16 @@ export const da: Record<string, string> = {
 	"import.warn.iconNameUnknown":
 		'Der er ingen "{{value}}" ikon i {{type}}, så standardikonet blev brugt i stedet.',
 	"import.warn.cmIconUnknownNew":
-		'Der er ingen "{{value}}" ikon i Obsidian, så standardikonet blev brugt i stedet.',
+		"Ikonet \"{{value}}\" er ikke tilgængeligt i denne vault, så standardikonet blev brugt i stedet.",
 	"import.warn.cmIconUnknownExisting":
-		'Der er ingen "{{value}}" ikon i Obsidian, så "{{id}}" beholdt det ikon, det allerede havde.',
+		"Ikonet \"{{value}}\" er ikke tilgængeligt i denne vault, så \"{{id}}\" beholdt sit eksisterende ikon.",
 	"import.chooseSource": "Importer fra",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc":
 		"Indlæs en .json-fil eksporteret fra Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"Indsæt de stilarter, du kopierede fra Copy-knappen i Callout Manager.",
+		"Overfør dine tilpassede callouts fra pluginet Callout Manager.",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Hent dine egne admonitions over fra Admonition-pluginnet.",
@@ -834,8 +834,8 @@ export const da: Record<string, string> = {
 	"import.cmPasteLabel":
 		"Eller indsæt de kopierede stilarter fra Callout Manager her:",
 	"import.cmInstructions":
-		"I Callout Manager skal du bruge dens Copy-knap til at kopiere dine tilpassede callout-stilarter og derefter indsætte dem nedenfor.",
-	"import.cmPlaceholder": "Indsæt de kopierede stilarter her…",
+		"Hver tilpasset callout overføres med sit ikon og sin farve. Temaspecifik styling og brugerdefineret CSS har ingen tilsvarende indstillinger her og overføres ikke.",
+	"import.cmPlaceholder": "Indsæt de kopierede stilarter eller indholdet af en data.json-fil her…",
 	"import.cmBtnCancel": "Annuller",
 	"import.cmBtnImport": "Importer",
 	"import.err.cmNoBlocksFound":

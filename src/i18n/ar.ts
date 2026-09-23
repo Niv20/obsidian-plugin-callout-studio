@@ -18,16 +18,16 @@ export const ar: Record<string, string> = {
 
 	"autocomplete.createNew": 'إنشاء "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "لا يوجد callout يطابق «{{query}}».",
 	"calloutPicker.placeholder": "بحث في الـ callouts",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "لا يوجد لون يطابق «{{query}}».",
+	"editor.paletteSearchPlaceholder": "البحث عن الألوان…",
 	"replaceModal.searchPlaceholder": "بحث في الـ callouts",
 	"settings.fallbackTag": "افتراضي",
 	"settings.fallbackTagAuto": "افتراضي تلقائي",
 	"settings.rescanVaultDesc": "يضيف أنواع callout المستخدَمة في ملاحظاتك وغير الموجودة في هذه القائمة بعد. لا تتغيّر الـ callout والملاحظات الحالية لديك.",
 	"settings.rescanVaultHintAction": "مسح بحثًا عن callout",
-	"manualDiscovery.failed": "لم يتم حفظ نتائج الاكتشاف. انتظر اكتمال المزامنة ثم أعد المحاولة من الإعدادات ← أنواع التنبيهات الخاصة بي ← مسح بحثًا عن callout. لم يتم استبدال التعليقات الحالية.",
+	"manualDiscovery.failed": "لم يتم حفظ نتائج الاكتشاف. تحققوا من إمكانية حفظ الإعدادات واكتمال المزامنة، ثم أعيدوا المحاولة من الإعدادات ← أنواع الـ callout الخاصة بي ← مسح بحثًا عن callout. لم تُستبدل الـ callouts الموجودة.",
 	"manualDiscovery.scanning": "جارٍ المسح…",
 	"settings.rescanComplete":
 		"اكتمل المسح: تمت إضافة {{count}} نوع callout جديد.",
@@ -89,8 +89,8 @@ export const ar: Record<string, string> = {
 	"settings.import": "استيراد",
 	"settings.export": "تصدير",
 	"settings.importDesc":
-		"استيراد بيانات Callout Studio من مخزن آخر باستخدام ملف JSON.",
-	"settings.exportDesc": "حفظ جميع أنواع الـ callout المخصصة بصيغة JSON.",
+		"استوردوا بيانات Callout Studio الخاصة بكم من خزنة أخرى، أو انقلوا الـ callouts الخاصة بكم من إضافة أخرى.",
+	"settings.exportDesc": "احفظ الـ callouts الخاصة بك كنسخة احتياطية من Callout Studio أو كمقتطف CSS يمكن استخدامه في مكان آخر.",
 	"settings.importConflictNotice":
 		"تم استيراد {{count}} نوع callout؛ تم الكتابة فوق {{overwritten}} إدخال موجود.",
 
@@ -122,7 +122,7 @@ export const ar: Record<string, string> = {
 		"ستَرِث أنواع الـ callout غير المعروفة في مخزنك نمط هذا الـ callout.",
 
 	"settings.globalStyle": "نمط الـ callout العام",
-	"settings.globalStyleRegularTitle": "النمط العام لـ Block callout",
+	"settings.globalStyleRegularTitle": "النمط العام للـ callout الكتلي",
 	"settings.globalStyleHeadingTitle": "النمط العام لـ callout العنوان",
 	"settings.globalStyleInlineTitle": "النمط العام لـ callout المضمّن",
 	"settings.border": "الحدود",
@@ -221,7 +221,7 @@ export const ar: Record<string, string> = {
 	"settings.vaultStatsScanning": "جارٍ المسح",
 	"settings.resetAll": "إعادة التعيين",
 	"settings.resetAllDesc":
-		"يحذف جميع callouts المستخدم، ويعيد تعيين الـ callouts المدمجة والأنماط العامة (الحدود ومقياس الخط والشكل)، ولوحات الألوان المحفوظة، وتخصيص قائمة النقر بزر الماوس الأيمن، وSVGs Material المحملة.",
+		"يحذف كل الـ callouts التي أنشأها المستخدم، ويعيد تعيين الـ callouts المدمجة والأنماط العامة (الحدود ومقياس الخط والشكل) ولوحات الألوان المحفوظة وتخصيص قائمة النقر بزر الماوس الأيمن، ويحذف ملفات SVG الخاصة بـ Material التي تم تنزيلها.",
 	"settings.resetAllButton": "إعادة تعيين الكل",
 	"settings.resetAllConfirm":
 		"سيؤدي هذا إلى حذف جميع الـ callouts المخصصة، وإعادة تعيين الـ callouts المدمجة والأنماط العامة، ولوحات الألوان المحفوظة، وتخصيص قائمة النقر بزر الماوس الأيمن، وجميع SVGs Material المخزنة مؤقتاً. لا يمكن التراجع عن هذا الإجراء. هل أنت متأكد؟",
@@ -293,7 +293,7 @@ export const ar: Record<string, string> = {
 	"editor.verticalOffset": "الإزاحة الرأسية",
 	"editor.colors": "الألوان",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"يحدد ألوان إطار هذا الـ callout وخلفيته ونصه.",
 	"editor.resetColors": "إعادة تعيين الألوان إلى الافتراضي",
 	"editor.paletteDeleted": "لون محذوف",
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
@@ -309,9 +309,9 @@ export const ar: Record<string, string> = {
 	"editor.foldClosed": "مغلق افتراضياً",
 	"editor.cancel": "إلغاء",
 	"editor.saveChanges": "حفظ التغييرات",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "جارٍ الحفظ…",
+	"editor.saveFailed": "تعذّر إكمال الحفظ. إذا كان هذا المحرر لا يزال مفتوحًا، فأبقوه مفتوحًا وأعيدوا المحاولة بعد التحقق من مساحة التخزين والمزامنة. ربما حُفظت بعض الإعدادات أو تحديثات الملاحظات بالفعل.",
+	"notice.settingsSaveFailed": "تعذّر على Callout Studio حفظ تغييراتكم. تحققوا من مساحة التخزين والمزامنة، ثم أعيدوا المحاولة قبل إغلاق Obsidian.",
 	"editor.createCallout": "إنشاء callout",
 	"editor.nameRequired": "يلزم تحديد اسم معروض قبل إنشاء callout.",
 	"editor.noChangesToSave": "لم يتم إجراء أي تغييرات.",
@@ -449,7 +449,7 @@ export const ar: Record<string, string> = {
 	"iconPicker.custom": "أيقونات مخصصة",
 	"iconPicker.searchCustom": "البحث في الأيقونات المخصصة",
 	"iconPicker.customTooLarge":
-		"{{name}} كبير جدًا. يجب أن تكون الأيقونات المخصصة أقل من 5 ميغابايت.",
+		"{{name}} كبير جدًا. يجب ألا يتجاوز حجم الأيقونات المخصصة 5 ميغابايت.",
 	"iconPicker.customUnsupported":
 		"{{name}} ليس ملف أيقونة مخصصة مدعومًا. استخدم SVG أو PNG أو JPEG أو WebP.",
 	"iconPicker.customInvalidSvg":
@@ -645,7 +645,7 @@ export const ar: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"اضبط الحدود والشكل لكل inline callout في خزنتك.",
 	"settings.globalSettingsCustomize": "تخصيص",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "callout كتلي",
 	"settings.calloutTypeHeading": "callout العنوان",
 	"settings.calloutTypeInline": "callout مضمّن",
 	"settings.customizeMenu": "تخصيص عناصر القائمة",
@@ -655,7 +655,7 @@ export const ar: Record<string, string> = {
 	"menuCustomize.title": "تخصيص قائمة النقر بزر الماوس الأيمن",
 	"menuCustomize.desc":
 		"قم بتفعيل الإجراءات أو تعطيلها واسحب المقبض لإعادة ترتيبها. تُحفظ التغييرات تلقائياً.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "callout كتلي",
 	"menuCustomize.heading": "callout العنوان",
 	"menuCustomize.inline": "callout مضمّن",
 	"menuCustomize.dragHandle": "اسحب لإعادة الترتيب",
@@ -718,7 +718,7 @@ export const ar: Record<string, string> = {
 	"quickInsert.targetMoved": "الملاحظة التي فتحت منها الإدراج السريع تغيّرت أو أُغلقت. أعد فتح الإدراج السريع في الملاحظة التي تريد تحريرها.",
 	"quickInsert.targetMovedHint": "الملاحظة الأصلية لم تعد متاحة لهذا الإدراج.",
 	"quickInsert.noUserCallouts":
-		"لم تُنشئ أي callout مخصص بعد. شغّل “Callout Studio: Create new callout type” من لوحة الأوامر.",
+		"لم تُنشئوا أي callout مخصص بعد. شغّلوا «Callout Studio: إنشاء نوع callout جديد» من لوحة الأوامر.",
 	"quickInsert.noAvailableUserCallouts": "تظهر الـ callouts المخصصة لديك حاليًا ضمن فلتر السمة لأن السمة النشطة تتحكم بها.",
 	"quickInsert.noEditorHint": "لا توجد ملاحظة مفتوحة في وضع التحرير، لذا لا يمكن إدراج شيء.",
 	"quickInsert.noEditor": "افتح ملاحظة في وضع التحرير لإدراج callout.",
@@ -749,9 +749,9 @@ export const ar: Record<string, string> = {
 
 	"import.title": "مشاكل الاستيراد",
 	"import.reportLeadIn":
-		"يبدو أن الملف الذي استوردته قد تم تعديله. فيما يلي قائمة المشاكل:",
+		"راجعوا مشكلات الاستيراد هذه قبل المتابعة:",
 	"import.reportLeadInFatal":
-		"لا يبدو هذا الملف كتصدير Callout Studio. لا يمكن استيراده:",
+		"تعذّر استيراد هذه البيانات:",
 	"import.entryHeading": "الإدخال {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} من {{total}} إدخالات صالحة · تم العثور على {{issues}} مشكلة.",
@@ -789,7 +789,7 @@ export const ar: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"يجب أن تكون قيمة الأيقونة سلسلة نصية غير فارغة.",
 	"import.err.iconValueTooLong":
-		"قيمة الأيقونة طويلة بشكل غير عادي ({{length}} حرفاً).",
+		"تتجاوز قيمة الأيقونة الحد الأقصى البالغ 200 حرف ({{length}} حرفًا).",
 	"import.err.materialStyle":
 		'نمط أيقونة Material "{{value}}" ليس أحد: outlined أو filled أو rounded أو sharp.',
 	"import.err.materialWeight":
@@ -805,7 +805,7 @@ export const ar: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" يجب أن يكون رقماً بين {{min}} و{{max}} (تم استلام "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		"يجب أن يكون \"iconAdjust\" كائنًا يربط نوع الـ callout (\"regular\", \"heading\", \"inline\") بحجم أيقونته وإزاحاتها.",
 	"import.err.aliasesNotArray":
 		'"aliases" يجب أن يكون مصفوفة من السلاسل النصية.',
 	"import.err.aliasNotString": "يجب أن يكون الاسم المستعار سلسلة نصية.",
@@ -822,7 +822,7 @@ export const ar: Record<string, string> = {
 	"import.warn.defaultFoldedAutofix":
 		'كانت "defaultFolded" true بينما كانت "foldable" false؛ تمت إعادة تعيين defaultFolded إلى false.',
 	"import.warn.imageMissing":
-		"يستخدم هذا Callout صورة غير موجودة في الملف أو في هذا vault، لذا سيعرض أيقونة بديلة حتى تحدد صورة جديدة.",
+		"يستخدم هذا الـ callout صورة غير موجودة في الملف ولا في هذه الخزنة، لذا سيُعرض رمز بديل إلى أن تختار له صورة جديدة.",
 
 	"import.err.paletteIdInvalid":
 		'"paletteId" يجب أن يكون معرّف نصي غير فارغ (تم استلام "{{value}}").',
@@ -837,14 +837,13 @@ export const ar: Record<string, string> = {
 	"import.sourceStudioDesc": "تحميل ملف ‎.json تم تصديره من Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"انقل التلميحات المخصصة لديك من إضافة Callout Manager.",
+		"انقل الـ callouts التي خصصتها من إضافة Callout Manager.",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"انقل تنبيهات admonition المخصصة لديك من إضافة Admonition.",
 	"import.cmTitle": "استيراد من Callout Manager",
 	"import.cmInstructions":
-		"ينتقل كل تلميح مخصص بأيقونته ولونه. تنسيق كل سمة على حدة وأنماط " +
-		"CSS المخصصة لا مقابل لها هنا ولا يتم استيرادها.",
+		"يُنقل كل callout مخصص مع أيقونته ولونه. لا يُنقل التنسيق الخاص بكل سمة أو CSS المخصص، إذ لا يوجد ما يقابلهما هنا.",
 	"import.cmFromVault": "هذه الخزينة",
 	"import.cmVaultChecking": "جارٍ البحث عن إضافة Callout Manager…",
 	"import.cmVaultFound": "تم العثور على {{count}} تلميح(ات) مخصصة.",
@@ -964,7 +963,7 @@ export const ar: Record<string, string> = {
 		"ملف ‎.json هو الطريقة الوحيدة المدعومة لاستعادة بيانات Callout Studio بالكامل أو نقلها إلى خزنة جديدة مثبّت فيها المكوّن الإضافي.",
 	"export.formatCss": "لقطة CSS مستقلة بذاتها",
 	"export.formatCssDesc":
-		"للمواقع أو الخزائن التي لا يعمل فيها Callout Studio. تشمل نداءات الكتل فقط، ويجب تصديرها مجددًا بعد أي تغييرات.",
+		"مخصص للمواقع أو الخزائن التي لا يعمل فيها Callout Studio. يشمل الـ callouts الكتلية فقط، ويجب تصديره مجددًا بعد التغييرات.",
 	"quickInsert.readingViewHint": "هذه الملاحظة مفتوحة في وضع القراءة، لذا لا يمكن إدراج أي شيء.",
 	"quickInsert.readingView": "بدّل إلى وضع المصدر أو المعاينة المباشرة لإدراج callout.",
 	"quickInsert.noCursorHint": "لا يوجد مؤشر في هذه الملاحظة، لذا لا يوجد مكان للإدراج.",

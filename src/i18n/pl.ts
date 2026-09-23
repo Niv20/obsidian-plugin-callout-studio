@@ -17,16 +17,16 @@ export const pl: Record<string, string> = {
 
 	"autocomplete.createNew": 'Utwórz "{{name}}"',
 
-	"calloutPicker.noMatches": "No callout matches “{{query}}”.",
+	"calloutPicker.noMatches": "Nie znaleziono calloutów pasujących do „{{query}}”.",
 	"calloutPicker.placeholder": "Szukaj callout",
-	"editor.paletteNoMatches": "No color matches “{{query}}”.",
-	"editor.paletteSearchPlaceholder": "Search colors…",
+	"editor.paletteNoMatches": "Nie znaleziono kolorów pasujących do „{{query}}”.",
+	"editor.paletteSearchPlaceholder": "Szukaj kolorów…",
 	"replaceModal.searchPlaceholder": "Szukaj callout",
 	"settings.fallbackTag": "Domyślny",
 	"settings.fallbackTagAuto": "Aut. domyślny",
 	"settings.rescanVaultDesc": "Dodaje typy calloutów używane w Twoich notatkach, których nie ma jeszcze na tej liście. Twoje istniejące callouty i notatki nie są zmieniane.",
 	"settings.rescanVaultHintAction": "Skanuj w poszukiwaniu calloutów",
-	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
+	"manualDiscovery.failed": "Nie udało się zapisać wyników skanowania. Sprawdź, czy ustawienia można zapisywać i czy synchronizacja się zakończyła, a następnie spróbuj ponownie przez Ustawienia → Moje typy callout → Skanuj w poszukiwaniu calloutów. Istniejące callouty nie zostały zastąpione.",
 	"manualDiscovery.scanning": "Skanowanie…",
 	"settings.rescanComplete":
 		"Skanowanie zakończone: dodano {{count}} nowych typów calloutów.",
@@ -88,9 +88,9 @@ export const pl: Record<string, string> = {
 	"settings.import": "Importuj",
 	"settings.export": "Eksportuj",
 	"settings.importDesc":
-		"Importuj swoje dane Callout Studio z innego vault za pomocą pliku JSON.",
+		"Importuj dane Callout Studio z innego vaulta lub przenieś callouty z innej wtyczki.",
 	"settings.exportDesc":
-		"Zapisz wszystkie niestandardowe typy callout w formacie JSON.",
+		"Zapisz callouty jako kopię zapasową Callout Studio albo fragment CSS do użycia w innym miejscu.",
 	"settings.importConflictNotice":
 		"Zaimportowano {{count}} typ(ów) callout; nadpisano {{overwritten}} istniejący(ch) wpis(y).",
 
@@ -298,7 +298,7 @@ export const pl: Record<string, string> = {
 	"editor.verticalOffset": "Przesunięcie pionowe",
 	"editor.colors": "Kolory",
 	"editor.colorsDesc":
-		"Sets this callout's border, background, and text colors.",
+		"Ustawia kolory obramowania, tła i tekstu tego calloutu.",
 	"editor.resetColors": "Zresetuj kolory do domyślnych",
 	"editor.paletteDeleted": "Usunięty kolor",
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
@@ -315,9 +315,9 @@ export const pl: Record<string, string> = {
 	"editor.foldClosed": "Domyślnie zamknięty",
 	"editor.cancel": "Anuluj",
 	"editor.saveChanges": "Zapisz zmiany",
-	"editor.saving": "Saving…",
-	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
+	"editor.saving": "Zapisywanie…",
+	"editor.saveFailed": "Nie udało się ukończyć zapisywania. Jeśli ten edytor jest nadal otwarty, pozostaw go otwartym i spróbuj ponownie po sprawdzeniu miejsca na dysku oraz synchronizacji. Niektóre ustawienia lub zmiany w notatkach mogły już zostać zapisane.",
+	"notice.settingsSaveFailed": "Callout Studio nie mógł zapisać zmian. Sprawdź dostępne miejsce i synchronizację, a następnie spróbuj ponownie przed zamknięciem Obsidian.",
 	"editor.createCallout": "Utwórz callout",
 	"editor.nameRequired":
 		"Przed utworzeniem callout wymagana jest nazwa wyświetlana.",
@@ -457,7 +457,7 @@ export const pl: Record<string, string> = {
 	"iconPicker.custom": "Ikony niestandardowe",
 	"iconPicker.searchCustom": "Szukaj ikon niestandardowych",
 	"iconPicker.customTooLarge":
-		"{{name}} jest za duży. Ikony niestandardowe muszą mieć mniej niż 5 MB.",
+		"{{name}} jest za duży. Ikony niestandardowe mogą mieć maksymalnie 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} nie jest obsługiwanym plikiem ikony niestandardowej. Użyj SVG, PNG, JPEG lub WebP.",
 	"iconPicker.customInvalidSvg":
@@ -656,7 +656,7 @@ export const pl: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Dostosuj obramowanie i kształt każdego callout śródtekstowego w Twoim vault.",
 	"settings.globalSettingsCustomize": "Dostosuj",
-	"settings.calloutTypeRegular": "Block callout",
+	"settings.calloutTypeRegular": "Callout blokowy",
 	"settings.calloutTypeHeading": "Callout-nagłówek",
 	"settings.calloutTypeInline": "Callout śródtekstowy",
 	"settings.customizeMenu": "Dostosuj elementy menu",
@@ -666,7 +666,7 @@ export const pl: Record<string, string> = {
 	"menuCustomize.title": "Dostosuj menu kontekstowe",
 	"menuCustomize.desc":
 		"Włączaj lub wyłączaj akcje i przeciągaj uchwyt, aby zmienić ich kolejność. Zmiany są zapisywane automatycznie.",
-	"menuCustomize.regular": "Block callout",
+	"menuCustomize.regular": "Callout blokowy",
 	"menuCustomize.heading": "Callout-nagłówek",
 	"menuCustomize.inline": "Callout śródtekstowy",
 	"menuCustomize.dragHandle": "Przeciągnij, aby zmienić kolejność",
@@ -727,7 +727,7 @@ export const pl: Record<string, string> = {
 	"quickInsert.targetMoved": "Notatka, z której otwarto Szybkie wstawianie, została zmieniona lub zamknięta. Otwórz Szybkie wstawianie ponownie w notatce, którą chcesz edytować.",
 	"quickInsert.targetMovedHint": "Pierwotna notatka nie jest już dostępna dla tego wstawienia.",
 	"quickInsert.noUserCallouts":
-		"Nie utworzono jeszcze żadnego niestandardowego callout. Uruchom “Callout Studio: Create new callout type” z palety poleceń.",
+		"Nie utworzono jeszcze żadnego niestandardowego calloutu. Uruchom „Callout Studio: Utwórz nowy typ callout” z palety poleceń.",
 	"quickInsert.noAvailableUserCallouts":
 		"Twoje niestandardowe callout są obecnie widoczne pod filtrem motywu, ponieważ aktywny motyw nimi zarządza.",
 	"quickInsert.noEditorHint": "Żadna notatka nie jest otwarta w trybie edycji, więc nic nie można wstawić.",
@@ -759,9 +759,9 @@ export const pl: Record<string, string> = {
 
 	"import.title": "Problemy z importem",
 	"import.reportLeadIn":
-		"Wygląda na to, że zaimportowany plik został zmodyfikowany. Oto lista problemów:",
+		"Przed kontynuowaniem przejrzyj poniższe problemy z importem:",
 	"import.reportLeadInFatal":
-		"Ten plik nie wygląda jak eksport Callout Studio. Nie można go zaimportować:",
+		"Nie udało się zaimportować tych danych:",
 	"import.entryHeading": "Wpis {{index}} — {{label}}",
 	"import.summary":
 		"{{valid}} z {{total}} wpisów jest prawidłowych · znaleziono {{issues}} problem(ów).",
@@ -800,7 +800,7 @@ export const pl: Record<string, string> = {
 	"import.err.iconValueEmpty":
 		"Wartość ikony musi być niepustym ciągiem znaków.",
 	"import.err.iconValueTooLong":
-		"Wartość ikony jest niezwykle długa ({{length}} znaków).",
+		"Wartość ikony przekracza limit 200 znaków ({{length}} znaków).",
 	"import.err.materialStyle":
 		'Styl ikony Material "{{value}}" nie jest jednym z: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
@@ -816,7 +816,7 @@ export const pl: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" musi być liczbą od {{min}} do {{max}} (otrzymano "{{value}}").',
 	"import.err.iconAdjustShape":
-		'"iconAdjust" must be an object mapping a callout type ("regular", "heading", "inline") to its icon size and offsets.',
+		'"iconAdjust" musi być obiektem przypisującym typowi calloutu ("regular", "heading", "inline") rozmiar ikony i jej przesunięcia.',
 	"import.err.aliasesNotArray": '"aliases" musi być tablicą ciągów znaków.',
 	"import.err.aliasNotString": "Alias musi być ciągiem znaków.",
 	"import.err.aliasDup": 'Alias "{{value}}" jest zduplikowany w tym wpisie.',
@@ -848,7 +848,7 @@ export const pl: Record<string, string> = {
 		"Załaduj plik .json wyeksportowany z Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"Przenieś swoje własne calloty z wtyczki Callout Manager.",
+		"Przenieś swoje niestandardowe callouty z wtyczki Callout Manager.",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Przenieś swoje własne admonition z wtyczki Admonition.",
@@ -863,7 +863,7 @@ export const pl: Record<string, string> = {
 	"import.cmVaultNotFound": "Nie znaleziono własnych calloutów w tym sejfie.",
 	"import.cmPasteLabel":
 		"Albo wklej tutaj style skopiowane z Callout Manager:",
-	"import.cmPlaceholder": "Wklej skopiowane style lub plik data.json tutaj…",
+	"import.cmPlaceholder": "Wklej tutaj skopiowane style lub zawartość pliku data.json…",
 	"import.cmBtnCancel": "Anuluj",
 	"import.cmBtnImport": "Importuj",
 	"import.err.cmNoBlocksFound":
