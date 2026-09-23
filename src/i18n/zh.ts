@@ -142,6 +142,9 @@ export const zh: Record<string, string> = {
 	"settings.headingFoldGroup": "折叠",
 	"settings.headingFoldArrow": "显示折叠箭头",
 	"settings.styleDemoName": "示例",
+	"settings.styleDemoInlineName": "示例",
+	"settings.styleDemoInlineText":
+		"微风拂过树梢。{{callout}}温暖的阳光洒在静谧的小径上，让景色焕发生机。",
 	"settings.previewTitle": "预览",
 
 	// Settings — Saved color palettes
@@ -320,9 +323,9 @@ export const zh: Record<string, string> = {
 
 	"editor.untitledCallout": "未命名 Callout",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet，consectetur adipiscing elit。",
+		"微风拂过树梢。温暖的阳光洒在静谧的小径上，让景色焕发生机。",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet，consectetur adipiscing elit。",
+		"微风拂过树梢。",
 	"editor.sampleInlineText": "这是一个嵌入在段落中的行内 [!{id}] 徽标。",
 	"editor.previewReadOnly": "实时预览无法编辑",
 

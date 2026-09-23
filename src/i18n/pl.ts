@@ -143,6 +143,9 @@ export const pl: Record<string, string> = {
 	"settings.headingFoldGroup": "Zwijanie",
 	"settings.headingFoldArrow": "Pokaż strzałkę zwijania",
 	"settings.styleDemoName": "Przykład",
+	"settings.styleDemoInlineName": "Przykład",
+	"settings.styleDemoInlineText":
+		"Lekki wiatr porusza gałęziami drzew. {{callout}} Ciepłe światło słońca rozjaśnia cichą ścieżkę i ożywia krajobraz.",
 	"settings.previewTitle": "Podgląd",
 
 	// Settings — Saved color palettes
@@ -328,9 +331,9 @@ export const pl: Record<string, string> = {
 		"Obsidian zapisuje spacje jako myślniki, więc to ID koliduje z „{{other}}”",
 	"editor.untitledCallout": "Callout bez tytułu",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Lekki wiatr porusza gałęziami drzew. Ciepłe światło słońca rozjaśnia cichą ścieżkę i ożywia krajobraz.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Lekki wiatr porusza gałęziami drzew.",
 	"editor.sampleInlineText":
 		"Oto wbudowana pigułka [!{id}] wewnątrz akapitu.",
 	"editor.previewReadOnly": "Podglądu na żywo nie można edytować",

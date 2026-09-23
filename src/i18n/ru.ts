@@ -144,6 +144,9 @@ export const ru: Record<string, string> = {
 	"settings.headingFoldGroup": "Сворачивание",
 	"settings.headingFoldArrow": "Показать стрелку сворачивания",
 	"settings.styleDemoName": "Пример",
+	"settings.styleDemoInlineName": "Пример",
+	"settings.styleDemoInlineText":
+		"Лёгкий ветерок колышет деревья. {{callout}} Тёплый солнечный свет заливает тихую тропинку и оживляет пейзаж.",
 	"settings.previewTitle": "Предпросмотр",
 
 	// Settings — Saved color palettes
@@ -328,9 +331,9 @@ export const ru: Record<string, string> = {
 		"Obsidian записывает пробелы как дефисы, поэтому этот ID конфликтует с «{{other}}»",
 	"editor.untitledCallout": "Callout без названия",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Лёгкий ветерок колышет деревья. Тёплый солнечный свет заливает тихую тропинку и оживляет пейзаж.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Лёгкий ветерок колышет деревья.",
 	"editor.sampleInlineText": "Вот встроенная капсула [!{id}] внутри абзаца.",
 	"editor.previewReadOnly": "Живой предпросмотр нельзя редактировать",
 

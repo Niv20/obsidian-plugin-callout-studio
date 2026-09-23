@@ -144,6 +144,9 @@ export const hu: Record<string, string> = {
 	"settings.headingFoldGroup": "Összecsukás",
 	"settings.headingFoldArrow": "Összecsukási nyíl megjelenítése",
 	"settings.styleDemoName": "Minta",
+	"settings.styleDemoInlineName": "Minta",
+	"settings.styleDemoInlineText":
+		"Enyhe szellő suhan át a fák között. {{callout}} A meleg napfény beragyog egy csendes ösvényt, és élettel tölti meg a tájat.",
 	"settings.previewTitle": "Előnézet",
 
 	// Settings — Saved color palettes
@@ -329,9 +332,9 @@ export const hu: Record<string, string> = {
 		"Az Obsidian a szóközöket kötőjelként írja, ezért ez az azonosító ütközik ezzel: „{{other}}”",
 	"editor.untitledCallout": "Névtelen callout",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Enyhe szellő suhan át a fák között. A meleg napfény beragyog egy csendes ösvényt, és élettel tölti meg a tájat.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Enyhe szellő suhan át a fák között.",
 	"editor.sampleInlineText":
 		"Íme egy soron belüli [!{id}] pirula egy bekezdésen belül.",
 	"editor.previewReadOnly": "Az élő előnézet nem szerkeszthető",

@@ -143,6 +143,9 @@ export const pt: Record<string, string> = {
 	"settings.headingFoldGroup": "Dobrar",
 	"settings.headingFoldArrow": "Mostrar seta de dobra",
 	"settings.styleDemoName": "Exemplo",
+	"settings.styleDemoInlineName": "Exemplo",
+	"settings.styleDemoInlineText":
+		"Uma brisa suave passa entre as árvores. {{callout}} A luz quente do sol ilumina um caminho tranquilo e dá vida à paisagem.",
 	"settings.previewTitle": "Pré-visualização",
 
 	// Settings — Saved color palettes
@@ -327,9 +330,9 @@ export const pt: Record<string, string> = {
 		'O Obsidian grava espaços como hífens, por isso este ID entra em conflito com "{{other}}"',
 	"editor.untitledCallout": "Callout sem título",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Uma brisa suave passa entre as árvores. A luz quente do sol ilumina um caminho tranquilo e dá vida à paisagem.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Uma brisa suave passa entre as árvores.",
 	"editor.sampleInlineText":
 		"Aqui está uma pílula [!{id}] embutida dentro de um parágrafo.",
 	"editor.previewReadOnly": "A pré-visualização ao vivo não pode ser editada",

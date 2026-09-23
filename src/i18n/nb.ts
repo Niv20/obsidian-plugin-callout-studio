@@ -137,6 +137,9 @@ export const nb: Record<string, string> = {
 	"settings.headingFoldGroup": "Brett inn",
 	"settings.headingFoldArrow": "Vis brettepil",
 	"settings.styleDemoName": "Eksempel",
+	"settings.styleDemoInlineName": "Eksempel",
+	"settings.styleDemoInlineText":
+		"En lett bris stryker gjennom trærne. {{callout}} Varmt sollys faller over en stille sti og gir landskapet liv.",
 	"settings.previewTitle": "Forhåndsvisning",
 	// Settings — Saved color palettes
 	"settings.customPalettes": "Lagrede fargepaletter",
@@ -316,9 +319,9 @@ export const nb: Record<string, string> = {
 		"Merk: temaet ditt stiler alle callouts som matcher {{pattern}}, så det kan overstyre hvordan denne ser ut.",
 	"editor.untitledCallout": "Navnløs Callout",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"En lett bris stryker gjennom trærne. Varmt sollys faller over en stille sti og gir landskapet liv.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"En lett bris stryker gjennom trærne.",
 	"editor.sampleInlineText":
 		"Her er en innebygd [!{id}] pille inne i et avsnitt.",
 	"editor.previewReadOnly": "Direktevisningen kan ikke redigeres",

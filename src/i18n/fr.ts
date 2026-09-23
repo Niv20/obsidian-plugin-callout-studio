@@ -145,6 +145,9 @@ export const fr: Record<string, string> = {
 	"settings.headingFoldGroup": "Réduire",
 	"settings.headingFoldArrow": "Afficher la flèche de réduction",
 	"settings.styleDemoName": "Exemple",
+	"settings.styleDemoInlineName": "Exemple",
+	"settings.styleDemoInlineText":
+		"Une brise légère traverse les arbres. {{callout}} La lumière chaude du soleil éclaire un sentier paisible et donne vie au paysage.",
 	"settings.previewTitle": "Aperçu",
 
 	// Settings — Saved color palettes
@@ -337,9 +340,9 @@ export const fr: Record<string, string> = {
 
 	"editor.untitledCallout": "Callout sans titre",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Une brise légère traverse les arbres. La lumière chaude du soleil éclaire un sentier paisible et donne vie au paysage.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Une brise légère traverse les arbres.",
 	"editor.sampleInlineText":
 		"Voici une pastille [!{id}] intégrée dans un paragraphe.",
 	"editor.previewReadOnly": "L'aperçu en direct ne peut pas être modifié",

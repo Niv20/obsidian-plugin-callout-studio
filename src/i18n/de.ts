@@ -144,6 +144,9 @@ export const de: Record<string, string> = {
 	"settings.headingFoldGroup": "Einklappen",
 	"settings.headingFoldArrow": "Einklapp-Pfeil anzeigen",
 	"settings.styleDemoName": "Beispiel",
+	"settings.styleDemoInlineName": "Beispiel",
+	"settings.styleDemoInlineText":
+		"Eine sanfte Brise streicht durch die Bäume. {{callout}} Warmes Sonnenlicht fällt auf einen stillen Weg und lässt die Szene lebendig wirken.",
 	"settings.previewTitle": "Vorschau",
 
 	// Settings — Saved color palettes
@@ -331,9 +334,9 @@ export const de: Record<string, string> = {
 		"Hinweis: Ihr Theme gestaltet jeden Callout, der zu {{pattern}} passt, daher könnte es das Aussehen dieses hier überschreiben.",
 	"editor.untitledCallout": "Callout ohne Titel",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Eine sanfte Brise streicht durch die Bäume. Warmes Sonnenlicht fällt auf einen stillen Weg und lässt die Szene lebendig wirken.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Eine sanfte Brise streicht durch die Bäume.",
 	"editor.sampleInlineText":
 		"Hier ist eine eingebettete [!{id}] Pille innerhalb eines Absatzes.",
 	"editor.previewReadOnly": "Die Live-Vorschau kann nicht bearbeitet werden",

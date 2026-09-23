@@ -144,6 +144,9 @@ export const sv: Record<string, string> = {
 	"settings.headingFoldGroup": "Hopfällning",
 	"settings.headingFoldArrow": "Visa hopfällningspil",
 	"settings.styleDemoName": "Exempel",
+	"settings.styleDemoInlineName": "Exempel",
+	"settings.styleDemoInlineText":
+		"En lätt bris rör sig genom träden. {{callout}} Varmt solljus faller över en stilla stig och ger landskapet liv.",
 	"settings.previewTitle": "Förhandsvisning",
 
 	// Settings — Saved color palettes
@@ -326,9 +329,9 @@ export const sv: Record<string, string> = {
 		"Obs: ditt tema stilar alla callouts som matchar {{pattern}}, så det kan påverka hur den här ser ut.",
 	"editor.untitledCallout": "Namnlös Callout",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"En lätt bris rör sig genom träden. Varmt solljus faller över en stilla stig och ger landskapet liv.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"En lätt bris rör sig genom träden.",
 	"editor.sampleInlineText":
 		"Här är en infogad [!{id}]-pill inuti ett stycke.",
 	"editor.previewReadOnly": "Livevyn kan inte redigeras",

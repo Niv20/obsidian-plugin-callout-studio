@@ -143,6 +143,9 @@ export const tr: Record<string, string> = {
 	"settings.headingFoldGroup": "Katla",
 	"settings.headingFoldArrow": "Katlama okunu göster",
 	"settings.styleDemoName": "Örnek",
+	"settings.styleDemoInlineName": "Örnek",
+	"settings.styleDemoInlineText":
+		"Hafif bir esinti ağaçların arasından geçiyor. {{callout}} Sıcak güneş ışığı sessiz bir patikayı aydınlatıp manzaraya canlılık katıyor.",
 	"settings.previewTitle": "Önizleme",
 
 	// Settings — Saved color palettes
@@ -326,9 +329,9 @@ export const tr: Record<string, string> = {
 		"Uyarı: temanız {{pattern}} ile eşleşen her callout'u biçimlendiriyor, bu yüzden bunun görünümünü geçersiz kılabilir.",
 	"editor.untitledCallout": "Başlıksız Callout",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Hafif bir esinti ağaçların arasından geçiyor. Sıcak güneş ışığı sessiz bir patikayı aydınlatıp manzaraya canlılık katıyor.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Hafif bir esinti ağaçların arasından geçiyor.",
 	"editor.sampleInlineText":
 		"İşte bir paragraf içinde satır içi bir [!{id}] hapı.",
 	"editor.previewReadOnly": "Canlı önizleme düzenlenemez",

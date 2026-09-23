@@ -140,6 +140,9 @@ export const ms: Record<string, string> = {
 	"settings.headingFoldGroup": "Lipat",
 	"settings.headingFoldArrow": "Papar anak panah lipat",
 	"settings.styleDemoName": "Contoh",
+	"settings.styleDemoInlineName": "Contoh",
+	"settings.styleDemoInlineText":
+		"Bayu lembut bertiup di celah pepohonan. {{callout}} Cahaya matahari yang hangat menyinari laluan yang sunyi dan menghidupkan suasana.",
 	"settings.previewTitle": "Pratonton",
 	// Settings — Saved color palettes
 	"settings.customPalettes": "Palet warna tersimpan",
@@ -322,9 +325,9 @@ export const ms: Record<string, string> = {
 		'Obsidian menulis ruang sebagai sengkang, jadi ID ini bercanggah dengan "{{other}}"',
 	"editor.untitledCallout": "Callout Tanpa Tajuk",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Bayu lembut bertiup di celah pepohonan. Cahaya matahari yang hangat menyinari laluan yang sunyi dan menghidupkan suasana.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Bayu lembut bertiup di celah pepohonan.",
 	"editor.sampleInlineText":
 		"Berikut ialah pil [!{id}] sebaris di dalam perenggan.",
 	"editor.previewReadOnly": "Pratonton langsung tidak boleh diedit",

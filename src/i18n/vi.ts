@@ -146,6 +146,9 @@ export const vi: Record<string, string> = {
 	"settings.headingFoldGroup": "Thu gọn",
 	"settings.headingFoldArrow": "Hiển thị mũi tên thu gọn",
 	"settings.styleDemoName": "Mẫu",
+	"settings.styleDemoInlineName": "Mẫu",
+	"settings.styleDemoInlineText":
+		"Làn gió nhẹ lướt qua những tán cây. {{callout}} Ánh nắng ấm áp phủ lên lối mòn yên tĩnh, làm khung cảnh thêm sống động.",
 	"settings.previewTitle": "Xem trước",
 
 	// Settings — Saved color palettes
@@ -329,9 +332,9 @@ export const vi: Record<string, string> = {
 
 	"editor.untitledCallout": "Callout chưa đặt tên",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Làn gió nhẹ lướt qua những tán cây. Ánh nắng ấm áp phủ lên lối mòn yên tĩnh, làm khung cảnh thêm sống động.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Làn gió nhẹ lướt qua những tán cây.",
 	"editor.sampleInlineText":
 		"Đây là một viên [!{id}] nội tuyến bên trong một đoạn văn.",
 	"editor.previewReadOnly": "Không thể chỉnh sửa bản xem trước trực tiếp",

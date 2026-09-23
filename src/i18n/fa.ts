@@ -142,6 +142,9 @@ export const fa: Record<string, string> = {
 	"settings.headingFoldGroup": "تا کردن",
 	"settings.headingFoldArrow": "نمایش فلش تا کردن",
 	"settings.styleDemoName": "نمونه",
+	"settings.styleDemoInlineName": "نمونه",
+	"settings.styleDemoInlineText":
+		"نسیمی ملایم از میان درختان می‌گذرد. {{callout}} نور گرم خورشید بر مسیری آرام می‌تابد و به منظره جان می‌بخشد.",
 	"settings.previewTitle": "پیش‌نمایش",
 
 	// Settings — Saved color palettes
@@ -326,9 +329,9 @@ export const fa: Record<string, string> = {
 		"توجه: پوسته‌ی شما هر callout ای را که با {{pattern}} مطابقت داشته باشد استایل می‌دهد، بنابراین ممکن است ظاهر این یکی را بازنویسی کند.",
 	"editor.untitledCallout": "Callout بدون عنوان",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"نسیمی ملایم از میان درختان می‌گذرد. نور گرم خورشید بر مسیری آرام می‌تابد و به منظره جان می‌بخشد.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"نسیمی ملایم از میان درختان می‌گذرد.",
 	"editor.sampleInlineText":
 		"در اینجا یک قرص [!{id}] درون‌خطی در داخل یک پاراگراف وجود دارد.",
 	"editor.previewReadOnly": "پیش‌نمایش زنده قابل ویرایش نیست",

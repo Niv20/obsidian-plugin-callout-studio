@@ -143,6 +143,9 @@ export const id: Record<string, string> = {
 	"settings.headingFoldGroup": "Lipat",
 	"settings.headingFoldArrow": "Tampilkan panah lipat",
 	"settings.styleDemoName": "Contoh",
+	"settings.styleDemoInlineName": "Contoh",
+	"settings.styleDemoInlineText":
+		"Angin sepoi-sepoi bertiup di antara pepohonan. {{callout}} Sinar matahari yang hangat menyinari jalan setapak yang tenang dan menghidupkan suasana.",
 	"settings.previewTitle": "Pratinjau",
 
 	// Settings — Saved color palettes
@@ -326,9 +329,9 @@ export const id: Record<string, string> = {
 		'Obsidian menulis spasi sebagai tanda hubung, sehingga ID ini bertentangan dengan "{{other}}"',
 	"editor.untitledCallout": "Callout Tanpa Judul",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Angin sepoi-sepoi bertiup di antara pepohonan. Sinar matahari yang hangat menyinari jalan setapak yang tenang dan menghidupkan suasana.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Angin sepoi-sepoi bertiup di antara pepohonan.",
 	"editor.sampleInlineText":
 		"Berikut adalah Inline Callout [!{id}] di dalam sebuah paragraf.",
 	"editor.previewReadOnly": "Pratinjau langsung tidak dapat diedit",

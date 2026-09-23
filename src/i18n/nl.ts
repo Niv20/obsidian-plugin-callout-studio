@@ -145,6 +145,9 @@ export const nl: Record<string, string> = {
 	"settings.headingFoldGroup": "Inklappen",
 	"settings.headingFoldArrow": "Inklapppijl tonen",
 	"settings.styleDemoName": "Voorbeeld",
+	"settings.styleDemoInlineName": "Voorbeeld",
+	"settings.styleDemoInlineText":
+		"Een zacht briesje waait door de bomen. {{callout}} Warm zonlicht valt op een rustig pad en brengt het landschap tot leven.",
 	"settings.previewTitle": "Voorbeeld",
 
 	// Settings — Saved color palettes
@@ -335,9 +338,9 @@ export const nl: Record<string, string> = {
 
 	"editor.untitledCallout": "Naamloze callout",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Een zacht briesje waait door de bomen. Warm zonlicht valt op een rustig pad en brengt het landschap tot leven.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Een zacht briesje waait door de bomen.",
 	"editor.sampleInlineText":
 		"Hier is een Inline Callout [!{id}] binnen een alinea.",
 	"editor.previewReadOnly": "De live-voorvertoning kan niet worden bewerkt",

@@ -146,6 +146,9 @@ export const ko: Record<string, string> = {
 	"settings.headingFoldGroup": "접기",
 	"settings.headingFoldArrow": "접기 화살표 표시",
 	"settings.styleDemoName": "예시",
+	"settings.styleDemoInlineName": "예시",
+	"settings.styleDemoInlineText":
+		"산들바람이 나무 사이로 지나갑니다. {{callout}} 따뜻한 햇살이 고요한 오솔길을 비추며 풍경에 생기를 더합니다.",
 	"settings.previewTitle": "미리 보기",
 
 	// Settings — Saved color palettes
@@ -327,9 +330,9 @@ export const ko: Record<string, string> = {
 		'Obsidian은 공백을 대시로 저장하므로 이 ID는 "{{other}}"와(과) 충돌합니다',
 	"editor.untitledCallout": "제목 없는 Callout",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"산들바람이 나무 사이로 지나갑니다. 따뜻한 햇살이 고요한 오솔길을 비추며 풍경에 생기를 더합니다.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"산들바람이 나무 사이로 지나갑니다.",
 	"editor.sampleInlineText": "다음은 단락 안에 있는 인라인 [!{id}] 필입니다.",
 	"editor.previewReadOnly": "실시간 미리보기는 편집할 수 없습니다",
 

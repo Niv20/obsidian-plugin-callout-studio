@@ -143,6 +143,9 @@ export const th: Record<string, string> = {
 	"settings.headingFoldGroup": "การพับ",
 	"settings.headingFoldArrow": "แสดงลูกศรพับ",
 	"settings.styleDemoName": "ตัวอย่าง",
+	"settings.styleDemoInlineName": "ตัวอย่าง",
+	"settings.styleDemoInlineText":
+		"สายลมอ่อน ๆ พัดผ่านต้นไม้ {{callout}} แสงแดดอบอุ่นส่องลงบนทางเดินอันเงียบสงบและทำให้ทิวทัศน์ดูมีชีวิตชีวา",
 	"settings.previewTitle": "ตัวอย่าง",
 
 	// Settings — Saved color palettes
@@ -321,9 +324,9 @@ export const th: Record<string, string> = {
 		'Obsidian เขียนช่องว่างเป็นขีดกลาง ดังนั้น ID นี้จึงขัดแย้งกับ "{{other}}"',
 	"editor.untitledCallout": "Callout ไม่มีชื่อ",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"สายลมอ่อน ๆ พัดผ่านต้นไม้ แสงแดดอบอุ่นส่องลงบนทางเดินอันเงียบสงบและทำให้ทิวทัศน์ดูมีชีวิตชีวา",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"สายลมอ่อน ๆ พัดผ่านต้นไม้",
 	"editor.sampleInlineText": "นี่คือแคปซูล [!{id}] แบบอินไลน์ภายในย่อหน้า",
 	"editor.previewReadOnly": "ไม่สามารถแก้ไขตัวอย่างสดได้",
 

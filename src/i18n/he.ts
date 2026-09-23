@@ -166,6 +166,9 @@ export const he: Record<string, string> = {
 	"settings.headingFoldGroup": "קיפול",
 	"settings.headingFoldArrow": "הצגת חץ הקיפול",
 	"settings.styleDemoName": "דוגמה",
+	"settings.styleDemoInlineName": "דוגמה",
+	"settings.styleDemoInlineText":
+		"רוח קלה נושבת בין העצים. {{callout}} אור שמש חמים מאיר שביל שקט ומפיח חיים בנוף.",
 	"settings.previewTitle": "תצוגה מקדימה",
 
 	// Settings — Saved color palettes
@@ -351,9 +354,9 @@ export const he: Record<string, string> = {
 		'אובסידיאן ממיר רווחים למקפים, ולכן מזהה זה מתנגש עם "{{other}}"',
 	"editor.untitledCallout": "תיבת־הבלטה ללא שם",
 	"editor.loremIpsum":
-		"לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אלית. סד דו איוסמוד טמפור אינסידידונט אוט לבורה את דולורה מגנה אליקווה.",
+		"רוח קלה נושבת בין העצים. אור שמש חמים מאיר שביל שקט ומפיח חיים בנוף.",
 	"editor.loremIpsumShort":
-		"לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אלית.",
+		"רוח קלה נושבת בין העצים.",
 	"editor.sampleInlineText": "כאן יש תגית [!{id}] מוטבעת בתוך פסקה.",
 	"editor.previewReadOnly": "לא ניתן לערוך את התצוגה המקדימה",
 

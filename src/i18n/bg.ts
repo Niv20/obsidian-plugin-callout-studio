@@ -135,6 +135,9 @@ export const bg: Record<string, string> = {
 	"settings.headingFoldGroup": "Сгъване",
 	"settings.headingFoldArrow": "Показване на стрелка за сгъване",
 	"settings.styleDemoName": "Пример",
+	"settings.styleDemoInlineName": "Пример",
+	"settings.styleDemoInlineText":
+		"Лек вятър полюшва дърветата. {{callout}} Топла слънчева светлина огрява тиха пътека и оживява пейзажа.",
 	"settings.previewTitle": "Преглед",
 	// Settings — Saved color palettes
 	"settings.customPalettes": "Запазени цветови палитри",
@@ -312,9 +315,9 @@ export const bg: Record<string, string> = {
 		"Внимание: темата ви стилизира всеки callout, съвпадащ с {{pattern}}, затова може да промени как изглежда този.",
 	"editor.untitledCallout": "Callout без заглавие",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Лек вятър полюшва дърветата. Топла слънчева светлина огрява тиха пътека и оживява пейзажа.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Лек вятър полюшва дърветата.",
 	"editor.sampleInlineText": "Ето вградена [!{id}] капсула вътре в абзац.",
 	"editor.previewReadOnly": "Прегледът на живо не може да се редактира",
 

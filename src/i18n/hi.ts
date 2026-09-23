@@ -143,6 +143,9 @@ export const hi: Record<string, string> = {
 	"settings.headingFoldGroup": "फ़ोल्ड",
 	"settings.headingFoldArrow": "फ़ोल्ड तीर दिखाएं",
 	"settings.styleDemoName": "उदाहरण",
+	"settings.styleDemoInlineName": "उदाहरण",
+	"settings.styleDemoInlineText":
+		"पेड़ों के बीच से हल्की हवा गुजरती है। {{callout}} धूप की गर्म किरणें शांत पगडंडी पर पड़ती हैं और दृश्य को जीवंत बनाती हैं।",
 	"settings.previewTitle": "पूर्वावलोकन",
 
 	// Settings — Saved color palettes
@@ -327,9 +330,9 @@ export const hi: Record<string, string> = {
 		'Obsidian स्पेस को डैश के रूप में लिखता है, इसलिए यह ID "{{other}}" से टकराती है',
 	"editor.untitledCallout": "बिना शीर्षक Callout",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"पेड़ों के बीच से हल्की हवा गुजरती है। धूप की गर्म किरणें शांत पगडंडी पर पड़ती हैं और दृश्य को जीवंत बनाती हैं।",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"पेड़ों के बीच से हल्की हवा गुजरती है।",
 	"editor.sampleInlineText":
 		"यहाँ एक पैराग्राफ के भीतर एक इनलाइन [!{id}] पिल है।",
 	"editor.previewReadOnly": "लाइव पूर्वावलोकन संपादित नहीं किया जा सकता",

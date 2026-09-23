@@ -146,6 +146,9 @@ export const ja: Record<string, string> = {
 	"settings.headingFoldGroup": "折りたたみ",
 	"settings.headingFoldArrow": "折りたたみ矢印を表示",
 	"settings.styleDemoName": "サンプル",
+	"settings.styleDemoInlineName": "サンプル",
+	"settings.styleDemoInlineText":
+		"木々の間をそよ風が吹き抜けます。{{callout}}暖かな日差しが静かな小道を照らし、景色に彩りを添えます。",
 	"settings.previewTitle": "プレビュー",
 
 	// Settings — Saved color palettes
@@ -328,9 +331,9 @@ export const ja: Record<string, string> = {
 		"Obsidianはスペースをハイフンとして書き込むため、このIDは「{{other}}」と衝突します",
 	"editor.untitledCallout": "タイトルなしCallout",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"木々の間をそよ風が吹き抜けます。暖かな日差しが静かな小道を照らし、景色に彩りを添えます。",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"木々の間をそよ風が吹き抜けます。",
 	"editor.sampleInlineText": "段落内にインラインの [!{id}] ピルがあります。",
 	"editor.previewReadOnly": "ライブプレビューは編集できません",
 

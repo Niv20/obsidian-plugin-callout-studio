@@ -143,6 +143,9 @@ export const ar: Record<string, string> = {
 	"settings.headingFoldGroup": "طي",
 	"settings.headingFoldArrow": "إظهار سهم الطي",
 	"settings.styleDemoName": "مثال",
+	"settings.styleDemoInlineName": "مثال",
+	"settings.styleDemoInlineText":
+		"تداعب نسمة لطيفة أوراق الأشجار. {{callout}} وتغمر أشعة الشمس الدافئة ممراً هادئاً، فتبعث الحياة في المشهد.",
 	"settings.previewTitle": "معاينة",
 
 	// Settings — Saved color palettes
@@ -321,9 +324,9 @@ export const ar: Record<string, string> = {
 		"تنبيه: يقوم القالب الخاص بك بتنسيق كل callout يطابق {{pattern}}، لذا قد يتجاوز شكل هذا الـ callout.",
 	"editor.untitledCallout": "Callout بدون عنوان",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"تداعب نسمة لطيفة أوراق الأشجار. وتغمر أشعة الشمس الدافئة ممراً هادئاً، فتبعث الحياة في المشهد.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"تداعب نسمة لطيفة أوراق الأشجار.",
 	"editor.sampleInlineText": "إليك شارة [!{id}] مضمّنة داخل فقرة.",
 	"editor.previewReadOnly": "لا يمكن تعديل المعاينة المباشرة",
 

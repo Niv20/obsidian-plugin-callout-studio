@@ -145,6 +145,9 @@ export const it: Record<string, string> = {
 	"settings.headingFoldGroup": "Piega",
 	"settings.headingFoldArrow": "Mostra freccia di piega",
 	"settings.styleDemoName": "Esempio",
+	"settings.styleDemoInlineName": "Esempio",
+	"settings.styleDemoInlineText":
+		"Una brezza leggera attraversa gli alberi. {{callout}} La luce calda del sole illumina un sentiero tranquillo e dà vita al paesaggio.",
 	"settings.previewTitle": "Anteprima",
 
 	// Settings — Saved color palettes
@@ -334,9 +337,9 @@ export const it: Record<string, string> = {
 
 	"editor.untitledCallout": "Callout senza titolo",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Una brezza leggera attraversa gli alberi. La luce calda del sole illumina un sentiero tranquillo e dà vita al paesaggio.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Una brezza leggera attraversa gli alberi.",
 	"editor.sampleInlineText":
 		"Ecco una pillola [!{id}] incorporata all'interno di un paragrafo.",
 	"editor.previewReadOnly": "L'anteprima dal vivo non può essere modificata",

@@ -143,6 +143,9 @@ export const cs: Record<string, string> = {
 	"settings.headingFoldGroup": "Sbalení",
 	"settings.headingFoldArrow": "Zobrazit šipku sbalení",
 	"settings.styleDemoName": "Ukázka",
+	"settings.styleDemoInlineName": "Ukázka",
+	"settings.styleDemoInlineText":
+		"Mezi stromy vane jemný vánek. {{callout}} Teplé sluneční světlo zalévá tichou stezku a oživuje krajinu.",
 	"settings.previewTitle": "Náhled",
 
 	// Settings — Saved color palettes
@@ -325,9 +328,9 @@ export const cs: Record<string, string> = {
 		"Upozornění: vaše téma stylizuje každý callout odpovídající {{pattern}}, takže může přepsat vzhled tohoto.",
 	"editor.untitledCallout": "Callout bez názvu",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Mezi stromy vane jemný vánek. Teplé sluneční světlo zalévá tichou stezku a oživuje krajinu.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Mezi stromy vane jemný vánek.",
 	"editor.sampleInlineText":
 		"Zde je vložená pilulka [!{id}] uvnitř odstavce.",
 	"editor.previewReadOnly": "Živý náhled nelze upravovat",

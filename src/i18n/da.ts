@@ -134,6 +134,9 @@ export const da: Record<string, string> = {
 	"settings.headingFoldGroup": "Fold",
 	"settings.headingFoldArrow": "Vis fold-pil",
 	"settings.styleDemoName": "Eksempel",
+	"settings.styleDemoInlineName": "Eksempel",
+	"settings.styleDemoInlineText":
+		"En let brise bevæger sig gennem træerne. {{callout}} Varmt sollys falder over en stille sti og giver landskabet liv.",
 	"settings.previewTitle": "Forhåndsvisning",
 	// Settings — Saved color palettes
 	"settings.customPalettes": "Gemte farvepaletter",
@@ -312,9 +315,9 @@ export const da: Record<string, string> = {
 		"Bemærk: dit tema styler alle callouts, der matcher {{pattern}}, så det kan overskrive, hvordan denne ser ud.",
 	"editor.untitledCallout": "Navnløs Callout",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"En let brise bevæger sig gennem træerne. Varmt sollys falder over en stille sti og giver landskabet liv.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"En let brise bevæger sig gennem træerne.",
 	"editor.sampleInlineText":
 		"Her er en indlejret [!{id}] pille inde i et afsnit.",
 	"editor.previewReadOnly": "Livevisningen kan ikke redigeres",

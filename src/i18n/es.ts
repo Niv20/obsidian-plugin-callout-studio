@@ -144,6 +144,9 @@ export const es: Record<string, string> = {
 	"settings.headingFoldGroup": "Plegar",
 	"settings.headingFoldArrow": "Mostrar flecha de pliegue",
 	"settings.styleDemoName": "Ejemplo",
+	"settings.styleDemoInlineName": "Ejemplo",
+	"settings.styleDemoInlineText":
+		"Una brisa suave recorre los árboles. {{callout}} La luz cálida del sol baña un sendero tranquilo y llena de vida la escena.",
 	"settings.previewTitle": "Vista previa",
 
 	// Settings — Saved color palettes
@@ -331,9 +334,9 @@ export const es: Record<string, string> = {
 		'Obsidian escribe los espacios como guiones, por lo que este ID coincide con "{{other}}"',
 	"editor.untitledCallout": "Callout sin título",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Una brisa suave recorre los árboles. La luz cálida del sol baña un sendero tranquilo y llena de vida la escena.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Una brisa suave recorre los árboles.",
 	"editor.sampleInlineText":
 		"Aquí hay una píldora [!{id}] insertada dentro de un párrafo.",
 	"editor.previewReadOnly": "La vista previa en vivo no se puede editar",

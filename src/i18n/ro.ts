@@ -143,6 +143,9 @@ export const ro: Record<string, string> = {
 	"settings.headingFoldGroup": "Pliere",
 	"settings.headingFoldArrow": "Afișează săgeata de pliere",
 	"settings.styleDemoName": "Exemplu",
+	"settings.styleDemoInlineName": "Exemplu",
+	"settings.styleDemoInlineText":
+		"O adiere ușoară trece printre copaci. {{callout}} Lumina caldă a soarelui scaldă o cărare liniștită și însuflețește peisajul.",
 	"settings.previewTitle": "Previzualizare",
 
 	// Settings — Saved color palettes
@@ -330,9 +333,9 @@ export const ro: Record<string, string> = {
 		"Obsidian scrie spațiile ca liniuțe, așa că acest ID intră în conflict cu „{{other}}”",
 	"editor.untitledCallout": "Callout fără titlu",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"O adiere ușoară trece printre copaci. Lumina caldă a soarelui scaldă o cărare liniștită și însuflețește peisajul.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"O adiere ușoară trece printre copaci.",
 	"editor.sampleInlineText":
 		"Iată o pastilă [!{id}] inline în interiorul unui paragraf.",
 	"editor.previewReadOnly": "Previzualizarea live nu poate fi editată",

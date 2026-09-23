@@ -136,6 +136,9 @@ export const el: Record<string, string> = {
 	"settings.headingFoldGroup": "Σύμπτυξη",
 	"settings.headingFoldArrow": "Εμφάνιση βέλους σύμπτυξης",
 	"settings.styleDemoName": "Παράδειγμα",
+	"settings.styleDemoInlineName": "Παράδειγμα",
+	"settings.styleDemoInlineText":
+		"Ένα απαλό αεράκι περνά ανάμεσα από τα δέντρα. {{callout}} Το ζεστό φως του ήλιου φωτίζει ένα ήσυχο μονοπάτι και ζωντανεύει το τοπίο.",
 	"settings.previewTitle": "Προεπισκόπηση",
 	// Settings — Saved color palettes
 	"settings.customPalettes": "Αποθηκευμένες παλέτες χρωμάτων",
@@ -315,9 +318,9 @@ export const el: Record<string, string> = {
 		"Το Obsidian γράφει τα κενά ως παύλες, επομένως αυτό το ID συγκρούεται με το «{{other}}»",
 	"editor.untitledCallout": "Callout χωρίς τίτλο",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Ένα απαλό αεράκι περνά ανάμεσα από τα δέντρα. Το ζεστό φως του ήλιου φωτίζει ένα ήσυχο μονοπάτι και ζωντανεύει το τοπίο.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Ένα απαλό αεράκι περνά ανάμεσα από τα δέντρα.",
 	"editor.sampleInlineText":
 		"Εδώ υπάρχει ένα ενσωματωμένο [!{id}] χάπι μέσα σε μια παράγραφο.",
 	"editor.previewReadOnly":

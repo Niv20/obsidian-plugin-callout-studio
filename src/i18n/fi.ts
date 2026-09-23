@@ -138,6 +138,9 @@ export const fi: Record<string, string> = {
 	"settings.headingFoldGroup": "Kutistaminen",
 	"settings.headingFoldArrow": "Näytä kutistamisnuoli",
 	"settings.styleDemoName": "Esimerkki",
+	"settings.styleDemoInlineName": "Esimerkki",
+	"settings.styleDemoInlineText":
+		"Kevyt tuuli liikuttaa puiden oksia. {{callout}} Lämmin auringonvalo lankeaa hiljaiselle polulle ja herättää maiseman eloon.",
 	"settings.previewTitle": "Esikatselu",
 	// Settings — Saved color palettes
 	"settings.customPalettes": "Tallennetut väripaletit",
@@ -321,9 +324,9 @@ export const fi: Record<string, string> = {
 
 	"editor.untitledCallout": "Nimetön Callout",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Kevyt tuuli liikuttaa puiden oksia. Lämmin auringonvalo lankeaa hiljaiselle polulle ja herättää maiseman eloon.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Kevyt tuuli liikuttaa puiden oksia.",
 	"editor.sampleInlineText":
 		"Tässä on upotettu [!{id}] -pilleri kappaleen sisällä.",
 	"editor.previewReadOnly": "Live-esikatselua ei voi muokata",

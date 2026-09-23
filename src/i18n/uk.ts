@@ -147,6 +147,9 @@ export const uk: Record<string, string> = {
 	"settings.headingFoldGroup": "Згортання",
 	"settings.headingFoldArrow": "Показати стрілку згортання",
 	"settings.styleDemoName": "Приклад",
+	"settings.styleDemoInlineName": "Приклад",
+	"settings.styleDemoInlineText":
+		"Легкий вітерець колише дерева. {{callout}} Тепле сонячне проміння освітлює тиху стежку й оживляє краєвид.",
 	"settings.previewTitle": "Попередній перегляд",
 
 	// Settings — Saved color palettes
@@ -336,9 +339,9 @@ export const uk: Record<string, string> = {
 
 	"editor.untitledCallout": "Callout без назви",
 	"editor.loremIpsum":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		"Легкий вітерець колише дерева. Тепле сонячне проміння освітлює тиху стежку й оживляє краєвид.",
 	"editor.loremIpsumShort":
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Легкий вітерець колише дерева.",
 	"editor.sampleInlineText":
 		"Ось вбудована капсула [!{id}] всередині абзацу.",
 	"editor.previewReadOnly": "Живий перегляд не можна редагувати",
