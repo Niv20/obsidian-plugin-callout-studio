@@ -18,6 +18,7 @@
  */
 import { Setting } from "obsidian";
 import { t } from "../../i18n";
+import { SelectDropdown } from "../../ui/selectDropdown";
 import type { CalloutRenderRole, CustomCommandFold } from "../../types";
 
 /** Fold options in the order the user is shown them. */
@@ -34,6 +35,7 @@ const FOLD_LABEL_KEY: Record<CustomCommandFold, string> = {
 };
 
 export interface FoldStateRow {
+	destroy(): void;
 	/** Show the row only for the one format that has fold syntax. */
 	sync(role: CalloutRenderRole): void;
 }
@@ -46,18 +48,15 @@ export function buildFoldStateRow(
 	const setting = new Setting(parent)
 		.setName(t("commandBuilder.foldState"))
 		.setClass("cs-command-field")
-		.setDesc(t("commandBuilder.foldStateDesc"))
-		.addDropdown((dd) => {
-			for (const fold of FOLD_ORDER) {
-				dd.addOption(fold, t(FOLD_LABEL_KEY[fold]));
-			}
-			dd.setValue(initial).onChange((raw) =>
-				onPick(raw as CustomCommandFold),
-			);
-		});
+		.setDesc(t("commandBuilder.foldStateDesc"));
+	const dropdown = new SelectDropdown(setting.controlEl, t("commandBuilder.foldState"));
+	for (const fold of FOLD_ORDER) dropdown.addOption(fold, t(FOLD_LABEL_KEY[fold]));
+	dropdown.setValue(initial).onChange((raw) => onPick(raw as CustomCommandFold));
 
 	return {
+		destroy: () => dropdown.destroy(),
 		sync(role) {
+			if (role !== "regular") dropdown.close();
 			setting.settingEl.toggleClass("cs-row-hidden", role !== "regular");
 		},
 	};

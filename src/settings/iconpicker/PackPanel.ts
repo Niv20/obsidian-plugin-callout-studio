@@ -36,6 +36,7 @@ import type { PackDataStore } from "../../icons/PackDataStore";
 import { isAllSources } from "./allSources";
 import { IconGrid } from "./IconGrid";
 import { t } from "../../i18n";
+import { SelectDropdown } from "../../ui/selectDropdown";
 
 /**
  * Raised hand in each skin tone, indexed 0 = default, 1–5 = light → dark.
@@ -76,16 +77,13 @@ export class PackPanel {
 	private category = "";
 	private variants: IconVariantState;
 	private searchInput: HTMLInputElement | null = null;
-	private categorySelect: HTMLSelectElement | null = null;
-	/**
-	 * Every control in the toolbar, so they can be locked as a group while the
-	 * source still needs downloading. Using one control before then would filter
-	 * the grid — which is where the download prompt lives — and replace the
-	 * Download button with cells no artwork exists for yet.
+	private categorySelect: SelectDropdown | null = null;
+	private readonly dropdowns: SelectDropdown[] = [];
+	/** Lock the toolbar until the source is downloaded: filtering sooner would
+	 * replace its Download prompt with cells whose artwork is unavailable.
 	 */
 	private readonly toolbarControls: (
 		| HTMLInputElement
-		| HTMLSelectElement
 		| HTMLButtonElement
 	)[] = [];
 	/** Rebuilt on every variant change — Font Awesome's applies to Brands only. */
@@ -121,6 +119,7 @@ export class PackPanel {
 
 	dispose(): void {
 		this.disposed = true;
+		for (const dropdown of this.dropdowns) dropdown.destroy();
 		this.container.empty();
 	}
 
@@ -158,7 +157,7 @@ export class PackPanel {
 	private buildToolbar(): void {
 		this.searchInput = this.toolbarEl.createEl("input", {
 			type: "text",
-			cls: "icon-picker-search-input",
+			cls: "icon-picker-search-input cs-text-control",
 			placeholder: t(this.pack.searchPlaceholderKey),
 			value: this.query,
 		});
@@ -174,18 +173,12 @@ export class PackPanel {
 		}
 
 		if (this.pack.hasCategories) {
-			this.categorySelect = this.toolbarEl.createEl("select", {
-				cls: "icon-picker-category-select",
-			});
-			// Populated once the index is decoded; the placeholder keeps the
-			// toolbar from reflowing when it arrives.
-			this.categorySelect.createEl("option", {
-				text: t("iconPicker.allCategories"),
-				value: "",
-			});
-			this.toolbarControls.push(this.categorySelect);
-			this.categorySelect.addEventListener("change", () => {
-				this.category = this.categorySelect?.value ?? "";
+			const select = this.categorySelect = new SelectDropdown(this.toolbarEl, t("iconPicker.allCategories"))
+				.addOption("", t("iconPicker.allCategories"));
+			select.el.addClass("icon-picker-category-select");
+			this.dropdowns.push(select);
+			select.onChange((value) => {
+				this.category = value;
 				this.host.saveCategory(this.pack.id, this.category);
 				this.applyFilter();
 			});
@@ -193,31 +186,19 @@ export class PackPanel {
 	}
 
 	private buildVariantSelect(
-		spec: Extract<
-			NonNullable<IconPack["variants"]>[number],
-			{ kind: "select" }
-		>,
+		spec: Extract<NonNullable<IconPack["variants"]>[number], { kind: "select" }>,
 	): void {
-		const select = this.toolbarEl.createEl("select", {
-			cls: `icon-picker-variant-select icon-picker-${spec.key}-select`,
-			attr: { "aria-label": t(spec.labelKey) },
-		});
+		const select = new SelectDropdown(this.toolbarEl, t(spec.labelKey));
+		select.el.addClass("icon-picker-variant-select", `icon-picker-${spec.key}-select`);
+		select.setOptions(spec.options.map((option, i) => ({
+			value: String(option),
+			label: spec.optionLabelKeys?.[i] ? t(spec.optionLabelKeys[i]) : String(option),
+		})));
 		const current = this.variants[spec.key];
-		spec.options.forEach((option, i) => {
-			const labelKey = spec.optionLabelKeys?.[i];
-			const opt = select.createEl("option", {
-				text: labelKey ? t(labelKey) : String(option),
-				value: String(option),
-			});
-			if (String(option) === String(current)) opt.selected = true;
-		});
-		this.toolbarControls.push(select);
-		select.addEventListener("change", () => {
-			const raw = select.value;
-			this.variants = {
-				...this.variants,
-				[spec.key]: spec.key === "weight" ? parseInt(raw, 10) : raw,
-			};
+		if (spec.options.some((option) => String(option) === String(current))) select.setValue(String(current));
+		this.dropdowns.push(select);
+		select.onChange((raw) => {
+			this.variants = { ...this.variants, [spec.key]: spec.key === "weight" ? parseInt(raw, 10) : raw };
 			this.host.saveVariants(this.pack.id, this.variants);
 			void this.onVariantChanged();
 		});
@@ -264,6 +245,7 @@ export class PackPanel {
 	 */
 	private setToolbarEnabled(enabled: boolean): void {
 		for (const control of this.toolbarControls) control.disabled = !enabled;
+		for (const dropdown of this.dropdowns) dropdown.setDisabled(!enabled);
 		this.toolbarEl.toggleClass("is-disabled", !enabled);
 	}
 
@@ -353,26 +335,14 @@ export class PackPanel {
 	private populateCategories(): void {
 		const select = this.categorySelect;
 		const categories = this.index?.categories ?? [];
-		if (!select || categories.length === 0) return;
-		select.empty();
-		select.createEl("option", {
-			text: t("iconPicker.allCategories"),
-			value: "",
-		});
-		for (const category of categories) {
-			select.createEl("option", {
-				text: t(`iconPicker.cat.${category}`),
-				value: category,
-			});
-		}
-		// A remembered category that no longer exists falls back to "all"
-		// rather than silently filtering everything out.
-		if (this.category && categories.includes(this.category)) {
-			select.value = this.category;
-		} else {
-			this.category = "";
-			select.value = "";
-		}
+		if (!select) return;
+		select.setOptions([
+			{ value: "", label: t("iconPicker.allCategories") },
+			...categories.map((value) => ({ value, label: t(`iconPicker.cat.${value}`) })),
+		]);
+		// A vanished remembered category falls back to all, even for an empty index.
+		if (!categories.includes(this.category)) this.category = "";
+		select.setValue(this.category);
 	}
 
 	private applyFilter(): void {

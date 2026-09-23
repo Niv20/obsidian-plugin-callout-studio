@@ -43,7 +43,9 @@ import {
 import { QuickInsertPreviews } from "./quickInsertPreview";
 import {
 	buildQuickInsertToolbar,
+	quickInsertSearchKey,
 	syncQuickInsertThemeOption,
+	type QuickInsertToolbar,
 } from "./quickInsertToolbar";
 import { renderQuickInsertRow } from "./quickInsertRow";
 import type { SettingsTabPlugin } from "./sections/types";
@@ -64,6 +66,7 @@ export class QuickInsertModal extends Modal {
 	private readonly captured: TargetEditorResult;
 
 	private listEl: HTMLElement | null = null;
+	private toolbar?: QuickInsertToolbar;
 	private searchEl: HTMLInputElement | null = null;
 	/** Rows currently on screen, in view order — what the arrow keys walk. */
 	private rows: { def: CalloutDefinition; el: HTMLElement }[] = [];
@@ -125,6 +128,7 @@ export class QuickInsertModal extends Modal {
 		this.plugin.app.workspace.offref(this.cssChangeRef);
 		this.disposeIconListener?.();
 		this.disposeIconListener = null;
+		this.toolbar?.destroy();
 		this.previews?.destroy();
 		this.previews = null;
 		this.contentEl.empty();
@@ -134,7 +138,8 @@ export class QuickInsertModal extends Modal {
 
 	// ── Toolbar ─────────────────────────────────────────────────────────
 	private buildToolbar(parent: HTMLElement): void {
-		this.searchEl = buildQuickInsertToolbar(parent, {
+		this.toolbar?.destroy();
+		this.toolbar = buildQuickInsertToolbar(parent, {
 			filter: this.filter,
 			themeLabel:
 				activeThemeName(this.plugin.app) ?? t("quickInsert.sourceTheme"),
@@ -150,22 +155,14 @@ export class QuickInsertModal extends Modal {
 			},
 			onKey: (ev) => this.onSearchKey(ev),
 		});
+		this.searchEl = this.toolbar.search;
 	}
 
 	private onSearchKey(ev: KeyboardEvent): void {
-		if (ev.key === "ArrowDown") {
-			ev.preventDefault();
-			this.setActive(Math.min(this.activeIndex + 1, this.rows.length - 1));
-		} else if (ev.key === "ArrowUp") {
-			ev.preventDefault();
-			this.setActive(Math.max(this.activeIndex - 1, 0));
-		} else if (ev.key === "Enter") {
-			ev.preventDefault();
-			// With nothing arrowed to, Enter takes the top row — the one the
-			// query is most plausibly about.
-			const row = this.rows[this.activeIndex >= 0 ? this.activeIndex : 0];
-			if (row) this.insert(row.def);
-		}
+		quickInsertSearchKey(ev,
+			(delta) => this.setActive(Math.max(0, Math.min(this.activeIndex + delta, this.rows.length - 1))),
+			() => { const row = this.rows[Math.max(0, this.activeIndex)]; if (row) this.insert(row.def); },
+		);
 	}
 
 	private setActive(index: number, pointer = false): void {
@@ -208,7 +205,7 @@ export class QuickInsertModal extends Modal {
 		const listEl = this.listEl;
 		if (!listEl) return;
 		const filter = syncQuickInsertThemeOption(
-			this.contentEl,
+			this.toolbar?.filter,
 			activeThemeName(this.plugin.app) ?? t("quickInsert.sourceTheme"),
 			usable.some((def) => this.plugin.registry.themeOwns(def)),
 			this.filter,

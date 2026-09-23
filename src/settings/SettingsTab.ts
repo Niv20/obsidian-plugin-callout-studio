@@ -11,6 +11,7 @@
  */
 import { PluginSettingTab } from "obsidian";
 import type { App } from "obsidian";
+import { registerMenuScopeHost } from "../ui/menuEscape";
 import { CalloutEditor } from "./CalloutEditor";
 import { openCalloutEditorFor } from "./openCalloutEditor";
 import { renderHotkeySection } from "./sections/HotkeySection";
@@ -105,6 +106,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		this.runSectionDisposers();
 		containerEl.empty();
 		containerEl.addClass("callout-studio-settings");
+		this.sectionDisposers.push(registerMenuScopeHost(containerEl, this.app));
 
 		this.unsubscribe ??= subscribeSettingsTab(
 			this.app,

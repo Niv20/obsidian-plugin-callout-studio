@@ -3,14 +3,11 @@
  *
  * Shared picker. `listboxPopupDom.ts` owns markup; `renderRow` supplies content.
  *
- * Two rules hold the whole design up. **The query is separate state from
- * `input.value`**: opening does not treat the committed label as a search for
- * itself — which would list exactly one row — it starts empty and selects the
- * text so the first keystroke replaces it. And **blur never commits**: leaving
- * with half a word typed reverts, because `fallbackCalloutId` is picked through
- * here and is persisted *and synced to every device*, so a picker that guessed
- * "probably the first match" would write a value nobody chose. A click and
- * Enter are the only two commits there are.
+ * **The query is separate from the committed label**: opening starts empty
+ * and selects the text so the first keystroke replaces it.
+ * **Blur never commits**: leaving
+ * with half a word typed reverts: guessing a choice would persist and sync
+ * a value nobody chose. Only explicit click, Enter, or select-only Space commits.
  */
 import {
 	buildComboboxSkeleton,
@@ -20,6 +17,7 @@ import {
 	renderComboboxRows,
 } from "./listboxPopupDom";
 import { wirePopupEvents } from "./listboxPopupEvents";
+import { captureMenuEscape } from "./menuEscape";
 import type { ListboxPopupOptions } from "./listboxPopupTypes";
 import { clearListboxMenuHeightCap, syncListboxMenuHeightCap } from "./listboxPopupLayout";
 
@@ -54,7 +52,9 @@ export class ListboxPopup<T> {
 	private createRowIndex: number | null = null;
 	private open = false;
 	private disabled = false;
+	private destroyed = false;
 	private removeDocumentClick?: () => void;
+	private removeMenuScope?: () => void;
 	private removeWindowResize?: () => void;
 	private readonly searchable: boolean;
 
@@ -102,6 +102,7 @@ export class ListboxPopup<T> {
 		this.missingSelectionLabel = missingLabel;
 		this.inputEl.value = match ? this.options.labelOf(match) : missingLabel;
 		this.el.toggleClass("is-empty", !match && !missingLabel);
+		if (this.open) this.rebuild("");
 	}
 
 	/** The committed item, or `undefined`. */
@@ -109,11 +110,8 @@ export class ListboxPopup<T> {
 		return this.selected;
 	}
 
-	private groupOf(item: T): { key: string; label: string } {
-		return this.options.groupOf?.(item) ?? { key: "", label: "" };
-	}
-
 	setDisabled(disabled: boolean): void {
+		disabled ||= this.destroyed;
 		this.disabled = disabled;
 		this.inputEl.disabled = disabled;
 		this.el.toggleClass("is-disabled", disabled);
@@ -122,11 +120,10 @@ export class ListboxPopup<T> {
 
 	/** Take the document listener back. **Every caller must call this.** */
 	destroy(): void {
+		this.destroyed = true;
+		this.setDisabled(true);
 		this.removeDocumentClick?.();
 		this.removeDocumentClick = undefined;
-		this.removeWindowResize?.();
-		this.removeWindowResize = undefined;
-		clearListboxMenuHeightCap(this.menuEl);
 	}
 
 	/* ---- opening and closing ---- */
@@ -137,7 +134,7 @@ export class ListboxPopup<T> {
 		this.menuEl.removeClass("cs-combobox-menu-hidden");
 		this.controlEl.addClass("is-open");
 		this.inputEl.setAttribute("aria-expanded", "true");
-		this.applyMenuHeightCap();
+		this.removeMenuScope = captureMenuEscape(this.el, () => this.open, () => this.close());
 		// The empty query, and the select, are the first rule of the header.
 		this.rebuild("");
 		if (this.searchable) this.inputEl.select();
@@ -156,6 +153,8 @@ export class ListboxPopup<T> {
 	close(): void {
 		if (!this.open) return;
 		this.open = false;
+		this.removeMenuScope?.();
+		this.removeMenuScope = undefined;
 		this.menuEl.addClass("cs-combobox-menu-hidden");
 		this.controlEl.removeClass("is-open");
 		this.inputEl.setAttribute("aria-expanded", "false");
@@ -172,7 +171,7 @@ export class ListboxPopup<T> {
 	/* ---- the list ---- */
 
 	/** Redraw for `query` — the input's text, unless `openMenu` forces `""`. */
-	private rebuild(query = this.inputEl.value): void {
+	private rebuild(query = this.searchable ? this.inputEl.value : ""): void {
 		this.activeIndex = -1;
 		this.items = this.options.itemsFor(query);
 
@@ -188,7 +187,7 @@ export class ListboxPopup<T> {
 			keyOf: (item) => this.options.keyOf(item),
 			renderRow: (rowEl, item, q) => this.options.renderRow(rowEl, item, q),
 			emptyText: (q) => this.options.emptyText(q),
-			groupOf: this.options.groupOf && ((i) => this.groupOf(i)),
+			groupOf: this.options.groupOf && ((item) => this.options.groupOf!(item)),
 			onPointerRow: (i) => this.restorePointerHighlight(i),
 			onLeaveRow: () => this.clearPointerHighlight(),
 			onClickRow: (i) => this.commit(i),
@@ -226,6 +225,7 @@ export class ListboxPopup<T> {
 		);
 		const idleMissing = query === "" && this.missingSelectionLabel !== "";
 		const active = at >= 0 ? at : idleMissing ? -1 : this.items.length > 0 ? 0 : -1;
+		this.applyMenuHeightCap();
 		this.setActive(active, { preview: false });
 	}
 
@@ -256,6 +256,7 @@ export class ListboxPopup<T> {
 	}
 
 	private commit(index: number): void {
+		if (!this.open || this.disabled) return;
 		if (this.createRowIndex !== null && index === this.createRowIndex) {
 			const query = this.inputEl.value.trim();
 			// Close first: whatever creates the item is going to take focus, and
@@ -288,12 +289,10 @@ export class ListboxPopup<T> {
 			searchable: () => this.searchable,
 			refilter: () => this.rebuild(),
 			clearPointerHighlight: () => this.clearPointerHighlight(),
+			activeIndex: () => this.activeIndex,
+			labels: () => this.items.map((item) => this.options.labelOf(item)),
 			moveActive: (delta) =>
-				this.setActive(
-					delta > 0
-						? Math.min(this.activeIndex + delta, this.rowEls.length - 1)
-						: Math.max(this.activeIndex + delta, 0),
-				),
+				this.setActive(Math.max(0, Math.min(this.activeIndex + delta, this.rowEls.length - 1))),
 			commitActive: () => this.commit(this.activeIndex),
 		});
 	}

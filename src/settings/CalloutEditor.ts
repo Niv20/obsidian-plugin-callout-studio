@@ -48,6 +48,7 @@ import {
 import { t } from "../i18n";
 import { sanitizeCalloutIdInput } from "../utils/calloutId";
 import { TagInput } from "../ui/TagInput";
+import { appendDropdownCaret } from "../ui/dropdownControl";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
 import { resolveCurrentModeColors } from "../ui/ColorCircles";
 import { PaletteEditorModal } from "./PaletteEditorModal";
@@ -429,9 +430,8 @@ export class CalloutEditor extends Modal {
 			)
 			.addText((text) => {
 				this.nameTextInput = text;
-				text.setPlaceholder(
-					t("editor.displayNamePlaceholder"),
-				).setValue(this.displayName);
+				text.inputEl.addClass("cs-text-control");
+				text.setPlaceholder(t("editor.displayNamePlaceholder")).setValue(this.displayName);
 				if (this.isBuiltIn) {
 					text.setDisabled(true);
 				} else {
@@ -1261,16 +1261,13 @@ export class CalloutEditor extends Modal {
 			cls: "cs-palette-dropdown cs-fold-dropdown",
 		});
 		const foldTrigger = foldDropdown.createEl("button", {
-			cls: "cs-palette-trigger cs-fold-trigger",
+			cls: "cs-palette-trigger cs-fold-trigger cs-dropdown-control",
 			attr: { type: "button", "aria-haspopup": "listbox" },
 		});
 		const foldTriggerLabel = foldTrigger.createSpan({
 			cls: "cs-palette-trigger-label",
 		});
-		foldTrigger.createSpan({
-			cls: "cs-palette-trigger-caret",
-			text: "▾",
-		});
+		appendDropdownCaret(foldTrigger);
 		const foldMenu = foldDropdown.createDiv({
 			cls: "cs-palette-menu cs-palette-menu-up cs-fold-menu cs-scrollable-dropdown-menu cs-palette-menu-hidden",
 			attr: { role: "listbox", tabindex: "-1" },

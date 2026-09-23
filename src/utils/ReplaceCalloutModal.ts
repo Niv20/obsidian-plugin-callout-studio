@@ -102,7 +102,7 @@ export class ReplaceCalloutModal extends Modal {
 		// search in the plugin.
 		const search = contentEl.createEl("input", {
 			type: "text",
-			cls: "callout-studio-replace-search",
+			cls: "callout-studio-replace-search cs-text-control",
 			placeholder: t("replaceModal.searchPlaceholder"),
 		});
 		search.addEventListener("input", () => this.renderList(search.value));

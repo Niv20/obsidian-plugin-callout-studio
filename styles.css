@@ -75,7 +75,8 @@
    than to no hover at all. */
 .callout-studio-settings,
 .cs-modal,
-.callout-studio-editor {
+.callout-studio-editor,
+.cs-occurrences-view {
 	--cs-btn-face: var(--interactive-normal);
 	--cs-btn-face-hover: color-mix(
 		in srgb,
@@ -1332,56 +1333,12 @@ body:not(.is-phone)
 	}
 }
 
-/* The display name field. Two classes are excluded because they are also text
-   inputs inside a control column. `.cs-tag-input-field` is the flexible half of
-   the IDs row, and the width belongs to the wrapper around it, not to the
-   field. `.cs-combobox-input` is the text half of the Color row's palette
-   picker, which paints itself down to nothing so its wrapper can be the visible
-   box — and this rule was handing it back a border, a form-field background,
-   padding and a second focus ring, so the Color row drew a white box inside the
-   picker and lit two nested rings when the user typed in it. The combobox is
-   (0,2,0) and this rule is (0,4,1), so it could never have won on its own; the
-   exclusion is the only thing that settles it. The same picker in the settings
-   tab was always correct, which is why the two looked different side by side.
-
-   A `:not()` selector list, not two chained `:not()`s: a list takes the
-   specificity of its most specific argument, so this stays 4 classes + 1 type
-   and the count below still holds.
-
-   Those 4 classes + 1 type outrank Obsidian's phone rule above (3 classes + 1
-   type), and on phone the variable resolves to 100% anyway, so the two agree.
-
-   The rest of the box model (border, padding, height) and the focus/disabled
-   states are copied from `.cs-tag-input-field` on purpose: this field sits
-   directly above the Callout IDs field, and the two looked like different
-   controls when one used Obsidian's bare input style and the other the
-   deliberately-styled tag field. */
+/* Width belongs to the display-name field; the IDs wrapper and combobox
+   manage their own width. Shared .cs-text-control rules paint the field. */
 .callout-studio-editor
 	.setting-item-control
 	input[type="text"]:not(.cs-tag-input-field, .cs-combobox-input) {
 	width: var(--cs-editor-control-width);
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-s);
-	background: var(--background-modifier-form-field);
-	padding: 6px 10px;
-	min-height: 36px;
-	box-sizing: border-box;
-}
-
-/* The same focus treatment Obsidian gives a bare text field — an emphasized
-   grey border plus the 2px ring — rather than the accent colour this used to
-   paint. Written out instead of deleted: the base rule above sets the `border`
-   shorthand at (0,4,1), which outranks Obsidian's own (0,2,1) `input:focus`,
-   so dropping this block would leave the border at its resting grey and change
-   only the ring. Naming both properties here is what keeps the field identical
-   to the palette editor's Name box, which has no override and is the reference
-   every input in the plugin is matched to. */
-.callout-studio-editor
-	.setting-item-control
-	input[type="text"]:not(.cs-tag-input-field, .cs-combobox-input):focus {
-	border-color: var(--background-modifier-border-focus);
-	box-shadow: 0 0 0 var(--input-border-width-focus)
-		var(--background-modifier-border-focus);
 }
 
 /* A greyed-out control still has to read as a control, which means it has to
@@ -2808,24 +2765,7 @@ button.callout-studio-icon-picker-loading {
 
 .cs-palette-trigger {
 	width: 100%;
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 6px 8px;
-	border-radius: var(--radius-s);
-	border: 1px solid var(--background-modifier-border);
-	background-color: var(--cs-surface-raised, var(--background-secondary));
-	color: var(--text-normal);
-	font-size: var(--font-ui-small);
-	cursor: pointer;
-	text-align: start;
 }
-
-.cs-palette-trigger:hover,
-.cs-palette-trigger.is-open {
-	background-color: var(--background-modifier-hover);
-}
-
 
 /* `min-width: 0` is not redundant next to `flex: 1`: the flex BASIS is 0 but
    `min-width` still defaults to `auto`, which floors the label at its content
@@ -2837,22 +2777,6 @@ button.callout-studio-icon-picker-loading {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-}
-
-/* Sits at the far end in both directions — margin-inline-start, not
-   margin-left, so RTL puts it on the left. Same treatment as the icon picker's
-   source button, which this control is deliberately a twin of. */
-.cs-palette-trigger-caret {
-	display: flex;
-	flex-shrink: 0;
-	align-items: center;
-	margin-inline-start: auto;
-	color: var(--text-muted);
-}
-
-.cs-palette-trigger-caret .svg-icon {
-	width: var(--icon-xs);
-	height: var(--icon-xs);
 }
 
 /* Opens at the trigger's own width, every time. Pinning BOTH inset-inline edges
@@ -2917,10 +2841,6 @@ button.callout-studio-icon-picker-loading {
 	cursor: pointer;
 	color: var(--text-normal);
 	font-size: var(--font-ui-small);
-}
-
-.cs-palette-combobox .cs-combobox-control {
-	gap: 14px;
 }
 
 /* The fold menu has no arrow navigation; combobox rows take their pointer
@@ -3259,41 +3179,115 @@ button.callout-studio-icon-picker-loading {
 	min-width: 0;
 }
 
-/* Match the native text fields in the callout editor.
+/* Selection controls and standalone text fields share one face and geometry.
+   Explicit opt-in leaves action buttons and the combobox's inner input alone.
+   Repeated classes beat Obsidian's native input/select/button chrome. */
+.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control,
+.cs-text-control.cs-text-control.cs-text-control.cs-text-control {
+	height: auto;
+	min-height: max(36px, var(--input-height));
+	box-sizing: border-box;
+	padding: 6px 10px;
+	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
+	border-radius: var(--radius-s);
+	corner-shape: round;
+	background: var(--cs-btn-face, var(--interactive-normal));
+	color: var(--text-normal);
+	box-shadow: none;
+	font-family: inherit;
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-normal);
+	line-height: var(--line-height-tight);
+	text-align: start;
+}
 
-   The display-name field is `6px 10px`, `--radius-s`, `1px` border and `36px`
-   min-height in this plugin's own theme rules. The combobox needs the same model
-   so it reads like a sibling in callout rows and settings tabs.
-
-   One box, no field inside it: the input below is painted down to nothing so
-   the text sits straight on this background, and the focus ring is drawn here
-   rather than around the input. */
-.cs-combobox-control {
+.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	min-height: 36px;
-	box-sizing: border-box;
-	padding: 6px 10px;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-s);
-	background-color: var(--background-modifier-form-field);
-	color: var(--text-normal);
-	font-size: var(--font-ui-small);
-	/* A button, not a text field — the whole thing opens the list. */
 	cursor: pointer;
 }
 
-.cs-combobox-control:hover,
-.cs-combobox-control.is-open {
-	background-color: var(--background-modifier-form-field-hover);
-	border-color: var(--background-modifier-border-hover);
+.cs-text-control.cs-text-control.cs-text-control.cs-text-control {
+	cursor: text;
 }
 
-.cs-combobox-control:focus-within {
+@media (hover: hover) {
+	.cs-dropdown-control.cs-dropdown-control:not(:disabled):not(:has(:disabled)):hover,
+	.cs-text-control.cs-text-control:not(:disabled):hover {
+		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
+	}
+}
+
+/* Keep the same fill while a menu is open or the user is editing a field. */
+.cs-dropdown-control.cs-dropdown-control.is-open,
+.cs-dropdown-control.cs-dropdown-control.mobile-tap:not(:disabled),
+.cs-dropdown-control.cs-dropdown-control:not(:disabled):not(:has(:disabled)):focus-within,
+.cs-text-control.cs-text-control:not(:disabled):focus,
+.cs-text-control.cs-text-control:not(:disabled):active {
+	background-color: var(--cs-btn-face-hover, var(--interactive-hover));
+}
+
+/* Validation owns the red border/ring even while an invalid field is focused. */
+.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control:focus-within,
+.cs-text-control.cs-text-control.cs-text-control.cs-text-control:not(:disabled):not(.cs-input-invalid):focus {
 	border-color: var(--background-modifier-border-focus);
 	box-shadow: 0 0 0 var(--input-border-width-focus)
 		var(--background-modifier-border-focus);
+	outline: none;
+}
+
+.cs-dropdown-control.cs-dropdown-control:disabled,
+.cs-text-control.cs-text-control.cs-text-control.cs-text-control:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.cs-text-control.cs-text-control.cs-text-control.cs-text-control::placeholder {
+	color: var(--text-faint);
+}
+
+/* Plain choices share the listbox popup. A hidden stack gives the trigger the
+   width of its longest translated option without giving the input a fixed size. */
+.cs-select-dropdown.cs-combobox {
+	display: inline-grid;
+	flex: 0 1 auto;
+	vertical-align: middle;
+	min-inline-size: 0;
+	max-inline-size: 100%;
+}
+
+.cs-dropdown-width-sizer {
+	display: grid;
+	block-size: 0;
+	overflow: hidden;
+	visibility: hidden;
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-normal);
+}
+
+.cs-dropdown-width-sizer > span {
+	grid-area: 1 / 1;
+	padding-inline: 11px calc(19px + var(--icon-xs));
+	white-space: nowrap;
+}
+
+.cs-select-dropdown .cs-combobox-lead {
+	display: none;
+}
+
+.cs-select-dropdown .cs-combobox-input {
+	width: 0;
+	text-overflow: ellipsis;
+}
+
+.setting-item-control > .cs-select-dropdown {
+	width: 100%;
+}
+
+/* The combobox's inner input has no separate face or ring. */
+.cs-combobox-control {
+	min-width: 0;
 }
 
 /* Sized like `.callout-studio-suggestion-icon` so the chosen item beside the
@@ -3351,18 +3345,8 @@ button.callout-studio-icon-picker-loading {
 	cursor: inherit;
 }
 
-/* Obsidian's `input:focus` / `:focus-visible` / `:hover` are (0,2,1) — a border
-   colour and the focus ring. Three classes (0,3,0) outrank them, which is what
-   keeps the ring on the control instead of around the text.
-
-   Outranking *Obsidian* is not the whole test, and assuming it was is what let
-   the Color row break. This plugin's own editor-scoped rule
-   (`.callout-studio-editor .setting-item-control input[type="text"]…:focus`) is
-   (0,5,1) and beats this, so wherever a combobox is mounted inside the callout
-   editor these declarations lost and the input drew its own box and ring inside
-   the control. That rule now excludes `.cs-combobox-input` by name; if another
-   broadly-scoped `input[type="text"]` rule is ever added, it has to do the
-   same. */
+/* The wrapper paints the hover/focus state; its inner input stays transparent
+   and never opts into .cs-text-control or adds a second focus ring. */
 .cs-combobox-control input[type="text"].cs-combobox-input:hover,
 .cs-combobox-control input[type="text"].cs-combobox-input:active,
 .cs-combobox-control input[type="text"].cs-combobox-input:focus,
@@ -3384,7 +3368,7 @@ button.callout-studio-icon-picker-loading {
 }
 
 /* margin-inline-start, not margin-left: RTL puts the caret on the left. */
-.cs-combobox-caret {
+.cs-dropdown-caret {
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
@@ -3393,7 +3377,7 @@ button.callout-studio-icon-picker-loading {
 	pointer-events: none;
 }
 
-.cs-combobox-caret .svg-icon {
+.cs-dropdown-caret .svg-icon {
 	width: var(--icon-xs);
 	height: var(--icon-xs);
 }
@@ -3421,13 +3405,24 @@ button.callout-studio-icon-picker-loading {
 
 /* Every custom dropdown uses one bounded scroll surface. The fallback is the
    normal desktop limit; long menus lower the custom property live when the
-   viewport or the nearest modal/settings scroll container leaves less room. */
+   viewport or a clipping ancestor leaves less room above or below the control. */
 .cs-scrollable-dropdown-menu {
 	box-sizing: border-box;
 	max-height: var(--cs-combobox-menu-max-height, 320px);
+	transform: translateX(var(--cs-dropdown-menu-offset-x, 0px));
 	overflow-x: hidden;
 	overflow-y: auto;
 	overscroll-behavior: contain;
+}
+
+/* The source picker declares its own width later in this stylesheet. */
+.cs-scrollable-dropdown-menu.cs-scrollable-dropdown-menu {
+	max-width: min(100%, var(--cs-dropdown-menu-max-width, 100%));
+}
+
+.cs-scrollable-dropdown-menu.cs-dropdown-menu-above {
+	top: auto;
+	bottom: calc(100% + 4px);
 }
 
 .cs-combobox-menu-hidden {
@@ -3435,9 +3430,18 @@ button.callout-studio-icon-picker-loading {
 }
 
 /* Same treatment as `.cs-palette-menu-group-label`, which this replaced. */
+.cs-combobox-group {
+	position: relative;
+}
+
 .cs-combobox-group-label {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	background: var(--cs-surface, var(--background-primary));
 	padding: 4px 12px;
 	font-size: var(--font-ui-smaller);
+	line-height: var(--line-height-normal);
 	color: var(--text-faint);
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
@@ -3446,10 +3450,16 @@ button.callout-studio-icon-picker-loading {
 
 /* Separates each later group from the one above. Skipped on the first, whose
    top edge is the menu's own. */
-.cs-combobox-group-label:not(:first-child) {
+.cs-combobox-group + .cs-combobox-group {
 	margin-top: 6px;
 	border-top: 1px solid var(--background-modifier-border);
-	padding-top: 8px;
+}
+
+/* Start the scrollport flush with the heading so scrolled rows cannot show in
+   a strip above it. Arrow-key scrolling also reserves the pinned heading. */
+.cs-combobox-menu:has(.cs-combobox-group) {
+	padding-block-start: 0;
+	scroll-padding-block-start: calc(var(--font-ui-smaller) * var(--line-height-normal) + 8px);
 }
 
 .cs-combobox-option {
@@ -3468,7 +3478,9 @@ button.callout-studio-icon-picker-loading {
 	background-color: var(--background-secondary-alt);
 }
 
-.cs-language-option-label {
+.cs-language-option-label,
+.cs-dropdown-option-label {
+	display: block;
 	padding: 6px 12px;
 	overflow: hidden;
 	color: var(--text-normal);
@@ -3513,26 +3525,6 @@ button.callout-studio-icon-picker-loading {
 	flex-basis: auto;
 	inline-size: 100%;
 	max-inline-size: 100%;
-}
-
-.cs-fallback-setting .cs-combobox-control,
-.cs-language-setting .cs-combobox-control {
-	background-color: var(--cs-btn-face, var(--interactive-normal));
-	border-color: var(--cs-btn-border, var(--background-modifier-border));
-	color: var(--text-normal);
-	box-shadow: none;
-}
-
-@media (hover: hover) {
-	.cs-fallback-setting .cs-combobox-control:hover,
-	.cs-fallback-setting .cs-combobox-control.is-open,
-	.cs-language-setting .cs-combobox-control:hover,
-	.cs-language-setting .cs-combobox-control.is-open {
-		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
-		border-color: var(--cs-btn-border, var(--background-modifier-border));
-		color: var(--text-normal);
-		box-shadow: none;
-	}
 }
 
 .cs-combobox-footer-row {
@@ -3596,7 +3588,7 @@ button.callout-studio-icon-picker-loading {
 	max-width: 100%;
 }
 
-.cs-command-field .setting-item-control > :is(.cs-combobox, select.dropdown) {
+.cs-command-field .setting-item-control > .cs-combobox {
 	width: 100%;
 	min-width: 0;
 }
@@ -3679,8 +3671,7 @@ button.callout-studio-icon-picker-loading {
 	cursor: pointer;
 }
 
-.icon-picker-source-emblem,
-.icon-picker-source-chevron {
+.icon-picker-source-emblem {
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
@@ -3690,17 +3681,6 @@ button.callout-studio-icon-picker-loading {
 .icon-picker-source-emblem .svg-icon {
 	width: var(--icon-s);
 	height: var(--icon-s);
-}
-
-/* The chevron sits at the far end in both directions — margin-inline-start,
-   not margin-left, so RTL puts it on the left. */
-.icon-picker-source-chevron {
-	margin-inline-start: auto;
-}
-
-.icon-picker-source-chevron .svg-icon {
-	width: var(--icon-xs);
-	height: var(--icon-xs);
 }
 
 .icon-picker-source-current {
@@ -3937,14 +3917,13 @@ button.callout-studio-icon-picker-loading {
 	flex-wrap: wrap;
 }
 
-.icon-picker-toolbar input {
+.icon-picker-toolbar .icon-picker-search-input {
 	flex: 1;
 	min-width: 150px;
 	padding: 6px 10px;
 }
 
-.icon-picker-toolbar select {
-	padding: 6px 8px;
+.icon-picker-toolbar .cs-select-dropdown {
 	flex-shrink: 0;
 }
 
@@ -3954,14 +3933,14 @@ button.callout-studio-icon-picker-loading {
 }
 
 .icon-picker-toolbar.is-disabled input,
-.icon-picker-toolbar.is-disabled select,
+.icon-picker-toolbar.is-disabled .cs-dropdown-control,
 .icon-picker-toolbar.is-disabled button {
 	cursor: not-allowed;
 }
 
 /* On narrow screens, search takes full width and selects wrap below */
 @media (max-width: 600px) {
-	.icon-picker-toolbar input {
+	.icon-picker-toolbar .icon-picker-search-input {
 		flex-basis: 100%;
 		min-width: 100%;
 	}
@@ -4322,50 +4301,6 @@ button.callout-studio-icon-picker-loading {
 	outline-offset: -2px;
 }
 
-/* The toolbar's search box and dropdowns deliberately carry NO rule that
-   changes what focus looks like. Obsidian already focuses both the way the
-   rest of the plugin now does — a text field gets its 1px border in
-   `--background-modifier-border-focus` plus the 2px ring, a select gets a
-   flat 3px ring in the same colour, so the two read as the same weight of
-   grey edge. The accent outline that used to sit here was the one thing
-   making this toolbar disagree with the palette editor's Name box, which is
-   the field every input is matched to.
-
-   The search box does now carry a *pointer* rule, immediately below — see
-   there for why that is a narrower claim than "no rule at all" and does not
-   contradict this paragraph. The dropdowns are untouched by it: nothing here
-   changes how a `<select>` behaves. */
-
-/* Freeze the search box the same way the palette editor's Name field is
-   frozen (see `.callout-studio-palette-editor …input[type="text"]:not(…)` in
-   the Tag Input section below) and for the same reason: it is otherwise a
-   bare `input[type="text"]`, so Obsidian's own `input[type='text']:hover` —
-   (0,2,1), border-color plus background-color — repainted it for as long as
-   the pointer sat over it, mid-search, unfocused. The values are copied 1:1
-   from what Obsidian already paints at rest, so this does not change how the
-   field looks — only that it stops changing with the mouse. One class
-   (`.icon-picker-search-input`) is shared by both panels that build this
-   toolbar (ImagePanel's "Your images" search and PackPanel's per-source
-   search), so the one rule covers both. */
-.icon-picker-toolbar input[type="text"].icon-picker-search-input {
-	border-color: var(--background-modifier-border);
-	background-color: var(--background-modifier-form-field);
-}
-
-/* Raising the base rule above Obsidian's hover rule means its own `:focus`
-   state (0,2,1) now loses to it too — without this, focusing the field would
-   leave the border at its resting grey instead of the focus colour the
-   paragraph above still leaves entirely to Obsidian. */
-.icon-picker-toolbar input[type="text"].icon-picker-search-input:focus {
-	border-color: var(--background-modifier-border-focus);
-}
-
-/* Minimum 32px touch targets */
-.icon-picker-toolbar input,
-.icon-picker-toolbar select {
-	min-height: 32px;
-}
-
 /* ─── Tag Input (Aliases) ─────────────────────────────────────── */
 
 /* The wrapper carries the row's width, not the field inside it — the field has
@@ -4381,20 +4316,10 @@ button.callout-studio-icon-picker-loading {
 	max-width: 100%;
 }
 
-/* Invalid text input (e.g. duplicate palette name) — red like an ID error.
-   Applied today only to the palette editor's Name field (see
-   `updateValidity()` in PaletteEditorModal.ts), which is otherwise a bare
-   `input[type="text"]` — so without the class tripled, this sat at (0,1,1)
-   (rest) / (0,2,1) (`:focus`) against Obsidian's own `input[type='text']:hover`
-   at (0,2,1). The rest-state half of that is a straight loss: hovering a field
-   already flagged as a duplicate name faded its red border to Obsidian's
-   ordinary hover grey for as long as the pointer sat over it, then snapped
-   back the moment it left — the same pointer-driven flinch as the Callout IDs
-   field above, just on the error colour instead of the focus ring. Tripling
-   the class takes the rest state to (0,3,1), clearing the hover rule
-   outright rather than tying it and leaning on load order. */
-input.cs-input-invalid.cs-input-invalid.cs-input-invalid,
-input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
+/* Keep validation visible above both the shared resting face and Obsidian's
+   hover rules. The normal focus ring explicitly excludes invalid fields. */
+input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid,
+input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	border-color: var(--text-error);
 	box-shadow: 0 0 0 1px var(--text-error);
 }
@@ -4450,7 +4375,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
    is *exactly* the field's fill rather than a colour that merely usually
    matches it. */
 .cs-tag-input-row {
-	--cs-tag-field-bg: var(--background-modifier-form-field);
+	--cs-tag-field-bg: var(--cs-btn-face, var(--interactive-normal));
 	/* Width of the end-cap the + sits in. The field's trailing padding is
 	   derived from it below, so the two can never drift apart. */
 	--cs-tag-add-size: 28px;
@@ -4459,74 +4384,29 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	align-items: center;
 }
 
-/* The trailing padding is what actually keeps text out from under the +: the
-   text run simply stops before the button and scrolls there instead. It is
-   reserved unconditionally, not only while the button is showing, so the first
-   keystroke doesn't shove the caret sideways — and it costs nothing visible
-   when the field is empty, since the field is still full width and only the
-   placeholder (never longer than a few words) shares the space.
+/* Change the field and the opaque + overlay together, including when the
+   pointer is over the overlay rather than over the input underneath it. */
+@media (hover: hover) {
+	.cs-tag-input-row:has(> input:not(:disabled)):hover {
+		--cs-tag-field-bg: var(--cs-btn-face-hover, var(--interactive-hover));
+	}
+}
 
-   `+ 5px`: the slot sits 1px inside the border, so this clears it by 4px.
+.cs-tag-input-row:has(> input:not(:disabled)):focus-within,
+.cs-tag-input-row:has(> input:not(:disabled):active) {
+	--cs-tag-field-bg: var(--cs-btn-face-hover, var(--interactive-hover));
+}
 
-   **`input[type="text"]` is load-bearing — do not simplify this back to
-   `.cs-tag-input-row > .cs-tag-input-field`.** Obsidian paints every text
-   field on hover (`input[type='text']:hover` → `border-color:
-   var(--background-modifier-border-hover)` plus `background-color`), and that
-   selector is (0,2,1). Two classes are (0,2,0) and LOSE to it, so this field —
-   alone among the plugin's inputs — had Obsidian repainting its border the
-   moment the pointer crossed it, while the display-name field directly above
-   it (whose rule is (0,4,1)) sat still. The two are deliberately styled as one
-   control, so one of them flinching at the mouse and the other not is exactly
-   the seam a reader notices. Type + attribute + two classes is (0,3,1), which
-   clears the hover rule and freezes both properties.
-
-   Freezing `background` is not incidental: `.cs-tag-add-slot` below paints
-   `--cs-tag-field-bg` to disappear into this field, and it has no hover state
-   of its own. While Obsidian could still swap this field to
-   `--background-modifier-form-field-hover`, any theme that gives those two
-   tokens different values drew the end-cap as a visible block at the field's
-   trailing edge for as long as the pointer was inside it. */
-.cs-tag-input-row > input[type="text"].cs-tag-input-field {
+/* Reserve the trailing slot even while the + is hidden, so typing the first
+   character never moves the caret sideways. The shared control owns chrome. */
+.cs-tag-input-row > input[type="text"].cs-tag-input-field.cs-text-control {
 	flex: 1 1 auto;
 	min-width: 80px;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-s);
 	background: var(--cs-tag-field-bg);
-	color: var(--text-normal);
-	font-size: var(--font-ui-small);
-	padding: 6px 10px;
 	padding-inline-end: calc(var(--cs-tag-add-size) + 5px);
-	min-height: 36px;
-	outline: none;
-	box-sizing: border-box;
 }
 
-/* Matched to the display-name field above it for the reason given there: the
-   two sit one on top of the other in the callout editor and were deliberately
-   styled as one control, so the focus state has to move together too.
-
-   Carries the same `input[type="text"]` as the base rule above, and must: the
-   base is now (0,3,1), so a (0,3,0) focus rule would lose to it on the type
-   count alone and the field would keep its resting border while focused. This
-   is (0,4,1), which sits above the base and above every rule Obsidian aims at
-   a focused text field. */
-.cs-tag-input-row > input[type="text"].cs-tag-input-field:focus {
-	border-color: var(--background-modifier-border-focus);
-	box-shadow: 0 0 0 var(--input-border-width-focus)
-		var(--background-modifier-border-focus);
-}
-
-/* The same raised shade as the display-name field above it, for the same
-   reason: the two sit one on top of the other in the callout editor and were
-   deliberately styled to match, so a fix to one that skipped the other would
-   split them apart on exactly the platform the fix is for. The only host of a
-   `.cs-tag-input-row` is that editor (src/ui/TagInput.ts), which is a chromed
-   window — but the fallback stays, because it is what makes the token safe to
-   name from a rule whose selector does not say so.
-
-   `input[type="text"]` for the same reason as the two rules above: it has to
-   stay above the (0,3,1) base, or a disabled field would paint the form-field
-   fill again. */
+/* Disabled IDs retain the same raised fill as the disabled display name. */
 .cs-tag-input-row > input[type="text"].cs-tag-input-field:disabled {
 	color: var(--text-faint);
 	opacity: 0.5;
@@ -5276,9 +5156,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	max-width: 100%;
 }
 
-/* `min-width: 0` matters on the select: a `<select>` refuses to shrink below
-   its widest option by default, which would push it past the shared edge the
-   moment a translation runs long. */
+/* Let both controls shrink within the shared column for long translations. */
 .callout-studio-palette-editor
 	.cs-palette-name-setting
 	.setting-item-control
@@ -5286,53 +5164,9 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 .callout-studio-palette-editor
 	.cs-palette-bgstyle-setting
 	.setting-item-control
-	select {
+	.cs-select-dropdown {
 	width: 100%;
 	min-width: 0;
-}
-
-/* Freeze the Name field the same way the callout editor's Display name and
-   Callout IDs fields are frozen (see `.callout-studio-editor
-   …input[type="text"]:not(...)` and `.cs-tag-input-row > input[type="text"]
-   .cs-tag-input-field` above). This field is otherwise a bare
-   `input[type="text"]` with no plugin rule of its own, so Obsidian's own
-   `input[type='text']:hover` — (0,2,1), border-color plus background-color —
-   was free to repaint it for as long as the pointer sat over it, even before
-   it was ever focused. The two fields in the callout editor never do that, so
-   opening this modal right after that one made the difference obvious: the
-   row that looks identical at rest visibly changes with the mouse and the
-   other two don't.
-
-   Four classes/attributes deep (`.callout-studio-palette-editor
-   .cs-palette-name-setting .setting-item-control input[type="text"]`) is
-   already (0,4,1), comfortably past the (0,2,1) it has to clear, so nothing
-   here is doubled or tripled the way `.cs-input-invalid` below had to be.
-
-   `:not(.cs-input-invalid)` carves out the one state this field can be in
-   that this rule must not touch: `updateValidity()` (PaletteEditorModal.ts)
-   toggles that class to turn the border red for a taken name, and pinning
-   border-color unconditionally here would outrank its declaration and mute
-   the red back to grey. */
-.callout-studio-palette-editor
-	.cs-palette-name-setting
-	.setting-item-control
-	input[type="text"]:not(.cs-input-invalid) {
-	border-color: var(--background-modifier-border);
-	background-color: var(--background-modifier-form-field);
-}
-
-/* Raising the base rule above Obsidian's hover rule means its `:focus` state
-   (0,2,1) now loses to the base too — without this, focusing the field would
-   leave the border at its resting grey instead of turning to the same focus
-   colour every other field in the plugin uses. Matched to the base rule's own
-   `:not(.cs-input-invalid)` so a taken name keeps its red ring while
-   focused, exactly as `input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus`
-   (above) already provides for it. */
-.callout-studio-palette-editor
-	.cs-palette-name-setting
-	.setting-item-control
-	input[type="text"]:not(.cs-input-invalid):focus {
-	border-color: var(--background-modifier-border-focus);
 }
 
 /* ── Card row separators ─────────────────────────────────────────
@@ -5537,17 +5371,6 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	width: 26px;
 	flex: 0 0 26px;
 	padding: 0;
-}
-
-/* ─── Icon Picker Weight Select ─────────────────────────────── */
-
-.icon-picker-weight-select {
-	padding: 4px 8px;
-	border-radius: 4px;
-	border: 1px solid var(--background-modifier-border);
-	background: var(--cs-surface-raised, var(--background-secondary));
-	color: var(--text-normal);
-	font-size: var(--font-small);
 }
 
 /* Phase 7: name + fallback tag */
@@ -5820,8 +5643,12 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	min-width: 150px;
 }
 
-.cs-quick-insert-filter {
+.cs-quick-insert-toolbar .cs-select-dropdown {
 	flex-shrink: 0;
+	max-width: 100%;
+}
+
+.cs-quick-insert-filter {
 	max-width: 100%;
 }
 
@@ -5829,7 +5656,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
    dropdown does not fit side by side. */
 @media (max-width: 600px) {
 	.cs-quick-insert-search,
-	.cs-quick-insert-filter {
+	.cs-quick-insert-toolbar .cs-select-dropdown {
 		flex-basis: 100%;
 		min-width: 100%;
 	}
@@ -5982,7 +5809,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 /* 160px, not the 220px the Callout Manager box used while it was the whole
    window: both modals now carry rows above it, and the taller box pushes the
    pinned footer off a short window. */
-.cs-import-textarea {
+.cs-text-control.cs-text-control.cs-text-control.cs-import-textarea {
 	width: 100%;
 	min-height: 160px;
 	font-family: var(--font-monospace);
@@ -7259,16 +7086,9 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 
 .cs-occurrences-picker,
 .cs-occurrences-picker .cs-combobox,
-.cs-occurrences-controls select {
+.cs-occurrences-controls .cs-select-dropdown {
 	width: 100%;
 	min-inline-size: 0;
-}
-
-.cs-occurrences-controls select {
-	height: auto;
-	min-height: var(--input-height);
-	white-space: normal;
-	overflow-wrap: anywhere;
 }
 
 .cs-occurrences-summary,
@@ -7307,7 +7127,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 		width: auto;
 	}
 
-	.cs-occurrences-controls select {
+	.cs-occurrences-controls .cs-select-dropdown {
 		flex: 1 1 0;
 		width: auto;
 	}

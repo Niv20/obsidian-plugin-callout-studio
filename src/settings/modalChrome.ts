@@ -25,10 +25,11 @@
  * in each modal: `.modal` gives up its own padding to `.cs-modal` so the rules
  * can reach the window's sides, and every band re-applies that inset itself.
  *
- * Everything visual is in `styles.css` under "Modal chrome" — this module only
- * hangs the classes and returns the footer to fill.
+ * Everything visual is in `styles.css` under "Modal chrome". This module also
+ * owns the modal's keyboard scope so an open dropdown gets the first Escape.
  */
 import type { Modal } from "obsidian";
+import { installModalMenuScope, removeModalMenuScope } from "../ui/menuEscape";
 
 export interface ModalChromeOptions {
 	/** Build the pinned bottom bar and return it. Omit for windows with no actions. */
@@ -65,6 +66,7 @@ export function applyModalChrome(
 	options: ModalChromeOptions = {},
 ): HTMLElement | null {
 	const { modalEl, containerEl } = modal;
+	installModalMenuScope(modal);
 	modalEl.addClass("cs-modal");
 	modalEl.toggleClass("cs-modal-wide", options.wide === true);
 	detachFooter(modalEl);
@@ -94,6 +96,7 @@ export function applyModalChrome(
  * survives the usual `contentEl.empty()`.
  */
 export function removeModalChrome(modal: Modal): void {
+	removeModalMenuScope(modal);
 	const { modalEl, containerEl } = modal;
 	detachFooter(modalEl);
 	modalEl.removeClasses(["cs-modal", "cs-modal-wide"]);

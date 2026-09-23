@@ -94,7 +94,7 @@ export class TagInput {
 		// Input field
 		this.inputEl = inputRow.createEl("input", {
 			type: "text",
-			cls: "cs-tag-input-field",
+			cls: "cs-tag-input-field cs-text-control",
 			placeholder: this.placeholder,
 			attr:
 				this.maxLength !== undefined

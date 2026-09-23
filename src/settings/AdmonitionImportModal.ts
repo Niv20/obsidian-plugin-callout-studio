@@ -80,7 +80,7 @@ export class AdmonitionImportModal extends Modal {
 			cls: "cs-import-paste-label",
 		});
 		this.textareaEl = this.contentEl.createEl("textarea", {
-			cls: "cs-import-textarea",
+			cls: "cs-import-textarea cs-text-control",
 			attr: { placeholder: t("import.admPlaceholder") },
 		});
 		this.textareaEl.addEventListener("input", () => {

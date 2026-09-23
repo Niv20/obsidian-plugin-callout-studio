@@ -71,7 +71,7 @@ export class CalloutManagerImportModal extends Modal {
 			cls: "cs-import-paste-label",
 		});
 		this.textareaEl = this.contentEl.createEl("textarea", {
-			cls: "cs-import-textarea",
+			cls: "cs-import-textarea cs-text-control",
 			attr: { placeholder: t("import.cmPlaceholder") },
 		});
 		this.textareaEl.addEventListener("input", () => {

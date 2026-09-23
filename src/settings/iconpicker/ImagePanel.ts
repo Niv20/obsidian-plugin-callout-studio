@@ -104,7 +104,7 @@ export class ImagePanel {
 		// search box changes sides on the way in and out of this panel.
 		const search = this.toolbarEl.createEl("input", {
 			type: "text",
-			cls: "icon-picker-search-input",
+			cls: "icon-picker-search-input cs-text-control",
 			placeholder: t("iconPicker.searchCustom"),
 			value: this.query,
 		});

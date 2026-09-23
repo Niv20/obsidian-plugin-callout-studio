@@ -32,7 +32,7 @@ export interface CalloutComboboxOptions {
 	choices: () => readonly CalloutDefinition[];
 	/** Selected id, or "" for none. An id absent from `choices` reads as none. */
 	value: string;
-	/** `aria-label` for the input; the call site owns the wording. */
+	/** Accessible name for the input; the call site owns the wording. */
 	ariaLabel: string;
 	/** Optional committed label; popup rows keep the shared name/id presentation. */
 	labelOf?: (def: CalloutDefinition) => string;

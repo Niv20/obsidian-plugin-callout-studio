@@ -41,6 +41,8 @@ import { PackPanel } from "./PackPanel";
 import { ImagePanel } from "./ImagePanel";
 import { createSourceMenuTitle } from "./sourceMenuPresentation";
 import { clearListboxMenuHeightCap, syncListboxMenuHeightCap } from "../../ui/listboxPopupLayout";
+import { appendDropdownCaret } from "../../ui/dropdownControl";
+import { captureMenuEscape } from "../../ui/menuEscape";
 import { applyModalChrome, removeModalChrome } from "../modalChrome";
 import { getLocale, t } from "../../i18n";
 import type { LocaleKey } from "../../i18n";
@@ -116,6 +118,7 @@ export class IconPicker extends Modal {
 	private activeSourceMenuIndex = -1;
 	private sourceMenuPointerActive = false;
 	private sourceMenuResizeDisposer?: () => void;
+	private sourceMenuEscapeDisposer?: () => void;
 	private packStatesLoaded = false;
 	private packStateDisposer: (() => void) | null = null;
 	/** Removed by hand in onClose because Modal has no auto-cleanup. */
@@ -176,11 +179,7 @@ export class IconPicker extends Modal {
 		void this.openInitialPanel();
 	}
 
-	/**
-	 * Warms pack state from disk before the first render, so a source
-	 * downloaded in an earlier session but not yet assigned to a callout
-	 * still shows as downloaded instead of prompting again.
-	 */
+	/** Warm disk state so previously downloaded sources open without another prompt. */
 	private async openInitialPanel(): Promise<void> {
 		await this.plugin.icons.packs.loadAllFromDisk();
 		this.packStatesLoaded = true;
@@ -221,7 +220,7 @@ export class IconPicker extends Modal {
 		});
 		this.sourceDropdownEl = row.createDiv("icon-picker-source-dropdown");
 		this.sourceButtonEl = this.sourceDropdownEl.createEl("button", {
-			cls: "icon-picker-source-button",
+			cls: "icon-picker-source-button cs-dropdown-control",
 			attr: {
 				id: "cs-icon-source",
 				type: "button",
@@ -275,10 +274,7 @@ export class IconPicker extends Modal {
 			cls: "icon-picker-source-current",
 			text: t(meta.labelKey),
 		});
-		const chevron = this.sourceButtonEl.createSpan({
-			cls: "icon-picker-source-chevron",
-		});
-		setIcon(chevron, "chevron-down");
+		appendDropdownCaret(this.sourceButtonEl);
 	}
 
 	/** Rebuilt on every open so counts and download state are never stale. */
@@ -334,10 +330,14 @@ export class IconPicker extends Modal {
 		}
 	}
 
-	/** Open below the trigger, capped to the visible modal body. */
+	/** Open on whichever side fits within the visible modal body. */
 	private openSourceMenu(): void {
 		this.buildSourceMenuItems();
 		this.sourceMenuOpen = true;
+		this.sourceMenuEscapeDisposer ??= captureMenuEscape(
+			this.sourceDropdownEl, () => this.sourceMenuOpen,
+			() => { this.closeSourceMenu(); this.sourceButtonEl.focus(); },
+		);
 		this.sourceMenuEl.removeClass("icon-picker-source-menu-hidden");
 		this.sourceButtonEl.addClass("is-open");
 		this.sourceButtonEl.setAttribute("aria-expanded", "true");
@@ -358,6 +358,8 @@ export class IconPicker extends Modal {
 	private closeSourceMenu(): void {
 		if (!this.sourceMenuOpen) return;
 		this.sourceMenuOpen = false;
+		this.sourceMenuEscapeDisposer?.();
+		this.sourceMenuEscapeDisposer = undefined;
 		this.sourceMenuEl.addClass("icon-picker-source-menu-hidden");
 		this.sourceButtonEl.removeClass("is-open");
 		this.sourceButtonEl.setAttribute("aria-expanded", "false");
@@ -410,10 +412,6 @@ export class IconPicker extends Modal {
 				this.closeSourceMenu();
 				this.sourceButtonEl.focus();
 			}
-		} else if (ev.key === "Escape") {
-			ev.preventDefault();
-			this.closeSourceMenu();
-			this.sourceButtonEl.focus();
 		}
 	}
 

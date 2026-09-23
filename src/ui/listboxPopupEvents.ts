@@ -22,6 +22,8 @@
  *   with the mouse would revert before it committed.
  */
 
+import { createPopupKeyHandler } from "./listboxPopupKeyboard";
+
 /** What the popup lets its events do to it. */
 export interface PopupEventTarget {
 	readonly el: HTMLElement;
@@ -36,6 +38,8 @@ export interface PopupEventTarget {
 	refilter(): void;
 	/** Move the highlight by `delta`, clamped, without wrapping. */
 	moveActive(delta: number): void;
+	activeIndex(): number;
+	labels(): readonly string[];
 	/** End a pointer preview without disturbing keyboard navigation. */
 	clearPointerHighlight(): void;
 	/** Take the highlighted row. */
@@ -48,30 +52,37 @@ export interface PopupEventTarget {
  */
 export function wirePopupEvents(popup: PopupEventTarget): () => void {
 	let selectOnControlClick = false;
+	const doc = popup.inputEl.ownerDocument;
 
 	// The whole control opens, not just the input — a bigger tap target.
 	popup.controlEl.addEventListener("mousedown", () => {
-		selectOnControlClick = activeDocument.activeElement !== popup.inputEl;
+		selectOnControlClick = doc.activeElement !== popup.inputEl;
 	});
 	popup.controlEl.addEventListener("click", (ev) => {
+		if (popup.inputEl.disabled) return;
 		if (ev.target !== popup.inputEl) {
 			popup.inputEl.focus();
 		}
-		popup.open();
+		if (!popup.searchable() && popup.isOpen()) popup.close();
+		else popup.open();
 		if (popup.searchable() && selectOnControlClick) popup.inputEl.select();
 		selectOnControlClick = false;
 	});
 	// Keyboard focus (Tab) never gets a mouseup, so the select() the popup does
 	// on open is the whole story there.
-	popup.inputEl.addEventListener("focus", () => popup.open());
+	popup.inputEl.addEventListener("focus", () => {
+		if (popup.inputEl.disabled) return;
+		if (popup.searchable()) popup.open();
+		else popup.inputEl.setSelectionRange(0, 0);
+	});
 
 	popup.inputEl.addEventListener("input", () => {
-		if (!popup.searchable()) return;
+		if (!popup.searchable() || popup.inputEl.disabled) return;
 		if (!popup.isOpen()) popup.open();
 		else popup.refilter();
 	});
 
-	popup.inputEl.addEventListener("keydown", (ev) => onKeyDown(popup, ev));
+	popup.inputEl.addEventListener("keydown", createPopupKeyHandler(popup));
 
 	// See the header — this one line is what lets a mouse selection commit.
 	popup.menuEl.addEventListener("mousedown", (ev) => ev.preventDefault());
@@ -85,30 +96,8 @@ export function wirePopupEvents(popup: PopupEventTarget): () => void {
 		if (!target || popup.el.contains(target)) return;
 		popup.close();
 	};
-	activeDocument.addEventListener("click", onDocumentClick);
+	doc.addEventListener("click", onDocumentClick);
 	return () => {
-		activeDocument.removeEventListener("click", onDocumentClick);
+		doc.removeEventListener("click", onDocumentClick);
 	};
-}
-
-function onKeyDown(popup: PopupEventTarget, ev: KeyboardEvent): void {
-	if (ev.key === "ArrowDown") {
-		ev.preventDefault();
-		if (!popup.isOpen()) popup.open();
-		else popup.moveActive(1);
-	} else if (ev.key === "ArrowUp") {
-		ev.preventDefault();
-		popup.moveActive(-1);
-	} else if (ev.key === "Enter") {
-		ev.preventDefault();
-		if (!popup.isOpen()) popup.open();
-		else popup.commitActive();
-	} else if (ev.key === "Escape") {
-		// Stopped as well as prevented: this popup lives inside modals that close
-		// on Escape, and the first press belongs to whichever of the two is open.
-		// Only a second press should reach the modal.
-		ev.preventDefault();
-		ev.stopPropagation();
-		popup.close();
-	}
 }

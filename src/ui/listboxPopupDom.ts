@@ -14,6 +14,7 @@
  * mis-announce, so it is worth being explicit that the modern one is deliberate.
  */
 import { setIcon } from "obsidian";
+import { appendDropdownCaret } from "./dropdownControl";
 
 export interface ComboboxParts {
 	root: HTMLElement;
@@ -36,7 +37,11 @@ export function buildComboboxSkeleton(
 	options: ComboboxSkeletonOptions,
 ): ComboboxParts {
 	const root = parent.createDiv({ cls: "cs-combobox" });
-	const control = root.createDiv({ cls: "cs-combobox-control" });
+	// Obsidian turns aria-label into a hover tooltip. A referenced hidden label
+	// keeps the field named for assistive technology without a second popup.
+	const labelId = `${options.listboxId}-label`;
+	root.createSpan({ text: options.ariaLabel, attr: { id: labelId, hidden: "" } });
+	const control = root.createDiv({ cls: "cs-combobox-control cs-dropdown-control" });
 	const lead = control.createDiv({ cls: "cs-combobox-lead" });
 
 	const input = control.createEl("input", {
@@ -44,7 +49,7 @@ export function buildComboboxSkeleton(
 		attr: {
 			type: "text",
 			role: "combobox",
-			"aria-label": options.ariaLabel,
+			"aria-labelledby": labelId,
 			"aria-expanded": "false",
 			"aria-controls": options.listboxId,
 			"aria-haspopup": "listbox",
@@ -58,14 +63,7 @@ export function buildComboboxSkeleton(
 		},
 	});
 
-	// Up/down chevron, matching standard selects. Decoration only — the control
-	// control it sits on is already operable, so making this focusable would
-	// just add a Tab stop on the way past.
-	const caret = control.createDiv({
-		cls: "cs-combobox-caret",
-		attr: { "aria-hidden": "true" },
-	});
-	setIcon(caret, "chevrons-up-down");
+	appendDropdownCaret(control);
 
 	const menu = root.createDiv({
 		cls: "cs-combobox-menu cs-scrollable-dropdown-menu cs-combobox-menu-hidden",
@@ -126,17 +124,27 @@ export function renderComboboxRows<T>(
 	menuEl.empty();
 	const rowEls: HTMLElement[] = [];
 	let openGroup: string | undefined;
+	let rowParent = menuEl;
 
 	spec.items.forEach((item, i) => {
 		const group = spec.groupOf?.(item);
 		if (group && group.key !== openGroup) {
 			openGroup = group.key;
-			menuEl.createDiv({
+			const headingId = `${spec.listboxId}-group-${i}`;
+			rowParent = menuEl.createDiv({
+				cls: "cs-combobox-group",
+				attr: { role: "group", "aria-labelledby": headingId },
+			});
+			rowParent.createDiv({
 				cls: "cs-combobox-group-label",
 				text: group.label,
+				attr: { id: headingId },
 			});
+		} else if (!group) {
+			openGroup = undefined;
+			rowParent = menuEl;
 		}
-		const rowEl = menuEl.createDiv({
+		const rowEl = rowParent.createDiv({
 			cls: "cs-combobox-option",
 			attr: { role: "option", id: `${spec.listboxId}-${i}` },
 		});
