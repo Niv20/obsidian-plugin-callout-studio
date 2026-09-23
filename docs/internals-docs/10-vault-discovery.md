@@ -115,12 +115,18 @@ The sidebar owns the former statistics screen's four vault-wide metrics. CSS
 container queries show the first two, three or four metrics according to pane
 width, with equal-width cards, and place the filters side by side when space
 allows. The last metric is labelled **Markdown files** and counts successfully
-scanned Markdown files; scan status still identifies incomplete results.
+scanned Markdown files. The loading/stale live region stays mounted but empty for
+the first two seconds of one continuous idle/loading/stale episode, so ordinary
+navigation and incremental refreshes do not flash progress copy. One cancellable
+timer spans those status transitions; a long-running episode is announced, while
+completion or view closure clears it. Partial and failed states remain immediate.
 `VaultCalloutStatisticsModal` and its row renderer have been removed, along with
 the Settings action and styles. Result cards omit redundant type labels and
 clamp excerpts to two lines while preserving raw Markdown syntax; block excerpts
 prefer a header line and a line of body content. Preview formatting does not
-change source coordinates or token exclusions.
+change source coordinates or token exclusions. Fine-pointer hover changes only a
+result card's border to the theme's focus-border colour; selected and
+keyboard-focus treatments remain distinct.
 DOM menus update counts while the index loads and unsubscribe when hidden.
 Views unsubscribe from both index and registry changes when closed.
 The list starts with 100 results and adds 100 per **Show more** action. Per-file

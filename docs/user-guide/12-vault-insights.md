@@ -44,7 +44,9 @@ revealed by **Show more**. Each card shows its format, line number, and at most
 two lines of raw Markdown, including syntax such as `> [!info]`. Block previews
 include a line of body text when available. Choose **All formats**, **Block**,
 **Heading**, or **Inline** to filter the selected type. The type and format
-controls sit side by side when the pane is wide enough.
+controls sit side by side when the pane is wide enough. With a mouse or trackpad,
+hovering a result subtly brightens its border; keyboard focus keeps its stronger
+outline.
 
 A summary below the controls shows the matching occurrences and files, such as
 **131 occurrences in 15 files**. The whole sidebar scrolls together. Select a
@@ -72,7 +74,8 @@ reported as zero. Actions that change notes check current contents separately.
 There is no automatic discovery or unconditional startup scan. Opening a usage
 surface, including a restored occurrences sidebar, builds an in-memory index. Subsequent requests reuse it, and
 saved-note changes and edits in open Markdown editors are reflected automatically after a short delay. There is no manual Refresh button. Nothing is uploaded
-or written to plugin settings by this index.
+or written to plugin settings by this index. Brief scans and updates stay quiet;
+if one remains in progress for two seconds, its status appears above the results.
 
 Fenced and indented code, inline code (including multiple-backtick and multiline
 spans), YAML frontmatter, and Obsidian `%%` comments are excluded. Escaped tokens,

@@ -16,7 +16,11 @@ const dom = installFakeDom();
 dom.window.setTimeout = (callback, delay) => Number(scheduleTimer(callback, delay));
 dom.window.clearTimeout = (id) => cancelTimer(id);
 
-function harness(contents: Record<string, string>, read?: (file: TFile) => Promise<string>) {
+function harness(
+	contents: Record<string, string>,
+	read?: (file: TFile) => Promise<string>,
+	busyStatusDelayMs?: number,
+) {
 	const files = Object.entries(contents).map(([path, content]) => Object.assign(new TFile(), {
 		path, extension: "md", stat: { mtime: 1, ctime: 1, size: content.length },
 	}));
@@ -31,7 +35,7 @@ function harness(contents: Record<string, string>, read?: (file: TFile) => Promi
 	} as unknown as App;
 	const registry = new CalloutRegistry();
 	registry.load({});
-	const view = new CalloutOccurrencesView({ app } as unknown as WorkspaceLeaf, registry);
+	const view = new CalloutOccurrencesView({ app } as unknown as WorkspaceLeaf, registry, busyStatusDelayMs);
 	return { view, app, registry, contents, index: getCalloutOccurrenceIndex(app), savedLayouts: () => layoutSaves };
 }
 
@@ -73,17 +77,33 @@ describe("callout occurrence sidebar", () => {
 			{ type: "callout-studio-occurrences", active: true, state: { ids: ["note"], role: undefined } },
 		]);
 	});
-	it("shows a loading state rather than an authoritative zero before the scan finishes", async () => {
+	it("keeps quick scans quiet without showing an authoritative zero", async () => {
 		let release: (text: string) => void = () => {};
 		const wait = new Promise<string>((resolve) => { release = resolve; });
 		const h = harness({ "a.md": "[!note]" }, () => wait);
 		const opened = h.view.onOpen();
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent, "");
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-metric-value")?.textContent, "—");
+		release("[!note]");
+		await opened;
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
+		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-id"), null);
+		await h.view.onClose();
+		h.index.dispose();
+	});
+	it("announces a scan only after it stays busy past the delay", async () => {
+		let release: (text: string) => void = () => {};
+		const wait = new Promise<string>((resolve) => { release = resolve; });
+		const h = harness({ "a.md": "[!note]" }, () => wait, 10);
+		const opened = h.view.onOpen();
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
+		await new Promise((resolve) => scheduleTimer(resolve, 30));
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, t("usage.loading"));
 		release("[!note]");
 		await opened;
-		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
-		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-id"), null);
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
 		await h.view.onClose();
 		h.index.dispose();
 	});
@@ -122,17 +142,70 @@ describe("callout occurrence sidebar", () => {
 		await h.view.onClose();
 		h.index.dispose();
 	});
-	it("labels partial reads and stale results without claiming the vault has zero usages", async () => {
-		const h = harness({ "broken.md": "[!warning]" }, () => Promise.reject(new Error("Unreadable")));
+	it("labels partial reads immediately but delays stale progress", async () => {
+		const h = harness({ "broken.md": "[!warning]" }, () => Promise.reject(new Error("Unreadable")), 10);
 		await h.view.onOpen();
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, t("usage.partial", { count: 1 }));
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent, "");
 		assert.ok(h.view.contentEl.querySelector(".cs-occurrences-failures")?.textContent?.includes("broken.md"));
 		h.index.invalidate("broken.md");
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
+		await new Promise((resolve) => scheduleTimer(resolve, 30));
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, t("usage.stale"));
 		await h.view.onClose();
 		h.index.dispose();
 		assert.equal(h.view.contentEl.textContent, "");
+	});
+	it("keeps existing results while a slow background update waits to announce itself", async () => {
+		let reads = 0;
+		let release: (text: string) => void = () => {};
+		const wait = new Promise<string>((resolve) => { release = resolve; });
+		const h = harness({ "a.md": "[!note]" }, () => ++reads === 1 ? Promise.resolve("[!note]") : wait, 10);
+		await h.view.onOpen();
+		const firstCard = action(h.view, "result");
+		h.index.invalidateEditor("a.md");
+		const refreshing = h.index.ensureFresh();
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
+		assert.equal(action(h.view, "result"), firstCard);
+		await new Promise((resolve) => scheduleTimer(resolve, 30));
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, t("usage.stale"));
+		assert.equal(action(h.view, "result"), firstCard);
+		release("[!note]");
+		await refreshing;
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
+		await h.view.onClose();
+		h.index.dispose();
+	});
+	it("cannot revive a delayed status after a quick completion or close", async () => {
+		const originalSetTimeout = dom.window.setTimeout.bind(dom.window);
+		const originalClearTimeout = dom.window.clearTimeout.bind(dom.window);
+		let delayed: (() => void) | undefined;
+		let cleared = false;
+		dom.window.setTimeout = (callback, delay) => {
+			assert.equal(delay, 2_000);
+			delayed = callback as () => void;
+			return 42;
+		};
+		dom.window.clearTimeout = (id) => { if (id === 42) cleared = true; };
+		try {
+			let release: (text: string) => void = () => {};
+			const wait = new Promise<string>((resolve) => { release = resolve; });
+			const h = harness({ "a.md": "[!note]" }, () => wait);
+			const opened = h.view.onOpen();
+			assert.ok(delayed);
+			release("[!note]");
+			await opened;
+			assert.equal(cleared, true);
+			delayed();
+			assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
+			await h.view.onClose();
+			delayed();
+			assert.equal(h.view.contentEl.textContent, "");
+			h.index.dispose();
+		} finally {
+			dom.window.setTimeout = originalSetTimeout;
+			dom.window.clearTimeout = originalClearTimeout;
+		}
 	});
 	it("uses native buttons for keyboard activation and exposes the exact role and line", async () => {
 		const h = harness({ "a.md": "before\n# [!note] title" });
@@ -340,7 +413,7 @@ describe("callout occurrence sidebar", () => {
 		for (let i = 0; i < 50; i++) h.index.invalidateEditor("a.md");
 		assert.equal(queries, 0);
 		assert.equal(action(h.view, "result"), firstCard);
-		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, t("usage.stale"));
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
 		await h.view.onClose();
 		h.index.dispose();
 	});

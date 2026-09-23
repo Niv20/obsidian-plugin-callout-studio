@@ -7279,7 +7279,6 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 }
 
 .cs-occurrences-summary:empty,
-.cs-occurrences-status:empty,
 .cs-occurrences-failures:empty {
 	display: none;
 }
@@ -7354,6 +7353,12 @@ button.cs-occurrences-result {
 	overflow-wrap: anywhere;
 	box-shadow: none;
 	background: var(--cs-surface-raised, var(--background-secondary));
+}
+
+@media (hover: hover) and (pointer: fine) {
+	button.cs-occurrences-result:hover {
+		border-color: var(--background-modifier-border-focus);
+	}
 }
 
 button.cs-occurrences-result[aria-current="true"] {

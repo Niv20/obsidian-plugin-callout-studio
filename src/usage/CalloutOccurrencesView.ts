@@ -13,6 +13,7 @@ import { createOccurrencesFrame, occurrenceButton, occurrenceRoleLabel, OCCURREN
 
 export const CALLOUT_OCCURRENCES_VIEW = "callout-studio-occurrences";
 const PAGE_SIZE = 100;
+const BUSY_STATUS_DELAY_MS = 2_000;
 const occurrenceKey = (item: CalloutOccurrence): string =>
 	JSON.stringify([item.path, item.line, item.from, item.identity]);
 
@@ -31,6 +32,10 @@ export class CalloutOccurrencesView extends ItemView {
 	private handlersRegistered = false;
 	private failed = false;
 	private navigating = false;
+	private busyStatusVisible = false;
+	private busyStatusTimer: number | null = null;
+	private busyStatusGeneration = 0;
+	private busyStatusKind: "loading" | "stale" | null = null;
 	private frame: OccurrencesFrame | null = null;
 	private picker: CalloutCombobox | null = null;
 	private lastIndexState = "";
@@ -46,7 +51,11 @@ export class CalloutOccurrencesView extends ItemView {
 		if (this.opened) this.render();
 	};
 
-	constructor(leaf: WorkspaceLeaf, private readonly registry: CalloutRegistry) {
+	constructor(
+		leaf: WorkspaceLeaf,
+		private readonly registry: CalloutRegistry,
+		private readonly busyStatusDelayMs = BUSY_STATUS_DELAY_MS,
+	) {
 		super(leaf);
 		this.index = getCalloutOccurrenceIndex(this.app);
 		this.typeChoices = new OccurrenceTypeChoices(registry, this.index);
@@ -100,6 +109,7 @@ export class CalloutOccurrencesView extends ItemView {
 	}
 	onClose(): Promise<void> {
 		this.opened = false;
+		this.resetBusyStatus();
 		this.unsubscribe?.();
 		this.unsubscribe = null;
 		this.registry.offChange(this.registryChanged);
@@ -139,6 +149,30 @@ export class CalloutOccurrencesView extends ItemView {
 		this.selected = null;
 		this.contentEl.scrollTop = 0;
 		this.app.workspace.requestSaveLayout();
+	}
+	private syncBusyStatus(busy: boolean): void {
+		if (!busy || !this.opened) {
+			this.resetBusyStatus();
+			return;
+		}
+		this.busyStatusKind ??= this.index.status === "stale" || this.results.length > 0 ? "stale" : "loading";
+		if (this.busyStatusVisible || this.busyStatusTimer !== null) return;
+		const generation = ++this.busyStatusGeneration;
+		this.busyStatusTimer = window.setTimeout(() => {
+			if (generation !== this.busyStatusGeneration) return;
+			this.busyStatusTimer = null;
+			const status = this.index.status;
+			if (!this.opened || status !== "idle" && status !== "loading" && status !== "stale") return;
+			this.busyStatusVisible = true;
+			this.render();
+		}, this.busyStatusDelayMs);
+	}
+	private resetBusyStatus(): void {
+		this.busyStatusGeneration++;
+		if (this.busyStatusTimer !== null) window.clearTimeout(this.busyStatusTimer);
+		this.busyStatusTimer = null;
+		this.busyStatusVisible = false;
+		this.busyStatusKind = null;
 	}
 	private async refresh(): Promise<void> {
 		this.failed = false;
@@ -206,10 +240,12 @@ export class CalloutOccurrencesView extends ItemView {
 		const frame = this.ensureFrame();
 		frame.roleSelect.value = this.role ?? "";
 		renderOccurrenceMetrics(frame.metrics, index);
+		const busy = !this.failed && (index.status === "idle" || index.status === "loading" || index.status === "stale");
+		this.syncBusyStatus(busy);
 		frame.status.setText(this.failed || index.status === "disposed" ? t("usage.failed")
-			: index.status === "idle" || index.status === "loading" ? t("usage.loading")
+			: busy && this.busyStatusVisible && this.busyStatusKind === "loading" ? t("usage.loading")
 			: index.status === "partial" ? t("usage.partial", { count: index.failures.length })
-			: index.status === "stale" ? t("usage.stale") : "");
+			: busy && this.busyStatusVisible ? t("usage.stale") : "");
 		frame.failures.empty();
 		if (index.failures.length > 0) {
 			const details = frame.failures.createEl("details");
