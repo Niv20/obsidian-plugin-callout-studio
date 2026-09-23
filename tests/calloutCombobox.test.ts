@@ -145,6 +145,24 @@ const isOpen = (h: Harness): boolean =>
 /* -------------------------------------------------------------------------- */
 
 describe("CalloutCombobox — the closed field", () => {
+	it("keeps unique accessible names without Obsidian hover-tooltip attributes", () => {
+		const first = mount(CHOICES);
+		const second = mount(CHOICES);
+		try {
+			const firstLabel = first.input.getAttribute("aria-labelledby");
+			const secondLabel = second.input.getAttribute("aria-labelledby");
+			assert.ok(firstLabel);
+			assert.ok(secondLabel);
+			assert.notStrictEqual(firstLabel, secondLabel);
+			for (const h of [first, second]) {
+				const label = h.host.querySelector(`#${h.input.getAttribute("aria-labelledby")}`);
+				assert.strictEqual(label?.textContent, "Callout type");
+				assert.strictEqual(label?.hasAttribute("hidden"), true);
+				assert.strictEqual(h.control.querySelector("[aria-label]"), null);
+				assert.strictEqual(h.control.querySelector("[title]"), null);
+			}
+		} finally { first.box.destroy(); second.box.destroy(); }
+	});
 	it("can show an ID in the sidebar without changing names in its popup rows", () => {
 		const h = mount(CHOICES, { labelOf: (entry) => entry.id });
 		assert.strictEqual(h.input.value, "note");
@@ -553,7 +571,7 @@ describe("CalloutCombobox — creating the callout you searched for", () => {
 
 describe("renderComboboxRows — group headings", () => {
 	/** Two groups, drawn through the popup the palette picker uses. */
-	function grouped(query: string): FakeElement {
+	function grouped(query: string, onCommit: (id: string) => void = () => {}): FakeElement {
 		fakeDom.light();
 		const host = el();
 		const items = [
@@ -571,7 +589,7 @@ describe("renderComboboxRows — group headings", () => {
 			groupOf: (item) => ({ key: item.group, label: item.group }),
 			labelOf: (item) => item.name,
 			keyOf: (item) => item.id,
-			onCommit: () => {},
+			onCommit: (item) => onCommit(item.id),
 		});
 		const input = host.querySelector(".cs-combobox-input");
 		assert.ok(input);
@@ -596,6 +614,40 @@ describe("renderComboboxRows — group headings", () => {
 		// The bug this design avoids: headings emitted from a fixed list of
 		// groups would leave "preset" stranded over nothing.
 		assert.deepStrictEqual(labels(grouped("am")), ["custom"]);
+	});
+
+	it("keeps every heading with its own options so sticky headings stop at group boundaries", () => {
+		const host = grouped("");
+		const groups = host.querySelectorAll(".cs-combobox-group");
+		assert.strictEqual(groups.length, 2);
+		assert.deepStrictEqual(groups.map((group) =>
+			group.querySelectorAll(".cs-combobox-option").map((row) => row.textContent)),
+		[["Aqua", "Amber"], ["Crimson"]]);
+		for (const group of groups) {
+			const heading = group.querySelector(".cs-combobox-group-label");
+			assert.ok(heading);
+			assert.strictEqual(group.getAttribute("role"), "group");
+			assert.strictEqual(group.getAttribute("aria-labelledby"), heading.getAttribute("id"));
+		}
+	});
+
+	it("keeps keyboard navigation and selection continuous across a group boundary", () => {
+		const committed: string[] = [];
+		const host = grouped("", (id) => committed.push(id));
+		const input = host.querySelector(".cs-combobox-input");
+		assert.ok(input);
+		const key = (value: string) => input.fire("keydown", {
+			key: value,
+			preventDefault: () => {},
+			stopPropagation: () => {},
+		});
+		key("ArrowDown");
+		key("ArrowDown");
+		const active = host.querySelector(".cs-combobox-option.is-active");
+		assert.strictEqual(active?.textContent, "Crimson");
+		assert.strictEqual(input.getAttribute("aria-activedescendant"), active?.getAttribute("id"));
+		key("Enter");
+		assert.deepStrictEqual(committed, ["c"]);
 	});
 });
 

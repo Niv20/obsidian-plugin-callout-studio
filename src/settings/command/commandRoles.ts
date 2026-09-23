@@ -19,8 +19,8 @@
  * selected and the line explaining why two of them are missing are one answer.
  */
 import { Setting } from "obsidian";
-import type { DropdownComponent } from "obsidian";
 import { t } from "../../i18n";
+import { SelectDropdown } from "../../ui/selectDropdown";
 import type {
 	CalloutDefinition,
 	CalloutRenderRole,
@@ -65,6 +65,7 @@ export function offerableRoles(
 
 /** The live *Callout format* row, kept in step by {@link FormatRow.sync}. */
 export interface FormatRow {
+	destroy(): void;
 	/**
 	 * Refill the options for `calloutId` and settle on a role. Returns the role
 	 * to use, which is `role` unless the theme has withdrawn it — a stored
@@ -87,28 +88,23 @@ export function buildFormatRow(
 		.setName(t("commandBuilder.format"))
 		.setClass("cs-command-field")
 		.setDesc(t("commandBuilder.formatDesc"));
-	let dd: DropdownComponent | undefined;
-	// Options are filled by sync, not here: which formats exist depends on the
-	// callout, and the callout can change while this window is open.
-	setting.addDropdown((component) => {
-		dd = component;
-		component.onChange((raw) => onPick(raw as CalloutRenderRole));
-	});
+	const dd = new SelectDropdown(setting.controlEl, t("commandBuilder.format"))
+		.onChange((raw) => onPick(raw as CalloutRenderRole));
 	const noticeEl = setting.descEl.createDiv({ cls: "cs-command-role-notice" });
 	let applied = "";
 
 	return {
+		destroy: () => dd.destroy(),
 		sync(registry, settings, calloutId, role) {
 			const roles = offerableRoles(registry, calloutId);
 			const narrowed = roles.length < ROLE_ORDER.length;
 			const next = roles.includes(role) ? role : "regular";
 			const key = roles.join(",");
-			if (dd && key !== applied) {
+			if (key !== applied) {
 				applied = key;
-				dd.selectEl.empty();
-				for (const r of roles) dd.addOption(r, t(ROLE_LABEL_KEY[r]));
+				dd.setOptions(roles.map((value) => ({ value, label: t(ROLE_LABEL_KEY[value]) })));
 			}
-			dd?.setValue(next);
+			dd.setValue(next);
 
 			// Two different absences, and the theme one has to say so: those
 			// options did not grey out, they are gone, and a dropdown that

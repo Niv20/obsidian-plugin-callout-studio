@@ -1,15 +1,26 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { asEl, el, fakeDom } from "./support/fakeDom";
+import type { Modal } from "obsidian";
+import { asEl, FakeDocument, fakeDom } from "./support/fakeDom";
+import { TestKeymap, TestScope } from "./support/fakeKeymap";
 import { IconPicker } from "../src/settings/iconpicker/IconPickerModal";
 import type { IconPickerPlugin } from "../src/settings/iconpicker/IconPickerModal";
+import { installModalMenuScope, removeModalMenuScope } from "../src/ui/menuEscape";
 
 function mount() {
 	fakeDom.light();
+	const doc = new FakeDocument();
 	const picker = new IconPicker({
 		registry: { getUserImages: () => [] },
 	} as unknown as IconPickerPlugin, { type: "lucide", value: "star" });
-	const host = el();
+	const host = doc.createElement("div");
+	const keymap = new TestKeymap();
+	const scope = new TestScope();
+	let modalCloses = 0;
+	scope.register(null, "Escape", () => { modalCloses++; return false; });
+	keymap.pushScope(scope);
+	const modal = { modalEl: host, app: { keymap }, scope } as unknown as Modal;
+	installModalMenuScope(modal);
 	picker.contentEl = asEl(host);
 	const source = picker as unknown as {
 		buildSourcePicker(host: HTMLElement): void;
@@ -22,16 +33,49 @@ function mount() {
 	button.fire("click");
 	const rows = menu.querySelectorAll(".icon-picker-source-menu-item");
 	return {
-		button, menu, rows,
-		key: (key: string) => menu.fire("keydown", { key, preventDefault: () => {} }),
+		button, menu, rows, keymap, doc,
+		modalCloses: () => modalCloses,
+		key: (key: string) => {
+			let prevented = false;
+			let stopped = false;
+			const event = { key, target: menu,
+				preventDefault: () => { prevented = true; },
+				stopPropagation: () => { stopped = true; },
+			};
+			const handled = keymap.handle(event as unknown as KeyboardEvent);
+			if (handled !== false && !stopped) menu.fire("keydown", event);
+			return { prevented, stopped };
+		},
 		destroy: () => {
 			source.closeSourceMenu();
+			removeModalMenuScope(modal);
+			keymap.popScope(scope);
 			activeDocument.removeEventListener("click", source.sourceMenuOutsideClick);
 		},
 	};
 }
 
 describe("icon library pointer navigation", () => {
+	it("handles the first Escape before the modal scope and removes its child scope on teardown", () => {
+		const h = mount();
+		try {
+			assert.equal(h.keymap.scopes.length, 2);
+			assert.deepEqual(h.key("Escape"), { prevented: true, stopped: true });
+			assert.equal(h.modalCloses(), 0);
+			assert.equal(h.button.getAttribute("aria-expanded"), "false");
+			assert.equal(h.doc.activeElement, h.button);
+			assert.equal(h.keymap.scopes.length, 1, "closing restores the original modal scope");
+			assert.deepEqual(h.key("Escape"), { prevented: true, stopped: false });
+			assert.equal(h.modalCloses(), 1, "the next Escape reaches the containing modal");
+			h.button.fire("click");
+			assert.equal(h.keymap.scopes.length, 2, "reopening adds only one temporary menu scope");
+			assert.deepEqual(h.key("Escape"), { prevented: true, stopped: true });
+			assert.equal(h.modalCloses(), 1, "reopening registers the source menu again");
+			assert.equal(h.keymap.scopes.length, 1, "closing removes that temporary scope again");
+		} finally { h.destroy(); }
+		assert.equal(h.keymap.scopes.length, 0, "modal teardown removes its child and parent scopes");
+	});
+
 	for (const exit of ["row", "menu"] as const) {
 		it(`clears All sources hover on ${exit} exit without changing the selected library`, () => {
 			const h = mount();

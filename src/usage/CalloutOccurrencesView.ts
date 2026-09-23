@@ -1,5 +1,6 @@
 import { ItemView, type WorkspaceLeaf, type ViewStateResult } from "obsidian";
 import { t } from "../i18n";
+import { registerMenuScopeHost } from "../ui/menuEscape";
 import { STATISTICS_ICON_ID } from "../icons/uiIcons";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { CalloutCombobox } from "../settings/calloutCombobox";
@@ -37,6 +38,7 @@ export class CalloutOccurrencesView extends ItemView {
 	private busyStatusGeneration = 0;
 	private busyStatusKind: "loading" | "stale" | null = null;
 	private frame: OccurrencesFrame | null = null;
+	private disposeMenuHost?: () => void;
 	private picker: CalloutCombobox | null = null;
 	private lastIndexState = "";
 	private lastChoicesRevision = -1;
@@ -90,13 +92,6 @@ export class CalloutOccurrencesView extends ItemView {
 		if (!this.handlersRegistered) {
 			this.handlersRegistered = true;
 			this.registerDomEvent(this.contentEl, "click", (event) => this.onClick(event));
-			this.registerDomEvent(this.contentEl, "change", (event) => {
-				const target = event.target as HTMLSelectElement | null;
-				if (target?.dataset.action !== "role") return;
-				this.role = OCCURRENCE_ROLES.includes(target.value as CalloutRenderRole) ? target.value as CalloutRenderRole : undefined;
-				this.resetResults();
-				this.render();
-			});
 		}
 		this.unsubscribe?.();
 		this.unsubscribe = this.index.subscribe(() => {
@@ -120,6 +115,8 @@ export class CalloutOccurrencesView extends ItemView {
 	private clearFrame(): void {
 		this.picker?.destroy();
 		this.picker = null;
+		this.frame?.roleSelect.destroy();
+		this.disposeMenuHost?.(); this.disposeMenuHost = undefined;
 		this.frame = null;
 		this.lastResultsState = "";
 		this.contentEl.empty();
@@ -204,7 +201,13 @@ export class CalloutOccurrencesView extends ItemView {
 	}
 	private ensureFrame(): OccurrencesFrame {
 		if (this.frame) return this.frame;
+		this.disposeMenuHost = registerMenuScopeHost(this.contentEl, this.app);
 		const frame = this.frame = createOccurrencesFrame(this.contentEl);
+		frame.roleSelect.onChange((value) => {
+			this.role = OCCURRENCE_ROLES.includes(value as CalloutRenderRole) ? value as CalloutRenderRole : undefined;
+			this.resetResults();
+			this.render();
+		});
 		this.picker = new CalloutCombobox(frame.pickerHost, {
 			registry: this.registry, choices: () => this.choices(), value: this.selectedType,
 			ariaLabel: t("usage.selectType"), labelOf: (def) => def.id,
@@ -238,7 +241,7 @@ export class CalloutOccurrencesView extends ItemView {
 		const focusAction = focused && this.contentEl.contains(focused) ? focused.dataset.action : undefined;
 		const focusResult = focused?.dataset.result;
 		const frame = this.ensureFrame();
-		frame.roleSelect.value = this.role ?? "";
+		frame.roleSelect.setValue(this.role ?? "");
 		renderOccurrenceMetrics(frame.metrics, index);
 		const busy = !this.failed && (index.status === "idle" || index.status === "loading" || index.status === "stale");
 		this.syncBusyStatus(busy);

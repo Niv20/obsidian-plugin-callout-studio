@@ -6,6 +6,7 @@ import { DEFAULT_SETTINGS } from "../src/constants";
 import { FIXED_COMMAND_IDS, type FixedCommandId } from "../src/editor/commands";
 import { CommandBuilderModal, type CommandBuilderHost } from "../src/settings/CommandBuilderModal";
 import { installFakeDom } from "./support/fakeDom";
+import { TestKeymap, TestScope } from "./support/fakeKeymap";
 
 installFakeDom();
 
@@ -58,13 +59,13 @@ function openBuilder(id: FixedCommandId, enabled: boolean, save = () => Promise.
 			return save();
 		},
 	} as unknown as CommandBuilderHost;
-	const app = {} as App;
+	const app = { keymap: new TestKeymap() } as unknown as App;
 	const modal = new CommandBuilderModal(app, host);
 	const containerEl = document.body.createDiv({ cls: "modal-container" });
 	const modalEl = containerEl.createDiv({ cls: "modal" });
 	const titleEl = modalEl.createDiv({ cls: "modal-title" });
 	const contentEl = modalEl.createDiv({ cls: "modal-content" });
-	Object.assign(modal, { app, containerEl, modalEl, titleEl, contentEl });
+	Object.assign(modal, { app, scope: new TestScope(), containerEl, modalEl, titleEl, contentEl });
 	modal.onOpen();
 	const rows = Array.from(contentEl.querySelectorAll<HTMLElement>(".cs-command-fixed-row"));
 	const index = FIXED_COMMAND_IDS.indexOf(id);

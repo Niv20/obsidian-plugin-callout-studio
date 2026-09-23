@@ -32,6 +32,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import type { Modal } from "obsidian";
+import { TestKeymap, TestScope } from "./support/fakeKeymap";
 import {
 	applyModalChrome,
 	removeModalChrome,
@@ -56,7 +57,7 @@ function fakeModal(): {
 	modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });
 	const contentEl = modalEl.createDiv({ cls: "modal-content" });
 	return {
-		modal: { modalEl, containerEl, contentEl } as unknown as Modal,
+		modal: { modalEl, containerEl, contentEl, scope: new TestScope(), app: { keymap: new TestKeymap() } } as unknown as Modal,
 		modalEl,
 		containerEl,
 		contentEl,

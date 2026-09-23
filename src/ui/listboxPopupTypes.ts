@@ -22,7 +22,7 @@ export interface ListboxPopupOptions<T> extends ComboboxRowContract<T> {
 		label(query: string): string;
 		onSelect(query: string): void;
 	};
-	/** `aria-label` for the input. The caller owns the wording. */
+	/** Accessible name for the input; emitted through a hidden referenced label. */
 	ariaLabel: string;
 	placeholder: string;
 	/** False for select-like pickers whose label should not behave like text. */

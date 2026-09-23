@@ -725,6 +725,8 @@ export class FakeElement {
 	/** Bumped by {@link focus} / {@link select}, which have nothing else to do. */
 	focusCount = 0;
 	selectCount = 0;
+	selectionStart = 0;
+	selectionEnd = 0;
 	/**
 	 * How this element was last focused. Recorded rather than counted because
 	 * `preventScroll` is the whole substance of the modal autofocus fix: a
@@ -746,6 +748,12 @@ export class FakeElement {
 
 	select(): void {
 		this.selectCount++;
+		this.setSelectionRange(0, this.value.length);
+	}
+
+	setSelectionRange(start: number, end: number): void {
+		this.selectionStart = start;
+		this.selectionEnd = end;
 	}
 
 	/**

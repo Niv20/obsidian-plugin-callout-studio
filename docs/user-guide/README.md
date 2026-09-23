@@ -2,6 +2,25 @@
 
 This guide follows the same order and scope as the videos in `video-scripts`. Each chapter stands on its own, so you can jump to the task you need or read the guide from the beginning.
 
+Menus for choosing a value share the same background, height, rounded corners,
+and up/down arrow indicator throughout Callout Studio. Both the buttons and
+the lists use the plugin's theme. This includes callout, color, and language
+pickers, command options, icon filters, and **All formats** in the occurrences
+sidebar. In grouped lists, the current group's heading stays visible at the
+top while you scroll, until the next group takes its place. Lists open above
+the button when there is more room there.
+
+Text fields share the menus' background and rounded corners, and single-line
+fields have the same height. This includes callout names and IDs, palette
+names, searches in Quick Insert, replacement dialogs and the icon picker, and
+the JSON paste areas in import dialogs. Hovering highlights the background;
+the highlight remains while you edit a field or use an open menu. Validation
+errors stay visible. Text fields and menu buttons do not show hover popups.
+
+For a list without a search field, press Space or Enter to open it, use arrow
+keys or type the start of an option to navigate, then press Enter to choose.
+Escape or Tab closes the list without changing your selection.
+
 ## Video guide
 
 | Chapter | What it covers |

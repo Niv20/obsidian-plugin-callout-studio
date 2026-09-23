@@ -28,7 +28,6 @@ export function renderFallbackSection(
 
 	const setting = new Setting(containerEl)
 		.setName(t("settings.fallbackCallout"))
-		.setClass("cs-fallback-setting")
 		.setDesc(t("settings.fallbackCalloutDesc"));
 
 	// Re-read on every open, so a callout created from the picker itself is

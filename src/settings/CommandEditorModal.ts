@@ -36,7 +36,7 @@ import { buildCalloutRow, type CalloutRow } from "./command/calloutRow";
 import type { CalloutEditorPlugin } from "./editor/types";
 import { buildFormatRow, type FormatRow } from "./command/commandRoles";
 import { buildFoldStateRow, type FoldStateRow } from "./command/foldStateRow";
-import { buildActionRow, buildHeadingLevelRow } from "./command/optionRows";
+import { buildActionRow, buildHeadingLevelRow, type ChoiceRow } from "./command/optionRows";
 
 /**
  * Narrow structural host — the plugin instance, which both call sites already
@@ -65,8 +65,8 @@ export class CommandEditorModal extends Modal {
 	private resolve?: (result: CustomCommandDraft | null) => void;
 	private resolved = false;
 
-	private headingRowEl?: HTMLElement;
-	private actionRowEl?: HTMLElement;
+	private headingRow?: ChoiceRow;
+	private actionRow?: ChoiceRow;
 	private formatRow?: FormatRow;
 	private foldRow?: FoldStateRow;
 	private calloutRow?: CalloutRow;
@@ -148,11 +148,11 @@ export class CommandEditorModal extends Modal {
 			this.role = role;
 			this.syncVisibility();
 		});
-		this.headingRowEl = buildHeadingLevelRow(contentEl, this.headingLevel, (level) => {
+		this.headingRow = buildHeadingLevelRow(contentEl, this.headingLevel, (level) => {
 			this.headingLevel = level;
 			this.syncVisibility();
 		});
-		this.actionRowEl = buildActionRow(contentEl, this.action, (action) => {
+		this.actionRow = buildActionRow(contentEl, this.action, (action) => {
 			this.action = action;
 			this.syncVisibility();
 		});
@@ -178,6 +178,10 @@ export class CommandEditorModal extends Modal {
 		// Before `empty()`: the teardown reaches a document-level listener.
 		this.calloutRow?.destroy();
 		this.calloutRow = undefined;
+		this.formatRow?.destroy();
+		this.foldRow?.destroy();
+		this.headingRow?.dropdown.destroy();
+		this.actionRow?.dropdown.destroy();
 		this.contentEl.empty();
 		// The footer is a sibling of contentEl, so empty() never reaches it.
 		removeModalChrome(this);
@@ -234,14 +238,16 @@ export class CommandEditorModal extends Modal {
 				this.role,
 			);
 		}
-		this.headingRowEl?.toggleClass(
+		this.headingRow?.el.toggleClass(
 			"cs-row-hidden",
 			this.role !== "heading",
 		);
 		// Heading and inline have exactly one sensible action, so the row is
 		// hidden rather than shown as a dropdown with nothing to choose.
-		this.actionRowEl?.toggleClass("cs-row-hidden", this.role !== "regular");
+		this.actionRow?.el.toggleClass("cs-row-hidden", this.role !== "regular");
 		this.foldRow?.sync(this.role);
+		if (this.role !== "heading") this.headingRow?.dropdown.close();
+		if (this.role !== "regular") this.actionRow?.dropdown.close();
 
 		const def = this.host.registry.get(this.calloutId);
 		if (this.previewEl) {

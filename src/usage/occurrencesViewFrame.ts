@@ -1,4 +1,5 @@
 import { t, getLocale } from "../i18n";
+import { SelectDropdown } from "../ui/selectDropdown";
 import type { CalloutRenderRole } from "../types";
 import type { CalloutOccurrenceIndex } from "./CalloutOccurrenceIndex";
 import { getOccurrenceMetrics } from "./occurrenceMetrics";
@@ -19,9 +20,10 @@ export function createOccurrencesFrame(content: HTMLElement) {
 	const metrics = content.createDiv({ cls: "cs-occurrences-metrics" });
 	const controls = content.createDiv({ cls: "cs-occurrences-controls" });
 	const pickerHost = controls.createDiv({ cls: "cs-occurrences-picker" });
-	const roleSelect = controls.createEl("select", { attr: { "data-action": "role", "aria-label": t("usage.filterRole") } });
-	roleSelect.createEl("option", { text: t("usage.allRoles"), value: "" });
-	for (const role of OCCURRENCE_ROLES) roleSelect.createEl("option", { text: occurrenceRoleLabel(role), value: role });
+	const roleSelect = new SelectDropdown(controls, t("usage.filterRole"))
+		.addOption("", t("usage.allRoles"));
+	roleSelect.inputEl.dataset.action = "role";
+	for (const role of OCCURRENCE_ROLES) roleSelect.addOption(role, occurrenceRoleLabel(role));
 	const summary = content.createDiv({ cls: "cs-occurrences-summary", attr: { role: "status", "aria-live": "polite" } });
 	const status = content.createDiv({ cls: "cs-occurrences-status", attr: { role: "status", "aria-live": "polite" } });
 	const failures = content.createDiv({ cls: "cs-occurrences-failures" });

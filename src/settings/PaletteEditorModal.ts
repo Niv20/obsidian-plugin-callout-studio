@@ -36,6 +36,8 @@ import {
 	setContrastWarning,
 } from "../ui/ColorSwatchInput";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
+import type { SelectDropdown } from "../ui/selectDropdown";
+import { buildPaletteBgStyleRow, type BgStyle } from "./paletteBgStyleRow";
 import { renderBaseColorRow, seedBaseColor } from "./paletteBaseColorRow";
 import { renderDirectionPicker } from "./paletteDirectionPicker";
 import { LiveCalloutPreview } from "./LiveCalloutPreview";
@@ -116,16 +118,6 @@ const GRADIENT_HUE_SHIFT = 45;
  * stay type-checked while it is off.
  */
 const SHOW_TEXT_COLOR_CHANNEL: boolean = false;
-
-/**
- * How the palette paints its background. `"none"` is not a third way of
- * colouring one — it is the absence of a background (`transparentBg`), which is
- * why it lives here rather than at the bottom of the Intensity slider: an
- * intensity near zero is still an OPAQUE fill in the page's own colour, so it
- * looks transparent while quietly flattening the nesting step of every callout
- * stacked inside it (see `CalloutDefinition.transparentBg`).
- */
-type BgStyle = "solid" | "gradient" | "none";
 
 export class PaletteEditorModal extends Modal {
 	private existing: CustomPalette | null;
@@ -370,8 +362,8 @@ export class PaletteEditorModal extends Modal {
 			.addText((text) => {
 				this.nameInputEl = text.inputEl;
 				text.inputEl.maxLength = MAX_NAME_LENGTH;
-				text.setPlaceholder(t("palette.namePlaceholder"))
-					.setValue(this.name)
+				text.inputEl.addClass("cs-text-control");
+				text.setPlaceholder(t("palette.namePlaceholder")).setValue(this.name)
 					.onChange((v) => {
 						this.name = v;
 						this.updateValidity();
@@ -594,50 +586,40 @@ export class PaletteEditorModal extends Modal {
 	/**
 	 * Solid|Gradient|None picker — sits above the base color.
 	 *
-	 * A dropdown rather than the segmented switch this used to be: the options
-	 * column is narrow, and three labelled buttons beside a name left the name
-	 * itself ellipsised to "St…" in English and worse in every language with a
-	 * longer word for "gradient". A `<select>` costs one fixed width no matter
-	 * how many options it holds or how they translate. `cs-palette-bgstyle-setting`
-	 * is what pins that width to the Name field's above it (see styles.css).
+	 * A dropdown keeps this narrow column usable with long translated labels,
+	 * where the previous three-segment switch crowded out the setting name.
+	 * `cs-palette-bgstyle-setting` pins the shared dropdown to the
+	 * Name field's width above it (see styles.css).
 	 */
+	private bgStyleDropdown?: SelectDropdown;
 	private buildBgStyleRow(parent: HTMLElement): void {
-		const bgStyleSetting = new Setting(parent)
-			.setName(t("palette.bgStyle"))
-			.setClass("cs-palette-bgstyle-setting");
-		bgStyleSetting.addDropdown((dd) => {
-			dd.addOption("solid", t("palette.bgSolid"))
-				.addOption("gradient", t("palette.bgGradient"))
-				.addOption("none", t("palette.bgTransparent"))
-				.setValue(this.bgStyle)
-				.onChange((raw) => {
-					const v = raw as BgStyle;
-					this.bgStyle = v;
-					// Follow the per-style default until the user drags the
-					// slider themselves; once touched, their chosen intensity
-					// sticks across style changes instead of being overwritten.
-					// "None" is skipped entirely: it paints no background, so it
-					// has no strength of its own to default to, and re-seeding
-					// here would silently rewrite the value a switch back to
-					// Solid is meant to restore.
-					const reseed = !this.bgIntensityTouched && v !== "none";
-					if (reseed) {
-						this.bgIntensity =
-							v === "gradient"
-								? DEFAULT_BG_INTENSITY_GRADIENT
-								: DEFAULT_BG_INTENSITY_SOLID;
-					}
-					// Rebuild BEFORE re-deriving. Which rows the card holds is
-					// a function of the style (the advanced grid and Intensity
-					// are Solid-only, the gradient rows Gradient-only), and
-					// applyDerived() below pushes colours into the second-colour
-					// swatch — which has to be the fresh one, or the new value
-					// lands in a detached input. Colours and intensity are left
-					// exactly as they were, ready to reappear on a switch back.
-					this.renderColorSection();
-					if (reseed) this.applyDerived();
-					else this.preview?.refresh();
-				});
+		this.bgStyleDropdown?.destroy();
+		this.bgStyleDropdown = buildPaletteBgStyleRow(parent, this.bgStyle, (v) => {
+			this.bgStyle = v;
+			// Follow the per-style default until the user drags the
+			// slider themselves; once touched, their chosen intensity
+			// sticks across style changes instead of being overwritten.
+			// "None" is skipped entirely: it paints no background, so it
+			// has no strength of its own to default to, and re-seeding
+			// here would silently rewrite the value a switch back to
+			// Solid is meant to restore.
+			const reseed = !this.bgIntensityTouched && v !== "none";
+			if (reseed) {
+				this.bgIntensity =
+					v === "gradient"
+						? DEFAULT_BG_INTENSITY_GRADIENT
+						: DEFAULT_BG_INTENSITY_SOLID;
+			}
+			// Rebuild BEFORE re-deriving. Which rows the card holds is
+			// a function of the style (the advanced grid and Intensity
+			// are Solid-only, the gradient rows Gradient-only), and
+			// applyDerived() below pushes colours into the second-colour
+			// swatch — which has to be the fresh one, or the new value
+			// lands in a detached input. Colours and intensity are left
+			// exactly as they were, ready to reappear on a switch back.
+			this.renderColorSection();
+			if (reseed) this.applyDerived();
+			else this.preview?.refresh();
 		});
 	}
 
@@ -1059,6 +1041,7 @@ export class PaletteEditorModal extends Modal {
 	}
 
 	onClose(): void {
+		this.bgStyleDropdown?.destroy();
 		// Destroys the embedded editor and, via onDestroy, restores the outer
 		// preview registration (if any) and re-injects CSS.
 		this.preview?.destroy();
