@@ -958,7 +958,7 @@ describe("no new oversized files", () => {
 		// manager/theme/calloutListIcon.ts. Lowered again from 337: the shortcut
 		// chips and the hotkey-pane button — carried identically by both lists
 		// in the window — moved to settings/command/hotkeyRow.ts.
-		"src/settings/CommandBuilderModal.ts": 303,
+		"src/settings/CommandBuilderModal.ts": 302,
 		"src/settings/iconpicker/IconGrid.ts": 343,
 	};
 

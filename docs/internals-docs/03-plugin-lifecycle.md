@@ -5,7 +5,8 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
 
 ## Startup
 
-1. Read `workspace.layoutReady`, create the registry and inject the previous
+1. Register the two bundled UI icons and their unload cleanup synchronously.
+   Read `workspace.layoutReady`, create the registry and inject the previous
    startup CSS snapshot synchronously before the first await.
 2. Create `SettingsWriter`, `DeviceLocalStore` and `ReloadQueue`. Read and
    validate `data.json`; load definitions and ordinary settings. A legacy
@@ -64,7 +65,8 @@ The CSS injector cannot recreate styles after destruction. Layout-ready callback
 check that the plugin remains active before installing decorators or starting work.
 Occurrence-index disposal also clears its debounce, source records and subscribers;
 in-flight reads cannot publish after disposal. Registered event
-and DOM listeners are removed through Obsidian's plugin lifecycle. There are no
+and DOM listeners are removed through Obsidian's plugin lifecycle, along with
+the two custom UI icon registrations. There are no
 discovery timers, note watchers, prune queues or rediscovery holds to clean up.
 
 The startup CSS snapshot is derived presentation state only. Local storage

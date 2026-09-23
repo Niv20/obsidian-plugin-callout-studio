@@ -44,10 +44,7 @@ import { createCalloutViewPlugin } from "./editor/livepreview/calloutViewPlugin"
 import { clearContentPillCache } from "./editor/livepreview/contentPillRender";
 import { createHeadingGapField } from "./editor/livepreview/headingGapField";
 import { beginStartupEntranceWindow } from "./editor/renderShared";
-import {
-	refreshCallouts,
-	refreshRenderModes,
-} from "./editor/renderRefresh";
+import { refreshCallouts, refreshRenderModes } from "./editor/renderRefresh";
 import { OutlineDecorator } from "./outline/OutlineDecorator";
 import { createCalloutReadingPostProcessor } from "./reading/calloutPostProcessor";
 import {
@@ -59,7 +56,7 @@ import {
 } from "./editor/commands";
 import { CustomCommandManager } from "./editor/CustomCommandManager";
 import { CalloutStudioAPI } from "./api/PluginAPI";
-import { PLUGIN_ICON_ID } from "./constants";
+import { registerQuickInsertRibbon, registerUiIcons } from "./icons/registerUiIcons";
 import { getLocale, setLocale, t } from "./i18n";
 import { LocaleStore } from "./i18n/LocaleStore";
 import { registerDeveloperProtocols } from "./settings/developerProtocols";
@@ -119,6 +116,7 @@ export default class CalloutStudioPlugin extends Plugin {
 	}
 
 	async onload() {
+		registerUiIcons(this);
 		startMaterialFontLoader();
 		// Mobile and mid-session loads animate over an already visible UI.
 		// Capture visibility before any await.
@@ -284,10 +282,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		// Commands
 		registerCalloutCommands(this, this.commandDeps());
 
-		// The ribbon opens the same quick-insert window as its command.
-		this.addRibbonIcon(PLUGIN_ICON_ID, t("quickInsert.title"), () => {
-			this.openQuickInsert();
-		});
+		registerQuickInsertRibbon(this);
 
 		// Editor autocomplete on [! trigger
 		this.autoComplete = new CalloutAutoComplete(this);
@@ -362,12 +357,12 @@ export default class CalloutStudioPlugin extends Plugin {
 	 * The windows the fixed commands open. Built fresh on each call because
 	 * `CalloutEditor` is single-use, and kept here so the ribbon and the
 	 * command open the very same window.
-			openOccurrences: () => { void openCalloutOccurrences(this.app); },
 	 */
 	private commandDeps(): FixedCommandDeps {
 		return {
 			openEditor: () => new CalloutEditor(this),
 			openQuickInsert: () => this.openQuickInsert(),
+			openOccurrences: () => { void openCalloutOccurrences(this.app); },
 		};
 	}
 

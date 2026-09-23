@@ -1,5 +1,6 @@
 import { ItemView, type WorkspaceLeaf, type ViewStateResult } from "obsidian";
 import { t } from "../i18n";
+import { STATISTICS_ICON_ID } from "../icons/uiIcons";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { CalloutCombobox } from "../settings/calloutCombobox";
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
@@ -53,7 +54,7 @@ export class CalloutOccurrencesView extends ItemView {
 	}
 	getViewType(): string { return CALLOUT_OCCURRENCES_VIEW; }
 	getDisplayText(): string { return t("usage.title"); }
-	getIcon(): string { return "search"; }
+	getIcon(): string { return STATISTICS_ICON_ID; }
 	refreshLabels(): void {
 		if (!this.opened) return;
 		this.clearFrame();

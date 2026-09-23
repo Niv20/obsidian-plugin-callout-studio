@@ -80,6 +80,9 @@ export const Platform = {
 
 export const Keymap = { isModEvent: () => false };
 
+export function addIcon(): void { /* Custom UI registration has no DOM effect here. */ }
+export function removeIcon(): void { /* No global icon registry in this stand-in. */ }
+
 export function setIcon(): void {
 	/* no-op: nothing here draws */
 }

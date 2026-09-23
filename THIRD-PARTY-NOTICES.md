@@ -16,14 +16,16 @@ Two of them are worth reading before you use them, rather than after:
 
 ## What the plugin ships, and what it fetches
 
-The plugin bundle contains only *search indexes* — icon names, keywords and
-categories. No icon artwork is bundled.
+The plugin bundle contains icon-library *search indexes* — names, keywords and
+categories — and two Lucide-derived UI icons for quick insert and statistics.
+Icon-pack artwork is not bundled.
 
-Artwork arrives one of two ways:
+Artwork is supplied as follows:
 
 | Source | Artwork |
 | --- | --- |
 | Lucide | Shipped inside Obsidian; the plugin draws it via Obsidian's own API |
+| Plugin UI icons | Two Lucide-derived SVG composites bundled with the plugin; no download |
 | Emoji | Rendered by your system's emoji font; nothing is downloaded |
 | Material Symbols | Fetched from Google, one icon at a time, only for icons you choose |
 | Tabler Icons, Octicons, Font Awesome, RPG Awesome | Downloaded once when you press **Download** on that source in the icon picker — one file each, two for Tabler and three for Font Awesome (one per style) |
@@ -38,15 +40,19 @@ privacy* section for the exact URLs.
 
 - **Homepage:** https://lucide.dev
 - **Licence:** ISC
-- **Included via:** Obsidian's built-in icon set
+- **Included via:** Obsidian's built-in icon set, plus two bundled UI composites
 
-Lucide is not bundled by this plugin; it is provided by Obsidian, and listed
-here because Callout Studio offers it as an icon source.
+The Lucide icon library is provided by Obsidian. Callout Studio also bundles
+two derived UI icons: a paintbrush with a circle-plus badge for quick insert,
+and a paintbrush with a search badge for callout occurrences and statistics.
+The badges sit at the lower right. Lucide's paintbrush, circle-plus and search
+shapes are tailored and recomposed for small UI sizes. Editable SVGs are in
+[`docs/assets/ui-icons/`](docs/assets/ui-icons/).
 
 ```
 ISC License
 
-Copyright (c) 2020, Lucide Contributors
+Copyright (c) 2026 Lucide Icons and Contributors
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above

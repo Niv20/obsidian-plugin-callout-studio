@@ -7,6 +7,8 @@ Vault insights shows source references to callouts across your Markdown notes.
 Run **Callout Studio: Callout occurrences** from the Command palette, or select
 **Find usages** from a callout's three-dot menu. The sidebar combines navigation
 and vault statistics; there is no separate statistics window in Settings.
+The sidebar tab and **Find usages** share a paintbrush icon with an overlapping magnifying
+glass at its lower right.
 
 The compact metrics at the top share the available width evenly. Narrow panes
 show **Total callouts** and **Types found**; wider panes also show **Files with

@@ -1,5 +1,6 @@
 import type { App, Menu } from "obsidian";
 import { t } from "../i18n";
+import { STATISTICS_ICON_ID } from "../icons/uiIcons";
 import { getCalloutOccurrenceIndex } from "./occurrenceService";
 import { openOccurrencesFromSettings } from "./openFromSettings";
 
@@ -23,7 +24,7 @@ export function addUsageMenuItem(
 			const title = index.status === "ready"
 				? t("usage.menuCount", { count: result.totalCount, files: result.fileCount })
 				: t(index.status === "partial" ? "usage.menuIncomplete" : "usage.menuLoading");
-			item.setTitle(title).setIcon("search");
+			item.setTitle(title).setIcon(STATISTICS_ICON_ID);
 		};
 		item.onClick(() => openOccurrencesFromSettings(app, ids));
 		unsubscribe = index.subscribe(update);

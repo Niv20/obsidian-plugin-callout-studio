@@ -35,10 +35,8 @@ export const MAX_TAGS_COUNT: number = 4;
 /**
  * The Lucide id that stands for Callout Studio itself.
  *
- * Named once because two surfaces wear it and they must not drift: the welcome
- * splash's hero mark and the left-ribbon button. The plugin registers no icon
- * of its own with `addIcon()` — this is a stock Obsidian glyph, so it needs no
- * asset, costs no bytes and follows the theme.
+ * The welcome splash's hero mark. Action-specific composites for quick insert
+ * and occurrences live separately in icons/uiIcons.ts.
  */
 export const PLUGIN_ICON_ID = "paintbrush";
 

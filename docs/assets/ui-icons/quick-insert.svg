@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+<!--
+ISC License
+
+Copyright (c) 2026 Lucide Icons and Contributors
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+
+MIT License
+
+Copyright (c) 2013-2023 Cole Bemis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<!-- Exported from src/icons/uiIcons.ts. -->
+<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M9.561 16.517L3.942 14.984"/>
+  <path d="M12.369 11.362L8.354 7.348C8.159 7.153 8.159 6.836 8.354 6.641L9.298 5.697C10.239 4.756 11.765 4.756 12.706 5.697L13.65 6.641C13.845 6.836 14.162 6.836 14.357 6.641L18.376 2.622C18.912 2.086 19.694 1.876 20.426 2.073C21.159 2.269 21.731 2.841 21.927 3.574C22.124 4.306 21.914 5.088 21.378 5.624L17.503 9.5"/>
+  <path d="M9 8C7.196 10.71 5.03 11.46 2.417 11.948C2.241 11.98 2.094 12.103 2.032 12.271C1.97 12.44 2.002 12.628 2.115 12.767L9.435 21.65C9.74 21.974 10.224 22.058 10.62 21.854C10.658 21.828 10.697 21.801 10.737 21.773"/>
+  <circle cx="17.5" cy="17.5" r="4.5" stroke-width="1.8"/>
+  <path d="M17.5 15.4v4.2M15.4 17.5h4.2" stroke-width="1.6"/></g>
+</svg>

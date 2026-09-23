@@ -4,6 +4,30 @@ Covers the whole icon subsystem: [`src/icons/`](../../src/icons/) — the servic
 layer (fetching, caching, resolving), the pack registry (what each library
 looks like as data), rendering, and the "Your images" user-upload source.
 
+## Plugin UI icons
+
+[`src/icons/uiIcons.ts`](../../src/icons/uiIcons.ts) bundles two Lucide-derived
+SVG composites: `callout-studio-quick-insert` combines a paintbrush with a
+circle-plus badge at the lower right, and `callout-studio-statistics` combines
+the paintbrush with a search badge at the lower right. Each badge overlaps the
+full-size brush, whose paths stop short to leave a transparent gap around the
+badge. The cutout is part of the geometry: no background-coloured cover or SVG
+mask IDs are needed, so repeated icons and different backgrounds render alike.
+The shapes use `currentColor` and inherit the host's icon colour.
+
+[`registerUiIcons.ts`](../../src/icons/registerUiIcons.ts) registers both with
+Obsidian's `addIcon()` synchronously at the start of `onload()`, before any view,
+command or ribbon consumer. A plugin-registered cleanup calls `removeIcon()` on
+unload. These assets require no runtime fetch or icon-pack download.
+
+Quick insert uses its ID for the ribbon and command. Occurrences uses its ID
+for the sidebar tab, **Find usages** menus and command. The welcome hero keeps
+the stock `paintbrush` icon. Editable standalone exports live in
+[`quick-insert.svg`](../assets/ui-icons/quick-insert.svg) and
+[`statistics.svg`](../assets/ui-icons/statistics.svg); keep them aligned with
+the bundled definitions. Attribution is in
+[`THIRD-PARTY-NOTICES.md`](../../THIRD-PARTY-NOTICES.md#lucide).
+
 ## Two id spaces (recap)
 
 From [Architecture](02-architecture.md#two-id-spaces-for-icons):
@@ -401,13 +425,15 @@ rather than reading `settings` directly, because `buildSvg()` is synchronous
 by contract and is called from render paths that have no route back to the
 plugin instance.
 
-## Search indexes are bundled; artwork is not
+## Search indexes and UI artwork
 
 Every pack's **search index** (names, keywords, categories) ships inside
 `main.js`, encoded via [`src/icons/data/codec.ts`](../../src/icons/data/codec.ts)
 — this is what makes searching every source work fully offline from install,
-before any artwork download. **Artwork itself is never bundled** (beyond
-Lucide, which Obsidian already ships). Regeneration is a deliberately
+before any artwork download. Icon-pack artwork is not bundled: Lucide comes
+from Obsidian, and the other SVG libraries are fetched as described above.
+The two plugin UI composites are the only bundled icon artwork. Regeneration
+of search indexes and downloadable packs is a deliberately
 separate, manual step — `npm run icons:generate` — **never** part of
 `npm run build`, and its output **is committed to the repo**. See
 [Build, test, and release](19-build-test-release.md#regenerating-icon-and-locale-data)
