@@ -12,7 +12,7 @@
  * - the **fold chevron's tooltip**, baked into a CodeMirror widget when the
  *   decoration was built (`refreshRenderModes`);
  * - a **command's name**, which Obsidian copies out of the object handed to
- *   `addCommand` and never reads again — true of the six fixed commands and of
+ *   `addCommand` and never reads again — true of the built-in commands and of
  *   the user's own alike, since `describeCommand` renders those through `t()`
  *   too, which is why the manager's sweep is on the list.
  *

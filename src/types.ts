@@ -542,7 +542,7 @@ export type CustomCommandFold = "none" | "expanded" | "collapsed";
 /**
  * One user-built command, registered with Obsidian so it can be given a hotkey.
  *
- * The plugin registers only its six fixed commands by default; everything here
+ * The plugin registers only its built-in commands by default; everything here
  * was explicitly created by the user in the command builder, and is registered
  * and unregistered as that list changes.
  */
@@ -753,11 +753,11 @@ export interface PluginSettings {
 	/**
 	 * Commands the user built for specific callouts, registered with Obsidian
 	 * so they can be given hotkeys. Empty by default — the command palette
-	 * carries only the six fixed commands unless the user adds to this.
+	 * carries only the built-in commands unless the user adds to this.
 	 */
 	customCommands: CustomCommand[];
 	/**
-	 * Ids of the six fixed commands (`editor/commands.ts`) the user has
+	 * Ids of the built-in commands (`editor/commands.ts`) the user has
 	 * turned off. Empty by default — every fixed command is registered unless
 	 * listed here. A disabled command is not registered with Obsidian at all,
 	 * so it drops out of the command palette and the hotkeys pane, but any

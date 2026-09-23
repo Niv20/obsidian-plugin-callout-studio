@@ -290,7 +290,7 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
 
 ## Backward compatibility constraints
 
-- **Command ids are permanent.** The five fixed command ids, and every
+- **Command ids are permanent.** The built-in command ids, and every
   minted custom-command id once created, can never be renamed —
   hotkeys are bound to them.
 - **`manifest.json`'s `id`** (`callout-studio`) can never change — it's the

@@ -360,6 +360,7 @@ describe("command ids have not moved since release", () => {
 		"callout-wrap",
 		"callout-unwrap",
 		"open-quick-insert",
+		"show-callout-occurrences",
 	] as const;
 
 	it("the fixed ids are exactly the released ones, in order", () => {
@@ -385,7 +386,7 @@ describe("command ids have not moved since release", () => {
 		}
 	});
 
-	it("custom commands keep their own namespace, and cannot collide with the fixed five", () => {
+	it("custom commands keep their own namespace, and cannot collide with a built-in", () => {
 		// A user-built command's id is `custom-<minted identity>`, and the
 		// prefix doubles as the marker CustomCommandManager uses to recognise
 		// its own registrations during a sweep. If a fixed id ever started with

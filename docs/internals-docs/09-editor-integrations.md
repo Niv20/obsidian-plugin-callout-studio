@@ -1,7 +1,7 @@
 # Editor integrations
 
 This covers everything that lets a user *write* callouts and *act* on them:
-autocomplete, wrap/unwrap/insert, the five fixed commands, custom commands,
+autocomplete, wrap/unwrap/insert, the built-in commands, custom commands,
 the right-click context menu, and the two decorators that clean up callout
 syntax outside the editor (Outline pane, link suggestions).
 
@@ -52,7 +52,7 @@ still-default title while leaving a custom one alone.
 ## `CalloutBlockTools.ts` — wrap, unwrap, insert
 
 [`src/editor/CalloutBlockTools.ts`](../../src/editor/CalloutBlockTools.ts) holds
-the pure editor-manipulation functions behind both the five fixed commands and
+the pure editor-manipulation functions behind the three fixed editor commands and
 custom commands. All of it is careful about structure that has nothing to do
 with callouts: fenced code blocks, math blocks (`$$`), YAML frontmatter, and
 existing nesting.
@@ -186,32 +186,62 @@ the manager's `currentSuggest` and behaves exactly like a natively-typed `!`
 — it follows scroll and auto-closes on delete, neither of which a
 directly-opened popover would do.
 
-## The five fixed commands
+## Built-in commands and availability
 
-[`src/editor/commands.ts`](../../src/editor/commands.ts) registers exactly five
-command ids, and **deliberately does not register one command per callout
-type** — a design choice, not an oversight — which would flood the command
-palette with hundreds of entries.
+[`src/editor/commands.ts`](../../src/editor/commands.ts) owns every built-in
+command id and the list rendered by **Manage commands**. It deliberately does
+not register one command per callout type, which would flood the command palette
+with hundreds of entries. `show-callout-occurrences` is included in that same
+list even though its view and navigation implementation live under `src/usage/`.
+The ids are the source of the `FixedCommandId` type; the total name-key record
+and the command builder's exhaustive switch make a missing label or
+implementation a TypeScript error. A source rule in
+`tests/customCommandSync.test.ts` also restricts built-in `addCommand()` calls
+to this module, so a new static registration cannot silently bypass the list.
 
 ```ts
 FIXED_COMMAND_IDS = [
   "open-settings", "create-callout", "insert-empty-callout",
-  "callout-wrap", "callout-unwrap",
+  "callout-wrap", "callout-unwrap", "open-quick-insert",
+  "show-callout-occurrences",
 ]
 ```
+
+Obsidian only offers a command with `editorCallback` in the Command Palette
+when an active Markdown editor is available. The three text-editing commands
+use that callback: **Insert empty callout**, **Wrap in callout**, and **Unwrap
+from callout**. They therefore disappear in Reading view and when focus is in
+a surface without an active note editor. The settings command-builder's
+embedded preview deliberately reports preview mode, so these editor commands
+are unavailable while focus is in that preview too; treating it as an editor
+would let a command write into the preview instead of the user's note. Open a
+note in Live Preview or Source mode and focus its text to make them available.
+
+The other built-ins use plain `callback`s and can appear without an active
+editor: **Open settings**, **Create new callout type**, **Quick insert block
+callout**, and **Callout occurrences**. **Manage commands** lists all built-ins
+regardless of whether Obsidian currently considers their execution context
+available. Hotkeys are also bound independently of the active editor context.
 
 > [!IMPORTANT]
 > **These ids are a stable API — never rename one.** Users may have hotkeys
 > bound to them; a rename orphans the binding. `tests/repoRelease.test.ts`
 > pins the exact set and order.
 
-Each user can individually disable a fixed command
+Each user can individually disable a built-in command
 (`settings.disabledFixedCommands`); `setFixedCommandEnabled()` calls
 `plugin.removeCommand()` / `plugin.addCommand()` directly, immediately, rather
 than merely hiding the command — this is what removes it from the command
 palette *and* the hotkeys pane, not just from view. Obsidian only clears a
 removed command's **default** hotkeys on `removeCommand`, never the user's own
 binding, so re-enabling restores it instantly.
+
+Because Obsidian keeps a user's binding under the command id while the command
+is removed, disabling a command does not free its shortcut. If the same key is
+assigned to another command while it is off, re-enabling restores both saved
+bindings. The plugin does not rewrite Obsidian's hotkey store; users who want to
+reuse a key should clear the old binding in Obsidian's Hotkeys settings before
+assigning it elsewhere.
 
 `refreshFixedCommandNames()` re-registers a command **at the same id** whenever
 its rendered name changes (a locale arriving mid-session, or the user changing

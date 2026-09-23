@@ -1480,14 +1480,16 @@ both runtime outcomes, not two mutually visible actions.
 
 ### `CommandBuilderModal` — fixed + custom commands, one window
 
-Two lists in one modal: the five fixed commands (plain rows — nothing to
+Two lists in one modal: the built-in commands (plain rows — nothing to
 configure but a hotkey), and the user's own built commands (full rows with
 add/edit/delete). Both kinds display the same two pieces of information side
 by side, deliberately kept separate:
 
 - **A hotkey chip** that only *reads* what Obsidian has bound
   (`hotkeyLink.ts`'s `hotkeysForCommand`), because a shortcut is a fact
-  about the row, not something this window can set directly.
+  about the row, not something this window can set directly. On a disabled
+  built-in row the chip is hidden and returns when the command is re-enabled;
+  the saved Obsidian binding itself is preserved.
 - **A button** that *opens* Obsidian's own hotkeys pane, filtered to that
   command (`openHotkeySettings`), because binding a key is Obsidian's job.
 

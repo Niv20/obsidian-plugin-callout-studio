@@ -1,9 +1,8 @@
 /**
  * editor/commands.ts — Registers all user-facing Obsidian commands.
  *
- * Calls plugin.addCommand() for each stable command ID (open-settings,
- * create-callout, callout-wrap, callout-unwrap, open-quick-insert). Command
- * implementations delegate to CalloutBlockTools or open one of the two windows
+ * Calls plugin.addCommand() for every id in FIXED_COMMAND_IDS. Command
+ * implementations delegate to CalloutBlockTools or to an injected window
  * passed in as `FixedCommandDeps`.
  * Command IDs must never be renamed after release because users may have
  * them bound to hotkeys.
@@ -18,22 +17,26 @@ import {
 } from "./CalloutBlockTools";
 import { t } from "../i18n";
 import type { PluginSettings } from "../types";
+import { QUICK_INSERT_ICON_ID, STATISTICS_ICON_ID } from "../icons/uiIcons";
 
 interface SettingsApi {
 	open?: () => void;
 	openTabById?: (id: string) => void;
 }
 
-/**
- * The commands the plugin always registers. Stable API — never rename one.
- */
-export type FixedCommandId =
-	| "open-settings"
-	| "create-callout"
-	| "insert-empty-callout"
-	| "callout-wrap"
-	| "callout-unwrap"
-	| "open-quick-insert";
+/** The commands registered and displayed in Manage commands, in stable order. */
+export const FIXED_COMMAND_IDS = [
+	"open-settings",
+	"create-callout",
+	"insert-empty-callout",
+	"callout-wrap",
+	"callout-unwrap",
+	"open-quick-insert",
+	"show-callout-occurrences",
+] as const;
+
+/** Stable API — never rename a command id after release. */
+export type FixedCommandId = (typeof FIXED_COMMAND_IDS)[number];
 
 /**
  * The name key behind each fixed command.
@@ -50,17 +53,8 @@ export const FIXED_COMMAND_NAME_KEYS: Record<FixedCommandId, string> = {
 	"callout-wrap": "cmd.calloutWrap",
 	"callout-unwrap": "cmd.calloutUnwrap",
 	"open-quick-insert": "cmd.openQuickInsert",
+	"show-callout-occurrences": "usage.title",
 };
-
-/** The fixed commands in the order they are registered below. */
-export const FIXED_COMMAND_IDS: readonly FixedCommandId[] = [
-	"open-settings",
-	"create-callout",
-	"insert-empty-callout",
-	"callout-wrap",
-	"callout-unwrap",
-	"open-quick-insert",
-];
 
 interface CommandHostPlugin extends Plugin {
 	app: Plugin["app"] & { setting?: SettingsApi };
@@ -71,14 +65,15 @@ interface CommandHostPlugin extends Plugin {
 /**
  * The windows these commands open, injected rather than imported.
  *
- * Two of the six exist only to put a window on screen, and both of those
- * windows need far more of the plugin than {@link CommandHostPlugin} describes.
+ * The openers put a window on screen, and those windows need far more of the
+ * plugin than {@link CommandHostPlugin} describes.
  * Passing the openers in keeps this module's idea of "the plugin" at three
  * members, and keeps `commands.ts` from importing the settings tree.
  */
 export interface FixedCommandDeps {
 	openEditor: () => CalloutEditor;
 	openQuickInsert: () => void;
+	openOccurrences: () => void;
 }
 
 /**
@@ -153,11 +148,24 @@ function buildFixedCommand(
 			return {
 				id,
 				name,
+				icon: QUICK_INSERT_ICON_ID,
 				callback: () => {
 					deps.openQuickInsert();
 				},
 			};
+		case "show-callout-occurrences":
+			return {
+				id,
+				name,
+				icon: STATISTICS_ICON_ID,
+				callback: () => deps.openOccurrences(),
+			};
 	}
+	return assertNever(id);
+}
+
+function assertNever(value: never): never {
+	throw new Error(`Missing built-in command implementation: ${String(value)}`);
 }
 
 /**

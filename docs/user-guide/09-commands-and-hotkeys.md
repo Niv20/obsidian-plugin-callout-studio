@@ -10,6 +10,13 @@ The built-in commands are:
 - **Callout Studio: Wrap in callout**
 - **Callout Studio: Unwrap from callout**
 - **Callout Studio: Quick insert block callout**
+- **Callout Studio: Callout occurrences**
+
+The three commands that edit note text — **Insert empty callout**, **Wrap in
+callout**, and **Unwrap from callout** — appear in the Command Palette when a
+Markdown note is open in an editing mode and its text editor is focused. They
+are unavailable in Reading view or when focus is in a surface without an active
+note editor.
 
 No keyboard shortcut is assigned by default.
 
@@ -46,10 +53,16 @@ Open **Settings → Callout Studio → Commands & hotkeys**, then click **Manage
 From this window you can:
 
 - Turn built-in commands on or off.
+- See each command's assigned shortcuts while it is on. Turning a command off
+  hides its shortcut labels; turning it back on restores them.
 - Click the plus button beside a command to open Obsidian's Hotkeys settings focused on that command.
 - Review the shortcuts already assigned by Obsidian.
 
 Obsidian owns the shortcut itself; Callout Studio provides the command.
+Turning a command off preserves its assigned shortcut. If you want to reuse
+that key for another command, remove its old assignment in Obsidian's Hotkeys
+settings while the original command is still on. Otherwise the saved bindings
+can overlap when you turn the original command back on.
 
 ## Create a custom command
 

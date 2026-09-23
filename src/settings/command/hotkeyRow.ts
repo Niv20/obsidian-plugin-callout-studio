@@ -2,7 +2,7 @@
  * settings/command/hotkeyRow.ts — the shortcut half of a command row.
  *
  * Both lists in *Manage commands* carry it — the user's own commands and the
- * six fixed ones — and they must not be able to disagree about what a command
+ * built-in ones — and they must not be able to disagree about what a command
  * is bound to or where the click leads, so there is one implementation.
  */
 import { setIcon } from "obsidian";
@@ -35,13 +35,15 @@ export function addHotkeyChips(
 	pluginId: string,
 	nameLine: HTMLElement,
 	shortId: string,
-): void {
+): HTMLElement[] {
 	const shortcuts = hotkeysForCommand(app, fullCommandId(pluginId, shortId));
 	const labels =
 		shortcuts.length > 0 ? shortcuts : [t("commandBuilder.hotkeyBlank")];
+	const chips: HTMLElement[] = [];
 	for (const label of labels) {
-		nameLine.createSpan({ cls: "cs-hotkey-chip", text: label });
+		chips.push(nameLine.createSpan({ cls: "cs-hotkey-chip", text: label }));
 	}
+	return chips;
 }
 
 /**
@@ -53,7 +55,7 @@ export function addHotkeyChips(
  * it identical to the pencil and the bin beside it.
  *
  * `disabled` is for a fixed command the user switched off: with nothing
- * registered there is nowhere for the click to lead. The pills stay.
+ * registered there is nowhere for the click to lead.
  */
 export function addHotkeyButton(
 	app: App,

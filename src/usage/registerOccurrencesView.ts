@@ -4,29 +4,15 @@ import type { CalloutRenderRole } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { CALLOUT_OCCURRENCES_VIEW, CalloutOccurrencesView } from "./CalloutOccurrencesView";
 
-const commandNames = new WeakMap<Plugin, string>();
+const registeredViews = new WeakSet<Plugin>();
 
 export function registerOccurrencesView(plugin: Plugin & { registry: CalloutRegistry }): void {
 	plugin.registerView(CALLOUT_OCCURRENCES_VIEW, (leaf) => new CalloutOccurrencesView(leaf, plugin.registry));
-	registerOccurrencesCommand(plugin);
-}
-
-function registerOccurrencesCommand(plugin: Plugin): void {
-	const name = t("usage.title");
-	if (commandNames.get(plugin) !== name) {
-		if (commandNames.has(plugin)) plugin.removeCommand("show-callout-occurrences");
-		plugin.addCommand({
-			id: "show-callout-occurrences", name,
-			callback: () => { void openCalloutOccurrences(plugin.app); },
-		});
-		commandNames.set(plugin, name);
-	}
+	registeredViews.add(plugin);
 }
 
 export function refreshOccurrencesViewLocale(plugin: Plugin): void {
-	// Locale preparation can complete before this feature's lifecycle registration.
-	if (!commandNames.has(plugin)) return;
-	registerOccurrencesCommand(plugin);
+	if (!registeredViews.has(plugin)) return;
 	for (const leaf of plugin.app.workspace.getLeavesOfType(CALLOUT_OCCURRENCES_VIEW)) {
 		if (leaf.view instanceof CalloutOccurrencesView) leaf.view.refreshLabels();
 	}

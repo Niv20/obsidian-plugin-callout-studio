@@ -1,7 +1,7 @@
 /**
  * settings/sections/HotkeySection.ts — Keyboard shortcut settings section.
  *
- * One row, one button. Everything about commands — the six fixed ones, the
+ * One row, one button. Everything about commands — the built-in ones, the
  * user's own, and what each is bound to — lives in the window behind it, so
  * this section stays a door rather than a second place to read the same list.
  */

@@ -73,11 +73,12 @@ function openBuilder(id: FixedCommandId, enabled: boolean, save = () => Promise.
 	assert.ok(row && toggle);
 	const control = row.querySelector<HTMLElement>(".cs-command-row-toggle");
 	const hotkey = row.querySelector<HTMLButtonElement>("button");
+	const chips = Array.from(row.querySelectorAll<HTMLElement>(".cs-hotkey-chip"));
 	assert.ok(control && hotkey);
 	control.focus({ preventScroll: true });
 	const originalNodes = descendants(contentEl);
 	return {
-		row, hotkey, settings, changes,
+		row, hotkey, chips, settings, changes,
 		value: () => values.get(toggle.component),
 		change: (value: boolean) => {
 			toggle.component.setValue(value);
@@ -104,6 +105,8 @@ describe("command toggles keep their existing rows and focus", () => {
 				h.assertStable();
 				assert.equal(h.row.hasClass("is-disabled"), enabled);
 				assert.equal(h.hotkey.disabled, enabled);
+				assert.ok(h.chips.length > 0);
+				assert.ok(h.chips.every((chip) => chip.hidden === enabled));
 				assert.equal(h.value(), !enabled);
 				assert.equal(h.settings.disabledFixedCommands.includes(id), enabled);
 				assert.deepEqual(h.changes, [[id, !enabled]]);

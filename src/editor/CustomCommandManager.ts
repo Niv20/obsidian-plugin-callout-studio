@@ -1,7 +1,7 @@
 /**
  * editor/CustomCommandManager.ts — Keeps user-built commands in sync.
  *
- * The plugin registers six fixed commands (editor/commands.ts); everything
+ * The plugin registers seven built-in commands (editor/commands.ts); everything
  * here was created by the user in the command builder and must appear in, and
  * disappear from, Obsidian's command palette as that list changes.
  *

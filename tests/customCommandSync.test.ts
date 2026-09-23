@@ -969,15 +969,13 @@ describe("the existence of a callout implies no command", () => {
 	});
 });
 
-describe("no code path registers a command per callout", () => {
-	/** Every module that is allowed to call `addCommand` at all. */
+describe("command registration stays centralized", () => {
+	/** Built-ins and user-built commands each have one registration owner. */
 	const CALLERS = [
 		"src/editor/commands.ts", "src/editor/CustomCommandManager.ts",
-		// One static command opens the vault-wide occurrence view; never per ID.
-		"src/usage/registerOccurrencesView.ts",
 	];
 
-	it("keeps addCommand to the fixed, user-command and occurrence-view owners", () => {
+	it("keeps addCommand to the built-in and user-command owners", () => {
 		const offenders = pluginSourceFiles()
 			.filter((f) => !CALLERS.includes(f.path))
 			.filter((f) => /\.addCommand\s*\(/.test(blankLiterals(f.text)))
@@ -985,10 +983,20 @@ describe("no code path registers a command per callout", () => {
 		assert.deepEqual(
 			offenders,
 			[],
-			report(
-				"addCommand belongs to commands.ts (the fixed set), CustomCommandManager.ts (the user's list), and registerOccurrencesView.ts (one static view command). Unexpected registration callers:",
+				report(
+				"addCommand belongs to commands.ts (all built-ins) and CustomCommandManager.ts (the user's list). Unexpected registration callers:",
 				offenders,
 			),
+		);
+	});
+
+	it("keeps every built-in registration path routed through the declared id list", () => {
+		const fixedCommands = blankLiterals(readRepoFile("src/editor/commands.ts"));
+		const callSites = fixedCommands.match(/plugin\.addCommand\s*\(/g) ?? [];
+		assert.equal(
+			callSites.length,
+			3,
+			"the only built-in addCommand paths should be startup, name refresh and re-enable; add new ids to FIXED_COMMAND_IDS instead",
 		);
 	});
 

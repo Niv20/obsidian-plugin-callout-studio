@@ -48,7 +48,7 @@ describe("callout occurrence sidebar", () => {
 		}) as Plugin;
 		assert.doesNotThrow(() => refreshOccurrencesViewLocale(plugin));
 	});
-	it("registers one static command and reapplies filters when reusing the sidebar", async () => {
+	it("registers the view and reapplies filters when reusing the sidebar", async () => {
 		const commands: Command[] = [];
 		const states: unknown[] = [];
 		const sides: string[] = [];
@@ -64,7 +64,7 @@ describe("callout occurrence sidebar", () => {
 		const plugin = { app, registry: new CalloutRegistry(), registerView: () => {}, addCommand: (command: Command) => { commands.push(command); } } as unknown as Plugin & { registry: CalloutRegistry };
 		registerOccurrencesView(plugin);
 		refreshOccurrencesViewLocale(plugin);
-		assert.deepEqual(commands.map((command) => command.id), ["show-callout-occurrences"]);
+		assert.deepEqual(commands, [], "the static command is owned by the built-in command registry");
 		await openCalloutOccurrences(app, ["warning"], "inline");
 		await openCalloutOccurrences(app, ["note"]);
 		assert.deepEqual(sides, ["right", "right"]);

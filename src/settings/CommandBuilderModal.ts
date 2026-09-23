@@ -1,7 +1,7 @@
 /**
  * settings/CommandBuilderModal.ts — Every Callout Studio command, in one place.
  *
- * Two lists. The six fixed commands are shown as plain lines, because there is
+ * Two lists. The built-in commands are shown as plain lines, because there is
  * nothing to do to them but bind a key; the user's own commands get real rows
  * with add / edit / delete. Both carry the same two things, and they are
  * deliberately separate: pills beside the name that *read* what Obsidian has
@@ -80,9 +80,8 @@ export class CommandBuilderModal extends Modal {
 			cls: "setting-item-description",
 		});
 
-		// The user's own commands come first. They are the only part of this
-		// window that can be acted on, and the five built-ins never change, so
-		// putting them on top would push the list that matters below the fold.
+		// The user's own commands come first because they are the only entries
+		// that can be created, edited, or deleted; built-ins only have toggles.
 		new Setting(contentEl)
 			.setName(t("commandBuilder.yourCommands"))
 			.setHeading()
@@ -161,7 +160,8 @@ export class CommandBuilderModal extends Modal {
 	 * built-in command. Each row contains its name, shortcut pills, the button
 	 * that binds one, and an on/off toggle.
 	 *
-	 * A disabled row fades in place and keeps showing its bound shortcuts.
+	 * A disabled row fades in place and hides its bound shortcuts. They remain
+	 * stored by Obsidian and return when the command is re-enabled.
 	 * The row and its controls must stay attached when toggled: rebuilding
 	 * the list removes the focused control and temporarily shrinks the
 	 * scroller, losing its position. Update the row's class and existing
@@ -183,10 +183,8 @@ export class CommandBuilderModal extends Modal {
 				.createDiv({ cls: "callout-studio-row-info" })
 				.createDiv({ cls: "callout-studio-row-name-line" });
 			nameLine.createDiv({ cls: "callout-studio-row-name", text: name });
-			// Still read, even switched off: the binding underneath survives the
-			// toggle, and turning the command back on must not look like it lost
-			// the shortcut.
-			this.hotkeyChips(nameLine, id);
+			const hotkeyChips = this.hotkeyChips(nameLine, id);
+			for (const chip of hotkeyChips) chip.hidden = !enabled;
 
 			// Blocked, not hidden: there is nowhere left for the click to lead
 			// while the command isn't registered.
@@ -202,6 +200,7 @@ export class CommandBuilderModal extends Modal {
 					// A newer toggle may have landed while this save was pending.
 					const enabled = isFixedCommandEnabled(this.host.settings, id);
 					row.toggleClass("is-disabled", !enabled);
+					for (const chip of hotkeyChips) chip.hidden = !enabled;
 					hotkeyButton.disabled = !enabled;
 					toggle.setValue(enabled);
 				});
@@ -209,8 +208,8 @@ export class CommandBuilderModal extends Modal {
 	}
 
 	/** @see addHotkeyChips */
-	private hotkeyChips(nameLine: HTMLElement, shortId: string): void {
-		addHotkeyChips(this.app, this.host.manifest.id, nameLine, shortId);
+	private hotkeyChips(nameLine: HTMLElement, shortId: string): HTMLElement[] {
+		return addHotkeyChips(this.app, this.host.manifest.id, nameLine, shortId);
 	}
 
 	/** @see addHotkeyButton */

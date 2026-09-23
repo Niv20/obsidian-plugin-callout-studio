@@ -40,14 +40,18 @@ migration/runtime-refresh."
 
 ## Adding a command
 
-**Do not add a sixth fixed command.** The plugin deliberately caps itself at
-five (`FIXED_COMMAND_IDS` in `src/editor/commands.ts`) specifically to avoid
-flooding the command palette with a per-callout entry — see
-[Editor integrations § the five fixed commands](09-editor-integrations.md#the-five-fixed-commands).
-A genuinely new *kind* of user-facing action belongs there only if it's a
-generic action independent of any specific callout; anything tied to "wrap
-this callout type" belongs in the **custom command** system instead
-(`CustomCommandManager` — users build these themselves via
+The built-in command list (`FIXED_COMMAND_IDS` in `src/editor/commands.ts`) is
+also the list shown by **Manage commands**. A new generic action belongs there
+only if it is independent of any specific callout; never register one command
+per callout type, which would flood the command palette. The list derives the
+`FixedCommandId` union, and the total name map plus exhaustive command builder
+require every id to have a label and implementation. Keep built-in
+`addCommand()` calls in `commands.ts`; a source rule in the test suite flags
+registrations added elsewhere. See
+[Editor integrations § built-in commands](09-editor-integrations.md#built-in-commands-and-availability).
+
+Anything tied to "wrap this callout type" belongs in the **custom command**
+system instead (`CustomCommandManager` — users build these themselves via
 `CommandBuilderModal`; there's nothing for a contributor to add here beyond
 new *roles/actions* the builder can offer, which would touch
 `CustomCommandAction`/`CustomCommand.role` in `src/types.ts`,

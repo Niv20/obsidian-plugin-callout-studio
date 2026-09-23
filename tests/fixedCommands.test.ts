@@ -1,5 +1,5 @@
 /**
- * tests/fixedCommands.test.ts — the five commands the plugin always ships.
+ * tests/fixedCommands.test.ts — the built-in commands the plugin always ships.
  *
  * Command ids are stable API: Obsidian keys the user's hotkey by id, so a
  * renamed id is a silently unbound shortcut and a *drifted list* is worse — the
@@ -98,6 +98,7 @@ let quickInsertOpens = 0;
 const deps = (): Parameters<typeof registerCalloutCommands>[1] => ({
 	openEditor: noEditor,
 	openQuickInsert: () => void (quickInsertOpens += 1),
+	openOccurrences: () => {},
 });
 
 const idsOf = (commands: Command[]): string[] => commands.map((c) => c.id);
@@ -124,9 +125,9 @@ describe("FIXED_COMMAND_IDS — no drift", () => {
 		}
 	});
 
-	it("declares six, with no duplicates", () => {
-		assert.strictEqual(FIXED_COMMAND_IDS.length, 6);
-		assert.strictEqual(new Set(FIXED_COMMAND_IDS).size, 6);
+	it("declares unique command ids", () => {
+		assert.ok(FIXED_COMMAND_IDS.length >= 7);
+		assert.strictEqual(new Set(FIXED_COMMAND_IDS).size, FIXED_COMMAND_IDS.length);
 	});
 
 	it("carries a name key for every id and an id for every name key", () => {
@@ -179,7 +180,7 @@ describe("FIXED_COMMAND_IDS — no drift", () => {
 		registerCalloutCommands(h.plugin, deps());
 		const byId = new Map(h.added.map((c) => [c.id, c]));
 
-		for (const id of ["open-settings", "create-callout", "open-quick-insert"]) {
+		for (const id of ["open-settings", "create-callout", "open-quick-insert", "show-callout-occurrences"]) {
 			assert.strictEqual(typeof byId.get(id)?.callback, "function", id);
 			assert.strictEqual(byId.get(id)?.editorCallback, undefined, id);
 		}
@@ -207,15 +208,24 @@ describe("open-quick-insert", () => {
 		assert.deepStrictEqual(h.triggered, []);
 	});
 
-	it("is registered last, after the commands that write text", () => {
-		// Order is asserted elsewhere against FIXED_COMMAND_IDS; this says why
-		// the new one goes on the end — the palette lists them in registration
-		// order, and the four that existed first should not move under a user
-		// who knows where they are.
-		assert.strictEqual(
-			FIXED_COMMAND_IDS[FIXED_COMMAND_IDS.length - 1],
-			"open-quick-insert",
-		);
+	it("appends Callout occurrences after the existing built-ins", () => {
+		assert.deepStrictEqual(FIXED_COMMAND_IDS.slice(0, 6), [
+			"open-settings", "create-callout", "insert-empty-callout",
+			"callout-wrap", "callout-unwrap", "open-quick-insert",
+		]);
+		assert.equal(FIXED_COMMAND_IDS.at(-1), "show-callout-occurrences");
+	});
+});
+
+describe("show-callout-occurrences", () => {
+	it("opens the occurrence view through its injected owner", () => {
+		const h = host();
+		let opens = 0;
+		registerCalloutCommands(h.plugin, { ...deps(), openOccurrences: () => { opens += 1; } });
+		const command = h.added.find((item) => item.id === "show-callout-occurrences");
+		assert.ok(command?.callback);
+		command.callback();
+		assert.equal(opens, 1);
 	});
 });
 
@@ -287,6 +297,7 @@ describe("registerCalloutCommands — skipping the disabled", () => {
 			"insert-empty-callout",
 			"callout-unwrap",
 			"open-quick-insert",
+			"show-callout-occurrences",
 		]);
 	});
 
@@ -395,6 +406,7 @@ describe("refreshFixedCommandNames", () => {
 			"cmd.calloutWrap": "Envelopper",
 			"cmd.calloutUnwrap": "Désenvelopper",
 			"cmd.openQuickInsert": "Insertion rapide",
+			"usage.title": "Occurrences de callout",
 		});
 		setLocale("cs-test");
 		try {

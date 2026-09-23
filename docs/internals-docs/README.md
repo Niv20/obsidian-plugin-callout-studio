@@ -59,7 +59,7 @@ mutate → CSS → repaint loop everything else builds on.
 | [06-css-generation.md](06-css-generation.md) | How the registry becomes a stylesheet: the injector's two write targets, icon painting, theme ownership and selector escaping. |
 | [07-persistence-and-caching.md](07-persistence-and-caching.md) | What's saved to `data.json`, what's cached on disk, what's runtime-only, and the startup CSS snapshot. |
 | [08-render-roles.md](08-render-roles.md) | The token grammar, and how heading/inline callouts render in Live Preview and Reading view. |
-| [09-editor-integrations.md](09-editor-integrations.md) | Autocomplete, wrap/unwrap, the five fixed commands, custom commands, the right-click menu, Outline/link cleanup. |
+| [09-editor-integrations.md](09-editor-integrations.md) | Autocomplete, wrap/unwrap, built-in command registration and availability, custom commands, the right-click menu, Outline/link cleanup. |
 
 ## Subsystems — reference, as needed
 

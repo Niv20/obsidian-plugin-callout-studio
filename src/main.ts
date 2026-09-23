@@ -64,7 +64,11 @@ import { getLocale, setLocale, t } from "./i18n";
 import { LocaleStore } from "./i18n/LocaleStore";
 import { registerDeveloperProtocols } from "./settings/developerProtocols";
 import { registerOccurrenceIndex } from "./usage/registerOccurrenceIndex";
-import { registerOccurrencesView, refreshOccurrencesViewLocale } from "./usage/registerOccurrencesView";
+import {
+	openCalloutOccurrences,
+	registerOccurrencesView,
+	refreshOccurrencesViewLocale,
+} from "./usage/registerOccurrencesView";
 
 /**
  * How long the startup entrance animation window stays open. Long enough to
@@ -358,6 +362,7 @@ export default class CalloutStudioPlugin extends Plugin {
 	 * The windows the fixed commands open. Built fresh on each call because
 	 * `CalloutEditor` is single-use, and kept here so the ribbon and the
 	 * command open the very same window.
+			openOccurrences: () => { void openCalloutOccurrences(this.app); },
 	 */
 	private commandDeps(): FixedCommandDeps {
 		return {
@@ -416,7 +421,7 @@ export default class CalloutStudioPlugin extends Plugin {
 	}
 
 	/**
-	 * Turn one of the six fixed commands on or off, from the command
+	 * Turn one of the built-in commands on or off, from the command
 	 * builder. {@link registerCalloutCommands} only runs at startup, so this
 	 * is what (un)registers the command with Obsidian immediately.
 	 */
