@@ -16,9 +16,9 @@
  *   .x {"` is neither too large nor too small; it is a CSS payload that closes
  *   the declaration and opens rules of its own, and the only safe reading of it
  *   is "the file did not say".
- * - **Nothing a person could have meant is touched.** The limits are guards, far
- *   wider than the sliders, because a rule as narrow as the UI would already be
- *   wrong: `inline.borderRadius` ships at 16 and its own slider stops at 10.
+ * - **Nothing a person could have meant is touched.** Limits are guards wider
+ *   than the sliders. The inline radius slider reaches 25px, but saved values
+ *   up to 64px remain valid.
  *
  * The generated suite is the one that keeps this honest over time. It walks the
  * numeric leaves of `DEFAULT_SETTINGS.globalStyle` and demands each be guarded,
@@ -69,9 +69,7 @@ const NUMERIC = numericLeaves(DEFAULTS);
 
 describe("clampGlobalStyle — the settings a slider can produce", () => {
 	it("leaves the shipped defaults exactly as they are", () => {
-		// Including `inline.borderRadius: 16`, which is above its own slider's
-		// maximum of 10. Clamping to what the UI offers would reshape the
-		// default pill in every vault on the next launch.
+		// Including `inline.borderRadius: 16`, the default pill's radius.
 		assert.deepStrictEqual(clampGlobalStyle(structuredClone(DEFAULTS)), DEFAULTS);
 	});
 
@@ -84,6 +82,11 @@ describe("clampGlobalStyle — the settings a slider can produce", () => {
 			contentScale: 0.5,
 		};
 		assert.deepStrictEqual(clampGlobalStyle(edited), edited);
+	});
+
+	it("preserves an existing inline radius above the current slider range", () => {
+		const saved = withValue(["inline", "borderRadius"], 40);
+		assert.equal(clampGlobalStyle(saved).inline.borderRadius, 40);
 	});
 
 	it("is idempotent — it runs over its own output on every load", () => {

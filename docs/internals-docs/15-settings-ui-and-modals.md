@@ -1431,6 +1431,13 @@ same live-preview-on-a-registered-row pattern, letting the border/radius/
 scale/spacing sliders for block, heading, or inline style show their effect
 on a real rendered callout as the user drags them.
 
+The inline sample places a content pill (`[!global-style-demo]{Example}`)
+between two Lorem ipsum sentences. In the embedded Live Preview, clicking
+the pill reveals that source syntax for inspection. Its `Example` payload is
+kept in English across locales so the revealed syntax stays the same. The
+inline corner-radius slider reaches 25px for the 1.5× text scale. The settings
+guard still accepts previously saved values up to 64px.
+
 ### `CommandBuilderModal` — fixed + custom commands, one window
 
 Two lists in one modal: the five fixed commands (plain rows — nothing to

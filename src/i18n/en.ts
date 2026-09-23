@@ -208,6 +208,9 @@ export const en: Record<string, string> = {
 	"settings.headingFoldGroup": "Fold",
 	"settings.headingFoldArrow": "Show fold arrow",
 	"settings.styleDemoName": "Example",
+	"settings.styleDemoInlineName": "Example",
+	"settings.styleDemoInlineText":
+		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. {{callout}} Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 	"settings.previewTitle": "Preview",
 
 	// Settings — Saved color palettes

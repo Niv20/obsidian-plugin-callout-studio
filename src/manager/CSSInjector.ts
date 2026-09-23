@@ -1667,16 +1667,16 @@ export class CSSInjector {
 			parts.push(`.${CSS_HEADING_LINE} {\n${headingProps.join("\n")}\n}`);
 		}
 
-		// Inline-pill frame. Radius 16px ≈ the default 1em pill shape, so the
-		// static rule's fallback keeps the classic pill until the user moves it.
+		// The static 1em radius covers the default 16px inline-pill setting.
 		const inlineProps = this.roleBorderProps(gs.inline);
-		if (gs.inline.borderRadius !== 16) {
-			inlineProps.push(
-				`  --cs-inline-radius: ${gs.inline.borderRadius}px;`,
-			);
-		}
+		if (gs.inline.borderRadius !== 16)
+			inlineProps.push(`  --cs-inline-radius: ${gs.inline.borderRadius}px;`);
 		if (gs.inline.fontScale !== 1) {
-			inlineProps.push(`  --cs-inline-scale: ${gs.inline.fontScale};`);
+			inlineProps.push(
+				`  --cs-inline-scale: ${gs.inline.fontScale};`,
+				// Pill-em compensation keeps the lift fixed to the surrounding line.
+				`  --cs-inline-center-lift: ${(0.1 / gs.inline.fontScale).toFixed(3)}em;`,
+			);
 		}
 		if (inlineProps.length > 0 && !standalone) {
 			parts.push(`.${CSS_INLINE_TOKEN} {\n${inlineProps.join("\n")}\n}`);

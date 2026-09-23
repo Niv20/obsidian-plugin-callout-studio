@@ -16,12 +16,11 @@
  * belongs to. So it is repaired on the way in, once, at the single funnel the
  * loader and the importer already share.
  *
- * The limits are deliberately far wider than the sliders — a guard, not a style
- * rule, the same posture as `MAX_NAME_LENGTH` in `userImages.ts`. A rule would
- * have to be wrong somewhere: `inline.borderRadius` ships at 16 while its own
- * slider stops at 10, so clamping to what the UI offers would silently reshape
- * every default pill in every vault. What these catch is the absurd and the
- * malformed, and nothing a person could have meant.
+ * The limits are deliberately wider than the sliders — a guard, not a style
+ * rule, the same posture as `MAX_NAME_LENGTH` in `userImages.ts`. The inline
+ * corner slider reaches 25px, while previously saved values up to 64px remain
+ * valid. These guards catch absurd and malformed values without reshaping a
+ * person's existing style.
  */
 import { DEFAULT_SETTINGS } from "../constants";
 import type { GlobalStyleSettings } from "../types";
@@ -48,7 +47,7 @@ interface Range {
 
 /** Border thickness, px. The sliders offer 1–4; 0 is a legacy "no border". */
 const WIDTH: Range = { min: 0, max: 20 };
-/** Corner rounding, px. The sliders offer 0–24, and 0–10 for the inline pill. */
+/** Corner rounding, px. Block/heading sliders offer 0–24; inline offers 0–25. */
 const RADIUS: Range = { min: 0, max: 64 };
 /** Font scale, a multiplier. The sliders offer 0.5–1.5; 0 would erase the text. */
 const SCALE: Range = { min: 0.1, max: 10 };

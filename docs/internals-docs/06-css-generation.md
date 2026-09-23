@@ -103,7 +103,7 @@ registry actually holds data) replaces it with a real generated pass.
 
 ```text
 1. header comment
-2. generateGlobalStyleCSS()        — border/radius/scale + icon gap and title/content alignment for registered Studio blocks
+2. generateGlobalStyleCSS()        — role-wide borders, scale, geometry, and alignment (including scale-neutral inline centering)
 3. @media screen { .cs-export-icon { display: none } }   — hides the PDF-only DOM icon copies on screen
 4. generateCalloutCSS(def) for every callout in registry.getAll()
      └─ within it, coreAccentShimCSS(def) — only when the active theme spells the

@@ -20,8 +20,16 @@ For heading callouts, you can:
 For inline callouts, you can:
 
 - Scale the pill text independently of the rest of the note.
-- Adjust corner rounding.
+- Adjust corner rounding up to 25px to keep the pill rounded at larger text sizes.
 - Choose border sides and thickness.
+
+The icon and spacing scale with the pill text. At every inline text scale, the
+entire pill stays centered vertically in the surrounding line instead of
+shrinking toward the text baseline.
+
+The Inline preview shows an **Example** pill between two Lorem ipsum
+sentences. Click **Example** to reveal its `[!global-style-demo]{Example}`
+syntax in the preview editor.
 
 ## Block callouts
 

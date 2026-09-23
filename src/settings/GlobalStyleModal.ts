@@ -288,15 +288,15 @@ export class GlobalStyleModal extends Modal {
 			},
 		});
 
-		// Inline pills are small; corner rounding above ~10px has no visible
-		// effect, so cap the slider there instead of the default 24.
+		// A larger font scale makes the pill taller; 25px gives the slider enough
+		// room to round the ends at its 1.5× maximum text scale.
 		this.renderShapeGroup(
 			col,
 			() => inline.borderRadius,
 			(v) => {
 				inline.borderRadius = v;
 			},
-			10,
+			25,
 		);
 	}
 
@@ -486,10 +486,10 @@ export class GlobalStyleModal extends Modal {
 					t("editor.loremIpsum"),
 				].join("\n");
 			case "inline":
-				return t("editor.sampleInlineText").replace(
-					"{id}",
-					STYLE_DEMO_ID,
-				);
+				// Keep Example literal across locales for click-to-reveal syntax.
+				return t("settings.styleDemoInlineText", {
+					callout: `[!${STYLE_DEMO_ID}]{${t("settings.styleDemoInlineName")}}`,
+				});
 		}
 	}
 

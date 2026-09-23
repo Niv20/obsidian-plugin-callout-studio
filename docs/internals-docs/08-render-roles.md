@@ -147,6 +147,25 @@ the name are both absent (the ref-token variant, and a content pill's lead) —
 without it the token root would still be a flex item claiming space in its
 parent.
 
+### Inline pill alignment and scale
+
+Both inline pill forms use the same `.cs-inline-callout` flex box. An optional
+icon or icon lead sits beside the display name or `{…}` payload. The root uses
+`vertical-align: middle` at every font scale, so changing the scale contracts
+or expands the whole pill around the surrounding line's vertical center
+instead of pinning its bottom to the text baseline. CSS
+`middle` aligns to the parent's x-height midpoint, which sits slightly below
+the line box's visual center, so the pill is also moved upward by about `0.09em`
+of the surrounding text. The icon and text remain centered inside the pill
+through `align-items: center` and the icon box's own flex centering.
+
+The pill's `--cs-inline-scale` multiplies its `0.9em` base font size. Padding,
+gap, and SVG size use `em`, while the unitless line height scales with that
+font size. The centering correction therefore uses `0.1 / fontScale` em of the
+pill, keeping it at about `0.09em` of the paragraph as the pill changes size.
+`--cs-inline-lift` remains available to CSS snippets as an optional additional
+visual offset, with a neutral `0em` default.
+
 ## Live Preview: `calloutViewPlugin.ts`
 
 A single CodeMirror `ViewPlugin`

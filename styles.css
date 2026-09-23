@@ -6428,45 +6428,16 @@ body:not(.is-phone)
 	   Inline → Global callout style); the icon tracks it via its 1em sizing. */
 	font-size: calc(0.9em * var(--cs-inline-scale, 1));
 	line-height: 1.4;
-	/* Centred on the line, not hung off its baseline — the answer to "shrink
-	   the font scale and the pill stays welded to the bottom of the line".
-
-	   With `vertical-align: baseline` this box's baseline is its ICON'S BOTTOM
-	   EDGE: CSS Flexbox §8.5 gives a flex container the baseline of its first
-	   item (with `align-items: center` no item is baseline-aligned, so the
-	   first one's own baseline is used), that item is the icon box, and a
-	   replaced <svg>'s baseline is its bottom margin edge. So the pill's bottom
-	   was pinned near the baseline and every bit of shrinking came off the top.
-	   `middle` anchors the box's CENTRE instead — parent baseline plus half its
-	   x-height — so a small pill contracts around a fixed point and floats.
-
-	   Two knock-on effects, both wanted: at the default scale the pill settles
-	   ~2px lower than it used to (its text baseline lands on the paragraph's,
-	   where before it rode ~0.12em above it), and the box's top no longer
-	   reaches as far above the line, so it is LESS likely to grow a line's
-	   height than the old anchoring was — which matters inside .cm-line, where
-	   a taller inline box is something CodeMirror has to measure. */
+	/* Anchor the whole pill at the surrounding line's visual middle at every
+	   font scale. CSS `middle` lands slightly below the line box's optical
+	   center, so the second variable supplies a small upward correction. The
+	   injector compensates that em value when the pill is scaled, keeping the
+	   correction constant relative to the surrounding text. */
 	vertical-align: middle;
-	/* Optical lift on top of that centring, and the one hand-tuned number in
-	   the pill.
-
-	   `middle` is not the middle of the line: it anchors the box to the
-	   baseline plus half the parent's X-HEIGHT, while the line box's own centre
-	   sits at baseline + (descent − ascent) / 2. Those two points differ by
-	   (ascent − descent) / 2 − x-height / 2 — around 0.09em, ~1.4px at 16px
-	   text, and always on the low side. (The fold chevron met the same constant
-	   and answered it with a flex strut; a pill has no container to be centred
-	   in, so it takes the offset directly.)
-
-	   Deliberately absolute rather than em: it corrects for where letters sit
-	   in their line box, not for the pill's own size, so it must NOT grow with
-	   the inline font scale. Deliberately not a setting either — change it
-	   here. `position: relative` and not a margin (which would change the line
-	   box and make CodeMirror re-measure) and not a transform (spoken for by
-	   the cs-token-in entrance animation, which would overwrite it mid-flight). */
-	--cs-inline-lift: 1px;
+	--cs-inline-lift: 0em;
+	--cs-inline-center-lift: 0.1em;
 	position: relative;
-	top: calc(-1 * var(--cs-inline-lift));
+	top: calc(-1 * var(--cs-inline-lift) - var(--cs-inline-center-lift));
 	background-color: color-mix(in oklch, var(--cs-accent, #086ddd) 12%, transparent);
 	font-weight: var(--font-medium, 500);
 	white-space: nowrap;
