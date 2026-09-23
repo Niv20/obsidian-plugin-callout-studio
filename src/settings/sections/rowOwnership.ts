@@ -145,18 +145,18 @@ export function addDeleteItem(
 	menu: Menu,
 	ctx: SettingsSectionContext,
 	def: CalloutDefinition,
-	usage: { fileCount: number; totalCount: number },
+	usage?: { fileCount: number; totalCount: number },
 ): void {
 	const removes = deleteRemovesRow(ctx, def);
-	if (!removes && usage.fileCount === 0) return;
+	if (!removes && usage?.fileCount === 0) return;
 	menu.addItem((item) =>
 		item
 			.setTitle(t("settings.deleteAction"))
 			.setIcon("trash-2")
 			.onClick(() => {
 				void (removes
-					? handleCalloutDelete(ctx, def, usage)
-					: handleClearCalloutUsages(ctx, def, usage));
+					? handleCalloutDelete(ctx, def)
+					: handleClearCalloutUsages(ctx, def));
 			}),
 	);
 }

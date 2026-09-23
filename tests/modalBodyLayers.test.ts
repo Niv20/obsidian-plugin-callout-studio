@@ -286,8 +286,6 @@ const STICKY_LAYERS: Record<string, string> = {
 		"the callout / palette / style editors' preview column, inside .modal-content",
 	".icon-picker-toolbar":
 		"the icon picker's per-source search bar, inside .icon-picker-content",
-	".callout-studio-vault-stats .cs-vault-stats-header":
-		"the vault-statistics table header, inside .cs-vault-stats-list",
 	".cs-quick-insert-toolbar":
 		"the quick-insert window's search + source filter, inside .modal-content",
 	".callout-studio-settings .cs-sticky-heading.setting-item":

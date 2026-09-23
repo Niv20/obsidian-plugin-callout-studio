@@ -243,7 +243,7 @@ describe("the retired personal-CSS handoff", () => {
 	it("does not leave an empty divider on an unmodified, unused built-in", () => {
 		assert.match(
 			readRepoFile("src/settings/sections/CalloutRowActions.ts"),
-			/if \(modified \|\| usage\.fileCount > 0\) menu\.addSeparator\(\)/,
+			/if \(modified \|\| usage\?\.fileCount !== 0\) menu\.addSeparator\(\)/,
 		);
 	});
 });
@@ -403,7 +403,7 @@ describe("the ⋯ menu on a theme row", () => {
 		// callout is what the section below this one is for, and offering it
 		// from a theme row implied the new one would inherit something.
 		const src = readRepoFile("src/settings/sections/themeRowActions.ts");
-		for (const key of ["settings.usageInfo", "settings.replaceAction", "settings.clearUsesAction"]) {
+		for (const key of ["addUsageMenuItem", "settings.replaceAction", "settings.clearUsesAction"]) {
 			assert.ok(src.includes(key), `the menu lost ${key}`);
 		}
 		assert.ok(!src.includes("deriveCalloutAction"));

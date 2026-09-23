@@ -76,7 +76,7 @@ interface Harness {
 
 function mount(
 	choices: readonly CalloutDefinition[] = CHOICES,
-	options: { value?: string; disabled?: boolean } = {},
+	options: { value?: string; disabled?: boolean; labelOf?: (def: CalloutDefinition) => string } = {},
 ): Harness {
 	fakeDom.light();
 	const host = el();
@@ -87,6 +87,7 @@ function mount(
 		value: options.value ?? "note",
 		ariaLabel: "Callout type",
 		disabled: options.disabled,
+		labelOf: options.labelOf,
 		onChange: (id) => {
 			committed.push(id);
 		},
@@ -144,6 +145,15 @@ const isOpen = (h: Harness): boolean =>
 /* -------------------------------------------------------------------------- */
 
 describe("CalloutCombobox — the closed field", () => {
+	it("can show an ID in the sidebar without changing names in its popup rows", () => {
+		const h = mount(CHOICES, { labelOf: (entry) => entry.id });
+		assert.strictEqual(h.input.value, "note");
+		h.open();
+		assert.ok(h.names().includes("Note"));
+		clickRow(h, 0);
+		assert.strictEqual(h.input.value, h.box.value);
+		h.box.destroy();
+	});
 	it("shows the display name alone, never 'Abstract (abstract)'", () => {
 		// The reported bug. The id belongs on a row that needs explaining, not
 		// welded to every label in the list.

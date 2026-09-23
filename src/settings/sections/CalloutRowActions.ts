@@ -5,12 +5,8 @@
  * button. User rows get options like Delete and Convert to fallback; built-in
  * rows get Reset to default. The flows that actually rewrite notes live next
  * door in `calloutVaultActions.ts` — this file decides which items a row is
- * offered, and asks `vaultCalloutScanner` for the usage counts that decision
- * turns on.
- *
- * Rows under *Callouts from your theme* never reach here: they have no ⋯ at
- * all, because nothing this menu offers would be true of them. See
- * `themeRowActions.ts`.
+ * offered. Menu counts come from the read-only occurrence index; operations
+ * that rewrite notes still count current contents before confirmation.
  */
 import { Menu } from "obsidian";
 import { ConfirmModal } from "../../utils/ConfirmModal";
@@ -19,6 +15,7 @@ import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
 import { addDeleteItem } from "./rowOwnership";
+import { addUsageMenuItem } from "../../usage/usageMenuItem";
 import {
 	handleCalloutReplace,
 	handleClearCalloutUsages,
@@ -35,12 +32,11 @@ export async function openBuiltInRowMenu(
 	def: CalloutDefinition,
 ): Promise<void> {
 	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
-	const usage = await countCalloutUsages(ctx.app, allIds);
 	const menu = new Menu();
+	const usage = addUsageMenuItem(menu, ctx.app, allIds);
 	const modified = ctx.plugin.registry.isBuiltInModified(def.id);
 
-	addUsageInfoMenuItem(menu, usage);
-	if (modified || usage.fileCount > 0) menu.addSeparator();
+	if (modified || usage?.fileCount !== 0) menu.addSeparator();
 
 	if (modified) {
 		menu.addItem((item) =>
@@ -53,7 +49,7 @@ export async function openBuiltInRowMenu(
 		);
 	}
 
-	if (usage.fileCount > 0) {
+	if (usage?.fileCount !== 0) {
 		menu.addItem((item) =>
 			item
 				.setTitle(t("settings.replaceAction"))
@@ -68,12 +64,13 @@ export async function openBuiltInRowMenu(
 				.setTitle(t("settings.deleteAction"))
 				.setIcon("trash-2")
 				.onClick(() => {
-					void handleClearCalloutUsages(ctx, def, usage);
+					void handleClearCalloutUsages(ctx, def);
 				}),
 		);
 	}
 
 	menu.showAtMouseEvent(event);
+	await Promise.resolve();
 }
 
 export async function openRowMenu(
@@ -82,13 +79,12 @@ export async function openRowMenu(
 	def: CalloutDefinition,
 ): Promise<void> {
 	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
-	const usage = await countCalloutUsages(ctx.app, allIds);
 	const menu = new Menu();
+	const usage = addUsageMenuItem(menu, ctx.app, allIds);
 
-	addUsageInfoMenuItem(menu, usage);
 	menu.addSeparator();
 
-	if (usage.fileCount > 0) {
+	if (usage?.fileCount !== 0) {
 		menu.addItem((item) =>
 			item
 				.setTitle(t("settings.replaceAction"))
@@ -116,23 +112,7 @@ export async function openRowMenu(
 	}
 
 	menu.showAtMouseEvent(event);
-}
-
-function addUsageInfoMenuItem(
-	menu: Menu,
-	usage: { fileCount: number; totalCount: number },
-): void {
-	menu.addItem((item) =>
-		item
-			.setTitle(
-				t("settings.usageInfo", {
-					count: String(usage.totalCount),
-					files: String(usage.fileCount),
-				}),
-			)
-			.setIcon("info")
-			.setDisabled(true),
-	);
+	await Promise.resolve();
 }
 
 async function handleConvertToFallback(

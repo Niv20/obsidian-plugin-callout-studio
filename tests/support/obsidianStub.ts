@@ -149,6 +149,24 @@ export class PluginSettingTab {}
 export class Menu {}
 export class WorkspaceLeaf {}
 
+/** Minimal lifecycle/DOM host for occurrence view tests. */
+export class ItemView {
+	app: unknown;
+	contentEl: HTMLElement;
+	private disposers: Array<() => void> = [];
+	constructor(public leaf: { app: unknown }) {
+		this.app = leaf.app;
+		this.contentEl = createDiv();
+	}
+	register(dispose: () => void): void { this.disposers.push(dispose); }
+	registerDomEvent(el: EventTarget, name: string, listener: EventListener): void {
+		el.addEventListener(name, listener);
+		this.register(() => el.removeEventListener(name, listener));
+	}
+	setState(_state: unknown, _result: unknown): Promise<void> { return Promise.resolve(); }
+	unload(): void { this.disposers.splice(0).forEach((dispose) => dispose()); }
+}
+
 /* -------------------------------------------------------------------------- */
 /* Settings components — the two that ARE driven                              */
 /* -------------------------------------------------------------------------- */

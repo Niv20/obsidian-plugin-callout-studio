@@ -17,8 +17,7 @@
  *
  * What is left is honest, and it is only about the vault: how much of it this
  * callout occupies, and the two ways to change that. Both vault-writing actions
- * drop the usage cache afterwards, because the number they just changed is the
- * one the menu will show next time it opens.
+ * recheck current notes before acting; vault events invalidate the shared index.
  */
 import { Menu, setIcon, setTooltip } from "obsidian";
 import { t } from "../../i18n";
@@ -28,7 +27,7 @@ import {
 	handleCalloutReplace,
 	handleClearCalloutUsages,
 } from "./calloutVaultActions";
-import { invalidateThemeRowUsage, themeRowUsage } from "./themeRowUsage";
+import { addUsageMenuItem } from "../../usage/usageMenuItem";
 import { ThemeCalloutPreviewModal } from "../ThemeCalloutPreviewModal";
 
 /** One 32×32 icon button, in the same shape the view and `⋯` actions use. */
@@ -66,31 +65,17 @@ export async function openThemeRowMenu(
 	event: MouseEvent,
 	def: CalloutDefinition,
 ): Promise<void> {
-	const usage = themeRowUsage(def.id) ?? { fileCount: 0, totalCount: 0 };
 	const menu = new Menu();
-
-	menu.addItem((item) =>
-		item
-			.setTitle(
-				t("settings.usageInfo", {
-					count: usage.totalCount,
-					files: usage.fileCount,
-				}),
-			)
-			.setIcon("info")
-			.setDisabled(true),
-	);
+	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
 	menu.addSeparator();
 
-	if (usage.fileCount > 0) {
+	if (usage?.fileCount !== 0) {
 		menu.addItem((item) =>
 			item
 				.setTitle(t("settings.replaceAction"))
 				.setIcon("arrow-left-right")
 				.onClick(() => {
-					void handleCalloutReplace(ctx, def).finally(
-						invalidateThemeRowUsage,
-					);
+					void handleCalloutReplace(ctx, def);
 				}),
 		);
 		menu.addItem((item) =>
@@ -98,9 +83,7 @@ export async function openThemeRowMenu(
 				.setTitle(t("settings.clearUsesAction"))
 				.setIcon("eraser")
 				.onClick(() => {
-					void handleClearCalloutUsages(ctx, def, usage).finally(
-						invalidateThemeRowUsage,
-					);
+					void handleClearCalloutUsages(ctx, def);
 				}),
 		);
 	}

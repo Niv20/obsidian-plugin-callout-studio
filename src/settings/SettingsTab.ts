@@ -38,7 +38,6 @@ import type { PagingState } from "./sections/listPaging";
 import type { RowKind } from "./sections/rowOwnership";
 import { renderCalloutRow as renderCalloutRowSection } from "./sections/CalloutRowRenderer";
 import { openBuiltInRowMenu, openRowMenu } from "./sections/CalloutRowActions";
-import { invalidateThemeRowUsage } from "./sections/themeRowUsage";
 import type {
 	SettingsSectionContext,
 	SettingsTabPlugin,
@@ -204,8 +203,6 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		// the tab is the reopen it has always been reset by. What it is no
 		// longer reset by is a repaint the reader did not ask for.
 		this.paging = freshPaging();
-		// One whole-vault usage pass per visit to this tab, not per repaint.
-		invalidateThemeRowUsage();
 		super.hide();
 	}
 
