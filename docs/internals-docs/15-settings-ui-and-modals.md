@@ -914,193 +914,59 @@ is doing.
 
 ## How an input field focuses
 
-Every control a user types into focuses the same way, and that way is
-**Obsidian's own**, not a plugin invention. The reference is still the Name
-box in the palette editor: every value it paints — border colour, ring width,
-background — is copied 1:1 from what `app.css` already produces, and
-everything else in the plugin is matched to that. It used to carry *literally*
-no rule of its own to get there; as of the pointer-stability fix below it
-carries a narrow one, added not to change what the field looks like but to
-stop it changing *when* — see "A rule can be added for parity alone" further
-down for why matching the reference now means giving it a rule rather than
-withholding one.
+Editable text fields use the same chrome as the
+[shared dropdown controls](#shared-dropdown-controls). Their opt-in
+`cs-text-control` class keeps the rule scoped to Callout Studio's own fields;
+it must not style Obsidian's editor or the transparent input inside a combobox.
+Single-line fields share the dropdowns' 36px minimum height (or
+`--input-height` when larger), 6px by 10px padding, `--radius-s` corners,
+1px border, and small UI font. Each screen retains its own control width.
+The two JSON paste areas keep their multiline height, vertical resize, and
+monospace font while sharing the same border, corners, and background states.
 
-The contract has two shapes, which are meant to look like one:
-
-| Control | On focus |
+| State | Text fields and dropdown controls |
 | --- | --- |
-| A bordered text field (`input[type="text"]`, `textarea`) | its 1px border recolours to `--background-modifier-border-focus`, plus `box-shadow: 0 0 0 var(--input-border-width-focus)` (2px) in the same colour |
-| A borderless, dropdown-shaped control (`select`, `.cs-combobox-control`) | a flat `box-shadow: 0 0 0 3px` in that colour |
+| Rest | `--cs-btn-face`, falling back to `--interactive-normal`; no shadow |
+| Pointer hover | `--cs-btn-face-hover`, falling back to `--interactive-hover` |
+| Focus, press, or an open list | The same highlighted face remains behind the content; focus also uses `--background-modifier-border-focus` for the border and `0 0 0 var(--input-border-width-focus)` ring |
+| Disabled | No interactive hover or press feedback; the field retains its disabled appearance |
 
-The widths differ because the results must not. A text field keeps its own
-border and recolours it, so its 2px ring sits on top of that and the eye reads
-**3px** of grey edge; a control with `border: 0` has nothing to recolour, so it
-needs all 3px from the ring. Obsidian draws its own `select, .dropdown` exactly
-that way, and `.cs-combobox-control` follows it.
+The standalone fields are the callout editor's **Display name** and **Callout
+IDs**, the palette editor's **Name**, the Quick Insert and replacement-dialog
+searches, the search box in every icon source, and JSON paste in both the
+Callout Manager and Admonition import dialogs. Searchable callout and color
+pickers remain comboboxes: their outer `cs-dropdown-control` paints the box,
+and their inner `cs-combobox-input` stays transparent in every state.
+Select-only combobox inputs remain readonly. File inputs and native color
+swatches are separate controls and do not receive text-field styling.
 
-A third control answers to the first row without being a field at all — the
-callout editor's icon tile, which is a `<button>` with a 1px border sitting in
-the same form as the two fields above it. See
-[The one control that is not a field but focuses like one](#the-one-control-that-is-not-a-field-but-focuses-like-one).
+There are three cascade constraints:
 
-Two rules follow from this, and both have already been broken once:
+- Shared field rules must outrank Obsidian's
+  `input[type='text']:not(:disabled):hover` selector, whose specificity is
+  `(0,3,1)`. The state rules must also win over the base they refine.
+  This preserves the plugin's intentional hover
+  and focus fills instead of allowing the host's form-field tokens to win.
+- The palette name's `cs-input-invalid` state must keep its red border and
+  error ring during hover and focus. Shared colors must not hide validation.
+- The Callout IDs field reserves trailing space for its **+** button.
+  `cs-tag-add-slot` overlays the field and uses the same `--cs-tag-field-bg`
+  value, including during hover and focus, so its background never becomes a
+  separate rectangular patch. Preserve the trailing padding and the row's
+  existing width when adjusting the shared chrome.
 
-- **Never focus a field with the accent colour.** The display name, the Callout
-  IDs field and the icon-picker search each used to paint
-  `var(--interactive-accent)` or an accent `outline`, which made them the only
-  fields in the plugin that disagreed with the Name box beside them.
-- **A rule scoped to the editor reaches more inputs than the field it was
-  written for.** `.callout-studio-editor .setting-item-control
-  input[type="text"]` is (0,4,1) and matches *every* text input in that
-  column — including the text half of the Color row's palette combobox, which
-  is styled by `.cs-combobox-control .cs-combobox-input` at (0,2,0) and
-  therefore loses. Before the exclusion, that gave the Color row a bordered,
-  form-field-coloured box **inside** the picker and two nested focus rings when
-  the user typed in it, while the same component in the settings tab was
-  correct — the two only ever differed because of who their ancestor was. The
-  rule now excludes both specialised fields by class:
+Text fields and dropdown triggers do not show hover tooltips. Their accessible
+names still identify the controls to assistive technology; suppressing hover
+popups must not remove those names. Obsidian turns `aria-label` into a tooltip,
+so `buildComboboxSkeleton` uses a unique hidden text node referenced through
+`aria-labelledby`. Tooltips on unrelated action buttons keep their own behavior.
 
-  ```css
-  input[type="text"]:not(.cs-tag-input-field, .cs-combobox-input)
-  ```
-
-  A `:not()` **list**, not two chained `:not()`s: a list takes the specificity
-  of its most specific argument, so the selector stays (0,4,1) and the
-  reasoning written beside it about outranking Obsidian's phone rule still
-  holds. The same exclusion is on the `:focus` and `:disabled` variants —
-  `ListboxPopup.setDisabled` does set `inputEl.disabled`, so that state is
-  reachable, and `tests/modalSurfaces.test.ts` pins the disabled one by its
-  exact selector.
-
-- **A field that paints its own box has to outrank Obsidian's `:hover`, not
-  just its `:focus`.** Focus is the state everyone checks; hover is the one
-  that gets forgotten, and it is a *different* rule with a different number:
-
-  ```css
-  /* app.css, inside @media (hover: hover) */
-  input[type='text']:hover {
-    border-color: var(--background-modifier-border-hover);
-    background-color: var(--background-modifier-form-field-hover);
-  }
-  ```
-
-  That is **(0,2,1)**, and it is the bar. `.cs-tag-input-row >
-  .cs-tag-input-field` — the Callout IDs field — was (0,2,0), one short. It
-  painted its own border, radius, fill and padding, and then Obsidian repainted
-  the border and fill out from under it for as long as the pointer was inside
-  the field. The display name field directly above it is (0,4,1) and cleared
-  the bar, so the two rows — which are deliberately styled as one control —
-  disagreed about whether the mouse was worth reacting to: one flinched, the
-  other sat still. Adding the type and attribute takes it to (0,3,1) and
-  settles it:
-
-  ```css
-  .cs-tag-input-row > input[type="text"].cs-tag-input-field
-  ```
-
-  Raising a base rule has a second half that must not be skipped: the state
-  layers on top of it have to be raised with it. `:focus` was (0,3,0), which
-  *did* clear Obsidian's hover on its own — but not the new (0,3,1) base, which
-  would then have kept its resting border on a focused field. `:focus` and
-  `:disabled` therefore carry the same `input[type="text"]`, landing at (0,4,1).
-  `tests/inputPointerStability.test.ts` checks both halves as arithmetic, and
-  sweeps the stylesheet for any other rule that paints a field's box from at or
-  below (0,2,1).
-
-  Freezing the fill is not incidental either. `.cs-tag-add-slot` — the end-cap
-  the **+** button sits in — paints `--cs-tag-field-bg` in order to disappear
-  into the field, and it has no hover state of its own. While Obsidian could
-  still swap the field to `--background-modifier-form-field-hover`, any theme
-  that gives those two tokens different values drew the end-cap as a visible
-  block at the field's trailing edge whenever the pointer was inside it. The
-  default theme defines `--background-modifier-form-field-hover` as
-  `--background-modifier-form-field`, which is exactly why that half never
-  showed up on the machine it was written on.
-
-  **A rule can be added for parity alone — no size or colour was wrong.** The
-  palette editor's Name box was the second field to fall into this, the other
-  way round: not a box painted too low a specificity, but *no* box at all. It
-  is a bare `input[type="text"]` inside `.callout-studio-palette-editor`,
-  which is a scope of its own — it does not reuse `.callout-studio-editor`, so
-  none of that section's rules, including the freeze above, ever reached it.
-  Wherever it was opened next to the callout editor's Display name field —
-  the two look identical and sit in list of "create a thing with a name" flows
-  a user moves between — the palette field kept pulsing grey on hover and the
-  callout editor's field did not. Fixed by giving it a scoped rule of its own,
-  copying the exact values `app.css` already paints there (`border-color:
-  var(--background-modifier-border)`, `background-color:
-  var(--background-modifier-form-field)`) and clearing the same (0,2,1) bar —
-  so the field looks *exactly* as it did before, it just stops changing when
-  the mouse happens to be over it:
-
-  ```css
-  .callout-studio-palette-editor
-    .cs-palette-name-setting
-    .setting-item-control
-    input[type="text"]:not(.cs-input-invalid) { … }
-  ```
-
-  `:not(.cs-input-invalid)` is not decorative. `updateValidity()`
-  (`PaletteEditorModal.ts`) toggles that class on this same input to turn its
-  border red for a taken name, and the freeze rule above is (0,4,1) against
-  `.cs-input-invalid`'s then-(0,1,1) — high enough to silently mute the red
-  back to grey if it were not excluded. Discovering that `.cs-input-invalid`
-  was live at all was its own detour: a repo-wide `grep -r cs-input-invalid
-  src/` came back empty during the *first* pass at this bug and was read as
-  proof the class was an orphan, because `PaletteEditorModal.ts` — for reasons
-  never fully isolated, not a NUL byte — is flagged `data` rather than `ASCII
-  text` by `file(1)`, and BSD `grep` without `-a` silently returns zero
-  matches for a file it treats as binary. No "Binary file matches" notice,
-  no error. `grep -a` (or `ripgrep`, which does not binary-sniff `.ts` files)
-  reads it fine. Once found, `.cs-input-invalid` turned out to have the exact
-  same defect one level down: at its original, undoubled specificity its red
-  border also lost to Obsidian's hover rule, fading to grey while the pointer
-  sat over an already-invalid field. Tripling the class
-  (`input.cs-input-invalid.cs-input-invalid.cs-input-invalid`) clears the bar
-  outright rather than tying it at (0,2,1) and leaning on `styles.css` loading
-  after `app.css` to win the tie.
-
-  **The icon picker's search box** was the third field found this way, fixed
-  on a direct follow-up request rather than in the same pass as the two above
-  — "I want uniformity" turned out to mean the whole plugin, not just the one
-  pair of fields first raised. Same shape as the palette Name field: a bare
-  `input[type="text"]`, no rule of its own, so it fell straight through to
-  Obsidian's hover rule and repainted mid-search, unfocused. One class,
-  `.icon-picker-search-input`, is shared by both panels that build this
-  toolbar — PackPanel (Lucide, Tabler, Material, Font Awesome, emoji, the
-  pooled "All sources" list) and ImagePanel ("Your images") — so the one rule
-  fixes both at once:
-
-  ```css
-  .icon-picker-toolbar input[type="text"].icon-picker-search-input { … }
-  ```
-
-  No `:not()` exclusion needed here — nothing ever adds an error class to this
-  field, unlike the palette Name field beside it in the same file. The
-  toolbar's `<select>` dropdowns are untouched by this rule and remain exactly
-  as documented above: no rule of their own, focusing the way Obsidian's
-  `select, .dropdown:focus-visible` already does.
-
-  What is **still** deliberately untouched, and now on its second round of not
-  being asked about: the Replace search and the quick-insert filter, both bare
-  `input[type="text"]` fields that likewise recolour their border on hover
-  before focus. The reasoning that first excused them — a *search/filter*
-  field reacting to hover is Obsidian's ordinary affordance, and there is no
-  adjacent field in the same modal for either of them to visibly disagree with
-  — held up through one round of "is this actually wanted here" (the icon
-  picker's search box, which turned out to be wanted despite fitting the same
-  description) and should not be assumed to hold through the next one either.
-  Treat it as open, not settled, the next time a field on this list comes up.
-
-> [!TIP]
-> This is a cascade question, not a reading-the-file question, and it is worth
-> answering with the harness in
-> [17 — Checking a theme against the real cascade](17-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade):
-> extract `app.css` from the installer asar, load it beside the live
-> `styles.css`, rebuild the DOM chain, focus the field and read
-> `getComputedStyle`. Comparing a field against the Name box that way is how
-> the combobox divergence was found — both mount sites *look* identical in the
-> stylesheet, and only the computed values show that one of them is not.
+Check these rules against the actual cascade, including light and dark modes,
+invalid and disabled fields, and the IDs field with its **+** visible. The
+harness in [17 — Checking a theme against the real
+cascade](17-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade)
+explains how to compare `styles.css` with Obsidian's `app.css`; reading either
+stylesheet alone does not prove the computed result.
 
 ### The one control that is not a field but focuses like one
 
@@ -1109,7 +975,7 @@ The **icon tile** in the callout editor (`.cs-icon-tile` — the 44px box that
 directly under the Display name and Callout IDs fields, and it is the third row
 of the same form. It used to light `--interactive-accent` on hover, which made
 it the one purple-lit control in a window of grey-lit ones, so it now takes the
-bordered-field row of the table above verbatim: `border-color` to
+same focus-border and ring treatment as the fields: `border-color` to
 `--background-modifier-border-focus`, plus `0 0 0 var(--input-border-width-focus)`
 in the same grey. Measured against real `app.css`, hover and `:focus-visible`
 both land on `#bdbdbd` + a 2px ring in light and `#555555` + 2px in dark — the
@@ -1509,14 +1375,13 @@ state*, then a live preview of the command name. Every row is built
 unconditionally and hidden with `cs-row-hidden`; one `syncVisibility()` decides
 all of it, so the controls can never disagree about the current format. Every
 configuration row also carries `cs-command-field`: the four format-specific
-native dropdowns share one compact control-column width. The callout picker adds
+select-only dropdowns share one compact control-column width. The callout picker adds
 `cs-command-callout-setting` for a wider searchable field, and both widths
 become full-width when Obsidian stacks rows on a phone.
 
 Three of those rows are their own modules under `settings/command/` rather than
-methods on the modal, because each carries a rule that only makes sense next to
-its control — and because the modal is *at* the 300-line ratchet, so a rule
-written inline would have to be written *thin*:
+methods on the modal, keeping each control's rules and cleanup beside the
+control and the modal within the 300-line limit:
 
 - **`commandRoles.ts`** — the format dropdown refills itself per callout
   (a theme-owned callout has only Block), with a line explaining the absence.
@@ -1533,6 +1398,44 @@ written inline would have to be written *thin*:
 `"none"` — otherwise a command saved from this window and the same command
 reloaded would differ by a key that means nothing. See
 [`CustomCommand`](04-data-model.md#customcommand).
+
+### Shared dropdown controls
+
+All list-selection triggers carry `cs-dropdown-control`: the shared callout,
+color, and language listboxes; plain selectors in commands, palettes, Quick
+Insert, the icon picker, and occurrences; and the custom icon-source and Fold
+selectors. They share a 36px minimum height (or `--input-height` when larger),
+6px by 10px padding, `--radius-s` corners, a 1px
+`--background-modifier-border`, and the same `chevrons-up-down` indicator.
+The face uses `--cs-btn-face` with `--interactive-normal` as its fallback,
+hover, focus, press, and the open state use `--cs-btn-face-hover`, and the
+resting control has no shadow. Text-entry fields share these surface states
+through `cs-text-control`; see [How an input field focuses](#how-an-input-field-focuses).
+Widths remain specific to each layout.
+
+[`ui/dropdownControl.ts`](../../src/ui/dropdownControl.ts) exposes
+`appendDropdownCaret` for the inert, `aria-hidden` indicator. Both triggers and
+open lists follow the plugin's theme; none of these value selectors uses an
+OS-native `<select>` menu. Action buttons, confirmation buttons, modal
+launchers, and three-dot action menus keep their own behavior and styling.
+
+[`ui/selectDropdown.ts`](../../src/ui/selectDropdown.ts) adapts
+`ListboxPopup` with `searchable: false` for finite `{ value, label }` choices.
+It owns the options and committed value, supports silent programmatic changes
+and dynamic option replacement, and calls `onChange` only for a changed user
+selection. Replacing options retains a still-valid value or chooses the first
+option. There is no hidden native select. `cs-select-dropdown` adds a hidden
+`cs-dropdown-width-sizer` grid of translated labels to preserve intrinsic
+longest-option width, while fixed-width setting rows can still shrink it.
+Callers destroy the adapter before rebuilding its row or closing its owner.
+
+Select-only controls stay closed on Tab focus. Click, Space, Enter, or an arrow
+opens the list; arrows, Home/End, and Page Up/Down move its active row. Typing a
+label prefix finds an option, and repeating one character cycles matching
+options. Click, Enter, and Space commit; Escape, Tab, and blur dismiss without
+changing the value. Escape on an already closed list remains available to its
+modal. The readonly input avoids opening a mobile text keyboard. Searchable
+callout and color pickers retain their editable query behavior.
 
 ### The shared callout picker
 
@@ -1561,7 +1464,10 @@ while rows within each group keep the normal match/name order. Only the
 **Callout occurrences** picker enables this for registered and unregistered
 choices; other callout pickers keep their existing flat lists and choices.
 Headings and dividers reuse the palette picker's rendering, and filtering out
-all rows in a group removes its heading too.
+all rows in a group removes its heading too. Each contiguous group is wrapped
+in a `role="group"` element with `cs-combobox-group`; its opaque
+`cs-combobox-group-label` is sticky at the menu's top until the next group
+replaces it. Group containment handles the handoff without scroll listeners.
 
 A query that matches nothing does **not** dead-end. When the call site supplies
 `onCreate`, the empty state is replaced by a real, keyboard-reachable row
@@ -1601,18 +1507,27 @@ menu follows the same rule. Quick Insert follows the same pointer/keyboard
 distinction through its single `is-active` highlight.
 
 Callers **must** call `destroy()` — a modal from `onClose`, a settings section
-through `registerDisposer` — because the popup holds a document-level
-click listener.
+through `registerDisposer` — because the popup holds a document-level click
+listener. Destruction also disables the detached input permanently so stale
+DOM events cannot reopen a menu and attach new listeners.
+
+`ui/menuEscape.ts` registers a keyboard host at each plugin modal and settings
+surface. A menu pushes a temporary public Obsidian `Scope` only while open and
+pops it on close; the first Escape dismisses the menu, while the next reaches
+the original host. A DOM key listener alone is too late for Obsidian's keymap,
+and a permanent child scope would swallow Escape even when the menu is closed.
+The icon-source menu shares this lifecycle. No global app lookup is needed.
 
 Every custom dropdown menu carries `cs-scrollable-dropdown-menu`, whose 320px
-maximum and vertical scrolling are the common fallback. For the long shared
-listboxes and the icon-source picker, `listboxPopupLayout.ts` lowers that limit
-while the menu is open to the space actually visible below the control. It is
-bounded by both the visual viewport and the nearest modal or settings scroll
-container, and recalculates on resize and surrounding scroll. This keeps the
-command editor, **Default fallback callout**, palette, language, and icon-source
-pickers on the same overflow contract; the hidden three-item Fold menu needs
-only the shared static cap.
+maximum and vertical scrolling are the common fallback. Shared listboxes and
+the icon-source picker use `listboxPopupLayout.ts` to fit the visual viewport
+and all clipping ancestors, including inner scroll bodies and sidebar panes.
+Menus normally open below the trigger; when their content will not fit and
+there is more room above, they open above. Horizontal bounds also account for
+RTL and viewport offsets. Layout runs after rendering/filtering and updates
+on viewport resize, surrounding scroll, and control/container resizing. Closing
+removes these listeners, observers, and temporary layout properties. The hidden
+three-item Fold menu needs only the shared static cap.
 
 Two details in [`listboxPopupEvents.ts`](../../src/ui/listboxPopupEvents.ts) are
 load-bearing and have already been bugs. Selecting the label on click has to
@@ -1621,10 +1536,9 @@ mouseup → click, and mouseup places a caret that undoes an earlier `select()`.
 And the menu's `mousedown` `preventDefault()` is what lets a mouse selection
 commit at all — a click on a row is also a blur, and blur lands first.
 
-The control itself is built from Obsidian's own `select, .dropdown` variables
-(`--input-height`, `--input-shadow`, `--input-radius`, `--dropdown-background`,
-`border: 0`) so it is exactly as tall as the native dropdowns beside it. The
-input inside is painted down to nothing, and **its rules are descendant-
+The control itself uses the [shared dropdown styling](#shared-dropdown-controls),
+matching the other listbox triggers. The input inside is
+painted down to nothing, and **its rules are descendant-
 qualified on purpose**: Obsidian styles `input[type='text']` at specificity
 (0,1,1), which beats a lone class — a bare `.cs-combobox-input` rule loses, and
 that is how the field first came to look like a second box drawn inside the
@@ -1633,7 +1547,8 @@ control.
 The Color row uses the same popup through
 [`paletteCombobox.ts`](../../src/settings/paletteCombobox.ts), which adds group
 headings (*Custom* / *Obsidian* / *Presets*, emitted per run so a group filtered
-to nothing leaves no stranded heading) and the pinned "+ New color…" action.
+to nothing leaves no stranded heading). A query with no match offers a
+keyboard-reachable action to create a color under that name.
 Only the *control* moved out of `CalloutEditor`: which palette the form's colours
 resolve to, the "Deleted color" state when they resolve to none, and the
 save-state baseline that feeds all stayed, because they read and write editor
