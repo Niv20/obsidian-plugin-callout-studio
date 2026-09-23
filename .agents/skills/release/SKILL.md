@@ -77,13 +77,20 @@ what to do about it, then **end the turn** — do not attempt a workaround.
    git rev-parse -q --verify "refs/tags/$VERSION"        # must fail
    git ls-remote --exit-code --tags origin "$VERSION"    # must fail
    ```
-7. **Lint, build, and tests pass locally:**
+7. **The push workflow's local gates pass in CI order:**
    ```bash
-   npm run lint && npm run build && npm test
+   npm run build
+   git diff --exit-code -- locales src/i18n/localeManifest.ts
+   npm run lint
+   npm test
    ```
-   This runs before anything is tagged. A failure here costs seconds; a failure
-   after the tag is pushed means a red Actions run against a tag that already
-   exists in the cloud.
+   The generated-locale diff matters because `build` runs `i18n:generate`; a
+   clean tree before the build and a diff afterward means required generated
+   files were not committed. These gates run before anything is tagged. A
+   failure here costs seconds; a failure after the tag is pushed means a red
+   Actions run against a tag that already exists in the cloud. If the repo later
+   exposes an `npm run check` script, use it only after confirming it still
+   mirrors this workflow exactly.
 
 ## Step 2 — Decide the version
 

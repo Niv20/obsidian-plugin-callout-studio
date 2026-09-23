@@ -62,6 +62,8 @@ graphify-out/
 !.agents/skills/user-image-icons/
 !.agents/skills/callout-color-nesting/
 !.agents/skills/callout-metadata-pipe/
+!.agents/skills/ci-quality-gates/
+!.agents/skills/localization-change-safety/
 
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store
