@@ -40,6 +40,12 @@ export interface AnimateReorderOptions {
 /** In-flight slide per row, so a rapid re-reorder can cancel and restart cleanly. */
 const slideAnims = new WeakMap<HTMLElement, Animation>();
 
+/** Hand a sliding row back to direct manipulation without competing transforms. */
+export function cancelReorderAnimation(row: HTMLElement): void {
+	slideAnims.get(row)?.cancel();
+	slideAnims.delete(row);
+}
+
 /**
  * Run `mutate` (which reorders `container`'s direct children) and animate every
  * row that changed position with a FLIP slide.
@@ -80,7 +86,7 @@ export function animateReorder(
 
 		// Cancel any in-flight slide so the rect below is the true new flow
 		// position; `oldTop` already captured where the row visually was.
-		slideAnims.get(el)?.cancel();
+		cancelReorderAnimation(el);
 		const dy = oldTop - el.getBoundingClientRect().top;
 		if (Math.abs(dy) < 0.5) continue;
 

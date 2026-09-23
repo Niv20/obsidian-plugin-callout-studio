@@ -34,7 +34,11 @@ A block callout offers:
 
 ## Customize the menu
 
-Open **Settings → Callout Studio → Context menu**, then click **Customize menu items**. Toggle individual actions on or off and drag them into your preferred order. Every change is saved immediately.
+Open **Settings → Callout Studio → Context menu**, then click **Customize menu items**. Toggle individual actions on or off and drag their handles into your preferred order. You can keep dragging the same row or another row without waiting for it to settle. Every change is saved immediately.
+
+Enabled actions stay above the divider and disabled actions stay below it. Drag within either group; use the toggle to move an action between groups. Turning an action off sends it to the bottom, and turning it on places it after the other enabled actions.
+
+To reorder with the keyboard, focus a drag handle and press **↑** or **↓**. The action moves within its group, and focus follows it.
 
 ---
 **Next:** [Commands & hotkeys](09-commands-and-hotkeys.md)

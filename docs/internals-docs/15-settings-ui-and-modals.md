@@ -1440,6 +1440,37 @@ label follows the selected language. The
 inline corner-radius slider reaches 25px for the 1.5× text scale. The settings
 guard still accepts previously saved values up to 64px.
 
+### `MenuCustomizationModal` — reorder without replacing a grabbed row
+
+Each render role has one persistent list container and one `makeDragSortable`
+attachment. Enabled and disabled items occupy separate bands, divided by a
+sibling separator. Pointer and keyboard moves stay within the item's band;
+only its toggle changes bands. Every completed move updates the settings array
+and requests a save immediately.
+
+`ui/DragSortList.ts` moves the existing row nodes as the pointer crosses their
+neighbours. On release it reports the final indices synchronously, and the modal
+keeps those nodes: rebuilding them after a drop could detach the target of the
+next drag. The row's short settling animation is cosmetic and never owns a
+delayed model update or list rebuild. A new gesture cancels that settle and any
+FLIP slide on its row through `cancelReorderAnimation`, preserving the row's
+current visual position before pointer tracking takes over. Otherwise the Web
+Animations transform can override the pointer-following transform, making a
+row appear stuck even though its handle shows the drag cursor.
+
+Pointer capture belongs to the stable container. Move/end events must match
+the active pointer, and release, cancellation, or lost capture detach the
+gesture listeners and clear its state before releasing capture. Closing the
+modal also cancels settle/slide animations and removes transient drag styles.
+Reduced motion skips the visual animations without changing when a move is
+committed.
+
+Toggle and keyboard changes still rebuild their role's rows and animate them
+by stable item id. Since pointer moves preserve rows and their handlers, the
+handle's ArrowUp/ArrowDown listener looks up the item's current array index on
+every key press; a render-time index would become stale after the first drag.
+Keyboard moves return focus to the moved item's handle.
+
 ### `CommandBuilderModal` — fixed + custom commands, one window
 
 Two lists in one modal: the five fixed commands (plain rows — nothing to

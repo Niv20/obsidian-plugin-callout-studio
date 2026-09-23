@@ -21,6 +21,7 @@
 import {
 	REORDER_DURATION_MS,
 	animateReorder,
+	cancelReorderAnimation,
 	prefersReducedMotion,
 } from "./flip";
 
@@ -56,13 +57,17 @@ export function makeDragSortable(
 	let grabOffset = 0;
 	/** Current translateY applied to the dragged row (px). */
 	let currentTransform = 0;
+	/** Settling is cosmetic; it must never own a delayed reorder callback. */
+	let stopSettling: (() => void) | null = null;
 
 	const rows = (): HTMLElement[] =>
-		Array.from(container.querySelectorAll<HTMLElement>(opts.rowSelector));
+		Array.from(container.querySelectorAll<HTMLElement>(opts.rowSelector)).filter(
+			(row) => row.parentElement === container,
+		);
 
 	const onPointerMove = (e: PointerEvent): void => {
 		const dragEl = dragging;
-		if (!dragEl) return;
+		if (!dragEl || e.pointerId !== pointerId) return;
 		e.preventDefault();
 		const y = e.clientY;
 
@@ -124,36 +129,44 @@ export function makeDragSortable(
 		dragEl.style.transform = `translateY(${currentTransform}px)`;
 	};
 
-	const onPointerUp = (): void => {
-		const dragEl = dragging;
-		if (!dragEl) return;
-		const from = startIndex;
-		const finalIndex = rows().indexOf(dragEl);
-		const changed = finalIndex !== -1 && finalIndex !== from;
-
+	const detachGesture = (): void => {
+		const capturedId = pointerId;
+		dragging = null;
+		startIndex = -1;
+		pointerId = -1;
+		currentTransform = 0;
 		container.removeClass("cs-dragging");
-		try {
-			container.releasePointerCapture(pointerId);
-		} catch {
-			/* capture may already be gone (pointercancel) */
-		}
 		container.removeEventListener("pointermove", onPointerMove);
 		container.removeEventListener("pointerup", onPointerUp);
 		container.removeEventListener("pointercancel", onPointerUp);
+		container.removeEventListener("lostpointercapture", onPointerUp);
+		try {
+			container.releasePointerCapture(capturedId);
+		} catch {
+			/* capture may already be gone (pointercancel/lostpointercapture) */
+		}
+	};
+
+	const onPointerUp = (e: PointerEvent): void => {
+		const dragEl = dragging;
+		if (!dragEl || e.pointerId !== pointerId) return;
+		const from = startIndex;
+		const finalIndex = rows().indexOf(dragEl);
+		const changed = finalIndex !== -1 && finalIndex !== from;
+		const offset = currentTransform;
+		detachGesture();
 
 		const finish = (): void => {
 			dragEl.removeClass("is-dragging");
 			dragEl.style.removeProperty("transform");
-			if (changed) opts.onReorder(from, finalIndex);
 		};
 
-		if (!reduceMotion && Math.abs(currentTransform) >= 0.5) {
-			// Settle: slide the residual offset back to zero, then finish. The
-			// reorder is reported only after the row lands so a caller that rebuilds
-			// the list does not interrupt the slide.
+		if (!reduceMotion && Math.abs(offset) >= 0.5) {
+			// Save independently of this slide: a later gesture must never be
+			// interrupted by a stale animation callback rebuilding its rows.
 			const anim = dragEl.animate(
 				[
-					{ transform: `translateY(${currentTransform}px)` },
+					{ transform: `translateY(${offset}px)` },
 					{ transform: "translateY(0px)" },
 				],
 				{ duration: REORDER_DURATION_MS, easing: "ease" },
@@ -161,46 +174,61 @@ export function makeDragSortable(
 			// Drop the inline follow-transform now: the animation overrides it while
 			// running and, with no fill, the row rests at its natural slot after.
 			dragEl.style.removeProperty("transform");
-			anim.addEventListener("finish", finish, { once: true });
+			const settle = (): void => {
+				anim.removeEventListener("finish", settle);
+				anim.removeEventListener("cancel", settle);
+				stopSettling = null;
+				anim.cancel();
+				finish();
+			};
+			stopSettling = settle;
+			anim.addEventListener("finish", settle, { once: true });
+			anim.addEventListener("cancel", settle, { once: true });
 		} else {
 			finish();
 		}
 
-		dragging = null;
-		startIndex = -1;
-		pointerId = -1;
-		currentTransform = 0;
+		if (changed) opts.onReorder(from, finalIndex);
 	};
 
 	const onPointerDown = (e: PointerEvent): void => {
-		if (dragging) return; // ignore extra touches mid-drag
+		if (dragging || e.button !== 0) return; // ignore extra touches/buttons
 		const target = e.target as HTMLElement | null;
 		const handle = target?.closest(opts.handleSelector);
 		if (!handle) return;
 		const row = handle.closest(opts.rowSelector);
-		if (!(row instanceof HTMLElement)) return;
+		if (!row?.instanceOf(HTMLElement) || row.parentElement !== container) return;
 
 		e.preventDefault();
+		const visualTop = row.getBoundingClientRect().top;
+		stopSettling?.();
+		// A neighbour may still be sliding from the previous move. Its animation
+		// would otherwise override our inline pointer-following transform.
+		cancelReorderAnimation(row);
 		dragging = row;
 		pointerId = e.pointerId;
 		startIndex = rows().indexOf(row);
 		reduceMotion = prefersReducedMotion();
-		grabOffset = e.clientY - row.getBoundingClientRect().top;
-		currentTransform = 0;
+		grabOffset = e.clientY - visualTop;
+		currentTransform = reduceMotion ? 0 : visualTop - row.getBoundingClientRect().top;
+		if (!reduceMotion) row.style.transform = `translateY(${currentTransform}px)`;
 		container.addClass("cs-dragging");
 		row.addClass("is-dragging");
 		container.setPointerCapture(pointerId);
 		container.addEventListener("pointermove", onPointerMove);
 		container.addEventListener("pointerup", onPointerUp);
 		container.addEventListener("pointercancel", onPointerUp);
+		container.addEventListener("lostpointercapture", onPointerUp);
 	};
 
 	container.addEventListener("pointerdown", onPointerDown);
 
 	return () => {
 		container.removeEventListener("pointerdown", onPointerDown);
-		container.removeEventListener("pointermove", onPointerMove);
-		container.removeEventListener("pointerup", onPointerUp);
-		container.removeEventListener("pointercancel", onPointerUp);
+		stopSettling?.();
+		dragging?.removeClass("is-dragging");
+		dragging?.style.removeProperty("transform");
+		detachGesture();
+		for (const row of rows()) cancelReorderAnimation(row);
 	};
 }

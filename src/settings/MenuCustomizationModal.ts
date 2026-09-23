@@ -99,7 +99,8 @@ export class MenuCustomizationModal extends Modal {
 					const items = this.host.settings.contextMenu.items[role];
 					moveItem(items, from, to);
 					void this.host.saveSettings();
-					this.renderRoleList(role, listEl);
+					// DragSortList already moved the live rows. Keeping them preserves
+					// the next gesture's target while the previous drop settles.
 				},
 			}),
 		);
@@ -117,7 +118,7 @@ export class MenuCustomizationModal extends Modal {
 			if (!item.enabled && index > 0 && items[index - 1]?.enabled) {
 				listEl.createDiv({ cls: "cs-menu-band-divider" });
 			}
-			this.renderRow(role, listEl, item, index, items.length);
+			this.renderRow(role, listEl, item);
 		});
 	}
 
@@ -125,8 +126,6 @@ export class MenuCustomizationModal extends Modal {
 		role: CalloutRenderRole,
 		listEl: HTMLElement,
 		item: ContextMenuItemConfig,
-		index: number,
-		count: number,
 	): void {
 		const rerender = (): void => this.renderRoleList(role, listEl);
 		const items = this.host.settings.contextMenu.items[role];
@@ -142,6 +141,9 @@ export class MenuCustomizationModal extends Modal {
 		handle.setAttribute("aria-label", t("menuCustomize.dragHandle"));
 		setIcon(handle, "grip-vertical");
 		handle.addEventListener("keydown", (e) => {
+			// Pointer reorders preserve these nodes; the render-time index is stale.
+			const index = items.indexOf(item);
+			if (index === -1) return;
 			// Reorder only within this item's band: the neighbour must share its
 			// enabled state, so a row never crosses the divider by keyboard —
 			// exactly as the pointer drag is constrained (see groupOf above).
@@ -163,7 +165,7 @@ export class MenuCustomizationModal extends Modal {
 				focusHandleAt(listEl, index - 1);
 			} else if (
 				e.key === "ArrowDown" &&
-				index < count - 1 &&
+				index < items.length - 1 &&
 				items[index + 1]?.enabled === item.enabled
 			) {
 				e.preventDefault();
