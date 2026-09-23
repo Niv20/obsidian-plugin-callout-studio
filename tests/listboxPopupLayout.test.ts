@@ -9,7 +9,12 @@ import { asEl, FakeDocument, FakeElement, FakeWindow, fakeDom } from "./support/
 class LayoutWindow extends FakeWindow {
 	readonly Node = FakeElement;
 	readonly events = new Map<string, Array<(ev: unknown) => void>>();
+	readonly styles = new Map<Element, Partial<CSSStyleDeclaration>>();
 	ResizeObserver?: typeof LayoutObserver;
+	getComputedStyle(element: Element): CSSStyleDeclaration {
+		return { overflowX: "visible", overflowY: "visible", direction: "ltr",
+			...this.styles.get(element) } as CSSStyleDeclaration;
+	}
 	addEventListener(type: string, listener: (ev: unknown) => void): void {
 		this.events.set(type, [...(this.events.get(type) ?? []), listener]);
 	}
@@ -32,39 +37,48 @@ class LayoutObserver {
 	disconnect(): void { this.disconnected = true; }
 }
 
+function rect(top: number, bottom: number, left = 100, right = 340): DOMRect {
+	return { top, bottom, left, right, width: right - left, height: bottom - top } as DOMRect;
+}
+
 function mount(options: {
 	height?: number;
 	offsetTop?: number;
+	clipTop?: number;
 	clipBottom?: number;
-	autoClip?: "modal-content" | "vertical-tab-content";
+	autoClip?: "modal-content" | "vertical-tab-content" | "icon-picker-content";
 	observe?: boolean;
+	menuHeight?: number;
+	controlBottom?: number;
 } = {}) {
 	const view = new LayoutWindow();
 	view.visualViewport.height = options.height ?? 720;
-	Object.assign(view.visualViewport, { offsetTop: options.offsetTop ?? 0 });
+	Object.assign(view.visualViewport, { offsetTop: options.offsetTop ?? 0, width: 800, offsetLeft: 0 });
 	if (options.observe) view.ResizeObserver = LayoutObserver;
 	const doc = new FakeDocument(view);
 	doc.documentElement.clientHeight = 900;
+	doc.documentElement.clientWidth = 800;
 	const control = doc.createElement("div");
 	const menu = doc.createElement("div");
+	Object.assign(menu, { scrollHeight: options.menuHeight ?? 600, offsetHeight: 36 });
 	const clip = options.clipBottom === undefined ? undefined : doc.createElement("div");
-	if (clip && options.autoClip) {
-		clip.addClass(options.autoClip);
+	if (clip) {
 		clip.appendChild(control);
 		clip.appendChild(menu);
+		if (options.autoClip) {
+			clip.addClass(options.autoClip);
+			view.styles.set(asEl(clip), { overflowX: "auto", overflowY: "auto" });
+		}
 	}
-	let controlBottom = 200;
-	control.getBoundingClientRect = () => ({ bottom: controlBottom } as DOMRect);
-	if (clip) clip.getBoundingClientRect = () => ({ bottom: options.clipBottom } as DOMRect);
+	let controlBottom = options.controlBottom ?? 200;
+	control.getBoundingClientRect = () => rect(controlBottom - 36, controlBottom);
+	if (clip) clip.getBoundingClientRect = () => rect(options.clipTop ?? 0, options.clipBottom!, 0, 800);
 	let teardown: (() => void) | undefined;
 	let updates = 0;
 	const refresh = (): void => {
 		updates++;
 		teardown = syncListboxMenuHeightCap(
-			asEl(control),
-			asEl(menu),
-			teardown,
-			refresh,
+			asEl(control), asEl(menu), teardown, refresh,
 			options.autoClip ? undefined : clip && asEl(clip),
 		);
 	};
@@ -73,56 +87,118 @@ function mount(options: {
 		view, doc, control, menu, clip, refresh,
 		get updates() { return updates; },
 		cap: () => menu.style.getPropertyValue("--cs-combobox-menu-max-height"),
+		above: () => menu.hasClass("cs-dropdown-menu-above"),
 		setControlBottom: (bottom: number) => { controlBottom = bottom; },
 		dispose: () => teardown?.(),
 	};
 }
 
-describe("listbox popup height — visible space", () => {
-	it("caps a tall menu at 320px and can clear its inline cap", () => {
-		const h = mount();
+describe("listbox popup placement — visible space", () => {
+	it("caps long menus at 320px and clears every transient layout property", () => {
+		const h = mount({ controlBottom: 650 });
 		try {
 			assert.equal(h.cap(), "320px");
+			assert.ok(h.above());
 			clearListboxMenuHeightCap(asEl(h.menu));
 			assert.equal(h.cap(), "");
+			assert.equal(h.above(), false);
+			assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-max-width"), "");
+			assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-offset-x"), "");
 		} finally { h.dispose(); }
 	});
 
-	it("uses the popout document's visible viewport, including its vertical offset", () => {
+	it("keeps a short menu below when it fits, even with more space above", () => {
+		const h = mount({ controlBottom: 600, menuHeight: 80 });
+		try {
+			assert.equal(h.above(), false);
+			assert.equal(h.cap(), "108px");
+		} finally { h.dispose(); }
+	});
+
+	it("opens above near the bottom without oscillating after a height cap", () => {
+		const h = mount({ controlBottom: 600, menuHeight: 140 });
+		try {
+			for (let i = 0; i < 3; i++) {
+				h.refresh();
+				assert.equal(h.above(), true);
+				assert.equal(h.cap(), "320px");
+			}
+			Object.assign(h.menu, { scrollHeight: 80 });
+			h.refresh();
+			assert.equal(h.above(), false, "filtering to a smaller list can fit below again");
+		} finally { h.dispose(); }
+	});
+
+	it("uses the popout's visual viewport, including its top offset", () => {
 		const h = mount({ height: 300, offsetTop: 50 });
 		try {
 			assert.notEqual(h.view, fakeDom.document.defaultView);
 			assert.equal(h.cap(), "138px");
+			h.setControlBottom(320);
+			h.refresh();
+			assert.ok(h.above());
+			assert.equal(h.cap(), "222px");
 			h.setControlBottom(400);
 			h.refresh();
-			assert.equal(h.cap(), "0px", "no negative height when the trigger is off-screen");
+			assert.equal(h.cap(), "0px", "a fully off-screen trigger has no visible menu");
 		} finally { h.dispose(); }
 	});
 
-	it("stops at the modal clipping edge when it ends before the viewport", () => {
-		const h = mount({ clipBottom: 310.8 });
+	it("chooses the larger side inside an explicit clipping box", () => {
+		const h = mount({ clipTop: 100, clipBottom: 310.8 });
 		try {
 			assert.equal(h.cap(), "98px");
+			assert.equal(h.above(), false);
 			h.setControlBottom(275);
 			h.refresh();
-			assert.equal(h.cap(), "23px");
+			assert.equal(h.cap(), "127px");
+			assert.ok(h.above());
 		} finally { h.dispose(); }
 	});
 
-	for (const clipClass of ["modal-content", "vertical-tab-content"] as const) {
-		it(`discovers its ${clipClass} boundary without caller-specific wiring`, () => {
-			const h = mount({ clipBottom: 310.8, autoClip: clipClass });
+	for (const clipClass of ["modal-content", "vertical-tab-content", "icon-picker-content"] as const) {
+		it(`discovers its ${clipClass} scroll boundary without caller wiring`, () => {
+			const h = mount({ clipTop: 100, clipBottom: 310.8, autoClip: clipClass });
 			try {
 				assert.equal(h.cap(), "98px");
 				h.setControlBottom(275);
 				h.refresh();
-				assert.equal(h.cap(), "23px");
+				assert.equal(h.cap(), "127px");
 			} finally { h.dispose(); }
 		});
 	}
 
-	it("recalculates on window and visual viewport changes without duplicating listeners", () => {
+	it("intersects nested clipping ancestors without treating visible overflow as clipping", () => {
+		const h = mount({ clipBottom: 500, autoClip: "modal-content" });
+		try {
+			const outer = h.doc.createElement("div");
+			outer.appendChild(h.clip!);
+			outer.getBoundingClientRect = () => rect(100, 310, 0, 800);
+			h.refresh();
+			assert.equal(h.cap(), "288px");
+			h.view.styles.set(asEl(outer), { overflowY: "hidden" });
+			h.refresh();
+			assert.equal(h.cap(), "98px");
+		} finally { h.dispose(); }
+	});
+
+	it("bounds width and shifts from the trigger consistently, including RTL", () => {
 		const h = mount();
+		try {
+			Object.assign(h.view.visualViewport, { width: 200, offsetLeft: 50 });
+			for (const direction of ["ltr", "rtl"]) {
+				h.view.styles.set(asEl(h.control), { direction });
+				for (let i = 0; i < 2; i++) {
+					h.refresh();
+					assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-max-width"), "184px");
+					assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-offset-x"), direction === "ltr" ? "-42px" : "-98px");
+				}
+			}
+		} finally { h.dispose(); }
+	});
+
+	it("recalculates on viewport changes without duplicating listeners", () => {
+		const h = mount({ menuHeight: 30 });
 		try {
 			h.view.visualViewport.height = 280;
 			h.view.fire("resize");
@@ -138,12 +214,11 @@ describe("listbox popup height — visible space", () => {
 		} finally { h.dispose(); }
 	});
 
-	it("repositions after surrounding content scrolls but leaves menu scrolling alone", () => {
-		const h = mount({ height: 400 });
+	it("repositions on surrounding scroll while leaving menu scrolling alone", () => {
+		const h = mount({ height: 400, menuHeight: 30 });
 		try {
-			const row = h.menu.createDiv();
 			const before = h.updates;
-			h.doc.fire("scroll", { target: row });
+			h.doc.fire("scroll", { target: h.menu.createDiv() });
 			h.doc.fire("scroll", { target: h.menu });
 			assert.equal(h.updates, before);
 			h.setControlBottom(250);
@@ -153,9 +228,9 @@ describe("listbox popup height — visible space", () => {
 		} finally { h.dispose(); }
 	});
 
-	it("observes control and modal resize, then removes every listener and observer", () => {
+	it("observes control and clipping boxes and cleans listeners, observers and positioning", () => {
 		LayoutObserver.instances = [];
-		const h = mount({ clipBottom: 400, observe: true });
+		const h = mount({ clipBottom: 400, observe: true, menuHeight: 30 });
 		const observer = LayoutObserver.instances[0]!;
 		try {
 			assert.deepEqual(observer.observed, [h.control, h.clip]);
@@ -165,6 +240,8 @@ describe("listbox popup height — visible space", () => {
 			assert.equal(LayoutObserver.instances.length, 1);
 		} finally { h.dispose(); }
 		assert.ok(observer.disconnected);
+		assert.equal(h.cap(), "");
+		assert.equal(h.above(), false);
 		for (const listeners of h.view.events.values()) assert.equal(listeners.length, 0);
 		assert.equal(h.doc.listeners.get("scroll")?.length, 0);
 		const before = h.updates;

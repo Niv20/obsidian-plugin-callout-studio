@@ -48,6 +48,7 @@
  * both say so at their definition.
  */
 import { StateField } from "@codemirror/state";
+export { TestScope as Scope } from "./fakeKeymap";
 
 /* -------------------------------------------------------------------------- */
 /* Seams                                                                      */
