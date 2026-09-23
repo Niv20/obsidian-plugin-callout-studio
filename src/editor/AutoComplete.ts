@@ -188,7 +188,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		const inCode = isCalloutTokenInCode({
 			line,
 			tokenIndex: triggerIdx,
-			lineIndex: cursor.line,
+			lineIndex: cursor.line, lineCount: editor.lineCount(),
 			lineAt: (index) => editor.getLine(index),
 		});
 		if (inCode) return null;

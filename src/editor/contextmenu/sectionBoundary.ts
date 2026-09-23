@@ -2,6 +2,7 @@
 import { foldable } from "@codemirror/language";
 import type { EditorView } from "@codemirror/view";
 import type { Editor } from "obsidian";
+import { isMarkdownEscaped } from "../markdownExclusions";
 import { createDocumentLineFilter, stripInlineCode } from "../calloutTokens";
 
 /** First line outside this section, or lineCount at EOF. */
@@ -12,14 +13,14 @@ export function sectionEndLine(editor: Editor, headingLine: number, level: numbe
 	// Source-only/reading editors may have no fold service. Share the same
 	// fence-length/frontmatter rules as the vault scanner; feed every line.
 	const isContent = createDocumentLineFilter();
-	let comment = false;
+	let comment = false, percentComment = false;
 	let math = false;
 	let htmlEnd: RegExp | "blank" | null = null;
 	let paragraphStart: number | null = null;
 	for (let line = 0; line < editor.lineCount(); line++) {
 		const raw = editor.getLine(line);
 		let text = raw;
-		if (!comment && !math && !htmlEnd && /^ {0,3}>/.test(text)) {
+		if (!comment && !percentComment && !math && !htmlEnd && /^ {0,3}>/.test(text)) {
 			isContent("", line); paragraphStart = null; continue;
 		}
 		if (htmlEnd) {
@@ -36,6 +37,11 @@ export function sectionEndLine(editor: Editor, headingLine: number, level: numbe
 			if (/^ {0,3}\$\$\s*$/.test(text)) math = false;
 			isContent("", line); paragraphStart = null; continue;
 		}
+		if (percentComment) {
+			const end = text.indexOf("%%");
+			if (end < 0) { isContent("", line); paragraphStart = null; continue; }
+			text = "\0".repeat(end + 2) + text.slice(end + 2); percentComment = false;
+		}
 		if (!isContent(text, line)) { paragraphStart = null; continue; }
 		text = stripInlineCode(text);
 		const html = htmlBlockEnd(text, paragraphStart === null);
@@ -50,6 +56,15 @@ export function sectionEndLine(editor: Editor, headingLine: number, level: numbe
 			text = text.slice(0, open) + text.slice(end + 3);
 			open = text.indexOf("<!--");
 		}
+		let percent = text.indexOf("%%");
+		while (percent >= 0) {
+			if (isMarkdownEscaped(text, percent)) { percent = text.indexOf("%%", percent + 2); continue; }
+			const end = text.indexOf("%%", percent + 2);
+			if (end < 0) { text = text.slice(0, percent); percentComment = true; break; }
+			text = text.slice(0, percent) + "\0".repeat(end + 2 - percent) + text.slice(end + 2);
+			percent = text.indexOf("%%", percent + 2);
+		}
+		if (percentComment) { paragraphStart = null; continue; }
 		if (/^ {0,3}\$\$\s*$/.test(text)) { math = !math; paragraphStart = null; continue; }
 		if (comment) { paragraphStart = null; continue; }
 		const atx = /^ {0,3}(#{1,6})(?:[ \t]+|$)/.exec(text);

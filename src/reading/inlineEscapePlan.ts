@@ -1,5 +1,6 @@
 /** Keep source escape decisions attached to text as content pills split it. */
-import { scanLineForCalloutTokens, stripInlineCode, stripWikilinks } from "../editor/calloutTokens";
+import { scanLineForCalloutTokens, stripWikilinks } from "../editor/calloutTokens";
+import { iterateMarkdownSourceLines } from "../editor/markdownExclusions";
 import { blankInlineMath } from "../editor/inlineContent";
 import { splitCalloutMetadata } from "../utils/calloutId";
 
@@ -35,8 +36,8 @@ export function createInlineEscapePlan(
 	const lines = getSectionLines();
 	if (!lines || !lines.join("\n").includes("\\[!")) return pass;
 	const sequence: Array<{ key: string; escaped: boolean }> = [];
-	for (const rawLine of lines) {
-		const line = blankInlineMath(stripWikilinks(stripInlineCode(rawLine)));
+	for (const { visible } of iterateMarkdownSourceLines(lines.join("\n"))) {
+		const line = blankInlineMath(stripWikilinks(visible));
 		const entries: Array<{ from: number; key: string; escaped: boolean }> = [];
 		for (const token of scanLineForCalloutTokens(line, { inlineContent: false })) {
 			if (token.role === "inline") entries.push({ from: token.from, key: keyOf(token.rawId, token.metadata), escaped: false });

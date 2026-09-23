@@ -27,6 +27,9 @@
 import type { CalloutRenderRole } from "../types";
 import { splitCalloutMetadata, type CalloutIdParts } from "../utils/calloutId";
 import { blankInlineMath, matchInlineContent } from "./inlineContent";
+import { markdownPrefix } from "./markdownContainers";
+import { isMarkdownEscaped, iterateMarkdownSourceLines, maskInlineCode } from "./markdownExclusions";
+import { iterateDocumentCallouts } from "./documentCallouts";
 
 /**
  * Heading callout header: 1–6 hashes, at least one space/tab, then the token
@@ -46,14 +49,14 @@ export const HEADING_CALLOUT_RE =
  * this belong to Obsidian's own callout rendering — the heading/inline logic
  * must leave them alone. Captures: 1=quote prefix.
  */
-export const BLOCKQUOTE_CALLOUT_PREFIX_RE = /^(\s*(?:>[ \t]?)+)\[!/;
+export const BLOCKQUOTE_CALLOUT_PREFIX_RE = /^([ \t]*(?:>[ \t]*)+)\[!/;
 
 /**
  * Full block callout header including the id.
  * Captures: 1=quote prefix, 2=raw id.
  */
 export const BLOCKQUOTE_CALLOUT_HEADER_RE =
-	/^(\s*(?:>[ \t]?)+)\[!([^\]\n\r]+)\]/;
+	/^([ \t]*(?:>[ \t]*)+)\[!([^\]\n\r]+)\]/;
 
 /**
  * Matches the token at the start of a reading-view heading's rendered text
@@ -363,8 +366,7 @@ export function nestedInlineTokens(
  * token offsets computed on the result are valid in the original line.
  */
 export function stripInlineCode(line: string): string {
-	if (!line.includes("`")) return line;
-	return line.replace(/`[^`\n]*`/g, (m) => " ".repeat(m.length));
+	return maskInlineCode(line);
 }
 
 /**
@@ -405,21 +407,32 @@ export interface ScanLineOptions {
 	 * either way, so it keeps the default.
 	 */
 	inlineContent?: boolean;
+	/** Document lexer mask, preserving offsets; never independently re-lex it. */
+	visibleLine?: string;
+	/** Content start after Markdown container prefixes and allowed indentation. */
+	contentFrom?: number;
+	/** Whether the innermost container is a blockquote. */
+	blockQuote?: boolean;
 }
 
 /**
  * Scans one raw markdown line and returns every callout token on it, already
  * classified by role. Cheap for the common case: bails immediately when the
- * line contains no `[!`. Inline-code spans are ignored. Does NOT know about
- * multi-line context (fenced code blocks, frontmatter, math) — callers that
- * scan whole documents must skip those lines themselves.
+ * line contains no `[!`. Code and comments contained in this input are ignored. Whole-document
+ * consumers use documentCallouts to preserve context across lines.
  */
 export function scanLineForCalloutTokens(
 	rawLine: string,
 	options: ScanLineOptions = {},
 ): LineCalloutToken[] {
 	if (rawLine.indexOf("[!") === -1) return [];
-	const line = stripWikilinks(stripInlineCode(rawLine));
+	const visible = options.visibleLine ?? Array.from(iterateMarkdownSourceLines(rawLine)).map(part => part.visible).join("\n");
+	const line = stripWikilinks(visible);
+	const prefix = markdownPrefix(rawLine);
+	const contentFrom = options.contentFrom ?? prefix.from;
+	const blockQuote = options.blockQuote ?? prefix.lastContainer === "quote";
+	const content = line.slice(contentFrom).replace(/\r$/, "");
+	const intact = (from: number, to: number): boolean => line.slice(from, to) === rawLine.slice(from, to);
 	const parseContent = options.inlineContent !== false;
 	/**
 	 * The line the `{…}` matcher runs on. Math is blanked here and ONLY here:
@@ -436,22 +449,21 @@ export function scanLineForCalloutTokens(
 
 	// Native block callout header → single block token; the rest of the
 	// line is the callout's title, which Obsidian renders — no pills inside it.
-	const quoteHeader = line.match(BLOCKQUOTE_CALLOUT_HEADER_RE);
+	const quoteHeader = blockQuote ? /^\[!([^\][\n\r\0]+)\]/.exec(content) : null;
 	if (quoteHeader) {
-		const prefix = quoteHeader[1] ?? "";
-		const body = quoteHeader[2] ?? "";
+		const body = quoteHeader[1] ?? "";
 		const parts = splitCalloutMetadata(body);
 		// A blank type (`[!|purple]`) names no callout; Obsidian renders it with
 		// an empty `data-callout`, and there is nothing here for us to resolve.
-		if (!parts.id.trim()) return [];
+		if (!parts.id.trim() || body.includes("[") || !intact(contentFrom, contentFrom + quoteHeader[0].length)) return [];
 		return [
 			{
 				role: "regular",
 				rawId: parts.id,
 				metadata: parts.metadata,
 				hasMetadata: parts.hasMetadata,
-				from: prefix.length,
-				to: prefix.length + 2 + body.length + 1,
+				from: contentFrom,
+				to: contentFrom + 2 + body.length + 1,
 				hasTitle: false,
 				headingLevel: 0,
 			},
@@ -463,15 +475,15 @@ export function scanLineForCalloutTokens(
 	// Heading callout header → heading token; the trailing title text may
 	// still contain inline tokens, so keep scanning after it.
 	let inlineScanFrom = 0;
-	const heading = line.match(HEADING_CALLOUT_RE);
+	const heading = prefix.quoteDepth === 0 ? content.match(HEADING_CALLOUT_RE) : null;
 	if (heading) {
 		const body = heading[2] ?? "";
 		const parts = splitCalloutMetadata(body);
-		const from = line.indexOf("[!");
+		const from = contentFrom + content.indexOf("[!");
 		const to = from + 2 + body.length + 1;
 		// `# [!text](url)` is a markdown link at heading start, not a callout.
 		const isLink = line[to] === "(";
-		if (parts.id.trim() && !isLink) {
+		if (parts.id.trim() && !body.includes("[") && !isLink && intact(from, to)) {
 			tokens.push({
 				role: "heading",
 				rawId: parts.id,
@@ -488,21 +500,24 @@ export function scanLineForCalloutTokens(
 
 	// Inline tokens: manual indexOf scan (no regex) so adjacent tokens,
 	// escapes, and link syntax are handled exactly and cheaply.
-	let searchFrom = inlineScanFrom;
+	let searchFrom = inlineScanFrom, nextClose = -1;
 	for (;;) {
 		const idx = line.indexOf("[!", searchFrom);
 		if (idx === -1) break;
 		searchFrom = idx + 2;
 		const before = idx > 0 ? line[idx - 1] : "";
-		if (before === "\\") continue; // escaped: \[!name]
+		if (isMarkdownEscaped(line, idx)) continue; // odd backslash run escapes the token
 		if (before === "[") continue; // defensive; stripWikilinks blanks [[!name]]
-		const close = line.indexOf("]", idx + 2);
+		if (nextClose < idx + 2) nextClose = line.indexOf("]", idx + 2);
+		const close = nextClose;
 		if (close === -1) break; // unclosed — nothing further can close either
+		const nestedOpening = line.indexOf("[", idx + 2);
+		if (nestedOpening >= 0 && nestedOpening < close) { searchFrom = nestedOpening; continue; }
 		const body = line.slice(idx + 2, close);
 		const parts = splitCalloutMetadata(body);
 		// The \n guard matters when scanning rendered multi-line text nodes
 		// (reading view); raw markdown lines never contain newlines.
-		if (!parts.id.trim() || body.includes("[") || body.includes("\n"))
+		if (!parts.id.trim() || body.includes("[") || /[\n\r\0]/.test(body) || !intact(idx, close + 1))
 			continue;
 		if (line[close + 1] === "(") {
 			// Markdown link whose text starts with `!`: [!name](url)
@@ -558,9 +573,9 @@ const FENCE_OPEN_RE = /^(?:\s*>\s*)*\s*(`{3,}|~{3,})/;
  * (``` / ~~~, including fences nested in blockquotes), so a note that merely
  * *documents* callout syntax is never mistaken for one that uses it.
  *
- * Every whole-document consumer shares this one filter — the read-only
- * scanners below and the vault rewriters in utils/vaultCalloutScanner. That is
- * what keeps "3 uses in 2 files" and "3 references updated" in agreement.
+ * Legacy block-only filter for heading-section boundary fallback. Vault
+ * consumers use documentCallouts instead, which also handles comments,
+ * inline spans and indented code; this boolean API cannot represent them.
  *
  * Lines must be passed with their real index and none may be skipped, or the
  * fence/frontmatter state desyncs. Callers that consume extra lines of their
@@ -610,28 +625,13 @@ export function createDocumentLineFilter(): (
 	};
 }
 
-/**
- * Iterates every callout token in a full markdown document, skipping YAML
- * frontmatter and fenced code blocks. Used by the vault scanners so discovery,
- * statistics, and prune-counting all see heading and inline usages, not just
- * blockquotes.
- */
+/** Compatibility callback over the complete document lexer. */
 export function forEachCalloutToken(
 	content: string,
 	cb: (rawId: string, role: CalloutRenderRole, lineIndex: number) => void,
 ): void {
-	if (content.indexOf("[!") === -1) return;
-
-	const lines = content.split("\n");
-	const isContentLine = createDocumentLineFilter();
-
-	for (let i = 0; i < lines.length; i++) {
-		const line = lines[i] ?? "";
-		if (!isContentLine(line, i)) continue;
-		if (line.indexOf("[!") === -1) continue;
-		for (const token of scanLineForCalloutTokens(line)) {
-			cb(token.rawId, token.role, i);
-		}
+	for (const { token, lineIndex } of iterateDocumentCallouts(content)) {
+		cb(token.rawId, token.role, lineIndex);
 	}
 }
 

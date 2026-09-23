@@ -23,14 +23,14 @@ import { Decoration, EditorView } from "@codemirror/view";
 import type { DecorationSet } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
 import { editorLivePreviewField } from "obsidian";
-import { scanLineForCalloutTokens } from "../calloutTokens";
+import { editorLineCalloutTokens } from "./sourceTokens";
 import { resolveCalloutDef, shouldRenderToken } from "../renderShared";
 import { HeadingGapWidget } from "./headingGapWidget";
 import { calloutStudioRefresh } from "./refresh";
 import type { LivePreviewHost } from "./calloutViewPlugin";
 
 /** Syntax-tree node names whose content must never be treated as a callout. */
-const SKIP_NODE_RE = /codeblock|frontmatter|yaml|inline-code|math/i;
+const SKIP_NODE_RE = /codeblock|frontmatter|yaml|inline-code|math|comment/i;
 
 /** Build the block-gap decoration set for the whole document. */
 function buildGaps(state: EditorState, host: LivePreviewHost): DecorationSet {
@@ -73,7 +73,7 @@ function buildGaps(state: EditorState, host: LivePreviewHost): DecorationSet {
 		if (line.text.indexOf("[!") === -1) continue;
 		// Skip fenced code / frontmatter, exactly as the bar decoration does.
 		if (SKIP_NODE_RE.test(tree.resolveInner(line.from, 1).name)) continue;
-		const tokens = scanLineForCalloutTokens(line.text);
+		const tokens = editorLineCalloutTokens(state, line.from, line.text);
 		// Native `> [!id]` block callouts belong to Obsidian's rendering.
 		if (tokens.some((tk) => tk.role === "regular")) continue;
 		// The gap belongs to the bar, so it goes wherever the bar goes: a

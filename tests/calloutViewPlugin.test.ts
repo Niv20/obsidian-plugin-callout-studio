@@ -767,3 +767,14 @@ describe("lifecycle", () => {
 		assert.doesNotThrow(() => h.instance.destroy());
 	});
 });
+
+describe("document exclusions in language-free Live Preview", () => {
+	it("never decorates fake heading/inline callouts across multiline exclusions", () => {
+		const source = "%%\n## [!note] Comment\n[!note]\n%%\n```\n## [!note] Code\n```\n\n    [!note]\n\ntext ``\n[!note]\n``\n\n## [!note] Real\nend";
+		const h = harness(source, { selection: source.length });
+		const real = source.indexOf("## [!note] Real");
+		assert.ok(h.lineClasses(real).includes(CSS_HEADING_LINE));
+		assert.equal(h.decorations().filter(([, , deco]) => widgetOf(deco) instanceof CalloutTokenWidget).length, 1);
+		assert.deepStrictEqual(h.lineClasses(source.indexOf("## [!note] Comment")), []);
+	});
+});

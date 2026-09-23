@@ -8,6 +8,9 @@ import { asEditor, editor } from "./support/fakeEditor";
 describe("heading section Markdown boundaries", () => {
 	for (const body of [
 		"```sh\n# shell comment\necho hello\n```",
+		"%%\n```\n# hidden comment heading\n%%",
+		"%% # same-line hidden heading %%",
+		"```\n%%\n## example heading\n```",
 		"````md\n```\n## still code\n```\n````",
 		"~~~md\n```\n## still code\n~~~",
 		"<!--\n```\n# comment heading\n-->",
