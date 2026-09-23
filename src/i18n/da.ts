@@ -650,7 +650,7 @@ export const da: Record<string, string> = {
 	"menuCustomize.heading": "Overskrift-callout",
 	"menuCustomize.inline": "Indlejret callout",
 	"menuCustomize.dragHandle": "Træk for at omarrangere",
-	"menuItem.edit": "Rediger callout",
+	"menuItem.createOrEdit": "Opret eller rediger callout",
 	"menuItem.openSettings": "Åbn indstillinger",
 	"menuItem.copyMarkdown": "Kopiér Markdown",
 	"menuItem.foldDefaults": "Standard foldetilstand (åben / lukket / ingen)",

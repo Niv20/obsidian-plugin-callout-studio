@@ -372,11 +372,12 @@ each id on that role. An id with no builder for a given role (e.g.
 `copyMarkdown` on `heading`) is simply skipped — one config shape covers ids
 that only make sense for some roles.
 
-- **`edit`** resolves through `resolveCalloutDef` (the same ladder the
-  renderer uses) rather than a plain lookup — this is what lets right-clicking
-  `[!a-b]` written for the callout `a b` offer "Edit," and what correctly
-  refuses to offer editing for a genuinely unknown id (which merely borrows
-  the fallback's *appearance*, not its identity).
+- **`edit`** is the stable persisted id for one adaptive create/edit action.
+  It resolves through `resolveCalloutDef` (the same ladder the renderer uses)
+  rather than a plain lookup — so right-clicking `[!a-b]` written for the
+  callout `a b` edits that definition. A genuinely unknown id merely borrows
+  the fallback's *appearance*, not its identity, so the same configured action
+  instead opens a new editor seeded with the token's exact normalized id.
 - **Block-role `foldDefaults`** offers the *other two* fold states (never the
   current one) — open / closed / non-collapsible — by rewriting the header's
   fold mark in place.

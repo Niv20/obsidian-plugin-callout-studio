@@ -679,7 +679,7 @@ export const nl: Record<string, string> = {
 	"menuCustomize.heading": "Kop-callout",
 	"menuCustomize.inline": "Inline callout",
 	"menuCustomize.dragHandle": "Sleep om te herschikken",
-	"menuItem.edit": "Callout bewerken",
+	"menuItem.createOrEdit": "Callout maken of bewerken",
 	"menuItem.openSettings": "Instellingen openen",
 	"menuItem.copyMarkdown": "Markdown kopiëren",
 	"menuItem.foldDefaults": "Standaardvouwstatus (open / gesloten / geen)",

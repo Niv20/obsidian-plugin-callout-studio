@@ -40,7 +40,8 @@ const ROLE_TITLE_KEY: Record<CalloutRenderRole, string> = {
 
 /** i18n key for each menu item's label. */
 const ITEM_LABEL_KEY: Record<ContextMenuItemId, string> = {
-	edit: "menuItem.edit",
+	// `edit` is the stable persisted id; at runtime it creates unknown tokens.
+	edit: "menuItem.createOrEdit",
 	openSettings: "menuItem.openSettings",
 	copyMarkdown: "menuItem.copyMarkdown",
 	foldDefaults: "menuItem.foldDefaults",

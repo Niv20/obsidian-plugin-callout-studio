@@ -670,7 +670,7 @@ export const pl: Record<string, string> = {
 	"menuCustomize.heading": "Callout-nagłówek",
 	"menuCustomize.inline": "Callout śródtekstowy",
 	"menuCustomize.dragHandle": "Przeciągnij, aby zmienić kolejność",
-	"menuItem.edit": "Edytuj callout",
+	"menuItem.createOrEdit": "Utwórz lub edytuj callout",
 	"menuItem.openSettings": "Otwórz ustawienia",
 	"menuItem.copyMarkdown": "Kopiuj Markdown",
 	"menuItem.foldDefaults": "Domyślne zwijanie (otwarty / zamknięty / brak)",

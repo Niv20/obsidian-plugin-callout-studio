@@ -1193,6 +1193,12 @@ body:not(.is-phone)
 }
 
 /* Rows reuse .callout-studio-row; this only tweaks the menu-specific bits. */
+.cs-menu-row .callout-studio-row-name {
+	/* The shared 22ch cap is for callout names. Menu actions should use the
+	   whole row and ellipsize only when the handle and toggle truly need it. */
+	max-width: none;
+}
+
 .cs-menu-row.is-disabled {
 	opacity: 0.55;
 }

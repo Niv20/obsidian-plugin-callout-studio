@@ -575,10 +575,10 @@ export interface CustomCommand {
 }
 
 /**
- * Identifiers for the right-click menu entries. `foldDefaults` covers the
- * whole open/closed/normal fold-default group as one toggleable unit; the
- * `*Section` items operate on an entire heading section (heading line +
- * everything until the next same-or-higher-level heading).
+ * Identifiers for the right-click menu entries. `edit` is the persisted
+ * adaptive create/edit action. `foldDefaults` covers the open/closed/normal
+ * fold-state group; `*Section` items cover the heading line through everything
+ * before the next same-or-higher-level heading.
  */
 export type ContextMenuItemId =
 	| "edit"

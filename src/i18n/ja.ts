@@ -676,7 +676,7 @@ export const ja: Record<string, string> = {
 	"menuCustomize.heading": "見出しcallout",
 	"menuCustomize.inline": "インラインcallout",
 	"menuCustomize.dragHandle": "ドラッグして並べ替え",
-	"menuItem.edit": "calloutを編集",
+	"menuItem.createOrEdit": "calloutを作成または編集",
 	"menuItem.openSettings": "設定を開く",
 	"menuItem.copyMarkdown": "Markdownをコピー",
 	"menuItem.foldDefaults": "折りたたみのデフォルト（開く / 閉じる / なし）",

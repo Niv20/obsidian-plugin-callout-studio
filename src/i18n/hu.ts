@@ -673,7 +673,7 @@ export const hu: Record<string, string> = {
 	"menuCustomize.heading": "Címsor callout",
 	"menuCustomize.inline": "Beágyazott callout",
 	"menuCustomize.dragHandle": "Húzás az átrendezéshez",
-	"menuItem.edit": "Callout szerkesztése",
+	"menuItem.createOrEdit": "Callout létrehozása vagy szerkesztése",
 	"menuItem.openSettings": "Beállítások megnyitása",
 	"menuItem.copyMarkdown": "Markdown másolása",
 	"menuItem.foldDefaults":

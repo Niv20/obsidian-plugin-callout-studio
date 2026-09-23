@@ -674,7 +674,7 @@ export const es: Record<string, string> = {
 	"menuCustomize.heading": "Callout de encabezado",
 	"menuCustomize.inline": "Callout en línea",
 	"menuCustomize.dragHandle": "Arrastrar para reordenar",
-	"menuItem.edit": "Editar callout",
+	"menuItem.createOrEdit": "Crear o editar callout",
 	"menuItem.openSettings": "Abrir ajustes",
 	"menuItem.copyMarkdown": "Copiar Markdown",
 	"menuItem.foldDefaults":

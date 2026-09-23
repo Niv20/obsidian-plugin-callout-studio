@@ -48,6 +48,15 @@ const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, (m) =>
 );
 const cssRaw = readRepoFile("styles.css");
 
+describe("menu customization layout", () => {
+	it("lets action labels use the available row width", () => {
+		assert.match(
+			cssRaw,
+			/\.cs-menu-row\s+\.callout-studio-row-name\s*\{[\s\S]*?max-width:\s*none;/,
+		);
+	});
+});
+
 /**
  * The two prefixes this plugin owns. Everything else in the file is Obsidian's.
  *

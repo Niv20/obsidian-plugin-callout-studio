@@ -654,7 +654,7 @@ export const bg: Record<string, string> = {
 	"menuCustomize.heading": "Callout-заглавие",
 	"menuCustomize.inline": "Вграден callout",
 	"menuCustomize.dragHandle": "Плъзгане за пренареждане",
-	"menuItem.edit": "Редактиране на callout",
+	"menuItem.createOrEdit": "Създаване или редактиране на callout",
 	"menuItem.openSettings": "Отваряне на настройките",
 	"menuItem.copyMarkdown": "Копиране на Markdown",
 	"menuItem.foldDefaults":

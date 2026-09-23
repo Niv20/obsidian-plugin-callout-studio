@@ -662,7 +662,7 @@ export const fi: Record<string, string> = {
 	"menuCustomize.heading": "Otsikko-callout",
 	"menuCustomize.inline": "Rivinsisäinen callout",
 	"menuCustomize.dragHandle": "Vedä järjestääksesi uudelleen",
-	"menuItem.edit": "Muokkaa calloutia",
+	"menuItem.createOrEdit": "Luo tai muokkaa calloutia",
 	"menuItem.openSettings": "Avaa asetukset",
 	"menuItem.copyMarkdown": "Kopioi Markdown",
 	"menuItem.foldDefaults": "Oletustaitto (auki / kiinni / ei mitään)",

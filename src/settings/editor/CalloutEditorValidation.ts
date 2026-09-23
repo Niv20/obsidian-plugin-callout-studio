@@ -14,7 +14,8 @@ type ValidationLookup = {
 };
 
 type ValidationBaseInput = ValidationLookup & {
-	createFromAutocomplete: boolean;
+	/** The new definition is being created for a token already present in a note. */
+	createFromToken: boolean;
 	existingId: string | null;
 };
 
@@ -80,11 +81,11 @@ export function hasStateChanges(
 	return currentSnapshot !== initialSnapshot;
 }
 
-export function shouldSaveNewAutocompleteCalloutAsFallback(
+export function shouldSaveNewTokenCalloutAsFallback(
 	input: ValidationBaseInput & { hasStyleChanges: boolean },
 ): boolean {
 	return (
-		input.createFromAutocomplete &&
+		input.createFromToken &&
 		input.existingId === null &&
 		!input.hasStyleChanges
 	);
@@ -93,7 +94,7 @@ export function shouldSaveNewAutocompleteCalloutAsFallback(
 export function isOverwritingAutoFallbackRow(
 	input: ValidationBaseInput & { id: string },
 ): boolean {
-	if (!input.createFromAutocomplete) return false;
+	if (!input.createFromToken) return false;
 	if (input.existingId !== null) return false;
 	if (!input.id) return false;
 	const existing = input.getById(input.id);
@@ -162,7 +163,7 @@ export function findAttrIdCollision(input: AttrIdCollisionInput): string | null 
 export function isStateValid(input: ValidationStateInput): boolean {
 	if (!input.calloutId) return false;
 	const requireDisplayName =
-		!input.createFromAutocomplete || input.existingId !== null;
+		!input.createFromToken || input.existingId !== null;
 	if (!input.isBuiltIn && requireDisplayName && !input.displayName.trim()) {
 		return false;
 	}

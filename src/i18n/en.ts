@@ -801,7 +801,7 @@ export const en: Record<string, string> = {
 	"menuCustomize.heading": "Heading callout",
 	"menuCustomize.inline": "Inline callout",
 	"menuCustomize.dragHandle": "Drag to reorder",
-	"menuItem.edit": "Edit callout",
+	"menuItem.createOrEdit": "Create or edit callout",
 	"menuItem.openSettings": "Open settings",
 	"menuItem.copyMarkdown": "Copy Markdown",
 	"menuItem.foldDefaults": "Fold defaults (open / closed / none)",

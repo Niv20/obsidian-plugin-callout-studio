@@ -669,7 +669,7 @@ export const ru: Record<string, string> = {
 	"menuCustomize.heading": "Callout-заголовок",
 	"menuCustomize.inline": "Встроенный callout",
 	"menuCustomize.dragHandle": "Перетащите для изменения порядка",
-	"menuItem.edit": "Редактировать callout",
+	"menuItem.createOrEdit": "Создать или отредактировать callout",
 	"menuItem.openSettings": "Открыть настройки",
 	"menuItem.copyMarkdown": "Копировать Markdown",
 	"menuItem.foldDefaults":

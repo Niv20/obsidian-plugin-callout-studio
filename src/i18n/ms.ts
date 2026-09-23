@@ -663,7 +663,7 @@ export const ms: Record<string, string> = {
 	"menuCustomize.heading": "Callout tajuk",
 	"menuCustomize.inline": "Callout sebaris",
 	"menuCustomize.dragHandle": "Seret untuk menyusun semula",
-	"menuItem.edit": "Edit callout",
+	"menuItem.createOrEdit": "Cipta atau edit callout",
 	"menuItem.openSettings": "Buka tetapan",
 	"menuItem.copyMarkdown": "Salin Markdown",
 	"menuItem.foldDefaults": "Lipatan lalai (terbuka / tertutup / tiada)",

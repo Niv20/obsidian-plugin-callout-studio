@@ -38,7 +38,7 @@ import {
 	hasStateChanges,
 	isOverwritingAutoFallbackRow,
 	isStateValid,
-	shouldSaveNewAutocompleteCalloutAsFallback,
+	shouldSaveNewTokenCalloutAsFallback,
 	type SnapshotInput,
 	type ValidationStateInput,
 } from "../src/settings/editor/CalloutEditorValidation";
@@ -268,7 +268,7 @@ const canUse = (
 ): boolean =>
 	canUseCalloutId({
 		...lookup(world),
-		createFromAutocomplete: false,
+		createFromToken: false,
 		existingId: null,
 		role: "primary",
 		id,
@@ -317,15 +317,15 @@ describe("canUseCalloutId — invalid", () => {
 });
 
 describe("canUseCalloutId — the one allowance, and its shape", () => {
-	// Creating from the autocomplete popover for an id discovery already filed
-	// as an uncustomized placeholder: the row IS the thing being created, so
-	// taking it over is not a clash.
+	// Creating for a token already in a note when discovery has filed that id as
+	// an uncustomized placeholder: the row IS the thing being created, so taking
+	// it over is not a clash.
 	const overwriting = {
-		createFromAutocomplete: true,
+		createFromToken: true,
 		existingId: null,
 	} as const;
 
-	it("lets a new autocomplete callout take over an untouched fallback row", () => {
+	it("lets a new token-based callout take over an untouched fallback row", () => {
 		assert.strictEqual(canUse("auto", overwriting), true);
 	});
 
@@ -362,7 +362,7 @@ describe("canUseCalloutId — there is no reserved-ID list", () => {
 			canUseCalloutId({
 				getById: (x) => registry.get(x),
 				findByAlias: (x) => registry.findByAlias(x),
-				createFromAutocomplete: false,
+				createFromToken: false,
 				existingId: null,
 				role: "primary",
 				id,
@@ -487,21 +487,21 @@ describe("findAttrIdCollision — the cases it deliberately stays silent on", ()
 /* 123 — the two fallback questions                                           */
 /* -------------------------------------------------------------------------- */
 
-describe("shouldSaveNewAutocompleteCalloutAsFallback", () => {
+describe("shouldSaveNewTokenCalloutAsFallback", () => {
 	const ask = (
 		over: Partial<
-			Parameters<typeof shouldSaveNewAutocompleteCalloutAsFallback>[0]
+			Parameters<typeof shouldSaveNewTokenCalloutAsFallback>[0]
 		> = {},
 	): boolean =>
-		shouldSaveNewAutocompleteCalloutAsFallback({
+		shouldSaveNewTokenCalloutAsFallback({
 			...lookup(world),
-			createFromAutocomplete: true,
+			createFromToken: true,
 			existingId: null,
 			hasStyleChanges: false,
 			...over,
 		});
 
-	it("is true for a brand-new popover callout the user did not style", () => {
+	it("is true for a brand-new token callout the user did not style", () => {
 		// Nothing was chosen, so the row is discovery's placeholder rather than
 		// the user's callout — and the prune pass may take it away again.
 		assert.strictEqual(ask(), true);
@@ -511,8 +511,8 @@ describe("shouldSaveNewAutocompleteCalloutAsFallback", () => {
 		assert.strictEqual(ask({ hasStyleChanges: true }), false);
 	});
 
-	it("is false when the modal was not opened from the popover", () => {
-		assert.strictEqual(ask({ createFromAutocomplete: false }), false);
+	it("is false when the modal was not opened for an existing token", () => {
+		assert.strictEqual(ask({ createFromToken: false }), false);
 	});
 
 	it("is false when an existing callout is being edited", () => {
@@ -527,7 +527,7 @@ describe("isOverwritingAutoFallbackRow", () => {
 	): boolean =>
 		isOverwritingAutoFallbackRow({
 			...lookup(world),
-			createFromAutocomplete: true,
+			createFromToken: true,
 			existingId: null,
 			id,
 			...over,
@@ -553,7 +553,7 @@ describe("isOverwritingAutoFallbackRow", () => {
 		assert.strictEqual(
 			isOverwritingAutoFallbackRow({
 				...lookup(rows),
-				createFromAutocomplete: true,
+				createFromToken: true,
 				existingId: null,
 				id: "odd",
 			}),
@@ -574,8 +574,8 @@ describe("isOverwritingAutoFallbackRow", () => {
 		assert.strictEqual(ask(""), false);
 	});
 
-	it("is false outside the autocomplete-create flow", () => {
-		assert.strictEqual(ask("auto", { createFromAutocomplete: false }), false);
+	it("is false outside the token-create flow", () => {
+		assert.strictEqual(ask("auto", { createFromToken: false }), false);
 	});
 
 	it("is false while editing an existing callout", () => {
@@ -592,7 +592,7 @@ describe("isStateValid", () => {
 		isStateValid({
 			...lookup(world),
 			findAttrIdConflict: () => undefined,
-			createFromAutocomplete: false,
+			createFromToken: false,
 			existingId: null,
 			isBuiltIn: false,
 			displayName: "Brand new",
@@ -644,7 +644,7 @@ describe("isStateValid — when a display name is required", () => {
 		isStateValid({
 			...lookup(world),
 			findAttrIdConflict: () => undefined,
-			createFromAutocomplete: false,
+			createFromToken: false,
 			existingId: null,
 			isBuiltIn: false,
 			displayName: "",
@@ -661,15 +661,15 @@ describe("isStateValid — when a display name is required", () => {
 		assert.strictEqual(valid({ displayName: "   " }), false);
 	});
 
-	it("waives it for a callout created from the autocomplete popover", () => {
-		// The popover already knows the ID the user typed; a name is derived from
-		// it, and demanding one would block the one-keystroke path the popover is.
-		assert.strictEqual(valid({ createFromAutocomplete: true }), true);
+	it("waives it for a callout created from a token in the note", () => {
+		// The caller already knows the token ID; a name is derived from it, and
+		// demanding another one would block the direct token-creation path.
+		assert.strictEqual(valid({ createFromToken: true }), true);
 	});
 
 	it("re-imposes it once that callout is opened again for editing", () => {
 		assert.strictEqual(
-			valid({ createFromAutocomplete: true, existingId: "brand-new" }),
+			valid({ createFromToken: true, existingId: "brand-new" }),
 			false,
 		);
 	});

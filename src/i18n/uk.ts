@@ -683,7 +683,7 @@ export const uk: Record<string, string> = {
 	"menuCustomize.heading": "Callout-заголовок",
 	"menuCustomize.inline": "Вбудований callout",
 	"menuCustomize.dragHandle": "Перетягніть, щоб змінити порядок",
-	"menuItem.edit": "Редагувати callout",
+	"menuItem.createOrEdit": "Створити або відредагувати callout",
 	"menuItem.openSettings": "Відкрити налаштування",
 	"menuItem.copyMarkdown": "Копіювати Markdown",
 	"menuItem.foldDefaults":

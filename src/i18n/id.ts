@@ -674,7 +674,7 @@ export const id: Record<string, string> = {
 	"menuCustomize.heading": "Callout heading",
 	"menuCustomize.inline": "Callout sebaris",
 	"menuCustomize.dragHandle": "Seret untuk mengatur ulang urutan",
-	"menuItem.edit": "Edit callout",
+	"menuItem.createOrEdit": "Buat atau edit callout",
 	"menuItem.openSettings": "Buka pengaturan",
 	"menuItem.copyMarkdown": "Salin Markdown",
 	"menuItem.foldDefaults": "Default lipatan (terbuka / tertutup / tidak ada)",

@@ -10,6 +10,14 @@ import type {
 	PluginSettings,
 } from "../../types";
 
+export interface CalloutEditorOptions {
+	seedDisplayName?: string;
+	/** A normalized token id to preserve verbatim while creating. */
+	seedCalloutId?: string;
+	/** The callout token already exists in a note (autocomplete or context menu). */
+	createFromToken?: boolean;
+}
+
 export interface CalloutEditorPlugin {
 	app: App;
 	registry: CalloutRegistry;

@@ -678,7 +678,7 @@ export const vi: Record<string, string> = {
 	"menuCustomize.heading": "Callout tiêu đề",
 	"menuCustomize.inline": "Callout nội tuyến",
 	"menuCustomize.dragHandle": "Kéo để sắp xếp lại",
-	"menuItem.edit": "Chỉnh sửa callout",
+	"menuItem.createOrEdit": "Tạo hoặc chỉnh sửa callout",
 	"menuItem.openSettings": "Mở cài đặt",
 	"menuItem.copyMarkdown": "Sao chép Markdown",
 	"menuItem.foldDefaults": "Mặc định gập (mở / đóng / không)",

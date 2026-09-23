@@ -655,7 +655,7 @@ export const nb: Record<string, string> = {
 	"menuCustomize.heading": "Overskrift-callout",
 	"menuCustomize.inline": "Innebygd callout",
 	"menuCustomize.dragHandle": "Dra for å endre rekkefølge",
-	"menuItem.edit": "Rediger callout",
+	"menuItem.createOrEdit": "Opprett eller rediger callout",
 	"menuItem.openSettings": "Åpne innstillinger",
 	"menuItem.copyMarkdown": "Kopier Markdown",
 	"menuItem.foldDefaults": "Standard folding (åpen / lukket / ingen)",

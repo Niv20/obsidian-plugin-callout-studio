@@ -682,7 +682,7 @@ export const it: Record<string, string> = {
 	"menuCustomize.heading": "Callout di intestazione",
 	"menuCustomize.inline": "Callout in linea",
 	"menuCustomize.dragHandle": "Trascina per riordinare",
-	"menuItem.edit": "Modifica callout",
+	"menuItem.createOrEdit": "Crea o modifica callout",
 	"menuItem.openSettings": "Apri impostazioni",
 	"menuItem.copyMarkdown": "Copia Markdown",
 	"menuItem.foldDefaults":

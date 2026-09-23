@@ -666,7 +666,7 @@ export const cs: Record<string, string> = {
 	"menuCustomize.heading": "Callout nadpisu",
 	"menuCustomize.inline": "Vložený callout",
 	"menuCustomize.dragHandle": "Přetažením změníte pořadí",
-	"menuItem.edit": "Upravit callout",
+	"menuItem.createOrEdit": "Vytvořit nebo upravit callout",
 	"menuItem.openSettings": "Otevřít nastavení",
 	"menuItem.copyMarkdown": "Kopírovat Markdown",
 	"menuItem.foldDefaults":

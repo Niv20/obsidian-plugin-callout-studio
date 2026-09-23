@@ -1471,6 +1471,13 @@ handle's ArrowUp/ArrowDown listener looks up the item's current array index on
 every key press; a render-time index would become stale after the first drag.
 Keyboard moves return focus to the moved item's handle.
 
+The row label uses all width left by the drag handle and toggle. It deliberately
+drops the shared callout-name `22ch` cap, while retaining overflow ellipsis, so
+long actions such as **Fold defaults (open / closed / none)** are complete when
+the window has room and shorten only at a real narrow-width limit. The saved
+`edit` row is labelled **Create or edit callout** because it is one toggle for
+both runtime outcomes, not two mutually visible actions.
+
 ### `CommandBuilderModal` — fixed + custom commands, one window
 
 Two lists in one modal: the five fixed commands (plain rows — nothing to

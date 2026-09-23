@@ -755,7 +755,7 @@ describe("no new oversized files", () => {
 		// Lowered from 2128: the shared field reset button and the icon-adjust
 		// storage decision moved into focused editor helpers while the editor now
 		// wires the built-in ID and per-role adjustment resets to them.
-		"src/settings/CalloutEditor.ts": 2121,
+		"src/settings/CalloutEditor.ts": 2120,
 		// Lowered repeatedly, per this ratchet's own ask: `bgAlphaFor`'s solve moved
 		// to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the many
 		// that render the callout identically; `generateFallbackCSS` to

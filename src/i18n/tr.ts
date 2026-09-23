@@ -671,7 +671,7 @@ export const tr: Record<string, string> = {
 	"menuCustomize.heading": "Başlık callout'u",
 	"menuCustomize.inline": "Satır içi callout",
 	"menuCustomize.dragHandle": "Yeniden sıralamak için sürükleyin",
-	"menuItem.edit": "Callout düzenle",
+	"menuItem.createOrEdit": "Callout oluştur veya düzenle",
 	"menuItem.openSettings": "Ayarları aç",
 	"menuItem.copyMarkdown": "Markdown'ı kopyala",
 	"menuItem.foldDefaults": "Katlama varsayılanları (açık / kapalı / yok)",

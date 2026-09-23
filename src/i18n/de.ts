@@ -676,7 +676,7 @@ export const de: Record<string, string> = {
 	"menuCustomize.heading": "Überschrift-Callout",
 	"menuCustomize.inline": "Inline-Callout",
 	"menuCustomize.dragHandle": "Zum Neuanordnen ziehen",
-	"menuItem.edit": "Callout bearbeiten",
+	"menuItem.createOrEdit": "Callout erstellen oder bearbeiten",
 	"menuItem.openSettings": "Einstellungen öffnen",
 	"menuItem.copyMarkdown": "Markdown kopieren",
 	"menuItem.foldDefaults":

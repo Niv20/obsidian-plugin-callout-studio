@@ -11,6 +11,7 @@ import type { Editor, Menu } from "obsidian";
 import type CalloutStudioPlugin from "../../main";
 import type { CalloutRenderRole, ContextMenuItemId } from "../../types";
 import { t } from "../../i18n";
+import { CalloutEditor } from "../../settings/CalloutEditor";
 import { openCalloutEditorFor } from "../../settings/openCalloutEditor";
 import { resolveCalloutDef } from "../renderShared";
 import {
@@ -36,20 +37,33 @@ type ItemBuilder = (
 
 // ─── Shared item builders ────────────────────────────────────────────────────
 
-const buildEdit: ItemBuilder = (plugin, menu, context) => {
-	// The same resolution the renderer uses, so the menu offers "edit" for
-	// exactly the tokens that render as a known callout — including `[!a-b]`
-	// written for the callout `a b`, which an exact id/alias lookup misses.
-	// `unknown` keeps genuinely unrecognized ids from offering to edit the
-	// fallback definition they merely borrow their looks from.
+const buildCreateOrEdit: ItemBuilder = (plugin, menu, context) => {
+	// Use the renderer's resolution ladder so `[!a-b]` written for the known
+	// callout `a b` edits that definition. A genuinely unknown token still
+	// receives the fallback's appearance, but `unknown` keeps that borrowed
+	// definition distinct: the action creates the token's own callout instead.
 	const { def, unknown } = resolveCalloutDef(plugin.registry, context.id);
-	if (!def || unknown) return;
+	if (!unknown && def) {
+		menu.addItem((item) => {
+			item.setTitle(t("contextMenu.editCallout"))
+				.setIcon("pencil")
+				.setSection(MENU_SECTION)
+				.onClick(() => {
+					void openCalloutEditorFor(plugin, def);
+				});
+		});
+		return;
+	}
+
 	menu.addItem((item) => {
-		item.setTitle(t("contextMenu.editCallout"))
-			.setIcon("pencil")
+		item.setTitle(t("editor.createCallout"))
+			.setIcon("plus")
 			.setSection(MENU_SECTION)
 			.onClick(() => {
-				void openCalloutEditorFor(plugin, def);
+				void new CalloutEditor(plugin, undefined, {
+					seedCalloutId: context.id,
+					createFromToken: true,
+				}).openAndWait();
 			});
 	});
 };
@@ -157,20 +171,20 @@ const BUILDERS: Record<
 	Partial<Record<ContextMenuItemId, ItemBuilder>>
 > = {
 	regular: {
-		edit: buildEdit,
+		edit: buildCreateOrEdit,
 		openSettings: buildOpenSettings,
 		copyMarkdown: buildCopyMarkdown,
 		foldDefaults: buildRegularFoldDefaults,
 	},
 	heading: {
-		edit: buildEdit,
+		edit: buildCreateOrEdit,
 		openSettings: buildOpenSettings,
 		cutSection: buildCutSection,
 		copySection: buildCopySection,
 		deleteSection: buildDeleteSection,
 	},
 	inline: {
-		edit: buildEdit,
+		edit: buildCreateOrEdit,
 		openSettings: buildOpenSettings,
 	},
 };

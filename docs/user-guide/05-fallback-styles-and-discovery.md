@@ -6,6 +6,10 @@ Callout Studio saves only the callout types you explicitly create, import, or di
 
 Open **Settings → Callout Studio → My callout types** and click **Scan for callouts**. Callout Studio scans your saved notes and adds types that are not already in the list. It does not alter notes, overwrite existing types, or change your custom styles.
 
+To create just one unknown type directly, right-click it in the note and choose
+**Create callout**. The editor keeps the ID from that token, ready for you to
+review and style it.
+
 ## Choose the fallback appearance
 
 An unknown callout still receives the **Default fallback** appearance. By

@@ -53,7 +53,7 @@ import { resolveCurrentModeColors } from "../ui/ColorCircles";
 import { PaletteEditorModal } from "./PaletteEditorModal";
 import { PaletteCombobox } from "./paletteCombobox";
 import type { PaletteEntry } from "./paletteCombobox";
-import type { CalloutEditorPlugin } from "./editor/types";
+import type { CalloutEditorOptions, CalloutEditorPlugin } from "./editor/types";
 import {
 	buildStateSnapshot,
 	canUseCalloutId,
@@ -61,7 +61,7 @@ import {
 	hasStateChanges,
 	isOverwritingAutoFallbackRow,
 	isStateValid,
-	shouldSaveNewAutocompleteCalloutAsFallback,
+	shouldSaveNewTokenCalloutAsFallback,
 } from "./editor/CalloutEditorValidation";
 import { renderCalloutEditorIconPreview } from "./editor/CalloutEditorIconRenderer";
 import { performCalloutEditorSave } from "./editor/CalloutEditorSave";
@@ -215,7 +215,7 @@ export class CalloutEditor extends Modal {
 	 * saves as `source: "fallback"`, whether it may overwrite a discovery-created
 	 * row of the same id, and whether a display name is required.
 	 */
-	private createFromAutocomplete: boolean;
+	private createFromToken: boolean;
 	/**
 	 * The definition the form fields below were seeded from — the callout being
 	 * edited, or the fallback callout for a new one; undefined only if the
@@ -308,16 +308,13 @@ export class CalloutEditor extends Modal {
 	constructor(
 		plugin: CalloutEditorPlugin,
 		existing?: CalloutDefinition,
-		options?: {
-			seedDisplayName?: string;
-			createFromAutocomplete?: boolean;
-		},
+		options?: CalloutEditorOptions,
 	) {
 		super(plugin.app);
 		this.plugin = plugin;
 		this.existingId = existing?.id ?? null;
 		this.isBuiltIn = existing?.builtIn ?? false;
-		this.createFromAutocomplete = options?.createFromAutocomplete === true;
+		this.createFromToken = options?.createFromToken === true;
 		// EVERY create-new flow seeds from the fallback callout, not just the
 		// autocomplete one. That callout is what the user picked under "Default
 		// fallback callout", whose own description promises unrecognized types
@@ -343,7 +340,9 @@ export class CalloutEditor extends Modal {
 		this.displayName =
 			existing?.displayName ?? options?.seedDisplayName ?? "";
 		this.calloutId =
-			existing?.id ?? generateId(options?.seedDisplayName ?? "");
+			existing?.id ??
+			options?.seedCalloutId ??
+			generateId(options?.seedDisplayName ?? "");
 		this.icon = seed?.icon
 			? { ...seed.icon }
 			: { type: "lucide", value: "lucide-pencil" };
@@ -1544,9 +1543,9 @@ export class CalloutEditor extends Modal {
 		);
 	}
 
-	private shouldSaveNewAutocompleteCalloutAsFallback(): boolean {
-		return shouldSaveNewAutocompleteCalloutAsFallback({
-			createFromAutocomplete: this.createFromAutocomplete,
+	private shouldSaveNewTokenCalloutAsFallback(): boolean {
+		return shouldSaveNewTokenCalloutAsFallback({
+			createFromToken: this.createFromToken,
 			existingId: this.existingId,
 			hasStyleChanges: this.hasStyleChanges(),
 			getById: (id) => this.plugin.registry.get(id),
@@ -1555,7 +1554,7 @@ export class CalloutEditor extends Modal {
 	}
 
 	/**
-	 * When creating a callout from the autocomplete "Create new" entry, the
+	 * When creating a callout for a token already present in a note, the
 	 * background vault scan may have already auto-added an uncustomized
 	 * `source: "fallback"` row for the same ID. That row is a placeholder
 	 * mirroring the fallback style, not a real conflict, so allow the create
@@ -1563,7 +1562,7 @@ export class CalloutEditor extends Modal {
 	 */
 	private isOverwritingAutoFallbackRow(id: string = this.calloutId): boolean {
 		return isOverwritingAutoFallbackRow({
-			createFromAutocomplete: this.createFromAutocomplete,
+			createFromToken: this.createFromToken,
 			existingId: this.existingId,
 			id,
 			getById: (targetId) => this.plugin.registry.getReal(targetId),
@@ -1574,7 +1573,7 @@ export class CalloutEditor extends Modal {
 
 	private canUseCalloutId(id: string, role: "primary" | "alias"): boolean {
 		return canUseCalloutId({
-			createFromAutocomplete: this.createFromAutocomplete,
+			createFromToken: this.createFromToken,
 			existingId: this.existingId,
 			id,
 			role,
@@ -1604,7 +1603,7 @@ export class CalloutEditor extends Modal {
 
 	private isStateValid(): boolean {
 		return isStateValid({
-			createFromAutocomplete: this.createFromAutocomplete,
+			createFromToken: this.createFromToken,
 			existingId: this.existingId,
 			isBuiltIn: this.isBuiltIn,
 			displayName: this.displayName,
@@ -1638,7 +1637,7 @@ export class CalloutEditor extends Modal {
 	private showSaveBlockedNotice(): void {
 		const hasChanges = this.hasStateChanges();
 		const requireDisplayName =
-			!this.createFromAutocomplete || this.existingId !== null;
+			!this.createFromToken || this.existingId !== null;
 
 		if (
 			!this.existingId &&
@@ -2065,7 +2064,7 @@ export class CalloutEditor extends Modal {
 				paletteId: this.paletteId,
 			},
 			hasStyleChanges: this.hasStyleChanges(),
-			saveAsFallback: this.shouldSaveNewAutocompleteCalloutAsFallback(),
+			saveAsFallback: this.shouldSaveNewTokenCalloutAsFallback(),
 			overwriteAutoFallback: this.isOverwritingAutoFallbackRow(),
 			canUseCalloutId: (id, role) => this.canUseCalloutId(id, role),
 			getFallbackBase: () => this.getFallbackBase(),

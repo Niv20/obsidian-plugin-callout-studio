@@ -270,17 +270,18 @@ switching to "None" background doesn't clear the colour fields either). Without
 including these two flags explicitly, toggling either one would leave the
 Save button disabled on the one and only change the user came to make.
 
-### `isOverwritingAutoFallbackRow` — the autocomplete "create new" special case
+### `isOverwritingAutoFallbackRow` — the token-based create special case
 
-When a callout is created via autocomplete's "Create new" flow
-(`createFromAutocomplete: true`) and the typed name happens to collide with
-an **existing, uncustomized fallback row**, saving is allowed to overwrite
-that row in place rather than refusing as a duplicate — the user is
-effectively "adopting" a discovered id. `shouldSaveNewAutocompleteCalloutAsFallback`
-additionally decides that a brand-new autocomplete-created callout with **no
-style changes at all** should save as `source: "fallback"` rather than
-`"user"` — picking a suggestion from the dropdown and saving immediately with
-no edits is not really "customizing" anything.
+When a callout is created for a token already present in a note — through
+autocomplete's **Create new** result or the right-click menu's adaptive
+create/edit action — the editor opens with `createFromToken: true`. If a
+background vault scan files an **existing, uncustomized fallback row** for that
+id while the editor is open, saving may overwrite the row in place rather than
+refusing it as a duplicate: the user is effectively adopting the discovered
+id. `shouldSaveNewTokenCalloutAsFallback` additionally decides that a new
+token-created callout with **no style changes at all** saves as
+`source: "fallback"` rather than `"user"`; opening the editor and saving the
+inherited appearance is not yet a customization.
 
 ## Save pipeline
 

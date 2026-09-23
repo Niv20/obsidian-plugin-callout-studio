@@ -670,7 +670,7 @@ export const hi: Record<string, string> = {
 	"menuCustomize.heading": "शीर्षक callout",
 	"menuCustomize.inline": "इनलाइन callout",
 	"menuCustomize.dragHandle": "पुनः क्रमबद्ध करने के लिए खींचें",
-	"menuItem.edit": "callout संपादित करें",
+	"menuItem.createOrEdit": "callout बनाएँ या संपादित करें",
 	"menuItem.openSettings": "सेटिंग खोलें",
 	"menuItem.copyMarkdown": "Markdown कॉपी करें",
 	"menuItem.foldDefaults": "डिफ़ॉल्ट मोड़ स्थिति (खुला / बंद / कोई नहीं)",

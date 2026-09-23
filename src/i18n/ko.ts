@@ -673,7 +673,7 @@ export const ko: Record<string, string> = {
 	"menuCustomize.heading": "제목 callout",
 	"menuCustomize.inline": "인라인 callout",
 	"menuCustomize.dragHandle": "드래그하여 순서 변경",
-	"menuItem.edit": "callout 편집",
+	"menuItem.createOrEdit": "callout 만들기 또는 편집",
 	"menuItem.openSettings": "설정 열기",
 	"menuItem.copyMarkdown": "Markdown 복사",
 	"menuItem.foldDefaults": "접기 기본값 (열기 / 닫기 / 없음)",

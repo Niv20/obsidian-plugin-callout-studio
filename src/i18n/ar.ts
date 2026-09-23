@@ -659,7 +659,7 @@ export const ar: Record<string, string> = {
 	"menuCustomize.heading": "callout العنوان",
 	"menuCustomize.inline": "callout مضمّن",
 	"menuCustomize.dragHandle": "اسحب لإعادة الترتيب",
-	"menuItem.edit": "تعديل الـ callout",
+	"menuItem.createOrEdit": "إنشاء أو تعديل callout",
 	"menuItem.openSettings": "فتح الإعدادات",
 	"menuItem.copyMarkdown": "نسخ Markdown",
 	"menuItem.foldDefaults": "حالة الطي الافتراضية (مفتوح / مغلق / بلا)",

@@ -672,7 +672,7 @@ export const ro: Record<string, string> = {
 	"menuCustomize.heading": "Callout tip titlu",
 	"menuCustomize.inline": "Callout inline",
 	"menuCustomize.dragHandle": "Trageți pentru a reordona",
-	"menuItem.edit": "Editați callout",
+	"menuItem.createOrEdit": "Creați sau editați un callout",
 	"menuItem.openSettings": "Deschideți setările",
 	"menuItem.copyMarkdown": "Copiați Markdown",
 	"menuItem.foldDefaults":

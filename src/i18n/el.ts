@@ -660,7 +660,7 @@ export const el: Record<string, string> = {
 	"menuCustomize.heading": "Callout επικεφαλίδας",
 	"menuCustomize.inline": "Ενσωματωμένο callout",
 	"menuCustomize.dragHandle": "Σύρετε για αναδιάταξη",
-	"menuItem.edit": "Επεξεργασία callout",
+	"menuItem.createOrEdit": "Δημιουργία ή επεξεργασία callout",
 	"menuItem.openSettings": "Άνοιγμα ρυθμίσεων",
 	"menuItem.copyMarkdown": "Αντιγραφή Markdown",
 	"menuItem.foldDefaults":

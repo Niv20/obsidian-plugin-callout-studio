@@ -666,7 +666,7 @@ export const sv: Record<string, string> = {
 	"menuCustomize.heading": "Rubrik-callout",
 	"menuCustomize.inline": "Infogad callout",
 	"menuCustomize.dragHandle": "Dra för att ändra ordning",
-	"menuItem.edit": "Redigera callout",
+	"menuItem.createOrEdit": "Skapa eller redigera callout",
 	"menuItem.openSettings": "Öppna inställningar",
 	"menuItem.copyMarkdown": "Kopiera Markdown",
 	"menuItem.foldDefaults": "Standardvikning (öppen / stängd / ingen)",

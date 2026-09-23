@@ -701,7 +701,7 @@ export const he: Record<string, string> = {
 	"menuCustomize.heading": "תיבת־הבלטה ככותרת",
 	"menuCustomize.inline": "תיבת־הבלטה מוטבעת",
 	"menuCustomize.dragHandle": "גררו כדי לשנות סדר",
-	"menuItem.edit": "עריכת תיבת־ההבלטה",
+	"menuItem.createOrEdit": "יצירה או עריכה של תיבת־הבלטה",
 	"menuItem.openSettings": "פתיחת ההגדרות",
 	"menuItem.copyMarkdown": "העתקת Markdown",
 	"menuItem.foldDefaults": "ברירות מחדל לקיפול (פתוח / סגור / ללא)",

@@ -666,7 +666,7 @@ export const th: Record<string, string> = {
 	"menuCustomize.heading": "Callout หัวข้อ",
 	"menuCustomize.inline": "Callout อินไลน์",
 	"menuCustomize.dragHandle": "ลากเพื่อจัดลำดับใหม่",
-	"menuItem.edit": "แก้ไข callout",
+	"menuItem.createOrEdit": "สร้างหรือแก้ไข callout",
 	"menuItem.openSettings": "เปิดการตั้งค่า",
 	"menuItem.copyMarkdown": "คัดลอก Markdown",
 	"menuItem.foldDefaults": "ค่าเริ่มต้นการพับ (เปิด / ปิด / ไม่มี)",

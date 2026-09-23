@@ -644,7 +644,7 @@ export const zhTW: Record<string, string> = {
 	"menuCustomize.heading": "標題 callout",
 	"menuCustomize.inline": "行內 callout",
 	"menuCustomize.dragHandle": "拖曳以重新排序",
-	"menuItem.edit": "編輯 callout",
+	"menuItem.createOrEdit": "建立或編輯 callout",
 	"menuItem.openSettings": "開啟設定",
 	"menuItem.copyMarkdown": "複製 Markdown",
 	"menuItem.foldDefaults": "折疊預設值（展開 / 折疊 / 無）",

@@ -666,7 +666,7 @@ export const fa: Record<string, string> = {
 	"menuCustomize.heading": "callout عنوان",
 	"menuCustomize.inline": "callout درون‌خطی",
 	"menuCustomize.dragHandle": "برای تغییر ترتیب بکشید",
-	"menuItem.edit": "ویرایش callout",
+	"menuItem.createOrEdit": "ایجاد یا ویرایش callout",
 	"menuItem.openSettings": "باز کردن تنظیمات",
 	"menuItem.copyMarkdown": "کپی Markdown",
 	"menuItem.foldDefaults": "حالت جمع‌شدن پیش‌فرض (باز / بسته / هیچ‌کدام)",
