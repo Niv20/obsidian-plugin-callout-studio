@@ -57,9 +57,7 @@ export class GlobalStyleModal extends Modal {
 		// No footer: every control here applies live, so there is nothing to
 		// confirm. Same width as the two editors, hence `wide`.
 		applyModalChrome(this, { wide: true });
-		this.titleEl.setText(
-			`${t("settings.globalStyle")} — ${this.roleName()}`,
-		);
+		this.titleEl.setText(t(this.titleKey()));
 
 		const panel = this.contentEl.createDiv({
 			cls: "callout-studio-preview-panel",
@@ -453,15 +451,12 @@ export class GlobalStyleModal extends Modal {
 
 	// ── Demo callout + samples ──────────────────────────────────────
 
-	private roleName(): string {
-		switch (this.role) {
-			case "regular":
-				return t("settings.calloutTypeRegular");
-			case "heading":
-				return t("settings.calloutTypeHeading");
-			case "inline":
-				return t("settings.calloutTypeInline");
-		}
+	private titleKey(): string {
+		return {
+			regular: "settings.globalStyleRegularTitle",
+			heading: "settings.globalStyleHeadingTitle",
+			inline: "settings.globalStyleInlineTitle",
+		}[this.role];
 	}
 
 	/** Sample markdown for the role being styled. */
@@ -486,7 +481,7 @@ export class GlobalStyleModal extends Modal {
 					t("editor.loremIpsum"),
 				].join("\n");
 			case "inline":
-				// Keep Example literal across locales for click-to-reveal syntax.
+				// Use the localized label in the syntax revealed by the preview.
 				return t("settings.styleDemoInlineText", {
 					callout: `[!${STYLE_DEMO_ID}]{${t("settings.styleDemoInlineName")}}`,
 				});

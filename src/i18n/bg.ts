@@ -114,6 +114,9 @@ export const bg: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Непознатите типове callout в хранилището ви ще наследят стила на този callout.",
 	"settings.globalStyle": "Глобален стил на callout",
+	"settings.globalStyleRegularTitle": "Глобален стил на блоковия callout",
+	"settings.globalStyleHeadingTitle": "Глобален стил на callout за заглавия",
+	"settings.globalStyleInlineTitle": "Глобален стил на вградения callout",
 	"settings.border": "Граници",
 	"settings.borderAll": "Всички",
 	"settings.borderTop": "Горе",

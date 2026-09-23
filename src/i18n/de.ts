@@ -123,6 +123,9 @@ export const de: Record<string, string> = {
 		"Unbekannte Callout-Typen im Vault übernehmen den Stil dieses Callouts.",
 
 	"settings.globalStyle": "Globaler Callout-Stil",
+	"settings.globalStyleRegularTitle": "Globaler Stil für Block-Callouts",
+	"settings.globalStyleHeadingTitle": "Globaler Stil für Überschrift-Callouts",
+	"settings.globalStyleInlineTitle": "Globaler Stil für Inline-Callouts",
 	"settings.border": "Rahmen",
 	"settings.borderAll": "Alle",
 	"settings.borderTop": "Oben",

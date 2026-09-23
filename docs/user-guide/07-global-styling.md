@@ -27,9 +27,9 @@ The icon and spacing scale with the pill text. At every inline text scale, the
 entire pill stays centered vertically in the surrounding line instead of
 shrinking toward the text baseline.
 
-The Inline preview shows an **Example** pill between two Lorem ipsum
-sentences. Click **Example** to reveal its `[!global-style-demo]{Example}`
-syntax in the preview editor.
+The Inline preview shows a localized example pill between two sample
+sentences. Click it to reveal its Markdown syntax in the preview editor, using
+the translated label.
 
 ## Block callouts
 

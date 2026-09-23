@@ -124,6 +124,9 @@ export const nl: Record<string, string> = {
 		"Niet-herkende callout-types in uw vault nemen de stijl van deze callout over.",
 
 	"settings.globalStyle": "Globale callout-stijl",
+	"settings.globalStyleRegularTitle": "Globale stijl voor block callouts",
+	"settings.globalStyleHeadingTitle": "Globale stijl voor kop-callouts",
+	"settings.globalStyleInlineTitle": "Globale stijl voor inline callouts",
 	"settings.border": "Randen",
 	"settings.borderAll": "Alle",
 	"settings.borderTop": "Boven",

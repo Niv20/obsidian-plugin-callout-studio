@@ -122,6 +122,9 @@ export const th: Record<string, string> = {
 		"ประเภท callout ที่ไม่รู้จักใน vault จะสืบทอดสไตล์ของ callout นี้",
 
 	"settings.globalStyle": "สไตล์ callout ส่วนกลาง",
+	"settings.globalStyleRegularTitle": "สไตล์ส่วนกลางสำหรับ block callout",
+	"settings.globalStyleHeadingTitle": "สไตล์ส่วนกลางสำหรับ callout หัวข้อ",
+	"settings.globalStyleInlineTitle": "สไตล์ส่วนกลางสำหรับ callout อินไลน์",
 	"settings.border": "ขอบ",
 	"settings.borderAll": "ทั้งหมด",
 	"settings.borderTop": "บน",

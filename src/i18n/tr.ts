@@ -122,6 +122,9 @@ export const tr: Record<string, string> = {
 		"Vault'unuzdaki tanınmayan callout türleri bu callout'un stilini devralır.",
 
 	"settings.globalStyle": "Genel callout stili",
+	"settings.globalStyleRegularTitle": "Blok callout'ları için genel stil",
+	"settings.globalStyleHeadingTitle": "Başlık callout'ları için genel stil",
+	"settings.globalStyleInlineTitle": "Satır içi callout'lar için genel stil",
 	"settings.border": "Kenarlıklar",
 	"settings.borderAll": "Tümü",
 	"settings.borderTop": "Üst",

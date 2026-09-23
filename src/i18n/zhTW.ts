@@ -114,6 +114,9 @@ export const zhTW: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"vault 中無法辨識的 callout 類型將繼承此 callout 的樣式。",
 	"settings.globalStyle": "全域 callout 樣式",
+	"settings.globalStyleRegularTitle": "全域區塊 callout 樣式",
+	"settings.globalStyleHeadingTitle": "全域標題 callout 樣式",
+	"settings.globalStyleInlineTitle": "全域行內 callout 樣式",
 	"settings.border": "邊框",
 	"settings.borderAll": "全部",
 	"settings.borderTop": "頂部",

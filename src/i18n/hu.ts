@@ -123,6 +123,9 @@ export const hu: Record<string, string> = {
 		"A tárban fel nem ismert callout-típusok öröklik ennek a callout-nak a stílusát.",
 
 	"settings.globalStyle": "Globális callout-stílus",
+	"settings.globalStyleRegularTitle": "Blokk callout globális stílusa",
+	"settings.globalStyleHeadingTitle": "Címsor callout globális stílusa",
+	"settings.globalStyleInlineTitle": "Beágyazott callout globális stílusa",
 	"settings.border": "Szegélyek",
 	"settings.borderAll": "Mind",
 	"settings.borderTop": "Felül",

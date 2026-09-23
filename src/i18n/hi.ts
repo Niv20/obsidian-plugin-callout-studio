@@ -122,6 +122,9 @@ export const hi: Record<string, string> = {
 		"vault में अज्ञात callout प्रकार इस callout की स्टाइल विरासत में लेंगे।",
 
 	"settings.globalStyle": "वैश्विक callout स्टाइल",
+	"settings.globalStyleRegularTitle": "ब्लॉक callout की वैश्विक शैली",
+	"settings.globalStyleHeadingTitle": "शीर्षक callout की वैश्विक शैली",
+	"settings.globalStyleInlineTitle": "इनलाइन callout की वैश्विक शैली",
 	"settings.border": "बॉर्डर",
 	"settings.borderAll": "सभी",
 	"settings.borderTop": "ऊपर",

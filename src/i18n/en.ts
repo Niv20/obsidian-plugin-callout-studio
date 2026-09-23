@@ -187,6 +187,9 @@ export const en: Record<string, string> = {
 
 	// Settings — Global style
 	"settings.globalStyle": "Global callout style",
+	"settings.globalStyleRegularTitle": "Global Block callout style",
+	"settings.globalStyleHeadingTitle": "Global Heading callout style",
+	"settings.globalStyleInlineTitle": "Global Inline callout style",
 	"settings.border": "Borders",
 	"settings.borderAll": "All",
 	"settings.borderTop": "Top",

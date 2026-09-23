@@ -145,6 +145,9 @@ export const he: Record<string, string> = {
 
 	// Settings — Global style
 	"settings.globalStyle": "עיצוב גלובלי לתיבות־הבלטה",
+	"settings.globalStyleRegularTitle": "עיצוב גלובלי לתיבות־הבלטה רגילות",
+	"settings.globalStyleHeadingTitle": "עיצוב גלובלי לתיבות־הבלטה ככותרת",
+	"settings.globalStyleInlineTitle": "עיצוב גלובלי לתיבות־הבלטה מוטבעות",
 	"settings.border": "מסגרות",
 	"settings.borderAll": "הכול",
 	"settings.borderTop": "עליונה",

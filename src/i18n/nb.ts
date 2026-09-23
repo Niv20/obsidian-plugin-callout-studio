@@ -116,6 +116,9 @@ export const nb: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Ukjente callout-typer i valvet ditt vil arve stilen fra denne callout-en.",
 	"settings.globalStyle": "Global callout-stil",
+	"settings.globalStyleRegularTitle": "Global stil for blokk-callouts",
+	"settings.globalStyleHeadingTitle": "Global stil for overskrift-callouts",
+	"settings.globalStyleInlineTitle": "Global stil for innebygde callouts",
 	"settings.border": "Kanter",
 	"settings.borderAll": "Alle",
 	"settings.borderTop": "Topp",

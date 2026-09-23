@@ -119,6 +119,9 @@ export const ms: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Jenis callout yang tidak dikenali dalam vault anda akan mewarisi gaya callout ini.",
 	"settings.globalStyle": "Gaya callout global",
+	"settings.globalStyleRegularTitle": "Gaya global callout blok",
+	"settings.globalStyleHeadingTitle": "Gaya global callout tajuk",
+	"settings.globalStyleInlineTitle": "Gaya global callout sebaris",
 	"settings.border": "Sempadan",
 	"settings.borderAll": "Semua",
 	"settings.borderTop": "Atas",

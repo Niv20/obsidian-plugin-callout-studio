@@ -125,6 +125,9 @@ export const ko: Record<string, string> = {
 		"볼트에서 인식되지 않는 callout 유형은 이 callout의 스타일을 상속합니다.",
 
 	"settings.globalStyle": "전역 callout 스타일",
+	"settings.globalStyleRegularTitle": "블록 callout 전역 스타일",
+	"settings.globalStyleHeadingTitle": "제목 callout 전역 스타일",
+	"settings.globalStyleInlineTitle": "인라인 callout 전역 스타일",
 	"settings.border": "테두리",
 	"settings.borderAll": "모두",
 	"settings.borderTop": "위",

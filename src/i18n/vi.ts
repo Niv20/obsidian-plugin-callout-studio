@@ -125,6 +125,9 @@ export const vi: Record<string, string> = {
 		"Các loại callout không nhận dạng được trong vault sẽ kế thừa kiểu của callout này.",
 
 	"settings.globalStyle": "Kiểu callout toàn cục",
+	"settings.globalStyleRegularTitle": "Kiểu toàn cục cho callout khối",
+	"settings.globalStyleHeadingTitle": "Kiểu toàn cục cho callout tiêu đề",
+	"settings.globalStyleInlineTitle": "Kiểu toàn cục cho callout nội tuyến",
 	"settings.border": "Viền",
 	"settings.borderAll": "Tất cả",
 	"settings.borderTop": "Trên",

@@ -113,6 +113,9 @@ export const da: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Ukendte callout-typer i din vault arver stilen fra denne callout.",
 	"settings.globalStyle": "Global callout-stil",
+	"settings.globalStyleRegularTitle": "Global stil for blok-callouts",
+	"settings.globalStyleHeadingTitle": "Global stil for overskrift-callouts",
+	"settings.globalStyleInlineTitle": "Global stil for indlejrede callouts",
 	"settings.border": "Kanter",
 	"settings.borderAll": "Alle",
 	"settings.borderTop": "Top",

@@ -125,6 +125,9 @@ export const ja: Record<string, string> = {
 		"vaultで認識されないcalloutタイプはこのcalloutのスタイルを継承します。",
 
 	"settings.globalStyle": "グローバルcalloutスタイル",
+	"settings.globalStyleRegularTitle": "ブロック callout のグローバルスタイル",
+	"settings.globalStyleHeadingTitle": "見出し callout のグローバルスタイル",
+	"settings.globalStyleInlineTitle": "インライン callout のグローバルスタイル",
 	"settings.border": "ボーダー",
 	"settings.borderAll": "すべて",
 	"settings.borderTop": "上",

@@ -123,6 +123,9 @@ export const sv: Record<string, string> = {
 		"Okända callout-typer i ditt vault ärver stilen från denna callout.",
 
 	"settings.globalStyle": "Global callout-stil",
+	"settings.globalStyleRegularTitle": "Global stil för block-callouts",
+	"settings.globalStyleHeadingTitle": "Global stil för rubrik-callouts",
+	"settings.globalStyleInlineTitle": "Global stil för infogade callouts",
 	"settings.border": "Kanter",
 	"settings.borderAll": "Alla",
 	"settings.borderTop": "Topp",

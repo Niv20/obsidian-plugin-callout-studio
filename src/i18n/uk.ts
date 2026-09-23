@@ -126,6 +126,9 @@ export const uk: Record<string, string> = {
 		"Нерозпізнані типи callout у сховищі успадкують стиль цього callout.",
 
 	"settings.globalStyle": "Глобальний стиль callout",
+	"settings.globalStyleRegularTitle": "Глобальний стиль блокових callout",
+	"settings.globalStyleHeadingTitle": "Глобальний стиль callout-заголовків",
+	"settings.globalStyleInlineTitle": "Глобальний стиль вбудованих callout",
 	"settings.border": "Рамки",
 	"settings.borderAll": "Усі",
 	"settings.borderTop": "Зверху",

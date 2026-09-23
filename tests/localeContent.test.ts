@@ -248,6 +248,31 @@ describe("export format guidance is translated everywhere", () => {
 	}
 });
 
+describe("global style modal titles are translated everywhere", () => {
+	const keys = [
+		"settings.globalStyleRegularTitle",
+		"settings.globalStyleHeadingTitle",
+		"settings.globalStyleInlineTitle",
+	] as const;
+
+	for (const [fileId, table] of entries) {
+		it(`${fileId}.ts has its own title for each callout style`, () => {
+			for (const key of keys) {
+				assert.strictEqual(
+					typeof table[key],
+					"string",
+					`${fileId}.ts is missing ${key}`,
+				);
+				assert.notStrictEqual(
+					table[key],
+					en[key],
+					`${fileId}.ts still shows the English ${key}`,
+				);
+			}
+		});
+	}
+});
+
 describe("the concise theme preview summary is translated everywhere", () => {
 	const key = "themePreview.summary";
 	const english = en[key];

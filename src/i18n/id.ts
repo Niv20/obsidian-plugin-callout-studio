@@ -122,6 +122,9 @@ export const id: Record<string, string> = {
 		"Tipe callout yang tidak dikenal di vault Anda akan mewarisi gaya callout ini.",
 
 	"settings.globalStyle": "Gaya callout global",
+	"settings.globalStyleRegularTitle": "Gaya global callout blok",
+	"settings.globalStyleHeadingTitle": "Gaya global callout judul",
+	"settings.globalStyleInlineTitle": "Gaya global callout sebaris",
 	"settings.border": "Batas",
 	"settings.borderAll": "Semua",
 	"settings.borderTop": "Atas",

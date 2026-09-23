@@ -117,6 +117,9 @@ export const fi: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Holvisi tuntemattomat callout-tyypit perivät tämän calloutin tyylin.",
 	"settings.globalStyle": "Callout-yleistyyli",
+	"settings.globalStyleRegularTitle": "Block-calloutien yleistyyli",
+	"settings.globalStyleHeadingTitle": "Otsikko-calloutien yleistyyli",
+	"settings.globalStyleInlineTitle": "Rivinsisäisten calloutien yleistyyli",
 	"settings.border": "Reunat",
 	"settings.borderAll": "Kaikki",
 	"settings.borderTop": "Ylä",

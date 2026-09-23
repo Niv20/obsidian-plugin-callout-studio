@@ -122,6 +122,9 @@ export const cs: Record<string, string> = {
 		"Nerozpoznané typy callout ve vaultu zdědí styl tohoto callout.",
 
 	"settings.globalStyle": "Globální styl callout",
+	"settings.globalStyleRegularTitle": "Globální styl blokových calloutů",
+	"settings.globalStyleHeadingTitle": "Globální styl nadpisových calloutů",
+	"settings.globalStyleInlineTitle": "Globální styl vložených calloutů",
 	"settings.border": "Ohraničení",
 	"settings.borderAll": "Vše",
 	"settings.borderTop": "Nahoře",

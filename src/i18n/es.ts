@@ -123,6 +123,9 @@ export const es: Record<string, string> = {
 		"Los tipos de callout no reconocidos en su vault heredarán el estilo de este callout.",
 
 	"settings.globalStyle": "Estilo global de callout",
+	"settings.globalStyleRegularTitle": "Estilo global de callouts de bloque",
+	"settings.globalStyleHeadingTitle": "Estilo global de callouts de encabezado",
+	"settings.globalStyleInlineTitle": "Estilo global de callouts en línea",
 	"settings.border": "Bordes",
 	"settings.borderAll": "Todos",
 	"settings.borderTop": "Superior",

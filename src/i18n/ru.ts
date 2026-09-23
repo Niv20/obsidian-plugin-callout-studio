@@ -123,6 +123,9 @@ export const ru: Record<string, string> = {
 		"Нераспознанные типы callout в хранилище унаследуют стиль этого callout.",
 
 	"settings.globalStyle": "Глобальный стиль callout",
+	"settings.globalStyleRegularTitle": "Глобальный стиль блочных callout",
+	"settings.globalStyleHeadingTitle": "Глобальный стиль callout-заголовков",
+	"settings.globalStyleInlineTitle": "Глобальный стиль встроенных callout",
 	"settings.border": "Рамки",
 	"settings.borderAll": "Все",
 	"settings.borderTop": "Сверху",

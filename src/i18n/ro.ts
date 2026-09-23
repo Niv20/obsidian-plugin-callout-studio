@@ -122,6 +122,9 @@ export const ro: Record<string, string> = {
 		"Tipurile de callout nerecunoscute din vault vor moșteni stilul acestui callout.",
 
 	"settings.globalStyle": "Stil global callout",
+	"settings.globalStyleRegularTitle": "Stil global pentru callout-uri de bloc",
+	"settings.globalStyleHeadingTitle": "Stil global pentru callout-uri de titlu",
+	"settings.globalStyleInlineTitle": "Stil global pentru callout-uri inline",
 	"settings.border": "Borduri",
 	"settings.borderAll": "Toate",
 	"settings.borderTop": "Sus",

@@ -122,6 +122,9 @@ export const ar: Record<string, string> = {
 		"ستَرِث أنواع الـ callout غير المعروفة في مخزنك نمط هذا الـ callout.",
 
 	"settings.globalStyle": "نمط الـ callout العام",
+	"settings.globalStyleRegularTitle": "النمط العام لـ Block callout",
+	"settings.globalStyleHeadingTitle": "النمط العام لـ callout العنوان",
+	"settings.globalStyleInlineTitle": "النمط العام لـ callout المضمّن",
 	"settings.border": "الحدود",
 	"settings.borderAll": "الكل",
 	"settings.borderTop": "أعلى",

@@ -115,6 +115,9 @@ export const el: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Οι άγνωστοι τύποι callout στο vault σας θα κληρονομήσουν το στυλ αυτού του callout.",
 	"settings.globalStyle": "Καθολικό στυλ callout",
+	"settings.globalStyleRegularTitle": "Καθολικό στυλ για block callout",
+	"settings.globalStyleHeadingTitle": "Καθολικό στυλ για callout επικεφαλίδας",
+	"settings.globalStyleInlineTitle": "Καθολικό στυλ για ενσωματωμένο callout",
 	"settings.border": "Περιγράμματα",
 	"settings.borderAll": "Όλες",
 	"settings.borderTop": "Πάνω",

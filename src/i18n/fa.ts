@@ -121,6 +121,9 @@ export const fa: Record<string, string> = {
 		"انواع callout ناشناخته در vault سبک این callout را به ارث می‌برند.",
 
 	"settings.globalStyle": "سبک کلی callout",
+	"settings.globalStyleRegularTitle": "سبک کلی callout بلوکی",
+	"settings.globalStyleHeadingTitle": "سبک کلی callout عنوان",
+	"settings.globalStyleInlineTitle": "سبک کلی callout درون‌خطی",
 	"settings.border": "حاشیه",
 	"settings.borderAll": "همه",
 	"settings.borderTop": "بالا",

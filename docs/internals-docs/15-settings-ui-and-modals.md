@@ -1429,12 +1429,14 @@ callout editor) must not collide on one registry slot.
 Also uses a reserved demo id (`STYLE_DEMO_ID = "global-style-demo"`) and the
 same live-preview-on-a-registered-row pattern, letting the border/radius/
 scale/spacing sliders for block, heading, or inline style show their effect
-on a real rendered callout as the user drags them.
+on a real rendered callout as the user drags them. Its three modal titles are
+separate translation keys rather than a concatenation of “Global callout
+style” and a role name, so each locale can put the words in its natural order.
 
-The inline sample places a content pill (`[!global-style-demo]{Example}`)
-between two Lorem ipsum sentences. In the embedded Live Preview, clicking
-the pill reveals that source syntax for inspection. Its `Example` payload is
-kept in English across locales so the revealed syntax stays the same. The
+The inline sample places a localized content pill between two localized sample
+sentences. In the embedded Live Preview, clicking the pill reveals its source
+syntax for inspection. The callout id stays fixed across locales; its visible
+label follows the selected language. The
 inline corner-radius slider reaches 25px for the 1.5× text scale. The settings
 guard still accepts previously saved values up to 64px.
 

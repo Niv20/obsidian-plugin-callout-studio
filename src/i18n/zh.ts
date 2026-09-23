@@ -121,6 +121,9 @@ export const zh: Record<string, string> = {
 		"库中无法识别的 callout 类型将继承此 callout 的样式。",
 
 	"settings.globalStyle": "全局 callout 样式",
+	"settings.globalStyleRegularTitle": "全局块状 callout 样式",
+	"settings.globalStyleHeadingTitle": "全局标题 callout 样式",
+	"settings.globalStyleInlineTitle": "全局行内 callout 样式",
 	"settings.border": "边框",
 	"settings.borderAll": "全部",
 	"settings.borderTop": "顶部",

@@ -923,7 +923,7 @@ describe("no new oversized files", () => {
 		// including raising `settingsEditOpen` for as long as it is up, which is
 		// what lets a deferred settings reload be released — moved to
 		// settings/previewOwnership.ts, shared with WelcomeModal.
-		"src/settings/GlobalStyleModal.ts": 516,
+		"src/settings/GlobalStyleModal.ts": 511,
 		// Lowered from 497: the two role-icon helpers moved to editor/roleIcon.ts,
 		// beside the theme-artwork renderer they now both consult.
 		"src/editor/renderShared.ts": 459,
