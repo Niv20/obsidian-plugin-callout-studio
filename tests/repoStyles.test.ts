@@ -238,6 +238,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-custom", // the exported vault snippet's filename
 		"callout-studio-welcome", // obsidian:// URI action
 		"callout-studio-context-menu", // Menu section id
+		"callout-studio-occurrences", // Registered ItemView type, not a DOM class
 		"callout-studio-export", // export filename stem
 		"callout-studio-upgrade-recovery", // recovery archive format identifier
 		"callout-studio-recovery", // inert legacy snippet archive directory

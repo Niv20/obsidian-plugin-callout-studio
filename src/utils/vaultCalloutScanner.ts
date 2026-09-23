@@ -24,10 +24,9 @@ import { calloutIdentity, mergeDashSpaceVariants, normalizeCalloutId } from "./c
 import { rewriteVaultFiles, scanVaultFiles } from "./vaultRewrite";
 import type { LineCalloutToken } from "../editor/calloutTokens";
 import {
-	createDocumentLineFilter,
 	forEachCalloutToken,
-	scanLineForCalloutTokens,
 } from "../editor/calloutTokens";
+import { iterateDocumentCalloutLines } from "../editor/documentCallouts";
 import { splitFoldMark } from "../editor/calloutWriter";
 import { calloutsToPlainText } from "./calloutPlainText";
 
@@ -113,14 +112,9 @@ function rewriteCalloutLines(
 	if (content.indexOf("[!") === -1) return null;
 
 	const lines = content.split("\n");
-	const isContentLine = createDocumentLineFilter();
 	let total = 0;
 
-	for (let i = 0; i < lines.length; i++) {
-		const line = lines[i] ?? "";
-		if (!isContentLine(line, i)) continue;
-		if (line.indexOf("[!") === -1) continue;
-		const tokens = scanLineForCalloutTokens(line);
+	for (const { lineIndex: i, lineText: line, tokens } of iterateDocumentCalloutLines(content)) {
 		if (tokens.length === 0) continue;
 		const result = rewriteLine(line, tokens);
 		if (result.count === 0) continue;
@@ -356,7 +350,7 @@ export async function normalizeFoldMarkersInVault(
 		rewriteCalloutLines(content, (line, tokens) =>
 			rewriteTokensOnLine(line, tokens, (token) => {
 				// Keep the full written quote prefix, including repeated spaces.
-				if (!/^(?:>[ \t]*)+$/.test(line.slice(0, token.from)) || !idSet.has(calloutIdentity(token.rawId))) return null;
+				if (token.role !== "regular" || !idSet.has(calloutIdentity(token.rawId))) return null;
 				const current = /^[+-]/.exec(line.slice(token.to))?.[0] ?? "";
 				if (current === desiredMarker) return null;
 				return { text: `${line.slice(token.from, token.to)}${desiredMarker}`, end: token.to + current.length };

@@ -320,6 +320,7 @@ export const en: Record<string, string> = {
 		"Place the cursor in the note where you want to insert the callout, then try again.",
 
 	// Settings — Reset
+	"settings.maintenance": "Maintenance",
 	"settings.vaultMaintenance": "Vault insights & maintenance",
 	"settings.vaultStats": "Callout statistics",
 	"settings.vaultStatsDesc":
@@ -883,6 +884,32 @@ export const en: Record<string, string> = {
 	"vaultStats.roleHeading": "Heading",
 	"vaultStats.roleInline": "Inline",
 	"vaultStats.close": "Close",
+
+	"usage.title": "Callout occurrences",
+	"usage.selectType": "Callout type",
+	"usage.registeredCallouts": "Registered callouts",
+	"usage.unregisteredCallouts": "Unregistered callouts",
+	"usage.summary": "{{count}} occurrences in {{files}} files",
+	"usage.fileCount": "{{path}} ({{count}})",
+	"usage.markdownFiles": "Markdown files",
+	"usage.filterRole": "Filter by format",
+	"usage.allRoles": "All formats",
+	"usage.failed": "Could not update callout occurrences.",
+	"usage.loading": "Scanning Markdown notes…",
+	"usage.partial": "Results are incomplete: {{count}} read errors.",
+	"usage.stale": "Updating callout occurrences…",
+	"usage.empty": "No matching callouts were found.",
+	"usage.failedFiles": "Files that could not be read",
+	"usage.vaultReadFailed": "Could not list Markdown notes in this vault.",
+	"usage.more": "Show {{count}} more",
+	"usage.location": "Line {{line}} · {{role}}",
+	"usage.missing": "This note no longer exists. Updating results…",
+	"usage.changed": "This occurrence has changed or moved ambiguously. Updating results…",
+	"usage.openFailed": "Could not open this callout occurrence.",
+	"usage.menuCount": "Find usages: {{count}} in {{files}} files",
+	"usage.menuIncomplete": "Find usages — scan incomplete",
+	"usage.menuLoading": "Find usages — counting…",
+	"usage.closeSettings": "Close Settings to view the callout results in the sidebar.",
 
 	// Import validation
 	"import.title": "Import issues",

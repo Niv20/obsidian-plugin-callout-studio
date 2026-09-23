@@ -5990,187 +5990,6 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	resize: vertical;
 }
 
-/* ─── Vault statistics modal ───────────────────────────────── */
-.callout-studio-vault-stats-modal {
-	max-width: 760px;
-}
-
-.callout-studio-vault-stats .cs-vault-stats-summary {
-	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-	gap: 8px;
-	margin-bottom: 14px;
-}
-
-.callout-studio-vault-stats .cs-vault-stats-metric {
-	padding: 10px 12px;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
-	background: var(--cs-surface-raised, var(--background-secondary));
-}
-
-.callout-studio-vault-stats .cs-vault-stats-metric-value {
-	font-size: 1.35em;
-	font-weight: 700;
-	line-height: 1.1;
-	color: var(--text-normal);
-}
-
-.callout-studio-vault-stats .cs-vault-stats-metric-label {
-	margin-top: 3px;
-	font-size: var(--font-ui-smaller);
-	color: var(--text-muted);
-}
-
-.callout-studio-vault-stats .cs-vault-stats-list {
-	max-height: 50vh;
-	overflow-y: auto;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
-	background: var(--cs-surface, var(--background-primary));
-}
-
-/* Three columns, all always on: type, the per-role chips, files. Source and
-   Count were dropped rather than made narrower — the chips already carry the
-   split, and their sum is the count. The chips themselves used to be a cell
-   spanning the row that opened on hover, which made the row change height
-   under the pointer. */
-.callout-studio-vault-stats .cs-vault-stats-row {
-	display: grid;
-	grid-template-columns: minmax(110px, 1fr) minmax(170px, 1.4fr) minmax(56px, 0.35fr);
-	gap: 10px;
-	align-items: center;
-	padding: 8px 10px;
-	border-bottom: 1px solid var(--background-modifier-border-hover);
-}
-
-.callout-studio-vault-stats .cs-vault-stats-row:last-child {
-	border-bottom: none;
-}
-
-/* Opaque on purpose — rows scroll under it — and a step off the list's own
-   `--cs-surface` paint, which is why it takes the raised token rather than
-   `--background-secondary`. */
-.callout-studio-vault-stats .cs-vault-stats-header {
-	position: sticky;
-	top: 0;
-	z-index: 1;
-	font-size: var(--font-ui-smaller);
-	font-weight: 700;
-	color: var(--text-muted);
-	background: var(--cs-surface-raised, var(--background-secondary));
-}
-
-.callout-studio-vault-stats .cs-vault-stats-type {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	min-width: 0;
-	max-width: 100%;
-	font-size: var(--font-ui-smaller);
-}
-
-.callout-studio-vault-stats .cs-vault-stats-type-icon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 20px;
-	height: 20px;
-	flex: 0 0 20px;
-	font-size: 16px;
-}
-
-.callout-studio-vault-stats .cs-vault-stats-type-icon svg {
-	width: 16px;
-	height: 16px;
-}
-
-.callout-studio-vault-stats .cs-vault-stats-type-icon.is-unknown {
-	color: var(--text-faint);
-}
-
-/* The raw `[!id]`, so a row can be found in a note. Monospace because that is
-   what it is — text the user types, not a name we chose. */
-.callout-studio-vault-stats .cs-vault-stats-type-id {
-	min-width: 0;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	font-family: var(--font-monospace);
-}
-
-/* Only two rows in the whole table carry one — an id nothing defines, and an id
-   that counted under another callout's aliases — so it sits beside the id
-   rather than in a column of its own, which is what the Source column was. */
-.callout-studio-vault-stats .cs-vault-stats-type-note {
-	flex: 0 1 auto;
-	min-width: 0;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	color: var(--text-faint);
-	font-size: var(--font-smallest);
-}
-
-.callout-studio-vault-stats .cs-vault-stats-files {
-	font-variant-numeric: tabular-nums;
-	text-align: start;
-}
-
-/* The exact numbers, as an ordinary column. No transition and no reveal: a row
-   that grows under the pointer is the thing this replaced. */
-.callout-studio-vault-stats .cs-vault-stats-roles {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 4px;
-	min-width: 0;
-}
-
-.callout-studio-vault-stats .cs-vault-stats-role-chip {
-	padding: 1px 6px;
-	border-radius: var(--radius-s);
-	background: var(--background-modifier-hover);
-	color: var(--text-muted);
-	font-size: var(--font-smallest);
-	line-height: 1.5;
-	white-space: nowrap;
-}
-
-.callout-studio-vault-stats .cs-vault-stats-empty {
-	margin: 0.5rem 0 1rem;
-	color: var(--text-muted);
-}
-
-@media (max-width: 620px) {
-	.callout-studio-vault-stats .cs-vault-stats-summary {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	.callout-studio-vault-stats .cs-vault-stats-header {
-		display: none;
-	}
-
-	.callout-studio-vault-stats .cs-vault-stats-row {
-		grid-template-columns: minmax(0, 1fr) auto;
-		gap: 4px 10px;
-	}
-
-	/* Type over chips down the left, the file count on the right. The chips wrap
-	   inside their own line rather than pushing the row wider, which is why they
-	   keep `min-width: 0`. */
-	.callout-studio-vault-stats .cs-vault-stats-type,
-	.callout-studio-vault-stats .cs-vault-stats-roles {
-		grid-column: 1;
-	}
-
-	.callout-studio-vault-stats .cs-vault-stats-files {
-		grid-column: 2;
-		grid-row: 1;
-		color: var(--text-muted);
-		font-size: var(--font-ui-smaller);
-	}
-}
-
 /* ── Icon licenses & credits modal ───────────────────────────── */
 .modal.callout-studio-credits-modal {
 	--dialog-width: 620px;
@@ -7377,6 +7196,196 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-normal);
 	font-size: var(--font-ui-small);
 	line-height: 1.5;
+}
+
+/* Adapt to the sidebar's available width, independently of the main window. */
+.view-content.cs-occurrences-view {
+	container: cs-occurrences / inline-size;
+	padding: 0 var(--size-4-3) var(--size-4-3);
+	overflow: auto;
+}
+
+.cs-occurrences-view > h2 {
+	margin-block: 0 var(--size-4-3);
+	padding-block-start: var(--size-4-3);
+}
+
+.cs-occurrences-view > hr {
+	margin-block: 0 var(--size-4-3);
+	border: 0;
+	border-top: 1px solid var(--background-modifier-border-hover);
+}
+
+.cs-occurrences-metrics {
+	display: flex;
+	gap: var(--size-4-2);
+	padding-block-end: var(--size-4-3);
+	border-block-end: 1px solid var(--background-modifier-border);
+}
+
+.cs-occurrences-metric {
+	display: flex;
+	flex: 1 1 0;
+	flex-direction: column;
+	min-inline-size: 0;
+	gap: var(--size-2-1);
+	padding: var(--size-4-2);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	overflow-wrap: anywhere;
+}
+
+.cs-occurrences-metric:nth-child(n + 3) {
+	display: none;
+}
+
+.cs-occurrences-metric-value {
+	font-size: var(--font-ui-large);
+	font-weight: var(--font-semibold);
+	font-variant-numeric: tabular-nums;
+}
+
+.cs-occurrences-metric-label {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+}
+
+.cs-occurrences-controls {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-2);
+	margin-block: var(--size-4-3);
+}
+
+.cs-occurrences-picker,
+.cs-occurrences-picker .cs-combobox,
+.cs-occurrences-controls select {
+	width: 100%;
+	min-inline-size: 0;
+}
+
+.cs-occurrences-controls select {
+	height: auto;
+	min-height: var(--input-height);
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.cs-occurrences-summary,
+.cs-occurrences-status,
+.cs-occurrences-location {
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+}
+
+.cs-occurrences-summary:empty,
+.cs-occurrences-status:empty,
+.cs-occurrences-failures:empty {
+	display: none;
+}
+
+.cs-occurrences-failures,
+.cs-occurrences-file h3 {
+	overflow-wrap: anywhere;
+}
+
+.cs-occurrences-summary {
+	font-variant-numeric: tabular-nums;
+}
+
+@container cs-occurrences (min-width: 360px) {
+	.cs-occurrences-metric:nth-child(3) {
+		display: flex;
+	}
+
+	.cs-occurrences-controls {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.cs-occurrences-picker {
+		flex: 2 1 0;
+		width: auto;
+	}
+
+	.cs-occurrences-controls select {
+		flex: 1 1 0;
+		width: auto;
+	}
+}
+
+@container cs-occurrences (min-width: 480px) {
+	.cs-occurrences-metric:nth-child(4) {
+		display: flex;
+	}
+}
+
+.cs-occurrences-results {
+	padding-block: var(--size-4-3) var(--size-4-2);
+}
+
+.cs-occurrences-file {
+	padding-block: var(--size-4-1) 0;
+}
+
+.cs-occurrences-file + .cs-occurrences-file {
+	margin-block-start: var(--size-4-4);
+}
+
+.cs-occurrences-file h3 {
+	font-size: var(--font-ui-small);
+	margin-block: 0 var(--size-4-2);
+}
+
+button.cs-occurrences-result {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--size-2-1);
+	width: 100%;
+	height: auto;
+	min-height: var(--input-height);
+	margin-block: var(--size-4-2);
+	padding: var(--size-4-2);
+	border: 1px solid var(--background-modifier-border-hover);
+	border-radius: var(--radius-s);
+	text-align: start;
+	white-space: normal;
+	overflow-wrap: anywhere;
+	box-shadow: none;
+	background: var(--cs-surface-raised, var(--background-secondary));
+}
+
+button.cs-occurrences-result[aria-current="true"] {
+	background: var(--background-modifier-active-hover);
+	outline: 1px solid var(--interactive-accent);
+}
+
+button.cs-occurrences-result:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+.cs-occurrences-excerpt {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	overflow: hidden;
+	font-size: var(--font-ui-small);
+	white-space: pre-line;
+	unicode-bidi: plaintext;
+}
+
+.cs-occurrences-excerpt-split {
+	display: block;
+}
+
+.cs-occurrences-excerpt-line {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .cs-competitor-import-banner-action,

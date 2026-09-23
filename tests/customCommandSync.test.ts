@@ -971,9 +971,13 @@ describe("the existence of a callout implies no command", () => {
 
 describe("no code path registers a command per callout", () => {
 	/** Every module that is allowed to call `addCommand` at all. */
-	const CALLERS = ["src/editor/commands.ts", "src/editor/CustomCommandManager.ts"];
+	const CALLERS = [
+		"src/editor/commands.ts", "src/editor/CustomCommandManager.ts",
+		// One static command opens the vault-wide occurrence view; never per ID.
+		"src/usage/registerOccurrencesView.ts",
+	];
 
-	it("keeps addCommand to the two modules that own it", () => {
+	it("keeps addCommand to the fixed, user-command and occurrence-view owners", () => {
 		const offenders = pluginSourceFiles()
 			.filter((f) => !CALLERS.includes(f.path))
 			.filter((f) => /\.addCommand\s*\(/.test(blankLiterals(f.text)))
@@ -982,7 +986,7 @@ describe("no code path registers a command per callout", () => {
 			offenders,
 			[],
 			report(
-				"addCommand belongs to commands.ts (the fixed set) and CustomCommandManager.ts (the user's list). A third caller is how a callout starts implying a command:",
+				"addCommand belongs to commands.ts (the fixed set), CustomCommandManager.ts (the user's list), and registerOccurrencesView.ts (one static view command). Unexpected registration callers:",
 				offenders,
 			),
 		);

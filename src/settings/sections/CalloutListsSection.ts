@@ -57,7 +57,6 @@ import { sortCalloutsByDisplayName } from "../../utils/sorting";
 import { activeThemeName } from "../../manager/theme/customCssApi";
 import { partitionByStyleOwner, styleOwnerFacts } from "./rowOwnership";
 import type { RowKind } from "./rowOwnership";
-import { ensureThemeRowUsage } from "./themeRowUsage";
 import {
 	focusFirstRevealed,
 	headingWithCount,
@@ -237,19 +236,7 @@ export function createCalloutListsController(
 		renderThemeList(fromTheme);
 		renderUserList(own);
 		renderBuiltInList(builtIn);
-		// Warmed here rather than when a menu opens, because a menu cannot wait
-		// on a whole-vault read: `openThemeRowMenu` reads the answer
-		// synchronously and offers Replace and Clear uses only once it has one.
-		// Nothing on a row shows the count any more, so nothing is repainted when
-		// it lands — the callback is what used to cause a visible reflow a second
-		// after the tab opened. One pass per visit; `SettingsTab.hide()` drops it.
-		ensureThemeRowUsage(
-			ctx.app,
-			fromTheme.flatMap((def) =>
-				ctx.plugin.registry.vaultIdFormsFor(def),
-			),
-			() => {},
-		);
+
 	};
 
 	return {

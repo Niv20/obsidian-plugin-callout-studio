@@ -2,7 +2,7 @@
 
 Use **Reset everything** only when you want to return Callout Studio to a clean state.
 
-Open **Settings → Callout Studio**, scroll to **Vault insights & maintenance**, find the **Reset** row, and click **Reset everything**.
+Open **Settings → Callout Studio**, scroll to **Maintenance**, find the **Reset** row, and click **Reset everything**.
 
 The reset removes or restores:
 

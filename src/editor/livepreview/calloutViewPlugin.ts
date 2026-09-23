@@ -37,7 +37,6 @@ import type { CalloutRegistry } from "../../manager/CalloutRegistry";
 import {
 	findWikilinkCalloutRefs,
 	nestedInlineTokens,
-	scanLineForCalloutTokens,
 	tokenEnd,
 } from "../calloutTokens";
 import {
@@ -49,6 +48,7 @@ import {
 	resolveCalloutDef,
 	shouldRenderToken,
 } from "../renderShared";
+import { editorLineCalloutTokens, excludedEditorRange } from "./sourceTokens";
 import { isHeadingFoldEnabled, resolveMarkdownView } from "../headingFold";
 import {
 	CalloutContentPillWidget,
@@ -75,7 +75,7 @@ export interface LivePreviewHost {
 const NO_FOLDS: ReadonlySet<number> = new Set();
 
 /** Syntax-tree node names whose content must never be decorated. */
-const SKIP_NODE_RE = /codeblock|frontmatter|yaml|inline-code|math/i;
+const SKIP_NODE_RE = /codeblock|frontmatter|yaml|inline-code|math|comment/i;
 
 /** True when `text[i]` is a space or tab (bounds-safe). */
 function isSpaceAt(text: string, i: number): boolean {
@@ -224,7 +224,7 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 				}
 				if (
 					update.docChanged ||
-					update.viewportChanged ||
+					update.viewportChanged || syntaxTree(update.startState) !== syntaxTree(update.state) ||
 					refreshed ||
 					caretDrop ||
 					mouseReleased ||
@@ -364,7 +364,7 @@ function decorateLine(
 	// Skip whole lines inside fenced code / frontmatter.
 	if (SKIP_NODE_RE.test(tree.resolveInner(lineFrom, 1).name)) return;
 
-	const tokens = scanLineForCalloutTokens(lineText, {
+	const tokens = editorLineCalloutTokens(view.state, lineFrom, lineText, {
 		inlineContent: host.settings.inlineCallouts.allowContent,
 	});
 	// Tokens sitting inside another token's payload; skipped below (see
@@ -519,7 +519,7 @@ function decorateLine(
 		const end = lineFrom + tokenEnd(token);
 		// Per-token guard for constructs the line-level check can't see
 		// (inline code via multi-backtick spans, inline math, …).
-		if (SKIP_NODE_RE.test(tree.resolveInner(from + 1, 0).name)) continue;
+		if (excludedEditorRange(view.state, from, to)) continue;
 
 		// Both kinds of pill reveal their raw source whole while the selection
 		// touches them — that is the only editing affordance either one has.
@@ -601,7 +601,7 @@ function decorateLine(
 		const hideHash = !ref.inAlias && ref.from === ref.linkFrom + 3 ? 1 : 0;
 		const from = lineFrom + ref.from - hideHash;
 		const to = lineFrom + ref.to;
-		if (SKIP_NODE_RE.test(tree.resolveInner(from + 1, 0).name)) continue;
+		if (excludedEditorRange(view.state, from, to)) continue;
 
 		// Title-less reference closing the target (`[[#[!id]]]`): the `]]]`
 		// run confuses Obsidian's own parsers (link cut at the first `]]`),

@@ -51,23 +51,114 @@ A settings change detected during discovery cancels publication. For external
 file adoption, generic conflict protection preserves a backup before replacing
 local definitions; see [Multi-device sync](07-persistence-and-caching.md#multi-device-sync).
 
-## Vault scanners — one shared tokenizer for every consumer
+## Read-only occurrence index and navigation
 
-[`src/utils/vaultCalloutScanner.ts`](../../src/utils/vaultCalloutScanner.ts)
-holds every function that reads or writes callout tokens across the whole
-vault — both the **read-only** scanners (statistics, unknown-id discovery,
-usage counting) and the **write** operations (bulk replace, convert-to-plain-
-text). All of them funnel through `editor/calloutTokens.ts`'s shared grammar,
-which is explicitly called out as the reason "3 uses in 2 files" (statistics)
-and "3 references updated" (replace) never disagree with each other.
+`src/usage/CalloutOccurrenceIndex.ts` owns an in-memory index of Markdown source,
+preferring current editor buffers for open notes and saved content for closed notes.
+It has no registry or settings-writer dependency. `getCalloutOccurrenceIndex(app)`
+shares one index per App, and disposal clears records/listeners. Constructing it
+registers no discovery and reads no notes. `registerOccurrenceIndex` installs
+lifecycle-owned vault and workspace invalidation events; after first use, a
+150 ms debounce coalesces note changes into incremental reads. `editor-change`
+invalidates affected source, while file/layout changes reconcile open editors.
+Editor values are sampled at scan boundaries rather than every keystroke.
+The most recently edited view remains authoritative if a duplicate view briefly
+lags after focus moves to the sidebar. Closed editor handles are pruned even
+before the first usage scan; unchanged layout events do not reparse notes.
+Non-Markdown file changes do not trigger a scan. Folder changes invalidate the index.
+
+`ensureFresh` coalesces concurrent requests, reads closed notes with `cachedRead`, and reuses
+unchanged file records. File identity, path, mtime, size and invalidation versions
+are validated before publication. Enumeration is checked again at completion.
+A changed snapshot becomes stale; unreadable files produce an incomplete result.
+Failures never become a successful zero and do not start an automatic retry loop.
+An invalidation subscription schedules updates even when navigation detects an
+obsolete occurrence. A stale pass can retry once per observed change revision;
+read failures alone do not reschedule. Large passes yield between
+files and document lines. Parsed occurrences retain source identity, role,
+zero-based line/columns, and text for navigation validation.
+
+Statistics, menus and the sidebar query these same occurrences. Equivalent
+case/whitespace/dash spellings group with `calloutIdentity`; metadata never becomes
+part of identity. Vault-wide metrics include unknown source IDs and are cached
+by `dataRevision`, which advances for published or removed results, rather than
+every typing notification. Result DOM uses the same distinction. Definition-menu
+queries union `vaultIdFormsFor(def)` including aliases and
+count distinct files, rather than summing alias file counts. Registry resolution
+provides appearance/status only; fallback artwork never changes usage ownership.
+
+`CalloutOccurrencesView` is a registered ItemView with a searchable
+`CalloutCombobox`, role filters, counted file groups and paged results. A summary
+below the controls reports the filtered occurrence and distinct-file counts;
+all sidebar content scrolls normally. Its picker combines committed, non-theme-only
+definitions with unregistered identities observed by the read-only index. Saved
+definitions include their aliases; equivalent identities and registered aliases
+are deduplicated before unknown options are added. A sidebar-local adapter supplies
+temporary display choices to the existing combobox, without changing the registry,
+settings, discovery, or other picker callers. Only this caller enables the
+combobox's optional grouping: registered choices precede unregistered choices,
+with the shared palette group heading and divider styles. Search ranking applies
+within each group; groups with no matches have no heading. Membership is tracked
+by the local adapter, independently of fallback artwork or definition provenance.
+Theme-only types become options only
+when present in source. Choice aggregation is cached by the index's `dataRevision`
+and invalidated on registry changes, so typing does not rescan the vault.
+The selected source identity is retained as a local choice through an initial
+scan or deletion of its last occurrence; it can therefore show zero results
+without silently falling back to a different type. Selecting another type removes
+that retained choice if it no longer occurs. Registering a selected identity or
+claiming it as an alias promotes selection to its committed owner.
+The view keeps the picker DOM stable during index updates and destroys its
+listeners on close. Workspace state holds filters, never the index.
+
+The sidebar owns the former statistics screen's four vault-wide metrics. CSS
+container queries show the first two, three or four metrics according to pane
+width, with equal-width cards, and place the filters side by side when space
+allows. The last metric is labelled **Markdown files** and counts successfully
+scanned Markdown files; scan status still identifies incomplete results.
+`VaultCalloutStatisticsModal` and its row renderer have been removed, along with
+the Settings action and styles. Result cards omit redundant type labels and
+clamp excerpts to two lines while preserving raw Markdown syntax; block excerpts
+prefer a header line and a line of body content. Preview formatting does not
+change source coordinates or token exclusions.
+DOM menus update counts while the index loads and unsubscribe when hidden.
+Views unsubscribe from both index and registry changes when closed.
+The list starts with 100 results and adds 100 per **Show more** action. Per-file
+heading counts cover the complete filtered query, including unloaded cards.
+
+Navigation uses public workspace/editor APIs, opens a document leaf in editing
+mode and revalidates source tokens against the current editor. A document
+fingerprint (normalized for CRLF/LF) permits exact coordinates only while the
+source is unchanged. After edits, unique unchanged source lines can be relocated;
+ambiguous or missing occurrences trigger an automatic refresh. The editor is checked again
+after asynchronous parsing so navigation cannot select from an obsolete buffer.
+It never inserts block IDs or modifies notes. The one isolated optional host seam
+is `openFromSettings.ts`: existing Obsidian `app.setting.close()` is called only
+when present to dismiss the settings overlay after explicit navigation. Hosts
+without that method receive a notice to close Settings themselves; opening and
+navigating the ItemView use public APIs.
+
+## Shared parsing and vault operations
+
+`editor/documentCallouts.ts` exposes a token iterator and a line iterator. Both
+preserve original source spans and use `markdownExclusions.ts` and
+`markdownContainers.ts` for comments, code and container context. Every whole-note
+consumer uses this path: discovery, statistics/indexing and note rewrites.
+Excluded characters are masked without changing offsets or creating whitespace
+that could turn invalid syntax into a token.
 
 | Function | Purpose |
 | --- | --- |
-| `scanVaultCalloutStatistics(app)` | Full vault pass, grouped by id: file count + total count per type |
-| `scanStringForUnknownCallouts` | Ids in one string not in a known-id set — the discovery primitives |
-| `countCalloutUsages` / `countCalloutUsagesMap` | Usage counts for a specific set of ids — used before delete/replace, and by explicit maintenance actions |
-| `convertCalloutsToPlainTextInVault` | Strips callout markup, keeping content as plain paragraphs — see below |
-| `replaceCalloutIdsInVault` | Bulk id swap, with optional title rewrite |
+| `scanVaultCalloutStatistics(app)` in `vaultCalloutStats.ts` | Aggregate the shared index by written ID, role, and distinct file |
+| `getOccurrenceMetrics(index)` | Cache the current snapshot's vault-wide totals for the sidebar |
+| `scanStringForUnknownCallouts` | Unknown source IDs after shared parsing; discovery primitive |
+| `countCalloutUsages` / `countCalloutUsagesMap` | Fresh direct scans for maintenance/confirmation, independent of cached menu counts |
+| `convertCalloutsToPlainTextInVault` | Strip markup while keeping content |
+| `replaceCalloutIdsInVault` | Bulk ID swap with optional title rewrite |
+
+The writers still use fresh file contents and complete-pass checks. Cached usage
+counts never authorize destructive operations. A statistics refresh never calls
+`runVaultScan`, mutates the registry, or saves `data.json`.
 
 ### `convertCalloutsToPlainTextInVault` — role-specific stripping
 

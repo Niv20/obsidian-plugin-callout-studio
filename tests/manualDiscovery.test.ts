@@ -168,7 +168,8 @@ describe("automatic discovery is removed from production wiring", () => {
 	it("only the settings button calls the manual scan", () => {
 		assert.doesNotMatch(readRepoFile("src/manager/launchSequence.ts"), /discovery|runVaultScan|schedulePrune/);
 		assert.doesNotMatch(readRepoFile("src/settings/SettingsTab.ts"), /scanOpenEditors|schedulePrune/);
-		assert.doesNotMatch(readRepoFile("src/utils/VaultCalloutStatisticsModal.ts"), /runVaultScan/);
+		assert.doesNotMatch(readRepoFile("src/usage/CalloutOccurrencesView.ts"), /runVaultScan/);
+		assert.equal(repoFileExists("src/utils/VaultCalloutStatisticsModal.ts"), false);
 	});
 });
 

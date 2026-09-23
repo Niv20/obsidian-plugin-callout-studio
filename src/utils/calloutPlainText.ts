@@ -1,7 +1,8 @@
 import {
-	createDocumentLineFilter, scanLineForCalloutTokens, tokenEnd,
+	scanLineForCalloutTokens, tokenEnd,
 	type LineCalloutToken,
 } from "../editor/calloutTokens";
+import { iterateDocumentCalloutLines } from "../editor/documentCallouts";
 import { splitFoldMark } from "../editor/calloutWriter";
 import { calloutIdentity } from "./calloutId";
 
@@ -49,24 +50,26 @@ function rewriteLine(line: string, tokens: LineCalloutToken[], ids: ReadonlySet<
 
 /** Convert matching source tokens while unwrapping each outer block only once. */
 export function calloutsToPlainText(content: string, ids: ReadonlySet<string>, displayName: string): { content: string; count: number } | null {
-	const lines = content.split("\n"), isContentLine = createDocumentLineFilter();
+	const lines = Array.from(iterateDocumentCalloutLines(content));
 	let unwrapping = false, count = 0;
-	const converted = lines.map((line, index) => {
-		if (!line.startsWith(">")) unwrapping = false;
-		const tokens = isContentLine(line, index) ? scanLineForCalloutTokens(line) : [];
+	const converted = lines.map(({ lineText: line, tokens, visible, prefix }) => {
+		if (!/^[ \t]*>/.test(line)) unwrapping = false;
 		const header = tokens[0]?.role === "regular" ? tokens[0] : undefined;
 		const matchingHeader = header !== undefined && ids.has(calloutIdentity(header.rawId));
-		const outer = matchingHeader && /^>[ \t]*$/.test(line.slice(0, header.from));
+		const outer = matchingHeader && prefix.listIndent === 0 && /^[ \t]*>[ \t]*$/.test(line.slice(0, header.from));
 		if (outer) unwrapping = true;
 		if (matchingHeader) {
 			// Native header scanning excludes its title. Once the header is
 			// removed, matching tokens there must be converted as source prose.
 			const masked = "x" + " ".repeat(header.to - 1) + line.slice(header.to);
-			tokens.push(...scanLineForCalloutTokens(masked));
+			tokens.push(...scanLineForCalloutTokens(masked, {
+				visibleLine: "x" + " ".repeat(header.to - 1) + visible.slice(header.to),
+				contentFrom: 0, blockQuote: false,
+			}));
 		}
 		const result = rewriteLine(line, tokens, ids, displayName.trim(), outer);
 		count += result.count;
-		return unwrapping && !outer ? result.line.replace(/^>[ \t]?/, "") : result.line;
+		return unwrapping && !outer ? result.line.replace(/^([ \t]*)>[ \t]?/, "$1") : result.line;
 	});
 	return count ? { content: converted.join("\n"), count } : null;
 }

@@ -1,9 +1,9 @@
 /**
  * settings/sections/DataManagementSection.ts — Import, export, and reset settings.
  *
- * Renders the "Vault insights & maintenance" and "Import / Export" sections in
+ * Renders the "Maintenance" and "Import / Export" sections in
  * the settings tab. Handles JSON import with validation (via importValidator),
- * vault statistics, and full data reset. Uses ImportReportModal to surface
+ * and full data reset. Uses ImportReportModal to surface
  * validation issues before import. Both export formats live behind
  * ExportFormatModal, the way both import sources live behind ImportSourceModal.
  */
@@ -17,8 +17,6 @@ import { mergeById } from "../../utils/mergeById";
 import { addImportedCallout, applyImportedCallout } from "../../utils/importedCallout";
 import { ImportSourceModal } from "../ImportSourceModal";
 import { countCalloutUsages } from "../../utils/vaultCalloutScanner";
-import { scanVaultCalloutStatistics } from "../../utils/vaultCalloutStats";
-import { VaultCalloutStatisticsModal } from "../../utils/VaultCalloutStatisticsModal";
 import type { SettingsSectionContext } from "./types";
 
 export function renderImportExportSection(
@@ -56,27 +54,8 @@ export function renderResetSection(
 	containerEl: HTMLElement,
 ): void {
 	new Setting(containerEl)
-		.setName(t("settings.vaultMaintenance"))
+		.setName(t("settings.maintenance"))
 		.setHeading();
-
-	new Setting(containerEl)
-		.setName(t("settings.vaultStats"))
-		.setDesc(t("settings.vaultStatsDesc"))
-		.addButton((btn) => {
-			btn.setButtonText(t("settings.vaultStatsButton")).onClick(
-				async () => {
-					btn.setDisabled(true);
-					btn.setButtonText(t("settings.vaultStatsScanning"));
-					try {
-						await showVaultStatistics(ctx);
-					} finally {
-						btn.setDisabled(false);
-						btn.setButtonText(t("settings.vaultStatsButton"));
-					}
-				},
-			);
-			btn.buttonEl.addClass("cs-settings-neutral-btn");
-		});
 
 	new Setting(containerEl)
 		.setName(t("settings.resetAll"))
@@ -122,10 +101,6 @@ export function renderResetSection(
 					ctx.display();
 				}),
 		);
-}
-
-async function showVaultStatistics(ctx: SettingsSectionContext): Promise<void> {
-	new VaultCalloutStatisticsModal(ctx, await scanVaultCalloutStatistics(ctx.app)).open();
 }
 
 /**

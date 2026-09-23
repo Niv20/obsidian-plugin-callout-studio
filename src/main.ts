@@ -63,6 +63,8 @@ import { PLUGIN_ICON_ID } from "./constants";
 import { getLocale, setLocale, t } from "./i18n";
 import { LocaleStore } from "./i18n/LocaleStore";
 import { registerDeveloperProtocols } from "./settings/developerProtocols";
+import { registerOccurrenceIndex } from "./usage/registerOccurrenceIndex";
+import { registerOccurrencesView, refreshOccurrencesViewLocale } from "./usage/registerOccurrencesView";
 
 /**
  * How long the startup entrance animation window stays open. Long enough to
@@ -272,13 +274,13 @@ export default class CalloutStudioPlugin extends Plugin {
 		this.addSettingTab(this.settingsTab);
 
 		registerDeveloperProtocols(this);
+		registerOccurrenceIndex(this);
+		registerOccurrencesView(this);
 
 		// Commands
 		registerCalloutCommands(this, this.commandDeps());
 
-		// The ribbon is a second door to the same window, not a second
-		// implementation: hiding the command leaves this one standing, and
-		// hiding the ribbon leaves the command bindable.
+		// The ribbon opens the same quick-insert window as its command.
 		this.addRibbonIcon(PLUGIN_ICON_ID, t("quickInsert.title"), () => {
 			this.openQuickInsert();
 		});
@@ -288,8 +290,6 @@ export default class CalloutStudioPlugin extends Plugin {
 		this.registerEditorSuggest(this.autoComplete);
 
 		// Clean heading-callout titles in the [[# link suggestion popup.
-		// Installed on layout-ready so the core link suggester exists; our own
-		// autocomplete is skipped (it renders callout suggestions itself).
 		this.linkSuggestDecorator = new LinkSuggestDecorator(this);
 		onActiveLayoutReady(this, () =>
 			this.linkSuggestDecorator.install([this.autoComplete]),
@@ -346,10 +346,10 @@ export default class CalloutStudioPlugin extends Plugin {
 	 * — from when it was added. Called when a language is picked or lands late.
 	 */
 	applyLocaleChange(): void {
-		// Only while on screen: re-rendering a detached container wastes work,
-		// and the picker re-renders itself when the user picked the language.
+		// Only repaint settings while they are on screen.
 		if (this.settingsTab?.containerEl.isConnected) this.settingsTab.display();
 		refreshFixedCommandNames(this, this.commandDeps());
+		refreshOccurrencesViewLocale(this);
 		this.customCommands.syncAll();
 		this.refreshRenderModes();
 	}

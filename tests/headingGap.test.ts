@@ -378,3 +378,12 @@ describe("createHeadingGapField — when it rebuilds", () => {
 		);
 	});
 });
+
+describe("document exclusions in language-free heading gaps", () => {
+	it("does not add gaps to headings inside comments or fenced code", () => {
+		setLivePreview(true);
+		const source = "%%\n## [!note] Comment\n%%\n```\n## [!note] Code\n```\n## [!note] Real";
+		const h = harness(source);
+		assert.deepStrictEqual(h.gaps().map(([from]) => from), [source.indexOf("## [!note] Real")]);
+	});
+});

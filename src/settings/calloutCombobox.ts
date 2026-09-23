@@ -34,6 +34,10 @@ export interface CalloutComboboxOptions {
 	value: string;
 	/** `aria-label` for the input; the call site owns the wording. */
 	ariaLabel: string;
+	/** Optional committed label; popup rows keep the shared name/id presentation. */
+	labelOf?: (def: CalloutDefinition) => string;
+	/** Optional groups in ascending order; search ranking stays within each group. */
+	groupOf?: (def: CalloutDefinition) => { key: string; label: string; order: number };
 	/**
 	 * Awaited by the caller's own `async` arrow where it needs to be, so a
 	 * save-then-refresh order survives.
@@ -66,18 +70,22 @@ export class CalloutCombobox {
 			ariaLabel: options.ariaLabel,
 			placeholder: t("calloutPicker.placeholder"),
 			emptyText: (query) => t("calloutPicker.noMatches", { query }),
-			itemsFor: (query) =>
-				filterCalloutList(this.choices(), {
+			itemsFor: (query) => {
+				const matches = filterCalloutList(this.choices(), {
 					query,
 					filter: "all",
 					locale: getLocale(),
-				}),
+				});
+				const groupOf = options.groupOf;
+				return groupOf ? matches.sort((a, b) => groupOf(a).order - groupOf(b).order) : matches;
+			},
+			groupOf: options.groupOf,
 			renderRow: (rowEl, def, query) =>
 				renderCalloutComboboxRow(rowEl, def, options.registry, {
 					isDark: isDarkTheme(),
 					query,
 				}),
-			labelOf: (def) => def.displayName,
+			labelOf: (def) => options.labelOf?.(def) ?? def.displayName,
 			keyOf: (def) => def.id,
 			onCommit: (def) => {
 				this.paintLead(def);
@@ -126,7 +134,7 @@ export class CalloutCombobox {
 		this.setValue(created.id);
 		if (this.popup.value?.id !== created.id) {
 			this.paintLead(created);
-			this.popup.inputEl.value = created.displayName;
+			this.popup.inputEl.value = this.options.labelOf?.(created) ?? created.displayName;
 			this.popup.el.toggleClass("is-empty", false);
 		}
 		void this.options.onChange(created.id);

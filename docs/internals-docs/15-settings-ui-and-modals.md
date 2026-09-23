@@ -194,7 +194,7 @@ which `keepHeadingInPlace` already anchors.
 scans open editors for unknown types nor schedules pruning. The one **Discover
 now** button lives in the **My callout types** heading; it disables itself while its promise
 is pending, catches failures and reports success only after persistence.
-The statistics modal is read-only and has no second discovery button.
+The occurrence sidebar owns read-only statistics and navigation; Settings has no separate statistics modal or second discovery button.
 
 
 ### `display()` is not only run by someone opening the tab
@@ -1552,6 +1552,14 @@ way in settings. Matching goes through the same `calloutMatchesQuery` — id,
 display name and **aliases**, substring rather than fuzzy — ordered by
 `matchRank`'s four tiers (exact, name-prefix, id/alias-prefix, anywhere) so that
 typing `no` answers `Note` rather than `Annotation`.
+
+An optional `groupOf` callback supplies a stable group key, translated label,
+and numeric order. When supplied, groups take priority over search ranking,
+while rows within each group keep the normal match/name order. Only the
+**Callout occurrences** picker enables this for registered and unregistered
+choices; other callout pickers keep their existing flat lists and choices.
+Headings and dividers reuse the palette picker's rendering, and filtering out
+all rows in a group removes its heading too.
 
 A query that matches nothing does **not** dead-end. When the call site supplies
 `onCreate`, the empty state is replaced by a real, keyboard-reachable row
