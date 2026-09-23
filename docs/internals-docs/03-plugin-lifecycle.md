@@ -21,6 +21,9 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
    `ManualCalloutDiscovery`; constructing it reads no notes and registers no events.
 5. Register Outline integration, custom commands, registry change listeners,
    settings UI, fixed commands, ribbon, autocomplete, context menu and public API.
+   Register the occurrence ItemView/command and vault/editor invalidations. Index construction
+   reads no notes; its first usage request starts indexing. Subsequent Markdown
+   changes are debounced independently of manual discovery.
    Missing custom-command targets are paused, never deleted as part of startup.
 6. Begin existing icon/locale preparation. At layout-ready, release the startup
    migration notices and run `runLaunchSequence`, which confirms whether this is
@@ -59,7 +62,8 @@ notify after their service has been destroyed. Already-started adapter writes an
 Obsidian HTTP requests cannot be cancelled; their later results are ignored.
 The CSS injector cannot recreate styles after destruction. Layout-ready callbacks
 check that the plugin remains active before installing decorators or starting work.
-Registered event
+Occurrence-index disposal also clears its debounce, source records and subscribers;
+in-flight reads cannot publish after disposal. Registered event
 and DOM listeners are removed through Obsidian's plugin lifecycle. There are no
 discovery timers, note watchers, prune queues or rediscovery holds to clean up.
 

@@ -21,12 +21,12 @@ agreement.
 
 ```ts
 HEADING_CALLOUT_RE   = /^(#{1,6})[ \t]+\[!([^\]\n\r]+)\][ \t]?(.*)$/
-BLOCKQUOTE_CALLOUT_HEADER_RE = /^(\s*(?:>[ \t]?)+)\[!([^\]\n\r]+)\]/
+BLOCKQUOTE_CALLOUT_HEADER_RE = /^([ \t]*(?:>[ \t]*)+)\[!([^\]\n\r]+)\]/
 // inline: no single regex — a manual indexOf scan (see below)
 ```
 
-`scanLineForCalloutTokens(rawLine, options?)` classifies every `[!name]` on a
-line by role:
+`scanLineForCalloutTokens(rawLine, options?)` classifies eligible `[!name]` tokens
+by role after resolving source masks and container prefixes:
 
 - **Block role**: the line matches `BLOCKQUOTE_CALLOUT_HEADER_RE`. Returns a
   single token; everything after is title text Obsidian itself renders — no
@@ -70,13 +70,31 @@ which matches rendered DOM candidates to source `[!` occurrences by *ordinal
 position*. Renderers filter nested tokens out via `nestedInlineTokens()`
 instead of the scanner refusing to find them.
 
-### Whole-document scanning skips frontmatter and fenced code
+### Whole-document exclusions and source positions
 
-`createDocumentLineFilter()` produces a **stateful, single-use** per-line
-predicate — every whole-document consumer (vault scanners, discovery,
-statistics) shares it, feeding it every line **in order**, none skipped, or
-the fence/frontmatter state desyncs. It correctly handles fences nested inside
-blockquotes and the frontmatter-must-be-line-0 rule.
+`documentCallouts.ts` exposes `iterateDocumentCallouts` (full token, line index,
+line offset) and `iterateDocumentCalloutLines` (every line, including excluded
+ones). `iterateDocumentCalloutSteps` also yields preparation checkpoints so
+indexing can yield while preparing large documents, even without any callouts.
+`forEachCalloutToken` is the compatibility
+callback over the same iterator. Vault scanners and writers use these interfaces.
+
+`markdownExclusions.ts` coordinates fenced/indented code, exact backtick-run code
+spans, YAML frontmatter and same-line/multiline Obsidian `%%` comments. Delimiters
+inside code cannot start comments; fences inside comments cannot start code.
+Exclusion masks preserve original offsets and cannot manufacture valid tokens.
+`markdownContainers.ts` resolves quote/list prefixes and indentation before role
+classification. Repeated quote-header spaces and 0–3-space heading indentation
+are accepted where they are not code. A quoted heading-leading token retains the
+existing inline-role behavior; finding `#` inside prose does not create a heading.
+
+The line scanner also applies same-line exclusions. Live Preview's
+`livepreview/sourceTokens.ts` additionally checks CodeMirror's ancestor context
+and parse frontier; unparsed regions remain raw until the tree advances.
+Language-free previews use document exclusions cached by immutable document
+identity. Autocomplete asks the document lexer before offering a trigger.
+Native Reading view suppresses code/comments; source pairing for escaped pills
+uses shared exclusions as well.
 
 ### References inside links and the Outline pane
 
