@@ -75,7 +75,7 @@ describe("command editor field layout", () => {
 		);
 		assert.match(
 			css,
-			/\.cs-command-field\s+\.setting-item-control\s*>\s*:is\(\.cs-combobox,\s*select\.dropdown\)\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0;[^}]*\}/,
+			/\.cs-command-field\s+\.setting-item-control\s*>\s*\.cs-combobox\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0;[^}]*\}/,
 		);
 		assert.match(
 			css,

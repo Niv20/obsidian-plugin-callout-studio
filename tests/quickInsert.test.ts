@@ -30,7 +30,7 @@
  * would be testing the stub.
  */
 import assert from "node:assert";
-import { describe, it } from "node:test";
+import { beforeEach, describe, it } from "node:test";
 import type { App, Editor, EditorPosition, WorkspaceLeaf } from "obsidian";
 import { MarkdownView } from "obsidian";
 import { wrapSelectionInCallout } from "../src/editor/CalloutBlockTools";
@@ -55,8 +55,9 @@ import {
 	buildQuickInsertToolbar,
 	syncQuickInsertThemeOption,
 } from "../src/settings/quickInsertToolbar";
+import { dropdownOptions, pickDropdown } from "./support/selectDropdown";
 import { QuickInsertModal } from "../src/settings/QuickInsertModal";
-import { asEl, el } from "./support/fakeDom";
+import { asEl, el, fakeDom } from "./support/fakeDom";
 import { readRepoFile } from "./support/sourceScan";
 import type { CalloutDefinition } from "../src/types";
 import {
@@ -365,68 +366,39 @@ describe("filterCalloutList", () => {
 });
 
 describe("quick-insert source controls and empty states", () => {
+	beforeEach(() => fakeDom.light());
 	it("keeps the optional live theme source in the right position", () => {
 		const host = asEl(el());
 		const chosen: string[] = [];
-		buildQuickInsertToolbar(host, {
+		const toolbar = buildQuickInsertToolbar(host, {
 			filter: "all",
 			themeLabel: "Nord",
 			onQuery: () => {},
 			onFilter: (filter) => chosen.push(filter),
 			onKey: () => {},
 		});
-		const select = host.querySelector<HTMLSelectElement>("select");
-		assert.ok(select);
-		assert.strictEqual(select.value, "all");
-		assert.deepStrictEqual(
-			Array.from(select.querySelectorAll("option")).map((option) => ({
-				value: option.value,
-				text: option.textContent,
-			})),
-			[
-				{ value: "all", text: "All" },
-				{ value: "builtin", text: "Built-in" },
-				{ value: "theme", text: "Nord" },
-				{ value: "user", text: "My callouts" },
-			],
-		);
-
-		select.value = "theme";
-		select.dispatchEvent({ type: "change" } as Event);
+		const select = toolbar.filter;
+		assert.strictEqual(host.querySelector("select"), null);
+		assert.strictEqual(select.getValue(), "all");
+		assert.deepStrictEqual(dropdownOptions(select.el).map((row) => row.textContent),
+			["All", "Built-in", "Nord", "My callouts"]);
+		pickDropdown(select.el, "Nord");
 		assert.deepStrictEqual(chosen, ["theme"]);
-
-		assert.strictEqual(
-			syncQuickInsertThemeOption(host, "Minimal", true, "theme"),
-			"theme",
-		);
-		assert.strictEqual(
-			Array.from(select.querySelectorAll("option")).find(
-				(option) => option.value === "theme",
-			)?.textContent,
-			"Minimal",
-		);
-
-		assert.strictEqual(
-			syncQuickInsertThemeOption(host, "Minimal", false, "theme"),
-			"all",
-		);
-		assert.deepStrictEqual(
-			Array.from(select.querySelectorAll("option")).map((option) => option.value),
-			["all", "builtin", "user"],
-		);
-		assert.strictEqual(select.value, "all");
-
-		syncQuickInsertThemeOption(host, "Solarized", true, "theme");
-		assert.deepStrictEqual(
-			Array.from(select.querySelectorAll("option")).map((option) => option.value),
-			["all", "builtin", "theme", "user"],
-		);
-		assert.strictEqual(select.value, "theme");
+		assert.strictEqual(syncQuickInsertThemeOption(select, "Minimal", true, "theme"), "theme");
+		assert.strictEqual(select.inputEl.value, "Minimal");
+		assert.strictEqual(syncQuickInsertThemeOption(select, "Minimal", false, "theme"), "all");
+		assert.deepStrictEqual(dropdownOptions(select.el).map((row) => row.textContent), ["All", "Built-in", "My callouts"]);
+		assert.strictEqual(select.getValue(), "all");
+		syncQuickInsertThemeOption(select, "Solarized", true, "theme");
+		assert.deepStrictEqual(dropdownOptions(select.el).map((row) => row.textContent), ["All", "Built-in", "Solarized", "My callouts"]);
+		assert.strictEqual(select.getValue(), "theme");
+		assert.deepStrictEqual(chosen, ["theme"], "live choices never persist a synthetic change");
+		toolbar.destroy();
 	});
 
 	it("omits the theme source when no usable callout is theme-owned", () => {
 		const contentEl = asEl(el());
-		buildQuickInsertToolbar(contentEl, {
+		const toolbar = buildQuickInsertToolbar(contentEl, {
 			filter: "theme",
 			themeLabel: "Lumines",
 			onQuery: () => {},
@@ -436,7 +408,7 @@ describe("quick-insert source controls and empty states", () => {
 		const listEl = contentEl.createDiv();
 		let themeOwns = false;
 		const modal = Object.assign(Object.create(QuickInsertModal.prototype), {
-			contentEl,
+			contentEl, toolbar,
 			listEl,
 			rows: [],
 			activeIndex: -1,
@@ -457,26 +429,18 @@ describe("quick-insert source controls and empty states", () => {
 			renderList(items: CalloutDefinition[]): void;
 		};
 		const styledBuiltIn = def({ id: "note", builtIn: true, source: "builtin" });
-		const select = contentEl.querySelector<HTMLSelectElement>("select");
-		assert.ok(select);
-
+		const select = toolbar.filter;
 		modal.renderList([styledBuiltIn]);
-		assert.deepStrictEqual(
-			Array.from(select.querySelectorAll("option")).map((option) => option.value),
-			["all", "builtin", "user"],
-		);
-		assert.strictEqual(select.value, "all");
+		assert.deepStrictEqual(dropdownOptions(select.el).map((row) => row.textContent), ["All", "Built-in", "My callouts"]);
+		assert.strictEqual(select.getValue(), "all");
 		assert.strictEqual(modal.filter, "theme", "remembered preference was erased");
 		assert.strictEqual(listEl.querySelectorAll(".cs-qi-row").length, 1);
-
 		themeOwns = true;
 		modal.renderList([styledBuiltIn]);
-		assert.deepStrictEqual(
-			Array.from(select.querySelectorAll("option")).map((option) => option.value),
-			["all", "builtin", "theme", "user"],
-		);
-		assert.strictEqual(select.value, "theme");
+		assert.deepStrictEqual(dropdownOptions(select.el).map((row) => row.textContent), ["All", "Built-in", "Lumines", "My callouts"]);
+		assert.strictEqual(select.getValue(), "theme");
 		assert.strictEqual(listEl.querySelectorAll(".cs-qi-row").length, 1);
+		toolbar.destroy();
 	});
 
 	it("explains an empty category, but keeps failed searches generic", () => {
@@ -552,10 +516,9 @@ describe("quick-insert source controls and empty states", () => {
 
 		const host = asEl(el());
 		instance.buildToolbar(host);
-		const select = host.querySelector<HTMLSelectElement>("select");
+		const select = host.querySelector<HTMLElement>(".cs-select-dropdown")!;
 		assert.ok(select);
-		select.value = "theme";
-		select.dispatchEvent({ type: "change" } as Event);
+		pickDropdown(select, en["quickInsert.sourceTheme"]!);
 		assert.strictEqual(settings.quickInsertSource, "theme");
 		assert.strictEqual(saves, 1);
 

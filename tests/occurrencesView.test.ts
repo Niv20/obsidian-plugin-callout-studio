@@ -1,3 +1,5 @@
+import { dropdownOptions, pickDropdown } from "./support/selectDropdown";
+import { TestKeymap, TestScope } from "./support/fakeKeymap";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { setTimeout as scheduleTimer, clearTimeout as cancelTimer } from "node:timers";
@@ -25,7 +27,11 @@ function harness(
 		path, extension: "md", stat: { mtime: 1, ctime: 1, size: content.length },
 	}));
 	let layoutSaves = 0;
+	const scope = new TestScope();
+	const keymap = new TestKeymap();
+	keymap.pushScope(scope);
 	const app = {
+		scope, keymap,
 		vault: {
 			getMarkdownFiles: () => files,
 			getAbstractFileByPath: (path: string) => files.find((file) => file.path === path) ?? null,
@@ -36,7 +42,7 @@ function harness(
 	const registry = new CalloutRegistry();
 	registry.load({});
 	const view = new CalloutOccurrencesView({ app } as unknown as WorkspaceLeaf, registry, busyStatusDelayMs);
-	return { view, app, registry, contents, index: getCalloutOccurrenceIndex(app), savedLayouts: () => layoutSaves };
+	return { view, app, scope, keymap, registry, contents, index: getCalloutOccurrenceIndex(app), savedLayouts: () => layoutSaves };
 }
 
 function action(view: CalloutOccurrencesView, name: string): HTMLButtonElement {
@@ -46,6 +52,29 @@ function action(view: CalloutOccurrencesView, name: string): HTMLButtonElement {
 }
 
 describe("callout occurrence sidebar", () => {
+	it("gives an open format menu the first Escape and restores the host scope on rebuild and close", async () => {
+		const h = harness({ "a.md": "[!note]" });
+		let hostEscapes = 0;
+		h.scope.register([], "Escape", () => { hostEscapes++; return false; });
+		await h.view.onOpen();
+		const dropdown = (): HTMLElement => h.view.contentEl.querySelector<HTMLElement>(".cs-select-dropdown")!;
+		const escape = () => h.keymap.handle({ key: "Escape", preventDefault: () => {}, stopPropagation: () => {} } as KeyboardEvent);
+		dropdownOptions(dropdown());
+		assert.equal(h.keymap.scopes.length, 2);
+		escape();
+		assert.equal(hostEscapes, 0);
+		assert.equal(dropdown().querySelector("input")?.getAttribute("aria-expanded"), "false");
+		assert.equal(h.keymap.scopes.length, 1);
+		escape();
+		assert.equal(hostEscapes, 1);
+		dropdownOptions(dropdown());
+		h.view.refreshLabels();
+		assert.equal(h.keymap.scopes.length, 1);
+		dropdownOptions(dropdown());
+		await h.view.onClose();
+		assert.equal(h.keymap.scopes.length, 1);
+		h.index.dispose();
+	});
 	it("ignores locale refresh before registration without reading the host", () => {
 		const plugin = new Proxy({}, {
 			get: (_target, property) => { throw new Error(`Premature host access: ${String(property)}`); },
@@ -124,10 +153,9 @@ describe("callout occurrence sidebar", () => {
 		assert.deepEqual(Array.from(h.view.contentEl.querySelectorAll(".cs-occurrences-file h3"), (node) => node.textContent), [
 			t("usage.fileCount", { path: "a.md", count: 105 }), t("usage.fileCount", { path: "b.md", count: 2 }),
 		]);
-		const select = h.view.contentEl.querySelector<HTMLSelectElement>("select")!;
-		select.value = "heading";
-		select.focus();
-		(h.view.contentEl as unknown as FakeElement).fire("change", { target: select });
+		const select = h.view.contentEl.querySelector<HTMLElement>(".cs-select-dropdown")!;
+		select.querySelector<HTMLInputElement>("input")!.focus();
+		pickDropdown(select, t("vaultStats.roleHeading"));
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
 		assert.deepEqual(h.view.getState(), { ids: ["note"], role: "heading" });
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
@@ -135,7 +163,7 @@ describe("callout occurrence sidebar", () => {
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-file h3")?.textContent,
 			t("usage.fileCount", { path: "b.md", count: 1 }));
 		assert.equal(h.savedLayouts(), 1);
-		assert.equal(h.view.contentEl.ownerDocument.activeElement, h.view.contentEl.querySelector("select"));
+		assert.equal(h.view.contentEl.ownerDocument.activeElement, select.querySelector("input"));
 		await h.view.setState({ ids: ["note", "note"], role: "regular", occurrences: ["never persist"], totalCount: 999 }, { history: false });
 		assert.deepEqual(h.view.getState(), { ids: ["note"], role: "regular" });
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 100);
@@ -263,7 +291,9 @@ describe("callout occurrence sidebar", () => {
 		await h.view.onOpen();
 		const input = h.view.contentEl.querySelector(".cs-combobox-input") as unknown as FakeElement;
 		assert.equal(input.value, "note");
-		assert.equal(input.getAttribute("aria-label"), t("usage.selectType"));
+		const inputLabel = h.view.contentEl.querySelector(`#${input.getAttribute("aria-labelledby")}`);
+		assert.equal(inputLabel?.textContent, t("usage.selectType"));
+		assert.equal(input.getAttribute("aria-label"), null);
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
 		assert.deepEqual(Array.from(h.view.contentEl.querySelectorAll(".cs-occurrences-metric-value"), (node) => node.textContent), ["4", "4", "1", "1"]);
 		input.fire("focus");
@@ -393,12 +423,12 @@ describe("callout occurrence sidebar", () => {
 		assert.equal(input.value, "emergent");
 		assert.equal(input.getAttribute("aria-expanded"), "true");
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-combobox-option").length, 1, "newly observed types appear in an open search");
-		assert.equal(listenerCount(), before + 1);
+		assert.equal(listenerCount(), before + 2);
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 2);
 		await h.view.onClose();
 		assert.equal(listenerCount(), before);
 		await h.view.onOpen();
-		assert.equal(listenerCount(), before + 1);
+		assert.equal(listenerCount(), before + 2);
 		await h.view.onClose();
 		assert.equal(listenerCount(), before);
 		h.index.dispose();
@@ -453,10 +483,9 @@ describe("callout occurrence sidebar", () => {
 		assert.equal((h.view.contentEl.querySelector(".cs-combobox-input") as HTMLInputElement).value, "unknown type");
 		release(text);
 		await opened;
-		const select = h.view.contentEl.querySelector<HTMLSelectElement>("select")!;
+		const select = h.view.contentEl.querySelector<HTMLElement>(".cs-select-dropdown")!;
 		for (const [role, count] of [["heading", 1], ["regular", 1], ["inline", 1], ["", 3]] as const) {
-			select.value = role;
-			(h.view.contentEl as unknown as FakeElement).fire("change", { target: select });
+			pickDropdown(select, t({ "": "usage.allRoles", regular: "vaultStats.roleBlock", heading: "vaultStats.roleHeading", inline: "vaultStats.roleInline" }[role]));
 			assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, count);
 			assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
 				t("usage.summary", { count, files: 1 }));

@@ -288,6 +288,8 @@ const STICKY_LAYERS: Record<string, string> = {
 		"the icon picker's per-source search bar, inside .icon-picker-content",
 	".cs-quick-insert-toolbar":
 		"the quick-insert window's search + source filter, inside .modal-content",
+	".cs-combobox-group-label":
+		"a dropdown's group heading, inside the .cs-combobox-menu scrollport and bounded by its group",
 	".callout-studio-settings .cs-sticky-heading.setting-item":
 		"the three callout-list section headings, inside .vertical-tab-content — " +
 		"the settings tab is its own scroller, and the plugin renders straight into it",
@@ -311,7 +313,7 @@ const stickyRules = rules.filter((r) =>
 
 describe("sticky layers", () => {
 	it("found them", () => {
-		assert.ok(stickyRules.length >= 4, `only ${stickyRules.length} found`);
+		assert.ok(stickyRules.length >= 5, `only ${stickyRules.length} found`);
 	});
 
 	it("are exactly the reviewed ones", () => {
@@ -320,6 +322,18 @@ describe("sticky layers", () => {
 			Object.keys(STICKY_LAYERS).sort(),
 			"A new sticky layer has to be added to STICKY_LAYERS with the scroller it sticks inside — " +
 				"the offset it needs depends on that scrollport and on nothing else.",
+		);
+	});
+
+	it("keeps dropdown group headings opaque over their scrolling options", () => {
+		assert.strictEqual(
+			paintOf(ruleFor(".cs-combobox-group-label")),
+			"var(--cs-surface, var(--background-primary))",
+		);
+		assert.strictEqual(
+			valueOf(ruleFor(".cs-combobox-menu:has(.cs-combobox-group)"), "padding-block-start"),
+			"0",
+			"the menu must not leave a strip above its sticky group heading",
 		);
 	});
 
