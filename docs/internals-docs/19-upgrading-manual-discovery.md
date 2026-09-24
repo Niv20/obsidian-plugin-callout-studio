@@ -11,7 +11,9 @@ The released tags did **not** reject newer settings versions. Loading a version-
 file into each historical registry and saving it emits version 4 and drops an
 unclaimed manual fallback row. The forward-version guard appeared after release
 2.12.2. Both devices must be updated before sync/editing resumes; a new plugin
-cannot prevent code on an old device from writing its own file.
+cannot prevent code on an old device from writing its own file. The current
+[compatibility and merge contract](08-settings-sync-and-recovery.md#causal-merge-history-and-integrity)
+is documented separately from these historical release fixtures.
 
 `DeviceLocalStore.archiveLegacyDiscovery(manifest)` runs before settings loading
 can generate fresh CSS. `legacyDiscoveryArchive.ts` writes a recovery-only JSON
@@ -26,7 +28,9 @@ it. `StartupStyleCache.persist` preserves the old CSS while the local marker is
 still v1 or unrecognized. Rendering itself continues. A refused local v2 cleanup
 also keeps that guard active until cleanup later succeeds. Corrupt/unknown local
 data is treated as evidence of a previously used installation, never proof of a
-fresh install whose missing `data.json` can safely be initialized.
+fresh install whose missing `data.json` can safely be initialized. See the
+[current startup decision table](08-settings-sync-and-recovery.md#launch-decision-table)
+for how this evidence affects recovery.
 
 A successful archive is silent in the UI and writes its path to
 `console.debug` for diagnostics. A failed archive remains user-visible because
@@ -38,4 +42,4 @@ ids still present in notes or a theme. Archived CSS is a limited recovery aid,
 not a replacement for lost metadata or a complete settings backup.
 
 ---
-Next chapter: [19-build-test-release.md](19-build-test-release.md)
+Next chapter: [20-build-test-release.md](20-build-test-release.md)

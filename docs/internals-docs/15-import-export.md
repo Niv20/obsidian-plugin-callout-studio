@@ -171,7 +171,7 @@ now-merged-away id, with a one-time notice.
 
 An import that adds callouts also triggers `ensureIconArtworkFor()` for
 every imported icon whose callout doesn't hide it — see
-[Icons § the only repair path](12-icons.md#ensureartworkforicons--the-only-repair-path).
+[Icons § the only repair path](13-icons.md#ensureartworkforicons--the-only-repair-path).
 
 ## Import from Callout Manager
 
@@ -239,7 +239,7 @@ vault (again: nothing exported first, nothing written back), or an
   all libraries this plugin also carries. Pictures the user uploaded into
   Admonition come across into **Your images**
   (`convertAdmonitionImage` — same re-encode-through-canvas pipeline as a
-  fresh upload, see [Icons § Your images](12-icons.md#your-images--the-local-never-downloaded-source)).
+  fresh upload, see [Icons § Your images](13-icons.md#your-images--the-local-never-downloaded-source)).
 - **A missing colour** defaults to `#448aff` (Obsidian's own Note blue) —
   deliberately **not** Admonition's own behaviour of picking a random colour
   per import, which the source comment calls out as "friendly in the moment
@@ -258,4 +258,4 @@ vault (again: nothing exported first, nothing written back), or an
   clobber it.
 
 ---
-Next chapter: [15-settings-ui-and-modals.md](15-settings-ui-and-modals.md)
+Next chapter: [16-settings-ui-and-modals.md](16-settings-ui-and-modals.md)

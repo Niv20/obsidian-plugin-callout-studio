@@ -24,7 +24,7 @@ migration/runtime-refresh."
    `userImages`, `customCommands`), it must also be added to `mergeById`
    handling in the JSON importer
    (`DataManagementSection.processImportedJSON`) — see
-   [Import and export § the three exceptions](14-import-export.md#settings-import-replace-wholesale-except-three-lists-that-merge-by-id).
+   [Import and export § the three exceptions](15-import-export.md#settings-import-replace-wholesale-except-three-lists-that-merge-by-id).
    A brand-new such list needs a fourth stop: register it in `mergeById`'s
    call site the same way the existing three are handled.
 6. Add the UI control in the relevant `src/settings/sections/*.ts` module
@@ -48,7 +48,7 @@ per callout type, which would flood the command palette. The list derives the
 require every id to have a label and implementation. Keep built-in
 `addCommand()` calls in `commands.ts`; a source rule in the test suite flags
 registrations added elsewhere. See
-[Editor integrations § built-in commands](09-editor-integrations.md#built-in-commands-and-availability).
+[Editor integrations § built-in commands](10-editor-integrations.md#built-in-commands-and-availability).
 
 Anything tied to "wrap this callout type" belongs in the **custom command**
 system instead (`CustomCommandManager` — users build these themselves via
@@ -77,7 +77,7 @@ command and any custom command sharing the same operation can't drift apart.
    colours, icon adjustment), add a predicate to
    `src/settings/editor/authoredStyle.ts` and use it from **both**
    `CalloutEditorSave.ts` and the live-preview build path — see
-   [Callout editor § the core tension](13-callout-editor.md#the-core-tension-concrete-form-state-vs-optional-definition-fields).
+   [Callout editor § the core tension](14-callout-editor.md#the-core-tension-concrete-form-state-vs-optional-definition-fields).
    Skipping this reintroduces the exact "opening the editor restyles the
    vault behind the modal" bug class documented there.
 4. If it's `true`-or-absent (not a real boolean), follow the
@@ -120,14 +120,14 @@ command and any custom command sharing the same operation can't drift apart.
    locale files for a routine addition — `t()` already falls back to
    English for any key missing elsewhere, by design.
 2. Wait until the English wording is settled before offering to translate
-   into other locales — see [Localization](16-i18n.md), don't re-translate
+   into other locales — see [Localization](17-i18n.md), don't re-translate
    on every small edit.
 3. `npm run i18n:generate` runs automatically as `prebuild` — you don't need
    to run it by hand, but if you do touch a *non-English* locale file, run
    it and commit the regenerated `locales/*.json` +
    `src/i18n/localeManifest.ts`, or CI's `git diff --exit-code` check fails
-   the build. See [Localization](16-i18n.md) and
-   [Build, test, and release](19-build-test-release.md).
+   the build. See [Localization](17-i18n.md) and
+   [Build, test, and release](20-build-test-release.md).
 4. **Never hardcode UI-facing text.** `tests/repoSourceRules.test.ts`
    ("no hardcoded UI copy") enforces this mechanically — a bare English
    literal handed to a text setter, `Notice`, or `aria-label` fails the
@@ -140,7 +140,7 @@ but specifically through `GlobalStyleSettings` /
 `HeadingFrameStyleSettings` / `InlineFrameStyleSettings` in `src/types.ts`,
 with the merge logic in **`src/utils/globalStyleMerge.ts`** (its own module,
 not `settingsMerge.ts` directly, because this section is deep enough to
-warrant one — see [Colour system](11-color-system.md#globalstylemergets-and-iconadjustts)).
+warrant one — see [Colour system](12-color-system.md#globalstylemergets-and-iconadjustts)).
 The UI lives in `GlobalStyleModal.ts`'s per-role popups, driven by
 `styleControls.ts`'s shared slider/toggle builders. Remember: a new numeric
 style field almost certainly needs a clamp in `clampGlobalStyle`
@@ -159,7 +159,7 @@ to something absurd.
   never mutates), and a single `CalloutRegistry.apply<Name>Import()` method
   that actually mutates, inside one `batch()`. This is what lets the import
   modal show a report **before** anything changes — see
-  [Import and export](14-import-export.md#import-from-callout-manager).
+  [Import and export](15-import-export.md#import-from-callout-manager).
 - **A new export format**: add a row inside `ExportFormatModal`, not a new
   top-level settings-tab row — the project's stated rationale is that a
   second top-level row would leave Import and Export shaped inconsistently.
@@ -183,7 +183,7 @@ step with real consequences if done wrong:
    together — `tests/repoGenerated.test.ts` enforces that the committed
    index files regenerate byte-for-byte from source.
 
-See [Icons § PackDataStore](12-icons.md#packdatastore--bundled-file-download-and-verification)
+See [Icons § PackDataStore](13-icons.md#packdatastore--bundled-file-download-and-verification)
 for why the checksum has to match exactly (a mismatch on disk is treated as
 `"corrupt"` and rejected, not accepted-as-stale the way a locale file is).
 
@@ -195,7 +195,7 @@ for why the checksum has to match exactly (a mismatch on disk is treated as
    `SOURCE_OF_TYPE` (both **total `Record`s**, so a missing entry is a
    compile error, not a silently blank grid).
 3. **`src/icons/packs/<name>.ts`** — implement the `IconPack` interface (see
-   [Icons § the `IconPack` contract](12-icons.md#the-iconpack-contract)).
+   [Icons § the `IconPack` contract](13-icons.md#the-iconpack-contract)).
    Decide `IconPackKind` carefully — it drives the fetch strategy end to
    end.
 4. If it's `bundledRemote`, add its file(s) to `scripts/generate-icon-packs.mjs`
@@ -220,4 +220,4 @@ Before considering a registry-touching change done, verify:
       doesn't itself call `notifyChange()`?
 
 ---
-Next chapter: [22-common-pitfalls.md](22-common-pitfalls.md)
+Next chapter: [23-common-pitfalls.md](23-common-pitfalls.md)

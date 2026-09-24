@@ -54,12 +54,13 @@ one of the ~40 sites below is `debug`, `warn`, or `error`.)
 > the only trace that anything was ever wrong.
 
 > [!IMPORTANT]
-> **`console.error`** — reserved for a genuine, unrecoverable programming
-> defect, not an environmental or network condition. An environmental
-> failure (a vault read error, a download that exhausted every mirror) that
-> gets caught and handled gracefully is a `console.warn` with a `Notice`, not
-> a `console.error` — `console.error` on a recoverable path just misclassifies
-> "the internet is down" as "the code is broken."
+> **`console.error`** — used for programming defects and, in the settings
+> persistence paths, failed primary/checkpoint/recovery operations that block
+> safe saving. Those storage failures can be environmental and recoverable; an
+> error-level log does not prove a programming defect. The
+> [saving status and recovery contract](08-settings-sync-and-recovery.md#saving-status-and-recovery-actions)
+> explains their UI and retry behavior. Fetch/cache failures with an ordinary
+> fallback generally use `console.warn`.
 
 > [!IMPORTANT]
 > **`Notice`** — the only signal an ordinary user ever sees. Raise one
@@ -68,7 +69,7 @@ one of the ~40 sites below is `debug`, `warn`, or `error`.)
 > `console.warn`/`console.error` carrying the raw error for diagnosis — never
 > replace one with the other, and never raise a Notice a user has no way to
 > act on (that's noise, not help). See
-> [Common pitfalls § UI strings that must go through i18n](22-common-pitfalls.md#ui-strings-that-must-go-through-i18n)
+> [Common pitfalls § UI strings that must go through i18n](23-common-pitfalls.md#ui-strings-that-must-go-through-i18n)
 > — every `Notice` string goes through `t()`, mechanically enforced.
 
 ## Full catalog
@@ -100,8 +101,11 @@ once dropping it would be news rather than routine. See
 
 The single discovery button reports errors through `console.error` and
 `manualDiscovery.failed`, and only reports added rows after a successful save.
-External adoption announces a recovery backup using `notice.settingsBackupSaved`;
-a failed required backup uses `notice.settingsBackupFailed` and defers adoption.
+A successful adoption backup logs its path with `console.debug`. A failed required
+backup sets the writer's `backup` status and uses the shared saving reporter;
+it does not emit a separate success popup per backup. See
+[Saving status and recovery actions](08-settings-sync-and-recovery.md#saving-status-and-recovery-actions)
+for the status, deduplication and retry contract.
 There are no automatic scan or prune logs.
 
 ### Icon pack and webfont pipeline — `console.warn`
@@ -110,7 +114,7 @@ Network fetch, disk cache, and integrity verification for icon packs and
 Material Symbols webfonts (`IconFetchManager`, `PackDataStore`,
 `materialFontStore`, `IconService`, `packs/materialFont.ts`). Every warn here
 sits behind an existing `Notice`, a retry UI, or an automatic self-heal — see
-[Icons](12-icons.md).
+[Icons](13-icons.md).
 
 | File | Function | Fires when |
 | --- | --- | --- |
@@ -137,9 +141,9 @@ sits behind an existing `Notice`, a retry UI, or an automatic self-heal — see
 `LocaleStore`'s download/verify/cache pipeline for the background
 UI-translation fetch — the one network call in this codebase that runs
 without an explicit per-use user action, disclosed for exactly that reason.
-See [Localization § LocaleStore](16-i18n.md#localestore--download-verify-cache)
+See [Localization § LocaleStore](17-i18n.md#localestore--download-verify-cache)
 and
-[§ what happens when a translation download fails](16-i18n.md#what-happens-when-a-translation-download-fails).
+[§ what happens when a translation download fails](17-i18n.md#what-happens-when-a-translation-download-fails).
 
 | File | Function | Fires when |
 | --- | --- | --- |
@@ -166,7 +170,7 @@ and
 
 `LiveCalloutPreview.ts`'s `build()` guards an undocumented internal Obsidian
 API with a working fallback — see
-[Common pitfalls § Obsidian APIs with special lifecycle requirements](22-common-pitfalls.md#obsidian-apis-with-special-lifecycle-requirements).
+[Common pitfalls § Obsidian APIs with special lifecycle requirements](23-common-pitfalls.md#obsidian-apis-with-special-lifecycle-requirements).
 `legacyStartupSnippet.ts` is marked for deletion once vaults finish migrating
 past the file it cleans up — not a candidate for further logging investment.
 
@@ -189,4 +193,4 @@ real bug reports as confusing, or if more than two modules start hand-rolling
 their own ad hoc "should I log this" logic.
 
 ---
-Next chapter: [README.md](README.md)
+Next chapter: [25-privacy-and-permissions.md](25-privacy-and-permissions.md)

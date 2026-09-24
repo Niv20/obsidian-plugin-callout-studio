@@ -63,7 +63,11 @@ export async function loadSettingsInto(
 
 		// Display the durable copy without making it the baseline for a file
 		// that is absent. Confirmed recreation preserves these definitions.
-		await host.settingsWriter.hold(async () => { host.registry.load(missingRecovery); });
+		const recoveryBaseline = missingRecovery && !isFromNewerBuild(missingRecovery) ? structuredClone(missingRecovery) : null;
+		await host.settingsWriter.hold(async () => {
+			host.registry.load(missingRecovery);
+			if (recoveryBaseline) host.settingsWriter.seedRecovery(recoveryBaseline);
+		});
 
 		if (!host.settingsWriter.isDestroyed) watchForLateSettings(host);
 		return { isFreshInstall: false };

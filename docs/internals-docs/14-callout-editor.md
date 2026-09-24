@@ -2,7 +2,7 @@
 
 The edit/create modal consists of
 [`src/settings/CalloutEditor.ts`](../../src/settings/CalloutEditor.ts), an explicit
-exception to the [source file size limit](19-build-test-release.md#source-file-size),
+exception to the [source file size limit](20-build-test-release.md#source-file-size),
 plus its focused helper modules under `src/settings/editor/`. This is the most
 state-heavy UI in the plugin, and understanding *why* is the point of this
 document: a `CalloutDefinition` distinguishes "the user picked white" from
@@ -24,7 +24,7 @@ the real definition:
 
 But on a `CalloutDefinition`, **absence is meaningful**: no background means
 Obsidian's own translucent fill keeps painting (the nesting invariant — see
-[Colour system](11-color-system.md)); no text colour means the theme's
+[Colour system](12-color-system.md)); no text colour means the theme's
 `--text-normal` keeps winning; no icon adjustment means the default
 positioning. Writing a *default the user never actually picked* back onto the
 definition would silently pin every built-in the user merely opened to a hex
@@ -54,7 +54,7 @@ also flipped `isUnmodifiedBuiltIn`.
 
 For the background specifically, `hasAuthoredBackground` doesn't compare
 against one fixed tint strength — it calls `derivedBgAmount()` (see
-[Colour system](11-color-system.md)) to check whether the current background
+[Colour system](12-color-system.md)) to check whether the current background
 **solves** as *some* tint strength of the current accent, because the
 palette editor's intensity slider produces tints at any strength between
 `MIN_BG_COLOR_AMOUNT` and `MAX_BG_COLOR_AMOUNT`.
@@ -164,7 +164,7 @@ Two layers now, and only the first is a guarantee:
    [`editor/contextmenu/readOnlyPreview.ts`](../../src/editor/contextmenu/readOnlyPreview.ts)
    removes the editing-only sections so the menu stops *offering* commands
    whose only remaining effect is a notice. See
-   [Editor integrations](09-editor-integrations.md#the-context-menu-inside-a-read-only-preview).
+   [Editor integrations](10-editor-integrations.md#the-context-menu-inside-a-read-only-preview).
 
 `EditorView.editable.of(false)` is deliberately **not** used: with no caret
 there is no cursor position, and Live Preview reveals a line's raw markdown by
@@ -299,13 +299,18 @@ clicks are ignored, and newer form edits made during the wait keep the editor
 open. Background saves use `settingsSaveFeedback` to report errors without
 leaking an unhandled promise rejection; awaiting callers still receive failure.
 
-The persistent saving banner displays the writer's specific failure reason.
-Its explicit recovery action keeps the form and editor ownership in place while
-allowing a guarded external adoption. Preview writes pause during saving/recovery.
-After recovery the user reviews the unchanged form and saves again. Unfinished
-note work retains a canonical snapshot of the definition it needs, including
-rename aliases; conflicting changes cannot silently allow that plan to run against
-a different or missing definition. Banner subscriptions are released on close.
+Persistence errors share the writer's English error reporter, including frozen and
+stale saves. A failed required vault rewrite reports once through `EditorSaveSession`
+and explicitly says that the definition was saved while note updates remain pending.
+The low-level required rewrite rejects without issuing a second popup. Successful
+rename/title phases are summarized together only after all note phases finish.
+
+The persistent saving banner is shared with settings. The canonical
+[editor recovery contract](08-settings-sync-and-recovery.md#editors-and-unfinished-note-operations)
+describes guarded adoption, missing-file restoration eligibility, and the distinction
+between a retained form and a durable settings write. Editor-specific note work
+retains the definition snapshot it requires; a conflicting recovery must not run
+that plan against a different definition. Banner subscriptions are released on close.
 
 
 ### The `fallbackBase` mirroring path
@@ -433,14 +438,8 @@ Consistent with the network-disclosure policy stated throughout the codebase:
 opening the picker, browsing, and searching are always offline (the search
 index is bundled). Only pressing **Download** for a `bundledRemote` source,
 or confirming a pick from a `perIconRemote`/`bundledRemote` source, ever
-touches the network. See [Icons](12-icons.md) for the fetch/cache mechanics
+touches the network. See [Icons](13-icons.md) for the fetch/cache mechanics
 this triggers.
 
 ---
-Next chapter: [14-import-export.md](14-import-export.md)
-
-Persistence errors share the writer's English error reporter, including frozen and
-stale saves. A failed required vault rewrite reports once through `EditorSaveSession`
-and explicitly says that the definition was saved while note updates remain pending.
-The low-level required rewrite rejects without issuing a second popup. Successful
-rename/title phases are summarized together only after all note phases finish.
+Next chapter: [15-import-export.md](15-import-export.md)

@@ -50,7 +50,7 @@ explains a lot of otherwise surprising behaviour:
 
 The roles also matter to icon artwork: a pack may draw the same icon differently
 per role (Octicons ships 16px and 24px drawings), so the icon cache is keyed per
-role. See [Icons](12-icons.md).
+role. See [Icons](13-icons.md).
 
 > [!NOTE]
 > `CALLOUT_RENDER_ROLES` (in `src/types.ts`) exists specifically so code that has
@@ -98,7 +98,7 @@ Every path that turns raw markdown into an ID funnels through
 `normalizeCalloutId` / `splitCalloutMetadata` in
 [`src/utils/calloutId.ts`](../../src/utils/calloutId.ts), which is what makes a piped
 ID structurally unreachable by the registry. Full treatment in
-[Callout IDs and normalization](04-data-model.md#callout-ids-and-the-three-normalizers).
+[Callout IDs and normalization](04-data-model.md#callout-ids-and-the-normalizers).
 
 ---
 Next chapter: [02-architecture.md](02-architecture.md)

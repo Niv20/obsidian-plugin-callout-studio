@@ -16,10 +16,10 @@ give it a second place to go stale. If you're looking for that, start there
 instead.
 
 Two chapters also serve readers outside the core contributor audience.
-[17-theme-callout-discovery.md](17-theme-callout-discovery.md) ends with a
+[18-theme-callout-discovery.md](18-theme-callout-discovery.md) ends with a
 compatibility section for **Obsidian theme authors**: which CSS patterns Callout
 Studio reads correctly, which ones hide a theme's callouts from it, and how to
-check a theme against it. [24-privacy-and-permissions.md](24-privacy-and-permissions.md)
+check a theme against it. [25-privacy-and-permissions.md](25-privacy-and-permissions.md)
 is the complete privacy reference for anyone who needs to audit vault access,
 network requests, downloaded assets, and local storage.
 
@@ -27,7 +27,7 @@ It complements, rather than replaces, two other documents already in the
 repo:
 
 - **[`API.md`](../API.md)** — the public plugin API contract for other
-  Obsidian plugins. [20-public-api.md](20-public-api.md) explains how the
+  Obsidian plugins. [21-public-api.md](21-public-api.md) explains how the
   implementation enforces what that document promises.
 - **`AGENTS.md`** (repo root) — a short entry point for AI coding assistants:
   a one-paragraph project summary, essential project-level conventions, and
@@ -38,7 +38,7 @@ repo:
 ## Reading order
 
 There isn't one required order, but if you're new to the codebase, reading
-**01 through 09 in sequence** gives you the whole mental model: what the
+**01 through 10 in sequence** gives you the whole mental model: what the
 plugin is, how its pieces fit together, what happens when it loads, how data
 is shaped and stored, and how a callout actually gets from a definition to
 pixels on screen. After that, the remaining files are largely independent
@@ -57,9 +57,10 @@ mutate → CSS → repaint loop everything else builds on.
 | [04-data-model.md](04-data-model.md) | Every persisted type (`CalloutDefinition`, `PluginSettings`, …) and the callout-id normalization rules. |
 | [05-callout-registry.md](05-callout-registry.md) | The single source of truth: CRUD, load-time migrations, the built-in-deference mechanism, the live-preview slot. |
 | [06-css-generation.md](06-css-generation.md) | How the registry becomes a stylesheet: the injector's two write targets, icon painting, theme ownership and selector escaping. |
-| [07-persistence-and-caching.md](07-persistence-and-caching.md) | What's saved to `data.json`, what's cached on disk, what's runtime-only, and the startup CSS snapshot. |
-| [08-render-roles.md](08-render-roles.md) | The token grammar, and how heading/inline callouts render in Live Preview and Reading view. |
-| [09-editor-integrations.md](09-editor-integrations.md) | Autocomplete, wrap/unwrap, built-in command registration and availability, custom commands, the right-click menu, Outline/link cleanup. |
+| [07-persistence-and-caching.md](07-persistence-and-caching.md) | What is stored in `data.json`, device storage and vault caches; what is runtime-only; the startup CSS snapshot. |
+| [08-settings-sync-and-recovery.md](08-settings-sync-and-recovery.md) | Saving and sync authorization, the recovery incident and repair, causal merges, verified writes, checkpoints and backups, recovery UI, provider differences, and edge cases. |
+| [09-render-roles.md](09-render-roles.md) | The token grammar, and how heading/inline callouts render in Live Preview and Reading view. |
+| [10-editor-integrations.md](10-editor-integrations.md) | Autocomplete, wrap/unwrap, built-in command registration and availability, custom commands, the right-click menu, Outline/link cleanup. |
 
 ## Subsystems — reference, as needed
 
@@ -68,15 +69,15 @@ covering whatever you're touching.
 
 | File | What it covers |
 | --- | --- |
-| [10-vault-discovery.md](10-vault-discovery.md) | Manual discovery, durable results, statistics, replace-in-vault, and the delete flow. |
-| [11-color-system.md](11-color-system.md) | The translucent-tint nesting invariant, palette derivation and baking, the Obsidian 1.13 colour-format split. |
-| [12-icons.md](12-icons.md) | The icon-pack model, fetch/cache/verify pipeline, rendering, SVG sanitization, and "Your images." |
-| [13-callout-editor.md](13-callout-editor.md) | The edit/create modal: the concrete-form-vs-optional-field tension, the live preview, validation, and save pipeline. |
-| [14-import-export.md](14-import-export.md) | The JSON backup format and validator, the CSS-snippet export, and the Callout Manager / Admonition importers. |
-| [15-settings-ui-and-modals.md](15-settings-ui-and-modals.md) | The settings tab's composition, the shared modal chrome and autofocus, and the individual modals. |
-| [16-i18n.md](16-i18n.md) | How `t()` resolves strings, the locale download/verification pipeline, and the contribution workflow. |
-| [17-theme-callout-discovery.md](17-theme-callout-discovery.md) | How the active theme's callout types are found, read back and represented — and the compatibility guide for **theme authors**. |
-| [18-upgrading-manual-discovery.md](18-upgrading-manual-discovery.md) | Released 2.12.x compatibility, verified one-time recovery archives, and safe removal of legacy local discovery state. |
+| [11-vault-discovery.md](11-vault-discovery.md) | Manual discovery, durable results, statistics, replace-in-vault, and the delete flow. |
+| [12-color-system.md](12-color-system.md) | The translucent-tint nesting invariant, palette derivation and baking, the Obsidian 1.13 colour-format split. |
+| [13-icons.md](13-icons.md) | The icon-pack model, fetch/cache/verify pipeline, rendering, SVG sanitization, and "Your images." |
+| [14-callout-editor.md](14-callout-editor.md) | The edit/create modal: the concrete-form-vs-optional-field tension, the live preview, validation, and save pipeline. |
+| [15-import-export.md](15-import-export.md) | The JSON backup format and validator, the CSS-snippet export, and the Callout Manager / Admonition importers. |
+| [16-settings-ui-and-modals.md](16-settings-ui-and-modals.md) | The settings tab's composition, the shared modal chrome and autofocus, and the individual modals. |
+| [17-i18n.md](17-i18n.md) | How `t()` resolves strings, the locale download/verification pipeline, and the contribution workflow. |
+| [18-theme-callout-discovery.md](18-theme-callout-discovery.md) | How the active theme's callout types are found, read back and represented — and the compatibility guide for **theme authors**. |
+| [19-upgrading-manual-discovery.md](19-upgrading-manual-discovery.md) | Released 2.12.x compatibility, verified one-time recovery archives, and safe removal of legacy local discovery state. |
 
 ## Shipping a change
 
@@ -86,12 +87,12 @@ codebase has already been bitten by once.
 
 | File | What it covers |
 | --- | --- |
-| [19-build-test-release.md](19-build-test-release.md) | Build tooling, the test harness and what it can't see, CI, and the release process. |
-| [20-public-api.md](20-public-api.md) | How the read-only public API is actually enforced — real privacy, frozen copies, the committed-state guarantee. |
-| [21-extending.md](21-extending.md) | Step-by-step checklists for adding a setting, a command, a callout field, a menu item, an icon source, and more. |
-| [22-common-pitfalls.md](22-common-pitfalls.md) | Concentrated warnings: state sync, id normalization, helpers that must always be used, mobile quirks, backward compatibility. |
-| [23-logging-and-diagnostics.md](23-logging-and-diagnostics.md) | Every `console.debug`/`warn`/`error` call site, the policy behind which one and when to use a `Notice` instead, and why there's no centralized logger. |
-| [24-privacy-and-permissions.md](24-privacy-and-permissions.md) | Vault access, network requests, downloaded assets, local storage, and the privacy boundaries around each one. |
+| [20-build-test-release.md](20-build-test-release.md) | Build tooling, the test harness and what it can't see, CI, and the release process. |
+| [21-public-api.md](21-public-api.md) | How the read-only public API is actually enforced — real privacy, frozen copies, the committed-state guarantee. |
+| [22-extending.md](22-extending.md) | Step-by-step checklists for adding a setting, a command, a callout field, a menu item, an icon source, and more. |
+| [23-common-pitfalls.md](23-common-pitfalls.md) | Concentrated warnings: state sync, id normalization, helpers that must always be used, mobile quirks, backward compatibility. |
+| [24-logging-and-diagnostics.md](24-logging-and-diagnostics.md) | Every `console.debug`/`warn`/`error` call site, the policy behind which one and when to use a `Notice` instead, and why there's no centralized logger. |
+| [25-privacy-and-permissions.md](25-privacy-and-permissions.md) | Vault access, network requests, downloaded assets, local storage, and the privacy boundaries around each one. |
 
 Opening a PR? [`CONTRIBUTING.md`](../CONTRIBUTING.md) has the
 process — fork, branch, lint, test, commit style. This guide is what to read

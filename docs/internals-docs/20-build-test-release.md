@@ -115,7 +115,7 @@ check (not exhaustive — see each file directly for the full list):
 | File | Enforces |
 | --- | --- |
 | `repoSourceRules.test.ts` | No bare English UI-copy literal handed to a text setter or `Notice`; every `workspace`/`vault`/`metadataCache` listener is `registerEvent`'d or `offref`'d; nothing listens on `document`/`window` without an unregister; no interval outside `registerInterval`; no `any` without an explicit ESLint-disable; `main.ts` exists; the network surface is exactly what the README discloses; **handwritten source files stay at or below 500 nonblank, non-comment-only lines unless their exact path is explicitly exempted** |
-| `repoStyles.test.ts` | Every CSS custom property read with a fallback has a writer somewhere in `src/`; every class the code applies has a matching rule in `styles.css` and vice versa; no rule scoped to `.cs-modal` paints a raw `--background-primary` (see [Settings UI § surface tokens](15-settings-ui-and-modals.md)) |
+| `repoStyles.test.ts` | Every CSS custom property read with a fallback has a writer somewhere in `src/`; every class the code applies has a matching rule in `styles.css` and vice versa; no rule scoped to `.cs-modal` paints a raw `--background-primary` (see [Settings UI § surface tokens](16-settings-ui-and-modals.md)) |
 | `repoGenerated.test.ts` | `locales/*.json` and `src/icons/data/*` regenerate **byte-for-byte** identical to what's committed |
 | `repoRelease.test.ts` | `manifest.json`/`package.json`/`versions.json` agree on one version; the plugin id can never change; `manifest.json` has every required field and no unknown ones; built-in command ids match the released set; bundle-size limit is still declared where CI reads it |
 | `repoTestGate.test.ts` | `scripts/tsconfig.json` includes `tests/`; the build actually runs that typecheck; no test file uses top-level `await`; test setup/teardown hooks run in the right order |
@@ -180,7 +180,7 @@ mixing them up is a real trap:
   `src/icons/data/packManifest.ts` — jsDelivr caches a tag's contents
   permanently, so re-pushing to the *same* tag would not actually refresh
   anything a user's cached copy sees. See
-  [Adding or modifying features](21-extending.md#refreshing-icon-pack-artwork).
+  [Adding or modifying features](22-extending.md#refreshing-icon-pack-artwork).
 
 ## CI
 
@@ -277,4 +277,4 @@ root for their conventional consumers. `styles.css` remains the maintained
 root stylesheet and the release artifact.
 
 ---
-Next chapter: [20-public-api.md](20-public-api.md)
+Next chapter: [21-public-api.md](21-public-api.md)

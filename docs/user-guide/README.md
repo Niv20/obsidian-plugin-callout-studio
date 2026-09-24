@@ -13,13 +13,14 @@ There's a lot to explore in Callout Studio — from callout types and custom col
 | [07 - Global styling](07-global-styling.md)                                | Set shared borders, corners, spacing, alignment, and scale.                        |
 | [08 - The right-click menu](08-the-right-click-menu.md)                    | Use and customize context-menu actions for each callout format.                    |
 | [09 - Commands & hotkeys](09-commands-and-hotkeys.md)                      | Wrap and unwrap content, create commands, and assign shortcuts.                    |
-| [10 - Import, export & sharing](10-import-export-and-sharing.md)           | Migrate from other plugins, back up your setup, or export CSS.                     |
+| [10 - Import, export & sharing](10-import-export-and-sharing.md)           | Migrate from other plugins, import a backup, or export CSS.                        |
 | [11 - Languages](11-languages.md)                                          | Follow Obsidian's language or choose another interface language.                   |
 | [12 - Vault insights](12-vault-insights.md)                                | Review callout usage across your notes.                                            |
 | [13 - Danger zone](13-danger-zone.md)                                      | Convert heading and inline callouts to standard Markdown, or reset Callout Studio. |
 | [14 - Quick insert](14-quick-insert.md)                                    | Insert and edit block callouts from the ribbon.                                    |
 | [15 - Advanced heading callouts](15-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                |
 | [16 - Theme integration](16-theme-integration.md)                          | Understand which callouts your theme controls.                                     |
+| [17 - Syncing & backups](17-syncing-and-backups.md)                        | Back up your setup, recover paused saving, and use synced vaults safely.           |
 
 ---
 

@@ -23,15 +23,24 @@ that feels like it "should just work."
 > on the standard `onChange → inject() → refreshAllCalloutEditors()` chain,
 > or — if you bypassed the normal inject path (a preview, for instance) —
 > call `refreshAllCalloutEditors()` explicitly. See
-> [Render roles § refreshAllCalloutEditors](08-render-roles.md#refreshallcallouteditors--why-registry-edits-need-an-explicit-nudge).
+> [Render roles § refreshAllCalloutEditors](09-render-roles.md#refreshallcallouteditors--why-registry-edits-need-an-explicit-nudge).
 
 > [!WARNING]
 > **`cleanupUnusedIconSvgs()` does not call `notifyChange()`.** It mutates
 > `registry.iconSvgCache` directly. Any caller that runs it must
 > **explicitly** `await saveSettings()` afterward, or the trimmed cache only
 > reaches disk whenever some unrelated future save happens to occur. See the
-> delete flow in [Vault discovery](10-vault-discovery.md#delete-flow) for
+> delete flow in [Vault discovery](11-vault-discovery.md#delete-flow) for
 > the canonical example.
+
+## Settings-file synchronization
+
+Do not clear the accepted file baseline to force a write, treat a fulfilled
+`save()` promise as proof of persistence, or interpret a missing file as a fresh
+installation without checking prior-use evidence. The exact rules and failure
+matrix live in
+[Settings saving, synchronization, and recovery](08-settings-sync-and-recovery.md).
+The state-synchronization warnings above concern repainting, not cloud transport.
 
 ## IDs that require normalization
 
@@ -74,13 +83,13 @@ that feels like it "should just work."
 > (`plugin.api`).** Everything it returns is frozen at every depth
 > specifically to prevent this — but if you're the one *implementing* a new
 > API mapper, remember to freeze it too. See
-> [Public API § nothing live escapes](20-public-api.md#nothing-live-escapes).
+> [Public API § nothing live escapes](21-public-api.md#nothing-live-escapes).
 
 ## Helpers that must always be used
 
 - **`resolveIconAdjust(def, role)`** — never read `iconAdjust` or the legacy
   flat trio directly; the two-layer fallback is required for old data to
-  keep rendering correctly. See [Colour system](11-color-system.md#globalstylemergets-and-iconadjustts).
+  keep rendering correctly. See [Colour system](12-color-system.md#globalstylemergets-and-iconadjustts).
 - **`resolveCalloutDef(registry, rawId)`** (`renderShared.ts`) — the one
   resolution ladder every renderer must use; `CSSInjector` mirrors it
   independently and the two must never diverge, or DOM icons and generated
@@ -95,7 +104,7 @@ that feels like it "should just work."
   sweep, which targets these exact classes.
 - **`renderIconInto`** (`renderIcon.ts`) — the only "icon → DOM" painter.
   Never reach into `iconSvgCache` directly from a new renderer; go through
-  an `IconResolver`. See [Icons § renderIcon.ts](12-icons.md#rendericonts--the-only-icon--dom-painter).
+  an `IconResolver`. See [Icons § renderIcon.ts](13-icons.md#rendericonts--the-only-icon--dom-painter).
 
 ## Registration/unregistration pairs
 
@@ -124,7 +133,7 @@ Every user-facing string goes through `t()`. This is enforced mechanically
 literal," "no Notice is raised with a bare literal," "aria-labels go through
 t() too"). A string interpolated into a translated value must use the
 **object** form (`t(key, {name: value})`), never manual string
-concatenation — see [Localization § t()](16-i18n.md#t--the-translation-function)
+concatenation — see [Localization § t()](17-i18n.md#t--the-translation-function)
 for why a plain string `.replace()` on user-typed content is a real bug, not
 just a style nit.
 
@@ -137,7 +146,7 @@ sufficient**. Common cases that also need an explicit follow-up call:
 | --- | --- |
 | Anything affecting generated CSS | `cssInjector.inject()` (usually automatic via `onChange`, but a **preview-only** or **out-of-band** mutation must call it explicitly with `inject(false)`) |
 | `headingCallouts.enabled` / `inlineCallouts.enabled` toggled | `plugin.refreshRenderModes()` — re-runs reading-view post-processors so already-baked DOM is added/stripped immediately, not just on next file open |
-| Language changed, or a locale download lands mid-session | `plugin.applyLocaleChange()` — re-renders the three surfaces that snapshot translated text (see [Localization § three surfaces](16-i18n.md#three-surfaces-that-snapshot-translated-text-and-need-a-manual-refresh)) |
+| Language changed, or a locale download lands mid-session | `plugin.applyLocaleChange()` — re-renders the three surfaces that snapshot translated text (see [Localization § three surfaces](17-i18n.md#surfaces-that-snapshot-translated-text-and-need-a-manual-refresh)) |
 | Fallback callout id changed | `restyleUncustomizedFallbackRows()` before saving, or every uncustomized fallback row keeps its stale look until some unrelated edit happens to trigger a re-mirror |
 
 ## CSS ordering/specificity assumptions
@@ -157,7 +166,7 @@ sufficient**. Common cases that also need an explicit follow-up call:
   it to `var(--callout-info)` explicitly instead of omitting it would work
   visually but would defeat the actual mechanism a theme relies on to
   override core's own rule at its own specificity. See
-  [Colour system § built-ins](11-color-system.md#built-ins-no---callout-color-at-all-until-edited).
+  [Colour system § built-ins](12-color-system.md#built-ins-no---callout-color-at-all-until-edited).
 - **`this.sel(id)` inside `CSSInjector` is not weight 1 — it is the *studio*
   weight**, set from the active theme's heaviest `!important` callout selector
   at the top of `generateCalloutCSS`. It is 5 under AnuPpuccin, where a single
@@ -177,7 +186,7 @@ sufficient**. Common cases that also need an explicit follow-up call:
   total: `--cs-accent-theme` is registered `<color>`, so the wrong wrapper falls
   back to grey and takes every heading bar, inline pill, ref token and icon tint
   on that built-in with it. See
-  [Colour system § declared is per mode](11-color-system.md#declared-is-per-mode-and-three-ways-a-value-can-hide).
+  [Colour system § declared is per mode](12-color-system.md#declared-is-per-mode-and-three-ways-a-value-can-hide).
 - **A theme declaration behind a body class you cannot see is not evidence.**
   `accentDialectScan` ignores a `--callout-<type>` declared only under a theme
   option (Aura's `.aura-origin-layout`, TerraFlow's `.academia-theme`) for the
@@ -206,7 +215,7 @@ sufficient**. Common cases that also need an explicit follow-up call:
   pane, assume a theme has an opinion about the same property, check the
   weight, and ask whether being *under* the theme would do the job instead of
   being above it. See
-  [Settings UI § the three sections pin their headings](15-settings-ui-and-modals.md#the-three-sections-pin-their-headings)
+  [Settings UI § the three sections pin their headings](16-settings-ui-and-modals.md#the-three-sections-pin-their-headings)
   and sections 165 and 166 of `tests/modalBodyLayers.test.ts`.
 - **The spelling of `--callout-color` is a fact about the active *theme*, not
   about the running Obsidian version.** `requireApiVersion("1.13.0")` answers
@@ -214,7 +223,7 @@ sufficient**. Common cases that also need an explicit follow-up call:
   `rgba(var(--callout-color), …)` and a hex makes every such declaration invalid
   at computed-value time — it unsets silently, so the symptom is a missing
   background or a vanished side accent, never an error. See
-  [Colour system § accent dialect](11-color-system.md#accent-dialect-version-drift-and-theme-drift).
+  [Colour system § accent dialect](12-color-system.md#accent-dialect-version-drift-and-theme-drift).
 
 ## Style Settings changes nothing you can hear
 
@@ -270,11 +279,11 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
 - **The Live Preview mousedown-freeze window is much wider on mobile** —
   core arms the same flag on every caret move with a 700ms debounce, not
   just on an actual mouse hold. See
-  [Render roles § the raw-syntax reveal](08-render-roles.md#the-raw-syntax-reveal-and-the-mousedown-freeze).
+  [Render roles § the raw-syntax reveal](09-render-roles.md#the-raw-syntax-reveal-and-the-mousedown-freeze).
 - **`.is-mobile.theme-dark` repoints `--modal-background` onto
   `--background-secondary`** — this is precisely what broke the modal
   surface tokens once and required the `color-mix()`-based re-derivation.
-  See [Settings UI § two theme-aware surface tokens](15-settings-ui-and-modals.md#two-theme-aware-surface-tokens).
+  See [Settings UI § two theme-aware surface tokens](16-settings-ui-and-modals.md#two-theme-aware-surface-tokens).
 - **`isDesktopOnly` is `false`** — any new feature must avoid Node/Electron-
   only APIs. The startup CSS-snapshot cache exists specifically to soften
   slow mobile launches (see [Persistence and caching](07-persistence-and-caching.md#the-startup-css-snapshot)).
@@ -284,7 +293,7 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   user taps the field. Desktop and mobile are deliberately inconsistent:
   the 400ms `scrollTop` hold that once kept them the same read as a clunky
   lurch and was removed, not tuned. Don't reinstate it — see
-  [Settings UI § where the cursor lands](15-settings-ui-and-modals.md#where-the-cursor-lands-when-a-window-opens).
+  [Settings UI § where the cursor lands](16-settings-ui-and-modals.md#where-the-cursor-lands-when-a-window-opens).
   The search windows (quick-insert, replace-callout) still focus on every
   device; they exist to be typed into.
 
@@ -311,7 +320,7 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   API surface (`registry.exportToJSON()`), not just an internal format.
 - **A settings-level list that merges by id must actually merge, never
   `Object.assign`** — see
-  [Import and export § the three exceptions](14-import-export.md#settings-import-replace-wholesale-except-three-lists-that-merge-by-id).
+  [Import and export § the three exceptions](15-import-export.md#settings-import-replace-wholesale-except-three-lists-that-merge-by-id).
   It's easy to add a new list field and forget this step, and the failure
   mode (silent data loss on import) is severe and easy to miss in testing.
 
@@ -333,4 +342,4 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   cycle even with no real change.
 
 ---
-Next chapter: [23-logging-and-diagnostics.md](23-logging-and-diagnostics.md)
+Next chapter: [24-logging-and-diagnostics.md](24-logging-and-diagnostics.md)

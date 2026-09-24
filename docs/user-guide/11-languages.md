@@ -20,7 +20,7 @@ Non-English translations were created with AI assistance, so an awkward phrase o
 - Read the contribution guide before submitting a pull request.
 - Send an email describing the language and the text that should change.
 
-See [Privacy & permissions](../internals-docs/24-privacy-and-permissions.md) for how translation files are downloaded and stored.
+See [Privacy & permissions](../internals-docs/25-privacy-and-permissions.md) for how translation files are downloaded and stored.
 
 ---
 **Next:** [Vault insights](12-vault-insights.md)

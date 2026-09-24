@@ -204,4 +204,4 @@ must not move in lockstep with it. The mapper functions in `PluginAPI.ts`
 are the seam between the two.
 
 ---
-Next chapter: [21-extending.md](21-extending.md)
+Next chapter: [22-extending.md](22-extending.md)

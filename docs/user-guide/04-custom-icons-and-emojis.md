@@ -32,7 +32,7 @@ To delete an uploaded icon, hover over its tile and click the **X**. If a callou
 
 For SVG files, choose whether the artwork keeps its original colors or inherits the callout color. Inheriting the callout color works especially well for flat icons and monochrome logos. Raster images keep their original colors.
 
-Uploaded files remain on your device and are stored with the plugin settings. See [Privacy & permissions](../internals-docs/24-privacy-and-permissions.md) for the storage and download details.
+Uploaded files remain on your device and are stored with the plugin settings. See [Privacy & permissions](../internals-docs/25-privacy-and-permissions.md) for the storage and download details.
 
 ## Adjust or remove the icon
 

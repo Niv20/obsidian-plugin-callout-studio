@@ -2,8 +2,9 @@ import { retryMissingSettingsRecovery } from "./missingSettingsRecovery";
 import { isFromNewerBuild } from "./foreignFields";
 import type { PluginData } from "../types";
 import { reportSettingsSaveFailure } from "./settingsSaveReporter";
+import { settingsWriteReason } from "./settingsSaveStatus";
 import { canonical } from "./syncTree";
-import { Notice } from "obsidian";
+import { Notice, normalizePath } from "obsidian";
 import { t } from "../i18n";
 import { readSettledSettingsFile } from "./settingsSettledRead";
 import { tryAdoptExternalSettings, type ExternalReloadHost, type SettingsAdoptionOptions } from "./settingsAdopt";
@@ -14,7 +15,13 @@ import { writeSettingsBackup } from "./settingsBackup";
 export async function retrySettingsRecovery(host: ExternalReloadHost, options: SettingsAdoptionOptions = {}): Promise<boolean> {
 	try {
 		const result = await tryAdoptExternalSettings(host, { ...options, force: true });
-		if (result !== "applied" || host.settingsWriter.isFrozen) {
+		// A first-ever write may have failed before creating data.json. Its
+		// explicit retry still has ordinary fresh-install write authority;
+		// an untouched fresh install or a lost prior file does not gain it here.
+		const retryInitialWrite = result === "unavailable" && !host.settingsWriter.isFrozen &&
+			!host.settingsWriter.hasRecoveryState && !host.localState.hasInitialized &&
+			["write", "write-permission", "write-space", "recovery-write"].includes(host.settingsWriter.status.failure ?? "");
+		if ((result !== "applied" && !retryInitialWrite) || host.settingsWriter.isFrozen) {
 			if (result === "unavailable" && host.settingsWriter.status.failure === "missing") await retryMissingSettingsRecovery(host, options);
 			return false;
 		}
@@ -32,7 +39,12 @@ export async function retrySettingsRecovery(host: ExternalReloadHost, options: S
 export async function startFreshSettings(host: ExternalReloadHost): Promise<boolean> {
 	const writer = host.settingsWriter;
 	if (writer.status.frozenReason !== "missing" || registryIsOwned(host)) return false;
-	const cancelled = () => writer.isDestroyed || registryIsOwned(host) || writer.status.frozenReason !== "missing";
+	const snapshot = canonical(host.registry.toSaveData());
+	// The writer owns serialization during restoration, so its own busy flag
+	// is deliberately excluded from this snapshot/ownership check.
+	const isCurrent = () => !writer.isDestroyed && !host.settingsEditOpen && !host.registry.hasPreviewDefinition() &&
+		writer.status.frozenReason === "missing" && canonical(host.registry.toSaveData()) === snapshot;
+	const cancelled = () => !isCurrent() || writer.busy;
 	const read = await readSettledSettingsFile(host, { isCancelled: cancelled });
 	if (cancelled()) return false;
 	if (read.kind !== "absent") {
@@ -45,37 +57,46 @@ export async function startFreshSettings(host: ExternalReloadHost): Promise<bool
 		return false;
 	}
 	try {
-		// Resetting must not erase the last independent recovery copy. Keep it
-		// in a vault backup before the writer checkpoints the new settings.
-		const saved = await writer.recoveryCopy() as Partial<PluginData> | null;
-		if (isFromNewerBuild(saved)) { writer.freeze("newer-version"); return false; }
-		if (saved) {
+		const restored = await writer.restoreMissing(isCurrent, async () => {
+			// Preserve the independent recovery copy before checkpointing the
+			// displayed settings. The writer stays frozen and busy throughout.
+			const saved = await writer.recoveryCopy() as Partial<PluginData> | null;
+			if (!isCurrent()) return false;
+			if (isFromNewerBuild(saved)) { writer.freeze("newer-version"); return false; }
+			// A remote uninstall may have removed the whole plugin directory.
+			// Only this explicit action recreates it; a missing checkpoint must
+			// not make success depend on a backup's incidental mkdir.
+			const dir = normalizePath(host.manifest.dir ?? `${host.app.vault.configDir}/plugins/${host.manifest.id}`);
 			try {
-				const path = await writeSettingsBackup(host, saved);
-				if (!path || canonical(JSON.parse(await host.app.vault.adapter.read(path))) !== canonical(saved)) {
-					writer.status.fail("backup"); return false;
-				}
+				if (!await host.app.vault.adapter.exists(dir)) await host.app.vault.adapter.mkdir(dir);
 			} catch (error) {
-				writer.status.fail("backup");
-				console.error("[callout-studio] cannot verify recovery backup before reset", error);
+				writer.status.fail(settingsWriteReason(error));
+				console.error("[callout-studio] could not prepare settings recovery directory", error);
 				return false;
 			}
-		}
-		if (cancelled()) return false;
-		// The writer checks the file again, including after its checkpoint.
-		writer.thaw();
+			if (!isCurrent()) return false;
+			if (saved) {
+				try {
+					const path = await writeSettingsBackup(host, saved);
+					if (!path || canonical(JSON.parse(await host.app.vault.adapter.read(path))) !== canonical(saved)) {
+						writer.status.fail("backup"); return false;
+					}
+				} catch (error) {
+					writer.status.fail("backup");
+					console.error("[callout-studio] cannot verify settings recovery backup", error);
+					return false;
+				}
+			}
+			return isCurrent();
+		});
+		if (!restored || writer.isDestroyed) return false;
+		// A started adapter write cannot be cancelled. If settings changed
+		// during it, save that follow-up through the ordinary freshness guard.
 		await host.saveSettings();
-		const savedNow = !writer.isDestroyed && !writer.isFrozen &&
+		return !writer.isDestroyed && !writer.isFrozen &&
 			writer.matchesLastWrite(JSON.stringify(host.registry.toSaveData()), true);
-		if (!savedNow && !writer.isDestroyed) writer.freeze("missing");
-		return savedNow;
 	} catch (error) {
-		if (!writer.isDestroyed) {
-			const reason = writer.status.reason;
-			writer.freeze("missing");
-			if (reason) writer.status.fail(reason);
-		}
-		console.error("[callout-studio] could not create replacement settings", error);
+		console.error("[callout-studio] could not restore missing settings", error);
 		return false;
 	}
 }

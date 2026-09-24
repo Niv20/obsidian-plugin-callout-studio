@@ -10,10 +10,10 @@ description: >-
 # Localization change safety
 
 Read
-[`docs/internals-docs/16-i18n.md`](../../../docs/internals-docs/16-i18n.md)
+[`docs/internals-docs/17-i18n.md`](../../../docs/internals-docs/17-i18n.md)
 before changing locale data. For generated files and CI behavior, also read the
 localization and CI sections of
-[`docs/internals-docs/19-build-test-release.md`](../../../docs/internals-docs/19-build-test-release.md).
+[`docs/internals-docs/20-build-test-release.md`](../../../docs/internals-docs/20-build-test-release.md).
 
 ## Establish the text contract first
 

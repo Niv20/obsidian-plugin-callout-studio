@@ -42,7 +42,7 @@ lines. `tests/repoSourceRules.test.ts` fails above that limit unless the exact
 repository-relative path appears in `scripts/source-size-exceptions.json`.
 Exceptions have no per-file cap or size to maintain. Data and generated trees
 are outside the check's scope. Split files by responsibility when that improves
-the code; see [Source file size](19-build-test-release.md#source-file-size) for
+the code; see [Source file size](20-build-test-release.md#source-file-size) for
 the full policy.
 
 ## Who owns state, who operates on it
@@ -52,6 +52,8 @@ Only a handful of classes actually **own** state:
 | Owner | State | Persisted? |
 | --- | --- | --- |
 | `CalloutRegistry` | `Map<id, CalloutDefinition>`, `PluginSettings`, `iconSvgCache` | Yes, via `toSaveData()` → `data.json` |
+| `SettingsWriter` / `SettingsSync` | Accepted file baseline, causal history and write/recovery status | Baseline/status are session state; sync history is carried in settings data. See [state distinctions](08-settings-sync-and-recovery.md#safety-rules-and-the-different-kinds-of-state). |
+| `SettingsCheckpoint` / `DeviceLocalStore` | Independent recovery snapshot and device UI/prior-use markers | Device-local IndexedDB and vault-scoped localStorage, respectively; neither is the primary settings file. |
 | `CalloutOccurrenceIndex` | Per-file source occurrences, invalidation versions and read failures | No — session memory only, never saved definitions |
 | `ManualCalloutDiscovery` | one in-flight manual scan | No — only its successfully saved definitions persist |
 | `CSSInjector` | the adopted stylesheet, the `<style>` element, `lastCssText` | No (but mirrors to `StartupStyleCache` → localStorage) |
@@ -59,12 +61,12 @@ Only a handful of classes actually **own** state:
 | `LocaleStore` | per-locale load state, in-flight downloads | Locale files live on disk under `translations/`; the *table* is registered into `i18n/index.ts`'s module-level map (runtime only) |
 | `CustomCommandManager` | nothing of its own — re-derives from `settings.customCommands` on every registry change | `settings.customCommands` is persisted by the registry |
 
-Everything else — `renderShared.ts`, the icon renderer, the settings sections,
-the modals — **reads** the registry and **calls its mutators**; none of it holds
-authoritative state of its own. This matters for a simple reason: if you find
-yourself caching a `CalloutDefinition` anywhere outside the registry's map, you
+Rendering and settings consumers — `renderShared.ts`, the icon renderer, the
+settings sections and the modals — **read** the registry and **call its mutators**.
+An editor can own an unsaved draft; it is not another source of committed
+definitions. If you cache a committed `CalloutDefinition` outside the registry's map, you
 are one edit away from it going stale. The public API guards against exactly this
-(see [Public API](20-public-api.md)) by handing out frozen copies rather than
+(see [Public API](21-public-api.md)) by handing out frozen copies rather than
 live references.
 
 ## The data-flow loop
@@ -101,7 +103,7 @@ settings snapshot the save writes, rather than racing it.
 > tell a rename from a delete-then-create anyway. `CustomCommandManager.syncAll()`
 > is designed entirely around this: it recomputes the whole desired command set
 > from scratch every time, which is what makes it converge correctly regardless
-> of *how* the registry changed. See [Editor integrations](09-editor-integrations.md).
+> of *how* the registry changed. See [Editor integrations](10-editor-integrations.md).
 
 ### Coalescing: why a single edit is not four full passes
 
@@ -140,7 +142,7 @@ every library except Font Awesome (one source, three files: solid/regular/brands
 and Tabler (one source, two files: outline/filled). Cache keys and pack-store
 calls always use `icon.type` (an `IconPackId`) — using the source id would
 collapse both Font Awesome styles onto one cache entry. Full treatment in
-[Icons](12-icons.md).
+[Icons](13-icons.md).
 
 ---
 Next chapter: [03-plugin-lifecycle.md](03-plugin-lifecycle.md)

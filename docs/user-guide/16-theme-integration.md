@@ -36,4 +36,4 @@ Heading and Inline callouts are Callout Studio features, so they are unavailable
 Switching themes updates the **Callouts from your theme** list and makes Quick Insert's theme filter appear, disappear, or change its label as needed, without changing note content.
 
 ---
-**Next:** [Back to the guide overview](README.md)
+**Next:** [Syncing & backups](17-syncing-and-backups.md)

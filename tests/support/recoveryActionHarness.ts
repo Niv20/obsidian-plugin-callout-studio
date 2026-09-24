@@ -23,8 +23,9 @@ export function recoveryActionHarness(options: { missing?: boolean; legacy?: boo
 	const registry = new CalloutRegistry(); registry.load(null);
 	const state = {
 		disk: options.missing ? null : JSON.stringify(registry.toSaveData()), writes: 0,
-		checkpoint: null as unknown, failRead: false, failCheckpoint: false, failWrite: false, failBackup: false,
+		checkpoint: null as unknown, failRead: false, failCheckpoint: false, failWrite: false, failBackup: false, skipPrimaryWrite: false,
 		beforeCheckpoint: null as (() => void) | null,
+		beforePrimaryWrite: null as ((data: unknown) => Promise<void>) | null,
 	};
 	const files = new Map<string, string>();
 	const app = { appId: id, vault: { configDir: ".obsidian", getName: () => id, adapter: {
@@ -39,7 +40,12 @@ export function recoveryActionHarness(options: { missing?: boolean; legacy?: boo
 		registry, localState: new DeviceLocalStore(app), settingsEditOpen: false,
 		waitForSettingsSettle: () => Promise.resolve(),
 		loadData: async () => state.disk === null ? null : JSON.parse(state.disk) as unknown,
-		saveData: async (data: unknown) => { if (state.failWrite) throw new Error("Primary disk full"); state.writes++; state.disk = JSON.stringify(data); },
+		saveData: async (data: unknown) => {
+			await state.beforePrimaryWrite?.(data);
+			if (state.failWrite) throw new Error("Primary disk full");
+			if (state.skipPrimaryWrite) return;
+			state.writes++; state.disk = JSON.stringify(data);
+		},
 		refreshCallouts: () => {}, refreshThemeAppearance: () => {}, customCommands: { syncAll: () => {} },
 	} as ExternalReloadHost & { saveData(data: unknown): Promise<void> };
 	host.onExternalSettingsChange = async () => { await tryAdoptExternalSettings(host); };

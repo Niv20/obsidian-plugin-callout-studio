@@ -107,7 +107,7 @@ selection is non-empty, single-line, and its braces balance — wraps the
 selection as the pill's `{…}` label instead. A multi-line or brace-unbalanced
 selection deliberately falls back to the plain-pill path rather than producing
 a broken pill, because braces cannot span lines or nest with no escape (see
-[Render roles § the `{…}` content payload](08-render-roles.md#the--content-payload-inline-pills-only)).
+[Render roles § the `{…}` content payload](09-render-roles.md#the--content-payload-inline-pills-only)).
 The cursor always lands **after** the pill on the same line — pressing Enter
 on an inline suggestion must never break the surrounding paragraph.
 
@@ -342,7 +342,7 @@ wrote.
 Discovery's prune pass explicitly checks `hasCommandFor(id)` before removing
 an unused fallback row — a custom command referencing a callout is a
 deliberate claim on it, exactly like `customized: true`. See
-[Vault discovery](10-vault-discovery.md).
+[Vault discovery](11-vault-discovery.md).
 
 ## The right-click context menu
 
@@ -427,14 +427,14 @@ that only make sense for some roles.
   are single editor transactions — undo works
   through the editor's own history, no confirmation modal needed (unlike
   deleting a callout *definition*, which is a destructive, harder-to-reverse
-  action guarded elsewhere — see [Vault discovery](10-vault-discovery.md#delete-flow)).
+  action guarded elsewhere — see [Vault discovery](11-vault-discovery.md#delete-flow)).
 
 ### The context menu inside a read-only preview
 
 The settings previews host a *real* embedded Obsidian editor, so they get
 Obsidian's real editor context menu — and none of its editing commands was ever
 stopped by `EditorState.readOnly` (see
-[Callout editor](13-callout-editor.md#why-read-only-needed-two-layers)). A user
+[Callout editor](14-callout-editor.md#why-read-only-needed-two-layers)). A user
 could right-click the splash screen and turn its sample into a bulleted list, an
 H1, a table or a code block.
 
@@ -520,4 +520,4 @@ popup the same way the Outline pane is cleaned — stripping the raw `[!id]`
 token from the displayed suggestion text.
 
 ---
-Next chapter: [10-vault-discovery.md](10-vault-discovery.md)
+Next chapter: [11-vault-discovery.md](11-vault-discovery.md)

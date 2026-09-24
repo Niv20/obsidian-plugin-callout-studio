@@ -61,13 +61,22 @@ These pictures live in the plugin's own data file alongside the rest of your set
 
 ## What's stored on the device
 
-- **A recovery copy of plugin settings**, including callout definitions, palettes, commands, and stored icon artwork, in the app's IndexedDB storage. It is separate from the vault and is not synced or sent to a server by this plugin. Callout Studio updates it before writing settings and when valid incoming settings are accepted, allowing an offline branch to survive a later replacement of `data.json`. It remains until replaced or the app's local data is cleared; disabling or uninstalling the plugin does not remove it. **Reset everything** replaces it with the reset state. If the recovery copy cannot be written, the settings write is stopped.
-
+- **A recovery copy of plugin settings**, including callout definitions, palettes,
+  commands and stored icon artwork, in the app's IndexedDB storage. It is separate
+  from the vault and is not synced or sent to a server by this plugin. The plugin
+  does not erase it on ordinary unload/uninstall, but clearing app data or OS
+  storage removal can lose it. **Reset everything** can replace it with reset
+  state. The exact write ordering, failure boundaries and scoped lifetime are
+  documented in [Device checkpoints and vault backups](08-settings-sync-and-recovery.md#device-checkpoints-and-vault-backups).
+- **Recovery backup files** inside the plugin's vault directory. These can sync
+  through your chosen provider and can be removed with that directory. They are
+  distinct from the device-only checkpoint; see the same chapter for retention.
 - **Artwork for icons in use**, plus your uploaded pictures, inside the plugin's data file. This keeps callouts rendering on a device that synced settings without downloading the original source.
 
-Stored SVG artwork is filtered again before it is displayed as part of a note
-or the plugin interface, including copies received through sync. Unsafe markup
-is removed; a damaged drawing uses the usual missing-icon display.
+  Stored SVG artwork is filtered again before it is displayed as part of a note
+  or the plugin interface, including copies received through sync. Unsafe markup
+  is removed; a damaged drawing uses the usual missing-icon display.
+
 - **The commands you've built:** a few bytes each. Shortcuts live in Obsidian's hotkeys file, so they survive when you edit a command.
 - **Downloaded icon library files:** safe to delete because in-use artwork is also saved in the plugin's data file.
 - **The interface translation file:** one language only and safe to delete. The plugin falls back to English and downloads it again when needed.

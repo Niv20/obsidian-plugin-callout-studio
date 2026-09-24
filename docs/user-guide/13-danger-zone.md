@@ -131,7 +131,7 @@ remain available while that theme is active.
 
 Before the reset runs, Callout Studio shows a confirmation and any relevant
 warning about custom types used in your notes. **Reset everything cannot be
-undone.** Export a [complete backup](10-import-export-and-sharing.md) first if
+undone.** Export a [complete backup](17-syncing-and-backups.md) first if
 you may want to restore your setup later.
 
 To undo just one icon or color, use the return arrow in the callout editor. To

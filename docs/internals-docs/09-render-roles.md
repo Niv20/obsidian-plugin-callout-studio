@@ -106,7 +106,7 @@ text, which Obsidian may have truncated at the first `]]`), and
 `parseOutlineHeadingText` (the Outline pane's bracket-stripped display —
 `!id Title` — which is genuinely ambiguous with a heading that literally
 starts with `!id`, hence the `bracketed` flag callers must check before
-trusting it). See [Outline pane and link cleanup](09-editor-integrations.md#outline-pane-and-link-suggestions).
+trusting it). See [Outline pane and link cleanup](10-editor-integrations.md#outline-pane-and-link-suggestions).
 
 ## `renderShared.ts` — the shared DOM builder
 
@@ -152,7 +152,7 @@ options, and an existing heading/inline command is *suspended* rather than
 deleted.
 
 See [CSS generation § standing down](06-css-generation.md#standing-down--why-emit-nothing-needs-three-separate-mechanisms) and
-[Theme callout discovery § Block only](17-theme-callout-discovery.md#where-theme-callouts-appear--and-why-block-only).
+[Theme callout discovery § Block only](18-theme-callout-discovery.md#where-theme-callouts-appear--and-why-block-only).
 
 ### `hideIcon` and flex-gap collapse
 
@@ -322,7 +322,7 @@ exports), the existing DOM-only rendering remains available.
 ## The Outline pane, PDF export, and gradient text
 
 - **`OutlineDecorator`** — see
-  [Editor integrations § Outline pane](09-editor-integrations.md#outline-pane-and-link-suggestions).
+  [Editor integrations § Outline pane](10-editor-integrations.md#outline-pane-and-link-suggestions).
 - **PDF export** clones the rendered DOM but drops the adopted stylesheet, so
   icon artwork for anything but Lucide has to already be baked as **visible**
   DOM (not a CSS mask) — see
@@ -343,11 +343,11 @@ beginStartupEntranceWindow(doc): () => void   // returns a close/cleanup fn
 `main.ts` opens this window (for `STARTUP_ENTRANCE_MS = 3000` ms) only when the
 UI was **already visible** at load time (mobile, always; desktop, only a
 mid-session enable/reload) — see
-[Plugin lifecycle](03-plugin-lifecycle.md#why-the-very-first-line-reads-layoutready-before-any-await).
+[Plugin lifecycle](03-plugin-lifecycle.md#startup).
 While open, freshly built inline pills, heading bars, and fold chevrons get the
 `cs-anim-in` class so they animate in rather than snap. Ref tokens (outline,
 links) are deliberately excluded — they render late, well outside any window
 where a snap would be visible as a flash.
 
 ---
-Next chapter: [09-editor-integrations.md](09-editor-integrations.md)
+Next chapter: [10-editor-integrations.md](10-editor-integrations.md)

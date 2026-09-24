@@ -14,7 +14,7 @@ export function rememberMissingSettingsDisplay(host: ExternalReloadHost): void {
 /** Retry a failed boot-time checkpoint read without authorizing a new file. */
 export async function retryMissingSettingsRecovery(host: ExternalReloadHost, options: SettingsAdoptionOptions): Promise<void> {
 	const writer = host.settingsWriter;
-	if (!initialDisplays.has(host) || !writer.isFrozen || writer.status.frozenReason !== "recovery-read") return;
+	if (!writer.isFrozen || writer.status.frozenReason !== "recovery-read") return;
 	const held = () => writer.isDestroyed || (options.editor
 		? writer.busy || host.registry.hasPreviewDefinition() : registryIsOwned(host));
 	if (held()) return;
@@ -29,7 +29,8 @@ export async function retryMissingSettingsRecovery(host: ExternalReloadHost, opt
 	// at boot. Later local changes stay visible; explicit creation backs up the
 	// recovered settings before saving the current display.
 	if (saved && before === initialDisplays.get(host)) {
-		await writer.hold(async () => { host.registry.load(saved); });
+		const recoveryBaseline = structuredClone(saved);
+		await writer.hold(async () => { host.registry.load(saved); writer.seedRecovery(recoveryBaseline); });
 	}
 	initialDisplays.delete(host);
 	host.refreshThemeAppearance(); host.customCommands.syncAll(); host.refreshCallouts();

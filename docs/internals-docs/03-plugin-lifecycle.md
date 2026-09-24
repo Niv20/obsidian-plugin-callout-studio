@@ -47,13 +47,11 @@ same queue on the real plugin. Calls arriving during an adoption request another
 read after it; calls arriving during a preview or settings write are deferred.
 Closing a modal, clearing a preview, or finishing a write releases a pending reload.
 
-Before replacing or removing local definitions or saved preferences, adoption writes a recovery copy.
-An unreadable file, failed required backup, or concurrent local edit leaves the
-registry intact. Successful adoption refreshes theme appearance, command
-registration and the settings view without re-discovering any callouts.
-
-See [Persistence](07-persistence-and-caching.md) and
-[Manual discovery](10-vault-discovery.md) for the conflict contract.
+Successful adoption refreshes theme appearance, command registration and the
+settings view without re-discovering callouts. The complete read/merge/backup,
+ownership, and missing-file behavior is owned by
+[Settings saving, synchronization, and recovery](08-settings-sync-and-recovery.md#multi-device-sync).
+This chapter describes when those operations are wired into the plugin lifecycle.
 
 ## Unload
 
@@ -73,3 +71,6 @@ discovery timers, note watchers, prune queues or rediscovery holds to clean up.
 The startup CSS snapshot is derived presentation state only. Local storage
 holds UI folds and an installation marker; it never restores callout definitions.
 Disabling and re-enabling the plugin follows the same saved-settings load path.
+
+---
+Next chapter: [04-data-model.md](04-data-model.md)

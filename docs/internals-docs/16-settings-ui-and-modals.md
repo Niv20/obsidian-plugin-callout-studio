@@ -3,7 +3,7 @@
 Covers [`src/settings/SettingsTab.ts`](../../src/settings/SettingsTab.ts), the
 section modules under `src/settings/sections/`, the shared modal chrome, and
 the individual modals not already covered by
-[Callout editor](13-callout-editor.md) or [Icons](12-icons.md).
+[Callout editor](14-callout-editor.md) or [Icons](13-icons.md).
 
 ## `SettingsTab` — composition and refresh plumbing
 
@@ -88,7 +88,7 @@ behavior. Revision guards prevent a stale or reopened view's confirmation from
 writing. Closing after conversion starts does not cancel writes; a notice still
 reports the outcome. Partial writes retain an exact recovery plan with fixed
 choices, including pending link-only changes. See
-[the conversion contract](10-vault-discovery.md#portable-markdown-conversion).
+[the conversion contract](11-vault-discovery.md#portable-markdown-conversion).
 
 The footer owns the contact and project links: one friendly sentence embeds an
 inline GitHub issue link for either a bug or an idea and an inline email link.
@@ -327,7 +327,7 @@ subscription from silently accumulating across repeated `display()` calls.
 [`CalloutListsSection.ts`](../../src/settings/sections/CalloutListsSection.ts)
 builds *Callouts from your theme*, *My callout types* and *Built-in
 callouts*, in that order, from one pass over one combined list (see
-[Theme callout discovery](17-theme-callout-discovery.md) for who lands
+[Theme callout discovery](18-theme-callout-discovery.md) for who lands
 where). Two behaviours sit on top of that split, each in its own helper —
 and [`CustomPalettesSection.ts`](../../src/settings/sections/CustomPalettesSection.ts)'s
 *Saved color palettes* heading is a fourth member of the same family rather than
@@ -1044,7 +1044,7 @@ so `buildComboboxSkeleton` uses a unique hidden text node referenced through
 Check these rules against the actual cascade, including light and dark modes,
 invalid and disabled fields, and the IDs field with its **+** visible. The
 harness in [17 — Checking a theme against the real
-cascade](17-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade)
+cascade](18-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade)
 explains how to compare `styles.css` with Obsidian's `app.css`; reading either
 stylesheet alone does not prove the computed result.
 
@@ -1340,7 +1340,7 @@ specific enough to warrant its own modal (bulk vault edits, full reset).
 
 ### `DeleteCalloutModal` and the replace/delete pivot
 
-Covered in depth in [Vault discovery § delete flow](10-vault-discovery.md#delete-flow).
+Covered in depth in [Vault discovery § delete flow](11-vault-discovery.md#delete-flow).
 UI-wise: two body copy variants (in-use vs. unused), and an in-use callout's
 footer offers **three** buttons (Cancel, "Replace instead…", Delete) rather
 than the usual two — the replace pivot exists specifically because deleting
@@ -1352,7 +1352,7 @@ Two-column layout mirroring the per-role global-style popups: a sticky live
 preview on the left, titled control cards on the right. **Simple mode**: one
 base colour, and the full six-value palette (light/dark accent, background,
 text) is auto-derived with contrast correction
-(`derivePaletteFromColor` — see [Colour system](11-color-system.md)).
+(`derivePaletteFromColor` — see [Colour system](12-color-system.md)).
 **Advanced mode** exposes independent accent/background/text rows per theme
 mode directly, each edit inferring the opposite mode's value
 (`inferOppositeModeColor`) — but is only offered while the background style
@@ -1360,7 +1360,7 @@ is **Solid**; a Gradient palette has no advanced per-colour view.
 
 Background style is a further 3-way choice: Solid, Gradient (two-stop linear,
 preset direction, an off-by-default "Gradient title text" toggle), or None
-(transparent — see [Colour system](11-color-system.md#preset-palettes--hue-named-not-role-named)
+(transparent — see [Colour system](12-color-system.md#preset-palettes--hue-named-not-role-named)
 for why this is the *only* route to a transparent palette).
 
 The palette card keeps **Name** and **Style** at the same control-column width.
@@ -1447,7 +1447,7 @@ by side, deliberately kept separate:
 The list **subscribes to the registry while open** — deleting a callout from
 another surface (the settings row menu) prunes any command depending on it
 (via `CustomCommandManager.syncAll()`, see
-[Editor integrations](09-editor-integrations.md#customcommandmanager--one-idempotent-sweep)),
+[Editor integrations](10-editor-integrations.md#customcommandmanager--one-idempotent-sweep)),
 and this window has to stop showing a now-deleted command in the same
 moment rather than offering a dead row. Everything here **saves itself
 immediately** on every change — there's no separate OK/Cancel, matching the
@@ -1685,10 +1685,11 @@ different ways in two different windows of this plugin.
 
 ### `WelcomeModal` — the one chrome opt-out
 
-Covered above under Modal chrome. Shown automatically exactly once, gated by
-`settings.welcomeSeen`, only for a genuinely fresh install (no
-pre-existing `data.json`) — a user who merely updates into a new version
-never sees it. Reopenable any time via the info icon in settings, or the
+Covered above under Modal chrome. Automatic onboarding requires confirmed
+fresh-install eligibility and checks both `settings.welcomeSeen` and the
+device-local welcome marker. An absent `data.json` alone is insufficient; see
+the [startup decisions](08-settings-sync-and-recovery.md#launch-decision-table).
+The welcome screen can be reopened via the info icon in settings or the
 dev-convenience protocol handler `obsidian://callout-studio-welcome`
 registered in `main.ts`.
 
@@ -1771,9 +1772,6 @@ lists and out of `data.json`, and the slot is cleared on close — see
 guarantees the other two demo ids get on top of that, and the section above for
 why this one does not take them.
 
----
-Next chapter: [16-i18n.md](16-i18n.md)
-
 ## Saving-status banner
 
 `saveStatusBanner.ts` is shared by the settings page and the callout editor.
@@ -1795,15 +1793,18 @@ actions apply. The title is chosen from the writer, not from the message —
 fails a retry still says it is paused. The card is outlined on all four sides
 rather than barred down one edge, which is also what makes it read the same way
 in an RTL locale; the action row is `flex-start`-aligned with the prose and
-stacks full width under 600px. The settings page also exposes the confirmed
-new-file action when the frozen reason is a missing file; other failures expose
-recovery retry without an unsafe reset. That banner is the *only* place the
-new-file action is offered: the startup notice for a missing file
-(`offerFreshStart`) links to the plugin's settings tab and nothing else, because
-a notice is transient, sits in a corner away from the page the decision belongs
-to, and is a surface people dismiss by clicking at. Disposers run on tab hide/re-render and
-editor close. Buttons are disabled while their action is running.
+stacks full width under 600px.
 
-Saving-status observers are isolated from persistence: a detached or failing UI
-listener is logged without preventing other listeners or writes. Recovery and editor
-errors use a shared writer-scoped English notification and omit raw storage paths.
+The action choices, before/after behavior, confirmation policy, failure reasons
+and editor restrictions are owned by
+[Saving status and recovery actions](08-settings-sync-and-recovery.md#saving-status-and-recovery-actions).
+Keep this UI as a subscriber to that state rather than inferring write authority
+from a label or from whether callouts happen to be visible.
+
+Buttons are disabled while their action is running. A completed missing-file
+check leaves explicit feedback in the same slot. Disposers run on tab
+hide/re-render and editor close. Action text uses `t()`; diagnostic failure prose
+uses the shared saving-message contract described in the canonical chapter.
+
+---
+Next chapter: [17-i18n.md](17-i18n.md)

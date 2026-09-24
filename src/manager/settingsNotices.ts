@@ -2,11 +2,9 @@
  * manager/settingsNotices.ts — what the user is told when `data.json` is not
  * usable, and what they can do about it.
  *
- * Both notices below announce a session that will not write. That is a strange
- * state to be in and an alarming one to discover late — the callouts are gone
- * from the settings list, and the natural reading is that the plugin threw them
- * away — so each one says the same three things: the file could not be used,
- * nothing has been written, and here is what to do next.
+ * Notices announce a session that will not write. Recovered callouts may still
+ * be visible, so they distinguish the missing/unusable shared file from the
+ * displayed settings and direct the user to the available recovery actions.
  *
  * Separated from `settingsBoot.ts` because it is the only part of that module
  * that touches the DOM, and because the wording is the thing most likely to be
@@ -46,15 +44,11 @@ export function warnSettingsUnreadable(writer?: SettingsWriter): void {
  * dismissed, and the way out is where the decision belongs: the settings
  * banner, which states the situation and offers both actions side by side.
  *
- * **The notice navigates; it does not act.** Creating a replacement file is the
- * single most destructive control this plugin has — it publishes an empty
- * configuration to every device on the vault, and it is offered at the exact
- * moment the real file is most likely still in flight. A notice is the wrong
- * surface for that: it is transient, it is a corner of the screen rather than
- * the page the settings live on, and it is one people dismiss by clicking at.
- * So this link only opens Callout Studio's settings. The confirmed action is
- * still one click away in the banner there, next to the retry that is far more
- * often the right answer.
+ * **The notice navigates; it does not act.** Restoring creates a file from the
+ * displayed configuration, which may come from a local recovery copy. The
+ * sync service may propagate that choice to other devices. Keep the choice
+ * beside the settings being restored, with an explanation and confirmation;
+ * a transient notice is too easy to activate accidentally.
  */
 export function offerFreshStart(app: App, pluginId: string): void {
 	const frag = createFragment();
@@ -107,12 +101,15 @@ export async function confirmFreshStart(
 	app: App,
 	notice: Notice | null,
 	startFresh: () => Promise<boolean>,
+	hasRecoveryState = false,
 ): Promise<boolean> {
 	const ok = await new ConfirmModal(
 		app,
-		t("confirm.titleStartFresh"),
-		t("confirm.startFresh"),
-		t("confirm.startFreshOk"),
+		t(hasRecoveryState ? "confirm.titleRestoreSettings" : "confirm.titleCreateSettingsFile"),
+		t("confirm.restoreDisplayedSettings"),
+		t(hasRecoveryState ? "saveStatus.restoreSettings" : "saveStatus.createSettingsFile"),
+		undefined,
+		"mod-cta",
 	).confirm();
 	if (!ok) return false;
 	try {

@@ -40,7 +40,7 @@ Describe the problem you're trying to solve rather than a finished spec. There's
 ## Submitting a change
 
 1. Fork the repo, branch off `master` (`feature/short-description` or `fix/short-description`).
-2. Make your change. [`docs/internals-docs/README.md`](internals-docs/README.md) is the architecture reference — read [03-plugin-lifecycle.md](internals-docs/03-plugin-lifecycle.md) and [06-css-generation.md](internals-docs/06-css-generation.md) for the registry → CSS injector → re-render loop before touching anything under `src/manager/`; a couple of real bugs here have come from missing one of those steps. It also has step-by-step checklists for adding a setting/command/callout field/icon source ([21-extending.md](internals-docs/21-extending.md)). [AGENTS.md](../AGENTS.md) is just the short entry point that links here.
+2. Make your change. [`docs/internals-docs/README.md`](internals-docs/README.md) is the architecture reference — read [03-plugin-lifecycle.md](internals-docs/03-plugin-lifecycle.md) and [06-css-generation.md](internals-docs/06-css-generation.md) for the registry → CSS injector → re-render loop before touching anything under `src/manager/`; a couple of real bugs here have come from missing one of those steps. It also has step-by-step checklists for adding a setting/command/callout field/icon source ([22-extending.md](internals-docs/22-extending.md)). [AGENTS.md](../AGENTS.md) is just the short entry point that links here.
 3. Run `npm run lint`, `npm run build` and `npm test` before pushing. CI runs the same three commands on every push and PR, so anything that fails locally will fail there too. A `todo` entry in a suite is a known bug someone wrote down, not a test that's allowed to stay red.
 4. Add or extend a test where the change is testable without Obsidian — that's the first place a change is proved. Then check it in Obsidian too (see Setup above), and say how you tested it in the PR description; for anything visual that's the only signal a reviewer has.
 
@@ -50,7 +50,7 @@ Keep PRs to one change. A fix bundled with an unrelated refactor just makes both
 
 Full list in [AGENTS.md](../AGENTS.md). The ones that bite most often:
 - Strict TypeScript — no `any` without an ESLint-disable comment explaining why.
-- Handwritten source files have a 500-line limit, excluding blank and comment-only lines. `npm test` and CI fail above it unless the exact repository-relative path is listed in [`scripts/source-size-exceptions.json`](../scripts/source-size-exceptions.json); exceptions have no per-file size cap. Split by responsibility when it improves the code. See [Source file size](internals-docs/19-build-test-release.md#source-file-size) for the scope and exception format.
+- Handwritten source files have a 500-line limit, excluding blank and comment-only lines. `npm test` and CI fail above it unless the exact repository-relative path is listed in [`scripts/source-size-exceptions.json`](../scripts/source-size-exceptions.json); exceptions have no per-file size cap. Split by responsibility when it improves the code. See [Source file size](internals-docs/20-build-test-release.md#source-file-size) for the scope and exception format.
 - Listeners and intervals go through `this.registerEvent` / `registerInterval` / `registerDomEvent`, not raw `addEventListener` or `setInterval`, so they don't leak past plugin unload.
 - Command IDs don't change once released — they're part of the public surface.
 - User-facing text goes through `t()`, with the key added to `src/i18n/en.ts`.

@@ -107,6 +107,14 @@ function adoptionIsHeld(host: ExternalReloadHost, options: SettingsAdoptionOptio
 	return options.editor ? host.settingsWriter.busy || host.settingsWriter.isDestroyed || host.registry.hasPreviewDefinition() : registryIsOwned(host);
 }
 
+function unavailableSettings(host: ExternalReloadHost, kind: "absent" | "unreadable"): void {
+	const writer = host.settingsWriter;
+	if (kind === "unreadable") { writer.status.fail("unreadable"); return; }
+	// A genuinely new installation has no data.json until its first edit.
+	// Foreground/watch events alone must not turn that into a recovery incident.
+	if (writer.isFrozen || writer.hasRecoveryState || host.localState.hasInitialized) writer.protectMissingFile();
+}
+
 /** Distinguish a transient sync read from a held editor or failed backup. */
 export async function tryAdoptExternalSettings(
 	host: ExternalReloadHost, options: SettingsAdoptionOptions = {},
@@ -116,7 +124,7 @@ export async function tryAdoptExternalSettings(
 	const first = await readSettingsFile(host);
 	if (adoptionIsHeld(host, options)) return "deferred";
 	if (first.kind !== "loaded") {
-		host.settingsWriter.status.fail(first.kind === "absent" ? "missing" : "unreadable");
+		unavailableSettings(host, first.kind);
 		return "unavailable";
 	}
 	const conflicts = host.settingsWriter.mergesConcurrent ? await readSettingsConflictFiles(host) : [];
@@ -132,7 +140,7 @@ export async function tryAdoptExternalSettings(
 	if (adoptionIsHeld(host, options)) return "deferred";
 
 	if (read.kind !== "loaded") {
-		host.settingsWriter.status.fail(read.kind === "absent" ? "missing" : "unreadable");
+		unavailableSettings(host, read.kind);
 		console.warn(
 			`[callout-studio] ignoring an external data.json change: ${read.kind}`,
 		);
@@ -202,7 +210,8 @@ async function applyExternalSettings(
 			// or sync can deliver another file while storage is still finishing.
 			const latest = await readSettingsFile(host);
 			if (latest.kind !== "loaded" || canonical(latest.data) !== canonical(read.data)) {
-				host.settingsWriter.status.fail(latest.kind === "absent" ? "missing" : latest.kind === "unreadable" ? "unreadable" : "changed");
+				if (latest.kind === "loaded") host.settingsWriter.status.fail("changed");
+				else unavailableSettings(host, latest.kind);
 				return false;
 			}
 			return !adoptionIsHeld(host, options) && JSON.stringify(stableKeyOrder(host.registry.toSaveData())) === snapshot;

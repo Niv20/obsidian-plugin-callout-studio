@@ -203,14 +203,14 @@ download(id): Promise<boolean>               // fetches, verifies, persists
 `PACK_MANIFEST` baked into the build.** Two URLs are tried in order
 (`packUrls(id)` — jsDelivr first, `raw.githubusercontent.com` fallback), each
 pinned to the **`packs-v2`** immutable tag (see
-[Adding or modifying features](21-extending.md#refreshing-icon-pack-artwork)
+[Adding or modifying features](22-extending.md#refreshing-icon-pack-artwork)
 for what "refreshing" a pack actually requires).
 
 > [!CAUTION]
 > **A checksum mismatch on disk is treated as `"corrupt"` — rejected
 > outright, unlike a locale file's staleness handling.** This is a
 > deliberate difference from `LocaleStore` (see
-> [Localization](16-i18n.md#locale-file-staleness-vs-a-corrupt-icon-pack)):
+> [Localization](17-i18n.md#locale-file-staleness-vs-a-corrupt-icon-pack)):
 > an icon pack's checksum only ever changes when the pack's *contents*
 > change (a refresh with a new tag), so a mismatch here means edited or
 > damaged data, not "an older but still-valid copy." A locale mismatch, in
@@ -339,7 +339,7 @@ modals) — those are columns of rows where a genuinely empty slot would both
 break the column layout and look identical to "still downloading." It draws
 a faint dashed ring instead. Content surfaces (the actual rendered callout,
 heading/inline tokens, PDF export) draw **nothing at all** and let the flex
-gap collapse — see [Render roles § hideIcon](08-render-roles.md#hideicon-and-flex-gap-collapse).
+gap collapse — see [Render roles § hideIcon](09-render-roles.md#hideicon-and-flex-gap-collapse).
 
 ## SVG sanitization — two sanitizers, two threat models
 
@@ -465,8 +465,8 @@ The two plugin UI composites are the only bundled icon artwork. Regeneration
 of search indexes and downloadable packs is a deliberately
 separate, manual step — `npm run icons:generate` — **never** part of
 `npm run build`, and its output **is committed to the repo**. See
-[Build, test, and release](19-build-test-release.md#regenerating-icon-and-locale-data)
-and [Adding or modifying features](21-extending.md#refreshing-icon-pack-artwork).
+[Build, test, and release](20-build-test-release.md#regenerating-icon-and-locale-data)
+and [Adding or modifying features](22-extending.md#refreshing-icon-pack-artwork).
 
 ---
-Next chapter: [13-callout-editor.md](13-callout-editor.md)
+Next chapter: [14-callout-editor.md](14-callout-editor.md)

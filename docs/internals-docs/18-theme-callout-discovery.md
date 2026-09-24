@@ -81,7 +81,7 @@ Two traps this module exists to absorb:
   decide whether a re-scan is needed, and hashing a megabyte to find out costs
   about as much as re-scanning it. The miss is a theme *edited in place* and
   reloaded, which moves neither name nor version — see
-  [the fingerprint](#the-fingerprint-that-catches-a-reload).
+  [the fingerprint](#when-theme-appearance-refreshes).
 
 > [!NOTE]
 > Only the text inside that one `<style>` element is ever scanned. Anything a
@@ -299,7 +299,7 @@ colour, **0** tie. The remaining 196 never touch these variables and fall back
 to core's own spelling, which makes their generated CSS byte-identical to what
 it was before any of this existed.
 
-See [Colour system § accent dialect](11-color-system.md#accent-dialect-version-drift-and-theme-drift)
+See [Colour system § accent dialect](12-color-system.md#accent-dialect-version-drift-and-theme-drift)
 for what is done with the answer, and
 [CSS generation § the core accent shim](06-css-generation.md#the-core-accent-shim)
 for the rule that pays for it.
@@ -796,11 +796,11 @@ predicate behind that wording, and it answers the same way for a built-in.
 
 The use count lives in that menu rather than on the row, and the row carries no
 *Default fallback* tag either: both describe a callout the user cannot act on.
-Counting is a whole-vault read, so it is cached at module scope in
-[`themeRowUsage.ts`](../../src/settings/sections/themeRowUsage.ts) — one pass per
-visit to the settings tab, dropped in `SettingsTab.hide()`. It must never move
-inside `refresh()`, which is subscribed to `registry.onChange`: that would scan
-every markdown file on every drag of a colour picker.
+[`usageMenuItem.ts`](../../src/usage/usageMenuItem.ts) reads the shared
+[`CalloutOccurrenceIndex`](../../src/usage/CalloutOccurrenceIndex.ts), subscribes
+while the menu is open, and requests freshness when the index is not ready.
+The index owns source invalidation and reuse; settings-row refreshes must not
+start an independent whole-vault scan on every colour-picker change.
 
 ## For theme authors
 
@@ -1190,7 +1190,7 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 | [`manager/theme/studioWeight.ts`](../../src/manager/theme/studioWeight.ts) / [`StudioWeightCache.ts`](../../src/manager/theme/StudioWeightCache.ts) | How hard the plugin pushes on what it *does* own |
 | [`manager/theme/themeReport*.ts`](../../src/manager/theme/themeReport.ts) | The `themes:report` worksheet — not bundled into `main.js` |
 | [`settings/sections/rowOwnership.ts`](../../src/settings/sections/rowOwnership.ts) | Which of the three lists a row belongs in |
-| [`settings/sections/themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts), [`themeRowUsage.ts`](../../src/settings/sections/themeRowUsage.ts) | The theme row's controls and its cached use counts |
+| [`settings/sections/themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts), [`usage/usageMenuItem.ts`](../../src/usage/usageMenuItem.ts) | The theme row's controls and its shared occurrence-index menu |
 | [`settings/ThemeCalloutPreviewModal.ts`](../../src/settings/ThemeCalloutPreviewModal.ts) | The read-only window behind the eye icon |
 
 Suites: `themeCalloutScan`, `themeOwnership`, `manualDiscovery`,
@@ -1198,4 +1198,4 @@ Suites: `themeCalloutScan`, `themeOwnership`, `manualDiscovery`,
 `themeAppearanceProbe`, `themeRowActions`, `themeReport`, `cssSpecificity`.
 
 ---
-Next chapter: [18-upgrading-manual-discovery.md](18-upgrading-manual-discovery.md)
+Next chapter: [19-upgrading-manual-discovery.md](19-upgrading-manual-discovery.md)

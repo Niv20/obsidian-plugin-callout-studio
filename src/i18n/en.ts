@@ -37,7 +37,7 @@ export const en: Record<string, string> = {
 	"settings.rescanVaultDesc": "Adds callout types used in your notes that aren't in this list yet. Your existing callouts and notes aren't changed.",
 	"settings.rescanVaultHintAction": "Scan for callouts",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
-	"saveStatus.missing": "Saving is paused because the settings file is missing. This can happen after reinstalling or while sync is still running. Finish synchronization and retry. To intentionally replace the missing file, use Create a new settings file in Callout Studio settings.",
+	"saveStatus.missing": "Saving is paused because the settings file is missing. Deleting the plugin on another device can sync this deletion here; the file may also be waiting to download. Any settings already loaded on this device remain available. Let your sync service finish and make the vault available offline, then choose Check again. If the file does not return, you can restore the settings shown in Callout Studio settings on this device.",
 	"saveStatus.unreadable": "Saving is paused because the settings file cannot be read safely. Finish synchronization or restore a valid copy, then retry. The existing file has been kept.",
 	"saveStatus.recoveryRead": "Saving is paused because the local recovery copy cannot be read. Your settings file may still be intact. Check available storage, then retry recovery. Existing recovery data will not be overwritten.",
 	"saveStatus.recoveryWrite": "The local recovery copy could not be saved. Check available storage, then retry. Keep your draft open until saving succeeds.",
@@ -55,6 +55,11 @@ export const en: Record<string, string> = {
 	"saveStatus.reviewDraft": "Incoming settings and recovery checks are complete. Your draft is unchanged. Review it and save again.",
 	"saveStatus.settingsArrived": "Existing settings arrived and were loaded. A replacement file was not created.",
 	"saveStatus.newFile": "Create a new settings file",
+	"saveStatus.restoreSettings": "Restore these settings",
+	"saveStatus.createSettingsFile": "Create settings file",
+	"saveStatus.checkAgain": "Check again",
+	"saveStatus.stillMissing": "The settings file is still missing. Checking again does not recreate it. Let synchronization finish and make the vault available offline. If the file was deleted, restore a backup or use the recovery action in Callout Studio settings on this device to save the settings shown.",
+	"saveStatus.recoverInSettings": "To restore the missing file on this device, open Callout Studio settings. Before closing this editor, copy any unsaved edits you want to keep; they have not been saved.",
 	"saveStatus.openSettings": "Open Callout Studio settings",
 	"notice.openSettingsFailed": "Callout Studio settings could not be opened. Open Settings → Callout Studio to choose what to do.",
 	"notice.settingsBackupFailed": "Settings recovery could not continue because a safety backup could not be saved. Check available storage and write permissions, then retry.",
@@ -892,6 +897,10 @@ export const en: Record<string, string> = {
 	"confirm.startFresh":
 		"This creates a new settings file from the callout types and settings currently shown. Any previous readable recovery copy is kept in a backup. If the missing file is still on its way from another device, or is still syncing, it will be replaced everywhere — including on the devices that still have your callouts.\nOnly do this if you deleted the file yourself, or if you are sure it is not coming back.",
 	"confirm.startFreshOk": "Create a new settings file",
+	"confirm.titleRestoreSettings": "Restore these settings",
+	"confirm.titleCreateSettingsFile": "Create settings file",
+	"confirm.restoreDisplayedSettings":
+		"This saves the callout types and preferences currently shown to a settings file on this device and resumes saving. Any readable local recovery copy is backed up first.\nBefore continuing, let your sync service finish and check whether another device has newer settings you want to keep. Your sync service may send this restored file to your other devices.\nThe file is checked again before saving. If existing settings are found, they are kept and recovery may ask you to check again.",
 
 	// Vault edge-case modals
 	"vault.filesUpdated":

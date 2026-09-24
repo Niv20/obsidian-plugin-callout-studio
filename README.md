@@ -34,9 +34,9 @@ Thank you all for helping make Callout Studio better!
 
 ## Privacy, in short
 
-Callout Studio keeps a local recovery copy of its settings in case sync replaces `data.json` while the plugin is closed. It can merge valid concurrent edits and recognized conflict copies, while preserving damaged or unsupported data for recovery. For the safest sync setup, install the same up-to-date build on every device. See [persistence and recovery](docs/internals-docs/07-persistence-and-caching.md).
+Callout Studio keeps a local recovery copy of its settings in case sync replaces `data.json` while the plugin is closed. It can merge valid concurrent edits and recognized conflict copies, while preserving damaged or unsupported data for recovery. For the safest sync setup, install the same up-to-date build on every device. See [settings sync and recovery](docs/internals-docs/08-settings-sync-and-recovery.md).
 
-Callout Studio never sends your vault content anywhere and collects no telemetry or analytics. It only downloads icon artwork you choose and, when needed, a translation for the plugin interface. See [Privacy & permissions](docs/internals-docs/24-privacy-and-permissions.md) for a full explanation of every download and where data is stored.
+Callout Studio never sends your vault content anywhere and collects no telemetry or analytics. It only downloads icon artwork you choose and, when needed, a translation for the plugin interface. See [Privacy & permissions](docs/internals-docs/25-privacy-and-permissions.md) for a full explanation of every download and where data is stored.
 
 **Convert to standard Markdown** reads Markdown notes locally for a selectable preview and, after a separate irreversible-action confirmation, rewrites heading and inline callout syntax and updates links to changed headings. Back up your vault first; see [the conversion guide](docs/user-guide/13-danger-zone.md).
 
@@ -47,7 +47,7 @@ Callout Studio never sends your vault content anywhere and collects no telemetry
 
 ## Developers
 
-The [internals guide](docs/internals-docs/README.md) covers architecture, source, build and release details, including [manual installation](docs/internals-docs/19-build-test-release.md#manual-installation-from-a-release); see [CONTRIBUTING.md](docs/CONTRIBUTING.md) for the contribution process. Other plugins can use the [public API](docs/API.md) to read callout types and subscribe to changes.
+The [internals guide](docs/internals-docs/README.md) covers architecture, source, build and release details, including [manual installation](docs/internals-docs/20-build-test-release.md#manual-installation-from-a-release); see [CONTRIBUTING.md](docs/CONTRIBUTING.md) for the contribution process. Other plugins can use the [public API](docs/API.md) to read callout types and subscribe to changes.
 
 ## License & Third-Party Assets
 

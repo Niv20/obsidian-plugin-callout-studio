@@ -1,8 +1,9 @@
-import { SettingsPersistenceError } from "./settingsSaveStatus";
+import { SettingsPersistenceError, settingsWriteReason } from "./settingsSaveStatus";
 import { reportSettingsSaveFailure } from "./settingsSaveReporter";
 import { SettingsCheckpoint, type SettingsCheckpointStore } from "./settingsCheckpoint";
 import { SettingsWriter } from "./SettingsWriter";
 import { readSettingsFile, type SettingsFileHost } from "./settingsFile";
+import { canonical } from "./syncTree";
 
 export interface SettingsWriterOwner extends SettingsFileHost {
 	registry: { toSaveData(): unknown };
@@ -21,7 +22,16 @@ export function createSettingsWriter(
 		mergeConcurrent: true, checkpoint,
 		build: () => owner.registry.toSaveData(),
 		write: async (data) => {
-			await owner.saveData(data);
+			// Some Obsidian versions swallow adapter failures inside saveData.
+			// Resolve only after reading back the intended settings, including
+			// when the adapter replaced the file and then reported an error.
+			let failure: unknown;
+			try { await owner.saveData(data); } catch (error) { failure = error; }
+			const read = await readSettingsFile(owner);
+			if (read.kind !== "loaded" || canonical(read.data) !== canonical(data)) {
+				throw failure instanceof Error ? failure :
+					new SettingsPersistenceError(settingsWriteReason(failure), failure ?? "Settings write could not be verified");
+			}
 			owner.localState?.markInitialized();
 		},
 		readCurrent: async () => {

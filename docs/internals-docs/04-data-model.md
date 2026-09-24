@@ -57,7 +57,7 @@ Field-by-field notes on the ones that are not self-explanatory:
 - **`paletteId`** links a definition back to the `CustomPalette` its colors were
   last applied from, so a later edit to that palette can cascade. Left stale
   (pointing at nothing) when the palette is deleted — see
-  [Colour system](11-color-system.md#custom-palettes-simple-vs-advanced-and-the-baking-contract).
+  [Colour system](12-color-system.md#custom-palettes-simple-vs-advanced-and-the-baking-contract).
 - **`metadata`** here is a definition's own key/value bag — **not** the same
   thing as Obsidian's `data-callout-metadata` (the `|purple` after a pipe). Two
   different "metadata" concepts share the name; don't conflate them.
@@ -97,7 +97,7 @@ interface CalloutIcon {
 }
 ```
 
-See [Icons](12-icons.md) for the full pack model.
+See [Icons](13-icons.md) for the full pack model.
 
 ### `BgGradient`
 
@@ -137,7 +137,7 @@ are simply not read while the flag is set). Editing a palette **cascades**
 onto every linked callout (`CalloutRegistry.applyPaletteColors`); deleting one
 leaves linked callouts with their last-baked colours, unlinked but with a
 dangling `paletteId` the UI can offer to re-adopt. See
-[Colour system](11-color-system.md#custom-palettes-simple-vs-advanced-and-the-baking-contract).
+[Colour system](12-color-system.md#custom-palettes-simple-vs-advanced-and-the-baking-contract).
 
 ## `UserImageIcon`
 
@@ -157,7 +157,7 @@ interface UserImageIcon {
 Every uploaded picture — SVG or raster — is normalized to one representation
 (SVG markup) so every render surface, the SVG cache, and the PDF-export path
 need no special case. See the `user-image-icons` skill and
-[Icons](12-icons.md#your-images--the-local-never-downloaded-source).
+[Icons](13-icons.md#your-images--the-local-never-downloaded-source).
 
 ## `CustomCommand`
 
@@ -175,7 +175,7 @@ interface CustomCommand {
 `id` is deliberately independent of the command's content — Obsidian keys the
 user's hotkey by command id, and editing a command's callout/role/level must
 not orphan that binding. See
-[Editor integrations](09-editor-integrations.md#customcommandmanager--one-idempotent-sweep).
+[Editor integrations](10-editor-integrations.md#customcommandmanager--one-idempotent-sweep).
 
 `fold` decides which header the command writes — `> [!note]`, `> [!note]+` or
 `> [!note]-` — and is block-only for the same reason `splitFoldMark` takes a
@@ -241,7 +241,7 @@ See [Persistence](07-persistence-and-caching.md).
 
 ```ts
 interface PluginData {
-  version: number;                        // CURRENT_DATA_VERSION = 4
+  version: number;                        // CURRENT_DATA_VERSION = 5
   callouts: CalloutDefinition[];            // only non-default rows — see below
   settings: PluginSettings;
   materialIconsCache?: unknown;              // legacy, ignored on save
@@ -250,11 +250,14 @@ interface PluginData {
 }
 ```
 
-`version` is stamped for provenance only — every load-time migration in
-`CalloutRegistry.load()` is keyed on whether a *field is present*, never on
-this number, because an imported or hand-edited file can carry any version
-number it likes while still needing the same repairs. See
-[Callout registry](05-callout-registry.md#load-time-migrations).
+`version` is a format-compatibility gate: a finite numeric version newer than
+this build is protected from writes. Within supported input, registry migrations
+still inspect field presence and shape rather than assuming the version implies
+that every repair has run. See
+[Callout registry](05-callout-registry.md#load-time-migrations) for those repairs,
+and [startup classification](08-settings-sync-and-recovery.md#startup-and-file-classification)
+for the file gate. The additional `calloutStudioSync` envelope carries separate
+[causal history and integrity metadata](08-settings-sync-and-recovery.md#causal-merge-history-and-integrity).
 
 `callouts` is **not** every callout the registry holds — see
 [Callout registry § which rows are persisted](05-callout-registry.md#which-rows-are-persisted-the-built-in-rule).

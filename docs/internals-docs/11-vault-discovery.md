@@ -33,8 +33,8 @@ count includes only definitions actually added to the live registry.
 
 These checks use Obsidian's file objects and metadata, not a filesystem lock.
 An external writer that changes bytes without updating observed metadata, or
-writes after the final check, cannot be excluded by this API. Recovery and
-two-device limitations remain described in the persistence chapter.
+writes after the final check, cannot be excluded by this API. See the canonical
+[settings recovery and sync boundaries](08-settings-sync-and-recovery.md#verification-and-remaining-boundaries).
 
 Discovered fallback rows are saved normally and exported. Appearance continues to
 follow the selected fallback until customized, except where the current theme owns
@@ -49,7 +49,7 @@ is deleted merely because one device has not discovered its target.
 
 A settings change detected during discovery cancels publication. For external
 file adoption, generic conflict protection preserves a backup before replacing
-local definitions; see [Multi-device sync](07-persistence-and-caching.md#multi-device-sync).
+local definitions; see [Multi-device sync](08-settings-sync-and-recovery.md#multi-device-sync).
 
 ## Read-only occurrence index and navigation
 
@@ -507,4 +507,4 @@ stale title behind. **Only a title that exactly matches the old display name
 is touched** — a title the user wrote themselves is never touched.
 
 ---
-Next chapter: [11-color-system.md](11-color-system.md)
+Next chapter: [12-color-system.md](12-color-system.md)

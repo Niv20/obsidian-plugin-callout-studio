@@ -1,6 +1,6 @@
 # Import, export & sharing
 
-Callout Studio can migrate data from other callout plugins, create a complete backup, or export block-callout styling as plain CSS.
+Callout Studio can migrate data from other callout plugins, import a Callout Studio backup, or export block-callout styling as plain CSS.
 
 ## Import from another plugin
 
@@ -16,11 +16,9 @@ The importer reports unsupported or invalid entries before applying the valid da
 It does not scan, import, enable, disable, or modify existing files in the
 vault's CSS snippets folder.
 
-## Export a complete backup
+## Import a Callout Studio backup
 
-Choose the Callout Studio backup format to save your full setup as JSON, including callout definitions, saved color palettes, and plugin settings. This is the recommended and only supported way to fully restore a Callout Studio setup or transfer it to another vault where the plugin is installed.
-
-When importing a Callout Studio backup, matching entries are updated and valid saved palettes are merged into the destination setup without overwriting unrelated palettes.
+Choose the Callout Studio backup format when you want to bring back a setup that was previously exported from Callout Studio. For backup details, sync guidance, and recovery steps, see [Syncing & backups](17-syncing-and-backups.md).
 
 ## Export a CSS snippet
 

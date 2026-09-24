@@ -38,11 +38,16 @@ export class SettingsWriter {
 	private readonly stale: StaleWriteGuard;
 	private readonly sync: SettingsSync | null;
 	private persistedContent: string | null = null;
+	private recoveredState = false;
 	private revision = 0;
 	private destroyed = false;
 
 	constructor(private readonly host: SettingsWriterHost) {
-		this.stale = new StaleWriteGuard({ ...host, onBlocked: reason => { this.status.fail(reason); host.onBlocked?.(reason); } });
+		this.stale = new StaleWriteGuard({ ...host, onBlocked: reason => {
+			if (reason === "missing") this.protectMissingFile();
+			else this.status.fail(reason);
+			host.onBlocked?.(reason);
+		} });
 		this.sync = host.mergeConcurrent ? new SettingsSync() : null;
 	}
 
@@ -106,6 +111,22 @@ export class SettingsWriter {
 
 	get hasCheckpoint(): boolean { return this.host.checkpoint !== undefined; }
 	get mergesConcurrent(): boolean { return this.sync !== null; }
+	get hasRecoveryState(): boolean { return this.guard.hasBaseline || this.recoveredState; }
+
+	/** A local recovery copy carries sync clocks, but is not a file baseline. */
+	seedRecovery(data: unknown): void {
+		this.sync?.adopt(data);
+		this.recoveredState = true;
+	}
+
+	/** Runtime disappearance must offer the same recovery as missing-file boot. */
+	protectMissingFile(): void {
+		// A missing primary must not authorize replacing unreadable recovery
+		// storage or a snapshot from a newer build.
+		if (this.status.frozenReason === "newer-version") return;
+		if (!this.frozen || (this.status.frozenReason !== "missing" && this.status.frozenReason !== "recovery-read")) this.freeze("missing");
+		else this.status.fail("missing");
+	}
 
 	async recoveryCopy(): Promise<unknown> {
 		try { return await this.host.checkpoint?.read() ?? null; }
@@ -126,7 +147,7 @@ export class SettingsWriter {
 				const current = await this.host.readCurrent?.();
 				if (current != null && canonical(JSON.parse(current)) === canonical(data)) return;
 			} catch { /* The original failure remains the useful diagnostic. */ }
-			const reason = settingsWriteReason(error);
+			const reason = error instanceof SettingsPersistenceError ? error.reason : settingsWriteReason(error);
 			this.status.fail(reason); throw new SettingsPersistenceError(reason, error);
 		}
 	}
@@ -194,6 +215,44 @@ export class SettingsWriter {
 	}
 
 	get isDestroyed(): boolean { return this.destroyed; }
+
+	/**
+	 * Explicit restoration only. Keep the ordinary disk baseline and freeze
+	 * intact until a physical write succeeds; a failed attempt grants no later
+	 * background write permission. The temporary baseline requires absence,
+	 * even when the returned file would equal our old baseline.
+	 */
+	restoreMissing(isCurrent: () => boolean, preserve: () => Promise<boolean>): Promise<boolean> {
+		if (this.busy || this.holdDepth > 0 || this.destroyed || this.status.frozenReason !== "missing") return Promise.resolve(false);
+		const task = this.restoreMissingPass(isCurrent, preserve);
+		this.inFlight = task.then(() => undefined).finally(() => { this.inFlight = null; });
+		void this.inFlight.catch(() => undefined);
+		return this.inFlight.then(() => task);
+	}
+
+	private async restoreMissingPass(isCurrent: () => boolean, preserve: () => Promise<boolean>): Promise<boolean> {
+		const revision = this.revision;
+		const current = () => !this.destroyed && this.status.frozenReason === "missing" &&
+			revision === this.revision && isCurrent();
+		if (!current() || !this.stale.enabled) return false;
+		let data = structuredClone(this.host.build());
+		data = this.sync?.prepare(data) ?? data;
+		const absent = new SaveGuard();
+		const payload = absent.prepare(data)!;
+		if (await this.stale.blocks(absent) || !current()) return false;
+		if (!await preserve() || !current()) return false;
+		if (this.host.checkpoint) await this.remember(data);
+		if (!current() || await this.stale.blocks(absent) || !current()) return false;
+		await this.write(data);
+		if (this.destroyed) return false;
+		this.guard.commit(payload);
+		this.sync?.adopt(data);
+		if (this.sync) this.persistedContent = canonical(content(data));
+		this.revision++;
+		this.stale.clear();
+		this.thaw();
+		return true;
+	}
 
 	/** A started adapter write cannot be cancelled, but no later pass may run. */
 	destroy(): void {

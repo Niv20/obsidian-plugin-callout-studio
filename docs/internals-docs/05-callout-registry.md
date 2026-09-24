@@ -1,7 +1,7 @@
 # Callout registry
 
 [`src/manager/CalloutRegistry.ts`](../../src/manager/CalloutRegistry.ts), an
-explicit exception to the [source file size limit](19-build-test-release.md#source-file-size),
+explicit exception to the [source file size limit](20-build-test-release.md#source-file-size),
 is the single source of truth for every
 callout definition and every setting. `CSSInjector`, `AutoComplete`,
 `SettingsTab`, the public API, discovery — everything reads through it, and
@@ -172,7 +172,7 @@ snapshot after another device completed the migration. Display changes the
 marker to `seen`, suppressing repeats if an older device later reintroduces the
 retired field. With writable device-local storage, `pending` also survives a
 crash before UI readiness; the best-effort storage failure boundary is recorded
-in [Persistence and caching](07-persistence-and-caching.md#missing-or-unsupported-settings).
+in [Settings saving and recovery](08-settings-sync-and-recovery.md#startup-and-file-classification).
 
 ### `dropDerivedBackgrounds` — the nesting invariant, retroactively
 
@@ -187,7 +187,7 @@ derived tint into the form fields, saving wrote it back regardless of what the
 user actually meant to change, and `restyleUncustomizedFallbackRows` then
 copied that derived value onto every discovered row that mirrored it.
 
-Both write sites are fixed now (see [Colour system](11-color-system.md)); this
+Both write sites are fixed now (see [Colour system](12-color-system.md)); this
 migration retires what they already wrote to `data.json`. A background is
 dropped only when `derivedBgAmount` can prove it IS the accent at some tint
 strength, in **both** light and dark modes simultaneously — such a value
@@ -279,7 +279,7 @@ rebuilds collision groups until no merge remains: an alias inherited from a
 deleted bridge row can connect another group, and must resolve in the same load.
 Each successful pass removes at least one row; fallback/command references follow
 every merge. See
-[Logging and diagnostics](23-logging-and-diagnostics.md#background-discovery-and-load-time-migrations--consoledebug)
+[Logging and diagnostics](24-logging-and-diagnostics.md#background-discovery-and-load-time-migrations--consoledebug)
 for the full catalog of these traces and why they stay at `console.debug`.
 
 ## `isModified` and the built-in-deference mechanism
@@ -331,8 +331,7 @@ toSaveData(): PluginData
   memory it is appended to in fetch order, which is per machine; on disk that
   made two synced devices holding identical artwork serialize byte-different
   files, and so rewrite each other's `data.json` forever. See
-  [Persistence § multi-device sync](07-persistence-and-caching.md#multi-device-sync)
-  property 5.
+  [Causal merge history and integrity](08-settings-sync-and-recovery.md#causal-merge-history-and-integrity).
 
 > [!CAUTION]
 > A modified built-in and a user-created callout are equally "real, authored
@@ -483,7 +482,7 @@ every claim on this page.
 
 ### The third demo id, and why it is not in the set
 
-The [welcome splash](15-settings-ui-and-modals.md#why-this-one-id-is-not-reserved)
+The [welcome splash](16-settings-ui-and-modals.md#why-this-one-id-is-not-reserved)
 has a demo callout too, `WELCOME_DEMO_ID = "demo"`, and it is deliberately
 **not** reserved. The dash is the whole mechanism above, and `demo` does not
 have one: `sanitizeCalloutIdInput("Demo")` returns exactly `demo`, so a user can

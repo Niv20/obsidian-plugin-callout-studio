@@ -14,7 +14,7 @@ Keep local verification and GitHub Actions equivalent enough that a push does
 not discover a failure that could have been caught beforehand.
 
 Before changing this path, read
-[`docs/internals-docs/19-build-test-release.md`](../../../docs/internals-docs/19-build-test-release.md)
+[`docs/internals-docs/20-build-test-release.md`](../../../docs/internals-docs/20-build-test-release.md)
 and the relevant workflow under [`.github/workflows/`](../../../.github/workflows/).
 The workflow is the source of truth if prose or a hook disagrees with it.
 

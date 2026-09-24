@@ -366,7 +366,7 @@ this machinery invisible in those vaults: their generated CSS is byte-identical
 to what it was before any of it existed.
 
 Measured across all 257: **36** themes read a triplet, **25** read a colour,
-**0** tie. See [17-theme-callout-discovery.md](17-theme-callout-discovery.md)
+**0** tie. See [18-theme-callout-discovery.md](18-theme-callout-discovery.md)
 for the scan itself, the per-theme matrix and the known limitations.
 
 `parseCssColorToHex()` is the inverse — used by the Callout Manager
@@ -393,4 +393,4 @@ existed — this two-layer fallback is what lets pre-existing data and older
 exports keep rendering identically with no migration pass required.
 
 ---
-Next chapter: [12-icons.md](12-icons.md)
+Next chapter: [13-icons.md](13-icons.md)
