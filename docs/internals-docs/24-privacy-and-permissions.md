@@ -6,11 +6,17 @@ Callout Studio never sends your vault content anywhere and collects no telemetry
 
 Callout Studio asks for a small number of permissions, and all of them stay local to your machine:
 
-- **Vault file enumeration.** The plugin reads note contents through Obsidian's APIs for **Scan for callouts**, callout statistics, **Replace in vault**, **Convert to plain text**, and warnings about deleting a type that is still in use. It uses that content locally and never sends it anywhere. Statistics, the occurrences sidebar and usage menus share a lazy, in-memory index of Markdown, preferring current editor text for open notes. After the first usage request, vault and editor changes refresh affected entries; there is no unconditional startup scan. Source positions, excerpts and counts are discarded when the plugin unloads and never register callout types or enter plugin settings.
-- **Vault file modification.** The plugin writes to notes only when you run **Replace in vault**, **Convert to plain text**, or a wrap/unwrap command. It does not rewrite notes in the background.
+- **Vault file enumeration.** The plugin reads note contents through Obsidian's APIs for **Scan for callouts**, callout statistics, **Replace in vault**, **Convert to plain text**, **Convert to standard Markdown**, and warnings about deleting a type that is still in use. It uses that content locally and never sends it anywhere. Statistics, the occurrences sidebar and usage menus share a lazy, in-memory index of Markdown, preferring current editor text for open notes. After the first usage request, vault and editor changes refresh affected entries; there is no unconditional startup scan. Source positions, excerpts and counts are discarded when the plugin unloads and never register callout types or enter plugin settings.
+- **Vault file modification.** The plugin writes to notes only when you run **Replace in vault**, **Convert to plain text**, **Convert to standard Markdown**, or a wrap/unwrap command. It does not rewrite notes in the background.
 - **Clipboard access**, narrowly, for two things only: the **Copy callout Markdown** menu action writes to your clipboard when you click it, and the callout ID/alias input field can read a pasted block of comma- or space-separated text so you can paste several IDs at once. The clipboard is never read at any other time.
 
 No vault content, clipboard data, or usage information is ever transmitted off your device.
+
+The standard Markdown conversion sidebar keeps a local, in-memory preview while
+open and refreshes it after note changes. Only explicit confirmation writes the
+selected conversions and their heading-link repairs. A partially completed
+conversion retains its expected remaining bytes in memory until completed or the
+plugin unloads; it does not create a backup or recovery file on disk.
 
 ## What's fetched, and when
 

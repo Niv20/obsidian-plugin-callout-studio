@@ -1,7 +1,7 @@
 /**
  * settings/sections/DataManagementSection.ts — Import, export, and reset settings.
  *
- * Renders the "Maintenance" and "Import / Export" sections in
+ * Renders the "Danger zone" and "Import / Export" sections in
  * the settings tab. Handles JSON import with validation (via importValidator),
  * and full data reset. Uses ImportReportModal to surface
  * validation issues before import. Both export formats live behind
@@ -17,6 +17,7 @@ import { mergeById } from "../../utils/mergeById";
 import { addImportedCallout, applyImportedCallout } from "../../utils/importedCallout";
 import { ImportSourceModal } from "../ImportSourceModal";
 import { countCalloutUsages } from "../../utils/vaultCalloutScanner";
+import { PortableCalloutsModal } from "../PortableCalloutsModal";
 import type { SettingsSectionContext } from "./types";
 
 export function renderImportExportSection(
@@ -56,6 +57,15 @@ export function renderResetSection(
 	new Setting(containerEl)
 		.setName(t("settings.maintenance"))
 		.setHeading();
+
+	new Setting(containerEl)
+		.setName(t("portable.title"))
+		.setDesc(t("portable.settingDesc"))
+		.addButton((btn) => {
+			btn.setButtonText(t("portable.review"))
+				.onClick(() => new PortableCalloutsModal(ctx.app).open());
+			btn.buttonEl.addClass("cs-settings-neutral-btn");
+		});
 
 	new Setting(containerEl)
 		.setName(t("settings.resetAll"))

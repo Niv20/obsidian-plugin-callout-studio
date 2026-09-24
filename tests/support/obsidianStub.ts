@@ -150,7 +150,7 @@ export class Editor {}
  */
 export class ToggleComponent {}
 export class PluginSettingTab {}
-export class Menu {}
+export class Menu { setUseNativeMenu(_native: boolean): this { return this; } }
 export class WorkspaceLeaf {}
 
 /** Minimal lifecycle/DOM host for occurrence view tests. */
@@ -473,6 +473,10 @@ export class EditorSuggest<T> {
  * state that includes it answers `true`/`false` and one that does not answers
  * `undefined` — the three-way distinction the callers actually branch on.
  */
+export const editorInfoField = StateField.define<{ editor?: import("obsidian").Editor } | null>({
+	create: () => null,
+	update: (value) => value,
+});
 export const editorLivePreviewField = StateField.define<boolean>({
 	create: () => seams.__CS_LIVE_PREVIEW__ !== false,
 	update: (value) => value,
@@ -484,3 +488,12 @@ export const editorLivePreviewField = StateField.define<boolean>({
  * suite wants, so the key needs no behaviour — only identity.
  */
 export const livePreviewState = {};
+
+/** Native Obsidian 1.13.7 heading normalization, verified against its bundled app. */
+export function stripHeading(heading: string): string {
+	return heading.replace(/[!"#$%&()*+,.:;<=>?@^`{|}~/[\]\\\r\n]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+export function stripHeadingForLink(heading: string): string {
+	return heading.replace(/([:#|^\\\r\n]|%%|\[\[|\]\])/g, " ").replace(/\s+/g, " ").trim();
+}

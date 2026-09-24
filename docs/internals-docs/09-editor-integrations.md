@@ -219,9 +219,11 @@ note in Live Preview or Source mode and focus its text to make them available.
 
 The other built-ins use plain `callback`s and can appear without an active
 editor: **Open settings**, **Create new callout type**, **Quick insert block
-callout**, and **Callout occurrences**. **Manage commands** lists all built-ins
-regardless of whether Obsidian currently considers their execution context
-available. Hotkeys are also bound independently of the active editor context.
+callout**, and the **Callout occurrences** command (shown as
+**Callout Studio: Callout occurrences** in the Command Palette).
+**Manage commands** lists all built-ins regardless of whether Obsidian currently
+considers their execution context available. Hotkeys are also bound independently
+of the active editor context.
 
 > [!IMPORTANT]
 > **These ids are a stable API — never rename one.** Users may have hotkeys

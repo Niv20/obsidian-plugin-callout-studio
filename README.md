@@ -38,6 +38,8 @@ Callout Studio keeps a local recovery copy of its settings in case sync replaces
 
 Callout Studio never sends your vault content anywhere and collects no telemetry or analytics. It only downloads icon artwork you choose and, when needed, a translation for the plugin interface. See [Privacy & permissions](docs/internals-docs/24-privacy-and-permissions.md) for a full explanation of every download and where data is stored.
 
+**Convert to standard Markdown** reads Markdown notes locally for a selectable preview and, after a separate irreversible-action confirmation, rewrites heading and inline callout syntax and updates links to changed headings. Back up your vault first; see [the conversion guide](docs/user-guide/17-convert-to-standard-markdown.md).
+
 ## Install
 
 ### Community plugins (recommended)

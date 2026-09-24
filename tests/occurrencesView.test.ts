@@ -15,6 +15,7 @@ import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutCombobox } from "../src/settings/calloutCombobox";
 import { renderFallbackSection } from "../src/settings/sections/FallbackSection";
 import { FakeElement, installFakeDom } from "./support/fakeDom";
+import { notifySidebarEditorSelection } from "../src/ui/sidebarSelection";
 
 const dom = installFakeDom();
 // Index scans yield between chunks. Let only those timer APIs run normally;
@@ -205,7 +206,7 @@ describe("callout occurrence sidebar", () => {
 		const opened = h.view.onOpen();
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent, "");
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
-		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-metric-value")?.textContent, "—");
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-metrics"), null);
 		release("[!note]");
 		await opened;
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
@@ -235,16 +236,15 @@ describe("callout occurrence sidebar", () => {
 		});
 		await h.view.onOpen();
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 100);
-		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-file h3")?.textContent,
-			t("usage.fileCount", { path: "a.md", count: 105 }), "file count covers unloaded results too");
+		assert.equal(h.view.contentEl.querySelector(".cs-sidebar-file-link")?.textContent,
+			"a.md (105)", "file count covers unloaded results too");
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
 			t("usage.summary", { count: 107, files: 2 }));
 		(h.view.contentEl as unknown as FakeElement).fire("click", { target: action(h.view, "more") });
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 107);
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-file").length, 2);
-		assert.deepEqual(Array.from(h.view.contentEl.querySelectorAll(".cs-occurrences-file h3"), (node) => node.textContent), [
-			t("usage.fileCount", { path: "a.md", count: 105 }), t("usage.fileCount", { path: "b.md", count: 2 }),
-		]);
+		assert.deepEqual(Array.from(h.view.contentEl.querySelectorAll(".cs-sidebar-file-link"), (node) => node.textContent),
+			["a.md (105)", "b.md (2)"]);
 		const formatInput = h.view.contentEl.querySelector(".cs-select-dropdown .cs-combobox-input") as unknown as FakeElement;
 		assert.ok(formatInput);
 		assert.equal(formatInput.readOnly, true);
@@ -263,14 +263,13 @@ describe("callout occurrence sidebar", () => {
 		assert.deepEqual(h.view.getState(), { ids: [], role: "heading", allTypes: true });
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
 			t("usage.summary", { count: 1, files: 1 }));
-		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-file h3")?.textContent,
-			t("usage.fileCount", { path: "b.md", count: 1 }));
+		assert.equal(h.view.contentEl.querySelector(".cs-sidebar-file-link")?.textContent, "b.md (1)");
 		assert.equal(h.savedLayouts(), 1);
 		assert.equal(h.view.contentEl.ownerDocument.activeElement, formatInput);
-		h.view.contentEl.scrollTop = 180;
+		h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop = 180;
 		await h.view.setState({ ids: ["note", "note"], role: "regular", occurrences: ["never persist"], totalCount: 999 }, { history: false });
 		assert.deepEqual(h.view.getState(), { ids: ["note"], role: "regular" });
-		assert.equal(h.view.contentEl.scrollTop, 0, "opening another view state begins at the top");
+		assert.equal(h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop, 0, "opening another view state begins at the top");
 		assert.equal(formatInput.value, t("vaultStats.roleBlock"));
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 100);
 		await h.view.onClose();
@@ -430,7 +429,7 @@ describe("callout occurrence sidebar", () => {
 		};
 		try {
 			await h.view.onOpen();
-			assert.equal(h.view.contentEl.scrollTop, 0);
+			assert.equal(h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop, 0);
 			assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 100);
 			assert.equal(fileSection(h.view, "z.md"), null, "initial opening does not expand to the active file");
 			assert.deepEqual(scrolled, [], "initial opening does not scroll to the active file");
@@ -461,7 +460,7 @@ describe("callout occurrence sidebar", () => {
 		try {
 			await h.view.onOpen();
 			const typeInput = h.view.contentEl.querySelector(".cs-occurrences-picker .cs-combobox-input") as unknown as FakeElement;
-			h.view.contentEl.scrollTop = 240;
+			h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop = 240;
 			typeInput.fire("focus");
 			typeInput.value = "note";
 			typeInput.fire("input");
@@ -469,15 +468,15 @@ describe("callout occurrence sidebar", () => {
 			assert.ok(note);
 			note.fire("click");
 			assert.deepEqual(h.view.getState(), { ids: ["note"], role: undefined });
-			assert.equal(h.view.contentEl.scrollTop, 240, "choosing a type keeps the sidebar near the choice");
+			assert.equal(h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop, 240, "choosing a type keeps the sidebar near the choice");
 			assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 100);
 			assert.equal(fileSection(h.view, "z.md"), null);
 			assert.deepEqual(scrolled, []);
 
-			h.view.contentEl.scrollTop = 300;
+			h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop = 300;
 			pickDropdown(h.view.contentEl.querySelector<HTMLElement>(".cs-select-dropdown")!, t("vaultStats.roleBlock"));
 			assert.deepEqual(h.view.getState(), { ids: ["note"], role: "regular" });
-			assert.equal(h.view.contentEl.scrollTop, 300, "choosing a format keeps the sidebar near the choice");
+			assert.equal(h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop, 300, "choosing a format keeps the sidebar near the choice");
 			assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 100);
 			assert.equal(fileSection(h.view, "z.md"), null);
 			assert.deepEqual(scrolled, []);
@@ -659,12 +658,16 @@ describe("callout occurrence sidebar", () => {
 		h.activateFile("a.md");
 		const root = h.app.workspace.rootSplit;
 		const selected: Array<{ path: string; from: EditorPosition }> = [];
+		let liveSelection = { anchor: { line: 0, ch: 0 }, head: { line: 0, ch: 0 } };
 		const opened: string[] = [];
 		const view = new MarkdownView({} as WorkspaceLeaf);
 		Object.assign(view, {
 			editor: {
 				getValue: () => contents[view.file!.path as keyof typeof contents],
-				setSelection: (from: EditorPosition) => { selected.push({ path: view.file!.path, from }); },
+				setSelection: (from: EditorPosition, to = from) => {
+					selected.push({ path: view.file!.path, from }); liveSelection = { anchor: from, head: to };
+				},
+				listSelections: () => [liveSelection],
 				scrollIntoView: () => {}, focus: () => {},
 			},
 		});
@@ -686,21 +689,21 @@ describe("callout occurrence sidebar", () => {
 		FakeElement.prototype.scrollIntoView = function (this: FakeElement): void {
 			if (this.classList.contains("cs-occurrences-file")) {
 				scrolled.push(this);
-				h.view.contentEl.scrollTop = 999;
+				h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop = 999;
 			}
 		};
 		try {
 			await h.view.onOpen();
 			assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
 				t("usage.summary", { count: 3, files: 2 }));
-			h.view.contentEl.scrollTop = 240;
+			h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop = 240;
 			for (const position of [0, 1, 0, 2]) {
 				const button = h.view.contentEl.querySelector(`[data-action="result"][data-result="${position}"]`)!;
 				(h.view.contentEl as unknown as FakeElement).fire("click", { target: button });
 				await new Promise((resolve) => window.setTimeout(resolve, 0));
 				assert.equal(h.view.contentEl.querySelector(`[data-result="${position}"]`), button,
 					"selecting a result updates its existing card without rebuilding the list");
-				assert.equal(h.view.contentEl.scrollTop, 240, `result ${position} stays at its original scroll offset`);
+				assert.equal(h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop, 240, `result ${position} stays at its original scroll offset`);
 				assert.deepEqual(scrolled, [], "result navigation must not reveal its file heading");
 			}
 			assert.deepEqual(opened, ["a.md", "a.md", "a.md", "b.md"]);
@@ -709,8 +712,17 @@ describe("callout occurrence sidebar", () => {
 			assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
 				t("usage.summary", { count: 3, files: 2 }));
 			h.activateFile("b.md");
-			assert.equal(h.view.contentEl.scrollTop, 240, "a delayed activation of the clicked file keeps the card in place");
+			assert.equal(h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop, 240, "a delayed activation of the clicked file keeps the card in place");
 			assert.deepEqual(scrolled, []);
+			liveSelection = { anchor: { line: 0, ch: 0 }, head: { line: 0, ch: 0 } };
+			notifySidebarEditorSelection(view.editor);
+			assert.equal(h.view.contentEl.querySelector('[aria-current="true"]'), null, "clicking elsewhere clears the card immediately");
+			const fileButton = h.view.contentEl.querySelector('button[data-action="file"][data-path="b.md"]')!;
+			(h.view.contentEl as unknown as FakeElement).fire("click", { target: fileButton, ctrlKey: true });
+			await new Promise(resolve => window.setTimeout(resolve, 0));
+			assert.equal(opened.at(-1), "b.md");
+			assert.deepEqual(liveSelection, { anchor: { line: 0, ch: 0 }, head: { line: 0, ch: 0 } });
+			assert.equal(h.view.contentEl.querySelector('[aria-current="true"]'), null);
 			const file = h.app.vault.getAbstractFileByPath("a.md");
 			assert.ok(file instanceof TFile);
 			view.file = file;
@@ -758,7 +770,7 @@ describe("callout occurrence sidebar", () => {
 			h.index.dispose();
 		});
 	}
-	it("offers registered and observed types locally, unions aliases, and keeps global metrics independent", async () => {
+	it("offers registered and observed types locally and unions aliases without showing global metrics", async () => {
 		const h = harness({ "a.md": "[!note] [!warning] [!caution] [!unregistered]" });
 		const before = JSON.stringify(h.registry.toSaveData());
 		await h.view.onOpen();
@@ -766,9 +778,9 @@ describe("callout occurrence sidebar", () => {
 		assert.equal(input.value, t("usage.allTypes"));
 		assert.equal(input.getAttribute("aria-label"), null);
 		const labelId = input.getAttribute("aria-labelledby");
-		assert.equal(h.view.contentEl.querySelector(`#${labelId}`)?.textContent, t("usage.selectType"));
+		assert.equal(h.view.contentEl.querySelector(`#${labelId}`)?.textContent, t("vaultStats.columnType"));
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 4);
-		assert.deepEqual(Array.from(h.view.contentEl.querySelectorAll(".cs-occurrences-metric-value"), (node) => node.textContent), ["4", "4", "1", "1"]);
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-metrics"), null);
 		input.fire("focus");
 		input.value = "caution";
 		input.fire("input");
@@ -805,7 +817,8 @@ describe("callout occurrence sidebar", () => {
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-id"), null);
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-query"), null);
 		assert.equal(h.view.contentEl.querySelector('button[data-action="refresh"]'), null);
-		assert.ok(h.view.contentEl.querySelector("hr"));
+		assert.ok(h.view.contentEl.querySelector(".cs-sidebar-toolbar .cs-occurrences-controls"));
+		assert.equal(h.view.contentEl.querySelector(".cs-sidebar-subtitle")?.textContent, t("usage.subtitle"));
 		await h.view.onClose();
 		h.index.dispose();
 	});

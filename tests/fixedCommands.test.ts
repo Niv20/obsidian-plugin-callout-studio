@@ -224,6 +224,7 @@ describe("show-callout-occurrences", () => {
 		registerCalloutCommands(h.plugin, { ...deps(), openOccurrences: () => { opens += 1; } });
 		const command = h.added.find((item) => item.id === "show-callout-occurrences");
 		assert.ok(command?.callback);
+		assert.equal(command.name, "Callout occurrences");
 		command.callback();
 		assert.equal(opens, 1);
 	});
@@ -406,7 +407,7 @@ describe("refreshFixedCommandNames", () => {
 			"cmd.calloutWrap": "Envelopper",
 			"cmd.calloutUnwrap": "Désenvelopper",
 			"cmd.openQuickInsert": "Insertion rapide",
-			"usage.title": "Occurrences de callout",
+			"usage.command": "Occurrences de callouts",
 		});
 		setLocale("cs-test");
 		try {
@@ -415,6 +416,7 @@ describe("refreshFixedCommandNames", () => {
 			const again = h.added.slice(before);
 			assert.deepStrictEqual(idsOf(again), [...FIXED_COMMAND_IDS]);
 			assert.strictEqual(again[0]?.name, "Ouvrir les paramètres");
+			assert.strictEqual(again.at(-1)?.name, "Occurrences de callouts");
 			// Never removed and re-added — Obsidian keys the hotkey by id, so
 			// re-adding in place is exactly what preserves it.
 			assert.deepStrictEqual(h.removed, []);

@@ -239,6 +239,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-welcome", // obsidian:// URI action
 		"callout-studio-context-menu", // Menu section id
 		"callout-studio-occurrences", // Registered ItemView type, not a DOM class
+		"callout-studio-portable-conversion", // Registered conversion ItemView type, not a DOM class
 		"callout-studio-quick-insert", // Registered icon ID, not a DOM class
 		"callout-studio-statistics", // Registered icon ID, not a DOM class
 		"callout-studio-export", // export filename stem
@@ -255,6 +256,11 @@ describe("class names in styles.css and src/ agree", () => {
 	 * line here.
 	 */
 	const EMITTED_WITHOUT_RULES = new Set([
+		"cs-occurrences-summary", // view-specific lookup; shared cs-sidebar-summary supplies the presentation
+		"cs-occurrences-file", // per-view hook; shared cs-sidebar-file supplies the layout
+		"cs-portable-file", // per-view hook; shared cs-sidebar-file supplies the layout
+		"cs-occurrences-result", // identity/query hook; shared cs-sidebar-result supplies the card
+		"cs-occurrences-location", // per-view hook; shared cs-sidebar-location supplies its typography
 		"cs-discover-callouts-btn", // stable action hook; neutral-button and heading rules supply its styling
 		"callout-studio-delete-modal",
 		"callout-studio-delete-modal-hint",

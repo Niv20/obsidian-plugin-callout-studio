@@ -71,7 +71,7 @@ then its format and the options for that format. **Callout type** is searchable
 and starts on **Note** when that built-in type is available. You can change it
 before saving. It shows registered types in one list without section headings,
 including types saved through a scan. Types found only in your notes remain
-available in **Callout occurrences** until you register them.
+available in **Callout Studio occurrences** until you register them.
 **Callout format**, **Heading level**, **Action**, and **Fold state** open lists
 of choices without text search. They share the same rounded field appearance
 and subtle hover feedback. Pressing or focusing a field keeps that background

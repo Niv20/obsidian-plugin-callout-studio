@@ -6,16 +6,21 @@ looks like as data), rendering, and the "Your images" user-upload source.
 
 ## Plugin UI icons
 
-[`src/icons/uiIcons.ts`](../../src/icons/uiIcons.ts) bundles two Lucide-derived
+[`src/icons/uiIcons.ts`](../../src/icons/uiIcons.ts) bundles three Lucide-derived
 SVG composites: `callout-studio-quick-insert` combines a paintbrush with a
 circle-plus badge at the lower right, and `callout-studio-statistics` combines
-the paintbrush with a search badge at the lower right. Each badge overlaps the
+the paintbrush with a search badge at the lower right. The conversion sidebar
+uses `callout-studio-portable-conversion`, with Lucide's split badge in the same
+corner. Each badge overlaps the
 full-size brush, whose paths stop short to leave a transparent gap around the
 badge. The cutout is part of the geometry: no background-coloured cover or SVG
 mask IDs are needed, so repeated icons and different backgrounds render alike.
-The shapes use `currentColor` and inherit the host's icon colour.
+The shapes use `currentColor` and inherit the host's icon colour. All three use
+a 24px canvas with rounded 2px brush strokes. The split badge is half of the
+original Lucide coordinates, translated by `(11.5, 11)` while retaining its
+2px stroke; its nearest brush endpoints leave about 1.6px of transparent space.
 
-[`registerUiIcons.ts`](../../src/icons/registerUiIcons.ts) registers both with
+[`registerUiIcons.ts`](../../src/icons/registerUiIcons.ts) registers all three with
 Obsidian's `addIcon()` synchronously at the start of `onload()`, before any view,
 command or ribbon consumer. A plugin-registered cleanup calls `removeIcon()` on
 unload. These assets require no runtime fetch or icon-pack download.
@@ -25,8 +30,9 @@ for the native right-sidebar tab, **Find usages** menus and command. The tab is
 the only visible occurrences control; after closing it, the command or a
 **Find usages** action reopens the sidebar. The welcome hero keeps
 the stock `paintbrush` icon. Editable standalone exports live in
-[`quick-insert.svg`](../assets/ui-icons/quick-insert.svg) and
-[`statistics.svg`](../assets/ui-icons/statistics.svg); keep them aligned with
+[`quick-insert.svg`](../assets/ui-icons/quick-insert.svg),
+[`statistics.svg`](../assets/ui-icons/statistics.svg) and
+[`conversion.svg`](../assets/ui-icons/conversion.svg); keep them aligned with
 the bundled definitions. Attribution is in
 [`THIRD-PARTY-NOTICES.md`](../../THIRD-PARTY-NOTICES.md#lucide).
 

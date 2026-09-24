@@ -9,12 +9,92 @@ the individual modals not already covered by
 
 `CalloutStudioSettingsTab.display()` renders its sections in a fixed order into
 one scrollable tab: callout lists → fallback → custom palettes → global settings
-→ context menu → hotkeys → import/export → language → reset → footer.
+→ context menu → hotkeys → import/export → language → danger zone → footer.
+
+**Danger zone** contains **Convert to standard Markdown** first and
+**Reset everything** second. `PortableCalloutsModal` is a compact introduction:
+two example tables with two rows each (headings, then inline), isolated LTR source
+text, extra space between the tables, and a backup recommendation. There is no expanded-details section or arrows.
+It performs no vault reads. The red **Convert vault…** button opens the registered
+`PortableConversionView` in the right sidebar and closes settings.
+
+**Callout Studio conversion** groups before/after replacements and dependent
+link repairs by file, using the shared `ui/sidebarResults.ts` components. Each
+card shows its format and line number, with muted interface-font labels beside
+the monospace before/after text. Only the separate checkbox changes inclusion;
+the card's button navigates to its validated Markdown source. Source and link
+changes on the same selected heading line share one card. Each inline token,
+including its optional payload, has a separate card and selection; headings show
+their complete source line. Both previews wrap without truncation. Rows paginate in batches of
+100; all remain available. `ui/sidebarFrame.ts` supplies the identical heading,
+short subtitle, and result-summary components to both sidebars. The conversion
+subtitle sits opposite the red conversion button. A master checkbox before the
+summary has empty, indeterminate and checked states. Clicking an empty or partial
+selection selects all; clicking the fully checked state clears all choices.
+The indeterminate dash uses Obsidian's checkbox fill and marker colors so it
+matches the checked mark across themes.
+Occurrence filters have localized accessible names without visible labels.
+Each fixed toolbar sits outside its own results scrollport, so controls
+stay visible without a measured sticky offset; file headings stick at zero
+inside the scroller. Keyboard focus has an outline; a pointer press adds none.
+The shared summary owns equal block padding between its top rule and the toolbar's
+bottom rule; the toolbar adds no trailing padding. The conversion checkbox shares
+the summary's center alignment and clears the host's positional checkbox offset.
+Both sidebars use a centered, maximum-1000px layout and a row-major, left-to-right
+two-column card grid at 680px pane width, while file headings span both columns.
+
+`portableConversionNavigation.ts` shares active-file tracking and source opening
+with occurrences via `ui/sidebarActiveFile.ts` and `ui/sidebarNavigation.ts`.
+Fingerprint plus source-line validation preserves repeated-line identity;
+changed documents may relocate only a unique unchanged line. Navigation never
+modifies text or conversion choices, and stale asynchronous selections cancel.
+Both sidebars open a note at its beginning when its file heading is clicked;
+counts appear in parentheses immediately after the file name. The shared
+file-heading button uses its visible name and count as its accessible label,
+without a redundant hover tooltip. The shared
+`ui/sidebarSelection.ts` observes selection transactions forwarded by the existing
+CodeMirror extension. Moving or collapsing the selection, adding another selection,
+or changing the document clears the active card without polling. Subscriptions
+are released when the active card changes or the sidebar closes.
+
+`portableConversionWatch.ts` listens only while open, debounces changes by 350 ms
+and invalidates affected cache entries. Stale previews immediately disable
+conversion. Progress appears as an overlay only after 600 ms, so brief refreshes
+do not move the toolbar or flash status text. Persistent errors/recovery guidance
+have their own region in the result scrollport. Exact unchanged row identities preserve
+selection; new or edited rows require fresh selection. Closing releases events,
+timers and preview state. Locale changes redraw the view without losing choices.
+
+The source card's icon-bearing Obsidian context menu opens
+`PortableCustomReplacementModal` through `portableConversionCustom.ts`.
+The modal has a read-only **Before** row and one editable **After** row, without
+format legends. `portableReplacementEditor.ts` exposes one text
+input for the selected inline token, with up to three read-only context words on
+each side (two on narrower panes). Read-only context stays on one line and may
+ellipsize as available space or text size changes; fixed heading markers cannot
+shrink away. Actual source text still wraps in full;
+heading rows expose only the title, keeping the container prefix, heading level,
+and closing markers fixed. Enter, input-method line breaks, and multiline pastes
+are blocked; save validates the values again before rebuilding the reviewed
+proposal. The modal snapshots the opening values, updates Save availability on
+input, and rejects unchanged drafts in the click handler as well. Returning every
+field to its opening value disables Save again. A purple **Custom** badge sits
+beside the format/line label. Restoring
+the default also rebuilds dependent heading-link repairs. These edits remain in
+the review until the separate conversion confirmation is accepted.
+
+A separate `ConfirmModal` describes irreversible changes and partial-failure
+behavior. Revision guards prevent a stale or reopened view's confirmation from
+writing. Closing after conversion starts does not cancel writes; a notice still
+reports the outcome. Partial writes retain an exact recovery plan with fixed
+choices, including pending link-only changes. See
+[the conversion contract](10-vault-discovery.md#portable-markdown-conversion).
 
 The footer owns the contact and project links: one friendly sentence embeds an
 inline GitHub issue link for either a bug or an idea and an inline email link.
-The quieter row links to the source, contribution guide, plugin license and the
-GitHub release matching the displayed plugin version. The
+An inset rule with matching space above and below separates that sentence from
+the quieter row, which links to the source, contribution guide, plugin license
+and the GitHub release matching the displayed plugin version. The
 **Icon licenses & credits** control opens `IconCreditsModal`; that modal renders
 the registry-backed icon attributions and links to the full third-party notices
 without reserving a long disclosure row at the bottom of the settings page.
@@ -1479,7 +1559,7 @@ typing `no` answers `Note` rather than `Annotation`.
 An optional `groupOf` callback supplies a stable group key, translated label,
 and numeric order. When supplied, groups take priority over search ranking,
 while rows within each group keep the normal match/name order. Only the
-**Callout occurrences** picker enables this for registered and unregistered
+**Callout Studio occurrences** picker enables this for registered and unregistered
 choices; other callout pickers keep their existing flat lists and choices.
 Headings and dividers reuse the palette picker's rendering, and filtering out
 all rows in a group removes its heading too. Each contiguous group is wrapped

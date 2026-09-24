@@ -63,7 +63,8 @@ import {
 	CSS_HEADING_TITLE,
 	CSS_UNKNOWN,
 } from "../src/editor/renderShared";
-import { editorLivePreviewField, livePreviewState } from "obsidian";
+import { editorInfoField, editorLivePreviewField, livePreviewState, type Editor, type MarkdownFileInfo } from "obsidian";
+import { SidebarSourceSelection } from "../src/ui/sidebarSelection";
 
 type Registry = InstanceType<typeof CalloutRegistry>;
 type Host = Parameters<typeof createCalloutViewPlugin>[0];
@@ -244,6 +245,23 @@ const widgets = (h: Harness): unknown[] =>
 	h.decorations()
 		.map(([, , deco]) => widgetOf(deco))
 		.filter(Boolean);
+
+describe("sidebar selection updates from CodeMirror", () => {
+	it("clears a sidebar highlight when source mode moves the caret, without a document edit", () => {
+		let h: Harness;
+		const editor = { listSelections: () => h.view.state.selection.ranges.map(range => ({
+			anchor: { line: 0, ch: range.anchor }, head: { line: 0, ch: range.head },
+		})) } as Editor;
+		h = harness("[!note] after", { extensions: [editorInfoField.init(() => ({ editor } as MarkdownFileInfo))] });
+		update(h, { transaction: { selection: { anchor: 0, head: 7 } } });
+		const selected = new SidebarSourceSelection();
+		let cleared = false;
+		selected.watch(editor, { from: { line: 0, ch: 0 }, to: { line: 0, ch: 7 } }, () => { cleared = true; });
+		update(h, { transaction: { selection: { anchor: 10 } } });
+		assert.equal(cleared, true);
+		h.instance.destroy();
+	});
+});
 
 /* -------------------------------------------------------------------------- */
 /* Heading callouts                                                            */

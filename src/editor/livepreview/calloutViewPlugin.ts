@@ -30,7 +30,8 @@ import {
 } from "@codemirror/view";
 import { RangeSetBuilder, type EditorSelection } from "@codemirror/state";
 import { syntaxTree } from "@codemirror/language";
-import { editorLivePreviewField, livePreviewState } from "obsidian";
+import { editorInfoField, editorLivePreviewField, livePreviewState } from "obsidian";
+import { notifySidebarEditorSelection } from "../../ui/sidebarSelection";
 import type { App } from "obsidian";
 import type { PluginSettings } from "../../types";
 import type { CalloutRegistry } from "../../manager/CalloutRegistry";
@@ -137,17 +138,11 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 				// canvas card, editable transclusion, settings preview), it is
 				// tracked from here until destroy() (see refresh.ts).
 				registerCalloutEditorView(view);
-				// Safety net for drags that end outside the editor (or over a
-				// widget that swallowed the event): if no transaction cleared
-				// the freeze by the next macrotask, force one via the no-op
-				// refresh effect. When core already dispatched on mouseup this
-				// is a no-op because wasMousedown is false by then.
-				//
-				// The listener sits on the shared document and one instance of
-				// this plugin exists per EditorView (notes, table cells, canvas
-				// cards, the settings preview), so a single physical mouseup
-				// reaches every one of them. Three things keep that from turning
-				// into a fan-out of dispatches into unrelated views: only an
+				// Drags may end outside the editor or over a widget that swallowed
+				// mouseup. On the next macrotask, thaw via a no-op refresh unless
+				// core already cleared wasMousedown. Each EditorView (notes, table
+				// cells, canvas cards, settings previews) hears the shared document's
+				// mouseup. Three checks prevent dispatches into unrelated views: only an
 				// ARMED view (one that saw the mousedown) acts, the timer always
 				// disarms itself even when it bails — so a view that stopped
 				// receiving updates cannot stay armed forever and re-fire on
@@ -180,6 +175,10 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 			}
 
 			update(update: ViewUpdate): void {
+				if (update.selectionSet || update.docChanged) {
+					const editor = update.state.field(editorInfoField, false)?.editor;
+					if (editor) notifySidebarEditorSelection(editor, update.docChanged);
+				}
 				const mousedown =
 					update.view.plugin(livePreviewState)?.mousedown ?? false;
 				const refreshed = update.transactions.some((tr) =>

@@ -1,8 +1,7 @@
-import { t, getLocale } from "../i18n";
+import { t } from "../i18n";
 import { SelectDropdown } from "../ui/selectDropdown";
+import { createSidebarSummary, createSidebarToolbar } from "../ui/sidebarFrame";
 import type { CalloutRenderRole } from "../types";
-import type { CalloutOccurrenceIndex } from "./CalloutOccurrenceIndex";
-import { getOccurrenceMetrics } from "./occurrenceMetrics";
 
 export const OCCURRENCE_ROLES: CalloutRenderRole[] = ["regular", "heading", "inline"];
 export const occurrenceRoleLabel = (role: CalloutRenderRole): string => t({
@@ -15,34 +14,20 @@ export function occurrenceButton(container: HTMLElement, action: string, label: 
 
 /** Stable controls let an in-progress picker search survive index updates. */
 export function createOccurrencesFrame(content: HTMLElement) {
-	content.createEl("h2", { text: t("usage.title") });
-	content.createEl("hr");
-	const metrics = content.createDiv({ cls: "cs-occurrences-metrics" });
-	const controls = content.createDiv({ cls: "cs-occurrences-controls" });
-	const pickerHost = controls.createDiv({ cls: "cs-occurrences-picker" });
-	const roleSelect = new SelectDropdown(controls, t("usage.filterRole"))
+	const toolbar = createSidebarToolbar(content, t("usage.title"), t("usage.subtitle"));
+	const controls = toolbar.createDiv({ cls: "cs-occurrences-controls" });
+	const typeField = controls.createDiv({ cls: "cs-sidebar-filter" });
+	const pickerHost = typeField.createDiv({ cls: "cs-occurrences-picker" });
+	const roleField = controls.createDiv({ cls: "cs-sidebar-filter" });
+	const roleSelect = new SelectDropdown(roleField, t("commandBuilder.format"))
 		.addOption("", t("usage.allRoles"));
 	roleSelect.inputEl.dataset.action = "role";
 	for (const role of OCCURRENCE_ROLES) roleSelect.addOption(role, occurrenceRoleLabel(role));
-	const summary = content.createDiv({ cls: "cs-occurrences-summary", attr: { role: "status", "aria-live": "polite" } });
-	const status = content.createDiv({ cls: "cs-occurrences-status", attr: { role: "status", "aria-live": "polite" } });
-	const failures = content.createDiv({ cls: "cs-occurrences-failures" });
-	const results = content.createDiv({ cls: "cs-occurrences-results" });
-	return { metrics, pickerHost, roleSelect, summary, status, failures, results };
+	const summary = createSidebarSummary(toolbar, "cs-occurrences-summary");
+	const scroll = content.createDiv({ cls: "cs-occurrences-scroll" });
+	const status = scroll.createDiv({ cls: "cs-occurrences-status", attr: { role: "status", "aria-live": "polite" } });
+	const failures = scroll.createDiv({ cls: "cs-occurrences-failures" });
+	const results = scroll.createDiv({ cls: "cs-occurrences-results" });
+	return { pickerHost, roleSelect, summary, scroll, status, failures, results };
 }
 export type OccurrencesFrame = ReturnType<typeof createOccurrencesFrame>;
-
-export function renderOccurrenceMetrics(host: HTMLElement, index: CalloutOccurrenceIndex): void {
-	const metrics = getOccurrenceMetrics(index);
-	const waiting = index.status === "idle" || index.status === "loading" && metrics.scannedFileCount === 0;
-	const values = [
-		["vaultStats.totalCallouts", metrics.totalCount], ["vaultStats.typesFound", metrics.typeCount],
-		["vaultStats.filesWithCallouts", metrics.fileCount], ["usage.markdownFiles", metrics.scannedFileCount],
-	] as const;
-	host.empty();
-	for (const [label, value] of values) {
-		const metric = host.createDiv({ cls: "cs-occurrences-metric" });
-		metric.createSpan({ cls: "cs-occurrences-metric-value", text: waiting ? "—" : value.toLocaleString(getLocale()) });
-		metric.createSpan({ cls: "cs-occurrences-metric-label", text: t(label) });
-	}
-}

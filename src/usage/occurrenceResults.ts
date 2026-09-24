@@ -1,4 +1,5 @@
 import { t } from "../i18n";
+import { createSidebarFileGroup, renderSidebarLocation } from "../ui/sidebarResults";
 import type { CalloutOccurrence } from "./occurrenceTypes";
 import { occurrenceButton, occurrenceRoleLabel } from "./occurrencesViewFrame";
 
@@ -86,15 +87,15 @@ function renderOccurrenceResults(
 	for (const [offset, occurrence] of results.slice(0, limit).entries()) {
 		if (occurrence.path !== path || !group) {
 			path = occurrence.path;
-			group = content.createEl("section", { cls: "cs-occurrences-file" });
-			onSection(path, group);
-			group.createEl("h3", { text: t("usage.fileCount", { path, count: fileCounts.get(path) ?? 0 }) });
+			const file = createSidebarFileGroup(content, { path, count: fileCounts.get(path) ?? 0, cls: "cs-occurrences-file" });
+			group = file.grid;
+			onSection(path, file.section);
 		}
 		const row = occurrenceButton(group, "result", "");
-		row.addClass("cs-occurrences-result");
+		row.addClass("cs-occurrences-result", "cs-sidebar-result");
 		row.dataset.result = String(offset);
 		onRow(occurrence, row);
-		row.createSpan({ cls: "cs-occurrences-location", text: t("usage.location", { line: occurrence.line + 1, role: occurrenceRoleLabel(occurrence.role) }) });
+		renderSidebarLocation(row, { line: occurrence.line + 1, role: occurrenceRoleLabel(occurrence.role), cls: "cs-occurrences-location" });
 		const excerpt = row.createSpan({ cls: "cs-occurrences-excerpt" });
 		if (occurrence.role === "regular" && occurrence.excerpt.includes("\n")) {
 			excerpt.addClass("cs-occurrences-excerpt-split");

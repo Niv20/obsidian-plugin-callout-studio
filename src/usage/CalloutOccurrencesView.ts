@@ -6,13 +6,14 @@ import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { CalloutCombobox } from "../settings/calloutCombobox";
 import type { CalloutRenderRole } from "../types";
 import { getCalloutOccurrenceIndex, type CalloutOccurrenceIndex } from "./CalloutOccurrenceIndex";
-import { OccurrenceActiveFile } from "./occurrenceActiveFile";
+import { SidebarActiveFile } from "../ui/sidebarActiveFile";
+import { navigateToSidebarFile } from "../ui/sidebarNavigation";
+import { SidebarSourceSelection } from "../ui/sidebarSelection";
 import type { CalloutOccurrence, CalloutOccurrenceQuery } from "./occurrenceTypes";
 import { ALL_TYPES_ID, OccurrenceTypeChoices, occurrencePickerChoices } from "./occurrenceTypeChoices";
 import { OccurrenceResults } from "./occurrenceResults";
 import { navigateToCalloutOccurrence } from "./navigation";
-import { createOccurrencesFrame, OCCURRENCE_ROLES,
-	renderOccurrenceMetrics, type OccurrencesFrame } from "./occurrencesViewFrame";
+import { createOccurrencesFrame, OCCURRENCE_ROLES, type OccurrencesFrame } from "./occurrencesViewFrame";
 
 export const CALLOUT_OCCURRENCES_VIEW = "callout-studio-occurrences";
 const PAGE_SIZE = 100;
@@ -22,13 +23,14 @@ const BUSY_STATUS_DELAY_MS = 2_000;
 export class CalloutOccurrencesView extends ItemView {
 	private readonly index: CalloutOccurrenceIndex;
 	private readonly typeChoices: OccurrenceTypeChoices;
-	private readonly activeFile: OccurrenceActiveFile;
+	private readonly activeFile: SidebarActiveFile;
 	private ids: string[] = [];
 	private selectedType = ALL_TYPES_ID;
 	private allTypes = true;
 	private role: CalloutRenderRole | undefined;
 	private limit = PAGE_SIZE;
 	private readonly resultCards = new OccurrenceResults(PAGE_SIZE);
+	private readonly sourceSelection = new SidebarSourceSelection();
 	private results: readonly CalloutOccurrence[] = [];
 	private unsubscribe: (() => void) | null = null;
 	private opened = false;
@@ -59,9 +61,10 @@ export class CalloutOccurrencesView extends ItemView {
 		super(leaf);
 		this.index = getCalloutOccurrenceIndex(this.app);
 		this.typeChoices = new OccurrenceTypeChoices(registry, this.index);
-		this.activeFile = new OccurrenceActiveFile(this.app,
+		this.activeFile = new SidebarActiveFile(this.app,
 			(ref) => this.registerEvent(ref),
 			(path) => {
+				this.sourceSelection.clear();
 				this.resultCards.setActiveFile(path);
 				if (this.opened && this.frame) this.activeFile.sync(this.results, this.limit, this.index.status, this.failed);
 			},
@@ -91,8 +94,8 @@ export class CalloutOccurrencesView extends ItemView {
 		this.role = OCCURRENCE_ROLES.includes(input.role as CalloutRenderRole) ? input.role as CalloutRenderRole : undefined;
 		this.limit = PAGE_SIZE;
 		this.navigationGeneration++;
-		this.resultCards.select(null);
-		this.contentEl.scrollTop = 0;
+		this.resultCards.select(null); this.sourceSelection.clear();
+		if (this.frame) this.frame.scroll.scrollTop = 0;
 		this.activeFile.cancelReveal();
 		this.picker?.setValue(this.selectedType);
 		this.frame?.roleSelect.setValue(this.role ?? "");
@@ -121,7 +124,7 @@ export class CalloutOccurrencesView extends ItemView {
 	onClose(): Promise<void> {
 		this.opened = false;
 		this.navigationGeneration++;
-		this.resultCards.select(null);
+		this.resultCards.select(null); this.sourceSelection.clear();
 		this.resetBusyStatus();
 		this.unsubscribe?.();
 		this.unsubscribe = null;
@@ -162,7 +165,7 @@ export class CalloutOccurrencesView extends ItemView {
 	private resetResults(): void {
 		this.limit = PAGE_SIZE;
 		this.navigationGeneration++;
-		this.resultCards.select(null);
+		this.resultCards.select(null); this.sourceSelection.clear();
 		// render() preserves the current scroll offset after a picker commit.
 		this.activeFile.cancelReveal();
 		this.app.workspace.requestSaveLayout();
@@ -202,25 +205,32 @@ export class CalloutOccurrencesView extends ItemView {
 		if (!button || button.disabled) return;
 		const action = button.dataset.action;
 		if (action === "more") { this.limit += PAGE_SIZE; this.render(); return; }
+		if (action === "file" && button.dataset.path) { void this.openResult(button.dataset.path, event.metaKey || event.ctrlKey); return; }
 		if (action !== "result") return;
 		const occurrence = this.resultCards.getOccurrence(button);
 		if (occurrence) void this.openResult(occurrence, event.metaKey || event.ctrlKey);
 	}
-	private async openResult(occurrence: CalloutOccurrence, newTab: boolean): Promise<void> {
+	private async openResult(occurrence: CalloutOccurrence | string, newTab: boolean): Promise<void> {
 		if (this.navigating) return;
 		this.navigating = true;
+		const path = typeof occurrence === "string" ? occurrence : occurrence.path;
 		const generation = this.navigationGeneration;
 		const isCurrent = (): boolean => this.opened && generation === this.navigationGeneration;
-		this.activeFile.beginResultNavigation(occurrence.path);
+		this.activeFile.beginResultNavigation(path);
 		let opened = false;
-		try { opened = await navigateToCalloutOccurrence(this.app, occurrence, newTab, isCurrent); }
-		finally { this.activeFile.endResultNavigation(occurrence.path); this.navigating = false; }
+		let trackSelection: (() => void) | undefined;
+		try { opened = await (typeof occurrence === "string"
+			? navigateToSidebarFile(this.app, path, newTab, isCurrent)
+			: navigateToCalloutOccurrence(this.app, occurrence, newTab, isCurrent,
+				(editor, range) => { trackSelection = () => this.sourceSelection.watch(editor, range, () => this.resultCards.select(null)); })); }
+		finally { this.activeFile.endResultNavigation(path); this.navigating = false; }
 		if (!isCurrent()) return;
 		if (opened) {
-			this.activeFile.openedResult(occurrence.path);
-			this.resultCards.select(occurrence);
+			this.activeFile.openedResult(path); trackSelection?.();
+			if (typeof occurrence === "string") this.sourceSelection.clear();
+			this.resultCards.select(typeof occurrence === "string" ? null : occurrence);
 		} else {
-			this.index.invalidate(occurrence.path);
+			this.index.invalidate(path);
 			await this.refresh();
 		}
 		if (this.opened) this.render();
@@ -236,7 +246,7 @@ export class CalloutOccurrencesView extends ItemView {
 		});
 		this.picker = new CalloutCombobox(frame.pickerHost, {
 			registry: this.registry, choices: () => occurrencePickerChoices(this.typeChoices, this.selectedType), value: this.selectedType,
-			ariaLabel: t("usage.selectType"), labelOf: (def) => def.id === ALL_TYPES_ID ? t("usage.allTypes") : def.id,
+			ariaLabel: t("vaultStats.columnType"), labelOf: (def) => def.id === ALL_TYPES_ID ? t("usage.allTypes") : def.id,
 			iconlessOptionId: ALL_TYPES_ID,
 			hideSingleGroup: true,
 			showSingleGroupKey: "browse",
@@ -264,10 +274,9 @@ export class CalloutOccurrencesView extends ItemView {
 		}
 		this.results = this.cachedQuery.result.occurrences;
 		const complete = index.status === "ready" && !this.failed;
-		const scrollTop = this.contentEl.scrollTop;
+		const scrollTop = this.frame?.scroll.scrollTop ?? 0;
 		const frame = this.ensureFrame();
 		frame.roleSelect.setValue(this.role ?? "");
-		renderOccurrenceMetrics(frame.metrics, index);
 		const busy = !this.failed && (index.status === "idle" || index.status === "loading" || index.status === "stale");
 		this.syncBusyStatus(busy);
 		frame.status.setText(this.failed || index.status === "disposed" ? t("usage.failed")
@@ -284,7 +293,7 @@ export class CalloutOccurrencesView extends ItemView {
 			? t("usage.summary", { count: this.results.length, files: this.cachedQuery.result.fileCount }) : "");
 		this.resultCards.render(frame.results, this.results, this.limit, complete,
 			(path, section) => this.activeFile.addSection(path, section), () => this.activeFile.clearSections());
-		this.contentEl.scrollTop = scrollTop;
+		frame.scroll.scrollTop = scrollTop;
 		this.activeFile.sync(this.results, this.limit, index.status, this.failed);
 	}
 	private indexState(): string { return `${this.index.dataRevision}:${this.index.status}:${this.index.failures.length}`; }

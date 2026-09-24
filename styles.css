@@ -76,7 +76,8 @@
 .callout-studio-settings,
 .cs-modal,
 .callout-studio-editor,
-.cs-occurrences-view {
+.cs-occurrences-view,
+.cs-portable-view {
 	--cs-btn-face: var(--interactive-normal);
 	--cs-btn-face-hover: color-mix(
 		in srgb,
@@ -5923,7 +5924,9 @@ body:not(.is-phone)
 	justify-content: center;
 	column-gap: 2px;
 	row-gap: 0;
-	margin-top: var(--size-4-2);
+	margin-block-start: var(--size-4-3);
+	padding-block-start: var(--size-4-3);
+	border-block-start: 1px solid var(--background-modifier-border);
 	color: var(--text-faint);
 	font-size: var(--font-smallest);
 	line-height: 1.25;
@@ -5978,6 +5981,564 @@ body:not(.is-phone)
 .cs-reset-warning {
 	color: var(--text-error);
 	font-weight: bold;
+}
+
+/* Portable Markdown: compact rules first, a separate review sidebar for edits. */
+.cs-portable-modal {
+	width: min(700px, 94vw);
+}
+
+.cs-portable-rules {
+	margin-block: var(--size-4-3);
+}
+
+.cs-portable-rules + .cs-portable-rules {
+	margin-block-start: var(--size-4-6);
+}
+
+.cs-portable-rules h3 {
+	margin: 0 0 var(--size-4-2);
+	font-size: var(--font-ui-medium);
+}
+
+.cs-portable-rules table {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+	font-size: var(--font-small);
+}
+
+.cs-portable-rules th {
+	color: var(--text-muted);
+	font-weight: var(--font-normal);
+	text-align: start;
+	padding: 0 var(--size-4-2) var(--size-4-1);
+}
+
+.cs-portable-rules td {
+	padding: var(--size-4-2);
+	border-block-start: 1px solid var(--background-modifier-border);
+	background: var(--cs-surface-raised, var(--background-secondary));
+}
+
+.cs-portable-rules code {
+	display: block;
+	padding: 0;
+	background: transparent;
+	direction: ltr;
+	unicode-bidi: isolate;
+	text-align: start;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	font-size: inherit;
+}
+
+.cs-portable-warning {
+	margin-block: var(--size-4-3) 0;
+	padding: var(--size-4-2) var(--size-4-3);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	color: var(--text-muted);
+	font-size: var(--font-small);
+}
+
+.cs-portable-custom-modal {
+	width: min(680px, 94vw);
+}
+
+.cs-portable-custom-label {
+	font-size: var(--font-ui-small);
+	color: var(--text-muted);
+	font-family: var(--font-interface);
+	align-self: center;
+}
+
+.cs-portable-custom-input {
+	flex: 1 1 0;
+	min-inline-size: 0;
+	inline-size: 0;
+	font-family: var(--font-monospace);
+	color: var(--text-normal);
+	line-height: 1.5;
+}
+
+.cs-portable-custom-fields {
+	container: cs-custom-editor / inline-size;
+	display: grid;
+	gap: var(--size-4-4);
+}
+
+.cs-portable-custom-field {
+	display: grid;
+	gap: var(--size-4-3);
+	min-inline-size: 0;
+	margin: 0;
+}
+
+.cs-portable-custom-row {
+	display: grid;
+	grid-template-columns: max-content minmax(0, 1fr);
+	align-items: start;
+	gap: var(--size-4-3);
+	min-inline-size: 0;
+}
+
+.cs-portable-custom-context {
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
+	padding-block: var(--size-4-2);
+	color: var(--text-normal);
+	font-family: var(--font-monospace);
+	font-size: var(--font-ui-small);
+	overflow-wrap: anywhere;
+}
+
+.cs-portable-custom-context code {
+	flex: 0 1 auto;
+	min-inline-size: 0;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.cs-portable-custom-editor {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-2);
+	min-inline-size: 0;
+}
+
+.cs-portable-custom-fixed {
+	flex: 0 1 auto;
+	min-inline-size: 0;
+	max-inline-size: 25%;
+	color: var(--text-faint);
+	font-family: var(--font-monospace);
+	font-size: var(--font-ui-small);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.cs-portable-custom-markers {
+	flex: 0 0 auto;
+	max-inline-size: none;
+	overflow: visible;
+}
+
+@container cs-custom-editor (max-width: 480px) {
+	.cs-portable-custom-outer-word {
+		display: none;
+	}
+}
+
+.cs-portable-custom-error {
+	color: var(--text-error);
+	font-size: var(--font-ui-small);
+}
+
+.cs-portable-custom-error:empty {
+	display: none;
+}
+
+.cs-portable-custom-badge {
+	display: inline-block;
+	margin-inline-start: var(--size-4-2);
+	border-radius: var(--radius-s);
+	padding: 1px 6px;
+	background: color-mix(in srgb, var(--color-purple) 12%, transparent);
+	color: var(--color-purple);
+	font-size: var(--font-ui-smaller);
+}
+
+/* Both vault sidebars share file groups, cards and a bounded row-major grid. */
+.cs-sidebar-file {
+	min-inline-size: 0;
+	padding-block-end: var(--size-4-4);
+}
+
+.cs-sidebar-file-heading {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	display: flex;
+	align-items: baseline;
+	gap: var(--size-4-2);
+	margin: 0;
+	padding-block: var(--size-4-3);
+	background: var(--cs-surface-raised, var(--background-secondary));
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-medium);
+	line-height: 1.4;
+}
+
+.cs-sidebar-file-name {
+	min-inline-size: 0;
+	overflow-wrap: anywhere;
+	unicode-bidi: plaintext;
+}
+
+.cs-sidebar-file-count {
+	margin-inline-start: 0.4em;
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-normal);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+button.cs-sidebar-file-link {
+	display: block;
+	min-inline-size: 0;
+	block-size: auto;
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-s);
+	background: transparent;
+	box-shadow: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	white-space: normal;
+	overflow-wrap: anywhere;
+	cursor: pointer;
+}
+
+button.cs-sidebar-file-link:hover {
+	color: var(--text-accent);
+}
+
+button.cs-sidebar-file-link:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 3px;
+}
+
+.cs-sidebar-file.is-active-file .cs-sidebar-file-name {
+	color: var(--text-accent);
+}
+
+.cs-sidebar-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	grid-auto-flow: row;
+	align-items: stretch;
+	gap: var(--size-4-2);
+	/* Physical left-to-right row order is shared by RTL and LTR panes. */
+	direction: ltr;
+}
+
+.cs-sidebar-result {
+	min-inline-size: 0;
+	margin: 0;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	background: var(--cs-surface-raised, var(--background-secondary));
+	box-shadow: none;
+	text-align: start;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+[dir="rtl"] .cs-sidebar-result {
+	direction: rtl;
+}
+
+button.cs-sidebar-result {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: flex-start;
+	gap: var(--size-4-2);
+	inline-size: 100%;
+	block-size: auto;
+	min-block-size: var(--input-height);
+	padding: var(--size-4-3);
+	color: var(--text-normal);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.cs-sidebar-result:hover {
+		border-color: var(--background-modifier-border-focus);
+		background: var(--background-modifier-hover);
+	}
+}
+
+.cs-sidebar-result[aria-current="true"] {
+	border-color: var(--interactive-accent);
+	background: var(--background-modifier-active-hover);
+}
+
+.cs-sidebar-result:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+.cs-sidebar-result:active,
+.cs-sidebar-result:focus:not(:focus-visible) {
+	outline: none;
+	box-shadow: none;
+}
+
+.cs-sidebar-location {
+	display: block;
+	color: var(--text-muted);
+	font-family: var(--font-interface);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-medium);
+	line-height: 1.4;
+	font-variant-numeric: tabular-nums;
+}
+
+@container cs-sidebar (min-width: 680px) {
+	.cs-sidebar-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.view-content.cs-portable-view,
+.view-content.cs-occurrences-view {
+	container: cs-sidebar / inline-size;
+	display: flex;
+	flex-direction: column;
+	min-block-size: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+/* Both headers stay outside their scrolling results; their height may wrap. */
+.cs-sidebar-toolbar {
+	flex: none;
+	display: grid;
+	gap: var(--size-4-3);
+	box-sizing: border-box;
+	inline-size: min(100%, 1032px);
+	margin-inline: auto;
+	padding: var(--size-4-4) var(--size-4-4) 0;
+	border-block-end: 1px solid var(--background-modifier-border);
+}
+
+.cs-sidebar-title {
+	margin: 0;
+	font-size: var(--font-ui-large);
+	font-weight: var(--font-semibold);
+	line-height: 1.3;
+}
+
+.cs-sidebar-subtitle {
+	margin: 0;
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	line-height: 1.5;
+}
+
+.cs-sidebar-summary {
+	min-block-size: 1.5em;
+	padding-block: var(--size-4-3);
+	border-block-start: 1px solid var(--background-modifier-border);
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	font-variant-numeric: tabular-nums;
+	line-height: 1.5;
+}
+
+.cs-portable-intro-actions {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-4);
+}
+
+.cs-portable-intro-actions .cs-sidebar-subtitle {
+	flex: 1 1 0;
+	min-inline-size: 0;
+}
+
+.cs-portable-intro-actions button {
+	flex: 0 1 auto;
+	max-inline-size: 42%;
+	min-inline-size: 0;
+	block-size: auto;
+	min-block-size: var(--input-height);
+	padding: var(--size-4-2);
+	font-size: var(--font-ui-smaller);
+	line-height: 1.3;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.cs-portable-review-summary {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-2);
+}
+
+.cs-portable-review-summary input[type="checkbox"] {
+	flex: none;
+	align-self: center;
+	margin: 0;
+	inset: 0;
+}
+
+.cs-portable-review-summary input[type="checkbox"]:indeterminate {
+	appearance: none;
+	border-color: var(--checkbox-color);
+	background-color: var(--checkbox-color);
+	background-image: linear-gradient(var(--checkbox-marker-color), var(--checkbox-marker-color));
+	background-size: 60% 2px;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.cs-portable-review-summary input[type="checkbox"]:indeterminate::after {
+	display: none;
+}
+
+.cs-portable-summary-text {
+	min-inline-size: 0;
+}
+
+.cs-portable-results-shell {
+	position: relative;
+	flex: 1 1 0;
+	min-block-size: 0;
+}
+
+.cs-portable-results-scroll {
+	block-size: 100%;
+	box-sizing: border-box;
+	overflow: auto;
+	padding: 0 var(--size-4-4) var(--size-4-3);
+}
+
+.cs-portable-change-list,
+.cs-portable-hint,
+.cs-portable-review-status {
+	max-inline-size: 1000px;
+	margin-inline: auto;
+}
+
+.cs-portable-review-status {
+	margin-block-start: var(--size-4-3);
+	padding: var(--size-4-3);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	overflow-wrap: anywhere;
+}
+
+.cs-portable-hint:empty,
+.cs-portable-review-status:empty,
+.cs-portable-view [hidden] {
+	display: none;
+}
+
+.cs-portable-refresh-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+	display: grid;
+	place-content: center;
+	padding: var(--size-4-6);
+	background: color-mix(in srgb, var(--cs-surface-raised, var(--background-secondary)) 70%, transparent);
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	text-align: center;
+}
+
+.cs-portable-results-shell.is-stale .cs-portable-change-list {
+	pointer-events: none;
+}
+
+.cs-portable-results-shell.is-busy .cs-portable-change-list {
+	opacity: 0.4;
+	filter: blur(1px);
+}
+
+.cs-portable-change {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: stretch;
+	gap: var(--size-4-2);
+	min-inline-size: 0;
+}
+
+.cs-portable-change input[type="checkbox"] {
+	align-self: start;
+	margin: var(--size-4-3) 0 0;
+}
+
+[dir="rtl"] .cs-sidebar-selectable {
+	direction: rtl;
+}
+
+.cs-portable-change-body {
+	min-width: 0;
+	block-size: 100%;
+}
+
+.cs-portable-change-location {
+	margin: 0;
+}
+
+.cs-portable-diff {
+	display: grid;
+	gap: var(--size-2-1);
+}
+
+.cs-portable-diff-line {
+	display: grid;
+	grid-template-columns: 3.5em minmax(0, 1fr);
+	align-items: baseline;
+	gap: var(--size-4-2);
+}
+
+.cs-portable-diff-label {
+	color: var(--text-faint);
+	font-family: var(--font-interface);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-normal);
+	line-height: 1.5;
+}
+
+.cs-portable-before,
+.cs-portable-after {
+	display: block;
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	color: var(--text-normal);
+	font-family: var(--font-monospace);
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-normal);
+	line-height: 1.5;
+	direction: ltr;
+	unicode-bidi: isolate;
+	text-align: start;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.cs-portable-before {
+	color: var(--text-muted);
+}
+
+.cs-portable-change-note,
+.cs-portable-hint {
+	margin-block: var(--size-4-2) 0;
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-normal);
+	line-height: 1.5;
+}
+
+.cs-portable-link-change {
+	min-inline-size: 0;
+}
+
+.cs-portable-more,
+.cs-portable-retry {
+	display: block;
+	margin: var(--size-4-3) auto;
 }
 
 @media (max-width: 420px) {
@@ -6978,63 +7539,34 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	line-height: 1.5;
 }
 
-/* Adapt to the sidebar's available width, independently of the main window. */
-.view-content.cs-occurrences-view {
-	container: cs-occurrences / inline-size;
-	padding: 0 var(--size-4-3) var(--size-4-3);
-	overflow: auto;
-}
-
-.cs-occurrences-view > h2 {
-	margin-block: 0 var(--size-4-3);
-	padding-block-start: var(--size-4-3);
-}
-
-.cs-occurrences-view > hr {
-	margin-block: 0 var(--size-4-3);
-	border: 0;
-	border-top: 1px solid var(--background-modifier-border-hover);
-}
-
-.cs-occurrences-metrics {
-	display: flex;
-	gap: var(--size-4-2);
-	padding-block-end: var(--size-4-3);
-	border-block-end: 1px solid var(--background-modifier-border);
-}
-
-.cs-occurrences-metric {
-	display: flex;
+/* The independent result scroller keeps the shared header and filters fixed. */
+.cs-occurrences-scroll {
 	flex: 1 1 0;
-	flex-direction: column;
-	min-inline-size: 0;
-	gap: var(--size-2-1);
-	padding: var(--size-4-2);
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-s);
-	overflow-wrap: anywhere;
+	min-block-size: 0;
+	overflow: auto;
+	padding: 0 var(--size-4-4) var(--size-4-3);
 }
 
-.cs-occurrences-metric:nth-child(n + 3) {
-	display: none;
-}
-
-.cs-occurrences-metric-value {
-	font-size: var(--font-ui-large);
-	font-weight: var(--font-semibold);
-	font-variant-numeric: tabular-nums;
-}
-
-.cs-occurrences-metric-label {
-	font-size: var(--font-ui-smaller);
-	color: var(--text-muted);
+.cs-occurrences-scroll > * {
+	box-sizing: border-box;
+	max-inline-size: 1000px;
+	margin-inline: auto;
 }
 
 .cs-occurrences-controls {
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
 	gap: var(--size-4-2);
-	margin-block: var(--size-4-3);
+}
+
+@container cs-sidebar (max-width: 440px) {
+	.cs-occurrences-controls {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.cs-sidebar-filter {
+	min-inline-size: 0;
 }
 
 .cs-occurrences-picker,
@@ -7054,119 +7586,22 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	font-size: var(--font-ui-small);
 }
 
-.cs-occurrences-summary,
-.cs-occurrences-status,
-.cs-occurrences-location {
+.cs-occurrences-status {
 	color: var(--text-muted);
 	font-size: var(--font-ui-small);
 }
 
-.cs-occurrences-summary:empty,
+.cs-occurrences-status:empty,
 .cs-occurrences-failures:empty {
 	display: none;
 }
 
-.cs-occurrences-failures,
-.cs-occurrences-file h3 {
+.cs-occurrences-failures {
 	overflow-wrap: anywhere;
-}
-
-.cs-occurrences-summary {
-	font-variant-numeric: tabular-nums;
-}
-
-@container cs-occurrences (min-width: 360px) {
-	.cs-occurrences-metric:nth-child(3) {
-		display: flex;
-	}
-
-	.cs-occurrences-controls {
-		flex-direction: row;
-		align-items: center;
-	}
-
-	.cs-occurrences-picker {
-		flex: 2 1 0;
-		width: auto;
-	}
-
-	.cs-occurrences-controls .cs-select-dropdown {
-		flex: 1 1 0;
-		width: auto;
-	}
-}
-
-@container cs-occurrences (min-width: 480px) {
-	.cs-occurrences-metric:nth-child(4) {
-		display: flex;
-	}
 }
 
 .cs-occurrences-results {
-	padding-block: var(--size-4-3) var(--size-4-2);
-}
-
-.cs-occurrences-file {
-	padding-block: var(--size-4-1) 0;
-}
-
-.cs-occurrences-file + .cs-occurrences-file {
-	margin-block-start: var(--size-4-4);
-}
-
-.cs-occurrences-file h3 {
-	/* The file section bounds its heading, so the next file takes over.
-	   Sidebar leaves use the secondary background, including in themes where
-	   it differs visibly from the editor's primary background. */
-	position: sticky;
-	top: 0;
-	z-index: 1;
-	background-color: var(--cs-surface-raised, var(--background-secondary));
-	font-size: var(--font-ui-small);
-	margin-inline: calc(-1 * var(--size-4-1));
-	padding-inline: var(--size-4-1);
-	padding-block: 12px;
-	margin-block: 0 var(--size-4-2);
-}
-
-.cs-occurrences-file.is-active-file h3 {
-	color: var(--text-accent);
-	font-weight: var(--font-semibold);
-}
-
-button.cs-occurrences-result {
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	gap: var(--size-2-1);
-	width: 100%;
-	height: auto;
-	min-height: var(--input-height);
-	margin-block: var(--size-4-2);
-	padding: var(--size-4-2);
-	border: 1px solid var(--background-modifier-border-hover);
-	border-radius: var(--radius-s);
-	text-align: start;
-	white-space: normal;
-	overflow-wrap: anywhere;
-	box-shadow: none;
-	background: var(--cs-surface-raised, var(--background-secondary));
-}
-
-@media (hover: hover) and (pointer: fine) {
-	button.cs-occurrences-result:hover {
-		border-color: var(--background-modifier-border-focus);
-	}
-}
-
-button.cs-occurrences-result[aria-current="true"] {
-	background: var(--background-modifier-active-hover);
-	outline: 1px solid var(--interactive-accent);
-}
-
-button.cs-occurrences-result:focus-visible {
-	outline: 2px solid var(--interactive-accent);
-	outline-offset: 2px;
+	padding-block-end: var(--size-4-2);
 }
 
 .cs-occurrences-excerpt {

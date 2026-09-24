@@ -5,25 +5,24 @@ Vault insights shows source references to callouts across your Markdown notes.
 ## Open the sidebar
 
 Run **Callout Studio: Callout occurrences** from the Command palette, or select
-**Find usages** from a callout's three-dot menu. Use the native **Callout
-occurrences** tab in Obsidian's right sidebar to show or hide the open panel. If
-you close the tab, either action opens it again. This is the only on-screen
-occurrences control; there is no separate ribbon button or statistics window in
-Settings. The sidebar combines navigation and vault statistics.
+**Find usages** from a callout's three-dot menu. Use the native
+**Callout Studio occurrences** tab in Obsidian's right sidebar to show or hide
+the open panel. If you close the tab, either action opens it again. This is the
+only on-screen occurrences control; there is no separate ribbon button or statistics window in
+Settings. The sidebar helps you filter callouts and navigate to their Markdown source.
 
-Opening **Callout occurrences** from the Command palette starts with **All
-types** and **All formats**. Opening **Find usages** from a callout's three-dot
-menu starts with that callout type and **All formats**, even if you previously
-selected a different format in the sidebar.
+Opening **Callout Studio: Callout occurrences** from the Command palette starts
+with **All types** and **All formats**. Opening **Find usages** from a callout's
+three-dot menu starts with that callout type and **All formats**, even if you
+previously selected a different format in the sidebar.
 
-The compact metrics at the top share the available width evenly. Narrow panes
-show **Total callouts** and **Types found**; wider panes also show **Files with
-callouts**, then **Markdown files** as space allows. These totals cover the whole
-vault, independent of the selected type and format. A subtle divider separates
-the metrics from the filters below. Several inline callouts on one line count as
-separate occurrences.
+The title and short subtitle stay visible above the type and format
+pickers. The pickers sit side by side when the sidebar is wide and stack when it
+is narrow. The header, pickers, and matching-result summary remain fixed while the
+file groups below scroll. Several inline callouts on one line count as separate
+occurrences. The former vault-wide statistics cards are no longer shown here.
 
-Use the searchable **Callout type** picker to choose **All types**, a saved type,
+Use the searchable type picker to choose **All types**, a saved type,
 or an unregistered type found in your notes. The iconless **All types** option
 appears first under **Browse**. It shows every callout occurrence in the vault,
 including unregistered types. **Registered callouts** follow, then
@@ -54,28 +53,35 @@ out of the picker.
 ## Navigate through occurrences
 
 Results are grouped by note, with a bordered card for each occurrence. The file
-heading includes its matching count in parentheses, including matches not yet
+heading includes the matching count in parentheses after the file name, including matches not yet
 revealed by **Show more**. Each card shows its format, line number, and at most
 two lines of raw Markdown, including syntax such as `> [!info]`. Block previews
 include a line of body text when available. Choose **All formats**, **Block**,
 **Heading**, or **Inline** to filter the selected type or all types. The format
 picker opens a list of these four choices without a search field. It has the
-same control shape and hover feedback as **Callout type**. A selected option remains
-identifiable when you hover over it or move to it with the keyboard. The two
-controls sit side by side when the pane is wide enough. With a mouse or
+same control shape and hover feedback as the type picker. A selected option remains
+identifiable when you hover over it or move to it with the keyboard. With a mouse or
 trackpad, hovering a result subtly brightens its border; keyboard focus keeps
 its stronger outline.
 
 A summary below the controls shows the matching occurrences and files, such as
-**131 occurrences in 15 files**. The whole sidebar scrolls together. Select a
+**131 occurrences in 15 files**. It uses the same styling as the conversion
+selection summary. Only the results scroll. Select a
 card to navigate. As you scroll through a note's results, its file heading stays
-at the top of the sidebar until that note's results end; the next file heading
+below the fixed header until that note's results end; the next file heading
 then takes its place. Clicking a result highlights that card and keeps it in the
-same sidebar position. Switching to another note clears the previous card's highlight;
+same sidebar position. Clicking elsewhere in the editor or changing its text
+selection returns that card to its normal appearance. Clicking the file heading
+opens the note at its beginning. Switching to another note also clears the previous card's highlight;
 the new note's heading identifies the current file. Updating the list keeps
 keyboard focus on the same occurrence when its source is unchanged.
 Ctrl-click (Command-click on macOS) opens a new tab. The list initially shows
 up to 100 results; **Show more** reveals another page.
+
+Widen the sidebar to arrange each file's cards in two columns, read left to right
+and then onto the next row. File headings span both columns. Content has a maximum
+width and stays centered when the pane grows further. The file groups and cards
+use the same layout as **Callout Studio conversion**.
 
 The current Markdown note's file heading is highlighted in the results. The
 sidebar opens at the top with the filters visible, even if that note's section
@@ -83,7 +89,7 @@ is farther down the list. When you switch to another Markdown tab directly, the
 sidebar scrolls to that note's section. It reveals more results first if the
 section is beyond the initial page. If the current filters leave that note
 with no matching occurrences, the list stays in place. Choosing a different
-**Callout type** or **Format** keeps the sidebar near its current position in
+type or format keeps the sidebar near its current position in
 the updated results.
 If the filtered list is shorter, the scroll position settles at the nearest
 available place. The highlighted note does not pull the list to its section

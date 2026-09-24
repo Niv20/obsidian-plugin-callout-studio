@@ -6,6 +6,8 @@ export interface MarkdownSourceLine {
 	lineText: string;
 	/** Null characters mask excluded bytes without forming whitespace or tokens. */
 	visible: string;
+	/** Inline code remains meaningful title content, unlike excluded blocks/comments. */
+	hasInlineCode?: boolean;
 	prefix: MarkdownPrefix;
 }
 
@@ -102,7 +104,7 @@ export function* iterateMarkdownSourceSteps(content: string): Generator<Markdown
 				whole = true;
 			} else if (lineText.trim()) indented = false;
 		}
-		let visible = "";
+		let visible = "", hasInlineCode = false;
 		if (whole) {
 			visible = "\0".repeat(lineText.length);
 			paragraph = false;
@@ -114,6 +116,7 @@ export function* iterateMarkdownSourceSteps(content: string): Generator<Markdown
 				if (at >= checkpoint) { checkpoint = at + 4096; yield null; }
 				const absolute = lineOffset + at;
 				if (codeEnd > absolute) {
+					hasInlineCode = true;
 					const to = Math.min(lineText.length, codeEnd - lineOffset);
 					parts.push("\0".repeat(to - at)); at = to; continue;
 				}
@@ -150,7 +153,7 @@ export function* iterateMarkdownSourceSteps(content: string): Generator<Markdown
 			paragraph = Boolean(visible.replace(/\0/g, "").trim()) && !/^#{1,6}(?:[ \t]|$)/.test(text) &&
 				!(prefix.lastContainer === "quote" && /^\[!/.test(text));
 		}
-		yield { lineIndex, lineOffset, lineText, visible, prefix };
+		yield { lineIndex, lineOffset, lineText, visible, prefix, hasInlineCode };
 	}
 }
 

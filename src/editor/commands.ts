@@ -53,7 +53,7 @@ export const FIXED_COMMAND_NAME_KEYS: Record<FixedCommandId, string> = {
 	"callout-wrap": "cmd.calloutWrap",
 	"callout-unwrap": "cmd.calloutUnwrap",
 	"open-quick-insert": "cmd.openQuickInsert",
-	"show-callout-occurrences": "usage.title",
+	"show-callout-occurrences": "usage.command",
 };
 
 interface CommandHostPlugin extends Plugin {

@@ -2,7 +2,7 @@
 
 Use **Reset everything** only when you want to return Callout Studio to a clean state.
 
-Open **Settings → Callout Studio**, scroll to **Maintenance**, find the **Reset** row, and click **Reset everything**.
+Open **Settings → Callout Studio**, scroll to **Danger zone**, and use the second row, **Reset everything**. The first row, [**Convert to standard Markdown**](17-convert-to-standard-markdown.md), changes heading and inline syntax in notes and is a separate operation.
 
 The reset removes or restores:
 

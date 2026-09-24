@@ -16,10 +16,7 @@ import { CalloutRegistry } from "./manager/CalloutRegistry";
 import { CSSInjector } from "./manager/CSSInjector";
 import { IconService } from "./icons/IconService";
 import { startMaterialFontLoader, stopMaterialFontLoader } from "./icons/packs/materialFont";
-import {
-	clearMaterialFontStore,
-	setMaterialFontStore,
-} from "./icons/materialFontStore";
+import { clearMaterialFontStore, setMaterialFontStore } from "./icons/materialFontStore";
 import { ManualCalloutDiscovery } from "./manager/ManualCalloutDiscovery";
 import type { SettingsWriter } from "./manager/SettingsWriter";
 import { createSettingsWriter } from "./manager/settingsWriterHost";
@@ -66,6 +63,7 @@ import {
 	registerOccurrencesView,
 	refreshOccurrencesViewLocale,
 } from "./usage/registerOccurrencesView";
+import { registerPortableConversionView, refreshPortableConversionViewLocale } from "./portable/registerPortableConversionView";
 
 /**
  * How long the startup entrance animation window stays open. Long enough to
@@ -278,6 +276,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		registerDeveloperProtocols(this);
 		registerOccurrenceIndex(this);
 		registerOccurrencesView(this);
+		registerPortableConversionView(this);
 
 		// Commands
 		registerCalloutCommands(this, this.commandDeps());
@@ -349,6 +348,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		if (this.settingsTab?.containerEl.isConnected) this.settingsTab.display();
 		refreshFixedCommandNames(this, this.commandDeps());
 		refreshOccurrencesViewLocale(this);
+		refreshPortableConversionViewLocale(this);
 		this.customCommands.syncAll();
 		this.refreshRenderModes();
 	}

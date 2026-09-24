@@ -5,6 +5,7 @@ import { MarkdownView, TFile, type App, type EditorPosition, type WorkspaceLeaf 
 import { scanCalloutOccurrences } from "../src/usage/scanCalloutOccurrences";
 import { navigateToCalloutOccurrence, resolveOccurrencePosition } from "../src/usage/navigation";
 import { t } from "../src/i18n";
+import { navigateToSidebarFile } from "../src/ui/sidebarNavigation";
 
 Object.assign(globalThis, { window: {
 	setTimeout: (callback: () => void, delay: number) => Number(scheduleTimer(callback, delay)),
@@ -96,6 +97,13 @@ function navigationHarness(content = original) {
 }
 
 describe("occurrence navigation", () => {
+	it("opens file headings at the top without selecting text and honors a new tab", async () => {
+		const h = navigationHarness();
+		assert.equal(await navigateToSidebarFile(h.app, "note.md", true), true);
+		assert.deepEqual(h.selections, [[{ line: 0, ch: 0 }, { line: 0, ch: 0 }]]);
+		assert.deepEqual(h.requestedLeaves, ["tab"]);
+		assert.deepEqual(h.ephemeral, [{ line: 0, focus: true }]);
+	});
 	it("opens a document leaf and resolves against the current editor buffer", async () => {
 		const h = navigationHarness(`Unsaved line\n${original}`);
 		h.activate(h.view, null);

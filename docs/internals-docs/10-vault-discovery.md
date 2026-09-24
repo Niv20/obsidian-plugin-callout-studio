@@ -92,9 +92,10 @@ provides appearance/status only; fallback artwork never changes usage ownership.
 `CalloutOccurrencesView` is a registered ItemView with a searchable
 `CalloutCombobox`, role filters, counted file groups and paged results. A summary
 below the controls reports the filtered occurrence and distinct-file counts;
-all sidebar content shares one scroll container. File headings stick to the top
-of that container while their own result section remains in view, then yield to
-the next section's heading. Its picker combines committed, non-theme-only
+the vault-wide metric tiles are not displayed. The shared sidebar heading,
+subtitles, filters and summary stay above a separate result scroll container.
+File headings stick to the top of that container while their own result section
+remains in view, then yield to the next section's heading. Its picker combines committed, non-theme-only
 definitions with unregistered identities observed by the read-only index. Saved
 definitions include their aliases; equivalent identities and registered aliases
 are deduplicated before unknown options are added. A sidebar-local adapter supplies
@@ -134,12 +135,16 @@ and no role filter. **Find usages** supplies a specific type and clears the role
 filter, including when it reuses an existing sidebar. Workspace state holds
 filters, never the index.
 
-The format filter uses the shared `SelectDropdown` with the same menu keyboard
-and pointer behavior as other finite-choice controls. The view registers a menu
+The type and format controls have no visible labels; each keeps a localized
+accessible name. They share one grid row until the sidebar container is 440px
+wide, then stack in one column. The format filter uses the shared
+`SelectDropdown` with the same menu keyboard and pointer behavior as other
+finite-choice controls. The view registers a menu
 scope host so Escape first closes an open picker, and releases the host and both
 pickers when the frame is rebuilt or the view closes.
 
-`OccurrenceActiveFile` tracks the most recent document in the main workspace.
+The shared `SidebarActiveFile` (`ui/sidebarActiveFile.ts`) tracks the most recent
+document in the main workspace for both occurrences and conversion review.
 It ignores `file-open` notifications from embedded notes and Markdown sidebar
 panes by restricting document lookup to `rootSplit`, and follows `TFile.path` when
 the active note is renamed. It highlights that file's heading in the current
@@ -160,7 +165,12 @@ results or scroll to that file's section; an actual active-editor change may
 still request those actions.
 
 `OccurrenceResults` owns card rendering, selection, and focus restoration. A
-card's identity includes its path, source fingerprint, token coordinates,
+file group and its row-major grid come from `ui/sidebarResults.ts`, shared with
+the conversion sidebar. CSS bounds both panes' content at 1000px, switches cards
+to two columns at 680px container width, and keeps each file heading full-width
+and sticky within its section. `ui/sidebarNavigation.ts` owns opening and
+selecting a validated source range; each consumer supplies its source resolver.
+A card's identity includes its path, source fingerprint, token coordinates,
 identity, and role; array offsets are presentation data only. A `WeakMap` maps
 current buttons directly to occurrences, so detached buttons cannot open a
 different result after a refresh. Selection updates `aria-current` in place
@@ -169,11 +179,10 @@ occurrence rather than its old list position. A changed source snapshot clears
 selection instead of transferring it to a replacement at the same coordinates.
 Per-file counts are cached by result-array identity and reused for pagination.
 
-The sidebar owns the former statistics screen's four vault-wide metrics. CSS
-container queries show the first two, three or four metrics according to pane
-width, with equal-width cards, and place the filters side by side when space
-allows. The last metric is labelled **Markdown files** and counts successfully
-scanned Markdown files. The loading/stale live region stays mounted but empty for
+The former statistics screen's four vault-wide metric tiles are no longer part
+of the sidebar. Filters and the filtered result summary share the same fixed
+header layout as conversion review, with results scrolling beneath them.
+The loading/stale live region stays mounted but empty for
 the first two seconds of one continuous idle/loading/stale episode, so ordinary
 navigation and incremental refreshes do not flash progress copy. One cancellable
 timer spans those status transitions; a long-running episode is announced, while
@@ -203,7 +212,14 @@ ambiguous or missing occurrences trigger an automatic refresh. The editor is che
 after asynchronous parsing so navigation cannot select from an obsolete buffer
 or steal focus after a document switch. A caller generation guard also cancels
 selection after filters change or the occurrences view closes and reopens.
-It never inserts block IDs or modifies notes. The one isolated optional host seam
+`sidebarNavigation.ts` also opens a file from its group heading at the top of the
+note without selecting a result. File headings display their counts in parentheses
+beside the name. Both sidebars use `sidebarSelection.ts` to tie active-card styling
+to the exact selected range: a collapsed, moved or additional editor selection,
+or a document edit, clears the purple state. The existing CodeMirror extension
+forwards selection transactions to per-editor subscribers; there is no polling.
+Subscriptions are removed when the tracked range is cleared or its view closes.
+Navigation never inserts block IDs or modifies notes. The one isolated optional host seam
 is `openFromSettings.ts`: existing Obsidian `app.setting.close()` is called only
 when present to dismiss the settings overlay after explicit navigation. Hosts
 without that method receive a notice to close Settings themselves; opening and
@@ -221,15 +237,192 @@ that could turn invalid syntax into a token.
 | Function | Purpose |
 | --- | --- |
 | `scanVaultCalloutStatistics(app)` in `vaultCalloutStats.ts` | Aggregate the shared index by written ID, role, and distinct file |
-| `getOccurrenceMetrics(index)` | Cache the current snapshot's vault-wide totals for the sidebar |
+| `getOccurrenceMetrics(index)` | Cache the current snapshot's aggregate totals for statistics consumers |
 | `scanStringForUnknownCallouts` | Unknown source IDs after shared parsing; discovery primitive |
 | `countCalloutUsages` / `countCalloutUsagesMap` | Fresh direct scans for maintenance/confirmation, independent of cached menu counts |
 | `convertCalloutsToPlainTextInVault` | Strip markup while keeping content |
 | `replaceCalloutIdsInVault` | Bulk ID swap with optional title rewrite |
+| `preparePortableCalloutConversion` / `applyPortableCalloutConversion` | Reviewed, single-use heading/inline migration to standard Markdown |
 
 The writers still use fresh file contents and complete-pass checks. Cached usage
 counts never authorize destructive operations. A statistics refresh never calls
 `runVaultScan`, mutates the registry, or saves `data.json`.
+
+### Portable Markdown conversion
+
+`portableCallouts.ts` is the pure converter used by **Danger zone → Convert to
+standard Markdown**. It uses the shared source lexer and token grammar, with
+additional conservative masks in `portableCalloutExclusions.ts` for math, HTML
+and links. These export-only masks do not change what the existing renderer or
+usage index recognizes. Protected source retains its bytes and original offsets.
+Only original source tokens are rewritten; generated output is not scanned again.
+
+Bare inline tokens use the trimmed written type, with metadata removed, regardless
+of definitions, aliases, fallback settings or feature toggles. A complete inline
+payload is unwrapped without a type prefix; empty payloads disappear. Literal
+labels and newly exposed block markers are escaped where necessary to preserve
+text semantics. Malformed or unsupported nested payloads remain for manual review.
+This is a recognition boundary, not a best-effort text replacement: an incomplete
+`[!note]{unfinished` or nested `[!note]{outer [!tip]{inner}}` is left byte-exact.
+The converter never guesses a closing delimiter or strips a partly understood
+payload. Unknown type IDs are still valid tokens; they do not require a registered
+definition. Only recognized source spans enter the selectable conversion plan.
+Block-preserving escapes also cover a newly exposed reference definition; a
+conversion that would expose a raw HTML block is skipped for manual review.
+
+In a valid unquoted ATX heading, bare tokens are decorations when other title
+text remains, including tokens following that text. If only tokens remain, their
+written types provide the title. Closing ATX hashes do not count as title text.
+Literal heading `+`/`-` and heading braces remain title text. Quoted headings retain
+the parser's inline-role behavior. Native block headers and their titles are not
+rewritten, while body inline tokens remain eligible.
+
+`portableCalloutVault.ts` prepares a frozen public plan containing every eligible
+replacement and its exact source identity. `portableCalloutUnits.ts` derives these
+review units from the safe converter's approved edits. An ordinary inline token,
+including its complete payload, is one independently selectable unit; an unquoted
+ATX heading remains one full-line unit because its decorations depend on the
+whole title. Each public change retains `sourceLine`, the original `from`/`to`
+range within it, and `headingLine`, while `before`/`after` contain only that unit's
+display text. Unit IDs include the path, source line number, range, complete source
+line and default replacement, distinguishing repeated tokens on the same line.
+
+`portableCalloutPlan.ts` derives proposed content from selected units and computes
+dependent heading references. Source edits on one line are composed in source
+order, preserving all other source bytes and recomputing the converter's
+block-preserving escapes for the chosen subset. The planner tracks each unit's
+range in the proposal so its after-text includes link repairs within that range.
+`replacement` and `defaultReplacement` retain the current subset's bytes before
+link repairs, with and without custom text, so the editor and its no-op detection
+agree with the reviewed proposal even when selecting a subset changes an escape.
+Automatic link-repair cards retain complete source lines and follow heading
+choices, rather than becoming independently selectable units.
+A private WeakMap binds approval to the app, file objects, paths, metadata, exact
+original bytes and proposed bytes. All Markdown files are read with `vault.read`;
+incomplete reads reject the preview. `portableCalloutPreviewCache.ts` reuses
+unchanged reads and pure conversions only within the open review session; events
+invalidate affected paths. Apply never trusts this cache. Every open MarkdownView,
+including duplicate tabs, must agree with saved content (CRLF/LF normalized only
+for this editor comparison). No registry, settings or editor buffer is mutated.
+
+`portableHeadingLinks.ts`, `portableHeadingLinksHeadings.ts` and
+`portableHeadingLinksScan.ts` explicitly retarget internal wiki/Markdown links,
+embeds and reference definitions. Obsidian's `vault.process` writes and refreshes
+file caches; it does not invoke the separate native heading-rename command.
+Callout Studio therefore computes these repairs itself, without relying on the
+user's automatic file-link-update setting. Both formats documented in
+[Obsidian's internal-link guide](https://obsidian.md/help/links) are covered:
+
+| Source form | Heading change example |
+| --- | --- |
+| Wiki link or embed | `[[Note#Report note\|label]]` / `![[Note#Report note]]` → heading `Report` |
+| Markdown link or image | `[label](Note.md#Report%20note)` / `![label](Note.md#Report%20note)` → fragment `#Report` |
+| Markdown reference definition | `[id]: <Note.md#Report note> "title"` → destination `<Note.md#Report>` |
+
+Targets are resolved with `metadataCache.getFirstLinkpathDest` and Obsidian's
+`stripHeading`/`stripHeadingForLink` normalization. Top-level ATX and setext
+headings retain source-line identity. Paths, aliases and titles remain intact;
+wiki targets preserve literal percent sequences, while Markdown URI targets
+follow native decoding. Same-note fragments, relative paths, encoded spaces and
+Unicode, escaped punctuation, balanced destination parentheses, and ordered
+parent/child heading fragments all participate. Reference titles can span lines;
+their text is not scanned as nested links. A complete destination may start on the
+following line, including angle-delimited folder paths, but not after a blank line.
+Malformed destinations and definition tails are left untouched. External schemes,
+block references, unresolved files and unmatched headings never acquire guessed
+repairs. Protected code, comments, math, frontmatter and raw HTML
+are excluded. A bounded fixed-point pass handles links inside headings that
+change other referenced headings. Unsafe collisions or unrepresentable targets
+exclude the responsible source conversion and surface a reason in the review.
+This includes duplicate old anchors, two proposed headings collapsing to the same
+anchor, loss of a setext heading, and link-induced heading cycles that do not
+settle within twelve passes. Reparsing is based on the selected proposal, so
+deselecting a heading also removes its dependent repairs.
+Custom replacement values use the same proposed-content path: heading titles are
+not patched after link planning. The complete candidate is validated before its
+approval plan is committed, and any repaired destination is included in the final
+preview and exact approved output. Automatic link rows cannot be independently
+overridden, which prevents a manual replacement from detaching them from the
+heading selection that requires them.
+
+`portableCalloutSegments.ts` maps the converter's approved source edits to output
+ranges and fixed fragments; it never scans token-like text a second time. Each
+inline review unit owns its exact token/payload range and default converted value.
+Fixed fragments reconstruct all bytes outside the selected replacements. The
+converter's block-preserving escape belongs to the replacement when it escapes
+that value, and otherwise stays in a fixed fragment. Unsupported mappings fail
+closed. Multiple inline tokens on one line can be selected and customized
+independently without guessing delimiters inside custom text.
+
+`portableReplacementEditor.ts` exposes exactly one value for a source card. An
+inline value has up to three read-only words on each side, taken from the current
+source line. A heading value excludes its fixed prefix, heading-level markers and
+optional closing hashes. `PortableCustomReplacementModal` renders a read-only
+**Before** row and editable **After** row, without per-format legends or an
+introductory paragraph. Every input is single-line; Enter, newline insertion and
+multiline paste cannot alter the source-line structure.
+Validation also rejects custom text that changes quote/list nesting or indentation
+into a code block, preventing an edited token from reinterpreting neighboring prose.
+The context menu uses
+Obsidian's HTML menu (`setUseNativeMenu(false)`) so the edit and restore icons are
+visible consistently.
+
+Conversion cards never clamp or ellipsize their source/replacement text. File
+headings remain sticky, show counts in parentheses after the name, and open the
+note when clicked. Source-card navigation selects its precise token or heading
+range; purple active styling is cleared when that exact editor selection no longer
+exists. The fixed header places the conversion action beside the description.
+A single summary checkbox uses the native indeterminate state for partial
+selection, with a horizontal dash. Clicking an empty or partial state selects
+all; clicking the checked state clears all. Its count measures review units rather than source
+lines. These controls do not change selection while a frozen recovery plan is
+pending.
+
+Custom-text retention is scoped to the customized source segment, not the entire
+note. The private approval snapshots retain the original `TFile` object and exact
+source/default replacement bytes. After an unrelated edit, insertion or rename,
+the old and new segment must have an unambiguous exact correspondence. Matching
+uses unchanged file coordinates, unique complete source lines, unique token
+spans in both snapshots, or unchanged prefix/suffix positions. A single changed
+line bounded by unchanged lines can retain a uniquely matching token even when
+words on both sides change. An identical token elsewhere does not invalidate a
+uniquely mapped source line; deletion of duplicate identical lines cannot transfer
+their custom values to the survivor. The current note supplies unchanged
+surrounding text when a retained inline value is reconstructed. Changed, missing
+or ambiguous segments lose only their own override and selection, so a refresh
+cannot silently approve the default in place of discarded custom text. A native
+Obsidian `Notice` reports those invalidations. Retained overrides are validated
+again against the refreshed proposal and its heading-reference plan; retaining
+text does not bypass final snapshot checks. If surrounding Markdown changes make
+retained text unsafe, the text remains visible but its selection is cleared for
+review rather than replacing it with a default.
+
+Applying consumes the approval plan and checks the complete vault snapshot and
+editor buffers before the first write. Each changed file then goes through
+`vault.process` with another byte-exact comparison and identity/editor guards
+inside the atomic callback. There is no cached-read overwrite or `modify` fallback.
+A per-app lock rejects concurrent scans or conversions. A failure stops immediately
+and returns confirmed write counts; completed files stay converted. The service
+retains a frozen recovery plan per app for the exact pending outputs, even when
+only links remain after their target headings were already written. Reopening the
+sidebar returns that plan rather than rescanning away the old-to-new mapping.
+Retry choices are fixed and still require all expected bytes, file identities,
+membership and editor buffers to agree. This memory-only recovery state does not
+survive plugin unload. The UI must never describe a stopped operation as rolled
+back or wholly successful.
+
+`portableHeadingLinksCache.ts` retains up to three exact-content parses per path
+within the review session, shared across selection revisions and automatic
+rescans. It caches headings and link destinations, prunes removed paths and clears
+on close. No parsed note content is stored in a global cache. This keeps repeated
+checkbox changes from reparsing the entire vault. The source lexer's optional
+`hasInlineCode` flag and heading-only inline-math mask keep code/math-only setext
+titles in the collision check while their contents remain protected from rewriting.
+
+The API is atomic per file, not across the vault. External writers can still act
+after a successful callback; it is not a filesystem lock. There is no automatic
+backup or undo. The UI asks users to back up notes and pause editing/sync, and
+separates read-only review from the irreversible final confirmation.
 
 ### `convertCalloutsToPlainTextInVault` — role-specific stripping
 

@@ -1,8 +1,7 @@
 import { MarkdownView, TFile, type App, type EventRef, type WorkspaceLeaf } from "obsidian";
-import type { CalloutOccurrence, OccurrenceIndexStatus } from "./occurrenceTypes";
 
 /** Tracks the document behind the sidebar and reveals its group in the current query. */
-export class OccurrenceActiveFile {
+export class SidebarActiveFile {
 	private file: TFile | null = null;
 	private path: string | null = null;
 	private pendingPath: string | null = null;
@@ -66,7 +65,7 @@ export class OccurrenceActiveFile {
 		this.onChange(this.path);
 	}
 
-	sync(results: readonly CalloutOccurrence[], limit: number, status: OccurrenceIndexStatus, failed: boolean): void {
+	sync(results: readonly { path: string }[], limit: number, status: string, failed: boolean): void {
 		// Obsidian mutates TFile.path on rename; no tab-change event is required.
 		if (this.file && this.file.path !== this.path) {
 			this.path = this.file.path;
