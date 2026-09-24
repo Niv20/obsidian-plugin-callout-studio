@@ -464,6 +464,7 @@ export const fa: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} به عنوان نماد سفارشی قابل خواندن نبود.",
 	"iconPicker.customDuplicate":
 		"{{name}} از قبل در نمادهای سفارشی شما وجود دارد. نام فایل را تغییر دهید یا نماد موجود را حذف کنید.",
+	"iconPicker.uploadCustom": "بارگذاری فایل‌های تصویر",
 	"iconPicker.customEmpty":
 		"هنوز نماد سفارشی‌ای وجود ندارد. یک فایل SVG، PNG، JPEG یا WebP از رایانه خود اضافه کنید یا آن را اینجا رها کنید.",
 	"iconPicker.customEmptyTitle": "هنوز نماد سفارشی‌ای ندارید",

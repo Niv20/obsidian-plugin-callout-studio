@@ -510,6 +510,7 @@ export const th: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "ไม่สามารถอ่าน {{name}} เป็นไอคอนกำหนดเองได้",
 	"iconPicker.customDuplicate":
 		"{{name}} มีอยู่แล้วในไอคอนกำหนดเองของคุณ เปลี่ยนชื่อไฟล์หรือลบไอคอนที่มีอยู่",
+	"iconPicker.uploadCustom": "อัปโหลดไฟล์รูปภาพ",
 	"iconPicker.customEmpty":
 		"ยังไม่มีไอคอนกำหนดเอง เพิ่มไฟล์ SVG, PNG, JPEG หรือ WebP จากคอมพิวเตอร์ของคุณ หรือลากมาวางที่นี่",
 	"iconPicker.customEmptyTitle": "ยังไม่มีไอคอนที่กำหนดเอง",

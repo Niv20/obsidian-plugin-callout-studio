@@ -449,6 +449,7 @@ export const bg: Record<string, string> = {
 		"{{name}} не може да бъде прочетен като персонализирана икона.",
 	"iconPicker.customDuplicate":
 		"{{name}} вече е сред персонализираните ви икони. Преименувайте файла или изтрийте съществуващата икона.",
+	"iconPicker.uploadCustom": "Качване на файлове с изображения",
 	"iconPicker.customEmpty":
 		"Все още няма персонализирани икони. Добавете SVG, PNG, JPEG или WebP файл от компютъра си или го пуснете тук.",
 	"iconPicker.customEmptyTitle": "Все още няма персонализирани икони",

@@ -514,6 +514,7 @@ export const sv: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} kunde inte läsas som en anpassad ikon.",
 	"iconPicker.customDuplicate":
 		"{{name}} finns redan bland dina anpassade ikoner. Byt namn på filen eller ta bort den befintliga ikonen.",
+	"iconPicker.uploadCustom": "Ladda upp bildfiler",
 	"iconPicker.customEmpty":
 		"Inga anpassade ikoner ännu. Lägg till en SVG-, PNG-, JPEG- eller WebP-fil från datorn, eller släpp den här.",
 	"iconPicker.customEmptyTitle": "Inga egna ikoner än",

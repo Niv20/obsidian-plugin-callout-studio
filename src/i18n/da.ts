@@ -449,6 +449,7 @@ export const da: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} kunne ikke læses som et brugerdefineret ikon.",
 	"iconPicker.customDuplicate":
 		"{{name}} findes allerede blandt dine brugerdefinerede ikoner. Omdøb filen, eller slet det eksisterende ikon.",
+	"iconPicker.uploadCustom": "Upload billedfiler",
 	"iconPicker.customEmpty":
 		"Ingen brugerdefinerede ikoner endnu. Tilføj en SVG-, PNG-, JPEG- eller WebP-fil fra din computer, eller slip den her.",
 	"iconPicker.customEmptyTitle": "Ingen brugerdefinerede ikoner endnu",

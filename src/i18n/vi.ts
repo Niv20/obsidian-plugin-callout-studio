@@ -520,6 +520,7 @@ export const vi: Record<string, string> = {
 		"Không thể đọc {{name}} dưới dạng biểu tượng tùy chỉnh.",
 	"iconPicker.customDuplicate":
 		"{{name}} đã có trong biểu tượng tùy chỉnh của bạn. Đổi tên tệp hoặc xóa biểu tượng hiện có.",
+	"iconPicker.uploadCustom": "Tải tệp hình ảnh lên",
 	"iconPicker.customEmpty":
 		"Chưa có biểu tượng tùy chỉnh. Thêm tệp SVG, PNG, JPEG hoặc WebP từ máy tính, hoặc thả vào đây.",
 	"iconPicker.customEmptyTitle": "Chưa có biểu tượng tùy chỉnh",

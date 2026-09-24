@@ -516,6 +516,7 @@ export const ru: Record<string, string> = {
 		"{{name}} не удалось прочитать как пользовательский значок.",
 	"iconPicker.customDuplicate":
 		"{{name}} уже есть среди ваших пользовательских значков. Переименуйте файл или удалите существующий значок.",
+	"iconPicker.uploadCustom": "Загрузить файлы изображений",
 	"iconPicker.customEmpty":
 		"Пользовательских значков пока нет. Добавьте файл SVG, PNG, JPEG или WebP с компьютера либо перетащите его сюда.",
 	"iconPicker.customEmptyTitle": "Пока нет пользовательских значков",

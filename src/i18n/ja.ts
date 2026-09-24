@@ -467,6 +467,7 @@ export const ja: Record<string, string> = {
 		"{{name}}をカスタムアイコンとして読み取れませんでした。",
 	"iconPicker.customDuplicate":
 		"{{name}}はすでにカスタムアイコンにあります。ファイル名を変更するか、既存のアイコンを削除してください。",
+	"iconPicker.uploadCustom": "画像ファイルをアップロード",
 	"iconPicker.customEmpty":
 		"カスタムアイコンはまだありません。コンピューターからSVG、PNG、JPEG、またはWebPファイルを追加するか、ここにドロップしてください。",
 	"iconPicker.customEmptyTitle": "カスタムアイコンはまだありません",

@@ -466,6 +466,7 @@ export const id: Record<string, string> = {
 		"{{name}} tidak dapat dibaca sebagai ikon kustom.",
 	"iconPicker.customDuplicate":
 		"{{name}} sudah ada di ikon kustom Anda. Ganti nama berkas, atau hapus ikon yang sudah ada.",
+	"iconPicker.uploadCustom": "Unggah file gambar",
 	"iconPicker.customEmpty":
 		"Belum ada ikon kustom. Tambahkan berkas SVG, PNG, JPEG, atau WebP dari komputer Anda, atau jatuhkan di sini.",
 	"iconPicker.customEmptyTitle": "Belum ada ikon kustom",

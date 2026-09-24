@@ -495,6 +495,7 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "無法將 {{name}} 讀取為自訂圖示。",
 	"iconPicker.customDuplicate":
 		"{{name}} 已在你的自訂圖示中。請重新命名檔案，或刪除現有圖示。",
+	"iconPicker.uploadCustom": "上傳圖片檔案",
 	"iconPicker.customEmpty":
 		"還沒有自訂圖示。請從電腦新增 SVG、PNG、JPEG 或 WebP 檔案，或將檔案拖到這裡。",
 	"iconPicker.customEmptyTitle": "尚無自訂圖示",

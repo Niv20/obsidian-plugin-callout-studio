@@ -461,6 +461,7 @@ export const ms: Record<string, string> = {
 		"{{name}} tidak dapat dibaca sebagai ikon tersuai.",
 	"iconPicker.customDuplicate":
 		"{{name}} sudah ada dalam ikon tersuai anda. Namakan semula fail atau padam ikon sedia ada.",
+	"iconPicker.uploadCustom": "Muat naik fail imej",
 	"iconPicker.customEmpty":
 		"Belum ada ikon tersuai. Tambah fail SVG, PNG, JPEG atau WebP daripada komputer anda, atau lepaskan di sini.",
 	"iconPicker.customEmptyTitle": "Belum ada ikon tersuai",

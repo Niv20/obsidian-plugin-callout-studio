@@ -458,6 +458,7 @@ export const fi: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} ei voitu lukea mukautettuna kuvakkeena.",
 	"iconPicker.customDuplicate":
 		"{{name}} on jo mukautetuissa kuvakkeissasi. Nimeä tiedosto uudelleen tai poista olemassa oleva kuvake.",
+	"iconPicker.uploadCustom": "Lataa kuvatiedostoja",
 	"iconPicker.customEmpty":
 		"Ei vielä mukautettuja kuvakkeita. Lisää SVG-, PNG-, JPEG- tai WebP-tiedosto tietokoneeltasi tai pudota se tähän.",
 	"iconPicker.customEmptyTitle": "Ei omia kuvakkeita vielä",

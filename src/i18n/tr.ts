@@ -515,6 +515,7 @@ export const tr: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} özel simge olarak okunamadı.",
 	"iconPicker.customDuplicate":
 		"{{name}} özel simgelerinizde zaten var. Dosyayı yeniden adlandırın veya mevcut simgeyi silin.",
+	"iconPicker.uploadCustom": "Görsel dosyalarını yükle",
 	"iconPicker.customEmpty":
 		"Henüz özel simge yok. Bilgisayarınızdan bir SVG, PNG, JPEG veya WebP dosyası ekleyin ya da buraya bırakın.",
 	"iconPicker.customEmptyTitle": "Henüz özel simge yok",

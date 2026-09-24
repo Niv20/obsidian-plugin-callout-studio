@@ -476,6 +476,7 @@ export const fr: Record<string, string> = {
 		"{{name}} ne peut pas être lu comme une icône personnalisée.",
 	"iconPicker.customDuplicate":
 		"{{name}} existe déjà dans vos icônes personnalisées. Renommez le fichier ou supprimez l’icône existante.",
+	"iconPicker.uploadCustom": "Importer des fichiers image",
 	"iconPicker.customEmpty":
 		"Aucune icône personnalisée pour le moment. Ajoutez un fichier SVG, PNG, JPEG ou WebP depuis votre ordinateur, ou déposez-en un ici.",
 	"iconPicker.customEmptyTitle": "Aucune icône personnalisée pour le moment",

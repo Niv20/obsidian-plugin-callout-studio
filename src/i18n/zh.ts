@@ -507,6 +507,7 @@ export const zh: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "无法将 {{name}} 读取为自定义图标。",
 	"iconPicker.customDuplicate":
 		"{{name}} 已在你的自定义图标中。请重命名文件，或删除现有图标。",
+	"iconPicker.uploadCustom": "上传图片文件",
 	"iconPicker.customEmpty":
 		"还没有自定义图标。请从电脑添加 SVG、PNG、JPEG 或 WebP 文件，或将文件拖到这里。",
 	"iconPicker.customEmptyTitle": "暂无自定义图标",

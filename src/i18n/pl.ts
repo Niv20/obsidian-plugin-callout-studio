@@ -465,6 +465,7 @@ export const pl: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} nie może zostać odczytany jako ikona niestandardowa.",
 	"iconPicker.customDuplicate":
 		"{{name}} jest już w ikonach niestandardowych. Zmień nazwę pliku albo usuń istniejącą ikonę.",
+	"iconPicker.uploadCustom": "Prześlij pliki obrazów",
 	"iconPicker.customEmpty":
 		"Nie ma jeszcze ikon niestandardowych. Dodaj plik SVG, PNG, JPEG lub WebP z komputera albo upuść go tutaj.",
 	"iconPicker.customEmptyTitle": "Brak własnych ikon",

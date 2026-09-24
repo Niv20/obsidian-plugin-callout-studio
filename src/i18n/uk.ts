@@ -526,6 +526,7 @@ export const uk: Record<string, string> = {
 		"{{name}} не вдалося прочитати як користувацьку піктограму.",
 	"iconPicker.customDuplicate":
 		"{{name}} уже є серед ваших користувацьких піктограм. Перейменуйте файл або видаліть наявну піктограму.",
+	"iconPicker.uploadCustom": "Завантажити файли зображень",
 	"iconPicker.customEmpty":
 		"Користувацьких піктограм ще немає. Додайте файл SVG, PNG, JPEG або WebP з компʼютера чи перетягніть його сюди.",
 	"iconPicker.customEmptyTitle": "Власних піктограм поки немає",

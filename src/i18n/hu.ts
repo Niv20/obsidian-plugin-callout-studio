@@ -468,6 +468,7 @@ export const hu: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} nem olvasható egyéni ikonként.",
 	"iconPicker.customDuplicate":
 		"{{name}} már szerepel az egyéni ikonok között. Nevezze át a fájlt, vagy törölje a meglévő ikont.",
+	"iconPicker.uploadCustom": "Képfájlok feltöltése",
 	"iconPicker.customEmpty":
 		"Még nincsenek egyéni ikonok. Adjon hozzá SVG-, PNG-, JPEG- vagy WebP-fájlt a számítógépről, vagy húzza ide.",
 	"iconPicker.customEmptyTitle": "Még nincsenek egyéni ikonok",

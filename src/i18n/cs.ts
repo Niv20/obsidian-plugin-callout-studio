@@ -463,6 +463,7 @@ export const cs: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} nelze načíst jako vlastní ikonu.",
 	"iconPicker.customDuplicate":
 		"{{name}} už je mezi vašimi vlastními ikonami. Přejmenujte soubor nebo smažte stávající ikonu.",
+	"iconPicker.uploadCustom": "Nahrát obrazové soubory",
 	"iconPicker.customEmpty":
 		"Zatím tu nejsou žádné vlastní ikony. Přidejte soubor SVG, PNG, JPEG nebo WebP z počítače, nebo ho sem přetáhněte.",
 	"iconPicker.customEmptyTitle": "Zatím žádné vlastní ikony",

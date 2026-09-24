@@ -457,6 +457,7 @@ export const ar: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "تعذّرت قراءة {{name}} كأيقونة مخصصة.",
 	"iconPicker.customDuplicate":
 		"{{name}} موجودة بالفعل ضمن الأيقونات المخصصة. أعد تسمية الملف أو احذف الأيقونة الموجودة.",
+	"iconPicker.uploadCustom": "رفع ملفات الصور",
 	"iconPicker.customEmpty":
 		"لا توجد أيقونات مخصصة بعد. أضف ملف SVG أو PNG أو JPEG أو WebP من جهازك، أو اسحبه إلى هنا.",
 	"iconPicker.customEmptyTitle": "لا توجد أيقونات مخصصة بعد",

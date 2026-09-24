@@ -453,6 +453,7 @@ export const nb: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} kunne ikke leses som et egendefinert ikon.",
 	"iconPicker.customDuplicate":
 		"{{name}} finnes allerede blant de egendefinerte ikonene dine. Gi filen nytt navn eller slett det eksisterende ikonet.",
+	"iconPicker.uploadCustom": "Last opp bildefiler",
 	"iconPicker.customEmpty":
 		"Ingen egendefinerte ikoner ennå. Legg til en SVG-, PNG-, JPEG- eller WebP-fil fra datamaskinen, eller slipp den her.",
 	"iconPicker.customEmptyTitle": "Ingen egendefinerte ikoner ennå",

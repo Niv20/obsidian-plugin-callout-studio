@@ -468,6 +468,7 @@ export const es: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} no se pudo leer como icono personalizado.",
 	"iconPicker.customDuplicate":
 		"{{name}} ya está en tus iconos personalizados. Renombra el archivo o elimina el icono existente.",
+	"iconPicker.uploadCustom": "Subir archivos de imagen",
 	"iconPicker.customEmpty":
 		"Todavía no hay iconos personalizados. Añade un archivo SVG, PNG, JPEG o WebP desde tu ordenador o arrástralo aquí.",
 	"iconPicker.customEmptyTitle": "Aún no hay iconos personalizados",

@@ -467,6 +467,7 @@ export const hi: Record<string, string> = {
 		"{{name}} को कस्टम आइकन के रूप में पढ़ा नहीं जा सका।",
 	"iconPicker.customDuplicate":
 		"{{name}} आपके कस्टम आइकन में पहले से है। फ़ाइल का नाम बदलें या मौजूदा आइकन हटाएँ।",
+	"iconPicker.uploadCustom": "छवि फ़ाइलें अपलोड करें",
 	"iconPicker.customEmpty":
 		"अभी कोई कस्टम आइकन नहीं है। अपने कंप्यूटर से SVG, PNG, JPEG या WebP फ़ाइल जोड़ें, या उसे यहाँ छोड़ें।",
 	"iconPicker.customEmptyTitle": "अभी तक कोई कस्टम आइकन नहीं हैं",

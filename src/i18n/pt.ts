@@ -516,6 +516,7 @@ export const pt: Record<string, string> = {
 		"{{name}} não pôde ser lido como ícone personalizado.",
 	"iconPicker.customDuplicate":
 		"{{name}} já está nos seus ícones personalizados. Renomeie o ficheiro ou elimine o ícone existente.",
+	"iconPicker.uploadCustom": "Carregar ficheiros de imagem",
 	"iconPicker.customEmpty":
 		"Ainda não há ícones personalizados. Adicione um ficheiro SVG, PNG, JPEG ou WebP do seu computador, ou arraste-o para aqui.",
 	"iconPicker.customEmptyTitle": "Ainda não há ícones personalizados",

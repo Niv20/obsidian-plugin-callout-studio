@@ -518,6 +518,7 @@ export const ro: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} nu a putut fi citit ca pictogramă personalizată.",
 	"iconPicker.customDuplicate":
 		"{{name}} există deja în pictogramele personalizate. Redenumiți fișierul sau ștergeți pictograma existentă.",
+	"iconPicker.uploadCustom": "Încarcă fișiere imagine",
 	"iconPicker.customEmpty":
 		"Nu există încă pictograme personalizate. Adăugați un fișier SVG, PNG, JPEG sau WebP de pe computer sau plasați-l aici.",
 	"iconPicker.customEmptyTitle": "Încă nu există pictograme personalizate",

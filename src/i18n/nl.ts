@@ -475,6 +475,7 @@ export const nl: Record<string, string> = {
 		"{{name}} kon niet als aangepast pictogram worden gelezen.",
 	"iconPicker.customDuplicate":
 		"{{name}} staat al bij uw aangepaste pictogrammen. Hernoem het bestand of verwijder het bestaande pictogram.",
+	"iconPicker.uploadCustom": "Afbeeldingsbestanden uploaden",
 	"iconPicker.customEmpty":
 		"Nog geen aangepaste pictogrammen. Voeg een SVG-, PNG-, JPEG- of WebP-bestand vanaf uw computer toe, of sleep het hierheen.",
 	"iconPicker.customEmptyTitle": "Nog geen aangepaste pictogrammen",
