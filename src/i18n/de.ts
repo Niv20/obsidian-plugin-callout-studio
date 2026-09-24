@@ -217,6 +217,7 @@ export const de: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"Pausiert: Ihr Theme liefert diesen Callout, daher hat er nur ein Block-Format. Dieser Befehl funktioniert wieder, sobald das Theme ihn nicht mehr liefert.",
 
+	"settings.maintenance": "Wartung",
 	"settings.vaultMaintenance": "Vault-Einblicke & Wartung",
 	"settings.vaultStats": "Callout-Statistiken",
 	"settings.vaultStatsDesc":
@@ -764,6 +765,34 @@ export const de: Record<string, string> = {
 	"vaultStats.roleHeading": "Überschrift",
 	"vaultStats.roleInline": "Eingebettet",
 	"vaultStats.close": "Schließen",
+
+	"usage.title": "Callout-Vorkommen",
+	"usage.selectType": "Callout-Typ",
+	"usage.browse": "Durchsuchen",
+	"usage.allTypes": "Alle Typen",
+	"usage.registeredCallouts": "Registrierte Callouts",
+	"usage.unregisteredCallouts": "Nicht registrierte Callouts",
+	"usage.summary": "{{count}} Vorkommen in {{files}} Dateien",
+	"usage.fileCount": "{{path}} ({{count}})",
+	"usage.markdownFiles": "Markdown-Dateien",
+	"usage.filterRole": "Nach Format filtern",
+	"usage.allRoles": "Alle Formate",
+	"usage.failed": "Die Callout-Vorkommen konnten nicht aktualisiert werden.",
+	"usage.loading": "Markdown-Notizen werden durchsucht…",
+	"usage.partial": "Die Ergebnisse sind unvollständig: {{count}} Lesefehler.",
+	"usage.stale": "Callout-Vorkommen werden aktualisiert…",
+	"usage.empty": "Keine passenden Callouts gefunden.",
+	"usage.failedFiles": "Dateien, die nicht gelesen werden konnten",
+	"usage.vaultReadFailed": "Die Markdown-Notizen in diesem Vault konnten nicht aufgelistet werden.",
+	"usage.more": "Weitere {{count}} anzeigen",
+	"usage.location": "Zeile {{line}} · {{role}}",
+	"usage.missing": "Diese Notiz existiert nicht mehr. Ergebnisse werden aktualisiert…",
+	"usage.changed": "Dieses Vorkommen hat sich geändert oder sein neuer Ort ist nicht eindeutig. Ergebnisse werden aktualisiert…",
+	"usage.openFailed": "Dieses Callout-Vorkommen konnte nicht geöffnet werden.",
+	"usage.menuCount": "Verwendungen finden: {{count}} in {{files}} Dateien",
+	"usage.menuIncomplete": "Verwendungen finden — Suche unvollständig",
+	"usage.menuLoading": "Verwendungen finden — wird gezählt…",
+	"usage.closeSettings": "Einstellungen schließen, um die Callout-Ergebnisse in der Seitenleiste anzuzeigen.",
 
 	"import.title": "Importprobleme",
 	"import.reportLeadIn":

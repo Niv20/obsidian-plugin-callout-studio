@@ -16,6 +16,9 @@ Open **Settings → Callout Studio**, then click **Add new callout**.
 
 The saved callout is now available in all three formats.
 
+Text fields and dropdown fields do not show tooltip bubbles on hover. Their
+labels remain available to screen readers.
+
 ## Create one while typing
 
 Type a block or heading token for a callout that does not exist yet. When the autocomplete menu offers **Create new callout**, select it. The editor opens with the name already filled in, ready for you to choose its color and icon.

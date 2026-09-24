@@ -31,7 +31,6 @@ import { TABLER_DEFAULT_STYLE, tablerStyleOf } from "../../icons/packs/tabler";
 import { describeIcon } from "../../icons/describeIcon";
 import {
 	ALL_SOURCES,
-	ALL_SOURCES_META,
 	availableSources,
 	createAllSourcesPack,
 	missingSources,
@@ -39,13 +38,10 @@ import {
 } from "./allSources";
 import { PackPanel } from "./PackPanel";
 import { ImagePanel } from "./ImagePanel";
-import { createSourceMenuTitle } from "./sourceMenuPresentation";
-import { clearListboxMenuHeightCap, syncListboxMenuHeightCap } from "../../ui/listboxPopupLayout";
-import { appendDropdownCaret } from "../../ui/dropdownControl";
-import { captureMenuEscape } from "../../ui/menuEscape";
+import { alignIconPickerRows, mountIconSourcePicker } from "./sourcePicker";
+import type { ListboxPopup } from "../../ui/listboxPopup";
 import { applyModalChrome, removeModalChrome } from "../modalChrome";
-import { getLocale, t } from "../../i18n";
-import type { LocaleKey } from "../../i18n";
+import { t } from "../../i18n";
 
 /**
  * What the modal needs of whichever panel is on screen. Every source but one is
@@ -55,13 +51,6 @@ import type { LocaleKey } from "../../i18n";
 interface PickerPanel {
 	render(): Promise<void>;
 	dispose(): void;
-}
-
-/** What the source menu needs to draw a row, pooled list included. */
-interface SourceMeta {
-	labelKey: LocaleKey;
-	descriptionKey: LocaleKey;
-	emblemIcon: string;
 }
 
 /**
@@ -110,19 +99,12 @@ export class IconPicker extends Modal {
 	private panelHostEl!: HTMLElement;
 	private previewEl!: HTMLElement;
 	private confirmBtn!: HTMLButtonElement;
-	private sourceButtonEl!: HTMLButtonElement;
-	private sourceDropdownEl!: HTMLElement;
-	private sourceMenuEl!: HTMLElement;
-	private sourceMenuOpen = false;
-	private sourceMenuItems: { id: PickerSourceId; el: HTMLElement }[] = [];
-	private activeSourceMenuIndex = -1;
-	private sourceMenuPointerActive = false;
-	private sourceMenuResizeDisposer?: () => void;
-	private sourceMenuEscapeDisposer?: () => void;
+	private sourcePicker: ListboxPopup<PickerSourceId> | null = null;
+	private sourceLayoutDisposer: (() => void) | null = null;
+	/** Invalidates async startup and counts when this modal closes or reopens. */
+	private openGeneration = 0;
 	private packStatesLoaded = false;
 	private packStateDisposer: (() => void) | null = null;
-	/** Removed by hand in onClose because Modal has no auto-cleanup. */
-	private sourceMenuOutsideClick: ((ev: MouseEvent) => void) | null = null;
 	/** How many icons each source offers; filled in the background on open. */
 	private sourceCounts = new Map<IconSourceId, number>();
 
@@ -145,6 +127,8 @@ export class IconPicker extends Modal {
 	}
 
 	onOpen(): void {
+		const generation = ++this.openGeneration;
+		this.packStatesLoaded = false;
 		this.modalEl.addClass("callout-studio-icon-picker");
 		const footer = applyModalChrome(this, { footer: true });
 		footer.addClass("icon-picker-footer");
@@ -153,14 +137,12 @@ export class IconPicker extends Modal {
 		const container = this.contentEl.createDiv("icon-picker-container");
 		this.buildSourcePicker(container);
 		this.packStateDisposer = this.plugin.icons.packs.onChange(() => {
-			if (this.packStatesLoaded && this.sourceMenuOpen) {
-				this.closeSourceMenu();
-				this.sourceButtonEl.focus();
-			}
+			if (this.packStatesLoaded) this.sourcePicker?.setItems();
 		});
 		this.panelHostEl = container.createDiv("icon-picker-content");
+		this.sourceLayoutDisposer = alignIconPickerRows(container, this.panelHostEl);
 		// Bundled indexes make counting offline and normally finish before first open.
-		void this.loadSourceCounts();
+		void this.loadSourceCounts(generation);
 
 		this.previewEl = footer.createDiv("icon-picker-preview");
 		this.updatePreview();
@@ -176,32 +158,36 @@ export class IconPicker extends Modal {
 		});
 		this.confirmBtn.addEventListener("click", () => void this.confirm());
 
-		void this.openInitialPanel();
+		void this.openInitialPanel(generation);
 	}
 
-	/** Warm disk state so previously downloaded sources open without another prompt. */
-	private async openInitialPanel(): Promise<void> {
+	/**
+	 * Warms pack state from disk before the first render, so a source
+	 * downloaded in an earlier session but not yet assigned to a callout
+	 * still shows as downloaded instead of prompting again.
+	 */
+	private async openInitialPanel(generation: number): Promise<void> {
 		await this.plugin.icons.packs.loadAllFromDisk();
+		if (generation !== this.openGeneration) return;
 		this.packStatesLoaded = true;
 		await this.showPanel();
-		if (this.sourceMenuOpen) this.openSourceMenu();
+		if (generation !== this.openGeneration) return;
+		this.sourcePicker?.setItems();
 	}
 
 	onClose(): void {
-		this.closeSourceMenu();
+		this.openGeneration++;
+		this.sourcePicker?.destroy();
+		this.sourcePicker = null;
+		this.sourceLayoutDisposer?.();
+		this.sourceLayoutDisposer = null;
 		this.panel?.dispose();
 		this.panel = null;
+		this.contentEl.empty();
 		this.packStateDisposer?.();
 		this.packStateDisposer = null;
 		// The bar is a sibling of contentEl, so it outlives the usual teardown.
 		removeModalChrome(this);
-		if (this.sourceMenuOutsideClick) {
-			activeDocument.removeEventListener(
-				"click",
-				this.sourceMenuOutsideClick,
-			);
-			this.sourceMenuOutsideClick = null;
-		}
 		if (this.resolve) {
 			this.resolve(null);
 			this.resolve = null;
@@ -210,209 +196,15 @@ export class IconPicker extends Modal {
 
 	// ── Source selection ────────────────────────────────────────────────
 
-	/** A button-anchored listbox with library descriptions and selection marks. */
+	/** Rich library rows in the same listbox used by the toolbar filters. */
 	private buildSourcePicker(container: HTMLElement): void {
-		const row = container.createDiv("icon-picker-source-row");
-		row.createEl("label", {
-			text: t("iconPicker.chooseSource"),
-			cls: "icon-picker-source-label",
-			attr: { for: "cs-icon-source", id: "icon-picker-source-label" },
+		this.sourcePicker = mountIconSourcePicker(container, {
+			value: this.activeSource,
+			countFor: (id) => this.countFor(id),
+			isMissing: (id) => this.packStatesLoaded &&
+				missingSources(this.plugin.icons.packs).some((pack) => pack.id === id),
+			onPick: (id) => this.selectSource(id),
 		});
-		this.sourceDropdownEl = row.createDiv("icon-picker-source-dropdown");
-		this.sourceButtonEl = this.sourceDropdownEl.createEl("button", {
-			cls: "icon-picker-source-button cs-dropdown-control",
-			attr: {
-				id: "cs-icon-source",
-				type: "button",
-				"aria-haspopup": "listbox",
-				"aria-expanded": "false",
-			},
-		});
-		this.paintSourceButton();
-		this.sourceMenuEl = this.sourceDropdownEl.createDiv({
-			cls: "icon-picker-source-menu cs-scrollable-dropdown-menu icon-picker-source-menu-hidden",
-			attr: { role: "listbox", tabindex: "-1", "aria-labelledby": "icon-picker-source-label" },
-		});
-		this.sourceDropdownEl.addEventListener("focusout", (ev) => {
-			const next = ev.relatedTarget as Node | null;
-			if (!next || !this.sourceDropdownEl.contains(next)) this.closeSourceMenu();
-		});
-
-		this.sourceButtonEl.addEventListener("click", () => {
-			if (this.sourceMenuOpen) this.closeSourceMenu();
-			else this.openSourceMenu();
-		});
-		this.sourceMenuEl.addEventListener("keydown", (ev) =>
-			this.onSourceMenuKeydown(ev),
-		);
-		this.sourceMenuEl.addEventListener("mouseleave", () => {
-			if (this.sourceMenuPointerActive) this.setActiveSourceMenuItem(-1);
-		});
-		// Nothing closes a plain div for us the way a real Menu would.
-		this.sourceMenuOutsideClick = (ev) => {
-			if (!this.sourceMenuOpen) return;
-			const target = ev.target as Node | null;
-			if (target && this.sourceDropdownEl.contains(target)) return;
-			this.closeSourceMenu();
-		};
-		activeDocument.addEventListener("click", this.sourceMenuOutsideClick);
-	}
-
-	/** Metadata for one row of the source menu; the pooled list has no pack. */
-	private sourceMeta(id: PickerSourceId): SourceMeta {
-		return id === ALL_SOURCES ? ALL_SOURCES_META : getSource(id);
-	}
-
-	private paintSourceButton(): void {
-		const meta = this.sourceMeta(this.activeSource);
-		this.sourceButtonEl.empty();
-		const emblem = this.sourceButtonEl.createSpan({
-			cls: "icon-picker-source-emblem",
-		});
-		setIcon(emblem, meta.emblemIcon);
-		this.sourceButtonEl.createSpan({
-			cls: "icon-picker-source-current",
-			text: t(meta.labelKey),
-		});
-		appendDropdownCaret(this.sourceButtonEl);
-	}
-
-	/** Rebuilt on every open so counts and download state are never stale. */
-	private buildSourceMenuItems(): void {
-		this.sourceMenuEl.empty();
-		this.sourceMenuItems = [];
-		const missing = new Set(
-			this.packStatesLoaded
-				? missingSources(this.plugin.icons.packs).map((pack) => pack.id)
-				: [],
-		);
-		// Searching everything is first: knowing which library has "swords" is hard.
-		const ids: PickerSourceId[] = [ALL_SOURCES, ...ICON_SOURCE_IDS];
-		for (const [index, id] of ids.entries()) {
-			const meta = this.sourceMeta(id);
-			const item = this.sourceMenuEl.createDiv({
-				cls: "icon-picker-source-menu-item",
-				attr: { id: `cs-icon-source-option-${id}`, role: "option",
-					"aria-selected": String(id === this.activeSource) },
-			});
-			const emblem = item.createSpan({
-				cls: "icon-picker-source-menu-item-emblem",
-			});
-			// Lucide emblems draw even when the source itself is not downloaded.
-			setIcon(emblem, meta.emblemIcon);
-			item.appendChild(
-				createSourceMenuTitle({
-					label: t(meta.labelKey),
-					description: t(meta.descriptionKey),
-					count: this.countFor(id),
-					locale: getLocale(),
-					exactCount: id === "image",
-					notDownloaded: id !== ALL_SOURCES && missing.has(id),
-					notDownloadedLabel: t("iconPicker.notDownloaded"),
-					selected: id === this.activeSource,
-				}),
-			);
-			item.toggleClass("is-selected", id === this.activeSource);
-			const onPointer = (): void => {
-				if (!this.sourceMenuPointerActive || this.activeSourceMenuIndex !== index)
-					this.setActiveSourceMenuItem(index, { pointer: true });
-			};
-			item.addEventListener("mouseenter", onPointer);
-			item.addEventListener("mousemove", onPointer);
-			item.addEventListener("mouseleave", () => {
-				if (this.sourceMenuPointerActive) this.setActiveSourceMenuItem(-1);
-			});
-			item.addEventListener("click", () => {
-				this.selectSource(id);
-				this.closeSourceMenu();
-			});
-			this.sourceMenuItems.push({ id, el: item });
-		}
-	}
-
-	/** Open on whichever side fits within the visible modal body. */
-	private openSourceMenu(): void {
-		this.buildSourceMenuItems();
-		this.sourceMenuOpen = true;
-		this.sourceMenuEscapeDisposer ??= captureMenuEscape(
-			this.sourceDropdownEl, () => this.sourceMenuOpen,
-			() => { this.closeSourceMenu(); this.sourceButtonEl.focus(); },
-		);
-		this.sourceMenuEl.removeClass("icon-picker-source-menu-hidden");
-		this.sourceButtonEl.addClass("is-open");
-		this.sourceButtonEl.setAttribute("aria-expanded", "true");
-		this.applySourceMenuHeightCap();
-		const startIdx = this.sourceMenuItems.findIndex(
-			(i) => i.id === this.activeSource,
-		);
-		this.setActiveSourceMenuItem(startIdx >= 0 ? startIdx : 0);
-		this.sourceMenuEl.focus();
-	}
-
-	private applySourceMenuHeightCap(): void {
-		this.sourceMenuResizeDisposer = syncListboxMenuHeightCap(this.sourceButtonEl,
-			this.sourceMenuEl, this.sourceMenuResizeDisposer,
-			() => this.applySourceMenuHeightCap(), this.contentEl);
-	}
-
-	private closeSourceMenu(): void {
-		if (!this.sourceMenuOpen) return;
-		this.sourceMenuOpen = false;
-		this.sourceMenuEscapeDisposer?.();
-		this.sourceMenuEscapeDisposer = undefined;
-		this.sourceMenuEl.addClass("icon-picker-source-menu-hidden");
-		this.sourceButtonEl.removeClass("is-open");
-		this.sourceButtonEl.setAttribute("aria-expanded", "false");
-		this.setActiveSourceMenuItem(-1);
-		this.sourceMenuResizeDisposer?.();
-		this.sourceMenuResizeDisposer = undefined;
-		clearListboxMenuHeightCap(this.sourceMenuEl);
-	}
-
-	private setActiveSourceMenuItem(
-		index: number,
-		opts?: { pointer?: boolean },
-	): void {
-		this.sourceMenuPointerActive = opts?.pointer ?? false;
-		const prev = this.sourceMenuItems[this.activeSourceMenuIndex];
-		prev?.el.removeClass("is-active");
-		if (index < 0 || index >= this.sourceMenuItems.length) {
-			this.activeSourceMenuIndex = -1;
-			this.sourceMenuEl.removeAttribute("aria-activedescendant");
-			return;
-		}
-		const entry = this.sourceMenuItems[index];
-		if (!entry) {
-			this.activeSourceMenuIndex = -1;
-			return;
-		}
-		this.activeSourceMenuIndex = index;
-		entry.el.addClass("is-active");
-		this.sourceMenuEl.setAttribute("aria-activedescendant", entry.el.id);
-		if (!opts?.pointer) entry.el.scrollIntoView({ block: "nearest" });
-	}
-
-	private onSourceMenuKeydown(ev: KeyboardEvent): void {
-		if (ev.key === "ArrowDown") {
-			ev.preventDefault();
-			this.setActiveSourceMenuItem(
-				Math.min(
-					this.activeSourceMenuIndex + 1,
-					this.sourceMenuItems.length - 1,
-				),
-			);
-		} else if (ev.key === "ArrowUp") {
-			ev.preventDefault();
-			this.setActiveSourceMenuItem(Math.max(this.activeSourceMenuIndex - 1, 0));
-		} else if (ev.key === "Enter") {
-			ev.preventDefault();
-			const entry = this.sourceMenuItems[this.activeSourceMenuIndex];
-			if (entry) {
-				this.selectSource(entry.id);
-				this.closeSourceMenu();
-				this.sourceButtonEl.focus();
-			}
-		}
 	}
 
 	/** Distinct icon names; style and weight variants do not inflate the count. */
@@ -432,16 +224,19 @@ export class IconPicker extends Modal {
 		return this.sourceCounts.get(id);
 	}
 
-	private async loadSourceCounts(): Promise<void> {
+	private async loadSourceCounts(generation: number): Promise<void> {
 		for (const id of ICON_SOURCE_IDS) {
 			try {
 				const index = await getSource(id).loadIndex();
+				if (generation !== this.openGeneration) return;
 				this.sourceCounts.set(id, index.entries.length);
 			} catch (e) {
+				if (generation !== this.openGeneration) return;
 				// A source that cannot describe itself simply shows no count.
 				console.warn(`[CalloutStudio] could not count icons in "${id}"`, e);
 			}
 		}
+		this.sourcePicker?.setItems();
 	}
 
 	private selectSource(id: PickerSourceId): void {
@@ -450,12 +245,12 @@ export class IconPicker extends Modal {
 		// Switching source clears the selection: an icon id only means anything
 		// within the source it came from.
 		this.selectedIcon = null;
-		this.paintSourceButton();
 		this.updatePreview();
 		void this.showPanel();
 	}
 
 	private async showPanel(): Promise<void> {
+		const generation = this.openGeneration;
 		this.panel?.dispose();
 		this.panelHostEl.empty();
 		const host = this.panelHostEl.createDiv("icon-picker-panel");
@@ -496,7 +291,9 @@ export class IconPicker extends Modal {
 				},
 			},
 		);
-		await this.panel.render();
+		const panel = this.panel;
+		await panel.render();
+		if (generation !== this.openGeneration || this.panel !== panel) return;
 		if (this.activeSource === ALL_SOURCES) this.renderMissingSourcesHint();
 	}
 

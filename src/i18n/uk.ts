@@ -220,6 +220,7 @@ export const uk: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"Призупинено: ваша тема надає цей callout, тому він має лише блоковий формат. Ця команда знову запрацює, коли тема перестане його надавати.",
 
+	"settings.maintenance": "Обслуговування",
 	"settings.vaultMaintenance": "Аналітика та обслуговування сховища",
 	"settings.vaultStats": "Статистика callout",
 	"settings.vaultStatsDesc":
@@ -769,6 +770,34 @@ export const uk: Record<string, string> = {
 	"vaultStats.roleHeading": "Заголовок",
 	"vaultStats.roleInline": "Вбудований",
 	"vaultStats.close": "Закрити",
+
+	"usage.title": "Входження callout",
+	"usage.selectType": "Тип callout",
+	"usage.browse": "Огляд",
+	"usage.allTypes": "Усі типи",
+	"usage.registeredCallouts": "Зареєстровані типи callout",
+	"usage.unregisteredCallouts": "Незареєстровані типи callout",
+	"usage.summary": "{{count}} входжень у {{files}} файлах",
+	"usage.fileCount": "{{path}} ({{count}})",
+	"usage.markdownFiles": "Файли Markdown",
+	"usage.filterRole": "Фільтрувати за форматом",
+	"usage.allRoles": "Усі формати",
+	"usage.failed": "Не вдалося оновити входження callout.",
+	"usage.loading": "Сканування нотаток Markdown…",
+	"usage.partial": "Результати неповні: помилок читання — {{count}}.",
+	"usage.stale": "Оновлення входжень callout…",
+	"usage.empty": "Відповідних callout не знайдено.",
+	"usage.failedFiles": "Файли, які не вдалося прочитати",
+	"usage.vaultReadFailed": "Не вдалося отримати список нотаток Markdown у цьому сховищі.",
+	"usage.more": "Показати ще {{count}}",
+	"usage.location": "Рядок {{line}} · {{role}}",
+	"usage.missing": "Цієї нотатки більше немає. Оновлення результатів…",
+	"usage.changed": "Це входження змінилося або перемістилося, і його нове розташування невідоме. Оновлення результатів…",
+	"usage.openFailed": "Не вдалося відкрити це входження callout.",
+	"usage.menuCount": "Знайти використання: {{count}} у {{files}} файлах",
+	"usage.menuIncomplete": "Знайти використання — сканування не завершено",
+	"usage.menuLoading": "Знайти використання — підрахунок…",
+	"usage.closeSettings": "Закрийте налаштування, щоб побачити результати для callout на бічній панелі.",
 
 	"import.title": "Проблеми імпорту",
 	"import.reportLeadIn":

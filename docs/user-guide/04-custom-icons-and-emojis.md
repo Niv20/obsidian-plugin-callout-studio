@@ -19,6 +19,8 @@ Moving the pointer again highlights the row under it.
 - **Material Symbols** downloads only the specific SVG you select, keeping its stored footprint small.
 
 Search works offline. Depending on the selected source, the filters at the top can narrow icons by category, style, stroke weight, or emoji skin tone.
+The source and filters use matching selection fields and menus. The emoji skin tone menu shows a
+sample hand beside each tone, so you can see the choice before selecting it.
 
 ## Use your own graphic
 

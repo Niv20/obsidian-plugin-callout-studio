@@ -1283,6 +1283,11 @@ preset direction, an off-by-default "Gradient title text" toggle), or None
 (transparent — see [Colour system](11-color-system.md#preset-palettes--hue-named-not-role-named)
 for why this is the *only* route to a transparent palette).
 
+The palette card keeps **Name** and **Style** at the same control-column width.
+Name is a 36px text field; Style uses the nonsearchable `ListboxPopup` rather
+than a native `<select>`. Both use the shared field radius, subtle hover fill,
+and focus border and ring. The popup is destroyed when the modal closes.
+
 The preview renders on a **reserved demo id** (`PALETTE_DEMO_ID =
 "palette-demo"`), registered through the same registry preview slot the
 callout editor uses — and, notably, **deliberately not**
@@ -1374,25 +1379,37 @@ The form is *Callout type*, *Callout format*, *Heading level*, *Action*, *Fold
 state*, then a live preview of the command name. Every row is built
 unconditionally and hidden with `cs-row-hidden`; one `syncVisibility()` decides
 all of it, so the controls can never disagree about the current format. Every
-configuration row also carries `cs-command-field`: the four format-specific
-select-only dropdowns share one compact control-column width. The callout picker adds
-`cs-command-callout-setting` for a wider searchable field, and both widths
+configuration row also carries `cs-command-field`: all five pickers share one
+control-column width. The four format-specific choices use `SelectDropdown`, while the callout picker is searchable. All five show
+the same field shape and hover, press, focus and open feedback. The controls
 become full-width when Obsidian stacks rows on a phone.
 
-Three of those rows are their own modules under `settings/command/` rather than
-methods on the modal, keeping each control's rules and cleanup beside the
-control and the modal within the 300-line limit:
+New commands select the built-in `note` type when available, then the first
+registered type with a visible name. This avoids selecting a discovered fallback
+whose display name contains only whitespace. Choices come from committed
+definitions, excluding theme-only rows and transient previews; persisted
+scan-created definitions are registered choices too. Existing commands retain
+their saved callout id and can still edit a pinned legacy theme choice.
 
-- **`commandRoles.ts`** — the format dropdown refills itself per callout
+The choice rows live under `settings/command/` rather than in the modal, which
+keeps each control beside its option rule and supplies one popup teardown path:
+
+- **`commandRoles.ts`** — the format list refills itself per callout
   (a theme-owned callout has only Block), with a line explaining the absence.
 - **`calloutRow.ts`** — the *Callout type* picker, over the shared
   [combobox](#the-shared-callout-picker). This was a `<select>` whose every
   option read `Abstract (abstract)`; the id is now shown only on a row it
-  actually explains.
+  actually explains. Registered choices form one flat list without headings.
+- **`optionRows.ts`** — the fixed Heading level and Action choices.
 - **`foldStateRow.ts`** — the three fold states, shown only for Block. Heading
   and inline are not narrower versions of the same choice, they have no fold
   syntax at all, so the row hides rather than greying out. Both block *actions*
   show it: Wrap selection and Insert new write the same header line.
+
+`SelectDropdown` mounts the four nonsearchable lists through the same
+`ListboxPopup` used by the searchable callout picker. It exposes selection and
+option refresh methods so the modal can sync dependent rows, and returns a
+disposer for every popup.
 
 `draft()` mirrors the sanitizer's shape, including omitting `fold` when it is
 `"none"` — otherwise a command saved from this window and the same command
@@ -1446,7 +1463,8 @@ Every place the user picks one callout out of a list is the same control:
 ([`FallbackSection.ts`](../../src/settings/sections/FallbackSection.ts)) and
 *Callout type* above — neither of which could be typed into or showed a callout's
 icon or colour, while the `[!` popover in the editor had done both for a long
-time.
+time. The fallback picker uses the shared field face and interaction rules;
+there is no fallback-specific button styling.
 
 The rows are literally the popover's markup
 ([`calloutComboboxRow.ts`](../../src/settings/calloutComboboxRow.ts) reuses the
@@ -1468,6 +1486,15 @@ all rows in a group removes its heading too. Each contiguous group is wrapped
 in a `role="group"` element with `cs-combobox-group`; its opaque
 `cs-combobox-group-label` is sticky at the menu's top until the next group
 replaces it. Group containment handles the handoff without scroll listeners.
+The occurrence picker sets `hideSingleGroup` to suppress redundant headings,
+while `showSingleGroupKey` keeps the Browse heading when All types is the only
+matching group.
+The All types scope is iconless and remains separate from registry definitions.
+Color pickers retain their headings even with only one matching group.
+
+The occurrence **Format** filter and the command editor's Format, Heading level,
+Action and Fold state rows use `SelectDropdown`, backed by the same shared
+listbox. Their readonly input displays the chosen value without filtering.
 
 A query that matches nothing does **not** dead-end. When the call site supplies
 `onCreate`, the empty state is replaced by a real, keyboard-reachable row
@@ -1476,8 +1503,8 @@ offering to create the callout under that name — the same offer, and the same
 then adopts what comes back, which is why `choices` is a *function*: the list is
 re-read after the editor closes, so the new row is simply there.
 
-Two rules in `listboxPopup.ts` carry the design and are worth reading before
-changing it:
+Two rules in `listboxPopup.ts` carry the searchable mode and are worth reading
+before changing it:
 
 - **The query is separate state from `input.value`.** Opening does not search
   for the committed label (that would list exactly one row); it starts empty and
@@ -1503,8 +1530,10 @@ exit. The last active input method owns the one visual highlight: an arrow key
 suppresses `:hover` on a stationary pointer row, and actual pointer movement
 returns the highlight to the row beneath it, even without another `mouseenter`.
 Hover never scrolls a row into view; keyboard navigation does. The icon-source
-menu follows the same rule. Quick Insert follows the same pointer/keyboard
-distinction through its single `is-active` highlight.
+menu and pack filters use this same component. Quick Insert follows the same pointer/keyboard
+distinction through its single `is-active` highlight. A row that is both
+`is-selected` and `is-active` gets a visible active treatment while retaining
+its selected state; hovering the committed option must not look inert.
 
 Callers **must** call `destroy()` — a modal from `onClose`, a settings section
 through `registerDisposer` — because the popup holds a document-level click
@@ -1528,6 +1557,9 @@ RTL and viewport offsets. Layout runs after rendering/filtering and updates
 on viewport resize, surrounding scroll, and control/container resizing. Closing
 removes these listeners, observers, and temporary layout properties. The hidden
 three-item Fold menu needs only the shared static cap.
+Shared listboxes have no vertical menu inset; the first and last rows meet
+its inside edge. Selection-only command choices use 8px vertical and 12px
+horizontal row padding.
 
 Two details in [`listboxPopupEvents.ts`](../../src/ui/listboxPopupEvents.ts) are
 load-bearing and have already been bugs. Selecting the label on click has to
@@ -1535,6 +1567,10 @@ happen on `click`, not on `focus`: the browser fires mousedown → focus →
 mouseup → click, and mouseup places a caret that undoes an earlier `select()`.
 And the menu's `mousedown` `preventDefault()` is what lets a mouse selection
 commit at all — a click on a row is also a blur, and blur lands first.
+
+Field names are assigned by `fieldAccessibleName.ts`, using a visually hidden
+sibling label referenced through `aria-labelledby`. This keeps accessible names
+without the hover tooltip Obsidian derives from `aria-label`.
 
 The control itself uses the [shared dropdown styling](#shared-dropdown-controls),
 matching the other listbox triggers. The input inside is

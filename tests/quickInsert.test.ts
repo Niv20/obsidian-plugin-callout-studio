@@ -378,6 +378,16 @@ describe("quick-insert source controls and empty states", () => {
 			onKey: () => {},
 		});
 		const select = toolbar.filter;
+		for (const [field, name] of [
+			[toolbar.search, en["quickInsert.searchPlaceholder"]],
+			[select.inputEl, en["quickInsert.sourceAria"]],
+		] as const) {
+			assert.strictEqual(field.getAttribute("aria-label"), null);
+			assert.strictEqual(field.getAttribute("title"), null);
+			const labelId = field.getAttribute("aria-labelledby");
+			assert.ok(labelId);
+			assert.strictEqual(host.querySelector(`#${labelId}`)?.textContent, name);
+		}
 		assert.strictEqual(host.querySelector("select"), null);
 		assert.strictEqual(select.getValue(), "all");
 		assert.deepStrictEqual(dropdownOptions(select.el).map((row) => row.textContent),

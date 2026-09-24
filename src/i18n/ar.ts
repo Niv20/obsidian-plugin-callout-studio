@@ -213,6 +213,7 @@ export const ar: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"متوقف مؤقتًا: يوفّر القالب الخاص بك هذا الـ callout، لذا لا يتوفر له سوى تنسيق الكتلة. سيعمل هذا الأمر مرة أخرى عندما يتوقف القالب عن توفيره.",
 
+	"settings.maintenance": "الصيانة",
 	"settings.vaultMaintenance": "رؤى المخزن والصيانة",
 	"settings.vaultStats": "إحصائيات الـ callout",
 	"settings.vaultStatsDesc":
@@ -746,6 +747,34 @@ export const ar: Record<string, string> = {
 	"vaultStats.roleHeading": "عنوان",
 	"vaultStats.roleInline": "ضمن السطر",
 	"vaultStats.close": "إغلاق",
+
+	"usage.title": "مواضع ظهور الـ callout",
+	"usage.selectType": "نوع الـ callout",
+	"usage.browse": "تصفّح",
+	"usage.allTypes": "كل الأنواع",
+	"usage.registeredCallouts": "الـ callouts المسجّلة",
+	"usage.unregisteredCallouts": "الـ callouts غير المسجّلة",
+	"usage.summary": "{{count}} موضع ظهور في {{files}} ملف",
+	"usage.fileCount": "{{path}} ({{count}})",
+	"usage.markdownFiles": "ملفات Markdown",
+	"usage.filterRole": "تصفية حسب التنسيق",
+	"usage.allRoles": "كل التنسيقات",
+	"usage.failed": "تعذّر تحديث مواضع ظهور الـ callout.",
+	"usage.loading": "جارٍ فحص ملاحظات Markdown…",
+	"usage.partial": "النتائج غير مكتملة: {{count}} خطأ في القراءة.",
+	"usage.stale": "جارٍ تحديث مواضع ظهور الـ callout…",
+	"usage.empty": "لم يُعثر على أي callouts مطابقة.",
+	"usage.failedFiles": "ملفات تعذّرت قراءتها",
+	"usage.vaultReadFailed": "تعذّر عرض قائمة ملاحظات Markdown في هذا المخزن.",
+	"usage.more": "عرض {{count}} أخرى",
+	"usage.location": "السطر {{line}} · {{role}}",
+	"usage.missing": "لم تعد هذه الملاحظة موجودة. جارٍ تحديث النتائج…",
+	"usage.changed": "تغيّر موضع الظهور هذا أو انتقل إلى مكان لا يمكن تحديده بدقة. جارٍ تحديث النتائج…",
+	"usage.openFailed": "تعذّر فتح موضع ظهور الـ callout هذا.",
+	"usage.menuCount": "البحث عن الاستخدامات: {{count}} في {{files}} ملف",
+	"usage.menuIncomplete": "البحث عن الاستخدامات — الفحص غير مكتمل",
+	"usage.menuLoading": "البحث عن الاستخدامات — جارٍ العد…",
+	"usage.closeSettings": "أغلق الإعدادات لعرض نتائج الـ callout في الشريط الجانبي.",
 
 	"import.title": "مشاكل الاستيراد",
 	"import.reportLeadIn":

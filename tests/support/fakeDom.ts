@@ -249,12 +249,18 @@ class FakeClassList {
 type FakeStyle = Record<string, unknown> & {
 	getPropertyValue(name: string): string;
 	setProperty(name: string, value: string): void;
+	removeProperty(name: string): void;
 };
 
 function createStyle(custom: Map<string, string>): FakeStyle {
 	const style = {
 		getPropertyValue: (name: string) => custom.get(name) ?? "",
 		setProperty: (name: string, value: string) => void custom.set(name, value),
+		removeProperty: (name: string) => {
+			const previous = custom.get(name) ?? "";
+			custom.delete(name);
+			return previous;
+		},
 	};
 	return style as FakeStyle;
 }

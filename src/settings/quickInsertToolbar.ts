@@ -7,6 +7,7 @@
  */
 import { t } from "../i18n";
 import { SelectDropdown } from "../ui/selectDropdown";
+import { setFieldAccessibleName } from "../ui/fieldAccessibleName";
 import {
 	isCalloutSourceFilter,
 	type CalloutSourceFilter,
@@ -48,11 +49,13 @@ export function buildQuickInsertToolbar(
 	const toolbar = parent.createDiv({ cls: "cs-quick-insert-toolbar" });
 
 	// The query is scoped to one insertion; the source choice is remembered.
+	const searchLabel = t("quickInsert.searchPlaceholder");
 	const search = toolbar.createEl("input", {
 		type: "text",
 		cls: "cs-quick-insert-search cs-text-control",
-		placeholder: t("quickInsert.searchPlaceholder"),
+		placeholder: searchLabel,
 	});
+	setFieldAccessibleName(search, searchLabel);
 	search.addEventListener("input", () => handlers.onQuery(search.value));
 	// Bound to the field rather than the window so typing and arrowing are the
 	// same gesture. Left/Right are deliberately untouched — they move the caret,

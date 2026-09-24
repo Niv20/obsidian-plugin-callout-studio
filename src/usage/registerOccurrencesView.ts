@@ -24,17 +24,18 @@ export async function openCalloutOccurrences(
 	role?: CalloutRenderRole,
 ): Promise<void> {
 	try {
+		const state = ids?.length ? { ids: [...ids], role } : { allTypes: true, role };
 		const leaf = await app.workspace.ensureSideLeaf(CALLOUT_OCCURRENCES_VIEW, "right", {
 			active: true,
 			reveal: true,
-			state: { ids: ids ? [...ids] : undefined, role },
+			state,
 		});
 		await leaf.loadIfDeferred();
 		// ensureSideLeaf can reuse a leaf: always apply the newly requested filter.
 		await leaf.setViewState({
 			type: CALLOUT_OCCURRENCES_VIEW,
 			active: true,
-			state: { ids: ids ? [...ids] : undefined, role },
+			state,
 		});
 		await app.workspace.revealLeaf(leaf);
 	} catch {

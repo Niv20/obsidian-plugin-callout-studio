@@ -214,6 +214,7 @@ export const cs: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"Pozastaveno: tento callout dodává vaše téma, takže má pouze blokový formát. Tento příkaz bude znovu fungovat, jakmile jej téma přestane dodávat.",
 
+	"settings.maintenance": "Údržba",
 	"settings.vaultMaintenance": "Statistiky a údržba vaultu",
 	"settings.vaultStats": "Statistiky callout",
 	"settings.vaultStatsDesc":
@@ -754,6 +755,34 @@ export const cs: Record<string, string> = {
 	"vaultStats.roleHeading": "Nadpis",
 	"vaultStats.roleInline": "Vložený v textu",
 	"vaultStats.close": "Zavřít",
+
+	"usage.title": "Výskyty calloutů",
+	"usage.selectType": "Typ calloutu",
+	"usage.browse": "Procházet",
+	"usage.allTypes": "Všechny typy",
+	"usage.registeredCallouts": "Registrované callouty",
+	"usage.unregisteredCallouts": "Neregistrované callouty",
+	"usage.summary": "{{count}} výskytů v {{files}} souborech",
+	"usage.fileCount": "{{path}} ({{count}})",
+	"usage.markdownFiles": "Soubory Markdown",
+	"usage.filterRole": "Filtrovat podle formátu",
+	"usage.allRoles": "Všechny formáty",
+	"usage.failed": "Výskyty calloutů se nepodařilo aktualizovat.",
+	"usage.loading": "Prohledávání poznámek Markdown…",
+	"usage.partial": "Výsledky nejsou úplné: {{count}} chyb při čtení.",
+	"usage.stale": "Aktualizace výskytů calloutů…",
+	"usage.empty": "Nebyly nalezeny žádné odpovídající callouty.",
+	"usage.failedFiles": "Soubory, které se nepodařilo přečíst",
+	"usage.vaultReadFailed": "Nepodařilo se vypsat poznámky Markdown v tomto vaultu.",
+	"usage.more": "Zobrazit dalších {{count}}",
+	"usage.location": "Řádek {{line}} · {{role}}",
+	"usage.missing": "Tato poznámka již neexistuje. Aktualizace výsledků…",
+	"usage.changed": "Tento výskyt se změnil nebo se přesunul na nejednoznačné místo. Aktualizace výsledků…",
+	"usage.openFailed": "Tento výskyt calloutu se nepodařilo otevřít.",
+	"usage.menuCount": "Najít použití: {{count}} v {{files}} souborech",
+	"usage.menuIncomplete": "Najít použití — prohledávání není dokončeno",
+	"usage.menuLoading": "Najít použití — počítání…",
+	"usage.closeSettings": "Zavřete nastavení, abyste výsledky pro callouty viděli v postranním panelu.",
 
 	"import.title": "Problémy s importem",
 	"import.reportLeadIn":

@@ -286,6 +286,8 @@ const STICKY_LAYERS: Record<string, string> = {
 		"the callout / palette / style editors' preview column, inside .modal-content",
 	".icon-picker-toolbar":
 		"the icon picker's per-source search bar, inside .icon-picker-content",
+	".cs-occurrences-file h3":
+		"each file's occurrence heading, inside .view-content.cs-occurrences-view and bounded by its section",
 	".cs-quick-insert-toolbar":
 		"the quick-insert window's search + source filter, inside .modal-content",
 	".cs-combobox-group-label":

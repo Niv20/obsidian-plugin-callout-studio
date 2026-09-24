@@ -35,14 +35,8 @@ import {
 import type { PackDataStore } from "../../icons/PackDataStore";
 import { isAllSources } from "./allSources";
 import { IconGrid } from "./IconGrid";
+import { PackToolbarFilters } from "./PackToolbarFilters";
 import { t } from "../../i18n";
-import { SelectDropdown } from "../../ui/selectDropdown";
-
-/**
- * Raised hand in each skin tone, indexed 0 = default, 1–5 = light → dark.
- * Used for the swatches, so each tone previews itself.
- */
-const SKIN_TONE_SAMPLES = ["✋", "✋🏻", "✋🏼", "✋🏽", "✋🏾", "✋🏿"];
 
 /**
  * Draws grid cells straight from pack data, bypassing the `data.json` cache.
@@ -77,15 +71,7 @@ export class PackPanel {
 	private category = "";
 	private variants: IconVariantState;
 	private searchInput: HTMLInputElement | null = null;
-	private categorySelect: SelectDropdown | null = null;
-	private readonly dropdowns: SelectDropdown[] = [];
-	/** Lock the toolbar until the source is downloaded: filtering sooner would
-	 * replace its Download prompt with cells whose artwork is unavailable.
-	 */
-	private readonly toolbarControls: (
-		| HTMLInputElement
-		| HTMLButtonElement
-	)[] = [];
+	private filters: PackToolbarFilters | null = null;
 	/** Rebuilt on every variant change — Font Awesome's applies to Brands only. */
 	private noticeEl: HTMLElement | null = null;
 	/**
@@ -119,7 +105,7 @@ export class PackPanel {
 
 	dispose(): void {
 		this.disposed = true;
-		for (const dropdown of this.dropdowns) dropdown.destroy();
+		this.filters?.destroy();
 		this.container.empty();
 	}
 
@@ -161,80 +147,28 @@ export class PackPanel {
 			placeholder: t(this.pack.searchPlaceholderKey),
 			value: this.query,
 		});
-		this.toolbarControls.push(this.searchInput);
 		this.searchInput.addEventListener("input", () => {
 			this.query = this.searchInput?.value ?? "";
 			this.applyFilter();
 		});
-
-		for (const spec of this.pack.variants ?? []) {
-			if (spec.kind === "select") this.buildVariantSelect(spec);
-			else this.buildSkinToneRow();
-		}
-
-		if (this.pack.hasCategories) {
-			const select = this.categorySelect = new SelectDropdown(this.toolbarEl, t("iconPicker.allCategories"))
-				.addOption("", t("iconPicker.allCategories"));
-			select.el.addClass("icon-picker-category-select");
-			this.dropdowns.push(select);
-			select.onChange((value) => {
-				this.category = value;
-				this.host.saveCategory(this.pack.id, this.category);
-				this.applyFilter();
-			});
-		}
-	}
-
-	private buildVariantSelect(
-		spec: Extract<NonNullable<IconPack["variants"]>[number], { kind: "select" }>,
-	): void {
-		const select = new SelectDropdown(this.toolbarEl, t(spec.labelKey));
-		select.el.addClass("icon-picker-variant-select", `icon-picker-${spec.key}-select`);
-		select.setOptions(spec.options.map((option, i) => ({
-			value: String(option),
-			label: spec.optionLabelKeys?.[i] ? t(spec.optionLabelKeys[i]) : String(option),
-		})));
-		const current = this.variants[spec.key];
-		if (spec.options.some((option) => String(option) === String(current))) select.setValue(String(current));
-		this.dropdowns.push(select);
-		select.onChange((raw) => {
-			this.variants = { ...this.variants, [spec.key]: spec.key === "weight" ? parseInt(raw, 10) : raw };
-			this.host.saveVariants(this.pack.id, this.variants);
-			void this.onVariantChanged();
-		});
-	}
-
-	private buildSkinToneRow(): void {
-		const row = this.toolbarEl.createDiv({
-			cls: "icon-picker-skin-row",
-			attr: { role: "group", "aria-label": t("iconPicker.skinTone") },
-		});
-		const buttons: HTMLButtonElement[] = [];
-		SKIN_TONE_SAMPLES.forEach((sample, tone) => {
-			const active = tone === (this.variants.emojiSkinTone ?? 0);
-			const btn = row.createEl("button", {
-				text: sample,
-				cls: `icon-picker-skin-btn${active ? " is-active" : ""}`,
-				attr: {
-					"aria-label": t("iconPicker.skinTone"),
-					"aria-pressed": String(active),
+		this.filters = new PackToolbarFilters(
+			this.toolbarEl, this.pack, this.variants, this.category, {
+				onCategory: (category) => {
+					this.category = category;
+					this.host.saveCategory(this.pack.id, category);
+					this.applyFilter();
 				},
-			});
-			buttons.push(btn);
-			this.toolbarControls.push(btn);
-			btn.addEventListener("click", () => {
-				this.variants = { ...this.variants, emojiSkinTone: tone };
-				this.host.saveVariants(this.pack.id, this.variants);
-				buttons.forEach((b, i) => {
-					b.toggleClass("is-active", i === tone);
-					b.setAttribute("aria-pressed", String(i === tone));
-				});
-				this.syncSelectionToVariants();
-				// Only the glyphs change, so repaint in place: rebuilding would
-				// throw away scroll position and every page loaded so far.
-				this.grid?.repaintVisible();
-			});
-		});
+				onVariant: (variants, kind) => {
+					this.variants = variants;
+					this.host.saveVariants(this.pack.id, variants);
+					if (kind === "skin-tone") {
+						this.syncSelectionToVariants();
+						// Tone changes only the glyphs; keep scroll and loaded pages.
+						this.grid?.repaintVisible();
+					} else void this.onVariantChanged();
+				},
+			},
+		);
 	}
 
 	/**
@@ -244,8 +178,8 @@ export class PackPanel {
 	 * toolbar keeps its height and the source still looks like itself.
 	 */
 	private setToolbarEnabled(enabled: boolean): void {
-		for (const control of this.toolbarControls) control.disabled = !enabled;
-		for (const dropdown of this.dropdowns) dropdown.setDisabled(!enabled);
+		if (this.searchInput) this.searchInput.disabled = !enabled;
+		this.filters?.setEnabled(enabled);
 		this.toolbarEl.toggleClass("is-disabled", !enabled);
 	}
 
@@ -333,16 +267,7 @@ export class PackPanel {
 	}
 
 	private populateCategories(): void {
-		const select = this.categorySelect;
-		const categories = this.index?.categories ?? [];
-		if (!select) return;
-		select.setOptions([
-			{ value: "", label: t("iconPicker.allCategories") },
-			...categories.map((value) => ({ value, label: t(`iconPicker.cat.${value}`) })),
-		]);
-		// A vanished remembered category falls back to all, even for an empty index.
-		if (!categories.includes(this.category)) this.category = "";
-		select.setValue(this.category);
+		this.category = this.filters?.setCategories(this.index?.categories ?? []) ?? "";
 	}
 
 	private applyFilter(): void {

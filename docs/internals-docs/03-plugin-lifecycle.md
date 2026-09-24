@@ -21,7 +21,8 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
    startup entrance animation when appropriate. Initialize icons and instantiate
    `ManualCalloutDiscovery`; constructing it reads no notes and registers no events.
 5. Register Outline integration, custom commands, registry change listeners,
-   settings UI, fixed commands, ribbon, autocomplete, context menu and public API.
+   settings UI, fixed commands, the Quick insert ribbon button,
+   autocomplete, context menu and public API.
    Register the occurrence ItemView/command and vault/editor invalidations. Index construction
    reads no notes; its first usage request starts indexing. Subsequent Markdown
    changes are debounced independently of manual discovery.

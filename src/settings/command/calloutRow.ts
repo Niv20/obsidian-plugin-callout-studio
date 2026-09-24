@@ -34,7 +34,6 @@ export function buildCalloutRow(
 	const setting = new Setting(parent)
 		.setName(t("commandBuilder.callout"))
 		.setClass("cs-command-field")
-		.setClass("cs-command-callout-setting")
 		.setDesc(t("commandBuilder.calloutDesc"));
 
 	const picker = new CalloutCombobox(setting.controlEl, {

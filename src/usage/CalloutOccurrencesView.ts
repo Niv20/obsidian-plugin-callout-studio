@@ -4,35 +4,38 @@ import { registerMenuScopeHost } from "../ui/menuEscape";
 import { STATISTICS_ICON_ID } from "../icons/uiIcons";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { CalloutCombobox } from "../settings/calloutCombobox";
-import type { CalloutDefinition, CalloutRenderRole } from "../types";
+import type { CalloutRenderRole } from "../types";
 import { getCalloutOccurrenceIndex, type CalloutOccurrenceIndex } from "./CalloutOccurrenceIndex";
+import { OccurrenceActiveFile } from "./occurrenceActiveFile";
 import type { CalloutOccurrence, CalloutOccurrenceQuery } from "./occurrenceTypes";
-import { OccurrenceTypeChoices } from "./occurrenceTypeChoices";
+import { ALL_TYPES_ID, OccurrenceTypeChoices, occurrencePickerChoices } from "./occurrenceTypeChoices";
+import { OccurrenceResults } from "./occurrenceResults";
 import { navigateToCalloutOccurrence } from "./navigation";
-import { createOccurrencesFrame, occurrenceButton, occurrenceRoleLabel, OCCURRENCE_ROLES,
+import { createOccurrencesFrame, OCCURRENCE_ROLES,
 	renderOccurrenceMetrics, type OccurrencesFrame } from "./occurrencesViewFrame";
 
 export const CALLOUT_OCCURRENCES_VIEW = "callout-studio-occurrences";
 const PAGE_SIZE = 100;
 const BUSY_STATUS_DELAY_MS = 2_000;
-const occurrenceKey = (item: CalloutOccurrence): string =>
-	JSON.stringify([item.path, item.line, item.from, item.identity]);
 
 /** The saved layout owns filters only; occurrences and counts stay in memory. */
 export class CalloutOccurrencesView extends ItemView {
 	private readonly index: CalloutOccurrenceIndex;
 	private readonly typeChoices: OccurrenceTypeChoices;
+	private readonly activeFile: OccurrenceActiveFile;
 	private ids: string[] = [];
-	private selectedType = "";
+	private selectedType = ALL_TYPES_ID;
+	private allTypes = true;
 	private role: CalloutRenderRole | undefined;
 	private limit = PAGE_SIZE;
-	private selected: string | null = null;
+	private readonly resultCards = new OccurrenceResults(PAGE_SIZE);
 	private results: readonly CalloutOccurrence[] = [];
 	private unsubscribe: (() => void) | null = null;
 	private opened = false;
 	private handlersRegistered = false;
 	private failed = false;
 	private navigating = false;
+	private navigationGeneration = 0;
 	private busyStatusVisible = false;
 	private busyStatusTimer: number | null = null;
 	private busyStatusGeneration = 0;
@@ -42,9 +45,7 @@ export class CalloutOccurrencesView extends ItemView {
 	private picker: CalloutCombobox | null = null;
 	private lastIndexState = "";
 	private lastChoicesRevision = -1;
-	private lastResultsState = "";
 	private cachedQuery: { revision: number; key: string; result: CalloutOccurrenceQuery } | null = null;
-	private fileCounts = new Map<string, number>();
 	private readonly registryChanged = (): void => {
 		const before = JSON.stringify(this.ids);
 		this.typeChoices.invalidate();
@@ -53,15 +54,18 @@ export class CalloutOccurrencesView extends ItemView {
 		if (this.opened) this.render();
 	};
 
-	constructor(
-		leaf: WorkspaceLeaf,
-		private readonly registry: CalloutRegistry,
-		private readonly busyStatusDelayMs = BUSY_STATUS_DELAY_MS,
-	) {
+	constructor(leaf: WorkspaceLeaf, private readonly registry: CalloutRegistry,
+		private readonly busyStatusDelayMs = BUSY_STATUS_DELAY_MS) {
 		super(leaf);
 		this.index = getCalloutOccurrenceIndex(this.app);
 		this.typeChoices = new OccurrenceTypeChoices(registry, this.index);
-		this.resolveType();
+		this.activeFile = new OccurrenceActiveFile(this.app,
+			(ref) => this.registerEvent(ref),
+			(path) => {
+				this.resultCards.setActiveFile(path);
+				if (this.opened && this.frame) this.activeFile.sync(this.results, this.limit, this.index.status, this.failed);
+			},
+			(limit) => { this.limit = limit; this.render(); }, PAGE_SIZE);
 	}
 	getViewType(): string { return CALLOUT_OCCURRENCES_VIEW; }
 	getDisplayText(): string { return t("usage.title"); }
@@ -71,16 +75,24 @@ export class CalloutOccurrencesView extends ItemView {
 		this.clearFrame();
 		this.render();
 	}
-	getState(): Record<string, unknown> { return { ids: [...this.ids], role: this.role }; }
+	getState(): Record<string, unknown> { return { ids: [...this.ids], role: this.role, ...(this.allTypes ? { allTypes: true } : {}) }; }
 	async setState(state: unknown, result: ViewStateResult): Promise<void> {
 		const input = typeof state === "object" && state !== null ? state as Record<string, unknown> : {};
 		const ids = Array.isArray(input.ids)
 			? input.ids.filter((id): id is string => typeof id === "string" && id.length > 0) : this.ids;
-		this.resolveType(ids);
+		if (input.allTypes === true || Array.isArray(input.ids) && ids.length === 0 && input.allTypes !== false) {
+			this.allTypes = true;
+			this.selectedType = ALL_TYPES_ID;
+			this.ids = [];
+		} else if (Array.isArray(input.ids) || input.allTypes === false) this.resolveType(ids);
 		this.role = OCCURRENCE_ROLES.includes(input.role as CalloutRenderRole) ? input.role as CalloutRenderRole : undefined;
 		this.limit = PAGE_SIZE;
-		this.selected = null;
+		this.navigationGeneration++;
+		this.resultCards.select(null);
+		this.contentEl.scrollTop = 0;
+		this.activeFile.cancelReveal();
 		this.picker?.setValue(this.selectedType);
+		this.frame?.roleSelect.setValue(this.role ?? "");
 		if (this.opened) this.render();
 		await super.setState(state, result);
 	}
@@ -99,15 +111,19 @@ export class CalloutOccurrencesView extends ItemView {
 		});
 		this.registry.offChange(this.registryChanged);
 		this.registry.onChange(this.registryChanged);
+		this.activeFile.open();
 		this.render();
 		await this.refresh();
 	}
 	onClose(): Promise<void> {
 		this.opened = false;
+		this.navigationGeneration++;
+		this.resultCards.select(null);
 		this.resetBusyStatus();
 		this.unsubscribe?.();
 		this.unsubscribe = null;
 		this.registry.offChange(this.registryChanged);
+		this.activeFile.close();
 		this.clearFrame();
 		this.cachedQuery = null;
 		return Promise.resolve();
@@ -118,33 +134,34 @@ export class CalloutOccurrencesView extends ItemView {
 		this.frame?.roleSelect.destroy();
 		this.disposeMenuHost?.(); this.disposeMenuHost = undefined;
 		this.frame = null;
-		this.lastResultsState = "";
+		this.resultCards.clear();
+		this.activeFile.clearSections();
 		this.contentEl.empty();
 	}
-	private choices(): readonly CalloutDefinition[] {
-		return this.typeChoices.definitions(this.selectedType);
-	}
 	private resolveType(ids: readonly string[] = []): void {
+		this.allTypes = false;
 		const selection = this.typeChoices.resolve(ids);
 		this.selectedType = selection.id;
 		this.ids = selection.ids;
 	}
 	private syncChoices(refreshSelection = false): void {
 		const previous = this.selectedType;
-		this.resolveType(this.ids);
+		if (!this.allTypes) this.resolveType(this.ids);
 		if (this.picker && (refreshSelection || previous !== this.selectedType)) {
 			const input = this.frame?.pickerHost.querySelector<HTMLInputElement>("input");
 			const query = input?.getAttribute("aria-expanded") === "true" ? input.value : undefined;
 			this.picker.setValue(this.selectedType);
 			if (input && query !== undefined) input.value = query;
 		}
-		this.picker?.setChoices(() => this.choices());
+		this.picker?.setChoices(() => occurrencePickerChoices(this.typeChoices, this.selectedType));
 		this.lastChoicesRevision = this.index.dataRevision;
 	}
 	private resetResults(): void {
 		this.limit = PAGE_SIZE;
-		this.selected = null;
-		this.contentEl.scrollTop = 0;
+		this.navigationGeneration++;
+		this.resultCards.select(null);
+		// render() preserves the current scroll offset after a picker commit.
+		this.activeFile.cancelReveal();
 		this.app.workspace.requestSaveLayout();
 	}
 	private syncBusyStatus(busy: boolean): void {
@@ -183,16 +200,22 @@ export class CalloutOccurrencesView extends ItemView {
 		const action = button.dataset.action;
 		if (action === "more") { this.limit += PAGE_SIZE; this.render(); return; }
 		if (action !== "result") return;
-		const occurrence = this.results[Number(button.dataset.result)];
+		const occurrence = this.resultCards.getOccurrence(button);
 		if (occurrence) void this.openResult(occurrence, event.metaKey || event.ctrlKey);
 	}
 	private async openResult(occurrence: CalloutOccurrence, newTab: boolean): Promise<void> {
 		if (this.navigating) return;
 		this.navigating = true;
-		const opened = await navigateToCalloutOccurrence(this.app, occurrence, newTab);
-		this.navigating = false;
+		const generation = this.navigationGeneration;
+		const isCurrent = (): boolean => this.opened && generation === this.navigationGeneration;
+		this.activeFile.beginResultNavigation(occurrence.path);
+		let opened = false;
+		try { opened = await navigateToCalloutOccurrence(this.app, occurrence, newTab, isCurrent); }
+		finally { this.activeFile.endResultNavigation(occurrence.path); this.navigating = false; }
+		if (!isCurrent()) return;
 		if (opened) {
-			this.selected = occurrenceKey(occurrence);
+			this.activeFile.openedResult(occurrence.path);
+			this.resultCards.select(occurrence);
 		} else {
 			this.index.invalidate(occurrence.path);
 			await this.refresh();
@@ -209,13 +232,19 @@ export class CalloutOccurrencesView extends ItemView {
 			this.render();
 		});
 		this.picker = new CalloutCombobox(frame.pickerHost, {
-			registry: this.registry, choices: () => this.choices(), value: this.selectedType,
-			ariaLabel: t("usage.selectType"), labelOf: (def) => def.id,
-			groupOf: (def) => this.typeChoices.isRegistered(def)
+			registry: this.registry, choices: () => occurrencePickerChoices(this.typeChoices, this.selectedType), value: this.selectedType,
+			ariaLabel: t("usage.selectType"), labelOf: (def) => def.id === ALL_TYPES_ID ? t("usage.allTypes") : def.id,
+			iconlessOptionId: ALL_TYPES_ID,
+			hideSingleGroup: true,
+			showSingleGroupKey: "browse",
+			groupOf: (def) => def.id === ALL_TYPES_ID
+				? { key: "browse", label: t("usage.browse"), order: -1 }
+				: this.typeChoices.isRegistered(def)
 				? { key: "registered", label: t("usage.registeredCallouts"), order: 0 }
 				: { key: "unregistered", label: t("usage.unregisteredCallouts"), order: 1 },
 			onChange: (id) => {
-				this.resolveType([id]);
+				if (id === ALL_TYPES_ID) { this.allTypes = true; this.ids = []; this.selectedType = ALL_TYPES_ID; }
+				else this.resolveType([id]);
 				this.resetResults();
 				this.render();
 			},
@@ -226,20 +255,13 @@ export class CalloutOccurrencesView extends ItemView {
 		const index = this.index;
 		if (this.lastChoicesRevision !== index.dataRevision) this.syncChoices();
 		this.lastIndexState = this.indexState();
-		const key = JSON.stringify([this.ids, this.role]);
+		const key = JSON.stringify([this.allTypes, this.ids, this.role]);
 		if (this.cachedQuery?.revision !== index.dataRevision || this.cachedQuery.key !== key) {
-			this.cachedQuery = { revision: index.dataRevision, key, result: index.query(this.ids, this.role) };
-			this.fileCounts.clear();
-			for (const occurrence of this.cachedQuery.result.occurrences) {
-				this.fileCounts.set(occurrence.path, (this.fileCounts.get(occurrence.path) ?? 0) + 1);
-			}
+			this.cachedQuery = { revision: index.dataRevision, key, result: index.query(this.allTypes ? undefined : this.ids, this.role) };
 		}
 		this.results = this.cachedQuery.result.occurrences;
 		const complete = index.status === "ready" && !this.failed;
 		const scrollTop = this.contentEl.scrollTop;
-		const focused = this.contentEl.ownerDocument.activeElement as HTMLElement | null;
-		const focusAction = focused && this.contentEl.contains(focused) ? focused.dataset.action : undefined;
-		const focusResult = focused?.dataset.result;
 		const frame = this.ensureFrame();
 		frame.roleSelect.setValue(this.role ?? "");
 		renderOccurrenceMetrics(frame.metrics, index);
@@ -257,44 +279,10 @@ export class CalloutOccurrencesView extends ItemView {
 		}
 		frame.summary.setText(complete || this.results.length > 0
 			? t("usage.summary", { count: this.results.length, files: this.cachedQuery.result.fileCount }) : "");
-		const resultsState = JSON.stringify([index.dataRevision, key, this.limit, this.selected, complete && this.results.length === 0]);
-		if (resultsState !== this.lastResultsState) {
-			this.lastResultsState = resultsState;
-			frame.results.empty();
-			if (complete && this.results.length === 0) frame.results.createEl("p", { text: t("usage.empty") });
-			this.renderResults(frame.results);
-			const remaining = this.results.length - this.limit;
-			if (remaining > 0) occurrenceButton(frame.results, "more", t("usage.more", { count: Math.min(PAGE_SIZE, remaining) }));
-		}
+		this.resultCards.render(frame.results, this.results, this.limit, complete,
+			(path, section) => this.activeFile.addSection(path, section), () => this.activeFile.clearSections());
 		this.contentEl.scrollTop = scrollTop;
-		if (focusAction === "result" || focusAction === "more") {
-			const selector = focusAction === "result"
-				? `button[data-action="result"][data-result="${focusResult}"]` : '[data-action="more"]';
-			this.contentEl.querySelector<HTMLElement>(selector)?.focus({ preventScroll: true });
-		}
+		this.activeFile.sync(this.results, this.limit, index.status, this.failed);
 	}
-	private indexState(): string {
-		return `${this.index.dataRevision}:${this.index.status}:${this.index.failures.length}`;
-	}
-	private renderResults(content: HTMLElement): void {
-		let path = "";
-		let group: HTMLElement | null = null;
-		for (const [offset, occurrence] of this.results.slice(0, this.limit).entries()) {
-			if (occurrence.path !== path || !group) {
-				path = occurrence.path;
-				group = content.createEl("section", { cls: "cs-occurrences-file" });
-				group.createEl("h3", { text: t("usage.fileCount", { path, count: this.fileCounts.get(path) ?? 0 }) });
-			}
-			const row = occurrenceButton(group, "result", "");
-			row.addClass("cs-occurrences-result");
-			row.dataset.result = String(offset);
-			row.setAttribute("aria-current", String(occurrenceKey(occurrence) === this.selected));
-			row.createSpan({ cls: "cs-occurrences-location", text: t("usage.location", { line: occurrence.line + 1, role: occurrenceRoleLabel(occurrence.role) }) });
-			const excerpt = row.createSpan({ cls: "cs-occurrences-excerpt" });
-			if (occurrence.role === "regular" && occurrence.excerpt.includes("\n")) {
-				excerpt.addClass("cs-occurrences-excerpt-split");
-				for (const line of occurrence.excerpt.split("\n", 2)) excerpt.createSpan({ cls: "cs-occurrences-excerpt-line", text: line });
-			} else excerpt.setText(occurrence.excerpt);
-		}
-	}
+	private indexState(): string { return `${this.index.dataRevision}:${this.index.status}:${this.index.failures.length}`; }
 }

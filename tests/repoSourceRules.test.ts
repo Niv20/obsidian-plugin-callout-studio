@@ -867,9 +867,9 @@ describe("no new oversized files", () => {
 		"src/types.ts": 824,
 		"src/editor/livepreview/widgets.ts": 793,
 		"src/reading/calloutPostProcessor.ts": 721,
-		"src/settings/iconpicker/PackPanel.ts": 706,
+		"src/settings/iconpicker/PackPanel.ts": 631,
 		"src/utils/colorUtils.ts": 685,
-		"src/settings/iconpicker/IconPickerModal.ts": 674,
+		"src/settings/iconpicker/IconPickerModal.ts": 471,
 		"src/editor/livepreview/calloutViewPlugin.ts": 676,
 		// Lowered from 666: sanitizeCustomPalettes — the untrusted-data gate,
 		// the opposite job to the rest of this file — moved to

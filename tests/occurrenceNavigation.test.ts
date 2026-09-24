@@ -75,21 +75,30 @@ function navigationHarness(content = original) {
 		setEphemeralState: (state: unknown) => { ephemeral.push(state); },
 	};
 	const sidebarLeaf = { getRoot: () => side, openFile: () => { throw new Error("Must not replace sidebar"); } };
+	let activeView: MarkdownView | null = view;
+	let recentLeaf: WorkspaceLeaf | null = documentLeaf as unknown as WorkspaceLeaf;
 	const app = {
 		vault: { getAbstractFileByPath: () => file },
 		workspace: {
 			rootSplit: root,
 			getLeavesOfType: () => [],
+			getActiveViewOfType: () => activeView,
+			getMostRecentLeaf: () => recentLeaf,
 			getLeaf: (mode: unknown) => { requestedLeaves.push(mode); return mode === "tab" ? documentLeaf : sidebarLeaf; },
 		},
 	} as unknown as App;
-	return { app, view, selections, opened, requestedLeaves, ephemeral, scrolled,
+	return { app, view, documentLeaf, selections, opened, requestedLeaves, ephemeral, scrolled,
+		activate: (active: MarkdownView | null, leaf?: WorkspaceLeaf | null) => {
+			activeView = active;
+			if (leaf !== undefined) recentLeaf = leaf;
+		},
 		focused: () => focus, loaded: () => deferredLoaded };
 }
 
 describe("occurrence navigation", () => {
 	it("opens a document leaf and resolves against the current editor buffer", async () => {
 		const h = navigationHarness(`Unsaved line\n${original}`);
+		h.activate(h.view, null);
 		assert.equal(await navigateToCalloutOccurrence(h.app, saved()), true);
 		assert.deepEqual(h.requestedLeaves, [false, "tab"]);
 		assert.deepEqual(h.opened, [{ active: true, state: { mode: "source" } }]);
@@ -125,6 +134,58 @@ describe("occurrence navigation", () => {
 		await checkpoint;
 		assert.equal(yieldedBeforeSelection, true);
 		assert.equal(h.selections[0]?.[0].line, 1500);
+	});
+	it("does not steal focus back after the user switches editor tabs during a scan", async () => {
+		const content = `${"plain text\n".repeat(1500)}${original}`;
+		const occurrence = scanCalloutOccurrences("note.md", content).at(-1)!;
+		const h = navigationHarness(content);
+		const other = Object.assign(new MarkdownView({} as WorkspaceLeaf), {
+			file: Object.assign(new TFile(), { path: "other.md" }),
+		});
+		const switched = new Promise<void>((resolve) => window.setTimeout(() => {
+			h.activate(other);
+			resolve();
+		}, 0));
+		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence), false);
+		await switched;
+		assert.deepEqual(h.selections, []);
+		assert.deepEqual(h.ephemeral, []);
+		assert.equal(h.focused(), 0);
+	});
+	it("keeps navigation valid when focus returns to the sidebar", async () => {
+		const h = navigationHarness();
+		h.activate(null);
+		assert.equal(await navigateToCalloutOccurrence(h.app, saved()), true);
+		assert.equal(h.selections.length, 1);
+	});
+	it("cancels a request before opening or after its sidebar context changes", async () => {
+		const content = `${"plain text\n".repeat(1500)}${original}`;
+		const occurrence = scanCalloutOccurrences("note.md", content).at(-1)!;
+		const h = navigationHarness(content);
+		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence, false, () => false), false);
+		assert.deepEqual(h.opened, []);
+		let current = true;
+		const cancelled = new Promise<void>((resolve) => window.setTimeout(() => {
+			current = false;
+			resolve();
+		}, 0));
+		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence, false, () => current), false);
+		await cancelled;
+		assert.deepEqual(h.selections, []);
+		assert.equal(h.focused(), 0);
+	});
+	it("uses the most recent matching editor when a note has duplicate tabs", async () => {
+		const h = navigationHarness(`Unsaved line\n${original}`);
+		const stale = new MarkdownView({} as WorkspaceLeaf);
+		stale.file = h.view.file;
+		const staleLeaf = {
+			view: stale, getRoot: h.documentLeaf.getRoot,
+			openFile: () => { throw new Error("Must not reopen a stale duplicate"); },
+		} as unknown as WorkspaceLeaf;
+		h.app.workspace.getLeavesOfType = () => [staleLeaf, h.documentLeaf as unknown as WorkspaceLeaf];
+		assert.equal(await navigateToCalloutOccurrence(h.app, saved()), true);
+		assert.deepEqual(h.requestedLeaves, []);
+		assert.equal(h.selections[0]?.[0].line, 1);
 	});
 	it("reports missing or stale results and never selects a guessed location", async () => {
 		const notices: string[] = [];

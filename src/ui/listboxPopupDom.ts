@@ -15,6 +15,7 @@
  */
 import { setIcon } from "obsidian";
 import { appendDropdownCaret } from "./dropdownControl";
+import { setFieldAccessibleName } from "./fieldAccessibleName";
 
 export interface ComboboxParts {
 	root: HTMLElement;
@@ -39,8 +40,6 @@ export function buildComboboxSkeleton(
 	const root = parent.createDiv({ cls: "cs-combobox" });
 	// Obsidian turns aria-label into a hover tooltip. A referenced hidden label
 	// keeps the field named for assistive technology without a second popup.
-	const labelId = `${options.listboxId}-label`;
-	root.createSpan({ text: options.ariaLabel, attr: { id: labelId, hidden: "" } });
 	const control = root.createDiv({ cls: "cs-combobox-control cs-dropdown-control" });
 	const lead = control.createDiv({ cls: "cs-combobox-lead" });
 
@@ -49,7 +48,6 @@ export function buildComboboxSkeleton(
 		attr: {
 			type: "text",
 			role: "combobox",
-			"aria-labelledby": labelId,
 			"aria-expanded": "false",
 			"aria-controls": options.listboxId,
 			"aria-haspopup": "listbox",
@@ -62,6 +60,7 @@ export function buildComboboxSkeleton(
 			enterkeyhint: "done",
 		},
 	});
+	setFieldAccessibleName(input, options.ariaLabel);
 
 	appendDropdownCaret(control);
 
@@ -96,6 +95,10 @@ export interface ComboboxRowContract<T> {
 	 * The caller must therefore hand items back already grouped.
 	 */
 	groupOf?(item: T): { key: string; label: string };
+	/** Hide redundant headings when the displayed rows share a single group. */
+	hideSingleGroup?: boolean;
+	/** Keep this scope heading visible even when it is the only matching group. */
+	showSingleGroupKey?: string;
 }
 
 export interface ComboboxRowsSpec<T> extends ComboboxRowContract<T> {
@@ -125,9 +128,13 @@ export function renderComboboxRows<T>(
 	const rowEls: HTMLElement[] = [];
 	let openGroup: string | undefined;
 	let rowParent = menuEl;
+	const groups = spec.items.map((item) => spec.groupOf?.(item));
+	const showGroups = !spec.hideSingleGroup ||
+		new Set(groups.map((group) => group?.key)).size > 1 ||
+		groups[0]?.key === spec.showSingleGroupKey;
 
 	spec.items.forEach((item, i) => {
-		const group = spec.groupOf?.(item);
+		const group = showGroups ? groups[i] : undefined;
 		if (group && group.key !== openGroup) {
 			openGroup = group.key;
 			const headingId = `${spec.listboxId}-group-${i}`;

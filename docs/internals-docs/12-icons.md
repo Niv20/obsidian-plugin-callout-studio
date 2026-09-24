@@ -21,7 +21,9 @@ command or ribbon consumer. A plugin-registered cleanup calls `removeIcon()` on
 unload. These assets require no runtime fetch or icon-pack download.
 
 Quick insert uses its ID for the ribbon and command. Occurrences uses its ID
-for the sidebar tab, **Find usages** menus and command. The welcome hero keeps
+for the native right-sidebar tab, **Find usages** menus and command. The tab is
+the only visible occurrences control; after closing it, the command or a
+**Find usages** action reopens the sidebar. The welcome hero keeps
 the stock `paintbrush` icon. Editable standalone exports live in
 [`quick-insert.svg`](../assets/ui-icons/quick-insert.svg) and
 [`statistics.svg`](../assets/ui-icons/statistics.svg); keep them aligned with
@@ -432,6 +434,22 @@ Every pack's **search index** (names, keywords, categories) ships inside
 — this is what makes searching every source work fully offline from install,
 before any artwork download. Icon-pack artwork is not bundled: Lucide comes
 from Obsidian, and the other SVG libraries are fetched as described above.
+[`PackToolbarFilters`](../../src/settings/iconpicker/PackToolbarFilters.ts)
+renders category and named variant filters through `SelectDropdown`, preserving
+its intrinsic option sizing and change-only callbacks. The emoji skin tone filter
+uses a selection-only `ListboxPopup` for its richer rows. Both share the same
+popup engine. The source picker uses the same 36px control,
+focus treatment and up/down chevron, so the toolbar reads as one family of
+fields. `sourcePicker.ts` also measures the grid scroll gutter with a
+`ResizeObserver`, keeping the fixed source row aligned with the toolbar
+when a scrollbar appears; the modal disconnects it on close. An open-generation
+guard invalidates pending startup and count loads after close or reopen, so
+late work cannot create detached picker listeners or repaint a newer menu. The emoji control shows the chosen hand sample
+beside its label and samples each option in the menu. `PackPanel` keeps the
+search and filter controls disabled until a downloaded pack is ready, persists
+committed filter choices through its host, and destroys the listboxes when the
+source panel closes. A tone change repaints visible glyphs without resetting
+the grid's scroll or pagination; other variants rebuild the filtered grid.
 The two plugin UI composites are the only bundled icon artwork. Regeneration
 of search indexes and downloadable packs is a deliberately
 separate, manual step — `npm run icons:generate` — **never** part of

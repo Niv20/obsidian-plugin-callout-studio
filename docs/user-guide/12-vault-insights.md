@@ -5,10 +5,16 @@ Vault insights shows source references to callouts across your Markdown notes.
 ## Open the sidebar
 
 Run **Callout Studio: Callout occurrences** from the Command palette, or select
-**Find usages** from a callout's three-dot menu. The sidebar combines navigation
-and vault statistics; there is no separate statistics window in Settings.
-The sidebar tab and **Find usages** share a paintbrush icon with an overlapping magnifying
-glass at its lower right.
+**Find usages** from a callout's three-dot menu. Use the native **Callout
+occurrences** tab in Obsidian's right sidebar to show or hide the open panel. If
+you close the tab, either action opens it again. This is the only on-screen
+occurrences control; there is no separate ribbon button or statistics window in
+Settings. The sidebar combines navigation and vault statistics.
+
+Opening **Callout occurrences** from the Command palette starts with **All
+types** and **All formats**. Opening **Find usages** from a callout's three-dot
+menu starts with that callout type and **All formats**, even if you previously
+selected a different format in the sidebar.
 
 The compact metrics at the top share the available width evenly. Narrow panes
 show **Total callouts** and **Types found**; wider panes also show **Files with
@@ -17,11 +23,15 @@ vault, independent of the selected type and format. A subtle divider separates
 the metrics from the filters below. Several inline callouts on one line count as
 separate occurrences.
 
-Use the searchable **Callout type** picker to choose a saved type or an
-unregistered type found in your notes. **Registered callouts** appear first,
-followed by a divider and **Unregistered callouts**, using the same group styling
-as the color picker. Searching keeps this order and hides groups with no matches.
-It shows the selected ID; saved types include their aliases in the results. Equivalent source spellings share one
+Use the searchable **Callout type** picker to choose **All types**, a saved type,
+or an unregistered type found in your notes. The iconless **All types** option
+appears first under **Browse**. It shows every callout occurrence in the vault,
+including unregistered types. **Registered callouts** follow, then
+**Unregistered callouts**. **Browse** and the other group headings stay visible
+while you scroll the picker. The type choices use the same group styling as the
+color picker.
+When you choose a single type, the picker shows its ID; saved types include
+their aliases in the results. Equivalent source spellings share one
 option, and a registered alias does not create a duplicate option. Unregistered
 options update as notes change and are available **only in this sidebar**.
 Selecting one never saves or registers it, or adds it to any other settings
@@ -43,17 +53,41 @@ heading includes its matching count in parentheses, including matches not yet
 revealed by **Show more**. Each card shows its format, line number, and at most
 two lines of raw Markdown, including syntax such as `> [!info]`. Block previews
 include a line of body text when available. Choose **All formats**, **Block**,
-**Heading**, or **Inline** to filter the selected type. The type and format
-controls sit side by side when the pane is wide enough. With a mouse or trackpad,
-hovering a result subtly brightens its border; keyboard focus keeps its stronger
-outline.
+**Heading**, or **Inline** to filter the selected type or all types. The format
+picker opens a list of these four choices without a search field. It has the
+same control shape and hover feedback as **Callout type**. A selected option remains
+identifiable when you hover over it or move to it with the keyboard. The two
+controls sit side by side when the pane is wide enough. With a mouse or
+trackpad, hovering a result subtly brightens its border; keyboard focus keeps
+its stronger outline.
 
 A summary below the controls shows the matching occurrences and files, such as
 **131 occurrences in 15 files**. The whole sidebar scrolls together. Select a
-card to navigate; Ctrl-click (Command-click on macOS) opens a new tab. The list
-initially shows up to 100 results; **Show more** reveals another page.
+card to navigate. As you scroll through a note's results, its file heading stays
+at the top of the sidebar until that note's results end; the next file heading
+then takes its place. Clicking a result highlights that card and keeps it in the
+same sidebar position. Switching to another note clears the previous card's highlight;
+the new note's heading identifies the current file. Updating the list keeps
+keyboard focus on the same occurrence when its source is unchanged.
+Ctrl-click (Command-click on macOS) opens a new tab. The list initially shows
+up to 100 results; **Show more** reveals another page.
+
+The current Markdown note's file heading is highlighted in the results. The
+sidebar opens at the top with the filters visible, even if that note's section
+is farther down the list. When you switch to another Markdown tab directly, the
+sidebar scrolls to that note's section. It reveals more results first if the
+section is beyond the initial page. If the current filters leave that note
+with no matching occurrences, the list stays in place. Choosing a different
+**Callout type** or **Format** keeps the sidebar near its current position in
+the updated results.
+If the filtered list is shorter, the scroll position settles at the nearest
+available place. The highlighted note does not pull the list to its section
+after a filter change.
 
 Navigation opens the note in editing mode and selects the exact callout token.
+If that note is already the most recent main-pane editor, navigation reuses it
+even when duplicate tabs are open. Switching away, changing the filters, or closing the sidebar while a
+result is still opening cancels its pending selection.
 Locations are revalidated against the current editor. Missing or ambiguous
 occurrences trigger an automatic update instead of selecting unrelated text.
 On hosts where Settings cannot be dismissed automatically, close Settings to

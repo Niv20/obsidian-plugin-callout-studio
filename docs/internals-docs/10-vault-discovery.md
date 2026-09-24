@@ -90,18 +90,22 @@ provides appearance/status only; fallback artwork never changes usage ownership.
 `CalloutOccurrencesView` is a registered ItemView with a searchable
 `CalloutCombobox`, role filters, counted file groups and paged results. A summary
 below the controls reports the filtered occurrence and distinct-file counts;
-all sidebar content scrolls normally. Its picker combines committed, non-theme-only
+all sidebar content shares one scroll container. File headings stick to the top
+of that container while their own result section remains in view, then yield to
+the next section's heading. Its picker combines committed, non-theme-only
 definitions with unregistered identities observed by the read-only index. Saved
 definitions include their aliases; equivalent identities and registered aliases
 are deduplicated before unknown options are added. A sidebar-local adapter supplies
 temporary display choices to the existing combobox, without changing the registry,
 settings, discovery, or other picker callers. Only this caller enables the
-combobox's optional grouping: registered choices precede unregistered choices,
-with the shared palette group heading and divider styles. Search ranking applies
-within each group; groups with no matches have no heading. Membership is tracked
-by the local adapter, independently of fallback artwork or definition provenance.
-Theme-only types become options only
-when present in source. Choice aggregation is cached by the index's `dataRevision`
+combobox's optional grouping: an iconless **All types** choice is the first row
+under a sticky **Browse** heading, then registered choices precede unregistered
+choices, with the shared palette group heading and divider styles. **All types**
+removes the ID restriction from the index query while retaining any role filter;
+it is not a registry definition. Search ranking applies within each type group.
+Membership is tracked by the local adapter, independently of fallback artwork
+or definition provenance. Theme-only types become options only when present in
+source. Choice aggregation is cached by the index's `dataRevision`
 and invalidated on registry changes, so typing does not rescan the vault.
 The selected source identity is retained as a local choice through an initial
 scan or deletion of its last occurrence; it can therefore show zero results
@@ -109,7 +113,45 @@ without silently falling back to a different type. Selecting another type remove
 that retained choice if it no longer occurs. Registering a selected identity or
 claiming it as an alias promotes selection to its committed owner.
 The view keeps the picker DOM stable during index updates and destroys its
-listeners on close. Workspace state holds filters, never the index.
+listeners on close. A general command opening starts with the all-types scope
+and no role filter. **Find usages** supplies a specific type and clears the role
+filter, including when it reuses an existing sidebar. Workspace state holds
+filters, never the index.
+
+The format filter uses the shared `SelectDropdown` with the same menu keyboard
+and pointer behavior as other finite-choice controls. The view registers a menu
+scope host so Escape first closes an open picker, and releases the host and both
+pickers when the frame is rebuilt or the view closes.
+
+`OccurrenceActiveFile` tracks the most recent document in the main workspace.
+It ignores `file-open` notifications from embedded notes and Markdown sidebar
+panes by restricting document lookup to `rootSplit`, and follows `TFile.path` when
+the active note is renamed. It highlights that file's heading in the current
+filtered results. Initial opening leaves the sidebar at the top, without
+expanding pages or scrolling to the active file. Navigating through a result
+updates selection and active-file highlighting without moving the clicked card,
+including when Obsidian emits editor activation events during navigation. A
+later editor tab change made outside the sidebar scrolls to that file's group.
+If the group lies beyond the current page, it reveals enough results before
+scrolling. An active file without a matching group does not move the list.
+Switching documents clears a selected card from the previous file immediately;
+focusing the sidebar preserves the current document and its selected card.
+This synchronization does not change the selected callout type or role. Committing either filter
+resets pagination and selection while preserving the sidebar's scroll offset
+within the updated results. A shorter list may clamp that offset to its end.
+The active-file highlight remains in place. Filter changes do not reveal extra
+results or scroll to that file's section; an actual active-editor change may
+still request those actions.
+
+`OccurrenceResults` owns card rendering, selection, and focus restoration. A
+card's identity includes its path, source fingerprint, token coordinates,
+identity, and role; array offsets are presentation data only. A `WeakMap` maps
+current buttons directly to occurrences, so detached buttons cannot open a
+different result after a refresh. Selection updates `aria-current` in place
+without rebuilding the cards. After a query update, focus follows the same
+occurrence rather than its old list position. A changed source snapshot clears
+selection instead of transferring it to a replacement at the same coordinates.
+Per-file counts are cached by result-array identity and reused for pagination.
 
 The sidebar owns the former statistics screen's four vault-wide metrics. CSS
 container queries show the first two, three or four metrics according to pane
@@ -131,13 +173,20 @@ DOM menus update counts while the index loads and unsubscribe when hidden.
 Views unsubscribe from both index and registry changes when closed.
 The list starts with 100 results and adds 100 per **Show more** action. Per-file
 heading counts cover the complete filtered query, including unloaded cards.
+The native right-sidebar tab is the sole visible occurrences control. The fixed
+command and **Find usages** menu reopen it after its tab is closed; the plugin
+does not add an occurrences button to Obsidian's left ribbon.
 
 Navigation uses public workspace/editor APIs, opens a document leaf in editing
-mode and revalidates source tokens against the current editor. A document
+mode and revalidates source tokens against the current editor. When a note has
+multiple open editors, it prefers the most recent matching main-pane editor.
+A document
 fingerprint (normalized for CRLF/LF) permits exact coordinates only while the
 source is unchanged. After edits, unique unchanged source lines can be relocated;
 ambiguous or missing occurrences trigger an automatic refresh. The editor is checked again
-after asynchronous parsing so navigation cannot select from an obsolete buffer.
+after asynchronous parsing so navigation cannot select from an obsolete buffer
+or steal focus after a document switch. A caller generation guard also cancels
+selection after filters change or the occurrences view closes and reopens.
 It never inserts block IDs or modifies notes. The one isolated optional host seam
 is `openFromSettings.ts`: existing Obsidian `app.setting.close()` is called only
 when present to dismiss the settings overlay after explicit navigation. Hosts

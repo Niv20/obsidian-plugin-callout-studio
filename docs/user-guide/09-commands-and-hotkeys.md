@@ -66,7 +66,19 @@ can overlap when you turn the original command back on.
 
 ## Create a custom command
 
-Under **Your commands**, click **New command**. Choose the callout type first, then its format and the options for that format. The configuration fields use one compact, aligned width while the searchable callout picker stays wider. Long picker menus stay inside the window and scroll.
+Under **Your commands**, click **New command**. Choose the callout type first,
+then its format and the options for that format. **Callout type** is searchable
+and starts on **Note** when that built-in type is available. You can change it
+before saving. It shows registered types in one list without section headings,
+including types saved through a scan. Types found only in your notes remain
+available in **Callout occurrences** until you register them.
+**Callout format**, **Heading level**, **Action**, and **Fold state** open lists
+of choices without text search. They share the same rounded field appearance
+and subtle hover feedback. Pressing or focusing a field keeps that background
+and shows a clear border. All five fields share one compact, aligned width.
+Long menus stay inside the window and scroll. All choices have the same
+comfortable spacing, and menus start and end at the first and last choice
+without empty strips.
 
 A Heading command can insert a chosen callout at a specific heading level. An Inline command inserts a chosen inline callout. A Block command can either insert a new block or wrap the current selection, and it can set the initial fold state:
 

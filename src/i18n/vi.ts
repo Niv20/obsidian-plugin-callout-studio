@@ -217,6 +217,7 @@ export const vi: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"Đã tạm dừng: giao diện của bạn cung cấp callout này, nên nó chỉ có định dạng Khối. Lệnh này sẽ hoạt động trở lại khi giao diện ngừng cung cấp nó.",
 
+	"settings.maintenance": "Bảo trì",
 	"settings.vaultMaintenance": "Thông tin & bảo trì vault",
 	"settings.vaultStats": "Thống kê callout",
 	"settings.vaultStatsDesc":
@@ -764,6 +765,34 @@ export const vi: Record<string, string> = {
 	"vaultStats.roleHeading": "Tiêu đề",
 	"vaultStats.roleInline": "Nội dòng",
 	"vaultStats.close": "Đóng",
+
+	"usage.title": "Các vị trí xuất hiện của callout",
+	"usage.selectType": "Loại callout",
+	"usage.browse": "Duyệt",
+	"usage.allTypes": "Tất cả loại",
+	"usage.registeredCallouts": "Callout đã đăng ký",
+	"usage.unregisteredCallouts": "Callout chưa đăng ký",
+	"usage.summary": "{{count}} lần xuất hiện trong {{files}} tệp",
+	"usage.fileCount": "{{path}} ({{count}})",
+	"usage.markdownFiles": "Tệp Markdown",
+	"usage.filterRole": "Lọc theo định dạng",
+	"usage.allRoles": "Tất cả định dạng",
+	"usage.failed": "Không thể cập nhật các vị trí xuất hiện của callout.",
+	"usage.loading": "Đang quét ghi chú Markdown…",
+	"usage.partial": "Kết quả chưa đầy đủ: {{count}} lỗi đọc tệp.",
+	"usage.stale": "Đang cập nhật các vị trí xuất hiện của callout…",
+	"usage.empty": "Không tìm thấy callout phù hợp.",
+	"usage.failedFiles": "Các tệp không thể đọc",
+	"usage.vaultReadFailed": "Không thể liệt kê ghi chú Markdown trong vault này.",
+	"usage.more": "Hiển thị thêm {{count}}",
+	"usage.location": "Dòng {{line}} · {{role}}",
+	"usage.missing": "Ghi chú này không còn tồn tại. Đang cập nhật kết quả…",
+	"usage.changed": "Vị trí này đã thay đổi hoặc đã di chuyển nhưng không xác định được vị trí mới. Đang cập nhật kết quả…",
+	"usage.openFailed": "Không thể mở vị trí xuất hiện của callout này.",
+	"usage.menuCount": "Tìm nơi sử dụng: {{count}} trong {{files}} tệp",
+	"usage.menuIncomplete": "Tìm nơi sử dụng — chưa quét xong",
+	"usage.menuLoading": "Tìm nơi sử dụng — đang đếm…",
+	"usage.closeSettings": "Đóng Cài đặt để xem kết quả callout trong thanh bên.",
 
 	"import.title": "Vấn đề nhập",
 	"import.reportLeadIn":

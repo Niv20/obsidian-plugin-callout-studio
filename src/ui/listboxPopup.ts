@@ -174,7 +174,6 @@ export class ListboxPopup<T> {
 	private rebuild(query = this.searchable ? this.inputEl.value : ""): void {
 		this.activeIndex = -1;
 		this.items = this.options.itemsFor(query);
-
 		const selectedKey = this.selected
 			? this.options.keyOf(this.selected)
 			: undefined;
@@ -188,11 +187,12 @@ export class ListboxPopup<T> {
 			renderRow: (rowEl, item, q) => this.options.renderRow(rowEl, item, q),
 			emptyText: (q) => this.options.emptyText(q),
 			groupOf: this.options.groupOf && ((item) => this.options.groupOf!(item)),
+			hideSingleGroup: this.options.hideSingleGroup,
+			showSingleGroupKey: this.options.showSingleGroupKey,
 			onPointerRow: (i) => this.restorePointerHighlight(i),
 			onLeaveRow: () => this.clearPointerHighlight(),
 			onClickRow: (i) => this.commit(i),
 		});
-
 		// Nothing matched: offer to create it, or say so. The create row joins
 		// `rowEls` so the keyboard reaches it, and `commit` knows it by index.
 		this.createRowIndex = null;

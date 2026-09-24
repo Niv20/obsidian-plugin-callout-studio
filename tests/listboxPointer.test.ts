@@ -44,6 +44,17 @@ function mount(withFooter = false) {
 }
 
 describe("ListboxPopup — pointer and keyboard highlights", () => {
+	it("keeps its accessible field name without a hover tooltip", () => {
+		const h = mount();
+		try {
+			assert.equal(h.input.getAttribute("aria-label"), null);
+			assert.equal(h.input.getAttribute("title"), null);
+			const labelId = h.input.getAttribute("aria-labelledby");
+			assert.ok(labelId);
+			assert.equal(h.input.parentElement?.querySelector(`#${labelId}`)?.textContent, "Choices");
+		} finally { h.popup.destroy(); }
+	});
+
 	for (const exit of ["row", "menu"] as const) {
 		it(`clears the pointer highlight and color preview when leaving the ${exit}`, () => {
 			const h = mount();
@@ -183,4 +194,14 @@ it("dropdown option styling has no independent mouse hover highlight", () => {
 		css,
 		/\.cs-combobox-menu\.is-keyboard-active\s+\.cs-combobox-footer-row:hover\s*\{[^}]*background-color:\s*transparent/,
 	);
+});
+
+it("selected options still show a visible pointer state", () => {
+	const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "");
+	for (const selector of [
+		".cs-combobox-option.is-selected.is-active",
+		".cs-fold-menu .cs-palette-menu-item.is-selected:hover",
+	]) {
+		assert.ok(css.includes(`${selector} {`), `${selector} must override the resting selected fill`);
+	}
 });

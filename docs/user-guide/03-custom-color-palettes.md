@@ -7,6 +7,7 @@ row restores the current colour; click a row or use the arrow keys and Enter
 to choose it. If the pointer rests over one row while you use the arrow keys,
 only the keyboard's row is highlighted. Move the pointer again to return the
 highlight and preview to the row under it.
+Group headings stay visible at the top of the color menu as you scroll.
 
 ![Per-mode colors](https://github.com/user-attachments/assets/8a37477c-2323-4464-9494-f3ed35e56f18)
 
@@ -29,6 +30,10 @@ The **Style** menu offers three choices:
 - **Solid** uses a single background color.
 - **Gradient** adds a second color and a direction control. You can also enable **Gradient title text**.
 - **Transparent** removes Callout Studio's background while keeping the base color on the title and icon. Your theme may still paint the content area.
+
+In the palette editor, **Name** and **Style** have the same rounded field shape
+and hover and focus feedback as other text and selection fields. Open
+**Style** to choose from the list; it does not accept typed text.
 
 In AnuPpuccin's Vanilla Normal, Vanilla Plus, and Sleek layouts, Block callouts
 keep the theme's neutral content background with a custom palette. The palette's

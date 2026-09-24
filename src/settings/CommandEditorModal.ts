@@ -31,6 +31,7 @@ import {
 	resolveHeadingLevel,
 } from "../utils/customCommands";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
+import { committedDefinitions } from "../utils/usableCallouts";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
 import { buildCalloutRow, type CalloutRow } from "./command/calloutRow";
 import type { CalloutEditorPlugin } from "./editor/types";
@@ -89,17 +90,19 @@ export class CommandEditorModal extends Modal {
 			: DEFAULT_HEADING_LEVEL;
 		this.action = existing ? resolveAction(existing) : "insert";
 		this.fold = existing ? resolveFold(existing) : "none";
-		this.calloutId = existing?.calloutId ?? initialChoices[0]?.id ?? "";
+		// A discovered callout can have a whitespace-only name and sort first.
+		// Start a new command on the familiar Note type instead of a blank field.
+		const initial = initialChoices.find((def) => def.id === "note")
+			?? initialChoices.find((def) => def.displayName.trim());
+		this.calloutId = existing?.calloutId ?? initial?.id ?? "";
 	}
 
 	private getChoices(): CalloutDefinition[] {
-		const offerable = this.host.registry.getAll();
+		const offerable = committedDefinitions(this.host.registry)
+			.filter((def) => def.source !== "theme");
 
-		// A command pins the callout it uses, which is exactly why a discovered
-		// row with no remaining vault usage can still be behind one: the prune
-		// skips it. That row is filtered out of the offerable list, so without
-		// this an existing command could not be edited without also being
-		// re-pointed at a different callout.
+		// Keep an existing command's selected type even when it is no longer
+		// offered for new commands, so editing never silently repoints it.
 		const pinned = this.options.existing
 			? this.host.registry.get(this.options.existing.calloutId)
 			: undefined;
@@ -175,13 +178,17 @@ export class CommandEditorModal extends Modal {
 	}
 
 	onClose(): void {
-		// Before `empty()`: the teardown reaches a document-level listener.
+		// Before `empty()`: each picker owns a document-level listener.
 		this.calloutRow?.destroy();
 		this.calloutRow = undefined;
 		this.formatRow?.destroy();
 		this.foldRow?.destroy();
 		this.headingRow?.dropdown.destroy();
 		this.actionRow?.dropdown.destroy();
+		this.formatRow = undefined;
+		this.headingRow = undefined;
+		this.actionRow = undefined;
+		this.foldRow = undefined;
 		this.contentEl.empty();
 		// The footer is a sibling of contentEl, so empty() never reaches it.
 		removeModalChrome(this);

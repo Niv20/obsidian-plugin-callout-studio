@@ -220,6 +220,7 @@ export const fr: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"En pause : votre thème fournit ce callout, il n'a donc qu'un format Bloc. Cette commande fonctionnera à nouveau lorsque le thème cessera de le fournir.",
 
+	"settings.maintenance": "Maintenance",
 	"settings.vaultMaintenance": "Informations et maintenance du vault",
 	"settings.vaultStats": "Statistiques des callouts",
 	"settings.vaultStatsDesc":
@@ -771,6 +772,34 @@ export const fr: Record<string, string> = {
 	"vaultStats.roleHeading": "Titre",
 	"vaultStats.roleInline": "En ligne",
 	"vaultStats.close": "Fermer",
+
+	"usage.title": "Occurrences de callouts",
+	"usage.selectType": "Type de callout",
+	"usage.browse": "Parcourir",
+	"usage.allTypes": "Tous les types",
+	"usage.registeredCallouts": "Callouts enregistrés",
+	"usage.unregisteredCallouts": "Callouts non enregistrés",
+	"usage.summary": "{{count}} occurrences dans {{files}} fichiers",
+	"usage.fileCount": "{{path}} ({{count}})",
+	"usage.markdownFiles": "Fichiers Markdown",
+	"usage.filterRole": "Filtrer par format",
+	"usage.allRoles": "Tous les formats",
+	"usage.failed": "Impossible de mettre à jour les occurrences de callouts.",
+	"usage.loading": "Analyse des notes Markdown…",
+	"usage.partial": "Les résultats sont incomplets : {{count}} erreurs de lecture.",
+	"usage.stale": "Mise à jour des occurrences de callouts…",
+	"usage.empty": "Aucun callout correspondant trouvé.",
+	"usage.failedFiles": "Fichiers qui n’ont pas pu être lus",
+	"usage.vaultReadFailed": "Impossible de répertorier les notes Markdown de ce vault.",
+	"usage.more": "Afficher {{count}} résultats supplémentaires",
+	"usage.location": "Ligne {{line}} · {{role}}",
+	"usage.missing": "Cette note n’existe plus. Mise à jour des résultats…",
+	"usage.changed": "Cette occurrence a changé ou a été déplacée vers un emplacement impossible à déterminer avec certitude. Mise à jour des résultats…",
+	"usage.openFailed": "Impossible d’ouvrir cette occurrence de callout.",
+	"usage.menuCount": "Rechercher les utilisations : {{count}} dans {{files}} fichiers",
+	"usage.menuIncomplete": "Rechercher les utilisations — analyse incomplète",
+	"usage.menuLoading": "Rechercher les utilisations — comptage…",
+	"usage.closeSettings": "Fermez les paramètres pour voir les résultats de callouts dans la barre latérale.",
 
 	"import.title": "Problèmes d'importation",
 	"import.reportLeadIn":

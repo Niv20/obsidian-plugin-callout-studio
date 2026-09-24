@@ -22,6 +22,7 @@ import { asEl, el, fakeDom } from "./support/fakeDom";
 import type { FakeElement } from "./support/fakeDom";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutCombobox } from "../src/settings/calloutCombobox";
+import { buildCalloutRow } from "../src/settings/command/calloutRow";
 import { renderFallbackSection } from "../src/settings/sections/FallbackSection";
 import { ListboxPopup } from "../src/ui/listboxPopup";
 import type { CalloutDefinition, PluginData } from "../src/types";
@@ -648,6 +649,45 @@ describe("renderComboboxRows — group headings", () => {
 		assert.strictEqual(input.getAttribute("aria-activedescendant"), active?.getAttribute("id"));
 		key("Enter");
 		assert.deepStrictEqual(committed, ["c"]);
+	});
+});
+
+describe("New command — Callout type list", () => {
+	it("keeps saved types in one flat searchable list, including scan-created types", () => {
+		fakeDom.light();
+		const choices = [
+			def({ id: "detected", displayName: "B Detected", source: "fallback" }),
+			def({ id: "registered", displayName: "A Registered", source: "user" }),
+			def({ id: "note", displayName: "Note", source: "builtin", builtIn: true }),
+		];
+		const registry = registryWith(choices);
+		const host = el();
+		const row = buildCalloutRow(
+			asEl(host),
+			{ registry } as Parameters<typeof buildCalloutRow>[1],
+			() => choices,
+			"note",
+			() => {},
+		);
+		try {
+			const input = host.querySelector(".cs-combobox-input");
+			assert.ok(input);
+			const labels = () => host.querySelectorAll(".cs-combobox-group-label")
+				.map((label) => label.textContent);
+			const names = () => host.querySelectorAll(".callout-studio-suggestion-name")
+				.map((name) => name.textContent);
+
+			input.fire("focus");
+			assert.deepStrictEqual(labels(), []);
+			assert.deepStrictEqual(names(), ["A Registered", "B Detected", "Note"]);
+
+			input.value = "det";
+			input.fire("input");
+			assert.deepStrictEqual(labels(), []);
+			assert.deepStrictEqual(names(), ["B Detected"]);
+		} finally {
+			row.destroy();
+		}
 	});
 });
 

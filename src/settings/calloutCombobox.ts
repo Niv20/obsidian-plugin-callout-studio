@@ -32,12 +32,18 @@ export interface CalloutComboboxOptions {
 	choices: () => readonly CalloutDefinition[];
 	/** Selected id, or "" for none. An id absent from `choices` reads as none. */
 	value: string;
-	/** Accessible name for the input; the call site owns the wording. */
+	/** Accessible name for the input (no hover tooltip); the call site owns the wording. */
 	ariaLabel: string;
 	/** Optional committed label; popup rows keep the shared name/id presentation. */
 	labelOf?: (def: CalloutDefinition) => string;
 	/** Optional groups in ascending order; search ranking stays within each group. */
 	groupOf?: (def: CalloutDefinition) => { key: string; label: string; order: number };
+	/** Hide headings when the current search has only one group. */
+	hideSingleGroup?: boolean;
+	/** Keep one caller-specific scope heading visible on a single-group search. */
+	showSingleGroupKey?: string;
+	/** A caller-local choice that represents a scope, not a callout, and has no icon. */
+	iconlessOptionId?: string;
 	/**
 	 * Awaited by the caller's own `async` arrow where it needs to be, so a
 	 * save-then-refresh order survives.
@@ -80,11 +86,18 @@ export class CalloutCombobox {
 				return groupOf ? matches.sort((a, b) => groupOf(a).order - groupOf(b).order) : matches;
 			},
 			groupOf: options.groupOf,
-			renderRow: (rowEl, def, query) =>
+			hideSingleGroup: options.hideSingleGroup,
+			showSingleGroupKey: options.showSingleGroupKey,
+			renderRow: (rowEl, def, query) => {
+				if (def.id === options.iconlessOptionId) {
+					rowEl.addClass("cs-combobox-iconless-option");
+					rowEl.setText(def.displayName);
+					return;
+				}
 				renderCalloutComboboxRow(rowEl, def, options.registry, {
-					isDark: isDarkTheme(),
-					query,
-				}),
+				isDark: isDarkTheme(), query,
+			});
+			},
 			labelOf: (def) => options.labelOf?.(def) ?? def.displayName,
 			keyOf: (def) => def.id,
 			onCommit: (def) => {
@@ -172,9 +185,10 @@ export class CalloutCombobox {
 	private paintLead(def: CalloutDefinition | undefined): void {
 		const lead = this.popup.leadEl;
 		lead.empty();
+		this.popup.el.toggleClass("is-iconless", def !== undefined && def.id === this.options.iconlessOptionId);
 		// No colour to clear: `is-empty` hides the slot, and the next callout
 		// painted into it sets its own.
-		if (!def) return;
+		if (!def || def.id === this.options.iconlessOptionId) return;
 		lead.style.color = paintCalloutListIcon(
 			lead,
 			def,

@@ -93,9 +93,8 @@ export interface IconVariantState {
 /**
  * A control a pack needs in the picker toolbar, beyond search and category.
  *
- * `"select"` covers anything that is a list of values; `"skin-tone"` is the one
- * bespoke control, because previewing five skin tones needs swatches rather
- * than a dropdown of words.
+ * `"select"` covers named variant lists; `"skin-tone"` supplies the six emoji
+ * samples. Both render through the picker's shared selection-only listbox.
  */
 export type IconVariantSpec =
 	| {

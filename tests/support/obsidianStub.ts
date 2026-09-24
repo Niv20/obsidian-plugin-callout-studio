@@ -163,6 +163,7 @@ export class ItemView {
 		this.contentEl = createDiv();
 	}
 	register(dispose: () => void): void { this.disposers.push(dispose); }
+	registerEvent(_ref: unknown): void { /* The view explicitly removes its event refs on close. */ }
 	registerDomEvent(el: EventTarget, name: string, listener: EventListener): void {
 		el.addEventListener(name, listener);
 		this.register(() => el.removeEventListener(name, listener));
@@ -330,6 +331,7 @@ export class Setting {
 	readonly settingEl: ElementLike;
 	readonly infoEl: ElementLike;
 	readonly nameEl: ElementLike;
+	readonly descEl: ElementLike;
 	readonly controlEl: ElementLike;
 	/** Every slider this row created, in order. */
 	readonly sliders: SliderComponent[] = [];
@@ -340,6 +342,7 @@ export class Setting {
 		this.settingEl = containerEl.createDiv({ cls: "setting-item" });
 		this.infoEl = this.settingEl.createDiv({ cls: "setting-item-info" });
 		this.nameEl = this.infoEl.createDiv({ cls: "setting-item-name" });
+		this.descEl = this.infoEl.createDiv({ cls: "setting-item-description" });
 		this.controlEl = this.settingEl.createDiv({
 			cls: "setting-item-control",
 		});
@@ -357,8 +360,8 @@ export class Setting {
 	 * name element, so a heading with no `nameEl` could not be built at all,
 	 * let alone folded. `setName` writes into it the way Obsidian's does,
 	 * *replacing* its children, because that replacement is exactly what the
-	 * disclosure has to survive. There is still no `descEl`: nothing under test
-	 * reaches for one.
+	 * disclosure has to survive. `descEl` also supports the command format
+	 * row's explanation when the selected callout belongs to the theme.
 	 */
 	setName(name?: string): this {
 		if (this.settingEl.dataset) this.settingEl.dataset.csName = name ?? "";
@@ -368,6 +371,7 @@ export class Setting {
 
 	setDesc(desc?: string): this {
 		if (this.settingEl.dataset) this.settingEl.dataset.csDesc = desc ?? "";
+		this.descEl.textContent = desc ?? "";
 		return this;
 	}
 

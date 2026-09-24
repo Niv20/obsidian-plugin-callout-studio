@@ -2782,8 +2782,8 @@ button.callout-studio-icon-picker-loading {
 /* Opens at the trigger's own width, every time. Pinning BOTH inset-inline edges
    is the whole trick — with only the start edge the popup is shrink-to-fit and
    free to disagree with its trigger, which is how it ended up narrower than the
-   button that opened it and read as clipped. (This is what the icon picker's
-   `.icon-picker-source-menu` does, and why that one looks right.) A `min-width`
+   button that opened it and read as clipped. The shared `.cs-combobox-menu`
+   pins the same edges. A `min-width`
    would reintroduce exactly that disagreement, so there isn't one. */
 .cs-palette-menu {
 	position: absolute;
@@ -2852,6 +2852,12 @@ button.callout-studio-icon-picker-loading {
 
 .cs-palette-menu-item.is-selected {
 	background-color: var(--background-secondary-alt);
+}
+
+/* The committed Fold option must still answer the pointer. Shared listboxes
+   use .is-active for this state below. */
+.cs-fold-menu .cs-palette-menu-item.is-selected:hover {
+	background-color: color-mix(in srgb, var(--background-secondary-alt) 86%, var(--text-normal));
 }
 
 /* Same `min-width: 0` as the trigger's label, for the same reason: the menu is
@@ -3392,7 +3398,7 @@ button.callout-studio-icon-picker-loading {
 	inset-inline-end: 0;
 	max-width: 100%;
 	z-index: 1000;
-	padding: 6px 0;
+	padding: 0;
 	border-radius: var(--radius-s);
 	border: 1px solid var(--background-modifier-border);
 	background-color: var(--cs-surface, var(--background-primary));
@@ -3476,6 +3482,12 @@ button.callout-studio-icon-picker-loading {
 
 .cs-combobox-option.is-selected {
 	background-color: var(--background-secondary-alt);
+}
+
+/* Both states can be present on one row. Without this more specific rule the
+   later selected fill hides the active pointer/keyboard highlight. */
+.cs-combobox-option.is-selected.is-active {
+	background-color: color-mix(in srgb, var(--background-secondary-alt) 86%, var(--text-normal));
 }
 
 .cs-language-option-label,
@@ -3567,15 +3579,10 @@ button.callout-studio-icon-picker-loading {
 	min-width: 0;
 }
 
-/* The four configuration selects share one compact width. Callout type keeps
-   more room for its icon, searchable name and caret. Both become full-width
+/* All five command pickers share one control width. They become full-width
    when Obsidian stacks setting rows on a phone. */
 .cs-command-field {
 	--cs-command-control-width: 180px;
-}
-
-.cs-command-field.cs-command-callout-setting {
-	--cs-command-control-width: 220px;
 }
 
 .is-phone .cs-command-field {
@@ -3591,6 +3598,14 @@ button.callout-studio-icon-picker-loading {
 .cs-command-field .setting-item-control > .cs-combobox {
 	width: 100%;
 	min-width: 0;
+}
+
+/* Match the breathing room of the All formats list in selection menus. */
+.cs-command-field .cs-select-dropdown .cs-combobox-option,
+.cs-palette-bgstyle-setting .cs-combobox-option {
+	padding: 8px 12px;
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
 }
 
 /* The shared empty state is a page-level block elsewhere; inside a popup it
@@ -3641,6 +3656,7 @@ button.callout-studio-icon-picker-loading {
 	gap: 8px;
 	border-bottom: 1px solid var(--background-modifier-border);
 	padding: 10px var(--cs-modal-inset);
+	padding-inline-end: calc(var(--cs-modal-inset) + var(--cs-icon-grid-scrollbar, 0px));
 	flex-shrink: 0;
 	background: var(--cs-surface, var(--background-primary));
 }
@@ -3651,88 +3667,22 @@ button.callout-studio-icon-picker-loading {
 	font-weight: var(--font-medium);
 }
 
-/* Wraps the button + menu so the menu can anchor to it (position: relative)
-   and always open at the button's own width, regardless of the mouse. */
+/* Source and toolbar filters share the same control and popup geometry. */
 .icon-picker-source-dropdown {
 	flex: 1;
-	position: relative;
 	min-width: 0;
-}
-
-/* A button rather than a <select>, because the list it opens carries an icon
-   and a description per row, and an <option> can hold neither. */
-.icon-picker-source-button {
-	display: flex;
-	width: 100%;
-	align-items: center;
-	gap: 8px;
-	min-width: 0;
-	text-align: start;
-	cursor: pointer;
-}
-
-.icon-picker-source-emblem {
-	display: flex;
-	flex-shrink: 0;
-	align-items: center;
-	color: var(--text-muted);
-}
-
-.icon-picker-source-emblem .svg-icon {
-	width: var(--icon-s);
-	height: var(--icon-s);
-}
-
-.icon-picker-source-current {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-
-/* Opens directly under the button, at the button's own width — an absolutely
-   positioned div anchored to .icon-picker-source-dropdown, not a menu that
-   follows the mouse. */
-.icon-picker-source-menu {
-	position: absolute;
-	top: calc(100% + 4px);
-	inset-inline-start: 0;
-	inset-inline-end: 0;
-	z-index: 1000;
-	padding: 6px 0;
-	border-radius: var(--radius-s);
-	border: 1px solid var(--background-modifier-border);
-	background-color: var(--cs-surface, var(--background-primary));
-	box-shadow:
-		0 8px 18px rgba(0, 0, 0, 0.22),
-		0 2px 6px rgba(0, 0, 0, 0.18);
-	outline: none;
-}
-
-.icon-picker-source-menu-hidden {
-	display: none;
 }
 
 .icon-picker-source-menu-item {
 	display: flex;
 	align-items: center;
 	gap: 0.75em;
-	padding: 6px 12px;
+	padding: 8px 12px;
 	cursor: pointer;
 }
 
 .icon-picker-source-menu-item + .icon-picker-source-menu-item {
 	border-top: var(--border-width) solid var(--background-modifier-border);
-}
-
-/* Hover/keyboard-focus gets the same subtle tint as everywhere else; the
-   current source stays visibly marked underneath it via a stronger fill —
-   same pairing as the color palette dropdown's .is-active/.is-selected. */
-.icon-picker-source-menu-item.is-active {
-	background-color: var(--background-modifier-hover);
-}
-
-.icon-picker-source-menu-item.is-selected {
-	background-color: var(--background-secondary-alt);
 }
 
 .icon-picker-source-menu-item-emblem {
@@ -3918,13 +3868,44 @@ button.callout-studio-icon-picker-loading {
 }
 
 .icon-picker-toolbar .icon-picker-search-input {
-	flex: 1;
-	min-width: 150px;
+	flex: 1 1 140px;
+	min-width: 120px;
+	height: 36px;
+	box-sizing: border-box;
 	padding: 6px 10px;
 }
 
-.icon-picker-toolbar .cs-select-dropdown {
+.icon-picker-filter {
+	flex: 0 1 100px;
+	min-width: 0;
+}
+
+.icon-picker-category-picker,
+.icon-picker-skin-tone-picker {
+	flex-basis: 140px;
+}
+
+.icon-picker-filter:not(.icon-picker-skin-tone-picker) .cs-combobox-lead {
+	display: none;
+}
+
+.icon-picker-filter .cs-combobox-option {
+	padding: 8px 12px;
+}
+
+.icon-picker-skin-tone-picker .cs-combobox-option {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.icon-picker-skin-tone-sample {
 	flex-shrink: 0;
+	font-size: 18px;
+}
+
+.icon-picker-skin-tone-label {
+	min-width: 0;
 }
 
 /* Locked while the source still has to be downloaded — see PackPanel */
@@ -3938,11 +3919,15 @@ button.callout-studio-icon-picker-loading {
 	cursor: not-allowed;
 }
 
-/* On narrow screens, search takes full width and selects wrap below */
+/* On narrow screens, search takes full width and listboxes wrap below. */
 @media (max-width: 600px) {
 	.icon-picker-toolbar .icon-picker-search-input {
 		flex-basis: 100%;
 		min-width: 100%;
+	}
+
+	.icon-picker-filter {
+		flex-grow: 1;
 	}
 }
 
@@ -4194,38 +4179,6 @@ button.callout-studio-icon-picker-loading {
 .icon-picker-image-panel .icon-picker-body {
 	flex: 1;
 	min-height: 120px;
-}
-
-/* Skin-tone selector — swatches previewing a sample glyph per tone */
-.icon-picker-skin-row {
-	display: flex;
-	align-items: center;
-	gap: 2px;
-	flex-shrink: 0;
-}
-
-.icon-picker-skin-btn {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 32px;
-	height: 32px;
-	padding: 0;
-	font-size: 18px;
-	line-height: 1;
-	border-radius: var(--radius-s);
-	background-color: transparent;
-	box-shadow: none;
-	cursor: pointer;
-}
-
-.icon-picker-skin-btn:hover {
-	background-color: var(--background-modifier-hover);
-}
-
-.icon-picker-skin-btn.is-active {
-	background-color: var(--background-modifier-hover);
-	box-shadow: inset 0 0 0 2px var(--interactive-accent);
 }
 
 /* One per group in the pooled list (own cursor, own button), or the whole
@@ -7091,6 +7044,16 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	min-inline-size: 0;
 }
 
+.cs-occurrences-picker .cs-combobox.is-iconless .cs-combobox-lead {
+	display: none;
+}
+
+.cs-occurrences-picker .cs-combobox-iconless-option {
+	padding: 8px 12px;
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
+}
+
 .cs-occurrences-summary,
 .cs-occurrences-status,
 .cs-occurrences-location {
@@ -7152,8 +7115,23 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 }
 
 .cs-occurrences-file h3 {
+	/* The file section bounds its heading, so the next file takes over.
+	   Sidebar leaves use the secondary background, including in themes where
+	   it differs visibly from the editor's primary background. */
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	background-color: var(--cs-surface-raised, var(--background-secondary));
 	font-size: var(--font-ui-small);
+	margin-inline: calc(-1 * var(--size-4-1));
+	padding-inline: var(--size-4-1);
+	padding-block: 12px;
 	margin-block: 0 var(--size-4-2);
+}
+
+.cs-occurrences-file.is-active-file h3 {
+	color: var(--text-accent);
+	font-weight: var(--font-semibold);
 }
 
 button.cs-occurrences-result {
@@ -7281,4 +7259,15 @@ button.cs-occurrences-result:focus-visible {
 		grid-column: 2;
 		grid-row: 1;
 	}
+}
+
+/* A field's accessible name must never turn into a hover tooltip. */
+.cs-field-accessible-label {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	pointer-events: none;
 }

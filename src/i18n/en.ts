@@ -887,6 +887,8 @@ export const en: Record<string, string> = {
 
 	"usage.title": "Callout occurrences",
 	"usage.selectType": "Callout type",
+	"usage.browse": "Browse",
+	"usage.allTypes": "All types",
 	"usage.registeredCallouts": "Registered callouts",
 	"usage.unregisteredCallouts": "Unregistered callouts",
 	"usage.summary": "{{count}} occurrences in {{files}} files",

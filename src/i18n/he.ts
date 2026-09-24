@@ -240,6 +240,7 @@ export const he: Record<string, string> = {
 	"commandBuilder.save": "שמירה",
 
 	// Settings — Reset
+	"settings.maintenance": "תחזוקה",
 	"settings.vaultMaintenance": "סקירה ותחזוקה של הכספת",
 	"settings.vaultStats": "סטטיסטיקת תיבות־הבלטה",
 	"settings.vaultStatsDesc":
@@ -792,6 +793,34 @@ export const he: Record<string, string> = {
 	"vaultStats.roleHeading": "כותרת",
 	"vaultStats.roleInline": "מוטבע",
 	"vaultStats.close": "סגירה",
+
+	"usage.title": "מופעי תיבות־הבלטה",
+	"usage.selectType": "סוג תיבת־הבלטה",
+	"usage.browse": "עיון",
+	"usage.allTypes": "כל הסוגים",
+	"usage.registeredCallouts": "תיבות־הבלטה רשומות",
+	"usage.unregisteredCallouts": "תיבות־הבלטה שאינן רשומות",
+	"usage.summary": "{{count}} מופעים ב־{{files}} קבצים",
+	"usage.fileCount": "{{path}} ({{count}})",
+	"usage.markdownFiles": "קובצי Markdown",
+	"usage.filterRole": "סינון לפי פורמט",
+	"usage.allRoles": "כל הפורמטים",
+	"usage.failed": "לא ניתן לעדכן את מופעי תיבות־ההבלטה.",
+	"usage.loading": "סריקת פתקי Markdown…",
+	"usage.partial": "התוצאות אינן מלאות: {{count}} שגיאות קריאה.",
+	"usage.stale": "עדכון מופעי תיבות־ההבלטה…",
+	"usage.empty": "לא נמצאו תיבות־הבלטה תואמות.",
+	"usage.failedFiles": "קבצים שלא ניתן לקרוא",
+	"usage.vaultReadFailed": "לא ניתן להציג את רשימת פתקי ה־Markdown בכספת זו.",
+	"usage.more": "הצגת {{count}} נוספים",
+	"usage.location": "שורה {{line}} · {{role}}",
+	"usage.missing": "הפתק הזה כבר אינו קיים. התוצאות מתעדכנות…",
+	"usage.changed": "המופע הזה השתנה או הועבר למיקום שאינו חד־משמעי. התוצאות מתעדכנות…",
+	"usage.openFailed": "לא ניתן לפתוח את המופע הזה של תיבת־ההבלטה.",
+	"usage.menuCount": "איתור שימושים: {{count}} ב־{{files}} קבצים",
+	"usage.menuIncomplete": "איתור שימושים — הסריקה לא הושלמה",
+	"usage.menuLoading": "איתור שימושים — הספירה מתבצעת…",
+	"usage.closeSettings": "יש לסגור את ההגדרות כדי לראות את תוצאות תיבות־ההבלטה בסרגל הצד.",
 
 	// Import validation
 	"import.title": "בעיות בייבוא",

@@ -218,6 +218,7 @@ export const nl: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"Gepauzeerd: uw thema levert deze callout, dus heeft deze alleen een Blok-indeling. Deze opdracht werkt weer zodra het thema deze niet meer levert.",
 
+	"settings.maintenance": "Onderhoud",
 	"settings.vaultMaintenance": "Vault-inzichten & onderhoud",
 	"settings.vaultStats": "Callout-statistieken",
 	"settings.vaultStatsDesc":
@@ -766,6 +767,34 @@ export const nl: Record<string, string> = {
 	"vaultStats.roleHeading": "Kop",
 	"vaultStats.roleInline": "In de tekst",
 	"vaultStats.close": "Sluiten",
+
+	"usage.title": "Vindplaatsen van callouts",
+	"usage.selectType": "Callout-type",
+	"usage.browse": "Bladeren",
+	"usage.allTypes": "Alle typen",
+	"usage.registeredCallouts": "Geregistreerde callouts",
+	"usage.unregisteredCallouts": "Niet-geregistreerde callouts",
+	"usage.summary": "{{count}} vindplaatsen in {{files}} bestanden",
+	"usage.fileCount": "{{path}} ({{count}})",
+	"usage.markdownFiles": "Markdown-bestanden",
+	"usage.filterRole": "Filteren op formaat",
+	"usage.allRoles": "Alle formaten",
+	"usage.failed": "Kan de vindplaatsen van callouts niet bijwerken.",
+	"usage.loading": "Markdown-notities scannen…",
+	"usage.partial": "Resultaten zijn onvolledig: {{count}} leesfouten.",
+	"usage.stale": "Vindplaatsen van callouts bijwerken…",
+	"usage.empty": "Geen overeenkomende callouts gevonden.",
+	"usage.failedFiles": "Bestanden die niet konden worden gelezen",
+	"usage.vaultReadFailed": "Kan de Markdown-notities in deze vault niet weergeven.",
+	"usage.more": "Nog {{count}} tonen",
+	"usage.location": "Regel {{line}} · {{role}}",
+	"usage.missing": "Deze notitie bestaat niet meer. Resultaten worden bijgewerkt…",
+	"usage.changed": "Deze vindplaats is gewijzigd of verplaatst naar een onduidelijke plek. Resultaten worden bijgewerkt…",
+	"usage.openFailed": "Kan deze vindplaats van de callout niet openen.",
+	"usage.menuCount": "Gebruik zoeken: {{count}} in {{files}} bestanden",
+	"usage.menuIncomplete": "Gebruik zoeken — scan onvolledig",
+	"usage.menuLoading": "Gebruik zoeken — tellen…",
+	"usage.closeSettings": "Sluit Instellingen om de callout-resultaten in de zijbalk te bekijken.",
 
 	"import.title": "Importeerproblemen",
 	"import.reportLeadIn":

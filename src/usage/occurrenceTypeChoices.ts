@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CalloutDefinition } from "../types";
 import { calloutIdentity, mergeDashSpaceVariants, normalizeCalloutId } from "../utils/calloutId";
@@ -6,6 +7,19 @@ import type { CalloutOccurrenceIndex } from "./CalloutOccurrenceIndex";
 
 interface OccurrenceTypeSelection { id: string; ids: string[]; }
 interface OccurrenceTypeChoice { definition: CalloutDefinition; ids: string[]; registered: boolean; }
+
+export const ALL_TYPES_ID = "";
+
+/** The aggregate scope exists only in this sidebar picker, never in the registry. */
+export function occurrencePickerChoices(types: OccurrenceTypeChoices, selectedId: string): readonly CalloutDefinition[] {
+	const all: CalloutDefinition = {
+		id: ALL_TYPES_ID, displayName: t("usage.allTypes"),
+		icon: { type: "lucide", value: "list" },
+		colorLight: "var(--text-normal)", colorDark: "var(--text-normal)",
+		foldable: false, defaultFolded: false, builtIn: false, source: "fallback",
+	};
+	return [all, ...types.definitions(selectedId)];
+}
 
 /** Display data only: these rows never enter the registry, CSS, or saved settings. */
 function sourceChoice(rawId: string): OccurrenceTypeChoice {

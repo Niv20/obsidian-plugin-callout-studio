@@ -218,6 +218,7 @@ export const it: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"In pausa: il tuo tema fornisce questo callout, quindi ha solo il formato Block. Questo comando funzionerà di nuovo quando il tema smetterà di fornirlo.",
 
+	"settings.maintenance": "Manutenzione",
 	"settings.vaultMaintenance": "Approfondimenti e manutenzione vault",
 	"settings.vaultStats": "Statistiche callout",
 	"settings.vaultStatsDesc":
@@ -770,6 +771,34 @@ export const it: Record<string, string> = {
 	"vaultStats.roleHeading": "Titolo",
 	"vaultStats.roleInline": "In linea",
 	"vaultStats.close": "Chiudi",
+
+	"usage.title": "Occorrenze dei callout",
+	"usage.selectType": "Tipo di callout",
+	"usage.browse": "Esplora",
+	"usage.allTypes": "Tutti i tipi",
+	"usage.registeredCallouts": "Callout registrati",
+	"usage.unregisteredCallouts": "Callout non registrati",
+	"usage.summary": "{{count}} occorrenze in {{files}} file",
+	"usage.fileCount": "{{path}} ({{count}})",
+	"usage.markdownFiles": "File Markdown",
+	"usage.filterRole": "Filtra per formato",
+	"usage.allRoles": "Tutti i formati",
+	"usage.failed": "Impossibile aggiornare le occorrenze dei callout.",
+	"usage.loading": "Scansione delle note Markdown…",
+	"usage.partial": "Risultati incompleti: {{count}} errori di lettura.",
+	"usage.stale": "Aggiornamento delle occorrenze dei callout…",
+	"usage.empty": "Nessun callout corrispondente trovato.",
+	"usage.failedFiles": "File che non è stato possibile leggere",
+	"usage.vaultReadFailed": "Impossibile elencare le note Markdown in questo vault.",
+	"usage.more": "Mostra altri {{count}}",
+	"usage.location": "Riga {{line}} · {{role}}",
+	"usage.missing": "Questa nota non esiste più. Aggiornamento dei risultati…",
+	"usage.changed": "Questa occorrenza è cambiata o è stata spostata in modo ambiguo. Aggiornamento dei risultati…",
+	"usage.openFailed": "Impossibile aprire questa occorrenza del callout.",
+	"usage.menuCount": "Trova utilizzi: {{count}} in {{files}} file",
+	"usage.menuIncomplete": "Trova utilizzi — scansione incompleta",
+	"usage.menuLoading": "Trova utilizzi — conteggio in corso…",
+	"usage.closeSettings": "Chiudi le Impostazioni per vedere i risultati dei callout nella barra laterale.",
 
 	"import.title": "Problemi di importazione",
 	"import.reportLeadIn":
