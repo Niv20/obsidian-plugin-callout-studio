@@ -7,12 +7,12 @@
 	"scripts": {
 		"dev": "npm run i18n:generate && node scripts/esbuild.config.mjs",
 		"prebuild": "npm run i18n:generate",
-		"build": "tsc -noEmit -skipLibCheck && node scripts/esbuild.config.mjs production",
+		"build": "tsc -noEmit -skipLibCheck -p scripts/tsconfig.json && node scripts/esbuild.config.mjs production",
 		"version": "node scripts/version-bump.mjs && git add manifest.json versions.json",
-		"lint": "eslint .",
+		"lint": "eslint --config scripts/eslint.config.mts .",
 		"test": "node scripts/run-tests.mjs",
 		"welcome": "open 'obsidian://callout-studio-welcome'",
-		"prepare": "husky",
+		"prepare": "husky scripts/hooks",
 		"icons:generate": "node scripts/generate-icon-packs.mjs",
 		"i18n:generate": "node scripts/generate-locales.mjs",
 		"themes:report": "node scripts/generate-theme-report.mjs"
@@ -46,7 +46,7 @@
 		"obsidian": "1.10.3"
 	},
 	"nano-staged": {
-		"*.{ts,mts}": "eslint"
+		"*.{ts,mts}": "eslint --config scripts/eslint.config.mts"
 	},
 	"overrides": {
 		"eslint-plugin-n": "17.24.0"

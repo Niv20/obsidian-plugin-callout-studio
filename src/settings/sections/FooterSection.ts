@@ -32,7 +32,7 @@ export function renderFooterSection(
 	createMetaLink(
 		meta,
 		t("footer.contribute"),
-		`${REPOSITORY_URL}/blob/master/CONTRIBUTING.md`,
+		`${REPOSITORY_URL}/blob/master/docs/CONTRIBUTING.md`,
 	);
 	createMetaSeparator(meta);
 	createMetaLink(

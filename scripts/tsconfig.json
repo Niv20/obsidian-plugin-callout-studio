@@ -19,5 +19,5 @@
 		"useUnknownInCatchVariables": true,
 		"lib": ["DOM", "ES2021", "ES2023"]
 	},
-	"include": ["src/**/*.ts", "tests/**/*.ts"]
+	"include": ["../src/**/*.ts", "../tests/**/*.ts"]
 }

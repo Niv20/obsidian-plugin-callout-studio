@@ -4,8 +4,8 @@
 
 ```bash
 npm run dev       # i18n:generate, then esbuild watch mode (inline sourcemaps)
-npm run build      # i18n:generate (prebuild), tsc -noEmit -skipLibCheck, then esbuild production (minified)
-npm run lint       # eslint . (obsidianmd recommended config + project rules)
+npm run build      # i18n:generate (prebuild), typecheck with scripts/tsconfig.json, then esbuild production (minified)
+npm run lint       # eslint with scripts/eslint.config.mts (obsidianmd recommended config + project rules)
 npm test           # scripts/run-tests.mjs
 npm run icons:generate    # regenerate icon pack search indexes + manifest — NEVER auto-run
 npm run i18n:generate      # regenerate locales/*.json + localeManifest.ts — runs as `prebuild`
@@ -39,9 +39,15 @@ sourcemaps entirely (dev builds inline them for fast iteration).
 
 ## TypeScript config
 
+The canonical configuration lives in `scripts/tsconfig.json`. The build
+selects it explicitly with `tsc -p scripts/tsconfig.json -noEmit
+-skipLibCheck`; both the plugin and test bundlers select it explicitly too.
+The small `src/tsconfig.json` and `tests/tsconfig.json` files extend it so
+editors continue to discover the project's compiler settings for each tree.
+
 ```json
 { "target": "ES6", "moduleResolution": "bundler", "strictNullChecks": true,
-  "noUncheckedIndexedAccess": true, "include": ["src/**/*.ts", "tests/**/*.ts"] }
+  "noUncheckedIndexedAccess": true, "include": ["../src/**/*.ts", "../tests/**/*.ts"] }
 ```
 
 > [!IMPORTANT]
@@ -62,7 +68,7 @@ sourcemaps entirely (dev builds inline them for fast iteration).
 before handing the result to Node's built-in test runner — it does not run
 the TypeScript source directly. Two reasons, both structural:
 
-1. `tsconfig.json` uses `moduleResolution: "bundler"`, so the whole codebase
+1. `scripts/tsconfig.json` uses `moduleResolution: "bundler"`, so the whole codebase
    imports without file extensions (`../utils/calloutId`). Node's own ESM
    resolver requires them, and the flag that used to relax that requirement
    was removed in Node 20.
@@ -105,7 +111,7 @@ check (not exhaustive — see each file directly for the full list):
 | `repoStyles.test.ts` | Every CSS custom property read with a fallback has a writer somewhere in `src/`; every class the code applies has a matching rule in `styles.css` and vice versa; no rule scoped to `.cs-modal` paints a raw `--background-primary` (see [Settings UI § surface tokens](15-settings-ui-and-modals.md)) |
 | `repoGenerated.test.ts` | `locales/*.json` and `src/icons/data/*` regenerate **byte-for-byte** identical to what's committed |
 | `repoRelease.test.ts` | `manifest.json`/`package.json`/`versions.json` agree on one version; the plugin id can never change; `manifest.json` has every required field and no unknown ones; built-in command ids match the released set; bundle-size limit is still declared where CI reads it |
-| `repoTestGate.test.ts` | `tsconfig.json` includes `tests/`; the build actually runs that typecheck; no test file uses top-level `await`; test setup/teardown hooks run in the right order |
+| `repoTestGate.test.ts` | `scripts/tsconfig.json` includes `tests/`; the build actually runs that typecheck; no test file uses top-level `await`; test setup/teardown hooks run in the right order |
 | `repoLicenseDocs.test.ts` | `LICENSE` is the plain 0BSD grant with no conditions attached; README/CONTRIBUTING both state the "don't republish as a new plugin" ask is *not* a license term |
 | `repoSourceRules.test.ts` ("AGENTS.md describes the checks that exist") | `AGENTS.md` doesn't claim the repo is untested, lists `npm test`, and still describes what the suite structurally cannot see |
 
@@ -203,16 +209,34 @@ Bumping `manifest.json`/`package.json`/`versions.json` happens together, via
 
 > [!IMPORTANT]
 > **Never bump or tag by hand, and never do it inside a feature/fix PR.**
-> Both `AGENTS.md` and `CONTRIBUTING.md` say releases are cut separately —
+> Both `AGENTS.md` and `docs/CONTRIBUTING.md` say releases are cut separately —
 > use the `$release` skill, which bumps all four version-bearing files
 > together, tags, pushes, waits for the CI build, writes release notes, and
 > publishes. Tags are bare semver (`1.5.0`), never `v1.5.0`.
 
 ## Husky / pre-commit
 
-A single pre-commit hook (`.husky/pre-commit: npx nano-staged`) runs ESLint
+A single pre-commit hook (`scripts/hooks/pre-commit: npx nano-staged`) runs ESLint
 against staged `*.ts`/`*.mts` files only — most style issues are caught
 before a push ever reaches CI.
+
+`npm install`/`npm ci` runs `prepare` (`husky scripts/hooks`) to install the
+hooks at their configured location. Run `npm run prepare` once after switching
+an existing checkout to this layout. The staged lint command, like `npm run
+lint`, selects `scripts/eslint.config.mts` explicitly. ESLint integrations in
+editors must also select that file if they rely on automatic root-config
+discovery; for the VS Code ESLint extension, set
+`eslint.options.overrideConfigFile` to `scripts/eslint.config.mts`.
+
+## Repository layout
+
+Public API documentation, contribution guidance, and third-party notices live
+in `docs/`. README and the plugin's contribution/credits links point to those
+paths. Development configuration and hooks live in `scripts/` alongside the
+build tools. `README.md`, `LICENSE`, the package and plugin manifests,
+`versions.json`, `.editorconfig`, `.npmrc`, and `.gitignore` remain at the
+root for their conventional consumers. `styles.css` remains the maintained
+root stylesheet and the release artifact.
 
 ---
 Next chapter: [20-public-api.md](20-public-api.md)

@@ -8,13 +8,13 @@
  * The bundle step is not ceremony. Two things rule out running the TypeScript
  * directly under `node --test --experimental-strip-types`:
  *
- * - `tsconfig.json` uses `moduleResolution: "bundler"`, so the whole codebase
+ * - `scripts/tsconfig.json` uses `moduleResolution: "bundler"`, so the whole codebase
  *   imports without file extensions (`../utils/calloutId`). Node's ESM resolver
  *   requires them, and the flag that used to relax that was removed in Node 20.
  * - Some modules under test transitively import `obsidian`, which only exists
  *   inside the app. esbuild's `alias` swaps in the stub below instead.
  *
- * The suites sit inside the build's typecheck, not beside it: `tsconfig.json`
+ * The suites sit inside the build's typecheck, not beside it: `scripts/tsconfig.json`
  * includes the `tests/` tree alongside `src/`, so the `tsc -noEmit` gate in
  * `npm run build` checks them too. Two things follow, and both bite silently
  * otherwise. A suite that no longer compiles fails the *build*, which is the
@@ -56,6 +56,7 @@ rmSync(outDir, { recursive: true, force: true });
 
 await build({
 	entryPoints,
+	tsconfig: path.join(root, "scripts/tsconfig.json"),
 	outdir: outDir,
 	bundle: true,
 	platform: "node",

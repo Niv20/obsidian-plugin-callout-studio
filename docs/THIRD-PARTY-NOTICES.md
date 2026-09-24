@@ -1,6 +1,6 @@
 # Third-party notices
 
-Callout Studio's own code is released under a permissive [license](LICENSE)
+Callout Studio's own code is released under a permissive [license](../LICENSE)
 that asks nothing of you. The icon libraries it draws on are separate works
 with their own licences, and those are reproduced here in full.
 
@@ -47,7 +47,7 @@ two derived UI icons: a paintbrush with a circle-plus badge for quick insert,
 and a paintbrush with a search badge for callout occurrences and statistics.
 The badges sit at the lower right. Lucide's paintbrush, circle-plus and search
 shapes are tailored and recomposed for small UI sizes. Editable SVGs are in
-[`docs/assets/ui-icons/`](docs/assets/ui-icons/).
+[`docs/assets/ui-icons/`](assets/ui-icons/).
 
 ```
 ISC License

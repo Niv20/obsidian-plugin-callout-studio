@@ -58,6 +58,7 @@ const NOT_A_LOCALE = new Set(["index", "en", "localeManifest", "LocaleStore"]);
 async function readLocaleTable(file) {
 	const result = await esbuild.build({
 		entryPoints: [join(I18N_DIR, `${file}.ts`)],
+		tsconfig: join(ROOT, "scripts/tsconfig.json"),
 		bundle: true,
 		format: "cjs",
 		platform: "neutral",

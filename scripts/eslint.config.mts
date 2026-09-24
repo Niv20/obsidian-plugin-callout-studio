@@ -23,7 +23,7 @@ export default tseslint.config(
 			},
 			parserOptions: {
 				projectService: true,
-				tsconfigRootDir: path.dirname(fileURLToPath(import.meta.url)),
+				tsconfigRootDir: path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."),
 			},
 		},
 	},
@@ -104,10 +104,6 @@ export default tseslint.config(
 		"scripts",
 		// Bundled test output (npm test) — generated, and a copy of tests/.
 		".test-out",
-		"scripts/esbuild.config.mjs",
-		"eslint.config.js",
-		"eslint.config.mts",
-		"scripts/version-bump.mjs",
 		"versions.json",
 		"main.js",
 	]),

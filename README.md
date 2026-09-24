@@ -64,14 +64,14 @@ npm run lint   # ESLint with the official obsidianmd plugin rules
 
 Source lives under `src/` and is bundled by esbuild into `main.js`. The release artifacts are `main.js`, `manifest.json`, and `styles.css`.
 
-Digging into how it's built, or preparing a pull request? See [`docs/internals-docs/`](docs/internals-docs/README.md) for the architecture, and [CONTRIBUTING.md](CONTRIBUTING.md) for the process.
+Digging into how it's built, or preparing a pull request? See [`docs/internals-docs/`](docs/internals-docs/README.md) for the architecture, and [CONTRIBUTING.md](docs/CONTRIBUTING.md) for the process.
 
 ### Plugin API
 
-Callout Studio exposes a small read-only API so other plugins can list the user's callout types and react when that list changes. See [API.md](API.md).
+Callout Studio exposes a small read-only API so other plugins can list the user's callout types and react when that list changes. See [API.md](docs/API.md).
 
 ## License & Third-Party Assets
 
 Callout Studio's code is available under a permissive [license](LICENSE), with no attribution required. One informal request, which is not a license term: please do not repackage the code and publish it as a new plugin in Obsidian's Community Plugins directory. You are welcome to reuse it, learn from it, and build on it in other ways.
 
-The icon libraries offered within the plugin are separate works and retain their own licenses. You can view the full text for each in **[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)** or select **Icon licenses & credits** at the bottom of the plugin settings.
+The icon libraries offered within the plugin are separate works and retain their own licenses. You can view the full text for each in **[THIRD-PARTY-NOTICES.md](docs/THIRD-PARTY-NOTICES.md)** or select **Icon licenses & credits** at the bottom of the plugin settings.

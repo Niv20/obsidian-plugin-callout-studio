@@ -9,6 +9,7 @@ const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || "playwright");
 const { outputFiles } = await build({
 	entryPoints: [path.join(root, "tests/browser/svgSecurity.ts")],
+	tsconfig: path.join(root, "scripts/tsconfig.json"),
 	bundle: true, write: false, format: "iife", globalName: "svgSecurityTests",
 	alias: { obsidian: path.join(root, "tests/support/obsidianStub.ts") },
 });

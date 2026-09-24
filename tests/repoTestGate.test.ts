@@ -1,7 +1,7 @@
 /**
  * tests/repoTestGate.test.ts — where the suites sit relative to the build.
  *
- * `tsconfig.json` includes `tests/**` as well as `src/**`, so `tsc -noEmit` in
+ * `scripts/tsconfig.json` includes `tests/**` as well as `src/**`, so `tsc -noEmit` in
  * `npm run build` typechecks the suites. Both `AGENTS.md` and
  * `scripts/run-tests.mjs` used to say the opposite — that tests live outside
  * `src/` precisely so they stay out of that gate — and a reader who believed it
@@ -10,7 +10,7 @@
  * Node accepts (it may not — `target: ES6` has no top-level `await`).
  *
  * A doc sentence cannot be checked directly, so this suite checks the two facts
- * the sentence is about, reading `tsconfig.json` and `package.json` rather than
+ * the sentence is about, reading `scripts/tsconfig.json` and `package.json` rather than
  * restating them, and then refuses the retired claims by name. The last suite is
  * the ratchet that makes the syntax half real: no test file may rely on
  * top-level `await` while the target forbids it.
@@ -29,7 +29,7 @@ interface PackageJson {
 	devDependencies?: Record<string, string>;
 }
 
-const tsconfig = readRepoJson<TsConfig>("tsconfig.json");
+const tsconfig = readRepoJson<TsConfig>("scripts/tsconfig.json");
 const pkg = readRepoJson<PackageJson>("package.json");
 
 /* -------------------------------------------------------------------------- */
@@ -40,8 +40,8 @@ describe("the suites are inside the build's typecheck", () => {
 	it("tsconfig includes the tests tree", () => {
 		const include = tsconfig.include ?? [];
 		assert.ok(
-			include.some((glob) => glob.startsWith("tests/")),
-			`tsconfig.json's include is ${JSON.stringify(include)} — with the ` +
+			include.some((glob) => glob.startsWith("../tests/")),
+			`scripts/tsconfig.json's include is ${JSON.stringify(include)} — with the ` +
 				"tests tree out of it, every suite silently stops being typechecked " +
 				"and the docs describing this gate become wrong again",
 		);
@@ -49,7 +49,7 @@ describe("the suites are inside the build's typecheck", () => {
 
 	it("the build is what runs that typecheck", () => {
 		// The include only gates anything because `npm run build` compiles.
-		assert.match(pkg.scripts?.build ?? "", /tsc\s+-{1,2}noEmit/);
+		assert.match(pkg.scripts?.build ?? "", /tsc\s+-{1,2}noEmit[^&]*\s-p\s+scripts\/tsconfig\.json(?:\s|$)/);
 	});
 
 	it("the suites have a command of their own", () => {

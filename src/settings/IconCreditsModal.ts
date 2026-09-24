@@ -14,7 +14,7 @@ import { applyModalChrome, removeModalChrome } from "./modalChrome";
 
 const REPOSITORY_URL =
 	"https://github.com/Niv20/obsidian-plugin-callout-studio/blob/master";
-const NOTICES_URL = `${REPOSITORY_URL}/THIRD-PARTY-NOTICES.md`;
+const NOTICES_URL = `${REPOSITORY_URL}/docs/THIRD-PARTY-NOTICES.md`;
 const EXTERNAL_LINK_ATTRS = {
 	target: "_blank",
 	rel: "noopener noreferrer",

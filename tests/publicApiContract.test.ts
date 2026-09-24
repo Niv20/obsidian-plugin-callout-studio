@@ -32,7 +32,7 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import { apiHarness } from "./support/apiHarness";
 
-const API_DOC = readFileSync(join(process.cwd(), "API.md"), "utf8");
+const API_DOC = readFileSync(join(process.cwd(), "docs/API.md"), "utf8");
 const MANIFEST = JSON.parse(
 	readFileSync(join(process.cwd(), "manifest.json"), "utf8"),
 ) as { id: string };

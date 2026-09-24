@@ -34,7 +34,7 @@ the stock `paintbrush` icon. Editable standalone exports live in
 [`statistics.svg`](../assets/ui-icons/statistics.svg) and
 [`conversion.svg`](../assets/ui-icons/conversion.svg); keep them aligned with
 the bundled definitions. Attribution is in
-[`THIRD-PARTY-NOTICES.md`](../../THIRD-PARTY-NOTICES.md#lucide).
+[`THIRD-PARTY-NOTICES.md`](../THIRD-PARTY-NOTICES.md#lucide).
 
 ## Two id spaces (recap)
 

@@ -69,7 +69,7 @@ describe("the settings footer", () => {
 		const links = linksIn(host);
 		const expectedMetadata = new Map([
 			["Source code", REPOSITORY_URL],
-			["Contribute", `${REPOSITORY_URL}/blob/master/CONTRIBUTING.md`],
+			["Contribute", `${REPOSITORY_URL}/blob/master/docs/CONTRIBUTING.md`],
 			["Plugin license", `${REPOSITORY_URL}/blob/master/LICENSE`],
 			["v2.14.1", `${REPOSITORY_URL}/releases/tag/2.14.1`],
 		]);

@@ -35,7 +35,7 @@ const read = (name: string): string =>
 const LICENSE = read("LICENSE");
 
 /** Every document that describes the plugin's own licence to a reader. */
-const DOCS = ["README.md", "CONTRIBUTING.md", "API.md"];
+const DOCS = ["README.md", "docs/CONTRIBUTING.md", "docs/API.md"];
 
 /**
  * Words that turn a grant into a conditional grant. `provided that` and
@@ -46,16 +46,16 @@ const CONDITION_WORDS = /\b(restriction|restricted|may not|provided that|subject
 
 /**
  * The sentences in `text` that talk about the plugin's own licence — those
- * carrying the `[…](LICENSE)` link. Split on sentence ends rather than on
- * lines, because these documents write one paragraph per line.
+ * carrying a link to LICENSE at the root or from docs/. Split only where
+ * punctuation ends a sentence, so the dots in ../LICENSE stay in the link.
  *
  * Matched rather than split on a lookbehind: `obsidianmd/regex-lookbehind` bans
  * those repo-wide, because iOS before 16.4 cannot parse one at all and this
  * plugin ships to phones.
  */
 function licenceSentences(text: string): string[] {
-	const sentences: string[] = text.match(/[^.!?]+[.!?]/g) ?? [];
-	return sentences.filter((s) => s.includes("(LICENSE)"));
+	const sentences = text.split(/[.!?](?:\s+|$)/);
+	return sentences.filter((s) => /\]\((?:\.\.\/)?LICENSE\)/.test(s));
 }
 
 describe("LICENSE grants without conditions", () => {
@@ -96,7 +96,7 @@ describe("no document invents a term LICENSE does not have", () => {
 	it("finds the licence sentences it is meant to be scanning", () => {
 		// A guard on the guard: rename the LICENSE file or drop the links and
 		// every assertion above passes vacuously.
-		for (const doc of DOCS.filter((d) => d !== "API.md")) {
+		for (const doc of DOCS.filter((d) => d !== "docs/API.md")) {
 			assert.ok(
 				licenceSentences(read(doc)).length > 0,
 				`${doc} no longer links to LICENSE — the scan above is empty`,
@@ -110,7 +110,7 @@ describe("the no-repackaging ask is an ask", () => {
 		// The ask itself is fine and stays. What is not fine is a reader coming
 		// away thinking it binds them, which is exactly what CONTRIBUTING used
 		// to do — and a contributor is the reader most likely to care.
-		for (const doc of ["README.md", "CONTRIBUTING.md"]) {
+		for (const doc of ["README.md", "docs/CONTRIBUTING.md"]) {
 			const text = read(doc);
 			assert.match(text, /repackage/i, `${doc} no longer carries the ask`);
 			assert.match(

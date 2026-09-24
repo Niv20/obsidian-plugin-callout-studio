@@ -73,8 +73,8 @@ function buildSandbox(): void {
 		mkdirSync(join(SANDBOX, "scripts", "data"), { recursive: true });
 		mkdirSync(join(SANDBOX, "src", "icons", "data"), { recursive: true });
 
-		for (const script of ["generate-locales.mjs", "generate-icon-packs.mjs"]) {
-			cpSync(join(REPO_ROOT, "scripts", script), join(SANDBOX, "scripts", script));
+		for (const file of ["generate-locales.mjs", "generate-icon-packs.mjs", "tsconfig.json"]) {
+			cpSync(join(REPO_ROOT, "scripts", file), join(SANDBOX, "scripts", file));
 		}
 		cpSync(
 			join(REPO_ROOT, "scripts", "lib", "encodeIndex.mjs"),
