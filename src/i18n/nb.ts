@@ -453,10 +453,11 @@ export const nb: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} kunne ikke leses som et egendefinert ikon.",
 	"iconPicker.customDuplicate":
 		"{{name}} finnes allerede blant de egendefinerte ikonene dine. Gi filen nytt navn eller slett det eksisterende ikonet.",
-	"iconPicker.customAdd": "Legg til egendefinerte ikoner",
 	"iconPicker.customEmpty":
 		"Ingen egendefinerte ikoner ennå. Legg til en SVG-, PNG-, JPEG- eller WebP-fil fra datamaskinen, eller slipp den her.",
-	"iconPicker.customDelete": "Slett",
+	"iconPicker.customEmptyTitle": "Ingen egendefinerte ikoner ennå",
+	"iconPicker.customEmptyHint": "Klikk på bildeknappen ovenfor eller dra en fil hit",
+	"iconPicker.customEmptyFormats": "Støttede formater: SVG, PNG, JPEG og WebP",
 	"iconPicker.customDeleteConfirm": "Slett «{{name}}»?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callouts bruker dette egendefinerte ikonet. De faller tilbake til et plassholderikon til du velger et nytt.",

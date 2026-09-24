@@ -516,10 +516,11 @@ export const ru: Record<string, string> = {
 		"{{name}} не удалось прочитать как пользовательский значок.",
 	"iconPicker.customDuplicate":
 		"{{name}} уже есть среди ваших пользовательских значков. Переименуйте файл или удалите существующий значок.",
-	"iconPicker.customAdd": "Добавить пользовательские значки",
 	"iconPicker.customEmpty":
 		"Пользовательских значков пока нет. Добавьте файл SVG, PNG, JPEG или WebP с компьютера либо перетащите его сюда.",
-	"iconPicker.customDelete": "Удалить",
+	"iconPicker.customEmptyTitle": "Пока нет пользовательских значков",
+	"iconPicker.customEmptyHint": "Нажмите кнопку с изображением выше или перетащите файл сюда",
+	"iconPicker.customEmptyFormats": "Поддерживаемые форматы: SVG, PNG, JPEG и WebP",
 	"iconPicker.customDeleteConfirm": "Удалить «{{name}}»?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callout(ов) используют этот пользовательский значок. Они будут показывать замещающий значок, пока вы не выберете новый.",

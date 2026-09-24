@@ -526,10 +526,11 @@ export const uk: Record<string, string> = {
 		"{{name}} не вдалося прочитати як користувацьку піктограму.",
 	"iconPicker.customDuplicate":
 		"{{name}} уже є серед ваших користувацьких піктограм. Перейменуйте файл або видаліть наявну піктограму.",
-	"iconPicker.customAdd": "Додати користувацькі піктограми",
 	"iconPicker.customEmpty":
 		"Користувацьких піктограм ще немає. Додайте файл SVG, PNG, JPEG або WebP з компʼютера чи перетягніть його сюди.",
-	"iconPicker.customDelete": "Видалити",
+	"iconPicker.customEmptyTitle": "Власних піктограм поки немає",
+	"iconPicker.customEmptyHint": "Натисніть кнопку зображення вище або перетягніть файл сюди",
+	"iconPicker.customEmptyFormats": "Підтримувані формати: SVG, PNG, JPEG і WebP",
 	"iconPicker.customDeleteConfirm": "Видалити «{{name}}»?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callout(ів) використовують цю користувацьку піктограму. Вони повернуться до піктограми-заповнювача, доки ви не виберете нову.",

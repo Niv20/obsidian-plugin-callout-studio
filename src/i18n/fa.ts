@@ -464,10 +464,11 @@ export const fa: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} به عنوان نماد سفارشی قابل خواندن نبود.",
 	"iconPicker.customDuplicate":
 		"{{name}} از قبل در نمادهای سفارشی شما وجود دارد. نام فایل را تغییر دهید یا نماد موجود را حذف کنید.",
-	"iconPicker.customAdd": "افزودن نمادهای سفارشی",
 	"iconPicker.customEmpty":
 		"هنوز نماد سفارشی‌ای وجود ندارد. یک فایل SVG، PNG، JPEG یا WebP از رایانه خود اضافه کنید یا آن را اینجا رها کنید.",
-	"iconPicker.customDelete": "حذف",
+	"iconPicker.customEmptyTitle": "هنوز نماد سفارشی‌ای ندارید",
+	"iconPicker.customEmptyHint": "روی دکمهٔ تصویر در بالا کلیک کنید یا فایلی را اینجا رها کنید",
+	"iconPicker.customEmptyFormats": "قالب‌های پشتیبانی‌شده: SVG، PNG، JPEG و WebP",
 	"iconPicker.customDeleteConfirm": "حذف «{{name}}»؟",
 	"iconPicker.customDeleteInUse":
 		"{{count}} کال‌اوت از این نماد سفارشی استفاده می‌کنند. تا زمانی که نماد جدیدی انتخاب کنید، از نماد جایگزین استفاده خواهند کرد.",

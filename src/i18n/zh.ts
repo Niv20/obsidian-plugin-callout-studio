@@ -507,10 +507,11 @@ export const zh: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "无法将 {{name}} 读取为自定义图标。",
 	"iconPicker.customDuplicate":
 		"{{name}} 已在你的自定义图标中。请重命名文件，或删除现有图标。",
-	"iconPicker.customAdd": "添加自定义图标",
 	"iconPicker.customEmpty":
 		"还没有自定义图标。请从电脑添加 SVG、PNG、JPEG 或 WebP 文件，或将文件拖到这里。",
-	"iconPicker.customDelete": "删除",
+	"iconPicker.customEmptyTitle": "暂无自定义图标",
+	"iconPicker.customEmptyHint": "点击上方的图片按钮，或将文件拖到这里",
+	"iconPicker.customEmptyFormats": "支持的格式：SVG、PNG、JPEG 和 WebP",
 	"iconPicker.customDeleteConfirm": "删除“{{name}}”？",
 	"iconPicker.customDeleteInUse":
 		"{{count}} 个 callout 正在使用此自定义图标。在你选择新图标之前，它们将回退到占位图标。",

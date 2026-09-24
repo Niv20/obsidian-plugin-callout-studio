@@ -465,10 +465,11 @@ export const ko: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}}을(를) 사용자 지정 아이콘으로 읽을 수 없습니다.",
 	"iconPicker.customDuplicate":
 		"{{name}}이(가) 이미 사용자 지정 아이콘에 있습니다. 파일 이름을 변경하거나 기존 아이콘을 삭제하세요.",
-	"iconPicker.customAdd": "사용자 지정 아이콘 추가",
 	"iconPicker.customEmpty":
 		"아직 사용자 지정 아이콘이 없습니다. 컴퓨터에서 SVG, PNG, JPEG 또는 WebP 파일을 추가하거나 여기에 끌어다 놓으세요.",
-	"iconPicker.customDelete": "삭제",
+	"iconPicker.customEmptyTitle": "아직 사용자 지정 아이콘이 없습니다",
+	"iconPicker.customEmptyHint": "위의 이미지 버튼을 클릭하거나 파일을 여기로 끌어다 놓으세요",
+	"iconPicker.customEmptyFormats": "지원 형식: SVG, PNG, JPEG, WebP",
 	"iconPicker.customDeleteConfirm": "“{{name}}” 삭제하시겠습니까?",
 	"iconPicker.customDeleteInUse":
 		"{{count}}개의 callout이 이 사용자 지정 아이콘을 사용합니다. 새 아이콘을 선택할 때까지 자리 표시자 아이콘이 표시됩니다.",

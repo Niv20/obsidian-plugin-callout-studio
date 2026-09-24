@@ -457,10 +457,11 @@ export const ar: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "تعذّرت قراءة {{name}} كأيقونة مخصصة.",
 	"iconPicker.customDuplicate":
 		"{{name}} موجودة بالفعل ضمن الأيقونات المخصصة. أعد تسمية الملف أو احذف الأيقونة الموجودة.",
-	"iconPicker.customAdd": "إضافة أيقونات مخصصة",
 	"iconPicker.customEmpty":
 		"لا توجد أيقونات مخصصة بعد. أضف ملف SVG أو PNG أو JPEG أو WebP من جهازك، أو اسحبه إلى هنا.",
-	"iconPicker.customDelete": "حذف",
+	"iconPicker.customEmptyTitle": "لا توجد أيقونات مخصصة بعد",
+	"iconPicker.customEmptyHint": "انقر على زر الصورة أعلاه أو اسحب ملفًا وأفلته هنا",
+	"iconPicker.customEmptyFormats": "التنسيقات المدعومة: SVG وPNG وJPEG وWebP",
 	"iconPicker.customDeleteConfirm": "حذف “{{name}}”؟",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callouts تستخدم هذه الأيقونة المخصصة. ستعود إلى أيقونة بديلة حتى تختار لها أيقونة جديدة.",

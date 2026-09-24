@@ -515,10 +515,11 @@ export const tr: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} özel simge olarak okunamadı.",
 	"iconPicker.customDuplicate":
 		"{{name}} özel simgelerinizde zaten var. Dosyayı yeniden adlandırın veya mevcut simgeyi silin.",
-	"iconPicker.customAdd": "Özel simgeler ekle",
 	"iconPicker.customEmpty":
 		"Henüz özel simge yok. Bilgisayarınızdan bir SVG, PNG, JPEG veya WebP dosyası ekleyin ya da buraya bırakın.",
-	"iconPicker.customDelete": "Sil",
+	"iconPicker.customEmptyTitle": "Henüz özel simge yok",
+	"iconPicker.customEmptyHint": "Yukarıdaki resim düğmesine tıklayın veya bir dosyayı buraya sürükleyin",
+	"iconPicker.customEmptyFormats": "Desteklenen biçimler: SVG, PNG, JPEG ve WebP",
 	"iconPicker.customDeleteConfirm": "“{{name}}” silinsin mi?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callout bu özel simgeyi kullanıyor. Yeni bir simge seçene kadar yer tutucu simgeye dönerler.",

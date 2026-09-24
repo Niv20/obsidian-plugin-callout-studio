@@ -518,10 +518,11 @@ export const ro: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} nu a putut fi citit ca pictogramă personalizată.",
 	"iconPicker.customDuplicate":
 		"{{name}} există deja în pictogramele personalizate. Redenumiți fișierul sau ștergeți pictograma existentă.",
-	"iconPicker.customAdd": "Adaugă pictograme personalizate",
 	"iconPicker.customEmpty":
 		"Nu există încă pictograme personalizate. Adăugați un fișier SVG, PNG, JPEG sau WebP de pe computer sau plasați-l aici.",
-	"iconPicker.customDelete": "Șterge",
+	"iconPicker.customEmptyTitle": "Încă nu există pictograme personalizate",
+	"iconPicker.customEmptyHint": "Faceți clic pe butonul de imagine de mai sus sau trageți un fișier aici",
+	"iconPicker.customEmptyFormats": "Formate acceptate: SVG, PNG, JPEG și WebP",
 	"iconPicker.customDeleteConfirm": "Ștergeți „{{name}}”?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callout-uri folosesc această pictogramă personalizată. Vor reveni la o pictogramă substituent până când alegeți una nouă.",

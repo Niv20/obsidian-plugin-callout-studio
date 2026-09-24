@@ -465,10 +465,11 @@ export const pl: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} nie może zostać odczytany jako ikona niestandardowa.",
 	"iconPicker.customDuplicate":
 		"{{name}} jest już w ikonach niestandardowych. Zmień nazwę pliku albo usuń istniejącą ikonę.",
-	"iconPicker.customAdd": "Dodaj ikony niestandardowe",
 	"iconPicker.customEmpty":
 		"Nie ma jeszcze ikon niestandardowych. Dodaj plik SVG, PNG, JPEG lub WebP z komputera albo upuść go tutaj.",
-	"iconPicker.customDelete": "Usuń",
+	"iconPicker.customEmptyTitle": "Brak własnych ikon",
+	"iconPicker.customEmptyHint": "Kliknij przycisk obrazu powyżej lub przeciągnij plik tutaj",
+	"iconPicker.customEmptyFormats": "Obsługiwane formaty: SVG, PNG, JPEG i WebP",
 	"iconPicker.customDeleteConfirm": "Usunąć „{{name}}”?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} calloutów używa tej ikony niestandardowej. Do czasu wybrania nowej będą używać ikony zastępczej.",

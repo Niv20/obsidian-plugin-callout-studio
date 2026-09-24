@@ -3657,7 +3657,9 @@ button.callout-studio-icon-picker-loading {
 	gap: 8px;
 	border-bottom: 1px solid var(--background-modifier-border);
 	padding: 10px var(--cs-modal-inset);
-	padding-inline-end: calc(var(--cs-modal-inset) + var(--cs-icon-grid-scrollbar, 0px));
+	/* Match the scrollable toolbar's visible width without shifting both
+	   controls toward the start of the modal when a scrollbar is present. */
+	padding-inline: calc(var(--cs-modal-inset) + var(--cs-icon-grid-scrollbar, 0px));
 	flex-shrink: 0;
 	background: var(--cs-surface, var(--background-primary));
 }
@@ -3853,7 +3855,10 @@ button.callout-studio-icon-picker-loading {
 	flex: 1;
 	min-height: 0;
 	overflow-y: auto;
+	/* Keep the controls still when filtering removes the grid's scrollbar. */
+	scrollbar-gutter: stable;
 	padding: 0 var(--cs-modal-inset) 12px;
+	padding-inline-start: calc(var(--cs-modal-inset) + var(--cs-icon-grid-scrollbar, 0px));
 }
 
 .icon-picker-toolbar {
@@ -3884,6 +3889,29 @@ button.callout-studio-icon-picker-loading {
 .icon-picker-category-picker,
 .icon-picker-skin-tone-picker {
 	flex-basis: 140px;
+}
+
+/* Tabler has two filters beside search. Keep search the widest control, but
+   share some of its spare width with style and category. */
+@media (min-width: 601px) {
+	.icon-picker-toolbar:has(> .icon-picker-tablerStyle-select) > .icon-picker-search-input {
+		flex: 8 1 120px;
+		min-width: 112px;
+	}
+
+	.icon-picker-toolbar:has(> .icon-picker-tablerStyle-select) > .icon-picker-filter {
+		flex: 1 1 auto;
+	}
+}
+
+/* Material has three filters. Give search its own row so the selected style,
+   weight and category can keep their full labels at desktop modal widths too. */
+.icon-picker-toolbar:has(> .icon-picker-weight-select) > .icon-picker-search-input {
+	flex: 1 0 100%;
+}
+
+.icon-picker-toolbar:has(> .icon-picker-weight-select) > .icon-picker-filter {
+	flex-grow: 1;
 }
 
 .icon-picker-filter:not(.icon-picker-skin-tone-picker) .cs-combobox-lead {
@@ -4118,44 +4146,118 @@ button.callout-studio-icon-picker-loading {
 	box-shadow: 0 0 0 2px var(--interactive-accent);
 }
 
-/* Room for that ring, and pictures need more air between them than the
-   monochrome glyphs the 4px default was measured for. Top padding keeps the
-   ring on row 1 from being clipped by the scroll container's edge. */
+/* Space around each image also leaves room for its corner delete badge. */
 .icon-picker-image-panel .icon-picker-grid {
-	gap: 8px;
-	padding-top: 3px;
+	gap: 18px;
+	padding: 14px;
+}
+
+.icon-picker-image-panel .icon-picker-cell-wrap {
+	position: relative;
+	width: 42px;
+	height: 42px;
+}
+
+.icon-picker-image-panel .icon-picker-grid.is-loaded > .icon-picker-cell-wrap > .icon-picker-cell {
+	animation: cs-grid-fade-in 0.25s ease-out both;
 }
 
 /* ── "Your images" panel ───────────────────────────────────────────── */
 
-/* The real file input never shows; the styled button beside it drives it. */
+/* The real file input never shows; the icon beside search drives it. */
 .icon-picker-image-input {
 	display: none;
 }
 
-.icon-picker-image-add,
-.icon-picker-image-delete {
-	display: inline-flex;
+.icon-picker-image-panel .icon-picker-toolbar {
 	align-items: center;
-	gap: 6px;
-	flex-shrink: 0;
+	flex-wrap: nowrap;
 }
 
-/* Delete stays in place with nothing selected rather than coming and going, so
-   it needs to read as unavailable on its own — mod-warning keeps its colour
-   otherwise, and a red button that ignores clicks looks broken. */
-.icon-picker-image-delete:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
+.icon-picker-image-panel .icon-picker-toolbar .icon-picker-search-input {
+	flex: 1 1 auto;
+	min-width: 0;
 }
 
-.icon-picker-image-btn-icon {
-	display: inline-flex;
+.icon-picker-image-panel button.icon-picker-image-add {
+	flex: 0 0 36px;
+	width: 36px;
+	height: 36px;
+	padding: 8px;
+	border: 0;
+	border-radius: var(--radius-s);
+	background: transparent;
+	box-shadow: none;
+	color: var(--text-muted);
 }
 
-.icon-picker-image-btn-icon svg {
-	width: 1em;
-	height: 1em;
+.icon-picker-image-panel button.icon-picker-image-add:hover,
+.icon-picker-image-panel button.icon-picker-image-add:focus-visible {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+.icon-picker-image-panel button.icon-picker-image-delete {
+	position: absolute;
+	z-index: 1;
+	inset-block-start: -9px;
+	inset-inline-start: -9px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: var(--color-red, #e93147);
+	box-shadow: 0 0 0 1.5px var(--cs-surface, var(--background-primary));
+	color: #fff;
+	cursor: pointer;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 120ms ease, background-color 120ms ease;
+}
+
+.icon-picker-image-panel button.icon-picker-image-delete:hover {
+	background: color-mix(in oklch, var(--color-red, #e93147) 85%, black);
+}
+
+.icon-picker-image-panel .icon-picker-image-delete svg {
+	width: 12px;
+	height: 12px;
+	color: inherit;
+}
+
+.icon-picker-image-panel button.icon-picker-image-delete:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 1.5px var(--cs-surface, var(--background-primary)),
+		0 0 0 3.5px var(--background-modifier-border-focus);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.icon-picker-image-panel .icon-picker-cell-wrap:hover .icon-picker-image-delete,
+	.icon-picker-image-panel .icon-picker-cell:focus-visible + .icon-picker-image-delete,
+	.icon-picker-image-panel .icon-picker-image-delete:focus-visible {
+		opacity: 1;
+		pointer-events: auto;
+	}
+}
+
+@media (hover: none), (pointer: coarse) {
+	.icon-picker-image-panel button.icon-picker-image-delete {
+		inset-block-start: -11px;
+		inset-inline-start: -11px;
+		width: 22px;
+		height: 22px;
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.icon-picker-image-panel .icon-picker-image-delete svg {
+		width: 14px;
+		height: 14px;
+	}
 }
 
 /* Dropping a file anywhere on the panel adds it, so no separate drop zone takes
@@ -4180,6 +4282,12 @@ button.callout-studio-icon-picker-loading {
 .icon-picker-image-panel .icon-picker-body {
 	flex: 1;
 	min-height: 120px;
+}
+
+.icon-picker-image-panel .icon-picker-body:has(.icon-picker-empty) {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 /* One per group in the pooled list (own cursor, own button), or the whole
@@ -4210,6 +4318,30 @@ button.callout-studio-icon-picker-loading {
 	white-space: normal;
 	max-width: 320px;
 	margin: 0 auto;
+}
+
+.icon-picker-image-panel .icon-picker-image-empty {
+	flex-direction: column;
+	gap: 4px;
+	max-width: min(100%, 440px);
+	color: var(--text-normal);
+}
+
+.icon-picker-image-empty-title {
+	color: var(--text-normal);
+	font-size: var(--font-ui-medium);
+	font-weight: 600;
+}
+
+.icon-picker-image-empty-hint {
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+}
+
+.icon-picker-image-empty-formats {
+	margin-top: 12px;
+	color: var(--text-faint);
+	font-size: var(--font-ui-smaller);
 }
 
 .icon-picker-error {

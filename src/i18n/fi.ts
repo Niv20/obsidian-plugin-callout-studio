@@ -458,10 +458,11 @@ export const fi: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} ei voitu lukea mukautettuna kuvakkeena.",
 	"iconPicker.customDuplicate":
 		"{{name}} on jo mukautetuissa kuvakkeissasi. Nimeä tiedosto uudelleen tai poista olemassa oleva kuvake.",
-	"iconPicker.customAdd": "Lisää mukautettuja kuvakkeita",
 	"iconPicker.customEmpty":
 		"Ei vielä mukautettuja kuvakkeita. Lisää SVG-, PNG-, JPEG- tai WebP-tiedosto tietokoneeltasi tai pudota se tähän.",
-	"iconPicker.customDelete": "Poista",
+	"iconPicker.customEmptyTitle": "Ei omia kuvakkeita vielä",
+	"iconPicker.customEmptyHint": "Napsauta yllä olevaa kuvapainiketta tai vedä tiedosto tähän",
+	"iconPicker.customEmptyFormats": "Tuetut tiedostomuodot: SVG, PNG, JPEG ja WebP",
 	"iconPicker.customDeleteConfirm": "Poistetaanko „{{name}}“?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} calloutia käyttää tätä mukautettua kuvaketta. Ne palaavat paikkamerkkikuvakkeeseen, kunnes valitset uuden.",

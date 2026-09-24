@@ -468,10 +468,11 @@ export const hu: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} nem olvasható egyéni ikonként.",
 	"iconPicker.customDuplicate":
 		"{{name}} már szerepel az egyéni ikonok között. Nevezze át a fájlt, vagy törölje a meglévő ikont.",
-	"iconPicker.customAdd": "Egyéni ikonok hozzáadása",
 	"iconPicker.customEmpty":
 		"Még nincsenek egyéni ikonok. Adjon hozzá SVG-, PNG-, JPEG- vagy WebP-fájlt a számítógépről, vagy húzza ide.",
-	"iconPicker.customDelete": "Törlés",
+	"iconPicker.customEmptyTitle": "Még nincsenek egyéni ikonok",
+	"iconPicker.customEmptyHint": "Kattintson a fenti képgombra, vagy húzzon ide egy fájlt",
+	"iconPicker.customEmptyFormats": "Támogatott formátumok: SVG, PNG, JPEG és WebP",
 	"iconPicker.customDeleteConfirm": "„{{name}}” törlése?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callout használja ezt az egyéni ikont. Új ikon kiválasztásáig helyőrző ikonra váltanak.",

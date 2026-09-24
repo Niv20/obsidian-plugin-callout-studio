@@ -461,10 +461,11 @@ export const ms: Record<string, string> = {
 		"{{name}} tidak dapat dibaca sebagai ikon tersuai.",
 	"iconPicker.customDuplicate":
 		"{{name}} sudah ada dalam ikon tersuai anda. Namakan semula fail atau padam ikon sedia ada.",
-	"iconPicker.customAdd": "Tambah ikon tersuai",
 	"iconPicker.customEmpty":
 		"Belum ada ikon tersuai. Tambah fail SVG, PNG, JPEG atau WebP daripada komputer anda, atau lepaskan di sini.",
-	"iconPicker.customDelete": "Padam",
+	"iconPicker.customEmptyTitle": "Belum ada ikon tersuai",
+	"iconPicker.customEmptyHint": "Klik butang imej di atas atau seret fail ke sini",
+	"iconPicker.customEmptyFormats": "Format yang disokong: SVG, PNG, JPEG dan WebP",
 	"iconPicker.customDeleteConfirm": "Padam “{{name}}”?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callout menggunakan ikon tersuai ini. Ia akan kembali kepada ikon pemegang tempat sehingga anda memilih yang baharu.",

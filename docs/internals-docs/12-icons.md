@@ -446,7 +446,12 @@ its intrinsic option sizing and change-only callbacks. The emoji skin tone filte
 uses a selection-only `ListboxPopup` for its richer rows. Both share the same
 popup engine. The source picker uses the same 36px control,
 focus treatment and up/down chevron, so the toolbar reads as one family of
-fields. `sourcePicker.ts` also measures the grid scroll gutter with a
+fields. Material's three-filter toolbar puts search on its own row at any
+modal width, leaving the style, weight and category fields room to show their
+selected labels; the fields wrap when they cannot fit together. On wider screens,
+Tabler keeps search beside its two filters but gives it a smaller width so the
+style and category choices have more room. `sourcePicker.ts`
+also measures the grid scroll gutter with a
 `ResizeObserver`, keeping the fixed source row aligned with the toolbar
 when a scrollbar appears; the modal disconnects it on close. An open-generation
 guard invalidates pending startup and count loads after close or reopen, so

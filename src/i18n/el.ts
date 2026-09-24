@@ -455,10 +455,11 @@ export const el: Record<string, string> = {
 		"Το {{name}} δεν μπόρεσε να διαβαστεί ως προσαρμοσμένο εικονίδιο.",
 	"iconPicker.customDuplicate":
 		"Το {{name}} υπάρχει ήδη στα προσαρμοσμένα εικονίδιά σας. Μετονομάστε το αρχείο ή διαγράψτε το υπάρχον εικονίδιο.",
-	"iconPicker.customAdd": "Προσθήκη προσαρμοσμένων εικονιδίων",
 	"iconPicker.customEmpty":
 		"Δεν υπάρχουν ακόμη προσαρμοσμένα εικονίδια. Προσθέστε ένα αρχείο SVG, PNG, JPEG ή WebP από τον υπολογιστή σας ή αποθέστε το εδώ.",
-	"iconPicker.customDelete": "Διαγραφή",
+	"iconPicker.customEmptyTitle": "Δεν υπάρχουν ακόμη προσαρμοσμένα εικονίδια",
+	"iconPicker.customEmptyHint": "Κάντε κλικ στο κουμπί εικόνας παραπάνω ή σύρετε ένα αρχείο εδώ",
+	"iconPicker.customEmptyFormats": "Υποστηριζόμενες μορφές: SVG, PNG, JPEG και WebP",
 	"iconPicker.customDeleteConfirm": "Διαγραφή “{{name}}”;",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callouts χρησιμοποιούν αυτό το προσαρμοσμένο εικονίδιο. Θα επιστρέψουν σε εικονίδιο κράτησης θέσης μέχρι να επιλέξετε νέο.",

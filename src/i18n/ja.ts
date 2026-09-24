@@ -467,10 +467,11 @@ export const ja: Record<string, string> = {
 		"{{name}}をカスタムアイコンとして読み取れませんでした。",
 	"iconPicker.customDuplicate":
 		"{{name}}はすでにカスタムアイコンにあります。ファイル名を変更するか、既存のアイコンを削除してください。",
-	"iconPicker.customAdd": "カスタムアイコンを追加",
 	"iconPicker.customEmpty":
 		"カスタムアイコンはまだありません。コンピューターからSVG、PNG、JPEG、またはWebPファイルを追加するか、ここにドロップしてください。",
-	"iconPicker.customDelete": "削除",
+	"iconPicker.customEmptyTitle": "カスタムアイコンはまだありません",
+	"iconPicker.customEmptyHint": "上の画像ボタンをクリックするか、ファイルをここにドラッグしてください",
+	"iconPicker.customEmptyFormats": "対応形式: SVG、PNG、JPEG、WebP",
 	"iconPicker.customDeleteConfirm": "「{{name}}」を削除しますか？",
 	"iconPicker.customDeleteInUse":
 		"{{count}}個のcalloutがこのカスタムアイコンを使用しています。新しいアイコンを指定するまで、プレースホルダーアイコンが表示されます。",

@@ -553,10 +553,12 @@ export const he: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "לא ניתן לקרוא את {{name}} כאייקון מותאם אישית.",
 	"iconPicker.customDuplicate":
 		"{{name}} כבר נמצא באייקונים המותאמים אישית שלכם. אפשר לשנות את שם הקובץ או למחוק את האייקון הקיים.",
-	"iconPicker.customAdd": "הוספת אייקונים מותאמים אישית",
+	"iconPicker.uploadCustom": "העלאת קובצי תמונה",
 	"iconPicker.customEmpty":
 		"עדיין אין אייקונים מותאמים אישית. אפשר להוסיף קובץ SVG, PNG, JPEG או WebP מהמחשב, או לגרור אותו לכאן.",
-	"iconPicker.customDelete": "מחיקה",
+	"iconPicker.customEmptyTitle": "עדיין אין אייקונים מותאמים אישית",
+	"iconPicker.customEmptyHint": "לחצו על כפתור התמונה שלמעלה או גררו קובץ לכאן",
+	"iconPicker.customEmptyFormats": "פורמטים נתמכים: SVG, PNG, JPEG ו־WebP",
 	"iconPicker.customDeleteConfirm": "למחוק את „{{name}}”?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} תיבות־הבלטה משתמשות באייקון המותאם אישית הזה. במקומו יוצג אייקון זמני עד שתבחרו להן אייקון חדש.",

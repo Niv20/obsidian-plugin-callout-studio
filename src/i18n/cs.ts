@@ -463,10 +463,11 @@ export const cs: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} nelze načíst jako vlastní ikonu.",
 	"iconPicker.customDuplicate":
 		"{{name}} už je mezi vašimi vlastními ikonami. Přejmenujte soubor nebo smažte stávající ikonu.",
-	"iconPicker.customAdd": "Přidat vlastní ikony",
 	"iconPicker.customEmpty":
 		"Zatím tu nejsou žádné vlastní ikony. Přidejte soubor SVG, PNG, JPEG nebo WebP z počítače, nebo ho sem přetáhněte.",
-	"iconPicker.customDelete": "Smazat",
+	"iconPicker.customEmptyTitle": "Zatím žádné vlastní ikony",
+	"iconPicker.customEmptyHint": "Klikněte na tlačítko obrázku výše nebo sem přetáhněte soubor",
+	"iconPicker.customEmptyFormats": "Podporované formáty: SVG, PNG, JPEG a WebP",
 	"iconPicker.customDeleteConfirm": "Smazat „{{name}}“?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} calloutů používá tuto vlastní ikonu. Dokud jim nevyberete novou, budou používat zástupnou ikonu.",

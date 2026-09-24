@@ -476,10 +476,11 @@ export const fr: Record<string, string> = {
 		"{{name}} ne peut pas être lu comme une icône personnalisée.",
 	"iconPicker.customDuplicate":
 		"{{name}} existe déjà dans vos icônes personnalisées. Renommez le fichier ou supprimez l’icône existante.",
-	"iconPicker.customAdd": "Ajouter des icônes personnalisées",
 	"iconPicker.customEmpty":
 		"Aucune icône personnalisée pour le moment. Ajoutez un fichier SVG, PNG, JPEG ou WebP depuis votre ordinateur, ou déposez-en un ici.",
-	"iconPicker.customDelete": "Supprimer",
+	"iconPicker.customEmptyTitle": "Aucune icône personnalisée pour le moment",
+	"iconPicker.customEmptyHint": "Cliquez sur le bouton d’image ci-dessus ou déposez un fichier ici",
+	"iconPicker.customEmptyFormats": "Formats pris en charge : SVG, PNG, JPEG et WebP",
 	"iconPicker.customDeleteConfirm": "Supprimer « {{name}} » ?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callout(s) utilisent cette icône personnalisée. Ils afficheront une icône de remplacement jusqu’à ce que vous en choisissiez une nouvelle.",

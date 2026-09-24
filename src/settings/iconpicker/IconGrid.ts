@@ -1,19 +1,12 @@
 /**
  * settings/iconpicker/IconGrid.ts — The paged, keyboard-navigable icon grid.
  *
- * Pack-agnostic: it owns paging, selection highlighting, arrow-key navigation
- * and scrolling a pre-selected icon into view, and delegates the one thing that
- * differs between sources — how a single cell is drawn — to a callback.
+ * Pack-agnostic: owns paging, selection, arrow keys and scrolling to a chosen
+ * icon; callbacks draw cells and optional actions.
  *
- * Paging is per group, not global. In the pooled "All sources" list a source
- * with hundreds of hits would otherwise have to be paged through in full
- * before the next source's heading ever appeared — collapsing it wouldn't
- * help, since "Load more" still walked the flat list underneath. Splitting
- * every group into its own segment, each with its own cursor and its own
- * "Load more", means every heading shows up immediately and collapsing one
- * source's cells collapses its "Load more" with them. A source panel with no
- * groups is simply one segment covering everything, which is exactly today's
- * behaviour: one cursor, one button.
+ * Paging is per group: a large source in "All sources" cannot hide later
+ * groups behind its "Load more" button. Collapsing a group hides its own
+ * cells and button. A single-source panel has one segment.
  */
 import { setIcon } from "obsidian";
 import type { IconEntry } from "../../icons/types";
@@ -26,6 +19,8 @@ const MAX_REVEAL_PAGES = 500;
 export interface IconGridOptions {
 	/** Draws one icon into its cell. */
 	renderCell(cell: HTMLElement, entry: IconEntry): void;
+	/** Optional sibling action, kept outside the selectable cell. */
+	renderCellAction?(host: HTMLElement, entry: IconEntry): void;
 	/** Whether this entry is the current selection (drives the highlight). */
 	isSelected(entry: IconEntry): boolean;
 	onSelect(entry: IconEntry, cell: HTMLElement): void;
@@ -48,6 +43,8 @@ export interface IconGridOptions {
 	 */
 	groupLabelFor?(entry: IconEntry, previous: IconEntry | undefined): string | undefined;
 	emptyText: string;
+	/** Optional custom empty state for sources with richer guidance. */
+	renderEmpty?(host: HTMLElement): void;
 	loadMoreText: string;
 }
 
@@ -84,9 +81,9 @@ export class IconGrid {
 		for (const segment of this.segments) this.renderSegment(segment);
 		this.gridEl.addClass("is-loaded");
 		if (entries.length === 0) {
-			this.gridEl.createDiv("icon-picker-empty").setText(
-				this.options.emptyText,
-			);
+			const empty = this.gridEl.createDiv("icon-picker-empty");
+			if (this.options.renderEmpty) this.options.renderEmpty(empty);
+			else empty.setText(this.options.emptyText);
 		}
 	}
 
@@ -238,7 +235,9 @@ export class IconGrid {
 			if (!entry) continue;
 
 			const cellClass = this.options.cellClass?.(entry);
-			const cell = this.gridEl.createDiv({
+			const cellHost = this.options.renderCellAction
+				? this.gridEl.createDiv("icon-picker-cell-wrap") : this.gridEl;
+			const cell = cellHost.createDiv({
 				cls:
 					`icon-picker-cell${cellClass ? ` ${cellClass}` : ""}` +
 					(segment.collapsed ? " is-group-collapsed" : ""),
@@ -248,12 +247,13 @@ export class IconGrid {
 					role: "button",
 				},
 			});
-			// createDiv appends at the grid's end; move it back in front of this
-			// segment's own "Load more" so later groups stay after it.
-			if (segment.loadMoreEl) this.gridEl.insertBefore(cell, segment.loadMoreEl);
+			// Keep this segment before its own "Load more" row.
+			const item = cellHost === this.gridEl ? cell : cellHost;
+			if (segment.loadMoreEl) this.gridEl.insertBefore(item, segment.loadMoreEl);
 			segment.cellEls.push(cell);
 
 			this.options.renderCell(cell, entry);
+			if (cellHost !== this.gridEl) this.options.renderCellAction?.(cellHost, entry);
 			if (this.options.isSelected(entry)) cell.addClass("is-selected");
 
 			const select = () => {

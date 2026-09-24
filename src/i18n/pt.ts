@@ -516,10 +516,11 @@ export const pt: Record<string, string> = {
 		"{{name}} não pôde ser lido como ícone personalizado.",
 	"iconPicker.customDuplicate":
 		"{{name}} já está nos seus ícones personalizados. Renomeie o ficheiro ou elimine o ícone existente.",
-	"iconPicker.customAdd": "Adicionar ícones personalizados",
 	"iconPicker.customEmpty":
 		"Ainda não há ícones personalizados. Adicione um ficheiro SVG, PNG, JPEG ou WebP do seu computador, ou arraste-o para aqui.",
-	"iconPicker.customDelete": "Eliminar",
+	"iconPicker.customEmptyTitle": "Ainda não há ícones personalizados",
+	"iconPicker.customEmptyHint": "Clique no botão de imagem acima ou arraste um ficheiro para aqui",
+	"iconPicker.customEmptyFormats": "Formatos aceites: SVG, PNG, JPEG e WebP",
 	"iconPicker.customDeleteConfirm": "Eliminar “{{name}}”?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callouts utilizam este ícone personalizado. Voltarão a um ícone de marcador de posição até escolher um novo.",

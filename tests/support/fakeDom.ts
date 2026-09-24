@@ -196,6 +196,12 @@ export class FakeDocumentFragment {
 	readonly nodeType = NODE_FRAGMENT;
 	readonly childNodes: FakeNode[] = [];
 
+	createEl(tag: string, options?: ElOptions): FakeElement {
+		const el = new FakeElement(tag, sharedDocument);
+		applyElOptions(el, options);
+		return this.appendChild(el);
+	}
+
 	appendChild<T extends FakeNode>(node: T): T {
 		node.parentElement?.removeChild(node);
 		node.parentElement = null;
@@ -666,20 +672,24 @@ export class FakeElement {
 		return this.make(tag, options);
 	}
 
-	createDiv(options?: ElOptions): FakeElement {
+	createDiv(options?: ElOptions | string): FakeElement {
 		return this.make("div", options);
 	}
 
-	createSpan(options?: ElOptions): FakeElement {
+	createSpan(options?: ElOptions | string): FakeElement {
 		return this.make("span", options);
 	}
 
 	/** The shared body of the three creators above. */
-	private make(tag: string, options?: ElOptions): FakeElement {
+	private make(tag: string, options?: ElOptions | string): FakeElement {
 		const el = new FakeElement(tag, this.ownerDocument);
 		applyElOptions(el, options);
 		return this.appendChild(el);
 	}
+
+	/** Obsidian's convenience visibility methods used by paged picker rows. */
+	show(): void { this.setCssProps({ display: "" }); }
+	hide(): void { this.setCssProps({ display: "none" }); }
 
 	/**
 	 * Set a CSS custom property the way Obsidian sets `--font-text-size` on
@@ -853,8 +863,12 @@ function closestFrom(start: FakeElement, selector: string): FakeElement | null {
 	return null;
 }
 
-function applyElOptions(el: FakeElement, options?: ElOptions): void {
+function applyElOptions(el: FakeElement, options?: ElOptions | string): void {
 	if (!options) return;
+	if (typeof options === "string") {
+		el.classList.add(...options.split(/\s+/).filter(Boolean));
+		return;
+	}
 	if (options.cls) {
 		const classes = Array.isArray(options.cls)
 			? options.cls
@@ -1386,7 +1400,7 @@ export function installFakeDom(): FakeDomHandle {
 	 * of `createDiv`/`createSpan`, so routing them through something called
 	 * `createEl` would read as the mistake the lint rule is there to catch.
 	 */
-	const make = (tag: string, options?: ElOptions): FakeElement => {
+	const make = (tag: string, options?: ElOptions | string): FakeElement => {
 		const el = new FakeElement(tag, doc);
 		applyElOptions(el, options);
 		return el;
@@ -1397,8 +1411,8 @@ export function installFakeDom(): FakeDomHandle {
 	g.window = win;
 	g.activeWindow = win;
 	g.createEl = make;
-	g.createDiv = (options?: ElOptions) => make("div", options);
-	g.createSpan = (options?: ElOptions) => make("span", options);
+	g.createDiv = (options?: ElOptions | string) => make("div", options);
+	g.createSpan = (options?: ElOptions | string) => make("span", options);
 	g.createFragment = () => new FakeDocumentFragment();
 	g.HTMLElement = FakeElement;
 	g.Node = {

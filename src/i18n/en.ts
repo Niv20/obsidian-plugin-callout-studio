@@ -652,10 +652,12 @@ export const en: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} could not be read as a custom icon.",
 	"iconPicker.customDuplicate":
 		"{{name}} is already in your custom icons. Rename the file, or delete the custom icon you already have.",
-	"iconPicker.customAdd": "Add custom icons",
+	"iconPicker.uploadCustom": "Upload image files",
 	"iconPicker.customEmpty":
 		"No custom icons yet. Add an SVG, PNG, JPEG or WebP file from your computer, or drop one here.",
-	"iconPicker.customDelete": "Delete",
+	"iconPicker.customEmptyTitle": "No custom icons yet",
+	"iconPicker.customEmptyHint": "Click the image button above or drop a file here",
+	"iconPicker.customEmptyFormats": "Accepted formats: SVG, PNG, JPEG, and WebP",
 	"iconPicker.customDeleteConfirm": "Delete “{{name}}”?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callouts use this custom icon. They will fall back to a placeholder icon until you give them a new one.",

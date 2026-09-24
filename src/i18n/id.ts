@@ -466,10 +466,11 @@ export const id: Record<string, string> = {
 		"{{name}} tidak dapat dibaca sebagai ikon kustom.",
 	"iconPicker.customDuplicate":
 		"{{name}} sudah ada di ikon kustom Anda. Ganti nama berkas, atau hapus ikon yang sudah ada.",
-	"iconPicker.customAdd": "Tambah ikon kustom",
 	"iconPicker.customEmpty":
 		"Belum ada ikon kustom. Tambahkan berkas SVG, PNG, JPEG, atau WebP dari komputer Anda, atau jatuhkan di sini.",
-	"iconPicker.customDelete": "Hapus",
+	"iconPicker.customEmptyTitle": "Belum ada ikon kustom",
+	"iconPicker.customEmptyHint": "Klik tombol gambar di atas atau seret file ke sini",
+	"iconPicker.customEmptyFormats": "Format yang didukung: SVG, PNG, JPEG, dan WebP",
 	"iconPicker.customDeleteConfirm": "Hapus “{{name}}”?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callout menggunakan ikon kustom ini. Mereka akan kembali ke ikon placeholder sampai Anda memilih yang baru.",

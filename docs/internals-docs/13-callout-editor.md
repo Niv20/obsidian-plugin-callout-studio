@@ -385,6 +385,13 @@ grid, driven entirely by its `IconPack`), `IconGrid` (paging + keyboard
 navigation), `ImagePanel` ("Your images" upload/manage), `allSources.ts` (the
 pooled cross-source search).
 
+`ImagePanel` keeps its file-upload control beside search as an icon-only
+button with a localized accessible name. Each uploaded icon exposes its delete
+action as an **X** over the tile on hover or keyboard focus; deletion still
+uses the confirmation and in-use warning. The panel centers its empty message
+within the grid as a title, upload-or-drop instruction, and subdued list of
+accepted formats. Its extra tile spacing keeps the delete targets clear.
+
 ### "All sources" is itself an `IconPack`
 
 [`src/settings/iconpicker/allSources.ts`](../../src/settings/iconpicker/allSources.ts)
@@ -411,6 +418,13 @@ visible viewport and the clipping modal body both limit that space; resize,
 zoom and layout changes refresh the cap while open, with observers removed on
 close. Pointer highlights clear on row/menu exit without clearing committed
 selection; arrow-key highlights persist until navigation or dismissal.
+
+The icon grid scrolls below the fixed source row. `alignIconPickerRows()`
+measures its scrollbar and gives the source row and grid content matching
+start-side insets, so the source control and search field stay aligned with
+equal visible space on both sides. The grid reserves its scrollbar gutter while
+results are filtered, preventing the controls from resizing when the grid is
+empty. The extra inset is zero when scrollbars overlay the content.
 
 ### Downloads happen on confirm, not on browse
 

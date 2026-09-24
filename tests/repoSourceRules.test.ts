@@ -869,7 +869,7 @@ describe("no new oversized files", () => {
 		"src/reading/calloutPostProcessor.ts": 721,
 		"src/settings/iconpicker/PackPanel.ts": 631,
 		"src/utils/colorUtils.ts": 685,
-		"src/settings/iconpicker/IconPickerModal.ts": 471,
+		"src/settings/iconpicker/IconPickerModal.ts": 470,
 		"src/editor/livepreview/calloutViewPlugin.ts": 675,
 		// Lowered from 666: sanitizeCustomPalettes — the untrusted-data gate,
 		// the opposite job to the rest of this file — moved to
@@ -953,13 +953,13 @@ describe("no new oversized files", () => {
 		// that finally made it one — moved to settings/previewReadOnly.ts,
 		// where it can be tested against a real EditorState.
 		"src/settings/EmbeddableMarkdownEditor.ts": 349,
-		"src/settings/iconpicker/ImagePanel.ts": 354,
+		"src/settings/iconpicker/ImagePanel.ts": 335,
 		// Lowered from 345: its row icon goes through
 		// manager/theme/calloutListIcon.ts. Lowered again from 337: the shortcut
 		// chips and the hotkey-pane button — carried identically by both lists
 		// in the window — moved to settings/command/hotkeyRow.ts.
 		"src/settings/CommandBuilderModal.ts": 302,
-		"src/settings/iconpicker/IconGrid.ts": 343,
+		"src/settings/iconpicker/IconGrid.ts": 341,
 	};
 
 	it("nothing new crosses the 300-line line", () => {

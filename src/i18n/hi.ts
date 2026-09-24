@@ -467,10 +467,11 @@ export const hi: Record<string, string> = {
 		"{{name}} को कस्टम आइकन के रूप में पढ़ा नहीं जा सका।",
 	"iconPicker.customDuplicate":
 		"{{name}} आपके कस्टम आइकन में पहले से है। फ़ाइल का नाम बदलें या मौजूदा आइकन हटाएँ।",
-	"iconPicker.customAdd": "कस्टम आइकन जोड़ें",
 	"iconPicker.customEmpty":
 		"अभी कोई कस्टम आइकन नहीं है। अपने कंप्यूटर से SVG, PNG, JPEG या WebP फ़ाइल जोड़ें, या उसे यहाँ छोड़ें।",
-	"iconPicker.customDelete": "हटाएं",
+	"iconPicker.customEmptyTitle": "अभी तक कोई कस्टम आइकन नहीं हैं",
+	"iconPicker.customEmptyHint": "ऊपर दिए गए इमेज बटन पर क्लिक करें या फ़ाइल को यहाँ खींचकर छोड़ें",
+	"iconPicker.customEmptyFormats": "समर्थित फ़ॉर्मैट: SVG, PNG, JPEG और WebP",
 	"iconPicker.customDeleteConfirm": "“{{name}}” हटाएं?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callouts इस कस्टम आइकन का उपयोग करते हैं। नया आइकन चुनने तक वे प्लेसहोल्डर आइकन पर लौटेंगे।",

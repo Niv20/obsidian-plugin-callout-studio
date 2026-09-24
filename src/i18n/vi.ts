@@ -520,10 +520,11 @@ export const vi: Record<string, string> = {
 		"Không thể đọc {{name}} dưới dạng biểu tượng tùy chỉnh.",
 	"iconPicker.customDuplicate":
 		"{{name}} đã có trong biểu tượng tùy chỉnh của bạn. Đổi tên tệp hoặc xóa biểu tượng hiện có.",
-	"iconPicker.customAdd": "Thêm biểu tượng tùy chỉnh",
 	"iconPicker.customEmpty":
 		"Chưa có biểu tượng tùy chỉnh. Thêm tệp SVG, PNG, JPEG hoặc WebP từ máy tính, hoặc thả vào đây.",
-	"iconPicker.customDelete": "Xóa",
+	"iconPicker.customEmptyTitle": "Chưa có biểu tượng tùy chỉnh",
+	"iconPicker.customEmptyHint": "Nhấp vào nút hình ảnh ở trên hoặc kéo tệp vào đây",
+	"iconPicker.customEmptyFormats": "Định dạng được hỗ trợ: SVG, PNG, JPEG và WebP",
 	"iconPicker.customDeleteConfirm": "Xóa “{{name}}”?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callout đang dùng biểu tượng tùy chỉnh này. Chúng sẽ quay về biểu tượng giữ chỗ cho đến khi bạn chọn biểu tượng mới.",

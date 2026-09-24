@@ -46,6 +46,7 @@ export interface ImagePanelHost {
 	/** The single writer — it re-syncs the pack and repaints open notes. */
 	saveImages(images: readonly UserImageIcon[]): void;
 	onSelect(icon: CalloutIcon, entry: IconEntry): void;
+	onDelete(id: string): void;
 	selectedIcon(): CalloutIcon | null;
 }
 
@@ -55,8 +56,7 @@ export class ImagePanel {
 	private grid: IconGrid | null = null;
 	private query = "";
 	private fileInput: HTMLInputElement | null = null;
-	private deleteBtn: HTMLButtonElement | null = null;
-	/** Which picture Delete acts on; null when nothing is selected. */
+	/** The selected picture, if this source owns the current selection. */
 	private activeId: string | null = null;
 	private disposed = false;
 
@@ -82,6 +82,19 @@ export class ImagePanel {
 		this.buildToolbar();
 		this.grid = new IconGrid(this.bodyEl, {
 			renderCell: (cell, entry) => this.renderCell(cell, entry),
+			renderCellAction: (cellHost, entry) => this.renderDeleteButton(cellHost, entry),
+			renderEmpty: (host) => {
+				host.addClass("icon-picker-image-empty");
+				host.createDiv("icon-picker-image-empty-title").setText(
+					t("iconPicker.customEmptyTitle"),
+				);
+				host.createDiv("icon-picker-image-empty-hint").setText(
+					t("iconPicker.customEmptyHint"),
+				);
+				host.createDiv("icon-picker-image-empty-formats").setText(
+					t("iconPicker.customEmptyFormats"),
+				);
+			},
 			isSelected: (entry) => this.isSelected(entry),
 			onSelect: (entry) => this.select(entry),
 			labelFor: (entry) => entry.label ?? entry.name,
@@ -113,31 +126,11 @@ export class ImagePanel {
 			this.refresh();
 		});
 
-		// Delete sits between search and Add, acting on whatever is selected —
-		// hanging a button off every cell would stop the grid being a grid, and
-		// IconGrid has no per-cell affordance to hang one on anyway. Whether a
-		// picture follows the callout's colour is deliberately not here: that is
-		// the callout's choice, and lives in the callout editor beside the
-		// icon's size and offsets.
-		const deleteBtn = this.toolbarEl.createEl("button", {
-			cls: "icon-picker-image-delete mod-warning",
-			attr: { type: "button" },
-		});
-		setIcon(deleteBtn.createSpan("icon-picker-image-btn-icon"), "trash-2");
-		deleteBtn.createSpan({ text: t("iconPicker.customDelete") });
-		deleteBtn.addEventListener("click", () => {
-			const active = this.activeImage();
-			if (active) void this.confirmDelete(active);
-		});
-		this.deleteBtn = deleteBtn;
-		this.syncDeleteButton();
-
 		const addBtn = this.toolbarEl.createEl("button", {
-			cls: "icon-picker-image-add mod-cta",
-			attr: { type: "button" },
+			cls: "icon-picker-image-add clickable-icon",
+			attr: { type: "button", "aria-label": t("iconPicker.uploadCustom") },
 		});
-		setIcon(addBtn.createSpan("icon-picker-image-btn-icon"), "image-plus");
-		addBtn.createSpan({ text: t("iconPicker.customAdd") });
+		setIcon(addBtn, "image-plus");
 		addBtn.addEventListener("click", () => this.fileInput?.click());
 
 		// The real input stays out of the layout; the styled button drives it.
@@ -237,7 +230,7 @@ export class ImagePanel {
 
 	// ── Grid ────────────────────────────────────────────────────────────
 
-	/** Rebuild the grid and the Delete button from the current picture list. */
+	/** Rebuild the grid from the current picture list. */
 	private refresh(): void {
 		const images = this.matching();
 		// "No pictures yet" and "nothing matches that search" are different
@@ -249,7 +242,6 @@ export class ImagePanel {
 		} else {
 			this.grid?.setEntries(images.map((image) => this.entryFor(image)));
 		}
-		this.syncDeleteButton();
 	}
 
 	private matching(): UserImageIcon[] {
@@ -285,6 +277,21 @@ export class ImagePanel {
 		);
 	}
 
+	private renderDeleteButton(host: HTMLElement, entry: IconEntry): void {
+		const button = host.createEl("button", {
+			cls: "icon-picker-image-delete clickable-icon",
+			attr: {
+				type: "button",
+				"aria-label": t("iconPicker.customDeleteConfirm", { name: entry.label ?? entry.name }),
+			},
+		});
+		setIcon(button, "x");
+		button.addEventListener("click", () => {
+			const image = this.host.images().find((item) => item.id === entry.name);
+			if (image) void this.confirmDelete(image);
+		});
+	}
+
 	private isSelected(entry: IconEntry): boolean {
 		return entry.name === this.activeId;
 	}
@@ -294,21 +301,6 @@ export class ImagePanel {
 		// Through the pack, so the pick arrives carrying the same "follow the
 		// callout's colour" default a flat drawing gets everywhere else.
 		this.host.onSelect(userImagesPack.makeIcon(entry, {}), entry);
-		this.syncDeleteButton();
-	}
-
-	/**
-	 * Delete is live only while it has something to act on — with no pictures at
-	 * all, or none picked, it is disabled rather than hidden, so the toolbar
-	 * keeps the same shape and the button stays where the eye last left it.
-	 */
-	private syncDeleteButton(): void {
-		if (this.deleteBtn) this.deleteBtn.disabled = !this.activeImage();
-	}
-
-	private activeImage(): UserImageIcon | undefined {
-		if (!this.activeId) return undefined;
-		return this.host.images().find((image) => image.id === this.activeId);
 	}
 
 	// ── Mutations ───────────────────────────────────────────────────────
@@ -349,6 +341,7 @@ export class ImagePanel {
 			this.host.images().filter((entry) => entry.id !== image.id),
 		);
 		if (this.activeId === image.id) this.activeId = null;
+		this.host.onDelete(image.id);
 		this.refresh();
 	}
 }

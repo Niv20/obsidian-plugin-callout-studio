@@ -495,10 +495,11 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "無法將 {{name}} 讀取為自訂圖示。",
 	"iconPicker.customDuplicate":
 		"{{name}} 已在你的自訂圖示中。請重新命名檔案，或刪除現有圖示。",
-	"iconPicker.customAdd": "新增自訂圖示",
 	"iconPicker.customEmpty":
 		"還沒有自訂圖示。請從電腦新增 SVG、PNG、JPEG 或 WebP 檔案，或將檔案拖到這裡。",
-	"iconPicker.customDelete": "刪除",
+	"iconPicker.customEmptyTitle": "尚無自訂圖示",
+	"iconPicker.customEmptyHint": "點擊上方的圖片按鈕，或將檔案拖曳到這裡",
+	"iconPicker.customEmptyFormats": "支援的格式：SVG、PNG、JPEG 和 WebP",
 	"iconPicker.customDeleteConfirm": "刪除「{{name}}」？",
 	"iconPicker.customDeleteInUse":
 		"{{count}} 個 callout 正在使用此自訂圖示。在你選擇新圖示之前，它們會回退到佔位圖示。",

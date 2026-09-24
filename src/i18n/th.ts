@@ -510,10 +510,11 @@ export const th: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "ไม่สามารถอ่าน {{name}} เป็นไอคอนกำหนดเองได้",
 	"iconPicker.customDuplicate":
 		"{{name}} มีอยู่แล้วในไอคอนกำหนดเองของคุณ เปลี่ยนชื่อไฟล์หรือลบไอคอนที่มีอยู่",
-	"iconPicker.customAdd": "เพิ่มไอคอนกำหนดเอง",
 	"iconPicker.customEmpty":
 		"ยังไม่มีไอคอนกำหนดเอง เพิ่มไฟล์ SVG, PNG, JPEG หรือ WebP จากคอมพิวเตอร์ของคุณ หรือลากมาวางที่นี่",
-	"iconPicker.customDelete": "ลบ",
+	"iconPicker.customEmptyTitle": "ยังไม่มีไอคอนที่กำหนดเอง",
+	"iconPicker.customEmptyHint": "คลิกปุ่มรูปภาพด้านบนหรือลากไฟล์มาวางที่นี่",
+	"iconPicker.customEmptyFormats": "รูปแบบไฟล์ที่รองรับ: SVG, PNG, JPEG และ WebP",
 	"iconPicker.customDeleteConfirm": "ลบ “{{name}}” หรือไม่?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callouts ใช้ไอคอนกำหนดเองนี้ จะกลับไปใช้ไอคอนตัวแทนจนกว่าคุณจะเลือกไอคอนใหม่",

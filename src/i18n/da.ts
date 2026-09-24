@@ -449,10 +449,11 @@ export const da: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} kunne ikke læses som et brugerdefineret ikon.",
 	"iconPicker.customDuplicate":
 		"{{name}} findes allerede blandt dine brugerdefinerede ikoner. Omdøb filen, eller slet det eksisterende ikon.",
-	"iconPicker.customAdd": "Tilføj brugerdefinerede ikoner",
 	"iconPicker.customEmpty":
 		"Ingen brugerdefinerede ikoner endnu. Tilføj en SVG-, PNG-, JPEG- eller WebP-fil fra din computer, eller slip den her.",
-	"iconPicker.customDelete": "Slet",
+	"iconPicker.customEmptyTitle": "Ingen brugerdefinerede ikoner endnu",
+	"iconPicker.customEmptyHint": "Klik på billedknappen ovenfor, eller træk en fil hertil",
+	"iconPicker.customEmptyFormats": "Understøttede formater: SVG, PNG, JPEG og WebP",
 	"iconPicker.customDeleteConfirm": "Slet „{{name}}“?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callouts bruger dette brugerdefinerede ikon. De falder tilbage til et pladsholderikon, indtil du vælger et nyt.",

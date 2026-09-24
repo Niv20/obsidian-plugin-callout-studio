@@ -514,10 +514,11 @@ export const sv: Record<string, string> = {
 	"iconPicker.customDecodeFailed": "{{name}} kunde inte läsas som en anpassad ikon.",
 	"iconPicker.customDuplicate":
 		"{{name}} finns redan bland dina anpassade ikoner. Byt namn på filen eller ta bort den befintliga ikonen.",
-	"iconPicker.customAdd": "Lägg till anpassade ikoner",
 	"iconPicker.customEmpty":
 		"Inga anpassade ikoner ännu. Lägg till en SVG-, PNG-, JPEG- eller WebP-fil från datorn, eller släpp den här.",
-	"iconPicker.customDelete": "Ta bort",
+	"iconPicker.customEmptyTitle": "Inga egna ikoner än",
+	"iconPicker.customEmptyHint": "Klicka på bildknappen ovan eller dra en fil hit",
+	"iconPicker.customEmptyFormats": "Format som stöds: SVG, PNG, JPEG och WebP",
 	"iconPicker.customDeleteConfirm": "Ta bort „{{name}}“?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callouts använder den här anpassade ikonen. De återgår till en platshållarikon tills du väljer en ny.",

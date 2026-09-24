@@ -475,10 +475,11 @@ export const nl: Record<string, string> = {
 		"{{name}} kon niet als aangepast pictogram worden gelezen.",
 	"iconPicker.customDuplicate":
 		"{{name}} staat al bij uw aangepaste pictogrammen. Hernoem het bestand of verwijder het bestaande pictogram.",
-	"iconPicker.customAdd": "Aangepaste pictogrammen toevoegen",
 	"iconPicker.customEmpty":
 		"Nog geen aangepaste pictogrammen. Voeg een SVG-, PNG-, JPEG- of WebP-bestand vanaf uw computer toe, of sleep het hierheen.",
-	"iconPicker.customDelete": "Verwijderen",
+	"iconPicker.customEmptyTitle": "Nog geen aangepaste pictogrammen",
+	"iconPicker.customEmptyHint": "Klik op de afbeeldingsknop hierboven of sleep hier een bestand naartoe",
+	"iconPicker.customEmptyFormats": "Ondersteunde indelingen: SVG, PNG, JPEG en WebP",
 	"iconPicker.customDeleteConfirm": "“{{name}}” verwijderen?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callouts gebruiken dit aangepaste pictogram. Ze vallen terug op een plaatsaanduidingspictogram totdat u een nieuw pictogram kiest.",

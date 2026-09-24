@@ -470,10 +470,11 @@ export const de: Record<string, string> = {
 		"{{name}} konnte nicht als benutzerdefiniertes Symbol gelesen werden.",
 	"iconPicker.customDuplicate":
 		"{{name}} ist bereits in Ihren benutzerdefinierten Symbolen. Benennen Sie die Datei um oder löschen Sie das vorhandene Symbol.",
-	"iconPicker.customAdd": "Benutzerdefinierte Symbole hinzufügen",
 	"iconPicker.customEmpty":
 		"Noch keine benutzerdefinierten Symbole. Fügen Sie eine SVG-, PNG-, JPEG- oder WebP-Datei von Ihrem Computer hinzu oder ziehen Sie sie hierher.",
-	"iconPicker.customDelete": "Löschen",
+	"iconPicker.customEmptyTitle": "Noch keine benutzerdefinierten Symbole",
+	"iconPicker.customEmptyHint": "Klicken Sie oben auf die Bildschaltfläche oder ziehen Sie eine Datei hierher",
+	"iconPicker.customEmptyFormats": "Unterstützte Formate: SVG, PNG, JPEG und WebP",
 	"iconPicker.customDeleteConfirm": "„{{name}}“ löschen?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} Callout(s) verwenden dieses benutzerdefinierte Symbol. Sie fallen auf ein Platzhalter-Symbol zurück, bis Sie ein neues auswählen.",

@@ -1,14 +1,10 @@
 /**
  * settings/iconpicker/IconPickerModal.ts — The icon selection modal.
  *
- * A source menu rather than a tab row: there are more sources than a tab strip
- * fits, on mobile or in RTL, and the list keeps growing. The modal owns only
- * the source choice, the preview and Confirm; everything about a given source
- * lives in PackPanel.
+ * The source menu fits a growing catalog on mobile and in RTL. The modal owns
+ * source choice, preview and Confirm; each source panel owns its own controls.
  *
- * Nothing here reaches the network. Choosing a source shows either its grid or
- * a download prompt; only pressing Download, or confirming an icon whose
- * artwork is not local yet, causes a request.
+ * Requests start only on Download or confirmation of uncached artwork.
  */
 import { Modal, setIcon } from "obsidian";
 import type { App } from "obsidian";
@@ -44,9 +40,7 @@ import { applyModalChrome, removeModalChrome } from "../modalChrome";
 import { t } from "../../i18n";
 
 /**
- * What the modal needs of whichever panel is on screen. Every source but one is
- * a PackPanel; "Custom Icons" is an ImagePanel, because it is the only library
- * the user can write to (see ImagePanel's header).
+ * Both PackPanel and the writable ImagePanel implement this surface.
  */
 interface PickerPanel {
 	render(): Promise<void>;
@@ -268,6 +262,11 @@ export class IconPicker extends Modal {
 				selectedIcon: () => this.selectedIcon,
 				onSelect: (icon) => {
 					this.selectedIcon = icon;
+					this.updatePreview();
+				},
+				onDelete: (id) => {
+					if (this.selectedIcon?.type !== "image" || this.selectedIcon.value !== id) return;
+					this.selectedIcon = null;
 					this.updatePreview();
 				},
 			});

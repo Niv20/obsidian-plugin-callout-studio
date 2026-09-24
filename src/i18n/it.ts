@@ -473,10 +473,11 @@ export const it: Record<string, string> = {
 		"{{name}} non può essere letto come icona personalizzata.",
 	"iconPicker.customDuplicate":
 		"{{name}} è già tra le tue icone personalizzate. Rinomina il file o elimina l’icona esistente.",
-	"iconPicker.customAdd": "Aggiungi icone personalizzate",
 	"iconPicker.customEmpty":
 		"Non ci sono ancora icone personalizzate. Aggiungi un file SVG, PNG, JPEG o WebP dal computer, oppure trascinalo qui.",
-	"iconPicker.customDelete": "Elimina",
+	"iconPicker.customEmptyTitle": "Ancora nessuna icona personalizzata",
+	"iconPicker.customEmptyHint": "Fai clic sul pulsante immagine qui sopra o trascina qui un file",
+	"iconPicker.customEmptyFormats": "Formati supportati: SVG, PNG, JPEG e WebP",
 	"iconPicker.customDeleteConfirm": "Eliminare “{{name}}”?",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callout usano questa icona personalizzata. Torneranno a un’icona segnaposto finché non ne sceglierai una nuova.",
