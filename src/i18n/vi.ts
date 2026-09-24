@@ -789,7 +789,7 @@ export const vi: Record<string, string> = {
 	"usage.missing": "Ghi chú này không còn tồn tại. Đang cập nhật kết quả…",
 	"usage.changed": "Vị trí này đã thay đổi hoặc đã di chuyển nhưng không xác định được vị trí mới. Đang cập nhật kết quả…",
 	"usage.openFailed": "Không thể mở vị trí xuất hiện của callout này.",
-	"usage.menuCount": "Tìm nơi sử dụng: {{count}} trong {{files}} tệp",
+	"usage.menuCount": "Tìm nơi sử dụng ({{count}})",
 	"usage.menuIncomplete": "Tìm nơi sử dụng — chưa quét xong",
 	"usage.menuLoading": "Tìm nơi sử dụng — đang đếm…",
 	"usage.closeSettings": "Đóng Cài đặt để xem kết quả callout trong thanh bên.",

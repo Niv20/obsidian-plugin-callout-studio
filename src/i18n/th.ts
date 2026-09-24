@@ -777,7 +777,7 @@ export const th: Record<string, string> = {
 	"usage.missing": "โน้ตนี้ไม่มีอยู่แล้ว กำลังอัปเดตผลลัพธ์…",
 	"usage.changed": "รายการนี้เปลี่ยนแปลงหรือถูกย้ายโดยไม่สามารถระบุตำแหน่งใหม่ได้ กำลังอัปเดตผลลัพธ์…",
 	"usage.openFailed": "ไม่สามารถเปิดตำแหน่งที่พบ callout นี้ได้",
-	"usage.menuCount": "ค้นหาการใช้งาน: {{count}} รายการใน {{files}} ไฟล์",
+	"usage.menuCount": "ค้นหาการใช้งาน ({{count}})",
 	"usage.menuIncomplete": "ค้นหาการใช้งาน — สแกนไม่ครบ",
 	"usage.menuLoading": "ค้นหาการใช้งาน — กำลังนับ…",
 	"usage.closeSettings": "ปิดการตั้งค่าเพื่อดูผลลัพธ์ของ callout ในแถบด้านข้าง",

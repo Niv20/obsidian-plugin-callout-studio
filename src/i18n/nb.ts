@@ -763,7 +763,7 @@ export const nb: Record<string, string> = {
 	"usage.missing": "Dette notatet finnes ikke lenger. Oppdaterer resultatene…",
 	"usage.changed": "Denne forekomsten er endret eller flyttet til et uklart sted. Oppdaterer resultatene…",
 	"usage.openFailed": "Kunne ikke åpne denne callout-forekomsten.",
-	"usage.menuCount": "Finn bruk: {{count}} i {{files}} filer",
+	"usage.menuCount": "Finn bruk ({{count}})",
 	"usage.menuIncomplete": "Finn bruk — ufullstendig skanning",
 	"usage.menuLoading": "Finn bruk — teller…",
 	"usage.closeSettings": "Lukk Innstillinger for å se callout-resultatene i sidepanelet.",

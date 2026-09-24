@@ -781,7 +781,7 @@ export const hi: Record<string, string> = {
 	"usage.missing": "यह नोट अब मौजूद नहीं है। परिणाम अपडेट किए जा रहे हैं…",
 	"usage.changed": "यह उपयोग स्थान बदल गया है या इसका नया स्थान स्पष्ट नहीं है। परिणाम अपडेट किए जा रहे हैं…",
 	"usage.openFailed": "इस callout के उपयोग स्थान को नहीं खोला जा सका।",
-	"usage.menuCount": "उपयोग खोजें: {{files}} फ़ाइलों में {{count}}",
+	"usage.menuCount": "उपयोग खोजें ({{count}})",
 	"usage.menuIncomplete": "उपयोग खोजें — स्कैन अधूरा है",
 	"usage.menuLoading": "उपयोग खोजें — गिनती जारी है…",
 	"usage.closeSettings": "साइडबार में callout के परिणाम देखने के लिए सेटिंग बंद करें।",

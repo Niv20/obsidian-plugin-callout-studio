@@ -100,10 +100,9 @@ reach the opened sidebar.
 
 ## Usage counts in menus
 
-A callout's three-dot menu shows **Find usages**, with its total across all three
-formats and the number of distinct files. Select it to open those results.
-Definition menus include the type's aliases; a file containing both the primary
-ID and an alias still counts as one file.
+A callout's three-dot menu shows **Find usages** with its total across all three
+formats. Select it to open those results. Definition menus include the type's
+aliases, so their occurrences contribute to the total.
 
 A first scan displays **counting…**. Incomplete scans are labelled rather than
 reported as zero. Actions that change notes check current contents separately.

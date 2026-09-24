@@ -786,7 +786,7 @@ export const hu: Record<string, string> = {
 	"usage.missing": "Ez a jegyzet már nem létezik. Az eredmények frissítése…",
 	"usage.changed": "Ez az előfordulás megváltozott, vagy nem egyértelműen más helyre került. Az eredmények frissítése…",
 	"usage.openFailed": "Nem sikerült megnyitni ezt a callout-előfordulást.",
-	"usage.menuCount": "Előfordulások keresése: {{count}} {{files}} fájlban",
+	"usage.menuCount": "Előfordulások keresése ({{count}})",
 	"usage.menuIncomplete": "Előfordulások keresése — a vizsgálat nem teljes",
 	"usage.menuLoading": "Előfordulások keresése — számlálás…",
 	"usage.closeSettings": "Zárd be a Beállításokat, hogy a callout-eredményeket az oldalsávban lásd.",

@@ -908,7 +908,7 @@ export const en: Record<string, string> = {
 	"usage.missing": "This note no longer exists. Updating results…",
 	"usage.changed": "This occurrence has changed or moved ambiguously. Updating results…",
 	"usage.openFailed": "Could not open this callout occurrence.",
-	"usage.menuCount": "Find usages: {{count}} in {{files}} files",
+	"usage.menuCount": "Find usages ({{count}})",
 	"usage.menuIncomplete": "Find usages — scan incomplete",
 	"usage.menuLoading": "Find usages — counting…",
 	"usage.closeSettings": "Close Settings to view the callout results in the sidebar.",

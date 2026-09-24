@@ -782,7 +782,7 @@ export const tr: Record<string, string> = {
 	"usage.missing": "Bu not artık mevcut değil. Sonuçlar güncelleniyor…",
 	"usage.changed": "Bu kullanım değişti veya yeni konumu belirsiz. Sonuçlar güncelleniyor…",
 	"usage.openFailed": "Bu callout kullanımı açılamadı.",
-	"usage.menuCount": "Kullanımları bul: {{files}} dosyada {{count}}",
+	"usage.menuCount": "Kullanımları bul ({{count}})",
 	"usage.menuIncomplete": "Kullanımları bul — tarama tamamlanmadı",
 	"usage.menuLoading": "Kullanımları bul — sayılıyor…",
 	"usage.closeSettings": "Callout sonuçlarını kenar çubuğunda görmek için Ayarlar bölümünü kapatın.",

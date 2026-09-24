@@ -771,7 +771,7 @@ export const ar: Record<string, string> = {
 	"usage.missing": "لم تعد هذه الملاحظة موجودة. جارٍ تحديث النتائج…",
 	"usage.changed": "تغيّر موضع الظهور هذا أو انتقل إلى مكان لا يمكن تحديده بدقة. جارٍ تحديث النتائج…",
 	"usage.openFailed": "تعذّر فتح موضع ظهور الـ callout هذا.",
-	"usage.menuCount": "البحث عن الاستخدامات: {{count}} في {{files}} ملف",
+	"usage.menuCount": "البحث عن الاستخدامات ({{count}})",
 	"usage.menuIncomplete": "البحث عن الاستخدامات — الفحص غير مكتمل",
 	"usage.menuLoading": "البحث عن الاستخدامات — جارٍ العد…",
 	"usage.closeSettings": "أغلق الإعدادات لعرض نتائج الـ callout في الشريط الجانبي.",

@@ -71,7 +71,7 @@ describe("shared callout usage surfaces", () => {
 		}
 		const menu = fakeMenu();
 		addUsageMenuItem(menu.menu, app, ["note"]);
-		assert.equal(menu.title(), t("usage.menuCount", { count: 4, files: 2 }));
+		assert.equal(menu.title(), "Find usages (4)", "menu shows usages without a file count");
 		await scanVaultCalloutStatistics(app);
 		assert.equal(reads(), 2, "repeat report and menu reuse parsed files");
 		assert.equal(registry.has("never-saved"), false);
@@ -106,10 +106,10 @@ describe("shared callout usage surfaces", () => {
 		await Promise.resolve();
 		release("[!note]");
 		await running;
-		assert.equal(menu.title(), t("usage.menuCount", { count: 1, files: 1 }));
+		assert.equal(menu.title(), t("usage.menuCount", { count: 1 }));
 		menu.hide();
 		index.invalidate("a.md");
-		assert.equal(menu.title(), t("usage.menuCount", { count: 1, files: 1 }));
+		assert.equal(menu.title(), t("usage.menuCount", { count: 1 }));
 		index.dispose();
 	});
 

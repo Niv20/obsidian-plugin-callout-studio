@@ -791,7 +791,7 @@ export const nl: Record<string, string> = {
 	"usage.missing": "Deze notitie bestaat niet meer. Resultaten worden bijgewerkt…",
 	"usage.changed": "Deze vindplaats is gewijzigd of verplaatst naar een onduidelijke plek. Resultaten worden bijgewerkt…",
 	"usage.openFailed": "Kan deze vindplaats van de callout niet openen.",
-	"usage.menuCount": "Gebruik zoeken: {{count}} in {{files}} bestanden",
+	"usage.menuCount": "Gebruik zoeken ({{count}})",
 	"usage.menuIncomplete": "Gebruik zoeken — scan onvolledig",
 	"usage.menuLoading": "Gebruik zoeken — tellen…",
 	"usage.closeSettings": "Sluit Instellingen om de callout-resultaten in de zijbalk te bekijken.",

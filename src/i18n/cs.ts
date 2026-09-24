@@ -779,7 +779,7 @@ export const cs: Record<string, string> = {
 	"usage.missing": "Tato poznámka již neexistuje. Aktualizace výsledků…",
 	"usage.changed": "Tento výskyt se změnil nebo se přesunul na nejednoznačné místo. Aktualizace výsledků…",
 	"usage.openFailed": "Tento výskyt calloutu se nepodařilo otevřít.",
-	"usage.menuCount": "Najít použití: {{count}} v {{files}} souborech",
+	"usage.menuCount": "Najít použití ({{count}})",
 	"usage.menuIncomplete": "Najít použití — prohledávání není dokončeno",
 	"usage.menuLoading": "Najít použití — počítání…",
 	"usage.closeSettings": "Zavřete nastavení, abyste výsledky pro callouty viděli v postranním panelu.",

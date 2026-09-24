@@ -789,7 +789,7 @@ export const de: Record<string, string> = {
 	"usage.missing": "Diese Notiz existiert nicht mehr. Ergebnisse werden aktualisiert…",
 	"usage.changed": "Dieses Vorkommen hat sich geändert oder sein neuer Ort ist nicht eindeutig. Ergebnisse werden aktualisiert…",
 	"usage.openFailed": "Dieses Callout-Vorkommen konnte nicht geöffnet werden.",
-	"usage.menuCount": "Verwendungen finden: {{count}} in {{files}} Dateien",
+	"usage.menuCount": "Verwendungen finden ({{count}})",
 	"usage.menuIncomplete": "Verwendungen finden — Suche unvollständig",
 	"usage.menuLoading": "Verwendungen finden — wird gezählt…",
 	"usage.closeSettings": "Einstellungen schließen, um die Callout-Ergebnisse in der Seitenleiste anzuzeigen.",

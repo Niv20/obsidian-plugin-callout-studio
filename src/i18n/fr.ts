@@ -796,7 +796,7 @@ export const fr: Record<string, string> = {
 	"usage.missing": "Cette note n’existe plus. Mise à jour des résultats…",
 	"usage.changed": "Cette occurrence a changé ou a été déplacée vers un emplacement impossible à déterminer avec certitude. Mise à jour des résultats…",
 	"usage.openFailed": "Impossible d’ouvrir cette occurrence de callout.",
-	"usage.menuCount": "Rechercher les utilisations : {{count}} dans {{files}} fichiers",
+	"usage.menuCount": "Rechercher les utilisations ({{count}})",
 	"usage.menuIncomplete": "Rechercher les utilisations — analyse incomplète",
 	"usage.menuLoading": "Rechercher les utilisations — comptage…",
 	"usage.closeSettings": "Fermez les paramètres pour voir les résultats de callouts dans la barre latérale.",

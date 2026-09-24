@@ -770,7 +770,7 @@ export const fi: Record<string, string> = {
 	"usage.missing": "Tätä muistiinpanoa ei enää ole. Päivitetään tuloksia…",
 	"usage.changed": "Tämä esiintymä on muuttunut tai siirtynyt paikkaan, jota ei voi määrittää yksiselitteisesti. Päivitetään tuloksia…",
 	"usage.openFailed": "Tätä callout-esiintymää ei voitu avata.",
-	"usage.menuCount": "Etsi esiintymiä: {{count}} {{files}} tiedostossa",
+	"usage.menuCount": "Etsi esiintymiä ({{count}})",
 	"usage.menuIncomplete": "Etsi esiintymiä — skannaus kesken",
 	"usage.menuLoading": "Etsi esiintymiä — lasketaan…",
 	"usage.closeSettings": "Sulje asetukset, jotta näet callout-tulokset sivupaneelissa.",

@@ -758,7 +758,7 @@ export const da: Record<string, string> = {
 	"usage.missing": "Denne note findes ikke længere. Opdaterer resultaterne…",
 	"usage.changed": "Denne forekomst er ændret eller flyttet til en placering, der ikke kan bestemmes entydigt. Opdaterer resultaterne…",
 	"usage.openFailed": "Denne callout-forekomst kunne ikke åbnes.",
-	"usage.menuCount": "Find anvendelser: {{count}} i {{files}} filer",
+	"usage.menuCount": "Find anvendelser ({{count}})",
 	"usage.menuIncomplete": "Find anvendelser — scanning ufuldstændig",
 	"usage.menuLoading": "Find anvendelser — tæller…",
 	"usage.closeSettings": "Luk indstillingerne for at se callout-resultaterne i sidepanelet.",

@@ -22,7 +22,7 @@ export function addUsageMenuItem(
 			if (!active) return;
 			const result = index.query(ids);
 			const title = index.status === "ready"
-				? t("usage.menuCount", { count: result.totalCount, files: result.fileCount })
+				? t("usage.menuCount", { count: result.totalCount })
 				: t(index.status === "partial" ? "usage.menuIncomplete" : "usage.menuLoading");
 			item.setTitle(title).setIcon(STATISTICS_ICON_ID);
 		};

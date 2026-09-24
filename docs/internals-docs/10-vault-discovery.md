@@ -84,7 +84,9 @@ part of identity. Vault-wide metrics include unknown source IDs and are cached
 by `dataRevision`, which advances for published or removed results, rather than
 every typing notification. Result DOM uses the same distinction. Definition-menu
 queries union `vaultIdFormsFor(def)` including aliases and
-count distinct files, rather than summing alias file counts. Registry resolution
+count distinct files, rather than summing alias file counts. The menu label
+shows only the total occurrence count; the file count remains available to
+other consumers. Registry resolution
 provides appearance/status only; fallback artwork never changes usage ownership.
 
 `CalloutOccurrencesView` is a registered ItemView with a searchable

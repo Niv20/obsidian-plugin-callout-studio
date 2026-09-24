@@ -795,7 +795,7 @@ export const it: Record<string, string> = {
 	"usage.missing": "Questa nota non esiste più. Aggiornamento dei risultati…",
 	"usage.changed": "Questa occorrenza è cambiata o è stata spostata in modo ambiguo. Aggiornamento dei risultati…",
 	"usage.openFailed": "Impossibile aprire questa occorrenza del callout.",
-	"usage.menuCount": "Trova utilizzi: {{count}} in {{files}} file",
+	"usage.menuCount": "Trova utilizzi ({{count}})",
 	"usage.menuIncomplete": "Trova utilizzi — scansione incompleta",
 	"usage.menuLoading": "Trova utilizzi — conteggio in corso…",
 	"usage.closeSettings": "Chiudi le Impostazioni per vedere i risultati dei callout nella barra laterale.",

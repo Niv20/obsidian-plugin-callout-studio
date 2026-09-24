@@ -783,7 +783,7 @@ export const ko: Record<string, string> = {
 	"usage.missing": "이 노트는 더 이상 존재하지 않습니다. 결과를 업데이트하는 중…",
 	"usage.changed": "이 사용 위치가 변경되었거나 이동한 위치를 명확히 알 수 없습니다. 결과를 업데이트하는 중…",
 	"usage.openFailed": "이 callout 사용 위치를 열지 못했습니다.",
-	"usage.menuCount": "사용 위치 찾기: {{files}}개의 파일에 {{count}}개",
+	"usage.menuCount": "사용 위치 찾기 ({{count}})",
 	"usage.menuIncomplete": "사용 위치 찾기 — 스캔이 완료되지 않음",
 	"usage.menuLoading": "사용 위치 찾기 — 개수 세는 중…",
 	"usage.closeSettings": "사이드바에서 callout 결과를 보려면 설정을 닫으세요.",

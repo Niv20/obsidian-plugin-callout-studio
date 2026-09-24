@@ -785,7 +785,7 @@ export const id: Record<string, string> = {
 	"usage.missing": "Catatan ini sudah tidak ada. Memperbarui hasil…",
 	"usage.changed": "Kemunculan ini berubah atau berpindah ke lokasi yang tidak pasti. Memperbarui hasil…",
 	"usage.openFailed": "Tidak dapat membuka kemunculan callout ini.",
-	"usage.menuCount": "Temukan penggunaan: {{count}} di {{files}} file",
+	"usage.menuCount": "Temukan penggunaan ({{count}})",
 	"usage.menuIncomplete": "Temukan penggunaan — pemindaian belum lengkap",
 	"usage.menuLoading": "Temukan penggunaan — menghitung…",
 	"usage.closeSettings": "Tutup Pengaturan untuk melihat hasil callout di bilah samping.",

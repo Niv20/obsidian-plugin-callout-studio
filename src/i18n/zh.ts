@@ -768,7 +768,7 @@ export const zh: Record<string, string> = {
 	"usage.missing": "此笔记已不存在。正在更新结果…",
 	"usage.changed": "此处内容已更改或已移动，无法确定新位置。正在更新结果…",
 	"usage.openFailed": "无法打开此处的 Callout。",
-	"usage.menuCount": "查找使用位置：{{files}} 个文件中有 {{count}} 处",
+	"usage.menuCount": "查找使用位置 ({{count}})",
 	"usage.menuIncomplete": "查找使用位置 — 扫描未完成",
 	"usage.menuLoading": "查找使用位置 — 正在计数…",
 	"usage.closeSettings": "关闭“设置”，即可在侧边栏查看 Callout 结果。",

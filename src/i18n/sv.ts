@@ -777,7 +777,7 @@ export const sv: Record<string, string> = {
 	"usage.missing": "Anteckningen finns inte längre. Uppdaterar resultaten…",
 	"usage.changed": "Den här förekomsten har ändrats eller flyttats på ett oklart sätt. Uppdaterar resultaten…",
 	"usage.openFailed": "Det gick inte att öppna den här callout-förekomsten.",
-	"usage.menuCount": "Hitta användningar: {{count}} i {{files}} filer",
+	"usage.menuCount": "Hitta användningar ({{count}})",
 	"usage.menuIncomplete": "Hitta användningar — skanningen är ofullständig",
 	"usage.menuLoading": "Hitta användningar — räknar…",
 	"usage.closeSettings": "Stäng Inställningar för att se callout-resultaten i sidofältet.",

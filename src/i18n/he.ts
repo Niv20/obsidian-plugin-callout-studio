@@ -817,7 +817,7 @@ export const he: Record<string, string> = {
 	"usage.missing": "הפתק הזה כבר אינו קיים. התוצאות מתעדכנות…",
 	"usage.changed": "המופע הזה השתנה או הועבר למיקום שאינו חד־משמעי. התוצאות מתעדכנות…",
 	"usage.openFailed": "לא ניתן לפתוח את המופע הזה של תיבת־ההבלטה.",
-	"usage.menuCount": "איתור שימושים: {{count}} ב־{{files}} קבצים",
+	"usage.menuCount": "איתור שימושים ({{count}})",
 	"usage.menuIncomplete": "איתור שימושים — הסריקה לא הושלמה",
 	"usage.menuLoading": "איתור שימושים — הספירה מתבצעת…",
 	"usage.closeSettings": "יש לסגור את ההגדרות כדי לראות את תוצאות תיבות־ההבלטה בסרגל הצד.",

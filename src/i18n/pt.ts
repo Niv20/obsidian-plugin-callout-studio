@@ -783,7 +783,7 @@ export const pt: Record<string, string> = {
 	"usage.missing": "Esta nota não existe mais. Atualizando resultados…",
 	"usage.changed": "Esta ocorrência mudou ou foi movida para um local incerto. Atualizando resultados…",
 	"usage.openFailed": "Não foi possível abrir esta ocorrência de callout.",
-	"usage.menuCount": "Encontrar usos: {{count}} em {{files}} arquivos",
+	"usage.menuCount": "Encontrar usos ({{count}})",
 	"usage.menuIncomplete": "Encontrar usos — verificação incompleta",
 	"usage.menuLoading": "Encontrar usos — contando…",
 	"usage.closeSettings": "Feche as Configurações para ver os resultados dos callouts na barra lateral.",

@@ -785,7 +785,7 @@ export const ro: Record<string, string> = {
 	"usage.missing": "Această notă nu mai există. Se actualizează rezultatele…",
 	"usage.changed": "Această apariție s-a modificat sau a fost mutată într-un loc incert. Se actualizează rezultatele…",
 	"usage.openFailed": "Nu s-a putut deschide această apariție de callout.",
-	"usage.menuCount": "Găsește utilizări: {{count}} în {{files}} fișiere",
+	"usage.menuCount": "Găsește utilizări ({{count}})",
 	"usage.menuIncomplete": "Găsește utilizări — scanare incompletă",
 	"usage.menuLoading": "Găsește utilizări — se numără…",
 	"usage.closeSettings": "Închide Setări pentru a vedea rezultatele pentru callout-uri în bara laterală.",

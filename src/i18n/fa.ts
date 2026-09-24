@@ -782,7 +782,7 @@ export const fa: Record<string, string> = {
 	"usage.missing": "این یادداشت دیگر وجود ندارد. در حال به‌روزرسانی نتایج…",
 	"usage.changed": "این مورد تغییر کرده یا به مکانی جابه‌جا شده که نمی‌توان آن را با قطعیت تعیین کرد. در حال به‌روزرسانی نتایج…",
 	"usage.openFailed": "باز کردن این مورد استفاده از callout ممکن نشد.",
-	"usage.menuCount": "یافتن موارد استفاده: {{count}} مورد در {{files}} فایل",
+	"usage.menuCount": "یافتن موارد استفاده ({{count}})",
 	"usage.menuIncomplete": "یافتن موارد استفاده — اسکن کامل نیست",
 	"usage.menuLoading": "یافتن موارد استفاده — در حال شمارش…",
 	"usage.closeSettings": "برای دیدن نتایج callout در نوار کناری، تنظیمات را ببندید.",

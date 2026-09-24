@@ -771,7 +771,7 @@ export const ms: Record<string, string> = {
 	"usage.missing": "Nota ini tidak lagi wujud. Mengemas kini hasil…",
 	"usage.changed": "Kemunculan ini telah berubah atau berpindah ke lokasi yang tidak jelas. Mengemas kini hasil…",
 	"usage.openFailed": "Tidak dapat membuka kemunculan callout ini.",
-	"usage.menuCount": "Cari penggunaan: {{count}} dalam {{files}} fail",
+	"usage.menuCount": "Cari penggunaan ({{count}})",
 	"usage.menuIncomplete": "Cari penggunaan — imbasan tidak lengkap",
 	"usage.menuLoading": "Cari penggunaan — sedang mengira…",
 	"usage.closeSettings": "Tutup Tetapan untuk melihat hasil callout dalam bar sisi.",

@@ -748,7 +748,7 @@ export const zhTW: Record<string, string> = {
 	"usage.missing": "此筆記已不存在。正在更新結果…",
 	"usage.changed": "此處內容已變更或已移動，無法確定新位置。正在更新結果…",
 	"usage.openFailed": "無法開啟此處的 Callout。",
-	"usage.menuCount": "尋找使用位置：{{files}} 個檔案中有 {{count}} 處",
+	"usage.menuCount": "尋找使用位置 ({{count}})",
 	"usage.menuIncomplete": "尋找使用位置 — 掃描未完成",
 	"usage.menuLoading": "尋找使用位置 — 正在計數…",
 	"usage.closeSettings": "關閉「設定」，即可在側邊欄查看 Callout 結果。",
