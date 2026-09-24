@@ -104,9 +104,23 @@ choices, with the shared palette group heading and divider styles. **All types**
 removes the ID restriction from the index query while retaining any role filter;
 it is not a registry definition. Search ranking applies within each type group.
 Membership is tracked by the local adapter, independently of fallback artwork
-or definition provenance. Theme-only types become options only when present in
-source. Choice aggregation is cached by the index's `dataRevision`
-and invalidated on registry changes, so typing does not rescan the vault.
+or definition provenance. Unregistered display definitions reuse
+`fallbackSourceFor` and `buildDiscoveredRow`, the same appearance builders as
+manual discovery, with the committed fallback definition from `getReal`.
+They retain the observed ID, sidebar label and equivalent-spelling aliases;
+the fallback's ID and aliases never become usage filters. This also applies to
+a retained zero-result selection. The shared `paintCalloutListIcon` paints both
+popup rows and the selected icon, including the fallback's hidden-icon setting;
+theme-owned IDs still use their measured theme appearance. These definitions
+remain local display data and never enter the registry or saved settings.
+Theme-only types become options only when present in source.
+Choice aggregation is cached by the index's `dataRevision` and committed
+fallback reference, and invalidated on registry changes, so typing does not
+rescan the vault. The fallback settings picker also calls
+`refreshOccurrencesViewAppearance` to repaint open sidebars while preserving
+their selection and typed query. This explicit refresh is needed even when no
+saved fallback rows change and the generated CSS stays identical, such as
+switching between two emoji fallbacks with the same colors.
 The selected source identity is retained as a local choice through an initial
 scan or deletion of its last occurrence; it can therefore show zero results
 without silently falling back to a different type. Selecting another type removes

@@ -70,6 +70,9 @@ export class CalloutOccurrencesView extends ItemView {
 	getViewType(): string { return CALLOUT_OCCURRENCES_VIEW; }
 	getDisplayText(): string { return t("usage.title"); }
 	getIcon(): string { return STATISTICS_ICON_ID; }
+	refreshAppearance(): void {
+		if (this.opened) this.registryChanged();
+	}
 	refreshLabels(): void {
 		if (!this.opened) return;
 		this.clearFrame();

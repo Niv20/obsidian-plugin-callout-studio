@@ -15,6 +15,7 @@ import { Setting } from "obsidian";
 import { t } from "../../i18n";
 import { CalloutCombobox } from "../calloutCombobox";
 import { CalloutEditor } from "../CalloutEditor";
+import { refreshOccurrencesViewAppearance } from "../../usage/registerOccurrencesView";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
 
@@ -50,6 +51,7 @@ export function renderFallbackSection(
 		onChange: async (id) => {
 			ctx.plugin.settings.fallbackCalloutId = id;
 			ctx.plugin.restyleUncustomizedFallbackRows();
+			refreshOccurrencesViewAppearance(ctx.plugin);
 			await ctx.plugin.saveSettings();
 			ctx.plugin.refreshCallouts();
 		},

@@ -18,6 +18,14 @@ export function refreshOccurrencesViewLocale(plugin: Plugin): void {
 	}
 }
 
+/** Fallback selection can change artwork without changing registry rows or generated CSS. */
+export function refreshOccurrencesViewAppearance(plugin: Plugin): void {
+	if (!registeredViews.has(plugin)) return;
+	for (const leaf of plugin.app.workspace.getLeavesOfType(CALLOUT_OCCURRENCES_VIEW)) {
+		if (leaf.view instanceof CalloutOccurrencesView) leaf.view.refreshAppearance();
+	}
+}
+
 export async function openCalloutOccurrences(
 	app: App,
 	ids?: readonly string[],

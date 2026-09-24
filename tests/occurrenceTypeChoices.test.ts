@@ -23,6 +23,52 @@ function harness(text: string) {
 }
 
 describe("sidebar-only occurrence type choices", () => {
+	it("uses the configured fallback artwork without borrowing its identity or registering observed types", async () => {
+		const h = harness("[!mystery type] [!MYSTERY-TYPE] [!template]");
+		h.registry.add({ ...h.registry.get("note")!, id: "template", displayName: "Template", builtIn: false,
+			source: "user", aliases: ["template-alias"], icon: { type: "emoji", value: "⭐" },
+			colorLight: "#123456", colorDark: "#abcdef", hideIcon: true });
+		h.registry.settings.fallbackCalloutId = "template";
+		const before = JSON.stringify(h.registry.toSaveData());
+		await h.index.ensureFresh();
+		const unknown = h.choices.definitions().find((def) => def.id === "mystery type")!;
+		assert.equal(unknown.displayName, "mystery type");
+		assert.deepEqual(unknown.icon, { type: "emoji", value: "⭐" });
+		assert.notEqual(unknown.icon, h.registry.get("template")!.icon);
+		assert.equal(unknown.hideIcon, true);
+		assert.equal(unknown.colorLight, "#123456");
+		assert.equal(unknown.colorDark, "#abcdef");
+		assert.deepEqual(unknown.aliases, ["mystery-type"]);
+		assert.equal(h.choices.isRegistered(unknown), false);
+		assert.equal(h.index.query(h.choices.resolve([unknown.id]).ids).totalCount, 2);
+		assert.equal(h.registry.get(unknown.id), undefined);
+		assert.equal(JSON.stringify(h.registry.toSaveData()), before);
+		h.index.dispose();
+	});
+
+	it("updates observed and retained choices after fallback changes without a new scan or a saved draft", async () => {
+		const h = harness("[!unknown]");
+		await h.index.ensureFresh();
+		const reads = h.reads.length;
+		const note = h.registry.getReal("note")!;
+		assert.deepEqual(h.choices.definitions().find((def) => def.id === "unknown")!.icon, note.icon);
+		assert.deepEqual(h.choices.definitions("absent").find((def) => def.id === "absent")!.icon, note.icon);
+		h.registry.settings.fallbackCalloutId = "warning";
+		for (const id of ["unknown", "absent"]) {
+			assert.deepEqual(h.choices.definitions(id).find((def) => def.id === id)!.icon, h.registry.get("warning")!.icon);
+		}
+		h.registry.update("warning", { icon: { type: "emoji", value: "⚠️" } });
+		h.registry.setPreviewDefinition({ ...h.registry.get("warning")!, icon: { type: "emoji", value: "🚧" } });
+		for (const id of ["unknown", "absent"]) {
+			assert.deepEqual(h.choices.definitions(id).find((def) => def.id === id)!.icon, { type: "emoji", value: "⚠️" });
+		}
+		h.registry.setPreviewDefinition(null);
+		h.registry.settings.fallbackCalloutId = "missing-template";
+		assert.deepEqual(h.choices.definitions().find((def) => def.id === "unknown")!.icon, note.icon);
+		assert.equal(h.reads.length, reads);
+		h.index.dispose();
+	});
+
 	it("deduplicates observed spellings and registered aliases without changing the registry", async () => {
 		const h = harness("[!warning] [!Caution] [!ATTENTION|red] [!mystery-type] [!Mystery   Type|meta]\n```\n[!hidden]\n```");
 		const before = JSON.stringify(h.registry.toSaveData());

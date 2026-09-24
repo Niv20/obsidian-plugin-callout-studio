@@ -13,6 +13,7 @@ import { QUICK_INSERT_ICON_ID, STATISTICS_ICON_ID } from "../src/icons/uiIcons";
 import { t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutCombobox } from "../src/settings/calloutCombobox";
+import { renderFallbackSection } from "../src/settings/sections/FallbackSection";
 import { FakeElement, installFakeDom } from "./support/fakeDom";
 
 const dom = installFakeDom();
@@ -983,6 +984,64 @@ describe("callout occurrence sidebar", () => {
 		}
 		assert.equal(changes, 0);
 		assert.equal(JSON.stringify(h.registry.toSaveData()), before);
+		await h.view.onClose();
+		h.index.dispose();
+	});
+	it("repaints unknown options and the selected icon when the fallback changes without saved fallback rows", async () => {
+		const h = harness({ "a.md": "[!unknown]" });
+		h.registry.add({ ...h.registry.get("note")!, id: "template", displayName: "Template", builtIn: false,
+			source: "user", icon: { type: "emoji", value: "⭐" }, colorLight: "#123456", colorDark: "#123456" });
+		await h.view.setState({ ids: ["unknown"] }, { history: false });
+		await h.view.onOpen();
+		const input = h.view.contentEl.querySelector(".cs-combobox-input") as unknown as FakeElement;
+		input.fire("focus");
+		input.value = "unk";
+		input.fire("input");
+		const lead = h.view.contentEl.querySelector<HTMLElement>(".cs-combobox-lead")!;
+		const optionIcon = (): HTMLElement => h.view.contentEl.querySelector(".callout-studio-suggestion-icon")!;
+		const plugin = { app: h.app, registry: h.registry, settings: h.registry.settings, registerView: () => {},
+			restyleUncustomizedFallbackRows: () => h.registry.restyleUncustomizedFallbackRows(),
+			saveSettings: () => Promise.resolve(), refreshCallouts: () => {},
+		} as unknown as Parameters<typeof renderFallbackSection>[0]["plugin"];
+		registerOccurrencesView(plugin);
+		const settingsHost = createDiv();
+		const disposers: (() => void)[] = [];
+		renderFallbackSection({ app: h.app, plugin, display: () => {}, registerDisposer: (dispose) => disposers.push(dispose) }, settingsHost);
+		const settingsInput = settingsHost.querySelector(".cs-combobox-input") as unknown as FakeElement;
+		settingsInput.fire("focus");
+		settingsInput.value = "template";
+		settingsInput.fire("input");
+		(settingsHost.querySelector(".cs-combobox-option") as unknown as FakeElement).fire("click");
+		assert.equal(h.registry.settings.fallbackCalloutId, "template");
+		assert.equal(input.value, "unk");
+		assert.equal(input.getAttribute("aria-expanded"), "true");
+		assert.equal(lead.textContent, "⭐");
+		assert.equal(lead.style.color, "#123456");
+		assert.equal(optionIcon().textContent, "⭐");
+		assert.equal(optionIcon().style.color, "#123456");
+		h.registry.update("template", { hideIcon: true });
+		assert.ok(lead.hasClass("cs-icon-none"));
+		assert.ok(optionIcon().hasClass("cs-icon-none"));
+		assert.equal(lead.textContent, "");
+		assert.deepEqual(h.view.getState(), { ids: ["unknown"], role: undefined });
+		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
+		assert.equal(h.registry.get("unknown"), undefined);
+		for (const dispose of disposers) dispose();
+		await h.view.onClose();
+		h.index.dispose();
+	});
+	it("keeps the theme's measured appearance for an unregistered type with fallback artwork", async () => {
+		const h = harness({ "a.md": "[!theme-only]" });
+		h.registry.setThemeOwnedIds(new Set(["theme-only"]));
+		h.registry.setThemeAppearances(new Map([["theme-only", {
+			accent: "rgb(1, 2, 3)", background: null, icon: { kind: "glyph", text: "☀", fontFamily: "serif" },
+		}]]));
+		await h.view.setState({ ids: ["theme-only"] }, { history: false });
+		await h.view.onOpen();
+		const lead = h.view.contentEl.querySelector<HTMLElement>(".cs-combobox-lead")!;
+		assert.equal(lead.style.color, "rgb(1, 2, 3)");
+		assert.equal(lead.textContent, "☀");
+		assert.equal(h.registry.get("theme-only"), undefined);
 		await h.view.onClose();
 		h.index.dispose();
 	});

@@ -37,6 +37,11 @@ options update as notes change and are available **only in this sidebar**.
 Selecting one never saves or registers it, or adds it to any other settings
 picker. Use **My callout types → Scan for callouts** to register it.
 
+Unregistered choices use the icon and color from **Default fallback callout**,
+just as they would after **Scan for callouts**. If the active theme owns a type,
+the picker shows its measured theme appearance instead. Changing the fallback
+updates these choices without registering them or changing the selected type.
+
 Built-ins and saved definitions are available even without occurrences. A type
 provided only by a theme is offered here when it occurs in a note; an unsaved
 editor preview alone does not add an option.

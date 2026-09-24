@@ -1,5 +1,6 @@
 import { t } from "../i18n";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
+import { buildDiscoveredRow, fallbackSourceFor } from "../manager/discoveredRow";
 import type { CalloutDefinition } from "../types";
 import { calloutIdentity, mergeDashSpaceVariants, normalizeCalloutId } from "../utils/calloutId";
 import { committedDefinitions } from "../utils/usableCallouts";
@@ -22,14 +23,13 @@ export function occurrencePickerChoices(types: OccurrenceTypeChoices, selectedId
 }
 
 /** Display data only: these rows never enter the registry, CSS, or saved settings. */
-function sourceChoice(rawId: string): OccurrenceTypeChoice {
+function sourceChoice(rawId: string, fallback: CalloutDefinition): OccurrenceTypeChoice {
 	const id = normalizeCalloutId(rawId);
 	const identity = calloutIdentity(id);
 	return {
 		definition: Object.freeze({
-			id, displayName: id, icon: Object.freeze({ type: "lucide", value: "circle-help" }),
-			colorLight: "var(--text-muted)", colorDark: "var(--text-muted)",
-			foldable: false, defaultFolded: false, builtIn: false, source: "fallback",
+			...buildDiscoveredRow(id, fallback),
+			displayName: id,
 			...(identity === id ? {} : { aliases: [identity] }),
 		}),
 		ids: [id],
@@ -43,6 +43,7 @@ export class OccurrenceTypeChoices {
 	private choices: readonly CalloutDefinition[] = [];
 	private byIdentity = new Map<string, OccurrenceTypeChoice>();
 	private retained: { id: string; choices: readonly CalloutDefinition[] } | null = null;
+	private fallback: CalloutDefinition | null = null;
 
 	constructor(private readonly registry: CalloutRegistry, private readonly index: CalloutOccurrenceIndex) {}
 
@@ -60,7 +61,7 @@ export class OccurrenceTypeChoices {
 		if (!id || this.byIdentity.has(calloutIdentity(id))) return this.choices;
 		// A vanished/restored selection remains visible with zero results until
 		// another type is chosen; source changes must not silently change filters.
-		if (this.retained?.id !== id) this.retained = { id, choices: [...this.choices, sourceChoice(id).definition] };
+		if (this.retained?.id !== id) this.retained = { id, choices: [...this.choices, sourceChoice(id, this.fallback!).definition] };
 		return this.retained.choices;
 	}
 
@@ -78,8 +79,10 @@ export class OccurrenceTypeChoices {
 	}
 
 	private refresh(): void {
-		if (this.revision === this.index.dataRevision) return;
+		const fallback = fallbackSourceFor({ get: (id) => this.registry.getReal(id) }, this.registry.settings.fallbackCalloutId);
+		if (this.revision === this.index.dataRevision && this.fallback === fallback) return;
 		this.revision = this.index.dataRevision;
+		this.fallback = fallback;
 		this.retained = null;
 		this.byIdentity.clear();
 		const definitions: CalloutDefinition[] = [];
@@ -94,7 +97,7 @@ export class OccurrenceTypeChoices {
 		for (const id of observed) {
 			const identity = calloutIdentity(id);
 			if (this.byIdentity.has(identity)) continue;
-			const choice = sourceChoice(id);
+			const choice = sourceChoice(id, fallback);
 			this.byIdentity.set(identity, choice);
 			definitions.push(choice.definition);
 		}
