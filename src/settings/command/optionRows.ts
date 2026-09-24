@@ -2,10 +2,8 @@
  * settings/command/optionRows.ts — the command editor's two plain dropdowns.
  *
  * *Heading level* and *Action* are the rows with no rule of their own: a fixed
- * list of options, a value, a change. They live here for the reason the other
- * `settings/command/` modules do — `CommandEditorModal` sits against the repo's
- * 300-line ratchet, and rows that carry nothing interesting are the cheapest
- * thing to move out of it.
+ * list of options, a value, a change. This module owns their controls while
+ * `CommandEditorModal` coordinates the command being edited.
  *
  * Each returns its row and dropdown, because the modal's `syncVisibility()` is what
  * decides whether the row is shown for the current format.

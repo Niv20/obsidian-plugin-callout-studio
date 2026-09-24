@@ -107,7 +107,7 @@ check (not exhaustive — see each file directly for the full list):
 
 | File | Enforces |
 | --- | --- |
-| `repoSourceRules.test.ts` | No bare English UI-copy literal handed to a text setter or `Notice`; every `workspace`/`vault`/`metadataCache` listener is `registerEvent`'d or `offref`'d; nothing listens on `document`/`window` without an unregister; no interval outside `registerInterval`; no `any` without an explicit ESLint-disable; `main.ts` stays lifecycle-only; the network surface is exactly what the README discloses; **no file outside a frozen exception list crosses 300 lines** (and no exception grows further) |
+| `repoSourceRules.test.ts` | No bare English UI-copy literal handed to a text setter or `Notice`; every `workspace`/`vault`/`metadataCache` listener is `registerEvent`'d or `offref`'d; nothing listens on `document`/`window` without an unregister; no interval outside `registerInterval`; no `any` without an explicit ESLint-disable; `main.ts` exists; the network surface is exactly what the README discloses; **handwritten source files stay at or below 500 nonblank, non-comment-only lines unless their exact path is explicitly exempted** |
 | `repoStyles.test.ts` | Every CSS custom property read with a fallback has a writer somewhere in `src/`; every class the code applies has a matching rule in `styles.css` and vice versa; no rule scoped to `.cs-modal` paints a raw `--background-primary` (see [Settings UI § surface tokens](15-settings-ui-and-modals.md)) |
 | `repoGenerated.test.ts` | `locales/*.json` and `src/icons/data/*` regenerate **byte-for-byte** identical to what's committed |
 | `repoRelease.test.ts` | `manifest.json`/`package.json`/`versions.json` agree on one version; the plugin id can never change; `manifest.json` has every required field and no unknown ones; built-in command ids match the released set; bundle-size limit is still declared where CI reads it |
@@ -118,9 +118,40 @@ check (not exhaustive — see each file directly for the full list):
 > [!TIP]
 > `npm test`'s output is the single source of truth for whether a
 > proposed change violates one of these conventions — don't try to
-> re-derive "is this file over 300 lines" or "is this listener registered
+> re-derive "is this file over 500 counted lines" or "is this listener registered
 > correctly" by inspection when the corresponding repo test will simply tell
 > you.
+
+### Source file size
+
+The size check covers handwritten TypeScript under `src/`, including
+`src/main.ts`. It excludes blank lines and lines containing only comments;
+lines containing code with a trailing comment still count. The existing data
+and generated-tree exclusions remain: `src/i18n/`, `src/icons/data/`, and
+`src/data/` are outside this check's scope.
+
+**500 counted lines is the single limit.** A non-exempt file at 500 passes;
+at 501 it fails `npm test`, including the GitHub Actions test step. Files at or
+below the limit and exempt files produce no size warning. Keeping `main.ts`
+limited to lifecycle and wiring remains architectural guidance; its size check
+uses the same limit as other source files.
+
+[`scripts/source-size-exceptions.json`](../../scripts/source-size-exceptions.json)
+is a JSON array of exact repository-relative file paths, for example:
+
+```json
+[
+  "src/manager/CalloutRegistry.ts",
+  "src/settings/CalloutEditor.ts"
+]
+```
+
+An entry exempts that file from the size limit entirely. There are no per-file
+numbers, growth caps, or required updates when a file gets shorter; an entry may
+remain after the file drops below 500. Use the full path rather than only its
+basename so another file with the same name is not accidentally exempted.
+Choose responsibility boundaries when splitting code, rather than adding
+helpers solely to lower a line count.
 
 ## Regenerating icon and locale data
 

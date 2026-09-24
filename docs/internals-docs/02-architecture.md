@@ -36,12 +36,14 @@ main.ts (CalloutStudioPlugin) — lifecycle and wiring only
 ```
 
 `src/main.ts` is deliberately thin: lifecycle and wiring only, per the project's
-own coding convention ("Keep `src/main.ts` minimal"). Every file over ~300 lines
-is expected to be split by responsibility — this is enforced by
-`tests/repoSourceRules.test.ts`'s "no new oversized files" check, which freezes a
-list of pre-existing exceptions (`CalloutRegistry.ts`, `CSSInjector.ts`,
-`CalloutEditor.ts`, the i18n locale files, `emojiData.ts`, …) and fails if a file
-outside that list crosses 300 lines, or if a frozen exception grows further.
+own coding convention ("Keep `src/main.ts` minimal"). Handwritten source files,
+including `main.ts`, have a 500-line limit, excluding blank and comment-only
+lines. `tests/repoSourceRules.test.ts` fails above that limit unless the exact
+repository-relative path appears in `scripts/source-size-exceptions.json`.
+Exceptions have no per-file cap or size to maintain. Data and generated trees
+are outside the check's scope. Split files by responsibility when that improves
+the code; see [Source file size](19-build-test-release.md#source-file-size) for
+the full policy.
 
 ## Who owns state, who operates on it
 

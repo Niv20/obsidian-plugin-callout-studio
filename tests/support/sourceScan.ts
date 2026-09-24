@@ -419,6 +419,18 @@ export function blankLiterals(text: string): string {
 	return scan(text).blanked;
 }
 
+/** Nonblank lines containing code or literal text, excluding comment-only lines. */
+export function codeLineCount(text: string): number {
+	const { blanked, literals: found } = scan(text);
+	const uncommented = blanked.split("");
+	// Restore literal contents: comment markers inside strings, regexes and
+	// template text are data. Template interpolation comments stay blanked.
+	for (const { start, end } of found) {
+		for (let i = start; i < end; i++) uncommented[i] = text[i] as string;
+	}
+	return uncommented.join("").split(/\r\n|\n|\r/).filter((line) => line.trim()).length;
+}
+
 /** Every string/template/regex literal body in `text`, with its offsets. */
 export function literals(text: string): Literal[] {
 	return scan(text).literals;

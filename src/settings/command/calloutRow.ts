@@ -1,9 +1,8 @@
 /**
  * settings/command/calloutRow.ts — the command editor's "Callout type" row.
  *
- * A third module beside `commandRoles.ts` and `foldStateRow.ts`, for the reason
- * they give: `CommandEditorModal` sits against the repo's 300-line ratchet, so
- * a row that grows goes in a sibling rather than into the modal.
+ * Owns the callout picker and its editor button beside the other command-row
+ * modules, leaving `CommandEditorModal` to coordinate the command being edited.
  *
  * This row used to be a `<select>` whose every option read `Abstract
  * (abstract)` — the display name with the id welded on in parentheses. For a

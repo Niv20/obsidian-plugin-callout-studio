@@ -3,8 +3,8 @@
  * claim its colour?"
  *
  * One question, asked from three places in `CalloutRegistry` (`toSaveData`,
- * `isBuiltInModified`, `isUnmodifiedBuiltIn`) and from nowhere else. Split out
- * of that file, which AGENTS.md's ~300-line rule has long since had to freeze.
+ * `isBuiltInModified`, `isUnmodifiedBuiltIn`) and from nowhere else. Keeping
+ * the comparison policy here makes those callers share one answer.
  *
  * The two tables are the point of the module, and both are load-bearing in
  * opposite directions — one decides what gets *persisted*, the other decides

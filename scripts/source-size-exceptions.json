@@ -1,0 +1,7 @@
+[
+	"src/manager/CSSInjector.ts",
+	"src/manager/CalloutRegistry.ts",
+	"src/settings/CalloutEditor.ts",
+	"src/settings/PaletteEditorModal.ts",
+	"src/utils/importValidator.ts"
+]

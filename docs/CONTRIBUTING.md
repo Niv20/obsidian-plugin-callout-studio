@@ -50,7 +50,7 @@ Keep PRs to one change. A fix bundled with an unrelated refactor just makes both
 
 Full list in [AGENTS.md](../AGENTS.md). The ones that bite most often:
 - Strict TypeScript — no `any` without an ESLint-disable comment explaining why.
-- Split files once they pass ~300 lines.
+- Handwritten source files have a 500-line limit, excluding blank and comment-only lines. `npm test` and CI fail above it unless the exact repository-relative path is listed in [`scripts/source-size-exceptions.json`](../scripts/source-size-exceptions.json); exceptions have no per-file size cap. Split by responsibility when it improves the code. See [Source file size](internals-docs/19-build-test-release.md#source-file-size) for the scope and exception format.
 - Listeners and intervals go through `this.registerEvent` / `registerInterval` / `registerDomEvent`, not raw `addEventListener` or `setInterval`, so they don't leak past plugin unload.
 - Command IDs don't change once released — they're part of the public surface.
 - User-facing text goes through `t()`, with the key added to `src/i18n/en.ts`.

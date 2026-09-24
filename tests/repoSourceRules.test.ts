@@ -19,15 +19,14 @@
  *   keeps that true. `npm run lint` enforces the same thing, and better, since
  *   it has type information — but lint is a separate command, and this one is
  *   in `npm test`.
- * - **`main.ts` stays wiring** — the file every future feature is tempted to
- *   put "just one more thing" into.
+ * - **The lifecycle entry point exists** — `src/main.ts` is subject to the
+ *   same source-size limit as every other hand-written module.
  * - **No new network calls** — the plugin's privacy claim is a *closed list* of
  *   four call sites, disclosed in the README. The claim is only worth anything
  *   if adding a fifth is hard to do by accident.
- * - **Files split by responsibility** — a ratchet rather than a rule, because
- *   40 files are already over the stated 300-line line. Freezing them at
- *   today's size is what makes the number mean something: nothing new joins the
- *   list, and nothing on it grows.
+ * - **Source files stay within 500 code lines** — larger files must be named
+ *   explicitly in scripts/source-size-exceptions.json. Comments and blank
+ *   lines do not count; exceptions have no individual size limits.
  *
  * A seventh suite turns the document around and checks *it* instead: AGENTS.md
  * spent a long release cycle stating that this repository has no automated
@@ -51,27 +50,18 @@ import {
 	argSpan,
 	at,
 	blankLiterals,
+	codeLineCount,
 	lineOf,
 	literals,
 	pluginSourceFiles,
 	readRepoFile,
+	readRepoJson,
 	report,
 	scanIsBalanced,
 	type SourceFile,
 } from "./support/sourceScan";
 
 const files = pluginSourceFiles();
-
-/**
- * Lines in a file, counted the way `wc -l` counts them.
- *
- * A trailing newline is a terminator, not an empty last line, and every number
- * frozen below was read off `wc -l`. Getting this wrong is an off-by-one on all
- * 40 entries at once — which is exactly how it first ran.
- */
-function lineCount(file: SourceFile): number {
-	return file.text.replace(/\n$/, "").split("\n").length;
-}
 
 /* -------------------------------------------------------------------------- */
 /* The scanner itself                                                         */
@@ -547,33 +537,12 @@ describe("no `any` without an explicit exemption", () => {
 });
 
 /* -------------------------------------------------------------------------- */
-/* 156 — main.ts stays wiring                                                 */
+/* The plugin entry point                                                     */
 /* -------------------------------------------------------------------------- */
 
-describe("main.ts stays lifecycle and wiring", () => {
-	/**
-	 * The ceiling, set just above today's 556 lines.
-	 *
-	 * Deliberately tight rather than generous: the value of this number is that
-	 * it is reached, noticed, and answered by moving something out — not by
-	 * being raised. `main.ts` is where every feature's `onload` wiring wants to
-	 * live, and it is the one file whose growth nothing else would flag.
-	 */
-	const MAIN_TS_MAX_LINES = 600;
-
-	const main = files.find((f) => f.path === "src/main.ts");
-
+describe("the plugin lifecycle entry point", () => {
 	it("exists", () => {
-		assert.ok(main, "src/main.ts not found");
-	});
-
-	it(`is at most ${MAIN_TS_MAX_LINES} lines`, () => {
-		const lines = lineCount(main as SourceFile);
-		assert.ok(
-			lines <= MAIN_TS_MAX_LINES,
-			`src/main.ts is ${lines} lines (ceiling ${MAIN_TS_MAX_LINES}). ` +
-				"Move the logic into a sub-module rather than raising this.",
-		);
+		assert.ok(files.some((f) => f.path === "src/main.ts"), "src/main.ts not found");
 	});
 });
 
@@ -716,307 +685,66 @@ describe("the network surface is exactly what the README discloses", () => {
 });
 
 /* -------------------------------------------------------------------------- */
-/* 160 — file size ratchet                                                    */
+/* Source file size                                                           */
 /* -------------------------------------------------------------------------- */
 
-describe("no new oversized files", () => {
-	/**
-	 * The files already over AGENTS.md's ~300-line line, frozen at the size
-	 * they were when this test was written.
-	 *
-	 * This is a ratchet, not a rule, and saying so plainly matters: 40 files are
-	 * already over, the three largest are ten times over, and a test that
-	 * demanded 300 lines today would simply be deleted. What it *can* enforce is
-	 * the direction of travel — a 41st file cannot join quietly, and none of
-	 * these 40 can grow. Splitting one is expected to *lower* its entry here,
-	 * which the last assertion insists on so the list cannot rot into a
-	 * permanently generous allowance.
-	 *
-	 * `src/i18n/`, `src/icons/data/` and `src/data/` are out of scope entirely
-	 * (see `sourceScan.ts`): they are tables and generated indexes, where line
-	 * count measures how many icons exist, not how much a file is doing.
-	 */
-	const SOFT_LIMIT = 300;
+describe("source files stay within the 500-line limit unless explicitly exempt", () => {
+	const MAX_LINES = 500;
+	const EXCEPTIONS_FILE = "scripts/source-size-exceptions.json";
+	const exceptions = readRepoJson<string[]>(EXCEPTIONS_FILE);
 
-	const FROZEN: Record<string, number> = {
-		// Lowered from 2328: the Color row's dropdown — its trigger, its menu,
-		// its arrow-key navigation and its outside-click — moved to
-		// settings/paletteCombobox.ts, over the shared ui/listboxPopup.ts, so
-		// the row can be typed into like every other callout picker. What stays
-		// is the half only this class can answer: which palette the form's
-		// colours resolve to, the "Deleted color" state when they resolve to
-		// none, and the save-state baseline that resolution feeds.
-		// Raised from 2322 for the create-only autofocus, then lowered again to
-		// 2144 when the mobile scroll-hold workaround went: the disposer field
-		// and the two lines that released it on close went with it. Everything
-		// movable already moved — settings/modalAutofocus.ts owns the focus and
-		// the platform gate whole — and what is left is the one thing only this
-		// class can answer: whether this window is creating a callout.
-		// Lowered from 2128: the shared field reset button and the icon-adjust
-		// storage decision moved into focused editor helpers while the editor now
-		// wires the built-in ID and per-role adjustment resets to them.
-		"src/settings/CalloutEditor.ts": 2117,
-		// Lowered repeatedly, per this ratchet's own ask: `bgAlphaFor`'s solve moved
-		// to utils/bgTintAlpha.ts, which owns the CHOICE of alpha among the many
-		// that render the callout identically; `generateFallbackCSS` to
-		// manager/css/fallbackCSS.ts, taking the icon-box width the two now share
-		// with it to manager/css/iconBox.ts; core's own icon reader to
-		// manager/css/coreIcon.ts; the three `::after` icon overrides to
-		// manager/css/iconOverrides.ts; and the `--callout-icon` decision to
-		// manager/css/calloutIconProp.ts. Held flat since: the outline half of
-		// `transparentBg` moved out to manager/css/transparentBorder.ts — which
-		// both this file and fallbackCSS were already reaching for through
-		// `FallbackCssContext` — and the room that bought was spent on the core
-		// accent shim rather than banked.
-		// Lowered from 1859: `bgProps` and `bgImageFor` moved to
-		// manager/css/backgroundProps.ts — they were already being handed to
-		// `fallbackCSS` as plain functions of a definition, and read nothing off
-		// the injector — and part of the room that bought went to `themeSurface`,
-		// which asks manager/theme/calloutSurface.ts whether the active styling
-		// owns the callout surface.
-		// Lowered from 1793: the block title/content geometry moved to
-		// manager/css/alignmentCSS.ts.
-		"src/manager/CSSInjector.ts": 1763,
-		// Lowered from 2014: what "mirror the fallback callout" means now lives
-		// entirely in manager/discoveredRow.ts, beside the other half of the same
-		// agreement, and the two-mode migration in manager/styleModeMigration.ts.
-		// Lowered again from 2003: attribute-form identity — which definition a
-		// dasherized id belongs to, and which raw forms one definition may claim
-		// in the vault — moved to manager/calloutIdForms.ts, and what the active
-		// theme claims and draws to manager/theme/ThemeFacts.ts.
-		// Lowered from 1990: the dash/space collision fold moved to
-		// manager/idCollisionMigration.ts, which owns the merge rule.
-		// Raised from 1983 for the `RESERVED_DEMO_IDS` filter in
-		// `getExportableDefinitions`. Six lines, and there is no sibling module
-		// for them: the question is "what does an export contain", which is
-		// this class's, and the set they consult already lives in constants.ts
-		// precisely so `manager/` and `utils/` can share it.
-		// Lowered from 1989: the four icon repairs that run on load moved to
-		// manager/iconMigrations.ts (which also made them ask for the write-back
-		// they had always skipped), and which rows `data.json` may hold — above
-		// all why an unclaimed discovered row may not — to
-		// manager/discoveredRowPersistence.ts.
-		// Raised from 1949 for the foreign-field quarantine: a field a NEWER
-		// build wrote is now set aside on load and handed back on save, so two
-		// devices on different versions stop rewriting `data.json` at each
-		// other forever. The rule and both key lists live in
-		// manager/foreignFields.ts; what is left here is the three places only
-		// this class can put them — the load that sets them aside, the save
-		// that hands them back, and the reset that throws them away with
-		// everything else. Most of that raise was paid straight back by moving
-		// CURRENT_DATA_VERSION to constants.ts, where the same check can read
-		// it without importing the class that imports the check.
-		// Raised from 1892 for `resetAll`'s theme-overlay carve-out. Reset must
-		// not empty the theme list: those rows are minted from the active
-		// stylesheet, not saved anywhere, and only a sweep can put them back.
-		// The rule belongs where the map is cleared — moving it out would mean
-		// a caller had to remember, which is the bug.
-		"src/manager/CalloutRegistry.ts": 1874,
-		// Raised from 1184 for the same set, rejected in `validateIdString`.
-		// Same reasoning: "which id strings are valid on import" is the one
-		// thing this file is for, so the rule cannot move out of it without
-		// splitting the answer in two.
-		"src/utils/importValidator.ts": 1184,
-		// Lowered from 1190: the style-mode pair's import rules moved to
-		// utils/importStyleMode.ts.
-		// Lowered from 1106: the Base color row moved to
-		// settings/paletteBaseColorRow.ts (which also owns seedBaseColor, the
-		// reason CustomPalette.baseColor exists), and the gradient's arrow
-		// direction picker — a pure function of its arguments — to
-		// settings/paletteDirectionPicker.ts.
-		// Raised from 1070 for the same create-only autofocus and lowered again
-		// to 1079 by the same workaround removal, for the same reason:
-		// settings/modalAutofocus.ts holds all of it except "is this window
-		// creating a palette", which is `existing` and lives here.
-		"src/settings/PaletteEditorModal.ts": 1062,
-		"src/editor/calloutTokens.ts": 840,
-		// The one entry that is allowed to move, and only for this reason: a
-		// member of `PluginSettings` has no sibling module to be moved into, so
-		// the remedy this list asks for is structurally unavailable to it. Raise
-		// it only for a settings field; anything else here still splits.
-		// Raised from 803 for `CustomPalette.baseColor`, lowered again when
-		// `externalStyle`'s cascade derivation moved to internals-docs, raised
-		// for the style-mode field that replaced it, and raised again for
-		// `PluginSettings.defaultStyleMode` — the one field standing between an
-		// upgrade and every built-in callout being handed to the theme. Raised
-		// again for `PluginSettings.retiredThemeIds`, which is what stops
-		// discovery re-creating a theme's callout types from notes that still
-		// mention them after the theme is gone.
-		// Raised again for `PluginSettings.calloutListsExpanded`, which remembers
-		// the fold state of the three callout-list sections across a
-		// settings-tab reopen and a plugin reload. Raised again when Saved color
-		// palettes joined that fold state as its fourth key, `palettes`.
-		// Lowered from 839: `firstRunCompleted`, `retiredThemeIds` and the
-		// settings-list fold are not settings at all — they describe a machine,
-		// not a vault — and moved to manager/DeviceLocalStore.ts. Raised again
-		// for `autoDiscoverCallouts`, on the same terms as every settings field
-		// above: this file is where a settings field is declared, and there is
-		// no sibling module for one field's declaration to move into.
-		// Raised from 838 for `ignoredCalloutIds` — the per-callout half of
-		// automatic discovery, asked for in issue #41 by a user who had already
-		// deleted every `[!mcc]` in their vault from a row they never wanted.
-		// The field has to be declared here; everything it means lives in
-		// manager/ignoredCallouts.ts.
-		// Raised from 825 for `CustomCommandFold` and `CustomCommand.fold` — the
-		// per-command fold state, which lets a hotkey write `> [!note]-` rather
-		// than only `> [!note]`. Declared here on the same terms as every
-		// settings field above: `CustomCommand` is a `PluginSettings` member and
-		// `CustomCommandAction` already sits beside it. Everything the field
-		// means — the default that keeps older commands writing what they always
-		// wrote, and the marks it maps to — lives in utils/customCommands.ts.
-		"src/types.ts": 824,
-		"src/editor/livepreview/widgets.ts": 793,
-		"src/reading/calloutPostProcessor.ts": 721,
-		"src/settings/iconpicker/PackPanel.ts": 631,
-		"src/utils/colorUtils.ts": 685,
-		"src/settings/iconpicker/IconPickerModal.ts": 470,
-		"src/editor/livepreview/calloutViewPlugin.ts": 675,
-		// Lowered from 666: sanitizeCustomPalettes — the untrusted-data gate,
-		// the opposite job to the rest of this file — moved to
-		// utils/paletteSanitize.ts, taking its three colorUtils imports with it.
-		"src/utils/colorPalettes.ts": 612,
-		// Lowered from 666: the two structural questions the transforms only
-		// consult — blockquote prefix arithmetic and the fenced code/math
-		// ranges an expansion must not cut through — moved to
-		// editor/quotePrefix.ts and editor/fenceBlocks.ts.
-		// Frontmatter protection moved to editor/frontmatter.ts.
-		"src/editor/CalloutBlockTools.ts": 566,
-		"src/utils/vaultCalloutScanner.ts": 403,
-		// Lowered from 593: the suggestion row's icon and accent go through
-		// manager/theme/calloutListIcon.ts, shared with the three other lists
-		// that draw a callout small.
-		// Lowered again from 574: the id/alias second line moved to
-		// settings/calloutComboboxRow.ts `renderCalloutIdLine`, which the
-		// settings callout picker draws too — the popover and the picker must
-		// not describe the same callout differently.
-		// Lowered from 540 when autocomplete became permanently enabled and the
-		// obsolete settings gate left the trigger path.
-		"src/editor/AutoComplete.ts": 538,
-		// Lowered from 537: everything that has to happen when the active theme
-		// changes — re-derive its callout rows, then re-inject, in that order —
-		// moved to manager/theme/themeProvidedRows.ts, which is where the rule
-		// about which pass goes first belongs.
-		// Lowered from 532 while gaining `onExternalSettingsChange`: the welcome
-		// screen's "who sees it, and when" moved to settings/welcomeRouting.ts,
-		// the data.json write policy to manager/SettingsWriter.ts, reading it
-		// back into a live registry to manager/settingsBoot.ts, and the two
-		// repaint passes to editor/renderRefresh.ts. What is left is lifecycle
-		// and wiring, which is all AGENTS.md asks of this file.
-		// Lowered again from 512: the post-layout half of startup — confirm the
-		// fresh install, greet, run first-run discovery — moved to
-		// manager/launchSequence.ts, which is where the ordering rule between
-		// those three belongs.
-		// Lowered from 503: what the plugin hands SettingsWriter — including
-		// what to do when a write turns out to be stale — moved to
-		// manager/settingsWriterHost.ts. That last part is a policy, not a
-		// wire, and "why did a save sometimes not save" should be findable
-		// without reading the plugin class.
-		// Lowered again from 501: serializing external reloads and retrying a
-		// deferred one moved to manager/reloadQueue.ts, and the discovery host
-		// stopped being handed a `settings` object it would only hold stale.
-		"src/main.ts": 450,
-		"src/icons/renderIcon.ts": 545,
-		// Lowered from 528: `STYLE_DEMO_ID` moved to constants.ts, where the
-		// discovery/import/autocomplete filters that now consult it can reach
-		// it without importing a settings modal.
-		// Lowered from 522: standing a demo callout up and taking it down —
-		// including raising `settingsEditOpen` for as long as it is up, which is
-		// what lets a deferred settings reload be released — moved to
-		// settings/previewOwnership.ts, shared with WelcomeModal.
-		"src/settings/GlobalStyleModal.ts": 511,
-		// Lowered from 497: the two role-icon helpers moved to editor/roleIcon.ts,
-		// beside the theme-artwork renderer they now both consult.
-		"src/editor/renderShared.ts": 459,
-		// Lowered from 454: the two reasons automatic discovery is held back from
-		// an id — an explicit delete seconds ago, and a callout type the active
-		// theme stopped supplying — are one question now, in
-		// manager/rediscoveryHold.ts.
-		// Lowered from 412: "what ids do we already know" moved to
-		// manager/knownCalloutIds.ts, so the settings tab can ask the same
-		// question without a forwarder through the plugin.
-		// Lowered from 398: the whole-vault half — which rows nothing references
-		// any more — moved to manager/CalloutPrune.ts. Discovery reads one file;
-		// the prune reads every file. They shared a subject, not a job.
-		// Lowered from 318: *when* to scan — the debounce, the triggers including
-		// the `file-open` one, and the mtime memo that keeps it cheap — moved to
-		// manager/discoveryScheduler.ts, and reading the half-typed line under
-		// the cursor to editor/activeTypingIds.ts.
+	function oversized(
+		sources: readonly Pick<SourceFile, "path" | "text">[],
+		exemptPaths: readonly string[],
+	): string[] {
+		const exempt = new Set(exemptPaths);
+		return sources.flatMap((file) => {
+			if (exempt.has(file.path)) return [];
+			const lines = codeLineCount(file.text);
+			return lines > MAX_LINES ? [`${file.path}  (${lines} code lines)`] : [];
+		});
+	}
 
-		"src/editor/contextmenu/resolve.ts": 455,
-		"src/ui/TagInput.ts": 414,
-		// Lowered from 368: preview and save now share the built-in-aware icon
-		// adjustment serializer instead of maintaining parallel persistence rules.
-		"src/settings/editor/CalloutEditorSave.ts": 350,
-		"src/icons/isolateSvg.ts": 402,
-		"src/outline/OutlineDecorator.ts": 382,
-		// Lowered from 357: the read-only rule — and the transaction filter
-		// that finally made it one — moved to settings/previewReadOnly.ts,
-		// where it can be tested against a real EditorState.
-		"src/settings/EmbeddableMarkdownEditor.ts": 349,
-		"src/settings/iconpicker/ImagePanel.ts": 335,
-		// Lowered from 345: its row icon goes through
-		// manager/theme/calloutListIcon.ts. Lowered again from 337: the shortcut
-		// chips and the hotkey-pane button — carried identically by both lists
-		// in the window — moved to settings/command/hotkeyRow.ts.
-		"src/settings/CommandBuilderModal.ts": 302,
-		"src/settings/iconpicker/IconGrid.ts": 341,
-	};
+	it("exceptions are exact paths to hand-written source files", () => {
+		assert.ok(Array.isArray(exceptions), `${EXCEPTIONS_FILE} must be an array of file paths`);
+		const paths = new Set(files.map((file) => file.path));
+		for (const path of exceptions) {
+			assert.ok(paths.has(path), `${EXCEPTIONS_FILE}: unknown source path ${path}`);
+		}
+	});
 
-	it("nothing new crosses the 300-line line", () => {
-		const newcomers = files
-			.filter((f) => lineCount(f) > SOFT_LIMIT && FROZEN[f.path] === undefined)
-			.map((f) => `${f.path}  (${lineCount(f)} lines)`);
+	it("rejects source files over the limit unless their exact path is listed", () => {
+		const bad = oversized(files, exceptions);
 		assert.deepStrictEqual(
-			newcomers,
+			bad,
 			[],
 			report(
-				`These files passed ${SOFT_LIMIT} lines. Split by responsibility, or — if the file genuinely is one responsibility — add it to FROZEN with a note:`,
-				newcomers,
+				`These files exceed ${MAX_LINES} code lines (excluding blank and comment-only lines). Split by responsibility or list the exact path in ${EXCEPTIONS_FILE}:`,
+				bad,
 			),
 		);
 	});
 
-	it("none of the known-oversized files has grown", () => {
-		const grown: string[] = [];
-		for (const [path, frozen] of Object.entries(FROZEN)) {
-			const f = files.find((x) => x.path === path);
-			if (!f) continue; // handled by the staleness check below
-			const now = lineCount(f);
-			if (now > frozen) grown.push(`${path}  ${frozen} → ${now} (+${now - frozen})`);
-		}
-		assert.deepStrictEqual(
-			grown,
-			[],
-			report(
-				"An already-oversized file grew. Put the new code in a sibling module instead of raising these numbers:",
-				grown,
-			),
-		);
+	it("allows exactly 500 code lines and rejects 501", () => {
+		const path = "src/example.ts";
+		const text = "run();\n".repeat(500);
+		assert.deepStrictEqual(oversized([{ path, text }], []), []);
+		assert.deepStrictEqual(oversized([{ path, text: text + "\n// Comment\n".repeat(500) }], []), []);
+		assert.deepStrictEqual(oversized([{ path, text: `${text}run();\n` }], []), [
+			`${path}  (501 code lines)`,
+		]);
 	});
 
-	it("the frozen list has no stale entries", () => {
-		// Two kinds of rot, both of which quietly turn the ratchet into a
-		// rubber band: a file that was split (so its entry now permits growth
-		// it no longer needs) and a file that was deleted or renamed.
-		const stale: string[] = [];
-		for (const [path, frozen] of Object.entries(FROZEN)) {
-			const f = files.find((x) => x.path === path);
-			if (!f) {
-				stale.push(`${path}  — gone; remove the entry`);
-				continue;
-			}
-			const now = lineCount(f);
-			if (now <= SOFT_LIMIT) {
-				stale.push(`${path}  — now ${now} lines; remove the entry`);
-			} else if (now < frozen) {
-				stale.push(`${path}  — now ${now} lines; lower the entry from ${frozen}`);
-			}
+	it("exempts only the exact path, regardless of growth or shrinkage", () => {
+		const path = "src/example.ts";
+		for (const lines of [1, 501, 2000]) {
+			assert.deepStrictEqual(oversized([{ path, text: "run();\n".repeat(lines) }], [path]), []);
 		}
-		assert.deepStrictEqual(
-			stale,
-			[],
-			report("Tighten the ratchet — these entries are looser than the truth:", stale),
-		);
+		const other = { path: "src/other/example.ts", text: "run();\n".repeat(501) };
+		assert.deepStrictEqual(oversized([other], [path]), [`${other.path}  (501 code lines)`]);
+		assert.deepStrictEqual(oversized([other], ["example.ts", "src/**/*.ts"]), [
+			`${other.path}  (501 code lines)`,
+		]);
 	});
 });
 

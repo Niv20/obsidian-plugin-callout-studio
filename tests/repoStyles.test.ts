@@ -406,9 +406,8 @@ describe("class names in styles.css and src/ agree", () => {
 	});
 
 	it("the frozen exception lists have no stale entries", () => {
-		// The same rot as the file-size ratchet: an exception that has been
-		// fixed but not removed silently re-permits the thing it was granted
-		// for.
+		// A style exception that has been fixed but not removed silently
+		// re-permits the thing it was granted for.
 		const stale: string[] = [];
 		for (const name of EMITTED_WITHOUT_RULES) {
 			if (styled.has(name)) {

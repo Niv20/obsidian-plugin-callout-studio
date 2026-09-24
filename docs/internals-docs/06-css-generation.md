@@ -1,7 +1,8 @@
 # CSS generation
 
-[`src/manager/CSSInjector.ts`](../../src/manager/CSSInjector.ts) (~1,800 lines,
-one of the frozen oversized-file exceptions) reads every `CalloutDefinition`
+[`src/manager/CSSInjector.ts`](../../src/manager/CSSInjector.ts), an explicit
+exception to the [source file size limit](19-build-test-release.md#source-file-size),
+reads every `CalloutDefinition`
 from the registry and writes one CSS stylesheet that restyles Obsidian's block
 callouts and paints the plugin's own heading/inline DOM. It also paints icon
 DOM directly (not just via CSS) — see [Icon painting](#icon-painting) below.

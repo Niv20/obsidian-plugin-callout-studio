@@ -1,8 +1,8 @@
 # Callout registry
 
-[`src/manager/CalloutRegistry.ts`](../../src/manager/CalloutRegistry.ts) (~2,100
-lines — one of the handful of files exempted from the 300-line rule, tracked in
-`tests/repoSourceRules.test.ts`) is the single source of truth for every
+[`src/manager/CalloutRegistry.ts`](../../src/manager/CalloutRegistry.ts), an
+explicit exception to the [source file size limit](19-build-test-release.md#source-file-size),
+is the single source of truth for every
 callout definition and every setting. `CSSInjector`, `AutoComplete`,
 `SettingsTab`, the public API, discovery — everything reads through it, and
 every mutation of callout data goes through its methods.

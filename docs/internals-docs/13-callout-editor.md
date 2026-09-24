@@ -1,8 +1,9 @@
 # Callout editor
 
-The edit/create modal — [`src/settings/CalloutEditor.ts`](../../src/settings/CalloutEditor.ts)
-(~2,100 lines, one of the frozen oversized-file exceptions) plus its focused
-helper modules under `src/settings/editor/`. This is the most
+The edit/create modal consists of
+[`src/settings/CalloutEditor.ts`](../../src/settings/CalloutEditor.ts), an explicit
+exception to the [source file size limit](19-build-test-release.md#source-file-size),
+plus its focused helper modules under `src/settings/editor/`. This is the most
 state-heavy UI in the plugin, and understanding *why* is the point of this
 document: a `CalloutDefinition` distinguishes "the user picked white" from
 "nothing was picked, so it renders as Obsidian's default" via field

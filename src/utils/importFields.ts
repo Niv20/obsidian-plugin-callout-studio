@@ -1,10 +1,8 @@
 /**
  * utils/importFields.ts — Which keys an imported `CalloutDefinition` may carry.
  *
- * Split out of `importValidator.ts`, which is one of the files AGENTS.md's
- * ~300-line rule has already had to freeze. This is a self-contained question —
- * "is this key one we know?" — asked from two places in the validator and from
- * nowhere else, so it moves without a seam.
+ * Answers the self-contained question "is this key one we know?", shared by
+ * two places in `importValidator.ts` so both recognize the same fields.
  *
  * The two maps are the point of the module. Both are total `Record`s, so a field
  * added to `CalloutDefinition` or `CalloutIcon` and forgotten here is a compile

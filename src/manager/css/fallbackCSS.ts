@@ -1,11 +1,9 @@
 /**
  * manager/css/fallbackCSS.ts — the style an *unrecognized* callout id gets.
  *
- * Moved out of `CSSInjector`, which AGENTS.md's ~300-line rule froze long ago.
- * It leaves cleanly because it was already parameterised on the callout list
- * rather than reaching into the injector's state: everything else it needs is
- * one of nine emitters, now named by {@link FallbackCssContext} instead of
- * reached through `this`.
+ * Takes the callout list and the emitters named by {@link FallbackCssContext}
+ * explicitly, so fallback styling can be read and tested independently of
+ * `CSSInjector`'s state.
  *
  * The block-callout half deliberately stays weak: one class of specificity,
  * no `!important`, and no direct icon pseudo-element. That lets an ordinary
