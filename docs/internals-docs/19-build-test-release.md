@@ -11,6 +11,13 @@ npm run icons:generate    # regenerate icon pack search indexes + manifest — N
 npm run i18n:generate      # regenerate locales/*.json + localeManifest.ts — runs as `prebuild`
 ```
 
+## Manual installation from a release
+
+To install a release manually, download `manifest.json`, `main.js`, and
+`styles.css` from the [latest GitHub release](https://github.com/Niv20/obsidian-plugin-callout-studio/releases/latest).
+Copy the files into `<Vault>/.obsidian/plugins/callout-studio/`, restart
+Obsidian, then enable **Callout Studio** in **Settings → Community plugins**.
+
 > [!IMPORTANT]
 > **`repo-is-live-plugin-folder`**: this repository *is* the plugin's
 > installed folder inside the vault (`.obsidian/plugins/obsidian-Plugin-Callout-Studio`).

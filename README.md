@@ -38,37 +38,16 @@ Callout Studio keeps a local recovery copy of its settings in case sync replaces
 
 Callout Studio never sends your vault content anywhere and collects no telemetry or analytics. It only downloads icon artwork you choose and, when needed, a translation for the plugin interface. See [Privacy & permissions](docs/internals-docs/24-privacy-and-permissions.md) for a full explanation of every download and where data is stored.
 
-**Convert to standard Markdown** reads Markdown notes locally for a selectable preview and, after a separate irreversible-action confirmation, rewrites heading and inline callout syntax and updates links to changed headings. Back up your vault first; see [the conversion guide](docs/user-guide/17-convert-to-standard-markdown.md).
+**Convert to standard Markdown** reads Markdown notes locally for a selectable preview and, after a separate irreversible-action confirmation, rewrites heading and inline callout syntax and updates links to changed headings. Back up your vault first; see [the conversion guide](docs/user-guide/13-danger-zone.md).
 
 ## Install
-
-### Community plugins (recommended)
 
 1. Open **Settings → Community plugins** in Obsidian.
 2. Search for **Callout Studio** and select **Install**, then **Enable**.
 
-### Manual install
+## Developers
 
-1. Download `manifest.json`, `main.js`, and `styles.css` from the latest GitHub release.
-2. Copy them into `<Vault>/.obsidian/plugins/callout-studio/`.
-3. Restart Obsidian and enable **Callout Studio** in **Settings → Community plugins**.
-
-## Development
-
-```bash
-npm install
-npm run dev    # watch build
-npm run build  # production build (typecheck + minified bundle)
-npm run lint   # ESLint with the official obsidianmd plugin rules
-```
-
-Source lives under `src/` and is bundled by esbuild into `main.js`. The release artifacts are `main.js`, `manifest.json`, and `styles.css`.
-
-Digging into how it's built, or preparing a pull request? See [`docs/internals-docs/`](docs/internals-docs/README.md) for the architecture, and [CONTRIBUTING.md](docs/CONTRIBUTING.md) for the process.
-
-### Plugin API
-
-Callout Studio exposes a small read-only API so other plugins can list the user's callout types and react when that list changes. See [API.md](docs/API.md).
+The [internals guide](docs/internals-docs/README.md) covers architecture, source, build and release details, including [manual installation](docs/internals-docs/19-build-test-release.md#manual-installation-from-a-release); see [CONTRIBUTING.md](docs/CONTRIBUTING.md) for the contribution process. Other plugins can use the [public API](docs/API.md) to read callout types and subscribe to changes.
 
 ## License & Third-Party Assets
 

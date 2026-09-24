@@ -138,4 +138,4 @@ changes or reopening the sidebar trigger another attempt; failures do not start
 an endless retry loop.
 
 ---
-**Next:** [Reset everything](13-reset-everything.md)
+**Next:** [Danger zone](13-danger-zone.md)
