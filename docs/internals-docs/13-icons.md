@@ -7,32 +7,82 @@ looks like as data), rendering, and the "Your images" user-upload source.
 ## Plugin UI icons
 
 [`src/icons/uiIcons.ts`](../../src/icons/uiIcons.ts) bundles three Lucide-derived
-SVG composites: `callout-studio-quick-insert` combines a paintbrush with a
-circle-plus badge at the lower right, and `callout-studio-statistics` combines
-the paintbrush with a search badge at the lower right. The conversion sidebar
-uses `callout-studio-portable-conversion`, with Lucide's split badge in the same
-corner. Each badge overlaps the
-full-size brush, whose paths stop short to leave a transparent gap around the
-badge. The cutout is part of the geometry: no background-coloured cover or SVG
-mask IDs are needed, so repeated icons and different backgrounds render alike.
-The shapes use `currentColor` and inherit the host's icon colour. All three use
-a 24px canvas with rounded 2px brush strokes. The split badge is half of the
-original Lucide coordinates, translated by `(11.5, 11)` while retaining its
-2px stroke; its nearest brush endpoints leave about 1.6px of transparent space.
+SVG composites: `callout-studio-quick-insert` combines a paintbrush with
+Lucide's plain plus at the lower right, and `callout-studio-statistics` combines
+the paintbrush with a search badge in that corner. The conversion sidebar uses
+`callout-studio-portable-conversion`, with Lucide's split badge. Each small
+symbol occupies part of the full-size brush, whose paths stop short to leave a
+transparent gap around it. The cutout is part of the geometry: no
+background-coloured cover or SVG mask IDs are needed, so repeated icons and
+different backgrounds render alike. The shapes use `currentColor` and inherit
+the host's icon colour. All three use a 24px canvas with rounded 2px brush
+strokes. The split badge is half of the original Lucide coordinates, translated
+by `(11.5, 11)` while retaining its 2px stroke; its nearest brush endpoints
+leave about 1.6px of transparent space.
+
+Quick insert scales Lucide's plus to half its original coordinates and moves it
+to the lower right: `M15 18.5h7` and `M18.5 15v7`, with a 2px stroke. The brush
+is trimmed around these two lines rather than around a circle.
 
 [`registerUiIcons.ts`](../../src/icons/registerUiIcons.ts) registers all three with
 Obsidian's `addIcon()` synchronously at the start of `onload()`, before any view,
 command or ribbon consumer. A plugin-registered cleanup calls `removeIcon()` on
 unload. These assets require no runtime fetch or icon-pack download.
 
+### Authoring another composite UI icon
+
+Keep the new drawing as a standalone SVG in [`assets/ui-icons/`](../../assets/ui-icons/)
+and put the identical inner SVG markup in `UI_ICON_CONTENT` in
+[`src/icons/uiIcons.ts`](../../src/icons/uiIcons.ts). The standalone file is an
+editable export; the TypeScript markup is what `addIcon()` receives at runtime.
+`registerUiIcons.ts` scales the 24 × 24 drawing into Obsidian's 100 × 100 icon
+viewBox. Use `fill="none"`, `stroke="currentColor"`, round caps and joins, and
+explicit stroke widths so Obsidian can recolour it.
+
+1. Download the original SVGs from [Lucide](https://lucide.dev/icons/) for the
+   large icon and the small symbol; Quick Insert uses
+   [paintbrush](https://lucide.dev/icons/paintbrush) and
+   [plus](https://lucide.dev/icons/plus). Scale and position the small symbol
+   in the 24 × 24 coordinate system; retain its recognizable path shape,
+   adjusting only the geometry needed to
+   fit the smaller footprint. Do not cover the large icon with a fill matching
+   the background.
+2. Cut the large icon's paths where they approach the small symbol. Measure
+   the closest distance **between the two stroke centreline segments**, not
+   just between their endpoints. The visible transparent gap is that distance
+   minus **half the large stroke width** and **half the small stroke width**.
+   With two 2px strokes, a target of at least 1.2px of visible space requires
+   at least 3.2px between centrelines (`1px + 1px + 1.2px`). This is the
+   clearance target for Quick Insert's brush and plus; the rendered minimum is
+   about 1.3px. The half-stroke subtraction also accounts for rounded caps at
+   the path endpoints. For a circular badge, measure from its centre to the
+   brush centreline, then
+   subtract the circle's centreline radius and both half-stroke widths. For a
+   plus or another open shape, check clearance to **each line segment**.
+3. Change only the brush segments that enter that measured clearance area.
+   Preserve the other Lucide curves and corners, and check the result at the
+   small ribbon size as well as at 24px. The cutout should remain transparent
+   on light and dark backgrounds, without a mask, clip path, filter, or SVG ID.
+4. Give the composite a stable `callout-studio-*` ID and add it to
+   `UI_ICON_CONTENT`. [`registerUiIcons.ts`](../../src/icons/registerUiIcons.ts)
+   registers every entry before its consumers load and unregisters it on
+   plugin unload. Keep the standalone SVG's `<g>` markup byte-for-byte
+   aligned with the registered content; [`uiIcons.test.ts`](../../tests/uiIcons.test.ts)
+   checks that parity and the shared SVG constraints. Add a geometry check for
+   the measured clearance where another symbol comes close to the brush.
+5. Preserve the source's licence notice in the SVG and source file, and update
+   [`THIRD-PARTY-NOTICES.md`](../THIRD-PARTY-NOTICES.md#lucide) when adding or
+   changing source artwork. Update the relevant user guide page when the
+   visible control changes.
+
 Quick insert uses its ID for the ribbon and command. Occurrences uses its ID
 for the native right-sidebar tab, **Find usages** menus and command. The tab is
 the only visible occurrences control; after closing it, the command or a
 **Find usages** action reopens the sidebar. The welcome hero keeps
 the stock `paintbrush` icon. Editable standalone exports live in
-[`quick-insert.svg`](../assets/ui-icons/quick-insert.svg),
-[`statistics.svg`](../assets/ui-icons/statistics.svg) and
-[`conversion.svg`](../assets/ui-icons/conversion.svg); keep them aligned with
+[`quick-insert.svg`](../../assets/ui-icons/quick-insert.svg),
+[`statistics.svg`](../../assets/ui-icons/statistics.svg) and
+[`conversion.svg`](../../assets/ui-icons/conversion.svg); keep them aligned with
 the bundled definitions. Attribution is in
 [`THIRD-PARTY-NOTICES.md`](../THIRD-PARTY-NOTICES.md#lucide).
 

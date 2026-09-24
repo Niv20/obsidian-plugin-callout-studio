@@ -17,7 +17,8 @@ Two of them are worth reading before you use them, rather than after:
 ## What the plugin ships, and what it fetches
 
 The plugin bundle contains icon-library *search indexes* — names, keywords and
-categories — and two Lucide-derived UI icons for quick insert and statistics.
+categories — and three Lucide-derived UI icons for quick insert, statistics,
+and conversion.
 Icon-pack artwork is not bundled.
 
 Artwork is supplied as follows:
@@ -25,7 +26,7 @@ Artwork is supplied as follows:
 | Source | Artwork |
 | --- | --- |
 | Lucide | Shipped inside Obsidian; the plugin draws it via Obsidian's own API |
-| Plugin UI icons | Two Lucide-derived SVG composites bundled with the plugin; no download |
+| Plugin UI icons | Three Lucide-derived SVG composites bundled with the plugin; no download |
 | Emoji | Rendered by your system's emoji font; nothing is downloaded |
 | Material Symbols | Fetched from Google, one icon at a time, only for icons you choose |
 | Tabler Icons, Octicons, Font Awesome, RPG Awesome | Downloaded once when you press **Download** on that source in the icon picker — one file each, two for Tabler and three for Font Awesome (one per style) |
@@ -40,14 +41,15 @@ privacy* section for the exact URLs.
 
 - **Homepage:** https://lucide.dev
 - **Licence:** ISC
-- **Included via:** Obsidian's built-in icon set, plus two bundled UI composites
+- **Included via:** Obsidian's built-in icon set, plus three bundled UI composites
 
 The Lucide icon library is provided by Obsidian. Callout Studio also bundles
-two derived UI icons: a paintbrush with a circle-plus badge for quick insert,
-and a paintbrush with a search badge for callout occurrences and statistics.
-The badges sit at the lower right. Lucide's paintbrush, circle-plus and search
-shapes are tailored and recomposed for small UI sizes. Editable SVGs are in
-[`docs/assets/ui-icons/`](assets/ui-icons/).
+three derived UI icons: a paintbrush with a plain plus for quick insert,
+a paintbrush with a search badge for callout occurrences and statistics, and a
+paintbrush with a split badge for conversion.
+The small symbols sit at the lower right. Lucide's paintbrush, plus, search and
+split shapes are tailored and recomposed for small UI sizes. Editable SVGs are in
+[`assets/ui-icons/`](../assets/ui-icons/).
 
 ```
 ISC License

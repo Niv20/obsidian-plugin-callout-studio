@@ -19,7 +19,7 @@ const exports = [
 describe("plugin action icon artwork", () => {
 	for (const [id, file] of exports) {
 		it(`${file} stays identical in the editable export and registered artwork`, () => {
-			const svg = readFileSync(`docs/assets/ui-icons/${file}.svg`, "utf8");
+			const svg = readFileSync(`assets/ui-icons/${file}.svg`, "utf8");
 			assert.match(svg, /viewBox="0 0 24 24"/);
 			const artwork = svg.match(/<g fill=[\s\S]*<\/g>/)?.[0];
 			assert.equal(artwork, UI_ICON_CONTENT[id]);
