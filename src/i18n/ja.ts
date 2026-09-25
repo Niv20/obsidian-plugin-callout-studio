@@ -85,7 +85,7 @@ export const ja: Record<string, string> = {
 	"settings.languageDesc":
 		"Callout Studio の表示言語。デフォルトでは Obsidian のインターフェース言語に従います。",
 	"settings.languageAuto": "自動（Obsidian に合わせる）",
-	"settings.importExport": "インポート / エクスポート",
+	"settings.importExport": "インポートとエクスポート",
 	"settings.import": "インポート",
 	"settings.export": "エクスポート",
 	"settings.importDesc":

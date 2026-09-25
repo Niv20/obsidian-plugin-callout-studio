@@ -85,7 +85,7 @@ export const ko: Record<string, string> = {
 	"settings.languageDesc":
 		"Callout Studio의 표시 언어입니다. 기본값은 Obsidian의 인터페이스 언어를 따릅니다.",
 	"settings.languageAuto": "자동 (Obsidian과 동일)",
-	"settings.importExport": "가져오기 / 내보내기",
+	"settings.importExport": "가져오기 및 내보내기",
 	"settings.import": "가져오기",
 	"settings.export": "내보내기",
 	"settings.importDesc":

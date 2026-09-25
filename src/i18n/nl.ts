@@ -85,7 +85,7 @@ export const nl: Record<string, string> = {
 	"settings.languageDesc":
 		"Weergavetaal voor Callout Studio. Volgt standaard de interfacetaal van Obsidian.",
 	"settings.languageAuto": "Automatisch (zoals Obsidian)",
-	"settings.importExport": "Importeren / exporteren",
+	"settings.importExport": "Importeren en exporteren",
 	"settings.import": "Importeren",
 	"settings.export": "Exporteren",
 	"settings.importDesc":

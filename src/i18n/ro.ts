@@ -135,7 +135,7 @@ export const ro: Record<string, string> = {
 	"settings.languageDesc":
 		"Limba de afișare pentru Callout Studio. În mod implicit urmează limba interfeței Obsidian.",
 	"settings.languageAuto": "Automat (la fel ca Obsidian)",
-	"settings.importExport": "Import / export",
+	"settings.importExport": "Import și export",
 	"settings.import": "Importați",
 	"settings.export": "Exportați",
 	"settings.importDesc":

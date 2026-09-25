@@ -85,7 +85,7 @@ export const hu: Record<string, string> = {
 	"settings.languageDesc":
 		"A Callout Studio megjelenítési nyelve. Alapértelmezés szerint az Obsidian felületi nyelvét követi.",
 	"settings.languageAuto": "Automatikus (mint az Obsidian)",
-	"settings.importExport": "Importálás / exportálás",
+	"settings.importExport": "Importálás és exportálás",
 	"settings.import": "Importálás",
 	"settings.export": "Exportálás",
 	"settings.importDesc":

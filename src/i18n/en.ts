@@ -145,7 +145,7 @@ export const en: Record<string, string> = {
 	"locale.diskWriteFailed":
 		"Callout Studio could not save the translation to disk, so it will need downloading again next time.",
 
-	"settings.importExport": "Import / export",
+	"settings.importExport": "Import and export",
 	"settings.import": "Import",
 	"settings.export": "Export",
 	"settings.importDesc":

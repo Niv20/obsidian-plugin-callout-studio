@@ -85,7 +85,7 @@ export const ar: Record<string, string> = {
 	"settings.languageDesc":
 		"لغة عرض Callout Studio. تتبع افتراضيًا لغة واجهة Obsidian.",
 	"settings.languageAuto": "تلقائي (مثل Obsidian)",
-	"settings.importExport": "استيراد / تصدير",
+	"settings.importExport": "استيراد وتصدير",
 	"settings.import": "استيراد",
 	"settings.export": "تصدير",
 	"settings.importDesc":

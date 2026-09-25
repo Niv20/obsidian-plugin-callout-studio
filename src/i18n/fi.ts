@@ -82,7 +82,7 @@ export const fi: Record<string, string> = {
 	"settings.languageDesc":
 		"Callout Studion näyttökieli. Seuraa oletuksena Obsidianin käyttöliittymän kieltä.",
 	"settings.languageAuto": "Automaattinen (sama kuin Obsidian)",
-	"settings.importExport": "Tuo / vie",
+	"settings.importExport": "Tuo ja vie",
 	"settings.import": "Tuo",
 	"settings.export": "Vie",
 	"settings.importDesc":

@@ -136,7 +136,7 @@ export const sv: Record<string, string> = {
 	"settings.languageDesc":
 		"Visningsspråk för Callout Studio. Följer som standard Obsidians gränssnittsspråk.",
 	"settings.languageAuto": "Automatiskt (samma som Obsidian)",
-	"settings.importExport": "Importera / exportera",
+	"settings.importExport": "Importera och exportera",
 	"settings.import": "Importera",
 	"settings.export": "Exportera",
 	"settings.importDesc":

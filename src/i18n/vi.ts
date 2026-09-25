@@ -136,7 +136,7 @@ export const vi: Record<string, string> = {
 	"settings.languageDesc":
 		"Ngôn ngữ hiển thị cho Callout Studio. Mặc định theo ngôn ngữ giao diện của Obsidian.",
 	"settings.languageAuto": "Tự động (giống Obsidian)",
-	"settings.importExport": "Nhập / xuất",
+	"settings.importExport": "Nhập và xuất",
 	"settings.import": "Nhập",
 	"settings.export": "Xuất",
 	"settings.importDesc":

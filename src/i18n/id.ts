@@ -84,7 +84,7 @@ export const id: Record<string, string> = {
 	"settings.languageDesc":
 		"Bahasa tampilan untuk Callout Studio. Secara default mengikuti bahasa antarmuka Obsidian.",
 	"settings.languageAuto": "Otomatis (sama seperti Obsidian)",
-	"settings.importExport": "Impor / ekspor",
+	"settings.importExport": "Impor dan ekspor",
 	"settings.import": "Impor",
 	"settings.export": "Ekspor",
 	"settings.importDesc":
