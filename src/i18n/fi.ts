@@ -227,7 +227,6 @@ export const fi: Record<string, string> = {
 		"Poistettiin {{count}} mukautettu(a) komento(a), joiden callout-tyyppiä ei enää ole.",
 	"notice.customCommandMissingCallout":
 		"Tämän komennon callout-tyyppiä ei enää ole.",
-	"notice.exported": "Calloutit viety tiedostoon callout-studio-export.json",
 	"notice.importedJSON": "{{count}} callout-tyyppiä tuotu JSONista.",
 	"notice.importedSettings": "Lisäosan asetukset tuotu.",
 	"notice.importedCalloutManager":
@@ -855,6 +854,11 @@ export const fi: Record<string, string> = {
 		"Taustan liukuväri ei ollut kelvollinen, ja se jätettiin huomiotta.",
 	"import.err.parseFailed":
 		"Tiedosto ei ole kelvollinen JSON eikä sitä voitu jäsentää.",
+	"import.err.tooLarge": "Tämä tuonti ylittää 16 MiB:n kokorajan. Jaa se pienempiin tiedostoihin ja yritä uudelleen.",
+	"import.err.tooComplex": "Tämä tuonti on liian monimutkainen: enintään 1 000 kohdetta luetteloa tai objektia kohti, yhteensä 50 000 arvoa ja enintään 32 sisäkkäisyystasoa.",
+	"import.err.imageBudget": "Koko kuvakokoelma ylittää koko- tai monimutkaisuusrajat. Poista suuret kuvat tai yksinkertaista niitä ennen tuontia.",
+	"import.err.processingFailed": "Tuontia ei voitu suorittaa. Tarkista tiedot ja yritä uudelleen.",
+	"import.reportTruncated": "Näytetään {{shown}} ensimmäistä ongelmaa {{total}} ongelmasta. Pitkiä arvoja on lyhennetty tässä raportissa.",
 	"import.err.entryNotObject": "Merkinnän on oltava objekti.",
 	"import.err.requiredMissing":
 		'Pakollinen kenttä "{{field}}" puuttuu tai on väärää tyyppiä.',
@@ -930,6 +934,17 @@ export const fi: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Tuo omat admonitionisi Admonition-laajennuksesta.",
+	"import.back": "Takaisin",
+	"import.removeFile": "Poista tiedosto",
+	"import.fileReady": "Valmis tuotavaksi.",
+	"import.pasteButton": "Liitä",
+	"import.pasted": "Liitetty leikepöydältä",
+	"import.clearPaste": "Tyhjennä liitetty teksti",
+	"import.clipboardEmpty": "Leikepöytä on tyhjä. Kopioi tiedot ensin.",
+	"import.clipboardUnreadable":
+		"Leikepöytää ei voitu lukea. Tallenna tiedot tiedostoksi ja valitse se sen sijaan.",
+	"import.importing": "Tuodaan…",
+	"import.err.fileUnreadable": "Tiedostoa ei voitu lukea.",
 	"import.cmTitle": "Tuo Callout Managerista",
 	"import.cmInstructions":
 		"Jokainen mukautettu callout tuodaan kuvakkeineen ja väreineen. Teemakohtaiselle " +
@@ -939,13 +954,24 @@ export const fi: Record<string, string> = {
 	"import.cmVaultFound": "{{count}} mukautettua callouttia löydetty.",
 	"import.cmVaultNotFound":
 		"Tästä holvista ei löytynyt mukautettuja callouteja.",
+	"import.cmVaultNotInstalled": "Callout Manageria ei ole asennettu tähän holviin.",
+	"import.cmVaultUnreadable":
+		"Tämän holvin Callout Manager -asetustiedostoa ei voitu lukea.",
+	"import.cmUseManual": "Käytä sen sijaan tiedostoa tai kopioituja tyylejä",
+	"import.cmFromFile": "Tiedosto",
+	"import.cmFromFileDesc":
+		"Callout Managerin data.json tai sen kopioidut tyylit tiedostoon tallennettuina.",
+	"import.cmChooseFile": "Valitse tiedosto…",
+	"import.cmFromPaste": "Kopioidut tyylit",
+	"import.cmFromPasteDesc":
+		"Se, minkä Callout Managerin Copy-painike kopioi, tai data.json.",
 	"import.cmPasteLabel":
 		"Tai liitä Callout Managerin kopioimat tyylit tähän:",
 	"import.cmPlaceholder": "Liitä kopioidut tyylit tai data.json tähän…",
 	"import.cmBtnCancel": "Peruuta",
 	"import.cmBtnImport": "Tuo",
 	"import.err.cmNoBlocksFound":
-		"Liitetystä tekstistä ei löydetty Callout Manager -tyylejä.",
+		"Tiedostosta tai liitetystä tekstistä ei löydetty Callout Manager -tyylejä.",
 	"import.err.cmNotRecognized":
 		"Tuntematon tiedosto: odotettiin Callout Managerin Copy-painikkeen tuottamia " +
 		"tyylejä tai Callout Managerin data.json-tiedostoa.",
@@ -964,6 +990,10 @@ export const fi: Record<string, string> = {
 		"ei ole osa tuontia, joten vain sen kuvake ja väri tuotiin.",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "Teemasta riippuvaa tyyliä ei voi säilyttää. Ehdottomia arvoja suositaan; mahdollinen ehdollinen varaarvo otetaan käyttöön kaikissa teemoissa.",
+	"import.warn.cmCustomStylesSkipped": "Callout Managerin mukautettua CSS:ää ei tuoda. Vain tuetut kuvake- ja väriasetukset voidaan siirtää.",
+	"import.warn.cmSchemeIcon": "Callout Studio käyttää samaa kuvaketta molemmissa väriteemoissa; tuotua kuvaketta käytetään kummassakin.",
+	"import.err.cmDuplicateId": "Tämän tuonnin tunniste {{value}} on päällekkäinen tunnisteen {{other}} kanssa, joten se ohitettiin.",
 	"import.admTitle": "Tuo Admonitionista",
 	"import.admInstructions":
 		"Jokainen admonition tulee tänne calloutina nimineen, " +
@@ -974,9 +1004,16 @@ export const fi: Record<string, string> = {
 	"import.admVaultChecking": "Etsitään Admonition-laajennusta…",
 	"import.admVaultFound": "Löytyi {{count}} omaa admonitionia.",
 	"import.admVaultNotFound": "Tästä holvista ei löytynyt omia admonitioneja.",
+	"import.admVaultNotInstalled": "Admonitionia ei ole asennettu tähän holviin.",
+	"import.admVaultUnreadable":
+		"Tämän holvin Admonition-asetustiedostoa ei voitu lukea.",
+	"import.admUseManual": "Käytä sen sijaan tiedostoa tai liitettyä JSONia",
 	"import.admFromFile": "Tiedosto",
 	"import.admFromFileDesc": "admonitions.json-tiedosto tai jaettu paketti.",
 	"import.admChooseFile": "Valitse tiedosto…",
+	"import.admFromPaste": "Kopioitu JSON",
+	"import.admFromPasteDesc":
+		"Admonitionin JSON tai data.json, kopioituna leikepöydälle.",
 	"import.admPasteLabel": "Tai liitä JSON tähän:",
 	"import.admPlaceholder": "Liitä admonitionisi tähän…",
 	"import.admBtnCancel": "Peruuta",
@@ -995,6 +1032,8 @@ export const fi: Record<string, string> = {
 		'joten "{{id}}" säilytti entisen kuvakkeensa.',
 	"import.warn.admImageFailed":
 		"Ladattua kuvaa ei voitu lukea, joten käytettiin oletuskuvaketta.",
+	"import.warn.admUnsupportedOptions": "Näitä Admonition-asetuksia ei tuoda: {{fields}}.",
+	"import.warn.admImageSkipped": "Ladattua kuvaa ei voitu lukea, joten sitä ei tuotu.",
 	"import.warn.admIconWithCss":
 		"Tämän admonitionin ulkoasu tulee Admonitionin CSS-katkelmasta. " +
 		"Se ei kuulu tuontiin, joten mukaan tulivat vain nimi, kuvake ja " +
@@ -1048,8 +1087,9 @@ export const fi: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"Snippets-kansiossa oleva CSS-katkelma on muuttunut sen jälkeen, kun Callout Studio kirjoitti sen. Uusi vienti korvaa koko tiedoston.",
 	"confirm.overwriteSnippetOk": "Korvaa",
+	"settings.recommended": "Suositeltu",
 	"export.chooseFormat": "Vie muodossa",
-	"export.formatJson": "Callout Studion varmuuskopio (suositeltu)",
+	"export.formatJson": "Callout Studion varmuuskopio",
 	"export.formatJsonDesc":
 		".json-tiedosto on ainoa tuettu tapa palauttaa Callout Studion tiedot kokonaan tai siirtää ne uuteen vaultiin, johon lisäosa on asennettu.",
 	"export.formatCss": "Erillinen CSS-tilannekuva",

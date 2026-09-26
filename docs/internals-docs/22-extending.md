@@ -159,7 +159,11 @@ to something absurd.
   never mutates), and a single `CalloutRegistry.apply<Name>Import()` method
   that actually mutates, inside one `batch()`. This is what lets the import
   modal show a report **before** anything changes — see
-  [Import and export](15-import-export.md#import-from-callout-manager).
+  [Import and export](15-import-export.md#import-from-callout-manager). The
+  window itself is not yours to write: add a `PluginImportSource` beside
+  `admonitionImportSource.ts` and open `PluginImportModal` with it from a new
+  `ImportSourceModal` row — see
+  [the plugin import window](15-import-export.md#the-plugin-import-window).
 - **A new export format**: add a row inside `ExportFormatModal`, not a new
   top-level settings-tab row — the project's stated rationale is that a
   second top-level row would leave Import and Export shaped inconsistently.

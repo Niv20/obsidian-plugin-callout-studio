@@ -222,7 +222,6 @@ export const nb: Record<string, string> = {
 		"Fjernet {{count}} tilpasset(e) kommando(er) hvis callout-type ikke lenger finnes.",
 	"notice.customCommandMissingCallout":
 		"Denne kommandoens callout-type finnes ikke lenger.",
-	"notice.exported": "Callouts eksportert til callout-studio-export.json",
 	"notice.importedJSON": "{{count}} callout-type(r) importert fra JSON.",
 	"notice.importedSettings": "Plugin-innstillinger importert.",
 	"notice.importedCalloutManager":
@@ -795,6 +794,11 @@ export const nb: Record<string, string> = {
 	"import.warn.invalidGradient":
 		"Bakgrunnsgradienten var ugyldig og ble ignorert.",
 	"import.err.parseFailed": "Filen er ikke gyldig JSON og kunne ikke parses.",
+	"import.err.tooLarge": "Denne importen overskrider størrelsesgrensen på 16 MiB. Del den opp i mindre filer og prøv på nytt.",
+	"import.err.tooComplex": "Denne importen er for kompleks: maksimalt 1 000 elementer per liste eller objekt, 50 000 verdier totalt og 32 nivåer med nøsting.",
+	"import.err.imageBudget": "Den samlede bildesamlingen overskrider grensene for størrelse eller kompleksitet. Fjern eller forenkle store bilder før import.",
+	"import.err.processingFailed": "Importen kunne ikke fullføres. Kontroller dataene og prøv på nytt.",
+	"import.reportTruncated": "Viser de første {{shown}} av {{total}} problemer. Lange verdier er forkortet i denne rapporten.",
 	"import.err.entryNotObject": "Posten må være et objekt.",
 	"import.err.requiredMissing":
 		'Det obligatoriske feltet "{{field}}" mangler eller har feil type.',
@@ -870,11 +874,33 @@ export const nb: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Hent dine egne admonitions fra Admonition-tillegget.",
+	"import.back": "Tilbake",
+	"import.removeFile": "Fjern fil",
+	"import.fileReady": "Klar til import.",
+	"import.pasteButton": "Lim inn",
+	"import.pasted": "Limt inn fra utklippstavlen",
+	"import.clearPaste": "Fjern innlimt tekst",
+	"import.clipboardEmpty": "Utklippstavlen er tom. Kopiér dataene først.",
+	"import.clipboardUnreadable":
+		"Utklippstavlen kunne ikke leses. Lagre dataene som en fil og velg den i stedet.",
+	"import.importing": "Importerer…",
+	"import.err.fileUnreadable": "Filen kunne ikke leses.",
 	"import.cmTitle": "Importer fra Callout Manager",
 	"import.cmFromVault": "Dette hvelvet",
 	"import.cmVaultChecking": "Ser etter Callout Manager-tillegget…",
 	"import.cmVaultFound": "Fant {{count}} tilpassede callouts.",
 	"import.cmVaultNotFound": "Fant ingen tilpassede callouts i dette hvelvet.",
+	"import.cmVaultNotInstalled": "Callout Manager er ikke installert i dette hvelvet.",
+	"import.cmVaultUnreadable":
+		"Innstillingsfilen til Callout Manager i dette hvelvet kunne ikke leses.",
+	"import.cmUseManual": "Bruk en fil eller kopierte stiler i stedet",
+	"import.cmFromFile": "En fil",
+	"import.cmFromFileDesc":
+		"En data.json fra Callout Manager, eller de kopierte stilene lagret som en fil.",
+	"import.cmChooseFile": "Velg fil…",
+	"import.cmFromPaste": "Kopierte stiler",
+	"import.cmFromPasteDesc":
+		"Det Copy-knappen i Callout Manager kopierer, eller en data.json.",
 	"import.cmPasteLabel":
 		"Eller lim inn de kopierte stilene fra Callout Manager her:",
 	"import.cmInstructions":
@@ -883,7 +909,7 @@ export const nb: Record<string, string> = {
 	"import.cmBtnCancel": "Avbryt",
 	"import.cmBtnImport": "Importer",
 	"import.err.cmNoBlocksFound":
-		"Ingen Callout Manager-stiler ble funnet i den innlimte teksten.",
+		"Ingen Callout Manager-stiler ble funnet i filen eller den innlimte teksten.",
 	"import.err.cmNotRecognized":
 		"Ukjent fil: forventet stilene fra Callout Managers Copy-knapp eller en data.json fra Callout Manager.",
 	"import.err.cmNoEntries": "Fant ingen tilpassede callouts å importere.",
@@ -899,6 +925,10 @@ export const nb: Record<string, string> = {
 		"Denne callouten har også egendefinert CSS i Callout Manager. Denne stylingen er ikke en del av importen, så bare ikonet og fargen ble tatt med.",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "Temavhengig stil kan ikke bevares. Ubetingede verdier foretrekkes; eventuelle betingede reserveverdier brukes på tvers av alle temaer.",
+	"import.warn.cmCustomStylesSkipped": "Egendefinert CSS fra Callout Manager importeres ikke. Bare støttede ikon- og fargeinnstillinger kan overføres.",
+	"import.warn.cmSchemeIcon": "Callout Studio bruker ett ikon for begge fargeskjemaene; det importerte ikonet brukes i begge.",
+	"import.err.cmDuplicateId": "ID-en {{value}} er duplikat av {{other}} i denne importen og ble hoppet over.",
 	"import.admTitle": "Importer fra Admonition",
 	"import.admInstructions":
 		"Hver admonition kommer over som en callout med navn, ikon og " +
@@ -908,9 +938,16 @@ export const nb: Record<string, string> = {
 	"import.admVaultChecking": "Leter etter Admonition-tillegget…",
 	"import.admVaultFound": "Fant {{count}} egne admonitions.",
 	"import.admVaultNotFound": "Fant ingen egne admonitions i dette hvelvet.",
+	"import.admVaultNotInstalled": "Admonition er ikke installert i dette hvelvet.",
+	"import.admVaultUnreadable":
+		"Innstillingsfilen til Admonition i dette hvelvet kunne ikke leses.",
+	"import.admUseManual": "Bruk en fil eller innlimt JSON i stedet",
 	"import.admFromFile": "En fil",
 	"import.admFromFileDesc": "En admonitions.json-fil eller en delt pakke.",
 	"import.admChooseFile": "Velg fil…",
+	"import.admFromPaste": "Kopiert JSON",
+	"import.admFromPasteDesc":
+		"Admonition-JSON eller en data.json, kopiert til utklippstavlen.",
 	"import.admPasteLabel": "Eller lim inn JSON her:",
 	"import.admPlaceholder": "Lim inn dine admonitions her…",
 	"import.admBtnCancel": "Avbryt",
@@ -930,6 +967,8 @@ export const nb: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"Det opplastede bildet kunne ikke leses, så standardikonet ble " +
 		"brukt.",
+	"import.warn.admUnsupportedOptions": "Disse Admonition-alternativene importeres ikke: {{fields}}.",
+	"import.warn.admImageSkipped": "Det opplastede bildet kunne ikke leses og ble ikke importert.",
 	"import.warn.admIconWithCss":
 		"Denne admonitionen får utseendet sitt fra et CSS-snutt i " +
 		"Admonition. Det utseendet er ikke en del av importen, så bare " +
@@ -984,8 +1023,9 @@ export const nb: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"CSS-utdraget i snippets-mappen er endret siden Callout Studio skrev det. En ny eksport erstatter hele filen.",
 	"confirm.overwriteSnippetOk": "Overskriv",
+	"settings.recommended": "Anbefalt",
 	"export.chooseFormat": "Eksporter som",
-	"export.formatJson": "Callout Studio-sikkerhetskopi (anbefalt)",
+	"export.formatJson": "Callout Studio-sikkerhetskopi",
 	"export.formatJsonDesc":
 		"En .json-fil er den eneste støttede måten å gjenopprette alle Callout Studio-data eller overføre dem til en ny vault der pluginen er installert.",
 	"export.formatCss": "Frittstående CSS-øyeblikksbilde",

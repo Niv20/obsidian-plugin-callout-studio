@@ -197,11 +197,13 @@ const FORCED = new Set([
  * generic `twist` below cannot produce a *different but still valid* one — it
  * would hand the merge junk and read the rejection as data loss. Each names one
  * real alternative; that the junk case falls back is tested by hand further
- * down. Listed only where the merge actually validates: most enum-ish leaves
- * (`iconSources.materialStyleDefault`) are stored as written.
+ * down. Picker enum and numeric range leaves also name accepted alternatives.
  */
 const ENUM_LEAVES: Record<string, Scalar> = {
 	quickInsertSource: "theme",
+	"iconSources.materialStyleDefault": "outlined",
+	"iconSources.materialWeightDefault": 500,
+	"iconSources.lastEmojiSkinTone": 3,
 };
 
 /** A value definitely different from `value`, of the same type. */

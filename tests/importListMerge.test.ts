@@ -100,15 +100,15 @@ describe("the importer still uses it — for all three lists", () => {
 	const source = readRepoFile("src/settings/sections/DataManagementSection.ts");
 
 	it("routes three lists through mergeById", () => {
-		// Three call sites: palettes, pictures, commands. A fourth list added to
-		// `PluginSettings` without one here is the bug this counts.
-		const calls = source.match(/mergeById\(/g) ?? [];
-		assert.equal(
-			calls.length,
-			3,
-			`applyImport makes ${calls.length} mergeById calls; palettes, ` +
-				"pictures and commands each need one",
-		);
+		// Budget checks may also compute a prospective merge. Pin each applied
+		// list, rather than counting unrelated read-only merge calls.
+		for (const [list, pattern] of [
+			["palettes", /customPalettes\s*=\s*mergeById\([\s\S]*?importedPalettes/],
+			["pictures", /setUserImages\(\s*mergeById\([\s\S]*?importedImages/],
+			["commands", /customCommands\s*=\s*mergeById\([\s\S]*?importedCommands/],
+		] as const) {
+			assert.match(source, pattern, `${list} must still merge by id when applied`);
+		}
 	});
 
 	it("keeps the three lists out of the wholesale Object.assign", () => {

@@ -236,7 +236,6 @@ export const nl: Record<string, string> = {
 		"{{count}} aangepaste opdracht(en) verwijderd waarvan het callout-type niet meer bestaat.",
 	"notice.customCommandMissingCallout":
 		"Het callout-type van deze opdracht bestaat niet meer.",
-	"notice.exported": "Callouts geëxporteerd naar callout-studio-export.json",
 	"notice.importedJSON": "{{count}} callout-type(s) geïmporteerd uit JSON.",
 	"notice.importedSettings": "Plugin-instellingen geïmporteerd.",
 	"notice.importedCalloutManager":
@@ -825,6 +824,11 @@ export const nl: Record<string, string> = {
 		"Het achtergrondverloop was ongeldig en is genegeerd.",
 	"import.err.parseFailed":
 		"Het bestand is geen geldig JSON en kon niet worden geparsed.",
+	"import.err.tooLarge": "Deze import overschrijdt de limiet van 16 MiB. Verdeel de gegevens over kleinere bestanden en probeer het opnieuw.",
+	"import.err.tooComplex": "Deze import is te complex: maximaal 1.000 items per lijst of object, in totaal 50.000 waarden en maximaal 32 niveaus diep.",
+	"import.err.imageBudget": "De volledige verzameling afbeeldingen overschrijdt de limieten voor grootte of complexiteit. Verwijder grote afbeeldingen of vereenvoudig ze vóór het importeren.",
+	"import.err.processingFailed": "De import kon niet worden voltooid. Controleer de gegevens en probeer het opnieuw.",
+	"import.reportTruncated": "De eerste {{shown}} van {{total}} problemen worden getoond. Lange waarden zijn in dit rapport ingekort.",
 	"import.err.entryNotObject": "De vermelding moet een object zijn.",
 	"import.err.requiredMissing":
 		'Verplicht veld "{{field}}" ontbreekt of heeft het verkeerde type.',
@@ -904,12 +908,34 @@ export const nl: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Haal je eigen admonitions op uit de Admonition-plug-in.",
+	"import.back": "Terug",
+	"import.removeFile": "Bestand verwijderen",
+	"import.fileReady": "Klaar om te importeren.",
+	"import.pasteButton": "Plakken",
+	"import.pasted": "Geplakt vanaf het klembord",
+	"import.clearPaste": "Geplakte tekst wissen",
+	"import.clipboardEmpty": "Het klembord is leeg. Kopieer eerst de gegevens.",
+	"import.clipboardUnreadable":
+		"Het klembord kon niet worden gelezen. Sla de gegevens in plaats daarvan op als bestand en kies dat.",
+	"import.importing": "Importeren…",
+	"import.err.fileUnreadable": "Het bestand kon niet worden gelezen.",
 	"import.cmTitle": "Importeren uit Callout Manager",
 	"import.cmFromVault": "Deze kluis",
 	"import.cmVaultChecking": "De Callout Manager-plug-in wordt gezocht…",
 	"import.cmVaultFound": "{{count}} aangepaste callouts gevonden.",
 	"import.cmVaultNotFound":
 		"Geen aangepaste callouts gevonden in deze kluis.",
+	"import.cmVaultNotInstalled": "Callout Manager is niet geïnstalleerd in deze kluis.",
+	"import.cmVaultUnreadable":
+		"Het instellingenbestand van Callout Manager in deze kluis kon niet worden gelezen.",
+	"import.cmUseManual": "Een bestand of gekopieerde stijlen gebruiken",
+	"import.cmFromFile": "Een bestand",
+	"import.cmFromFileDesc":
+		"Een data.json van Callout Manager, of de gekopieerde stijlen opgeslagen als bestand.",
+	"import.cmChooseFile": "Bestand kiezen…",
+	"import.cmFromPaste": "Gekopieerde stijlen",
+	"import.cmFromPasteDesc":
+		"Wat de Copy-knop van Callout Manager kopieert, of een data.json.",
 	"import.cmPasteLabel":
 		"Of plak hier de gekopieerde stijlen uit Callout Manager:",
 	"import.cmInstructions":
@@ -922,7 +948,7 @@ export const nl: Record<string, string> = {
 	"import.err.cmNoEntries":
 		"Geen aangepaste callouts gevonden om te importeren.",
 	"import.err.cmNoBlocksFound":
-		"Er zijn geen Callout Manager-stijlen gevonden in de geplakte tekst.",
+		"Er zijn geen Callout Manager-stijlen gevonden in het bestand of de geplakte tekst.",
 	"import.err.cmNoColorForNew":
 		'Er is geen bruikbare kleur gevonden voor de nieuwe callout "{{value}}"; deze is overgeslagen.',
 	"import.warn.cmNoColorDefault":
@@ -935,6 +961,10 @@ export const nl: Record<string, string> = {
 		'ID "{{value}}" wordt al gebruikt als alias door een andere callout ("{{other}}") en is overgeslagen.',
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "Thema-afhankelijke opmaak kan niet behouden blijven. Waarden zonder voorwaarden krijgen de voorkeur; eventuele voorwaardelijke terugvalwaarden gelden voor alle thema’s.",
+	"import.warn.cmCustomStylesSkipped": "Aangepaste CSS van Callout Manager wordt niet geïmporteerd. Alleen ondersteunde pictogram- en kleurinstellingen kunnen worden overgezet.",
+	"import.warn.cmSchemeIcon": "Callout Studio gebruikt één pictogram voor beide kleurenschema’s; het geïmporteerde pictogram wordt in beide gebruikt.",
+	"import.err.cmDuplicateId": "ID {{value}} is een duplicaat van {{other}} in deze import en is overgeslagen.",
 	"import.admTitle": "Importeren uit Admonition",
 	"import.admInstructions":
 		"Elke admonition komt over als een callout met naam, pictogram en " +
@@ -944,10 +974,17 @@ export const nl: Record<string, string> = {
 	"import.admVaultChecking": "Zoeken naar de Admonition-plug-in…",
 	"import.admVaultFound": "{{count}} eigen admonition(s) gevonden.",
 	"import.admVaultNotFound": "Geen eigen admonitions gevonden in deze kluis.",
+	"import.admVaultNotInstalled": "Admonition is niet geïnstalleerd in deze kluis.",
+	"import.admVaultUnreadable":
+		"Het instellingenbestand van Admonition in deze kluis kon niet worden gelezen.",
+	"import.admUseManual": "Een bestand of geplakte JSON gebruiken",
 	"import.admFromFile": "Een bestand",
 	"import.admFromFileDesc":
 		"Een admonitions.json-bestand of een gedeeld pakket.",
 	"import.admChooseFile": "Bestand kiezen…",
+	"import.admFromPaste": "Gekopieerde JSON",
+	"import.admFromPasteDesc":
+		"De JSON van Admonition, of een data.json, gekopieerd naar het klembord.",
 	"import.admPasteLabel": "Of plak de JSON hier:",
 	"import.admPlaceholder": "Plak je admonitions hier…",
 	"import.admBtnCancel": "Annuleren",
@@ -969,6 +1006,8 @@ export const nl: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"De geüploade afbeelding kon niet worden gelezen, dus is het " +
 		"standaardpictogram gebruikt.",
+	"import.warn.admUnsupportedOptions": "Deze Admonition-opties worden niet geïmporteerd: {{fields}}.",
+	"import.warn.admImageSkipped": "De geüploade afbeelding kon niet worden gelezen en is niet geïmporteerd.",
 	"import.warn.admIconWithCss":
 		"Deze admonition wordt in Admonition opgemaakt door een " +
 		"CSS-snippet. Die opmaak hoort niet bij de import, dus alleen " +
@@ -1023,8 +1062,9 @@ export const nl: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"Het CSS-fragment in je snippets-map is gewijzigd sinds Callout Studio het schreef. Opnieuw exporteren vervangt het hele bestand.",
 	"confirm.overwriteSnippetOk": "Overschrijven",
+	"settings.recommended": "Aanbevolen",
 	"export.chooseFormat": "Exporteren als",
-	"export.formatJson": "Callout Studio-back-up (aanbevolen)",
+	"export.formatJson": "Callout Studio-back-up",
 	"export.formatJsonDesc":
 		"Een .json-bestand is de enige ondersteunde manier om alle Callout Studio-gegevens volledig te herstellen of over te zetten naar een nieuwe vault waarin de plugin is geïnstalleerd.",
 	"export.formatCss": "Zelfstandige CSS-momentopname",

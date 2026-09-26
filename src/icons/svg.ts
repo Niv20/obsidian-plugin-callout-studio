@@ -18,6 +18,7 @@
  */
 import { USER_SVG_ELEMENTS, USER_SVG_ATTRS } from "./userSvgProfile";
 import { stripUnsafeSvg } from "./svgSafety";
+import { embeddedRasterSize, MAX_RASTER_PIXELS } from "./rasterSafety";
 import { SVG_CSS_PROPERTIES, safeSvgCssValue, sanitizeSvgStyleAttribute, sanitizeSvgStylesheet } from "./svgCss";
 
 
@@ -56,13 +57,6 @@ export function sanitizeSVG(raw: string): string | null {
  * ------------------------------------------------------------------ */
 
 /**
- * The one kind of `href` that survives: a raster embedded in the file itself.
- * Figma and Illustrator both emit these, and it is also the shape this plugin
- * produces when it wraps an uploaded PNG (see userImageImport.ts).
- */
-const DATA_IMAGE_HREF_RE = /^data:image\/(png|jpe?g|gif|webp);base64,[\w+/=\s]+$/i;
-
-/**
  * Values that must never survive, wherever they appear: script URLs, IE's
  * `expression()`, HTC `behavior:`, and any `url()` that is not a same-document
  * reference or an inline data URI.
@@ -80,6 +74,7 @@ const EXTERNAL_URL_RE = /url\(\s*['"]?(?!#|data:)/i;
  * icon is a thousandth of that, so this only ever bites the pathological case.
  */
 const MAX_USER_SVG_ELEMENTS = 5000;
+const MAX_USER_SVG_DEPTH = 64;
 const MAX_USER_SVG_BYTES = 256 * 1024;
 
 export interface SanitizedUserSvg {
@@ -87,6 +82,10 @@ export interface SanitizedUserSvg {
 	/** Intrinsic size from the viewBox, for the icon box's aspect ratio. */
 	width: number;
 	height: number;
+	/** Embedded decoded pixels, used to bound a complete imported picture list. */
+	rasterPixels: number;
+	/** Retained SVG elements, including the root. */
+	elementCount: number;
 }
 
 /**
@@ -98,7 +97,7 @@ export interface SanitizedUserSvg {
  * renders blank is not a better outcome than a refusal that says why.
  */
 export function sanitizeUserSvg(raw: string): SanitizedUserSvg | null {
-	if (raw.length > MAX_USER_SVG_BYTES) return null;
+	if (raw.length > MAX_USER_SVG_BYTES || /<!DOCTYPE|<!ENTITY/i.test(raw)) return null;
 	const doc = new DOMParser().parseFromString(raw, "image/svg+xml");
 	if (doc.querySelector("parsererror")) return null;
 
@@ -112,15 +111,16 @@ export function sanitizeUserSvg(raw: string): SanitizedUserSvg | null {
 	svg.removeAttribute("width");
 	svg.removeAttribute("height");
 
-	const budget = { remaining: MAX_USER_SVG_ELEMENTS };
-	if (!cleanUserElement(svg, budget)) return null;
+	const budget = { remaining: MAX_USER_SVG_ELEMENTS, pixels: MAX_RASTER_PIXELS };
+	if (!cleanUserElement(svg, budget, 0)) return null;
 	if (svg.children.length === 0) return null;
 
 	svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 	const serialized = new XMLSerializer().serializeToString(svg);
 	if (serialized.length > MAX_USER_SVG_BYTES) return null;
 
-	return { svg: serialized, width, height };
+	return { svg: serialized, width, height, rasterPixels: MAX_RASTER_PIXELS - budget.pixels,
+		elementCount: MAX_USER_SVG_ELEMENTS - budget.remaining };
 }
 
 /**
@@ -131,9 +131,10 @@ export function sanitizeUserSvg(raw: string): SanitizedUserSvg | null {
  */
 function cleanUserElement(
 	el: Element,
-	budget: { remaining: number },
+	budget: { remaining: number; pixels: number },
+	depth: number,
 ): boolean {
-	if (budget.remaining-- <= 0) return false;
+	if (budget.remaining-- <= 0 || depth > MAX_USER_SVG_DEPTH) return false;
 
 	const toRemove: Element[] = [];
 	for (const child of Array.from(el.children)) {
@@ -152,15 +153,15 @@ function cleanUserElement(
 				continue;
 			}
 		}
-		if (!cleanUserElement(child, budget)) return false;
+		if (!cleanUserElement(child, budget, depth + 1)) return false;
 	}
 	for (const child of toRemove) el.removeChild(child);
 
-	cleanUserAttributes(el);
+	cleanUserAttributes(el, budget);
 	return true;
 }
 
-function cleanUserAttributes(el: Element): void {
+function cleanUserAttributes(el: Element, budget: { pixels: number }): void {
 	const isImage = el.localName.toLowerCase() === "image";
 	let embedded: string | undefined;
 
@@ -173,7 +174,13 @@ function cleanUserAttributes(el: Element): void {
 		// the SVG2 one is written back, so no xlink namespace has to survive.
 		if (isImage && (name === "href" || name === "xlink:href")) {
 			el.removeAttribute(attr);
-			if (DATA_IMAGE_HREF_RE.test(value.trim())) embedded = value.trim();
+			const uri = value.trim();
+			const size = embeddedRasterSize(uri);
+			const pixels = size ? (size.decodedPixels ?? size.width * size.height) : 0;
+			if (size && pixels <= budget.pixels) {
+				embedded = uri;
+				budget.pixels -= pixels;
+			}
 			continue;
 		}
 

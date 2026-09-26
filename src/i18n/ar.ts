@@ -231,7 +231,6 @@ export const ar: Record<string, string> = {
 		"تمت إزالة {{count}} أمر/أوامر مخصصة لم يعد نوع الـ callout الخاص بها موجودًا.",
 	"notice.customCommandMissingCallout":
 		"نوع الـ callout لهذا الأمر لم يعد موجودًا.",
-	"notice.exported": "تم تصدير الـ callouts إلى callout-studio-export.json",
 	"notice.importedJSON": "تم استيراد {{count}} نوع callout من JSON.",
 	"notice.importedSettings": "تم استيراد إعدادات الإضافة.",
 	"notice.importedCalloutManager":
@@ -856,6 +855,11 @@ export const ar: Record<string, string> = {
 	"import.warn.invalidGradient":
 		"كان التدرج اللوني للخلفية غير صالح وتم تجاهله.",
 	"import.err.parseFailed": "الملف ليس JSON صالحاً ولا يمكن تحليله.",
+	"import.err.tooLarge": "يتجاوز هذا الاستيراد حد الحجم البالغ 16 MiB. قسّمه إلى ملفات أصغر ثم حاول مرة أخرى.",
+	"import.err.tooComplex": "هذا الاستيراد معقد جدًا: استخدم 1,000 عنصر كحد أقصى لكل قائمة أو كائن، و50,000 قيمة إجمالًا، و32 مستوى من التداخل.",
+	"import.err.imageBudget": "تتجاوز مجموعة الصور حدود الحجم أو التعقيد. أزل الصور الكبيرة أو بسّطها قبل الاستيراد.",
+	"import.err.processingFailed": "تعذر إكمال الاستيراد. راجع البيانات وحاول مرة أخرى.",
+	"import.reportTruncated": "يتم عرض أول {{shown}} مشكلة من أصل {{total}}. تم اختصار القيم الطويلة في هذا التقرير.",
 	"import.err.entryNotObject": "يجب أن يكون الإدخال كائناً.",
 	"import.err.requiredMissing":
 		'الحقل المطلوب "{{field}}" مفقود أو من نوع خاطئ.',
@@ -933,6 +937,17 @@ export const ar: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"انقل تنبيهات admonition المخصصة لديك من إضافة Admonition.",
+	"import.back": "رجوع",
+	"import.removeFile": "إزالة الملف",
+	"import.fileReady": "جاهز للاستيراد.",
+	"import.pasteButton": "لصق",
+	"import.pasted": "تم اللصق من الحافظة",
+	"import.clearPaste": "مسح النص الملصق",
+	"import.clipboardEmpty": "الحافظة فارغة. انسخ البيانات أولاً.",
+	"import.clipboardUnreadable":
+		"تعذّرت قراءة الحافظة. احفظ البيانات كملف واخترْه بدلاً من ذلك.",
+	"import.importing": "جارٍ الاستيراد…",
+	"import.err.fileUnreadable": "تعذّرت قراءة الملف.",
 	"import.cmTitle": "استيراد من Callout Manager",
 	"import.cmInstructions":
 		"يُنقل كل callout مخصص مع أيقونته ولونه. لا يُنقل التنسيق الخاص بكل سمة أو CSS المخصص، إذ لا يوجد ما يقابلهما هنا.",
@@ -941,12 +956,23 @@ export const ar: Record<string, string> = {
 	"import.cmVaultFound": "تم العثور على {{count}} تلميح(ات) مخصصة.",
 	"import.cmVaultNotFound":
 		"لم يتم العثور على أي تلميحات مخصصة في هذه الخزينة.",
+	"import.cmVaultNotInstalled": "لم يتم تثبيت Callout Manager في هذه الخزينة.",
+	"import.cmVaultUnreadable":
+		"تعذّرت قراءة ملف إعدادات Callout Manager في هذه الخزينة.",
+	"import.cmUseManual": "استخدام ملف أو أنماط منسوخة بدلاً من ذلك",
+	"import.cmFromFile": "ملف",
+	"import.cmFromFileDesc":
+		"ملف data.json من Callout Manager، أو الأنماط المنسوخة منه محفوظةً في ملف.",
+	"import.cmChooseFile": "اختيار ملف…",
+	"import.cmFromPaste": "الأنماط المنسوخة",
+	"import.cmFromPasteDesc":
+		"ما ينسخه زر Copy في Callout Manager، أو ملف data.json.",
 	"import.cmPasteLabel": "أو الصق الأنماط المنسوخة من Callout Manager هنا:",
 	"import.cmPlaceholder": "الصق الأنماط المنسوخة، أو ملف data.json، هنا…",
 	"import.cmBtnCancel": "إلغاء",
 	"import.cmBtnImport": "استيراد",
 	"import.err.cmNoBlocksFound":
-		"لم يتم العثور على أي أنماط Callout Manager في النص الملصق.",
+		"لم يتم العثور على أي أنماط Callout Manager في الملف أو النص الملصق.",
 	"import.err.cmNotRecognized":
 		"ملف غير معروف: كان متوقعاً الأنماط الناتجة عن زر Copy في Callout " +
 		"Manager، أو ملف data.json الخاص به.",
@@ -965,6 +991,10 @@ export const ar: Record<string, string> = {
 		"ليس جزءاً من الاستيراد، لذلك تم نقل الأيقونة واللون فقط.",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "لا يمكن الحفاظ على التنسيق المعتمد على السمة. تُفضّل القيم غير المشروطة؛ ويُطبّق أي بديل مشروط على جميع السمات.",
+	"import.warn.cmCustomStylesSkipped": "لن يتم استيراد CSS المخصص من Callout Manager. يمكن نقل إعدادات الأيقونة واللون المدعومة فقط.",
+	"import.warn.cmSchemeIcon": "يستخدم Callout Studio أيقونة واحدة لكلا نظامي الألوان؛ وستُستخدم الأيقونة المستوردة في كليهما.",
+	"import.err.cmDuplicateId": "المعرّف {{value}} مكرر مع {{other}} في هذا الاستيراد وتم تخطيه.",
 	"import.admTitle": "استيراد من Admonition",
 	"import.admInstructions":
 		"ينتقل كل admonition كـ callout مع اسمه وأيقونته ولونه. الإعدادات " +
@@ -975,9 +1005,16 @@ export const ar: Record<string, string> = {
 	"import.admVaultFound": "تم العثور على {{count}} من admonition المخصصة.",
 	"import.admVaultNotFound":
 		"لم يتم العثور على أي admonition مخصص في هذه الخزينة.",
+	"import.admVaultNotInstalled": "لم يتم تثبيت Admonition في هذه الخزينة.",
+	"import.admVaultUnreadable":
+		"تعذّرت قراءة ملف إعدادات Admonition في هذه الخزينة.",
+	"import.admUseManual": "استخدام ملف أو نص JSON ملصق بدلاً من ذلك",
 	"import.admFromFile": "ملف",
 	"import.admFromFileDesc": "ملف admonitions.json، أو حزمة مشتركة.",
 	"import.admChooseFile": "اختيار ملف…",
+	"import.admFromPaste": "JSON المنسوخ",
+	"import.admFromPasteDesc":
+		"JSON الخاص بـ Admonition أو ملف data.json، منسوخًا إلى الحافظة.",
 	"import.admPasteLabel": "أو الصق JSON هنا:",
 	"import.admPlaceholder": "الصق admonition الخاصة بك هنا…",
 	"import.admBtnCancel": "إلغاء",
@@ -997,6 +1034,8 @@ export const ar: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"تعذّرت قراءة الصورة المرفوعة، لذلك تم استخدام الأيقونة " +
 		"الافتراضية.",
+	"import.warn.admUnsupportedOptions": "لن يتم استيراد خيارات Admonition هذه: {{fields}}.",
+	"import.warn.admImageSkipped": "تعذرت قراءة الصورة المرفوعة ولم يتم استيرادها.",
 	"import.warn.admIconWithCss":
 		"يتم تنسيق هذا الـ admonition عبر مقتطف CSS في Admonition. هذا " +
 		"التنسيق ليس جزءًا من الاستيراد، لذلك انتقل الاسم والأيقونة " +
@@ -1049,8 +1088,9 @@ export const ar: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"تغير مقطع CSS في مجلد المقاطع منذ أن كتبه Callout Studio. سيؤدي التصدير مرة أخرى إلى استبدال الملف بالكامل.",
 	"confirm.overwriteSnippetOk": "استبدال",
+	"settings.recommended": "موصى به",
 	"export.chooseFormat": "تصدير كـ",
-	"export.formatJson": "نسخة Callout Studio الاحتياطية (موصى بها)",
+	"export.formatJson": "نسخة Callout Studio الاحتياطية",
 	"export.formatJsonDesc":
 		"ملف ‎.json هو الطريقة الوحيدة المدعومة لاستعادة بيانات Callout Studio بالكامل أو نقلها إلى خزنة جديدة مثبّت فيها المكوّن الإضافي.",
 	"export.formatCss": "لقطة CSS مستقلة بذاتها",

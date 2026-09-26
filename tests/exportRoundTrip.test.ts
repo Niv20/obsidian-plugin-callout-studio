@@ -474,6 +474,17 @@ describe("exportToJSONv2 — the envelope", () => {
  * ──────────────────────────────────────────────────────────────────────────── */
 
 describe("export → import — a fresh vault becomes the exporting one", () => {
+	it("notifies once for a whole definition import instead of repainting once per entry", async () => {
+		const target = emptyVault();
+		let changes = 0;
+		target.onChange(() => { changes++; });
+		const source = sourceVault();
+		assert.ok(source.getUserDefined().length > 1);
+		await importInto(target, source.exportToJSON());
+		assert.equal(changes, 1);
+		assert.equal(target.getUserDefined().length, source.getUserDefined().length);
+	});
+
 	it("passes validation with no issue at all", async () => {
 		// Stated before the round trip below, because `processImportedJSON`
 		// answers any issue with a modal — so a warning appearing here would turn

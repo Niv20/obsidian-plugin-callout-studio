@@ -14,6 +14,7 @@
  * structure survives to be interpreted by anything later.
  */
 import { sanitizeUserSvg } from "./svg";
+import { rasterDimensions, safeRasterSize } from "./rasterSafety";
 import {
 	newUserImageId,
 	userImageNameFromFilename,
@@ -200,7 +201,12 @@ async function readRaster(
 	file: File,
 	format: UserImageIcon["format"],
 ): Promise<{ svg: string; width: number; height: number } | null> {
+	// Compressed byte size does not bound decoded pixel allocation. Inspect the
+	// dimensions before assigning an object URL to an Image.
+	const dimensions = rasterDimensions(new Uint8Array(await file.arrayBuffer()));
+	if (!dimensions || dimensions.format !== format || !safeRasterSize(dimensions.width, dimensions.height)) return null;
 	const source = await decodeImage(file);
+	if (!safeRasterSize(source.naturalWidth, source.naturalHeight)) return null;
 	const { width, height } = fitWithin(
 		source.naturalWidth,
 		source.naturalHeight,

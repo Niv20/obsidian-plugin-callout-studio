@@ -1,4 +1,12 @@
 import { sanitizeUserSvg } from "../../src/icons/svg";
+import { sanitizeUserImages } from "../../src/utils/userImages";
+import { planAdmonitionImport } from "../../src/utils/admonitionImport";
+import { ADMONITION_IMPORT } from "../../src/settings/pluginImport/admonitionImportSource";
+import { processImportedJSON } from "../../src/settings/sections/DataManagementSection";
+import type { SettingsSectionContext } from "../../src/settings/sections/types";
+import { ImportReportModal } from "../../src/utils/ImportReportModal";
+import { ImportLimitError } from "../../src/utils/importLimits";
+import type { UserImageIcon } from "../../src/types";
 import { isolateSvgCopy } from "../../src/icons/isolateSvg";
 import { renderIconInto } from "../../src/icons/renderIcon";
 import { createIconResolver } from "../../src/icons/resolver";
@@ -59,7 +67,7 @@ export async function runSvgSecurityTests(): Promise<number> {
 	const foreign = clean('<style xmlns="http://www.w3.org/1999/xhtml">body{display:none}</style><rect width="24" height="24"/>');
 	check(!foreign.querySelector("style"), "Foreign namespace style survived");
 	check(document.body.dataset.attacked === undefined, "Event handler executed");
-	return checks + 6 + cachedSvgChecks() + await iconCssChecks() + await lateMaterialChecks();
+	return checks + 6 + await svgResourceChecks() + cachedSvgChecks() + await iconCssChecks() + await lateMaterialChecks();
 }
 
 async function lateMaterialChecks(): Promise<number> {
@@ -141,5 +149,106 @@ function cachedSvgChecks(): number {
 	check(renderIconInto(target, icon, resolver, {
 		role: "regular", fill: "currentColor", missing: { kind: "leave" },
 	}) === "skipped", "Malformed cache did not use the missing-artwork path");
+	return 5;
+}
+
+/** Parser/resource bounds exercise real DOMParser and XMLSerializer behavior. */
+async function svgResourceChecks(): Promise<number> {
+	check(sanitizeUserSvg('<!DOCTYPE svg [<!ENTITY a "expanded">]><svg xmlns="http://www.w3.org/2000/svg"><text>&a;</text></svg>') === null,
+		"SVG entity document survived");
+	check(sanitizeUserSvg(`<svg xmlns="http://www.w3.org/2000/svg">${"<g>".repeat(80)}<path d="M0 0L1 1"/>${"</g>".repeat(80)}</svg>`) === null,
+		"Deeply nested SVG survived");
+	const canvas = document.createElement("canvas"); canvas.width = 1; canvas.height = 1;
+	const valid = canvas.toDataURL("image/png");
+	check(clean(`<image href="${valid}" width="1" height="1"/>`).querySelector("image")?.hasAttribute("href"),
+		"Safe embedded raster was lost");
+	const bytes = Uint8Array.from(atob(valid.split(",")[1]!), char => char.charCodeAt(0));
+	new DataView(bytes.buffer).setUint32(16, 100000);
+	new DataView(bytes.buffer).setUint32(20, 100000);
+	const bomb = `data:image/png;base64,${btoa(String.fromCharCode(...bytes))}`;
+	check(!clean(`<image href="${bomb}" width="1" height="1"/>`).querySelector("image")?.hasAttribute("href"),
+		"Huge compressed raster survived SVG import");
+	new DataView(bytes.buffer).setUint32(16, 4096);
+	new DataView(bytes.buffer).setUint32(20, 4096);
+	const fullBudget = `data:image/png;base64,${btoa(String.fromCharCode(...bytes))}`;
+	const list = sanitizeUserImages([1, 2].map(id => ({ id: `img-budget-${id}`, name: `Budget ${id}.svg`, format: "svg",
+		svg: `<svg xmlns="http://www.w3.org/2000/svg"><image href="${fullBudget}" width="1" height="1"/></svg>` })));
+	check(list.length === 1, "Picture list exceeded its aggregate raster budget");
+	const registry = new CalloutRegistry(); registry.load(null); registry.setUserImages(list);
+	const result = await validateImportPayload({ format: "callout-studio", callouts: [],
+		settings: { userImages: [{ ...list[0]!, id: "img-additional" }] } }, registry);
+	check(result.fatal && result.issues.some(issue => issue.messageKey === "import.err.imageBudget"),
+		"Combined native image budget was not rejected before mutation");
+	check(registry.getUserImages().length === 1 && registry.getUserImages()[0]?.id === list[0]!.id,
+		"A failed combined image import mutated existing pictures");
+	const replacement = await validateImportPayload({ format: "callout-studio", callouts: [],
+		settings: { userImages: list } }, registry);
+	check(!replacement.fatal && replacement.settings?.userImages.length === 1,
+		"Replacing the same image was charged twice");
+	const vector = `<svg xmlns="http://www.w3.org/2000/svg">${'<path d="M0 0L1 1"/>'.repeat(4999)}</svg>`;
+	const vectors = sanitizeUserImages(Array.from({ length: 11 }, (_, id) => ({ id: `vector-${id}`, name: `Vector ${id}.svg`, format: "svg", svg: vector })));
+	check(vectors.length === 10, "Picture collection exceeded 50,000 SVG elements");
+	const tinySvg = '<svg xmlns="http://www.w3.org/2000/svg"><path d="M0 0L1 1"/></svg>';
+	const admonition = await planAdmonitionImport([{ type: "budget-test", icon: { type: "image", name: `data:image/svg+xml,${encodeURIComponent(tinySvg)}` } }], registry, vectors);
+	check(admonition.newImages.length === 0 && admonition.issues.some(issue => issue.messageKey === "import.warn.admImageSkipped"),
+		"Admonition promised a picture its combined collection could not hold");
+	return 10 + await importBudgetRaceChecks(list[0]!, valid);
+}
+
+/** Both apply routes must recheck a destination changed after planning. */
+async function importBudgetRaceChecks(fullBudget: UserImageIcon, rasterUri: string): Promise<number> {
+	const incoming = sanitizeUserImages([{ id: "race-picture", name: "Race.svg", format: "svg",
+		svg: `<svg xmlns="http://www.w3.org/2000/svg"><image href="${rasterUri}" width="1" height="1"/></svg>` }])[0];
+	check(incoming, "Race test did not create a real sanitized image");
+	const registry = new CalloutRegistry(); registry.load(null);
+	let mutations = 0;
+	const ctx = { app: {}, plugin: { registry,
+		saveSettings: async () => { mutations++; }, customCommands: { syncAll: () => { mutations++; } },
+		refreshRenderModes: () => { mutations++; }, ensureIconArtworkFor: async () => { mutations++; },
+	}, display: () => { mutations++; } } as unknown as SettingsSectionContext;
+	const payload = { format: "callout-studio", callouts: [{
+		id: "race-native", displayName: "Race native", icon: { type: "image", value: incoming.id },
+		colorLight: "#448aff", colorDark: "#448aff", foldable: true, defaultFolded: false,
+		futureField: "Triggers a warning report before apply",
+	}], settings: { userImages: [incoming] } };
+	const validation = await validateImportPayload(payload, registry);
+	check(!validation.fatal && validation.validDefs.length === 1 && validation.issues.length > 0,
+		"Race test must begin with a valid import and a warning report");
+	const originalPrompt = Object.getOwnPropertyDescriptor(ImportReportModal.prototype, "prompt")!;
+	const reports: Array<{ fatal: boolean; keys: string[] }> = [];
+	ImportReportModal.prototype.prompt = function () {
+		const report = this as unknown as { fatal: boolean; issues: Array<{ messageKey: string }> };
+		reports.push({ fatal: report.fatal, keys: report.issues.map(issue => issue.messageKey) });
+		if (reports.length === 1) {
+			registry.setUserImages([fullBudget]); // Sync arrives while the report is open.
+			return Promise.resolve("importValid");
+		}
+		return Promise.resolve("cancel");
+	};
+	try {
+		await processImportedJSON(ctx, new File([JSON.stringify(payload)], "race.json"));
+	} finally { Object.defineProperty(ImportReportModal.prototype, "prompt", originalPrompt); }
+	check(reports.length === 2 && !reports[0]!.fatal && reports[1]!.fatal && reports[1]!.keys.includes("import.err.imageBudget"),
+		"Native apply did not report its changed image budget");
+	check(!registry.has("race-native") && registry.getUserImages().length === 1 &&
+		registry.getUserImages()[0]?.id === fullBudget.id && mutations === 0,
+		"Native budget race changed definitions, pictures or saved settings");
+
+	registry.setUserImages([]);
+	const read = ADMONITION_IMPORT.fromText(JSON.stringify([{ type: "race-admonition", icon: {
+		type: "image", name: `data:image/svg+xml,${encodeURIComponent(incoming.svg)}`,
+	} }]));
+	check("batch" in read, "Admonition source did not recognize the race fixture");
+	const plan = await read.batch.plan(ctx);
+	check(plan.applyCount === 1 && !plan.issues.some(issue => issue.messageKey === "import.warn.admImageSkipped"),
+		"Admonition race plan did not contain a converted image");
+	registry.setUserImages([fullBudget]);
+	let blocked = false;
+	try { plan.apply(); } catch (error) {
+		blocked = error instanceof ImportLimitError && error.messageKey === "import.err.imageBudget";
+	}
+	check(blocked && !registry.has("race-admonition") && registry.getUserImages().length === 1 &&
+		registry.getUserImages()[0]?.id === fullBudget.id,
+		"Admonition applied an image after its destination exhausted the budget");
 	return 5;
 }

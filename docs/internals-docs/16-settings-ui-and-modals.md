@@ -1001,8 +1001,6 @@ it must not style Obsidian's editor or the transparent input inside a combobox.
 Single-line fields share the dropdowns' 36px minimum height (or
 `--input-height` when larger), 6px by 10px padding, `--radius-s` corners,
 1px border, and small UI font. Each screen retains its own control width.
-The two JSON paste areas keep their multiline height, vertical resize, and
-monospace font while sharing the same border, corners, and background states.
 
 | State | Text fields and dropdown controls |
 | --- | --- |
@@ -1013,10 +1011,12 @@ monospace font while sharing the same border, corners, and background states.
 
 The standalone fields are the callout editor's **Display name** and **Callout
 IDs**, the palette editor's **Name**, the Quick Insert and replacement-dialog
-searches, the search box in every icon source, and JSON paste in both the
-Callout Manager and Admonition import dialogs. Searchable callout and color
-pickers remain comboboxes: their outer `cs-dropdown-control` paints the box,
-and their inner `cs-combobox-input` stays transparent in every state.
+searches, and the search box in every icon source. The Callout Manager and
+Admonition import window has no text box: it reads the clipboard instead (see
+[Import and export](15-import-export.md#the-plugin-import-window)).
+Searchable callout and color pickers remain comboboxes: their outer
+`cs-dropdown-control` paints the box, and their inner `cs-combobox-input`
+stays transparent in every state.
 Select-only combobox inputs remain readonly. File inputs and native color
 swatches are separate controls and do not receive text-field styling.
 

@@ -237,8 +237,6 @@ export const ja: Record<string, string> = {
 	"notice.customCommandMissingCallout":
 		"このコマンドのcalloutタイプはもう存在しません。",
 
-	"notice.exported":
-		"calloutをcallout-studio-export.jsonにエクスポートしました",
 	"notice.importedJSON":
 		"JSONから{{count}}件のcalloutタイプをインポートしました。",
 	"notice.importedSettings": "プラグインの設定をインポートしました。",
@@ -819,6 +817,11 @@ export const ja: Record<string, string> = {
 		"背景のグラデーションが無効だったため、無視されました。",
 	"import.err.parseFailed":
 		"ファイルは有効なJSONではなく、解析できませんでした。",
+	"import.err.tooLarge": "このインポートは16 MiBのサイズ上限を超えています。小さなファイルに分割して、もう一度お試しください。",
+	"import.err.tooComplex": "このインポートは複雑すぎます。リストまたはオブジェクトごとに最大1,000項目、合計50,000値、入れ子は最大32階層にしてください。",
+	"import.err.imageBudget": "画像コレクション全体がサイズまたは複雑さの上限を超えています。大きな画像を削除するか簡素化してからインポートしてください。",
+	"import.err.processingFailed": "インポートを完了できませんでした。データを確認して、もう一度お試しください。",
+	"import.reportTruncated": "{{total}}件中、最初の{{shown}}件の問題を表示しています。長い値はこのレポート内で短縮されています。",
 	"import.err.entryNotObject": "エントリはオブジェクトでなければなりません。",
 	"import.err.requiredMissing":
 		'必須フィールド"{{field}}"が欠けているか、型が間違っています。',
@@ -899,12 +902,33 @@ export const ja: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Admonition プラグインからカスタム admonition を引き継ぎます。",
+	"import.back": "戻る",
+	"import.removeFile": "ファイルを削除",
+	"import.fileReady": "インポートの準備ができました。",
+	"import.pasteButton": "貼り付け",
+	"import.pasted": "クリップボードから貼り付けました",
+	"import.clearPaste": "貼り付けたテキストを消去",
+	"import.clipboardEmpty": "クリップボードが空です。先にデータをコピーしてください。",
+	"import.clipboardUnreadable":
+		"クリップボードを読み取れませんでした。代わりにデータをファイルとして保存し、それを選択してください。",
+	"import.importing": "インポート中…",
+	"import.err.fileUnreadable": "ファイルを読み取れませんでした。",
 	"import.cmTitle": "Callout Manager からインポート",
 	"import.cmFromVault": "この保管庫",
 	"import.cmVaultChecking": "Callout Manager プラグインを探しています…",
 	"import.cmVaultFound": "カスタム callout が {{count}} 件見つかりました。",
 	"import.cmVaultNotFound":
 		"この保管庫にカスタム callout は見つかりませんでした。",
+	"import.cmVaultNotInstalled": "この保管庫にはCallout Managerがインストールされていません。",
+	"import.cmVaultUnreadable": "この保管庫の Callout Manager 設定ファイルを読み取れませんでした。",
+	"import.cmUseManual": "代わりにファイルまたはコピーしたスタイルを使用",
+	"import.cmFromFile": "ファイル",
+	"import.cmFromFileDesc":
+		"Callout Manager の data.json、またはコピーしたスタイルを保存したファイル。",
+	"import.cmChooseFile": "ファイルを選択…",
+	"import.cmFromPaste": "コピーしたスタイル",
+	"import.cmFromPasteDesc":
+		"Callout Manager の Copy ボタンでコピーされるもの、または data.json。",
 	"import.cmPasteLabel":
 		"または Callout Manager からコピーしたスタイルをここに貼り付け：",
 	"import.cmInstructions":
@@ -913,7 +937,7 @@ export const ja: Record<string, string> = {
 	"import.cmBtnCancel": "キャンセル",
 	"import.cmBtnImport": "インポート",
 	"import.err.cmNoBlocksFound":
-		"貼り付けたテキストに Callout Manager のスタイルが見つかりませんでした。",
+		"ファイルまたは貼り付けたテキストに Callout Manager のスタイルが見つかりませんでした。",
 	"import.err.cmNotRecognized":
 		"ファイルを認識できませんでした。Callout Manager の Copy ボタンで作成されたスタイル、または Callout Manager の data.json が必要です。",
 	"import.err.cmNoEntries":
@@ -930,6 +954,10 @@ export const ja: Record<string, string> = {
 		"この callout には Callout Manager のカスタム CSS もあります。このスタイルはインポート対象外のため、アイコンと色だけが引き継がれました。",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "テーマ依存のスタイルは保持できません。無条件の値が優先され、条件付きの代替値がある場合はすべてのテーマに適用されます。",
+	"import.warn.cmCustomStylesSkipped": "Callout ManagerのカスタムCSSはインポートされません。対応しているアイコンと色の設定のみ引き継げます。",
+	"import.warn.cmSchemeIcon": "Callout Studioは両方の配色で同じアイコンを使用します。インポートしたアイコンは両方で使われます。",
+	"import.err.cmDuplicateId": "ID {{value}} はこのインポート内の {{other}} と重複するため、スキップされました。",
 	"import.admTitle": "Admonition からインポート",
 	"import.admInstructions":
 		"各 admonition は名前・アイコン・色を保ったまま callout としてインポートされます。Callout " +
@@ -940,9 +968,15 @@ export const ja: Record<string, string> = {
 		"カスタム admonition が {{count}} 件見つかりました。",
 	"import.admVaultNotFound":
 		"この保管庫にカスタム admonition は見つかりませんでした。",
+	"import.admVaultNotInstalled": "この保管庫にはAdmonitionがインストールされていません。",
+	"import.admVaultUnreadable": "この保管庫の Admonition 設定ファイルを読み取れませんでした。",
+	"import.admUseManual": "代わりにファイルまたは貼り付けた JSON を使用",
 	"import.admFromFile": "ファイル",
 	"import.admFromFileDesc": "admonitions.json ファイル、または共有パック。",
 	"import.admChooseFile": "ファイルを選択…",
+	"import.admFromPaste": "コピーした JSON",
+	"import.admFromPasteDesc":
+		"Admonition の JSON、またはクリップボードにコピーされた data.json。",
 	"import.admPasteLabel": "または JSON をここに貼り付け：",
 	"import.admPlaceholder": "ここに admonition を貼り付け…",
 	"import.admBtnCancel": "キャンセル",
@@ -959,6 +993,8 @@ export const ja: Record<string, string> = {
 		'"{{value}}" という名前のアイコンはどのアイコンライブラリにもないため、"{{id}}" は元のアイコンのままです。',
 	"import.warn.admImageFailed":
 		"アップロードされた画像を読み取れなかったため、既定のアイコンを使用しました。",
+	"import.warn.admUnsupportedOptions": "次のAdmonitionオプションはインポートされません: {{fields}}。",
+	"import.warn.admImageSkipped": "アップロードされた画像を読み取れなかったため、インポートされませんでした。",
 	"import.warn.admIconWithCss":
 		"この admonition は Admonition 側の CSS " +
 		"スニペットでスタイル設定されています。そのスタイルはインポートに含まれないため、名前・アイコン・色のみを引き継ぎました。",
@@ -1011,8 +1047,9 @@ export const ja: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"snippetsフォルダのCSSスニペットは、Callout Studioが書き込んだ後に変更されています。再度エクスポートするとファイル全体が置き換えられます。",
 	"confirm.overwriteSnippetOk": "上書き",
+	"settings.recommended": "推奨",
 	"export.chooseFormat": "エクスポート形式",
-	"export.formatJson": "Callout Studioバックアップ（推奨）",
+	"export.formatJson": "Callout Studioバックアップ",
 	"export.formatJsonDesc":
 		".jsonファイルは、Callout Studioのデータを完全に復元したり、プラグインがインストールされた新しいvaultへ移行したりするためにサポートされている唯一の方法です。",
 	"export.formatCss": "単独で使用できるCSSスナップショット",

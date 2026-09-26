@@ -30,7 +30,6 @@ import type {
 	ContextMenuItemConfig,
 	ContextMenuItemId,
 	ContextMenuSettings,
-	IconSourceSettings,
 	LegacyPopupSettings,
 	PluginSettings,
 } from "../types";
@@ -38,61 +37,10 @@ import { DEFAULT_CONTEXT_MENU_ITEMS, DEFAULT_SETTINGS } from "../constants";
 import { sanitizeCustomPalettes } from "./paletteSanitize";
 import { mergeGlobalStyle } from "./globalStyleMerge";
 import { isCalloutSourceFilter } from "./calloutSearch";
-import { clampGlobalStyle, localePreference } from "./settingsGuards";
+import { booleanPreference, clampGlobalStyle, localePreference } from "./settingsGuards";
 import { sanitizeUserImages } from "./userImages";
 import { sanitizeCustomCommands } from "./customCommands";
-
-/**
- * Merge saved icon-picker state over the defaults, folding the pre-2.4
- * `lastMaterialCategory` into `lastCategory`, which is keyed by icon source
- * now that there is more than one source with categories.
- *
- * Field by field rather than `{...defaults, ...saved}` for the reason spelled
- * out on {@link mergeSavedSettings}: a spread carries every key the current
- * version knows nothing about straight back into `data.json` and into every
- * export. The two optional style defaults are only written when the file
- * actually names them, since the defaults object has no key for them at all
- * and an `undefined` one is still a key.
- */
-function mergeIconSources(
-	saved: Partial<IconSourceSettings> | undefined,
-): IconSourceSettings {
-	const defaults = DEFAULT_SETTINGS.iconSources;
-	const merged: IconSourceSettings = {
-		materialStyleDefault:
-			saved?.materialStyleDefault ?? defaults.materialStyleDefault,
-		materialWeightDefault:
-			saved?.materialWeightDefault ?? defaults.materialWeightDefault,
-		// Its own object on every merge, whatever the file said. A plain spread
-		// of the defaults copies the *reference*, so a file that names no
-		// category — every fresh install, and every "reset to defaults" — was
-		// handed `DEFAULT_SETTINGS`' own map. Nothing writes into it in place
-		// today, by the picker's convention alone; the day something does, the
-		// last-opened category would be stuck in the defaults for the rest of
-		// the session and leak into every later merge.
-		lastCategory: {
-			...defaults.lastCategory,
-			...saved?.lastCategory,
-		},
-		lastEmojiSkinTone:
-			saved?.lastEmojiSkinTone ?? defaults.lastEmojiSkinTone,
-	};
-	if (saved?.faStyleDefault !== undefined) {
-		merged.faStyleDefault = saved.faStyleDefault;
-	}
-	if (saved?.tablerStyleDefault !== undefined) {
-		merged.tablerStyleDefault = saved.tablerStyleDefault;
-	}
-	// Pre-2.4: one source had categories, so the field named Material directly.
-	const legacyCategory = saved?.lastMaterialCategory;
-	if (legacyCategory) {
-		merged.lastCategory = {
-			...merged.lastCategory,
-			material: legacyCategory,
-		};
-	}
-	return merged;
-}
+import { mergeIconSources } from "./iconSourcesMerge";
 
 /**
  * The three per-item booleans the context menu had until 1.2.2, when it became
@@ -204,9 +152,8 @@ export function mergeSavedSettings(
 		globalStyle: clampGlobalStyle(mergeGlobalStyle(savedGlobal)),
 		contextMenu: {
 			enabled:
-				savedSettings.contextMenu?.enabled ??
-				legacyPopup?.enabled ??
-				DEFAULT_SETTINGS.contextMenu.enabled,
+				booleanPreference(savedSettings.contextMenu?.enabled,
+					booleanPreference(legacyPopup?.enabled, DEFAULT_SETTINGS.contextMenu.enabled)),
 			items: {
 				regular: mergeMenuItems(
 					savedMenuItems?.regular,
@@ -234,31 +181,32 @@ export function mergeSavedSettings(
 		iconSources: mergeIconSources(savedSettings.iconSources),
 		headingCallouts: {
 			enabled:
-				savedSettings.headingCallouts?.enabled ??
-				DEFAULT_SETTINGS.headingCallouts.enabled,
+				booleanPreference(savedSettings.headingCallouts?.enabled,
+					DEFAULT_SETTINGS.headingCallouts.enabled),
 			// Outline/link cleaning + icons are always on and no longer
 			// user-configurable; ignore any saved-off value from old data.
 			refCleanTitles: true,
 			refShowIcon: true,
 			showFoldArrow:
-				savedSettings.headingCallouts?.showFoldArrow ??
-				DEFAULT_SETTINGS.headingCallouts.showFoldArrow,
+				booleanPreference(savedSettings.headingCallouts?.showFoldArrow,
+					DEFAULT_SETTINGS.headingCallouts.showFoldArrow),
 		},
 		inlineCallouts: {
 			enabled:
-				savedSettings.inlineCallouts?.enabled ??
-				DEFAULT_SETTINGS.inlineCallouts.enabled,
+				booleanPreference(savedSettings.inlineCallouts?.enabled,
+					DEFAULT_SETTINGS.inlineCallouts.enabled),
 			allowContent:
-				savedSettings.inlineCallouts?.allowContent ??
-				DEFAULT_SETTINGS.inlineCallouts.allowContent,
+				booleanPreference(savedSettings.inlineCallouts?.allowContent,
+					DEFAULT_SETTINGS.inlineCallouts.allowContent),
 		},
 		welcomeSeen:
-			savedSettings.welcomeSeen ?? DEFAULT_SETTINGS.welcomeSeen,
+			booleanPreference(savedSettings.welcomeSeen, DEFAULT_SETTINGS.welcomeSeen ?? false),
 		competitorImportBannerHandled:
 			savedSettings.competitorImportBannerHandled === true,
 		fallbackCalloutId:
-			savedSettings.fallbackCalloutId ??
-			DEFAULT_SETTINGS.fallbackCalloutId,
+			typeof savedSettings.fallbackCalloutId === "string"
+				? savedSettings.fallbackCalloutId
+				: DEFAULT_SETTINGS.fallbackCalloutId,
 		language: localePreference(savedSettings.language),
 		customPalettes: sanitizeCustomPalettes(savedSettings.customPalettes),
 		userImages: sanitizeUserImages(savedSettings.userImages),

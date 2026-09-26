@@ -8,10 +8,10 @@
  *
  * The libraries line up better than they have any right to. Admonition offers
  * Obsidian's own icons plus five downloadable packs, and Callout Studio already
- * carries every one of them under the same upstream names — Octicons
- * `accessibility`, RPG Awesome `acid`, Font Awesome `star` are the same strings
- * on both sides. So the mapping below is a rename of the pack id and nothing
- * more; no name translation table is needed, and none should ever be added.
+ * carries every one of them. Most names match — Octicons `accessibility`, RPG
+ * Awesome `acid`, Font Awesome `star` — with two RPG glyph-name exceptions:
+ * Admonition kept the font's old spellings, while our generator uses the
+ * stylesheet's documented names. Those are normalized per candidate below.
  *
  * What is not a rename is the guessing. Admonition's icon field has three
  * spellings in the wild — an object with a pack, an object without one, and a
@@ -69,10 +69,10 @@ const FONT_AWESOME_PACKS: readonly IconPackId[] = Object.freeze([
 /**
  * Where to look when the file does not say which pack a name came from.
  *
- * Obsidian's own icons first, then the downloadable packs, which is the order
- * Admonition's `getIconType()` uses to answer the same question — so a name
- * that is ambiguous (`globe` exists in both Lucide and Font Awesome) resolves
- * to the same drawing the user was looking at before they exported.
+ * Obsidian's own icons first, like Admonition's `getIconType()`, then a stable
+ * fallback order. Upstream tries its downloaded packs in installation order,
+ * which a shared export does not carry. Ambiguous packless names therefore
+ * cannot always recover the original drawing; explicit pack ids can.
  */
 const INFERENCE_ORDER: readonly IconPackId[] = Object.freeze([
 	"lucide",
@@ -107,23 +107,37 @@ export function isAdmonitionImage(icon: AdmonitionIconRaw): boolean {
  * Every drawing this icon could plausibly be, best first.
  *
  * Empty for a picture, which is not a name in any pack and travels its own way
- * (see `convertAdmonitionImage`). Otherwise always at least one candidate, so a
- * name that exists nowhere still produces a definite "no such icon" for the
- * report rather than silence.
+ * (see `convertAdmonitionImage`) or an oversized name. Other names always have
+ * at least one candidate, and a name that exists nowhere produces a definite
+ * "no such icon" for the report rather than silence.
  */
 export function iconCandidates(icon: AdmonitionIconRaw): CalloutIcon[] {
 	if (isAdmonitionImage(icon)) return [];
+	// Same ceiling as the backup validator; never persist an oversized name
+	// when a library index is unavailable and its name check is optimistic.
+	if (icon.name.length > 200) return [];
 
 	const packs = packsToTry(icon.type);
-	return packs.map((type) => ({ type, value: icon.name }));
+	return packs.map((type) => ({ type, value: candidateName(type, icon.name) }));
+}
+
+function candidateName(type: IconPackId, name: string): string {
+	if (type !== "rpg-awesome") return name;
+	if (name === "montains") return "mountains";
+	if (name === "perspective-dice-six-two") return "perspective-dice-two";
+	return name;
 }
 
 function packsToTry(type: string | undefined): readonly IconPackId[] {
 	if (!type) return INFERENCE_ORDER;
 	// The legacy id, still accepted by upstream's own importer.
 	if (type === "font-awesome") return FONT_AWESOME_PACKS;
-	const mapped = PACK_OF_ADMONITION_TYPE[type];
-	if (mapped) return [mapped];
+	// A JSON string such as "__proto__" is data, never an inherited member of
+	// this lookup. Otherwise a function/object could become CalloutIcon.type
+	// and survive the optimistic name check into persistent settings.
+	if (Object.prototype.hasOwnProperty.call(PACK_OF_ADMONITION_TYPE, type)) {
+		return [PACK_OF_ADMONITION_TYPE[type]!];
+	}
 	// A pack this build has never heard of — most likely one Admonition added
 	// after this was written. Guessing beats refusing: the name is still a name,
 	// and if nothing has it the report says so.
@@ -161,10 +175,11 @@ export async function resolveIcon(
 	if (!match) return undefined;
 
 	if (FONT_AWESOME_PACKS.includes(match.type)) {
-		const actual = await faTypeForName(
-			match.value,
-			FA_STYLE_OF_ADMONITION_TYPE[raw.type ?? ""],
-		);
+		const type = raw.type ?? "";
+		const wanted = Object.prototype.hasOwnProperty.call(FA_STYLE_OF_ADMONITION_TYPE, type)
+			? FA_STYLE_OF_ADMONITION_TYPE[type]
+			: undefined;
+		const actual = await faTypeForName(match.value, wanted);
 		if (actual) return { type: actual, value: match.value };
 	}
 	return match;
@@ -238,8 +253,8 @@ export async function convertAdmonitionImage(
  * percent-encoded form a hand-written file may carry.
  */
 function dataUriToFile(dataUri: string, label: string): File | null {
+	if (dataUri.length > MAX_DATA_URI_CHARS) return null;
 	const uri = dataUri.trim();
-	if (uri.length > MAX_DATA_URI_CHARS) return null;
 
 	const match = /^data:(image\/[a-z0-9.+-]+)\s*(;base64)?\s*,([\s\S]*)$/i.exec(
 		uri,

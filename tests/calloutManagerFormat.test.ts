@@ -6,9 +6,9 @@
  * result and one dark result, and every rule in it is the kind that breaks
  * silently: last-write-wins is *per property*, an unconditional entry has to
  * beat a theme-conditional one whichever came first in the file, and the
- * "we could not honour this condition" note must fire only when a conditional
- * value actually survived — a note on every theme-conditional entry, including
- * ones that were overridden anyway, is noise that buries the real rows.
+ * "we could not honour this condition" note covers a surviving fallback or a
+ * later conditional override we cannot preserve. Earlier conditional values
+ * erased by a later unconditional rule need no warning.
  *
  * The colour strings stay raw here on purpose: turning "158, 158, 158" into a
  * hex is `toCalloutManagerEntries`' job, so these tests compare the strings the
@@ -20,6 +20,7 @@ import {
 	parseCalloutManagerData,
 	type CalloutManagerRaw,
 } from "../src/utils/calloutManagerFormat";
+import { ImportLimitError } from "../src/utils/importLimits";
 
 /** The parsed entry for one id, or undefined — most assertions want just one. */
 function one(
@@ -156,8 +157,9 @@ describe("parseCalloutManagerData — conditions we cannot honour", () => {
 		assert.deepEqual(entry?.notes, ["conditional"]);
 	});
 
-	it("stays silent when an unconditional entry overrode the theme one", () => {
-		// Nothing was lost, so nothing is reported — whichever order they came in.
+	it("reports a later theme override that cannot be preserved", () => {
+		// A later unconditional rule really erases the conditional one. In the
+		// reverse order, CM changes appearance for that theme, which we lose.
 		for (const reversed of [false, true]) {
 			const rules = [
 				{ condition: { theme: "Minimal" }, changes: { color: "4, 5, 6" } },
@@ -168,7 +170,7 @@ describe("parseCalloutManagerData — conditions we cannot honour", () => {
 				"note",
 			);
 			assert.equal(entry?.colorLight, "1, 2, 3");
-			assert.deepEqual(entry?.notes, []);
+			assert.deepEqual(entry?.notes, reversed ? ["conditional"] : []);
 		}
 	});
 
@@ -240,6 +242,31 @@ describe("parseCalloutManagerData — conditions we cannot honour", () => {
 		assert.equal(entry?.colorLight, "1, 2, 3");
 		assert.deepEqual(entry?.notes, ["customStyles"]);
 	});
+
+	it("keeps a custom-CSS-only row so the unsupported styling can be reported", () => {
+		const entry = one(dataJson({ note: [{ changes: { customStyles: "color: red;" } }] }), "note");
+		assert.deepEqual(entry?.notes, ["customStyles"]);
+		assert.equal(entry?.colorLight, undefined);
+	});
+
+	it("reports per-scheme icon loss, including an icon set in just one scheme", () => {
+		for (const light of [[], [{ condition: { colorScheme: "light" }, changes: { icon: "lucide-star" } }]]) {
+			const entry = one(dataJson({ note: [
+				...light,
+				{ condition: { colorScheme: "dark" }, changes: { icon: "lucide-moon" } },
+			] }), "note");
+			assert.deepEqual(entry?.notes, ["schemeIcon"]);
+			assert.equal(entry?.icon, light.length ? "lucide-star" : "lucide-moon");
+		}
+	});
+
+	it("does not warn when both schemes use the same icon", () => {
+		const entry = one(dataJson({ note: [
+			{ condition: { colorScheme: "light" }, changes: { icon: "lucide-star" } },
+			{ condition: { colorScheme: "dark" }, changes: { icon: "lucide-star" } },
+		] }), "note");
+		assert.deepEqual(entry?.notes, []);
+	});
 });
 
 describe("parseCalloutManagerData — which callouts survive", () => {
@@ -276,5 +303,32 @@ describe("parseCalloutManagerData — which callouts survive", () => {
 		);
 		assert.equal(entries?.length, 1);
 		assert.equal(entries?.[0]?.declared, true);
+	});
+
+	it("looks up the original settings key and preserves it for validation", () => {
+		for (const id of [" padded ", "note\n", "\tnote"]) {
+			const entry = one(dataJson({ [id]: [{ changes: { color: "1, 2, 3" } }] }, [id]), id);
+			assert.equal(entry?.colorLight, "1, 2, 3");
+			assert.equal(entry?.declared, true);
+		}
+	});
+
+	it("treats prototype-looking JSON keys as data", () => {
+		const raw: unknown = JSON.parse('{"settings":{"__proto__":[{"changes":{"color":"1, 2, 3"}}],"constructor":[{"changes":{"color":"4, 5, 6"}}]}}');
+		assert.equal(one(raw, "__proto__")?.colorLight, "1, 2, 3");
+		assert.equal(one(raw, "constructor")?.colorLight, "4, 5, 6");
+		assert.equal(({} as Record<string, unknown>).color, undefined);
+	});
+
+	it("rejects deeply nested JSON conditions without exhausting the call stack", () => {
+		let condition: unknown = { colorScheme: "dark" };
+		for (let depth = 0; depth < 10_000; depth++) condition = { and: [condition] };
+		assert.throws(() => parseCalloutManagerData(dataJson({ note: [{ condition, changes: { color: "1, 2, 3" } }] })), ImportLimitError);
+	});
+
+	it("rejects cyclic conditions passed directly to the format reader", () => {
+		const condition: { and: unknown[] } = { and: [] };
+		condition.and.push(condition, condition);
+		assert.throws(() => parseCalloutManagerData(dataJson({ note: [{ condition, changes: { color: "1, 2, 3" } }] })), ImportLimitError);
 	});
 });

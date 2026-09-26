@@ -285,7 +285,6 @@ export const pt: Record<string, string> = {
 	"notice.customCommandMissingCallout":
 		"O tipo de callout deste comando não existe mais.",
 
-	"notice.exported": "Callouts exportados para callout-studio-export.json",
 	"notice.importedJSON": "{{count}} tipo(s) de callout importado(s) de JSON.",
 	"notice.importedSettings": "Configurações do plugin importadas.",
 	"notice.importedCalloutManager":
@@ -868,6 +867,11 @@ export const pt: Record<string, string> = {
 		"O gradiente de fundo era inválido e foi ignorado.",
 	"import.err.parseFailed":
 		"O arquivo não é JSON válido e não pôde ser analisado.",
+	"import.err.tooLarge": "Esta importação excede o limite de tamanho de 16 MiB. Divida-a em ficheiros menores e tente novamente.",
+	"import.err.tooComplex": "Esta importação é demasiado complexa: no máximo 1.000 itens por lista ou objeto, 50.000 valores no total e 32 níveis de aninhamento.",
+	"import.err.imageBudget": "A coleção total de imagens excede os limites de tamanho ou complexidade. Remova ou simplifique imagens grandes antes de importar.",
+	"import.err.processingFailed": "Não foi possível concluir a importação. Reveja os dados e tente novamente.",
+	"import.reportTruncated": "A mostrar os primeiros {{shown}} problemas de {{total}}. Os valores longos são abreviados neste relatório.",
 	"import.err.entryNotObject": "A entrada deve ser um objeto.",
 	"import.err.requiredMissing":
 		'O campo obrigatório "{{field}}" está ausente ou tem o tipo errado.',
@@ -945,6 +949,17 @@ export const pt: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Traga as suas admonitions personalizadas do plugin Admonition.",
+	"import.back": "Voltar",
+	"import.removeFile": "Remover ficheiro",
+	"import.fileReady": "Pronto para importar.",
+	"import.pasteButton": "Colar",
+	"import.pasted": "Colado da área de transferência",
+	"import.clearPaste": "Limpar o texto colado",
+	"import.clipboardEmpty": "A área de transferência está vazia. Copie os dados primeiro.",
+	"import.clipboardUnreadable":
+		"Não foi possível ler a área de transferência. Em vez disso, guarde os dados como um ficheiro e escolha-o.",
+	"import.importing": "A importar…",
+	"import.err.fileUnreadable": "Não foi possível ler o ficheiro.",
 	"import.cmTitle": "Importar do Callout Manager",
 	"import.cmInstructions":
 		"Cada callout personalizado passa a ser trazido com o seu ícone e " +
@@ -955,13 +970,24 @@ export const pt: Record<string, string> = {
 	"import.cmVaultFound": "Encontrados {{count}} callout(s) personalizados.",
 	"import.cmVaultNotFound":
 		"Não foram encontrados callouts personalizados neste cofre.",
+	"import.cmVaultNotInstalled": "O Callout Manager não está instalado neste cofre.",
+	"import.cmVaultUnreadable":
+		"Não foi possível ler o ficheiro de definições do Callout Manager neste cofre.",
+	"import.cmUseManual": "Usar um ficheiro ou estilos copiados em vez disso",
+	"import.cmFromFile": "Um ficheiro",
+	"import.cmFromFileDesc":
+		"Um data.json do Callout Manager, ou os estilos copiados guardados num ficheiro.",
+	"import.cmChooseFile": "Escolher ficheiro…",
+	"import.cmFromPaste": "Estilos copiados",
+	"import.cmFromPasteDesc":
+		"O que o botão Copy do Callout Manager copia, ou um data.json.",
 	"import.cmPasteLabel":
 		"Ou cole aqui os estilos copiados do Callout Manager:",
 	"import.cmPlaceholder": "Cole os estilos copiados, ou um data.json, aqui…",
 	"import.cmBtnCancel": "Cancelar",
 	"import.cmBtnImport": "Importar",
 	"import.err.cmNoBlocksFound":
-		"Nenhum estilo do Callout Manager foi encontrado no texto colado.",
+		"Nenhum estilo do Callout Manager foi encontrado no ficheiro nem no texto colado.",
 	"import.err.cmNotRecognized":
 		"Ficheiro não reconhecido: era esperado o estilo produzido pelo " +
 		"botão Copy do Callout Manager, ou um data.json do Callout Manager.",
@@ -983,6 +1009,10 @@ export const pt: Record<string, string> = {
 		"foram trazidos.",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "Não é possível preservar estilos dependentes do tema. Os valores incondicionais têm prioridade; qualquer valor alternativo condicional é aplicado a todos os temas.",
+	"import.warn.cmCustomStylesSkipped": "O CSS personalizado do Callout Manager não é importado. Só podem ser transferidas as definições compatíveis de ícones e cores.",
+	"import.warn.cmSchemeIcon": "O Callout Studio usa um único ícone para ambos os esquemas de cores; o ícone importado será usado nos dois.",
+	"import.err.cmDuplicateId": "O ID {{value}} duplica {{other}} nesta importação e foi ignorado.",
 	"import.admTitle": "Importar do Admonition",
 	"import.admInstructions":
 		"Cada admonition passa a ser um callout com o seu nome, ícone e " +
@@ -994,10 +1024,17 @@ export const pt: Record<string, string> = {
 		"Encontradas {{count}} admonition(s) personalizadas.",
 	"import.admVaultNotFound":
 		"Não foram encontradas admonitions personalizadas neste cofre.",
+	"import.admVaultNotInstalled": "O Admonition não está instalado neste cofre.",
+	"import.admVaultUnreadable":
+		"Não foi possível ler o ficheiro de definições do Admonition neste cofre.",
+	"import.admUseManual": "Usar um ficheiro ou JSON colado em vez disso",
 	"import.admFromFile": "Um ficheiro",
 	"import.admFromFileDesc":
 		"Um ficheiro admonitions.json, ou um pacote partilhado.",
 	"import.admChooseFile": "Escolher ficheiro…",
+	"import.admFromPaste": "JSON copiado",
+	"import.admFromPasteDesc":
+		"O JSON do Admonition ou um data.json, copiado para a área de transferência.",
 	"import.admPasteLabel": "Ou cole aqui o JSON:",
 	"import.admPlaceholder": "Cole aqui as suas admonitions…",
 	"import.admBtnCancel": "Cancelar",
@@ -1018,6 +1055,8 @@ export const pt: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"Não foi possível ler a imagem carregada, por isso foi usado o " +
 		"ícone predefinido.",
+	"import.warn.admUnsupportedOptions": "Estas opções do Admonition não são importadas: {{fields}}.",
+	"import.warn.admImageSkipped": "Não foi possível ler a imagem carregada e ela não foi importada.",
 	"import.warn.admIconWithCss":
 		"Esta admonition é estilizada por um fragmento CSS no Admonition. " +
 		"Esse estilo não faz parte da importação, por isso vieram apenas " +
@@ -1073,8 +1112,9 @@ export const pt: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"O snippet CSS na pasta snippets foi alterado desde que o Callout Studio o escreveu. Exportá-lo novamente substitui o ficheiro inteiro.",
 	"confirm.overwriteSnippetOk": "Substituir",
+	"settings.recommended": "Recomendado",
 	"export.chooseFormat": "Exportar como",
-	"export.formatJson": "Cópia de segurança do Callout Studio (recomendada)",
+	"export.formatJson": "Cópia de segurança do Callout Studio",
 	"export.formatJsonDesc":
 		"Um ficheiro .json é a única forma suportada de restaurar totalmente ou transferir os dados do Callout Studio para um novo vault com o plugin instalado.",
 	"export.formatCss": "Instantâneo CSS autónomo",

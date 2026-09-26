@@ -323,7 +323,6 @@ export const he: Record<string, string> = {
 		"סוג תיבת־ההבלטה של הפקודה הזו כבר לא קיים.",
 
 	// Notices
-	"notice.exported": "תיבות־ההבלטה יוצאו לקובץ callout-studio-export.json",
 	"notice.importedJSON": "יובאו {{count}} סוגי תיבות־הבלטה מתוך JSON.",
 	"notice.importedSettings": "הגדרות התוסף יובאו.",
 	"notice.importedCalloutManager":
@@ -903,6 +902,11 @@ export const he: Record<string, string> = {
 	"import.warn.invalidGradient":
 		"גרדיאנט הרקע לא היה תקין ולכן לא נלקח בחשבון.",
 	"import.err.parseFailed": "הקובץ אינו JSON תקין ולכן לא ניתן לפענח אותו.",
+	"import.err.tooLarge": "הייבוא הזה חורג ממגבלת הגודל של 16 MiB. יש לפצל אותו לקבצים קטנים יותר ולנסות שוב.",
+	"import.err.tooComplex": "הייבוא הזה מורכב מדי: עד 1,000 פריטים בכל רשימה או אובייקט, 50,000 ערכים בסך הכול ו־32 רמות קינון לכל היותר.",
+	"import.err.imageBudget": "אוסף התמונות חורג ממגבלות הגודל או המורכבות. יש להסיר תמונות גדולות או לפשט אותן לפני הייבוא.",
+	"import.err.processingFailed": "לא ניתן להשלים את הייבוא. יש לבדוק את הנתונים ולנסות שוב.",
+	"import.reportTruncated": "מוצגות {{shown}} הבעיות הראשונות מתוך {{total}}. ערכים ארוכים קוצרו בדוח הזה.",
 	"import.err.entryNotObject": "כל רשומה חייבת להיות אובייקט (Object).",
 	"import.err.requiredMissing": 'שדה החובה "{{field}}" חסר או שסוגו שגוי.',
 	"import.err.idEmpty": "ה־ID לא יכול להיות ריק.",
@@ -994,6 +998,17 @@ export const he: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"ייבאו את התיבות המותאמות־אישית שלכם מהתוסף Admonition.",
+	"import.back": "חזרה",
+	"import.removeFile": "הסרת קובץ",
+	"import.fileReady": "מוכן לייבוא.",
+	"import.pasteButton": "הדבקה",
+	"import.pasted": "הודבק מלוח הגזירה",
+	"import.clearPaste": "ניקוי הטקסט המודבק",
+	"import.clipboardEmpty": "לוח הגזירה ריק. יש להעתיק את הנתונים קודם.",
+	"import.clipboardUnreadable":
+		"לא ניתן לקרוא את לוח הגזירה. שמרו את הנתונים כקובץ ובחרו אותו במקום זאת.",
+	"import.importing": "מייבא…",
+	"import.err.fileUnreadable": "לא ניתן לקרוא את הקובץ.",
 
 	// ייבוא — הדבקה מתוך Callout Manager
 	"import.cmTitle": "ייבוא מתוך Callout Manager",
@@ -1001,6 +1016,17 @@ export const he: Record<string, string> = {
 	"import.cmVaultChecking": "מחפש את התוסף Callout Manager…",
 	"import.cmVaultFound": "נמצאו {{count}} תיבות־הבלטה מותאמות־אישית.",
 	"import.cmVaultNotFound": "לא נמצאו תיבות־הבלטה מותאמות־אישית בכספת הזו.",
+	"import.cmVaultNotInstalled": "Callout Manager לא מותקן בכספת הזו.",
+	"import.cmVaultUnreadable":
+		"לא ניתן לקרוא את קובץ ההגדרות של Callout Manager בכספת הזו.",
+	"import.cmUseManual": "שימוש בקובץ או בסגנונות שהועתקו במקום זאת",
+	"import.cmFromFile": "קובץ",
+	"import.cmFromFileDesc":
+		"קובץ data.json של Callout Manager, או סגנונות שהועתקו ממנו ונשמרו בקובץ.",
+	"import.cmChooseFile": "בחירת קובץ…",
+	"import.cmFromPaste": "סגנונות שהועתקו",
+	"import.cmFromPasteDesc":
+		"מה שכפתור ה־Copy של Callout Manager מעתיק, או קובץ data.json.",
 	"import.cmPasteLabel":
 		"או הדביקו כאן את הסגנונות שהועתקו מ־Callout Manager:",
 	"import.cmInstructions":
@@ -1009,7 +1035,7 @@ export const he: Record<string, string> = {
 	"import.cmBtnCancel": "ביטול",
 	"import.cmBtnImport": "ייבוא",
 	"import.err.cmNoBlocksFound":
-		"לא נמצאו סגנונות של Callout Manager בטקסט שהודבק.",
+		"לא נמצאו סגנונות של Callout Manager בקובץ או בטקסט שהודבק.",
 	"import.err.cmNotRecognized":
 		"קובץ לא מזוהה: נדרשו הסגנונות שנוצרים באמצעות כפתור ה־Copy של Callout Manager, או קובץ data.json של Callout Manager.",
 	"import.err.cmNoEntries": "לא נמצאו תיבות־הבלטה מותאמות־אישית לייבוא.",
@@ -1025,6 +1051,10 @@ export const he: Record<string, string> = {
 		"לתיבת־הבלטה הזו יש גם CSS מותאם־אישית ב־Callout Manager. הסגנון הזה אינו חלק מהייבוא, ולכן הועברו רק הסמל והצבע.",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "אי אפשר לשמר עיצוב שתלוי בערכת העיצוב. יש עדיפות לערכים שאינם מותנים; כל ערך חלופי מותנה מוחל בכל ערכות העיצוב.",
+	"import.warn.cmCustomStylesSkipped": "CSS מותאם אישית מ־Callout Manager לא מיובא. אפשר להעביר רק הגדרות נתמכות של סמלים וצבעים.",
+	"import.warn.cmSchemeIcon": "Callout Studio משתמש באותו סמל בשתי ערכות הצבעים; הסמל שיובא ישמש בשתיהן.",
+	"import.err.cmDuplicateId": "המזהה {{value}} כפול למזהה {{other}} בייבוא הזה ולכן דולג.",
 	"import.admTitle": "ייבוא מתוך Admonition",
 	"import.admInstructions":
 		"כל תיבה של Admonition מיובאת כתיבת־הבלטה עם השם, האייקון והצבע שלה. הגדרות " +
@@ -1034,9 +1064,16 @@ export const he: Record<string, string> = {
 	"import.admVaultChecking": "מחפש את התוסף Admonition…",
 	"import.admVaultFound": "נמצאו {{count}} תיבות מותאמות־אישית של Admonition.",
 	"import.admVaultNotFound": "לא נמצאו תיבות מותאמות־אישית של Admonition בכספת הזו.",
+	"import.admVaultNotInstalled": "Admonition לא מותקן בכספת הזו.",
+	"import.admVaultUnreadable":
+		"לא ניתן לקרוא את קובץ ההגדרות של Admonition בכספת הזו.",
+	"import.admUseManual": "שימוש בקובץ או ב־JSON מודבק במקום זאת",
 	"import.admFromFile": "קובץ",
 	"import.admFromFileDesc": "קובץ admonitions.json, או חבילה משותפת.",
 	"import.admChooseFile": "בחירת קובץ…",
+	"import.admFromPaste": "JSON שהועתק",
+	"import.admFromPasteDesc":
+		"ה־JSON של Admonition, או קובץ data.json, שהועתקו ללוח הגזירה.",
 	"import.admPasteLabel": "או הדביקו כאן את ה־JSON:",
 	"import.admPlaceholder": "הדביקו כאן את נתוני Admonition שלכם…",
 	"import.admBtnCancel": "ביטול",
@@ -1054,6 +1091,8 @@ export const he: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"לא ניתן היה לקרוא את התמונה שהועלתה, ולכן נעשה שימוש באייקון " +
 		"ברירת המחדל.",
+	"import.warn.admUnsupportedOptions": "אפשרויות Admonition האלה לא מיובאות: {{fields}}.",
+	"import.warn.admImageSkipped": "לא ניתן לקרוא את התמונה שהועלתה והיא לא יובאה.",
 	"import.warn.admIconWithCss":
 		"התיבה הזו מעוצבת על־ידי קטע CSS ב־Admonition. העיצוב הזה אינו " +
 		"חלק מהייבוא, ולכן עברו רק השם, האייקון והצבע.",
@@ -1094,8 +1133,9 @@ export const he: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"קטע ה־CSS בתיקיית הקטעים השתנה מאז ש־Callout Studio כתב אותו. ייצוא נוסף יחליף את כל הקובץ.",
 	"confirm.overwriteSnippetOk": "שכתוב",
+	"settings.recommended": "מומלץ",
 	"export.chooseFormat": "ייצוא בתור",
-	"export.formatJson": "גיבוי של Callout Studio (מומלץ)",
+	"export.formatJson": "גיבוי של Callout Studio",
 	"export.formatJsonDesc":
 		"קובץ ‎.json הוא הדרך היחידה הנתמכת לשחזור מלא של נתוני Callout Studio או להעברתם לכספת חדשה שבה התוסף מותקן.",
 	"export.formatCss": "תמונת מצב עצמאית ב־CSS",

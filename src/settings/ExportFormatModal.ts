@@ -11,9 +11,10 @@
  * modal with a line of prose per row rather than a menu: the backup leaves the
  * vault through the browser's download dialog, while the snippet is written
  * *into* the vault. Both handlers live here, so "everything Export does" is one
- * file.
+ * file. Each format is one option box (settings/optionBox.ts) — the same box
+ * Import's source chooser and the plugin import window draw.
  */
-import { Modal, Notice, setIcon } from "obsidian";
+import { Modal, Notice } from "obsidian";
 import { t } from "../i18n";
 import { ConfirmModal } from "../utils/ConfirmModal";
 import {
@@ -22,14 +23,8 @@ import {
 	type SnippetExportOutcome,
 } from "../manager/cssSnippetExport";
 import { applyModalChrome } from "./modalChrome";
+import { renderOptionBox, renderOptionList, type OptionBoxSpec } from "./optionBox";
 import type { SettingsSectionContext } from "./sections/types";
-
-interface FormatRow {
-	icon: string;
-	title: string;
-	desc: string;
-	onClick: () => void;
-}
 
 export class ExportFormatModal extends Modal {
 	constructor(private readonly ctx: SettingsSectionContext) {
@@ -38,18 +33,19 @@ export class ExportFormatModal extends Modal {
 
 	onOpen(): void {
 		this.modalEl.addClass("callout-studio-export-format-modal");
-		// No footer: every row here IS the action.
+		// No footer: every box here IS the action.
 		applyModalChrome(this);
 		this.setTitle(t("export.chooseFormat"));
 
-		const list = this.contentEl.createDiv({ cls: "cs-export-format-list" });
+		const list = renderOptionList(this.contentEl);
 
-		const rows: FormatRow[] = [
+		const formats: OptionBoxSpec[] = [
 			{
-				icon: "file-json",
+				icon: "paintbrush",
 				title: t("export.formatJson"),
 				desc: t("export.formatJsonDesc"),
-				onClick: () => {
+				recommended: true,
+				onActivate: () => {
 					this.close();
 					exportCalloutsJSON(this.ctx);
 				},
@@ -58,42 +54,21 @@ export class ExportFormatModal extends Modal {
 				icon: "file-code",
 				title: t("export.formatCss"),
 				desc: t("export.formatCssDesc"),
-				onClick: () => {
-					// Close first, like every other chooser row here — the
+				onActivate: () => {
+					// Close first, like every other chooser box here — the
 					// snippet path can raise a confirmation of its own, and
 					// stacking it under a window on its way out steals focus.
-					// Double-clicks are already handled one layer down, by
-					// cssSnippetExport's in-flight guard.
+					// A double-click's second click never gets here (the box
+					// counts only the first), and a second export started any
+					// other way is stopped one layer down, by cssSnippetExport's
+					// in-flight guard.
 					this.close();
 					void exportCalloutsCSS(this.ctx);
 				},
 			},
 		];
 
-		for (const row of rows) this.renderRow(list, row);
-	}
-
-	private renderRow(container: HTMLElement, row: FormatRow): void {
-		const item = container.createDiv({ cls: "cs-export-format-item" });
-		item.setAttribute("role", "button");
-		item.setAttribute("tabindex", "0");
-
-		const iconEl = item.createDiv({ cls: "cs-export-format-item-icon" });
-		setIcon(iconEl, row.icon);
-
-		const textEl = item.createDiv({ cls: "cs-export-format-item-text" });
-		textEl.createDiv({
-			cls: "cs-export-format-item-title",
-			text: row.title,
-		});
-		textEl.createDiv({ cls: "cs-export-format-item-desc", text: row.desc });
-
-		item.addEventListener("click", row.onClick);
-		item.addEventListener("keydown", (ev) => {
-			if (ev.key !== "Enter" && ev.key !== " ") return;
-			ev.preventDefault();
-			row.onClick();
-		});
+		for (const format of formats) renderOptionBox(list, format);
 	}
 
 	onClose(): void {
@@ -115,7 +90,6 @@ function exportCalloutsJSON(ctx: SettingsSectionContext): void {
 	a.download = "callout-studio-export.json";
 	a.click();
 	URL.revokeObjectURL(url);
-	new Notice(t("notice.exported"));
 }
 
 /**

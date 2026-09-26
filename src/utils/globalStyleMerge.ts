@@ -18,6 +18,7 @@
  * worked for the one field somebody remembered to name.
  */
 import { DEFAULT_SETTINGS } from "../constants";
+import { booleanPreference } from "./settingsGuards";
 import type {
 	BorderSidesSettings,
 	GlobalStyleSettings,
@@ -37,10 +38,10 @@ function mergeBorderSides(
 	defaults: BorderSidesSettings,
 ): BorderSidesSettings {
 	return {
-		top: saved?.top ?? defaults.top,
-		right: saved?.right ?? defaults.right,
-		bottom: saved?.bottom ?? defaults.bottom,
-		left: saved?.left ?? defaults.left,
+		top: booleanPreference(saved?.top, defaults.top),
+		right: booleanPreference(saved?.right, defaults.right),
+		bottom: booleanPreference(saved?.bottom, defaults.bottom),
+		left: booleanPreference(saved?.left, defaults.left),
 	};
 }
 
@@ -93,7 +94,7 @@ export function mergeGlobalStyle(
 		contentScale: saved?.contentScale ?? defaults.contentScale,
 		borderRadius: saved?.borderRadius ?? defaults.borderRadius,
 		alignContentWithTitle:
-			saved?.alignContentWithTitle ?? defaults.alignContentWithTitle,
+			booleanPreference(saved?.alignContentWithTitle, defaults.alignContentWithTitle),
 		heading: mergeHeadingStyle(saved?.heading),
 		inline: mergeInlineStyle(saved?.inline),
 	};

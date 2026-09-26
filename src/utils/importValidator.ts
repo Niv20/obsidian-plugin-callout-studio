@@ -34,6 +34,9 @@ import {
 } from "./importFields";
 import { sanitizeBgGradient } from "./colorUtils";
 import { sanitizeImportedSettings } from "./settingsValidator";
+import { assertImportStructure, ImportLimitError } from "./importLimits";
+import { userImagesFitResourceBudget } from "./userImages";
+import { mergeById } from "./mergeById";
 
 /** Severity used by the report modal to style each row. */
 export type IssueLevel = "error" | "warning";
@@ -512,6 +515,13 @@ export async function validateImportPayload(
 	raw: unknown,
 	registry: CalloutRegistry,
 ): Promise<ValidationResult> {
+	try {
+		assertImportStructure(raw);
+	} catch (error) {
+		if (!(error instanceof ImportLimitError)) throw error;
+		return { validDefs: [], fatal: true, issues: [{ index: -1, entryLabel: "",
+			level: "error", messageKey: error.messageKey }] };
+	}
 	// v2 object envelope.
 	if (isPlainObject(raw) && !Array.isArray(raw)) {
 		const looksLikeV2 =
@@ -537,6 +547,11 @@ export async function validateImportPayload(
 			? validateCalloutArray(calloutsRaw, registry)
 			: { validDefs: [], issues: [] };
 		const settingsResult = sanitizeImportedSettings(raw.settings);
+		const incomingImages = settingsResult.settings?.userImages ?? [];
+		if (incomingImages.length && !userImagesFitResourceBudget(mergeById(registry.getUserImages(), incomingImages))) {
+			return { validDefs: [], fatal: true, issues: [{ index: -1, entryLabel: "",
+				field: "settings.userImages", level: "error", messageKey: "import.err.imageBudget" }] };
+		}
 		return {
 			validDefs: base.validDefs,
 			issues: [
@@ -573,7 +588,8 @@ export async function validateImportPayload(
 	const base = validateCalloutArray(raw, registry);
 	return {
 		...base,
-		issues: [...base.issues, ...(await unknownIconNameIssues(base.validDefs))],
+		issues: [...base.issues, ...missingImageIssues(base.validDefs, undefined, registry),
+			...(await unknownIconNameIssues(base.validDefs))],
 		fatal: false,
 	};
 }
@@ -1062,10 +1078,10 @@ function validateCalloutArray(
 				type: iconRaw.type as CalloutIcon["type"],
 				value: (iconRaw.value as string).trim(),
 			};
-			if (typeof iconRaw.style === "string") {
+			if (cleanIcon.type === "material" && typeof iconRaw.style === "string") {
 				cleanIcon.style = iconRaw.style as CalloutIcon["style"];
 			}
-			if (typeof iconRaw.weight === "number") {
+			if (cleanIcon.type === "material" && typeof iconRaw.weight === "number") {
 				cleanIcon.weight = iconRaw.weight;
 			}
 			// Only for "image": the flag is the *callout's* choice about the

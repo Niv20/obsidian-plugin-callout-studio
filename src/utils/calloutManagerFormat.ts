@@ -46,9 +46,10 @@
  * entry index a `ValidationIssue` needs — turns it into a warning, so every
  * issue is still reported together.
  */
+import { assertImportStructure } from "./importLimits";
 
 /** What could not be brought over, for the planner to turn into report rows. */
-export type CalloutManagerNote = "conditional" | "customStyles";
+export type CalloutManagerNote = "conditional" | "customStyles" | "schemeIcon";
 
 /** One Callout Manager callout as the file describes it, uninterpreted. */
 export interface CalloutManagerRaw {
@@ -111,14 +112,22 @@ function evaluate(condition: unknown, scheme: Scheme): Verdict {
 	// Ordinary boolean algebra, which is also what an empty array gives:
 	// `{and: []}` is vacuously true, `{or: []}` vacuously false.
 	if (Array.isArray(condition.and)) {
-		const kids = condition.and.map((child) => evaluate(child, scheme));
-		if (kids.includes("no")) return "no";
-		return kids.includes("maybe") ? "maybe" : "yes";
+		let result: Verdict = "yes";
+		for (const child of condition.and) {
+			const verdict = evaluate(child, scheme);
+			if (verdict === "no") return "no";
+			if (verdict === "maybe") result = "maybe";
+		}
+		return result;
 	}
 	if (Array.isArray(condition.or)) {
-		const kids = condition.or.map((child) => evaluate(child, scheme));
-		if (kids.includes("yes")) return "yes";
-		return kids.includes("maybe") ? "maybe" : "no";
+		let result: Verdict = "no";
+		for (const child of condition.or) {
+			const verdict = evaluate(child, scheme);
+			if (verdict === "yes") return "yes";
+			if (verdict === "maybe") result = "maybe";
+		}
+		return result;
 	}
 
 	// A condition kind from a Callout Manager newer than this build. Treating it
@@ -134,7 +143,7 @@ interface Layer {
 
 interface SchemeResult {
 	layer: Layer;
-	/** A value reached the result only because a conditional entry supplied it. */
+	/** A conditional value supplied the result, or a later conditional override was lost. */
 	conditional: boolean;
 	customStyles: boolean;
 }
@@ -149,7 +158,8 @@ interface SchemeResult {
  *
  * Definite and maybe are kept apart and merged at the end, so an unconditional
  * value always beats a theme-conditional one no matter which came first in the
- * file, and the note only fires when the conditional value actually survived.
+ * file. Report conditional fallbacks and later conditional overrides that we
+ * cannot preserve; earlier conditions erased by a later definite rule are quiet.
  */
 function flatten(settings: unknown, scheme: Scheme): SchemeResult {
 	const definite: Layer = {};
@@ -166,9 +176,15 @@ function flatten(settings: unknown, scheme: Scheme): SchemeResult {
 			const into = verdict === "yes" ? definite : maybe;
 
 			const color = str(changes.color);
-			if (color) into.color = color;
+			if (color) {
+				into.color = color;
+				if (verdict === "yes") delete maybe.color;
+			}
 			const icon = str(changes.icon);
-			if (icon) into.icon = icon;
+			if (icon) {
+				into.icon = icon;
+				if (verdict === "yes") delete maybe.icon;
+			}
 
 			// Never mined for values. Callout Manager's custom-styles box is free
 			// CSS; picking `--callout-color` back out of it would be a second,
@@ -184,8 +200,8 @@ function flatten(settings: unknown, scheme: Scheme): SchemeResult {
 		icon: definite.icon ?? maybe.icon,
 	};
 	const conditional =
-		(layer.color !== undefined && definite.color === undefined) ||
-		(layer.icon !== undefined && definite.icon === undefined);
+		(maybe.color !== undefined && maybe.color !== definite.color) ||
+		(maybe.icon !== undefined && maybe.icon !== definite.icon);
 
 	return { layer, conditional, customStyles };
 }
@@ -201,14 +217,15 @@ function readCallout(
 	const notes: CalloutManagerNote[] = [];
 	if (light.conditional || dark.conditional) notes.push("conditional");
 	if (light.customStyles || dark.customStyles) notes.push("customStyles");
+	if (light.layer.icon !== dark.layer.icon) notes.push("schemeIcon");
 
 	return {
 		id,
 		declared,
 		// One icon per callout here, so light decides and dark only fills in when
-		// light said nothing. Callout Manager cannot author a per-scheme icon
-		// either — its own editor classes a color-scheme condition carrying a
-		// non-color change as "complex" and refuses to show it.
+		// light said nothing. Callout Manager can render per-scheme icons from a
+		// hand-edited file, even though its visual editor calls them "complex".
+		// Report that loss rather than claiming these files import faithfully.
 		icon: light.layer.icon ?? dark.layer.icon,
 		colorLight: light.layer.color,
 		colorDark: dark.layer.color,
@@ -223,8 +240,7 @@ function readCallouts(custom: unknown, settings: unknown): CalloutManagerRaw[] {
 	const declared = new Set<string>();
 	if (Array.isArray(custom)) {
 		for (const id of custom) {
-			const trimmed = str(id);
-			if (trimmed) declared.add(trimmed);
+			if (typeof id === "string" && str(id)) declared.add(id);
 		}
 	}
 
@@ -232,8 +248,9 @@ function readCallouts(custom: unknown, settings: unknown): CalloutManagerRaw[] {
 	// then everything they only restyled — built-ins, theme and snippet callouts.
 	const ids = [...declared];
 	for (const id of Object.keys(settingsRecord)) {
-		const trimmed = str(id);
-		if (trimmed && !declared.has(trimmed)) ids.push(trimmed);
+		// Keep the original key for lookup and validation. Trimming first loses
+		// its settings and hides forbidden leading/trailing tabs or newlines.
+		if (str(id) && !declared.has(id)) ids.push(id);
 	}
 
 	return (
@@ -242,14 +259,15 @@ function readCallouts(custom: unknown, settings: unknown): CalloutManagerRaw[] {
 			// A callout that is not the user's own and carries nothing importable
 			// is dropped rather than reported: real files are full of `{"changes":
 			// {}}` leftovers, and a report padded with rows saying "nothing
-			// happened" buries the rows that matter. A *declared* callout is kept
-			// even when bare — the user created it, so it has to come over.
+			// happened" buries the rows that matter. Unsupported styling still
+			// needs a report row. A *declared* callout is kept even when bare.
 			.filter(
 				(entry) =>
 					entry.declared ||
 					entry.icon !== undefined ||
 					entry.colorLight !== undefined ||
-					entry.colorDark !== undefined,
+					entry.colorDark !== undefined ||
+					entry.notes.length > 0,
 			)
 	);
 }
@@ -265,6 +283,8 @@ function readCallouts(custom: unknown, settings: unknown): CalloutManagerRaw[] {
 export function parseCalloutManagerData(
 	raw: unknown,
 ): CalloutManagerRaw[] | null {
+	// Direct callers get the same depth/work limits as file and paste routes.
+	assertImportStructure(raw);
 	if (!isRecord(raw)) return null;
 
 	// A whole data.json — what reading the installed plugin's own folder gives.

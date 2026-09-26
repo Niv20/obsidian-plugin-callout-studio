@@ -25,6 +25,7 @@
  * judgement about it — is the id usable, does the icon exist, is the colour a
  * colour — is the planner's, so that all of them can be reported together.
  */
+import { assertImportStructure } from "./importLimits";
 
 /** One admonition as it appears in the file, before anything is decided about it. */
 export interface AdmonitionRaw {
@@ -33,6 +34,10 @@ export interface AdmonitionRaw {
 	icon?: unknown;
 	color?: unknown;
 	iconWithCss?: unknown;
+	command?: unknown;
+	copy?: unknown;
+	noTitle?: unknown;
+	injectColor?: unknown;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -55,6 +60,10 @@ function readEntry(value: unknown, fallbackType = ""): AdmonitionRaw | null {
 		icon: value.icon,
 		color: value.color,
 		iconWithCss: value.iconWithCss,
+		command: value.command,
+		copy: value.copy,
+		noTitle: value.noTitle,
+		injectColor: value.injectColor,
 	};
 }
 
@@ -77,6 +86,7 @@ function readRecord(record: Record<string, unknown>): AdmonitionRaw[] {
  * its own words. Only an unrecognizable shape is null.
  */
 export function parseAdmonitionExport(raw: unknown): AdmonitionRaw[] | null {
+	assertImportStructure(raw);
 	// The documented import format.
 	if (Array.isArray(raw)) {
 		// Entries that are not objects are dropped here rather than reported:

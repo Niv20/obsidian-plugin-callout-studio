@@ -234,7 +234,6 @@ export const fa: Record<string, string> = {
 	"notice.customCommandMissingCallout":
 		"نوع callout آن دستور دیگر وجود ندارد.",
 
-	"notice.exported": "callout‌ها در callout-studio-export.json صادر شدند",
 	"notice.importedJSON": "{{count}} نوع callout از JSON وارد شد.",
 	"notice.importedSettings": "تنظیمات افزونه وارد شد.",
 	"notice.importedCalloutManager":
@@ -868,6 +867,11 @@ export const fa: Record<string, string> = {
 		"گرادیان پس‌زمینه معتبر نبود و نادیده گرفته شد.",
 	"import.err.parseFailed":
 		"فایل JSON معتبر نیست و نمی‌توان آن را تجزیه کرد.",
+	"import.err.tooLarge": "این درون‌ریزی از محدودیت اندازهٔ 16 MiB فراتر می‌رود. آن را به فایل‌های کوچک‌تر تقسیم کنید و دوباره تلاش کنید.",
+	"import.err.tooComplex": "این درون‌ریزی بیش از حد پیچیده است: حداکثر ۱٬۰۰۰ مورد در هر فهرست یا شیء، در مجموع ۵۰٬۰۰۰ مقدار و حداکثر ۳۲ سطح تو‌در‌تویی مجاز است.",
+	"import.err.imageBudget": "مجموعهٔ تصاویر از محدودیت اندازه یا پیچیدگی فراتر می‌رود. پیش از درون‌ریزی، تصاویر بزرگ را حذف یا ساده کنید.",
+	"import.err.processingFailed": "درون‌ریزی کامل نشد. داده‌ها را بررسی کنید و دوباره تلاش کنید.",
+	"import.reportTruncated": "{{shown}} مورد نخست از {{total}} مورد نمایش داده می‌شود. مقادیر طولانی در این گزارش کوتاه شده‌اند.",
 	"import.err.entryNotObject": "ورودی باید یک شی باشد.",
 	"import.err.requiredMissing":
 		'فیلد اجباری "{{field}}" وجود ندارد یا نوع اشتباهی دارد.',
@@ -946,11 +950,33 @@ export const fa: Record<string, string> = {
 	"import.sourceAdmonitionDesc":
 		"admonition‌های سفارشی خود را از افزونهٔ Admonition به اینجا " +
 		"بیاورید.",
+	"import.back": "بازگشت",
+	"import.removeFile": "حذف پرونده",
+	"import.fileReady": "آماده برای وارد کردن.",
+	"import.pasteButton": "چسباندن",
+	"import.pasted": "از کلیپ‌بورد چسبانده شد",
+	"import.clearPaste": "پاک کردن متن چسبانده‌شده",
+	"import.clipboardEmpty": "کلیپ‌بورد خالی است. ابتدا داده‌ها را کپی کنید.",
+	"import.clipboardUnreadable":
+		"خواندن کلیپ‌بورد ممکن نشد. در عوض داده‌ها را به‌صورت پرونده ذخیره کرده و آن را انتخاب کنید.",
+	"import.importing": "در حال وارد کردن…",
+	"import.err.fileUnreadable": "خواندن پرونده ممکن نشد.",
 	"import.cmTitle": "وارد کردن از Callout Manager",
 	"import.cmFromVault": "این گاوصندوق",
 	"import.cmVaultChecking": "در حال جست‌وجوی افزونهٔ Callout Manager…",
 	"import.cmVaultFound": "{{count}} callout سفارشی پیدا شد.",
 	"import.cmVaultNotFound": "هیچ callout سفارشی در این گاوصندوق پیدا نشد.",
+	"import.cmVaultNotInstalled": "Callout Manager در این گاوصندوق نصب نشده است.",
+	"import.cmVaultUnreadable":
+		"خواندن پروندهٔ تنظیمات Callout Manager در این گاوصندوق ممکن نشد.",
+	"import.cmUseManual": "استفاده از پرونده یا استایل‌های کپی‌شده به‌جای آن",
+	"import.cmFromFile": "یک پرونده",
+	"import.cmFromFileDesc":
+		"یک data.json از Callout Manager، یا استایل‌های کپی‌شدهٔ آن که در یک پرونده ذخیره شده‌اند.",
+	"import.cmChooseFile": "انتخاب پرونده…",
+	"import.cmFromPaste": "استایل‌های کپی‌شده",
+	"import.cmFromPasteDesc":
+		"چیزی که دکمهٔ Copy در Callout Manager کپی می‌کند، یا یک data.json.",
 	"import.cmPasteLabel":
 		"یا استایل‌های کپی‌شده از Callout Manager را اینجا بچسبانید:",
 	"import.cmInstructions":
@@ -959,7 +985,7 @@ export const fa: Record<string, string> = {
 	"import.cmBtnCancel": "لغو",
 	"import.cmBtnImport": "وارد کردن",
 	"import.err.cmNoBlocksFound":
-		"هیچ استایل Callout Manager در متن چسبانده‌شده یافت نشد.",
+		"هیچ استایل Callout Manager در پرونده یا متن چسبانده‌شده یافت نشد.",
 	"import.err.cmNotRecognized":
 		"فایل شناسایی نشد: استایل‌های تولیدشده با دکمهٔ Copy در Callout Manager یا data.json این افزونه مورد انتظار بود.",
 	"import.err.cmNoEntries": "هیچ callout سفارشی برای درون‌ریزی یافت نشد.",
@@ -975,6 +1001,10 @@ export const fa: Record<string, string> = {
 		"این callout در Callout Manager دارای CSS سفارشی نیز هست. این استایل بخشی از درون‌ریزی نیست، بنابراین فقط نماد و رنگ منتقل شدند.",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "حفظ سبک وابسته به پوسته ممکن نیست. مقادیر غیرشرطی در اولویت‌اند؛ هر مقدار جایگزین شرطی برای همهٔ پوسته‌ها اعمال می‌شود.",
+	"import.warn.cmCustomStylesSkipped": "CSS سفارشی Callout Manager درون‌ریزی نمی‌شود. فقط تنظیمات پشتیبانی‌شدهٔ نماد و رنگ قابل انتقال هستند.",
+	"import.warn.cmSchemeIcon": "Callout Studio برای هر دو طرح رنگی از یک نماد استفاده می‌کند؛ نماد درون‌ریزی‌شده در هر دو به کار می‌رود.",
+	"import.err.cmDuplicateId": "شناسهٔ {{value}} در این درون‌ریزی با {{other}} تکراری است و نادیده گرفته شد.",
 	"import.admTitle": "درون‌ریزی از Admonition",
 	"import.admInstructions":
 		"هر admonition با نام، نماد و رنگ خود به‌صورت یک callout وارد " +
@@ -985,10 +1015,17 @@ export const fa: Record<string, string> = {
 	"import.admVaultFound": "{{count}} admonition سفارشی پیدا شد.",
 	"import.admVaultNotFound":
 		"هیچ admonition سفارشی در این گاوصندوق پیدا نشد.",
+	"import.admVaultNotInstalled": "Admonition در این گاوصندوق نصب نشده است.",
+	"import.admVaultUnreadable":
+		"خواندن پروندهٔ تنظیمات Admonition در این گاوصندوق ممکن نشد.",
+	"import.admUseManual": "استفاده از پرونده یا JSON چسبانده‌شده به‌جای آن",
 	"import.admFromFile": "یک پرونده",
 	"import.admFromFileDesc":
 		"یک پروندهٔ admonitions.json، یا یک بستهٔ به‌اشتراک‌گذاشته‌شده.",
 	"import.admChooseFile": "انتخاب پرونده…",
+	"import.admFromPaste": "JSON کپی‌شده",
+	"import.admFromPasteDesc":
+		"JSON مربوط به Admonition یا یک data.json، کپی‌شده در کلیپ‌بورد.",
 	"import.admPasteLabel": "یا JSON را اینجا بچسبانید:",
 	"import.admPlaceholder": "admonition‌های خود را اینجا بچسبانید…",
 	"import.admBtnCancel": "لغو",
@@ -1008,6 +1045,8 @@ export const fa: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"تصویر بارگذاری‌شده خوانده نشد، بنابراین از نماد پیش‌فرض استفاده " +
 		"شد.",
+	"import.warn.admUnsupportedOptions": "این گزینه‌های Admonition درون‌ریزی نمی‌شوند: {{fields}}.",
+	"import.warn.admImageSkipped": "خواندن تصویر بارگذاری‌شده ممکن نبود و تصویر درون‌ریزی نشد.",
 	"import.warn.admIconWithCss":
 		"این admonition در Admonition با یک قطعه CSS ظاهرآرایی شده است. " +
 		"آن ظاهر بخشی از درون‌ریزی نیست، بنابراین تنها نام، نماد و رنگ آن " +
@@ -1060,8 +1099,9 @@ export const fa: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"قطعه CSS در پوشه snippets از زمانی که Callout Studio آن را نوشته تغییر کرده است. خروجی گرفتن دوباره کل فایل را جایگزین می‌کند.",
 	"confirm.overwriteSnippetOk": "بازنویسی",
+	"settings.recommended": "توصیه‌شده",
 	"export.chooseFormat": "خروجی به‌صورت",
-	"export.formatJson": "پشتیبان Callout Studio (توصیه‌شده)",
+	"export.formatJson": "پشتیبان Callout Studio",
 	"export.formatJsonDesc":
 		"فایل ‎.json تنها روش پشتیبانی‌شده برای بازیابی کامل یا انتقال داده‌های Callout Studio به vault جدیدی است که افزونه در آن نصب شده است.",
 	"export.formatCss": "عکس فوری CSS مستقل",

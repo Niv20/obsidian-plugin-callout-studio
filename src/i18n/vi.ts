@@ -286,7 +286,6 @@ export const vi: Record<string, string> = {
 		"Đã xóa {{count}} lệnh tùy chỉnh có loại callout không còn tồn tại.",
 	"notice.customCommandMissingCallout":
 		"Loại callout của lệnh đó không còn tồn tại.",
-	"notice.exported": "Đã xuất callouts vào callout-studio-export.json",
 	"notice.importedJSON": "Đã nhập {{count}} loại callout từ JSON.",
 	"notice.importedSettings": "Đã nhập cài đặt plugin.",
 	"notice.importedCalloutManager":
@@ -874,6 +873,11 @@ export const vi: Record<string, string> = {
 		"Chuyển sắc nền không hợp lệ và đã bị bỏ qua.",
 	"import.err.parseFailed":
 		"Tệp không phải JSON hợp lệ và không thể phân tích.",
+	"import.err.tooLarge": "Lần nhập này vượt quá giới hạn kích thước 16 MiB. Hãy chia thành các tệp nhỏ hơn rồi thử lại.",
+	"import.err.tooComplex": "Lần nhập này quá phức tạp: tối đa 1.000 mục cho mỗi danh sách hoặc đối tượng, tổng cộng 50.000 giá trị và tối đa 32 cấp lồng nhau.",
+	"import.err.imageBudget": "Toàn bộ bộ sưu tập ảnh vượt quá giới hạn về kích thước hoặc độ phức tạp. Hãy xóa hoặc đơn giản hóa ảnh lớn trước khi nhập.",
+	"import.err.processingFailed": "Không thể hoàn tất việc nhập. Hãy kiểm tra dữ liệu rồi thử lại.",
+	"import.reportTruncated": "Đang hiển thị {{shown}} vấn đề đầu tiên trong tổng số {{total}}. Các giá trị dài được rút gọn trong báo cáo này.",
 	"import.err.entryNotObject": "Mục phải là một đối tượng.",
 	"import.err.requiredMissing":
 		'Trường bắt buộc "{{field}}" thiếu hoặc có kiểu sai.',
@@ -950,6 +954,17 @@ export const vi: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Mang các admonition tùy chỉnh của bạn từ plugin Admonition sang.",
+	"import.back": "Quay lại",
+	"import.removeFile": "Xóa tệp",
+	"import.fileReady": "Sẵn sàng để nhập.",
+	"import.pasteButton": "Dán",
+	"import.pasted": "Đã dán từ bảng nhớ tạm",
+	"import.clearPaste": "Xóa văn bản đã dán",
+	"import.clipboardEmpty": "Bảng nhớ tạm trống. Hãy sao chép dữ liệu trước.",
+	"import.clipboardUnreadable":
+		"Không thể đọc bảng nhớ tạm. Hãy lưu dữ liệu thành tệp và chọn tệp đó thay thế.",
+	"import.importing": "Đang nhập…",
+	"import.err.fileUnreadable": "Không thể đọc tệp.",
 	"import.cmTitle": "Nhập từ Callout Manager",
 	"import.cmInstructions":
 		"Mỗi callout đã tùy chỉnh được mang sang cùng biểu tượng và màu sắc. Kiểu dáng theo từng giao diện và CSS tùy chỉnh không có tương đương ở đây nên sẽ không được mang sang.",
@@ -958,6 +973,17 @@ export const vi: Record<string, string> = {
 	"import.cmVaultFound": "Đã tìm thấy {{count}} callout đã tùy chỉnh.",
 	"import.cmVaultNotFound":
 		"Không tìm thấy callout đã tùy chỉnh nào trong vault này.",
+	"import.cmVaultNotInstalled": "Callout Manager chưa được cài đặt trong vault này.",
+	"import.cmVaultUnreadable":
+		"Không thể đọc tệp cài đặt của Callout Manager trong vault này.",
+	"import.cmUseManual": "Chuyển sang dùng tệp hoặc các kiểu đã sao chép",
+	"import.cmFromFile": "Một tệp",
+	"import.cmFromFileDesc":
+		"Một tệp data.json của Callout Manager, hoặc các kiểu đã sao chép được lưu thành tệp.",
+	"import.cmChooseFile": "Chọn tệp…",
+	"import.cmFromPaste": "Các kiểu đã sao chép",
+	"import.cmFromPasteDesc":
+		"Những gì nút Copy của Callout Manager sao chép, hoặc một tệp data.json.",
 	"import.cmPasteLabel":
 		"Hoặc dán các kiểu đã sao chép từ Callout Manager vào đây:",
 	"import.cmPlaceholder":
@@ -965,7 +991,7 @@ export const vi: Record<string, string> = {
 	"import.cmBtnCancel": "Hủy",
 	"import.cmBtnImport": "Nhập",
 	"import.err.cmNoBlocksFound":
-		"Không tìm thấy kiểu Callout Manager nào trong văn bản đã dán.",
+		"Không tìm thấy kiểu Callout Manager nào trong tệp hoặc văn bản đã dán.",
 	"import.err.cmNotRecognized":
 		"Tệp không nhận dạng được: cần các kiểu do nút Copy của Callout Manager tạo ra, hoặc một tệp data.json của Callout Manager.",
 	"import.err.cmNoEntries":
@@ -982,6 +1008,10 @@ export const vi: Record<string, string> = {
 		"Callout này cũng có CSS tùy chỉnh trong Callout Manager. Kiểu dáng đó không thuộc phạm vi nhập, nên chỉ biểu tượng và màu sắc được mang sang.",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "Không thể giữ lại kiểu dáng phụ thuộc vào giao diện. Ưu tiên các giá trị không có điều kiện; mọi giá trị dự phòng có điều kiện sẽ áp dụng cho tất cả giao diện.",
+	"import.warn.cmCustomStylesSkipped": "CSS tùy chỉnh từ Callout Manager không được nhập. Chỉ có thể chuyển các cài đặt biểu tượng và màu được hỗ trợ.",
+	"import.warn.cmSchemeIcon": "Callout Studio dùng cùng một biểu tượng cho cả hai bảng màu; biểu tượng đã nhập sẽ được dùng ở cả hai.",
+	"import.err.cmDuplicateId": "ID {{value}} trùng với {{other}} trong lần nhập này nên đã bị bỏ qua.",
 	"import.admTitle": "Nhập từ Admonition",
 	"import.admInstructions":
 		"Mỗi admonition sẽ sang đây thành một callout với tên, biểu tượng " +
@@ -992,10 +1022,17 @@ export const vi: Record<string, string> = {
 	"import.admVaultFound": "Đã tìm thấy {{count}} admonition tùy chỉnh.",
 	"import.admVaultNotFound":
 		"Không tìm thấy admonition tùy chỉnh nào trong kho này.",
+	"import.admVaultNotInstalled": "Admonition chưa được cài đặt trong vault này.",
+	"import.admVaultUnreadable":
+		"Không thể đọc tệp cài đặt của Admonition trong kho này.",
+	"import.admUseManual": "Chuyển sang dùng tệp hoặc JSON đã dán",
 	"import.admFromFile": "Một tệp",
 	"import.admFromFileDesc":
 		"Một tệp admonitions.json, hoặc một gói được chia sẻ.",
 	"import.admChooseFile": "Chọn tệp…",
+	"import.admFromPaste": "JSON đã sao chép",
+	"import.admFromPasteDesc":
+		"JSON của Admonition hoặc một tệp data.json, đã được sao chép vào bảng nhớ tạm.",
 	"import.admPasteLabel": "Hoặc dán JSON vào đây:",
 	"import.admPlaceholder": "Dán admonition của bạn vào đây…",
 	"import.admBtnCancel": "Hủy",
@@ -1015,6 +1052,8 @@ export const vi: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"Không đọc được ảnh đã tải lên, nên biểu tượng mặc định đã được " +
 		"dùng.",
+	"import.warn.admUnsupportedOptions": "Các tùy chọn Admonition này không được nhập: {{fields}}.",
+	"import.warn.admImageSkipped": "Không thể đọc ảnh đã tải lên nên ảnh không được nhập.",
 	"import.warn.admIconWithCss":
 		"Admonition này được tạo kiểu bằng một đoạn CSS trong Admonition. " +
 		"Kiểu đó không thuộc phần nhập, nên chỉ tên, biểu tượng và màu " +
@@ -1067,8 +1106,9 @@ export const vi: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"Đoạn CSS trong thư mục snippets đã thay đổi kể từ khi Callout Studio ghi nó. Xuất lại sẽ thay thế toàn bộ tệp.",
 	"confirm.overwriteSnippetOk": "Ghi đè",
+	"settings.recommended": "Khuyên dùng",
 	"export.chooseFormat": "Xuất dưới dạng",
-	"export.formatJson": "Bản sao lưu Callout Studio (khuyên dùng)",
+	"export.formatJson": "Bản sao lưu Callout Studio",
 	"export.formatJsonDesc":
 		"Tệp .json là cách duy nhất được hỗ trợ để khôi phục đầy đủ hoặc chuyển dữ liệu Callout Studio sang một vault mới đã cài plugin.",
 	"export.formatCss": "Ảnh chụp CSS độc lập",

@@ -32,6 +32,16 @@ To delete an uploaded icon, hover over its tile and click the **X**. If a callou
 
 For SVG files, choose whether the artwork keeps its original colors or inherits the callout color. Inheriting the callout color works especially well for flat icons and monochrome logos. Raster images keep their original colors.
 
+Source files are limited to 5 MiB. Raster pictures must also fit within
+16,777,216 pixels, with neither side above 16,384 pixels, before they are reduced
+to an icon. SVG files have separate size and complexity limits; scripts,
+external references, and unsafe embedded pictures are removed or rejected.
+The saved picture collection has a shared decoded raster-pixel budget, so a
+collection of unusually large embedded pictures may be only partially accepted.
+It also has a shared SVG complexity limit. A backup import that would exceed
+the limits after combining with your existing pictures is rejected. An
+Admonition import reports new pictures it cannot add and keeps existing ones.
+
 Uploaded files remain on your device and are stored with the plugin settings. See [Privacy & permissions](../internals-docs/25-privacy-and-permissions.md) for the storage and download details.
 
 ## Adjust or remove the icon

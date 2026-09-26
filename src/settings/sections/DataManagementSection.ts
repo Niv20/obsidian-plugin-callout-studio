@@ -13,7 +13,9 @@ import { ConfirmModal } from "../../utils/ConfirmModal";
 import { ExportFormatModal } from "../ExportFormatModal";
 import { ImportReportModal } from "../../utils/ImportReportModal";
 import { validateImportPayload } from "../../utils/importValidator";
+import { assertImportSize, ImportLimitError, parseImportJson } from "../../utils/importLimits";
 import { mergeById } from "../../utils/mergeById";
+import { userImagesFitResourceBudget } from "../../utils/userImages";
 import { addImportedCallout, applyImportedCallout } from "../../utils/importedCallout";
 import { ImportSourceModal } from "../ImportSourceModal";
 import { countCalloutUsages } from "../../utils/vaultCalloutScanner";
@@ -127,9 +129,10 @@ export async function processImportedJSON(
 ): Promise<void> {
 	let parsed: unknown;
 	try {
+		assertImportSize(file.size);
 		const text = await file.text();
-		parsed = JSON.parse(text);
-	} catch {
+		parsed = parseImportJson(text);
+	} catch (error) {
 		await new ImportReportModal(
 			ctx.app,
 			[
@@ -137,7 +140,7 @@ export async function processImportedJSON(
 					index: -1,
 					entryLabel: "",
 					level: "error",
-					messageKey: "import.err.parseFailed",
+					messageKey: error instanceof ImportLimitError ? error.messageKey : "import.err.parseFailed",
 				},
 			],
 			0,
@@ -158,23 +161,34 @@ export async function processImportedJSON(
 			total,
 			result.fatal,
 		).prompt();
-		if (choice === "cancel") return;
+		if (choice === "cancel" || result.fatal) return;
 	}
 
 	const defs = result.validDefs;
+	// A report can stay open while sync changes the destination collection.
+	const incomingImages = result.settings?.userImages;
+	if (incomingImages?.length && !userImagesFitResourceBudget(mergeById(ctx.plugin.registry.getUserImages(), incomingImages))) {
+		await new ImportReportModal(ctx.app, [{ index: -1, entryLabel: "", level: "error",
+			messageKey: "import.err.imageBudget" }], 0, 0, true).prompt();
+		return;
+	}
 
 	let imported = 0;
 	let overwritten = 0;
-	for (const def of defs) {
-		if (ctx.plugin.registry.has(def.id)) {
-			if (!applyImportedCallout(ctx.plugin.registry, def)) continue;
-			overwritten++;
-			imported++;
-		} else {
-			const added = addImportedCallout(ctx.plugin.registry, def);
-			if (added) imported++;
+	// Match foreign imports: one stylesheet/repaint/save notification for the
+	// batch, rather than rebuilding the growing registry once per entry.
+	ctx.plugin.registry.batch(() => {
+		for (const def of defs) {
+			if (ctx.plugin.registry.has(def.id)) {
+				if (!applyImportedCallout(ctx.plugin.registry, def)) continue;
+				overwritten++;
+				imported++;
+			} else {
+				const added = addImportedCallout(ctx.plugin.registry, def);
+				if (added) imported++;
+			}
 		}
-	}
+	});
 
 	// v2 files also carry plugin settings; apply them field-by-field
 	// (result.settings is already merged against defaults, so unknown

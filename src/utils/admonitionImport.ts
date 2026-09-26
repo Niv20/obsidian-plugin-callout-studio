@@ -12,16 +12,16 @@
  * show the user a report — in the same `ValidationIssue` shape the JSON
  * importer uses — before anything changes.
  *
- * Fields with no equivalent here (`command`, `copy`, `noTitle`, `injectColor`)
- * are dropped in silence; there is nothing useful to say about a setting this
- * plugin has no concept of. `iconWithCss` is the exception and warns, because
- * it means the admonition's whole appearance lives in a CSS snippet that is not
- * coming with it.
+ * Enabled behavior with no equivalent here (`command`, `copy`, `noTitle`, or
+ * disabled `injectColor`) is reported before import, so losing it is visible.
+ * `iconWithCss` warns separately because the appearance lives in a CSS snippet
+ * that is not coming with it.
  */
 import type { CalloutIcon, UserImageIcon } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { AdmonitionRaw } from "./admonitionFormat";
 import type { ValidationIssue } from "./importValidator";
+import { MAX_TAG_LENGTH } from "../constants";
 import { MAX_DISPLAY_NAME, validateIdString } from "./importValidator";
 import { createIconNameCheck } from "../icons/nameCheck";
 import {
@@ -37,7 +37,8 @@ import {
 	obsidianDefaultTitle,
 } from "./calloutId";
 import { parseCssColorToHex } from "./colorUtils";
-import { takenUserImageNames } from "./userImages";
+import { takenUserImageNames, userImageRasterPixels, userImageElementCount, MAX_USER_IMAGE_ELEMENTS } from "./userImages";
+import { MAX_RASTER_PIXELS } from "../icons/rasterSafety";
 
 /**
  * The colour a new callout takes when the admonition names none.
@@ -48,6 +49,8 @@ import { takenUserImageNames } from "./userImages";
  * purpose, stable, and the one colour every vault already shows somewhere.
  */
 const DEFAULT_IMPORT_COLOR = "#448aff";
+/** Bound work in the shared CSS color parser before it reaches a regular expression. */
+const MAX_COLOR_LENGTH = 128;
 
 /** One admonition after mapping, in this plugin's own terms. */
 export interface AdmonitionEntry {
@@ -133,6 +136,9 @@ export async function planAdmonitionImport(
 	// it, so the same artwork arrives several times over. Keyed by the data URI
 	// so it is stored once and the callouts share it, exactly as they did there.
 	const imagesByUri = new Map<string, UserImageIcon>();
+	const rejectedImages = new Set<string>();
+	let imagePixels = existingImages.reduce((sum, image) => sum + userImageRasterPixels(image), 0);
+	let imageElements = existingImages.reduce((sum, image) => sum + userImageElementCount(image), 0);
 	const seenIds = new Map<string, number>();
 
 	for (let index = 0; index < entries.length; index++) {
@@ -140,7 +146,7 @@ export async function planAdmonitionImport(
 		if (!raw) continue;
 		const icon = icons[index];
 		const rawType = raw.type.trim();
-		const label = rawType || `#${index + 1}`;
+		const label = rawType.slice(0, MAX_TAG_LENGTH) || `#${index + 1}`;
 		const push = (
 			issue: Omit<ValidationIssue, "index" | "entryLabel">,
 		): void => {
@@ -152,6 +158,15 @@ export async function planAdmonitionImport(
 				field: "type",
 				level: "error",
 				messageKey: "import.err.admTypeMissing",
+			});
+			continue;
+		}
+		if (rawType.length > MAX_TAG_LENGTH) {
+			push({
+				field: "type",
+				level: "error",
+				messageKey: "import.err.idTooLong",
+				params: { value: label, max: MAX_TAG_LENGTH, length: rawType.length },
 			});
 			continue;
 		}
@@ -195,6 +210,16 @@ export async function planAdmonitionImport(
 		if (raw.iconWithCss === true) {
 			push({ level: "warning", messageKey: "import.warn.admIconWithCss" });
 		}
+		const unsupported: string[] = (["command", "copy", "noTitle"] as const)
+			.filter((field) => raw[field] === true);
+		if (raw.injectColor === false) unsupported.push("injectColor");
+		if (unsupported.length) {
+			push({
+				level: "warning",
+				messageKey: "import.warn.admUnsupportedOptions",
+				params: { fields: unsupported.join(", ") },
+			});
+		}
 
 		/* -- title -- */
 		let displayName: string | undefined;
@@ -218,13 +243,20 @@ export async function planAdmonitionImport(
 		let resolvedIcon: CalloutIcon | undefined;
 		if (icon && isAdmonitionImage(icon)) {
 			const cached = imagesByUri.get(icon.name);
-			const image =
+			let image =
 				cached ??
-				(await convertAdmonitionImage(
+				(rejectedImages.has(icon.name) ? null : await convertAdmonitionImage(
 					icon.name,
 					`admonition-${id}`,
 					takenNames,
 				));
+			if (image && !cached) {
+				const pixels = userImageRasterPixels(image);
+				const elements = userImageElementCount(image);
+				if (imagePixels + pixels > MAX_RASTER_PIXELS || imageElements + elements > MAX_USER_IMAGE_ELEMENTS) image = null;
+				else { imagePixels += pixels; imageElements += elements; }
+			}
+			if (!image) rejectedImages.add(icon.name);
 			if (image) {
 				if (!cached) {
 					imagesByUri.set(icon.name, image);
@@ -242,7 +274,7 @@ export async function planAdmonitionImport(
 				push({
 					field: "icon",
 					level: "warning",
-					messageKey: "import.warn.admImageFailed",
+					messageKey: "import.warn.admImageSkipped",
 				});
 			}
 		} else if (icon) {
@@ -257,14 +289,14 @@ export async function planAdmonitionImport(
 					messageKey: existing
 						? "import.warn.admIconUnknownExisting"
 						: "import.warn.admIconUnknown",
-					params: { value: icon.name, id: existing?.id ?? id },
+					params: { value: icon.name.slice(0, MAX_TAG_LENGTH), id: existing?.id ?? id },
 				});
 			}
 		}
 
 		/* -- colour -- */
 		const color =
-			typeof raw.color === "string"
+			typeof raw.color === "string" && raw.color.length <= MAX_COLOR_LENGTH
 				? (parseCssColorToHex(raw.color) ?? undefined)
 				: undefined;
 

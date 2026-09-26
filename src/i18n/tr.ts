@@ -284,8 +284,6 @@ export const tr: Record<string, string> = {
 		"Callout türü artık mevcut olmayan {{count}} özel komut kaldırıldı.",
 	"notice.customCommandMissingCallout":
 		"Bu komutun callout türü artık mevcut değil.",
-	"notice.exported":
-		"Callout'lar callout-studio-export.json dosyasına dışa aktarıldı",
 	"notice.importedJSON": "JSON'dan {{count}} callout türü içe aktarıldı.",
 	"notice.importedSettings": "Eklenti ayarları içe aktarıldı.",
 	"notice.importedCalloutManager":
@@ -866,6 +864,11 @@ export const tr: Record<string, string> = {
 	"import.warn.invalidGradient":
 		"Arka plan gradyanı geçersizdi ve yoksayıldı.",
 	"import.err.parseFailed": "Dosya geçerli JSON değil ve ayrıştırılamadı.",
+	"import.err.tooLarge": "Bu içe aktarma 16 MiB boyut sınırını aşıyor. Daha küçük dosyalara bölüp yeniden deneyin.",
+	"import.err.tooComplex": "Bu içe aktarma çok karmaşık: her liste veya nesne için en fazla 1.000 öğe, toplam 50.000 değer ve en fazla 32 iç içe geçme düzeyi kullanın.",
+	"import.err.imageBudget": "Toplam resim koleksiyonu boyut veya karmaşıklık sınırlarını aşıyor. İçe aktarmadan önce büyük resimleri kaldırın veya basitleştirin.",
+	"import.err.processingFailed": "İçe aktarma tamamlanamadı. Verileri gözden geçirip yeniden deneyin.",
+	"import.reportTruncated": "{{total}} sorunun ilk {{shown}} tanesi gösteriliyor. Uzun değerler bu raporda kısaltılmıştır.",
 	"import.err.entryNotObject": "Giriş bir nesne olmalıdır.",
 	"import.err.requiredMissing":
 		'"{{field}}" zorunlu alanı eksik veya yanlış türde.',
@@ -942,11 +945,33 @@ export const tr: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Özel admonition'larınızı Admonition eklentisinden getirin.",
+	"import.back": "Geri",
+	"import.removeFile": "Dosyayı kaldır",
+	"import.fileReady": "İçe aktarılmaya hazır.",
+	"import.pasteButton": "Yapıştır",
+	"import.pasted": "Panodan yapıştırıldı",
+	"import.clearPaste": "Yapıştırılan metni temizle",
+	"import.clipboardEmpty": "Pano boş. Önce verileri kopyalayın.",
+	"import.clipboardUnreadable":
+		"Pano okunamadı. Bunun yerine verileri dosya olarak kaydedin ve onu seçin.",
+	"import.importing": "İçe aktarılıyor…",
+	"import.err.fileUnreadable": "Dosya okunamadı.",
 	"import.cmTitle": "Callout Manager'dan İçe Aktar",
 	"import.cmFromVault": "Bu kasa",
 	"import.cmVaultChecking": "Callout Manager eklentisi aranıyor…",
 	"import.cmVaultFound": "{{count}} özel callout bulundu.",
 	"import.cmVaultNotFound": "Bu kasada özel callout bulunamadı.",
+	"import.cmVaultNotInstalled": "Callout Manager bu kasada yüklü değil.",
+	"import.cmVaultUnreadable":
+		"Bu kasadaki Callout Manager ayar dosyası okunamadı.",
+	"import.cmUseManual": "Bunun yerine dosya ya da kopyalanan stilleri kullan",
+	"import.cmFromFile": "Bir dosya",
+	"import.cmFromFileDesc":
+		"Bir Callout Manager data.json dosyası veya dosyaya kaydedilmiş kopyalanan stiller.",
+	"import.cmChooseFile": "Dosya seç…",
+	"import.cmFromPaste": "Kopyalanan stiller",
+	"import.cmFromPasteDesc":
+		"Callout Manager'ın Copy düğmesinin kopyaladığı şey, ya da bir data.json.",
 	"import.cmPasteLabel":
 		"Veya Callout Manager'dan kopyalanan stilleri buraya yapıştırın:",
 	"import.cmInstructions":
@@ -958,7 +983,7 @@ export const tr: Record<string, string> = {
 		"Dosya tanınmadı: Callout Manager'ın Copy düğmesiyle oluşturulan stiller veya Callout Manager data.json dosyası bekleniyordu.",
 	"import.err.cmNoEntries": "İçe aktarılacak özel callout bulunamadı.",
 	"import.err.cmNoBlocksFound":
-		"Yapıştırılan metinde Callout Manager stilleri bulunamadı.",
+		"Dosyada veya yapıştırılan metinde Callout Manager stilleri bulunamadı.",
 	"import.err.cmNoColorForNew":
 		'Yeni callout "{{value}}" için kullanılabilir bir renk bulunamadı; atlandı.',
 	"import.warn.cmNoColorDefault":
@@ -971,6 +996,10 @@ export const tr: Record<string, string> = {
 		'"{{value}}" ID\'si zaten başka bir callout ("{{other}}") tarafından takma ad olarak kullanılıyor ve atlandı.',
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "Temaya bağlı stiller korunamaz. Koşulsuz değerler tercih edilir; koşullu yedek değerler tüm temalara uygulanır.",
+	"import.warn.cmCustomStylesSkipped": "Callout Manager özel CSS'i içe aktarılmaz. Yalnızca desteklenen simge ve renk ayarları aktarılabilir.",
+	"import.warn.cmSchemeIcon": "Callout Studio her iki renk şeması için de tek bir simge kullanır; içe aktarılan simge ikisinde de kullanılır.",
+	"import.err.cmDuplicateId": "{{value}} kimliği bu içe aktarmada {{other}} ile yineleniyor ve atlandı.",
 	"import.admTitle": "Admonition'dan içe aktar",
 	"import.admInstructions":
 		"Her admonition adı, simgesi ve rengiyle birlikte bir callout " +
@@ -980,10 +1009,17 @@ export const tr: Record<string, string> = {
 	"import.admVaultChecking": "Admonition eklentisi aranıyor…",
 	"import.admVaultFound": "{{count}} özel admonition bulundu.",
 	"import.admVaultNotFound": "Bu kasada özel admonition bulunamadı.",
+	"import.admVaultNotInstalled": "Admonition bu kasada yüklü değil.",
+	"import.admVaultUnreadable":
+		"Bu kasadaki Admonition ayar dosyası okunamadı.",
+	"import.admUseManual": "Bunun yerine dosya ya da yapıştırılan JSON kullan",
 	"import.admFromFile": "Bir dosya",
 	"import.admFromFileDesc":
 		"Bir admonitions.json dosyası veya paylaşılan bir paket.",
 	"import.admChooseFile": "Dosya seç…",
+	"import.admFromPaste": "Kopyalanan JSON",
+	"import.admFromPasteDesc":
+		"Admonition'ın JSON'u ya da panoya kopyalanan bir data.json.",
 	"import.admPasteLabel": "Ya da JSON'u buraya yapıştırın:",
 	"import.admPlaceholder": "Admonition'larınızı buraya yapıştırın…",
 	"import.admBtnCancel": "İptal",
@@ -1002,6 +1038,8 @@ export const tr: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"Yüklenen görsel okunamadı, bu yüzden varsayılan simge " +
 		"kullanıldı.",
+	"import.warn.admUnsupportedOptions": "Bu Admonition seçenekleri içe aktarılmaz: {{fields}}.",
+	"import.warn.admImageSkipped": "Yüklenen resim okunamadı ve içe aktarılmadı.",
 	"import.warn.admIconWithCss":
 		"Bu admonition, Admonition içindeki bir CSS parçacığıyla " +
 		"biçimlendiriliyor. Bu biçimlendirme içe aktarmaya dahil " +
@@ -1055,8 +1093,9 @@ export const tr: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"Snippets klasöründeki CSS snippet, Callout Studio yazdıktan sonra değişti. Yeniden dışa aktarma dosyanın tamamını değiştirir.",
 	"confirm.overwriteSnippetOk": "Üzerine yaz",
+	"settings.recommended": "Önerilen",
 	"export.chooseFormat": "Şu biçimde dışa aktar",
-	"export.formatJson": "Callout Studio yedeği (önerilir)",
+	"export.formatJson": "Callout Studio yedeği",
 	"export.formatJsonDesc":
 		".json dosyası, Callout Studio verilerini tamamen geri yüklemenin veya eklentinin kurulu olduğu yeni bir vault'a aktarmanın desteklenen tek yoludur.",
 	"export.formatCss": "Bağımsız CSS anlık görüntüsü",

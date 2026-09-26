@@ -411,6 +411,26 @@ gradients, and clipping — enough to draw any icon — and explicitly excludes
 `<animate>`/`<set>` (can assign event-handler attributes at runtime), and any
 nested `<svg>` (would re-open the whole attack surface one level down).
 
+The sanitizer rejects DTD/entity declarations and SVGs above 256 KiB,
+5,000 elements, or 64 child levels. Embedded raster data URIs must have a
+matching PNG/JPEG/GIF/WebP header and a bounded decoded size. `rasterSafety.ts`
+checks dimensions before the browser decoder is used: no side above 16,384
+pixels and at most 16,777,216 decoded pixels. APNG controls/chunk boundaries,
+GIF frames and WebP frame/bitstream dimensions are checked as well as their outer
+canvas. Animation costs count full composited canvases per frame, including an
+APNG's separate default picture when present. Each SVG and the accepted `sanitizeUserImages` collection share the
+same pixel ceiling, preventing many individually small files from multiplying
+the decoded memory budget. The collection also has a 50,000-element SVG budget.
+Malformed or over-budget artwork is omitted during sanitization. Before import,
+the prospective merged collection is checked too: native backup import fails
+without changes if the combined collection does not fit, and Admonition
+reserves the existing collection's cost before admitting new pictures. Rejected
+new pictures are reported; an import never evicts existing pictures to make room.
+
+Header checks reduce resource-exhaustion risk; they do not replace the browser's
+decoder or guarantee its behavior for every corrupt bitstream. Material's
+separate vendor-specific `sanitizeSVG` is unchanged.
+
 User SVG CSS is parsed with the browser's non-adopted, constructed stylesheet
 parser (`svgCss.ts`); parsing never installs a sheet or loads its imports.
 Only flat style rules and an allow-list of drawing declarations survive.
@@ -452,6 +472,9 @@ and fail the test; no package or browser download is part of the runner.
 - **Format detection reads file bytes, not the extension** (`detectFormat`)
   — a mislabeled `.png` that's actually a JPEG is routine, and trusting the
   filename would reject perfectly good pictures.
+- **Dimensions are checked before decoding**, in addition to the 5 MiB source
+  file limit. A highly compressed oversized PNG is rejected before assigning
+  its object URL to an `Image`; a decoded-dimension check runs again after load.
 - **Uniqueness key is the filename**, compared case-insensitively (matching
   how macOS/Windows filesystems already treat names) — `logo.svg` and
   `logo.png` are two pictures; two `logo.png` uploads are the same one

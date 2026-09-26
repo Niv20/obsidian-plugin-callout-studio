@@ -282,7 +282,6 @@ export const th: Record<string, string> = {
 		"ลบคำสั่งแบบกำหนดเอง {{count}} รายการที่ประเภท callout ไม่มีอยู่แล้ว",
 	"notice.customCommandMissingCallout":
 		"ประเภท callout ของคำสั่งนี้ไม่มีอยู่แล้ว",
-	"notice.exported": "ส่งออก callout ไปยัง callout-studio-export.json แล้ว",
 	"notice.importedJSON": "นำเข้า {{count}} ประเภท callout จาก JSON แล้ว",
 	"notice.importedSettings": "นำเข้าการตั้งค่าปลั๊กอินแล้ว",
 	"notice.importedCalloutManager":
@@ -861,6 +860,11 @@ export const th: Record<string, string> = {
 		"การไล่ระดับสีพื้นหลังไม่ถูกต้องและถูกละเว้น",
 	"import.err.parseFailed":
 		"ไฟล์ไม่ใช่ JSON ที่ถูกต้องและไม่สามารถแยกวิเคราะห์ได้",
+	"import.err.tooLarge": "การนำเข้านี้เกินขีดจำกัดขนาด 16 MiB โปรดแบ่งเป็นไฟล์ขนาดเล็กลงแล้วลองอีกครั้ง",
+	"import.err.tooComplex": "การนำเข้านี้ซับซ้อนเกินไป: แต่ละรายการหรือออบเจ็กต์มีได้ไม่เกิน 1,000 รายการ รวมทั้งหมดไม่เกิน 50,000 ค่า และซ้อนกันได้ไม่เกิน 32 ระดับ",
+	"import.err.imageBudget": "คอลเลกชันรูปภาพทั้งหมดเกินขีดจำกัดด้านขนาดหรือความซับซ้อน โปรดลบหรือทำให้รูปภาพขนาดใหญ่เรียบง่ายลงก่อนนำเข้า",
+	"import.err.processingFailed": "ดำเนินการนำเข้าไม่สำเร็จ โปรดตรวจสอบข้อมูลแล้วลองอีกครั้ง",
+	"import.reportTruncated": "แสดงปัญหา {{shown}} รายการแรกจากทั้งหมด {{total}} รายการ ค่าแบบยาวจะถูกย่อในรายงานนี้",
 	"import.err.entryNotObject": "รายการต้องเป็น object",
 	"import.err.requiredMissing":
 		'ฟิลด์ที่จำเป็น "{{field}}" หายไปหรือมีประเภทที่ไม่ถูกต้อง',
@@ -934,11 +938,33 @@ export const th: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"นำ admonition ที่คุณกำหนดเองมาจากปลั๊กอิน Admonition",
+	"import.back": "ย้อนกลับ",
+	"import.removeFile": "นำไฟล์ออก",
+	"import.fileReady": "พร้อมนำเข้า",
+	"import.pasteButton": "วาง",
+	"import.pasted": "วางจากคลิปบอร์ดแล้ว",
+	"import.clearPaste": "ล้างข้อความที่วาง",
+	"import.clipboardEmpty": "คลิปบอร์ดว่างเปล่า กรุณาคัดลอกข้อมูลก่อน",
+	"import.clipboardUnreadable":
+		"ไม่สามารถอ่านคลิปบอร์ดได้ ให้บันทึกข้อมูลเป็นไฟล์แล้วเลือกไฟล์นั้นแทน",
+	"import.importing": "กำลังนำเข้า…",
+	"import.err.fileUnreadable": "ไม่สามารถอ่านไฟล์ได้",
 	"import.cmTitle": "นำเข้าจาก Callout Manager",
 	"import.cmFromVault": "ห้องนิรภัยนี้",
 	"import.cmVaultChecking": "กำลังค้นหาปลั๊กอิน Callout Manager…",
 	"import.cmVaultFound": "พบ callout ที่กำหนดเอง {{count}} รายการ",
 	"import.cmVaultNotFound": "ไม่พบ callout ที่กำหนดเองในห้องนิรภัยนี้",
+	"import.cmVaultNotInstalled": "ไม่ได้ติดตั้ง Callout Manager ในห้องนิรภัยนี้",
+	"import.cmVaultUnreadable":
+		"ไม่สามารถอ่านไฟล์การตั้งค่าของ Callout Manager ในห้องนิรภัยนี้ได้",
+	"import.cmUseManual": "ใช้ไฟล์หรือสไตล์ที่คัดลอกไว้แทน",
+	"import.cmFromFile": "ไฟล์",
+	"import.cmFromFileDesc":
+		"ไฟล์ data.json ของ Callout Manager หรือสไตล์ที่คัดลอกมาซึ่งบันทึกเป็นไฟล์",
+	"import.cmChooseFile": "เลือกไฟล์…",
+	"import.cmFromPaste": "สไตล์ที่คัดลอก",
+	"import.cmFromPasteDesc":
+		"สิ่งที่ปุ่ม Copy ของ Callout Manager คัดลอก หรือไฟล์ data.json",
 	"import.cmPasteLabel": "หรือวางสไตล์ที่คัดลอกจาก Callout Manager ที่นี่:",
 	"import.cmInstructions":
 		"callout ที่กำหนดเองแต่ละรายการจะนำเข้าพร้อมไอคอนและสี แต่สไตล์เฉพาะธีมและ CSS แบบกำหนดเองไม่มีรูปแบบเทียบเท่าที่นี่ จึงไม่ถูกนำเข้า",
@@ -948,7 +974,7 @@ export const th: Record<string, string> = {
 	"import.err.cmNotRecognized":
 		"ไม่รู้จักไฟล์นี้: ต้องเป็นสไตล์ที่สร้างจากปุ่ม Copy ของ Callout Manager หรือไฟล์ data.json ของ Callout Manager",
 	"import.err.cmNoEntries": "ไม่พบ callout ที่กำหนดเองเพื่อนำเข้า",
-	"import.err.cmNoBlocksFound": "ไม่พบสไตล์ Callout Manager ในข้อความที่วาง",
+	"import.err.cmNoBlocksFound": "ไม่พบสไตล์ Callout Manager ในไฟล์หรือข้อความที่วาง",
 	"import.err.cmNoColorForNew":
 		'ไม่พบสีที่ใช้งานได้สำหรับ callout ใหม่ "{{value}}" จึงถูกข้ามไป',
 	"import.warn.cmNoColorDefault":
@@ -961,6 +987,10 @@ export const th: Record<string, string> = {
 		'ID "{{value}}" ถูกใช้เป็น alias โดย callout อื่น ("{{other}}") แล้ว จึงถูกข้ามไป',
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "ไม่สามารถคงรูปแบบที่ขึ้นกับธีมไว้ได้ โดยจะเลือกใช้ค่าแบบไม่มีเงื่อนไขก่อน ส่วนค่าทดแทนแบบมีเงื่อนไขจะใช้กับทุกธีม",
+	"import.warn.cmCustomStylesSkipped": "จะไม่นำเข้า CSS ที่กำหนดเองจาก Callout Manager สามารถย้ายได้เฉพาะการตั้งค่าไอคอนและสีที่รองรับ",
+	"import.warn.cmSchemeIcon": "Callout Studio ใช้ไอคอนเดียวกันสำหรับชุดสีทั้งสองแบบ โดยไอคอนที่นำเข้าจะใช้กับทั้งสองแบบ",
+	"import.err.cmDuplicateId": "ID {{value}} ซ้ำกับ {{other}} ในการนำเข้านี้ จึงข้ามรายการดังกล่าว",
 	"import.admTitle": "นำเข้าจาก Admonition",
 	"import.admInstructions":
 		"admonition แต่ละรายการจะกลายเป็น callout พร้อมชื่อ ไอคอน " +
@@ -970,9 +1000,16 @@ export const th: Record<string, string> = {
 	"import.admVaultChecking": "กำลังค้นหาปลั๊กอิน Admonition…",
 	"import.admVaultFound": "พบ admonition ที่กำหนดเอง {{count}} รายการ",
 	"import.admVaultNotFound": "ไม่พบ admonition ที่กำหนดเองในห้องนิรภัยนี้",
+	"import.admVaultNotInstalled": "ไม่ได้ติดตั้ง Admonition ในห้องนิรภัยนี้",
+	"import.admVaultUnreadable":
+		"ไม่สามารถอ่านไฟล์การตั้งค่าของ Admonition ในห้องนิรภัยนี้ได้",
+	"import.admUseManual": "ใช้ไฟล์หรือ JSON ที่วางแทน",
 	"import.admFromFile": "ไฟล์",
 	"import.admFromFileDesc": "ไฟล์ admonitions.json หรือชุดที่แชร์กันมา",
 	"import.admChooseFile": "เลือกไฟล์…",
+	"import.admFromPaste": "JSON ที่คัดลอก",
+	"import.admFromPasteDesc":
+		"JSON ของ Admonition หรือไฟล์ data.json ที่คัดลอกไปยังคลิปบอร์ด",
 	"import.admPasteLabel": "หรือวาง JSON ที่นี่:",
 	"import.admPlaceholder": "วาง admonition ของคุณที่นี่…",
 	"import.admBtnCancel": "ยกเลิก",
@@ -990,6 +1027,8 @@ export const th: Record<string, string> = {
 		"จึงยังคงใช้ไอคอนเดิม",
 	"import.warn.admImageFailed":
 		"อ่านรูปภาพที่อัปโหลดไม่ได้ จึงใช้ไอคอนเริ่มต้นแทน",
+	"import.warn.admUnsupportedOptions": "ไม่นำเข้าตัวเลือก Admonition เหล่านี้: {{fields}}",
+	"import.warn.admImageSkipped": "อ่านรูปภาพที่อัปโหลดไม่ได้ จึงไม่นำเข้ารูปภาพดังกล่าว",
 	"import.warn.admIconWithCss":
 		"admonition นี้จัดรูปแบบด้วยสไนปเป็ต CSS ใน Admonition " +
 		"สไตล์นั้นไม่ได้รวมอยู่ในการนำเข้า จึงนำมาเฉพาะชื่อ ไอคอน และสี",
@@ -1041,8 +1080,9 @@ export const th: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"CSS snippet ในโฟลเดอร์ snippets เปลี่ยนไปตั้งแต่ Callout Studio เขียนไว้ การส่งออกอีกครั้งจะแทนที่ทั้งไฟล์",
 	"confirm.overwriteSnippetOk": "เขียนทับ",
+	"settings.recommended": "แนะนำ",
 	"export.chooseFormat": "ส่งออกเป็น",
-	"export.formatJson": "ข้อมูลสำรอง Callout Studio (แนะนำ)",
+	"export.formatJson": "ข้อมูลสำรอง Callout Studio",
 	"export.formatJsonDesc":
 		"ไฟล์ .json เป็นวิธีเดียวที่รองรับสำหรับการกู้คืนข้อมูล Callout Studio อย่างครบถ้วนหรือถ่ายโอนไปยัง vault ใหม่ที่ติดตั้งปลั๊กอินไว้",
 	"export.formatCss": "สแนปช็อต CSS แบบสแตนด์อโลน",

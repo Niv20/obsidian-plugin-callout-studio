@@ -28,7 +28,7 @@ import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { ValidationIssue } from "./importValidator";
 import type { CalloutManagerNote, CalloutManagerRaw } from "./calloutManagerFormat";
 import { createLucideNameCheck } from "../icons/nameCheck";
-import { normalizeCalloutId } from "./calloutId";
+import { calloutIdentity, normalizeCalloutId } from "./calloutId";
 import { parseCssColorToHex } from "./colorUtils";
 import { parseIconDecl } from "./calloutCssParse";
 import { validateIdString } from "./importValidator";
@@ -154,6 +154,7 @@ export function planCalloutManagerImport(
 	const toApply: CalloutManagerPlanItem[] = [];
 	const issues: ValidationIssue[] = [];
 	const lucideExists = createLucideNameCheck();
+	const plannedIds = new Map<string, string>();
 
 	entries.forEach((rawEntry, index) => {
 		// `--callout-icon` is free text in the pasted CSS, so a typo (or an icon
@@ -199,8 +200,10 @@ export function planCalloutManagerImport(
 				level: "warning",
 				messageKey:
 					note === "conditional"
-						? "import.warn.cmThemeCondition"
-						: "import.warn.cmCustomStyles",
+						? "import.warn.cmThemeConditionPartial"
+						: note === "schemeIcon"
+							? "import.warn.cmSchemeIcon"
+							: "import.warn.cmCustomStylesSkipped",
 			});
 		}
 
@@ -220,8 +223,25 @@ export function planCalloutManagerImport(
 			entry.id,
 		);
 		if (!idOk) return;
+		const identity = calloutIdentity(normalizedId);
+		const duplicate = plannedIds.get(identity);
+		if (duplicate !== undefined) {
+			issues.push({
+				index,
+				entryLabel: entry.id,
+				field: "id",
+				level: "error",
+				messageKey: "import.err.cmDuplicateId",
+				params: { value: entry.id, other: duplicate },
+			});
+			return;
+		}
 
 		if (existing) {
+			// Unsupported-only rows still produce warnings, but must not offer
+			// an import whose apply step would make no change at all.
+			if (!entry.icon && !entry.color) return;
+			plannedIds.set(identity, entry.id);
 			toApply.push({ action: "update", existingId: existing.id, entry });
 			return;
 		}
@@ -265,6 +285,7 @@ export function planCalloutManagerImport(
 			return;
 		}
 
+		plannedIds.set(identity, entry.id);
 		toApply.push({ action: "create", entry });
 	});
 

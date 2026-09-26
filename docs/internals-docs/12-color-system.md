@@ -369,11 +369,12 @@ Measured across all 257: **36** themes read a triplet, **25** read a colour,
 **0** tie. See [18-theme-callout-discovery.md](18-theme-callout-discovery.md)
 for the scan itself, the per-theme matrix and the known limitations.
 
-`parseCssColorToHex()` is the inverse — used by the Callout Manager
-clipboard-CSS migration parser, not as an importer for Callout Studio's own
-exported snippet — and handles hex, `rgb()`/`rgba()`, and the bare pre-1.13
-triplet, returning `null` (caller skips the entry) for anything else (named
-colours, `oklch()`, …).
+`parseCssColorToHex()` is the inverse — used by the Callout Manager CSS
+migration parser (a paste or a chosen file), which is also the only route
+that reads a Callout Studio CSS snapshot back, and only partially (see
+[Import and export](15-import-export.md#two-export-formats)) — and handles
+hex, `rgb()`/`rgba()`, and the bare pre-1.13 triplet, returning `null`
+(caller skips the entry) for anything else (named colours, `oklch()`, …).
 
 ## `globalStyleMerge.ts` and `iconAdjust.ts`
 

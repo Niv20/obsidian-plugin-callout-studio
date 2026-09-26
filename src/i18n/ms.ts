@@ -230,7 +230,6 @@ export const ms: Record<string, string> = {
 	"notice.customCommandMissingCallout":
 		"Jenis callout untuk arahan itu tidak lagi wujud.",
 
-	"notice.exported": "Callouts dieksport ke callout-studio-export.json",
 	"notice.importedJSON": "{{count}} jenis callout diimport dari JSON.",
 	"notice.importedSettings": "Tetapan plugin diimport.",
 	"notice.importedCalloutManager":
@@ -803,6 +802,11 @@ export const ms: Record<string, string> = {
 	"import.warn.invalidGradient":
 		"Kecerunan latar belakang tidak sah dan telah diabaikan.",
 	"import.err.parseFailed": "Fail bukan JSON sah dan tidak dapat dihurai.",
+	"import.err.tooLarge": "Import ini melebihi had saiz 16 MiB. Bahagikannya kepada fail yang lebih kecil dan cuba lagi.",
+	"import.err.tooComplex": "Import ini terlalu kompleks: maksimum 1,000 item bagi setiap senarai atau objek, 50,000 nilai keseluruhan dan kedalaman maksimum 32 tahap.",
+	"import.err.imageBudget": "Koleksi gambar keseluruhan melebihi had saiz atau kerumitan. Alih keluar atau ringkaskan gambar besar sebelum mengimport.",
+	"import.err.processingFailed": "Import tidak dapat diselesaikan. Semak data dan cuba lagi.",
+	"import.reportTruncated": "Menunjukkan {{shown}} isu pertama daripada {{total}}. Nilai yang panjang dipendekkan dalam laporan ini.",
 	"import.err.entryNotObject": "Entri mestilah objek.",
 	"import.err.requiredMissing":
 		'Medan yang diperlukan "{{field}}" hilang atau mempunyai jenis yang salah.',
@@ -877,6 +881,17 @@ export const ms: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Bawa admonition tersuai anda dari pemalam Admonition.",
+	"import.back": "Kembali",
+	"import.removeFile": "Alih keluar fail",
+	"import.fileReady": "Sedia untuk diimport.",
+	"import.pasteButton": "Tampal",
+	"import.pasted": "Ditampal daripada papan keratan",
+	"import.clearPaste": "Kosongkan teks yang ditampal",
+	"import.clipboardEmpty": "Papan keratan kosong. Salin data terlebih dahulu.",
+	"import.clipboardUnreadable":
+		"Papan keratan tidak dapat dibaca. Simpan data sebagai fail dan pilih fail itu sebagai gantinya.",
+	"import.importing": "Mengimport…",
+	"import.err.fileUnreadable": "Fail tidak dapat dibaca.",
 	"import.cmTitle": "Import dari Callout Manager",
 	"import.cmInstructions":
 		"Setiap callout tersuai dibawa masuk berserta ikon dan warnanya. Gaya " +
@@ -886,6 +901,17 @@ export const ms: Record<string, string> = {
 	"import.cmVaultFound": "{{count}} callout tersuai ditemukan.",
 	"import.cmVaultNotFound":
 		"Tiada callout tersuai ditemukan dalam vault ini.",
+	"import.cmVaultNotInstalled": "Callout Manager tidak dipasang dalam vault ini.",
+	"import.cmVaultUnreadable":
+		"Fail tetapan Callout Manager dalam vault ini tidak dapat dibaca.",
+	"import.cmUseManual": "Gunakan fail atau gaya yang disalin sebaliknya",
+	"import.cmFromFile": "Satu fail",
+	"import.cmFromFileDesc":
+		"Fail data.json Callout Manager, atau gaya salinannya yang disimpan sebagai fail.",
+	"import.cmChooseFile": "Pilih fail…",
+	"import.cmFromPaste": "Gaya yang disalin",
+	"import.cmFromPasteDesc":
+		"Apa yang disalin oleh butang Copy Callout Manager, atau fail data.json.",
 	"import.cmPasteLabel":
 		"Atau tampal gaya yang disalin daripada Callout Manager di sini:",
 	"import.cmPlaceholder":
@@ -893,7 +919,7 @@ export const ms: Record<string, string> = {
 	"import.cmBtnCancel": "Batal",
 	"import.cmBtnImport": "Import",
 	"import.err.cmNoBlocksFound":
-		"Tiada gaya Callout Manager ditemukan dalam teks yang ditampal.",
+		"Tiada gaya Callout Manager ditemukan dalam fail atau teks yang ditampal.",
 	"import.err.cmNotRecognized":
 		"Fail tidak dikenali: dijangka gaya yang dihasilkan oleh butang Copy " +
 		"Callout Manager, atau fail data.json Callout Manager.",
@@ -912,6 +938,10 @@ export const ms: Record<string, string> = {
 		"tersebut bukan sebahagian daripada import, jadi hanya ikon dan warnanya dibawa.",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "Gaya yang bergantung pada tema tidak dapat dikekalkan. Nilai tanpa syarat diutamakan; sebarang nilai sandaran bersyarat digunakan pada semua tema.",
+	"import.warn.cmCustomStylesSkipped": "CSS tersuai daripada Callout Manager tidak diimport. Hanya tetapan ikon dan warna yang disokong boleh dibawa.",
+	"import.warn.cmSchemeIcon": "Callout Studio menggunakan satu ikon untuk kedua-dua skema warna; ikon yang diimport akan digunakan pada kedua-duanya.",
+	"import.err.cmDuplicateId": "ID {{value}} pendua dengan {{other}} dalam import ini dan telah dilangkau.",
 	"import.admTitle": "Import daripada Admonition",
 	"import.admInstructions":
 		"Setiap admonition datang sebagai callout dengan nama, ikon dan " +
@@ -922,9 +952,16 @@ export const ms: Record<string, string> = {
 	"import.admVaultFound": "{{count}} admonition tersuai ditemui.",
 	"import.admVaultNotFound":
 		"Tiada admonition tersuai ditemui dalam bilik kebal ini.",
+	"import.admVaultNotInstalled": "Admonition tidak dipasang dalam vault ini.",
+	"import.admVaultUnreadable":
+		"Fail tetapan Admonition dalam bilik kebal ini tidak dapat dibaca.",
+	"import.admUseManual": "Gunakan fail atau JSON yang ditampal sebaliknya",
 	"import.admFromFile": "Satu fail",
 	"import.admFromFileDesc": "Fail admonitions.json, atau pek yang dikongsi.",
 	"import.admChooseFile": "Pilih fail…",
+	"import.admFromPaste": "JSON yang disalin",
+	"import.admFromPasteDesc":
+		"JSON Admonition atau fail data.json, yang disalin ke papan keratan.",
 	"import.admPasteLabel": "Atau tampal JSON di sini:",
 	"import.admPlaceholder": "Tampal admonition anda di sini…",
 	"import.admBtnCancel": "Batal",
@@ -944,6 +981,8 @@ export const ms: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"Gambar yang dimuat naik tidak dapat dibaca, jadi ikon lalai " +
 		"digunakan.",
+	"import.warn.admUnsupportedOptions": "Pilihan Admonition ini tidak diimport: {{fields}}.",
+	"import.warn.admImageSkipped": "Gambar yang dimuat naik tidak dapat dibaca dan tidak diimport.",
 	"import.warn.admIconWithCss":
 		"Admonition ini digayakan oleh petikan CSS dalam Admonition. Gaya " +
 		"itu bukan sebahagian daripada import, jadi hanya nama, ikon dan " +
@@ -997,8 +1036,9 @@ export const ms: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"Coretan CSS dalam folder snippets telah berubah sejak Callout Studio menulisnya. Mengeksport semula akan menggantikan keseluruhan fail.",
 	"confirm.overwriteSnippetOk": "Tulis ganti",
+	"settings.recommended": "Disyorkan",
 	"export.chooseFormat": "Eksport sebagai",
-	"export.formatJson": "Sandaran Callout Studio (disyorkan)",
+	"export.formatJson": "Sandaran Callout Studio",
 	"export.formatJsonDesc":
 		"Fail .json ialah satu-satunya cara yang disokong untuk memulihkan sepenuhnya atau memindahkan data Callout Studio ke vault baharu dengan pemalam terpasang.",
 	"export.formatCss": "Petikan CSS kendiri",

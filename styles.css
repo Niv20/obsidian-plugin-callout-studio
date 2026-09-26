@@ -5626,10 +5626,8 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 }
 
 /* ─── Import source / export format chooser modals ────────── */
-/* One widget, two windows: Import picks a source, Export picks a format, and
- * both are a column of clickable rows. Shared as selector lists rather than
- * renamed to something neutral — the import names are load-bearing in a lot of
- * places, and duplicating the rule blocks is how the two would drift apart. */
+/* Import picks a source and Export picks a format, each from a column of
+   option boxes (below) that act the moment one is clicked. */
 .callout-studio-import-source-modal,
 .callout-studio-export-format-modal {
 	max-width: 480px;
@@ -5637,50 +5635,144 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 .cs-import-file-input {
 	display: none;
 }
-.cs-import-source-list,
-.cs-export-format-list {
+
+/* ─── Option boxes ────────────────────────────────────────────── */
+/* One box, three windows: Import's source chooser, Export's format chooser and
+   the plugin import window's three options all draw it with
+   settings/optionBox.ts, so they look, hover and answer a click alike. What a
+   click means is each window's own — a chooser's box acts at once, a plugin
+   import box is chosen (`is-selected`) or filled — and that is the one thing
+   these rules tell apart.
+
+   Unpainted at rest — a border and nothing else — so it needs no
+   --cs-surface / --cs-surface-raised pairing to stay right on mobile dark;
+   every tint below is a colour mixed with transparent, which sits on either. */
+
+/* No top margin of its own: the body's padding is the air above the first
+   box. Export used to get away with one because its list is the body's first
+   child and so caught `.cs-modal > .modal-content > :first-child`; Import's
+   hidden file input comes first, so the reset missed its list and the margin
+   showed. */
+.cs-option-list {
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
-	margin-top: 0.5rem;
 }
-.cs-import-source-item,
-.cs-export-format-item {
+.cs-option-box {
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
 	padding: 0.6rem 0.75rem;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 6px;
+}
+.cs-option-box[tabindex="0"] {
 	cursor: pointer;
 }
-.cs-import-source-item:hover,
-.cs-export-format-item:hover {
-	background: var(--background-modifier-hover);
+.cs-option-box:focus-visible {
+	outline: 2px solid var(--background-modifier-border-focus);
+	outline-offset: 2px;
 }
-.cs-import-source-item-icon,
-.cs-export-format-item-icon {
+/* The A file box shows where a dragged file will land, including when that
+   option is already selected. */
+.cs-option-box.is-drop-target {
+	outline: 2px dashed var(--interactive-accent);
+	outline-offset: 2px;
+}
+/* The chosen box in the plugin import window — the one its footer Import acts
+   on. Two pixels of accent (the inset shadow doubles the border without
+   moving anything) and a faint accent wash. It is the only accent a box ever
+   wears, so a hovered box, which stays neutral, never reads as a second
+   selection beside it. */
+.cs-option-box.is-selected {
+	border-color: var(--interactive-accent);
+	box-shadow: inset 0 0 0 1px var(--interactive-accent);
+	background: color-mix(in srgb, var(--interactive-accent) 8%, transparent);
+}
+/* Behind `(hover: hover)`, as Obsidian guards its own button hovers, so a
+   tapped box on a phone doesn't stay lit. */
+@media (hover: hover) {
+	/* A box that takes clicks answers the pointer with a light wash and a
+	   firmer border, both neutral. The wash is Obsidian's own hover tint, the
+	   one its lists and menus use. The border skips
+	   `--background-modifier-border-hover`, a single base step from the
+	   resting border and too close to see (#e4e4e4 to #dadada in the default
+	   light theme), for the focus grey, the step past it. */
+	.cs-option-box[tabindex="0"]:not(.is-selected):hover {
+		border-color: var(--background-modifier-border-focus);
+		background: var(--background-modifier-hover);
+	}
+	/* The chosen box lightens its wash a step, as Obsidian's accent buttons
+	   lighten on hover. `--interactive-accent-hover` is the lighter accent in
+	   both themes; lighter still means more of it over a dark window and less
+	   of it over a light one. */
+	.theme-dark .cs-option-box.is-selected:hover {
+		background: color-mix(in srgb, var(--interactive-accent-hover) 12%, transparent);
+	}
+	.theme-light .cs-option-box.is-selected:hover {
+		background: color-mix(in srgb, var(--interactive-accent-hover) 4%, transparent);
+	}
+	/* Keep the Recommended pill distinct from an unselected row's hover wash.
+	   A selected, purple box keeps the pill's resting fill. */
+	.cs-option-box[tabindex="0"]:not(.is-selected):hover .cs-recommended-badge {
+		background: var(--background-modifier-border-focus);
+	}
+}
+/* Nothing to choose: the plugin import window's vault box once the other
+   plugin turns out not to be installed, or to hold nothing to import. Greyed
+   throughout, and the pointer says the box won't take a click; with no
+   tabindex, no hover above reaches it. A reason that is a problem to fix —
+   the settings file is there but can't be read — keeps its warning colour. */
+.cs-option-box.is-disabled {
+	cursor: not-allowed;
+}
+.cs-option-box.is-disabled .cs-option-box-icon,
+.cs-option-box.is-disabled .cs-option-box-title,
+.cs-option-box.is-disabled .cs-option-box-desc:not(.is-warning) {
+	color: var(--text-faint);
+}
+.cs-option-box-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	color: var(--text-accent);
 	flex-shrink: 0;
 }
-.cs-import-source-item-text,
-.cs-export-format-item-text {
+.cs-option-box-icon .svg-icon {
+	color: inherit;
+}
+.cs-option-box-text {
 	display: flex;
 	flex-direction: column;
 	gap: 0.1rem;
+	/* Takes the slack, and lets a long status line or file name wrap instead
+	   of widening the box. */
+	flex: 1;
+	min-width: 0;
 }
-.cs-import-source-item-title,
-.cs-export-format-item-title {
+/* The title and, when there is one, the Recommended pill. */
+.cs-option-box-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem 0.5rem;
+}
+.cs-option-box-title {
+	min-width: 0;
 	font-weight: 600;
 	color: var(--text-normal);
 }
-.cs-import-source-item-desc,
-.cs-export-format-item-desc {
+.cs-option-box-desc {
 	font-size: 0.85em;
 	color: var(--text-muted);
+}
+.cs-option-box-desc.is-warning {
+	color: var(--text-warning);
+}
+/* A file name rather than a label: it breaks anywhere instead of widening the
+   box. */
+.cs-option-box-name {
+	overflow-wrap: anywhere;
 }
 
 /* ─── Quick insert window (the ribbon icon) ─────────────────── */
@@ -5837,9 +5929,12 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	box-shadow: inset 0 0 0 1px var(--background-modifier-border-hover);
 }
 
-/* ─── Plugin import modals (Admonition, Callout Manager) ───── */
-/* One widget, two windows: both offer ready-made sources as rows with a paste
-   box underneath, so the rules are shared rather than copied per modal. */
+/* ─── Plugin import window (Admonition, Callout Manager) ────── */
+/* One window, two sources: PluginImportModal draws both, so the rules are
+   shared rather than copied per plugin. The per-plugin classes stay on the
+   window as styling hooks a user's snippet may already target. Its three
+   options — this vault, a file, the clipboard — are option boxes (see
+   "Option boxes" above) in a `role="radiogroup"`. */
 .callout-studio-cm-import-modal,
 .callout-studio-adm-import-modal {
 	max-width: 560px;
@@ -5848,59 +5943,73 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	margin-top: 0;
 	color: var(--text-muted);
 }
-/* One row per ready-made source (this vault, a file). The paste box below is
-   the fallback, so these read as offers rather than as a list of steps.
-   Deliberately unpainted — a border and nothing else — so it needs no
-   --cs-surface / --cs-surface-raised pairing to stay right on mobile dark. */
-.cs-import-row {
-	display: flex;
+
+/* The probe is a local file read and usually settles within a frame or two.
+   Held back briefly so that case never flashes "Looking for…" before the
+   result replaces it; a slow probe still shows it. */
+.cs-option-box.is-checking .cs-option-box-desc {
+	animation: cs-import-reveal 0.2s ease-out 0.25s both;
+}
+@keyframes cs-import-reveal {
+	from {
+		opacity: 0;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.cs-option-box.is-checking .cs-option-box-desc {
+		animation-duration: 1ms;
+	}
+}
+
+/* Says what the vault probe found, and why a paste brought nothing back, to a
+   screen reader only. */
+.cs-import-announcer {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+/* ─── Recommended pill ────────────────────────────────────────── */
+/* On an option's title line: the export chooser's backup, and the plugin
+   import window's "This vault" once there is something in it. Grey on
+   purpose — a recommendation, not a state. At rest it uses the border tone;
+   when its selectable box is hovered, its fill deepens to the clearer border
+   tone so it stays distinct from the row's hover wash. */
+.cs-recommended-badge {
+	display: inline-flex;
 	align-items: center;
-	gap: 0.75rem;
-	padding: 0.6rem 0.75rem;
-	margin-bottom: 0.5rem;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
-}
-.cs-import-row-icon {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: var(--text-accent);
-	flex-shrink: 0;
-}
-.cs-import-row-text {
-	display: flex;
-	flex-direction: column;
-	gap: 0.1rem;
-	/* Takes the slack so the button sits against the right edge, and lets a
-	   long status line wrap instead of pushing the button out of the row. */
-	flex: 1;
-	min-width: 0;
-}
-.cs-import-row-title {
-	font-weight: 600;
-	color: var(--text-normal);
-}
-.cs-import-row-desc {
-	font-size: 0.85em;
+	gap: 0.25em;
+	padding-block: 1px;
+	padding-inline: 6px 8px;
+	border-radius: 999px;
+	background: var(--background-modifier-border);
 	color: var(--text-muted);
+	font-size: calc(var(--font-ui-smaller) - 1px);
+	font-weight: var(--font-normal);
+	line-height: 1.4;
+	white-space: nowrap;
 }
-.cs-import-row button {
-	flex-shrink: 0;
+.cs-recommended-badge-icon {
+	display: flex;
+	--icon-size: 10px;
+	--icon-stroke: var(--icon-xs-stroke-width);
 }
-.cs-import-paste-label {
-	margin-bottom: 0.35rem;
-	color: var(--text-muted);
-}
-/* 160px, not the 220px the Callout Manager box used while it was the whole
-   window: both modals now carry rows above it, and the taller box pushes the
-   pinned footer off a short window. */
-.cs-text-control.cs-text-control.cs-text-control.cs-import-textarea {
-	width: 100%;
-	min-height: 160px;
-	font-family: var(--font-monospace);
-	font-size: 0.85em;
-	resize: vertical;
+/* Centred on the word's capitals rather than on the font's line box. A face
+   whose line box runs deep below the baseline — most Hebrew ones, which keep
+   room there for vowel points — otherwise sets the word visibly high in the
+   pill. Trimmed to cap height and baseline, the word leaves the pill's
+   height to its padding and the icon. An installer too old for `text-box`
+   keeps the line box. */
+@supports (text-box: trim-both cap alphabetic) {
+	.cs-recommended-badge {
+		padding-block: 4px;
+	}
+	.cs-recommended-badge-text {
+		text-box: trim-both cap alphabetic;
+	}
 }
 
 /* ── Icon licenses & credits modal ───────────────────────────── */

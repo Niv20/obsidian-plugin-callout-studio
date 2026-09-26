@@ -307,6 +307,30 @@ describe("planAdmonitionImport — titles", () => {
 });
 
 describe("planAdmonitionImport — icons", () => {
+	it("preserves Admonition's two legacy RPG drawings with or without a named pack", async () => {
+		for (const type of ["rpg", undefined]) {
+			const result = await plan([
+				{ type: "mountain", icon: { type, name: "montains" }, color: "1,2,3" },
+				{ type: "dice", icon: { type, name: "perspective-dice-six-two" }, color: "1,2,3" },
+			]);
+			assert.deepStrictEqual(result.toApply.map((item) => item.entry.icon), [
+				{ type: "rpg-awesome", value: "mountains" },
+				{ type: "rpg-awesome", value: "perspective-dice-two" },
+			]);
+			assert.deepStrictEqual(result.issues, []);
+		}
+	});
+
+	it("never persists inherited lookup members supplied as JSON pack names", async () => {
+		for (const type of ["__proto__", "constructor", "toString", "valueOf", "hasOwnProperty"]) {
+			const payload = JSON.parse(JSON.stringify([{ type: "safe-callout", icon: { type, name: "star" } }])) as AdmonitionRaw[];
+			const result = await plan(payload);
+			assert.equal(result.toApply.length, 1, type);
+			assert.deepStrictEqual(result.toApply[0]?.entry.icon, { type: "fa-solid", value: "star" }, type);
+			assert.deepStrictEqual(JSON.parse(JSON.stringify(result.toApply[0]?.entry.icon)), { type: "fa-solid", value: "star" });
+		}
+	});
+
 	it("resolves a named icon into one of ours", async () => {
 		const r = await plan([
 			{ type: "x", color: "#ff0000", icon: { type: "rpg", name: "acid" } },
@@ -359,7 +383,7 @@ describe("planAdmonitionImport — icons", () => {
 		assert.equal(r.toApply.length, 1);
 		assert.equal(r.toApply[0]?.entry.icon, undefined);
 		assert.deepStrictEqual(r.newImages, []);
-		assert.deepStrictEqual(keys(r.issues), ["import.warn.admImageFailed"]);
+		assert.deepStrictEqual(keys(r.issues), ["import.warn.admImageSkipped"]);
 	});
 });
 
@@ -377,6 +401,53 @@ describe("planAdmonitionImport — iconWithCss", () => {
 			{ type: "c", color: "#ff0000" },
 		]);
 		assert.deepStrictEqual(keys(r.issues), []);
+	});
+});
+
+describe("planAdmonitionImport — unsupported behavior", () => {
+	it("reports enabled behavior that the imported callout cannot reproduce", async () => {
+		const result = await plan([{
+			type: "x", color: "1,2,3", command: true, copy: true, noTitle: true, injectColor: false,
+		}]);
+		assert.equal(result.toApply.length, 1);
+		assert.deepStrictEqual(result.issues, [{
+			index: 0, entryLabel: "x", level: "warning",
+			messageKey: "import.warn.admUnsupportedOptions",
+			params: { fields: "command, copy, noTitle, injectColor" },
+		}]);
+	});
+
+	it("does not warn for missing, disabled, or nonboolean behavior flags", async () => {
+		for (const value of [undefined, false, "true", 1, {}]) {
+			const result = await plan([{
+				type: "x", color: "1,2,3", command: value, copy: value, noTitle: value, injectColor: true,
+			}]);
+			assert.deepStrictEqual(result.issues, []);
+		}
+	});
+});
+
+describe("planAdmonitionImport — bounded strings", () => {
+	it("bounds oversized id labels and rejects the entry before icon conversion", async () => {
+		const result = await plan([{
+			type: "x".repeat(100_000), icon: { type: "image", name: "data:image/png;base64,AAAA" },
+		}]);
+		assert.deepStrictEqual(result.toApply, []);
+		assert.deepStrictEqual(result.newImages, []);
+		assert.equal(result.issues[0]?.entryLabel.length, 200);
+		assert.equal(result.issues[0]?.params?.length, 100_000);
+		assert.equal(String(result.issues[0]?.params?.value).length, 200);
+	});
+
+	it("rejects oversized color input before parsing and bounds icon warning text", async () => {
+		const result = await plan([{
+			type: "x", color: `rgb(1,2,3${" ".repeat(100_000)})`,
+			icon: { type: "fas", name: "x".repeat(100_000) },
+		}]);
+		assert.equal(result.toApply[0]?.entry.color, DEFAULT_IMPORT_COLOR);
+		assert.equal(result.toApply[0]?.entry.icon, undefined);
+		const warning = result.issues.find((issue) => issue.messageKey === "import.warn.admIconUnknown");
+		assert.equal(String(warning?.params?.value).length, 200);
 	});
 });
 
@@ -404,7 +475,7 @@ describe("planAdmonitionImport — a refused entry leaves nothing behind", () =>
 			{ type: "dup", icon: { type: "image", name: "not-a-data-uri" } },
 		]);
 		assert.deepStrictEqual(r.newImages, []);
-		assert.ok(!keys(r.issues).includes("import.warn.admImageFailed"));
+		assert.ok(!keys(r.issues).includes("import.warn.admImageSkipped"));
 	});
 });
 

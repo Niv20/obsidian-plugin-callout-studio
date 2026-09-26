@@ -14,6 +14,9 @@ import { applyModalChrome } from "../settings/modalChrome";
 
 export type ImportReportChoice = "cancel" | "importValid";
 
+const MAX_VISIBLE_ISSUES = 200;
+const reportText = (value: string): string => value.length > 500 ? `${value.slice(0, 500)}…` : value;
+
 /**
  * Centered modal that lists every validation issue found in an imported JSON
  * file, grouped per entry. Lets the user cancel or import only the entries
@@ -51,11 +54,11 @@ export class ImportReportModal extends Modal {
 		// Group issues by entry index. -1 means top-level.
 		const grouped = new Map<number, ValidationIssue[]>();
 		const labels = new Map<number, string>();
-		for (const issue of this.issues) {
+		for (const issue of this.issues.slice(0, MAX_VISIBLE_ISSUES)) {
 			const arr = grouped.get(issue.index) ?? [];
 			arr.push(issue);
 			grouped.set(issue.index, arr);
-			if (issue.entryLabel) labels.set(issue.index, issue.entryLabel);
+			if (issue.entryLabel) labels.set(issue.index, reportText(issue.entryLabel));
 		}
 
 		const listEl = contentEl.createDiv({
@@ -87,12 +90,19 @@ export class ImportReportModal extends Modal {
 				if (issue.field) {
 					li.createEl("code", {
 						cls: "cs-import-issue-field",
-						text: issue.field,
+						text: reportText(issue.field),
 					});
 					li.appendText(" — ");
 				}
-				li.appendText(t(issue.messageKey, issue.params));
+				const params = issue.params && Object.fromEntries(Object.entries(issue.params)
+					.map(([key, value]) => [key, typeof value === "string" ? reportText(value) : value]));
+				li.appendText(t(issue.messageKey, params));
 			}
+		}
+		if (this.issues.length > MAX_VISIBLE_ISSUES) {
+			contentEl.createEl("p", { text: t("import.reportTruncated", {
+				shown: MAX_VISIBLE_ISSUES, total: this.issues.length,
+			}) });
 		}
 
 		// Summary line

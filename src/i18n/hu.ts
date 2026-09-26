@@ -235,7 +235,6 @@ export const hu: Record<string, string> = {
 	"notice.customCommandMissingCallout":
 		"Ennek a parancsnak a callout-típusa már nem létezik.",
 
-	"notice.exported": "A callout-ok exportálva: callout-studio-export.json",
 	"notice.importedJSON": "{{count}} callout-típus importálva JSON-ból.",
 	"notice.importedSettings": "A bővítmény beállításai importálva.",
 	"notice.importedCalloutManager":
@@ -819,6 +818,11 @@ export const hu: Record<string, string> = {
 	"import.warn.invalidGradient":
 		"A háttér színátmenete nem volt érvényes, ezért figyelmen kívül lett hagyva.",
 	"import.err.parseFailed": "A fájl nem érvényes JSON, és nem elemezhető.",
+	"import.err.tooLarge": "Ez az importálás túllépi a 16 MiB-os méretkorlátot. Bontsa kisebb fájlokra, majd próbálja újra.",
+	"import.err.tooComplex": "Ez az importálás túl összetett: listánként vagy objektumonként legfeljebb 1 000 elem, összesen 50 000 érték és legfeljebb 32 beágyazási szint használható.",
+	"import.err.imageBudget": "A teljes képgyűjtemény túllépi a méret- vagy összetettségi korlátot. Importálás előtt távolítsa el vagy egyszerűsítse a nagy képeket.",
+	"import.err.processingFailed": "Az importálást nem sikerült befejezni. Ellenőrizze az adatokat, majd próbálja újra.",
+	"import.reportTruncated": "A {{total}} problémából az első {{shown}} jelenik meg. A hosszú értékek rövidítve szerepelnek ebben a jelentésben.",
 	"import.err.entryNotObject": "A bejegyzésnek objektumnak kell lennie.",
 	"import.err.requiredMissing":
 		'A kötelező "{{field}}" mező hiányzik vagy rossz típusú.',
@@ -899,6 +903,17 @@ export const hu: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Hozd át a saját admonition-jeidet az Admonition bővítményből.",
+	"import.back": "Vissza",
+	"import.removeFile": "Fájl eltávolítása",
+	"import.fileReady": "Importálásra kész.",
+	"import.pasteButton": "Beillesztés",
+	"import.pasted": "Beillesztve a vágólapról",
+	"import.clearPaste": "Beillesztett szöveg törlése",
+	"import.clipboardEmpty": "A vágólap üres. Először másold ki az adatokat.",
+	"import.clipboardUnreadable":
+		"A vágólapot nem sikerült beolvasni. Mentsd el az adatokat fájlként, és azt válaszd helyette.",
+	"import.importing": "Importálás…",
+	"import.err.fileUnreadable": "A fájlt nem sikerült beolvasni.",
 	"import.cmTitle": "Importálás a Callout Managerből",
 	"import.cmInstructions":
 		"Minden testreszabott callout az ikonjával és a színével együtt kerül át. A témánkénti stílusoknak és az egyéni CSS-nek itt nincs megfelelője, ezek nem kerülnek át.",
@@ -907,6 +922,17 @@ export const hu: Record<string, string> = {
 	"import.cmVaultFound": "{{count}} testreszabott callout található.",
 	"import.cmVaultNotFound":
 		"Nem található testreszabott callout ebben a vaultban.",
+	"import.cmVaultNotInstalled": "A Callout Manager nincs telepítve ebben a vaultban.",
+	"import.cmVaultUnreadable":
+		"A Callout Manager ebben a vaultban lévő beállításfájlját nem sikerült beolvasni.",
+	"import.cmUseManual": "Inkább fájl vagy másolt stílusok használata",
+	"import.cmFromFile": "Egy fájl",
+	"import.cmFromFileDesc":
+		"Egy Callout Manager data.json fájl, vagy a belőle másolt, fájlba mentett stílusok.",
+	"import.cmChooseFile": "Fájl kiválasztása…",
+	"import.cmFromPaste": "Másolt stílusok",
+	"import.cmFromPasteDesc":
+		"Amit a Callout Manager Copy gombja másol, vagy egy data.json.",
 	"import.cmPasteLabel":
 		"Vagy illeszd be ide a Callout Manager Copy gombjáról másolt stílusokat:",
 	"import.cmPlaceholder":
@@ -914,7 +940,7 @@ export const hu: Record<string, string> = {
 	"import.cmBtnCancel": "Mégse",
 	"import.cmBtnImport": "Importálás",
 	"import.err.cmNoBlocksFound":
-		"Nem találhatók Callout Manager stílusok a beillesztett szövegben.",
+		"Nem találhatók Callout Manager stílusok a fájlban vagy a beillesztett szövegben.",
 	"import.err.cmNotRecognized":
 		"Ismeretlen fájl: a Callout Manager Copy gombja által előállított stílusokat, vagy egy Callout Manager data.json fájlt vártunk.",
 	"import.err.cmNoEntries":
@@ -931,6 +957,10 @@ export const hu: Record<string, string> = {
 		"Ennek a callout-nak egyéni CSS-e is van a Callout Managerben. Az a stílus nem része az importnak, csak az ikonja és a színe került át.",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "A témától függő stílus nem őrizhető meg. A feltétel nélküli értékek élveznek elsőbbséget; a feltételes tartalékérték minden témára érvényes.",
+	"import.warn.cmCustomStylesSkipped": "A Callout Manager egyéni CSS-e nem importálható. Csak a támogatott ikon- és színbeállítások vihetők át.",
+	"import.warn.cmSchemeIcon": "A Callout Studio mindkét színsémához ugyanazt az ikont használja; az importált ikon mindkettőben megjelenik.",
+	"import.err.cmDuplicateId": "A(z) {{value}} azonosító megkettőzi a(z) {{other}} azonosítót ebben az importálásban, ezért kimaradt.",
 	"import.admTitle": "Importálás az Admonitionből",
 	"import.admInstructions":
 		"Minden admonition callout lesz, a nevével, ikonjával és színével " +
@@ -942,10 +972,17 @@ export const hu: Record<string, string> = {
 	"import.admVaultFound": "{{count}} saját admonition található.",
 	"import.admVaultNotFound":
 		"Ebben a tárolóban nem található saját admonition.",
+	"import.admVaultNotInstalled": "Az Admonition nincs telepítve ebben a vaultban.",
+	"import.admVaultUnreadable":
+		"Az Admonition ebben a tárolóban lévő beállításfájlját nem sikerült beolvasni.",
+	"import.admUseManual": "Inkább fájl vagy beillesztett JSON használata",
 	"import.admFromFile": "Egy fájl",
 	"import.admFromFileDesc":
 		"Egy admonitions.json fájl vagy egy megosztott csomag.",
 	"import.admChooseFile": "Fájl kiválasztása…",
+	"import.admFromPaste": "Másolt JSON",
+	"import.admFromPasteDesc":
+		"Az Admonition JSON-ja vagy egy data.json, a vágólapra másolva.",
 	"import.admPasteLabel": "Vagy illeszd be ide a JSON-t:",
 	"import.admPlaceholder": "Illeszd be ide az admonition-jeidet…",
 	"import.admBtnCancel": "Mégse",
@@ -965,6 +1002,8 @@ export const hu: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"A feltöltött kép nem volt olvasható, ezért az alapértelmezett " +
 		"ikon került a helyére.",
+	"import.warn.admUnsupportedOptions": "Ezek az Admonition-beállítások nem importálhatók: {{fields}}.",
+	"import.warn.admImageSkipped": "A feltöltött kép nem volt olvasható, ezért nem lett importálva.",
 	"import.warn.admIconWithCss":
 		"Ezt az admonitiont egy CSS-részlet formázza az Admonitionben. Ez " +
 		"a formázás nem része az importnak, így csak a neve, ikonja és " +
@@ -1019,8 +1058,9 @@ export const hu: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"A snippets mappában lévő CSS-részlet megváltozott azóta, hogy a Callout Studio létrehozta. Az újbóli exportálás a teljes fájlt lecseréli.",
 	"confirm.overwriteSnippetOk": "Felülírás",
+	"settings.recommended": "Ajánlott",
 	"export.chooseFormat": "Exportálás mint",
-	"export.formatJson": "Callout Studio biztonsági mentés (ajánlott)",
+	"export.formatJson": "Callout Studio biztonsági mentés",
 	"export.formatJsonDesc":
 		"A .json fájl az egyetlen támogatott mód a Callout Studio adatainak teljes visszaállítására vagy egy új, telepített pluginnal rendelkező vaultba való átvitelére.",
 	"export.formatCss": "Önálló CSS-pillanatkép",

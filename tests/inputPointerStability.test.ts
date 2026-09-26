@@ -81,15 +81,6 @@ describe("compound and multiline fields keep their specialized layout", () => {
 		}
 	});
 
-	it("keeps JSON entry multiline and resizable with a monospace font", () => {
-		const selector = ".cs-text-control.cs-text-control.cs-text-control.cs-import-textarea";
-		const rule = ruleFor(selector);
-		assert.ok(rule.body.includes("min-height: 160px"));
-		assert.ok(rule.body.includes("resize: vertical"));
-		assert.ok(rule.body.includes("font-family: var(--font-monospace)"));
-		assert.ok(compareSpecificity(specificityOf(selector), specificityOf(TEXT_BASE)) >= 0);
-	});
-
 	it("leaves the inner combobox input transparent in every pointer/focus state", () => {
 		for (const state of ["hover", "active", "focus", "focus-visible"]) {
 			const rule = ruleFor(`.cs-combobox-control input[type="text"].cs-combobox-input:${state}`);

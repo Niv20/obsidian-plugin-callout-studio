@@ -232,7 +232,6 @@ export const cs: Record<string, string> = {
 		"Odstraněno {{count}} vlastní(ch) příkaz(ů), jejichž typ callout již neexistuje.",
 	"notice.customCommandMissingCallout":
 		"Typ callout tohoto příkazu již neexistuje.",
-	"notice.exported": "Callouts exportovány do callout-studio-export.json",
 	"notice.importedJSON": "Importováno {{count}} typ(ů) callout z JSON.",
 	"notice.importedSettings": "Importováno nastavení doplňku.",
 	"notice.importedCalloutManager":
@@ -864,6 +863,11 @@ export const cs: Record<string, string> = {
 	"import.warn.invalidGradient":
 		"Přechod pozadí byl neplatný a byl ignorován.",
 	"import.err.parseFailed": "Soubor není platný JSON a nelze ho analyzovat.",
+	"import.err.tooLarge": "Tento import překračuje limit velikosti 16 MiB. Rozdělte ho na menší soubory a zkuste to znovu.",
+	"import.err.tooComplex": "Tento import je příliš složitý: v každém seznamu nebo objektu použijte nejvýše 1 000 položek, celkem 50 000 hodnot a maximálně 32 úrovní vnoření.",
+	"import.err.imageBudget": "Celá kolekce obrázků překračuje limity velikosti nebo složitosti. Před importem odeberte velké obrázky nebo je zjednodušte.",
+	"import.err.processingFailed": "Import se nepodařilo dokončit. Zkontrolujte data a zkuste to znovu.",
+	"import.reportTruncated": "Zobrazuje se prvních {{shown}} problémů z celkových {{total}}. Dlouhé hodnoty jsou v tomto přehledu zkrácené.",
 	"import.err.entryNotObject": "Položka musí být objekt.",
 	"import.err.requiredMissing":
 		'Povinné pole "{{field}}" chybí nebo má nesprávný typ.',
@@ -940,6 +944,17 @@ export const cs: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Přeneste své vlastní admonition z pluginu Admonition.",
+	"import.back": "Zpět",
+	"import.removeFile": "Odebrat soubor",
+	"import.fileReady": "Připraveno k importu.",
+	"import.pasteButton": "Vložit",
+	"import.pasted": "Vloženo ze schránky",
+	"import.clearPaste": "Vymazat vložený text",
+	"import.clipboardEmpty": "Schránka je prázdná. Nejprve zkopírujte data.",
+	"import.clipboardUnreadable":
+		"Schránku se nepodařilo přečíst. Uložte data jako soubor a vyberte ho místo toho.",
+	"import.importing": "Importování…",
+	"import.err.fileUnreadable": "Soubor se nepodařilo přečíst.",
 	"import.cmTitle": "Import z Callout Manager",
 	"import.cmInstructions":
 		"Každý přizpůsobený callout se přenese se svou ikonou a barvou. Styly " +
@@ -949,6 +964,17 @@ export const cs: Record<string, string> = {
 	"import.cmVaultFound": "Nalezeno přizpůsobených calloutů: {{count}}.",
 	"import.cmVaultNotFound":
 		"V tomto trezoru nebyly nalezeny žádné přizpůsobené callouty.",
+	"import.cmVaultNotInstalled": "Callout Manager není v tomto trezoru nainstalován.",
+	"import.cmVaultUnreadable":
+		"Soubor s nastavením pluginu Callout Manager v tomto trezoru se nepodařilo přečíst.",
+	"import.cmUseManual": "Použít místo toho soubor nebo zkopírované styly",
+	"import.cmFromFile": "Soubor",
+	"import.cmFromFileDesc":
+		"Soubor data.json z Callout Manager nebo z něj zkopírované styly uložené jako soubor.",
+	"import.cmChooseFile": "Vybrat soubor…",
+	"import.cmFromPaste": "Zkopírované styly",
+	"import.cmFromPasteDesc":
+		"To, co zkopíruje tlačítko Copy v Callout Manager, nebo soubor data.json.",
 	"import.cmPasteLabel":
 		"Nebo sem vložte styly zkopírované z Callout Manager:",
 	"import.cmPlaceholder":
@@ -956,7 +982,7 @@ export const cs: Record<string, string> = {
 	"import.cmBtnCancel": "Zrušit",
 	"import.cmBtnImport": "Importovat",
 	"import.err.cmNoBlocksFound":
-		"Ve vloženém textu nebyly nalezeny žádné styly Callout Manager.",
+		"V souboru ani ve vloženém textu nebyly nalezeny žádné styly Callout Manager.",
 	"import.err.cmNotRecognized":
 		"Nerozpoznaný soubor: očekávány byly styly generované tlačítkem Copy " +
 		"v Callout Manager, nebo soubor data.json z Callout Manager.",
@@ -978,6 +1004,10 @@ export const cs: Record<string, string> = {
 		"součástí importu, proto se přenesla jen jeho ikona a barva.",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "Styly závislé na motivu nelze zachovat. Přednost mají nepodmíněné hodnoty; případná podmíněná náhradní hodnota se použije pro všechny motivy.",
+	"import.warn.cmCustomStylesSkipped": "Vlastní CSS z Callout Manageru se neimportuje. Přenést lze pouze podporované nastavení ikony a barvy.",
+	"import.warn.cmSchemeIcon": "Callout Studio používá jednu ikonu pro obě barevná schémata; importovaná ikona se použije v obou.",
+	"import.err.cmDuplicateId": "ID „{{value}}“ se v tomto importu překrývá s „{{other}}“ a bylo přeskočeno.",
 	"import.admTitle": "Import z Admonition",
 	"import.admInstructions":
 		"Každý admonition sem přijde jako callout s názvem, ikonou a " +
@@ -988,9 +1018,16 @@ export const cs: Record<string, string> = {
 	"import.admVaultFound": "Nalezeno {{count}} vlastních admonition.",
 	"import.admVaultNotFound":
 		"V tomto trezoru nebyly nalezeny žádné vlastní admonition.",
+	"import.admVaultNotInstalled": "Admonition není v tomto trezoru nainstalován.",
+	"import.admVaultUnreadable":
+		"Soubor s nastavením pluginu Admonition v tomto trezoru se nepodařilo přečíst.",
+	"import.admUseManual": "Použít místo toho soubor nebo vložený JSON",
 	"import.admFromFile": "Soubor",
 	"import.admFromFileDesc": "Soubor admonitions.json nebo sdílený balíček.",
 	"import.admChooseFile": "Vybrat soubor…",
+	"import.admFromPaste": "Zkopírovaný JSON",
+	"import.admFromPasteDesc":
+		"JSON z Admonition nebo soubor data.json, zkopírovaný do schránky.",
 	"import.admPasteLabel": "Nebo sem vložte JSON:",
 	"import.admPlaceholder": "Vložte sem své admonition…",
 	"import.admBtnCancel": "Zrušit",
@@ -1010,6 +1047,8 @@ export const cs: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"Nahraný obrázek se nepodařilo načíst, proto byla použita výchozí " +
 		"ikona.",
+	"import.warn.admUnsupportedOptions": "Tyto možnosti pluginu Admonition se neimportují: {{fields}}.",
+	"import.warn.admImageSkipped": "Nahraný obrázek se nepodařilo přečíst a nebyl importován.",
 	"import.warn.admIconWithCss":
 		"Tento admonition je v pluginu Admonition stylován úryvkem CSS. " +
 		"Ten není součástí importu, takže se přenesl jen název, ikona a " +
@@ -1063,8 +1102,9 @@ export const cs: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"CSS fragment ve složce snippets se od posledního zápisu Callout Studiem změnil. Další export nahradí celý soubor.",
 	"confirm.overwriteSnippetOk": "Přepsat",
+	"settings.recommended": "Doporučeno",
 	"export.chooseFormat": "Exportovat jako",
-	"export.formatJson": "Záloha Callout Studio (doporučeno)",
+	"export.formatJson": "Záloha Callout Studio",
 	"export.formatJsonDesc":
 		"Soubor .json je jediný podporovaný způsob, jak plně obnovit nebo přenést data Callout Studia do nového vaultu s nainstalovaným pluginem.",
 	"export.formatCss": "Samostatný snímek CSS",

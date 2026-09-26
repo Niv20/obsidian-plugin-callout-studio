@@ -221,7 +221,6 @@ export const el: Record<string, string> = {
 		"Αφαιρέθηκαν {{count}} προσαρμοσμένη(-ες) εντολή(-ές) των οποίων ο τύπος callout δεν υπάρχει πια.",
 	"notice.customCommandMissingCallout":
 		"Ο τύπος callout αυτής της εντολής δεν υπάρχει πια.",
-	"notice.exported": "Τα callouts εξήχθησαν στο callout-studio-export.json",
 	"notice.importedJSON": "Εισήχθησαν {{count}} τύπος/τύποι callout από JSON.",
 	"notice.importedSettings": "Οι ρυθμίσεις του προσθέτου εισήχθησαν.",
 	"notice.importedCalloutManager":
@@ -855,6 +854,11 @@ export const el: Record<string, string> = {
 		"Η διαβάθμιση φόντου δεν ήταν έγκυρη και αγνοήθηκε.",
 	"import.err.parseFailed":
 		"Το αρχείο δεν είναι έγκυρο JSON και δεν ήταν δυνατή η ανάλυσή του.",
+	"import.err.tooLarge": "Αυτή η εισαγωγή υπερβαίνει το όριο μεγέθους των 16 MiB. Χωρίστε την σε μικρότερα αρχεία και δοκιμάστε ξανά.",
+	"import.err.tooComplex": "Αυτή η εισαγωγή είναι υπερβολικά σύνθετη: έως 1.000 στοιχεία ανά λίστα ή αντικείμενο, 50.000 τιμές συνολικά και έως 32 επίπεδα ένθεσης.",
+	"import.err.imageBudget": "Η συνολική συλλογή εικόνων υπερβαίνει τα όρια μεγέθους ή πολυπλοκότητας. Αφαιρέστε ή απλοποιήστε τις μεγάλες εικόνες πριν από την εισαγωγή.",
+	"import.err.processingFailed": "Δεν ήταν δυνατή η ολοκλήρωση της εισαγωγής. Ελέγξτε τα δεδομένα και δοκιμάστε ξανά.",
+	"import.reportTruncated": "Εμφανίζονται τα πρώτα {{shown}} από τα {{total}} ζητήματα. Οι μεγάλες τιμές έχουν συντομευτεί σε αυτήν την αναφορά.",
 	"import.err.entryNotObject": "Η καταχώρηση πρέπει να είναι αντικείμενο.",
 	"import.err.requiredMissing":
 		'Το υποχρεωτικό πεδίο "{{field}}" λείπει ή έχει λανθασμένο τύπο.',
@@ -935,6 +939,17 @@ export const el: Record<string, string> = {
 	"import.sourceAdmonitionDesc":
 		"Φέρτε τα προσαρμοσμένα admonition σας από το πρόσθετο " +
 		"Admonition.",
+	"import.back": "Πίσω",
+	"import.removeFile": "Αφαίρεση αρχείου",
+	"import.fileReady": "Έτοιμο για εισαγωγή.",
+	"import.pasteButton": "Επικόλληση",
+	"import.pasted": "Επικολλήθηκε από το πρόχειρο",
+	"import.clearPaste": "Εκκαθάριση επικολλημένου κειμένου",
+	"import.clipboardEmpty": "Το πρόχειρο είναι άδειο. Αντιγράψτε πρώτα τα δεδομένα.",
+	"import.clipboardUnreadable":
+		"Δεν ήταν δυνατή η ανάγνωση του προχείρου. Αποθηκεύστε τα δεδομένα ως αρχείο και επιλέξτε το αντ' αυτού.",
+	"import.importing": "Εισαγωγή…",
+	"import.err.fileUnreadable": "Δεν ήταν δυνατή η ανάγνωση του αρχείου.",
 	"import.cmTitle": "Εισαγωγή από Callout Manager",
 	"import.cmInstructions":
 		"Κάθε προσαρμοσμένο callout μεταφέρεται με το εικονίδιο και το χρώμα " +
@@ -945,6 +960,17 @@ export const el: Record<string, string> = {
 	"import.cmVaultFound": "Βρέθηκαν {{count}} προσαρμοσμένα callout.",
 	"import.cmVaultNotFound":
 		"Δεν βρέθηκαν προσαρμοσμένα callout σε αυτό το vault.",
+	"import.cmVaultNotInstalled": "Το Callout Manager δεν είναι εγκατεστημένο σε αυτό το vault.",
+	"import.cmVaultUnreadable":
+		"Δεν ήταν δυνατή η ανάγνωση του αρχείου ρυθμίσεων του Callout Manager σε αυτό το vault.",
+	"import.cmUseManual": "Χρήση αρχείου ή αντιγραμμένων στυλ αντ' αυτού",
+	"import.cmFromFile": "Ένα αρχείο",
+	"import.cmFromFileDesc":
+		"Ένα data.json του Callout Manager ή τα αντιγραμμένα στυλ του αποθηκευμένα σε αρχείο.",
+	"import.cmChooseFile": "Επιλογή αρχείου…",
+	"import.cmFromPaste": "Αντιγραμμένα στυλ",
+	"import.cmFromPasteDesc":
+		"Ό,τι αντιγράφει το κουμπί Copy του Callout Manager, ή ένα data.json.",
 	"import.cmPasteLabel":
 		"Ή επικολλήστε εδώ τα αντιγραμμένα στυλ του Callout Manager:",
 	"import.cmPlaceholder":
@@ -952,7 +978,7 @@ export const el: Record<string, string> = {
 	"import.cmBtnCancel": "Ακύρωση",
 	"import.cmBtnImport": "Εισαγωγή",
 	"import.err.cmNoBlocksFound":
-		"Δεν βρέθηκαν στυλ Callout Manager στο επικολλημένο κείμενο.",
+		"Δεν βρέθηκαν στυλ Callout Manager στο αρχείο ή στο επικολλημένο κείμενο.",
 	"import.err.cmNotRecognized":
 		"Μη αναγνωρίσιμο αρχείο: αναμένονται τα στυλ που παράγει το κουμπί " +
 		"Copy του Callout Manager, ή ένα data.json του Callout Manager.",
@@ -975,6 +1001,10 @@ export const el: Record<string, string> = {
 		"μόνο το εικονίδιο και το χρώμα του.",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "Δεν είναι δυνατή η διατήρηση της μορφοποίησης που εξαρτάται από το θέμα. Προτιμώνται οι μη υπό όρους τιμές· τυχόν υπό όρους εναλλακτική εφαρμόζεται σε όλα τα θέματα.",
+	"import.warn.cmCustomStylesSkipped": "Δεν εισάγεται προσαρμοσμένο CSS από το Callout Manager. Μεταφέρονται μόνο οι υποστηριζόμενες ρυθμίσεις εικονιδίου και χρώματος.",
+	"import.warn.cmSchemeIcon": "Το Callout Studio χρησιμοποιεί ένα εικονίδιο και για τα δύο χρωματικά σχήματα· το εισαγόμενο εικονίδιο θα χρησιμοποιηθεί και στα δύο.",
+	"import.err.cmDuplicateId": "Το αναγνωριστικό {{value}} είναι διπλότυπο του {{other}} σε αυτήν την εισαγωγή και παραλείφθηκε.",
 	"import.admTitle": "Εισαγωγή από το Admonition",
 	"import.admInstructions":
 		"Κάθε admonition έρχεται ως callout με το όνομα, το εικονίδιο και " +
@@ -985,10 +1015,17 @@ export const el: Record<string, string> = {
 	"import.admVaultFound": "Βρέθηκαν {{count}} προσαρμοσμένα admonition.",
 	"import.admVaultNotFound":
 		"Δεν βρέθηκαν προσαρμοσμένα admonition σε αυτό το θησαυροφυλάκιο.",
+	"import.admVaultNotInstalled": "Το Admonition δεν είναι εγκατεστημένο σε αυτό το vault.",
+	"import.admVaultUnreadable":
+		"Δεν ήταν δυνατή η ανάγνωση του αρχείου ρυθμίσεων του Admonition σε αυτό το θησαυροφυλάκιο.",
+	"import.admUseManual": "Χρήση αρχείου ή επικολλημένου JSON αντ' αυτού",
 	"import.admFromFile": "Ένα αρχείο",
 	"import.admFromFileDesc":
 		"Ένα αρχείο admonitions.json ή ένα κοινόχρηστο πακέτο.",
 	"import.admChooseFile": "Επιλογή αρχείου…",
+	"import.admFromPaste": "Αντιγραμμένο JSON",
+	"import.admFromPasteDesc":
+		"JSON του Admonition ή ένα data.json, αντιγραμμένο στο πρόχειρο.",
 	"import.admPasteLabel": "Ή επικολλήστε εδώ το JSON:",
 	"import.admPlaceholder": "Επικολλήστε εδώ τα admonition σας…",
 	"import.admBtnCancel": "Ακύρωση",
@@ -1008,6 +1045,8 @@ export const el: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"Δεν ήταν δυνατή η ανάγνωση της μεταφορτωμένης εικόνας, οπότε " +
 		"χρησιμοποιήθηκε το προεπιλεγμένο εικονίδιο.",
+	"import.warn.admUnsupportedOptions": "Αυτές οι επιλογές του Admonition δεν εισάγονται: {{fields}}.",
+	"import.warn.admImageSkipped": "Δεν ήταν δυνατή η ανάγνωση της μεταφορτωμένης εικόνας και δεν εισήχθη.",
 	"import.warn.admIconWithCss":
 		"Αυτό το admonition παίρνει την εμφάνισή του από ένα απόσπασμα " +
 		"CSS στο Admonition. Η εμφάνιση αυτή δεν περιλαμβάνεται στην " +
@@ -1062,8 +1101,9 @@ export const el: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"Το απόσπασμα CSS στον φάκελο snippets άλλαξε από τότε που το έγραψε το Callout Studio. Η νέα εξαγωγή αντικαθιστά ολόκληρο το αρχείο.",
 	"confirm.overwriteSnippetOk": "Αντικατάσταση",
+	"settings.recommended": "Προτεινόμενο",
 	"export.chooseFormat": "Εξαγωγή ως",
-	"export.formatJson": "Αντίγραφο ασφαλείας Callout Studio (προτείνεται)",
+	"export.formatJson": "Αντίγραφο ασφαλείας Callout Studio",
 	"export.formatJsonDesc":
 		"Το αρχείο .json είναι ο μόνος υποστηριζόμενος τρόπος για πλήρη επαναφορά ή μεταφορά των δεδομένων του Callout Studio σε νέο vault όπου είναι εγκατεστημένο το πρόσθετο.",
 	"export.formatCss": "Αυτόνομο στιγμιότυπο CSS",

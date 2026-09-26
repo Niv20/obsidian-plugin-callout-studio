@@ -286,7 +286,6 @@ export const ro: Record<string, string> = {
 	"notice.customCommandMissingCallout":
 		"Tipul de callout al acestei comenzi nu mai există.",
 
-	"notice.exported": "Callouts exportate în callout-studio-export.json",
 	"notice.importedJSON":
 		"Au fost importate {{count}} tip(uri) de callout din JSON.",
 	"notice.importedSettings": "Au fost importate setările pluginului.",
@@ -870,6 +869,11 @@ export const ro: Record<string, string> = {
 		"Gradientul de fundal a fost invalid și a fost ignorat.",
 	"import.err.parseFailed":
 		"Fișierul nu este JSON valid și nu a putut fi analizat.",
+	"import.err.tooLarge": "Acest import depășește limita de dimensiune de 16 MiB. Împarte-l în fișiere mai mici și încearcă din nou.",
+	"import.err.tooComplex": "Acest import este prea complex: cel mult 1.000 de elemente pentru fiecare listă sau obiect, 50.000 de valori în total și maximum 32 de niveluri de imbricare.",
+	"import.err.imageBudget": "Colecția totală de imagini depășește limitele de dimensiune sau complexitate. Elimină ori simplifică imaginile mari înainte de import.",
+	"import.err.processingFailed": "Importul nu a putut fi finalizat. Verifică datele și încearcă din nou.",
+	"import.reportTruncated": "Se afișează primele {{shown}} probleme din {{total}}. Valorile lungi sunt scurtate în acest raport.",
 	"import.err.entryNotObject": "Intrarea trebuie să fie un obiect.",
 	"import.err.requiredMissing":
 		'Câmpul obligatoriu "{{field}}" lipsește sau are tipul greșit.',
@@ -949,12 +953,34 @@ export const ro: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Adu-ți admonition-urile personalizate din pluginul Admonition.",
+	"import.back": "Înapoi",
+	"import.removeFile": "Elimină fișierul",
+	"import.fileReady": "Gata de import.",
+	"import.pasteButton": "Lipește",
+	"import.pasted": "Lipit din clipboard",
+	"import.clearPaste": "Șterge textul lipit",
+	"import.clipboardEmpty": "Clipboardul este gol. Copiază mai întâi datele.",
+	"import.clipboardUnreadable":
+		"Clipboardul nu a putut fi citit. Salvează datele ca fișier și alege-l în schimb.",
+	"import.importing": "Se importă…",
+	"import.err.fileUnreadable": "Fișierul nu a putut fi citit.",
 	"import.cmTitle": "Importați din Callout Manager",
 	"import.cmFromVault": "Acest vault",
 	"import.cmVaultChecking": "Se caută pluginul Callout Manager…",
 	"import.cmVaultFound": "S-au găsit {{count}} callout-uri personalizate.",
 	"import.cmVaultNotFound":
 		"Nu s-au găsit callout-uri personalizate în acest vault.",
+	"import.cmVaultNotInstalled": "Callout Manager nu este instalat în acest vault.",
+	"import.cmVaultUnreadable":
+		"Fișierul de setări al pluginului Callout Manager din acest vault nu a putut fi citit.",
+	"import.cmUseManual": "Folosește în schimb un fișier sau stilurile copiate",
+	"import.cmFromFile": "Un fișier",
+	"import.cmFromFileDesc":
+		"Un data.json din Callout Manager sau stilurile copiate din acesta, salvate ca fișier.",
+	"import.cmChooseFile": "Alege fișier…",
+	"import.cmFromPaste": "Stiluri copiate",
+	"import.cmFromPasteDesc":
+		"Ceea ce copiază butonul Copy din Callout Manager, sau un data.json.",
 	"import.cmPasteLabel":
 		"Sau lipește aici stilurile copiate din Callout Manager:",
 	"import.cmInstructions":
@@ -967,7 +993,7 @@ export const ro: Record<string, string> = {
 	"import.err.cmNoEntries":
 		"Nu s-au găsit callout-uri personalizate de importat.",
 	"import.err.cmNoBlocksFound":
-		"Nu au fost găsite stiluri Callout Manager în textul lipit.",
+		"Nu au fost găsite stiluri Callout Manager în fișier sau în textul lipit.",
 	"import.err.cmNoColorForNew":
 		'Nu a fost găsită nicio culoare utilizabilă pentru noul callout "{{value}}"; a fost omis.',
 	"import.warn.cmNoColorDefault":
@@ -980,6 +1006,10 @@ export const ro: Record<string, string> = {
 		'ID-ul "{{value}}" este deja utilizat ca alias de un alt callout ("{{other}}") și a fost omis.',
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "Stilurile dependente de temă nu pot fi păstrate. Sunt preferate valorile necondiționate; orice valoare de rezervă condiționată se aplică tuturor temelor.",
+	"import.warn.cmCustomStylesSkipped": "CSS-ul personalizat din Callout Manager nu este importat. Pot fi transferate doar setările acceptate pentru pictograme și culori.",
+	"import.warn.cmSchemeIcon": "Callout Studio folosește aceeași pictogramă pentru ambele scheme de culori; pictograma importată va fi folosită în ambele.",
+	"import.err.cmDuplicateId": "ID-ul {{value}} îl dublează pe {{other}} în acest import și a fost omis.",
 	"import.admTitle": "Importă din Admonition",
 	"import.admInstructions":
 		"Fiecare admonition devine un callout cu numele, pictograma și " +
@@ -990,10 +1020,17 @@ export const ro: Record<string, string> = {
 	"import.admVaultFound": "S-au găsit {{count}} admonition personalizate.",
 	"import.admVaultNotFound":
 		"Nu s-au găsit admonition personalizate în acest seif.",
+	"import.admVaultNotInstalled": "Admonition nu este instalat în acest vault.",
+	"import.admVaultUnreadable":
+		"Fișierul de setări al pluginului Admonition din acest seif nu a putut fi citit.",
+	"import.admUseManual": "Folosește în schimb un fișier sau un JSON lipit",
 	"import.admFromFile": "Un fișier",
 	"import.admFromFileDesc":
 		"Un fișier admonitions.json sau un pachet partajat.",
 	"import.admChooseFile": "Alege fișier…",
+	"import.admFromPaste": "JSON copiat",
+	"import.admFromPasteDesc":
+		"JSON-ul din Admonition sau un data.json, copiat în clipboard.",
 	"import.admPasteLabel": "Sau lipește JSON-ul aici:",
 	"import.admPlaceholder": "Lipește aici admonition-urile tale…",
 	"import.admBtnCancel": "Anulare",
@@ -1013,6 +1050,8 @@ export const ro: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"Imaginea încărcată nu a putut fi citită, așa că s-a folosit " +
 		"pictograma implicită.",
+	"import.warn.admUnsupportedOptions": "Aceste opțiuni Admonition nu sunt importate: {{fields}}.",
+	"import.warn.admImageSkipped": "Imaginea încărcată nu a putut fi citită și nu a fost importată.",
 	"import.warn.admIconWithCss":
 		"Acest admonition este stilizat de un fragment CSS în Admonition. " +
 		"Acel stil nu face parte din import, așa că au venit doar numele, " +
@@ -1067,8 +1106,9 @@ export const ro: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"Fragmentul CSS din folderul snippets s-a schimbat de când a fost scris de Callout Studio. Un nou export va înlocui întregul fișier.",
 	"confirm.overwriteSnippetOk": "Suprascrie",
+	"settings.recommended": "Recomandat",
 	"export.chooseFormat": "Exportă ca",
-	"export.formatJson": "Copie de siguranță Callout Studio (recomandată)",
+	"export.formatJson": "Copie de siguranță Callout Studio",
 	"export.formatJsonDesc":
 		"Un fișier .json este singura metodă acceptată pentru restaurarea completă sau transferul datelor Callout Studio într-un vault nou în care este instalat pluginul.",
 	"export.formatCss": "Instantaneu CSS autonom",

@@ -21,6 +21,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { parseAdmonitionExport } from "../src/utils/admonitionFormat";
+import { ImportLimitError, MAX_IMPORT_COLLECTION, MAX_IMPORT_DEPTH } from "../src/utils/importLimits";
 
 const one = {
 	type: "my-type",
@@ -42,9 +43,19 @@ describe("parseAdmonitionExport — the documented array", () => {
 		assert.equal(entry?.color, "200, 50, 50");
 	});
 
-	it("carries iconWithCss, the one dropped setting worth warning about", () => {
+	it("carries iconWithCss for the missing-styles warning", () => {
 		const [entry] = parseAdmonitionExport([{ type: "x", iconWithCss: true }]) ?? [];
 		assert.equal(entry?.iconWithCss, true);
+	});
+
+	it("preserves unsupported behavior flags for the import report", () => {
+		const [entry] = parseAdmonitionExport([{
+			type: "x", command: true, copy: true, noTitle: true, injectColor: false,
+		}]) ?? [];
+		assert.equal(entry?.command, true);
+		assert.equal(entry?.copy, true);
+		assert.equal(entry?.noTitle, true);
+		assert.equal(entry?.injectColor, false);
 	});
 
 	it("drops non-object members in silence", () => {
@@ -177,6 +188,15 @@ describe("parseAdmonitionExport — a bare Record<type, Admonition>", () => {
 });
 
 describe("parseAdmonitionExport — not Admonition data at all", () => {
+	it("applies resource limits even when called with already-parsed JSON", () => {
+		assert.throws(() => parseAdmonitionExport(
+			Array.from({ length: MAX_IMPORT_COLLECTION + 1 }, () => ({ type: "x" })),
+		), ImportLimitError);
+		let nested: unknown = { type: "x" };
+		for (let i = 0; i < MAX_IMPORT_DEPTH; i++) nested = { nested };
+		assert.throws(() => parseAdmonitionExport(nested), ImportLimitError);
+	});
+
 	it("returns null for a value that is not an object or array", () => {
 		for (const junk of [null, undefined, "text", 42, true]) {
 			assert.equal(parseAdmonitionExport(junk), null, String(junk));

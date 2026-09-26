@@ -14,9 +14,11 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { toCalloutManagerEntries } from "../src/utils/calloutManagerImport";
+import { planCalloutManagerImport, toCalloutManagerEntries } from "../src/utils/calloutManagerImport";
 import { parseCalloutManagerExport } from "../src/utils/calloutCssParse";
-import type { CalloutManagerRaw } from "../src/utils/calloutManagerFormat";
+import { parseCalloutManagerData, type CalloutManagerRaw } from "../src/utils/calloutManagerFormat";
+import { ImportLimitError, MAX_IMPORT_BYTES, MAX_IMPORT_COLLECTION, MAX_IMPORT_VALUES } from "../src/utils/importLimits";
+import { harness } from "./support/cssInjectorHarness";
 import {
 	derivePaletteFromColor,
 	derivePaletteFromColors,
@@ -151,5 +153,96 @@ describe("parseCalloutManagerExport — recovering from generated CSS", () => {
 		assert.deepEqual(entries, [
 			{ id: "tip", icon: { type: "lucide", value: "star" }, color: "#ff0000" },
 		]);
+	});
+
+	it("uses the last declaration inside the same block, as CM's settings cascade does", () => {
+		const [entry] = parseCalloutManagerExport(`.callout[data-callout="note"] {
+			--callout-color: rgb(255, 0, 0); --callout-icon: lucide-star;
+			--callout-color: rgb(0, 0, 255); --callout-icon: lucide-moon;
+		}`);
+		assert.equal(entry?.color, "#0000ff");
+		assert.equal(entry?.icon?.value, "moon");
+	});
+
+	it("does not merge invalid metadata or multiline IDs into a valid callout", () => {
+		for (const invalid of ["note|malicious", "note\n"]) {
+			const entries = parseCalloutManagerExport(`
+				.callout[data-callout="${invalid}"] { --callout-color: rgb(255, 0, 0); }
+				.callout[data-callout="note"] { --callout-icon: lucide-star; }
+			`);
+			assert.equal(entries.length, 2);
+			assert.equal(entries.find(entry => entry.id === "note")?.color, undefined);
+			const { toApply, issues } = planCalloutManagerImport(entries, harness().registry);
+			assert.ok(issues.some(issue => issue.level === "error" && issue.entryLabel === invalid));
+			assert.ok(toApply.every(item => item.entry.color === undefined));
+		}
+	});
+
+	it("handles large brace-free and unterminated CSS without regex backtracking", () => {
+		// Each input drove a quadratic regex before the bounded scanner. Keep
+		// these substantial enough to expose that regression without timing gates.
+		assert.deepEqual(parseCalloutManagerExport("x".repeat(150_000)), []);
+		assert.deepEqual(parseCalloutManagerExport("/*".repeat(75_000)), []);
+		assert.deepEqual(parseCalloutManagerExport('.callout[data-callout="note"] {' + "x".repeat(150_000)), []);
+	});
+
+	it("discards unfinished comments rather than importing fake rules inside them", () => {
+		assert.deepEqual(parseCalloutManagerExport('/* .callout[data-callout="note"] { --callout-color: 1,2,3; }'), []);
+	});
+
+	it("does not treat quoted text or function arguments as declarations", () => {
+		const [entry] = parseCalloutManagerExport(`.callout[data-callout="note"] {
+			content: "; --callout-color: rgb(255,0,0);";
+			background: url(data:ignored; --callout-color: rgb(255,0,0));
+			--callout-icon: lucide-star;
+		}`);
+		assert.equal(entry?.color, undefined);
+		assert.equal(entry?.icon?.value, "star");
+	});
+
+	it("enforces size, entry and token budgets before returning a partial import", () => {
+		assert.throws(() => parseCalloutManagerExport("x".repeat(MAX_IMPORT_BYTES + 1)), ImportLimitError);
+		assert.throws(() => parseCalloutManagerExport(Array.from({ length: MAX_IMPORT_COLLECTION + 1 }, (_, i) =>
+			`.callout[data-callout="x${i}"] { --callout-color: 1,2,3; }`).join("\n")), ImportLimitError);
+		assert.throws(() => parseCalloutManagerExport("{}".repeat(MAX_IMPORT_VALUES)), ImportLimitError);
+	});
+});
+
+describe("planCalloutManagerImport — reports match applied work", () => {
+	it("rejects duplicate identities within the batch before minting extra palettes", () => {
+		const h = harness();
+		const { toApply, issues } = planCalloutManagerImport([
+			{ id: "batch callout", color: "#ff0000" },
+			{ id: "BATCH-CALLOUT", color: "#0000ff" },
+		], h.registry);
+		assert.equal(toApply.length, 1);
+		assert.equal(issues[0]?.messageKey, "import.err.cmDuplicateId");
+		assert.deepEqual(h.registry.applyCalloutManagerImport(toApply), { created: 1, updated: 0 });
+		assert.equal(h.registry.settings.customPalettes.length, 1);
+	});
+
+	it("rejects duplicate updates as well as duplicate creations", () => {
+		const { toApply, issues } = planCalloutManagerImport([
+			{ id: "note", color: "#ff0000" },
+			{ id: " NOTE ", color: "#0000ff" },
+		], harness().registry);
+		assert.equal(toApply.length, 1);
+		assert.equal(issues[0]?.messageKey, "import.err.cmDuplicateId");
+	});
+
+	it("reports unsupported-only existing rows without offering an empty update", () => {
+		const entries = parseCalloutManagerData({ settings: { note: [{ changes: { customStyles: "color: red;" } }] } });
+		assert.ok(entries);
+		const { toApply, issues } = planCalloutManagerImport(toCalloutManagerEntries(entries), harness().registry);
+		assert.equal(toApply.length, 0);
+		assert.equal(issues[0]?.messageKey, "import.warn.cmCustomStylesSkipped");
+	});
+
+	it("does not hide invalid boundary whitespace by trimming it before validation", () => {
+		const entries = parseCalloutManagerData({ custom: ["note\n"], settings: { "note\n": [{ changes: { color: "1, 2, 3" } }] } });
+		assert.ok(entries);
+		const { toApply, issues } = planCalloutManagerImport(toCalloutManagerEntries(entries), harness().registry);
+		assert.equal(toApply.length, 0);
+		assert.equal(issues[0]?.messageKey, "import.err.idBadChar");
 	});
 });

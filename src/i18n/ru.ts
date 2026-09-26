@@ -286,7 +286,6 @@ export const ru: Record<string, string> = {
 	"notice.customCommandMissingCallout":
 		"Тип callout этой команды больше не существует.",
 
-	"notice.exported": "Callout экспортированы в callout-studio-export.json",
 	"notice.importedJSON": "Импортировано {{count}} типов callout из JSON.",
 	"notice.importedSettings": "Настройки плагина импортированы.",
 	"notice.importedCalloutManager":
@@ -865,6 +864,11 @@ export const ru: Record<string, string> = {
 		"Градиент фона был недопустимым и был проигнорирован.",
 	"import.err.parseFailed":
 		"Файл не является допустимым JSON и не может быть разобран.",
+	"import.err.tooLarge": "Этот импорт превышает ограничение размера 16 MiB. Разделите его на файлы меньшего размера и повторите попытку.",
+	"import.err.tooComplex": "Этот импорт слишком сложный: не более 1 000 элементов в каждом списке или объекте, 50 000 значений всего и не более 32 уровней вложенности.",
+	"import.err.imageBudget": "Вся коллекция изображений превышает ограничения по размеру или сложности. Перед импортом удалите большие изображения или упростите их.",
+	"import.err.processingFailed": "Не удалось завершить импорт. Проверьте данные и повторите попытку.",
+	"import.reportTruncated": "Показаны первые {{shown}} из {{total}} проблем. Длинные значения в этом отчёте сокращены.",
 	"import.err.entryNotObject": "Запись должна быть объектом.",
 	"import.err.requiredMissing":
 		'Обязательное поле "{{field}}" отсутствует или имеет неверный тип.',
@@ -944,12 +948,35 @@ export const ru: Record<string, string> = {
 	"import.sourceAdmonitionDesc":
 		"Перенесите свои пользовательские admonition из плагина " +
 		"Admonition.",
+	"import.back": "Назад",
+	"import.removeFile": "Удалить файл",
+	"import.fileReady": "Готов к импорту.",
+	"import.pasteButton": "Вставить",
+	"import.pasted": "Вставлено из буфера обмена",
+	"import.clearPaste": "Очистить вставленный текст",
+	"import.clipboardEmpty": "Буфер обмена пуст. Сначала скопируйте данные.",
+	"import.clipboardUnreadable":
+		"Не удалось прочитать буфер обмена. Вместо этого сохраните данные в файл и выберите его.",
+	"import.importing": "Импорт…",
+	"import.err.fileUnreadable": "Не удалось прочитать файл.",
 	"import.cmTitle": "Импорт из Callout Manager",
 	"import.cmFromVault": "Это хранилище",
 	"import.cmVaultChecking": "Поиск плагина Callout Manager…",
 	"import.cmVaultFound": "Найдено пользовательских callout: {{count}}.",
 	"import.cmVaultNotFound":
 		"В этом хранилище не найдено пользовательских callout.",
+	"import.cmVaultNotInstalled": "Callout Manager не установлен в этом хранилище.",
+	"import.cmVaultUnreadable":
+		"Не удалось прочитать файл настроек Callout Manager в этом хранилище.",
+	"import.cmUseManual":
+		"Использовать вместо этого файл или скопированные стили",
+	"import.cmFromFile": "Файл",
+	"import.cmFromFileDesc":
+		"Файл data.json из Callout Manager или его скопированные стили, сохранённые в файл.",
+	"import.cmChooseFile": "Выбрать файл…",
+	"import.cmFromPaste": "Скопированные стили",
+	"import.cmFromPasteDesc":
+		"То, что копирует кнопка Copy в Callout Manager, или файл data.json.",
 	"import.cmPasteLabel":
 		"Или вставьте сюда стили, скопированные из Callout Manager:",
 	"import.cmInstructions":
@@ -962,7 +989,7 @@ export const ru: Record<string, string> = {
 	"import.err.cmNoEntries":
 		"Не найдено пользовательских callout для импорта.",
 	"import.err.cmNoBlocksFound":
-		"В вставленном тексте не найдено стилей Callout Manager.",
+		"В файле или во вставленном тексте не найдено стилей Callout Manager.",
 	"import.err.cmNoColorForNew":
 		'Не найден подходящий цвет для нового callout "{{value}}"; он был пропущен.',
 	"import.warn.cmNoColorDefault":
@@ -975,6 +1002,10 @@ export const ru: Record<string, string> = {
 		'ID "{{value}}" уже используется как псевдоним другим callout ("{{other}}") и был пропущен.',
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "Стили, зависящие от темы, сохранить нельзя. Предпочтение отдаётся безусловным значениям; любое условное резервное значение применяется во всех темах.",
+	"import.warn.cmCustomStylesSkipped": "Пользовательский CSS из Callout Manager не импортируется. Можно перенести только поддерживаемые настройки значков и цветов.",
+	"import.warn.cmSchemeIcon": "Callout Studio использует один значок для обеих цветовых схем; импортированный значок будет использоваться в обеих.",
+	"import.err.cmDuplicateId": "Идентификатор {{value}} дублирует {{other}} в этом импорте, поэтому он пропущен.",
 	"import.admTitle": "Импорт из Admonition",
 	"import.admInstructions":
 		"Каждый admonition переносится как callout с его именем, значком " +
@@ -986,9 +1017,17 @@ export const ru: Record<string, string> = {
 	"import.admVaultFound": "Найдено пользовательских admonition: {{count}}.",
 	"import.admVaultNotFound":
 		"В этом хранилище не найдено пользовательских admonition.",
+	"import.admVaultNotInstalled": "Admonition не установлен в этом хранилище.",
+	"import.admVaultUnreadable":
+		"Не удалось прочитать файл настроек Admonition в этом хранилище.",
+	"import.admUseManual":
+		"Использовать вместо этого файл или вставленный JSON",
 	"import.admFromFile": "Файл",
 	"import.admFromFileDesc": "Файл admonitions.json или общий набор.",
 	"import.admChooseFile": "Выбрать файл…",
+	"import.admFromPaste": "Скопированный JSON",
+	"import.admFromPasteDesc":
+		"JSON из Admonition или файл data.json, скопированный в буфер обмена.",
 	"import.admPasteLabel": "Или вставьте JSON сюда:",
 	"import.admPlaceholder": "Вставьте сюда свои admonition…",
 	"import.admBtnCancel": "Отмена",
@@ -1007,6 +1046,8 @@ export const ru: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"Не удалось прочитать загруженное изображение, поэтому " +
 		"использован значок по умолчанию.",
+	"import.warn.admUnsupportedOptions": "Эти параметры Admonition не импортируются: {{fields}}.",
+	"import.warn.admImageSkipped": "Не удалось прочитать загруженное изображение, поэтому оно не было импортировано.",
 	"import.warn.admIconWithCss":
 		"Этот admonition оформлен CSS-сниппетом в Admonition. Это " +
 		"оформление не входит в импорт, поэтому перенесены только имя, " +
@@ -1060,8 +1101,9 @@ export const ru: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"Фрагмент CSS в папке snippets изменился с момента записи Callout Studio. Повторный экспорт заменит весь файл.",
 	"confirm.overwriteSnippetOk": "Перезаписать",
+	"settings.recommended": "Рекомендовано",
 	"export.chooseFormat": "Экспортировать как",
-	"export.formatJson": "Резервная копия Callout Studio (рекомендуется)",
+	"export.formatJson": "Резервная копия Callout Studio",
 	"export.formatJsonDesc":
 		"Файл .json — единственный поддерживаемый способ полностью восстановить данные Callout Studio или перенести их в новый vault, где установлен плагин.",
 	"export.formatCss": "Автономный снимок CSS",

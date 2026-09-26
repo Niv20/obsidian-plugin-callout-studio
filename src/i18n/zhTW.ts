@@ -270,7 +270,6 @@ export const zhTW: Record<string, string> = {
 	"notice.customCommandsRemoved":
 		"已移除 {{count}} 個 callout 類型已不存在的自訂指令。",
 	"notice.customCommandMissingCallout": "該指令的 callout 類型已不存在。",
-	"notice.exported": "Callout 已匯出到 callout-studio-export.json",
 	"notice.importedJSON": "已從 JSON 匯入 {{count}} 個 callout 類型。",
 	"notice.importedSettings": "已匯入外掛設定。",
 	"notice.importedCalloutManager":
@@ -828,6 +827,11 @@ export const zhTW: Record<string, string> = {
 	"import.warn.settingsIgnored": "設定區塊不是有效的物件，已被忽略。",
 	"import.warn.invalidGradient": "背景漸層無效，已被忽略。",
 	"import.err.parseFailed": "檔案不是有效的 JSON，無法解析。",
+	"import.err.tooLarge": "此匯入超過了 16 MiB 的大小限制。請將其拆分成較小的檔案，然後再試一次。",
+	"import.err.tooComplex": "此匯入過於複雜：每個清單或物件最多 1,000 個項目，總計最多 50,000 個值，巢狀層級最多 32 層。",
+	"import.err.imageBudget": "圖片集合總量超出大小或複雜度限制。匯入前請移除或簡化較大的圖片。",
+	"import.err.processingFailed": "無法完成匯入。請檢查資料後再試一次。",
+	"import.reportTruncated": "顯示 {{total}} 個問題中的前 {{shown}} 個。此報告中的長值已縮短。",
 	"import.err.entryNotObject": "條目必須是物件。",
 	"import.err.requiredMissing": "必填欄位「{{field}}」缺失或類型錯誤。",
 	"import.err.idEmpty": "ID 不能為空。",
@@ -898,11 +902,31 @@ export const zhTW: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"從 Admonition 外掛匯入您的自訂 admonition。",
+	"import.back": "返回",
+	"import.removeFile": "移除檔案",
+	"import.fileReady": "已準備好匯入。",
+	"import.pasteButton": "貼上",
+	"import.pasted": "已從剪貼簿貼上",
+	"import.clearPaste": "清除貼上的文字",
+	"import.clipboardEmpty": "剪貼簿是空的。請先複製資料。",
+	"import.clipboardUnreadable":
+		"無法讀取剪貼簿。請改為將資料儲存成檔案並選擇該檔案。",
+	"import.importing": "正在匯入…",
+	"import.err.fileUnreadable": "無法讀取檔案。",
 	"import.cmTitle": "從 Callout Manager 匯入",
 	"import.cmFromVault": "本儲存庫",
 	"import.cmVaultChecking": "正在尋找 Callout Manager 外掛…",
 	"import.cmVaultFound": "找到 {{count}} 個自訂 callout。",
 	"import.cmVaultNotFound": "在本儲存庫中找不到自訂 callout。",
+	"import.cmVaultNotInstalled": "本儲存庫尚未安裝 Callout Manager 外掛。",
+	"import.cmVaultUnreadable": "無法讀取本儲存庫中 Callout Manager 的設定檔。",
+	"import.cmUseManual": "改用檔案或複製的樣式",
+	"import.cmFromFile": "檔案",
+	"import.cmFromFileDesc": "Callout Manager 的 data.json，或儲存成檔案的複製樣式。",
+	"import.cmChooseFile": "選擇檔案…",
+	"import.cmFromPaste": "複製的樣式",
+	"import.cmFromPasteDesc":
+		"Callout Manager 的 Copy 按鈕所複製的內容，或一個 data.json 檔案。",
 	"import.cmPasteLabel": "或在此貼上從 Callout Manager 複製的樣式：",
 	"import.cmInstructions":
 		"每個自訂 callout 都會連同圖示與顏色一起匯入。依主題設定的樣式和自訂 CSS 在此沒有對應功能，因此不會匯入。",
@@ -912,7 +936,7 @@ export const zhTW: Record<string, string> = {
 	"import.err.cmNotRecognized":
 		"無法辨識的檔案：應為 Callout Manager Copy 按鈕產生的樣式，或 Callout Manager 的 data.json。",
 	"import.err.cmNoEntries": "找不到可匯入的自訂 callout。",
-	"import.err.cmNoBlocksFound": "在貼上的文字中未找到 Callout Manager 樣式。",
+	"import.err.cmNoBlocksFound": "在檔案或貼上的文字中未找到 Callout Manager 樣式。",
 	"import.err.cmNoColorForNew":
 		'未找到適用於新 callout "{{value}}" 的可用顏色；已跳過。',
 	"import.warn.cmNoColorDefault":
@@ -925,6 +949,10 @@ export const zhTW: Record<string, string> = {
 		'ID "{{value}}" 已被另一個 callout ("{{other}}") 用作別名，已跳過。',
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "無法保留依賴佈景主題的樣式。優先採用無條件值；任何條件式備用值都會套用至所有佈景主題。",
+	"import.warn.cmCustomStylesSkipped": "不會匯入 Callout Manager 的自訂 CSS。只能移轉受支援的圖示與色彩設定。",
+	"import.warn.cmSchemeIcon": "Callout Studio 在兩種色彩配置中使用相同圖示；匯入的圖示會用於兩種配置。",
+	"import.err.cmDuplicateId": "ID {{value}} 與此匯入中的 {{other}} 重複，因此已略過。",
 	"import.admTitle": "從 Admonition 匯入",
 	"import.admInstructions":
 		"每個 admonition 都會作為 callout 匯入，保留其名稱、圖示與顏色。Callout Studio " +
@@ -933,9 +961,15 @@ export const zhTW: Record<string, string> = {
 	"import.admVaultChecking": "正在尋找 Admonition 外掛…",
 	"import.admVaultFound": "找到 {{count}} 個自訂 admonition。",
 	"import.admVaultNotFound": "在本儲存庫中找不到自訂 admonition。",
+	"import.admVaultNotInstalled": "本儲存庫尚未安裝 Admonition 外掛。",
+	"import.admVaultUnreadable": "無法讀取本儲存庫中 Admonition 的設定檔。",
+	"import.admUseManual": "改用檔案或貼上的 JSON",
 	"import.admFromFile": "檔案",
 	"import.admFromFileDesc": "admonitions.json 檔案，或共享的圖示包。",
 	"import.admChooseFile": "選擇檔案…",
+	"import.admFromPaste": "複製的 JSON",
+	"import.admFromPasteDesc":
+		"Admonition 的 JSON，或已複製到剪貼簿的 data.json。",
 	"import.admPasteLabel": "或在此貼上 JSON：",
 	"import.admPlaceholder": "在此貼上您的 admonition…",
 	"import.admBtnCancel": "取消",
@@ -949,6 +983,8 @@ export const zhTW: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'在所有圖示庫中都找不到名為 "{{value}}" 的圖示，因此 "{{id}}" 保留了原有圖示。',
 	"import.warn.admImageFailed": "無法讀取上傳的圖片，已改用預設圖示。",
+	"import.warn.admUnsupportedOptions": "不會匯入以下 Admonition 選項：{{fields}}。",
+	"import.warn.admImageSkipped": "無法讀取上傳的圖片，因此未匯入。",
 	"import.warn.admIconWithCss":
 		"此 admonition 在 Admonition 中由 CSS " +
 		"片段設定樣式。該樣式不屬於匯入內容，因此僅匯入了名稱、圖示與顏色。",
@@ -999,8 +1035,9 @@ export const zhTW: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"snippets 資料夾中的 CSS 片段自 Callout Studio 寫入後已變更。再次匯出會取代整個檔案。",
 	"confirm.overwriteSnippetOk": "覆寫",
+	"settings.recommended": "建議",
 	"export.chooseFormat": "匯出為",
-	"export.formatJson": "Callout Studio 備份（建議）",
+	"export.formatJson": "Callout Studio 備份",
 	"export.formatJsonDesc":
 		".json 檔案是完整還原 Callout Studio 資料，或將其移轉到已安裝此外掛程式的新儲存庫的唯一受支援方式。",
 	"export.formatCss": "獨立 CSS 快照",

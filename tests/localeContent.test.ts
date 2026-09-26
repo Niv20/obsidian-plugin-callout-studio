@@ -273,6 +273,49 @@ describe("global style modal titles are translated everywhere", () => {
 	}
 });
 
+describe("the plugin import window is translated everywhere", () => {
+	// Both importers share one window with a single Import. These are the words
+	// that tell a user what that Import will act on — a staged file's line,
+	// why the vault can't be read, "Importing…" — so an English leftover here
+	// is a window the user cannot read the state of.
+	const keys = [
+		"import.removeFile",
+		"import.fileReady",
+		"import.importing",
+		"import.err.fileUnreadable",
+		"import.err.cmNoBlocksFound",
+		"import.admVaultUnreadable",
+		"import.cmVaultUnreadable",
+		"import.cmFromFile",
+		"import.cmFromFileDesc",
+		"import.cmChooseFile",
+	] as const;
+
+	for (const [fileId, table] of entries) {
+		it(`${fileId}.ts has its own copy for the import window`, () => {
+			for (const key of keys) {
+				assert.strictEqual(
+					typeof table[key],
+					"string",
+					`${fileId}.ts is missing ${key}`,
+				);
+				assert.notStrictEqual(
+					table[key],
+					en[key],
+					`${fileId}.ts still shows the English ${key}`,
+				);
+			}
+		});
+
+		it(`${fileId}.ts words Callout Manager's file row as it does Admonition's`, () => {
+			// Same English, same role: a second wording would read as a
+			// different kind of file.
+			assert.strictEqual(table["import.cmFromFile"], table["import.admFromFile"]);
+			assert.strictEqual(table["import.cmChooseFile"], table["import.admChooseFile"]);
+		});
+	}
+});
+
 describe("the create-or-edit menu action is translated everywhere", () => {
 	const key = "menuItem.createOrEdit";
 	const english = en[key];

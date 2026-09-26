@@ -14,6 +14,7 @@
  */
 import { sanitizeUserSvg, type SanitizedUserSvg } from "../icons/svg";
 import type { UserImageIcon } from "../types";
+import { MAX_RASTER_PIXELS } from "../icons/rasterSafety";
 
 /** Prefix for a picture's stable id, stored as `CalloutIcon.value`. */
 const ID_PREFIX = "img-";
@@ -27,6 +28,8 @@ const FORMATS = new Set<UserImageIcon["format"]>([
 
 /** Long enough for any sane filename; a guard, not a style rule. */
 const MAX_NAME_LENGTH = 60;
+/** Bound the complete picture collection, not only each individual SVG. */
+export const MAX_USER_IMAGE_ELEMENTS = 50_000;
 
 /**
  * Extensions a name may already end in, so the legacy migration below can tell
@@ -167,6 +170,8 @@ export function sanitizeUserImages(raw: unknown): UserImageIcon[] {
 	if (!Array.isArray(raw)) return [];
 	const result: UserImageIcon[] = [];
 	const seenIds = new Set<string>();
+	let rasterPixels = 0;
+	let elements = 0;
 	for (const entry of raw) {
 		if (!entry || typeof entry !== "object") continue;
 		const image = entry as Partial<UserImageIcon>;
@@ -179,7 +184,10 @@ export function sanitizeUserImages(raw: unknown): UserImageIcon[] {
 		// Re-filter rather than trust: this markup may have been written by an
 		// older build, edited by hand, or handed over in an import file.
 		const artwork = filterArtwork(image.svg);
-		if (!artwork) continue;
+		if (!artwork || rasterPixels + artwork.rasterPixels > MAX_RASTER_PIXELS ||
+			elements + artwork.elementCount > MAX_USER_IMAGE_ELEMENTS) continue;
+		rasterPixels += artwork.rasterPixels;
+		elements += artwork.elementCount;
 
 		const format = image.format as UserImageIcon["format"];
 
@@ -210,6 +218,33 @@ export function sanitizeUserImages(raw: unknown): UserImageIcon[] {
 		});
 	}
 	return result;
+}
+
+/**
+ * Raster allocation cost of a picture already accepted by the image boundary.
+ * The fast path keeps vector-only imports independent of browser parsing.
+ * Unknown raster markup consumes the whole budget rather than being trusted.
+ */
+export function userImageRasterPixels(image: Pick<UserImageIcon, "svg">): number {
+	if (!/<(?:[A-Za-z_][\w.-]*:)?image(?:[\s/>])/i.test(image.svg)) return 0;
+	return filterArtwork(image.svg)?.rasterPixels ?? MAX_RASTER_PIXELS + 1;
+}
+
+/** Count tags in already-sanitized markup; escaped text cannot become tags. */
+export function userImageElementCount(image: Pick<UserImageIcon, "svg">): number {
+	return image.svg.match(/<[A-Za-z_][\w:.-]*(?=[\s/>])/g)?.length ?? 0;
+}
+
+/** Check the prospective collection before import mutates pictures or callouts. */
+export function userImagesFitResourceBudget(images: readonly UserImageIcon[]): boolean {
+	let pixels = 0;
+	let elements = 0;
+	for (const image of images) {
+		pixels += userImageRasterPixels(image);
+		elements += userImageElementCount(image);
+		if (pixels > MAX_RASTER_PIXELS || elements > MAX_USER_IMAGE_ELEMENTS) return false;
+	}
+	return true;
 }
 
 /**

@@ -3,17 +3,16 @@
  *
  * The libraries line up better than they have any right to: Admonition offers
  * Obsidian's own icons plus five downloadable packs, and this plugin carries
- * every one of them under the same upstream names. So the mapping is a rename
- * of the pack id and nothing more — which is precisely why it is worth a test.
- * A name-translation table would be conspicuous; a silently wrong pack id is not.
+ * every one of them. Most names match, except two legacy RPG glyph names that
+ * our generator spells according to the library's stylesheet.
  *
  * What is not a rename is the guessing, and that is the other half of these
  * tests. The icon field has three spellings in the wild, and the legacy
  * `"font-awesome"` pack was split into three files upstream, so an unlabelled
  * name has to be probed against a list in a specific order. Lucide comes first
- * because that is the order Admonition's own `getIconType()` uses — so `globe`,
- * which exists in both Lucide and Font Awesome, resolves to the same drawing the
- * user was looking at before they exported.
+ * because Admonition's own `getIconType()` starts there too. The remaining order
+ * is a deterministic fallback: upstream's downloaded-pack installation order
+ * is not available in a shared export.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
@@ -21,6 +20,7 @@ import {
 	iconCandidates,
 	isAdmonitionImage,
 	readAdmonitionIcon,
+	resolveIcon,
 } from "../src/utils/admonitionIcons";
 
 const types = (raw: unknown): string[] => {
@@ -129,6 +129,18 @@ describe("iconCandidates — a named pack is a straight rename", () => {
 	it("offers exactly one candidate when the pack is known", () => {
 		assert.equal(iconCandidates({ type: "fas", name: "star" }).length, 1);
 	});
+
+	it("maps the two RPG glyph spellings onto the names our artwork uses", () => {
+		assert.deepStrictEqual(iconCandidates({ type: "rpg", name: "montains" }), [
+			{ type: "rpg-awesome", value: "mountains" },
+		]);
+		assert.deepStrictEqual(iconCandidates({ type: "rpg", name: "perspective-dice-six-two" }), [
+			{ type: "rpg-awesome", value: "perspective-dice-two" },
+		]);
+		assert.deepStrictEqual(iconCandidates({ type: "fas", name: "montains" }), [
+			{ type: "fa-solid", value: "montains" },
+		]);
+	});
 });
 
 describe("iconCandidates — the guessing", () => {
@@ -142,8 +154,7 @@ describe("iconCandidates — the guessing", () => {
 	];
 
 	it("probes every library, Obsidian's own first, when no pack is named", () => {
-		// Matching Admonition's own getIconType() order is what makes an
-		// ambiguous name resolve to the drawing the user was already looking at.
+		// Lucide wins in both plugins; otherwise use our stable fallback order.
 		assert.deepStrictEqual(types("globe"), INFERENCE_ORDER);
 		assert.deepStrictEqual(types({ name: "globe" }), INFERENCE_ORDER);
 	});
@@ -164,6 +175,12 @@ describe("iconCandidates — the guessing", () => {
 		assert.deepStrictEqual(types({ type: "some-new-pack", name: "x" }), INFERENCE_ORDER);
 	});
 
+	it("treats Object.prototype names as unknown pack strings", () => {
+		for (const type of ["__proto__", "constructor", "toString", "valueOf", "hasOwnProperty"]) {
+			assert.deepStrictEqual(types({ type, name: "star" }), INFERENCE_ORDER, type);
+		}
+	});
+
 	it("always offers at least one candidate for a named icon", () => {
 		// So a name that exists nowhere produces a definite "no such icon" in
 		// the report rather than silence.
@@ -175,6 +192,12 @@ describe("iconCandidates — the guessing", () => {
 		]) {
 			assert.ok(types(raw).length >= 1, JSON.stringify(raw));
 		}
+	});
+
+	it("refuses oversized names even when an index cannot validate names", async () => {
+		const raw = { type: "fas", name: "x".repeat(201) };
+		assert.deepStrictEqual(iconCandidates(raw), []);
+		assert.equal(await resolveIcon(raw, () => true), undefined);
 	});
 
 	it("offers nothing for a picture — it travels its own way", () => {

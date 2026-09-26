@@ -40,6 +40,11 @@ export function localePreference(pref: unknown): string {
 	return typeof pref === "string" ? pref : DEFAULT_SETTINGS.language;
 }
 
+/** A boolean preference cannot carry an object or a truthy string from JSON. */
+export function booleanPreference(value: unknown, fallback: boolean): boolean {
+	return typeof value === "boolean" ? value : fallback;
+}
+
 interface Range {
 	min: number;
 	max: number;

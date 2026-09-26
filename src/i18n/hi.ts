@@ -235,8 +235,6 @@ export const hi: Record<string, string> = {
 	"notice.customCommandMissingCallout":
 		"उस कमांड का callout प्रकार अब मौजूद नहीं है।",
 
-	"notice.exported":
-		"Callouts को callout-studio-export.json में निर्यात किया गया",
 	"notice.importedJSON": "JSON से {{count}} callout प्रकार आयात किए गए।",
 	"notice.importedSettings": "प्लगइन सेटिंग आयात की गईं।",
 	"notice.importedCalloutManager":
@@ -814,6 +812,11 @@ export const hi: Record<string, string> = {
 	"import.warn.invalidGradient":
 		"पृष्ठभूमि ग्रेडिएंट वैध नहीं था और इसे अनदेखा कर दिया गया।",
 	"import.err.parseFailed": "फ़ाइल वैध JSON नहीं है और पार्स नहीं हो सकी।",
+	"import.err.tooLarge": "यह इंपोर्ट 16 MiB की आकार सीमा से बड़ा है। इसे छोटी फ़ाइलों में बाँटकर फिर कोशिश करें।",
+	"import.err.tooComplex": "यह इंपोर्ट बहुत जटिल है: हर सूची या ऑब्जेक्ट में अधिकतम 1,000 आइटम, कुल 50,000 मान और नेस्टिंग के अधिकतम 32 स्तर रखें।",
+	"import.err.imageBudget": "चित्रों का कुल संग्रह आकार या जटिलता की सीमा से अधिक है। इंपोर्ट करने से पहले बड़े चित्र हटाएँ या सरल करें।",
+	"import.err.processingFailed": "इंपोर्ट पूरा नहीं हो सका। डेटा जाँचें और फिर कोशिश करें।",
+	"import.reportTruncated": "कुल {{total}} समस्याओं में से पहली {{shown}} दिखाई जा रही हैं। इस रिपोर्ट में लंबे मान छोटे किए गए हैं।",
 	"import.err.entryNotObject": "प्रविष्टि एक ऑब्जेक्ट होनी चाहिए।",
 	"import.err.requiredMissing":
 		'आवश्यक फ़ील्ड "{{field}}" गायब है या गलत प्रकार का है।',
@@ -890,11 +893,33 @@ export const hi: Record<string, string> = {
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
 		"Admonition प्लगइन से अपने कस्टम admonition यहाँ ले आएँ।",
+	"import.back": "वापस",
+	"import.removeFile": "फ़ाइल हटाएँ",
+	"import.fileReady": "आयात के लिए तैयार।",
+	"import.pasteButton": "पेस्ट करें",
+	"import.pasted": "क्लिपबोर्ड से पेस्ट किया गया",
+	"import.clearPaste": "पेस्ट किया गया टेक्स्ट साफ़ करें",
+	"import.clipboardEmpty": "क्लिपबोर्ड खाली है। पहले डेटा कॉपी करें।",
+	"import.clipboardUnreadable":
+		"क्लिपबोर्ड पढ़ा नहीं जा सका। इसके बजाय डेटा को फ़ाइल के रूप में सहेजें और उसे चुनें।",
+	"import.importing": "आयात किया जा रहा है…",
+	"import.err.fileUnreadable": "फ़ाइल पढ़ी नहीं जा सकी।",
 	"import.cmTitle": "Callout Manager से आयात करें",
 	"import.cmFromVault": "यह वॉल्ट",
 	"import.cmVaultChecking": "Callout Manager प्लगइन खोजा जा रहा है…",
 	"import.cmVaultFound": "{{count}} कस्टम callout मिले।",
 	"import.cmVaultNotFound": "इस वॉल्ट में कोई कस्टम callout नहीं मिला।",
+	"import.cmVaultNotInstalled": "इस वॉल्ट में Callout Manager इंस्टॉल नहीं है।",
+	"import.cmVaultUnreadable":
+		"इस वॉल्ट में Callout Manager की सेटिंग्स फ़ाइल पढ़ी नहीं जा सकी।",
+	"import.cmUseManual": "इसके बजाय फ़ाइल या कॉपी किए गए स्टाइल इस्तेमाल करें",
+	"import.cmFromFile": "एक फ़ाइल",
+	"import.cmFromFileDesc":
+		"Callout Manager की data.json, या फ़ाइल के रूप में सहेजे गए उसके कॉपी किए गए स्टाइल।",
+	"import.cmChooseFile": "फ़ाइल चुनें…",
+	"import.cmFromPaste": "कॉपी किए गए स्टाइल",
+	"import.cmFromPasteDesc":
+		"Callout Manager का Copy बटन जो कॉपी करता है, या एक data.json।",
 	"import.cmPasteLabel":
 		"या Callout Manager से कॉपी किए गए स्टाइल यहाँ पेस्ट करें:",
 	"import.cmInstructions":
@@ -903,7 +928,7 @@ export const hi: Record<string, string> = {
 	"import.cmBtnCancel": "रद्द करें",
 	"import.cmBtnImport": "आयात",
 	"import.err.cmNoBlocksFound":
-		"पेस्ट किए गए टेक्स्ट में कोई Callout Manager स्टाइल नहीं मिले।",
+		"फ़ाइल या पेस्ट किए गए टेक्स्ट में कोई Callout Manager स्टाइल नहीं मिले।",
 	"import.err.cmNotRecognized":
 		"फ़ाइल पहचानी नहीं गई: Callout Manager के Copy बटन से बनाए गए स्टाइल या Callout Manager की data.json अपेक्षित थी।",
 	"import.err.cmNoEntries": "आयात करने के लिए कोई कस्टम callout नहीं मिला।",
@@ -919,6 +944,10 @@ export const hi: Record<string, string> = {
 		"इस callout में Callout Manager का कस्टम CSS भी है। यह स्टाइल आयात का हिस्सा नहीं है, इसलिए केवल इसका आइकन और रंग लाया गया।",
 
 	// Import — Admonition
+	"import.warn.cmThemeConditionPartial": "थीम पर निर्भर शैली को सुरक्षित नहीं रखा जा सकता। बिना शर्त वाले मानों को प्राथमिकता दी जाती है; कोई भी सशर्त विकल्प सभी थीम पर लागू होगा।",
+	"import.warn.cmCustomStylesSkipped": "Callout Manager का कस्टम CSS इंपोर्ट नहीं होता। केवल समर्थित आइकन और रंग सेटिंग लाई जा सकती हैं।",
+	"import.warn.cmSchemeIcon": "Callout Studio दोनों रंग योजनाओं के लिए एक ही आइकन इस्तेमाल करता है; इंपोर्ट किया गया आइकन दोनों में इस्तेमाल होगा।",
+	"import.err.cmDuplicateId": "इस इंपोर्ट में ID {{value}} और {{other}} दोहराए गए हैं, इसलिए {{value}} को छोड़ दिया गया।",
 	"import.admTitle": "Admonition से आयात करें",
 	"import.admInstructions":
 		"हर admonition अपने नाम, आइकन और रंग के साथ एक callout बन जाता " +
@@ -928,9 +957,17 @@ export const hi: Record<string, string> = {
 	"import.admVaultChecking": "Admonition प्लगइन खोजा जा रहा है…",
 	"import.admVaultFound": "{{count}} कस्टम admonition मिले।",
 	"import.admVaultNotFound": "इस वॉल्ट में कोई कस्टम admonition नहीं मिला।",
+	"import.admVaultNotInstalled": "इस वॉल्ट में Admonition इंस्टॉल नहीं है।",
+	"import.admVaultUnreadable":
+		"इस वॉल्ट में Admonition की सेटिंग्स फ़ाइल पढ़ी नहीं जा सकी।",
+	"import.admUseManual":
+		"इसके बजाय फ़ाइल या पेस्ट किया गया JSON इस्तेमाल करें",
 	"import.admFromFile": "एक फ़ाइल",
 	"import.admFromFileDesc": "एक admonitions.json फ़ाइल, या कोई साझा पैक।",
 	"import.admChooseFile": "फ़ाइल चुनें…",
+	"import.admFromPaste": "कॉपी किया गया JSON",
+	"import.admFromPasteDesc":
+		"Admonition का JSON, या एक data.json, जो क्लिपबोर्ड पर कॉपी किया गया हो।",
 	"import.admPasteLabel": "या JSON यहाँ पेस्ट करें:",
 	"import.admPlaceholder": "अपने admonition यहाँ पेस्ट करें…",
 	"import.admBtnCancel": "रद्द करें",
@@ -950,6 +987,8 @@ export const hi: Record<string, string> = {
 	"import.warn.admImageFailed":
 		"अपलोड की गई तस्वीर पढ़ी नहीं जा सकी, इसलिए डिफ़ॉल्ट आइकन उपयोग " +
 		"किया गया।",
+	"import.warn.admUnsupportedOptions": "Admonition के ये विकल्प इंपोर्ट नहीं किए जाते: {{fields}}।",
+	"import.warn.admImageSkipped": "अपलोड किया गया चित्र पढ़ा नहीं जा सका और इंपोर्ट नहीं हुआ।",
 	"import.warn.admIconWithCss":
 		"यह admonition, Admonition में एक CSS स्निपेट से स्टाइल किया गया " +
 		"है। वह स्टाइल आयात का हिस्सा नहीं है, इसलिए केवल इसका नाम, आइकन " +
@@ -1002,8 +1041,9 @@ export const hi: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"snippets फ़ोल्डर में CSS स्निपेट Callout Studio द्वारा लिखे जाने के बाद बदल गया है। दोबारा निर्यात करने पर पूरी फ़ाइल बदल जाएगी।",
 	"confirm.overwriteSnippetOk": "ओवरराइट करें",
+	"settings.recommended": "अनुशंसित",
 	"export.chooseFormat": "इस रूप में निर्यात करें",
-	"export.formatJson": "Callout Studio बैकअप (अनुशंसित)",
+	"export.formatJson": "Callout Studio बैकअप",
 	"export.formatJsonDesc":
 		".json फ़ाइल Callout Studio के डेटा को पूरी तरह पुनर्स्थापित करने या उसे प्लगइन इंस्टॉल वाली नई vault में स्थानांतरित करने का एकमात्र समर्थित तरीका है।",
 	"export.formatCss": "स्वतंत्र CSS स्नैपशॉट",
