@@ -947,7 +947,7 @@ export const hi: Record<string, string> = {
 	"import.warn.cmThemeConditionPartial": "थीम पर निर्भर शैली को सुरक्षित नहीं रखा जा सकता। बिना शर्त वाले मानों को प्राथमिकता दी जाती है; कोई भी सशर्त विकल्प सभी थीम पर लागू होगा।",
 	"import.warn.cmCustomStylesSkipped": "Callout Manager का कस्टम CSS इंपोर्ट नहीं होता। केवल समर्थित आइकन और रंग सेटिंग लाई जा सकती हैं।",
 	"import.warn.cmSchemeIcon": "Callout Studio दोनों रंग योजनाओं के लिए एक ही आइकन इस्तेमाल करता है; इंपोर्ट किया गया आइकन दोनों में इस्तेमाल होगा।",
-	"import.err.cmDuplicateId": "इस इंपोर्ट में ID {{value}} और {{other}} दोहराए गए हैं, इसलिए {{value}} को छोड़ दिया गया।",
+	"import.err.cmDuplicateId": "इस इंपोर्ट में ID {{value}} पहले से मौजूद ID {{other}} से टकराती है, इसलिए उसे छोड़ दिया गया।",
 	"import.admTitle": "Admonition से आयात करें",
 	"import.admInstructions":
 		"हर admonition अपने नाम, आइकन और रंग के साथ एक callout बन जाता " +

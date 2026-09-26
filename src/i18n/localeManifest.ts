@@ -84,8 +84,8 @@ export const LOCALE_MANIFEST = {
 		keys: 903,
 	},
 	"hi": {
-		bytes: 116431,
-		sha256: "7e34281c0251f9ab18dc9941f5cb0b59f9ae59faf77270a885b2ce1dc829f913",
+		bytes: 116453,
+		sha256: "64f60cf84a593e87f74ae13a06489c691cb741aa35bf80da273d55220066df71",
 		keys: 903,
 	},
 	"hu": {
