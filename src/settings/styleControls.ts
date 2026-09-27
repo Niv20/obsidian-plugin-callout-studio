@@ -14,6 +14,7 @@ import { Setting, type SliderComponent } from "obsidian";
 import { t } from "../i18n";
 import type { BorderSidesSettings } from "../types";
 import type { SettingsTabPlugin } from "./sections/types";
+import { addHeaderResetButton } from "./headerResetButton";
 
 /**
  * `setDisplayFormat` arrived with the value readout in Obsidian 1.13. It is in
@@ -59,6 +60,86 @@ export function createControlGroup(
 		text: title,
 	});
 	return groupEl;
+}
+
+export interface StyleGroupReset {
+	isModified(): boolean;
+	reset(): void;
+	afterReset?(): void;
+}
+
+/** Defaults for a group's scalar settings, never touching another group. */
+export function styleFieldsReset<T, K extends keyof T>(
+	values: T,
+	defaults: T,
+	keys: readonly K[],
+): StyleGroupReset {
+	return {
+		isModified: () => keys.some((key) => values[key] !== defaults[key]),
+		reset: () => {
+			for (const key of keys) values[key] = defaults[key];
+		},
+	};
+}
+
+/** Keep group resets, live values and visible controls in step without rebuilding. */
+export function createResettableControlGroup(
+	plugin: SettingsTabPlugin,
+	parentEl: HTMLElement,
+	title: string,
+	defaults: StyleGroupReset,
+	extraCls = "",
+): {
+	el: HTMLElement;
+	syncReset(): void;
+	addSync(sync: () => void): void;
+	addSlider(spec: StyleSliderSpec): void;
+	addToggle(label: string, get: () => boolean, set: (value: boolean) => void,
+		afterCommit?: () => void): void;
+} {
+	const el = createControlGroup(parentEl, title, extraCls);
+	const controls: (() => void)[] = [];
+	const reset = addHeaderResetButton(
+		el.querySelector<HTMLElement>(".cs-settings-group-header")!,
+		{
+			label: `${t("settings.resetAction")}: ${title}`,
+			isModified: () => defaults.isModified(),
+			reset: async () => {
+				defaults.reset();
+				for (const sync of controls) sync();
+				reset.sync();
+				await plugin.saveSettings();
+				plugin.cssInjector.inject();
+				defaults.afterReset?.();
+			},
+		},
+	);
+	return {
+		el,
+		syncReset: () => reset.sync(),
+		addSync: (sync) => controls.push(sync),
+		addSlider: (spec) => {
+			controls.push(addStyleSlider(plugin, el, {
+				...spec,
+				set: (value) => {
+					spec.set(value);
+					reset.sync();
+				},
+			}));
+		},
+		addToggle: (label, get, setValue, afterCommit) => {
+			new Setting(el).setName(label).addToggle((toggle) => {
+				controls.push(() => { toggle.setValue(get()); });
+				toggle.setValue(get()).onChange(async (value) => {
+					setValue(value);
+					reset.sync();
+					await plugin.saveSettings();
+					plugin.cssInjector.inject();
+					afterCommit?.();
+				});
+			});
+		},
+	};
 }
 
 /**
@@ -120,8 +201,9 @@ export function addStyleSlider(
 	plugin: SettingsTabPlugin,
 	parentEl: HTMLElement,
 	spec: StyleSliderSpec,
-): void {
+): () => void {
 	const row = createSliderRow(parentEl, spec.label);
+	let syncValue = (): void => {};
 
 	const factor = Math.pow(10, spec.decimals);
 	const round = (v: number): number => Math.round(v * factor) / factor;
@@ -157,6 +239,12 @@ export function addStyleSlider(
 	};
 
 	new Setting(row).addSlider((slider) => {
+		syncValue = () => {
+			if (rafId !== null) window.cancelAnimationFrame(rafId);
+			rafId = null;
+			slider.setValue(spec.get());
+			endDrag();
+		};
 		// The number beside the track is Obsidian's own — SliderComponent keeps it
 		// in sync, so this only says how to spell it.
 		setSliderDisplay(
@@ -185,6 +273,7 @@ export function addStyleSlider(
 			plugin.cssInjector.inject();
 		});
 	});
+	return () => syncValue();
 }
 
 /**
@@ -196,8 +285,18 @@ export function renderBordersGroup(
 	plugin: SettingsTabPlugin,
 	parentEl: HTMLElement,
 	frame: { borderSides: BorderSidesSettings; borderWidth: number },
+	defaults: { borderSides: BorderSidesSettings; borderWidth: number },
 ): void {
-	const groupEl = createControlGroup(parentEl, t("settings.border"));
+	const keys: (keyof BorderSidesSettings)[] = ["top", "right", "bottom", "left"];
+	const group = createResettableControlGroup(plugin, parentEl, t("settings.border"), {
+		isModified: () => frame.borderWidth !== defaults.borderWidth ||
+			keys.some((key) => frame.borderSides[key] !== defaults.borderSides[key]),
+		reset: () => {
+			Object.assign(frame.borderSides, defaults.borderSides);
+			frame.borderWidth = defaults.borderWidth;
+		},
+	});
+	const groupEl = group.el;
 	const sidesRow = groupEl.createDiv({ cls: "cs-border-sides-row" });
 
 	const sides: { key: keyof BorderSidesSettings; label: string }[] = [
@@ -218,6 +317,7 @@ export function renderBordersGroup(
 	const sideButtons = new Map<string, HTMLButtonElement>();
 
 	const commit = async (): Promise<void> => {
+		syncUI();
 		await plugin.saveSettings();
 		plugin.cssInjector.inject();
 		syncUI();
@@ -248,7 +348,7 @@ export function renderBordersGroup(
 	}
 
 	const widthRow = groupEl.createDiv({ cls: isAny() ? "" : "cs-hidden" });
-	addStyleSlider(plugin, widthRow, {
+	const syncWidth = addStyleSlider(plugin, widthRow, {
 		label: t("settings.borderWidth"),
 		min: 1,
 		max: 4,
@@ -258,10 +358,12 @@ export function renderBordersGroup(
 		get: () => frame.borderWidth,
 		set: (v) => {
 			frame.borderWidth = v;
+			group.syncReset();
 		},
 	});
 
 	const syncUI = (): void => {
+		group.syncReset();
 		allBtn.toggleClass("is-active", isAll());
 		for (const side of sides) {
 			sideButtons
@@ -270,4 +372,6 @@ export function renderBordersGroup(
 		}
 		widthRow.toggleClass("cs-hidden", !isAny());
 	};
+	group.addSync(syncWidth);
+	group.addSync(syncUI);
 }

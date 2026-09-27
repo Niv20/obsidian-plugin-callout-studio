@@ -13,20 +13,20 @@
  * slot (never persisted) so it renders through the real pipeline: injected
  * CSS, heading/inline decorations, icon painting.
  */
-import { Component, MarkdownRenderer, Modal, Setting, setIcon } from "obsidian";
+import { Component, MarkdownRenderer, Modal, setIcon } from "obsidian";
 import { t } from "../i18n";
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import { LiveCalloutPreview } from "./LiveCalloutPreview";
 import {
-	addStyleSlider,
-	createControlGroup,
+	createResettableControlGroup,
 	renderBordersGroup,
+	styleFieldsReset,
 } from "./styleControls";
 import type { SettingsTabPlugin } from "./sections/types";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { CSS_FOLD_ARROW, CSS_HEADING_LINE } from "../editor/renderShared";
 import { applyModalChrome } from "./modalChrome";
-import { STYLE_DEMO_ID } from "../constants";
+import { DEFAULT_SETTINGS, STYLE_DEMO_ID } from "../constants";
 import { beginDemoPreview, endDemoPreview } from "./previewOwnership";
 
 /** Neutral gray accent used by the demo callout in both theme modes. */
@@ -112,10 +112,14 @@ export class GlobalStyleModal extends Modal {
 
 	private renderRegularControls(col: HTMLElement): void {
 		const { globalStyle } = this.plugin.settings;
-		renderBordersGroup(this.plugin, col, globalStyle);
+		const defaults = DEFAULT_SETTINGS.globalStyle;
+		renderBordersGroup(this.plugin, col, globalStyle, defaults);
 
-		const fontGroup = createControlGroup(col, t("settings.fontScaleGroup"));
-		addStyleSlider(this.plugin, fontGroup, {
+		const fontGroup = createResettableControlGroup(
+			this.plugin, col, t("settings.fontScaleGroup"),
+			styleFieldsReset(globalStyle, defaults, ["titleScale", "contentScale"]),
+		);
+		fontGroup.addSlider({
 			label: t("settings.titleScale"),
 			min: 0.5,
 			max: 1.5,
@@ -127,7 +131,7 @@ export class GlobalStyleModal extends Modal {
 				globalStyle.titleScale = v;
 			},
 		});
-		addStyleSlider(this.plugin, fontGroup, {
+		fontGroup.addSlider({
 			label: t("settings.contentScale"),
 			min: 0.5,
 			max: 1.5,
@@ -146,29 +150,25 @@ export class GlobalStyleModal extends Modal {
 			(v) => {
 				globalStyle.borderRadius = v;
 			},
+			defaults.borderRadius,
 		);
 
-		const alignGroup = createControlGroup(
+		const alignGroup = createResettableControlGroup(
+			this.plugin,
 			col,
 			t("settings.alignGroup"),
+			styleFieldsReset(globalStyle, defaults, ["alignContentWithTitle"]),
 			"cs-layout-group",
 		);
-		new Setting(alignGroup)
-			.setName(t("settings.alignContent"))
-			.addToggle((toggle) => {
-				toggle
-					.setValue(globalStyle.alignContentWithTitle)
-					.onChange(async (v) => {
-						globalStyle.alignContentWithTitle = v;
-						await this.plugin.saveSettings();
-						this.plugin.cssInjector.inject();
-					});
-			});
+		alignGroup.addToggle(t("settings.alignContent"),
+			() => globalStyle.alignContentWithTitle,
+			(value) => { globalStyle.alignContentWithTitle = value; });
 	}
 
 	private renderHeadingControls(col: HTMLElement): void {
 		const heading = this.plugin.settings.globalStyle.heading;
-		renderBordersGroup(this.plugin, col, heading);
+		const defaults = DEFAULT_SETTINGS.globalStyle.heading;
+		renderBordersGroup(this.plugin, col, heading, defaults);
 
 		this.renderShapeGroup(
 			col,
@@ -176,16 +176,28 @@ export class GlobalStyleModal extends Modal {
 			(v) => {
 				heading.borderRadius = v;
 			},
+			defaults.borderRadius,
 		);
 
 		// Vertical spacing of the text inside the bar. A single slider drives
 		// both the top and bottom padding symmetrically, so the heading text
 		// always stays vertically centered in the bar.
-		const spacingGroup = createControlGroup(
+		const refreshSpacing = (): void => {
+			this.hideGapDemo();
+			this.setGapDemoValue(heading.marginTop);
+			this.preview?.refresh();
+			refreshAllCalloutEditors();
+		};
+		const spacingGroup = createResettableControlGroup(
+			this.plugin,
 			col,
 			t("settings.headingSpacingGroup"),
+			{
+				...styleFieldsReset(heading, defaults, ["paddingTop", "paddingBottom", "marginTop"]),
+				afterReset: refreshSpacing,
+			},
 		);
-		addStyleSlider(this.plugin, spacingGroup, {
+		spacingGroup.addSlider({
 			label: t("settings.headingPadVertical"),
 			min: 0,
 			max: 1,
@@ -203,7 +215,7 @@ export class GlobalStyleModal extends Modal {
 		// from what precedes it — chiefly from other heading callouts, which
 		// otherwise stack glued together when collapsed. Distinct from the
 		// vertical-spacing slider above, which is the padding *inside* the bar.
-		addStyleSlider(this.plugin, spacingGroup, {
+		spacingGroup.addSlider({
 			label: t("settings.headingGap"),
 			min: 0,
 			max: 2,
@@ -242,38 +254,38 @@ export class GlobalStyleModal extends Modal {
 		// Our own trailing chevron only — Obsidian's native indicator before
 		// the title (and the one reading view uses) is a separate element we
 		// never draw, so it keeps folding regardless of this switch.
-		const foldGroup = createControlGroup(
+		const refreshFold = (): void => {
+			this.syncDemoChevrons();
+			this.preview?.refresh();
+			refreshAllCalloutEditors();
+		};
+		const foldGroup = createResettableControlGroup(
+			this.plugin,
 			col,
 			t("settings.headingFoldGroup"),
+			{
+				...styleFieldsReset(this.plugin.settings.headingCallouts,
+					DEFAULT_SETTINGS.headingCallouts, ["showFoldArrow"]),
+				afterReset: refreshFold,
+			},
 			"cs-layout-group",
 		);
-		new Setting(foldGroup)
-			.setName(t("settings.headingFoldArrow"))
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.headingCallouts.showFoldArrow)
-					.onChange(async (v) => {
-						this.plugin.settings.headingCallouts.showFoldArrow = v;
-						await this.plugin.saveSettings();
-						// The gap demo draws its own static chevron, so it
-						// doesn't come along with the editor refresh below.
-						this.syncDemoChevrons();
-						// Emits no CSS — the chevron is a CM6 widget, so the
-						// editors have to rebuild their decorations. The preview
-						// call stays for the static fallback render, which is no
-						// editor and so is reached by no dispatch.
-						this.preview?.refresh();
-						refreshAllCalloutEditors();
-					});
-			});
+		foldGroup.addToggle(t("settings.headingFoldArrow"),
+			() => this.plugin.settings.headingCallouts.showFoldArrow,
+			(value) => { this.plugin.settings.headingCallouts.showFoldArrow = value; },
+			refreshFold);
 	}
 
 	private renderInlineControls(col: HTMLElement): void {
 		const inline = this.plugin.settings.globalStyle.inline;
-		renderBordersGroup(this.plugin, col, inline);
+		const defaults = DEFAULT_SETTINGS.globalStyle.inline;
+		renderBordersGroup(this.plugin, col, inline, defaults);
 
-		const fontGroup = createControlGroup(col, t("settings.fontScaleGroup"));
-		addStyleSlider(this.plugin, fontGroup, {
+		const fontGroup = createResettableControlGroup(
+			this.plugin, col, t("settings.fontScaleGroup"),
+			styleFieldsReset(inline, defaults, ["fontScale"]),
+		);
+		fontGroup.addSlider({
 			label: t("settings.inlineTextScale"),
 			min: 0.5,
 			max: 1.5,
@@ -294,6 +306,7 @@ export class GlobalStyleModal extends Modal {
 			(v) => {
 				inline.borderRadius = v;
 			},
+			defaults.borderRadius,
 			25,
 		);
 	}
@@ -302,10 +315,14 @@ export class GlobalStyleModal extends Modal {
 		col: HTMLElement,
 		get: () => number,
 		set: (v: number) => void,
+		defaultRadius: number,
 		max = 24,
 	): void {
-		const shapeGroup = createControlGroup(col, t("settings.shapeGroup"));
-		addStyleSlider(this.plugin, shapeGroup, {
+		const shapeGroup = createResettableControlGroup(this.plugin, col, t("settings.shapeGroup"), {
+			isModified: () => get() !== defaultRadius,
+			reset: () => set(defaultRadius),
+		});
+		shapeGroup.addSlider({
 			label: t("settings.borderRadius"),
 			min: 0,
 			max,

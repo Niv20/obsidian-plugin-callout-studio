@@ -27,6 +27,8 @@ Inline tokens remain Callout Studio surfaces and use the full fallback design.
 
 To change it, find **Default fallback callout** in the settings and choose the style that unknown callouts should inherit. The fallback can be one of your own custom callouts.
 
+After choosing a different fallback, click **Reset to default** beside the picker to select **Note** again.
+
 ## Apply or leave the fallback style
 
 To make an existing saved callout follow the fallback, open its three-dot menu and choose **Use default fallback style**. Its icon and color immediately match the fallback.

@@ -83,6 +83,9 @@ Vertical trio. It resets only that render role and calls the preview once;
 other roles keep their values. The target is
 `resolveIconAdjust(builtInDefault, role)`, not hard-coded `0 / 0 / 1`, so a
 future built-in with a non-neutral shipped adjustment remains correct.
+The compact header reset shares the settings-wide layout rule: showing it must
+preserve the colored header's natural height. See
+[settings resets](16-settings-ui-and-modals.md#scoped-reset-controls).
 
 There is a storage trap here: moving every thumb back to its shipped position
 does not by itself reset the definition. A customized baseline already carried

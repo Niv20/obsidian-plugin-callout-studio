@@ -13,9 +13,11 @@
 import { Modal, Setting, ToggleComponent, setIcon } from "obsidian";
 import type { App } from "obsidian";
 import { t } from "../i18n";
+import { DEFAULT_CONTEXT_MENU_ITEMS } from "../constants";
 import { makeDragSortable } from "../ui/DragSortList";
 import { animateReorder } from "../ui/flip";
 import { applyModalChrome } from "./modalChrome";
+import { addFieldResetButton } from "./editor/fieldResetButton";
 import type {
 	CalloutRenderRole,
 	ContextMenuItemConfig,
@@ -53,6 +55,7 @@ const ITEM_LABEL_KEY: Record<ContextMenuItemId, string> = {
 export class MenuCustomizationModal extends Modal {
 	/** Detach functions for the per-role drag listeners, run on close. */
 	private dragCleanups: Array<() => void> = [];
+	private roleResetSyncs: Partial<Record<CalloutRenderRole, () => void>> = {};
 
 	constructor(
 		app: App,
@@ -76,14 +79,31 @@ export class MenuCustomizationModal extends Modal {
 	onClose(): void {
 		for (const cleanup of this.dragCleanups) cleanup();
 		this.dragCleanups = [];
+		this.roleResetSyncs = {};
 		this.contentEl.empty();
 	}
 
 	private renderRole(role: CalloutRenderRole): void {
-		new Setting(this.contentEl).setName(t(ROLE_TITLE_KEY[role])).setHeading();
+		const heading = new Setting(this.contentEl)
+			.setName(t(ROLE_TITLE_KEY[role]))
+			.setHeading();
+		heading.settingEl.addClass("cs-reset-heading");
 		const listEl = this.contentEl.createDiv({
 			cls: "cs-menu-customize-list",
 		});
+		this.roleResetSyncs[role] = addFieldResetButton(
+			heading,
+			t("settings.resetAction"),
+			() => this.isRoleDefault(role),
+			() => {
+				// Copy both the array and entries: later toggles must never mutate
+				// the shipped defaults or another category's saved layout.
+				this.host.settings.contextMenu.items[role] =
+					DEFAULT_CONTEXT_MENU_ITEMS[role].map((item) => ({ ...item }));
+				this.renderRoleList(role, listEl);
+				void this.host.saveSettings();
+			},
+		);
 		this.renderRoleList(role, listEl);
 
 		// Attach drag once to the persistent list container; rows re-render into
@@ -99,11 +119,20 @@ export class MenuCustomizationModal extends Modal {
 				onReorder: (from, to) => {
 					const items = this.host.settings.contextMenu.items[role];
 					moveItem(items, from, to);
+					this.roleResetSyncs[role]?.();
 					void this.host.saveSettings();
 					// DragSortList already moved the live rows. Keeping them preserves
 					// the next gesture's target while the previous drop settles.
 				},
 			}),
+		);
+	}
+
+	private isRoleDefault(role: CalloutRenderRole): boolean {
+		const items = this.host.settings.contextMenu.items[role];
+		const defaults = DEFAULT_CONTEXT_MENU_ITEMS[role];
+		return items.length === defaults.length && items.every((item, index) =>
+			item.id === defaults[index]?.id && item.enabled === defaults[index]?.enabled,
 		);
 	}
 
@@ -121,6 +150,7 @@ export class MenuCustomizationModal extends Modal {
 			}
 			this.renderRow(role, listEl, item);
 		});
+		this.roleResetSyncs[role]?.();
 	}
 
 	private renderRow(

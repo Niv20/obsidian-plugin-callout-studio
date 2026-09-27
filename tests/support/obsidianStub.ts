@@ -149,7 +149,6 @@ export class Editor {}
  * that touches the popover. None of it is constructed there, and a suite that
  * did construct one would need real implementations rather than these.
  */
-export class ToggleComponent {}
 export class PluginSettingTab {}
 export class Menu { setUseNativeMenu(_native: boolean): this { return this; } }
 export class WorkspaceLeaf {}
@@ -185,6 +184,8 @@ export class ItemView {
  */
 type ElementLike = {
 	createDiv(options?: { cls?: string }): ElementLike;
+	addClass?(...classes: string[]): void;
+	addEventListener?(type: string, callback: () => void): void;
 	value: string;
 	textContent: string;
 	dataset?: Record<string, string>;
@@ -220,6 +221,42 @@ type ElementLike = {
  * `beforeEach`; nothing resets it on its own.
  */
 export const createdSliders: SliderComponent[] = [];
+
+export const createdToggles: ToggleComponent[] = [];
+
+/** Settings reset tests need the displayed value as well as the change event. */
+export class ToggleComponent {
+	readonly toggleEl: ElementLike;
+	private value = false;
+	private changeCb: ((value: boolean) => unknown) | null = null;
+
+	constructor(containerEl: ElementLike) {
+		this.toggleEl = containerEl.createDiv({ cls: "checkbox-container" });
+		createdToggles.push(this);
+	}
+
+	setValue(value: boolean): this {
+		this.value = value;
+		return this;
+	}
+
+	getValue(): boolean { return this.value; }
+
+	setTooltip(text: string): this {
+		setTooltip(this.toggleEl, text);
+		return this;
+	}
+
+	onChange(cb: (value: boolean) => unknown): this {
+		this.changeCb = cb;
+		return this;
+	}
+
+	commit(value: boolean): unknown {
+		this.setValue(value);
+		return this.changeCb?.(value);
+	}
+}
 
 export class SliderComponent {
 	readonly sliderEl: ElementLike;
@@ -297,6 +334,7 @@ export class ButtonLike {
 	constructor(containerEl: ElementLike) {
 		this.buttonEl = containerEl.createDiv({ cls: "clickable-icon" });
 		this.extraSettingsEl = this.buttonEl;
+		this.buttonEl.addEventListener?.("click", () => this.click?.());
 	}
 
 	setButtonText(text: string): this {
@@ -376,11 +414,13 @@ export class Setting {
 		return this;
 	}
 
-	setClass(): this {
+	setClass(cls: string): this {
+		this.settingEl.addClass?.(cls);
 		return this;
 	}
 
 	setHeading(): this {
+		this.settingEl.addClass?.("setting-item-heading");
 		return this;
 	}
 
@@ -405,6 +445,11 @@ export class Setting {
 		const slider = new SliderComponent(this.controlEl);
 		this.sliders.push(slider);
 		cb(slider);
+		return this;
+	}
+
+	addToggle(cb: (toggle: ToggleComponent) => unknown): this {
+		cb(new ToggleComponent(this.controlEl));
 		return this;
 	}
 }

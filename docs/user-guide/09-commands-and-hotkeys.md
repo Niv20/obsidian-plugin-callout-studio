@@ -58,6 +58,8 @@ From this window you can:
 - Click the plus button beside a command to open Obsidian's Hotkeys settings focused on that command.
 - Review the shortcuts already assigned by Obsidian.
 
+When any built-in command is off, **Reset to default** appears in the **Built-in commands** header. Click it to turn every built-in command on. Assigned shortcuts and your custom commands are preserved.
+
 Obsidian owns the shortcut itself; Callout Studio provides the command.
 Turning a command off preserves its assigned shortcut. If you want to reuse
 that key for another command, remove its old assignment in Obsidian's Hotkeys

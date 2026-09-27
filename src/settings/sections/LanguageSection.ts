@@ -16,8 +16,10 @@
  * reverting the dropdown would look like the click had not registered.
  */
 import { Setting } from "obsidian";
+import { DEFAULT_SETTINGS } from "../../constants";
 import { getSelectableLocales, resolveLocaleFile, setLocale, t } from "../../i18n";
 import { ListboxPopup } from "../../ui/listboxPopup";
+import { addFieldResetButton } from "../editor/fieldResetButton";
 import type { SettingsSectionContext } from "./types";
 
 type LanguageChoice = {
@@ -34,6 +36,7 @@ export function renderLanguageSection(
 	const setting = new Setting(containerEl)
 		.setName(t("settings.language"))
 		.setClass("cs-language-setting")
+		.setClass("cs-reset-setting")
 		.setDesc(t("settings.languageDesc"));
 
 	const picker = new ListboxPopup<LanguageChoice>(setting.controlEl, {
@@ -47,10 +50,20 @@ export function renderLanguageSection(
 		searchable: false,
 		onCommit: (choice) => {
 			void setLanguage(ctx, setting, picker, choice.code);
+			syncReset();
 		},
 	});
 	picker.setSelected(ctx.plugin.settings.language);
-	renderLanguageWidthSizer(picker.el, languageChoices());
+	const syncReset = addFieldResetButton(
+		setting,
+		`${t("settings.resetAction")}: ${t("settings.language")}`,
+		() => ctx.plugin.settings.language === DEFAULT_SETTINGS.language,
+		() => {
+			picker.setSelected(DEFAULT_SETTINGS.language);
+			void setLanguage(ctx, setting, picker, DEFAULT_SETTINGS.language);
+		},
+	);
+	renderLanguageWidthSizer(picker.el, setting.controlEl, languageChoices());
 	observeLanguageSettingLayout(ctx, setting);
 	ctx.registerDisposer(() => picker.destroy());
 
@@ -88,6 +101,7 @@ function observeLanguageSettingLayout(
  */
 function renderLanguageWidthSizer(
 	containerEl: HTMLElement,
+	controlEl: HTMLElement,
 	choices: readonly LanguageChoice[],
 ): void {
 	const sizerEl = containerEl.createDiv({
@@ -104,7 +118,7 @@ function renderLanguageWidthSizer(
 		),
 	);
 	if (widestLabel > 0) {
-		containerEl.style.setProperty(
+		controlEl.style.setProperty(
 			"--cs-language-picker-width",
 			`${widestLabel}px`,
 		);

@@ -18,13 +18,12 @@ const css = readRepoFile("styles.css")
 	.replace(/\/\*[\s\S]*?\*\//g, "")
 	.replace(/\s+/g, " ");
 
-/** Declarations for one exact, unnested selector in the flattened stylesheet. */
+/** Declarations for an exact selector, including shared comma-separated rules. */
 function cssRule(selector: string): string {
-	const start = css.indexOf(`${selector} {`);
-	assert.notStrictEqual(start, -1, `missing CSS rule for ${selector}`);
-	const open = css.indexOf("{", start);
-	const close = css.indexOf("}", open);
-	return css.slice(open + 1, close);
+	const rule = Array.from(css.matchAll(/([^{}]+)\{([^{}]*)\}/g))
+		.find((match) => match[1]!.split(",").some((entry) => entry.trim() === selector));
+	assert.ok(rule, `missing CSS rule for ${selector}`);
+	return rule[2]!;
 }
 
 function cssValue(rule: string, property: string): string | undefined {
@@ -62,7 +61,7 @@ function sliders(): SliderComponent[] {
 }
 
 describe("renderIconAdjustGroup — reset affordance", () => {
-	it("matches the Live preview header until a reset button is visible", () => {
+	it("preserves the original header height with a visible or hidden reset", () => {
 		const preview = cssRule(".callout-studio-preview-header");
 		const adjustment = cssRule(".callout-studio-adjust-header");
 		const iconAdjustment = cssRule(".cs-icon-adjust-header");
@@ -90,7 +89,12 @@ describe("renderIconAdjustGroup — reset affordance", () => {
 		}
 
 		assert.strictEqual(cssValue(cssRule(".cs-hidden"), "display"), "none");
-		assert.strictEqual(cssValue(cssRule(".cs-icon-adjust-reset"), "height"), "28px");
+		const button = cssRule(".cs-icon-adjust-header > .cs-icon-adjust-reset");
+		assert.strictEqual(cssValue(button, "position"), "absolute",
+			"reset must not participate in the header's line height");
+		assert.strictEqual(cssValue(button, "height"), "20px");
+		assert.strictEqual(cssValue(cssRule(".cs-icon-adjust-reset.cs-hidden"), "display"), "none");
+		assert.strictEqual(cssValue(cssRule(".cs-header-reset.cs-hidden"), "display"), "none");
 	});
 
 	it("does not offer reset when the caller has no built-in defaults", () => {

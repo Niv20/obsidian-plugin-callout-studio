@@ -13,6 +13,8 @@
  */
 import { Setting } from "obsidian";
 import { t } from "../../i18n";
+import { DEFAULT_SETTINGS } from "../../constants";
+import { addFieldResetButton } from "../editor/fieldResetButton";
 import { CalloutCombobox } from "../calloutCombobox";
 import { CalloutEditor } from "../CalloutEditor";
 import { refreshOccurrencesViewAppearance } from "../../usage/registerOccurrencesView";
@@ -29,6 +31,7 @@ export function renderFallbackSection(
 
 	const setting = new Setting(containerEl)
 		.setName(t("settings.fallbackCallout"))
+		.setClass("cs-reset-setting")
 		.setDesc(t("settings.fallbackCalloutDesc"));
 
 	// Re-read on every open, so a callout created from the picker itself is
@@ -48,14 +51,25 @@ export function renderFallbackSection(
 			new CalloutEditor(ctx.plugin, undefined, {
 				seedDisplayName: name,
 			}).openAndWait(),
-		onChange: async (id) => {
-			ctx.plugin.settings.fallbackCalloutId = id;
-			ctx.plugin.restyleUncustomizedFallbackRows();
-			refreshOccurrencesViewAppearance(ctx.plugin);
-			await ctx.plugin.saveSettings();
-			ctx.plugin.refreshCallouts();
-		},
+		onChange: (id) => setFallback(id),
 	});
+	const syncReset = addFieldResetButton(
+		setting,
+		`${t("settings.resetAction")}: ${t("settings.fallbackCallout")}`,
+		() => ctx.plugin.settings.fallbackCalloutId === DEFAULT_SETTINGS.fallbackCalloutId,
+		() => {
+			picker.setValue(DEFAULT_SETTINGS.fallbackCalloutId);
+			void setFallback(DEFAULT_SETTINGS.fallbackCalloutId);
+		},
+	);
+	async function setFallback(id: string): Promise<void> {
+		ctx.plugin.settings.fallbackCalloutId = id;
+		syncReset();
+		ctx.plugin.restyleUncustomizedFallbackRows();
+		refreshOccurrencesViewAppearance(ctx.plugin);
+		await ctx.plugin.saveSettings();
+		ctx.plugin.refreshCallouts();
+	}
 	// The picker holds a document-level click listener; the tab owns its
 	// lifetime and clears these on `hide()` and before every re-`display()`.
 	ctx.registerDisposer(() => picker.destroy());

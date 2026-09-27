@@ -40,6 +40,8 @@ A block callout offers:
 
 Open **Settings → Callout Studio → Context menu**, then click **Customize menu items**. Toggle individual actions on or off and drag their handles into your preferred order. You can keep dragging the same row or another row without waiting for it to settle. Every change is saved immediately.
 
+Each category shows a **Reset to default** arrow in its header after you change its toggles or order. Click it to turn every action in that category on and restore the original sorting order. The other categories keep their settings.
+
 **Create or edit callout** is a single action here. At most one of its two
 runtime labels appears in a note: **Edit callout settings** for a saved type or
 **Create callout** for an unknown one.

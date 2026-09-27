@@ -1194,6 +1194,24 @@ body:not(.is-phone)
 	margin-bottom: 4px;
 }
 
+/* Category resets share the trailing toggle column, including on phones where
+   ordinary settings rows stack. Keep the heading and its action on one row. */
+.cs-menu-customize .setting-item.cs-reset-heading,
+.cs-command-builder .setting-item.cs-reset-heading {
+	flex-direction: row;
+	align-items: center;
+}
+
+.cs-menu-customize .cs-reset-heading .setting-item-control,
+.cs-command-builder .cs-reset-heading .setting-item-control {
+	flex: 0 0 var(--toggle-width, 40px);
+	justify-content: center;
+	margin: 0;
+	margin-inline-start: auto;
+	margin-inline-end: 12px;
+	padding: 0;
+}
+
 /* Rows reuse .callout-studio-row; this only tweaks the menu-specific bits. */
 .cs-menu-row .callout-studio-row-name {
 	/* The shared 22ch cap is for callout names. Menu actions should use the
@@ -2561,30 +2579,40 @@ button.callout-studio-icon-picker-loading {
 	border-radius: 7px 7px 0 0;
 }
 
-/* Built-in icon-adjustment cards put one role-scoped reset in the header. With
-   that button hidden, this strip deliberately keeps the shared header's natural
-   height so it matches Live preview beside it. The visible 28px button grows
-   only its own strip when a reset is actually available. */
-.cs-icon-adjust-header {
-	display: flex;
-	align-items: center;
-	gap: 6px;
+/* Reset buttons sit outside the header's line box: revealing one must never
+   change the colored strip's height or move the sliders below it. Logical
+   positioning also keeps the action at the trailing edge in RTL languages. */
+.cs-icon-adjust-header,
+.callout-studio-adjust-header.cs-reset-header {
+	position: relative;
 	box-sizing: border-box;
+	padding-inline-end: 36px;
 }
 
 .cs-icon-adjust-header > span {
-	flex: 1 1 auto;
-	min-width: 0;
+	display: block;
 }
 
-.cs-icon-adjust-reset {
+.cs-icon-adjust-header > .cs-icon-adjust-reset,
+.callout-studio-adjust-header > .cs-header-reset {
+	position: absolute;
+	inset-inline-end: 6px;
+	top: 50%;
+	transform: translateY(-50%);
 	display: inline-flex;
-	flex: 0 0 auto;
 	align-items: center;
 	justify-content: center;
-	width: 28px;
-	height: 28px;
-	padding: 5px;
+	width: 20px;
+	height: 20px;
+	min-height: 0;
+	padding: 2px;
+	margin: 0;
+	--icon-size: 14px;
+}
+
+.cs-icon-adjust-reset.cs-hidden,
+.cs-header-reset.cs-hidden {
+	display: none;
 }
 
 /* Slider rows: roomy label above full-width slider */
@@ -3512,9 +3540,34 @@ button.callout-studio-icon-picker-loading {
    information: every translated option occupies the same grid cell, so the
    widest one sets the width. The inline padding reserves the control's own
    padding, gap and caret. */
-.cs-language-setting .cs-combobox {
-	flex: 0 0 var(--cs-language-picker-width, auto);
+/* The width belongs to the pair, just like the editor's Color row. A visible
+   reset takes room from the picker, keeping the control column's edge fixed. */
+.cs-reset-setting .setting-item-control {
+	flex: 0 0 auto;
+	inline-size: 260px;
+	max-inline-size: 100%;
+	min-width: 0;
+	gap: 8px;
+}
+
+.cs-reset-setting .setting-item-info {
+	min-width: 0;
+}
+
+.cs-reset-setting .setting-item-control > .cs-combobox {
+	flex: 1 1 0;
+	inline-size: auto;
+	min-inline-size: 0;
+}
+
+.cs-reset-setting .setting-item-control > .extra-setting-button {
+	flex: 0 0 auto;
+}
+
+.cs-language-setting .setting-item-control {
+	flex: 0 1 var(--cs-language-picker-width, auto);
 	inline-size: var(--cs-language-picker-width, max-content);
+	max-inline-size: 100%;
 }
 
 .cs-language-width-sizer {
@@ -3534,10 +3587,14 @@ button.callout-studio-icon-picker-loading {
 /* The renderer adds this class only while Obsidian has actually stacked the
    setting row. Reading the real layout keeps this custom control aligned with
    core and with themes without duplicating a breakpoint that can drift. */
-.cs-language-setting-stacked .cs-combobox {
+.cs-language-setting-stacked .setting-item-control {
 	flex-basis: auto;
 	inline-size: 100%;
 	max-inline-size: 100%;
+}
+
+.is-phone .cs-reset-setting .setting-item-control {
+	inline-size: 100%;
 }
 
 .cs-combobox-footer-row {

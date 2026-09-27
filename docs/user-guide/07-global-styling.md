@@ -6,6 +6,8 @@ Global styling gives every Callout Studio callout a consistent shape and layout.
 
 Each callout format has its own controls, so changing one format does not force the others to use the same geometry.
 
+Each option box shows a **Reset to default** arrow in its header when its settings differ from the defaults. Click it to restore that box's settings immediately. Other boxes and callout formats keep their values.
+
 ## Heading callouts
 
 For heading callouts, you can:

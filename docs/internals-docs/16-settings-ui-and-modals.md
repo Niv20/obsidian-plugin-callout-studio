@@ -1434,6 +1434,25 @@ callout editor uses — and, notably, **deliberately not**
 concurrently-open demo previews (opening the palette editor from inside the
 callout editor) must not collide on one registry slot.
 
+### Scoped reset controls
+
+The conditional `rotate-ccw` controls use the shared `settings.resetAction`
+label. They are hidden when their scope already matches its canonical default.
+Settings resets save immediately through the usual settings path; the built-in
+callout editor's field resets still change its draft until Save.
+
+**Default fallback callout** restores `DEFAULT_SETTINGS.fallbackCalloutId`
+(`note`). **Language** restores `DEFAULT_SETTINGS.language` (`auto`), following
+Obsidian's language through the same locale-change path as a manual selection.
+Their reset buttons occupy the trailing edge of the existing control column;
+the picker shrinks to make room, as in the callout editor's color row.
+
+Colored option headers reserve space at their trailing edge for the compact
+reset control without increasing the header's original height. The rule also
+applies to the callout editor's icon-adjustment headers. Menu-category and
+built-in-command resets sit at the trailing edge of their headings, above the
+toggle rows.
+
 ### `GlobalStyleModal` — the three per-role style popups
 
 Also uses a reserved demo id (`STYLE_DEMO_ID = "global-style-demo"`) and the
@@ -1442,6 +1461,13 @@ scale/spacing sliders for block, heading, or inline style show their effect
 on a real rendered callout as the user drags them. Its three modal titles are
 separate translation keys rather than a concatenation of “Global callout
 style” and a role name, so each locale can put the words in its natural order.
+
+Every option box owns one scoped reset. It restores only the fields represented
+by that box from `DEFAULT_SETTINGS`, including nested border-side flags and the
+heading-fold setting outside `globalStyle`. Resets refresh the affected controls,
+generated styles and preview; heading settings that affect decorations also
+refresh open callout editors. Default objects remain unchanged so subsequent
+edits cannot alter a later reset target.
 
 The inline sample places a localized content pill between two localized sample
 sentences. In the embedded Live Preview, clicking the pill reveals its source
@@ -1457,6 +1483,12 @@ attachment. Enabled and disabled items occupy separate bands, divided by a
 sibling separator. Pointer and keyboard moves stay within the item's band;
 only its toggle changes bands. Every completed move updates the settings array
 and requests a save immediately.
+
+Each category heading also owns a reset that replaces only that role's array
+with fresh entries from `DEFAULT_CONTEXT_MENU_ITEMS[role]`. This restores both
+the shipped order and every enabled flag. Visibility compares both fields, so
+reordering an otherwise fully enabled category still exposes the reset. Reset
+rebuilds that role's rows and saves through the same path as other edits.
 
 `ui/DragSortList.ts` moves the existing row nodes as the pointer crosses their
 neighbours. On release it reports the final indices synchronously, and the modal
@@ -1502,6 +1534,12 @@ by side, deliberately kept separate:
   the saved Obsidian binding itself is preserved.
 - **A button** that *opens* Obsidian's own hotkeys pane, filtered to that
   command (`openHotkeySettings`), because binding a key is Obsidian's job.
+
+The **Built-in commands** heading reset is available while any
+`FIXED_COMMAND_IDS` entry is disabled. It re-enables those commands through the
+existing command-registration path and leaves custom commands untouched.
+Assigned hotkeys are preserved: Obsidian exposes no public API for deleting
+user bindings, and this reset does not write its undocumented hotkey store.
 
 The list **subscribes to the registry while open** — deleting a callout from
 another surface (the settings row menu) prunes any command depending on it

@@ -41,6 +41,7 @@ import { ConfirmModal } from "../utils/ConfirmModal";
 import { CommandEditorModal } from "./CommandEditorModal";
 import { addHotkeyButton, addHotkeyChips } from "./command/hotkeyRow";
 import { applyModalChrome } from "./modalChrome";
+import { addFieldResetButton } from "./editor/fieldResetButton";
 
 /** Narrow structural host — the plugin instance satisfies this. */
 // Extends `CalloutEditorPlugin` because this window hands itself to
@@ -55,6 +56,7 @@ export interface CommandBuilderHost extends CalloutEditorPlugin {
 export class CommandBuilderModal extends Modal {
 	private listEl?: HTMLElement;
 	private fixedListEl?: HTMLElement;
+	private syncFixedReset?: () => void;
 	private readonly onRegistryChange = (): void => {
 		this.renderList();
 	};
@@ -97,7 +99,16 @@ export class CommandBuilderModal extends Modal {
 		this.listEl = contentEl.createDiv({ cls: "cs-command-list" });
 		this.renderList();
 
-		new Setting(contentEl).setName(t("commandBuilder.builtIn")).setHeading();
+		const fixedHeading = new Setting(contentEl)
+			.setName(t("commandBuilder.builtIn"))
+			.setHeading();
+		fixedHeading.settingEl.addClass("cs-reset-heading");
+		this.syncFixedReset = addFieldResetButton(
+			fixedHeading,
+			t("settings.resetAction"),
+			() => FIXED_COMMAND_IDS.every((id) => isFixedCommandEnabled(this.host.settings, id)),
+			() => void this.resetFixedCommands(),
+		);
 		this.fixedListEl = contentEl.createDiv({ cls: "cs-command-fixed-list" });
 		this.renderFixedList();
 
@@ -106,7 +117,19 @@ export class CommandBuilderModal extends Modal {
 
 	onClose(): void {
 		this.host.registry.offChange(this.onRegistryChange);
+		this.syncFixedReset = undefined;
 		this.contentEl.empty();
+	}
+
+	private async resetFixedCommands(): Promise<void> {
+		// Use the existing registration path so the palette updates immediately.
+		// Obsidian provides no public API for clearing user-assigned hotkeys;
+		// re-enabling commands deliberately preserves those bindings.
+		await Promise.all(FIXED_COMMAND_IDS
+			.filter((id) => !isFixedCommandEnabled(this.host.settings, id))
+			.map((id) => this.host.setFixedCommandEnabled(id, true)));
+		this.renderFixedList();
+		this.syncFixedReset?.();
 	}
 
 	/** Signatures already in use, optionally ignoring the command being edited. */
@@ -203,6 +226,7 @@ export class CommandBuilderModal extends Modal {
 					for (const chip of hotkeyChips) chip.hidden = !enabled;
 					hotkeyButton.disabled = !enabled;
 					toggle.setValue(enabled);
+					this.syncFixedReset?.();
 				});
 		}
 	}
