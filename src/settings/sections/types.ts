@@ -10,6 +10,7 @@ import type { OutlineDecorator } from "../../outline/OutlineDecorator";
 import type { PackDataStore } from "../../icons/PackDataStore";
 import type { LocaleStore } from "../../i18n/LocaleStore";
 import type {
+	CalloutDefinition,
 	CalloutIcon,
 	CalloutRenderRole,
 	PluginSettings,
@@ -23,7 +24,7 @@ export type SettingsTabPlugin = Plugin & {
 	settings: PluginSettings;
 	settingsEditOpen: boolean;
 
-	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite"> & Partial<Pick<SettingsWriter, "status">>;
+	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite" | "commit"> & Partial<Pick<SettingsWriter, "status">>;
 
 	localState: DeviceLocalStore;
 	onIconCacheChange(cb: () => void): () => void;
@@ -57,6 +58,8 @@ export type SettingsSectionContext = {
 	app: App;
 	plugin: SettingsTabPlugin;
 	display: () => void;
+	/** Reveal a newly created row even when it sorts beyond the first page. */
+	revealCallout?: (def: CalloutDefinition) => void;
 
 	registerDisposer: (dispose: () => void) => void;
 };

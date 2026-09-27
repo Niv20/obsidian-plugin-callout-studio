@@ -176,6 +176,12 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 			app: this.app,
 			plugin: this.plugin,
 			display: () => this.display(),
+			revealCallout: (def) => {
+				const kind = this.plugin.registry.themeOwns(def) ? "theme" : "user";
+				this.paging[kind].expanded = true;
+				this.plugin.localState.setExpanded(kind, true);
+				this.display();
+			},
 			registerDisposer: (dispose) => this.sectionDisposers.push(dispose),
 		};
 	}

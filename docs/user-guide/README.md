@@ -9,7 +9,7 @@ There's a lot to explore in Callout Studio — from callout types and custom col
 | [03 - Custom color palettes](03-custom-color-palettes.md)                  | Create solid, gradient, and transparent palettes and reuse them.                   |
 | [04 - Custom icons & emojis](04-custom-icons-and-emojis.md)                | Browse icon libraries, use emoji, upload graphics, or remove an icon.              |
 | [05 - Fallback styles & discovery](05-fallback-styles-and-discovery.md)    | Control unknown callouts and save types found in your vault.                       |
-| [06 - Editing, replacing & deleting](06-editing-replacing-and-deleting.md) | Safely change, replace, reset, or remove callouts.                                 |
+| [06 - Editing, replacing & deleting](06-editing-replacing-and-deleting.md) | Safely edit, duplicate, replace, reset, or remove callouts.                        |
 | [07 - Global styling](07-global-styling.md)                                | Set shared borders, corners, spacing, alignment, and scale.                        |
 | [08 - The right-click menu](08-the-right-click-menu.md)                    | Use and customize context-menu actions for each callout format.                    |
 | [09 - Commands & hotkeys](09-commands-and-hotkeys.md)                      | Wrap and unwrap content, create commands, and assign shortcuts.                    |

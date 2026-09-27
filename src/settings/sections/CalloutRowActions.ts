@@ -2,7 +2,7 @@
  * settings/sections/CalloutRowActions.ts — Row-level context menus in the settings list.
  *
  * Opens a dropdown Menu for a callout row when the user clicks the three-dot
- * button. User rows get options like Delete and Convert to fallback; built-in
+ * button. User rows get Duplicate, Delete and Convert to fallback; built-in
  * rows get Reset to default. The flows that actually rewrite notes live next
  * door in `calloutVaultActions.ts` — this file decides which items a row is
  * offered. Menu counts come from the read-only occurrence index; operations
@@ -16,6 +16,7 @@ import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
 import { addDeleteItem } from "./rowOwnership";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
+import { addDuplicateItem } from "./duplicateCallout";
 import {
 	handleCalloutReplace,
 	handleClearCalloutUsages,
@@ -83,6 +84,7 @@ export async function openRowMenu(
 	const usage = addUsageMenuItem(menu, ctx.app, allIds);
 
 	menu.addSeparator();
+	addDuplicateItem(menu, ctx, def);
 
 	if (usage?.fileCount !== 0) {
 		menu.addItem((item) =>

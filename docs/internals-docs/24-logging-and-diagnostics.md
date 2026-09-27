@@ -108,6 +108,11 @@ it does not emit a separate success popup per backup. See
 for the status, deduplication and retry contract.
 There are no automatic scan or prune logs.
 
+`settings/sections/duplicateCallout.ts` reports duplication failures through
+`console.error` and `notice.calloutDuplicateFailed`. The success notice follows
+the completed settings commit. If only its final recovery checkpoint fails,
+the valid saved copy remains available and the failure notice still appears.
+
 ### Icon pack and webfont pipeline — `console.warn`
 
 Network fetch, disk cache, and integrity verification for icon packs and

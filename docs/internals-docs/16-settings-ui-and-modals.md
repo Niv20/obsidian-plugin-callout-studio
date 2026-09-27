@@ -368,6 +368,35 @@ too (see [The three sections pin their headings](#the-three-sections-pin-their-h
 palettes is the standalone fourth). Unlike the other sections, it keeps only the
 list of saved palettes and no additional orphan groups.
 
+### Duplicating a saved custom callout
+
+The row's three-dot menu offers **Duplicate** with the Lucide `copy` icon for
+persisted, non-built-in definitions. Theme-only definitions are excluded; a
+saved custom definition remains eligible when the theme controls its preview.
+Duplication reads the stored definition, not the theme's rendered appearance
+or a reconstructed editor form, and deep-copies its complete state. Apart from
+the new display name, primary ID and aliases, nested styling, flags, metadata
+and palette references remain unchanged. In particular, a stale `paletteId`
+and its baked colors survive, preserving the editor's **Deleted color** state.
+
+New IDs pass through `sanitizeCalloutIdInput`, so suffixes are `copy`,
+`copy 2`, and so on with spaces rather than hyphens. The generated primary ID
+and aliases must not collide with any existing primary ID, alias or equivalent
+Obsidian attribute spelling, or with one another. Display names are also
+unique. Base text is truncated before adding the suffix to stay within the
+200-code-unit ID limit and 80-code-unit display-name limit without splitting
+a surrogate pair.
+
+The action validates and commits an isolated settings snapshot through
+`SettingsWriter.commit`, publishing the registry definition only from its
+after-write callback. A completed commit triggers the success `Notice` and
+`revealCallout`, which expands the destination section and its pagination
+before rendering so a duplicate beyond the first 20 rows is visible too.
+Validation and pre-write failures leave the registry unchanged and show an
+error `Notice`. If a final recovery-checkpoint failure occurs after the valid
+copy has reached disk and the registry, the action keeps that durable copy,
+refreshes the list and shows the error `Notice`. No vault tokens are rewritten.
+
 ### `sectionDisclosure.ts` — a heading you can fold
 
 `attachSectionDisclosure(setting, bodyEl, initiallyExpanded = true, onToggle?)`

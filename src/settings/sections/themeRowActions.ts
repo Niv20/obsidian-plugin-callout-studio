@@ -15,9 +15,9 @@
  *   who wants a different design creates a new callout under a different ID,
  *   the ordinary way, from the section that is theirs.
  *
- * What is left is honest, and it is only about the vault: how much of it this
- * callout occupies, and the two ways to change that. Both vault-writing actions
- * recheck current notes before acting; vault events invalidate the shared index.
+ * Vault actions recheck current notes before acting; vault events invalidate
+ * the shared index. A saved custom definition also offers Duplicate, which
+ * copies its stored Studio style under a new identity without changing this row.
  */
 import { Menu, setIcon, setTooltip } from "obsidian";
 import { t } from "../../i18n";
@@ -29,6 +29,7 @@ import {
 } from "./calloutVaultActions";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
 import { ThemeCalloutPreviewModal } from "../ThemeCalloutPreviewModal";
+import { addDuplicateItem } from "./duplicateCallout";
 
 /** One 32×32 icon button, in the same shape the view and `⋯` actions use. */
 function addRowButton(
@@ -46,8 +47,8 @@ function addRowButton(
 /**
  * The `⋯` menu for a theme-owned row.
  *
- * Three items, none of which claims to change how the callout looks: what the
- * callout costs in the vault, and the two ways to spend less of it.
+ * Usage and vault actions, plus Duplicate for saved custom definitions.
+ * None changes how the existing theme-owned callout looks.
  *
  * This is also the only place the count appears. The row itself does not carry
  * one any more — a use count reads as something to act on, and on a row whose
@@ -68,6 +69,7 @@ export async function openThemeRowMenu(
 	const menu = new Menu();
 	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
 	menu.addSeparator();
+	addDuplicateItem(menu, ctx, def);
 
 	if (usage?.fileCount !== 0) {
 		menu.addItem((item) =>
