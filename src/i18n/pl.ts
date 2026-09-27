@@ -103,6 +103,9 @@ export const pl: Record<string, string> = {
 	"settings.usageInfo": "{{count}} użyć w {{files}} pliku(ach)",
 	"settings.replaceAction": "Zastąp w vault",
 	"settings.deleteAction": "Usuń",
+	"settings.duplicateAction": "Duplikuj",
+	"notice.calloutDuplicated": "Callout zduplikowano jako „{{name}}”.",
+	"notice.calloutDuplicateFailed": "Nie udało się zduplikować callouta. Sprawdź stan zapisu i spróbuj ponownie.",
 	"settings.resetAction": "Resetuj do domyślnego",
 	"settings.makeFallbackAction": "Użyj domyślnego stylu zapasowego",
 

@@ -103,6 +103,9 @@ export const fa: Record<string, string> = {
 	"settings.usageInfo": "{{count}} بار استفاده در {{files}} فایل",
 	"settings.replaceAction": "جایگزینی در vault",
 	"settings.deleteAction": "حذف",
+	"settings.duplicateAction": "تکثیر",
+	"notice.calloutDuplicated": "callout با نام «{{name}}» تکثیر شد.",
+	"notice.calloutDuplicateFailed": "تکثیر callout ممکن نشد. وضعیت ذخیره‌سازی را بررسی کنید و دوباره امتحان کنید.",
 	"settings.resetAction": "بازنشانی به پیش‌فرض",
 	"settings.makeFallbackAction": "استفاده از سبک پشتیبان پیش‌فرض",
 

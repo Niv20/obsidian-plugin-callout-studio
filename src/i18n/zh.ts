@@ -152,6 +152,9 @@ export const zh: Record<string, string> = {
 	"settings.usageInfo": "在 {{files}} 个文件中使用了 {{count}} 次",
 	"settings.replaceAction": "在库中替换",
 	"settings.deleteAction": "删除",
+	"settings.duplicateAction": "复制",
+	"notice.calloutDuplicated": "已将 callout 复制为“{{name}}”。",
+	"notice.calloutDuplicateFailed": "无法复制 callout。请检查保存状态后重试。",
 	"settings.resetAction": "重置为默认值",
 	"settings.makeFallbackAction": "使用默认回退样式",
 

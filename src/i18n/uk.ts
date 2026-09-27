@@ -155,6 +155,9 @@ export const uk: Record<string, string> = {
 	"settings.usageInfo": "{{count}} використань у {{files}} файлі(ах)",
 	"settings.replaceAction": "Замінити у сховищі",
 	"settings.deleteAction": "Видалити",
+	"settings.duplicateAction": "Дублювати",
+	"notice.calloutDuplicated": "Callout дубльовано під назвою «{{name}}».",
+	"notice.calloutDuplicateFailed": "Не вдалося дублювати callout. Перевірте стан збереження й повторіть спробу.",
 	"settings.resetAction": "Скинути до типового",
 	"settings.makeFallbackAction":
 		"Використовувати резервний стиль за замовчуванням",

@@ -104,6 +104,9 @@ export const ja: Record<string, string> = {
 	"settings.usageInfo": "{{files}}個のファイルで{{count}}回使用",
 	"settings.replaceAction": "vaultで置き換え",
 	"settings.deleteAction": "削除",
+	"settings.duplicateAction": "複製",
+	"notice.calloutDuplicated": "コールアウトを「{{name}}」として複製しました。",
+	"notice.calloutDuplicateFailed": "コールアウトを複製できませんでした。保存状態を確認して、もう一度お試しください。",
 	"settings.resetAction": "デフォルトにリセット",
 	"settings.makeFallbackAction": "デフォルトフォールバックスタイルを使用",
 

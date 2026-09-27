@@ -124,6 +124,9 @@ export const he: Record<string, string> = {
 	"settings.usageInfo": "בשימוש {{count}} פעמים ב־{{files}} קבצים",
 	"settings.replaceAction": "החלפה בכספת",
 	"settings.deleteAction": "מחיקה",
+	"settings.duplicateAction": "שכפול",
+	"notice.calloutDuplicated": "ה־callout שוכפל בשם „{{name}}”.",
+	"notice.calloutDuplicateFailed": "לא ניתן לשכפל את ה־callout. בדוק את מצב השמירה ונסה שוב.",
 	"settings.resetAction": "איפוס לברירת־מחדל",
 	"settings.makeFallbackAction": "החלת עיצוב ברירת־המחדל",
 

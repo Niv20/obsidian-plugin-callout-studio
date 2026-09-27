@@ -155,6 +155,9 @@ export const vi: Record<string, string> = {
 	"settings.usageInfo": "{{count}} lần sử dụng trong {{files}} tệp",
 	"settings.replaceAction": "Thay thế trong vault",
 	"settings.deleteAction": "Xóa",
+	"settings.duplicateAction": "Nhân bản",
+	"notice.calloutDuplicated": "Đã nhân bản callout thành “{{name}}”.",
+	"notice.calloutDuplicateFailed": "Không thể nhân bản callout. Hãy kiểm tra trạng thái lưu rồi thử lại.",
 	"settings.resetAction": "Đặt lại về mặc định",
 	"settings.makeFallbackAction": "Sử dụng kiểu dự phòng mặc định",
 

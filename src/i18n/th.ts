@@ -154,6 +154,9 @@ export const th: Record<string, string> = {
 	"settings.usageInfo": "ใช้งาน {{count}} ครั้งใน {{files}} ไฟล์",
 	"settings.replaceAction": "แทนที่ใน vault",
 	"settings.deleteAction": "ลบ",
+	"settings.duplicateAction": "ทำสำเนา",
+	"notice.calloutDuplicated": "ทำสำเนา callout เป็น “{{name}}” แล้ว",
+	"notice.calloutDuplicateFailed": "ทำสำเนา callout ไม่ได้ โปรดตรวจสอบสถานะการบันทึกแล้วลองอีกครั้ง",
 	"settings.resetAction": "รีเซ็ตเป็นค่าเริ่มต้น",
 	"settings.makeFallbackAction": "ใช้สไตล์สำรองเริ่มต้น",
 

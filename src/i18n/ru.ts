@@ -155,6 +155,9 @@ export const ru: Record<string, string> = {
 	"settings.usageInfo": "{{count}} использований в {{files}} файле(ах)",
 	"settings.replaceAction": "Заменить в хранилище",
 	"settings.deleteAction": "Удалить",
+	"settings.duplicateAction": "Дублировать",
+	"notice.calloutDuplicated": "Callout дублирован под именем «{{name}}».",
+	"notice.calloutDuplicateFailed": "Не удалось дублировать callout. Проверьте состояние сохранения и попробуйте снова.",
 	"settings.resetAction": "Сбросить до умолчания",
 	"settings.makeFallbackAction": "Использовать резервный стиль по умолчанию",
 

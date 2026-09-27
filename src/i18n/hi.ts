@@ -103,6 +103,9 @@ export const hi: Record<string, string> = {
 	"settings.usageInfo": "{{files}} फ़ाइल(ों) में {{count}} बार उपयोग",
 	"settings.replaceAction": "vault में बदलें",
 	"settings.deleteAction": "हटाएँ",
+	"settings.duplicateAction": "डुप्लिकेट करें",
+	"notice.calloutDuplicated": "कॉलआउट को \"{{name}}\" नाम से डुप्लिकेट किया गया।",
+	"notice.calloutDuplicateFailed": "कॉलआउट डुप्लिकेट नहीं हो सका। सेव करने की स्थिति जाँचें और फिर कोशिश करें।",
 	"settings.resetAction": "डिफ़ॉल्ट पर रीसेट करें",
 	"settings.makeFallbackAction": "डिफ़ॉल्ट फ़ॉलबैक स्टाइल उपयोग करें",
 

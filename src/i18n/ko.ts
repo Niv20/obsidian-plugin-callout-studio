@@ -104,6 +104,9 @@ export const ko: Record<string, string> = {
 	"settings.usageInfo": "{{files}}개의 파일에서 {{count}}번 사용",
 	"settings.replaceAction": "볼트에서 교체",
 	"settings.deleteAction": "삭제",
+	"settings.duplicateAction": "복제",
+	"notice.calloutDuplicated": "콜아웃이 \"{{name}}\"(으)로 복제되었습니다.",
+	"notice.calloutDuplicateFailed": "콜아웃을 복제할 수 없습니다. 저장 상태를 확인한 후 다시 시도하세요.",
 	"settings.resetAction": "기본값으로 재설정",
 	"settings.makeFallbackAction": "기본 폴백 스타일 사용",
 

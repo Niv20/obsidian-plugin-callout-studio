@@ -103,6 +103,9 @@ export const ar: Record<string, string> = {
 	"settings.usageInfo": "{{count}} استخدام في {{files}} ملف",
 	"settings.replaceAction": "استبدال في المخزن",
 	"settings.deleteAction": "حذف",
+	"settings.duplicateAction": "تكرار",
+	"notice.calloutDuplicated": "تم تكرار التنبيه باسم \"{{name}}\".",
+	"notice.calloutDuplicateFailed": "تعذّر تكرار التنبيه. تحقّق من حالة الحفظ ثم حاول مرة أخرى.",
 	"settings.resetAction": "إعادة التعيين إلى الافتراضي",
 	"settings.makeFallbackAction": "استخدام النمط الاحتياطي الافتراضي",
 

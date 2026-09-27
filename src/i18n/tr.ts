@@ -154,6 +154,9 @@ export const tr: Record<string, string> = {
 	"settings.usageInfo": "{{files}} dosyada {{count}} kullanım",
 	"settings.replaceAction": "Vault'ta değiştir",
 	"settings.deleteAction": "Sil",
+	"settings.duplicateAction": "Çoğalt",
+	"notice.calloutDuplicated": "Callout \"{{name}}\" adıyla çoğaltıldı.",
+	"notice.calloutDuplicateFailed": "Callout çoğaltılamadı. Kaydetme durumunu kontrol edip tekrar deneyin.",
 	"settings.resetAction": "Varsayılana sıfırla",
 	"settings.makeFallbackAction": "Varsayılan geri dönüş stilini kullan",
 

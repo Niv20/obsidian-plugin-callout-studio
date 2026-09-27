@@ -103,6 +103,9 @@ export const id: Record<string, string> = {
 	"settings.usageInfo": "{{count}} penggunaan di {{files}} file",
 	"settings.replaceAction": "Ganti di vault",
 	"settings.deleteAction": "Hapus",
+	"settings.duplicateAction": "Duplikasikan",
+	"notice.calloutDuplicated": "Callout diduplikasi sebagai \"{{name}}\".",
+	"notice.calloutDuplicateFailed": "Callout tidak dapat diduplikasi. Periksa status penyimpanan, lalu coba lagi.",
 	"settings.resetAction": "Reset ke default",
 	"settings.makeFallbackAction": "Gunakan gaya fallback default",
 

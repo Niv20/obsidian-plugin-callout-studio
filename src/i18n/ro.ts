@@ -154,6 +154,9 @@ export const ro: Record<string, string> = {
 	"settings.usageInfo": "{{count}} utilizare(i) în {{files}} fișier(e)",
 	"settings.replaceAction": "Înlocuiți în vault",
 	"settings.deleteAction": "Șterge",
+	"settings.duplicateAction": "Duplică",
+	"notice.calloutDuplicated": "Callout duplicat cu numele „{{name}}”.",
+	"notice.calloutDuplicateFailed": "Calloutul nu a putut fi duplicat. Verifică starea salvării și încearcă din nou.",
 	"settings.resetAction": "Resetează la implicit",
 	"settings.makeFallbackAction": "Utilizați stilul de rezervă implicit",
 

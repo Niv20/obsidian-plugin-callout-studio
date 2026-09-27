@@ -103,6 +103,9 @@ export const cs: Record<string, string> = {
 	"settings.usageInfo": "{{count}} použití v {{files}} souboru(ech)",
 	"settings.replaceAction": "Nahradit ve vaultu",
 	"settings.deleteAction": "Smazat",
+	"settings.duplicateAction": "Duplikovat",
+	"notice.calloutDuplicated": "Callout byl duplikován jako „{{name}}“.",
+	"notice.calloutDuplicateFailed": "Callout se nepodařilo duplikovat. Zkontrolujte stav ukládání a zkuste to znovu.",
 	"settings.resetAction": "Obnovit výchozí",
 	"settings.makeFallbackAction": "Použít výchozí záložní styl",
 

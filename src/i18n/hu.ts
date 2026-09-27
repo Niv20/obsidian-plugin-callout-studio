@@ -104,6 +104,9 @@ export const hu: Record<string, string> = {
 	"settings.usageInfo": "{{count}} előfordulás {{files}} fájlban",
 	"settings.replaceAction": "Csere a tárban",
 	"settings.deleteAction": "Törlés",
+	"settings.duplicateAction": "Másolat készítése",
+	"notice.calloutDuplicated": "A callout másolata „{{name}}” néven készült.",
+	"notice.calloutDuplicateFailed": "A callout másolása nem sikerült. Ellenőrizd a mentés állapotát, majd próbáld újra.",
 	"settings.resetAction": "Visszaállítás alapértelmezettre",
 	"settings.makeFallbackAction": "Alapértelmezett tartalékstílus használata",
 
