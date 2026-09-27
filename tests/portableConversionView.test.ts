@@ -32,6 +32,7 @@ describe("portable conversion sidebar", () => {
 		try {
 			await h.view.onOpen();
 			assert.equal(h.inputs().length, 3);
+			assert.deepEqual(h.root.querySelectorAll(".cs-portable-after").map(el => el.textContent), ["note", "tip", "Keep me"]);
 			assert.deepEqual(h.root.querySelectorAll(".cs-portable-before").map(el => el.textContent), ["[!note]", "[!tip]", "[!warning]{Keep me}"]);
 			h.choose(1, false); h.choose(2, false);
 			h.click("convert"); await h.tasks[h.tasks.length - 1];
@@ -74,13 +75,14 @@ describe("portable conversion sidebar", () => {
 			assert.equal(all.getAttribute("aria-label"), t("portable.selectNone"));
 		} finally { await h.destroy(); }
 	});
-	it("renders all source text literally without truncating long or HTML-looking lines", async () => {
+	it("renders source and replacement text literally without truncating long or HTML-looking lines", async () => {
 		const source = `[!note]{Text <img src="x" onerror="alert(1)"> ${"x".repeat(500)}}`;
 		const h = harness({ "a.md": source });
 		try {
 			await h.view.onOpen();
 			assert.equal(h.root.querySelector("img"), null);
 			const codes = h.root.querySelectorAll("code");
+			assert.equal(codes.length, 2);
 			assert.equal(codes[0]!.textContent, source);
 			assert.equal(codes[1]!.textContent, source.slice("[!note]{".length, -1));
 			assert.ok(codes.every(code => code.getAttribute("dir") === "ltr"));
@@ -131,18 +133,23 @@ describe("portable conversion sidebar", () => {
 			assert.equal(h.reads.length, reads);
 		} finally { setLocale(previous); await h.destroy(); }
 	});
-	it("opens and reveals the right sidebar from settings", async () => {
-		const h = harness(), events: string[] = [];
+	it("creates the conversion tab only when opened from settings", async () => {
+		const h = harness(), events: string[] = [], previousLocale = getLocale();
 		try {
+			setLocale("en");
 			Object.assign(h.app, { setting: { close: () => events.push("close") } });
 			const leaf = { loadIfDeferred: async () => { events.push("load"); } } as unknown as WorkspaceLeaf;
 			Object.assign(h.app.workspace, {
 				ensureSideLeaf: async (type: string, side: string) => { events.push(`${type}:${side}`); return leaf; },
 				revealLeaf: async (value: WorkspaceLeaf) => { assert.equal(value, leaf); events.push("reveal"); },
 			});
+			registerPortableConversionView({ app: h.app, registerView: () => {} } as unknown as Plugin);
+			assert.deepEqual(events, [], "registering the view must not create a conversion tab");
 			await openPortableConversionFromSettings(h.app);
 			assert.deepEqual(events, ["close", `${PORTABLE_CONVERSION_VIEW}:right`, "load", "reveal"]);
-			assert.equal(new PortableConversionView({ app: h.app } as unknown as WorkspaceLeaf).getViewType(), PORTABLE_CONVERSION_VIEW);
-		} finally { await h.destroy(); }
+			const view = new PortableConversionView({ app: h.app } as unknown as WorkspaceLeaf);
+			assert.equal(view.getViewType(), PORTABLE_CONVERSION_VIEW);
+			assert.equal(view.getDisplayText(), "Review conversion");
+		} finally { setLocale(previousLocale); await h.destroy(); }
 	});
 });

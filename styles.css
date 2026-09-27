@@ -6224,22 +6224,13 @@ body:not(.is-phone)
 	font-weight: bold;
 }
 
-/* Portable Markdown: compact rules first, a separate review sidebar for edits. */
+/* Optional conversion help and inline replacement editing in the review sidebar. */
 .cs-portable-modal {
 	width: min(700px, 94vw);
 }
 
 .cs-portable-rules {
 	margin-block: var(--size-4-3);
-}
-
-.cs-portable-rules + .cs-portable-rules {
-	margin-block-start: var(--size-4-6);
-}
-
-.cs-portable-rules h3 {
-	margin: 0 0 var(--size-4-2);
-	font-size: var(--font-ui-medium);
 }
 
 .cs-portable-rules table {
@@ -6283,97 +6274,83 @@ body:not(.is-phone)
 	font-size: var(--font-small);
 }
 
-.cs-portable-custom-modal {
-	width: min(680px, 94vw);
-}
-
-.cs-portable-custom-label {
-	font-size: var(--font-ui-small);
-	color: var(--text-muted);
-	font-family: var(--font-interface);
-	align-self: center;
-}
-
-.cs-portable-custom-input {
-	flex: 1 1 0;
+.cs-portable-inline {
 	min-inline-size: 0;
-	inline-size: 0;
-	font-family: var(--font-monospace);
-	color: var(--text-normal);
-	line-height: 1.5;
-}
-
-.cs-portable-custom-fields {
-	container: cs-custom-editor / inline-size;
-	display: grid;
-	gap: var(--size-4-4);
-}
-
-.cs-portable-custom-field {
-	display: grid;
-	gap: var(--size-4-3);
-	min-inline-size: 0;
-	margin: 0;
-}
-
-.cs-portable-custom-row {
-	display: grid;
-	grid-template-columns: max-content minmax(0, 1fr);
-	align-items: start;
-	gap: var(--size-4-3);
-	min-inline-size: 0;
-}
-
-.cs-portable-custom-context {
-	display: flex;
-	align-items: center;
-	gap: 0.4em;
-	padding-block: var(--size-4-2);
-	color: var(--text-normal);
-	font-family: var(--font-monospace);
-	font-size: var(--font-ui-small);
-	overflow-wrap: anywhere;
-}
-
-.cs-portable-custom-context code {
-	flex: 0 1 auto;
-	min-inline-size: 0;
-	white-space: pre-wrap;
-	overflow-wrap: anywhere;
 }
 
 .cs-portable-custom-editor {
 	display: flex;
-	align-items: center;
-	gap: var(--size-4-2);
+	align-items: baseline;
+	gap: 0.4em;
 	min-inline-size: 0;
 }
 
-.cs-portable-custom-fixed {
-	flex: 0 1 auto;
+.cs-portable-input-grow {
+	display: grid;
+	flex: 1 1 0;
 	min-inline-size: 0;
-	max-inline-size: 25%;
-	color: var(--text-faint);
+	border-radius: var(--radius-s);
+	background: color-mix(in srgb, var(--interactive-accent) 8%, transparent);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--interactive-accent) 25%, transparent);
+}
+
+.cs-portable-input-grow:focus-within {
+	background: color-mix(in srgb, var(--interactive-accent) 12%, transparent);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--interactive-accent) 50%, transparent);
+}
+
+.cs-portable-input-mirror,
+.cs-portable-inline textarea.cs-portable-custom-input {
+	grid-area: 1 / 1;
+	box-sizing: border-box;
+	inline-size: 100%;
+	min-inline-size: 0;
+	min-block-size: 1.5em;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--text-normal);
 	font-family: var(--font-monospace);
 	font-size: var(--font-ui-small);
-	white-space: nowrap;
+	font-weight: var(--font-normal);
+	line-height: 1.5;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	/* Match the LTR Markdown preview's text origin, including RTL input. */
+	text-align: left;
+}
+
+.cs-portable-input-mirror {
+	visibility: hidden;
+}
+
+.cs-portable-inline textarea.cs-portable-custom-input {
+	block-size: 100%;
+	resize: none;
 	overflow: hidden;
-	text-overflow: ellipsis;
+	caret-color: var(--text-accent);
+	color: color-mix(in srgb, var(--text-normal) 85%, var(--text-accent));
+}
+
+.cs-portable-inline textarea.cs-portable-custom-input:focus {
+	border: 0;
+	outline: none;
+	box-shadow: none;
 }
 
 .cs-portable-custom-markers {
 	flex: 0 0 auto;
-	max-inline-size: none;
-	overflow: visible;
-}
-
-@container cs-custom-editor (max-width: 480px) {
-	.cs-portable-custom-outer-word {
-		display: none;
-	}
+	color: var(--text-faint);
+	font-family: var(--font-monospace);
+	font-size: var(--font-ui-small);
+	white-space: pre;
 }
 
 .cs-portable-custom-error {
+	margin-block-start: var(--size-4-2);
 	color: var(--text-error);
 	font-size: var(--font-ui-small);
 }
@@ -6582,6 +6559,18 @@ button.cs-sidebar-result {
 	line-height: 1.5;
 }
 
+.cs-portable-title-row {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-2);
+}
+
+.cs-portable-help {
+	flex: none;
+	margin-inline-start: auto;
+	color: var(--text-muted);
+}
+
 .cs-portable-intro-actions {
 	display: flex;
 	align-items: center;
@@ -6713,21 +6702,130 @@ button.cs-sidebar-result {
 }
 
 .cs-portable-change-body {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-2-1);
 	min-width: 0;
 	block-size: 100%;
+	padding: var(--size-4-3);
+}
+
+.cs-portable-change.is-editing .cs-portable-change-body {
+	border-color: var(--interactive-accent);
+	background: var(--background-modifier-active-hover);
+}
+
+button.cs-portable-source,
+button.cs-portable-after-button {
+	display: block;
+	inline-size: 100%;
+	min-inline-size: 0;
+	block-size: auto;
+	min-block-size: 1.5em;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-s);
+	background: transparent;
+	box-shadow: none;
+	color: inherit;
+	text-align: start;
+	white-space: normal;
+}
+
+button.cs-portable-source {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--size-4-2);
+	cursor: pointer;
+}
+
+button.cs-portable-after-button {
+	cursor: text;
+	transition: background-color 140ms ease, box-shadow 140ms ease;
+}
+
+button.cs-portable-after-button:not(:disabled):hover {
+	background: color-mix(in srgb, var(--interactive-accent) 8%, transparent);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--interactive-accent) 8%, transparent);
+}
+
+button.cs-portable-after-button:not(:disabled):hover .cs-portable-after {
+	color: var(--text-accent);
+}
+
+button.cs-portable-source:focus-visible,
+button.cs-portable-after-button:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 3px;
+}
+
+.cs-portable-change .cs-portable-change-location {
+	padding-inline-end: 60px;
+}
+
+.cs-portable-card-actions {
+	position: absolute;
+	inset-block-start: var(--size-4-2);
+	inset-inline-end: var(--size-4-2);
+	display: flex;
+	align-items: center;
+	gap: var(--size-2-1);
+	transition: opacity 160ms ease;
+}
+
+.cs-portable-card-actions button {
+	--icon-size: 12px;
+	padding: var(--size-4-1);
+	color: var(--text-muted);
+}
+
+.cs-portable-card-actions button svg {
+	inline-size: 12px;
+	block-size: 12px;
+}
+
+.cs-portable-card-actions button[hidden] {
+	display: none;
+}
+
+.cs-portable-card-actions button:hover {
+	color: var(--text-normal);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.cs-portable-card-actions {
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.cs-portable-change:hover .cs-portable-card-actions,
+	.cs-portable-change:focus-within .cs-portable-card-actions,
+	.cs-portable-change.is-editing .cs-portable-card-actions {
+		opacity: 1;
+		pointer-events: auto;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cs-portable-card-actions,
+	button.cs-portable-after-button {
+		transition: none;
+	}
 }
 
 .cs-portable-change-location {
 	margin: 0;
 }
 
-.cs-portable-diff {
-	display: grid;
-	gap: var(--size-2-1);
-}
-
 .cs-portable-diff-line {
 	display: grid;
+	/* Both rows use the same em width, even inside a host-styled button. */
+	font-size: var(--font-ui-small);
+	inline-size: 100%;
+	min-inline-size: 0;
 	grid-template-columns: 3.5em minmax(0, 1fr);
 	align-items: baseline;
 	gap: var(--size-4-2);

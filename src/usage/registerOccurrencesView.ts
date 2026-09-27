@@ -11,6 +11,14 @@ export function registerOccurrencesView(plugin: Plugin & { registry: CalloutRegi
 	registeredViews.add(plugin);
 }
 
+/** Add the native sidebar tab at startup without selecting it or opening the sidebar. */
+export async function ensureOccurrencesSidebarTab(app: App): Promise<void> {
+	await app.workspace.ensureSideLeaf(CALLOUT_OCCURRENCES_VIEW, "right", {
+		active: false,
+		reveal: false,
+	});
+}
+
 export function refreshOccurrencesViewLocale(plugin: Plugin): void {
 	if (!registeredViews.has(plugin)) return;
 	for (const leaf of plugin.app.workspace.getLeavesOfType(CALLOUT_OCCURRENCES_VIEW)) {

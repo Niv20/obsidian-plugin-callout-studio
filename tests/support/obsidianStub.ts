@@ -129,14 +129,15 @@ export function requireApiVersion(): boolean {
 export class TFile {}
 export class Plugin {}
 export class Component {
-	/**
-	 * Real `Component` owns child lifetimes and unload callbacks. Nothing here
-	 * needs that, but several modules call these on construction and teardown
-	 * (`QuickInsertPreviews`, `ThemeAppearanceProbe`), so they have to exist or
-	 * the suite dies before it reaches the behaviour it is testing.
-	 */
+	/** Minimal cleanup support for components that own temporary DOM editors. */
+	private disposers: Array<() => void> = [];
 	load(): void {}
-	unload(): void {}
+	register(dispose: () => void): void { this.disposers.push(dispose); }
+	registerDomEvent(el: EventTarget, name: string, listener: EventListener): void {
+		el.addEventListener(name, listener);
+		this.register(() => el.removeEventListener(name, listener));
+	}
+	unload(): void { this.disposers.splice(0).forEach(dispose => dispose()); }
 }
 export class Modal {}
 export class Editor {}

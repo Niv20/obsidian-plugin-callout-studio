@@ -7,10 +7,10 @@ import { MarkdownView, TFile, type App, type Command, type EditorPosition, type 
 import { CalloutOccurrencesView } from "../src/usage/CalloutOccurrencesView";
 import { getCalloutOccurrenceIndex } from "../src/usage/CalloutOccurrenceIndex";
 import { openOccurrencesFromSettings } from "../src/usage/openFromSettings";
-import { openCalloutOccurrences, registerOccurrencesView, refreshOccurrencesViewLocale } from "../src/usage/registerOccurrencesView";
+import { ensureOccurrencesSidebarTab, openCalloutOccurrences, registerOccurrencesView, refreshOccurrencesViewLocale } from "../src/usage/registerOccurrencesView";
 import { registerQuickInsertRibbon } from "../src/icons/registerUiIcons";
 import { QUICK_INSERT_ICON_ID, STATISTICS_ICON_ID } from "../src/icons/uiIcons";
-import { t } from "../src/i18n";
+import { getLocale, setLocale, t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutCombobox } from "../src/settings/calloutCombobox";
 import { renderFallbackSection } from "../src/settings/sections/FallbackSection";
@@ -128,6 +128,18 @@ function fileSection(view: CalloutOccurrencesView, path: string): FakeElement | 
 }
 
 describe("callout occurrence sidebar", () => {
+	it("creates its right sidebar tab without activating or revealing it", async () => {
+		const calls: unknown[][] = [];
+		const app = { workspace: {
+			ensureSideLeaf: async (...args: unknown[]) => { calls.push(args); return {
+				loadIfDeferred: () => { throw new Error("The background tab must remain deferred"); },
+				setViewState: () => { throw new Error("The background tab must keep its saved state"); },
+			}; },
+			revealLeaf: () => { throw new Error("The sidebar must remain hidden"); },
+		} } as unknown as App;
+		await ensureOccurrencesSidebarTab(app);
+		assert.deepEqual(calls, [["callout-studio-occurrences", "right", { active: false, reveal: false }]]);
+	});
 	it("gives an open format menu the first Escape and restores the host scope on rebuild and close", async () => {
 		const h = harness({ "a.md": "[!note]" });
 		let hostEscapes = 0;
@@ -161,14 +173,18 @@ describe("callout occurrence sidebar", () => {
 		const commands: Command[] = [];
 		const states: unknown[] = [];
 		const sides: string[] = [];
+		const options: unknown[] = [];
+		let reveals = 0;
 		const leaf = {
 			loadIfDeferred: () => Promise.resolve(),
 			setViewState: (state: unknown) => { states.push(state); return Promise.resolve(); },
 		};
 		const app = { setting: { close: () => {} }, workspace: {
 			getLeavesOfType: () => [],
-			ensureSideLeaf: (_type: string, side: string) => { sides.push(side); return Promise.resolve(leaf); },
-			revealLeaf: () => Promise.resolve(),
+			ensureSideLeaf: (_type: string, side: string, option: unknown) => {
+				sides.push(side); options.push(option); return Promise.resolve(leaf);
+			},
+			revealLeaf: () => { reveals++; return Promise.resolve(); },
 		} } as unknown as App;
 		const plugin = { app, registry: new CalloutRegistry(), registerView: () => {}, addCommand: (command: Command) => { commands.push(command); } } as unknown as Plugin & { registry: CalloutRegistry };
 		registerOccurrencesView(plugin);
@@ -179,6 +195,13 @@ describe("callout occurrence sidebar", () => {
 		await openOccurrencesFromSettings(app, ["note"]);
 		await openCalloutOccurrences(app);
 		assert.deepEqual(sides, ["right", "right", "right", "right"]);
+		assert.deepEqual(options, [
+			{ active: true, reveal: true, state: { ids: ["warning"], role: "inline" } },
+			{ active: true, reveal: true, state: { allTypes: true, role: undefined } },
+			{ active: true, reveal: true, state: { ids: ["note"], role: undefined } },
+			{ active: true, reveal: true, state: { allTypes: true, role: undefined } },
+		]);
+		assert.equal(reveals, 4);
 		assert.deepEqual(states, [
 			{ type: "callout-studio-occurrences", active: true, state: { ids: ["warning"], role: "inline" } },
 			{ type: "callout-studio-occurrences", active: true, state: { allTypes: true, role: undefined } },
@@ -188,16 +211,20 @@ describe("callout occurrence sidebar", () => {
 	});
 	it("keeps the native right sidebar tab as the only occurrences toggle", () => {
 		const h = harness({ "a.md": "[!note]" });
+		const previousLocale = getLocale();
 		const ribbonIcons: string[] = [];
 		const plugin = {
 			app: h.app,
 			openQuickInsert: () => {},
 			addRibbonIcon: (icon: string) => { ribbonIcons.push(icon); },
 		} as unknown as Plugin & { openQuickInsert(): void };
-		registerQuickInsertRibbon(plugin);
-		assert.deepEqual(ribbonIcons, [QUICK_INSERT_ICON_ID]);
-		assert.equal(h.view.getIcon(), STATISTICS_ICON_ID, "the occurrences tab keeps its own native icon");
-		h.index.dispose();
+		try {
+			setLocale("en");
+			registerQuickInsertRibbon(plugin);
+			assert.deepEqual(ribbonIcons, [QUICK_INSERT_ICON_ID]);
+			assert.equal(h.view.getIcon(), STATISTICS_ICON_ID, "the occurrences tab keeps its own native icon");
+			assert.equal(h.view.getDisplayText(), "Find callouts");
+		} finally { setLocale(previousLocale); h.index.dispose(); }
 	});
 	it("keeps quick scans quiet without showing an authoritative zero", async () => {
 		let release: (text: string) => void = () => {};

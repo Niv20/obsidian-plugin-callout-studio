@@ -12,17 +12,24 @@ one scrollable tab: callout lists → fallback → custom palettes → global se
 → context menu → hotkeys → import/export → language → danger zone → footer.
 
 **Danger zone** contains **Convert to standard Markdown** first and
-**Reset everything** second. `PortableCalloutsModal` is a compact introduction:
-two example tables with two rows each (headings, then inline), isolated LTR source
-text, extra space between the tables, and a backup recommendation. There is no expanded-details section or arrows.
-It performs no vault reads. The red **Convert vault…** button opens the registered
-`PortableConversionView` in the right sidebar and closes settings.
+**Reset everything** second. Its **Review conversion** button opens the registered
+`PortableConversionView` directly in the right sidebar and closes settings.
+The question-mark button sits at the far trailing edge of the sidebar's title
+row. It opens `PortableConversionHelpModal`: an **About conversion** explanation
+with one four-row **Before**/**After** table, isolated LTR source text, and a
+backup recommendation. Heading and inline examples share the table without
+separate subheadings.
+The help modal performs no vault reads and has no conversion action.
+The **Review conversion** tab is created only by this action, rather than at
+startup. A tab restored by Obsidian from an earlier session is closed during
+plugin startup, so the review does not remain open across launches.
 
-**Callout Studio conversion** groups before/after replacements and dependent
+**Review conversion** groups before/after replacements and dependent
 link repairs by file, using the shared `ui/sidebarResults.ts` components. Each
 card shows its format and line number, with muted interface-font labels beside
-the monospace before/after text. Only the separate checkbox changes inclusion;
-the card's button navigates to its validated Markdown source. Source and link
+the monospace **Before** source and **After** replacement. Only the separate
+checkbox changes inclusion; the format/line label and **Before** text form the
+source-navigation button, while **After** starts inline editing. Source and link
 changes on the same selected heading line share one card. Each inline token,
 including its optional payload, has a separate card and selection; headings show
 their complete source line. Both previews wrap without truncation. Rows paginate in batches of
@@ -65,23 +72,46 @@ have their own region in the result scrollport. Exact unchanged row identities p
 selection; new or edited rows require fresh selection. Closing releases events,
 timers and preview state. Locale changes redraw the view without losing choices.
 
-The source card's icon-bearing Obsidian context menu opens
-`PortableCustomReplacementModal` through `portableConversionCustom.ts`.
-The modal has a read-only **Before** row and one editable **After** row, without
-format legends. `portableReplacementEditor.ts` exposes one text
-input for the selected inline token, with up to three read-only context words on
-each side (two on narrower panes). Read-only context stays on one line and may
-ellipsize as available space or text size changes; fixed heading markers cannot
-shrink away. Actual source text still wraps in full;
-heading rows expose only the title, keeping the container prefix, heading level,
-and closing markers fixed. Enter, input-method line breaks, and multiline pastes
-are blocked; save validates the values again before rebuilding the reviewed
-proposal. The modal snapshots the opening values, updates Save availability on
-input, and rejects unchanged drafts in the click handler as well. Returning every
-field to its opening value disables Save again. A purple **Custom** badge sits
-beside the format/line label. Restoring
-the default also rebuilds dependent heading-link repairs. These edits remain in
-the review until the separate conversion confirmation is accepted.
+Each editable source card has a pencil at its upper trailing corner. It fades
+in on hover or focus within the card and remains visible for touch input. The
+pencil, the replacement text, and the source card's icon-bearing Obsidian context
+menu all start the same inline edit through `portableConversionCustom.ts`.
+The `rotate-ccw` restore button beside the pencil is available only when the
+current replacement differs from the automatic default. During editing its
+visibility follows each keystroke, so returning to the default immediately
+hides it. It discards a dirty draft and restores the last saved value, or
+restores the default when the current value is already saved.
+`portableInlineReplacement.ts` edits **After** inside the card and keeps the
+read-only **Before** row visible, without separate Save or Cancel buttons.
+Entry selects all editable text and keeps the field focused without opening or
+scrolling the note. The card receives its own purple editing highlight;
+the previous source-navigation highlight clears so only one card stays purple.
+Checkbox inclusion is unchanged. Source navigation remains on the format/line
+label and **Before** text.
+The monospace input inherits the card background and removes the host's input
+border, shadow and outline. Both diff rows use the same explicit font sizing
+and label column so their source text aligns. Hover and editing states use a
+soft accent tint derived from the active theme.
+`portableReplacementEditor.ts` exposes one value for the selected inline token,
+without surrounding source words. Replacement text wraps in full; heading rows
+expose only the title for editing, keeping the visible container prefix, heading
+level, and closing markers fixed. These fixed markers cannot shrink away.
+
+Enter or clicking outside saves, and Escape cancels. Enter and Escape are ignored
+while an input method is composing; clicking outside commits the final composed
+input before closing the field.
+Newline insertion and multiline pastes are blocked; save validates the values
+again before rebuilding the reviewed proposal. The editor snapshots the opening
+value; finishing an unchanged draft exits editing without mutating the review.
+Escape or the active card's return-arrow button on a dirty draft restores its
+last saved/default preview. An outside click closes an invalid draft and shows
+a notice rather than leaving the input's editing appearance active. Conversion
+stays disabled until the active draft is saved or cancelled. Drafts survive
+redraws; they are cancelled when the current review becomes stale or closes.
+A purple **Custom** badge sits beside the format/line label. Outside an
+active edit, the return-arrow button restores the default replacement, as does
+the context-menu action; both rebuild dependent heading-link repairs. Saved
+edits remain in the review until the separate conversion confirmation is accepted.
 
 A separate `ConfirmModal` describes irreversible changes and partial-failure
 behavior. Revision guards prevent a stale or reopened view's confirmation from
@@ -1559,7 +1589,7 @@ typing `no` answers `Note` rather than `Annotation`.
 An optional `groupOf` callback supplies a stable group key, translated label,
 and numeric order. When supplied, groups take priority over search ranking,
 while rows within each group keep the normal match/name order. Only the
-**Callout Studio occurrences** picker enables this for registered and unregistered
+**Find callouts** picker enables this for registered and unregistered
 choices; other callout pickers keep their existing flat lists and choices.
 Headings and dividers reuse the palette picker's rendering, and filtering out
 all rows in a group removes its heading too. Each contiguous group is wrapped

@@ -8,9 +8,12 @@ everything**. Both ask for confirmation because they can make lasting changes.
 
 Use this when moving notes to an app without Callout Studio, or when you want
 to stop using the plugin's heading and inline formats. Choose **Review
-conversion** for a short explanation and examples. The red **Convert vault…**
-button opens **Callout Studio conversion** in the sidebar; it does not edit
-notes.
+conversion** to close settings and open the review directly in the right
+sidebar; this does not edit notes. The question-mark icon at the opposite end
+of the title row opens **About conversion**, with a single **Before**/**After**
+example table and backup advice. This tab appears when you open the review,
+rather than at startup. If it was left open in an earlier session, Callout
+Studio closes it on the next launch; use **Review conversion** to open a new review.
 
 ### What gets converted
 
@@ -51,28 +54,53 @@ type count as heading text, not as an inline payload.
 
 The sidebar groups results by file and shows the number of changes beside each
 file name. Select a file to open its note. Each card shows the format and line
-number, followed by **Before** and **After**. Heading cards show the complete
-heading because its title affects the replacement. Each inline callout gets a
-separate card showing its `[!type]` token and optional `{content}` payload, even
-when several are on one line. Long text wraps in full.
+number, followed by **Before** and **After** with the original text and proposed
+replacement. Heading cards show the complete heading. Each inline callout gets
+a separate card showing its `[!type]` token and optional `{content}` payload,
+even when several are on one line. Long text wraps in full.
 
-Select a card to open and select its exact source in the editor. Its highlight
-lasts while that source remains selected. Only the card's checkbox includes or
-excludes that replacement. The summary checkbox selects all changes, clears
-them all, or shows a dash when only some are selected. **Show more** reveals
-additional results; switching notes scrolls to that file's results.
+Select a card's format label or **Before** text to open and select its exact
+source in the editor. Its highlight lasts while that source remains selected.
+Only the card's checkbox includes or excludes that replacement. The summary
+checkbox selects all changes, clears them all, or shows a dash when only some
+are selected. **Show more** reveals additional results; switching notes scrolls
+to that file's results.
 
-To change a proposed replacement, right-click its card and choose **Custom
-replacement…**. For inline callouts, the editor also shows up to three nearby
-words on each side; for headings, the heading-level `#` marks stay read-only.
-Custom replacements must fit on one line. A heading title can be renamed, but
-not removed, moved to another level, or changed to introduce another heading
-or protected syntax. Saving changes the preview only; you still need to select
-and confirm the conversion. If a replacement is unsafe or conflicts with a
-link, it is rejected or deselected for review.
+To change a proposed replacement, click its **After** text or the pencil in the
+card's upper corner. The pencil fades in when you hover over the card or focus
+its controls, and stays visible on touch devices. Right-clicking the card and
+choosing **Custom replacement…** opens the same inline editor. The **After**
+text becomes an editable field while **Before** stays visible. All editable
+text is selected so typing replaces it immediately. The card gains a purple
+highlight while the note stays in place; any previous card highlight clears.
+Editing does not change the card's
+checkbox. To see the source in the note, click **Before** or the format and line
+label.
+The field contains only the replacement; surrounding words from the note are
+not shown. For headings, the heading-level `#` marks stay read-only.
 
-Custom text stays available while the sidebar is open as you edit other parts
-of a note. If its source changes, disappears, or becomes ambiguous, that
+Press Enter or click outside the field to save your replacement and return to
+the preview. Press Escape to discard the active draft. The return-arrow icon
+appears only when the current text differs from the automatic replacement; it
+disappears immediately if you type the automatic text again. It discards an
+unfinished change and returns to the last saved replacement. If the text has
+not changed since you opened the editor, the arrow restores the automatic
+replacement instead. Finishing an unchanged edit simply closes the editor.
+Conversion is unavailable until you finish or
+discard the active edit. Custom replacements must fit on one line;
+multiline pastes are blocked. A heading title can be renamed, but not removed,
+moved to another level, or changed to introduce another heading or protected
+syntax. Saving changes the preview only; you still need to select and confirm
+the conversion. If a replacement is unsafe or conflicts with a link, it is
+rejected or deselected for review. An invalid draft is discarded with a notice
+if you click away. When the card is not being edited, click the
+return arrow beside the pencil to restore its default replacement. You can
+also right-click the card and choose **Restore default replacement**.
+
+An unfinished draft survives interface-language redraws, but is discarded if
+the review becomes stale or closes. Saved custom
+text stays available while the sidebar is open as you edit other parts of a
+note. If its source changes, disappears, or becomes ambiguous, that
 customization is discarded and the affected change is cleared for review.
 
 ### Links to changed headings

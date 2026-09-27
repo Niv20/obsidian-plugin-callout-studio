@@ -4,12 +4,14 @@ Vault insights shows source references to callouts across your Markdown notes.
 
 ## Open the sidebar
 
-Run **Callout Studio: Callout occurrences** from the Command palette, or select
-**Find usages** from a callout's three-dot menu. Use the native
-**Callout Studio occurrences** tab in Obsidian's right sidebar to show or hide
-the open panel. If you close the tab, either action opens it again. This is the
-only on-screen occurrences control; there is no separate ribbon button or statistics window in
-Settings. The sidebar helps you filter callouts and navigate to their Markdown source.
+The **Find callouts** tab appears automatically at the top of Obsidian's right
+sidebar when Callout Studio starts. Select it to open the panel; the sidebar
+does not open automatically. You can also run **Callout Studio: Callout
+occurrences** from the Command palette, or select **Find usages** from a
+callout's three-dot menu. If you close the tab, either action opens it again.
+This is the only on-screen occurrences control; there is no separate ribbon
+button or statistics window in Settings. The sidebar helps you filter callouts
+and navigate to their Markdown source.
 
 Opening **Callout Studio: Callout occurrences** from the Command palette starts
 with **All types** and **All formats**. Opening **Find usages** from a callout's
@@ -81,7 +83,7 @@ up to 100 results; **Show more** reveals another page.
 Widen the sidebar to arrange each file's cards in two columns, read left to right
 and then onto the next row. File headings span both columns. Content has a maximum
 width and stays centered when the pane grows further. The file groups and cards
-use the same layout as **Callout Studio conversion**.
+use the same layout as **Review conversion**.
 
 The current Markdown note's file heading is highlighted in the results. The
 sidebar opens at the top with the filters visible, even if that note's section
@@ -116,9 +118,12 @@ reported as zero. Actions that change notes check current contents separately.
 ## Scanning behavior and exclusions
 
 There is no automatic discovery or unconditional startup scan. Opening a usage
-surface, including a restored occurrences sidebar, builds an in-memory index. Subsequent requests reuse it, and
-saved-note changes and edits in open Markdown editors are reflected automatically after a short delay. There is no manual Refresh button. Nothing is uploaded
-or written to plugin settings by this index. Brief scans and updates stay quiet;
+surface, including selecting **Find callouts** or restoring an already-open
+sidebar, builds an in-memory index. Adding the inactive tab at startup does not
+start a scan. Subsequent requests reuse the index, and saved-note changes and
+edits in open Markdown editors are reflected automatically after a short delay.
+There is no manual Refresh button. Nothing is uploaded or written to plugin
+settings by this index. Brief scans and updates stay quiet;
 if one remains in progress for two seconds, its status appears above the results.
 
 Fenced and indented code, inline code (including multiple-backtick and multiline

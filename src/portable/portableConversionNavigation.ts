@@ -47,7 +47,6 @@ export class PortableConversionNavigation {
 	private current?: string;
 	private opened = false;
 	private generation = 0;
-	private navigating = false;
 	private root?: HTMLElement;
 	private limit = PORTABLE_PAGE_SIZE;
 	private ready = false;
@@ -65,14 +64,14 @@ export class PortableConversionNavigation {
 	open(): void { this.opened = true; this.activeFile.open(); }
 	close(): void { this.opened = false; this.invalidate(); this.clearCurrent(); this.activeFile.close(); this.root = undefined; }
 	invalidate(): void { this.generation++; }
-	renderRows(root: HTMLElement, plan: PortableCalloutConversionPlan | undefined, limit: number, disabled: boolean): void {
+	renderRows(root: HTMLElement, plan: PortableCalloutConversionPlan | undefined, limit: number, disabled: boolean, editingId?: string, resetEnabled = false): void {
 		this.root = root;
 		this.limit = limit;
 		this.rows = portableConversionRows(plan);
 		if (!this.rows.some(row => row.id === this.current)) this.clearCurrent();
 		this.activeFile.clearSections();
 		renderPortableConversionRows(root, plan, this.rows, limit, disabled, this.current,
-			(path, section) => this.activeFile.addSection(path, section));
+			(path, section) => this.activeFile.addSection(path, section), editingId, resetEnabled);
 	}
 	sync(ready: boolean, failed: boolean): void {
 		this.ready = ready; this.failed = failed;
@@ -80,9 +79,8 @@ export class PortableConversionNavigation {
 	}
 	async navigate(id: string | undefined, newTab: boolean): Promise<void> {
 		const row = this.rows.find(item => item.id === id);
-		if (!row || !this.opened || this.navigating) return;
-		this.navigating = true;
-		const generation = this.generation;
+		if (!row || !this.opened) return;
+		const generation = ++this.generation;
 		const isCurrent = (): boolean => this.opened && generation === this.generation;
 		this.activeFile.beginResultNavigation(row.path);
 		let opened = false;
@@ -90,15 +88,14 @@ export class PortableConversionNavigation {
 		try { opened = await navigateToSidebarResult(this.app, row.path,
 			(content, stillOpen) => resolvePortableSourcePosition(row.change, content, stillOpen), newTab, isCurrent,
 			(editor, range) => { trackSelection = () => this.sourceSelection.watch(editor, range, () => this.clearCurrent()); }); }
-		finally { this.activeFile.endResultNavigation(row.path); this.navigating = false; }
+		finally { if (generation === this.generation) this.activeFile.endResultNavigation(row.path); }
 		if (!isCurrent()) return;
 		if (opened) { this.activeFile.openedResult(row.path); this.current = row.id; trackSelection?.(); this.render(); }
 		else this.refresh();
 	}
 	async navigateFile(path: string | undefined, newTab: boolean): Promise<void> {
-		if (!path || !this.opened || this.navigating || !this.rows.some(row => row.path === path)) return;
-		this.navigating = true;
-		const generation = this.generation;
+		if (!path || !this.opened || !this.rows.some(row => row.path === path)) return;
+		const generation = ++this.generation;
 		const isCurrent = (): boolean => this.opened && generation === this.generation;
 		this.activeFile.beginResultNavigation(path);
 		try {
@@ -106,9 +103,9 @@ export class PortableConversionNavigation {
 				this.clearCurrent();
 				this.activeFile.openedResult(path);
 			}
-		} finally { this.activeFile.endResultNavigation(path); this.navigating = false; }
+		} finally { if (generation === this.generation) this.activeFile.endResultNavigation(path); }
 	}
-	private clearCurrent(): void {
+	clearCurrent(): void {
 		this.current = undefined;
 		this.sourceSelection.clear();
 		for (const card of Array.from(this.root?.querySelectorAll('[aria-current="true"]') ?? [])) card.setAttribute("aria-current", "false");

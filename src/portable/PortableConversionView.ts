@@ -12,6 +12,7 @@ import { PortableConversionCustom } from "./portableConversionCustom";
 import { PortableCustomReplacementError } from "../utils/portableCalloutCustom";
 import { PortableConversionWatch } from "./portableConversionWatch";
 import { PortableConversionNavigation } from "./portableConversionNavigation";
+import { PortableConversionHelpModal } from "./PortableConversionHelpModal";
 
 export const PORTABLE_CONVERSION_VIEW = "callout-studio-portable-conversion";
 
@@ -46,13 +47,14 @@ export class PortableConversionView extends ItemView {
 		this.busy = new PortableConversionBusy(busyDelayMs);
 		this.custom = new PortableConversionCustom(this.app, () => ({ ready: this.ready(), plan: this.plan, selected: this.selected }), plan => {
 			this.revision++; this.plan = plan; this.selected = new Set(plan.selectedIds); this.setStatus(""); this.render();
-		});
+		}, () => this.render(), () => this.resultNavigation.clearCurrent());
 		this.resultNavigation = new PortableConversionNavigation(this.app, ref => this.registerEvent(ref),
 			() => this.render(), () => this.invalidate(), limit => { this.limit = limit; this.render(); });
 		this.watch = new PortableConversionWatch(this.app, ref => this.registerEvent(ref), (path, old) => this.invalidate(path, old));
 		this.registerDomEvent(this.contentEl, "click", event => this.onClick(event));
 		this.registerDomEvent(this.contentEl, "change", event => this.onChange(event));
 		this.registerDomEvent(this.contentEl, "contextmenu", event => this.custom.contextMenu(event));
+		this.registerDomEvent(this.contentEl.ownerDocument, "click", event => this.custom.outsideClick(event));
 		this.register(() => this.stop());
 	}
 	getViewType(): string { return PORTABLE_CONVERSION_VIEW; }
@@ -168,9 +170,20 @@ export class PortableConversionView extends ItemView {
 		}
 	}
 	private onClick(event: MouseEvent): void {
+		const input = event.target as HTMLInputElement | null;
+		if (input?.dataset.changeId || input?.dataset.action === "toggle-all") {
+			// The checkbox has already toggled. Preserve it before committing a draft redraws the list.
+			this.custom.finish(); this.onChange(event); return;
+		}
 		const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>("button[data-action]");
 		if (!button || button.disabled) return;
 		const action = button.dataset.action;
+		if (action === "help") { new PortableConversionHelpModal(this.app).open(); return; }
+		if (action === "edit" || action === "restore") {
+			const id = button.closest<HTMLElement>("[data-row-id]")?.dataset.rowId?.replace(/^source:/, "");
+			if (action === "edit") this.custom.edit(id, event); else this.custom.restore(id);
+			return;
+		}
 		if (action === "more") { this.limit += PORTABLE_PAGE_SIZE; this.render(); return; }
 		if (action === "retry") { this.invalidate(); return; }
 		if (action === "convert") { void this.convert(); return; }
@@ -218,29 +231,34 @@ export class PortableConversionView extends ItemView {
 	}
 	private render(): void {
 		if (!this.opened) return;
+		this.custom.beforeRender();
 		const scrollTop = this.frame?.scroll.scrollTop ?? 0;
 		const focused = this.contentEl.ownerDocument.activeElement as HTMLElement | null;
 		const focusedId = this.contentEl.contains(focused) ? focused?.dataset.changeId : undefined;
-		const focusedRow = this.contentEl.contains(focused) ? focused?.dataset.rowId : undefined;
+		const focusedRow = this.contentEl.contains(focused) ? focused?.closest<HTMLElement>("[data-row-id]")?.dataset.rowId : undefined;
+		const focusedAction = focused?.dataset.action;
 		const frame = this.frame ??= createPortableConversionFrame(this.contentEl);
 		const plan = this.plan;
 		updatePortableSelection(frame, plan, this.ready());
+		if (this.custom.editing) frame.convert.disabled = true;
 		frame.status.setText(this.status());
 		frame.hint.setText(plan?.recovery ? t("portable.recovery") : "");
 		frame.retry.hidden = !this.failed || this.unrecoverable;
 		frame.retry.disabled = this.scanning || this.confirming || this.applying;
 		this.busy.update(frame, this.stale, !this.failed && !this.unrecoverable && (this.stale || this.scanning || this.applying));
-		this.resultNavigation.renderRows(frame.results, plan, this.limit, !this.ready() || Boolean(plan?.recovery));
+		this.resultNavigation.renderRows(frame.results, plan, this.limit, !this.ready() || Boolean(plan?.recovery), this.custom.editingId, this.custom.resetEnabled);
+		this.custom.render(frame.results);
 		if (focusedId) Array.from(frame.results.querySelectorAll<HTMLInputElement>("input[data-change-id]"))
 			.find(input => input.dataset.changeId === focusedId && !input.disabled)?.focus({ preventScroll: true });
-		if (focusedRow) Array.from(frame.results.querySelectorAll<HTMLButtonElement>("button[data-row-id]"))
-			.find(button => button.dataset.rowId === focusedRow)?.focus({ preventScroll: true });
+		if (focusedRow && focusedAction) Array.from(frame.results.querySelectorAll<HTMLButtonElement>("button[data-action]"))
+			.find(button => button.dataset.action === focusedAction && !button.disabled
+				&& button.closest<HTMLElement>("[data-row-id]")?.dataset.rowId === focusedRow)?.focus({ preventScroll: true });
 		frame.scroll.scrollTop = scrollTop;
 		this.resultNavigation.sync(!this.stale, this.failed);
 	}
 	private async convert(): Promise<void> {
 		const plan = this.plan;
-		if (!this.ready() || !plan || !(plan.count || plan.linkCount)) return;
+		if (!this.ready() || this.custom.editing || !plan || !(plan.count || plan.linkCount)) return;
 		const revision = this.revision;
 		this.confirming = true;
 		this.resultNavigation.invalidate();

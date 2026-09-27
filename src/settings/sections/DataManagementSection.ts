@@ -19,7 +19,7 @@ import { userImagesFitResourceBudget } from "../../utils/userImages";
 import { addImportedCallout, applyImportedCallout } from "../../utils/importedCallout";
 import { ImportSourceModal } from "../ImportSourceModal";
 import { countCalloutUsages } from "../../utils/vaultCalloutScanner";
-import { PortableCalloutsModal } from "../PortableCalloutsModal";
+import { openPortableConversionFromSettings } from "../../portable/registerPortableConversionView";
 import type { SettingsSectionContext } from "./types";
 
 export function renderImportExportSection(
@@ -65,7 +65,7 @@ export function renderResetSection(
 		.setDesc(t("portable.settingDesc"))
 		.addButton((btn) => {
 			btn.setButtonText(t("portable.review"))
-				.onClick(() => new PortableCalloutsModal(ctx.app).open());
+				.onClick(() => { void openPortableConversionFromSettings(ctx.app); });
 			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
 

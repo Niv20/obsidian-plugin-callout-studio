@@ -1,3 +1,4 @@
+import { setIcon } from "obsidian";
 import { t } from "../i18n";
 import { createSidebarFileGroup, renderSidebarLocation } from "../ui/sidebarResults";
 import type { PortableCalloutConversionPlan } from "../utils/portableCalloutVault";
@@ -27,6 +28,8 @@ export function renderPortableConversionRows(
 	root: HTMLElement, plan: PortableCalloutConversionPlan | undefined, rows: readonly PortableConversionRow[],
 	limit: number, disabled: boolean, current: string | undefined,
 	onSection: (path: string, section: HTMLElement) => void,
+	editingId?: string,
+	resetEnabled = false,
 ): void {
 	root.empty();
 	if (!plan) return;
@@ -46,6 +49,8 @@ export function renderPortableConversionRows(
 			onSection(path, group.section);
 		}
 		const card = grid.createDiv({ cls: linkOnly ? "cs-portable-link-change" : "cs-portable-change cs-sidebar-selectable" });
+		const editing = !linkOnly && change.id === editingId;
+		card.toggleClass("is-editing", editing);
 		card.toggleClass("is-included", selected.has(change.id));
 		if (!linkOnly) {
 			const checkbox = card.createEl("input", { type: "checkbox", attr: {
@@ -55,21 +60,38 @@ export function renderPortableConversionRows(
 			checkbox.checked = selected.has(change.id);
 			checkbox.disabled = disabled;
 		}
-		const body = card.createEl("button", { cls: "cs-sidebar-result cs-portable-change-body", attr: {
-			type: "button", "data-action": "result", "data-row-id": row.id, "aria-current": String(current === row.id),
+		const body = card.createDiv({ cls: "cs-sidebar-result cs-portable-change-body", attr: {
+			"data-row-id": row.id, "aria-current": String(current === row.id),
 		} });
-		const location = renderSidebarLocation(body, { role: rowRole(row), line: change.line, cls: "cs-portable-change-location" });
+		const source = body.createEl("button", { cls: "cs-portable-source", attr: {
+			type: "button", "data-action": "result", "data-row-id": row.id,
+		} });
+		const location = renderSidebarLocation(source, { role: rowRole(row), line: change.line, cls: "cs-portable-change-location" });
 		if (!linkOnly && (change as PortableCalloutConversionChange).custom) location.createSpan({ cls: "cs-portable-custom-badge", text: t("portable.customBadge") });
-		const diff = body.createSpan({ cls: "cs-portable-diff" });
 		for (const which of ["before", "after"] as const) {
-			const line = diff.createSpan({ cls: "cs-portable-diff-line" });
+			const line = (which === "before" ? source : body).createSpan({ cls: "cs-portable-diff-line" });
 			line.createSpan({ text: t(`portable.${which}`), cls: "cs-portable-diff-label" });
-			line.createEl("code", { text: change[which], cls: which === "before" ? "cs-portable-before" : "cs-portable-after", attr: { dir: "ltr" } });
+			const slot = which === "after" && !linkOnly
+				? line.createSpan({ attr: { "data-replacement": change.id } }) : line;
+			const text = which === "after" && !linkOnly
+				? slot.createEl("button", { cls: "cs-portable-after-button", attr: {
+					type: "button", "data-action": "edit", "aria-description": t("portable.editCustom"),
+				} }) : slot;
+			if (text !== slot) (text as HTMLButtonElement).disabled = disabled;
+			if (text !== slot && !change.after.trim()) text.setAttribute("aria-label", t("portable.editCustom"));
+			text.createEl("code", { text: change[which], cls: which === "before" ? "cs-portable-before" : "cs-portable-after", attr: { dir: "ltr" } });
 		}
 		const reason = blocked.get(change.id);
 		if (reason) body.createSpan({ cls: "cs-portable-change-note", text: t(reason === "ambiguous-target"
 			? "portable.blockedAmbiguous" : "portable.blockedTarget") });
-		if (linkOnly) body.setAttribute("aria-description", t("portable.relatedLinksHint"));
+		if (!linkOnly) {
+			const actions = body.createDiv({ cls: "cs-portable-card-actions" });
+			const reset = createCardAction(actions, "restore", "rotate-ccw",
+				t(editing ? "portable.cancelEdit" : "portable.restoreDefault"), disabled);
+			reset.hidden = !(editing ? resetEnabled : (change as PortableCalloutConversionChange).custom);
+			createCardAction(actions, "edit", "pencil", t("portable.editCustom"), disabled);
+		}
+		if (linkOnly) source.setAttribute("aria-description", t("portable.relatedLinksHint"));
 	}
 	if (rows.length > limit) root.createEl("button", {
 		text: t("portable.showMore", { count: Math.min(PORTABLE_PAGE_SIZE, rows.length - limit) }),
@@ -81,4 +103,13 @@ function rowRole(row: PortableConversionRow): string {
 	if (row.linkOnly) return t("portable.roleLink");
 	const change = row.change as PortableCalloutConversionChange;
 	return t(change.headingLine ? "vaultStats.roleHeading" : "vaultStats.roleInline");
+}
+
+function createCardAction(host: HTMLElement, action: string, icon: string, label: string, disabled: boolean): HTMLButtonElement {
+	const button = host.createEl("button", { cls: "clickable-icon", attr: {
+		type: "button", "data-action": action, "aria-label": label,
+	} });
+	button.disabled = disabled;
+	setIcon(button, icon);
+	return button;
 }

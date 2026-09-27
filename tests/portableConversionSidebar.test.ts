@@ -43,6 +43,75 @@ describe("conversion source navigation", () => {
 });
 
 describe("conversion file groups and cards", () => {
+	it("keeps the purple highlight on only the newly edited card", async () => {
+		const h = harness({ "a.md": "[!note]\n[!tip]" });
+		try {
+			await h.view.onOpen();
+			h.root.fire("click", { target: h.root.querySelectorAll('button[data-action="result"]')[0] });
+			await h.settle();
+			assert.equal(h.root.querySelectorAll('[aria-current="true"]').length, 1);
+			const opened = [...h.opened], selections = [...h.selections];
+			h.root.fire("click", { target: h.root.querySelectorAll(".cs-portable-after-button")[1] });
+			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
+			assert.equal(h.root.querySelectorAll(".is-editing").length, 1);
+			assert.ok(h.root.querySelectorAll(".cs-portable-change")[1]!.hasClass("is-editing"));
+			assert.deepEqual(h.opened, opened);
+			assert.deepEqual(h.selections, selections);
+		} finally { await h.destroy(); }
+	});
+	it("switches inline editors without opening or selecting a source", async () => {
+		const h = harness({ "a.md": "[!note]\n[!tip]" });
+		try {
+			await h.view.onOpen();
+			h.root.fire("click", { target: h.root.querySelectorAll(".cs-portable-after-button")[0] });
+			const first = h.root.querySelector("textarea")!;
+			first.value = "First custom"; first.fire("input");
+			h.root.fire("click", { target: h.root.querySelectorAll('.cs-portable-card-actions button[data-action="edit"]')[1] });
+			const latest = h.root.querySelector("textarea")!; assert.notEqual(latest, first);
+			await h.settle();
+			assert.equal(h.root.ownerDocument.activeElement, latest);
+			assert.deepEqual([latest.selectionStart, latest.selectionEnd], [0, 3]);
+			assert.deepEqual(h.opened, []);
+			assert.deepEqual(h.selections, []);
+			assert.equal(h.root.querySelectorAll(".is-editing").length, 1);
+			assert.equal(h.root.querySelectorAll(".cs-portable-after")[0]!.textContent, "First custom");
+			assert.deepEqual(h.written, []);
+		} finally { await h.destroy(); }
+	});
+	it("does not move the note after an inline editor closes", async () => {
+		const h = harness({ "a.md": "[!note]" });
+		const outside = h.root.ownerDocument.body.createEl("button");
+		let loads = 0;
+		h.documentLeaf.loadIfDeferred = async () => { loads++; };
+		try {
+			await h.view.onOpen();
+			h.root.fire("click", { target: h.root.querySelector(".cs-portable-after-button") });
+			outside.focus(); h.root.ownerDocument.fire("click", { target: outside });
+			await h.settle();
+			assert.equal(h.root.querySelector("textarea"), null);
+			assert.equal(h.root.ownerDocument.activeElement, outside);
+			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
+			assert.equal(loads, 0);
+			assert.deepEqual(h.opened, []); assert.deepEqual(h.selections, []); assert.deepEqual(h.written, []);
+		} finally { outside.remove(); await h.destroy(); }
+	});
+	it("opens a clicked file heading while an inline edit is active", async () => {
+		const h = harness({ "a.md": "[!note]", "b.md": "[!tip]" });
+		try {
+			await h.view.onOpen();
+			h.root.fire("click", { target: h.root.querySelector(".cs-portable-after-button") });
+			const target = h.root.querySelectorAll('button[data-action="file"]').find(button => button.dataset.path === "b.md");
+			assert.ok(target);
+			h.root.fire("click", { target }); h.root.ownerDocument.fire("click", { target });
+			await h.settle();
+			assert.deepEqual(h.opened, ["b.md"]);
+			assert.deepEqual(h.selections, [[{ line: 0, ch: 0 }, { line: 0, ch: 0 }]]);
+			assert.equal(h.documentView.file?.path, "b.md");
+			assert.equal(h.root.querySelector("textarea"), null);
+			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
+			assert.deepEqual(h.written, []);
+		} finally { await h.destroy(); }
+	});
 	it("groups source and linked changes by file using shared grids and localized row roles", async () => {
 		const h = harness({ "a.md": "# Report [!note]\n[!tip]", "b.md": "[[a#Report note]]" });
 		try {
@@ -64,8 +133,10 @@ describe("conversion file groups and cards", () => {
 			assert.ok(locations[2]!.textContent.includes(t("portable.roleLink")));
 			assert.ok(locations.every(location => !location.textContent.includes(".md")));
 			assert.equal(h.root.querySelectorAll(".cs-portable-diff-arrow").length, 0);
-			assert.deepEqual(h.root.querySelectorAll(".cs-portable-diff-label").slice(0, 2).map(label => label.textContent),
+			assert.deepEqual(h.root.querySelectorAll(".cs-portable-diff-label").slice(0, 2).map(el => el.textContent),
 				[t("portable.before"), t("portable.after")]);
+			assert.deepEqual(h.root.querySelectorAll(".cs-portable-before").map(el => el.textContent), ["# Report [!note]", "[!tip]", "[[a#Report note]]"]);
+			assert.deepEqual(h.root.querySelectorAll(".cs-portable-after").map(row => row.textContent), ["# Report", "tip", "[[a#Report]]"]);
 		} finally { await h.destroy(); }
 	});
 	it("card clicks reveal the exact source line without toggling its independent checkbox or jumping its group", async () => {

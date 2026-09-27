@@ -135,6 +135,12 @@ and no role filter. **Find usages** supplies a specific type and clears the role
 filter, including when it reuses an existing sidebar. Workspace state holds
 filters, never the index.
 
+At layout-ready, the **Find callouts** tab is ensured in the right sidebar,
+reusing a restored leaf when present. A newly created leaf is inactive and
+unrevealed, so it does not open the deferred view or start an occurrence scan;
+selecting it does. **Review conversion** has no startup tab: any leaf restored
+by Obsidian is closed, and a new review opens only when requested from Settings.
+
 The type and format controls have no visible labels; each keeps a localized
 accessible name. They share one grid row until the sidebar container is 440px
 wide, then stack in one column. The format filter uses the shared
@@ -198,9 +204,10 @@ DOM menus update counts while the index loads and unsubscribe when hidden.
 Views unsubscribe from both index and registry changes when closed.
 The list starts with 100 results and adds 100 per **Show more** action. Per-file
 heading counts cover the complete filtered query, including unloaded cards.
-The native right-sidebar tab is the sole visible occurrences control. The fixed
-command and **Find usages** menu reopen it after its tab is closed; the plugin
-does not add an occurrences button to Obsidian's left ribbon.
+The native right-sidebar tab is the sole visible occurrences control. It is
+created automatically at startup, and the fixed command and **Find usages**
+menu reopen it after its tab is closed. The plugin does not add an occurrences
+button to Obsidian's left ribbon.
 
 Navigation uses public workspace/editor APIs, opens a document leaf in editing
 mode and revalidates source tokens against the current editor. When a note has
@@ -354,23 +361,45 @@ that value, and otherwise stays in a fixed fragment. Unsupported mappings fail
 closed. Multiple inline tokens on one line can be selected and customized
 independently without guessing delimiters inside custom text.
 
-`portableReplacementEditor.ts` exposes exactly one value for a source card. An
-inline value has up to three read-only words on each side, taken from the current
-source line. A heading value excludes its fixed prefix, heading-level markers and
-optional closing hashes. `PortableCustomReplacementModal` renders a read-only
-**Before** row and editable **After** row, without per-format legends or an
-introductory paragraph. Every input is single-line; Enter, newline insertion and
-multiline paste cannot alter the source-line structure.
+`portableReplacementEditor.ts` exposes exactly one value for a source card.
+Inline editing shows only that replacement, without surrounding source words.
+A heading value excludes its fixed prefix, heading-level markers and optional
+closing hashes, which remain visible and read-only. The source card's pencil,
+replacement text and context-menu
+edit action open `portableInlineReplacement.ts` through
+`portableConversionCustom.ts`. Cards keep their paired **Before**/**After**
+labels and original source preview; only the **After** text becomes editable.
+Its single-line field blends into the card without separate Save or Cancel
+buttons. Entry selects all editable text without opening or scrolling the note
+or changing conversion inclusion. The card gains an editing highlight; the
+previous source-navigation highlight clears, and the format/line label and
+**Before** text remain the source-navigation controls.
+Enter or clicking outside saves; Escape cancels. Enter and Escape are ignored
+during input method composition; clicking outside commits the final composed
+input before closing the field.
+Finishing an unchanged draft exits editing without changing the review. The
+`rotate-ccw` button appears only when the live value differs from the automatic
+replacement and updates as the user types. With an unsaved change it restores
+the last saved/default preview; with no unsaved change it restores the automatic
+replacement. Invalid outside-click saves discard the draft and show a notice so
+the field does not remain visibly active after focus leaves it.
+Newline insertion and multiline paste cannot alter the source-line structure.
+A draft is scoped to the active review: redraws preserve its text, while a stale
+or closed review cancels it.
+Conversion is disabled until the draft is saved or cancelled. Only a validated
+save rebuilds the proposal; editing never writes notes directly.
 Validation also rejects custom text that changes quote/list nesting or indentation
 into a code block, preventing an edited token from reinterpreting neighboring prose.
 The context menu uses
 Obsidian's HTML menu (`setUseNativeMenu(false)`) so the edit and restore icons are
-visible consistently.
+visible consistently. When a customized card is not being edited, the `rotate-ccw`
+button beside the pencil exposes the same restore-default action.
 
 Conversion cards never clamp or ellipsize their source/replacement text. File
 headings remain sticky, show counts in parentheses after the name, and open the
-note when clicked. Source-card navigation selects its precise token or heading
-range; purple active styling is cleared when that exact editor selection no longer
+note when clicked. The source card's format/line label and **Before** text
+navigate to its precise token or heading range; **After** starts inline editing.
+Purple active styling is cleared when that exact editor selection no longer
 exists. The fixed header places the conversion action beside the description.
 A single summary checkbox uses the native indeterminate state for partial
 selection, with a horizontal dash. Clicking an empty or partial state selects

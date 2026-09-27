@@ -99,7 +99,7 @@ describe("portable conversion sidebar freshness and confirmation", () => {
 			const opening = h.view.onOpen();
 			h.edit("a.md", "Fresh [!note]{Latest}"); h.vaultEvents.emit("modify", h.handles.get("a.md"));
 			read.resolve(); await opening; await h.settle();
-			assert.equal(h.root.querySelector("code")?.textContent, "[!note]{Latest}");
+			assert.equal(h.root.querySelector(".cs-portable-after")?.textContent, "Latest");
 			assert.equal(h.inputs().length, 1);
 			assert.equal(reads, 2);
 		} finally { read.resolve(); await h.destroy(); }

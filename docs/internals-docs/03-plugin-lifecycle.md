@@ -27,13 +27,19 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
    reads no notes; its first usage request starts indexing. Subsequent Markdown
    changes are debounced independently of manual discovery.
    Missing custom-command targets are paused, never deleted as part of startup.
-6. Begin existing icon/locale preparation. At layout-ready, release the startup
-   migration notices and run `runLaunchSequence`, which confirms whether this is
-   a fresh install, shows the welcome screen where appropriate, and writes no
-   welcome-only settings file. The affected-user-only autocomplete notice is
-   released only after the writer proves the normalized settings are durable.
+6. Begin existing icon/locale preparation. At layout-ready, detach any
+   **Review conversion** leaf restored by Obsidian from the previous workspace.
+   Then ensure the **Find callouts** ItemView has a right-sidebar leaf. Reuse an
+   existing leaf when one is already in the workspace; otherwise create it with
+   `active: false` and `reveal: false`, adding its tab without revealing the
+   sidebar or opening the deferred view. Release the startup migration notices
+   and run `runLaunchSequence`, which confirms whether this is a fresh install,
+   shows the welcome screen where appropriate, and writes no welcome-only
+   settings file. The affected-user-only autocomplete notice is released only
+   after the writer proves the normalized settings are durable.
    A successful settings load or actual write marks the installation initialized.
-   Startup does not scan.
+   Startup does not scan solely to add the inactive tab; restoring an already
+   open usage view can start the occurrence index.
 
 The registry change loop remains mutation → CSS/repaint → save. The manual
 scan stages results outside that loop, saves once using `SettingsWriter.commit`,

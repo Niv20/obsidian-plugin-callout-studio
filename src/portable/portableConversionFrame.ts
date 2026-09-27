@@ -1,3 +1,4 @@
+import { setIcon } from "obsidian";
 import { t } from "../i18n";
 import { createSidebarSummary, createSidebarToolbar } from "../ui/sidebarFrame";
 import type { PortableCalloutConversionPlan } from "../utils/portableCalloutPlan";
@@ -19,6 +20,15 @@ export interface PortableConversionFrame {
 export function createPortableConversionFrame(root: HTMLElement): PortableConversionFrame {
 	root.empty();
 	const toolbar = createSidebarToolbar(root, t("portable.reviewTitle"), t("portable.subtitle"));
+	const title = toolbar.querySelector<HTMLElement>(".cs-sidebar-title");
+	if (title) {
+		title.addClass("cs-portable-title-row");
+		const help = title.createEl("button", { cls: "cs-portable-help clickable-icon", attr: {
+			type: "button", "data-action": "help", "aria-label": t("portable.help"),
+			"aria-haspopup": "dialog",
+		} });
+		setIcon(help, "circle-help");
+	}
 	const actions = toolbar.createDiv({ cls: "cs-portable-intro-actions" });
 	const subtitle = toolbar.querySelector(".cs-sidebar-subtitle");
 	if (subtitle) actions.appendChild(subtitle);

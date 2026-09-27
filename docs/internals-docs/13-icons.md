@@ -76,9 +76,12 @@ explicit stroke widths so Obsidian can recolour it.
    visible control changes.
 
 Quick insert uses its ID for the ribbon and command. Occurrences uses its ID
-for the native right-sidebar tab, **Find usages** menus and command. The tab is
-the only visible occurrences control; after closing it, the command or a
-**Find usages** action reopens the sidebar. The welcome hero keeps
+for the native **Find callouts** right-sidebar tab, **Find usages** menus and
+command. The tab is created at startup without opening the sidebar, and is the
+only visible occurrences control. After closing it, the command or a
+**Find usages** action reopens the sidebar. The **Review conversion** tab uses
+its own composite icon and is created only on demand; restored conversion tabs
+are closed at startup. The welcome hero keeps
 the stock `paintbrush` icon. Editable standalone exports live in
 [`quick-insert.svg`](../../assets/ui-icons/quick-insert.svg),
 [`statistics.svg`](../../assets/ui-icons/statistics.svg) and

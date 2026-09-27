@@ -13,6 +13,13 @@ describe("shared sidebar headers", () => {
 		const usage = createOccurrencesFrame(occurrences as unknown as HTMLElement);
 		const portable = createPortableConversionFrame(conversion as unknown as HTMLElement);
 		try {
+			assert.equal(occurrences.querySelector("h2.cs-sidebar-title")?.textContent, t("usage.title"));
+			assert.equal(conversion.querySelector("h2.cs-sidebar-title")?.textContent, t("portable.reviewTitle"));
+			const help = conversion.querySelector('button[data-action="help"]');
+			assert.ok(help);
+			assert.equal(help.parentElement, conversion.querySelector("h2.cs-sidebar-title"));
+			assert.equal(help.getAttribute("aria-label"), t("portable.help"));
+			assert.equal(help.getAttribute("aria-haspopup"), "dialog");
 			for (const root of [occurrences, conversion]) {
 				const toolbar = root.querySelector(".cs-sidebar-toolbar")!;
 				assert.equal(toolbar.querySelectorAll("h2.cs-sidebar-title").length, 1);
