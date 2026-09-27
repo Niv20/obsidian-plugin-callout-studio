@@ -72,10 +72,14 @@ jobs:
             # 2.9.0's custom commands feature, Callout Manager import support,
             # and Palette Editor enhancements. Cut to 2 MiB once the 31
             # non-English locales moved out of the bundle and became downloads,
-            # which took main.js from 3.70 MiB to 1.70 MiB.
+            # which took main.js from 3.70 MiB to 1.70 MiB. Raised by 64 KiB for
+            # the settings-safety work after 2.14.1: verified backups, device history, the
+            # "Restore an earlier setup" window, replacing an unreadable settings
+            # file, the paused-saving indicator and guarded destructive actions
+            # took main.js from 1.97 MiB to just over 2 MiB.
             - name: Check bundle size
               run: |
-                  limit=2097152  # 2 MiB
+                  limit=2162688  # 2 MiB + 64 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

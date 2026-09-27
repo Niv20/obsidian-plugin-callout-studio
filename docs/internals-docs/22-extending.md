@@ -24,9 +24,10 @@ migration/runtime-refresh."
    `userImages`, `customCommands`), it must also be added to `mergeById`
    handling in the JSON importer
    (`DataManagementSection.processImportedJSON`) — see
-   [Import and export § the three exceptions](15-import-export.md#settings-import-replace-wholesale-except-three-lists-that-merge-by-id).
+   [Import and export § the three exceptions](15-import-export.md#settings-import-restore-the-groups-the-file-carries-three-lists-merge-by-id).
    A brand-new such list needs a fourth stop: register it in `mergeById`'s
-   call site the same way the existing three are handled.
+   call site the same way the existing three are handled, and add it to
+   `LIST_GROUPS` there, so the group restore never assigns it wholesale.
 6. Add the UI control in the relevant `src/settings/sections/*.ts` module
    (or a modal), reading/writing `ctx.plugin.settings.<field>` and calling
    `ctx.plugin.saveSettings()` on change — every settings write in this

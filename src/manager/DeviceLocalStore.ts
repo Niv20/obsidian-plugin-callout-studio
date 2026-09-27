@@ -4,6 +4,7 @@ import { LEGACY_STARTUP_CSS_STORAGE_KEY } from "./startupStyleKeys";
 import type { CalloutListsFoldState } from "../types";
 import { WriteMemo } from "../utils/writeMemo";
 import { writeLegacyDiscoveryArchive } from "./legacyDiscoveryArchive";
+import { SHARED_DEVICE_ID } from "./settingsBackup";
 
 export type LegacyDiscoveryMigration =
 	| { kind: "none" }
@@ -20,7 +21,36 @@ interface DeviceLocalState {
 	externalCssRetirement?: "pending" | "seen";
 	/** Pending is an explicit saved autocomplete opt-out awaiting its notice. */
 	autocompleteAlwaysEnabled?: "pending" | "seen";
+	/** The import prompt was dismissed or used here, before any settings file existed. */
+	importBannerHandled?: true;
+	/** Names this device's settings backups; see manager/settingsBackup.ts. */
+	deviceId?: string;
+	/**
+	 * Where the icon picker and Quick Insert were left. Remembered per device:
+	 * in the synced file, every glance at another category was a settings write
+	 * that every other device then had to adopt.
+	 */
+	iconCategories?: Record<string, string>;
+	emojiSkinTone?: number;
+	quickInsertSource?: string;
 	listsExpanded: CalloutListsFoldState;
+}
+
+type ParsedState = Partial<Record<keyof DeviceLocalState, unknown>> & { v?: number; listsExpanded?: Partial<CalloutListsFoldState> };
+
+/** Valid picker and Quick Insert memory, and a device id, from stored JSON. */
+function memoryFrom(parsed: ParsedState): Partial<DeviceLocalState> {
+	const out: Partial<DeviceLocalState> = {};
+	if (typeof parsed.deviceId === "string" && /^[a-z0-9]{8}$/.test(parsed.deviceId)) out.deviceId = parsed.deviceId;
+	const categories = parsed.iconCategories;
+	if (categories && typeof categories === "object" && !Array.isArray(categories)) {
+		out.iconCategories = Object.fromEntries(Object.entries(categories)
+			.filter((entry): entry is [string, string] => typeof entry[1] === "string" && entry[1].length <= 200));
+	}
+	const tone = parsed.emojiSkinTone;
+	if (typeof tone === "number" && Number.isInteger(tone) && tone >= 0 && tone <= 5) out.emojiSkinTone = tone;
+	if (typeof parsed.quickInsertSource === "string" && parsed.quickInsertSource.length <= 32) out.quickInsertSource = parsed.quickInsertSource;
+	return out;
 }
 
 export class DeviceLocalStore {
@@ -43,7 +73,7 @@ export class DeviceLocalStore {
 			// Unknown/corrupt data must not be overwritten by UI preferences.
 			this.writable = false;
 			this.state.initialized = true;
-			const parsed = JSON.parse(raw) as { v?: number; initialized?: boolean; welcomeSeen?: boolean; externalCssRetirement?: unknown; autocompleteAlwaysEnabled?: unknown; listsExpanded?: Partial<CalloutListsFoldState> };
+			const parsed = JSON.parse(raw) as ParsedState;
 			if (!parsed || (parsed.v !== 1 && parsed.v !== 2 && parsed.v !== 3)) return;
 			this.state = {
 				v: 3,
@@ -53,6 +83,8 @@ export class DeviceLocalStore {
 					? { externalCssRetirement: parsed.externalCssRetirement } : {}),
 				...(parsed.autocompleteAlwaysEnabled === "pending" || parsed.autocompleteAlwaysEnabled === "seen"
 					? { autocompleteAlwaysEnabled: parsed.autocompleteAlwaysEnabled } : {}),
+				...(parsed.importBannerHandled === true ? { importBannerHandled: true as const } : {}),
+				...memoryFrom(parsed),
 				listsExpanded: {
 					theme: parsed.listsExpanded?.theme !== false,
 					user: parsed.listsExpanded?.user !== false,
@@ -148,6 +180,62 @@ export class DeviceLocalStore {
 
 	markAutocompleteNoticeSeen(): void {
 		this.state.autocompleteAlwaysEnabled = "seen";
+		this.persist();
+	}
+
+	/**
+	 * The synced flag cannot hold this on a device without a settings file:
+	 * dismissing a prompt is not a reason to create one, so the answer is
+	 * remembered here as well.
+	 */
+	get hasHandledImportBanner(): boolean {
+		return this.state.importBannerHandled === true;
+	}
+
+	markImportBannerHandled(): void {
+		this.state.importBannerHandled = true;
+		this.persist();
+	}
+
+	/**
+	 * A random name for this device, kept for as long as its local storage is.
+	 * Storage that cannot be written would give a new name every launch, and
+	 * every launch's backups would then belong to nobody; such devices share
+	 * one name instead, and tidy each other's copies as the old builds did.
+	 */
+	get deviceId(): string {
+		if (!this.state.deviceId) {
+			if (!this.writable) return SHARED_DEVICE_ID;
+			this.state.deviceId = crypto.randomUUID().replace(/-/g, "").slice(0, 8);
+			this.persist();
+		}
+		return this.state.deviceId;
+	}
+
+	iconCategory(source: string): string | undefined {
+		return this.state.iconCategories?.[source];
+	}
+
+	setIconCategory(source: string, category: string): void {
+		this.state.iconCategories = { ...this.state.iconCategories, [source]: category };
+		this.persist();
+	}
+
+	get emojiSkinTone(): number | undefined {
+		return this.state.emojiSkinTone;
+	}
+
+	setEmojiSkinTone(tone: number): void {
+		this.state.emojiSkinTone = tone;
+		this.persist();
+	}
+
+	get quickInsertSource(): string | undefined {
+		return this.state.quickInsertSource;
+	}
+
+	setQuickInsertSource(source: string): void {
+		this.state.quickInsertSource = source;
 		this.persist();
 	}
 

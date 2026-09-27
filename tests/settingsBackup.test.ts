@@ -6,22 +6,26 @@
  * making that loss impossible; this is the admission that a bug nobody has
  * found yet will eventually make it possible anyway.
  *
- * Two properties matter more than the writing itself, and both are pinned
+ * Three properties matter more than the writing itself, and all are pinned
  * here: the folder cannot grow without bound (it lives in a synced directory),
- * and nothing it does may fail the operation it is protecting — a backup that
- * throws must not be the reason a user's settings failed to load.
+ * one device's tidying never evicts a copy another device or another step of
+ * the same operation relies on, and nothing it does may fail the operation it
+ * is protecting — a backup that throws must not be the reason a user's
+ * settings failed to load.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import type { App, PluginManifest } from "obsidian";
-import { writeSettingsBackup } from "../src/manager/settingsBackup";
+import { SHARED_DEVICE_ID, writeSettingsBackup } from "../src/manager/settingsBackup";
 
-/** A vault adapter over an in-memory file map. */
-function vault(initial: Record<string, string> = {}) {
+const DIR = ".obsidian/plugins/callout-studio/backups";
+
+/** A vault adapter over an in-memory file map, as seen by one device. */
+function vault(initial: Record<string, string> = {}, device = "mac00001") {
 	const files = new Map(Object.entries(initial));
 	const folders = new Set<string>();
 	const calls: string[] = [];
-	const fail = { write: false, list: false, mkdir: false };
+	const fail = { write: false, list: false, mkdir: false, garble: false };
 
 	const adapter = {
 		exists: (path: string) =>
@@ -34,9 +38,10 @@ function vault(initial: Record<string, string> = {}) {
 		},
 		write: (path: string, text: string) => {
 			if (fail.write) return Promise.reject(new Error("disk full"));
-			files.set(path, text);
+			files.set(path, fail.garble ? text.slice(0, 5) : text);
 			return Promise.resolve();
 		},
+		read: (path: string) => Promise.resolve(files.get(path) ?? ""),
 		list: (path: string) => {
 			if (fail.list) return Promise.reject(new Error("gone"));
 			return Promise.resolve({
@@ -50,114 +55,195 @@ function vault(initial: Record<string, string> = {}) {
 		},
 	};
 
-	const host = {
+	const host = (id = device) => ({
 		app: { vault: { adapter, configDir: ".obsidian" } } as unknown as App,
 		manifest: {
 			id: "callout-studio",
 			dir: ".obsidian/plugins/callout-studio",
 		} as PluginManifest,
-	};
+		localState: { deviceId: id },
+	});
 
 	return {
-		host,
+		host: host(),
+		as: host,
 		files,
 		folders,
 		calls,
 		fail,
-		/** Only the backups, newest last. */
+		/** Only the backups, oldest first. */
 		backups: () =>
 			[...files.keys()]
 				.filter((f) => f.includes("/backups/data-"))
 				.sort(),
+		/** The `n` each of this device's remaining copies holds, oldest first. */
+		kept: (id = device) =>
+			[...files.keys()].filter((f) => f.includes(`-${id}-`)).sort()
+				.map((p) => (JSON.parse(files.get(p)!) as { n: number }).n),
 	};
 }
 
 /** Distinct, ordered timestamps without reaching for a clock. */
 const at = (minute: number): Date =>
 	new Date(Date.UTC(2026, 0, 1, 12, minute, 0));
+const day = (offset: number, minute = 0): Date =>
+	new Date(Date.UTC(2026, 0, 1, 12, minute, 0) + offset * 86_400_000);
 
 describe("writing a settings backup", () => {
-	it("puts a copy beside data.json", async () => {
+	it("puts a copy beside data.json, named for its time, its device and its content", async () => {
 		const v = vault();
 
-		const path = await writeSettingsBackup(v.host, { callouts: ["a"] }, at(0));
+		const path = await writeSettingsBackup(v.host, { callouts: ["a"] }, { now: at(0) });
 
 		assert.ok(path);
-		assert.ok(
-			path.startsWith(".obsidian/plugins/callout-studio/backups/data-"),
-			path,
-		);
+		assert.match(path, /^\.obsidian\/plugins\/callout-studio\/backups\/data-2026-01-01T12-00-00-000Z-mac00001-[a-f0-9]{16}\.json$/);
 		assert.deepStrictEqual(
 			JSON.parse(v.files.get(path)!) as unknown,
 			{ callouts: ["a"] },
 		);
 	});
 
+	it("keeps the content only, never a sync envelope from another moment", async () => {
+		const v = vault();
+		const path = await writeSettingsBackup(v.host, { callouts: [], calloutStudioSync: { version: 2 } }, { now: at(0) });
+		assert.deepStrictEqual(JSON.parse(v.files.get(path!)!) as unknown, { callouts: [] });
+	});
+
 	it("creates the folder the first time and not after", async () => {
 		const v = vault();
 
-		await writeSettingsBackup(v.host, {}, at(0));
-		await writeSettingsBackup(v.host, {}, at(1));
+		await writeSettingsBackup(v.host, { n: 0 }, { now: at(0) });
+		await writeSettingsBackup(v.host, { n: 1 }, { now: at(1) });
 
-		assert.deepStrictEqual(v.calls, [
-			"mkdir .obsidian/plugins/callout-studio/backups",
-		]);
+		assert.deepStrictEqual(v.calls, [`mkdir ${DIR}`]);
 	});
 
 	it("names copies so that sorting them by name orders them by time", async () => {
-		// `prune` reads the name as the timestamp, so a name that sorts wrong
+		// Pruning reads the name as the timestamp, so a name that sorts wrong
 		// deletes the wrong file. `:` and `.` cannot appear in a Windows file
 		// name, and the substitution has to be fixed-width to keep the order.
 		const v = vault();
 
-		await writeSettingsBackup(v.host, { n: 2 }, at(2));
-		await writeSettingsBackup(v.host, { n: 10 }, at(10));
-		await writeSettingsBackup(v.host, { n: 1 }, at(1));
+		await writeSettingsBackup(v.host, { n: 2 }, { now: at(2) });
+		await writeSettingsBackup(v.host, { n: 10 }, { now: at(10) });
+		await writeSettingsBackup(v.host, { n: 1 }, { now: at(1) });
 
-		const named = v.backups().map((p) => JSON.parse(v.files.get(p)!) as { n: number });
-		assert.deepStrictEqual(
-			named.map((entry) => entry.n),
-			[1, 2, 10],
-		);
+		assert.deepStrictEqual(v.kept(), [1, 2, 10]);
 		assert.ok(!v.backups().some((p) => p.includes(":")), "no colons in a name");
+	});
+
+	it("does not save the same content twice", async () => {
+		const v = vault();
+
+		const first = await writeSettingsBackup(v.host, { n: 1, b: [1] }, { now: at(0) });
+		const again = await writeSettingsBackup(v.host, { b: [1], n: 1 }, { now: at(5) });
+
+		assert.strictEqual(again, first);
+		assert.strictEqual(v.backups().length, 1);
+	});
+
+	it("writes a fresh copy when the one with the same content no longer reads back", async () => {
+		const v = vault();
+		const first = await writeSettingsBackup(v.host, { n: 1 }, { now: at(0) });
+		v.files.set(first!, "{ truncated");
+
+		const second = await writeSettingsBackup(v.host, { n: 1 }, { now: at(1) });
+
+		assert.ok(second && second !== first);
+		assert.deepStrictEqual(JSON.parse(v.files.get(second)!) as unknown, { n: 1 });
 	});
 });
 
 describe("keeping the folder from growing", () => {
-	it("keeps the newest five and drops the rest", async () => {
+	it("keeps this device's newest ten from one busy day", async () => {
 		const v = vault();
 
-		for (let i = 0; i < 8; i++) {
-			await writeSettingsBackup(v.host, { n: i }, at(i));
+		for (let i = 0; i < 15; i++) {
+			await writeSettingsBackup(v.host, { n: i }, { now: at(i) });
 		}
 
-		const kept = v
-			.backups()
-			.map((p) => (JSON.parse(v.files.get(p)!) as { n: number }).n);
-		assert.deepStrictEqual(kept, [3, 4, 5, 6, 7]);
+		assert.deepStrictEqual(v.kept(), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
 	});
 
-	it("never touches a file it did not name", async () => {
+	it("also keeps its newest copy of each of the last fourteen days it saved one", async () => {
+		const v = vault();
+
+		for (let d = 0; d < 20; d++) {
+			// Several copies a day; only the last of each day can outlive the ten.
+			for (let m = 0; m < 3; m++) await writeSettingsBackup(v.host, { n: d * 10 + m }, { now: day(d, m) });
+		}
+
+		// The newest ten span days 19 to 16; each of days 19 to 6 keeps its last copy.
+		assert.deepStrictEqual(v.kept(), [
+			62, 72, 82, 92, 102, 112, 122, 132, 142, 152,
+			162, 170, 171, 172, 180, 181, 182, 190, 191, 192,
+		]);
+	});
+
+	it("never touches a file it did not name, including copies written by 2.14 and earlier", async () => {
 		// The folder is inside the plugin directory, which syncs. Anything else
-		// in there belongs to the user or to another tool.
-		const dir = ".obsidian/plugins/callout-studio/backups";
-		const v = vault({ [`${dir}/notes-of-my-own.json`]: "{}", [`${dir}/data-my-recovery.json`]: "{}" });
-		v.folders.add(dir);
+		// in there belongs to the user, another tool, or an older build that
+		// still prunes its own names.
+		const legacy = `${DIR}/data-2026-01-01T00-00-00-000Z-4c6ac6e0-4032-4541-9446-9a06b9655ab3.json`;
+		const v = vault({ [`${DIR}/notes-of-my-own.json`]: "{}", [`${DIR}/data-my-recovery.json`]: "{}", [legacy]: "{}" });
+		v.folders.add(DIR);
 
-		for (let i = 0; i < 8; i++) {
-			await writeSettingsBackup(v.host, { n: i }, at(i));
+		for (let i = 0; i < 15; i++) {
+			await writeSettingsBackup(v.host, { n: i }, { now: at(i) });
 		}
 
-		assert.ok(v.files.has(`${dir}/notes-of-my-own.json`));
-		assert.ok(v.files.has(`${dir}/data-my-recovery.json`));
+		assert.ok(v.files.has(`${DIR}/notes-of-my-own.json`));
+		assert.ok(v.files.has(`${DIR}/data-my-recovery.json`));
+		assert.ok(v.files.has(legacy));
 	});
 
-	it("keeps the new recovery copy when another device's clock runs ahead", async () => {
+	it("leaves another device's copies alone while that device is in use", async () => {
 		const v = vault();
-		for (let i = 10; i < 16; i++) await writeSettingsBackup(v.host, { n: i }, at(i));
-		const recovery = await writeSettingsBackup(v.host, { rescued: true }, at(0));
+		for (let i = 0; i < 12; i++) await writeSettingsBackup(v.as("phone001"), { n: 100 + i }, { now: at(i) });
+		const phone = v.kept("phone001");
+
+		for (let i = 0; i < 15; i++) await writeSettingsBackup(v.host, { n: i }, { now: at(20 + i) });
+
+		assert.deepStrictEqual(v.kept("phone001"), phone, "a busy Mac evicted the phone's copies");
+		assert.strictEqual(phone.length, 10, "the phone tidies its own");
+	});
+
+	it("thins a device that has saved nothing for ninety days to its newest copy", async () => {
+		const v = vault();
+		for (let i = 0; i < 4; i++) await writeSettingsBackup(v.as("oldphone"), { n: 100 + i }, { now: day(0, i) });
+
+		await writeSettingsBackup(v.host, { n: 1 }, { now: day(91) });
+
+		assert.deepStrictEqual(v.kept("oldphone"), [103]);
+	});
+
+	it("keeps every copy one operation relies on", async () => {
+		// One adoption can back up the local setup, the recovery copy and each
+		// conflict copy. Tidying after the last must not delete the first.
+		const v = vault();
+		const batch = new Set<string>();
+
+		for (let i = 0; i < 13; i++) {
+			await writeSettingsBackup(v.host, { n: i }, { now: at(i), batch });
+		}
+
+		assert.strictEqual(v.kept().length, 13);
+		assert.strictEqual(batch.size, 13);
+	});
+
+	it("keeps the new recovery copy when this device's own clock ran ahead before", async () => {
+		const v = vault();
+		for (let i = 10; i < 22; i++) await writeSettingsBackup(v.host, { n: i }, { now: at(i) });
+
+		const recovery = await writeSettingsBackup(v.host, { rescued: true }, { now: at(0) });
+
 		assert.ok(recovery && v.files.has(recovery));
-		assert.strictEqual(v.backups().length, 5);
+	});
+
+	it("names copies from a device that cannot remember itself with one shared name", async () => {
+		const v = vault();
+		const path = await writeSettingsBackup({ ...v.host, localState: undefined }, { n: 1 }, { now: at(0) });
+		assert.ok(path?.includes(`-${SHARED_DEVICE_ID}-`));
 	});
 });
 
@@ -168,29 +254,36 @@ describe("a backup that cannot be written", () => {
 		const v = vault();
 		v.fail.write = true;
 
-		assert.strictEqual(await writeSettingsBackup(v.host, {}, at(0)), null);
+		assert.strictEqual(await writeSettingsBackup(v.host, {}, { now: at(0) }), null);
+	});
+
+	it("reports null when the copy does not read back as written", async () => {
+		const v = vault();
+		v.fail.garble = true;
+
+		assert.strictEqual(await writeSettingsBackup(v.host, { n: 1 }, { now: at(0) }), null);
 	});
 
 	it("reports null when the folder cannot be created either", async () => {
 		const v = vault();
 		v.fail.mkdir = true;
 
-		assert.strictEqual(await writeSettingsBackup(v.host, {}, at(0)), null);
+		assert.strictEqual(await writeSettingsBackup(v.host, {}, { now: at(0) }), null);
 	});
 
-	it("still counts as written when only the tidying failed", async () => {
+	it("still counts as written when only listing and tidying failed", async () => {
 		// The copy exists; pruning is the part nobody is depending on.
 		const v = vault();
 		v.fail.list = true;
 
-		const path = await writeSettingsBackup(v.host, { kept: true }, at(0));
+		const path = await writeSettingsBackup(v.host, { kept: true }, { now: at(0) });
 
 		assert.ok(path);
 		assert.ok(v.files.has(path));
 	});
 
 	it("contains a timestamp-generation failure rather than rejecting adoption", async () => {
-		assert.strictEqual(await writeSettingsBackup(vault().host, {}, new Date(NaN)), null);
+		assert.strictEqual(await writeSettingsBackup(vault().host, {}, { now: new Date(NaN) }), null);
 	});
 
 	it("captures recovery data before awaited adapter work can mutate it", async () => {
@@ -201,7 +294,7 @@ describe("a backup that cannot be written", () => {
 			data.callouts[0]!.id = "changed during await";
 			return originalExists(path);
 		};
-		const path = await writeSettingsBackup(v.host, data, at(0));
+		const path = await writeSettingsBackup(v.host, data, { now: at(0) });
 		assert.ok(path);
 		const saved = JSON.parse(v.files.get(path)!) as { callouts: Array<{ id: string }> };
 		assert.strictEqual(saved.callouts[0]!.id, "original");

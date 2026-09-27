@@ -143,19 +143,19 @@ describe("explicit missing-file restoration boundaries", () => {
 		});
 	}
 
-	it("keeps restoration retryable after a checkpoint failure without authorizing ordinary saves", async t => {
+	it("restores the missing file even when this device's recovery copy cannot be updated", async t => {
+		t.mock.method(console, "warn", () => undefined);
 		const h = await running(t);
 		h.state.disk = null; await tryAdoptExternalSettings(h.host);
 		h.state.failCheckpoint = true;
-		assert.equal(await startFreshSettings(h.host), false);
-		assert.equal(h.host.settingsWriter.isFrozen, true);
-		assert.equal(h.host.settingsWriter.status.reason, "recovery-write");
+		assert.equal(await startFreshSettings(h.host), true);
+		assert.equal(h.host.settingsWriter.isFrozen, false);
+		assert.equal(h.host.settingsWriter.status.reason, null);
+		assert.ok((JSON.parse(h.state.disk!) as PluginData).callouts.some(row => row.id === "personal"));
 		h.state.failCheckpoint = false;
 		h.host.registry.add(definition({ id: "kept-draft" }));
 		await h.host.saveSettings();
-		assert.equal(h.state.disk, null);
-		assert.equal(await startFreshSettings(h.host), true);
-		assert.ok((JSON.parse(h.state.disk!) as PluginData).callouts.some(row => row.id === "kept-draft"));
+		assert.ok((h.state.checkpoint as PluginData).callouts.some(row => row.id === "kept-draft"), "the recovery copy caught up");
 	});
 
 	it("preserves the recovery copy when its backup cannot be verified", async t => {
@@ -208,8 +208,8 @@ describe("explicit missing-file restoration boundaries", () => {
 		const checkpointEntered = new Promise<void>(resolve => { entered = resolve; });
 		const checkpointReleased = new Promise<void>(resolve => { release = resolve; });
 		t.after(() => release());
-		const remember = h.host.settingsWriter.remember.bind(h.host.settingsWriter);
-		h.host.settingsWriter.remember = async data => { entered(); await checkpointReleased; await remember(data); };
+		const remember = h.host.settingsWriter.rememberIfPossible.bind(h.host.settingsWriter);
+		h.host.settingsWriter.rememberIfPossible = async data => { entered(); await checkpointReleased; return remember(data); };
 		const first = startFreshSettings(h.host);
 		await checkpointEntered;
 		assert.equal(await startFreshSettings(h.host), false);
@@ -258,12 +258,13 @@ describe("missing-file recovery provenance", () => {
 		assert.ok((JSON.parse(h.state.disk!) as PluginData).callouts.some(row => row.id === "recovered-from-unreadable"));
 	});
 
-	it("can restore after the primary disappears during a recovery-write pause", async t => {
+	it("keeps saving through a launch-time recovery storage failure, and restores after the primary disappears", async t => {
+		t.mock.method(console, "warn", () => undefined);
 		const h = harness(t);
 		h.state.disk = JSON.stringify(settings("personal"));
 		h.state.failCheckpoint = true;
 		await h.boot();
-		assert.equal(h.host.settingsWriter.status.frozenReason, "recovery-write");
+		assert.equal(h.host.settingsWriter.isFrozen, false);
 		h.state.disk = null;
 		await tryAdoptExternalSettings(h.host);
 		h.state.failCheckpoint = false;
@@ -416,6 +417,8 @@ describe("settings writes require verified persistence", () => {
 	it("keeps restoration paused when its missing parent directory cannot be created", async t => {
 		const h = harness(t, true);
 		await h.boot();
+		// The whole plugin folder is gone, and with it everything that was in it.
+		h.files.clear();
 		h.host.app.vault.adapter.mkdir = async () => { throw new Error("Directory creation denied"); };
 		assert.equal(await startFreshSettings(h.host), false);
 		assert.equal(h.state.checkpoint, null);

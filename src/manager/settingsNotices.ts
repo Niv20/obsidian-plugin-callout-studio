@@ -73,7 +73,7 @@ export function offerFreshStart(app: App, pluginId: string): void {
  * about an internal rather than a contract — hence the structural guard, the
  * same one `settings/hotkeyLink.ts` makes for the hotkeys pane.
  */
-function openPluginSettings(app: App, pluginId: string): boolean {
+export function openPluginSettings(app: App, pluginId: string): boolean {
 	const pane: App["setting"] | undefined = app.setting;
 	if (pane?.openTabById) {
 		try {

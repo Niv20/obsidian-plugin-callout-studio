@@ -6,6 +6,9 @@ import { handleCalloutDelete } from "../src/settings/sections/calloutVaultAction
 import { DeleteCalloutModal } from "../src/utils/DeleteCalloutModal";
 import type { SettingsSectionContext } from "../src/settings/sections/types";
 import type { CalloutDefinition } from "../src/types";
+import { savingWriter } from "./support/importSafetyStubs";
+// The completion notice is a fragment with an Undo link.
+import "./support/fakeDom";
 
 describe("delete after complete conversion", () => {
 	it("keeps the definition on a failed write and completes an idempotent retry", async () => {
@@ -29,7 +32,7 @@ describe("delete after complete conversion", () => {
 			},
 		} } as unknown as App;
 		const ctx = { app, display: () => {}, plugin: {
-			registry, saveSettings: async () => { saves++; },
+			registry, settingsWriter: savingWriter(), saveSettings: async () => { saves++; },
 		} } as unknown as SettingsSectionContext;
 		const prompt = Object.getOwnPropertyDescriptor(DeleteCalloutModal.prototype, "prompt")!, warn = console.warn;
 		DeleteCalloutModal.prototype.prompt = async () => "delete"; console.warn = () => {};

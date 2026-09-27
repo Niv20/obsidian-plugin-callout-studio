@@ -218,8 +218,6 @@ export const nb: Record<string, string> = {
 	"settings.resetAllDesc":
 		"Sletter alle brukercallouts, tilbakestiller innebygde callouts, globale stiler, lagrede fargepaletter, tilpasningen av høyreklikkmenyen og nedlastede Material-SVG-er.",
 	"settings.resetAllButton": "Tilbakestill alt",
-	"settings.resetAllConfirm":
-		"Dette sletter alle tilpassede callouts, tilbakestiller innebygde callouts, globale stiler, lagrede fargepaletter, tilpasningen av høyreklikkmenyen og alle cachede Material-SVG-er. Handlingen kan ikke angres. Er du sikker?",
 	"notice.resetAllDone": "Alt er tilbakestilt til standardinnstillingene.",
 	"notice.customCommandsRemoved":
 		"Fjernet {{count}} tilpasset(e) kommando(er) hvis callout-type ikke lenger finnes.",
@@ -247,7 +245,6 @@ export const nb: Record<string, string> = {
 		"Callout Studio klarte ikke å lese innstillingsfilen sin, så callout-typene dine mangler i denne økten. Ingenting er skrevet, og filen på disken er uendret — last inn Obsidian på nytt for å prøve igjen.",
 	"notice.settingsMissing":
 		"Callout Studios innstillingsfil mangler, så callout-typene dine mangler i denne økten. Ingenting er skrevet — hvis du synkroniserer dette hvelvet, la synkroniseringen fullføres og last inn Obsidian på nytt før du gjør endringer.",
-	"notice.settingsMissingAction": "Opprett en ny innstillingsfil",
 	"notice.nothingToWrap": "Ingenting å pakke inn.",
 	"notice.cursorNotInsideCallout": "Markøren er ikke inne i en callout.",
 	"notice.autocompleteTargetMoved":
@@ -671,7 +668,6 @@ export const nb: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Slett kommando",
-	"confirm.titleResetAll": "Tilbakestill alle callouts",
 	"confirm.titleResetCallout": "Tilbakestill callout",
 	"confirm.titleDeletePalette": "Slett palett",
 	"confirm.titleDeleteImage": "Slett bilde",
@@ -1040,12 +1036,9 @@ export const nb: Record<string, string> = {
 	"notice.legacyDiscoveryArchiveFailed": "Gjenopprettingskopien for oppgraderingen kunne ikke fullføres. Den tidligere lokale oppdagingsbufferen og oppstarts-CSS-en er beholdt uendret. Kontroller skrivetilgang til lagringen og ledig plass, og start deretter Obsidian på nytt for å prøve igjen.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Satt på pause: callout mangler. Finn eller opprett den for å gjenopprette denne kommandoen, eller rediger kommandoen for å velge en annen type.",
-	"confirm.startFresh": "Dette oppretter en ny innstillingsfil fra callout-typene og innstillingene som vises nå. Enhver tidligere lesbar gjenopprettingskopi beholdes i en sikkerhetskopi. Hvis den manglende filen fortsatt er underveis fra en annen enhet, eller fortsatt synkroniserer, blir den erstattet overalt — også på enheter som fortsatt har calloutene dine.\nGjør dette bare hvis du slettet filen selv, eller du er sikker på at den ikke kommer tilbake.",
-	"confirm.startFreshOk": "Opprett en ny innstillingsfil",
 	"confirm.titleRestoreSettings": "Gjenopprett disse innstillingene",
 	"confirm.titleCreateSettingsFile": "Opprett innstillingsfil",
 	"confirm.restoreDisplayedSettings": "Dette lagrer callout-typene og innstillingene som vises nå, til en innstillingsfil på denne enheten og gjenopptar lagring. Enhver lesbar lokal gjenopprettingskopi sikkerhetskopieres først.\nFør du fortsetter, la synkroniseringstjenesten fullføre og kontroller om en annen enhet har nyere innstillinger du vil beholde. Synkroniseringstjenesten kan sende denne gjenopprettede filen til de andre enhetene dine.\nFilen kontrolleres på nytt før lagring. Hvis eksisterende innstillinger blir funnet, beholdes de, og gjenopprettingen kan be deg kontrollere på nytt.",
-	"confirm.titleStartFresh": "Opprett en ny innstillingsfil",
 	"notice.settingsBackupFailed": "Gjenoppretting av innstillinger kunne ikke fortsette fordi en sikkerhetskopi ikke kunne lagres. Sjekk tilgjengelig lagringsplass og skrivetillatelser, og prøv igjen.",
 	"notice.settingsBackupSaved": "En gjenopprettingskopi av lokale callout-definisjoner ble lagret før innkommende innstillinger ble brukt: {{path}}.",
 	"notice.settingsChangedElsewhere": "Callout Studios innstillinger ble endret på en annen enhet, så denne endringen ble ikke lagret. Innstillingene fra den andre enheten lastes nå — gjør endringen på nytt.",
@@ -1053,11 +1046,9 @@ export const nb: Record<string, string> = {
 	"notice.settingsNotSaved": "Den endringen ble ikke lagret. Callout Studio kunne ikke bruke innstillingsfilen sin da Obsidian startet, så ingenting skrives på denne enheten — endringene dine varer til du lukker Obsidian. Se Innstillinger → Callout Studio for hva du kan gjøre.",
 	"saveStatus.changed": "Innstillingsfilen endret seg mens du redigerte. Utkastet ditt er fortsatt tilgjengelig. Velg Prøv lagring og gjenoppretting på nytt for å laste de innkommende innstillingene, og gjennomgå så utkastet ditt og lagre igjen.",
 	"saveStatus.missing": "Lagring er satt på pause fordi innstillingsfilen mangler. Dette kan skje etter ominstallering eller mens en synkronisering fortsatt kjører. Fullfør synkroniseringen og prøv igjen. For bevisst å erstatte den manglende filen, bruk Opprett en ny innstillingsfil i Callout Studios innstillinger.",
-	"saveStatus.newFile": "Opprett en ny innstillingsfil",
 	"saveStatus.restoreSettings": "Gjenopprett disse innstillingene",
 	"saveStatus.createSettingsFile": "Opprett innstillingsfil",
 	"saveStatus.checkAgain": "Kontroller på nytt",
-	"saveStatus.stillMissing": "Innstillingsfilen mangler fortsatt. Å kontrollere på nytt oppretter den ikke på nytt. La synkroniseringen fullføre og gjør hvelvet tilgjengelig frakoblet. Hvis filen ble slettet, gjenopprett en sikkerhetskopi eller bruk gjenopprettingshandlingen i Callout Studio-innstillingene på denne enheten for å lagre innstillingene som vises.",
 	"saveStatus.recoverInSettings": "For å gjenopprette den manglende filen på denne enheten, åpne Callout Studio-innstillingene. Før du lukker dette redigeringsprogrammet, kopier eventuelle ulagrede endringer du vil beholde; de er ikke lagret.",
 	"saveStatus.openSettings": "Åpne Callout Studio-innstillinger",
 	"notice.openSettingsFailed": "Callout Studio-innstillingene kunne ikke åpnes. Åpne Innstillinger → Callout Studio for å velge hva du vil gjøre.",
@@ -1128,4 +1119,100 @@ export const nb: Record<string, string> = {
 	"portable.errorBusy": "En annen konvertering pågår. Vent til den er ferdig.",
 	"portable.error": "Hvelvet kunne ikke leses eller oppdateres trygt. Kontroller filtilgangen og prøv igjen.",
 	"settings.maintenance": "Faresone",
+	// Sync safety hardening
+	"saveStatus.stillMissingAdvice":
+		"Innstillingsfilen mangler fortsatt. Å sjekke på nytt gjenoppretter den ikke. La synkroniseringen fullføre, og gjør hvelvet tilgjengelig frakoblet. Hvis filen ble slettet, velg Erstatt denne innstillingsfilen, eller gjenopprett en tidligere oppsett.",
+	"saveStatus.diagnosis.unavailable":
+		"Denne enheten kan ikke åpne filen akkurat nå. Den kan fortsatt lastes ned, hvelvet er kanskje ikke tilgjengelig frakoblet, eller lagringen svarer ikke. Callout Studio sjekker på nytt automatisk.",
+	"saveStatus.diagnosis.empty":
+		"Filen er tom, noe som vanligvis betyr at en synkronisering ble avbrutt. Hvis en annen enhet fortsatt har innstillingene dine, la den synkronisere. Ellers, erstatt filen.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"Filen inneholder uløste sammenslåingskonflikt-markører, for eksempel fra Git. Løs konflikten i Git-verktøyet ditt, eller erstatt filen.",
+	"saveStatus.diagnosis.damaged": "Filen er ufullstendig eller skadet, så den kan ikke leses som innstillinger.",
+	"saveStatus.diagnosis.combined":
+		"Synkroniseringstjenesten din slo sammen to versjoner av filen, så den interne sjekken samsvarer ikke lenger. Innstillingene i filen er intakte, og å erstatte filen beholder dem.",
+	"saveStatus.diagnosis.invalidEntries":
+		"Filen inneholder oppføringer Callout Studio ikke kan bruke, for eksempel samme callout-type oppført to ganger.",
+	"saveStatus.replaceUnreadable": "Erstatt innstillingsfil",
+	"saveStatus.discardRecoveryCopy": "Forkast gjenopprettingskopi",
+	"saveStatus.openRecovery": "Gjenopprett et tidligere oppsett",
+	"saveStatus.readOnlyWhilePaused":
+		"Innstillinger kan ikke endres før lagring fungerer igjen, så ingenting du endrer her går tapt. Du kan fortsatt eksportere oppsettet ditt.",
+	"statusBar.paused": "Lagring satt på pause",
+	"statusBar.pausedTooltip": "Callout Studio lagrer ikke innstillingsendringer. Klikk for å se hvorfor.",
+	"statusBar.pausedNotice": "Callout Studio lagrer ikke innstillingsendringer akkurat nå.",
+	"notice.replaceUnreadableUnavailable":
+		"Innstillingsfilen kan ikke erstattes akkurat nå: den endres, eller denne enheten kan ikke lese den. Prøv igjen om et øyeblikk.",
+	"notice.recoveryStorageUnavailable":
+		"Denne enhetens gjenopprettingslagring svarer ikke, så kopien kan ikke forkastes. Start Obsidian på nytt, og prøv igjen.",
+	"recovery.title": "Gjenopprett et tidligere oppsett",
+	"recovery.intro":
+		"Callout Studio beholder tidligere versjoner av oppsettet ditt på denne enheten og i pluginens sikkerhetskopimappe. Å gjenopprette en av dem erstatter det nåværende oppsettet ditt på alle synkroniserte enheter. En sikkerhetskopi av det nåværende oppsettet lagres først.",
+	"recovery.pausedHint": "Lagring er satt på pause, så gjenoppretting er ikke tilgjengelig før det er løst. Du kan fortsatt eksportere en kopi.",
+	"recovery.loading": "Ser etter tidligere versjoner…",
+	"recovery.empty": "Ingen tidligere versjoner ble funnet.",
+	"recovery.sectionHistory": "Lagret på denne enheten",
+	"recovery.sectionBackups": "Sikkerhetskopier",
+	"recovery.sectionCopies": "Andre kopier av innstillingsfilen",
+	"recovery.originThisDevice": "Denne enheten",
+	"recovery.originOtherDevice": "En annen enhet",
+	"recovery.originOlderVersion": "Lagret av en eldre versjon",
+	"recovery.unreadable": "Kan ikke leses som innstillinger",
+	"recovery.same": "Samme som ditt nåværende oppsett",
+	"recovery.summary": "{{callouts}} lagret(e) callout-type(r), {{count}} forskjell(er) fra nå",
+	"recovery.export": "Eksporter kopi",
+	"recovery.restore": "Gjenopprett",
+	"recovery.confirmTitle": "Gjenopprett dette oppsettet",
+	"recovery.confirmBody":
+		"Ditt nåværende oppsett erstattes med det fra {{when}} ({{count}} forskjell(er)). En sikkerhetskopi av ditt nåværende oppsett lagres først, og synkroniseringstjenesten din sender det gjenopprettede oppsettet til dine andre enheter.",
+	"recovery.restored": "Gjenopprettet oppsettet fra {{when}}.",
+	"recovery.stale":
+		"Ingenting ble gjenopprettet: innstillingene dine endret seg, eller kunne ikke sjekkes. Åpne dette vinduet igjen og gjennomgå listen.",
+	"recovery.backupFailed":
+		"Ingenting ble gjenopprettet: en sikkerhetskopi av ditt nåværende oppsett kunne ikke lagres først. Sjekk tilgjengelig lagringsplass, og prøv igjen.",
+	"recovery.failed": "Oppsettet kunne ikke gjenopprettes. Ingenting ble endret.",
+	"notice.unsavedChangesReplaced":
+		"Noen endringer gjort på denne enheten var ikke lagret ennå, og nyere innstillinger fra en annen enhet erstattet dem. Din versjon ble lagret først: åpne Gjenopprett et tidligere oppsett i Callout Studio-innstillingene for å få den tilbake.",
+	"notice.diagnosticsCopied": "Synkroniseringsdiagnostikk kopiert.",
+	"notice.diagnosticsFailed": "Synkroniseringsdiagnostikken kunne ikke kopieres.",
+	"notice.recoveryCopyStale":
+		"Innstillingene dine ble lagret, men denne enhetens gjenopprettingskopi kunne ikke oppdateres. Sjekk tilgjengelig lagringsplass på denne enheten. Callout Studio prøver igjen ved din neste endring.",
+	"notice.blockedWhilePaused":
+		"Lagring er satt på pause, så denne endringen kan ikke beholdes akkurat nå. Løs lagringsproblemet vist i Callout Studio-innstillingene først.",
+	"welcome.syncNote":
+		"Bruker du allerede Callout Studio på en annen enhet? La synkroniseringstjenesten din fullføre først. Calloutene og innstillingene dine vises her så snart de ankommer.",
+	"settings.resetAllConfirmFull":
+		"Dette sletter hver egendefinerte callout-type, opplastede bilder og egendefinerte kommandoer, og tilbakestiller innebygde callouter, globale stiler, lagrede fargepaletter, høyreklikkmenyen, overskrift- og inline-callout-innstillinger, og reservestilen. En sikkerhetskopi av ditt nåværende oppsett lagres først i pluginens sikkerhetskopimappe. Synkroniseringstjenesten din kan sende tilbakestillingen til dine andre enheter.",
+	"settings.resetBackupFailed":
+		"Ingenting ble tilbakestilt: en sikkerhetskopi av ditt nåværende oppsett kunne ikke lagres først. Sjekk tilgjengelig lagringsplass, og prøv igjen.",
+	"settings.resetNotSaved":
+		"Tilbakestillingen vises, men kunne ikke lagres ennå, så innstillingsfilen din har fortsatt det forrige oppsettet. Sjekk lagringsstatusen i Callout Studio-innstillingene.",
+	"settings.recovery": "Tidligere oppsett",
+	"settings.recoveryDesc": "Gjenopprett en versjon av oppsettet ditt lagret tidligere på denne enheten eller i pluginens sikkerhetskopimappe.",
+	"settings.recoveryButton": "Gjenopprett et tidligere oppsett",
+	"settings.diagnostics": "Synkroniseringsdiagnostikk",
+	"settings.diagnosticsDesc":
+		"Kopier et sammendrag av hvordan lagring og synkronisering fungerer, til bruk i en feilrapport. Det inneholder ingen callouter eller innstillinger.",
+	"settings.diagnosticsButton": "Kopier diagnostikk",
+	"confirm.titleResetEverything": "Tilbakestill alt",
+	"confirm.titleReplaceUnreadable": "Erstatt innstillingsfil",
+	"confirm.replaceUnreadable":
+		"En eksakt kopi av den nåværende filen lagres først i pluginens sikkerhetskopimappe. Filen erstattes deretter med oppsettet vist her, og synkroniseringstjenesten din sender det til dine andre enheter.",
+	"confirm.replaceUnreadableSalvage":
+		"En eksakt kopi av den nåværende filen lagres først i pluginens sikkerhetskopimappe. Innstillingene i den kombineres med oppsettet vist her, og filen skrives om slik at alle enheter kan lese den igjen.",
+	"confirm.titleDiscardRecoveryCopy": "Forkast gjenopprettingskopi",
+	"confirm.discardRecoveryCopy":
+		"Denne enhetens gjenopprettingskopi kan ikke leses, så lagring er satt på pause på denne enheten. En eksakt kopi av den lagres først i pluginens sikkerhetskopimappe. Den erstattes deretter med oppsettet vist her. Innstillingsfilen din endres ikke.",
+	"vault.undoRewrite": "Angre",
+	"vault.undoRestored": "Gjenopprettet {{count}} notat(er).",
+	"vault.undoPartial":
+		"Gjenopprettet {{count}} notat(er). {{skipped}} notat(er) endret seg etter omskrivingen, så de ble latt være som de er.",
+	"import.confirmTitle": "Importer Callout Studio-sikkerhetskopi",
+	"import.confirmSummary":
+		"Dette legger til {{added}} callout-type(r), erstatter {{replaced}} eksisterende med filens versjon, og gjenoppretter {{settings}} gruppe(r) av innstillinger fra filen. En sikkerhetskopi av ditt nåværende oppsett lagres først.",
+	"import.confirmAction": "Importer",
+	"import.backupFailed":
+		"Ingenting ble importert: en sikkerhetskopi av ditt nåværende oppsett kunne ikke lagres først. Sjekk tilgjengelig lagringsplass, og prøv igjen.",
+	"import.notSaved":
+		"Importen vises, men kunne ikke lagres ennå. Sjekk lagringsstatusen i Callout Studio-innstillingene.",
 };

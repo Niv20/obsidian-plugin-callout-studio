@@ -137,16 +137,19 @@ describe("durable recovery transaction boundaries", () => {
 		current = false; release(); assert.equal(await commit, false); assert.equal(writes, 0);
 		assert.equal((saved as { n: number }).n, 1);
 	});
-	it("keeps a published isolated commit consistent with the file if its final checkpoint fails", async () => {
-		let checkpoints = 0, state = { n: 1 }, disk = state, published = false;
+	it("keeps a published isolated commit consistent with the file if its final checkpoint fails", async t => {
+		t.mock.method(console, "warn", () => undefined);
+		let checkpoints = 0, stale = 0, state = { n: 1 }, disk = state, published = false;
 		const writer = new SettingsWriter({ mergeConcurrent: true, build: () => state,
 			checkpoint: { read: async () => null, write: async () => { if (++checkpoints === 2) throw new Error("Checkpoint failed after commit"); } },
 			write: async data => { disk = data as { n: number }; },
+			onCheckpointStale: () => { stale++; },
 		});
 		writer.adopt(JSON.stringify(state));
-		await assert.rejects(writer.commit({ n: 2 }, () => true, () => { state = { n: 2 }; published = true; }), /after commit/);
-		assert.equal(published, true); assert.equal(disk.n, 2);
+		assert.equal(await writer.commit({ n: 2 }, () => true, () => { state = { n: 2 }; published = true; }), true);
+		assert.equal(published, true); assert.equal(disk.n, 2); assert.equal(stale, 1);
 		assert.equal(writer.matchesLastWrite(JSON.stringify(state), true), true);
+		assert.equal(writer.status.reason, null, "a lagging recovery copy is not a failed save");
 	});
 
 });

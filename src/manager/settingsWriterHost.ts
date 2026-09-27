@@ -1,9 +1,14 @@
+import { Notice } from "obsidian";
+import { t } from "../i18n";
 import { SettingsPersistenceError, settingsWriteReason } from "./settingsSaveStatus";
 import { reportSettingsSaveFailure } from "./settingsSaveReporter";
 import { SettingsCheckpoint, type SettingsCheckpointStore } from "./settingsCheckpoint";
+import { SettingsHistory, type SettingsHistoryStore } from "./settingsHistory";
 import { SettingsWriter } from "./SettingsWriter";
-import { readSettingsFile, type SettingsFileHost } from "./settingsFile";
+import { PRIMARY_IO_TIMEOUT_MS, readSettingsFile, type SettingsFileHost } from "./settingsFile";
+import { withTimeout } from "../utils/withTimeout";
 import { canonical } from "./syncTree";
+import { isUntouchedSettings, settingsGenesis } from "./settingsGenesis";
 
 export interface SettingsWriterOwner extends SettingsFileHost {
 	registry: { toSaveData(): unknown };
@@ -17,16 +22,24 @@ export interface SettingsWriterOwner extends SettingsFileHost {
 export function createSettingsWriter(
 	owner: SettingsWriterOwner,
 	checkpoint: SettingsCheckpointStore = new SettingsCheckpoint(owner.app, owner.manifest),
+	history: SettingsHistoryStore = new SettingsHistory(owner.app, owner.manifest),
 ): SettingsWriter {
 	const writer = new SettingsWriter({
-		mergeConcurrent: true, checkpoint,
+		mergeConcurrent: true, checkpoint, history,
+		genesis: settingsGenesis,
+		isUntouched: data => isUntouchedSettings(data),
 		build: () => owner.registry.toSaveData(),
 		write: async (data) => {
 			// Some Obsidian versions swallow adapter failures inside saveData.
 			// Resolve only after reading back the intended settings, including
 			// when the adapter replaced the file and then reported an error.
 			let failure: unknown;
-			try { await owner.saveData(data); } catch (error) { failure = error; }
+			// A write that never answers is a failed write; the read-back below
+			// still accepts it if it did land.
+			try {
+				await withTimeout(owner.saveData(data), PRIMARY_IO_TIMEOUT_MS,
+					() => new SettingsPersistenceError("write", "Storage did not respond"));
+			} catch (error) { failure = error; }
 			const read = await readSettingsFile(owner);
 			if (read.kind !== "loaded" || canonical(read.data) !== canonical(data)) {
 				throw failure instanceof Error ? failure :
@@ -36,7 +49,9 @@ export function createSettingsWriter(
 		},
 		readCurrent: async () => {
 			const read = await readSettingsFile(owner);
-			if (read.kind === "unreadable") throw new SettingsPersistenceError("unreadable", "Settings are unreadable");
+			if (read.kind === "unreadable") {
+				throw new SettingsPersistenceError(read.newer ? "newer-version" : "unreadable", "Settings are unreadable");
+			}
 			return read.kind === "loaded" ? read.json : null;
 		},
 		onStaleWrite: () => {
@@ -52,6 +67,9 @@ export function createSettingsWriter(
 		onFrozenSave: () => {
 			reportSettingsSaveFailure(writer);
 		},
+		// Not a failure: the settings file holds every change. Said once, so a
+		// device whose recovery storage is full knows it is less protected.
+		onCheckpointStale: () => { new Notice(t("notice.recoveryCopyStale"), 10000); },
 	});
 	return writer;
 }

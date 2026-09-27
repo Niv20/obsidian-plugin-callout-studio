@@ -120,3 +120,74 @@ describe("missing settings recovery banner", () => {
 		}
 	});
 });
+
+describe("the way out of an unreadable file", () => {
+	function unreadable(diagnosis: import("../src/manager/settingsDiagnosis").SettingsDiagnosis, reason: "unreadable" | "recovery-read" = "unreadable") {
+		const status = new SettingsSaveStatus();
+		const host = { app: {} as App, settingsWriter: {
+			status, get isFrozen() { return status.frozenReason !== null; }, isDestroyed: false,
+		} };
+		const calls: string[] = [];
+		const container = dom.document.createElement("div");
+		const dispose = renderSaveStatusBanner(host, container as unknown as HTMLElement, {
+			retry: async () => false,
+			diagnose: async () => diagnosis,
+			replaceUnreadable: async () => { calls.push("replace"); return true; },
+			discardRecoveryCopy: async () => { calls.push("discard"); return true; },
+			openRecovery: () => { calls.push("recovery"); },
+		});
+		status.freeze(reason);
+		return { container, calls, dispose, buttons: () => container.querySelectorAll("button") };
+	}
+	const settle = () => new Promise(resolve => setImmediate(resolve));
+
+	it("names the cause, and offers to replace a file that waiting will not fix", async () => {
+		const h = unreadable("merge-markers");
+		try {
+			await settle();
+			assert.ok(h.container.textContent.includes(en["saveStatus.diagnosis.mergeMarkers"]!));
+			const replace = h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"]);
+			assert.ok(replace?.hasClass("mod-warning"));
+		} finally { h.dispose(); }
+	});
+
+	it("does not offer to replace a file that is only unavailable on this device", async () => {
+		const h = unreadable("unavailable");
+		try {
+			await settle();
+			assert.ok(h.container.textContent.includes(en["saveStatus.diagnosis.unavailable"]!));
+			assert.ok(!h.buttons().some(button => button.textContent === en["saveStatus.replaceUnreadable"]));
+		} finally { h.dispose(); }
+	});
+
+	it("replaces only after a confirmation that says an exact copy is kept", async () => {
+		const confirm = Object.getOwnPropertyDescriptor(ConfirmModal.prototype, "confirm")!;
+		const asked: string[] = [];
+		ConfirmModal.prototype.confirm = function (this: ConfirmModal) {
+			asked.push((this as unknown as { message: string }).message);
+			return Promise.resolve(asked.length > 1);
+		};
+		const h = unreadable("combined");
+		try {
+			await settle();
+			const replace = () => h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"])!;
+			replace().fire("click"); await settle(); await settle();
+			assert.deepEqual(h.calls, [], "replaced without a yes");
+			replace().fire("click"); await settle(); await settle();
+			assert.deepEqual(h.calls, ["replace"]);
+			assert.deepEqual(asked, [en["confirm.replaceUnreadableSalvage"], en["confirm.replaceUnreadableSalvage"]]);
+		} finally { h.dispose(); Object.defineProperty(ConfirmModal.prototype, "confirm", confirm); }
+	});
+
+	it("offers to discard an unreadable recovery copy, and earlier setups in every paused state", async () => {
+		const h = unreadable("readable", "recovery-read");
+		try {
+			await settle();
+			const labels = h.buttons().map(button => button.textContent);
+			assert.ok(labels.includes(en["saveStatus.discardRecoveryCopy"]!));
+			assert.ok(labels.includes(en["saveStatus.openRecovery"]!));
+			h.buttons().find(button => button.textContent === en["saveStatus.openRecovery"])!.fire("click");
+			assert.deepEqual(h.calls, ["recovery"]);
+		} finally { h.dispose(); }
+	});
+});

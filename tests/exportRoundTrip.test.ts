@@ -57,6 +57,7 @@ import { EXPORT_FORMAT_ID, EXPORT_FORMAT_VERSION } from "../src/manager/CalloutR
 import { processImportedJSON } from "../src/settings/sections/DataManagementSection";
 import { validateImportPayload } from "../src/utils/importValidator";
 import type { SettingsSectionContext } from "../src/settings/sections/types";
+import { memoryVault, PLUGIN_MANIFEST, savingWriter, stubConfirm } from "./support/importSafetyStubs";
 import type {
 	CalloutDefinition,
 	CustomCommand,
@@ -303,10 +304,16 @@ function emptyVaultOfSameEra(): CalloutRegistry {
  * Driving the real import path
  * ──────────────────────────────────────────────────────────────────────────── */
 
+// A clean file now asks before it applies; these suites are about what it
+// applies, so every confirmation says yes. The asking itself is pinned below.
+stubConfirm(true);
+
 interface ImportRun {
 	ctx: SettingsSectionContext;
 	/** Notices raised, in order — the only user-facing result of an import. */
 	notices: string[];
+	/** Files written through the vault: the pre-import backup lands here. */
+	files: Map<string, string>;
 	calls: {
 		saves: number;
 		displays: number;
@@ -336,8 +343,13 @@ function importRun(registry: CalloutRegistry): ImportRun {
 		artworkBatches: 0,
 	};
 
+	const vault = memoryVault();
 	const plugin = {
 		registry,
+		// The backup an import writes before it changes anything.
+		app: vault.app,
+		manifest: PLUGIN_MANIFEST,
+		settingsWriter: savingWriter(),
 		customCommands: {
 			syncAll: () => {
 				calls.commandSweeps++;
@@ -365,7 +377,7 @@ function importRun(registry: CalloutRegistry): ImportRun {
 		registerDisposer: () => {},
 	} as unknown as SettingsSectionContext;
 
-	return { ctx, notices, calls };
+	return { ctx, notices, calls, files: vault.files };
 }
 
 /** The export file, as a `File` — what the settings tab hands the importer. */

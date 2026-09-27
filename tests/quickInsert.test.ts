@@ -483,7 +483,11 @@ describe("quick-insert source controls and empty states", () => {
 		);
 	});
 
-	it("starts on All once, then restores and persists the last source", () => {
+	it("starts on All once, then restores the last source from this device, never from a settings write", () => {
+		const memory = (source?: string) => ({
+			quickInsertSource: source,
+			setQuickInsertSource(next: string) { this.quickInsertSource = next; },
+		});
 		const firstPlugin = {
 			app: {
 				workspace: {
@@ -492,14 +496,22 @@ describe("quick-insert source controls and empty states", () => {
 				},
 			},
 			settings: { quickInsertSource: "all" },
+			localState: memory(),
 		} as unknown as ConstructorParameters<typeof QuickInsertModal>[0];
 		const first = new QuickInsertModal(firstPlugin) as unknown as {
 			filter: CalloutSourceFilter;
 		};
 		assert.strictEqual(first.filter, "all");
 
+		// A synced value left by an older build seeds a device with no memory.
+		const seeded = new QuickInsertModal({ ...firstPlugin, settings: { quickInsertSource: "theme" } } as typeof firstPlugin) as unknown as {
+			filter: CalloutSourceFilter;
+		};
+		assert.strictEqual(seeded.filter, "theme");
+
 		let saves = 0;
-		const settings = { quickInsertSource: "user" };
+		const settings = { quickInsertSource: "all" };
+		const localState = memory("user");
 		const plugin = {
 			app: {
 				workspace: {
@@ -508,6 +520,7 @@ describe("quick-insert source controls and empty states", () => {
 				},
 			},
 			settings,
+			localState,
 			registry: {
 				getBuiltIn: () => [],
 				getUserDefined: () => [],
@@ -529,14 +542,13 @@ describe("quick-insert source controls and empty states", () => {
 		const select = host.querySelector<HTMLElement>(".cs-select-dropdown")!;
 		assert.ok(select);
 		pickDropdown(select, en["quickInsert.sourceTheme"]!);
-		assert.strictEqual(settings.quickInsertSource, "theme");
-		assert.strictEqual(saves, 1);
+		assert.strictEqual(localState.quickInsertSource, "theme");
+		assert.strictEqual(settings.quickInsertSource, "all", "the synced settings were changed");
+		assert.strictEqual(saves, 0, "choosing a filter wrote the settings file");
 
 		const modal = readRepoFile("src/settings/QuickInsertModal.ts");
 		const code = modal.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, "");
 		assert.match(code, /private filter:\s*CalloutSourceFilter\s*=\s*"all"/);
-		assert.match(code, /settings\.quickInsertSource\s*=\s*filter/);
-		assert.match(code, /void this\.plugin\.saveSettings\(\)/);
 		assert.match(code, /registry\.themeOwns\(def\)/);
 		assert.match(code, /usable\.some\(\(def\)\s*=>\s*this\.plugin\.registry\.themeOwns\(def\)\)/);
 		assert.match(code, /workspace\.on\("css-change",\s*this\.onRegistryChange\)/);

@@ -81,7 +81,9 @@ export class QuickInsertModal extends Modal {
 
 	constructor(private readonly plugin: SettingsTabPlugin) {
 		super(plugin.app);
-		if (isCalloutSourceFilter(plugin.settings.quickInsertSource)) this.filter = plugin.settings.quickInsertSource;
+		// Remembered on this device; the synced field seeds a device that has none.
+		const remembered = plugin.localState.quickInsertSource ?? plugin.settings.quickInsertSource;
+		if (isCalloutSourceFilter(remembered)) this.filter = remembered;
 		this.captured = resolveTargetEditor(plugin.app);
 	}
 
@@ -149,8 +151,9 @@ export class QuickInsertModal extends Modal {
 			},
 			onFilter: (filter) => {
 				this.filter = filter;
-				this.plugin.settings.quickInsertSource = filter;
-				void this.plugin.saveSettings();
+				// Memory, not a setting: a synced write here made every other
+				// device adopt a new settings file for a glance at a filter.
+				this.plugin.localState.setQuickInsertSource(filter);
 				this.renderList();
 			},
 			onKey: (ev) => this.onSearchKey(ev),

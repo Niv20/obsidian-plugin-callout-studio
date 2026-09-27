@@ -8,6 +8,7 @@ import { readSettledSettingsFile } from "./settingsSettledRead";
 import { offerFreshStart, warnSettingsUnreadable } from "./settingsNotices";
 import { watchForLateSettings } from "./settingsLateArrival";
 import { applySettingsRead } from "./settingsAdopt";
+import { hasSafeSettingsFileShape } from "./settingsFileShape";
 import type { ExternalReloadHost } from "./settingsAdopt";
 
 export interface SettingsBootResult {
@@ -24,7 +25,7 @@ export async function loadSettingsInto(
 	if (host.settingsWriter.isDestroyed) return { isFreshInstall: false };
 
 	if (read.kind === "unreadable") {
-		host.settingsWriter.freeze();
+		host.settingsWriter.freeze(read.newer ? "newer-version" : "unreadable");
 		console.error(
 			"[callout-studio] data.json exists but could not be read; " +
 				"settings will not be written this session",
@@ -65,7 +66,8 @@ export async function loadSettingsInto(
 		// that is absent. Confirmed recreation preserves these definitions.
 		const recoveryBaseline = missingRecovery && !isFromNewerBuild(missingRecovery) ? structuredClone(missingRecovery) : null;
 		await host.settingsWriter.hold(async () => {
-			host.registry.load(missingRecovery);
+			// A later build's copy may not pass this build's gate; show built-ins then.
+			host.registry.load(missingRecovery && hasSafeSettingsFileShape(missingRecovery) ? missingRecovery : null);
 			if (recoveryBaseline) host.settingsWriter.seedRecovery(recoveryBaseline);
 		});
 
@@ -74,7 +76,9 @@ export async function loadSettingsInto(
 	}
 
 	if (read.kind === "absent") {
-		host.settingsWriter.freeze("missing");
+		// Provisional until layout-ready confirms a fresh install; quiet, since
+		// a background save meeting it is not a lost change.
+		host.settingsWriter.freeze("missing", false);
 	}
 	const recovered = read.kind === "loaded" && host.settingsWriter.hasCheckpoint ? await recoverSettingsAtBoot(host, read) : read;
 	try { await applySettingsRead(host, recovered, read.kind === "loaded" ? read.json : undefined); }
@@ -86,4 +90,26 @@ export async function loadSettingsInto(
 
 	if (!host.settingsWriter.isDestroyed) watchForLateSettings(host);
 	return { isFreshInstall: read.kind === "absent" };
+}
+
+/**
+ * {@link loadSettingsInto}, never throwing.
+ *
+ * An error it does not expect — a migration meeting data this build never
+ * anticipated — used to escape `onload`, and the plugin then failed on every
+ * launch with no settings tab to export or recover from. Instead: pause
+ * saving, show the built-in callouts, and keep watching for a readable file.
+ * The file on disk is untouched.
+ */
+export async function loadSettingsSafely(host: ExternalReloadHost): Promise<SettingsBootResult> {
+	try {
+		return await loadSettingsInto(host);
+	} catch (error) {
+		console.error("[callout-studio] settings could not be loaded; showing built-in callouts", error);
+		host.settingsWriter.freeze("unreadable");
+		try { host.registry.load(null); } catch (reset) { console.error("[callout-studio] could not reset the registry", reset); }
+		reportSettingsSaveFailure(host.settingsWriter, error);
+		if (!host.settingsWriter.isDestroyed) watchForLateSettings(host);
+		return { isFreshInstall: false };
+	}
 }

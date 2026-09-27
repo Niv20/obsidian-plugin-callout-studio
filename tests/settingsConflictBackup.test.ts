@@ -16,6 +16,7 @@ function fixture() {
 		app: { vault: { adapter: {
 			exists: () => Promise.resolve(true),
 			write: (path: string, text: string) => { if (fail) return Promise.reject(new Error("disk full")); files.set(path, text); return Promise.resolve(); },
+			read: (path: string) => Promise.resolve(files.get(path) ?? ""),
 			list: () => Promise.resolve({ files: [...files.keys()], folders: [] }),
 			remove: (path: string) => { files.delete(path); return Promise.resolve(); },
 		} } } as unknown as App };
@@ -45,9 +46,16 @@ describe("conflicting device settings retain a recovery copy", () => {
 	});
 	it("two devices backing up at the same instant cannot overwrite one another", async () => {
 		const h = fixture(); const time = new Date("2026-09-06T10:00:00Z");
-		const a = await writeSettingsBackup(h.host, { from: "A" }, time);
-		const b = await writeSettingsBackup(h.host, { from: "B" }, time);
+		const a = await writeSettingsBackup({ ...h.host, localState: { deviceId: "aaaaaaaa" } }, { same: true }, { now: time });
+		const b = await writeSettingsBackup({ ...h.host, localState: { deviceId: "bbbbbbbb" } }, { same: false }, { now: time });
 		assert.notEqual(a, b); assert.equal(h.files.size, 2);
+	});
+	it("does not back up for picker memory or onboarding flags alone", async () => {
+		const h = fixture();
+		const incoming = { ...h.current, settings: { ...h.current.settings, welcomeSeen: true, quickInsertSource: "theme",
+			iconSources: { ...h.current.settings.iconSources, lastCategory: { material: "Social" }, lastEmojiSkinTone: 3 } } };
+		assert.equal(await backUpBeforeAdoption(h.host, h.current, incoming), true);
+		assert.equal(h.files.size, 0);
 	});
 	it("backs up settings-only edits even when all callout rows remain identical", async () => {
 		const h = fixture();

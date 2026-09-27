@@ -230,8 +230,6 @@ export const de: Record<string, string> = {
 	"settings.resetAllDesc":
 		"Löscht alle Benutzer-Callouts, setzt integrierte Callouts, globale Stile (Rahmen, Schriftskalierung, Form), gespeicherte Farbpaletten, die Anpassung des Rechtsklickmenüs und heruntergeladene Material-SVGs zurück.",
 	"settings.resetAllButton": "Alles zurücksetzen",
-	"settings.resetAllConfirm":
-		"Dadurch werden alle benutzerdefinierten Callouts gelöscht, integrierte Callouts, globale Stile, gespeicherte Farbpaletten, die Anpassung des Rechtsklickmenüs und alle gecachten Material-SVGs zurückgesetzt. Diese Aktion kann nicht rückgängig gemacht werden. Sind Sie sicher?",
 	"notice.resetAllDone": "Alles wurde auf die Standardwerte zurückgesetzt.",
 
 	"notice.customCommandsRemoved":
@@ -260,7 +258,6 @@ export const de: Record<string, string> = {
 		"Callout Studio konnte seine Einstellungsdatei nicht lesen, daher fehlen deine Callout-Typen in dieser Sitzung. Es wurde nichts geschrieben, und die Datei auf der Festplatte ist unverändert — lade Obsidian neu, um es erneut zu versuchen.",
 	"notice.settingsMissing":
 		"Die Einstellungsdatei von Callout Studio fehlt, daher fehlen deine Callout-Typen in dieser Sitzung. Es wurde nichts geschrieben — wenn du diesen Tresor synchronisierst, lass die Synchronisierung abschließen und lade Obsidian neu, bevor du Änderungen vornimmst.",
-	"notice.settingsMissingAction": "Neue Einstellungsdatei erstellen",
 	"notice.nothingToWrap": "Nichts zum Einbetten.",
 	"notice.cursorNotInsideCallout":
 		"Der Cursor befindet sich nicht in einem Callout.",
@@ -694,7 +691,6 @@ export const de: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Befehl löschen",
-	"confirm.titleResetAll": "Alle Callouts zurücksetzen",
 	"confirm.titleResetCallout": "Callout zurücksetzen",
 	"confirm.titleDeletePalette": "Palette löschen",
 	"confirm.titleDeleteImage": "Bild löschen",
@@ -1141,12 +1137,9 @@ export const de: Record<string, string> = {
 	"notice.legacyDiscoveryArchiveFailed": "Die Wiederherstellungskopie für das Upgrade konnte nicht abgeschlossen werden. Der bisherige lokale Erkennungs-Cache und das Start-CSS wurden unverändert beibehalten. Prüfe Schreib- und Speicherzugriff sowie den freien Speicherplatz und starte Obsidian anschließend neu, um es erneut zu versuchen.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Pausiert: Der Callout fehlt. Finde oder erstelle ihn, um diesen Befehl wiederherzustellen, oder bearbeite den Befehl, um einen anderen Typ zu wählen.",
-	"confirm.startFresh": "Dies erstellt eine neue Einstellungsdatei aus den aktuell angezeigten Callout-Typen und Einstellungen. Eine vorhandene lesbare Wiederherstellungskopie bleibt in einer Sicherung erhalten. Wenn die fehlende Datei noch von einem anderen Gerät unterwegs ist oder noch synchronisiert wird, wird sie überall ersetzt — auch auf den Geräten, die deine Callouts noch haben.\nMach das nur, wenn du die Datei selbst gelöscht hast oder sicher bist, dass sie nicht zurückkommt.",
-	"confirm.startFreshOk": "Neue Einstellungsdatei erstellen",
 	"confirm.titleRestoreSettings": "Diese Einstellungen wiederherstellen",
 	"confirm.titleCreateSettingsFile": "Einstellungsdatei erstellen",
 	"confirm.restoreDisplayedSettings": "Dies speichert die derzeit angezeigten Callout-Typen und Einstellungen in einer Einstellungsdatei auf diesem Gerät und setzt das Speichern fort. Jede lesbare lokale Wiederherstellungskopie wird vorher gesichert.\nBevor du fortfährst, lass deine Synchronisierung abschließen und prüfe, ob ein anderes Gerät neuere Einstellungen hat, die du behalten möchtest. Dein Synchronisierungsdienst kann diese wiederhergestellte Datei an deine anderen Geräte senden.\nDie Datei wird vor dem Speichern erneut geprüft. Wenn vorhandene Einstellungen gefunden werden, bleiben sie erhalten, und die Wiederherstellung kann dich bitten, erneut zu prüfen.",
-	"confirm.titleStartFresh": "Neue Einstellungsdatei erstellen",
 	"notice.settingsBackupFailed": "Die Einstellungswiederherstellung konnte nicht fortgesetzt werden, da eine Sicherheitskopie nicht gespeichert werden konnte. Prüfe den verfügbaren Speicherplatz und die Schreibrechte, und versuche es dann erneut.",
 	"notice.settingsBackupSaved": "Vor dem Anwenden der eingehenden Einstellungen wurde eine Wiederherstellungskopie der lokalen Callout-Definitionen gespeichert: {{path}}.",
 	"notice.settingsChangedElsewhere": "Die Einstellungen von Callout Studio wurden auf einem anderen Gerät geändert, daher wurde diese Änderung nicht gespeichert. Die Einstellungen des anderen Geräts werden jetzt geladen — nimm die Änderung bitte erneut vor.",
@@ -1154,11 +1147,9 @@ export const de: Record<string, string> = {
 	"notice.settingsNotSaved": "Diese Änderung wurde nicht gespeichert. Callout Studio konnte seine Einstellungsdatei beim Start von Obsidian nicht verwenden, daher wird auf diesem Gerät nichts geschrieben — deine Änderungen bleiben erhalten, bis du Obsidian schließt. Unter Einstellungen → Callout Studio erfährst du, was zu tun ist.",
 	"saveStatus.changed": "Die Einstellungsdatei hat sich geändert, während du bearbeitet hast. Dein Entwurf ist weiterhin verfügbar. Wähle Speichern und Wiederherstellung erneut versuchen, um die eingehenden Einstellungen zu laden, überprüfe dann deinen Entwurf und speichere erneut.",
 	"saveStatus.missing": "Das Speichern ist pausiert, weil die Einstellungsdatei fehlt. Das kann nach einer Neuinstallation oder während eine Synchronisierung noch läuft passieren. Schließe die Synchronisierung ab und versuche es erneut. Um die fehlende Datei absichtlich zu ersetzen, verwende Neue Einstellungsdatei erstellen in den Callout-Studio-Einstellungen.",
-	"saveStatus.newFile": "Neue Einstellungsdatei erstellen",
 	"saveStatus.restoreSettings": "Diese Einstellungen wiederherstellen",
 	"saveStatus.createSettingsFile": "Einstellungsdatei erstellen",
 	"saveStatus.checkAgain": "Erneut prüfen",
-	"saveStatus.stillMissing": "Die Einstellungsdatei fehlt weiterhin. Durch erneutes Prüfen wird sie nicht neu erstellt. Lass die Synchronisierung abschließen und mache den Vault offline verfügbar. Wenn die Datei gelöscht wurde, stelle ein Backup wieder her oder verwende die Wiederherstellungsaktion in den Callout Studio-Einstellungen auf diesem Gerät, um die angezeigten Einstellungen zu speichern.",
 	"saveStatus.recoverInSettings": "Um die fehlende Datei auf diesem Gerät wiederherzustellen, öffne die Callout Studio-Einstellungen. Kopiere vor dem Schließen dieses Editors alle ungespeicherten Änderungen, die du behalten möchtest; sie wurden nicht gespeichert.",
 	"saveStatus.openSettings": "Callout-Studio-Einstellungen öffnen",
 	"notice.openSettingsFailed": "Die Callout-Studio-Einstellungen konnten nicht geöffnet werden. Öffne Einstellungen → Callout Studio, um zu entscheiden, wie es weitergeht.",
@@ -1178,4 +1169,83 @@ export const de: Record<string, string> = {
 	"saveStatus.writePermission": "Die Einstellungsdatei konnte nicht gespeichert werden, weil der Speicher den Schreibzugriff verweigert hat. Prüfe, ob der Tresor und der Plugin-Ordner beschreibbar sind, und versuche es dann erneut.",
 	"saveStatus.writeSpace": "Die Einstellungsdatei konnte nicht gespeichert werden, weil der Speicher voll ist oder sein Kontingent überschritten wurde. Gib etwas Speicherplatz frei, und versuche es dann erneut.",
 	"settings.readOnly": "Callout Studio konnte seine Einstellungsdatei beim Start von Obsidian nicht verwenden, daher wird auf dieser Seite nichts auf diesem Gerät gespeichert. Deine Änderungen bleiben erhalten, bis du Obsidian schließt. Lade Obsidian neu, sobald die Datei wieder da ist — wenn du diesen Tresor synchronisierst, lass die Synchronisierung zuerst abschließen.",
+
+	// Sync safety hardening
+	"saveStatus.stillMissingAdvice":
+		"Die Einstellungsdatei fehlt weiterhin. Erneutes Prüfen stellt sie nicht wieder her. Lass die Synchronisierung abschließen und mache den Tresor offline verfügbar. Falls die Datei gelöscht wurde, wähle Einstellungsdatei ersetzen, oder stelle eine frühere Konfiguration wieder her.",
+	"saveStatus.diagnosis.unavailable":
+		"Dieses Gerät kann die Datei gerade nicht öffnen. Sie wird möglicherweise noch heruntergeladen, der Tresor ist eventuell nicht offline verfügbar, oder der Speicher reagiert nicht. Callout Studio prüft automatisch erneut.",
+	"saveStatus.diagnosis.empty": "Die Datei ist leer, was meist bedeutet, dass eine Synchronisierung unterbrochen wurde. Wenn ein anderes Gerät noch deine Einstellungen hat, lass es synchronisieren. Andernfalls ersetze die Datei.",
+	"saveStatus.diagnosis.mergeMarkers": "Die Datei enthält ungelöste Merge-Konfliktmarker, zum Beispiel von Git. Löse den Konflikt in deinem Git-Tool, oder ersetze die Datei.",
+	"saveStatus.diagnosis.damaged": "Die Datei ist unvollständig oder beschädigt und kann daher nicht als Einstellungen gelesen werden.",
+	"saveStatus.diagnosis.combined":
+		"Dein Sync-Dienst hat zwei Versionen der Datei zusammengeführt, sodass ihre interne Prüfsumme nicht mehr übereinstimmt. Die Einstellungen darin sind unversehrt, und das Ersetzen der Datei erhält sie.",
+	"saveStatus.diagnosis.invalidEntries": "Die Datei enthält Einträge, die Callout Studio nicht verwenden kann, zum Beispiel denselben Callout-Typ zweimal aufgeführt.",
+	"saveStatus.replaceUnreadable": "Einstellungsdatei ersetzen",
+	"saveStatus.discardRecoveryCopy": "Wiederherstellungskopie verwerfen",
+	"saveStatus.openRecovery": "Eine frühere Konfiguration wiederherstellen",
+	"saveStatus.readOnlyWhilePaused":
+		"Einstellungen können nicht geändert werden, bis das Speichern wieder funktioniert, daher geht nichts verloren, was du hier änderst. Du kannst deine Konfiguration weiterhin exportieren.",
+	"statusBar.paused": "Speichern pausiert",
+	"statusBar.pausedTooltip": "Callout Studio speichert Einstellungsänderungen nicht. Klicke, um den Grund zu sehen.",
+	"statusBar.pausedNotice": "Callout Studio speichert Einstellungsänderungen gerade nicht.",
+	"notice.replaceUnreadableUnavailable": "Die Einstellungsdatei kann gerade nicht ersetzt werden: Sie wird gerade geändert, oder dieses Gerät kann sie nicht lesen. Versuche es in einem Moment erneut.",
+	"notice.recoveryStorageUnavailable": "Der Wiederherstellungsspeicher dieses Geräts reagiert nicht, daher kann die Kopie nicht verworfen werden. Starte Obsidian neu, und versuche es dann erneut.",
+	"recovery.title": "Eine frühere Konfiguration wiederherstellen",
+	"recovery.intro":
+		"Callout Studio bewahrt frühere Versionen deiner Konfiguration auf diesem Gerät und im Backup-Ordner des Plugins auf. Das Wiederherstellen einer Version ersetzt deine aktuelle Konfiguration auf jedem synchronisierten Gerät. Zuerst wird ein Backup der aktuellen Konfiguration gespeichert.",
+	"recovery.pausedHint": "Das Speichern ist pausiert, daher ist die Wiederherstellung nicht verfügbar, bis das behoben ist. Du kannst weiterhin eine Kopie exportieren.",
+	"recovery.loading": "Suche nach früheren Versionen…",
+	"recovery.empty": "Es wurden keine früheren Versionen gefunden.",
+	"recovery.sectionHistory": "Auf diesem Gerät gespeichert",
+	"recovery.sectionBackups": "Backups",
+	"recovery.sectionCopies": "Andere Kopien der Einstellungsdatei",
+	"recovery.originThisDevice": "Dieses Gerät",
+	"recovery.originOtherDevice": "Ein anderes Gerät",
+	"recovery.originOlderVersion": "Von einer älteren Version gespeichert",
+	"recovery.unreadable": "Kann nicht als Einstellungen gelesen werden",
+	"recovery.same": "Identisch mit deiner aktuellen Konfiguration",
+	"recovery.summary": "{{callouts}} gespeicherte(r) Callout-Typ(en), {{count}} Unterschied(e) zu jetzt",
+	"recovery.export": "Kopie exportieren",
+	"recovery.restore": "Wiederherstellen",
+	"recovery.confirmTitle": "Diese Konfiguration wiederherstellen",
+	"recovery.confirmBody":
+		"Deine aktuelle Konfiguration wird durch die von {{when}} ersetzt ({{count}} Unterschied(e)). Zuerst wird ein Backup deiner aktuellen Konfiguration gespeichert, und dein Sync-Dienst sendet die wiederhergestellte Konfiguration an deine anderen Geräte.",
+	"recovery.restored": "Konfiguration von {{when}} wiederhergestellt.",
+	"recovery.stale": "Es wurde nichts wiederhergestellt: Deine Einstellungen haben sich geändert oder konnten nicht geprüft werden. Öffne dieses Fenster erneut, und überprüfe die Liste.",
+	"recovery.backupFailed": "Es wurde nichts wiederhergestellt: Ein Backup deiner aktuellen Konfiguration konnte nicht zuerst gespeichert werden. Prüfe den verfügbaren Speicherplatz, und versuche es dann erneut.",
+	"recovery.failed": "Die Konfiguration konnte nicht wiederhergestellt werden. Es wurde nichts geändert.",
+	"notice.unsavedChangesReplaced":
+		"Einige auf diesem Gerät vorgenommene Änderungen waren noch nicht gespeichert, und neuere Einstellungen von einem anderen Gerät haben sie ersetzt. Deine Version wurde zuerst gespeichert: Öffne Eine frühere Konfiguration wiederherstellen in den Callout-Studio-Einstellungen, um sie zurückzubekommen.",
+	"notice.diagnosticsCopied": "Sync-Diagnose kopiert.",
+	"notice.diagnosticsFailed": "Die Sync-Diagnose konnte nicht kopiert werden.",
+	"notice.recoveryCopyStale": "Deine Einstellungen wurden gespeichert, aber die Wiederherstellungskopie dieses Geräts konnte nicht aktualisiert werden. Prüfe den verfügbaren Speicherplatz auf diesem Gerät. Callout Studio versucht es bei deiner nächsten Änderung erneut.",
+	"notice.blockedWhilePaused": "Das Speichern ist pausiert, daher kann diese Änderung gerade nicht übernommen werden. Behebe zuerst das in den Callout-Studio-Einstellungen angezeigte Speicherproblem.",
+	"welcome.syncNote": "Nutzt du Callout Studio bereits auf einem anderen Gerät? Lass deinen Sync-Dienst zuerst abschließen. Deine Callouts und Einstellungen erscheinen hier, sobald sie ankommen.",
+	"settings.resetAllConfirmFull":
+		"Dadurch werden jeder benutzerdefinierte Callout-Typ, jedes hochgeladene Bild und jeder benutzerdefinierte Befehl gelöscht, und die integrierten Callouts, globalen Stile, gespeicherten Farbpaletten, das Rechtsklickmenü, die Einstellungen für Überschriften- und Inline-Callouts sowie der Ausweichstil werden zurückgesetzt. Zuerst wird ein Backup deiner aktuellen Konfiguration im Backup-Ordner des Plugins gespeichert. Dein Sync-Dienst sendet das Zurücksetzen möglicherweise an deine anderen Geräte.",
+	"settings.resetBackupFailed": "Es wurde nichts zurückgesetzt: Ein Backup deiner aktuellen Konfiguration konnte nicht zuerst gespeichert werden. Prüfe den verfügbaren Speicherplatz, und versuche es dann erneut.",
+	"settings.resetNotSaved": "Das Zurücksetzen wird angezeigt, konnte aber noch nicht gespeichert werden, daher enthält deine Einstellungsdatei noch die vorherige Konfiguration. Prüfe den Speicherstatus in den Callout-Studio-Einstellungen.",
+	"settings.recovery": "Frühere Konfigurationen",
+	"settings.recoveryDesc": "Stelle eine Version deiner Konfiguration wieder her, die zuvor auf diesem Gerät oder im Backup-Ordner des Plugins gespeichert wurde.",
+	"settings.recoveryButton": "Eine frühere Konfiguration wiederherstellen",
+	"settings.diagnostics": "Sync-Diagnose",
+	"settings.diagnosticsDesc": "Kopiere eine Zusammenfassung, wie Speichern und Synchronisierung funktionieren, um sie in einen Fehlerbericht aufzunehmen. Sie enthält keine Callouts oder Einstellungen.",
+	"settings.diagnosticsButton": "Diagnose kopieren",
+	"confirm.titleResetEverything": "Alles zurücksetzen",
+	"confirm.titleReplaceUnreadable": "Einstellungsdatei ersetzen",
+	"confirm.replaceUnreadable": "Zuerst wird eine exakte Kopie der aktuellen Datei im Backup-Ordner des Plugins gespeichert. Die Datei wird dann durch die hier angezeigte Konfiguration ersetzt, und dein Sync-Dienst sendet sie an deine anderen Geräte.",
+	"confirm.replaceUnreadableSalvage":
+		"Zuerst wird eine exakte Kopie der aktuellen Datei im Backup-Ordner des Plugins gespeichert. Die darin enthaltenen Einstellungen werden mit der hier angezeigten Konfiguration kombiniert, und die Datei wird neu geschrieben, damit jedes Gerät sie wieder lesen kann.",
+	"confirm.titleDiscardRecoveryCopy": "Wiederherstellungskopie verwerfen",
+	"confirm.discardRecoveryCopy":
+		"Die Wiederherstellungskopie dieses Geräts kann nicht gelesen werden, daher ist das Speichern auf diesem Gerät pausiert. Zuerst wird eine exakte Kopie davon im Backup-Ordner des Plugins gespeichert. Sie wird dann durch die hier angezeigte Konfiguration ersetzt. Deine Einstellungsdatei wird nicht verändert.",
+	"vault.undoRewrite": "Rückgängig machen",
+	"vault.undoRestored": "{{count}} Notiz(en) wiederhergestellt.",
+	"vault.undoPartial": "{{count}} Notiz(en) wiederhergestellt. {{skipped}} Notiz(en) haben sich nach dem Umschreiben geändert und wurden daher unverändert gelassen.",
+	"import.confirmTitle": "Callout-Studio-Backup importieren",
+	"import.confirmSummary": "Dadurch werden {{added}} Callout-Typ(en) hinzugefügt, {{replaced}} vorhandene(r) durch die Version aus der Datei ersetzt, und {{settings}} Einstellungsgruppe(n) aus der Datei wiederhergestellt. Zuerst wird ein Backup deiner aktuellen Konfiguration gespeichert.",
+	"import.confirmAction": "Importieren",
+	"import.backupFailed": "Es wurde nichts importiert: Ein Backup deiner aktuellen Konfiguration konnte nicht zuerst gespeichert werden. Prüfe den verfügbaren Speicherplatz, und versuche es dann erneut.",
+	"import.notSaved": "Der Import wird angezeigt, konnte aber noch nicht gespeichert werden. Prüfe den Speicherstatus in den Callout-Studio-Einstellungen.",
 };

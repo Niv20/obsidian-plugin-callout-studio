@@ -24,14 +24,22 @@ export function recoveryActionHarness(options: { missing?: boolean; legacy?: boo
 	const state = {
 		disk: options.missing ? null : JSON.stringify(registry.toSaveData()), writes: 0,
 		checkpoint: null as unknown, failRead: false, failCheckpoint: false, failWrite: false, failBackup: false, skipPrimaryWrite: false,
+		/** The recovery copy is there but not valid settings: `read` rejects it, `readRaw` returns it. */
+		invalidCheckpoint: false,
 		beforeCheckpoint: null as (() => void) | null,
 		beforePrimaryWrite: null as ((data: unknown) => Promise<void>) | null,
 	};
 	const files = new Map<string, string>();
 	const app = { appId: id, vault: { configDir: ".obsidian", getName: () => id, adapter: {
-		exists: async (path: string) => path.endsWith("/data.json") ? state.disk !== null : files.has(path),
+		exists: async (path: string) => path.endsWith("/data.json") ? state.disk !== null
+			: files.has(path) || [...files.keys()].some(file => file.startsWith(`${path}/`)),
 		mkdir: async () => {}, list: async () => ({ files: [...files.keys()], folders: [] }),
-		read: async (path: string) => files.get(path) ?? "",
+		// data.json is `state.disk`, raw, as the adapter would return it.
+		read: async (path: string) => {
+			if (!path.endsWith("/data.json")) return files.get(path) ?? "";
+			if (state.disk === null) throw Object.assign(new Error("ENOENT"), { code: "ENOENT" });
+			return state.disk;
+		},
 		write: async (path: string, data: string) => { if (state.failBackup) throw new Error("Backup disk full"); files.set(path, data); },
 		remove: async (path: string) => { files.delete(path); },
 	} } } as unknown as App;
@@ -39,7 +47,12 @@ export function recoveryActionHarness(options: { missing?: boolean; legacy?: boo
 		app, manifest: { id: "callout-studio", dir: ".obsidian/plugins/callout-studio" } as PluginManifest,
 		registry, localState: new DeviceLocalStore(app), settingsEditOpen: false,
 		waitForSettingsSettle: () => Promise.resolve(),
-		loadData: async () => state.disk === null ? null : JSON.parse(state.disk) as unknown,
+		// Obsidian's `readJson`: `null` for a missing file, `undefined` when the
+		// content cannot be parsed. It never throws for either.
+		loadData: async () => {
+			if (state.disk === null) return null;
+			try { return JSON.parse(state.disk) as unknown; } catch { return undefined; }
+		},
 		saveData: async (data: unknown) => {
 			await state.beforePrimaryWrite?.(data);
 			if (state.failWrite) throw new Error("Primary disk full");
@@ -50,10 +63,16 @@ export function recoveryActionHarness(options: { missing?: boolean; legacy?: boo
 	} as ExternalReloadHost & { saveData(data: unknown): Promise<void> };
 	host.onExternalSettingsChange = async () => { await tryAdoptExternalSettings(host); };
 	host.settingsWriter = createSettingsWriter({ ...host, onExternalSettingsChange: () => host.onExternalSettingsChange!() }, {
-		read: async () => { if (state.failRead) throw new Error("Recovery store blocked"); return structuredClone(state.checkpoint); },
+		read: async () => {
+			if (state.failRead) throw new Error("Recovery store blocked");
+			if (state.invalidCheckpoint) throw new Error("Settings recovery copy is invalid");
+			return structuredClone(state.checkpoint);
+		},
+		readRaw: async () => { if (state.failRead) throw new Error("Recovery store blocked"); return structuredClone(state.checkpoint); },
 		write: async data => {
 			state.beforeCheckpoint?.();
-			if (state.failCheckpoint) throw new Error("Recovery quota exceeded"); state.checkpoint = structuredClone(data);
+			if (state.failCheckpoint) throw new Error("Recovery quota exceeded");
+			state.checkpoint = structuredClone(data); state.invalidCheckpoint = false;
 		},
 	});
 	host.saveSettings = () => host.settingsWriter.save();

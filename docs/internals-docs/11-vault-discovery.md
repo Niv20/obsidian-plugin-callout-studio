@@ -255,6 +255,23 @@ The writers still use fresh file contents and complete-pass checks. Cached usage
 counts never authorize destructive operations. A statistics refresh never calls
 `runVaultScan`, mutates the registry, or saves `data.json`.
 
+**Undo.** `rewriteVaultFiles` takes an optional `NoteRewriteJournal`
+(`utils/noteRewriteUndo.ts`), which records each note's text before and after,
+once its write has succeeded. **Replace in vault**, **Delete** and clearing a
+built-in's usages pass one and end with `noticeWithUndo`
+(`settings/rewriteUndoNotice.ts`): a notice with an **Undo** link.
+
+- Only the most recent rewrite is kept, in memory. It is kept only whole: over
+  about 64 MB of text it is dropped rather than kept in part.
+- Undo writes back a note only while it holds exactly what the rewrite left.
+  Moved, deleted and edited notes are skipped and counted.
+- After a delete, `afterUndo` re-adds the callout type if its id is still free
+  and saving works. Missing cached artwork is restored with the type so Undo
+  also works offline; artwork already present is left unchanged.
+
+The portable Markdown conversion below has its own reviewed, confirmed
+irreversible flow and does not use the journal.
+
 ### Portable Markdown conversion
 
 `portableCallouts.ts` is the pure converter used by **Danger zone → Convert to

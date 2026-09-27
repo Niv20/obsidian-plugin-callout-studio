@@ -14,6 +14,8 @@ export interface SettledSettingsFileHost extends SettingsFileHost {
 
 function sameRead(a: SettingsRead, b: SettingsRead): boolean {
 	if (a.kind === "absent" && b.kind === "absent") return true;
+	// A later build's file stays a later build's file; say so rather than "unreadable".
+	if (a.kind === "unreadable" && b.kind === "unreadable" && a.newer && b.newer) return true;
 	return a.kind === "loaded" && b.kind === "loaded" &&
 		JSON.stringify(stableKeyOrder(a.data)) === JSON.stringify(stableKeyOrder(b.data));
 }
@@ -33,6 +35,7 @@ export async function readSettledSettingsFile(
 	if (cancelled()) return { kind: "unreadable" };
 	let previous = options.initial ?? await readSettingsFile(host);
 	let observedFile = previous.kind !== "absent";
+	let observedSettings = previous.kind === "loaded";
 	for (let attempt = 0; attempt < 3; attempt++) {
 		if (cancelled()) return { kind: "unreadable" };
 		await wait();
@@ -40,11 +43,13 @@ export async function readSettledSettingsFile(
 		const current = await readSettingsFile(host);
 		if (cancelled()) return { kind: "unreadable" };
 		observedFile ||= current.kind !== "absent";
+		observedSettings ||= current.kind === "loaded";
 		// A file that vanishes during replacement is not a new installation.
 		if (sameRead(previous, current) && !(observedFile && current.kind === "absent")) return current;
 		previous = current;
 	}
 	// Repeated malformed reads and continuously changing valid JSON are equally
-	// unsuitable as a baseline. Keep existing state and let the queue retry.
-	return { kind: "unreadable" };
+	// unsuitable as a baseline. Keep existing state and let the queue retry;
+	// only the second is still on its way to being readable.
+	return observedSettings ? { kind: "unreadable", unsettled: true } : { kind: "unreadable" };
 }

@@ -30,6 +30,8 @@ import { ImportReportModal } from "../../utils/ImportReportModal";
 import { assertImportSize, assertImportTextSize, ImportLimitError } from "../../utils/importLimits";
 import { markCompetitorImportBannerHandled } from "../competitorImportState";
 import { applyModalChrome, removeModalChrome } from "../modalChrome";
+import { blockedWhilePaused } from "../pausedGuard";
+import { writeSettingsBackup } from "../../manager/settingsBackup";
 import type { SettingsSectionContext } from "../sections/types";
 import {
 	IMPORT_OPTIONS,
@@ -419,10 +421,21 @@ export class PluginImportModal extends Modal {
 			if (choice === "cancel" || generation !== this.generation) return;
 		}
 		if (plan.applyCount === 0) return;
+		// The banner can open this window straight away; saving may be paused.
+		if (blockedWhilePaused(this.ctx.plugin.settingsWriter)) return;
+		// An import updates existing callouts in place: keep a way back.
+		if (!await writeSettingsBackup(this.ctx.plugin, this.ctx.plugin.registry.toSaveData())) {
+			new Notice(t("import.backupFailed"), 10000);
+			return;
+		}
+		if (generation !== this.generation) return;
 
 		const { created, updated } = plan.apply();
 		await markCompetitorImportBannerHandled(this.ctx.plugin);
-		new Notice(t(this.source.copy.notice, { created, updated }));
+		await this.ctx.plugin.saveSettings();
+		if (this.ctx.plugin.settingsWriter.persists?.(this.ctx.plugin.registry.toSaveData()) === false) {
+			new Notice(t("import.notSaved"), 10000);
+		} else new Notice(t(this.source.copy.notice, { created, updated }));
 		this.ctx.display();
 		this.close();
 		plan.afterApply?.();

@@ -280,8 +280,6 @@ export const ro: Record<string, string> = {
 	"settings.resetAllDesc":
 		"Șterge toate callouts utilizator, resetează callouts integrate, stilurile globale (borduri, scara fontului, formă), paletele de culori salvate, personalizarea meniului clic dreapta și SVG-urile Material descărcate.",
 	"settings.resetAllButton": "Resetați tot",
-	"settings.resetAllConfirm":
-		"Aceasta va șterge toate callouts personalizate, va reseta callouts integrate, stilurile globale, paletele de culori salvate, personalizarea meniului clic dreapta și toate SVG-urile Material din cache. Această acțiune nu poate fi anulată. Ești sigur?",
 	"notice.resetAllDone": "Totul a fost resetat la valorile implicite.",
 
 	"notice.customCommandsRemoved":
@@ -312,7 +310,6 @@ export const ro: Record<string, string> = {
 		"Callout Studio nu a putut citi fișierul de setări, astfel încât tipurile tale de callout lipsesc din această sesiune. Nu s-a scris nimic, iar fișierul de pe disc este neschimbat — reîncarcă Obsidian pentru a încerca din nou.",
 	"notice.settingsMissing":
 		"Fișierul de setări al Callout Studio lipsește, astfel încât tipurile tale de callout lipsesc din această sesiune. Nu s-a scris nimic — dacă sincronizezi acest vault, lasă sincronizarea să se termine și reîncarcă Obsidian înainte de a face vreo modificare.",
-	"notice.settingsMissingAction": "Creează un fișier de setări nou",
 	"notice.nothingToWrap": "Nimic de înfășurat.",
 	"notice.cursorNotInsideCallout":
 		"Cursorul nu este în interiorul unui callout.",
@@ -741,7 +738,6 @@ export const ro: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Șterge comanda",
-	"confirm.titleResetAll": "Resetează toate callout-urile",
 	"confirm.titleResetCallout": "Resetează callout",
 	"confirm.titleDeletePalette": "Șterge paleta",
 	"confirm.titleDeleteImage": "Șterge imaginea",
@@ -1123,12 +1119,9 @@ export const ro: Record<string, string> = {
 	"notice.legacyDiscoveryArchiveFailed": "Copia de recuperare pentru actualizare nu a putut fi finalizată. Cache-ul local anterior pentru detectare și CSS-ul de pornire au fost păstrate neschimbate. Verifică accesul de scriere la spațiul de stocare și spațiul liber, apoi repornește Obsidian pentru a încerca din nou.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "În pauză: callout-ul lipsește. Descoperă-l sau creează-l pentru a restabili această comandă, sau editează comanda pentru a alege alt tip.",
-	"confirm.startFresh": "Aceasta creează un fișier de setări nou din tipurile de callout și setările afișate în prezent. Orice copie de recuperare lizibilă anterioară este păstrată într-o copie de siguranță. Dacă fișierul lipsă este încă pe drum de pe alt dispozitiv, sau încă se sincronizează, va fi înlocuit peste tot — inclusiv pe dispozitivele care încă au callout-urile tale.\nFă asta doar dacă ai șters tu însuți fișierul, sau ești sigur că nu se va mai întoarce.",
-	"confirm.startFreshOk": "Creează un fișier de setări nou",
 	"confirm.titleRestoreSettings": "Restaurează aceste setări",
 	"confirm.titleCreateSettingsFile": "Creează fișierul de setări",
 	"confirm.restoreDisplayedSettings": "Aceasta salvează tipurile de callout și preferințele afișate în prezent într-un fișier de setări pe acest dispozitiv și reia salvarea. Orice copie locală de recuperare lizibilă este mai întâi salvată ca rezervă.\nÎnainte de a continua, lasă serviciul de sincronizare să se termine și verifică dacă un alt dispozitiv are setări mai noi pe care vrei să le păstrezi. Serviciul tău de sincronizare poate trimite acest fișier restaurat către celelalte dispozitive ale tale.\nFișierul este verificat din nou înainte de salvare. Dacă sunt găsite setări existente, acestea sunt păstrate, iar recuperarea îți poate cere să verifici din nou.",
-	"confirm.titleStartFresh": "Creează un fișier de setări nou",
 	"notice.settingsBackupFailed": "Recuperarea setărilor nu a putut continua deoarece o copie de siguranță nu a putut fi salvată. Verifică spațiul de stocare disponibil și permisiunile de scriere, apoi încearcă din nou.",
 	"notice.settingsBackupSaved": "O copie de recuperare a definițiilor locale de callout a fost salvată înainte de aplicarea setărilor primite: {{path}}.",
 	"notice.settingsChangedElsewhere": "Setările Callout Studio au fost modificate pe alt dispozitiv, așa că această modificare nu a fost salvată. Setările celuilalt dispozitiv se încarcă acum — te rugăm să faci din nou modificarea.",
@@ -1136,11 +1129,9 @@ export const ro: Record<string, string> = {
 	"notice.settingsNotSaved": "Acea modificare nu a fost salvată. Callout Studio nu a putut folosi fișierul său de setări când Obsidian a pornit, așa că nimic nu se scrie pe acest dispozitiv — modificările tale vor rămâne până închizi Obsidian. Vezi Setări → Callout Studio pentru ce trebuie făcut.",
 	"saveStatus.changed": "Fișierul de setări s-a schimbat în timp ce editai. Ciorna ta este încă disponibilă. Alege Reîncearcă salvarea și recuperarea pentru a încărca setările primite, apoi verifică-ți ciorna și salvează din nou.",
 	"saveStatus.missing": "Salvarea este în pauză deoarece fișierul de setări lipsește. Acest lucru se poate întâmpla după o reinstalare sau în timp ce sincronizarea încă rulează. Termină sincronizarea și încearcă din nou. Pentru a înlocui intenționat fișierul lipsă, folosește Creează un fișier de setări nou din setările Callout Studio.",
-	"saveStatus.newFile": "Creează un fișier de setări nou",
 	"saveStatus.restoreSettings": "Restaurează aceste setări",
 	"saveStatus.createSettingsFile": "Creează fișierul de setări",
 	"saveStatus.checkAgain": "Verifică din nou",
-	"saveStatus.stillMissing": "Fișierul de setări încă lipsește. Verificarea din nou nu îl recreează. Lasă sincronizarea să se termine și fă seiful disponibil offline. Dacă fișierul a fost șters, restaurează o copie de rezervă sau folosește acțiunea de recuperare din setările Callout Studio de pe acest dispozitiv pentru a salva setările afișate.",
 	"saveStatus.recoverInSettings": "Pentru a restaura fișierul lipsă pe acest dispozitiv, deschide setările Callout Studio. Înainte de a închide acest editor, copiază orice modificări nesalvate pe care vrei să le păstrezi; acestea nu au fost salvate.",
 	"saveStatus.openSettings": "Deschide setările Callout Studio",
 	"notice.openSettingsFailed": "Setările Callout Studio nu au putut fi deschise. Deschide Setări → Callout Studio pentru a alege ce faci.",
@@ -1160,4 +1151,100 @@ export const ro: Record<string, string> = {
 	"saveStatus.writePermission": "Fișierul de setări nu a putut fi salvat deoarece stocarea a refuzat accesul de scriere. Verifică dacă vault-ul și folderul pluginului pot fi scrise, apoi încearcă din nou.",
 	"saveStatus.writeSpace": "Fișierul de setări nu a putut fi salvat deoarece stocarea este plină sau cota sa a fost depășită. Eliberează ceva spațiu, apoi încearcă din nou.",
 	"settings.readOnly": "Callout Studio nu a putut folosi fișierul său de setări când Obsidian a pornit, așa că nimic pe această pagină nu se salvează pe acest dispozitiv. Modificările tale vor rămâne până închizi Obsidian. Reîncarcă Obsidian imediat ce fișierul revine — dacă sincronizezi acest vault, lasă mai întâi sincronizarea să se termine.",
+	// Sync safety hardening
+	"saveStatus.stillMissingAdvice":
+		"Fișierul de setări încă lipsește. Verificarea din nou nu îl recreează. Lasă sincronizarea să se termine și fă vault-ul disponibil offline. Dacă fișierul a fost șters, alege Înlocuiește acest fișier de setări, sau restaurează o configurație anterioară.",
+	"saveStatus.diagnosis.unavailable":
+		"Acest dispozitiv nu poate deschide fișierul acum. Poate fi încă descărcat, vault-ul poate să nu fie disponibil offline, sau stocarea nu răspunde. Callout Studio verifică din nou automat.",
+	"saveStatus.diagnosis.empty":
+		"Fișierul este gol, ceea ce înseamnă de obicei că o sincronizare a fost întreruptă. Dacă alt dispozitiv încă are setările tale, lasă-l să se sincronizeze. Altfel, înlocuiește fișierul.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"Fișierul conține marcaje de conflict de îmbinare nerezolvate, de exemplu din Git. Rezolvă conflictul în instrumentul tău Git, sau înlocuiește fișierul.",
+	"saveStatus.diagnosis.damaged": "Fișierul este incomplet sau deteriorat, deci nu poate fi citit ca setări.",
+	"saveStatus.diagnosis.combined":
+		"Serviciul tău de sincronizare a combinat două versiuni ale fișierului, așa că verificarea sa internă nu mai corespunde. Setările din interior sunt intacte, iar înlocuirea fișierului le păstrează.",
+	"saveStatus.diagnosis.invalidEntries":
+		"Fișierul conține intrări pe care Callout Studio nu le poate folosi, de exemplu același tip de callout listat de două ori.",
+	"saveStatus.replaceUnreadable": "Înlocuiește fișierul de setări",
+	"saveStatus.discardRecoveryCopy": "Renunță la copia de recuperare",
+	"saveStatus.openRecovery": "Restaurează o configurație anterioară",
+	"saveStatus.readOnlyWhilePaused":
+		"Setările nu pot fi modificate până când salvarea funcționează din nou, așa că nimic din ce modifici aici nu se pierde. Poți totuși să exporți configurația.",
+	"statusBar.paused": "Salvare întreruptă",
+	"statusBar.pausedTooltip": "Callout Studio nu salvează modificările de setări. Apasă pentru a vedea de ce.",
+	"statusBar.pausedNotice": "Callout Studio nu salvează modificările de setări chiar acum.",
+	"notice.replaceUnreadableUnavailable":
+		"Fișierul de setări nu poate fi înlocuit acum: se schimbă, sau acest dispozitiv nu îl poate citi. Încearcă din nou peste puțin timp.",
+	"notice.recoveryStorageUnavailable":
+		"Stocarea de recuperare a acestui dispozitiv nu răspunde, așa că această copie nu poate fi eliminată. Repornește Obsidian, apoi încearcă din nou.",
+	"recovery.title": "Restaurează o configurație anterioară",
+	"recovery.intro":
+		"Callout Studio păstrează versiuni anterioare ale configurației tale pe acest dispozitiv și în folderul de backup-uri al pluginului. Restaurarea uneia înlocuiește configurația curentă pe fiecare dispozitiv sincronizat. Un backup al configurației curente este salvat mai întâi.",
+	"recovery.pausedHint": "Salvarea este întreruptă, așa că restaurarea este indisponibilă până când problema se rezolvă. Poți totuși să exporți o copie.",
+	"recovery.loading": "Se caută versiuni anterioare…",
+	"recovery.empty": "Nu au fost găsite versiuni anterioare.",
+	"recovery.sectionHistory": "Salvate pe acest dispozitiv",
+	"recovery.sectionBackups": "Backup-uri",
+	"recovery.sectionCopies": "Alte copii ale fișierului de setări",
+	"recovery.originThisDevice": "Acest dispozitiv",
+	"recovery.originOtherDevice": "Alt dispozitiv",
+	"recovery.originOlderVersion": "Salvată de o versiune mai veche",
+	"recovery.unreadable": "Nu poate fi citită ca setări",
+	"recovery.same": "Identică cu configurația ta curentă",
+	"recovery.summary": "{{callouts}} tip(uri) de callout salvate, {{count}} diferență/e față de acum",
+	"recovery.export": "Exportă copie",
+	"recovery.restore": "Restaurează",
+	"recovery.confirmTitle": "Restaurează această configurație",
+	"recovery.confirmBody":
+		"Configurația ta curentă este înlocuită cu cea din {{when}} ({{count}} diferență/e). Un backup al configurației curente este salvat mai întâi, iar serviciul tău de sincronizare trimite configurația restaurată către celelalte dispozitive.",
+	"recovery.restored": "Configurația din {{when}} a fost restaurată.",
+	"recovery.stale":
+		"Nu a fost restaurat nimic: setările tale s-au schimbat sau nu au putut fi verificate. Deschide din nou această fereastră și revizuiește lista.",
+	"recovery.backupFailed":
+		"Nu a fost restaurat nimic: nu s-a putut salva mai întâi un backup al configurației curente. Verifică spațiul de stocare disponibil, apoi încearcă din nou.",
+	"recovery.failed": "Configurația nu a putut fi restaurată. Nimic nu a fost modificat.",
+	"notice.unsavedChangesReplaced":
+		"Unele modificări făcute pe acest dispozitiv nu fuseseră încă salvate, iar setări mai noi de pe alt dispozitiv le-au înlocuit. Versiunea ta a fost salvată mai întâi: deschide Restaurează o configurație anterioară din setările Callout Studio pentru a o recupera.",
+	"notice.diagnosticsCopied": "Diagnosticul de sincronizare a fost copiat.",
+	"notice.diagnosticsFailed": "Diagnosticul de sincronizare nu a putut fi copiat.",
+	"notice.recoveryCopyStale":
+		"Setările tale au fost salvate, dar copia de recuperare a acestui dispozitiv nu a putut fi actualizată. Verifică spațiul de stocare disponibil pe acest dispozitiv. Callout Studio va încerca din nou la următoarea ta modificare.",
+	"notice.blockedWhilePaused":
+		"Salvarea este întreruptă, așa că această modificare nu poate fi păstrată acum. Rezolvă mai întâi problema de salvare afișată în setările Callout Studio.",
+	"welcome.syncNote":
+		"Folosești deja Callout Studio pe alt dispozitiv? Lasă serviciul tău de sincronizare să se termine mai întâi. Callout-urile și setările tale vor apărea aici imediat ce ajung.",
+	"settings.resetAllConfirmFull":
+		"Aceasta șterge fiecare tip de callout personalizat, imagine încărcată și comandă personalizată, și resetează callout-urile predefinite, stilurile globale, paletele de culori salvate, meniul clic-dreapta, setările pentru callout-urile de titlu și cele în linie, și stilul implicit. Un backup al configurației curente este salvat mai întâi în folderul de backup-uri al pluginului. Serviciul tău de sincronizare poate trimite resetarea către celelalte dispozitive.",
+	"settings.resetBackupFailed":
+		"Nu a fost resetat nimic: nu s-a putut salva mai întâi un backup al configurației curente. Verifică spațiul de stocare disponibil, apoi încearcă din nou.",
+	"settings.resetNotSaved":
+		"Resetarea este afișată, dar nu a putut fi salvată încă, așa că fișierul tău de setări conține în continuare configurația anterioară. Verifică starea salvării în setările Callout Studio.",
+	"settings.recovery": "Configurații anterioare",
+	"settings.recoveryDesc": "Restaurează o versiune a configurației tale salvată anterior pe acest dispozitiv sau în folderul de backup-uri al pluginului.",
+	"settings.recoveryButton": "Restaurează o configurație anterioară",
+	"settings.diagnostics": "Diagnostic de sincronizare",
+	"settings.diagnosticsDesc":
+		"Copiază un rezumat despre modul în care funcționează salvarea și sincronizarea, pentru a-l include într-un raport de eroare. Nu conține callout-uri sau setări.",
+	"settings.diagnosticsButton": "Copiază diagnosticul",
+	"confirm.titleResetEverything": "Resetează tot",
+	"confirm.titleReplaceUnreadable": "Înlocuiește fișierul de setări",
+	"confirm.replaceUnreadable":
+		"O copie exactă a fișierului curent este salvată mai întâi în folderul de backup-uri al pluginului. Fișierul este apoi înlocuit cu configurația afișată aici, iar serviciul tău de sincronizare o trimite către celelalte dispozitive.",
+	"confirm.replaceUnreadableSalvage":
+		"O copie exactă a fișierului curent este salvată mai întâi în folderul de backup-uri al pluginului. Setările din interior sunt combinate cu configurația afișată aici, iar fișierul este rescris astfel încât fiecare dispozitiv să îl poată citi din nou.",
+	"confirm.titleDiscardRecoveryCopy": "Renunță la copia de recuperare",
+	"confirm.discardRecoveryCopy":
+		"Copia de recuperare a acestui dispozitiv nu poate fi citită, așa că salvarea este întreruptă pe acest dispozitiv. O copie exactă a ei este salvată mai întâi în folderul de backup-uri al pluginului. Este apoi înlocuită cu configurația afișată aici. Fișierul tău de setări nu este modificat.",
+	"vault.undoRewrite": "Anulează",
+	"vault.undoRestored": "{{count}} notă/e restaurată/e.",
+	"vault.undoPartial":
+		"{{count}} notă/e restaurată/e. {{skipped}} notă/e s-au schimbat după rescriere, așa că au fost lăsate așa cum sunt.",
+	"import.confirmTitle": "Importă backup Callout Studio",
+	"import.confirmSummary":
+		"Aceasta adaugă {{added}} tip(uri) de callout, înlocuiește {{replaced}} existent(e) cu versiunea din fișier și restaurează {{settings}} grup(uri) de setări din fișier. Un backup al configurației curente este salvat mai întâi.",
+	"import.confirmAction": "Importă",
+	"import.backupFailed":
+		"Nu a fost importat nimic: nu s-a putut salva mai întâi un backup al configurației curente. Verifică spațiul de stocare disponibil, apoi încearcă din nou.",
+	"import.notSaved":
+		"Importul este afișat, dar nu a putut fi salvat încă. Verifică starea salvării în setările Callout Studio.",
 };

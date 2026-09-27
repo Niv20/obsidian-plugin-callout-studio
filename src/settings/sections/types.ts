@@ -3,6 +3,7 @@ import type { App, Plugin, PluginManifest } from "obsidian";
 import type { CalloutRegistry } from "../../manager/CalloutRegistry";
 import type { DeviceLocalStore } from "../../manager/DeviceLocalStore";
 import type { SettingsWriter } from "../../manager/SettingsWriter";
+import type { SettingsRecoveryService } from "../../manager/settingsRecoveryService";
 import type { CSSInjector } from "../../manager/CSSInjector";
 import type { CustomCommandManager } from "../../editor/CustomCommandManager";
 import type { FixedCommandId } from "../../editor/commands";
@@ -24,13 +25,15 @@ export type SettingsTabPlugin = Plugin & {
 	settings: PluginSettings;
 	settingsEditOpen: boolean;
 
-	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite" | "commit"> & Partial<Pick<SettingsWriter, "status">>;
+	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite" | "commit"> & Partial<Pick<SettingsWriter, "status" | "persists">>;
 
 	localState: DeviceLocalStore;
 	onIconCacheChange(cb: () => void): () => void;
 
 	saveSettings(): Promise<void>;
 	retrySettingsRecovery?(options?: SettingsAdoptionOptions): Promise<boolean>;
+	/** Earlier setups and the paused-saving actions; absent on minimal hosts. */
+	recovery?: SettingsRecoveryService;
 	startFreshSettings?(): Promise<boolean>;
 	refreshCallouts(): void;
 	refreshRenderModes(): void;

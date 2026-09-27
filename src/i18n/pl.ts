@@ -228,8 +228,6 @@ export const pl: Record<string, string> = {
 	"settings.resetAllDesc":
 		"Usuwa wszystkie callouts użytkownika, resetuje wbudowane callouts, globalne style (obramowania, skala czcionki, kształt), zapisane palety kolorów, dostosowanie menu kontekstowego i pobrane SVG Material.",
 	"settings.resetAllButton": "Resetuj wszystko",
-	"settings.resetAllConfirm":
-		"Spowoduje to usunięcie wszystkich niestandardowych callouts, zresetowanie wbudowanych callouts, globalnych stylów, zapisanych palet kolorów, dostosowania menu kontekstowego i wszystkich buforowanych SVG Material. Tej akcji nie można cofnąć. Czy jesteś pewien?",
 	"notice.resetAllDone":
 		"Wszystko zostało zresetowane do wartości domyślnych.",
 
@@ -260,7 +258,6 @@ export const pl: Record<string, string> = {
 		"Callout Studio nie mogło odczytać pliku ustawień, więc twoje typy callout są niewidoczne w tej sesji. Nic nie zostało zapisane, a plik na dysku pozostaje niezmieniony — załaduj ponownie Obsidian, aby spróbować jeszcze raz.",
 	"notice.settingsMissing":
 		"Brakuje pliku ustawień Callout Studio, więc twoje typy callout są niewidoczne w tej sesji. Nic nie zostało zapisane — jeśli synchronizujesz ten skarbiec, poczekaj na zakończenie synchronizacji i załaduj ponownie Obsidian przed wprowadzeniem jakichkolwiek zmian.",
-	"notice.settingsMissingAction": "Utwórz nowy plik ustawień",
 	"notice.nothingToWrap": "Nic do owinięcia.",
 	"notice.cursorNotInsideCallout": "Kursor nie jest wewnątrz callout.",
 	"notice.autocompleteTargetMoved":
@@ -687,7 +684,6 @@ export const pl: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Usuń polecenie",
-	"confirm.titleResetAll": "Resetuj wszystkie callouty",
 	"confirm.titleResetCallout": "Resetuj callout",
 	"confirm.titleDeletePalette": "Usuń paletę",
 	"confirm.titleDeleteImage": "Usuń obraz",
@@ -1072,12 +1068,9 @@ export const pl: Record<string, string> = {
 	"notice.legacyDiscoveryArchiveFailed": "Nie udało się utworzyć kopii odzyskiwania na potrzeby aktualizacji. Poprzednia lokalna pamięć podręczna wykrywania i startowy kod CSS pozostały niezmienione. Sprawdź uprawnienia do zapisu oraz wolne miejsce na dysku, a następnie uruchom ponownie Obsidian, aby spróbować ponownie.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Wstrzymano: brak callout. Odkryj go lub utwórz, aby przywrócić to polecenie, albo edytuj polecenie, aby wybrać inny typ.",
-	"confirm.startFresh": "To tworzy nowy plik ustawień na podstawie aktualnie wyświetlanych typów callout i ustawień. Wszelkie poprzednie czytelne kopie odzyskiwania są zachowywane w kopii zapasowej. Jeśli brakujący plik wciąż jest w drodze z innego urządzenia lub wciąż się synchronizuje, zostanie zastąpiony wszędzie — także na urządzeniach, które nadal mają twoje callouty.\nZrób to tylko wtedy, gdy sam usunąłeś plik lub masz pewność, że nie wróci.",
-	"confirm.startFreshOk": "Utwórz nowy plik ustawień",
 	"confirm.titleRestoreSettings": "Przywróć te ustawienia",
 	"confirm.titleCreateSettingsFile": "Utwórz plik ustawień",
 	"confirm.restoreDisplayedSettings": "Spowoduje to zapisanie aktualnie wyświetlanych typów callout i preferencji do pliku ustawień na tym urządzeniu oraz wznowienie zapisywania. Każda czytelna lokalna kopia odzyskiwania zostanie najpierw zarchiwizowana.\nPrzed kontynuowaniem poczekaj na zakończenie działania usługi synchronizacji i sprawdź, czy na innym urządzeniu nie ma nowszych ustawień, które chcesz zachować. Usługa synchronizacji może wysłać ten przywrócony plik na inne Twoje urządzenia.\nPlik zostanie ponownie sprawdzony przed zapisaniem. Jeśli zostaną znalezione istniejące ustawienia, zostaną zachowane, a odzyskiwanie może poprosić o ponowne sprawdzenie.",
-	"confirm.titleStartFresh": "Utwórz nowy plik ustawień",
 	"notice.settingsBackupFailed": "Odzyskiwanie ustawień nie mogło być kontynuowane, ponieważ nie udało się zapisać kopii zapasowej bezpieczeństwa. Sprawdź dostępne miejsce na dysku i uprawnienia do zapisu, a następnie spróbuj ponownie.",
 	"notice.settingsBackupSaved": "Przed zastosowaniem nadchodzących ustawień zapisano kopię odzyskiwania lokalnych definicji callout: {{path}}.",
 	"notice.settingsChangedElsewhere": "Ustawienia Callout Studio zostały zmienione na innym urządzeniu, więc ta zmiana nie została zapisana. Ustawienia z drugiego urządzenia są teraz wczytywane — wprowadź zmianę ponownie.",
@@ -1085,11 +1078,9 @@ export const pl: Record<string, string> = {
 	"notice.settingsNotSaved": "Ta zmiana nie została zapisana. Callout Studio nie mogło użyć swojego pliku ustawień podczas uruchamiania Obsidiana, więc na tym urządzeniu nic nie jest zapisywane — twoje zmiany będą trwać, dopóki nie zamkniesz Obsidiana. Zobacz Ustawienia → Callout Studio, aby dowiedzieć się, co zrobić.",
 	"saveStatus.changed": "Plik ustawień zmienił się podczas edycji. Twoja wersja robocza jest nadal dostępna. Wybierz Spróbuj ponownie zapisać i odzyskać, aby wczytać nadchodzące ustawienia, a następnie sprawdź swoją wersję roboczą i zapisz ją ponownie.",
 	"saveStatus.missing": "Zapisywanie jest wstrzymane, ponieważ brakuje pliku ustawień. Może się to zdarzyć po ponownej instalacji lub gdy synchronizacja wciąż trwa. Zakończ synchronizację i spróbuj ponownie. Aby celowo zastąpić brakujący plik, użyj opcji Utwórz nowy plik ustawień w ustawieniach Callout Studio.",
-	"saveStatus.newFile": "Utwórz nowy plik ustawień",
 	"saveStatus.restoreSettings": "Przywróć te ustawienia",
 	"saveStatus.createSettingsFile": "Utwórz plik ustawień",
 	"saveStatus.checkAgain": "Sprawdź ponownie",
-	"saveStatus.stillMissing": "Pliku ustawień nadal brakuje. Ponowne sprawdzenie nie utworzy go od nowa. Poczekaj, aż synchronizacja się zakończy, i udostępnij sejf offline. Jeśli plik został usunięty, przywróć kopię zapasową albo użyj działania odzyskiwania w ustawieniach Callout Studio na tym urządzeniu, aby zapisać wyświetlane ustawienia.",
 	"saveStatus.recoverInSettings": "Aby przywrócić brakujący plik na tym urządzeniu, otwórz ustawienia Callout Studio. Przed zamknięciem tego edytora skopiuj wszelkie niezapisane zmiany, które chcesz zachować; nie zostały one zapisane.",
 	"saveStatus.openSettings": "Otwórz ustawienia Callout Studio",
 	"notice.openSettingsFailed": "Nie udało się otworzyć ustawień Callout Studio. Otwórz Ustawienia → Callout Studio, aby wybrać, co zrobić.",
@@ -1160,4 +1151,100 @@ export const pl: Record<string, string> = {
 	"portable.errorBusy": "Trwa inna konwersja. Poczekaj na jej zakończenie.",
 	"portable.error": "Nie można bezpiecznie odczytać ani zaktualizować skarbca. Sprawdź dostęp do plików i spróbuj ponownie.",
 	"settings.maintenance": "Strefa niebezpieczna",
+	// Sync safety hardening
+	"saveStatus.stillMissingAdvice":
+		"Plik ustawień nadal jest niedostępny. Ponowne sprawdzenie go nie odtworzy. Poczekaj, aż synchronizacja się zakończy, i udostępnij skarbiec offline. Jeśli plik został usunięty, wybierz Zastąp plik ustawień lub przywróć wcześniejszą konfigurację.",
+	"saveStatus.diagnosis.unavailable":
+		"To urządzenie nie może teraz otworzyć pliku. Może być jeszcze pobierany, skarbiec może być niedostępny offline, albo pamięć nie odpowiada. Callout Studio sprawdza to ponownie automatycznie.",
+	"saveStatus.diagnosis.empty":
+		"Plik jest pusty, co zwykle oznacza, że synchronizacja została przerwana. Jeśli inne urządzenie nadal ma Twoje ustawienia, pozwól mu się zsynchronizować. W przeciwnym razie zastąp plik.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"Plik zawiera nierozwiązane znaczniki konfliktu scalania, na przykład z Gita. Rozwiąż konflikt w swoim narzędziu Git albo zastąp plik.",
+	"saveStatus.diagnosis.damaged": "Plik jest niekompletny lub uszkodzony, więc nie da się go odczytać jako ustawień.",
+	"saveStatus.diagnosis.combined":
+		"Twoja usługa synchronizacji połączyła dwie wersje pliku, więc jego wewnętrzna suma kontrolna już się nie zgadza. Ustawienia w środku są nienaruszone, a zastąpienie pliku je zachowa.",
+	"saveStatus.diagnosis.invalidEntries":
+		"Plik zawiera wpisy, których Callout Studio nie może użyć, na przykład ten sam typ callout wymieniony dwukrotnie.",
+	"saveStatus.replaceUnreadable": "Zastąp plik ustawień",
+	"saveStatus.discardRecoveryCopy": "Odrzuć kopię odzyskiwania",
+	"saveStatus.openRecovery": "Przywróć wcześniejszą konfigurację",
+	"saveStatus.readOnlyWhilePaused":
+		"Ustawień nie można zmieniać, dopóki zapis znów nie zadziała, więc nic, co tu zmienisz, nie zostanie utracone. Nadal możesz wyeksportować swoją konfigurację.",
+	"statusBar.paused": "Zapisywanie wstrzymane",
+	"statusBar.pausedTooltip": "Callout Studio nie zapisuje zmian ustawień. Kliknij, aby zobaczyć dlaczego.",
+	"statusBar.pausedNotice": "Callout Studio nie zapisuje teraz zmian ustawień.",
+	"notice.replaceUnreadableUnavailable":
+		"Nie można teraz zastąpić pliku ustawień: jest w trakcie zmiany albo to urządzenie nie może go odczytać. Spróbuj ponownie za chwilę.",
+	"notice.recoveryStorageUnavailable":
+		"Pamięć odzyskiwania tego urządzenia nie odpowiada, więc nie można odrzucić kopii. Uruchom ponownie Obsidian, a następnie spróbuj jeszcze raz.",
+	"recovery.title": "Przywróć wcześniejszą konfigurację",
+	"recovery.intro":
+		"Callout Studio przechowuje wcześniejsze wersje Twojej konfiguracji na tym urządzeniu oraz w folderze kopii zapasowych wtyczki. Przywrócenie jednej z nich zastąpi bieżącą konfigurację na każdym zsynchronizowanym urządzeniu. Najpierw zostanie zapisana kopia zapasowa bieżącej konfiguracji.",
+	"recovery.pausedHint": "Zapisywanie jest wstrzymane, więc przywracanie jest niedostępne, dopóki to się nie rozwiąże. Nadal możesz wyeksportować kopię.",
+	"recovery.loading": "Szukanie wcześniejszych wersji…",
+	"recovery.empty": "Nie znaleziono wcześniejszych wersji.",
+	"recovery.sectionHistory": "Zapisane na tym urządzeniu",
+	"recovery.sectionBackups": "Kopie zapasowe",
+	"recovery.sectionCopies": "Inne kopie pliku ustawień",
+	"recovery.originThisDevice": "To urządzenie",
+	"recovery.originOtherDevice": "Inne urządzenie",
+	"recovery.originOlderVersion": "Zapisane przez starszą wersję",
+	"recovery.unreadable": "Nie można odczytać jako ustawień",
+	"recovery.same": "Takie samo jak Twoja bieżąca konfiguracja",
+	"recovery.summary": "{{callouts}} zapisanych typów callout, {{count}} różnic względem teraz",
+	"recovery.export": "Eksportuj kopię",
+	"recovery.restore": "Przywróć",
+	"recovery.confirmTitle": "Przywróć tę konfigurację",
+	"recovery.confirmBody":
+		"Twoja bieżąca konfiguracja zostanie zastąpiona tą z {{when}} ({{count}} różnic). Najpierw zostanie zapisana kopia zapasowa bieżącej konfiguracji, a Twoja usługa synchronizacji wyśle przywróconą konfigurację na pozostałe urządzenia.",
+	"recovery.restored": "Przywrócono konfigurację z {{when}}.",
+	"recovery.stale":
+		"Nic nie zostało przywrócone: Twoje ustawienia zmieniły się lub nie udało się ich sprawdzić. Otwórz to okno ponownie i przejrzyj listę.",
+	"recovery.backupFailed":
+		"Nic nie zostało przywrócone: nie udało się najpierw zapisać kopii zapasowej bieżącej konfiguracji. Sprawdź dostępne miejsce, a następnie spróbuj ponownie.",
+	"recovery.failed": "Nie udało się przywrócić konfiguracji. Nic się nie zmieniło.",
+	"notice.unsavedChangesReplaced":
+		"Niektóre zmiany wprowadzone na tym urządzeniu nie zostały jeszcze zapisane, a nowsze ustawienia z innego urządzenia je zastąpiły. Twoja wersja została najpierw zapisana: otwórz Przywróć wcześniejszą konfigurację w ustawieniach Callout Studio, aby ją odzyskać.",
+	"notice.diagnosticsCopied": "Skopiowano diagnostykę synchronizacji.",
+	"notice.diagnosticsFailed": "Nie udało się skopiować diagnostyki synchronizacji.",
+	"notice.recoveryCopyStale":
+		"Twoje ustawienia zostały zapisane, ale nie udało się zaktualizować kopii odzyskiwania na tym urządzeniu. Sprawdź dostępne miejsce na tym urządzeniu. Callout Studio spróbuje ponownie przy Twojej następnej zmianie.",
+	"notice.blockedWhilePaused":
+		"Zapisywanie jest wstrzymane, więc ta zmiana nie może zostać teraz zachowana. Najpierw rozwiąż problem z zapisem pokazany w ustawieniach Callout Studio.",
+	"welcome.syncNote":
+		"Używasz już Callout Studio na innym urządzeniu? Poczekaj najpierw, aż Twoja usługa synchronizacji zakończy pracę. Twoje callouty i ustawienia pojawią się tutaj, gdy tylko dotrą.",
+	"settings.resetAllConfirmFull":
+		"To usuwa każdy niestandardowy typ callout, przesłany obraz i niestandardowe polecenie oraz resetuje wbudowane callouty, style globalne, zapisane palety kolorów, menu prawego przycisku myszy, ustawienia calloutów nagłówkowych i wbudowanych w tekst oraz styl zapasowy. Najpierw zostanie zapisana kopia zapasowa bieżącej konfiguracji w folderze kopii zapasowych wtyczki. Twoja usługa synchronizacji może wysłać reset na pozostałe urządzenia.",
+	"settings.resetBackupFailed":
+		"Nic nie zostało zresetowane: nie udało się najpierw zapisać kopii zapasowej bieżącej konfiguracji. Sprawdź dostępne miejsce, a następnie spróbuj ponownie.",
+	"settings.resetNotSaved":
+		"Reset jest widoczny, ale nie udało się go jeszcze zapisać, więc plik ustawień nadal zawiera poprzednią konfigurację. Sprawdź stan zapisu w ustawieniach Callout Studio.",
+	"settings.recovery": "Wcześniejsze konfiguracje",
+	"settings.recoveryDesc": "Przywróć wersję Twojej konfiguracji zapisaną wcześniej na tym urządzeniu lub w folderze kopii zapasowych wtyczki.",
+	"settings.recoveryButton": "Przywróć wcześniejszą konfigurację",
+	"settings.diagnostics": "Diagnostyka synchronizacji",
+	"settings.diagnosticsDesc":
+		"Skopiuj podsumowanie działania zapisu i synchronizacji, aby dołączyć je do zgłoszenia błędu. Nie zawiera calloutów ani ustawień.",
+	"settings.diagnosticsButton": "Kopiuj diagnostykę",
+	"confirm.titleResetEverything": "Zresetuj wszystko",
+	"confirm.titleReplaceUnreadable": "Zastąp plik ustawień",
+	"confirm.replaceUnreadable":
+		"Dokładna kopia bieżącego pliku zostanie najpierw zapisana w folderze kopii zapasowych wtyczki. Plik zostanie następnie zastąpiony konfiguracją pokazaną tutaj, a Twoja usługa synchronizacji wyśle ją na pozostałe urządzenia.",
+	"confirm.replaceUnreadableSalvage":
+		"Dokładna kopia bieżącego pliku zostanie najpierw zapisana w folderze kopii zapasowych wtyczki. Ustawienia w niej zostaną połączone z konfiguracją pokazaną tutaj, a plik zostanie przepisany, aby każde urządzenie mogło go ponownie odczytać.",
+	"confirm.titleDiscardRecoveryCopy": "Odrzuć kopię odzyskiwania",
+	"confirm.discardRecoveryCopy":
+		"Kopii odzyskiwania tego urządzenia nie można odczytać, więc zapisywanie na tym urządzeniu jest wstrzymane. Jej dokładna kopia zostanie najpierw zapisana w folderze kopii zapasowych wtyczki. Następnie zostanie zastąpiona konfiguracją pokazaną tutaj. Twój plik ustawień nie zostanie zmieniony.",
+	"vault.undoRewrite": "Cofnij",
+	"vault.undoRestored": "Przywrócono {{count}} notatek.",
+	"vault.undoPartial":
+		"Przywrócono {{count}} notatek. {{skipped}} notatek zmieniło się po przepisaniu, więc pozostawiono je bez zmian.",
+	"import.confirmTitle": "Importuj kopię zapasową Callout Studio",
+	"import.confirmSummary":
+		"To dodaje {{added}} typów callout, zastępuje {{replaced}} istniejących wersją z pliku i przywraca {{settings}} grup ustawień z pliku. Najpierw zostanie zapisana kopia zapasowa bieżącej konfiguracji.",
+	"import.confirmAction": "Importuj",
+	"import.backupFailed":
+		"Nic nie zostało zaimportowane: nie udało się najpierw zapisać kopii zapasowej bieżącej konfiguracji. Sprawdź dostępne miejsce, a następnie spróbuj ponownie.",
+	"import.notSaved":
+		"Import jest widoczny, ale nie udało się go jeszcze zapisać. Sprawdź stan zapisu w ustawieniach Callout Studio.",
 };

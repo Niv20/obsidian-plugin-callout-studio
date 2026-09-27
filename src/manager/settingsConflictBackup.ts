@@ -8,9 +8,15 @@ import { reportSettingsSaveFailure } from "./settingsSaveReporter";
 import { writeSettingsBackup, type SettingsBackupHost } from "./settingsBackup";
 import { mergeSavedSettings } from "../utils/settingsMerge";
 import { collectForeignFields, withForeignSettings } from "./foreignFields";
+import { withoutIncidental } from "./settingsGenesis";
 
 function canonical(value: unknown): string {
 	return JSON.stringify(stableKeyOrder(value));
+}
+
+/** Settings as far as a backup cares: picker memory and onboarding flags are not authored. */
+function authored(settings: unknown): unknown {
+	return withoutIncidental({ settings }).settings;
 }
 
 export function settingsWouldDiscardRows(current: Partial<PluginData>, incoming: Partial<PluginData>): boolean {
@@ -23,15 +29,20 @@ export function settingsWouldDiscardRows(current: Partial<PluginData>, incoming:
 function settingsWouldReplacePreferences(current: Partial<PluginData>, incoming: Partial<PluginData>): boolean {
 	const incomingForeign = collectForeignFields(content(incoming));
 	const preferences = withForeignSettings(mergeSavedSettings(incoming.settings ?? {}), incomingForeign);
-	return canonical(current.settings ?? mergeSavedSettings({})) !== canonical(preferences) ||
+	return canonical(authored(current.settings ?? mergeSavedSettings({}))) !== canonical(authored(preferences)) ||
 		canonical(collectForeignFields(content(current)).data) !== canonical(incomingForeign.data);
 }
 
+/**
+ * Save `current` before `incoming` replaces any of it. `batch` collects every
+ * copy one adoption saves, so tidying after a later copy keeps the earlier ones.
+ */
 export async function backUpBeforeAdoption(
 	host: SettingsBackupHost & { settingsWriter?: Pick<SettingsWriter, "status"> }, current: Partial<PluginData>, incoming: Partial<PluginData>,
+	batch?: Set<string>,
 ): Promise<boolean> {
 	if (!settingsWouldDiscardRows(current, incoming) && !settingsWouldReplacePreferences(current, incoming)) return true;
-	const path = await writeSettingsBackup(host, current);
+	const path = await writeSettingsBackup(host, current, { batch });
 	if (!path) {
 		host.settingsWriter?.status.fail("backup");
 		if (host.settingsWriter) reportSettingsSaveFailure(host.settingsWriter);

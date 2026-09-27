@@ -125,9 +125,10 @@ export class ReplaceCalloutModal extends Modal {
 			(this.mode === "replace"
 				? t("vault.confirmReplace")
 				: t("vault.confirmDelete"));
+		// Both modes rewrite notes across the vault.
 		this.confirmBtn = btnContainer.createEl("button", {
 			text: confirmText,
-			cls: this.mode === "replace" ? "mod-cta" : "mod-warning",
+			cls: "mod-warning",
 		});
 		this.confirmBtn.disabled = true;
 		this.confirmBtn.addEventListener("click", () => {
@@ -210,10 +211,12 @@ export class ReplaceCalloutModal extends Modal {
 			this.selectItem(ids[Math.max(at - 1, 0)] ?? null);
 		} else if (ev.key === "Enter") {
 			ev.preventDefault();
-			// With nothing chosen yet, Enter takes the top row — the one the
-			// query is most plausibly about.
+			// Enter chooses — the top row when nothing is chosen yet, the one
+			// the query is most plausibly about — but never confirms. Confirming
+			// rewrites every note that uses the callout (Undo is brief and in
+			// memory only), so it takes the button itself, not a reflexive
+			// keypress in a search field that opened focused.
 			if (this.selectedId === undefined) this.selectItem(ids[0] ?? null);
-			this.confirmBtn?.click();
 		}
 	}
 

@@ -22,6 +22,7 @@
 import type { App } from "obsidian";
 import { calloutIdentity, mergeDashSpaceVariants, normalizeCalloutId } from "./calloutId";
 import { rewriteVaultFiles, scanVaultFiles } from "./vaultRewrite";
+import type { NoteRewriteJournal } from "./noteRewriteUndo";
 import type { LineCalloutToken } from "../editor/calloutTokens";
 import {
 	forEachCalloutToken,
@@ -234,12 +235,13 @@ export async function convertCalloutsToPlainTextInVault(
 	ids: string[],
 	displayName: string,
 	requireComplete = false,
+	journal?: NoteRewriteJournal,
 ): Promise<{ files: number; blocks: number }> {
 	if (ids.length === 0) return { files: 0, blocks: 0 };
 	const idSet = new Set(ids.map((id) => calloutIdentity(id)));
 	const transform = (content: string) => calloutsToPlainText(content, idSet, displayName);
 
-	const { files, count } = await rewriteVaultFiles(app, transform, requireComplete);
+	const { files, count } = await rewriteVaultFiles(app, transform, requireComplete, journal);
 	return { files, blocks: count };
 }
 
@@ -284,6 +286,7 @@ export async function replaceCalloutIdsInVault(
 	newId: string,
 	titleSwap?: CalloutTitleSwap,
 	requireComplete = false,
+	journal?: NoteRewriteJournal,
 ): Promise<number> {
 	if (oldIds.length === 0) return 0;
 
@@ -318,6 +321,7 @@ export async function replaceCalloutIdsInVault(
 				}),
 			),
 		requireComplete,
+		journal,
 	);
 
 	return count;

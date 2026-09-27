@@ -31,6 +31,7 @@ function device() {
 			exists: (path: string) => Promise.resolve(path.endsWith("data.json") ? disk.json !== null : true),
 			mkdir: () => Promise.resolve(),
 			write: (path: string, json: string) => { backups.set(path, json); return Promise.resolve(); },
+			read: (path: string) => Promise.resolve(backups.get(path) ?? ""),
 			list: () => Promise.resolve({ files: [...backups.keys()], folders: [] }),
 			remove: (path: string) => { backups.delete(path); return Promise.resolve(); },
 		} } } as unknown as App;

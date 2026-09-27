@@ -32,7 +32,7 @@ import type { SettingsBootResult } from "../src/manager/settingsBoot";
 import type CalloutStudioPlugin from "../src/main";
 import { installFakeDom } from "./support/fakeDom";
 import { WelcomeModal } from "../src/settings/WelcomeModal";
-import { shouldShowCompetitorImportBanner } from "../src/settings/competitorImportState";
+import { markCompetitorImportBannerHandled, shouldShowCompetitorImportBanner } from "../src/settings/competitorImportState";
 
 installFakeDom();
 
@@ -49,6 +49,8 @@ function launch(options: {
 	welcomeSeen?: boolean;
 	localWelcomeSeen?: boolean;
 	competitorImportBannerHandled?: boolean;
+	/** Dismissed on this device while it had no settings file to record it in. */
+	localBannerHandled?: boolean;
 	saveRejects?: boolean;
 } = {}) {
 	const registry = new CalloutRegistry();
@@ -63,6 +65,7 @@ function launch(options: {
 		welcomeMarks: 0,
 	};
 	let localWelcomeSeen = options.localWelcomeSeen ?? false;
+	let localBannerHandled = options.localBannerHandled ?? false;
 
 	const app = {
 		vault: {
@@ -109,6 +112,8 @@ function launch(options: {
 				localWelcomeSeen = true;
 				seen.welcomeMarks++;
 			},
+			get hasHandledImportBanner(): boolean { return localBannerHandled; },
+			markImportBannerHandled: (): void => { localBannerHandled = true; },
 		},
 		runVaultScan: (): Promise<number> => {
 			seen.scans += 1;
@@ -205,6 +210,20 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 			competitorImportBannerHandled: true,
 		});
 		await l.run(true);
+		assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), false);
+	});
+	it("does not re-arm an import banner this device dismissed before it had a settings file", async () => {
+		const l = launch({ localWelcomeSeen: true, localBannerHandled: true });
+		await l.run(true);
+		assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), false);
+	});
+	it("remembers a dismissal on the device as well as in the synced setting", async () => {
+		const l = launch({ localWelcomeSeen: true });
+		await l.run(true);
+		assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), true);
+		await markCompetitorImportBannerHandled(l.plugin);
+		assert.strictEqual(l.plugin.localState.hasHandledImportBanner, true);
+		assert.strictEqual(l.plugin.settings.competitorImportBannerHandled, true);
 		assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), false);
 	});
 	it("does not show a queued welcome after the plugin unloads", async () => {

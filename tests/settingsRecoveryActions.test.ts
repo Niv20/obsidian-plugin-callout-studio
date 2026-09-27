@@ -14,6 +14,7 @@ import { definition } from "./support/discoveryHarness";
 import { recoveryActionHarness } from "./support/recoveryActionHarness";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import type { PluginData } from "../src/types";
+import { en } from "../src/i18n/en";
 import { renderSaveStatusBanner } from "../src/settings/saveStatusBanner";
 
 describe("explicit saving recovery", () => {
@@ -89,12 +90,12 @@ describe("explicit saving recovery", () => {
 		assert.deepEqual(h.state.checkpoint, saved); assert.equal(h.state.writes, 0);
 		h.host.settingsWriter.destroy();
 	});
-	it("keeps reset retryable after a failed checkpoint and does not claim success", async () => {
+	it("creates the missing file although the recovery copy cannot be updated", async t => {
+		t.mock.method(console, "warn", () => undefined);
 		const h = recoveryActionHarness({ missing: true, legacy: true }); await h.boot(); h.state.failCheckpoint = true;
-		assert.equal(await startFreshSettings(h.host), false); assert.equal(h.state.writes, 0);
-		assert.equal(h.host.settingsWriter.status.frozenReason, "missing");
-		assert.equal(h.host.settingsWriter.status.reason, "recovery-write");
-		h.state.failCheckpoint = false; assert.equal(await startFreshSettings(h.host), true);
+		assert.equal(await startFreshSettings(h.host), true); assert.equal(h.state.writes, 1);
+		assert.equal(h.host.settingsWriter.isFrozen, false);
+		assert.equal(h.host.settingsWriter.status.reason, null);
 		h.host.settingsWriter.destroy();
 	});
 	it("recovers a transient checkpoint read failure without restarting or replacing the data file", async () => {
@@ -105,12 +106,22 @@ describe("explicit saving recovery", () => {
 		assert.equal(h.host.settingsWriter.status.reason, null); assert.equal(h.host.settingsWriter.isFrozen, false);
 		h.host.settingsWriter.destroy();
 	});
-	it("keeps the UI available after a launch checkpoint write failure and recovers when storage returns", async () => {
-		const h = recoveryActionHarness(); h.state.failCheckpoint = true;
-		await assert.doesNotReject(() => h.boot());
-		assert.equal(h.host.settingsWriter.status.reason, "recovery-write"); assert.equal(h.state.writes, 0);
-		h.state.failCheckpoint = false; assert.equal(await retrySettingsRecovery(h.host), true);
-		h.host.settingsWriter.destroy();
+	it("keeps saving after a launch checkpoint write failure, says so once, and catches up when storage returns", async context => {
+		context.mock.method(console, "warn", () => undefined);
+		const notices: string[] = [];
+		(globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ = notices;
+		try {
+			const h = recoveryActionHarness(); h.state.failCheckpoint = true;
+			await assert.doesNotReject(() => h.boot());
+			assert.equal(h.host.settingsWriter.status.reason, null); assert.equal(h.host.settingsWriter.isFrozen, false);
+			h.host.registry.add(definition({ id: "saved-anyway" }));
+			await h.host.saveSettings();
+			assert.ok((JSON.parse(h.state.disk!) as PluginData).callouts.some(row => row.id === "saved-anyway"));
+			assert.deepEqual(notices, [en["notice.recoveryCopyStale"]]);
+			h.state.failCheckpoint = false; await h.host.saveSettings();
+			assert.ok((h.state.checkpoint as PluginData).callouts.some(row => row.id === "saved-anyway"));
+			h.host.settingsWriter.destroy();
+		} finally { delete (globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__; }
 	});
 	it("distinguishes primary storage failure and successfully retries the unsaved edit", async () => {
 		const h = recoveryActionHarness(); await h.boot(); h.state.failWrite = true;
@@ -120,15 +131,16 @@ describe("explicit saving recovery", () => {
 		assert.ok((JSON.parse(h.state.disk!) as PluginData).callouts.some(row => row.id === "disk-failed"));
 		h.host.settingsWriter.destroy();
 	});
-	it("retries a failed checkpoint even when the primary settings already match", async () => {
+	it("does not fail a retry over a recovery copy that lags, and catches the copy up at the next save", async context => {
+		context.mock.method(console, "warn", () => undefined);
 		const h = recoveryActionHarness(); await h.boot();
 		h.state.failCheckpoint = true;
 		await assert.rejects(h.host.settingsWriter.remember(h.host.registry.toSaveData()));
-		assert.equal(await retrySettingsRecovery(h.host), false);
-		assert.equal(h.host.settingsWriter.status.reason, "recovery-write");
-		h.state.failCheckpoint = false;
 		assert.equal(await retrySettingsRecovery(h.host), true);
 		assert.equal(h.host.settingsWriter.status.reason, null);
+		h.state.failCheckpoint = false; h.state.checkpoint = null;
+		await h.host.saveSettings();
+		assert.ok(h.state.checkpoint, "an unchanged save retried the recovery copy");
 		h.host.settingsWriter.destroy();
 	});
 	it("retains editor ownership while an explicit action loads sync, then Save succeeds", async () => {

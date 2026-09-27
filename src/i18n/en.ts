@@ -54,13 +54,70 @@ export const en: Record<string, string> = {
 	"saveStatus.retryFailed": "Saving is still blocked. Check the saving status in Callout Studio settings for the cause, then retry.",
 	"saveStatus.reviewDraft": "Incoming settings and recovery checks are complete. Your draft is unchanged. Review it and save again.",
 	"saveStatus.settingsArrived": "Existing settings arrived and were loaded. A replacement file was not created.",
-	"saveStatus.newFile": "Create a new settings file",
 	"saveStatus.restoreSettings": "Restore these settings",
 	"saveStatus.createSettingsFile": "Create settings file",
 	"saveStatus.checkAgain": "Check again",
-	"saveStatus.stillMissing": "The settings file is still missing. Checking again does not recreate it. Let synchronization finish and make the vault available offline. If the file was deleted, restore a backup or use the recovery action in Callout Studio settings on this device to save the settings shown.",
 	"saveStatus.recoverInSettings": "To restore the missing file on this device, open Callout Studio settings. Before closing this editor, copy any unsaved edits you want to keep; they have not been saved.",
 	"saveStatus.openSettings": "Open Callout Studio settings",
+	"saveStatus.stillMissingAdvice":
+		"The settings file is still missing. Checking again does not recreate it. Let synchronization finish and make the vault available offline. If the file was deleted, choose Restore these settings, or restore an earlier setup.",
+	"saveStatus.diagnosis.unavailable":
+		"This device can't open the file right now. It may still be downloading, the vault may not be available offline, or storage isn't responding. Callout Studio checks again automatically.",
+	"saveStatus.diagnosis.empty":
+		"The file is empty, which usually means a sync was interrupted. If another device still has your settings, let it sync. Otherwise, replace the file.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"The file contains unresolved merge conflict markers, for example from Git. Resolve the conflict in your Git tool, or replace the file.",
+	"saveStatus.diagnosis.damaged": "The file is incomplete or damaged, so it can't be read as settings.",
+	"saveStatus.diagnosis.combined":
+		"Your sync service combined two versions of the file, so its internal check no longer matches. The settings inside are intact, and replacing the file keeps them.",
+	"saveStatus.diagnosis.invalidEntries":
+		"The file contains entries Callout Studio can't use, for example the same callout type listed twice.",
+	"saveStatus.replaceUnreadable": "Replace settings file",
+	"saveStatus.discardRecoveryCopy": "Discard recovery copy",
+	"saveStatus.openRecovery": "Restore an earlier setup",
+	"saveStatus.readOnlyWhilePaused":
+		"Settings can't be changed until saving works again, so nothing you change here is lost. You can still export your setup.",
+	"statusBar.paused": "Saving paused",
+	"statusBar.pausedTooltip": "Callout Studio isn't saving settings changes. Click to see why.",
+	"statusBar.pausedNotice": "Callout Studio isn't saving settings changes right now.",
+	"notice.replaceUnreadableUnavailable":
+		"The settings file can't be replaced right now: it is changing, or this device can't read it. Try again in a moment.",
+	"notice.recoveryStorageUnavailable":
+		"This device's recovery storage isn't responding, so the copy can't be discarded. Restart Obsidian, then try again.",
+	"recovery.title": "Restore an earlier setup",
+	"recovery.intro":
+		"Callout Studio keeps earlier versions of your setup on this device and in the plugin's backups folder. Restoring one replaces your current setup on every synced device. A backup of the current setup is saved first.",
+	"recovery.pausedHint": "Saving is paused, so restoring is unavailable until that is resolved. You can still export a copy.",
+	"recovery.loading": "Looking for earlier versions…",
+	"recovery.empty": "No earlier versions were found.",
+	"recovery.sectionHistory": "Saved on this device",
+	"recovery.sectionBackups": "Backups",
+	"recovery.sectionCopies": "Other copies of the settings file",
+	"recovery.originThisDevice": "This device",
+	"recovery.originOtherDevice": "Another device",
+	"recovery.originOlderVersion": "Saved by an older version",
+	"recovery.unreadable": "Can't be read as settings",
+	"recovery.same": "Same as your current setup",
+	"recovery.summary": "{{callouts}} saved callout type(s), {{count}} difference(s) from now",
+	"recovery.export": "Export copy",
+	"recovery.restore": "Restore",
+	"recovery.confirmTitle": "Restore this setup",
+	"recovery.confirmBody":
+		"Your current setup is replaced with the one from {{when}} ({{count}} difference(s)). A backup of your current setup is saved first, and your sync service sends the restored setup to your other devices.",
+	"recovery.restored": "Restored the setup from {{when}}.",
+	"recovery.stale":
+		"Nothing was restored: your settings changed or couldn't be checked. Open this window again and review the list.",
+	"recovery.backupFailed":
+		"Nothing was restored: a backup of your current setup could not be saved first. Check available storage, then try again.",
+	"recovery.failed": "The setup could not be restored. Nothing was changed.",
+	"notice.unsavedChangesReplaced":
+		"Some changes made on this device had not been saved yet, and newer settings from another device replaced them. Your version was saved first: open Restore an earlier setup in Callout Studio settings to get it back.",
+	"notice.diagnosticsCopied": "Sync diagnostics copied.",
+	"notice.diagnosticsFailed": "The sync diagnostics could not be copied.",
+	"notice.recoveryCopyStale":
+		"Your settings were saved, but this device's recovery copy could not be updated. Check available storage on this device. Callout Studio tries again with your next change.",
+	"notice.blockedWhilePaused":
+		"Saving is paused, so this change cannot be kept right now. Resolve the saving problem shown in Callout Studio settings first.",
 	"notice.openSettingsFailed": "Callout Studio settings could not be opened. Open Settings → Callout Studio to choose what to do.",
 	"notice.settingsBackupFailed": "Settings recovery could not continue because a safety backup could not be saved. Check available storage and write permissions, then retry.",
 	"notice.settingsBackupSaved": "A recovery copy of local callout definitions was saved before applying incoming settings: {{path}}.",
@@ -80,6 +137,8 @@ export const en: Record<string, string> = {
 	"welcome.title": "Welcome to Callout Studio!",
 	"welcome.tagline":
 		"Your complete solution for creating, styling and managing Obsidian callouts.",
+	"welcome.syncNote":
+		"Already use Callout Studio on another device? Let your sync service finish first. Your callouts and settings appear here once they arrive.",
 	"importBanner.message":
 		"We noticed you are using {{plugins}}. Would you like to import your callouts?",
 	"importBanner.action": "Import",
@@ -400,9 +459,20 @@ export const en: Record<string, string> = {
 	"settings.resetAllDesc":
 		"Delete all user callouts, reset built-in callouts, global styles (borders, font scale, shape), saved color palettes, the right-click menu customization, and downloaded Material SVGs.",
 	"settings.resetAllButton": "Reset everything",
-	"settings.resetAllConfirm":
-		"This will delete all custom callouts, reset built-in callouts, global styles, saved color palettes, the right-click menu customization, and all cached Material SVGs. This action cannot be undone. Are you sure?",
 	"notice.resetAllDone": "Everything has been reset to defaults.",
+	"settings.resetAllConfirmFull":
+		"This deletes every custom callout type, uploaded picture and custom command, and resets built-in callouts, global styles, saved color palettes, the right-click menu, heading and inline callout settings, and the fallback style. A backup of your current setup is saved in the plugin's backups folder first. Your sync service may send the reset to your other devices.",
+	"settings.resetBackupFailed":
+		"Nothing was reset: a backup of your current setup could not be saved first. Check available storage, then try again.",
+	"settings.resetNotSaved":
+		"The reset is shown but could not be saved yet, so your settings file still holds the previous setup. Check the saving status in Callout Studio settings.",
+	"settings.recovery": "Earlier setups",
+	"settings.recoveryDesc": "Restore a version of your setup saved earlier on this device or in the plugin's backups folder.",
+	"settings.recoveryButton": "Restore an earlier setup",
+	"settings.diagnostics": "Sync diagnostics",
+	"settings.diagnosticsDesc":
+		"Copy a summary of how saving and sync are working, to include in a bug report. It contains no callouts or settings.",
+	"settings.diagnosticsButton": "Copy diagnostics",
 
 	// Notices
 	"notice.customCommandsRemoved":
@@ -439,7 +509,6 @@ export const en: Record<string, string> = {
 		"Callout Studio could not read its settings file, so your callout types are missing from this session. Nothing has been written and the file on disk is unchanged \u2014 reload Obsidian to try again.",
 	"notice.settingsMissing":
 		"Callout Studio's settings file is missing, so your callout types are missing from this session. Nothing has been written — if you sync this vault, let the sync finish and reload Obsidian before making any changes.",
-	"notice.settingsMissingAction": "Create a new settings file",
 	"notice.settingsNotSaved":
 		"That change was not saved. Callout Studio could not use its settings file when Obsidian started, so nothing is being written on this device — your changes will last until you close Obsidian. See Settings \u2192 Callout Studio for what to do.",
 	"notice.settingsNewerVersion":
@@ -886,7 +955,15 @@ export const en: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Delete command",
-	"confirm.titleResetAll": "Reset all callouts",
+	"confirm.titleResetEverything": "Reset everything",
+	"confirm.titleReplaceUnreadable": "Replace settings file",
+	"confirm.replaceUnreadable":
+		"An exact copy of the current file is saved to the plugin's backups folder first. The file is then replaced with the setup shown here, and your sync service sends it to your other devices.",
+	"confirm.replaceUnreadableSalvage":
+		"An exact copy of the current file is saved to the plugin's backups folder first. The settings inside it are combined with the setup shown here, and the file is rewritten so every device can read it again.",
+	"confirm.titleDiscardRecoveryCopy": "Discard recovery copy",
+	"confirm.discardRecoveryCopy":
+		"This device's recovery copy can't be read, so saving is paused on this device. An exact copy of it is saved to the plugin's backups folder first. It is then replaced with the setup shown here. Your settings file is not changed.",
 	"confirm.titleResetCallout": "Reset callout",
 	"confirm.titleDeletePalette": "Delete palette",
 	"confirm.titleDeleteImage": "Delete image",
@@ -894,10 +971,6 @@ export const en: Record<string, string> = {
 	"confirm.overwriteSnippet":
 		"The CSS snippet in your snippets folder has changed since Callout Studio wrote it. Exporting again replaces the whole file.",
 	"confirm.overwriteSnippetOk": "Overwrite",
-	"confirm.titleStartFresh": "Create a new settings file",
-	"confirm.startFresh":
-		"This creates a new settings file from the callout types and settings currently shown. Any previous readable recovery copy is kept in a backup. If the missing file is still on its way from another device, or is still syncing, it will be replaced everywhere — including on the devices that still have your callouts.\nOnly do this if you deleted the file yourself, or if you are sure it is not coming back.",
-	"confirm.startFreshOk": "Create a new settings file",
 	"confirm.titleRestoreSettings": "Restore these settings",
 	"confirm.titleCreateSettingsFile": "Create settings file",
 	"confirm.restoreDisplayedSettings":
@@ -914,6 +987,10 @@ export const en: Record<string, string> = {
 	"vault.deleteWithout": "Delete without replacing",
 	"vault.confirmDelete": "Confirm",
 	"vault.confirmReplace": "Replace",
+	"vault.undoRewrite": "Undo",
+	"vault.undoRestored": "Restored {{count}} note(s).",
+	"vault.undoPartial":
+		"Restored {{count}} note(s). {{skipped}} note(s) changed after the rewrite, so they were left as they are.",
 	"vault.replacePromptInUse":
 		'"{{name}}" is used {{count}} time(s) in {{files}} file(s). Pick a callout to replace it with:',
 	"vault.replacePromptUnused": 'Pick a callout to replace "{{name}}" with:',
@@ -1005,6 +1082,14 @@ export const en: Record<string, string> = {
 		"The background gradient was invalid and was ignored.",
 	"import.err.parseFailed":
 		"The file is not valid JSON and could not be parsed.",
+	"import.confirmTitle": "Import Callout Studio backup",
+	"import.confirmSummary":
+		"This adds {{added}} callout type(s), replaces {{replaced}} existing one(s) with the file's version, and restores {{settings}} group(s) of settings from the file. A backup of your current setup is saved first.",
+	"import.confirmAction": "Import",
+	"import.backupFailed":
+		"Nothing was imported: a backup of your current setup could not be saved first. Check available storage, then try again.",
+	"import.notSaved":
+		"The import is shown but could not be saved yet. Check the saving status in Callout Studio settings.",
 	"import.err.tooLarge": "This import exceeds the 16 MiB size limit. Split it into smaller files and try again.",
 	"import.err.tooComplex": "This import is too complex: use at most 1,000 items per list or object, 50,000 values in total, and 32 levels of nesting.",
 	"import.err.imageBudget": "The combined picture collection exceeds the image size or complexity limits. Remove or simplify large pictures before importing.",

@@ -23,6 +23,7 @@ import {
 import { renderContextMenuSettingsSection } from "./sections/EditorFeaturesSection";
 import { renderFallbackSection } from "./sections/FallbackSection";
 import { renderReadOnlyBanner } from "./sections/ReadOnlyBanner";
+import { makePausedReadOnly } from "./sections/pausedReadOnly";
 import { renderCompetitorImportBanner } from "./competitorImportBanner";
 import { captureScroll } from "./sections/scrollRestore";
 import { renderLanguageSection } from "./sections/LanguageSection";
@@ -167,6 +168,18 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		// without changing their DOM position inside the title's banner slot.
 		renderCompetitorImportBanner(sectionCtx, bannerSlot, importTarget);
 		renderReadOnlyBanner(sectionCtx, bannerSlot);
+
+		// Nothing is saved while paused, so nothing is editable either; the page
+		// is redrawn whenever that changes. @see sections/pausedReadOnly.ts
+		const writer = this.plugin.settingsWriter;
+		const paused = writer.isFrozen;
+		if (paused) makePausedReadOnly(containerEl, [bannerSlot]);
+		const status = writer.status;
+		if (status) {
+			this.sectionDisposers.push(status.subscribe(() => {
+				if (!writer.isDestroyed && writer.isFrozen !== paused) this.display();
+			}));
+		}
 
 		restoreScroll();
 	}

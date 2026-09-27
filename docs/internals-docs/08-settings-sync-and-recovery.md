@@ -1,7 +1,10 @@
 # Settings saving, synchronization, and recovery
 
-**Documented: 2026-09-24.** This chapter describes the implementation after the
-missing-file recovery investigation on that date. It is an implementation
+**Documented: 2026-09-24; updated 2026-09-27.** This chapter describes the
+implementation after the missing-file recovery investigation, and after the
+data-safety review that followed it. The review added four things: a device's first
+file stamps only real edits, a merge-time rescue of legacy values, envelope-free
+backups, and guardrails on destructive actions. It is an implementation
 reference, not a release announcement or a claim that every sync provider has
 been tested on physical devices.
 
@@ -81,7 +84,8 @@ The following rules explain the checks that can otherwise look redundant:
 | Normal disk baseline | `SaveGuard` inside `SettingsWriter`, in memory | Canonical contents of the last accepted file/write. It is not a file-existence cache or a cross-device lock. |
 | Committed merge state | `SettingsSync`, in memory and the persisted envelope | Causal history used to distinguish edits, deletions, and stale snapshots. It is not ordered by wall-clock time. |
 | Recovery checkpoint | `CalloutStudioRecovery` IndexedDB database | One independent device-local snapshot, scoped by vault identity, configuration folder, and plugin id. It may survive plugin removal. |
-| Recovery backups | `<plugin-dir>/backups/data-<timestamp>-<uuid>.json` | Preserved versions needed before particular replacements. These files are inside the vault and can be synced or deleted by a provider. |
+| Device history | `CalloutStudioHistory` IndexedDB database | This device's recent accepted states: the last 20, plus the newest from each of the last 14 recorded days and 8 recorded weeks, within a size budget. Same scope as the checkpoint; never synced. |
+| Recovery backups | `<plugin-dir>/backups/data-<timestamp>-<device>-<hash>.json` | Verified copies taken before particular replacements. These files are inside the vault and can be synced or deleted by a provider. |
 | Prior-use/UI markers | `DeviceLocalStore`, vault-scoped `localStorage` | Evidence that absence should not be treated as a never-used installation; not a source of callout definitions. |
 | Editor form | The open editor's own fields and save session | An unsaved draft. A checkpoint of the registry is not a backup of every form field. |
 
@@ -105,10 +109,12 @@ The source map is deliberately explicit:
 | Write serialization, no-op and stale guards | [`SettingsWriter.ts`](../../src/manager/SettingsWriter.ts), [`saveGuard.ts`](../../src/utils/saveGuard.ts), [`staleWriteGuard.ts`](../../src/manager/staleWriteGuard.ts) |
 | Production adapter and verification | [`settingsWriterHost.ts`](../../src/manager/settingsWriterHost.ts) |
 | Incoming-file scheduling and adoption | [`reloadQueue.ts`](../../src/manager/reloadQueue.ts), [`settingsAdopt.ts`](../../src/manager/settingsAdopt.ts), [`registryOwnership.ts`](../../src/manager/registryOwnership.ts) |
-| Merge representation and integrity | [`settingsSync.ts`](../../src/manager/settingsSync.ts), [`syncTree.ts`](../../src/manager/syncTree.ts), [`syncFingerprint.ts`](../../src/manager/syncFingerprint.ts), [`foreignFields.ts`](../../src/manager/foreignFields.ts) |
-| Checkpoints, backups and conflict copies | [`settingsCheckpoint.ts`](../../src/manager/settingsCheckpoint.ts), [`settingsRecovery.ts`](../../src/manager/settingsRecovery.ts), [`settingsBackup.ts`](../../src/manager/settingsBackup.ts), [`settingsConflictBackup.ts`](../../src/manager/settingsConflictBackup.ts), [`settingsConflictFiles.ts`](../../src/manager/settingsConflictFiles.ts) |
-| Explicit recovery | [`settingsRecoveryActions.ts`](../../src/manager/settingsRecoveryActions.ts), [`missingSettingsRecovery.ts`](../../src/manager/missingSettingsRecovery.ts) |
+| Merge representation and integrity | [`settingsSync.ts`](../../src/manager/settingsSync.ts), [`settingsGenesis.ts`](../../src/manager/settingsGenesis.ts), [`syncTree.ts`](../../src/manager/syncTree.ts), [`syncFingerprint.ts`](../../src/manager/syncFingerprint.ts), [`foreignFields.ts`](../../src/manager/foreignFields.ts) |
+| Checkpoints, history, backups and conflict copies | [`settingsCheckpoint.ts`](../../src/manager/settingsCheckpoint.ts), [`settingsHistory.ts`](../../src/manager/settingsHistory.ts), [`settingsRecovery.ts`](../../src/manager/settingsRecovery.ts), [`settingsBackup.ts`](../../src/manager/settingsBackup.ts), [`settingsConflictBackup.ts`](../../src/manager/settingsConflictBackup.ts), [`settingsConflictFiles.ts`](../../src/manager/settingsConflictFiles.ts) |
+| Explicit recovery | [`settingsRecoveryActions.ts`](../../src/manager/settingsRecoveryActions.ts), [`missingSettingsRecovery.ts`](../../src/manager/missingSettingsRecovery.ts), [`settingsRecoveryService.ts`](../../src/manager/settingsRecoveryService.ts), [`settingsDiagnosis.ts`](../../src/manager/settingsDiagnosis.ts), [`SettingsRecoveryModal.ts`](../../src/settings/SettingsRecoveryModal.ts) |
+| Paused state | [`pausedRecheck.ts`](../../src/manager/pausedRecheck.ts), [`pausedIndicator.ts`](../../src/settings/pausedIndicator.ts), [`withTimeout.ts`](../../src/utils/withTimeout.ts) |
 | Status and user feedback | [`settingsSaveStatus.ts`](../../src/manager/settingsSaveStatus.ts), [`settingsSaveReporter.ts`](../../src/manager/settingsSaveReporter.ts), [`settingsSaveMessage.ts`](../../src/manager/settingsSaveMessage.ts), [`saveStatusBanner.ts`](../../src/settings/saveStatusBanner.ts), [`settingsNotices.ts`](../../src/manager/settingsNotices.ts) |
+| Destructive actions while paused | [`pausedGuard.ts`](../../src/settings/pausedGuard.ts), [`DataManagementSection.ts`](../../src/settings/sections/DataManagementSection.ts), [`PluginImportModal.ts`](../../src/settings/pluginImport/PluginImportModal.ts), [`calloutVaultActions.ts`](../../src/settings/sections/calloutVaultActions.ts) |
 
 ## Startup and file classification
 
@@ -117,9 +123,16 @@ The source map is deliberately explicit:
 `readSettingsFile()` calls `loadData()` first. It does not use modification time,
 file size, or a preliminary existence check to declare a payload safe.
 
-- A thrown read is `unreadable`.
+- A thrown read, or one that has not answered within **20 s**
+  (`PRIMARY_IO_TIMEOUT_MS`, see `utils/withTimeout.ts`), is `unreadable`. A
+  cloud placeholder can hang instead of failing, and a hung read used to keep
+  the writer busy forever with every save queued behind it.
 - A non-null object, excluding arrays, must pass `hasSafeSettingsFileShape()`;
-  otherwise it is `unreadable`.
+  otherwise it is `unreadable`. A later build's file is asked first
+  (`isNewerSettingsFormat()`: a data version above 5, or a sync envelope above
+  version 2): if it fails this build's gate it is `unreadable` with
+  `newer: true`, which callers turn into the `newer-version` freeze instead of
+  treating it as damage.
 - A valid object is returned as `loaded`, with both parsed data and a serialized
   copy of the exact observed object. Whitespace is not meaningful to its baseline.
 - A parsed array or primitive is `unreadable`, even if the file disappears before
@@ -136,9 +149,13 @@ built-in overrides and unknown future fields remain supported. Canonical handlin
 preserves keys such as `__proto__` as data rather than allowing prototype mutation.
 
 The data-format version and sync-envelope version are separate. The current data
-format is **5**; a higher data version is handled as a newer-build read-only case.
-Unsupported or malformed sync metadata fails the shape/integrity gate. A missing
-legacy data version can still enter field-based migrations.
+format is **5**; a higher data version, or an envelope version above 2, is
+handled as a newer-build read-only case, before the shape gate can call it
+damage. Malformed sync metadata of a known version fails the shape/integrity
+gate. A missing legacy data version can still enter field-based migrations. The
+checkpoint store returns a later build's copy as it is rather than rejecting it
+as invalid, and callers protect it; it is never displayed unless it also passes
+this build's gate.
 
 ### Settling does not mean synchronization has finished
 
@@ -164,6 +181,8 @@ nullish `loadData()` result means a new user:
 | --- | --- | --- |
 | Loaded, supported | Checkpoint/conflict copies available | Reconcile validated recovery data, rebuild the registry, establish the accepted baseline, and save only if migration or a real merge requires it. |
 | Loaded, newer data format | Any | Freeze with `newer-version`; do not authorize edits or replacement by the older build. |
+| Unreadable, but a later build's format | Any | The same `newer-version` freeze; the file is not called damaged and no replacement is offered. |
+| Loading throws for any other reason | Any | `loadSettingsSafely()` freezes with `unreadable`, shows the built-ins and keeps watching. The error used to escape `onload`, and the plugin failed on every launch. |
 | Unreadable | Readable recovery copy | Freeze writes and use the recovery copy for display where possible. Display is not permission to replace the primary. |
 | Unreadable | No usable recovery copy | Keep the primary untouched; built-ins may be displayed. The setup is not thereby a fresh writable installation. |
 | Absent | Prior-use marker or readable checkpoint | Freeze with `missing` and display the checkpoint when available. A supported copy seeds merge history separately from the disk baseline. |
@@ -177,11 +196,24 @@ sync history. It does not call `SaveGuard.adopt()` or assert that `data.json`
 exists. This preserves deleted-row tombstones when a reinstalled device later
 receives an older snapshot.
 
-Fresh-install confirmation never creates a welcome-only settings file. The
-welcome marker is device-local persisted UI state, not a write to `data.json`.
-The first real settings mutation still passes the ordinary freshness guard.
-A foreground check that finds no file on this untouched fresh installation does
+Fresh-install confirmation never creates a settings file by itself. While the
+writer has neither a disk baseline nor recovered state, `runPass()` treats a
+payload that says nothing beyond the shipped defaults as a no-op
+(`isUntouchedSettings()` in `settingsGenesis.ts`). That comparison ignores
+onboarding markers (`welcomeSeen`, `competitorImportBannerHandled`), device UI
+memory (`iconSources.lastCategory`, `iconSources.lastEmojiSkinTone`,
+`quickInsertSource`) and `iconSvgCache`. So the welcome, a theme's appearance
+sweep, fetched artwork or a dismissed import prompt cannot publish defaults over
+a file that is still arriving. Before this gate, a callout-styling theme alone
+created that file with no click at all. The prompt's dismissal is also kept in
+`DeviceLocalStore`, so it survives until a file exists. The first real settings
+change still creates the file, through the ordinary freshness guard. A
+foreground check that finds no file on this untouched fresh installation does
 not invent prior-use evidence and freeze it indefinitely.
+
+The provisional fresh-install freeze is silent (`freeze("missing", false)`): a
+background save that meets it before layout-ready is not a lost user change, so
+a first-time user never sees a missing-file notice.
 
 Unknown/corrupt or unavailable `DeviceLocalStore` storage is handled conservatively
 as prior-use evidence. A known legacy local-store blob is archived before cleanup;
@@ -205,18 +237,30 @@ An ordinary `runPass()` performs this sequence:
 2. Ask `SaveGuard.prepare()` whether the canonical payload differs from its
    accepted baseline. Object-key ordering and insignificant JSON formatting do
    not count as edits.
-3. If unchanged, do no file read or write. The special exception is retrying a
-   previously failed final checkpoint; that failure must not disappear behind a
-   no-op shortcut.
+3. If unchanged, do no file read or write. The special exception is a
+   checkpoint that fell behind: an unchanged save retries it, so a recovered
+   storage failure does not wait for the next real edit.
 4. When a current-file reader is available, use `StaleWriteGuard.blocks()` to
    compare the current file with the baseline. An unreadable file, changed file,
    or absence of a previously seen file blocks the write.
-5. Check frozen/destroyed/revision state, then persist the intended checkpoint.
+5. Check frozen/destroyed/revision state, then bring the checkpoint up to the
+   intended state if storage allows (`rememberIfPossible()`; see below).
 6. Check those conditions again, reread disk freshness after checkpointing, and
    check cancellation again before entering the physical write.
 7. Perform the production write and its read-back verification.
 8. Only after success, commit the normal baseline and sync state, record the
-   persisted content, and clear obsolete stale-write/status notifications.
+   persisted content, clear obsolete stale-write/status notifications, and
+   record the state in device history.
+
+**A checkpoint failure does not stop the write.** In 2.14 and earlier, step 5 threw, and
+any IndexedDB failure (common on iOS after the app returns from the background)
+meant nothing reached `data.json`: every edit lived in memory until the next app
+kill. The checkpoint is merged as one more replica, so a copy that lags only
+offers older stamps, which lose. Now a failure is logged, reported once through
+`onCheckpointStale` (the notice `notice.recoveryCopyStale`: settings were saved,
+the recovery copy was not), and retried by every later save, including unchanged
+ones, until it succeeds. `remember()` keeps the old throwing behavior for an
+explicit caller that wants it.
 
 `StaleWriteGuard` permits absence under the ordinary path only when there is no
 disk baseline, as for the authorized first write of a fresh installation. It
@@ -269,9 +313,9 @@ only then publishes the candidate to the live registry.
 A canonical no-op candidate still passes freshness/cancellation checks and can
 be published, but skips both the primary write and the checkpoint stages.
 
-The final candidate checkpoint follows publication. If it fails, the primary
-file and published registry may already have changed: report that checkpoint
-failure, and retry it even on an otherwise unchanged save. A crash between the
+The final candidate checkpoint follows publication. If it fails, the commit
+still succeeds: the primary file and published registry hold the change, and
+the checkpoint is marked behind and retried by later saves. A crash between the
 primary write and final checkpoint can leave that checkpoint one isolated commit
 behind. Do not describe this as a transaction across both storage systems.
 
@@ -298,6 +342,15 @@ Unavailable primary reads receive at most three scheduled retries, after **250,
 owner-held operation or failed required backup is deferred rather than put into
 an endless automatic write/retry loop. Unload cancels the scheduled callbacks.
 The queue is not a continuous polling service.
+
+Two things build on it. A primary that is unreadable on two reads in a row (the
+retries make that quick) now freezes a running session as `unreadable`, where
+it used to leave every save failing silently; that pause is what offers the way
+out. A read that was loaded at some point in the cycle but kept changing is
+`unsettled`, a sync in progress, and does not freeze. And while a session is
+visibly paused for a missing or unreadable file, `pausedRecheck.ts` runs the
+queue once a minute, only while the app is on screen. A phone left open on a
+paused session used to wait for the user to leave and return.
 
 ### Reading and adopting an incoming file
 
@@ -335,11 +388,9 @@ For a supported primary, the adoption algorithm is:
    settings tab. Do not rediscover callouts from notes.
 
 A newer primary takes a read-only path that skips checkpoint reading and writing.
-On the supported path, a checkpoint preflight failure can still allow validated
-incoming settings to be rebuilt for display, with saving frozen as
-`recovery-write`. A final checkpoint failure can likewise freeze saving after
-the rebuild. Checkpoint failure therefore does not always mean the displayed
-registry stayed unchanged.
+On the supported path, a checkpoint preflight or final checkpoint failure no
+longer freezes saving: the adoption completes, and the checkpoint is marked
+behind and retried like any other (see the normal writer pass).
 
 A failed rebuild freezes saving rather than establishing a baseline for a
 partially loaded registry. An incoming merge that cannot be durably saved is not
@@ -368,11 +419,77 @@ edit inside the deleted row; a deliberate recreation after observing that deleti
 uses a later counter. Tombstones are not pruned on a time-to-live assumption,
 because an offline device may return much later.
 
+Every field of a deleted row keeps a tombstone of its own, and that is most of
+the file: on a long-used vault measured on 2026-09-27, 8,559 of 9,058 stamps sat
+under 769 deleted rows. They are not redundant. Suppose a row is deleted and
+later re-created under the same id without some old field, and a device that
+missed both still holds that field at its old stamp. With only the row
+tombstoned, the field's stamps tie, and the tie-break favors a present value,
+so the stale field reappears in the new row. The alternative, ignoring a field
+older than its row, makes 2.13.1–2.14.1 and newer builds merge the same files
+differently, so each would keep rewriting the other's result. Compaction needs
+an envelope change the fleet cannot take yet (see the rules below).
+
 Before either side has stamped history, local unsaved changes can merge relative
 to the observed legacy baseline. Once stamped history exists, an unstamped older
-snapshot cannot undo it. Consequently, edits from an older incompatible build may
-need manual recovery from a preserved incoming version. Upgrade devices together;
-a new format guard cannot control code in a released build that lacks the guard.
+snapshot cannot undo it, with one exception: a stamped *default* that no user
+chose. The next section covers it. Otherwise, edits from an older incompatible
+build may need manual recovery from a preserved incoming version. Upgrade devices
+together; a new format guard cannot control code in a released build that lacks
+the guard.
+
+### A device's first file and the shipped defaults
+
+Every field a user has not edited since 2.13.1 carries no stamp (`[0, ""]`). In
+2.13.1–2.14.1, a device that had never adopted a file — a new phone, a reinstall
+on iOS, cleared app data — ran `prepare()` against an empty base. It stamped
+*every* key `[1, actor]`, the root `"[]"` included, although its user had
+changed nothing. Once that file met the long-time file, the new device's defaults
+beat every unstamped customization on every device. With a callout-styling theme,
+that took no click (see the fresh-install gate above).
+
+Two changes close it:
+
+- **Genesis baseline.** With no adopted state, `prepare()` diffs against
+  `settingsGenesis()`, a `new CalloutRegistry().load(null).toSaveData()`
+  snapshot cached per build. Untouched defaults and the root get no stamp, so
+  the first file says only what its user changed. The genesis tree is never
+  *adopted* into `state`. `merge()` must still take an incoming file whole on a
+  device that has not adopted one. Adopting genesis would also run the
+  unstamped-snapshot path, which stamps a legacy file `[1, "legacy"]`, and that
+  beats every real actor.
+- **Merge-time rescue**, for files the released builds already wrote.
+  `joined(a, b, genesis)` runs unchanged, then `rescued()` visits each key where
+  both sides hold differing atoms and the winner equals the genesis value:
+  - If the winner's stamp is `[0, ""]`, the loser's atom wins, stamped
+    `[0, "~legacy"]`.
+  - If the winner's stamp equals the root stamp `g0` (only an empty-base write
+    stamps the root), the loser wins, stamped `[g0[0], g0[1] + "~"]`. That
+    stamp beats `g0` and loses to everything that beats `g0`.
+
+  The rescue applies to leaves and list-order atoms, never to row existence: a
+  deletion is never undone. It is deterministic and never fires on its own
+  output, so the fleet converges without ping-pong, and older builds simply honor
+  the new stamps. A value a user deliberately set back to its default on a device
+  that never saw a file is indistinguishable from an untouched one; the legacy
+  value wins.
+
+`tests/syncGenesis.test.ts` models released builds with frozen copies of the
+2.14.1 merge core in `tests/fixtures/sync-2.14.1/`; do not update those copies.
+
+### Rules for every future build
+
+Released 2.13.1–2.14.1 gates are frozen in the field:
+
+- **Add fields only; never retype one.** An older build's shape gate reads a
+  retyped field as an unreadable file, not as "update needed".
+- **Keep the envelope at version 2 with two-element stamps.**
+- **Keep `CalloutStudioRecovery` at version 1.** An older build that opens a
+  newer version fails, reports unreadable recovery storage and freezes saving in
+  every vault on the device. New stores go in a database of their own, as
+  `CalloutStudioHistory` does.
+- **Never persist raw `toSaveData()` together with an envelope.** An envelope is
+  valid only for the body `prepare()` stamped it with.
 
 Envelope version **2** fingerprints the body and stamp map, excluding the
 fingerprint field itself. This is a deterministic corruption checksum, not
@@ -383,7 +500,10 @@ An unknown/malformed envelope or fingerprint mismatch is not silently restamped.
 
 Canonical key ordering, stable icon-cache ordering, no-op suppression and echo
 recognition prevent unchanged settings from bouncing between devices. Unknown
-allowed fields are preserved by `foreignFields.ts` on settings-file load/save;
+allowed fields are preserved by `foreignFields.ts` on settings-file load/save.
+`calloutStudioSync` is a known key there, so `toSaveData()` never hands back the
+envelope it loaded: re-emitted over a newer body, it made recovery copies fail
+their own integrity check.
 portable import validation is a different contract and does not inherit every
 unknown field. Retired known fields are explicitly excluded by their migrations.
 
@@ -430,37 +550,75 @@ The checkpoint read uses the settings shape/integrity gate. Callers also enforce
 the supported data-format bound. A failed read never becomes authority to replace
 that unreadable checkpoint. The plugin does not erase this store on normal unload
 or uninstall, but survival is contingent on the app/OS retaining its storage.
-Clearing application data can remove it. An intentional plugin reset can replace
-the checkpoint with the reset state; this is a recovery aid, not an immutable
-archive of every configuration ever used.
+Clearing application data can remove it. **Reset everything** replaces the
+checkpoint with the reset state on its next save, which is why it first writes
+and verifies a vault backup and refuses to run without one. The checkpoint is a
+recovery aid, not an immutable archive of every configuration ever used.
+
+The adoption preflight checkpoints the durable accepted file, or a freshly
+stamped snapshot of the registry (`settingsWriter.stamped()`), never the raw
+`toSaveData()` of the moment.
 
 ### Backup predicate, verification, and retention
 
 `backUpBeforeAdoption()` asks whether incoming state changes/removes a current
 callout row, replaces normalized preferences (including palettes, commands and
 user-image artwork), or changes preserved top-level foreign authored data.
-Metadata-only or icon-cache-only differences are not, by themselves, the trigger.
-For a merged adoption, the predicate is evaluated against the applicable local,
-checkpoint, incoming, and conflict versions before replacing their authored data.
+Metadata-only, icon-cache-only, onboarding-flag and picker-memory differences
+(`withoutIncidental()` in `settingsGenesis.ts`) are not, by themselves, the
+trigger. For a merged adoption, the predicate is evaluated against the
+applicable local, checkpoint, incoming, and conflict versions before replacing
+their authored data. One adoption passes a single `batch` to every copy it
+takes, so tidying after the last copy never removes the first.
 
-`writeSettingsBackup()` serializes the supplied object before its first awaited
-adapter operation, creates the backup directory when needed, and writes a unique
-timestamp-plus-UUID name. Pruning retains the newest five recognized generated
-names while always protecting the file just written, even if another device's
-clock is ahead. Unrecognized/user-created filenames are not pruned. Cleanup
-failure is logged and does not invalidate an already written backup.
+`writeSettingsBackup()` serializes the supplied object's *content* (the sync
+envelope stripped) before its first awaited adapter operation, creates the backup
+directory when needed, and names the copy
+`data-<time>-<device>-<content hash>.json`. A copy is restored through Import,
+which records its own history. An envelope from another moment would only make
+the copy fail validation, and its stamp map, thousands of entries long, exceeds
+Import's 1,000-key limit.
 
-There is an important verification distinction:
+- **Every copy is verified.** The copy is read back and compared canonically
+  before any caller is told it exists; `null` means no copy, and the caller
+  refuses the destructive step. The callers are adoption, boot-time recovery,
+  missing-file restoration, **Reset everything** and both imports.
+- **Deduplicated by hash.** When a copy with the same content hash exists and
+  reads back correctly, it is returned and nothing is written. Adoption used to
+  back up every stale conflict copy again on each pass.
+- **Each device tidies only its own copies.** The device part is
+  `DeviceLocalStore.deviceId`, eight random characters kept in local storage. A
+  device keeps its newest 10 copies plus its newest copy of each of the last 14
+  days on which it saved one. Another device's copies are left alone while it is
+  in use. Once it has saved none for 90 days (a reinstalled phone gets a new
+  name), all but its newest are removed. A device whose local storage cannot be
+  written uses the shared name `device00`. In 2.14 every device pruned every copy
+  to one shared window of five, so a busy device evicted another's copies and
+  sometimes its own earlier copy from the same adoption.
+- **Only names this module writes are pruned.** Copies named by 2.14 and
+  earlier (`data-<timestamp>-<uuid>.json`) are never deleted here; those builds
+  prune their own. User files are never touched. A pruning failure is logged and
+  does not invalidate a copy that was already written and verified.
 
-- Ordinary adoption checks that the backup helper reported a successful adapter
-  write. It does **not** separately read that backup back.
-- Explicit missing-file restoration additionally reads the previous checkpoint's
-  backup back and compares canonical content before permitting checkpoint
-  replacement.
+Backups are inside the plugin directory: provider deletion or a later uninstall
+can remove them. A user-exported backup kept elsewhere serves a different purpose.
 
-Do not turn the second guarantee into a claim about every backup caller. Backups
-are also inside the plugin directory: provider deletion or a later uninstall can
-remove them. A user-exported backup kept elsewhere serves a different purpose.
+### Device history
+
+`SettingsHistory` (`settingsHistory.ts`) records every state this device
+accepts: each verified write of `data.json`, from ordinary saves, isolated
+commits and restoration, and each file adopted from disk. It records content
+only, deduplicated by hash (a state that returns is refreshed, not duplicated).
+The writer never awaits it, and a failure never reaches a save.
+
+It lives in its own IndexedDB database, `CalloutStudioHistory`, scoped like the
+checkpoint. `historyToKeep()` keeps the last 20 distinct states, the newest of
+each of the last 14 days with a recorded state, and the newest of each of the
+last 8 weeks with a recorded state (Monday to Sunday, UTC), within a 24 MiB
+budget; beyond it older states go first, and the
+newest always stays. Each write happens in one transaction, issued from the
+read's success callback, because older WebKit committed a transaction before a
+promise continuation could add to it.
 
 ## Saving status and recovery actions
 
@@ -474,10 +632,10 @@ is frozen. Thus a missing-file restoration that fails to write a backup remains
 | Reason | Meaning and intended response |
 | --- | --- |
 | `missing` | A used installation cannot currently see the primary. Check for returned settings or explicitly restore the reviewed displayed setup. |
-| `unreadable` | Reads/validation cannot establish a safe primary. Resolve access/sync problems or restore a valid original file externally; do not overwrite it through missing-file restoration. |
-| `newer-version` | A primary/checkpoint is from a newer data format. Update this build; missing primary data does not override the protection. |
-| `recovery-read` | The independent checkpoint cannot be read. Retry the storage read before considering replacement. |
-| `recovery-write` | Checkpointing failed. Resolve storage availability/quota and retry; the primary may or may not already be saved, depending on the transaction phase. |
+| `unreadable` | Reads/validation cannot establish a safe primary. The banner names the cause; wait for access or sync, or use **Replace settings file**, which keeps an exact copy first. Missing-file restoration never overwrites it. |
+| `newer-version` | A primary or checkpoint is from a newer data format or envelope. Update this build; a missing or unreadable primary does not override the protection. |
+| `recovery-read` | The independent checkpoint cannot be read. Retry the storage read; if the copy itself is invalid, **Discard recovery copy** keeps an exact copy and replaces it. |
+| `recovery-write` | An explicit `remember()` failed. Ordinary saves, commits, adoptions and restoration no longer report this: they write the primary anyway, and a lagging checkpoint is a one-time notice plus automatic retries. |
 | `backup` | A required recovery backup failed or, on explicit restoration, could not be verified. Preserve the current state and retry after resolving the failure. |
 | `write`, `write-permission`, `write-space` | The primary write did not establish the intended verified file. Address the indicated storage problem, then retry the appropriate operation. |
 | `changed` | Disk no longer matches the accepted baseline. Inspect/adopt/merge the new file before saving again. |
@@ -545,9 +703,10 @@ The restoration sequence is intentionally separate from `save()`:
    does not reinstall missing `main.js`, `styles.css`, or `manifest.json`.
 6. If a checkpoint exists, write and read-verify its vault backup before
    overwriting that checkpoint. Recheck the captured registry and ownership.
-7. Checkpoint the restoration candidate. Recheck revision, destruction,
-   ownership and snapshot, then verify absence again after checkpointing and
-   immediately before entering the physical write.
+7. Checkpoint the restoration candidate if storage allows; a failure does not
+   stop the restoration, which exists to recreate the primary. Recheck revision,
+   destruction, ownership and snapshot, then verify absence again after
+   checkpointing and immediately before entering the physical write.
 8. Perform the production write/read-back. Only success advances the normal
    baseline and committed sync state, clears stale notifications, and thaws.
 9. After releasing serialization, request an ordinary follow-up save. A user may
@@ -565,6 +724,133 @@ If a file arrives during backup or checkpointing, restoration stops when the
 freshness check observes it. A subsequent normal recovery attempt can adopt or
 merge it. The UI must not claim that every aborted attempt immediately adopted
 the remote file, nor that the unavoidable final check/write race is eliminated.
+
+### Destructive actions and paused saving
+
+While the writer is frozen, a change lives only in memory, and closing Obsidian
+(or iOS closing it in the background) discards it. That is tolerable for a color
+tweak, but not for an action that also rewrites notes, empties the setup or
+imports one: those would half-happen, or look done and vanish. `blockedWhilePaused()`
+(`settings/pausedGuard.ts`) refuses them with a notice. Each checks again after
+its dialog closes, because saving can pause while the dialog is open.
+
+| Action | Paused check | Before it changes anything | Success notice |
+| --- | --- | --- | --- |
+| **Reset everything** | Before and after the confirmation | A verified vault backup; none, no reset | Only when `persists()` confirms the file holds the reset |
+| Callout Studio JSON import | On the Import button, and before applying | Summary confirmation for a clean file, then a verified vault backup | Only when `persists()` confirms it |
+| Foreign-plugin import | Before applying | A verified vault backup | Only when `persists()` confirms it |
+| Delete a custom callout | Before the dialog, and before converting notes | Notes are converted first, the row removed after | Unchanged |
+| Callout editor Save | Already refused while frozen | See [Callout editor](14-callout-editor.md#save-pipeline) | Unchanged |
+
+**The settings page is read-only while paused.** `makePausedReadOnly()`
+(`settings/sections/pausedReadOnly.ts`) marks everything that would change a
+setting `inert`, and `SettingsTab` redraws whenever the writer freezes or thaws.
+A change made while paused used to look applied and vanish on the next launch.
+The title, the banner, folding the lists, and the rows marked `cs-paused-allowed`
+(Export, Earlier setups, Sync diagnostics, Review conversion) stay usable.
+
+`SettingsWriter.persists(data)` answers whether the settings file now holds
+`data`, by content. `save()` resolves in every case, including when nothing was
+written, so a caller that announces success awaits `saveSettings()` and then
+asks. Reset's confirmation is titled and labelled **Reset everything** rather
+than **Delete**, and names everything it removes.
+
+### Recovery without file surgery
+
+Every other way out used to end in a hidden folder: copy a backup over
+`data.json`, delete a conflict copy, restore from a provider's version history.
+On a phone that folder is out of reach, and a file-level rollback does not even
+stick, because running devices merge their newer stamps straight back over it.
+`SettingsRecoveryService` (`settingsRecoveryService.ts`, the plugin's `recovery`)
+offers these actions from the banner and from **Settings → Earlier setups**.
+
+**Diagnosis.** `inspectSettingsFile()` (`settingsDiagnosis.ts`) reads the raw
+bytes through the adapter, with the same timeout, and names the cause:
+`unavailable` (the read failed), `empty`, `merge-markers` (Git's
+`<<<<<<<`/`>>>>>>>` lines), `damaged` (not a settings object), `combined` (valid
+settings inside sync metadata that no longer matches, the Obsidian Sync JSON
+merge case), `invalid-entries` (e.g. a duplicate id), `newer`, or `readable`. It
+changes nothing. The banner shows the cause under the general message and offers
+**Replace settings file** only for the causes waiting cannot fix.
+An unreadable primary does not override a `newer-version` or `recovery-read`
+checkpoint freeze: resolve that checkpoint state before replacing the primary.
+
+**Replace settings file** (`replaceUnreadable()`), after a warning confirmation:
+
+1. Read the raw bytes twice. A read that fails or bytes that differ between the
+   two reads stop the action. So does a later build's file.
+2. For `combined`, merge the salvaged body (envelope stripped) into the display
+   with `mergeExternal()`, as an unstamped incoming file: its rows join, stamped
+   local history still wins, and nothing the file held is lost.
+3. `writer.replaceUnreadable(isCurrent, preserve, unchanged)`, the same explicit
+   pass as missing-file restoration (`replace()` in `SettingsWriter.ts`) with a
+   different freshness check. `unchanged` compares the file's bytes with the
+   captured ones before preserving and again before writing, so a file that
+   changed since, even into a readable one, goes back to ordinary adoption.
+4. `preserve` writes the raw bytes to `backups/unreadable-<time>-<hash>.txt` and
+   verifies them byte for byte. The backup pruner does not match that name, so
+   the copy is never removed.
+
+**Discard recovery copy** (`discardRecoveryCopy()`) is the same idea for a
+`recovery-read` freeze. `readRaw()` fetches the stored value unvalidated. A
+store that does not answer stops the action with a notice, and a value that is
+valid again just retries recovery. Otherwise the value is copied to
+`backups/recovery-copy-<time>-<hash>.txt` (verified, never pruned), the
+checkpoint is replaced with the stamped display, and recovery is retried. The
+settings file is not touched.
+
+**Restore an earlier setup** (`SettingsRecoveryModal`) lists three sources:
+
+- device history, newest first
+- vault backups, from this device, another device, or 2.14 (`listSettingsBackups()`)
+- any other `data*.json` in the plugin folder, such as iCloud's `data 2.json` or a
+  Dropbox conflicted copy, which nothing else would mention
+
+Each source is normalized through a scratch registry, and `difference()` counts
+the callout rows and setting groups that differ from now. `restore()` runs only
+while saving works:
+
+1. Force a fresh adoption, so the decision is against the newest file.
+2. Refuse anything that is not readable settings of this build's format.
+3. Write a verified backup of the current setup.
+4. Apply the source through `commit()`. `prepare()` then stamps every differing
+   key above the history it has seen: changed values, deletions of rows added
+   since, and recreations of rows deleted since.
+
+That is why a restore sticks where a copied file did not, and why a concurrent
+edit the restoring device never saw survives it. **Export copy** downloads any
+entry as a Callout Studio backup, and works while saving is paused.
+
+**Seeing a pause.** `pausedIndicator.ts` keeps a status bar item up on desktop,
+and a notice that stays on mobile, while `writer.isVisiblyPaused`. That is every
+freeze except the quiet provisional one of a new install (`freeze(reason, false)`).
+A missing file at launch already has a notice that stays, so mobile does not
+add a second one.
+
+### Changes replaced by another device, and diagnostics
+
+Merging is per field and deterministic. With Lamport stamps alone it cannot
+tell a concurrent edit from a later one, so an overwritten value is not, by
+itself, news. One case is exact, though: a change made on this device that
+never reached the file (a failed or paused save), replaced when another
+device's file is adopted. `applyExternalSettings` compares the registry
+snapshot with `writer.lastSaved` (what the file held after this device's last
+write or adoption). If `unsavedChangesReplaced()` (`setupDifference.ts`) counts
+one or more callout types or setting groups that were changed here and then
+replaced, a notice says so and points to **Restore an earlier setup**. The
+adoption has already backed up that version.
+
+**Copy sync diagnostics** (`recovery.diagnostics()`) copies a plain-English
+report to the clipboard:
+
+- the version and platform
+- whether saving works, and why not if it doesn't
+- the settings file's diagnosis, size, envelope version and stamp count
+- whether the recovery copy is readable
+- the device name
+- counts of history states, backups (by origin) and stray copies
+
+It contains nothing of the setup itself.
 
 ### Editors and unfinished note operations
 
@@ -591,7 +877,8 @@ every combination of OS, provider and hardware has been exercised.
 
 | Case | What the implementation must do / how to proceed |
 | --- | --- |
-| First installation, no saved file | Confirm local absence before enabling edits; do not save merely for the welcome or a foreground event. |
+| First installation, no saved file | Confirm local absence before enabling edits. Do not save for the welcome, a foreground event, a theme sweep, fetched artwork or a dismissed prompt. The first file stamps only what the user changed. |
+| New or reinstalled device meets a long-time file | Untouched defaults carry no stamps, so the long-time values win. A default already stamped by a 2.13.1–2.14.1 genesis write is rescued at merge time. |
 | First actual write fails | Keep the intended registry/checkpoint when available. Explicit Retry may retry that first write; failed verification must not mark the device initialized. |
 | Reinstall with old marker but no checkpoint | Protect absence. The settings page can explicitly create a file from what is displayed, after confirmation. The marker alone cannot recover deleted definitions. |
 | Reinstall with valid checkpoint | Display it, retain its causal history, and offer restoration. Visibility does not mean the primary has been restored. |
@@ -606,17 +893,17 @@ every combination of OS, provider and hardware has been exercised.
 
 | Case | What the implementation must do / how to proceed |
 | --- | --- |
-| Cloud placeholder, offline read, permission error | Treat failed access as unreadable, not absent. Make the vault available locally or repair access, then retry. |
-| Empty/truncated JSON, Git conflict markers, invalid rows | Preserve the file. A syntactically parsed object still must pass the shape/integrity checks. Repair/restore a valid original outside the missing-file action. |
+| Cloud placeholder, offline read, permission error, hung read | Treat failed or timed-out access as unreadable, not absent, and diagnose it as `unavailable`: no replacement is offered. Make the vault available locally or repair access; the paused recheck looks again every minute. |
+| Empty/truncated JSON, Git conflict markers, invalid rows | Preserve the file. A syntactically parsed object still must pass the shape/integrity checks. **Replace settings file** keeps an exact copy, then writes the displayed setup. |
 | Malformed data later disappears | A later independent absent read can enter protected missing recovery. It must not retroactively classify the earlier malformed read as a new installation. |
 | Same-size rewrite or misleading timestamp | Use content equality and causal stamps, not metadata age or file size. |
 | Continuously changing file | Stop after the bounded settling reads; wait for another event or explicit check. Never choose an arbitrary intermediate baseline. |
-| Newer data-format primary/checkpoint | Keep the newer-version freeze. Update the plugin instead of restoring over data this build cannot interpret. |
-| Unknown envelope or checksum mismatch | Preserve it as unreadable. Do not restamp provider-combined or hand-edited metadata to make validation pass. |
+| Newer data-format primary/checkpoint | Keep the newer-version freeze, including for a file whose later shape this build's gate rejects. Update the plugin instead of restoring over data this build cannot interpret. |
+| Unknown envelope or checksum mismatch | Preserve it as unreadable, and never restamp it silently. An envelope above version 2 is a later build's. A mismatched envelope of a known version is diagnosed `combined`: **Replace settings file** merges the intact settings into the display, then rewrites the file. |
 | Valid remote settings plus unsaved registry changes | Merge against accepted causal history, preserve losing authored versions as required, and save through the normal guard. |
 | Stale snapshot resurrects a deleted id | Retained tombstones block the stale recreation. A legitimate recreation after observing deletion is a new causal edit. |
 | Incompatible old device writes an unstamped snapshot | Do not let it undo stamped history. Preserve relevant losing authored data; manual recovery may be required. |
-| Recognized intact conflict copy | Validate and incorporate its stamped history without deleting the file. Unrecognized/unstamped copies remain manual recovery sources. |
+| Recognized intact conflict copy | Validate and incorporate its stamped history without deleting the file. Unrecognized/unstamped copies are listed under **Restore an earlier setup**, never merged automatically. |
 | Notes sync but settings do not | Check provider configuration/profile inclusion. The plugin cannot infer that settings synchronization is enabled from note events. |
 
 ### Storage failures and async boundaries
@@ -625,8 +912,8 @@ every combination of OS, provider and hardware has been exercised.
 | --- | --- |
 | IndexedDB read blocked/unavailable or timed out | Keep `recovery-read`, retain existing bytes, and allow an explicit reread. A missing primary cannot bypass this guard. |
 | Checkpoint becomes readable while primary stays missing | Move to `missing`; only restore the untouched original empty boot display automatically. Keep later registry edits visible. |
-| Checkpoint write fails before an ordinary/restore write | Do not proceed with that primary write. Resolve storage, then retry; do not suppress the failure because the file might already match an older baseline. |
-| Final checkpoint fails after an isolated commit | Report the actual partial outcome: primary and publication succeeded, final checkpoint did not. Retry checkpointing without inventing another primary edit. |
+| Checkpoint write fails before an ordinary/restore write | Write the primary anyway. Say once that the recovery copy is behind, and retry it with every later save until it succeeds. |
+| Final checkpoint fails after an isolated commit | The commit succeeds; primary and publication hold the change. The checkpoint is retried by later saves without inventing another primary edit. |
 | Backup write or explicit backup read-back fails | Do not replace the protected checkpoint/registry through that operation. The backup failure remains actionable. |
 | Directory creation fails | Stop before checkpoint/primary replacement and retain missing-file protection, with storage/permission classification when available. |
 | `saveData()` resolves but file is absent/different/corrupt | Reject success after validated read-back; do not advance the accepted baseline or initialize the device from that attempt. |
@@ -699,6 +986,16 @@ Related existing suites verify other layers:
 | Merge and restart scenarios | [`settingsSync.test.ts`](../../tests/settingsSync.test.ts), [`syncRecoveryScenarios.test.ts`](../../tests/syncRecoveryScenarios.test.ts), [`settingsConflictFiles.test.ts`](../../tests/settingsConflictFiles.test.ts) |
 | Checkpoint and backups | [`settingsCheckpoint.test.ts`](../../tests/settingsCheckpoint.test.ts), [`settingsBackup.test.ts`](../../tests/settingsBackup.test.ts), [`settingsConflictBackup.test.ts`](../../tests/settingsConflictBackup.test.ts) |
 | Editor promises | [`editorSaveRecovery.test.ts`](../../tests/editorSaveRecovery.test.ts), [`calloutDeleteRecovery.test.ts`](../../tests/calloutDeleteRecovery.test.ts) |
+| First files, legacy rescue, backup integrity | [`syncGenesis.test.ts`](../../tests/syncGenesis.test.ts), [`syncBackupIntegrity.test.ts`](../../tests/syncBackupIntegrity.test.ts) |
+| Backups, history, device memory | [`settingsBackup.test.ts`](../../tests/settingsBackup.test.ts), [`settingsConflictBackup.test.ts`](../../tests/settingsConflictBackup.test.ts), [`settingsHistory.test.ts`](../../tests/settingsHistory.test.ts), [`deviceMemory.test.ts`](../../tests/deviceMemory.test.ts) |
+| Recovery without file surgery | [`settingsDiagnosis.test.ts`](../../tests/settingsDiagnosis.test.ts), [`settingsRecoveryService.test.ts`](../../tests/settingsRecoveryService.test.ts), [`settingsRecoveryModal.test.ts`](../../tests/settingsRecoveryModal.test.ts), [`settingsNewerFormat.test.ts`](../../tests/settingsNewerFormat.test.ts), [`pausedSaving.test.ts`](../../tests/pausedSaving.test.ts) |
+| Paused page, unsaved changes, lifecycle, undo | [`pausedReadOnly.test.ts`](../../tests/pausedReadOnly.test.ts), [`unsavedChangesNotice.test.ts`](../../tests/unsavedChangesNotice.test.ts), [`writerLifecycle.test.ts`](../../tests/writerLifecycle.test.ts), [`noteRewriteUndo.test.ts`](../../tests/noteRewriteUndo.test.ts) |
+| Destructive actions | [`resetSafety.test.ts`](../../tests/resetSafety.test.ts), [`importSafety.test.ts`](../../tests/importSafety.test.ts), [`deleteWhilePaused.test.ts`](../../tests/deleteWhilePaused.test.ts), [`replaceCalloutModal.test.ts`](../../tests/replaceCalloutModal.test.ts) |
+
+The replica harness (`tests/support/syncReplicaHarness.ts`) follows Obsidian's
+`loadData()`: `null` only for a missing file, `undefined` for any other failure.
+It installs the foreground watcher, can fire retry timers and can make the
+primary unavailable.
 
 At completion of the code repair on 2026-09-24, **6,209 tests**, the production
 build/typecheck, and lint passed. This is a dated validation record, not a fixed
@@ -716,14 +1013,15 @@ Explicit remaining boundaries:
   IndexedDB, and backup files do not form one distributed transaction.
 - Ordinary no-op saves do not poll for file existence. Detection relies on
   external events, foreground checks, explicit recovery, or a real subsequent edit.
-- The checkpoint is one snapshot, not version history. Clearing app data or losing
-  every independent copy is outside the recovery guarantee.
-- Unknown provider sidecar names are not automatically discovered/merged. Notes,
+- The checkpoint is one snapshot. Device history keeps more, but only on this
+  device and only within its budget. Clearing app data or losing every
+  independent copy is outside the recovery guarantee.
+- Unknown provider sidecar names are listed for restoring, not merged. Notes,
   provider exclusions, account access, file-size limits and OS storage eviction
   remain outside this settings protocol.
 - A user export is a portable backup of the displayed registry, not raw
-  `data.json`: it omits internal sync history and icon-cache details. Ordinary
-  Import does not bypass a paused writer. Do not recommend renaming an export
+  `data.json`: it omits internal sync history and icon-cache details. Import
+  refuses to start while saving is paused. Do not recommend renaming an export
   file as a substitute for a deliberate import/recovery implementation.
 - Registry recovery does not make unsaved editor-form fields durable, and it
   cannot run when the plugin itself is disabled, unloaded, or not installed.

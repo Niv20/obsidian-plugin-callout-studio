@@ -36,6 +36,8 @@ export async function markCompetitorImportBannerHandled(
 ): Promise<void> {
 	armedPlugins.delete(plugin);
 	forcedPlugins.delete(plugin);
+	// A device without a settings file will not write one for this flag alone.
+	plugin.localState.markImportBannerHandled();
 	if (plugin.registry.settings.competitorImportBannerHandled === true) return;
 	plugin.registry.settings.competitorImportBannerHandled = true;
 	await plugin.saveSettings();

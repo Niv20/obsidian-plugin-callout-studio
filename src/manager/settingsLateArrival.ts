@@ -34,7 +34,7 @@ export async function stillFreshInstall(
 	if (read.kind === "unreadable") {
 		// The verdict startup reaches for one, for the same reason: a file we
 		// cannot read is not a file we may replace.
-		host.settingsWriter.freeze();
+		host.settingsWriter.freeze(read.newer ? "newer-version" : "unreadable");
 		console.error(
 			"[callout-studio] data.json appeared but could not be read; " +
 				"settings will not be written this session",

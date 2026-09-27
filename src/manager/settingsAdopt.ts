@@ -11,6 +11,9 @@ import { isFromNewerBuild } from "./foreignFields";
 import { registryIsOwned } from "./registryOwnership";
 import { backUpBeforeAdoption } from "./settingsConflictBackup";
 import { stableKeyOrder } from "../utils/stableJson";
+import { unsavedChangesReplaced } from "./setupDifference";
+import { Notice } from "obsidian";
+import { t } from "../i18n";
 import type { SettingsRead } from "./settingsFile";
 
 export interface SettingsBootHost extends SettledSettingsFileHost {
@@ -41,13 +44,13 @@ export async function applySettingsRead(
 	}
 
 	return await host.settingsWriter.hold(async () => {
-		let checkpointFailed = false;
+		// Storage preflight, best effort: failing recovery storage does not stop
+		// a device adopting or saving. See SettingsWriter.rememberIfPossible().
 		if (savedData && (!host.settingsWriter.isFrozen || canContinue) && !isFromNewerBuild(savedData) && host.settingsWriter.hasCheckpoint) {
-			try { await host.settingsWriter.remember(acceptedCheckpoint ?? savedData); }
-			catch (error) { checkpointFailed = true; host.settingsWriter.freeze("recovery-write"); console.error("[callout-studio] cannot checkpoint settings", error); }
+			await host.settingsWriter.rememberIfPossible(acceptedCheckpoint ?? savedData);
 		}
 		if (host.settingsWriter.isDestroyed || (canContinue && !await canContinue())) return false;
-		if (canContinue && !checkpointFailed && !isFromNewerBuild(savedData)) host.settingsWriter.thaw();
+		if (canContinue && !isFromNewerBuild(savedData)) host.settingsWriter.thaw();
 		try {
 			host.registry.load(savedData);
 		} catch (error) {
@@ -59,8 +62,7 @@ export async function applySettingsRead(
 		if (read.kind === "loaded") host.settingsWriter.adopt(read.json, diskJson);
 		if (savedData) host.localState.markInitialized();
 		if (canContinue && savedData && !host.settingsWriter.isFrozen && host.settingsWriter.hasCheckpoint) {
-			try { await host.settingsWriter.remember(savedData); }
-			catch (error) { host.settingsWriter.freeze("recovery-write"); console.error("[callout-studio] cannot checkpoint adopted settings", error); }
+			await host.settingsWriter.rememberIfPossible(savedData);
 		}
 		if (host.settingsWriter.isDestroyed) return false;
 
@@ -107,9 +109,20 @@ function adoptionIsHeld(host: ExternalReloadHost, options: SettingsAdoptionOptio
 	return options.editor ? host.settingsWriter.busy || host.settingsWriter.isDestroyed || host.registry.hasPreviewDefinition() : registryIsOwned(host);
 }
 
-function unavailableSettings(host: ExternalReloadHost, kind: "absent" | "unreadable"): void {
+function unavailableSettings(host: ExternalReloadHost, read: Exclude<SettingsRead, { kind: "loaded" }>): void {
 	const writer = host.settingsWriter;
-	if (kind === "unreadable") { writer.status.fail("unreadable"); return; }
+	// A later build's file: this build must not write over it at all.
+	if (read.kind === "unreadable" && read.newer) { writer.freeze("newer-version"); return; }
+	// Unreadable twice in a row (the queue's retries make that quick), so not
+	// a read that landed mid-swap: pause, which is what offers the way out. A
+	// later build's freeze, or unreadable recovery storage, is the more
+	// specific story and stays.
+	if (read.kind === "unreadable") {
+		const again = writer.status.reason === "unreadable";
+		if (again && !read.unsettled && (!writer.isFrozen || writer.status.frozenReason === "missing")) writer.freeze("unreadable");
+		else writer.status.fail("unreadable");
+		return;
+	}
 	// A genuinely new installation has no data.json until its first edit.
 	// Foreground/watch events alone must not turn that into a recovery incident.
 	if (writer.isFrozen || writer.hasRecoveryState || host.localState.hasInitialized) writer.protectMissingFile();
@@ -124,7 +137,7 @@ export async function tryAdoptExternalSettings(
 	const first = await readSettingsFile(host);
 	if (adoptionIsHeld(host, options)) return "deferred";
 	if (first.kind !== "loaded") {
-		unavailableSettings(host, first.kind);
+		unavailableSettings(host, first);
 		return "unavailable";
 	}
 	const conflicts = host.settingsWriter.mergesConcurrent ? await readSettingsConflictFiles(host) : [];
@@ -140,7 +153,7 @@ export async function tryAdoptExternalSettings(
 	if (adoptionIsHeld(host, options)) return "deferred";
 
 	if (read.kind !== "loaded") {
-		unavailableSettings(host, read.kind);
+		unavailableSettings(host, read);
 		console.warn(
 			`[callout-studio] ignoring an external data.json change: ${read.kind}`,
 		);
@@ -185,6 +198,8 @@ async function applyExternalSettings(
 	if (isFromNewerBuild(durable)) { host.settingsWriter.freeze("newer-version"); return false; }
 	const before = host.registry.toSaveData();
 	const snapshot = JSON.stringify(stableKeyOrder(before));
+	// What the file held when this device last saved: changes past it are unsaved.
+	const lastSaved = host.settingsWriter.lastSaved as Partial<PluginData> | null;
 	const merged = isFromNewerBuild(read.data) ? read.data :
 		host.settingsWriter.mergeExternal(read.data, before, durable ? [durable, ...conflicts] : conflicts) as Partial<PluginData>;
 	if (!options.force && !host.settingsWriter.isFrozen && host.settingsWriter.matchesLastWrite(read.json) &&
@@ -193,14 +208,15 @@ async function applyExternalSettings(
 		host.settingsWriter.status.fail("sync-conflict");
 		return false;
 	}
-	if (!(await backUpBeforeAdoption(host, before, merged))) return false;
+	const batch = new Set<string>();
+	if (!(await backUpBeforeAdoption(host, before, merged, batch))) return false;
 	if (durable && canonical(content(durable)) !== canonical(content(before)) &&
-		!await backUpBeforeAdoption(host, durable, merged)) return false;
+		!await backUpBeforeAdoption(host, durable, merged, batch)) return false;
 	for (const conflict of conflicts) {
-		if (!await backUpBeforeAdoption(host, conflict, merged)) return false;
+		if (!await backUpBeforeAdoption(host, conflict, merged, batch)) return false;
 	}
 	if (JSON.stringify(stableKeyOrder(read.data)) !== JSON.stringify(stableKeyOrder(merged)) &&
-		!(await backUpBeforeAdoption(host, read.data, merged))) return false;
+		!(await backUpBeforeAdoption(host, read.data, merged, batch))) return false;
 	// User edits made while the backup was being written must not disappear.
 	if (adoptionIsHeld(host, options) || JSON.stringify(stableKeyOrder(host.registry.toSaveData())) !== snapshot) return false;
 	let applied = false;
@@ -211,11 +227,11 @@ async function applyExternalSettings(
 			const latest = await readSettingsFile(host);
 			if (latest.kind !== "loaded" || canonical(latest.data) !== canonical(read.data)) {
 				if (latest.kind === "loaded") host.settingsWriter.status.fail("changed");
-				else unavailableSettings(host, latest.kind);
+				else unavailableSettings(host, latest);
 				return false;
 			}
 			return !adoptionIsHeld(host, options) && JSON.stringify(stableKeyOrder(host.registry.toSaveData())) === snapshot;
-		}, durable ?? before);
+		}, durable ?? host.settingsWriter.stamped(before));
 		if (!applied) return;
 		if (host.settingsWriter.isDestroyed) return;
 		host.refreshThemeAppearance();
@@ -223,6 +239,12 @@ async function applyExternalSettings(
 		host.customCommands.syncAll();
 	});
 	if (!applied || host.settingsWriter.isDestroyed) return false;
+
+	// A change made here that never reached the file lost to the incoming one.
+	// The backup above holds it; say so, since nothing else would.
+	if (lastSaved && unsavedChangesReplaced(lastSaved, before, merged) > 0) {
+		new Notice(t("notice.unsavedChangesReplaced"), 15000);
+	}
 
 	host.refreshCallouts();
 	if (host.settingsTab?.containerEl.isConnected) host.settingsTab.display();

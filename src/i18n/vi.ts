@@ -281,8 +281,6 @@ export const vi: Record<string, string> = {
 	"settings.resetAllDesc":
 		"Xóa tất cả callouts người dùng, đặt lại callouts tích hợp, kiểu toàn cục (viền, tỷ lệ phông, hình dạng), bảng màu đã lưu, tùy chỉnh menu chuột phải và SVG Material đã tải.",
 	"settings.resetAllButton": "Đặt lại tất cả",
-	"settings.resetAllConfirm":
-		"Điều này sẽ xóa tất cả callouts tùy chỉnh, đặt lại callouts tích hợp, kiểu toàn cục, bảng màu đã lưu, tùy chỉnh menu chuột phải và tất cả SVG Material đã cache. Hành động này không thể hoàn tác. Bạn có chắc không?",
 	"notice.resetAllDone": "Đã đặt lại tất cả về mặc định.",
 
 	"notice.customCommandsRemoved":
@@ -312,7 +310,6 @@ export const vi: Record<string, string> = {
 		"Callout Studio không thể đọc tệp cài đặt của nó, vì vậy các loại callout của bạn bị thiếu trong phiên này. Không có gì được ghi và tệp trên đĩa không thay đổi — tải lại Obsidian để thử lại.",
 	"notice.settingsMissing":
 		"Tệp cài đặt của Callout Studio bị thiếu, vì vậy các loại callout của bạn bị thiếu trong phiên này. Không có gì được ghi — nếu bạn đồng bộ hóa kho lưu trữ này, hãy để việc đồng bộ hóa hoàn tất và tải lại Obsidian trước khi thực hiện bất kỳ thay đổi nào.",
-	"notice.settingsMissingAction": "Tạo tệp cài đặt mới",
 
 	"notice.nothingToWrap": "Không có gì để bọc.",
 	"notice.cursorNotInsideCallout": "Con trỏ không nằm trong callout.",
@@ -746,7 +743,6 @@ export const vi: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Xóa lệnh",
-	"confirm.titleResetAll": "Đặt lại tất cả callout",
 	"confirm.titleResetCallout": "Đặt lại callout",
 	"confirm.titleDeletePalette": "Xóa bảng màu",
 	"confirm.titleDeleteImage": "Xóa hình ảnh",
@@ -1123,12 +1119,9 @@ export const vi: Record<string, string> = {
 	"notice.legacyDiscoveryArchiveFailed": "Không thể hoàn tất bản sao khôi phục cho quá trình nâng cấp. Bộ nhớ đệm phát hiện cục bộ trước đó và CSS khởi động đã được giữ nguyên. Kiểm tra quyền ghi vào bộ nhớ và dung lượng trống, sau đó khởi động lại Obsidian để thử lại.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Đã tạm dừng: callout bị thiếu. Khám phá hoặc tạo lại để khôi phục lệnh này, hoặc chỉnh sửa lệnh để chọn loại khác.",
-	"confirm.startFresh": "Thao tác này tạo một tệp cài đặt mới từ các loại callout và cài đặt hiện đang hiển thị. Bất kỳ bản sao khôi phục có thể đọc được nào trước đó đều được giữ trong bản sao lưu. Nếu tệp bị thiếu vẫn đang trên đường từ thiết bị khác, hoặc vẫn đang đồng bộ hóa, nó sẽ được thay thế ở mọi nơi — kể cả trên các thiết bị vẫn còn callout của bạn.\nChỉ làm điều này nếu chính bạn đã xóa tệp, hoặc chắc chắn rằng nó sẽ không quay lại.",
-	"confirm.startFreshOk": "Tạo tệp cài đặt mới",
 	"confirm.titleRestoreSettings": "Khôi phục các cài đặt này",
 	"confirm.titleCreateSettingsFile": "Tạo tệp cài đặt",
 	"confirm.restoreDisplayedSettings": "Thao tác này lưu các loại callout và tùy chọn hiện đang hiển thị vào một tệp cài đặt trên thiết bị này và tiếp tục lưu. Mọi bản sao khôi phục cục bộ có thể đọc được sẽ được sao lưu trước.\nTrước khi tiếp tục, hãy để dịch vụ đồng bộ hóa của bạn hoàn tất và kiểm tra xem thiết bị khác có cài đặt mới hơn mà bạn muốn giữ hay không. Dịch vụ đồng bộ hóa của bạn có thể gửi tệp đã khôi phục này đến các thiết bị khác của bạn.\nTệp được kiểm tra lại trước khi lưu. Nếu tìm thấy cài đặt hiện có, chúng sẽ được giữ lại và quá trình khôi phục có thể yêu cầu bạn kiểm tra lại.",
-	"confirm.titleStartFresh": "Tạo tệp cài đặt mới",
 	"notice.settingsBackupFailed": "Không thể tiếp tục khôi phục cài đặt vì không thể lưu bản sao lưu an toàn. Kiểm tra bộ nhớ khả dụng và quyền ghi, sau đó thử lại.",
 	"notice.settingsBackupSaved": "Một bản sao khôi phục của các định nghĩa callout cục bộ đã được lưu trước khi áp dụng cài đặt đến: {{path}}.",
 	"notice.settingsChangedElsewhere": "Cài đặt của Callout Studio đã được thay đổi trên thiết bị khác, vì vậy thay đổi này chưa được lưu. Cài đặt của thiết bị kia hiện đang được tải — vui lòng thực hiện lại thay đổi.",
@@ -1136,11 +1129,9 @@ export const vi: Record<string, string> = {
 	"notice.settingsNotSaved": "Thay đổi đó chưa được lưu. Callout Studio không thể sử dụng tệp cài đặt của nó khi Obsidian khởi động, vì vậy không có gì được ghi vào thiết bị này — các thay đổi của bạn sẽ tồn tại cho đến khi bạn đóng Obsidian. Xem Cài đặt → Callout Studio để biết việc cần làm.",
 	"saveStatus.changed": "Tệp cài đặt đã thay đổi trong khi bạn đang chỉnh sửa. Bản nháp của bạn vẫn còn khả dụng. Chọn Thử lại lưu và khôi phục để tải cài đặt đến, sau đó xem lại bản nháp của bạn và lưu lại.",
 	"saveStatus.missing": "Việc lưu đang tạm dừng vì tệp cài đặt bị thiếu. Điều này có thể xảy ra sau khi cài đặt lại hoặc trong khi đồng bộ hóa vẫn đang chạy. Hoàn tất đồng bộ hóa và thử lại. Để cố ý thay thế tệp bị thiếu, hãy dùng Tạo tệp cài đặt mới trong cài đặt của Callout Studio.",
-	"saveStatus.newFile": "Tạo tệp cài đặt mới",
 	"saveStatus.restoreSettings": "Khôi phục các cài đặt này",
 	"saveStatus.createSettingsFile": "Tạo tệp cài đặt",
 	"saveStatus.checkAgain": "Kiểm tra lại",
-	"saveStatus.stillMissing": "Tệp cài đặt vẫn bị thiếu. Kiểm tra lại không tạo lại tệp đó. Hãy để quá trình đồng bộ hóa hoàn tất và làm cho vault có sẵn ngoại tuyến. Nếu tệp đã bị xóa, hãy khôi phục bản sao lưu hoặc dùng hành động khôi phục trong cài đặt Callout Studio trên thiết bị này để lưu các cài đặt đang hiển thị.",
 	"saveStatus.recoverInSettings": "Để khôi phục tệp bị thiếu trên thiết bị này, hãy mở cài đặt Callout Studio. Trước khi đóng trình chỉnh sửa này, hãy sao chép mọi chỉnh sửa chưa lưu mà bạn muốn giữ; chúng chưa được lưu.",
 	"saveStatus.openSettings": "Mở cài đặt Callout Studio",
 	"notice.openSettingsFailed": "Không thể mở cài đặt Callout Studio. Mở Cài đặt → Callout Studio để chọn việc cần làm.",
@@ -1160,4 +1151,81 @@ export const vi: Record<string, string> = {
 	"saveStatus.writePermission": "Không thể lưu tệp cài đặt vì bộ nhớ từ chối quyền truy cập ghi. Kiểm tra xem kho lưu trữ và thư mục plugin có thể ghi được không, sau đó thử lại.",
 	"saveStatus.writeSpace": "Không thể lưu tệp cài đặt vì bộ nhớ đã đầy hoặc đã vượt quá hạn ngạch. Giải phóng một ít dung lượng, sau đó thử lại.",
 	"settings.readOnly": "Callout Studio không thể sử dụng tệp cài đặt của nó khi Obsidian khởi động, vì vậy không có gì trên trang này được lưu vào thiết bị này. Các thay đổi của bạn sẽ tồn tại cho đến khi bạn đóng Obsidian. Tải lại Obsidian ngay khi tệp quay lại — nếu bạn đồng bộ hóa kho lưu trữ này, hãy để đồng bộ hóa hoàn tất trước.",
+
+	// Sync safety hardening
+	"saveStatus.stillMissingAdvice":
+		"Tệp cài đặt vẫn còn thiếu. Kiểm tra lại không tạo lại tệp đó. Hãy để đồng bộ hóa hoàn tất và làm cho kho lưu trữ khả dụng ngoại tuyến. Nếu tệp đã bị xóa, hãy chọn Khôi phục các cài đặt này, hoặc khôi phục một thiết lập trước đó.",
+	"saveStatus.diagnosis.unavailable":
+		"Thiết bị này hiện không thể mở tệp. Tệp có thể vẫn đang tải xuống, kho lưu trữ có thể không khả dụng ngoại tuyến, hoặc bộ nhớ không phản hồi. Callout Studio sẽ tự động kiểm tra lại.",
+	"saveStatus.diagnosis.empty": "Tệp trống, thường có nghĩa là một lần đồng bộ hóa đã bị gián đoạn. Nếu thiết bị khác vẫn còn cài đặt của bạn, hãy để nó đồng bộ. Nếu không, hãy thay thế tệp.",
+	"saveStatus.diagnosis.mergeMarkers": "Tệp chứa các dấu hiệu xung đột hợp nhất chưa được giải quyết, ví dụ từ Git. Giải quyết xung đột trong công cụ Git của bạn, hoặc thay thế tệp.",
+	"saveStatus.diagnosis.damaged": "Tệp không đầy đủ hoặc bị hỏng, nên không thể đọc được như một tệp cài đặt.",
+	"saveStatus.diagnosis.combined":
+		"Dịch vụ đồng bộ hóa của bạn đã kết hợp hai phiên bản của tệp, nên việc kiểm tra nội bộ của nó không còn khớp nữa. Các cài đặt bên trong vẫn nguyên vẹn, và việc thay thế tệp sẽ giữ lại chúng.",
+	"saveStatus.diagnosis.invalidEntries": "Tệp chứa các mục mà Callout Studio không thể sử dụng, ví dụ cùng một loại callout được liệt kê hai lần.",
+	"saveStatus.replaceUnreadable": "Thay thế tệp cài đặt",
+	"saveStatus.discardRecoveryCopy": "Bỏ bản sao khôi phục",
+	"saveStatus.openRecovery": "Khôi phục một thiết lập trước đó",
+	"saveStatus.readOnlyWhilePaused": "Không thể thay đổi cài đặt cho đến khi việc lưu hoạt động trở lại, vì vậy những gì bạn thay đổi ở đây sẽ không bị mất. Bạn vẫn có thể xuất thiết lập của mình.",
+	"statusBar.paused": "Đã tạm dừng lưu",
+	"statusBar.pausedTooltip": "Callout Studio không lưu các thay đổi cài đặt. Nhấp để xem lý do.",
+	"statusBar.pausedNotice": "Callout Studio hiện không lưu các thay đổi cài đặt.",
+	"notice.replaceUnreadableUnavailable": "Không thể thay thế tệp cài đặt ngay bây giờ: tệp đang thay đổi, hoặc thiết bị này không thể đọc được. Thử lại sau một lát.",
+	"notice.recoveryStorageUnavailable": "Bộ nhớ khôi phục của thiết bị này không phản hồi, nên không thể bỏ bản sao. Khởi động lại Obsidian, sau đó thử lại.",
+	"recovery.title": "Khôi phục một thiết lập trước đó",
+	"recovery.intro":
+		"Callout Studio giữ các phiên bản trước đó của thiết lập của bạn trên thiết bị này và trong thư mục sao lưu của plugin. Khôi phục một phiên bản sẽ thay thế thiết lập hiện tại của bạn trên mọi thiết bị được đồng bộ hóa. Một bản sao lưu của thiết lập hiện tại được lưu trước.",
+	"recovery.pausedHint": "Việc lưu đang tạm dừng, nên khôi phục không khả dụng cho đến khi vấn đề đó được giải quyết. Bạn vẫn có thể xuất một bản sao.",
+	"recovery.loading": "Đang tìm các phiên bản trước đó…",
+	"recovery.empty": "Không tìm thấy phiên bản trước đó nào.",
+	"recovery.sectionHistory": "Đã lưu trên thiết bị này",
+	"recovery.sectionBackups": "Bản sao lưu",
+	"recovery.sectionCopies": "Bản sao khác của tệp cài đặt",
+	"recovery.originThisDevice": "Thiết bị này",
+	"recovery.originOtherDevice": "Thiết bị khác",
+	"recovery.originOlderVersion": "Đã lưu bởi phiên bản cũ hơn",
+	"recovery.unreadable": "Không thể đọc được như một tệp cài đặt",
+	"recovery.same": "Giống với thiết lập hiện tại của bạn",
+	"recovery.summary": "{{callouts}} loại callout đã lưu, {{count}} điểm khác biệt so với hiện tại",
+	"recovery.export": "Xuất bản sao",
+	"recovery.restore": "Khôi phục",
+	"recovery.confirmTitle": "Khôi phục thiết lập này",
+	"recovery.confirmBody":
+		"Thiết lập hiện tại của bạn sẽ được thay thế bằng thiết lập từ {{when}} ({{count}} điểm khác biệt). Một bản sao lưu của thiết lập hiện tại của bạn được lưu trước, và dịch vụ đồng bộ hóa của bạn sẽ gửi thiết lập đã khôi phục đến các thiết bị khác của bạn.",
+	"recovery.restored": "Đã khôi phục thiết lập từ {{when}}.",
+	"recovery.stale": "Không có gì được khôi phục: cài đặt của bạn đã thay đổi hoặc không thể kiểm tra được. Mở lại cửa sổ này và xem lại danh sách.",
+	"recovery.backupFailed": "Không có gì được khôi phục: không thể lưu bản sao lưu của thiết lập hiện tại của bạn trước. Kiểm tra bộ nhớ khả dụng, sau đó thử lại.",
+	"recovery.failed": "Không thể khôi phục thiết lập. Không có gì thay đổi.",
+	"notice.unsavedChangesReplaced":
+		"Một số thay đổi được thực hiện trên thiết bị này chưa được lưu, và cài đặt mới hơn từ thiết bị khác đã thay thế chúng. Phiên bản của bạn đã được lưu trước: mở Khôi phục một thiết lập trước đó trong cài đặt Callout Studio để lấy lại nó.",
+	"notice.diagnosticsCopied": "Đã sao chép chẩn đoán đồng bộ hóa.",
+	"notice.diagnosticsFailed": "Không thể sao chép chẩn đoán đồng bộ hóa.",
+	"notice.recoveryCopyStale": "Cài đặt của bạn đã được lưu, nhưng bản sao khôi phục của thiết bị này không thể được cập nhật. Kiểm tra bộ nhớ khả dụng trên thiết bị này. Callout Studio sẽ thử lại vào lần thay đổi tiếp theo của bạn.",
+	"notice.blockedWhilePaused": "Việc lưu đang tạm dừng, nên thay đổi này không thể được giữ lại ngay bây giờ. Trước tiên hãy giải quyết vấn đề lưu được hiển thị trong cài đặt Callout Studio.",
+	"welcome.syncNote": "Đã sử dụng Callout Studio trên thiết bị khác? Hãy để dịch vụ đồng bộ hóa của bạn hoàn tất trước. Các callout và cài đặt của bạn sẽ xuất hiện ở đây khi chúng đến.",
+	"settings.resetAllConfirmFull":
+		"Thao tác này xóa mọi loại callout tùy chỉnh, hình ảnh đã tải lên và lệnh tùy chỉnh, đồng thời đặt lại các callout tích hợp sẵn, kiểu toàn cục, bảng màu đã lưu, menu chuột phải, cài đặt callout tiêu đề và nội tuyến, và kiểu dự phòng. Một bản sao lưu của thiết lập hiện tại của bạn được lưu vào thư mục sao lưu của plugin trước. Dịch vụ đồng bộ hóa của bạn có thể gửi việc đặt lại này đến các thiết bị khác của bạn.",
+	"settings.resetBackupFailed": "Không có gì được đặt lại: không thể lưu bản sao lưu của thiết lập hiện tại của bạn trước. Kiểm tra bộ nhớ khả dụng, sau đó thử lại.",
+	"settings.resetNotSaved": "Việc đặt lại được hiển thị nhưng chưa thể lưu được, vì vậy tệp cài đặt của bạn vẫn giữ thiết lập trước đó. Kiểm tra trạng thái lưu trong cài đặt Callout Studio.",
+	"settings.recovery": "Các thiết lập trước đó",
+	"settings.recoveryDesc": "Khôi phục một phiên bản thiết lập của bạn đã được lưu trước đó trên thiết bị này hoặc trong thư mục sao lưu của plugin.",
+	"settings.recoveryButton": "Khôi phục một thiết lập trước đó",
+	"settings.diagnostics": "Chẩn đoán đồng bộ hóa",
+	"settings.diagnosticsDesc": "Sao chép bản tóm tắt về cách lưu và đồng bộ hóa đang hoạt động, để đưa vào báo cáo lỗi. Nó không chứa callout hay cài đặt nào.",
+	"settings.diagnosticsButton": "Sao chép chẩn đoán",
+	"confirm.titleResetEverything": "Đặt lại tất cả",
+	"confirm.titleReplaceUnreadable": "Thay thế tệp cài đặt",
+	"confirm.replaceUnreadable": "Một bản sao chính xác của tệp hiện tại được lưu vào thư mục sao lưu của plugin trước. Sau đó tệp được thay thế bằng thiết lập được hiển thị ở đây, và dịch vụ đồng bộ hóa của bạn gửi nó đến các thiết bị khác của bạn.",
+	"confirm.replaceUnreadableSalvage": "Một bản sao chính xác của tệp hiện tại được lưu vào thư mục sao lưu của plugin trước. Cài đặt bên trong nó được kết hợp với thiết lập được hiển thị ở đây, và tệp được viết lại để mọi thiết bị có thể đọc lại được.",
+	"confirm.titleDiscardRecoveryCopy": "Bỏ bản sao khôi phục",
+	"confirm.discardRecoveryCopy":
+		"Bản sao khôi phục của thiết bị này không thể đọc được, nên việc lưu bị tạm dừng trên thiết bị này. Một bản sao chính xác của nó được lưu vào thư mục sao lưu của plugin trước. Sau đó nó được thay thế bằng thiết lập được hiển thị ở đây. Tệp cài đặt của bạn không thay đổi.",
+	"vault.undoRewrite": "Hoàn tác",
+	"vault.undoRestored": "Đã khôi phục {{count}} ghi chú.",
+	"vault.undoPartial": "Đã khôi phục {{count}} ghi chú. {{skipped}} ghi chú đã thay đổi sau khi viết lại, nên chúng được giữ nguyên như hiện tại.",
+	"import.confirmTitle": "Nhập bản sao lưu Callout Studio",
+	"import.confirmSummary": "Thao tác này thêm {{added}} loại callout, thay thế {{replaced}} loại hiện có bằng phiên bản trong tệp, và khôi phục {{settings}} nhóm cài đặt từ tệp. Một bản sao lưu của thiết lập hiện tại của bạn được lưu trước.",
+	"import.confirmAction": "Nhập",
+	"import.backupFailed": "Không có gì được nhập: không thể lưu bản sao lưu của thiết lập hiện tại của bạn trước. Kiểm tra bộ nhớ khả dụng, sau đó thử lại.",
+	"import.notSaved": "Việc nhập được hiển thị nhưng chưa thể lưu được. Kiểm tra trạng thái lưu trong cài đặt Callout Studio.",
 };

@@ -30,6 +30,11 @@ import { normalizePath } from "obsidian";
 import type { App, PluginManifest } from "obsidian";
 import type { PluginData } from "../types";
 import { hasSafeSettingsFileShape } from "./settingsFileShape";
+import { isNewerSettingsFormat } from "./foreignFields";
+import { withTimeout } from "../utils/withTimeout";
+
+/** How long a read or write of `data.json` may take before it counts as unavailable. */
+export const PRIMARY_IO_TIMEOUT_MS = 20_000;
 
 /** What `data.json` turned out to be. */
 export type SettingsRead =
@@ -44,8 +49,12 @@ export type SettingsRead =
 	 * canonicalization it applies on top.
 	 */
 	| { kind: "loaded"; data: Partial<PluginData>; json: string }
-	/** A file that is there but is not usable settings. Change nothing. */
-	| { kind: "unreadable" };
+	/**
+	 * A file that is there but is not usable settings. Change nothing.
+	 * `newer`: written by a later build this one cannot read — update, not repair.
+	 * `unsettled`: readable at times but still changing; a sync in progress.
+	 */
+	| { kind: "unreadable"; newer?: true; unsettled?: true };
 
 /** What the read needs from the plugin. */
 export interface SettingsFileHost {
@@ -59,7 +68,7 @@ export interface SettingsFileHost {
  * Where `data.json` lives. `manifest.dir` is typed optional, hence the
  * reconstruction fallback — the same one `PackDataStore` and `LocaleStore` use.
  */
-function dataPath(host: SettingsFileHost): string {
+export function settingsDataPath(host: Pick<SettingsFileHost, "app" | "manifest">): string {
 	const base =
 		host.manifest.dir ??
 		`${host.app.vault.configDir}/plugins/${host.manifest.id}`;
@@ -78,13 +87,15 @@ export async function readSettingsFile(
 	host: SettingsFileHost,
 ): Promise<SettingsRead> {
 	let raw: unknown;
-	try { raw = await host.loadData(); } catch { return { kind: "unreadable" }; }
+	// A hung read is unavailable storage, not an empty file: see withTimeout.
+	try { raw = await withTimeout(host.loadData(), PRIMARY_IO_TIMEOUT_MS, () => new Error("Settings read timed out")); }
+	catch { return { kind: "unreadable" }; }
 	// Arrays and primitives parse fine and are not settings. A subsequent
 	// disappearance during sync must not turn that observed corruption into
 	// permission to initialize a new file.
 	if (typeof raw === "object" && raw !== null && !Array.isArray(raw)) {
 		const data = raw as Record<string, unknown>;
-		if (!hasSafeSettingsFileShape(data)) return { kind: "unreadable" };
+		if (!hasSafeSettingsFileShape(data)) return isNewerSettingsFormat(data) ? { kind: "unreadable", newer: true } : { kind: "unreadable" };
 		return {
 			kind: "loaded",
 			data: raw,
@@ -94,7 +105,7 @@ export async function readSettingsFile(
 	if (raw !== null && raw !== undefined) return { kind: "unreadable" };
 
 	try {
-		const present = await host.app.vault.adapter.exists(dataPath(host));
+		const present = await host.app.vault.adapter.exists(settingsDataPath(host));
 		return { kind: present ? "unreadable" : "absent" };
 	} catch {
 		// The adapter itself is not answering. Assume the worse of the two: a

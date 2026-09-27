@@ -7635,6 +7635,15 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	line-height: 1.5;
 }
 
+/* Shown only on a launch that found no settings file: it may be a new device
+   whose synced settings have not arrived yet. */
+.cs-welcome-sync-note {
+	margin: var(--size-4-3) 0 0;
+	font-size: var(--font-ui-small);
+	color: var(--text-faint);
+	line-height: 1.5;
+}
+
 .cs-welcome-right {
 	min-width: 0;
 	display: flex;
@@ -7908,6 +7917,57 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 
 .cs-readonly-banner-actions button {
 	margin: 0;
+}
+
+/* The specific cause under the general message: quieter, same column. */
+.cs-readonly-banner p.cs-readonly-banner-detail {
+	color: var(--text-muted);
+}
+
+/* Saving is paused: a status bar item that stays up until it resumes. */
+.cs-paused-status {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--size-2-2);
+	color: var(--text-warning);
+}
+
+.cs-paused-status-icon {
+	display: inline-flex;
+}
+
+.cs-paused-status-icon .svg-icon {
+	width: var(--icon-xs);
+	height: var(--icon-xs);
+}
+
+/* Restore an earlier setup. Rows are ordinary setting items; only the prose
+   around them needs spacing, and the paused hint takes the warning colour. */
+.cs-recovery-intro,
+.cs-recovery-paused,
+.cs-recovery-status {
+	margin: 0 0 var(--size-4-3);
+	font-size: var(--font-ui-small);
+	line-height: 1.5;
+}
+
+.cs-recovery-intro,
+.cs-recovery-status {
+	color: var(--text-muted);
+}
+
+.cs-recovery-paused {
+	color: var(--text-warning);
+}
+
+.cs-recovery-list > .setting-item-heading:first-child {
+	padding-top: 0;
+}
+
+/* Saving is paused: whatever would change a setting is inert, and fades to
+   say so. @see src/settings/sections/pausedReadOnly.ts */
+.callout-studio-settings.cs-settings-paused [inert] {
+	opacity: 0.55;
 }
 
 /* First-install migration suggestion. It shares the title-adjacent notice slot

@@ -25,6 +25,7 @@ import {
 import { applyModalChrome } from "./modalChrome";
 import { renderOptionBox, renderOptionList, type OptionBoxSpec } from "./optionBox";
 import type { SettingsSectionContext } from "./sections/types";
+import { downloadText } from "../utils/downloadText";
 
 export class ExportFormatModal extends Modal {
 	constructor(private readonly ctx: SettingsSectionContext) {
@@ -82,14 +83,7 @@ export class ExportFormatModal extends Modal {
  * dialog so it lands wherever the user keeps their files.
  */
 function exportCalloutsJSON(ctx: SettingsSectionContext): void {
-	const json = ctx.plugin.registry.exportToJSONv2();
-	const blob = new Blob([json], { type: "application/json" });
-	const url = URL.createObjectURL(blob);
-	const a = createEl("a");
-	a.href = url;
-	a.download = "callout-studio-export.json";
-	a.click();
-	URL.revokeObjectURL(url);
+	downloadText(ctx.plugin.registry.exportToJSONv2(), "callout-studio-export.json");
 }
 
 /**

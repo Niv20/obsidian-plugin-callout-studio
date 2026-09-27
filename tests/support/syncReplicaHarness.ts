@@ -8,6 +8,7 @@ import { createSettingsWriter } from "../../src/manager/settingsWriterHost";
 import { DeviceLocalStore } from "../../src/manager/DeviceLocalStore";
 import { ReloadQueue } from "../../src/manager/reloadQueue";
 import { loadSettingsInto } from "../../src/manager/settingsBoot";
+import { confirmFreshInstall } from "../../src/manager/settingsLateArrival";
 import type { ExternalReloadHost } from "../../src/manager/settingsAdopt";
 import { definition } from "./discoveryHarness";
 import { syncThemeOverlayRows } from "../../src/manager/theme/themeOverlayRows";
@@ -27,12 +28,19 @@ export async function device(dir: string, seed?: unknown) {
 	if (seed !== undefined) await writeFile(file, JSON.stringify(seed));
 	const checkpointFile = join(dir, "device-checkpoint.json");
 	let writes = 0, backupFails = false, writeFails = false, checkpointFails = false;
+	/** A file the provider lists but cannot hand over: a placeholder or an offline read. */
+	let unavailable = false;
+	/** The foreground listeners this device registered, kept apart from other devices. */
+	const foreground: (() => void)[] = [];
 	/** What this device's active theme declares — machine-local by definition. */
 	let themeIds: ReadonlySet<string> = new Set<string>();
 	let checkpointHook: (() => Promise<void>) | null = null;
 	const app = { appId: dir, vault: { configDir: ".obsidian", getName: () => dir,
 		adapter: {
-			read: async (path: string) => readFile(path, "utf8"),
+			read: async (path: string) => {
+				if (unavailable && path === file) throw Object.assign(new Error("Resource temporarily unavailable"), { code: "EIO" });
+				return readFile(path, "utf8");
+			},
 			exists: async (path: string) => { try { await access(path); return true; } catch { return false; } },
 			mkdir: async (path: string) => { await mkdir(path, { recursive: true }); },
 			write: async (path: string, json: string) => { if (backupFails) throw new Error("backup unavailable"); await writeFile(path, json); },
@@ -43,9 +51,17 @@ export async function device(dir: string, seed?: unknown) {
 	const host = { app, manifest: { id: "callout-studio", dir } as PluginManifest, registry,
 		localState: new DeviceLocalStore(app), settingsEditOpen: false,
 		waitForSettingsSettle: () => Promise.resolve(),
+		// Obsidian's `readJson`: `null` for a missing file, `undefined` for any
+		// other read or parse failure. It never throws for either.
 		loadData: async () => {
-			try { return JSON.parse(await readFile(file, "utf8")) as unknown; }
-			catch (error) { if ((error as { code: string }).code === "ENOENT") return null; throw error; }
+			if (unavailable) return undefined;
+			let text: string;
+			try { text = await readFile(file, "utf8"); }
+			catch (error) { return (error as { code?: string }).code === "ENOENT" ? null : undefined; }
+			try { return JSON.parse(text) as unknown; } catch { return undefined; }
+		},
+		registerDomEvent: (_el: Document, type: string, callback: () => void) => {
+			if (type === "visibilitychange") foreground.push(callback);
 		},
 		saveData: async (data: unknown) => { if (writeFails) throw new Error("write unavailable"); writes++; await writeFile(file, JSON.stringify(data)); },
 		// The real hook re-runs the theme sweep, which is why `settingsAdopt`
@@ -68,9 +84,19 @@ export async function device(dir: string, seed?: unknown) {
 		write: async data => { if (checkpointFails) throw new Error("Checkpoint quota exceeded"); await writeFile(checkpointFile, JSON.stringify(data)); const hook = checkpointHook; checkpointHook = null; await hook?.(); },
 	});
 	const queue = new ReloadQueue(host);
+	// As in main.ts: config-file events and foreground checks share the queue.
+	host.onExternalSettingsChange = () => queue.run();
 	host.saveSettings = () => host.settingsWriter.save().finally(() => queue.release());
-	await loadSettingsInto(host);
-	return { dir, host, registry, queue,
+	const boot = await loadSettingsInto(host);
+	return { dir, host, registry, queue, boot,
+		/** Layout-ready on a launch that looked fresh, as `runLaunchSequence` does. */
+		launch: () => boot.isFreshInstall ? confirmFreshInstall(host) : Promise.resolve(false),
+		/** Return to the app: the mobile substitute for Obsidian's config watcher. */
+		foreground: async () => { for (const listener of foreground) listener(); await queue.run(); },
+		/** Fire the queued retry timers of every device, once. */
+		flushTimers: () => { dom.window.flushTimers(); },
+		unavailable: (on: boolean) => { unavailable = on; },
+		rawText: async () => readFile(file, "utf8"),
 		/** Switch this device's theme and sweep, as `css-change` would. */
 		setTheme: (...ids: string[]) => {
 			themeIds = new Set(ids);

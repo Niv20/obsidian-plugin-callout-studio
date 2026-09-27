@@ -220,11 +220,14 @@ interface PluginSettings {
 }
 ```
 
-`quickInsertSource` stores the last source selected in Quick Insert. Its default
-is `all`, so the first window starts complete; each later window restores the
-saved choice. Unknown values are sanitized back to `all` during settings merge.
-`theme` remains a valid saved choice when the current theme owns no usable
-rows; that modal temporarily resolves it to `all` without erasing the preference.
+`quickInsertSource` is the last Quick Insert source as older builds synced it.
+This build remembers the choice per device (`DeviceLocalStore.quickInsertSource`)
+and only reads this field to seed a device that has no memory yet; it never
+writes it. Its default is `all`, so the first window starts complete. Unknown
+values are sanitized back to `all` during settings merge. `theme` remains a valid
+choice when the current theme owns no usable rows; that modal temporarily
+resolves it to `all` without erasing the preference. `iconSources.lastCategory`
+and `iconSources.lastEmojiSkinTone` follow the same rule for the icon picker.
 
 `autocomplete.enabled` remains in the serialized shape so older settings files
 and exports have an explicit upgrade target, but it is no longer mutable

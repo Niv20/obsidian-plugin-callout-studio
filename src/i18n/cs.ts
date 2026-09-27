@@ -227,8 +227,6 @@ export const cs: Record<string, string> = {
 	"settings.resetAllDesc":
 		"Odstraní všechny callouts uživatele, obnoví vestavěné callouts, globální styly (ohraničení, měřítko písma, tvar), uložené barevné palety, přizpůsobení kontextové nabídky a stažené SVG Material.",
 	"settings.resetAllButton": "Obnovit vše",
-	"settings.resetAllConfirm":
-		"Tím se odstraní všechny vlastní callouts, obnoví vestavěné callouts, globální styly, uložené barevné palety, přizpůsobení kontextové nabídky a všechny SVG Material v mezipaměti. Tuto akci nelze vrátit zpět. Jste si jisti?",
 	"notice.resetAllDone": "Vše bylo obnoveno na výchozí hodnoty.",
 
 	"notice.customCommandsRemoved":
@@ -257,7 +255,6 @@ export const cs: Record<string, string> = {
 		"Callout Studio nemohlo přečíst svůj soubor s nastavením, takže vaše typy calloutů v této relaci chybí. Nic nebylo zapsáno a soubor na disku je nezměněný — znovu načtěte Obsidian a zkuste to znovu.",
 	"notice.settingsMissing":
 		"Soubor s nastavením Callout Studia chybí, takže vaše typy calloutů v této relaci chybí. Nic nebylo zapsáno — pokud tento trezor synchronizujete, nechte synchronizaci doběhnout a před provedením jakýchkoli změn znovu načtěte Obsidian.",
-	"notice.settingsMissingAction": "Vytvořit nový soubor s nastavením",
 	"notice.nothingToWrap": "Není co zabalit.",
 	"notice.cursorNotInsideCallout": "Kurzor není uvnitř callout.",
 	"notice.autocompleteTargetMoved":
@@ -684,7 +681,6 @@ export const cs: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Smazat příkaz",
-	"confirm.titleResetAll": "Obnovit všechny callouty",
 	"confirm.titleResetCallout": "Obnovit callout",
 	"confirm.titleDeletePalette": "Smazat paletu",
 	"confirm.titleDeleteImage": "Smazat obrázek",
@@ -1119,12 +1115,9 @@ export const cs: Record<string, string> = {
 	"notice.legacyDiscoveryArchiveFailed": "Kopii pro obnovení při aktualizaci se nepodařilo dokončit. Předchozí místní mezipaměť zjišťování a spouštěcí CSS zůstaly beze změny. Zkontrolujte oprávnění k zápisu, přístup k úložišti a volné místo a poté restartujte Obsidian, aby se akce zopakovala.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Pozastaveno: callout chybí. Objevte ho nebo vytvořte, abyste obnovili tento příkaz, nebo příkaz upravte a zvolte jiný typ.",
-	"confirm.startFresh": "Tímto se vytvoří nový soubor s nastavením z aktuálně zobrazených typů calloutů a nastavení. Jakákoli předchozí čitelná záloha pro obnovení zůstane zachována v záloze. Pokud je chybějící soubor stále na cestě z jiného zařízení nebo se stále synchronizuje, bude nahrazen všude — včetně zařízení, která vaše callouty stále mají.\nUdělejte to jen tehdy, pokud jste soubor smazali sami, nebo jste si jisti, že se už nevrátí.",
-	"confirm.startFreshOk": "Vytvořit nový soubor s nastavením",
 	"confirm.titleRestoreSettings": "Obnovit tato nastavení",
 	"confirm.titleCreateSettingsFile": "Vytvořit soubor nastavení",
 	"confirm.restoreDisplayedSettings": "Tím se aktuálně zobrazené typy calloutů a předvolby uloží do souboru nastavení na tomto zařízení a ukládání bude obnoveno. Každá čitelná místní kopie pro obnovení se nejprve zazálohuje.\nNež budete pokračovat, nechte synchronizaci dokončit a zkontrolujte, zda na jiném zařízení nejsou novější nastavení, která chcete zachovat. Synchronizační služba může tento obnovený soubor odeslat do vašich ostatních zařízení.\nPřed uložením se soubor znovu zkontroluje. Pokud budou nalezena existující nastavení, zůstanou zachována a obnovení vás může požádat o další kontrolu.",
-	"confirm.titleStartFresh": "Vytvořit nový soubor s nastavením",
 	"notice.settingsBackupFailed": "Obnovu nastavení nebylo možné dokončit, protože se nepodařilo uložit bezpečnostní zálohu. Zkontrolujte dostupný úložný prostor a oprávnění k zápisu, poté to zkuste znovu.",
 	"notice.settingsBackupSaved": "Před použitím příchozího nastavení byla uložena záloha pro obnovení místních definic calloutů: {{path}}.",
 	"notice.settingsChangedElsewhere": "Nastavení Callout Studia byla změněna na jiném zařízení, takže tato změna nebyla uložena. Nastavení z druhého zařízení se nyní načítají — proveďte prosím změnu znovu.",
@@ -1132,11 +1125,9 @@ export const cs: Record<string, string> = {
 	"notice.settingsNotSaved": "Tato změna nebyla uložena. Callout Studio nemohlo při spuštění Obsidianu použít svůj soubor s nastavením, takže se na tomto zařízení nic nezapisuje — vaše změny vydrží, dokud Obsidian nezavřete. Co dělat, najdete v Nastavení → Callout Studio.",
 	"saveStatus.changed": "Soubor s nastavením se během úprav změnil. Váš koncept je stále k dispozici. Zvolte Zkusit uložení a obnovu znovu, čímž načtete příchozí nastavení, poté zkontrolujte svůj koncept a znovu uložte.",
 	"saveStatus.missing": "Ukládání je pozastaveno, protože soubor s nastavením chybí. To se může stát po přeinstalování nebo během probíhající synchronizace. Dokončete synchronizaci a zkuste to znovu. Chcete-li chybějící soubor záměrně nahradit, použijte Vytvořit nový soubor s nastavením v nastavení Callout Studia.",
-	"saveStatus.newFile": "Vytvořit nový soubor s nastavením",
 	"saveStatus.restoreSettings": "Obnovit tato nastavení",
 	"saveStatus.createSettingsFile": "Vytvořit soubor nastavení",
 	"saveStatus.checkAgain": "Zkontrolovat znovu",
-	"saveStatus.stillMissing": "Soubor nastavení stále chybí. Opětovná kontrola ho znovu nevytvoří. Nechte synchronizaci doběhnout a zpřístupněte trezor offline. Pokud byl soubor smazán, obnovte zálohu nebo pomocí akce obnovení v nastavení Callout Studio na tomto zařízení uložte zobrazená nastavení.",
 	"saveStatus.recoverInSettings": "Chcete-li na tomto zařízení obnovit chybějící soubor, otevřete nastavení Callout Studio. Před zavřením tohoto editoru zkopírujte všechny neuložené úpravy, které chcete zachovat; nebyly uloženy.",
 	"saveStatus.openSettings": "Otevřít nastavení Callout Studio",
 	"notice.openSettingsFailed": "Nastavení Callout Studio se nepodařilo otevřít. Otevřete Nastavení → Callout Studio a zvolte, co dál.",
@@ -1156,4 +1147,83 @@ export const cs: Record<string, string> = {
 	"saveStatus.writePermission": "Soubor s nastavením se nepodařilo uložit, protože úložiště odepřelo přístup k zápisu. Zkontrolujte, že trezor a složka doplňku jsou zapisovatelné, poté to zkuste znovu.",
 	"saveStatus.writeSpace": "Soubor s nastavením se nepodařilo uložit, protože úložiště je plné nebo byla překročena jeho kvóta. Uvolněte místo a poté to zkuste znovu.",
 	"settings.readOnly": "Callout Studio nemohlo při spuštění Obsidianu použít svůj soubor s nastavením, takže se na této stránce na tomto zařízení nic neukládá. Vaše změny vydrží, dokud Obsidian nezavřete. Jakmile se soubor vrátí, znovu načtěte Obsidian — pokud tento trezor synchronizujete, nechte nejprve synchronizaci doběhnout.",
+
+	// Sync safety hardening
+	"saveStatus.stillMissingAdvice":
+		"Soubor s nastavením stále chybí. Opětovná kontrola ho neobnoví. Nechte synchronizaci doběhnout a zpřístupněte trezor offline. Pokud byl soubor smazán, zvolte Nahradit soubor s nastavením, nebo obnovte dřívější konfiguraci.",
+	"saveStatus.diagnosis.unavailable":
+		"Toto zařízení nyní nemůže soubor otevřít. Možná se ještě stahuje, trezor nemusí být dostupný offline, nebo úložiště neodpovídá. Callout Studio to automaticky zkouší znovu.",
+	"saveStatus.diagnosis.empty": "Soubor je prázdný, což obvykle znamená přerušenou synchronizaci. Pokud vaše nastavení stále má jiné zařízení, nechte ho synchronizovat. Jinak soubor nahraďte.",
+	"saveStatus.diagnosis.mergeMarkers": "Soubor obsahuje nevyřešené značky konfliktu sloučení, například z Gitu. Vyřešte konflikt ve svém nástroji Git, nebo soubor nahraďte.",
+	"saveStatus.diagnosis.damaged": "Soubor je neúplný nebo poškozený, takže ho nelze načíst jako nastavení.",
+	"saveStatus.diagnosis.combined":
+		"Vaše synchronizační služba sloučila dvě verze souboru, takže jeho interní kontrola už neodpovídá. Nastavení uvnitř je neporušené a nahrazení souboru ho zachová.",
+	"saveStatus.diagnosis.invalidEntries": "Soubor obsahuje položky, které Callout Studio nemůže použít, například stejný typ calloutu uvedený dvakrát.",
+	"saveStatus.replaceUnreadable": "Nahradit soubor s nastavením",
+	"saveStatus.discardRecoveryCopy": "Zahodit záložní kopii pro obnovu",
+	"saveStatus.openRecovery": "Obnovit dřívější konfiguraci",
+	"saveStatus.readOnlyWhilePaused":
+		"Nastavení nelze měnit, dokud ukládání znovu nefunguje, takže se žádná vaše zdejší změna neztratí. Stále můžete exportovat svou konfiguraci.",
+	"statusBar.paused": "Ukládání pozastaveno",
+	"statusBar.pausedTooltip": "Callout Studio neukládá změny nastavení. Klikněte pro zjištění důvodu.",
+	"statusBar.pausedNotice": "Callout Studio nyní neukládá změny nastavení.",
+	"notice.replaceUnreadableUnavailable": "Soubor s nastavením nyní nelze nahradit: právě se mění, nebo ho toto zařízení nedokáže přečíst. Zkuste to za chvíli znovu.",
+	"notice.recoveryStorageUnavailable": "Úložiště pro obnovu tohoto zařízení neodpovídá, takže kopii nelze zahodit. Restartujte Obsidian a zkuste to znovu.",
+	"recovery.title": "Obnovit dřívější konfiguraci",
+	"recovery.intro":
+		"Callout Studio uchovává dřívější verze vaší konfigurace na tomto zařízení a ve složce záloh doplňku. Obnovení verze nahradí vaši aktuální konfiguraci na každém synchronizovaném zařízení. Nejprve se uloží záloha aktuální konfigurace.",
+	"recovery.pausedHint": "Ukládání je pozastaveno, takže obnova je nedostupná, dokud se to nevyřeší. Stále můžete exportovat kopii.",
+	"recovery.loading": "Hledají se dřívější verze…",
+	"recovery.empty": "Nebyly nalezeny žádné dřívější verze.",
+	"recovery.sectionHistory": "Uloženo na tomto zařízení",
+	"recovery.sectionBackups": "Zálohy",
+	"recovery.sectionCopies": "Jiné kopie souboru s nastavením",
+	"recovery.originThisDevice": "Toto zařízení",
+	"recovery.originOtherDevice": "Jiné zařízení",
+	"recovery.originOlderVersion": "Uloženo starší verzí",
+	"recovery.unreadable": "Nelze načíst jako nastavení",
+	"recovery.same": "Stejné jako vaše aktuální konfigurace",
+	"recovery.summary": "{{callouts}} uložený(ch) typ(ů) calloutu, {{count}} rozdíl(ů) oproti nynějšímu stavu",
+	"recovery.export": "Exportovat kopii",
+	"recovery.restore": "Obnovit",
+	"recovery.confirmTitle": "Obnovit tuto konfiguraci",
+	"recovery.confirmBody":
+		"Vaše aktuální konfigurace bude nahrazena tou z {{when}} ({{count}} rozdíl(ů)). Nejprve se uloží záloha vaší aktuální konfigurace a vaše synchronizační služba odešle obnovenou konfiguraci na ostatní vaše zařízení.",
+	"recovery.restored": "Obnovena konfigurace z {{when}}.",
+	"recovery.stale": "Nic nebylo obnoveno: vaše nastavení se změnilo nebo ho nešlo zkontrolovat. Otevřete toto okno znovu a projděte seznam.",
+	"recovery.backupFailed": "Nic nebylo obnoveno: nejprve se nepodařilo uložit zálohu vaší aktuální konfigurace. Zkontrolujte dostupný úložný prostor a poté to zkuste znovu.",
+	"recovery.failed": "Konfiguraci se nepodařilo obnovit. Nic se nezměnilo.",
+	"notice.unsavedChangesReplaced":
+		"Některé změny provedené na tomto zařízení ještě nebyly uloženy a nahradilo je novější nastavení z jiného zařízení. Vaše verze byla nejprve uložena: otevřete Obnovit dřívější konfiguraci v nastavení Callout Studia, abyste ji získali zpět.",
+	"notice.diagnosticsCopied": "Diagnostika synchronizace zkopírována.",
+	"notice.diagnosticsFailed": "Diagnostiku synchronizace se nepodařilo zkopírovat.",
+	"notice.recoveryCopyStale": "Vaše nastavení bylo uloženo, ale záložní kopii pro obnovu na tomto zařízení se nepodařilo aktualizovat. Zkontrolujte dostupný úložný prostor na tomto zařízení. Callout Studio to zkusí znovu při vaší příští změně.",
+	"notice.blockedWhilePaused": "Ukládání je pozastaveno, takže tuto změnu nyní nelze zachovat. Nejprve vyřešte problém s ukládáním zobrazený v nastavení Callout Studia.",
+	"welcome.syncNote": "Už používáte Callout Studio na jiném zařízení? Nechte nejprve synchronizační službu doběhnout. Vaše callouty a nastavení se zde objeví, jakmile dorazí.",
+	"settings.resetAllConfirmFull":
+		"Tím se odstraní každý vlastní typ calloutu, nahraný obrázek a vlastní příkaz a obnoví se výchozí nastavení vestavěných calloutů, globálních stylů, uložených barevných palet, kontextové nabídky, nastavení nadpisových a vložených calloutů a záložního stylu. Nejprve se uloží záloha vaší aktuální konfigurace do složky záloh doplňku. Vaše synchronizační služba může resetování odeslat na ostatní vaše zařízení.",
+	"settings.resetBackupFailed": "Nic nebylo resetováno: nejprve se nepodařilo uložit zálohu vaší aktuální konfigurace. Zkontrolujte dostupný úložný prostor a poté to zkuste znovu.",
+	"settings.resetNotSaved": "Resetování je zobrazeno, ale ještě se nepodařilo ho uložit, takže váš soubor s nastavením stále obsahuje předchozí konfiguraci. Zkontrolujte stav ukládání v nastavení Callout Studia.",
+	"settings.recovery": "Dřívější konfigurace",
+	"settings.recoveryDesc": "Obnovte verzi své konfigurace uloženou dříve na tomto zařízení nebo ve složce záloh doplňku.",
+	"settings.recoveryButton": "Obnovit dřívější konfiguraci",
+	"settings.diagnostics": "Diagnostika synchronizace",
+	"settings.diagnosticsDesc": "Zkopírujte souhrn toho, jak funguje ukládání a synchronizace, pro zařazení do hlášení chyby. Neobsahuje žádné callouty ani nastavení.",
+	"settings.diagnosticsButton": "Kopírovat diagnostiku",
+	"confirm.titleResetEverything": "Resetovat vše",
+	"confirm.titleReplaceUnreadable": "Nahradit soubor s nastavením",
+	"confirm.replaceUnreadable": "Nejprve se do složky záloh doplňku uloží přesná kopie aktuálního souboru. Soubor je pak nahrazen konfigurací zobrazenou zde a vaše synchronizační služba ji odešle na ostatní vaše zařízení.",
+	"confirm.replaceUnreadableSalvage":
+		"Nejprve se do složky záloh doplňku uloží přesná kopie aktuálního souboru. Nastavení v něm se sloučí s konfigurací zobrazenou zde a soubor se přepíše, aby ho mohlo znovu číst každé zařízení.",
+	"confirm.titleDiscardRecoveryCopy": "Zahodit záložní kopii pro obnovu",
+	"confirm.discardRecoveryCopy":
+		"Záložní kopii pro obnovu tohoto zařízení nelze přečíst, takže je na tomto zařízení ukládání pozastaveno. Nejprve se do složky záloh doplňku uloží její přesná kopie. Poté je nahrazena konfigurací zobrazenou zde. Váš soubor s nastavením se nemění.",
+	"vault.undoRewrite": "Zpět",
+	"vault.undoRestored": "Obnoveno {{count}} poznámek.",
+	"vault.undoPartial": "Obnoveno {{count}} poznámek. {{skipped}} poznámek se po přepsání změnilo, takže byly ponechány tak, jak jsou.",
+	"import.confirmTitle": "Importovat zálohu Callout Studia",
+	"import.confirmSummary": "Tím se přidá {{added}} typ(ů) calloutu, nahradí {{replaced}} existujících verzí ze souboru a obnoví {{settings}} skupin(y) nastavení ze souboru. Nejprve se uloží záloha vaší aktuální konfigurace.",
+	"import.confirmAction": "Importovat",
+	"import.backupFailed": "Nic nebylo importováno: nejprve se nepodařilo uložit zálohu vaší aktuální konfigurace. Zkontrolujte dostupný úložný prostor a poté to zkuste znovu.",
+	"import.notSaved": "Import je zobrazen, ale ještě se nepodařilo ho uložit. Zkontrolujte stav ukládání v nastavení Callout Studia.",
 };

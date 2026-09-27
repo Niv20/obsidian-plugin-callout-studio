@@ -57,14 +57,18 @@ describe("recovery from adverse sync delivery", () => {
 			} finally { restarted.close(); }
 		});
 	});
-	it("does not overwrite the synced file if durable recovery storage is full", async () => {
+	it("still writes the synced file when durable recovery storage is full, and the recovery copy catches up", async t => {
+		// Blocking here left every edit in memory for the next app kill to
+		// discard. The recovery copy is one more replica: behind is not wrong.
+		t.mock.method(console, "warn", () => undefined);
 		await pair(async a => {
-			const before = canonical(await a.read()); a.checkpointFailure(true);
+			a.checkpointFailure(true);
 			a.registry.add(definition({ id: "pending" }));
-			await assert.rejects(() => a.host.saveSettings(), /quota/);
-			assert.equal(canonical(await a.read()), before);
-			a.checkpointFailure(false); await a.host.saveSettings();
+			await a.host.saveSettings();
 			assert.ok((content(await a.read()).callouts as { id: string }[]).some(row => row.id === "pending"));
+			a.checkpointFailure(false); await a.host.saveSettings();
+			const copy = await a.host.settingsWriter.recoveryCopy() as { callouts: { id: string }[] };
+			assert.ok(copy.callouts.some(row => row.id === "pending"));
 		});
 	});
 	it("keeps a corrupt recovery copy from being silently replaced on startup", async () => {

@@ -52,6 +52,7 @@ function fireRetry(): void {
  * and only far enough to hold one `data.json`.
  */
 function host(disk: { content: string | null }) {
+	const backupFiles = new Map<string, string>();
 	devices++;
 	const state = {
 		settingsEditOpen: false,
@@ -69,9 +70,11 @@ function host(disk: { content: string | null }) {
 			adapter: {
 				exists: () => Promise.resolve(disk.content !== null),
 				mkdir: () => Promise.resolve(),
-				write: () => Promise.resolve(),
-				list: () => Promise.resolve({ files: [], folders: [] }),
-				remove: () => Promise.resolve(),
+				// Backups only; a copy is read back before it counts.
+				write: (path: string, text: string) => { backupFiles.set(path, text); return Promise.resolve(); },
+				read: (path: string) => Promise.resolve(backupFiles.get(path) ?? ""),
+				list: () => Promise.resolve({ files: [...backupFiles.keys()], folders: [] }),
+				remove: (path: string) => { backupFiles.delete(path); return Promise.resolve(); },
 			},
 		},
 	} as unknown as App;
@@ -446,11 +449,11 @@ describe("reload releases arriving during adoption", () => {
 		registry.add(definition({ id: "local" }));
 		let finishBackup: (() => void) | null = null;
 		const backups: string[] = [];
-		h.app.vault.adapter.write = (_path, json) => {
+		const write = h.app.vault.adapter.write.bind(h.app.vault.adapter);
+		h.app.vault.adapter.write = async (path, json) => {
 			backups.push(json);
-			return backups.length === 1
-				? new Promise<void>(resolve => { finishBackup = resolve; })
-				: Promise.resolve();
+			if (backups.length === 1) await new Promise<void>(resolve => { finishBackup = resolve; });
+			await write(path, json);
 		};
 		const q = queue(h);
 		const first = q.run();

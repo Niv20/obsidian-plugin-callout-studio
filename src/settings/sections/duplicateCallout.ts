@@ -57,9 +57,9 @@ export async function handleCalloutDuplicate(
 	} catch (error) {
 		console.error("[Callout Studio] callout duplication failed", error);
 		new Notice(t("notice.calloutDuplicateFailed"));
-		// A final recovery-checkpoint failure can happen AFTER the valid row
-		// reached disk and the registry. Keep that durable row and refresh it.
-		// On an in-flight ID conflict, reconcile disk with the newer local edit.
+		// A failure after publication leaves a valid row on disk and in the
+		// registry. Keep that durable row and refresh it. On an in-flight ID
+		// conflict, reconcile disk with the newer local edit.
 		if (publicationConflict) {
 			try { await plugin.saveSettings(); }
 			catch { /* The writer already exposes the saving failure. */ }

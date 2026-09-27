@@ -230,8 +230,6 @@ export const ko: Record<string, string> = {
 	"settings.resetAllDesc":
 		"모든 사용자 callout을 삭제하고, 기본 제공 callout, 전역 스타일 (테두리, 폰트 크기, 모양), 저장된 색상 팔레트, 마우스 오른쪽 버튼 메뉴 사용자 지정 및 다운로드된 Material SVG를 재설정합니다.",
 	"settings.resetAllButton": "모두 재설정",
-	"settings.resetAllConfirm":
-		"모든 사용자 정의 callout이 삭제되고 기본 제공 callout, 전역 스타일, 저장된 색상 팔레트, 마우스 오른쪽 버튼 메뉴 사용자 지정, 캐시된 Material SVG가 재설정됩니다. 이 작업은 취소할 수 없습니다. 계속하시겠습니까?",
 	"notice.resetAllDone": "모든 항목이 기본값으로 재설정되었습니다.",
 
 	"notice.customCommandsRemoved":
@@ -261,7 +259,6 @@ export const ko: Record<string, string> = {
 		"Callout Studio가 설정 파일을 읽을 수 없어 이 세션에서 콜아웃 유형이 누락되었습니다. 아무것도 기록되지 않았으며 디스크의 파일은 변경되지 않았습니다 — 다시 시도하려면 Obsidian을 다시 로드하세요.",
 	"notice.settingsMissing":
 		"Callout Studio의 설정 파일이 없어 이 세션에서 콜아웃 유형이 누락되었습니다. 아무것도 기록되지 않았습니다 — 이 볼트를 동기화하는 경우 동기화가 끝날 때까지 기다렸다가 변경하기 전에 Obsidian을 다시 로드하세요.",
-	"notice.settingsMissingAction": "새 설정 파일 만들기",
 	"notice.nothingToWrap": "감쌀 내용이 없습니다.",
 	"notice.cursorNotInsideCallout": "커서가 callout 안에 있지 않습니다.",
 	"notice.autocompleteTargetMoved":
@@ -690,7 +687,6 @@ export const ko: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "명령 삭제",
-	"confirm.titleResetAll": "모든 callout 재설정",
 	"confirm.titleResetCallout": "callout 재설정",
 	"confirm.titleDeletePalette": "팔레트 삭제",
 	"confirm.titleDeleteImage": "이미지 삭제",
@@ -1059,12 +1055,9 @@ export const ko: Record<string, string> = {
 	"notice.legacyDiscoveryArchiveFailed": "업그레이드 복구 사본을 만들지 못했습니다. 이전 로컬 검색 캐시와 시작 CSS는 변경되지 않은 상태로 유지되었습니다. 저장소 쓰기 권한과 여유 공간을 확인한 다음 Obsidian을 다시 시작하여 재시도하세요.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "일시 중지됨: callout이 없습니다. 이 명령을 복원하려면 찾거나 만드세요. 다른 유형을 선택하려면 명령을 편집하세요.",
-	"confirm.startFresh": "현재 표시된 callout 유형과 설정으로 새 설정 파일을 만듭니다. 이전의 읽을 수 있는 복구 사본은 백업에 보관됩니다. 누락된 파일이 아직 다른 기기에서 오는 중이거나 여전히 동기화 중이라면, callout이 아직 남아 있는 기기를 포함해 모든 곳에서 교체됩니다.\n파일을 직접 삭제했거나 다시 돌아오지 않을 것이 확실한 경우에만 이 작업을 수행하세요.",
-	"confirm.startFreshOk": "새 설정 파일 만들기",
 	"confirm.titleRestoreSettings": "이 설정 복원",
 	"confirm.titleCreateSettingsFile": "설정 파일 만들기",
 	"confirm.restoreDisplayedSettings": "현재 표시된 callout 유형과 환경설정을 이 기기의 설정 파일에 저장하고 저장을 재개합니다. 읽을 수 있는 로컬 복구 사본은 먼저 백업됩니다.\n계속하기 전에 동기화 서비스가 끝날 때까지 기다리고, 다른 기기에 보관하려는 더 최신 설정이 있는지 확인하세요. 동기화 서비스가 이 복원된 파일을 다른 기기로 보낼 수 있습니다.\n저장하기 전에 파일을 다시 확인합니다. 기존 설정이 발견되면 그대로 유지되며, 복구 과정에서 다시 확인하라는 요청이 표시될 수 있습니다.",
-	"confirm.titleStartFresh": "새 설정 파일 만들기",
 	"notice.settingsBackupFailed": "안전 백업을 저장할 수 없어 설정 복구를 계속할 수 없습니다. 사용 가능한 저장 공간과 쓰기 권한을 확인한 후 다시 시도하세요.",
 	"notice.settingsBackupSaved": "수신된 설정을 적용하기 전에 로컬 callout 정의의 복구 사본이 저장되었습니다: {{path}}.",
 	"notice.settingsChangedElsewhere": "Callout Studio의 설정이 다른 기기에서 변경되어 이 변경 사항이 저장되지 않았습니다. 다른 기기의 설정을 지금 불러오는 중입니다 — 변경 사항을 다시 적용해 주세요.",
@@ -1072,11 +1065,9 @@ export const ko: Record<string, string> = {
 	"notice.settingsNotSaved": "그 변경 사항은 저장되지 않았습니다. Obsidian이 시작될 때 Callout Studio가 설정 파일을 사용할 수 없어 이 기기에는 아무것도 기록되지 않습니다 — 변경 사항은 Obsidian을 닫을 때까지 유지됩니다. 무엇을 해야 할지는 설정 → Callout Studio를 확인하세요.",
 	"saveStatus.changed": "편집하는 동안 설정 파일이 변경되었습니다. 초안은 여전히 사용할 수 있습니다. 저장 및 복구 다시 시도를 선택해 수신된 설정을 불러온 후, 초안을 검토하고 다시 저장하세요.",
 	"saveStatus.missing": "설정 파일이 없어 저장이 일시 중지되었습니다. 재설치 후나 동기화가 아직 실행 중일 때 발생할 수 있습니다. 동기화를 완료한 후 다시 시도하세요. 누락된 파일을 의도적으로 교체하려면 Callout Studio 설정에서 새 설정 파일 만들기를 사용하세요.",
-	"saveStatus.newFile": "새 설정 파일 만들기",
 	"saveStatus.restoreSettings": "이 설정 복원",
 	"saveStatus.createSettingsFile": "설정 파일 만들기",
 	"saveStatus.checkAgain": "다시 확인",
-	"saveStatus.stillMissing": "설정 파일이 아직 없습니다. 다시 확인해도 파일이 다시 만들어지지는 않습니다. 동기화가 끝나고 보관소를 오프라인에서 사용할 수 있게 될 때까지 기다리세요. 파일이 삭제된 경우 백업을 복원하거나 이 기기의 Callout Studio 설정에서 복구 동작을 사용해 표시된 설정을 저장하세요.",
 	"saveStatus.recoverInSettings": "이 기기에서 누락된 파일을 복원하려면 Callout Studio 설정을 여세요. 이 편집기를 닫기 전에 보관하려는 저장되지 않은 편집 내용을 복사하세요. 해당 내용은 저장되지 않았습니다.",
 	"saveStatus.openSettings": "Callout Studio 설정 열기",
 	"notice.openSettingsFailed": "Callout Studio 설정을 열 수 없습니다. 설정 → Callout Studio를 열어 어떻게 할지 선택하세요.",
@@ -1147,4 +1138,100 @@ export const ko: Record<string, string> = {
 	"portable.errorBusy": "다른 변환이 진행 중입니다. 완료될 때까지 기다리세요.",
 	"portable.error": "보관함을 안전하게 읽거나 업데이트하지 못했습니다. 파일 접근 권한을 확인한 후 다시 시도하세요.",
 	"settings.maintenance": "위험 구역",
+	// Sync safety hardening
+	"saveStatus.stillMissingAdvice":
+		"설정 파일이 여전히 없습니다. 다시 확인해도 파일이 다시 생성되지는 않습니다. 동기화가 끝날 때까지 기다리고 보관함을 오프라인에서도 사용할 수 있게 하세요. 파일이 삭제된 경우 '이 설정 복원'을 선택하거나 이전 설정을 복원하세요.",
+	"saveStatus.diagnosis.unavailable":
+		"이 기기에서 지금은 파일을 열 수 없습니다. 아직 다운로드 중이거나, 보관함이 오프라인에서 사용 가능하지 않거나, 저장소가 응답하지 않는 상태일 수 있습니다. Callout Studio가 자동으로 다시 확인합니다.",
+	"saveStatus.diagnosis.empty":
+		"파일이 비어 있습니다. 대개 동기화가 중단되었다는 의미입니다. 다른 기기에 설정이 남아 있다면 동기화되도록 두세요. 그렇지 않다면 파일을 교체하세요.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"파일에 병합 충돌 표시가 남아 있습니다(예: Git에서). Git 도구에서 충돌을 해결하거나 파일을 교체하세요.",
+	"saveStatus.diagnosis.damaged": "파일이 불완전하거나 손상되어 설정으로 읽을 수 없습니다.",
+	"saveStatus.diagnosis.combined":
+		"동기화 서비스가 파일의 두 버전을 병합해서 내부 검사값이 더 이상 일치하지 않습니다. 파일 안의 설정 자체는 온전하며, 파일을 교체해도 그대로 유지됩니다.",
+	"saveStatus.diagnosis.invalidEntries":
+		"파일에 Callout Studio가 사용할 수 없는 항목이 있습니다. 예를 들어 같은 콜아웃 유형이 두 번 나열된 경우입니다.",
+	"saveStatus.replaceUnreadable": "설정 파일 교체",
+	"saveStatus.discardRecoveryCopy": "복구 사본 삭제",
+	"saveStatus.openRecovery": "이전 설정 복원",
+	"saveStatus.readOnlyWhilePaused":
+		"저장이 다시 작동할 때까지 설정을 변경할 수 없으므로 지금 변경한 내용이 사라지지는 않습니다. 그래도 현재 설정을 내보낼 수 있습니다.",
+	"statusBar.paused": "저장 일시 중지됨",
+	"statusBar.pausedTooltip": "Callout Studio가 설정 변경 사항을 저장하지 않고 있습니다. 클릭하면 이유를 볼 수 있습니다.",
+	"statusBar.pausedNotice": "Callout Studio가 지금 설정 변경 사항을 저장하지 않고 있습니다.",
+	"notice.replaceUnreadableUnavailable":
+		"지금은 설정 파일을 교체할 수 없습니다. 파일이 변경 중이거나 이 기기에서 읽을 수 없는 상태입니다. 잠시 후 다시 시도하세요.",
+	"notice.recoveryStorageUnavailable":
+		"이 기기의 복구 저장소가 응답하지 않아 사본을 삭제할 수 없습니다. Obsidian을 다시 시작한 후 다시 시도하세요.",
+	"recovery.title": "이전 설정 복원",
+	"recovery.intro":
+		"Callout Studio는 이 기기와 플러그인의 백업 폴더에 이전 버전의 설정을 보관합니다. 복원하면 동기화된 모든 기기의 현재 설정이 교체됩니다. 먼저 현재 설정의 백업이 저장됩니다.",
+	"recovery.pausedHint": "저장이 일시 중지되어 있어 이 문제가 해결될 때까지 복원할 수 없습니다. 그래도 사본을 내보낼 수는 있습니다.",
+	"recovery.loading": "이전 버전을 찾는 중…",
+	"recovery.empty": "이전 버전을 찾을 수 없습니다.",
+	"recovery.sectionHistory": "이 기기에 저장됨",
+	"recovery.sectionBackups": "백업",
+	"recovery.sectionCopies": "설정 파일의 다른 사본",
+	"recovery.originThisDevice": "이 기기",
+	"recovery.originOtherDevice": "다른 기기",
+	"recovery.originOlderVersion": "이전 버전에서 저장됨",
+	"recovery.unreadable": "설정으로 읽을 수 없음",
+	"recovery.same": "현재 설정과 동일함",
+	"recovery.summary": "저장된 콜아웃 유형 {{callouts}}개, 지금과의 차이 {{count}}개",
+	"recovery.export": "사본 내보내기",
+	"recovery.restore": "복원",
+	"recovery.confirmTitle": "이 설정 복원",
+	"recovery.confirmBody":
+		"현재 설정이 {{when}}의 설정({{count}}개 차이)으로 교체됩니다. 먼저 현재 설정의 백업이 저장되며, 동기화 서비스가 복원된 설정을 다른 기기로 전송합니다.",
+	"recovery.restored": "{{when}}의 설정을 복원했습니다.",
+	"recovery.stale":
+		"아무것도 복원되지 않았습니다. 설정이 변경되었거나 확인할 수 없었습니다. 이 창을 다시 열고 목록을 확인하세요.",
+	"recovery.backupFailed":
+		"아무것도 복원되지 않았습니다. 현재 설정의 백업을 먼저 저장할 수 없었습니다. 사용 가능한 저장 공간을 확인한 후 다시 시도하세요.",
+	"recovery.failed": "설정을 복원할 수 없었습니다. 아무것도 변경되지 않았습니다.",
+	"notice.unsavedChangesReplaced":
+		"이 기기에서 저장되지 않은 일부 변경 사항이 다른 기기의 최신 설정으로 교체되었습니다. 사용자의 버전은 먼저 저장되었으니, Callout Studio 설정의 '이전 설정 복원'에서 되찾을 수 있습니다.",
+	"notice.diagnosticsCopied": "동기화 진단 정보를 복사했습니다.",
+	"notice.diagnosticsFailed": "동기화 진단 정보를 복사할 수 없었습니다.",
+	"notice.recoveryCopyStale":
+		"설정은 저장되었지만 이 기기의 복구 사본은 업데이트할 수 없었습니다. 이 기기의 사용 가능한 저장 공간을 확인하세요. Callout Studio가 다음 변경 시 다시 시도합니다.",
+	"notice.blockedWhilePaused":
+		"저장이 일시 중지되어 있어 지금은 이 변경 사항을 유지할 수 없습니다. Callout Studio 설정에 표시된 저장 문제를 먼저 해결하세요.",
+	"welcome.syncNote":
+		"이미 다른 기기에서 Callout Studio를 사용 중이신가요? 먼저 동기화 서비스가 끝나도록 두세요. 콜아웃과 설정은 도착하는 즉시 여기에 나타납니다.",
+	"settings.resetAllConfirmFull":
+		"이 작업은 모든 사용자 지정 콜아웃 유형, 업로드한 이미지, 사용자 지정 명령을 삭제하고, 기본 콜아웃, 전역 스타일, 저장된 색상 팔레트, 우클릭 메뉴, 제목 및 인라인 콜아웃 설정, 대체 스타일을 초기화합니다. 먼저 현재 설정의 백업이 플러그인의 백업 폴더에 저장됩니다. 동기화 서비스가 초기화 내용을 다른 기기로 전송할 수 있습니다.",
+	"settings.resetBackupFailed":
+		"아무것도 초기화되지 않았습니다. 현재 설정의 백업을 먼저 저장할 수 없었습니다. 사용 가능한 저장 공간을 확인한 후 다시 시도하세요.",
+	"settings.resetNotSaved":
+		"초기화는 화면에 표시되었지만 아직 저장되지 않았으므로 설정 파일에는 여전히 이전 설정이 남아 있습니다. Callout Studio 설정에서 저장 상태를 확인하세요.",
+	"settings.recovery": "이전 설정",
+	"settings.recoveryDesc": "이 기기나 플러그인의 백업 폴더에 저장된 이전 버전의 설정을 복원합니다.",
+	"settings.recoveryButton": "이전 설정 복원",
+	"settings.diagnostics": "동기화 진단",
+	"settings.diagnosticsDesc":
+		"저장과 동기화가 어떻게 작동하고 있는지 요약해서 복사합니다. 버그 신고에 포함할 수 있습니다. 콜아웃이나 설정 내용은 포함되지 않습니다.",
+	"settings.diagnosticsButton": "진단 정보 복사",
+	"confirm.titleResetEverything": "전체 초기화",
+	"confirm.titleReplaceUnreadable": "설정 파일 교체",
+	"confirm.replaceUnreadable":
+		"현재 파일의 정확한 사본이 먼저 플러그인의 백업 폴더에 저장됩니다. 그 다음 파일이 여기 표시된 설정으로 교체되고, 동기화 서비스가 다른 기기로 전송합니다.",
+	"confirm.replaceUnreadableSalvage":
+		"현재 파일의 정확한 사본이 먼저 플러그인의 백업 폴더에 저장됩니다. 그 안의 설정은 여기 표시된 설정과 합쳐지고, 모든 기기에서 다시 읽을 수 있도록 파일이 다시 작성됩니다.",
+	"confirm.titleDiscardRecoveryCopy": "복구 사본 삭제",
+	"confirm.discardRecoveryCopy":
+		"이 기기의 복구 사본을 읽을 수 없어 이 기기에서 저장이 일시 중지되었습니다. 먼저 정확한 사본이 플러그인의 백업 폴더에 저장됩니다. 그 다음 여기 표시된 설정으로 교체됩니다. 설정 파일 자체는 변경되지 않습니다.",
+	"vault.undoRewrite": "실행 취소",
+	"vault.undoRestored": "노트 {{count}}개를 복원했습니다.",
+	"vault.undoPartial":
+		"노트 {{count}}개를 복원했습니다. {{skipped}}개의 노트는 재작성 후 변경되어 그대로 두었습니다.",
+	"import.confirmTitle": "Callout Studio 백업 가져오기",
+	"import.confirmSummary":
+		"이 작업은 콜아웃 유형 {{added}}개를 추가하고, 기존 {{replaced}}개를 파일의 버전으로 교체하며, 파일에서 설정 {{settings}}개 그룹을 복원합니다. 먼저 현재 설정의 백업이 저장됩니다.",
+	"import.confirmAction": "가져오기",
+	"import.backupFailed":
+		"아무것도 가져오지 않았습니다. 현재 설정의 백업을 먼저 저장할 수 없었습니다. 사용 가능한 저장 공간을 확인한 후 다시 시도하세요.",
+	"import.notSaved":
+		"가져오기는 화면에 표시되었지만 아직 저장되지 않았습니다. Callout Studio 설정에서 저장 상태를 확인하세요.",
 };

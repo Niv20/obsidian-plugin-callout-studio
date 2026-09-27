@@ -32,6 +32,7 @@ import type {
 import type { SettingsSectionContext } from "../../src/settings/sections/types";
 import { fakeDom, type FakeElement } from "./fakeDom";
 import { TestKeymap, TestScope } from "./fakeKeymap";
+import { memoryVault, PLUGIN_MANIFEST, savingWriter } from "./importSafetyStubs";
 
 /** What the next `navigator.clipboard.readText()` resolves to, or rejects with. */
 let clipboardNext: string | Error = "";
@@ -118,6 +119,8 @@ export interface HarnessOptions {
 	 * suite must then give the `obsidian` stub's `Modal` a `close` itself.
 	 */
 	nativeClose?: boolean;
+	/** This plugin's writer; saving normally unless a suite pauses it. */
+	writer?: ReturnType<typeof savingWriter>;
 }
 
 export interface Harness {
@@ -131,6 +134,8 @@ export interface Harness {
 	isClosed: () => boolean;
 	/** How often the window has asked its file input to open the picker. */
 	pickerOpens: () => number;
+	/** The backups of this plugin's own settings written so far, by path. */
+	backups: () => string[];
 	destroy: () => void;
 }
 
@@ -159,10 +164,17 @@ export function harness(options: HarnessOptions = {}): Harness {
 		},
 	} as unknown as App;
 	let displays = 0;
+	// This plugin's own folder, where an import saves a backup before applying.
+	const own = memoryVault();
+	const settings = { competitorImportBannerHandled: true };
 	const ctx = {
 		app,
 		plugin: {
-			registry: { settings: { competitorImportBannerHandled: true } },
+			app: own.app,
+			manifest: PLUGIN_MANIFEST,
+			settingsWriter: options.writer ?? savingWriter(),
+			localState: { hasHandledImportBanner: false, markImportBannerHandled: () => {} },
+			registry: { settings, toSaveData: () => ({ settings }) },
 			saveSettings: () => Promise.resolve(),
 		},
 		display: () => {
@@ -221,6 +233,7 @@ export function harness(options: HarnessOptions = {}): Harness {
 		displays: () => displays,
 		isClosed: () => closed,
 		pickerOpens: () => pickerOpens,
+		backups: () => [...own.files.keys()].filter((path) => path.includes("/backups/")),
 		destroy: () => {
 			if (!closed) modal.onClose();
 			containerEl.remove();

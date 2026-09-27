@@ -75,17 +75,9 @@ export async function startFreshSettings(host: ExternalReloadHost): Promise<bool
 				return false;
 			}
 			if (!isCurrent()) return false;
-			if (saved) {
-				try {
-					const path = await writeSettingsBackup(host, saved);
-					if (!path || canonical(JSON.parse(await host.app.vault.adapter.read(path))) !== canonical(saved)) {
-						writer.status.fail("backup"); return false;
-					}
-				} catch (error) {
-					writer.status.fail("backup");
-					console.error("[callout-studio] cannot verify settings recovery backup", error);
-					return false;
-				}
+			if (saved && !await writeSettingsBackup(host, saved)) {
+				writer.status.fail("backup");
+				return false;
 			}
 			return isCurrent();
 		});

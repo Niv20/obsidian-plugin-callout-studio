@@ -186,6 +186,7 @@ type ElementLike = {
 	createDiv(options?: { cls?: string }): ElementLike;
 	addClass?(...classes: string[]): void;
 	addEventListener?(type: string, callback: () => void): void;
+	setAttribute?(name: string, value: string): void;
 	value: string;
 	textContent: string;
 	dataset?: Record<string, string>;
@@ -334,7 +335,7 @@ export class ButtonLike {
 	constructor(containerEl: ElementLike) {
 		this.buttonEl = containerEl.createDiv({ cls: "clickable-icon" });
 		this.extraSettingsEl = this.buttonEl;
-		this.buttonEl.addEventListener?.("click", () => this.click?.());
+		this.buttonEl.addEventListener?.("click", () => { if (!this.disabled) this.click?.(); });
 	}
 
 	setButtonText(text: string): this {
@@ -355,6 +356,20 @@ export class ButtonLike {
 		return this;
 	}
 
+	setWarning(): this {
+		this.buttonEl.addClass?.("mod-warning");
+		return this;
+	}
+
+	/** Recorded as `aria-disabled`, and a disabled button's press does nothing. */
+	setDisabled(disabled: boolean): this {
+		this.disabled = disabled;
+		this.buttonEl.setAttribute?.("aria-disabled", String(disabled));
+		return this;
+	}
+
+	private disabled = false;
+
 	onClick(cb: () => void): this {
 		this.click = cb;
 		return this;
@@ -362,7 +377,7 @@ export class ButtonLike {
 
 	/** For a test that wants to press it. */
 	press(): void {
-		this.click?.();
+		if (!this.disabled) this.click?.();
 	}
 }
 

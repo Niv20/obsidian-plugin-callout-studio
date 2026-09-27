@@ -16,7 +16,8 @@
  *   file (#53).
  * - **The import banner has its own lifetime.** Once first-install onboarding
  *   has made it eligible, every later launch arms it again until dismissal or
- *   a successful import persists `competitorImportBannerHandled`.
+ *   a successful import persists `competitorImportBannerHandled` — or, on a
+ *   device with no settings file to persist it in, records it device-locally.
  *
  * `openWelcome()` on the plugin is the deliberate bypass — the protocol handler
  * and the DevTools console reach the screen through it regardless of the flag.
@@ -50,7 +51,8 @@ export async function maybeShowWelcomeOnLaunch(
 	// still cannot opt an existing user into the banner.
 	if (
 		welcomeSeen &&
-		plugin.settings.competitorImportBannerHandled !== true
+		plugin.settings.competitorImportBannerHandled !== true &&
+		!plugin.localState.hasHandledImportBanner
 	) {
 		armCompetitorImportBanner(plugin);
 	}
@@ -63,5 +65,5 @@ export async function maybeShowWelcomeOnLaunch(
 	plugin.localState.markWelcomeSeen();
 	armCompetitorImportBanner(plugin);
 	plugin.settings.welcomeSeen = true;
-	await new WelcomeModal(plugin).prompt();
+	await new WelcomeModal(plugin, true).prompt();
 }

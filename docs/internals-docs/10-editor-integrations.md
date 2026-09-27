@@ -259,8 +259,9 @@ redirecting the edit to the active note. A mode-only change retains the
 specific Reading view message. With no captured note, normal resolution applies.
 
 The first modal starts with the default `all` source filter. Changing the
-source updates `settings.quickInsertSource`, and later modals restore that
-choice. The filters use the same style-owner precedence as the settings lists:
+source is remembered on this device (`localState.setQuickInsertSource`), never
+saved to the synced settings, and later modals restore that choice; a device
+with no memory starts from the synced `settings.quickInsertSource`. The filters use the same style-owner precedence as the settings lists:
 
 ```text
 registry.themeOwns(def) → theme

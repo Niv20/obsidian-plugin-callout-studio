@@ -7,7 +7,7 @@
  * validation issues before import. Both export formats live behind
  * ExportFormatModal, the way both import sources live behind ImportSourceModal.
  */
-import { Notice, Setting } from "obsidian";
+import { Notice, Platform, Setting } from "obsidian";
 import { t } from "../../i18n";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { ExportFormatModal } from "../ExportFormatModal";
@@ -20,6 +20,10 @@ import { addImportedCallout, applyImportedCallout } from "../../utils/importedCa
 import { ImportSourceModal } from "../ImportSourceModal";
 import { countCalloutUsages } from "../../utils/vaultCalloutScanner";
 import { openPortableConversionFromSettings } from "../../portable/registerPortableConversionView";
+import { writeSettingsBackup } from "../../manager/settingsBackup";
+import { blockedWhilePaused } from "../pausedGuard";
+import { SettingsRecoveryModal } from "../SettingsRecoveryModal";
+import { PAUSED_ALLOWED } from "./pausedReadOnly";
 import type { SettingsSectionContext } from "./types";
 
 export function renderImportExportSection(
@@ -34,7 +38,12 @@ export function renderImportExportSection(
 		.addButton((btn) => {
 			btn.setButtonText(t("settings.import"))
 				.setIcon("download")
-				.onClick(() => new ImportSourceModal(ctx).open());
+				.onClick(() => {
+					// An import that cannot be saved would look done and vanish
+					// on restart; say so before a file is even chosen.
+					if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
+					new ImportSourceModal(ctx).open();
+				});
 			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
 	importSetting.settingEl.addClass("cs-import-target");
@@ -42,12 +51,44 @@ export function renderImportExportSection(
 	new Setting(containerEl)
 		.setName(t("settings.export"))
 		.setDesc(t("settings.exportDesc"))
+		.setClass(PAUSED_ALLOWED)
 		.addButton((btn) => {
 			btn.setButtonText(t("settings.export"))
 				.setIcon("upload")
 				.onClick(() => new ExportFormatModal(ctx).open());
 			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
+
+	const recovery = ctx.plugin.recovery;
+	if (recovery) {
+		new Setting(containerEl)
+			.setName(t("settings.recovery"))
+			.setDesc(t("settings.recoveryDesc"))
+			.setClass(PAUSED_ALLOWED)
+			.addButton((btn) => {
+				btn.setButtonText(t("settings.recoveryButton"))
+					.setIcon("history")
+					.onClick(() => new SettingsRecoveryModal(ctx.app, ctx.plugin).open());
+				btn.buttonEl.addClass("cs-settings-neutral-btn");
+			});
+		new Setting(containerEl)
+			.setName(t("settings.diagnostics"))
+			.setDesc(t("settings.diagnosticsDesc"))
+			.setClass(PAUSED_ALLOWED)
+			.addButton((btn) => {
+				btn.setButtonText(t("settings.diagnosticsButton"))
+					.setIcon("clipboard-copy")
+					.onClick(() => {
+						void recovery.diagnostics(Platform.isMobile ? "mobile" : "desktop")
+							.then(report => navigator.clipboard.writeText(report))
+							.then(() => { new Notice(t("notice.diagnosticsCopied")); }, (error: unknown) => {
+								console.error("[callout-studio] sync diagnostics could not be copied", error);
+								new Notice(t("notice.diagnosticsFailed"), 10000);
+							});
+					});
+				btn.buttonEl.addClass("cs-settings-neutral-btn");
+			});
+	}
 
 	return importSetting.settingEl;
 }
@@ -60,9 +101,11 @@ export function renderResetSection(
 		.setName(t("settings.maintenance"))
 		.setHeading();
 
+	// Converting rewrites notes, never settings: fine while saving is paused.
 	new Setting(containerEl)
 		.setName(t("portable.title"))
 		.setDesc(t("portable.settingDesc"))
+		.setClass(PAUSED_ALLOWED)
 		.addButton((btn) => {
 			btn.setButtonText(t("portable.review"))
 				.onClick(() => { void openPortableConversionFromSettings(ctx.app); });
@@ -77,6 +120,8 @@ export function renderResetSection(
 				.setButtonText(t("settings.resetAllButton"))
 				.setWarning()
 				.onClick(async () => {
+					// A reset that cannot be saved would only look done.
+					if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 					const userCallouts = ctx.plugin.registry.getUserDefined();
 					const userIds = userCallouts.flatMap((c) =>
 						ctx.plugin.registry.vaultIdFormsFor(c),
@@ -97,19 +142,28 @@ export function renderResetSection(
 						}
 					}
 					messageFrag.createEl("p", {
-						text: t("settings.resetAllConfirm"),
+						text: t("settings.resetAllConfirmFull"),
 					});
 
 					const confirmed = await new ConfirmModal(
 						ctx.app,
-						t("confirm.titleResetAll"),
+						t("confirm.titleResetEverything"),
 						messageFrag,
+						t("settings.resetAllButton"),
 					).confirm();
-					if (!confirmed) return;
+					if (!confirmed || blockedWhilePaused(ctx.plugin.settingsWriter)) return;
+					// The reset also replaces this device's recovery copy, so the
+					// backup is the only way back: no verified copy, no reset.
+					if (!await writeSettingsBackup(ctx.plugin, ctx.plugin.registry.toSaveData())) {
+						new Notice(t("settings.resetBackupFailed"), 10000);
+						return;
+					}
 					ctx.plugin.registry.resetAll();
 					ctx.plugin.cssInjector.inject();
 					await ctx.plugin.saveSettings();
-					new Notice(t("notice.resetAllDone"));
+					if (ctx.plugin.settingsWriter.persists?.(ctx.plugin.registry.toSaveData()) === false) {
+						new Notice(t("settings.resetNotSaved"), 10000);
+					} else new Notice(t("notice.resetAllDone"));
 					ctx.display();
 				}),
 		);
@@ -173,6 +227,32 @@ export async function processImportedJSON(
 		return;
 	}
 
+	// Only the setting groups the file carries: an older export predates newer
+	// groups, and filling them with defaults would silently reset them here.
+	const present = presentSettingGroups(parsed);
+	const restored = result.settings
+		? Object.keys(result.settings).filter((key) => present.has(key) && !LIST_GROUPS.has(key)) : [];
+	// A clean file used to apply without a word. Say what it will replace; the
+	// report above already asked when there were issues.
+	if (result.issues.length === 0) {
+		const replaced = defs.filter((def) => ctx.plugin.registry.has(def.id)).length;
+		const confirmed = await new ConfirmModal(
+			ctx.app,
+			t("import.confirmTitle"),
+			t("import.confirmSummary", { added: defs.length - replaced, replaced, settings: restored.length }),
+			t("import.confirmAction"),
+			undefined,
+			"mod-cta",
+		).confirm();
+		if (!confirmed) return;
+	}
+	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
+	// Same-id callouts and whole setting groups are replaced: keep a way back.
+	if (!await writeSettingsBackup(ctx.plugin, ctx.plugin.registry.toSaveData())) {
+		new Notice(t("import.backupFailed"), 10000);
+		return;
+	}
+
 	let imported = 0;
 	let overwritten = 0;
 	// Match foreign imports: one stylesheet/repaint/save notification for the
@@ -213,7 +293,10 @@ export async function processImportedJSON(
 			customCommands: importedCommands,
 			...restSettings
 		} = result.settings;
-		Object.assign(ctx.plugin.registry.settings, restSettings);
+		Object.assign(
+			ctx.plugin.registry.settings,
+			Object.fromEntries(Object.entries(restSettings).filter(([key]) => restored.includes(key))),
+		);
 		if (importedPalettes) {
 			ctx.plugin.registry.settings.customPalettes = mergeById(
 				ctx.plugin.registry.settings.customPalettes,
@@ -248,8 +331,15 @@ export async function processImportedJSON(
 			// dropped by the sweep, which also registers the rest.
 			ctx.plugin.customCommands.syncAll();
 		}
-		await ctx.plugin.saveSettings();
 		ctx.plugin.refreshRenderModes();
+	}
+	// Awaited for every import, callouts-only included, so the notice below
+	// reports what reached the file rather than what the registry holds.
+	await ctx.plugin.saveSettings();
+	if (ctx.plugin.settingsWriter.persists?.(ctx.plugin.registry.toSaveData()) === false) {
+		new Notice(t("import.notSaved"), 10000);
+		ctx.display();
+		return;
 	}
 
 	if (imported > 0) {
@@ -278,6 +368,19 @@ export async function processImportedJSON(
 	} else {
 		new Notice(t("notice.noNewJSON"));
 	}
+}
+
+/** Lists the user builds up: merged by id on import, never replaced. */
+const LIST_GROUPS: ReadonlySet<string> = new Set(["customPalettes", "userImages", "customCommands"]);
+
+/** The top-level settings groups an import file actually carries. */
+function presentSettingGroups(parsed: unknown): Set<string> {
+	const settings = parsed !== null && typeof parsed === "object" && !Array.isArray(parsed)
+		? (parsed as { settings?: unknown }).settings : undefined;
+	const groups = new Set(settings !== null && typeof settings === "object" && !Array.isArray(settings) ? Object.keys(settings) : []);
+	// 1.x kept the menu switch under `popup`; the merge reads it into contextMenu.
+	if (groups.has("popup")) groups.add("contextMenu");
+	return groups;
 }
 
 /** Number of callout entries in either import shape (for the report modal). */

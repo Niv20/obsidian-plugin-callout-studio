@@ -86,15 +86,18 @@ describe("save failures remain retryable and accurately reported", () => {
 	});
 });
 
-it("retries a failed final checkpoint even when the current settings already match disk", async () => {
-	let state = { n: 1 }, checkpoints = 0, fail = true;
+it("retries a recovery copy that fell behind, without failing the saves that succeeded", async t => {
+	t.mock.method(console, "warn", () => undefined);
+	let state = { n: 1 }, checkpoints = 0, fail = true, stale = 0;
 	const writer = new SettingsWriter({ build: () => state,
 		checkpoint: { read: async () => null, write: async () => { if (++checkpoints > 1 && fail) throw new Error("Checkpoint full"); } },
-		write: async () => {},
+		write: async () => {}, onCheckpointStale: () => { stale++; },
 	});
 	writer.adopt(JSON.stringify(state));
-	await assert.rejects(writer.commit({ n: 2 }, () => true, () => { state = { n: 2 }; }));
-	await assert.rejects(writer.save()); assert.equal(writer.status.reason, "recovery-write");
-	fail = false; await writer.save(); assert.equal(writer.status.reason, null);
-	assert.equal(checkpoints, 4); writer.destroy();
+	assert.equal(await writer.commit({ n: 2 }, () => true, () => { state = { n: 2 }; }), true);
+	await writer.save(); assert.equal(writer.status.reason, null);
+	fail = false; await writer.save();
+	assert.equal(checkpoints, 4); assert.equal(stale, 1, "told once, not on every retry");
+	await writer.save(); assert.equal(checkpoints, 4, "a copy that caught up is not rewritten");
+	writer.destroy();
 });

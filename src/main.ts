@@ -24,7 +24,10 @@ import { saveSettingsWithFeedback } from "./manager/settingsSaveFeedback";
 import { DeviceLocalStore } from "./manager/DeviceLocalStore";
 import { reportLegacyDiscoveryMigration } from "./manager/legacyDiscoveryNotices";
 import { trackStartupMigrationNotices } from "./manager/startupMigrationNotices";
-import { loadSettingsInto } from "./manager/settingsBoot";
+import { loadSettingsSafely } from "./manager/settingsBoot";
+import { SettingsRecoveryService } from "./manager/settingsRecoveryService";
+import { registerPausedRecheck } from "./manager/pausedRecheck";
+import { registerPausedIndicator } from "./settings/pausedIndicator";
 import { ReloadQueue } from "./manager/reloadQueue";
 import { registerThemeAppearance } from "./manager/theme/themeAppearanceSync";
 import { removeLegacyStartupSnippet } from "./manager/legacyStartupSnippet";
@@ -85,6 +88,8 @@ export default class CalloutStudioPlugin extends Plugin {
 	settingsTab!: CalloutStudioSettingsTab;
 	discovery!: ManualCalloutDiscovery;
 	settingsWriter!: SettingsWriter;
+	/** Restoring earlier setups and the paused-saving way out. */
+	recovery!: SettingsRecoveryService;
 	/** Local UI/onboarding preferences and a prior-install marker. */
 	localState!: DeviceLocalStore;
 	/** Re-derives the theme's overlay rows — see registerThemeAppearance. */
@@ -109,8 +114,14 @@ export default class CalloutStudioPlugin extends Plugin {
 		if (!value) this.reloads?.release();
 	}
 
+	/** Settles when launch has loaded settings; adoption waits for it. */
+	private booted: Promise<unknown> = Promise.resolve();
+
 	/** Obsidian config-file events enter the serialized settings reload queue. */
 	async onExternalSettingsChange(): Promise<void> {
+		// Launch rebuilds the registry under a hold; an adoption racing it
+		// would rebuild it a second time underneath.
+		await this.booted;
 		await this.reloads.run();
 	}
 
@@ -136,11 +147,14 @@ export default class CalloutStudioPlugin extends Plugin {
 		this.localState = new DeviceLocalStore(this.app);
 		const showStartupMigrationNotices = trackStartupMigrationNotices(this);
 		this.reloads = new ReloadQueue(this);
+		this.recovery = new SettingsRecoveryService(this);
 		// The other seam. Cheap: a no-op unless a reload is actually waiting.
 		this.registry.onPreviewChange(() => this.reloads.release());
 		const legacyRecovery = await this.localState.archiveLegacyDiscovery(this.manifest);
 		if (this.settingsWriter.isDestroyed) return;
-		const boot = await loadSettingsInto(this);
+		const booting = loadSettingsSafely(this);
+		this.booted = booting;
+		const boot = await booting;
 		if (this.settingsWriter.isDestroyed) return;
 
 		// UI locale follows the user's saved preference; "auto" (the default)
@@ -269,6 +283,10 @@ export default class CalloutStudioPlugin extends Plugin {
 			void this.saveSettings();
 		});
 
+		// A paused session stays visible and keeps checking for its file.
+		registerPausedIndicator(this);
+		registerPausedRecheck(this);
+
 		// Settings tab. Held onto so a locale arriving mid-session can re-render
 		// it (see applyLocaleChange).
 		this.settingsTab = new CalloutStudioSettingsTab(this.app, this);
@@ -387,7 +405,8 @@ export default class CalloutStudioPlugin extends Plugin {
 	}
 
 	onunload() {
-		this.settingsWriter?.destroy();
+		// Finishes a write already under way, and the last change, then stops.
+		this.settingsWriter?.close();
 		stopMaterialFontLoader();
 		this.icons?.destroy();
 		this.locales?.destroy();

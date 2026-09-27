@@ -26,10 +26,12 @@ Use **Replace in vault** when every use of one type should become another:
 
 1. Open the callout's three-dot menu.
 2. Choose **Replace in vault**.
-3. Select the replacement callout.
-4. Confirm the change.
+3. Select the replacement callout. You can type to filter the list; pressing **Enter** selects the top match.
+4. Choose **Replace**.
 
-Callout Studio updates matching Block, Heading, and Inline callouts throughout the vault while keeping their content.
+Callout Studio updates matching Block, Heading, and Inline callouts throughout the vault while keeping their content. The change edits your notes directly, so **Enter** never starts it; only the **Replace** button does.
+
+When it finishes, the notice offers **Undo** for a few seconds. Undo puts back every note the replacement changed, unless you've edited that note since; those are left as they are, and the message says how many. Only the most recent replacement or deletion can be undone, and only until Obsidian is closed.
 
 ## Delete a custom callout
 
@@ -43,6 +45,10 @@ Choose **Delete** from the same three-dot menu.
 Obsidian's built-in callout types are permanent and cannot be removed from the list. You can reset their appearance or replace their uses, but the underlying type remains available.
 
 If some notes cannot be updated, Callout Studio reports the incomplete work and keeps the definition needed by the remaining notes. Resolve the file or sync problem and run the action again.
+
+After a deletion that converted notes, the notice offers **Undo** too. It puts the notes back, and the deleted callout type with them.
+
+While saving is paused, deleting a custom callout is unavailable and no note is changed: the removal could not be saved, so the type would return on the next launch after its notes had already been converted.
 
 ---
 **Next:** [Global styling](07-global-styling.md)

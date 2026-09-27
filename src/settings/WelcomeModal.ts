@@ -28,7 +28,11 @@ export class WelcomeModal extends Modal {
 	private resolve: () => void = () => {};
 	private preview: LiveCalloutPreview | null = null;
 
-	constructor(private readonly plugin: SettingsTabPlugin) {
+	/**
+	 * @param freshLaunch the launch found no settings file. That is also what a
+	 *   new device looks like before its synced settings arrive, so say so.
+	 */
+	constructor(private readonly plugin: SettingsTabPlugin, private readonly freshLaunch = false) {
 		super(plugin.app);
 	}
 
@@ -52,6 +56,12 @@ export class WelcomeModal extends Modal {
 			cls: "cs-welcome-tagline",
 			text: t("welcome.tagline"),
 		});
+		if (this.freshLaunch) {
+			left.createEl("p", {
+				cls: "cs-welcome-sync-note",
+				text: t("welcome.syncNote"),
+			});
+		}
 
 		// ── Right column: self-describing live preview ─────────────────
 		const right = panel.createDiv({ cls: "cs-welcome-right" });

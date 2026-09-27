@@ -1,10 +1,13 @@
 /** A device-local durable copy, independent of the synchronized vault file. */
 import type { App, PluginManifest } from "obsidian";
 import { hasSafeSettingsFileShape } from "./settingsFileShape";
+import { isNewerSettingsFormat } from "./foreignFields";
 
 export interface SettingsCheckpointStore {
 	read(): Promise<unknown>;
 	write(data: unknown): Promise<void>;
+	/** The stored value unvalidated, to keep an exact copy before discarding it. */
+	readRaw?(): Promise<unknown>;
 }
 
 export class SettingsCheckpoint implements SettingsCheckpointStore {
@@ -83,10 +86,19 @@ export class SettingsCheckpoint implements SettingsCheckpointStore {
 	async read(): Promise<unknown> {
 		const saved = await this.transact("readonly");
 		if (saved === undefined) return null;
-		if (!saved || typeof saved !== "object" || Array.isArray(saved) ||
-			!hasSafeSettingsFileShape(saved as Record<string, unknown>)) throw new Error("Settings recovery copy is invalid");
+		if (!saved || typeof saved !== "object" || Array.isArray(saved)) throw new Error("Settings recovery copy is invalid");
+		// A later build's copy is "newer", which callers protect; never "invalid",
+		// which would freeze saving until someone discarded the copy.
+		if (!hasSafeSettingsFileShape(saved as Record<string, unknown>) && !isNewerSettingsFormat(saved)) {
+			throw new Error("Settings recovery copy is invalid");
+		}
 		return saved;
 	}
 
 	async write(data: unknown): Promise<void> { await this.transact("readwrite", structuredClone(data)); }
+
+	async readRaw(): Promise<unknown> {
+		const saved = await this.transact("readonly");
+		return saved === undefined ? null : saved;
+	}
 }

@@ -8,12 +8,15 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
 1. Register the two bundled UI icons and their unload cleanup synchronously.
    Read `workspace.layoutReady`, create the registry and inject the previous
    startup CSS snapshot synchronously before the first await.
-2. Create `SettingsWriter`, `DeviceLocalStore` and `ReloadQueue`. Read and
-   validate `data.json`; load definitions and ordinary settings. A legacy
-   `autocomplete.enabled: false` is normalized to `true` and flushed through the
-   ordinary migration-save path. Unreadable, unsupported or unexpectedly missing
-   settings freeze writes. A first install stays provisionally frozen until the
-   layout-ready check.
+2. Create `SettingsWriter`, `DeviceLocalStore`, `ReloadQueue` and the
+   `SettingsRecoveryService` (`plugin.recovery`). Read and validate `data.json`
+   through `loadSettingsSafely()`; load definitions and ordinary settings. A
+   legacy `autocomplete.enabled: false` is normalized to `true` and flushed
+   through the ordinary migration-save path. Unreadable, unsupported or
+   unexpectedly missing settings freeze writes, and so does any other error
+   while loading: the built-ins are shown and `onload` continues, so the
+   settings tab stays reachable. A first install stays provisionally frozen
+   until the layout-ready check.
 3. Prepare the saved language, report any palette consolidation, publish the
    active theme's rendering ownership, and initialize real CSS. Theme inspection
    only affects appearance and grouping of existing definitions.
@@ -21,6 +24,8 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
    startup entrance animation when appropriate. Initialize icons and instantiate
    `ManualCalloutDiscovery`; constructing it reads no notes and registers no events.
 5. Register Outline integration, custom commands, registry change listeners,
+   the paused-saving indicator and once-a-minute recheck
+   (`registerPausedIndicator`, `registerPausedRecheck`),
    settings UI, fixed commands, the Quick insert ribbon button,
    autocomplete, context menu and public API.
    Register the occurrence ItemView/command and vault/editor invalidations. Index construction
@@ -49,7 +54,9 @@ request is deduplicated against the committed file.
 ## External settings changes
 
 Desktop settings events pass through `ReloadQueue`. Foreground checks use the
-same queue on the real plugin. Calls arriving during an adoption request another
+same queue on the real plugin. `onExternalSettingsChange` first waits for launch
+to finish loading settings: boot rebuilds the registry under a hold, and an
+adoption started meanwhile would rebuild it again underneath. Calls arriving during an adoption request another
 read after it; calls arriving during a preview or settings write are deferred.
 Closing a modal, clearing a preview, or finishing a write releases a pending reload.
 
@@ -61,7 +68,11 @@ This chapter describes when those operations are wired into the plugin lifecycle
 
 ## Unload
 
-Destroy the settings writer first, then the icon/locale services, manual discovery,
+Close the settings writer first (`SettingsWriter.close()`): from that moment it
+reports itself destroyed and refuses new saves, but a write already under way
+finishes and one last pass writes any change made since, before the writer is
+destroyed. Destroying it at once used to cancel the pass carrying a change made a
+moment before closing. Then close the icon/locale services, manual discovery,
 reload queue and CSS injector. Shutdown is terminal: deferred asset reads and
 downloads cannot publish artwork/translations, start cache writes, repaint or
 notify after their service has been destroyed. Already-started adapter writes and

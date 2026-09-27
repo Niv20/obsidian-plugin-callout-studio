@@ -29,6 +29,11 @@ The importer reports unsupported or invalid entries before applying the valid da
 It does not scan, import, enable, disable, or modify existing files in the
 vault's CSS snippets folder.
 
+Before applying anything, Callout Studio saves a copy of your current setup to
+its [backups folder](17-syncing-and-backups.md#automatic-backups). While saving
+is paused, the import is refused and the window stays open, so you can try again
+once saving works.
+
 ### What transfers
 
 | Source | Transferred | Limitations |
@@ -51,7 +56,16 @@ size limit, so a small compressed file can still be rejected.
 
 ## Import a Callout Studio backup
 
-Choose the Callout Studio backup format when you want to bring back a setup that was previously exported from Callout Studio. For backup details, sync guidance, and recovery steps, see [Syncing & backups](17-syncing-and-backups.md).
+Choose the Callout Studio backup format when you want to bring back a setup that was previously exported from Callout Studio. To return to a version saved automatically, [Restore an earlier setup](17-syncing-and-backups.md#restore-an-earlier-setup) is simpler: it lists those versions for you.
+
+Before anything changes, Callout Studio shows what the file will do: how many callout types it adds, how many existing ones it replaces with the file's version, and how many groups of settings it restores. If the file has problems, the report lists them instead. Then a copy of your current setup is saved to the backups folder.
+
+- Callouts with the same id are replaced by the file's version; others are added.
+- Only the setting groups the file contains are restored. A backup made before a newer setting existed leaves that setting as it is.
+- Saved palettes, uploaded pictures and custom commands are merged by id, so your other ones stay.
+- While saving is paused, **Import** is unavailable. If the import is displayed but could not be saved, a message says so.
+
+For sync guidance and recovery steps, see [Syncing & backups](17-syncing-and-backups.md).
 
 ## Export a CSS snippet
 

@@ -49,6 +49,7 @@ import {
 	stubReport,
 	type Harness,
 } from "./support/pluginImportHarness";
+import { savingWriter } from "./support/importSafetyStubs";
 
 const FOUND = { dataJson: "[1, 2, 3]" };
 const COPY = ADMONITION_IMPORT.copy;
@@ -1276,6 +1277,42 @@ describe("the plugin import window: closing on a phone", () => {
 			assert.deepEqual(h.rec.applied, ["vault"], "a second tap imports nothing");
 		} finally {
 			phone.restore();
+			h.destroy();
+		}
+	});
+});
+
+describe("the plugin import window: keeping a way back", () => {
+	it("saves a backup of this plugin's settings before applying", async () => {
+		const h = harness(FOUND);
+		try {
+			h.modal.onOpen();
+			await settle();
+			importButton(h).fire("click");
+			await settle();
+			assert.deepEqual(h.rec.applied, ["vault"]);
+			assert.equal(h.backups().length, 1);
+		} finally {
+			h.destroy();
+		}
+	});
+
+	it("applies nothing while saving is paused, and keeps the window open to try again", async () => {
+		const notices: string[] = [];
+		(globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ = notices;
+		const h = harness({ ...FOUND, writer: { ...savingWriter(), isFrozen: true } });
+		try {
+			h.modal.onOpen();
+			await settle();
+			importButton(h).fire("click");
+			await settle();
+			assert.deepEqual(h.rec.applied, []);
+			assert.equal(h.backups().length, 0);
+			assert.ok(notices.includes(en["notice.blockedWhilePaused"]!));
+			assert.equal(h.isClosed(), false);
+			assert.equal(ready(importButton(h)), true);
+		} finally {
+			delete (globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__;
 			h.destroy();
 		}
 	});

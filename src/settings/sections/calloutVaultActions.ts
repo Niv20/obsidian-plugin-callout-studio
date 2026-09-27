@@ -31,6 +31,9 @@ import {
 } from "../../utils/vaultCalloutScanner";
 import { t } from "../../i18n";
 import { activeThemeName } from "../../manager/theme/customCssApi";
+import { blockedWhilePaused } from "../pausedGuard";
+import { noticeWithUndo } from "../rewriteUndoNotice";
+import { NoteRewriteJournal } from "../../utils/noteRewriteUndo";
 import type { App } from "obsidian";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
@@ -39,16 +42,21 @@ const convertVaultCalloutsToPlainText = (
 	app: App,
 	def: CalloutDefinition,
 	ids: string[],
+	journal: NoteRewriteJournal,
 ): Promise<{ files: number; blocks: number }> =>
 	// The display name is what a heading or inline usage falls back to: those
 	// carry no text besides the token, so it is all they have left.
-	convertCalloutsToPlainTextInVault(app, ids, def.displayName, true);
+	convertCalloutsToPlainTextInVault(app, ids, def.displayName, true, journal);
 
 export async function handleCalloutDelete(
 	ctx: SettingsSectionContext,
 	def: CalloutDefinition,
 	knownUsage?: { fileCount: number; totalCount: number },
 ): Promise<void> {
+	// The notes are converted first and the row removed after. While saving is
+	// paused the removal would be lost on restart and the type would come back
+	// with its usages already gone, so neither half starts.
+	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
 	const usage = knownUsage ?? (await countCalloutUsages(ctx.app, allIds));
 
@@ -63,20 +71,14 @@ export async function handleCalloutDelete(
 		await handleCalloutReplace(ctx, def);
 		return;
 	}
+	// Saving can pause while the dialog is open.
+	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 
 	// Recheck every note even after a zero count: confirmation may outlive sync.
+	const journal = new NoteRewriteJournal();
+	let converted: { files: number; blocks: number };
 	try {
-		const result = await convertVaultCalloutsToPlainText(
-			ctx.app,
-			def,
-			allIds,
-		);
-		if (result.blocks > 0) new Notice(
-			t("vault.convertedToPlainText", {
-				blocks: String(result.blocks),
-				files: String(result.files),
-			}),
-		);
+		converted = await convertVaultCalloutsToPlainText(ctx.app, def, allIds, journal);
 	} catch (error) {
 		console.warn("[callout-studio] deletion stopped after incomplete conversion", error);
 		new Notice(t("notice.calloutDeleteIncomplete"), 10000);
@@ -87,6 +89,10 @@ export async function handleCalloutDelete(
 	// CodeMirror buffer that has not yet caught up with the conversion above —
 	// it would come back as an uncustomized fallback row, reading as "delete
 	// only reset my callout". Every id form goes in, not just the primary one.
+	// Cleanup drops artwork used only by this type. Keep its cached variants
+	// with Undo so restoring it also works offline or without the source pack.
+	const artwork = ctx.plugin.registry.iconSvgCache.filter(entry =>
+		entry.pack === def.icon.type && entry.name === def.icon.value);
 	ctx.plugin.registry.remove(def.id);
 	ctx.plugin.registry.cleanupUnusedIconSvgs();
 	// Awaited, and not just for tidiness: cleanupUnusedIconSvgs does not notify,
@@ -94,6 +100,23 @@ export async function handleCalloutDelete(
 	// rides on whatever save happens next.
 	await ctx.plugin.saveSettings();
 	ctx.display();
+	if (converted.blocks === 0) return;
+	// Undo puts the notes back, and the type they use with them.
+	journal.afterUndo = async () => {
+		if (ctx.plugin.settingsWriter.isFrozen || ctx.plugin.registry.has(def.id)) return;
+		for (const entry of artwork) {
+			if (!ctx.plugin.registry.findIconSvg(entry.pack, entry.name, entry.variant)) {
+				ctx.plugin.registry.addIconSvg(entry);
+			}
+		}
+		ctx.plugin.registry.add(structuredClone(def));
+		await ctx.plugin.saveSettings();
+		ctx.display();
+	};
+	noticeWithUndo(ctx.app, t("vault.convertedToPlainText", {
+		blocks: String(converted.blocks),
+		files: String(converted.files),
+	}), journal);
 }
 
 export async function handleClearCalloutUsages(
@@ -123,18 +146,17 @@ export async function handleClearCalloutUsages(
 	}
 
 	let result: { files: number; blocks: number };
-	try { result = await convertVaultCalloutsToPlainText(ctx.app, def, allIds); }
+	const journal = new NoteRewriteJournal();
+	try { result = await convertVaultCalloutsToPlainText(ctx.app, def, allIds, journal); }
 	catch (error) {
 		console.warn("[callout-studio] clearing callout usages was incomplete", error);
 		new Notice(t("notice.calloutDeleteIncomplete"), 10000);
 		return;
 	}
-	new Notice(
-		t("vault.convertedToPlainText", {
-			blocks: String(result.blocks),
-			files: String(result.files),
-		}),
-	);
+	noticeWithUndo(ctx.app, t("vault.convertedToPlainText", {
+		blocks: String(result.blocks),
+		files: String(result.files),
+	}), journal);
 	ctx.display();
 }
 
@@ -176,6 +198,7 @@ export async function handleCalloutReplace(
 		// leave `> [!danger] Warning` behind. Only a title that is exactly the
 		// old name is touched — one the user wrote themselves is theirs.
 		const target = otherCallouts.find((c) => c.id === result.replaceWith);
+		const journal = new NoteRewriteJournal();
 		const replaced = await replaceCalloutIdsInVault(
 			ctx.app,
 			allIds,
@@ -183,8 +206,10 @@ export async function handleCalloutReplace(
 			target && target.displayName !== def.displayName
 				? { from: def.displayName, to: target.displayName }
 				: undefined,
+			false,
+			journal,
 		);
-		new Notice(t("vault.filesUpdated", { count: String(replaced) }));
+		noticeWithUndo(ctx.app, t("vault.filesUpdated", { count: String(replaced) }), journal);
 	} else {
 		new Notice(t("vault.filesUpdated", { count: "0" }));
 	}

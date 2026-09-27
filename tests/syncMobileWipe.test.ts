@@ -71,16 +71,19 @@ class Disk {
  * device has no way back to the settings file after `onload`.
  */
 function phone(name: string, disk: Disk) {
+	// Backups only; data.json itself is `disk`, reached through loadData/saveData.
+	const files = new Map<string, string>();
 	const app = {
 		appId: name,
 		vault: {
 			getName: () => "shared-vault",
 			configDir: ".obsidian",
 			adapter: {
-                mkdir: () => Promise.resolve(),
-                write: () => Promise.resolve(),
-                list: () => Promise.resolve({ files: [], folders: [] }),
-                remove: () => Promise.resolve(),
+				mkdir: () => Promise.resolve(),
+				write: (path: string, text: string) => { files.set(path, text); return Promise.resolve(); },
+				read: (path: string) => Promise.resolve(files.get(path) ?? ""),
+				list: () => Promise.resolve({ files: [...files.keys()], folders: [] }),
+				remove: (path: string) => { files.delete(path); return Promise.resolve(); },
 				exists: () => Promise.resolve(disk.content !== null),
 			},
 			getMarkdownFiles: () => [],
@@ -265,34 +268,6 @@ describe("a phone whose data.json has not arrived", () => {
 		assert.strictEqual(disk.content, null, "the file exists too early");
 	});
 
-	it("leaves the next launch of a confirmed fresh install alone", async () => {
-		// The other direction of the freeze, and the reason the welcome screen's
-		// write is load bearing rather than ceremony. A launch that confirms it
-		// is fresh must end up with a `data.json`: the device is marked indexed
-		// either way, so a second launch that found no file would take the
-		// `absent && hasIndex` branch instead — read-only, with a notice telling
-		// the user their settings have gone missing when they never had any.
-		storage.clear();
-		const disk = new Disk();
-		const first = phone("new-phone", disk);
-		assert.strictEqual((await first.boot()).isFreshInstall, true);
-		assert.strictEqual(await first.layoutReady(), true);
-
-		// What `maybeShowWelcomeOnLaunch` does once the launch is confirmed.
-		first.registry.settings.welcomeSeen = true;
-		await first.save();
-		assert.ok(disk.content !== null, "a confirmed fresh install wrote nothing");
-
-		const second = phone("new-phone", disk);
-		assert.strictEqual((await second.boot()).isFreshInstall, false);
-		second.registry.add(authored("made-on-the-second-launch"));
-		await second.save();
-		assert.ok(
-			(disk.content ?? "").includes("made-on-the-second-launch"),
-			"the second launch came up read-only",
-		);
-	});
-
 	it("creates no file at all on a launch that only found built-ins", async () => {
 		// A fresh install writes when it has something to say, not merely
 		// because it started. On a device a synced vault is still reaching,
@@ -457,34 +432,6 @@ describe("a data.json that turns up after startup", () => {
 		p.registry.add(authored("first-one"));
 		await p.save();
 		assert.ok(disk.writes > 0, "a real fresh install was blocked");
-	});
-});
-
-describe("the way out of a frozen session", () => {
-	it("writes once the user asks for it explicitly", async () => {
-		// A user who deleted `data.json` themselves to start over gets the same
-		// freeze as a sync victim, because nothing can tell them apart. The
-		// notice carries the escape hatch; this is what its button does.
-		storage.clear();
-		const disk = vaultWithUserCallouts();
-		const first = phone("phone", disk);
-		await first.boot();
-
-		disk.content = null;
-		const second = phone("phone", disk);
-		await second.boot();
-
-		second.registry.add(authored("starting-over"));
-		await second.save();
-		assert.strictEqual(disk.writes, 0, "wrote while frozen");
-
-		second.writer.thaw();
-		await second.save();
-		assert.ok(disk.writes > 0, "thaw did not release the writer");
-		assert.ok(
-			(disk.content ?? "").includes("starting-over"),
-			"the user's callout was not saved",
-		);
 	});
 });
 

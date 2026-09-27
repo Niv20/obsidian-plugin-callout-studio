@@ -224,8 +224,6 @@ export const ms: Record<string, string> = {
 	"settings.resetAllDesc":
 		"Memadam semua callouts pengguna, menetapkan semula callouts terbina dalam, gaya global, palet warna yang disimpan, penyesuaian menu klik kanan, dan SVG Material yang dimuat turun.",
 	"settings.resetAllButton": "Set semula semua",
-	"settings.resetAllConfirm":
-		"Ini akan memadam semua callouts tersuai, menetapkan semula callouts terbina dalam, gaya global, palet warna yang disimpan, penyesuaian menu klik kanan dan semua SVG Material yang dicache. Tindakan ini tidak boleh dibatalkan. Adakah anda pasti?",
 	"notice.resetAllDone": "Semua telah ditetapkan semula ke lalai.",
 
 	"notice.customCommandsRemoved":
@@ -255,7 +253,6 @@ export const ms: Record<string, string> = {
 		"Callout Studio tidak dapat membaca fail tetapannya, jadi jenis callout anda hilang daripada sesi ini. Tiada apa yang ditulis dan fail pada cakera tidak berubah — muat semula Obsidian untuk mencuba lagi.",
 	"notice.settingsMissing":
 		"Fail tetapan Callout Studio hilang, jadi jenis callout anda hilang daripada sesi ini. Tiada apa yang ditulis — jika anda menyegerakkan vault ini, biarkan penyegerakan selesai dan muat semula Obsidian sebelum membuat sebarang perubahan.",
-	"notice.settingsMissingAction": "Cipta fail tetapan baharu",
 	"notice.nothingToWrap": "Tiada apa untuk dibalut.",
 	"notice.cursorNotInsideCallout": "Kursor tidak berada dalam callout.",
 	"notice.autocompleteTargetMoved":
@@ -679,7 +676,6 @@ export const ms: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Padam arahan",
-	"confirm.titleResetAll": "Set semula semua callout",
 	"confirm.titleResetCallout": "Set semula callout",
 	"confirm.titleDeletePalette": "Padam palet",
 	"confirm.titleDeleteImage": "Padam gambar",
@@ -1053,12 +1049,9 @@ export const ms: Record<string, string> = {
 	"notice.legacyDiscoveryArchiveFailed": "Salinan pemulihan naik taraf tidak dapat disiapkan. Cache penemuan setempat dan CSS permulaan yang terdahulu dikekalkan tanpa perubahan. Semak akses tulis storan dan ruang kosong, kemudian mulakan semula Obsidian untuk mencuba lagi.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Dijeda: callout tiada. Temui atau cipta untuk memulihkan arahan ini, atau edit arahan untuk memilih jenis lain.",
-	"confirm.startFresh": "Ini mencipta fail tetapan baharu daripada jenis callout dan tetapan yang dipaparkan sekarang. Sebarang salinan pemulihan boleh baca sebelumnya disimpan dalam sandaran. Jika fail yang hilang masih dalam perjalanan dari peranti lain, atau masih menyegerak, ia akan digantikan di mana-mana — termasuk pada peranti yang masih mempunyai callout anda.\nLakukan ini hanya jika anda memadamkan fail itu sendiri, atau anda pasti ia tidak akan kembali.",
-	"confirm.startFreshOk": "Cipta fail tetapan baharu",
 	"confirm.titleRestoreSettings": "Pulihkan tetapan ini",
 	"confirm.titleCreateSettingsFile": "Cipta fail tetapan",
 	"confirm.restoreDisplayedSettings": "Ini menyimpan jenis callout dan pilihan yang sedang dipaparkan ke fail tetapan pada peranti ini dan menyambung semula penyimpanan. Sebarang salinan pemulihan tempatan yang boleh dibaca disandarkan dahulu.\nSebelum meneruskan, biarkan perkhidmatan penyegerakan anda selesai dan semak sama ada peranti lain mempunyai tetapan yang lebih baharu yang mahu anda kekalkan. Perkhidmatan penyegerakan anda mungkin menghantar fail yang dipulihkan ini ke peranti anda yang lain.\nFail disemak sekali lagi sebelum disimpan. Jika tetapan sedia ada ditemui, tetapan itu dikekalkan dan pemulihan mungkin meminta anda menyemak sekali lagi.",
-	"confirm.titleStartFresh": "Cipta fail tetapan baharu",
 	"notice.settingsBackupFailed": "Pemulihan tetapan tidak dapat diteruskan kerana sandaran keselamatan tidak dapat disimpan. Semak storan yang tersedia dan kebenaran tulis, kemudian cuba lagi.",
 	"notice.settingsBackupSaved": "Salinan pemulihan definisi callout tempatan disimpan sebelum menggunakan tetapan yang masuk: {{path}}.",
 	"notice.settingsChangedElsewhere": "Tetapan Callout Studio telah diubah pada peranti lain, jadi perubahan ini tidak disimpan. Tetapan peranti lain sedang dimuatkan sekarang — sila buat perubahan itu sekali lagi.",
@@ -1066,11 +1059,9 @@ export const ms: Record<string, string> = {
 	"notice.settingsNotSaved": "Perubahan itu tidak disimpan. Callout Studio tidak dapat menggunakan fail tetapannya semasa Obsidian dimulakan, jadi tiada apa ditulis pada peranti ini — perubahan anda akan kekal sehingga anda menutup Obsidian. Lihat Tetapan → Callout Studio untuk apa yang perlu dilakukan.",
 	"saveStatus.changed": "Fail tetapan berubah semasa anda mengedit. Draf anda masih tersedia. Pilih Cuba semula simpan dan pemulihan untuk memuatkan tetapan yang masuk, kemudian semak draf anda dan simpan semula.",
 	"saveStatus.missing": "Penyimpanan dijeda kerana fail tetapan hilang. Ini boleh berlaku selepas pemasangan semula atau semasa penyegerakan masih berjalan. Selesaikan penyegerakan dan cuba lagi. Untuk menggantikan fail yang hilang dengan sengaja, gunakan Cipta fail tetapan baharu dalam tetapan Callout Studio.",
-	"saveStatus.newFile": "Cipta fail tetapan baharu",
 	"saveStatus.restoreSettings": "Pulihkan tetapan ini",
 	"saveStatus.createSettingsFile": "Cipta fail tetapan",
 	"saveStatus.checkAgain": "Semak sekali lagi",
-	"saveStatus.stillMissing": "Fail tetapan masih tiada. Menyemak sekali lagi tidak menciptanya semula. Biarkan penyegerakan selesai dan jadikan peti besi tersedia di luar talian. Jika fail dipadamkan, pulihkan sandaran atau gunakan tindakan pemulihan dalam tetapan Callout Studio pada peranti ini untuk menyimpan tetapan yang dipaparkan.",
 	"saveStatus.recoverInSettings": "Untuk memulihkan fail yang hilang pada peranti ini, buka tetapan Callout Studio. Sebelum menutup editor ini, salin sebarang suntingan yang belum disimpan yang mahu anda kekalkan; suntingan itu belum disimpan.",
 	"saveStatus.openSettings": "Buka tetapan Callout Studio",
 	"notice.openSettingsFailed": "Tetapan Callout Studio tidak dapat dibuka. Buka Tetapan → Callout Studio untuk memilih tindakan.",
@@ -1141,4 +1132,100 @@ export const ms: Record<string, string> = {
 	"portable.errorBusy": "Penukaran lain sedang berjalan. Tunggu sehingga selesai.",
 	"portable.error": "Vault tidak dapat dibaca atau dikemas kini dengan selamat. Periksa akses fail, kemudian cuba lagi.",
 	"settings.maintenance": "Zon bahaya",
+	// Sync safety hardening
+	"saveStatus.stillMissingAdvice":
+		"Fail tetapan masih hilang. Menyemak semula tidak akan mencipta semula fail itu. Biarkan penyegerakan selesai dan pastikan vault tersedia secara luar talian. Jika fail telah dipadam, pilih Ganti fail tetapan ini, atau pulihkan persediaan lama.",
+	"saveStatus.diagnosis.unavailable":
+		"Peranti ini tidak dapat membuka fail buat masa ini. Ia mungkin masih dimuat turun, vault mungkin tidak tersedia secara luar talian, atau storan tidak bertindak balas. Callout Studio menyemak semula secara automatik.",
+	"saveStatus.diagnosis.empty":
+		"Fail ini kosong, yang biasanya bermaksud penyegerakan telah terganggu. Jika peranti lain masih menyimpan tetapan anda, biarkan ia disegerakkan. Jika tidak, ganti fail itu.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"Fail ini mengandungi penanda konflik cantuman yang belum diselesaikan, contohnya daripada Git. Selesaikan konflik itu dalam alat Git anda, atau ganti fail itu.",
+	"saveStatus.diagnosis.damaged": "Fail ini tidak lengkap atau rosak, jadi ia tidak dapat dibaca sebagai tetapan.",
+	"saveStatus.diagnosis.combined":
+		"Perkhidmatan penyegerakan anda telah menggabungkan dua versi fail itu, jadi semakan dalamannya tidak lagi sepadan. Tetapan di dalamnya tetap utuh, dan menggantikan fail itu akan mengekalkannya.",
+	"saveStatus.diagnosis.invalidEntries":
+		"Fail ini mengandungi entri yang tidak dapat digunakan oleh Callout Studio, contohnya jenis callout yang sama disenaraikan dua kali.",
+	"saveStatus.replaceUnreadable": "Ganti fail tetapan",
+	"saveStatus.discardRecoveryCopy": "Buang salinan pemulihan",
+	"saveStatus.openRecovery": "Pulihkan persediaan lama",
+	"saveStatus.readOnlyWhilePaused":
+		"Tetapan tidak dapat diubah sehingga penyimpanan berfungsi semula, jadi tiada apa yang anda ubah di sini akan hilang. Anda masih boleh eksport persediaan anda.",
+	"statusBar.paused": "Penyimpanan dijeda",
+	"statusBar.pausedTooltip": "Callout Studio tidak menyimpan perubahan tetapan. Klik untuk lihat sebabnya.",
+	"statusBar.pausedNotice": "Callout Studio tidak menyimpan perubahan tetapan buat masa ini.",
+	"notice.replaceUnreadableUnavailable":
+		"Fail tetapan tidak dapat diganti buat masa ini: ia sedang berubah, atau peranti ini tidak dapat membacanya. Cuba lagi sebentar lagi.",
+	"notice.recoveryStorageUnavailable":
+		"Storan pemulihan peranti ini tidak bertindak balas, jadi salinan itu tidak dapat dibuang. Mulakan semula Obsidian, kemudian cuba lagi.",
+	"recovery.title": "Pulihkan persediaan lama",
+	"recovery.intro":
+		"Callout Studio menyimpan versi lama persediaan anda pada peranti ini dan dalam folder sandaran plugin. Memulihkan salah satu akan menggantikan persediaan semasa anda pada setiap peranti yang disegerakkan. Sandaran persediaan semasa disimpan dahulu.",
+	"recovery.pausedHint": "Penyimpanan dijeda, jadi pemulihan tidak tersedia sehingga isu itu diselesaikan. Anda masih boleh eksport salinan.",
+	"recovery.loading": "Mencari versi lama…",
+	"recovery.empty": "Tiada versi lama ditemui.",
+	"recovery.sectionHistory": "Disimpan pada peranti ini",
+	"recovery.sectionBackups": "Sandaran",
+	"recovery.sectionCopies": "Salinan lain fail tetapan",
+	"recovery.originThisDevice": "Peranti ini",
+	"recovery.originOtherDevice": "Peranti lain",
+	"recovery.originOlderVersion": "Disimpan oleh versi lebih lama",
+	"recovery.unreadable": "Tidak dapat dibaca sebagai tetapan",
+	"recovery.same": "Sama seperti persediaan semasa anda",
+	"recovery.summary": "{{callouts}} jenis callout tersimpan, {{count}} perbezaan daripada sekarang",
+	"recovery.export": "Eksport salinan",
+	"recovery.restore": "Pulihkan",
+	"recovery.confirmTitle": "Pulihkan persediaan ini",
+	"recovery.confirmBody":
+		"Persediaan semasa anda digantikan dengan yang dari {{when}} ({{count}} perbezaan). Sandaran persediaan semasa anda disimpan dahulu, dan perkhidmatan penyegerakan anda menghantar persediaan yang dipulihkan itu ke peranti lain anda.",
+	"recovery.restored": "Persediaan dari {{when}} telah dipulihkan.",
+	"recovery.stale":
+		"Tiada yang dipulihkan: tetapan anda telah berubah atau tidak dapat disemak. Buka tetingkap ini semula dan semak senarai itu.",
+	"recovery.backupFailed":
+		"Tiada yang dipulihkan: sandaran persediaan semasa anda tidak dapat disimpan dahulu. Semak storan yang tersedia, kemudian cuba lagi.",
+	"recovery.failed": "Persediaan tidak dapat dipulihkan. Tiada apa yang berubah.",
+	"notice.unsavedChangesReplaced":
+		"Sesetengah perubahan yang dibuat pada peranti ini belum disimpan, dan tetapan lebih baharu daripada peranti lain telah menggantikannya. Versi anda disimpan dahulu: buka Pulihkan persediaan lama dalam tetapan Callout Studio untuk mendapatkannya semula.",
+	"notice.diagnosticsCopied": "Diagnostik penyegerakan disalin.",
+	"notice.diagnosticsFailed": "Diagnostik penyegerakan tidak dapat disalin.",
+	"notice.recoveryCopyStale":
+		"Tetapan anda telah disimpan, tetapi salinan pemulihan peranti ini tidak dapat dikemas kini. Semak storan yang tersedia pada peranti ini. Callout Studio akan cuba lagi pada perubahan seterusnya anda.",
+	"notice.blockedWhilePaused":
+		"Penyimpanan dijeda, jadi perubahan ini tidak dapat disimpan buat masa ini. Selesaikan dahulu masalah penyimpanan yang ditunjukkan dalam tetapan Callout Studio.",
+	"welcome.syncNote":
+		"Sudah menggunakan Callout Studio pada peranti lain? Biarkan perkhidmatan penyegerakan anda selesai dahulu. Callout dan tetapan anda akan muncul di sini sebaik sahaja ia tiba.",
+	"settings.resetAllConfirmFull":
+		"Ini memadam setiap jenis callout tersuai, gambar yang dimuat naik dan arahan tersuai, serta menetapkan semula callout terbina dalam, gaya global, palet warna tersimpan, menu klik kanan, tetapan callout tajuk dan sebaris, serta gaya sandaran. Sandaran persediaan semasa anda disimpan dahulu dalam folder sandaran plugin. Perkhidmatan penyegerakan anda mungkin menghantar set semula itu ke peranti lain anda.",
+	"settings.resetBackupFailed":
+		"Tiada yang ditetapkan semula: sandaran persediaan semasa anda tidak dapat disimpan dahulu. Semak storan yang tersedia, kemudian cuba lagi.",
+	"settings.resetNotSaved":
+		"Set semula itu dipaparkan tetapi belum dapat disimpan, jadi fail tetapan anda masih menyimpan persediaan sebelumnya. Semak status penyimpanan dalam tetapan Callout Studio.",
+	"settings.recovery": "Persediaan lama",
+	"settings.recoveryDesc": "Pulihkan versi persediaan anda yang disimpan sebelum ini pada peranti ini atau dalam folder sandaran plugin.",
+	"settings.recoveryButton": "Pulihkan persediaan lama",
+	"settings.diagnostics": "Diagnostik penyegerakan",
+	"settings.diagnosticsDesc":
+		"Salin ringkasan cara penyimpanan dan penyegerakan berfungsi, untuk disertakan dalam laporan pepijat. Ia tidak mengandungi sebarang callout atau tetapan.",
+	"settings.diagnosticsButton": "Salin diagnostik",
+	"confirm.titleResetEverything": "Tetapkan semula semuanya",
+	"confirm.titleReplaceUnreadable": "Ganti fail tetapan",
+	"confirm.replaceUnreadable":
+		"Salinan tepat fail semasa disimpan dahulu ke folder sandaran plugin. Fail itu kemudian digantikan dengan persediaan yang ditunjukkan di sini, dan perkhidmatan penyegerakan anda menghantarnya ke peranti lain anda.",
+	"confirm.replaceUnreadableSalvage":
+		"Salinan tepat fail semasa disimpan dahulu ke folder sandaran plugin. Tetapan di dalamnya digabungkan dengan persediaan yang ditunjukkan di sini, dan fail itu ditulis semula supaya setiap peranti dapat membacanya semula.",
+	"confirm.titleDiscardRecoveryCopy": "Buang salinan pemulihan",
+	"confirm.discardRecoveryCopy":
+		"Salinan pemulihan peranti ini tidak dapat dibaca, jadi penyimpanan dijeda pada peranti ini. Salinan tepatnya disimpan dahulu ke folder sandaran plugin. Ia kemudian digantikan dengan persediaan yang ditunjukkan di sini. Fail tetapan anda tidak diubah.",
+	"vault.undoRewrite": "Buat asal",
+	"vault.undoRestored": "{{count}} nota dipulihkan.",
+	"vault.undoPartial":
+		"{{count}} nota dipulihkan. {{skipped}} nota telah berubah selepas penulisan semula, jadi ia dibiarkan seperti sedia ada.",
+	"import.confirmTitle": "Import sandaran Callout Studio",
+	"import.confirmSummary":
+		"Ini menambah {{added}} jenis callout, menggantikan {{replaced}} yang sedia ada dengan versi daripada fail, dan memulihkan {{settings}} kumpulan tetapan daripada fail itu. Sandaran persediaan semasa anda disimpan dahulu.",
+	"import.confirmAction": "Import",
+	"import.backupFailed":
+		"Tiada yang diimport: sandaran persediaan semasa anda tidak dapat disimpan dahulu. Semak storan yang tersedia, kemudian cuba lagi.",
+	"import.notSaved":
+		"Import itu dipaparkan tetapi belum dapat disimpan. Semak status penyimpanan dalam tetapan Callout Studio.",
 };

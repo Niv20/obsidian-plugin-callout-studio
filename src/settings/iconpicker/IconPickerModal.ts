@@ -18,6 +18,7 @@ import type {
 import type { IconVariantState } from "../../icons/types";
 import { ICON_SOURCE_IDS, getSource, packFor } from "../../icons/registry";
 import type { PackDataStore } from "../../icons/PackDataStore";
+import type { DeviceLocalStore } from "../../manager/DeviceLocalStore";
 import {
 	MATERIAL_DEFAULT_STYLE,
 	MATERIAL_DEFAULT_WEIGHT,
@@ -69,6 +70,11 @@ export interface IconPickerPlugin {
 	app: App;
 	settings: PluginSettings;
 	saveSettings(): Promise<void>;
+	/**
+	 * Where the picker was left, remembered on this device rather than in the
+	 * synced settings. The synced fields still seed a device that has none.
+	 */
+	localState?: Pick<DeviceLocalStore, "iconCategory" | "setIconCategory" | "emojiSkinTone" | "setEmojiSkinTone">;
 	ensureIconArtwork(icon: CalloutIcon): Promise<void>;
 	icons: { packs: PackDataStore };
 	/**
@@ -367,7 +373,7 @@ export class IconPicker extends Modal {
 				emojiSkinTone:
 					this.currentIcon?.type === "emoji"
 						? emojiToneOf(this.currentIcon.value)
-						: (sources.lastEmojiSkinTone ?? 0),
+						: (this.plugin.localState?.emojiSkinTone ?? sources.lastEmojiSkinTone ?? 0),
 			};
 		}
 		return {};
@@ -384,8 +390,10 @@ export class IconPicker extends Modal {
 			if (variants.tablerStyle) {
 				sources.tablerStyleDefault = variants.tablerStyle;
 			}
-		} else if (id === "emoji" && variants.emojiSkinTone !== undefined) {
-			sources.lastEmojiSkinTone = variants.emojiSkinTone;
+		} else if (id === "emoji") {
+			// Memory, not a setting: kept on this device and never saved.
+			if (variants.emojiSkinTone !== undefined) this.plugin.localState?.setEmojiSkinTone(variants.emojiSkinTone);
+			return;
 		}
 		void this.plugin.saveSettings();
 	}
@@ -396,13 +404,11 @@ export class IconPicker extends Modal {
 		// category is left alone.
 		const current = this.currentIcon ? packFor(this.currentIcon) : undefined;
 		if (current?.id === id) return "";
-		return this.plugin.settings.iconSources.lastCategory?.[id] ?? "";
+		return this.plugin.localState?.iconCategory(id) ?? this.plugin.settings.iconSources.lastCategory?.[id] ?? "";
 	}
 
 	private saveCategory(id: IconSourceId, category: string): void {
-		const sources = this.plugin.settings.iconSources;
-		sources.lastCategory = { ...sources.lastCategory, [id]: category };
-		void this.plugin.saveSettings();
+		this.plugin.localState?.setIconCategory(id, category);
 	}
 
 	// ── Preview & confirm ───────────────────────────────────────────────

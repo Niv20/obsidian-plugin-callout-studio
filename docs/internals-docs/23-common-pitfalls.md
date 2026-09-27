@@ -320,7 +320,7 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   API surface (`registry.exportToJSON()`), not just an internal format.
 - **A settings-level list that merges by id must actually merge, never
   `Object.assign`** — see
-  [Import and export § the three exceptions](15-import-export.md#settings-import-replace-wholesale-except-three-lists-that-merge-by-id).
+  [Import and export § the three exceptions](15-import-export.md#settings-import-restore-the-groups-the-file-carries-three-lists-merge-by-id).
   It's easy to add a new list field and forget this step, and the failure
   mode (silent data loss on import) is severe and easy to miss in testing.
 

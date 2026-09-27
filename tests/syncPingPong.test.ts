@@ -78,16 +78,19 @@ class Disk {
 type Device = ReturnType<typeof device>;
 
 function device(name: string, disk: Disk) {
+	// Backups only; data.json itself is `disk`, reached through loadData/saveData.
+	const files = new Map<string, string>();
 	const app = {
 		appId: name,
 		vault: {
 			getName: () => "shared-vault",
 			configDir: ".obsidian",
 			adapter: {
-                mkdir: () => Promise.resolve(),
-                write: () => Promise.resolve(),
-                list: () => Promise.resolve({ files: [], folders: [] }),
-                remove: () => Promise.resolve(),
+				mkdir: () => Promise.resolve(),
+				write: (path: string, text: string) => { files.set(path, text); return Promise.resolve(); },
+				read: (path: string) => Promise.resolve(files.get(path) ?? ""),
+				list: () => Promise.resolve({ files: [...files.keys()], folders: [] }),
+				remove: (path: string) => { files.delete(path); return Promise.resolve(); },
 				// The file is there whenever the disk holds anything at all,
 				// including the empty string — which is the case that matters.
 				exists: () => Promise.resolve(disk.content !== null),

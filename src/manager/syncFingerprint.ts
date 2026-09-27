@@ -3,10 +3,14 @@
  */
 import { canonical, content } from "./syncTree";
 export function syncFingerprint(data: unknown, stamps: unknown): string {
-	const json = canonical({ body: content(data), stamps });
+	return hash64(canonical({ body: content(data), stamps }));
+}
+
+/** 16 hex digits identifying `text`. Persisted in files: never change it. */
+export function hash64(text: string): string {
 	let a = 0x811c9dc5, b = 0x9e3779b9;
-	for (let i = 0; i < json.length; i++) {
-		const code = json.charCodeAt(i);
+	for (let i = 0; i < text.length; i++) {
+		const code = text.charCodeAt(i);
 		a = Math.imul(a ^ code, 0x01000193);
 		b = Math.imul(b ^ code, 0x85ebca6b);
 		b ^= b >>> 13;

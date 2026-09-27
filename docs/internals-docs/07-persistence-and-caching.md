@@ -20,8 +20,9 @@ This chapter keeps the storage inventory and cache-specific behavior.
 | Store | Location and purpose |
 | --- | --- |
 | Primary configuration | `<plugin-dir>/data.json`; durable definitions, preferences, in-use artwork and sync metadata. |
-| Device recovery checkpoint | App IndexedDB, separate from the vault; one snapshot per vault/configuration-profile/plugin. |
-| Recovery backups | `<plugin-dir>/backups/`; retained versions produced by guarded replacement/recovery. |
+| Device recovery checkpoint | App IndexedDB (`CalloutStudioRecovery`), separate from the vault; one snapshot per vault/configuration-profile/plugin. |
+| Device history | App IndexedDB (`CalloutStudioHistory`, its own database); this device's recent, daily and weekly accepted states, content only. |
+| Recovery backups | `<plugin-dir>/backups/`; verified, content-only copies (no sync envelope), named by time, device and content hash, written before guarded adoption, missing-file restoration, **Reset everything** and every import. |
 | Device UI/prior-use state | Vault-scoped `localStorage`; folds and onboarding/migration markers, never a live definitions cache. |
 
 See the canonical chapter's
@@ -122,9 +123,19 @@ because their previews appear here. See
 
 ## The device-local store
 
-`DeviceLocalStore` v3 stores section folds, prior-install/welcome markers, and
-optional `pending | seen` markers for the one-time personal-CSS-retirement and
-autocomplete-migration notices in vault-scoped browser storage. Each marker is
+`DeviceLocalStore` v3 stores section folds, prior-install/welcome markers, the
+import prompt's dismissal (`importBannerHandled`, for a device that has no
+settings file to record it in), the device's name for backup files
+(`deviceId`), where the icon picker and Quick Insert were left
+(`iconCategories`, `emojiSkinTone`, `quickInsertSource`), and optional
+`pending | seen` markers for the one-time personal-CSS-retirement and
+autocomplete-migration notices in vault-scoped browser storage.
+
+The picker and Quick Insert memory used to be synced settings, and every glance
+at another category wrote `data.json`, which every other device then adopted.
+The synced fields (`iconSources.lastCategory`, `iconSources.lastEmojiSkinTone`,
+`quickInsertSource`) stay in the file for older builds and seed a device that
+has no memory of its own; this build never writes them. Each marker is
 absent for unaffected users and carries no callout id or appearance. `pending`
 is only displayed once the settings writer proves the cleaned registry snapshot
 is durable; it can survive a restart before the UI is ready, and `seen`

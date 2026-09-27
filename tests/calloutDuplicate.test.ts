@@ -204,17 +204,17 @@ describe("failed duplication leaves no speculative row", () => {
 		assertFailure();
 	});
 
-	it("retains and refreshes a durable copy when only the final recovery checkpoint fails", async context => {
-		context.mock.method(console, "error", () => undefined);
+	it("announces a durable copy even when the recovery copy cannot follow it", async context => {
+		// The recovery copy is one more replica; one that lags is not a failed save.
+		context.mock.method(console, "warn", () => undefined);
 		const h = harness(definition(), true); h.state.failCheckpointAt = 2;
 		await h.run();
 		assert.ok(h.registry.get("quiet copy"));
 		assert.ok(h.state.disk.callouts.some(row => row.id === "quiet copy"));
 		assert.equal(h.state.writes, 1);
-		assert.equal(h.writer.status.reason, "recovery-write");
+		assert.equal(h.writer.status.reason, null);
 		assert.equal(h.state.refreshes, 1);
-		assert.equal(h.state.displays, 1);
-		assertFailure();
+		assert.deepEqual(notices, [t("notice.calloutDuplicated", { name: "Quiet copy" })]);
 	});
 });
 

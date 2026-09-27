@@ -231,8 +231,6 @@ export const nl: Record<string, string> = {
 	"settings.resetAllDesc":
 		"Verwijdert alle gebruikerscallouts, zet ingebouwde callouts, globale stijlen (randen, lettertypeschaal, vorm), opgeslagen kleurenpaletten, de aanpassing van het rechtsklikmenu en gedownloade Material SVG's terug.",
 	"settings.resetAllButton": "Alles terugzetten",
-	"settings.resetAllConfirm":
-		"Dit verwijdert alle aangepaste callouts, zet ingebouwde callouts, globale stijlen, opgeslagen kleurenpaletten, de aanpassing van het rechtsklikmenu en alle gecachte Material SVG's terug. Deze actie kan niet ongedaan worden gemaakt. Weet u het zeker?",
 	"notice.resetAllDone": "Alles is teruggezet naar de standaardinstellingen.",
 
 	"notice.customCommandsRemoved":
@@ -262,7 +260,6 @@ export const nl: Record<string, string> = {
 		"Callout Studio kon zijn instellingenbestand niet lezen, dus je callout-typen ontbreken in deze sessie. Er is niets geschreven en het bestand op schijf is ongewijzigd — herlaad Obsidian om het opnieuw te proberen.",
 	"notice.settingsMissing":
 		"Het instellingenbestand van Callout Studio ontbreekt, dus je callout-typen ontbreken in deze sessie. Er is niets geschreven — als je deze kluis synchroniseert, laat de synchronisatie dan voltooien en herlaad Obsidian voordat je wijzigingen aanbrengt.",
-	"notice.settingsMissingAction": "Nieuw instellingenbestand maken",
 
 	"notice.nothingToWrap": "Niets om in te pakken.",
 	"notice.cursorNotInsideCallout":
@@ -696,7 +693,6 @@ export const nl: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Opdracht verwijderen",
-	"confirm.titleResetAll": "Alle callouts terugzetten",
 	"confirm.titleResetCallout": "Callout terugzetten",
 	"confirm.titleDeletePalette": "Palet verwijderen",
 	"confirm.titleDeleteImage": "Afbeelding verwijderen",
@@ -1079,12 +1075,9 @@ export const nl: Record<string, string> = {
 	"notice.legacyDiscoveryArchiveFailed": "De herstelkopie voor de upgrade kon niet worden voltooid. De vorige lokale detectiecache en opstart-CSS zijn ongewijzigd behouden. Controleer de schrijftoegang tot de opslag en de vrije ruimte en start Obsidian vervolgens opnieuw om het nogmaals te proberen.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Gepauzeerd: de callout ontbreekt. Ontdek of maak hem om deze opdracht te herstellen, of bewerk de opdracht om een ander type te kiezen.",
-	"confirm.startFresh": "Dit maakt een nieuw instellingenbestand op basis van de callout-typen en instellingen die nu worden getoond. Een eerdere leesbare herstelkopie blijft bewaard in een back-up. Als het ontbrekende bestand nog onderweg is vanaf een ander apparaat, of nog aan het synchroniseren is, wordt het overal vervangen — ook op apparaten die je callouts nog hebben.\nDoe dit alleen als je het bestand zelf hebt verwijderd, of zeker weet dat het niet terugkomt.",
-	"confirm.startFreshOk": "Nieuw instellingenbestand maken",
 	"confirm.titleRestoreSettings": "Deze instellingen herstellen",
 	"confirm.titleCreateSettingsFile": "Instellingenbestand maken",
 	"confirm.restoreDisplayedSettings": "Dit slaat de momenteel weergegeven callout-typen en voorkeuren op in een instellingenbestand op dit apparaat en hervat het opslaan. Elke leesbare lokale herstelkopie wordt eerst geback-upt.\nLaat voordat je doorgaat je synchronisatieservice voltooien en controleer of een ander apparaat nieuwere instellingen heeft die je wilt bewaren. Je synchronisatieservice kan dit herstelde bestand naar je andere apparaten sturen.\nHet bestand wordt opnieuw gecontroleerd voordat het wordt opgeslagen. Als bestaande instellingen worden gevonden, blijven ze behouden en kan herstel je vragen opnieuw te controleren.",
-	"confirm.titleStartFresh": "Nieuw instellingenbestand maken",
 	"notice.settingsBackupFailed": "Het herstellen van instellingen kon niet doorgaan omdat een veiligheidsback-up niet kon worden opgeslagen. Controleer de beschikbare opslagruimte en schrijfrechten, en probeer het opnieuw.",
 	"notice.settingsBackupSaved": "Er is een herstelkopie van lokale callout-definities opgeslagen voordat de binnenkomende instellingen werden toegepast: {{path}}.",
 	"notice.settingsChangedElsewhere": "De instellingen van Callout Studio zijn op een ander apparaat gewijzigd, dus deze wijziging is niet opgeslagen. De instellingen van het andere apparaat worden nu geladen — voer de wijziging opnieuw door.",
@@ -1092,11 +1085,9 @@ export const nl: Record<string, string> = {
 	"notice.settingsNotSaved": "Die wijziging is niet opgeslagen. Callout Studio kon zijn instellingenbestand niet gebruiken toen Obsidian opstartte, dus er wordt niets op dit apparaat geschreven — je wijzigingen blijven bestaan totdat je Obsidian sluit. Zie Instellingen → Callout Studio voor wat je moet doen.",
 	"saveStatus.changed": "Het instellingenbestand is gewijzigd terwijl je aan het bewerken was. Je concept is nog steeds beschikbaar. Kies Opslaan en herstellen opnieuw proberen om de binnenkomende instellingen te laden, controleer daarna je concept en sla opnieuw op.",
 	"saveStatus.missing": "Opslaan is gepauzeerd omdat het instellingenbestand ontbreekt. Dit kan gebeuren na een herinstallatie of terwijl er nog wordt gesynchroniseerd. Rond de synchronisatie af en probeer het opnieuw. Gebruik Nieuw instellingenbestand maken in de instellingen van Callout Studio om het ontbrekende bestand bewust te vervangen.",
-	"saveStatus.newFile": "Nieuw instellingenbestand maken",
 	"saveStatus.restoreSettings": "Deze instellingen herstellen",
 	"saveStatus.createSettingsFile": "Instellingenbestand maken",
 	"saveStatus.checkAgain": "Opnieuw controleren",
-	"saveStatus.stillMissing": "Het instellingenbestand ontbreekt nog steeds. Opnieuw controleren maakt het niet opnieuw aan. Laat de synchronisatie voltooien en maak de kluis offline beschikbaar. Als het bestand is verwijderd, herstel dan een back-up of gebruik de herstelactie in de Callout Studio-instellingen op dit apparaat om de weergegeven instellingen op te slaan.",
 	"saveStatus.recoverInSettings": "Open de Callout Studio-instellingen om het ontbrekende bestand op dit apparaat te herstellen. Kopieer voordat je deze editor sluit alle niet-opgeslagen bewerkingen die je wilt bewaren; ze zijn niet opgeslagen.",
 	"saveStatus.openSettings": "Callout Studio-instellingen openen",
 	"notice.openSettingsFailed": "De Callout Studio-instellingen konden niet worden geopend. Open Instellingen → Callout Studio om te kiezen wat je doet.",
@@ -1167,4 +1158,100 @@ export const nl: Record<string, string> = {
 	"portable.errorBusy": "Er wordt al een andere conversie uitgevoerd. Wacht tot deze klaar is.",
 	"portable.error": "De kluis kon niet veilig worden gelezen of bijgewerkt. Controleer de bestandstoegang en probeer het opnieuw.",
 	"settings.maintenance": "Gevarenzone",
+	// Sync safety hardening
+	"saveStatus.stillMissingAdvice":
+		"Het instellingenbestand ontbreekt nog steeds. Opnieuw controleren herstelt het niet. Laat de synchronisatie afronden en zorg dat de kluis offline beschikbaar is. Als het bestand is verwijderd, kies dan Vervang dit instellingenbestand, of herstel een eerdere configuratie.",
+	"saveStatus.diagnosis.unavailable":
+		"Dit apparaat kan het bestand nu niet openen. Het wordt mogelijk nog gedownload, de kluis is misschien niet offline beschikbaar, of de opslag reageert niet. Callout Studio controleert automatisch opnieuw.",
+	"saveStatus.diagnosis.empty":
+		"Het bestand is leeg, wat meestal betekent dat een synchronisatie is onderbroken. Als een ander apparaat je instellingen nog heeft, laat het dan synchroniseren. Vervang anders het bestand.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"Het bestand bevat onopgeloste samenvoegconflict-markeringen, bijvoorbeeld van Git. Los het conflict op in je Git-tool, of vervang het bestand.",
+	"saveStatus.diagnosis.damaged": "Het bestand is onvolledig of beschadigd, waardoor het niet als instellingen kan worden gelezen.",
+	"saveStatus.diagnosis.combined":
+		"Je synchronisatiedienst heeft twee versies van het bestand samengevoegd, waardoor de interne controle niet meer klopt. De instellingen erin zijn intact, en het bestand vervangen behoudt ze.",
+	"saveStatus.diagnosis.invalidEntries":
+		"Het bestand bevat items die Callout Studio niet kan gebruiken, bijvoorbeeld hetzelfde callout-type dat twee keer voorkomt.",
+	"saveStatus.replaceUnreadable": "Instellingenbestand vervangen",
+	"saveStatus.discardRecoveryCopy": "Herstelkopie verwijderen",
+	"saveStatus.openRecovery": "Een eerdere configuratie herstellen",
+	"saveStatus.readOnlyWhilePaused":
+		"Instellingen kunnen niet worden gewijzigd totdat opslaan weer werkt, dus niets wat je hier wijzigt gaat verloren. Je kunt nog steeds je configuratie exporteren.",
+	"statusBar.paused": "Opslaan gepauzeerd",
+	"statusBar.pausedTooltip": "Callout Studio slaat instellingswijzigingen niet op. Klik om te zien waarom.",
+	"statusBar.pausedNotice": "Callout Studio slaat op dit moment geen instellingswijzigingen op.",
+	"notice.replaceUnreadableUnavailable":
+		"Het instellingenbestand kan nu niet worden vervangen: het verandert, of dit apparaat kan het niet lezen. Probeer het straks opnieuw.",
+	"notice.recoveryStorageUnavailable":
+		"De herstelopslag van dit apparaat reageert niet, dus de kopie kan niet worden verwijderd. Start Obsidian opnieuw en probeer het dan nogmaals.",
+	"recovery.title": "Een eerdere configuratie herstellen",
+	"recovery.intro":
+		"Callout Studio bewaart eerdere versies van je configuratie op dit apparaat en in de back-upmap van de plugin. Een ervan herstellen vervangt je huidige configuratie op elk gesynchroniseerd apparaat. Eerst wordt een back-up van de huidige configuratie opgeslagen.",
+	"recovery.pausedHint": "Opslaan is gepauzeerd, dus herstellen is niet mogelijk totdat dat is opgelost. Je kunt nog steeds een kopie exporteren.",
+	"recovery.loading": "Eerdere versies worden gezocht…",
+	"recovery.empty": "Er zijn geen eerdere versies gevonden.",
+	"recovery.sectionHistory": "Opgeslagen op dit apparaat",
+	"recovery.sectionBackups": "Back-ups",
+	"recovery.sectionCopies": "Andere kopieën van het instellingenbestand",
+	"recovery.originThisDevice": "Dit apparaat",
+	"recovery.originOtherDevice": "Een ander apparaat",
+	"recovery.originOlderVersion": "Opgeslagen door een oudere versie",
+	"recovery.unreadable": "Kan niet als instellingen worden gelezen",
+	"recovery.same": "Hetzelfde als je huidige configuratie",
+	"recovery.summary": "{{callouts}} opgeslagen callout-type(n), {{count}} verschil(len) met nu",
+	"recovery.export": "Kopie exporteren",
+	"recovery.restore": "Herstellen",
+	"recovery.confirmTitle": "Deze configuratie herstellen",
+	"recovery.confirmBody":
+		"Je huidige configuratie wordt vervangen door die van {{when}} ({{count}} verschil(len)). Eerst wordt een back-up van je huidige configuratie opgeslagen, en je synchronisatiedienst stuurt de herstelde configuratie naar je andere apparaten.",
+	"recovery.restored": "De configuratie van {{when}} is hersteld.",
+	"recovery.stale":
+		"Er is niets hersteld: je instellingen zijn gewijzigd of konden niet worden gecontroleerd. Open dit venster opnieuw en bekijk de lijst.",
+	"recovery.backupFailed":
+		"Er is niets hersteld: er kon geen back-up van je huidige configuratie worden opgeslagen. Controleer de beschikbare opslagruimte en probeer het opnieuw.",
+	"recovery.failed": "De configuratie kon niet worden hersteld. Er is niets gewijzigd.",
+	"notice.unsavedChangesReplaced":
+		"Sommige wijzigingen op dit apparaat waren nog niet opgeslagen, en nieuwere instellingen van een ander apparaat hebben ze vervangen. Jouw versie is eerst opgeslagen: open Een eerdere configuratie herstellen in de Callout Studio-instellingen om die terug te krijgen.",
+	"notice.diagnosticsCopied": "Synchronisatiediagnose gekopieerd.",
+	"notice.diagnosticsFailed": "De synchronisatiediagnose kon niet worden gekopieerd.",
+	"notice.recoveryCopyStale":
+		"Je instellingen zijn opgeslagen, maar de herstelkopie van dit apparaat kon niet worden bijgewerkt. Controleer de beschikbare opslagruimte op dit apparaat. Callout Studio probeert het opnieuw bij je volgende wijziging.",
+	"notice.blockedWhilePaused":
+		"Opslaan is gepauzeerd, dus deze wijziging kan nu niet worden bewaard. Los eerst het opslagprobleem op dat in de Callout Studio-instellingen wordt getoond.",
+	"welcome.syncNote":
+		"Gebruik je Callout Studio al op een ander apparaat? Laat je synchronisatiedienst eerst afronden. Je callouts en instellingen verschijnen hier zodra ze aankomen.",
+	"settings.resetAllConfirmFull":
+		"Dit verwijdert elk aangepast callout-type, geüploade afbeelding en aangepast commando, en herstelt ingebouwde callouts, globale stijlen, opgeslagen kleurenpaletten, het rechtsklikmenu, kop- en inline-callout-instellingen, en de terugvalstijl naar de standaard. Eerst wordt een back-up van je huidige configuratie opgeslagen in de back-upmap van de plugin. Je synchronisatiedienst kan de reset naar je andere apparaten sturen.",
+	"settings.resetBackupFailed":
+		"Er is niets gereset: er kon geen back-up van je huidige configuratie worden opgeslagen. Controleer de beschikbare opslagruimte en probeer het opnieuw.",
+	"settings.resetNotSaved":
+		"De reset wordt getoond, maar kon nog niet worden opgeslagen, dus je instellingenbestand bevat nog steeds de vorige configuratie. Controleer de opslagstatus in de Callout Studio-instellingen.",
+	"settings.recovery": "Eerdere configuraties",
+	"settings.recoveryDesc": "Herstel een eerder opgeslagen versie van je configuratie op dit apparaat of in de back-upmap van de plugin.",
+	"settings.recoveryButton": "Een eerdere configuratie herstellen",
+	"settings.diagnostics": "Synchronisatiediagnose",
+	"settings.diagnosticsDesc":
+		"Kopieer een samenvatting van hoe opslaan en synchroniseren werken, om op te nemen in een bugrapport. Het bevat geen callouts of instellingen.",
+	"settings.diagnosticsButton": "Diagnose kopiëren",
+	"confirm.titleResetEverything": "Alles resetten",
+	"confirm.titleReplaceUnreadable": "Instellingenbestand vervangen",
+	"confirm.replaceUnreadable":
+		"Een exacte kopie van het huidige bestand wordt eerst opgeslagen in de back-upmap van de plugin. Het bestand wordt daarna vervangen door de hier getoonde configuratie, en je synchronisatiedienst stuurt die naar je andere apparaten.",
+	"confirm.replaceUnreadableSalvage":
+		"Een exacte kopie van het huidige bestand wordt eerst opgeslagen in de back-upmap van de plugin. De instellingen erin worden gecombineerd met de hier getoonde configuratie, en het bestand wordt herschreven zodat elk apparaat het weer kan lezen.",
+	"confirm.titleDiscardRecoveryCopy": "Herstelkopie verwijderen",
+	"confirm.discardRecoveryCopy":
+		"De herstelkopie van dit apparaat kan niet worden gelezen, dus opslaan is gepauzeerd op dit apparaat. Een exacte kopie ervan wordt eerst opgeslagen in de back-upmap van de plugin. Daarna wordt hij vervangen door de hier getoonde configuratie. Je instellingenbestand wordt niet gewijzigd.",
+	"vault.undoRewrite": "Ongedaan maken",
+	"vault.undoRestored": "{{count}} notitie(s) hersteld.",
+	"vault.undoPartial":
+		"{{count}} notitie(s) hersteld. {{skipped}} notitie(s) zijn na het herschrijven gewijzigd, dus die zijn ongewijzigd gelaten.",
+	"import.confirmTitle": "Callout Studio-back-up importeren",
+	"import.confirmSummary":
+		"Dit voegt {{added}} callout-type(n) toe, vervangt {{replaced}} bestaande door de versie uit het bestand, en herstelt {{settings}} groep(en) instellingen uit het bestand. Eerst wordt een back-up van je huidige configuratie opgeslagen.",
+	"import.confirmAction": "Importeren",
+	"import.backupFailed":
+		"Er is niets geïmporteerd: er kon geen back-up van je huidige configuratie worden opgeslagen. Controleer de beschikbare opslagruimte en probeer het opnieuw.",
+	"import.notSaved":
+		"De import wordt getoond, maar kon nog niet worden opgeslagen. Controleer de opslagstatus in de Callout Studio-instellingen.",
 };

@@ -197,19 +197,48 @@ palette links. Aliases are the intentional exception: importing does not rewrite
 notes, so incoming and existing aliases are united by canonical identity. Removing
 an old alias remains an editor action, whose save plan protects its note usages.
 
-### Settings import: replace wholesale, except three lists that merge by id
+### Before anything is applied
+
+`processImportedJSON` asks, backs up and checks saving before its first
+registry mutation:
+
+1. A file with no issues shows a `ConfirmModal` summarizing what it will do:
+   callout types added, existing ones replaced by the file's version, and
+   setting groups restored. A file with issues has already been through
+   `ImportReportModal`, which is its confirmation.
+2. `blockedWhilePaused()` refuses the import while the settings writer is
+   frozen. An import that cannot be saved would look done and vanish on
+   restart. The **Import** button checks this too, before a file is chosen.
+3. `writeSettingsBackup()` saves the current setup to `<plugin-dir>/backups/`
+   and reads it back. No verified copy means no import.
+4. After applying, the import awaits `saveSettings()` and asks
+   `settingsWriter.persists()` whether the settings file holds the result.
+   If not, it says the import is shown but not saved, instead of reporting
+   success.
+
+The foreign-plugin window (`PluginImportModal.apply`) takes steps 2–4 as well;
+its report or its explicit **Import** click is the confirmation.
+
+### Settings import: restore the groups the file carries; three lists merge by id
 
 ```ts
-const { customPalettes, userImages, customCommands, ...restSettings } = result.settings;
-Object.assign(registry.settings, restSettings);   // ← wholesale replace
+const present = presentSettingGroups(parsed);  // the settings keys the file itself carries
+const restored = Object.keys(result.settings).filter(key => present.has(key) && !LIST_GROUPS.has(key));
+Object.assign(registry.settings, pick(restSettings, restored));  // ← only those groups
 registry.settings.customPalettes = mergeById(registry.settings.customPalettes, customPalettes);
 registry.setUserImages(mergeById(registry.getUserImages(), userImages));
 registry.settings.customCommands = mergeById(registry.settings.customCommands, customCommands);
 ```
 
+`sanitizeImportedSettings()` returns a complete `PluginSettings`, filling every
+group the file lacks with its default. Applying all of it made an older export
+reset every setting group it predates. Only groups present in the file are
+restored; 1.x files that carry `popup` restore `contextMenu`, which the merge
+reads it into.
+
 > [!IMPORTANT]
 > **`customPalettes`, `userImages`, and `customCommands` are the three
-> exceptions to "settings import replaces wholesale," and this is
+> exceptions to "settings import restores the group," and this is
 > deliberate, not an oversight.** Every other settings field (global style,
 > context-menu config, fallback id, language) is a single value with no id
 > of its own — "keep both" has no meaning for a border width, so an import

@@ -12,7 +12,7 @@ Quick Insert creates **Block callouts only**. Use autocomplete or a custom comma
 
 ## Filter by source
 
-The first time you open Quick Insert, it starts with **All** selected. After you change the source, Callout Studio remembers your latest choice for the next opening, including after restarting Obsidian. The available source choices are shown in this order:
+The first time you open Quick Insert, it starts with **All** selected. After you change the source, Callout Studio remembers your latest choice for the next opening, including after restarting Obsidian. Each device remembers its own choice. The available source choices are shown in this order:
 
 - **All** — every available block callout.
 - **Built-in** — Obsidian's built-in callouts that the active theme does not currently control.

@@ -15,6 +15,7 @@
 import { Notice } from "obsidian";
 import type { App, TFile } from "obsidian";
 import { t } from "../i18n";
+import type { NoteRewriteJournal } from "./noteRewriteUndo";
 
 /**
  * Visit every markdown file in the vault, isolating each one.
@@ -115,6 +116,7 @@ export async function rewriteVaultFiles(
 	app: App,
 	transform: (content: string) => { content: string; count: number } | null,
 	requireComplete = false,
+	journal?: NoteRewriteJournal,
 ): Promise<{ files: number; count: number }> {
 	let files = 0;
 	let total = 0;
@@ -123,12 +125,17 @@ export async function rewriteVaultFiles(
 		if (!transform(await app.vault.cachedRead(file))) return;
 
 		let count = 0;
+		let before = "", after = "";
 		await app.vault.process(file, (content) => {
 			const result = transform(content);
 			count = result?.count ?? 0;
-			return result ? result.content : content;
+			before = content;
+			after = result ? result.content : content;
+			return after;
 		});
+		// Recorded once the write is in: a failed one has nothing to undo.
 		if (count > 0) {
+			journal?.record(file.path, before, after);
 			files++;
 			total += count;
 		}

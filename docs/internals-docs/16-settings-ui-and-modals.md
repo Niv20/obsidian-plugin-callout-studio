@@ -985,6 +985,12 @@ take the cursor on **every** device, phone included. They have no edit mode to
 gate on, and nothing in them does anything until a query is typed — so there the
 keyboard arriving with the window is the point rather than the problem.
 
+The focused field is also why `ReplaceCalloutModal`'s **Enter only chooses**
+(the top row, when nothing is chosen yet) and never confirms. Confirming rewrites
+every note that uses the callout, and its Undo is brief and in memory only, so it takes the confirm button,
+which is `mod-warning` in both modes. `tests/replaceCalloutModal.test.ts` pins
+both.
+
 ## Two theme-aware surface tokens
 
 Defined **only** on `.modal.cs-modal` (never redefined per-modal), so
@@ -1790,6 +1796,12 @@ The welcome screen can be reopened via the info icon in settings or the
 dev-convenience protocol handler `obsidian://callout-studio-welcome`
 registered in `main.ts`.
 
+Only the automatic first-launch welcome (`new WelcomeModal(plugin, true)`) adds
+`welcome.syncNote` below the tagline: a user joining from another device should
+let sync finish, and their setup appears once it arrives. It is informational;
+the [genesis rule](08-settings-sync-and-recovery.md#a-devices-first-file-and-the-shipped-defaults)
+is what keeps this device's defaults from overwriting that setup.
+
 #### It demonstrates itself with a demo callout of its own
 
 The right column is a real `LiveCalloutPreview` rendering `welcome.sample`,
@@ -1902,6 +1914,34 @@ Buttons are disabled while their action is running. A completed missing-file
 check leaves explicit feedback in the same slot. Disposers run on tab
 hide/re-render and editor close. Action text uses `t()`; diagnostic failure prose
 uses the shared saving-message contract described in the canonical chapter.
+
+On the settings page the banner also says the page is read-only while saving is
+paused (`pausedNote`), because `SettingsTab` then makes every edit `inert`; see
+`sections/pausedReadOnly.ts`. The **Sync diagnostics** row beside **Earlier
+setups** copies `recovery.diagnostics()` to the clipboard.
+
+For an unreadable file the banner asks `actions.diagnose()` once per paused
+episode, and again after each action, then adds the cause as a muted
+`.cs-readonly-banner-detail` paragraph. **Replace settings file** appears only
+for causes waiting cannot fix, and **Discard recovery copy** only for a
+`recovery-read` freeze. Both are `mod-warning` and run only after a
+`ConfirmModal`. **Restore an earlier setup** is offered in every state. The
+settings page passes `plugin.recovery`'s methods in `ReadOnlyBanner.ts`; the
+callout editor passes only its retry.
+
+## `SettingsRecoveryModal` — earlier setups
+
+Opened from **Earlier setups** in the data section and from the banner. It asks
+`recovery.listSources()` once per open (a generation counter drops a late answer
+after close) and draws one heading per source kind with ordinary `Setting`
+rows: a name (the time, or the file name for a stray copy), a description of
+where the entry came from and how far it is from now, and two buttons. **Export
+copy** downloads through `utils/downloadText.ts`, the same path as **Export**.
+**Restore** is `mod-warning`, disabled while saving is paused or when the entry
+equals the current setup, and confirms before calling `recovery.restore()`. A
+source that cannot be read as settings is listed without buttons. The
+behavior behind both buttons is in
+[Recovery without file surgery](08-settings-sync-and-recovery.md#recovery-without-file-surgery).
 
 ---
 Next chapter: [17-i18n.md](17-i18n.md)
