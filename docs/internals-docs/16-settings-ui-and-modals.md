@@ -122,6 +122,9 @@ choices, including pending link-only changes. See
 
 The footer owns the contact and project links: one friendly sentence embeds an
 inline GitHub issue link for either a bug or an idea and an inline email link.
+Contact links use the basic `text-decoration` shorthand: no underline at rest,
+and a solid, current-color underline on hover. Its thickness comes from the
+browser/font rather than a fixed 1px declaration; only the text color transitions.
 The footer's leading padding and the metadata row's leading margin both use
 `--size-4-4` (16px by default), giving the contact text equal space to the rules
 above and below. The metadata row's leading padding and the footer's trailing
@@ -1086,6 +1089,11 @@ Admonition import window has no text box: it reads the clipboard instead (see
 Searchable callout and color pickers remain comboboxes: their outer
 `cs-dropdown-control` paints the box, and their inner `cs-combobox-input`
 stays transparent in every state.
+`ListboxPopup.setDisabled()` mirrors the input's disabled state onto its
+painted control as `cs-dropdown-disabled` (and keeps `is-disabled` on the root).
+The hover/focus selectors read that component state without a parent `:has()`
+query. Callers must use `setDisabled()` rather than disabling the inner input
+directly; native standalone controls still use `:disabled`.
 Select-only combobox inputs remain readonly. File inputs and native color
 swatches are separate controls and do not receive text-field styling.
 
@@ -1102,7 +1110,10 @@ There are three cascade constraints:
   `cs-tag-add-slot` overlays the field and uses the same `--cs-tag-field-bg`
   value, including during hover and focus, so its background never becomes a
   separate rectangular patch. Preserve the trailing padding and the row's
-  existing width when adjusting the shared chrome.
+  existing width when adjusting the shared chrome. The input and its immediately
+  adjacent slot each receive the same variable through CSS child/sibling
+  selectors. Native `:disabled` and `:active` remain the source of truth, without
+  pointer-state listeners or parent `:has()` queries.
 
 Text fields and dropdown triggers do not show hover tooltips. Their accessible
 names still identify the controls to assistive technology; suppressing hover
@@ -1678,6 +1689,10 @@ while `showSingleGroupKey` keeps the Browse heading when All types is the only
 matching group.
 The All types scope is iconless and remains separate from registry definitions.
 Color pickers retain their headings even with only one matching group.
+`renderComboboxRows()` sets `cs-combobox-menu-grouped` only when it actually
+creates a group, clearing it before every rebuild. That class owns the menu's
+top padding and sticky-heading scroll allowance, including transitions to
+ungrouped, empty, or create-only results.
 
 The occurrence **Format** filter and the command editor's Format, Heading level,
 Action and Fold state rows use `SelectDropdown`, backed by the same shared

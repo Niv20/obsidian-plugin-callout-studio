@@ -3255,7 +3255,7 @@ button.callout-studio-icon-picker-loading {
 }
 
 @media (hover: hover) {
-	.cs-dropdown-control.cs-dropdown-control:not(:disabled):not(:has(:disabled)):hover,
+	.cs-dropdown-control.cs-dropdown-control:not(:disabled):not(.cs-dropdown-disabled):hover,
 	.cs-text-control.cs-text-control:not(:disabled):hover {
 		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
 	}
@@ -3264,7 +3264,7 @@ button.callout-studio-icon-picker-loading {
 /* Keep the same fill while a menu is open or the user is editing a field. */
 .cs-dropdown-control.cs-dropdown-control.is-open,
 .cs-dropdown-control.cs-dropdown-control.mobile-tap:not(:disabled),
-.cs-dropdown-control.cs-dropdown-control:not(:disabled):not(:has(:disabled)):focus-within,
+.cs-dropdown-control.cs-dropdown-control:not(:disabled):not(.cs-dropdown-disabled):focus-within,
 .cs-text-control.cs-text-control:not(:disabled):focus,
 .cs-text-control.cs-text-control:not(:disabled):active {
 	background-color: var(--cs-btn-face-hover, var(--interactive-hover));
@@ -3499,7 +3499,7 @@ button.callout-studio-icon-picker-loading {
 
 /* Start the scrollport flush with the heading so scrolled rows cannot show in
    a strip above it. Arrow-key scrolling also reserves the pinned heading. */
-.cs-combobox-menu:has(.cs-combobox-group) {
+.cs-combobox-menu.cs-combobox-menu-grouped {
 	padding-block-start: 0;
 	scroll-padding-block-start: calc(var(--font-ui-smaller) * var(--line-height-normal) + 8px);
 }
@@ -3950,6 +3950,12 @@ button.callout-studio-icon-picker-loading {
 	min-width: 0;
 }
 
+/* Share the spare width on each line, including when filters wrap below search.
+   Match the specificity of the shared select wrapper's intrinsic flex sizing. */
+.icon-picker-toolbar > .icon-picker-filter {
+	flex-grow: 1;
+}
+
 .icon-picker-category-picker,
 .icon-picker-skin-tone-picker {
 	flex-basis: 140px;
@@ -3958,24 +3964,20 @@ button.callout-studio-icon-picker-loading {
 /* Tabler has two filters beside search. Keep search the widest control, but
    share some of its spare width with style and category. */
 @media (min-width: 601px) {
-	.icon-picker-toolbar:has(> .icon-picker-tablerStyle-select) > .icon-picker-search-input {
+	.icon-picker-toolbar.has-tablerStyle-filter > .icon-picker-search-input {
 		flex: 8 1 120px;
 		min-width: 112px;
 	}
 
-	.icon-picker-toolbar:has(> .icon-picker-tablerStyle-select) > .icon-picker-filter {
+	.icon-picker-toolbar.has-tablerStyle-filter > .icon-picker-filter {
 		flex: 1 1 auto;
 	}
 }
 
 /* Material has three filters. Give search its own row so the selected style,
    weight and category can keep their full labels at desktop modal widths too. */
-.icon-picker-toolbar:has(> .icon-picker-weight-select) > .icon-picker-search-input {
+.icon-picker-toolbar.has-weight-filter > .icon-picker-search-input {
 	flex: 1 0 100%;
-}
-
-.icon-picker-toolbar:has(> .icon-picker-weight-select) > .icon-picker-filter {
-	flex-grow: 1;
 }
 
 .icon-picker-filter:not(.icon-picker-skin-tone-picker) .cs-combobox-lead {
@@ -4348,7 +4350,7 @@ button.callout-studio-icon-picker-loading {
 	min-height: 120px;
 }
 
-.icon-picker-image-panel .icon-picker-body:has(.icon-picker-empty) {
+.icon-picker-image-panel .icon-picker-body.icon-picker-grid-empty {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -4534,16 +4536,20 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	align-items: center;
 }
 
-/* Change the field and the opaque + overlay together, including when the
-   pointer is over the overlay rather than over the input underneath it. */
+/* Set the same fill on the field and its adjacent + overlay, including when
+   the pointer is over the overlay. Keep native disabled/active input states
+   in CSS rather than mirroring transient pointer state in JavaScript. */
 @media (hover: hover) {
-	.cs-tag-input-row:has(> input:not(:disabled)):hover {
+	.cs-tag-input-row:hover > input:not(:disabled),
+	.cs-tag-input-row:hover > input:not(:disabled) + .cs-tag-add-slot {
 		--cs-tag-field-bg: var(--cs-btn-face-hover, var(--interactive-hover));
 	}
 }
 
-.cs-tag-input-row:has(> input:not(:disabled)):focus-within,
-.cs-tag-input-row:has(> input:not(:disabled):active) {
+.cs-tag-input-row:focus-within > input:not(:disabled),
+.cs-tag-input-row:focus-within > input:not(:disabled) + .cs-tag-add-slot,
+.cs-tag-input-row > input:not(:disabled):active,
+.cs-tag-input-row > input:not(:disabled):active + .cs-tag-add-slot {
 	--cs-tag-field-bg: var(--cs-btn-face-hover, var(--interactive-hover));
 }
 
@@ -6191,13 +6197,9 @@ body:not(.is-phone)
 	white-space: nowrap;
 	color: var(--text-normal);
 	font-weight: var(--font-medium);
-	text-decoration-line: none;
-	text-decoration-color: var(--text-faint);
-	text-decoration-thickness: 1px;
+	text-decoration: none;
 	text-underline-offset: 0.16em;
-	transition:
-		color 120ms ease,
-		text-decoration-color 120ms ease;
+	transition: color 120ms ease;
 }
 
 .callout-studio-footer-contact-links
@@ -6213,8 +6215,7 @@ body:not(.is-phone)
 @media (hover: hover) {
 	.callout-studio-footer-contact-link:hover {
 		color: var(--text-accent);
-		text-decoration-line: underline;
-		text-decoration-color: currentColor;
+		text-decoration: underline;
 	}
 }
 

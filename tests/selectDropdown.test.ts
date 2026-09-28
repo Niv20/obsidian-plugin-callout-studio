@@ -66,15 +66,21 @@ describe("SelectDropdown", () => {
 
 	it("closes immediately when disabled and refuses mouse and keyboard reopening", () => {
 		const { host, select, changed } = mount();
+		const control = host.querySelector(".cs-combobox-control")!;
 		try {
+			assert.equal(control.hasClass("cs-dropdown-disabled"), false);
 			dropdownOptions(select.el);
 			select.setDisabled(true);
 			assert.equal(select.inputEl.disabled, true);
+			assert.equal(control.hasClass("cs-dropdown-disabled"), true);
+			assert.equal(control.hasClass("is-open"), false);
 			assert.equal(select.inputEl.getAttribute("aria-expanded"), "false");
-			host.querySelector(".cs-combobox-control")!.fire("click", { target: select.inputEl });
+			control.fire("click", { target: select.inputEl });
 			(select.inputEl as unknown as FakeElement).fire("keydown", { key: "ArrowDown" });
 			assert.equal(select.inputEl.getAttribute("aria-expanded"), "false");
 			select.setDisabled(false);
+			assert.equal(control.hasClass("cs-dropdown-disabled"), false);
+			assert.equal(select.inputEl.disabled, false);
 			pickDropdown(select.el, "Alpha");
 			assert.deepEqual(changed, ["a"]);
 		} finally { select.destroy(); }
@@ -88,7 +94,10 @@ describe("SelectDropdown", () => {
 		assert.ok(documentCount() > initial);
 		select.destroy();
 		select.destroy();
+		select.setDisabled(false);
 		assert.equal(documentCount(), initial);
+		assert.equal(select.inputEl.disabled, true);
+		assert.equal(select.el.querySelector(".cs-combobox-control")?.hasClass("cs-dropdown-disabled"), true);
 		assert.equal(select.inputEl.getAttribute("aria-expanded"), "false");
 	});
 });

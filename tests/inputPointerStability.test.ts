@@ -75,9 +75,16 @@ describe("compound and multiline fields keep their specialized layout", () => {
 		assert.ok(field.body.includes("background: var(--cs-tag-field-bg)"));
 		assert.ok(field.body.includes("padding-inline-end: calc(var(--cs-tag-add-size) + 5px)"));
 		assert.ok(ruleFor(".cs-tag-add-slot").body.includes("background: var(--cs-tag-field-bg)"));
-		for (const state of ["hover", "focus-within"]) {
-			const rule = ruleFor(`.cs-tag-input-row:has(> input:not(:disabled)):${state}`);
+		for (const selector of [
+			".cs-tag-input-row:hover > input:not(:disabled)",
+			".cs-tag-input-row:focus-within > input:not(:disabled)",
+			".cs-tag-input-row > input:not(:disabled):active",
+		]) {
+			// Both surfaces read the native field state, so disabling the input
+			// immediately stops painting its hover/focus fill on the overlay too.
+			const rule = ruleFor(selector);
 			assert.ok(rule.body.includes(`--cs-tag-field-bg: ${HOVER_FILL}`));
+			assert.ok(rule.selectors.includes(`${selector} + .cs-tag-add-slot`));
 		}
 	});
 

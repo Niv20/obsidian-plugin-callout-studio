@@ -127,6 +127,7 @@ export function renderComboboxRows<T>(
 	menuEl.empty();
 	const rowEls: HTMLElement[] = [];
 	let openGroup: string | undefined;
+	let hasGroups = false;
 	let rowParent = menuEl;
 	const groups = spec.items.map((item) => spec.groupOf?.(item));
 	const showGroups = !spec.hideSingleGroup ||
@@ -136,6 +137,7 @@ export function renderComboboxRows<T>(
 	spec.items.forEach((item, i) => {
 		const group = showGroups ? groups[i] : undefined;
 		if (group && group.key !== openGroup) {
+			hasGroups = true;
 			openGroup = group.key;
 			const headingId = `${spec.listboxId}-group-${i}`;
 			rowParent = menuEl.createDiv({
@@ -171,6 +173,8 @@ export function renderComboboxRows<T>(
 		rowEl.addEventListener("click", () => spec.onClickRow(i));
 		rowEls.push(rowEl);
 	});
+	// Match the rendered groups, including filtering and hidden single headings.
+	menuEl.toggleClass("cs-combobox-menu-grouped", hasGroups);
 
 	return rowEls;
 }

@@ -55,14 +55,14 @@ export function createSourceMenuTitle(
 	const count =
 		options.count === undefined
 			? ""
-			: ` · \u2068${formatIconCount(
+			: ` (\u2068${formatIconCount(
 					options.count,
 					options.locale,
 					options.exactCount,
-				)}\u2069`;
+			)}\u2069)`;
 	text.createSpan({
 		cls: "cs-source-desc",
-		text: `(${options.description}${count})`,
+		text: `${options.description}${count}`,
 	});
 
 	if (options.selected) {

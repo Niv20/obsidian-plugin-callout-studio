@@ -526,7 +526,12 @@ fields. Material's three-filter toolbar puts search on its own row at any
 modal width, leaving the style, weight and category fields room to show their
 selected labels; the fields wrap when they cannot fit together. On wider screens,
 Tabler keeps search beside its two filters but gives it a smaller width so the
-style and category choices have more room. `sourcePicker.ts`
+style and category choices have more room. Every source's filters share the
+remaining width on their flex line, including when they wrap below search.
+The toolbar's `flex-grow: 1` rule matches the specificity of the shared select
+wrapper while preserving its intrinsic width basis, so Font Awesome's style and
+category fields also fill the row without changing their wrapping threshold.
+`sourcePicker.ts`
 also measures the grid scroll gutter with a
 `ResizeObserver`, keeping the fixed source row aligned with the toolbar
 when a scrollbar appears; the modal disconnects it on close. An open-generation
@@ -537,6 +542,13 @@ search and filter controls disabled until a downloaded pack is ready, persists
 committed filter choices through its host, and destroys the listboxes when the
 source panel closes. A tone change repaints visible glyphs without resetting
 the grid's scroll or pagination; other variants rebuild the filtered grid.
+The toolbar mirrors each rendered select filter as `has-${key}-filter`, and
+removes those classes when its filters are destroyed. Layout reads the Tabler
+style and Material weight markers instead of querying child controls with
+`:has()`. `IconGrid` similarly marks its body `icon-picker-grid-empty` only
+while it renders the empty-collection message, clearing it for entries or
+`showMessage()`. The image panel centers that state; search misses, download
+prompts, loading, and errors keep their separate message layout.
 The two plugin UI composites are the only bundled icon artwork. Regeneration
 of search indexes and downloadable packs is a deliberately
 separate, manual step — `npm run icons:generate` — **never** part of

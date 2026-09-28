@@ -21,6 +21,7 @@ export interface PackToolbarFilterCallbacks {
 
 export class PackToolbarFilters {
 	private readonly pickers: ToolbarPicker[] = [];
+	private readonly layoutClasses: string[] = [];
 	private categoryPicker: SelectDropdown | null = null;
 	private toneLead: HTMLElement | null = null;
 	private variants: IconVariantState;
@@ -59,6 +60,10 @@ export class PackToolbarFilters {
 			this.callbacks.onVariant({ ...this.variants }, "select");
 		});
 		picker.el.addClass("icon-picker-filter", "icon-picker-variant-picker", `icon-picker-${spec.key}-select`);
+		// Mirror rendered controls so layout needs no parent :has() selector.
+		const layoutClass = `has-${spec.key}-filter`;
+		this.toolbarEl.addClass(layoutClass);
+		this.layoutClasses.push(layoutClass);
 		const current = this.variants[spec.key];
 		if (choices.some((choice) => String(choice.value) === String(current))) picker.setValue(String(current));
 		this.pickers.push(picker);
@@ -129,5 +134,6 @@ export class PackToolbarFilters {
 
 	destroy(): void {
 		for (const picker of this.pickers) picker.destroy();
+		this.toolbarEl.removeClass(...this.layoutClasses);
 	}
 }

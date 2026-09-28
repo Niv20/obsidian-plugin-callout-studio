@@ -65,7 +65,7 @@ export class IconGrid {
 	private segments: GridSegment[] = [];
 
 	constructor(
-		parent: HTMLElement,
+		private readonly parent: HTMLElement,
 		private readonly options: IconGridOptions,
 	) {
 		this.gridEl = parent.createDiv("icon-picker-grid");
@@ -77,6 +77,7 @@ export class IconGrid {
 	setEntries(entries: readonly IconEntry[]): void {
 		this.segments = this.partition(entries);
 		this.gridEl.empty();
+		this.parent.toggleClass("icon-picker-grid-empty", entries.length === 0);
 		this.gridEl.removeClass("is-loaded");
 		for (const segment of this.segments) this.renderSegment(segment);
 		this.gridEl.addClass("is-loaded");
@@ -91,6 +92,7 @@ export class IconGrid {
 	showMessage(build: (host: HTMLElement) => void): void {
 		this.segments = [];
 		this.gridEl.empty();
+		this.parent.removeClass("icon-picker-grid-empty");
 		this.gridEl.addClass("is-loaded");
 		build(this.gridEl.createDiv("icon-picker-notice"));
 	}

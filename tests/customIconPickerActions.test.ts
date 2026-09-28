@@ -36,7 +36,7 @@ function panelHarness(initial: UserImageIcon[] = []) {
 		onDelete: (id) => { deletions.push(id); },
 	};
 	const panel = new ImagePanel(asEl(root), host);
-	return { root, panel, images: () => images, selections, deletions, saves,
+	return { root, panel, host, images: () => images, selections, deletions, saves,
 		destroy: () => { panel.dispose(); root.remove(); } };
 }
 
@@ -49,6 +49,33 @@ function wrapperFor(root: FakeElement, name: string): FakeElement {
 }
 
 describe("custom icon picker actions", () => {
+	it("centers empty collections while keeping unmatched searches in the normal notice layout", async () => {
+		const h = panelHarness();
+		try {
+			await h.panel.render();
+			const body = h.root.querySelector(".icon-picker-body")!;
+			const search = h.root.querySelector(".icon-picker-search-input")!;
+			assert.equal(body.hasClass("icon-picker-grid-empty"), true);
+			h.host.saveImages([picture("img-star", "star.svg", 1)]);
+			search.fire("input");
+			assert.equal(body.hasClass("icon-picker-grid-empty"), false);
+			assert.ok(body.querySelector(".icon-picker-cell"));
+			search.value = "missing";
+			search.fire("input");
+			assert.equal(body.hasClass("icon-picker-grid-empty"), false);
+			assert.equal(body.querySelector(".icon-picker-empty"), null);
+			assert.equal(body.querySelector(".icon-picker-notice")?.textContent, t("iconPicker.noResults"));
+			h.host.saveImages([]);
+			search.fire("input");
+			assert.equal(body.hasClass("icon-picker-grid-empty"), false);
+			search.value = "";
+			search.fire("input");
+			assert.equal(body.hasClass("icon-picker-grid-empty"), true);
+			assert.ok(body.querySelector(".icon-picker-image-empty-title"));
+			assert.equal(body.querySelector(".icon-picker-notice"), null);
+		} finally { h.destroy(); }
+	});
+
 	it("keeps the upload control icon only and accessible even when the grid is empty", async () => {
 		const h = panelHarness();
 		try {

@@ -115,6 +115,8 @@ export class ListboxPopup<T> {
 		this.disabled = disabled;
 		this.inputEl.disabled = disabled;
 		this.el.toggleClass("is-disabled", disabled);
+		// The painted control owns its hover/focus state; no descendant query is needed.
+		this.controlEl.toggleClass("cs-dropdown-disabled", disabled);
 		if (disabled) this.close();
 	}
 

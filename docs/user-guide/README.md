@@ -27,5 +27,7 @@ There's a lot to explore in Callout Studio — from callout types and custom col
 At the bottom of **Settings → Callout Studio**, the contact links have equal,
 roomy spacing to the divider lines above and below. A compact row below contains project links,
 licenses, and the current version, with a small gap beneath it.
+Contact links gain a standard underline on hover. Its thickness follows the
+current font and browser.
 
 To learn how the plugin works internally, including its privacy and permission model, see the [internals guide](../internals-docs/README.md).

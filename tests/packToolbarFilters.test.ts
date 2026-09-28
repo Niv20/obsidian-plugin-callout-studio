@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { IconPack, IconVariantState } from "../src/icons/types";
+import { getSource, ICON_SOURCE_IDS } from "../src/icons/registry";
 import { PackPanel, type PackPanelHost } from "../src/settings/iconpicker/PackPanel";
 import { PackToolbarFilters } from "../src/settings/iconpicker/PackToolbarFilters";
 import { t } from "../src/i18n";
@@ -51,6 +52,32 @@ function mount(category = "Animals") {
 }
 
 describe("icon pack toolbar filters", () => {
+	it("sets layout markers from rendered filters for every source and clears them on reuse", () => {
+		fakeDom.light();
+		const toolbar = el();
+		for (const sourceId of ICON_SOURCE_IDS) {
+			const filters = new PackToolbarFilters(asEl(toolbar), getSource(sourceId), {}, "", {
+				onCategory: () => {}, onVariant: () => {},
+			});
+			try {
+				for (const key of ["tablerStyle", "weight"]) {
+					assert.equal(toolbar.hasClass(`has-${key}-filter`),
+						toolbar.querySelector(`.icon-picker-${key}-select`) !== null,
+						`${sourceId}: layout follows the filter that is actually rendered`);
+				}
+				filters.setEnabled(false);
+				for (const key of ["tablerStyle", "weight"]) {
+					assert.equal(toolbar.hasClass(`has-${key}-filter`),
+						toolbar.querySelector(`.icon-picker-${key}-select`) !== null,
+						"locked filters keep the same layout while awaiting download");
+				}
+			} finally { filters.destroy(); }
+			assert.equal(toolbar.hasClass("has-tablerStyle-filter"), false);
+			assert.equal(toolbar.hasClass("has-weight-filter"), false);
+			toolbar.empty();
+		}
+	});
+
 	it("uses selection-only listboxes for every category and variant filter", () => {
 		const h = mount();
 		try {

@@ -333,7 +333,7 @@ describe("sticky layers", () => {
 			"var(--cs-surface, var(--background-primary))",
 		);
 		assert.strictEqual(
-			valueOf(ruleFor(".cs-combobox-menu:has(.cs-combobox-group)"), "padding-block-start"),
+			valueOf(ruleFor(".cs-combobox-menu.cs-combobox-menu-grouped"), "padding-block-start"),
 			"0",
 			"the menu must not leave a strip above its sticky group heading",
 		);
