@@ -59,7 +59,7 @@ function normalized(data: unknown): Partial<PluginData> | null {
 	if (isNewerSettingsFormat(body) || !hasSafeSettingsFileShape(body)) return null;
 	try {
 		const scratch = new CalloutRegistry();
-		scratch.load(body as Partial<PluginData>);
+		scratch.load(body);
 		return scratch.toSaveData();
 	} catch { return null; }
 }

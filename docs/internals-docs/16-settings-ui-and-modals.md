@@ -1755,9 +1755,11 @@ mouseup → click, and mouseup places a caret that undoes an earlier `select()`.
 And the menu's `mousedown` `preventDefault()` is what lets a mouse selection
 commit at all — a click on a row is also a blur, and blur lands first.
 
-Field names are assigned by `fieldAccessibleName.ts`, using a visually hidden
-sibling label referenced through `aria-labelledby`. This keeps accessible names
-without the hover tooltip Obsidian derives from `aria-label`.
+Field names are assigned by `fieldAccessibleName.ts`, using a hidden sibling
+label referenced through `aria-labelledby`. The label has the `hidden`
+attribute, with `opacity: 0` and `pointer-events: none` as a CSS fallback if a
+theme overrides its display. This keeps accessible names without the hover
+tooltip Obsidian derives from `aria-label`.
 
 The control itself uses the [shared dropdown styling](#shared-dropdown-controls),
 matching the other listbox triggers. The input inside is

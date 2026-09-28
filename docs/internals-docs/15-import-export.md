@@ -362,7 +362,9 @@ given while another is active.
   While the probe is still checking, the vault box can't be chosen
   but isn't greyed, and its "Looking for…" line is held back 250ms so a fast
   probe never flashes it. A `role="status"` live region, created before the
-  probe starts, announces the result. A probe that settles after the user
+  probe starts, announces the result. Its text-only box uses `opacity: 0` and
+  `pointer-events: none` to remain unpainted and ignore pointer hits while
+  keeping its geometry and accessibility. A probe that settles after the user
   staged a file leaves the file active.
 - **Paste reads the clipboard at the click.** `navigator.clipboard.readText()`
   runs from the paste box's own click handler, through `activate()`. It is the

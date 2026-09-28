@@ -74,7 +74,7 @@ export class OccurrenceTypeChoices {
 		const retained = ids.map(normalizeCalloutId).find(Boolean);
 		if (retained) return { id: retained, ids: [retained] };
 		const fallback = this.byIdentity.get(calloutIdentity(this.registry.settings.fallbackCalloutId));
-		const choice = fallback ?? this.byIdentity.values().next().value as OccurrenceTypeChoice | undefined;
+		const choice = fallback ?? this.byIdentity.values().next().value;
 		return choice ? { id: choice.definition.id, ids: [...choice.ids] } : { id: "", ids: [] };
 	}
 

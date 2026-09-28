@@ -6026,13 +6026,15 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 }
 
 /* Says what the vault probe found, and why a paste brought nothing back, to a
-   screen reader only. */
+   screen reader only. Opacity keeps the text available without painting it;
+   ignore pointer hits just as a fully clipped box would. */
 .cs-import-announcer {
 	position: absolute;
 	width: 1px;
 	height: 1px;
 	overflow: hidden;
-	clip-path: inset(50%);
+	opacity: 0;
+	pointer-events: none;
 	white-space: nowrap;
 }
 
@@ -6227,8 +6229,7 @@ body:not(.is-phone)
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
-	column-gap: 2px;
-	row-gap: 0;
+	gap: 0 2px;
 	margin-block-start: var(--size-4-4);
 	padding-block-start: var(--size-4-3);
 	border-block-start: 1px solid var(--background-modifier-border);
@@ -6950,7 +6951,9 @@ button.cs-portable-after-button:focus-visible {
 	}
 
 	.callout-studio-footer-meta {
-		column-gap: var(--size-4-3);
+		/* Keep the column gap's initial value even when the theme token is empty.
+		   Set the row separately so an invalid token cannot reset it. */
+		gap: normal var(--size-4-3);
 		row-gap: 0;
 	}
 
@@ -8165,7 +8168,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	width: 1px;
 	height: 1px;
 	overflow: hidden;
-	clip-path: inset(50%);
+	opacity: 0;
 	white-space: nowrap;
 	pointer-events: none;
 }

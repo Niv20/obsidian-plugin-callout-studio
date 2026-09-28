@@ -54,8 +54,13 @@ editors continue to discover the project's compiler settings for each tree.
 
 ```json
 { "target": "ES6", "moduleResolution": "bundler", "strictNullChecks": true,
-  "noUncheckedIndexedAccess": true, "include": ["../src/**/*.ts", "../tests/**/*.ts"] }
+  "strictBuiltinIteratorReturn": true, "noUncheckedIndexedAccess": true,
+  "include": ["../src/**/*.ts", "../tests/**/*.ts"] }
 ```
+
+`strictBuiltinIteratorReturn` keeps a built-in iterator's exhausted `.value`
+typed as `undefined` instead of `any`. It lets callers handle empty collections
+without type assertions and affects type checking only, not emitted JavaScript.
 
 > [!IMPORTANT]
 > **`tests/` is included in the same typecheck as `src/`.** `npm run
