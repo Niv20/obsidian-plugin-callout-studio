@@ -850,7 +850,7 @@ export const vi: Record<string, string> = {
 	"usage.openFailed": "Không thể mở vị trí xuất hiện của callout này.",
 	"usage.menuCount": "Tìm nơi sử dụng ({{count}})",
 	"usage.menuIncomplete": "Tìm nơi sử dụng — chưa quét xong",
-	"usage.menuLoading": "Tìm nơi sử dụng — đang đếm…",
+	"usage.menu": "Tìm nơi sử dụng",
 	"usage.closeSettings": "Đóng Cài đặt để xem kết quả callout trong thanh bên.",
 
 	"import.title": "Vấn đề nhập",

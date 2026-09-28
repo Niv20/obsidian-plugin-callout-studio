@@ -855,7 +855,7 @@ export const uk: Record<string, string> = {
 	"usage.openFailed": "Не вдалося відкрити це входження callout.",
 	"usage.menuCount": "Знайти використання ({{count}})",
 	"usage.menuIncomplete": "Знайти використання — сканування не завершено",
-	"usage.menuLoading": "Знайти використання — підрахунок…",
+	"usage.menu": "Знайти використання",
 	"usage.closeSettings": "Закрийте налаштування, щоб побачити результати для callout на бічній панелі.",
 
 	"import.title": "Проблеми імпорту",

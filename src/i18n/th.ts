@@ -838,7 +838,7 @@ export const th: Record<string, string> = {
 	"usage.openFailed": "ไม่สามารถเปิดตำแหน่งที่พบ callout นี้ได้",
 	"usage.menuCount": "ค้นหาการใช้งาน ({{count}})",
 	"usage.menuIncomplete": "ค้นหาการใช้งาน — สแกนไม่ครบ",
-	"usage.menuLoading": "ค้นหาการใช้งาน — กำลังนับ…",
+	"usage.menu": "ค้นหาการใช้งาน",
 	"usage.closeSettings": "ปิดการตั้งค่าเพื่อดูผลลัพธ์ของ callout ในแถบด้านข้าง",
 
 	"import.title": "ปัญหาการนำเข้า",

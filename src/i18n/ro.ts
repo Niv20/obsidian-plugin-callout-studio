@@ -846,7 +846,7 @@ export const ro: Record<string, string> = {
 	"usage.openFailed": "Nu s-a putut deschide această apariție de callout.",
 	"usage.menuCount": "Găsește utilizări ({{count}})",
 	"usage.menuIncomplete": "Găsește utilizări — scanare incompletă",
-	"usage.menuLoading": "Găsește utilizări — se numără…",
+	"usage.menu": "Găsește utilizări",
 	"usage.closeSettings": "Închide Setări pentru a vedea rezultatele pentru callout-uri în bara laterală.",
 
 	"import.title": "Probleme de import",

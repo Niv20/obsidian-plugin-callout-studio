@@ -16,6 +16,7 @@ import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
 import { addDeleteItem } from "./rowOwnership";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
+import { prepareUsageMenu } from "../../usage/prepareUsageMenu";
 import { addDuplicateItem } from "./duplicateCallout";
 import {
 	handleCalloutReplace,
@@ -32,6 +33,8 @@ export async function openBuiltInRowMenu(
 	event: MouseEvent,
 	def: CalloutDefinition,
 ): Promise<void> {
+	const preparation = prepareUsageMenu(ctx.app, event, ctx.registerDisposer);
+	if (preparation && !await preparation) return;
 	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
 	const menu = new Menu();
 	const usage = addUsageMenuItem(menu, ctx.app, allIds);
@@ -79,6 +82,8 @@ export async function openRowMenu(
 	event: MouseEvent,
 	def: CalloutDefinition,
 ): Promise<void> {
+	const preparation = prepareUsageMenu(ctx.app, event, ctx.registerDisposer);
+	if (preparation && !await preparation) return;
 	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
 	const menu = new Menu();
 	const usage = addUsageMenuItem(menu, ctx.app, allIds);

@@ -833,7 +833,7 @@ export const ar: Record<string, string> = {
 	"usage.openFailed": "تعذّر فتح موضع ظهور الـ callout هذا.",
 	"usage.menuCount": "البحث عن الاستخدامات ({{count}})",
 	"usage.menuIncomplete": "البحث عن الاستخدامات — الفحص غير مكتمل",
-	"usage.menuLoading": "البحث عن الاستخدامات — جارٍ العد…",
+	"usage.menu": "البحث عن الاستخدامات",
 	"usage.closeSettings": "أغلق الإعدادات لعرض نتائج الـ callout في الشريط الجانبي.",
 
 	"import.title": "مشاكل الاستيراد",

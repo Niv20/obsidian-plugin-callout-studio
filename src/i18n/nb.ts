@@ -773,7 +773,7 @@ export const nb: Record<string, string> = {
 	"usage.openFailed": "Kunne ikke åpne denne callout-forekomsten.",
 	"usage.menuCount": "Finn bruk ({{count}})",
 	"usage.menuIncomplete": "Finn bruk — ufullstendig skanning",
-	"usage.menuLoading": "Finn bruk — teller…",
+	"usage.menu": "Finn bruk",
 	"usage.closeSettings": "Lukk Innstillinger for å se callout-resultatene i sidepanelet.",
 	"import.title": "Importproblemer",
 	"import.reportLeadIn":

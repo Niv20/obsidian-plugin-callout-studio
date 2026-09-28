@@ -832,7 +832,7 @@ export const el: Record<string, string> = {
 	"usage.openFailed": "Δεν ήταν δυνατό το άνοιγμα αυτής της εμφάνισης callout.",
 	"usage.menuCount": "Εύρεση χρήσεων ({{count}})",
 	"usage.menuIncomplete": "Εύρεση χρήσεων — η σάρωση δεν ολοκληρώθηκε",
-	"usage.menuLoading": "Εύρεση χρήσεων — καταμέτρηση…",
+	"usage.menu": "Εύρεση χρήσεων",
 	"usage.closeSettings": "Κλείστε τις ρυθμίσεις για να δείτε τα αποτελέσματα των callout στην πλαϊνή στήλη.",
 	"import.title": "Προβλήματα εισαγωγής",
 	"import.reportLeadIn":

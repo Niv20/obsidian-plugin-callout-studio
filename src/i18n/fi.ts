@@ -832,7 +832,7 @@ export const fi: Record<string, string> = {
 	"usage.openFailed": "Tätä callout-esiintymää ei voitu avata.",
 	"usage.menuCount": "Etsi esiintymiä ({{count}})",
 	"usage.menuIncomplete": "Etsi esiintymiä — skannaus kesken",
-	"usage.menuLoading": "Etsi esiintymiä — lasketaan…",
+	"usage.menu": "Etsi esiintymiä",
 	"usage.closeSettings": "Sulje asetukset, jotta näet callout-tulokset sivupaneelissa.",
 	"import.title": "Tuontiongelmat",
 	"import.reportLeadIn":

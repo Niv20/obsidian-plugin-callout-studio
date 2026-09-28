@@ -790,7 +790,7 @@ export const hi: Record<string, string> = {
 	"usage.openFailed": "इस callout के उपयोग स्थान को नहीं खोला जा सका।",
 	"usage.menuCount": "उपयोग खोजें ({{count}})",
 	"usage.menuIncomplete": "उपयोग खोजें — स्कैन अधूरा है",
-	"usage.menuLoading": "उपयोग खोजें — गिनती जारी है…",
+	"usage.menu": "उपयोग खोजें",
 	"usage.closeSettings": "साइडबार में callout के परिणाम देखने के लिए सेटिंग बंद करें।",
 
 	"import.title": "आयात समस्याएँ",

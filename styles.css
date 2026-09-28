@@ -1212,6 +1212,13 @@ body:not(.is-phone)
 	padding: 0;
 }
 
+/* A count that arrives after its menu opens appears without flashing progress copy. */
+@media (prefers-reduced-motion: no-preference) {
+	.cs-usage-menu-count {
+		animation: cs-fade-in 180ms ease-out;
+	}
+}
+
 /* Rows reuse .callout-studio-row; this only tweaks the menu-specific bits. */
 .cs-menu-row .callout-studio-row-name {
 	/* The shared 22ch cap is for callout names. Menu actions should use the

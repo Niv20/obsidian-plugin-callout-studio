@@ -795,7 +795,7 @@ export const id: Record<string, string> = {
 	"usage.openFailed": "Tidak dapat membuka kemunculan callout ini.",
 	"usage.menuCount": "Temukan penggunaan ({{count}})",
 	"usage.menuIncomplete": "Temukan penggunaan — pemindaian belum lengkap",
-	"usage.menuLoading": "Temukan penggunaan — menghitung…",
+	"usage.menu": "Temukan penggunaan",
 	"usage.closeSettings": "Tutup Pengaturan untuk melihat hasil callout di bilah samping.",
 
 	"import.title": "Masalah impor",

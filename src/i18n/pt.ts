@@ -844,7 +844,7 @@ export const pt: Record<string, string> = {
 	"usage.openFailed": "Não foi possível abrir esta ocorrência de callout.",
 	"usage.menuCount": "Encontrar usos ({{count}})",
 	"usage.menuIncomplete": "Encontrar usos — verificação incompleta",
-	"usage.menuLoading": "Encontrar usos — contando…",
+	"usage.menu": "Encontrar usos",
 	"usage.closeSettings": "Feche as Configurações para ver os resultados dos callouts na barra lateral.",
 
 	"import.title": "Problemas de importação",

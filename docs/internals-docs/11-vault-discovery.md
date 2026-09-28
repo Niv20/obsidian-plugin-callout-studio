@@ -200,7 +200,22 @@ prefer a header line and a line of body content. Preview formatting does not
 change source coordinates or token exclusions. Fine-pointer hover changes only a
 result card's border to the theme's focus-border colour; selected and
 keyboard-focus treatments remain distinct.
-DOM menus update counts while the index loads and unsubscribe when hidden.
+`prepareUsageMenu` gives the shared occurrence scan up to 200 ms before any
+custom, built-in or theme row menu is constructed. A ready index bypasses both
+the wait and a freshness request. Concurrent requests share one scan; the latest
+menu request supersedes earlier ones. A temporary `Component` owns the timeout,
+index subscription and owner-document/window listeners. Clicking elsewhere,
+Escape/Tab, window blur, Settings hide/redraw or index disposal cancels the
+pending opening; a detached trigger cannot open a delayed menu. Every settlement
+cleans up the temporary resources.
+Fast scans show the exact count from the menu's first frame. On timeout, DOM
+menus open with the plain localized **Find usages** label and observe the existing
+scan without requesting another. Once ready, the added count fades in over
+180 ms using a document-fragment title; the action label stays visible. Counts
+already ready at opening do not animate, unchanged titles are not replaced, and
+reduced-motion preferences disable the fade. Partial scans retain an explicit
+incomplete label and are not retried within the same opening. Menus unsubscribe
+when hidden.
 Views unsubscribe from both index and registry changes when closed.
 The list starts with 100 results and adds 100 per **Show more** action. Per-file
 heading counts cover the complete filtered query, including unloaded cards.

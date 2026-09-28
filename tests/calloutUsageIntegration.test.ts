@@ -8,8 +8,9 @@ import { scanVaultCalloutStatistics } from "../src/utils/vaultCalloutStats";
 import { registerOccurrenceIndex } from "../src/usage/registerOccurrenceIndex";
 import { getOccurrenceMetrics } from "../src/usage/occurrenceMetrics";
 import { t } from "../src/i18n";
+import "./support/fakeDom";
 
-// Async index scheduling needs real timers even when no browser DOM is installed.
+// Async index scheduling needs real timers rather than the fake DOM's queue.
 const originalWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
 before(() => { Object.defineProperty(globalThis, "window", { configurable: true, value: globalThis }); });
 after(() => {
@@ -29,11 +30,11 @@ function harness(contents: Record<string, string>) {
 }
 
 function fakeMenu() {
-	let title = "";
+	let title: string | DocumentFragment = "";
 	let click: (() => unknown) | undefined;
 	let hide = (): void => {};
 	const item = {
-		setTitle(value: string) { title = value; return this; },
+		setTitle(value: string | DocumentFragment) { title = value; return this; },
 		setIcon() { return this; },
 		onClick(callback: () => unknown) { click = callback; return this; },
 	};
@@ -42,7 +43,14 @@ function fakeMenu() {
 		onHide(callback: () => void) { hide = callback; },
 		addItem(callback: (value: MenuItem) => void) { callback(item as unknown as MenuItem); return this; },
 	} as unknown as Menu;
-	return { menu, title: () => title, hide: () => hide(), click: () => click?.() };
+	return {
+		menu,
+		title: () => typeof title === "string" ? title : title.textContent,
+		countNode: () => typeof title === "string" ? undefined : Array.from(title.childNodes)
+			.find((node) => node.nodeType === Node.ELEMENT_NODE &&
+				(node as HTMLElement).classList.contains("cs-usage-menu-count")),
+		hide: () => hide(), click: () => click?.(),
+	};
 }
 
 describe("shared callout usage surfaces", () => {
@@ -71,7 +79,8 @@ describe("shared callout usage surfaces", () => {
 		}
 		const menu = fakeMenu();
 		addUsageMenuItem(menu.menu, app, ["note"]);
-		assert.equal(menu.title(), "Find usages (4)", "menu shows usages without a file count");
+		assert.equal(menu.title(), t("usage.menuCount", { count: 4 }), "menu shows usages without a file count");
+		assert.equal(menu.countNode(), undefined, "a count ready at opening appears immediately");
 		await scanVaultCalloutStatistics(app);
 		assert.equal(reads(), 2, "repeat report and menu reuse parsed files");
 		assert.equal(registry.has("never-saved"), false);
@@ -94,22 +103,46 @@ describe("shared callout usage surfaces", () => {
 		index.dispose();
 	});
 
-	it("opens a cold menu synchronously, updates its count, and detaches on hide", async () => {
+	it("opens a cold menu quietly, fades in only its count, and detaches on hide", async () => {
 		const { app } = harness({ "a.md": "[!note]" });
 		let release!: (content: string) => void;
 		app.vault.cachedRead = () => new Promise<string>((resolve) => { release = resolve; });
 		const menu = fakeMenu();
 		assert.equal(addUsageMenuItem(menu.menu, app, ["note"]), undefined);
-		assert.equal(menu.title(), t("usage.menuLoading"));
+		assert.equal(menu.title(), t("usage.menu"));
+		assert.equal(menu.countNode(), undefined);
 		const index = getCalloutOccurrenceIndex(app);
 		const running = index.ensureFresh();
 		await Promise.resolve();
+		assert.equal(index.status, "loading");
+		assert.equal(menu.title(), t("usage.menu"), "loading never flashes progress copy");
 		release("[!note]");
 		await running;
 		assert.equal(menu.title(), t("usage.menuCount", { count: 1 }));
+		assert.equal(menu.countNode()?.textContent, " (1)", "only the added count and its punctuation fade");
+		const countNode = menu.countNode();
+		await index.ensureFresh();
+		assert.equal(menu.countNode(), countNode, "an unchanged count keeps its existing element");
 		menu.hide();
 		index.invalidate("a.md");
 		assert.equal(menu.title(), t("usage.menuCount", { count: 1 }));
+		index.dispose();
+	});
+
+	it("does not reveal a count after its menu was dismissed during the scan", async () => {
+		const { app } = harness({ "a.md": "[!note]" });
+		let release!: (content: string) => void;
+		app.vault.cachedRead = () => new Promise<string>((resolve) => { release = resolve; });
+		const menu = fakeMenu();
+		addUsageMenuItem(menu.menu, app, ["note"]);
+		const index = getCalloutOccurrenceIndex(app);
+		const running = index.ensureFresh();
+		await Promise.resolve();
+		menu.hide();
+		release("[!note]");
+		await running;
+		assert.equal(menu.title(), t("usage.menu"));
+		assert.equal(menu.countNode(), undefined);
 		index.dispose();
 	});
 

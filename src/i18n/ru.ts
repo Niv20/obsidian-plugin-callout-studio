@@ -841,7 +841,7 @@ export const ru: Record<string, string> = {
 	"usage.openFailed": "Не удалось открыть это вхождение callout.",
 	"usage.menuCount": "Найти использования ({{count}})",
 	"usage.menuIncomplete": "Найти использования — сканирование не завершено",
-	"usage.menuLoading": "Найти использования — подсчёт…",
+	"usage.menu": "Найти использования",
 	"usage.closeSettings": "Закройте настройки, чтобы увидеть результаты по callout на боковой панели.",
 
 	"import.title": "Проблемы импорта",

@@ -820,7 +820,7 @@ export const da: Record<string, string> = {
 	"usage.openFailed": "Denne callout-forekomst kunne ikke åbnes.",
 	"usage.menuCount": "Find anvendelser ({{count}})",
 	"usage.menuIncomplete": "Find anvendelser — scanning ufuldstændig",
-	"usage.menuLoading": "Find anvendelser — tæller…",
+	"usage.menu": "Find anvendelser",
 	"usage.closeSettings": "Luk indstillingerne for at se callout-resultaterne i sidepanelet.",
 	"import.title": "Importproblemer",
 	"import.reportLeadIn":

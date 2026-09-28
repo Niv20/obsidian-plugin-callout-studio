@@ -801,7 +801,7 @@ export const nl: Record<string, string> = {
 	"usage.openFailed": "Kan deze vindplaats van de callout niet openen.",
 	"usage.menuCount": "Gebruik zoeken ({{count}})",
 	"usage.menuIncomplete": "Gebruik zoeken — scan onvolledig",
-	"usage.menuLoading": "Gebruik zoeken — tellen…",
+	"usage.menu": "Gebruik zoeken",
 	"usage.closeSettings": "Sluit Instellingen om de callout-resultaten in de zijbalk te bekijken.",
 
 	"import.title": "Importeerproblemen",

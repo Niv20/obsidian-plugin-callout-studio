@@ -794,7 +794,7 @@ export const ja: Record<string, string> = {
 	"usage.openFailed": "このcalloutの出現箇所を開けませんでした。",
 	"usage.menuCount": "使用箇所を検索 ({{count}})",
 	"usage.menuIncomplete": "使用箇所を検索 — スキャンが不完全",
-	"usage.menuLoading": "使用箇所を検索 — 集計中…",
+	"usage.menu": "使用箇所を検索",
 	"usage.closeSettings": "サイドバーでcalloutの結果を表示するには、設定を閉じてください。",
 
 	"import.title": "インポートの問題",

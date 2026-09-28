@@ -809,7 +809,7 @@ export const zhTW: Record<string, string> = {
 	"usage.openFailed": "無法開啟此處的 Callout。",
 	"usage.menuCount": "尋找使用位置 ({{count}})",
 	"usage.menuIncomplete": "尋找使用位置 — 掃描未完成",
-	"usage.menuLoading": "尋找使用位置 — 正在計數…",
+	"usage.menu": "尋找使用位置",
 	"usage.closeSettings": "關閉「設定」，即可在側邊欄查看 Callout 結果。",
 	"import.title": "匯入問題",
 	"import.reportLeadIn": "繼續之前，請檢查以下匯入問題：",

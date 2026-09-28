@@ -793,7 +793,7 @@ export const ko: Record<string, string> = {
 	"usage.openFailed": "이 callout 사용 위치를 열지 못했습니다.",
 	"usage.menuCount": "사용 위치 찾기 ({{count}})",
 	"usage.menuIncomplete": "사용 위치 찾기 — 스캔이 완료되지 않음",
-	"usage.menuLoading": "사용 위치 찾기 — 개수 세는 중…",
+	"usage.menu": "사용 위치 찾기",
 	"usage.closeSettings": "사이드바에서 callout 결과를 보려면 설정을 닫으세요.",
 
 	"import.title": "가져오기 문제",

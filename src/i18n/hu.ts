@@ -796,7 +796,7 @@ export const hu: Record<string, string> = {
 	"usage.openFailed": "Nem sikerült megnyitni ezt a callout-előfordulást.",
 	"usage.menuCount": "Előfordulások keresése ({{count}})",
 	"usage.menuIncomplete": "Előfordulások keresése — a vizsgálat nem teljes",
-	"usage.menuLoading": "Előfordulások keresése — számlálás…",
+	"usage.menu": "Előfordulások keresése",
 	"usage.closeSettings": "Zárd be a Beállításokat, hogy a callout-eredményeket az oldalsávban lásd.",
 
 	"import.title": "Importálási problémák",

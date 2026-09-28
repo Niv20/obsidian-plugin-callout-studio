@@ -829,7 +829,7 @@ export const zh: Record<string, string> = {
 	"usage.openFailed": "无法打开此处的 Callout。",
 	"usage.menuCount": "查找使用位置 ({{count}})",
 	"usage.menuIncomplete": "查找使用位置 — 扫描未完成",
-	"usage.menuLoading": "查找使用位置 — 正在计数…",
+	"usage.menu": "查找使用位置",
 	"usage.closeSettings": "关闭“设置”，即可在侧边栏查看 Callout 结果。",
 
 	"import.title": "导入问题",

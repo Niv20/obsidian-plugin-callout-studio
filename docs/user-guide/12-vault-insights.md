@@ -112,8 +112,15 @@ A callout's three-dot menu shows **Find usages** with its total across all three
 formats. Select it to open those results. Definition menus include the type's
 aliases, so their occurrences contribute to the total.
 
-A first scan displays **counting…**. Incomplete scans are labelled rather than
-reported as zero. Actions that change notes check current contents separately.
+When the count is already current, the menu opens immediately with the number.
+Otherwise it waits up to 200 milliseconds for the shared scan. If the count is
+ready within that time, the menu opens with it; if scanning takes longer, the
+menu opens with **Find usages**, and the number fades in when ready. Opening
+another callout's menu reuses the same index rather than scanning the vault again.
+Clicking elsewhere or closing Settings cancels a pending menu opening.
+The fade respects your system's reduced-motion preference. Incomplete scans are
+labelled rather than reported as zero. Actions that change notes check current
+contents separately.
 
 ## Scanning behavior and exclusions
 

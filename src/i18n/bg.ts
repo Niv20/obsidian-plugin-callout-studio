@@ -823,7 +823,7 @@ export const bg: Record<string, string> = {
 	"usage.openFailed": "Това срещане на callout не можа да се отвори.",
 	"usage.menuCount": "Търсене на употреби ({{count}})",
 	"usage.menuIncomplete": "Търсене на употреби — непълно сканиране",
-	"usage.menuLoading": "Търсене на употреби — преброяване…",
+	"usage.menu": "Търсене на употреби",
 	"usage.closeSettings": "Затворете настройките, за да видите резултатите за callout-и в страничната лента.",
 	"import.title": "Проблеми с импортирането",
 	"import.reportLeadIn":

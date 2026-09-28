@@ -791,7 +791,7 @@ export const pl: Record<string, string> = {
 	"usage.openFailed": "Nie udało się otworzyć tego wystąpienia calloutu.",
 	"usage.menuCount": "Znajdź użycia ({{count}})",
 	"usage.menuIncomplete": "Znajdź użycia — skanowanie niepełne",
-	"usage.menuLoading": "Znajdź użycia — liczenie…",
+	"usage.menu": "Znajdź użycia",
 	"usage.closeSettings": "Zamknij Ustawienia, aby zobaczyć wyniki dla calloutów na pasku bocznym.",
 
 	"import.title": "Problemy z importem",

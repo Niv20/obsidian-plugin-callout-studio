@@ -842,7 +842,7 @@ export const tr: Record<string, string> = {
 	"usage.openFailed": "Bu callout kullanımı açılamadı.",
 	"usage.menuCount": "Kullanımları bul ({{count}})",
 	"usage.menuIncomplete": "Kullanımları bul — tarama tamamlanmadı",
-	"usage.menuLoading": "Kullanımları bul — sayılıyor…",
+	"usage.menu": "Kullanımları bul",
 	"usage.closeSettings": "Callout sonuçlarını kenar çubuğunda görmek için Ayarlar bölümünü kapatın.",
 
 	"import.title": "İçe aktarma sorunları",

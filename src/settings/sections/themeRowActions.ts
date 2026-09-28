@@ -28,6 +28,7 @@ import {
 	handleClearCalloutUsages,
 } from "./calloutVaultActions";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
+import { prepareUsageMenu } from "../../usage/prepareUsageMenu";
 import { ThemeCalloutPreviewModal } from "../ThemeCalloutPreviewModal";
 import { addDuplicateItem } from "./duplicateCallout";
 
@@ -66,6 +67,8 @@ export async function openThemeRowMenu(
 	event: MouseEvent,
 	def: CalloutDefinition,
 ): Promise<void> {
+	const preparation = prepareUsageMenu(ctx.app, event, ctx.registerDisposer);
+	if (preparation && !await preparation) return;
 	const menu = new Menu();
 	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
 	menu.addSeparator();

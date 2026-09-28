@@ -798,7 +798,9 @@ The use count lives in that menu rather than on the row, and the row carries no
 *Default fallback* tag either: both describe a callout the user cannot act on.
 [`usageMenuItem.ts`](../../src/usage/usageMenuItem.ts) reads the shared
 [`CalloutOccurrenceIndex`](../../src/usage/CalloutOccurrenceIndex.ts), subscribes
-while the menu is open, and requests freshness when the index is not ready.
+while the menu is open. `prepareUsageMenu` requests freshness only when needed
+and waits at most 200 ms before the menu is built; after that, a pending count
+fades in when ready. Ready counts open immediately without a new scan.
 The index owns source invalidation and reuse; settings-row refreshes must not
 start an independent whole-vault scan on every colour-picker change.
 

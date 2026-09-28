@@ -1060,7 +1060,7 @@ export const en: Record<string, string> = {
 	"usage.openFailed": "Could not open this callout occurrence.",
 	"usage.menuCount": "Find usages ({{count}})",
 	"usage.menuIncomplete": "Find usages — scan incomplete",
-	"usage.menuLoading": "Find usages — counting…",
+	"usage.menu": "Find usages",
 	"usage.closeSettings": "Close Settings to view the callout results in the sidebar.",
 
 	// Import validation

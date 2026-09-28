@@ -781,7 +781,7 @@ export const ms: Record<string, string> = {
 	"usage.openFailed": "Tidak dapat membuka kemunculan callout ini.",
 	"usage.menuCount": "Cari penggunaan ({{count}})",
 	"usage.menuIncomplete": "Cari penggunaan — imbasan tidak lengkap",
-	"usage.menuLoading": "Cari penggunaan — sedang mengira…",
+	"usage.menu": "Cari penggunaan",
 	"usage.closeSettings": "Tutup Tetapan untuk melihat hasil callout dalam bar sisi.",
 	"import.title": "Masalah import",
 	"import.reportLeadIn":

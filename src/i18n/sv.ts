@@ -838,7 +838,7 @@ export const sv: Record<string, string> = {
 	"usage.openFailed": "Det gick inte att öppna den här callout-förekomsten.",
 	"usage.menuCount": "Hitta användningar ({{count}})",
 	"usage.menuIncomplete": "Hitta användningar — skanningen är ofullständig",
-	"usage.menuLoading": "Hitta användningar — räknar…",
+	"usage.menu": "Hitta användningar",
 	"usage.closeSettings": "Stäng Inställningar för att se callout-resultaten i sidofältet.",
 
 	"import.title": "Importproblem",

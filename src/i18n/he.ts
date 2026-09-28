@@ -879,7 +879,7 @@ export const he: Record<string, string> = {
 	"usage.openFailed": "לא ניתן לפתוח את המופע הזה של תיבת־ההבלטה.",
 	"usage.menuCount": "איתור שימושים ({{count}})",
 	"usage.menuIncomplete": "איתור שימושים — הסריקה לא הושלמה",
-	"usage.menuLoading": "איתור שימושים — הספירה מתבצעת…",
+	"usage.menu": "איתור שימושים",
 	"usage.closeSettings": "יש לסגור את ההגדרות כדי לראות את תוצאות תיבות־ההבלטה בסרגל הצד.",
 
 	// Import validation

@@ -844,7 +844,7 @@ export const fa: Record<string, string> = {
 	"usage.openFailed": "باز کردن این مورد استفاده از callout ممکن نشد.",
 	"usage.menuCount": "یافتن موارد استفاده ({{count}})",
 	"usage.menuIncomplete": "یافتن موارد استفاده — اسکن کامل نیست",
-	"usage.menuLoading": "یافتن موارد استفاده — در حال شمارش…",
+	"usage.menu": "یافتن موارد استفاده",
 	"usage.closeSettings": "برای دیدن نتایج callout در نوار کناری، تنظیمات را ببندید.",
 
 	"import.title": "مشکلات وارد کردن",

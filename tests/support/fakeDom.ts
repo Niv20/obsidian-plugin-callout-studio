@@ -197,6 +197,14 @@ export class FakeDocumentFragment {
 	readonly childNodes: FakeNode[] = [];
 
 	createEl(tag: string, options?: ElOptions): FakeElement {
+		return this.make(tag, options);
+	}
+
+	createSpan(options?: ElOptions): FakeElement {
+		return this.make("span", options);
+	}
+
+	private make(tag: string, options?: ElOptions): FakeElement {
 		const el = new FakeElement(tag, sharedDocument);
 		applyElOptions(el, options);
 		return this.appendChild(el);
