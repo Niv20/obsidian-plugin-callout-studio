@@ -122,10 +122,14 @@ choices, including pending link-only changes. See
 
 The footer owns the contact and project links: one friendly sentence embeds an
 inline GitHub issue link for either a bug or an idea and an inline email link.
-An inset rule with matching space above and below separates that sentence from
+The footer's leading padding and the metadata row's leading margin both use
+`--size-4-4` (16px by default), giving the contact text equal space to the rules
+above and below. The metadata row's leading padding and the footer's trailing
+padding remain `--size-4-3` (12px), keeping the final row compact.
+An inset rule separates the contact sentence from
 the quieter row, which links to the source, contribution guide, plugin license
 and the GitHub release matching the displayed plugin version. The
-**Icon licenses & credits** control opens `IconCreditsModal`; that modal renders
+**Icon licenses** control opens `IconCreditsModal`; that modal renders
 the registry-backed icon attributions and links to the full third-party notices
 without reserving a long disclosure row at the bottom of the settings page.
 
