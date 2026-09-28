@@ -3,7 +3,7 @@ import { SelectDropdown } from "../ui/selectDropdown";
 import { createSidebarSummary, createSidebarToolbar } from "../ui/sidebarFrame";
 import type { CalloutRenderRole } from "../types";
 
-export const OCCURRENCE_ROLES: CalloutRenderRole[] = ["regular", "heading", "inline"];
+export const OCCURRENCE_ROLES: CalloutRenderRole[] = ["heading", "inline", "regular"];
 export const occurrenceRoleLabel = (role: CalloutRenderRole): string => t({
 	regular: "vaultStats.roleBlock", heading: "vaultStats.roleHeading", inline: "vaultStats.roleInline",
 }[role]);
