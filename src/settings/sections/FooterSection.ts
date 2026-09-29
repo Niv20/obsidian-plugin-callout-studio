@@ -85,7 +85,7 @@ function renderContactLinks(parent: HTMLElement, template: string): void {
 			createContactLink(
 				parent,
 				t("footer.openIssue"),
-				`${REPOSITORY_URL}/issues/new`,
+				`${REPOSITORY_URL}/issues/new/choose`,
 				true,
 			);
 		} else if (part === "{{email}}") {

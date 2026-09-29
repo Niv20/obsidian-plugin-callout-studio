@@ -47,7 +47,8 @@ describe("the settings footer", () => {
 
 		const links = linksIn(host);
 		const issueLinks = links.filter(
-			(link) => link.getAttribute("href") === `${REPOSITORY_URL}/issues/new`,
+			(link) =>
+				link.getAttribute("href") === `${REPOSITORY_URL}/issues/new/choose`,
 		);
 		assert.equal(issueLinks.length, 1);
 		assert.equal(issueLinks[0]?.textContent, "Open a GitHub issue");
