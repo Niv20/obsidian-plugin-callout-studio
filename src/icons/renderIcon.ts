@@ -17,6 +17,7 @@
  * safety — is identical everywhere and lives here once.
  */
 import { setIcon } from "obsidian";
+import { HELP_ICON_ID } from "../constants";
 import type { CalloutIcon, CalloutRenderRole } from "../types";
 import type { IconResolver } from "./types";
 import { packFor } from "./registry";
@@ -473,7 +474,7 @@ function paintMissing(
 				return "placeholder";
 			}
 			if (resolver.hasFailed(icon, options.role)) {
-				setIcon(target, "circle-help");
+				setIcon(target, HELP_ICON_ID);
 				target.addClass("is-error");
 				if (options.errorAriaLabel) {
 					target.setAttribute("aria-label", options.errorAriaLabel);

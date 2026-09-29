@@ -41,6 +41,17 @@ export const MAX_TAGS_COUNT: number = 4;
 export const PLUGIN_ICON_ID = "paintbrush";
 
 /**
+ * The question-mark icon, under its older Lucide name on purpose.
+ *
+ * `circle-help` draws the same thing, but a right-to-left interface mirrors
+ * every icon, and Obsidian un-mirrors only `.lucide-help-circle` (and its own
+ * `.help`) when the language is Hebrew, where "?" is not written reversed the
+ * way Arabic's "؟" is. Under the newer name the plugin's "?" stayed backwards
+ * in Hebrew while Obsidian's own sat upright beside it.
+ */
+export const HELP_ICON_ID = "help-circle";
+
+/**
  * Placeholder callout ID the editor's live preview renders under while the
  * callout being created has no ID yet (empty name). Once the user types one,
  * the preview switches to the real ID being edited.

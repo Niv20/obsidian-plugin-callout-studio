@@ -385,6 +385,15 @@ both be missing in "exotic render realms" (a PDF-export clone, a pop-out
 window mid-teardown), and a missing icon there is always preferable to a
 crash mid-render.
 
+The "gave up" state draws a question mark, `HELP_ICON_ID` from
+[`constants.ts`](../../src/constants.ts) — as does the **About conversion**
+button in Review conversion. It is Lucide's older name, `help-circle`, not
+`circle-help`, on purpose: the drawing is identical, but a right-to-left
+interface mirrors every icon and Obsidian un-mirrors only `.lucide-help-circle`
+when the language is Hebrew (where "?" is not reversed the way Arabic's "؟"
+is). Under the newer name the "?" stayed backwards in Hebrew.
+`tests/iconNames.test.ts` keeps `circle-help` out of the source.
+
 `renderNoIcon(target)` is the **separate** function for a callout the user
 explicitly set to `hideIcon`, and it is used **only** on surfaces that
 *manage* callouts (settings list, autocomplete popup, statistics/replace

@@ -34,8 +34,10 @@ import {
 	iconsEqual,
 	resolveLucideId,
 } from "../src/icons/lucideId";
+import { HELP_ICON_ID } from "../src/constants";
 import { createIconNameCheck, createLucideNameCheck } from "../src/icons/nameCheck";
 import type { CalloutIcon, IconPackId } from "../src/types";
+import { literals, pluginSourceFiles } from "./support/sourceScan";
 
 /**
  * What `getIconIds()` answers in these tests.
@@ -408,5 +410,28 @@ describe("createIconNameCheck", () => {
 		// nothing; the check is built per import, not per session.
 		const known = await check([]);
 		assert.equal(known({ type: "octicons", value: "no-such-icon" }), true);
+	});
+});
+
+/**
+ * The one icon whose Lucide spelling changes what the user sees. A
+ * right-to-left interface mirrors every icon, and in Hebrew Obsidian un-mirrors
+ * the question mark only under its older name, `help-circle` — `circle-help`
+ * draws the same "?" and stays backwards. Measured against the real `app.css`;
+ * what can be checked here is that the plugin never draws it under the name
+ * that misses the exemption.
+ */
+describe("the question-mark icon keeps the name Hebrew un-mirrors", () => {
+	it("is help-circle", () => {
+		assert.equal(HELP_ICON_ID, "help-circle");
+	});
+
+	it("is never drawn as circle-help", () => {
+		const hits = pluginSourceFiles().flatMap((file) =>
+			literals(file.text)
+				.filter((lit) => /^(?:lucide-)?circle-help$/.test(lit.value))
+				.map(() => file.path),
+		);
+		assert.deepEqual(hits, [], "use HELP_ICON_ID from src/constants.ts");
 	});
 });

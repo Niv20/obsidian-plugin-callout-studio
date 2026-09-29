@@ -1,4 +1,5 @@
 import { setIcon } from "obsidian";
+import { HELP_ICON_ID } from "../constants";
 import { t } from "../i18n";
 import { createSidebarSummary, createSidebarToolbar } from "../ui/sidebarFrame";
 import type { PortableCalloutConversionPlan } from "../utils/portableCalloutPlan";
@@ -27,7 +28,7 @@ export function createPortableConversionFrame(root: HTMLElement): PortableConver
 			type: "button", "data-action": "help", "aria-label": t("portable.help"),
 			"aria-haspopup": "dialog",
 		} });
-		setIcon(help, "circle-help");
+		setIcon(help, HELP_ICON_ID);
 	}
 	const actions = toolbar.createDiv({ cls: "cs-portable-intro-actions" });
 	const subtitle = toolbar.querySelector(".cs-sidebar-subtitle");
