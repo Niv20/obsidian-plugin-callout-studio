@@ -761,6 +761,29 @@ than overflowed, so the chevron sits inside it; `.setting-item-info` has no
 overflow of its own. `margin-inline-start` also means RTL needs nothing extra
 — the title's inline-start edge is preserved there the same way.
 
+Which way the chevron points is RTL's one catch. Obsidian marks a
+right-to-left interface with `.mod-rtl` on the body — never `dir="rtl"` — and
+already mirrors every `svg.svg-icon` under it, so a folded chevron points along
+the title with no help. An open one must then turn *against* that mirror, or a
+fixed +90° turns the mirrored `<` into `^`. The open rule therefore turns by
+`calc(var(--direction, 1) * 90deg)`: core's `--direction` is 1, or -1 under
+`.mod-rtl`, and core's own fold indicators turn by it too. The folded rule
+must not read it, because core resets `--direction` to 1 on every
+`.is-collapsed:dir(ltr)` — which, with no `dir` attribute in the interface, is
+every folded heading. The icon picker's group chevron follows the same two
+rules.
+
+Its stroke is set, not inherited. Every fold chevron in the plugin's own UI
+sits beside a semibold heading — the settings lists, the groups and sections
+of **Restore an earlier setup**, and the icon picker's source groups — and
+Obsidian's default icon stroke (1.75 of the icon's 24 units) is a
+regular-weight line that reads as a hairline there. One rule,
+`.cs-disclosure-chevron svg, .icon-picker-group-chevron svg`, draws both at
+`stroke-width: 2.5px`; with the icon at `1em` that is about `0.1em` at any
+heading size, a semibold stem. A callout's own fold arrow (heading callout,
+block callout, and their previews) is deliberately left out — it follows
+Obsidian's look for callouts.
+
 ### Heading counts — one "(N)" everywhere
 
 Every heading that counts what it holds ends the same way: the four settings

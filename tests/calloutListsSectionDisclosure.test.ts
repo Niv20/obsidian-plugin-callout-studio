@@ -11,8 +11,9 @@
  *   rest, and the heading's "(N)" goes on naming the total either way — the
  *   count is how many the user *has*, never how many are on screen.
  *
- * A third block at the end guards the chevron's *layout* rather than its
- * behaviour — that it hangs in the gutter and leaves the title's x alone —
+ * A third block at the end guards the chevron's *look* rather than its
+ * behaviour — that it hangs in the gutter and leaves the title's x alone, and
+ * that every heading's chevron draws at one semibold stroke —
  * against the stylesheet, since the fake DOM has no layout engine to measure.
  *
  * The state of both lives in the controller's closure rather than the DOM,
@@ -634,6 +635,62 @@ describe("the fold chevron hangs in the gutter, not in the title", () => {
 			rule[1] as string,
 			/gap:\s*var\(--cs-disclosure-gap\)/,
 			"the gap the offset accounts for is not the gap the heading uses",
+		);
+	});
+
+	it("draws every heading's fold chevron at one stroke, thicker than Obsidian's default", () => {
+		const chevrons = [".cs-disclosure-chevron svg", ".icon-picker-group-chevron svg"];
+		const rules = Array.from(css.matchAll(/([^{}]+)\{([^}]*)\}/g))
+			.map((m) => ({
+				selectors: (m[1] as string).split(",").map((s) => s.replace(/\s+/g, " ").trim()),
+				stroke: /stroke-width:\s*([^;]+);/.exec(m[2] as string)?.[1]?.trim(),
+			}))
+			.filter((r) => r.stroke !== undefined && r.selectors.some((s) => chevrons.includes(s)));
+
+		assert.strictEqual(rules.length, 1, "one rule, or the two chevrons can drift apart");
+		const [rule] = rules;
+		assert.ok(rule);
+		for (const chevron of chevrons) {
+			assert.ok(rule.selectors.includes(chevron), `${chevron} is not drawn by the shared rule`);
+		}
+		assert.ok(
+			parseFloat(rule.stroke ?? "") > 1.75,
+			"1.75 is Obsidian's regular-weight stroke — a hairline beside a semibold heading",
+		);
+	});
+
+	/*
+	 * Obsidian marks a right-to-left interface with `.mod-rtl` on the body and
+	 * mirrors every icon under it itself; it never sets `dir="rtl"`. A chevron
+	 * that mirrors itself under `[dir="rtl"]` is therefore dead code, and one
+	 * that turns a fixed +90° once open points *up* after core's mirror. The
+	 * pointing itself was measured in a browser against the real `app.css`.
+	 */
+	it("turns an open chevron by core's --direction, never by a [dir] rule", () => {
+		for (const [open, folded] of [
+			[".cs-collapsible-heading .cs-disclosure-chevron", ".cs-collapsible-heading.is-collapsed .cs-disclosure-chevron"],
+			[".icon-picker-group-chevron", ".icon-picker-group-header.is-collapsed .icon-picker-group-chevron"],
+		] as const) {
+			const body = (selector: string) =>
+				Array.from(css.matchAll(/([^{}]+)\{([^}]*)\}/g))
+					.filter((m) => (m[1] as string).replace(/\s+/g, " ").trim() === selector)
+					.map((m) => m[2] as string)
+					.join("");
+			assert.match(
+				body(open),
+				/transform:\s*rotate\(calc\(var\(--direction, 1\) \* 90deg\)\)/,
+				`${open} must turn with the writing direction`,
+			);
+			assert.doesNotMatch(
+				body(folded),
+				/--direction/,
+				"core resets --direction to 1 on every .is-collapsed, so the folded state cannot read it",
+			);
+		}
+		assert.doesNotMatch(
+			css,
+			/\[dir="rtl"\][^{]*(?:cs-disclosure-chevron|icon-picker-group-chevron)/,
+			"Obsidian never sets dir=\"rtl\" on its interface; this rule would never match",
 		);
 	});
 });

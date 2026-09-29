@@ -462,21 +462,43 @@
 	height: 100%;
 }
 
+/* Every fold chevron in this plugin's own UI sits beside a semibold heading —
+   the settings lists, the groups and sections of Restore an earlier setup, and
+   the icon picker's source groups — and all of them draw at one weight, set
+   here and nowhere else. Obsidian's default icon stroke (1.75 of the icon's 24
+   units) is a regular-weight line, so beside semibold text the chevron read as
+   a hairline. The icon is 1em in both places, so 2.5 units is about 0.1em at
+   any heading size: a semibold stem.
+
+   A callout's own fold arrow — the heading callout's chevron, a block
+   callout's `.callout-fold` and the previews of either — is not in this list:
+   it belongs to the callout and follows Obsidian's look for callouts. */
+.cs-disclosure-chevron svg,
+.icon-picker-group-chevron svg {
+	stroke-width: 2.5px;
+}
+
+/* Folded, the chevron points along the title; open, it turns a quarter to
+   point down at the content. In a right-to-left interface Obsidian has already
+   mirrored the icon (`.mod-rtl svg.svg-icon` is `scale(-1, 1)`), so the folded
+   chevron points the right way untouched, and the open one has to turn the
+   other way round to still end up pointing down. Core's `--direction` (1, or
+   -1 under `.mod-rtl`) says which way — its own fold indicators turn by it.
+
+   This used to mirror the chevron itself under `[dir="rtl"]`. Obsidian never
+   sets that attribute on its interface, only `.mod-rtl` on the body, so those
+   rules never matched and the open chevron — mirrored by core, then turned
+   clockwise — pointed up.
+
+   The folded rule must not read `--direction`: core resets it to 1 on every
+   `.is-collapsed:dir(ltr)`, which with no `dir` attribute anywhere is every
+   `.is-collapsed`, this heading included. */
 .cs-collapsible-heading .cs-disclosure-chevron {
-	transform: rotate(90deg);
+	transform: rotate(calc(var(--direction, 1) * 90deg));
 }
 
 .cs-collapsible-heading.is-collapsed .cs-disclosure-chevron {
 	transform: rotate(0deg);
-}
-
-/* The chevron points at the content, so it flips with the writing direction. */
-[dir="rtl"] .cs-collapsible-heading .cs-disclosure-chevron {
-	transform: scaleX(-1) rotate(90deg);
-}
-
-[dir="rtl"] .cs-collapsible-heading.is-collapsed .cs-disclosure-chevron {
-	transform: scaleX(-1) rotate(0deg);
 }
 
 /* Folded away by the user. Deliberately not `cs-hidden`: the theme section
@@ -4117,9 +4139,13 @@ button.callout-studio-icon-picker-loading {
 	display: inline-flex;
 	flex-shrink: 0;
 	transition: transform 120ms ease;
-	transform: rotate(90deg);
+	/* Turns by core's `--direction` for the reason the settings headings'
+	   chevron does — see `.cs-collapsible-heading .cs-disclosure-chevron`. */
+	transform: rotate(calc(var(--direction, 1) * 90deg));
 }
 
+/* Its stroke is shared with the settings headings' chevron — see
+   `.cs-disclosure-chevron svg`. */
 .icon-picker-group-chevron svg {
 	width: 1em;
 	height: 1em;
@@ -4127,15 +4153,6 @@ button.callout-studio-icon-picker-loading {
 
 .icon-picker-group-header.is-collapsed .icon-picker-group-chevron {
 	transform: rotate(0deg);
-}
-
-/* The chevron points at the content, so it flips with the writing direction. */
-[dir="rtl"] .icon-picker-group-chevron {
-	transform: scaleX(-1) rotate(90deg);
-}
-
-[dir="rtl"] .icon-picker-group-header.is-collapsed .icon-picker-group-chevron {
-	transform: scaleX(-1) rotate(0deg);
 }
 
 .icon-picker-cell.is-group-collapsed {
