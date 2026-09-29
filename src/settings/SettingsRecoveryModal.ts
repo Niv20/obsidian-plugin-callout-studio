@@ -21,6 +21,7 @@ import { applyModalChrome } from "./modalChrome";
 import { blockedWhilePaused } from "./pausedGuard";
 import { SettingsRecoveryDetailsModal } from "./SettingsRecoveryDetailsModal";
 import { attachSectionDisclosure } from "./sections/sectionDisclosure";
+import { headingWithCount } from "../ui/headingCount";
 
 export interface RecoveryModalPlugin {
 	recovery?: SettingsRecoveryService;
@@ -103,12 +104,8 @@ export class SettingsRecoveryModal extends Modal {
 			if (group.length === 0) continue;
 			const section = list.createDiv({ cls: "cs-recovery-group" });
 			const headingSetting = new Setting(section)
-				.setName(t(heading))
+				.setName(headingWithCount(t(heading), group.length))
 				.setHeading();
-			headingSetting.nameEl.createSpan({
-				text: `(${group.length})`,
-				cls: "cs-recovery-group-count",
-			});
 			const rows = section.createDiv({ cls: "cs-recovery-group-rows" });
 			attachSectionDisclosure(headingSetting, rows);
 			for (const source of group) this.renderRow(rows, source);

@@ -57,12 +57,9 @@ import { sortCalloutsByDisplayName } from "../../utils/sorting";
 import { activeThemeName } from "../../manager/theme/customCssApi";
 import { partitionByStyleOwner, styleOwnerFacts } from "./rowOwnership";
 import type { RowKind } from "./rowOwnership";
-import {
-	focusFirstRevealed,
-	headingWithCount,
-	renderPagedList,
-} from "./listPaging";
+import { focusFirstRevealed, renderPagedList } from "./listPaging";
 import type { PagingState } from "./listPaging";
+import { headingWithCount } from "../../ui/headingCount";
 import { calloutListsSignature } from "./calloutListsSignature";
 import {
 	buildCalloutListsScaffold,

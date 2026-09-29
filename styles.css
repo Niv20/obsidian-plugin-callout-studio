@@ -500,6 +500,41 @@
 	display: none;
 }
 
+/* ─── Heading counts ──────────────────────────────────────────── */
+
+/* The "(N)" after a heading that counts what it holds: the settings tab's four
+   lists, the groups in Restore an earlier setup, the sections of the setup
+   comparison, and the file headings of the Find callouts and Review conversion
+   sidebars. One look for all of them, built by `ui/headingCount.ts` — a little
+   further from the title than a word space, in the secondary text colour, a
+   step smaller than the title and at medium weight, so it reads as a note on
+   the heading, not part of its name. Medium keeps the small digits from going
+   thin next to the title; a face without a 500 cut falls back to its regular
+   one, so the count then differs from the title by size and colour alone.
+
+   The space before "(" is in the text, so the heading still reads "My callout
+   types (4)" to a screen reader and when copied. `pre` keeps that space where
+   the count opens a flex item of its own (the setup comparison's section
+   titles), which would otherwise drop it, and — like `nowrap` — keeps "(12)"
+   on one line. The margin is the rest of the gap: `em`, so it keeps its
+   proportion to each heading's own type size. 0.3em of the count's 0.85em is
+   the 0.25em of the heading's own that the gap was before the count shrank. */
+.cs-heading-count {
+	margin-inline-start: 0.3em;
+	color: var(--text-muted);
+	font-size: 0.85em;
+	font-weight: var(--font-medium);
+	font-variant-numeric: tabular-nums;
+	white-space: pre;
+}
+
+/* On mobile, Obsidian draws settings headings in `--text-muted` themselves
+   (`--setting-group-heading-color`), which would leave the count the same
+   colour as its title. One step lighter keeps the two apart. */
+.is-mobile .setting-item-heading .cs-heading-count {
+	color: var(--text-faint);
+}
+
 /* ─── Sticky section headings ─────────────────────────────────── */
 
 /* The three callout-list headings pin to the top of the settings pane while
@@ -6468,15 +6503,6 @@ body:not(.is-phone)
 	unicode-bidi: plaintext;
 }
 
-.cs-sidebar-file-count {
-	margin-inline-start: 0.4em;
-	color: var(--text-muted);
-	font-size: var(--font-ui-smaller);
-	font-weight: var(--font-normal);
-	font-variant-numeric: tabular-nums;
-	white-space: nowrap;
-}
-
 button.cs-sidebar-file-link {
 	display: block;
 	min-inline-size: 0;
@@ -7979,12 +8005,6 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-warning);
 }
 
-.cs-recovery-group-count {
-	margin-inline-start: var(--size-4-2);
-	font-weight: var(--font-normal);
-	color: var(--text-muted);
-}
-
 /* Same 2px rhythm as .callout-studio-callout-list (the saved-palettes list and
    the three callout lists): rows sit almost flush, as a stack of boxes, not
    spaced out as separate cards. */
@@ -8334,12 +8354,15 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 
 /* Scoped to the table so it outranks Obsidian's own `button:not(.clickable-icon)`
    paint, padding and centring (0,1,1). The shade is the raised half of the
-   surface pair, the same as the number column it heads. */
+   surface pair, the same as the number column it heads.
+
+   No `gap`: it would open between the title and its count as well, on top of
+   the count's own spacing (`.cs-heading-count`), so the chevron keeps its
+   distance from the title with a margin of its own instead (below). */
 .cs-recovery-comparison .cs-recovery-section-toggle {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	gap: 6px;
 	width: 100%;
 	height: auto;
 	margin: 0;
@@ -8365,6 +8388,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 }
 
 .cs-recovery-section-toggle .cs-disclosure-chevron {
+	margin-inline-end: var(--cs-disclosure-gap);
 	color: var(--text-muted);
 }
 

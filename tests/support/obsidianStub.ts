@@ -184,6 +184,7 @@ export class ItemView {
  */
 type ElementLike = {
 	createDiv(options?: { cls?: string }): ElementLike;
+	appendChild?(node: Node): unknown;
 	addClass?(...classes: string[]): void;
 	addEventListener?(type: string, callback: () => void): void;
 	setAttribute?(name: string, value: string): void;
@@ -417,9 +418,16 @@ export class Setting {
 	 * disclosure has to survive. `descEl` also supports the command format
 	 * row's explanation when the selected callout belongs to the theme.
 	 */
-	setName(name?: string): this {
-		if (this.settingEl.dataset) this.settingEl.dataset.csName = name ?? "";
-		this.nameEl.textContent = name ?? "";
+	setName(name?: string | DocumentFragment): this {
+		if (name === undefined || typeof name === "string") {
+			this.nameEl.textContent = name ?? "";
+		} else {
+			// A fragment's children move in, as they do in Obsidian — the
+			// heading counts (`ui/headingCount.ts`) arrive this way.
+			this.nameEl.textContent = "";
+			for (const child of Array.from(name.childNodes)) this.nameEl.appendChild?.(child);
+		}
+		if (this.settingEl.dataset) this.settingEl.dataset.csName = this.nameEl.textContent;
 		return this;
 	}
 

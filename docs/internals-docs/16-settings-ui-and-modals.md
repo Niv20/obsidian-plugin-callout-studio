@@ -56,9 +56,10 @@ Fingerprint plus source-line validation preserves repeated-line identity;
 changed documents may relocate only a unique unchanged line. Navigation never
 modifies text or conversion choices, and stale asynchronous selections cancel.
 Both sidebars open a note at its beginning when its file heading is clicked;
-counts appear in parentheses immediately after the file name. The shared
-file-heading button uses its visible name and count as its accessible label,
-without a redundant hover tooltip. The shared
+counts appear in parentheses after the file name, drawn like every other
+heading count (see [Heading counts](#heading-counts--one-n-everywhere)). The
+shared file-heading button uses its visible name and count as its accessible
+label, without a redundant hover tooltip. The shared
 `ui/sidebarSelection.ts` observes selection transactions forwarded by the existing
 CodeMirror extension. Moving or collapsing the selection, adding another selection,
 or changing the document clears the active card without polling. Subscriptions
@@ -430,10 +431,11 @@ Three things about it are decisions, not incidentals:
   `aria-expanded` and `aria-controls` all live on it; the chevron is
   `aria-hidden`, because `aria-expanded` already says what it says.
 - **`setName` is wrapped.** Each list rewrites its heading on every render to
-  update the `(N)`, and Obsidian's `setName` *replaces* `nameEl`'s children —
-  which is where the chevron lives. Attributes survive that; elements do not.
-  Callers therefore go through `fold.setName(...)`, never
-  `setting.setName(...)`.
+  update the `(N)` — the fragment `headingWithCount` builds (see
+  [Heading counts](#heading-counts--one-n-everywhere)) — and Obsidian's
+  `setName` *replaces* `nameEl`'s children, which is where the chevron lives.
+  Attributes survive that; elements do not. Callers therefore go through
+  `fold.setName(...)`, never `setting.setName(...)`.
 
 Folding toggles `is-collapsed` on the heading and on the body. That is
 deliberately **not** `cs-hidden`: the theme *section* hides itself with
@@ -759,6 +761,57 @@ than overflowed, so the chevron sits inside it; `.setting-item-info` has no
 overflow of its own. `margin-inline-start` also means RTL needs nothing extra
 — the title's inline-start edge is preserved there the same way.
 
+### Heading counts — one "(N)" everywhere
+
+Every heading that counts what it holds ends the same way: the four settings
+lists (*Callouts from your theme*, *My callout types*, *Built-in callouts*,
+*Saved color palettes*), the source groups in **Restore an earlier setup**, the
+section titles of the setup comparison, and the file headings of the **Find
+callouts** and **Review conversion** sidebars.
+[`ui/headingCount.ts`](../../src/ui/headingCount.ts) builds all of them, and
+`.cs-heading-count` in `styles.css` is the one rule that places and colours
+them. They used to be four implementations, sitting one space, a space and a
+margin, or a flex gap and a margin from the title, in the heading's colour in
+one place and grey in the next.
+
+- `appendHeadingCount(heading, count)` appends
+  `<span class="cs-heading-count"> (N)</span>`, the number formatted with
+  `toLocaleString(getLocale())`. The space before "(" is part of the text, so
+  the heading reads — and is announced as — "My callout types (4)".
+- `headingWithCount(title, count)` returns the same thing as a fragment for a
+  `Setting` heading's `setName`, with the title and its count wrapped in one
+  span. A foldable heading's `nameEl` is a flex row (chevron, then title);
+  unwrapped, title and count would be two flex items — the row's gap between
+  them, and a long title wrapping beside its count instead of carrying it to
+  the end of its last line.
+- The setup comparison's title row keeps the count as its own flex item beside
+  `.cs-recovery-section-title`, so a title cut short with an ellipsis still
+  shows its count. That row therefore has no flex `gap` — its chevron carries
+  `margin-inline-end: var(--cs-disclosure-gap)` instead — because a gap would
+  open between the title and its count as well.
+
+The rule is the count's own word space plus `margin-inline-start: 0.3em` —
+about half an em in all, in `em` so it scales with each heading's type —
+`--text-muted`, `font-size: 0.85em` (a step below the heading, whatever size
+that is), `font-weight: var(--font-medium)`, `tabular-nums`, and
+`white-space: pre`. The margin is 0.3em rather than 0.25em because it is
+measured in the count's own, smaller em. Medium keeps the small digits from
+looking thin beside the title; where the interface font has no 500 cut the
+browser uses its regular one (its rule for a requested 500 is 400 first, then
+lighter, then heavier), so the count degrades to differing by size and colour
+alone, and a variable font simply renders 500. `pre` rather than `nowrap` because the comparison row's
+count opens a flex item, and `nowrap` drops a space at the start of one. On
+mobile, Obsidian paints settings headings in `--text-muted` themselves
+(`--setting-group-heading-color`), so
+`.is-mobile .setting-item-heading .cs-heading-count` steps down to
+`--text-faint` to stay distinct from its title.
+
+Not every "(N)" is a heading count. **Find usages (134)** in a callout's menu,
+**Load more (14)**, **Import valid only (3)** and the icon total in an icon
+source's description are part of a label, and stay plain text in that label's
+colour. `tests/headingCount.test.ts` pins the helpers and the rule; each
+surface's own suite checks that it goes through them.
+
 ### `listPaging.ts` — the first 20 rows, then a button
 
 `renderPagedList(host, items, state, renderItem, onLoadMore)` renders at most
@@ -776,12 +829,14 @@ because its grids run to thousands — a different problem, deliberately not
 shared code.)
 
 The button's label is `t("iconPicker.loadMore")` with the hidden count
-appended in code — `Load more (14)`. That is the same trick `headingWithCount`
-uses for the `(N)`: a numeric suffix on whatever `t()` returns, so it needs
-no key of its own in any of the 31 translated locales. Both `headingWithCount`
-and `focusFirstRevealed` (below) are exports of `listPaging.ts` rather than
-per-section helpers, which is what lets `CustomPalettesSection.ts` reuse them
-verbatim instead of reimplementing the same "(N)" and focus-on-reveal logic.
+appended in code — `Load more (14)` — the same trick the heading counts use: a
+numeric suffix on whatever `t()` returns, so it needs no key of its own in any
+of the 31 translated locales. Unlike a heading's count it stays plain text in
+the button's colour, because it is part of the label (see
+[Heading counts](#heading-counts--one-n-everywhere)). `focusFirstRevealed`
+(below) is an export of `listPaging.ts` rather than a per-section helper,
+which is what lets `CustomPalettesSection.ts` reuse it verbatim instead of
+reimplementing the same focus-on-reveal logic.
 
 Nothing above the button is faded. The rows carry an icon, two colour
 swatches and two buttons, and dimming an interactive row to hint that more

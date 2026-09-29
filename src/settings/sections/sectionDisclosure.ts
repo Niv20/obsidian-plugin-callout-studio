@@ -16,9 +16,10 @@
  * rather than the whole row including a paragraph of description.
  *
  * **`setName` is wrapped, not called directly.** Every list rewrites its
- * heading on every refresh to update the "(N)", and Obsidian's `setName`
- * replaces `nameEl`'s children — which is where the chevron lives. Attributes
- * survive that; child elements do not.
+ * heading on every refresh to update the "(N)" (`headingWithCount` in
+ * `ui/headingCount.ts`), and Obsidian's `setName` replaces `nameEl`'s
+ * children — which is where the chevron lives. Attributes survive that; child
+ * elements do not.
  *
  * The user-driven toggle is also wrapped in `foldAnchor.keepHeadingInPlace`, so
  * folding a heading that is currently pinned does not shoot it off the top of
@@ -31,7 +32,7 @@ import { keepHeadingInPlace } from "./foldAnchor";
 
 export type SectionDisclosure = {
 	/** `setName`, then the chevron put back — see the note above. */
-	setName: (text: string) => void;
+	setName: (name: string | DocumentFragment) => void;
 	setExpanded: (expanded: boolean) => void;
 	isExpanded: () => boolean;
 };
@@ -112,8 +113,8 @@ export function attachSectionDisclosure(
 	paint();
 
 	return {
-		setName: (text: string) => {
-			setting.setName(text);
+		setName: (name: string | DocumentFragment) => {
+			setting.setName(name);
 			mountChevron();
 		},
 		setExpanded,

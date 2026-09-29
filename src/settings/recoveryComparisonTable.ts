@@ -25,6 +25,7 @@ import { setIcon, type Component } from "obsidian";
 import { t } from "../i18n";
 import type { RecoveryItem, RecoveryReport, RecoverySection, RecoverySideName } from "./recoveryModel";
 import { keepHeadingInPlace } from "./sections/foldAnchor";
+import { appendHeadingCount } from "../ui/headingCount";
 
 /** Give the loading state and input events a turn between batches. */
 export function yieldRecoveryRender(component: Component, delay = 0): Promise<void> {
@@ -51,7 +52,9 @@ function sectionTable(parent: HTMLElement, section: RecoverySection, component: 
 	const toggle = heading.createEl("button", { cls: "cs-recovery-section-toggle", attr: { type: "button", "aria-expanded": "true" } });
 	setIcon(toggle.createSpan({ cls: "cs-disclosure-chevron", attr: { "aria-hidden": "true" } }), "chevron-right");
 	toggle.createSpan({ cls: "cs-recovery-section-title", text: section.title });
-	toggle.createSpan({ cls: "cs-recovery-group-count", text: `(${section.items.length})` });
+	// Its own flex item rather than inside the title, so a title cut short
+	// with an ellipsis still shows how many changes it holds.
+	appendHeadingCount(toggle, section.items.length);
 	const labels = head.createEl("tr", { cls: "cs-recovery-column-row" });
 	labels.createEl("th", { cls: "cs-recovery-column-number", text: t("recovery.details.column.number"), attr: { scope: "col" } });
 	labels.createEl("th", { cls: "cs-recovery-column-item", text: t("recovery.details.column.item"), attr: { scope: "col" } });

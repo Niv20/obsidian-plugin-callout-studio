@@ -75,7 +75,7 @@ describe("the earlier-setups window", () => {
 				assert.ok(heading, "source group has a shared collapsible heading");
 				assert.equal(heading.querySelector(".cs-disclosure-chevron") !== null, true, "source group uses the shared chevron");
 				assert.equal(heading.querySelector(".setting-item-name")?.getAttribute("aria-expanded"), "true", "source groups start expanded");
-				assert.equal(group.querySelector(".cs-recovery-group-count")?.textContent, "(1)");
+				assert.equal(group.querySelector(".cs-heading-count")?.textContent, " (1)");
 				assert.equal(group.querySelector("summary"), null, "source groups do not use a native summary");
 			}
 			const firstGroup = groups[0]!;

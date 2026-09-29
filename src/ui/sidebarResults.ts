@@ -1,4 +1,5 @@
-import { getLocale, t } from "../i18n";
+import { t } from "../i18n";
+import { appendHeadingCount } from "./headingCount";
 
 /** Shared, full-width file heading and row-major card grid for both result panes. */
 export function createSidebarFileGroup(host: HTMLElement, options: {
@@ -14,7 +15,7 @@ export function createSidebarFileGroup(host: HTMLElement, options: {
 		type: "button", "data-action": "file", "data-path": options.path,
 	} });
 	link.createSpan({ cls: "cs-sidebar-file-name", text: options.path });
-	link.createSpan({ cls: "cs-sidebar-file-count", text: ` (${options.count.toLocaleString(getLocale())})` });
+	appendHeadingCount(link, options.count);
 	const grid = section.createDiv({ cls: "cs-sidebar-grid" });
 	return { section, heading, grid };
 }

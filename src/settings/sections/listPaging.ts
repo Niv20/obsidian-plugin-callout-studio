@@ -27,17 +27,6 @@ export const LIST_PAGE_SIZE = 20;
  */
 export type PagingState = { expanded: boolean };
 
-/**
- * A heading's "(N)" suffix. The count is always the full list a section has,
- * never the slice currently on screen — folding a section or leaving rows
- * behind the Load more button changes what is drawn, not how many the user
- * has. Shared rather than reimplemented per section so every heading agrees
- * on the shape without needing a key of its own in any of the 31 translated
- * locales.
- */
-export const headingWithCount = (base: string, count: number): string =>
-	`${base} (${count})`;
-
 export function renderPagedList<T>(
 	host: HTMLElement,
 	items: T[],
@@ -60,9 +49,10 @@ export function renderPagedList<T>(
 	// falls under the button exactly as it would under a last row. A sibling
 	// would need spacing of its own, and one more thing to keep in step.
 	const row = listEl.createDiv({ cls: "callout-studio-load-more" });
-	// The count is a suffix on whatever `t()` returns — the same shape the list
-	// headings use for their "(N)" — so it needs no key of its own in any of
-	// the 31 translated locales.
+	// The count is a suffix on whatever `t()` returns, so it needs no key of
+	// its own in any of the 31 translated locales. Plain text, not the list
+	// headings' muted "(N)" (`ui/headingCount.ts`): it is part of the button's
+	// label, not a note on a title.
 	const btn = row.createEl("button", {
 		text: `${t("iconPicker.loadMore")} (${hidden})`,
 	});

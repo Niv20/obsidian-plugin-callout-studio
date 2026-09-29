@@ -87,7 +87,12 @@ describe("earlier setup detail reports", () => {
 				["user", "builtin", "iconSources", "fallback", "palettes", "style", "contextMenu", "commands", "language", "other"]);
 			for (const section of h.root.querySelectorAll("[data-recovery-section]")) {
 				assert.equal(section.tagName.toLowerCase(), "table");
-				assert.ok(section.querySelector("thead .cs-recovery-section-toggle"), "the title row folds the section");
+				const toggle = section.querySelector("thead .cs-recovery-section-toggle");
+				assert.ok(toggle, "the title row folds the section");
+				// The shared heading count, beside the title rather than inside
+				// it, so a title cut short still shows how many changes it holds.
+				const count = toggle.children.find(child => child.hasClass("cs-heading-count"));
+				assert.equal(text(count), ` (${section.querySelectorAll("tbody").length})`);
 				assert.deepEqual(section.querySelectorAll(".cs-recovery-column-row th").map(th => th.textContent), [
 					t("recovery.details.column.number"), t("recovery.details.column.item"),
 					t("recovery.details.current"), t("recovery.details.restored"),

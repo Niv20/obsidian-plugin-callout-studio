@@ -123,7 +123,7 @@ describe("conversion file groups and cards", () => {
 				const link = group.querySelector(".cs-sidebar-file-link")!;
 				assert.equal(link.getAttribute("aria-label"), null, "file names rely on visible text without a hover popup");
 				assert.equal(link.getAttribute("title"), null);
-				assert.equal(link.querySelector(".cs-sidebar-file-count")?.getAttribute("aria-hidden"), null);
+				assert.equal(link.querySelector(".cs-heading-count")?.getAttribute("aria-hidden"), null);
 			}
 			assert.deepEqual(groups.map(group => group.querySelectorAll(".cs-sidebar-result").length), [2, 1]);
 			assert.equal(groups[0]!.querySelectorAll(".cs-sidebar-grid").length, 1);

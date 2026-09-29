@@ -193,4 +193,28 @@ describe("each list heading carries the count of rows it is showing", () => {
 			`Built-in callouts (${totalBuiltIn})`,
 		);
 	});
+
+	// The shared "(N)" from ui/headingCount.ts, in one span with its title: the
+	// name element is a flex row, and the chevron is the only other item in it.
+	it("draws every count as the shared heading count, in one span with its title", () => {
+		const registry = vault();
+		const app = themeApp(["note"]);
+		const { host, lists } = render(registry, app, ["note"]);
+		addUserCallout(registry, "quiet");
+		lists.refresh();
+
+		const headings = Array.from(
+			host.querySelectorAll<HTMLElement>(".cs-collapsible-heading"),
+		);
+		assert.strictEqual(headings.length, 3);
+		for (const heading of headings) {
+			const nameEl = heading.querySelector(".setting-item-name");
+			const children: Element[] = nameEl ? Array.from(nameEl.children) : [];
+			const [chevron, label, ...rest] = children;
+			assert.ok(chevron?.hasClass("cs-disclosure-chevron"), "the chevron leads the name");
+			assert.strictEqual(rest.length, 0, "title and count are one item beside it");
+			assert.match(label?.querySelector(".cs-heading-count")?.textContent ?? "", /^ \(\d+\)$/);
+			assert.strictEqual(label?.textContent, heading.dataset.csName);
+		}
+	});
 });

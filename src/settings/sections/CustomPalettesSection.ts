@@ -35,12 +35,9 @@ import { ConfirmModal } from "../../utils/ConfirmModal";
 import { attachPersistedFold } from "./calloutListsFold";
 import { keepScrollAnchored } from "./foldAnchor";
 import { createStickySection } from "./stickySection";
-import {
-	focusFirstRevealed,
-	headingWithCount,
-	renderPagedList,
-} from "./listPaging";
+import { focusFirstRevealed, renderPagedList } from "./listPaging";
 import type { PagingState } from "./listPaging";
+import { headingWithCount } from "../../ui/headingCount";
 
 export function renderCustomPalettesSection(
 	ctx: SettingsSectionContext,
