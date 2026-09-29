@@ -723,6 +723,7 @@ export const he: Record<string, string> = {
 
 	// Context Menu
 	"contextMenu.editCallout": "עריכת הגדרות תיבת־הבלטה",
+	"contextMenu.createCallout": "יצירת תיבת־הבלטה חדשה",
 	"contextMenu.copyMarkdown": "העתקת קוד Markdown",
 	"contextMenu.openSettings": "פתיחת הגדרות של Callout Studio",
 	"contextMenu.setFoldClosed": "הגדרת תיבת־ההבלטה כסגורה (-)",

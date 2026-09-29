@@ -644,6 +644,7 @@ export const de: Record<string, string> = {
 		"Callout Studios eigener Code steht unter einer permissiven Lizenz; die Symbol-Bibliotheken behalten ihre eigenen Lizenzen.",
 
 	"contextMenu.editCallout": "Callout-Einstellungen bearbeiten",
+	"contextMenu.createCallout": "Neuen Callout erstellen",
 	"contextMenu.copyMarkdown": "Callout-Markdown kopieren",
 	"contextMenu.openSettings": "Callout Studio-Einstellungen öffnen",
 	"contextMenu.setFoldClosed": "Callout als geschlossen festlegen (-)",

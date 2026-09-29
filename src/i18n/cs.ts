@@ -634,6 +634,7 @@ export const cs: Record<string, string> = {
 		"Vlastní kód Callout Studio je pod licencí permissive; knihovny ikon si zachovávají své vlastní licence.",
 
 	"contextMenu.editCallout": "Upravit nastavení callout",
+	"contextMenu.createCallout": "Vytvořit nový callout",
 	"contextMenu.copyMarkdown": "Kopírovat Markdown callout",
 	"contextMenu.openSettings": "Otevřít nastavení Callout Studio",
 	"contextMenu.setFoldClosed": "Nastavit callout jako zavřený (-)",

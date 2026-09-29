@@ -628,6 +628,7 @@ export const el: Record<string, string> = {
 	"credits.pluginLicense":
 		"Ο κώδικας του Callout Studio είναι υπό μια permissive άδεια· οι βιβλιοθήκες εικονιδίων διατηρούν τις δικές τους άδειες.",
 	"contextMenu.editCallout": "Επεξεργασία ρυθμίσεων callout",
+	"contextMenu.createCallout": "Δημιουργία νέου callout",
 	"contextMenu.copyMarkdown": "Αντιγραφή Markdown callout",
 	"contextMenu.openSettings": "Άνοιγμα ρυθμίσεων Callout Studio",
 	"contextMenu.setFoldClosed": "Ορισμός callout ως κλειστού (-)",

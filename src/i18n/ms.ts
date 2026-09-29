@@ -631,6 +631,7 @@ export const ms: Record<string, string> = {
 	"credits.pluginLicense":
 		"Kod Callout Studio sendiri adalah di bawah lesen permissive; pustaka ikon mengekalkan lesen mereka sendiri.",
 	"contextMenu.editCallout": "Edit tetapan callout",
+	"contextMenu.createCallout": "Cipta callout baharu",
 	"contextMenu.copyMarkdown": "Salin Markdown callout",
 	"contextMenu.openSettings": "Buka tetapan Callout Studio",
 	"contextMenu.setFoldClosed": "Tetapkan callout sebagai tertutup (-)",

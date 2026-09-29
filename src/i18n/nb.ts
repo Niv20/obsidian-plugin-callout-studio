@@ -623,6 +623,7 @@ export const nb: Record<string, string> = {
 	"credits.pluginLicense":
 		"Callout Studios egen kode er under en permissiv lisens; ikonbibliotekene beholder sine egne lisenser.",
 	"contextMenu.editCallout": "Rediger callout-innstillinger",
+	"contextMenu.createCallout": "Opprett ny callout",
 	"contextMenu.copyMarkdown": "Kopier callout Markdown",
 	"contextMenu.openSettings": "Åpne Callout Studio-innstillinger",
 	"contextMenu.setFoldClosed": "Sett callout til lukket (-)",

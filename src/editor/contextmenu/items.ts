@@ -56,7 +56,7 @@ const buildCreateOrEdit: ItemBuilder = (plugin, menu, context) => {
 	}
 
 	menu.addItem((item) => {
-		item.setTitle(t("editor.createCallout"))
+		item.setTitle(t("contextMenu.createCallout"))
 			.setIcon("plus")
 			.setSection(MENU_SECTION)
 			.onClick(() => {

@@ -691,6 +691,7 @@ export const ro: Record<string, string> = {
 		"Codul propriu al Callout Studio este sub o licență permissive; bibliotecile de pictograme păstrează propriile licențe.",
 
 	"contextMenu.editCallout": "Editați setările callout",
+	"contextMenu.createCallout": "Creați callout nou",
 	"contextMenu.copyMarkdown": "Copiați Markdown callout",
 	"contextMenu.openSettings": "Deschideți setările Callout Studio",
 	"contextMenu.setFoldClosed": "Setați callout ca închis (-)",

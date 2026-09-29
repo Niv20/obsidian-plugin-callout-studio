@@ -693,6 +693,7 @@ export const vi: Record<string, string> = {
 		"Mã nguồn của Callout Studio thuộc giấy phép permissive; các thư viện biểu tượng giữ nguyên giấy phép riêng.",
 
 	"contextMenu.editCallout": "Chỉnh sửa cài đặt callout",
+	"contextMenu.createCallout": "Tạo callout mới",
 	"contextMenu.copyMarkdown": "Sao chép Markdown callout",
 	"contextMenu.openSettings": "Mở cài đặt Callout Studio",
 	"contextMenu.setFoldClosed": "Đặt callout thành đóng (-)",

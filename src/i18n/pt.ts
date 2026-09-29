@@ -690,6 +690,7 @@ export const pt: Record<string, string> = {
 		"O código do Callout Studio está sob uma licença permissive; as bibliotecas de ícones mantêm as suas próprias licenças.",
 
 	"contextMenu.editCallout": "Editar configurações do callout",
+	"contextMenu.createCallout": "Criar novo callout",
 	"contextMenu.copyMarkdown": "Copiar Markdown do callout",
 	"contextMenu.openSettings": "Abrir configurações do Callout Studio",
 	"contextMenu.setFoldClosed": "Definir o callout como fechado (-)",

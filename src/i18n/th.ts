@@ -681,6 +681,7 @@ export const th: Record<string, string> = {
 		"โค้ดของ Callout Studio เองอยู่ภายใต้สัญญาอนุญาต permissive ไลบรารีไอคอนยังคงใบอนุญาตของตนเอง",
 
 	"contextMenu.editCallout": "แก้ไขการตั้งค่า callout",
+	"contextMenu.createCallout": "สร้าง callout ใหม่",
 	"contextMenu.copyMarkdown": "คัดลอก Markdown callout",
 	"contextMenu.openSettings": "เปิดการตั้งค่า Callout Studio",
 	"contextMenu.setFoldClosed": "ตั้งค่า callout เป็นปิด (-)",

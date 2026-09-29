@@ -1091,6 +1091,7 @@ export const en: Record<string, string> = {
 
 	// Context Menu
 	"contextMenu.editCallout": "Edit callout settings",
+	"contextMenu.createCallout": "Create new callout",
 	"contextMenu.copyMarkdown": "Copy callout Markdown",
 	"contextMenu.openSettings": "Open Callout Studio settings",
 	"contextMenu.setFoldClosed": "Set callout closed (-)",

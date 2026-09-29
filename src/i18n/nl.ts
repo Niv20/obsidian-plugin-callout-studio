@@ -647,6 +647,7 @@ export const nl: Record<string, string> = {
 		"De eigen code van Callout Studio valt onder een permissieve licentie; de pictogrambibliotheken behouden hun eigen licenties.",
 
 	"contextMenu.editCallout": "Callout-instellingen bewerken",
+	"contextMenu.createCallout": "Nieuwe callout aanmaken",
 	"contextMenu.copyMarkdown": "Callout Markdown kopiëren",
 	"contextMenu.openSettings": "Callout Studio-instellingen openen",
 	"contextMenu.setFoldClosed": "Callout instellen als gesloten (-)",

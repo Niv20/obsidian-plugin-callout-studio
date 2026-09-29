@@ -685,6 +685,7 @@ export const tr: Record<string, string> = {
 		"Callout Studio'nun kendi kodu permissive lisansı altında; simge kütüphaneleri kendi lisanslarını korur.",
 
 	"contextMenu.editCallout": "Callout ayarlarını düzenle",
+	"contextMenu.createCallout": "Yeni callout oluştur",
 	"contextMenu.copyMarkdown": "Callout Markdown'ı kopyala",
 	"contextMenu.openSettings": "Callout Studio ayarlarını aç",
 	"contextMenu.setFoldClosed": "Callout'u kapalı olarak ayarla (-)",

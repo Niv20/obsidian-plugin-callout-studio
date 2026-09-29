@@ -641,6 +641,7 @@ export const hu: Record<string, string> = {
 		"A Callout Studio saját kódja egy permissive licenc alatt áll; az ikonkönyvtárak megőrzik saját licencüket.",
 
 	"contextMenu.editCallout": "Callout-beállítások szerkesztése",
+	"contextMenu.createCallout": "Új callout létrehozása",
 	"contextMenu.copyMarkdown": "Callout Markdown másolása",
 	"contextMenu.openSettings": "Callout Studio beállítások megnyitása",
 	"contextMenu.setFoldClosed": "Callout beállítása zártra (-)",

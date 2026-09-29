@@ -3,7 +3,7 @@
 Right-click a callout in a note to open actions for that callout. The available items depend on whether it is a Heading, Inline, or Block callout.
 
 The callout-type action adapts to the token under the pointer. A saved type
-shows **Edit callout settings**. An unknown type shows **Create callout** and
+shows **Edit callout settings**. An unknown type shows **Create new callout** and
 opens a new editor with that token's ID already filled in.
 
 ![Right-click context menu](https://github.com/user-attachments/assets/4100cbe6-ba6f-45ce-986f-f3d7d17fdbac)
@@ -44,7 +44,7 @@ Each category shows a **Reset to default** arrow in its header after you change 
 
 **Create or edit callout** is a single action here. At most one of its two
 runtime labels appears in a note: **Edit callout settings** for a saved type or
-**Create callout** for an unknown one.
+**Create new callout** for an unknown one.
 
 Enabled actions stay above the divider and disabled actions stay below it. Drag within either group; use the toggle to move an action between groups. Turning an action off sends it to the bottom, and turning it on places it after the other enabled actions.
 

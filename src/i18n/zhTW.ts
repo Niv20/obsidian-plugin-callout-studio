@@ -663,6 +663,7 @@ export const zhTW: Record<string, string> = {
 	"credits.pluginLicense":
 		"Callout Studio 自身的程式碼採用 permissive 授權；圖示庫保留各自的授權。",
 	"contextMenu.editCallout": "編輯 callout 設定",
+	"contextMenu.createCallout": "建立新的 callout",
 	"contextMenu.copyMarkdown": "複製 callout Markdown",
 	"contextMenu.openSettings": "開啟 Callout Studio 設定",
 	"contextMenu.setFoldClosed": "將 callout 設定為關閉 (-)",

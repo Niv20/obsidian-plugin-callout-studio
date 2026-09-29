@@ -621,6 +621,7 @@ export const bg: Record<string, string> = {
 	"credits.pluginLicense":
 		"Собственият код на Callout Studio е под лиценз permissive; библиотеките с икони запазват своите собствени лицензи.",
 	"contextMenu.editCallout": "Редактиране на настройките на callout",
+	"contextMenu.createCallout": "Създаване на нов callout",
 	"contextMenu.copyMarkdown": "Копиране на Markdown на callout",
 	"contextMenu.openSettings": "Отваряне на настройките на Callout Studio",
 	"contextMenu.setFoldClosed": "Задаване на callout като затворен (-)",

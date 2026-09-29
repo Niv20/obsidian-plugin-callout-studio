@@ -685,6 +685,7 @@ export const sv: Record<string, string> = {
 		"Callout Studios egen kod är under en permissiv licens; ikonbiblioteken behåller sina egna licenser.",
 
 	"contextMenu.editCallout": "Redigera callout-inställningar",
+	"contextMenu.createCallout": "Skapa ny callout",
 	"contextMenu.copyMarkdown": "Kopiera callout Markdown",
 	"contextMenu.openSettings": "Öppna Callout Studio-inställningar",
 	"contextMenu.setFoldClosed": "Ställ in callout som stängd (-)",

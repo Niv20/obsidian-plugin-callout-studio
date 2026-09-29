@@ -627,6 +627,7 @@ export const ar: Record<string, string> = {
 		"يخضع كود Callout Studio الخاص لرخصة permissive؛ وتحتفظ مكتبات الأيقونات برخصاتها الخاصة.",
 
 	"contextMenu.editCallout": "تعديل إعدادات الـ callout",
+	"contextMenu.createCallout": "إنشاء callout جديد",
 	"contextMenu.copyMarkdown": "نسخ Markdown الـ callout",
 	"contextMenu.openSettings": "فتح إعدادات Callout Studio",
 	"contextMenu.setFoldClosed": "تعيين الـ callout كمغلق (-)",

@@ -634,6 +634,7 @@ export const fa: Record<string, string> = {
 		"کد خاص Callout Studio تحت یک مجوز permissive است؛ کتابخانه‌های آیکون مجوزهای خود را حفظ می‌کنند.",
 
 	"contextMenu.editCallout": "ویرایش تنظیمات callout",
+	"contextMenu.createCallout": "ایجاد callout جدید",
 	"contextMenu.copyMarkdown": "کپی Markdown callout",
 	"contextMenu.openSettings": "باز کردن تنظیمات Callout Studio",
 	"contextMenu.setFoldClosed": "تنظیم callout به‌صورت بسته (-)",

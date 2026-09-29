@@ -676,6 +676,7 @@ export const zh: Record<string, string> = {
 		"Callout Studio 自身代码采用 permissive 许可证；图标库保留各自的许可证。",
 
 	"contextMenu.editCallout": "编辑 callout 设置",
+	"contextMenu.createCallout": "创建新的 callout",
 	"contextMenu.copyMarkdown": "复制 callout Markdown",
 	"contextMenu.openSettings": "打开 Callout Studio 设置",
 	"contextMenu.setFoldClosed": "将 callout 设置为关闭 (-)",

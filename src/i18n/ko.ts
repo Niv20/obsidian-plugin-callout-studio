@@ -637,6 +637,7 @@ export const ko: Record<string, string> = {
 		"Callout Studio 자체 코드는 permissive 라이선스입니다. 아이콘 라이브러리는 각자의 라이선스를 유지합니다.",
 
 	"contextMenu.editCallout": "callout 설정 편집",
+	"contextMenu.createCallout": "새 callout 만들기",
 	"contextMenu.copyMarkdown": "callout Markdown 복사",
 	"contextMenu.openSettings": "Callout Studio 설정 열기",
 	"contextMenu.setFoldClosed": "callout 닫힘(-)으로 설정",

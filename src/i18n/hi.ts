@@ -637,6 +637,7 @@ export const hi: Record<string, string> = {
 		"Callout Studio का अपना कोड permissive लाइसेंस के अंतर्गत है; आइकन लाइब्रेरी अपने अपने लाइसेंस बनाए रखती हैं।",
 
 	"contextMenu.editCallout": "callout सेटिंग संपादित करें",
+	"contextMenu.createCallout": "नया callout बनाएँ",
 	"contextMenu.copyMarkdown": "callout Markdown कॉपी करें",
 	"contextMenu.openSettings": "Callout Studio सेटिंग खोलें",
 	"contextMenu.setFoldClosed": "callout को बंद (-) पर सेट करें",

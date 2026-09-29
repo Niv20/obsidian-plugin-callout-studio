@@ -630,6 +630,7 @@ export const fi: Record<string, string> = {
 	"credits.pluginLicense":
 		"Callout Studion oma koodi on permissive-lisenssissä; kuvakekirjastot säilyttävät omat lisenssinsä.",
 	"contextMenu.editCallout": "Muokkaa callout-asetuksia",
+	"contextMenu.createCallout": "Luo uusi callout",
 	"contextMenu.copyMarkdown": "Kopioi callout Markdown",
 	"contextMenu.openSettings": "Avaa Callout Studio -asetukset",
 	"contextMenu.setFoldClosed": "Aseta callout suljetuksi (-)",

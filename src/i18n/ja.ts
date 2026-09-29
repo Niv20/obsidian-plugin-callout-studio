@@ -639,6 +639,7 @@ export const ja: Record<string, string> = {
 		"Callout Studio自体のコードは permissive ライセンスです。アイコン ライブラリはそれぞれのライセンスを保持します。",
 
 	"contextMenu.editCallout": "callout設定を編集",
+	"contextMenu.createCallout": "新しいcalloutを作成",
 	"contextMenu.copyMarkdown": "callout Markdownをコピー",
 	"contextMenu.openSettings": "Callout Studio設定を開く",
 	"contextMenu.setFoldClosed": "calloutを閉じた状態に設定 (-)",

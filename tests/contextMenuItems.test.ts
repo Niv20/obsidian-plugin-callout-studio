@@ -146,7 +146,8 @@ describe("adaptive create/edit context-menu action", () => {
 	it("offers one create action for an unknown token instead of editing its fallback", () => {
 		const h = harness("missing_name-with-dash");
 		assert.equal(h.items.length, 1);
-		assert.equal(h.items[0]!.title, t("editor.createCallout"));
+		assert.equal(h.items[0]!.title, t("contextMenu.createCallout"));
+		assert.equal(h.items[0]!.title, "Create new callout");
 		assert.equal(h.items[0]!.icon, "plus");
 
 		withRecordedEditors((opened) => {
@@ -169,7 +170,7 @@ describe("adaptive create/edit context-menu action", () => {
 		h.items.length = 0;
 		addItems(h.plugin, h.menu, context("not-yet-defined"));
 		assert.equal(h.items.length, 1);
-		assert.equal(h.items[0]!.title, t("editor.createCallout"));
+		assert.equal(h.items[0]!.title, t("contextMenu.createCallout"));
 	});
 
 	it("adds nothing when the single saved action is disabled", () => {
