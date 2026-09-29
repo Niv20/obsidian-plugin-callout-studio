@@ -139,6 +139,8 @@ export const vi: Record<string, string> = {
 	"settings.importExport": "Nhập và xuất",
 	"settings.import": "Nhập",
 	"settings.export": "Xuất",
+	"settings.importTitle": "Nhập callout",
+	"settings.exportTitle": "Xuất callout",
 	"settings.importDesc":
 		"Nhập dữ liệu Callout Studio từ vault khác hoặc chuyển callout của bạn từ plugin khác sang.",
 	"settings.exportDesc":

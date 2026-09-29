@@ -33,11 +33,10 @@ export function renderImportExportSection(
 	new Setting(containerEl).setName(t("settings.importExport")).setHeading();
 
 	const importSetting = new Setting(containerEl)
-		.setName(t("settings.import"))
+		.setName(t("settings.importTitle"))
 		.setDesc(t("settings.importDesc"))
 		.addButton((btn) => {
 			btn.setButtonText(t("settings.import"))
-				.setIcon("download")
 				.onClick(() => {
 					// An import that cannot be saved would look done and vanish
 					// on restart; say so before a file is even chosen.
@@ -49,12 +48,11 @@ export function renderImportExportSection(
 	importSetting.settingEl.addClass("cs-import-target");
 
 	new Setting(containerEl)
-		.setName(t("settings.export"))
+		.setName(t("settings.exportTitle"))
 		.setDesc(t("settings.exportDesc"))
 		.setClass(PAUSED_ALLOWED)
 		.addButton((btn) => {
 			btn.setButtonText(t("settings.export"))
-				.setIcon("upload")
 				.onClick(() => new ExportFormatModal(ctx).open());
 			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});

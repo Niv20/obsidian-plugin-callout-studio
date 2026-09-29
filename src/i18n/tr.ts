@@ -138,6 +138,8 @@ export const tr: Record<string, string> = {
 	"settings.importExport": "İçe aktar ve dışa aktar",
 	"settings.import": "İçe aktar",
 	"settings.export": "Dışa aktar",
+	"settings.importTitle": "Callout'ları içe aktar",
+	"settings.exportTitle": "Callout'ları dışa aktar",
 	"settings.importDesc":
 		"Callout Studio verilerinizi başka bir vault'tan içe aktarın veya callout'larınızı başka bir eklentiden getirin.",
 	"settings.exportDesc":

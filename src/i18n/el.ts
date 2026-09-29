@@ -84,6 +84,8 @@ export const el: Record<string, string> = {
 	"settings.importExport": "Εισαγωγή και εξαγωγή",
 	"settings.import": "Εισαγωγή",
 	"settings.export": "Εξαγωγή",
+	"settings.importTitle": "Εισαγωγή callout",
+	"settings.exportTitle": "Εξαγωγή callout",
 	"settings.importDesc":
 		"Εισαγάγετε τα δεδομένα σας στο Callout Studio από άλλο vault ή μεταφέρετε τα callout σας από άλλο πρόσθετο.",
 	"settings.exportDesc":

@@ -43,9 +43,9 @@ describe("the settings page while saving is paused", () => {
 			makePausedReadOnly(p.root as unknown as HTMLElement, [p.slot as unknown as HTMLElement]);
 			assert.ok(p.root.hasClass("cs-settings-paused"));
 			for (const [label, blocked] of [
-				[t("settings.import"), true],
+				[t("settings.importTitle"), true],
 				[t("settings.resetAll"), true],
-				[t("settings.export"), false],
+				[t("settings.exportTitle"), false],
 				[t("settings.recovery"), false],
 				[t("portable.title"), false],
 			] as const) {

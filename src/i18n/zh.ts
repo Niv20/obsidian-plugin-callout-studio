@@ -137,6 +137,8 @@ export const zh: Record<string, string> = {
 	"settings.importExport": "导入和导出",
 	"settings.import": "导入",
 	"settings.export": "导出",
+	"settings.importTitle": "导入 callout",
+	"settings.exportTitle": "导出 callout",
 	"settings.importDesc":
 		"从其他库导入您的 Callout Studio 数据，或从其他插件迁移 callout。",
 	"settings.exportDesc": "将您的 callout 保存为 Callout Studio 备份，或导出为可在其他地方使用的 CSS 代码片段。",

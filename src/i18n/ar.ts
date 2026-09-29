@@ -88,6 +88,8 @@ export const ar: Record<string, string> = {
 	"settings.importExport": "استيراد وتصدير",
 	"settings.import": "استيراد",
 	"settings.export": "تصدير",
+	"settings.importTitle": "استيراد callouts",
+	"settings.exportTitle": "تصدير callouts",
 	"settings.importDesc":
 		"استوردوا بيانات Callout Studio الخاصة بكم من خزنة أخرى، أو انقلوا الـ callouts الخاصة بكم من إضافة أخرى.",
 	"settings.exportDesc": "احفظ الـ callouts الخاصة بك كنسخة احتياطية من Callout Studio أو كمقتطف CSS يمكن استخدامه في مكان آخر.",

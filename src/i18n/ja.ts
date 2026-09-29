@@ -88,6 +88,8 @@ export const ja: Record<string, string> = {
 	"settings.importExport": "インポートとエクスポート",
 	"settings.import": "インポート",
 	"settings.export": "エクスポート",
+	"settings.importTitle": "calloutをインポート",
+	"settings.exportTitle": "calloutをエクスポート",
 	"settings.importDesc":
 		"別のvaultからCallout Studioのデータをインポートするか、他のプラグインからcalloutを取り込みます。",
 	"settings.exportDesc":

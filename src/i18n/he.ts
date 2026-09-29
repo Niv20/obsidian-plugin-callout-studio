@@ -105,6 +105,8 @@ export const he: Record<string, string> = {
 	"settings.importExport": "יבוא ויצוא",
 	"settings.import": "ייבוא",
 	"settings.export": "ייצוא",
+	"settings.importTitle": "ייבוא תיבות־הבלטה",
+	"settings.exportTitle": "ייצוא תיבות־הבלטה",
 	"settings.importDesc":
 		"ייבאו את ההגדרות שלכם ב־Callout Studio מכספת אחרת, או העבירו את תיבות־ההבלטה שלכם מתוסף אחר.",
 	"settings.exportDesc":

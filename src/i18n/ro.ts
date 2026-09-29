@@ -138,6 +138,8 @@ export const ro: Record<string, string> = {
 	"settings.importExport": "Import și export",
 	"settings.import": "Importați",
 	"settings.export": "Exportați",
+	"settings.importTitle": "Importă callout-uri",
+	"settings.exportTitle": "Exportă callout-uri",
 	"settings.importDesc":
 		"Importați datele Callout Studio dintr-un alt vault sau aduceți callout-urile dintr-un alt plugin.",
 	"settings.exportDesc":

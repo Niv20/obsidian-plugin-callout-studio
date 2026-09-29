@@ -88,6 +88,8 @@ export const hu: Record<string, string> = {
 	"settings.importExport": "Importálás és exportálás",
 	"settings.import": "Importálás",
 	"settings.export": "Exportálás",
+	"settings.importTitle": "Calloutok importálása",
+	"settings.exportTitle": "Calloutok exportálása",
 	"settings.importDesc":
 		"Importálja a Callout Studio adatait egy másik tárból, vagy hozza át a calloutokat egy másik bővítményből.",
 	"settings.exportDesc":

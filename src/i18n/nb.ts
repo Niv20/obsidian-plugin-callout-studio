@@ -86,6 +86,8 @@ export const nb: Record<string, string> = {
 	"settings.importExport": "Importer og eksporter",
 	"settings.import": "Importer",
 	"settings.export": "Eksporter",
+	"settings.importTitle": "Importer callouter",
+	"settings.exportTitle": "Eksporter callouter",
 	"settings.importDesc":
 		"Importer Callout Studio-dataene dine fra et annet hvelv, eller hent callouter fra en annen utvidelse.",
 	"settings.exportDesc": "Lagre calloutene som en Callout Studio-sikkerhetskopi eller som en CSS-kodebit du kan bruke andre steder.",

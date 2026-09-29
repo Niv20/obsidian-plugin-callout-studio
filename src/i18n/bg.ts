@@ -84,6 +84,8 @@ export const bg: Record<string, string> = {
 	"settings.importExport": "Импорт и експорт",
 	"settings.import": "Импортиране",
 	"settings.export": "Експортиране",
+	"settings.importTitle": "Импортиране на callout-и",
+	"settings.exportTitle": "Експортиране на callout-и",
 	"settings.importDesc":
 		"Импортирайте данните си от Callout Studio от друго хранилище или пренесете callout-ите си от друга приставка.",
 	"settings.exportDesc":

@@ -85,6 +85,8 @@ export const fi: Record<string, string> = {
 	"settings.importExport": "Tuo ja vie",
 	"settings.import": "Tuo",
 	"settings.export": "Vie",
+	"settings.importTitle": "Tuo calloutit",
+	"settings.exportTitle": "Vie calloutit",
 	"settings.importDesc":
 		"Tuo Callout Studio -tietosi toisesta holvista tai siirrä calloutisi toisesta lisäosasta.",
 	"settings.exportDesc":

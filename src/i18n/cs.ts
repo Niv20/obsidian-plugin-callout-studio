@@ -87,6 +87,8 @@ export const cs: Record<string, string> = {
 	"settings.importExport": "Import a export",
 	"settings.import": "Importovat",
 	"settings.export": "Exportovat",
+	"settings.importTitle": "Import calloutů",
+	"settings.exportTitle": "Export calloutů",
 	"settings.importDesc":
 		"Importujte svá data Callout Studia z jiného vaultu nebo přeneste callouty z jiného pluginu.",
 	"settings.exportDesc":

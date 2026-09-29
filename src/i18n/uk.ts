@@ -139,6 +139,8 @@ export const uk: Record<string, string> = {
 	"settings.importExport": "Імпорт і експорт",
 	"settings.import": "Імпорт",
 	"settings.export": "Експорт",
+	"settings.importTitle": "Імпорт callout",
+	"settings.exportTitle": "Експорт callout",
 	"settings.importDesc":
 		"Імпортуйте дані Callout Studio з іншого сховища або перенесіть callout з іншого плагіна.",
 	"settings.exportDesc":

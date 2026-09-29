@@ -134,6 +134,8 @@ export const zhTW: Record<string, string> = {
 	"settings.importExport": "匯入與匯出",
 	"settings.import": "匯入",
 	"settings.export": "匯出",
+	"settings.importTitle": "匯入 callout",
+	"settings.exportTitle": "匯出 callout",
 	"settings.importDesc":
 		"從其他儲存庫匯入 Callout Studio 資料，或從其他外掛程式移入您的 callout。",
 	"settings.exportDesc": "將您的 callout 儲存為 Callout Studio 備份，或匯出為可在其他地方使用的 CSS 程式碼片段。",

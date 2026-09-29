@@ -87,6 +87,8 @@ export const fa: Record<string, string> = {
 	"settings.importExport": "وارد کردن و صادر کردن",
 	"settings.import": "وارد کردن",
 	"settings.export": "صادر کردن",
+	"settings.importTitle": "وارد کردن کال‌اوت‌ها",
+	"settings.exportTitle": "صادر کردن کال‌اوت‌ها",
 	"settings.importDesc":
 		"داده‌های Callout Studio خود را از خزانه‌ای دیگر وارد کنید یا کال‌اوت‌هایتان را از افزونه‌ای دیگر منتقل کنید.",
 	"settings.exportDesc":

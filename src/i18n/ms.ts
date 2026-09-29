@@ -87,6 +87,8 @@ export const ms: Record<string, string> = {
 	"settings.importExport": "Import dan eksport",
 	"settings.import": "Import",
 	"settings.export": "Eksport",
+	"settings.importTitle": "Import callout",
+	"settings.exportTitle": "Eksport callout",
 	"settings.importDesc":
 		"Import data Callout Studio anda dari vault lain, atau bawa masuk callout daripada pemalam lain.",
 	"settings.exportDesc":

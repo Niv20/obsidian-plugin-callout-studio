@@ -88,6 +88,8 @@ export const ko: Record<string, string> = {
 	"settings.importExport": "가져오기 및 내보내기",
 	"settings.import": "가져오기",
 	"settings.export": "내보내기",
+	"settings.importTitle": "callout 가져오기",
+	"settings.exportTitle": "callout 내보내기",
 	"settings.importDesc":
 		"다른 볼트에서 Callout Studio 데이터를 가져오거나 다른 플러그인에서 callout을 가져옵니다.",
 	"settings.exportDesc":

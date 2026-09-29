@@ -139,6 +139,8 @@ export const sv: Record<string, string> = {
 	"settings.importExport": "Importera och exportera",
 	"settings.import": "Importera",
 	"settings.export": "Exportera",
+	"settings.importTitle": "Importera callouts",
+	"settings.exportTitle": "Exportera callouts",
 	"settings.importDesc":
 		"Importera dina Callout Studio-data från ett annat vault eller hämta dina callouts från ett annat tillägg.",
 	"settings.exportDesc":

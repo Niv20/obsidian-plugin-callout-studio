@@ -87,6 +87,8 @@ export const id: Record<string, string> = {
 	"settings.importExport": "Impor dan ekspor",
 	"settings.import": "Impor",
 	"settings.export": "Ekspor",
+	"settings.importTitle": "Impor callout",
+	"settings.exportTitle": "Ekspor callout",
 	"settings.importDesc":
 		"Impor data Callout Studio Anda dari vault lain, atau pindahkan callout dari plugin lain.",
 	"settings.exportDesc":

@@ -83,6 +83,8 @@ export const da: Record<string, string> = {
 	"settings.importExport": "Importer og eksporter",
 	"settings.import": "Importer",
 	"settings.export": "Eksporter",
+	"settings.importTitle": "Importer callouts",
+	"settings.exportTitle": "Eksporter callouts",
 	"settings.importDesc":
 		"Importer dine Callout Studio-data fra en anden vault, eller overfør dine callouts fra et andet plugin.",
 	"settings.exportDesc":

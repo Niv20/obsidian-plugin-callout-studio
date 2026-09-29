@@ -138,6 +138,8 @@ export const th: Record<string, string> = {
 	"settings.importExport": "นำเข้าและส่งออก",
 	"settings.import": "นำเข้า",
 	"settings.export": "ส่งออก",
+	"settings.importTitle": "นำเข้า callout",
+	"settings.exportTitle": "ส่งออก callout",
 	"settings.importDesc":
 		"นำเข้าข้อมูล Callout Studio จาก vault อื่น หรือย้าย callout ของคุณมาจากปลั๊กอินอื่น",
 	"settings.exportDesc":

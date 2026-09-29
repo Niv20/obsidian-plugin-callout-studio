@@ -87,6 +87,8 @@ export const hi: Record<string, string> = {
 	"settings.importExport": "आयात और निर्यात",
 	"settings.import": "आयात",
 	"settings.export": "निर्यात",
+	"settings.importTitle": "callout आयात करें",
+	"settings.exportTitle": "callout निर्यात करें",
 	"settings.importDesc":
 		"दूसरे vault से अपनी Callout Studio की प्रगति आयात करें, या किसी दूसरे प्लगइन से अपने callout लाएँ।",
 	"settings.exportDesc":
