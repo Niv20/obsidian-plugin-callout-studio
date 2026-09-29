@@ -7,90 +7,75 @@
  * — Obsidian closes the popover and restores its own selection first, so the
  * placement has to happen after that frame or it is simply overwritten.
  *
- * The block role is the fiddly one: the cursor belongs on the callout's *body*,
- * which means the next line has to carry a matching `>` prefix. It may already
- * have a deeper one (a nested callout continuing below), in which case the
- * deeper prefix wins and nothing is rewritten; a shallower one is widened to
- * match the header; and at end-of-document there is no next line at all, so one
- * is created carrying the prefix. The heading role wants the opposite — a plain
- * line with no prefix, because a heading callout has no body of its own.
+ * The rule is Enter's: a pick that finished a new callout opens a new line
+ * below it, the way Enter at the end of that line would — carrying the header's
+ * `>` prefix for a block callout, bare for a heading callout, which has no body
+ * of its own. The line is always *opened*, never borrowed: turning the blank
+ * line that separates the callout from the next paragraph into its body would
+ * leave the two touching, and the first word typed would pull that paragraph
+ * in as a lazy continuation. The one exception is a block callout whose body
+ * already starts on the next line (what "Wrap in callout" leaves), where the
+ * cursor goes to that body instead of opening an empty line above it.
+ *
+ * A pick that only changed an existing callout's type has nothing to open: the
+ * cursor goes to the end of that line, where the title the user kept is.
  */
 import type { Editor } from "obsidian";
-import type { CalloutRenderRole } from "../types";
 
 const CALLOUT_QUOTE_PREFIX_REGEX = /^((?:\s*> ?|\t)+)/;
+
+const quotePrefixOf = (line: string): string =>
+	CALLOUT_QUOTE_PREFIX_REGEX.exec(line)?.[1] ?? "";
 
 const countQuoteTokens = (prefix: string): number =>
 	(prefix.match(/>/g) ?? []).length;
 
 /**
- * Move the cursor to the start of the line below `line`, creating a plain
- * new line at end-of-document. Used after a heading-callout selection.
+ * Put the cursor on the line a finished callout's content starts on, opening
+ * that line when there is not one already.
  */
-export function moveCursorToLineBelow(editor: Editor, line: number): void {
+function moveToCalloutContent(
+	editor: Editor,
+	line: number,
+	role: "regular" | "heading",
+): void {
+	const header = editor.getLine(line);
+	// A header with no `>` of its own is the legacy bare `[!` block reading
+	// (inline callouts off), which has always been given a `> ` body.
+	const prefix = role === "heading" ? "" : quotePrefixOf(header) || "> ";
 	const nextLine = line + 1;
-	if (nextLine < editor.lineCount()) {
-		editor.setCursor({ line: nextLine, ch: 0 });
-		return;
+
+	if (role === "regular" && nextLine < editor.lineCount()) {
+		const nextPrefix = quotePrefixOf(editor.getLine(nextLine));
+		if (countQuoteTokens(nextPrefix) >= countQuoteTokens(prefix)) {
+			editor.setCursor({ line: nextLine, ch: nextPrefix.length });
+			return;
+		}
 	}
-	editor.replaceRange("\n", { line, ch: editor.getLine(line).length });
-	editor.setCursor({ line: nextLine, ch: 0 });
+
+	editor.replaceRange(`\n${prefix}`, { line, ch: header.length });
+	editor.setCursor({ line: nextLine, ch: prefix.length });
 }
 
 /**
- * Place the cursor for a pick on `line` that rendered as `role`, once the
- * popover has finished closing.
+ * Place the cursor for a pick that wrote a `role` token on `line`, once the
+ * popover has finished closing. `finishedNewCallout` is whether the pick
+ * completed a callout that had no title yet, rather than retyping one.
  */
 export function placeCursorAfterPick(
 	editor: Editor,
 	line: number,
-	role: CalloutRenderRole,
+	role: "regular" | "heading",
+	finishedNewCallout: boolean,
 ): void {
 	window.requestAnimationFrame(() => {
 		window.setTimeout(() => {
-			if (role === "heading") {
-				// Heading callout: Enter drops the cursor to the
-				// START of the next line — plain, with NO `>` prefix
-				// (a heading callout has no body of its own).
-				moveCursorToLineBelow(editor, line);
+			if (line >= editor.lineCount()) return;
+			if (finishedNewCallout) {
+				moveToCalloutContent(editor, line, role);
 				return;
 			}
-
-			const lineText = editor.getLine(line);
-			const quoteMatch = CALLOUT_QUOTE_PREFIX_REGEX.exec(lineText);
-			const quotePrefix = quoteMatch?.[1] ?? "> ";
-			const quoteDepth = countQuoteTokens(quotePrefix);
-			const nextLine = line + 1;
-
-			if (nextLine < editor.lineCount()) {
-				const nextLineText = editor.getLine(nextLine);
-				const nextPrefix =
-					CALLOUT_QUOTE_PREFIX_REGEX.exec(nextLineText)?.[1] ?? "";
-				const nextDepth = countQuoteTokens(nextPrefix);
-				const targetPrefix =
-					nextDepth >= quoteDepth ? nextPrefix : quotePrefix;
-
-				if (nextPrefix !== targetPrefix) {
-					editor.replaceRange(
-						targetPrefix,
-						{ line: nextLine, ch: 0 },
-						{ line: nextLine, ch: nextPrefix.length },
-					);
-				}
-
-				editor.setCursor({
-					line: nextLine,
-					ch: targetPrefix.length,
-				});
-				return;
-			}
-
-			const endPos = { line, ch: lineText.length };
-			editor.replaceRange("\n" + quotePrefix, endPos);
-			editor.setCursor({
-				line: line + 1,
-				ch: quotePrefix.length,
-			});
+			editor.setCursor({ line, ch: editor.getLine(line).length });
 		}, 50);
 	});
 }

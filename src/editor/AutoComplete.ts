@@ -6,8 +6,8 @@
  * blockquote prefix (`> [!` — block callout), after heading hashes
  * (`## [!` — heading callout), or mid-line (inline callout). Selecting a
  * suggestion inserts role-appropriate markdown, and Enter placement differs
- * per role (see close()/selectSuggestion). The "Create new" row opens the
- * CalloutEditor pre-filled with the typed query in all three contexts.
+ * per role (see selectSuggestion and autoCompleteCursor). The "Create new" row
+ * opens the CalloutEditor pre-filled with the typed query in all three contexts.
  */
 import {
 	Editor,
@@ -29,10 +29,7 @@ import { splitCalloutMetadata } from "../utils/calloutId";
 import { suggestableCallouts } from "../utils/usableCallouts";
 import { calloutMatchesQuery } from "../utils/calloutSearch";
 import { isCalloutTokenInCode } from "./calloutCodeContext";
-import {
-	moveCursorToLineBelow,
-	placeCursorAfterPick,
-} from "./autoCompleteCursor";
+import { placeCursorAfterPick } from "./autoCompleteCursor";
 import {
 	buildBlockHeaderToken,
 	buildHeadingToken,
@@ -60,28 +57,12 @@ function isCreateNew(s: CalloutSuggestion): s is CreateNewSuggestion {
 
 export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	private plugin: CalloutStudioPlugin;
-	private pendingEditor: Editor | null = null;
-	private pendingLine = -1;
-	/** Role of the pending post-close cursor placement. */
-	private pendingRole: CalloutRenderRole = "regular";
 	/** Role classified by the latest onTrigger; read by selectSuggestion. */
 	private triggerRole: CalloutRenderRole = "regular";
 
 	constructor(plugin: CalloutStudioPlugin) {
 		super(plugin.app);
 		this.plugin = plugin;
-	}
-
-	close(): void {
-		const editor = this.pendingEditor;
-		const line = this.pendingLine;
-		const role = this.pendingRole;
-		this.pendingEditor = null;
-		this.pendingLine = -1;
-		this.pendingRole = "regular";
-		super.close();
-
-		if (editor && line >= 0) placeCursorAfterPick(editor, line, role);
 	}
 
 	/**
@@ -304,7 +285,8 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		item: CalloutSuggestion,
 		evt: MouseEvent | KeyboardEvent,
 	): void {
-		if (!this.context) return;
+		const ctx = this.context;
+		if (!ctx) return;
 		if (evt instanceof KeyboardEvent) {
 			evt.preventDefault();
 			evt.stopPropagation();
@@ -312,13 +294,20 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 
 		// Handle "Create new" — open editor pre-filled with the typed query
 		if (isCreateNew(item)) {
-			const ctx = this.context;
 			void this.openCreateForQuery(item.query, ctx);
 			return;
 		}
 
+		// Close now, as Obsidian's own suggests do, rather than waiting for its
+		// manager to. The manager only closes a popover once no suggest claims
+		// the rewritten line, and another plugin's can: Admonition's `> [!`
+		// suggest reads ids as `\w+`, so `[!בדיקה]` or `[!my-note]` is still an
+		// open token to it. The popover then stayed up and the cursor never
+		// moved — built-in ids worked, ones the user named did not.
+		this.close();
+
 		const def = item;
-		const { editor, start, end, query } = this.context;
+		const { editor, start, end, query } = ctx;
 
 		const line = editor.getLine(start.line);
 
@@ -355,8 +344,8 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		// Heading callout: the rendered token already shows the display name,
 		// so no title text is inserted; a custom title the user already wrote
 		// is preserved — everything after `]` is title, this role has no fold
-		// syntax of its own. Enter then moves to the start of the next line (no
-		// `>` prefix — heading callouts have no body), via close().
+		// syntax of its own. A new one then opens a plain line below it (no `>`
+		// prefix — heading callouts have no body).
 		if (this.triggerRole === "heading") {
 			const replacement = buildHeadingToken(def, {
 				matchedId,
@@ -364,9 +353,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 				existingTitle: afterHeader,
 			});
 			editor.replaceRange(replacement, start, lineEnd);
-			this.pendingEditor = editor;
-			this.pendingLine = start.line;
-			this.pendingRole = "heading";
+			placeCursorAfterPick(editor, start.line, "heading", afterHeader.trim() === "");
 			return;
 		}
 
@@ -377,9 +364,6 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 			this.triggerRole,
 		).title.trim();
 
-		// Detect if this is a brand-new callout (no title text after the header)
-		const isNewCallout = existingTitle === "";
-
 		const replacement = buildBlockHeaderToken(def, {
 			matchedId,
 			metaSuffix,
@@ -387,12 +371,8 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 			isKnownDisplayName: this.isKnownDisplayName,
 		});
 		editor.replaceRange(replacement, start, lineEnd);
-
-		if (isNewCallout) {
-			this.pendingEditor = editor;
-			this.pendingLine = start.line;
-			this.pendingRole = "regular";
-		}
+		// No title yet means a brand-new callout, whose body comes next.
+		placeCursorAfterPick(editor, start.line, "regular", existingTitle === "");
 	}
 
 	/**
@@ -515,24 +495,12 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		// The token the user typed is still on the line, metadata included, and
 		// every branch below replaces it.
 		const metaSuffix = this.tokenMetadataSuffix(line, start.ch);
+		const existingTitle = titleAfterToken(line, start.ch, role);
+		const build = role === "heading" ? buildHeadingToken : buildBlockHeaderToken;
 
-		if (role === "heading") {
-			editor.replaceRange(
-				buildHeadingToken(result, { metaSuffix, existingTitle: titleAfterToken(line, start.ch, role) }),
-				start,
-				lineEnd,
-			);
-			// close() already ran (before the modal), so place the cursor
-			// directly rather than via the pending mechanism.
-			editor.focus();
-			moveCursorToLineBelow(editor, start.line);
-			return;
-		}
-
-		const replacement = buildBlockHeaderToken(result, { metaSuffix, existingTitle: titleAfterToken(line, start.ch, role) });
-		editor.replaceRange(replacement, start, lineEnd);
-		this.pendingEditor = editor;
-		this.pendingLine = start.line;
-		this.pendingRole = "regular";
+		editor.replaceRange(build(result, { metaSuffix, existingTitle }), start, lineEnd);
+		// The same landing a picked row gets — the modal is just a longer pick.
+		editor.focus();
+		placeCursorAfterPick(editor, start.line, role, existingTitle.trim() === "");
 	}
 }

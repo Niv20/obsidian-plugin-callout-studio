@@ -47,7 +47,7 @@ type Suggest = InstanceType<typeof CalloutAutoComplete>;
 describe("Create new preserves occurrence titles", () => {
 	for (const [source, expected] of [
 		["> [!brand⎸new|meta]- Keep this title", "> [!quiet|meta] Keep this title"],
-		["## [!brand⎸new|meta] - My title", "## [!quiet|meta] - My title\n"],
+		["## [!brand⎸new|meta] - My title", "## [!quiet|meta] - My title"],
 	]) {
 		it(source, async (test) => {
 			const h = harness();
@@ -75,6 +75,25 @@ describe("Create new preserves occurrence titles", () => {
 		await (h.suggest as unknown as { openCreateForQuery(query: string, context: EditorSuggestContext): Promise<void> })
 			.openCreateForQuery(info.query, { editor: asEditor(ed), file: null, start: info.start, end: { line, ch }, query: info.query } as unknown as EditorSuggestContext);
 		assert.strictEqual(ed.getValue(), "> [!quiet] New title");
+	});
+	it("lands the cursor as a picked row would", async (test) => {
+		// It used to hand the block case to a close() that had already run, so
+		// the cursor moved only whenever something next closed the popover.
+		const h = harness();
+		addCallout(h.registry);
+		test.mock.method(CalloutEditor.prototype, "openAndWait", async () => h.registry.get("quiet")!);
+		for (const [source, expected] of [
+			["> [!brand⎸new]", "> [!quiet] Quiet\n> |"],
+			["## [!brand⎸new]", "## [!quiet]\n|"],
+			["> [!brand⎸new] Kept\n> body", "> [!quiet] Kept|\n> body"],
+		]) {
+			const { info, editor: ed, line, ch } = triggerAt(h, source!);
+			assert.ok(info);
+			await (h.suggest as unknown as { openCreateForQuery(query: string, context: EditorSuggestContext): Promise<void> })
+				.openCreateForQuery(info.query, { editor: asEditor(ed), file: null, start: info.start, end: { line, ch }, query: info.query } as unknown as EditorSuggestContext);
+			settlePlacement();
+			assert.strictEqual(ed.valueWithCursor(), expected, source);
+		}
 	});
 });
 
@@ -329,8 +348,8 @@ describe("onTrigger — the query", () => {
 /**
  * The popover used to be the one surface that read a `[!` in code as callout
  * syntax. That is worse than a stray dropdown: picking a row rewrites the token
- * *and* `close()` then pushes a `> ` prefix onto the following line, so a note
- * documenting callout syntax gets edited into one that uses it.
+ * *and* then opens a `> ` body line under it, so a note documenting callout
+ * syntax gets edited into one that uses it.
  *
  * It now asks the same two questions the rest of the codebase asks —
  * `stripInlineCode` for the line, `createDocumentLineFilter` for the document —
@@ -683,6 +702,131 @@ describe("selectSuggestion — inline pill", () => {
 			pick(h, "a [!no⎸|purple] b", "note").getValue(),
 			"a [!note|purple] b",
 		);
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* selectSuggestion — where Enter leaves the cursor                            */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The placement is deferred past Obsidian's own close-and-restore (see
+ * autoCompleteCursor), so it only shows once the frame and then the timer it
+ * queues have fired.
+ */
+function settlePlacement(): void {
+	fakeDom.window.flushFrames();
+	fakeDom.window.flushTimers();
+}
+
+/** Pick, let the cursor land, and return the buffer with `|` at the cursor. */
+function landing(h: Harness, source: string, calloutId: string): string {
+	const ed = pick(h, source, calloutId);
+	settlePlacement();
+	return ed.valueWithCursor();
+}
+
+describe("selectSuggestion — where Enter leaves the cursor", () => {
+	it("closes the popover itself, in every role", () => {
+		// Obsidian's manager only closes it once no suggest claims the rewritten
+		// line — and Admonition's `> [!` suggest claims every id that is not
+		// `\w+`. Left to the manager, a user's `[!בדיקה]` kept the popover open
+		// and the cursor where the rewrite dropped it.
+		for (const source of ["> [!no⎸", "## [!no⎸", "a [!no⎸"]) {
+			const h = harness();
+			pick(h, source, "note");
+			assert.strictEqual(
+				(h.suggest as unknown as { closedCount: number }).closedCount,
+				1,
+				source,
+			);
+		}
+	});
+
+	it("opens the body line of a new block callout", () => {
+		const h = harness();
+		assert.strictEqual(landing(h, "> [!no⎸", "note"), "> [!note] Note\n> |");
+		// The closing bracket Obsidian auto-pairs is part of the token, not a title.
+		assert.strictEqual(landing(h, "> [!no⎸]", "note"), "> [!note] Note\n> |");
+	});
+
+	it("lands the same way for a callout the user named", () => {
+		const h = harness();
+		addCallout(h.registry, { id: "בדיקה", displayName: "בדיקה" });
+		addCallout(h.registry, { id: "my-note", displayName: "My note" });
+		assert.strictEqual(landing(h, "> [!בד⎸]", "בדיקה"), "> [!בדיקה] בדיקה\n> |");
+		assert.strictEqual(landing(h, "> [!my⎸]", "my-note"), "> [!my-note] My note\n> |");
+		assert.strictEqual(landing(h, "## [!בד⎸]", "בדיקה"), "## [!בדיקה]\n|");
+	});
+
+	it("keeps the header's own depth on the body line", () => {
+		const h = harness();
+		assert.strictEqual(landing(h, ">> [!no⎸", "note"), ">> [!note] Note\n>> |");
+		assert.strictEqual(landing(h, "> > [!no⎸", "note"), "> > [!note] Note\n> > |");
+	});
+
+	it("opens a new line rather than borrowing the blank one below", () => {
+		// That blank line is what separates the callout from the next paragraph;
+		// quoting it would leave the two touching, and the first word typed would
+		// pull the paragraph in as a lazy continuation.
+		const h = harness();
+		assert.strictEqual(
+			landing(h, "> [!no⎸\n\nNext paragraph", "note"),
+			"> [!note] Note\n> |\n\nNext paragraph",
+		);
+	});
+
+	it("never quotes the line below into the callout", () => {
+		const h = harness();
+		assert.strictEqual(
+			landing(h, "> [!no⎸\n## Next section", "note"),
+			"> [!note] Note\n> |\n## Next section",
+		);
+		// A nested header over its parent's body: the parent line stays the
+		// parent's.
+		assert.strictEqual(
+			landing(h, "> [!note] Parent\n> > [!ti⎸\n> parent body", "tip"),
+			"> [!note] Parent\n> > [!tip] Tip\n> > |\n> parent body",
+		);
+	});
+
+	it("goes to a body that is already there", () => {
+		// What "Wrap in callout" leaves: the header over the quoted content.
+		const h = harness();
+		assert.strictEqual(
+			landing(h, "> [!⎸\n> wrapped text", "note"),
+			"> [!note] Note\n> |wrapped text",
+		);
+	});
+
+	it("stays on a block header when only its type changed", () => {
+		const h = harness();
+		assert.strictEqual(
+			landing(h, "> [!no⎸] My own words\n> body", "note"),
+			"> [!note] My own words|\n> body",
+		);
+	});
+
+	it("opens a plain line under a new heading callout", () => {
+		const h = harness();
+		assert.strictEqual(landing(h, "## [!no⎸", "note"), "## [!note]\n|");
+		assert.strictEqual(
+			landing(h, "## [!no⎸\nSection text", "note"),
+			"## [!note]\n|\nSection text",
+		);
+	});
+
+	it("stays on a heading when only its type changed", () => {
+		const h = harness();
+		assert.strictEqual(
+			landing(h, "## [!no⎸] My section\nSection text", "note"),
+			"## [!note] My section|\nSection text",
+		);
+	});
+
+	it("keeps an inline pick on its own line", () => {
+		const h = harness();
+		assert.strictEqual(landing(h, "a [!no⎸]\nnext", "note"), "a [!note] |\nnext");
 	});
 });
 

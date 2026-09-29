@@ -50,6 +50,16 @@ Want an [!note]{inline callout}? Add [!type]{text} inside a sentence.
 
 The `{` must touch the closing `]`.
 
+## Picking from the autocomplete menu
+
+Type `[!` in any of the three positions and a menu of your callouts opens. Choosing one with **Enter** or a click writes the callout, then leaves the cursor where you would type next:
+
+- **Block:** on a new `> ` line under the header, ready for the content.
+- **Heading:** on a new line under the heading.
+- **Inline:** right after the pill, on the same line.
+
+If you were only changing the type of a callout that already has a title, the cursor stays at the end of that line instead. This works the same for built-in callouts and for ones you created, whatever their ID.
+
 ## Metadata and callout IDs
 
 Obsidian can attach metadata after a pipe, such as `[!note|purple]`. Callout Studio ignores that metadata when identifying the callout type, so `[!note]`, `[!note|purple]`, and `[!note|green]` all use the same **Note** definition. Heading, Inline, and Block callouts can all carry metadata.

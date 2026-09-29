@@ -175,6 +175,42 @@ target moved rather than silently corrupting an unrelated part of the note
 "recompute from the live document" discipline the context-menu section
 operations follow.
 
+### Where the cursor lands after a pick
+
+`selectSuggestion` writes the token and then hands the cursor to
+[`autoCompleteCursor.ts`](../../src/editor/autoCompleteCursor.ts). The rule is
+the one Enter follows at the end of the line, and it depends only on the role
+and on whether the pick finished a new callout. The callout's source (built-in,
+user, theme, fallback) and the characters in its id play no part:
+
+| Pick | Cursor lands |
+| --- | --- |
+| Block, no title yet | on a **new** `> ` line under the header, at the header's own depth |
+| Block, body already on the next line (what **Wrap in callout** leaves) | at the start of that body |
+| Heading, no title yet | on a **new** plain line under the heading (a heading callout has no body) |
+| Block or heading whose type was changed (a title was already there) | at the end of that line |
+| Inline | after the pill and one space, on the same line |
+
+The line under a new block or heading callout is always *opened*, never
+borrowed. Quoting the blank line that separates the callout from the next
+paragraph would leave the two touching, and the first word typed would pull
+that paragraph in as a lazy blockquote continuation. For the same reason a
+shallower or unquoted line below is never re-prefixed into the callout.
+"Create new" lands exactly like a picked row once the modal returns.
+
+The block and heading placements are deferred a frame plus 50 ms: Obsidian
+restores its own selection as the popover closes and would otherwise overwrite
+them. The inline placement is synchronous.
+
+> [!IMPORTANT]
+> **`selectSuggestion` closes the popover itself.** Obsidian's suggest manager
+> re-runs every registered suggest on the rewritten line and closes the current
+> one only if *none* claims it. Another plugin's can: Admonition's `> [!`
+> suggest matches ids as `\w+`, so `[!בדיקה]` or `[!my-note]` still looks
+> like an open token to it. While the placement waited for that close, callouts
+> with such ids kept the popover open and left the cursor where the rewrite
+> dropped it, just before `[!`. ASCII-only ids (every built-in) were unaffected.
+
 ### `triggerNow` — opening the popup for a programmatically-inserted `[!`
 
 The "Insert empty callout" and "Wrap in callout" commands insert `[!` and want
