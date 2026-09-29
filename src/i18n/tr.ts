@@ -134,7 +134,7 @@ export const tr: Record<string, string> = {
 	"settings.language": "Dil",
 	"settings.languageDesc":
 		"Callout Studio görüntüleme dili. Varsayılan olarak Obsidian'ın arayüz dilini izler.",
-	"settings.languageAuto": "Otomatik (Obsidian ile aynı)",
+	"settings.languageAuto": "Otomatik",
 	"settings.importExport": "İçe aktar ve dışa aktar",
 	"settings.import": "İçe aktar",
 	"settings.export": "Dışa aktar",

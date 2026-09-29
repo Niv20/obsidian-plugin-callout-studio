@@ -133,7 +133,7 @@ export const zh: Record<string, string> = {
 	"settings.language": "语言",
 	"settings.languageDesc":
 		"Callout Studio 的显示语言。默认跟随 Obsidian 的界面语言。",
-	"settings.languageAuto": "自动（跟随 Obsidian）",
+	"settings.languageAuto": "自动",
 	"settings.importExport": "导入和导出",
 	"settings.import": "导入",
 	"settings.export": "导出",

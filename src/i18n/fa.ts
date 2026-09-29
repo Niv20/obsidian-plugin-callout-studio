@@ -83,7 +83,7 @@ export const fa: Record<string, string> = {
 	"settings.language": "زبان",
 	"settings.languageDesc":
 		"زبان نمایش Callout Studio. به‌طور پیش‌فرض از زبان رابط Obsidian پیروی می‌کند.",
-	"settings.languageAuto": "خودکار (مانند Obsidian)",
+	"settings.languageAuto": "خودکار",
 	"settings.importExport": "وارد کردن و صادر کردن",
 	"settings.import": "وارد کردن",
 	"settings.export": "صادر کردن",

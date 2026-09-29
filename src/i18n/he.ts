@@ -101,7 +101,7 @@ export const he: Record<string, string> = {
 	"settings.language": "שפה",
 	"settings.languageDesc":
 		"שפת התצוגה של Callout Studio. ברירת־המחדל היא שפת הממשק של Obsidian.",
-	"settings.languageAuto": "אוטומטי (לפי Obsidian)",
+	"settings.languageAuto": "אוטומטי",
 	"settings.importExport": "יבוא ויצוא",
 	"settings.import": "ייבוא",
 	"settings.export": "ייצוא",

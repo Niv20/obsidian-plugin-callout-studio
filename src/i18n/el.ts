@@ -80,7 +80,7 @@ export const el: Record<string, string> = {
 	"settings.language": "Γλώσσα",
 	"settings.languageDesc":
 		"Γλώσσα εμφάνισης για το Callout Studio. Ακολουθεί από προεπιλογή τη γλώσσα διεπαφής του Obsidian.",
-	"settings.languageAuto": "Αυτόματα (όπως το Obsidian)",
+	"settings.languageAuto": "Αυτόματα",
 	"settings.importExport": "Εισαγωγή και εξαγωγή",
 	"settings.import": "Εισαγωγή",
 	"settings.export": "Εξαγωγή",

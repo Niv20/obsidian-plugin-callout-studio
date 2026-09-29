@@ -79,7 +79,7 @@ export const da: Record<string, string> = {
 	"settings.language": "Sprog",
 	"settings.languageDesc":
 		"Visningssprog for Callout Studio. Følger som standard Obsidians grænsefladesprog.",
-	"settings.languageAuto": "Automatisk (samme som Obsidian)",
+	"settings.languageAuto": "Automatisk",
 	"settings.importExport": "Importer og eksporter",
 	"settings.import": "Importer",
 	"settings.export": "Eksporter",

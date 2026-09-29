@@ -135,7 +135,7 @@ export const ru: Record<string, string> = {
 	"settings.language": "Язык",
 	"settings.languageDesc":
 		"Язык интерфейса Callout Studio. По умолчанию совпадает с языком интерфейса Obsidian.",
-	"settings.languageAuto": "Автоматически (как в Obsidian)",
+	"settings.languageAuto": "Автоматически",
 	"settings.importExport": "Импорт и экспорт",
 	"settings.import": "Импорт",
 	"settings.export": "Экспорт",

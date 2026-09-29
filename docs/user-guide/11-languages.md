@@ -4,7 +4,7 @@ Callout Studio supports more than thirty interface languages. By default, it fol
 
 ## Choose a language
 
-Open **Settings → Callout Studio** and select a language from the dropdown. Choose the automatic option if you want Callout Studio to keep following Obsidian.
+Open **Settings → Callout Studio** and select a language from the dropdown. Each language is listed under its own name. Choose **Automatic**, the first option (marked with a globe), if you want Callout Studio to keep following Obsidian.
 
 When a specific language is selected, click **Reset to default** beside the dropdown to follow Obsidian's language again.
 

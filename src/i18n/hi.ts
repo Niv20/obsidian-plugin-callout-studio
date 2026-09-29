@@ -83,7 +83,7 @@ export const hi: Record<string, string> = {
 	"settings.language": "भाषा",
 	"settings.languageDesc":
 		"Callout Studio के लिए प्रदर्शन भाषा। डिफ़ॉल्ट रूप से Obsidian की इंटरफ़ेस भाषा का अनुसरण करती है।",
-	"settings.languageAuto": "स्वचालित (Obsidian के अनुसार)",
+	"settings.languageAuto": "स्वचालित",
 	"settings.importExport": "आयात और निर्यात",
 	"settings.import": "आयात",
 	"settings.export": "निर्यात",

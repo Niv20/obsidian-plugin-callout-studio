@@ -83,7 +83,7 @@ export const cs: Record<string, string> = {
 	"settings.language": "Jazyk",
 	"settings.languageDesc":
 		"Jazyk zobrazení Callout Studio. Ve výchozím nastavení odpovídá jazyku rozhraní Obsidianu.",
-	"settings.languageAuto": "Automaticky (jako Obsidian)",
+	"settings.languageAuto": "Automaticky",
 	"settings.importExport": "Import a export",
 	"settings.import": "Importovat",
 	"settings.export": "Exportovat",

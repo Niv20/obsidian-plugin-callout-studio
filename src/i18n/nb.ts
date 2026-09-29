@@ -82,7 +82,7 @@ export const nb: Record<string, string> = {
 	"settings.language": "Språk",
 	"settings.languageDesc":
 		"Visningsspråk for Callout Studio. Følger som standard Obsidians grensesnittspråk.",
-	"settings.languageAuto": "Automatisk (samme som Obsidian)",
+	"settings.languageAuto": "Automatisk",
 	"settings.importExport": "Importer og eksporter",
 	"settings.import": "Importer",
 	"settings.export": "Eksporter",

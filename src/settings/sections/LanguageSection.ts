@@ -15,7 +15,7 @@
  * stays English until it succeeds, which is the honest outcome. Silently
  * reverting the dropdown would look like the click had not registered.
  */
-import { Setting } from "obsidian";
+import { Setting, setIcon } from "obsidian";
 import { DEFAULT_SETTINGS } from "../../constants";
 import { getSelectableLocales, resolveLocaleFile, setLocale, t } from "../../i18n";
 import { ListboxPopup } from "../../ui/listboxPopup";
@@ -26,6 +26,16 @@ type LanguageChoice = {
 	code: string;
 	name: string;
 };
+
+/** The choice that follows Obsidian's interface language instead of naming one. */
+const AUTO_LANGUAGE = "auto";
+
+/**
+ * Marks the Automatic row as a mode rather than a language. A globe because it
+ * is symmetric: a right-to-left interface mirrors every icon, and this one
+ * reads the same either way.
+ */
+const AUTO_LANGUAGE_ICON = "globe";
 
 export function renderLanguageSection(
 	ctx: SettingsSectionContext,
@@ -93,11 +103,13 @@ function observeLanguageSettingLayout(
 }
 
 /**
- * Let CSS size the closed picker from the widest translated option.
+ * Size the control column from the widest translated option.
  *
- * The popup is absolutely positioned, so its rows cannot contribute to the
- * combobox's intrinsic width. These overlapping, hidden labels can: CSS takes
- * the widest one without us guessing at glyph widths in proportional fonts.
+ * The popup is absolutely positioned and exactly as wide as the picker, so its
+ * rows cannot contribute to the column's width. These overlapping, hidden
+ * labels can: each is measured at its own width, without us guessing at glyph
+ * widths in proportional fonts. The column also keeps room for the reset arrow
+ * whether or not it shows, so the arrow never takes that room from the labels.
  */
 function renderLanguageWidthSizer(
 	containerEl: HTMLElement,
@@ -109,25 +121,46 @@ function renderLanguageWidthSizer(
 		attr: { "aria-hidden": "true" },
 	});
 	for (const choice of choices) {
-		sizerEl.createSpan({ text: choice.name });
+		const labelEl = sizerEl.createSpan({ text: choice.name });
+		// Its menu row also carries the icon, so it needs more room than its text.
+		if (choice.code === AUTO_LANGUAGE) labelEl.addClass("cs-language-width-sizer-auto");
 	}
 
+	// Fractional widths, rounded up once at the end: `scrollWidth` rounds to
+	// the nearest pixel, which could leave a label half a pixel short.
 	const widestLabel = Math.max(
-		...Array.from(sizerEl.children, (labelEl) =>
-			Math.ceil((labelEl as HTMLElement).scrollWidth),
-		),
+		...Array.from(sizerEl.children, (labelEl) => labelEl.getBoundingClientRect().width),
 	);
 	if (widestLabel > 0) {
 		controlEl.style.setProperty(
-			"--cs-language-picker-width",
-			`${widestLabel}px`,
+			"--cs-language-control-width",
+			`${Math.ceil(widestLabel + resetSlotWidth(controlEl))}px`,
 		);
 	}
 }
 
+/**
+ * The reset arrow's width plus its gap, measured whether or not it is showing.
+ *
+ * It is hidden (`display: none`, so no box) while Automatic is selected, and it
+ * appears as soon as another language is committed, before the tab redraws.
+ * Showing it for this one synchronous read paints nothing in between.
+ */
+function resetSlotWidth(controlEl: HTMLElement): number {
+	const resetEl = controlEl.querySelector<HTMLElement>(".clickable-icon");
+	if (!resetEl) return 0;
+	const hidden = resetEl.hasClass("cs-hidden");
+	resetEl.removeClass("cs-hidden");
+	const width = resetEl.getBoundingClientRect().width;
+	resetEl.toggleClass("cs-hidden", hidden);
+	if (width <= 0) return 0;
+	const gap = parseFloat(getComputedStyle(controlEl).columnGap);
+	return width + (Number.isFinite(gap) ? gap : 0);
+}
+
 function languageChoices(): LanguageChoice[] {
 	return [
-		{ code: "auto", name: t("settings.languageAuto") },
+		{ code: AUTO_LANGUAGE, name: t("settings.languageAuto") },
 		...getSelectableLocales(),
 	];
 }
@@ -143,7 +176,15 @@ function filterLanguageChoices(query: string): LanguageChoice[] {
 	);
 }
 
+/**
+ * Automatic is a mode, not a language, so its row gets an icon and a rule
+ * below it. Every other row is just the language's own name.
+ */
 function renderLanguageRow(rowEl: HTMLElement, choice: LanguageChoice): void {
+	if (choice.code === AUTO_LANGUAGE) {
+		rowEl.addClass("cs-language-option-auto");
+		setIcon(rowEl.createSpan({ cls: "cs-language-option-icon" }), AUTO_LANGUAGE_ICON);
+	}
 	rowEl.createDiv({ cls: "cs-language-option-label", text: choice.name });
 }
 
@@ -188,10 +229,14 @@ function renderUnavailableWarning(
 	containerEl: HTMLElement,
 ): void {
 	const pref = ctx.plugin.settings.language;
-	if (!resolveLocaleFile(pref) || ctx.plugin.locales.isReady(pref)) return;
+	const file = resolveLocaleFile(pref);
+	if (!file || ctx.plugin.locales.isReady(pref)) return;
 
+	// Name the language that is missing, including under Automatic ("עברית is
+	// not downloaded yet", not "Automatic is…"). Matched by file, since codes
+	// such as `zh-hk` and `no` are served by another code's file.
 	const name =
-		getSelectableLocales().find(({ code }) => code === pref)?.name ??
+		getSelectableLocales().find(({ code }) => resolveLocaleFile(code) === file)?.name ??
 		t("settings.languageAuto");
 
 	new Setting(containerEl)

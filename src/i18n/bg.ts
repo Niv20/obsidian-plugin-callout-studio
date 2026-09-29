@@ -80,7 +80,7 @@ export const bg: Record<string, string> = {
 	"settings.language": "Език",
 	"settings.languageDesc":
 		"Език на показване за Callout Studio. По подразбиране следва езика на интерфейса на Obsidian.",
-	"settings.languageAuto": "Автоматично (като Obsidian)",
+	"settings.languageAuto": "Автоматично",
 	"settings.importExport": "Импорт и експорт",
 	"settings.import": "Импортиране",
 	"settings.export": "Експортиране",

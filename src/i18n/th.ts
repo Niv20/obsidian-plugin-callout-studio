@@ -134,7 +134,7 @@ export const th: Record<string, string> = {
 	"settings.language": "ภาษา",
 	"settings.languageDesc":
 		"ภาษาที่แสดงผลสำหรับ Callout Studio ค่าเริ่มต้นจะใช้ตามภาษาอินเทอร์เฟซของ Obsidian",
-	"settings.languageAuto": "อัตโนมัติ (ตาม Obsidian)",
+	"settings.languageAuto": "อัตโนมัติ",
 	"settings.importExport": "นำเข้าและส่งออก",
 	"settings.import": "นำเข้า",
 	"settings.export": "ส่งออก",

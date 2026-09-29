@@ -382,7 +382,7 @@ export const en: Record<string, string> = {
 	"settings.language": "Language",
 	"settings.languageDesc":
 		"Display language for Callout Studio. Defaults to Obsidian's interface language.",
-	"settings.languageAuto": "Automatic (match Obsidian)",
+	"settings.languageAuto": "Automatic",
 
 	// Downloadable translations. English is built in; every other language is
 	// fetched the first time it is needed and kept for later.

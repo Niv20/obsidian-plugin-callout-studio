@@ -1551,6 +1551,26 @@ Obsidian's language through the same locale-change path as a manual selection.
 Their reset buttons occupy the trailing edge of the existing control column;
 the picker shrinks to make room, as in the callout editor's color row.
 
+The **Language** column is sized from its content, not the fixed 260px the other
+reset rows use. The picker's menu is exactly as wide as the picker, so the
+column has to fit the longest option. `LanguageSection` measures a hidden stack
+of every translated label and adds the reset arrow's width plus the gap.
+It un-hides the arrow for that one synchronous read, because Automatic keeps it
+`display: none`. The sum becomes `--cs-language-control-width`. The column
+never shrinks (`flex: 0 0 auto`): in a narrow pane the description wraps, and
+Obsidian stacks the row below 400px. Before this, a shrinking column and an
+arrow that took its room from the picker cut "Bahasa Indonesia" and Automatic
+short.
+
+**Automatic** is the first row and is drawn as a mode, not a language: a
+`globe` icon (symmetric, so the RTL mirroring Obsidian applies to every icon
+changes nothing) and a rule beneath it. The closed picker shows only its label.
+Every language row is its own native name, with no flags and no regional
+grouping. Flags stand for countries, not languages (W3C i18n Best Practice 16),
+and Windows' emoji font draws flag emoji as two letters.
+When Automatic follows a language that has not downloaded, the warning names
+that language, matched by locale *file* so `zh-hk` reads as 繁體中文.
+
 Colored option headers reserve space at their trailing edge for the compact
 reset control without increasing the header's original height. The rule also
 applies to the callout editor's icon-adjustment headers. Menu-category and
