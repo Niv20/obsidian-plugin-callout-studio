@@ -1,0 +1,34 @@
+name: "🐞 Bug report"
+description: Something isn't working as expected
+title: "[Bug]: "
+labels: ["bug"]
+assignees:
+    - Niv20
+
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks so much for taking the time to tell me about this!
+              Share what went wrong, as much or as little as you like, and I'll take a look as soon as I can.
+
+    - type: textarea
+      id: description
+      attributes:
+          label: Bug description
+          description: Tell me in your own words what you saw and what you expected instead.
+      validations:
+          required: true
+
+    - type: textarea
+      id: reproduce
+      attributes:
+          label: Steps to reproduce
+          description: If you remember the steps that led to it, that helps a lot. If you don't, no worries, this field is optional.
+
+    - type: markdown
+      attributes:
+          value: |
+              Thank you again for helping make Callout Studio better.
+
+              Niv 🙃

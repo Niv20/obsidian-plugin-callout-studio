@@ -1,0 +1,34 @@
+name: "❓ Question"
+description: Ask how to use the plugin
+title: "[Question]: "
+labels: ["question"]
+assignees:
+    - Niv20
+
+body:
+    # Video tutorials are still in the works, so the link is hidden for now.
+    # TODO: when the playlist is ready, replace the URL and uncomment this block (keep it in sync with config.yml).
+    # - type: markdown
+    #   attributes:
+    #     value: |
+    #       Happy to help! You can also watch the video tutorials [here](https://www.youtube.com/playlist?list=REPLACE_WITH_PLAYLIST_ID).
+
+    - type: markdown
+      attributes:
+          value: |
+              No question is too small, and if something felt confusing, chances are others found it confusing too.
+
+    - type: textarea
+      id: question
+      attributes:
+          label: Your question
+          description: Tell me what you're trying to do and where you got stuck.
+      validations:
+          required: true
+
+    - type: markdown
+      attributes:
+          value: |
+              Thank you for asking, and for using Callout Studio.
+
+              Niv 🙃

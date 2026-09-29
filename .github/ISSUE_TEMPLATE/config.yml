@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+
+# Video tutorials are still in the works, so the link is hidden for now.
+# TODO: when the playlist is ready, replace the URL and uncomment this block (keep it in sync with question.yml).
+# contact_links:
+#   - name: Video tutorials
+#     url: https://www.youtube.com/playlist?list=REPLACE_WITH_PLAYLIST_ID
+#     about: Prefer watching? Short videos on how to get the most out of the plugin.

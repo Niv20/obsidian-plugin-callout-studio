@@ -1,0 +1,28 @@
+name: "💡 Feature request"
+description: Suggest an idea or an improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+assignees:
+    - Niv20
+
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Got an idea? I'd love to hear it!
+              Many of the features you use today began as ideas from users like you. Feel free to suggest anything, big or small, and I'll read every idea.
+
+    - type: textarea
+      id: suggestion
+      attributes:
+          label: Feature description
+          description: Tell me what you have in mind, and how it would help you. Rough ideas are welcome too.
+      validations:
+          required: true
+
+    - type: markdown
+      attributes:
+          value: |
+              Thank you for helping shape where Callout Studio goes next.
+
+              Niv 🙃
