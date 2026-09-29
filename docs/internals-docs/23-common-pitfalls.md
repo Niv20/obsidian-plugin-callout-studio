@@ -224,6 +224,18 @@ sufficient**. Common cases that also need an explicit follow-up call:
   at computed-value time — it unsets silently, so the symptom is a missing
   background or a vanished side accent, never an error. See
   [Colour system § accent dialect](12-color-system.md#accent-dialect-version-drift-and-theme-drift).
+- **`.callout-studio-row` is a size container, and Obsidian's settings-tab
+  container queries are unnamed.** Core's `@container (max-width: 400px)`
+  rules (written for `.vertical-tab-content`) give `.setting-item:not(…)
+  .setting-item-control` and its `button:not(.clickable-icon)` `width: 100%`
+  and left-align the control. An unnamed query matches the nearest container
+  of any kind, so a `Setting` row that also wears `.callout-studio-row` (the
+  recovery list's rows) becomes that container for its own children, in any
+  narrow window on any device class, not just `.is-phone`. With the control
+  also set not to shrink, the text column collapsed to 0px and every row grew
+  hundreds of pixels tall. `.cs-recovery-row.callout-studio-row` resets
+  `container-type: normal`; do the same for any other `Setting` row that
+  borrows the class. `tests/settingsRecoveryModal.test.ts` checks for the reset.
 
 ## Style Settings changes nothing you can hear
 
@@ -287,15 +299,17 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
 - **`isDesktopOnly` is `false`** — any new feature must avoid Node/Electron-
   only APIs. The startup CSS-snapshot cache exists specifically to soften
   slow mobile launches (see [Persistence and caching](07-persistence-and-caching.md#the-startup-css-snapshot)).
-- **A create window does not autofocus its name field on mobile or
-  tablet.** `autofocusOnDesktop` bails on `Platform.isMobile`, so "New
-  callout" and "New color palette" leave the cursor alone there and the
-  user taps the field. Desktop and mobile are deliberately inconsistent:
-  the 400ms `scrollTop` hold that once kept them the same read as a clunky
-  lurch and was removed, not tuned. Don't reinstate it — see
+- **Opening a window must not autofocus a text field on mobile or
+  tablet.** `autofocusOnDesktop` bails on `Platform.isMobile`, so new
+  callouts and palettes, Quick Insert, replacement, and the icon picker
+  leave the cursor alone there. This includes an icon panel that finishes
+  loading after the window opens or appears after a source change. On desktop,
+  the applicable name or search field receives focus. The 400ms `scrollTop`
+  hold once used to accommodate the mobile keyboard read as a clunky lurch
+  and was removed, not tuned. Don't reinstate it — see
   [Settings UI § where the cursor lands](16-settings-ui-and-modals.md#where-the-cursor-lands-when-a-window-opens).
-  The search windows (quick-insert, replace-callout) still focus on every
-  device; they exist to be typed into.
+  The Hotkeys-settings DOM fallback may fill its query on mobile, but it must
+  not focus or select the field there.
 
 ## Backward compatibility constraints
 

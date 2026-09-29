@@ -1,30 +1,18 @@
 /**
  * tests/modalAutofocus.test.ts — where the cursor lands when a window opens.
  *
- * Four separate promises, and each fails in a way the user reads as the plugin
- * being broken rather than as a preference:
+ * Three promises about focus when a window opens:
  *
- * - **a create window takes the cursor — on the desktop.** "New callout" and
- *   "New color palette" both open on an empty name that has to be filled in
- *   before anything can be saved, so the first keystroke should be a letter,
- *   not a click on the name field.
- * - **a create window on a phone or tablet does not.** Deliberately inconsistent
- *   with the desktop: the soft keyboard shrinks the viewport out from under the
- *   form as it opens and the window jumps. See `modalAutofocus`, which also
- *   records the ~400ms scroll-hold workaround that used to paper over this and
- *   has since been removed — there are no tests for it here because there is no
- *   longer anything holding the body still.
+ * - **create and search windows take the cursor on desktop.** The first
+ *   keystroke can go into their name or search field immediately.
+ * - **no window takes a text cursor on a phone or tablet.** The soft keyboard
+ *   stays closed until the user taps a field.
  * - **an edit window does not, on any device.** The form is already filled in
  *   and the user came to change some other part of it. This is the half that was
  *   wrong once: the callout editor focused the name on every *custom* callout,
  *   edit included, because it asked `!isBuiltIn` — a question about whether the
  *   field is editable, not about whether the window is creating anything.
- * - **a search window takes the cursor everywhere.** Quick-insert and
- *   replace-callout exist to be typed into and have no edit mode to hold back
- *   for, so they keep the phone keyboard the create windows now decline.
- *
- * The focus itself is refused a scroll outright via `preventScroll` in both
- * cases — the one kind of focus scroll that can be turned off at the call.
+ * Desktop focus refuses a scroll via `preventScroll`.
  *
  * The create/edit gate is a one-line conditional inside a modal this suite has
  * no way to construct — the editors want a plugin, a registry, an app and an
@@ -35,10 +23,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { Platform } from "obsidian";
 import { installFakeDom } from "./support/fakeDom";
-import {
-	autofocusOnDesktop,
-	autofocusOnOpen,
-} from "../src/settings/modalAutofocus";
+import { autofocusOnDesktop } from "../src/settings/modalAutofocus";
 import { blankLiterals, readRepoFile, report } from "./support/sourceScan";
 
 const fakeDom = installFakeDom();
@@ -94,77 +79,27 @@ function onDevice(isMobile: boolean, body: () => void): void {
 }
 
 /* -------------------------------------------------------------------------- */
-/* 100 — a search window: the cursor, on every device                          */
+/* 100 — modal-open text focus depends on the device                           */
 /* -------------------------------------------------------------------------- */
 
-describe("the field a search window opens on", () => {
-	it("takes the cursor when it is handed one", () => {
+describe("the field a window opens on", () => {
+	it("takes the cursor on desktop", () => {
 		const win = openWindow();
-		autofocusOnOpen(win.input);
+		onDevice(false, () => autofocusOnDesktop(win.input));
 		assert.strictEqual(win.focusCount(), 1);
 		assert.strictEqual(fakeDom.document.activeElement, win.input as unknown);
 	});
 
 	it("asks for the focus WITHOUT a scroll", () => {
-		// A bare `focus()` here is the bug: the DOM scrolls the field into view
-		// on its own, which is the half of the jump that CAN be refused.
-		const win = openWindow();
-		autofocusOnOpen(win.input);
-		assert.deepStrictEqual(win.focusOptions(), { preventScroll: true });
-	});
-
-	it("still takes the cursor on a phone", () => {
-		// The deliberate difference from a create window. These windows do
-		// nothing at all until a query is typed, so the keyboard is the point.
-		const win = openWindow();
-		onDevice(true, () => autofocusOnOpen(win.input));
-		assert.strictEqual(win.focusCount(), 1);
-	});
-
-	it("focuses nothing when handed no field — the edit case", () => {
-		const win = openWindow();
-		autofocusOnOpen(null);
-		assert.strictEqual(win.focusCount(), 0);
-		assert.strictEqual(fakeDom.document.activeElement, null);
-	});
-
-	it("treats an absent field the same as a null one", () => {
-		// Call sites reach through an optional (`this.nameTextInput?.inputEl`),
-		// so `undefined` arrives here as readily as `null`.
-		const win = openWindow();
-		autofocusOnOpen(undefined);
-		assert.strictEqual(win.focusCount(), 0);
-	});
-});
-
-/* -------------------------------------------------------------------------- */
-/* 110 — a create window: the desktop only                                     */
-/* -------------------------------------------------------------------------- */
-
-describe("the name field a create window opens on", () => {
-	it("takes the cursor on the desktop", () => {
-		const win = openWindow();
-		onDevice(false, () => autofocusOnDesktop(win.input));
-		assert.strictEqual(win.focusCount(), 1);
-		assert.strictEqual(fakeDom.document.activeElement, win.input as unknown);
-	});
-
-	it("asks for the focus WITHOUT a scroll, like every other window", () => {
 		const win = openWindow();
 		onDevice(false, () => autofocusOnDesktop(win.input));
 		assert.deepStrictEqual(win.focusOptions(), { preventScroll: true });
 	});
 
-	it("takes nothing on a phone or tablet", () => {
-		// `Platform.isMobile` covers both. The keyboard would shrink the
-		// viewport out from under a form the user has not read yet.
+	it("leaves the cursor alone on a phone or tablet", () => {
 		const win = openWindow();
 		onDevice(true, () => autofocusOnDesktop(win.input));
-		assert.strictEqual(
-			win.focusCount(),
-			0,
-			"a create window grabbed the name field on a phone",
-		);
+		assert.strictEqual(win.focusCount(), 0);
 		assert.strictEqual(fakeDom.document.activeElement, null);
 	});
 
@@ -181,7 +116,7 @@ describe("the name field a create window opens on", () => {
 });
 
 /* -------------------------------------------------------------------------- */
-/* 120 — which window calls which, as a source rule                            */
+/* 110 — which window calls the helper, as a source rule                        */
 /* -------------------------------------------------------------------------- */
 
 /**
@@ -209,19 +144,22 @@ const CREATE_ONLY: Array<{
 ];
 
 /**
- * The windows with no edit mode to hold back for — they exist to be typed into,
- * so they take the cursor on every device and go through the unconditional
- * entry point.
+ * Search surfaces with no create/edit gate. The icon picker has separate
+ * panels for bundled packs and user images. The last entry is the fallback
+ * filter for Obsidian's Hotkeys settings opened from this plugin.
  */
-const SEARCH_WINDOWS: string[] = [
+const SEARCH_SURFACES: string[] = [
 	"src/settings/QuickInsertModal.ts",
 	"src/utils/ReplaceCalloutModal.ts",
+	"src/settings/iconpicker/PackPanel.ts",
+	"src/settings/iconpicker/ImagePanel.ts",
+	"src/settings/hotkeyLink.ts",
 ];
 
-/** Every window that takes the cursor at all. */
+/** Every plugin window that places the cursor in a text field on open. */
 const AUTOFOCUSED: string[] = [
 	...CREATE_ONLY.map((w) => w.file),
-	...SEARCH_WINDOWS,
+	...SEARCH_SURFACES,
 ];
 
 /** How many times `code` calls `name(`, ignoring the import that names it. */
@@ -229,7 +167,7 @@ function callCount(code: string, name: string): number {
 	return [...code.matchAll(new RegExp(`\\b${name}\\s*\\(`, "g"))].length;
 }
 
-describe("only a create window takes the cursor", () => {
+describe("plugin windows only autofocus text on desktop", () => {
 	for (const { file, guard, newTitleKey } of CREATE_ONLY) {
 		it(`${file} focuses its name field only behind \`${guard}\``, () => {
 			const text = readRepoFile(file);
@@ -264,37 +202,28 @@ describe("only a create window takes the cursor", () => {
 		});
 	}
 
-	it("no create window reaches for the unconditional entry point", () => {
-		// The regression this guards is a quiet one: `autofocusOnOpen` focuses
-		// on every device, so swapping it back in here restores exactly the
-		// phone behaviour that was removed — with nothing on screen to say so.
-		const bad = CREATE_ONLY.map((w) => w.file).filter(
+	it("no window calls the removed unconditional helper", () => {
+		const bad = AUTOFOCUSED.filter(
 			(file) => callCount(blankLiterals(readRepoFile(file)), "autofocusOnOpen") > 0,
 		);
 		assert.deepStrictEqual(
 			bad,
 			[],
 			report(
-				"These create windows call autofocusOnOpen, which would grab the " +
-					"name field on a phone again. Use autofocusOnDesktop:",
+				"These windows call autofocusOnOpen, which would raise the " +
+					"phone keyboard. Use autofocusOnDesktop:",
 				bad,
 			),
 		);
 	});
 
-	for (const file of SEARCH_WINDOWS) {
-		it(`${file} focuses its search field on every device`, () => {
+	for (const file of SEARCH_SURFACES) {
+		it(`${file} focuses its search field on desktop only`, () => {
 			const code = blankLiterals(readRepoFile(file));
 			assert.strictEqual(
-				callCount(code, "autofocusOnOpen"),
-				1,
-				`expected exactly one autofocusOnOpen call in ${file}`,
-			);
-			assert.strictEqual(
 				callCount(code, "autofocusOnDesktop"),
-				0,
-				`${file} exists to be typed into — it should not hold the cursor ` +
-					`back on a phone`,
+				1,
+				`expected exactly one autofocusOnDesktop call in ${file}`,
 			);
 		});
 	}
@@ -310,7 +239,7 @@ describe("only a create window takes the cursor", () => {
 		// the first draft of this rule miss `searchEl.focus()` — a field whose
 		// name says nothing about being an input.
 		//
-		// It stays deliberately blind to `focus()` on anything else: all four
+		// It stays deliberately blind to `focus()` on anything else: some
 		// windows legitimately focus a popup menu or the note's own editor,
 		// none of which is a text field or raises a keyboard.
 		const bad: string[] = [];
@@ -331,9 +260,8 @@ describe("only a create window takes the cursor", () => {
 			bad,
 			[],
 			report(
-				"These focus a text field directly. Route it through " +
-					"modalAutofocus so it refuses to scroll (and, on a window " +
-					"that also creates, is gated on create and on the desktop):",
+				"These focus a text field directly. Route modal-open focus " +
+					"through autofocusOnDesktop so mobile keeps its keyboard closed:",
 				bad,
 			),
 		);

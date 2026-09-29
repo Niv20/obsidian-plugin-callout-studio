@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { Platform } from "obsidian";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import { getSource, ICON_SOURCE_IDS } from "../src/icons/registry";
 import type { IconIndex } from "../src/icons/types";
@@ -64,6 +65,25 @@ function harness(
 }
 
 describe("icon picker asynchronous lifecycle", () => {
+	it("focuses icon search on desktop but leaves the mobile keyboard closed", async () => {
+		const wasMobile = Platform.isMobile;
+		try {
+			for (const isMobile of [false, true]) {
+				Platform.isMobile = isMobile;
+				const h = harness(async () => {});
+				try {
+					fakeDom.document.activeElement = null;
+					h.modal.onOpen();
+					await Promise.all(h.tasks);
+					const search = h.contentEl.querySelector(".icon-picker-search-input");
+					assert.ok(search);
+					assert.equal(search.focusCount, isMobile ? 0 : 1);
+					assert.equal(fakeDom.document.activeElement, isMobile ? null : search);
+				} finally { h.destroy(); }
+			}
+		} finally { Platform.isMobile = wasMobile; }
+	});
+
 	it("does not create toolbar listeners after closing during disk loading", async () => {
 		const disk = deferred<void>();
 		const h = harness(() => disk.promise);

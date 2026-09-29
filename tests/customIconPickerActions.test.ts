@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import type { App } from "obsidian";
+import { Platform, type App } from "obsidian";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import { t } from "../src/i18n";
 import type { PackDataStore } from "../src/icons/PackDataStore";
@@ -49,6 +49,24 @@ function wrapperFor(root: FakeElement, name: string): FakeElement {
 }
 
 describe("custom icon picker actions", () => {
+	it("focuses custom icon search on desktop only", async () => {
+		const wasMobile = Platform.isMobile;
+		try {
+			for (const isMobile of [false, true]) {
+				Platform.isMobile = isMobile;
+				const h = panelHarness();
+				try {
+					fakeDom.document.activeElement = null;
+					await h.panel.render();
+					const search = h.root.querySelector(".icon-picker-search-input");
+					assert.ok(search);
+					assert.equal(search.focusCount, isMobile ? 0 : 1);
+					assert.equal(fakeDom.document.activeElement, isMobile ? null : search);
+				} finally { h.destroy(); }
+			}
+		} finally { Platform.isMobile = wasMobile; }
+	});
+
 	it("centers empty collections while keeping unmatched searches in the normal notice layout", async () => {
 		const h = panelHarness();
 		try {

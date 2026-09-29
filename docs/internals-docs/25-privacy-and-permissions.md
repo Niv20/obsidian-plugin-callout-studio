@@ -8,7 +8,7 @@ Callout Studio asks for a small number of permissions, and all of them stay loca
 
 - **Vault file enumeration.** The plugin reads note contents through Obsidian's APIs for **Scan for callouts**, callout statistics, **Replace in vault**, **Convert to plain text**, **Convert to standard Markdown**, and warnings about deleting a type that is still in use. It uses that content locally and never sends it anywhere. Statistics, the occurrences sidebar and usage menus share a lazy, in-memory index of Markdown, preferring current editor text for open notes. After the first usage request, vault and editor changes refresh affected entries; there is no unconditional startup scan. Source positions, excerpts and counts are discarded when the plugin unloads and never register callout types or enter plugin settings.
 - **Vault file modification.** The plugin writes to notes only when you run **Replace in vault**, **Convert to plain text**, **Convert to standard Markdown**, or a wrap/unwrap command. It does not rewrite notes in the background.
-- **Clipboard access**, narrowly: the **Copy callout Markdown**, **Copy heading section**, **Cut heading section** and **Copy diagnostics** actions write to your clipboard when you click them. Diagnostics contain saving status, format and backup counts, and this device's random identifier, but no callout definitions or setting values. The callout ID/alias input field can read a pasted block of comma- or space-separated text so you can paste several IDs at once, and the Callout Manager and Admonition importers read your clipboard when you select their **Copied styles** or **Copied JSON** option. The clipboard is never read at any other time.
+- **Clipboard access**, narrowly: the **Copy callout Markdown**, **Copy heading section** and **Cut heading section** actions write to your clipboard when you click them. The callout ID/alias input field can read a pasted block of comma- or space-separated text so you can paste several IDs at once, and the Callout Manager and Admonition importers read your clipboard when you select their **Copied styles** or **Copied JSON** option. The clipboard is never read at any other time.
 
 No vault content, clipboard data, or usage information is ever transmitted off your device.
 
@@ -86,6 +86,16 @@ These pictures live in the plugin's own data file alongside the rest of your set
   Stored SVG artwork is filtered again before it is displayed as part of a note
   or the plugin interface, including copies received through sync. Unsafe markup
   is removed; a damaged drawing uses the usual missing-icon display.
+
+  **View details** in **Restore an earlier setup** displays a selected version's
+  changed fields and current/after-restoring visual previews entirely within the
+  app. Only differences are displayed; there is no full-backup or original-file-text
+  view. It does not send data, fetch assets, write a file, or restore the setup.
+  Markup in changed fields remains text; visual previews use sanitized artwork
+  from the corresponding snapshot and do not execute stored content or substitute
+  the live image pack. Unlike the sync diagnostics report (see
+  [08-settings-sync-and-recovery.md](08-settings-sync-and-recovery.md)), this
+  comparison contains user-authored setup content; review it before sharing it.
 
 - **The commands you've built:** a few bytes each. Shortcuts live in Obsidian's hotkeys file, so they survive when you edit a command.
 - **Downloaded icon library files:** safe to delete because in-use artwork is also saved in the plugin's data file.

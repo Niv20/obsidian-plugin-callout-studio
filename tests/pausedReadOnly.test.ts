@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { makePausedReadOnly } from "../src/settings/sections/pausedReadOnly";
-import { renderImportExportSection, renderResetSection } from "../src/settings/sections/DataManagementSection";
+import { renderBackupSection, renderImportExportSection, renderResetSection } from "../src/settings/sections/DataManagementSection";
 import type { SettingsSectionContext } from "../src/settings/sections/types";
 import { SettingsSaveStatus } from "../src/manager/settingsSaveStatus";
 import { renderSaveStatusBanner } from "../src/settings/saveStatusBanner";
@@ -30,6 +30,7 @@ function page() {
 	const plugin = { recovery: {}, settingsWriter: { isFrozen: true } };
 	const ctx = { app: {} as App, plugin, display: () => {} } as unknown as SettingsSectionContext;
 	renderImportExportSection(ctx, root as unknown as HTMLElement);
+	renderBackupSection(ctx, root as unknown as HTMLElement);
 	renderResetSection(ctx, root as unknown as HTMLElement);
 	const row = (label: string) => root.querySelectorAll(".setting-item").find(el => el.dataset.csName === label);
 	return { root, header, slot, fold, add, rows, row };

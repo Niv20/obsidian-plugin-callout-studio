@@ -112,6 +112,7 @@ The source map is deliberately explicit:
 | Merge representation and integrity | [`settingsSync.ts`](../../src/manager/settingsSync.ts), [`settingsGenesis.ts`](../../src/manager/settingsGenesis.ts), [`syncTree.ts`](../../src/manager/syncTree.ts), [`syncFingerprint.ts`](../../src/manager/syncFingerprint.ts), [`foreignFields.ts`](../../src/manager/foreignFields.ts) |
 | Checkpoints, history, backups and conflict copies | [`settingsCheckpoint.ts`](../../src/manager/settingsCheckpoint.ts), [`settingsHistory.ts`](../../src/manager/settingsHistory.ts), [`settingsRecovery.ts`](../../src/manager/settingsRecovery.ts), [`settingsBackup.ts`](../../src/manager/settingsBackup.ts), [`settingsConflictBackup.ts`](../../src/manager/settingsConflictBackup.ts), [`settingsConflictFiles.ts`](../../src/manager/settingsConflictFiles.ts) |
 | Explicit recovery | [`settingsRecoveryActions.ts`](../../src/manager/settingsRecoveryActions.ts), [`missingSettingsRecovery.ts`](../../src/manager/missingSettingsRecovery.ts), [`settingsRecoveryService.ts`](../../src/manager/settingsRecoveryService.ts), [`settingsDiagnosis.ts`](../../src/manager/settingsDiagnosis.ts), [`SettingsRecoveryModal.ts`](../../src/settings/SettingsRecoveryModal.ts) |
+| Earlier-setup inspection | [`setupDetails.ts`](../../src/manager/setupDetails.ts), [`SettingsRecoveryDetailsModal.ts`](../../src/settings/SettingsRecoveryDetailsModal.ts), [`recoveryDetailsView.ts`](../../src/settings/recoveryDetailsView.ts), [`recoverySections.ts`](../../src/settings/recoverySections.ts), [`recoveryCollections.ts`](../../src/settings/recoveryCollections.ts), [`recoveryModel.ts`](../../src/settings/recoveryModel.ts), [`recoveryValues.ts`](../../src/settings/recoveryValues.ts), [`recoveryDetailFields.ts`](../../src/settings/recoveryDetailFields.ts), [`recoveryComparisonTable.ts`](../../src/settings/recoveryComparisonTable.ts), [`recoveryPreview.ts`](../../src/settings/recoveryPreview.ts), [`recoveryRolePreview.ts`](../../src/settings/recoveryRolePreview.ts) |
 | Paused state | [`pausedRecheck.ts`](../../src/manager/pausedRecheck.ts), [`pausedIndicator.ts`](../../src/settings/pausedIndicator.ts), [`withTimeout.ts`](../../src/utils/withTimeout.ts) |
 | Status and user feedback | [`settingsSaveStatus.ts`](../../src/manager/settingsSaveStatus.ts), [`settingsSaveReporter.ts`](../../src/manager/settingsSaveReporter.ts), [`settingsSaveMessage.ts`](../../src/manager/settingsSaveMessage.ts), [`saveStatusBanner.ts`](../../src/settings/saveStatusBanner.ts), [`settingsNotices.ts`](../../src/manager/settingsNotices.ts) |
 | Destructive actions while paused | [`pausedGuard.ts`](../../src/settings/pausedGuard.ts), [`DataManagementSection.ts`](../../src/settings/sections/DataManagementSection.ts), [`PluginImportModal.ts`](../../src/settings/pluginImport/PluginImportModal.ts), [`calloutVaultActions.ts`](../../src/settings/sections/calloutVaultActions.ts) |
@@ -582,16 +583,22 @@ Import's 1,000-key limit.
 - **Every copy is verified.** The copy is read back and compared canonically
   before any caller is told it exists; `null` means no copy, and the caller
   refuses the destructive step. The callers are adoption, boot-time recovery,
-  missing-file restoration, **Reset everything** and both imports.
+  missing-file restoration, earlier-setup restoration, **Reset everything** and
+  both imports.
 - **Deduplicated by hash.** When a copy with the same content hash exists and
-  reads back correctly, it is returned and nothing is written. Adoption used to
-  back up every stale conflict copy again on each pass.
-- **Each device tidies only its own copies.** The device part is
+  reads back correctly, it is returned and nothing is written. This early
+  return also skips pruning. Adoption used to back up every stale conflict copy
+  again on each pass.
+- **Retention is per device.** The device part is
   `DeviceLocalStore.deviceId`, eight random characters kept in local storage. A
   device keeps its newest 10 copies plus its newest copy of each of the last 14
-  days on which it saved one. Another device's copies are left alone while it is
-  in use. Once it has saved none for 90 days (a reinstalled phone gets a new
-  name), all but its newest are removed. A device whose local storage cannot be
+  UTC days on which it saved one. The two sets overlap, and the current
+  operation's protected batch can retain additional copies. Another device's
+  copies are left alone until its newest backup is more than 90 days older than
+  this device's newest backup; then all but its newest are removed. This uses
+  backup timestamps, not a live-device heartbeat or the current wall clock, so
+  an active device that has needed no backup can qualify as idle. A reinstalled
+  phone can get a new device name. A device whose local storage cannot be
   written uses the shared name `device00`. In 2.14 every device pruned every copy
   to one shared window of five, so a busy device evicted another's copies and
   sometimes its own earlier copy from the same adoption.
@@ -599,6 +606,14 @@ Import's 1,000-key limit.
   earlier (`data-<timestamp>-<uuid>.json`) are never deleted here; those builds
   prune their own. User files are never touched. A pruning failure is logged and
   does not invalidate a copy that was already written and verified.
+
+Pruning runs after a new backup has been written and verified, never as a
+scheduled task. Recorded days are not an age expiry: even old copies can remain
+in the newest-ten or daily sets until later writes displace them. Raw preservation
+files (`unreadable-*.txt`, `recovery-copy-*.txt`) are outside this filename matcher
+and are never pruned. The folder has no global file-count or byte budget: multiple
+devices, legacy names, protected batches and preservation files make its total
+size independent of the normal per-device retention window.
 
 Backups are inside the plugin directory: provider deletion or a later uninstall
 can remove them. A user-exported backup kept elsewhere serves a different purpose.
@@ -614,11 +629,28 @@ The writer never awaits it, and a failure never reaches a save.
 It lives in its own IndexedDB database, `CalloutStudioHistory`, scoped like the
 checkpoint. `historyToKeep()` keeps the last 20 distinct states, the newest of
 each of the last 14 days with a recorded state, and the newest of each of the
-last 8 weeks with a recorded state (Monday to Sunday, UTC), within a 24 MiB
-budget; beyond it older states go first, and the
-newest always stays. Each write happens in one transaction, issued from the
-read's success callback, because older WebKit committed a transaction before a
-promise continuation could add to it.
+last 8 weeks with a recorded state (Monday to Sunday, UTC). Days use UTC too.
+These are overlapping sets of recorded periods, not an expiry after 14 days or
+8 weeks. The 24 MiB budget is estimated from `canonical(content).length * 2`,
+not measured IndexedDB disk usage; beyond it older retained states go first,
+and the newest always stays even if it alone exceeds the budget.
+
+Every record or refresh of an existing hash prunes the scope in the same
+transaction; listing history and the passage of time do not prune it. Writes
+are issued from the read's success callback, because older WebKit committed a
+transaction before a promise continuation could add to it. History remains
+best effort if IndexedDB is unavailable or rejects a write.
+
+`delete(hash)` forgets one entry on request, from **Restore an earlier setup**'s
+own **Delete**, and deliberately does not share `record()`'s never-rejects
+contract: the user asked for that state to be gone, so a storage failure is
+reported to the caller rather than logged and swallowed. It still runs behind
+the same internal write queue as `record()`/`put()`, so the two cannot race each
+other over the same hash, but the queue itself is forked — `this.queue` always
+resolves, so one failed delete cannot poison a later `record()` — while the
+promise handed back to the caller still rejects. `SettingsWriter.deleteHistoryEntry()`
+is the one public entry point, mirroring `historyEntries()`'s own delegation to
+`host.history`.
 
 ## Saving status and recovery actions
 
@@ -747,7 +779,7 @@ its dialog closes, because saving can pause while the dialog is open.
 setting `inert`, and `SettingsTab` redraws whenever the writer freezes or thaws.
 A change made while paused used to look applied and vanish on the next launch.
 The title, the banner, folding the lists, and the rows marked `cs-paused-allowed`
-(Export, Earlier setups, Sync diagnostics, Review conversion) stay usable.
+(Export, Earlier setups, Review conversion) stay usable.
 
 `SettingsWriter.persists(data)` answers whether the settings file now holds
 `data`, by content. `save()` resolves in every case, including when nothing was
@@ -806,8 +838,118 @@ settings file is not touched.
 - any other `data*.json` in the plugin folder, such as iCloud's `data 2.json` or a
   Dropbox conflicted copy, which nothing else would mention
 
-Each source is normalized through a scratch registry, and `difference()` counts
-the callout rows and setting groups that differ from now. `restore()` runs only
+Each available source group is a shared Callout Studio disclosure heading, initially
+expanded, with the same hairline divider the main settings tab draws between
+sections — on the heading, between groups, not on the individual rows, which are
+Callout Studio's ordinary raised row and carry no border of their own. Entries
+offer **View details**, **Delete**, and, when readable, **Restore**. There is no
+per-entry export button; the settings page's ordinary export still exports the
+displayed setup.
+
+**Delete** (`SettingsRecoveryService.remove()`) permanently forgets one source
+after a warning confirmation, regardless of readability. It touches neither the
+settings file nor the writer, so — unlike **Restore** — it stays available while
+saving is paused. A history entry goes through `SettingsWriter.deleteHistoryEntry()`
+→ `SettingsHistoryStore.delete(hash)`, keyed by the `historyHash` a `RecoverySource`
+carries for that kind only; a backup or stray copy goes through
+`adapter.remove(source.path)`, the same primitive `settingsBackup.ts`'s automatic
+pruning uses. The modal reloads the full list from `listSources()` on success
+rather than removing the row itself, so a group's count and its collapse-to-empty
+behavior stay correct without separate bookkeeping.
+
+Each `RecoverySource` still carries an `origin` (`"this-device"`, `"other-device"`,
+`"older-version"`, or `null`) for backups and stray copies, but the modal never
+displays it — which device a copy came from is not something restoring it
+requires the user to know. The field stays on the type for whatever internal
+bookkeeping constructs it (`settingsRecoveryService.ts`'s device comparison),
+not for display.
+
+Each source's `data` is its restorable setup normalized through a scratch registry.
+Malformed, unsupported or unreadable settings produce a null `data`; the list
+keeps the entry but cannot offer restoration. The comparison does not retain or
+display the original file text. `difference()` counts the callout rows and setting
+groups that differ from now.
+
+**View details** is available on every row, including unreadable entries and while
+saving is paused. `SettingsRecoveryService.details(source)` captures independent
+clones of the selected source and currently displayed registry and builds the
+report's changes through `setupDetails.ts`, using the same `differingEntries()`
+callout-row and settings-group comparison as the list summary. Incidental
+preferences, icon-cache changes and other top-level fields are not counted as
+differences. This is a
+point-in-time comparison when the details window opens, not a live preview or a
+promise about changes that may arrive before a later restore. The refresh control
+captures the latest displayed setup again against the same selected source and
+rebuilds the report; the source itself is not re-read from disk.
+
+`SetupChange.fields` contains the output of `setupFieldChanges(before, after)`:
+`SetupFieldChange` entries with a relative `path`, `before`, and `after`. Objects
+are compared recursively so unchanged fields do not fill the visible report.
+Added or removed values remain whole at their path; a whole added or removed
+callout uses `[]`. Arrays whose rows have unique string ids match by id, so adding
+one palette, image, command or menu action does not make every later row look
+changed. A changed order among shared ids uses a `$order` path with ordered id
+arrays. Primitive lists and object lists without unique string ids are atomic
+values. Incidental picker/onboarding fields are removed from field comparisons
+even inside a group that otherwise changed; user-image SVG changes remain actual
+differences. Field payloads and the complete source/current snapshots own cloned
+JSON data, so later edits cannot change an open report.
+
+`SetupDetails.callouts` compares effective definitions built from shipped defaults
+overlaid with each side's saved rows, without constructing a live registry. A
+missing custom definition can therefore be added or removed, while removing a
+built-in override compares against the default rather than implying that the
+built-in disappears. The visible comparison lists every callout type whose
+definition differs — additions, removals and changes — and every one whose stored
+artwork differs. `SetupCalloutComparison.artworkChanged` compares only the artwork
+a visible icon draws, and only when both sides show an icon: uploaded
+SVG/format/dimensions or matching cached variants for each render role. Unrelated
+cached artwork, image names/revisions, and showing or hiding an icon (that is the
+`hideIcon` field's change) do not count. Global styling is deliberately not part
+of it: a style change restyles every callout at once, so it is reported once, in
+the style section, instead of on every callout type. The renderer filters the
+internal effective-definition union with `kind !== "unchanged" || artworkChanged`;
+this does not alter the persisted-row/group count used by the earlier-setups list.
+Unaffected callouts are omitted; there is no sample limit.
+
+`SettingsRecoveryDetailsModal` puts the saved date in its header. The report is
+split into the settings page's sections, in its order (callout types, then custom
+icons and icon-picker defaults, fallback, palettes, global style, context menu,
+commands, language, then "Other settings" for groups this build does not know).
+`recoverySections.ts` and `recoveryCollections.ts` turn `SetupDetails` into items —
+one callout type, palette, custom icon, command, menu, built-in command or setting —
+matched by id, each holding only its differing fields. `recoveryComparisonTable.ts`
+lays each section out as its own four-column table (**No.**, **Item**, **Current
+setup**, **After restoring this version**) whose head, the folding section title
+plus the column headings, pins as one sticky block. Each item is one numbered row
+group; numbers run on across sections. `recoveryDetailFields.ts` labels known fields
+through `t()` and leaves unknown names literal. The window has no full-setup,
+provenance, retention or raw-JSON sections; an unreadable source shows that
+comparison is unavailable.
+
+`recoveryPreview.ts` renders representative regular blocks (and
+`recoveryRolePreview.ts` heading bars and inline pills, for the style section) in the current light
+or dark mode, using each side's snapshot colors, global frame/scales, icon
+adjustments, visibility and folding. It does not replay historical theme CSS,
+render a real note, mutate the registry, or install a `CSSInjector` stylesheet.
+Lucide and emoji are local; downloadable pack icons resolve only from the matching
+snapshot's saved cache (including legacy Material entries). Uploaded images are
+resolved from that snapshot's `userImages`, sanitized again, and rendered in
+isolated data images or stencil masks. Missing stored artwork gets a placeholder,
+never a fetch or substitution from the live image pack.
+
+Changed values are drawn by `recoveryValues.ts` — swatches, icons, gradients,
+border frames, numbered orders, On/Off — and never shown as raw JSON or behind a
+disclosure: text over 160 characters becomes an excerpt with its length, and an
+unknown object becomes nested labelled lists (six levels, forty entries each, then
+a count). Markup inside values remains text. Visual previews use sanitized artwork
+separately and never execute stored markup or fetch assets. Comparisons use normalized settings and effective defaults, not a claim to
+reconstruct the historical file or theme exactly.
+
+Inspection has no write, backup, restore, network or clipboard side effects. Its
+content includes user-authored setup data and is distinct from the content-free
+diagnostics report below. The detail window offers no restore action; users return
+to the earlier-setups list to confirm restoration. `restore()` runs only
 while saving works:
 
 1. Force a fresh adoption, so the decision is against the newest file.
@@ -818,8 +960,8 @@ while saving works:
    since, and recreations of rows deleted since.
 
 That is why a restore sticks where a copied file did not, and why a concurrent
-edit the restoring device never saw survives it. **Export copy** downloads any
-entry as a Callout Studio backup, and works while saving is paused.
+edit the restoring device never saw survives it. Inspection remains available
+while saving is paused; restoring does not.
 
 **Seeing a pause.** `pausedIndicator.ts` keeps a status bar item up on desktop,
 and a notice that stays on mobile, while `writer.isVisiblyPaused`. That is every
@@ -840,8 +982,12 @@ one or more callout types or setting groups that were changed here and then
 replaced, a notice says so and points to **Restore an earlier setup**. The
 adoption has already backed up that version.
 
-**Copy sync diagnostics** (`recovery.diagnostics()`) copies a plain-English
-report to the clipboard:
+`recovery.diagnostics()` builds a plain-English report. It has no settings-page
+entry point of its own anymore — the **Sync diagnostics** row and its **Copy
+diagnostics** button were removed from `renderBackupSection`
+(`settings/sections/DataManagementSection.ts`) — but the method itself is
+unchanged and is meant for another caller to invoke and copy on the user's
+behalf. The report:
 
 - the version and platform
 - whether saving works, and why not if it doesn't
@@ -989,6 +1135,7 @@ Related existing suites verify other layers:
 | First files, legacy rescue, backup integrity | [`syncGenesis.test.ts`](../../tests/syncGenesis.test.ts), [`syncBackupIntegrity.test.ts`](../../tests/syncBackupIntegrity.test.ts) |
 | Backups, history, device memory | [`settingsBackup.test.ts`](../../tests/settingsBackup.test.ts), [`settingsConflictBackup.test.ts`](../../tests/settingsConflictBackup.test.ts), [`settingsHistory.test.ts`](../../tests/settingsHistory.test.ts), [`deviceMemory.test.ts`](../../tests/deviceMemory.test.ts) |
 | Recovery without file surgery | [`settingsDiagnosis.test.ts`](../../tests/settingsDiagnosis.test.ts), [`settingsRecoveryService.test.ts`](../../tests/settingsRecoveryService.test.ts), [`settingsRecoveryModal.test.ts`](../../tests/settingsRecoveryModal.test.ts), [`settingsNewerFormat.test.ts`](../../tests/settingsNewerFormat.test.ts), [`pausedSaving.test.ts`](../../tests/pausedSaving.test.ts) |
+| Earlier-setup comparison | [`setupDetails.test.ts`](../../tests/setupDetails.test.ts), [`settingsRecoveryService.test.ts`](../../tests/settingsRecoveryService.test.ts), [`settingsRecoveryDetails.test.ts`](../../tests/settingsRecoveryDetails.test.ts), [`recoveryPreview.test.ts`](../../tests/recoveryPreview.test.ts) |
 | Paused page, unsaved changes, lifecycle, undo | [`pausedReadOnly.test.ts`](../../tests/pausedReadOnly.test.ts), [`unsavedChangesNotice.test.ts`](../../tests/unsavedChangesNotice.test.ts), [`writerLifecycle.test.ts`](../../tests/writerLifecycle.test.ts), [`noteRewriteUndo.test.ts`](../../tests/noteRewriteUndo.test.ts) |
 | Destructive actions | [`resetSafety.test.ts`](../../tests/resetSafety.test.ts), [`importSafety.test.ts`](../../tests/importSafety.test.ts), [`deleteWhilePaused.test.ts`](../../tests/deleteWhilePaused.test.ts), [`replaceCalloutModal.test.ts`](../../tests/replaceCalloutModal.test.ts) |
 

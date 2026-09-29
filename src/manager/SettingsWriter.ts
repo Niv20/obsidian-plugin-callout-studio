@@ -179,6 +179,11 @@ export class SettingsWriter {
 		return this.host.history?.list() ?? Promise.resolve([]);
 	}
 
+	/** Forget one state from this device's history; a no-op past a store that lacks one. */
+	deleteHistoryEntry(hash: string): Promise<void> {
+		return this.host.history?.delete(hash) ?? Promise.resolve();
+	}
+
 	async remember(data: unknown): Promise<void> {
 		try { await this.host.checkpoint?.write(data); }
 		catch (error) { this.status.fail("recovery-write"); throw new SettingsPersistenceError("recovery-write", error); }

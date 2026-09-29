@@ -15,7 +15,7 @@ import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import { getLocale, t } from "../i18n";
 import { filterCalloutList } from "./calloutSearch";
 import { applyModalChrome } from "../settings/modalChrome";
-import { autofocusOnOpen } from "../settings/modalAutofocus";
+import { autofocusOnDesktop } from "../settings/modalAutofocus";
 
 export type DeleteAction =
 	| { action: "replace"; replaceWith: string }
@@ -114,9 +114,8 @@ export class ReplaceCalloutModal extends Modal {
 			cls: "callout-studio-replace-list",
 		});
 		this.renderList("");
-		// Typed into like the quick-insert window, and focused on the same terms:
-		// every device, phone included. See modalAutofocus.
-		autofocusOnOpen(search);
+		// Keep search ready on desktop without raising the mobile keyboard on open.
+		autofocusOnDesktop(search);
 
 		// Single confirm button
 		const btnContainer = applyModalChrome(this, { footer: true });

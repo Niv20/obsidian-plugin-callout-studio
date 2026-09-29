@@ -292,9 +292,12 @@ const STICKY_LAYERS: Record<string, string> = {
 		"the quick-insert window's search + source filter, inside .modal-content",
 	".cs-combobox-group-label":
 		"a dropdown's group heading, inside the .cs-combobox-menu scrollport and bounded by its group",
-	".callout-studio-settings .cs-sticky-heading.setting-item":
+".callout-studio-settings .cs-sticky-heading.setting-item":
 		"the three callout-list section headings, inside .vertical-tab-content — " +
 		"the settings tab is its own scroller, and the plugin renders straight into it",
+	".cs-recovery-comparison > thead":
+		"each section of the Setup details comparison — its title row and column headings as one block — " +
+		"inside the details window's .modal-content (its top padding moved into the report) and bounded by the section's table",
 };
 
 /**

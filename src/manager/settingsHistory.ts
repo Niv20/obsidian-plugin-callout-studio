@@ -47,6 +47,8 @@ export interface SettingsHistoryStore {
 	record(data: unknown): Promise<void>;
 	/** Every kept state, newest first. */
 	list(): Promise<SettingsHistoryEntry[]>;
+	/** Forget one kept state. Unlike `record`, a failure is reported to the caller. */
+	delete(hash: string): Promise<void>;
 }
 
 /** Which states to keep, by hash: see the constants above. */
@@ -114,6 +116,24 @@ export class SettingsHistory implements SettingsHistoryStore {
 		const entries = await this.transact("readonly", store => this.all(store));
 		return entries.sort((a, b) => b.savedAt - a.savedAt)
 			.map(({ hash, savedAt, bytes, data }) => ({ hash, savedAt, bytes, data }));
+	}
+
+	/**
+	 * The user asked for this one to be gone, so — unlike `record`, which is
+	 * opportunistic bookkeeping that must never fail a save — a failure here is
+	 * not swallowed. It is still run behind `this.queue`, so it cannot race a
+	 * `record()`/`delete()` for the same hash, but the chain itself is forked:
+	 * `this.queue` always resolves, so one failed delete cannot poison every
+	 * later history write, while the caller's own promise still rejects.
+	 */
+	delete(hash: string): Promise<void> {
+		if (typeof indexedDB === "undefined") return Promise.resolve();
+		const attempt = this.queue.then(() => this.transact("readwrite", store => {
+			store.delete(this.key(hash));
+			return Promise.resolve();
+		}));
+		this.queue = attempt.catch(() => undefined);
+		return attempt;
 	}
 
 	private key(hash: string): string {

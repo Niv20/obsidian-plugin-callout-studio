@@ -8,7 +8,7 @@
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { SettingsRecoveryService } from "../src/manager/settingsRecoveryService";
+import { SettingsRecoveryService, type RecoverySource } from "../src/manager/settingsRecoveryService";
 import { SettingsSync } from "../src/manager/settingsSync";
 import { canonical, content } from "../src/manager/syncTree";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
@@ -81,6 +81,42 @@ describe("restoring an earlier setup", () => {
 	});
 });
 
+describe("deleting an earlier setup", () => {
+	it("forgets a history entry through the writer, by its hash", async () => {
+		const h = recoveryActionHarness(); await h.boot();
+		const service = new SettingsRecoveryService(h.host);
+		const deleted: string[] = [];
+		h.host.settingsWriter.deleteHistoryEntry = async (hash: string) => { deleted.push(hash); };
+		const source: RecoverySource = { kind: "history", time: 1, path: null, historyHash: "abc123", origin: "this-device", data: null };
+		assert.equal(await service.remove(source), true);
+		assert.deepEqual(deleted, ["abc123"]);
+		h.host.settingsWriter.destroy();
+	});
+
+	it("removes the file itself for a backup or a stray copy, the same primitive automatic pruning uses", async () => {
+		const h = recoveryActionHarness(); await h.boot();
+		const service = new SettingsRecoveryService(h.host);
+		const path = `${DIR}/backups/data-x.json`;
+		h.files.set(path, "{}");
+		const source: RecoverySource = { kind: "backup", time: 1, path, historyHash: null, origin: "this-device", data: null };
+		assert.equal(await service.remove(source), true);
+		assert.equal(h.files.has(path), false);
+		h.host.settingsWriter.destroy();
+	});
+
+	it("refuses a history entry without a hash, and reports a failed removal instead of throwing", async () => {
+		const h = recoveryActionHarness(); await h.boot();
+		const service = new SettingsRecoveryService(h.host);
+		assert.equal(await service.remove({ kind: "history", time: 1, path: null, historyHash: null, origin: "this-device", data: null }), false);
+		const error = console.error; console.error = () => {};
+		try {
+			h.host.app.vault.adapter.remove = () => Promise.reject(new Error("Disk full"));
+			assert.equal(await service.remove({ kind: "copy", time: null, path: `${DIR}/data 2.json`, historyHash: null, origin: null, data: null }), false);
+		} finally { console.error = error; }
+		h.host.settingsWriter.destroy();
+	});
+});
+
 describe("listing earlier setups", () => {
 	it("finds backups from this device, another device and an older version, and stray copies of the file", async () => {
 		const h = recoveryActionHarness(); await h.boot();
@@ -101,6 +137,35 @@ describe("listing earlier setups", () => {
 		assert.equal(copies[0]!.data, null, "an unreadable copy is listed, not offered");
 		assert.ok(ids(copies[1]!.data).includes("icloud-copy"));
 		h.host.settingsWriter.destroy();
+	});
+
+	it("lists sources that cannot be restored without accepting invalid or newer data", async () => {
+		const h = recoveryActionHarness(); await h.boot();
+		try {
+			const history = { callouts: [definition({ id: "history", icon: star })], extra: { preserved: [1, 2, 3] } };
+			h.host.settingsWriter.historyEntries = async () => [{ hash: "one", savedAt: 123, bytes: 100, data: history }];
+			const raw = '  { "callouts": [], "calloutStudioSync": { "version": 2 }, "extra": "complete" }\n';
+			const backup = `${DIR}/backups/data-2026-09-01T10-00-00-000Z-phone001-0123456789abcdef.json`;
+			const newer = '{\n "version": 99, "callouts": "future shape", "unknown": [1, 2, 3]\n}\n';
+			const cases = new Map([
+				[backup, raw], [`${DIR}/data newer.json`, newer], [`${DIR}/data broken.json`, "{ truncated"],
+				[`${DIR}/data invalid.json`, '{"callouts":[{"id":"missing-fields"}]}'], [`${DIR}/data empty.json`, ""],
+			]);
+			for (const [path, text] of cases) h.files.set(path, text);
+			const unavailable = `${DIR}/data unavailable.json`;
+			h.files.set(unavailable, "inaccessible");
+			const read = h.host.app.vault.adapter.read.bind(h.host.app.vault.adapter);
+			h.host.app.vault.adapter.read = path => path === unavailable ? Promise.reject(new Error("Offline")) : read(path);
+			const sources = await new SettingsRecoveryService(h.host).listSources();
+			assert.ok(sources[0]!.data?.callouts?.some(row => row.id === "history"));
+			for (const path of cases.keys()) {
+				const entry = sources.find(source => source.path === path);
+				assert.ok(entry, `missing ${path}`);
+				if (path !== backup) assert.equal(entry.data, null, `${path} cannot be restored`);
+			}
+			const unread = sources.find(source => source.path === unavailable);
+			assert.equal(unread?.data, null);
+		} finally { h.host.settingsWriter.destroy(); }
 	});
 
 	it("says how far each setup is from now", async () => {

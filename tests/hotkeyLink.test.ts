@@ -22,7 +22,7 @@
 import { fakeDom, type FakeElement } from "./support/fakeDom";
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import type { App } from "obsidian";
+import { Platform, type App } from "obsidian";
 import { t } from "../src/i18n";
 import {
 	fullCommandId,
@@ -410,6 +410,21 @@ describe("openHotkeySettings — the DOM fallback", () => {
 		assert.strictEqual(input.focusCount, 1);
 		assert.strictEqual(input.selectCount, 1);
 		assert.strictEqual(fakeDom.document.activeElement, input);
+	});
+
+	it("fills the search without opening the mobile keyboard", () => {
+		reset();
+		const { input } = mountSettingsModal();
+		const wasMobile = Platform.isMobile;
+		try {
+			Platform.isMobile = true;
+			fakeDom.document.activeElement = null;
+			openHotkeySettings(fakePane({ noTab: true }).app, "callout-studio:");
+			assert.strictEqual(input.value, "callout-studio:");
+			assert.strictEqual(input.focusCount, 0);
+			assert.strictEqual(input.selectCount, 0);
+			assert.strictEqual(fakeDom.document.activeElement, null);
+		} finally { Platform.isMobile = wasMobile; }
 	});
 
 	it("announces the change the way a real keystroke would", () => {

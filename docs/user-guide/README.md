@@ -20,7 +20,7 @@ There's a lot to explore in Callout Studio — from callout types and custom col
 | [14 - Quick insert](14-quick-insert.md)                                    | Insert and edit block callouts from the ribbon.                                    |
 | [15 - Advanced heading callouts](15-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                |
 | [16 - Theme integration](16-theme-integration.md)                          | Understand which callouts your theme controls.                                     |
-| [17 - Syncing & backups](17-syncing-and-backups.md)                        | Back up your setup, recover paused saving, and use synced vaults safely.           |
+| [17 - Syncing & backups](17-syncing-and-backups.md)                        | Compare and restore earlier setups, understand backup retention, recover paused saving, and use synced vaults safely. |
 
 ---
 

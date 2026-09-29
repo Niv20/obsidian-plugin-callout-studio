@@ -55,7 +55,7 @@ From this window you can:
 - Turn built-in commands on or off.
 - See each command's assigned shortcuts while it is on. Turning a command off
   hides its shortcut labels; turning it back on restores them.
-- Click the plus button beside a command to open Obsidian's Hotkeys settings focused on that command.
+- Click the plus button beside a command to open Obsidian's Hotkeys settings filtered to that command. On a phone or tablet, Callout Studio does not focus the search field when filling the filter.
 - Review the shortcuts already assigned by Obsidian.
 
 When any built-in command is off, **Reset to default** appears in the **Built-in commands** header. Click it to turn every built-in command on. Assigned shortcuts and your custom commands are preserved.

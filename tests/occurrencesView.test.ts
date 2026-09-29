@@ -280,11 +280,11 @@ describe("callout occurrence sidebar", () => {
 		formatInput.focus();
 		const formatRows = dropdownOptions(h.view.contentEl.querySelector<HTMLElement>(".cs-select-dropdown")!);
 		assert.deepEqual(formatRows.map((row) => row.textContent), [
-			t("usage.allRoles"), t("vaultStats.roleBlock"), t("vaultStats.roleHeading"), t("vaultStats.roleInline"),
+			t("usage.allRoles"), t("vaultStats.roleHeading"), t("vaultStats.roleInline"), t("vaultStats.roleBlock"),
 		]);
-		formatRows[2]!.fire("mouseenter");
-		assert.ok(formatRows[2]!.classList.contains("is-active"));
-		formatRows[2]!.fire("click");
+		formatRows[1]!.fire("mouseenter");
+		assert.ok(formatRows[1]!.classList.contains("is-active"));
+		formatRows[1]!.fire("click");
 		assert.equal(formatInput.value, t("vaultStats.roleHeading"));
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
 		assert.deepEqual(h.view.getState(), { ids: [], role: "heading", allTypes: true });

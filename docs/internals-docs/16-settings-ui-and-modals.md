@@ -916,25 +916,18 @@ already counted by the time the check runs.
 
 ## Where the cursor lands when a window opens
 
-[`src/settings/modalAutofocus.ts`](../../src/settings/modalAutofocus.ts) is the
-other half of the shared window behaviour, and exists because the rules it
-carries were previously reinvented — or simply got wrong — per modal.
+[`src/settings/modalAutofocus.ts`](../../src/settings/modalAutofocus.ts)
+centralizes the rule for text fields when a window opens:
+`autofocusOnDesktop(input)` focuses only when `Platform.isMobile` is false.
+That flag covers phones and tablets. A null or undefined field is a no-op, so
+a caller can reach through an optional field. Focus uses
+`{ preventScroll: true }` to refuse the DOM's own scroll-into-view. There is
+nothing to dispose of.
 
-```ts
-autofocusOnOpen(input: HTMLInputElement | null | undefined): void
-autofocusOnDesktop(input: HTMLInputElement | null | undefined): void
-```
-
-Two entry points, split by what the window is *for*. Both take the field alone,
-and `null` or `undefined` is a no-op — that is what lets a caller reach through
-an optional (`this.nameTextInput?.inputEl`) without guarding it twice. Both ask
-for the focus with `preventScroll: true`, refusing the DOM's own
-scroll-into-view. Neither returns anything: there is nothing to dispose of.
-
-### Rule 1: only a window that is *creating* something takes the cursor
+### Rule 1: only a *new* name field takes the cursor in a create/edit window
 
 A **new** callout or palette opens on an empty name that must be filled in
-before anything can be saved, so the cursor belongs there. An **edit** opens on
+before anything can be saved, so on desktop the cursor belongs there. An **edit** opens on
 a filled-in form the user came to change some other part of; taking the name
 field there costs a tap to get back out, and on a phone would throw the keyboard
 over the form they opened the window to look at.
@@ -963,11 +956,16 @@ is the case that most wants the cursor.
 wired up: its first control is a dropdown, not a text field, so there is no
 keyboard to raise and nothing to focus.
 
-### Rule 2: a create window is desktop-only, and the inconsistency is deliberate
+### Rule 2: no window automatically focuses a text field on mobile
 
 `autofocusOnDesktop` returns without doing anything when `Platform.isMobile`,
-which is true for phones **and** tablets — exactly the set of devices with a
-soft keyboard. There, the user taps the name field themselves.
+which is true for phones **and** tablets. Create windows, Quick Insert, the
+replacement picker, and every icon-picker search leave their text fields
+unfocused there. The user taps a field when ready to type. On desktop, Quick
+Insert and the replacement picker focus search on open. The icon picker focuses
+the enabled search field after its source panel loads; the Custom Icons panel
+does the same when selected. A source awaiting download has a disabled search
+field and cannot focus it.
 
 The reason is the jump, and it is not a scroll the plugin asks for, so
 `preventScroll` has no say over it: the WebView shrinks the visual viewport as
@@ -975,8 +973,8 @@ the keyboard slides up, then scrolls to keep the caret inside what is left. A
 window the user has not read yet moves while they are looking at it.
 
 > [!IMPORTANT]
-> This was once fixed the *other* way, keeping every device consistent: focus on
-> mobile as well, then hold the scroller's `scrollTop` at its pre-focus value
+> An earlier implementation focused a create window on mobile, then held the
+> scroller's `scrollTop` at its pre-focus value
 > for `KEYBOARD_SETTLE_MS` (400ms, covering the ~250-300ms iOS slide-in),
 > releasing early on `pointerdown`, `touchstart` or `wheel`. It did not work
 > well — it read as a delayed, clunky lurch rather than as no jump at all — and
@@ -985,14 +983,21 @@ window the user has not read yet moves while they are looking at it.
 > don't reach for it again.** `tests/modalAutofocus.test.ts` fails if a timer, a
 > listener or a `scrollTop` reappears in `modalAutofocus.ts`.
 
-### The search windows are the exception, on purpose
+### Search windows use the same device rule
 
-`QuickInsertModal` and `ReplaceCalloutModal` call `autofocusOnOpen`, so they
-take the cursor on **every** device, phone included. They have no edit mode to
-gate on, and nothing in them does anything until a query is typed — so there the
-keyboard arriving with the window is the point rather than the problem.
+`QuickInsertModal`, `ReplaceCalloutModal`, `PackPanel`, and `ImagePanel` focus
+their search fields on desktop only. They have no create/edit gate, but opening
+them on a phone or tablet must not summon the soft keyboard. This applies to
+an icon source change and to asynchronous panel loading as well as the first
+open. Tests in `modalAutofocus.test.ts` and `iconPickerLifecycle.test.ts` cover
+the platform behavior.
 
-The focused field is also why `ReplaceCalloutModal`'s **Enter only chooses**
+`hotkeyLink.ts` can also open Obsidian's Hotkeys settings. Its DOM fallback
+fills the search query and dispatches input/change on every device; it focuses
+and selects the text only on desktop. The normal `setQuery` path is supplied by
+Obsidian, so this plugin does not programmatically focus a field there.
+
+The search field's keyboard handling is also why `ReplaceCalloutModal`'s **Enter only chooses**
 (the top row, when nothing is chosen yet) and never confirms. Confirming rewrites
 every note that uses the callout, and its Undo is brief and in memory only, so it takes the confirm button,
 which is `mod-warning` in both modes. `tests/replaceCalloutModal.test.ts` pins
@@ -1938,8 +1943,7 @@ uses the shared saving-message contract described in the canonical chapter.
 
 On the settings page the banner also says the page is read-only while saving is
 paused (`pausedNote`), because `SettingsTab` then makes every edit `inert`; see
-`sections/pausedReadOnly.ts`. The **Sync diagnostics** row beside **Earlier
-setups** copies `recovery.diagnostics()` to the clipboard.
+`sections/pausedReadOnly.ts`.
 
 For an unreadable file the banner asks `actions.diagnose()` once per paused
 episode, and again after each action, then adds the cause as a muted
@@ -1952,17 +1956,79 @@ callout editor passes only its retry.
 
 ## `SettingsRecoveryModal` — earlier setups
 
-Opened from **Earlier setups** in the data section and from the banner. It asks
+Opened from **Earlier setups** in the **Backup** section (`renderBackupSection`,
+between **Import and export** and **Language**) and from the banner. It asks
 `recovery.listSources()` once per open (a generation counter drops a late answer
-after close) and draws one heading per source kind with ordinary `Setting`
+after close) and draws one shared Callout Studio disclosure heading per available
+source kind, initially expanded. **Saved on this device**, **Backups**, and **Other copies of the settings
+file** can be collapsed independently. Each disclosure contains ordinary `Setting`
 rows: a name (the time, or the file name for a stray copy), a description of
-where the entry came from and how far it is from now, and two buttons. **Export
-copy** downloads through `utils/downloadText.ts`, the same path as **Export**.
+where the entry came from and how far it is from now, and an eye icon with the
+**View details** tooltip. Readable entries also have a **Restore** action.
+There is no per-entry export action; the settings page's ordinary **Export**
+continues to export the displayed setup.
 **Restore** is `mod-warning`, disabled while saving is paused or when the entry
 equals the current setup, and confirms before calling `recovery.restore()`. A
-source that cannot be read as settings is listed without buttons. The
-behavior behind both buttons is in
+source that cannot be read as settings still has **View details**, but no restore
+button. The behavior behind these actions is in
 [Recovery without file surgery](08-settings-sync-and-recovery.md#recovery-without-file-surgery).
+
+`SettingsRecoveryDetailsModal` opens over that list as a read-only report, including
+while saving is paused, with the saved date in the summary card that opens the report (not in the window title).
+`recovery.details(source)` captures the source and current setup when opened;
+rendering does not load that version into the active registry. The refresh icon
+captures the current setup again against the same source and rebuilds the report,
+unloading the old render's component listeners first.
+
+`recoveryComparisonTable.ts` lays the report out as one table per settings section,
+in the settings page's order, each with four columns: **No.**, **Item**, **Current
+setup** and **After restoring this version**. A table's head has two rows — the
+section title, a `<button>` that folds the section down to that row, and the column
+headings — and the whole `<thead>` is the sticky layer at `top: 0`, so the two pin
+as one block and let go with the section's last row. The window body's top padding
+moves into the report, so nothing shows above a pinned head (the rules are in
+`tests/modalBodyLayers.test.ts`). Each item is one `<tbody>`: a number cell spanning
+all of its rows (numbers run on across sections), its title with a
+Changed/Added/Removed badge, a drawing of the whole item per side where one exists,
+then one row per changed field with the label in the Item column. An absent side
+says so explicitly. Below 600px the rows become two-column grids: number and title
+on one line, the two sides beneath, each field's label on a line of its own.
+
+`recoverySections.ts` and `recoveryCollections.ts` build the sections from
+`SetupDetails`, matching each callout type, palette, custom icon, command and
+context-menu entry by id so all of its changes stay in one item;
+`recoveryModel.ts` holds the shapes and the shared `recordFields()` diff. Effective
+definitions include shipped built-ins, so resetting a built-in override is a change
+to its default rather than a deletion. A global style change appears once, as
+heading/inline/block items with previews from `recoveryRolePreview.ts`, not on
+every callout it restyles. The comparison has no row cap.
+
+Rendering yields between batches of eight items. A loading message is delayed
+by 250 ms and, once shown, stays visible for at least 250 ms to avoid a flash on
+fast comparisons. A generation check and component-owned timers stop stale work
+after close or refresh. The comparison is published only when the current render
+finishes; a rendering failure leaves an error message instead of a partial table.
+
+`recoveryPreview.ts` provides `renderRecoveryPreview()` for a representative regular
+block and `renderRecoveryImage()` for an uploaded image. Both sides use their own
+snapshot's artwork; missing cached artwork gets a placeholder. Blocks use sample
+content in the current light/dark mode, not historical theme CSS or real note
+Markdown. The renderer does not change the live registry or image pack and does
+not install a generated stylesheet. Snapshot images are sanitized and isolated as
+data images or stencil masks. Folding events belong to the modal's component and
+are removed when the report is rebuilt or closed.
+
+`recoveryValues.ts` draws every value: colors as swatches, icons from that side's
+own saved artwork with their library and style, gradients, border frames, orders as
+numbered lists, switches as On/Off, and palette or callout references as what they
+name on that side. Known labels use `t()`; unknown field names remain literal and
+unknown values render as nested labelled lists. Nothing sits behind a disclosure:
+text over 160 characters shows an excerpt and its length. Values are inserted as
+text, including SVG and other markup; visual previews use sanitized artwork
+separately. There are no full-setup, provenance, retention or
+raw-data sections, and an unreadable source shows that comparison is unavailable.
+The details window makes no network, save or restore calls and has no restore
+button.
 
 ---
 Next chapter: [17-i18n.md](17-i18n.md)

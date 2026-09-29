@@ -7,6 +7,7 @@ Quick Insert lets you choose and insert a callout with the mouse instead of typi
 Place the cursor in a note, then click the paintbrush icon with a plain plus at its lower right in Obsidian's left ribbon. You can also run **Callout Studio: Quick insert block callout** from the Command Palette.
 
 The window shows rendered previews of the available callouts. Search by name or filter the list by source, then click a preview or its insert button. Callout Studio writes the selected callout at the cursor.
+On desktop, the search field is ready for typing when the window opens. On a phone or tablet, the keyboard stays closed until you tap the field.
 
 Quick Insert creates **Block callouts only**. Use autocomplete or a custom command for Heading and Inline callouts.
 

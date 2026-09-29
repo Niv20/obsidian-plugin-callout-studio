@@ -17,6 +17,7 @@ import { openCalloutEditorFor } from "./openCalloutEditor";
 import { renderHotkeySection } from "./sections/HotkeySection";
 import { renderFooterSection } from "./sections/FooterSection";
 import {
+	renderBackupSection,
 	renderImportExportSection,
 	renderResetSection,
 } from "./sections/DataManagementSection";
@@ -89,7 +90,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	 *
 	 * Defining the method (even empty) is the sanctioned way to satisfy
 	 * obsidianmd/settings-tab/prefer-setting-definitions. Populating real
-	 * per-setting search entries would mean reproducing all 11 sections
+	 * per-setting search entries would mean reproducing all 12 sections
 	 * declaratively — a migration that replaces display() and must be verified
 	 * on a real 1.13 build, so it is deliberately deferred.
 	 */
@@ -159,6 +160,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		renderContextMenuSettingsSection(sectionCtx, containerEl);
 		renderHotkeySection(sectionCtx, containerEl);
 		const importTarget = renderImportExportSection(sectionCtx, containerEl);
+		renderBackupSection(sectionCtx, containerEl);
 		renderLanguageSection(sectionCtx, containerEl);
 		renderResetSection(sectionCtx, containerEl);
 		renderFooterSection(sectionCtx, containerEl);
@@ -261,7 +263,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	/**
 	 * Redraw the three lists without moving the page under the reader.
 	 *
-	 * The lists sit above eleven other sections, so a reader parked anywhere
+	 * The lists sit above twelve other sections, so a reader parked anywhere
 	 * below them has all of this happening off-screen and above: rows appear and
 	 * vanish, the whole theme section comes and goes with `cs-hidden`, and a row
 	 * grows when the appearance probe finally lands it a swatch. Every one of

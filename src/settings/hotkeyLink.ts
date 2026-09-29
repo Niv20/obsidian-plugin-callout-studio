@@ -11,6 +11,7 @@ import { Notice, Platform } from "obsidian";
 import type { App } from "obsidian";
 import { t } from "../i18n";
 import type { StoredHotkey } from "../types";
+import { autofocusOnDesktop } from "./modalAutofocus";
 
 /** How Obsidian keys a plugin command: the plugin's id, then the short id. */
 export function fullCommandId(pluginId: string, shortId: string): string {
@@ -204,11 +205,12 @@ function applyHotkeySearchFilter(query: string): boolean {
 
 	if (!searchInput) return false;
 
-	searchInput.focus();
+	// Opening Hotkeys should not raise the soft keyboard on phones or tablets.
+	autofocusOnDesktop(searchInput);
 	searchInput.value = query;
 	searchInput.dispatchEvent(new Event("input", { bubbles: true }));
 	searchInput.dispatchEvent(new Event("change", { bubbles: true }));
-	searchInput.select();
+	if (!Platform.isMobile) searchInput.select();
 	return true;
 }
 

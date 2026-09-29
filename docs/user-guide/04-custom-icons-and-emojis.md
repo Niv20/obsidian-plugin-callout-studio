@@ -2,6 +2,7 @@
 
 Open a callout for editing and click its current icon to open the icon picker. You can search every source at once or select one library first.
 The source selector and search field stay aligned as search results change, even when there are no matches.
+On desktop, the available search field is ready for typing when an icon source opens, including **Custom Icons**. On a phone or tablet, tap the search field when you want to type; opening the picker or changing sources does not open the keyboard.
 
 ## Built-in sources
 

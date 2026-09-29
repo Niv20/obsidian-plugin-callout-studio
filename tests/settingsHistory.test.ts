@@ -123,12 +123,39 @@ describe("the history store", () => {
 			await assert.doesNotReject(history().record({ n: 1 }));
 		} finally { db.restore(); }
 	});
+
+	it("forgets one kept state by its hash, leaving the rest", async () => {
+		const db = installFakeIndexedDb();
+		try {
+			let clock = START;
+			const h = history("vault-a", () => clock);
+			await h.record({ callouts: [], n: 1 });
+			clock += MINUTE; await h.record({ callouts: [], n: 2 });
+			const gone = (await h.list()).find(entry => (entry.data as { n: number }).n === 1)!;
+			await h.delete(gone.hash);
+			assert.deepEqual((await h.list()).map(entry => entry.data.n), [2]);
+		} finally { db.restore(); }
+	});
+
+	it("reports a failed delete instead of swallowing it, and does not poison later writes", async () => {
+		const db = installFakeIndexedDb();
+		try {
+			const h = history();
+			await h.record({ callouts: [], n: 1 });
+			db.fail.open = true;
+			await assert.rejects(h.delete("whatever"));
+			db.fail.open = false;
+			await h.record({ callouts: [], n: 2 });
+			assert.deepEqual((await h.list()).map(entry => entry.data.n).sort(), [1, 2]);
+		} finally { db.restore(); }
+	});
 });
 
 describe("what the writer records", () => {
 	function recorder(): SettingsHistoryStore & { states: unknown[] } {
 		const states: unknown[] = [];
-		return { states, record: data => { states.push(structuredClone(data)); return Promise.resolve(); }, list: () => Promise.resolve([]) };
+		return { states, record: data => { states.push(structuredClone(data)); return Promise.resolve(); }, list: () => Promise.resolve([]),
+			delete: () => Promise.resolve() };
 	}
 
 	it("records the adopted file and each write that landed, never an unchanged or failed one", async () => {
@@ -148,7 +175,7 @@ describe("what the writer records", () => {
 	it("does not wait for the history to finish before a save resolves", async () => {
 		let state = { n: 1 };
 		const writer = new SettingsWriter({ build: () => state, write: () => Promise.resolve(),
-			history: { record: () => new Promise<void>(() => {}), list: () => Promise.resolve([]) } });
+			history: { record: () => new Promise<void>(() => {}), list: () => Promise.resolve([]), delete: () => Promise.resolve() } });
 		writer.adopt(JSON.stringify(state));
 		state = { n: 2 };
 		await writer.save();

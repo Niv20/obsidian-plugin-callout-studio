@@ -13,6 +13,7 @@
  */
 import { Notice } from "obsidian";
 import { t } from "../i18n";
+import { listUserImages, setUserImages } from "../icons/packs/userImages";
 import type { PluginData } from "../types";
 import { CalloutRegistry } from "./CalloutRegistry";
 import { isNewerSettingsFormat } from "./foreignFields";
@@ -25,6 +26,7 @@ import { inspectSettingsFile, type SettingsDiagnosis } from "./settingsDiagnosis
 import { settingsDataPath } from "./settingsFile";
 import { hasSafeSettingsFileShape } from "./settingsFileShape";
 import { differingEntries } from "./setupDifference";
+import { setupDetails, type SetupDetails } from "./setupDetails";
 import { retrySettingsRecovery } from "./settingsRecoveryActions";
 import { canonical, content } from "./syncTree";
 
@@ -37,6 +39,8 @@ export interface RecoverySource {
 	time: number | null;
 	/** The file, for backups and copies. */
 	path: string | null;
+	/** This device's history-store key, for a history entry; null otherwise. */
+	historyHash: string | null;
 	/** Who saved it, as far as can be told. */
 	origin: "this-device" | "other-device" | "older-version" | null;
 	/** The settings it holds, normalized; null when it cannot be read as settings. */
@@ -57,11 +61,13 @@ function normalized(data: unknown): Partial<PluginData> | null {
 	if (!data || typeof data !== "object" || Array.isArray(data)) return null;
 	const body = content(data);
 	if (isNewerSettingsFormat(body) || !hasSafeSettingsFileShape(body)) return null;
+	const images = listUserImages();
 	try {
 		const scratch = new CalloutRegistry();
 		scratch.load(body);
 		return scratch.toSaveData();
 	} catch { return null; }
+	finally { setUserImages(images); }
 }
 
 export class SettingsRecoveryService {
@@ -77,7 +83,7 @@ export class SettingsRecoveryService {
 		const sources: RecoverySource[] = [];
 		try {
 			for (const entry of await this.host.settingsWriter.historyEntries()) {
-				sources.push({ kind: "history", time: entry.savedAt, path: null, origin: "this-device", data: normalized(entry.data) });
+				sources.push({ kind: "history", time: entry.savedAt, path: null, historyHash: entry.hash, origin: "this-device", data: normalized(entry.data) });
 			}
 		} catch (error) { console.warn("[callout-studio] settings history could not be read", error); }
 		const { adapter } = this.host.app.vault;
@@ -88,7 +94,7 @@ export class SettingsRecoveryService {
 			const device = backupDeviceOf(this.host);
 			for (const entry of await listSettingsBackups(this.host)) {
 				const origin = entry.device === null ? "older-version" : entry.device === device ? "this-device" : "other-device";
-				sources.push({ kind: "backup", time: entry.time, path: entry.path, origin, data: await read(entry.path) });
+				sources.push({ kind: "backup", time: entry.time, path: entry.path, historyHash: null, origin, data: await read(entry.path) });
 			}
 		} catch (error) { console.warn("[callout-studio] settings backups could not be listed", error); }
 		try {
@@ -97,7 +103,7 @@ export class SettingsRecoveryService {
 			for (const path of (await adapter.list(dir)).files.sort()) {
 				// Any sync service's copy: `data 2.json`, `data (conflicted copy …).json`, …
 				if (path === primary || !/^data\b.*\.json$/i.test(path.slice(dir.length + 1))) continue;
-				sources.push({ kind: "copy", time: null, path, origin: null, data: await read(path) });
+				sources.push({ kind: "copy", time: null, path, historyHash: null, origin: null, data: await read(path) });
 			}
 		} catch (error) { console.warn("[callout-studio] settings copies could not be listed", error); }
 		return sources;
@@ -108,11 +114,9 @@ export class SettingsRecoveryService {
 		return { callouts: data.callouts?.length ?? 0, changed: differingEntries(this.host.registry.toSaveData(), data).size };
 	}
 
-	/** A Callout Studio backup of `data`, as Export writes one. */
-	exportJson(data: Partial<PluginData>): string {
-		const scratch = new CalloutRegistry();
-		scratch.load(structuredClone(data));
-		return scratch.exportToJSONv2();
+	/** Inspect a captured source against what is displayed now, without touching storage. */
+	details(source: RecoverySource): SetupDetails {
+		return setupDetails(source, this.host.registry.toSaveData());
 	}
 
 	/**
@@ -146,6 +150,31 @@ export class SettingsRecoveryService {
 		}
 		this.refresh();
 		return "restored";
+	}
+
+	/**
+	 * Called only after the user confirms. Permanently forget one earlier
+	 * setup: this device's history entry, or the file itself for a backup or a
+	 * stray copy — the same primitive `settingsBackup.ts` prunes with. Neither
+	 * touches the settings file or the writer, so this stays available while
+	 * saving is paused and regardless of whether the source is readable; an
+	 * unreadable stray copy is exactly what it is for.
+	 */
+	async remove(source: RecoverySource): Promise<boolean> {
+		const { host } = this;
+		try {
+			if (source.kind === "history") {
+				if (source.historyHash === null) return false;
+				await host.settingsWriter.deleteHistoryEntry(source.historyHash);
+				return true;
+			}
+			if (source.path === null) return false;
+			await host.app.vault.adapter.remove(source.path);
+			return true;
+		} catch (error) {
+			console.error("[callout-studio] an earlier setup could not be deleted", error);
+			return false;
+		}
 	}
 
 	/**

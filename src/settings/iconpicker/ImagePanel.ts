@@ -26,6 +26,7 @@ import {
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { IconGrid } from "./IconGrid";
 import { t } from "../../i18n";
+import { autofocusOnDesktop } from "../modalAutofocus";
 
 /**
  * Draws cells straight from the pack, like PackPanel's own preview resolver:
@@ -107,6 +108,7 @@ export class ImagePanel {
 		this.enableDrop();
 		this.refresh();
 		this.grid.revealSelected();
+		autofocusOnDesktop(this.toolbarEl.querySelector<HTMLInputElement>(".icon-picker-search-input"));
 		return Promise.resolve();
 	}
 

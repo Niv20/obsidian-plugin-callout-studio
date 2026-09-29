@@ -7,8 +7,9 @@
  * settings file a sync service left behind (`data 2.json` and the like, which
  * nothing else would ever mention). Each row says how far it is from what is
  * shown now. **Restore** replaces the current setup, after a confirmation and a
- * verified backup; **Export copy** downloads it as a Callout Studio backup,
- * which works even while saving is paused.
+ * verified backup. **View details** inspects a snapshot of an entry's restore
+ * effects without writing settings. **Delete** permanently forgets one entry —
+ * independent of the writer, so it stays available while saving is paused.
  */
 import { Modal, Notice, Setting } from "obsidian";
 import type { App } from "obsidian";
@@ -16,9 +17,10 @@ import { getLocale, t } from "../i18n";
 import type { RecoverySource, RecoverySourceKind, RestoreOutcome, SettingsRecoveryService } from "../manager/settingsRecoveryService";
 import type { SettingsWriter } from "../manager/SettingsWriter";
 import { ConfirmModal } from "../utils/ConfirmModal";
-import { downloadText } from "../utils/downloadText";
 import { applyModalChrome } from "./modalChrome";
 import { blockedWhilePaused } from "./pausedGuard";
+import { SettingsRecoveryDetailsModal } from "./SettingsRecoveryDetailsModal";
+import { attachSectionDisclosure } from "./sections/sectionDisclosure";
 
 export interface RecoveryModalPlugin {
 	recovery?: SettingsRecoveryService;
@@ -30,12 +32,6 @@ const SECTIONS: readonly [RecoverySourceKind, string][] = [
 	["backup", "recovery.sectionBackups"],
 	["copy", "recovery.sectionCopies"],
 ];
-
-const ORIGINS: Record<NonNullable<RecoverySource["origin"]>, string> = {
-	"this-device": "recovery.originThisDevice",
-	"other-device": "recovery.originOtherDevice",
-	"older-version": "recovery.originOlderVersion",
-};
 
 const OUTCOMES: Record<Exclude<RestoreOutcome, "restored">, string> = {
 	paused: "notice.blockedWhilePaused",
@@ -53,6 +49,7 @@ function when(source: RecoverySource): string {
 
 export class SettingsRecoveryModal extends Modal {
 	private generation = 0;
+	private listEl: HTMLElement | null = null;
 
 	constructor(app: App, private readonly plugin: RecoveryModalPlugin) {
 		super(app);
@@ -65,9 +62,23 @@ export class SettingsRecoveryModal extends Modal {
 		contentEl.empty();
 		contentEl.createEl("p", { text: t("recovery.intro"), cls: "cs-recovery-intro" });
 		if (this.plugin.settingsWriter.isFrozen) {
-			contentEl.createEl("p", { text: t("recovery.pausedHint"), cls: "cs-recovery-paused" });
+			contentEl.createEl("p", { text: t("recovery.pausedViewHint"), cls: "cs-recovery-paused" });
 		}
-		const list = contentEl.createDiv({ cls: "cs-recovery-list" });
+		this.listEl = contentEl.createDiv({ cls: "cs-recovery-list" });
+		this.reload();
+	}
+
+	onClose(): void {
+		this.generation++;
+		this.listEl = null;
+		this.contentEl.empty();
+	}
+
+	/** (Re)fetch every earlier setup and redraw the list; used after opening and after a delete. */
+	private reload(): void {
+		const list = this.listEl;
+		if (!list) return;
+		list.empty();
 		list.createEl("p", { text: t("recovery.loading"), cls: "cs-recovery-status" });
 		const generation = ++this.generation;
 		const recovery = this.plugin.recovery;
@@ -81,11 +92,6 @@ export class SettingsRecoveryModal extends Modal {
 		);
 	}
 
-	onClose(): void {
-		this.generation++;
-		this.contentEl.empty();
-	}
-
 	private render(list: HTMLElement, sources: RecoverySource[]): void {
 		list.empty();
 		if (sources.length === 0) {
@@ -95,36 +101,61 @@ export class SettingsRecoveryModal extends Modal {
 		for (const [kind, heading] of SECTIONS) {
 			const group = sources.filter(source => source.kind === kind);
 			if (group.length === 0) continue;
-			new Setting(list).setName(t(heading)).setHeading();
-			for (const source of group) this.renderRow(list, source);
+			const section = list.createDiv({ cls: "cs-recovery-group" });
+			const headingSetting = new Setting(section)
+				.setName(t(heading))
+				.setHeading();
+			headingSetting.nameEl.createSpan({
+				text: `(${group.length})`,
+				cls: "cs-recovery-group-count",
+			});
+			const rows = section.createDiv({ cls: "cs-recovery-group-rows" });
+			attachSectionDisclosure(headingSetting, rows);
+			for (const source of group) this.renderRow(rows, source);
 		}
 	}
 
 	private renderRow(list: HTMLElement, source: RecoverySource): void {
 		const recovery = this.plugin.recovery!;
 		const label = when(source);
-		const origin = source.origin && t(ORIGINS[source.origin]);
 		const row = new Setting(list).setName(label);
+		// `cs-row-inline` keeps the icons and Restore beside the label on phone,
+		// vertically centred like on desktop, instead of stacked onto a
+		// full-width line of their own. See the class in styles.css.
+		row.settingEl.addClass("callout-studio-row", "cs-recovery-row", "cs-row-inline");
 		const data = source.data;
-		if (!data) {
-			row.setDesc([origin, t("recovery.unreadable")].filter(Boolean).join(" · "));
+		const difference = data ? recovery.difference(data) : null;
+		// A setup identical to the current one has nothing to show; an unreadable one still says so.
+		if (!difference || difference.changed > 0) {
+			row.addExtraButton(button => button
+				.setIcon("eye")
+				.setTooltip(t("recovery.details.view"))
+				.onClick(() => new SettingsRecoveryDetailsModal(this.app, recovery.details(source)).open()));
+		}
+		row.addExtraButton(button => {
+			button.setIcon("trash-2").setTooltip(t("recovery.delete"))
+				.onClick(() => { void this.remove(source, label); });
+			button.extraSettingsEl.addClass("cs-recovery-delete-btn");
+		});
+		if (!data || !difference) {
+			row.setDesc(t("recovery.unreadable"));
 			return;
 		}
-		const difference = recovery.difference(data);
-		const summary = difference.changed === 0
-			? t("recovery.same")
-			: t("recovery.summary", { callouts: difference.callouts, count: difference.changed });
-		row.setDesc([origin, summary].filter(Boolean).join(" · "));
-		row.addButton(button => button
-			.setButtonText(t("recovery.export"))
-			.onClick(() => {
-				const stamp = source.time === null ? "copy" : new Date(source.time).toISOString().slice(0, 10);
-				downloadText(recovery.exportJson(data), `callout-studio-${stamp}.json`);
-			}));
+		if (difference.changed === 0) {
+			row.setDesc(t("recovery.same"));
+		} else {
+			// Two independent clauses, not one combined string: on phone the
+			// separator between them is hidden and each becomes its own line
+			// (see the `.cs-recovery-summary-*` rules in styles.css).
+			row.descEl.createSpan({ text: t("recovery.summaryCallouts", { callouts: difference.callouts }), cls: "cs-recovery-summary-part" });
+			row.descEl.createSpan({ text: ", ", cls: "cs-recovery-summary-sep" });
+			row.descEl.createSpan({ text: t("recovery.summaryChanges", { count: difference.changed }), cls: "cs-recovery-summary-part" });
+		}
 		row.addButton(button => {
 			button.setButtonText(t("recovery.restore")).setWarning()
 				.onClick(() => { void this.restore(data, label, difference.changed); });
 			button.setDisabled(this.plugin.settingsWriter.isFrozen || difference.changed === 0);
+			button.buttonEl.addClass("cs-recovery-restore-btn");
 		});
 	}
 
@@ -145,5 +176,23 @@ export class SettingsRecoveryModal extends Modal {
 			return;
 		}
 		new Notice(t(OUTCOMES[outcome]), 10000);
+	}
+
+	private async remove(source: RecoverySource, label: string): Promise<void> {
+		const recovery = this.plugin.recovery;
+		if (!recovery) return;
+		const confirmed = await new ConfirmModal(
+			this.app,
+			t("recovery.deleteConfirmTitle"),
+			t("recovery.deleteConfirmBody", { when: label }),
+			t("recovery.delete"),
+		).confirm();
+		if (!confirmed) return;
+		if (!await recovery.remove(source)) {
+			new Notice(t("recovery.deleteFailed"), 10000);
+			return;
+		}
+		new Notice(t("recovery.deleted", { when: label }));
+		this.reload();
 	}
 }

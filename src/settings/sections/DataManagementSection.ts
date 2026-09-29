@@ -1,13 +1,13 @@
 /**
- * settings/sections/DataManagementSection.ts — Import, export, and reset settings.
+ * settings/sections/DataManagementSection.ts — Import/export, backup, and reset settings.
  *
- * Renders the "Danger zone" and "Import / Export" sections in
+ * Renders the "Import and export", "Backup", and "Danger zone" sections in
  * the settings tab. Handles JSON import with validation (via importValidator),
  * and full data reset. Uses ImportReportModal to surface
  * validation issues before import. Both export formats live behind
  * ExportFormatModal, the way both import sources live behind ImportSourceModal.
  */
-import { Notice, Platform, Setting } from "obsidian";
+import { Notice, Setting } from "obsidian";
 import { t } from "../../i18n";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { ExportFormatModal } from "../ExportFormatModal";
@@ -59,38 +59,28 @@ export function renderImportExportSection(
 			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
 
-	const recovery = ctx.plugin.recovery;
-	if (recovery) {
-		new Setting(containerEl)
-			.setName(t("settings.recovery"))
-			.setDesc(t("settings.recoveryDesc"))
-			.setClass(PAUSED_ALLOWED)
-			.addButton((btn) => {
-				btn.setButtonText(t("settings.recoveryButton"))
-					.setIcon("history")
-					.onClick(() => new SettingsRecoveryModal(ctx.app, ctx.plugin).open());
-				btn.buttonEl.addClass("cs-settings-neutral-btn");
-			});
-		new Setting(containerEl)
-			.setName(t("settings.diagnostics"))
-			.setDesc(t("settings.diagnosticsDesc"))
-			.setClass(PAUSED_ALLOWED)
-			.addButton((btn) => {
-				btn.setButtonText(t("settings.diagnosticsButton"))
-					.setIcon("clipboard-copy")
-					.onClick(() => {
-						void recovery.diagnostics(Platform.isMobile ? "mobile" : "desktop")
-							.then(report => navigator.clipboard.writeText(report))
-							.then(() => { new Notice(t("notice.diagnosticsCopied")); }, (error: unknown) => {
-								console.error("[callout-studio] sync diagnostics could not be copied", error);
-								new Notice(t("notice.diagnosticsFailed"), 10000);
-							});
-					});
-				btn.buttonEl.addClass("cs-settings-neutral-btn");
-			});
-	}
-
 	return importSetting.settingEl;
+}
+
+/** Restoring an earlier setup; absent on minimal hosts. */
+export function renderBackupSection(
+	ctx: SettingsSectionContext,
+	containerEl: HTMLElement,
+): void {
+	const recovery = ctx.plugin.recovery;
+	if (!recovery) return;
+
+	new Setting(containerEl).setName(t("settings.backup")).setHeading();
+
+	new Setting(containerEl)
+		.setName(t("settings.recovery"))
+		.setDesc(t("settings.recoveryDesc"))
+		.setClass(PAUSED_ALLOWED)
+		.addButton((btn) => {
+			btn.setButtonText(t("settings.recoveryButton"))
+				.onClick(() => new SettingsRecoveryModal(ctx.app, ctx.plugin).open());
+			btn.buttonEl.addClass("cs-settings-neutral-btn");
+		});
 }
 
 export function renderResetSection(

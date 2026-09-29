@@ -56,7 +56,7 @@ size limit, so a small compressed file can still be rejected.
 
 ## Import a Callout Studio backup
 
-Choose the Callout Studio backup format when you want to bring back a setup that was previously exported from Callout Studio. To return to a version saved automatically, [Restore an earlier setup](17-syncing-and-backups.md#restore-an-earlier-setup) is simpler: it lists those versions for you.
+Choose the Callout Studio backup format when you want to bring back a setup that was previously exported from Callout Studio. To return to a version saved automatically, [Restore an earlier setup](17-syncing-and-backups.md#restore-an-earlier-setup) lists those versions in collapsible groups. Its **View details** eye button compares your current setup with what would change after restoring that version, including visual previews of affected callouts. Earlier versions are compared and restored there; **Export** in settings saves the setup currently displayed.
 
 Before anything changes, Callout Studio shows what the file will do: how many callout types it adds, how many existing ones it replaces with the file's version, and how many groups of settings it restores. If the file has problems, the report lists them instead. Then a copy of your current setup is saved to the backups folder.
 

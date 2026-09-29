@@ -37,6 +37,7 @@ import { isAllSources } from "./allSources";
 import { IconGrid } from "./IconGrid";
 import { PackToolbarFilters } from "./PackToolbarFilters";
 import { t } from "../../i18n";
+import { autofocusOnDesktop } from "../modalAutofocus";
 
 /**
  * Draws grid cells straight from pack data, bypassing the `data.json` cache.
@@ -263,7 +264,7 @@ export class PackPanel {
 		this.populateCategories();
 		this.applyFilter();
 		this.grid?.revealSelected();
-		this.searchInput?.focus();
+		autofocusOnDesktop(this.searchInput);
 	}
 
 	private populateCategories(): void {

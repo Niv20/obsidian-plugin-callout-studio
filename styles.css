@@ -386,7 +386,8 @@
    heading resolves this against its own font-size and gets a chevron and a
    gutter in proportion to its own type. That is what lets the three sections
    share one rule instead of carrying one offset each. */
-.callout-studio-settings .cs-collapsible-heading {
+.callout-studio-settings .cs-collapsible-heading,
+.cs-modal .cs-collapsible-heading {
 	--cs-disclosure-size: 1em;
 	--cs-disclosure-gap: 6px;
 }
@@ -401,7 +402,8 @@
    button's accessible name stays "My callout types (4)" rather than the whole
    row including a paragraph of description. Specificity is (0,3,0) so it also
    reaches "Built-in callouts", which has no .cs-subheader-row. */
-.callout-studio-settings .cs-collapsible-heading .setting-item-name {
+.callout-studio-settings .cs-collapsible-heading .setting-item-name,
+.cs-modal .cs-collapsible-heading .setting-item-name {
 	display: flex;
 	align-items: center;
 	gap: var(--cs-disclosure-gap);
@@ -423,7 +425,8 @@
 	);
 }
 
-.callout-studio-settings .cs-collapsible-heading .setting-item-name:hover {
+.callout-studio-settings .cs-collapsible-heading .setting-item-name:hover,
+.cs-modal .cs-collapsible-heading .setting-item-name:hover {
 	color: var(--text-normal);
 }
 
@@ -431,6 +434,9 @@
    the keyboard is. The ring follows the shifted box, so it frames the chevron
    and the title together — the control is both. */
 .callout-studio-settings
+	.cs-collapsible-heading
+	.setting-item-name:focus-visible,
+.cs-modal
 	.cs-collapsible-heading
 	.setting-item-name:focus-visible {
 	outline: 2px solid var(--background-modifier-border-focus);
@@ -7952,8 +7958,10 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	height: var(--icon-xs);
 }
 
-/* Restore an earlier setup. Rows are ordinary setting items; only the prose
-   around them needs spacing, and the paused hint takes the warning colour. */
+/* Restore an earlier setup. Its groups use the same hand-built disclosure
+   heading as the main callout lists, and its entries reuse the same raised row
+   surface. The recovery-specific class names keep the ordinary settings tab
+   unchanged. */
 .cs-recovery-intro,
 .cs-recovery-paused,
 .cs-recovery-status {
@@ -7971,8 +7979,849 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-warning);
 }
 
-.cs-recovery-list > .setting-item-heading:first-child {
+.cs-recovery-group-count {
+	margin-inline-start: var(--size-4-2);
+	font-weight: var(--font-normal);
+	color: var(--text-muted);
+}
+
+/* Same 2px rhythm as .callout-studio-callout-list (the saved-palettes list and
+   the three callout lists): rows sit almost flush, as a stack of boxes, not
+   spaced out as separate cards. */
+.cs-recovery-group-rows {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin-top: 8px;
+}
+
+/* Match the callout-list headings: the shared modal rules above keep the
+   chevron in the gutter and the title on its original x-coordinate. This is
+   also where the divider between categories lives — the same hairline rule
+   "My callout types"/"Built-in callouts" draws between each other, and that
+   the Customize right-click menu and Commands modals already reuse for their
+   own sections, so every multi-section list in this plugin divides the same
+   way. It sits on the heading rather than between individual rows, which stay
+   a plain raised row (.cs-recovery-row below) with no border of their own:
+   only the boundary between "Saved on this device", "Backups" and "Other
+   copies" reads as a line. */
+.cs-recovery-group .cs-collapsible-heading.setting-item {
+	margin-top: 36px;
+	padding: 36px 12px 2px;
+	border-top: 1px solid var(--background-modifier-border);
+	border-radius: 0;
+	min-height: 0;
+}
+
+/* The first group that actually renders sits directly under the intro text
+   and needs no divider of its own — same as "My callout types" there. */
+.cs-recovery-group:first-child .cs-collapsible-heading.setting-item {
+	margin-top: 0;
+	padding-top: 4px;
+	border-top: none;
+}
+
+.cs-recovery-group .cs-collapsible-heading .setting-item-info {
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0;
+}
+
+.cs-recovery-group .cs-collapsible-heading .setting-item-control {
+	min-width: 0;
+}
+
+/* The row lives in a modal, where Obsidian's own
+   `.modal:not(.mod-settings) .setting-item:not(.setting-item-heading)` rule
+   (0,4,0) — and its `:first-child` variant, (0,5,0) — would otherwise win:
+   a hairline `border-top` between every pair of rows, a transparent
+   background and square corners. Matched at (0,5,0) and won on source order,
+   so every entry is the same borderless raised box a saved-palette row is. */
+.modal .cs-recovery-group-rows > .cs-recovery-row.setting-item:not(.setting-item-heading) {
+	min-width: 0;
+	margin: 0;
+	padding: 14px 16px;
+	border: none;
+	border-radius: 8px;
+	background: var(--cs-surface-raised, var(--background-secondary));
+	transition: background 120ms ease;
+}
+
+.modal .cs-recovery-group-rows > .cs-recovery-row.setting-item:not(.setting-item-heading):hover {
+	background: var(--background-secondary-alt);
+}
+
+/* The row wears `.callout-studio-row` for its surface, and that class makes it
+   a size container (`container-type: inline-size`, for the callout list's own
+   narrow-row rules). Obsidian's settings-tab rules are unnamed container
+   queries —
+
+     @container (max-width: 400px) {
+       .setting-item:not(…) .setting-item-control { width: 100%; justify-content: flex-start }
+       .setting-item:not(…) .setting-item-control button:not(.clickable-icon) { width: 100% }
+     }
+
+   — so they match the nearest container of any kind, which inside this row is
+   the row itself. Whenever its content box was 400px or less, on any device
+   class, the control was pinned to the full row width while refusing to
+   shrink: the text column collapsed to 0px (each row hundreds of pixels tall,
+   its text unreadable), the icons went left and Restore spread across the
+   row. Nothing queries this row, so it simply stops being a container. */
+.cs-recovery-row.callout-studio-row {
+	container-type: normal;
+}
+
+/* A floor for the text column at every width: the cluster on the right keeps
+   its natural size, so without one the date and summary could still be
+   squeezed into a sliver. When the row is too narrow for the floor beside the
+   cluster, the cluster wraps onto its own line and stays at the end (the
+   control's `margin-inline-start: auto`). `.modal` and the doubled class clear
+   Obsidian's `.is-phone .modal .setting-item-info { min-width: 0 }` (0,3,0). */
+.cs-recovery-row.setting-item {
+	flex-wrap: wrap;
+}
+
+.modal .cs-recovery-row.cs-recovery-row .setting-item-info {
+	flex: 1 1 8rem;
+	min-width: 8rem;
+	margin: 0;
+}
+
+/* `break-word`, not `anywhere`: both still break an unbroken file name that
+   cannot fit, but `anywhere` also lets every word count as breakable when the
+   column is sized, which is what let it shrink to a letter per line. */
+.cs-recovery-row .setting-item-name {
+	min-width: 0;
+	font-weight: var(--font-semibold);
+	white-space: normal;
+	overflow-wrap: break-word;
+}
+
+.cs-recovery-row .setting-item-description {
+	margin-top: 0;
+	padding-top: 2px;
+	line-height: 1.4;
+	overflow-wrap: break-word;
+}
+
+.cs-recovery-row .setting-item-control {
+	flex: 0 0 auto;
+	min-width: 0;
+	margin-inline-start: auto;
+	gap: 4px;
+}
+
+.cs-recovery-row .setting-item-control .clickable-icon {
+	border-radius: 6px;
+}
+
+/* Quiet until hovered/focused, same as the main callout list's own delete
+   button (.callout-studio-delete-btn) — red is earned by intent to use it,
+   not shown at rest on a row that is otherwise identical to "View details". */
+.cs-recovery-row .cs-recovery-delete-btn:hover,
+.cs-recovery-row .cs-recovery-delete-btn:focus-visible {
+	color: var(--text-error);
+}
+
+.is-mobile.theme-light .modal .cs-recovery-group-rows > .cs-recovery-row.setting-item:not(.setting-item-heading) {
+	background: var(--background-secondary-alt);
+}
+
+/* The row keeps its desktop shape on phone too — date + summary on the left,
+   the eye/trash/Restore cluster vertically centred on the right — rather
+   than stacking the control onto a full-width line of its own. `cs-row-inline`
+   is the same opt-in this file already uses for the icon-tile and colour-swatch
+   rows (see "Rows that keep their control on the label's line" above); it
+   clears Obsidian's own phone stacking at (0,4,0)/(0,5,0) by tripling the class.
+   That rule only reaches `.setting-item-control` itself, though: the Restore
+   button inside it is still hit by `.is-phone .modal .setting-item-control
+   button:not(.clickable-icon) { width: 100% }` at (0,4,1), so it needs its
+   own override here, at (0,5,0) via the same doubling trick.
+
+   The compact cluster is for every mobile class, not just phone: a tablet's
+   `.is-tablet button:not(.clickable-icon)` pads Restore by 20px a side, and
+   desktop's mobile emulation is a tablet whenever the window is 600×600 or
+   more — a narrow window whose text column needs the width as much as a
+   phone's does. The row gap likewise: Obsidian's phone gap is 16px. */
+.is-mobile .cs-recovery-row.cs-recovery-row .cs-recovery-restore-btn.cs-recovery-restore-btn {
+	width: auto;
+	flex: 0 0 auto;
+	padding: 4px 10px;
+}
+
+.is-mobile .cs-recovery-row.cs-recovery-row .setting-item-control {
+	gap: 2px;
+}
+
+.is-mobile .cs-recovery-row.cs-recovery-row .setting-item-control .clickable-icon {
+	padding: 4px;
+}
+
+.is-mobile .cs-recovery-row.cs-recovery-row.setting-item {
+	gap: 8px;
+}
+
+/* "24 difference(s) from now" always follows "1 saved callout type(s)" with
+   this literal comma-space between the two parts (`.cs-recovery-summary-part`
+   × 2, `.cs-recovery-summary-sep` between them — see renderRow()). On mobile
+   (phone, tablet, and desktop's mobile emulation, which is tablet whenever the
+   window is at least 600×600) the row is narrow and a wrapped mid-sentence
+   comma reads worse than two short lines, so the separator is dropped and each
+   part becomes its own line. */
+.is-mobile .cs-recovery-row .cs-recovery-summary-sep {
+	display: none;
+}
+
+.is-mobile .cs-recovery-row .cs-recovery-summary-part {
+	display: block;
+}
+
+/* ── Setup details ────────────────────────────────────────────────
+   One report per earlier setup: a line of context, the number of changes,
+   then one table per settings section. @see src/settings/recoveryComparisonTable.ts */
+.cs-recovery-detail-loading {
+	margin: 0;
+	color: var(--text-muted);
+}
+
+.cs-recovery-details-modal {
+	min-width: min(820px, 94vw);
+}
+
+/* Selectable, so a value can be copied out of a comparison. */
+.cs-recovery-detail-report {
+	min-width: 0;
+	font-size: var(--font-ui-small);
+	line-height: 1.5;
+	overflow-wrap: anywhere;
+	user-select: text;
+	-webkit-user-select: text;
+}
+
+/* The report's opening card: when this setup was saved and what it is compared
+   with, then the total and its breakdown under a
+   hairline. Grey-lit like the rest of the chrome: the accent colour belongs to
+   the callout being previewed. */
+.cs-recovery-detail-summary {
+	margin: 0 0 var(--size-4-5);
+	padding: var(--size-4-3) var(--size-4-4);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	background: var(--cs-surface-raised, var(--background-secondary));
+}
+
+.cs-recovery-detail-source {
+	min-width: 0;
+}
+
+.cs-recovery-detail-saved {
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-medium);
+}
+
+.cs-recovery-detail-prose {
+	margin: var(--size-4-1) 0 0;
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+}
+
+.cs-recovery-detail-summary > .cs-recovery-detail-prose {
+	margin-top: var(--size-4-2);
+}
+
+.cs-recovery-change-counts {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--size-4-2);
+	margin-top: var(--size-4-3);
+	padding-top: var(--size-4-3);
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+/* Same weight as a section title (.cs-recovery-section-toggle): the total is
+   the headline of this report, not another pill beside "Changed"/"Added". */
+.cs-recovery-count-total {
+	margin-inline-end: var(--size-4-1);
+	font-size: var(--font-ui-medium);
+	font-weight: var(--font-semibold);
+	color: var(--text-normal);
+}
+
+/* The window body's top padding moves into the report. A section's head
+   pins at `top: 0`, which is measured inside the scroller's padding: kept on
+   the scroller, that padding would park every pinned head 16px below the title
+   rule, with rows showing through the strip above it. */
+.cs-recovery-details-modal > .modal-content {
 	padding-top: 0;
+}
+
+.cs-recovery-detail-report,
+.cs-recovery-detail-loading {
+	padding-top: var(--size-4-4);
+}
+
+/* ── The table ── */
+/* A framed table. No `overflow: hidden` for rounded corners: it would make the
+   table its own scroll container and unpin the column headings. */
+.cs-recovery-comparison {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	table-layout: fixed;
+	border: 1px solid var(--background-modifier-border);
+}
+
+.cs-recovery-comparison + .cs-recovery-comparison {
+	margin-top: var(--size-4-5);
+}
+
+/* A section's head — its title and the column headings — pins as one block
+   while the section's rows scroll under it, and lets go with its last row. */
+.cs-recovery-comparison > thead {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	background: var(--cs-surface, var(--background-primary));
+}
+
+.cs-recovery-comparison col.is-number {
+	width: 3.25em;
+}
+
+.cs-recovery-comparison col.is-item {
+	width: 22%;
+}
+
+/* Every column after the number has a rule on its start side: the vertical
+   lines between Item, Current setup and After restoring. */
+.cs-recovery-comparison th,
+.cs-recovery-comparison td {
+	min-width: 0;
+	padding: var(--size-4-2) var(--size-4-3);
+	vertical-align: top;
+	text-align: start;
+	overflow-wrap: anywhere;
+	border-inline-start: 1px solid var(--background-modifier-border);
+}
+
+.cs-recovery-comparison .cs-recovery-column-number,
+.cs-recovery-comparison .cs-recovery-number {
+	border-inline-start: none;
+	text-align: center;
+}
+
+.cs-recovery-column-row > th {
+	text-align: center;
+	vertical-align: middle;
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-semibold);
+	color: var(--text-muted);
+	border-block-start: 1px solid var(--background-modifier-border);
+	border-block-end: 2px solid var(--background-modifier-border);
+}
+
+.cs-recovery-column-row > .cs-recovery-column-item {
+	text-align: start;
+}
+
+/* The title row is one button: pressing anywhere on it folds the section. */
+.cs-recovery-comparison .cs-recovery-section-heading {
+	padding: 0;
+	border-inline-start: none;
+}
+
+/* Scoped to the table so it outranks Obsidian's own `button:not(.clickable-icon)`
+   paint, padding and centring (0,1,1). The shade is the raised half of the
+   surface pair, the same as the number column it heads. */
+.cs-recovery-comparison .cs-recovery-section-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 6px;
+	width: 100%;
+	height: auto;
+	margin: 0;
+	padding: var(--size-4-2) var(--size-4-3);
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+	background: var(--cs-surface-raised, var(--background-secondary));
+	font-size: var(--font-ui-medium);
+	font-weight: var(--font-semibold);
+	color: var(--text-normal);
+	text-align: start;
+	cursor: pointer;
+}
+
+.cs-recovery-comparison .cs-recovery-section-toggle:hover {
+	background: var(--background-modifier-hover);
+}
+
+.cs-recovery-comparison .cs-recovery-section-toggle:focus-visible {
+	outline: 2px solid var(--background-modifier-border-focus);
+	outline-offset: -2px;
+}
+
+.cs-recovery-section-toggle .cs-disclosure-chevron {
+	color: var(--text-muted);
+}
+
+.cs-recovery-section-title {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* Folded: only the title row stays. */
+.cs-recovery-comparison.is-collapsed > tbody,
+.cs-recovery-comparison.is-collapsed .cs-recovery-column-row {
+	display: none;
+}
+
+/* One change is one <tbody>. A full rule above each separates changes; a
+   lighter one separates the fields inside a change. */
+.cs-recovery-item:not(:first-of-type) > tr:first-child > * {
+	border-block-start: 1px solid var(--background-modifier-border);
+}
+
+.cs-recovery-field-row > * {
+	border-block-start: 1px dashed
+		color-mix(in srgb, var(--background-modifier-border) 80%, transparent);
+}
+
+/* The number spans every row of its change, and its shade is what binds the
+   title to the rows beneath it. */
+.cs-recovery-number {
+	font-weight: var(--font-semibold);
+	font-variant-numeric: tabular-nums;
+	color: var(--text-muted);
+	background: var(--cs-surface-raised, var(--background-secondary));
+}
+
+.cs-recovery-item-title {
+	font-weight: var(--font-normal);
+}
+
+.cs-recovery-item-name {
+	display: block;
+	font-weight: var(--font-semibold);
+	color: var(--text-normal);
+}
+
+.cs-recovery-item-title > .cs-recovery-code,
+.cs-recovery-item-note {
+	display: block;
+	margin-top: 2px;
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+}
+
+/* A title with nothing to draw beside it spans the row: keep it on one line. */
+.cs-recovery-item-title[colspan] > * {
+	display: inline-block;
+	margin: 0 var(--size-4-2) 0 0;
+	vertical-align: baseline;
+}
+
+.cs-recovery-item-title[colspan] > .cs-recovery-state {
+	margin-top: 0;
+}
+
+.cs-recovery-field-label {
+	font-weight: var(--font-normal);
+	color: var(--text-muted);
+}
+
+.cs-recovery-state {
+	display: inline-block;
+	margin-top: var(--size-4-1);
+	padding: 0 6px;
+	border-radius: var(--radius-s);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-medium);
+	color: var(--color-yellow);
+	background: rgba(var(--color-yellow-rgb), 0.14);
+}
+
+.cs-recovery-state.is-added {
+	color: var(--color-green);
+	background: rgba(var(--color-green-rgb), 0.12);
+}
+
+.cs-recovery-state.is-removed {
+	color: var(--color-red);
+	background: rgba(var(--color-red-rgb), 0.12);
+}
+
+/* ── Values ── */
+.cs-recovery-muted {
+	color: var(--text-muted);
+}
+
+.cs-recovery-text {
+	white-space: pre-wrap;
+}
+
+.cs-recovery-text + .cs-recovery-muted {
+	display: block;
+}
+
+.cs-recovery-value {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--size-4-1) var(--size-4-2);
+	max-width: 100%;
+	vertical-align: middle;
+}
+
+.cs-recovery-value-lines {
+	display: inline-flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.cs-recovery-code {
+	font-family: var(--font-monospace);
+	font-size: 0.92em;
+	direction: ltr;
+	unicode-bidi: isolate;
+}
+
+.cs-recovery-swatch,
+.cs-recovery-gradient,
+.cs-recovery-sides {
+	display: inline-block;
+	flex: none;
+	width: 1.15em;
+	height: 1.15em;
+	border-radius: 4px;
+}
+
+.cs-recovery-swatch {
+	background: var(--cs-recovery-swatch);
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+
+.cs-recovery-gradient {
+	width: 4.5em;
+	background: var(--cs-recovery-gradient);
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+
+/* A little frame: the chosen sides solid, the others a faint dash. */
+.cs-recovery-sides {
+	box-sizing: border-box;
+	border-radius: 2px;
+	border: 1px dashed var(--text-faint);
+}
+
+.cs-recovery-sides.is-top { border-top: 2px solid var(--text-normal); }
+.cs-recovery-sides.is-right { border-right: 2px solid var(--text-normal); }
+.cs-recovery-sides.is-bottom { border-bottom: 2px solid var(--text-normal); }
+.cs-recovery-sides.is-left { border-left: 2px solid var(--text-normal); }
+
+.cs-recovery-chip {
+	padding: 0 6px;
+	border-radius: var(--radius-s);
+	background: var(--background-modifier-hover);
+}
+
+/* The numbered `<ol>` a value renders as inside the Setup details report —
+   not the "Restore an earlier setup" list itself, which despite the similar
+   name is an unrelated plain div (see its own rules further up) and used to
+   inherit this list-indent by accident through the shared class name. */
+.cs-recovery-value-list {
+	margin: 0;
+	padding-inline-start: 1.5em;
+}
+
+.cs-recovery-pairs {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 2px var(--size-4-2);
+	margin: 0;
+}
+
+.cs-recovery-pairs dt {
+	color: var(--text-muted);
+}
+
+.cs-recovery-pairs dd {
+	margin: 0;
+}
+
+.cs-recovery-value.is-icon .cs-recovery-preview-icon {
+	width: 1.5em;
+	height: 1.5em;
+}
+
+/* A palette as two small cards, each on its own mode's backdrop. */
+.cs-recovery-palette {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--size-4-2);
+}
+
+.cs-recovery-palette-tile {
+	min-width: 0;
+	padding: 6px 8px;
+	border-radius: var(--radius-s);
+	border-inline-start: 3px solid var(--cs-recovery-accent, var(--text-faint));
+	background-image: var(--cs-recovery-palette-image, none);
+}
+
+.cs-recovery-palette-tile.is-light {
+	background-color: #ffffff;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.cs-recovery-palette-tile.is-dark {
+	background-color: #1e1e1e;
+}
+
+.cs-recovery-palette-title {
+	font-weight: var(--font-semibold);
+	color: var(--cs-recovery-accent, var(--text-muted));
+}
+
+.cs-recovery-palette-tile.is-light .cs-recovery-palette-body {
+	color: var(--cs-recovery-palette-text, #222222);
+}
+
+.cs-recovery-palette-tile.is-dark .cs-recovery-palette-body {
+	color: var(--cs-recovery-palette-text, #dadada);
+}
+
+.cs-recovery-side-preview {
+	margin-top: var(--size-4-2);
+}
+
+/* ── Previews: a block, a heading bar and an inline pill ── */
+.cs-recovery-preview-unavailable {
+	color: var(--text-muted);
+	font-style: italic;
+}
+
+.cs-recovery-preview,
+.cs-recovery-heading-preview,
+.cs-recovery-inline-preview {
+	border-style: solid;
+	border-color: var(--cs-recovery-border-color);
+	border-width: var(--cs-recovery-border-width);
+	border-radius: var(--cs-recovery-radius);
+	background: color-mix(in srgb, var(--cs-recovery-accent) 10%, transparent);
+}
+
+.cs-recovery-preview {
+	min-width: 0;
+	max-width: 100%;
+	padding: var(--size-4-3);
+}
+
+.cs-recovery-preview-title {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-1);
+	font-weight: var(--font-semibold);
+}
+
+.cs-recovery-preview-title-text {
+	min-width: 0;
+	font-size: var(--cs-recovery-title-size);
+	overflow-wrap: anywhere;
+}
+
+.cs-recovery-preview-title-text.is-gradient {
+	background-image: var(--cs-recovery-title-gradient);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+}
+
+.cs-recovery-preview-content {
+	margin-block-start: var(--size-4-2);
+	padding-inline-start: var(--cs-recovery-content-indent, 0);
+	color: var(--cs-recovery-content-color);
+	font-size: var(--cs-recovery-content-size);
+	overflow-wrap: anywhere;
+}
+
+.cs-recovery-preview-fold {
+	flex: none;
+}
+
+.cs-recovery-preview-icon {
+	display: inline-flex;
+	flex: 0 0 auto;
+	width: var(--icon-size, 1.2em);
+	height: var(--icon-size, 1.2em);
+	overflow: visible;
+}
+
+.cs-recovery-preview-icon svg,
+.cs-recovery-preview-icon img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.cs-recovery-preview-icon.is-mask {
+	background-color: currentColor;
+	mask-image: var(--cs-recovery-icon-mask);
+	-webkit-mask-image: var(--cs-recovery-icon-mask);
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-size: contain;
+}
+
+.cs-recovery-heading-preview {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-1);
+	padding: var(--cs-recovery-pad-top, 0.25em) var(--size-4-2) var(--cs-recovery-pad-bottom, 0.25em);
+	font-size: 1.3em;
+	font-weight: var(--font-bold);
+	line-height: 1.3;
+	color: var(--cs-recovery-accent);
+}
+
+.cs-recovery-heading-fold {
+	display: inline-flex;
+	color: var(--text-faint);
+}
+
+.cs-recovery-role-title {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.cs-recovery-inline-preview {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25em;
+	max-width: 100%;
+	padding: 0 0.55em;
+	font-size: calc(0.9em * var(--cs-recovery-font-scale, 1));
+	font-weight: var(--font-medium);
+	line-height: 1.7;
+	color: var(--cs-recovery-accent);
+}
+
+.cs-recovery-heading-preview .cs-recovery-preview-icon,
+.cs-recovery-inline-preview .cs-recovery-preview-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.cs-recovery-image {
+	display: block;
+	max-width: 100%;
+	max-height: 96px;
+	object-fit: contain;
+}
+
+/* A phone has no room for the wide window's side inset. */
+.is-phone .modal.cs-recovery-details-modal {
+	--cs-modal-inset: var(--size-4-3);
+}
+
+/* Four columns do not fit a phone. Each change becomes a full-width line with
+   its number and title, then its two setups side by side; each field's name
+   gets a line of its own above its two values. Only the column headings of
+   the two setups remain, pinned as one strip — a sticky cell cannot move
+   outside its row, so on a grid row it is the whole head that pins. */
+@media (max-width: 600px) {
+	.cs-recovery-comparison,
+	.cs-recovery-comparison tbody {
+		display: block;
+	}
+
+	.cs-recovery-comparison colgroup,
+	.cs-recovery-column-row > .cs-recovery-column-number,
+	.cs-recovery-column-row > .cs-recovery-column-item {
+		display: none;
+	}
+
+	.cs-recovery-comparison > thead {
+		display: block;
+	}
+
+	.cs-recovery-section-row > .cs-recovery-section-heading {
+		grid-column: 1 / -1;
+	}
+
+	.cs-recovery-comparison tr {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.cs-recovery-comparison th,
+	.cs-recovery-comparison td {
+		padding: var(--size-4-1) var(--size-4-2);
+		border-inline-start: none;
+	}
+
+	/* The vertical rule between the two setups. */
+	.cs-recovery-comparison .cs-recovery-side + .cs-recovery-side,
+	.cs-recovery-column-row > .cs-recovery-column-side + .cs-recovery-column-side {
+		border-inline-start: 1px solid var(--background-modifier-border);
+	}
+
+	/* Number and title share the first line; the number keeps its shade. */
+	.cs-recovery-item-row > .cs-recovery-number,
+	.cs-recovery-item-row > .cs-recovery-item-title {
+		grid-row: 1;
+		grid-column: 1 / -1;
+	}
+
+	.cs-recovery-item-row > .cs-recovery-number {
+		z-index: 1;
+		justify-self: start;
+		width: 2.25em;
+	}
+
+	.cs-recovery-item-row > .cs-recovery-item-title {
+		padding-inline-start: calc(2.25em + var(--size-4-2));
+	}
+
+	.cs-recovery-item-row > .cs-recovery-item-title > * {
+		display: inline-block;
+		margin: 0 var(--size-4-2) 0 0;
+		vertical-align: baseline;
+	}
+
+	.cs-recovery-item-row > .cs-recovery-side {
+		border-block-start: 1px dashed
+			color-mix(in srgb, var(--background-modifier-border) 80%, transparent);
+	}
+
+	.cs-recovery-field-row > .cs-recovery-field-label {
+		grid-column: 1 / -1;
+	}
+
+	.cs-recovery-field-row > .cs-recovery-side {
+		border-block-start: none;
+	}
+
+	.cs-recovery-palette {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 600px) {
+	.cs-recovery-list > .setting-item:not(.setting-item-heading) {
+		flex-wrap: wrap;
+	}
+
+	.cs-recovery-list .setting-item-control {
+		flex-wrap: wrap;
+		justify-content: flex-start;
+	}
 }
 
 /* Saving is paused: whatever would change a setting is inert, and fades to

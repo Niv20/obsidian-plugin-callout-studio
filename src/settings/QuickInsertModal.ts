@@ -33,7 +33,7 @@ import {
 } from "../utils/calloutSearch";
 import { committedDefinitions } from "../utils/usableCallouts";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
-import { autofocusOnOpen } from "./modalAutofocus";
+import { autofocusOnDesktop } from "./modalAutofocus";
 import { openCalloutEditorFor } from "./openCalloutEditor";
 import {
 	quickInsertEmptyMessage,
@@ -121,8 +121,8 @@ export class QuickInsertModal extends Modal {
 			void this.refresh();
 		});
 
-		// Quick Insert always focuses search, on mobile too: typing is its first action.
-		autofocusOnOpen(this.searchEl);
+		// Keep search ready on desktop without raising the mobile keyboard on open.
+		autofocusOnDesktop(this.searchEl);
 	}
 
 	onClose(): void {

@@ -29,6 +29,8 @@ Use **Replace in vault** when every use of one type should become another:
 3. Select the replacement callout. You can type to filter the list; pressing **Enter** selects the top match.
 4. Choose **Replace**.
 
+On desktop, the replacement search is ready for typing when the window opens. On a phone or tablet, tap it to bring up the keyboard.
+
 Callout Studio updates matching Block, Heading, and Inline callouts throughout the vault while keeping their content. The change edits your notes directly, so **Enter** never starts it; only the **Replace** button does.
 
 When it finishes, the notice offers **Undo** for a few seconds. Undo puts back every note the replacement changed, unless you've edited that note since; those are left as they are, and the message says how many. Only the most recent replacement or deletion can be undone, and only until Obsidian is closed.

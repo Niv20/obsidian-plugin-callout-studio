@@ -40,8 +40,8 @@ const ROLE_TITLE_KEY: Record<CalloutRenderRole, string> = {
 	inline: "menuCustomize.inline",
 };
 
-/** i18n key for each menu item's label. */
-const ITEM_LABEL_KEY: Record<ContextMenuItemId, string> = {
+/** i18n key for each menu item's label. Also names the entries in the setup comparison. */
+export const ITEM_LABEL_KEY: Record<ContextMenuItemId, string> = {
 	// `edit` is the stable persisted id; at runtime it creates unknown tokens.
 	edit: "menuItem.createOrEdit",
 	openSettings: "menuItem.openSettings",
