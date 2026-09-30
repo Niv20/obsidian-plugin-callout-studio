@@ -25,4 +25,4 @@ Non-English translations were created with AI assistance, so an awkward phrase o
 See [Privacy & permissions](../internals-docs/25-privacy-and-permissions.md) for how translation files are downloaded and stored.
 
 ---
-**Next:** [Vault insights](12-vault-insights.md)
+**Next:** [Find callouts](12-find-callouts.md)

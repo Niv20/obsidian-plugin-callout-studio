@@ -1,6 +1,8 @@
-# Vault insights
+# Find callouts
 
-Vault insights shows source references to callouts across your Markdown notes.
+**Find callouts** is a sidebar panel that answers "where did I use this
+callout?" It lists every source reference to a callout across your Markdown
+notes, lets you filter them by type and format, and jumps to the exact line.
 
 ## Open the sidebar
 
