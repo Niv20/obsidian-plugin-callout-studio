@@ -57,22 +57,97 @@ custom commands. All of it is careful about structure that has nothing to do
 with callouts: fenced code blocks, math blocks (`$$`), YAML frontmatter, and
 existing nesting.
 
-### `wrapSelectionInCallout`
+### `wrapSelectionInCallout` and `wrapRange.ts`
 
-Given a selection (or, with none, the cursor's line), it:
+`wrapSelectionInCallout` only writes. What it wraps is decided by `planWrap` in
+[`src/editor/wrapRange.ts`](../../src/editor/wrapRange.ts), which returns a
+`WrapPlan`: the line range, the container `level` the callout opens inside,
+whether the callout is born empty, and whether a blank separator line goes
+above or below it. The fixed **Wrap in callout** command, the Quick insert
+window, and block custom commands with the wrap action all call it, so they
+share every rule below. The user-facing version of these rules is in
+[Commands & hotkeys](../user-guide/09-commands-and-hotkeys.md#what-gets-wrapped).
 
-1. Skips past frontmatter if the selection starts inside it.
-2. **Expands** the selection to cover whole fenced code/math blocks it
-   partially overlaps — you cannot wrap half a fence.
-3. **Further expands** outward (`expandStartLine`/`expandEndLine`) through
-   adjacent non-blank lines, again respecting fence boundaries — this is what
-   lets running the command with the cursor merely *inside* a paragraph wrap
-   the whole paragraph, not just the cursor's line.
-4. Detects the surrounding quote-nesting depth and whether the target is
-   *already* a callout header (nesting one callout inside another, one `>`
-   level deeper).
-5. Rewrites every line with the appropriate `>` prefix depth, inserting the
-   new header line.
+The earlier implementation grew the range through adjacent non-blank lines
+with no regard to depth. It then enclosed the result from the outside when
+its first line happened to be a callout header. So the cursor in a callout's
+first paragraph wrapped the callout from the outside, the cursor in any later
+paragraph wrapped from the inside, and a selection in the first paragraph of a
+multi-paragraph callout moved the other paragraphs out of it. The rules below
+replace that with one model.
+
+**1. The target.** A selection's lines, except that a last line it reaches
+only at column 0 is dropped, and so is a first line it leaves at its very end
+(both are what dragging over whole lines or Shift+Down leaves). A bare
+cursor's line, grown to its paragraph in step 3. A target that starts inside
+frontmatter starts after it. A fence under either edge is taken whole. Blank
+lines at the edges are dropped. A target made only of blank lines is the
+empty case: the callout is written over its first line, at that line's depth.
+
+**2. The level.** A line's level is its `>` depth, minus one when the line is
+a callout header, because the header stands for its whole callout, which lives
+one level up. The minimum over the target, with interior blank lines
+included, is the depth of the innermost quote that holds every target line.
+The callout opens inside that quote, and its header gets `level + 1` markers.
+A root-level blank line between two callouts is what brings the minimum down
+to 0. A header is `[!…]` on the first line of its quote, meaning the line
+above is shallower. That rule is `opensCallout` in `quotePrefix.ts`, and
+unwrap and `insertEmptyCallout` apply it too. A `[!…]` further down a quote is an inline pill in its
+body. So the cursor in a callout's text nests the new callout inside it, and
+the cursor on its header encloses it. A plain blockquote has no header, so
+wrapping inside one stays inside it.
+
+**3. Growth.** Each edge grows on its own:
+
+- An edge inside a quote nested in the container (depth > level) grows over
+  the whole run of deeper lines, which is exactly one nested callout or quote.
+  A nested block is never split.
+- A bare cursor grows to its paragraph: the run of non-blank lines at the
+  container's depth. The run stops at the container's own header and at an
+  ATX heading. A heading never belongs to the paragraph under it, and this is
+  also what keeps a heading callout written directly above a paragraph out of
+  the wrap.
+- A selection edge stays where it is if the paragraph may be cut there.
+  Otherwise it moves outwards to the nearest line where it may. A cut is
+  refused before a line inside a fence, an indented line (a list item's
+  sub-items, a footnote's continuation), and a setext underline. It is also
+  refused before any line of a table (from its header row to the end of the
+  run, since GFM takes every later line as a row) or of an HTML block (after
+  its opening tag, to the end of the run).
+
+**4. Separators.** The separator is a blank line at the container's depth:
+`buildPrefix(level).trimEnd()`, which is an empty line in the note itself and
+`>` inside a callout. It goes above the callout when the line above is
+non-blank content of the container (anything except the container's own
+header). It goes below when the line below is non-blank at depth ≥ level.
+Without them, lazy continuation glues a following paragraph into the callout,
+and a header written straight after a line of its own depth becomes a line of
+that line's quote. That second failure is the inline-pill bug. A neighbour
+shallower than the container is left alone. That is a lazy line after the
+container ends, and it stays exactly as lazy as it was.
+
+**5. Requoting.** Every line of the range moves one level below the container:
+its first `level` markers become `level + 1`. A blank line gets
+`max(depth, level) + 1` markers. So a blank `>` inside a wrapped callout
+becomes `> >` and stays inside it, and a blank line between wrapped callouts
+becomes the new callout's own paragraph break.
+
+Depth is read by `splitQuoteMarkers` (`quotePrefix.ts`) throughout. It
+counts the `>` markers from column 0, each following straight on after at
+most one space. A tab or an indented `>` belongs to the list item above it,
+so it travels as content instead of setting the line's depth. A line inside a
+fence takes the fence's own depth, so callout syntax inside code is never
+read as structure. `fenceBlocks.ts` closes a fence only with a marker at its
+own depth, and ends it where its quote ends. Without that, a ``` left open
+inside a callout would swallow the rest of the note. The lenient
+`stripLeadingQuoteTokens` reading is unchanged, because unwrap depends on it
+to reach callouts indented under list items.
+
+Not handled: an Obsidian `%%` comment block is not a unit, so an edge can cut
+one when the comment contains a blank line. A callout inside a list item
+(`- > [!x]`, or an indented `>`) is list content, not a container. Lines are
+read by their own `>` count, so a lazy continuation line with fewer markers
+ends its quote rather than continuing it.
 
 With no `def` passed, the header is the deliberately unfinished `[!` — the
 generic "Wrap in callout" command parks the cursor right there and triggers
@@ -81,11 +156,28 @@ already knows its type, so it gets the finished header and no popup.
 
 ### `insertEmptyCallout`
 
-On a blank line, drops the header **in place**. On a line with content,
-appends the callout *below*, separated by a blank line so it renders as its
-own block — guarding both the leading separator (keeps current quote depth)
-and the trailing one (a following non-blank line would otherwise be swallowed
-into the new empty callout as a lazy blockquote continuation).
+On a blank line, the callout replaces that line. On a line with content, it
+goes on new lines *below* it. Either way, a blank separator line at the
+container's depth goes wherever the callout would otherwise touch a
+neighbour:
+
+- **Below**, whenever the next line has content, however shallow it is. The
+  bare `[!` header is a paragraph line, so the line after it would join it
+  as a lazy continuation. The blank-line case used to skip this, and the
+  paragraph under the cursor ended up inside the callout.
+- **Above**, always after a line with content. In place of a blank line,
+  only when the line above is content of the same container or deeper. The
+  container's own header is the exception, because a nested callout may open
+  straight under it. Otherwise a callout written over the `>` between two
+  sibling callouts would fuse all three into one quote.
+
+A next line that is already blank (`>` counts) gets no second separator.
+Depth is read strictly (`splitQuoteMarkers`), the same way wrap reads it,
+so a tab-indented list line is not taken as quoted. Frontmatter is never
+written into. From inside it, the callout goes onto the first body line when
+that line is blank, or else on a new line after the closing delimiter, with a
+separator before the body text. A note that is all frontmatter gets the
+callout appended.
 
 ### `insertHeadingCallout`
 
@@ -117,6 +209,25 @@ Walks upward from the cursor's line to find the header of the *innermost*
 callout containing it (`findContainingCallout`), strips exactly one `>` level
 from every line of its body, and replaces the whole block. Fails with a
 `Notice` if the cursor isn't inside any callout.
+
+The header's title stays, as its own line at the container's depth. Only the
+`[!type]` token and its fold mark go, which matches what
+`calloutsToPlainText` leaves when a deleted type is converted to plain text.
+A header with no title is dropped. `removeQuoteLevel` takes off the first `>`
+but keeps whatever indents it, so a callout indented under a list item stays
+inside the item. When the line above the header is non-blank text of the same
+container, a blank separator is written first; the container's own header is
+the exception. Without the separator, the callout's first line would join that
+paragraph. This is the mirror of the separators wrap writes.
+
+A header is decided by `isHeaderAt`. It is `opensCallout` on the first line of
+its quote, where the line above has fewer `>` markers. Those are counted by
+`countQuoteMarkers`, which does not take a bare tab for one. A line inside a
+fence is never a header. A `[!…]` further down a callout is body text: taken
+for a header, it used to be deleted, and the real callout was left half
+unwrapped. The walk itself still reads depth leniently
+(`countLeadingQuoteTokens`), so a callout indented under a list item stays
+reachable.
 
 ## Autocomplete
 

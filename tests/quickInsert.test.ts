@@ -749,7 +749,8 @@ describe("the Insert button writes block callouts", () => {
 	it("nests inside an existing blockquote rather than doubling its marker", () => {
 		// The quoted text keeps its quote and the callout goes *inside* it —
 		// the cursor was in the quote, so that is what was asked to be wrapped.
-		// Contrast the existing-callout case below, which encloses from outside.
+		// A callout's text works the same way; only its header line stands for
+		// the whole callout (the two cases below).
 		const b = buffer("> quo|ted");
 		insert(b);
 
@@ -767,8 +768,18 @@ describe("the Insert button writes block callouts", () => {
 		);
 	});
 
-	it("encloses an existing callout instead of corrupting its header", () => {
+	it("nests inside an existing callout without corrupting its header", () => {
 		const b = buffer("> [!note] Note\n> in|ner");
+		insert(b);
+
+		assert.strictEqual(
+			b.value(),
+			"> [!note] Note\n> > [!warning] Warning\n> > inner",
+		);
+	});
+
+	it("encloses an existing callout when the cursor is on its header", () => {
+		const b = buffer("> [!note] No|te\n> inner");
 		insert(b);
 
 		assert.strictEqual(

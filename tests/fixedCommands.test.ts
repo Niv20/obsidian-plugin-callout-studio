@@ -262,7 +262,7 @@ describe("the editor commands", () => {
 
 	it("unwraps without re-opening it — there is no header to finish", () => {
 		const { h, ed } = run("callout-unwrap", "> [!note] Note\n> body");
-		assert.strictEqual(ed.getValue(), "body");
+		assert.strictEqual(ed.getValue(), "Note\nbody");
 		assert.strictEqual(h.triggered.length, 0);
 	});
 });

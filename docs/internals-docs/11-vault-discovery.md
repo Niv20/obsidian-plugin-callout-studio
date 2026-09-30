@@ -492,7 +492,12 @@ rules per role:
 
 - **Block (`regular`)**: only the **outermost** block (single `>`) is fully
   unwrapped (header keeps its title text, body lines lose their leading
-  `> `). A **nested** `>> [!id] Title` (a callout inside a parent callout)
+  `> `). When the line above the header is visible text outside any quote
+  (not blank, not frontmatter or code), a blank line goes before the title.
+  Without it, the title would become that paragraph's next line. A title-less
+  header turns into a blank line of its own, so it needs no separator. The
+  editor's unwrap command keeps titles and separates them the same way. A
+  **nested** `>> [!id] Title` (a callout inside a parent callout)
   keeps its blockquote depth — that depth belongs to the parent — and loses
   only the token: `>> Title`.
 - **Heading**: `### [!id] Title` → `### Title`; `### [!id]` (no title of its
