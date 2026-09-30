@@ -1073,13 +1073,15 @@ export const id: Record<string, string> = {
 	"commandBuilder.missingCallout": "Dijeda: callout tidak ada. Temukan atau buat untuk memulihkan perintah ini, atau edit perintah untuk memilih jenis lain.",
 	"confirm.titleRestoreSettings": "Pulihkan pengaturan ini",
 	"confirm.titleCreateSettingsFile": "Buat file pengaturan",
-	"confirm.restoreDisplayedSettings": "Ini menyimpan jenis callout dan preferensi yang sedang ditampilkan ke file pengaturan di perangkat ini dan melanjutkan penyimpanan. Setiap salinan pemulihan lokal yang dapat dibaca dicadangkan terlebih dahulu.\nSebelum melanjutkan, biarkan layanan sinkronisasi selesai dan periksa apakah perangkat lain memiliki pengaturan yang lebih baru yang ingin Anda pertahankan. Layanan sinkronisasi Anda dapat mengirim file yang dipulihkan ini ke perangkat Anda yang lain.\nFile diperiksa lagi sebelum disimpan. Jika pengaturan yang sudah ada ditemukan, pengaturan tersebut dipertahankan dan pemulihan dapat meminta Anda memeriksa lagi.",
+	"confirm.saveDisplayedSettings":
+		"Ini menyimpan pengaturan yang Anda lihat sekarang sebagai file pengaturan Anda dan mengaktifkan penyimpanan kembali. Salinan cadangan yang disimpan perangkat ini dicadangkan lebih dulu.\nJika perangkat lain mungkin memiliki perubahan lebih baru yang ingin Anda pertahankan, biarkan perangkat itu selesai menyinkronkan sebelum melanjutkan. Aplikasi sinkronisasi Anda dapat mengirim file ini ke perangkat Anda yang lain.\nCallout Studio mencari file pengaturan sekali lagi sebelum menyimpan. Jika file itu sudah kembali, Callout Studio mempertahankannya.",
 	"notice.settingsBackupFailed": "Pemulihan pengaturan tidak dapat dilanjutkan karena cadangan keamanan tidak dapat disimpan. Periksa penyimpanan yang tersedia dan izin tulis, lalu coba lagi.",
 	"notice.settingsBackupSaved": "Salinan pemulihan definisi callout lokal disimpan sebelum menerapkan pengaturan yang masuk: {{path}}.",
 	"notice.settingsChangedElsewhere": "Pengaturan Callout Studio diubah di perangkat lain, sehingga perubahan ini tidak disimpan. Pengaturan dari perangkat lain sedang dimuat sekarang — silakan lakukan perubahan itu lagi.",
 	"notice.settingsNewerVersion": "Pengaturan Callout Studio disimpan oleh versi plugin yang lebih baru, sehingga tidak ada yang akan ditulis di perangkat ini hingga Anda memperbaruinya. Pengaturan Anda aman — perbarui Callout Studio di sini dan muat ulang Obsidian.",
 	"notice.settingsNotSaved": "Perubahan itu tidak disimpan. Callout Studio tidak dapat menggunakan file pengaturannya saat Obsidian dimulai, sehingga tidak ada yang ditulis di perangkat ini — perubahan Anda akan bertahan hingga Anda menutup Obsidian. Lihat Pengaturan → Callout Studio untuk mengetahui apa yang harus dilakukan.",
-	"saveStatus.changed": "File pengaturan berubah saat Anda mengedit. Draf Anda masih tersedia. Pilih Coba lagi penyimpanan dan pemulihan untuk memuat pengaturan yang masuk, lalu tinjau draf Anda dan simpan lagi.",
+	"saveStatus.changed":
+		"File pengaturan berubah saat Anda mengedit. Draf Anda masih tersedia. Pilih Coba lagi untuk memuat pengaturan yang masuk, lalu tinjau draf Anda dan simpan lagi.",
 	"saveStatus.missing": "Penyimpanan dijeda karena file pengaturan hilang. Ini bisa terjadi setelah pemasangan ulang atau saat sinkronisasi masih berjalan. Selesaikan sinkronisasi dan coba lagi. Untuk mengganti file yang hilang secara sengaja, gunakan Buat file pengaturan baru di pengaturan Callout Studio.",
 	"saveStatus.restoreSettings": "Pulihkan pengaturan ini",
 	"saveStatus.createSettingsFile": "Buat file pengaturan",
@@ -1090,14 +1092,14 @@ export const id: Record<string, string> = {
 	"saveStatus.notesFailed": "Definisi callout disimpan, tetapi beberapa pembaruan catatan tidak dapat diselesaikan. Biarkan editor ini tetap terbuka dan pilih Simpan untuk mencoba lagi pembaruan yang belum selesai.",
 	"saveStatus.recoveryRead": "Penyimpanan dijeda karena salinan pemulihan lokal tidak dapat dibaca. File pengaturan Anda mungkin masih utuh. Periksa penyimpanan yang tersedia, lalu coba lagi pemulihan. Data pemulihan yang ada tidak akan ditimpa.",
 	"saveStatus.recoveryWrite": "Salinan pemulihan lokal tidak dapat disimpan. Periksa penyimpanan yang tersedia, lalu coba lagi. Biarkan draf Anda tetap terbuka hingga penyimpanan berhasil.",
-	"saveStatus.retry": "Coba lagi penyimpanan dan pemulihan",
 	"saveStatus.retryFailed": "Penyimpanan masih diblokir. Periksa status penyimpanan di pengaturan Callout Studio untuk mengetahui penyebabnya, lalu coba lagi.",
-	"saveStatus.retrying": "Memeriksa penyimpanan dan pemulihan…",
 	"saveStatus.reviewDraft": "Pengaturan yang masuk dan pemeriksaan pemulihan telah selesai. Draf Anda tidak berubah. Tinjau dan simpan lagi.",
 	"saveStatus.settingsArrived": "Pengaturan yang ada telah tiba dan dimuat. File pengganti tidak dibuat.",
 	"saveStatus.syncConflict": "Pengaturan yang masuk berkonflik dengan callout yang diperlukan untuk pembaruan catatan yang belum selesai. Draf Anda dan pembaruan yang tertunda telah disimpan. Selesaikan konflik pengaturan sebelum mencoba lagi.",
 	"saveStatus.titlePaused": "Penyimpanan dijeda",
 	"saveStatus.titleFailed": "Pengaturan tidak disimpan",
+	"saveStatus.tryAgain": "Coba lagi",
+	"saveStatus.working": "Sedang diproses…",
 	"saveStatus.unreadable": "Penyimpanan dijeda karena file pengaturan tidak dapat dibaca dengan aman. Selesaikan sinkronisasi atau pulihkan salinan yang valid, lalu coba lagi. File yang ada telah disimpan.",
 	"saveStatus.write": "File pengaturan tidak dapat disimpan. Periksa penyimpanan yang tersedia, izin folder, dan sinkronisasi, lalu coba lagi sebelum menutup Obsidian.",
 	"saveStatus.writePermission": "File pengaturan tidak dapat disimpan karena penyimpanan menolak akses tulis. Periksa apakah vault dan folder plugin dapat ditulisi, lalu coba lagi.",
@@ -1156,7 +1158,6 @@ export const id: Record<string, string> = {
 	"settings.maintenance": "Zona berbahaya",
 
 	// Sync safety hardening
-	"saveStatus.stillMissingAdvice": "Berkas pengaturan masih hilang. Memeriksa lagi tidak akan membuatnya ulang. Biarkan sinkronisasi selesai dan buat vault tersedia secara offline. Jika berkas telah dihapus, pilih Pulihkan pengaturan ini, atau pulihkan konfigurasi sebelumnya.",
 	"saveStatus.diagnosis.unavailable": "Perangkat ini tidak bisa membuka berkas saat ini. Mungkin masih dalam proses unduh, vault mungkin tidak tersedia secara offline, atau penyimpanan tidak merespons. Callout Studio memeriksa lagi secara otomatis.",
 	"saveStatus.diagnosis.empty": "Berkas kosong, yang biasanya berarti sinkronisasi terputus. Jika perangkat lain masih memiliki pengaturan Anda, biarkan perangkat itu tersinkronisasi. Jika tidak, ganti berkasnya.",
 	"saveStatus.diagnosis.mergeMarkers": "Berkas berisi penanda konflik penggabungan yang belum diselesaikan, misalnya dari Git. Selesaikan konflik di alat Git Anda, atau ganti berkasnya.",
@@ -1165,11 +1166,43 @@ export const id: Record<string, string> = {
 	"saveStatus.diagnosis.invalidEntries": "Berkas berisi entri yang tidak dapat digunakan Callout Studio, misalnya tipe callout yang sama terdaftar dua kali.",
 	"saveStatus.replaceUnreadable": "Ganti berkas pengaturan",
 	"saveStatus.discardRecoveryCopy": "Buang salinan pemulihan",
-	"saveStatus.openRecovery": "Pulihkan konfigurasi sebelumnya",
-	"saveStatus.readOnlyWhilePaused": "Pengaturan tidak dapat diubah hingga penyimpanan berfungsi kembali, sehingga tidak ada perubahan yang hilang di sini. Anda tetap dapat mengekspor konfigurasi Anda.",
+	"saveStatus.calm.opening": "Pertama-tama, tarik napas dalam-dalam — semuanya akan baik-baik saja.",
+	"saveStatus.calm.kept": "Catatan Anda aman, dan callout Anda masih ada di perangkat ini.",
+	"saveStatus.calm.safe": "Catatan Anda aman.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio hanya menjeda penyimpanan untuk melindungi pengaturan Anda, jadi halaman ini hanya bisa dibaca untuk sementara.",
+	"saveStatus.calm.paused": "Callout Studio hanya menjeda penyimpanan untuk melindungi pengaturan Anda.",
+	"saveStatus.explain.missing":
+		"Callout Studio tidak dapat menemukan file pengaturannya. Ini biasanya terjadi saat aplikasi sinkronisasi Anda masih mengunduhnya, atau setelah Callout Studio dihapus di perangkat lain.",
+	"saveStatus.explain.stillMissing":
+		"File pengaturan masih belum kembali. Pemeriksaan hanya mencarinya dan tidak pernah membuat yang baru. Jika vault Anda ada di iCloud, OneDrive, Google Drive, atau Dropbox, pastikan vault diatur agar tetap terunduh di perangkat ini.",
+	"saveStatus.explain.unreadable":
+		"Callout Studio tidak dapat membaca file pengaturannya saat ini, jadi file dibiarkan persis seperti adanya.",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio menyimpan salinan cadangan pengaturan Anda di perangkat ini, dan salinan itu tidak dapat dibaca saat ini. File pengaturannya sendiri mungkin masih baik-baik saja.",
+	"saveStatus.explain.newerVersion":
+		"Pengaturan Anda disimpan oleh Callout Studio versi yang lebih baru, jadi versi lama ini tidak akan mengubahnya.",
+	"saveStatus.explain.changed":
+		"File pengaturan berubah saat Callout Studio sedang mengerjakannya, jadi prosesnya berhenti tanpa mengganti apa pun.",
+	"saveStatus.guide.rechecks":
+		"Callout Studio memeriksa ulang setiap menit selama Obsidian terbuka, jadi masalah ini sering teratasi sendiri.",
+	"saveStatus.guide.rechecksCheckNow":
+		"Callout Studio memeriksa ulang setiap menit selama Obsidian terbuka, jadi masalah ini sering teratasi sendiri — atau pilih Periksa lagi untuk memeriksa sekarang.",
+	"saveStatus.guide.restore":
+		"Jika pengaturan Anda tidak kembali, pilih Pulihkan pengaturan ini untuk mempertahankan callout yang Anda lihat di sini.",
+	"saveStatus.guide.create": "Jika pengaturan Anda tidak kembali, pilih Buat file pengaturan untuk mulai menyimpan lagi.",
+	"saveStatus.guide.backup": "Setelah penyimpanan berfungsi lagi, Anda juga dapat mengembalikan versi sebelumnya dari bagian Cadangan.",
+	"saveStatus.guide.recoveryRetry": "Pastikan perangkat ini memiliki sedikit ruang penyimpanan kosong, lalu pilih Coba lagi.",
+	"saveStatus.guide.recoveryDiscard":
+		"Jika itu tidak membantu, pilih Buang salinan pemulihan. Salinan persis disimpan lebih dulu, dan file pengaturan Anda tidak disentuh.",
+	"saveStatus.guide.newerVersion": "Perbarui Callout Studio di Pengaturan → Plugin komunitas, lalu muat ulang Obsidian.",
+	"saveStatus.goToBackups": "Buka cadangan",
+	"saveStatus.missingNotice":
+		"Catatan Anda aman. Callout Studio menjeda penyimpanan karena saat ini tidak dapat menemukan file pengaturannya.",
 	"statusBar.paused": "Penyimpanan dijeda",
 	"statusBar.pausedTooltip": "Callout Studio tidak menyimpan perubahan pengaturan. Klik untuk melihat alasannya.",
 	"statusBar.pausedNotice": "Callout Studio tidak menyimpan perubahan pengaturan saat ini.",
+	"saveStatus.resumed": "Penyimpanan aktif kembali. Callout Studio menyimpan perubahan pengaturan lagi.",
 	"notice.replaceUnreadableUnavailable": "Berkas pengaturan tidak dapat diganti saat ini: berkas sedang berubah, atau perangkat ini tidak dapat membacanya. Coba lagi sebentar lagi.",
 	"notice.recoveryStorageUnavailable": "Penyimpanan pemulihan perangkat ini tidak merespons, sehingga salinan tidak dapat dibuang. Mulai ulang Obsidian, lalu coba lagi.",
 	"recovery.title": "Pulihkan konfigurasi sebelumnya",

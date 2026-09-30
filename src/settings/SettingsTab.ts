@@ -160,16 +160,17 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		renderContextMenuSettingsSection(sectionCtx, containerEl);
 		renderHotkeySection(sectionCtx, containerEl);
 		const importTarget = renderImportExportSection(sectionCtx, containerEl);
-		renderBackupSection(sectionCtx, containerEl);
+		const backupTarget = renderBackupSection(sectionCtx, containerEl);
 		renderLanguageSection(sectionCtx, containerEl);
 		renderResetSection(sectionCtx, containerEl);
 		renderFooterSection(sectionCtx, containerEl);
 
 		// Both notices belong directly under the title. Rendering them after the
-		// sections lets the import prompt hold the real row it will scroll to,
-		// without changing their DOM position inside the title's banner slot.
+		// sections lets each hold the real row it scrolls to — Import for the
+		// import prompt, Backup › Earlier setups for the saving banner — without
+		// changing their DOM position inside the title's banner slot.
 		renderCompetitorImportBanner(sectionCtx, bannerSlot, importTarget);
-		renderReadOnlyBanner(sectionCtx, bannerSlot);
+		renderReadOnlyBanner(sectionCtx, bannerSlot, backupTarget);
 
 		// Nothing is saved while paused, so nothing is editable either; the page
 		// is redrawn whenever that changes. @see sections/pausedReadOnly.ts

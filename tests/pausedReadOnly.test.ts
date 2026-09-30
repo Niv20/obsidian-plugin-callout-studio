@@ -67,7 +67,11 @@ describe("the settings page while saving is paused", () => {
 		} }, container as unknown as HTMLElement, { pausedNote: true });
 		try {
 			status.freeze("missing");
-			assert.ok(container.textContent.includes(en["saveStatus.readOnlyWhilePaused"]!));
+			// In the calm first paragraph, right after the reassurance, rather than
+			// in a paragraph of its own at the end.
+			const first = container.querySelector(".cs-readonly-banner p")?.textContent ?? "";
+			assert.ok(first.startsWith(en["saveStatus.calm.opening"]!));
+			assert.ok(first.includes(en["saveStatus.calm.pausedPage"]!));
 		} finally { dispose(); }
 	});
 });

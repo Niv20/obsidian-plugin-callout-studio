@@ -1092,13 +1092,15 @@ export const da: Record<string, string> = {
 	"commandBuilder.missingCallout": "Sat på pause: callout'en mangler. Find eller opret den for at gendanne denne kommando, eller rediger kommandoen for at vælge en anden type.",
 	"confirm.titleRestoreSettings": "Gendan disse indstillinger",
 	"confirm.titleCreateSettingsFile": "Opret indstillingsfil",
-	"confirm.restoreDisplayedSettings": "Dette gemmer de callout-typer og indstillinger, der vises lige nu, i en indstillingsfil på denne enhed og genoptager lagring. Enhver læsbar lokal gendannelseskopi sikkerhedskopieres først.\nFør du fortsætter, skal du lade synkroniseringen blive færdig og kontrollere, om en anden enhed har nyere indstillinger, du vil beholde. Din synkroniseringstjeneste kan sende denne gendannede fil til dine andre enheder.\nFilen kontrolleres igen før lagring. Hvis eksisterende indstillinger findes, bevares de, og gendannelsen kan bede dig om at kontrollere igen.",
+	"confirm.saveDisplayedSettings":
+		"Dette gemmer den opsætning, du ser nu, som din indstillingsfil og slår gemning til igen. Den reservekopi, som denne enhed opbevarer, sikkerhedskopieres først.\nHvis en anden enhed måske har nyere ændringer, du vil beholde, så lad den blive færdig med at synkronisere, før du fortsætter. Din synkroniseringsapp kan sende denne fil videre til dine andre enheder.\nCallout Studio leder efter indstillingsfilen en sidste gang, før der gemmes. Hvis den er kommet tilbage, beholder Callout Studio den i stedet.",
 	"notice.settingsBackupFailed": "Gendannelse af indstillinger kunne ikke fortsætte, fordi en sikkerhedskopi ikke kunne gemmes. Tjek ledig lagerplads og skriverettigheder, og prøv så igen.",
 	"notice.settingsBackupSaved": "En gendannelseskopi af lokale callout-definitioner blev gemt, før de indkommende indstillinger blev anvendt: {{path}}.",
 	"notice.settingsChangedElsewhere": "Callout Studios indstillinger blev ændret på en anden enhed, så denne ændring blev ikke gemt. Den anden enheds indstillinger indlæses nu — foretag venligst ændringen igen.",
 	"notice.settingsNewerVersion": "Callout Studios indstillinger blev gemt af en nyere version af pluginet, så der bliver ikke skrevet noget på denne enhed, før du opdaterer det. Dine indstillinger er sikre — opdater Callout Studio her, og genindlæs Obsidian.",
 	"notice.settingsNotSaved": "Den ændring blev ikke gemt. Callout Studio kunne ikke bruge sin indstillingsfil, da Obsidian startede, så der bliver ikke skrevet noget på denne enhed — dine ændringer varer, indtil du lukker Obsidian. Se Indstillinger → Callout Studio for, hvad du kan gøre.",
-	"saveStatus.changed": "Indstillingsfilen ændrede sig, mens du redigerede. Dit udkast er stadig tilgængeligt. Vælg Prøv igen med gemning og gendannelse for at indlæse de indkommende indstillinger, og gennemgå så dit udkast og gem igen.",
+	"saveStatus.changed":
+		"Indstillingsfilen ændrede sig, mens du redigerede. Dit udkast er stadig tilgængeligt. Vælg Prøv igen for at indlæse de indkomne indstillinger, og gennemgå derefter dit udkast og gem igen.",
 	"saveStatus.missing": "Gemning er sat på pause, fordi indstillingsfilen mangler. Det kan ske efter geninstallation, eller mens synkronisering stadig kører. Afslut synkroniseringen, og prøv igen. For bevidst at erstatte den manglende fil skal du bruge Opret en ny indstillingsfil i Callout Studios indstillinger.",
 	"saveStatus.restoreSettings": "Gendan disse indstillinger",
 	"saveStatus.createSettingsFile": "Opret indstillingsfil",
@@ -1109,14 +1111,14 @@ export const da: Record<string, string> = {
 	"saveStatus.notesFailed": "Callout-definitionen blev gemt, men nogle noteopdateringer kunne ikke fuldføres. Lad denne editor være åben, og vælg Gem for at prøve de ufuldendte opdateringer igen.",
 	"saveStatus.recoveryRead": "Gemning er sat på pause, fordi den lokale gendannelseskopi ikke kan læses. Din indstillingsfil er muligvis stadig intakt. Tjek ledig lagerplads, og prøv så gendannelse igen. Eksisterende gendannelsesdata bliver ikke overskrevet.",
 	"saveStatus.recoveryWrite": "Den lokale gendannelseskopi kunne ikke gemmes. Tjek ledig lagerplads, og prøv så igen. Lad dit udkast være åbent, indtil gemningen lykkes.",
-	"saveStatus.retry": "Prøv igen med gemning og gendannelse",
 	"saveStatus.retryFailed": "Gemning er stadig blokeret. Tjek gemmestatussen i Callout Studios indstillinger for at finde årsagen, og prøv så igen.",
-	"saveStatus.retrying": "Kontrollerer gemning og gendannelse…",
 	"saveStatus.reviewDraft": "Indkommende indstillinger og gendannelseskontroller er fuldført. Dit udkast er uændret. Gennemgå det, og gem igen.",
 	"saveStatus.settingsArrived": "Eksisterende indstillinger ankom og blev indlæst. Der blev ikke oprettet en erstatningsfil.",
 	"saveStatus.syncConflict": "Indkommende indstillinger er i konflikt med en callout, der er nødvendig for ufuldendte noteopdateringer. Dit udkast og ventende opdateringer er blevet bevaret. Løs konflikten i indstillingerne, før du prøver igen.",
 	"saveStatus.titlePaused": "Gemning er sat på pause",
 	"saveStatus.titleFailed": "Indstillingerne blev ikke gemt",
+	"saveStatus.tryAgain": "Prøv igen",
+	"saveStatus.working": "Arbejder på det…",
 	"saveStatus.unreadable": "Gemning er sat på pause, fordi indstillingsfilen ikke kan læses sikkert. Afslut synkroniseringen, eller gendan en gyldig kopi, og prøv så igen. Den eksisterende fil er blevet bevaret.",
 	"saveStatus.write": "Indstillingsfilen kunne ikke gemmes. Tjek ledig lagerplads, mapperettigheder og synkronisering, og prøv så igen, før du lukker Obsidian.",
 	"saveStatus.writePermission": "Indstillingsfilen kunne ikke gemmes, fordi lagerpladsen nægtede skriveadgang. Tjek, at vaulten og plugin-mappen kan skrives til, og prøv så igen.",
@@ -1124,8 +1126,6 @@ export const da: Record<string, string> = {
 	"settings.readOnly": "Callout Studio kunne ikke bruge sin indstillingsfil, da Obsidian startede, så intet på denne side bliver gemt på denne enhed. Dine ændringer varer, indtil du lukker Obsidian. Genindlæs Obsidian, når filen er tilbage — hvis du synkroniserer denne vault, så lad synkroniseringen blive færdig først.",
 
 	// Sync safety hardening
-	"saveStatus.stillMissingAdvice":
-		"Indstillingsfilen mangler stadig. At tjekke igen genskaber den ikke. Lad synkroniseringen blive færdig, og gør vaulten tilgængelig offline. Hvis filen blev slettet, så vælg Erstat indstillingsfil, eller gendan en tidligere opsætning.",
 	"saveStatus.diagnosis.unavailable":
 		"Denne enhed kan ikke åbne filen lige nu. Den kan stadig være ved at downloade, vaulten er måske ikke tilgængelig offline, eller lagerplads svarer ikke. Callout Studio prøver automatisk igen.",
 	"saveStatus.diagnosis.empty": "Filen er tom, hvilket normalt betyder, at en synkronisering blev afbrudt. Hvis en anden enhed stadig har dine indstillinger, så lad den synkronisere. Ellers skal filen erstattes.",
@@ -1136,12 +1136,42 @@ export const da: Record<string, string> = {
 	"saveStatus.diagnosis.invalidEntries": "Filen indeholder poster, som Callout Studio ikke kan bruge, for eksempel samme callout-type angivet to gange.",
 	"saveStatus.replaceUnreadable": "Erstat indstillingsfil",
 	"saveStatus.discardRecoveryCopy": "Kassér gendannelseskopi",
-	"saveStatus.openRecovery": "Gendan en tidligere opsætning",
-	"saveStatus.readOnlyWhilePaused":
-		"Indstillinger kan ikke ændres, før gemning virker igen, så intet du ændrer her, går tabt. Du kan stadig eksportere din opsætning.",
+	"saveStatus.calm.opening": "Først og fremmest: træk vejret dybt — alt bliver godt.",
+	"saveStatus.calm.kept": "Dine noter er i sikkerhed, og dine callouts er stadig her på denne enhed.",
+	"saveStatus.calm.safe": "Dine noter er i sikkerhed.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio har kun sat gemningen på pause for at beskytte din opsætning, så denne side er skrivebeskyttet for nu.",
+	"saveStatus.calm.paused": "Callout Studio har kun sat gemningen på pause for at beskytte din opsætning.",
+	"saveStatus.explain.missing":
+		"Callout Studio kan ikke finde sin indstillingsfil. Det sker som regel, mens din synkroniseringsapp stadig henter den, eller efter at Callout Studio er blevet fjernet på en anden enhed.",
+	"saveStatus.explain.stillMissing":
+		"Indstillingsfilen er stadig ikke tilbage. Kontrollen leder kun efter den og opretter aldrig en ny. Hvis dit vault ligger i iCloud, OneDrive, Google Drive eller Dropbox, så sørg for, at det er indstillet til at blive hentet og forblive på denne enhed.",
+	"saveStatus.explain.unreadable":
+		"Callout Studio kan ikke læse sin indstillingsfil lige nu, så den har ladet filen ligge præcis som den er.",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio gemmer en reservekopi af dine indstillinger på denne enhed, og den kopi kan ikke læses lige nu. Selve indstillingsfilen er måske i orden.",
+	"saveStatus.explain.newerVersion":
+		"Dine indstillinger blev gemt af en nyere version af Callout Studio, så denne ældre version ændrer dem ikke.",
+	"saveStatus.explain.changed":
+		"Indstillingsfilen ændrede sig, mens Callout Studio arbejdede med den, så den stoppede uden at erstatte noget.",
+	"saveStatus.guide.rechecks": "Callout Studio tjekker igen hvert minut, så længe Obsidian er åben, så det løser sig ofte af sig selv.",
+	"saveStatus.guide.rechecksCheckNow":
+		"Callout Studio tjekker igen hvert minut, så længe Obsidian er åben, så det løser sig ofte af sig selv — eller vælg Kontrollér igen for at tjekke med det samme.",
+	"saveStatus.guide.restore":
+		"Hvis dine indstillinger ikke kommer tilbage, så vælg Gendan disse indstillinger for at beholde de callouts, du ser her.",
+	"saveStatus.guide.create": "Hvis dine indstillinger ikke kommer tilbage, så vælg Opret indstillingsfil for at begynde at gemme igen.",
+	"saveStatus.guide.backup": "Når gemning virker igen, kan du også hente en tidligere version frem fra afsnittet Sikkerhedskopi.",
+	"saveStatus.guide.recoveryRetry": "Sørg for, at der er noget ledig lagerplads på denne enhed, og vælg derefter Prøv igen.",
+	"saveStatus.guide.recoveryDiscard":
+		"Hvis det ikke hjælper, så vælg Kassér gendannelseskopi. Der gemmes først en nøjagtig kopi, og din indstillingsfil bliver ikke rørt.",
+	"saveStatus.guide.newerVersion": "Opdatér Callout Studio under Indstillinger → Fællesskabsplugins, og genindlæs derefter Obsidian.",
+	"saveStatus.goToBackups": "Gå til sikkerhedskopier",
+	"saveStatus.missingNotice":
+		"Dine noter er i sikkerhed. Callout Studio har sat gemning på pause, fordi den ikke kan finde sin indstillingsfil lige nu.",
 	"statusBar.paused": "Gemning sat på pause",
 	"statusBar.pausedTooltip": "Callout Studio gemmer ikke indstillingsændringer. Klik for at se hvorfor.",
 	"statusBar.pausedNotice": "Callout Studio gemmer ikke indstillingsændringer lige nu.",
+	"saveStatus.resumed": "Gemning er slået til igen. Callout Studio gemmer igen ændringer af indstillingerne.",
 	"notice.replaceUnreadableUnavailable": "Indstillingsfilen kan ikke erstattes lige nu: den ændrer sig, eller denne enhed kan ikke læse den. Prøv igen om lidt.",
 	"notice.recoveryStorageUnavailable": "Denne enheds gendannelseslager svarer ikke, så kopien kan ikke kasseres. Genstart Obsidian, og prøv så igen.",
 	"recovery.title": "Gendan en tidligere opsætning",

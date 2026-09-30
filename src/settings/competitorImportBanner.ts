@@ -2,6 +2,7 @@
 import { setIcon, type App } from "obsidian";
 import { getLocale, t } from "../i18n";
 import type { SettingsSectionContext } from "./sections/types";
+import { createTargetHighlighter } from "./targetHighlighter";
 import {
 	isCompetitorImportBannerForced,
 	markCompetitorImportBannerHandled,
@@ -64,71 +65,6 @@ export function competitorImportMessage(
 	});
 }
 
-type TargetHighlighter = { run: () => void; dispose: () => void };
-
-function createTargetHighlighter(target: HTMLElement): TargetHighlighter {
-	let observer: IntersectionObserver | null = null;
-	let fallbackTimer: number | null = null;
-	let classTimer: number | null = null;
-
-	const stopWaiting = (): void => {
-		observer?.disconnect();
-		observer = null;
-		if (fallbackTimer !== null) window.clearTimeout(fallbackTimer);
-		fallbackTimer = null;
-	};
-
-	const highlight = (): void => {
-		stopWaiting();
-		target.classList.remove("cs-import-target-highlight");
-		// Animate back to the row's real resting paint rather than to
-		// `transparent`. Some themes give setting rows an opaque grey background;
-		// ending on transparency and then removing the class made that grey appear
-		// as a separate, abrupt final step.
-		const restingStyle = window.getComputedStyle(target);
-		target.style.setProperty(
-			"--cs-import-target-rest-bg",
-			restingStyle.backgroundColor,
-		);
-		target.style.setProperty(
-			"--cs-import-target-rest-shadow",
-			restingStyle.boxShadow,
-		);
-		// Restart the animation when the action is clicked more than once.
-		void target.offsetWidth;
-		target.classList.add("cs-import-target-highlight");
-		if (classTimer !== null) window.clearTimeout(classTimer);
-		classTimer = window.setTimeout(() => {
-			target.classList.remove("cs-import-target-highlight");
-			classTimer = null;
-		}, 1600);
-	};
-
-	return {
-		run: () => {
-			stopWaiting();
-			if (typeof IntersectionObserver !== "undefined") {
-				observer = new IntersectionObserver((entries) => {
-					if (entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.8)) {
-						highlight();
-					}
-				}, { threshold: [0.8] });
-				observer.observe(target);
-			}
-			// Older Obsidian/Electron builds get a conservative fallback after the
-			// smooth scroll has had time to settle.
-			fallbackTimer = window.setTimeout(highlight, 1000);
-			target.scrollIntoView({ behavior: "smooth", block: "center" });
-		},
-		dispose: () => {
-			stopWaiting();
-			if (classTimer !== null) window.clearTimeout(classTimer);
-			classTimer = null;
-			target.classList.remove("cs-import-target-highlight");
-		},
-	};
-}
-
 export function renderCompetitorImportBanner(
 	ctx: SettingsSectionContext,
 	containerEl: HTMLElement,
@@ -157,7 +93,8 @@ export function renderCompetitorImportBanner(
 		cls: "mod-cta cs-competitor-import-banner-action",
 		text: t("importBanner.action"),
 	});
-	importButton.addEventListener("click", highlighter.run);
+	// A click from Enter or Space carries no pointer detail; it shows the ring.
+	importButton.addEventListener("click", (event) => { highlighter.run(event.detail === 0); });
 
 	const dismissButton = banner.createEl("button", {
 		cls: "clickable-icon cs-competitor-import-banner-dismiss",

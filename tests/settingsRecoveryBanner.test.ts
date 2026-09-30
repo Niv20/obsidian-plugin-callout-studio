@@ -13,17 +13,20 @@ import { definition } from "./support/discoveryHarness";
 
 const dom = installFakeDom();
 
-function bannerHarness(hasRecoveryState: boolean, restore = true, retry: () => Promise<boolean> = async () => false) {
+function bannerHarness(hasRecoveryState: boolean, restore = true, retry: () => Promise<boolean> = async () => false,
+	startFresh: () => Promise<boolean> = async () => true) {
 	const status = new SettingsSaveStatus();
 	const host = { app: {} as App, settingsWriter: {
 		status, get isFrozen() { return status.frozenReason !== null; }, isDestroyed: false, hasRecoveryState,
 	} };
 	const container = dom.document.createElement("div");
 	const dispose = renderSaveStatusBanner(host, container as unknown as HTMLElement, {
-		retry, ...(restore ? { startFresh: async () => true } : {}),
+		retry, ...(restore ? { startFresh } : {}),
 	});
 	status.freeze("missing");
-	return { container, status, dispose };
+	const buttons = () => container.querySelectorAll("button");
+	const button = (label: string) => buttons().find(candidate => candidate.textContent === label)!;
+	return { container, status, dispose, buttons, button, labels: () => buttons().map(candidate => candidate.textContent) };
 }
 
 describe("missing settings recovery banner", () => {
@@ -38,35 +41,62 @@ describe("missing settings recovery banner", () => {
 			h.host.registry.add(definition({ id: "local-change" }));
 			await h.host.saveSettings();
 			assert.equal(container.querySelector(".cs-readonly-banner-title")?.textContent, "Saving is paused");
-			assert.deepEqual(container.querySelectorAll("button").map(button => button.textContent), ["Restore these settings", "Check again"]);
+			assert.deepEqual(container.querySelectorAll("button").map(button => button.textContent), ["Check again", "Restore these settings"]);
 			assert.equal(container.querySelector(".mod-warning"), null);
 		} finally { dispose(); h.host.settingsWriter.destroy(); }
 	});
 	for (const recovered of [true, false]) {
-		it(`uses ${recovered ? "restore" : "create"} wording for ${recovered ? "a saved recovery" : "an unavailable recovery"} state`, () => {
+		it(`asks to check first, then offers ${recovered ? "restore" : "create"} wording for ${recovered ? "a saved recovery" : "an unavailable recovery"} state`, () => {
 			const h = bannerHarness(recovered);
 			try {
-				const buttons = h.container.querySelectorAll("button");
-				assert.equal(buttons[0]?.textContent, recovered ? "Restore these settings" : "Create settings file");
-				assert.equal(buttons[0]?.hasClass("mod-cta"), recovered);
-				assert.equal(buttons[1]?.textContent, "Check again");
+				const restore = recovered ? "Restore these settings" : "Create settings file";
+				assert.deepEqual(h.labels(), ["Check again", restore]);
+				assert.equal(h.button("Check again").hasClass("mod-cta"), true, "checking is the first step");
+				assert.equal(h.button(restore).hasClass("mod-cta"), false);
 				assert.equal(h.container.querySelector(".mod-warning"), null);
 			} finally { h.dispose(); }
+		});
+	}
+	for (const recovered of [true, false]) {
+		it(`leads with ${recovered ? "restore" : "create"} once a check has come back empty, and keeps it there`, async () => {
+			let cancelled = false;
+			const h = bannerHarness(recovered, true, async () => false);
+			const confirm = Object.getOwnPropertyDescriptor(ConfirmModal.prototype, "confirm")!;
+			ConfirmModal.prototype.confirm = function () { cancelled = true; return Promise.resolve(false); };
+			try {
+				const restore = recovered ? "Restore these settings" : "Create settings file";
+				h.button("Check again").fire("click");
+				await new Promise(resolve => setImmediate(resolve));
+				assert.deepEqual(h.labels(), [restore, "Check again"]);
+				// Restoring the setup shown is the main step now; creating a file from
+				// what may be only the built-ins never is.
+				assert.equal(h.button(restore).hasClass("mod-cta"), recovered);
+				assert.equal(h.button("Check again").hasClass("mod-cta"), false);
+				// A cancelled confirmation does not send the reader back to step one.
+				h.button(restore).fire("click");
+				await new Promise(resolve => setImmediate(resolve));
+				assert.equal(cancelled, true);
+				assert.deepEqual(h.labels(), [restore, "Check again"]);
+				assert.equal(h.button(restore).hasClass("mod-cta"), recovered);
+			} finally { h.dispose(); Object.defineProperty(ConfirmModal.prototype, "confirm", confirm); }
 		});
 	}
 	it("keeps the result of a completed check visible and leaves further checks available", async () => {
 		let finish!: (value: boolean) => void;
 		const h = bannerHarness(true, true, () => new Promise(resolve => { finish = resolve; }));
 		try {
-			h.container.querySelectorAll("button")[1]!.dispatchEvent({ type: "click" });
-			assert.match(h.container.textContent, /Checking saving and recovery/);
-			assert.ok(h.container.querySelectorAll("button").every(button => button.disabled));
+			h.button("Check again").fire("click");
+			assert.match(h.container.textContent, /Working on it…/);
+			assert.match(h.container.textContent, /take a deep breath/, "the calm opening stays while checking");
+			assert.deepEqual(h.labels(), ["Check again", "Restore these settings"], "the order holds while checking");
+			assert.ok(h.buttons().every(button => button.disabled));
 			finish(false); await Promise.resolve(); await Promise.resolve();
-			assert.match(h.container.textContent, /The settings file is still missing/);
-			assert.match(h.container.textContent, /Checking again does not recreate it/);
-			assert.ok(h.container.querySelectorAll("button").every(button => !button.disabled));
+			assert.match(h.container.textContent, /The settings file still isn't back/);
+			assert.match(h.container.textContent, /it never creates a new one/);
+			assert.match(h.container.textContent, /iCloud, OneDrive, Google Drive or Dropbox/);
+			assert.ok(h.buttons().every(button => !button.disabled));
 			h.status.clear();
-			assert.match(h.container.textContent, /The settings file is still missing/);
+			assert.match(h.container.textContent, /The settings file still isn't back/);
 			h.status.thaw();
 			assert.equal(h.container.querySelector(".cs-readonly-banner"), null);
 		} finally { h.dispose(); }
@@ -84,10 +114,10 @@ describe("missing settings recovery banner", () => {
 		try {
 			h.status.thaw(); h.status.fail("write");
 			assert.equal(h.container.querySelector(".cs-readonly-banner-title")?.textContent, "Settings were not saved");
-			assert.deepEqual(h.container.querySelectorAll("button").map(button => button.textContent), ["Retry saving and recovery"]);
+			assert.deepEqual(h.container.querySelectorAll("button").map(button => button.textContent), ["Try again"]);
 			h.status.freeze("unreadable");
 			assert.equal(h.container.querySelectorAll("button").length, 1);
-			assert.match(h.container.textContent, /The existing file has been kept/);
+			assert.match(h.container.textContent, /it has left the file exactly as it is/);
 		} finally { h.dispose(); }
 	});
 	it("falls back to revised English when an existing translation only contains the old reset wording", async () => {
@@ -101,7 +131,7 @@ describe("missing settings recovery banner", () => {
 			});
 			setLocale("test-old-recovery");
 			const h = bannerHarness(true);
-			try { assert.equal(h.container.querySelector("button")?.textContent, "Restore these settings"); }
+			try { assert.ok(h.labels().includes("Restore these settings")); }
 			finally { h.dispose(); }
 			ConfirmModal.prototype.confirm = function () {
 				confirmation = this as unknown as NonNullable<typeof confirmation>;
@@ -111,9 +141,13 @@ describe("missing settings recovery banner", () => {
 			assert.equal(confirmation?.title, en["confirm.titleRestoreSettings"]);
 			assert.equal(confirmation?.confirmLabel, "Restore these settings");
 			assert.equal(confirmation?.confirmClass, "mod-cta");
-			assert.match(confirmation?.message ?? "", /callout types and preferences currently shown/);
-			assert.match(confirmation?.message ?? "", /recovery copy is backed up first/);
+			// Plain words, the same safety facts: what is saved, what is backed up
+			// first, what reaches the other devices, and the last look for the file.
+			assert.equal(confirmation?.message, en["confirm.saveDisplayedSettings"]);
+			assert.match(confirmation?.message ?? "", /saves the setup you see now/);
+			assert.match(confirmation?.message ?? "", /backed up first/);
 			assert.match(confirmation?.message ?? "", /other devices/);
+			assert.match(confirmation?.message ?? "", /looks for the settings file once more/);
 		} finally {
 			setLocale(locale);
 			Object.defineProperty(ConfirmModal.prototype, "confirm", original);
@@ -122,7 +156,8 @@ describe("missing settings recovery banner", () => {
 });
 
 describe("the way out of an unreadable file", () => {
-	function unreadable(diagnosis: import("../src/manager/settingsDiagnosis").SettingsDiagnosis, reason: "unreadable" | "recovery-read" = "unreadable") {
+	function unreadable(diagnosis: import("../src/manager/settingsDiagnosis").SettingsDiagnosis, reason: "unreadable" | "recovery-read" = "unreadable",
+		diagnoses: import("../src/manager/settingsDiagnosis").SettingsDiagnosis[] = []) {
 		const status = new SettingsSaveStatus();
 		const host = { app: {} as App, settingsWriter: {
 			status, get isFrozen() { return status.frozenReason !== null; }, isDestroyed: false,
@@ -131,10 +166,11 @@ describe("the way out of an unreadable file", () => {
 		const container = dom.document.createElement("div");
 		const dispose = renderSaveStatusBanner(host, container as unknown as HTMLElement, {
 			retry: async () => false,
-			diagnose: async () => diagnosis,
+			// Later looks can find something else: a file that changed meanwhile.
+			diagnose: async () => diagnoses.shift() ?? diagnosis,
 			replaceUnreadable: async () => { calls.push("replace"); return true; },
 			discardRecoveryCopy: async () => { calls.push("discard"); return true; },
-			openRecovery: () => { calls.push("recovery"); },
+			showBackup: () => { calls.push("backup"); },
 		});
 		status.freeze(reason);
 		return { container, calls, dispose, buttons: () => container.querySelectorAll("button") };
@@ -179,15 +215,74 @@ describe("the way out of an unreadable file", () => {
 		} finally { h.dispose(); Object.defineProperty(ConfirmModal.prototype, "confirm", confirm); }
 	});
 
-	it("offers to discard an unreadable recovery copy, and earlier setups in every paused state", async () => {
+	it("offers replacing a combined file as the step to take, since it keeps every setting", async () => {
+		const confirm = Object.getOwnPropertyDescriptor(ConfirmModal.prototype, "confirm")!;
+		const classes: string[] = [];
+		ConfirmModal.prototype.confirm = function (this: ConfirmModal) {
+			classes.push((this as unknown as { confirmClass: string }).confirmClass);
+			return Promise.resolve(true);
+		};
+		const h = unreadable("combined");
+		try {
+			await settle();
+			const replace = h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"])!;
+			assert.ok(replace.hasClass("mod-cta"), "not red: nothing is lost");
+			assert.ok(!replace.hasClass("mod-warning"));
+			const tryAgain = h.buttons().find(button => button.textContent === en["saveStatus.tryAgain"])!;
+			assert.ok(!tryAgain.hasClass("mod-cta"), "one main button");
+			replace.fire("click"); await settle(); await settle();
+			assert.deepEqual(classes, ["mod-cta"], "and its confirmation is not a warning either");
+			assert.deepEqual(h.calls, ["replace"]);
+		} finally { h.dispose(); Object.defineProperty(ConfirmModal.prototype, "confirm", confirm); }
+	});
+
+	it("keeps a warning for every cause that loses what the file held", async () => {
+		const confirm = Object.getOwnPropertyDescriptor(ConfirmModal.prototype, "confirm")!;
+		const classes: string[] = [];
+		ConfirmModal.prototype.confirm = function (this: ConfirmModal) {
+			classes.push((this as unknown as { confirmClass: string }).confirmClass);
+			return Promise.resolve(false);
+		};
+		try {
+			for (const cause of ["empty", "merge-markers", "damaged", "invalid-entries"] as const) {
+				const h = unreadable(cause);
+				try {
+					await settle();
+					const replace = h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"])!;
+					assert.ok(replace.hasClass("mod-warning"), cause);
+					replace.fire("click"); await settle();
+				} finally { h.dispose(); }
+			}
+			assert.deepEqual(classes, ["mod-warning", "mod-warning", "mod-warning", "mod-warning"]);
+		} finally { Object.defineProperty(ConfirmModal.prototype, "confirm", confirm); }
+	});
+
+	it("does not replace a combined file that has since become another kind of broken", async () => {
+		const confirm = Object.getOwnPropertyDescriptor(ConfirmModal.prototype, "confirm")!;
+		ConfirmModal.prototype.confirm = () => Promise.resolve(true);
+		// First look: combined. The look after the yes: damaged.
+		const h = unreadable("damaged", "unreadable", ["combined", "damaged"]);
+		try {
+			await settle();
+			const replace = h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"])!;
+			assert.ok(replace.hasClass("mod-cta"));
+			replace.fire("click"); await settle(); await settle(); await settle();
+			assert.deepEqual(h.calls, [], "the promise to keep everything no longer holds");
+			// The banner looked again, and now says what the file is.
+			assert.ok(h.container.textContent.includes(en["saveStatus.diagnosis.damaged"]!));
+			assert.ok(h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"])!.hasClass("mod-warning"));
+		} finally { h.dispose(); Object.defineProperty(ConfirmModal.prototype, "confirm", confirm); }
+	});
+
+	it("offers to discard an unreadable recovery copy, and the way to backups in every paused state", async () => {
 		const h = unreadable("readable", "recovery-read");
 		try {
 			await settle();
 			const labels = h.buttons().map(button => button.textContent);
 			assert.ok(labels.includes(en["saveStatus.discardRecoveryCopy"]!));
-			assert.ok(labels.includes(en["saveStatus.openRecovery"]!));
-			h.buttons().find(button => button.textContent === en["saveStatus.openRecovery"])!.fire("click");
-			assert.deepEqual(h.calls, ["recovery"]);
+			assert.ok(labels.includes(en["saveStatus.goToBackups"]!));
+			h.buttons().find(button => button.textContent === en["saveStatus.goToBackups"])!.fire("click");
+			assert.deepEqual(h.calls, ["backup"], "Go to backups navigates; it runs no recovery action");
 		} finally { h.dispose(); }
 	});
 });

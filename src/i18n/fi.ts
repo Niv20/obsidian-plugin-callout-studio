@@ -1105,13 +1105,15 @@ export const fi: Record<string, string> = {
 	"commandBuilder.missingCallout": "Keskeytetty: callout puuttuu. Etsi tai luo se palauttaaksesi tämän komennon, tai muokkaa komentoa valitaksesi toisen tyypin.",
 	"confirm.titleRestoreSettings": "Palauta nämä asetukset",
 	"confirm.titleCreateSettingsFile": "Luo asetustiedosto",
-	"confirm.restoreDisplayedSettings": "Tämä tallentaa parhaillaan näkyvät callout-tyypit ja asetukset tämän laitteen asetustiedostoon ja jatkaa tallentamista. Kaikki luettavat paikalliset palautuskopiot varmuuskopioidaan ensin.\nEnnen kuin jatkat, anna synkronointipalvelun valmistua ja tarkista, onko toisella laitteella uudempia asetuksia, jotka haluat säilyttää. Synkronointipalvelusi voi lähettää tämän palautetun tiedoston muille laitteillesi.\nTiedosto tarkistetaan uudelleen ennen tallennusta. Jos olemassa olevia asetuksia löytyy, ne säilytetään ja palautus voi pyytää sinua tarkistamaan uudelleen.",
+	"confirm.saveDisplayedSettings":
+		"Tämä tallentaa nyt näkemäsi asetukset asetustiedostoksi ja kytkee tallennuksen takaisin päälle. Tämän laitteen säilyttämästä varakopiosta tehdään ensin varmuuskopio.\nJos toisella laitteella voi olla uudempia muutoksia, jotka haluat säilyttää, anna sen viimeistellä synkronointi ennen kuin jatkat. Synkronointisovelluksesi voi lähettää tämän tiedoston muille laitteillesi.\nCallout Studio etsii asetustiedostoa vielä kerran ennen tallennusta. Jos se on palannut, Callout Studio säilyttää sen.",
 	"notice.settingsBackupFailed": "Asetusten palautusta ei voitu jatkaa, koska varmuuskopiota ei voitu tallentaa. Tarkista käytettävissä oleva tallennustila ja kirjoitusoikeudet, ja yritä sitten uudelleen.",
 	"notice.settingsBackupSaved": "Paikallisten callout-määritysten palautuskopio tallennettiin ennen saapuvien asetusten käyttöönottoa: {{path}}.",
 	"notice.settingsChangedElsewhere": "Callout Studion asetuksia muutettiin toisella laitteella, joten tätä muutosta ei tallennettu. Toisen laitteen asetuksia ladataan nyt — tee muutos uudelleen.",
 	"notice.settingsNewerVersion": "Callout Studion asetukset tallensi lisäosan uudempi versio, joten tälle laitteelle ei kirjoiteta mitään ennen kuin päivität sen. Asetuksesi ovat turvassa — päivitä Callout Studio täältä ja lataa Obsidian uudelleen.",
 	"notice.settingsNotSaved": "Tuota muutosta ei tallennettu. Callout Studio ei voinut käyttää asetustiedostoaan Obsidianin käynnistyessä, joten tälle laitteelle ei kirjoiteta mitään — muutoksesi säilyvät, kunnes suljet Obsidianin. Katso Asetukset → Callout Studio nähdäksesi, mitä tehdä.",
-	"saveStatus.changed": "Asetustiedosto muuttui muokkauksesi aikana. Luonnoksesi on yhä käytettävissä. Valitse Yritä tallennusta ja palautusta uudelleen ladataksesi saapuvat asetukset, tarkista sitten luonnoksesi ja tallenna uudelleen.",
+	"saveStatus.changed":
+		"Asetustiedosto muuttui, kun muokkasit sitä. Luonnoksesi on yhä saatavilla. Valitse Yritä uudelleen ladataksesi saapuneet asetukset, tarkista sitten luonnos ja tallenna uudelleen.",
 	"saveStatus.missing": "Tallennus on keskeytetty, koska asetustiedosto puuttuu. Näin voi käydä uudelleenasennuksen jälkeen tai kun synkronointi on vielä käynnissä. Viimeistele synkronointi ja yritä uudelleen. Korvataksesi puuttuvan tiedoston tarkoituksella, käytä Luo uusi asetustiedosto -toimintoa Callout Studion asetuksissa.",
 	"saveStatus.restoreSettings": "Palauta nämä asetukset",
 	"saveStatus.createSettingsFile": "Luo asetustiedosto",
@@ -1122,14 +1124,14 @@ export const fi: Record<string, string> = {
 	"saveStatus.notesFailed": "Callout-määritys tallennettiin, mutta joitakin muistiinpanopäivityksiä ei voitu viedä loppuun. Pidä tämä muokkain auki ja valitse Tallenna yrittääksesi keskeneräisiä päivityksiä uudelleen.",
 	"saveStatus.recoveryRead": "Tallennus on keskeytetty, koska paikallista palautuskopiota ei voida lukea. Asetustiedostosi voi silti olla ehjä. Tarkista käytettävissä oleva tallennustila ja yritä sitten palautusta uudelleen. Olemassa olevaa palautusdataa ei korvata.",
 	"saveStatus.recoveryWrite": "Paikallista palautuskopiota ei voitu tallentaa. Tarkista käytettävissä oleva tallennustila ja yritä sitten uudelleen. Pidä luonnoksesi auki, kunnes tallennus onnistuu.",
-	"saveStatus.retry": "Yritä tallennusta ja palautusta uudelleen",
 	"saveStatus.retryFailed": "Tallennus on yhä estetty. Tarkista tallennuksen tila Callout Studion asetuksista syyn selvittämiseksi ja yritä sitten uudelleen.",
-	"saveStatus.retrying": "Tarkistetaan tallennusta ja palautusta…",
 	"saveStatus.reviewDraft": "Saapuvat asetukset ja palautustarkistukset on tehty. Luonnoksesi on muuttumaton. Tarkista se ja tallenna uudelleen.",
 	"saveStatus.settingsArrived": "Olemassa olevat asetukset saapuivat ja ladattiin. Korvaavaa tiedostoa ei luotu.",
 	"saveStatus.syncConflict": "Saapuvat asetukset ovat ristiriidassa calloutin kanssa, jota tarvitaan keskeneräisiin muistiinpanopäivityksiin. Luonnoksesi ja odottavat päivitykset on säilytetty. Ratkaise asetusristiriita ennen uudelleenyritystä.",
 	"saveStatus.titlePaused": "Tallennus on keskeytetty",
 	"saveStatus.titleFailed": "Asetuksia ei tallennettu",
+	"saveStatus.tryAgain": "Yritä uudelleen",
+	"saveStatus.working": "Työstetään…",
 	"saveStatus.unreadable": "Tallennus on keskeytetty, koska asetustiedostoa ei voida lukea turvallisesti. Viimeistele synkronointi tai palauta kelvollinen kopio, ja yritä sitten uudelleen. Olemassa oleva tiedosto on säilytetty.",
 	"saveStatus.write": "Asetustiedostoa ei voitu tallentaa. Tarkista käytettävissä oleva tallennustila, kansion oikeudet ja synkronointi, ja yritä sitten uudelleen ennen Obsidianin sulkemista.",
 	"saveStatus.writePermission": "Asetustiedostoa ei voitu tallentaa, koska tallennustila esti kirjoitusoikeuden. Tarkista, että holvi ja lisäosakansio ovat kirjoitettavissa, ja yritä sitten uudelleen.",
@@ -1137,7 +1139,6 @@ export const fi: Record<string, string> = {
 	"settings.readOnly": "Callout Studio ei voinut käyttää asetustiedostoaan Obsidianin käynnistyessä, joten mitään tällä sivulla ei tallenneta tälle laitteelle. Muutoksesi säilyvät, kunnes suljet Obsidianin. Lataa Obsidian uudelleen, kun tiedosto on taas paikallaan — jos synkronoit tätä holvia, anna synkronoinnin valmistua ensin.",
 
 	// Sync safety hardening
-	"saveStatus.stillMissingAdvice": "Asetustiedosto puuttuu edelleen. Uudelleentarkistus ei luo sitä uudelleen. Anna synkronoinnin valmistua ja varmista, että holvi on saatavilla myös offline-tilassa. Jos tiedosto poistettiin, valitse Palauta nämä asetukset tai palauta aiempi asetuskokonaisuus.",
 	"saveStatus.diagnosis.unavailable": "Tämä laite ei voi avata tiedostoa juuri nyt. Se voi olla vielä latautumassa, holvi ei ehkä ole saatavilla offline-tilassa, tai tallennustila ei vastaa. Callout Studio tarkistaa asian uudelleen automaattisesti.",
 	"saveStatus.diagnosis.empty": "Tiedosto on tyhjä, mikä yleensä tarkoittaa, että synkronointi keskeytyi. Jos toisella laitteella on yhä asetuksesi tallessa, anna sen synkronoida. Muussa tapauksessa korvaa tiedosto.",
 	"saveStatus.diagnosis.mergeMarkers": "Tiedosto sisältää ratkaisemattomia yhdistämisristiriitojen merkintöjä, esimerkiksi Gitistä. Ratkaise ristiriita Git-työkalussasi tai korvaa tiedosto.",
@@ -1146,11 +1147,40 @@ export const fi: Record<string, string> = {
 	"saveStatus.diagnosis.invalidEntries": "Tiedosto sisältää merkintöjä, joita Callout Studio ei voi käyttää, esimerkiksi saman callout-tyypin kahteen kertaan.",
 	"saveStatus.replaceUnreadable": "Korvaa asetustiedosto",
 	"saveStatus.discardRecoveryCopy": "Hylkää palautuskopio",
-	"saveStatus.openRecovery": "Palauta aiempi asetuskokonaisuus",
-	"saveStatus.readOnlyWhilePaused": "Asetuksia ei voi muuttaa, ennen kuin tallennus toimii jälleen, joten mitään tekemääsi muutosta ei menetetä. Voit silti viedä asetuksesi.",
+	"saveStatus.calm.opening": "Ensin hengitä syvään — kaikki järjestyy.",
+	"saveStatus.calm.kept": "Muistiinpanosi ovat turvassa, ja calloutit ovat yhä täällä tällä laitteella.",
+	"saveStatus.calm.safe": "Muistiinpanosi ovat turvassa.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio on vain keskeyttänyt tallennuksen suojatakseen asetuksesi, joten tämä sivu on toistaiseksi vain luku -tilassa.",
+	"saveStatus.calm.paused": "Callout Studio on vain keskeyttänyt tallennuksen suojatakseen asetuksesi.",
+	"saveStatus.explain.missing":
+		"Callout Studio ei löydä asetustiedostoaan. Tämä tapahtuu yleensä, kun synkronointisovellus vielä lataa sitä, tai kun Callout Studio on poistettu toiselta laitteelta.",
+	"saveStatus.explain.stillMissing":
+		"Asetustiedosto ei ole vielä palannut. Tarkistus vain etsii sitä eikä koskaan luo uutta. Jos holvisi on iCloudissa, OneDrivessa, Google Drivessa tai Dropboxissa, varmista, että se pysyy ladattuna tällä laitteella.",
+	"saveStatus.explain.unreadable":
+		"Callout Studio ei voi juuri nyt lukea asetustiedostoaan, joten se on jättänyt tiedoston täsmälleen ennalleen.",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio säilyttää tällä laitteella varakopiota asetuksistasi, eikä tuota kopiota voi juuri nyt lukea. Itse asetustiedosto voi olla kunnossa.",
+	"saveStatus.explain.newerVersion": "Asetuksesi on tallentanut Callout Studion uudempi versio, joten tämä vanhempi versio ei muuta niitä.",
+	"saveStatus.explain.changed": "Asetustiedosto muuttui, kun Callout Studio työskenteli sen kanssa, joten se pysähtyi korvaamatta mitään.",
+	"saveStatus.guide.rechecks":
+		"Callout Studio tarkistaa uudelleen joka minuutti, kun Obsidian on auki, joten tämä korjaantuu usein itsestään.",
+	"saveStatus.guide.rechecksCheckNow":
+		"Callout Studio tarkistaa uudelleen joka minuutti, kun Obsidian on auki, joten tämä korjaantuu usein itsestään — tai valitse Tarkista uudelleen katsoaksesi heti.",
+	"saveStatus.guide.restore": "Jos asetuksesi eivät palaa, valitse Palauta nämä asetukset säilyttääksesi täällä näkyvät calloutit.",
+	"saveStatus.guide.create": "Jos asetuksesi eivät palaa, valitse Luo asetustiedosto aloittaaksesi tallennuksen uudelleen.",
+	"saveStatus.guide.backup": "Kun tallennus toimii taas, voit myös palauttaa aiemman version kohdasta Varmuuskopio.",
+	"saveStatus.guide.recoveryRetry": "Varmista, että tällä laitteella on vapaata tallennustilaa, ja valitse sitten Yritä uudelleen.",
+	"saveStatus.guide.recoveryDiscard":
+		"Jos se ei auta, valitse Hylkää palautuskopio. Ensin tallennetaan täsmällinen kopio, eikä asetustiedostoosi kosketa.",
+	"saveStatus.guide.newerVersion": "Päivitä Callout Studio kohdassa Asetukset → Yhteisön laajennukset ja lataa sitten Obsidian uudelleen.",
+	"saveStatus.goToBackups": "Siirry varmuuskopioihin",
+	"saveStatus.missingNotice":
+		"Muistiinpanosi ovat turvassa. Callout Studio on keskeyttänyt tallennuksen, koska se ei juuri nyt löydä asetustiedostoaan.",
 	"statusBar.paused": "Tallennus keskeytetty",
 	"statusBar.pausedTooltip": "Callout Studio ei tallenna asetusmuutoksia. Napsauta nähdäksesi syyn.",
 	"statusBar.pausedNotice": "Callout Studio ei tallenna asetusmuutoksia juuri nyt.",
+	"saveStatus.resumed": "Tallennus on taas päällä. Callout Studio tallentaa asetusten muutokset uudelleen.",
 	"notice.replaceUnreadableUnavailable": "Asetustiedostoa ei voi korvata juuri nyt: se on muuttumassa, tai tämä laite ei voi lukea sitä. Yritä hetken päästä uudelleen.",
 	"notice.recoveryStorageUnavailable": "Tämän laitteen palautustallennustila ei vastaa, joten kopiota ei voi hylätä. Käynnistä Obsidian uudelleen ja yritä sitten uudelleen.",
 	"recovery.title": "Palauta aiempi asetuskokonaisuus",

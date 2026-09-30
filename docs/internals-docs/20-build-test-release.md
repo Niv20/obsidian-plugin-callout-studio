@@ -212,7 +212,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 1. Verify manifest.json / package.json / versions.json all agree with the pushed tag exactly
 2. npm ci, npm run build, npm run lint, npm test (all required on the tagged commit)
 3. Re-verify locales/ has no diff (same reasoning as lint.yml, but against the release build)
-4. Check main.js is under the 2 MiB + 64 KiB bundle-size budget (2,162,688 bytes)
+4. Check main.js is under the 2 MiB + 72 KiB bundle-size budget (2,170,880 bytes)
 5. Attest build provenance for main.js and styles.css
 6. Wait (poll, up to 15×2s) for the tag to be visible via the GitHub API
    — the tag-push webhook can fire before the tag itself propagates
@@ -226,7 +226,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > can't correctly resolve as an update.
 
 > [!NOTE]
-> **The bundle-size budget (2 MiB + 64 KiB) is deliberately tight against the current
+> **The bundle-size budget (2 MiB + 72 KiB) is deliberately tight against the current
 > size**, not generously padded — "a careless import trips it here rather
 > than in users' vaults; raise it consciously when a feature earns it." The
 > ceiling's own history is documented right in the workflow file: it moved
@@ -236,7 +236,10 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > entirely and became downloads — which alone took `main.js` from 3.70 MiB
 > to 1.70 MiB. The settings-safety work after 2.14.1 added verified backups,
 > device history, recovery UI and paused-saving safeguards, taking the bundle
-> just over 2 MiB; its allowance increased by 64 KiB.
+> just over 2 MiB; its allowance increased by 64 KiB. The calmer paused-saving
+> flow (three-paragraph banner, guided buttons, Go to backups with keyboard
+> focus, the saving-resumed notice) went 24 bytes past that, and the allowance
+> grew by another 8 KiB.
 
 > [!NOTE]
 > **The release is created as a `draft`, on purpose.** The `$release` skill

@@ -76,10 +76,14 @@ jobs:
             # the settings-safety work after 2.14.1: verified backups, device history, the
             # "Restore an earlier setup" window, replacing an unreadable settings
             # file, the paused-saving indicator and guarded destructive actions
-            # took main.js from 1.97 MiB to just over 2 MiB.
+            # took main.js from 1.97 MiB to just over 2 MiB. Raised by 8 KiB for
+            # the calmer paused-saving flow: the banner's three short paragraphs
+            # and their per-button sentences, the guided buttons, Go to backups,
+            # keyboard focus on the row it scrolls to, and the notice that saving
+            # is back on took main.js 24 bytes past 2 MiB + 64 KiB.
             - name: Check bundle size
               run: |
-                  limit=2162688  # 2 MiB + 64 KiB
+                  limit=2170880  # 2 MiB + 72 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

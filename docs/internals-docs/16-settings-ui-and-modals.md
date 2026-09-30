@@ -2019,7 +2019,7 @@ since it is the reason nothing below it will be saved; above the title it read
 as a message about the settings window rather than about this plugin.
 
 Each redraw builds the same three parts: a header (`alert-triangle` plus a title
-row), the message paragraph, and `.cs-readonly-banner-actions` holding whatever
+row), the message paragraphs, and `.cs-readonly-banner-actions` holding whatever
 actions apply. The title is chosen from the writer, not from the message —
 `isFrozen || status.frozenReason` reads as *Saving is paused*, a bare
 `status.failure` as *Settings were not saved* — so a frozen session that also
@@ -2036,26 +2036,115 @@ from a label or from whether callouts happen to be visible.
 
 Buttons are disabled while their action is running. A completed missing-file
 check leaves explicit feedback in the same slot. Disposers run on tab
-hide/re-render and editor close. Action text uses `t()`; diagnostic failure prose
-uses the shared saving-message contract described in the canonical chapter.
-
-On the settings page the banner also says the page is read-only while saving is
-paused (`pausedNote`), because `SettingsTab` then makes every edit `inert`; see
-`sections/pausedReadOnly.ts`.
+hide/re-render and editor close. Action text uses `t()`, and so does the paused
+copy below; a one-off failure's message uses the shared saving-message contract
+described in the canonical chapter.
 
 For an unreadable file the banner asks `actions.diagnose()` once per paused
-episode, and again after each action, then adds the cause as a muted
-`.cs-readonly-banner-detail` paragraph. **Replace settings file** appears only
+episode, and again after each action. **Replace settings file** appears only
 for causes waiting cannot fix, and **Discard recovery copy** only for a
 `recovery-read` freeze. Both are `mod-warning` and run only after a
-`ConfirmModal`. **Restore an earlier setup** is offered in every state. The
-settings page passes `plugin.recovery`'s methods in `ReadOnlyBanner.ts`; the
-callout editor passes only its retry.
+`ConfirmModal`. The one exception to the red is a `combined` file: replacing
+it keeps every setting, so **Replace settings file** is the main button
+(`mod-cta`), its confirmation's button is too, and after the yes the banner
+diagnoses the file once more and replaces nothing if it is no longer `combined`
+(or readable), because keeping everything was the promise. The retry button
+reads **Try again** (**Check again** for a missing file). **Go to backups** is
+offered in every state on the settings page (below). The settings page passes `plugin.recovery`'s methods in
+`ReadOnlyBanner.ts`; the callout editor passes only its retry.
+
+### What a paused banner says
+
+Whoever reads a paused banner has usually just seen "missing" next to their
+settings and assumed the worst, so every paused state — frozen for `missing`,
+`unreadable`, `recovery-read` or `newer-version` — reads the same way, in two
+or three short paragraphs chosen by `pausedCopy()` in
+[`saveStatusCopy.ts`](../../src/settings/saveStatusCopy.ts):
+
+1. **Calm.** "First of all, take a deep breath — everything is going to be
+   okay", then what is safe, then why the page is read-only (`pausedNote`,
+   because `SettingsTab` makes every edit `inert`; see
+   `sections/pausedReadOnly.ts`). The editor gets the same paragraph without
+   the page sentence.
+2. **What happened**, from `status.reason` (latest failure, else the frozen
+   reason). After a manual **Check again** finds the file still missing, it
+   gets more specific and names the cloud-storage "keep it downloaded" setting
+   that most often keeps a synced file away.
+3. **What to do**, from `status.frozenReason` — the field that decides the
+   buttons. A known cause of an unreadable file goes here, as the existing
+   `saveStatus.diagnosis.*` text.
+
+While an action runs, the calm paragraph stays and "Working on it…" replaces
+the other two, so the card does not collapse. A one-off
+*Settings were not saved* failure (not frozen) keeps its single message and,
+for an unreadable file, the diagnosis as a muted `.cs-readonly-banner-detail`.
+
+Two rules keep the words honest, and `tests/saveStatusCopy.test.ts` checks both
+across every paused state, failure, surface and diagnosis:
+
+- **A sentence that names a button appears only with that button.** The banner
+  decides its buttons once (`PausedButtons`) and passes the same answers to
+  `pausedCopy()`, and each "choose X" sentence is a key of its own. A reason
+  whose usual message names a button the paused banner may be labelling
+  differently gets paused wording of its own: `changed`'s message names
+  **Try again**, which reads **Check again** for a missing file.
+- **A comforting claim needs a fact.** "Your callouts are still here on this
+  device" only when `writer.hasRecoveryState`, never over a page of built-ins.
+  "Checks again every minute" only where `rechecksWhilePaused()` — the same
+  function `pausedRecheck.ts` runs on — says the timer covers the state.
+
+### Guided order for a missing file
+
+With a missing file on the settings page, the next step is the main button:
+
+| When | Buttons |
+| --- | --- |
+| Nobody has checked yet | **Check again** (`mod-cta`) · **Restore these settings** / **Create settings file** · **Go to backups** |
+| A manual check came back empty | **Restore these settings** (`mod-cta`) or **Create settings file** · **Check again** · **Go to backups** |
+
+`checkedMissing` holds the second state for the rest of the missing episode, so
+the order does not flip back while an action runs or after a cancelled
+confirmation; `stillMissing`, which only colours the message after a check, is
+separate. **Create settings file** is never the main button: what is shown may
+be only the built-ins. Every other state, and the editor, keep one order.
+
+### Go to backups, and scrolling to a row
+
+**Go to backups** (`showBackup`) does not open the earlier-setups window. It
+scrolls to **Backup › Earlier setups** and highlights that row, the way the
+first-install import prompt takes the reader to the **Import** row: while
+saving is paused the window can only be browsed, and the banner is what says
+why. `renderBackupSection` returns the row, `SettingsTab.display()` passes it
+to `renderReadOnlyBanner`, and the row keeps `cs-paused-allowed`, so it stays
+usable and unfaded on a paused page.
+
+Both notices share [`targetHighlighter.ts`](../../src/settings/targetHighlighter.ts).
+`createTargetHighlighter(row)` marks the row `cs-scroll-target`; `run()` scrolls
+it smoothly to the centre, waits until 80% of it is in view (an
+`IntersectionObserver`, with a one-second fallback), then adds
+`cs-scroll-target-highlight`, a 1.5 s accent pulse that starts and ends on the
+row's own computed background and shadow (`--cs-scroll-target-rest-*`), so a
+theme's grey row does not flash. `dispose()` is registered with the tab and runs
+on every re-render and on `hide()`.
+
+Keyboard focus goes with the reader, before the scroll starts and with
+`preventScroll`, so the glide is not cut short and a screen reader announces
+the destination at once. Obsidian 1.13 makes every settings row focusable
+(`tabindex="-1"`) and moves between rows itself — the arrow keys go row to row,
+Enter reaches the row's button — so the row takes focus; older Obsidian rows
+cannot, and there the row's first usable control does. An inert row (Import,
+while saving is paused) is left alone. `run(fromKeyboard)` passes `focusVisible`:
+the buttons report a click with `event.detail === 0` (Enter or Space) as from
+the keyboard, so a key press shows the focus ring and a mouse click does not.
+With `prefers-reduced-motion: reduce` the scroll jumps (`behavior: "auto"`,
+via `prefersReducedMotion()` in `ui/flip.ts`); the pulse only fades a colour and
+stays.
 
 ## `SettingsRecoveryModal` — earlier setups
 
 Opened from **Earlier setups** in the **Backup** section (`renderBackupSection`,
-between **Import and export** and **Language**) and from the banner. It asks
+between **Import and export** and **Language**). The saving banner's **Go to
+backups** scrolls to that row rather than opening the window itself. It asks
 `recovery.listSources()` once per open (a generation counter drops a late answer
 after close) and draws one shared Callout Studio disclosure heading per available
 source kind, initially expanded. **Saved on this device**, **Backups**, and **Other copies of the settings

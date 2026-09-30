@@ -9032,19 +9032,22 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-muted);
 }
 
-/* A short, soft rise into the accent tint followed by the requested 1.5 s
-   fade. Both ends use the row's computed resting paint, captured immediately
-   before the animation, so themes with grey setting rows cannot flash from
-   transparent to grey when the animation class is removed. */
-.callout-studio-settings .cs-import-target.cs-import-target-highlight {
-	animation: cs-import-target-highlight 1.5s ease-in-out both;
+/* The row a notice under the title scrolls the reader to — the import prompt's
+   Import row, the saving banner's Backup › Earlier setups row
+   (see src/settings/targetHighlighter.ts). A short, soft rise into the accent
+   tint followed by the requested 1.5 s fade. Both ends use the row's computed
+   resting paint, captured immediately before the animation, so themes with grey
+   setting rows cannot flash from transparent to grey when the animation class
+   is removed. */
+.callout-studio-settings .cs-scroll-target.cs-scroll-target-highlight {
+	animation: cs-scroll-target-highlight 1.5s ease-in-out both;
 	border-radius: var(--radius-s);
 }
 
-@keyframes cs-import-target-highlight {
+@keyframes cs-scroll-target-highlight {
 	0% {
-		background-color: var(--cs-import-target-rest-bg, transparent);
-		box-shadow: var(--cs-import-target-rest-shadow, none);
+		background-color: var(--cs-scroll-target-rest-bg, transparent);
+		box-shadow: var(--cs-scroll-target-rest-shadow, none);
 	}
 	18% {
 		background-color: color-mix(
@@ -9059,8 +9062,8 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 		);
 	}
 	100% {
-		background-color: var(--cs-import-target-rest-bg, transparent);
-		box-shadow: var(--cs-import-target-rest-shadow, none);
+		background-color: var(--cs-scroll-target-rest-bg, transparent);
+		box-shadow: var(--cs-scroll-target-rest-shadow, none);
 	}
 }
 

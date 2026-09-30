@@ -114,7 +114,7 @@ The source map is deliberately explicit:
 | Explicit recovery | [`settingsRecoveryActions.ts`](../../src/manager/settingsRecoveryActions.ts), [`missingSettingsRecovery.ts`](../../src/manager/missingSettingsRecovery.ts), [`settingsRecoveryService.ts`](../../src/manager/settingsRecoveryService.ts), [`settingsDiagnosis.ts`](../../src/manager/settingsDiagnosis.ts), [`SettingsRecoveryModal.ts`](../../src/settings/SettingsRecoveryModal.ts) |
 | Earlier-setup inspection | [`setupDetails.ts`](../../src/manager/setupDetails.ts), [`SettingsRecoveryDetailsModal.ts`](../../src/settings/SettingsRecoveryDetailsModal.ts), [`recoveryDetailsView.ts`](../../src/settings/recoveryDetailsView.ts), [`recoverySections.ts`](../../src/settings/recoverySections.ts), [`recoveryCollections.ts`](../../src/settings/recoveryCollections.ts), [`recoveryModel.ts`](../../src/settings/recoveryModel.ts), [`recoveryValues.ts`](../../src/settings/recoveryValues.ts), [`recoveryDetailFields.ts`](../../src/settings/recoveryDetailFields.ts), [`recoveryComparisonTable.ts`](../../src/settings/recoveryComparisonTable.ts), [`recoveryPreview.ts`](../../src/settings/recoveryPreview.ts), [`recoveryRolePreview.ts`](../../src/settings/recoveryRolePreview.ts) |
 | Paused state | [`pausedRecheck.ts`](../../src/manager/pausedRecheck.ts), [`pausedIndicator.ts`](../../src/settings/pausedIndicator.ts), [`withTimeout.ts`](../../src/utils/withTimeout.ts) |
-| Status and user feedback | [`settingsSaveStatus.ts`](../../src/manager/settingsSaveStatus.ts), [`settingsSaveReporter.ts`](../../src/manager/settingsSaveReporter.ts), [`settingsSaveMessage.ts`](../../src/manager/settingsSaveMessage.ts), [`saveStatusBanner.ts`](../../src/settings/saveStatusBanner.ts), [`settingsNotices.ts`](../../src/manager/settingsNotices.ts) |
+| Status and user feedback | [`settingsSaveStatus.ts`](../../src/manager/settingsSaveStatus.ts), [`settingsSaveReporter.ts`](../../src/manager/settingsSaveReporter.ts), [`settingsSaveMessage.ts`](../../src/manager/settingsSaveMessage.ts), [`saveStatusBanner.ts`](../../src/settings/saveStatusBanner.ts), [`saveStatusCopy.ts`](../../src/settings/saveStatusCopy.ts), [`settingsNotices.ts`](../../src/manager/settingsNotices.ts) |
 | Destructive actions while paused | [`pausedGuard.ts`](../../src/settings/pausedGuard.ts), [`DataManagementSection.ts`](../../src/settings/sections/DataManagementSection.ts), [`PluginImportModal.ts`](../../src/settings/pluginImport/PluginImportModal.ts), [`calloutVaultActions.ts`](../../src/settings/sections/calloutVaultActions.ts) |
 
 ## Startup and file classification
@@ -676,9 +676,14 @@ is frozen. Thus a missing-file restoration that fails to write a backup remains
 Status subscriptions update the banner slot without rebuilding the form or moving
 settings scroll. Subscription exceptions cannot interrupt persistence. The shared
 reporter deduplicates recent identical notices and clears them when the underlying
-status recovers. Diagnostic failure prose comes from the canonical English table;
-action labels, titles and confirmation text use `t()`. Raw adapter errors and
-paths belong in the console rather than in the user-facing failure text.
+status recovers. Notices and a one-off failure's message take their prose from
+the canonical English table (`settingsSaveMessage()`). The paused banner's
+calm/what-happened/what-to-do copy, action labels, titles and confirmation text
+use `t()`, under keys of their own, so a stale translation of the older wording
+never shows through; see
+[What a paused banner says](16-settings-ui-and-modals.md#what-a-paused-banner-says).
+Raw adapter errors and paths belong in the console rather than in the
+user-facing failure text.
 
 ### Retry and its first-install exception
 
@@ -711,11 +716,16 @@ primary file**, not unconditionally reset to defaults.
 
 The settings banner offers **Restore these settings** when
 `writer.hasRecoveryState` identifies an accepted file or seeded recovery state;
-otherwise it offers **Create settings file**. Both require confirmation describing
-the displayed settings, backup, and possible propagation to other devices. The
-restore action is not styled as a destructive reset. The missing-file checking
-action is **Check again**, with a persistent still-missing result after an
-unsuccessful check.
+otherwise it offers **Create settings file**. Both require a plain-language
+confirmation (`confirm.saveDisplayedSettings`) describing the displayed
+settings, the backup of the recovery copy, possible propagation to other
+devices, and the last check for a file that has come back. The restore action
+is not styled as a destructive reset. The missing-file checking action is
+**Check again**, with a persistent still-missing result after an unsuccessful
+check. The order is guided: **Check again** is the main button until a manual
+check comes back empty, then **Restore these settings** is; **Create settings
+file** never is (see
+[Guided order for a missing file](16-settings-ui-and-modals.md#guided-order-for-a-missing-file)).
 
 The restoration sequence is intentionally separate from `save()`:
 
@@ -794,7 +804,9 @@ Every other way out used to end in a hidden folder: copy a backup over
 On a phone that folder is out of reach, and a file-level rollback does not even
 stick, because running devices merge their newer stamps straight back over it.
 `SettingsRecoveryService` (`settingsRecoveryService.ts`, the plugin's `recovery`)
-offers these actions from the banner and from **Settings → Earlier setups**.
+offers diagnosis, replacement and discarding from the banner, and earlier setups
+from **Settings → Backup → Earlier setups**, which the banner's **Go to
+backups** scrolls to.
 
 **Diagnosis.** `inspectSettingsFile()` (`settingsDiagnosis.ts`) reads the raw
 bytes through the adapter, with the same timeout, and names the cause:
@@ -807,7 +819,9 @@ changes nothing. The banner shows the cause under the general message and offers
 An unreadable primary does not override a `newer-version` or `recovery-read`
 checkpoint freeze: resolve that checkpoint state before replacing the primary.
 
-**Replace settings file** (`replaceUnreadable()`), after a warning confirmation:
+**Replace settings file** (`replaceUnreadable()`), after a confirmation — a
+warning, except for `combined`, where the replacement keeps every setting and
+the banner re-diagnoses the file after the yes:
 
 1. Read the raw bytes twice. A read that fails or bytes that differ between the
    two reads stop the action. So does a later build's file.
@@ -967,7 +981,20 @@ while saving is paused; restoring does not.
 and a notice that stays on mobile, while `writer.isVisiblyPaused`. That is every
 freeze except the quiet provisional one of a new install (`freeze(reason, false)`).
 A missing file at launch already has a notice that stays, so mobile does not
-add a second one.
+add a second one. That notice (`offerFreshStart()`) is one reassuring line and a
+link to the settings, not a copy of the banner's explanation, and it hides
+itself when the writer thaws: a file that syncs back in, or a restore, used to
+leave it announcing a missing file that was there again. A change of reason
+alone does not hide it, since saving is still paused.
+
+When a visible pause ends, `pausedIndicator.ts` adds a short notice that saving
+is back on, which is the only confirmation a successful restore, replacement,
+discard or late-arriving file gets. It is decided on a microtask, so a thaw the
+same step undoes (an adoption whose rebuild fails and freezes again) is not a
+resume, and such a pause keeps its original start. A pause shorter than
+`RESUME_NOTICE_AFTER_MS` (5 s, longer than the reload queue's 250 + 750 + 2000 ms
+retries) ended by itself and is not announced; nor is a new install's quiet
+provisional pause, or anything once the writer is destroyed.
 
 ### Changes replaced by another device, and diagnostics
 

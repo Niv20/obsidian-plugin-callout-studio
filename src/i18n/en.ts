@@ -45,12 +45,17 @@ export const en: Record<string, string> = {
 	"saveStatus.writeSpace": "The settings file could not be saved because storage is full or its quota was exceeded. Free some space, then retry.",
 	"saveStatus.notesFailed": "The callout definition was saved, but some note updates could not be completed. Keep this editor open and choose Save to retry the unfinished updates.",
 	"saveStatus.write": "The settings file could not be saved. Check available storage, folder permissions and synchronization, then retry before closing Obsidian.",
-	"saveStatus.changed": "The settings file changed while you were editing. Your draft is still available. Choose Retry saving and recovery to load the incoming settings, then review your draft and save again.",
+	// Shown only through settingsSaveMessage(), which reads this English table
+	// directly, so rewording it here cannot leave a stale translation on screen.
+	"saveStatus.changed": "The settings file changed while you were editing. Your draft is still available. Choose Try again to load the incoming settings, then review your draft and save again.",
 	"saveStatus.syncConflict": "Incoming settings conflict with a callout needed for unfinished note updates. Your draft and pending updates have been kept. Resolve the conflicting settings before retrying.",
 	"saveStatus.titlePaused": "Saving is paused",
 	"saveStatus.titleFailed": "Settings were not saved",
-	"saveStatus.retry": "Retry saving and recovery",
-	"saveStatus.retrying": "Checking saving and recovery…",
+	// The retry button and the line shown while any banner action runs: plain
+	// words, like the rest of the banner. Their own keys, although
+	// portable.retry also says "Try again".
+	"saveStatus.tryAgain": "Try again",
+	"saveStatus.working": "Working on it…",
 	"saveStatus.retryFailed": "Saving is still blocked. Check the saving status in Callout Studio settings for the cause, then retry.",
 	"saveStatus.reviewDraft": "Incoming settings and recovery checks are complete. Your draft is unchanged. Review it and save again.",
 	"saveStatus.settingsArrived": "Existing settings arrived and were loaded. A replacement file was not created.",
@@ -59,8 +64,6 @@ export const en: Record<string, string> = {
 	"saveStatus.checkAgain": "Check again",
 	"saveStatus.recoverInSettings": "To restore the missing file on this device, open Callout Studio settings. Before closing this editor, copy any unsaved edits you want to keep; they have not been saved.",
 	"saveStatus.openSettings": "Open Callout Studio settings",
-	"saveStatus.stillMissingAdvice":
-		"The settings file is still missing. Checking again does not recreate it. Let synchronization finish and make the vault available offline. If the file was deleted, choose Restore these settings, or restore an earlier setup.",
 	"saveStatus.diagnosis.unavailable":
 		"This device can't open the file right now. It may still be downloading, the vault may not be available offline, or storage isn't responding. Callout Studio checks again automatically.",
 	"saveStatus.diagnosis.empty":
@@ -74,12 +77,52 @@ export const en: Record<string, string> = {
 		"The file contains entries Callout Studio can't use, for example the same callout type listed twice.",
 	"saveStatus.replaceUnreadable": "Replace settings file",
 	"saveStatus.discardRecoveryCopy": "Discard recovery copy",
-	"saveStatus.openRecovery": "Restore an earlier setup",
-	"saveStatus.readOnlyWhilePaused":
-		"Settings can't be changed until saving works again, so nothing you change here is lost. You can still export your setup.",
+	// The paused banner, for someone who may be worried their work is gone:
+	// calm first, then what happened, then what to do (see
+	// settings/saveStatusCopy.ts). Each sentence is its own key because the
+	// banner leaves out any sentence whose button it isn't showing. A sentence
+	// that names a button must use that button's label exactly.
+	"saveStatus.calm.opening": "First of all, take a deep breath — everything is going to be okay.",
+	"saveStatus.calm.kept": "Your notes are safe, and your callouts are still here on this device.",
+	"saveStatus.calm.safe": "Your notes are safe.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio has only paused saving to protect your setup, so this page is read-only for now.",
+	"saveStatus.calm.paused": "Callout Studio has only paused saving to protect your setup.",
+	"saveStatus.explain.missing":
+		"Callout Studio can't find its settings file. This usually happens while your sync app is still downloading it, or after Callout Studio was removed on another device.",
+	"saveStatus.explain.stillMissing":
+		"The settings file still isn't back. Checking only looks for it; it never creates a new one. If your vault is in iCloud, OneDrive, Google Drive or Dropbox, make sure it's set to stay downloaded on this device.",
+	"saveStatus.explain.unreadable":
+		"Callout Studio can't read its settings file right now, so it has left the file exactly as it is.",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio keeps a spare copy of your settings on this device, and that copy can't be read right now. Your settings file itself may be fine.",
+	"saveStatus.explain.newerVersion":
+		"Your settings were saved by a newer version of Callout Studio, so this older version won't change them.",
+	"saveStatus.explain.changed":
+		"The settings file changed while Callout Studio was working with it, so it stopped without replacing anything.",
+	"saveStatus.guide.rechecks":
+		"Callout Studio checks again every minute while Obsidian is open, so this often fixes itself.",
+	"saveStatus.guide.rechecksCheckNow":
+		"Callout Studio checks again every minute while Obsidian is open, so this often fixes itself — or choose Check again to look right now.",
+	"saveStatus.guide.restore":
+		"If your settings don't come back, choose Restore these settings to keep the callouts you see here.",
+	"saveStatus.guide.create":
+		"If your settings don't come back, choose Create settings file to start saving again.",
+	"saveStatus.guide.backup":
+		"Once saving works again, you can also bring back an earlier version from the Backup section.",
+	"saveStatus.guide.recoveryRetry":
+		"Make sure this device has some free storage, then choose Try again.",
+	"saveStatus.guide.recoveryDiscard":
+		"If that doesn't help, choose Discard recovery copy. An exact copy is saved first, and your settings file isn't touched.",
+	"saveStatus.guide.newerVersion": "Update Callout Studio in Settings → Community plugins, then reload Obsidian.",
+	"saveStatus.goToBackups": "Go to backups",
+	"saveStatus.missingNotice":
+		"Your notes are safe. Callout Studio has paused saving because it can't find its settings file right now.",
 	"statusBar.paused": "Saving paused",
 	"statusBar.pausedTooltip": "Callout Studio isn't saving settings changes. Click to see why.",
 	"statusBar.pausedNotice": "Callout Studio isn't saving settings changes right now.",
+	// When a pause someone could have seen ends; see settings/pausedIndicator.ts.
+	"saveStatus.resumed": "Saving is back on. Callout Studio is saving settings changes again.",
 	"notice.replaceUnreadableUnavailable":
 		"The settings file can't be replaced right now: it is changing, or this device can't read it. Try again in a moment.",
 	"notice.recoveryStorageUnavailable":
@@ -1167,8 +1210,10 @@ export const en: Record<string, string> = {
 	"confirm.overwriteSnippetOk": "Overwrite",
 	"confirm.titleRestoreSettings": "Restore these settings",
 	"confirm.titleCreateSettingsFile": "Create settings file",
-	"confirm.restoreDisplayedSettings":
-		"This saves the callout types and preferences currently shown to a settings file on this device and resumes saving. Any readable local recovery copy is backed up first.\nBefore continuing, let your sync service finish and check whether another device has newer settings you want to keep. Your sync service may send this restored file to your other devices.\nThe file is checked again before saving. If existing settings are found, they are kept and recovery may ask you to check again.",
+	// The same safety facts as the entry above, in plain words: what is saved,
+	// what is backed up first, what reaches other devices, and the last check.
+	"confirm.saveDisplayedSettings":
+		"This saves the setup you see now as your settings file and turns saving back on. The spare copy this device keeps is backed up first.\nIf another device might have newer changes you want to keep, let it finish syncing before you continue. Your sync app may send this file to your other devices.\nCallout Studio looks for the settings file once more before saving. If it has come back, Callout Studio keeps it instead.",
 
 	// Vault edge-case modals
 	"vault.filesUpdated":

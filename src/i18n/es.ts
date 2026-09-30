@@ -1134,13 +1134,15 @@ export const es: Record<string, string> = {
 	"commandBuilder.missingCallout": "En pausa: falta el callout. Descúbrelo o créalo para restaurar este comando, o edita el comando para elegir otro tipo.",
 	"confirm.titleRestoreSettings": "Restaurar estos ajustes",
 	"confirm.titleCreateSettingsFile": "Crear archivo de ajustes",
-	"confirm.restoreDisplayedSettings": "Esto guarda los tipos de callout y las preferencias que se muestran actualmente en un archivo de ajustes de este dispositivo y reanuda el guardado. Primero se crea una copia de seguridad de cualquier copia local de recuperación que pueda leerse.\nAntes de continuar, deja que tu servicio de sincronización termine y comprueba si otro dispositivo tiene ajustes más recientes que quieras conservar. Tu servicio de sincronización puede enviar este archivo restaurado a tus otros dispositivos.\nEl archivo se comprueba de nuevo antes de guardar. Si se encuentran ajustes existentes, se conservan y la recuperación puede pedirte que vuelvas a comprobar.",
+	"confirm.saveDisplayedSettings":
+		"Esto guarda la configuración que ves ahora como tu archivo de ajustes y reactiva el guardado. La copia de reserva que conserva este dispositivo se respalda primero.\nSi otro dispositivo pudiera tener cambios más recientes que quieras conservar, deja que termine de sincronizar antes de continuar. Tu aplicación de sincronización puede enviar este archivo a tus otros dispositivos.\nCallout Studio busca el archivo de ajustes una vez más antes de guardar. Si ha vuelto, Callout Studio lo conserva en su lugar.",
 	"notice.settingsBackupFailed": "La recuperación de la configuración no pudo continuar porque no se pudo guardar una copia de seguridad. Comprueba el almacenamiento disponible y los permisos de escritura, y vuelve a intentarlo.",
 	"notice.settingsBackupSaved": "Se guardó una copia de recuperación de las definiciones de callout locales antes de aplicar la configuración entrante: {{path}}.",
 	"notice.settingsChangedElsewhere": "La configuración de Callout Studio se cambió en otro dispositivo, así que este cambio no se guardó. La configuración del otro dispositivo se está cargando ahora — vuelve a hacer el cambio.",
 	"notice.settingsNewerVersion": "La configuración de Callout Studio la guardó una versión más reciente del plugin, así que no se escribirá nada en este dispositivo hasta que lo actualices. Tu configuración está a salvo — actualiza Callout Studio aquí y recarga Obsidian.",
 	"notice.settingsNotSaved": "Ese cambio no se guardó. Callout Studio no pudo usar su archivo de configuración cuando se inició Obsidian, así que no se está escribiendo nada en este dispositivo — tus cambios durarán hasta que cierres Obsidian. Consulta Ajustes → Callout Studio para saber qué hacer.",
-	"saveStatus.changed": "El archivo de configuración cambió mientras editabas. Tu borrador sigue disponible. Elige Reintentar guardado y recuperación para cargar la configuración entrante, y luego revisa tu borrador y guarda de nuevo.",
+	"saveStatus.changed":
+		"El archivo de ajustes cambió mientras lo editabas. Tu borrador sigue disponible. Elige Intentar de nuevo para cargar los ajustes recibidos, revisa después tu borrador y vuelve a guardar.",
 	"saveStatus.missing": "El guardado está en pausa porque falta el archivo de configuración. Esto puede pasar tras reinstalar o mientras la sincronización todavía se está ejecutando. Termina la sincronización y vuelve a intentarlo. Para reemplazar el archivo que falta intencionadamente, usa Crear un nuevo archivo de configuración en los ajustes de Callout Studio.",
 	"saveStatus.restoreSettings": "Restaurar estos ajustes",
 	"saveStatus.createSettingsFile": "Crear archivo de ajustes",
@@ -1151,14 +1153,14 @@ export const es: Record<string, string> = {
 	"saveStatus.notesFailed": "La definición del callout se guardó, pero algunas actualizaciones de notas no se pudieron completar. Deja este editor abierto y elige Guardar para reintentar las actualizaciones sin terminar.",
 	"saveStatus.recoveryRead": "El guardado está en pausa porque no se puede leer la copia de recuperación local. Tu archivo de configuración todavía puede estar intacto. Comprueba el almacenamiento disponible, y luego vuelve a intentar la recuperación. Los datos de recuperación existentes no se sobrescribirán.",
 	"saveStatus.recoveryWrite": "No se pudo guardar la copia de recuperación local. Comprueba el almacenamiento disponible, y vuelve a intentarlo. Deja tu borrador abierto hasta que el guardado tenga éxito.",
-	"saveStatus.retry": "Reintentar guardado y recuperación",
 	"saveStatus.retryFailed": "El guardado sigue bloqueado. Comprueba el estado del guardado en los ajustes de Callout Studio para ver la causa, y vuelve a intentarlo.",
-	"saveStatus.retrying": "Comprobando el guardado y la recuperación…",
 	"saveStatus.reviewDraft": "La configuración entrante y las comprobaciones de recuperación se han completado. Tu borrador no ha cambiado. Revísalo y guarda de nuevo.",
 	"saveStatus.settingsArrived": "Llegó la configuración existente y se cargó. No se creó ningún archivo de repuesto.",
 	"saveStatus.syncConflict": "La configuración entrante entra en conflicto con un callout necesario para actualizaciones de notas sin terminar. Tu borrador y las actualizaciones pendientes se han conservado. Resuelve el conflicto de configuración antes de volver a intentarlo.",
 	"saveStatus.titlePaused": "El guardado está en pausa",
 	"saveStatus.titleFailed": "Los ajustes no se guardaron",
+	"saveStatus.tryAgain": "Intentar de nuevo",
+	"saveStatus.working": "Trabajando en ello…",
 	"saveStatus.unreadable": "El guardado está en pausa porque el archivo de configuración no se puede leer con seguridad. Termina la sincronización o restaura una copia válida, y vuelve a intentarlo. El archivo existente se ha conservado.",
 	"saveStatus.write": "No se pudo guardar el archivo de configuración. Comprueba el almacenamiento disponible, los permisos de la carpeta y la sincronización, y vuelve a intentarlo antes de cerrar Obsidian.",
 	"saveStatus.writePermission": "No se pudo guardar el archivo de configuración porque el almacenamiento denegó el acceso de escritura. Comprueba que la bóveda y la carpeta del plugin se puedan escribir, y vuelve a intentarlo.",
@@ -1166,8 +1168,6 @@ export const es: Record<string, string> = {
 	"settings.readOnly": "Callout Studio no pudo usar su archivo de configuración cuando se inició Obsidian, así que nada en esta página se está guardando en este dispositivo. Tus cambios durarán hasta que cierres Obsidian. Recarga Obsidian en cuanto vuelva el archivo — si sincronizas esta bóveda, deja que la sincronización termine primero.",
 
 	// Sync safety hardening
-	"saveStatus.stillMissingAdvice":
-		"El archivo de configuración sigue faltando. Comprobarlo de nuevo no lo recrea. Deja que la sincronización termine y haz que la bóveda esté disponible sin conexión. Si el archivo se eliminó, elige Reemplazar archivo de configuración, o restaura una configuración anterior.",
 	"saveStatus.diagnosis.unavailable":
 		"Este dispositivo no puede abrir el archivo ahora mismo. Puede que aún se esté descargando, que la bóveda no esté disponible sin conexión, o que el almacenamiento no responda. Callout Studio vuelve a comprobarlo automáticamente.",
 	"saveStatus.diagnosis.empty": "El archivo está vacío, lo que normalmente significa que una sincronización se interrumpió. Si otro dispositivo todavía tiene tu configuración, deja que sincronice. Si no, reemplaza el archivo.",
@@ -1178,12 +1178,42 @@ export const es: Record<string, string> = {
 	"saveStatus.diagnosis.invalidEntries": "El archivo contiene entradas que Callout Studio no puede usar, por ejemplo el mismo tipo de callout listado dos veces.",
 	"saveStatus.replaceUnreadable": "Reemplazar archivo de configuración",
 	"saveStatus.discardRecoveryCopy": "Descartar copia de recuperación",
-	"saveStatus.openRecovery": "Restaurar una configuración anterior",
-	"saveStatus.readOnlyWhilePaused":
-		"La configuración no se puede cambiar hasta que el guardado vuelva a funcionar, así que nada de lo que cambies aquí se pierde. Aún puedes exportar tu configuración.",
+	"saveStatus.calm.opening": "Antes que nada, respira hondo: todo va a salir bien.",
+	"saveStatus.calm.kept": "Tus notas están a salvo y tus callouts siguen aquí, en este dispositivo.",
+	"saveStatus.calm.safe": "Tus notas están a salvo.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio solo ha pausado el guardado para proteger tu configuración, así que esta página es de solo lectura por ahora.",
+	"saveStatus.calm.paused": "Callout Studio solo ha pausado el guardado para proteger tu configuración.",
+	"saveStatus.explain.missing":
+		"Callout Studio no encuentra su archivo de ajustes. Suele pasar mientras tu aplicación de sincronización aún lo está descargando, o después de que Callout Studio se haya eliminado en otro dispositivo.",
+	"saveStatus.explain.stillMissing":
+		"El archivo de ajustes todavía no ha vuelto. La comprobación solo lo busca y nunca crea uno nuevo. Si tu bóveda está en iCloud, OneDrive, Google Drive o Dropbox, asegúrate de que esté configurada para mantenerse descargada en este dispositivo.",
+	"saveStatus.explain.unreadable": "Callout Studio no puede leer ahora su archivo de ajustes, así que lo ha dejado exactamente como está.",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio guarda en este dispositivo una copia de reserva de tus ajustes, y ahora mismo esa copia no se puede leer. Es posible que el archivo de ajustes en sí esté bien.",
+	"saveStatus.explain.newerVersion":
+		"Tus ajustes se guardaron con una versión más reciente de Callout Studio, así que esta versión anterior no los modificará.",
+	"saveStatus.explain.changed":
+		"El archivo de ajustes cambió mientras Callout Studio trabajaba con él, así que se detuvo sin reemplazar nada.",
+	"saveStatus.guide.rechecks":
+		"Callout Studio vuelve a comprobarlo cada minuto mientras Obsidian esté abierto, así que a menudo se soluciona solo.",
+	"saveStatus.guide.rechecksCheckNow":
+		"Callout Studio vuelve a comprobarlo cada minuto mientras Obsidian esté abierto, así que a menudo se soluciona solo; o elige Comprobar de nuevo para mirar ahora mismo.",
+	"saveStatus.guide.restore": "Si tus ajustes no vuelven, elige Restaurar estos ajustes para conservar los callouts que ves aquí.",
+	"saveStatus.guide.create": "Si tus ajustes no vuelven, elige Crear archivo de ajustes para empezar a guardar de nuevo.",
+	"saveStatus.guide.backup":
+		"Cuando el guardado vuelva a funcionar, también puedes recuperar una versión anterior desde la sección Copia de seguridad.",
+	"saveStatus.guide.recoveryRetry": "Asegúrate de que este dispositivo tenga algo de almacenamiento libre y luego elige Intentar de nuevo.",
+	"saveStatus.guide.recoveryDiscard":
+		"Si eso no ayuda, elige Descartar copia de recuperación. Primero se guarda una copia exacta y tu archivo de ajustes no se toca.",
+	"saveStatus.guide.newerVersion": "Actualiza Callout Studio en Ajustes → Plugins de la comunidad y luego recarga Obsidian.",
+	"saveStatus.goToBackups": "Ir a las copias de seguridad",
+	"saveStatus.missingNotice":
+		"Tus notas están a salvo. Callout Studio ha pausado el guardado porque ahora mismo no encuentra su archivo de ajustes.",
 	"statusBar.paused": "Guardado en pausa",
 	"statusBar.pausedTooltip": "Callout Studio no está guardando los cambios de configuración. Haz clic para ver por qué.",
 	"statusBar.pausedNotice": "Callout Studio no está guardando los cambios de configuración en este momento.",
+	"saveStatus.resumed": "El guardado vuelve a estar activo. Callout Studio está guardando de nuevo los cambios en los ajustes.",
 	"notice.replaceUnreadableUnavailable": "El archivo de configuración no se puede reemplazar ahora mismo: está cambiando, o este dispositivo no puede leerlo. Vuelve a intentarlo en un momento.",
 	"notice.recoveryStorageUnavailable": "El almacenamiento de recuperación de este dispositivo no responde, así que la copia no se puede descartar. Reinicia Obsidian, y vuelve a intentarlo.",
 	"recovery.title": "Restaurar una configuración anterior",

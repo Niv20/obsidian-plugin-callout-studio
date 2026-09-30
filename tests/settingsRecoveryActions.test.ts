@@ -192,6 +192,24 @@ describe("explicit saving recovery", () => {
 		assert.equal(h.state.disk !== null, true, "navigating must not touch the settings file");
 		h.host.settingsWriter.destroy();
 	});
+	it("the startup notice reassures in one line and leaves once saving resumes", () => {
+		// It used to print the banner's whole explanation, and to stay up saying
+		// "missing" after the file had synced back in or been restored.
+		const h = recoveryActionHarness();
+		const status = h.host.settingsWriter.status;
+		status.freeze("missing");
+		offerFreshStart(h.host.app, h.host.manifest.id, status);
+		const notice = StubNotice.last!;
+		const text = (notice.message as FakeDocumentFragment).childNodes
+			.find((node): node is FakeElement => node instanceof FakeElement && node.tagName.toLowerCase() === "p");
+		assert.equal(text?.textContent, "Your notes are safe. Callout Studio has paused saving because it can't find its settings file right now.");
+		// A different reason is still a pause, and may be all a phone shows of it.
+		status.freeze("unreadable");
+		assert.equal(notice.hidden, false);
+		status.thaw();
+		assert.equal(notice.hidden, true);
+		h.host.settingsWriter.destroy();
+	});
 	it("updates a persistent banner without rebuilding the form and disposes its listener", async () => {
 		const h = recoveryActionHarness(); await h.boot();
 		const container = h.dom.document.createElement("div"); const input = container.createEl("input"); input.value = "My draft";
@@ -206,7 +224,7 @@ describe("explicit saving recovery", () => {
 		assert.equal(input.value, "My draft");
 		h.host.settingsWriter.freeze("recovery-read");
 		assert.equal(container.querySelectorAll("button").length, 1);
-		assert.match(container.textContent, /local recovery copy/);
+		assert.match(container.textContent, /spare copy of your settings on this device/);
 		dispose(); const text = container.textContent; h.host.settingsWriter.thaw();
 		assert.equal(container.textContent, text); h.host.settingsWriter.destroy();
 	});

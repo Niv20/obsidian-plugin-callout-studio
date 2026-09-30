@@ -45,7 +45,6 @@ export function renderImportExportSection(
 				});
 			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
-	importSetting.settingEl.addClass("cs-import-target");
 
 	new Setting(containerEl)
 		.setName(t("settings.exportTitle"))
@@ -60,17 +59,22 @@ export function renderImportExportSection(
 	return importSetting.settingEl;
 }
 
-/** Restoring an earlier setup; absent on minimal hosts. */
+/**
+ * Restoring an earlier setup; absent on minimal hosts.
+ *
+ * Returns the **Earlier setups** row, which the saving banner's **Go to
+ * backups** scrolls to and highlights, or `null` when there is no section.
+ */
 export function renderBackupSection(
 	ctx: SettingsSectionContext,
 	containerEl: HTMLElement,
-): void {
+): HTMLElement | null {
 	const recovery = ctx.plugin.recovery;
-	if (!recovery) return;
+	if (!recovery) return null;
 
 	new Setting(containerEl).setName(t("settings.backup")).setHeading();
 
-	new Setting(containerEl)
+	const earlierSetups = new Setting(containerEl)
 		.setName(t("settings.recovery"))
 		.setDesc(t("settings.recoveryDesc"))
 		.setClass(PAUSED_ALLOWED)
@@ -79,6 +83,7 @@ export function renderBackupSection(
 				.onClick(() => new SettingsRecoveryModal(ctx.app, ctx.plugin).open());
 			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
+	return earlierSetups.settingEl;
 }
 
 export function renderResetSection(

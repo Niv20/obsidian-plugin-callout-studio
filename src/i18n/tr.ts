@@ -1111,13 +1111,15 @@ export const tr: Record<string, string> = {
 	"commandBuilder.missingCallout": "Duraklatıldı: callout eksik. Bu komutu geri yüklemek için onu bulun veya oluşturun, ya da başka bir tür seçmek için komutu düzenleyin.",
 	"confirm.titleRestoreSettings": "Bu ayarları geri yükle",
 	"confirm.titleCreateSettingsFile": "Ayarlar dosyası oluştur",
-	"confirm.restoreDisplayedSettings": "Bu, şu anda gösterilen callout türlerini ve tercihleri bu cihazdaki bir ayarlar dosyasına kaydeder ve kaydetmeyi sürdürür. Okunabilir yerel kurtarma kopyaları önce yedeklenir.\nDevam etmeden önce eşitleme hizmetinizin bitmesini bekleyin ve başka bir cihazda saklamak istediğiniz daha yeni ayarlar olup olmadığını kontrol edin. Eşitleme hizmetiniz bu geri yüklenen dosyayı diğer cihazlarınıza gönderebilir.\nDosya kaydetmeden önce tekrar kontrol edilir. Mevcut ayarlar bulunursa korunur ve kurtarma sizden tekrar kontrol etmenizi isteyebilir.",
+	"confirm.saveDisplayedSettings":
+		"Bu işlem, şu anda gördüğünüz kurulumu ayarlar dosyanız olarak kaydeder ve kaydetmeyi yeniden açar. Bu cihazın tuttuğu yedek kopya önce yedeklenir.\nBaşka bir cihazda saklamak istediğiniz daha yeni değişiklikler olabilirse, devam etmeden önce eşitlemeyi bitirmesine izin verin. Eşitleme uygulamanız bu dosyayı diğer cihazlarınıza gönderebilir.\nCallout Studio kaydetmeden önce ayarlar dosyasını bir kez daha arar. Dosya geri geldiyse Callout Studio onu korur.",
 	"notice.settingsBackupFailed": "Bir güvenlik yedeği kaydedilemediği için ayar kurtarma işlemi devam edemedi. Kullanılabilir depolama alanını ve yazma izinlerini kontrol edin, ardından yeniden deneyin.",
 	"notice.settingsBackupSaved": "Gelen ayarlar uygulanmadan önce yerel callout tanımlarının bir kurtarma kopyası kaydedildi: {{path}}.",
 	"notice.settingsChangedElsewhere": "Callout Studio ayarları başka bir cihazda değiştirildi, bu nedenle bu değişiklik kaydedilmedi. Diğer cihazın ayarları şu anda yükleniyor — lütfen değişikliği tekrar yapın.",
 	"notice.settingsNewerVersion": "Callout Studio ayarları eklentinin daha yeni bir sürümü tarafından kaydedildi, bu nedenle siz güncelleyene kadar bu cihaza hiçbir şey yazılmayacak. Ayarlarınız güvende — Callout Studio'yu buradan güncelleyin ve Obsidian'ı yeniden yükleyin.",
 	"notice.settingsNotSaved": "O değişiklik kaydedilmedi. Obsidian başlatıldığında Callout Studio ayarlar dosyasını kullanamadı, bu nedenle bu cihaza hiçbir şey yazılmıyor — değişiklikleriniz Obsidian'ı kapatana kadar kalıcı olacak. Ne yapmanız gerektiğini görmek için Ayarlar → Callout Studio'ya bakın.",
-	"saveStatus.changed": "Siz düzenlerken ayarlar dosyası değişti. Taslağınız hâlâ kullanılabilir. Gelen ayarları yüklemek için Kaydetmeyi ve kurtarmayı yeniden dene seçeneğini seçin, ardından taslağınızı gözden geçirip tekrar kaydedin.",
+	"saveStatus.changed":
+		"Ayarlar dosyası siz düzenlerken değişti. Taslağınız hâlâ duruyor. Gelen ayarları yüklemek için Yeniden dene seçeneğini seçin, sonra taslağınızı gözden geçirip yeniden kaydedin.",
 	"saveStatus.missing": "Ayarlar dosyası eksik olduğu için kaydetme duraklatıldı. Bu, yeniden yüklemeden sonra veya senkronizasyon hâlâ çalışırken olabilir. Senkronizasyonu tamamlayın ve yeniden deneyin. Eksik dosyayı kasıtlı olarak değiştirmek için Callout Studio ayarlarında Yeni bir ayarlar dosyası oluştur seçeneğini kullanın.",
 	"saveStatus.restoreSettings": "Bu ayarları geri yükle",
 	"saveStatus.createSettingsFile": "Ayarlar dosyası oluştur",
@@ -1128,14 +1130,14 @@ export const tr: Record<string, string> = {
 	"saveStatus.notesFailed": "Callout tanımı kaydedildi, ancak bazı not güncellemeleri tamamlanamadı. Bu düzenleyiciyi açık tutun ve tamamlanmamış güncellemeleri yeniden denemek için Kaydet'i seçin.",
 	"saveStatus.recoveryRead": "Yerel kurtarma kopyası okunamadığı için kaydetme duraklatıldı. Ayarlar dosyanız hâlâ bozulmamış olabilir. Kullanılabilir depolama alanını kontrol edin, ardından kurtarmayı yeniden deneyin. Mevcut kurtarma verileri üzerine yazılmayacak.",
 	"saveStatus.recoveryWrite": "Yerel kurtarma kopyası kaydedilemedi. Kullanılabilir depolama alanını kontrol edin, ardından yeniden deneyin. Kaydetme başarılı olana kadar taslağınızı açık tutun.",
-	"saveStatus.retry": "Kaydetmeyi ve kurtarmayı yeniden dene",
 	"saveStatus.retryFailed": "Kaydetme hâlâ engelli. Nedenini öğrenmek için Callout Studio ayarlarındaki kaydetme durumunu kontrol edin, ardından yeniden deneyin.",
-	"saveStatus.retrying": "Kaydetme ve kurtarma kontrol ediliyor…",
 	"saveStatus.reviewDraft": "Gelen ayarlar ve kurtarma kontrolleri tamamlandı. Taslağınız değişmedi. Gözden geçirip tekrar kaydedin.",
 	"saveStatus.settingsArrived": "Mevcut ayarlar geldi ve yüklendi. Yedek bir dosya oluşturulmadı.",
 	"saveStatus.syncConflict": "Gelen ayarlar, tamamlanmamış not güncellemeleri için gereken bir callout ile çakışıyor. Taslağınız ve bekleyen güncellemeler korundu. Yeniden denemeden önce ayar çakışmasını çözün.",
 	"saveStatus.titlePaused": "Kaydetme duraklatıldı",
 	"saveStatus.titleFailed": "Ayarlar kaydedilmedi",
+	"saveStatus.tryAgain": "Yeniden dene",
+	"saveStatus.working": "Üzerinde çalışılıyor…",
 	"saveStatus.unreadable": "Ayarlar dosyası güvenli bir şekilde okunamadığı için kaydetme duraklatıldı. Senkronizasyonu tamamlayın veya geçerli bir kopyayı geri yükleyin, ardından yeniden deneyin. Mevcut dosya korundu.",
 	"saveStatus.write": "Ayarlar dosyası kaydedilemedi. Kullanılabilir depolama alanını, klasör izinlerini ve senkronizasyonu kontrol edin, ardından Obsidian'ı kapatmadan önce yeniden deneyin.",
 	"saveStatus.writePermission": "Depolama alanı yazma erişimini reddettiği için ayarlar dosyası kaydedilemedi. Kasanın ve eklenti klasörünün yazılabilir olduğunu kontrol edin, ardından yeniden deneyin.",
@@ -1143,8 +1145,6 @@ export const tr: Record<string, string> = {
 	"settings.readOnly": "Obsidian başlatıldığında Callout Studio ayarlar dosyasını kullanamadı, bu nedenle bu sayfadaki hiçbir şey bu cihaza kaydedilmiyor. Değişiklikleriniz Obsidian'ı kapatana kadar kalıcı olacak. Dosya geri geldiğinde Obsidian'ı yeniden yükleyin — bu kasayı senkronize ediyorsanız, önce senkronizasyonun tamamlanmasına izin verin.",
 
 	// Sync safety hardening
-	"saveStatus.stillMissingAdvice":
-		"Ayarlar dosyası hâlâ eksik. Yeniden kontrol etmek onu yeniden oluşturmaz. Senkronizasyonun tamamlanmasına izin verin ve kasayı çevrimdışı kullanılabilir hale getirin. Dosya silindiyse, Bu ayarları geri yükle seçeneğini kullanın veya daha önceki bir kurulumu geri yükleyin.",
 	"saveStatus.diagnosis.unavailable":
 		"Bu cihaz şu anda dosyayı açamıyor. Hâlâ indiriliyor olabilir, kasa çevrimdışı kullanılabilir olmayabilir veya depolama yanıt vermiyor olabilir. Callout Studio otomatik olarak tekrar kontrol eder.",
 	"saveStatus.diagnosis.empty": "Dosya boş; bu genellikle bir senkronizasyonun kesintiye uğradığı anlamına gelir. Başka bir cihazda hâlâ ayarlarınız varsa, senkronize olmasına izin verin. Aksi takdirde dosyayı değiştirin.",
@@ -1155,11 +1155,41 @@ export const tr: Record<string, string> = {
 	"saveStatus.diagnosis.invalidEntries": "Dosya, Callout Studio'nun kullanamadığı girişler içeriyor; örneğin aynı callout türünün iki kez listelenmesi gibi.",
 	"saveStatus.replaceUnreadable": "Ayarlar dosyasını değiştir",
 	"saveStatus.discardRecoveryCopy": "Kurtarma kopyasını at",
-	"saveStatus.openRecovery": "Daha önceki bir kurulumu geri yükle",
-	"saveStatus.readOnlyWhilePaused": "Kaydetme tekrar çalışana kadar ayarlar değiştirilemez, bu nedenle burada yaptığınız hiçbir değişiklik kaybolmaz. Yine de kurulumunuzu dışa aktarabilirsiniz.",
+	"saveStatus.calm.opening": "Önce derin bir nefes alın — her şey yoluna girecek.",
+	"saveStatus.calm.kept": "Notlarınız güvende ve callout'larınız hâlâ bu cihazda duruyor.",
+	"saveStatus.calm.safe": "Notlarınız güvende.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio, kurulumunuzu korumak için yalnızca kaydetmeyi duraklattı; bu yüzden bu sayfa şimdilik salt okunur.",
+	"saveStatus.calm.paused": "Callout Studio, kurulumunuzu korumak için yalnızca kaydetmeyi duraklattı.",
+	"saveStatus.explain.missing":
+		"Callout Studio kendi ayarlar dosyasını bulamıyor. Bu genellikle eşitleme uygulamanız dosyayı hâlâ indirirken ya da Callout Studio başka bir cihazda kaldırıldıktan sonra olur.",
+	"saveStatus.explain.stillMissing":
+		"Ayarlar dosyası hâlâ geri gelmedi. Denetim yalnızca dosyayı arar, asla yeni bir dosya oluşturmaz. Kasanız iCloud, OneDrive, Google Drive veya Dropbox içindeyse bu cihazda indirilmiş kalacak şekilde ayarlandığından emin olun.",
+	"saveStatus.explain.unreadable": "Callout Studio şu anda ayarlar dosyasını okuyamıyor, bu yüzden dosyayı olduğu gibi bıraktı.",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio bu cihazda ayarlarınızın yedek bir kopyasını tutuyor ve o kopya şu anda okunamıyor. Ayarlar dosyasının kendisi sağlam olabilir.",
+	"saveStatus.explain.newerVersion":
+		"Ayarlarınız Callout Studio'nun daha yeni bir sürümü tarafından kaydedilmiş; bu yüzden bu eski sürüm onları değiştirmeyecek.",
+	"saveStatus.explain.changed": "Callout Studio dosyayla çalışırken ayarlar dosyası değişti; bu yüzden hiçbir şeyi değiştirmeden durdu.",
+	"saveStatus.guide.rechecks":
+		"Obsidian açık olduğu sürece Callout Studio her dakika yeniden denetler, bu yüzden sorun çoğu zaman kendiliğinden düzelir.",
+	"saveStatus.guide.rechecksCheckNow":
+		"Obsidian açık olduğu sürece Callout Studio her dakika yeniden denetler, bu yüzden sorun çoğu zaman kendiliğinden düzelir — ya da hemen bakmak için Tekrar kontrol et seçeneğini seçin.",
+	"saveStatus.guide.restore":
+		"Ayarlarınız geri gelmezse burada gördüğünüz callout'ları korumak için Bu ayarları geri yükle seçeneğini seçin.",
+	"saveStatus.guide.create": "Ayarlarınız geri gelmezse yeniden kaydetmeye başlamak için Ayarlar dosyası oluştur seçeneğini seçin.",
+	"saveStatus.guide.backup": "Kaydetme yeniden çalışmaya başladığında Yedek bölümünden daha eski bir sürümü de geri getirebilirsiniz.",
+	"saveStatus.guide.recoveryRetry": "Bu cihazda biraz boş depolama alanı olduğundan emin olun, sonra Yeniden dene seçeneğini seçin.",
+	"saveStatus.guide.recoveryDiscard":
+		"Bu işe yaramazsa Kurtarma kopyasını at seçeneğini seçin. Önce birebir bir kopya kaydedilir ve ayarlar dosyanıza dokunulmaz.",
+	"saveStatus.guide.newerVersion":
+		"Callout Studio'yu Ayarlar → Topluluk eklentileri bölümünden güncelleyin, sonra Obsidian'ı yeniden yükleyin.",
+	"saveStatus.goToBackups": "Yedeklere git",
+	"saveStatus.missingNotice": "Notlarınız güvende. Callout Studio şu anda ayarlar dosyasını bulamadığı için kaydetmeyi duraklattı.",
 	"statusBar.paused": "Kaydetme duraklatıldı",
 	"statusBar.pausedTooltip": "Callout Studio ayar değişikliklerini kaydetmiyor. Nedenini görmek için tıklayın.",
 	"statusBar.pausedNotice": "Callout Studio şu anda ayar değişikliklerini kaydetmiyor.",
+	"saveStatus.resumed": "Kaydetme yeniden açıldı. Callout Studio ayar değişikliklerini yeniden kaydediyor.",
 	"notice.replaceUnreadableUnavailable": "Ayarlar dosyası şu anda değiştirilemiyor: değişiyor veya bu cihaz onu okuyamıyor. Bir süre sonra tekrar deneyin.",
 	"notice.recoveryStorageUnavailable": "Bu cihazın kurtarma depolaması yanıt vermiyor, bu nedenle kopya atılamıyor. Obsidian'ı yeniden başlatın, ardından tekrar deneyin.",
 	"recovery.title": "Daha önceki bir kurulumu geri yükle",

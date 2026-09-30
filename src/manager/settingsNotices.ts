@@ -17,6 +17,7 @@ import { settingsSaveMessage } from "./settingsSaveMessage";
 import { en } from "../i18n/en";
 import { reportSettingsSaveFailure } from "./settingsSaveReporter";
 import type { SettingsWriter } from "./SettingsWriter";
+import type { SettingsSaveStatus } from "./settingsSaveStatus";
 import { ConfirmModal } from "../utils/ConfirmModal";
 
 /**
@@ -49,10 +50,25 @@ export function warnSettingsUnreadable(writer?: SettingsWriter): void {
  * sync service may propagate that choice to other devices. Keep the choice
  * beside the settings being restored, with an explanation and confirmation;
  * a transient notice is too easy to activate accidentally.
+ *
+ * **It is short, and it is not the explanation.** It says the one thing a
+ * worried reader needs first — their notes are safe, saving is only paused —
+ * and hands the rest to the banner, instead of printing the banner's whole
+ * explanation twice.
+ *
+ * **It leaves when the pause does.** Given `status`, it hides itself once the
+ * writer thaws: a file that syncs back in, or a restore from the banner, would
+ * otherwise leave it announcing a missing file that is there again. A change
+ * of reason alone does not hide it — saving is still paused, and on a phone
+ * this may be the only thing still saying so.
  */
-export function offerFreshStart(app: App, pluginId: string): void {
+export function offerFreshStart(
+	app: App,
+	pluginId: string,
+	status?: Pick<SettingsSaveStatus, "frozenReason" | "subscribe">,
+): void {
 	const frag = createFragment();
-	frag.appendChild(createEl("p", { text: settingsSaveMessage("missing") }));
+	frag.appendChild(createEl("p", { text: t("saveStatus.missingNotice") }));
 	const action = frag.appendChild(
 		createEl("a", {
 			text: t("saveStatus.openSettings"),
@@ -60,11 +76,19 @@ export function offerFreshStart(app: App, pluginId: string): void {
 		}),
 	);
 	const notice = new Notice(frag, 0);
+	const unsubscribe = status?.subscribe(() => {
+		if (status.frozenReason !== null) return;
+		unsubscribe?.();
+		notice.hide();
+	});
 	action.addEventListener("click", (event) => {
 		event.preventDefault();
 		// The notice stands if the pane could not be opened: the session is
 		// still frozen, and this is still the only thing saying so.
-		if (openPluginSettings(app, pluginId)) notice.hide();
+		if (openPluginSettings(app, pluginId)) {
+			unsubscribe?.();
+			notice.hide();
+		}
 	});
 }
 
@@ -106,7 +130,8 @@ export async function confirmFreshStart(
 	const ok = await new ConfirmModal(
 		app,
 		t(hasRecoveryState ? "confirm.titleRestoreSettings" : "confirm.titleCreateSettingsFile"),
-		t("confirm.restoreDisplayedSettings"),
+		// Plain words for the last step of a worrying moment.
+		t("confirm.saveDisplayedSettings"),
 		t(hasRecoveryState ? "saveStatus.restoreSettings" : "saveStatus.createSettingsFile"),
 		undefined,
 		"mod-cta",

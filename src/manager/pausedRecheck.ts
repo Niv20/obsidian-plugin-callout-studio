@@ -9,8 +9,18 @@
  * minute, and only while the app is on screen.
  */
 import type { SettingsWriter } from "./SettingsWriter";
+import type { SettingsSaveReason } from "./settingsSaveStatus";
 
 export const PAUSED_RECHECK_MS = 60_000;
+
+/**
+ * The paused states this keeps looking in. The saving banner promises "checks
+ * again every minute" only for these, so the promise and the timer share one
+ * answer rather than two lists that could drift.
+ */
+export function rechecksWhilePaused(reason: SettingsSaveReason | null | undefined): boolean {
+	return reason === "missing" || reason === "unreadable";
+}
 
 export interface PausedRecheckHost {
 	settingsWriter: Pick<SettingsWriter, "isVisiblyPaused" | "isDestroyed" | "status">;
@@ -22,8 +32,7 @@ export interface PausedRecheckHost {
 export function recheckIfPaused(host: PausedRecheckHost, doc: Pick<Document, "visibilityState"> = document): void {
 	const writer = host.settingsWriter;
 	if (writer.isDestroyed || !writer.isVisiblyPaused || doc.visibilityState === "hidden") return;
-	const reason = writer.status.frozenReason;
-	if (reason !== "missing" && reason !== "unreadable") return;
+	if (!rechecksWhilePaused(writer.status.frozenReason)) return;
 	void host.onExternalSettingsChange().catch((error: unknown) => {
 		console.error("[callout-studio] could not check the settings file again", error);
 	});

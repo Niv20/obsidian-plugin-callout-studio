@@ -1054,13 +1054,15 @@ export const ms: Record<string, string> = {
 	"commandBuilder.missingCallout": "Dijeda: callout tiada. Temui atau cipta untuk memulihkan arahan ini, atau edit arahan untuk memilih jenis lain.",
 	"confirm.titleRestoreSettings": "Pulihkan tetapan ini",
 	"confirm.titleCreateSettingsFile": "Cipta fail tetapan",
-	"confirm.restoreDisplayedSettings": "Ini menyimpan jenis callout dan pilihan yang sedang dipaparkan ke fail tetapan pada peranti ini dan menyambung semula penyimpanan. Sebarang salinan pemulihan tempatan yang boleh dibaca disandarkan dahulu.\nSebelum meneruskan, biarkan perkhidmatan penyegerakan anda selesai dan semak sama ada peranti lain mempunyai tetapan yang lebih baharu yang mahu anda kekalkan. Perkhidmatan penyegerakan anda mungkin menghantar fail yang dipulihkan ini ke peranti anda yang lain.\nFail disemak sekali lagi sebelum disimpan. Jika tetapan sedia ada ditemui, tetapan itu dikekalkan dan pemulihan mungkin meminta anda menyemak sekali lagi.",
+	"confirm.saveDisplayedSettings":
+		"Ini menyimpan persediaan yang anda lihat sekarang sebagai fail tetapan anda dan menghidupkan semula penyimpanan. Salinan simpanan yang disimpan oleh peranti ini disandarkan dahulu.\nJika peranti lain mungkin mempunyai perubahan lebih baharu yang anda mahu kekalkan, biarkan ia selesai menyegerak sebelum meneruskan. Aplikasi penyegerakan anda mungkin menghantar fail ini ke peranti anda yang lain.\nCallout Studio mencari fail tetapan sekali lagi sebelum menyimpan. Jika ia telah kembali, Callout Studio mengekalkannya.",
 	"notice.settingsBackupFailed": "Pemulihan tetapan tidak dapat diteruskan kerana sandaran keselamatan tidak dapat disimpan. Semak storan yang tersedia dan kebenaran tulis, kemudian cuba lagi.",
 	"notice.settingsBackupSaved": "Salinan pemulihan definisi callout tempatan disimpan sebelum menggunakan tetapan yang masuk: {{path}}.",
 	"notice.settingsChangedElsewhere": "Tetapan Callout Studio telah diubah pada peranti lain, jadi perubahan ini tidak disimpan. Tetapan peranti lain sedang dimuatkan sekarang — sila buat perubahan itu sekali lagi.",
 	"notice.settingsNewerVersion": "Tetapan Callout Studio disimpan oleh versi pemalam yang lebih baharu, jadi tiada apa akan ditulis pada peranti ini sehingga anda mengemas kininya. Tetapan anda selamat — kemas kini Callout Studio di sini dan muat semula Obsidian.",
 	"notice.settingsNotSaved": "Perubahan itu tidak disimpan. Callout Studio tidak dapat menggunakan fail tetapannya semasa Obsidian dimulakan, jadi tiada apa ditulis pada peranti ini — perubahan anda akan kekal sehingga anda menutup Obsidian. Lihat Tetapan → Callout Studio untuk apa yang perlu dilakukan.",
-	"saveStatus.changed": "Fail tetapan berubah semasa anda mengedit. Draf anda masih tersedia. Pilih Cuba semula simpan dan pemulihan untuk memuatkan tetapan yang masuk, kemudian semak draf anda dan simpan semula.",
+	"saveStatus.changed":
+		"Fail tetapan berubah semasa anda menyunting. Draf anda masih ada. Pilih Cuba lagi untuk memuatkan tetapan yang masuk, kemudian semak draf anda dan simpan sekali lagi.",
 	"saveStatus.missing": "Penyimpanan dijeda kerana fail tetapan hilang. Ini boleh berlaku selepas pemasangan semula atau semasa penyegerakan masih berjalan. Selesaikan penyegerakan dan cuba lagi. Untuk menggantikan fail yang hilang dengan sengaja, gunakan Cipta fail tetapan baharu dalam tetapan Callout Studio.",
 	"saveStatus.restoreSettings": "Pulihkan tetapan ini",
 	"saveStatus.createSettingsFile": "Cipta fail tetapan",
@@ -1071,14 +1073,14 @@ export const ms: Record<string, string> = {
 	"saveStatus.notesFailed": "Definisi callout disimpan, tetapi beberapa kemas kini nota tidak dapat diselesaikan. Biarkan editor ini terbuka dan pilih Simpan untuk mencuba semula kemas kini yang belum selesai.",
 	"saveStatus.recoveryRead": "Penyimpanan dijeda kerana salinan pemulihan tempatan tidak dapat dibaca. Fail tetapan anda mungkin masih utuh. Semak storan yang tersedia, kemudian cuba semula pemulihan. Data pemulihan sedia ada tidak akan ditulis ganti.",
 	"saveStatus.recoveryWrite": "Salinan pemulihan tempatan tidak dapat disimpan. Semak storan yang tersedia, kemudian cuba lagi. Biarkan draf anda terbuka sehingga penyimpanan berjaya.",
-	"saveStatus.retry": "Cuba semula simpan dan pemulihan",
 	"saveStatus.retryFailed": "Penyimpanan masih disekat. Semak status penyimpanan dalam tetapan Callout Studio untuk mengetahui puncanya, kemudian cuba lagi.",
-	"saveStatus.retrying": "Menyemak penyimpanan dan pemulihan…",
 	"saveStatus.reviewDraft": "Tetapan yang masuk dan pemeriksaan pemulihan telah selesai. Draf anda tidak berubah. Semak dan simpan semula.",
 	"saveStatus.settingsArrived": "Tetapan sedia ada telah tiba dan dimuatkan. Fail gantian tidak dicipta.",
 	"saveStatus.syncConflict": "Tetapan yang masuk bercanggah dengan callout yang diperlukan untuk kemas kini nota yang belum selesai. Draf anda dan kemas kini yang tertangguh telah disimpan. Selesaikan percanggahan tetapan sebelum mencuba lagi.",
 	"saveStatus.titlePaused": "Penyimpanan dijeda",
 	"saveStatus.titleFailed": "Tetapan tidak disimpan",
+	"saveStatus.tryAgain": "Cuba lagi",
+	"saveStatus.working": "Sedang diproses…",
 	"saveStatus.unreadable": "Penyimpanan dijeda kerana fail tetapan tidak dapat dibaca dengan selamat. Selesaikan penyegerakan atau pulihkan salinan yang sah, kemudian cuba lagi. Fail sedia ada telah disimpan.",
 	"saveStatus.write": "Fail tetapan tidak dapat disimpan. Semak storan yang tersedia, kebenaran folder dan penyegerakan, kemudian cuba lagi sebelum menutup Obsidian.",
 	"saveStatus.writePermission": "Fail tetapan tidak dapat disimpan kerana storan menolak akses tulis. Semak sama ada vault dan folder pemalam boleh ditulis, kemudian cuba lagi.",
@@ -1136,8 +1138,6 @@ export const ms: Record<string, string> = {
 	"portable.error": "Vault tidak dapat dibaca atau dikemas kini dengan selamat. Periksa akses fail, kemudian cuba lagi.",
 	"settings.maintenance": "Zon bahaya",
 	// Sync safety hardening
-	"saveStatus.stillMissingAdvice":
-		"Fail tetapan masih hilang. Menyemak semula tidak akan mencipta semula fail itu. Biarkan penyegerakan selesai dan pastikan vault tersedia secara luar talian. Jika fail telah dipadam, pilih Ganti fail tetapan ini, atau pulihkan persediaan lama.",
 	"saveStatus.diagnosis.unavailable":
 		"Peranti ini tidak dapat membuka fail buat masa ini. Ia mungkin masih dimuat turun, vault mungkin tidak tersedia secara luar talian, atau storan tidak bertindak balas. Callout Studio menyemak semula secara automatik.",
 	"saveStatus.diagnosis.empty":
@@ -1151,12 +1151,44 @@ export const ms: Record<string, string> = {
 		"Fail ini mengandungi entri yang tidak dapat digunakan oleh Callout Studio, contohnya jenis callout yang sama disenaraikan dua kali.",
 	"saveStatus.replaceUnreadable": "Ganti fail tetapan",
 	"saveStatus.discardRecoveryCopy": "Buang salinan pemulihan",
-	"saveStatus.openRecovery": "Pulihkan persediaan lama",
-	"saveStatus.readOnlyWhilePaused":
-		"Tetapan tidak dapat diubah sehingga penyimpanan berfungsi semula, jadi tiada apa yang anda ubah di sini akan hilang. Anda masih boleh eksport persediaan anda.",
+	"saveStatus.calm.opening": "Pertama sekali, tarik nafas dalam-dalam — semuanya akan baik-baik saja.",
+	"saveStatus.calm.kept": "Nota anda selamat, dan callout anda masih ada di peranti ini.",
+	"saveStatus.calm.safe": "Nota anda selamat.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio hanya menjeda penyimpanan untuk melindungi persediaan anda, jadi halaman ini hanya boleh dibaca buat masa ini.",
+	"saveStatus.calm.paused": "Callout Studio hanya menjeda penyimpanan untuk melindungi persediaan anda.",
+	"saveStatus.explain.missing":
+		"Callout Studio tidak dapat menemui fail tetapannya. Ini biasanya berlaku semasa aplikasi penyegerakan anda masih memuat turunnya, atau selepas Callout Studio dibuang pada peranti lain.",
+	"saveStatus.explain.stillMissing":
+		"Fail tetapan masih belum kembali. Semakan hanya mencarinya dan tidak pernah mencipta yang baharu. Jika vault anda berada dalam iCloud, OneDrive, Google Drive atau Dropbox, pastikan ia ditetapkan untuk kekal dimuat turun pada peranti ini.",
+	"saveStatus.explain.unreadable":
+		"Callout Studio tidak dapat membaca fail tetapannya sekarang, jadi ia membiarkan fail itu tepat seperti sedia ada.",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio menyimpan salinan simpanan tetapan anda pada peranti ini, dan salinan itu tidak dapat dibaca sekarang. Fail tetapan itu sendiri mungkin masih baik.",
+	"saveStatus.explain.newerVersion":
+		"Tetapan anda disimpan oleh versi Callout Studio yang lebih baharu, jadi versi lama ini tidak akan mengubahnya.",
+	"saveStatus.explain.changed":
+		"Fail tetapan berubah semasa Callout Studio sedang mengendalikannya, jadi ia berhenti tanpa menggantikan apa-apa.",
+	"saveStatus.guide.rechecks":
+		"Callout Studio menyemak semula setiap minit selagi Obsidian dibuka, jadi masalah ini sering selesai dengan sendirinya.",
+	"saveStatus.guide.rechecksCheckNow":
+		"Callout Studio menyemak semula setiap minit selagi Obsidian dibuka, jadi masalah ini sering selesai dengan sendirinya — atau pilih Semak sekali lagi untuk menyemak sekarang.",
+	"saveStatus.guide.restore":
+		"Jika tetapan anda tidak kembali, pilih Pulihkan tetapan ini untuk mengekalkan callout yang anda lihat di sini.",
+	"saveStatus.guide.create": "Jika tetapan anda tidak kembali, pilih Cipta fail tetapan untuk mula menyimpan semula.",
+	"saveStatus.guide.backup":
+		"Setelah penyimpanan berfungsi semula, anda juga boleh mengembalikan versi terdahulu daripada bahagian Sandaran.",
+	"saveStatus.guide.recoveryRetry": "Pastikan peranti ini mempunyai sedikit ruang storan kosong, kemudian pilih Cuba lagi.",
+	"saveStatus.guide.recoveryDiscard":
+		"Jika itu tidak membantu, pilih Buang salinan pemulihan. Salinan tepat disimpan dahulu, dan fail tetapan anda tidak disentuh.",
+	"saveStatus.guide.newerVersion": "Kemas kini Callout Studio dalam Tetapan → Pemalam komuniti, kemudian muat semula Obsidian.",
+	"saveStatus.goToBackups": "Pergi ke sandaran",
+	"saveStatus.missingNotice":
+		"Nota anda selamat. Callout Studio telah menjeda penyimpanan kerana ia tidak dapat menemui fail tetapannya sekarang.",
 	"statusBar.paused": "Penyimpanan dijeda",
 	"statusBar.pausedTooltip": "Callout Studio tidak menyimpan perubahan tetapan. Klik untuk lihat sebabnya.",
 	"statusBar.pausedNotice": "Callout Studio tidak menyimpan perubahan tetapan buat masa ini.",
+	"saveStatus.resumed": "Penyimpanan dihidupkan semula. Callout Studio menyimpan perubahan tetapan semula.",
 	"notice.replaceUnreadableUnavailable":
 		"Fail tetapan tidak dapat diganti buat masa ini: ia sedang berubah, atau peranti ini tidak dapat membacanya. Cuba lagi sebentar lagi.",
 	"notice.recoveryStorageUnavailable":

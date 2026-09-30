@@ -1124,13 +1124,15 @@ export const ro: Record<string, string> = {
 	"commandBuilder.missingCallout": "În pauză: callout-ul lipsește. Descoperă-l sau creează-l pentru a restabili această comandă, sau editează comanda pentru a alege alt tip.",
 	"confirm.titleRestoreSettings": "Restaurează aceste setări",
 	"confirm.titleCreateSettingsFile": "Creează fișierul de setări",
-	"confirm.restoreDisplayedSettings": "Aceasta salvează tipurile de callout și preferințele afișate în prezent într-un fișier de setări pe acest dispozitiv și reia salvarea. Orice copie locală de recuperare lizibilă este mai întâi salvată ca rezervă.\nÎnainte de a continua, lasă serviciul de sincronizare să se termine și verifică dacă un alt dispozitiv are setări mai noi pe care vrei să le păstrezi. Serviciul tău de sincronizare poate trimite acest fișier restaurat către celelalte dispozitive ale tale.\nFișierul este verificat din nou înainte de salvare. Dacă sunt găsite setări existente, acestea sunt păstrate, iar recuperarea îți poate cere să verifici din nou.",
+	"confirm.saveDisplayedSettings":
+		"Aceasta salvează configurația pe care o vezi acum ca fișier de setări și repornește salvarea. Copia de rezervă păstrată de acest dispozitiv este salvată mai întâi într-un backup.\nDacă un alt dispozitiv ar putea avea modificări mai noi pe care vrei să le păstrezi, lasă-l să termine sincronizarea înainte de a continua. Aplicația ta de sincronizare ar putea trimite acest fișier către celelalte dispozitive ale tale.\nÎnainte de salvare, Callout Studio caută încă o dată fișierul de setări. Dacă a revenit, Callout Studio îl păstrează pe acela.",
 	"notice.settingsBackupFailed": "Recuperarea setărilor nu a putut continua deoarece o copie de siguranță nu a putut fi salvată. Verifică spațiul de stocare disponibil și permisiunile de scriere, apoi încearcă din nou.",
 	"notice.settingsBackupSaved": "O copie de recuperare a definițiilor locale de callout a fost salvată înainte de aplicarea setărilor primite: {{path}}.",
 	"notice.settingsChangedElsewhere": "Setările Callout Studio au fost modificate pe alt dispozitiv, așa că această modificare nu a fost salvată. Setările celuilalt dispozitiv se încarcă acum — te rugăm să faci din nou modificarea.",
 	"notice.settingsNewerVersion": "Setările Callout Studio au fost salvate de o versiune mai nouă a pluginului, așa că nimic nu va fi scris pe acest dispozitiv până nu îl actualizezi. Setările tale sunt în siguranță — actualizează Callout Studio aici și reîncarcă Obsidian.",
 	"notice.settingsNotSaved": "Acea modificare nu a fost salvată. Callout Studio nu a putut folosi fișierul său de setări când Obsidian a pornit, așa că nimic nu se scrie pe acest dispozitiv — modificările tale vor rămâne până închizi Obsidian. Vezi Setări → Callout Studio pentru ce trebuie făcut.",
-	"saveStatus.changed": "Fișierul de setări s-a schimbat în timp ce editai. Ciorna ta este încă disponibilă. Alege Reîncearcă salvarea și recuperarea pentru a încărca setările primite, apoi verifică-ți ciorna și salvează din nou.",
+	"saveStatus.changed":
+		"Fișierul de setări s-a schimbat cât timp l-ai editat. Ciorna ta este încă disponibilă. Alege Încearcă din nou pentru a încărca setările sosite, apoi verifică ciorna și salvează din nou.",
 	"saveStatus.missing": "Salvarea este în pauză deoarece fișierul de setări lipsește. Acest lucru se poate întâmpla după o reinstalare sau în timp ce sincronizarea încă rulează. Termină sincronizarea și încearcă din nou. Pentru a înlocui intenționat fișierul lipsă, folosește Creează un fișier de setări nou din setările Callout Studio.",
 	"saveStatus.restoreSettings": "Restaurează aceste setări",
 	"saveStatus.createSettingsFile": "Creează fișierul de setări",
@@ -1141,22 +1143,20 @@ export const ro: Record<string, string> = {
 	"saveStatus.notesFailed": "Definiția callout-ului a fost salvată, dar unele actualizări de notițe nu au putut fi finalizate. Lasă acest editor deschis și alege Salvează pentru a reîncerca actualizările neterminate.",
 	"saveStatus.recoveryRead": "Salvarea este în pauză deoarece copia de recuperare locală nu poate fi citită. Fișierul tău de setări poate fi încă intact. Verifică spațiul de stocare disponibil, apoi reîncearcă recuperarea. Datele de recuperare existente nu vor fi suprascrise.",
 	"saveStatus.recoveryWrite": "Copia de recuperare locală nu a putut fi salvată. Verifică spațiul de stocare disponibil, apoi încearcă din nou. Lasă ciorna deschisă până când salvarea reușește.",
-	"saveStatus.retry": "Reîncearcă salvarea și recuperarea",
 	"saveStatus.retryFailed": "Salvarea este încă blocată. Verifică starea salvării în setările Callout Studio pentru a afla cauza, apoi încearcă din nou.",
-	"saveStatus.retrying": "Se verifică salvarea și recuperarea…",
 	"saveStatus.reviewDraft": "Setările primite și verificările de recuperare sunt complete. Ciorna ta este neschimbată. Verific-o și salvează din nou.",
 	"saveStatus.settingsArrived": "Setările existente au sosit și au fost încărcate. Niciun fișier de înlocuire nu a fost creat.",
 	"saveStatus.syncConflict": "Setările primite intră în conflict cu un callout necesar pentru actualizări de notițe neterminate. Ciorna ta și actualizările în așteptare au fost păstrate. Rezolvă conflictul de setări înainte de a reîncerca.",
 	"saveStatus.titlePaused": "Salvarea este în pauză",
 	"saveStatus.titleFailed": "Setările nu au fost salvate",
+	"saveStatus.tryAgain": "Încearcă din nou",
+	"saveStatus.working": "Se lucrează la asta…",
 	"saveStatus.unreadable": "Salvarea este în pauză deoarece fișierul de setări nu poate fi citit în siguranță. Termină sincronizarea sau restaurează o copie validă, apoi încearcă din nou. Fișierul existent a fost păstrat.",
 	"saveStatus.write": "Fișierul de setări nu a putut fi salvat. Verifică spațiul de stocare disponibil, permisiunile folderului și sincronizarea, apoi încearcă din nou înainte de a închide Obsidian.",
 	"saveStatus.writePermission": "Fișierul de setări nu a putut fi salvat deoarece stocarea a refuzat accesul de scriere. Verifică dacă vault-ul și folderul pluginului pot fi scrise, apoi încearcă din nou.",
 	"saveStatus.writeSpace": "Fișierul de setări nu a putut fi salvat deoarece stocarea este plină sau cota sa a fost depășită. Eliberează ceva spațiu, apoi încearcă din nou.",
 	"settings.readOnly": "Callout Studio nu a putut folosi fișierul său de setări când Obsidian a pornit, așa că nimic pe această pagină nu se salvează pe acest dispozitiv. Modificările tale vor rămâne până închizi Obsidian. Reîncarcă Obsidian imediat ce fișierul revine — dacă sincronizezi acest vault, lasă mai întâi sincronizarea să se termine.",
 	// Sync safety hardening
-	"saveStatus.stillMissingAdvice":
-		"Fișierul de setări încă lipsește. Verificarea din nou nu îl recreează. Lasă sincronizarea să se termine și fă vault-ul disponibil offline. Dacă fișierul a fost șters, alege Înlocuiește acest fișier de setări, sau restaurează o configurație anterioară.",
 	"saveStatus.diagnosis.unavailable":
 		"Acest dispozitiv nu poate deschide fișierul acum. Poate fi încă descărcat, vault-ul poate să nu fie disponibil offline, sau stocarea nu răspunde. Callout Studio verifică din nou automat.",
 	"saveStatus.diagnosis.empty":
@@ -1170,12 +1170,42 @@ export const ro: Record<string, string> = {
 		"Fișierul conține intrări pe care Callout Studio nu le poate folosi, de exemplu același tip de callout listat de două ori.",
 	"saveStatus.replaceUnreadable": "Înlocuiește fișierul de setări",
 	"saveStatus.discardRecoveryCopy": "Renunță la copia de recuperare",
-	"saveStatus.openRecovery": "Restaurează o configurație anterioară",
-	"saveStatus.readOnlyWhilePaused":
-		"Setările nu pot fi modificate până când salvarea funcționează din nou, așa că nimic din ce modifici aici nu se pierde. Poți totuși să exporți configurația.",
+	"saveStatus.calm.opening": "Înainte de orice, respiră adânc — totul va fi bine.",
+	"saveStatus.calm.kept": "Notele tale sunt în siguranță, iar callout-urile tale sunt încă aici, pe acest dispozitiv.",
+	"saveStatus.calm.safe": "Notele tale sunt în siguranță.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio a oprit doar temporar salvarea, ca să-ți protejeze configurația, de aceea pagina aceasta este momentan doar pentru citire.",
+	"saveStatus.calm.paused": "Callout Studio a oprit doar temporar salvarea, ca să-ți protejeze configurația.",
+	"saveStatus.explain.missing":
+		"Callout Studio nu își găsește fișierul de setări. Asta se întâmplă de obicei cât timp aplicația ta de sincronizare încă îl descarcă sau după ce Callout Studio a fost eliminat de pe alt dispozitiv.",
+	"saveStatus.explain.stillMissing":
+		"Fișierul de setări încă nu a revenit. Verificarea doar îl caută și nu creează niciodată unul nou. Dacă seiful tău este în iCloud, OneDrive, Google Drive sau Dropbox, asigură-te că este setat să rămână descărcat pe acest dispozitiv.",
+	"saveStatus.explain.unreadable": "Callout Studio nu poate citi acum fișierul său de setări, așa că l-a lăsat exact așa cum este.",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio păstrează pe acest dispozitiv o copie de rezervă a setărilor tale, iar acea copie nu poate fi citită acum. Este posibil ca fișierul de setări în sine să fie în regulă.",
+	"saveStatus.explain.newerVersion":
+		"Setările tale au fost salvate de o versiune mai nouă a Callout Studio, așa că această versiune mai veche nu le va modifica.",
+	"saveStatus.explain.changed":
+		"Fișierul de setări s-a schimbat cât timp Callout Studio lucra cu el, așa că s-a oprit fără să înlocuiască nimic.",
+	"saveStatus.guide.rechecks":
+		"Callout Studio verifică din nou în fiecare minut cât timp Obsidian este deschis, așa că adesea problema se rezolvă singură.",
+	"saveStatus.guide.rechecksCheckNow":
+		"Callout Studio verifică din nou în fiecare minut cât timp Obsidian este deschis, așa că adesea problema se rezolvă singură — sau alege Verifică din nou ca să verifici chiar acum.",
+	"saveStatus.guide.restore":
+		"Dacă setările tale nu revin, alege Restaurează aceste setări pentru a păstra callout-urile pe care le vezi aici.",
+	"saveStatus.guide.create": "Dacă setările tale nu revin, alege Creează fișierul de setări pentru a începe din nou să salvezi.",
+	"saveStatus.guide.backup": "Când salvarea funcționează din nou, poți readuce și o versiune anterioară din secțiunea Copie de rezervă.",
+	"saveStatus.guide.recoveryRetry": "Asigură-te că acest dispozitiv are puțin spațiu de stocare liber, apoi alege Încearcă din nou.",
+	"saveStatus.guide.recoveryDiscard":
+		"Dacă asta nu ajută, alege Renunță la copia de recuperare. Mai întâi se salvează o copie exactă, iar fișierul tău de setări nu este atins.",
+	"saveStatus.guide.newerVersion": "Actualizează Callout Studio din Setări → Pluginuri comunitare, apoi reîncarcă Obsidian.",
+	"saveStatus.goToBackups": "Mergi la copiile de rezervă",
+	"saveStatus.missingNotice":
+		"Notele tale sunt în siguranță. Callout Studio a oprit temporar salvarea pentru că nu își găsește acum fișierul de setări.",
 	"statusBar.paused": "Salvare întreruptă",
 	"statusBar.pausedTooltip": "Callout Studio nu salvează modificările de setări. Apasă pentru a vedea de ce.",
 	"statusBar.pausedNotice": "Callout Studio nu salvează modificările de setări chiar acum.",
+	"saveStatus.resumed": "Salvarea funcționează din nou. Callout Studio salvează iar modificările setărilor.",
 	"notice.replaceUnreadableUnavailable":
 		"Fișierul de setări nu poate fi înlocuit acum: se schimbă, sau acest dispozitiv nu îl poate citi. Încearcă din nou peste puțin timp.",
 	"notice.recoveryStorageUnavailable":

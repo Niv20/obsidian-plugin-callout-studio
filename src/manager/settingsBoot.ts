@@ -60,7 +60,7 @@ export async function loadSettingsInto(
 		if (isFromNewerBuild(missingRecovery)) {
 			host.settingsWriter.freeze("newer-version");
 			reportSettingsSaveFailure(host.settingsWriter);
-		} else offerFreshStart(host.app, host.manifest.id);
+		} else offerFreshStart(host.app, host.manifest.id, host.settingsWriter.status);
 
 		// Display the durable copy without making it the baseline for a file
 		// that is absent. Confirmed recreation preserves these definitions.

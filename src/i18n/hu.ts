@@ -1076,13 +1076,15 @@ export const hu: Record<string, string> = {
 	"commandBuilder.missingCallout": "Szüneteltetve: a callout hiányzik. Fedezd fel vagy hozd létre a parancs visszaállításához, vagy szerkeszd a parancsot másik típus kiválasztásához.",
 	"confirm.titleRestoreSettings": "Ezeknek a beállításoknak a visszaállítása",
 	"confirm.titleCreateSettingsFile": "Beállításfájl létrehozása",
-	"confirm.restoreDisplayedSettings": "Ez az éppen megjelenített callout-típusokat és beállításokat egy beállításfájlba menti ezen az eszközön, és folytatja a mentést. Minden olvasható helyi helyreállítási példányról előbb biztonsági mentés készül.\nFolytatás előtt várd meg, amíg a szinkronizálási szolgáltatás befejeződik, és ellenőrizd, hogy van-e másik eszközön újabb beállítás, amelyet meg szeretnél tartani. A szinkronizálási szolgáltatás ezt a visszaállított fájlt elküldheti a többi eszközödre.\nA fájl mentés előtt újra ellenőrzésre kerül. Ha meglévő beállítások találhatók, azok megmaradnak, és a helyreállítás újraellenőrzést kérhet.",
+	"confirm.saveDisplayedSettings":
+		"Ez a most látható beállításokat menti el beállításfájlként, és újra bekapcsolja a mentést. Az ezen az eszközön őrzött tartalék másolatról előbb biztonsági mentés készül.\nHa egy másik eszközön lehetnek újabb módosítások, amelyeket meg szeretnél tartani, a folytatás előtt hagyd, hogy befejezze a szinkronizálást. A szinkronizáló alkalmazásod elküldheti ezt a fájlt a többi eszközödre.\nA Callout Studio mentés előtt még egyszer megkeresi a beállításfájlt. Ha visszatért, a Callout Studio azt tartja meg.",
 	"notice.settingsBackupFailed": "A beállítások helyreállítása nem folytatódhatott, mert egy biztonsági mentést nem sikerült elmenteni. Ellenőrizd az elérhető tárhelyet és az írási jogosultságokat, majd próbáld újra.",
 	"notice.settingsBackupSaved": "A bejövő beállítások alkalmazása előtt elmentődött a helyi callout-definíciók helyreállítási másolata: {{path}}.",
 	"notice.settingsChangedElsewhere": "A Callout Studio beállításai egy másik eszközön megváltoztak, ezért ez a módosítás nem mentődött el. A másik eszköz beállításai most töltődnek be — kérjük, végezd el újra a módosítást.",
 	"notice.settingsNewerVersion": "A Callout Studio beállításait a bővítmény egy újabb verziója mentette el, ezért ezen az eszközön semmi nem íródik, amíg nem frissíted. A beállításaid biztonságban vannak — frissítsd itt a Callout Studiót, és töltsd újra az Obsidiant.",
 	"notice.settingsNotSaved": "Az a módosítás nem mentődött el. A Callout Studio nem tudta használni a beállításfájlját az Obsidian indulásakor, ezért ezen az eszközön semmi nem íródik — a módosításaid megmaradnak, amíg be nem zárod az Obsidiant. Nézd meg a Beállítások → Callout Studio menüt a teendőkért.",
-	"saveStatus.changed": "A beállításfájl megváltozott, miközben szerkesztettél. A vázlatod továbbra is elérhető. Válaszd a Mentés és helyreállítás újrapróbálása lehetőséget a bejövő beállítások betöltéséhez, majd ellenőrizd a vázlatod, és mentsd el újra.",
+	"saveStatus.changed":
+		"A beállításfájl megváltozott, miközben szerkesztetted. A vázlatod továbbra is elérhető. Válaszd az Újrapróbálkozás lehetőséget a beérkezett beállítások betöltéséhez, majd nézd át a vázlatot, és mentsd újra.",
 	"saveStatus.missing": "A mentés szüneteltetve van, mert a beállításfájl hiányzik. Ez előfordulhat újratelepítés után, vagy amíg a szinkronizálás még fut. Fejezd be a szinkronizálást, és próbáld újra. A hiányzó fájl szándékos cseréjéhez használd az Új beállításfájl létrehozása lehetőséget a Callout Studio beállításaiban.",
 	"saveStatus.restoreSettings": "Ezeknek a beállításoknak a visszaállítása",
 	"saveStatus.createSettingsFile": "Beállításfájl létrehozása",
@@ -1093,14 +1095,14 @@ export const hu: Record<string, string> = {
 	"saveStatus.notesFailed": "A callout definíciója elmentődött, de néhány jegyzetfrissítés nem tudott befejeződni. Hagyd nyitva ezt a szerkesztőt, és válaszd a Mentés lehetőséget a befejezetlen frissítések újrapróbálásához.",
 	"saveStatus.recoveryRead": "A mentés szüneteltetve van, mert a helyi helyreállítási másolat nem olvasható. A beállításfájlod még sértetlen lehet. Ellenőrizd az elérhető tárhelyet, majd próbáld újra a helyreállítást. A meglévő helyreállítási adatok nem íródnak felül.",
 	"saveStatus.recoveryWrite": "A helyi helyreállítási másolatot nem sikerült elmenteni. Ellenőrizd az elérhető tárhelyet, majd próbáld újra. Hagyd nyitva a vázlatod, amíg a mentés sikeres nem lesz.",
-	"saveStatus.retry": "Mentés és helyreállítás újrapróbálása",
 	"saveStatus.retryFailed": "A mentés továbbra is blokkolva van. Ellenőrizd a mentés állapotát a Callout Studio beállításaiban az ok kiderítéséhez, majd próbáld újra.",
-	"saveStatus.retrying": "Mentés és helyreállítás ellenőrzése…",
 	"saveStatus.reviewDraft": "A bejövő beállítások és a helyreállítási ellenőrzések befejeződtek. A vázlatod változatlan. Ellenőrizd, és mentsd el újra.",
 	"saveStatus.settingsArrived": "A meglévő beállítások megérkeztek és betöltődtek. Nem jött létre pótfájl.",
 	"saveStatus.syncConflict": "A bejövő beállítások ütköznek egy befejezetlen jegyzetfrissítéshez szükséges callout-tal. A vázlatod és a függőben lévő frissítések megmaradtak. Oldd fel a beállítások ütközését, mielőtt újra próbálkoznál.",
 	"saveStatus.titlePaused": "A mentés szüneteltetve van",
 	"saveStatus.titleFailed": "A beállítások nem lettek elmentve",
+	"saveStatus.tryAgain": "Újrapróbálkozás",
+	"saveStatus.working": "Folyamatban…",
 	"saveStatus.unreadable": "A mentés szüneteltetve van, mert a beállításfájl nem olvasható be biztonságosan. Fejezd be a szinkronizálást, vagy állíts vissza egy érvényes másolatot, majd próbáld újra. A meglévő fájl megmaradt.",
 	"saveStatus.write": "A beállításfájlt nem sikerült elmenteni. Ellenőrizd az elérhető tárhelyet, a mappa jogosultságait és a szinkronizálást, majd próbáld újra, mielőtt bezárnád az Obsidiant.",
 	"saveStatus.writePermission": "A beállításfájlt nem sikerült elmenteni, mert a tárhely megtagadta az írási hozzáférést. Ellenőrizd, hogy a boltív és a bővítmény mappája írható-e, majd próbáld újra.",
@@ -1159,7 +1161,6 @@ export const hu: Record<string, string> = {
 	"settings.maintenance": "Veszélyzóna",
 
 	// Sync safety hardening
-	"saveStatus.stillMissingAdvice": "A beállítási fájl továbbra is hiányzik. Az újbóli ellenőrzés nem hozza létre újra. Hagyja, hogy a szinkronizálás befejeződjön, és tegye elérhetővé a tárat offline is. Ha a fájlt törölték, válassza a Beállítások visszaállítása lehetőséget, vagy állítson vissza egy korábbi konfigurációt.",
 	"saveStatus.diagnosis.unavailable": "Ez az eszköz jelenleg nem tudja megnyitni a fájlt. Lehet, hogy még letöltés alatt van, a tár nem érhető el offline, vagy a tárhely nem válaszol. A Callout Studio automatikusan újra ellenőriz.",
 	"saveStatus.diagnosis.empty": "A fájl üres, ami általában azt jelenti, hogy egy szinkronizálás megszakadt. Ha egy másik eszközön még megvannak a beállításai, hagyja, hogy szinkronizáljon. Ellenkező esetben cserélje le a fájlt.",
 	"saveStatus.diagnosis.mergeMarkers": "A fájl megoldatlan összevonási ütközésjelzőket tartalmaz, például Gitből. Oldja fel az ütközést a Git-eszközében, vagy cserélje le a fájlt.",
@@ -1168,11 +1169,45 @@ export const hu: Record<string, string> = {
 	"saveStatus.diagnosis.invalidEntries": "A fájl olyan bejegyzéseket tartalmaz, amelyeket a Callout Studio nem tud használni, például ugyanaz a callout-típus kétszer szerepel.",
 	"saveStatus.replaceUnreadable": "Beállítási fájl cseréje",
 	"saveStatus.discardRecoveryCopy": "Helyreállítási másolat elvetése",
-	"saveStatus.openRecovery": "Korábbi konfiguráció visszaállítása",
-	"saveStatus.readOnlyWhilePaused": "A beállítások nem módosíthatók, amíg a mentés újra nem működik, így semmi, amit itt módosít, nem vész el. Továbbra is exportálhatja a konfigurációját.",
+	"saveStatus.calm.opening": "Először is végy egy mély levegőt — minden rendben lesz.",
+	"saveStatus.calm.kept": "A jegyzeteid biztonságban vannak, és a calloutjaid továbbra is itt vannak ezen az eszközön.",
+	"saveStatus.calm.safe": "A jegyzeteid biztonságban vannak.",
+	"saveStatus.calm.pausedPage":
+		"A Callout Studio csak szüneteltette a mentést, hogy megvédje a beállításaidat, ezért ez az oldal egyelőre csak olvasható.",
+	"saveStatus.calm.paused": "A Callout Studio csak szüneteltette a mentést, hogy megvédje a beállításaidat.",
+	"saveStatus.explain.missing":
+		"A Callout Studio nem találja a beállításfájlját. Ez általában akkor történik, amikor a szinkronizáló alkalmazásod még tölti le, vagy miután a Callout Studiót eltávolították egy másik eszközön.",
+	"saveStatus.explain.stillMissing":
+		"A beállításfájl még mindig nem tért vissza. Az ellenőrzés csak keresi, és sosem hoz létre újat. Ha a tárolód iCloudban, OneDrive-on, Google Drive-on vagy Dropboxban van, ügyelj rá, hogy ezen az eszközön letöltve maradjon.",
+	"saveStatus.explain.unreadable": "A Callout Studio most nem tudja beolvasni a beállításfájlját, ezért pontosan úgy hagyta, ahogy van.",
+	"saveStatus.explain.recoveryRead":
+		"A Callout Studio ezen az eszközön tartalék másolatot őriz a beállításaidról, és ezt a másolatot most nem lehet beolvasni. Maga a beállításfájl lehet, hogy rendben van.",
+	"saveStatus.explain.newerVersion":
+		"A beállításaidat a Callout Studio egy újabb verziója mentette, ezért ez a régebbi verzió nem módosítja őket.",
+	"saveStatus.explain.changed":
+		"A beállításfájl megváltozott, miközben a Callout Studio dolgozott vele, ezért leállt anélkül, hogy bármit lecserélt volna.",
+	"saveStatus.guide.rechecks":
+		"A Callout Studio percenként újra ellenőrzi, amíg az Obsidian nyitva van, ezért ez gyakran magától megoldódik.",
+	"saveStatus.guide.rechecksCheckNow":
+		"A Callout Studio percenként újra ellenőrzi, amíg az Obsidian nyitva van, ezért ez gyakran magától megoldódik — vagy válaszd az Újraellenőrzés lehetőséget, hogy azonnal megnézd.",
+	"saveStatus.guide.restore":
+		"Ha a beállításaid nem térnek vissza, válaszd az Ezeknek a beállításoknak a visszaállítása lehetőséget, hogy megtartsd az itt látható calloutokat.",
+	"saveStatus.guide.create":
+		"Ha a beállításaid nem térnek vissza, válaszd a Beállításfájl létrehozása lehetőséget, hogy újra elkezdődjön a mentés.",
+	"saveStatus.guide.backup": "Ha a mentés újra működik, a(z) Biztonsági mentés szakaszból egy korábbi verziót is visszahozhatsz.",
+	"saveStatus.guide.recoveryRetry":
+		"Győződj meg róla, hogy van némi szabad tárhely ezen az eszközön, majd válaszd az Újrapróbálkozás lehetőséget.",
+	"saveStatus.guide.recoveryDiscard":
+		"Ha ez nem segít, válaszd a Helyreállítási másolat elvetése lehetőséget. Előbb egy pontos másolat mentődik, és a beállításfájlodhoz nem nyúl hozzá.",
+	"saveStatus.guide.newerVersion":
+		"Frissítsd a Callout Studiót a Beállítások → Közösségi bővítmények menüpontban, majd töltsd újra az Obsidiant.",
+	"saveStatus.goToBackups": "Ugrás a biztonsági mentésekhez",
+	"saveStatus.missingNotice":
+		"A jegyzeteid biztonságban vannak. A Callout Studio szüneteltette a mentést, mert most nem találja a beállításfájlját.",
 	"statusBar.paused": "Mentés szüneteltetve",
 	"statusBar.pausedTooltip": "A Callout Studio nem menti a beállítások módosításait. Kattintson, hogy megtudja, miért.",
 	"statusBar.pausedNotice": "A Callout Studio jelenleg nem menti a beállítások módosításait.",
+	"saveStatus.resumed": "A mentés újra be van kapcsolva. A Callout Studio ismét menti a beállítások módosításait.",
 	"notice.replaceUnreadableUnavailable": "A beállítási fájl jelenleg nem cserélhető le: változás alatt áll, vagy ez az eszköz nem tudja beolvasni. Próbálja újra egy pillanat múlva.",
 	"notice.recoveryStorageUnavailable": "Ennek az eszköznek a helyreállítási tárhelye nem válaszol, ezért a másolat nem vethető el. Indítsa újra az Obsidiant, majd próbálja újra.",
 	"recovery.title": "Korábbi konfiguráció visszaállítása",

@@ -1116,13 +1116,15 @@ export const sv: Record<string, string> = {
 	"commandBuilder.missingCallout": "Pausad: callout saknas. Upptäck eller skapa den för att återställa det här kommandot, eller redigera kommandot för att välja en annan typ.",
 	"confirm.titleRestoreSettings": "Återställ dessa inställningar",
 	"confirm.titleCreateSettingsFile": "Skapa inställningsfil",
-	"confirm.restoreDisplayedSettings": "Detta sparar de callout-typer och inställningar som visas just nu till en inställningsfil på den här enheten och återupptar sparandet. Varje läsbar lokal återställningskopia säkerhetskopieras först.\nInnan du fortsätter, låt synkroniseringstjänsten slutföras och kontrollera om en annan enhet har nyare inställningar som du vill behålla. Din synkroniseringstjänst kan skicka den här återställda filen till dina andra enheter.\nFilen kontrolleras igen före sparande. Om befintliga inställningar hittas behålls de, och återställningen kan be dig kontrollera igen.",
+	"confirm.saveDisplayedSettings":
+		"Det här sparar den konfiguration du ser nu som din inställningsfil och slår på sparandet igen. Den reservkopia som den här enheten har säkerhetskopieras först.\nOm en annan enhet kan ha nyare ändringar som du vill behålla, låt den bli klar med synkroniseringen innan du fortsätter. Din synkroniseringsapp kan skicka den här filen till dina andra enheter.\nCallout Studio letar efter inställningsfilen en gång till innan den sparar. Har den kommit tillbaka behåller Callout Studio den i stället.",
 	"notice.settingsBackupFailed": "Återställningen av inställningar kunde inte fortsätta eftersom en säkerhetskopia inte kunde sparas. Kontrollera tillgängligt lagringsutrymme och skrivbehörigheter, och försök igen.",
 	"notice.settingsBackupSaved": "En återställningskopia av lokala callout-definitioner sparades innan de inkommande inställningarna tillämpades: {{path}}.",
 	"notice.settingsChangedElsewhere": "Callout Studios inställningar ändrades på en annan enhet, så den här ändringen sparades inte. Den andra enhetens inställningar läses in nu — gör ändringen igen.",
 	"notice.settingsNewerVersion": "Callout Studios inställningar sparades av en nyare version av tillägget, så inget kommer att skrivas på den här enheten förrän du uppdaterar det. Dina inställningar är säkra — uppdatera Callout Studio här och läs in Obsidian igen.",
 	"notice.settingsNotSaved": "Den ändringen sparades inte. Callout Studio kunde inte använda sin inställningsfil när Obsidian startade, så inget skrivs på den här enheten — dina ändringar består tills du stänger Obsidian. Se Inställningar → Callout Studio för vad du ska göra.",
-	"saveStatus.changed": "Inställningsfilen ändrades medan du redigerade. Ditt utkast är fortfarande tillgängligt. Välj Försök spara och återställa igen för att läsa in de inkommande inställningarna, granska sedan ditt utkast och spara igen.",
+	"saveStatus.changed":
+		"Inställningsfilen ändrades medan du redigerade. Ditt utkast finns kvar. Välj Försök igen för att läsa in de inkomna inställningarna, granska sedan utkastet och spara igen.",
 	"saveStatus.missing": "Sparandet är pausat eftersom inställningsfilen saknas. Detta kan hända efter en ominstallation eller medan en synkronisering fortfarande pågår. Slutför synkroniseringen och försök igen. För att medvetet ersätta den saknade filen, använd Skapa en ny inställningsfil i Callout Studios inställningar.",
 	"saveStatus.restoreSettings": "Återställ dessa inställningar",
 	"saveStatus.createSettingsFile": "Skapa inställningsfil",
@@ -1133,14 +1135,14 @@ export const sv: Record<string, string> = {
 	"saveStatus.notesFailed": "Callout-definitionen sparades, men vissa anteckningsuppdateringar kunde inte slutföras. Låt den här redigeraren vara öppen och välj Spara för att försöka igen med de ofullständiga uppdateringarna.",
 	"saveStatus.recoveryRead": "Sparandet är pausat eftersom den lokala återställningskopian inte kan läsas. Din inställningsfil kan fortfarande vara intakt. Kontrollera tillgängligt lagringsutrymme, och försök sedan igen med återställningen. Befintlig återställningsdata skrivs inte över.",
 	"saveStatus.recoveryWrite": "Den lokala återställningskopian kunde inte sparas. Kontrollera tillgängligt lagringsutrymme, och försök igen. Låt ditt utkast vara öppet tills sparandet lyckas.",
-	"saveStatus.retry": "Försök spara och återställa igen",
 	"saveStatus.retryFailed": "Sparandet är fortfarande blockerat. Kontrollera sparstatusen i Callout Studios inställningar för orsaken, och försök igen.",
-	"saveStatus.retrying": "Kontrollerar sparande och återställning…",
 	"saveStatus.reviewDraft": "De inkommande inställningarna och återställningskontrollerna är klara. Ditt utkast är oförändrat. Granska det och spara igen.",
 	"saveStatus.settingsArrived": "Befintliga inställningar anlände och lästes in. Ingen ersättningsfil skapades.",
 	"saveStatus.syncConflict": "De inkommande inställningarna står i konflikt med en callout som behövs för ofullständiga anteckningsuppdateringar. Ditt utkast och väntande uppdateringar har behållits. Lös inställningskonflikten innan du försöker igen.",
 	"saveStatus.titlePaused": "Sparandet är pausat",
 	"saveStatus.titleFailed": "Inställningarna sparades inte",
+	"saveStatus.tryAgain": "Försök igen",
+	"saveStatus.working": "Jobbar på det…",
 	"saveStatus.unreadable": "Sparandet är pausat eftersom inställningsfilen inte kan läsas säkert. Slutför synkroniseringen eller återställ en giltig kopia, och försök igen. Den befintliga filen har behållits.",
 	"saveStatus.write": "Inställningsfilen kunde inte sparas. Kontrollera tillgängligt lagringsutrymme, mapprättigheter och synkronisering, och försök igen innan du stänger Obsidian.",
 	"saveStatus.writePermission": "Inställningsfilen kunde inte sparas eftersom lagringsutrymmet nekade skrivåtkomst. Kontrollera att valvet och tilläggsmappen går att skriva till, och försök igen.",
@@ -1148,8 +1150,6 @@ export const sv: Record<string, string> = {
 	"settings.readOnly": "Callout Studio kunde inte använda sin inställningsfil när Obsidian startade, så inget på den här sidan sparas på den här enheten. Dina ändringar består tills du stänger Obsidian. Läs in Obsidian igen så snart filen är tillbaka — om du synkroniserar det här valvet, låt synkroniseringen bli klar först.",
 
 	// Sync safety hardening
-	"saveStatus.stillMissingAdvice":
-		"Inställningsfilen saknas fortfarande. Att kontrollera igen återskapar den inte. Låt synkroniseringen bli klar och gör valvet tillgängligt offline. Om filen har tagits bort, välj Återställ dessa inställningar, eller återställ en tidigare uppsättning.",
 	"saveStatus.diagnosis.unavailable":
 		"Den här enheten kan inte öppna filen just nu. Den kan fortfarande laddas ner, valvet kanske inte är tillgängligt offline, eller lagringen svarar inte. Callout Studio kontrollerar automatiskt igen.",
 	"saveStatus.diagnosis.empty": "Filen är tom, vilket vanligtvis betyder att en synkronisering avbröts. Om en annan enhet fortfarande har dina inställningar, låt den synkronisera. Ersätt annars filen.",
@@ -1160,11 +1160,41 @@ export const sv: Record<string, string> = {
 	"saveStatus.diagnosis.invalidEntries": "Filen innehåller poster som Callout Studio inte kan använda, till exempel samma callout-typ listad två gånger.",
 	"saveStatus.replaceUnreadable": "Ersätt inställningsfil",
 	"saveStatus.discardRecoveryCopy": "Kasta återställningskopia",
-	"saveStatus.openRecovery": "Återställ en tidigare uppsättning",
-	"saveStatus.readOnlyWhilePaused": "Inställningar kan inte ändras förrän sparandet fungerar igen, så inget du ändrar här går förlorat. Du kan fortfarande exportera din uppsättning.",
+	"saveStatus.calm.opening": "Först och främst: ta ett djupt andetag — allt kommer att ordna sig.",
+	"saveStatus.calm.kept": "Dina anteckningar är säkra, och dina callouts finns kvar här på den här enheten.",
+	"saveStatus.calm.safe": "Dina anteckningar är säkra.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio har bara pausat sparandet för att skydda din konfiguration, så den här sidan är skrivskyddad tills vidare.",
+	"saveStatus.calm.paused": "Callout Studio har bara pausat sparandet för att skydda din konfiguration.",
+	"saveStatus.explain.missing":
+		"Callout Studio hittar inte sin inställningsfil. Det händer oftast medan din synkroniseringsapp fortfarande laddar ner den, eller efter att Callout Studio tagits bort på en annan enhet.",
+	"saveStatus.explain.stillMissing":
+		"Inställningsfilen är fortfarande inte tillbaka. Kontrollen letar bara efter den och skapar aldrig en ny. Om ditt valv ligger i iCloud, OneDrive, Google Drive eller Dropbox, se till att det är inställt på att stanna nedladdat på den här enheten.",
+	"saveStatus.explain.unreadable": "Callout Studio kan inte läsa sin inställningsfil just nu, så filen har lämnats precis som den är.",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio sparar en reservkopia av dina inställningar på den här enheten, och den kopian går inte att läsa just nu. Själva inställningsfilen kan vara helt i sin ordning.",
+	"saveStatus.explain.newerVersion":
+		"Dina inställningar sparades av en nyare version av Callout Studio, så den här äldre versionen ändrar dem inte.",
+	"saveStatus.explain.changed": "Inställningsfilen ändrades medan Callout Studio arbetade med den, så den stoppade utan att ersätta något.",
+	"saveStatus.guide.rechecks":
+		"Callout Studio kontrollerar igen varje minut så länge Obsidian är öppet, så det här löser sig ofta av sig självt.",
+	"saveStatus.guide.rechecksCheckNow":
+		"Callout Studio kontrollerar igen varje minut så länge Obsidian är öppet, så det här löser sig ofta av sig självt — eller välj Kontrollera igen för att titta direkt.",
+	"saveStatus.guide.restore":
+		"Om dina inställningar inte kommer tillbaka, välj Återställ dessa inställningar för att behålla de callouts du ser här.",
+	"saveStatus.guide.create": "Om dina inställningar inte kommer tillbaka, välj Skapa inställningsfil för att börja spara igen.",
+	"saveStatus.guide.backup": "När sparandet fungerar igen kan du också hämta tillbaka en tidigare version från avsnittet Säkerhetskopia.",
+	"saveStatus.guide.recoveryRetry": "Se till att den här enheten har lite ledigt lagringsutrymme och välj sedan Försök igen.",
+	"saveStatus.guide.recoveryDiscard":
+		"Om det inte hjälper, välj Kasta återställningskopia. En exakt kopia sparas först, och din inställningsfil rörs inte.",
+	"saveStatus.guide.newerVersion": "Uppdatera Callout Studio under Inställningar → Community-plugin och ladda sedan om Obsidian.",
+	"saveStatus.goToBackups": "Gå till säkerhetskopior",
+	"saveStatus.missingNotice":
+		"Dina anteckningar är säkra. Callout Studio har pausat sparandet eftersom den inte hittar sin inställningsfil just nu.",
 	"statusBar.paused": "Sparande pausat",
 	"statusBar.pausedTooltip": "Callout Studio sparar inte inställningsändringar. Klicka för att se varför.",
 	"statusBar.pausedNotice": "Callout Studio sparar inte inställningsändringar just nu.",
+	"saveStatus.resumed": "Sparandet är på igen. Callout Studio sparar inställningsändringar igen.",
 	"notice.replaceUnreadableUnavailable": "Inställningsfilen kan inte ersättas just nu: den håller på att ändras, eller så kan den här enheten inte läsa den. Försök igen om en stund.",
 	"notice.recoveryStorageUnavailable": "Den här enhetens återställningslagring svarar inte, så kopian kan inte kastas. Starta om Obsidian och försök igen.",
 	"recovery.title": "Återställ en tidigare uppsättning",

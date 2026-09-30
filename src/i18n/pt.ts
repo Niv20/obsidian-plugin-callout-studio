@@ -1130,13 +1130,15 @@ export const pt: Record<string, string> = {
 	"commandBuilder.missingCallout": "Pausado: o callout está faltando. Descubra-o ou crie-o para restaurar este comando, ou edite o comando para escolher outro tipo.",
 	"confirm.titleRestoreSettings": "Restaurar estas configurações",
 	"confirm.titleCreateSettingsFile": "Criar arquivo de configurações",
-	"confirm.restoreDisplayedSettings": "Isso salva os tipos de callout e preferências exibidos atualmente em um arquivo de configurações neste dispositivo e retoma o salvamento. Qualquer cópia local de recuperação legível é primeiro salva em backup.\nAntes de continuar, deixe seu serviço de sincronização terminar e verifique se outro dispositivo tem configurações mais recentes que você deseja manter. Seu serviço de sincronização pode enviar este arquivo restaurado para seus outros dispositivos.\nO arquivo é verificado novamente antes de salvar. Se configurações existentes forem encontradas, elas serão mantidas e a recuperação poderá pedir que você verifique novamente.",
+	"confirm.saveDisplayedSettings":
+		"Isso salva a configuração que você vê agora como seu arquivo de configurações e reativa o salvamento. A cópia reserva que este dispositivo mantém é copiada primeiro em backup.\nSe outro dispositivo puder ter alterações mais recentes que você quer manter, deixe-o terminar de sincronizar antes de continuar. Seu app de sincronização pode enviar este arquivo para os seus outros dispositivos.\nO Callout Studio procura o arquivo de configurações mais uma vez antes de salvar. Se ele voltou, o Callout Studio o mantém no lugar.",
 	"notice.settingsBackupFailed": "A recuperação das configurações não pôde continuar porque não foi possível salvar um backup de segurança. Verifique o armazenamento disponível e as permissões de gravação, depois tente novamente.",
 	"notice.settingsBackupSaved": "Uma cópia de recuperação das definições de callout locais foi salva antes de aplicar as configurações recebidas: {{path}}.",
 	"notice.settingsChangedElsewhere": "As configurações do Callout Studio foram alteradas em outro dispositivo, então essa alteração não foi salva. As configurações do outro dispositivo estão sendo carregadas agora — faça a alteração novamente.",
 	"notice.settingsNewerVersion": "As configurações do Callout Studio foram salvas por uma versão mais recente do plugin, então nada será gravado neste dispositivo até que você o atualize. Suas configurações estão seguras — atualize o Callout Studio aqui e recarregue o Obsidian.",
 	"notice.settingsNotSaved": "Essa alteração não foi salva. O Callout Studio não conseguiu usar seu arquivo de configurações quando o Obsidian foi iniciado, então nada está sendo gravado neste dispositivo — suas alterações durarão até você fechar o Obsidian. Veja Configurações → Callout Studio para saber o que fazer.",
-	"saveStatus.changed": "O arquivo de configurações mudou enquanto você editava. Seu rascunho ainda está disponível. Escolha Tentar novamente salvar e recuperar para carregar as configurações recebidas, depois revise seu rascunho e salve novamente.",
+	"saveStatus.changed":
+		"O arquivo de configurações mudou enquanto você editava. Seu rascunho continua disponível. Escolha Tentar novamente para carregar as configurações recebidas, depois revise o rascunho e salve novamente.",
 	"saveStatus.missing": "O salvamento está pausado porque o arquivo de configurações está faltando. Isso pode acontecer após uma reinstalação ou enquanto a sincronização ainda está em execução. Termine a sincronização e tente novamente. Para substituir intencionalmente o arquivo ausente, use Criar um novo arquivo de configurações nas configurações do Callout Studio.",
 	"saveStatus.restoreSettings": "Restaurar estas configurações",
 	"saveStatus.createSettingsFile": "Criar arquivo de configurações",
@@ -1147,22 +1149,20 @@ export const pt: Record<string, string> = {
 	"saveStatus.notesFailed": "A definição do callout foi salva, mas algumas atualizações de notas não puderam ser concluídas. Deixe este editor aberto e escolha Salvar para tentar novamente as atualizações incompletas.",
 	"saveStatus.recoveryRead": "O salvamento está pausado porque a cópia de recuperação local não pode ser lida. Seu arquivo de configurações ainda pode estar intacto. Verifique o armazenamento disponível, depois tente a recuperação novamente. Os dados de recuperação existentes não serão substituídos.",
 	"saveStatus.recoveryWrite": "A cópia de recuperação local não pôde ser salva. Verifique o armazenamento disponível, depois tente novamente. Deixe seu rascunho aberto até que o salvamento seja bem-sucedido.",
-	"saveStatus.retry": "Tentar novamente salvar e recuperar",
 	"saveStatus.retryFailed": "O salvamento ainda está bloqueado. Verifique o status de salvamento nas configurações do Callout Studio para a causa, depois tente novamente.",
-	"saveStatus.retrying": "Verificando salvamento e recuperação…",
 	"saveStatus.reviewDraft": "As configurações recebidas e as verificações de recuperação foram concluídas. Seu rascunho está inalterado. Revise-o e salve novamente.",
 	"saveStatus.settingsArrived": "As configurações existentes chegaram e foram carregadas. Nenhum arquivo substituto foi criado.",
 	"saveStatus.syncConflict": "As configurações recebidas entram em conflito com um callout necessário para atualizações de notas incompletas. Seu rascunho e as atualizações pendentes foram mantidos. Resolva o conflito de configurações antes de tentar novamente.",
 	"saveStatus.titlePaused": "O salvamento está pausado",
 	"saveStatus.titleFailed": "As configurações não foram salvas",
+	"saveStatus.tryAgain": "Tentar novamente",
+	"saveStatus.working": "Processando…",
 	"saveStatus.unreadable": "O salvamento está pausado porque o arquivo de configurações não pode ser lido com segurança. Termine a sincronização ou restaure uma cópia válida, depois tente novamente. O arquivo existente foi mantido.",
 	"saveStatus.write": "O arquivo de configurações não pôde ser salvo. Verifique o armazenamento disponível, as permissões da pasta e a sincronização, depois tente novamente antes de fechar o Obsidian.",
 	"saveStatus.writePermission": "O arquivo de configurações não pôde ser salvo porque o armazenamento negou acesso de gravação. Verifique se o cofre e a pasta do plugin têm permissão de gravação, depois tente novamente.",
 	"saveStatus.writeSpace": "O arquivo de configurações não pôde ser salvo porque o armazenamento está cheio ou sua cota foi excedida. Libere algum espaço, depois tente novamente.",
 	"settings.readOnly": "O Callout Studio não conseguiu usar seu arquivo de configurações quando o Obsidian foi iniciado, então nada nesta página está sendo salvo neste dispositivo. Suas alterações durarão até você fechar o Obsidian. Recarregue o Obsidian assim que o arquivo voltar — se você sincroniza este cofre, deixe a sincronização terminar primeiro.",
 	// Sync safety hardening
-	"saveStatus.stillMissingAdvice":
-		"O arquivo de configurações ainda está ausente. Verificar novamente não o recria. Deixe a sincronização terminar e disponibilize o cofre offline. Se o arquivo foi excluído, escolha Substituir este arquivo de configurações, ou restaure uma configuração anterior.",
 	"saveStatus.diagnosis.unavailable":
 		"Este dispositivo não consegue abrir o arquivo agora. Ele pode ainda estar sendo baixado, o cofre pode não estar disponível offline, ou o armazenamento não está respondendo. O Callout Studio verifica novamente de forma automática.",
 	"saveStatus.diagnosis.empty":
@@ -1176,12 +1176,44 @@ export const pt: Record<string, string> = {
 		"O arquivo contém entradas que o Callout Studio não consegue usar, por exemplo o mesmo tipo de callout listado duas vezes.",
 	"saveStatus.replaceUnreadable": "Substituir arquivo de configurações",
 	"saveStatus.discardRecoveryCopy": "Descartar cópia de recuperação",
-	"saveStatus.openRecovery": "Restaurar uma configuração anterior",
-	"saveStatus.readOnlyWhilePaused":
-		"As configurações não podem ser alteradas até que salvar volte a funcionar, então nada do que você mudar aqui será perdido. Você ainda pode exportar sua configuração.",
+	"saveStatus.calm.opening": "Antes de tudo, respire fundo — vai ficar tudo bem.",
+	"saveStatus.calm.kept": "Suas notas estão seguras, e seus callouts continuam aqui, neste dispositivo.",
+	"saveStatus.calm.safe": "Suas notas estão seguras.",
+	"saveStatus.calm.pausedPage":
+		"O Callout Studio apenas pausou o salvamento para proteger sua configuração, então esta página fica somente para leitura por enquanto.",
+	"saveStatus.calm.paused": "O Callout Studio apenas pausou o salvamento para proteger sua configuração.",
+	"saveStatus.explain.missing":
+		"O Callout Studio não encontra o próprio arquivo de configurações. Isso costuma acontecer enquanto seu app de sincronização ainda o baixa, ou depois que o Callout Studio foi removido em outro dispositivo.",
+	"saveStatus.explain.stillMissing":
+		"O arquivo de configurações ainda não voltou. A verificação apenas o procura e nunca cria um novo. Se o seu cofre está no iCloud, OneDrive, Google Drive ou Dropbox, confirme que ele está configurado para permanecer baixado neste dispositivo.",
+	"saveStatus.explain.unreadable":
+		"O Callout Studio não consegue ler o arquivo de configurações agora, então deixou o arquivo exatamente como está.",
+	"saveStatus.explain.recoveryRead":
+		"O Callout Studio guarda neste dispositivo uma cópia reserva das suas configurações, e essa cópia não pode ser lida agora. O arquivo de configurações em si pode estar em ordem.",
+	"saveStatus.explain.newerVersion":
+		"Suas configurações foram salvas por uma versão mais recente do Callout Studio, então esta versão mais antiga não vai alterá-las.",
+	"saveStatus.explain.changed":
+		"O arquivo de configurações mudou enquanto o Callout Studio trabalhava com ele, então ele parou sem substituir nada.",
+	"saveStatus.guide.rechecks":
+		"O Callout Studio verifica de novo a cada minuto enquanto o Obsidian estiver aberto, então isso muitas vezes se resolve sozinho.",
+	"saveStatus.guide.rechecksCheckNow":
+		"O Callout Studio verifica de novo a cada minuto enquanto o Obsidian estiver aberto, então isso muitas vezes se resolve sozinho — ou escolha Verificar novamente para olhar agora mesmo.",
+	"saveStatus.guide.restore":
+		"Se suas configurações não voltarem, escolha Restaurar estas configurações para manter os callouts que você vê aqui.",
+	"saveStatus.guide.create": "Se suas configurações não voltarem, escolha Criar arquivo de configurações para voltar a salvar.",
+	"saveStatus.guide.backup": "Quando o salvamento voltar a funcionar, você também pode recuperar uma versão anterior na seção Backup.",
+	"saveStatus.guide.recoveryRetry":
+		"Confirme que este dispositivo tem algum espaço livre de armazenamento e depois escolha Tentar novamente.",
+	"saveStatus.guide.recoveryDiscard":
+		"Se isso não ajudar, escolha Descartar cópia de recuperação. Uma cópia exata é salva primeiro, e seu arquivo de configurações não é tocado.",
+	"saveStatus.guide.newerVersion": "Atualize o Callout Studio em Configurações → Plugins da comunidade e depois recarregue o Obsidian.",
+	"saveStatus.goToBackups": "Ir para os backups",
+	"saveStatus.missingNotice":
+		"Suas notas estão seguras. O Callout Studio pausou o salvamento porque não encontra o arquivo de configurações agora.",
 	"statusBar.paused": "Salvamento pausado",
 	"statusBar.pausedTooltip": "O Callout Studio não está salvando mudanças de configurações. Clique para ver o motivo.",
 	"statusBar.pausedNotice": "O Callout Studio não está salvando mudanças de configurações agora.",
+	"saveStatus.resumed": "O salvamento voltou. O Callout Studio está salvando as alterações de configurações novamente.",
 	"notice.replaceUnreadableUnavailable":
 		"O arquivo de configurações não pode ser substituído agora: ele está sendo alterado, ou este dispositivo não consegue lê-lo. Tente novamente daqui a pouco.",
 	"notice.recoveryStorageUnavailable":

@@ -1086,13 +1086,15 @@ export const it: Record<string, string> = {
 	"commandBuilder.missingCallout": "In pausa: il callout è mancante. Scoprilo o crealo per ripristinare questo comando, oppure modifica il comando per scegliere un altro tipo.",
 	"confirm.titleRestoreSettings": "Ripristina queste impostazioni",
 	"confirm.titleCreateSettingsFile": "Crea file delle impostazioni",
-	"confirm.restoreDisplayedSettings": "Questo salva i tipi di callout e le preferenze attualmente mostrati in un file delle impostazioni su questo dispositivo e riprende il salvataggio. Ogni copia di recupero locale leggibile viene prima salvata in un backup.\nPrima di continuare, lascia terminare il servizio di sincronizzazione e controlla se un altro dispositivo ha impostazioni più recenti che vuoi conservare. Il servizio di sincronizzazione potrebbe inviare questo file ripristinato agli altri dispositivi.\nIl file viene controllato di nuovo prima del salvataggio. Se vengono trovate impostazioni esistenti, vengono mantenute e il recupero potrebbe chiederti di controllare di nuovo.",
+	"confirm.saveDisplayedSettings":
+		"Questo salva la configurazione che vedi ora come file delle impostazioni e riattiva il salvataggio. La copia di riserva che questo dispositivo conserva viene prima messa in backup.\nSe un altro dispositivo potrebbe avere modifiche più recenti che vuoi tenere, lascia che finisca di sincronizzarsi prima di continuare. La tua app di sincronizzazione potrebbe inviare questo file ai tuoi altri dispositivi.\nPrima di salvare, Callout Studio cerca ancora una volta il file delle impostazioni. Se è tornato, Callout Studio mantiene quello.",
 	"notice.settingsBackupFailed": "Il ripristino delle impostazioni non ha potuto continuare perché non è stato possibile salvare un backup di sicurezza. Controlla lo spazio di archiviazione disponibile e i permessi di scrittura, poi riprova.",
 	"notice.settingsBackupSaved": "Una copia di ripristino delle definizioni di callout locali è stata salvata prima di applicare le impostazioni in arrivo: {{path}}.",
 	"notice.settingsChangedElsewhere": "Le impostazioni di Callout Studio sono state modificate su un altro dispositivo, quindi questa modifica non è stata salvata. Le impostazioni dell'altro dispositivo si stanno caricando ora — effettua di nuovo la modifica.",
 	"notice.settingsNewerVersion": "Le impostazioni di Callout Studio sono state salvate da una versione più recente del plugin, quindi non verrà scritto nulla su questo dispositivo finché non lo aggiorni. Le tue impostazioni sono al sicuro — aggiorna Callout Studio qui e ricarica Obsidian.",
 	"notice.settingsNotSaved": "Quella modifica non è stata salvata. Callout Studio non ha potuto usare il suo file delle impostazioni all'avvio di Obsidian, quindi non viene scritto nulla su questo dispositivo — le tue modifiche dureranno finché non chiudi Obsidian. Consulta Impostazioni → Callout Studio per sapere cosa fare.",
-	"saveStatus.changed": "Il file delle impostazioni è cambiato mentre stavi modificando. La tua bozza è ancora disponibile. Scegli Riprova salvataggio e ripristino per caricare le impostazioni in arrivo, poi rivedi la tua bozza e salva di nuovo.",
+	"saveStatus.changed":
+		"Il file delle impostazioni è cambiato mentre lo modificavi. La tua bozza è ancora disponibile. Scegli Riprova per caricare le impostazioni in arrivo, poi rivedi la bozza e salva di nuovo.",
 	"saveStatus.missing": "Il salvataggio è in pausa perché il file delle impostazioni è mancante. Questo può succedere dopo una reinstallazione o mentre una sincronizzazione è ancora in corso. Completa la sincronizzazione e riprova. Per sostituire intenzionalmente il file mancante, usa Crea un nuovo file delle impostazioni nelle impostazioni di Callout Studio.",
 	"saveStatus.restoreSettings": "Ripristina queste impostazioni",
 	"saveStatus.createSettingsFile": "Crea file delle impostazioni",
@@ -1103,14 +1105,14 @@ export const it: Record<string, string> = {
 	"saveStatus.notesFailed": "La definizione del callout è stata salvata, ma alcuni aggiornamenti delle note non sono stati completati. Lascia aperto questo editor e scegli Salva per riprovare gli aggiornamenti incompleti.",
 	"saveStatus.recoveryRead": "Il salvataggio è in pausa perché la copia di ripristino locale non può essere letta. Il tuo file delle impostazioni potrebbe essere ancora intatto. Controlla lo spazio di archiviazione disponibile, poi riprova il ripristino. I dati di ripristino esistenti non verranno sovrascritti.",
 	"saveStatus.recoveryWrite": "La copia di ripristino locale non è stata salvata. Controlla lo spazio di archiviazione disponibile, poi riprova. Lascia aperta la tua bozza finché il salvataggio non riesce.",
-	"saveStatus.retry": "Riprova salvataggio e ripristino",
 	"saveStatus.retryFailed": "Il salvataggio è ancora bloccato. Controlla lo stato del salvataggio nelle impostazioni di Callout Studio per la causa, poi riprova.",
-	"saveStatus.retrying": "Verifica di salvataggio e ripristino in corso…",
 	"saveStatus.reviewDraft": "Le impostazioni in arrivo e i controlli di ripristino sono completi. La tua bozza è invariata. Rivedila e salva di nuovo.",
 	"saveStatus.settingsArrived": "Le impostazioni esistenti sono arrivate e sono state caricate. Non è stato creato alcun file sostitutivo.",
 	"saveStatus.syncConflict": "Le impostazioni in arrivo sono in conflitto con un callout necessario per aggiornamenti di note incompleti. La tua bozza e gli aggiornamenti in sospeso sono stati conservati. Risolvi il conflitto delle impostazioni prima di riprovare.",
 	"saveStatus.titlePaused": "Il salvataggio è in pausa",
 	"saveStatus.titleFailed": "Le impostazioni non sono state salvate",
+	"saveStatus.tryAgain": "Riprova",
+	"saveStatus.working": "Ci sto lavorando…",
 	"saveStatus.unreadable": "Il salvataggio è in pausa perché il file delle impostazioni non può essere letto in sicurezza. Completa la sincronizzazione o ripristina una copia valida, poi riprova. Il file esistente è stato conservato.",
 	"saveStatus.write": "Il file delle impostazioni non è stato salvato. Controlla lo spazio di archiviazione disponibile, i permessi della cartella e la sincronizzazione, poi riprova prima di chiudere Obsidian.",
 	"saveStatus.writePermission": "Il file delle impostazioni non è stato salvato perché l'archiviazione ha negato l'accesso in scrittura. Controlla che il vault e la cartella del plugin siano scrivibili, poi riprova.",
@@ -1169,7 +1171,6 @@ export const it: Record<string, string> = {
 	"settings.maintenance": "Zona pericolosa",
 
 	// Sync safety hardening
-	"saveStatus.stillMissingAdvice": "Il file delle impostazioni è ancora mancante. Controllare di nuovo non lo ricrea. Lascia che la sincronizzazione finisca e rendi il vault disponibile anche offline. Se il file è stato eliminato, scegli Ripristina queste impostazioni, oppure ripristina una configurazione precedente.",
 	"saveStatus.diagnosis.unavailable": "Questo dispositivo non può aprire il file in questo momento. Potrebbe essere ancora in fase di download, il vault potrebbe non essere disponibile offline, oppure l'archiviazione non risponde. Callout Studio riprova automaticamente.",
 	"saveStatus.diagnosis.empty": "Il file è vuoto, il che di solito significa che una sincronizzazione è stata interrotta. Se un altro dispositivo ha ancora le tue impostazioni, lascia che si sincronizzi. Altrimenti, sostituisci il file.",
 	"saveStatus.diagnosis.mergeMarkers": "Il file contiene marcatori di conflitto di merge non risolti, ad esempio da Git. Risolvi il conflitto nel tuo strumento Git, oppure sostituisci il file.",
@@ -1178,11 +1179,42 @@ export const it: Record<string, string> = {
 	"saveStatus.diagnosis.invalidEntries": "Il file contiene voci che Callout Studio non può usare, ad esempio lo stesso tipo di callout elencato due volte.",
 	"saveStatus.replaceUnreadable": "Sostituisci il file delle impostazioni",
 	"saveStatus.discardRecoveryCopy": "Scarta copia di ripristino",
-	"saveStatus.openRecovery": "Ripristina una configurazione precedente",
-	"saveStatus.readOnlyWhilePaused": "Le impostazioni non possono essere modificate finché il salvataggio non torna a funzionare, quindi nulla di ciò che modifichi qui viene perso. Puoi comunque esportare la tua configurazione.",
+	"saveStatus.calm.opening": "Prima di tutto, fai un respiro profondo: andrà tutto bene.",
+	"saveStatus.calm.kept": "Le tue note sono al sicuro e i tuoi callout sono ancora qui, su questo dispositivo.",
+	"saveStatus.calm.safe": "Le tue note sono al sicuro.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio ha solo messo in pausa il salvataggio per proteggere la tua configurazione, quindi per ora questa pagina è in sola lettura.",
+	"saveStatus.calm.paused": "Callout Studio ha solo messo in pausa il salvataggio per proteggere la tua configurazione.",
+	"saveStatus.explain.missing":
+		"Callout Studio non trova il proprio file delle impostazioni. Di solito succede mentre la tua app di sincronizzazione lo sta ancora scaricando, oppure dopo che Callout Studio è stato rimosso su un altro dispositivo.",
+	"saveStatus.explain.stillMissing":
+		"Il file delle impostazioni non è ancora tornato. Il controllo si limita a cercarlo e non ne crea mai uno nuovo. Se il tuo vault è su iCloud, OneDrive, Google Drive o Dropbox, assicurati che sia impostato per restare scaricato su questo dispositivo.",
+	"saveStatus.explain.unreadable":
+		"Callout Studio non riesce a leggere il proprio file delle impostazioni in questo momento, perciò lo ha lasciato esattamente com'è.",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio conserva su questo dispositivo una copia di riserva delle tue impostazioni, e al momento quella copia non è leggibile. Il file delle impostazioni in sé potrebbe essere a posto.",
+	"saveStatus.explain.newerVersion":
+		"Le tue impostazioni sono state salvate da una versione più recente di Callout Studio, quindi questa versione più vecchia non le modificherà.",
+	"saveStatus.explain.changed":
+		"Il file delle impostazioni è cambiato mentre Callout Studio ci stava lavorando, quindi si è fermato senza sostituire nulla.",
+	"saveStatus.guide.rechecks": "Callout Studio ricontrolla ogni minuto finché Obsidian è aperto, quindi spesso si risolve da solo.",
+	"saveStatus.guide.rechecksCheckNow":
+		"Callout Studio ricontrolla ogni minuto finché Obsidian è aperto, quindi spesso si risolve da solo — oppure scegli Controlla di nuovo per controllare subito.",
+	"saveStatus.guide.restore":
+		"Se le tue impostazioni non tornano, scegli Ripristina queste impostazioni per mantenere i callout che vedi qui.",
+	"saveStatus.guide.create": "Se le tue impostazioni non tornano, scegli Crea file delle impostazioni per ricominciare a salvare.",
+	"saveStatus.guide.backup": "Quando il salvataggio funziona di nuovo, puoi anche recuperare una versione precedente dalla sezione Backup.",
+	"saveStatus.guide.recoveryRetry": "Assicurati che questo dispositivo abbia un po' di spazio libero, poi scegli Riprova.",
+	"saveStatus.guide.recoveryDiscard":
+		"Se non basta, scegli Scarta copia di ripristino. Prima viene salvata una copia esatta e il tuo file delle impostazioni non viene toccato.",
+	"saveStatus.guide.newerVersion": "Aggiorna Callout Studio in Impostazioni → Plugin della community, poi ricarica Obsidian.",
+	"saveStatus.goToBackups": "Vai ai backup",
+	"saveStatus.missingNotice":
+		"Le tue note sono al sicuro. Callout Studio ha messo in pausa il salvataggio perché al momento non trova il proprio file delle impostazioni.",
 	"statusBar.paused": "Salvataggio in pausa",
 	"statusBar.pausedTooltip": "Callout Studio non sta salvando le modifiche alle impostazioni. Clicca per scoprire perché.",
 	"statusBar.pausedNotice": "Callout Studio non sta salvando le modifiche alle impostazioni in questo momento.",
+	"saveStatus.resumed": "Il salvataggio è di nuovo attivo. Callout Studio salva di nuovo le modifiche alle impostazioni.",
 	"notice.replaceUnreadableUnavailable": "Il file delle impostazioni non può essere sostituito in questo momento: sta cambiando, oppure questo dispositivo non riesce a leggerlo. Riprova tra poco.",
 	"notice.recoveryStorageUnavailable": "L'archiviazione di ripristino di questo dispositivo non risponde, quindi la copia non può essere scartata. Riavvia Obsidian, poi riprova.",
 	"recovery.title": "Ripristina una configurazione precedente",

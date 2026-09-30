@@ -16,7 +16,7 @@ import { describe, it } from "node:test";
 import type { App, PluginManifest } from "obsidian";
 import { Notice } from "./support/obsidianStub";
 import { SettingsWriter } from "../src/manager/SettingsWriter";
-import { registerPausedIndicator } from "../src/settings/pausedIndicator";
+import { registerPausedIndicator, RESUME_NOTICE_AFTER_MS } from "../src/settings/pausedIndicator";
 import { PAUSED_RECHECK_MS, recheckIfPaused, registerPausedRecheck } from "../src/manager/pausedRecheck";
 import { loadSettingsSafely } from "../src/manager/settingsBoot";
 import { PRIMARY_IO_TIMEOUT_MS, readSettingsFile } from "../src/manager/settingsFile";
@@ -93,6 +93,100 @@ describe("showing that saving is paused", () => {
 		try {
 			registerPausedIndicator(h.host, true);
 			assert.equal(Notice.last, before);
+		} finally { h.dispose(); w.destroy(); }
+	});
+});
+
+describe("saying that saving is back on", () => {
+	// The banner used to just vanish after a restore or a file syncing back in,
+	// leaving a worried reader to guess whether it had worked.
+	const settle = () => new Promise((resolve) => setImmediate(resolve));
+	const resumed = en["saveStatus.resumed"];
+
+	it("says so when a pause someone could have seen ends", async (t) => {
+		let now = 1_000_000;
+		t.mock.method(Date, "now", () => now);
+		const w = writer();
+		const h = indicatorHost(w);
+		try {
+			registerPausedIndicator(h.host, false);
+			w.freeze("missing");
+			now += RESUME_NOTICE_AFTER_MS;
+			w.thaw();
+			await settle();
+			assert.equal(Notice.last?.message, resumed);
+		} finally { h.dispose(); w.destroy(); }
+	});
+
+	it("stays quiet about a pause the automatic retries resolved", async (t) => {
+		let now = 1_000_000;
+		t.mock.method(Date, "now", () => now);
+		const w = writer();
+		const h = indicatorHost(w);
+		try {
+			registerPausedIndicator(h.host, false);
+			w.freeze("unreadable");
+			const before = Notice.last;
+			now += 1_000;
+			w.thaw();
+			await settle();
+			assert.equal(Notice.last, before);
+		} finally { h.dispose(); w.destroy(); }
+	});
+
+	it("does not take a thaw the same step undoes for a resume, and keeps the pause's start", async (t) => {
+		let now = 1_000_000;
+		t.mock.method(Date, "now", () => now);
+		const w = writer();
+		const h = indicatorHost(w);
+		try {
+			registerPausedIndicator(h.host, false);
+			w.freeze("missing");
+			now += RESUME_NOTICE_AFTER_MS;
+			const before = Notice.last;
+			// An adoption that thaws, then fails its rebuild and freezes again.
+			w.thaw(); w.freeze("unreadable");
+			await settle();
+			assert.equal(Notice.last, before);
+			now += 10;
+			w.thaw();
+			await settle();
+			assert.equal(Notice.last?.message, resumed, "the pause began at the first freeze");
+		} finally { h.dispose(); w.destroy(); }
+	});
+
+	it("says nothing when the plugin unloads while paused, or about a new install's pause", async (t) => {
+		let now = 1_000_000;
+		t.mock.method(Date, "now", () => now);
+		for (const quiet of [false, true]) {
+			const w = writer();
+			const h = indicatorHost(w);
+			try {
+				registerPausedIndicator(h.host, false);
+				w.freeze("missing", !quiet);
+				const before = Notice.last;
+				now += RESUME_NOTICE_AFTER_MS;
+				if (quiet) w.thaw(); else w.destroy();
+				await settle();
+				assert.equal(Notice.last, before, quiet ? "provisional pause" : "unload");
+			} finally { h.dispose(); w.destroy(); }
+		}
+	});
+
+	it("says so on a phone too, once the notice that stayed has gone", async (t) => {
+		let now = 1_000_000;
+		t.mock.method(Date, "now", () => now);
+		const w = writer();
+		const h = indicatorHost(w);
+		try {
+			registerPausedIndicator(h.host, true);
+			w.freeze("unreadable");
+			const paused = Notice.last as Notice & { hidden: boolean };
+			now += RESUME_NOTICE_AFTER_MS;
+			w.thaw();
+			assert.equal(paused.hidden, true);
+			await settle();
+			assert.equal(Notice.last?.message, resumed);
 		} finally { h.dispose(); w.destroy(); }
 	});
 });

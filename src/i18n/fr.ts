@@ -1141,13 +1141,15 @@ export const fr: Record<string, string> = {
 	"commandBuilder.missingCallout": "En pause : le callout est manquant. Découvrez-le ou créez-le pour restaurer cette commande, ou modifiez la commande pour choisir un autre type.",
 	"confirm.titleRestoreSettings": "Restaurer ces paramètres",
 	"confirm.titleCreateSettingsFile": "Créer le fichier de paramètres",
-	"confirm.restoreDisplayedSettings": "Cela enregistre les types de callout et les préférences actuellement affichés dans un fichier de paramètres sur cet appareil, puis reprend l’enregistrement. Toute copie locale de récupération lisible est d’abord sauvegardée.\nAvant de continuer, laissez votre service de synchronisation se terminer et vérifiez si un autre appareil possède des paramètres plus récents que vous souhaitez conserver. Votre service de synchronisation peut envoyer ce fichier restauré à vos autres appareils.\nLe fichier est vérifié à nouveau avant l’enregistrement. Si des paramètres existants sont trouvés, ils sont conservés et la récupération peut vous demander de vérifier à nouveau.",
+	"confirm.saveDisplayedSettings":
+		"Cette action enregistre la configuration que vous voyez maintenant comme votre fichier de paramètres et réactive l'enregistrement. La copie de secours que conserve cet appareil est d'abord sauvegardée.\nSi un autre appareil a peut-être des modifications plus récentes que vous voulez garder, laissez-le terminer sa synchronisation avant de continuer. Votre application de synchronisation peut envoyer ce fichier à vos autres appareils.\nCallout Studio cherche encore une fois le fichier de paramètres avant d'enregistrer. S'il est revenu, Callout Studio le conserve à la place.",
 	"notice.settingsBackupFailed": "La récupération des paramètres n'a pas pu continuer car une sauvegarde de sécurité n'a pas pu être enregistrée. Vérifiez l'espace de stockage disponible et les autorisations d'écriture, puis réessayez.",
 	"notice.settingsBackupSaved": "Une copie de récupération des définitions de callout locales a été enregistrée avant l'application des paramètres entrants : {{path}}.",
 	"notice.settingsChangedElsewhere": "Les paramètres de Callout Studio ont été modifiés sur un autre appareil, donc cette modification n'a pas été enregistrée. Les paramètres de l'autre appareil sont en cours de chargement — veuillez refaire la modification.",
 	"notice.settingsNewerVersion": "Les paramètres de Callout Studio ont été enregistrés par une version plus récente du plugin, donc rien ne sera écrit sur cet appareil tant que vous ne l'aurez pas mis à jour. Vos paramètres sont en sécurité — mettez à jour Callout Studio ici et rechargez Obsidian.",
 	"notice.settingsNotSaved": "Cette modification n'a pas été enregistrée. Callout Studio n'a pas pu utiliser son fichier de paramètres au démarrage d'Obsidian, donc rien n'est écrit sur cet appareil — vos modifications dureront jusqu'à la fermeture d'Obsidian. Consultez Paramètres → Callout Studio pour savoir quoi faire.",
-	"saveStatus.changed": "Le fichier de paramètres a changé pendant que vous modifiiez. Votre brouillon est toujours disponible. Choisissez Réessayer l'enregistrement et la récupération pour charger les paramètres entrants, puis vérifiez votre brouillon et enregistrez à nouveau.",
+	"saveStatus.changed":
+		"Le fichier de paramètres a changé pendant votre modification. Votre brouillon est toujours disponible. Choisissez Réessayer pour charger les paramètres reçus, puis relisez votre brouillon et enregistrez à nouveau.",
 	"saveStatus.missing": "L'enregistrement est en pause car le fichier de paramètres est manquant. Cela peut arriver après une réinstallation ou pendant qu'une synchronisation est encore en cours. Terminez la synchronisation et réessayez. Pour remplacer intentionnellement le fichier manquant, utilisez Créer un nouveau fichier de paramètres dans les paramètres de Callout Studio.",
 	"saveStatus.restoreSettings": "Restaurer ces paramètres",
 	"saveStatus.createSettingsFile": "Créer le fichier de paramètres",
@@ -1158,14 +1160,14 @@ export const fr: Record<string, string> = {
 	"saveStatus.notesFailed": "La définition du callout a été enregistrée, mais certaines mises à jour de notes n'ont pas pu être terminées. Laissez cet éditeur ouvert et choisissez Enregistrer pour réessayer les mises à jour inachevées.",
 	"saveStatus.recoveryRead": "L'enregistrement est en pause car la copie de récupération locale ne peut pas être lue. Votre fichier de paramètres est peut-être encore intact. Vérifiez l'espace de stockage disponible, puis réessayez la récupération. Les données de récupération existantes ne seront pas écrasées.",
 	"saveStatus.recoveryWrite": "La copie de récupération locale n'a pas pu être enregistrée. Vérifiez l'espace de stockage disponible, puis réessayez. Laissez votre brouillon ouvert jusqu'à ce que l'enregistrement réussisse.",
-	"saveStatus.retry": "Réessayer l'enregistrement et la récupération",
 	"saveStatus.retryFailed": "L'enregistrement est toujours bloqué. Vérifiez l'état de l'enregistrement dans les paramètres de Callout Studio pour en connaître la cause, puis réessayez.",
-	"saveStatus.retrying": "Vérification de l'enregistrement et de la récupération…",
 	"saveStatus.reviewDraft": "Les paramètres entrants et les vérifications de récupération sont terminés. Votre brouillon est inchangé. Vérifiez-le et enregistrez à nouveau.",
 	"saveStatus.settingsArrived": "Les paramètres existants sont arrivés et ont été chargés. Aucun fichier de remplacement n'a été créé.",
 	"saveStatus.syncConflict": "Les paramètres entrants sont en conflit avec un callout nécessaire pour des mises à jour de notes inachevées. Votre brouillon et les mises à jour en attente ont été conservés. Résolvez le conflit de paramètres avant de réessayer.",
 	"saveStatus.titlePaused": "L'enregistrement est en pause",
 	"saveStatus.titleFailed": "Les paramètres n'ont pas été enregistrés",
+	"saveStatus.tryAgain": "Réessayer",
+	"saveStatus.working": "En cours…",
 	"saveStatus.unreadable": "L'enregistrement est en pause car le fichier de paramètres ne peut pas être lu en toute sécurité. Terminez la synchronisation ou restaurez une copie valide, puis réessayez. Le fichier existant a été conservé.",
 	"saveStatus.write": "Le fichier de paramètres n'a pas pu être enregistré. Vérifiez l'espace de stockage disponible, les autorisations du dossier et la synchronisation, puis réessayez avant de fermer Obsidian.",
 	"saveStatus.writePermission": "Le fichier de paramètres n'a pas pu être enregistré car le stockage a refusé l'accès en écriture. Vérifiez que le coffre et le dossier du plugin sont accessibles en écriture, puis réessayez.",
@@ -1173,7 +1175,6 @@ export const fr: Record<string, string> = {
 	"settings.readOnly": "Callout Studio n'a pas pu utiliser son fichier de paramètres au démarrage d'Obsidian, donc rien sur cette page n'est enregistré sur cet appareil. Vos modifications dureront jusqu'à la fermeture d'Obsidian. Rechargez Obsidian une fois le fichier revenu — si vous synchronisez ce coffre, laissez d'abord la synchronisation se terminer.",
 
 	// Sync safety hardening
-	"saveStatus.stillMissingAdvice": "Le fichier de paramètres est toujours manquant. Revérifier ne le recrée pas. Laissez la synchronisation se terminer et rendez le coffre disponible hors ligne. Si le fichier a été supprimé, choisissez Restaurer ces paramètres, ou restaurez une configuration antérieure.",
 	"saveStatus.diagnosis.unavailable": "Cet appareil ne peut pas ouvrir le fichier pour le moment. Il est peut-être encore en train de se télécharger, le coffre n'est peut-être pas disponible hors ligne, ou le stockage ne répond pas. Callout Studio revérifie automatiquement.",
 	"saveStatus.diagnosis.empty": "Le fichier est vide, ce qui signifie généralement qu'une synchronisation a été interrompue. Si un autre appareil possède encore vos paramètres, laissez-le se synchroniser. Sinon, remplacez le fichier.",
 	"saveStatus.diagnosis.mergeMarkers": "Le fichier contient des marqueurs de conflit de fusion non résolus, par exemple provenant de Git. Résolvez le conflit dans votre outil Git, ou remplacez le fichier.",
@@ -1182,11 +1183,44 @@ export const fr: Record<string, string> = {
 	"saveStatus.diagnosis.invalidEntries": "Le fichier contient des entrées que Callout Studio ne peut pas utiliser, par exemple le même type de callout listé deux fois.",
 	"saveStatus.replaceUnreadable": "Remplacer le fichier de paramètres",
 	"saveStatus.discardRecoveryCopy": "Ignorer la copie de récupération",
-	"saveStatus.openRecovery": "Restaurer une configuration antérieure",
-	"saveStatus.readOnlyWhilePaused": "Les paramètres ne peuvent pas être modifiés tant que l'enregistrement ne fonctionne pas à nouveau, donc rien de ce que vous modifiez ici n'est perdu. Vous pouvez toujours exporter votre configuration.",
+	"saveStatus.calm.opening": "Avant tout, respirez profondément — tout va bien se passer.",
+	"saveStatus.calm.kept": "Vos notes sont en sécurité, et vos callouts sont toujours là, sur cet appareil.",
+	"saveStatus.calm.safe": "Vos notes sont en sécurité.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio a seulement mis l'enregistrement en pause pour protéger votre configuration, donc cette page est en lecture seule pour l'instant.",
+	"saveStatus.calm.paused": "Callout Studio a seulement mis l'enregistrement en pause pour protéger votre configuration.",
+	"saveStatus.explain.missing":
+		"Callout Studio ne trouve pas son fichier de paramètres. Cela arrive généralement pendant que votre application de synchronisation le télécharge encore, ou après la suppression de Callout Studio sur un autre appareil.",
+	"saveStatus.explain.stillMissing":
+		"Le fichier de paramètres n'est toujours pas revenu. La vérification ne fait que le chercher ; elle n'en crée jamais un nouveau. Si votre coffre est dans iCloud, OneDrive, Google Drive ou Dropbox, assurez-vous qu'il reste téléchargé sur cet appareil.",
+	"saveStatus.explain.unreadable":
+		"Callout Studio ne peut pas lire son fichier de paramètres pour le moment ; il l'a donc laissé exactement tel quel.",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio conserve sur cet appareil une copie de secours de vos paramètres, et cette copie est illisible pour le moment. Le fichier de paramètres lui-même est peut-être intact.",
+	"saveStatus.explain.newerVersion":
+		"Vos paramètres ont été enregistrés par une version plus récente de Callout Studio ; cette version plus ancienne ne les modifiera donc pas.",
+	"saveStatus.explain.changed":
+		"Le fichier de paramètres a changé pendant que Callout Studio travaillait dessus ; il s'est donc arrêté sans rien remplacer.",
+	"saveStatus.guide.rechecks": "Callout Studio revérifie chaque minute tant qu'Obsidian est ouvert, donc cela se règle souvent tout seul.",
+	"saveStatus.guide.rechecksCheckNow":
+		"Callout Studio revérifie chaque minute tant qu'Obsidian est ouvert, donc cela se règle souvent tout seul — ou choisissez Vérifier à nouveau pour vérifier tout de suite.",
+	"saveStatus.guide.restore":
+		"Si vos paramètres ne reviennent pas, choisissez Restaurer ces paramètres pour conserver les callouts que vous voyez ici.",
+	"saveStatus.guide.create":
+		"Si vos paramètres ne reviennent pas, choisissez Créer le fichier de paramètres pour recommencer à enregistrer.",
+	"saveStatus.guide.backup":
+		"Une fois l'enregistrement rétabli, vous pouvez aussi récupérer une version antérieure depuis la section Sauvegarde.",
+	"saveStatus.guide.recoveryRetry": "Vérifiez que cet appareil dispose d'un peu d'espace de stockage libre, puis choisissez Réessayer.",
+	"saveStatus.guide.recoveryDiscard":
+		"Si cela n'aide pas, choisissez Ignorer la copie de récupération. Une copie exacte est d'abord enregistrée, et votre fichier de paramètres n'est pas modifié.",
+	"saveStatus.guide.newerVersion": "Mettez à jour Callout Studio dans Paramètres → Plugins communautaires, puis rechargez Obsidian.",
+	"saveStatus.goToBackups": "Aller aux sauvegardes",
+	"saveStatus.missingNotice":
+		"Vos notes sont en sécurité. Callout Studio a mis l'enregistrement en pause parce qu'il ne trouve pas son fichier de paramètres pour le moment.",
 	"statusBar.paused": "Enregistrement en pause",
 	"statusBar.pausedTooltip": "Callout Studio n'enregistre pas les modifications des paramètres. Cliquez pour savoir pourquoi.",
 	"statusBar.pausedNotice": "Callout Studio n'enregistre pas les modifications des paramètres pour le moment.",
+	"saveStatus.resumed": "L'enregistrement est de nouveau actif. Callout Studio enregistre à nouveau les modifications des paramètres.",
 	"notice.replaceUnreadableUnavailable": "Le fichier de paramètres ne peut pas être remplacé pour le moment : il est en cours de modification, ou cet appareil ne peut pas le lire. Réessayez dans un instant.",
 	"notice.recoveryStorageUnavailable": "Le stockage de récupération de cet appareil ne répond pas, la copie ne peut donc pas être ignorée. Redémarrez Obsidian, puis réessayez.",
 	"recovery.title": "Restaurer une configuration antérieure",
