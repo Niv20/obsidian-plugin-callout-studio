@@ -1,25 +1,31 @@
 /**
  * editor/fenceBlocks.ts — Where fenced code and math blocks start and end.
  *
- * Wrapping or unwrapping a callout expands outwards from the cursor until it
- * hits a blank line, and a fence is the one place that rule has to be
- * suspended: a blank line inside ```…``` or $$…$$ is content, not a paragraph
- * break, and the fence's own markers must move as one unit or the block stops
- * being a block. Scanning for those ranges is a self-contained pass over the
- * buffer, so it lives here rather than inside the transforms that consult it.
+ * Wrapping a callout decides what to take by paragraphs and blank lines, and a
+ * fence is the one place that rule has to be suspended: a blank line inside
+ * ```…``` or $$…$$ is content, not a paragraph break, and the fence's own
+ * markers must move as one unit or the block stops being a block. Scanning for
+ * those ranges is a self-contained pass over the buffer, so it lives here
+ * rather than inside the transforms that consult it.
  *
  * Fences are recognised at any quote depth (the markers are read through
- * `stripLeadingQuoteTokens`), and an unterminated one is taken to run to the
- * end of the note — which is what the editor shows while it is being typed.
+ * `stripLeadingQuoteTokens`), but a fence belongs to the quote it opened in:
+ * only a closing marker at that same depth closes it, and it ends anyway where
+ * that quote does. Without that last rule, a ``` left open inside a callout
+ * would swallow the rest of the note. An unterminated fence at the top level
+ * still runs to the end of the note — which is what the editor shows while it
+ * is being typed.
  */
 import type { Editor } from "obsidian";
-import { stripLeadingQuoteTokens } from "./quotePrefix";
+import { splitQuoteMarkers, stripLeadingQuoteTokens } from "./quotePrefix";
 
 export interface FenceBlock {
 	startLine: number;
 	endLine: number;
 	kind: "code" | "math";
 	marker?: "```" | "~~~";
+	/** Quote depth of the opening line, which every line of the fence shares. */
+	depth: number;
 }
 
 const getFenceToken = (
@@ -43,14 +49,20 @@ const getFenceToken = (
 export const collectFenceBlocks = (editor: Editor): FenceBlock[] => {
 	const fenceBlocks: FenceBlock[] = [];
 	const lineCount = editor.lineCount();
-	let openFence: {
-		startLine: number;
-		kind: "code" | "math";
-		marker?: "```" | "~~~";
-	} | null = null;
+	let openFence: Omit<FenceBlock, "endLine"> | null = null;
+	const close = (endLine: number): void => {
+		if (openFence) fenceBlocks.push({ ...openFence, endLine });
+		openFence = null;
+	};
 
 	for (let line = 0; line < lineCount; line++) {
-		const token = getFenceToken(editor.getLine(line));
+		const text = editor.getLine(line);
+		const { depth } = splitQuoteMarkers(text);
+		// The quote holding the fence ended on the line above, and the fence
+		// with it.
+		if (openFence && depth < openFence.depth) close(line - 1);
+
+		const token = getFenceToken(text);
 		if (!token) continue;
 
 		if (!openFence) {
@@ -58,45 +70,25 @@ export const collectFenceBlocks = (editor: Editor): FenceBlock[] => {
 				startLine: line,
 				kind: token.kind,
 				...(token.kind === "code" ? { marker: token.marker } : {}),
+				depth,
 			};
 			continue;
 		}
 
-		if (openFence.kind === "math" && token.kind === "math") {
-			fenceBlocks.push({
-				startLine: openFence.startLine,
-				endLine: line,
-				kind: "math",
-			});
-			openFence = null;
-			continue;
-		}
+		// A marker quoted deeper than the fence is a line of its content.
+		if (depth !== openFence.depth) continue;
 
 		if (
-			openFence.kind === "code" &&
-			token.kind === "code" &&
-			openFence.marker === token.marker
+			(openFence.kind === "math" && token.kind === "math") ||
+			(openFence.kind === "code" &&
+				token.kind === "code" &&
+				openFence.marker === token.marker)
 		) {
-			fenceBlocks.push({
-				startLine: openFence.startLine,
-				endLine: line,
-				kind: "code",
-				marker: openFence.marker,
-			});
-			openFence = null;
+			close(line);
 		}
 	}
 
-	if (openFence && lineCount > 0) {
-		fenceBlocks.push({
-			startLine: openFence.startLine,
-			endLine: lineCount - 1,
-			kind: openFence.kind,
-			...(openFence.kind === "code" && openFence.marker
-				? { marker: openFence.marker }
-				: {}),
-		});
-	}
+	if (lineCount > 0) close(lineCount - 1);
 
 	return fenceBlocks;
 };

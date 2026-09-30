@@ -20,6 +20,12 @@ note editor.
 
 No keyboard shortcut is assigned by default.
 
+## Insert an empty callout
+
+Run **Callout Studio: Insert empty callout** to start a callout at the cursor, then choose its type from the list that opens. On an empty line, the callout takes that line's place. On a line with text, it goes on a new line below it. Inside a callout, the new one is nested in it.
+
+Wherever the new callout would touch the text above or below it, Callout Studio adds a blank line, so neither is pulled into the other. It never writes into the note's properties: with the cursor there, the callout goes where the note's text begins.
+
 ## Wrap text after writing it
 
 Select text and run **Callout Studio: Wrap in callout**. Choose a callout type, and Callout Studio turns the selection into a block callout.
@@ -32,7 +38,20 @@ Select text and run **Callout Studio: Wrap in callout**. Choose a callout type, 
 
 This lets you write first and decide on the callout later. It also handles tables and fenced code blocks without making you add every `>` manually.
 
-To create nested callouts, write the inner content, wrap it once, select the result, and wrap it again:
+### What gets wrapped
+
+- **With a selection**, the lines the selection touches are wrapped. A line that the selection reaches only at its very start is left out. If the selection starts or ends in the middle of a paragraph, the paragraph is split there.
+- **Without a selection**, the paragraph under the cursor is wrapped: the lines around it, up to the nearest blank line. A heading directly above or below it stays out.
+- **On an empty line**, an empty callout is created there, ready to type into.
+- The note's properties (frontmatter) are never wrapped.
+
+Some blocks are always wrapped whole, even when the selection covers only part of them: code and math blocks, tables, HTML blocks, a list item together with its indented sub-items, and callouts.
+
+When the new callout would touch the text right above or below it, Callout Studio adds a blank line in between. Without that line, Obsidian would merge the two blocks.
+
+### Inside a callout
+
+Wrapping text that is already inside a callout puts the new callout inside it:
 
 ```md
 > [!tip]
@@ -42,9 +61,21 @@ To create nested callouts, write the inner content, wrap it once, select the res
 > > This smaller note is nested inside the first callout.
 ```
 
+To wrap the whole callout instead, place the cursor on its first line (the one with `[!tip]`), or include that line in the selection. The whole callout is then wrapped from the outside, however much of it is selected.
+
+That gives two ways to build nested callouts: wrap the outer text first and then the part that belongs inside it, or wrap the inner part first and then select everything and wrap it again.
+
+You can also select several callouts at once and wrap them together. Each one stays its own block callout inside the new one.
+
+A plain blockquote has no such first line, so wrapping text in a quote always puts the callout inside the quote.
+
+A heading callout (`## [!tip] Title`) only works outside block callouts. If you wrap one, it becomes an ordinary heading that starts with an inline callout.
+
 ## Unwrap a callout
 
-Place the cursor inside a callout, or select part of it, and run **Callout Studio: Unwrap from callout**. It removes one callout layer while keeping the content. Nested blocks can therefore be unwrapped one level at a time.
+Place the cursor inside a callout, or select part of it, and run **Callout Studio: Unwrap from callout**. It removes one callout layer while keeping the content. It always unwraps the innermost callout around the cursor, so nested blocks can be unwrapped one level at a time.
+
+The callout's title stays, as a line of its own; only the `[!type]` marker is removed. This is the same thing that happens to notes when you delete a callout type and convert its uses to plain text. If text sat right above the callout with no blank line between, a blank line is added so the two stay separate paragraphs. A callout indented under a list item stays inside that item.
 
 ## Show, hide, and assign shortcuts
 

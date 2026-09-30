@@ -70,6 +70,27 @@ describe("document lexer and vault writers share strict exclusions", () => {
 		assert.ok(v.read().includes("Text Old name: payload Old name"));
 	});
 
+	it("plain text conversion keeps a callout apart from a paragraph right above it", async () => {
+		// Its title would otherwise become that paragraph's next line.
+		const v = vault("para\n> [!old]- Title\n> body");
+		await convertCalloutsToPlainTextInVault(v.app, ["old"], "Old name");
+		assert.equal(v.read(), "para\n\nTitle\nbody");
+	});
+
+	it("plain text conversion adds no blank line where one is not needed", async () => {
+		// Already apart, straight after the properties, or with no title left
+		// to join anything: the header line itself turns blank.
+		for (const [before, after] of [
+			["para\n\n> [!old] Title\n> body", "para\n\nTitle\nbody"],
+			["---\na: 1\n---\n> [!old] Title\n> body", "---\na: 1\n---\nTitle\nbody"],
+			["para\n> [!old]\n> body", "para\n\nbody"],
+		]) {
+			const v = vault(before!);
+			await convertCalloutsToPlainTextInVault(v.app, ["old"], "Old name");
+			assert.equal(v.read(), after, before);
+		}
+	});
+
 	it("renaming never touches unknown types merely because they share an appearance", async () => {
 		const v = vault("[!note] [!unregistered]");
 		assert.equal(await replaceCalloutIdsInVault(v.app, ["note"], "info"), 1);

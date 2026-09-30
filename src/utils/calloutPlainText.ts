@@ -52,7 +52,13 @@ function rewriteLine(line: string, tokens: LineCalloutToken[], ids: ReadonlySet<
 export function calloutsToPlainText(content: string, ids: ReadonlySet<string>, displayName: string): { content: string; count: number } | null {
 	const lines = Array.from(iterateDocumentCalloutLines(content));
 	let unwrapping = false, count = 0;
-	const converted = lines.map(({ lineText: line, tokens, visible, prefix }) => {
+	/** Visible text outside any quote, which a title written after it would join. */
+	const isOpenProse = (index: number): boolean => {
+		const above = lines[index];
+		return above !== undefined && !/^[ \t]*>/.test(above.lineText) &&
+			above.visible.replace(/\0/g, "").trim() !== "";
+	};
+	const converted = lines.map(({ lineText: line, tokens, visible, prefix }, index) => {
 		if (!/^[ \t]*>/.test(line)) unwrapping = false;
 		const header = tokens[0]?.role === "regular" ? tokens[0] : undefined;
 		const matchingHeader = header !== undefined && ids.has(calloutIdentity(header.rawId));
@@ -69,6 +75,9 @@ export function calloutsToPlainText(content: string, ids: ReadonlySet<string>, d
 		}
 		const result = rewriteLine(line, tokens, ids, displayName.trim(), outer);
 		count += result.count;
+		// The callout was a block of its own. Right under a paragraph, its
+		// title would become that paragraph's next line without a blank one.
+		if (outer && result.line.trim() !== "" && isOpenProse(index - 1)) return `\n${result.line}`;
 		return unwrapping && !outer ? result.line.replace(/^([ \t]*)>[ \t]?/, "$1") : result.line;
 	});
 	return count ? { content: converted.join("\n"), count } : null;

@@ -41,7 +41,7 @@ Choose **Delete** from the same three-dot menu.
 
 - If the custom callout is not used in any note, it is removed from the list immediately.
 - If it is in use, Callout Studio shows the number of affected occurrences and asks what should happen next.
-- **Delete (convert to plain text)** removes the callout styling but keeps the note content.
+- **Delete (convert to plain text)** removes the callout styling but keeps the note content. Each callout's title stays as a line of its own. If text sat right above a callout with no blank line between them, a blank line is added so the two stay separate paragraphs.
 - **Replace instead** changes every occurrence to another callout before removing the old definition.
 
 Obsidian's built-in callout types are permanent and cannot be removed from the list. You can reset their appearance or replace their uses, but the underlying type remains available.
