@@ -2217,5 +2217,48 @@ raw-data sections, and an unreadable source shows that comparison is unavailable
 The details window makes no network, save or restore calls and has no restore
 button.
 
+## Reduced motion
+
+The plugin has no setting for this and never stores a choice. It reads the
+operating system's preference, which Obsidian's Chromium exposes as the
+`prefers-reduced-motion` media feature (macOS **Reduce motion**, Windows
+**Animation effects** off). Obsidian itself has no reduced-motion option and
+most of its own animations ignore the preference, so everything below is the
+plugin's own doing. To test without changing the system setting, use the
+developer tools' **Rendering → Emulate CSS media feature
+prefers-reduced-motion**.
+
+There are two entry points, and a new animation uses whichever matches how it
+is driven.
+
+**From JavaScript** — `prefersReducedMotion()` in
+[`ui/flip.ts`](../../src/ui/flip.ts) is the only function; it is a fresh
+`matchMedia` read on every call, so a change in the system setting applies to
+the next animation without a reload. It is exported from `flip.ts` for
+historical reasons, not because the check belongs to FLIP. Its callers:
+
+- `flip.ts` itself — row reorders skip the FLIP animation and just land.
+- `DragSortList.ts` — read once when a drag starts; the settle and slide
+  animations are skipped (see the drag section above).
+- `settings/targetHighlighter.ts` — `scrollIntoView` uses `behavior: "auto"`
+  instead of `"smooth"`; the pulse only fades a colour.
+
+**From CSS** — `@media (prefers-reduced-motion: …)` blocks in
+[`styles.css`](../../styles.css). They take two shapes:
+
+- **`reduce` blocks** turn something off: `transition: none` on the portable
+  cards and footer contact link, `animation-duration: 1ms` on the "checking"
+  option box, the icon tile transitions, and the heading callout's entrance
+  transition (which also never animates into a print or PDF snapshot).
+- **`no-preference` queries** switch something on only when motion is
+  allowed: the usage menu's count fade, and the icon swap arrows' drift loop
+  with its hover trigger. Use this shape when the selectors are so specific
+  that an `animation: none` in a `reduce` block could not outrank them; a
+  loop that never starts needs no stopping. The `reduce` block beside the
+  icon tiles says so and deliberately leaves the arrows alone.
+
+The vault-scan fade is the same idea, documented with its feature in
+[Vault discovery](11-vault-discovery.md).
+
 ---
 Next chapter: [17-i18n.md](17-i18n.md)
