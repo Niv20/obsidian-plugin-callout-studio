@@ -515,6 +515,8 @@ export const uk: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Бренди",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Пошук в RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Пошук у Simple Icons",
 	"iconPicker.custom": "Користувацькі піктограми",
 	"iconPicker.searchCustom": "Пошук користувацьких піктограм",
 	"iconPicker.customTooLarge":
@@ -555,6 +557,7 @@ export const uk: Record<string, string> = {
 	"iconPicker.descOcticons": "іконки інтерфейсу GitHub",
 	"iconPicker.descFa": "заповнений, звичайний та бренди",
 	"iconPicker.descRpgAwesome": "іконки фентезі та настільних ігор",
+	"iconPicker.descSimpleIcons": "логотипи брендів і продуктів",
 	"iconPicker.descCustom": "користувацькі піктограми, додані з компʼютера",
 
 	// Icon picker — category filter dropdown labels
@@ -682,6 +685,8 @@ export const uk: Record<string, string> = {
 	"iconPack.retry": "Повторити",
 	"iconPack.faBrandsNotice":
 		"Іконки брендів є торговими марками відповідних власників. Їх включення не означає схвалення. Використовуйте їх лише для представлення компанії, продукту або послуги, на які вони посилаються.",
+	"iconPack.simpleIconsNotice":
+		"Логотипи є торговельними марками своїх власників; їх наявність тут не означає схвалення. Використовуйте логотип лише для позначення його власного бренду та дотримуйтеся правил цього бренду. Деякі логотипи мають і власну ліцензію; див. авторство значків.",
 	"iconPack.artworkRestored": "Графіку іконок для {{names}} завантажено.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio не вдалося зберегти пакет іконок на диск, тому наступного разу його потрібно буде завантажити знову. Вибрані вами іконки зберігаються з налаштуваннями.",

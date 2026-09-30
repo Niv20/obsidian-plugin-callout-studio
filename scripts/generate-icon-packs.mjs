@@ -13,6 +13,12 @@
  * - `packs/<id>.json` — the path data, downloaded on demand and cached to disk.
  *   Committed here and served from jsDelivr at a pinned tag.
  *
+ * And a third for the one pack whose licence is not a single licence: Simple
+ * Icons' logos carry terms of their own, one brand at a time, so its builder
+ * also writes `docs/SIMPLE-ICONS-LICENSES.md` — who is credited for which logo,
+ * and which logos were left out. Generated rather than written, because it has
+ * to describe exactly the file beside it and nothing else.
+ *
  * Path data is stored as bare `d` strings, never markup, and every one is
  * validated against a path grammar at build time and again at load time. That
  * is what lets the runtime skip SVG sanitization for these packs entirely:
@@ -507,7 +513,7 @@ function buildRpgAwesome() {
  * takes the bundled form to well under a third of its size.
  */
 async function buildMaterial() {
-	// The other seven packs read their upstream out of `node_modules`; Material
+	// The other eight packs read their upstream out of `node_modules`; Material
 	// has no such package, because the tags and categories live behind Google's
 	// web metadata endpoint rather than in anything published to npm. So the
 	// table is committed here, beside the generator that consumes it — outside
@@ -673,6 +679,463 @@ function buildTabler(style) {
 	};
 }
 
+// ── Simple Icons ────────────────────────────────────────────────────────
+
+const SI_DIR = join(ROOT, "node_modules/simple-icons");
+
+/** Every Simple Icons drawing is a single path on the same 24-unit square. */
+const SI_SIZE = "24";
+
+/** Where the per-logo licence notices go, relative to the repository root. */
+const SI_NOTICES_FILE = join("docs", "SIMPLE-ICONS-LICENSES.md");
+
+/**
+ * The one shape every Simple Icons file takes: a root carrying only the
+ * viewBox, a title, and a single path with nothing on it but `d`.
+ *
+ * Matched whole rather than picked apart, for the reason parseOcticonPaths and
+ * readTablerSvg are strict: a second path, a `fill-rule`, a transform — anything
+ * this does not expect — means upstream changed shape, and a build that read
+ * only the `d` it recognised would ship a wrong drawing. For somebody's
+ * trademark that is a worse mistake than for an arrow.
+ */
+const SI_SVG_RE =
+	/^<svg role="img" viewBox="0 0 24 24" xmlns="http:\/\/www\.w3\.org\/2000\/svg"><title>[^<]*<\/title><path d="([^"]*)"\/><\/svg>\s*$/;
+
+/**
+ * The licences a logo may carry and still ship.
+ *
+ * Simple Icons releases its collection under CC0, and says in the same breath
+ * that this "doesn't mean to imply that all icons within the project are also
+ * CC0" (its DISCLAIMER.md). Where a brand published its logo under a licence of
+ * its own, upstream records that on the icon, and that licence is the one that
+ * binds whoever passes the drawing on — which, since `packs/` is served from
+ * this repository, is us.
+ *
+ * So this is an allow-list, and what is on it has one thing in common:
+ * everything the licence asks of someone redistributing the logo *unchanged*
+ * can be met with a notice — name the work, name the licence, link both.
+ * docs/SIMPLE-ICONS-LICENSES.md, written below, is that notice. ShareAlike and
+ * MPL belong here for the same reason: their copyleft attaches to a modified
+ * logo, and the pack carries every path exactly as published, as one separate
+ * work among thousands.
+ */
+const SI_SHIPPED_LICENSES = new Set([
+	"CC0-1.0",
+	"Unlicense",
+	"Apache-2.0",
+	"MPL-2.0",
+	"CC-BY-2.5",
+	"CC-BY-3.0",
+	"CC-BY-4.0",
+	"CC-BY-SA-2.0",
+	"CC-BY-SA-2.5",
+	"CC-BY-SA-3.0",
+	"CC-BY-SA-4.0",
+]);
+
+/**
+ * The licences that keep a logo out of the pack, and why.
+ *
+ * `reason` is printed beside the logo in the notices and `because` once above
+ * the table, so an icon someone goes looking for and does not find has an
+ * explanation. The GPL entry has one more reason than it states there: upstream
+ * does not record the owner's copyright notice, so the notice the licence wants
+ * delivered could not be reproduced even by a download that was shaped for it.
+ */
+const SI_WITHHELD_LICENSES = [
+	{
+		test: /^custom$/,
+		reason: "brand-specific terms",
+		because:
+			"the brand's own conditions, behind the link, which have to be read and " +
+			"accepted one brand at a time",
+	},
+	{
+		test: /-NC(?:-|$)/,
+		reason: "non-commercial use only",
+		because:
+			"the licence binds everyone downstream, and an icon picker cannot know " +
+			"what a vault is used for",
+	},
+	{
+		test: /-ND(?:-|$)/,
+		reason: "no derivatives",
+		because:
+			"a logo drawn in a callout's colour and shared in an exported note is " +
+			"arguably an altered copy",
+	},
+	{
+		test: /^(?:MIT|BSD-3-Clause)$/,
+		reason: "copyright notice not recorded upstream",
+		because:
+			"the licence wants the owner's copyright line delivered with every copy, " +
+			"and Simple Icons keeps the licence per logo but not that line",
+	},
+	{
+		test: /^A?GPL-/,
+		reason: "GPL-family copyleft",
+		because:
+			"the licence wants its full text and the owner's copyright notice " +
+			"delivered with every copy",
+	},
+];
+
+/**
+ * Logos withdrawn at their owner's request, by slug.
+ *
+ * Upstream drops a brand from its next major release when asked to; this is the
+ * same courtesy without the wait. Add the slug, regenerate, and publish under a
+ * new packs tag — the old tag stays cached on the CDN for good, so what ends the
+ * distribution is a build that no longer points at it.
+ */
+const SI_WITHDRAWN = new Set([]);
+
+const SI_WITHDRAWN_RULE = {
+	reason: "withdrawn at the owner's request",
+	because: "the brand asked for its logo not to be distributed",
+};
+
+/**
+ * Whether a logo ships, and under which rules it does not.
+ *
+ * A licence on neither list stops the build. Upstream adds licence data every
+ * week, and a kind of term this has not met has to be read by a person before
+ * it is either promised or refused — never waved through by default, and never
+ * dropped without a word either.
+ */
+function classifySimpleIcon(brand) {
+	if (SI_WITHDRAWN.has(brand.slug)) return { ship: false, rules: [SI_WITHDRAWN_RULE] };
+
+	const type = brand.license?.type;
+	if (type === undefined) return { ship: true };
+	if (typeof type !== "string" || type.length === 0) {
+		throw new Error(`simple-icons: "${brand.slug}" has a malformed licence`);
+	}
+
+	const rules = SI_WITHHELD_LICENSES.filter((rule) => rule.test.test(type));
+	if (rules.length > 0) return { ship: false, rules };
+	if (SI_SHIPPED_LICENSES.has(type)) return { ship: true };
+
+	throw new Error(
+		`simple-icons: "${brand.slug}" carries the licence "${type}", which is on ` +
+			`neither SI_SHIPPED_LICENSES nor SI_WITHHELD_LICENSES. Read the licence, ` +
+			`then add it to the list it belongs on.`,
+	);
+}
+
+/** Read one Simple Icons file down to its path data. */
+function readSimpleIconSvg(slug) {
+	const where = `simple-icons/${slug}`;
+	const raw = readFileSync(join(SI_DIR, "icons", `${slug}.svg`), "utf8");
+	const match = SI_SVG_RE.exec(raw);
+	if (!match) throw new Error(`unexpected markup at ${where}: ${raw.slice(0, 160)}`);
+	const d = match[1];
+	assertPathData(d, where);
+	return { w: 24, p: [{ d }] };
+}
+
+/**
+ * Search terms for one brand beyond its slug and its title.
+ *
+ * Upstream's aliases are the whole reason a search for "twitter" finds `x`:
+ * other names the brand goes by, names it used to have, names in other
+ * languages, and the other brands that share its drawing. Lower-cased, since
+ * the search ignores case and one spelling per term keeps the dictionary small.
+ *
+ * One term is derived rather than read. A slug spells punctuation out
+ * (`nodedotjs`, `atandt`) and a title keeps it (`Node.js`, `AT&T`), so neither
+ * answers to the spelling people actually type — `nodejs`, `att`. The title
+ * with its punctuation closed up does, and is added only when the slug does not
+ * already contain it, which is what keeps it from being a second copy of most
+ * names.
+ */
+function simpleIconKeywords(brand) {
+	const aliases = brand.aliases ?? {};
+	const duplicates = aliases.dup ?? [];
+	const terms = [
+		...(aliases.aka ?? []),
+		...(aliases.old ?? []),
+		...Object.values(aliases.loc ?? {}),
+		...duplicates.map((duplicate) => duplicate.title),
+		...duplicates.flatMap((duplicate) => Object.values(duplicate.loc ?? {})),
+	].map((term) => String(term).toLowerCase());
+
+	const closedUp = brand.title
+		.normalize("NFD")
+		.replace(/[̀-ͯ]/g, "")
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "");
+	if (closedUp.length > 2 && !brand.slug.replace(/_/g, "").includes(closedUp)) {
+		terms.push(closedUp);
+	}
+	return terms;
+}
+
+/** The page a licence's own text lives on, for an SPDX identifier. */
+function licenseUrl(spdx) {
+	if (spdx === "CC0-1.0") return "https://creativecommons.org/publicdomain/zero/1.0/";
+	const cc = /^CC-(BY(?:-[A-Z]{2})*)-(\d\.\d)$/.exec(spdx);
+	if (cc) {
+		return `https://creativecommons.org/licenses/${cc[1].toLowerCase()}/${cc[2]}/`;
+	}
+	return `https://spdx.org/licenses/${spdx}.html`;
+}
+
+/**
+ * The licences that ask for their own words to travel with the work, and those
+ * words.
+ *
+ * A link is enough for the Creative Commons licences and for MPL, which say so
+ * themselves. Apache 2.0 gets the notice it prescribes and a link to its full
+ * text, the way THIRD-PARTY-NOTICES.md already treats Material Symbols. MIT and
+ * BSD are absent on purpose: they want the owner's copyright line delivered with
+ * every copy, upstream records a licence per logo and not that line, so those
+ * logos are withheld (see SI_WITHHELD_LICENSES).
+ */
+const SI_LICENSE_TEXTS = [
+	{
+		spdx: "Apache-2.0",
+		title: "Apache License 2.0",
+		text: [
+			`Licensed under the Apache License, Version 2.0 (the "License"); you may not use`,
+			`these files except in compliance with the License. You may obtain a copy of the`,
+			`License at`,
+			``,
+			`    http://www.apache.org/licenses/LICENSE-2.0`,
+			``,
+			`Unless required by applicable law or agreed to in writing, software distributed`,
+			`under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR`,
+			`CONDITIONS OF ANY KIND, either express or implied. See the License for the`,
+			`specific language governing permissions and limitations under the License.`,
+		],
+	},
+];
+
+/** Escape text for a Markdown table cell. */
+function markdownText(value) {
+	return String(value).replace(/[\\`*_[\]<>|]/g, (char) => `\\${char}`);
+}
+
+/**
+ * A Markdown link for a table cell. The destination goes in angle brackets so a
+ * parenthesis in it cannot end the link early, and a pipe is percent-encoded so
+ * it cannot end the cell.
+ */
+function markdownLink(text, url) {
+	return `[${markdownText(text)}](<${String(url).replace(/\|/g, "%7C")}>)`;
+}
+
+/**
+ * Write the per-logo notices: who is credited for which logo, under what, and
+ * which logos were left out.
+ *
+ * This is the attribution the licences on SI_SHIPPED_LICENSES ask for, so it
+ * has to describe the pack file exactly — hence built here, from the same pass
+ * that built the file, rather than maintained by hand beside it.
+ */
+function simpleIconsNotices({ version, total, shippedCount, licensed, withheld }) {
+	const byLicense = new Map();
+	for (const brand of licensed) {
+		byLicense.set(brand.license.type, (byLicense.get(brand.license.type) ?? 0) + 1);
+	}
+	const summary = [...byLicense.entries()].sort(
+		(a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1),
+	);
+
+	const licenseCell = (brand) => {
+		const license = brand.license;
+		if (!license) return "—";
+		return markdownLink(license.type, license.url ?? licenseUrl(license.type));
+	};
+	// Grouped the way the rest of the documentation writes a count ("5,130").
+	const count = (value) => value.toLocaleString("en-US");
+
+	const lines = [
+		`# Simple Icons — per-logo licences`,
+		``,
+		`> **Generated file — do not edit.** Written by`,
+		`> \`scripts/generate-icon-packs.mjs\` from \`simple-icons\` ${version}. Regenerate`,
+		`> with \`npm run icons:generate -- --pack=simple-icons\`.`,
+		``,
+		`[Simple Icons](https://simpleicons.org) releases its collection under`,
+		`[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/), and adds that this`,
+		`"doesn't mean to imply that all icons within the project are also CC0": where a`,
+		`brand has published its logo under a licence of its own, Simple Icons records`,
+		`that licence on the icon. This file is the per-logo half of the Simple Icons`,
+		`section of [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). It describes the`,
+		`Simple Icons pack Callout Studio offers for download, \`packs/simple-icons.json\`:`,
+		`${count(shippedCount)} of the ${count(total)} logos in Simple Icons ${version}.`,
+		``,
+		`Three things hold for every logo in that pack, whether or not it is listed`,
+		`below:`,
+		``,
+		`- **It is a trademark of its owner.** No licence on this page grants trademark`,
+		`  rights. Use a logo only to refer to the company, product or service it`,
+		`  belongs to, and follow its owner's brand guidelines — Simple Icons links the`,
+		`  ones it knows of from each icon at <https://simpleicons.org>.`,
+		`- **Its outline is unmodified.** The path data is copied exactly as Simple`,
+		`  Icons publishes it. The SVG wrapper and its \`<title>\` element are dropped,`,
+		`  and the colour is applied when the icon is drawn.`,
+		`- **The licence data is upstream's**, and upstream calls it an ongoing`,
+		`  project: "the absence of license data for a particular icon does not imply`,
+		`  that the icon is not released under a license." A logo that is not listed`,
+		`  here is one Simple Icons records no licence for, not one that is known to`,
+		`  have none.`,
+		``,
+		`## Logos shipped under their own licence`,
+		``,
+		`${count(licensed.length)} logos in the pack carry a licence that Simple Icons records. Each`,
+		`one is credited here to the brand it belongs to, under the licence named, from`,
+		`the source linked. The copyright in a logo is its owner's, as stated at that`,
+		`source.`,
+		``,
+		`| Licence | Logos |`,
+		`| --- | ---: |`,
+		...summary.map(
+			([type, logos]) => `| ${markdownLink(type, licenseUrl(type))} | ${count(logos)} |`,
+		),
+		``,
+		`An adapted version of a logo under a ShareAlike licence (the CC BY-SA family)`,
+		`may itself only be shared under that licence, or one it declares compatible.`,
+		``,
+		`| Logo | Name in the pack | Licence | Source |`,
+		`| --- | --- | --- | --- |`,
+		...licensed.map(
+			(brand) =>
+				`| ${markdownText(brand.title)} | \`${brand.slug}\` | ${licenseCell(brand)} | ` +
+				`${markdownLink(new URL(brand.source).hostname, brand.source)} |`,
+		),
+		``,
+		// Only the texts some shipped logo actually answers to, in declared order.
+		...SI_LICENSE_TEXTS.filter(({ spdx }) => byLicense.has(spdx)).flatMap(
+			({ spdx, title, text }, position) => [
+				...(position === 0
+					? [
+							`### Licence texts`,
+							``,
+							`The texts below apply to each logo marked with that licence in the table`,
+							`above. The copyright notice each one refers to is the logo owner's own, as`,
+							`stated at the source linked from the logo's row.`,
+							``,
+						]
+					: []),
+				`**${title}** (\`${spdx}\`)`,
+				``,
+				"```",
+				...text,
+				"```",
+				``,
+			],
+		),
+		`## Logos left out`,
+		``,
+		...(withheld.length === 0
+			? [`Every logo in Simple Icons ${version} is in the pack.`, ``]
+			: [
+					`${count(withheld.length)} logos in Simple Icons ${version} are not in the pack. The reasons, each`,
+					`of them something a downloaded icon pack cannot settle on its users' behalf:`,
+					``,
+					// Only the rules that actually kept something out, in the order
+					// they are declared, so the list never explains a reason the
+					// table below it does not use.
+					...[...SI_WITHHELD_LICENSES, SI_WITHDRAWN_RULE]
+						.filter((rule) => withheld.some((entry) => entry.rules.includes(rule)))
+						.map((rule) => `- **${rule.reason}** — ${rule.because}.`),
+					``,
+					`Any of them can still be used in a callout by someone who has read its terms:`,
+					`download the logo from its owner and add it under **Custom Icons**.`,
+					``,
+					`| Logo | Name upstream | Licence | Left out because |`,
+					`| --- | --- | --- | --- |`,
+					...withheld.map(
+						({ brand, rules }) =>
+							`| ${markdownText(brand.title)} | \`${brand.slug}\` | ${licenseCell(brand)} | ` +
+							`${rules.map((rule) => rule.reason).join(", ")} |`,
+					),
+					``,
+				]),
+	];
+	return lines.join("\n");
+}
+
+/**
+ * Build the Simple Icons pack: brand logos, one path each.
+ *
+ * The slug is the icon's name — it is upstream's file name and its stable id,
+ * the thing anyone who has used Simple Icons elsewhere already knows a logo by.
+ * The title rides along as a label only where it says something the slug does
+ * not (`Node.js` for `nodedotjs`, `AT&T` for `atandt`); for most brands the two
+ * differ by capitals and spaces alone, which the search ignores anyway.
+ */
+function buildSimpleIcons() {
+	const version = JSON.parse(
+		readFileSync(join(SI_DIR, "package.json"), "utf8"),
+	).version;
+	const brands = JSON.parse(
+		readFileSync(join(SI_DIR, "data/simple-icons.json"), "utf8"),
+	);
+	if (!Array.isArray(brands) || brands.length === 0) {
+		throw new Error("simple-icons: data/simple-icons.json holds no brands");
+	}
+
+	const sorted = [...brands].sort((a, b) => (a.slug < b.slug ? -1 : 1));
+	const known = new Set(sorted.map((brand) => brand.slug));
+	for (const slug of SI_WITHDRAWN) {
+		// A withdrawal that names nothing is a typo, or a logo upstream has since
+		// dropped — either way the list is no longer saying what it seems to.
+		if (!known.has(slug)) {
+			throw new Error(`simple-icons: SI_WITHDRAWN names "${slug}", which upstream does not have`);
+		}
+	}
+
+	const icons = {};
+	const entries = [];
+	const licensed = [];
+	const withheld = [];
+
+	for (const brand of sorted) {
+		const { slug, title } = brand;
+		if (typeof slug !== "string" || typeof title !== "string" || !title) {
+			throw new Error(`simple-icons: malformed brand record ${JSON.stringify(brand).slice(0, 120)}`);
+		}
+		if (slug in icons) throw new Error(`simple-icons: duplicate slug "${slug}"`);
+
+		const verdict = classifySimpleIcon(brand);
+		if (!verdict.ship) {
+			withheld.push({ brand, rules: verdict.rules });
+			continue;
+		}
+		if (brand.license) licensed.push(brand);
+
+		icons[slug] = { [SI_SIZE]: readSimpleIconSvg(slug) };
+		entries.push({
+			name: slug,
+			...(labelAddsMeaning(slug, title) ? { label: title } : {}),
+			categories: [], // Simple Icons has no taxonomy upstream.
+			keywords: simpleIconKeywords(brand),
+		});
+	}
+
+	return {
+		id: "simple-icons",
+		version,
+		file: { icons },
+		entries,
+		note: `${entries.length} icons, ${withheld.length} more left out`,
+		notices: {
+			path: SI_NOTICES_FILE,
+			text: simpleIconsNotices({
+				version,
+				total: sorted.length,
+				shippedCount: entries.length,
+				licensed,
+				withheld,
+			}),
+		},
+	};
+}
+
 // ── Emit ────────────────────────────────────────────────────────────────
 
 function writePackFile(pack) {
@@ -710,6 +1173,14 @@ function writeIndexFile(pack, encoded) {
 	const path = join(DATA_DIR, `${pack.id}.index.ts`);
 	writeFileSync(path, source);
 	return { path, bytes: Buffer.byteLength(source, "utf8") };
+}
+
+/** Write a pack's licence notices, for the packs that have any to write. */
+function writeNoticesFile(notices) {
+	const path = join(ROOT, notices.path);
+	mkdirSync(dirname(path), { recursive: true });
+	writeFileSync(path, notices.text);
+	return { path, bytes: Buffer.byteLength(notices.text, "utf8") };
 }
 
 /**
@@ -751,6 +1222,7 @@ const BUILDERS = {
 	"fa-regular": () => buildFontAwesome("regular"),
 	"fa-brands": () => buildFontAwesome("brands"),
 	"rpg-awesome": buildRpgAwesome,
+	"simple-icons": buildSimpleIcons,
 };
 
 async function main() {
@@ -771,6 +1243,7 @@ async function main() {
 
 		const packFile = pack.file ? writePackFile(pack) : null;
 		const indexFile = writeIndexFile(pack, encoded);
+		const noticesFile = pack.notices ? writeNoticesFile(pack.notices) : null;
 
 		if (packFile) {
 			manifest[id] = {
@@ -788,6 +1261,9 @@ async function main() {
 					? `  pack  ${kb(packFile.bytes)}  ${packFile.path}\n`
 					: `  pack  (none — artwork is fetched per icon)\n`) +
 				`  index ${kb(indexFile.bytes)}  ${indexFile.path}` +
+				(noticesFile
+					? `\n  notices ${kb(noticesFile.bytes)}  ${noticesFile.path}`
+					: "") +
 				(packFile ? `\n  sha256 ${packFile.sha256}` : ""),
 		);
 	}

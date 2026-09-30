@@ -53,4 +53,4 @@ The [internals guide](docs/internals-docs/README.md) covers architecture, source
 
 Callout Studio's code is available under a permissive [license](LICENSE), with no attribution required. One informal request, which is not a license term: please do not repackage the code and publish it as a new plugin in Obsidian's Community Plugins directory. You are welcome to reuse it, learn from it, and build on it in other ways.
 
-The icon libraries offered within the plugin are separate works and retain their own licenses. You can view the full text for each in **[THIRD-PARTY-NOTICES.md](docs/THIRD-PARTY-NOTICES.md)** or select **Icon licenses & credits** at the bottom of the plugin settings.
+The icon libraries offered within the plugin are separate works and retain their own licenses. You can view the full text for each in **[THIRD-PARTY-NOTICES.md](docs/THIRD-PARTY-NOTICES.md)** or select **Icon licenses & credits** at the bottom of the plugin settings. Brand logos, from Simple Icons and Font Awesome Brands among others, also remain trademarks of their owners, and some carry a license of their own; both are covered there.

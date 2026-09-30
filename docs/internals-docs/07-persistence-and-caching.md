@@ -273,7 +273,7 @@ in [Icons](13-icons.md), summarized here for the "what's stored where" view:
 | Layer | Where | Persisted? | Verified how |
 | --- | --- | --- | --- |
 | `iconSvgCache` (per-icon, in use) | `data.json` | Yes — syncs with the rest of settings | Trusted (it's this plugin's own settings file) |
-| Downloaded pack files (Tabler, FA, Octicons, RPG Awesome) | `<plugin-dir>/icon-packs/*.json` | On disk, outside `data.json` | SHA-256 checked on download **and on every disk read** |
+| Downloaded pack files (Tabler, FA, Octicons, RPG Awesome, Simple Icons) | `<plugin-dir>/icon-packs/*.json` | On disk, outside `data.json` | SHA-256 checked on download **and on every disk read** |
 | Material Symbols preview webfont | `<plugin-dir>/icon-fonts/*` | On disk | Not integrity-checked (a rendering aid, not artwork of record) |
 
 `iconSvgCache` is the layer that makes a callout keep rendering correctly on a

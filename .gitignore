@@ -30,7 +30,7 @@ data.json
 # Local recovery snapshots created by the plugin
 backups/
 
-# Icon packs downloaded at runtime — served from the packs-v2 tag, never committed
+# Icon packs downloaded at runtime — served from the packs-v3 tag, never committed
 icon-packs/
 
 # Translations downloaded at runtime — served from the plugin's own release tag,

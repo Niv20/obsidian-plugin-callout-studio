@@ -16,7 +16,8 @@
  * packs are added over time, and a consumer that pinned an exhaustive union
  * would stop compiling the day one appears. Current values are `lucide`,
  * `tabler-outline`, `tabler-filled`, `material`, `emoji`, `octicons`,
- * `fa-solid`, `fa-regular`, `fa-brands`, `rpg-awesome` and `image`.
+ * `fa-solid`, `fa-regular`, `fa-brands`, `rpg-awesome`, `simple-icons` and
+ * `image`.
  *
  * Only `lucide` names are resolvable by an outside plugin (Obsidian's own
  * `setIcon` draws them). Everything else needs artwork Callout Studio keeps to

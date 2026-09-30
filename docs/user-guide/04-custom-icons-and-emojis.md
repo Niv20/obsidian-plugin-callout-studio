@@ -6,7 +6,7 @@ On desktop, the available search field is ready for typing when an icon source o
 
 ## Built-in sources
 
-The picker includes Lucide, Tabler Icons, Material Symbols, Emoji, Font Awesome, Octicons, and RPG Awesome.
+The picker includes Lucide, Tabler Icons, Material Symbols, Emoji, Font Awesome, Octicons, RPG Awesome, and Simple Icons.
 
 The source menu keeps catalog sizes easy to scan with rounded counts such as **3.8K+**. A grey outlined **Not downloaded** badge marks whole-library packs that are not stored on this device yet; selecting one opens its one-time download prompt.
 
@@ -26,6 +26,18 @@ For Tabler Icons, the search field is slightly narrower to leave more room for t
 For Material Symbols, search sits above the style, weight, and category filters so their choices stay readable.
 The source and filters use matching selection fields and menus. The emoji skin tone menu shows a
 sample hand beside each tone, so you can see the choice before selecting it.
+
+## Brand logos
+
+**Simple Icons** holds the logos of companies, products, and open-source projects, such as GitHub, Docker, Python, and Notion. It is a single download of about 4.5 MB and works offline afterward.
+
+Each logo is listed under the short name Simple Icons gives it, which spells punctuation out: Node.js is `nodedotjs` and C++ is `cplusplus`. Search understands the usual spellings too, so `node.js`, `nodejs`, and `twitter` (for X) all find their logo.
+
+Three things are worth knowing before you use one:
+
+- **Logos are trademarks of their owners.** Use a logo only to represent the company, product, or service it belongs to, and follow its owner's brand guidelines. The picker keeps this reminder on screen while the source is selected.
+- **Some logos are missing on purpose.** Simple Icons itself no longer carries some well-known brands, and Callout Studio leaves out the few logos whose own license restricts how they may be used or passed on. If you have the right to use such a logo, add its file under **Custom Icons** instead.
+- **Some logos have a license of their own that asks for credit.** **Icon licenses & credits**, at the bottom of the plugin settings, links to the full list, which also names every logo that was left out and why.
 
 ## Use your own graphic
 

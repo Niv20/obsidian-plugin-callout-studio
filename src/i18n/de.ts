@@ -459,6 +459,8 @@ export const de: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Marken (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "RPG Awesome durchsuchen",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Simple Icons durchsuchen",
 	"iconPicker.custom": "Benutzerdefinierte Symbole",
 	"iconPicker.searchCustom": "Benutzerdefinierte Symbole durchsuchen",
 	"iconPicker.customTooLarge":
@@ -500,6 +502,7 @@ export const de: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHubs Interface-Symbole",
 	"iconPicker.descFa": "ausgefüllt, regulär und Marken",
 	"iconPicker.descRpgAwesome": "Fantasy- und Tabletop-Symbole",
+	"iconPicker.descSimpleIcons": "Marken- und Produktlogos",
 	"iconPicker.descCustom": "benutzerdefinierte Symbole, die Sie von Ihrem Computer hinzufügen",
 
 	// Icon picker — category filter dropdown labels
@@ -627,6 +630,8 @@ export const de: Record<string, string> = {
 	"iconPack.retry": "Erneut versuchen",
 	"iconPack.faBrandsNotice":
 		"Marken-Symbole sind Markenzeichen ihrer jeweiligen Eigentümer. Ihre Aufnahme impliziert keine Empfehlung. Bitte verwenden Sie sie nur zur Darstellung des Unternehmens, Produkts oder der Dienstleistung, für das sie stehen.",
+	"iconPack.simpleIconsNotice":
+		"Logos sind Markenzeichen ihrer Eigentümer; ihre Aufnahme impliziert keine Empfehlung. Verwenden Sie ein Logo nur zur Darstellung der eigenen Marke und befolgen Sie deren Richtlinien. Manche Logos unterliegen zusätzlich einer eigenen Lizenz; siehe die Symbol-Nachweise.",
 	"iconPack.artworkRestored":
 		"Die Symbol-Grafiken für {{names}} wurden heruntergeladen.",
 	"iconPack.diskWriteFailed":

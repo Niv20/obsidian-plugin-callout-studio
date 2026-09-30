@@ -504,6 +504,8 @@ export const sv: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Varumärken",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Sök i RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Sök i Simple Icons",
 	"iconPicker.custom": "Anpassade ikoner",
 	"iconPicker.searchCustom": "Sök i anpassade ikoner",
 	"iconPicker.customTooLarge":
@@ -542,6 +544,7 @@ export const sv: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHubs gränssnittsikoner",
 	"iconPicker.descFa": "solid, regular och varumärken",
 	"iconPicker.descRpgAwesome": "fantasy- och sällskapsspelsikoner",
+	"iconPicker.descSimpleIcons": "logotyper för varumärken och produkter",
 	"iconPicker.descCustom": "anpassade ikoner som du lägger till från datorn",
 
 	// Icon picker — category filter dropdown labels
@@ -669,6 +672,8 @@ export const sv: Record<string, string> = {
 	"iconPack.retry": "Försök igen",
 	"iconPack.faBrandsNotice":
 		"Varumärkesikoner är varumärken som tillhör respektive ägare. Deras inkludering indikerar inte ett godkännande. Använd dem bara för att representera det företag, den produkt eller tjänst de hänvisar till.",
+	"iconPack.simpleIconsNotice":
+		"Logotyper är varumärken som tillhör sina ägare; att de finns här innebär inte att de är rekommenderade. Använd en logotyp bara för att representera sitt eget varumärke och följ varumärkets riktlinjer. Vissa logotyper har också en egen licens; se ikonernas erkännanden.",
 	"iconPack.artworkRestored": "Ikonbilderna för {{names}} har laddats ner.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio kunde inte spara ikonpaketet på disk, så det måste laddas ner igen nästa gång. Ikonerna du väljer sparas fortfarande med dina inställningar.",

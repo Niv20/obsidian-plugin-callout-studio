@@ -10,8 +10,11 @@
  * exactly one reason: the file has no elements and no attributes, only `d`
  * strings and 1s, and every `d` is checked against a path grammar with no
  * character in it that could open an element, a quote or a URL. Which makes this
- * regex the security boundary for four downloaded megabytes, and the rejection
- * cases below the test that says so. Rejection is whole-file on the first bad
+ * check the security boundary for every downloaded megabyte, and the rejection
+ * cases below the test that says so. It is a table and a loop rather than the
+ * grammar's own expression — a pack is megabytes of path data, checked on every
+ * load — so the cases below also hold it to that expression, character for
+ * character. Rejection is whole-file on the first bad
  * path, never per-icon: a file that fails this is corrupt or is not what it
  * claims to be, and neither is something to render around.
  *
@@ -199,6 +202,61 @@ describe("parsePackFile — what a pack file has to be", () => {
 			PACK_FORMAT,
 		);
 		assert.ok(result.ok);
+	});
+
+	/** The grammar as the generator states it, and as `packData.ts` quotes it. */
+	const GRAMMAR = /^[MmLlHhVvCcSsQqTtAaZz0-9eE+\-.,\s]+$/;
+
+	const accepts = (d: string): boolean =>
+		parsePackFile(
+			packFile({ icons: { alert: { "16": { w: 16, p: [{ d }] } } } }),
+			"octicons",
+			PACK_FORMAT,
+		).ok;
+
+	it("agrees with the grammar's own expression on every character there is", () => {
+		// The check is a lookup table and a loop, for speed, so its claim to be
+		// "the same grammar" is only as good as this. A path is accepted exactly
+		// when each of its characters is, independently of the others — which
+		// makes the one-character strings the whole input space, and all 65,536
+		// code units cheap enough to ask about rather than sample.
+		const disagreements: string[] = [];
+		for (let code = 0; code <= 0xffff; code++) {
+			const d = String.fromCharCode(code);
+			if (accepts(d) !== GRAMMAR.test(d)) {
+				disagreements.push(`U+${code.toString(16).padStart(4, "0")}`);
+			}
+		}
+		assert.deepStrictEqual(disagreements, []);
+	});
+
+	it("checks the last character of a path as carefully as the first", () => {
+		// What the exhaustive test above cannot see: a loop that stops one short.
+		const legal = "M1 1L2 2Z".repeat(200);
+		assert.equal(accepts(legal), true);
+		for (const hostile of ['"', "<", ">", "&", "#", "\u0000"]) {
+			assert.equal(accepts(hostile + legal), false, `leading ${JSON.stringify(hostile)}`);
+			assert.equal(accepts(legal + hostile), false, `trailing ${JSON.stringify(hostile)}`);
+			assert.equal(
+				accepts(legal + hostile + legal),
+				false,
+				`embedded ${JSON.stringify(hostile)}`,
+			);
+		}
+	});
+
+	it("is the grammar the generator holds every path to at build time", () => {
+		// Two halves of one promise — "checked when the file is built and again
+		// when it is loaded" — kept in two languages. The expression is quoted
+		// here a third time so that editing either half alone fails something.
+		const generator = readFileSync(
+			join(process.cwd(), "scripts", "generate-icon-packs.mjs"),
+			"utf8",
+		);
+		assert.ok(
+			generator.includes(`const PATH_DATA_RE = ${String(GRAMMAR)};`),
+			"scripts/generate-icon-packs.mjs no longer declares this grammar",
+		);
 	});
 
 	it("rejects the whole file on the first bad path, not just that icon", () => {
@@ -540,7 +598,7 @@ describe("where pack files are fetched from", () => {
 		// jsDelivr caches a tagged URL permanently, so an ordinary patch release
 		// must not invalidate every user's cached pack. Refreshing pack data is
 		// then an explicit act: new tag, new checksums.
-		assert.equal(PACKS_TAG, "packs-v2");
+		assert.equal(PACKS_TAG, "packs-v3");
 		for (const url of packUrls("octicons")) {
 			assert.ok(url.includes(PACKS_TAG), url);
 			assert.ok(url.endsWith("/packs/octicons.json"), url);

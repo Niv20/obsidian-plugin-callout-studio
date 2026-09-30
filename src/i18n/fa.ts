@@ -454,6 +454,8 @@ export const fa: Record<string, string> = {
 	"iconPicker.faStyleBrands": "برندها (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "جستجو در RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "جست‌وجو در Simple Icons",
 	"iconPicker.custom": "نمادهای سفارشی",
 	"iconPicker.searchCustom": "جستجو در نمادهای سفارشی",
 	"iconPicker.customTooLarge":
@@ -492,6 +494,7 @@ export const fa: Record<string, string> = {
 	"iconPicker.descOcticons": "آیکون‌های رابط GitHub",
 	"iconPicker.descFa": "توپر، معمولی و برندها",
 	"iconPicker.descRpgAwesome": "آیکون‌های فانتزی و بازی‌های رومیزی",
+	"iconPicker.descSimpleIcons": "لوگوهای برندها و محصولات",
 	"iconPicker.descCustom": "نمادهای سفارشی که از رایانه خود اضافه می‌کنید",
 
 	// Icon picker — category filter dropdown labels
@@ -618,6 +621,8 @@ export const fa: Record<string, string> = {
 	"iconPack.retry": "تلاش مجدد",
 	"iconPack.faBrandsNotice":
 		"آیکون‌های برندها علائم تجاری صاحبان مربوطه هستند. گنجاندن آن‌ها به معنای تأیید نیست. لطفاً آن‌ها را فقط برای نمایندگی شرکت، محصول یا خدماتی که به آن اشاره دارند استفاده کنید.",
+	"iconPack.simpleIconsNotice":
+		"لوگوها علامت تجاری صاحبان خود هستند و درج آن‌ها در اینجا به معنای تأیید نیست. از هر لوگو فقط برای نمایش برند خودش استفاده کنید و راهنمای آن برند را رعایت کنید. برخی لوگوها مجوز مخصوص خود را نیز دارند؛ به منابع و مجوزهای آیکون‌ها نگاه کنید.",
 	"iconPack.artworkRestored": "آثار هنری آیکون‌ها برای {{names}} دانلود شد.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio نتوانست بسته آیکون را روی دیسک ذخیره کند، بنابراین دفعه بعد باید دوباره دانلود شود. آیکون‌هایی که انتخاب می‌کنید همچنان در تنظیمات شما ذخیره هستند.",

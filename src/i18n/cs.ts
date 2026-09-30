@@ -453,6 +453,8 @@ export const cs: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Značky (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Hledat v RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Hledat v Simple Icons",
 	"iconPicker.custom": "Vlastní ikony",
 	"iconPicker.searchCustom": "Hledat ve vlastních ikonách",
 	"iconPicker.customTooLarge":
@@ -491,6 +493,7 @@ export const cs: Record<string, string> = {
 	"iconPicker.descOcticons": "ikony rozhraní GitHub",
 	"iconPicker.descFa": "plné, normální a značky",
 	"iconPicker.descRpgAwesome": "ikony pro fantasy a stolní hry",
+	"iconPicker.descSimpleIcons": "loga značek a produktů",
 	"iconPicker.descCustom": "vlastní ikony přidané z počítače",
 
 	// Icon picker — category filter dropdown labels
@@ -618,6 +621,8 @@ export const cs: Record<string, string> = {
 	"iconPack.retry": "Zkusit znovu",
 	"iconPack.faBrandsNotice":
 		"Ikony značek jsou ochranné známky příslušných vlastníků. Jejich zahrnutí neznamená schválení. Používejte je pouze k zastupování společnosti, produktu nebo služby, které představují.",
+	"iconPack.simpleIconsNotice":
+		"Loga jsou ochranné známky svých vlastníků; jejich zařazení zde neznamená doporučení. Logo používejte jen k zastoupení vlastní značky a dodržujte pokyny dané značky. Některá loga mají také vlastní licenci; viz autorství ikon.",
 	"iconPack.artworkRestored": "Byla stažena kresba ikon pro {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio nemohlo uložit balíček ikon na disk, takže ho bude nutné příště stáhnout znovu. Vybrané ikony jsou stále uloženy ve vašem nastavení.",

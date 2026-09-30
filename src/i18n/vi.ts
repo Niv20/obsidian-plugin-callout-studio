@@ -510,6 +510,8 @@ export const vi: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Thương hiệu",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Tìm kiếm RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Tìm trong Simple Icons",
 	"iconPicker.custom": "Biểu tượng tùy chỉnh",
 	"iconPicker.searchCustom": "Tìm kiếm biểu tượng tùy chỉnh",
 	"iconPicker.customTooLarge": "{{name}} quá lớn. Biểu tượng tùy chỉnh có kích thước tối đa 5 MB.",
@@ -549,6 +551,7 @@ export const vi: Record<string, string> = {
 	"iconPicker.descOcticons": "biểu tượng giao diện GitHub",
 	"iconPicker.descFa": "đặc, thường và thương hiệu",
 	"iconPicker.descRpgAwesome": "biểu tượng fantasy và trò chơi bàn",
+	"iconPicker.descSimpleIcons": "logo thương hiệu và sản phẩm",
 	"iconPicker.descCustom": "biểu tượng tùy chỉnh bạn thêm từ máy tính",
 
 	// Icon picker — category filter dropdown labels
@@ -676,6 +679,8 @@ export const vi: Record<string, string> = {
 	"iconPack.retry": "Thử lại",
 	"iconPack.faBrandsNotice":
 		"Biểu tượng thương hiệu là nhãn hiệu của chủ sở hữu tương ứng. Việc đưa vào không có nghĩa là xác nhận. Chỉ sử dụng để đại diện cho công ty, sản phẩm hoặc dịch vụ mà chúng đề cập.",
+	"iconPack.simpleIconsNotice":
+		"Logo là nhãn hiệu của chủ sở hữu; việc đưa vào đây không có nghĩa là được chứng thực. Chỉ dùng logo để đại diện cho chính thương hiệu của nó và tuân theo hướng dẫn của thương hiệu đó. Một số logo còn có giấy phép riêng; xem phần ghi công biểu tượng.",
 	"iconPack.artworkRestored":
 		"Đã tải xuống hình ảnh biểu tượng cho {{names}}.",
 	"iconPack.diskWriteFailed":

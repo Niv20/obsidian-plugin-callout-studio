@@ -498,6 +498,8 @@ export const zh: Record<string, string> = {
 	"iconPicker.faStyleBrands": "品牌",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "搜索 RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "搜索 Simple Icons",
 	"iconPicker.custom": "自定义图标",
 	"iconPicker.searchCustom": "搜索自定义图标",
 	"iconPicker.customTooLarge": "{{name}} 太大。自定义图标的大小不得超过 5 MB。",
@@ -535,6 +537,7 @@ export const zh: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub 界面图标",
 	"iconPicker.descFa": "实心、常规和品牌",
 	"iconPicker.descRpgAwesome": "奇幻和桌游图标",
+	"iconPicker.descSimpleIcons": "品牌和产品标志",
 	"iconPicker.descCustom": "你从电脑添加的自定义图标",
 
 	// Icon picker — category filter dropdown labels
@@ -660,6 +663,8 @@ export const zh: Record<string, string> = {
 	"iconPack.retry": "重试",
 	"iconPack.faBrandsNotice":
 		"品牌图标是其各自所有者的商标。包含这些图标并不表示认可。请仅将其用于代表所指的公司、产品或服务。",
+	"iconPack.simpleIconsNotice":
+		"标志是其所有者的商标，收录于此并不代表获得认可。请仅用标志代表其自身品牌，并遵守该品牌的使用规范。部分标志还带有各自的许可证，请参阅图标致谢。",
 	"iconPack.artworkRestored": "已下载 {{names}} 的图标图稿。",
 	"iconPack.diskWriteFailed":
 		"Callout Studio 无法将图标包保存到磁盘，下次需要重新下载。您选择的图标仍已保存在您的设置中。",

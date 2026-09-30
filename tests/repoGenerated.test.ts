@@ -13,6 +13,10 @@
  *   worse by jsDelivr caching a tag forever. A pack file edited without a new
  *   tag and new checksums is not a degraded download; it is a download that can
  *   never succeed again.
+ * - `docs/SIMPLE-ICONS-LICENSES.md` — written by the same run as the Simple
+ *   Icons pack, and the credit that pack's per-logo licences ask for. It fails
+ *   differently and no less silently: a list that has drifted from the file it
+ *   describes credits logos that are not shipped and omits ones that are.
  *
  * `locales.test.ts` and `iconPackData.test.ts` already check the *second* half
  * of each — that the file on disk hashes to what the compiled manifest expects.
@@ -80,7 +84,7 @@ function buildSandbox(): void {
 			join(REPO_ROOT, "scripts", "lib", "encodeIndex.mjs"),
 			join(SANDBOX, "scripts", "lib", "encodeIndex.mjs"),
 		);
-		// Material's upstream is not an npm package, so unlike the other seven it
+		// Material's upstream is not an npm package, so unlike the other eight it
 		// cannot come in over the node_modules symlink — the table is committed
 		// beside the generator and has to be copied like the generator itself.
 		cpSync(
@@ -196,7 +200,7 @@ describe("icons:generate output is committed", () => {
 	});
 
 	it("regenerates every pack file and search index byte-for-byte", () => {
-		// ~3 seconds: it re-reads and re-encodes roughly four megabytes of
+		// A few seconds: it re-reads and re-encodes roughly nine megabytes of
 		// upstream path data. That is the price of catching a hand-edited pack
 		// file, which is a defect no download can recover from.
 		requireSandbox();
@@ -208,6 +212,17 @@ describe("icons:generate output is committed", () => {
 			assertSameFile(join("packs", `${id}.json`));
 			assertSameFile(join("src", "icons", "data", `${id}.index.ts`));
 		}
+	});
+
+	it("regenerates the Simple Icons licence notices byte-for-byte", () => {
+		// The third artefact, and the one with a legal job rather than a
+		// technical one: it is the credit the per-logo licences ask for, so it
+		// has to list exactly the logos the pack file holds. Written by the same
+		// builder in the same pass — which only helps if that pass is what was
+		// committed.
+		requireSandbox();
+		generate("generate-icon-packs.mjs", ["--pack=simple-icons"]);
+		assertSameFile(join("docs", "SIMPLE-ICONS-LICENSES.md"));
 	});
 
 	/**
@@ -239,7 +254,7 @@ describe("icons:generate output is committed", () => {
 	});
 
 	it("runs for every pack in one pass, the way npm run icons:generate does", () => {
-		// The eight-pack default path, with no `--pack=` narrowing it. Both tests
+		// The nine-pack default path, with no `--pack=` narrowing it. The tests
 		// above pass a list, and that is exactly the shape of run that stayed
 		// green while the real command was dead: Material is first in `BUILDERS`,
 		// so its failure was the first thing to happen and nothing after it ran.

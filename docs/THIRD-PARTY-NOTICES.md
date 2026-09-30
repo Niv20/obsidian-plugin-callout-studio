@@ -4,15 +4,19 @@ Callout Studio's own code is released under a permissive [license](../LICENSE)
 that asks nothing of you. The icon libraries it draws on are separate works
 with their own licences, and those are reproduced here in full.
 
-Two of them are worth reading before you use them, rather than after:
+Three things are worth reading before you use them, rather than after:
 
 - **Font Awesome Free**'s icons are CC BY 4.0. Redistributing something built
   with them — a theme, a vault template, a screenshot set — carries the same
   attribution requirement this file satisfies for the plugin.
-- **Brand icons** (Font Awesome Brands, Tabler's Brand category, and GitHub's
-  own marks in Octicons) are trademarks. No icon licence grants trademark
-  rights, so their owners' usage guidelines apply regardless of what the icon
-  licence permits.
+- **Brand icons** (every logo in Simple Icons, Font Awesome Brands, Tabler's
+  Brand category, and GitHub's own marks in Octicons) are trademarks. No icon
+  licence grants trademark rights, so their owners' usage guidelines apply
+  regardless of what the icon licence permits.
+- **Some Simple Icons logos carry a licence of their own** on top of that —
+  most of them one that asks for credit. They are credited one by one in
+  [SIMPLE-ICONS-LICENSES.md](SIMPLE-ICONS-LICENSES.md), and redistributing
+  something built with one of them carries the same requirement.
 
 ## What the plugin ships, and what it fetches
 
@@ -29,7 +33,7 @@ Artwork is supplied as follows:
 | Plugin UI icons | Three Lucide-derived SVG composites bundled with the plugin; no download |
 | Emoji | Rendered by your system's emoji font; nothing is downloaded |
 | Material Symbols | Fetched from Google, one icon at a time, only for icons you choose |
-| Tabler Icons, Octicons, Font Awesome, RPG Awesome | Downloaded once when you press **Download** on that source in the icon picker — one file each, two for Tabler and three for Font Awesome (one per style) |
+| Tabler Icons, Octicons, Font Awesome, RPG Awesome, Simple Icons | Downloaded once when you press **Download** on that source in the icon picker — one file each, two for Tabler and three for Font Awesome (one per style) |
 
 Downloaded packs are verified against a SHA-256 checksum built into the plugin
 and cached in the plugin's own folder. See the README's *Network usage and
@@ -314,6 +318,86 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
+
+---
+
+## Simple Icons 16.33.0
+
+- **Homepage:** https://simpleicons.org
+- **Repository:** https://github.com/simple-icons/simple-icons
+- **Licence:** CC0 1.0 Universal, for the collection
+- **By:** Simple Icons Collaborators
+
+**Modifications:** Path data is copied unchanged from the published SVGs into a
+compressed pack file; each file's `<title>` element and SVG wrapper are dropped,
+and the fill colour is applied at render time. No logo's outline is altered. Not
+every logo in the release is in the pack — see *It does not cover every logo*
+below.
+
+Simple Icons dedicates its collection to the public domain under
+[CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/legalcode),
+which asks for no attribution; it is credited here anyway. Two things that
+dedication does not do are the reason this section is longer than a link.
+
+### It does not cover every logo
+
+Simple Icons' own
+[disclaimer](https://github.com/simple-icons/simple-icons/blob/develop/DISCLAIMER.md)
+says so:
+
+> Simple Icons is released under CC0 - though that doesn't mean to imply that
+> all icons within the project are also CC0. Please see individual licenses
+> where available.
+
+Where a brand has published its logo under a licence of its own, Simple Icons
+records that licence on the icon, and Callout Studio decides logo by logo what
+the pack carries:
+
+- A logo whose licence is met by crediting it — the Creative Commons
+  attribution and ShareAlike licences, MIT, BSD, Apache 2.0, MPL 2.0 — or asks
+  for nothing at all (CC0, the Unlicense) **is in the pack**, and is credited
+  to its owner, under its licence, from its source, in
+  **[SIMPLE-ICONS-LICENSES.md](SIMPLE-ICONS-LICENSES.md)**. That file is
+  generated together with the pack, lists exactly what the pack holds, and
+  carries the licence texts that ask to travel with the work.
+- A logo whose licence allows non-commercial use only, forbids derivatives, is
+  GPL-family, or is a brand's own set of terms **is left out**. The same file
+  names each one and says why. Any of them can still be added by hand under
+  **Custom Icons** by someone who has read its terms.
+
+Most logos have no licence recorded at all, and upstream is careful about what
+that means: "the absence of license data for a particular icon does not imply
+that the icon is not released under a license." For those, as for every other
+logo here, the owner's rights are the ones described next.
+
+### It does not touch trademarks
+
+CC0 says so of itself — "No trademark or patent rights held by Affirmer are
+waived, abandoned, surrendered, licensed or otherwise affected by this
+document." — and the people who drew these icons are not the brands' owners in
+any case. Every logo in Simple Icons is a trademark of the company or project it
+belongs to. Their inclusion does not indicate endorsement, in either direction.
+Use a logo only to represent the company, product or service it refers to, and
+follow its owner's brand guidelines; Simple Icons links the ones it knows of from
+each icon at https://simpleicons.org.
+
+From the same disclaimer:
+
+> Simple Icons cannot be held responsible for any legal activity raised by a
+> brand, or users of the package. We ask that our users seek the correct
+> permissions to use the icons relevant to their project.
+
+The plugin shows a notice to this effect in the icon picker for as long as the
+Simple Icons source is selected, and again in its credits.
+
+### Asking for a logo to be removed
+
+A brand owner who would rather their logo were not offered through Callout
+Studio can say so in an
+[issue](https://github.com/Niv20/obsidian-plugin-callout-studio/issues), and it
+is withdrawn from the pack. Simple Icons runs its own removal process,
+described in the disclaimer linked above; a logo removed there leaves this pack
+the next time it is refreshed.
 
 ---
 

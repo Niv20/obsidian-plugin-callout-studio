@@ -26,7 +26,7 @@ export const PACK_FORMAT = 1;
  * The tag also does not match the release workflow's version pattern, so
  * pushing it cannot trigger a plugin build.
  */
-export const PACKS_TAG = "packs-v2";
+export const PACKS_TAG = "packs-v3";
 
 const REPO = "Niv20/obsidian-plugin-callout-studio";
 
@@ -90,5 +90,11 @@ export const PACK_MANIFEST: Partial<Record<IconPackId, PackManifestEntry>> = {
 		iconCount: 1054,
 		bytes: 515352,
 		sha256: "9fd4edf7ef4eeb5f4734735bdcdd5325b73cc6ec9cecb7fc82c07335e484bca7",
+	},
+	"simple-icons": {
+		version: "16.33.0",
+		iconCount: 3376,
+		bytes: 4638664,
+		sha256: "ad7cf03a6d35f8916aa3d78fcc4a8e730077e9ff4fe0313de49870a81c89c489",
 	},
 };

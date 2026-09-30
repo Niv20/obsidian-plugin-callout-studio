@@ -437,6 +437,8 @@ export const bg: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Марки (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Търсене в RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Търсене в Simple Icons",
 	"iconPicker.custom": "Персонализирани икони",
 	"iconPicker.searchCustom": "Търсене в персонализирани икони",
 	"iconPicker.customTooLarge":
@@ -478,6 +480,7 @@ export const bg: Record<string, string> = {
 	"iconPicker.descOcticons": "иконите на интерфейса на GitHub",
 	"iconPicker.descFa": "плътни, редовни и марки",
 	"iconPicker.descRpgAwesome": "фентъзи и настолни игри икони",
+	"iconPicker.descSimpleIcons": "лога на марки и продукти",
 	"iconPicker.descCustom": "персонализирани икони, които добавяте от компютъра си",
 
 	// Icon picker — category filter dropdown labels
@@ -605,6 +608,8 @@ export const bg: Record<string, string> = {
 	"iconPack.retry": "Повторен опит",
 	"iconPack.faBrandsNotice":
 		"Иконките на марките са търговски марки на съответните им собственици. Включването им не означава одобрение. Моля, използвайте ги само за представяне на компанията, продукта или услугата, за която се отнасят.",
+	"iconPack.simpleIconsNotice":
+		"Логата са търговски марки на своите собственици; включването им тук не означава одобрение. Използвайте логото само за да представите собствената му марка и спазвайте насоките на тази марка. Някои лога имат и собствен лиценз; вижте авторските указания за иконите.",
 	"iconPack.artworkRestored":
 		"Изтеглени са графиките на иконите за {{names}}.",
 	"iconPack.diskWriteFailed":

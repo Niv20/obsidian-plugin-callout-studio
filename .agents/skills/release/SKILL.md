@@ -91,6 +91,17 @@ what to do about it, then **end the turn** — do not attempt a workaround.
    Actions run against a tag that already exists in the cloud. If the repo later
    exposes an `npm run check` script, use it only after confirming it still
    mirrors this workflow exactly.
+8. **The icon-pack tag is on the remote.** Every downloadable icon library is
+   fetched from the tag `PACKS_TAG` names, and that tag is pushed separately
+   from a release:
+   ```bash
+   PACKS_TAG=$(sed -n 's/^export const PACKS_TAG = "\(.*\)";$/\1/p' src/icons/data/packManifest.ts)
+   git ls-remote --exit-code --tags origin "$PACKS_TAG"   # must succeed
+   ```
+   A build that names a tag the remote does not have ships a Download button
+   that can only fail — for every library, since they share the one tag. If
+   this fails, pack files were regenerated but never published; see
+   "Refreshing icon pack artwork" in `docs/internals-docs/22-extending.md`.
 
 ## Step 2 — Decide the version
 

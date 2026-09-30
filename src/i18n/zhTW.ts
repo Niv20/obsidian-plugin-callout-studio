@@ -486,6 +486,8 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.faStyleBrands": "品牌",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "搜尋 RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "搜尋 Simple Icons",
 	"iconPicker.custom": "自訂圖示",
 	"iconPicker.searchCustom": "搜尋自訂圖示",
 	"iconPicker.customTooLarge": "{{name}} 太大。自訂圖示的大小不得超過 5 MB。",
@@ -523,6 +525,7 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub 介面圖示",
 	"iconPicker.descFa": "實心、一般和品牌",
 	"iconPicker.descRpgAwesome": "奇幻和桌遊圖示",
+	"iconPicker.descSimpleIcons": "品牌與產品標誌",
 	"iconPicker.descCustom": "你從電腦新增的自訂圖示",
 
 	// Icon picker — category filter dropdown labels
@@ -648,6 +651,8 @@ export const zhTW: Record<string, string> = {
 	"iconPack.retry": "重試",
 	"iconPack.faBrandsNotice":
 		"品牌圖示是其各自所有者的商標。包含這些圖示並不表示認可。請僅將其用於代表所指的公司、產品或服務。",
+	"iconPack.simpleIconsNotice":
+		"標誌是其擁有者的商標，收錄於此並不代表獲得認可。請僅用標誌代表其自身品牌，並遵守該品牌的使用規範。部分標誌還帶有各自的授權條款，請參閱圖示致謝。",
 	"iconPack.artworkRestored": "已下載 {{names}} 的圖示圖稿。",
 	"iconPack.diskWriteFailed":
 		"Callout Studio 無法將圖示包儲存至磁碟，下次需要重新下載。您選擇的圖示仍已儲存在您的設定中。",

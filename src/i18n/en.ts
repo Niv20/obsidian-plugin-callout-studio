@@ -952,6 +952,8 @@ export const en: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Brands",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Search RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Search Simple Icons",
 	"iconPicker.custom": "Custom Icons",
 	"iconPicker.searchCustom": "Search custom icons",
 	"iconPicker.customTooLarge":
@@ -991,6 +993,7 @@ export const en: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub's interface icons",
 	"iconPicker.descFa": "solid, regular and brand marks",
 	"iconPicker.descRpgAwesome": "fantasy and tabletop icons",
+	"iconPicker.descSimpleIcons": "brand and product logos",
 	"iconPicker.descCustom": "custom icons you add from your computer",
 
 	// Icon picker — category filter dropdown labels
@@ -1117,6 +1120,8 @@ export const en: Record<string, string> = {
 	"iconPack.retry": "Retry",
 	"iconPack.faBrandsNotice":
 		"Brand icons are trademarks of their respective owners. Their inclusion does not indicate endorsement. Please use them only to represent the company, product, or service they refer to.",
+	"iconPack.simpleIconsNotice":
+		"Logos are trademarks of their owners; inclusion here does not indicate endorsement. Use a logo only to represent its own brand, and follow that brand's guidelines. Some logos also carry their own license; see the icon credits.",
 	"iconPack.artworkRestored": "Downloaded the icon artwork for {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio could not save the icon pack to disk, so it will need downloading again next time. The icons you pick are still saved with your settings.",

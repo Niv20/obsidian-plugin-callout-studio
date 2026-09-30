@@ -455,6 +455,8 @@ export const ja: Record<string, string> = {
 	"iconPicker.faStyleBrands": "ブランド (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "RPG Awesomeを検索",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Simple Icons を検索",
 	"iconPicker.custom": "カスタムアイコン",
 	"iconPicker.searchCustom": "カスタムアイコンを検索",
 	"iconPicker.customTooLarge":
@@ -495,6 +497,7 @@ export const ja: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHubのインターフェイスアイコン",
 	"iconPicker.descFa": "Solid、Regular、ブランド",
 	"iconPicker.descRpgAwesome": "ファンタジーとテーブルトップのアイコン",
+	"iconPicker.descSimpleIcons": "ブランドや製品のロゴ",
 	"iconPicker.descCustom": "コンピューターから追加したカスタムアイコン",
 
 	// Icon picker — category filter dropdown labels
@@ -622,6 +625,8 @@ export const ja: Record<string, string> = {
 	"iconPack.retry": "再試行",
 	"iconPack.faBrandsNotice":
 		"ブランドアイコンはそれぞれの所有者の商標です。それらの掲載は推薦を意味しません。それらが指す会社、製品、またはサービスを表すためにのみ使用してください。",
+	"iconPack.simpleIconsNotice":
+		"ロゴはそれぞれの所有者の商標であり、ここに含まれていることは推奨を意味しません。ロゴはそのブランド自体を示す目的にのみ使用し、そのブランドのガイドラインに従ってください。一部のロゴには独自のライセンスもあります。アイコンのクレジットをご覧ください。",
 	"iconPack.artworkRestored":
 		"{{names}}のアイコンアートワークをダウンロードしました。",
 	"iconPack.diskWriteFailed":

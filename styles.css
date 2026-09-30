@@ -3959,7 +3959,8 @@ button.callout-studio-icon-picker-loading {
 }
 
 /* Standing notice for a source whose icons carry obligations of their own
-   (Font Awesome's Brands style and its trademarks). Not dismissible by design.
+   (the trademarks in Font Awesome's Brands style, and in all of Simple Icons).
+   Not dismissible by design.
    The element is always present and hidden when empty, so switching style can
    raise it without rebuilding the panel around it. */
 .icon-picker-pack-notice {

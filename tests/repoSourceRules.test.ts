@@ -655,6 +655,7 @@ describe("the network surface is exactly what the README discloses", () => {
 			"tabler.io",
 			"primer.style",
 			"nagoshiashumari.github.io",
+			"simpleicons.org",
 			"fonts.google.com",
 			"lucide.dev",
 			"buymeacoffee.com",

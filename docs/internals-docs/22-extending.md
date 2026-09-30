@@ -175,22 +175,57 @@ This is **not** a code change in the usual sense — it's a data-publishing
 step with real consequences if done wrong:
 
 1. Regenerate locally: `npm run icons:generate` (reads from `node_modules`,
-   writes `src/icons/data/*.index.ts` and `packs/*.json`).
+   writes `src/icons/data/*.index.ts` and `packs/*.json`). To refresh one
+   library and leave the rest byte-identical, name it:
+   `npm run icons:generate -- --pack=simple-icons`.
 2. **Mint a new git tag** for the pack files — do **not** push new pack
-   content to the existing `packs-v2` tag. jsDelivr caches a tag's contents
+   content to the existing `packs-v3` tag. jsDelivr caches a tag's contents
    **permanently**; overwriting an existing tag's blobs would leave every
    already-cached CDN edge serving stale bytes forever to some users while
    others get the new ones, an inconsistency with no clean recovery.
-3. Update the checksums (SHA-256 + byte count) in
+3. Update `PACKS_TAG` and the checksums (SHA-256 + byte count) in
    `src/icons/data/packManifest.ts` to match the new tag and new file
-   bytes.
-4. Commit both the regenerated index files and the manifest checksums
-   together — `tests/repoGenerated.test.ts` enforces that the committed
-   index files regenerate byte-for-byte from source.
+   bytes, and the version the pack module credits
+   (`tests/simpleIconsPack.test.ts` holds every downloadable source's credit
+   to its manifest entry).
+4. Commit the regenerated files and the manifest checksums together —
+   `tests/repoGenerated.test.ts` enforces that the committed pack files,
+   index files and generated notices regenerate byte-for-byte from source.
+5. **Push the tag before releasing a build that names it**, and check both
+   hosts serve the expected bytes. `PACKS_TAG` is one tag for *every* pack, so
+   a release that points at a tag the remote does not have ships a Download
+   button that can only fail — for all eight files, not just a new one. Packs
+   already on a user's disk are unaffected either way.
 
 See [Icons § PackDataStore](13-icons.md#packdatastore--bundled-file-download-and-verification)
 for why the checksum has to match exactly (a mismatch on disk is treated as
 `"corrupt"` and rejected, not accepted-as-stale the way a locale file is).
+
+### Refreshing Simple Icons in particular
+
+`simple-icons` is pinned to an exact version in `package.json`, unlike the
+caret ranges beside it, because upstream releases weekly and every release
+changes the pack's bytes. Bumping it is the refresh, and it does three things
+the other packs' refreshes do not:
+
+- **It re-runs the licence policy.** Upstream adds licence data continuously.
+  A logo whose newly recorded licence is on the withheld list drops out of the
+  pack; one under a licence on neither list **stops the build** until someone
+  has read that licence and added it to `SI_SHIPPED_LICENSES` or
+  `SI_WITHHELD_LICENSES` — and to the matching lists in
+  `tests/simpleIconsPack.test.ts`, which restate the policy on purpose. See
+  [Icons § Simple Icons](13-icons.md#simple-icons--a-pack-decided-logo-by-logo).
+- **It rewrites `docs/SIMPLE-ICONS-LICENSES.md`.** Commit it with the pack; it
+  is the credit the per-logo licences ask for. Update the version in the
+  `## Simple Icons …` heading of `docs/THIRD-PARTY-NOTICES.md` by hand — the
+  same test fails until it matches.
+- **A major release removes logos**, by design: that is how upstream honours a
+  brand's request to be taken out. A callout already using a removed logo keeps
+  rendering, from the copy in `data.json`, but the picker stops offering it and
+  an import naming it falls back to the placeholder icon.
+
+To withdraw one logo without waiting for upstream — a brand owner asked — add
+its slug to `SI_WITHDRAWN` in the generator and refresh as above.
 
 ## Adding a new icon source/pack
 
@@ -208,6 +243,21 @@ for why the checksum has to match exactly (a mismatch on disk is treated as
 5. Add its search index type to `src/icons/data/` and wire `loadIndex()`
    through `codec.ts`'s decode.
 6. Add its i18n label/description keys to `en.ts`.
+7. **Read the licence before the artwork**, and write down what it asks for
+   where a reader will find it: the pack's `attribution` (which is what the
+   picker's credit line and the credits modal are drawn from), a section in
+   [`THIRD-PARTY-NOTICES.md`](../THIRD-PARTY-NOTICES.md) with the modifications
+   stated, and a standing `noticeKey` if the artwork includes other people's
+   marks. A library whose icons do not all share one licence needs what Simple
+   Icons has — a per-icon decision in the generator and a generated credit.
+8. Let the suites find the rest: the two counts and the id map in
+   `tests/iconRegistry.test.ts`, the index list in `tests/iconIndex.test.ts`,
+   and — for the homepage the credit links to — the host list in
+   `tests/repoSourceRules.test.ts`. `main.js` grows by the size of the search
+   index, so check it against the bundle budget in `release.yml`.
+9. Name the library where users read about them: the source list in
+   [`user-guide/04`](../user-guide/04-custom-icons-and-emojis.md) and the
+   download sizes in [Privacy & permissions](25-privacy-and-permissions.md).
 
 ## Common gotcha checklist for any feature touching the registry
 

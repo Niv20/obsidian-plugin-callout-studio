@@ -542,6 +542,8 @@ export const he: Record<string, string> = {
 	"iconPicker.faStyleBrands": "מותגים",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "חיפוש ב־RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "חיפוש ב־Simple Icons",
 	"iconPicker.custom": "אייקונים מותאמים אישית",
 	"iconPicker.searchCustom": "חיפוש באייקונים מותאמים אישית",
 	"iconPicker.customTooLarge":
@@ -580,6 +582,7 @@ export const he: Record<string, string> = {
 	"iconPicker.descOcticons": "אייקוני הממשק של GitHub",
 	"iconPicker.descFa": "אייקונים מלאים, מתאר וסמלי מותגים",
 	"iconPicker.descRpgAwesome": "אייקוני פנטזיה ומשחקי תפקידים",
+	"iconPicker.descSimpleIcons": "לוגואים של מותגים ומוצרים",
 	"iconPicker.descCustom": "אייקונים מותאמים אישית שהוספתם מהמחשב שלכם",
 
 	// Icon picker — category filter dropdown labels
@@ -706,6 +709,8 @@ export const he: Record<string, string> = {
 	"iconPack.retry": "נסו שוב",
 	"iconPack.faBrandsNotice":
 		"אייקוני המותגים הם סימני מסחר של בעליהם. הכללתם כאן אינה מהווה חסות או אישור מצדם. אנא השתמשו בהם רק כדי לייצג את החברה, המוצר או השירות שאליהם הם מתייחסים.",
+	"iconPack.simpleIconsNotice":
+		"הלוגואים הם סימני מסחר של בעליהם. הכללתם כאן אינה מהווה חסות או אישור מצדם. אנא השתמשו בלוגו רק כדי לייצג את המותג שלו, ופעלו לפי הנחיות אותו מותג. חלק מהלוגואים נושאים גם רישיון משלהם; ראו את קרדיטי האייקונים.",
 	"iconPack.artworkRestored": "האייקונים של {{names}} הורדו.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio לא הצליח לשמור את חבילת האייקונים לדיסק, ולכן היא תידרש להורדה מחדש בפעם הבאה. האייקונים שבחרתם עדיין נשמרים יחד עם ההגדרות.",

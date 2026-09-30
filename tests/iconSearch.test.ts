@@ -2,7 +2,7 @@
  * tests/iconSearch.test.ts — `filterIcons`, the one matcher every source shares.
  *
  * The property worth pinning is not "it finds things" but *what counts as one
- * word*. Eight libraries spell the same idea three ways — `arrow_right`,
+ * word*. Nine libraries spell the same idea three ways — `arrow_right`,
  * `arrow-right`, `arrowright` — and a picker that made the user learn which is
  * which would be a picker nobody could search. So a name is matched twice:
  * verbatim, and with its separators turned into spaces. Everything else here

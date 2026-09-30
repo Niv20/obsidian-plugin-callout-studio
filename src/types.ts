@@ -31,6 +31,7 @@ export type IconPackId =
 	| "fa-regular"
 	| "fa-brands"
 	| "rpg-awesome"
+	| "simple-icons"
 	| "image";
 
 /**
@@ -49,6 +50,7 @@ export type IconSourceId =
 	| "octicons"
 	| "fa"
 	| "rpg-awesome"
+	| "simple-icons"
 	| "image";
 
 export interface CalloutIcon {

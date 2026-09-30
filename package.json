@@ -34,6 +34,7 @@
 		"jiti": "2.6.1",
 		"nano-staged": "^1.0.2",
 		"rpg-awesome": "^0.2.0",
+		"simple-icons": "16.33.0",
 		"svgpath": "^2.6.0",
 		"tslib": "2.4.0",
 		"typescript": "^5.8.3",

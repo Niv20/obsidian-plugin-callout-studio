@@ -92,8 +92,8 @@ the bundled definitions. Attribution is in
 ## Two id spaces (recap)
 
 From [Architecture](02-architecture.md#two-id-spaces-for-icons):
-`IconSourceId` (8 members) is a library as the picker shows it; `IconPackId`
-(11 members) is one body of downloadable/cacheable artwork. They coincide
+`IconSourceId` (9 members) is a library as the picker shows it; `IconPackId`
+(12 members) is one body of downloadable/cacheable artwork. They coincide
 except for Font Awesome (`fa` → `fa-solid`/`fa-regular`/`fa-brands`) and
 Tabler (`tabler` → `tabler-outline`/`tabler-filled`).
 [`src/icons/registry.ts`](../../src/icons/registry.ts) holds both mappings as
@@ -101,7 +101,7 @@ Tabler (`tabler` → `tabler-outline`/`tabler-filled`).
 in the corresponding record is a compile error, not a silently-blank grid.
 
 ```ts
-ICON_SOURCES: Record<IconSourceId, IconPack>       // the 8 libraries
+ICON_SOURCES: Record<IconSourceId, IconPack>       // the 9 libraries
 SOURCE_OF_TYPE: Record<IconPackId, IconSourceId>    // which source owns each body of artwork
 packFor(icon: CalloutIcon): IconPack | undefined     // undefined ⟺ icon.type unknown to this build
 iconCacheKey(pack, name, variant): string             // "pack name variant" — pack-scoped, never source-scoped
@@ -146,7 +146,7 @@ interface IconPack {
 | `builtin` | Lucide | Obsidian's own `setIcon()`. No data, no network, ever. |
 | `glyph` | Emoji | A text glyph drawn as a text node. No SVG at all. |
 | `perIconRemote` | Material Symbols | One SVG fetched per icon, from Google, on choice — see below. |
-| `bundledRemote` | Tabler, Font Awesome, Octicons, RPG Awesome | One file per pack downloaded once, then fully offline. |
+| `bundledRemote` | Tabler, Font Awesome, Octicons, RPG Awesome, Simple Icons | One file per pack downloaded once, then fully offline. |
 | `local` | Your images | Held in `settings.userImages`. Never fetched, ever. |
 
 ### `cacheVariant` — everything besides the name that changes the drawing
@@ -165,8 +165,8 @@ different drawings collide on one cache entry:
   a `c` suffix when `icon.recolor` is set — two callouts sharing one picture
   with different recolour settings must not share a cache entry, or one
   would keep the other's paint.
-- Packs with a single drawing per icon (Tabler, Font Awesome, RPG Awesome)
-  use `""`.
+- Packs with a single drawing per icon (Tabler, Font Awesome, RPG Awesome,
+  Simple Icons) use `""`.
 
 ## `IconService` — the one entry point
 
@@ -245,7 +245,8 @@ source pack to still be downloaded.
 ## `PackDataStore` — bundled-file download and verification
 
 [`src/icons/PackDataStore.ts`](../../src/icons/PackDataStore.ts) handles the
-`bundledRemote` packs (Tabler, Font Awesome, Octicons, RPG Awesome).
+`bundledRemote` packs (Tabler, Font Awesome, Octicons, RPG Awesome, Simple
+Icons).
 
 ```ts
 loadFromDisk(id): Promise<PackDiskResult>   // "ready" | "missing" | "corrupt" — NEVER fetches
@@ -255,7 +256,7 @@ download(id): Promise<boolean>               // fetches, verifies, persists
 **Every read — download or disk — is SHA-256-verified against
 `PACK_MANIFEST` baked into the build.** Two URLs are tried in order
 (`packUrls(id)` — jsDelivr first, `raw.githubusercontent.com` fallback), each
-pinned to the **`packs-v2`** immutable tag (see
+pinned to the **`packs-v3`** immutable tag (see
 [Adding or modifying features](22-extending.md#refreshing-icon-pack-artwork)
 for what "refreshing" a pack actually requires).
 
@@ -282,6 +283,89 @@ hand works — it's read and verified on the next launch exactly like a
 downloaded one. This is intentionally undocumented in the picker UI itself
 (README: "a path for someone who already knows to look, not an option worth
 putting in front of everyone downloading an icon set").
+
+### The path-grammar check
+
+A file that passes its checksum is then parsed by `parsePackFile`
+([`packData.ts`](../../src/icons/packData.ts)), which is the whole sanitizer
+these files get: every `d` string has to consist of path-data characters and
+nothing else, and one bad path rejects the file, not the icon. The grammar is
+the one the generator asserts when it writes the file,
+`/^[MmLlHhVvCcSsQqTtAaZz0-9eE+\-.,\s]+$/`.
+
+At load time that grammar is applied by `isPathData` — a 128-entry lookup table
+and a loop — rather than by running the expression. The two accept exactly the
+same strings; the loop is about eight times faster, which started to matter
+with Simple Icons: 4.6 MB of path data cost some 55 ms through the expression
+on a desktop, in one uninterrupted main-thread block, at startup for any vault
+that uses one of its logos. `tests/iconPackData.test.ts` holds the loop to the
+expression on all 65,536 code units, and to the generator's copy of it by
+quoting the literal — edit one without the others and something fails.
+
+## Simple Icons — a pack decided logo by logo
+
+Mechanically [`packs/simpleIcons.ts`](../../src/icons/packs/simpleIcons.ts) is
+the simplest `bundledRemote` pack there is: one path per logo on a 24-unit
+square, one drawing, no styles, no categories. It is `bundledRemote` rather
+than `perIconRemote` for the opposite of Material's reason — there is exactly
+one drawing of each logo, so a whole-library file exists, the picker grid can
+draw from it, and one checksum vouches for all of it. What is different is the
+artwork: every icon is somebody else's mark. Three consequences.
+
+**The licence is decided per logo, by the generator.** Simple Icons releases
+its collection under CC0 and states that this does not make every logo CC0;
+where a brand published its logo under its own terms, upstream's
+`data/simple-icons.json` records a `license` on that icon. `buildSimpleIcons()`
+in [`scripts/generate-icon-packs.mjs`](../../scripts/generate-icon-packs.mjs)
+sorts every logo one of three ways:
+
+| Upstream licence | Outcome |
+| --- | --- |
+| none recorded | Shipped. |
+| on `SI_SHIPPED_LICENSES` (CC0, Unlicense, Apache-2.0, MPL-2.0, CC BY, CC BY-SA) | Shipped, and credited by name in the generated notices. |
+| matches `SI_WITHHELD_LICENSES` (`custom`, MIT and BSD-3-Clause, any `-NC`, any `-ND`, GPL/AGPL) | Left out of the pack file *and* the search index, and listed in the notices with the reason. |
+| anything else | **The build stops.** A licence nobody has read is neither promised nor refused by default. |
+
+The allow-list has one principle: everything the licence asks of someone
+passing the logo on *unchanged* can be met with a notice. ShareAlike and MPL
+qualify because their copyleft attaches to a modified logo, and the pack
+carries every path exactly as published. The withheld ones each ask for
+something a downloaded pack cannot promise on its users' behalf — see the
+comments on the two lists for the reasoning per licence.
+
+`SI_WITHDRAWN` is a third, manual list: slugs withdrawn at their owner's
+request, ahead of upstream's own next major release. It is empty until someone
+asks. Adding a slug is a pack refresh like any other — new tag, new checksums
+— because the old tag stays cached on the CDN.
+
+**The credit is generated, and is an artefact of the build.** The same pass
+that writes `packs/simple-icons.json` writes
+[`docs/SIMPLE-ICONS-LICENSES.md`](../SIMPLE-ICONS-LICENSES.md): every shipped
+logo that carries a licence, with its owner, licence and source, and every
+logo left out, with why. It is the attribution those licences require, so it
+must describe the pack file exactly — `tests/repoGenerated.test.ts` regenerates
+it byte-for-byte, and `tests/simpleIconsPack.test.ts` re-derives the whole
+policy from upstream's records independently of the generator and checks the
+file, the index and the notices against it. The credits modal links that file
+**at the packs tag** rather than on the default branch, because at the tag the
+list and the pack were generated together.
+
+**The trademark notice is never off.** Font Awesome raises its brand notice
+for one style through `pickerNotice`; here `attribution.noticeKey` alone is
+enough, because there is no toolbar state in which the grid is not brand
+marks.
+
+Two smaller things follow from upstream's naming. An icon's `value` is
+upstream's **slug** (`nodedotjs`), its stable id and file name; the title
+rides along as a label only where it says something the slug does not
+(`Node.js`, `AT&T`) — fewer than one entry in twenty, and the first bundled
+index to have a label column at all. And the search terms are upstream's aliases plus one
+derived term, the title with its punctuation closed up (`nodejs`, `att`),
+added only when the slug does not already contain it.
+
+`tests/simpleIconsPack.test.ts` also asserts that every shipped path is
+byte-identical to upstream's. "No outline is altered" is said in the credits
+and in both notices files, and for a logo it is the claim that matters most.
 
 ## `IconFetchManager` — Material Symbols, one icon at a time
 
@@ -413,9 +497,11 @@ deliberate:
 | `sanitizeSVG` | Material Symbols, fetched individually from Google | One known vendor, one known output shape | **Deny-list** of the obviously executable (`<script>`, event handlers, `javascript:`/`data:text/html` URLs) |
 | `sanitizeUserSvg` | A file the user picked off their own disk | Could be *anything*, and it's inserted into the live DOM | **Allow-list** — unknown elements and unknown attributes simply do not survive |
 
-Downloadable bundled packs (Tabler, FA, Octicons, RPG Awesome) ship **bare
-path data**, not full SVG documents, and need no sanitization at all — there
-is no markup to sanitize.
+Downloadable bundled packs (Tabler, FA, Octicons, RPG Awesome, Simple Icons)
+ship **bare path data**, not full SVG documents, and need no sanitization at
+all — there is no markup to sanitize. What they get instead is
+`parsePackFile`'s grammar check, described under
+[PackDataStore](#packdatastore--bundled-file-download-and-verification).
 
 The user-image allow-list (`USER_SVG_ELEMENTS`) permits shapes, grouping,
 gradients, and clipping — enough to draw any icon — and explicitly excludes

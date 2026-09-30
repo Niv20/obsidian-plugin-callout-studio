@@ -26,12 +26,13 @@ There is exactly one exception that isn't tied to pressing a button: downloading
 
 ## Downloadable icon libraries
 
-Tabler Icons, Font Awesome, Octicons, and RPG Awesome provide their artwork as downloadable files. After you press **Download** for a source once, it works offline. Approximate sizes:
+Tabler Icons, Font Awesome, Octicons, RPG Awesome, and Simple Icons provide their artwork as downloadable files. After you press **Download** for a source once, it works offline. Approximate sizes:
 
 - **Tabler Icons:** 1.7 MB total (Outline 1.14 MB, Filled 503 KB)
 - **Font Awesome:** 1.4 MB total (Solid 794 KB, Regular 105 KB, Brands 559 KB)
 - **Octicons:** 375 KB
 - **RPG Awesome:** 625 KB
+- **Simple Icons:** 4.5 MB
 
 These files come from the plugin's own GitHub repository, pinned to a fixed release tag. Every download is checked against a built-in checksum and rejected outright if it doesn't match exactly, so a compromised network or a corrupted download can never substitute different artwork. The same check runs again every time the file is later read from disk, so a copy that becomes damaged or tampered with afterwards is never trusted either.
 

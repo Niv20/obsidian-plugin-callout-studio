@@ -508,6 +508,8 @@ export const ro: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Mărci (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Caută în RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Caută în Simple Icons",
 	"iconPicker.custom": "Pictograme personalizate",
 	"iconPicker.searchCustom": "Caută în pictogramele personalizate",
 	"iconPicker.customTooLarge":
@@ -547,6 +549,7 @@ export const ro: Record<string, string> = {
 	"iconPicker.descOcticons": "pictogramele de interfață GitHub",
 	"iconPicker.descFa": "solid, normal și mărci",
 	"iconPicker.descRpgAwesome": "pictograme fantasy și jocuri de masă",
+	"iconPicker.descSimpleIcons": "logo-uri de mărci și produse",
 	"iconPicker.descCustom": "pictograme personalizate adăugate de pe computer",
 
 	// Icon picker — category filter dropdown labels
@@ -674,6 +677,8 @@ export const ro: Record<string, string> = {
 	"iconPack.retry": "Încearcă din nou",
 	"iconPack.faBrandsNotice":
 		"Pictogramele de mărci sunt mărci înregistrate ale proprietarilor respectivi. Includerea lor nu indică o aprobare. Vă rugăm să le folosiți doar pentru a reprezenta compania, produsul sau serviciul la care se referă.",
+	"iconPack.simpleIconsNotice":
+		"Logo-urile sunt mărci comerciale ale proprietarilor lor; includerea lor aici nu înseamnă o recomandare. Folosiți un logo doar pentru a reprezenta propria marcă și respectați ghidurile acelei mărci. Unele logo-uri au și o licență proprie; consultați creditele pictogramelor.",
 	"iconPack.artworkRestored":
 		"Arta pictogramelor pentru {{names}} a fost descărcată.",
 	"iconPack.diskWriteFailed":

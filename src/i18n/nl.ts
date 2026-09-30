@@ -464,6 +464,8 @@ export const nl: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Merken (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Zoek in RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Zoeken in Simple Icons",
 	"iconPicker.custom": "Aangepaste pictogrammen",
 	"iconPicker.searchCustom": "Aangepaste pictogrammen zoeken",
 	"iconPicker.customTooLarge":
@@ -504,6 +506,7 @@ export const nl: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHubs interface-iconen",
 	"iconPicker.descFa": "gevuld, regulier en merken",
 	"iconPicker.descRpgAwesome": "fantasy- en bordspeliconen",
+	"iconPicker.descSimpleIcons": "logo's van merken en producten",
 	"iconPicker.descCustom": "aangepaste pictogrammen die u vanaf uw computer toevoegt",
 
 	// Icon picker — category filter dropdown labels
@@ -631,6 +634,8 @@ export const nl: Record<string, string> = {
 	"iconPack.retry": "Opnieuw proberen",
 	"iconPack.faBrandsNotice":
 		"Merkiconen zijn handelsmerken van de respectievelijke eigenaren. Opname ervan impliceert geen goedkeuring. Gebruik ze alleen om het bedrijf, product of de dienst waarnaar ze verwijzen te vertegenwoordigen.",
+	"iconPack.simpleIconsNotice":
+		"Logo's zijn handelsmerken van hun eigenaren; opname hier betekent geen goedkeuring. Gebruik een logo alleen om zijn eigen merk weer te geven en volg de richtlijnen van dat merk. Sommige logo's hebben ook een eigen licentie; zie de pictogramvermeldingen.",
 	"iconPack.artworkRestored": "De icoongrafiek voor {{names}} is gedownload.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio kon het iconpakket niet opslaan op schijf, dus moet het de volgende keer opnieuw worden gedownload. De iconen die u kiest worden nog steeds opgeslagen met uw instellingen.",

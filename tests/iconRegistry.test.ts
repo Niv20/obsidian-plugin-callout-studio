@@ -3,9 +3,9 @@
  * them apart.
  *
  * `IconSourceId` is a library as the user meets it: one row in the picker's
- * source menu, one toolbar, one Download button — eight of them. `IconPackId`
+ * source menu, one toolbar, one Download button — nine of them. `IconPackId`
  * is one body of artwork: one `CalloutIcon.type`, one pack manifest entry, one
- * downloaded file, one SVG cache key — eleven of them. They differ for exactly
+ * downloaded file, one SVG cache key — twelve of them. They differ for exactly
  * two libraries, Font Awesome (three files behind one source) and Tabler (two),
  * and every bug this file guards against is the same bug: treating a source id
  * as though it were an artwork id.
@@ -64,6 +64,7 @@ const EXPECTED_SOURCE_OF_TYPE: Readonly<Record<IconPackId, IconSourceId>> = {
 	"fa-regular": "fa",
 	"fa-brands": "fa",
 	"rpg-awesome": "rpg-awesome",
+	"simple-icons": "simple-icons",
 	image: "image",
 };
 
@@ -74,9 +75,9 @@ const icon = (type: IconPackId, value = "x"): CalloutIcon => ({ type, value });
  * ------------------------------------------------------------------ */
 
 describe("ICON_SOURCES and SOURCE_OF_TYPE are total over their unions", () => {
-	it("offers eight sources and knows eleven bodies of artwork", () => {
-		assert.equal(ICON_SOURCE_IDS.length, 8);
-		assert.equal(ICON_PACK_IDS.length, 11);
+	it("offers nine sources and knows twelve bodies of artwork", () => {
+		assert.equal(ICON_SOURCE_IDS.length, 9);
+		assert.equal(ICON_PACK_IDS.length, 12);
 	});
 
 	it("gives every source the id it is filed under", () => {
@@ -477,6 +478,10 @@ describe("describeIcon", () => {
 		assert.equal(
 			describeIcon(icon("rpg-awesome", "acid"), []),
 			"RPG Awesome: acid",
+		);
+		assert.equal(
+			describeIcon(icon("simple-icons", "nodedotjs"), []),
+			"Simple Icons: nodedotjs",
 		);
 	});
 

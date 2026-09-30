@@ -448,6 +448,8 @@ export const fi: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Brändit (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Hae RPG Awesome -kuvakkeita",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Hae Simple Icons -kuvakkeista",
 	"iconPicker.custom": "Mukautetut kuvakkeet",
 	"iconPicker.searchCustom": "Hae mukautettuja kuvakkeita",
 	"iconPicker.customTooLarge":
@@ -488,6 +490,7 @@ export const fi: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHubin käyttöliittymäkuvakkeet",
 	"iconPicker.descFa": "täytetty, tavallinen ja brändit",
 	"iconPicker.descRpgAwesome": "fantasia- ja lautapelikuvakkeet",
+	"iconPicker.descSimpleIcons": "tuotemerkkien ja tuotteiden logot",
 	"iconPicker.descCustom": "mukautetut kuvakkeet, jotka lisäät tietokoneeltasi",
 
 	// Icon picker — category filter dropdown labels
@@ -614,6 +617,8 @@ export const fi: Record<string, string> = {
 	"iconPack.retry": "Yritä uudelleen",
 	"iconPack.faBrandsNotice":
 		"Brändi-kuvakkeet ovat asianomaisten omistajien tavaramerkkejä. Niiden sisällyttäminen ei tarkoita hyväksyntää. Käytä niitä vain edustamaan yritystä, tuotetta tai palvelua, johon ne viittaavat.",
+	"iconPack.simpleIconsNotice":
+		"Logot ovat omistajiensa tavaramerkkejä, eikä niiden sisällyttäminen tarkoita, että ne olisi hyväksytty. Käytä logoa vain sen oman tuotemerkin esittämiseen ja noudata kyseisen tuotemerkin ohjeita. Joillakin logoilla on myös oma lisenssinsä; katso kuvakkeiden tekijätiedot.",
 	"iconPack.artworkRestored":
 		"Kuvakkeiden grafiikka ladattiin kohteille {{names}}.",
 	"iconPack.diskWriteFailed":

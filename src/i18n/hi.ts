@@ -455,6 +455,8 @@ export const hi: Record<string, string> = {
 	"iconPicker.faStyleBrands": "ब्रांड (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "RPG Awesome में खोजें",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Simple Icons में खोजें",
 	"iconPicker.custom": "कस्टम आइकन",
 	"iconPicker.searchCustom": "कस्टम आइकन खोजें",
 	"iconPicker.customTooLarge":
@@ -494,6 +496,7 @@ export const hi: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub के इंटरफ़ेस आइकन",
 	"iconPicker.descFa": "ठोस, सामान्य और ब्रांड",
 	"iconPicker.descRpgAwesome": "फंतासी और टेबलटॉप आइकन",
+	"iconPicker.descSimpleIcons": "ब्रांड और उत्पादों के लोगो",
 	"iconPicker.descCustom": "आपके कंप्यूटर से जोड़े गए कस्टम आइकन",
 
 	// Icon picker — category filter dropdown labels
@@ -620,6 +623,8 @@ export const hi: Record<string, string> = {
 	"iconPack.retry": "पुनः प्रयास करें",
 	"iconPack.faBrandsNotice":
 		"ब्रांड आइकन उनके संबंधित स्वामियों के ट्रेडमार्क हैं। उनका समावेश समर्थन का संकेत नहीं देता। कृपया उन्हें केवल उस कंपनी, उत्पाद या सेवा का प्रतिनिधित्व करने के लिए उपयोग करें जिसे वे संदर्भित करते हैं।",
+	"iconPack.simpleIconsNotice":
+		"लोगो अपने स्वामियों के ट्रेडमार्क हैं; यहाँ उनका शामिल होना किसी समर्थन का संकेत नहीं है। किसी लोगो का उपयोग केवल उसके अपने ब्रांड को दर्शाने के लिए करें और उस ब्रांड के दिशानिर्देशों का पालन करें। कुछ लोगो का अपना लाइसेंस भी होता है; आइकन क्रेडिट देखें।",
 	"iconPack.artworkRestored":
 		"{{names}} के लिए आइकन आर्टवर्क डाउनलोड किया गया।",
 	"iconPack.diskWriteFailed":

@@ -444,6 +444,8 @@ export const el: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Εμπορικά σήματα (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Αναζήτηση στο RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Αναζήτηση στο Simple Icons",
 	"iconPicker.custom": "Προσαρμοσμένα εικονίδια",
 	"iconPicker.searchCustom": "Αναζήτηση στα προσαρμοσμένα εικονίδια",
 	"iconPicker.customTooLarge":
@@ -487,6 +489,7 @@ export const el: Record<string, string> = {
 	"iconPicker.descFa": "συμπαγές, κανονικό και εμπορικά σήματα",
 	"iconPicker.descRpgAwesome":
 		"εικονίδια φαντασίας και επιτραπέζιων παιχνιδιών",
+	"iconPicker.descSimpleIcons": "λογότυπα επωνυμιών και προϊόντων",
 	"iconPicker.descCustom": "προσαρμοσμένα εικονίδια που προσθέτετε από τον υπολογιστή σας",
 
 	// Icon picker — category filter dropdown labels
@@ -613,6 +616,8 @@ export const el: Record<string, string> = {
 	"iconPack.retry": "Επανάληψη",
 	"iconPack.faBrandsNotice":
 		"Τα εικονίδια μαρκών αποτελούν εμπορικά σήματα των αντίστοιχων ιδιοκτητών τους. Η συμπερίληψή τους δεν υποδηλώνει έγκριση. Παρακαλώ χρησιμοποιήστε τα μόνο για την αντιπροσώπευση της εταιρείας, του προϊόντος ή της υπηρεσίας που αναφέρουν.",
+	"iconPack.simpleIconsNotice":
+		"Τα λογότυπα είναι εμπορικά σήματα των κατόχων τους· η συμπερίληψή τους εδώ δεν υποδηλώνει έγκριση. Χρησιμοποιήστε ένα λογότυπο μόνο για να εκπροσωπήσει τη δική του επωνυμία και ακολουθήστε τις οδηγίες της. Ορισμένα λογότυπα έχουν και δική τους άδεια· δείτε τις αναφορές των εικονιδίων.",
 	"iconPack.artworkRestored": "Λήψη γραφικών εικονιδίων για {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Το Callout Studio δεν μπόρεσε να αποθηκεύσει το πακέτο εικονιδίων στο δίσκο, οπότε θα χρειαστεί να γίνει λήψη ξανά την επόμενη φορά. Τα εικονίδια που επιλέγετε αποθηκεύονται στις ρυθμίσεις σας.",

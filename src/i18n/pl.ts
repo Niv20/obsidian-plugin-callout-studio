@@ -455,6 +455,8 @@ export const pl: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Marki (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Szukaj w RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Szukaj w Simple Icons",
 	"iconPicker.custom": "Ikony niestandardowe",
 	"iconPicker.searchCustom": "Szukaj ikon niestandardowych",
 	"iconPicker.customTooLarge":
@@ -495,6 +497,7 @@ export const pl: Record<string, string> = {
 	"iconPicker.descOcticons": "ikony interfejsu GitHub",
 	"iconPicker.descFa": "wypełniona, regularna i marki",
 	"iconPicker.descRpgAwesome": "ikony fantasy i gier planszowych",
+	"iconPicker.descSimpleIcons": "logotypy marek i produktów",
 	"iconPicker.descCustom": "ikony niestandardowe dodane z komputera",
 
 	// Icon picker — category filter dropdown labels
@@ -622,6 +625,8 @@ export const pl: Record<string, string> = {
 	"iconPack.retry": "Spróbuj ponownie",
 	"iconPack.faBrandsNotice":
 		"Ikony marek są znakami towarowymi ich właścicieli. Ich obecność nie oznacza poparcia. Używaj ich tylko do reprezentowania firmy, produktu lub usługi, do której się odnoszą.",
+	"iconPack.simpleIconsNotice":
+		"Logotypy są znakami towarowymi ich właścicieli; ich obecność tutaj nie oznacza poparcia. Używaj logo wyłącznie do przedstawienia jego własnej marki i przestrzegaj wytycznych tej marki. Niektóre logo mają też własną licencję; zobacz informacje o autorach ikon.",
 	"iconPack.artworkRestored": "Pobrano grafikę ikon dla {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio nie mogło zapisać pakietu ikon na dysku, więc następnym razem będzie trzeba go pobrać ponownie. Wybrane ikony są nadal zapisane w ustawieniach.",

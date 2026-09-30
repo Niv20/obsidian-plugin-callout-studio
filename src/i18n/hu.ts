@@ -458,6 +458,8 @@ export const hu: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Márkák (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Keresés az RPG Awesome-ban",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Keresés a Simple Icons között",
 	"iconPicker.custom": "Egyéni ikonok",
 	"iconPicker.searchCustom": "Keresés az egyéni ikonok között",
 	"iconPicker.customTooLarge":
@@ -498,6 +500,7 @@ export const hu: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub felületi ikonjai",
 	"iconPicker.descFa": "tömör, normál és márkák",
 	"iconPicker.descRpgAwesome": "fantasy és asztali játék ikonok",
+	"iconPicker.descSimpleIcons": "márka- és termékembléma",
 	"iconPicker.descCustom": "a számítógépről hozzáadott egyéni ikonok",
 
 	// Icon picker — category filter dropdown labels
@@ -624,6 +627,8 @@ export const hu: Record<string, string> = {
 	"iconPack.retry": "Újrapróbálkozás",
 	"iconPack.faBrandsNotice":
 		"A márka ikonok a megfelelő tulajdonosok védjegyei. Szerepeltetésük nem jelent jóváhagyást. Kérjük, csak az általuk képviselt vállalat, termék vagy szolgáltatás megjelenítésére használja őket.",
+	"iconPack.simpleIconsNotice":
+		"A logók tulajdonosaik védjegyei; az itt szereplésük nem jelent támogatást. Egy logót csak a saját márkájának jelölésére használjon, és tartsa be az adott márka irányelveit. Egyes logókhoz saját licenc is tartozik; lásd az ikonok forrásmegjelöléseit.",
 	"iconPack.artworkRestored":
 		"Az ikonok grafikája letöltve a(z) {{names}} számára.",
 	"iconPack.diskWriteFailed":

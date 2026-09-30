@@ -450,6 +450,8 @@ export const ms: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Jenama (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Cari RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Cari dalam Simple Icons",
 	"iconPicker.custom": "Ikon tersuai",
 	"iconPicker.searchCustom": "Cari ikon tersuai",
 	"iconPicker.customTooLarge":
@@ -490,6 +492,7 @@ export const ms: Record<string, string> = {
 	"iconPicker.descOcticons": "ikon antara muka GitHub",
 	"iconPicker.descFa": "padu, biasa dan jenama",
 	"iconPicker.descRpgAwesome": "ikon fantasi dan permainan meja",
+	"iconPicker.descSimpleIcons": "logo jenama dan produk",
 	"iconPicker.descCustom": "ikon tersuai yang anda tambah daripada komputer",
 
 	// Icon picker — category filter dropdown labels
@@ -616,6 +619,8 @@ export const ms: Record<string, string> = {
 	"iconPack.retry": "Cuba lagi",
 	"iconPack.faBrandsNotice":
 		"Ikon jenama adalah tanda dagangan pemilik masing-masing. Penyertaannya tidak menunjukkan sokongan. Sila gunakannya hanya untuk mewakili syarikat, produk atau perkhidmatan yang dirujuk.",
+	"iconPack.simpleIconsNotice":
+		"Logo ialah tanda dagangan pemiliknya; kemasukannya di sini tidak bermakna sokongan. Gunakan logo hanya untuk mewakili jenamanya sendiri dan ikuti garis panduan jenama itu. Sesetengah logo turut mempunyai lesennya sendiri; lihat kredit ikon.",
 	"iconPack.artworkRestored": "Seni ikon untuk {{names}} telah dimuat turun.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio tidak dapat menyimpan pakej ikon ke cakera, jadi ia perlu dimuat turun semula lain kali. Ikon yang anda pilih masih disimpan dengan tetapan anda.",

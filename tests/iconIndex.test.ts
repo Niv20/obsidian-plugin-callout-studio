@@ -44,6 +44,7 @@ import { FA_REGULAR_INDEX } from "../src/icons/data/fa-regular.index";
 import { FA_BRANDS_INDEX } from "../src/icons/data/fa-brands.index";
 import { TABLER_OUTLINE_INDEX } from "../src/icons/data/tabler-outline.index";
 import { TABLER_FILLED_INDEX } from "../src/icons/data/tabler-filled.index";
+import { SIMPLE_ICONS_INDEX } from "../src/icons/data/simple-icons.index";
 
 /**
  * Every index this build carries, under the pack id whose artwork it describes.
@@ -60,6 +61,7 @@ const INDEXES: ReadonlyArray<[IconPackId, EncodedIndex, number]> = [
 	["fa-brands", FA_BRANDS_INDEX, 572],
 	["tabler-outline", TABLER_OUTLINE_INDEX, 5130],
 	["tabler-filled", TABLER_FILLED_INDEX, 1054],
+	["simple-icons", SIMPLE_ICONS_INDEX, 3376],
 ];
 
 /**
@@ -171,7 +173,8 @@ describe("decodeIndex — the shape it produces", () => {
 	it("omits `label` entirely when no entry has one", () => {
 		// Absent, not "" — the grid tooltip falls back on a prettified name, and
 		// an empty string is not a falsy label it would catch. This is the state
-		// all eight bundled indexes are actually in.
+		// eight of the nine bundled indexes are actually in; Simple Icons, whose
+		// slugs spell punctuation out (`nodedotjs`), is the one with labels.
 		const index = build([
 			{ name: "a", categories: [], keywords: [] },
 			{ name: "b", categories: [], keywords: [] },

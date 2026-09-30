@@ -447,6 +447,8 @@ export const ar: Record<string, string> = {
 	"iconPicker.faStyleBrands": "العلامات التجارية (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "البحث في RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "البحث في Simple Icons",
 	"iconPicker.custom": "أيقونات مخصصة",
 	"iconPicker.searchCustom": "البحث في الأيقونات المخصصة",
 	"iconPicker.customTooLarge":
@@ -485,6 +487,7 @@ export const ar: Record<string, string> = {
 	"iconPicker.descOcticons": "أيقونات واجهة GitHub",
 	"iconPicker.descFa": "صلبة وعادية وعلامات تجارية",
 	"iconPicker.descRpgAwesome": "أيقونات الخيال والألعاب المصغرة",
+	"iconPicker.descSimpleIcons": "شعارات العلامات التجارية والمنتجات",
 	"iconPicker.descCustom": "أيقونات مخصصة تضيفها من جهازك",
 
 	// Icon picker — category filter dropdown labels
@@ -611,6 +614,8 @@ export const ar: Record<string, string> = {
 	"iconPack.retry": "إعادة المحاولة",
 	"iconPack.faBrandsNotice":
 		"أيقونات العلامات التجارية هي علامات تجارية مسجلة لأصحابها. لا يعني تضمينها أي تأييد. يرجى استخدامها فقط لتمثيل الشركة أو المنتج أو الخدمة التي تشير إليها.",
+	"iconPack.simpleIconsNotice":
+		"الشعارات علامات تجارية مملوكة لأصحابها، ولا يعني إدراجها هنا أي تأييد. استخدم الشعار لتمثيل علامته التجارية فقط، والتزم بإرشادات تلك العلامة. تحمل بعض الشعارات ترخيصًا خاصًا بها أيضًا؛ راجع شكر الأيقونات.",
 	"iconPack.artworkRestored": "تم تنزيل رسومات الأيقونات لـ {{names}}.",
 	"iconPack.diskWriteFailed":
 		"تعذر على Callout Studio حفظ حزمة الأيقونات على القرص، لذا ستحتاج إلى تنزيلها مرة أخرى في المرة القادمة. الأيقونات التي تختارها لا تزال محفوظة في إعداداتك.",

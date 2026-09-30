@@ -80,10 +80,14 @@ jobs:
             # the calmer paused-saving flow: the banner's three short paragraphs
             # and their per-button sentences, the guided buttons, Go to backups,
             # keyboard focus on the row it scrolls to, and the notice that saving
-            # is back on took main.js 24 bytes past 2 MiB + 64 KiB.
+            # is back on took main.js 24 bytes past 2 MiB + 64 KiB. Raised by
+            # 44 KiB for Simple Icons: the search index for its 3,410 brand
+            # logos — slugs, the titles that say more than their slug, and
+            # upstream's aliases — is 45 KB of the bundle, which keeps the
+            # headroom where it was (about 8 KB) rather than widening it.
             - name: Check bundle size
               run: |
-                  limit=2170880  # 2 MiB + 72 KiB
+                  limit=2215936  # 2 MiB + 116 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

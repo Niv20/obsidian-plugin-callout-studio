@@ -135,7 +135,7 @@ See [CSS generation](06-css-generation.md) for the injector's internals and
 ## Two id spaces for icons
 
 A second architecture worth knowing before touching icon code: `IconSourceId`
-(8 members — one row in the picker's source menu) and `IconPackId` (11 members
+(9 members — one row in the picker's source menu) and `IconPackId` (12 members
 — one body of downloaded/cached artwork) are deliberately different types, kept
 apart in [`src/icons/registry.ts`](../../src/icons/registry.ts). They coincide for
 every library except Font Awesome (one source, three files: solid/regular/brands)

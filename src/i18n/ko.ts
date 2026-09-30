@@ -455,6 +455,8 @@ export const ko: Record<string, string> = {
 	"iconPicker.faStyleBrands": "브랜드 (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "RPG Awesome 검색",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Simple Icons 검색",
 	"iconPicker.custom": "사용자 지정 아이콘",
 	"iconPicker.searchCustom": "사용자 지정 아이콘 검색",
 	"iconPicker.customTooLarge":
@@ -494,6 +496,7 @@ export const ko: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub 인터페이스 아이콘",
 	"iconPicker.descFa": "솔리드, 레귤러 및 브랜드",
 	"iconPicker.descRpgAwesome": "판타지 및 테이블탑 아이콘",
+	"iconPicker.descSimpleIcons": "브랜드 및 제품 로고",
 	"iconPicker.descCustom": "컴퓨터에서 추가한 사용자 지정 아이콘",
 
 	// Icon picker — category filter dropdown labels
@@ -620,6 +623,8 @@ export const ko: Record<string, string> = {
 	"iconPack.retry": "재시도",
 	"iconPack.faBrandsNotice":
 		"브랜드 아이콘은 각 소유자의 상표입니다. 포함되었다고 해서 지지를 의미하지 않습니다. 해당 회사, 제품 또는 서비스를 나타내기 위해서만 사용하세요.",
+	"iconPack.simpleIconsNotice":
+		"로고는 각 소유자의 상표이며, 여기에 포함되었다고 해서 보증을 의미하지는 않습니다. 로고는 해당 브랜드를 나타내는 용도로만 사용하고 그 브랜드의 가이드라인을 따르세요. 일부 로고에는 자체 라이선스도 있으니 아이콘 크레딧을 확인하세요.",
 	"iconPack.artworkRestored":
 		"{{names}}의 아이콘 아트워크를 다운로드했습니다.",
 	"iconPack.diskWriteFailed":

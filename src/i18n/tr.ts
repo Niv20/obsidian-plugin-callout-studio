@@ -504,6 +504,8 @@ export const tr: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Markalar",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "RPG Awesome ara",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Simple Icons içinde ara",
 	"iconPicker.custom": "Özel simgeler",
 	"iconPicker.searchCustom": "Özel simgelerde ara",
 	"iconPicker.customTooLarge":
@@ -542,6 +544,7 @@ export const tr: Record<string, string> = {
 	"iconPicker.descOcticons": "GitHub arayüz simgeleri",
 	"iconPicker.descFa": "düz, normal ve markalar",
 	"iconPicker.descRpgAwesome": "fantezi ve masa oyunları simgeleri",
+	"iconPicker.descSimpleIcons": "marka ve ürün logoları",
 	"iconPicker.descCustom": "bilgisayarınızdan eklediğiniz özel simgeler",
 
 	// Icon picker — category filter dropdown labels
@@ -669,6 +672,8 @@ export const tr: Record<string, string> = {
 	"iconPack.retry": "Yeniden dene",
 	"iconPack.faBrandsNotice":
 		"Marka simgeleri ilgili sahiplerinin ticari markalarıdır. Dahil edilmeleri onay anlamına gelmez. Lütfen yalnızca temsil ettikleri şirket, ürün veya hizmeti temsil etmek için kullanın.",
+	"iconPack.simpleIconsNotice":
+		"Logolar sahiplerinin ticari markalarıdır; burada yer almaları onay anlamına gelmez. Bir logoyu yalnızca kendi markasını temsil etmek için kullanın ve o markanın yönergelerine uyun. Bazı logoların kendi lisansı da vardır; simge katkı bilgilerine bakın.",
 	"iconPack.artworkRestored": "{{names}} için simge çizimleri indirildi.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio simge paketini diske kaydedemedi, bu nedenle bir sonraki seferde yeniden indirilmesi gerekecek. Seçtiğiniz simgeler hâlâ ayarlarınıza kaydedildi.",

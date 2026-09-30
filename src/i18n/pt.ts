@@ -505,6 +505,8 @@ export const pt: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Marcas (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Pesquisar no RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Pesquisar em Simple Icons",
 	"iconPicker.custom": "Ícones personalizados",
 	"iconPicker.searchCustom": "Pesquisar ícones personalizados",
 	"iconPicker.customTooLarge":
@@ -546,6 +548,7 @@ export const pt: Record<string, string> = {
 	"iconPicker.descOcticons": "ícones de interface do GitHub",
 	"iconPicker.descFa": "sólido, regular e marcas",
 	"iconPicker.descRpgAwesome": "ícones de fantasia e jogos de tabuleiro",
+	"iconPicker.descSimpleIcons": "logotipos de marcas e produtos",
 	"iconPicker.descCustom": "ícones personalizados que adiciona do seu computador",
 
 	// Icon picker — category filter dropdown labels
@@ -673,6 +676,8 @@ export const pt: Record<string, string> = {
 	"iconPack.retry": "Tentar novamente",
 	"iconPack.faBrandsNotice":
 		"Os ícones de marcas são marcas registadas dos respetivos proprietários. A sua inclusão não indica aprovação. Por favor, utilize-os apenas para representar a empresa, produto ou serviço a que se referem.",
+	"iconPack.simpleIconsNotice":
+		"Os logotipos são marcas registadas dos seus proprietários; a sua inclusão aqui não implica aprovação. Use um logotipo apenas para representar a sua própria marca e siga as diretrizes dessa marca. Alguns logotipos têm também a sua própria licença; consulte os créditos dos ícones.",
 	"iconPack.artworkRestored":
 		"O artwork dos ícones para {{names}} foi descarregado.",
 	"iconPack.diskWriteFailed":

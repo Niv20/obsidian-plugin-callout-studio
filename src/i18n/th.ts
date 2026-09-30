@@ -500,6 +500,8 @@ export const th: Record<string, string> = {
 	"iconPicker.faStyleBrands": "แบรนด์",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "ค้นหา RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "ค้นหาใน Simple Icons",
 	"iconPicker.custom": "ไอคอนกำหนดเอง",
 	"iconPicker.searchCustom": "ค้นหาไอคอนกำหนดเอง",
 	"iconPicker.customTooLarge":
@@ -538,6 +540,7 @@ export const th: Record<string, string> = {
 	"iconPicker.descOcticons": "ไอคอนอินเทอร์เฟซ GitHub",
 	"iconPicker.descFa": "ทึบ ปกติ และแบรนด์",
 	"iconPicker.descRpgAwesome": "ไอคอนแฟนตาซีและเกมกระดาน",
+	"iconPicker.descSimpleIcons": "โลโก้แบรนด์และผลิตภัณฑ์",
 	"iconPicker.descCustom": "ไอคอนกำหนดเองที่คุณเพิ่มจากคอมพิวเตอร์",
 
 	// Icon picker — category filter dropdown labels
@@ -665,6 +668,8 @@ export const th: Record<string, string> = {
 	"iconPack.retry": "ลองอีกครั้ง",
 	"iconPack.faBrandsNotice":
 		"ไอคอนแบรนด์เป็นเครื่องหมายการค้าของเจ้าของแต่ละราย การรวมไว้ไม่ได้หมายความว่าได้รับการรับรอง โปรดใช้เฉพาะเพื่อแทนบริษัท ผลิตภัณฑ์ หรือบริการที่อ้างถึง",
+	"iconPack.simpleIconsNotice":
+		"โลโก้เป็นเครื่องหมายการค้าของเจ้าของ การรวมไว้ที่นี่ไม่ได้หมายความว่าได้รับการรับรอง โปรดใช้โลโก้เพื่อแทนแบรนด์ของตัวเองเท่านั้น และปฏิบัติตามแนวทางของแบรนด์นั้น โลโก้บางรายการยังมีสัญญาอนุญาตของตนเอง ดูเครดิตไอคอน",
 	"iconPack.artworkRestored": "ดาวน์โหลดงานศิลป์ไอคอนสำหรับ {{names}} แล้ว",
 	"iconPack.diskWriteFailed":
 		"Callout Studio ไม่สามารถบันทึกชุดไอคอนลงดิสก์ได้ จึงต้องดาวน์โหลดใหม่ในครั้งถัดไป ไอคอนที่คุณเลือกยังคงบันทึกไว้ในการตั้งค่า",

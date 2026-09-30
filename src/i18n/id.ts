@@ -455,6 +455,8 @@ export const id: Record<string, string> = {
 	"iconPicker.faStyleBrands": "Merek (Brands)",
 	"iconPicker.rpgAwesome": "RPG Awesome",
 	"iconPicker.searchRpgAwesome": "Cari RPG Awesome",
+	"iconPicker.simpleIcons": "Simple Icons",
+	"iconPicker.searchSimpleIcons": "Cari di Simple Icons",
 	"iconPicker.custom": "Ikon kustom",
 	"iconPicker.searchCustom": "Cari ikon kustom",
 	"iconPicker.customTooLarge":
@@ -495,6 +497,7 @@ export const id: Record<string, string> = {
 	"iconPicker.descOcticons": "ikon antarmuka GitHub",
 	"iconPicker.descFa": "solid, regular, dan merek",
 	"iconPicker.descRpgAwesome": "ikon fantasi dan permainan meja",
+	"iconPicker.descSimpleIcons": "logo merek dan produk",
 	"iconPicker.descCustom": "ikon kustom yang Anda tambahkan dari komputer",
 
 	// Icon picker — category filter dropdown labels
@@ -621,6 +624,8 @@ export const id: Record<string, string> = {
 	"iconPack.retry": "Coba lagi",
 	"iconPack.faBrandsNotice":
 		"Ikon merek adalah merek dagang dari pemiliknya masing-masing. Penyertaannya tidak menunjukkan dukungan. Gunakan hanya untuk mewakili perusahaan, produk, atau layanan yang dimaksud.",
+	"iconPack.simpleIconsNotice":
+		"Logo adalah merek dagang pemiliknya; pencantumannya di sini tidak berarti dukungan. Gunakan logo hanya untuk mewakili mereknya sendiri, dan ikuti pedoman merek tersebut. Beberapa logo juga memiliki lisensinya sendiri; lihat kredit ikon.",
 	"iconPack.artworkRestored":
 		"Karya seni ikon untuk {{names}} telah diunduh.",
 	"iconPack.diskWriteFailed":
