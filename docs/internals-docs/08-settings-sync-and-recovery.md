@@ -795,7 +795,9 @@ The title, the banner, folding the lists, and the rows marked `cs-paused-allowed
 `data`, by content. `save()` resolves in every case, including when nothing was
 written, so a caller that announces success awaits `saveSettings()` and then
 asks. Reset's confirmation is titled and labelled **Reset everything** rather
-than **Delete**, and names everything it removes.
+than **Delete**, lists what it removes from this vault as bullets with the count
+first in each, and keeps its button locked until the **I have read and understood** box
+is ticked. With nothing to reset it says so and asks nothing.
 
 ### Recovery without file surgery
 

@@ -226,6 +226,22 @@ export const fi: Record<string, string> = {
 		"Poistaa kaikki käyttäjän calloutit, palauttaa sisäänrakennetut calloutit, yleiset tyylit, tallennetut väripaletit, hiiren kakkospainikkeen valikon mukautukset ja ladatut Material-SVG:t.",
 	"settings.resetAllButton": "Palauta kaikki",
 	"notice.resetAllDone": "Kaikki on palautettu oletuksiksi.",
+	"settings.resetIntro": "Pysähdy hetkeksi arvostamaan kaikkea, minkä olet rakentanut Callout Studiolla.",
+	"settings.resetDeletes": "Kaikki tämä on poistumassa:",
+	"settings.resetRestores": "Nämä palautuvat oletuksiin:",
+	"settings.resetItemCallouts": "{{count}} mukautettu(a) callout-tyyppi(ä)",
+	"settings.resetItemImages": "{{count}} ladattu(a) kuva(a)",
+	"settings.resetItemCommands": "{{count}} mukautettu(a) komento(a)",
+	"settings.resetItemPalettes": "{{count}} tallennettu(a) väripaletti(a)",
+	"settings.resetItemReferences": "{{count}} callout-viittaus(ta)",
+	"settings.resetItemBuiltIns": "{{count}} muuttamasi(a) sisäänrakennettu(a) callout(ia)",
+	"settings.resetItemGlobalStyle": "Yleiset tyylit",
+	"settings.resetItemContextMenu": "Hiiren kakkospainikkeen valikko",
+	"settings.resetItemHeading": "Otsikko-calloutien asetukset",
+	"settings.resetItemInline": "Rivinsisäisten calloutien asetukset",
+	"settings.resetItemFallback": "Varatyyli",
+	"settings.resetAllConfirmAfter": "Ei huolta: ennen palautusta tallennamme varmuuskopion nykyisestä kokoonpanostasi. Voit palauttaa sen milloin tahansa asetusten Varmuuskopiot-osiosta.\nJos käytät synkronointipalvelua, palautus voi siirtyä myös muille laitteillesi.",
+	"settings.resetNothing": "Ei mitään palautettavaa: kaikki on jo oletuksissa.",
 	"notice.customCommandsRemoved":
 		"Poistettiin {{count}} mukautettu(a) komento(a), joiden callout-tyyppiä ei enää ole.",
 	"notice.customCommandMissingCallout":
@@ -680,6 +696,7 @@ export const fi: Record<string, string> = {
 	"menuItem.deleteSection": "Poista osio",
 	"confirm.ok": "Poista",
 	"confirm.cancel": "Peruuta",
+	"confirm.acknowledge": "Olen lukenut ja ymmärtänyt",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Poista komento",

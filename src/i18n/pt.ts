@@ -282,6 +282,22 @@ export const pt: Record<string, string> = {
 		"Exclui todos os callouts de usuário, redefine callouts integrados, estilos globais (bordas, escala de fonte, forma), paletas de cores salvas, a personalização do menu de clique direito e SVGs Material baixados.",
 	"settings.resetAllButton": "Redefinir tudo",
 	"notice.resetAllDone": "Tudo foi redefinido para os padrões.",
+	"settings.resetIntro": "Reserve um momento para valorizar tudo o que você construiu com o Callout Studio.",
+	"settings.resetDeletes": "Tudo isso está prestes a ser excluído:",
+	"settings.resetRestores": "Isto volta aos padrões:",
+	"settings.resetItemCallouts": "{{count}} tipo(s) de callout personalizado(s)",
+	"settings.resetItemImages": "{{count}} imagem(ns) enviada(s)",
+	"settings.resetItemCommands": "{{count}} comando(s) personalizado(s)",
+	"settings.resetItemPalettes": "{{count}} paleta(s) de cores salva(s)",
+	"settings.resetItemReferences": "{{count}} referência(s) de callout",
+	"settings.resetItemBuiltIns": "{{count}} callout(s) integrado(s) que você alterou",
+	"settings.resetItemGlobalStyle": "Estilos globais",
+	"settings.resetItemContextMenu": "Menu de clique direito",
+	"settings.resetItemHeading": "Configurações de callouts de título",
+	"settings.resetItemInline": "Configurações de callouts em linha",
+	"settings.resetItemFallback": "Estilo de reserva",
+	"settings.resetAllConfirmAfter": "Fique tranquilo: antes de redefinir, salvamos um backup da sua configuração atual. Você pode restaurá-lo a qualquer momento na seção Backups das configurações.\nSe você usa um serviço de sincronização, a redefinição pode chegar também aos seus outros dispositivos.",
+	"settings.resetNothing": "Nada para redefinir: tudo já está nos padrões.",
 
 	"notice.customCommandsRemoved":
 		"{{count}} comando(s) personalizado(s) removido(s) cujo tipo de callout não existe mais.",
@@ -741,6 +757,7 @@ export const pt: Record<string, string> = {
 
 	"confirm.ok": "Excluir",
 	"confirm.cancel": "Cancelar",
+	"confirm.acknowledge": "Li e entendi",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Excluir comando",

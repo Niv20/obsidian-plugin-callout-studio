@@ -159,8 +159,25 @@ or restores:
 Callouts supplied by the active theme are not deleted from the theme. They
 remain available while that theme is active.
 
-Before the reset runs, Callout Studio shows a confirmation and any relevant
-warning about custom types used in your notes. It then saves a copy of your
+Before the reset runs, Callout Studio shows a confirmation. It opens with a
+reminder that everything you built is about to be deleted, then lists, as a
+plain bulleted list, how many custom callout types, uploaded pictures, custom
+commands and saved color palettes go. If notes in your vault use the custom
+callout types that would be deleted, the last bullet says how many callout
+references those are. A second list shows how many built-in callouts you
+changed and which settings go back to their defaults. Anything you have none of
+is left off the list.
+
+The **Reset everything** button in that window stays disabled until you tick
+**I have read and understood**, in a box on the last line of the window. If the
+list is long enough to scroll, pressing the button early scrolls all the way
+down to the box, which shakes and turns red, tick square included, for a
+moment before fading back.
+
+If everything is already at its defaults, for example right after a reset, no
+window opens and a message says there is nothing to reset.
+
+Callout Studio then saves a copy of your
 current setup to the plugin's [backups folder](13-syncing-and-backups.md#automatic-backups)
 and checks that the copy can be read. If no copy can be saved, nothing is
 reset. While saving is paused, **Reset everything** is unavailable; resolve the

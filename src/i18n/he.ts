@@ -318,6 +318,22 @@ export const he: Record<string, string> = {
 		"מחיקת כל תיבות־ההבלטה המותאמות־אישית, איפוס תיבות מובנות, איפוס סגנונות גלובליים (מסגרות, קנה־מידה, צורה), מחיקת פלטות צבעים שמורות, איפוס התאמת תפריט הקליק־הימני ומחיקת קובצי Material SVG שהורדו.",
 	"settings.resetAllButton": "איפוס הכול",
 	"notice.resetAllDone": "הכול אופס לברירות־המחדל.",
+	"settings.resetIntro": "כדאי לעצור רגע ולהעריך כל מה שבניתם עם Callout Studio.",
+	"settings.resetDeletes": "כל זה עומד להימחק:",
+	"settings.resetRestores": "הפריטים האלה יחזרו לברירות־המחדל:",
+	"settings.resetItemCallouts": "{{count}} סוגי תיבות־הבלטה מותאמות אישית",
+	"settings.resetItemImages": "{{count}} תמונות שהועלו",
+	"settings.resetItemCommands": "{{count}} פקודות מותאמות אישית",
+	"settings.resetItemPalettes": "{{count}} פלטות צבעים שמורות",
+	"settings.resetItemReferences": "{{count}} הפניות לתיבות־הבלטה",
+	"settings.resetItemBuiltIns": "{{count}} תיבות־הבלטה מובנות ששיניתם",
+	"settings.resetItemGlobalStyle": "סגנונות כלליים",
+	"settings.resetItemContextMenu": "תפריט הקליק הימני",
+	"settings.resetItemHeading": "הגדרות תיבות־הבלטה בכותרות",
+	"settings.resetItemInline": "הגדרות תיבות־הבלטה בתוך השורה",
+	"settings.resetItemFallback": "סגנון ברירת־מחדל",
+	"settings.resetAllConfirmAfter": "אל דאגה: לפני האיפוס נשמור גיבוי של התצורה הנוכחית שלכם. אפשר לשחזר אותו בכל עת מהקטע גיבויים בהגדרות.\nאם אתם משתמשים בשירות סנכרון, האיפוס עשוי להגיע גם למכשירים האחרים שלכם.",
+	"settings.resetNothing": "אין מה לאפס: הכול כבר בברירות־המחדל.",
 
 	"notice.customCommandsRemoved":
 		"הוסרו {{count}} פקודות מותאמות־אישית שסוג תיבת־ההבלטה שלהן כבר לא קיים.",
@@ -783,6 +799,7 @@ export const he: Record<string, string> = {
 	// Confirm modal
 	"confirm.ok": "מחיקה",
 	"confirm.cancel": "ביטול",
+	"confirm.acknowledge": "קראתי והבנתי",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "מחיקת פקודה",

@@ -280,6 +280,22 @@ export const th: Record<string, string> = {
 		"ลบ callout ผู้ใช้ทั้งหมด รีเซ็ต callout ในตัว สไตล์ส่วนกลาง (ขอบ ขนาดตัวอักษร รูปร่าง) ชุดสีที่บันทึกไว้ การปรับแต่งเมนูคลิกขวา และ SVG Material ที่ดาวน์โหลด",
 	"settings.resetAllButton": "รีเซ็ตทั้งหมด",
 	"notice.resetAllDone": "รีเซ็ตทุกอย่างเป็นค่าเริ่มต้นแล้ว",
+	"settings.resetIntro": "ใช้เวลาสักครู่เพื่อชื่นชมทุกสิ่งที่คุณสร้างไว้กับ Callout Studio",
+	"settings.resetDeletes": "ทั้งหมดนี้กำลังจะถูกลบ:",
+	"settings.resetRestores": "รายการเหล่านี้จะกลับเป็นค่าเริ่มต้น:",
+	"settings.resetItemCallouts": "callout แบบกำหนดเอง {{count}} ประเภท",
+	"settings.resetItemImages": "รูปภาพที่อัปโหลด {{count}} รูป",
+	"settings.resetItemCommands": "คำสั่งแบบกำหนดเอง {{count}} คำสั่ง",
+	"settings.resetItemPalettes": "ชุดสีที่บันทึกไว้ {{count}} ชุด",
+	"settings.resetItemReferences": "การอ้างอิง callout {{count}} รายการ",
+	"settings.resetItemBuiltIns": "callout ในตัวที่คุณเปลี่ยน {{count}} รายการ",
+	"settings.resetItemGlobalStyle": "สไตล์ส่วนกลาง",
+	"settings.resetItemContextMenu": "เมนูคลิกขวา",
+	"settings.resetItemHeading": "การตั้งค่า callout หัวข้อ",
+	"settings.resetItemInline": "การตั้งค่า callout แบบอินไลน์",
+	"settings.resetItemFallback": "สไตล์สำรอง",
+	"settings.resetAllConfirmAfter": "ไม่ต้องกังวล: ก่อนรีเซ็ต เราจะบันทึกข้อมูลสำรองของการตั้งค่าปัจจุบันของคุณไว้ คุณกู้คืนได้ทุกเมื่อจากส่วนข้อมูลสำรองในการตั้งค่า\nหากคุณใช้บริการซิงก์ การรีเซ็ตอาจส่งไปถึงอุปกรณ์เครื่องอื่นของคุณด้วย",
+	"settings.resetNothing": "ไม่มีอะไรให้รีเซ็ต: ทุกอย่างเป็นค่าเริ่มต้นอยู่แล้ว",
 
 	"notice.customCommandsRemoved":
 		"ลบคำสั่งแบบกำหนดเอง {{count}} รายการที่ประเภท callout ไม่มีอยู่แล้ว",
@@ -736,6 +752,7 @@ export const th: Record<string, string> = {
 
 	"confirm.ok": "ลบ",
 	"confirm.cancel": "ยกเลิก",
+	"confirm.acknowledge": "ฉันอ่านและเข้าใจแล้ว",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "ลบคำสั่ง",

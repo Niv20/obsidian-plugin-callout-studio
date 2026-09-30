@@ -7,7 +7,7 @@
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { Setting, type App, type ButtonComponent } from "obsidian";
+import { Setting, TFile, type App, type ButtonComponent } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { content } from "../src/manager/syncTree";
 import { renderResetSection } from "../src/settings/sections/DataManagementSection";
@@ -62,6 +62,19 @@ function resetButton(ctx: SettingsSectionContext): () => Promise<void> {
 	return reset;
 }
 
+/** The text of every `tag` element in a confirmation message, in order. */
+function textsOf(message: unknown, tag: "LI" | "P"): string[] {
+	type Node = { tagName?: string; childNodes?: Node[]; textContent: string };
+	const found: string[] = [];
+	const walk = (node: Node): void => {
+		if (node.tagName === tag) found.push(node.textContent);
+		node.childNodes?.forEach(walk);
+	};
+	walk(message as Node);
+	return found;
+}
+const bullets = (message: unknown): string[] => textsOf(message, "LI");
+
 describe("Reset everything", () => {
 	it("names itself, saves a verified backup of the current setup, then resets", async () => {
 		const confirm = stubConfirm(true);
@@ -71,11 +84,79 @@ describe("Reset everything", () => {
 			await resetButton(h.ctx)();
 			assert.deepEqual(confirm.asked, [en["confirm.titleResetEverything"]]);
 			assert.deepEqual(confirm.labels, [en["settings.resetAllButton"]], "the button still says Delete");
+			assert.deepEqual(confirm.acknowledgements, [en["confirm.acknowledge"]], "the reset is not gated behind a tick");
 			const copies = h.backups();
 			assert.equal(copies.length, 1, "no backup was written before the reset");
 			assert.deepEqual(content(JSON.parse(copies[0]![1])), before);
 			assert.equal(h.registry.has("mine"), false);
 			assert.ok(h.notices.includes(en["notice.resetAllDone"]!));
+		} finally { confirm.restore(); }
+	});
+
+	it("says there is nothing to reset the second time, and asks nothing", async () => {
+		const confirm = stubConfirm(true);
+		try {
+			const h = setup();
+			const reset = resetButton(h.ctx);
+			await reset();
+			await reset();
+			assert.equal(confirm.asked.length, 1, "a reset of nothing still asked for a tick");
+			assert.equal(h.backups().length, 1, "a reset of nothing backed up an empty setup");
+			assert.equal(h.saves, 1);
+			assert.ok(h.notices.includes(en["settings.resetNothing"]!));
+		} finally { confirm.restore(); }
+	});
+
+	it("lists what it deletes as plain bullets, the notes that use a custom type last", async () => {
+		const confirm = stubConfirm(false);
+		try {
+			const h = setup();
+			const note = Object.assign(new TFile(), { path: "a.md", extension: "md", stat: { mtime: 1, size: 1 } });
+			Object.assign(h.ctx.app, { vault: {
+				getMarkdownFiles: () => [note],
+				getAbstractFileByPath: () => note,
+				cachedRead: () => Promise.resolve("> [!mine] One\n> text\n\n> [!mine] Two\n> text\n"),
+			} });
+			await resetButton(h.ctx)();
+			assert.deepEqual(bullets(confirm.messages[0]), [
+				t("settings.resetItemCallouts", { count: 1 }),
+				t("settings.resetItemReferences", { count: 2 }),
+			]);
+			assert.equal(h.registry.has("mine"), true, "declining still reset it");
+		} finally { confirm.restore(); }
+	});
+
+	it("opens with a reminder and a lead-in of their own before the list of what goes", async () => {
+		const confirm = stubConfirm(false);
+		try {
+			const h = setup();
+			await resetButton(h.ctx)();
+			assert.deepEqual(textsOf(confirm.messages[0], "P").slice(0, 2), [
+				en["settings.resetIntro"],
+				en["settings.resetDeletes"],
+			], "the lead-in is not a paragraph of its own");
+		} finally { confirm.restore(); }
+	});
+
+	it("draws no reminder when nothing is deleted, only settings going back to defaults", async () => {
+		const confirm = stubConfirm(false);
+		try {
+			const h = setup();
+			h.registry.remove("mine");
+			h.registry.settings.fallbackCalloutId = "tip";
+			await resetButton(h.ctx)();
+			const paragraphs = textsOf(confirm.messages[0], "P");
+			assert.ok(!paragraphs.includes(en["settings.resetIntro"]!), "a reminder about what is deleted, with none");
+			assert.ok(paragraphs.includes(en["settings.resetRestores"]!));
+		} finally { confirm.restore(); }
+	});
+
+	it("leaves the notes line out when no note uses a custom type", async () => {
+		const confirm = stubConfirm(false);
+		try {
+			const h = setup();
+			await resetButton(h.ctx)();
+			assert.deepEqual(bullets(confirm.messages[0]), [t("settings.resetItemCallouts", { count: 1 })]);
 		} finally { confirm.restore(); }
 	});
 

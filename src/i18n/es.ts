@@ -234,6 +234,22 @@ export const es: Record<string, string> = {
 	"settings.resetAllButton": "Restablecer todo",
 	"notice.resetAllDone":
 		"Todo se ha restablecido a los valores predeterminados.",
+	"settings.resetIntro": "Tómate un momento para valorar todo lo que has creado con Callout Studio.",
+	"settings.resetDeletes": "Todo esto está a punto de eliminarse:",
+	"settings.resetRestores": "Esto vuelve a sus valores predeterminados:",
+	"settings.resetItemCallouts": "{{count}} tipo(s) de callout personalizado(s)",
+	"settings.resetItemImages": "{{count}} imagen(es) subida(s)",
+	"settings.resetItemCommands": "{{count}} comando(s) personalizado(s)",
+	"settings.resetItemPalettes": "{{count}} paleta(s) de colores guardada(s)",
+	"settings.resetItemReferences": "{{count}} referencia(s) de callout",
+	"settings.resetItemBuiltIns": "{{count}} callout(s) integrado(s) que has cambiado",
+	"settings.resetItemGlobalStyle": "Estilos globales",
+	"settings.resetItemContextMenu": "Menú contextual (clic derecho)",
+	"settings.resetItemHeading": "Ajustes de callouts de encabezado",
+	"settings.resetItemInline": "Ajustes de callouts en línea",
+	"settings.resetItemFallback": "Estilo de respaldo",
+	"settings.resetAllConfirmAfter": "Tranquilo: antes de restablecer, guardamos una copia de seguridad de tu configuración actual. Puedes restaurarla en cualquier momento desde la sección Copias de seguridad de los ajustes.\nSi usas un servicio de sincronización, el restablecimiento también podría llegar a tus otros dispositivos.",
+	"settings.resetNothing": "No hay nada que restablecer: todo ya está en sus valores predeterminados.",
 
 	"notice.customCommandsRemoved":
 		"Se eliminaron {{count}} comando(s) personalizado(s) cuyo tipo de callout ya no existe.",
@@ -694,6 +710,7 @@ export const es: Record<string, string> = {
 
 	"confirm.ok": "Eliminar",
 	"confirm.cancel": "Cancelar",
+	"confirm.acknowledge": "He leído y entendido",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Eliminar comando",

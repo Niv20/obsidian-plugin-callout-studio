@@ -283,6 +283,22 @@ export const sv: Record<string, string> = {
 		"Tar bort alla användarcallouts, återställer inbyggda callouts, globala stilar (kanter, typsnittsskala, form), sparade färgpaletter, anpassningen av högerklicksmenyn och nedladdade Material-SVG:er.",
 	"settings.resetAllButton": "Återställ allt",
 	"notice.resetAllDone": "Allt har återställts till standard.",
+	"settings.resetIntro": "Ta en stund och uppskatta allt du har byggt med Callout Studio.",
+	"settings.resetDeletes": "Allt detta håller på att raderas:",
+	"settings.resetRestores": "Detta går tillbaka till standard:",
+	"settings.resetItemCallouts": "{{count}} anpassad(e) callout-typ(er)",
+	"settings.resetItemImages": "{{count}} uppladdad(e) bild(er)",
+	"settings.resetItemCommands": "{{count}} anpassat/anpassade kommando(n)",
+	"settings.resetItemPalettes": "{{count}} sparad(e) färgpalett(er)",
+	"settings.resetItemReferences": "{{count}} callout-referens(er)",
+	"settings.resetItemBuiltIns": "{{count}} inbyggd(a) callout(s) du har ändrat",
+	"settings.resetItemGlobalStyle": "Globala stilar",
+	"settings.resetItemContextMenu": "Högerklicksmeny",
+	"settings.resetItemHeading": "Inställningar för rubrik-callouts",
+	"settings.resetItemInline": "Inställningar för inline-callouts",
+	"settings.resetItemFallback": "Reservstil",
+	"settings.resetAllConfirmAfter": "Ingen fara: innan återställningen sparar vi en säkerhetskopia av din nuvarande konfiguration. Du kan återställa den när som helst från avsnittet Säkerhetskopior i inställningarna.\nOm du använder en synkroniseringstjänst kan återställningen även nå dina andra enheter.",
+	"settings.resetNothing": "Inget att återställa: allt är redan på standard.",
 
 	"notice.customCommandsRemoved":
 		"{{count}} eget kommando/egna kommandon vars callout-typ inte längre finns togs bort.",
@@ -736,6 +752,7 @@ export const sv: Record<string, string> = {
 
 	"confirm.ok": "Ta bort",
 	"confirm.cancel": "Avbryt",
+	"confirm.acknowledge": "Jag har läst och förstått",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Ta bort kommando",

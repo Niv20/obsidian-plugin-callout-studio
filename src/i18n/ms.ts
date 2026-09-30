@@ -227,6 +227,22 @@ export const ms: Record<string, string> = {
 		"Memadam semua callouts pengguna, menetapkan semula callouts terbina dalam, gaya global, palet warna yang disimpan, penyesuaian menu klik kanan, dan SVG Material yang dimuat turun.",
 	"settings.resetAllButton": "Set semula semua",
 	"notice.resetAllDone": "Semua telah ditetapkan semula ke lalai.",
+	"settings.resetIntro": "Luangkan sedikit masa untuk menghargai semua yang telah anda bina dengan Callout Studio.",
+	"settings.resetDeletes": "Semua ini akan dipadamkan:",
+	"settings.resetRestores": "Ini akan kembali kepada lalai:",
+	"settings.resetItemCallouts": "{{count}} jenis callout tersuai",
+	"settings.resetItemImages": "{{count}} gambar yang dimuat naik",
+	"settings.resetItemCommands": "{{count}} arahan tersuai",
+	"settings.resetItemPalettes": "{{count}} palet warna yang disimpan",
+	"settings.resetItemReferences": "{{count}} rujukan callout",
+	"settings.resetItemBuiltIns": "{{count}} callout terbina dalam yang anda ubah",
+	"settings.resetItemGlobalStyle": "Gaya global",
+	"settings.resetItemContextMenu": "Menu klik kanan",
+	"settings.resetItemHeading": "Tetapan callout tajuk",
+	"settings.resetItemInline": "Tetapan callout sebaris",
+	"settings.resetItemFallback": "Gaya sandaran",
+	"settings.resetAllConfirmAfter": "Jangan risau: sebelum menetapkan semula, kami menyimpan sandaran persediaan semasa anda. Anda boleh memulihkannya pada bila-bila masa daripada bahagian Sandaran dalam tetapan.\nJika anda menggunakan perkhidmatan penyegerakan, penetapan semula mungkin sampai ke peranti anda yang lain juga.",
+	"settings.resetNothing": "Tiada apa untuk ditetapkan semula: semuanya sudah pada tetapan lalai.",
 
 	"notice.customCommandsRemoved":
 		"{{count}} arahan tersuai yang jenis callout-nya tidak lagi wujud telah dibuang.",
@@ -681,6 +697,7 @@ export const ms: Record<string, string> = {
 	"menuItem.deleteSection": "Padam bahagian",
 	"confirm.ok": "Padam",
 	"confirm.cancel": "Batal",
+	"confirm.acknowledge": "Saya telah membaca dan memahami",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Padam arahan",

@@ -284,6 +284,22 @@ export const vi: Record<string, string> = {
 		"Xóa tất cả callouts người dùng, đặt lại callouts tích hợp, kiểu toàn cục (viền, tỷ lệ phông, hình dạng), bảng màu đã lưu, tùy chỉnh menu chuột phải và SVG Material đã tải.",
 	"settings.resetAllButton": "Đặt lại tất cả",
 	"notice.resetAllDone": "Đã đặt lại tất cả về mặc định.",
+	"settings.resetIntro": "Hãy dành một chút thời gian để trân trọng mọi thứ bạn đã xây dựng với Callout Studio.",
+	"settings.resetDeletes": "Tất cả những thứ này sắp bị xóa:",
+	"settings.resetRestores": "Những mục này sẽ trở về mặc định:",
+	"settings.resetItemCallouts": "{{count}} loại callout tùy chỉnh",
+	"settings.resetItemImages": "{{count}} hình ảnh đã tải lên",
+	"settings.resetItemCommands": "{{count}} lệnh tùy chỉnh",
+	"settings.resetItemPalettes": "{{count}} bảng màu đã lưu",
+	"settings.resetItemReferences": "{{count}} tham chiếu callout",
+	"settings.resetItemBuiltIns": "{{count}} callout tích hợp bạn đã thay đổi",
+	"settings.resetItemGlobalStyle": "Kiểu toàn cục",
+	"settings.resetItemContextMenu": "Menu chuột phải",
+	"settings.resetItemHeading": "Cài đặt callout tiêu đề",
+	"settings.resetItemInline": "Cài đặt callout nội dòng",
+	"settings.resetItemFallback": "Kiểu dự phòng",
+	"settings.resetAllConfirmAfter": "Đừng lo: trước khi đặt lại, chúng tôi lưu một bản sao lưu thiết lập hiện tại của bạn. Bạn có thể khôi phục bất cứ lúc nào từ mục Bản sao lưu trong phần cài đặt.\nNếu bạn dùng dịch vụ đồng bộ, việc đặt lại có thể lan sang các thiết bị khác của bạn.",
+	"settings.resetNothing": "Không có gì để đặt lại: mọi thứ đã ở mặc định.",
 
 	"notice.customCommandsRemoved":
 		"Đã xóa {{count}} lệnh tùy chỉnh có loại callout không còn tồn tại.",
@@ -748,6 +764,7 @@ export const vi: Record<string, string> = {
 
 	"confirm.ok": "Xóa",
 	"confirm.cancel": "Hủy",
+	"confirm.acknowledge": "Tôi đã đọc và hiểu",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Xóa lệnh",

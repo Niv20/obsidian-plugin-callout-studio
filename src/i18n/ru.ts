@@ -283,6 +283,22 @@ export const ru: Record<string, string> = {
 		"Удаляет все пользовательские callout, сбрасывает встроенные callout, глобальные стили (рамки, масштаб шрифта, форма), сохранённые цветовые палитры, настройку контекстного меню и загруженные SVG Material.",
 	"settings.resetAllButton": "Сбросить всё",
 	"notice.resetAllDone": "Всё сброшено до значений по умолчанию.",
+	"settings.resetIntro": "Уделите минуту, чтобы оценить всё, что вы создали в Callout Studio.",
+	"settings.resetDeletes": "Всё это сейчас будет удалено:",
+	"settings.resetRestores": "Это вернётся к значениям по умолчанию:",
+	"settings.resetItemCallouts": "Пользовательские типы callout: {{count}}",
+	"settings.resetItemImages": "Загруженные изображения: {{count}}",
+	"settings.resetItemCommands": "Пользовательские команды: {{count}}",
+	"settings.resetItemPalettes": "Сохранённые цветовые палитры: {{count}}",
+	"settings.resetItemReferences": "Ссылки на callout: {{count}}",
+	"settings.resetItemBuiltIns": "Изменённые вами встроенные callout: {{count}}",
+	"settings.resetItemGlobalStyle": "Глобальные стили",
+	"settings.resetItemContextMenu": "Контекстное меню (правая кнопка мыши)",
+	"settings.resetItemHeading": "Настройки callout в заголовках",
+	"settings.resetItemInline": "Настройки встроенных в строку callout",
+	"settings.resetItemFallback": "Резервный стиль",
+	"settings.resetAllConfirmAfter": "Не волнуйтесь: перед сбросом мы сохраним резервную копию вашей текущей конфигурации. Её можно восстановить в любой момент в разделе «Резервные копии» в настройках.\nЕсли вы используете службу синхронизации, сброс может дойти и до ваших других устройств.",
+	"settings.resetNothing": "Сбрасывать нечего: всё уже имеет значения по умолчанию.",
 
 	"notice.customCommandsRemoved":
 		"Удалено {{count}} пользовательских команд, тип callout которых больше не существует.",
@@ -740,6 +756,7 @@ export const ru: Record<string, string> = {
 
 	"confirm.ok": "Удалить",
 	"confirm.cancel": "Отмена",
+	"confirm.acknowledge": "Я прочитал(а) и понял(а)",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Удалить команду",

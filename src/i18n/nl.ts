@@ -234,6 +234,22 @@ export const nl: Record<string, string> = {
 		"Verwijdert alle gebruikerscallouts, zet ingebouwde callouts, globale stijlen (randen, lettertypeschaal, vorm), opgeslagen kleurenpaletten, de aanpassing van het rechtsklikmenu en gedownloade Material SVG's terug.",
 	"settings.resetAllButton": "Alles terugzetten",
 	"notice.resetAllDone": "Alles is teruggezet naar de standaardinstellingen.",
+	"settings.resetIntro": "Neem even de tijd om te waarderen wat je allemaal met Callout Studio hebt opgebouwd.",
+	"settings.resetDeletes": "Dit alles wordt verwijderd:",
+	"settings.resetRestores": "Dit wordt teruggezet naar de standaardinstellingen:",
+	"settings.resetItemCallouts": "{{count}} aangepast(e) callouttype(n)",
+	"settings.resetItemImages": "{{count}} geüploade afbeelding(en)",
+	"settings.resetItemCommands": "{{count}} aangepast(e) opdracht(en)",
+	"settings.resetItemPalettes": "{{count}} opgeslagen kleurenpalet(ten)",
+	"settings.resetItemReferences": "{{count}} calloutverwijzing(en)",
+	"settings.resetItemBuiltIns": "{{count}} ingebouwde callout(s) die je hebt gewijzigd",
+	"settings.resetItemGlobalStyle": "Globale stijlen",
+	"settings.resetItemContextMenu": "Rechtsklikmenu",
+	"settings.resetItemHeading": "Instellingen voor koptekst-callouts",
+	"settings.resetItemInline": "Instellingen voor inline callouts",
+	"settings.resetItemFallback": "Terugvalstijl",
+	"settings.resetAllConfirmAfter": "Geen zorgen: voordat we terugzetten, slaan we een back-up van je huidige configuratie op. Je kunt die op elk moment herstellen via het onderdeel Back-ups in de instellingen.\nAls je een synchronisatieservice gebruikt, kan het terugzetten ook naar je andere apparaten worden doorgegeven.",
+	"settings.resetNothing": "Niets om terug te zetten: alles staat al op de standaardinstellingen.",
 
 	"notice.customCommandsRemoved":
 		"{{count}} aangepaste opdracht(en) verwijderd waarvan het callout-type niet meer bestaat.",
@@ -698,6 +714,7 @@ export const nl: Record<string, string> = {
 
 	"confirm.ok": "Verwijderen",
 	"confirm.cancel": "Annuleren",
+	"confirm.acknowledge": "Ik heb het gelezen en begrepen",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Opdracht verwijderen",

@@ -231,6 +231,22 @@ export const id: Record<string, string> = {
 		"Menghapus semua callout pengguna, mereset callout bawaan, gaya global (batas, skala font, bentuk), palet warna tersimpan, penyesuaian menu klik kanan, dan SVG Material yang diunduh.",
 	"settings.resetAllButton": "Reset semua",
 	"notice.resetAllDone": "Semua telah direset ke default.",
+	"settings.resetIntro": "Luangkan waktu sejenak untuk menghargai semua yang telah Anda bangun dengan Callout Studio.",
+	"settings.resetDeletes": "Semua ini akan dihapus:",
+	"settings.resetRestores": "Ini akan dikembalikan ke default:",
+	"settings.resetItemCallouts": "{{count}} jenis callout kustom",
+	"settings.resetItemImages": "{{count}} gambar yang diunggah",
+	"settings.resetItemCommands": "{{count}} perintah kustom",
+	"settings.resetItemPalettes": "{{count}} palet warna tersimpan",
+	"settings.resetItemReferences": "{{count}} referensi callout",
+	"settings.resetItemBuiltIns": "{{count}} callout bawaan yang Anda ubah",
+	"settings.resetItemGlobalStyle": "Gaya global",
+	"settings.resetItemContextMenu": "Menu klik kanan",
+	"settings.resetItemHeading": "Pengaturan callout judul",
+	"settings.resetItemInline": "Pengaturan callout inline",
+	"settings.resetItemFallback": "Gaya cadangan",
+	"settings.resetAllConfirmAfter": "Tenang: sebelum mereset, kami menyimpan cadangan penyiapan Anda saat ini. Anda bisa memulihkannya kapan saja dari bagian Cadangan di pengaturan.\nJika Anda memakai layanan sinkronisasi, reset ini mungkin juga sampai ke perangkat Anda yang lain.",
+	"settings.resetNothing": "Tidak ada yang perlu direset: semuanya sudah di pengaturan default.",
 
 	"notice.customCommandsRemoved":
 		"Menghapus {{count}} perintah kustom yang tipe callout-nya sudah tidak ada.",
@@ -693,6 +709,7 @@ export const id: Record<string, string> = {
 
 	"confirm.ok": "Hapus",
 	"confirm.cancel": "Batal",
+	"confirm.acknowledge": "Saya sudah membaca dan memahami",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Hapus perintah",

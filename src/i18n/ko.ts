@@ -233,6 +233,22 @@ export const ko: Record<string, string> = {
 		"모든 사용자 callout을 삭제하고, 기본 제공 callout, 전역 스타일 (테두리, 폰트 크기, 모양), 저장된 색상 팔레트, 마우스 오른쪽 버튼 메뉴 사용자 지정 및 다운로드된 Material SVG를 재설정합니다.",
 	"settings.resetAllButton": "모두 재설정",
 	"notice.resetAllDone": "모든 항목이 기본값으로 재설정되었습니다.",
+	"settings.resetIntro": "잠시 시간을 내어 Callout Studio로 만든 모든 것을 돌아보세요.",
+	"settings.resetDeletes": "다음 항목이 모두 삭제됩니다:",
+	"settings.resetRestores": "다음 항목은 기본값으로 돌아갑니다:",
+	"settings.resetItemCallouts": "사용자 지정 callout 유형 {{count}}개",
+	"settings.resetItemImages": "업로드한 이미지 {{count}}개",
+	"settings.resetItemCommands": "사용자 지정 명령 {{count}}개",
+	"settings.resetItemPalettes": "저장된 색상 팔레트 {{count}}개",
+	"settings.resetItemReferences": "callout 참조 {{count}}개",
+	"settings.resetItemBuiltIns": "변경한 기본 제공 callout {{count}}개",
+	"settings.resetItemGlobalStyle": "전역 스타일",
+	"settings.resetItemContextMenu": "마우스 오른쪽 버튼 메뉴",
+	"settings.resetItemHeading": "제목 callout 설정",
+	"settings.resetItemInline": "인라인 callout 설정",
+	"settings.resetItemFallback": "대체 스타일",
+	"settings.resetAllConfirmAfter": "걱정하지 마세요. 재설정하기 전에 현재 설정의 백업을 저장합니다. 설정의 백업 섹션에서 언제든 복원할 수 있습니다.\n동기화 서비스를 사용한다면 재설정이 다른 기기에도 전달될 수 있습니다.",
+	"settings.resetNothing": "재설정할 항목이 없습니다. 모든 것이 이미 기본값입니다.",
 
 	"notice.customCommandsRemoved":
 		"callout 유형이 더 이상 존재하지 않는 사용자 정의 명령어 {{count}}개를 제거했습니다.",
@@ -692,6 +708,7 @@ export const ko: Record<string, string> = {
 
 	"confirm.ok": "삭제",
 	"confirm.cancel": "취소",
+	"confirm.acknowledge": "읽고 이해했습니다",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "명령 삭제",

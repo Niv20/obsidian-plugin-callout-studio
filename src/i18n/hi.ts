@@ -232,6 +232,22 @@ export const hi: Record<string, string> = {
 		"सभी उपयोगकर्ता callouts हटाता है, बिल्ट-इन callouts, वैश्विक स्टाइल (बॉर्डर, फ़ॉन्ट स्केल, आकार), सहेजे गए रंग पैलेट, राइट-क्लिक मेनू का कस्टमाइज़ेशन और डाउनलोड किए गए Material SVG रीसेट करता है।",
 	"settings.resetAllButton": "सब रीसेट करें",
 	"notice.resetAllDone": "सब कुछ डिफ़ॉल्ट पर रीसेट हो गया।",
+	"settings.resetIntro": "थोड़ा रुककर उस सबकी कद्र कीजिए जो आपने Callout Studio से बनाया है।",
+	"settings.resetDeletes": "यह सब मिटने वाला है:",
+	"settings.resetRestores": "यह डिफ़ॉल्ट पर लौट जाएगा:",
+	"settings.resetItemCallouts": "{{count}} कस्टम callout प्रकार",
+	"settings.resetItemImages": "{{count}} अपलोड की गई तस्वीर(तस्वीरें)",
+	"settings.resetItemCommands": "{{count}} कस्टम कमांड",
+	"settings.resetItemPalettes": "{{count}} सहेजे गए रंग पैलेट",
+	"settings.resetItemReferences": "{{count}} callout संदर्भ",
+	"settings.resetItemBuiltIns": "{{count}} बिल्ट-इन callout जिन्हें आपने बदला",
+	"settings.resetItemGlobalStyle": "वैश्विक स्टाइल",
+	"settings.resetItemContextMenu": "राइट-क्लिक मेनू",
+	"settings.resetItemHeading": "हेडिंग callout की सेटिंग",
+	"settings.resetItemInline": "इनलाइन callout की सेटिंग",
+	"settings.resetItemFallback": "फ़ॉलबैक स्टाइल",
+	"settings.resetAllConfirmAfter": "चिंता न करें: रीसेट से पहले हम आपके मौजूदा सेटअप का बैकअप सहेजते हैं। आप उसे कभी भी सेटिंग के बैकअप सेक्शन से बहाल कर सकते हैं।\nअगर आप सिंक सेवा का उपयोग करते हैं, तो रीसेट आपके दूसरे डिवाइस तक भी पहुँच सकता है।",
+	"settings.resetNothing": "रीसेट करने के लिए कुछ नहीं है: सब कुछ पहले से डिफ़ॉल्ट पर है।",
 
 	"notice.customCommandsRemoved":
 		"{{count}} कस्टम कमांड हटा दिए गए जिनका callout प्रकार अब मौजूद नहीं है।",
@@ -688,6 +704,7 @@ export const hi: Record<string, string> = {
 
 	"confirm.ok": "हटाएँ",
 	"confirm.cancel": "रद्द करें",
+	"confirm.acknowledge": "मैंने पढ़ लिया और समझ लिया",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "कमांड हटाएँ",

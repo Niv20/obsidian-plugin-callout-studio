@@ -236,6 +236,22 @@ export const fr: Record<string, string> = {
 		"Supprime tous les callouts utilisateur, réinitialise les callouts intégrés, les styles globaux (bordures, échelle de police, forme), les palettes de couleurs enregistrées, la personnalisation du menu du clic droit et les SVG Material téléchargés.",
 	"settings.resetAllButton": "Tout réinitialiser",
 	"notice.resetAllDone": "Tout a été réinitialisé aux valeurs par défaut.",
+	"settings.resetIntro": "Prenez un instant pour apprécier tout ce que vous avez créé avec Callout Studio.",
+	"settings.resetDeletes": "Tout cela est sur le point d'être supprimé :",
+	"settings.resetRestores": "Ceci revient aux valeurs par défaut :",
+	"settings.resetItemCallouts": "{{count}} type(s) de callout personnalisé(s)",
+	"settings.resetItemImages": "{{count}} image(s) importée(s)",
+	"settings.resetItemCommands": "{{count}} commande(s) personnalisée(s)",
+	"settings.resetItemPalettes": "{{count}} palette(s) de couleurs enregistrée(s)",
+	"settings.resetItemReferences": "{{count}} référence(s) de callout",
+	"settings.resetItemBuiltIns": "{{count}} callout(s) intégré(s) que vous avez modifié(s)",
+	"settings.resetItemGlobalStyle": "Styles globaux",
+	"settings.resetItemContextMenu": "Menu contextuel (clic droit)",
+	"settings.resetItemHeading": "Réglages des callouts de titre",
+	"settings.resetItemInline": "Réglages des callouts en ligne",
+	"settings.resetItemFallback": "Style de repli",
+	"settings.resetAllConfirmAfter": "Pas d'inquiétude : avant la réinitialisation, nous enregistrons une sauvegarde de votre configuration actuelle. Vous pouvez la restaurer à tout moment depuis la section Sauvegardes des réglages.\nSi vous utilisez un service de synchronisation, la réinitialisation peut aussi se propager à vos autres appareils.",
+	"settings.resetNothing": "Rien à réinitialiser : tout est déjà aux valeurs par défaut.",
 
 	"notice.customCommandsRemoved":
 		"{{count}} commande(s) personnalisée(s) supprimée(s) car leur type de callout n'existe plus.",
@@ -703,6 +719,7 @@ export const fr: Record<string, string> = {
 
 	"confirm.ok": "Supprimer",
 	"confirm.cancel": "Annuler",
+	"confirm.acknowledge": "J'ai lu et compris",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Supprimer la commande",

@@ -1501,6 +1501,39 @@ Resolves `Promise<boolean>`. Required `title` (see above), optional
 caller overrides it). Used throughout for anything destructive that isn't
 specific enough to warrant its own modal (bulk vault edits, full reset).
 
+An optional last argument, `acknowledgement`, is for a confirmation that
+cannot be taken back. It draws a checkbox with that label, in a bordered box,
+as the last line of the message (`.cs-confirm-acknowledge`; the tick and the
+box's outline turn red once it is ticked) and keeps the confirm button locked
+(`aria-disabled`, not `disabled`, so it still receives the click) until the box
+is ticked. Pressing the locked button shakes the box and turns its text, its
+outline and the empty tick square's outline red, then fades them back to their
+normal colour (its weight never changes; under reduced motion only the colour
+fade plays), and scrolls the body to its very end
+(`contentEl.scrollTo({ top: scrollHeight })`): the window's body is the
+scroller, so a long message pushes the box off screen. It is not
+`label.scrollIntoView()`, which lines the label's edge up with the body's and
+so stops one bottom padding (16px) short of the end. **Reset everything** is
+the only caller that passes it (`confirm.acknowledge`).
+
+Its message is built from `settings/resetInventory.ts`, which reads the
+registry and returns two lists: what the reset deletes (custom callouts,
+pictures, commands, palettes, each with a count) and what it puts back to
+defaults (changed built-ins with a count, then each setting group that differs
+from `DEFAULT_SETTINGS`). A row that would change nothing is left out. Each
+list is drawn as a plain `<ul>` with no rules between the lines, and each
+counted row's sentence opens with its number (`{{count}} custom callout
+type(s)`). Reading the registry cannot say how many notes use the custom types
+that go, so the button handler scans the vault and appends that as the last
+row of `deleted` (`settings.resetItemReferences`, just the count) rather than
+as a paragraph above the lists. The first list is introduced by two paragraphs
+of its own, a reminder (`settings.resetIntro`) and the lead-in
+(`settings.resetDeletes`), drawn only when something is deleted; blocks are
+spaced by `--p-spacing`, with the lead-in kept close to its list. An empty
+inventory means there is nothing to reset, and the button answers with a notice
+(`settings.resetNothing`) instead of opening the window. The inventory mirrors
+`CalloutRegistry.resetAll()`: a group added to one belongs in the other.
+
 ### `DeleteCalloutModal` and the replace/delete pivot
 
 Covered in depth in [Vault discovery § delete flow](11-vault-discovery.md#delete-flow).

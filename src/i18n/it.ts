@@ -234,6 +234,22 @@ export const it: Record<string, string> = {
 		"Elimina tutti i callout utente, ripristina i callout integrati, gli stili globali (bordi, scala font, forma), le tavolozze di colori salvate, la personalizzazione del menu del clic destro e gli SVG Material scaricati.",
 	"settings.resetAllButton": "Ripristina tutto",
 	"notice.resetAllDone": "Tutto è stato ripristinato ai valori predefiniti.",
+	"settings.resetIntro": "Prenditi un momento per apprezzare tutto ciò che hai creato con Callout Studio.",
+	"settings.resetDeletes": "Tutto questo sta per essere eliminato:",
+	"settings.resetRestores": "Questo torna ai valori predefiniti:",
+	"settings.resetItemCallouts": "{{count}} tipo/i di callout personalizzato/i",
+	"settings.resetItemImages": "{{count}} immagine/i caricata/e",
+	"settings.resetItemCommands": "{{count}} comando/i personalizzato/i",
+	"settings.resetItemPalettes": "{{count}} tavolozza/e di colori salvata/e",
+	"settings.resetItemReferences": "{{count}} riferimento/i a callout",
+	"settings.resetItemBuiltIns": "{{count}} callout integrato/i che hai modificato",
+	"settings.resetItemGlobalStyle": "Stili globali",
+	"settings.resetItemContextMenu": "Menu del clic destro",
+	"settings.resetItemHeading": "Impostazioni dei callout di intestazione",
+	"settings.resetItemInline": "Impostazioni dei callout in linea",
+	"settings.resetItemFallback": "Stile di riserva",
+	"settings.resetAllConfirmAfter": "Niente paura: prima del ripristino salviamo un backup della tua configurazione attuale. Puoi ripristinarlo in qualsiasi momento dalla sezione Backup nelle impostazioni.\nSe usi un servizio di sincronizzazione, il ripristino potrebbe arrivare anche sugli altri tuoi dispositivi.",
+	"settings.resetNothing": "Niente da ripristinare: tutto è già ai valori predefiniti.",
 
 	"notice.customCommandsRemoved":
 		"Rimosso/i {{count}} comando/i personalizzato/i il cui tipo di callout non esiste più.",
@@ -702,6 +718,7 @@ export const it: Record<string, string> = {
 
 	"confirm.ok": "Elimina",
 	"confirm.cancel": "Annulla",
+	"confirm.acknowledge": "Ho letto e compreso",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Elimina comando",

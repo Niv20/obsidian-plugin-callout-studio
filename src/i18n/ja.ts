@@ -234,6 +234,22 @@ export const ja: Record<string, string> = {
 		"すべてのユーザーcalloutを削除し、組み込みcallout、グローバルスタイル（ボーダー、フォントスケール、形状）、保存済みのカラーパレット、右クリックメニューのカスタマイズ、ダウンロード済みMaterial SVGをリセットします。",
 	"settings.resetAllButton": "すべてリセット",
 	"notice.resetAllDone": "すべてデフォルトにリセットされました。",
+	"settings.resetIntro": "Callout Studioで作り上げてきたものを、少しだけ振り返ってみてください。",
+	"settings.resetDeletes": "次のものがすべて削除されます:",
+	"settings.resetRestores": "次のものはデフォルトに戻ります:",
+	"settings.resetItemCallouts": "カスタムcalloutタイプ {{count}} 件",
+	"settings.resetItemImages": "アップロードした画像 {{count}} 件",
+	"settings.resetItemCommands": "カスタムコマンド {{count}} 件",
+	"settings.resetItemPalettes": "保存済みのカラーパレット {{count}} 件",
+	"settings.resetItemReferences": "calloutの参照 {{count}} 件",
+	"settings.resetItemBuiltIns": "変更した組み込みcallout {{count}} 件",
+	"settings.resetItemGlobalStyle": "グローバルスタイル",
+	"settings.resetItemContextMenu": "右クリックメニュー",
+	"settings.resetItemHeading": "見出しcalloutの設定",
+	"settings.resetItemInline": "インラインcalloutの設定",
+	"settings.resetItemFallback": "フォールバックスタイル",
+	"settings.resetAllConfirmAfter": "ご安心ください。リセットの前に、現在の設定のバックアップを保存します。設定の「バックアップ」セクションからいつでも復元できます。\n同期サービスをお使いの場合、リセットは他の端末にも反映される可能性があります。",
+	"settings.resetNothing": "リセットするものはありません。すべてすでにデフォルトです。",
 
 	"notice.customCommandsRemoved":
 		"calloutタイプが存在しなくなったカスタムコマンドを{{count}}件削除しました。",
@@ -694,6 +710,7 @@ export const ja: Record<string, string> = {
 
 	"confirm.ok": "削除",
 	"confirm.cancel": "キャンセル",
+	"confirm.acknowledge": "読んで理解しました",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "コマンドを削除",

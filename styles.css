@@ -6389,6 +6389,104 @@ body:not(.is-phone)
 	font-weight: bold;
 }
 
+/* What "Reset everything" would change in this vault: a lead-in and, under it,
+   a plain bulleted list with the number first. No rules between the lines. The
+   window's body is the scroller, so a long list scrolls with the message and
+   the tick below stays its last line. */
+.cs-reset-inventory-heading {
+	margin: 0 0 var(--size-2-3);
+}
+
+.cs-reset-inventory {
+	margin: 0 0 var(--p-spacing, 1rem);
+	padding-inline-start: var(--size-4-6);
+	list-style: disc;
+}
+
+.cs-reset-inventory > li {
+	margin: 0;
+	padding: var(--size-2-1) 0;
+}
+
+/* The "I have read and understood" tick under an irreversible confirmation,
+   in a box of its own. The confirm button stays locked until it is ticked;
+   pressing it early makes the box shake and its text and outline turn red,
+   then fade back to normal. The weight never changes: a bolder label is wider,
+   and a wrapped line would jump. */
+.cs-confirm-acknowledge {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-3);
+	margin-top: var(--p-spacing, 1rem);
+	padding: var(--size-4-3) var(--size-4-4);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	background-color: var(--cs-surface-raised, var(--background-secondary));
+	cursor: pointer;
+}
+
+.cs-confirm-acknowledge:hover {
+	border-color: var(--background-modifier-border-hover);
+}
+
+/* No `transition` on the outline. The tick's own fill flips at once, so a
+   fading outline read as a lag; both change on the same frame. */
+.cs-confirm-acknowledge:has(input:checked) {
+	border-color: var(--color-red);
+}
+
+/* Solid red rather than the accent: this tick agrees to a deletion. The
+   variables are Obsidian's own checkbox ones, scoped to this box alone.
+   `--color-red` is the palette's saturated red, so a literal white is the
+   right tick on it in either mode. */
+.cs-confirm-acknowledge input[type="checkbox"] {
+	--checkbox-color: var(--color-red);
+	--checkbox-color-hover: var(--color-red);
+	--checkbox-marker-color: white;
+	flex: none;
+	margin: 0;
+}
+
+.cs-modal > .cs-modal-footer button.cs-is-locked {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+/* The red is a colour fade, which reduced motion allows; only the shake is
+   movement. No end keyframe: the colours fade to whatever the box has
+   otherwise, so a theme's own text and border colours are honoured. */
+.cs-confirm-acknowledge.cs-nudge {
+	animation: cs-confirm-flash 1.6s ease-out;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.cs-confirm-acknowledge.cs-nudge {
+		animation: cs-confirm-shake 0.45s ease, cs-confirm-flash 1.6s ease-out;
+	}
+}
+
+/* The empty tick square joins in, on the same keyframes: only its outline is
+   red, since it has no text. It restarts with the label because the selector
+   stops matching when the class is taken off. */
+.cs-confirm-acknowledge.cs-nudge input[type="checkbox"] {
+	animation: cs-confirm-flash 1.6s ease-out;
+}
+
+@keyframes cs-confirm-flash {
+	0%, 45% {
+		color: var(--text-error);
+		border-color: var(--text-error);
+	}
+}
+
+@keyframes cs-confirm-shake {
+	0%, 100% { transform: translateX(0); }
+	20% { transform: translateX(-6px); }
+	40% { transform: translateX(5px); }
+	60% { transform: translateX(-4px); }
+	80% { transform: translateX(2px); }
+}
+
 /* Optional conversion help and inline replacement editing in the review sidebar. */
 .cs-portable-modal {
 	width: min(700px, 94vw);

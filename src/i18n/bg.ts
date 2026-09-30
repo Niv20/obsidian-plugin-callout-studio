@@ -218,6 +218,22 @@ export const bg: Record<string, string> = {
 		"Изтрива всички callout-и на потребителя, нулира вградените callout-и, глобалните стилове, запазените цветови палитри, персонализирането на контекстното меню и изтеглените SVG файлове на Material.",
 	"settings.resetAllButton": "Нулиране на всичко",
 	"notice.resetAllDone": "Всичко е нулирано до стандартните стойности.",
+	"settings.resetIntro": "Отделете малко време, за да оцените всичко, което сте създали с Callout Studio.",
+	"settings.resetDeletes": "Всичко това ще бъде изтрито:",
+	"settings.resetRestores": "Това ще се върне към стандартните стойности:",
+	"settings.resetItemCallouts": "{{count}} персонализиран(и) тип(а) callout",
+	"settings.resetItemImages": "{{count}} качена(и) картинка(и)",
+	"settings.resetItemCommands": "{{count}} персонализирана(и) команда(и)",
+	"settings.resetItemPalettes": "{{count}} запазена(и) цветова(и) палитра(и)",
+	"settings.resetItemReferences": "{{count}} препратка(и) към callout",
+	"settings.resetItemBuiltIns": "{{count}} вграден(и) callout, които сте променили",
+	"settings.resetItemGlobalStyle": "Глобални стилове",
+	"settings.resetItemContextMenu": "Контекстно меню (десен бутон)",
+	"settings.resetItemHeading": "Настройки на callout в заглавия",
+	"settings.resetItemInline": "Настройки на вградените в реда callout",
+	"settings.resetItemFallback": "Резервен стил",
+	"settings.resetAllConfirmAfter": "Спокойно: преди нулирането запазваме резервно копие на текущата ви конфигурация. Можете да я възстановите по всяко време от раздела Резервни копия в настройките.\nАко използвате услуга за синхронизиране, нулирането може да стигне и до другите ви устройства.",
+	"settings.resetNothing": "Няма какво да се нулира: всичко вече е със стандартните стойности.",
 	"notice.customCommandsRemoved":
 		"Премахнати са {{count}} персонализирана(и) команда(и), чийто тип callout вече не съществува.",
 	"notice.customCommandMissingCallout":
@@ -672,6 +688,7 @@ export const bg: Record<string, string> = {
 	"menuItem.deleteSection": "Изтриване на раздел",
 	"confirm.ok": "Изтриване",
 	"confirm.cancel": "Отказ",
+	"confirm.acknowledge": "Прочетох и разбрах",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Изтриване на команда",

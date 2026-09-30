@@ -233,6 +233,22 @@ export const de: Record<string, string> = {
 		"Löscht alle Benutzer-Callouts, setzt integrierte Callouts, globale Stile (Rahmen, Schriftskalierung, Form), gespeicherte Farbpaletten, die Anpassung des Rechtsklickmenüs und heruntergeladene Material-SVGs zurück.",
 	"settings.resetAllButton": "Alles zurücksetzen",
 	"notice.resetAllDone": "Alles wurde auf die Standardwerte zurückgesetzt.",
+	"settings.resetIntro": "Nimm dir einen Moment, um zu würdigen, was du mit Callout Studio aufgebaut hast.",
+	"settings.resetDeletes": "All das wird gleich gelöscht:",
+	"settings.resetRestores": "Das wird auf die Standardwerte zurückgesetzt:",
+	"settings.resetItemCallouts": "{{count}} benutzerdefinierte(r) Callout-Typ(en)",
+	"settings.resetItemImages": "{{count}} hochgeladene(s) Bild(er)",
+	"settings.resetItemCommands": "{{count}} benutzerdefinierte(r) Befehl(e)",
+	"settings.resetItemPalettes": "{{count}} gespeicherte Farbpalette(n)",
+	"settings.resetItemReferences": "{{count}} Callout-Verweis(e)",
+	"settings.resetItemBuiltIns": "{{count}} von dir geänderte(s) integrierte(s) Callout(s)",
+	"settings.resetItemGlobalStyle": "Globale Stile",
+	"settings.resetItemContextMenu": "Rechtsklickmenü",
+	"settings.resetItemHeading": "Einstellungen für Überschrift-Callouts",
+	"settings.resetItemInline": "Einstellungen für Inline-Callouts",
+	"settings.resetItemFallback": "Ausweichstil",
+	"settings.resetAllConfirmAfter": "Keine Sorge: Vor dem Zurücksetzen speichern wir ein Backup deiner aktuellen Konfiguration. Du kannst es jederzeit im Bereich Backups in den Einstellungen wiederherstellen.\nWenn du einen Synchronisierungsdienst nutzt, kann das Zurücksetzen auch auf deine anderen Geräte übertragen werden.",
+	"settings.resetNothing": "Nichts zurückzusetzen: Alles ist bereits auf den Standardwerten.",
 
 	"notice.customCommandsRemoved":
 		"{{count}} eigene(r) Befehl(e) entfernt, deren Callout-Typ nicht mehr existiert.",
@@ -696,6 +712,7 @@ export const de: Record<string, string> = {
 
 	"confirm.ok": "Löschen",
 	"confirm.cancel": "Abbrechen",
+	"confirm.acknowledge": "Ich habe es gelesen und verstanden",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Befehl löschen",

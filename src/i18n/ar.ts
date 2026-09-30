@@ -229,6 +229,22 @@ export const ar: Record<string, string> = {
 		"يحذف كل الـ callouts التي أنشأها المستخدم، ويعيد تعيين الـ callouts المدمجة والأنماط العامة (الحدود ومقياس الخط والشكل) ولوحات الألوان المحفوظة وتخصيص قائمة النقر بزر الماوس الأيمن، ويحذف ملفات SVG الخاصة بـ Material التي تم تنزيلها.",
 	"settings.resetAllButton": "إعادة تعيين الكل",
 	"notice.resetAllDone": "تمت إعادة تعيين كل شيء إلى الإعدادات الافتراضية.",
+	"settings.resetIntro": "خذ لحظة لتقدّر كل ما بنيته مع Callout Studio.",
+	"settings.resetDeletes": "كل هذا على وشك أن يُحذف:",
+	"settings.resetRestores": "سيعود هذا إلى الإعدادات الافتراضية:",
+	"settings.resetItemCallouts": "{{count}} من أنواع callout المخصصة",
+	"settings.resetItemImages": "{{count}} من الصور المرفوعة",
+	"settings.resetItemCommands": "{{count}} من الأوامر المخصصة",
+	"settings.resetItemPalettes": "{{count}} من لوحات الألوان المحفوظة",
+	"settings.resetItemReferences": "{{count}} من مراجع callout",
+	"settings.resetItemBuiltIns": "{{count}} من callouts المدمجة التي غيّرتها",
+	"settings.resetItemGlobalStyle": "الأنماط العامة",
+	"settings.resetItemContextMenu": "قائمة النقر بزر الماوس الأيمن",
+	"settings.resetItemHeading": "إعدادات callout في العناوين",
+	"settings.resetItemInline": "إعدادات callout المضمّنة في السطر",
+	"settings.resetItemFallback": "النمط الاحتياطي",
+	"settings.resetAllConfirmAfter": "لا تقلق: قبل إعادة التعيين نحفظ نسخة احتياطية من إعداداتك الحالية. يمكنك استعادتها في أي وقت من قسم النسخ الاحتياطية في الإعدادات.\nإذا كنت تستخدم خدمة مزامنة، فقد تصل إعادة التعيين إلى أجهزتك الأخرى أيضًا.",
+	"settings.resetNothing": "لا يوجد ما يُعاد تعيينه: كل شيء على إعداداته الافتراضية بالفعل.",
 
 	"notice.customCommandsRemoved":
 		"تمت إزالة {{count}} أمر/أوامر مخصصة لم يعد نوع الـ callout الخاص بها موجودًا.",
@@ -678,6 +694,7 @@ export const ar: Record<string, string> = {
 
 	"confirm.ok": "حذف",
 	"confirm.cancel": "إلغاء",
+	"confirm.acknowledge": "قرأت وفهمت",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "حذف الأمر",

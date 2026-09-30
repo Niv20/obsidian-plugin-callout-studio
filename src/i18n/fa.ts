@@ -231,6 +231,22 @@ export const fa: Record<string, string> = {
 		"همه callout‌های کاربر را حذف می‌کند، callout‌های داخلی، سبک‌های کلی (حاشیه، مقیاس فونت، شکل)، پالت‌های رنگ ذخیره‌شده، سفارشی‌سازی منوی کلیک راست و SVG‌های Material دانلود شده را بازنشانی می‌کند.",
 	"settings.resetAllButton": "بازنشانی همه چیز",
 	"notice.resetAllDone": "همه چیز به پیش‌فرض بازنشانی شد.",
+	"settings.resetIntro": "لحظه‌ای وقت بگذارید و قدر هر آنچه با Callout Studio ساخته‌اید را بدانید.",
+	"settings.resetDeletes": "همه این‌ها در شرف حذف شدن است:",
+	"settings.resetRestores": "این موارد به پیش‌فرض برمی‌گردد:",
+	"settings.resetItemCallouts": "{{count}} نوع callout سفارشی",
+	"settings.resetItemImages": "{{count}} تصویر بارگذاری‌شده",
+	"settings.resetItemCommands": "{{count}} دستور سفارشی",
+	"settings.resetItemPalettes": "{{count}} پالت رنگ ذخیره‌شده",
+	"settings.resetItemReferences": "{{count}} ارجاع به callout",
+	"settings.resetItemBuiltIns": "{{count}} callout داخلی که تغییر داده‌اید",
+	"settings.resetItemGlobalStyle": "سبک‌های کلی",
+	"settings.resetItemContextMenu": "منوی کلیک راست",
+	"settings.resetItemHeading": "تنظیمات callout عنوان",
+	"settings.resetItemInline": "تنظیمات callout درون‌خطی",
+	"settings.resetItemFallback": "سبک جایگزین",
+	"settings.resetAllConfirmAfter": "نگران نباشید: پیش از بازنشانی، از پیکربندی فعلی شما یک پشتیبان ذخیره می‌کنیم. هر زمان می‌توانید آن را از بخش پشتیبان‌ها در تنظیمات بازیابی کنید.\nاگر از سرویس همگام‌سازی استفاده می‌کنید، ممکن است بازنشانی به دستگاه‌های دیگر شما هم برسد.",
+	"settings.resetNothing": "چیزی برای بازنشانی نیست: همه چیز از قبل روی پیش‌فرض است.",
 
 	"notice.customCommandsRemoved":
 		"{{count}} دستور سفارشی که نوع callout آن‌ها دیگر وجود ندارد حذف شد.",
@@ -685,6 +701,7 @@ export const fa: Record<string, string> = {
 
 	"confirm.ok": "حذف",
 	"confirm.cancel": "لغو",
+	"confirm.acknowledge": "خوانده‌ام و متوجه شدم",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "حذف دستور",

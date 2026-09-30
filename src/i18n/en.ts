@@ -695,8 +695,30 @@ export const en: Record<string, string> = {
 		"Delete all user callouts, reset built-in callouts, global styles (borders, font scale, shape), saved color palettes, the right-click menu customization, and downloaded Material SVGs.",
 	"settings.resetAllButton": "Reset everything",
 	"notice.resetAllDone": "Everything has been reset to defaults.",
+	// The confirmation lists what this vault would lose, one bullet per kind,
+	// the number first; a bullet with nothing behind it is left out.
+	"settings.resetIntro":
+		"Take a moment to appreciate everything you've built with Callout Studio.",
+	"settings.resetDeletes": "All of it is about to be deleted:",
+	"settings.resetRestores": "This goes back to its defaults:",
+	"settings.resetItemCallouts": "{{count}} custom callout type(s)",
+	"settings.resetItemImages": "{{count}} uploaded picture(s)",
+	"settings.resetItemCommands": "{{count}} custom command(s)",
+	"settings.resetItemPalettes": "{{count}} saved color palette(s)",
+	"settings.resetItemReferences": "{{count}} callout reference(s)",
+	"settings.resetItemBuiltIns": "{{count}} built-in callout(s) you changed",
+	"settings.resetItemGlobalStyle": "Global styles",
+	"settings.resetItemContextMenu": "Right-click menu",
+	"settings.resetItemHeading": "Heading callout settings",
+	"settings.resetItemInline": "Inline callout settings",
+	"settings.resetItemFallback": "Fallback style",
+	"settings.resetAllConfirmAfter":
+		"Don't worry: before resetting, we save a backup of your current setup. You can restore it at any time from the Backups section in the settings.\nIf you use a sync service, the reset might travel to your other devices too.",
+	// No longer drawn: the list above replaced it. Kept because every locale
+	// still carries it, and a locale may not hold a key English lacks.
 	"settings.resetAllConfirmFull":
-		"This deletes every custom callout type, uploaded picture and custom command, and resets built-in callouts, global styles, saved color palettes, the right-click menu, heading and inline callout settings, and the fallback style. A backup of your current setup is saved in the plugin's backups folder first. Your sync service may send the reset to your other devices.",
+		"Heads up: this wipes every custom callout type, uploaded picture and custom command.\nBuilt-in callouts, global styles, saved palettes, the right-click menu, heading and inline callout settings, and the fallback style all go back to their defaults.\nDon't worry, we save a backup of your current setup in the plugin's backups folder first.\nIf you use a sync service, the reset might travel to your other devices too.",
+	"settings.resetNothing": "Nothing to reset: everything is already at its defaults.",
 	"settings.resetBackupFailed":
 		"Nothing was reset: a backup of your current setup could not be saved first. Check available storage, then try again.",
 	"settings.resetNotSaved":
@@ -1194,6 +1216,7 @@ export const en: Record<string, string> = {
 	// Confirm modal
 	"confirm.ok": "Delete",
 	"confirm.cancel": "Cancel",
+	"confirm.acknowledge": "I have read and understood",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Delete command",

@@ -232,6 +232,22 @@ export const pl: Record<string, string> = {
 	"settings.resetAllButton": "Resetuj wszystko",
 	"notice.resetAllDone":
 		"Wszystko zostało zresetowane do wartości domyślnych.",
+	"settings.resetIntro": "Poświęć chwilę, by docenić wszystko, co zbudowano w Callout Studio.",
+	"settings.resetDeletes": "Wszystko to zostanie usunięte:",
+	"settings.resetRestores": "To wróci do ustawień domyślnych:",
+	"settings.resetItemCallouts": "Własne typy callout: {{count}}",
+	"settings.resetItemImages": "Przesłane obrazy: {{count}}",
+	"settings.resetItemCommands": "Własne polecenia: {{count}}",
+	"settings.resetItemPalettes": "Zapisane palety kolorów: {{count}}",
+	"settings.resetItemReferences": "Odwołania do callout: {{count}}",
+	"settings.resetItemBuiltIns": "Zmienione wbudowane callouts: {{count}}",
+	"settings.resetItemGlobalStyle": "Style globalne",
+	"settings.resetItemContextMenu": "Menu kontekstowe (prawy przycisk myszy)",
+	"settings.resetItemHeading": "Ustawienia callout w nagłówkach",
+	"settings.resetItemInline": "Ustawienia callout śródliniowych",
+	"settings.resetItemFallback": "Styl zastępczy",
+	"settings.resetAllConfirmAfter": "Spokojnie: przed resetem zapisujemy kopię zapasową Twojej obecnej konfiguracji. Możesz ją w każdej chwili przywrócić w sekcji Kopie zapasowe w ustawieniach.\nJeśli korzystasz z usługi synchronizacji, reset może dotrzeć także na Twoje inne urządzenia.",
+	"settings.resetNothing": "Nie ma czego resetować: wszystko ma już ustawienia domyślne.",
 
 	"notice.customCommandsRemoved":
 		"Usunięto {{count}} niestandardowe(ych) polecenie/polecenia, których typ callout już nie istnieje.",
@@ -689,6 +705,7 @@ export const pl: Record<string, string> = {
 
 	"confirm.ok": "Usuń",
 	"confirm.cancel": "Anuluj",
+	"confirm.acknowledge": "Przeczytałem(-am) i rozumiem",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Usuń polecenie",

@@ -220,6 +220,22 @@ export const el: Record<string, string> = {
 		"Διαγράφει όλα τα callout χρήστη, επαναφέρει τα ενσωματωμένα callouts, τα καθολικά στυλ, τις αποθηκευμένες παλέτες χρωμάτων, την προσαρμογή του μενού δεξιού κλικ και τα ληφθέντα SVG Material.",
 	"settings.resetAllButton": "Επαναφορά όλων",
 	"notice.resetAllDone": "Όλα επαναφέρθηκαν στις προεπιλογές.",
+	"settings.resetIntro": "Αφιερώστε λίγο χρόνο να εκτιμήσετε όσα δημιουργήσατε με το Callout Studio.",
+	"settings.resetDeletes": "Όλα αυτά πρόκειται να διαγραφούν:",
+	"settings.resetRestores": "Αυτά θα επανέλθουν στις προεπιλογές:",
+	"settings.resetItemCallouts": "{{count}} προσαρμοσμένο(α) είδος(η) callout",
+	"settings.resetItemImages": "{{count}} εικόνα(ες) που ανεβάσατε",
+	"settings.resetItemCommands": "{{count}} προσαρμοσμένη(ες) εντολή(ές)",
+	"settings.resetItemPalettes": "{{count}} αποθηκευμένη(ες) παλέτα(ες) χρωμάτων",
+	"settings.resetItemReferences": "{{count}} αναφορά(ές) callout",
+	"settings.resetItemBuiltIns": "{{count}} ενσωματωμένο(α) callout που αλλάξατε",
+	"settings.resetItemGlobalStyle": "Καθολικά στυλ",
+	"settings.resetItemContextMenu": "Μενού δεξιού κλικ",
+	"settings.resetItemHeading": "Ρυθμίσεις callout επικεφαλίδων",
+	"settings.resetItemInline": "Ρυθμίσεις ενσωματωμένων callout",
+	"settings.resetItemFallback": "Εφεδρικό στυλ",
+	"settings.resetAllConfirmAfter": "Μην ανησυχείτε: πριν από την επαναφορά αποθηκεύουμε αντίγραφο ασφαλείας της τρέχουσας διαμόρφωσής σας. Μπορείτε να το επαναφέρετε οποτεδήποτε από την ενότητα Αντίγραφα ασφαλείας στις ρυθμίσεις.\nΑν χρησιμοποιείτε υπηρεσία συγχρονισμού, η επαναφορά μπορεί να φτάσει και στις άλλες συσκευές σας.",
+	"settings.resetNothing": "Δεν υπάρχει τίποτα για επαναφορά: όλα είναι ήδη στις προεπιλογές.",
 	"notice.customCommandsRemoved":
 		"Αφαιρέθηκαν {{count}} προσαρμοσμένη(-ες) εντολή(-ές) των οποίων ο τύπος callout δεν υπάρχει πια.",
 	"notice.customCommandMissingCallout":
@@ -679,6 +695,7 @@ export const el: Record<string, string> = {
 	"menuItem.deleteSection": "Διαγραφή ενότητας",
 	"confirm.ok": "Διαγραφή",
 	"confirm.cancel": "Ακύρωση",
+	"confirm.acknowledge": "Το διάβασα και το κατάλαβα",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Διαγραφή εντολής",

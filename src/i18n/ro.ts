@@ -283,6 +283,22 @@ export const ro: Record<string, string> = {
 		"Șterge toate callouts utilizator, resetează callouts integrate, stilurile globale (borduri, scara fontului, formă), paletele de culori salvate, personalizarea meniului clic dreapta și SVG-urile Material descărcate.",
 	"settings.resetAllButton": "Resetați tot",
 	"notice.resetAllDone": "Totul a fost resetat la valorile implicite.",
+	"settings.resetIntro": "Acordați-vă un moment ca să apreciați tot ce ați construit cu Callout Studio.",
+	"settings.resetDeletes": "Toate acestea urmează să fie șterse:",
+	"settings.resetRestores": "Acestea revin la valorile implicite:",
+	"settings.resetItemCallouts": "{{count}} tip(uri) de callout personalizat(e)",
+	"settings.resetItemImages": "{{count}} imagine/imagini încărcată/încărcate",
+	"settings.resetItemCommands": "{{count}} comandă/comenzi personalizată/personalizate",
+	"settings.resetItemPalettes": "{{count}} paletă/palete de culori salvată/salvate",
+	"settings.resetItemReferences": "{{count}} referință/referințe la callout",
+	"settings.resetItemBuiltIns": "{{count}} callout(uri) integrat(e) pe care le-ați modificat",
+	"settings.resetItemGlobalStyle": "Stiluri globale",
+	"settings.resetItemContextMenu": "Meniul clic dreapta",
+	"settings.resetItemHeading": "Setările callout-urilor de titlu",
+	"settings.resetItemInline": "Setările callout-urilor inline",
+	"settings.resetItemFallback": "Stil de rezervă",
+	"settings.resetAllConfirmAfter": "Nu vă faceți griji: înainte de resetare salvăm un backup al configurației curente. Îl puteți restaura oricând din secțiunea Backup-uri din setări.\nDacă folosiți un serviciu de sincronizare, resetarea poate ajunge și pe celelalte dispozitive ale dumneavoastră.",
+	"settings.resetNothing": "Nimic de resetat: totul este deja la valorile implicite.",
 
 	"notice.customCommandsRemoved":
 		"Au fost eliminate {{count}} comandă/comenzi personalizată(e) al căror tip de callout nu mai există.",
@@ -743,6 +759,7 @@ export const ro: Record<string, string> = {
 
 	"confirm.ok": "Șterge",
 	"confirm.cancel": "Anulare",
+	"confirm.acknowledge": "Am citit și am înțeles",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Șterge comanda",

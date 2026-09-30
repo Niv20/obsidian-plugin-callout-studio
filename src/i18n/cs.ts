@@ -230,6 +230,22 @@ export const cs: Record<string, string> = {
 		"Odstraní všechny callouts uživatele, obnoví vestavěné callouts, globální styly (ohraničení, měřítko písma, tvar), uložené barevné palety, přizpůsobení kontextové nabídky a stažené SVG Material.",
 	"settings.resetAllButton": "Obnovit vše",
 	"notice.resetAllDone": "Vše bylo obnoveno na výchozí hodnoty.",
+	"settings.resetIntro": "Udělejte si chvíli a oceňte vše, co jste s Callout Studio vytvořili.",
+	"settings.resetDeletes": "Všechno z toho bude smazáno:",
+	"settings.resetRestores": "Tohle se vrátí na výchozí hodnoty:",
+	"settings.resetItemCallouts": "{{count}} vlastní(ch) typ(ů) callout",
+	"settings.resetItemImages": "{{count}} nahraný(ch) obrázek(ů)",
+	"settings.resetItemCommands": "{{count}} vlastní(ch) příkaz(ů)",
+	"settings.resetItemPalettes": "{{count}} uložená(ých) barevná(ých) paleta(y)",
+	"settings.resetItemReferences": "{{count}} odkaz(ů) na callout",
+	"settings.resetItemBuiltIns": "{{count}} vestavěný(ch) callout, který(é) jste změnili",
+	"settings.resetItemGlobalStyle": "Globální styly",
+	"settings.resetItemContextMenu": "Kontextová nabídka (pravé tlačítko)",
+	"settings.resetItemHeading": "Nastavení callout v nadpisech",
+	"settings.resetItemInline": "Nastavení inline callout",
+	"settings.resetItemFallback": "Záložní styl",
+	"settings.resetAllConfirmAfter": "Žádný strach: před obnovením uložíme zálohu vaší aktuální konfigurace. Můžete ji kdykoli obnovit v části Zálohy v nastavení.\nPokud používáte synchronizační službu, obnovení se může přenést i na vaše další zařízení.",
+	"settings.resetNothing": "Není co obnovovat: vše je již ve výchozím stavu.",
 
 	"notice.customCommandsRemoved":
 		"Odstraněno {{count}} vlastní(ch) příkaz(ů), jejichž typ callout již neexistuje.",
@@ -686,6 +702,7 @@ export const cs: Record<string, string> = {
 
 	"confirm.ok": "Smazat",
 	"confirm.cancel": "Zrušit",
+	"confirm.acknowledge": "Přečetl(a) jsem a rozumím",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Smazat příkaz",

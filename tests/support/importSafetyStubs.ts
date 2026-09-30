@@ -17,23 +17,29 @@ import { ConfirmModal } from "../../src/utils/ConfirmModal";
 export function stubConfirm(answer: boolean | (() => boolean) = true): {
 	asked: string[];
 	labels: (string | undefined)[];
+	acknowledgements: (string | undefined)[];
+	messages: (string | DocumentFragment)[];
 	restore(): void;
 } {
 	const saved = Object.getOwnPropertyDescriptor(ConfirmModal.prototype, "confirm");
 	if (!saved) throw new Error("ConfirmModal.confirm is missing");
 	const asked: string[] = [];
 	const labels: (string | undefined)[] = [];
+	const acknowledgements: (string | undefined)[] = [];
+	const messages: (string | DocumentFragment)[] = [];
 	Object.defineProperty(ConfirmModal.prototype, "confirm", {
 		configurable: true,
 		writable: true,
 		value(this: ConfirmModal) {
-			const dialog = this as unknown as { title: string; confirmLabel?: string };
+			const dialog = this as unknown as { title: string; message: string | DocumentFragment; confirmLabel?: string; acknowledgement?: string };
 			asked.push(dialog.title);
 			labels.push(dialog.confirmLabel);
+			acknowledgements.push(dialog.acknowledgement);
+			messages.push(dialog.message);
 			return Promise.resolve(typeof answer === "function" ? answer() : answer);
 		},
 	});
-	return { asked, labels, restore: () => Object.defineProperty(ConfirmModal.prototype, "confirm", saved) };
+	return { asked, labels, acknowledgements, messages, restore: () => Object.defineProperty(ConfirmModal.prototype, "confirm", saved) };
 }
 
 /** A vault whose adapter keeps files, backups included, in memory. */

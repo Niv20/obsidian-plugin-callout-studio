@@ -287,6 +287,22 @@ export const uk: Record<string, string> = {
 		"Видаляє всі користувацькі callout, скидає вбудовані callout, глобальні стилі (рамки, масштаб шрифту, форма), збережені колірні палітри, налаштування контекстного меню і завантажені SVG Material.",
 	"settings.resetAllButton": "Скинути все",
 	"notice.resetAllDone": "Все скинуто до типових значень.",
+	"settings.resetIntro": "Знайдіть хвилинку, щоб оцінити все, що ви створили в Callout Studio.",
+	"settings.resetDeletes": "Усе це буде видалено:",
+	"settings.resetRestores": "Це повернеться до типових значень:",
+	"settings.resetItemCallouts": "Користувацькі типи callout: {{count}}",
+	"settings.resetItemImages": "Завантажені зображення: {{count}}",
+	"settings.resetItemCommands": "Користувацькі команди: {{count}}",
+	"settings.resetItemPalettes": "Збережені колірні палітри: {{count}}",
+	"settings.resetItemReferences": "Посилання на callout: {{count}}",
+	"settings.resetItemBuiltIns": "Змінені вами вбудовані callout: {{count}}",
+	"settings.resetItemGlobalStyle": "Глобальні стилі",
+	"settings.resetItemContextMenu": "Контекстне меню (права кнопка миші)",
+	"settings.resetItemHeading": "Налаштування callout у заголовках",
+	"settings.resetItemInline": "Налаштування вбудованих у рядок callout",
+	"settings.resetItemFallback": "Резервний стиль",
+	"settings.resetAllConfirmAfter": "Не хвилюйтеся: перед скиданням ми збережемо резервну копію вашої поточної конфігурації. Її можна відновити будь-коли в розділі «Резервні копії» в налаштуваннях.\nЯкщо ви користуєтеся службою синхронізації, скидання може дійти й до ваших інших пристроїв.",
+	"settings.resetNothing": "Скидати нічого: усе вже має типові значення.",
 
 	"notice.customCommandsRemoved":
 		"Видалено {{count}} користувацьких команд, тип callout яких більше не існує.",
@@ -754,6 +770,7 @@ export const uk: Record<string, string> = {
 
 	"confirm.ok": "Видалити",
 	"confirm.cancel": "Скасувати",
+	"confirm.acknowledge": "Я прочитав(ла) і зрозумів(ла)",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Видалити команду",

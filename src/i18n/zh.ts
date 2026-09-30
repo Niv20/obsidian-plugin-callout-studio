@@ -280,6 +280,22 @@ export const zh: Record<string, string> = {
 		"删除所有用户 callout，重置内置 callout、全局样式（边框、字体缩放、形状）、已保存的调色板、右键菜单自定义设置和已下载的 Material SVG。",
 	"settings.resetAllButton": "重置所有内容",
 	"notice.resetAllDone": "所有内容已重置为默认值。",
+	"settings.resetIntro": "花点时间，回顾一下你用 Callout Studio 打造的一切。",
+	"settings.resetDeletes": "以下内容即将被删除：",
+	"settings.resetRestores": "以下内容将恢复为默认值：",
+	"settings.resetItemCallouts": "{{count}} 个自定义 callout 类型",
+	"settings.resetItemImages": "{{count}} 张已上传的图片",
+	"settings.resetItemCommands": "{{count}} 个自定义命令",
+	"settings.resetItemPalettes": "{{count}} 个已保存的调色板",
+	"settings.resetItemReferences": "{{count}} 个 callout 引用",
+	"settings.resetItemBuiltIns": "{{count}} 个你修改过的内置 callout",
+	"settings.resetItemGlobalStyle": "全局样式",
+	"settings.resetItemContextMenu": "右键菜单",
+	"settings.resetItemHeading": "标题 callout 设置",
+	"settings.resetItemInline": "行内 callout 设置",
+	"settings.resetItemFallback": "后备样式",
+	"settings.resetAllConfirmAfter": "别担心：重置之前，我们会先保存当前设置的备份。你可以随时在设置的“备份”部分恢复。\n如果你使用同步服务，重置也可能同步到你的其他设备。",
+	"settings.resetNothing": "没有需要重置的内容：一切都已是默认值。",
 
 	"notice.customCommandsRemoved":
 		"已移除 {{count}} 个 callout 类型已不存在的自定义命令。",
@@ -731,6 +747,7 @@ export const zh: Record<string, string> = {
 
 	"confirm.ok": "删除",
 	"confirm.cancel": "取消",
+	"confirm.acknowledge": "我已阅读并理解",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "删除命令",

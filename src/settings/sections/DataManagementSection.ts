@@ -23,6 +23,7 @@ import { openPortableConversionFromSettings } from "../../portable/registerPorta
 import { writeSettingsBackup } from "../../manager/settingsBackup";
 import { blockedWhilePaused } from "../pausedGuard";
 import { SettingsRecoveryModal } from "../SettingsRecoveryModal";
+import { isResetInventoryEmpty, resetInventory, type ResetInventoryRow } from "../resetInventory";
 import { PAUSED_ALLOWED } from "./pausedReadOnly";
 import type { SettingsSectionContext } from "./types";
 
@@ -115,34 +116,50 @@ export function renderResetSection(
 				.onClick(async () => {
 					// A reset that cannot be saved would only look done.
 					if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
+					// A second reset in a row, or one on a fresh install: say so
+					// rather than ask for a tick and back up an empty setup.
+					const inventory = resetInventory(ctx.plugin.registry);
+					if (isResetInventoryEmpty(inventory)) {
+						new Notice(t("settings.resetNothing"));
+						return;
+					}
 					const userCallouts = ctx.plugin.registry.getUserDefined();
 					const userIds = userCallouts.flatMap((c) =>
 						ctx.plugin.registry.vaultIdFormsFor(c),
 					);
 
-					const messageFrag = createFragment();
+					// Uses of a custom type in notes are one more line of what goes,
+					// last in the list and in the same colour, not a paragraph above.
 					if (userIds.length > 0) {
-						const { fileCount, totalCount } =
-							await countCalloutUsages(ctx.app, userIds);
-						if (fileCount > 0) {
-							messageFrag.createEl("p", {
-								text: t("vault.resetAllInUse", {
-									count: String(totalCount),
-									files: String(fileCount),
-								}),
-								cls: "cs-reset-warning",
+						const { totalCount } = await countCalloutUsages(ctx.app, userIds);
+						if (totalCount > 0) {
+							inventory.deleted.push({
+								labelKey: "settings.resetItemReferences",
+								count: totalCount,
 							});
 						}
 					}
-					messageFrag.createEl("p", {
-						text: t("settings.resetAllConfirmFull"),
-					});
+
+					const messageFrag = createFragment();
+					// "All of it" needs an it: with nothing to delete, only the
+					// list of settings going back to their defaults is drawn.
+					if (inventory.deleted.length > 0) {
+						messageFrag.createEl("p", { text: t("settings.resetIntro") });
+					}
+					renderResetInventory(messageFrag, "settings.resetDeletes", inventory.deleted);
+					renderResetInventory(messageFrag, "settings.resetRestores", inventory.restored);
+					for (const paragraph of t("settings.resetAllConfirmAfter").split(/\n+/)) {
+						messageFrag.createEl("p", { text: paragraph });
+					}
 
 					const confirmed = await new ConfirmModal(
 						ctx.app,
 						t("confirm.titleResetEverything"),
 						messageFrag,
 						t("settings.resetAllButton"),
+						undefined,
+						undefined,
+						t("confirm.acknowledge"),
 					).confirm();
 					if (!confirmed || blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 					// The reset also replaces this device's recovery copy, so the
@@ -160,6 +177,20 @@ export function renderResetSection(
 					ctx.display();
 				}),
 		);
+}
+
+/** One lead-in sentence and its list in the reset confirmation; nothing when the list is empty. */
+function renderResetInventory(
+	parent: DocumentFragment,
+	headingKey: string,
+	rows: ResetInventoryRow[],
+): void {
+	if (rows.length === 0) return;
+	parent.createEl("p", { text: t(headingKey), cls: "cs-reset-inventory-heading" });
+	const list = parent.createEl("ul", { cls: "cs-reset-inventory" });
+	for (const row of rows) {
+		list.createEl("li", { text: t(row.labelKey, { count: row.count ?? 0 }) });
+	}
 }
 
 /**

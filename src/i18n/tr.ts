@@ -282,6 +282,22 @@ export const tr: Record<string, string> = {
 		"Tüm kullanıcı callout'larını siler, yerleşik callout'ları, global stilleri (kenarlıklar, yazı tipi ölçeği, şekil), kaydedilmiş renk paletlerini, sağ tık menüsü özelleştirmesini ve indirilen Material SVG'leri sıfırlar.",
 	"settings.resetAllButton": "Her şeyi sıfırla",
 	"notice.resetAllDone": "Her şey varsayılanlara sıfırlandı.",
+	"settings.resetIntro": "Callout Studio ile oluşturduğunuz her şeyi takdir etmek için bir an durun.",
+	"settings.resetDeletes": "Bunların hepsi silinmek üzere:",
+	"settings.resetRestores": "Bunlar varsayılanlara dönecek:",
+	"settings.resetItemCallouts": "{{count}} özel callout türü",
+	"settings.resetItemImages": "{{count}} yüklenen resim",
+	"settings.resetItemCommands": "{{count}} özel komut",
+	"settings.resetItemPalettes": "{{count}} kayıtlı renk paleti",
+	"settings.resetItemReferences": "{{count}} callout başvurusu",
+	"settings.resetItemBuiltIns": "Değiştirdiğiniz {{count}} yerleşik callout",
+	"settings.resetItemGlobalStyle": "Global stiller",
+	"settings.resetItemContextMenu": "Sağ tık menüsü",
+	"settings.resetItemHeading": "Başlık callout ayarları",
+	"settings.resetItemInline": "Satır içi callout ayarları",
+	"settings.resetItemFallback": "Yedek stil",
+	"settings.resetAllConfirmAfter": "Merak etmeyin: sıfırlamadan önce mevcut kurulumunuzun bir yedeğini kaydederiz. Ayarlardaki Yedekler bölümünden istediğiniz zaman geri yükleyebilirsiniz.\nBir eşitleme hizmeti kullanıyorsanız, sıfırlama diğer cihazlarınıza da ulaşabilir.",
+	"settings.resetNothing": "Sıfırlanacak bir şey yok: her şey zaten varsayılanlarda.",
 
 	"notice.customCommandsRemoved":
 		"Callout türü artık mevcut olmayan {{count}} özel komut kaldırıldı.",
@@ -740,6 +756,7 @@ export const tr: Record<string, string> = {
 
 	"confirm.ok": "Sil",
 	"confirm.cancel": "İptal",
+	"confirm.acknowledge": "Okudum ve anladım",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Komutu sil",

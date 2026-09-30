@@ -221,6 +221,22 @@ export const nb: Record<string, string> = {
 		"Sletter alle brukercallouts, tilbakestiller innebygde callouts, globale stiler, lagrede fargepaletter, tilpasningen av høyreklikkmenyen og nedlastede Material-SVG-er.",
 	"settings.resetAllButton": "Tilbakestill alt",
 	"notice.resetAllDone": "Alt er tilbakestilt til standardinnstillingene.",
+	"settings.resetIntro": "Ta et øyeblikk og sett pris på alt du har bygget med Callout Studio.",
+	"settings.resetDeletes": "Alt dette er i ferd med å bli slettet:",
+	"settings.resetRestores": "Dette går tilbake til standardinnstillingene:",
+	"settings.resetItemCallouts": "{{count}} egendefinert(e) callout-type(r)",
+	"settings.resetItemImages": "{{count}} opplastet(e) bilde(r)",
+	"settings.resetItemCommands": "{{count}} egendefinert(e) kommando(er)",
+	"settings.resetItemPalettes": "{{count}} lagret(e) fargepalett(er)",
+	"settings.resetItemReferences": "{{count}} callout-referanse(r)",
+	"settings.resetItemBuiltIns": "{{count}} innebygd(e) callout(s) du har endret",
+	"settings.resetItemGlobalStyle": "Globale stiler",
+	"settings.resetItemContextMenu": "Høyreklikkmeny",
+	"settings.resetItemHeading": "Innstillinger for overskrifts-callouts",
+	"settings.resetItemInline": "Innstillinger for inline-callouts",
+	"settings.resetItemFallback": "Reservestil",
+	"settings.resetAllConfirmAfter": "Ingen grunn til bekymring: før tilbakestillingen lagrer vi en sikkerhetskopi av det nåværende oppsettet ditt. Du kan gjenopprette den når som helst fra Sikkerhetskopier-delen i innstillingene.\nHvis du bruker en synkroniseringstjeneste, kan tilbakestillingen også nå de andre enhetene dine.",
+	"settings.resetNothing": "Ingenting å tilbakestille: alt er allerede på standardinnstillingene.",
 	"notice.customCommandsRemoved":
 		"Fjernet {{count}} tilpasset(e) kommando(er) hvis callout-type ikke lenger finnes.",
 	"notice.customCommandMissingCallout":
@@ -673,6 +689,7 @@ export const nb: Record<string, string> = {
 	"menuItem.deleteSection": "Slett seksjon",
 	"confirm.ok": "Slett",
 	"confirm.cancel": "Avbryt",
+	"confirm.acknowledge": "Jeg har lest og forstått",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Slett kommando",

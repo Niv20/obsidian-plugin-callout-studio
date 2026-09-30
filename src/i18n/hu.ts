@@ -232,6 +232,22 @@ export const hu: Record<string, string> = {
 		"Törli az összes felhasználói callout-ot, visszaállítja a beépített callout-okat, a globális stílusokat (szegélyek, betűméret-arány, alak), a mentett színpalettákat, a jobb gombos menü testreszabását és a letöltött Material SVG-ket.",
 	"settings.resetAllButton": "Mindent visszaállít",
 	"notice.resetAllDone": "Minden visszaállt az alapértelmezettekre.",
+	"settings.resetIntro": "Szánjon egy pillanatot arra, hogy értékelje mindazt, amit a Callout Studióval felépített.",
+	"settings.resetDeletes": "Mindez törlődni fog:",
+	"settings.resetRestores": "Ez visszaáll az alapértelmezettre:",
+	"settings.resetItemCallouts": "{{count}} egyéni callout-típus",
+	"settings.resetItemImages": "{{count}} feltöltött kép",
+	"settings.resetItemCommands": "{{count}} egyéni parancs",
+	"settings.resetItemPalettes": "{{count}} mentett színpaletta",
+	"settings.resetItemReferences": "{{count}} callout-hivatkozás",
+	"settings.resetItemBuiltIns": "{{count}} Ön által módosított beépített callout",
+	"settings.resetItemGlobalStyle": "Globális stílusok",
+	"settings.resetItemContextMenu": "Jobb gombos menü",
+	"settings.resetItemHeading": "Címsor-callout beállításai",
+	"settings.resetItemInline": "Soron belüli callout beállításai",
+	"settings.resetItemFallback": "Tartalék stílus",
+	"settings.resetAllConfirmAfter": "Ne aggódjon: a visszaállítás előtt biztonsági mentést készítünk a jelenlegi beállításairól. Bármikor visszaállíthatja a Beállítások Biztonsági mentések szakaszából.\nHa szinkronizálási szolgáltatást használ, a visszaállítás eljuthat a többi eszközére is.",
+	"settings.resetNothing": "Nincs mit visszaállítani: minden már az alapértelmezett állapotban van.",
 
 	"notice.customCommandsRemoved":
 		"{{count}} egyéni parancs eltávolítva, amelyek callout-típusa már nem létezik.",
@@ -693,6 +709,7 @@ export const hu: Record<string, string> = {
 
 	"confirm.ok": "Törlés",
 	"confirm.cancel": "Mégse",
+	"confirm.acknowledge": "Elolvastam és megértettem",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Parancs törlése",
