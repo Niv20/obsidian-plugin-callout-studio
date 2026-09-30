@@ -22,8 +22,6 @@ export interface CalloutComboboxRowOptions {
 	query: string;
 }
 
-/** For many IDs, render what fits on one line and show the rest as an ellipsis. */
-const ID_ELLIPSIS = "...";
 const ID_SEPARATOR = ", ";
 
 export function renderCalloutComboboxRow(
@@ -80,69 +78,29 @@ export function renderCalloutIdLine(
 	if (toShow.length === 0) return;
 
 	const idEl = textEl.createDiv({ cls: "callout-studio-suggestion-id" });
-	idEl.addClass("callout-studio-suggestion-id-truncated");
-	const fade = (text: string): void => {
-		if (text) {
-			idEl.createSpan({
-				cls: "callout-studio-suggestion-id-dim",
-				text,
-			});
-		}
-	};
 
-	const canvas = createEl("canvas");
-	const ctx =
-		typeof canvas.getContext === "function"
-			? canvas.getContext("2d")
-			: null;
-	if (ctx && typeof getComputedStyle === "function") {
-		ctx.font = getComputedStyle(idEl).font;
-	}
-	const measure = (value: string): number =>
-		ctx ? ctx.measureText(value).width : value.length * 8;
-	const available = Math.max(64, textEl.clientWidth - 8);
-
-	const idsToShow = available === 0
-		? toShow
-		: (() => {
-			const visible: string[] = [];
-			toShow.forEach((id, index) => {
-				const next = visible.length === 0 ? id : `${visible.join(ID_SEPARATOR)}${ID_SEPARATOR}${id}`;
-				const withEllipsis =
-					index < toShow.length - 1 ? `${next}${ID_SEPARATOR}${ID_ELLIPSIS}` : next;
-				if (measure(withEllipsis) <= available) {
-					visible.push(id);
-					return;
-				}
-				if (visible.length === 0) {
-					visible.push(id);
-				}
-				return;
-			});
-			if (visible.length < toShow.length) {
-				visible.push(ID_ELLIPSIS);
-			}
-			return visible;
-		})();
-
-	const appendId = (id: string): void => {
-		if (id === ID_ELLIPSIS) {
-			idEl.appendText(ID_ELLIPSIS);
-			return;
-		}
+	// One element per id, each carrying its own trailing ", ". The line is cut by
+	// the browser (`text-overflow: ellipsis` in styles.css), which drops whole
+	// elements rather than characters, so the cut always falls between ids and
+	// the mark always follows a comma and a space. Nothing here measures
+	// anything: the width is only known once the row is laid out, inside a list
+	// whose scrollbar arrives after its rows are built, and a count worked out
+	// beforehand disagreed with the final layout by exactly that scrollbar.
+	toShow.forEach((id, index) => {
+		const itemEl = idEl.createSpan({ cls: "callout-studio-suggestion-id-item" });
 		if (!highlight) {
-			idEl.appendText(id);
-			return;
+			itemEl.appendText(id);
+		} else {
+			// Matched run stays at normal weight wherever it falls, not only at the
+			// start; everything around it fades.
+			const at = id.toLowerCase().indexOf(query);
+			const fade = (text: string): void => {
+				if (text) itemEl.createSpan({ cls: "callout-studio-suggestion-id-dim", text });
+			};
+			fade(id.slice(0, at));
+			itemEl.appendText(id.slice(at, at + query.length));
+			fade(id.slice(at + query.length));
 		}
-		// Matched run stays at normal weight wherever it falls, not only at the
-		// start; everything around it fades.
-		const at = id.toLowerCase().indexOf(query);
-		fade(id.slice(0, at));
-		idEl.appendText(id.slice(at, at + query.length));
-		fade(id.slice(at + query.length));
-	};
-	idsToShow.forEach((id, i) => {
-		if (i > 0) idEl.appendText(ID_SEPARATOR);
-		appendId(id);
+		if (index < toShow.length - 1) itemEl.appendText(ID_SEPARATOR);
 	});
 }

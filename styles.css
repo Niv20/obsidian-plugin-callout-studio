@@ -86,6 +86,29 @@
 	);
 	--cs-btn-border: var(--background-modifier-border);
 	--cs-btn-border-hover: var(--background-modifier-border-hover);
+
+	/* The edge a FIELD (text box, dropdown) shows under the pointer. Fields do
+	   not repaint their fill on hover — buttons do, fields answer with an edge,
+	   so a field and the list that opens from it are always the same grey (see
+	   "Dropdown popups wear their control's face").
+
+	   It is not `--background-modifier-border-hover`: in dark that is #3f3f3f
+	   against a #333333 face (and #dadada against #e4e4e4 in macOS light), a step
+	   nobody sees, and the resting border is the face's own colour there. It is
+	   the path from the resting border to the focus border, 60% of the way. It is
+	   the ONE edge a field draws whenever it is engaged — hovered, focused,
+	   pressed or with its list open — with no thicker border and no ring:
+
+	       dark    #333333 → #555555   hover edge #474747
+	       light   #e4e4e4 → #bdbdbd   hover edge #cdcdcd   (macOS; Windows rests on #ffffff)
+
+	   So the three states read as rest < hover < focus, and a theme that moves
+	   either endpoint moves the hover edge with it. */
+	--cs-field-border-hover: color-mix(
+		in srgb,
+		var(--background-modifier-border-focus) 60%,
+		var(--background-modifier-border)
+	);
 	--cs-btn-accent-face-hover: color-mix(
 		in srgb,
 		var(--interactive-accent) 92%,
@@ -1635,24 +1658,23 @@ body:not(.is-phone)
 /* ── Hover, press and focus ──
 
    The tile is a box the user edits without typing into, and it sits directly
-   below the Display name and Callout IDs fields, so it borrows *their* focus
-   treatment rather than inventing one: the 1px border recolours to
-   `--background-modifier-border-focus` and a 2px ring in the same grey sits on
-   top of it, which the eye reads as 3px of grey edge. That is the contract in
-   "How an input field focuses" (`docs/internals-docs/16-settings-ui-and-modals.md`),
-   and this row now answers to it like the two above it. It used to light
-   `--interactive-accent`, which made it the one purple-lit control in a modal
-   of grey-lit ones.
+   below the Display name and Callout IDs fields, so it answers the pointer the
+   way they do: the 1px border recolours to `--cs-field-border-hover` — the one
+   thin edge a field draws whenever it is engaged (see `.cs-text-control`) — with
+   no thicker border, no ring and no change of fill. Hover, keyboard focus and
+   press all draw that same edge.
 
-   ── Why the box needs four classes and the fill does not ──
+   ── Why the box needs four classes ──
 
    `box-shadow` is contested three ways: `button:not(.clickable-icon)` (0,1,1)
    sets `--input-shadow`, `button:hover` (0,1,1) sets `--input-shadow-hover`,
    and `button:not(.clickable-icon).mobile-tap` (0,2,1) sets it again the moment
-   a finger lands. A one-class rule is (0,1,0), so the ring would simply never
-   appear — the same trap, and the same fix, as the ⓧ badge further down.
-   `background-color` is contested only at (0,1,1), which a plain
-   `.cs-icon-tile:hover` clears on its own.
+   a finger lands. A one-class rule is (0,1,0), so `box-shadow: none` would
+   simply never apply — the same trap, and the same fix, as the ⓧ badge further
+   down. The fill is never repainted here, so Obsidian's own hover fill on a
+   button is the only thing that could touch it; the tile's rest rule wins that
+   at (0,2,0) only where it is restated, so the empty state's transparent fill
+   (same weight, later in the file) keeps the dashed "add one" box hollow.
 
    `border-color`, never the `border` shorthand: the empty state swaps
    `border-style` to dashed at (0,2,0) and a shorthand here would silently
@@ -1672,13 +1694,8 @@ body:not(.is-phone)
 	.setting-item-control
 	button.cs-icon-tile:focus-visible {
 	outline: none;
-	border-color: var(--background-modifier-border-focus);
-	box-shadow: 0 0 0 var(--input-border-width-focus)
-		var(--background-modifier-border-focus);
-}
-
-.cs-icon-tile:focus-visible {
-	background-color: var(--background-modifier-hover);
+	border-color: var(--cs-field-border-hover, var(--background-modifier-border-hover));
+	box-shadow: none;
 }
 
 /* The glyph shares the box rather than covering it: fading the artwork out
@@ -1737,13 +1754,8 @@ body:not(.is-phone)
 		.setting-item
 		.setting-item-control
 		button.cs-icon-tile:hover {
-		border-color: var(--background-modifier-border-focus);
-		box-shadow: 0 0 0 var(--input-border-width-focus)
-			var(--background-modifier-border-focus);
-	}
-
-	.cs-icon-tile:hover {
-		background-color: var(--background-modifier-hover);
+		border-color: var(--cs-field-border-hover, var(--background-modifier-border-hover));
+		box-shadow: none;
 	}
 
 	.cs-icon-tile:hover .callout-studio-icon-preview,
@@ -1786,9 +1798,8 @@ body:not(.is-phone)
 		.setting-item
 		.setting-item-control
 		button.cs-icon-tile.mobile-tap {
-		border-color: var(--background-modifier-border-focus);
-		box-shadow: 0 0 0 var(--input-border-width-focus)
-			var(--background-modifier-border-focus);
+		border-color: var(--cs-field-border-hover, var(--background-modifier-border-hover));
+		box-shadow: none;
 	}
 }
 
@@ -2878,12 +2889,74 @@ button.callout-studio-icon-picker-loading {
 	white-space: nowrap;
 }
 
+/* ─── Dropdown popups wear their control's face ───────────────────
+   Both popups that open from a `cs-dropdown-control` — the shared
+   `.cs-combobox-menu` and the Fold selector's `.cs-palette-menu` — are painted
+   from the tokens below, so a popup and the control that opened it cannot
+   disagree about colour or corners.
+
+   They used to be painted `--cs-surface`, the window's own colour, with a 4px
+   `--radius-s` corner. Under a grey field that read as a second object stuck
+   onto it: near black beneath a #333333 field in the default dark theme, and
+   tighter at the corners than the field's 8px `superellipse` on macOS.
+
+   `--cs-menu-face` is the control's own face, `--cs-btn-face`, and because a
+   field never repaints its fill (it answers the pointer and focus with its
+   EDGE — see `.cs-text-control`), that is the control's face in every state,
+   open included. There is no second grey to keep in step. An earlier version
+   wore the field's lighter hover fill instead; #434343 read as too light for a
+   list, and it only matched the field while the field was hovered.
+
+   Things that only worked on the old dark ground are re-derived from the face:
+
+   - Selected rows were `--background-secondary-alt`, which in `.theme-dark` IS
+     `--interactive-normal`, i.e. the face itself, so a selection would vanish.
+     They are now mixed from the face toward `--text-normal`, which steps away
+     in whichever direction the active theme reads as "more contrast" — the
+     same move `--cs-btn-face-hover` makes.
+   - Faint text loses contrast on a lighter ground (`--text-faint` on the dark
+     face is 2.2:1). Group headings use `--text-muted`, and the dimmed
+     characters of a callout row's id line are a 60% mix of it.
+   - The resting border, which is the face's own colour in dark and in macOS
+     light, cannot draw the line between two groups. The divider is the field's
+     hover edge, `--cs-field-border-hover`.
+   - The ring that cuts overlapping colour circles apart repaints the ground
+     behind them, so inside a popup it is the face rather than `--cs-surface`.
+
+   The cost: a callout's own colour, painted on its name and icon in the callout
+   picker, sits on a lighter ground than the window. Worst case against the
+   popup, for the built-in accents: dark Note blue #027aff 4.2:1 → 3.1:1 and
+   Danger red 4.9:1 → 3.7:1; light teal #00bfbc 2.3:1 → 1.8:1 on macOS, where
+   the light field is itself grey, and unchanged on Windows/Linux, where it is
+   white. */
+.cs-combobox-menu,
+.cs-palette-menu {
+	--cs-menu-face: var(--cs-btn-face, var(--interactive-normal));
+	--cs-menu-divider: var(--cs-field-border-hover, var(--background-modifier-border-hover));
+	--cs-menu-row-selected: color-mix(
+		in srgb,
+		var(--cs-menu-face) 88%,
+		var(--text-normal)
+	);
+	--cs-menu-row-selected-active: color-mix(
+		in srgb,
+		var(--cs-menu-face) 80%,
+		var(--text-normal)
+	);
+}
+
 /* Opens at the trigger's own width, every time. Pinning BOTH inset-inline edges
    is the whole trick — with only the start edge the popup is shrink-to-fit and
    free to disagree with its trigger, which is how it ended up narrower than the
    button that opened it and read as clipped. The shared `.cs-combobox-menu`
    pins the same edges. A `min-width`
-   would reintroduce exactly that disagreement, so there isn't one. */
+   would reintroduce exactly that disagreement, so there isn't one.
+
+   Corners: a list is a box taller than one line, so it takes the radius Obsidian
+   gives such a box — `--textarea-radius` where it is defined (mobile: 24px,
+   where fields are 44px pills that would clip the first row's text), otherwise
+   the field's own `--input-radius`. The border is the colour the open control
+   outlines itself with, so the edge carries on from the field into the list. */
 .cs-palette-menu {
 	position: absolute;
 	top: calc(100% + 4px);
@@ -2891,12 +2964,13 @@ button.callout-studio-icon-picker-loading {
 	inset-inline-end: 0;
 	z-index: 1000;
 	padding: 6px 0;
-	border-radius: var(--radius-s);
-	border: 1px solid var(--background-modifier-border);
-	background-color: var(--cs-surface, var(--background-primary));
+	border-radius: var(--textarea-radius, var(--input-radius, var(--radius-s)));
+	corner-shape: var(--input-corner-shape, round);
+	border: 1px solid var(--cs-field-border-hover, var(--background-modifier-border-hover));
+	background-color: var(--cs-menu-face);
 	box-shadow:
-		0 8px 18px rgba(0, 0, 0, 0.22),
-		0 2px 6px rgba(0, 0, 0, 0.18);
+		0 10px 28px rgba(0, 0, 0, 0.34),
+		0 3px 8px rgba(0, 0, 0, 0.24);
 	outline: none;
 }
 
@@ -2950,13 +3024,20 @@ button.callout-studio-icon-picker-loading {
 }
 
 .cs-palette-menu-item.is-selected {
-	background-color: var(--background-secondary-alt);
+	background-color: var(--cs-menu-row-selected);
 }
 
 /* The committed Fold option must still answer the pointer. Shared listboxes
    use .is-active for this state below. */
 .cs-fold-menu .cs-palette-menu-item.is-selected:hover {
-	background-color: color-mix(in srgb, var(--background-secondary-alt) 86%, var(--text-normal));
+	background-color: var(--cs-menu-row-selected-active);
+}
+
+/* The circles' cut-out ring repaints the ground behind them; in a popup that is
+   the popup's face, not the window. */
+.cs-combobox-menu .cs-color-circle,
+.cs-palette-menu .cs-color-circle {
+	box-shadow: 0 0 0 1.5px var(--cs-menu-face);
 }
 
 /* Same `min-width: 0` as the trigger's label, for the same reason: the menu is
@@ -3067,6 +3148,16 @@ button.callout-studio-icon-picker-loading {
 	);
 	background-size: calc(var(--cs-circle-size) / 2)
 		calc(var(--cs-circle-size) / 2);
+}
+
+/* In a dropdown popup the surface the swatch is drawn on is the popup's face,
+   not the window — same rule as the ring beside the popup tokens. */
+.cs-combobox-menu .cs-color-circle.is-transparent,
+.cs-palette-menu .cs-color-circle.is-transparent {
+	background-image: repeating-conic-gradient(
+		color-mix(in srgb, var(--text-normal) 22%, var(--cs-menu-face)) 0% 25%,
+		var(--cs-menu-face) 0% 50%
+	);
 }
 
 /* ─── Compact Color Grid ──────────────────────────────────────── */
@@ -3239,10 +3330,23 @@ button.callout-studio-icon-picker-loading {
 	white-space: nowrap;
 }
 
+/* The ids are code, so the line is left-to-right whatever the window's
+   direction: in a right-to-left window the bidi algorithm would reorder the
+   comma-separated run and leave the commas on the wrong side of the words. In
+   such a window it still lines up with the name above it, on the right.
+
+   It is cut in ONE place, here. Each id is an atomic unit carrying its own
+   trailing ", " (see `.callout-studio-suggestion-id-item`), and
+   `text-overflow: ellipsis` hides atomic units whole, so a line that does not
+   fit always ends ", …" after the last id that does. The mark is the browser's
+   own, the same glyph every time, and the layout engine decides where it falls
+   — no count is worked out beforehand, which is what used to disagree with the
+   final layout once the list grew a scrollbar. */
 .callout-studio-suggestion-id {
 	font-size: var(--font-ui-smaller);
 	color: var(--text-muted);
 	font-family: var(--font-monospace);
+	direction: ltr;
 	min-width: 0;
 	max-width: 100%;
 	width: 100%;
@@ -3251,13 +3355,22 @@ button.callout-studio-icon-picker-loading {
 	text-overflow: ellipsis;
 }
 
-.callout-studio-suggestion-id-truncated {
+.mod-rtl .callout-studio-suggestion-id {
+	text-align: right;
+}
+
+/* `white-space: pre` keeps the trailing space of ", " — an inline-block would
+   collapse it. `max-width` plus its own ellipsis is for a single id longer than
+   the whole line, which would otherwise have nowhere to be cut;
+   `vertical-align: top` because `overflow: hidden` moves an inline-block's
+   baseline to its bottom edge. */
+.callout-studio-suggestion-id-item {
+	display: inline-block;
 	max-width: 100%;
-	width: 100%;
-	min-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	white-space: nowrap;
+	white-space: pre;
+	vertical-align: top;
 }
 
 /* Characters around the matched run of an id/alias fade out. */
@@ -3327,28 +3440,35 @@ button.callout-studio-icon-picker-loading {
 	cursor: text;
 }
 
+/* A field never repaints its fill, and it has one answer for being engaged:
+   the thin edge `--cs-field-border-hover`. Hovering draws it; so do focus, a
+   press and an open list, with no thicker border and no ring — the edge does
+   not change when a hovered field is clicked. Buttons are the ones that change
+   fill on hover.
+
+   Because the list that opens from a dropdown wears the field's own face and
+   the same edge, the two read as one object in every state (see "Dropdown
+   popups wear their control's face").
+
+   All of these set the same colour, so none can undo another and there is no
+   specificity to manage between hover and focus. Validation still wins: the
+   invalid field's red (0,4,1) sits above the text rules here, and the focus
+   rule excludes `.cs-input-invalid`. `.is-open` is listed because a tap on a
+   phone does not focus a `<button>` trigger (the Fold selector), and
+   `.mobile-tap` is Obsidian's press class, there being no hover on a phone. */
 @media (hover: hover) {
 	.cs-dropdown-control.cs-dropdown-control:not(:disabled):not(.cs-dropdown-disabled):hover,
 	.cs-text-control.cs-text-control:not(:disabled):hover {
-		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-field-border-hover, var(--background-modifier-border-hover));
 	}
 }
 
-/* Keep the same fill while a menu is open or the user is editing a field. */
-.cs-dropdown-control.cs-dropdown-control.is-open,
-.cs-dropdown-control.cs-dropdown-control.mobile-tap:not(:disabled),
-.cs-dropdown-control.cs-dropdown-control:not(:disabled):not(.cs-dropdown-disabled):focus-within,
-.cs-text-control.cs-text-control:not(:disabled):focus,
-.cs-text-control.cs-text-control:not(:disabled):active {
-	background-color: var(--cs-btn-face-hover, var(--interactive-hover));
-}
-
-/* Validation owns the red border/ring even while an invalid field is focused. */
 .cs-dropdown-control.cs-dropdown-control.cs-dropdown-control:focus-within,
+.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control.is-open,
+.cs-dropdown-control.cs-dropdown-control.mobile-tap:not(:disabled):not(.cs-dropdown-disabled),
 .cs-text-control.cs-text-control.cs-text-control.cs-text-control:not(:disabled):not(.cs-input-invalid):focus {
-	border-color: var(--background-modifier-border-focus);
-	box-shadow: 0 0 0 var(--input-border-width-focus)
-		var(--background-modifier-border-focus);
+	border-color: var(--cs-field-border-hover, var(--background-modifier-border-hover));
+	box-shadow: none;
 	outline: none;
 }
 
@@ -3499,7 +3619,9 @@ button.callout-studio-icon-picker-loading {
 
 /* Both inset-inline edges pinned, for the reason spelled out at
    `.cs-palette-menu`: with only the start edge the popup is shrink-to-fit and
-   free to end up narrower than the field that opened it. */
+   free to end up narrower than the field that opened it. Its face, corners and
+   border are explained there too, under "Dropdown popups wear their control's
+   face". */
 .cs-combobox-menu {
 	position: absolute;
 	top: calc(100% + 4px);
@@ -3508,12 +3630,13 @@ button.callout-studio-icon-picker-loading {
 	max-width: 100%;
 	z-index: 1000;
 	padding: 0;
-	border-radius: var(--radius-s);
-	border: 1px solid var(--background-modifier-border);
-	background-color: var(--cs-surface, var(--background-primary));
+	border-radius: var(--textarea-radius, var(--input-radius, var(--radius-s)));
+	corner-shape: var(--input-corner-shape, round);
+	border: 1px solid var(--cs-field-border-hover, var(--background-modifier-border-hover));
+	background-color: var(--cs-menu-face);
 	box-shadow:
-		0 8px 18px rgba(0, 0, 0, 0.22),
-		0 2px 6px rgba(0, 0, 0, 0.18);
+		0 10px 28px rgba(0, 0, 0, 0.34),
+		0 3px 8px rgba(0, 0, 0, 0.24);
 	outline: none;
 	text-align: start;
 }
@@ -3553,11 +3676,11 @@ button.callout-studio-icon-picker-loading {
 	position: sticky;
 	top: 0;
 	z-index: 1;
-	background: var(--cs-surface, var(--background-primary));
+	background: var(--cs-menu-face);
 	padding: 4px 12px;
 	font-size: var(--font-ui-smaller);
 	line-height: var(--line-height-normal);
-	color: var(--text-faint);
+	color: var(--text-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	text-align: start;
@@ -3567,7 +3690,7 @@ button.callout-studio-icon-picker-loading {
    top edge is the menu's own. */
 .cs-combobox-group + .cs-combobox-group {
 	margin-top: 6px;
-	border-top: 1px solid var(--background-modifier-border);
+	border-top: 1px solid var(--cs-menu-divider, var(--background-modifier-border));
 }
 
 /* Start the scrollport flush with the heading so scrolled rows cannot show in
@@ -3590,13 +3713,20 @@ button.callout-studio-icon-picker-loading {
 }
 
 .cs-combobox-option.is-selected {
-	background-color: var(--background-secondary-alt);
+	background-color: var(--cs-menu-row-selected);
 }
 
 /* Both states can be present on one row. Without this more specific rule the
    later selected fill hides the active pointer/keyboard highlight. */
 .cs-combobox-option.is-selected.is-active {
-	background-color: color-mix(in srgb, var(--background-secondary-alt) 86%, var(--text-normal));
+	background-color: var(--cs-menu-row-selected-active);
+}
+
+/* The characters of an id that sit outside the matched run. The base rule's
+   `--text-faint` is tuned for the `[!` popover's ground; on a dropdown's lighter
+   open face it would all but disappear, so it is a 60% mix of `--text-muted`. */
+.cs-combobox-menu .callout-studio-suggestion-id-dim {
+	color: color-mix(in srgb, var(--text-muted) 60%, transparent);
 }
 
 .cs-language-option-label,
@@ -3776,14 +3906,6 @@ button.callout-studio-icon-picker-loading {
 .cs-command-field .setting-item-control > .cs-combobox {
 	width: 100%;
 	min-width: 0;
-}
-
-/* Match the breathing room of the All formats list in selection menus. */
-.cs-command-field .cs-select-dropdown .cs-combobox-option,
-.cs-palette-bgstyle-setting .cs-combobox-option {
-	padding: 8px 12px;
-	color: var(--text-normal);
-	font-size: var(--font-ui-small);
 }
 
 /* The shared empty state is a page-level block elsewhere; inside a popup it
@@ -4578,7 +4700,7 @@ button.callout-studio-icon-picker-loading {
 }
 
 /* Keep validation visible above both the shared resting face and Obsidian's
-   hover rules. The normal focus ring explicitly excludes invalid fields. */
+   hover rules. The normal engaged edge explicitly excludes invalid fields. */
 input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid,
 input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
 	border-color: var(--text-error);
@@ -4645,21 +4767,16 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	align-items: center;
 }
 
-/* Set the same fill on the field and its adjacent + overlay, including when
-   the pointer is over the overlay. Keep native disabled/active input states
-   in CSS rather than mirroring transient pointer state in JavaScript. */
+/* The field's fill never changes (a field answers the pointer with its edge,
+   see `.cs-text-control`), so the field and the overlay read one constant. What
+   the row adds is the hover edge while the pointer is over the + button itself:
+   the button re-enables pointer events, so the input underneath is not the
+   hovered element there and its own `:hover` would let go. A field marked
+   invalid is excluded, which keeps its red. */
 @media (hover: hover) {
-	.cs-tag-input-row:hover > input:not(:disabled),
-	.cs-tag-input-row:hover > input:not(:disabled) + .cs-tag-add-slot {
-		--cs-tag-field-bg: var(--cs-btn-face-hover, var(--interactive-hover));
+	.cs-tag-input-row:hover > input:not(:disabled):not(.cs-input-invalid) {
+		border-color: var(--cs-field-border-hover, var(--background-modifier-border-hover));
 	}
-}
-
-.cs-tag-input-row:focus-within > input:not(:disabled),
-.cs-tag-input-row:focus-within > input:not(:disabled) + .cs-tag-add-slot,
-.cs-tag-input-row > input:not(:disabled):active,
-.cs-tag-input-row > input:not(:disabled):active + .cs-tag-add-slot {
-	--cs-tag-field-bg: var(--cs-btn-face-hover, var(--interactive-hover));
 }
 
 /* Reserve the trailing slot even while the + is hidden, so typing the first

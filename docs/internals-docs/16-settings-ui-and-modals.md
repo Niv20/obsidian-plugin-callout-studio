@@ -1092,8 +1092,10 @@ which Obsidian itself paints `--background-primary` — visually unchanged:
 ```
 
 - **`--cs-surface`** (fallback `--background-primary`) — anything meant to
-  read as flush with the modal window itself: fixed bands, panels, popup
-  menus, the ring cut around an icon tile's ✕.
+  read as flush with the modal window itself: fixed bands, panels, the ring
+  cut around an icon tile's ✕. Not dropdown lists: those wear the face of the
+  control that opened them (see
+  [Dropdown popups wear their control's face](#dropdown-popups-wear-their-controls-face)).
 - **`--cs-surface-raised`** (fallback `--background-secondary`) — anything
   meant to read as *raised off* that surface: a group-box header strip, a
   card, a control, a row pill.
@@ -1160,12 +1162,48 @@ small UI font. Each screen retains its own control width.
 
 | State | Text fields and dropdown controls |
 | --- | --- |
-| Rest | `--cs-btn-face`, falling back to `--interactive-normal`; no shadow |
-| Pointer hover | `--cs-btn-face-hover`, falling back to `--interactive-hover` |
-| Focus, press, or an open list | The same highlighted face remains behind the content; focus also uses `--background-modifier-border-focus` for the border and `0 0 0 var(--input-border-width-focus)` ring |
+| Rest | `--cs-btn-face`, falling back to `--interactive-normal`; 1px `--cs-btn-border`; no shadow |
+| Pointer hover | **The fill does not change.** The 1px border steps to `--cs-field-border-hover`, falling back to `--background-modifier-border-hover` |
+| Focus, press, or an open list | **The same edge as hover**: same fill, same 1px border colour, no thicker border and no ring. Clicking a hovered field changes nothing |
 | Disabled | No interactive hover or press feedback; the field retains its disabled appearance |
 
+### A field answers with its edge, not its fill
+
+Buttons change fill under the pointer (`--cs-btn-face-hover`, see
+[Why the hover is a `color-mix`](#why-the-hover-is-a-color-mix-and-not---background-modifier-hover));
+fields never do. A field has two looks: at rest, and **engaged** — hovered,
+focused, pressed, or with its list open — and the engaged look is one thin edge.
+There is deliberately no third, stronger state: an earlier version gave focus a
+`--background-modifier-border-focus` border plus a 2px ring, and the jump from
+the hover edge to that on every click was the thing to lose.
+
+Two more reasons for the edge. The list that opens from a dropdown wears the
+field's own face ([Dropdown popups wear their control's face](#dropdown-popups-wear-their-controls-face)),
+and a field that repainted itself would be a different grey from its own list
+whenever the pointer was on it. And in dark and in macOS light the resting border
+*is* the face's colour, so the field is a borderless grey slab at rest, which
+leaves the edge free to carry the state.
+
+`--cs-field-border-hover` is declared with the other `--cs-btn-*` tokens as
+`color-mix(in srgb, var(--background-modifier-border-focus) 60%, var(--background-modifier-border))`,
+not as Obsidian's `--background-modifier-border-hover`, which is a step nobody
+sees on these faces. Measured against the real `app.css`, edge against face:
+
+| | rest → engaged edge | Obsidian's own hover border |
+| --- | --- | --- |
+| Dark (face `#333333`) | `#333333` → `#474747` (1.36:1) | `#3f3f3f`, 1.20:1 |
+| Light, macOS (face `#e4e4e4`) | `#e4e4e4` → `#cdcdcd` (1.25:1) | `#dadada`, 1.10:1 |
+| Light, Windows/Linux (face `#ffffff`) | `#e4e4e4` → `#cdcdcd` (1.59:1) | `#dadada`, 1.40:1 |
+
+Both ends are Obsidian's tokens, so a theme that moves either moves the edge with
+it; a theme that invalidates the `color-mix` falls back to Obsidian's own hover
+border. The cost of one edge for every engaged state is that keyboard focus and
+hover look the same; a text field still shows its caret, and a dropdown its open
+list. If that ever needs to change, add a `:focus-visible` rule for keyboard focus
+alone rather than giving the pointer a stronger border again.
+
 The standalone fields are the callout editor's **Display name** and **Callout
+IDs**,The standalone fields are the callout editor's **Display name** and **Callout
 IDs**, the palette editor's **Name**, the Quick Insert and replacement-dialog
 searches, the search box in every icon source, and the text box on Callout
 Manager's import window's paste card — a `<textarea>` of one fixed height on
@@ -1187,18 +1225,27 @@ There are three cascade constraints:
 - Shared field rules must outrank Obsidian's
   `input[type='text']:not(:disabled):hover` selector, whose specificity is
   `(0,3,1)`. The state rules must also win over the base they refine.
-  This preserves the plugin's intentional hover
-  and focus fills instead of allowing the host's form-field tokens to win.
+  This preserves the plugin's intentional edge instead of allowing the host's
+  form-field tokens to win. Hover, focus, press and open all set the *same*
+  colour, so they cannot undo one another and there is no specificity to balance
+  between them (the text hover is `(0,4,0)`, level with its base and after it in
+  the file; the focus rule is higher).
 - The palette name's `cs-input-invalid` state must keep its red border and
-  error ring during hover and focus. Shared colors must not hide validation.
+  error ring during hover and focus. Shared colors must not hide validation:
+  the red rule is `(0,4,1)`, above the text rules, and the focus rule excludes
+  `.cs-input-invalid`. `.is-open` is part of the engaged rule because a tap on a
+  phone does not focus a `<button>` trigger (the Fold selector), and Obsidian's
+  press class, `.mobile-tap`, is listed there too since a phone has no hover.
 - The Callout IDs field reserves trailing space for its **+** button.
-  `cs-tag-add-slot` overlays the field and uses the same `--cs-tag-field-bg`
-  value, including during hover and focus, so its background never becomes a
-  separate rectangular patch. Preserve the trailing padding and the row's
-  existing width when adjusting the shared chrome. The input and its immediately
-  adjacent slot each receive the same variable through CSS child/sibling
-  selectors. Native `:disabled` and `:active` remain the source of truth, without
-  pointer-state listeners or parent `:has()` queries.
+  `cs-tag-add-slot` overlays the field and paints the same `--cs-tag-field-bg`,
+  declared once on the row as the resting face — a field's fill never changes —
+  so its background never becomes a separate rectangular patch. Preserve the
+  trailing padding and the row's existing width when adjusting the shared
+  chrome. The edge is set from the row's `:hover`, not only the input's: the
+  **+** button re-enables pointer events, so over it the input is not the
+  hovered element and its own `:hover` would let go. Native `:disabled` and
+  `:focus` remain the source of truth, without pointer-state listeners or
+  parent `:has()` queries.
 
 Text fields and dropdown triggers do not show hover tooltips. Their accessible
 names still identify the controls to assistive technology; suppressing hover
@@ -1250,41 +1297,33 @@ beside the plugin's fields under the harness linked above, with body classes
 The **icon tile** in the callout editor (`.cs-icon-tile` — the 44px box that
 *is* the icon picker's button, with the ⓧ badge straddling its corner) sits
 directly under the Display name and Callout IDs fields, and it is the third row
-of the same form. It used to light `--interactive-accent` on hover, which made
-it the one purple-lit control in a window of grey-lit ones, so it now takes the
-same focus-border and ring treatment as the fields: `border-color` to
-`--background-modifier-border-focus`, plus `0 0 0 var(--input-border-width-focus)`
-in the same grey. Measured against real `app.css`, hover and `:focus-visible`
-both land on `#bdbdbd` + a 2px ring in light and `#555555` + 2px in dark — the
-same two numbers the fields above it produce.
+of the same form, so it answers the pointer exactly as they do ([see
+above](#a-field-answers-with-its-edge-not-its-fill)): hover, `:focus-visible` and
+press all set `border-color` to `--cs-field-border-hover` and `box-shadow: none`,
+and the fill never changes. (It used to take a 3px focus border and a
+`--background-modifier-hover` fill, which read as a darker box with a heavy
+edge next to its neighbours.)
 
 Three things about it are easy to get wrong a second time:
 
-- **The box needs four classes; the fill does not.** `box-shadow` is contested
+- **The box needs four classes.** `box-shadow` is contested
   three ways — `button:not(.clickable-icon)` (0,1,1) sets `--input-shadow`,
   `button:hover` (0,1,1) sets `--input-shadow-hover`, and
   `button:not(.clickable-icon).mobile-tap` (0,2,1) sets it again the moment a
-  finger lands — so the ring is written at (0,4,1), the same count and the same
-  reason as the ⓧ badge. `background-color` is contested only at (0,1,1) and
-  has to *stay* at (0,2,0): the empty state paints `background-color:
-  transparent` at the same weight further down the file and wins the tie on
-  source order, which is the only thing keeping the dashed "add one" box from
-  filling in under the pointer.
+  finger lands — so `box-shadow: none` is written at (0,4,1), the same count and
+  the same reason as the ⓧ badge. The fill is not repainted at all, so the
+  empty state's transparent "add one" box stays hollow under the pointer.
 - **`border-color`, never the `border` shorthand.** The empty state swaps
   `border-style` to dashed at (0,2,0); a shorthand at (0,4,1) would silently
   solidify it.
 - **The resting shadow is still Obsidian's.** `.cs-icon-tile` declares
   `box-shadow: none` at (0,1,0) and loses to `button:not(.clickable-icon)`, so
   at rest the tile wears `--input-shadow` while the fields above it wear
-  nothing. That is left as it was — the request was to sync the *hover* state —
-  but it is why `box-shadow` in the tile's `transition` only eases on the phone
-  and under themes that null `--input-shadow`: an inset hairline plus a drop
-  shadow is not interpolable with a flat ring, so on desktop with the default
-  theme the ring arrives at once instead.
+  nothing. That is left as it was.
 
 #### Hover is desktop-only, and the press is the touch half
 
-Every hover-driven change the tile makes — the ring, the fill, fading the
+Every hover-driven change the tile makes — the edge, fading the
 artwork out, revealing the swap arrows, the ⓧ badge appearing — lives in one
 `@media (hover: hover) and (pointer: fine)` block. The `hover: hover` half is
 old and load-bearing: iOS Safari applies `:hover` on the first tap of an element
@@ -1296,7 +1335,7 @@ half, and it excludes the stylus and the hybrid laptops that answer
 Touch gets the complement, written as `@media (hover: none), (pointer: coarse)`
 rather than `not ((hover: hover) and (pointer: fine))` — Safari only learned
 that boolean form in 16.4, and this is the block whose whole job is the phone.
-There the press carries the box instead: the same border and ring on `:active`
+There the press carries the box instead: the same thin edge on `:active`
 **and** on `.mobile-tap`, Obsidian's own press class (it adds it to every
 `a, button, .tappable, …` on touchstart and removes it on release), which is the
 dependable half on iOS where `:active` fires only for elements the engine has
@@ -1595,8 +1634,8 @@ for why this is the *only* route to a transparent palette).
 
 The palette card keeps **Name** and **Style** at the same control-column width.
 Name is a 36px text field; Style uses the nonsearchable `ListboxPopup` rather
-than a native `<select>`. Both use the shared field radius, subtle hover fill,
-and focus border and ring. The popup is destroyed when the modal closes.
+than a native `<select>`. Both use the shared field radius and the same
+hover/focus edge. The popup is destroyed when the modal closes.
 
 The preview renders on a **reserved demo id** (`PALETTE_DEMO_ID =
 "palette-demo"`), registered through the same registry preview slot the
@@ -1822,6 +1861,117 @@ options. Click, Enter, and Space commit; Escape, Tab, and blur dismiss without
 changing the value. Escape on an already closed list remains available to its
 modal. The readonly input avoids opening a mobile text keyboard. Searchable
 callout and color pickers retain their editable query behavior.
+
+### Dropdown popups wear their control's face
+
+The two popups that open from a `cs-dropdown-control` — `.cs-combobox-menu`
+(every `ListboxPopup`, so every `SelectDropdown` too) and the Fold selector's
+`.cs-palette-menu` — are painted from four tokens declared once on both:
+
+| Token | Value | Paints |
+| --- | --- | --- |
+| `--cs-menu-face` | `var(--cs-btn-face, var(--interactive-normal))`, the control's own face | the popup, its sticky group heading, and the ring around overlapping colour circles |
+| `--cs-menu-divider` | `var(--cs-field-border-hover, var(--background-modifier-border-hover))` | the line between two groups |
+| `--cs-menu-row-selected` | `color-mix(in srgb, var(--cs-menu-face) 88%, var(--text-normal))` | the committed row |
+| `--cs-menu-row-selected-active` | the same at 80% | the committed row while the pointer or keyboard is on it |
+
+They used to be `--cs-surface` with a fixed `--radius-s`, which under a grey,
+8px field read as a second object stuck onto it: near black beneath a `#333333`
+field in the default dark theme, and square-shouldered beside a macOS
+`superellipse` corner. Now the popup and its control share fill, corners and
+outline:
+
+- **Fill.** The popup is defined as the expression the field itself rests on, and
+  the field never repaints it — it answers the pointer and focus with its edge
+  ([A field answers with its edge, not its fill](#a-field-answers-with-its-edge-not-its-fill)) —
+  so the two are one grey in every state, not just at the moment the list opens.
+  Tests pin both halves: the popup's face is the control's, and nothing but the
+  shared base paints a fill on a field. An earlier version wore the field's
+  lighter *hover* fill instead (`#434343` in dark); it read as too light for a
+  list and matched the field only while the field was hovered.
+- **Corners.** `var(--textarea-radius, var(--input-radius, var(--radius-s)))`
+  with `corner-shape: var(--input-corner-shape, round)`. A list is taller than a
+  line, so it takes the radius Obsidian gives such a box: `--textarea-radius`
+  where defined (mobile only, 24px, because `--input-radius` there is a 44px
+  pill that would clip the first row's text), otherwise the field's own — 5px by
+  default, 8px superellipse on macOS. The import window's paste box uses the
+  same expression.
+- **Outline.** `--cs-field-border-hover`, the colour an engaged field draws its
+  border in, so the edge carries on from the field into the list. An open field
+  carries that edge itself (`.is-open` is in the engaged rule alongside
+  `:focus-within`), so the pair reads as one joined object.
+
+Five things leaned on the old dark ground and are re-derived from the face:
+
+- *Selected rows* were `--background-secondary-alt`, which in `.theme-dark` is
+  `--interactive-normal` — the face itself, so a selection would vanish. They mix
+  from the face toward `--text-normal`, which steps away in whichever direction
+  the theme reads as "more contrast", as `--cs-btn-face-hover` does.
+- *Group headings* use `--text-muted`: `--text-faint` is 2.2:1 on the dark face.
+  The heading stays opaque and paints exactly the menu's face.
+- *The divider between groups* cannot be `--background-modifier-border`: that is
+  the face's own colour in dark and in macOS light, so the line would not show.
+  It is the field's hover edge.
+- *Dimmed id characters* in a callout row (`callout-studio-suggestion-id-dim`)
+  are a 60% mix of `--text-muted` inside `.cs-combobox-menu` only; the `[!`
+  popover keeps the faint original.
+- *The colour circles' cut-out ring and transparent-swatch checkerboard* are both
+  drawn from the ground behind the circles, which inside a popup is the face.
+
+**The cost.** A callout's own colour, painted on its name and icon in the callout
+picker, now sits on a lighter ground than the window. Contrast against the popup
+for the built-in accents, worst case: dark (default theme) Note/Info/Todo blue
+`#027aff` falls from 4.2:1 to 3.1:1 and Danger red from 4.9:1 to 3.7:1; light
+teal `#00bfbc` (already 2.3:1 on white) is unchanged on Windows/Linux, where the
+face is white, and falls to 1.8:1 on macOS, where the light field is itself grey.
+(Painting the popup the field's hover fill instead would have cost 2.5:1, 2.9:1
+and 1.9:1/1.5:1 — the reason that version was dropped.)
+
+`tests/dropdownPopupSurface.test.ts` pins the links (face = the control's face,
+corners, outline, every derived state); `tests/modalBodyLayers.test.ts` allows the
+sticky heading to paint `--cs-menu-face` instead of the window surface. To check
+it against the real cascade, render each popup open beside its field in the
+harness linked under [How an input field focuses](#how-an-input-field-focuses),
+with body classes `theme-dark`/`theme-light` × `mod-macos`/`mod-windows`/`is-mobile
+is-phone`. The open field needs no stand-in for `:focus-within`: `.is-open`
+carries the edge. For hover, drive a real pointer (Chrome's
+`Input.dispatchMouseEvent` over the DevTools protocol) rather than a forced
+class, so Obsidian's own `:hover` rules take part — and read
+`getComputedStyle(...).borderTopColor` as `color(srgb r g b)` with components in
+0–1 when it comes from a `color-mix`, not as `rgb()`: parsing it as 0–255 reads
+every mixed colour as black.
+
+### Option rows are padded once
+
+A `SelectDropdown` row is `.cs-combobox-option > .cs-dropdown-option-label`, and
+the **label** owns the padding (`6px 12px`): text starts 13px inside the popup,
+28.9px rows, the same in the language list, the occurrence **Format** filter,
+the command editor and the palette editor. The command editor's four selects and
+the palette editor's **Style** select used to add `padding: 8px 12px` to the
+*row* as well, on top of the label's, which put their text 25px in — the field's
+own text starts 11px in — and made their rows 45px tall. That rule is gone;
+`tests/dropdownOptionRows.test.ts` fails if a row-level padding comes back.
+
+### The id line under a callout's name
+
+`renderCalloutIdLine` (shared by the picker and the `[!` popover) draws one
+`.callout-studio-suggestion-id-item` per id, each carrying its own trailing
+`", "` (the last has none), inside `.callout-studio-suggestion-id`. The line is
+cut by the browser and by nothing else: `text-overflow: ellipsis` on the line
+hides atomic inline boxes whole, so a line that does not fit always ends
+`abstract, …` — cut between ids, the native `…` after a comma and a space,
+identical on every row. A single id longer than the whole line ellipsizes inside
+its own item.
+
+It used to work out how many ids fit with a canvas measurement and append a
+literal `...`, *and* carried the native ellipsis as a fallback. The measurement
+ran while the rows were being built, before the list overflowed and a scrollbar
+(12–17px) narrowed every row, so rows that had just fit now overflowed and got
+the browser's `…` on top of the typed `...` — in one list, `check, ...`
+(three monospace cells wide), a glued `…` and the two overlapping. Never measure
+this line. The id line is also `direction: ltr` in any window, right-aligned under
+`.mod-rtl` so it lines up with the name above it: ids are code, and in an RTL
+window the bidi algorithm reordered the run and stranded the commas.
 
 ### The shared callout picker
 

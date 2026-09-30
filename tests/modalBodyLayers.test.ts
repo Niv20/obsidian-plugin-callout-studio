@@ -331,9 +331,17 @@ describe("sticky layers", () => {
 	});
 
 	it("keeps dropdown group headings opaque over their scrolling options", () => {
+		// The heading sits on its menu's face, so it must paint exactly what the
+		// menu paints — a different value is a stripe across the list, and a
+		// translucent one lets the rows it is hiding show through.
 		assert.strictEqual(
 			paintOf(ruleFor(".cs-combobox-group-label")),
-			"var(--cs-surface, var(--background-primary))",
+			"var(--cs-menu-face)",
+		);
+		assert.strictEqual(
+			paintOf(ruleFor(".cs-combobox-group-label")),
+			paintOf(ruleFor(".cs-combobox-menu")),
+			"the heading and the menu it is pinned in must not disagree",
 		);
 		assert.strictEqual(
 			valueOf(ruleFor(".cs-combobox-menu.cs-combobox-menu-grouped"), "padding-block-start"),
@@ -394,13 +402,21 @@ describe("sticky layers", () => {
 		// colour this stylesheet does not choose, which is exactly what
 		// `inherit` is: it cannot disagree with the pane, on any platform,
 		// because it is the pane's own computed colour.
+		//
+		// One layer is on a different ground: a dropdown's group heading sits
+		// inside its menu, which is painted the open control's face rather than
+		// the window's colour (see "Dropdown popups wear their control's face").
+		// It cannot `inherit` either — its parent is an unpainted group wrapper,
+		// which would hand it `transparent` — so it names the menu's own token.
 		const painted = stickyRules.filter((r) => paintOf(r));
 		assert.ok(painted.length >= 2, "expected at least two painted layers");
 
 		for (const rule of painted) {
 			assert.match(
 				paintOf(rule) as string,
-				/^(inherit|var\(--cs-surface(-raised)?, var\(--background-(primary|secondary)\)\))$/,
+				rule.selector === ".cs-combobox-group-label"
+					? /^var\(--cs-menu-face\)$/
+					: /^(inherit|var\(--cs-surface(-raised)?, var\(--background-(primary|secondary)\)\))$/,
 				`${rule.selector} (styles.css:${rule.line})`,
 			);
 		}

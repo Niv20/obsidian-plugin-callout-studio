@@ -112,7 +112,7 @@ describe("custom dropdown overflow", () => {
 	it("keeps group headings pinned over a solid menu surface while scrolling", () => {
 		assert.match(
 			css,
-			/\.cs-combobox-group-label\s*\{[^}]*position:\s*sticky;[^}]*top:\s*0;[^}]*background(?:-color)?:\s*var\(--cs-surface,\s*var\(--background-primary\)\);[^}]*\}/,
+			/\.cs-combobox-group-label\s*\{[^}]*position:\s*sticky;[^}]*top:\s*0;[^}]*background(?:-color)?:\s*var\(--cs-menu-face\);[^}]*\}/,
 		);
 	});
 });

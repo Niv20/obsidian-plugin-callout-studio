@@ -957,10 +957,12 @@ describe("renderSuggestion", () => {
 		const el = row();
 		h.suggest.renderSuggestion(h.registry.get("hushed")!, el);
 		const idsEl = children(children(el)[1])[1];
-		// `h` before and `ed` after are dimmed spans; `ush` is a bare text node.
-		const dimmed = (idsEl as { children: { textContent: string }[] }).children;
+		// Each id is one item. In it, `h` before and `ed` after are dimmed spans;
+		// `ush` is a bare text node.
+		const items = (idsEl as { children: { children: { textContent: string }[] }[] }).children;
+		assert.strictEqual(items.length, 1);
 		assert.deepStrictEqual(
-			dimmed.map((span) => span.textContent),
+			items[0]!.children.map((span) => span.textContent),
 			["h", "ed"],
 		);
 		assert.strictEqual((idsEl as { textContent: string }).textContent, "hushed");
@@ -974,7 +976,10 @@ describe("renderSuggestion", () => {
 		const el = row();
 		h.suggest.renderSuggestion(h.registry.get("quiet")!, el);
 		const idsEl = children(children(el)[1])[1];
-		assert.strictEqual((idsEl as { children: unknown[] }).children.length, 0);
+		// One item per id, none of them carrying a dimmed span.
+		const items = (idsEl as { children: { children: unknown[] }[] }).children;
+		assert.strictEqual(items.length, 2);
+		assert.ok(items.every((item) => item.children.length === 0));
 		assert.strictEqual((idsEl as { textContent: string }).textContent, "quiet, shh");
 	});
 });

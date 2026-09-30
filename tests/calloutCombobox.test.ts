@@ -251,6 +251,29 @@ describe("CalloutCombobox — opening and filtering", () => {
 		assert.strictEqual(idLine?.textContent, "abstract, summary, tldr");
 	});
 
+	it("draws each id as its own item, so the line can only ever be cut between ids", () => {
+		// Cutting is the browser's job (`text-overflow: ellipsis` over atomic
+		// items), which is what makes the mark the same everywhere. Nothing may
+		// measure a width and hand-draw "..." — that count disagreed with the
+		// final layout once the list grew a scrollbar, and the two marks then
+		// overwrote each other.
+		const h = mount();
+
+		h.open();
+
+		const idLine = h.rows()[0]?.querySelector(".callout-studio-suggestion-id") as
+			| { children: { textContent: string; className: string }[]; textContent: string }
+			| null
+			| undefined;
+		assert.deepStrictEqual(
+			idLine?.children.map((item) => item.textContent),
+			["abstract, ", "summary, ", "tldr"],
+			"each id carries its own trailing comma and space, the last has none",
+		);
+		assert.ok(idLine?.children.every((item) => item.className === "callout-studio-suggestion-id-item"));
+		assert.ok(!/\.\.\.|…/.test(idLine?.textContent ?? ""), "no hand-drawn ellipsis");
+	});
+
 	it("narrows the id line to the matching aliases once you type", () => {
 		const h = mount();
 

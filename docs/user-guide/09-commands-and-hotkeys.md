@@ -75,9 +75,11 @@ before saving. It shows registered types in one list without section headings,
 including types saved through a scan. Types found only in your notes remain
 available in **Find callouts** until you register them.
 **Callout format**, **Heading level**, **Action**, and **Fold state** open lists
-of choices without text search. They share the same rounded field appearance
-and subtle hover feedback. Pressing or focusing a field keeps that background
-and shows a clear border. All five fields share one compact, aligned width.
+of choices without text search. They share the same rounded field appearance.
+A field's background never changes: hovering, pressing or focusing it draws the
+same thin border, and the list that opens beneath it has the same background as
+the field itself. All five fields share one compact,
+aligned width.
 Long menus stay inside the window and scroll. All choices have the same
 comfortable spacing, and menus start and end at the first and last choice
 without empty strips.
