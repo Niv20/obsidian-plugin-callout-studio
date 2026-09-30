@@ -2,15 +2,20 @@
  * settings/pluginImport/calloutManagerImportSource.ts — bringing callouts over
  * from the competing "Obsidian Callout Manager" plugin.
  *
- * Three ways in, the same three the Admonition importer offers:
+ * Two ways in:
  *
  * - **This vault** — Callout Manager is (or was) installed here, so its
  *   `data.json` is right there. Nothing to copy first.
- * - **A file** — that `data.json` taken from another vault, or the styles its
- *   Copy button produces, saved as a file.
- * - **Paste** — the styles its Copy button puts on the clipboard, which is what
- *   somebody moving between vaults or following a shared snippet has. A
- *   `data.json` copied as text works too.
+ * - **Copied styles** — the styles its Copy button puts on the clipboard, which
+ *   is what somebody moving between vaults or following a shared snippet has. A
+ *   `data.json` copied as text works too. Pasted by the user into the
+ *   window's text box, or put there by its Paste button — the only time the
+ *   window reads the clipboard. The only option there is when this vault holds
+ *   no Callout Manager data.
+ *
+ * There used to be a third, a file; each window now offers one way in besides
+ * the vault (`PluginImportManual`). A `data.json` from another vault still
+ * comes over, pasted as text.
  *
  * The vault route is not merely the convenient one, it is the *complete* one.
  * The Copy button emits the stylesheet already resolved for whichever colour
@@ -18,7 +23,7 @@
  * different light and dark colour — and a callout that was created but never
  * restyled emits no CSS at all and is invisible to it.
  *
- * All three end at the same plan (utils/calloutManagerImport.ts);
+ * Both end at the same plan (utils/calloutManagerImport.ts);
  * PluginImportModal owns the window and the shared ImportReportModal, exactly
  * as it does for the Admonition importer.
  */
@@ -60,20 +65,15 @@ export const CALLOUT_MANAGER_IMPORT: PluginImportSource = {
 	// Unchanged since its first release.
 	pluginId: "callout-manager",
 	modalClass: "callout-studio-cm-import-modal",
-	fileAccept: ".json,.css",
+	manual: { kind: "paste", placeholder: "import.cmPlaceholder" },
 	copy: {
 		title: "import.cmTitle",
 		instructions: "import.cmInstructions",
 		fromVault: "import.cmFromVault",
 		vaultChecking: "import.cmVaultChecking",
 		vaultFound: "import.cmVaultFound",
-		vaultEmpty: "import.cmVaultNotFound",
-		vaultNotInstalled: "import.cmVaultNotInstalled",
-		vaultUnreadable: "import.cmVaultUnreadable",
-		fromFile: "import.cmFromFile",
-		fromFileDesc: "import.cmFromFileDesc",
-		fromPaste: "import.cmFromPaste",
-		fromPasteDesc: "import.cmFromPasteDesc",
+		manual: "import.cmFromPaste",
+		manualDesc: "import.cmFromPasteDesc",
 		cancel: "import.cmBtnCancel",
 		importButton: "import.cmBtnImport",
 		notice: "notice.importedCalloutManager",
@@ -88,7 +88,8 @@ export const CALLOUT_MANAGER_IMPORT: PluginImportSource = {
 };
 
 /**
- * A file or a paste, which both take two languages.
+ * Pasted text, which takes two languages: the copied styles, or a `data.json`
+ * copied as text.
  *
  * Which one it is, is decided by the first character rather than by
  * trial-parsing: a stylesheet never opens with a brace (a rule opens with its

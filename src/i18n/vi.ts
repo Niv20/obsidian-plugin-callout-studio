@@ -970,22 +970,22 @@ export const vi: Record<string, string> = {
 		'Biểu tượng "{{value}}" không có sẵn trong vault này, vì vậy "{{id}}" giữ nguyên biểu tượng đã có.',
 	"import.chooseSource": "Nhập từ",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc": "Tải tệp .json được xuất từ Callout Studio.",
+	"import.sourceStudioDesc": "Tệp .json được xuất từ Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Mang các callout đã tùy chỉnh của bạn từ plugin Callout Manager sang.",
+	"import.sourceCalloutManagerDesc": "Các callout đã tùy chỉnh của bạn từ plugin.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Mang các admonition tùy chỉnh của bạn từ plugin Admonition sang.",
-	"import.back": "Quay lại",
-	"import.removeFile": "Xóa tệp",
+	"import.sourceAdmonitionDesc": "Các admonition tùy chỉnh của bạn từ plugin.",
+	"import.sourceOtherPlugins": "Từ plugin khác",
 	"import.fileReady": "Sẵn sàng để nhập.",
+	"import.upload": "Tải lên",
+	"import.replace": "Thay thế",
+	"import.fileUploaded": "Đã tải lên {{name}}.",
+	"import.fileReplaced": "Đã thay tệp bằng {{name}}.",
 	"import.pasteButton": "Dán",
-	"import.pasted": "Đã dán từ bảng nhớ tạm",
-	"import.clearPaste": "Xóa văn bản đã dán",
+	"import.pasteFirst": "Hãy dán các kiểu đã sao chép trước.",
+	"import.uploadFirst": "Hãy tải lên một tệp trước.",
 	"import.clipboardEmpty": "Bảng nhớ tạm trống. Hãy sao chép dữ liệu trước.",
-	"import.clipboardUnreadable":
-		"Không thể đọc bảng nhớ tạm. Hãy lưu dữ liệu thành tệp và chọn tệp đó thay thế.",
+	"import.clipboardBlocked": "Không đọc được bảng nhớ tạm. Hãy tự dán vào ô thay thế.",
 	"import.importing": "Đang nhập…",
 	"import.err.fileUnreadable": "Không thể đọc tệp.",
 	"import.cmTitle": "Nhập từ Callout Manager",
@@ -994,21 +994,9 @@ export const vi: Record<string, string> = {
 	"import.cmFromVault": "Vault này",
 	"import.cmVaultChecking": "Đang tìm plugin Callout Manager…",
 	"import.cmVaultFound": "Đã tìm thấy {{count}} callout đã tùy chỉnh.",
-	"import.cmVaultNotFound":
-		"Không tìm thấy callout đã tùy chỉnh nào trong vault này.",
-	"import.cmVaultNotInstalled": "Callout Manager chưa được cài đặt trong vault này.",
-	"import.cmVaultUnreadable":
-		"Không thể đọc tệp cài đặt của Callout Manager trong vault này.",
-	"import.cmUseManual": "Chuyển sang dùng tệp hoặc các kiểu đã sao chép",
-	"import.cmFromFile": "Một tệp",
-	"import.cmFromFileDesc":
-		"Một tệp data.json của Callout Manager, hoặc các kiểu đã sao chép được lưu thành tệp.",
-	"import.cmChooseFile": "Chọn tệp…",
 	"import.cmFromPaste": "Các kiểu đã sao chép",
 	"import.cmFromPasteDesc":
 		"Những gì nút Copy của Callout Manager sao chép, hoặc một tệp data.json.",
-	"import.cmPasteLabel":
-		"Hoặc dán các kiểu đã sao chép từ Callout Manager vào đây:",
 	"import.cmPlaceholder":
 		"Dán các kiểu đã sao chép, hoặc một tệp data.json, vào đây…",
 	"import.cmBtnCancel": "Hủy",
@@ -1025,10 +1013,6 @@ export const vi: Record<string, string> = {
 		'ID "{{value}}" đã được sử dụng làm bí danh bởi một callout khác ("{{other}}") và đã bị bỏ qua.',
 	"import.warn.cmNoColorDefault":
 		"Không có màu nào được đặt trong Callout Manager, nên màu xám mặc định đã được sử dụng.",
-	"import.warn.cmThemeCondition":
-		"Màu hoặc biểu tượng của callout này chỉ được đặt cho một giao diện. Callout Studio không có kiểu dáng theo từng giao diện, nên nó đã được mang sang cho mọi giao diện.",
-	"import.warn.cmCustomStyles":
-		"Callout này cũng có CSS tùy chỉnh trong Callout Manager. Kiểu dáng đó không thuộc phạm vi nhập, nên chỉ biểu tượng và màu sắc được mang sang.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "Không thể giữ lại kiểu dáng phụ thuộc vào giao diện. Ưu tiên các giá trị không có điều kiện; mọi giá trị dự phòng có điều kiện sẽ áp dụng cho tất cả giao diện.",
@@ -1043,21 +1027,9 @@ export const vi: Record<string, string> = {
 	"import.admFromVault": "Kho này",
 	"import.admVaultChecking": "Đang tìm plugin Admonition…",
 	"import.admVaultFound": "Đã tìm thấy {{count}} admonition tùy chỉnh.",
-	"import.admVaultNotFound":
-		"Không tìm thấy admonition tùy chỉnh nào trong kho này.",
-	"import.admVaultNotInstalled": "Admonition chưa được cài đặt trong vault này.",
-	"import.admVaultUnreadable":
-		"Không thể đọc tệp cài đặt của Admonition trong kho này.",
-	"import.admUseManual": "Chuyển sang dùng tệp hoặc JSON đã dán",
 	"import.admFromFile": "Một tệp",
 	"import.admFromFileDesc":
 		"Một tệp admonitions.json, hoặc một gói được chia sẻ.",
-	"import.admChooseFile": "Chọn tệp…",
-	"import.admFromPaste": "JSON đã sao chép",
-	"import.admFromPasteDesc":
-		"JSON của Admonition hoặc một tệp data.json, đã được sao chép vào bảng nhớ tạm.",
-	"import.admPasteLabel": "Hoặc dán JSON vào đây:",
-	"import.admPlaceholder": "Dán admonition của bạn vào đây…",
 	"import.admBtnCancel": "Hủy",
 	"import.admBtnImport": "Nhập",
 	"import.err.admNotRecognized":
@@ -1072,9 +1044,6 @@ export const vi: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Không tìm thấy biểu tượng nào tên "{{value}}" trong bất kỳ thư ' +
 		'viện nào, nên "{{id}}" vẫn giữ biểu tượng sẵn có.',
-	"import.warn.admImageFailed":
-		"Không đọc được ảnh đã tải lên, nên biểu tượng mặc định đã được " +
-		"dùng.",
 	"import.warn.admUnsupportedOptions": "Các tùy chọn Admonition này không được nhập: {{fields}}.",
 	"import.warn.admImageSkipped": "Không thể đọc ảnh đã tải lên nên ảnh không được nhập.",
 	"import.warn.admIconWithCss":

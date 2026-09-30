@@ -969,23 +969,22 @@ export const es: Record<string, string> = {
 		'El ícono "{{value}}" no está disponible en este vault, por lo que "{{id}}" conservó el ícono que ya tenía.',
 	"import.chooseSource": "Importar desde",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Cargar un archivo .json exportado desde Callout Studio.",
+	"import.sourceStudioDesc": "Un archivo .json exportado desde Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Trae tus callouts personalizados desde el plugin Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Tus callouts personalizados del plugin.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Trae tus admonitions personalizadas desde el plugin Admonition.",
-	"import.back": "Volver",
-	"import.removeFile": "Quitar archivo",
+	"import.sourceAdmonitionDesc": "Tus admonitions personalizadas del plugin.",
+	"import.sourceOtherPlugins": "Desde otro plugin",
 	"import.fileReady": "Listo para importar.",
+	"import.upload": "Subir",
+	"import.replace": "Reemplazar",
+	"import.fileUploaded": "Se subió {{name}}.",
+	"import.fileReplaced": "Archivo reemplazado por {{name}}.",
 	"import.pasteButton": "Pegar",
-	"import.pasted": "Pegado desde el portapapeles",
-	"import.clearPaste": "Borrar el texto pegado",
+	"import.pasteFirst": "Pega primero los estilos copiados.",
+	"import.uploadFirst": "Sube primero un archivo.",
 	"import.clipboardEmpty": "El portapapeles está vacío. Copia los datos primero.",
-	"import.clipboardUnreadable":
-		"No se pudo leer el portapapeles. Guarda los datos como archivo y elígelo en su lugar.",
+	"import.clipboardBlocked": "No se pudo leer el portapapeles. Pega tú mismo el contenido en el cuadro.",
 	"import.importing": "Importando…",
 	"import.err.fileUnreadable": "No se pudo leer el archivo.",
 	"import.cmTitle": "Importar desde Callout Manager",
@@ -997,21 +996,9 @@ export const es: Record<string, string> = {
 	"import.cmVaultChecking": "Buscando el plugin Callout Manager…",
 	"import.cmVaultFound":
 		"Se encontraron {{count}} callout(s) personalizado(s).",
-	"import.cmVaultNotFound":
-		"No se encontraron callouts personalizados en este vault.",
-	"import.cmVaultNotInstalled": "Callout Manager no está instalado en este vault.",
-	"import.cmVaultUnreadable":
-		"No se pudo leer el archivo de configuración de Callout Manager en este vault.",
-	"import.cmUseManual": "Usar un archivo o estilos copiados en su lugar",
-	"import.cmFromFile": "Un archivo",
-	"import.cmFromFileDesc":
-		"Un data.json de Callout Manager, o sus estilos copiados guardados como archivo.",
-	"import.cmChooseFile": "Elegir archivo…",
 	"import.cmFromPaste": "Estilos copiados",
 	"import.cmFromPasteDesc":
 		"Lo que copia el botón Copy de Callout Manager, o un data.json.",
-	"import.cmPasteLabel":
-		"O pega aquí los estilos copiados de Callout Manager:",
 	"import.cmPlaceholder": "Pega los estilos copiados, o un data.json, aquí…",
 	"import.cmBtnCancel": "Cancelar",
 	"import.cmBtnImport": "Importar",
@@ -1029,14 +1016,6 @@ export const es: Record<string, string> = {
 	"import.warn.cmNoColorDefault":
 		"No se definió ningún color en Callout Manager, por lo que se usó " +
 		"su gris predeterminado.",
-	"import.warn.cmThemeCondition":
-		"El color o el ícono de este callout se definió solo para un tema. " +
-		"Callout Studio no tiene estilos por tema, así que se trajo para " +
-		"todos los temas.",
-	"import.warn.cmCustomStyles":
-		"Este callout también tiene CSS personalizado en Callout Manager. " +
-		"Ese estilo no forma parte de la importación, así que solo se " +
-		"trajeron su ícono y color.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "No se puede conservar el estilo que depende del tema. Se prefieren los valores incondicionales; cualquier alternativa condicional se aplica a todos los temas.",
@@ -1052,21 +1031,9 @@ export const es: Record<string, string> = {
 	"import.admVaultChecking": "Buscando el plugin Admonition…",
 	"import.admVaultFound":
 		"Se encontraron {{count}} admonition(s) personalizadas.",
-	"import.admVaultNotFound":
-		"No se encontraron admonitions personalizadas en esta bóveda.",
-	"import.admVaultNotInstalled": "Admonition no está instalado en este vault.",
-	"import.admVaultUnreadable":
-		"No se pudo leer el archivo de configuración de Admonition en esta bóveda.",
-	"import.admUseManual": "Usar un archivo o JSON pegado en su lugar",
 	"import.admFromFile": "Un archivo",
 	"import.admFromFileDesc":
 		"Un archivo admonitions.json, o un paquete compartido.",
-	"import.admChooseFile": "Elegir archivo…",
-	"import.admFromPaste": "JSON copiado",
-	"import.admFromPasteDesc":
-		"El JSON de Admonition o un data.json, copiado al portapapeles.",
-	"import.admPasteLabel": "O pega aquí el JSON:",
-	"import.admPlaceholder": "Pega aquí tus admonitions…",
 	"import.admBtnCancel": "Cancelar",
 	"import.admBtnImport": "Importar",
 	"import.err.admNotRecognized":
@@ -1080,9 +1047,6 @@ export const es: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'No se encontró ningún icono llamado "{{value}}" en ninguna ' +
 		'biblioteca, así que "{{id}}" conservó el icono que ya tenía.',
-	"import.warn.admImageFailed":
-		"No se pudo leer la imagen subida, así que se usó el icono " +
-		"predeterminado.",
 	"import.warn.admUnsupportedOptions": "Estas opciones de Admonition no se importan: {{fields}}.",
 	"import.warn.admImageSkipped": "No se pudo leer la imagen cargada y no se importó.",
 	"import.warn.admIconWithCss":

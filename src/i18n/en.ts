@@ -1435,35 +1435,35 @@ export const en: Record<string, string> = {
 	"import.chooseSource": "Import from",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc":
-		"Load a .json file exported from Callout Studio.",
+		"A .json file exported from Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
 	"import.sourceCalloutManagerDesc":
-		"Bring your customized callouts over from the Callout Manager plugin.",
+		"Your customized callouts from the plugin.",
 	"import.sourceAdmonition": "Admonition",
 	"import.sourceAdmonitionDesc":
-		"Bring your custom admonitions over from the Admonition plugin.",
+		"Your custom admonitions from the plugin.",
+	"import.sourceOtherPlugins": "From another plugin",
 
 	// Import — plugin import window (Admonition and Callout Manager alike)
-	"import.removeFile": "Remove file",
 	"import.fileReady": "Ready to import.",
+	"import.upload": "Upload",
+	"import.replace": "Replace",
+	"import.fileUploaded": "Uploaded {{name}}.",
+	"import.fileReplaced": "Replaced the file with {{name}}.",
 	"import.pasteButton": "Paste",
-	"import.pasted": "Pasted from the clipboard",
-	"import.clearPaste": "Clear pasted text",
+	// Pressing Import, or choosing the empty fallback, before it holds anything.
+	// One per fallback: Callout Manager's window takes pasted text, Admonition's
+	// an uploaded file.
+	"import.pasteFirst": "Paste the copied styles first.",
+	"import.uploadFirst": "Upload a file first.",
+	"import.cmPlaceholder": "Paste the copied styles, or a data.json, here…",
 	"import.clipboardEmpty": "The clipboard is empty. Copy the data first.",
-	"import.clipboardUnreadable":
-		"The clipboard could not be read. Save the data as a file and choose it instead.",
+	// Says nothing about choosing a file: the one window that reads the
+	// clipboard has no file option.
+	"import.clipboardBlocked":
+		"The clipboard could not be read. Paste into the box yourself instead.",
 	"import.importing": "Importing…",
 	"import.err.fileUnreadable": "The file could not be read.",
-	// Retired with the window's second view: nothing looks these up. They stay
-	// until a translation pass drops them from every locale, since a locale key
-	// English lacks fails tests/locales.test.ts.
-	"import.back": "Back",
-	"import.cmUseManual": "Use a file or copied styles instead",
-	"import.cmPasteLabel": "Or paste Callout Manager's copied styles here:",
-	"import.cmPlaceholder": "Paste the copied styles, or a data.json, here…",
-	"import.admUseManual": "Use a file or pasted JSON instead",
-	"import.admPasteLabel": "Or paste the JSON here:",
-	"import.admPlaceholder": "Paste your admonitions here…",
 
 	// Shared by the export format chooser and the plugin import window.
 	"settings.recommended": "Recommended",
@@ -1485,16 +1485,6 @@ export const en: Record<string, string> = {
 	"import.cmFromVault": "This vault",
 	"import.cmVaultChecking": "Looking for the Callout Manager plugin…",
 	"import.cmVaultFound": "{{count}} customized callout(s) found.",
-	"import.cmVaultNotFound":
-		"No customized callouts were found in this vault.",
-	"import.cmVaultNotInstalled":
-		"Callout Manager isn't installed in this vault.",
-	"import.cmVaultUnreadable":
-		"Callout Manager's settings file in this vault could not be read.",
-	"import.cmFromFile": "A file",
-	"import.cmFromFileDesc":
-		"A Callout Manager data.json, or its copied styles saved as a file.",
-	"import.cmChooseFile": "Choose file…",
 	"import.cmFromPaste": "Copied styles",
 	"import.cmFromPasteDesc":
 		"What Callout Manager's Copy button copies, or a data.json.",
@@ -1512,16 +1502,10 @@ export const en: Record<string, string> = {
 		'ID "{{value}}" is already used as an alias by another callout ("{{other}}") and was skipped.',
 	"import.warn.cmNoColorDefault":
 		"No color was set in Callout Manager, so its default gray was used.",
-	"import.warn.cmThemeCondition":
-		"This callout's color or icon was set for one theme only. Callout " +
-		"Studio has no per-theme styling, so it was brought over for every theme.",
 	// Previous warning keys remain while their existing translations are retired.
 	// New keys let the corrected report fall back to English in every locale.
 	"import.warn.cmThemeConditionPartial":
 		"Theme-dependent styling cannot be preserved. Unconditional values are preferred; any conditional fallback is applied across themes.",
-	"import.warn.cmCustomStyles":
-		"This callout also has custom CSS in Callout Manager. That styling is " +
-		"not part of the import, so only its icon and color came over.",
 	"import.warn.cmCustomStylesSkipped":
 		"Custom CSS from Callout Manager is not imported. Only supported icon and color settings can be brought over.",
 	"import.warn.cmSchemeIcon": "Callout Studio uses one icon for both color schemes; the imported icon will be used in both.",
@@ -1537,18 +1521,8 @@ export const en: Record<string, string> = {
 	"import.admFromVault": "This vault",
 	"import.admVaultChecking": "Looking for the Admonition plugin…",
 	"import.admVaultFound": "{{count}} custom admonition(s) found.",
-	"import.admVaultNotFound":
-		"No custom admonitions were found in this vault.",
-	"import.admVaultNotInstalled":
-		"Admonition isn't installed in this vault.",
-	"import.admVaultUnreadable":
-		"Admonition's settings file in this vault could not be read.",
 	"import.admFromFile": "A file",
 	"import.admFromFileDesc": "An admonitions.json file, or a shared pack.",
-	"import.admChooseFile": "Choose file…",
-	"import.admFromPaste": "Copied JSON",
-	"import.admFromPasteDesc":
-		"Admonition JSON or a data.json, copied to the clipboard.",
 	"import.admBtnCancel": "Cancel",
 	"import.admBtnImport": "Import",
 	"import.err.admNotRecognized":
@@ -1561,8 +1535,6 @@ export const en: Record<string, string> = {
 		'No icon named "{{value}}" was found in any icon library, so the default icon was used instead.',
 	"import.warn.admIconUnknownExisting":
 		'No icon named "{{value}}" was found in any icon library, so "{{id}}" kept the icon it already had.',
-	"import.warn.admImageFailed":
-		"The uploaded picture could not be read, so the default icon was used instead.",
 	"import.warn.admImageSkipped":
 		"The uploaded picture could not be read and was not imported.",
 	"import.warn.admIconWithCss":

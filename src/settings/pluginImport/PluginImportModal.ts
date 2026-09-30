@@ -2,22 +2,29 @@
  * settings/pluginImport/PluginImportModal.ts — the one window that imports from
  * another callout plugin, Admonition and Callout Manager alike.
  *
- * One screen: three options, stacked, and exactly one Import, in the footer:
+ * One screen, at most two options, and exactly one Import, in the footer:
  *
- *   ┌──────────────────────────────────────────┐
- *   │ Import from Admonition                 ✕ │
- *   ├──────────────────────────────────────────┤
- *   │ ┃▣ This vault  (👍 Recommended)        ┃ │  ← active: accent border
- *   │ ┃  12 custom admonitions found.        ┃ │
- *   │  ▢ A file                                │
- *   │  ▢ Copied JSON                           │
- *   ├──────────────────────────────────────────┤
- *   │                       [Cancel] [Import]  │
- *   └──────────────────────────────────────────┘
+ *   ┌──────────────────────────────────────────────┐
+ *   │ Import from Callout Manager                ✕ │
+ *   ├──────────────────────────────────────────────┤
+ *   │  ▣ This vault  (Recommended)             (•) │
+ *   │    12 customized callouts found.             │
+ *   │                                              │
+ *   │  ▣ Copied styles               [Paste]   ( ) │
+ *   │    What Callout Manager's Copy button…       │
+ *   │  ┌────────────────────────────────────────┐  │
+ *   │  │ a text box, pasted into or filled by   │  │
+ *   │  │ the Paste button                       │  │
+ *   │  └────────────────────────────────────────┘  │
+ *   ├──────────────────────────────────────────────┤
+ *   │                           [Cancel] [Import]  │
+ *   └──────────────────────────────────────────────┘
  *
- * When the other plugin's data is not in this vault, "This vault" stays on
- * screen, greyed out, saying why. Each box is its own button: there is nothing
- * else on it to press (see `activate`).
+ * The second option is the source's one fallback (`source.manual`): that paste
+ * card for Callout Manager, a file card with an Upload button for Admonition.
+ * When the other plugin's data is not in this vault, "This vault" is simply
+ * not there — no greyed-out card and no line saying why — and the fallback
+ * stands alone, with nothing to choose between.
  *
  * What the footer Import acts on is decided in one place, pluginImportFlow.ts,
  * from state rather than from which control was touched last. This class keeps
@@ -34,11 +41,11 @@ import { blockedWhilePaused } from "../pausedGuard";
 import { writeSettingsBackup } from "../../manager/settingsBackup";
 import type { SettingsSectionContext } from "../sections/types";
 import {
-	IMPORT_OPTIONS,
 	activeOption,
 	canImport,
 	initialFlow,
 	isFilled,
+	vaultOffered,
 	type ImportOption,
 } from "./pluginImportFlow";
 import {
@@ -47,31 +54,21 @@ import {
 	type PluginImportParse,
 	type PluginImportSource,
 } from "./pluginImportSource";
-import {
-	markActive,
-	renderOptions,
-	vaultStatus,
-	type OptionsRefs,
-} from "./pluginImportViews";
-
-/** Where focus goes after the body is redrawn; null leaves it alone. */
-type FocusIntent = ImportOption | "import" | null;
+import { renderOptions, type OptionsView } from "./pluginImportViews";
 
 export class PluginImportModal extends Modal {
 	private flow = initialFlow();
 	private vaultBatch: PluginImportBatch | null = null;
 	private stagedFile: File | null = null;
 	private pasteText = "";
-	/** i18n key: why the last clipboard read brought nothing back. */
-	private pasteError: string | null = null;
 	/** Bumped on every open and close, so late async work can tell it is stale. */
 	private generation = 0;
 
-	private fileInput!: HTMLInputElement;
+	/** The file picker; null in a window whose fallback is pasted text. */
+	private fileInput: HTMLInputElement | null = null;
 	private announcer!: HTMLElement;
-	private viewEl!: HTMLElement;
 	private importBtn!: HTMLButtonElement;
-	private options: OptionsRefs | null = null;
+	private view: OptionsView | null = null;
 
 	constructor(
 		private readonly ctx: SettingsSectionContext,
@@ -86,7 +83,6 @@ export class PluginImportModal extends Modal {
 		this.vaultBatch = null;
 		this.stagedFile = null;
 		this.pasteText = "";
-		this.pasteError = null;
 
 		const { copy } = this.source;
 		this.modalEl.addClass(this.source.modalClass);
@@ -97,33 +93,42 @@ export class PluginImportModal extends Modal {
 			cls: "cs-import-instructions",
 		});
 
-		// Created once and attached for the window's whole life, outside the
-		// part that is redrawn, for the reason ImportSourceModal spells out: a
-		// file input built fresh and left detached does not reliably open
-		// Chromium's file chooser.
-		this.fileInput = this.contentEl.createEl("input", {
-			cls: "cs-import-file-input",
-			type: "file",
-			attr: { accept: this.source.fileAccept },
-		});
-		this.fileInput.addEventListener("change", () => {
-			const file = this.fileInput.files?.[0];
-			// Reset so picking the same file again still fires `change`.
-			this.fileInput.value = "";
-			if (file) this.stageFile(file);
-		});
+		// Created once and attached for the window's whole life, for the reason
+		// ImportSourceModal spells out: a file input built fresh and left
+		// detached does not reliably open Chromium's file chooser.
+		this.fileInput = null;
+		if (this.source.manual.kind === "file") {
+			const input = this.contentEl.createEl("input", {
+				cls: "cs-import-file-input",
+				type: "file",
+				attr: { accept: this.source.manual.accept },
+			});
+			input.addEventListener("change", () => {
+				const file = input.files?.[0];
+				// Reset so picking the same file again still fires `change`.
+				input.value = "";
+				if (file) this.stageFile(file);
+			});
+			this.fileInput = input;
+		}
 
-		// Says what the probe found, and why a clipboard read brought nothing back.
-		// Created empty, before the probe starts, because a live region only
-		// reliably announces changes made after it exists — and outside the
-		// redrawn part, so a redraw cannot cut it off.
+		// Says what the probe found. Created empty, before the probe starts,
+		// because a live region only reliably announces changes made after it
+		// exists.
 		this.announcer = this.contentEl.createDiv({
 			cls: "cs-import-announcer",
 			attr: { role: "status", "aria-live": "polite", "aria-atomic": "true" },
 		});
 
-		// The part that is redrawn: the three options and nothing else.
-		this.viewEl = this.contentEl.createDiv();
+		// Drawn once; from here on `update()` writes what changes in place.
+		this.view = renderOptions(this.contentEl, this.titleEl, copy, this.source.manual, {
+			onChoose: (option) => this.choose(option, true),
+			onPasteFocus: () => this.choose("manual", false),
+			onUpload: () => this.openPicker(),
+			onPaste: () => void this.pasteFromClipboard(),
+			onPasteInput: (text) => this.setPaste(text),
+		});
+		if (this.source.manual.kind === "file") this.bindFileDrop(this.view.manualEl);
 
 		const footer = applyModalChrome(this, { footer: true });
 		footer
@@ -135,7 +140,7 @@ export class PluginImportModal extends Modal {
 		});
 		this.importBtn.addEventListener("click", () => void this.runImport());
 
-		this.render(null);
+		this.update();
 		void this.probe(generation);
 	}
 
@@ -152,7 +157,7 @@ export class PluginImportModal extends Modal {
 
 	onClose(): void {
 		this.generation++;
-		this.options = null;
+		this.view = null;
 		removeModalChrome(this);
 		this.contentEl.empty();
 	}
@@ -161,31 +166,8 @@ export class PluginImportModal extends Modal {
 	 * Drawing
 	 * -------------------------------------------------------------- */
 
-	/** Redraw the three options, then bring the footer in line. */
-	private render(focus: FocusIntent): void {
-		this.viewEl.empty();
-		this.options = renderOptions(
-			this.viewEl,
-			this.titleEl,
-			this.source.copy,
-			{
-				probe: this.flow.probe,
-				vaultCount: this.vaultBatch?.size ?? 0,
-				fileName: this.stagedFile?.name ?? null,
-				pasted: this.flow.hasPaste,
-				pasteError: this.pasteError,
-			},
-			{ onActivate: (option) => this.activate(option) },
-		);
-		this.bindFileDrop();
-		this.sync();
-		this.focus(focus);
-	}
-
-	/** The file box accepts the same File that the picker passes to stageFile. */
-	private bindFileDrop(): void {
-		const box = this.options?.file.el;
-		if (!box) return;
+	/** The file card accepts the same File that the picker passes to stageFile. */
+	private bindFileDrop(box: HTMLElement): void {
 		box.addEventListener("dragover", (ev) => {
 			if (!ev.dataTransfer?.types.includes("Files")) return;
 			ev.preventDefault();
@@ -195,7 +177,7 @@ export class PluginImportModal extends Modal {
 			}
 		});
 		box.addEventListener("dragleave", (ev) => {
-			// Crossing a child inside the box is not leaving the drop target.
+			// Crossing a child inside the card is not leaving the drop target.
 			if (box.contains(ev.relatedTarget as Node | null)) return;
 			box.removeClass("is-drop-target");
 		});
@@ -209,8 +191,9 @@ export class PluginImportModal extends Modal {
 	}
 
 	/**
-	 * Everything that changes without a redraw: which option is active, and the
-	 * footer Import. The only writer of either, so they cannot disagree.
+	 * Bring the cards and the footer Import in line with state. The only writer
+	 * of either, so which card is active, Import's label, its readiness and
+	 * what it says it would import cannot disagree.
 	 *
 	 * Import is soft-disabled — `aria-disabled` and `cs-btn-disabled`, like the
 	 * callout editor's Save — rather than `disabled`. It stays focusable, so it
@@ -218,9 +201,13 @@ export class PluginImportModal extends Modal {
 	 * focus back to it when the stacked report closes; a disabled button would
 	 * refuse that focus and drop it on the page.
 	 */
-	private sync(): void {
-		const active = activeOption(this.flow);
-		if (this.options) markActive(this.options, active);
+	private update(): void {
+		if (!this.view) return;
+		this.view.update({
+			flow: this.flow,
+			vaultCount: this.vaultBatch?.size ?? 0,
+			fileName: this.stagedFile?.name ?? null,
+		});
 
 		const ready = canImport(this.flow);
 		this.importBtn.setText(
@@ -228,27 +215,9 @@ export class PluginImportModal extends Modal {
 		);
 		this.importBtn.setAttribute("aria-disabled", ready ? "false" : "true");
 		this.importBtn.toggleClass("cs-btn-disabled", !ready);
-		if (active && this.options) {
-			this.importBtn.setAttribute("aria-describedby", this.options[active].describedBy);
-		} else {
-			this.importBtn.removeAttribute("aria-describedby");
-		}
-	}
-
-	private focus(intent: FocusIntent): void {
-		if (intent === null) return;
-		if (intent === "import") {
-			this.importBtn.focus({ preventScroll: true });
-			return;
-		}
-		this.options?.[intent].el.focus({ preventScroll: true });
-	}
-
-	/** Which option's box has focus now, so a redraw can put it back. */
-	private focusInView(): FocusIntent {
-		const active = this.viewEl.ownerDocument.activeElement;
-		if (!this.options || !active) return null;
-		return IMPORT_OPTIONS.find((option) => this.options?.[option].el === active) ?? null;
+		const active = activeOption(this.flow);
+		if (active) this.importBtn.setAttribute("aria-describedby", this.view.describedBy(active));
+		else this.importBtn.removeAttribute("aria-describedby");
 	}
 
 	/* -------------------------------------------------------------- *
@@ -256,84 +225,96 @@ export class PluginImportModal extends Modal {
 	 * -------------------------------------------------------------- */
 
 	/**
-	 * A click on an option's box. One that holds something but is not the
-	 * active one becomes active — no redraw, so focus stays put. An empty one is
-	 * filled instead, which chooses it once there is something in it. And the
-	 * active one is filled again: the box is the only thing to press, so a
-	 * second click on it is how a file is swapped for another or a paste
-	 * brought up to date. The vault is filled by the probe alone.
+	 * A card or its radio dot was pressed: make that option the one Import acts
+	 * on. Only an option that holds something can be chosen — an empty one is
+	 * filled first, by its own button or its text box, and pressing it while
+	 * "This vault" is there to choose instead says so in a notice. Alone, the
+	 * fallback is not being chosen against anything, and a click on its card
+	 * says nothing; nor does focus entering an empty paste box (`explain`).
 	 */
-	private activate(option: ImportOption): void {
+	private choose(option: ImportOption, explain: boolean): void {
 		if (this.flow.busy) return;
-		const filled = isFilled(this.flow, option);
-		if (option !== "vault" && (!filled || activeOption(this.flow) === option)) {
-			if (option === "file") this.chooseFile();
-			else void this.paste();
-		} else if (filled) {
-			this.flow.chosen = option;
-			this.sync();
+		if (!isFilled(this.flow, option)) {
+			if (explain && option === "manual" && vaultOffered(this.flow.probe)) this.noticeFillFirst();
+			return;
 		}
+		this.flow.chosen = option;
+		this.update();
 	}
 
-	private chooseFile(): void {
-		if (!this.flow.busy) this.fileInput.click();
+	/** The fallback is empty: say what fills it — a paste, or an upload. */
+	private noticeFillFirst(): void {
+		new Notice(t(this.source.manual.kind === "file" ? "import.uploadFirst" : "import.pasteFirst"));
+	}
+
+	/** Upload, or Replace: open the file picker. */
+	private openPicker(): void {
+		if (this.flow.busy) return;
+		this.fileInput?.click();
 	}
 
 	/**
-	 * Picking a file only stages it, replacing any file staged before — the
-	 * footer Import is still the one thing that imports. Focus goes there, with
-	 * the file as its description: Import is the next thing to press.
+	 * Uploading a file only stages it, replacing any file staged before — the
+	 * footer Import is still the one thing that imports. The card is rewritten
+	 * in place, so its Upload button is the button that now reads Replace, and
+	 * a notice says which of the two just happened. The file becomes the
+	 * active option and focus goes to Import: the next thing to press.
 	 */
 	private stageFile(file: File): void {
 		if (this.flow.busy) return;
+		const replaced = this.stagedFile !== null;
 		this.stagedFile = file;
-		this.flow.hasFile = true;
-		this.flow.chosen = "file";
-		this.render("import");
+		this.flow.hasManual = true;
+		this.flow.chosen = "manual";
+		this.update();
+		new Notice(t(replaced ? "import.fileReplaced" : "import.fileUploaded", { name: file.name }));
+		this.importBtn.focus({ preventScroll: true });
 	}
 
 	/**
-	 * Read the clipboard straight into the paste option. Read now, from the
-	 * click, rather than at Import: the clipboard is the user's, and what was
-	 * on it when they clicked is what they meant.
+	 * The paste box changed. Kept as typed and handed to the source only when
+	 * Import is pressed, as a file's text is; whitespace alone is nothing to
+	 * import. Typing in the box is choosing it.
 	 */
-	private async paste(): Promise<void> {
-		if (this.flow.busy) return;
+	private setPaste(text: string): void {
+		this.pasteText = text;
+		this.flow.hasManual = text.trim().length > 0;
+		this.flow.chosen = "manual";
+		this.update();
+	}
+
+	/**
+	 * The Paste button: put the clipboard's text in the box, in place of
+	 * whatever was there. The one clipboard read in the window, and only ever
+	 * at this button — what it brought is then on screen, in the box, to see
+	 * and to edit. A clipboard that is empty, unreadable or too large says so
+	 * in a notice and leaves the box as it was.
+	 */
+	private async pasteFromClipboard(): Promise<void> {
+		const input = this.view?.pasteInput;
+		if (this.flow.busy || !input) return;
 		const generation = this.generation;
-		let text: string | null;
+		let text: string;
 		try {
 			text = await navigator.clipboard.readText();
 		} catch {
-			text = null;
-		}
-		if (generation !== this.generation || this.flow.busy) return;
-		if (text !== null) {
-			try {
-				assertImportTextSize(text);
-			} catch {
-				this.pasteError = "import.err.tooLarge";
-				this.announcer.setText(t(this.pasteError));
-				if (!this.flow.hasPaste) this.render("paste");
-				return;
-			}
-		}
-
-		if (text === null || text.trim().length === 0) {
-			const error = text === null ? "import.clipboardUnreadable" : "import.clipboardEmpty";
-			this.announcer.setText(t(error));
-			// A second read that brings nothing back — an emptied clipboard, or a
-			// phone's paste prompt dismissed — leaves the paste already held, and
-			// still ready, as it was.
-			if (this.flow.hasPaste) return;
-			this.pasteError = error;
-			this.render(this.focusInView());
+			if (generation === this.generation) new Notice(t("import.clipboardBlocked"));
 			return;
 		}
-		this.pasteText = text;
-		this.pasteError = null;
-		this.flow.hasPaste = true;
-		this.flow.chosen = "paste";
-		this.render("import");
+		if (generation !== this.generation || this.flow.busy) return;
+		if (text.trim() === "") {
+			new Notice(t("import.clipboardEmpty"));
+			return;
+		}
+		try {
+			assertImportTextSize(text);
+		} catch (error) {
+			new Notice(t(error instanceof ImportLimitError ? error.messageKey : "import.err.processingFailed"));
+			return;
+		}
+		input.value = text;
+		this.setPaste(text);
+		this.importBtn.focus({ preventScroll: true });
 	}
 
 	private async probe(generation: number): Promise<void> {
@@ -342,11 +323,12 @@ export class PluginImportModal extends Modal {
 
 		this.flow.probe = result.kind;
 		this.vaultBatch = result.kind === "found" ? result.batch : null;
-		// The vault box's own status line, word for word.
-		this.announcer.setText(
-			vaultStatus(this.source.copy, result.kind, this.vaultBatch?.size ?? 0),
-		);
-		this.render(this.focusInView());
+		// The vault card's own status line, word for word. A vault with nothing
+		// to import is not announced: its card just goes.
+		if (this.vaultBatch) {
+			this.announcer.setText(t(this.source.copy.vaultFound, { count: this.vaultBatch.size }));
+		}
+		this.update();
 	}
 
 	/* -------------------------------------------------------------- *
@@ -355,7 +337,14 @@ export class PluginImportModal extends Modal {
 
 	private async runImport(): Promise<void> {
 		const target = activeOption(this.flow);
-		if (this.flow.busy || !canImport(this.flow) || !target) return;
+		if (this.flow.busy) return;
+		if (!canImport(this.flow) || !target) {
+			// Nothing in this vault and nothing handed over yet: say what to do
+			// first. Not while the probe is still looking — the vault may yet
+			// turn up and arm Import by itself.
+			if (this.flow.probe !== "checking") this.noticeFillFirst();
+			return;
+		}
 
 		const generation = this.generation;
 		this.setBusy(true);
@@ -382,9 +371,16 @@ export class PluginImportModal extends Modal {
 				? { batch: this.vaultBatch }
 				: { errorKey: "import.err.parseFailed" };
 		}
-		if (target === "paste") return this.source.fromText(this.pasteText);
+		if (this.source.manual.kind === "paste") {
+			try {
+				assertImportTextSize(this.pasteText);
+			} catch (error) {
+				return { errorKey: error instanceof ImportLimitError ? error.messageKey : "import.err.processingFailed" };
+			}
+			return this.source.fromText(this.pasteText);
+		}
 
-		// Read only now, not when staged: a file picked and then replaced is
+		// Read only now, not when staged: a file uploaded and then replaced is
 		// never opened at all.
 		const file = this.stagedFile;
 		if (!file) return { errorKey: "import.err.fileUnreadable" };
@@ -443,8 +439,8 @@ export class PluginImportModal extends Modal {
 
 	private setBusy(busy: boolean): void {
 		this.flow.busy = busy;
-		if (busy) this.options?.file.el.removeClass("is-drop-target");
-		this.sync();
+		if (busy) this.view?.manualEl.removeClass("is-drop-target");
+		this.update();
 	}
 
 	/** The report modal in its "nothing usable here" mode. */

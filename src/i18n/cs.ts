@@ -959,23 +959,22 @@ export const cs: Record<string, string> = {
 		'Ikona "{{value}}" není v tomto trezoru dostupná, proto "{{id}}" si ponechalo ikonu, kterou již mělo.',
 	"import.chooseSource": "Importovat z",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Načíst soubor .json exportovaný z Callout Studio.",
+	"import.sourceStudioDesc": "Soubor .json exportovaný z Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Přeneste své přizpůsobené callouty z pluginu Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Vaše přizpůsobené callouty z pluginu.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Přeneste své vlastní admonition z pluginu Admonition.",
-	"import.back": "Zpět",
-	"import.removeFile": "Odebrat soubor",
+	"import.sourceAdmonitionDesc": "Vaše vlastní admonition z pluginu.",
+	"import.sourceOtherPlugins": "Z jiného pluginu",
 	"import.fileReady": "Připraveno k importu.",
+	"import.upload": "Nahrát",
+	"import.replace": "Nahradit",
+	"import.fileUploaded": "Nahráno: {{name}}.",
+	"import.fileReplaced": "Soubor byl nahrazen souborem {{name}}.",
 	"import.pasteButton": "Vložit",
-	"import.pasted": "Vloženo ze schránky",
-	"import.clearPaste": "Vymazat vložený text",
+	"import.pasteFirst": "Nejprve vložte zkopírované styly.",
+	"import.uploadFirst": "Nejprve nahrajte soubor.",
 	"import.clipboardEmpty": "Schránka je prázdná. Nejprve zkopírujte data.",
-	"import.clipboardUnreadable":
-		"Schránku se nepodařilo přečíst. Uložte data jako soubor a vyberte ho místo toho.",
+	"import.clipboardBlocked": "Schránku se nepodařilo přečíst. Vložte text do pole ručně.",
 	"import.importing": "Importování…",
 	"import.err.fileUnreadable": "Soubor se nepodařilo přečíst.",
 	"import.cmTitle": "Import z Callout Manager",
@@ -985,21 +984,9 @@ export const cs: Record<string, string> = {
 	"import.cmFromVault": "Tento trezor",
 	"import.cmVaultChecking": "Hledání pluginu Callout Manager…",
 	"import.cmVaultFound": "Nalezeno přizpůsobených calloutů: {{count}}.",
-	"import.cmVaultNotFound":
-		"V tomto trezoru nebyly nalezeny žádné přizpůsobené callouty.",
-	"import.cmVaultNotInstalled": "Callout Manager není v tomto trezoru nainstalován.",
-	"import.cmVaultUnreadable":
-		"Soubor s nastavením pluginu Callout Manager v tomto trezoru se nepodařilo přečíst.",
-	"import.cmUseManual": "Použít místo toho soubor nebo zkopírované styly",
-	"import.cmFromFile": "Soubor",
-	"import.cmFromFileDesc":
-		"Soubor data.json z Callout Manager nebo z něj zkopírované styly uložené jako soubor.",
-	"import.cmChooseFile": "Vybrat soubor…",
 	"import.cmFromPaste": "Zkopírované styly",
 	"import.cmFromPasteDesc":
 		"To, co zkopíruje tlačítko Copy v Callout Manager, nebo soubor data.json.",
-	"import.cmPasteLabel":
-		"Nebo sem vložte styly zkopírované z Callout Manager:",
 	"import.cmPlaceholder":
 		"Vložte zkopírované styly nebo soubor data.json sem…",
 	"import.cmBtnCancel": "Zrušit",
@@ -1018,13 +1005,6 @@ export const cs: Record<string, string> = {
 	"import.warn.cmNoColorDefault":
 		"V Callout Manager nebyla nastavena barva, proto byla použita výchozí " +
 		"šedá.",
-	"import.warn.cmThemeCondition":
-		"Barva nebo ikona tohoto calloutu byla nastavena jen pro jedno téma. " +
-		"Callout Studio nemá styly pro jednotlivá témata, proto byla přenesena " +
-		"pro všechna témata.",
-	"import.warn.cmCustomStyles":
-		"Tento callout má v Callout Manager i vlastní CSS. Tento styl není " +
-		"součástí importu, proto se přenesla jen jeho ikona a barva.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "Styly závislé na motivu nelze zachovat. Přednost mají nepodmíněné hodnoty; případná podmíněná náhradní hodnota se použije pro všechny motivy.",
@@ -1039,20 +1019,8 @@ export const cs: Record<string, string> = {
 	"import.admFromVault": "Tento trezor",
 	"import.admVaultChecking": "Hledám plugin Admonition…",
 	"import.admVaultFound": "Nalezeno {{count}} vlastních admonition.",
-	"import.admVaultNotFound":
-		"V tomto trezoru nebyly nalezeny žádné vlastní admonition.",
-	"import.admVaultNotInstalled": "Admonition není v tomto trezoru nainstalován.",
-	"import.admVaultUnreadable":
-		"Soubor s nastavením pluginu Admonition v tomto trezoru se nepodařilo přečíst.",
-	"import.admUseManual": "Použít místo toho soubor nebo vložený JSON",
 	"import.admFromFile": "Soubor",
 	"import.admFromFileDesc": "Soubor admonitions.json nebo sdílený balíček.",
-	"import.admChooseFile": "Vybrat soubor…",
-	"import.admFromPaste": "Zkopírovaný JSON",
-	"import.admFromPasteDesc":
-		"JSON z Admonition nebo soubor data.json, zkopírovaný do schránky.",
-	"import.admPasteLabel": "Nebo sem vložte JSON:",
-	"import.admPlaceholder": "Vložte sem své admonition…",
 	"import.admBtnCancel": "Zrušit",
 	"import.admBtnImport": "Importovat",
 	"import.err.admNotRecognized":
@@ -1067,9 +1035,6 @@ export const cs: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'V žádné knihovně ikon není ikona s názvem "{{value}}", proto si ' +
 		'"{{id}}" ponechal svou dosavadní ikonu.',
-	"import.warn.admImageFailed":
-		"Nahraný obrázek se nepodařilo načíst, proto byla použita výchozí " +
-		"ikona.",
 	"import.warn.admUnsupportedOptions": "Tyto možnosti pluginu Admonition se neimportují: {{fields}}.",
 	"import.warn.admImageSkipped": "Nahraný obrázek se nepodařilo přečíst a nebyl importován.",
 	"import.warn.admIconWithCss":

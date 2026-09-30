@@ -941,24 +941,22 @@ export const bg: Record<string, string> = {
 		'Иконата "{{value}}" не е налична в това хранилище, затова "{{id}}" запази иконата, която вече имаше.',
 	"import.chooseSource": "Импортиране от",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Зареди .json файл, експортиран от Callout Studio.",
+	"import.sourceStudioDesc": "Файл .json, експортиран от Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Пренесете персонализираните си callout-и от приставката Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Персонализираните ви callout-и от приставката.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Пренесете своите персонализирани admonition от приставката " +
-		"Admonition.",
-	"import.back": "Назад",
-	"import.removeFile": "Премахване на файл",
+	"import.sourceAdmonitionDesc": "Вашите персонализирани admonition от приставката.",
+	"import.sourceOtherPlugins": "От друга приставка",
 	"import.fileReady": "Готов за импортиране.",
+	"import.upload": "Качване",
+	"import.replace": "Замяна",
+	"import.fileUploaded": "Качено: {{name}}.",
+	"import.fileReplaced": "Файлът е заменен с {{name}}.",
 	"import.pasteButton": "Поставяне",
-	"import.pasted": "Поставено от клипборда",
-	"import.clearPaste": "Изчистване на поставения текст",
+	"import.pasteFirst": "Първо поставете копираните стилове.",
+	"import.uploadFirst": "Първо качете файл.",
 	"import.clipboardEmpty": "Клипбордът е празен. Първо копирайте данните.",
-	"import.clipboardUnreadable":
-		"Клипбордът не можа да бъде прочетен. Запазете данните като файл и го изберете вместо това.",
+	"import.clipboardBlocked": "Клипбордът не можа да бъде прочетен. Поставете в полето ръчно.",
 	"import.importing": "Импортиране…",
 	"import.err.fileUnreadable": "Файлът не можа да бъде прочетен.",
 	"import.cmTitle": "Импортиране от Callout Manager",
@@ -968,21 +966,9 @@ export const bg: Record<string, string> = {
 	"import.cmFromVault": "Това хранилище",
 	"import.cmVaultChecking": "Търсене на приставката Callout Manager…",
 	"import.cmVaultFound": "Намерени са {{count}} персонализирани callout-и.",
-	"import.cmVaultNotFound":
-		"В това хранилище не бяха намерени персонализирани callout-и.",
-	"import.cmVaultNotInstalled": "Callout Manager не е инсталиран в това хранилище.",
-	"import.cmVaultUnreadable":
-		"Файлът с настройки на Callout Manager в това хранилище не можа да бъде прочетен.",
-	"import.cmUseManual": "Използване на файл или копирани стилове вместо това",
-	"import.cmFromFile": "Файл",
-	"import.cmFromFileDesc":
-		"Файл data.json на Callout Manager или копираните му стилове, запазени като файл.",
-	"import.cmChooseFile": "Избор на файл…",
 	"import.cmFromPaste": "Копирани стилове",
 	"import.cmFromPasteDesc":
 		"Това, което копира бутонът Copy на Callout Manager, или файл data.json.",
-	"import.cmPasteLabel":
-		"Или поставете копираните от Callout Manager стилове тук:",
 	"import.cmPlaceholder":
 		"Поставете копираните стилове или файл data.json тук…",
 	"import.cmBtnCancel": "Отказ",
@@ -1001,13 +987,6 @@ export const bg: Record<string, string> = {
 	"import.warn.cmNoColorDefault":
 		"В Callout Manager не беше зададен цвят, затова беше използвано " +
 		"стандартното сиво.",
-	"import.warn.cmThemeCondition":
-		"Цветът или иконата на този callout бяха зададени само за една тема. " +
-		"Callout Studio няма стилове по теми, затова той беше пренесен за " +
-		"всички теми.",
-	"import.warn.cmCustomStyles":
-		"Този callout има и персонализиран CSS в Callout Manager. Този стил не " +
-		"е част от импортирането, затова бяха пренесени само иконата и цветът.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "Стиловете, зависещи от темата, не могат да бъдат запазени. Предпочитат се безусловните стойности; всяка условна резервна стойност се прилага към всички теми.",
@@ -1022,20 +1001,8 @@ export const bg: Record<string, string> = {
 	"import.admFromVault": "Този трезор",
 	"import.admVaultChecking": "Търсене на приставката Admonition…",
 	"import.admVaultFound": "Намерени са {{count}} персонализирани admonition.",
-	"import.admVaultNotFound":
-		"В този трезор не са намерени персонализирани admonition.",
-	"import.admVaultNotInstalled": "Admonition не е инсталиран в това хранилище.",
-	"import.admVaultUnreadable":
-		"Файлът с настройки на Admonition в този трезор не можа да бъде прочетен.",
-	"import.admUseManual": "Използване на файл или поставен JSON вместо това",
 	"import.admFromFile": "Файл",
 	"import.admFromFileDesc": "Файл admonitions.json или споделен пакет.",
-	"import.admChooseFile": "Избор на файл…",
-	"import.admFromPaste": "Копиран JSON",
-	"import.admFromPasteDesc":
-		"JSON на Admonition или файл data.json, копиран в клипборда.",
-	"import.admPasteLabel": "Или поставете JSON тук:",
-	"import.admPlaceholder": "Поставете своите admonition тук…",
 	"import.admBtnCancel": "Отказ",
 	"import.admBtnImport": "Импортиране",
 	"import.err.admNotRecognized":
@@ -1050,9 +1017,6 @@ export const bg: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'В никоя библиотека с икони няма икона с име "{{value}}", затова ' +
 		'"{{id}}" запази досегашната си икона.',
-	"import.warn.admImageFailed":
-		"Каченото изображение не можа да бъде прочетено, затова беше " +
-		"използвана иконата по подразбиране.",
 	"import.warn.admUnsupportedOptions": "Тези опции на Admonition не се импортират: {{fields}}.",
 	"import.warn.admImageSkipped": "Каченото изображение не можа да бъде прочетено и не беше импортирано.",
 	"import.warn.admIconWithCss":

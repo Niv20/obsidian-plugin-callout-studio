@@ -908,43 +908,31 @@ export const hi: Record<string, string> = {
 		'"{{value}}" आइकन इस vault में उपलब्ध नहीं है, इसलिए "{{id}}" का मौजूदा आइकन बना रहा।',
 	"import.chooseSource": "इससे आयात करें",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Callout Studio से निर्यात की गई .json फ़ाइल लोड करें।",
+	"import.sourceStudioDesc": "Callout Studio से निर्यात की गई .json फ़ाइल।",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Callout Manager प्लगइन से अपने कस्टमाइज़ किए गए callout यहाँ लाएँ।",
+	"import.sourceCalloutManagerDesc": "प्लगइन से आपके कस्टमाइज़ किए गए callout।",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Admonition प्लगइन से अपने कस्टम admonition यहाँ ले आएँ।",
-	"import.back": "वापस",
-	"import.removeFile": "फ़ाइल हटाएँ",
+	"import.sourceAdmonitionDesc": "प्लगइन से आपके कस्टम admonition।",
+	"import.sourceOtherPlugins": "किसी दूसरे प्लगइन से",
 	"import.fileReady": "आयात के लिए तैयार।",
+	"import.upload": "अपलोड करें",
+	"import.replace": "बदलें",
+	"import.fileUploaded": "{{name}} अपलोड हो गई।",
+	"import.fileReplaced": "फ़ाइल को {{name}} से बदल दिया गया।",
 	"import.pasteButton": "पेस्ट करें",
-	"import.pasted": "क्लिपबोर्ड से पेस्ट किया गया",
-	"import.clearPaste": "पेस्ट किया गया टेक्स्ट साफ़ करें",
+	"import.pasteFirst": "पहले कॉपी किए गए स्टाइल पेस्ट करें।",
+	"import.uploadFirst": "पहले एक फ़ाइल अपलोड करें।",
 	"import.clipboardEmpty": "क्लिपबोर्ड खाली है। पहले डेटा कॉपी करें।",
-	"import.clipboardUnreadable":
-		"क्लिपबोर्ड पढ़ा नहीं जा सका। इसके बजाय डेटा को फ़ाइल के रूप में सहेजें और उसे चुनें।",
+	"import.clipboardBlocked": "क्लिपबोर्ड पढ़ा नहीं जा सका। इसके बजाय बॉक्स में खुद पेस्ट करें।",
 	"import.importing": "आयात किया जा रहा है…",
 	"import.err.fileUnreadable": "फ़ाइल पढ़ी नहीं जा सकी।",
 	"import.cmTitle": "Callout Manager से आयात करें",
 	"import.cmFromVault": "यह वॉल्ट",
 	"import.cmVaultChecking": "Callout Manager प्लगइन खोजा जा रहा है…",
 	"import.cmVaultFound": "{{count}} कस्टम callout मिले।",
-	"import.cmVaultNotFound": "इस वॉल्ट में कोई कस्टम callout नहीं मिला।",
-	"import.cmVaultNotInstalled": "इस वॉल्ट में Callout Manager इंस्टॉल नहीं है।",
-	"import.cmVaultUnreadable":
-		"इस वॉल्ट में Callout Manager की सेटिंग्स फ़ाइल पढ़ी नहीं जा सकी।",
-	"import.cmUseManual": "इसके बजाय फ़ाइल या कॉपी किए गए स्टाइल इस्तेमाल करें",
-	"import.cmFromFile": "एक फ़ाइल",
-	"import.cmFromFileDesc":
-		"Callout Manager की data.json, या फ़ाइल के रूप में सहेजे गए उसके कॉपी किए गए स्टाइल।",
-	"import.cmChooseFile": "फ़ाइल चुनें…",
 	"import.cmFromPaste": "कॉपी किए गए स्टाइल",
 	"import.cmFromPasteDesc":
 		"Callout Manager का Copy बटन जो कॉपी करता है, या एक data.json।",
-	"import.cmPasteLabel":
-		"या Callout Manager से कॉपी किए गए स्टाइल यहाँ पेस्ट करें:",
 	"import.cmInstructions":
 		"हर कस्टमाइज़ किया गया callout अपने आइकन और रंग के साथ आयात होता है। थीम के अनुसार स्टाइल और कस्टम CSS का यहाँ समकक्ष नहीं है, इसलिए वे आयात नहीं होते।",
 	"import.cmPlaceholder": "कॉपी किए गए स्टाइल या data.json की सामग्री यहाँ पेस्ट करें…",
@@ -961,10 +949,6 @@ export const hi: Record<string, string> = {
 		'ID "{{value}}" पहले से ही एक अन्य callout ("{{other}}") द्वारा alias के रूप में उपयोग की जा रही है और इसे छोड़ दिया गया।',
 	"import.warn.cmNoColorDefault":
 		"Callout Manager में कोई रंग सेट नहीं था, इसलिए उसका डिफ़ॉल्ट ग्रे इस्तेमाल किया गया।",
-	"import.warn.cmThemeCondition":
-		"इस callout का रंग या आइकन केवल एक थीम के लिए सेट था। Callout Studio में थीम-विशिष्ट स्टाइलिंग नहीं है, इसलिए इसे सभी थीम के लिए लाया गया।",
-	"import.warn.cmCustomStyles":
-		"इस callout में Callout Manager का कस्टम CSS भी है। यह स्टाइल आयात का हिस्सा नहीं है, इसलिए केवल इसका आइकन और रंग लाया गया।",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "थीम पर निर्भर शैली को सुरक्षित नहीं रखा जा सकता। बिना शर्त वाले मानों को प्राथमिकता दी जाती है; कोई भी सशर्त विकल्प सभी थीम पर लागू होगा।",
@@ -979,20 +963,8 @@ export const hi: Record<string, string> = {
 	"import.admFromVault": "यह वॉल्ट",
 	"import.admVaultChecking": "Admonition प्लगइन खोजा जा रहा है…",
 	"import.admVaultFound": "{{count}} कस्टम admonition मिले।",
-	"import.admVaultNotFound": "इस वॉल्ट में कोई कस्टम admonition नहीं मिला।",
-	"import.admVaultNotInstalled": "इस वॉल्ट में Admonition इंस्टॉल नहीं है।",
-	"import.admVaultUnreadable":
-		"इस वॉल्ट में Admonition की सेटिंग्स फ़ाइल पढ़ी नहीं जा सकी।",
-	"import.admUseManual":
-		"इसके बजाय फ़ाइल या पेस्ट किया गया JSON इस्तेमाल करें",
 	"import.admFromFile": "एक फ़ाइल",
 	"import.admFromFileDesc": "एक admonitions.json फ़ाइल, या कोई साझा पैक।",
-	"import.admChooseFile": "फ़ाइल चुनें…",
-	"import.admFromPaste": "कॉपी किया गया JSON",
-	"import.admFromPasteDesc":
-		"Admonition का JSON, या एक data.json, जो क्लिपबोर्ड पर कॉपी किया गया हो।",
-	"import.admPasteLabel": "या JSON यहाँ पेस्ट करें:",
-	"import.admPlaceholder": "अपने admonition यहाँ पेस्ट करें…",
 	"import.admBtnCancel": "रद्द करें",
 	"import.admBtnImport": "आयात",
 	"import.err.admNotRecognized":
@@ -1007,9 +979,6 @@ export const hi: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'"{{value}}" नाम का कोई आइकन किसी भी आइकन लाइब्रेरी में नहीं ' +
 		'मिला, इसलिए "{{id}}" ने अपना पुराना आइकन ही रखा।',
-	"import.warn.admImageFailed":
-		"अपलोड की गई तस्वीर पढ़ी नहीं जा सकी, इसलिए डिफ़ॉल्ट आइकन उपयोग " +
-		"किया गया।",
 	"import.warn.admUnsupportedOptions": "Admonition के ये विकल्प इंपोर्ट नहीं किए जाते: {{fields}}।",
 	"import.warn.admImageSkipped": "अपलोड किया गया चित्र पढ़ा नहीं जा सका और इंपोर्ट नहीं हुआ।",
 	"import.warn.admIconWithCss":

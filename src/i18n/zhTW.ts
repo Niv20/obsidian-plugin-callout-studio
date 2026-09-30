@@ -918,39 +918,31 @@ export const zhTW: Record<string, string> = {
 		"「{{value}}」圖示無法在此儲存庫使用，因此「{{id}}」保留原有圖示。",
 	"import.chooseSource": "從以下位置匯入",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc": "載入從 Callout Studio 匯出的 .json 檔案。",
+	"import.sourceStudioDesc": "從 Callout Studio 匯出的 .json 檔案。",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"從 Callout Manager 外掛程式匯入您自訂的 callout。",
+	"import.sourceCalloutManagerDesc": "您在外掛程式中自訂的 callout。",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"從 Admonition 外掛匯入您的自訂 admonition。",
-	"import.back": "返回",
-	"import.removeFile": "移除檔案",
+	"import.sourceAdmonitionDesc": "您在外掛程式中的自訂 admonition。",
+	"import.sourceOtherPlugins": "來自其他外掛程式",
 	"import.fileReady": "已準備好匯入。",
+	"import.upload": "上傳",
+	"import.replace": "取代",
+	"import.fileUploaded": "已上傳 {{name}}。",
+	"import.fileReplaced": "已將檔案取代為 {{name}}。",
 	"import.pasteButton": "貼上",
-	"import.pasted": "已從剪貼簿貼上",
-	"import.clearPaste": "清除貼上的文字",
+	"import.pasteFirst": "請先貼上複製的樣式。",
+	"import.uploadFirst": "請先上傳檔案。",
 	"import.clipboardEmpty": "剪貼簿是空的。請先複製資料。",
-	"import.clipboardUnreadable":
-		"無法讀取剪貼簿。請改為將資料儲存成檔案並選擇該檔案。",
+	"import.clipboardBlocked": "無法讀取剪貼簿。請改為自行貼到文字方塊中。",
 	"import.importing": "正在匯入…",
 	"import.err.fileUnreadable": "無法讀取檔案。",
 	"import.cmTitle": "從 Callout Manager 匯入",
 	"import.cmFromVault": "本儲存庫",
 	"import.cmVaultChecking": "正在尋找 Callout Manager 外掛…",
 	"import.cmVaultFound": "找到 {{count}} 個自訂 callout。",
-	"import.cmVaultNotFound": "在本儲存庫中找不到自訂 callout。",
-	"import.cmVaultNotInstalled": "本儲存庫尚未安裝 Callout Manager 外掛。",
-	"import.cmVaultUnreadable": "無法讀取本儲存庫中 Callout Manager 的設定檔。",
-	"import.cmUseManual": "改用檔案或複製的樣式",
-	"import.cmFromFile": "檔案",
-	"import.cmFromFileDesc": "Callout Manager 的 data.json，或儲存成檔案的複製樣式。",
-	"import.cmChooseFile": "選擇檔案…",
 	"import.cmFromPaste": "複製的樣式",
 	"import.cmFromPasteDesc":
 		"Callout Manager 的 Copy 按鈕所複製的內容，或一個 data.json 檔案。",
-	"import.cmPasteLabel": "或在此貼上從 Callout Manager 複製的樣式：",
 	"import.cmInstructions":
 		"每個自訂 callout 都會連同圖示與顏色一起匯入。依主題設定的樣式和自訂 CSS 在此沒有對應功能，因此不會匯入。",
 	"import.cmPlaceholder": "在此貼上複製的樣式或 data.json 檔案…",
@@ -964,10 +956,6 @@ export const zhTW: Record<string, string> = {
 		'未找到適用於新 callout "{{value}}" 的可用顏色；已跳過。',
 	"import.warn.cmNoColorDefault":
 		"Callout Manager 未設定顏色，因此使用預設灰色。",
-	"import.warn.cmThemeCondition":
-		"此 callout 的顏色或圖示只為單一佈景主題設定。Callout Studio 不支援各主題獨立樣式，因此已套用至所有主題。",
-	"import.warn.cmCustomStyles":
-		"此 callout 在 Callout Manager 中還有自訂 CSS。該樣式不包含在匯入內容中，因此僅匯入其圖示與顏色。",
 	"import.err.cmIdConflict":
 		'ID "{{value}}" 已被另一個 callout ("{{other}}") 用作別名，已跳過。',
 
@@ -983,18 +971,8 @@ export const zhTW: Record<string, string> = {
 	"import.admFromVault": "本儲存庫",
 	"import.admVaultChecking": "正在尋找 Admonition 外掛…",
 	"import.admVaultFound": "找到 {{count}} 個自訂 admonition。",
-	"import.admVaultNotFound": "在本儲存庫中找不到自訂 admonition。",
-	"import.admVaultNotInstalled": "本儲存庫尚未安裝 Admonition 外掛。",
-	"import.admVaultUnreadable": "無法讀取本儲存庫中 Admonition 的設定檔。",
-	"import.admUseManual": "改用檔案或貼上的 JSON",
 	"import.admFromFile": "檔案",
 	"import.admFromFileDesc": "admonitions.json 檔案，或共享的圖示包。",
-	"import.admChooseFile": "選擇檔案…",
-	"import.admFromPaste": "複製的 JSON",
-	"import.admFromPasteDesc":
-		"Admonition 的 JSON，或已複製到剪貼簿的 data.json。",
-	"import.admPasteLabel": "或在此貼上 JSON：",
-	"import.admPlaceholder": "在此貼上您的 admonition…",
 	"import.admBtnCancel": "取消",
 	"import.admBtnImport": "匯入",
 	"import.err.admNotRecognized":
@@ -1005,7 +983,6 @@ export const zhTW: Record<string, string> = {
 		'在所有圖示庫中都找不到名為 "{{value}}" 的圖示，已改用預設圖示。',
 	"import.warn.admIconUnknownExisting":
 		'在所有圖示庫中都找不到名為 "{{value}}" 的圖示，因此 "{{id}}" 保留了原有圖示。',
-	"import.warn.admImageFailed": "無法讀取上傳的圖片，已改用預設圖示。",
 	"import.warn.admUnsupportedOptions": "不會匯入以下 Admonition 選項：{{fields}}。",
 	"import.warn.admImageSkipped": "無法讀取上傳的圖片，因此未匯入。",
 	"import.warn.admIconWithCss":

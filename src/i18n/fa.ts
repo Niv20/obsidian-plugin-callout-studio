@@ -964,44 +964,31 @@ export const fa: Record<string, string> = {
 		"نماد «{{value}}» در این خزانه در دسترس نیست، بنابراین «{{id}}» نماد قبلی خود را نگه داشت.",
 	"import.chooseSource": "وارد کردن از",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"بارگذاری فایل .json صادر شده از Callout Studio.",
+	"import.sourceStudioDesc": "یک فایل .json صادرشده از Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"کال‌اوت‌های سفارشی خود را از افزونهٔ Callout Manager منتقل کنید.",
+	"import.sourceCalloutManagerDesc": "کال‌اوت‌های سفارشی شما از افزونه.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"admonition‌های سفارشی خود را از افزونهٔ Admonition به اینجا " +
-		"بیاورید.",
-	"import.back": "بازگشت",
-	"import.removeFile": "حذف پرونده",
+	"import.sourceAdmonitionDesc": "admonition‌های سفارشی شما از افزونه.",
+	"import.sourceOtherPlugins": "از افزونهٔ دیگر",
 	"import.fileReady": "آماده برای وارد کردن.",
+	"import.upload": "بارگذاری",
+	"import.replace": "جایگزینی",
+	"import.fileUploaded": "{{name}} بارگذاری شد.",
+	"import.fileReplaced": "فایل با {{name}} جایگزین شد.",
 	"import.pasteButton": "چسباندن",
-	"import.pasted": "از کلیپ‌بورد چسبانده شد",
-	"import.clearPaste": "پاک کردن متن چسبانده‌شده",
+	"import.pasteFirst": "ابتدا استایل‌های کپی‌شده را بچسبانید.",
+	"import.uploadFirst": "ابتدا یک فایل بارگذاری کنید.",
 	"import.clipboardEmpty": "کلیپ‌بورد خالی است. ابتدا داده‌ها را کپی کنید.",
-	"import.clipboardUnreadable":
-		"خواندن کلیپ‌بورد ممکن نشد. در عوض داده‌ها را به‌صورت پرونده ذخیره کرده و آن را انتخاب کنید.",
+	"import.clipboardBlocked": "خواندن کلیپ‌بورد ممکن نشد. به‌جای آن، خودتان در کادر بچسبانید.",
 	"import.importing": "در حال وارد کردن…",
 	"import.err.fileUnreadable": "خواندن پرونده ممکن نشد.",
 	"import.cmTitle": "وارد کردن از Callout Manager",
 	"import.cmFromVault": "این گاوصندوق",
 	"import.cmVaultChecking": "در حال جست‌وجوی افزونهٔ Callout Manager…",
 	"import.cmVaultFound": "{{count}} callout سفارشی پیدا شد.",
-	"import.cmVaultNotFound": "هیچ callout سفارشی در این گاوصندوق پیدا نشد.",
-	"import.cmVaultNotInstalled": "Callout Manager در این گاوصندوق نصب نشده است.",
-	"import.cmVaultUnreadable":
-		"خواندن پروندهٔ تنظیمات Callout Manager در این گاوصندوق ممکن نشد.",
-	"import.cmUseManual": "استفاده از پرونده یا استایل‌های کپی‌شده به‌جای آن",
-	"import.cmFromFile": "یک پرونده",
-	"import.cmFromFileDesc":
-		"یک data.json از Callout Manager، یا استایل‌های کپی‌شدهٔ آن که در یک پرونده ذخیره شده‌اند.",
-	"import.cmChooseFile": "انتخاب پرونده…",
 	"import.cmFromPaste": "استایل‌های کپی‌شده",
 	"import.cmFromPasteDesc":
 		"چیزی که دکمهٔ Copy در Callout Manager کپی می‌کند، یا یک data.json.",
-	"import.cmPasteLabel":
-		"یا استایل‌های کپی‌شده از Callout Manager را اینجا بچسبانید:",
 	"import.cmInstructions":
 		"هر کال‌اوت سفارشی همراه با آیکون و رنگش منتقل می‌شود. سبک‌دهی مخصوص هر پوسته و CSS سفارشی در اینجا معادلی ندارند و منتقل نمی‌شوند.",
 	"import.cmPlaceholder": "استایل‌های کپی‌شده یا محتوای فایل data.json را اینجا بچسبانید…",
@@ -1018,10 +1005,6 @@ export const fa: Record<string, string> = {
 		'شناسه "{{value}}" قبلاً به عنوان نام مستعار توسط callout دیگری ("{{other}}") استفاده می‌شود و از آن صرف‌نظر شد.',
 	"import.warn.cmNoColorDefault":
 		"در Callout Manager رنگی تنظیم نشده بود، بنابراین خاکستری پیش‌فرض استفاده شد.",
-	"import.warn.cmThemeCondition":
-		"رنگ یا نماد این callout فقط برای یک پوسته تنظیم شده بود. Callout Studio استایل‌دهی جداگانه برای پوسته‌ها ندارد، بنابراین برای همهٔ پوسته‌ها منتقل شد.",
-	"import.warn.cmCustomStyles":
-		"این callout در Callout Manager دارای CSS سفارشی نیز هست. این استایل بخشی از درون‌ریزی نیست، بنابراین فقط نماد و رنگ منتقل شدند.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "حفظ سبک وابسته به پوسته ممکن نیست. مقادیر غیرشرطی در اولویت‌اند؛ هر مقدار جایگزین شرطی برای همهٔ پوسته‌ها اعمال می‌شود.",
@@ -1036,21 +1019,9 @@ export const fa: Record<string, string> = {
 	"import.admFromVault": "همین گاوصندوق",
 	"import.admVaultChecking": "در حال جست‌وجوی افزونهٔ Admonition…",
 	"import.admVaultFound": "{{count}} admonition سفارشی پیدا شد.",
-	"import.admVaultNotFound":
-		"هیچ admonition سفارشی در این گاوصندوق پیدا نشد.",
-	"import.admVaultNotInstalled": "Admonition در این گاوصندوق نصب نشده است.",
-	"import.admVaultUnreadable":
-		"خواندن پروندهٔ تنظیمات Admonition در این گاوصندوق ممکن نشد.",
-	"import.admUseManual": "استفاده از پرونده یا JSON چسبانده‌شده به‌جای آن",
 	"import.admFromFile": "یک پرونده",
 	"import.admFromFileDesc":
 		"یک پروندهٔ admonitions.json، یا یک بستهٔ به‌اشتراک‌گذاشته‌شده.",
-	"import.admChooseFile": "انتخاب پرونده…",
-	"import.admFromPaste": "JSON کپی‌شده",
-	"import.admFromPasteDesc":
-		"JSON مربوط به Admonition یا یک data.json، کپی‌شده در کلیپ‌بورد.",
-	"import.admPasteLabel": "یا JSON را اینجا بچسبانید:",
-	"import.admPlaceholder": "admonition‌های خود را اینجا بچسبانید…",
 	"import.admBtnCancel": "لغو",
 	"import.admBtnImport": "وارد کردن",
 	"import.err.admNotRecognized":
@@ -1065,9 +1036,6 @@ export const fa: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'نمادی با نام "{{value}}" در هیچ کتابخانه‌ای پیدا نشد، بنابراین ' +
 		'"{{id}}" نماد قبلی خود را نگه داشت.',
-	"import.warn.admImageFailed":
-		"تصویر بارگذاری‌شده خوانده نشد، بنابراین از نماد پیش‌فرض استفاده " +
-		"شد.",
 	"import.warn.admUnsupportedOptions": "این گزینه‌های Admonition درون‌ریزی نمی‌شوند: {{fields}}.",
 	"import.warn.admImageSkipped": "خواندن تصویر بارگذاری‌شده ممکن نبود و تصویر درون‌ریزی نشد.",
 	"import.warn.admIconWithCss":

@@ -960,43 +960,31 @@ export const tr: Record<string, string> = {
 		"“{{value}}” simgesi bu vault’ta kullanılamıyor; bu nedenle “{{id}}” mevcut simgesini korudu.",
 	"import.chooseSource": "Şuradan içe aktar",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Callout Studio'dan dışa aktarılmış bir .json dosyası yükleyin.",
+	"import.sourceStudioDesc": "Callout Studio'dan dışa aktarılmış bir .json dosyası.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Özelleştirilmiş callout'larınızı Callout Manager eklentisinden içe aktarın.",
+	"import.sourceCalloutManagerDesc": "Eklentideki özelleştirilmiş callout'larınız.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Özel admonition'larınızı Admonition eklentisinden getirin.",
-	"import.back": "Geri",
-	"import.removeFile": "Dosyayı kaldır",
+	"import.sourceAdmonitionDesc": "Eklentideki özel admonition'larınız.",
+	"import.sourceOtherPlugins": "Başka bir eklentiden",
 	"import.fileReady": "İçe aktarılmaya hazır.",
+	"import.upload": "Yükle",
+	"import.replace": "Değiştir",
+	"import.fileUploaded": "{{name}} yüklendi.",
+	"import.fileReplaced": "Dosya {{name}} ile değiştirildi.",
 	"import.pasteButton": "Yapıştır",
-	"import.pasted": "Panodan yapıştırıldı",
-	"import.clearPaste": "Yapıştırılan metni temizle",
+	"import.pasteFirst": "Önce kopyalanan stilleri yapıştırın.",
+	"import.uploadFirst": "Önce bir dosya yükleyin.",
 	"import.clipboardEmpty": "Pano boş. Önce verileri kopyalayın.",
-	"import.clipboardUnreadable":
-		"Pano okunamadı. Bunun yerine verileri dosya olarak kaydedin ve onu seçin.",
+	"import.clipboardBlocked": "Pano okunamadı. Bunun yerine içeriği kutuya kendiniz yapıştırın.",
 	"import.importing": "İçe aktarılıyor…",
 	"import.err.fileUnreadable": "Dosya okunamadı.",
 	"import.cmTitle": "Callout Manager'dan İçe Aktar",
 	"import.cmFromVault": "Bu kasa",
 	"import.cmVaultChecking": "Callout Manager eklentisi aranıyor…",
 	"import.cmVaultFound": "{{count}} özel callout bulundu.",
-	"import.cmVaultNotFound": "Bu kasada özel callout bulunamadı.",
-	"import.cmVaultNotInstalled": "Callout Manager bu kasada yüklü değil.",
-	"import.cmVaultUnreadable":
-		"Bu kasadaki Callout Manager ayar dosyası okunamadı.",
-	"import.cmUseManual": "Bunun yerine dosya ya da kopyalanan stilleri kullan",
-	"import.cmFromFile": "Bir dosya",
-	"import.cmFromFileDesc":
-		"Bir Callout Manager data.json dosyası veya dosyaya kaydedilmiş kopyalanan stiller.",
-	"import.cmChooseFile": "Dosya seç…",
 	"import.cmFromPaste": "Kopyalanan stiller",
 	"import.cmFromPasteDesc":
 		"Callout Manager'ın Copy düğmesinin kopyaladığı şey, ya da bir data.json.",
-	"import.cmPasteLabel":
-		"Veya Callout Manager'dan kopyalanan stilleri buraya yapıştırın:",
 	"import.cmInstructions":
 		"Özelleştirilmiş her callout, simgesi ve rengiyle birlikte aktarılır. Temaya özel stillerin ve özel CSS'nin burada karşılığı yoktur; bunlar aktarılmaz.",
 	"import.cmPlaceholder": "Kopyalanan stilleri veya bir data.json dosyasını buraya yapıştırın…",
@@ -1011,10 +999,6 @@ export const tr: Record<string, string> = {
 		'Yeni callout "{{value}}" için kullanılabilir bir renk bulunamadı; atlandı.',
 	"import.warn.cmNoColorDefault":
 		"Callout Manager'da renk ayarlanmadığından varsayılan gri kullanıldı.",
-	"import.warn.cmThemeCondition":
-		"Bu callout'un rengi veya simgesi yalnızca bir tema için ayarlanmıştı. Callout Studio tema başına stil oluşturmadığından tüm temalara aktarıldı.",
-	"import.warn.cmCustomStyles":
-		"Bu callout'un Callout Manager'da özel CSS'i de var. Bu stil içe aktarmaya dahil olmadığından yalnızca simgesi ve rengi aktarıldı.",
 	"import.err.cmIdConflict":
 		'"{{value}}" ID\'si zaten başka bir callout ("{{other}}") tarafından takma ad olarak kullanılıyor ve atlandı.',
 
@@ -1031,20 +1015,9 @@ export const tr: Record<string, string> = {
 	"import.admFromVault": "Bu kasa",
 	"import.admVaultChecking": "Admonition eklentisi aranıyor…",
 	"import.admVaultFound": "{{count}} özel admonition bulundu.",
-	"import.admVaultNotFound": "Bu kasada özel admonition bulunamadı.",
-	"import.admVaultNotInstalled": "Admonition bu kasada yüklü değil.",
-	"import.admVaultUnreadable":
-		"Bu kasadaki Admonition ayar dosyası okunamadı.",
-	"import.admUseManual": "Bunun yerine dosya ya da yapıştırılan JSON kullan",
 	"import.admFromFile": "Bir dosya",
 	"import.admFromFileDesc":
 		"Bir admonitions.json dosyası veya paylaşılan bir paket.",
-	"import.admChooseFile": "Dosya seç…",
-	"import.admFromPaste": "Kopyalanan JSON",
-	"import.admFromPasteDesc":
-		"Admonition'ın JSON'u ya da panoya kopyalanan bir data.json.",
-	"import.admPasteLabel": "Ya da JSON'u buraya yapıştırın:",
-	"import.admPlaceholder": "Admonition'larınızı buraya yapıştırın…",
 	"import.admBtnCancel": "İptal",
 	"import.admBtnImport": "İçe aktar",
 	"import.err.admNotRecognized":
@@ -1058,9 +1031,6 @@ export const tr: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Hiçbir simge kitaplığında "{{value}}" adlı bir simge bulunamadı, ' +
 		'bu yüzden "{{id}}" mevcut simgesini korudu.',
-	"import.warn.admImageFailed":
-		"Yüklenen görsel okunamadı, bu yüzden varsayılan simge " +
-		"kullanıldı.",
 	"import.warn.admUnsupportedOptions": "Bu Admonition seçenekleri içe aktarılmaz: {{fields}}.",
 	"import.warn.admImageSkipped": "Yüklenen resim okunamadı ve içe aktarılmadı.",
 	"import.warn.admIconWithCss":

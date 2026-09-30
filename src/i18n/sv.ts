@@ -958,23 +958,22 @@ export const sv: Record<string, string> = {
 		'Ikonen "{{value}}" finns inte i det här valvet, så "{{id}}" behöll ikonen det redan hade.',
 	"import.chooseSource": "Importera från",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Läs in en .json-fil exporterad från Callout Studio.",
+	"import.sourceStudioDesc": "En .json-fil exporterad från Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Ta med dina anpassade callouts från tillägget Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Dina anpassade callouts från tillägget.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Hämta dina egna admonitions från Admonition-tillägget.",
-	"import.back": "Tillbaka",
-	"import.removeFile": "Ta bort fil",
+	"import.sourceAdmonitionDesc": "Dina egna admonitions från tillägget.",
+	"import.sourceOtherPlugins": "Från ett annat tillägg",
 	"import.fileReady": "Redo att importeras.",
+	"import.upload": "Ladda upp",
+	"import.replace": "Ersätt",
+	"import.fileUploaded": "{{name}} har laddats upp.",
+	"import.fileReplaced": "Filen har ersatts med {{name}}.",
 	"import.pasteButton": "Klistra in",
-	"import.pasted": "Inklistrat från urklipp",
-	"import.clearPaste": "Rensa inklistrad text",
+	"import.pasteFirst": "Klistra först in de kopierade stilarna.",
+	"import.uploadFirst": "Ladda först upp en fil.",
 	"import.clipboardEmpty": "Urklipp är tomt. Kopiera datan först.",
-	"import.clipboardUnreadable":
-		"Urklipp kunde inte läsas. Spara datan som en fil och välj den i stället.",
+	"import.clipboardBlocked": "Urklipp kunde inte läsas. Klistra i stället in i rutan själv.",
 	"import.importing": "Importerar…",
 	"import.err.fileUnreadable": "Filen kunde inte läsas.",
 	"import.cmTitle": "Importera från Callout Manager",
@@ -984,21 +983,9 @@ export const sv: Record<string, string> = {
 	"import.cmFromVault": "Det här valvet",
 	"import.cmVaultChecking": "Söker efter tillägget Callout Manager…",
 	"import.cmVaultFound": "{{count}} anpassad(e) callout(s) hittades.",
-	"import.cmVaultNotFound":
-		"Inga anpassade callouts hittades i det här valvet.",
-	"import.cmVaultNotInstalled": "Callout Manager är inte installerat i det här valvet.",
-	"import.cmVaultUnreadable":
-		"Inställningsfilen för Callout Manager i det här valvet kunde inte läsas.",
-	"import.cmUseManual": "Använd en fil eller kopierade stilar i stället",
-	"import.cmFromFile": "En fil",
-	"import.cmFromFileDesc":
-		"En data.json från Callout Manager, eller dess kopierade stilar sparade som en fil.",
-	"import.cmChooseFile": "Välj fil…",
 	"import.cmFromPaste": "Kopierade stilar",
 	"import.cmFromPasteDesc":
 		"Det som Callout Managers Copy-knapp kopierar, eller en data.json.",
-	"import.cmPasteLabel":
-		"Eller klistra in Callout Managers kopierade stilar här:",
 	"import.cmPlaceholder":
 		"Klistra in de kopierade stilarna, eller en data.json, här…",
 	"import.cmBtnCancel": "Avbryt",
@@ -1015,12 +1002,6 @@ export const sv: Record<string, string> = {
 		'ID "{{value}}" används redan som ett alias av en annan callout ("{{other}}") och hoppades över.',
 	"import.warn.cmNoColorDefault":
 		"Ingen färg var angiven i Callout Manager, så dess standardgrå användes.",
-	"import.warn.cmThemeCondition":
-		"Den här calloutens färg eller ikon var bara angiven för ett tema. Callout " +
-		"Studio har ingen temaspecifik styling, så den togs med för alla teman.",
-	"import.warn.cmCustomStyles":
-		"Den här callouten har också egen CSS i Callout Manager. Den stylingen är " +
-		"inte en del av importen, så bara dess ikon och färg togs med.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "Temaberoende formatering kan inte bevaras. Ovillkorliga värden prioriteras; eventuella villkorliga reservvärden används för alla teman.",
@@ -1035,20 +1016,8 @@ export const sv: Record<string, string> = {
 	"import.admFromVault": "Det här valvet",
 	"import.admVaultChecking": "Letar efter Admonition-tillägget…",
 	"import.admVaultFound": "{{count}} egna admonitions hittades.",
-	"import.admVaultNotFound":
-		"Inga egna admonitions hittades i det här valvet.",
-	"import.admVaultNotInstalled": "Admonition är inte installerat i det här valvet.",
-	"import.admVaultUnreadable":
-		"Inställningsfilen för Admonition i det här valvet kunde inte läsas.",
-	"import.admUseManual": "Använd en fil eller inklistrad JSON i stället",
 	"import.admFromFile": "En fil",
 	"import.admFromFileDesc": "En admonitions.json-fil eller ett delat paket.",
-	"import.admChooseFile": "Välj fil…",
-	"import.admFromPaste": "Kopierad JSON",
-	"import.admFromPasteDesc":
-		"Admonitions JSON eller en data.json, kopierad till urklipp.",
-	"import.admPasteLabel": "Eller klistra in JSON här:",
-	"import.admPlaceholder": "Klistra in dina admonitions här…",
 	"import.admBtnCancel": "Avbryt",
 	"import.admBtnImport": "Importera",
 	"import.err.admNotRecognized":
@@ -1063,9 +1032,6 @@ export const sv: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Ingen ikon med namnet "{{value}}" hittades i något ' +
 		'ikonbibliotek, så "{{id}}" behöll ikonen den redan hade.',
-	"import.warn.admImageFailed":
-		"Den uppladdade bilden gick inte att läsa, så standardikonen " +
-		"användes.",
 	"import.warn.admUnsupportedOptions": "De här Admonition-alternativen importeras inte: {{fields}}.",
 	"import.warn.admImageSkipped": "Den uppladdade bilden kunde inte läsas och importerades inte.",
 	"import.warn.admIconWithCss":

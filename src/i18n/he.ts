@@ -1014,22 +1014,22 @@ export const he: Record<string, string> = {
 	// ייבוא — בחירת מקור
 	"import.chooseSource": "ייבוא מתוך",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc": "טעינת קובץ ‎.json שיוצא מתוך Callout Studio.",
+	"import.sourceStudioDesc": "קובץ ‎.json שיוצא מתוך Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"ייבאו את תיבות־ההבלטה המותאמות שלכם מהתוסף Callout Manager.",
+	"import.sourceCalloutManagerDesc": "תיבות־ההבלטה המותאמות שלכם מהתוסף.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"ייבאו את התיבות המותאמות־אישית שלכם מהתוסף Admonition.",
-	"import.back": "חזרה",
-	"import.removeFile": "הסרת קובץ",
+	"import.sourceAdmonitionDesc": "התיבות המותאמות־אישית שלכם מהתוסף.",
+	"import.sourceOtherPlugins": "מתוסף אחר",
 	"import.fileReady": "מוכן לייבוא.",
+	"import.upload": "העלאה",
+	"import.replace": "החלפה",
+	"import.fileUploaded": "הקובץ {{name}} הועלה.",
+	"import.fileReplaced": "הקובץ הוחלף ב־{{name}}.",
 	"import.pasteButton": "הדבקה",
-	"import.pasted": "הודבק מלוח הגזירה",
-	"import.clearPaste": "ניקוי הטקסט המודבק",
+	"import.pasteFirst": "יש להדביק קודם את הסגנונות שהועתקו.",
+	"import.uploadFirst": "יש להעלות קובץ קודם.",
 	"import.clipboardEmpty": "לוח הגזירה ריק. יש להעתיק את הנתונים קודם.",
-	"import.clipboardUnreadable":
-		"לא ניתן לקרוא את לוח הגזירה. שמרו את הנתונים כקובץ ובחרו אותו במקום זאת.",
+	"import.clipboardBlocked": "לא ניתן היה לקרוא את לוח הגזירה. הדביקו את התוכן בתיבה בעצמכם.",
 	"import.importing": "מייבא…",
 	"import.err.fileUnreadable": "לא ניתן לקרוא את הקובץ.",
 
@@ -1038,20 +1038,9 @@ export const he: Record<string, string> = {
 	"import.cmFromVault": "הכספת הזו",
 	"import.cmVaultChecking": "מחפש את התוסף Callout Manager…",
 	"import.cmVaultFound": "נמצאו {{count}} תיבות־הבלטה מותאמות־אישית.",
-	"import.cmVaultNotFound": "לא נמצאו תיבות־הבלטה מותאמות־אישית בכספת הזו.",
-	"import.cmVaultNotInstalled": "Callout Manager לא מותקן בכספת הזו.",
-	"import.cmVaultUnreadable":
-		"לא ניתן לקרוא את קובץ ההגדרות של Callout Manager בכספת הזו.",
-	"import.cmUseManual": "שימוש בקובץ או בסגנונות שהועתקו במקום זאת",
-	"import.cmFromFile": "קובץ",
-	"import.cmFromFileDesc":
-		"קובץ data.json של Callout Manager, או סגנונות שהועתקו ממנו ונשמרו בקובץ.",
-	"import.cmChooseFile": "בחירת קובץ…",
 	"import.cmFromPaste": "סגנונות שהועתקו",
 	"import.cmFromPasteDesc":
 		"מה שכפתור ה־Copy של Callout Manager מעתיק, או קובץ data.json.",
-	"import.cmPasteLabel":
-		"או הדביקו כאן את הסגנונות שהועתקו מ־Callout Manager:",
 	"import.cmInstructions":
 		"כל תיבת־הבלטה מותאמת מיובאת עם האייקון והצבע שלה. עיצוב ייחודי לערכת נושא ו־CSS מותאם אישית אינם נתמכים כאן ולא ייובאו.",
 	"import.cmPlaceholder": "הדביקו כאן סגנונות שהועתקו, או תוכן של קובץ data.json…",
@@ -1068,10 +1057,6 @@ export const he: Record<string, string> = {
 		'המזהה "{{value}}" כבר משמש ככינוי (alias) עבור תיבת־הבלטה אחרת ("{{other}}"), ולכן דולג.',
 	"import.warn.cmNoColorDefault":
 		"לא הוגדר צבע ב־Callout Manager, ולכן נעשה שימוש באפור ברירת־המחדל.",
-	"import.warn.cmThemeCondition":
-		"הצבע או הסמל של תיבת־הבלטה זו הוגדרו עבור ערכת נושא אחת בלבד. Callout Studio אינו תומך בעיצוב נפרד לכל ערכת נושא, ולכן הם הועברו לכל ערכות הנושא.",
-	"import.warn.cmCustomStyles":
-		"לתיבת־הבלטה הזו יש גם CSS מותאם־אישית ב־Callout Manager. הסגנון הזה אינו חלק מהייבוא, ולכן הועברו רק הסמל והצבע.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "אי אפשר לשמר עיצוב שתלוי בערכת העיצוב. יש עדיפות לערכים שאינם מותנים; כל ערך חלופי מותנה מוחל בכל ערכות העיצוב.",
@@ -1086,19 +1071,8 @@ export const he: Record<string, string> = {
 	"import.admFromVault": "הכספת הזו",
 	"import.admVaultChecking": "מחפש את התוסף Admonition…",
 	"import.admVaultFound": "נמצאו {{count}} תיבות מותאמות־אישית של Admonition.",
-	"import.admVaultNotFound": "לא נמצאו תיבות מותאמות־אישית של Admonition בכספת הזו.",
-	"import.admVaultNotInstalled": "Admonition לא מותקן בכספת הזו.",
-	"import.admVaultUnreadable":
-		"לא ניתן לקרוא את קובץ ההגדרות של Admonition בכספת הזו.",
-	"import.admUseManual": "שימוש בקובץ או ב־JSON מודבק במקום זאת",
 	"import.admFromFile": "קובץ",
 	"import.admFromFileDesc": "קובץ admonitions.json, או חבילה משותפת.",
-	"import.admChooseFile": "בחירת קובץ…",
-	"import.admFromPaste": "JSON שהועתק",
-	"import.admFromPasteDesc":
-		"ה־JSON של Admonition, או קובץ data.json, שהועתקו ללוח הגזירה.",
-	"import.admPasteLabel": "או הדביקו כאן את ה־JSON:",
-	"import.admPlaceholder": "הדביקו כאן את נתוני Admonition שלכם…",
 	"import.admBtnCancel": "ביטול",
 	"import.admBtnImport": "ייבוא",
 	"import.err.admNotRecognized":
@@ -1111,9 +1085,6 @@ export const he: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'לא נמצא אייקון בשם "{{value}}" באף ספריית אייקונים, ולכן ' +
 		'"{{id}}" נשאר עם האייקון הקיים שלו.',
-	"import.warn.admImageFailed":
-		"לא ניתן היה לקרוא את התמונה שהועלתה, ולכן נעשה שימוש באייקון " +
-		"ברירת המחדל.",
 	"import.warn.admUnsupportedOptions": "אפשרויות Admonition האלה לא מיובאות: {{fields}}.",
 	"import.warn.admImageSkipped": "לא ניתן לקרוא את התמונה שהועלתה והיא לא יובאה.",
 	"import.warn.admIconWithCss":

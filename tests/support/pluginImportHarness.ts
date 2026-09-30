@@ -7,15 +7,19 @@
  * they were asked to do, so no registry is needed and a suite can assert which
  * input the one Import actually acted on.
  *
- * Each option is one box, and the box is the whole control: there is no button
- * on it. A click on it chooses it, or fills it (the picker, the clipboard) —
- * which of the two is the window's call, so the helpers here say which one a
- * suite is relying on rather than leaving it to the state they happen to be in.
+ * The window draws its options on one screen: "This vault" while the other
+ * plugin's data is there (or still being looked for), and the source's one
+ * fallback, always. `harness()` opens Admonition's window, whose fallback is a
+ * file card with an Upload button; `pasteHarness()` opens Callout Manager's,
+ * whose fallback is a paste card with a text box and a Paste button. A suite
+ * names the fallback by what it is — `"file"` or `"paste"` — and `option()`
+ * refuses the one the window does not draw.
  *
  * Importing this module replaces `navigator` for the whole test file (Node's
  * own is a getter-only accessor, so it is redefined rather than assigned; each
  * test file runs in its own process, so nothing leaks). `clipboard` sets what
- * the next `readText()` gives back.
+ * the next `readText()` gives back, and counts the reads: only the Paste
+ * button may cause one.
  */
 import assert from "node:assert/strict";
 import { setImmediate } from "node:timers/promises";
@@ -24,6 +28,7 @@ import { t } from "../../src/i18n";
 import { ImportReportModal } from "../../src/utils/ImportReportModal";
 import { PluginImportModal } from "../../src/settings/pluginImport/PluginImportModal";
 import { ADMONITION_IMPORT } from "../../src/settings/pluginImport/admonitionImportSource";
+import { CALLOUT_MANAGER_IMPORT } from "../../src/settings/pluginImport/calloutManagerImportSource";
 import type {
 	PluginImportBatch,
 	PluginImportPlan,
@@ -91,8 +96,9 @@ export function recordingPlan(label: string, size: number, rec: Recorder): Plugi
 }
 
 /**
- * `base`'s copy and file types with a recording data path. A data.json that is
- * a JSON array is "found" with that many entries; the text "bad" does not parse.
+ * `base`'s copy and fallback with a recording data path. A data.json that
+ * is a JSON array is "found" with that many entries; the text "bad" does not
+ * parse.
  */
 export function recordingSource(rec: Recorder, base: PluginImportSource = ADMONITION_IMPORT): PluginImportSource {
 	return {
@@ -125,6 +131,8 @@ export interface HarnessOptions {
 
 export interface Harness {
 	modal: PluginImportModal;
+	/** The fallback this window falls back to: a file, or pasted text. */
+	manual: "file" | "paste";
 	modalEl: FakeElement;
 	headerEl: FakeElement;
 	titleEl: FakeElement;
@@ -182,7 +190,9 @@ export function harness(options: HarnessOptions = {}): Harness {
 		},
 	} as unknown as SettingsSectionContext;
 
-	const modal = new PluginImportModal(ctx, (options.source ?? recordingSource)(rec));
+	const source = (options.source ?? recordingSource)(rec);
+	const manual = source.manual.kind;
+	const modal = new PluginImportModal(ctx, source);
 	const containerEl = fakeDom.document.body.createDiv({ cls: "modal-container" });
 	const modalEl = containerEl.createDiv({ cls: "modal" });
 	const headerEl = modalEl.createDiv({ cls: "modal-header" });
@@ -212,19 +222,25 @@ export function harness(options: HarnessOptions = {}): Harness {
 	}
 	// A real file input's `click()` opens the system file chooser, which a test
 	// can only count; the fake DOM has no `click()` at all. The input is built
-	// afresh by every `onOpen`, so every open gets the counter.
+	// afresh by every `onOpen`, so every open gets the counter. A window whose
+	// fallback is pasted text has no picker, and so no input to build.
 	let pickerOpens = 0;
 	const open = modal.onOpen.bind(modal);
 	Object.assign(modal, {
 		onOpen: () => {
 			open();
 			const input = contentEl.querySelector(".cs-import-file-input");
+			if (manual === "paste") {
+				assert.equal(input, null, "a paste window builds no file input");
+				return;
+			}
 			assert.ok(input, "onOpen attaches the file input");
 			Object.assign(input, { click: () => pickerOpens++ });
 		},
 	});
 	return {
 		modal,
+		manual,
 		modalEl,
 		headerEl,
 		titleEl,
@@ -239,6 +255,16 @@ export function harness(options: HarnessOptions = {}): Harness {
 			containerEl.remove();
 		},
 	};
+}
+
+/** Callout Manager's window: this vault, or pasted text. */
+export function pasteSource(rec: Recorder): PluginImportSource {
+	return recordingSource(rec, CALLOUT_MANAGER_IMPORT);
+}
+
+/** {@link harness} over Callout Manager's window instead of Admonition's. */
+export function pasteHarness(options: HarnessOptions = {}): Harness {
+	return harness({ source: pasteSource, ...options });
 }
 
 /** Let the file/folder probe and any plan settle. */
@@ -274,23 +300,75 @@ export function ready(btn: FakeElement): boolean {
 
 export type Option = "vault" | "file" | "paste";
 
-export const OPTIONS: readonly Option[] = ["vault", "file", "paste"];
-
-/** The `role="radiogroup"` that holds the three boxes. */
+/** The column that holds the cards; a `role="radiogroup"` while there are two. */
 export function group(h: Harness): FakeElement {
 	const el = h.contentEl.querySelector(".cs-option-list");
 	assert.ok(el, "the options are drawn");
 	return el;
 }
 
-/**
- * The option's box — itself the option's radio, and the one thing on it to
- * click. The window always draws all three, in this order.
- */
+/** The options on screen, top to bottom: the vault while it is offered, then the fallback. */
+export function options(h: Harness): readonly Option[] {
+	const cards = group(h).querySelectorAll(".cs-option-box");
+	const vault = cards.filter((el) => el.hasClass("cs-import-vault"));
+	const manual = cards.filter((el) => el.hasClass("cs-import-manual"));
+	assert.equal(manual.length, 1, "the fallback is always there, once");
+	assert.equal(cards.length, vault.length + 1, "and nothing else but the vault");
+	assert.ok(vault.length <= 1);
+	if (vault.length === 0) return [h.manual];
+	assert.deepEqual(cards, [vault[0], manual[0]], "the vault comes first");
+	return ["vault", h.manual];
+}
+
+/** The option's card. */
 export function option(h: Harness, name: Option): FakeElement {
-	const rows = h.contentEl.querySelectorAll(".cs-option-box");
-	assert.equal(rows.length, 3, "three options, always");
-	return rows[{ vault: 0, file: 1, paste: 2 }[name]]!;
+	if (name !== "vault") assert.equal(name, h.manual, `this window's fallback is "${h.manual}"`);
+	const el = group(h).querySelector(name === "vault" ? ".cs-import-vault" : ".cs-import-manual");
+	assert.ok(el, `the ${name} option is on screen`);
+	return el;
+}
+
+export function optionTitle(h: Harness, name: Option): string {
+	return option(h, name).querySelector(".cs-option-box-title")?.textContent ?? "";
+}
+
+/** The card's status line. */
+export function status(h: Harness, name: Option): FakeElement {
+	const el = option(h, name).querySelector(".cs-option-box-desc");
+	assert.ok(el);
+	return el;
+}
+
+/** The radio dot at the card's trailing edge; null when the card stands alone. */
+export function radio(h: Harness, name: Option): FakeElement | null {
+	return option(h, name).querySelector(".cs-import-radio");
+}
+
+/**
+ * The active option, checked two ways that must agree: the accent ring on its
+ * card, and `aria-checked` on its radio dot. Null when none is active — and
+ * when the fallback stands alone, with nothing to be chosen against.
+ */
+export function active(h: Harness): Option | null {
+	const ringed = options(h).filter((name) => option(h, name).hasClass("is-selected"));
+	const checked = options(h).filter((name) => radio(h, name)?.getAttribute("aria-checked") === "true");
+	assert.deepEqual(ringed, checked, "the ring and aria-checked agree");
+	assert.ok(ringed.length <= 1, "at most one active option");
+	return ringed[0] ?? null;
+}
+
+/** The fallback card's own button: Upload, then Replace — or Paste. */
+export function actionButton(h: Harness): FakeElement {
+	const buttons = option(h, h.manual).querySelectorAll("button");
+	assert.equal(buttons.length, 1, "one button on the fallback's card");
+	return buttons[0]!;
+}
+
+/** The text box of the paste card. */
+export function pasteBox(h: Harness): FakeElement {
+	const box = option(h, "paste").querySelector("textarea");
+	assert.ok(box, "the paste card holds a text box");
+	return box;
 }
 
 /**
@@ -312,33 +390,11 @@ export function press(el: FakeElement, key: string, repeat = false): boolean {
 	return claimed;
 }
 
-export function optionTitle(h: Harness, name: Option): string {
-	return option(h, name).querySelector(".cs-option-box-title")?.textContent ?? "";
-}
-
-export function status(h: Harness, name: Option): FakeElement {
-	const el = option(h, name).querySelector(".cs-option-box-desc");
-	assert.ok(el);
-	return el;
-}
-
-/** The screen-reader-only live region: what the probe found, why a paste failed. */
+/** The screen-reader-only live region: what the probe found. */
 export function announcer(h: Harness): FakeElement {
 	const el = h.contentEl.querySelector(".cs-import-announcer");
 	assert.ok(el);
 	return el;
-}
-
-/**
- * The active option, checked two ways that must agree: the accent border, and
- * `aria-checked` on its box. Null when none is active.
- */
-export function active(h: Harness): Option | null {
-	const bordered = OPTIONS.filter((name) => option(h, name).hasClass("is-selected"));
-	const checked = OPTIONS.filter((name) => option(h, name).getAttribute("aria-checked") === "true");
-	assert.deepEqual(bordered, checked, "the border and aria-checked agree");
-	assert.ok(bordered.length <= 1, "at most one active option");
-	return bordered[0] ?? null;
 }
 
 export function fileInput(h: Harness): FakeElement {
@@ -349,8 +405,8 @@ export function fileInput(h: Harness): FakeElement {
 
 /**
  * What the picker hands back once a file is picked: the input's `files`, its
- * `value` (the browser's fake path), and `change`. Needs no click on the file
- * box first — the picker is modelled only by its result.
+ * `value` (the browser's fake path), and `change`. Needs no click on Upload
+ * first — the picker is modelled only by its result.
  */
 export function stage(h: Harness, name: string, text: () => Promise<string>): void {
 	const input = fileInput(h);
@@ -359,24 +415,22 @@ export function stage(h: Harness, name: string, text: () => Promise<string>): vo
 }
 
 /**
- * Put `text` on the clipboard and click the paste box; waits for the read.
- *
- * Only for a click that *fills* the box: an empty one, or the active one, which
- * a click fills again. A box that holds a paste but is not the active one is
- * only chosen by a click and never reads the clipboard — asserted here, so a
- * test cannot quietly mistake one for the other.
+ * What the user does in the text box themselves: its whole text becomes
+ * `text`, as typing, or a keyboard paste over everything, leaves it.
  */
-export async function paste(h: Harness, text: string | Error): Promise<void> {
-	const box = option(h, "paste");
-	assert.ok(
-		!box.hasClass("is-filled") || active(h) === "paste",
-		"paste(): a click on this box would only choose it; click it directly instead",
-	);
-	clipboard.set(text);
+export function typeText(h: Harness, text: string): void {
+	const box = pasteBox(h);
+	box.value = text;
+	box.fire("input");
+}
+
+/** Put `next` on the clipboard and press the Paste button; waits for the read. */
+export async function pressPaste(h: Harness, next: string | Error): Promise<void> {
+	clipboard.set(next);
 	const reads = clipboard.reads();
-	box.fire("click");
+	actionButton(h).fire("click");
 	await settle();
-	assert.equal(clipboard.reads(), reads + 1, "the click read the clipboard");
+	assert.equal(clipboard.reads(), reads + 1, "Paste read the clipboard, once");
 }
 
 export interface ReportSeen {

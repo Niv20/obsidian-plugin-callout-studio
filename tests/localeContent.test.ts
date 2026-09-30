@@ -279,16 +279,10 @@ describe("the plugin import window is translated everywhere", () => {
 	// why the vault can't be read, "Importing…" — so an English leftover here
 	// is a window the user cannot read the state of.
 	const keys = [
-		"import.removeFile",
 		"import.fileReady",
 		"import.importing",
 		"import.err.fileUnreadable",
 		"import.err.cmNoBlocksFound",
-		"import.admVaultUnreadable",
-		"import.cmVaultUnreadable",
-		"import.cmFromFile",
-		"import.cmFromFileDesc",
-		"import.cmChooseFile",
 	] as const;
 
 	for (const [fileId, table] of entries) {
@@ -307,12 +301,6 @@ describe("the plugin import window is translated everywhere", () => {
 			}
 		});
 
-		it(`${fileId}.ts words Callout Manager's file row as it does Admonition's`, () => {
-			// Same English, same role: a second wording would read as a
-			// different kind of file.
-			assert.strictEqual(table["import.cmFromFile"], table["import.admFromFile"]);
-			assert.strictEqual(table["import.cmChooseFile"], table["import.admChooseFile"]);
-		});
 	}
 });
 

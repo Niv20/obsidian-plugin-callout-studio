@@ -163,8 +163,14 @@ to something absurd.
   [Import and export](15-import-export.md#import-from-callout-manager). The
   window itself is not yours to write: add a `PluginImportSource` beside
   `admonitionImportSource.ts` and open `PluginImportModal` with it from a new
-  `ImportSourceModal` row — see
+  `ImportSourceModal` row, under that window's **From another plugin** caption
+  — see
   [the plugin import window](15-import-export.md#the-plugin-import-window).
+  The source names **one** fallback besides the vault (`manual`: a file
+  with its `accept`, or pasted text with its `placeholder`) — whichever the
+  other plugin actually hands its users. The window shows both on one screen
+  when it finds the plugin's data, and the fallback alone otherwise; it cannot
+  be given a third route.
 - **A new export format**: add a row inside `ExportFormatModal`, not a new
   top-level settings-tab row — the project's stated rationale is that a
   second top-level row would leave Import and Export shaped inconsistently.

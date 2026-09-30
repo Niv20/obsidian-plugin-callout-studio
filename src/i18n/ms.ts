@@ -896,23 +896,22 @@ export const ms: Record<string, string> = {
 		'Ikon "{{value}}" tidak tersedia dalam vault ini, jadi "{{id}}" mengekalkan ikon yang sudah ada.',
 	"import.chooseSource": "Import dari",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Muatkan fail .json yang dieksport dari Callout Studio.",
+	"import.sourceStudioDesc": "Fail .json yang dieksport dari Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Bawa callout tersuai anda dari pemalam Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Callout tersuai anda daripada pemalam.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Bawa admonition tersuai anda dari pemalam Admonition.",
-	"import.back": "Kembali",
-	"import.removeFile": "Alih keluar fail",
+	"import.sourceAdmonitionDesc": "Admonition tersuai anda daripada pemalam.",
+	"import.sourceOtherPlugins": "Daripada pemalam lain",
 	"import.fileReady": "Sedia untuk diimport.",
+	"import.upload": "Muat naik",
+	"import.replace": "Gantikan",
+	"import.fileUploaded": "{{name}} dimuat naik.",
+	"import.fileReplaced": "Fail digantikan dengan {{name}}.",
 	"import.pasteButton": "Tampal",
-	"import.pasted": "Ditampal daripada papan keratan",
-	"import.clearPaste": "Kosongkan teks yang ditampal",
+	"import.pasteFirst": "Tampal gaya yang disalin dahulu.",
+	"import.uploadFirst": "Muat naik fail dahulu.",
 	"import.clipboardEmpty": "Papan keratan kosong. Salin data terlebih dahulu.",
-	"import.clipboardUnreadable":
-		"Papan keratan tidak dapat dibaca. Simpan data sebagai fail dan pilih fail itu sebagai gantinya.",
+	"import.clipboardBlocked": "Papan keratan tidak dapat dibaca. Sebaliknya, tampal sendiri ke dalam kotak.",
 	"import.importing": "Mengimport…",
 	"import.err.fileUnreadable": "Fail tidak dapat dibaca.",
 	"import.cmTitle": "Import dari Callout Manager",
@@ -922,21 +921,9 @@ export const ms: Record<string, string> = {
 	"import.cmFromVault": "Vault ini",
 	"import.cmVaultChecking": "Mencari pemalam Callout Manager…",
 	"import.cmVaultFound": "{{count}} callout tersuai ditemukan.",
-	"import.cmVaultNotFound":
-		"Tiada callout tersuai ditemukan dalam vault ini.",
-	"import.cmVaultNotInstalled": "Callout Manager tidak dipasang dalam vault ini.",
-	"import.cmVaultUnreadable":
-		"Fail tetapan Callout Manager dalam vault ini tidak dapat dibaca.",
-	"import.cmUseManual": "Gunakan fail atau gaya yang disalin sebaliknya",
-	"import.cmFromFile": "Satu fail",
-	"import.cmFromFileDesc":
-		"Fail data.json Callout Manager, atau gaya salinannya yang disimpan sebagai fail.",
-	"import.cmChooseFile": "Pilih fail…",
 	"import.cmFromPaste": "Gaya yang disalin",
 	"import.cmFromPasteDesc":
 		"Apa yang disalin oleh butang Copy Callout Manager, atau fail data.json.",
-	"import.cmPasteLabel":
-		"Atau tampal gaya yang disalin daripada Callout Manager di sini:",
 	"import.cmPlaceholder":
 		"Tampal gaya yang disalin atau kandungan data.json di sini…",
 	"import.cmBtnCancel": "Batal",
@@ -953,12 +940,6 @@ export const ms: Record<string, string> = {
 		'ID "{{value}}" sudah digunakan sebagai alias oleh callout lain ("{{other}}") dan dilangkau.',
 	"import.warn.cmNoColorDefault":
 		"Tiada warna ditetapkan dalam Callout Manager, jadi kelabu lalainya digunakan.",
-	"import.warn.cmThemeCondition":
-		"Warna atau ikon callout ini hanya ditetapkan untuk satu tema. Callout " +
-		"Studio tiada gaya khusus tema, jadi ia dibawa untuk semua tema.",
-	"import.warn.cmCustomStyles":
-		"Callout ini juga mempunyai CSS tersuai dalam Callout Manager. Gaya " +
-		"tersebut bukan sebahagian daripada import, jadi hanya ikon dan warnanya dibawa.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "Gaya yang bergantung pada tema tidak dapat dikekalkan. Nilai tanpa syarat diutamakan; sebarang nilai sandaran bersyarat digunakan pada semua tema.",
@@ -973,20 +954,8 @@ export const ms: Record<string, string> = {
 	"import.admFromVault": "Bilik kebal ini",
 	"import.admVaultChecking": "Mencari pemalam Admonition…",
 	"import.admVaultFound": "{{count}} admonition tersuai ditemui.",
-	"import.admVaultNotFound":
-		"Tiada admonition tersuai ditemui dalam bilik kebal ini.",
-	"import.admVaultNotInstalled": "Admonition tidak dipasang dalam vault ini.",
-	"import.admVaultUnreadable":
-		"Fail tetapan Admonition dalam bilik kebal ini tidak dapat dibaca.",
-	"import.admUseManual": "Gunakan fail atau JSON yang ditampal sebaliknya",
 	"import.admFromFile": "Satu fail",
 	"import.admFromFileDesc": "Fail admonitions.json, atau pek yang dikongsi.",
-	"import.admChooseFile": "Pilih fail…",
-	"import.admFromPaste": "JSON yang disalin",
-	"import.admFromPasteDesc":
-		"JSON Admonition atau fail data.json, yang disalin ke papan keratan.",
-	"import.admPasteLabel": "Atau tampal JSON di sini:",
-	"import.admPlaceholder": "Tampal admonition anda di sini…",
 	"import.admBtnCancel": "Batal",
 	"import.admBtnImport": "Import",
 	"import.err.admNotRecognized":
@@ -1001,9 +970,6 @@ export const ms: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Tiada ikon bernama "{{value}}" dalam mana-mana pustaka ikon, ' +
 		'jadi "{{id}}" mengekalkan ikon sedia ada.',
-	"import.warn.admImageFailed":
-		"Gambar yang dimuat naik tidak dapat dibaca, jadi ikon lalai " +
-		"digunakan.",
 	"import.warn.admUnsupportedOptions": "Pilihan Admonition ini tidak diimport: {{fields}}.",
 	"import.warn.admImageSkipped": "Gambar yang dimuat naik tidak dapat dibaca dan tidak diimport.",
 	"import.warn.admIconWithCss":

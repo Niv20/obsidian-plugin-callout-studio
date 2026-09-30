@@ -5796,10 +5796,12 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 
 /* ─── Import source / export format chooser modals ────────── */
 /* Import picks a source and Export picks a format, each from a column of
-   option boxes (below) that act the moment one is clicked. */
+   option boxes (below) that act the moment one is clicked. As wide as the
+   plugin import window Import's chooser hands over to, so the step from one to
+   the other doesn't resize the window under the pointer. */
 .callout-studio-import-source-modal,
 .callout-studio-export-format-modal {
-	max-width: 480px;
+	max-width: 520px;
 }
 .cs-import-file-input {
 	display: none;
@@ -5807,15 +5809,19 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 
 /* ─── Option boxes ────────────────────────────────────────────── */
 /* One box, three windows: Import's source chooser, Export's format chooser and
-   the plugin import window's three options all draw it with
-   settings/optionBox.ts, so they look, hover and answer a click alike. What a
-   click means is each window's own — a chooser's box acts at once, a plugin
-   import box is chosen (`is-selected`) or filled — and that is the one thing
-   these rules tell apart.
+   the plugin import window's two cards all draw it with
+   settings/optionBox.ts, so they look alike. A chooser's box is the control —
+   it acts the moment it is clicked, and the chevron at its trailing edge says
+   so. A card in the plugin import window is chosen instead: it ends in a radio
+   dot, and carries a button of its own (see "Plugin import window" below).
 
-   Unpainted at rest — a border and nothing else — so it needs no
-   --cs-surface / --cs-surface-raised pairing to stay right on mobile dark;
-   every tint below is a colour mixed with transparent, which sits on either. */
+   Drawn as the settings lists draw a callout row (`.callout-studio-row`): a
+   borderless pill raised off the window, its icon on a tile of the window's own
+   colour. The two surfaces are the `--cs-surface` / `--cs-surface-raised` pair
+   and nothing else, which is what keeps the pill visible on mobile dark, where
+   `--background-secondary` IS the window. Chrome stays grey-lit: the accent
+   is spent on one thing only, the active card of the plugin import window, and
+   nothing on a box turns green. */
 
 /* No top margin of its own: the body's padding is the air above the first
    box. Export used to get away with one because its list is the body's first
@@ -5825,15 +5831,29 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 .cs-option-list {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: 6px;
+}
+/* A caption over the boxes that follow — Import's "From another plugin". The
+   same small capitals a combobox group and an icon source wear
+   (`.cs-combobox-group-label`). Its top margin, on top of the list's gap, is
+   what sets the group apart from the box above it. */
+.cs-option-group-label {
+	margin-top: 10px;
+	padding-inline: 2px;
+	font-size: var(--font-ui-smaller);
+	line-height: var(--line-height-normal);
+	color: var(--text-faint);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 }
 .cs-option-box {
 	display: flex;
 	align-items: center;
-	gap: 0.75rem;
-	padding: 0.6rem 0.75rem;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
+	gap: 12px;
+	padding: 10px 12px;
+	border-radius: 8px;
+	background: var(--cs-surface-raised, var(--background-secondary));
+	transition: background 120ms ease;
 }
 .cs-option-box[tabindex="0"] {
 	cursor: pointer;
@@ -5842,78 +5862,57 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	outline: 2px solid var(--background-modifier-border-focus);
 	outline-offset: 2px;
 }
-/* The A file box shows where a dragged file will land, including when that
-   option is already selected. */
+/* The plugin import window's file card shows where a dragged file will land,
+   whether or not a file is already staged on it. */
 .cs-option-box.is-drop-target {
 	outline: 2px dashed var(--interactive-accent);
 	outline-offset: 2px;
 }
-/* The chosen box in the plugin import window — the one its footer Import acts
-   on. Two pixels of accent (the inset shadow doubles the border without
-   moving anything) and a faint accent wash. It is the only accent a box ever
-   wears, so a hovered box, which stays neutral, never reads as a second
-   selection beside it. */
-.cs-option-box.is-selected {
-	border-color: var(--interactive-accent);
-	box-shadow: inset 0 0 0 1px var(--interactive-accent);
-	background: color-mix(in srgb, var(--interactive-accent) 8%, transparent);
-}
 /* Behind `(hover: hover)`, as Obsidian guards its own button hovers, so a
    tapped box on a phone doesn't stay lit. */
 @media (hover: hover) {
-	/* A box that takes clicks answers the pointer with a light wash and a
-	   firmer border, both neutral. The wash is Obsidian's own hover tint, the
-	   one its lists and menus use. The border skips
-	   `--background-modifier-border-hover`, a single base step from the
-	   resting border and too close to see (#e4e4e4 to #dadada in the default
-	   light theme), for the focus grey, the step past it. */
-	.cs-option-box[tabindex="0"]:not(.is-selected):hover {
-		border-color: var(--background-modifier-border-focus);
-		background: var(--background-modifier-hover);
+	/* A box that takes clicks answers the pointer by stepping its fill toward
+	   the text colour: darker over a light window, lighter over a dark one,
+	   and a visible step on either. `.callout-studio-row` hovers to
+	   `--background-secondary-alt` instead, which on a light desktop is nearly
+	   the window's own white — fine for a row whose buttons carry the
+	   feedback, too faint for a box that is itself the button. A card has no
+	   tabindex, so it stays as it is under the pointer. */
+	.cs-option-box[tabindex="0"]:hover {
+		background: color-mix(
+			in srgb,
+			var(--cs-surface-raised, var(--background-secondary)) 93%,
+			var(--text-normal)
+		);
 	}
-	/* The chosen box lightens its wash a step, as Obsidian's accent buttons
-	   lighten on hover. `--interactive-accent-hover` is the lighter accent in
-	   both themes; lighter still means more of it over a dark window and less
-	   of it over a light one. */
-	.theme-dark .cs-option-box.is-selected:hover {
-		background: color-mix(in srgb, var(--interactive-accent-hover) 12%, transparent);
-	}
-	.theme-light .cs-option-box.is-selected:hover {
-		background: color-mix(in srgb, var(--interactive-accent-hover) 4%, transparent);
-	}
-	/* Keep the Recommended pill distinct from an unselected row's hover wash.
-	   A selected, purple box keeps the pill's resting fill. */
-	.cs-option-box[tabindex="0"]:not(.is-selected):hover .cs-recommended-badge {
-		background: var(--background-modifier-border-focus);
+	/* The chevron answers too: from a hint to a direction. */
+	.cs-option-box[tabindex="0"]:hover .cs-option-box-mark {
+		color: var(--text-muted);
 	}
 }
-/* Nothing to choose: the plugin import window's vault box once the other
-   plugin turns out not to be installed, or to hold nothing to import. Greyed
-   throughout, and the pointer says the box won't take a click; with no
-   tabindex, no hover above reaches it. A reason that is a problem to fix —
-   the settings file is there but can't be read — keeps its warning colour. */
-.cs-option-box.is-disabled {
-	cursor: not-allowed;
-}
-.cs-option-box.is-disabled .cs-option-box-icon,
-.cs-option-box.is-disabled .cs-option-box-title,
-.cs-option-box.is-disabled .cs-option-box-desc:not(.is-warning) {
-	color: var(--text-faint);
-}
+/* The icon sits on a tile of the window's own colour, the way a row's syntax
+   chip does (`.callout-studio-row-syntax`), in Obsidian's own icon grey — and
+   stays that grey whatever the box comes to hold. */
 .cs-option-box-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var(--text-accent);
 	flex-shrink: 0;
+	width: 36px;
+	height: 36px;
+	border-radius: 8px;
+	background: var(--cs-surface, var(--background-primary));
+	color: var(--text-muted);
 }
 .cs-option-box-icon .svg-icon {
+	width: 18px;
+	height: 18px;
 	color: inherit;
 }
 .cs-option-box-text {
 	display: flex;
 	flex-direction: column;
-	gap: 0.1rem;
+	gap: 2px;
 	/* Takes the slack, and lets a long status line or file name wrap instead
 	   of widening the box. */
 	flex: 1;
@@ -5928,20 +5927,35 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 }
 .cs-option-box-title {
 	min-width: 0;
-	font-weight: 600;
+	font-size: var(--font-ui-medium);
+	font-weight: var(--font-semibold);
 	color: var(--text-normal);
 }
 .cs-option-box-desc {
-	font-size: 0.85em;
+	font-size: var(--font-ui-smaller);
+	line-height: 1.4;
 	color: var(--text-muted);
-}
-.cs-option-box-desc.is-warning {
-	color: var(--text-warning);
 }
 /* A file name rather than a label: it breaks anywhere instead of widening the
    box. */
 .cs-option-box-name {
 	overflow-wrap: anywhere;
+}
+/* The mark at the trailing edge of a chooser's box: a chevron, because the
+   click opens something. Obsidian mirrors it under `.mod-rtl` along with every
+   other directional icon. Decoration — the box's role says the same to a
+   screen reader. */
+.cs-option-box-mark {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	color: var(--text-faint);
+	transition: color 120ms ease;
+}
+.cs-option-box-mark .svg-icon {
+	width: 16px;
+	height: 16px;
 }
 
 /* ─── Quick insert window (the ribbon icon) ─────────────────── */
@@ -6101,22 +6115,29 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 /* ─── Plugin import window (Admonition, Callout Manager) ────── */
 /* One window, two sources: PluginImportModal draws both, so the rules are
    shared rather than copied per plugin. The per-plugin classes stay on the
-   window as styling hooks a user's snippet may already target. Its three
-   options — this vault, a file, the clipboard — are option boxes (see
-   "Option boxes" above) in a `role="radiogroup"`. */
+   window as styling hooks a user's snippet may already target. One screen, at
+   most two options, each an option box drawn as a card (see "Option boxes"
+   above): "This vault", and the source's one fallback — a file card with an
+   Upload button, or a paste card with a Paste button and a text box. */
 .callout-studio-cm-import-modal,
 .callout-studio-adm-import-modal {
-	max-width: 560px;
+	max-width: 520px;
 }
+/* What comes over and what is left behind: a caption over the options, set as
+   the Restore window sets its own intro (`.cs-recovery-intro`), not a
+   paragraph of body text competing with them. */
 .cs-import-instructions {
-	margin-top: 0;
+	margin: 0 0 var(--size-4-3);
 	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	line-height: 1.5;
 }
 
 /* The probe is a local file read and usually settles within a frame or two.
-   Held back briefly so that case never flashes "Looking for…" before the
-   result replaces it; a slow probe still shows it. */
-.cs-option-box.is-checking .cs-option-box-desc {
+   The vault card is held back briefly while it runs, so that case never
+   flashes the card — nor "Looking for…" on it — before it goes, or before the
+   count replaces it; a slow probe still shows it. */
+.cs-import-vault.is-checking {
 	animation: cs-import-reveal 0.2s ease-out 0.25s both;
 }
 @keyframes cs-import-reveal {
@@ -6125,14 +6146,130 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	}
 }
 @media (prefers-reduced-motion: reduce) {
-	.cs-option-box.is-checking .cs-option-box-desc {
+	.cs-import-vault.is-checking {
 		animation-duration: 1ms;
 	}
 }
 
-/* Says what the vault probe found, and why a paste brought nothing back, to a
-   screen reader only. Opacity keeps the text available without painting it;
-   ignore pointer hits just as a fully clipped box would. */
+/* The paste card holds its text box on a line of its own, under the head. */
+.cs-import-manual {
+	flex-wrap: wrap;
+	row-gap: 10px;
+}
+
+/* The active card — the one the footer Import acts on — while there are two
+   to choose between. A two-pixel accent ring, drawn as an inset shadow so
+   nothing moves when it arrives, over a faint accent wash of the card's own
+   colour; its radio dot fills to match (below). */
+.cs-option-box.is-selected {
+	box-shadow: inset 0 0 0 2px var(--interactive-accent);
+	background: color-mix(
+		in srgb,
+		var(--interactive-accent) 8%,
+		var(--cs-surface-raised, var(--background-secondary))
+	);
+}
+/* A card that a click would choose — it holds something, and is not the
+   active one — says so under the pointer: the same neutral step a chooser's
+   box takes. */
+.cs-option-box.is-choosable {
+	cursor: pointer;
+}
+@media (hover: hover) {
+	.cs-option-box.is-choosable:hover {
+		background: color-mix(
+			in srgb,
+			var(--cs-surface-raised, var(--background-secondary)) 93%,
+			var(--text-normal)
+		);
+	}
+}
+
+/* The radio dot at a card's trailing edge, in Obsidian's own checkbox colours:
+   empty until its card is the active one. The check inside it is always there
+   and simply has no colour until then, so choosing moves nothing. With nothing
+   in its card to choose, it fades. */
+.cs-import-radio {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 18px;
+	height: 18px;
+	border: 1px solid var(--checkbox-border-color);
+	border-radius: 50%;
+	color: transparent;
+	transition:
+		background 120ms ease,
+		border-color 120ms ease;
+}
+.cs-import-radio .svg-icon {
+	width: 12px;
+	height: 12px;
+	stroke-width: 3px;
+}
+.cs-import-radio[aria-disabled="true"] {
+	opacity: 0.45;
+}
+.cs-import-radio:focus-visible {
+	outline: 2px solid var(--background-modifier-border-focus);
+	outline-offset: 2px;
+}
+.cs-option-box.is-selected .cs-import-radio {
+	border-color: var(--checkbox-color);
+	background: var(--checkbox-color);
+	color: var(--text-on-accent);
+}
+
+/* A card's own button — Upload, which reads Replace once a file is staged, and
+   Paste: a standard button at the card's trailing edge, never squeezed by a
+   long file name. It wears the shared neutral face and border, as a footer's
+   Cancel does, rather than falling through to `app.css`: on a phone Obsidian's
+   own button face is the card's colour, and the border is what keeps it a
+   button there. */
+.cs-option-box .cs-import-action {
+	flex-shrink: 0;
+	background-color: var(--cs-btn-face, var(--interactive-normal));
+	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
+	color: var(--text-normal);
+	box-shadow: none;
+}
+@media (hover: hover) {
+	.cs-option-box .cs-import-action:hover {
+		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
+	}
+}
+.cs-option-box .cs-import-action:focus-visible {
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+}
+
+/* A plain text box of one fixed height, across the paste card's full width: it
+   scrolls instead of growing with what is pasted into it, and cannot be
+   dragged larger, so the footer's Import stays where it was. Painted by
+   `.cs-text-control` like every other text field; one class more than that
+   rule's four, to take its `height: auto` back. Monospace and left-to-right,
+   because what goes in is CSS or JSON: in a right-to-left window a rule would
+   otherwise read `} selector.`. */
+.cs-import-paste-input.cs-text-control.cs-text-control.cs-text-control.cs-text-control {
+	flex: 0 0 100%;
+	height: 132px;
+	resize: none;
+	overflow: auto;
+	direction: ltr;
+	font-family: var(--font-monospace);
+	line-height: 1.5;
+	tab-size: 4;
+}
+/* Empty, it shows a translated sentence rather than code, so that reads in the
+   window's own direction. */
+.cs-import-paste-input.cs-text-control.cs-text-control.cs-text-control.cs-text-control:placeholder-shown {
+	direction: inherit;
+}
+
+/* Says what the vault probe found to a screen reader only. Opacity keeps the
+   text available without painting it; ignore pointer hits just as a fully
+   clipped box would. */
 .cs-import-announcer {
 	position: absolute;
 	width: 1px;
@@ -6146,9 +6283,10 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 /* ─── Recommended pill ────────────────────────────────────────── */
 /* On an option's title line: the export chooser's backup, and the plugin
    import window's "This vault" once there is something in it. Grey on
-   purpose — a recommendation, not a state. At rest it uses the border tone;
-   when its selectable box is hovered, its fill deepens to the clearer border
-   tone so it stays distinct from the row's hover wash. */
+   purpose — a recommendation, not a state. It is a chip of the window's own
+   colour on the raised box, as the box's icon tile and a row's syntax chip
+   are, so it stays apart from the box through its hover and its selection
+   without a second fill of its own to keep in step. */
 .cs-recommended-badge {
 	display: inline-flex;
 	align-items: center;
@@ -6156,7 +6294,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	padding-block: 1px;
 	padding-inline: 6px 8px;
 	border-radius: 999px;
-	background: var(--background-modifier-border);
+	background: var(--cs-surface, var(--background-primary));
 	color: var(--text-muted);
 	font-size: calc(var(--font-ui-smaller) - 1px);
 	font-weight: var(--font-normal);

@@ -2,17 +2,20 @@
  * settings/pluginImport/admonitionImportSource.ts — bringing custom types over
  * from the "Obsidian Admonition" plugin.
  *
- * Three ways in, because a user migrating has no reason to know which one they
- * have, and each is the shortest path for somebody:
+ * Two ways in:
  *
  * - **This vault** — Admonition is still installed, so its `data.json` is right
  *   there. Nothing to export first.
  * - **A file** — an `admonitions.json` of the kind Admonition's own export
- *   button writes, or one of the community packs shared as that format.
- * - **Paste** — for anything else, including a `data.json` copied out of
- *   another vault.
+ *   button writes, one of the community packs shared as that format, or a
+ *   `data.json` taken from another vault. Uploaded with the window's Upload
+ *   button, and the only option there is when this vault holds no Admonition
+ *   data.
  *
- * All three end at the same plan (utils/admonitionImport.ts); PluginImportModal
+ * There used to be a third, pasted JSON; each window now offers one way in
+ * besides the vault (`PluginImportManual`).
+ *
+ * Both end at the same plan (utils/admonitionImport.ts); PluginImportModal
  * owns the window and the shared ImportReportModal, exactly as it does for the
  * Callout Manager importer.
  */
@@ -71,20 +74,15 @@ export const ADMONITION_IMPORT: PluginImportSource = {
 	// handover to its current maintainer.
 	pluginId: "obsidian-admonition",
 	modalClass: "callout-studio-adm-import-modal",
-	fileAccept: ".json",
+	manual: { kind: "file", accept: ".json" },
 	copy: {
 		title: "import.admTitle",
 		instructions: "import.admInstructions",
 		fromVault: "import.admFromVault",
 		vaultChecking: "import.admVaultChecking",
 		vaultFound: "import.admVaultFound",
-		vaultEmpty: "import.admVaultNotFound",
-		vaultNotInstalled: "import.admVaultNotInstalled",
-		vaultUnreadable: "import.admVaultUnreadable",
-		fromFile: "import.admFromFile",
-		fromFileDesc: "import.admFromFileDesc",
-		fromPaste: "import.admFromPaste",
-		fromPasteDesc: "import.admFromPasteDesc",
+		manual: "import.admFromFile",
+		manualDesc: "import.admFromFileDesc",
 		cancel: "import.admBtnCancel",
 		importButton: "import.admBtnImport",
 		notice: "notice.importedAdmonition",

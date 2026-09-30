@@ -953,22 +953,22 @@ export const ar: Record<string, string> = {
 		'الأيقونة "{{value}}" غير متوفرة في هذه الخزينة، لذلك احتفظ "{{id}}" بالأيقونة التي كانت لديه.',
 	"import.chooseSource": "استيراد من",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc": "تحميل ملف ‎.json تم تصديره من Callout Studio.",
+	"import.sourceStudioDesc": "ملف ‎.json تم تصديره من Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"انقل الـ callouts التي خصصتها من إضافة Callout Manager.",
+	"import.sourceCalloutManagerDesc": "الـ callouts المخصصة لديك من الإضافة.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"انقل تنبيهات admonition المخصصة لديك من إضافة Admonition.",
-	"import.back": "رجوع",
-	"import.removeFile": "إزالة الملف",
+	"import.sourceAdmonitionDesc": "تنبيهات admonition المخصصة لديك من الإضافة.",
+	"import.sourceOtherPlugins": "من إضافة أخرى",
 	"import.fileReady": "جاهز للاستيراد.",
+	"import.upload": "رفع",
+	"import.replace": "استبدال",
+	"import.fileUploaded": "تم رفع {{name}}.",
+	"import.fileReplaced": "تم استبدال الملف بـ {{name}}.",
 	"import.pasteButton": "لصق",
-	"import.pasted": "تم اللصق من الحافظة",
-	"import.clearPaste": "مسح النص الملصق",
+	"import.pasteFirst": "الصق الأنماط المنسوخة أولاً.",
+	"import.uploadFirst": "ارفع ملفاً أولاً.",
 	"import.clipboardEmpty": "الحافظة فارغة. انسخ البيانات أولاً.",
-	"import.clipboardUnreadable":
-		"تعذّرت قراءة الحافظة. احفظ البيانات كملف واخترْه بدلاً من ذلك.",
+	"import.clipboardBlocked": "تعذرت قراءة الحافظة. الصق في الحقل بنفسك بدلاً من ذلك.",
 	"import.importing": "جارٍ الاستيراد…",
 	"import.err.fileUnreadable": "تعذّرت قراءة الملف.",
 	"import.cmTitle": "استيراد من Callout Manager",
@@ -977,20 +977,9 @@ export const ar: Record<string, string> = {
 	"import.cmFromVault": "هذه الخزينة",
 	"import.cmVaultChecking": "جارٍ البحث عن إضافة Callout Manager…",
 	"import.cmVaultFound": "تم العثور على {{count}} تلميح(ات) مخصصة.",
-	"import.cmVaultNotFound":
-		"لم يتم العثور على أي تلميحات مخصصة في هذه الخزينة.",
-	"import.cmVaultNotInstalled": "لم يتم تثبيت Callout Manager في هذه الخزينة.",
-	"import.cmVaultUnreadable":
-		"تعذّرت قراءة ملف إعدادات Callout Manager في هذه الخزينة.",
-	"import.cmUseManual": "استخدام ملف أو أنماط منسوخة بدلاً من ذلك",
-	"import.cmFromFile": "ملف",
-	"import.cmFromFileDesc":
-		"ملف data.json من Callout Manager، أو الأنماط المنسوخة منه محفوظةً في ملف.",
-	"import.cmChooseFile": "اختيار ملف…",
 	"import.cmFromPaste": "الأنماط المنسوخة",
 	"import.cmFromPasteDesc":
 		"ما ينسخه زر Copy في Callout Manager، أو ملف data.json.",
-	"import.cmPasteLabel": "أو الصق الأنماط المنسوخة من Callout Manager هنا:",
 	"import.cmPlaceholder": "الصق الأنماط المنسوخة، أو ملف data.json، هنا…",
 	"import.cmBtnCancel": "إلغاء",
 	"import.cmBtnImport": "استيراد",
@@ -1006,12 +995,6 @@ export const ar: Record<string, string> = {
 		'المعرّف "{{value}}" مستخدم بالفعل كاسم مستعار لتلميح آخر ("{{other}}")، وتم تخطيه.',
 	"import.warn.cmNoColorDefault":
 		"لم يتم تعيين لون في Callout Manager، لذلك تم استخدام الرمادي الافتراضي.",
-	"import.warn.cmThemeCondition":
-		"تم تعيين لون أو أيقونة هذا التلميح لسمة واحدة فقط. لا يدعم Callout " +
-		"Studio تنسيقاً خاصاً بكل سمة، لذلك تم نقله ليشمل جميع السمات.",
-	"import.warn.cmCustomStyles":
-		"يحتوي هذا التلميح أيضاً على CSS مخصص في Callout Manager. هذا التنسيق " +
-		"ليس جزءاً من الاستيراد، لذلك تم نقل الأيقونة واللون فقط.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "لا يمكن الحفاظ على التنسيق المعتمد على السمة. تُفضّل القيم غير المشروطة؛ ويُطبّق أي بديل مشروط على جميع السمات.",
@@ -1026,20 +1009,8 @@ export const ar: Record<string, string> = {
 	"import.admFromVault": "هذه الخزينة",
 	"import.admVaultChecking": "جارٍ البحث عن إضافة Admonition…",
 	"import.admVaultFound": "تم العثور على {{count}} من admonition المخصصة.",
-	"import.admVaultNotFound":
-		"لم يتم العثور على أي admonition مخصص في هذه الخزينة.",
-	"import.admVaultNotInstalled": "لم يتم تثبيت Admonition في هذه الخزينة.",
-	"import.admVaultUnreadable":
-		"تعذّرت قراءة ملف إعدادات Admonition في هذه الخزينة.",
-	"import.admUseManual": "استخدام ملف أو نص JSON ملصق بدلاً من ذلك",
 	"import.admFromFile": "ملف",
 	"import.admFromFileDesc": "ملف admonitions.json، أو حزمة مشتركة.",
-	"import.admChooseFile": "اختيار ملف…",
-	"import.admFromPaste": "JSON المنسوخ",
-	"import.admFromPasteDesc":
-		"JSON الخاص بـ Admonition أو ملف data.json، منسوخًا إلى الحافظة.",
-	"import.admPasteLabel": "أو الصق JSON هنا:",
-	"import.admPlaceholder": "الصق admonition الخاصة بك هنا…",
 	"import.admBtnCancel": "إلغاء",
 	"import.admBtnImport": "استيراد",
 	"import.err.admNotRecognized":
@@ -1054,9 +1025,6 @@ export const ar: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'لا توجد أيقونة باسم "{{value}}" في أي مكتبة أيقونات، لذلك احتفظ ' +
 		'"{{id}}" بالأيقونة الموجودة لديه.',
-	"import.warn.admImageFailed":
-		"تعذّرت قراءة الصورة المرفوعة، لذلك تم استخدام الأيقونة " +
-		"الافتراضية.",
 	"import.warn.admUnsupportedOptions": "لن يتم استيراد خيارات Admonition هذه: {{fields}}.",
 	"import.warn.admImageSkipped": "تعذرت قراءة الصورة المرفوعة ولم يتم استيرادها.",
 	"import.warn.admIconWithCss":

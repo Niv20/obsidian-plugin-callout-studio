@@ -4,12 +4,12 @@
  *
  * The window used to show an Import inside the "This vault" row beside a footer
  * Import that only read the paste box. pluginImportFlow.ts now decides, from
- * plain state, which of the three options is active and so what the single
- * footer Import acts on. These cases state that rule from the user's side —
- * which box wears the accent border — rather than restating the
- * implementation, so a change that lets Import reach an option the user did
- * not choose fails here. tests/pluginImportModal.test.ts checks the same rule
- * on the real window.
+ * plain state, which of the window's options is active — the vault, or the
+ * source's one fallback — and so what the single footer Import acts on. These
+ * cases state that rule from the user's side — the option wearing the ring is
+ * the one Import imports — rather than restating the implementation, so a
+ * change that lets Import reach something the user did not choose fails here.
+ * tests/pluginImportModal.test.ts checks the same rule on the real window.
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -18,85 +18,92 @@ import { en } from "../src/i18n/en";
 import { ADMONITION_IMPORT } from "../src/settings/pluginImport/admonitionImportSource";
 import { CALLOUT_MANAGER_IMPORT } from "../src/settings/pluginImport/calloutManagerImportSource";
 import {
-	IMPORT_OPTIONS,
 	activeOption,
 	canImport,
 	initialFlow,
 	isFilled,
-	vaultUnavailable,
+	vaultOffered,
 	type ImportFlow,
+	type ImportOption,
 	type ProbeState,
 } from "../src/settings/pluginImport/pluginImportFlow";
 import { probeVault } from "../src/settings/pluginImport/pluginImportSource";
 
 const PROBES: ProbeState[] = ["checking", "found", "empty", "notInstalled", "unreadable"];
+const OPTIONS: ImportOption[] = ["vault", "manual"];
 
 function everyFlow(): ImportFlow[] {
 	const out: ImportFlow[] = [];
 	for (const probe of PROBES)
-		for (const chosen of [null, ...IMPORT_OPTIONS])
-			for (const hasFile of [false, true])
-				for (const hasPaste of [false, true])
-					for (const busy of [false, true])
-						out.push({ probe, chosen, hasFile, hasPaste, busy });
+		for (const chosen of [null, ...OPTIONS])
+			for (const hasManual of [false, true])
+				for (const busy of [false, true])
+					out.push({ probe, chosen, hasManual, busy });
 	return out;
 }
 
 describe("the import flow", () => {
-	it("opens with nothing active and nothing to import", () => {
+	it("opens with the vault on offer and nothing to import yet", () => {
 		const flow = initialFlow();
+		assert.equal(vaultOffered(flow.probe), true);
 		assert.equal(activeOption(flow), null);
 		assert.equal(canImport(flow), false);
 	});
 
-	it("makes the vault the active option once found, until the user chooses another", () => {
-		const found = { ...initialFlow(), probe: "found" as const };
-		assert.equal(activeOption(found), "vault");
-		assert.equal(activeOption({ ...found, hasFile: true }), "vault", "a staged file alone does not take over");
-		assert.equal(activeOption({ ...found, hasFile: true, chosen: "file" }), "file");
-		assert.equal(activeOption({ ...found, hasPaste: true, chosen: "paste" }), "paste");
+	it("offers the vault while it is looked for and once it is found, and not once it holds nothing", () => {
+		assert.deepEqual(
+			PROBES.map((probe) => [probe, vaultOffered(probe)]),
+			[
+				["checking", true],
+				["found", true],
+				["empty", false],
+				["notInstalled", false],
+				["unreadable", false],
+			],
+		);
 	});
 
-	it("only ever makes active an option that holds something", () => {
+	it("makes the vault the default once its data is found", () => {
+		assert.equal(activeOption({ ...initialFlow(), probe: "found" }), "vault");
+	});
+
+	it("follows the user's choice between two filled options", () => {
+		const both = { ...initialFlow(), probe: "found" as const, hasManual: true };
+		assert.equal(activeOption({ ...both, chosen: "manual" }), "manual");
+		assert.equal(activeOption({ ...both, chosen: "vault" }), "vault");
+	});
+
+	it("falls back to the vault when the chosen fallback no longer holds anything", () => {
+		// The text box emptied again after it was typed in.
+		const emptied = { ...initialFlow(), probe: "found" as const, chosen: "manual" as const };
+		assert.equal(activeOption(emptied), "vault");
+	});
+
+	it("imports the fallback alone when the vault holds nothing, whatever was chosen", () => {
+		for (const flow of everyFlow().filter((f) => !vaultOffered(f.probe))) {
+			assert.equal(activeOption(flow), flow.hasManual ? "manual" : null, JSON.stringify(flow));
+		}
+	});
+
+	it("lets the fallback be used while the vault is still being looked for", () => {
+		// A probe that never settles must not lock the window.
+		const looking = { ...initialFlow(), chosen: "manual" as const, hasManual: true };
+		assert.equal(activeOption(looking), "manual");
+		assert.equal(activeOption({ ...looking, probe: "found" }), "manual", "and the probe settling leaves the choice alone");
+	});
+
+	it("only ever imports an option that holds something", () => {
 		for (const flow of everyFlow()) {
 			const active = activeOption(flow);
-			if (active !== null) assert.ok(isFilled(flow, active), JSON.stringify(flow));
+			if (active !== null) assert.equal(isFilled(flow, active), true, JSON.stringify(flow));
 		}
 	});
 
-	it("honours the user's choice while it holds something, whatever else is filled", () => {
+	it("never leaves Import idle while something on screen could be imported", () => {
 		for (const flow of everyFlow()) {
-			if (flow.chosen === null || !isFilled(flow, flow.chosen)) continue;
-			assert.equal(activeOption(flow), flow.chosen, JSON.stringify(flow));
+			const something = OPTIONS.some((option) => isFilled(flow, option));
+			assert.equal(activeOption(flow) !== null, something, JSON.stringify(flow));
 		}
-	});
-
-	it("falls back to the vault, or to nothing, when the chosen option is emptied", () => {
-		for (const flow of everyFlow()) {
-			if (flow.chosen !== null && isFilled(flow, flow.chosen)) continue;
-			assert.equal(
-				activeOption(flow),
-				flow.probe === "found" ? "vault" : null,
-				JSON.stringify(flow),
-			);
-		}
-	});
-
-	it("never picks a filled file or paste on the user's behalf", () => {
-		// Keeping what an option was given is only safe if holding something
-		// is never enough to become what Import acts on.
-		for (const flow of everyFlow().filter((f) => f.chosen === null)) {
-			assert.notEqual(activeOption(flow), "file", JSON.stringify(flow));
-			assert.notEqual(activeOption(flow), "paste", JSON.stringify(flow));
-		}
-	});
-
-	it("greys the vault out only once the probe has settled on nothing", () => {
-		assert.equal(vaultUnavailable("checking"), false);
-		assert.equal(vaultUnavailable("found"), false);
-		assert.equal(vaultUnavailable("empty"), true);
-		assert.equal(vaultUnavailable("notInstalled"), true);
-		assert.equal(vaultUnavailable("unreadable"), true);
 	});
 
 	it("is never ready while busy", () => {
@@ -105,7 +112,7 @@ describe("the import flow", () => {
 		}
 	});
 
-	it("is ready exactly when it is idle and an option is active", () => {
+	it("is ready exactly when it is idle and some option is active", () => {
 		for (const flow of everyFlow().filter((f) => !f.busy)) {
 			assert.equal(canImport(flow), activeOption(flow) !== null, JSON.stringify(flow));
 		}
@@ -120,6 +127,12 @@ describe("the Admonition and Callout Manager sources", () => {
 			}
 		});
 	}
+
+	it("each offers one fallback: a file for Admonition, pasted text for Callout Manager", () => {
+		assert.deepEqual(ADMONITION_IMPORT.manual, { kind: "file", accept: ".json" });
+		assert.deepEqual(CALLOUT_MANAGER_IMPORT.manual, { kind: "paste", placeholder: "import.cmPlaceholder" });
+		assert.ok("import.cmPlaceholder" in en, "the paste box's placeholder is an English key");
+	});
 
 	it("Callout Manager tells a data.json from copied styles by the first character", () => {
 		assert.deepEqual(CALLOUT_MANAGER_IMPORT.fromText("{not json"), { errorKey: "import.err.parseFailed" });

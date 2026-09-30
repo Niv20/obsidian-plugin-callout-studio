@@ -913,23 +913,22 @@ export const ko: Record<string, string> = {
 		'"{{value}}" 아이콘을 이 vault에서 사용할 수 없어 "{{id}}"는 기존 아이콘을 유지했습니다.',
 	"import.chooseSource": "가져오기 위치",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Callout Studio에서 내보낸 .json 파일을 불러옵니다.",
+	"import.sourceStudioDesc": "Callout Studio에서 내보낸 .json 파일입니다.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Callout Manager 플러그인에서 사용자 지정 callout을 가져옵니다.",
+	"import.sourceCalloutManagerDesc": "플러그인의 사용자 지정 callout입니다.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Admonition 플러그인에서 사용자 지정 admonition을 가져옵니다.",
-	"import.back": "뒤로",
-	"import.removeFile": "파일 제거",
+	"import.sourceAdmonitionDesc": "플러그인의 사용자 지정 admonition입니다.",
+	"import.sourceOtherPlugins": "다른 플러그인에서",
 	"import.fileReady": "가져올 준비가 되었습니다.",
+	"import.upload": "업로드",
+	"import.replace": "바꾸기",
+	"import.fileUploaded": "{{name}}을(를) 업로드했습니다.",
+	"import.fileReplaced": "파일을 {{name}}(으)로 바꿨습니다.",
 	"import.pasteButton": "붙여넣기",
-	"import.pasted": "클립보드에서 붙여넣음",
-	"import.clearPaste": "붙여넣은 텍스트 지우기",
+	"import.pasteFirst": "먼저 복사한 스타일을 붙여넣으세요.",
+	"import.uploadFirst": "먼저 파일을 업로드하세요.",
 	"import.clipboardEmpty": "클립보드가 비어 있습니다. 먼저 데이터를 복사하세요.",
-	"import.clipboardUnreadable":
-		"클립보드를 읽을 수 없습니다. 대신 데이터를 파일로 저장한 후 선택하세요.",
+	"import.clipboardBlocked": "클립보드를 읽을 수 없습니다. 대신 입력란에 직접 붙여넣으세요.",
 	"import.importing": "가져오는 중…",
 	"import.err.fileUnreadable": "파일을 읽을 수 없습니다.",
 	"import.cmTitle": "Callout Manager에서 가져오기",
@@ -938,20 +937,9 @@ export const ko: Record<string, string> = {
 	"import.cmFromVault": "이 vault",
 	"import.cmVaultChecking": "Callout Manager 플러그인을 찾는 중…",
 	"import.cmVaultFound": "사용자 지정 callout {{count}}개를 찾았습니다.",
-	"import.cmVaultNotFound":
-		"이 vault에서 사용자 지정 callout을 찾지 못했습니다.",
-	"import.cmVaultNotInstalled": "이 vault에는 Callout Manager가 설치되어 있지 않습니다.",
-	"import.cmVaultUnreadable": "이 vault의 Callout Manager 설정 파일을 읽을 수 없습니다.",
-	"import.cmUseManual": "대신 파일 또는 복사한 스타일 사용",
-	"import.cmFromFile": "파일",
-	"import.cmFromFileDesc":
-		"Callout Manager의 data.json 파일 또는 복사한 스타일을 저장한 파일.",
-	"import.cmChooseFile": "파일 선택…",
 	"import.cmFromPaste": "복사한 스타일",
 	"import.cmFromPasteDesc":
 		"Callout Manager의 Copy 버튼이 복사하는 내용, 또는 data.json 파일.",
-	"import.cmPasteLabel":
-		"또는 Callout Manager에서 복사한 스타일을 여기에 붙여넣으세요:",
 	"import.cmPlaceholder":
 		"복사한 스타일 또는 data.json의 내용을 여기에 붙여넣으세요…",
 	"import.cmBtnCancel": "취소",
@@ -968,10 +956,6 @@ export const ko: Record<string, string> = {
 		'ID "{{value}}"는 이미 다른 callout("{{other}}")의 alias로 사용 중이어서 건너뛰었습니다.',
 	"import.warn.cmNoColorDefault":
 		"Callout Manager에 색상이 설정되어 있지 않아 기본 회색이 사용되었습니다.",
-	"import.warn.cmThemeCondition":
-		"이 callout의 색상 또는 아이콘은 하나의 테마에만 설정되어 있었습니다. Callout Studio는 테마별 스타일을 지원하지 않으므로 모든 테마에 동일하게 적용되었습니다.",
-	"import.warn.cmCustomStyles":
-		"이 callout에는 Callout Manager에 사용자 지정 CSS도 있습니다. 해당 스타일은 가져오기 대상이 아니므로 아이콘과 색상만 반영되었습니다.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "테마에 따라 달라지는 스타일은 유지할 수 없습니다. 조건 없는 값을 우선하며 조건부 대체 값은 모든 테마에 적용됩니다.",
@@ -985,19 +969,8 @@ export const ko: Record<string, string> = {
 	"import.admFromVault": "이 보관함",
 	"import.admVaultChecking": "Admonition 플러그인을 찾는 중…",
 	"import.admVaultFound": "사용자 지정 admonition {{count}}개를 찾았습니다.",
-	"import.admVaultNotFound":
-		"이 보관함에서 사용자 지정 admonition을 찾지 못했습니다.",
-	"import.admVaultNotInstalled": "이 vault에는 Admonition이 설치되어 있지 않습니다.",
-	"import.admVaultUnreadable": "이 보관함의 Admonition 설정 파일을 읽을 수 없습니다.",
-	"import.admUseManual": "대신 파일 또는 붙여넣은 JSON 사용",
 	"import.admFromFile": "파일",
 	"import.admFromFileDesc": "admonitions.json 파일 또는 공유된 팩.",
-	"import.admChooseFile": "파일 선택…",
-	"import.admFromPaste": "복사한 JSON",
-	"import.admFromPasteDesc":
-		"Admonition의 JSON 또는 클립보드에 복사된 data.json.",
-	"import.admPasteLabel": "또는 여기에 JSON을 붙여넣으세요:",
-	"import.admPlaceholder": "여기에 admonition을 붙여넣으세요…",
 	"import.admBtnCancel": "취소",
 	"import.admBtnImport": "가져오기",
 	"import.err.admNotRecognized":
@@ -1010,8 +983,6 @@ export const ko: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'"{{value}}" 이름의 아이콘을 어떤 아이콘 라이브러리에서도 찾지 못해 "{{id}}"은(는) 기존 아이콘을 ' +
 		"그대로 유지했습니다.",
-	"import.warn.admImageFailed":
-		"업로드된 이미지를 읽을 수 없어 기본 아이콘을 사용했습니다.",
 	"import.warn.admUnsupportedOptions": "다음 Admonition 옵션은 가져오지 않습니다: {{fields}}.",
 	"import.warn.admImageSkipped": "업로드한 이미지를 읽을 수 없어 가져오지 않았습니다.",
 	"import.warn.admIconWithCss":

@@ -964,23 +964,22 @@ export const pt: Record<string, string> = {
 		'O ícone "{{value}}" não está disponível neste cofre, por isso "{{id}}" manteve o ícone que já tinha.',
 	"import.chooseSource": "Importar de",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Carregar um arquivo .json exportado do Callout Studio.",
+	"import.sourceStudioDesc": "Um arquivo .json exportado do Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Traga os seus callouts personalizados do plugin Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Os seus callouts personalizados do plugin.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Traga as suas admonitions personalizadas do plugin Admonition.",
-	"import.back": "Voltar",
-	"import.removeFile": "Remover ficheiro",
+	"import.sourceAdmonitionDesc": "As suas admonitions personalizadas do plugin.",
+	"import.sourceOtherPlugins": "De outro plugin",
 	"import.fileReady": "Pronto para importar.",
+	"import.upload": "Enviar",
+	"import.replace": "Substituir",
+	"import.fileUploaded": "{{name}} enviado.",
+	"import.fileReplaced": "Arquivo substituído por {{name}}.",
 	"import.pasteButton": "Colar",
-	"import.pasted": "Colado da área de transferência",
-	"import.clearPaste": "Limpar o texto colado",
+	"import.pasteFirst": "Cole primeiro os estilos copiados.",
+	"import.uploadFirst": "Envie primeiro um arquivo.",
 	"import.clipboardEmpty": "A área de transferência está vazia. Copie os dados primeiro.",
-	"import.clipboardUnreadable":
-		"Não foi possível ler a área de transferência. Em vez disso, guarde os dados como um ficheiro e escolha-o.",
+	"import.clipboardBlocked": "Não foi possível ler a área de transferência. Cole o conteúdo você mesmo na caixa.",
 	"import.importing": "A importar…",
 	"import.err.fileUnreadable": "Não foi possível ler o ficheiro.",
 	"import.cmTitle": "Importar do Callout Manager",
@@ -991,21 +990,9 @@ export const pt: Record<string, string> = {
 	"import.cmFromVault": "Este cofre",
 	"import.cmVaultChecking": "A procurar o plugin Callout Manager…",
 	"import.cmVaultFound": "Encontrados {{count}} callout(s) personalizados.",
-	"import.cmVaultNotFound":
-		"Não foram encontrados callouts personalizados neste cofre.",
-	"import.cmVaultNotInstalled": "O Callout Manager não está instalado neste cofre.",
-	"import.cmVaultUnreadable":
-		"Não foi possível ler o ficheiro de definições do Callout Manager neste cofre.",
-	"import.cmUseManual": "Usar um ficheiro ou estilos copiados em vez disso",
-	"import.cmFromFile": "Um ficheiro",
-	"import.cmFromFileDesc":
-		"Um data.json do Callout Manager, ou os estilos copiados guardados num ficheiro.",
-	"import.cmChooseFile": "Escolher ficheiro…",
 	"import.cmFromPaste": "Estilos copiados",
 	"import.cmFromPasteDesc":
 		"O que o botão Copy do Callout Manager copia, ou um data.json.",
-	"import.cmPasteLabel":
-		"Ou cole aqui os estilos copiados do Callout Manager:",
 	"import.cmPlaceholder": "Cole os estilos copiados, ou um data.json, aqui…",
 	"import.cmBtnCancel": "Cancelar",
 	"import.cmBtnImport": "Importar",
@@ -1022,14 +1009,6 @@ export const pt: Record<string, string> = {
 		'O ID "{{value}}" já está sendo usado como alias por outro callout ("{{other}}") e foi ignorado.',
 	"import.warn.cmNoColorDefault":
 		"Nenhuma cor foi definida no Callout Manager, por isso foi usado o cinza padrão.",
-	"import.warn.cmThemeCondition":
-		"A cor ou o ícone deste callout foi definido apenas para um tema. " +
-		"O Callout Studio não tem estilos por tema, por isso foi trazido " +
-		"para todos os temas.",
-	"import.warn.cmCustomStyles":
-		"Este callout também tem CSS personalizado no Callout Manager. Esse " +
-		"estilo não faz parte da importação, por isso só o ícone e a cor " +
-		"foram trazidos.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "Não é possível preservar estilos dependentes do tema. Os valores incondicionais têm prioridade; qualquer valor alternativo condicional é aplicado a todos os temas.",
@@ -1045,21 +1024,9 @@ export const pt: Record<string, string> = {
 	"import.admVaultChecking": "A procurar o plugin Admonition…",
 	"import.admVaultFound":
 		"Encontradas {{count}} admonition(s) personalizadas.",
-	"import.admVaultNotFound":
-		"Não foram encontradas admonitions personalizadas neste cofre.",
-	"import.admVaultNotInstalled": "O Admonition não está instalado neste cofre.",
-	"import.admVaultUnreadable":
-		"Não foi possível ler o ficheiro de definições do Admonition neste cofre.",
-	"import.admUseManual": "Usar um ficheiro ou JSON colado em vez disso",
 	"import.admFromFile": "Um ficheiro",
 	"import.admFromFileDesc":
 		"Um ficheiro admonitions.json, ou um pacote partilhado.",
-	"import.admChooseFile": "Escolher ficheiro…",
-	"import.admFromPaste": "JSON copiado",
-	"import.admFromPasteDesc":
-		"O JSON do Admonition ou um data.json, copiado para a área de transferência.",
-	"import.admPasteLabel": "Ou cole aqui o JSON:",
-	"import.admPlaceholder": "Cole aqui as suas admonitions…",
 	"import.admBtnCancel": "Cancelar",
 	"import.admBtnImport": "Importar",
 	"import.err.admNotRecognized":
@@ -1075,9 +1042,6 @@ export const pt: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Não foi encontrado nenhum ícone chamado "{{value}}" em nenhuma ' +
 		'biblioteca, por isso "{{id}}" manteve o ícone que já tinha.',
-	"import.warn.admImageFailed":
-		"Não foi possível ler a imagem carregada, por isso foi usado o " +
-		"ícone predefinido.",
 	"import.warn.admUnsupportedOptions": "Estas opções do Admonition não são importadas: {{fields}}.",
 	"import.warn.admImageSkipped": "Não foi possível ler a imagem carregada e ela não foi importada.",
 	"import.warn.admIconWithCss":

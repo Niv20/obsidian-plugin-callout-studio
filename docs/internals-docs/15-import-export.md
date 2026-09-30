@@ -11,8 +11,12 @@ opening a chooser — one picks a source, the other picks a format — rather
 than one top-level row per option, per the project's own stated design
 rationale ("a second top-level row for a new format would leave the two
 halves of one section shaped differently"). Both choosers show the backup
-with the same Lucide `paintbrush` icon. Export
-marks it with the shared grey **Recommended** pill (`settings/recommendedBadge.ts`) on its title line rather
+with the same Lucide `paintbrush` icon. Import's chooser sets its two other
+plugins under a **From another plugin** caption (`renderOptionGroupLabel`, a
+plain `div.cs-option-group-label` inside the same list, in the small capitals
+a combobox group wears), so the window reads as "your own backup, or somebody
+else's data" rather than as three equal rows. Export
+marks its backup with the shared grey **Recommended** pill (`settings/recommendedBadge.ts`) on its title line rather
 than a "(recommended)" written into the title. The pill's word
 (`.cs-recommended-badge-text`) is centred on its capitals, not on the font's
 line box: inside `@supports (text-box: trim-both cap alphabetic)` the word is
@@ -26,11 +30,63 @@ possible future UI use; it is not bundled or shown in these choosers.
 
 Both choosers and the plugin import window use `settings/optionBox.ts`:
 `renderOptionList()` provides the column and `renderOptionBox()` provides the
-icon, title, description, badge, and interaction. Chooser boxes have
-`role="button"`; plugin import options have `role="radio"`. They share the
-same `.cs-option-box` styling and click, Enter, and Space handling. Only the
-first click of a double-click and the first keydown of a held key activate a
-box, so choosing an option cannot also refill it through a repeated event.
+icon, title, description and badge. A box comes in two forms, told apart by
+whether it is given an `onActivate`:
+
+- **A choice** — a chooser's box. The whole box is the control
+  (`role="button"`, `tabindex="0"`, a chevron at its trailing edge) with click,
+  Enter, and Space handling. Only the first click of a double-click and the
+  first keydown of a held key activate it, so one gesture cannot open the file
+  picker twice or start a second export.
+- **A card** — no `onActivate`: the box alone, with no role, no focus stop,
+  no chevron and no listeners. The plugin import window builds its two
+  options on it and adds what is its own to say — a radio dot, a button, a
+  text box (see [the plugin import window](#the-plugin-import-window)).
+  `renderOptionBox()` returns the card's `titleEl` and `descEl` so that window
+  can rewrite them in place.
+
+### How an option box is drawn
+
+A box is drawn as the settings lists draw a callout row
+(`.callout-studio-row`), so the three windows read as part of the same plugin
+rather than as dialogs of their own:
+
+- **A borderless pill on the raised surface.** `border-radius: 8px`, no border,
+  and `var(--cs-surface-raised, var(--background-secondary))` as its fill. The
+  icon sits on a 36px tile painted `var(--cs-surface, var(--background-primary))`
+  — the window's own colour, as a row's syntax chip is — and so does the
+  **Recommended** pill. Those two tokens are the pair
+  [Settings UI and modals](16-settings-ui-and-modals.md) describes, and nothing
+  else may be used here: on mobile dark `--background-secondary` *is* the
+  window, and a box painted with it directly disappears.
+- **Chrome stays grey-lit.** The icon is `--text-muted`, Obsidian's own icon
+  grey, not `--text-accent`, and it stays that grey whatever the box comes to
+  hold: nothing on a box turns green. The accent is spent on exactly one thing,
+  the active card of the plugin import window (and the dashed outline a dragged
+  file lands in, `is-drop-target`). `tests/importBoxStyles.test.ts` fails on
+  any other option-box or import-card rule that names the accent, and on any
+  `.cs-option-*` or `.cs-import-*` rule that names a success colour.
+- **The mark at the trailing edge says what a click does.**
+  `.cs-option-box-mark` is `aria-hidden` decoration with no role and no focus
+  stop: a `chevron-right` in `--text-faint` (Obsidian mirrors it under
+  `.mod-rtl`), drawn on a choice only, because the click opens something. A
+  plugin import card ends in a radio dot instead, because a click there only
+  chooses.
+- **Hover.** A choice steps its own fill 7% toward `--text-normal` — darker
+  over a light window, lighter over a dark one — and its chevron goes from
+  `--text-faint` to `--text-muted`. (A callout row hovers to
+  `--background-secondary-alt` instead, which on a light desktop is nearly the
+  window's white: fine for a row whose buttons carry the feedback, too faint
+  for a box that is itself the button.) A plugin import card takes the same
+  step only while a click would change something (`is-choosable`: it holds
+  something and is not the active one). All hover rules sit inside
+  `@media (hover: hover)`, as Obsidian guards its own button hovers, so a
+  tapped box on a phone doesn't stay lit.
+- **Type.** The title is `--font-ui-medium` semibold; the status line is
+  `--font-ui-smaller` in `--text-muted`, the size of a settings description.
+
+The three windows share one `max-width` (520px), so stepping from Import's
+chooser into a plugin import window doesn't resize the window under the pointer.
 
 ### Two export formats
 
@@ -61,9 +117,9 @@ box, so choosing an option cannot also refill it through a repeated event.
    the backup importer never reads the generated CSS file, and no importer
    scans the snippets folder.
 
-The Callout Manager importer's file and paste routes can parse a limited subset
-from either Callout Manager CSS or a Callout Studio snapshot, chosen as a file
-or pasted. This is a partial recovery/migration path, not a restore of the
+The Callout Manager importer's paste route can parse a limited subset from
+either Callout Manager CSS or a Callout Studio snapshot, pasted from the
+clipboard. This is a partial recovery/migration path, not a restore of the
 backup format or a full-fidelity one: CSS cannot carry the complete definitions,
 settings, palettes, commands, or stored image data in the JSON backup.
 
@@ -275,143 +331,194 @@ configured by a `PluginImportSource`
 ([`admonitionImportSource.ts`](../../src/settings/pluginImport/admonitionImportSource.ts),
 [`calloutManagerImportSource.ts`](../../src/settings/pluginImport/calloutManagerImportSource.ts)).
 A source never touches the DOM. It supplies the other plugin's id (and so
-where its `data.json` lives), the window's per-plugin class, the file picker's
-`accept`, its i18n keys, and two readers: `fromDataJson` for the probed file,
-and `fromText` for a chosen file's text or a paste. Each reader returns a
+where its `data.json` lives), the window's per-plugin class, its one fallback
+(`manual`), its i18n keys, and two readers: `fromDataJson` for the
+probed file, and `fromText` for the fallback's text. Each reader returns a
 `PluginImportBatch`, which holds the entries in a closure together with the
 plugin's planner and `apply` method. That lets the modal import without ever
 seeing an entry type. It also keeps the modal class free of type parameters,
 which `tests/modalChrome.test.ts`'s chrome scan requires. A third importer is
 one more source object and one more row in `ImportSourceModal`.
 
-**One screen, three options, exactly one Import.** The window used to show an
-Import inside the "This vault" row as well as a footer Import that only read
-the paste box, and Admonition's "Choose file…" imported the moment a file was
-picked. A later version split the window into a vault view and a file-or-paste
-view behind a header Back arrow. Now it is one screen: three option boxes
-stacked in a `role="radiogroup"` (`pluginImportViews.ts`), and the footer
-Import is the only import control. Which box is active, and so what Import
-acts on, is decided in one place,
+**One screen, at most two options, exactly one Import.** The window used to
+show an Import inside the "This vault" row as well as a footer Import that only
+read the paste box, and Admonition's "Choose file…" imported the moment a file
+was picked. Later versions split it into views behind a header Back arrow,
+made each option a box that was its own button — one of which read the
+clipboard the moment it was clicked, which nothing on screen announced — and
+then showed one option at a time behind a small text link, which hid the
+choice. Now both options are on one screen:
+
+- **This vault** — a card saying what was found. On screen while the probe is
+  still looking and once it has found something.
+- **The source's one fallback** — always on screen, and alone when the vault
+  holds nothing to import.
+
+The fallback is the source's to name —
+
+```ts
+type PluginImportManual =
+  | { kind: "file"; accept: string }        // Admonition: `.json`
+  | { kind: "paste"; placeholder: string }; // Callout Manager
+```
+
+— matching what each plugin hands its users: Admonition's export button writes
+a file, so its window takes an uploaded file; Callout Manager's Copy button
+fills the clipboard, so its window has a text box and a Paste button. The
+footer Import is the only import control. Which option is active, and so what
+Import acts on, is decided in one place,
 [`pluginImportFlow.ts`](../../src/settings/pluginImport/pluginImportFlow.ts),
-as pure functions of the window's state:
+as pure functions of the window's state. The flow knows the fallback only as
+`manual`; whether that is a file or pasted text is the window's and the
+source's business, which is what makes a third route structurally impossible
+rather than merely not drawn:
 
 | Option | Holds something when | How it is filled |
 | --- | --- | --- |
 | `vault` | the probe found entries | the probe, on open |
-| `file` | a file is staged | clicking the empty or active box opens the file picker; dropping a file onto the box stages it |
-| `paste` | the clipboard gave non-blank text | a click on the box, while empty or active: a clipboard read |
+| `manual` (a file) | a file is staged | **Upload** opens the file picker; dropping a file onto the card stages it |
+| `manual` (pasted text) | the text box holds something other than whitespace | the user pastes or types into it, or presses **Paste** |
 
+`vaultOffered()` is true while the probe is `checking` or `found`.
 `activeOption()` is the user's last choice (`flow.chosen`) while that option
-still holds something. Otherwise it is the vault once found, as the
-recommended default, and otherwise nothing. Holding something is never enough
-on its own: a staged file or a paste becomes active only when the user fills
-or clicks it. That is what makes it safe for every option to keep what it was
-given while another is active.
+still holds something; otherwise the vault once found, as the recommended
+default; and otherwise whatever the fallback holds, being the only thing on
+screen. Filling the fallback — a file staged, text typed or pasted — chooses
+it; a click on the vault card, or on its radio dot, chooses the vault. Each
+option keeps what it was given while the other is active, and Import only ever
+reads the active one.
 
-- **Choosing.** Each box, `.cs-option-box`, is itself the `role="radio"`:
-  `aria-checked`, `aria-labelledby` its title line, `aria-describedby` its
-  status line, and `tabindex="0"` while it can be chosen. Nothing sits on it.
-  The **Choose file…** and **Paste** buttons that once sat at its edge, and
-  the **×** that replaced them once filled, are gone, so the whole face is the
-  one click target and `OptionsHandlers` is a single `onActivate`. What a
-  click, Enter or Space means is decided in `PluginImportModal.activate()`.
-  While an import runs, nothing. A file or paste box that is empty, or that is
-  already the active one, is filled (again): the file picker opens, or the
-  clipboard is read. A box that holds something but isn't active becomes
-  active, and `markActive()` flips `is-selected` and `aria-checked` in place
-  without a redraw, so focus stays where it was. The vault box can only be
-  chosen: it takes clicks once the probe has found something, and never if it
-  finds nothing.
-- **The group is named by the window's title.** `renderOptions` takes the
-  modal's title element as `label`, gives it an id if it has none, and points
-  the radiogroup's `aria-labelledby` at it. It used to be an `aria-label`, but
-  Obsidian turns any `aria-label` into a hover tooltip, looking it up from the
-  hovered element with `matchParent("[aria-label]")`, so the group's "Import
-  from …" popped up over every box.
-- **The active box** wears `is-selected`: a 2px `--interactive-accent`
-  border (the border plus a 1px inset shadow, so nothing shifts) and an 8%
-  accent wash. A box that holds something but isn't active shows only its
-  success state (`is-filled`: `file-check`/`clipboard-check`, the file name or
-  "Pasted from the clipboard", and "Ready to import.").
-- **Hover.** Every selectable box that isn't active gets a subtle neutral
-  `--background-modifier-hover` wash and a clearer
-  `--background-modifier-border-focus` border, in all three windows. The active box
-  lightens its wash a step with `--interactive-accent-hover`, the lighter
-  accent in both themes: 12% under `.theme-dark` and 4% under `.theme-light`,
-  since lighter means more of it over a dark window and less over a light one.
-  On an enabled, unselected box, the shared **Recommended** pill also deepens
-  its fill to `--background-modifier-border-focus`, keeping it distinct from
-  the row wash. A selected box keeps the pill's resting fill.
-  All hover rules sit inside `@media (hover: hover)`, as Obsidian guards its own
-  button hovers, so a tapped box on a phone doesn't stay lit.
+- **The cards** (`renderOptions`,
+  [`pluginImportViews.ts`](../../src/settings/pluginImport/pluginImportViews.ts))
+  are option boxes drawn as cards (`.cs-import-vault`, `.cs-import-manual`),
+  built **once** per open. `update()` writes everything that changes in place —
+  the count, the Recommended pill, a staged file's name, which card is active —
+  so nothing the user is in is ever replaced: the Upload button that becomes
+  Replace is the same button, typing never moves the caret, and the probe
+  settling touches neither the text box nor focus.
+- **Choosing.** While both cards are there, the list is a
+  `role="radiogroup"` named by the window's title (`aria-labelledby`, never an
+  `aria-label`, which Obsidian would pop up as a tooltip over every card), and
+  each card ends in a radio dot, `.cs-import-radio`: `role="radio"`,
+  `aria-checked`, `aria-labelledby` its card's title line, `aria-describedby`
+  its status line. The dot, not the card, is the radio, because a radio may
+  hold no control and the fallback's card holds a button and, for a paste, a
+  text box. The whole card is still one pointer target for the same thing: a
+  click anywhere on it chooses it — except on its own button or text box
+  (`closest("button, textarea")`), which does what it says instead. Enter and
+  Space on a dot choose it; a held key is claimed but counted once. A dot is a
+  focus stop only while its card holds something; an empty fallback's dot is
+  `aria-disabled` and faded, and a click on the empty card or its dot chooses
+  nothing — it waits to be filled by its own button or box, and a notice says
+  which: `import.uploadFirst` (Admonition) or `import.pasteFirst` (Callout
+  Manager), picked by `source.manual.kind`. Going back into a text box that
+  holds text (`focus`) chooses it; focus entering an *empty* box is silent,
+  since the user is about to paste (`onPasteFocus` rather than `onChoose`). Choosing flips `is-selected` and
+  `aria-checked` in place.
+- **The active card** wears `is-selected`: a 2px `--interactive-accent` ring
+  (an inset `box-shadow`, so nothing shifts) over an 8% accent tint of the
+  card's own fill, and its radio dot fills with `--checkbox-color` and shows
+  its check. A card a click would change wears `is-choosable` and steps its
+  fill on hover, like a chooser's box.
+- **Nothing in the vault.** When the probe settles on `notInstalled`, `empty`,
+  or `unreadable`, the vault card is removed, and with it the radiogroup role
+  and the fallback's radio dot: alone, it has nothing to be chosen against, and
+  wears no ring, and a click on its card says nothing. **Nothing says why** —
+  no greyed-out card, no line saying the plugin isn't installed, and nothing
+  announced. The three probe results stay
+  distinct in `probeVault` and the flow; the window simply treats them alike.
+  Their sentences are retired keys.
+- **The instructions** above the cards — what comes over and what is left
+  behind — are a caption (`.cs-import-instructions`: `--font-ui-small`,
+  `--text-muted`), set as the Restore window sets its own intro.
 - **The probe.** `probeVault` reads the file rather than asking
   `app.plugins`, because a plugin being migrated off is often already
   disabled. If `data.json` is missing, it checks the plugin folder: a missing
   folder is `notInstalled`; a folder without a settings file is `empty`.
   A file with no custom entries and an empty `{}` are also `empty`.
-  A file that can't be read, parsed, or recognized is
-  `unreadable`. Once found, the vault box carries the shared grey
-  **Recommended** pill (`settings/recommendedBadge.ts`, also used by
-  `ExportFormatModal`'s backup row) on its title line. Once `notInstalled`,
-  `empty`, or `unreadable`, it stays on screen with `is-disabled`,
-  `aria-disabled`, no activation handlers, and no tab stop. The icon, title,
-  and empty-state description use `--text-faint`; unreadable-file descriptions
-  retain their warning color. The cursor is `not-allowed`, and the disabled
-  box receives no hover wash. The new not-installed messages live only in
-  `en.ts`; other locales use the existing per-key English fallback.
-  While the probe is still checking, the vault box can't be chosen
-  but isn't greyed, and its "Looking for…" line is held back 250ms so a fast
-  probe never flashes it. A `role="status"` live region, created before the
-  probe starts, announces the result. Its text-only box uses `opacity: 0` and
-  `pointer-events: none` to remain unpainted and ignore pointer hits while
-  keeping its geometry and accessibility. A probe that settles after the user
-  staged a file leaves the file active.
-- **Paste reads the clipboard at the click.** `navigator.clipboard.readText()`
-  runs from the paste box's own click handler, through `activate()`. It is the
-  same call Obsidian's own mobile editor makes for its Paste menu item. There
-  is no text box. Non-blank text replaces any paste already held, makes the
-  option active, and sends focus to Import. Blank text is
-  `import.clipboardEmpty` and a rejected read is `import.clipboardUnreadable`;
-  either is announced, and neither stages anything. With no paste held, the
-  error also shows in the box's status line as a warning. With one held (the
-  active box clicked again after the clipboard was emptied, or a phone's paste
-  prompt dismissed), the error is only announced: the held paste stays,
-  still "Ready to import." and still active, and nothing is redrawn. The text
-  is kept as it was read, and `fromText` runs on it only when Import is
-  pressed, as a file's does.
-- **Staging a file.** Choosing a file in the picker or dropping one onto the
-  file box only stages it. Either action replaces any file staged before,
-  makes the file option active, and sends focus to Import. A picker closed
-  without a file changes nothing. The file is read when Import is pressed,
+  A file that can't be read, parsed, or recognized is `unreadable`. Once
+  found, the vault card carries the shared grey **Recommended** pill
+  (`settings/recommendedBadge.ts`, also used by `ExportFormatModal`'s backup
+  row) on its title line. While the probe is still checking, the vault card
+  says "Looking for…", its dot takes no focus, and the card
+  (`.cs-import-vault.is-checking`) is held back 250ms, so a fast probe never
+  flashes it before it goes or before the count replaces it. The fallback is
+  usable from the start, so a probe that never settles cannot lock the window;
+  a probe that settles after the user filled the fallback leaves their choice
+  alone. A `role="status"` live region, created before the probe starts,
+  announces the count once found (and nothing otherwise). Its text-only box
+  uses `opacity: 0` and `pointer-events: none` to remain unpainted and ignore
+  pointer hits while keeping its geometry and accessibility.
+- **Pasting** (Callout Manager's window). The paste card holds a plain
+  `<textarea>` on a line of its own under the card's head (the card is
+  `flex-wrap: wrap`; the box is `flex: 0 0 100%`), named and described by the
+  card's own title and status lines (`aria-labelledby`/`aria-describedby`),
+  with the source's `manual.placeholder`. It opts into `.cs-text-control` for
+  the shared field face, and `.cs-import-paste-input` gives it **one fixed
+  height** (132px) with `resize: none` and `overflow: auto`: it scrolls
+  instead of growing with what is pasted, so the footer stays where it was. It
+  is monospace and `direction: ltr`, since what goes in is CSS or JSON (in a
+  right-to-left window a rule would otherwise read `} selector.`); only while
+  `:placeholder-shown` does it take the window's own direction, for the
+  translated placeholder. Its `input` handler keeps the text as typed
+  (`setPaste()`), counts whitespace alone as nothing to import, and chooses
+  the card. `fromText` runs on it only when Import is pressed, as a file's
+  does, after `assertImportTextSize`; text that fails to parse is reported and
+  stays in the box to correct.
+- **The Paste button** (`pasteFromClipboard()`) is **the only clipboard read in
+  the window**: `navigator.clipboard.readText()` from the button's own click,
+  the same call Obsidian's mobile editor makes for its Paste menu item. It
+  used to happen when the paste box itself was clicked, which looked like
+  nothing had happened or, on a phone, raised a paste prompt nobody asked for;
+  now a button says what it does and the result is there to see, in the box.
+  Non-blank text replaces whatever the box held, chooses the card, and sends
+  focus to Import. Blank text is an `import.clipboardEmpty` notice, a rejected
+  read (or no clipboard API at all) an `import.clipboardBlocked` notice, and
+  text over the import size limit that limit's own notice; each leaves the box,
+  the choice and focus as they were. (`import.clipboardBlocked` is a new key
+  rather than new words under the old, since removed, key that told the user
+  to choose a file instead — advice this window can't honour, and that an
+  older translation would keep giving.) A read that answers after the
+  window was asked to close does nothing.
+- **Uploading a file** (Admonition's window). The file card carries a
+  standard `<button class="cs-import-action">` before its radio dot that reads
+  **Upload**, `aria-describedby` the card's two lines. Picking a file, or
+  dropping one onto the card, only stages it (`stageFile()`): the card is
+  rewritten in place — its title becomes the file's name
+  (`cs-option-box-name`, `dir="auto"`), its status line "Ready to import.",
+  and **the same button now reads Replace** — and the file becomes the active
+  option. Its icon does not change and nothing turns green; the confirmation
+  is an Obsidian `Notice` — `import.fileUploaded` for a first file,
+  `import.fileReplaced` for one that replaces a file already staged, each
+  naming the file. Focus goes to Import. A picker closed without a file
+  changes nothing and says nothing. The file is read when Import is pressed,
   not when it is staged, so a file staged and then replaced is never opened.
   A read that fails (an evicted cloud file, for example) is reported as
-  `import.err.fileUnreadable`.
-- **Filling again, never emptying.** A file is swapped by clicking the active
-  box again or dropping another file onto it; a paste is brought up to date by
-  clicking its active box again. Nothing can empty an option:
-  there is no Remove or Clear, and a staged file or a paste lasts until it is
-  replaced or the window is closed and reopened (`onOpen` resets both). That
-  is safe because Import only ever acts on the active option. Whatever an
-  inactive box still holds is never read, and it becomes active only when the
-  user clicks it or drops a new file onto the file box. That first click on an
-  inactive filled box only chooses it,
-  so switching back to a file or a paste never reopens the picker or reads the
-  clipboard again.
-- **No Back, no view state, no Escape handling of its own.** With a single
-  screen there is nothing to step back to, so the window no longer overrides
-  `onHistoryBack` or `onEscapeKey`. Escape and the back gesture close it as
-  they close any Obsidian modal.
-- **Redraws.** Filling an option, a paste that fails with none held, and the
-  probe settling redraw the three boxes. Focus goes to Import after a file is
-  staged or a paste lands; otherwise it goes back to whichever option's box
-  had it (`focusInView()`). Choosing between filled options only re-syncs, and
-  a failed re-read over a held paste touches nothing but the live region.
+  `import.err.fileUnreadable`, and the file stays staged to be replaced. The
+  file input and the drop handlers exist only in a window whose fallback is a
+  file: Callout Manager's builds no `<input type="file">`, and neither its
+  cards nor its text box are drop targets.
+- **A card's own button** (Upload/Replace, Paste) takes the shared neutral face
+  and border explicitly (`.cs-option-box .cs-import-action`), as a footer's
+  Cancel does: on a phone Obsidian's own button face is the card's colour, and
+  the border is what keeps it a button there.
+- **Replacing, never emptying.** A file is swapped with **Replace** or by
+  dropping another onto the card; pasted text is edited in its box or replaced
+  with **Paste**. A staged file lasts until it is replaced or the window is
+  closed and reopened (`onOpen` resets both). That is safe because Import only
+  ever acts on the active option.
+- **No Back, no Escape handling of its own.** With one screen there is nothing
+  to step back to, so the window does not override `onHistoryBack` or
+  `onEscapeKey`; Escape and the back gesture close it as they close any
+  Obsidian modal.
 - **The footer.** Import is soft-disabled with `aria-disabled` and
   `cs-btn-disabled`, like the callout editor's Save, rather than with
   `disabled`. It stays focusable, and Obsidian can return focus to it when the
-  stacked `ImportReportModal` closes. Its `aria-describedby` points at the
-  active box's title line and status line. While an import runs, its label
-  reads "Importing…" and every handler is a no-op.
+  stacked `ImportReportModal` closes. Pressed with nothing to import, it
+  raises the same `import.uploadFirst` / `import.pasteFirst` notice — except
+  while the probe is still `checking`, when the vault may yet arm it. Its
+  `aria-describedby` points at the active card's title line and status line. While an import runs, its label
+  reads "Importing…" and choosing, Upload, Paste and a drop are no-ops.
 - **Stale work is dropped.** A generation counter bumps on every open, in
   `close()` and in `onClose()`. The `close()` bump matters on a phone, where
   Obsidian slides the window out before it calls `onClose`. A probe, a
@@ -429,7 +536,7 @@ close. The source's `afterApply` runs last; Admonition uses it for
 ## Import from Callout Manager
 
 [`src/utils/calloutManagerImport.ts`](../../src/utils/calloutManagerImport.ts)
-+ `calloutManagerFormat.ts`. **Three entry routes, one shape, one planner** —
++ `calloutManagerFormat.ts`. **Two entry routes, one shape, one planner** —
 whichever route data arrives by, it becomes a `CalloutManagerEntry[]` and
 goes through the same `planCalloutManagerImport`:
 
@@ -442,14 +549,14 @@ goes through the same `planCalloutManagerImport`:
    which the CSS-copy route can see at all, since a copied stylesheet is
    already flattened to whichever scheme was active when it was copied.
 2. **Paste the CSS the plugin's own "Copy" button puts on the clipboard** —
-   read by a click on the window's paste box and parsed directly
+   pasted into the window's text box (by hand, or with its **Paste** button)
+   and parsed directly
    (`.callout[data-callout="test"] { --callout-icon: ...; --callout-color:
    ... }`). A `data.json` copied as text works too; the first character
    tells the two apart (`{` or `[` is JSON), so a JSON syntax error is
-   reported as one instead of being retried as CSS.
-3. **Choose a file** (`.json` or `.css`) — Callout Manager's `data.json` from
-   another vault, or its copied styles saved as a file. The file's text goes
-   through exactly the same reader as a paste.
+   reported as one instead of being retried as CSS. That is also how a
+   `data.json` from *another* vault comes over now that the window has no
+   file option: opened, copied, and pasted.
 
 `declared` is the flag that lets one planner serve both doors without either
 route needing to know which one is calling: a copied stylesheet never sets
@@ -495,10 +602,10 @@ importer for the same reason: **planning is read-only against the registry;
 `CalloutRegistry.applyAdmonitionImport` is the only mutator**, so a report
 can be shown before anything changes.
 
-Three entry routes: Admonition's own `data.json` read straight out of the
-vault (again: nothing exported first, nothing written back), an
-`admonitions.json` file, or JSON read from the clipboard by a click on the
-window's paste box.
+Two entry routes: Admonition's own `data.json` read straight out of the
+vault (again: nothing exported first, nothing written back), or an uploaded
+file — an `admonitions.json` its export button wrote, a shared pack, or a
+`data.json` taken from another vault.
 
 - **Every icon library Admonition offers maps to one this plugin already
   has** — its own bundled set, Font Awesome, Octicons, and RPG Awesome are

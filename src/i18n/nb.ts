@@ -889,43 +889,31 @@ export const nb: Record<string, string> = {
 		'Ikonet «{{value}}» er ikke tilgjengelig i dette hvelvet, så «{{id}}» beholdt ikonet det allerede hadde.',
 	"import.chooseSource": "Importer fra",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Last inn en .json-fil eksportert fra Callout Studio.",
+	"import.sourceStudioDesc": "En .json-fil eksportert fra Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Hent de tilpassede calloutene dine fra Callout Manager-utvidelsen.",
+	"import.sourceCalloutManagerDesc": "De tilpassede calloutene dine fra utvidelsen.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Hent dine egne admonitions fra Admonition-tillegget.",
-	"import.back": "Tilbake",
-	"import.removeFile": "Fjern fil",
+	"import.sourceAdmonitionDesc": "Dine egne admonitions fra tillegget.",
+	"import.sourceOtherPlugins": "Fra en annen utvidelse",
 	"import.fileReady": "Klar til import.",
+	"import.upload": "Last opp",
+	"import.replace": "Erstatt",
+	"import.fileUploaded": "{{name}} er lastet opp.",
+	"import.fileReplaced": "Filen er erstattet med {{name}}.",
 	"import.pasteButton": "Lim inn",
-	"import.pasted": "Limt inn fra utklippstavlen",
-	"import.clearPaste": "Fjern innlimt tekst",
+	"import.pasteFirst": "Lim inn de kopierte stilene først.",
+	"import.uploadFirst": "Last opp en fil først.",
 	"import.clipboardEmpty": "Utklippstavlen er tom. Kopiér dataene først.",
-	"import.clipboardUnreadable":
-		"Utklippstavlen kunne ikke leses. Lagre dataene som en fil og velg den i stedet.",
+	"import.clipboardBlocked": "Utklippstavlen kunne ikke leses. Lim inn i feltet selv i stedet.",
 	"import.importing": "Importerer…",
 	"import.err.fileUnreadable": "Filen kunne ikke leses.",
 	"import.cmTitle": "Importer fra Callout Manager",
 	"import.cmFromVault": "Dette hvelvet",
 	"import.cmVaultChecking": "Ser etter Callout Manager-tillegget…",
 	"import.cmVaultFound": "Fant {{count}} tilpassede callouts.",
-	"import.cmVaultNotFound": "Fant ingen tilpassede callouts i dette hvelvet.",
-	"import.cmVaultNotInstalled": "Callout Manager er ikke installert i dette hvelvet.",
-	"import.cmVaultUnreadable":
-		"Innstillingsfilen til Callout Manager i dette hvelvet kunne ikke leses.",
-	"import.cmUseManual": "Bruk en fil eller kopierte stiler i stedet",
-	"import.cmFromFile": "En fil",
-	"import.cmFromFileDesc":
-		"En data.json fra Callout Manager, eller de kopierte stilene lagret som en fil.",
-	"import.cmChooseFile": "Velg fil…",
 	"import.cmFromPaste": "Kopierte stiler",
 	"import.cmFromPasteDesc":
 		"Det Copy-knappen i Callout Manager kopierer, eller en data.json.",
-	"import.cmPasteLabel":
-		"Eller lim inn de kopierte stilene fra Callout Manager her:",
 	"import.cmInstructions":
 		"Hver tilpasset callout importeres med ikon og farge. Temaspesifikke stiler og egendefinert CSS har ingen tilsvarende innstilling her og blir ikke overført.",
 	"import.cmPlaceholder": "Lim inn kopierte stiler eller innholdet i data.json her…",
@@ -942,10 +930,6 @@ export const nb: Record<string, string> = {
 		'ID "{{value}}" brukes allerede som et alias av en annen callout ("{{other}}") og ble hoppet over.',
 	"import.warn.cmNoColorDefault":
 		"Ingen farge var angitt i Callout Manager, så standardgrå ble brukt.",
-	"import.warn.cmThemeCondition":
-		"Fargen eller ikonet til denne callouten var bare angitt for ett tema. Callout Studio støtter ikke temaspesifikk styling, så den ble tatt med for alle temaer.",
-	"import.warn.cmCustomStyles":
-		"Denne callouten har også egendefinert CSS i Callout Manager. Denne stylingen er ikke en del av importen, så bare ikonet og fargen ble tatt med.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "Temavhengig stil kan ikke bevares. Ubetingede verdier foretrekkes; eventuelle betingede reserveverdier brukes på tvers av alle temaer.",
@@ -960,19 +944,8 @@ export const nb: Record<string, string> = {
 	"import.admFromVault": "Dette hvelvet",
 	"import.admVaultChecking": "Leter etter Admonition-tillegget…",
 	"import.admVaultFound": "Fant {{count}} egne admonitions.",
-	"import.admVaultNotFound": "Fant ingen egne admonitions i dette hvelvet.",
-	"import.admVaultNotInstalled": "Admonition er ikke installert i dette hvelvet.",
-	"import.admVaultUnreadable":
-		"Innstillingsfilen til Admonition i dette hvelvet kunne ikke leses.",
-	"import.admUseManual": "Bruk en fil eller innlimt JSON i stedet",
 	"import.admFromFile": "En fil",
 	"import.admFromFileDesc": "En admonitions.json-fil eller en delt pakke.",
-	"import.admChooseFile": "Velg fil…",
-	"import.admFromPaste": "Kopiert JSON",
-	"import.admFromPasteDesc":
-		"Admonition-JSON eller en data.json, kopiert til utklippstavlen.",
-	"import.admPasteLabel": "Eller lim inn JSON her:",
-	"import.admPlaceholder": "Lim inn dine admonitions her…",
 	"import.admBtnCancel": "Avbryt",
 	"import.admBtnImport": "Importer",
 	"import.err.admNotRecognized":
@@ -987,9 +960,6 @@ export const nb: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Det finnes ingen ikon som heter "{{value}}" i noe ikonbibliotek, ' +
 		'så "{{id}}" beholdt ikonet den allerede hadde.',
-	"import.warn.admImageFailed":
-		"Det opplastede bildet kunne ikke leses, så standardikonet ble " +
-		"brukt.",
 	"import.warn.admUnsupportedOptions": "Disse Admonition-alternativene importeres ikke: {{fields}}.",
 	"import.warn.admImageSkipped": "Det opplastede bildet kunne ikke leses og ble ikke importert.",
 	"import.warn.admIconWithCss":

@@ -3,10 +3,11 @@
  * to tell PluginImportModal, and the vault probe every source shares.
  *
  * A source never touches the DOM. It knows how its plugin's data is shaped —
- * where the plugin keeps it, how its data.json, an export file and a paste are
- * read, and how the entries are planned and applied — and nothing else. The
- * modal owns every pixel, so the Admonition and Callout Manager windows cannot
- * drift apart again, which is how each came to grow a second Import button.
+ * where the plugin keeps it, which one other way in its window offers, how its
+ * data.json and that file or pasted text are read, and how the entries are
+ * planned and applied — and nothing else. The modal owns every pixel, so the
+ * Admonition and Callout Manager windows cannot drift apart again, which is
+ * how each came to grow a second Import button.
  *
  * Entries stay behind closures (`PluginImportBatch`) rather than a type
  * parameter: the modal never needs to look at one, and a modal class with type
@@ -36,7 +37,7 @@ export interface PluginImportBatch {
 	plan(ctx: SettingsSectionContext): Promise<PluginImportPlan>;
 }
 
-/** A file or a paste, read: entries, or the report message saying why not. */
+/** A file or pasted text, read: entries, or the report message saying why not. */
 export type PluginImportParse =
 	| { batch: PluginImportBatch }
 	| { errorKey: string };
@@ -49,33 +50,46 @@ export interface PluginImportCopy {
 	vaultChecking: string;
 	/** Takes `{{count}}`. */
 	vaultFound: string;
-	/** The plugin's folder is here, with nothing in it to import. */
-	vaultEmpty: string;
-	/** The plugin has no folder here: it isn't installed in this vault. */
-	vaultNotInstalled: string;
-	vaultUnreadable: string;
-	fromFile: string;
-	fromFileDesc: string;
-	/** The clipboard option: its name, and what it takes. */
-	fromPaste: string;
-	fromPasteDesc: string;
+	/** The manual option, before it holds anything: its name, and what it takes. */
+	manual: string;
+	manualDesc: string;
 	cancel: string;
 	importButton: string;
 	/** Takes `{{created}}` and `{{updated}}`. */
 	notice: string;
 }
 
+/**
+ * The window's fallback: the one way in besides this vault.
+ *
+ * One per plugin, matching what that plugin hands its users: Admonition's
+ * export button writes a file (and its shared packs are files), so its window
+ * takes an uploaded file; Callout Manager's Copy button fills the clipboard,
+ * so its window has a box to paste into, and a Paste button. Both windows used
+ * to offer both.
+ */
+export type PluginImportManual =
+	| {
+			readonly kind: "file";
+			/** The file picker's `accept`. */
+			readonly accept: string;
+	  }
+	| {
+			readonly kind: "paste";
+			/** i18n key: what the empty paste box says it takes. */
+			readonly placeholder: string;
+	  };
+
 export interface PluginImportSource {
 	/** The plugin's id, and so its folder under the config directory. */
 	readonly pluginId: string;
 	/** The window's own class — a styling hook user snippets may target. */
 	readonly modalClass: string;
-	/** The file picker's `accept`. */
-	readonly fileAccept: string;
+	readonly manual: PluginImportManual;
 	readonly copy: PluginImportCopy;
 	/** The plugin's data.json, already JSON-parsed; null when unrecognized. */
 	fromDataJson(raw: unknown): PluginImportBatch | null;
-	/** A chosen file's text or a paste — both start as text of unknown shape. */
+	/** The manual option's text — an uploaded file's or a paste's, of unknown shape. */
 	fromText(text: string): PluginImportParse;
 }
 

@@ -918,23 +918,22 @@ export const hu: Record<string, string> = {
 		'A "{{value}}" ikon nem érhető el ebben a vaultban, ezért a "{{id}}" megtartotta a korábban beállított ikont.',
 	"import.chooseSource": "Importálás innen",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Egy Callout Studióból exportált .json fájl betöltése.",
+	"import.sourceStudioDesc": "Egy Callout Studióból exportált .json fájl.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Hozd át a testreszabott callout-jaidat a Callout Manager bővítményből.",
+	"import.sourceCalloutManagerDesc": "A testreszabott callout-jaid a bővítményből.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Hozd át a saját admonition-jeidet az Admonition bővítményből.",
-	"import.back": "Vissza",
-	"import.removeFile": "Fájl eltávolítása",
+	"import.sourceAdmonitionDesc": "A saját admonition-jeid a bővítményből.",
+	"import.sourceOtherPlugins": "Másik bővítményből",
 	"import.fileReady": "Importálásra kész.",
+	"import.upload": "Feltöltés",
+	"import.replace": "Csere",
+	"import.fileUploaded": "{{name}} feltöltve.",
+	"import.fileReplaced": "A fájl lecserélve erre: {{name}}.",
 	"import.pasteButton": "Beillesztés",
-	"import.pasted": "Beillesztve a vágólapról",
-	"import.clearPaste": "Beillesztett szöveg törlése",
+	"import.pasteFirst": "Először illeszd be a másolt stílusokat.",
+	"import.uploadFirst": "Először tölts fel egy fájlt.",
 	"import.clipboardEmpty": "A vágólap üres. Először másold ki az adatokat.",
-	"import.clipboardUnreadable":
-		"A vágólapot nem sikerült beolvasni. Mentsd el az adatokat fájlként, és azt válaszd helyette.",
+	"import.clipboardBlocked": "A vágólapot nem sikerült beolvasni. Illeszd be a tartalmat magad a mezőbe.",
 	"import.importing": "Importálás…",
 	"import.err.fileUnreadable": "A fájlt nem sikerült beolvasni.",
 	"import.cmTitle": "Importálás a Callout Managerből",
@@ -943,21 +942,9 @@ export const hu: Record<string, string> = {
 	"import.cmFromVault": "Ez a vault",
 	"import.cmVaultChecking": "Callout Manager bővítmény keresése…",
 	"import.cmVaultFound": "{{count}} testreszabott callout található.",
-	"import.cmVaultNotFound":
-		"Nem található testreszabott callout ebben a vaultban.",
-	"import.cmVaultNotInstalled": "A Callout Manager nincs telepítve ebben a vaultban.",
-	"import.cmVaultUnreadable":
-		"A Callout Manager ebben a vaultban lévő beállításfájlját nem sikerült beolvasni.",
-	"import.cmUseManual": "Inkább fájl vagy másolt stílusok használata",
-	"import.cmFromFile": "Egy fájl",
-	"import.cmFromFileDesc":
-		"Egy Callout Manager data.json fájl, vagy a belőle másolt, fájlba mentett stílusok.",
-	"import.cmChooseFile": "Fájl kiválasztása…",
 	"import.cmFromPaste": "Másolt stílusok",
 	"import.cmFromPasteDesc":
 		"Amit a Callout Manager Copy gombja másol, vagy egy data.json.",
-	"import.cmPasteLabel":
-		"Vagy illeszd be ide a Callout Manager Copy gombjáról másolt stílusokat:",
 	"import.cmPlaceholder":
 		"Illeszd be ide a másolt stílusokat vagy a data.json tartalmát…",
 	"import.cmBtnCancel": "Mégse",
@@ -974,10 +961,6 @@ export const hu: Record<string, string> = {
 		'A "{{value}}" azonosítót már egy másik callout ("{{other}}") alias-ként használja, ezért kihagyva.',
 	"import.warn.cmNoColorDefault":
 		"A Callout Managerben nem volt beállítva szín, ezért az alapértelmezett szürkét használtuk.",
-	"import.warn.cmThemeCondition":
-		"Ennek a callout-nak a színe vagy ikonja csak egy témára volt beállítva. A Callout Studióban nincs témánkénti stílus, ezért minden témára átkerült.",
-	"import.warn.cmCustomStyles":
-		"Ennek a callout-nak egyéni CSS-e is van a Callout Managerben. Az a stílus nem része az importnak, csak az ikonja és a színe került át.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "A témától függő stílus nem őrizhető meg. A feltétel nélküli értékek élveznek elsőbbséget; a feltételes tartalékérték minden témára érvényes.",
@@ -993,21 +976,9 @@ export const hu: Record<string, string> = {
 	"import.admFromVault": "Ez a tároló",
 	"import.admVaultChecking": "Az Admonition bővítmény keresése…",
 	"import.admVaultFound": "{{count}} saját admonition található.",
-	"import.admVaultNotFound":
-		"Ebben a tárolóban nem található saját admonition.",
-	"import.admVaultNotInstalled": "Az Admonition nincs telepítve ebben a vaultban.",
-	"import.admVaultUnreadable":
-		"Az Admonition ebben a tárolóban lévő beállításfájlját nem sikerült beolvasni.",
-	"import.admUseManual": "Inkább fájl vagy beillesztett JSON használata",
 	"import.admFromFile": "Egy fájl",
 	"import.admFromFileDesc":
 		"Egy admonitions.json fájl vagy egy megosztott csomag.",
-	"import.admChooseFile": "Fájl kiválasztása…",
-	"import.admFromPaste": "Másolt JSON",
-	"import.admFromPasteDesc":
-		"Az Admonition JSON-ja vagy egy data.json, a vágólapra másolva.",
-	"import.admPasteLabel": "Vagy illeszd be ide a JSON-t:",
-	"import.admPlaceholder": "Illeszd be ide az admonition-jeidet…",
 	"import.admBtnCancel": "Mégse",
 	"import.admBtnImport": "Importálás",
 	"import.err.admNotRecognized":
@@ -1022,9 +993,6 @@ export const hu: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Egyik ikonkönyvtárban sincs "{{value}}" nevű ikon, ezért a(z) ' +
 		'"{{id}}" megtartotta a korábbi ikonját.',
-	"import.warn.admImageFailed":
-		"A feltöltött kép nem volt olvasható, ezért az alapértelmezett " +
-		"ikon került a helyére.",
 	"import.warn.admUnsupportedOptions": "Ezek az Admonition-beállítások nem importálhatók: {{fields}}.",
 	"import.warn.admImageSkipped": "A feltöltött kép nem volt olvasható, ezért nem lett importálva.",
 	"import.warn.admIconWithCss":

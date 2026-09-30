@@ -936,44 +936,31 @@ export const da: Record<string, string> = {
 		"Ikonet \"{{value}}\" er ikke tilgængeligt i denne vault, så \"{{id}}\" beholdt sit eksisterende ikon.",
 	"import.chooseSource": "Importer fra",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Indlæs en .json-fil eksporteret fra Callout Studio.",
+	"import.sourceStudioDesc": "En .json-fil eksporteret fra Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Overfør dine tilpassede callouts fra pluginet Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Dine tilpassede callouts fra pluginet.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Hent dine egne admonitions over fra Admonition-pluginnet.",
-	"import.back": "Tilbage",
-	"import.removeFile": "Fjern fil",
+	"import.sourceAdmonitionDesc": "Dine egne admonitions fra pluginet.",
+	"import.sourceOtherPlugins": "Fra et andet plugin",
 	"import.fileReady": "Klar til import.",
+	"import.upload": "Upload",
+	"import.replace": "Erstat",
+	"import.fileUploaded": "{{name}} er uploadet.",
+	"import.fileReplaced": "Filen er erstattet med {{name}}.",
 	"import.pasteButton": "Indsæt",
-	"import.pasted": "Indsat fra udklipsholderen",
-	"import.clearPaste": "Ryd indsat tekst",
+	"import.pasteFirst": "Indsæt de kopierede stilarter først.",
+	"import.uploadFirst": "Upload en fil først.",
 	"import.clipboardEmpty": "Udklipsholderen er tom. Kopiér dataene først.",
-	"import.clipboardUnreadable":
-		"Udklipsholderen kunne ikke læses. Gem dataene som en fil, og vælg den i stedet.",
+	"import.clipboardBlocked": "Udklipsholderen kunne ikke læses. Indsæt i feltet selv i stedet.",
 	"import.importing": "Importerer…",
 	"import.err.fileUnreadable": "Filen kunne ikke læses.",
 	"import.cmTitle": "Importer fra Callout Manager",
 	"import.cmFromVault": "Denne boks",
 	"import.cmVaultChecking": "Leder efter Callout Manager-pluginnet…",
 	"import.cmVaultFound": "Der blev fundet {{count}} tilpassede callouts.",
-	"import.cmVaultNotFound":
-		"Der blev ikke fundet tilpassede callouts i denne boks.",
-	"import.cmVaultNotInstalled": "Callout Manager er ikke installeret i denne boks.",
-	"import.cmVaultUnreadable":
-		"Indstillingsfilen for Callout Manager i denne boks kunne ikke læses.",
-	"import.cmUseManual": "Brug en fil eller kopierede stilarter i stedet",
-	"import.cmFromFile": "En fil",
-	"import.cmFromFileDesc":
-		"En data.json fra Callout Manager eller de kopierede stilarter gemt som en fil.",
-	"import.cmChooseFile": "Vælg fil…",
 	"import.cmFromPaste": "Kopierede stilarter",
 	"import.cmFromPasteDesc":
 		"Det, som Callout Managers Copy-knap kopierer, eller en data.json.",
-	"import.cmPasteLabel":
-		"Eller indsæt de kopierede stilarter fra Callout Manager her:",
 	"import.cmInstructions":
 		"Hver tilpasset callout overføres med sit ikon og sin farve. Temaspecifik styling og brugerdefineret CSS har ingen tilsvarende indstillinger her og overføres ikke.",
 	"import.cmPlaceholder": "Indsæt de kopierede stilarter eller indholdet af en data.json-fil her…",
@@ -991,10 +978,6 @@ export const da: Record<string, string> = {
 		'ID "{{value}}" bruges allerede som et alias af en anden callout ("{{other}}") og blev sprunget over.',
 	"import.warn.cmNoColorDefault":
 		"Der blev ikke angivet en farve i Callout Manager, så standardgrå blev brugt.",
-	"import.warn.cmThemeCondition":
-		"Denne callouts farve eller ikon var kun angivet for ét tema. Callout Studio har ikke temaspecifik styling, så den blev hentet med til alle temaer.",
-	"import.warn.cmCustomStyles":
-		"Denne callout har også tilpasset CSS i Callout Manager. Denne styling er ikke en del af importen, så kun ikon og farve blev hentet med.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "Temabetinget styling kan ikke bevares. Ubetingede værdier foretrækkes; eventuelle betingede reserveværdier anvendes på tværs af temaer.",
@@ -1009,20 +992,8 @@ export const da: Record<string, string> = {
 	"import.admFromVault": "Denne boks",
 	"import.admVaultChecking": "Leder efter Admonition-pluginnet…",
 	"import.admVaultFound": "Der blev fundet {{count}} egne admonitions.",
-	"import.admVaultNotFound":
-		"Der blev ikke fundet nogen egne admonitions i denne boks.",
-	"import.admVaultNotInstalled": "Admonition er ikke installeret i denne boks.",
-	"import.admVaultUnreadable":
-		"Indstillingsfilen for Admonition i denne boks kunne ikke læses.",
-	"import.admUseManual": "Brug en fil eller indsat JSON i stedet",
 	"import.admFromFile": "En fil",
 	"import.admFromFileDesc": "En admonitions.json-fil eller en delt pakke.",
-	"import.admChooseFile": "Vælg fil…",
-	"import.admFromPaste": "Kopieret JSON",
-	"import.admFromPasteDesc":
-		"Admonition-JSON eller en data.json, kopieret til udklipsholderen.",
-	"import.admPasteLabel": "Eller indsæt JSON her:",
-	"import.admPlaceholder": "Indsæt dine admonitions her…",
 	"import.admBtnCancel": "Annuller",
 	"import.admBtnImport": "Importer",
 	"import.err.admNotRecognized":
@@ -1038,9 +1009,6 @@ export const da: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Der findes intet ikon ved navn "{{value}}" i nogen ikonsamling, ' +
 		'så "{{id}}" beholdt sit hidtidige ikon.',
-	"import.warn.admImageFailed":
-		"Det uploadede billede kunne ikke læses, så standardikonet blev " +
-		"brugt.",
 	"import.warn.admUnsupportedOptions": "Disse Admonition-indstillinger importeres ikke: {{fields}}.",
 	"import.warn.admImageSkipped": "Det uploadede billede kunne ikke læses og blev ikke importeret.",
 	"import.warn.admIconWithCss":

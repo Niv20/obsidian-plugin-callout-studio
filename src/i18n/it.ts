@@ -926,24 +926,22 @@ export const it: Record<string, string> = {
 		'L\'icona "{{value}}" non è disponibile in questo vault, quindi "{{id}}" ha mantenuto l\'icona che aveva già.',
 	"import.chooseSource": "Importa da",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Carica un file .json esportato da Callout Studio.",
+	"import.sourceStudioDesc": "Un file .json esportato da Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Porta qui i tuoi callout personalizzati dal plugin Callout Manager.",
+	"import.sourceCalloutManagerDesc": "I tuoi callout personalizzati dal plugin.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Porta qui le tue admonition personalizzate dal plugin " +
-		"Admonition.",
-	"import.back": "Indietro",
-	"import.removeFile": "Rimuovi file",
+	"import.sourceAdmonitionDesc": "Le tue admonition personalizzate dal plugin.",
+	"import.sourceOtherPlugins": "Da un altro plugin",
 	"import.fileReady": "Pronto per l'importazione.",
+	"import.upload": "Carica",
+	"import.replace": "Sostituisci",
+	"import.fileUploaded": "{{name}} caricato.",
+	"import.fileReplaced": "File sostituito con {{name}}.",
 	"import.pasteButton": "Incolla",
-	"import.pasted": "Incollato dagli appunti",
-	"import.clearPaste": "Cancella il testo incollato",
+	"import.pasteFirst": "Incolla prima gli stili copiati.",
+	"import.uploadFirst": "Carica prima un file.",
 	"import.clipboardEmpty": "Gli appunti sono vuoti. Copia prima i dati.",
-	"import.clipboardUnreadable":
-		"Non è stato possibile leggere gli appunti. Salva invece i dati come file e selezionalo.",
+	"import.clipboardBlocked": "Impossibile leggere gli appunti. Incolla tu stesso il contenuto nella casella.",
 	"import.importing": "Importazione…",
 	"import.err.fileUnreadable": "Non è stato possibile leggere il file.",
 	"import.cmTitle": "Importa da Callout Manager",
@@ -952,21 +950,9 @@ export const it: Record<string, string> = {
 	"import.cmFromVault": "Questo vault",
 	"import.cmVaultChecking": "Ricerca del plugin Callout Manager…",
 	"import.cmVaultFound": "{{count}} callout personalizzati trovati.",
-	"import.cmVaultNotFound":
-		"Nessun callout personalizzato è stato trovato in questo vault.",
-	"import.cmVaultNotInstalled": "Callout Manager non è installato in questo vault.",
-	"import.cmVaultUnreadable":
-		"Non è stato possibile leggere il file delle impostazioni di Callout Manager in questo vault.",
-	"import.cmUseManual": "Usa invece un file o gli stili copiati",
-	"import.cmFromFile": "Un file",
-	"import.cmFromFileDesc":
-		"Un data.json di Callout Manager, o i suoi stili copiati salvati come file.",
-	"import.cmChooseFile": "Scegli file…",
 	"import.cmFromPaste": "Stili copiati",
 	"import.cmFromPasteDesc":
 		"Ciò che copia il pulsante Copy di Callout Manager, o un data.json.",
-	"import.cmPasteLabel":
-		"Oppure incolla qui gli stili copiati da Callout Manager:",
 	"import.cmPlaceholder":
 		"Incolla qui gli stili copiati o il contenuto di data.json…",
 	"import.cmBtnCancel": "Annulla",
@@ -981,10 +967,6 @@ export const it: Record<string, string> = {
 		'Nessun colore utilizzabile è stato trovato per il nuovo callout "{{value}}"; è stato ignorato.',
 	"import.warn.cmNoColorDefault":
 		"In Callout Manager non era impostato nessun colore, quindi è stato usato il grigio predefinito.",
-	"import.warn.cmThemeCondition":
-		"Il colore o l'icona di questo callout erano impostati per un solo tema. Callout Studio non ha stili per tema, quindi sono stati portati per ogni tema.",
-	"import.warn.cmCustomStyles":
-		"Questo callout ha anche CSS personalizzati in Callout Manager. Quello stile non fa parte dell'importazione, quindi sono stati portati solo l'icona e il colore.",
 	"import.err.cmIdConflict":
 		'L\'ID "{{value}}" è già utilizzato come alias da un altro callout ("{{other}}") ed è stato ignorato.',
 
@@ -1002,21 +984,9 @@ export const it: Record<string, string> = {
 	"import.admFromVault": "Questo vault",
 	"import.admVaultChecking": "Ricerca del plugin Admonition…",
 	"import.admVaultFound": "Trovate {{count}} admonition personalizzate.",
-	"import.admVaultNotFound":
-		"Nessuna admonition personalizzata trovata in questo vault.",
-	"import.admVaultNotInstalled": "Admonition non è installato in questo vault.",
-	"import.admVaultUnreadable":
-		"Non è stato possibile leggere il file delle impostazioni di Admonition in questo vault.",
-	"import.admUseManual": "Usa invece un file o il JSON incollato",
 	"import.admFromFile": "Un file",
 	"import.admFromFileDesc":
 		"Un file admonitions.json, o un pacchetto condiviso.",
-	"import.admChooseFile": "Scegli file…",
-	"import.admFromPaste": "JSON copiato",
-	"import.admFromPasteDesc":
-		"Il JSON di Admonition o un data.json, copiato negli appunti.",
-	"import.admPasteLabel": "Oppure incolla qui il JSON:",
-	"import.admPlaceholder": "Incolla qui le tue admonition…",
 	"import.admBtnCancel": "Annulla",
 	"import.admBtnImport": "Importa",
 	"import.err.admNotRecognized":
@@ -1031,9 +1001,6 @@ export const it: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Nessuna icona di nome "{{value}}" è stata trovata in alcuna ' +
 		'libreria, quindi "{{id}}" ha mantenuto l\'icona che aveva già.',
-	"import.warn.admImageFailed":
-		"Non è stato possibile leggere l'immagine caricata, quindi è " +
-		"stata usata l'icona predefinita.",
 	"import.warn.admUnsupportedOptions": "Queste opzioni di Admonition non vengono importate: {{fields}}.",
 	"import.warn.admImageSkipped": "Non è stato possibile leggere l’immagine caricata, che non è stata importata.",
 	"import.warn.admIconWithCss":

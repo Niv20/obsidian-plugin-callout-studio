@@ -915,23 +915,22 @@ export const id: Record<string, string> = {
 		'Ikon "{{value}}" tidak tersedia di vault ini, sehingga "{{id}}" mempertahankan ikon yang sudah dimilikinya.',
 	"import.chooseSource": "Impor dari",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Muat file .json yang diekspor dari Callout Studio.",
+	"import.sourceStudioDesc": "File .json yang diekspor dari Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Bawa callout kustom Anda dari plugin Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Callout kustom Anda dari plugin.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Bawa admonition kustom Anda dari plugin Admonition.",
-	"import.back": "Kembali",
-	"import.removeFile": "Hapus berkas",
+	"import.sourceAdmonitionDesc": "Admonition kustom Anda dari plugin.",
+	"import.sourceOtherPlugins": "Dari plugin lain",
 	"import.fileReady": "Siap diimpor.",
+	"import.upload": "Unggah",
+	"import.replace": "Ganti",
+	"import.fileUploaded": "{{name}} diunggah.",
+	"import.fileReplaced": "File diganti dengan {{name}}.",
 	"import.pasteButton": "Tempel",
-	"import.pasted": "Ditempel dari papan klip",
-	"import.clearPaste": "Hapus teks yang ditempel",
+	"import.pasteFirst": "Tempel gaya yang disalin terlebih dahulu.",
+	"import.uploadFirst": "Unggah file terlebih dahulu.",
 	"import.clipboardEmpty": "Papan klip kosong. Salin datanya terlebih dahulu.",
-	"import.clipboardUnreadable":
-		"Papan klip tidak dapat dibaca. Simpan datanya sebagai berkas dan pilih berkas tersebut.",
+	"import.clipboardBlocked": "Papan klip tidak dapat dibaca. Tempel sendiri ke dalam kotak.",
 	"import.importing": "Mengimpor…",
 	"import.err.fileUnreadable": "Berkas tidak dapat dibaca.",
 	"import.cmTitle": "Impor dari Callout Manager",
@@ -940,22 +939,9 @@ export const id: Record<string, string> = {
 	"import.cmFromVault": "Vault ini",
 	"import.cmVaultChecking": "Mencari plugin Callout Manager…",
 	"import.cmVaultFound": "{{count}} callout kustom ditemukan.",
-	"import.cmVaultNotFound":
-		"Tidak ada callout kustom yang ditemukan di vault ini.",
-	"import.cmVaultNotInstalled": "Callout Manager tidak terpasang di vault ini.",
-	"import.cmVaultUnreadable":
-		"Berkas pengaturan Callout Manager di vault ini tidak dapat dibaca.",
-	"import.cmUseManual":
-		"Gunakan berkas atau gaya yang disalin sebagai gantinya",
-	"import.cmFromFile": "Sebuah berkas",
-	"import.cmFromFileDesc":
-		"Berkas data.json Callout Manager, atau gaya salinannya yang disimpan sebagai berkas.",
-	"import.cmChooseFile": "Pilih berkas…",
 	"import.cmFromPaste": "Gaya yang disalin",
 	"import.cmFromPasteDesc":
 		"Yang disalin oleh tombol Copy milik Callout Manager, atau sebuah data.json.",
-	"import.cmPasteLabel":
-		"Atau tempel gaya yang disalin dari Callout Manager di sini:",
 	"import.cmPlaceholder":
 		"Tempel gaya yang disalin atau isi data.json di sini…",
 	"import.cmBtnCancel": "Batal",
@@ -972,10 +958,6 @@ export const id: Record<string, string> = {
 		'ID "{{value}}" sudah digunakan sebagai alias oleh callout lain ("{{other}}") dan dilewati.',
 	"import.warn.cmNoColorDefault":
 		"Tidak ada warna yang diatur di Callout Manager, sehingga abu-abu default digunakan.",
-	"import.warn.cmThemeCondition":
-		"Warna atau ikon callout ini hanya diatur untuk satu tema. Callout Studio tidak memiliki gaya per-tema, sehingga dibawa untuk semua tema.",
-	"import.warn.cmCustomStyles":
-		"Callout ini juga memiliki CSS kustom di Callout Manager. Gaya tersebut bukan bagian dari impor, sehingga hanya ikon dan warnanya yang dibawa.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "Gaya yang bergantung pada tema tidak dapat dipertahankan. Nilai tanpa kondisi diutamakan; nilai pengganti bersyarat apa pun diterapkan ke semua tema.",
@@ -990,22 +972,9 @@ export const id: Record<string, string> = {
 	"import.admFromVault": "Vault ini",
 	"import.admVaultChecking": "Mencari plugin Admonition…",
 	"import.admVaultFound": "Ditemukan {{count}} admonition kustom.",
-	"import.admVaultNotFound":
-		"Tidak ada admonition kustom yang ditemukan di vault ini.",
-	"import.admVaultNotInstalled": "Admonition tidak terpasang di vault ini.",
-	"import.admVaultUnreadable":
-		"Berkas pengaturan Admonition di vault ini tidak dapat dibaca.",
-	"import.admUseManual":
-		"Gunakan berkas atau JSON yang ditempel sebagai gantinya",
 	"import.admFromFile": "Sebuah berkas",
 	"import.admFromFileDesc":
 		"Berkas admonitions.json, atau paket yang dibagikan.",
-	"import.admChooseFile": "Pilih berkas…",
-	"import.admFromPaste": "JSON yang disalin",
-	"import.admFromPasteDesc":
-		"JSON Admonition atau data.json, yang disalin ke papan klip.",
-	"import.admPasteLabel": "Atau tempel JSON di sini:",
-	"import.admPlaceholder": "Tempel admonition Anda di sini…",
 	"import.admBtnCancel": "Batal",
 	"import.admBtnImport": "Impor",
 	"import.err.admNotRecognized":
@@ -1021,9 +990,6 @@ export const id: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Tidak ada ikon bernama "{{value}}" di pustaka ikon mana pun, ' +
 		'jadi "{{id}}" tetap memakai ikon yang sudah ada.',
-	"import.warn.admImageFailed":
-		"Gambar yang diunggah tidak dapat dibaca, jadi ikon bawaan " +
-		"digunakan.",
 	"import.warn.admUnsupportedOptions": "Opsi Admonition ini tidak diimpor: {{fields}}.",
 	"import.warn.admImageSkipped": "Gambar yang diunggah tidak dapat dibaca dan tidak diimpor.",
 	"import.warn.admIconWithCss":

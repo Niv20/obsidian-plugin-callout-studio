@@ -962,46 +962,31 @@ export const ru: Record<string, string> = {
 		"Значок «{{value}}» недоступен в этом хранилище, поэтому «{{id}}» сохранил прежний значок.",
 	"import.chooseSource": "Импорт из",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Загрузить файл .json, экспортированный из Callout Studio.",
+	"import.sourceStudioDesc": "Файл .json, экспортированный из Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Импортируйте настроенные callout из плагина Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Ваши настроенные callout из плагина.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Перенесите свои пользовательские admonition из плагина " +
-		"Admonition.",
-	"import.back": "Назад",
-	"import.removeFile": "Удалить файл",
+	"import.sourceAdmonitionDesc": "Ваши пользовательские admonition из плагина.",
+	"import.sourceOtherPlugins": "Из другого плагина",
 	"import.fileReady": "Готов к импорту.",
+	"import.upload": "Загрузить",
+	"import.replace": "Заменить",
+	"import.fileUploaded": "Загружен файл {{name}}.",
+	"import.fileReplaced": "Файл заменён на {{name}}.",
 	"import.pasteButton": "Вставить",
-	"import.pasted": "Вставлено из буфера обмена",
-	"import.clearPaste": "Очистить вставленный текст",
+	"import.pasteFirst": "Сначала вставьте скопированные стили.",
+	"import.uploadFirst": "Сначала загрузите файл.",
 	"import.clipboardEmpty": "Буфер обмена пуст. Сначала скопируйте данные.",
-	"import.clipboardUnreadable":
-		"Не удалось прочитать буфер обмена. Вместо этого сохраните данные в файл и выберите его.",
+	"import.clipboardBlocked": "Не удалось прочитать буфер обмена. Вставьте содержимое в поле самостоятельно.",
 	"import.importing": "Импорт…",
 	"import.err.fileUnreadable": "Не удалось прочитать файл.",
 	"import.cmTitle": "Импорт из Callout Manager",
 	"import.cmFromVault": "Это хранилище",
 	"import.cmVaultChecking": "Поиск плагина Callout Manager…",
 	"import.cmVaultFound": "Найдено пользовательских callout: {{count}}.",
-	"import.cmVaultNotFound":
-		"В этом хранилище не найдено пользовательских callout.",
-	"import.cmVaultNotInstalled": "Callout Manager не установлен в этом хранилище.",
-	"import.cmVaultUnreadable":
-		"Не удалось прочитать файл настроек Callout Manager в этом хранилище.",
-	"import.cmUseManual":
-		"Использовать вместо этого файл или скопированные стили",
-	"import.cmFromFile": "Файл",
-	"import.cmFromFileDesc":
-		"Файл data.json из Callout Manager или его скопированные стили, сохранённые в файл.",
-	"import.cmChooseFile": "Выбрать файл…",
 	"import.cmFromPaste": "Скопированные стили",
 	"import.cmFromPasteDesc":
 		"То, что копирует кнопка Copy в Callout Manager, или файл data.json.",
-	"import.cmPasteLabel":
-		"Или вставьте сюда стили, скопированные из Callout Manager:",
 	"import.cmInstructions":
 		"Каждый настроенный callout переносится вместе со значком и цветом. Стили для отдельных тем и пользовательский CSS здесь не поддерживаются и не импортируются.",
 	"import.cmPlaceholder": "Вставьте сюда скопированные стили или файл data.json…",
@@ -1017,10 +1002,6 @@ export const ru: Record<string, string> = {
 		'Не найден подходящий цвет для нового callout "{{value}}"; он был пропущен.',
 	"import.warn.cmNoColorDefault":
 		"В Callout Manager цвет не задан, поэтому использован стандартный серый.",
-	"import.warn.cmThemeCondition":
-		"Цвет или значок этого callout были заданы только для одной темы. Callout Studio не поддерживает стили для отдельных тем, поэтому они перенесены для всех тем.",
-	"import.warn.cmCustomStyles":
-		"У этого callout также есть пользовательский CSS в Callout Manager. Этот стиль не входит в импорт, поэтому перенесены только значок и цвет.",
 	"import.err.cmIdConflict":
 		'ID "{{value}}" уже используется как псевдоним другим callout ("{{other}}") и был пропущен.',
 
@@ -1038,21 +1019,8 @@ export const ru: Record<string, string> = {
 	"import.admFromVault": "Это хранилище",
 	"import.admVaultChecking": "Поиск плагина Admonition…",
 	"import.admVaultFound": "Найдено пользовательских admonition: {{count}}.",
-	"import.admVaultNotFound":
-		"В этом хранилище не найдено пользовательских admonition.",
-	"import.admVaultNotInstalled": "Admonition не установлен в этом хранилище.",
-	"import.admVaultUnreadable":
-		"Не удалось прочитать файл настроек Admonition в этом хранилище.",
-	"import.admUseManual":
-		"Использовать вместо этого файл или вставленный JSON",
 	"import.admFromFile": "Файл",
 	"import.admFromFileDesc": "Файл admonitions.json или общий набор.",
-	"import.admChooseFile": "Выбрать файл…",
-	"import.admFromPaste": "Скопированный JSON",
-	"import.admFromPasteDesc":
-		"JSON из Admonition или файл data.json, скопированный в буфер обмена.",
-	"import.admPasteLabel": "Или вставьте JSON сюда:",
-	"import.admPlaceholder": "Вставьте сюда свои admonition…",
 	"import.admBtnCancel": "Отмена",
 	"import.admBtnImport": "Импорт",
 	"import.err.admNotRecognized":
@@ -1066,9 +1034,6 @@ export const ru: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Значок с именем "{{value}}" не найден ни в одной библиотеке, ' +
 		'поэтому "{{id}}" сохранил прежний значок.',
-	"import.warn.admImageFailed":
-		"Не удалось прочитать загруженное изображение, поэтому " +
-		"использован значок по умолчанию.",
 	"import.warn.admUnsupportedOptions": "Эти параметры Admonition не импортируются: {{fields}}.",
 	"import.warn.admImageSkipped": "Не удалось прочитать загруженное изображение, поэтому оно не было импортировано.",
 	"import.warn.admIconWithCss":

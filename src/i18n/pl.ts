@@ -911,23 +911,22 @@ export const pl: Record<string, string> = {
 		'Ikona "{{value}}" nie jest dostępna w tym sejfie, więc "{{id}}" zachowało ikonę, którą już miało.',
 	"import.chooseSource": "Importuj z",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Załaduj plik .json wyeksportowany z Callout Studio.",
+	"import.sourceStudioDesc": "Plik .json wyeksportowany z Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Przenieś swoje niestandardowe callouty z wtyczki Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Twoje niestandardowe callouty z wtyczki.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Przenieś swoje własne admonition z wtyczki Admonition.",
-	"import.back": "Wstecz",
-	"import.removeFile": "Usuń plik",
+	"import.sourceAdmonitionDesc": "Twoje własne admonition z wtyczki.",
+	"import.sourceOtherPlugins": "Z innej wtyczki",
 	"import.fileReady": "Gotowy do importu.",
+	"import.upload": "Prześlij",
+	"import.replace": "Zastąp",
+	"import.fileUploaded": "Przesłano plik {{name}}.",
+	"import.fileReplaced": "Zastąpiono plik plikiem {{name}}.",
 	"import.pasteButton": "Wklej",
-	"import.pasted": "Wklejono ze schowka",
-	"import.clearPaste": "Wyczyść wklejony tekst",
+	"import.pasteFirst": "Najpierw wklej skopiowane style.",
+	"import.uploadFirst": "Najpierw prześlij plik.",
 	"import.clipboardEmpty": "Schowek jest pusty. Najpierw skopiuj dane.",
-	"import.clipboardUnreadable":
-		"Nie udało się odczytać schowka. Zamiast tego zapisz dane jako plik i wybierz go.",
+	"import.clipboardBlocked": "Nie udało się odczytać schowka. Wklej zawartość samodzielnie w polu.",
 	"import.importing": "Importowanie…",
 	"import.err.fileUnreadable": "Nie udało się odczytać pliku.",
 	"import.cmTitle": "Importuj z Callout Manager",
@@ -938,21 +937,9 @@ export const pl: Record<string, string> = {
 	"import.cmFromVault": "Ten sejf",
 	"import.cmVaultChecking": "Szukanie wtyczki Callout Manager…",
 	"import.cmVaultFound": "Znaleziono {{count}} własnych calloutów.",
-	"import.cmVaultNotFound": "Nie znaleziono własnych calloutów w tym sejfie.",
-	"import.cmVaultNotInstalled": "Callout Manager nie jest zainstalowany w tym sejfie.",
-	"import.cmVaultUnreadable":
-		"Nie udało się odczytać pliku ustawień Callout Manager w tym sejfie.",
-	"import.cmUseManual":
-		"Zamiast tego wybierz plik lub wklej skopiowane style",
-	"import.cmFromFile": "Plik",
-	"import.cmFromFileDesc":
-		"Plik data.json z Callout Manager lub skopiowane z niego style zapisane jako plik.",
-	"import.cmChooseFile": "Wybierz plik…",
 	"import.cmFromPaste": "Skopiowane style",
 	"import.cmFromPasteDesc":
 		"To, co kopiuje przycisk Copy w Callout Manager, lub plik data.json.",
-	"import.cmPasteLabel":
-		"Albo wklej tutaj style skopiowane z Callout Manager:",
 	"import.cmPlaceholder": "Wklej tutaj skopiowane style lub zawartość pliku data.json…",
 	"import.cmBtnCancel": "Anuluj",
 	"import.cmBtnImport": "Importuj",
@@ -969,13 +956,6 @@ export const pl: Record<string, string> = {
 		'ID "{{value}}" jest już używane jako alias przez inny callout ("{{other}}") i zostało pominięte.',
 	"import.warn.cmNoColorDefault":
 		"W Callout Manager nie ustawiono koloru, więc użyto domyślnej szarości.",
-	"import.warn.cmThemeCondition":
-		"Kolor lub ikona tego callouta zostały ustawione tylko dla jednego " +
-		"motywu. Callout Studio nie obsługuje stylów dla poszczególnych " +
-		"motywów, więc przeniesiono je dla każdego motywu.",
-	"import.warn.cmCustomStyles":
-		"Ten callout ma też niestandardowy CSS w Callout Manager. Ten styl " +
-		"nie jest częścią importu, więc przeniesiono tylko jego ikonę i kolor.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "Nie można zachować stylów zależnych od motywu. Preferowane są wartości bezwarunkowe; ewentualna warunkowa wartość zapasowa jest stosowana we wszystkich motywach.",
@@ -991,20 +971,8 @@ export const pl: Record<string, string> = {
 	"import.admFromVault": "Ten sejf",
 	"import.admVaultChecking": "Szukanie wtyczki Admonition…",
 	"import.admVaultFound": "Znaleziono {{count}} własnych admonition.",
-	"import.admVaultNotFound":
-		"Nie znaleziono własnych admonition w tym sejfie.",
-	"import.admVaultNotInstalled": "Admonition nie jest zainstalowany w tym sejfie.",
-	"import.admVaultUnreadable":
-		"Nie udało się odczytać pliku ustawień Admonition w tym sejfie.",
-	"import.admUseManual": "Zamiast tego wybierz plik lub wklej JSON",
 	"import.admFromFile": "Plik",
 	"import.admFromFileDesc": "Plik admonitions.json lub udostępniony pakiet.",
-	"import.admChooseFile": "Wybierz plik…",
-	"import.admFromPaste": "Skopiowany JSON",
-	"import.admFromPasteDesc":
-		"JSON z Admonition lub plik data.json, skopiowany do schowka.",
-	"import.admPasteLabel": "Albo wklej tutaj JSON:",
-	"import.admPlaceholder": "Wklej tutaj swoje admonition…",
 	"import.admBtnCancel": "Anuluj",
 	"import.admBtnImport": "Importuj",
 	"import.err.admNotRecognized":
@@ -1020,9 +988,6 @@ export const pl: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		"W żadnej bibliotece ikon nie znaleziono ikony o nazwie " +
 		'"{{value}}", więc "{{id}}" zachował dotychczasową ikonę.',
-	"import.warn.admImageFailed":
-		"Nie udało się odczytać przesłanego obrazu, więc użyto ikony " +
-		"domyślnej.",
 	"import.warn.admUnsupportedOptions": "Te opcje Admonition nie są importowane: {{fields}}.",
 	"import.warn.admImageSkipped": "Nie udało się odczytać przesłanego obrazu, więc nie został zaimportowany.",
 	"import.warn.admIconWithCss":

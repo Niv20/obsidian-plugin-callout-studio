@@ -1166,8 +1166,9 @@ Single-line fields share the dropdowns' 36px minimum height (or
 
 The standalone fields are the callout editor's **Display name** and **Callout
 IDs**, the palette editor's **Name**, the Quick Insert and replacement-dialog
-searches, and the search box in every icon source. The Callout Manager and
-Admonition import window has no text box: it reads the clipboard instead (see
+searches, the search box in every icon source, and the text box on Callout
+Manager's import window's paste card — a `<textarea>` of one fixed height on
+the same `cs-text-control` face (see
 [Import and export](15-import-export.md#the-plugin-import-window)).
 Searchable callout and color pickers remain comboboxes: their outer
 `cs-dropdown-control` paints the box, and their inner `cs-combobox-input`
@@ -2280,8 +2281,8 @@ historical reasons, not because the check belongs to FLIP. Its callers:
 [`styles.css`](../../styles.css). They take two shapes:
 
 - **`reduce` blocks** turn something off: `transition: none` on the portable
-  cards and footer contact link, `animation-duration: 1ms` on the "checking"
-  option box, the icon tile transitions, and the heading callout's entrance
+  cards and footer contact link, `animation-duration: 1ms` on the plugin
+  import window's "checking" vault card, the icon tile transitions, and the heading callout's entrance
   transition (which also never animates into a print or PDF snapshot).
 - **`no-preference` queries** switch something on only when motion is
   allowed: the usage menu's count fade, and the icon swap arrows' drift loop

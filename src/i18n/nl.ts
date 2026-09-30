@@ -923,44 +923,31 @@ export const nl: Record<string, string> = {
 		'Het pictogram ‘{{value}}’ is niet beschikbaar in deze vault; daarom heeft ‘{{id}}’ het bestaande pictogram behouden.',
 	"import.chooseSource": "Importeren uit",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Laad een .json-bestand dat is geëxporteerd uit Callout Studio.",
+	"import.sourceStudioDesc": "Een .json-bestand dat is geëxporteerd uit Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Neem je aangepaste callouts over uit de plug-in Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Je aangepaste callouts uit de plug-in.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Haal je eigen admonitions op uit de Admonition-plug-in.",
-	"import.back": "Terug",
-	"import.removeFile": "Bestand verwijderen",
+	"import.sourceAdmonitionDesc": "Je eigen admonitions uit de plug-in.",
+	"import.sourceOtherPlugins": "Uit een andere plug-in",
 	"import.fileReady": "Klaar om te importeren.",
+	"import.upload": "Uploaden",
+	"import.replace": "Vervangen",
+	"import.fileUploaded": "{{name}} geüpload.",
+	"import.fileReplaced": "Bestand vervangen door {{name}}.",
 	"import.pasteButton": "Plakken",
-	"import.pasted": "Geplakt vanaf het klembord",
-	"import.clearPaste": "Geplakte tekst wissen",
+	"import.pasteFirst": "Plak eerst de gekopieerde stijlen.",
+	"import.uploadFirst": "Upload eerst een bestand.",
 	"import.clipboardEmpty": "Het klembord is leeg. Kopieer eerst de gegevens.",
-	"import.clipboardUnreadable":
-		"Het klembord kon niet worden gelezen. Sla de gegevens in plaats daarvan op als bestand en kies dat.",
+	"import.clipboardBlocked": "Het klembord kon niet worden gelezen. Plak de inhoud in plaats daarvan zelf in het vak.",
 	"import.importing": "Importeren…",
 	"import.err.fileUnreadable": "Het bestand kon niet worden gelezen.",
 	"import.cmTitle": "Importeren uit Callout Manager",
 	"import.cmFromVault": "Deze kluis",
 	"import.cmVaultChecking": "De Callout Manager-plug-in wordt gezocht…",
 	"import.cmVaultFound": "{{count}} aangepaste callouts gevonden.",
-	"import.cmVaultNotFound":
-		"Geen aangepaste callouts gevonden in deze kluis.",
-	"import.cmVaultNotInstalled": "Callout Manager is niet geïnstalleerd in deze kluis.",
-	"import.cmVaultUnreadable":
-		"Het instellingenbestand van Callout Manager in deze kluis kon niet worden gelezen.",
-	"import.cmUseManual": "Een bestand of gekopieerde stijlen gebruiken",
-	"import.cmFromFile": "Een bestand",
-	"import.cmFromFileDesc":
-		"Een data.json van Callout Manager, of de gekopieerde stijlen opgeslagen als bestand.",
-	"import.cmChooseFile": "Bestand kiezen…",
 	"import.cmFromPaste": "Gekopieerde stijlen",
 	"import.cmFromPasteDesc":
 		"Wat de Copy-knop van Callout Manager kopieert, of een data.json.",
-	"import.cmPasteLabel":
-		"Of plak hier de gekopieerde stijlen uit Callout Manager:",
 	"import.cmInstructions":
 		"Elke aangepaste callout wordt met pictogram en kleur overgenomen. Stijlen per thema en aangepaste CSS hebben hier geen equivalent en worden niet overgenomen.",
 	"import.cmPlaceholder": "Plak hier de gekopieerde stijlen of de inhoud van data.json…",
@@ -976,10 +963,6 @@ export const nl: Record<string, string> = {
 		'Er is geen bruikbare kleur gevonden voor de nieuwe callout "{{value}}"; deze is overgeslagen.',
 	"import.warn.cmNoColorDefault":
 		"Er was geen kleur ingesteld in Callout Manager, dus het standaardgrijs is gebruikt.",
-	"import.warn.cmThemeCondition":
-		"De kleur of het pictogram van deze callout was maar voor één thema ingesteld. Callout Studio heeft geen themaspecifieke styling, dus deze is voor elk thema overgenomen.",
-	"import.warn.cmCustomStyles":
-		"Deze callout heeft ook aangepaste CSS in Callout Manager. Die styling maakt geen deel uit van de import, dus alleen het pictogram en de kleur zijn overgenomen.",
 	"import.err.cmIdConflict":
 		'ID "{{value}}" wordt al gebruikt als alias door een andere callout ("{{other}}") en is overgeslagen.',
 
@@ -996,20 +979,9 @@ export const nl: Record<string, string> = {
 	"import.admFromVault": "Deze kluis",
 	"import.admVaultChecking": "Zoeken naar de Admonition-plug-in…",
 	"import.admVaultFound": "{{count}} eigen admonition(s) gevonden.",
-	"import.admVaultNotFound": "Geen eigen admonitions gevonden in deze kluis.",
-	"import.admVaultNotInstalled": "Admonition is niet geïnstalleerd in deze kluis.",
-	"import.admVaultUnreadable":
-		"Het instellingenbestand van Admonition in deze kluis kon niet worden gelezen.",
-	"import.admUseManual": "Een bestand of geplakte JSON gebruiken",
 	"import.admFromFile": "Een bestand",
 	"import.admFromFileDesc":
 		"Een admonitions.json-bestand of een gedeeld pakket.",
-	"import.admChooseFile": "Bestand kiezen…",
-	"import.admFromPaste": "Gekopieerde JSON",
-	"import.admFromPasteDesc":
-		"De JSON van Admonition, of een data.json, gekopieerd naar het klembord.",
-	"import.admPasteLabel": "Of plak de JSON hier:",
-	"import.admPlaceholder": "Plak je admonitions hier…",
 	"import.admBtnCancel": "Annuleren",
 	"import.admBtnImport": "Importeren",
 	"import.err.admNotRecognized":
@@ -1026,9 +998,6 @@ export const nl: Record<string, string> = {
 		"Er is in geen enkele pictogrambibliotheek een pictogram met de " +
 		'naam "{{value}}" gevonden, dus heeft "{{id}}" het bestaande ' +
 		"pictogram behouden.",
-	"import.warn.admImageFailed":
-		"De geüploade afbeelding kon niet worden gelezen, dus is het " +
-		"standaardpictogram gebruikt.",
 	"import.warn.admUnsupportedOptions": "Deze Admonition-opties worden niet geïmporteerd: {{fields}}.",
 	"import.warn.admImageSkipped": "De geüploade afbeelding kon niet worden gelezen en is niet geïmporteerd.",
 	"import.warn.admIconWithCss":

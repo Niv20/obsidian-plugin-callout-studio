@@ -953,24 +953,22 @@ export const el: Record<string, string> = {
 		'Το εικονίδιο "{{value}}" δεν είναι διαθέσιμο σε αυτό το vault, οπότε το "{{id}}" διατήρησε το εικονίδιο που είχε ήδη.',
 	"import.chooseSource": "Εισαγωγή από",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Φόρτωση αρχείου .json εξαγόμενου από το Callout Studio.",
+	"import.sourceStudioDesc": "Ένα αρχείο .json εξαγόμενο από το Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Μεταφέρετε τα προσαρμοσμένα σας callout από το πρόσθετο Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Τα προσαρμοσμένα σας callout από το πρόσθετο.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Φέρτε τα προσαρμοσμένα admonition σας από το πρόσθετο " +
-		"Admonition.",
-	"import.back": "Πίσω",
-	"import.removeFile": "Αφαίρεση αρχείου",
+	"import.sourceAdmonitionDesc": "Τα προσαρμοσμένα admonition σας από το πρόσθετο.",
+	"import.sourceOtherPlugins": "Από άλλο πρόσθετο",
 	"import.fileReady": "Έτοιμο για εισαγωγή.",
+	"import.upload": "Μεταφόρτωση",
+	"import.replace": "Αντικατάσταση",
+	"import.fileUploaded": "Μεταφορτώθηκε το {{name}}.",
+	"import.fileReplaced": "Το αρχείο αντικαταστάθηκε με το {{name}}.",
 	"import.pasteButton": "Επικόλληση",
-	"import.pasted": "Επικολλήθηκε από το πρόχειρο",
-	"import.clearPaste": "Εκκαθάριση επικολλημένου κειμένου",
+	"import.pasteFirst": "Επικολλήστε πρώτα τα αντιγραμμένα στυλ.",
+	"import.uploadFirst": "Μεταφορτώστε πρώτα ένα αρχείο.",
 	"import.clipboardEmpty": "Το πρόχειρο είναι άδειο. Αντιγράψτε πρώτα τα δεδομένα.",
-	"import.clipboardUnreadable":
-		"Δεν ήταν δυνατή η ανάγνωση του προχείρου. Αποθηκεύστε τα δεδομένα ως αρχείο και επιλέξτε το αντ' αυτού.",
+	"import.clipboardBlocked": "Δεν ήταν δυνατή η ανάγνωση του πρόχειρου. Επικολλήστε οι ίδιοι το περιεχόμενο στο πλαίσιο.",
 	"import.importing": "Εισαγωγή…",
 	"import.err.fileUnreadable": "Δεν ήταν δυνατή η ανάγνωση του αρχείου.",
 	"import.cmTitle": "Εισαγωγή από Callout Manager",
@@ -981,21 +979,9 @@ export const el: Record<string, string> = {
 	"import.cmFromVault": "Αυτό το vault",
 	"import.cmVaultChecking": "Αναζήτηση του πρόσθετου Callout Manager…",
 	"import.cmVaultFound": "Βρέθηκαν {{count}} προσαρμοσμένα callout.",
-	"import.cmVaultNotFound":
-		"Δεν βρέθηκαν προσαρμοσμένα callout σε αυτό το vault.",
-	"import.cmVaultNotInstalled": "Το Callout Manager δεν είναι εγκατεστημένο σε αυτό το vault.",
-	"import.cmVaultUnreadable":
-		"Δεν ήταν δυνατή η ανάγνωση του αρχείου ρυθμίσεων του Callout Manager σε αυτό το vault.",
-	"import.cmUseManual": "Χρήση αρχείου ή αντιγραμμένων στυλ αντ' αυτού",
-	"import.cmFromFile": "Ένα αρχείο",
-	"import.cmFromFileDesc":
-		"Ένα data.json του Callout Manager ή τα αντιγραμμένα στυλ του αποθηκευμένα σε αρχείο.",
-	"import.cmChooseFile": "Επιλογή αρχείου…",
 	"import.cmFromPaste": "Αντιγραμμένα στυλ",
 	"import.cmFromPasteDesc":
 		"Ό,τι αντιγράφει το κουμπί Copy του Callout Manager, ή ένα data.json.",
-	"import.cmPasteLabel":
-		"Ή επικολλήστε εδώ τα αντιγραμμένα στυλ του Callout Manager:",
 	"import.cmPlaceholder":
 		"Επικολλήστε τα αντιγραμμένα στυλ, ή ένα data.json, εδώ…",
 	"import.cmBtnCancel": "Ακύρωση",
@@ -1014,14 +1000,6 @@ export const el: Record<string, string> = {
 	"import.warn.cmNoColorDefault":
 		"Δεν είχε οριστεί χρώμα στο Callout Manager, οπότε χρησιμοποιήθηκε " +
 		"το προεπιλεγμένο γκρι του.",
-	"import.warn.cmThemeCondition":
-		"Το χρώμα ή το εικονίδιο αυτού του callout είχε οριστεί μόνο για ένα " +
-		"θέμα. Το Callout Studio δεν έχει στυλ ανά θέμα, οπότε μεταφέρθηκε " +
-		"για όλα τα θέματα.",
-	"import.warn.cmCustomStyles":
-		"Αυτό το callout έχει επίσης προσαρμοσμένο CSS στο Callout Manager. " +
-		"Αυτό το στυλ δεν αποτελεί μέρος της εισαγωγής, οπότε μεταφέρθηκαν " +
-		"μόνο το εικονίδιο και το χρώμα του.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "Δεν είναι δυνατή η διατήρηση της μορφοποίησης που εξαρτάται από το θέμα. Προτιμώνται οι μη υπό όρους τιμές· τυχόν υπό όρους εναλλακτική εφαρμόζεται σε όλα τα θέματα.",
@@ -1036,21 +1014,9 @@ export const el: Record<string, string> = {
 	"import.admFromVault": "Αυτό το θησαυροφυλάκιο",
 	"import.admVaultChecking": "Αναζήτηση του πρόσθετου Admonition…",
 	"import.admVaultFound": "Βρέθηκαν {{count}} προσαρμοσμένα admonition.",
-	"import.admVaultNotFound":
-		"Δεν βρέθηκαν προσαρμοσμένα admonition σε αυτό το θησαυροφυλάκιο.",
-	"import.admVaultNotInstalled": "Το Admonition δεν είναι εγκατεστημένο σε αυτό το vault.",
-	"import.admVaultUnreadable":
-		"Δεν ήταν δυνατή η ανάγνωση του αρχείου ρυθμίσεων του Admonition σε αυτό το θησαυροφυλάκιο.",
-	"import.admUseManual": "Χρήση αρχείου ή επικολλημένου JSON αντ' αυτού",
 	"import.admFromFile": "Ένα αρχείο",
 	"import.admFromFileDesc":
 		"Ένα αρχείο admonitions.json ή ένα κοινόχρηστο πακέτο.",
-	"import.admChooseFile": "Επιλογή αρχείου…",
-	"import.admFromPaste": "Αντιγραμμένο JSON",
-	"import.admFromPasteDesc":
-		"JSON του Admonition ή ένα data.json, αντιγραμμένο στο πρόχειρο.",
-	"import.admPasteLabel": "Ή επικολλήστε εδώ το JSON:",
-	"import.admPlaceholder": "Επικολλήστε εδώ τα admonition σας…",
 	"import.admBtnCancel": "Ακύρωση",
 	"import.admBtnImport": "Εισαγωγή",
 	"import.err.admNotRecognized":
@@ -1065,9 +1031,6 @@ export const el: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Δεν βρέθηκε εικονίδιο με όνομα "{{value}}" σε καμία βιβλιοθήκη, ' +
 		'οπότε το "{{id}}" κράτησε το εικονίδιο που είχε ήδη.',
-	"import.warn.admImageFailed":
-		"Δεν ήταν δυνατή η ανάγνωση της μεταφορτωμένης εικόνας, οπότε " +
-		"χρησιμοποιήθηκε το προεπιλεγμένο εικονίδιο.",
 	"import.warn.admUnsupportedOptions": "Αυτές οι επιλογές του Admonition δεν εισάγονται: {{fields}}.",
 	"import.warn.admImageSkipped": "Δεν ήταν δυνατή η ανάγνωση της μεταφορτωμένης εικόνας και δεν εισήχθη.",
 	"import.warn.admIconWithCss":

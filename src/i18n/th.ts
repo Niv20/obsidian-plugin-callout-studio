@@ -954,41 +954,31 @@ export const th: Record<string, string> = {
 		'ไอคอน "{{value}}" ไม่พร้อมใช้งานในโวลต์นี้ ดังนั้น "{{id}}" จึงยังคงใช้ไอคอนเดิม',
 	"import.chooseSource": "นำเข้าจาก",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc": "โหลดไฟล์ .json ที่ส่งออกจาก Callout Studio",
+	"import.sourceStudioDesc": "ไฟล์ .json ที่ส่งออกจาก Callout Studio",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"นำเข้า callout ที่กำหนดเองจากปลั๊กอิน Callout Manager",
+	"import.sourceCalloutManagerDesc": "callout ที่คุณกำหนดเองจากปลั๊กอิน",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"นำ admonition ที่คุณกำหนดเองมาจากปลั๊กอิน Admonition",
-	"import.back": "ย้อนกลับ",
-	"import.removeFile": "นำไฟล์ออก",
+	"import.sourceAdmonitionDesc": "admonition ที่คุณกำหนดเองจากปลั๊กอิน",
+	"import.sourceOtherPlugins": "จากปลั๊กอินอื่น",
 	"import.fileReady": "พร้อมนำเข้า",
+	"import.upload": "อัปโหลด",
+	"import.replace": "แทนที่",
+	"import.fileUploaded": "อัปโหลด {{name}} แล้ว",
+	"import.fileReplaced": "แทนที่ไฟล์ด้วย {{name}} แล้ว",
 	"import.pasteButton": "วาง",
-	"import.pasted": "วางจากคลิปบอร์ดแล้ว",
-	"import.clearPaste": "ล้างข้อความที่วาง",
+	"import.pasteFirst": "กรุณาวางสไตล์ที่คัดลอกไว้ก่อน",
+	"import.uploadFirst": "กรุณาอัปโหลดไฟล์ก่อน",
 	"import.clipboardEmpty": "คลิปบอร์ดว่างเปล่า กรุณาคัดลอกข้อมูลก่อน",
-	"import.clipboardUnreadable":
-		"ไม่สามารถอ่านคลิปบอร์ดได้ ให้บันทึกข้อมูลเป็นไฟล์แล้วเลือกไฟล์นั้นแทน",
+	"import.clipboardBlocked": "อ่านคลิปบอร์ดไม่ได้ กรุณาวางลงในช่องด้วยตนเองแทน",
 	"import.importing": "กำลังนำเข้า…",
 	"import.err.fileUnreadable": "ไม่สามารถอ่านไฟล์ได้",
 	"import.cmTitle": "นำเข้าจาก Callout Manager",
 	"import.cmFromVault": "ห้องนิรภัยนี้",
 	"import.cmVaultChecking": "กำลังค้นหาปลั๊กอิน Callout Manager…",
 	"import.cmVaultFound": "พบ callout ที่กำหนดเอง {{count}} รายการ",
-	"import.cmVaultNotFound": "ไม่พบ callout ที่กำหนดเองในห้องนิรภัยนี้",
-	"import.cmVaultNotInstalled": "ไม่ได้ติดตั้ง Callout Manager ในห้องนิรภัยนี้",
-	"import.cmVaultUnreadable":
-		"ไม่สามารถอ่านไฟล์การตั้งค่าของ Callout Manager ในห้องนิรภัยนี้ได้",
-	"import.cmUseManual": "ใช้ไฟล์หรือสไตล์ที่คัดลอกไว้แทน",
-	"import.cmFromFile": "ไฟล์",
-	"import.cmFromFileDesc":
-		"ไฟล์ data.json ของ Callout Manager หรือสไตล์ที่คัดลอกมาซึ่งบันทึกเป็นไฟล์",
-	"import.cmChooseFile": "เลือกไฟล์…",
 	"import.cmFromPaste": "สไตล์ที่คัดลอก",
 	"import.cmFromPasteDesc":
 		"สิ่งที่ปุ่ม Copy ของ Callout Manager คัดลอก หรือไฟล์ data.json",
-	"import.cmPasteLabel": "หรือวางสไตล์ที่คัดลอกจาก Callout Manager ที่นี่:",
 	"import.cmInstructions":
 		"callout ที่กำหนดเองแต่ละรายการจะนำเข้าพร้อมไอคอนและสี แต่สไตล์เฉพาะธีมและ CSS แบบกำหนดเองไม่มีรูปแบบเทียบเท่าที่นี่ จึงไม่ถูกนำเข้า",
 	"import.cmPlaceholder": "วางสไตล์ที่คัดลอกหรือไฟล์ data.json ที่นี่…",
@@ -1002,10 +992,6 @@ export const th: Record<string, string> = {
 		'ไม่พบสีที่ใช้งานได้สำหรับ callout ใหม่ "{{value}}" จึงถูกข้ามไป',
 	"import.warn.cmNoColorDefault":
 		"ไม่ได้ตั้งค่าสีไว้ใน Callout Manager จึงใช้สีเทาเริ่มต้น",
-	"import.warn.cmThemeCondition":
-		"สีหรือไอคอนของ callout นี้ตั้งไว้สำหรับธีมเดียวเท่านั้น Callout Studio ไม่รองรับสไตล์แยกตามธีม จึงนำมาใช้กับทุกธีม",
-	"import.warn.cmCustomStyles":
-		"callout นี้มี CSS แบบกำหนดเองใน Callout Manager ด้วย สไตล์ดังกล่าวไม่รวมอยู่ในการนำเข้า จึงนำมาเฉพาะไอคอนและสี",
 	"import.err.cmIdConflict":
 		'ID "{{value}}" ถูกใช้เป็น alias โดย callout อื่น ("{{other}}") แล้ว จึงถูกข้ามไป',
 
@@ -1022,19 +1008,8 @@ export const th: Record<string, string> = {
 	"import.admFromVault": "ห้องนิรภัยนี้",
 	"import.admVaultChecking": "กำลังค้นหาปลั๊กอิน Admonition…",
 	"import.admVaultFound": "พบ admonition ที่กำหนดเอง {{count}} รายการ",
-	"import.admVaultNotFound": "ไม่พบ admonition ที่กำหนดเองในห้องนิรภัยนี้",
-	"import.admVaultNotInstalled": "ไม่ได้ติดตั้ง Admonition ในห้องนิรภัยนี้",
-	"import.admVaultUnreadable":
-		"ไม่สามารถอ่านไฟล์การตั้งค่าของ Admonition ในห้องนิรภัยนี้ได้",
-	"import.admUseManual": "ใช้ไฟล์หรือ JSON ที่วางแทน",
 	"import.admFromFile": "ไฟล์",
 	"import.admFromFileDesc": "ไฟล์ admonitions.json หรือชุดที่แชร์กันมา",
-	"import.admChooseFile": "เลือกไฟล์…",
-	"import.admFromPaste": "JSON ที่คัดลอก",
-	"import.admFromPasteDesc":
-		"JSON ของ Admonition หรือไฟล์ data.json ที่คัดลอกไปยังคลิปบอร์ด",
-	"import.admPasteLabel": "หรือวาง JSON ที่นี่:",
-	"import.admPlaceholder": "วาง admonition ของคุณที่นี่…",
 	"import.admBtnCancel": "ยกเลิก",
 	"import.admBtnImport": "นำเข้า",
 	"import.err.admNotRecognized":
@@ -1048,8 +1023,6 @@ export const th: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'ไม่พบไอคอนชื่อ "{{value}}" ในคลังไอคอนใดเลย "{{id}}" ' +
 		"จึงยังคงใช้ไอคอนเดิม",
-	"import.warn.admImageFailed":
-		"อ่านรูปภาพที่อัปโหลดไม่ได้ จึงใช้ไอคอนเริ่มต้นแทน",
 	"import.warn.admUnsupportedOptions": "ไม่นำเข้าตัวเลือก Admonition เหล่านี้: {{fields}}",
 	"import.warn.admImageSkipped": "อ่านรูปภาพที่อัปโหลดไม่ได้ จึงไม่นำเข้ารูปภาพดังกล่าว",
 	"import.warn.admIconWithCss":

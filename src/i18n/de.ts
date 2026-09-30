@@ -973,23 +973,22 @@ export const de: Record<string, string> = {
 		'Das Symbol "{{value}}" ist in diesem Vault nicht verfügbar, daher hat "{{id}}" das bereits vorhandene Symbol behalten.',
 	"import.chooseSource": "Importieren aus",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Eine aus Callout Studio exportierte .json-Datei laden.",
+	"import.sourceStudioDesc": "Eine aus Callout Studio exportierte .json-Datei.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Übernimm deine angepassten Callouts aus dem Callout Manager-Plugin.",
+	"import.sourceCalloutManagerDesc": "Deine angepassten Callouts aus dem Plugin.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Übernimm deine eigenen Admonitions aus dem Admonition-Plugin.",
-	"import.back": "Zurück",
-	"import.removeFile": "Datei entfernen",
+	"import.sourceAdmonitionDesc": "Deine eigenen Admonitions aus dem Plugin.",
+	"import.sourceOtherPlugins": "Aus einem anderen Plugin",
 	"import.fileReady": "Bereit zum Importieren.",
+	"import.upload": "Hochladen",
+	"import.replace": "Ersetzen",
+	"import.fileUploaded": "{{name}} hochgeladen.",
+	"import.fileReplaced": "Datei durch {{name}} ersetzt.",
 	"import.pasteButton": "Einfügen",
-	"import.pasted": "Aus der Zwischenablage eingefügt",
-	"import.clearPaste": "Eingefügten Text löschen",
+	"import.pasteFirst": "Füge zuerst die kopierten Stile ein.",
+	"import.uploadFirst": "Lade zuerst eine Datei hoch.",
 	"import.clipboardEmpty": "Die Zwischenablage ist leer. Kopiere zuerst die Daten.",
-	"import.clipboardUnreadable":
-		"Die Zwischenablage konnte nicht gelesen werden. Speichere die Daten stattdessen als Datei und wähle sie aus.",
+	"import.clipboardBlocked": "Die Zwischenablage konnte nicht gelesen werden. Füge den Inhalt stattdessen selbst in das Feld ein.",
 	"import.importing": "Wird importiert…",
 	"import.err.fileUnreadable": "Die Datei konnte nicht gelesen werden.",
 	"import.cmTitle": "Aus Callout Manager importieren",
@@ -1000,22 +999,9 @@ export const de: Record<string, string> = {
 	"import.cmFromVault": "Dieser Tresor",
 	"import.cmVaultChecking": "Suche nach dem Callout Manager-Plugin…",
 	"import.cmVaultFound": "{{count}} angepasste(r) Callout(s) gefunden.",
-	"import.cmVaultNotFound":
-		"In diesem Tresor wurden keine angepassten Callouts gefunden.",
-	"import.cmVaultNotInstalled": "Callout Manager ist in diesem Tresor nicht installiert.",
-	"import.cmVaultUnreadable":
-		"Die Einstellungsdatei von Callout Manager in diesem Tresor konnte nicht gelesen werden.",
-	"import.cmUseManual":
-		"Stattdessen eine Datei oder kopierte Stile verwenden",
-	"import.cmFromFile": "Eine Datei",
-	"import.cmFromFileDesc":
-		"Eine data.json von Callout Manager oder die kopierten Stile, als Datei gespeichert.",
-	"import.cmChooseFile": "Datei wählen…",
 	"import.cmFromPaste": "Kopierte Stile",
 	"import.cmFromPasteDesc":
 		"Das, was die Copy-Schaltfläche von Callout Manager kopiert, oder eine data.json.",
-	"import.cmPasteLabel":
-		"Oder füge die kopierten Stile von Callout Manager hier ein:",
 	"import.cmPlaceholder": "Kopierte Stile oder eine data.json hier einfügen…",
 	"import.cmBtnCancel": "Abbrechen",
 	"import.cmBtnImport": "Importieren",
@@ -1033,14 +1019,6 @@ export const de: Record<string, string> = {
 	"import.warn.cmNoColorDefault":
 		"In Callout Manager war keine Farbe festgelegt, daher wurde das " +
 		"Standardgrau verwendet.",
-	"import.warn.cmThemeCondition":
-		"Farbe oder Symbol dieses Callouts wurden nur für ein Theme " +
-		"festgelegt. Callout Studio kennt keine Theme-abhängigen Stile, " +
-		"daher wurde die Einstellung für alle Themes übernommen.",
-	"import.warn.cmCustomStyles":
-		"Dieser Callout hat außerdem eigenes CSS in Callout Manager. Diese " +
-		"Stile sind nicht Teil des Imports, daher wurden nur Symbol und " +
-		"Farbe übernommen.",
 
 	// Import — Admonition
 	"import.warn.cmThemeConditionPartial": "Themenabhängige Formatierungen können nicht beibehalten werden. Unbedingte Werte werden bevorzugt; bedingte Ersatzwerte gelten für alle Themen.",
@@ -1056,22 +1034,9 @@ export const de: Record<string, string> = {
 	"import.admFromVault": "Dieser Tresor",
 	"import.admVaultChecking": "Suche nach dem Admonition-Plugin…",
 	"import.admVaultFound": "{{count}} eigene Admonition(s) gefunden.",
-	"import.admVaultNotFound":
-		"In diesem Tresor wurden keine eigenen Admonitions gefunden.",
-	"import.admVaultNotInstalled": "Admonition ist in diesem Tresor nicht installiert.",
-	"import.admVaultUnreadable":
-		"Die Einstellungsdatei von Admonition in diesem Tresor konnte nicht gelesen werden.",
-	"import.admUseManual":
-		"Stattdessen eine Datei oder eingefügtes JSON verwenden",
 	"import.admFromFile": "Eine Datei",
 	"import.admFromFileDesc":
 		"Eine admonitions.json-Datei oder ein geteiltes Paket.",
-	"import.admChooseFile": "Datei wählen…",
-	"import.admFromPaste": "Kopiertes JSON",
-	"import.admFromPasteDesc":
-		"Admonition-JSON oder eine data.json, in die Zwischenablage kopiert.",
-	"import.admPasteLabel": "Oder füge das JSON hier ein:",
-	"import.admPlaceholder": "Füge deine Admonitions hier ein…",
 	"import.admBtnCancel": "Abbrechen",
 	"import.admBtnImport": "Importieren",
 	"import.err.admNotRecognized":
@@ -1087,9 +1052,6 @@ export const de: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		"In keiner Symbolbibliothek gibt es ein Symbol namens " +
 		'"{{value}}", daher hat "{{id}}" sein bisheriges Symbol behalten.',
-	"import.warn.admImageFailed":
-		"Das hochgeladene Bild konnte nicht gelesen werden, daher wurde " +
-		"das Standardsymbol verwendet.",
 	"import.warn.admUnsupportedOptions": "Diese Admonition-Optionen werden nicht importiert: {{fields}}.",
 	"import.warn.admImageSkipped": "Das hochgeladene Bild konnte nicht gelesen werden und wurde nicht importiert.",
 	"import.warn.admIconWithCss":

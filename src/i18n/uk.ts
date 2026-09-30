@@ -976,43 +976,31 @@ export const uk: Record<string, string> = {
 		"Значок «{{value}}» недоступний у цьому сховищі, тому «{{id}}» зберіг попередній значок.",
 	"import.chooseSource": "Імпорт з",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Завантажте файл .json, експортований з Callout Studio.",
+	"import.sourceStudioDesc": "Файл .json, експортований з Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Імпортуйте свої налаштовані callout із плагіна Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Ваші налаштовані callout із плагіна.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Перенесіть свої власні admonition із плагіна Admonition.",
-	"import.back": "Назад",
-	"import.removeFile": "Прибрати файл",
+	"import.sourceAdmonitionDesc": "Ваші власні admonition із плагіна.",
+	"import.sourceOtherPlugins": "З іншого плагіна",
 	"import.fileReady": "Готово до імпорту.",
+	"import.upload": "Завантажити",
+	"import.replace": "Замінити",
+	"import.fileUploaded": "Завантажено файл {{name}}.",
+	"import.fileReplaced": "Файл замінено на {{name}}.",
 	"import.pasteButton": "Вставити",
-	"import.pasted": "Вставлено з буфера обміну",
-	"import.clearPaste": "Очистити вставлений текст",
+	"import.pasteFirst": "Спершу вставте скопійовані стилі.",
+	"import.uploadFirst": "Спершу завантажте файл.",
 	"import.clipboardEmpty": "Буфер обміну порожній. Спершу скопіюйте дані.",
-	"import.clipboardUnreadable":
-		"Не вдалося прочитати буфер обміну. Натомість збережіть дані як файл і виберіть його.",
+	"import.clipboardBlocked": "Не вдалося прочитати буфер обміну. Вставте вміст у поле самостійно.",
 	"import.importing": "Імпортування…",
 	"import.err.fileUnreadable": "Не вдалося прочитати файл.",
 	"import.cmTitle": "Імпорт з Callout Manager",
 	"import.cmFromVault": "Це сховище",
 	"import.cmVaultChecking": "Пошук плагіна Callout Manager…",
 	"import.cmVaultFound": "Знайдено власних callout: {{count}}.",
-	"import.cmVaultNotFound": "У цьому сховищі не знайдено власних callout.",
-	"import.cmVaultNotInstalled": "Callout Manager не встановлено в цьому сховищі.",
-	"import.cmVaultUnreadable":
-		"Не вдалося прочитати файл налаштувань Callout Manager у цьому сховищі.",
-	"import.cmUseManual": "Використати натомість файл або скопійовані стилі",
-	"import.cmFromFile": "Файл",
-	"import.cmFromFileDesc":
-		"Файл data.json із Callout Manager або скопійовані з нього стилі, збережені як файл.",
-	"import.cmChooseFile": "Вибрати файл…",
 	"import.cmFromPaste": "Скопійовані стилі",
 	"import.cmFromPasteDesc":
 		"Те, що копіює кнопка Copy в Callout Manager, або файл data.json.",
-	"import.cmPasteLabel":
-		"Або вставте сюди стилі, скопійовані з Callout Manager:",
 	"import.cmInstructions":
 		"Кожен налаштований callout імпортується разом зі значком і кольором. Стилі для окремих тем і власний CSS тут не підтримуються й не імпортуються.",
 	"import.cmPlaceholder": "Вставте сюди скопійовані стилі або файл data.json…",
@@ -1027,10 +1015,6 @@ export const uk: Record<string, string> = {
 		'Не знайдено придатного кольору для нового callout "{{value}}"; його було пропущено.',
 	"import.warn.cmNoColorDefault":
 		"У Callout Manager колір не задано, тому використано стандартний сірий.",
-	"import.warn.cmThemeCondition":
-		"Колір або піктограму цього callout задано лише для однієї теми. Callout Studio не підтримує стилі для окремих тем, тому їх перенесено для всіх тем.",
-	"import.warn.cmCustomStyles":
-		"Цей callout також має власний CSS у Callout Manager. Цей стиль не входить до імпорту, тому перенесено лише піктограму та колір.",
 	"import.err.cmIdConflict":
 		'ID "{{value}}" вже використовується як псевдонім іншим callout ("{{other}}") і було пропущено.',
 
@@ -1048,20 +1032,8 @@ export const uk: Record<string, string> = {
 	"import.admFromVault": "Це сховище",
 	"import.admVaultChecking": "Пошук плагіна Admonition…",
 	"import.admVaultFound": "Знайдено власних admonition: {{count}}.",
-	"import.admVaultNotFound":
-		"У цьому сховищі не знайдено власних admonition.",
-	"import.admVaultNotInstalled": "Admonition не встановлено в цьому сховищі.",
-	"import.admVaultUnreadable":
-		"Не вдалося прочитати файл налаштувань Admonition у цьому сховищі.",
-	"import.admUseManual": "Використати натомість файл або вставлений JSON",
 	"import.admFromFile": "Файл",
 	"import.admFromFileDesc": "Файл admonitions.json або спільний набір.",
-	"import.admChooseFile": "Вибрати файл…",
-	"import.admFromPaste": "Скопійований JSON",
-	"import.admFromPasteDesc":
-		"JSON з Admonition або файл data.json, скопійований у буфер обміну.",
-	"import.admPasteLabel": "Або вставте JSON сюди:",
-	"import.admPlaceholder": "Вставте сюди свої admonition…",
 	"import.admBtnCancel": "Скасувати",
 	"import.admBtnImport": "Імпорт",
 	"import.err.admNotRecognized":
@@ -1076,9 +1048,6 @@ export const uk: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Піктограму з назвою "{{value}}" не знайдено в жодній бібліотеці, ' +
 		'тому "{{id}}" залишив свою попередню піктограму.',
-	"import.warn.admImageFailed":
-		"Не вдалося прочитати завантажене зображення, тому використано " +
-		"типову піктограму.",
 	"import.warn.admUnsupportedOptions": "Ці параметри Admonition не імпортуються: {{fields}}.",
 	"import.warn.admImageSkipped": "Не вдалося прочитати завантажене зображення, тому його не імпортовано.",
 	"import.warn.admIconWithCss":

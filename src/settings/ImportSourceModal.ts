@@ -7,13 +7,20 @@
  * straight to the file picker; the other two open PluginImportModal with their
  * own PluginImportSource (settings/pluginImport/). Each source is one option
  * box (settings/optionBox.ts) — the same box Export's format chooser and the
- * plugin import window draw.
+ * plugin import window draw. The two other plugins sit under a caption of
+ * their own, so the window reads as "your own backup, or somebody else's
+ * data" rather than as three equal rows.
  */
 import { Modal } from "obsidian";
 import { t } from "../i18n";
 import { processImportedJSON } from "./sections/DataManagementSection";
 import { applyModalChrome } from "./modalChrome";
-import { renderOptionBox, renderOptionList, type OptionBoxSpec } from "./optionBox";
+import {
+	renderOptionBox,
+	renderOptionGroupLabel,
+	renderOptionList,
+	type OptionBoxSpec,
+} from "./optionBox";
 import { PluginImportModal } from "./pluginImport/PluginImportModal";
 import { ADMONITION_IMPORT } from "./pluginImport/admonitionImportSource";
 import { CALLOUT_MANAGER_IMPORT } from "./pluginImport/calloutManagerImportSource";
@@ -55,14 +62,16 @@ export class ImportSourceModal extends Modal {
 
 		const list = renderOptionList(this.contentEl);
 
-		const sources: OptionBoxSpec[] = [
-			{
-				// The export chooser uses the same Lucide icon for this backup.
-				icon: "paintbrush",
-				title: t("import.sourceStudio"),
-				desc: t("import.sourceStudioDesc"),
-				onActivate: () => this.fileInput.click(),
-			},
+		// The export chooser uses the same Lucide icon for this backup.
+		renderOptionBox(list, {
+			icon: "paintbrush",
+			title: t("import.sourceStudio"),
+			desc: t("import.sourceStudioDesc"),
+			onActivate: () => this.fileInput.click(),
+		});
+
+		renderOptionGroupLabel(list, t("import.sourceOtherPlugins"));
+		const plugins: OptionBoxSpec[] = [
 			{
 				icon: "file",
 				title: t("import.sourceCalloutManager"),
@@ -83,7 +92,7 @@ export class ImportSourceModal extends Modal {
 			},
 		];
 
-		for (const source of sources) renderOptionBox(list, source);
+		for (const plugin of plugins) renderOptionBox(list, plugin);
 	}
 
 	onClose(): void {

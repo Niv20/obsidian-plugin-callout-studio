@@ -968,44 +968,31 @@ export const ro: Record<string, string> = {
 		"Pictograma „{{value}}” nu este disponibilă în acest vault, așa că „{{id}}” și-a păstrat pictograma existentă.",
 	"import.chooseSource": "Importați din",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc":
-		"Încărcați un fișier .json exportat din Callout Studio.",
+	"import.sourceStudioDesc": "Un fișier .json exportat din Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc":
-		"Importați callout-urile personalizate din pluginul Callout Manager.",
+	"import.sourceCalloutManagerDesc": "Callout-urile tale personalizate din plugin.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc":
-		"Adu-ți admonition-urile personalizate din pluginul Admonition.",
-	"import.back": "Înapoi",
-	"import.removeFile": "Elimină fișierul",
+	"import.sourceAdmonitionDesc": "Admonition-urile tale personalizate din plugin.",
+	"import.sourceOtherPlugins": "Dintr-un alt plugin",
 	"import.fileReady": "Gata de import.",
+	"import.upload": "Încarcă",
+	"import.replace": "Înlocuiește",
+	"import.fileUploaded": "{{name}} a fost încărcat.",
+	"import.fileReplaced": "Fișierul a fost înlocuit cu {{name}}.",
 	"import.pasteButton": "Lipește",
-	"import.pasted": "Lipit din clipboard",
-	"import.clearPaste": "Șterge textul lipit",
+	"import.pasteFirst": "Lipește mai întâi stilurile copiate.",
+	"import.uploadFirst": "Încarcă mai întâi un fișier.",
 	"import.clipboardEmpty": "Clipboardul este gol. Copiază mai întâi datele.",
-	"import.clipboardUnreadable":
-		"Clipboardul nu a putut fi citit. Salvează datele ca fișier și alege-l în schimb.",
+	"import.clipboardBlocked": "Clipboardul nu a putut fi citit. Lipește conținutul chiar tu în casetă.",
 	"import.importing": "Se importă…",
 	"import.err.fileUnreadable": "Fișierul nu a putut fi citit.",
 	"import.cmTitle": "Importați din Callout Manager",
 	"import.cmFromVault": "Acest vault",
 	"import.cmVaultChecking": "Se caută pluginul Callout Manager…",
 	"import.cmVaultFound": "S-au găsit {{count}} callout-uri personalizate.",
-	"import.cmVaultNotFound":
-		"Nu s-au găsit callout-uri personalizate în acest vault.",
-	"import.cmVaultNotInstalled": "Callout Manager nu este instalat în acest vault.",
-	"import.cmVaultUnreadable":
-		"Fișierul de setări al pluginului Callout Manager din acest vault nu a putut fi citit.",
-	"import.cmUseManual": "Folosește în schimb un fișier sau stilurile copiate",
-	"import.cmFromFile": "Un fișier",
-	"import.cmFromFileDesc":
-		"Un data.json din Callout Manager sau stilurile copiate din acesta, salvate ca fișier.",
-	"import.cmChooseFile": "Alege fișier…",
 	"import.cmFromPaste": "Stiluri copiate",
 	"import.cmFromPasteDesc":
 		"Ceea ce copiază butonul Copy din Callout Manager, sau un data.json.",
-	"import.cmPasteLabel":
-		"Sau lipește aici stilurile copiate din Callout Manager:",
 	"import.cmInstructions":
 		"Fiecare callout personalizat este importat împreună cu pictograma și culoarea sa. Stilurile specifice temei și CSS-ul personalizat nu au echivalent aici și nu sunt importate.",
 	"import.cmPlaceholder": "Lipiți aici stilurile copiate sau un fișier data.json…",
@@ -1021,10 +1008,6 @@ export const ro: Record<string, string> = {
 		'Nu a fost găsită nicio culoare utilizabilă pentru noul callout "{{value}}"; a fost omis.',
 	"import.warn.cmNoColorDefault":
 		"Nu a fost setată nicio culoare în Callout Manager, așa că s-a folosit griul implicit.",
-	"import.warn.cmThemeCondition":
-		"Culoarea sau pictograma acestui callout a fost setată pentru o singură temă. Callout Studio nu are stilizare per temă, așa că a fost adusă pentru toate temele.",
-	"import.warn.cmCustomStyles":
-		"Acest callout are și CSS personalizat în Callout Manager. Stilul nu face parte din import, așa că au fost aduse doar pictograma și culoarea.",
 	"import.err.cmIdConflict":
 		'ID-ul "{{value}}" este deja utilizat ca alias de un alt callout ("{{other}}") și a fost omis.',
 
@@ -1041,21 +1024,9 @@ export const ro: Record<string, string> = {
 	"import.admFromVault": "Acest seif",
 	"import.admVaultChecking": "Se caută pluginul Admonition…",
 	"import.admVaultFound": "S-au găsit {{count}} admonition personalizate.",
-	"import.admVaultNotFound":
-		"Nu s-au găsit admonition personalizate în acest seif.",
-	"import.admVaultNotInstalled": "Admonition nu este instalat în acest vault.",
-	"import.admVaultUnreadable":
-		"Fișierul de setări al pluginului Admonition din acest seif nu a putut fi citit.",
-	"import.admUseManual": "Folosește în schimb un fișier sau un JSON lipit",
 	"import.admFromFile": "Un fișier",
 	"import.admFromFileDesc":
 		"Un fișier admonitions.json sau un pachet partajat.",
-	"import.admChooseFile": "Alege fișier…",
-	"import.admFromPaste": "JSON copiat",
-	"import.admFromPasteDesc":
-		"JSON-ul din Admonition sau un data.json, copiat în clipboard.",
-	"import.admPasteLabel": "Sau lipește JSON-ul aici:",
-	"import.admPlaceholder": "Lipește aici admonition-urile tale…",
 	"import.admBtnCancel": "Anulare",
 	"import.admBtnImport": "Importați",
 	"import.err.admNotRecognized":
@@ -1070,9 +1041,6 @@ export const ro: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Nu s-a găsit nicio pictogramă numită "{{value}}" în nicio ' +
 		'bibliotecă, așa că "{{id}}" și-a păstrat pictograma existentă.',
-	"import.warn.admImageFailed":
-		"Imaginea încărcată nu a putut fi citită, așa că s-a folosit " +
-		"pictograma implicită.",
 	"import.warn.admUnsupportedOptions": "Aceste opțiuni Admonition nu sunt importate: {{fields}}.",
 	"import.warn.admImageSkipped": "Imaginea încărcată nu a putut fi citită și nu a fost importată.",
 	"import.warn.admIconWithCss":

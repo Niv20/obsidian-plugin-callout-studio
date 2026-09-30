@@ -6,24 +6,25 @@ Callout Studio can migrate data from other callout plugins, import a Callout Stu
 
 On first installation, Callout Studio checks whether the vault contains **Callout Manager** or **Admonition**. If it finds either one, a welcome banner appears at the top of the settings with a shortcut to the importer.
 
-The importer brings over the available custom callout names, colors, icons, and uploaded images. The Callout Manager and Admonition importers work the same way. The window lists three options, one under another, and has one **Import** button at the bottom. **Import** always acts on the option with the purple border.
+To open the importer yourself, go to **Settings → Callout Studio → Import and export → Import**. The **Import from** window lists **Callout Studio** first, for your own backups, and then **Callout Manager** and **Admonition** under **From another plugin**.
 
-- **This vault** reads the other plugin's data straight from the current vault. If it finds some, it shows how many custom callouts it found, carries a **Recommended** badge, and is already selected when the window opens. If the plugin's folder is missing, it says the plugin isn't installed. If the folder exists but contains no custom callouts, it says none were found. In both cases, the option stays visible with greyed-out text and a not-allowed cursor. An unreadable settings file shows a separate warning.
-- **A file**: select the box and pick the data you exported or copied from the old plugin, or drag a file onto the box and drop it there. Either way, the file is selected without importing it straight away. The option shows the file's name until you select **Import**.
-- **Copied JSON** (Admonition) or **Copied styles** (Callout Manager): copy the data from the old plugin, then select the box. The option reads your clipboard and confirms that the text was pasted. If the clipboard is empty or can't be read, the option says so.
+The importer brings over the available custom callout names, colors, icons, and uploaded images. The Callout Manager and Admonition importers work the same way. The window has one **Import** button at the bottom, and it always imports the selected option: the one with the purple ring and the filled dot.
 
-Picking or dropping a file selects **A file**; pasting selects the copied-data option. To switch, select another option's box. Whatever you chose, dropped, or pasted in the other options is kept until you close the window, so you can switch back to it, but only the selected option is imported. To pick a different file, select the box that's already selected or drop another file onto it; to paste again, select the paste box. The new file or text replaces the old one. If the clipboard is empty or can't be read, the text you pasted before is kept.
+- **This vault** reads the other plugin's data straight from the current vault. If it finds some, it shows how many custom callouts it found, carries a **Recommended** badge, and is already selected. This is the most complete route, and nothing has to be exported from the other plugin first. If the other plugin isn't in this vault, or has nothing to import, this option doesn't appear at all.
+- The second option depends on the plugin you are moving from, and matches what that plugin gives you:
+  - **Admonition → A file.** In Admonition's settings, under **Import & export**, use **Download all** in the **Export custom types as JSON** row. Then select **Upload** here and pick that file, or drag the file onto the box. A notice confirms the upload, the box shows the file's name, and the button changes to **Replace**, which you can use to pick a different file. A shared pack in the same format, or a `data.json` taken from another vault, works too.
+  - **Callout Manager → Copied styles.** Use Callout Manager's **Copy** button, then select **Paste** here, or paste into the text box yourself. The box keeps one height and scrolls when the text is long. A `data.json` from another vault works too: open it, copy its contents, and paste them. Callout Studio reads your clipboard only when you select **Paste**; if the clipboard is empty or can't be read, a notice says so.
 
-The import and export choosers use the same option boxes as this window.
-Click anywhere on an available box, or focus it and press **Enter** or
-**Space**. Hovering adds a subtle background tint and a clearer border.
-The **Recommended** badge darkens slightly while you hover over an unselected
-box. A selected box keeps the badge's usual color.
+Uploading a file, or pasting or typing text, selects that option. To switch, select the other option's box or its dot. What you uploaded or pasted is kept until you close the window, so you can switch back to it, but nothing is imported until you select **Import**, and only the selected option is imported. If you select **Import**, or the second option's box or dot, before uploading a file or pasting text, a notice tells you to do that first.
+
+The import and export choosers use the same rounded grey boxes as this window:
+an icon, a title, and a line of description. In a chooser, click anywhere on a
+box, or focus it and press **Enter** or **Space**; it ends in a small arrow
+because selecting it opens the next step straight away. In an importer, a box
+ends in a dot instead, because selecting it only chooses what **Import** will
+act on.
 The Callout Studio backup option uses the same paintbrush icon in both
 choosers.
-
-- **Admonition:** choose its exported `admonitions.json` or a shared pack, or paste the JSON. A `data.json` copied from another vault works too.
-- **Callout Manager:** choose its `data.json` from another vault, or its copied styles saved as a file. You can also paste the styles its **Copy** button produces.
 
 The importer reports unsupported or invalid entries before applying the valid data.
 It does not scan, import, enable, disable, or modify existing files in the
@@ -73,7 +74,7 @@ Choose the CSS option to generate a standalone copy of your Block callout styles
 
 The CSS file is a one-way styling snapshot, **not a Callout Studio backup**. The Callout Studio backup import can't restore it, and Callout Studio doesn't scan the snippets folder for it. To restore or move an editable Callout Studio setup, use the JSON backup instead.
 
-If the snapshot is all you have, the Callout Manager importer can still read it: choose the file, or paste its contents. That recovers each callout's name, icon, and one color, and nothing else.
+If the snapshot is all you have, the Callout Manager importer can still read it: open the file, copy its contents, and select **Copied styles**. That recovers each callout's name, icon, and one color, and nothing else.
 
 Use the snippet for Obsidian Publish, a static website, or another place where the plugin itself is not running. The export is a snapshot: export it again after changing your designs.
 

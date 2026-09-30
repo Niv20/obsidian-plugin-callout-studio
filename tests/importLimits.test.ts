@@ -13,8 +13,8 @@ import type { SettingsSectionContext } from "../src/settings/sections/types";
 import { t } from "../src/i18n";
 import { ImportReportModal } from "../src/utils/ImportReportModal";
 import {
-	active, announcer, fileInput, harness, importButton, paste, recordingSource,
-	settle, stubReport,
+	fileInput, harness, importButton, pasteBox, pasteHarness, pasteSource, pressPaste,
+	settle, stubReport, typeText,
 } from "./support/pluginImportHarness";
 
 describe("untrusted import resource budgets", () => {
@@ -138,30 +138,53 @@ describe("untrusted import resource budgets", () => {
 		} finally { h.destroy(); report.restore(); }
 	});
 
-	it("retains the previous paste when an oversized clipboard read is rejected", async () => {
-		const h = harness();
+	it("rejects oversized pasted text before the source reads it, and leaves it in the box", async () => {
+		const h = pasteHarness();
+		const report = stubReport();
+		const big = "x".repeat(MAX_IMPORT_BYTES + 1);
 		try {
 			h.modal.onOpen();
 			await settle();
-			await paste(h, "previous");
-			await paste(h, "x".repeat(MAX_IMPORT_BYTES + 1));
-			assert.equal(active(h), "paste");
-			assert.equal(announcer(h).textContent, t("import.err.tooLarge"));
+			typeText(h, big);
+			importButton(h).fire("click");
+			await settle();
+			assert.deepEqual(h.rec.fromText, []);
+			assert.deepEqual(h.rec.applied, []);
+			assert.deepEqual(report.seen, [{ fatal: true, keys: ["import.err.tooLarge"] }]);
+			assert.equal(pasteBox(h).value.length, big.length, "still there to trim");
+			assert.equal(importButton(h).getAttribute("aria-disabled"), "false");
+		} finally { h.destroy(); report.restore(); }
+	});
+
+	it("keeps an oversized clipboard out of the box: Paste says so and changes nothing", async () => {
+		const h = pasteHarness();
+		const notices: string[] = [];
+		(globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ = notices;
+		try {
+			h.modal.onOpen();
+			await settle();
+			typeText(h, "previous");
+			await pressPaste(h, "x".repeat(MAX_IMPORT_BYTES + 1));
+			assert.deepEqual(notices, [t("import.err.tooLarge")]);
+			assert.equal(pasteBox(h).value, "previous");
 			importButton(h).fire("click");
 			await settle();
 			assert.deepEqual(h.rec.applied, ["text:previous"]);
-		} finally { h.destroy(); }
+		} finally {
+			delete (globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__;
+			h.destroy();
+		}
 	});
 
 	it("reports an unexpected planner failure and leaves the modal usable", async () => {
-		const h = harness({ source: (rec) => ({ ...recordingSource(rec),
+		const h = pasteHarness({ source: (rec) => ({ ...pasteSource(rec),
 			fromText: () => ({ batch: { size: 1, plan: () => Promise.reject(new Error("bad input")) } }),
 		}) });
 		const report = stubReport();
 		try {
 			h.modal.onOpen();
 			await settle();
-			await paste(h, "data");
+			typeText(h, "data");
 			importButton(h).fire("click");
 			await settle();
 			assert.deepEqual(report.seen, [{ fatal: true, keys: ["import.err.processingFailed"] }]);
