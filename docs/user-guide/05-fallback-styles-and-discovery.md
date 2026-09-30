@@ -35,7 +35,7 @@ To make an existing saved callout follow the fallback, open its three-dot menu a
 
 To make it independent again, edit any part of its design. The **Default fallback** label disappears, and later fallback changes no longer change that callout.
 
-Theme-provided callouts are handled separately because the active theme controls their appearance. See [Theme integration](16-theme-integration.md).
+Theme-provided callouts are handled separately because the active theme controls their appearance. See [Theme integration](17-theme-integration.md).
 
 ---
 **Next:** [Editing, replacing & deleting](06-editing-replacing-and-deleting.md)

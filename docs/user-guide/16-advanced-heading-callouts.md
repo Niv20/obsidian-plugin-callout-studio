@@ -19,4 +19,4 @@ Heading callouts are compatible with the community plugins **Table of Contents**
 A normal Markdown link at the start of a heading, such as `# [some link](https://example.com)`, is not a callout token and is left unchanged.
 
 ---
-**Next:** [Theme integration](16-theme-integration.md)
+**Next:** [Theme integration](17-theme-integration.md)

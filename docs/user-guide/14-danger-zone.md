@@ -161,17 +161,17 @@ remain available while that theme is active.
 
 Before the reset runs, Callout Studio shows a confirmation and any relevant
 warning about custom types used in your notes. It then saves a copy of your
-current setup to the plugin's [backups folder](17-syncing-and-backups.md#automatic-backups)
+current setup to the plugin's [backups folder](13-syncing-and-backups.md#automatic-backups)
 and checks that the copy can be read. If no copy can be saved, nothing is
 reset. While saving is paused, **Reset everything** is unavailable; resolve the
 saving problem first. If the reset is displayed but could not be saved, a
 message says so instead of reporting success.
 
 **There is no undo button.** To bring the previous setup back, open
-[Restore an earlier setup](17-syncing-and-backups.md#restore-an-earlier-setup)
+[Restore an earlier setup](13-syncing-and-backups.md#restore-an-earlier-setup)
 and restore the backup saved just before the reset. A synced vault can send the
 reset to your other devices, and the backups folder lives in the synced plugin
-folder. Export a [complete backup](17-syncing-and-backups.md) and keep it
+folder. Export a [complete backup](13-syncing-and-backups.md) and keep it
 somewhere else if you may want your setup later.
 
 To undo just one icon or color, use the return arrow in the callout editor. To
@@ -179,4 +179,4 @@ restore one customized built-in callout, choose **Reset to default** from its
 three-dot menu.
 
 ---
-**Next:** [Quick insert](14-quick-insert.md)
+**Next:** [Quick insert](15-quick-insert.md)

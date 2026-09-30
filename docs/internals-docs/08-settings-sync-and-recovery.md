@@ -15,7 +15,7 @@ where; this chapter explains when those stores may change. Read it before changi
 the settings writer, startup/reload paths, recovery UI, or sync protocol.
 
 For operational instructions, see the user guide's
-[Syncing and backups](../user-guide/17-syncing-and-backups.md). That guide is for
+[Syncing and backups](../user-guide/13-syncing-and-backups.md). That guide is for
 choosing actions in Obsidian; this chapter is for understanding and maintaining
 the code behind those actions.
 

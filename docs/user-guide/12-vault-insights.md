@@ -150,4 +150,4 @@ changes or reopening the sidebar trigger another attempt; failures do not start
 an endless retry loop.
 
 ---
-**Next:** [Danger zone](13-danger-zone.md)
+**Next:** [Syncing & backups](13-syncing-and-backups.md)

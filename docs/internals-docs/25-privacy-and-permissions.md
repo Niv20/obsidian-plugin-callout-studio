@@ -73,7 +73,7 @@ These pictures live in the plugin's own data file alongside the rest of your set
   plugin settings and artwork, deduplicated and retained within a size budget.
   It survives unload/uninstall, but clearing app data can remove it. It is never
   synced or sent to a server by this plugin; see
-  [Restore an earlier setup](../user-guide/17-syncing-and-backups.md#restore-an-earlier-setup).
+  [Restore an earlier setup](../user-guide/13-syncing-and-backups.md#restore-an-earlier-setup).
 - **Recovery backup files** inside the plugin's vault directory. These can sync
   through your chosen provider and can be removed with that directory. They are
   distinct from the device-only checkpoint; see the same chapter for retention.

@@ -35,4 +35,4 @@ Drag the icon in Obsidian's ribbon to change its position.
 To hide it, use Obsidian's own ribbon customization settings, not Callout Studio's plugin settings. The Command Palette action remains available even when the ribbon icon is hidden.
 
 ---
-**Next:** [Advanced heading callouts](15-advanced-heading-callouts.md)
+**Next:** [Advanced heading callouts](16-advanced-heading-callouts.md)

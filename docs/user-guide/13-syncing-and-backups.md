@@ -124,4 +124,4 @@ Use one sync service for the vault, and check that it includes your configuratio
 These recovery safeguards work with the files visible to Obsidian; they cannot control a provider's exclusions, connectivity, delayed deletions or conflict policy. They are not a guarantee of compatibility with every service or mobile setup.
 
 ---
-**Next:** [Back to the guide overview](README.md)
+**Next:** [Danger zone](14-danger-zone.md)

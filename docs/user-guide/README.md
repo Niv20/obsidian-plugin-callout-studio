@@ -16,11 +16,11 @@ There's a lot to explore in Callout Studio — from callout types and custom col
 | [10 - Import, export & sharing](10-import-export-and-sharing.md)           | Migrate from other plugins, import a backup, or export CSS.                        |
 | [11 - Languages](11-languages.md)                                          | Follow Obsidian's language or choose another interface language.                   |
 | [12 - Vault insights](12-vault-insights.md)                                | Review callout usage across your notes.                                            |
-| [13 - Danger zone](13-danger-zone.md)                                      | Convert heading and inline callouts to standard Markdown, or reset Callout Studio. |
-| [14 - Quick insert](14-quick-insert.md)                                    | Insert and edit block callouts from the ribbon.                                    |
-| [15 - Advanced heading callouts](15-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                |
-| [16 - Theme integration](16-theme-integration.md)                          | Understand which callouts your theme controls.                                     |
-| [17 - Syncing & backups](17-syncing-and-backups.md)                        | Compare and restore earlier setups, understand backup retention, recover paused saving, and use synced vaults safely. |
+| [13 - Syncing & backups](13-syncing-and-backups.md)                        | Compare and restore earlier setups, understand backup retention, recover paused saving, and use synced vaults safely. |
+| [14 - Danger zone](14-danger-zone.md)                                      | Convert heading and inline callouts to standard Markdown, or reset Callout Studio. |
+| [15 - Quick insert](15-quick-insert.md)                                    | Insert and edit block callouts from the ribbon.                                    |
+| [16 - Advanced heading callouts](16-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                |
+| [17 - Theme integration](17-theme-integration.md)                          | Understand which callouts your theme controls.                                     |
 
 ---
 
