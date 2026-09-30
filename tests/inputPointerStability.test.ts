@@ -38,7 +38,8 @@ describe("text fields match selection controls through hover and focus", () => {
 		for (const declaration of [
 			"min-height: max(36px, var(--input-height))",
 			"padding: 6px 10px",
-			"border-radius: var(--radius-s)",
+			"border-radius: var(--input-radius, var(--radius-s))",
+			"corner-shape: var(--input-corner-shape, round)",
 			"background: var(--cs-btn-face, var(--interactive-normal))",
 			"border: 1px solid var(--cs-btn-border, var(--background-modifier-border))",
 		]) assert.ok(shared.body.includes(declaration), declaration);
@@ -86,6 +87,25 @@ describe("compound and multiline fields keep their specialized layout", () => {
 			assert.ok(rule.body.includes(`--cs-tag-field-bg: ${HOVER_FILL}`));
 			assert.ok(rule.selectors.includes(`${selector} + .cs-tag-add-slot`));
 		}
+	});
+
+	it("rounds the + end-cap one pixel inside the field's own Obsidian corners", () => {
+		const slot = ruleFor(".cs-tag-add-slot");
+		for (const corner of ["start-end", "end-end"]) {
+			assert.ok(
+				slot.body.includes(`border-${corner}-radius: calc(var(--input-radius, var(--radius-s)) - 1px)`),
+				`${corner} must track the field radius, not a fixed token`,
+			);
+		}
+		assert.ok(slot.body.includes("corner-shape: var(--input-corner-shape, round)"));
+		const add = ruleFor(".cs-tag-add-btn");
+		assert.ok(add.body.includes("border-radius: inherit"));
+		assert.ok(add.body.includes("corner-shape: inherit"), "the hover tint follows the end-cap's shape");
+	});
+
+	it("gives the paste textarea Obsidian's textarea radius instead of the pill input radius", () => {
+		const paste = ruleFor(".cs-import-paste-input.cs-text-control.cs-text-control.cs-text-control.cs-text-control");
+		assert.ok(paste.body.includes("border-radius: var(--textarea-radius, var(--input-radius, var(--radius-s)))"));
 	});
 
 	it("leaves the inner combobox input transparent in every pointer/focus state", () => {

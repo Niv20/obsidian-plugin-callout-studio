@@ -1154,8 +1154,9 @@ Editable text fields use the same chrome as the
 `cs-text-control` class keeps the rule scoped to Callout Studio's own fields;
 it must not style Obsidian's editor or the transparent input inside a combobox.
 Single-line fields share the dropdowns' 36px minimum height (or
-`--input-height` when larger), 6px by 10px padding, `--radius-s` corners,
-1px border, and small UI font. Each screen retains its own control width.
+`--input-height` when larger), 6px by 10px padding, Obsidian's own
+[field corners](#field-corners-follow-obsidians-input-tokens), 1px border, and
+small UI font. Each screen retains its own control width.
 
 | State | Text fields and dropdown controls |
 | --- | --- |
@@ -1211,6 +1212,38 @@ harness in [17 — Checking a theme against the real
 cascade](18-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade)
 explains how to compare `styles.css` with Obsidian's `app.css`; reading either
 stylesheet alone does not prove the computed result.
+
+### Field corners follow Obsidian's input tokens
+
+The shared chrome takes its corners from `var(--input-radius, var(--radius-s))`
+and `var(--input-corner-shape, round)`, never from a fixed `--radius-s` and
+`round`. Those are the tokens behind Obsidian's own `input`, `select` and
+`.dropdown` rules, and they are platform- and theme-dependent (Obsidian 1.13):
+
+| Environment | `--input-radius` (= `--button-radius`) | `--corner-shape` |
+| --- | --- | --- |
+| Default (Windows, Linux) | 5px | `round` |
+| `.mod-macos` | `--radius-m`, 8px | `superellipse(1.33)` |
+| `.is-mobile` | `--touch-radius-m`, 44px (a pill) | as the desktop above |
+
+A native `textarea` reads `--textarea-radius` first and only mobile defines it
+(24px), so the import window's paste box repeats that fallback rather than
+becoming a pill 132px tall. Native `button` rules read `--button-radius`, which
+is `var(--input-radius)` unless a theme splits the two; plain buttons are left
+to Obsidian, so they and the fields match by construction.
+
+Two things draw a corner inside a field and must follow it: the **+** end-cap
+(`.cs-tag-add-slot`) rounds one pixel *inside* the field's radius with the same
+`corner-shape`, and its button inherits both, so a hover tint cannot square off
+the field's corner. Anything new that overlays a field edge should derive its
+radius from `--input-radius` the same way. The combobox's inner input stays at
+`border-radius: 0`; its wrapper owns the corner.
+
+`tests/inputPointerStability.test.ts` pins the declarations. To confirm the
+computed numbers, render a native `button`, `input`, `select` and `textarea`
+beside the plugin's fields under the harness linked above, with body classes
+`mod-macos`, `mod-windows` and `is-mobile is-phone`, and compare
+`border-top-left-radius` and `corner-shape`.
 
 ### The one control that is not a field but focuses like one
 
@@ -1757,7 +1790,8 @@ All list-selection triggers carry `cs-dropdown-control`: the shared callout,
 color, and language listboxes; plain selectors in commands, palettes, Quick
 Insert, the icon picker, and occurrences; and the custom icon-source and Fold
 selectors. They share a 36px minimum height (or `--input-height` when larger),
-6px by 10px padding, `--radius-s` corners, a 1px
+6px by 10px padding, Obsidian's own
+[field corners](#field-corners-follow-obsidians-input-tokens), a 1px
 `--background-modifier-border`, and the same `chevrons-up-down` indicator.
 The face uses `--cs-btn-face` with `--interactive-normal` as its fallback,
 hover, focus, press, and the open state use `--cs-btn-face-hover`, and the

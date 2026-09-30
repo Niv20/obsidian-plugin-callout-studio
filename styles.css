@@ -3286,7 +3286,17 @@ button.callout-studio-icon-picker-loading {
 
 /* Selection controls and standalone text fields share one face and geometry.
    Explicit opt-in leaves action buttons and the combobox's inner input alone.
-   Repeated classes beat Obsidian's native input/select/button chrome. */
+   Repeated classes beat Obsidian's native input/select/button chrome.
+
+   The corners are Obsidian's own, not ours: `--input-radius` and
+   `--input-corner-shape` are what its `input`, `select` and `.dropdown` rules
+   read, and they are not constants. They are 5px / round by default, 8px /
+   superellipse on macOS (`.mod-macos`), and pill-sized on mobile
+   (`.is-mobile`), and a theme may set either one. A fixed `--radius-s` (4px)
+   and `round` here drew these fields tighter than the `button` beside them on
+   every platform. `--button-radius` is `var(--input-radius)` unless a theme
+   splits them, so following the input token keeps fields level with buttons in
+   the default case. */
 .cs-dropdown-control.cs-dropdown-control.cs-dropdown-control,
 .cs-text-control.cs-text-control.cs-text-control.cs-text-control {
 	height: auto;
@@ -3294,8 +3304,8 @@ button.callout-studio-icon-picker-loading {
 	box-sizing: border-box;
 	padding: 6px 10px;
 	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
-	border-radius: var(--radius-s);
-	corner-shape: round;
+	border-radius: var(--input-radius, var(--radius-s));
+	corner-shape: var(--input-corner-shape, round);
 	background: var(--cs-btn-face, var(--interactive-normal));
 	color: var(--text-normal);
 	box-shadow: none;
@@ -4698,8 +4708,9 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	align-items: center;
 	justify-content: center;
 	background: var(--cs-tag-field-bg);
-	border-start-end-radius: calc(var(--radius-s) - 1px);
-	border-end-end-radius: calc(var(--radius-s) - 1px);
+	border-start-end-radius: calc(var(--input-radius, var(--radius-s)) - 1px);
+	border-end-end-radius: calc(var(--input-radius, var(--radius-s)) - 1px);
+	corner-shape: var(--input-corner-shape, round);
 	pointer-events: none;
 	opacity: 0;
 	transition: opacity 0.12s ease;
@@ -4722,6 +4733,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	justify-content: center;
 	border: none;
 	border-radius: inherit;
+	corner-shape: inherit;
 	background: transparent;
 	box-shadow: none;
 	color: var(--text-muted);
@@ -6250,10 +6262,15 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
    `.cs-text-control` like every other text field; one class more than that
    rule's four, to take its `height: auto` back. Monospace and left-to-right,
    because what goes in is CSS or JSON: in a right-to-left window a rule would
-   otherwise read `} selector.`. */
+   otherwise read `} selector.`.
+
+   Obsidian's own `textarea` rule reads `--textarea-radius` ahead of the input
+   token, and only mobile defines it (24px, where inputs are pills): a pill
+   radius on a 132px box would be a sausage, so follow the same fallback. */
 .cs-import-paste-input.cs-text-control.cs-text-control.cs-text-control.cs-text-control {
 	flex: 0 0 100%;
 	height: 132px;
+	border-radius: var(--textarea-radius, var(--input-radius, var(--radius-s)));
 	resize: none;
 	overflow: auto;
 	direction: ltr;
