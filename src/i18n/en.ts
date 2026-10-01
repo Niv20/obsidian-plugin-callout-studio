@@ -398,7 +398,7 @@ export const en: Record<string, string> = {
 		"You can replace it with another callout instead, which keeps your vault content as a styled callout.",
 	"deleteModal.bodyUnused":
 		'"{{name}}" is not used in any note, but it is a custom callout you customized. Deleting will remove it from this list.',
-	"deleteModal.replaceInstead": "Replace instead",
+	"deleteModal.replaceInstead": "Replace instead…",
 	"deleteModal.deleteInUse": "Delete (convert to plain text)",
 	"deleteModal.deleteUnused": "Delete callout",
 	// The variant for a callout whose definition Callout Studio cannot remove:
@@ -432,8 +432,8 @@ export const en: Record<string, string> = {
 		"Callout Studio could not save the translation to disk, so it will need downloading again next time.",
 
 	"settings.importExport": "Import and export",
-	"settings.import": "Import",
-	"settings.export": "Export",
+	"settings.import": "Import…",
+	"settings.export": "Export…",
 	"settings.importTitle": "Import callouts",
 	"settings.exportTitle": "Export callouts",
 	"settings.importDesc":
@@ -452,7 +452,7 @@ export const en: Record<string, string> = {
 	// Settings — Row actions
 	"settings.editAria": "Edit {{name}}",
 	"settings.moreRowActionsAria": "More actions for {{name}}",
-	"settings.replaceAction": "Replace in vault",
+	"settings.replaceAction": "Replace in vault…",
 	"settings.deleteAction": "Delete",
 	"settings.duplicateAction": "Duplicate",
 	"notice.calloutDuplicated": 'Duplicated callout as "{{name}}".',
@@ -629,7 +629,7 @@ export const en: Record<string, string> = {
 	"portable.customDiscarded": "{{count}} custom replacements were cleared because their source text changed or could not be located safely.",
 	"portable.customBadge": "Custom",
 	"portable.roleLink": "Heading link",
-	"portable.convertSelected": "Convert selected…",
+	"portable.convertSelected": "Convert selected",
 	"portable.selectionSummary": "{{selected}} of {{total}} replacements selected · {{links}} heading links to update",
 	"portable.selectionConflict": "That choice would make heading links ambiguous. Your previous selection was kept.",
 	"portable.selectAll": "Select all",
@@ -644,7 +644,7 @@ export const en: Record<string, string> = {
 	"portable.blockedTarget": "This heading is skipped because its link target cannot be preserved safely.",
 	"portable.recovery": "Some changes remain. Finish this conversion and its heading-link updates before restarting or disabling the plugin; the pending plan is kept only in memory.",
 	"portable.recoveryChanged": "Notes changed after conversion stopped. Pending link updates are retained; every note is checked again before writing.",
-	"portable.finishConversion": "Finish conversion…",
+	"portable.finishConversion": "Finish conversion",
 	"portable.recoveryUnavailable": "Some pending link updates could not be recovered safely. Check the affected notes before starting a new conversion.",
 	"portable.title": "Convert to standard Markdown",
 	"portable.settingDesc": "Replace heading and inline callouts across the vault with ordinary text, ready to use without Callout Studio.",
@@ -1391,8 +1391,8 @@ export const en: Record<string, string> = {
 
 	// Import — plugin import window (Admonition and Callout Manager alike)
 	"import.fileReady": "Ready to import.",
-	"import.upload": "Upload",
-	"import.replace": "Replace",
+	"import.upload": "Upload…",
+	"import.replace": "Replace…",
 	"import.fileUploaded": "Uploaded {{name}}.",
 	"import.fileReplaced": "Replaced the file with {{name}}.",
 	"import.pasteButton": "Paste",
