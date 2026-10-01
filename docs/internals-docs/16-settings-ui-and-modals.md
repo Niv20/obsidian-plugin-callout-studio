@@ -1448,6 +1448,18 @@ was really darkening from Obsidian's grey one. Both segmented rows double their
 class to clear the bar, the same trick `.cs-gradient-dir-btn` already used
 against the mobile core rules.
 
+Doubling was not enough for that mobile rule itself, which is a cautionary
+tale: Obsidian 1.13's `.is-phone .modal .setting-item-control
+button:not(.clickable-icon) { width: 100% }` is **(0,4,1)**, so
+`.is-mobile .cs-gradient-dir-row .cs-gradient-dir-btn.cs-gradient-dir-btn`
+(0,4,0) lost `width: 26px` on the element tie-break and now carries a third
+copy of the class. Chrome hid the loss — `flex: 0 0 26px` still sized the
+buttons — but WebKit sizes the shrink-wrapped control column from `width`, got
+56px for three 26px arrows, and the last one spilled out of the card on iOS.
+`tests/gradientDirectionMobileSize.test.ts` pins the specificity; check a phone
+override in WebKit as well as Chrome (see "Checking a theme against the real
+cascade" in `21-theme-callout-discovery.md` for the harness).
+
 Two more consequences worth keeping:
 
 - **`.is-active` is declared *before* `:hover`.** They tie at (0,2,0), so the
