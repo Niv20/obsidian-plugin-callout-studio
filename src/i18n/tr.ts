@@ -8,7 +8,6 @@ export const tr: Record<string, string> = {
 	"portable.selectionConflict": "Bu seçim başlık bağlantılarını belirsiz hâle getirirdi. Önceki seçiminiz korundu.",
 	"portable.selectAll": "Tümünü seç",
 	"portable.selectNone": "Tüm seçimleri kaldır",
-	"portable.waiting": "Notlar değişti. İnceleme güncelleniyor…",
 	"portable.relatedLinksHint": "Bağlantılar ve gömülü içerikler seçilen başlıklara göre güncellenir ve onlarla birlikte dönüştürülür.",
 	"portable.selectChange": "{{path}}, {{line}}. satırı dönüştür",
 	"portable.showMore": "{{count}} tane daha göster",
@@ -35,10 +34,8 @@ export const tr: Record<string, string> = {
 	"portable.backup": "Dönüştürmeden önce kasanızı yedeklemenizi öneririz. Bu işlem özgün notları değiştirir ve Callout Studio'da geri alınamaz.",
 	"portable.scanning": "Markdown notları okunuyor…",
 	"portable.progress": "Notlar okunuyor: {{done}} / {{total}}",
-	"portable.summary": "{{files}} notta {{count}} değiştirme · Başlıklarda {{headings}} · Satır içinde {{inline}}",
 	"portable.empty": "Dönüştürülebilecek başlık veya satır içi callout bulunamadı. Hiçbir şey değiştirilmeyecek.",
 	"portable.skipped": "Eksik veya desteklenmeyen {{count}} kullanım, elle inceleme için değiştirilmeden bırakıldı.",
-	"portable.location": "{{path}} · {{line}}. satır",
 	"portable.confirmTitle": "Bu kasa kalıcı olarak dönüştürülsün mü?",
 	"portable.confirmBody": "{{files}} notta {{count}} kullanım dönüştürülsün ve {{links}} başlık bağlantısı güncellensin mi?\nBu işlem özgün dosyaları değiştirir ve Callout Studio'da geri alınamaz. Otomatik yedek oluşturulmaz. Önce kasanızı yedekleyin, açık notları kaydedin ve dönüşüm bitene kadar düzenlemeyi ve eşitlemeyi duraklatın.\nBir dosya değişirse veya yazma işlemi başarısız olursa dönüşüm durur. Dönüştürülmüş notlardaki değişiklikler korunur.",
 	"portable.confirmAction": "Kalıcı olarak dönüştür",
@@ -159,7 +156,6 @@ export const tr: Record<string, string> = {
 
 	"settings.editAria": "{{name}} düzenle",
 	"settings.moreRowActionsAria": "{{name}} için daha fazla eylem",
-	"settings.usageInfo": "{{files}} dosyada {{count}} kullanım",
 	"settings.replaceAction": "Vault'ta değiştir",
 	"settings.deleteAction": "Sil",
 	"settings.duplicateAction": "Çoğalt",
@@ -183,7 +179,6 @@ export const tr: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Vault'unuzdaki tanınmayan callout türleri bu callout'un stilini devralır.",
 
-	"settings.globalStyle": "Genel callout stili",
 	"settings.globalStyleRegularTitle": "Blok callout'ları için genel stil",
 	"settings.globalStyleHeadingTitle": "Başlık callout'ları için genel stil",
 	"settings.globalStyleInlineTitle": "Satır içi callout'lar için genel stil",
@@ -278,12 +273,6 @@ export const tr: Record<string, string> = {
 	"commandBuilder.noCalloutChosen": "Önce bu komut için bir callout seçin.",
 	"commandBuilder.save": "Kaydet",
 
-	"settings.vaultMaintenance": "Vault içgörüleri ve bakımı",
-	"settings.vaultStats": "Callout istatistikleri",
-	"settings.vaultStatsDesc":
-		"Markdown notlarınızdaki her callout'u — blok, başlık ve satır içi — sayar ve türe göre gruplar.",
-	"settings.vaultStatsButton": "İstatistikleri görüntüle",
-	"settings.vaultStatsScanning": "Taranıyor",
 	"settings.resetAll": "Sıfırla",
 	"settings.resetAllDesc":
 		"Tüm kullanıcı callout'larını siler, yerleşik callout'ları, global stilleri (kenarlıklar, yazı tipi ölçeği, şekil), kaydedilmiş renk paletlerini, sağ tık menüsü özelleştirmesini ve indirilen Material SVG'leri sıfırlar.",
@@ -306,8 +295,6 @@ export const tr: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "Merak etmeyin: sıfırlamadan önce mevcut kurulumunuzun bir yedeğini kaydederiz. Ayarlardaki Yedekler bölümünden istediğiniz zaman geri yükleyebilirsiniz.\nBir eşitleme hizmeti kullanıyorsanız, sıfırlama diğer cihazlarınıza da ulaşabilir.",
 	"settings.resetNothing": "Sıfırlanacak bir şey yok: her şey zaten varsayılanlarda.",
 
-	"notice.customCommandsRemoved":
-		"Callout türü artık mevcut olmayan {{count}} özel komut kaldırıldı.",
 	"notice.customCommandMissingCallout":
 		"Bu komutun callout türü artık mevcut değil.",
 	"notice.importedJSON": "JSON'dan {{count}} callout türü içe aktarıldı.",
@@ -328,10 +315,6 @@ export const tr: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} not güncellenemedi ve değiştirilmeden bırakıldı. Ayrıntılar için geliştirici konsolunu kontrol edin.",
 	"notice.calloutDeleteIncomplete": "Bazı notlar dönüştürülemedi. Callout türü korundu. Tamamlanan dönüştürmeler kaydedildi; dosya sorununu çözün, ardından işlemi bitirmek için yeniden çalıştırın.",
-	"notice.settingsUnreadable":
-		"Callout Studio ayarlar dosyasını okuyamadı, bu nedenle callout türleriniz bu oturumda eksik. Hiçbir şey yazılmadı ve diskteki dosya değişmedi — tekrar denemek için Obsidian'ı yeniden yükleyin.",
-	"notice.settingsMissing":
-		"Callout Studio'nun ayarlar dosyası eksik, bu nedenle callout türleriniz bu oturumda eksik. Hiçbir şey yazılmadı — bu kasayı senkronize ediyorsanız, senkronizasyonun tamamlanmasını bekleyin ve herhangi bir değişiklik yapmadan önce Obsidian'ı yeniden yükleyin.",
 	"notice.nothingToWrap": "Sarılacak bir şey yok.",
 	"notice.cursorNotInsideCallout": "İmleç callout içinde değil.",
 	"notice.autocompleteTargetMoved":
@@ -377,7 +360,6 @@ export const tr: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Obsidian callout'ları",
 	"editor.paletteGroupPresets": "Renk ön ayarları",
 	"editor.paletteGroupCustom": "Özel",
-	"editor.paletteNewColor": "Yeni renk…",
 	"editor.contrastWarning":
 		"Arka plana karşı düşük kontrast — okunması zor olabilir",
 	"editor.foldable": "Katlanabilir",
@@ -390,7 +372,6 @@ export const tr: Record<string, string> = {
 	"editor.saveChanges": "Değişiklikleri kaydet",
 	"editor.saving": "Kaydediliyor…",
 	"editor.saveFailed": "Kaydetme tamamlanamadı. Bu düzenleyici hâlâ açıksa açık bırakın; depolamayı ve eşitlemeyi kontrol ettikten sonra yeniden deneyin. Bazı ayarlar veya not değişiklikleri kaydedilmiş olabilir.",
-	"notice.settingsSaveFailed": "Callout Studio değişikliklerinizi kaydedemedi. Kullanılabilir depolama alanını ve eşitlemeyi kontrol edin, ardından Obsidian'ı kapatmadan önce yeniden deneyin.",
 	"editor.createCallout": "Callout oluştur",
 	"editor.nameRequired": "Callout oluşturmadan önce görünen ad gereklidir.",
 	"editor.noChangesToSave": "Herhangi bir değişiklik yapılmadı.",
@@ -705,14 +686,9 @@ export const tr: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "Simge lisansları ve katkılar",
-	"credits.intro":
-		"Callout Studio açık kaynak simge kitaplıkları kullanır. Her kitaplığın lisansını, atıf bilgisini ve değişikliklerini aşağıda görüntüleyin.",
-	"credits.fullNotices": "Tam üçüncü taraf bildirimleri",
 	"credits.introBeforeNotices":
 		"Callout Studio açık kaynak simge kitaplıkları kullanır; her kitaplığın lisansını, atıf bilgisini ve değişikliklerini aşağıda görüntüleyin veya ",
 	"credits.fullNoticesInline": "tam üçüncü taraf bildirimlerini",
-	"credits.pluginLicense":
-		"Callout Studio'nun kendi kodu permissive lisansı altında; simge kütüphaneleri kendi lisanslarını korur.",
 
 	"contextMenu.editCallout": "Callout ayarlarını düzenle",
 	"contextMenu.createCallout": "Yeni callout oluştur",
@@ -730,8 +706,6 @@ export const tr: Record<string, string> = {
 	"heading.toggleFold": "Katlamayı aç/kapat",
 
 	"settings.globalSettings": "Genel Callout Studio stil seçenekleri",
-	"settings.globalSettingsScope":
-		"Bunlar genel ayarlardır: her biri, Callout Studio'nun biçimlendirdiği her callout'un şeklini, boşluğunu ve boyutunu tek seferde değiştirir. Temanızın biçimlendirdiği callout'lar temanın kendi tasarımını korur.",
 	"settings.globalSettingsRegularDesc":
 		"Vault'unuzdaki her block callout'un kenarlığını, köşe yuvarlaklığını, yazı tipi ölçeğini ve hizalamasını ayarlayın.",
 	"settings.globalSettingsHeadingDesc":
@@ -793,8 +767,6 @@ export const tr: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{files}} dosyadaki {{count}} referans özel takma adlar kullanıyor: {{aliases}}. Sıfırlamadan sonra çalışmayacaklar. Devam edilsin mi?",
 	"vault.resetConfirm": "Sıfırla",
-	"vault.resetAllInUse":
-		"⚠ {{files}} dosyadaki {{count}} callout referansı silinecek özel callout türleri kullanıyor.",
 
 	"quickInsert.title": "Blok callout'u hızlı ekle",
 	"quickInsert.desc": "İmleç konumuna eklemek için bir callout seçin. Yalnızca blok callout'lar.",
@@ -818,29 +790,10 @@ export const tr: Record<string, string> = {
 	"quickInsert.noEditorHint": "Düzenleme modunda açık bir not yok, bu yüzden hiçbir şey eklenemez.",
 	"quickInsert.noEditor": "Bir callout eklemek için bir notu düzenleme modunda açın.",
 
-	"vaultStats.title": "Callout istatistikleri",
-	"vaultStats.totalCallouts": "Toplam callout",
-	"vaultStats.typesFound": "Bulunan türler",
-	"vaultStats.filesWithCallouts": "Callout içeren dosyalar",
-	"vaultStats.filesScanned": "Taranan Markdown dosyaları",
-	"vaultStats.empty": "Markdown notlarında callout bulunamadı.",
 	"vaultStats.columnType": "Tür",
-	"vaultStats.columnName": "Ad",
-	"vaultStats.columnSource": "Kaynak",
-	"vaultStats.columnCount": "Sayı",
-	"vaultStats.columnFiles": "Dosyalar",
-	"vaultStats.unknown": "Bilinmiyor",
-	"vaultStats.sourceBuiltIn": "Yerleşik",
-	"vaultStats.sourceCustom": "Özel",
-	"vaultStats.sourceAutoFallback": "Otomatik geri dönüş",
-	"vaultStats.sourceTheme": "CSS snippet",
-	"vaultStats.sourceAlias": "{{id}}'nin takma adı",
-	"vaultStats.sourceUnknown": "Bilinmiyor",
-	"vaultStats.byRole": "Şu şekilde yazıldı",
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Başlık",
 	"vaultStats.roleInline": "Satır içi",
-	"vaultStats.close": "Kapat",
 	"portable.subtitle": "Callout Studio’yu kullanmayı bırakmadan önce hangi başlık ve satır içi callout’ların standart Markdown’a dönüştürüleceğini seçin.",
 	"portable.customize": "Özel değiştirme…",
 	"portable.editCustom": "Özel değiştirmeyi düzenle…",
@@ -860,7 +813,6 @@ export const tr: Record<string, string> = {
 	"usage.registeredCallouts": "Kayıtlı callout türleri",
 	"usage.unregisteredCallouts": "Kayıtlı olmayan callout türleri",
 	"usage.summary": "{{files}} dosyada {{count}} kullanım",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "Tüm biçimler",
 	"usage.failed": "Callout kullanımları güncellenemedi.",
 	"usage.loading": "Markdown notları taranıyor…",
@@ -1060,9 +1012,6 @@ export const tr: Record<string, string> = {
 	"footer.contribute": "Katkıda bulun",
 	"footer.license": "Eklenti lisansı",
 	"footer.iconCredits": "Simge lisansları",
-	"footer.tagline":
-		"Geri bildiriminiz, yorumlarınız veya önerileriniz var mı? Duymak isterim!",
-	"footer.madeBy": "Niv tarafından yapıldı  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'"{{name}}" paleti silinsin mi?\n1 callout bunu kullanıyor. Renklerini korur ve daha sonra düzenleyicisindeki Renk satırından yeniden bağlayabilirsiniz.',
 	"settings.deletePaletteConfirmLinked":
@@ -1116,10 +1065,7 @@ export const tr: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"Bu işlem, şu anda gördüğünüz kurulumu ayarlar dosyanız olarak kaydeder ve kaydetmeyi yeniden açar. Bu cihazın tuttuğu yedek kopya önce yedeklenir.\nBaşka bir cihazda saklamak istediğiniz daha yeni değişiklikler olabilirse, devam etmeden önce eşitlemeyi bitirmesine izin verin. Eşitleme uygulamanız bu dosyayı diğer cihazlarınıza gönderebilir.\nCallout Studio kaydetmeden önce ayarlar dosyasını bir kez daha arar. Dosya geri geldiyse Callout Studio onu korur.",
 	"notice.settingsBackupFailed": "Bir güvenlik yedeği kaydedilemediği için ayar kurtarma işlemi devam edemedi. Kullanılabilir depolama alanını ve yazma izinlerini kontrol edin, ardından yeniden deneyin.",
-	"notice.settingsBackupSaved": "Gelen ayarlar uygulanmadan önce yerel callout tanımlarının bir kurtarma kopyası kaydedildi: {{path}}.",
-	"notice.settingsChangedElsewhere": "Callout Studio ayarları başka bir cihazda değiştirildi, bu nedenle bu değişiklik kaydedilmedi. Diğer cihazın ayarları şu anda yükleniyor — lütfen değişikliği tekrar yapın.",
 	"notice.settingsNewerVersion": "Callout Studio ayarları eklentinin daha yeni bir sürümü tarafından kaydedildi, bu nedenle siz güncelleyene kadar bu cihaza hiçbir şey yazılmayacak. Ayarlarınız güvende — Callout Studio'yu buradan güncelleyin ve Obsidian'ı yeniden yükleyin.",
-	"notice.settingsNotSaved": "O değişiklik kaydedilmedi. Obsidian başlatıldığında Callout Studio ayarlar dosyasını kullanamadı, bu nedenle bu cihaza hiçbir şey yazılmıyor — değişiklikleriniz Obsidian'ı kapatana kadar kalıcı olacak. Ne yapmanız gerektiğini görmek için Ayarlar → Callout Studio'ya bakın.",
 	"saveStatus.changed":
 		"Ayarlar dosyası siz düzenlerken değişti. Taslağınız hâlâ duruyor. Gelen ayarları yüklemek için Yeniden dene seçeneğini seçin, sonra taslağınızı gözden geçirip yeniden kaydedin.",
 	"saveStatus.missing": "Ayarlar dosyası eksik olduğu için kaydetme duraklatıldı. Bu, yeniden yüklemeden sonra veya senkronizasyon hâlâ çalışırken olabilir. Senkronizasyonu tamamlayın ve yeniden deneyin. Eksik dosyayı kasıtlı olarak değiştirmek için Callout Studio ayarlarında Yeni bir ayarlar dosyası oluştur seçeneğini kullanın.",
@@ -1197,20 +1143,14 @@ export const tr: Record<string, string> = {
 	"recovery.title": "Daha önceki bir kurulumu geri yükle",
 	"recovery.intro":
 		"Callout Studio, kurulumunuzun önceki sürümlerini bu cihazda ve eklentinin yedekler klasöründe saklar. Birini geri yüklemek, senkronize edilen her cihazdaki mevcut kurulumunuzun yerini alır. Önce mevcut kurulumun bir yedeği kaydedilir.",
-	"recovery.pausedHint": "Kaydetme duraklatıldığından, bu sorun çözülene kadar geri yükleme kullanılamaz. Yine de bir kopya dışa aktarabilirsiniz.",
 	"recovery.loading": "Önceki sürümler aranıyor…",
 	"recovery.empty": "Önceki sürüm bulunamadı.",
 	"recovery.sectionHistory": "Bu cihazda kaydedildi",
 	"recovery.sectionBackups": "Yedekler",
 	"recovery.sectionCopies": "Ayarlar dosyasının diğer kopyaları",
-	"recovery.originThisDevice": "Bu cihaz",
-	"recovery.originOtherDevice": "Başka bir cihaz",
-	"recovery.originOlderVersion": "Daha eski bir sürüm tarafından kaydedildi",
 	"recovery.unreadable": "Ayarlar olarak okunamıyor",
 	"recovery.same": "Mevcut kurulumunuzla aynı",
 	"recovery.restoreSame": "Bu kurulum mevcut kurulumunuzla aynı, bu yüzden geri yüklenecek bir şey yok.",
-	"recovery.summary": "{{callouts}} kaydedilmiş callout türü, şu andan {{count}} fark",
-	"recovery.export": "Kopyayı dışa aktar",
 	"recovery.restore": "Geri yükle",
 	"recovery.confirmTitle": "Bu kurulumu geri yükle",
 	"recovery.confirmBody":
@@ -1221,21 +1161,14 @@ export const tr: Record<string, string> = {
 	"recovery.failed": "Kurulum geri yüklenemedi. Hiçbir şey değiştirilmedi.",
 	"notice.unsavedChangesReplaced":
 		"Bu cihazda yapılan bazı değişiklikler henüz kaydedilmemişti ve başka bir cihazdan gelen daha yeni ayarlar onların yerini aldı. Sürümünüz önce kaydedildi: geri almak için Callout Studio ayarlarında Bu önceki bir kurulumu geri yükle seçeneğini açın.",
-	"notice.diagnosticsCopied": "Senkronizasyon tanılaması kopyalandı.",
-	"notice.diagnosticsFailed": "Senkronizasyon tanılaması kopyalanamadı.",
 	"notice.recoveryCopyStale": "Ayarlarınız kaydedildi, ancak bu cihazın kurtarma kopyası güncellenemedi. Bu cihazdaki kullanılabilir depolamayı kontrol edin. Callout Studio, bir sonraki değişikliğinizde tekrar dener.",
 	"notice.blockedWhilePaused": "Kaydetme duraklatıldığından, bu değişiklik şu anda korunamıyor. Önce Callout Studio ayarlarında gösterilen kaydetme sorununu çözün.",
 	"welcome.syncNote": "Callout Studio'yu başka bir cihazda zaten mi kullanıyorsunuz? Önce senkronizasyon hizmetinizin tamamlanmasına izin verin. Callout'larınız ve ayarlarınız geldiğinde burada görünecek.",
-	"settings.resetAllConfirmFull":
-		"Bu işlem her özel callout türünü, yüklenmiş resmi ve özel komutu siler; yerleşik callout'ları, genel stilleri, kaydedilmiş renk paletlerini, sağ tık menüsünü, başlık ve satır içi callout ayarlarını ve yedek stili sıfırlar. Mevcut kurulumunuzun bir yedeği önce eklentinin yedekler klasörüne kaydedilir. Senkronizasyon hizmetiniz sıfırlamayı diğer cihazlarınıza gönderebilir.",
 	"settings.resetBackupFailed": "Hiçbir şey sıfırlanmadı: mevcut kurulumunuzun bir yedeği önce kaydedilemedi. Kullanılabilir depolamayı kontrol edin, ardından tekrar deneyin.",
 	"settings.resetNotSaved": "Sıfırlama gösteriliyor ancak henüz kaydedilemedi, bu nedenle ayarlar dosyanız hâlâ önceki kurulumu tutuyor. Callout Studio ayarlarındaki kaydetme durumunu kontrol edin.",
 	"settings.recovery": "Önceki kurulumlar",
 	"settings.recoveryDesc": "Bu cihazda veya eklentinin yedekler klasöründe daha önce kaydedilmiş bir kurulum sürümünü geri yükleyin.",
 	"settings.recoveryButton": "Daha önceki bir kurulumu geri yükle",
-	"settings.diagnostics": "Senkronizasyon tanılaması",
-	"settings.diagnosticsDesc": "Bir hata raporuna eklemek üzere kaydetme ve senkronizasyonun nasıl çalıştığına dair bir özet kopyalayın. Hiçbir callout veya ayar içermez.",
-	"settings.diagnosticsButton": "Tanılamayı kopyala",
 	"confirm.titleResetEverything": "Her şeyi sıfırla",
 	"confirm.titleReplaceUnreadable": "Ayarlar dosyasını değiştir",
 	"confirm.replaceUnreadable": "Mevcut dosyanın birebir bir kopyası önce eklentinin yedekler klasörüne kaydedilir. Dosya ardından burada gösterilen kurulumla değiştirilir ve senkronizasyon hizmetiniz onu diğer cihazlarınıza gönderir.",

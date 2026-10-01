@@ -12,7 +12,7 @@ export interface ListboxPopupOptions<T> extends ComboboxRowContract<T> {
 	onCommit(item: T): void;
 	/** The highlight moved, or left it (`null`). Must be undoable by `null`. */
 	onHighlight?(item: T | null): void;
-	/** One extra action pinned below the list — e.g. "+ New color…". */
+	/** One extra action pinned below the list — e.g. the palette picker's Create "name" row. */
 	footerRow?: FooterRowSpec;
 	/**
 	 * Offered *instead of* the empty state when a non-empty query matches

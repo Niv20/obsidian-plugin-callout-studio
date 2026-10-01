@@ -517,7 +517,7 @@ export function bakePaletteColors(
  * accent+background / gradient equality `CalloutEditor`'s dropdown and
  * `CalloutRegistry`'s paletteId migration already use) links to that palette
  * as-is. Otherwise the color is "unknown": a new named `CustomPalette` is
- * derived from it (same derivation as the editor's "New color…" flow) for
+ * derived from it (same derivation as the editor's Create "name" flow) for
  * the caller to save, instead of the callout ending up with baked colors
  * that match nothing — which the editor would otherwise show as a
  * "Deleted color".

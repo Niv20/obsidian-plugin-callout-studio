@@ -8,7 +8,6 @@ export const ro: Record<string, string> = {
 	"portable.selectionConflict": "Această alegere ar face ambigue linkurile către titluri. Selecția anterioară a fost păstrată.",
 	"portable.selectAll": "Selectează tot",
 	"portable.selectNone": "Deselectează tot",
-	"portable.waiting": "Notele s-au schimbat. Se actualizează previzualizarea…",
 	"portable.relatedLinksHint": "Linkurile și încorporările urmează titlurile selectate și sunt convertite împreună cu ele.",
 	"portable.selectChange": "Convertește {{path}}, rândul {{line}}",
 	"portable.showMore": "Afișează încă {{count}}",
@@ -35,10 +34,8 @@ export const ro: Record<string, string> = {
 	"portable.backup": "Recomandăm să faci o copie de siguranță a seifului înainte de conversie. Operația modifică notele originale și nu poate fi anulată în Callout Studio.",
 	"portable.scanning": "Se citesc notele Markdown…",
 	"portable.progress": "Se citesc notele: {{done}} din {{total}}",
-	"portable.summary": "{{count}} înlocuiri în {{files}} note · {{headings}} în titluri · {{inline}} în text",
 	"portable.empty": "Nu s-au găsit callout-uri eligibile în titluri sau în text. Nu se va modifica nimic.",
 	"portable.skipped": "{{count}} apariții incomplete sau neacceptate au fost lăsate neschimbate pentru verificare manuală.",
-	"portable.location": "{{path}} · rândul {{line}}",
 	"portable.confirmTitle": "Convertești definitiv acest seif?",
 	"portable.confirmBody": "Convertești {{count}} apariții și actualizezi {{links}} linkuri către titluri în {{files}} note?\nAceastă operație modifică fișierele originale și nu poate fi anulată în Callout Studio. Nu se creează automat o copie de siguranță. Fă mai întâi o copie de siguranță a seifului, salvează notele deschise și întrerupe editarea și sincronizarea până la încheierea conversiei.\nDacă un fișier se schimbă sau scrierea eșuează, conversia se oprește. Notele deja convertite rămân modificate.",
 	"portable.confirmAction": "Convertește definitiv",
@@ -159,7 +156,6 @@ export const ro: Record<string, string> = {
 
 	"settings.editAria": "Editați {{name}}",
 	"settings.moreRowActionsAria": "Mai multe acțiuni pentru {{name}}",
-	"settings.usageInfo": "{{count}} utilizare(i) în {{files}} fișier(e)",
 	"settings.replaceAction": "Înlocuiți în vault",
 	"settings.deleteAction": "Șterge",
 	"settings.duplicateAction": "Duplică",
@@ -183,7 +179,6 @@ export const ro: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Tipurile de callout nerecunoscute din vault vor moșteni stilul acestui callout.",
 
-	"settings.globalStyle": "Stil global callout",
 	"settings.globalStyleRegularTitle": "Stil global pentru callout-uri de bloc",
 	"settings.globalStyleHeadingTitle": "Stil global pentru callout-uri de titlu",
 	"settings.globalStyleInlineTitle": "Stil global pentru callout-uri inline",
@@ -279,12 +274,6 @@ export const ro: Record<string, string> = {
 	"commandBuilder.noCalloutChosen": "Alege mai întâi un callout pentru această comandă.",
 	"commandBuilder.save": "Salvați",
 
-	"settings.vaultMaintenance": "Informații și întreținere vault",
-	"settings.vaultStats": "Statistici callout",
-	"settings.vaultStatsDesc":
-		"Numără fiecare callout din notele Markdown — de bloc, de titlu și inline — și le grupează după tip.",
-	"settings.vaultStatsButton": "Vizualizare statistici",
-	"settings.vaultStatsScanning": "Scanare",
 	"settings.resetAll": "Resetați",
 	"settings.resetAllDesc":
 		"Șterge toate callouts utilizator, resetează callouts integrate, stilurile globale (borduri, scara fontului, formă), paletele de culori salvate, personalizarea meniului clic dreapta și SVG-urile Material descărcate.",
@@ -307,8 +296,6 @@ export const ro: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "Nu vă faceți griji: înainte de resetare salvăm un backup al configurației curente. Îl puteți restaura oricând din secțiunea Backup-uri din setări.\nDacă folosiți un serviciu de sincronizare, resetarea poate ajunge și pe celelalte dispozitive ale dumneavoastră.",
 	"settings.resetNothing": "Nimic de resetat: totul este deja la valorile implicite.",
 
-	"notice.customCommandsRemoved":
-		"Au fost eliminate {{count}} comandă/comenzi personalizată(e) al căror tip de callout nu mai există.",
 	"notice.customCommandMissingCallout":
 		"Tipul de callout al acestei comenzi nu mai există.",
 
@@ -331,10 +318,6 @@ export const ro: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} notă/note nu au putut fi actualizate și au rămas neschimbate. Vezi consola pentru dezvoltatori pentru detalii.",
 	"notice.calloutDeleteIncomplete": "Unele notițe nu au putut fi convertite. Tipul de callout a fost păstrat. Conversiile finalizate sunt salvate; rezolvați problema fișierului, apoi rulați din nou acțiunea pentru a finaliza.",
-	"notice.settingsUnreadable":
-		"Callout Studio nu a putut citi fișierul de setări, astfel încât tipurile tale de callout lipsesc din această sesiune. Nu s-a scris nimic, iar fișierul de pe disc este neschimbat — reîncarcă Obsidian pentru a încerca din nou.",
-	"notice.settingsMissing":
-		"Fișierul de setări al Callout Studio lipsește, astfel încât tipurile tale de callout lipsesc din această sesiune. Nu s-a scris nimic — dacă sincronizezi acest vault, lasă sincronizarea să se termine și reîncarcă Obsidian înainte de a face vreo modificare.",
 	"notice.nothingToWrap": "Nimic de înfășurat.",
 	"notice.cursorNotInsideCallout":
 		"Cursorul nu este în interiorul unui callout.",
@@ -381,7 +364,6 @@ export const ro: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
 	"editor.paletteGroupPresets": "Presetări culori",
 	"editor.paletteGroupCustom": "Personalizat",
-	"editor.paletteNewColor": "Culoare nouă…",
 	"editor.contrastWarning":
 		"Contrast scăzut cu fundalul — poate fi greu de citit",
 	"editor.foldable": "Pliabil",
@@ -394,7 +376,6 @@ export const ro: Record<string, string> = {
 	"editor.saveChanges": "Salvați modificările",
 	"editor.saving": "Se salvează…",
 	"editor.saveFailed": "Salvarea nu a putut fi finalizată. Dacă acest editor este încă deschis, păstrați-l deschis și reîncercați după ce verificați spațiul de stocare și sincronizarea. Este posibil ca unele setări sau modificări ale notelor să fi fost deja salvate.",
-	"notice.settingsSaveFailed": "Callout Studio nu a putut salva modificările. Verificați spațiul de stocare disponibil și sincronizarea, apoi reîncercați înainte de a închide Obsidian.",
 	"editor.createCallout": "Creați callout",
 	"editor.nameRequired":
 		"Este necesar un nume afișat înainte de a crea un callout.",
@@ -711,14 +692,9 @@ export const ro: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "Licențe pictograme și credite",
-	"credits.intro":
-		"Callout Studio folosește biblioteci de pictograme open-source. Vezi mai jos licența, atribuirea și modificările fiecărei biblioteci.",
-	"credits.fullNotices": "Notificări complete ale terților",
 	"credits.introBeforeNotices":
 		"Callout Studio folosește biblioteci de pictograme open-source; vezi mai jos licența, atribuirea și modificările fiecărei biblioteci sau citește ",
 	"credits.fullNoticesInline": "notificările complete ale terților",
-	"credits.pluginLicense":
-		"Codul propriu al Callout Studio este sub o licență permissive; bibliotecile de pictograme păstrează propriile licențe.",
 
 	"contextMenu.editCallout": "Editați setările callout",
 	"contextMenu.createCallout": "Creați callout nou",
@@ -734,8 +710,6 @@ export const ro: Record<string, string> = {
 	"contextMenu.deleteSection": "Ștergeți secțiunea de titlu",
 	"heading.toggleFold": "Comutare pliere",
 	"settings.globalSettings": "Opțiuni de stil globale Callout Studio",
-	"settings.globalSettingsScope":
-		"Acestea sunt setări globale: fiecare dintre ele modifică dintr-o dată forma, spațierea și dimensiunea fiecărui callout pe care îl stilizează Callout Studio. Callouts stilizate de tema dvs. păstrează designul propriu al temei.",
 	"settings.globalSettingsRegularDesc":
 		"Ajustați bordura, rotunjirea, scara fontului și alinierea fiecărui block callout din vault-ul dvs.",
 	"settings.globalSettingsHeadingDesc":
@@ -797,8 +771,6 @@ export const ro: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{count}} referință(e) din {{files}} fișier(e) folosesc aliasuri personalizate: {{aliases}}. Acestea vor înceta să funcționeze după resetare. Continuați?",
 	"vault.resetConfirm": "Resetați",
-	"vault.resetAllInUse":
-		"⚠ {{count}} referință(e) callout din {{files}} fișier(e) folosesc tipuri de callout personalizate care vor fi șterse.",
 
 	"quickInsert.title": "Inserare rapidă de callout bloc",
 	"quickInsert.desc": "Alege un callout de inserat la poziția cursorului. Doar callout de tip bloc.",
@@ -822,29 +794,10 @@ export const ro: Record<string, string> = {
 	"quickInsert.noEditorHint": "Nicio notă nu este deschisă în modul de editare, așa că nimic nu poate fi inserat.",
 	"quickInsert.noEditor": "Deschide o notă în modul de editare pentru a insera un callout.",
 
-	"vaultStats.title": "Statistici callout",
-	"vaultStats.totalCallouts": "Număr total de callout-uri",
-	"vaultStats.typesFound": "Tipuri găsite",
-	"vaultStats.filesWithCallouts": "Fișiere cu callouts",
-	"vaultStats.filesScanned": "Fișiere Markdown scanate",
-	"vaultStats.empty": "Nu au fost găsite callouts în notele Markdown.",
 	"vaultStats.columnType": "Tip",
-	"vaultStats.columnName": "Nume",
-	"vaultStats.columnSource": "Sursă",
-	"vaultStats.columnCount": "Număr",
-	"vaultStats.columnFiles": "Fișiere",
-	"vaultStats.unknown": "Necunoscut",
-	"vaultStats.sourceBuiltIn": "Integrat",
-	"vaultStats.sourceCustom": "Personalizat",
-	"vaultStats.sourceAutoFallback": "Rezervă automată",
-	"vaultStats.sourceTheme": "Fragment CSS",
-	"vaultStats.sourceAlias": "Alias pentru {{id}}",
-	"vaultStats.sourceUnknown": "Necunoscut",
-	"vaultStats.byRole": "Scris ca",
 	"vaultStats.roleBlock": "Bloc",
 	"vaultStats.roleHeading": "Titlu",
 	"vaultStats.roleInline": "În linie",
-	"vaultStats.close": "Închide",
 	"portable.subtitle": "Alegeți ce callouturi din titluri și din text să convertiți în Markdown standard înainte de a renunța la Callout Studio.",
 	"portable.customize": "Înlocuire personalizată…",
 	"portable.editCustom": "Editați înlocuirea personalizată…",
@@ -864,7 +817,6 @@ export const ro: Record<string, string> = {
 	"usage.registeredCallouts": "Callout-uri înregistrate",
 	"usage.unregisteredCallouts": "Callout-uri neînregistrate",
 	"usage.summary": "{{count}} apariții în {{files}} fișiere",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "Toate formatele",
 	"usage.failed": "Nu s-au putut actualiza aparițiile callout-urilor.",
 	"usage.loading": "Se scanează notele Markdown…",
@@ -1071,9 +1023,6 @@ export const ro: Record<string, string> = {
 	"footer.contribute": "Contribuie",
 	"footer.license": "Licența pluginului",
 	"footer.iconCredits": "Licențe pictograme",
-	"footer.tagline":
-		"Aveți feedback, comentarii sau sugestii? Mi-ar plăcea să aud!",
-	"footer.madeBy": "Creat de Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Ștergeți paleta "{{name}}"?\n1 callout o folosește. Își păstrează culorile, iar mai târziu îl puteți reconecta din rândul Culoare din editorul lui.',
 	"settings.deletePaletteConfirmLinked":
@@ -1127,10 +1076,7 @@ export const ro: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"Aceasta salvează configurația pe care o vezi acum ca fișier de setări și repornește salvarea. Copia de rezervă păstrată de acest dispozitiv este salvată mai întâi într-un backup.\nDacă un alt dispozitiv ar putea avea modificări mai noi pe care vrei să le păstrezi, lasă-l să termine sincronizarea înainte de a continua. Aplicația ta de sincronizare ar putea trimite acest fișier către celelalte dispozitive ale tale.\nÎnainte de salvare, Callout Studio caută încă o dată fișierul de setări. Dacă a revenit, Callout Studio îl păstrează pe acela.",
 	"notice.settingsBackupFailed": "Recuperarea setărilor nu a putut continua deoarece o copie de siguranță nu a putut fi salvată. Verifică spațiul de stocare disponibil și permisiunile de scriere, apoi încearcă din nou.",
-	"notice.settingsBackupSaved": "O copie de recuperare a definițiilor locale de callout a fost salvată înainte de aplicarea setărilor primite: {{path}}.",
-	"notice.settingsChangedElsewhere": "Setările Callout Studio au fost modificate pe alt dispozitiv, așa că această modificare nu a fost salvată. Setările celuilalt dispozitiv se încarcă acum — te rugăm să faci din nou modificarea.",
 	"notice.settingsNewerVersion": "Setările Callout Studio au fost salvate de o versiune mai nouă a pluginului, așa că nimic nu va fi scris pe acest dispozitiv până nu îl actualizezi. Setările tale sunt în siguranță — actualizează Callout Studio aici și reîncarcă Obsidian.",
-	"notice.settingsNotSaved": "Acea modificare nu a fost salvată. Callout Studio nu a putut folosi fișierul său de setări când Obsidian a pornit, așa că nimic nu se scrie pe acest dispozitiv — modificările tale vor rămâne până închizi Obsidian. Vezi Setări → Callout Studio pentru ce trebuie făcut.",
 	"saveStatus.changed":
 		"Fișierul de setări s-a schimbat cât timp l-ai editat. Ciorna ta este încă disponibilă. Alege Încearcă din nou pentru a încărca setările sosite, apoi verifică ciorna și salvează din nou.",
 	"saveStatus.missing": "Salvarea este în pauză deoarece fișierul de setări lipsește. Acest lucru se poate întâmpla după o reinstalare sau în timp ce sincronizarea încă rulează. Termină sincronizarea și încearcă din nou. Pentru a înlocui intenționat fișierul lipsă, folosește Creează un fișier de setări nou din setările Callout Studio.",
@@ -1213,20 +1159,14 @@ export const ro: Record<string, string> = {
 	"recovery.title": "Restaurează o configurație anterioară",
 	"recovery.intro":
 		"Callout Studio păstrează versiuni anterioare ale configurației tale pe acest dispozitiv și în folderul de backup-uri al pluginului. Restaurarea uneia înlocuiește configurația curentă pe fiecare dispozitiv sincronizat. Un backup al configurației curente este salvat mai întâi.",
-	"recovery.pausedHint": "Salvarea este întreruptă, așa că restaurarea este indisponibilă până când problema se rezolvă. Poți totuși să exporți o copie.",
 	"recovery.loading": "Se caută versiuni anterioare…",
 	"recovery.empty": "Nu au fost găsite versiuni anterioare.",
 	"recovery.sectionHistory": "Salvate pe acest dispozitiv",
 	"recovery.sectionBackups": "Backup-uri",
 	"recovery.sectionCopies": "Alte copii ale fișierului de setări",
-	"recovery.originThisDevice": "Acest dispozitiv",
-	"recovery.originOtherDevice": "Alt dispozitiv",
-	"recovery.originOlderVersion": "Salvată de o versiune mai veche",
 	"recovery.unreadable": "Nu poate fi citită ca setări",
 	"recovery.same": "Identică cu configurația ta curentă",
 	"recovery.restoreSame": "Această configurare este identică cu cea curentă, deci nu există nimic de restaurat.",
-	"recovery.summary": "{{callouts}} tip(uri) de callout salvate, {{count}} diferență/e față de acum",
-	"recovery.export": "Exportă copie",
 	"recovery.restore": "Restaurează",
 	"recovery.confirmTitle": "Restaurează această configurație",
 	"recovery.confirmBody":
@@ -1239,16 +1179,12 @@ export const ro: Record<string, string> = {
 	"recovery.failed": "Configurația nu a putut fi restaurată. Nimic nu a fost modificat.",
 	"notice.unsavedChangesReplaced":
 		"Unele modificări făcute pe acest dispozitiv nu fuseseră încă salvate, iar setări mai noi de pe alt dispozitiv le-au înlocuit. Versiunea ta a fost salvată mai întâi: deschide Restaurează o configurație anterioară din setările Callout Studio pentru a o recupera.",
-	"notice.diagnosticsCopied": "Diagnosticul de sincronizare a fost copiat.",
-	"notice.diagnosticsFailed": "Diagnosticul de sincronizare nu a putut fi copiat.",
 	"notice.recoveryCopyStale":
 		"Setările tale au fost salvate, dar copia de recuperare a acestui dispozitiv nu a putut fi actualizată. Verifică spațiul de stocare disponibil pe acest dispozitiv. Callout Studio va încerca din nou la următoarea ta modificare.",
 	"notice.blockedWhilePaused":
 		"Salvarea este întreruptă, așa că această modificare nu poate fi păstrată acum. Rezolvă mai întâi problema de salvare afișată în setările Callout Studio.",
 	"welcome.syncNote":
 		"Folosești deja Callout Studio pe alt dispozitiv? Lasă serviciul tău de sincronizare să se termine mai întâi. Callout-urile și setările tale vor apărea aici imediat ce ajung.",
-	"settings.resetAllConfirmFull":
-		"Aceasta șterge fiecare tip de callout personalizat, imagine încărcată și comandă personalizată, și resetează callout-urile predefinite, stilurile globale, paletele de culori salvate, meniul clic-dreapta, setările pentru callout-urile de titlu și cele în linie, și stilul implicit. Un backup al configurației curente este salvat mai întâi în folderul de backup-uri al pluginului. Serviciul tău de sincronizare poate trimite resetarea către celelalte dispozitive.",
 	"settings.resetBackupFailed":
 		"Nu a fost resetat nimic: nu s-a putut salva mai întâi un backup al configurației curente. Verifică spațiul de stocare disponibil, apoi încearcă din nou.",
 	"settings.resetNotSaved":
@@ -1256,10 +1192,6 @@ export const ro: Record<string, string> = {
 	"settings.recovery": "Configurații anterioare",
 	"settings.recoveryDesc": "Restaurează o versiune a configurației tale salvată anterior pe acest dispozitiv sau în folderul de backup-uri al pluginului.",
 	"settings.recoveryButton": "Restaurează o configurație anterioară",
-	"settings.diagnostics": "Diagnostic de sincronizare",
-	"settings.diagnosticsDesc":
-		"Copiază un rezumat despre modul în care funcționează salvarea și sincronizarea, pentru a-l include într-un raport de eroare. Nu conține callout-uri sau setări.",
-	"settings.diagnosticsButton": "Copiază diagnosticul",
 	"confirm.titleResetEverything": "Resetează tot",
 	"confirm.titleReplaceUnreadable": "Înlocuiește fișierul de setări",
 	"confirm.replaceUnreadable":

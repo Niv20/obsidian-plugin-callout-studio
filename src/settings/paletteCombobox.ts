@@ -45,7 +45,7 @@ export interface PaletteComboboxOptions {
 	 */
 	onPreview(palette: ColorPalette | null): void;
 	onCommit(entry: PaletteEntry): void;
-	/** "+ New color…" — opens the palette editor. */
+	/** The Create "name" row — opens the palette editor. */
 	onNewColor(name: string): void;
 }
 

@@ -101,7 +101,6 @@ export const ms: Record<string, string> = {
 	"settings.noCalloutsNow": "Tiada callout tersuai buat masa ini.",
 	"settings.editAria": "Sunting {{name}}",
 	"settings.moreRowActionsAria": "Tindakan lain untuk {{name}}",
-	"settings.usageInfo": "{{count}} penggunaan dalam {{files}} fail",
 	"settings.replaceAction": "Ganti dalam vault",
 	"settings.deleteAction": "Padam",
 	"settings.duplicateAction": "Pendua",
@@ -125,7 +124,6 @@ export const ms: Record<string, string> = {
 	"settings.fallbackCallout": "Callout sandaran lalai",
 	"settings.fallbackCalloutDesc":
 		"Jenis callout yang tidak dikenali dalam vault anda akan mewarisi gaya callout ini.",
-	"settings.globalStyle": "Gaya callout global",
 	"settings.globalStyleRegularTitle": "Gaya global callout blok",
 	"settings.globalStyleHeadingTitle": "Gaya global callout tajuk",
 	"settings.globalStyleInlineTitle": "Gaya global callout sebaris",
@@ -219,12 +217,6 @@ export const ms: Record<string, string> = {
 	"commandBuilder.noCalloutChosen": "Pilih callout untuk arahan ini dahulu.",
 	"commandBuilder.save": "Simpan",
 
-	"settings.vaultMaintenance": "Wawasan & penyelenggaraan vault",
-	"settings.vaultStats": "Statistik callout",
-	"settings.vaultStatsDesc":
-		"Mengira setiap callout dalam nota Markdown anda — blok, tajuk dan sebaris — dan mengumpulkannya mengikut jenis.",
-	"settings.vaultStatsButton": "Lihat statistik",
-	"settings.vaultStatsScanning": "Mengimbas",
 	"settings.resetAll": "Set semula",
 	"settings.resetAllDesc":
 		"Memadam semua callouts pengguna, menetapkan semula callouts terbina dalam, gaya global, palet warna yang disimpan, penyesuaian menu klik kanan, dan SVG Material yang dimuat turun.",
@@ -247,8 +239,6 @@ export const ms: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "Jangan risau: sebelum menetapkan semula, kami menyimpan sandaran persediaan semasa anda. Anda boleh memulihkannya pada bila-bila masa daripada bahagian Sandaran dalam tetapan.\nJika anda menggunakan perkhidmatan penyegerakan, penetapan semula mungkin sampai ke peranti anda yang lain juga.",
 	"settings.resetNothing": "Tiada apa untuk ditetapkan semula: semuanya sudah pada tetapan lalai.",
 
-	"notice.customCommandsRemoved":
-		"{{count}} arahan tersuai yang jenis callout-nya tidak lagi wujud telah dibuang.",
 	"notice.customCommandMissingCallout":
 		"Jenis callout untuk arahan itu tidak lagi wujud.",
 
@@ -270,10 +260,6 @@ export const ms: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} nota tidak dapat dikemas kini dan dibiarkan tanpa perubahan. Lihat konsol pembangun untuk butiran.",
 	"notice.calloutDeleteIncomplete": "Sesetengah nota tidak dapat ditukar. Jenis callout dikekalkan. Penukaran yang selesai telah disimpan; selesaikan masalah fail, kemudian jalankan tindakan itu semula untuk menyelesaikannya.",
-	"notice.settingsUnreadable":
-		"Callout Studio tidak dapat membaca fail tetapannya, jadi jenis callout anda hilang daripada sesi ini. Tiada apa yang ditulis dan fail pada cakera tidak berubah — muat semula Obsidian untuk mencuba lagi.",
-	"notice.settingsMissing":
-		"Fail tetapan Callout Studio hilang, jadi jenis callout anda hilang daripada sesi ini. Tiada apa yang ditulis — jika anda menyegerakkan vault ini, biarkan penyegerakan selesai dan muat semula Obsidian sebelum membuat sebarang perubahan.",
 	"notice.nothingToWrap": "Tiada apa untuk dibalut.",
 	"notice.cursorNotInsideCallout": "Kursor tidak berada dalam callout.",
 	"notice.autocompleteTargetMoved":
@@ -319,7 +305,6 @@ export const ms: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
 	"editor.paletteGroupPresets": "Pratetap warna",
 	"editor.paletteGroupCustom": "Tersuai",
-	"editor.paletteNewColor": "Warna baharu…",
 	"editor.contrastWarning":
 		"Kontras rendah dengan latar belakang — mungkin sukar dibaca",
 	"editor.foldable": "Boleh dilipat",
@@ -332,7 +317,6 @@ export const ms: Record<string, string> = {
 	"editor.saveChanges": "Simpan perubahan",
 	"editor.saving": "Menyimpan…",
 	"editor.saveFailed": "Penyimpanan tidak dapat diselesaikan. Jika editor ini masih terbuka, biarkan ia terbuka dan cuba lagi selepas menyemak storan dan penyegerakan. Sesetengah tetapan atau kemas kini nota mungkin sudah disimpan.",
-	"notice.settingsSaveFailed": "Callout Studio tidak dapat menyimpan perubahan anda. Semak ruang storan dan penyegerakan, kemudian cuba lagi sebelum menutup Obsidian.",
 	"editor.createCallout": "Cipta callout",
 	"editor.nameRequired": "Nama paparan diperlukan sebelum mencipta callout.",
 	"editor.noChangesToSave": "Tiada perubahan dibuat.",
@@ -648,14 +632,9 @@ export const ms: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "Lesen ikon dan kredit",
-	"credits.intro":
-		"Callout Studio menggunakan pustaka ikon sumber terbuka. Lihat lesen, atribusi dan pengubahsuaian setiap pustaka di bawah.",
-	"credits.fullNotices": "Notis pihak ketiga penuh",
 	"credits.introBeforeNotices":
 		"Callout Studio menggunakan pustaka ikon sumber terbuka; lihat lesen, atribusi dan pengubahsuaian setiap pustaka di bawah, atau baca ",
 	"credits.fullNoticesInline": "notis pihak ketiga penuh",
-	"credits.pluginLicense":
-		"Kod Callout Studio sendiri adalah di bawah lesen permissive; pustaka ikon mengekalkan lesen mereka sendiri.",
 	"contextMenu.editCallout": "Edit tetapan callout",
 	"contextMenu.createCallout": "Cipta callout baharu",
 	"contextMenu.copyMarkdown": "Salin Markdown callout",
@@ -670,8 +649,6 @@ export const ms: Record<string, string> = {
 	"contextMenu.deleteSection": "Padam bahagian tajuk",
 	"heading.toggleFold": "Togol lipatan",
 	"settings.globalSettings": "Pilihan gaya global Callout Studio",
-	"settings.globalSettingsScope":
-		"Ini ialah tetapan global: setiap satunya sekaligus mengubah bentuk, jarak dan saiz setiap callout yang digayakan oleh Callout Studio. Callouts yang digayakan oleh tema anda mengekalkan reka bentuk tema itu sendiri.",
 	"settings.globalSettingsRegularDesc":
 		"Laraskan sempadan, jejari, skala fon dan penjajaran setiap block callout dalam vault anda.",
 	"settings.globalSettingsHeadingDesc":
@@ -729,8 +706,6 @@ export const ms: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{count}} rujukan dalam {{files}} fail menggunakan alias tersuai: {{aliases}}. Ini akan berhenti berfungsi selepas set semula. Teruskan?",
 	"vault.resetConfirm": "Set semula",
-	"vault.resetAllInUse":
-		"⚠ {{count}} rujukan callout dalam {{files}} fail menggunakan jenis callout tersuai yang akan dipadam.",
 	"quickInsert.title": "Sisipan pantas callout blok",
 	"quickInsert.desc": "Pilih callout untuk disisipkan pada kedudukan kursor. Callout blok sahaja.",
 	"quickInsert.searchPlaceholder": "Cari callout",
@@ -753,29 +728,10 @@ export const ms: Record<string, string> = {
 	"quickInsert.noEditorHint": "Tiada nota dibuka dalam mod penyuntingan, jadi tiada apa yang boleh disisipkan.",
 	"quickInsert.noEditor": "Buka nota dalam mod penyuntingan untuk menyisipkan callout.",
 
-	"vaultStats.title": "Statistik callout",
-	"vaultStats.totalCallouts": "Jumlah callouts",
-	"vaultStats.typesFound": "Jenis ditemui",
-	"vaultStats.filesWithCallouts": "Fail dengan callouts",
-	"vaultStats.filesScanned": "Fail Markdown diimbas",
-	"vaultStats.empty": "Tiada callouts ditemui dalam nota Markdown.",
 	"vaultStats.columnType": "Jenis",
-	"vaultStats.columnName": "Nama",
-	"vaultStats.columnSource": "Sumber",
-	"vaultStats.columnCount": "Bilangan",
-	"vaultStats.columnFiles": "Fail",
-	"vaultStats.unknown": "Tidak diketahui",
-	"vaultStats.sourceBuiltIn": "Terbina dalam",
-	"vaultStats.sourceCustom": "Tersuai",
-	"vaultStats.sourceAutoFallback": "Sandaran automatik",
-	"vaultStats.sourceTheme": "Coretan CSS",
-	"vaultStats.sourceAlias": "Alias bagi {{id}}",
-	"vaultStats.sourceUnknown": "Tidak diketahui",
-	"vaultStats.byRole": "Ditulis sebagai",
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Tajuk",
 	"vaultStats.roleInline": "Sebaris",
-	"vaultStats.close": "Tutup",
 	"portable.subtitle": "Pilih callout tajuk dan sebaris yang hendak ditukar kepada Markdown standard sebelum berhenti menggunakan Callout Studio.",
 	"portable.customize": "Penggantian tersuai…",
 	"portable.editCustom": "Edit penggantian tersuai…",
@@ -795,7 +751,6 @@ export const ms: Record<string, string> = {
 	"usage.registeredCallouts": "Callout berdaftar",
 	"usage.unregisteredCallouts": "Callout tidak berdaftar",
 	"usage.summary": "{{count}} kemunculan dalam {{files}} fail",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "Semua format",
 	"usage.failed": "Tidak dapat mengemas kini kemunculan callout.",
 	"usage.loading": "Mengimbas nota Markdown…",
@@ -995,9 +950,6 @@ export const ms: Record<string, string> = {
 	"footer.contribute": "Sumbang",
 	"footer.license": "Lesen pemalam",
 	"footer.iconCredits": "Lesen ikon",
-	"footer.tagline":
-		"Ada maklum balas, komen atau cadangan? Saya ingin mendengarnya!",
-	"footer.madeBy": "Dicipta oleh Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Padam palet "{{name}}"?\n1 callout menggunakannya. Ia mengekalkan warnanya, dan anda boleh sambungkan semula kemudian dari baris Warna dalam editornya.',
 	"settings.deletePaletteConfirmLinked":
@@ -1051,10 +1003,7 @@ export const ms: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"Ini menyimpan persediaan yang anda lihat sekarang sebagai fail tetapan anda dan menghidupkan semula penyimpanan. Salinan simpanan yang disimpan oleh peranti ini disandarkan dahulu.\nJika peranti lain mungkin mempunyai perubahan lebih baharu yang anda mahu kekalkan, biarkan ia selesai menyegerak sebelum meneruskan. Aplikasi penyegerakan anda mungkin menghantar fail ini ke peranti anda yang lain.\nCallout Studio mencari fail tetapan sekali lagi sebelum menyimpan. Jika ia telah kembali, Callout Studio mengekalkannya.",
 	"notice.settingsBackupFailed": "Pemulihan tetapan tidak dapat diteruskan kerana sandaran keselamatan tidak dapat disimpan. Semak storan yang tersedia dan kebenaran tulis, kemudian cuba lagi.",
-	"notice.settingsBackupSaved": "Salinan pemulihan definisi callout tempatan disimpan sebelum menggunakan tetapan yang masuk: {{path}}.",
-	"notice.settingsChangedElsewhere": "Tetapan Callout Studio telah diubah pada peranti lain, jadi perubahan ini tidak disimpan. Tetapan peranti lain sedang dimuatkan sekarang — sila buat perubahan itu sekali lagi.",
 	"notice.settingsNewerVersion": "Tetapan Callout Studio disimpan oleh versi pemalam yang lebih baharu, jadi tiada apa akan ditulis pada peranti ini sehingga anda mengemas kininya. Tetapan anda selamat — kemas kini Callout Studio di sini dan muat semula Obsidian.",
-	"notice.settingsNotSaved": "Perubahan itu tidak disimpan. Callout Studio tidak dapat menggunakan fail tetapannya semasa Obsidian dimulakan, jadi tiada apa ditulis pada peranti ini — perubahan anda akan kekal sehingga anda menutup Obsidian. Lihat Tetapan → Callout Studio untuk apa yang perlu dilakukan.",
 	"saveStatus.changed":
 		"Fail tetapan berubah semasa anda menyunting. Draf anda masih ada. Pilih Cuba lagi untuk memuatkan tetapan yang masuk, kemudian semak draf anda dan simpan sekali lagi.",
 	"saveStatus.missing": "Penyimpanan dijeda kerana fail tetapan hilang. Ini boleh berlaku selepas pemasangan semula atau semasa penyegerakan masih berjalan. Selesaikan penyegerakan dan cuba lagi. Untuk menggantikan fail yang hilang dengan sengaja, gunakan Cipta fail tetapan baharu dalam tetapan Callout Studio.",
@@ -1089,7 +1038,6 @@ export const ms: Record<string, string> = {
 	"portable.selectionConflict": "Pilihan itu akan menjadikan pautan tajuk tidak jelas. Pilihan sebelumnya dikekalkan.",
 	"portable.selectAll": "Pilih semua",
 	"portable.selectNone": "Nyahpilih semua",
-	"portable.waiting": "Nota telah berubah. Mengemas kini semakan…",
 	"portable.relatedLinksHint": "Pautan dan benaman mengikuti tajuk yang dipilih dan ditukar bersama-samanya.",
 	"portable.selectChange": "Tukar {{path}}, baris {{line}}",
 	"portable.showMore": "Tunjukkan {{count}} lagi",
@@ -1116,10 +1064,8 @@ export const ms: Record<string, string> = {
 	"portable.backup": "Kami mengesyorkan anda menyandarkan vault sebelum penukaran. Tindakan ini mengubah nota asal dan tidak boleh dibuat asal dalam Callout Studio.",
 	"portable.scanning": "Membaca nota Markdown…",
 	"portable.progress": "Membaca nota: {{done}} daripada {{total}}",
-	"portable.summary": "{{count}} penggantian dalam {{files}} nota · {{headings}} dalam tajuk · {{inline}} sebaris",
 	"portable.empty": "Tiada callout tajuk atau sebaris yang boleh ditukar ditemui. Tiada apa-apa akan diubah.",
 	"portable.skipped": "{{count}} kemunculan yang tidak lengkap atau tidak disokong dibiarkan tanpa perubahan untuk semakan manual.",
-	"portable.location": "{{path}} · baris {{line}}",
 	"portable.confirmTitle": "Tukar vault ini secara kekal?",
 	"portable.confirmBody": "Tukar {{count}} kemunculan dan kemas kini {{links}} pautan tajuk dalam {{files}} nota?\nTindakan ini mengubah fail asal dan tidak boleh dibuat asal dalam Callout Studio. Tiada sandaran automatik dicipta. Sandarkan vault dahulu, simpan nota yang terbuka dan jeda penyuntingan serta penyegerakan sehingga penukaran selesai.\nJika fail berubah atau penulisan gagal, penukaran akan berhenti. Nota yang sudah ditukar kekal berubah.",
 	"portable.confirmAction": "Tukar secara kekal",
@@ -1194,20 +1140,14 @@ export const ms: Record<string, string> = {
 	"recovery.title": "Pulihkan persediaan lama",
 	"recovery.intro":
 		"Callout Studio menyimpan versi lama persediaan anda pada peranti ini dan dalam folder sandaran plugin. Memulihkan salah satu akan menggantikan persediaan semasa anda pada setiap peranti yang disegerakkan. Sandaran persediaan semasa disimpan dahulu.",
-	"recovery.pausedHint": "Penyimpanan dijeda, jadi pemulihan tidak tersedia sehingga isu itu diselesaikan. Anda masih boleh eksport salinan.",
 	"recovery.loading": "Mencari versi lama…",
 	"recovery.empty": "Tiada versi lama ditemui.",
 	"recovery.sectionHistory": "Disimpan pada peranti ini",
 	"recovery.sectionBackups": "Sandaran",
 	"recovery.sectionCopies": "Salinan lain fail tetapan",
-	"recovery.originThisDevice": "Peranti ini",
-	"recovery.originOtherDevice": "Peranti lain",
-	"recovery.originOlderVersion": "Disimpan oleh versi lebih lama",
 	"recovery.unreadable": "Tidak dapat dibaca sebagai tetapan",
 	"recovery.same": "Sama seperti persediaan semasa anda",
 	"recovery.restoreSame": "Persediaan ini sama dengan persediaan semasa anda, jadi tiada apa untuk dipulihkan.",
-	"recovery.summary": "{{callouts}} jenis callout tersimpan, {{count}} perbezaan daripada sekarang",
-	"recovery.export": "Eksport salinan",
 	"recovery.restore": "Pulihkan",
 	"recovery.confirmTitle": "Pulihkan persediaan ini",
 	"recovery.confirmBody":
@@ -1220,16 +1160,12 @@ export const ms: Record<string, string> = {
 	"recovery.failed": "Persediaan tidak dapat dipulihkan. Tiada apa yang berubah.",
 	"notice.unsavedChangesReplaced":
 		"Sesetengah perubahan yang dibuat pada peranti ini belum disimpan, dan tetapan lebih baharu daripada peranti lain telah menggantikannya. Versi anda disimpan dahulu: buka Pulihkan persediaan lama dalam tetapan Callout Studio untuk mendapatkannya semula.",
-	"notice.diagnosticsCopied": "Diagnostik penyegerakan disalin.",
-	"notice.diagnosticsFailed": "Diagnostik penyegerakan tidak dapat disalin.",
 	"notice.recoveryCopyStale":
 		"Tetapan anda telah disimpan, tetapi salinan pemulihan peranti ini tidak dapat dikemas kini. Semak storan yang tersedia pada peranti ini. Callout Studio akan cuba lagi pada perubahan seterusnya anda.",
 	"notice.blockedWhilePaused":
 		"Penyimpanan dijeda, jadi perubahan ini tidak dapat disimpan buat masa ini. Selesaikan dahulu masalah penyimpanan yang ditunjukkan dalam tetapan Callout Studio.",
 	"welcome.syncNote":
 		"Sudah menggunakan Callout Studio pada peranti lain? Biarkan perkhidmatan penyegerakan anda selesai dahulu. Callout dan tetapan anda akan muncul di sini sebaik sahaja ia tiba.",
-	"settings.resetAllConfirmFull":
-		"Ini memadam setiap jenis callout tersuai, gambar yang dimuat naik dan arahan tersuai, serta menetapkan semula callout terbina dalam, gaya global, palet warna tersimpan, menu klik kanan, tetapan callout tajuk dan sebaris, serta gaya sandaran. Sandaran persediaan semasa anda disimpan dahulu dalam folder sandaran plugin. Perkhidmatan penyegerakan anda mungkin menghantar set semula itu ke peranti lain anda.",
 	"settings.resetBackupFailed":
 		"Tiada yang ditetapkan semula: sandaran persediaan semasa anda tidak dapat disimpan dahulu. Semak storan yang tersedia, kemudian cuba lagi.",
 	"settings.resetNotSaved":
@@ -1237,10 +1173,6 @@ export const ms: Record<string, string> = {
 	"settings.recovery": "Persediaan lama",
 	"settings.recoveryDesc": "Pulihkan versi persediaan anda yang disimpan sebelum ini pada peranti ini atau dalam folder sandaran plugin.",
 	"settings.recoveryButton": "Pulihkan persediaan lama",
-	"settings.diagnostics": "Diagnostik penyegerakan",
-	"settings.diagnosticsDesc":
-		"Salin ringkasan cara penyimpanan dan penyegerakan berfungsi, untuk disertakan dalam laporan pepijat. Ia tidak mengandungi sebarang callout atau tetapan.",
-	"settings.diagnosticsButton": "Salin diagnostik",
 	"confirm.titleResetEverything": "Tetapkan semula semuanya",
 	"confirm.titleReplaceUnreadable": "Ganti fail tetapan",
 	"confirm.replaceUnreadable":

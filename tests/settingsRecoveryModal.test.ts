@@ -138,8 +138,8 @@ describe("the earlier-setups window", () => {
 		const h = open(false, [history, unchanged, myBackup]);
 		try {
 			await setImmediate();
-			for (const key of ["recovery.originThisDevice", "recovery.originOtherDevice", "recovery.originOlderVersion"] as const) {
-				assert.ok(!h.contentEl.textContent.includes(en[key]!), `should not surface ${key}`);
+			for (const label of ["This device", "Another device", "Saved by an older version"]) {
+				assert.ok(!h.contentEl.textContent.includes(label), `should not surface "${label}"`);
 			}
 		} finally { h.destroy(); }
 	});

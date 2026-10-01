@@ -105,7 +105,6 @@ export const hu: Record<string, string> = {
 
 	"settings.editAria": "{{name}} szerkesztése",
 	"settings.moreRowActionsAria": "További műveletek a következőhöz: {{name}}",
-	"settings.usageInfo": "{{count}} előfordulás {{files}} fájlban",
 	"settings.replaceAction": "Csere a tárban",
 	"settings.deleteAction": "Törlés",
 	"settings.duplicateAction": "Másolat készítése",
@@ -129,7 +128,6 @@ export const hu: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"A tárban fel nem ismert callout-típusok öröklik ennek a callout-nak a stílusát.",
 
-	"settings.globalStyle": "Globális callout-stílus",
 	"settings.globalStyleRegularTitle": "Blokk callout globális stílusa",
 	"settings.globalStyleHeadingTitle": "Címsor callout globális stílusa",
 	"settings.globalStyleInlineTitle": "Beágyazott callout globális stílusa",
@@ -224,12 +222,6 @@ export const hu: Record<string, string> = {
 	"commandBuilder.noCalloutChosen": "Először válasszon egy calloutot ehhez a parancshoz.",
 	"commandBuilder.save": "Mentés",
 
-	"settings.vaultMaintenance": "Tár-elemzések és karbantartás",
-	"settings.vaultStats": "Callout-statisztikák",
-	"settings.vaultStatsDesc":
-		"Megszámolja a Markdown-jegyzetekben található összes callout-ot — blokk, cím és beágyazott — és típusonként csoportosítja.",
-	"settings.vaultStatsButton": "Statisztikák megtekintése",
-	"settings.vaultStatsScanning": "Szkennelés",
 	"settings.resetAll": "Visszaállítás",
 	"settings.resetAllDesc":
 		"Törli az összes felhasználói callout-ot, visszaállítja a beépített callout-okat, a globális stílusokat (szegélyek, betűméret-arány, alak), a mentett színpalettákat, a jobb gombos menü testreszabását és a letöltött Material SVG-ket.",
@@ -252,8 +244,6 @@ export const hu: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "Ne aggódjon: a visszaállítás előtt biztonsági mentést készítünk a jelenlegi beállításairól. Bármikor visszaállíthatja a Beállítások Biztonsági mentések szakaszából.\nHa szinkronizálási szolgáltatást használ, a visszaállítás eljuthat a többi eszközére is.",
 	"settings.resetNothing": "Nincs mit visszaállítani: minden már az alapértelmezett állapotban van.",
 
-	"notice.customCommandsRemoved":
-		"{{count}} egyéni parancs eltávolítva, amelyek callout-típusa már nem létezik.",
 	"notice.customCommandMissingCallout":
 		"Ennek a parancsnak a callout-típusa már nem létezik.",
 
@@ -275,10 +265,6 @@ export const hu: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} jegyzetet nem sikerült frissíteni, ezek változatlanok maradtak. A részletekért lásd a fejlesztői konzolt.",
 	"notice.calloutDeleteIncomplete": "Néhány jegyzetet nem sikerült átalakítani. A callout típusa megmaradt. A befejezett átalakítások mentve vannak; oldja meg a fájlproblémát, majd futtassa újra a műveletet a befejezéshez.",
-	"notice.settingsUnreadable":
-		"A Callout Studio nem tudta beolvasni a beállításfájlját, ezért a callout típusaid hiányoznak ebből a munkamenetből. Semmi nem íródott, és a lemezen lévő fájl változatlan — töltsd újra az Obsidiant az újbóli próbához.",
-	"notice.settingsMissing":
-		"A Callout Studio beállításfájlja hiányzik, ezért a callout típusaid hiányoznak ebből a munkamenetből. Semmi nem íródott — ha ezt a boltívet szinkronizálod, várd meg a szinkronizálás befejezését, és töltsd újra az Obsidiant, mielőtt bármit módosítanál.",
 	"notice.nothingToWrap": "Nincs mit becsomagolni.",
 	"notice.cursorNotInsideCallout": "A kurzor nem callout-on belül van.",
 	"notice.autocompleteTargetMoved":
@@ -325,7 +311,6 @@ export const hu: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Obsidian callout-ok",
 	"editor.paletteGroupPresets": "Szín-előbeállítások",
 	"editor.paletteGroupCustom": "Egyéni",
-	"editor.paletteNewColor": "Új szín…",
 	"editor.contrastWarning":
 		"Alacsony kontraszt a háttérrel szemben — nehezen olvasható lehet",
 	"editor.foldable": "Összecsukható",
@@ -338,7 +323,6 @@ export const hu: Record<string, string> = {
 	"editor.saveChanges": "Változtatások mentése",
 	"editor.saving": "Mentés…",
 	"editor.saveFailed": "A mentést nem sikerült befejezni. Ha ez a szerkesztő még nyitva van, hagyja nyitva, és a tárhely és a szinkronizálás ellenőrzése után próbálja újra. Egyes beállítások vagy jegyzetmódosítások már mentésre kerülhettek.",
-	"notice.settingsSaveFailed": "A Callout Studio nem tudta menteni a módosításokat. Ellenőrizze a rendelkezésre álló tárhelyet és a szinkronizálást, majd az Obsidian bezárása előtt próbálja újra.",
 	"editor.createCallout": "Callout létrehozása",
 	"editor.nameRequired":
 		"Callout létrehozása előtt megjelenítési név szükséges.",
@@ -657,14 +641,9 @@ export const hu: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "Ikonlicencek és köszönet",
-	"credits.intro":
-		"A Callout Studio nyílt forráskódú ikonkönyvtárakat használ. Alább megtekintheted az egyes könyvtárak licencét, szerzőmegjelölését és módosításait.",
-	"credits.fullNotices": "Teljes harmadik féltől származó megjegyzések",
 	"credits.introBeforeNotices":
 		"A Callout Studio nyílt forráskódú ikonkönyvtárakat használ; alább megtekintheted az egyes könyvtárak licencét, szerzőmegjelölését és módosításait, vagy olvasd el a ",
 	"credits.fullNoticesInline": "teljes harmadik féltől származó megjegyzéseket",
-	"credits.pluginLicense":
-		"A Callout Studio saját kódja egy permissive licenc alatt áll; az ikonkönyvtárak megőrzik saját licencüket.",
 
 	"contextMenu.editCallout": "Callout-beállítások szerkesztése",
 	"contextMenu.createCallout": "Új callout létrehozása",
@@ -680,8 +659,6 @@ export const hu: Record<string, string> = {
 	"contextMenu.deleteSection": "Címsor szakasz törlése",
 	"heading.toggleFold": "Összecsukás váltása",
 	"settings.globalSettings": "Callout Studio globális stílusbeállítások",
-	"settings.globalSettingsScope":
-		"Ezek globális beállítások: mindegyik egyszerre módosítja a Callout Studio által stílusozott összes callout alakját, térközét és méretét. A témája által stílusozott callout-ok megtartják a téma saját dizájnját.",
 	"settings.globalSettingsRegularDesc":
 		"Állítsa be a tárában lévő összes block callout szegélyét, sugarát, betűméret-arányát és igazítását.",
 	"settings.globalSettingsHeadingDesc":
@@ -743,8 +720,6 @@ export const hu: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{count}} hivatkozás {{files}} fájlban egyéni aliasokat használ: {{aliases}}. Visszaállítás után ezek nem fognak működni. Folytatja?",
 	"vault.resetConfirm": "Visszaállítás",
-	"vault.resetAllInUse":
-		"⚠ {{count}} callout-hivatkozás {{files}} fájlban olyan egyéni callout-típusokat használ, amelyek törlődni fognak.",
 
 	"quickInsert.title": "Blokk callout gyors beszúrása",
 	"quickInsert.desc": "Válassz egy callout-ot a kurzor pozíciójába való beszúráshoz. Csak blokk callout-ok.",
@@ -768,29 +743,10 @@ export const hu: Record<string, string> = {
 	"quickInsert.noEditorHint": "Nincs szerkesztési módban megnyitott jegyzet, ezért semmit sem lehet beszúrni.",
 	"quickInsert.noEditor": "Nyiss meg egy jegyzetet szerkesztési módban a callout beszúrásához.",
 
-	"vaultStats.title": "Callout-statisztikák",
-	"vaultStats.totalCallouts": "Összes callout",
-	"vaultStats.typesFound": "Talált típusok",
-	"vaultStats.filesWithCallouts": "Callout-okat tartalmazó fájlok",
-	"vaultStats.filesScanned": "Beszkennelt Markdown-fájlok",
-	"vaultStats.empty": "Nem található callout a Markdown-jegyzetekben.",
 	"vaultStats.columnType": "Típus",
-	"vaultStats.columnName": "Név",
-	"vaultStats.columnSource": "Forrás",
-	"vaultStats.columnCount": "Darab",
-	"vaultStats.columnFiles": "Fájlok",
-	"vaultStats.unknown": "Ismeretlen",
-	"vaultStats.sourceBuiltIn": "Beépített",
-	"vaultStats.sourceCustom": "Egyéni",
-	"vaultStats.sourceAutoFallback": "Aut. tartalék",
-	"vaultStats.sourceTheme": "CSS-részlet",
-	"vaultStats.sourceAlias": "{{id}} aliasa",
-	"vaultStats.sourceUnknown": "Ismeretlen",
-	"vaultStats.byRole": "Íráshelye",
 	"vaultStats.roleBlock": "Blokk",
 	"vaultStats.roleHeading": "Címsor",
 	"vaultStats.roleInline": "Beágyazott",
-	"vaultStats.close": "Bezárás",
 	"portable.subtitle": "A Callout Studio használatának befejezése előtt válassza ki, mely címsorbeli és soron belüli calloutokat alakítja szabványos Markdownná.",
 	"portable.customize": "Egyéni csere…",
 	"portable.editCustom": "Egyéni csere szerkesztése…",
@@ -810,7 +766,6 @@ export const hu: Record<string, string> = {
 	"usage.registeredCallouts": "Nyilvántartott callout-ok",
 	"usage.unregisteredCallouts": "Nem nyilvántartott callout-ok",
 	"usage.summary": "{{count}} előfordulás {{files}} fájlban",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "Minden formátum",
 	"usage.failed": "Nem sikerült frissíteni a callout-előfordulásokat.",
 	"usage.loading": "Markdown-jegyzetek vizsgálata…",
@@ -1019,9 +974,6 @@ export const hu: Record<string, string> = {
 	"footer.contribute": "Közreműködés",
 	"footer.license": "Bővítmény licence",
 	"footer.iconCredits": "Ikonlicencek",
-	"footer.tagline":
-		"Van visszajelzése, megjegyzése vagy javaslata? Szívesen meghallgatom!",
-	"footer.madeBy": "Készítette: Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Törli a(z) "{{name}}" palettát?\n1 callout használja. Megtartja a színeit, és később újra összekapcsolhatod a szerkesztőjében a Szín sorból.',
 	"settings.deletePaletteConfirmLinked":
@@ -1075,10 +1027,7 @@ export const hu: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"Ez a most látható beállításokat menti el beállításfájlként, és újra bekapcsolja a mentést. Az ezen az eszközön őrzött tartalék másolatról előbb biztonsági mentés készül.\nHa egy másik eszközön lehetnek újabb módosítások, amelyeket meg szeretnél tartani, a folytatás előtt hagyd, hogy befejezze a szinkronizálást. A szinkronizáló alkalmazásod elküldheti ezt a fájlt a többi eszközödre.\nA Callout Studio mentés előtt még egyszer megkeresi a beállításfájlt. Ha visszatért, a Callout Studio azt tartja meg.",
 	"notice.settingsBackupFailed": "A beállítások helyreállítása nem folytatódhatott, mert egy biztonsági mentést nem sikerült elmenteni. Ellenőrizd az elérhető tárhelyet és az írási jogosultságokat, majd próbáld újra.",
-	"notice.settingsBackupSaved": "A bejövő beállítások alkalmazása előtt elmentődött a helyi callout-definíciók helyreállítási másolata: {{path}}.",
-	"notice.settingsChangedElsewhere": "A Callout Studio beállításai egy másik eszközön megváltoztak, ezért ez a módosítás nem mentődött el. A másik eszköz beállításai most töltődnek be — kérjük, végezd el újra a módosítást.",
 	"notice.settingsNewerVersion": "A Callout Studio beállításait a bővítmény egy újabb verziója mentette el, ezért ezen az eszközön semmi nem íródik, amíg nem frissíted. A beállításaid biztonságban vannak — frissítsd itt a Callout Studiót, és töltsd újra az Obsidiant.",
-	"notice.settingsNotSaved": "Az a módosítás nem mentődött el. A Callout Studio nem tudta használni a beállításfájlját az Obsidian indulásakor, ezért ezen az eszközön semmi nem íródik — a módosításaid megmaradnak, amíg be nem zárod az Obsidiant. Nézd meg a Beállítások → Callout Studio menüt a teendőkért.",
 	"saveStatus.changed":
 		"A beállításfájl megváltozott, miközben szerkesztetted. A vázlatod továbbra is elérhető. Válaszd az Újrapróbálkozás lehetőséget a beérkezett beállítások betöltéséhez, majd nézd át a vázlatot, és mentsd újra.",
 	"saveStatus.missing": "A mentés szüneteltetve van, mert a beállításfájl hiányzik. Ez előfordulhat újratelepítés után, vagy amíg a szinkronizálás még fut. Fejezd be a szinkronizálást, és próbáld újra. A hiányzó fájl szándékos cseréjéhez használd az Új beállításfájl létrehozása lehetőséget a Callout Studio beállításaiban.",
@@ -1113,7 +1062,6 @@ export const hu: Record<string, string> = {
 	"portable.selectionConflict": "Ez a választás kétértelművé tenné a címsorhivatkozásokat. Az előző kijelölés megmaradt.",
 	"portable.selectAll": "Összes kijelölése",
 	"portable.selectNone": "Kijelölés törlése",
-	"portable.waiting": "A jegyzetek megváltoztak. Az áttekintés frissítése…",
 	"portable.relatedLinksHint": "A hivatkozások és beágyazások követik a kijelölt címsorokat, és velük együtt alakulnak át.",
 	"portable.selectChange": "{{path}}, {{line}}. sor átalakítása",
 	"portable.showMore": "További {{count}} megjelenítése",
@@ -1140,10 +1088,8 @@ export const hu: Record<string, string> = {
 	"portable.backup": "Javasoljuk, hogy átalakítás előtt készítsen biztonsági másolatot a tárról. A művelet az eredeti jegyzeteket módosítja, és a Callout Studio alkalmazásban nem vonható vissza.",
 	"portable.scanning": "Markdown-jegyzetek olvasása…",
 	"portable.progress": "Jegyzetek olvasása: {{done}} / {{total}}",
-	"portable.summary": "{{count}} csere {{files}} jegyzetben · {{headings}} címsorban · {{inline}} sorközben",
 	"portable.empty": "Nem található átalakítható címsori vagy sorközi kiemelés. Semmi sem változik.",
 	"portable.skipped": "{{count}} hiányos vagy nem támogatott előfordulás változatlan maradt kézi ellenőrzésre.",
-	"portable.location": "{{path}} · {{line}}. sor",
 	"portable.confirmTitle": "Véglegesen átalakítja ezt a tárat?",
 	"portable.confirmBody": "Átalakít {{count}} előfordulást és frissít {{links}} címsorhivatkozást {{files}} jegyzetben?\nEz az eredeti fájlokat módosítja, és a Callout Studio alkalmazásban nem vonható vissza. Automatikus biztonsági másolat nem készül. Előbb készítsen másolatot a tárról, mentse a nyitott jegyzeteket, és az átalakítás végéig szüneteltesse a szerkesztést és a szinkronizálást.\nHa egy fájl megváltozik vagy az írás sikertelen, az átalakítás leáll. A már átalakított jegyzetek módosításai megmaradnak.",
 	"portable.confirmAction": "Végleges átalakítás",
@@ -1212,20 +1158,14 @@ export const hu: Record<string, string> = {
 	"notice.recoveryStorageUnavailable": "Ennek az eszköznek a helyreállítási tárhelye nem válaszol, ezért a másolat nem vethető el. Indítsa újra az Obsidiant, majd próbálja újra.",
 	"recovery.title": "Korábbi konfiguráció visszaállítása",
 	"recovery.intro": "A Callout Studio megőrzi a konfigurációja korábbi verzióit ezen az eszközön és a bővítmény biztonsági mentés mappájában. Egy verzió visszaállítása lecseréli a jelenlegi konfigurációját minden szinkronizált eszközön. A jelenlegi konfigurációról előbb mentés készül.",
-	"recovery.pausedHint": "A mentés szüneteltetve van, ezért a visszaállítás nem érhető el, amíg ez meg nem oldódik. Továbbra is exportálhat egy másolatot.",
 	"recovery.loading": "Korábbi verziók keresése…",
 	"recovery.empty": "Nem található korábbi verzió.",
 	"recovery.sectionHistory": "Ezen az eszközön mentve",
 	"recovery.sectionBackups": "Biztonsági mentések",
 	"recovery.sectionCopies": "A beállítási fájl más másolatai",
-	"recovery.originThisDevice": "Ez az eszköz",
-	"recovery.originOtherDevice": "Másik eszköz",
-	"recovery.originOlderVersion": "Egy régebbi verzió mentette",
 	"recovery.unreadable": "Nem olvasható be beállításként",
 	"recovery.same": "Megegyezik a jelenlegi konfigurációjával",
 	"recovery.restoreSame": "Ez a beállítás megegyezik a jelenlegivel, ezért nincs mit visszaállítani.",
-	"recovery.summary": "{{callouts}} mentett callout-típus, {{count}} eltérés a jelenlegihez képest",
-	"recovery.export": "Másolat exportálása",
 	"recovery.restore": "Visszaállítás",
 	"recovery.confirmTitle": "Ennek a konfigurációnak a visszaállítása",
 	"recovery.confirmBody": "A jelenlegi konfigurációja lecserélődik a(z) {{when}} időpontban mentettre ({{count}} eltérés). A jelenlegi konfigurációjáról előbb mentés készül, és a szinkronizálási szolgáltatása elküldi a visszaállított konfigurációt a többi eszközére.",
@@ -1234,20 +1174,14 @@ export const hu: Record<string, string> = {
 	"recovery.backupFailed": "Semmi nem lett visszaállítva: a jelenlegi konfigurációjáról nem sikerült előbb mentést készíteni. Ellenőrizze a rendelkezésre álló tárhelyet, majd próbálja újra.",
 	"recovery.failed": "A konfiguráció nem volt visszaállítható. Semmi nem változott.",
 	"notice.unsavedChangesReplaced": "Néhány, ezen az eszközön végzett módosítás még nem volt elmentve, és egy másik eszközről érkezett újabb beállítások lecserélték őket. Az Ön verziója előbb mentésre került: nyissa meg a Korábbi konfiguráció visszaállítása lehetőséget a Callout Studio beállításaiban, hogy visszakapja.",
-	"notice.diagnosticsCopied": "Szinkronizálási diagnosztika másolva.",
-	"notice.diagnosticsFailed": "A szinkronizálási diagnosztikát nem sikerült másolni.",
 	"notice.recoveryCopyStale": "A beállításai mentésre kerültek, de ennek az eszköznek a helyreállítási másolatát nem sikerült frissíteni. Ellenőrizze a rendelkezésre álló tárhelyet ezen az eszközön. A Callout Studio a következő módosításnál újra megpróbálja.",
 	"notice.blockedWhilePaused": "A mentés szüneteltetve van, ezért ez a módosítás jelenleg nem tartható meg. Először oldja meg a Callout Studio beállításaiban megjelenő mentési problémát.",
 	"welcome.syncNote": "Már használja a Callout Studiót egy másik eszközön? Hagyja, hogy a szinkronizálási szolgáltatása előbb befejeződjön. A callout-jai és beállításai megjelennek itt, amint megérkeznek.",
-	"settings.resetAllConfirmFull": "Ez törli az összes egyéni callout-típust, feltöltött képet és egyéni parancsot, és visszaállítja a beépített callout-okat, a globális stílusokat, a mentett színpalettákat, a jobbklikk menüt, a címsor- és beágyazott callout-beállításokat, valamint a tartalék stílust. A jelenlegi konfigurációjáról előbb mentés készül a bővítmény biztonsági mentés mappájába. A szinkronizálási szolgáltatása elküldheti a visszaállítást a többi eszközére.",
 	"settings.resetBackupFailed": "Semmi nem lett visszaállítva: a jelenlegi konfigurációjáról nem sikerült előbb mentést készíteni. Ellenőrizze a rendelkezésre álló tárhelyet, majd próbálja újra.",
 	"settings.resetNotSaved": "A visszaállítás megjelenik, de még nem sikerült elmenteni, ezért a beállítási fájlja még mindig az előző konfigurációt tartalmazza. Ellenőrizze a mentés állapotát a Callout Studio beállításaiban.",
 	"settings.recovery": "Korábbi konfigurációk",
 	"settings.recoveryDesc": "Állítson vissza egy korábban, ezen az eszközön vagy a bővítmény biztonsági mentés mappájában mentett verziót a konfigurációjából.",
 	"settings.recoveryButton": "Korábbi konfiguráció visszaállítása",
-	"settings.diagnostics": "Szinkronizálási diagnosztika",
-	"settings.diagnosticsDesc": "Másolja ki a mentés és a szinkronizálás működésének összefoglalóját egy hibajelentéshez. Nem tartalmaz callout-okat vagy beállításokat.",
-	"settings.diagnosticsButton": "Diagnosztika másolása",
 	"confirm.titleResetEverything": "Minden visszaállítása",
 	"confirm.titleReplaceUnreadable": "Beállítási fájl cseréje",
 	"confirm.replaceUnreadable": "A jelenlegi fájl pontos másolata előbb mentésre kerül a bővítmény biztonsági mentés mappájába. Ezután a fájl lecserélődik az itt látható konfigurációra, és a szinkronizálási szolgáltatása elküldi a többi eszközére.",

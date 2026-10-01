@@ -41,7 +41,6 @@ export const he: Record<string, string> = {
 	"settings.rescanVaultHintAction": "סריקת תיבות־הבלטה",
 	"manualDiscovery.failed": "תוצאות הסריקה לא נשמרו. יש לוודא שאפשר לכתוב לקובץ ההגדרות ושהסנכרון הסתיים, ואז לנסות שוב דרך הגדרות ← סוגי תיבות־ההבלטה שלי ← סריקת תיבות־הבלטה. תיבות־ההבלטה הקיימות לא הוחלפו.",
 	"notice.settingsBackupFailed": "שחזור ההגדרות לא יכול להמשיך מפני שלא ניתן היה לשמור גיבוי בטיחותי. יש לבדוק את מקום האחסון הפנוי ואת הרשאות הכתיבה, ולנסות שוב.",
-	"notice.settingsBackupSaved": "עותק לשחזור של הגדרות תיבות־ההבלטה המקומיות נשמר לפני החלת ההגדרות שהגיעו: {{path}}.",
 	"commandBuilder.missingCallout": "מושהית: תיבת־ההבלטה חסרה. יש לאתר או ליצור אותה כדי להפעיל מחדש את הפקודה, או לערוך את הפקודה ולבחור סוג אחר.",
 	"manualDiscovery.scanning": "סורק…",
 	"settings.rescanComplete": "הסריקה הסתיימה: נוספו {{count}} סוגי תיבות־הבלטה חדשים.",
@@ -125,7 +124,6 @@ export const he: Record<string, string> = {
 	// Settings — Row actions
 	"settings.editAria": "עריכת {{name}}",
 	"settings.moreRowActionsAria": "פעולות נוספות עבור {{name}}",
-	"settings.usageInfo": "בשימוש {{count}} פעמים ב־{{files}} קבצים",
 	"settings.replaceAction": "החלפה בכספת",
 	"settings.deleteAction": "מחיקה",
 	"settings.duplicateAction": "שכפול",
@@ -151,7 +149,6 @@ export const he: Record<string, string> = {
 		"סוגי תיבות־הבלטה לא מוכרות יקבלו את העיצוב של תיבת־הבלטה זו.",
 
 	// Settings — Global style
-	"settings.globalStyle": "עיצוב גלובלי לתיבות־הבלטה",
 	"settings.globalStyleRegularTitle": "עיצוב גלובלי לתיבות־הבלטה מסוג בלוק",
 	"settings.globalStyleHeadingTitle": "עיצוב גלובלי לתיבות־הבלטה ככותרת",
 	"settings.globalStyleInlineTitle": "עיצוב גלובלי לתיבות־הבלטה מוטבעות",
@@ -267,7 +264,6 @@ export const he: Record<string, string> = {
 	"portable.selectionConflict": "הבחירה הזו תיצור עמימות בקישורים לכותרות. הבחירה הקודמת שלך נשמרה.",
 	"portable.selectAll": "בחירת הכול",
 	"portable.selectNone": "ביטול הבחירה",
-	"portable.waiting": "הפתקים השתנו. הסקירה מתעדכנת…",
 	"portable.relatedLinksHint": "קישורים והטמעות נבחרים יחד עם הכותרות שאליהן הם מפנים.",
 	"portable.selectChange": "המרת {{path}}, שורה {{line}}",
 	"portable.showMore": "הצגת {{count}} נוספים",
@@ -294,10 +290,8 @@ export const he: Record<string, string> = {
 	"portable.backup": "מומלץ לגבות את הכספת לפני ההמרה. הפעולה משנה את הפתקים המקוריים ואין אפשרות לבטל אותה דרך Callout Studio.",
 	"portable.scanning": "קריאת פתקי Markdown…",
 	"portable.progress": "קריאת פתקים: {{done}} מתוך {{total}}",
-	"portable.summary": "{{count}} החלפות ב־{{files}} פתקים · {{headings}} בכותרות · {{inline}} inline",
 	"portable.empty": "לא נמצאו כותרות מיוחדות או תגיות inline שניתן להמיר. לא יתבצעו שינויים.",
 	"portable.skipped": "{{count}} מופעים לא שלמים או לא נתמכים נשארו ללא שינוי לבדיקה ידנית.",
-	"portable.location": "{{path}} · שורה {{line}}",
 	"portable.confirmTitle": "להמיר את הכספת לצמיתות?",
 	"portable.confirmBody": "להמיר {{count}} מופעים ולעדכן {{links}} קישורי כותרות ב־{{files}} פתקים?\nהפעולה משנה את הקבצים המקוריים ולא ניתן לבטל אותה דרך Callout Studio. לא נוצר גיבוי אוטומטי. יש לגבות את הכספת, לשמור פתקים פתוחים ולהשהות עריכה וסנכרון עד לסיום ההמרה.\nאם קובץ משתנה או כתיבה נכשלת, ההמרה נעצרת. פתקים שכבר הומרו נשארים לאחר השינוי.",
 	"portable.confirmAction": "המרה לצמיתות",
@@ -314,12 +308,6 @@ export const he: Record<string, string> = {
 	"portable.blockedNothingSelected": "יש לבחור לפחות החלפה אחת להמרה.",
 
 	"settings.maintenance": "אזור מסוכן",
-	"settings.vaultMaintenance": "סקירה ותחזוקה של הכספת",
-	"settings.vaultStats": "סטטיסטיקת תיבות־הבלטה",
-	"settings.vaultStatsDesc":
-		"ספירת כל תיבת־הבלטה בקובצי Markdown — בלוק, כותרת ומוטבעת — וחלוקה לפי סוג.",
-	"settings.vaultStatsButton": "צפייה בסטטיסטיקה",
-	"settings.vaultStatsScanning": "בסריקה...",
 	"settings.resetAll": "איפוס הכול",
 	"settings.resetAllDesc":
 		"מחיקת כל תיבות־ההבלטה המותאמות־אישית, איפוס תיבות מובנות, איפוס סגנונות גלובליים (מסגרות, קנה־מידה, צורה), מחיקת פלטות צבעים שמורות, איפוס התאמת תפריט הקליק־הימני ומחיקת קובצי Material SVG שהורדו.",
@@ -342,8 +330,6 @@ export const he: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "אל דאגה: לפני האיפוס נשמור גיבוי של התצורה הנוכחית שלכם. אפשר לשחזר אותו בכל עת מהקטע גיבויים בהגדרות.\nאם אתם משתמשים בשירות סנכרון, האיפוס עשוי להגיע גם למכשירים האחרים שלכם.",
 	"settings.resetNothing": "אין מה לאפס: הכול כבר בברירות־המחדל.",
 
-	"notice.customCommandsRemoved":
-		"הוסרו {{count}} פקודות מותאמות־אישית שסוג תיבת־ההבלטה שלהן כבר לא קיים.",
 	"notice.customCommandMissingCallout":
 		"סוג תיבת־ההבלטה של הפקודה הזו כבר לא קיים.",
 
@@ -365,10 +351,6 @@ export const he: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"לא ניתן לעדכן {{count}} פתקים, והם נשארו ללא שינוי. פרטים נוספים בקונסולת המפתחים.",
 	"notice.calloutDeleteIncomplete": "חלק מהפתקים לא ניתנים להמרה. סוג תיבת־ההבלטה נשמר. ההמרות שהושלמו נשמרו; טפלו בבעיית הקובץ והפעילו שוב את הפעולה כדי לסיים.",
-	"notice.settingsUnreadable":
-		"Callout Studio לא הצליח לקרוא את קובץ ההגדרות שלו, ולכן סוגי תיבות־ההבלטה שלכם חסרים בהפעלה זו. דבר לא נכתב והקובץ בדיסק לא השתנה — טענו מחדש את Obsidian כדי לנסות שוב.",
-	"notice.settingsMissing":
-		"קובץ ההגדרות של Callout Studio חסר, ולכן סוגי תיבות־ההבלטה שלכם חסרים בהפעלה זו. דבר לא נכתב — אם אתם מסנכרנים את הכספת הזו, המתינו לסיום הסנכרון וטענו מחדש את Obsidian לפני ביצוע שינויים.",
 	"notice.nothingToWrap": "אין תוכן לעטוף.",
 	"notice.cursorNotInsideCallout": "הסמן אינו נמצא בתוך תיבת־הבלטה.",
 	"notice.autocompleteTargetMoved":
@@ -414,7 +396,6 @@ export const he: Record<string, string> = {
 	"editor.paletteGroupObsidian": "תיבות־הבלטה של Obsidian",
 	"editor.paletteGroupPresets": "תבניות צבע",
 	"editor.paletteGroupCustom": "מותאם אישית",
-	"editor.paletteNewColor": "צבע חדש…",
 	"editor.contrastWarning":
 		"ניגודיות נמוכה מול הרקע — הטקסט עלול להיות קשה לקריאה",
 	"editor.foldable": "ניתן לקיפול",
@@ -427,7 +408,6 @@ export const he: Record<string, string> = {
 	"editor.saveChanges": "שמירת שינויים",
 	"editor.saving": "שומר…",
 	"editor.saveFailed": "השמירה לא הושלמה. אם העורך עדיין פתוח, השאירו אותו פתוח ונסו שוב אחרי בדיקת המקום הפנוי והסנכרון. ייתכן שחלק מההגדרות או מעדכוני הפתקים כבר נשמרו.",
-	"notice.settingsSaveFailed": "Callout Studio לא הצליח לשמור את השינויים. יש לבדוק מקום פנוי וסנכרון ולנסות שוב לפני סגירת Obsidian.",
 	"editor.createCallout": "יצירת תיבת־הבלטה",
 	"editor.nameRequired": "יש להזין שם לתצוגה לפני יצירת תיבת־הבלטה.",
 	"editor.noChangesToSave": "לא בוצעו שינויים.",
@@ -742,14 +722,9 @@ export const he: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "רישיונות וקרדיטים לאייקונים",
-	"credits.intro":
-		"Callout Studio משתמש בספריות אייקונים בקוד פתוח. אפשר לראות למטה את הרישיון, הייחוס והשינויים של כל ספרייה.",
-	"credits.fullNotices": "הודעות צד־שלישי המלאות",
 	"credits.introBeforeNotices":
 		"Callout Studio משתמש בספריות אייקונים בקוד פתוח; אפשר לראות למטה את הרישיון, הייחוס והשינויים של כל ספרייה, או לקרוא את ",
 	"credits.fullNoticesInline": "הודעות צד־שלישי המלאות",
-	"credits.pluginLicense":
-		"הקוד של Callout Studio עצמו מופץ ברישיון מתירני; ספריות האייקונים שומרות על הרישיונות שלהן.",
 
 	// Context Menu
 	"contextMenu.editCallout": "עריכת הגדרות תיבת־הבלטה",
@@ -770,8 +745,6 @@ export const he: Record<string, string> = {
 
 	// Global settings section (per-role style popups)
 	"settings.globalSettings": "אפשרויות העיצוב הגלובליות של Callout Studio",
-	"settings.globalSettingsScope":
-		"אלה הגדרות גלובליות: כל אחת מהן משנה בבת אחת את הצורה, הריווח והגודל של כל תיבת־הבלטה ש־Callout Studio מעצב. תיבות־הבלטה שערכת הנושא שלכם מעצבת שומרות על העיצוב המקורי שלה.",
 	"settings.globalSettingsRegularDesc":
 		"התאמת המסגרת, עיגול הפינות, קנה־המידה של הגופן והיישור של כל תיבת־הבלטה מסוג בלוק בכספת שלכם.",
 	"settings.globalSettingsHeadingDesc":
@@ -839,8 +812,6 @@ export const he: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{count}} הפניות ב־{{files}} קבצים משתמשות בכינויים מותאמים־אישית: {{aliases}}. הכינויים הללו יפסיקו לעבוד לאחר איפוס. להמשיך?",
 	"vault.resetConfirm": "איפוס",
-	"vault.resetAllInUse":
-		"⚠ {{count}} הפניות ב־{{files}} קבצים משתמשות בסוגי תיבות־הבלטה שעומדות להימחק.",
 
 	// Vault statistics modal
 	"quickInsert.title": "הוספה מהירה של תיבת־הבלטה מסוג בלוק",
@@ -865,29 +836,10 @@ export const he: Record<string, string> = {
 	"quickInsert.noEditorHint": "אין פתק פתוח במצב עריכה, ולכן לא ניתן להוסיף דבר.",
 	"quickInsert.noEditor": "פתחו פתק במצב עריכה כדי להוסיף תיבת־הבלטה.",
 
-	"vaultStats.title": "סטטיסטיקת תיבות־הבלטה",
-	"vaultStats.totalCallouts": "סך הכול תיבות־הבלטה",
-	"vaultStats.typesFound": "סוגים שנמצאו",
-	"vaultStats.filesWithCallouts": "קבצים המכילים תיבות־הבלטה",
-	"vaultStats.filesScanned": "קובצי Markdown שנסרקו",
-	"vaultStats.empty": "לא נמצאו תיבות־הבלטה בקובצי Markdown.",
 	"vaultStats.columnType": "סוג",
-	"vaultStats.columnName": "שם",
-	"vaultStats.columnSource": "מקור",
-	"vaultStats.columnCount": "כמות",
-	"vaultStats.columnFiles": "קבצים",
-	"vaultStats.unknown": "לא מוכר",
-	"vaultStats.sourceBuiltIn": "מובנה",
-	"vaultStats.sourceCustom": "מותאם־אישית",
-	"vaultStats.sourceAutoFallback": "ברירת־מחדל אוטומטית",
-	"vaultStats.sourceTheme": "מקטע CSS",
-	"vaultStats.sourceAlias": "כינוי של {{id}}",
-	"vaultStats.sourceUnknown": "לא מוכר",
-	"vaultStats.byRole": "נכתב כ־",
 	"vaultStats.roleBlock": "בלוק",
 	"vaultStats.roleHeading": "כותרת",
 	"vaultStats.roleInline": "מוטבע",
-	"vaultStats.close": "סגירה",
 
 	"usage.title": "מצאו תיבות־הבלטה",
 	"usage.command": "מופעי תיבות־הבלטה",
@@ -897,7 +849,6 @@ export const he: Record<string, string> = {
 	"usage.registeredCallouts": "תיבות־הבלטה רשומות",
 	"usage.unregisteredCallouts": "תיבות־הבלטה שאינן רשומות",
 	"usage.summary": "{{count}} מופעים ב־{{files}} קבצים",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "כל הפורמטים",
 	"usage.failed": "לא ניתן לעדכן את מופעי תיבות־ההבלטה.",
 	"usage.loading": "סריקת פתקי Markdown…",
@@ -1004,8 +955,6 @@ export const he: Record<string, string> = {
 	"footer.contribute": "תרומה",
 	"footer.license": "רישיון התוסף",
 	"footer.iconCredits": "רישיונות אייקונים",
-	"footer.tagline": "יש לכם משוב, הערות או הצעות? אשמח לשמוע!",
-	"footer.madeBy": "נוצר על־ידי ניב  •  ",
 
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded" הוגדר כ־true למרות ש־"foldable" הוגדר כ־false; לכן defaultFolded אופס בחזרה ל־false.',
@@ -1155,9 +1104,7 @@ export const he: Record<string, string> = {
 	"confirm.titleCreateSettingsFile": "יצירת קובץ הגדרות",
 	"confirm.saveDisplayedSettings":
 		"הפעולה שומרת את המצב שאתם רואים עכשיו כקובץ ההגדרות ומחזירה את השמירה לפעולה. העותק הרזרבי ששמור במכשיר הזה מגובה קודם.\nאם ייתכן שבמכשיר אחר יש שינויים חדשים יותר שאתם רוצים לשמור, כדאי לתת לו לסיים להסתנכרן לפני שממשיכים. אפליקציית הסנכרון עשויה לשלוח את הקובץ הזה למכשירים האחרים שלכם.\nCallout Studio מחפש את קובץ ההגדרות עוד פעם אחת לפני השמירה. אם הוא חזר, Callout Studio משאיר אותו במקום.",
-	"notice.settingsChangedElsewhere": "הגדרות Callout Studio השתנו במכשיר אחר, ולכן השינוי הזה לא נשמר. הגדרות המכשיר האחר נטענות כעת — יש לבצע את השינוי שוב.",
 	"notice.settingsNewerVersion": "הגדרות Callout Studio נשמרו על ידי גרסה חדשה יותר של התוסף, ולכן שום דבר לא יישמר במכשיר הזה עד שתעדכנו אותו. ההגדרות שלכם בטוחות — יש לעדכן את Callout Studio כאן ולטעון מחדש את Obsidian.",
-	"notice.settingsNotSaved": "השינוי הזה לא נשמר. Callout Studio לא הצליח להשתמש בקובץ ההגדרות שלו כשה-Obsidian הופעל, ולכן שום דבר לא נכתב במכשיר הזה — השינויים שלכם יישמרו עד שתסגרו את Obsidian. ראו הגדרות ← Callout Studio למה שניתן לעשות.",
 	"saveStatus.changed":
 		"קובץ ההגדרות השתנה בזמן שערכתם. הטיוטה שלכם עדיין זמינה. יש לבחור בניסיון נוסף כדי לטעון את ההגדרות שהגיעו, ואז לבדוק את הטיוטה ולשמור שוב.",
 	"saveStatus.missing": "השמירה מושהית מפני שקובץ ההגדרות חסר. זה יכול לקרות אחרי התקנה מחדש או בזמן שהסנכרון עדיין רץ. יש לסיים את הסנכרון ולנסות שוב. כדי להחליף את הקובץ החסר במכוון, יש להשתמש ביצירת קובץ הגדרות חדש בהגדרות Callout Studio.",
@@ -1226,20 +1173,14 @@ export const he: Record<string, string> = {
 	"notice.recoveryStorageUnavailable": "אחסון השחזור של המכשיר הזה לא מגיב, ולכן לא ניתן למחוק את העותק. יש להפעיל מחדש את Obsidian ולנסות שוב.",
 	"recovery.title": "שחזור תצורה קודמת",
 	"recovery.intro": "Callout Studio שומר גרסאות קודמות של התצורה שלכם על המכשיר הזה ובתיקיית הגיבויים של התוסף. שחזור אחת מהן מחליף את התצורה הנוכחית שלכם בכל מכשיר מסונכרן. גיבוי של התצורה הנוכחית נשמר קודם.",
-	"recovery.pausedHint": "השמירה מושהית, ולכן השחזור אינו זמין עד שהבעיה תיפתר. עדיין אפשר לייצא עותק.",
 	"recovery.loading": "מחפש גרסאות קודמות…",
 	"recovery.empty": "לא נמצאו גרסאות קודמות.",
 	"recovery.sectionHistory": "נשמר במכשיר הזה",
 	"recovery.sectionBackups": "גיבויים",
 	"recovery.sectionCopies": "עותקים נוספים של קובץ ההגדרות",
-	"recovery.originThisDevice": "המכשיר הזה",
-	"recovery.originOtherDevice": "מכשיר אחר",
-	"recovery.originOlderVersion": "נשמר בגרסה ישנה יותר",
 	"recovery.unreadable": "לא ניתן לקרוא כהגדרות",
 	"recovery.same": "זהה לתצורה הנוכחית שלכם",
 	"recovery.restoreSame": "התצורה הזו זהה לתצורה הנוכחית שלכם, ולכן אין מה לשחזר.",
-	"recovery.summary": "{{callouts}} סוגי תיבות־הבלטה שמורים, {{count}} הבדלים מהמצב הנוכחי",
-	"recovery.export": "ייצוא עותק",
 	"recovery.restore": "שחזור",
 	"recovery.confirmTitle": "שחזור התצורה הזו",
 	"recovery.confirmBody": "התצורה הנוכחית שלכם תוחלף בזו מתאריך {{when}} ({{count}} הבדלים). גיבוי של התצורה הנוכחית שלכם נשמר קודם, ושירות הסנכרון שלכם שולח את התצורה המשוחזרת למכשירים האחרים שלכם.",
@@ -1248,20 +1189,14 @@ export const he: Record<string, string> = {
 	"recovery.backupFailed": "שום דבר לא שוחזר: לא ניתן היה לשמור גיבוי של התצורה הנוכחית שלכם קודם. יש לבדוק את מקום האחסון הפנוי ולנסות שוב.",
 	"recovery.failed": "לא ניתן היה לשחזר את התצורה. שום דבר לא השתנה.",
 	"notice.unsavedChangesReplaced": "חלק מהשינויים שבוצעו במכשיר הזה טרם נשמרו, והגדרות חדשות יותר ממכשיר אחר החליפו אותם. הגרסה שלכם נשמרה קודם: יש לפתוח את שחזור תצורה קודמת בהגדרות Callout Studio כדי לקבל אותה בחזרה.",
-	"notice.diagnosticsCopied": "אבחון הסנכרון הועתק.",
-	"notice.diagnosticsFailed": "לא ניתן היה להעתיק את אבחון הסנכרון.",
 	"notice.recoveryCopyStale": "ההגדרות שלכם נשמרו, אך לא ניתן היה לעדכן את עותק השחזור של המכשיר הזה. יש לבדוק את מקום האחסון הפנוי במכשיר הזה. Callout Studio ינסה שוב בשינוי הבא שלכם.",
 	"notice.blockedWhilePaused": "השמירה מושהית, ולכן לא ניתן לשמור את השינוי הזה כרגע. יש לפתור קודם את בעיית השמירה המוצגת בהגדרות Callout Studio.",
 	"welcome.syncNote": "כבר משתמשים ב-Callout Studio במכשיר אחר? יש לתת לשירות הסנכרון שלכם להסתיים קודם. תיבות־ההבלטה וההגדרות שלכם יופיעו כאן ברגע שיגיעו.",
-	"settings.resetAllConfirmFull": "פעולה זו מוחקת כל סוג תיבת־הבלטה מותאם אישית, תמונה שהועלתה ופקודה מותאמת אישית, ומאפסת את תיבות־ההבלטה המובנות, הסגנונות הכלליים, פלטות הצבעים השמורות, תפריט לחצן העכבר הימני, הגדרות תיבות־ההבלטה בכותרות ובתוך השורה, וסגנון ברירת־המחדל. גיבוי של התצורה הנוכחית שלכם נשמר קודם בתיקיית הגיבויים של התוסף. שירות הסנכרון שלכם עשוי לשלוח את האיפוס למכשירים האחרים שלכם.",
 	"settings.resetBackupFailed": "שום דבר לא אופס: לא ניתן היה לשמור גיבוי של התצורה הנוכחית שלכם קודם. יש לבדוק את מקום האחסון הפנוי ולנסות שוב.",
 	"settings.resetNotSaved": "האיפוס מוצג אך טרם ניתן היה לשמור אותו, כך שקובץ ההגדרות שלכם עדיין מכיל את התצורה הקודמת. יש לבדוק את מצב השמירה בהגדרות Callout Studio.",
 	"settings.recovery": "תצורות קודמות",
 	"settings.recoveryDesc": "שחזור גרסה של התצורה שלכם שנשמרה קודם במכשיר הזה או בתיקיית הגיבויים של התוסף.",
 	"settings.recoveryButton": "שחזור תצורה קודמת",
-	"settings.diagnostics": "אבחון סנכרון",
-	"settings.diagnosticsDesc": "העתקת סיכום של אופן פעולת השמירה והסנכרון, לצירוף לדיווח על תקלה. הוא לא מכיל תיבות־הבלטה או הגדרות.",
-	"settings.diagnosticsButton": "העתקת אבחון",
 	"confirm.titleResetEverything": "איפוס הכול",
 	"confirm.titleReplaceUnreadable": "החלפת קובץ ההגדרות",
 	"confirm.replaceUnreadable": "עותק מדויק של הקובץ הנוכחי נשמר קודם בתיקיית הגיבויים של התוסף. לאחר מכן הקובץ מוחלף בתצורה המוצגת כאן, ושירות הסנכרון שלכם שולח אותה למכשירים האחרים שלכם.",

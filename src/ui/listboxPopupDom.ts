@@ -222,7 +222,7 @@ export interface FooterRowSpec {
 }
 
 /**
- * The optional row pinned below the list — the palette picker's "+ New color…".
+ * The optional row pinned below the list — the palette picker's Create "name" row.
  *
  * It is an action, not an item, which is why it is built here rather than
  * through the caller's `renderRow` and why the popup keeps it out of the array

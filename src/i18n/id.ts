@@ -104,7 +104,6 @@ export const id: Record<string, string> = {
 
 	"settings.editAria": "Sunting {{name}}",
 	"settings.moreRowActionsAria": "Tindakan lainnya untuk {{name}}",
-	"settings.usageInfo": "{{count}} penggunaan di {{files}} file",
 	"settings.replaceAction": "Ganti di vault",
 	"settings.deleteAction": "Hapus",
 	"settings.duplicateAction": "Duplikasikan",
@@ -128,7 +127,6 @@ export const id: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Tipe callout yang tidak dikenal di vault Anda akan mewarisi gaya callout ini.",
 
-	"settings.globalStyle": "Gaya callout global",
 	"settings.globalStyleRegularTitle": "Gaya global callout blok",
 	"settings.globalStyleHeadingTitle": "Gaya global callout judul",
 	"settings.globalStyleInlineTitle": "Gaya global callout sebaris",
@@ -223,12 +221,6 @@ export const id: Record<string, string> = {
 	"commandBuilder.noCalloutChosen": "Pilih callout untuk perintah ini terlebih dahulu.",
 	"commandBuilder.save": "Simpan",
 
-	"settings.vaultMaintenance": "Wawasan & pemeliharaan vault",
-	"settings.vaultStats": "Statistik callout",
-	"settings.vaultStatsDesc":
-		"Menghitung setiap callout di catatan Markdown Anda — blok, judul, dan sebaris — lalu mengelompokkannya berdasarkan tipe.",
-	"settings.vaultStatsButton": "Lihat statistik",
-	"settings.vaultStatsScanning": "Memindai",
 	"settings.resetAll": "Reset",
 	"settings.resetAllDesc":
 		"Menghapus semua callout pengguna, mereset callout bawaan, gaya global (batas, skala font, bentuk), palet warna tersimpan, penyesuaian menu klik kanan, dan SVG Material yang diunduh.",
@@ -251,8 +243,6 @@ export const id: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "Tenang: sebelum mereset, kami menyimpan cadangan penyiapan Anda saat ini. Anda bisa memulihkannya kapan saja dari bagian Cadangan di pengaturan.\nJika Anda memakai layanan sinkronisasi, reset ini mungkin juga sampai ke perangkat Anda yang lain.",
 	"settings.resetNothing": "Tidak ada yang perlu direset: semuanya sudah di pengaturan default.",
 
-	"notice.customCommandsRemoved":
-		"Menghapus {{count}} perintah kustom yang tipe callout-nya sudah tidak ada.",
 	"notice.customCommandMissingCallout":
 		"Tipe callout untuk perintah tersebut sudah tidak ada.",
 
@@ -274,10 +264,6 @@ export const id: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} catatan tidak dapat diperbarui dan dibiarkan tidak berubah. Lihat konsol pengembang untuk detailnya.",
 	"notice.calloutDeleteIncomplete": "Beberapa catatan tidak dapat dikonversi. Tipe callout dipertahankan. Konversi yang selesai telah disimpan; atasi masalah berkas, lalu jalankan lagi tindakan tersebut untuk menyelesaikannya.",
-	"notice.settingsUnreadable":
-		"Callout Studio tidak dapat membaca file pengaturannya, sehingga jenis callout Anda hilang dari sesi ini. Tidak ada yang ditulis dan file di disk tidak berubah — muat ulang Obsidian untuk mencoba lagi.",
-	"notice.settingsMissing":
-		"File pengaturan Callout Studio hilang, sehingga jenis callout Anda hilang dari sesi ini. Tidak ada yang ditulis — jika Anda menyinkronkan vault ini, biarkan sinkronisasi selesai dan muat ulang Obsidian sebelum membuat perubahan apa pun.",
 	"notice.nothingToWrap": "Tidak ada yang perlu dibungkus.",
 	"notice.cursorNotInsideCallout": "Kursor tidak berada di dalam callout.",
 	"notice.autocompleteTargetMoved":
@@ -323,7 +309,6 @@ export const id: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Callout Obsidian",
 	"editor.paletteGroupPresets": "Preset warna",
 	"editor.paletteGroupCustom": "Kustom",
-	"editor.paletteNewColor": "Warna baru…",
 	"editor.contrastWarning":
 		"Kontras rendah terhadap latar belakang — mungkin sulit dibaca",
 	"editor.foldable": "Dapat dilipat",
@@ -336,7 +321,6 @@ export const id: Record<string, string> = {
 	"editor.saveChanges": "Simpan perubahan",
 	"editor.saving": "Menyimpan…",
 	"editor.saveFailed": "Penyimpanan tidak dapat diselesaikan. Jika editor ini masih terbuka, biarkan tetap terbuka dan coba lagi setelah memeriksa penyimpanan serta sinkronisasi. Beberapa pengaturan atau perubahan catatan mungkin sudah tersimpan.",
-	"notice.settingsSaveFailed": "Callout Studio tidak dapat menyimpan perubahan Anda. Periksa ruang penyimpanan dan sinkronisasi, lalu coba lagi sebelum menutup Obsidian.",
 	"editor.createCallout": "Buat callout",
 	"editor.nameRequired": "Nama tampilan diperlukan sebelum membuat callout.",
 	"editor.noChangesToSave": "Tidak ada perubahan yang dibuat.",
@@ -654,14 +638,9 @@ export const id: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "Lisensi ikon dan kredit",
-	"credits.intro":
-		"Callout Studio menggunakan pustaka ikon sumber terbuka. Lihat lisensi, atribusi, dan modifikasi tiap pustaka di bawah.",
-	"credits.fullNotices": "Pemberitahuan pihak ketiga lengkap",
 	"credits.introBeforeNotices":
 		"Callout Studio menggunakan pustaka ikon sumber terbuka; lihat lisensi, atribusi, dan modifikasi tiap pustaka di bawah, atau baca ",
 	"credits.fullNoticesInline": "pemberitahuan pihak ketiga lengkap",
-	"credits.pluginLicense":
-		"Kode milik Callout Studio sendiri berada di bawah lisensi permissive; pustaka ikon mempertahankan lisensinya sendiri.",
 
 	"contextMenu.editCallout": "Edit pengaturan callout",
 	"contextMenu.createCallout": "Buat callout baru",
@@ -679,8 +658,6 @@ export const id: Record<string, string> = {
 	"heading.toggleFold": "Alihkan lipatan",
 
 	"settings.globalSettings": "Opsi gaya global Callout Studio",
-	"settings.globalSettingsScope":
-		"Ini adalah pengaturan global: masing-masing sekaligus mengubah bentuk, jarak, dan ukuran setiap callout yang ditata gayanya oleh Callout Studio. Callout yang ditata gayanya oleh tema Anda tetap mempertahankan desain tema itu sendiri.",
 	"settings.globalSettingsRegularDesc":
 		"Sesuaikan batas, radius, skala font, dan perataan setiap block callout di vault Anda.",
 	"settings.globalSettingsHeadingDesc":
@@ -742,8 +719,6 @@ export const id: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{count}} referensi di {{files}} file menggunakan alias kustom: {{aliases}}. Ini akan berhenti berfungsi setelah reset. Lanjutkan?",
 	"vault.resetConfirm": "Reset",
-	"vault.resetAllInUse":
-		"⚠ {{count}} referensi callout di {{files}} file menggunakan tipe callout kustom yang akan dihapus.",
 
 	"quickInsert.title": "Sisipan cepat callout blok",
 	"quickInsert.desc": "Pilih callout untuk disisipkan di posisi kursor. Hanya callout blok.",
@@ -767,29 +742,10 @@ export const id: Record<string, string> = {
 	"quickInsert.noEditorHint": "Tidak ada catatan yang terbuka dalam mode edit, jadi tidak ada yang dapat disisipkan.",
 	"quickInsert.noEditor": "Buka catatan dalam mode edit untuk menyisipkan callout.",
 
-	"vaultStats.title": "Statistik callout",
-	"vaultStats.totalCallouts": "Total callout",
-	"vaultStats.typesFound": "Tipe yang ditemukan",
-	"vaultStats.filesWithCallouts": "File dengan callout",
-	"vaultStats.filesScanned": "File Markdown yang dipindai",
-	"vaultStats.empty": "Tidak ada callout yang ditemukan di catatan Markdown.",
 	"vaultStats.columnType": "Tipe",
-	"vaultStats.columnName": "Nama",
-	"vaultStats.columnSource": "Sumber",
-	"vaultStats.columnCount": "Jumlah",
-	"vaultStats.columnFiles": "File",
-	"vaultStats.unknown": "Tidak diketahui",
-	"vaultStats.sourceBuiltIn": "Bawaan",
-	"vaultStats.sourceCustom": "Kustom",
-	"vaultStats.sourceAutoFallback": "Fallback otomatis",
-	"vaultStats.sourceTheme": "Cuplikan CSS",
-	"vaultStats.sourceAlias": "Alias dari {{id}}",
-	"vaultStats.sourceUnknown": "Tidak diketahui",
-	"vaultStats.byRole": "Ditulis sebagai",
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Judul",
 	"vaultStats.roleInline": "Sebaris",
-	"vaultStats.close": "Tutup",
 	"portable.subtitle": "Pilih callout judul dan sebaris yang akan dikonversi ke Markdown standar sebelum berhenti menggunakan Callout Studio.",
 	"portable.customize": "Penggantian khusus…",
 	"portable.editCustom": "Edit penggantian khusus…",
@@ -809,7 +765,6 @@ export const id: Record<string, string> = {
 	"usage.registeredCallouts": "Callout terdaftar",
 	"usage.unregisteredCallouts": "Callout tidak terdaftar",
 	"usage.summary": "{{count}} kemunculan di {{files}} file",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "Semua format",
 	"usage.failed": "Tidak dapat memperbarui kemunculan callout.",
 	"usage.loading": "Memindai catatan Markdown…",
@@ -1014,9 +969,6 @@ export const id: Record<string, string> = {
 	"footer.contribute": "Berkontribusi",
 	"footer.license": "Lisensi plugin",
 	"footer.iconCredits": "Lisensi ikon",
-	"footer.tagline":
-		"Ada umpan balik, komentar, atau saran? Saya ingin mendengarnya!",
-	"footer.madeBy": "Dibuat oleh Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Hapus palet "{{name}}"?\n1 callout menggunakannya. Ia tetap mempertahankan warnanya, dan Anda bisa menyambungkannya lagi nanti dari baris Warna di editornya.',
 	"settings.deletePaletteConfirmLinked":
@@ -1070,10 +1022,7 @@ export const id: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"Ini menyimpan pengaturan yang Anda lihat sekarang sebagai file pengaturan Anda dan mengaktifkan penyimpanan kembali. Salinan cadangan yang disimpan perangkat ini dicadangkan lebih dulu.\nJika perangkat lain mungkin memiliki perubahan lebih baru yang ingin Anda pertahankan, biarkan perangkat itu selesai menyinkronkan sebelum melanjutkan. Aplikasi sinkronisasi Anda dapat mengirim file ini ke perangkat Anda yang lain.\nCallout Studio mencari file pengaturan sekali lagi sebelum menyimpan. Jika file itu sudah kembali, Callout Studio mempertahankannya.",
 	"notice.settingsBackupFailed": "Pemulihan pengaturan tidak dapat dilanjutkan karena cadangan keamanan tidak dapat disimpan. Periksa penyimpanan yang tersedia dan izin tulis, lalu coba lagi.",
-	"notice.settingsBackupSaved": "Salinan pemulihan definisi callout lokal disimpan sebelum menerapkan pengaturan yang masuk: {{path}}.",
-	"notice.settingsChangedElsewhere": "Pengaturan Callout Studio diubah di perangkat lain, sehingga perubahan ini tidak disimpan. Pengaturan dari perangkat lain sedang dimuat sekarang — silakan lakukan perubahan itu lagi.",
 	"notice.settingsNewerVersion": "Pengaturan Callout Studio disimpan oleh versi plugin yang lebih baru, sehingga tidak ada yang akan ditulis di perangkat ini hingga Anda memperbaruinya. Pengaturan Anda aman — perbarui Callout Studio di sini dan muat ulang Obsidian.",
-	"notice.settingsNotSaved": "Perubahan itu tidak disimpan. Callout Studio tidak dapat menggunakan file pengaturannya saat Obsidian dimulai, sehingga tidak ada yang ditulis di perangkat ini — perubahan Anda akan bertahan hingga Anda menutup Obsidian. Lihat Pengaturan → Callout Studio untuk mengetahui apa yang harus dilakukan.",
 	"saveStatus.changed":
 		"File pengaturan berubah saat Anda mengedit. Draf Anda masih tersedia. Pilih Coba lagi untuk memuat pengaturan yang masuk, lalu tinjau draf Anda dan simpan lagi.",
 	"saveStatus.missing": "Penyimpanan dijeda karena file pengaturan hilang. Ini bisa terjadi setelah pemasangan ulang atau saat sinkronisasi masih berjalan. Selesaikan sinkronisasi dan coba lagi. Untuk mengganti file yang hilang secara sengaja, gunakan Buat file pengaturan baru di pengaturan Callout Studio.",
@@ -1108,7 +1057,6 @@ export const id: Record<string, string> = {
 	"portable.selectionConflict": "Pilihan itu akan membuat tautan judul menjadi ambigu. Pilihan sebelumnya dipertahankan.",
 	"portable.selectAll": "Pilih semua",
 	"portable.selectNone": "Batalkan semua pilihan",
-	"portable.waiting": "Catatan berubah. Memperbarui tinjauan…",
 	"portable.relatedLinksHint": "Tautan dan sematan mengikuti judul yang dipilih dan dikonversi bersamanya.",
 	"portable.selectChange": "Konversi {{path}}, baris {{line}}",
 	"portable.showMore": "Tampilkan {{count}} lagi",
@@ -1135,10 +1083,8 @@ export const id: Record<string, string> = {
 	"portable.backup": "Sebaiknya cadangkan vault sebelum mengonversi. Tindakan ini mengubah catatan asli dan tidak dapat dibatalkan di Callout Studio.",
 	"portable.scanning": "Membaca catatan Markdown…",
 	"portable.progress": "Membaca catatan: {{done}} dari {{total}}",
-	"portable.summary": "{{count}} penggantian dalam {{files}} catatan · {{headings}} pada judul · {{inline}} sebaris",
 	"portable.empty": "Tidak ditemukan callout judul atau sebaris yang dapat dikonversi. Tidak ada yang akan diubah.",
 	"portable.skipped": "{{count}} kemunculan yang tidak lengkap atau tidak didukung dibiarkan tanpa perubahan untuk ditinjau secara manual.",
-	"portable.location": "{{path}} · baris {{line}}",
 	"portable.confirmTitle": "Konversikan vault ini secara permanen?",
 	"portable.confirmBody": "Konversikan {{count}} kemunculan dan perbarui {{links}} tautan judul dalam {{files}} catatan?\nTindakan ini mengubah berkas asli dan tidak dapat dibatalkan di Callout Studio. Cadangan tidak dibuat secara otomatis. Cadangkan vault terlebih dahulu, simpan catatan yang terbuka, lalu jeda penyuntingan dan sinkronisasi hingga konversi selesai.\nJika berkas berubah atau penulisan gagal, konversi berhenti. Catatan yang sudah dikonversi tetap berubah.",
 	"portable.confirmAction": "Konversi secara permanen",
@@ -1205,20 +1151,14 @@ export const id: Record<string, string> = {
 	"notice.recoveryStorageUnavailable": "Penyimpanan pemulihan perangkat ini tidak merespons, sehingga salinan tidak dapat dibuang. Mulai ulang Obsidian, lalu coba lagi.",
 	"recovery.title": "Pulihkan konfigurasi sebelumnya",
 	"recovery.intro": "Callout Studio menyimpan versi sebelumnya dari konfigurasi Anda di perangkat ini dan di folder cadangan plugin. Memulihkan salah satunya akan mengganti konfigurasi Anda saat ini di setiap perangkat yang tersinkronisasi. Cadangan konfigurasi saat ini disimpan terlebih dahulu.",
-	"recovery.pausedHint": "Penyimpanan dijeda, sehingga pemulihan tidak tersedia hingga masalah ini teratasi. Anda tetap dapat mengekspor salinan.",
 	"recovery.loading": "Mencari versi sebelumnya…",
 	"recovery.empty": "Tidak ditemukan versi sebelumnya.",
 	"recovery.sectionHistory": "Disimpan di perangkat ini",
 	"recovery.sectionBackups": "Cadangan",
 	"recovery.sectionCopies": "Salinan lain dari berkas pengaturan",
-	"recovery.originThisDevice": "Perangkat ini",
-	"recovery.originOtherDevice": "Perangkat lain",
-	"recovery.originOlderVersion": "Disimpan oleh versi yang lebih lama",
 	"recovery.unreadable": "Tidak dapat dibaca sebagai pengaturan",
 	"recovery.same": "Sama seperti konfigurasi Anda saat ini",
 	"recovery.restoreSame": "Pengaturan ini sama dengan pengaturan Anda saat ini, jadi tidak ada yang perlu dipulihkan.",
-	"recovery.summary": "{{callouts}} tipe callout tersimpan, {{count}} perbedaan dari sekarang",
-	"recovery.export": "Ekspor salinan",
 	"recovery.restore": "Pulihkan",
 	"recovery.confirmTitle": "Pulihkan konfigurasi ini",
 	"recovery.confirmBody": "Konfigurasi Anda saat ini akan diganti dengan yang dari {{when}} ({{count}} perbedaan). Cadangan konfigurasi Anda saat ini disimpan terlebih dahulu, dan layanan sinkronisasi Anda mengirim konfigurasi yang dipulihkan ke perangkat lain Anda.",
@@ -1227,20 +1167,14 @@ export const id: Record<string, string> = {
 	"recovery.backupFailed": "Tidak ada yang dipulihkan: cadangan konfigurasi Anda saat ini tidak dapat disimpan terlebih dahulu. Periksa penyimpanan yang tersedia, lalu coba lagi.",
 	"recovery.failed": "Konfigurasi tidak dapat dipulihkan. Tidak ada yang berubah.",
 	"notice.unsavedChangesReplaced": "Beberapa perubahan yang dibuat di perangkat ini belum tersimpan, dan pengaturan terbaru dari perangkat lain menggantikannya. Versi Anda disimpan terlebih dahulu: buka Pulihkan konfigurasi sebelumnya di pengaturan Callout Studio untuk mengambilnya kembali.",
-	"notice.diagnosticsCopied": "Diagnostik sinkronisasi disalin.",
-	"notice.diagnosticsFailed": "Diagnostik sinkronisasi tidak dapat disalin.",
 	"notice.recoveryCopyStale": "Pengaturan Anda telah disimpan, tetapi salinan pemulihan perangkat ini tidak dapat diperbarui. Periksa penyimpanan yang tersedia di perangkat ini. Callout Studio akan mencoba lagi pada perubahan berikutnya.",
 	"notice.blockedWhilePaused": "Penyimpanan dijeda, sehingga perubahan ini tidak dapat disimpan saat ini. Selesaikan dahulu masalah penyimpanan yang ditampilkan di pengaturan Callout Studio.",
 	"welcome.syncNote": "Sudah menggunakan Callout Studio di perangkat lain? Biarkan layanan sinkronisasi Anda selesai terlebih dahulu. Callout dan pengaturan Anda akan muncul di sini setelah tiba.",
-	"settings.resetAllConfirmFull": "Ini menghapus setiap tipe callout kustom, gambar yang diunggah, dan perintah kustom, serta mengatur ulang callout bawaan, gaya global, palet warna tersimpan, menu klik kanan, pengaturan callout heading dan inline, serta gaya cadangan. Cadangan konfigurasi Anda saat ini disimpan terlebih dahulu di folder cadangan plugin. Layanan sinkronisasi Anda mungkin mengirim reset ini ke perangkat lain Anda.",
 	"settings.resetBackupFailed": "Tidak ada yang direset: cadangan konfigurasi Anda saat ini tidak dapat disimpan terlebih dahulu. Periksa penyimpanan yang tersedia, lalu coba lagi.",
 	"settings.resetNotSaved": "Reset ditampilkan tetapi belum dapat disimpan, sehingga berkas pengaturan Anda masih menyimpan konfigurasi sebelumnya. Periksa status penyimpanan di pengaturan Callout Studio.",
 	"settings.recovery": "Konfigurasi sebelumnya",
 	"settings.recoveryDesc": "Pulihkan versi konfigurasi Anda yang disimpan sebelumnya di perangkat ini atau di folder cadangan plugin.",
 	"settings.recoveryButton": "Pulihkan konfigurasi sebelumnya",
-	"settings.diagnostics": "Diagnostik sinkronisasi",
-	"settings.diagnosticsDesc": "Salin ringkasan cara kerja penyimpanan dan sinkronisasi, untuk disertakan dalam laporan bug. Ringkasan ini tidak berisi callout atau pengaturan.",
-	"settings.diagnosticsButton": "Salin diagnostik",
 	"confirm.titleResetEverything": "Reset semuanya",
 	"confirm.titleReplaceUnreadable": "Ganti berkas pengaturan",
 	"confirm.replaceUnreadable": "Salinan persis dari berkas saat ini disimpan terlebih dahulu ke folder cadangan plugin. Berkas kemudian diganti dengan konfigurasi yang ditampilkan di sini, dan layanan sinkronisasi Anda mengirimkannya ke perangkat lain Anda.",

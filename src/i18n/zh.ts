@@ -8,7 +8,6 @@ export const zh: Record<string, string> = {
 	"portable.selectionConflict": "此选择会导致标题链接的目标不明确。已保留之前的选择。",
 	"portable.selectAll": "全选",
 	"portable.selectNone": "取消全选",
-	"portable.waiting": "笔记已更改。正在更新预览…",
 	"portable.relatedLinksHint": "链接和嵌入内容会随所选标题一起转换。",
 	"portable.selectChange": "转换 {{path}}，第 {{line}} 行",
 	"portable.showMore": "再显示 {{count}} 项",
@@ -35,10 +34,8 @@ export const zh: Record<string, string> = {
 	"portable.backup": "建议在转换前备份仓库。此操作会修改原始笔记，且无法在 Callout Studio 中撤销。",
 	"portable.scanning": "正在读取 Markdown 笔记…",
 	"portable.progress": "正在读取笔记：{{done}} / {{total}}",
-	"portable.summary": "{{files}} 篇笔记中有 {{count}} 处替换 · 标题中 {{headings}} 处 · 行内 {{inline}} 处",
 	"portable.empty": "未找到可转换的标题或行内 callout。不会进行任何更改。",
 	"portable.skipped": "{{count}} 处不完整或不受支持的内容保持原样，留待手动检查。",
-	"portable.location": "{{path}} · 第 {{line}} 行",
 	"portable.confirmTitle": "永久转换此仓库？",
 	"portable.confirmBody": "转换 {{files}} 篇笔记中的 {{count}} 处内容，并更新 {{links}} 个标题链接？\n此操作会修改原始文件，且无法在 Callout Studio 中撤销。系统不会自动创建备份。请先备份仓库、保存已打开的笔记，并暂停编辑和同步，直到转换完成。\n如果文件发生更改或写入失败，转换将停止。已转换的笔记会保留更改。",
 	"portable.confirmAction": "永久转换",
@@ -157,7 +154,6 @@ export const zh: Record<string, string> = {
 
 	"settings.editAria": "编辑 {{name}}",
 	"settings.moreRowActionsAria": "{{name}} 的更多操作",
-	"settings.usageInfo": "在 {{files}} 个文件中使用了 {{count}} 次",
 	"settings.replaceAction": "在库中替换",
 	"settings.deleteAction": "删除",
 	"settings.duplicateAction": "复制",
@@ -182,7 +178,6 @@ export const zh: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"库中无法识别的 callout 类型将继承此 callout 的样式。",
 
-	"settings.globalStyle": "全局 callout 样式",
 	"settings.globalStyleRegularTitle": "全局块状 callout 样式",
 	"settings.globalStyleHeadingTitle": "全局标题 callout 样式",
 	"settings.globalStyleInlineTitle": "全局行内 callout 样式",
@@ -276,12 +271,6 @@ export const zh: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"已暂停：您的主题提供了此 callout，因此它只有 Block 格式。当主题不再提供它时，此命令将重新生效。",
 
-	"settings.vaultMaintenance": "库洞察与维护",
-	"settings.vaultStats": "Callout 统计",
-	"settings.vaultStatsDesc":
-		"统计 Markdown 笔记中的每个 callout（块级、标题和行内）并按类型分组。",
-	"settings.vaultStatsButton": "查看统计",
-	"settings.vaultStatsScanning": "扫描中",
 	"settings.resetAll": "重置",
 	"settings.resetAllDesc":
 		"删除所有用户 callout，重置内置 callout、全局样式（边框、字体缩放、形状）、已保存的调色板、右键菜单自定义设置和已下载的 Material SVG。",
@@ -304,8 +293,6 @@ export const zh: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "别担心：重置之前，我们会先保存当前设置的备份。你可以随时在设置的“备份”部分恢复。\n如果你使用同步服务，重置也可能同步到你的其他设备。",
 	"settings.resetNothing": "没有需要重置的内容：一切都已是默认值。",
 
-	"notice.customCommandsRemoved":
-		"已移除 {{count}} 个 callout 类型已不存在的自定义命令。",
 	"notice.customCommandMissingCallout": "该命令的 callout 类型已不存在。",
 	"notice.importedJSON": "已从 JSON 导入 {{count}} 个 callout 类型。",
 	"notice.importedSettings": "已导入插件设置。",
@@ -323,10 +310,6 @@ export const zh: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"有 {{count}} 条笔记无法更新，已保持不变。详情请查看开发者控制台。",
 	"notice.calloutDeleteIncomplete": "部分笔记无法转换。callout 类型已保留。已完成的转换已保存；请解决文件问题，然后再次运行该操作以完成。",
-	"notice.settingsUnreadable":
-		"Callout Studio 无法读取其设置文件，因此本次会话中缺少你的 callout 类型。未写入任何内容，磁盘上的文件也未更改——重新加载 Obsidian 以重试。",
-	"notice.settingsMissing":
-		"Callout Studio 的设置文件缺失，因此本次会话中缺少你的 callout 类型。未写入任何内容——如果你正在同步此仓库，请等待同步完成后再重新加载 Obsidian，然后再进行任何更改。",
 
 	"notice.nothingToWrap": "没有可包裹的内容。",
 	"notice.cursorNotInsideCallout": "光标不在 callout 内部。",
@@ -371,7 +354,6 @@ export const zh: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Obsidian callout",
 	"editor.paletteGroupPresets": "颜色预设",
 	"editor.paletteGroupCustom": "自定义",
-	"editor.paletteNewColor": "新建颜色…",
 	"editor.contrastWarning": "与背景对比度过低——可能难以阅读",
 	"editor.foldable": "可折叠",
 	"editor.foldableDesc":
@@ -383,7 +365,6 @@ export const zh: Record<string, string> = {
 	"editor.saveChanges": "保存更改",
 	"editor.saving": "正在保存…",
 	"editor.saveFailed": "无法完成保存。如果此编辑器仍处于打开状态，请保持打开，检查存储空间和同步状态后重试。部分设置或笔记更改可能已经保存。",
-	"notice.settingsSaveFailed": "Callout Studio 无法保存您的更改。请检查可用存储空间和同步状态，并在关闭 Obsidian 前重试。",
 	"editor.createCallout": "创建 callout",
 	"editor.nameRequired": "创建 callout 前需要提供显示名称。",
 	"editor.noChangesToSave": "没有做任何更改。",
@@ -696,14 +677,9 @@ export const zh: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "图标许可证与致谢",
-	"credits.intro":
-		"Callout Studio 使用开源图标库。请在下方查看每个库的许可证、署名和修改内容。",
-	"credits.fullNotices": "完整的第三方声明",
 	"credits.introBeforeNotices":
 		"Callout Studio 使用开源图标库；请在下方查看每个库的许可证、署名和修改内容，或阅读",
 	"credits.fullNoticesInline": "完整的第三方声明",
-	"credits.pluginLicense":
-		"Callout Studio 自身代码采用 permissive 许可证；图标库保留各自的许可证。",
 
 	"contextMenu.editCallout": "编辑 callout 设置",
 	"contextMenu.createCallout": "创建新的 callout",
@@ -721,8 +697,6 @@ export const zh: Record<string, string> = {
 	"heading.toggleFold": "切换折叠",
 
 	"settings.globalSettings": "Callout Studio 全局样式选项",
-	"settings.globalSettingsScope":
-		"这些是全局设置：每一项都会一次性更改 Callout Studio 所设置样式的每个 callout 的形状、间距和大小。您主题设置样式的 callout 保留主题自身的设计。",
 	"settings.globalSettingsRegularDesc":
 		"调整库中每个 block callout 的边框、圆角、字体缩放和对齐方式。",
 	"settings.globalSettingsHeadingDesc":
@@ -782,8 +756,6 @@ export const zh: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{files}} 个文件中有 {{count}} 个引用使用了自定义别名：{{aliases}}。重置后这些别名将失效。继续？",
 	"vault.resetConfirm": "重置",
-	"vault.resetAllInUse":
-		"⚠ {{files}} 个文件中有 {{count}} 个 callout 引用使用了将被删除的自定义 callout 类型。",
 
 	"quickInsert.title": "快速插入块级 callout",
 	"quickInsert.desc": "选择要插入光标位置的 callout。仅限块级 callout。",
@@ -805,29 +777,10 @@ export const zh: Record<string, string> = {
 	"quickInsert.noEditorHint": "没有笔记以编辑模式打开，因此无法插入任何内容。",
 	"quickInsert.noEditor": "以编辑模式打开一篇笔记来插入 callout。",
 
-	"vaultStats.title": "Callout 统计",
-	"vaultStats.totalCallouts": "Callout 总数",
-	"vaultStats.typesFound": "发现的类型",
-	"vaultStats.filesWithCallouts": "包含 callout 的文件",
-	"vaultStats.filesScanned": "已扫描的 Markdown 文件",
-	"vaultStats.empty": "在 Markdown 笔记中未找到 callout。",
 	"vaultStats.columnType": "类型",
-	"vaultStats.columnName": "名称",
-	"vaultStats.columnSource": "来源",
-	"vaultStats.columnCount": "数量",
-	"vaultStats.columnFiles": "文件",
-	"vaultStats.unknown": "未知",
-	"vaultStats.sourceBuiltIn": "内置",
-	"vaultStats.sourceCustom": "自定义",
-	"vaultStats.sourceAutoFallback": "自动回退",
-	"vaultStats.sourceTheme": "CSS 片段",
-	"vaultStats.sourceAlias": "{{id}} 的别名",
-	"vaultStats.sourceUnknown": "未知",
-	"vaultStats.byRole": "写作形式",
 	"vaultStats.roleBlock": "块级",
 	"vaultStats.roleHeading": "标题",
 	"vaultStats.roleInline": "行内",
-	"vaultStats.close": "关闭",
 	"portable.subtitle": "停止使用 Callout Studio 前，选择要转换为标准 Markdown 的标题和行内 callout。",
 	"portable.customize": "自定义替换…",
 	"portable.editCustom": "编辑自定义替换…",
@@ -847,7 +800,6 @@ export const zh: Record<string, string> = {
 	"usage.registeredCallouts": "已注册的 Callout",
 	"usage.unregisteredCallouts": "未注册的 Callout",
 	"usage.summary": "{{files}} 个文件中有 {{count}} 处",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "所有格式",
 	"usage.failed": "无法更新 Callout 出现位置。",
 	"usage.loading": "正在扫描 Markdown 笔记…",
@@ -1032,8 +984,6 @@ export const zh: Record<string, string> = {
 	"footer.contribute": "参与贡献",
 	"footer.license": "插件许可证",
 	"footer.iconCredits": "图标许可证",
-	"footer.tagline": "有反馈、意见或建议？欢迎告诉我！",
-	"footer.madeBy": "由 Niv 制作  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		"删除调色板“{{name}}”？\n1 个 callout 正在使用它。它会保留原有颜色，你之后可以在其编辑器的颜色行重新关联。",
 	"settings.deletePaletteConfirmLinked":
@@ -1086,10 +1036,7 @@ export const zh: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"这会把你现在看到的配置保存为你的设置文件，并重新开启保存。这台设备保留的备用副本会先被备份。\n如果另一台设备上可能有你想保留的较新更改，请先让它完成同步再继续。你的同步应用可能会把这个文件发送到你的其他设备。\n保存之前，Callout Studio 会再查找一次设置文件。如果它已经回来，Callout Studio 会改为保留它。",
 	"notice.settingsBackupFailed": "设置恢复无法继续，因为无法保存安全备份。请检查可用存储空间和写入权限，然后重试。",
-	"notice.settingsBackupSaved": "在应用传入的设置之前，已保存本地 callout 定义的恢复副本：{{path}}。",
-	"notice.settingsChangedElsewhere": "Callout Studio 的设置在另一台设备上被更改，因此此更改未被保存。另一台设备的设置目前正在加载——请重新进行该更改。",
 	"notice.settingsNewerVersion": "Callout Studio 的设置已被更新版本的插件保存，因此在你更新之前，此设备上不会写入任何内容。你的设置是安全的——请在此处更新 Callout Studio 并重新加载 Obsidian。",
-	"notice.settingsNotSaved": "该更改未被保存。Obsidian 启动时 Callout Studio 无法使用其设置文件，因此此设备上不会写入任何内容——你的更改将保留，直到你关闭 Obsidian。请查看设置 → Callout Studio 了解应如何处理。",
 	"saveStatus.changed": "你编辑时，设置文件发生了变化。你的草稿仍然保留。请选择“重试”加载传入的设置，然后检查草稿并再次保存。",
 	"saveStatus.missing": "保存已暂停，因为设置文件缺失。这可能发生在重新安装之后，或同步仍在进行时。请完成同步后重试。若要有意替换缺失的文件，请在 Callout Studio 设置中使用创建新的设置文件。",
 	"saveStatus.restoreSettings": "恢复这些设置",
@@ -1153,20 +1100,14 @@ export const zh: Record<string, string> = {
 	"notice.recoveryStorageUnavailable": "此设备的恢复存储没有响应，因此无法丢弃该副本。请重启 Obsidian 后再试。",
 	"recovery.title": "恢复较早的设置",
 	"recovery.intro": "Callout Studio 会在此设备上以及插件的备份文件夹中保留你设置的较早版本。恢复其中一个版本会替换每台已同步设备上的当前设置。系统会先保存当前设置的一份备份。",
-	"recovery.pausedHint": "保存已暂停，因此在问题解决之前无法进行恢复。你仍然可以导出一份副本。",
 	"recovery.loading": "正在查找较早的版本……",
 	"recovery.empty": "未找到较早的版本。",
 	"recovery.sectionHistory": "已保存在此设备上",
 	"recovery.sectionBackups": "备份",
 	"recovery.sectionCopies": "设置文件的其他副本",
-	"recovery.originThisDevice": "此设备",
-	"recovery.originOtherDevice": "另一台设备",
-	"recovery.originOlderVersion": "由较旧版本保存",
 	"recovery.unreadable": "无法作为设置读取",
 	"recovery.same": "与你当前的设置相同",
 	"recovery.restoreSame": "此配置与当前配置相同，因此无需恢复。",
-	"recovery.summary": "已保存 {{callouts}} 个 callout 类型，与当前相比有 {{count}} 处差异",
-	"recovery.export": "导出副本",
 	"recovery.restore": "恢复",
 	"recovery.confirmTitle": "恢复此设置",
 	"recovery.confirmBody": "你当前的设置将被 {{when}} 的版本替换（{{count}} 处差异）。系统会先保存你当前设置的一份备份，随后你的同步服务会将恢复后的设置发送到你的其他设备。",
@@ -1175,20 +1116,14 @@ export const zh: Record<string, string> = {
 	"recovery.backupFailed": "未恢复任何内容：无法先保存你当前设置的备份。请检查可用存储空间，然后重试。",
 	"recovery.failed": "无法恢复该设置。未做任何更改。",
 	"notice.unsavedChangesReplaced": "此设备上所做的一些更改尚未保存，来自另一台设备的更新设置已将其替换。你的版本已先被保存：可在 Callout Studio 设置中打开恢复较早的设置将其找回。",
-	"notice.diagnosticsCopied": "同步诊断信息已复制。",
-	"notice.diagnosticsFailed": "无法复制同步诊断信息。",
 	"notice.recoveryCopyStale": "你的设置已保存，但此设备的恢复副本未能更新。请检查此设备上的可用存储空间。Callout Studio 会在你下次更改时重试。",
 	"notice.blockedWhilePaused": "保存已暂停，因此此更改目前无法保留。请先解决 Callout Studio 设置中显示的保存问题。",
 	"welcome.syncNote": "已经在另一台设备上使用 Callout Studio？请先让你的同步服务完成同步。你的 callout 和设置到达后会显示在这里。",
-	"settings.resetAllConfirmFull": "此操作会删除每一个自定义 callout 类型、已上传的图片和自定义命令，并重置内置 callout、全局样式、已保存的调色板、右键菜单、标题与内联 callout 设置以及后备样式。系统会先将你当前设置的备份保存到插件的备份文件夹中。你的同步服务可能会将此次重置发送到你的其他设备。",
 	"settings.resetBackupFailed": "未重置任何内容：无法先保存你当前设置的备份。请检查可用存储空间，然后重试。",
 	"settings.resetNotSaved": "重置已显示，但尚未能保存，因此你的设置文件仍保留之前的设置。请查看 Callout Studio 设置中的保存状态。",
 	"settings.recovery": "较早的设置",
 	"settings.recoveryDesc": "恢复此设备或插件备份文件夹中较早保存的某个设置版本。",
 	"settings.recoveryButton": "恢复较早的设置",
-	"settings.diagnostics": "同步诊断",
-	"settings.diagnosticsDesc": "复制一份关于保存和同步工作情况的摘要，用于附加到错误报告中。其中不包含任何 callout 或设置内容。",
-	"settings.diagnosticsButton": "复制诊断信息",
 	"confirm.titleResetEverything": "重置所有内容",
 	"confirm.titleReplaceUnreadable": "替换设置文件",
 	"confirm.replaceUnreadable": "系统会先将当前文件的一份精确副本保存到插件的备份文件夹中。随后该文件会被替换为此处显示的设置，你的同步服务会将其发送到你的其他设备。",

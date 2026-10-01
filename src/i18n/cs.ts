@@ -104,7 +104,6 @@ export const cs: Record<string, string> = {
 
 	"settings.editAria": "Upravit {{name}}",
 	"settings.moreRowActionsAria": "Další akce pro {{name}}",
-	"settings.usageInfo": "{{count}} použití v {{files}} souboru(ech)",
 	"settings.replaceAction": "Nahradit ve vaultu",
 	"settings.deleteAction": "Smazat",
 	"settings.duplicateAction": "Duplikovat",
@@ -128,7 +127,6 @@ export const cs: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Nerozpoznané typy callout ve vaultu zdědí styl tohoto callout.",
 
-	"settings.globalStyle": "Globální styl callout",
 	"settings.globalStyleRegularTitle": "Globální styl blokových calloutů",
 	"settings.globalStyleHeadingTitle": "Globální styl nadpisových calloutů",
 	"settings.globalStyleInlineTitle": "Globální styl vložených calloutů",
@@ -222,12 +220,6 @@ export const cs: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"Pozastaveno: tento callout dodává vaše téma, takže má pouze blokový formát. Tento příkaz bude znovu fungovat, jakmile jej téma přestane dodávat.",
 
-	"settings.vaultMaintenance": "Statistiky a údržba vaultu",
-	"settings.vaultStats": "Statistiky callout",
-	"settings.vaultStatsDesc":
-		"Počítá každý callout v poznámkách Markdown — blokový, nadpisový i vložený — a seskupuje je podle typu.",
-	"settings.vaultStatsButton": "Zobrazit statistiky",
-	"settings.vaultStatsScanning": "Prohledávání",
 	"settings.resetAll": "Obnovit",
 	"settings.resetAllDesc":
 		"Odstraní všechny callouts uživatele, obnoví vestavěné callouts, globální styly (ohraničení, měřítko písma, tvar), uložené barevné palety, přizpůsobení kontextové nabídky a stažené SVG Material.",
@@ -250,8 +242,6 @@ export const cs: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "Žádný strach: před obnovením uložíme zálohu vaší aktuální konfigurace. Můžete ji kdykoli obnovit v části Zálohy v nastavení.\nPokud používáte synchronizační službu, obnovení se může přenést i na vaše další zařízení.",
 	"settings.resetNothing": "Není co obnovovat: vše je již ve výchozím stavu.",
 
-	"notice.customCommandsRemoved":
-		"Odstraněno {{count}} vlastní(ch) příkaz(ů), jejichž typ callout již neexistuje.",
 	"notice.customCommandMissingCallout":
 		"Typ callout tohoto příkazu již neexistuje.",
 	"notice.importedJSON": "Importováno {{count}} typ(ů) callout z JSON.",
@@ -272,10 +262,6 @@ export const cs: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} poznámku(y) se nepodařilo aktualizovat a zůstaly beze změny. Podrobnosti najdete v konzoli pro vývojáře.",
 	"notice.calloutDeleteIncomplete": "Některé poznámky se nepodařilo převést. Typ calloutu byl zachován. Dokončené převody jsou uloženy; vyřešte problém se souborem a poté akci spusťte znovu, abyste ji dokončili.",
-	"notice.settingsUnreadable":
-		"Callout Studio nemohlo přečíst svůj soubor s nastavením, takže vaše typy calloutů v této relaci chybí. Nic nebylo zapsáno a soubor na disku je nezměněný — znovu načtěte Obsidian a zkuste to znovu.",
-	"notice.settingsMissing":
-		"Soubor s nastavením Callout Studia chybí, takže vaše typy calloutů v této relaci chybí. Nic nebylo zapsáno — pokud tento trezor synchronizujete, nechte synchronizaci doběhnout a před provedením jakýchkoli změn znovu načtěte Obsidian.",
 	"notice.nothingToWrap": "Není co zabalit.",
 	"notice.cursorNotInsideCallout": "Kurzor není uvnitř callout.",
 	"notice.autocompleteTargetMoved":
@@ -321,7 +307,6 @@ export const cs: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
 	"editor.paletteGroupPresets": "Barevné předvolby",
 	"editor.paletteGroupCustom": "Vlastní",
-	"editor.paletteNewColor": "Nová barva…",
 	"editor.contrastWarning":
 		"Nízký kontrast vůči pozadí — může být obtížně čitelné",
 	"editor.foldable": "Sbalitelný",
@@ -334,7 +319,6 @@ export const cs: Record<string, string> = {
 	"editor.saveChanges": "Uložit změny",
 	"editor.saving": "Ukládání…",
 	"editor.saveFailed": "Ukládání se nepodařilo dokončit. Pokud je tento editor stále otevřený, nechte ho otevřený a po kontrole úložiště a synchronizace to zkuste znovu. Některá nastavení nebo změny poznámek už mohly být uloženy.",
-	"notice.settingsSaveFailed": "Callout Studio nemohlo uložit vaše změny. Zkontrolujte volné místo a synchronizaci a zkuste to znovu před zavřením Obsidianu.",
 	"editor.createCallout": "Vytvořit callout",
 	"editor.nameRequired":
 		"Před vytvořením callout je vyžadován zobrazovaný název.",
@@ -650,14 +634,9 @@ export const cs: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "Licence ikon a poděkování",
-	"credits.intro":
-		"Callout Studio používá open-source knihovny ikon. Níže si zobrazte licenci, uvedení autorství a úpravy každé knihovny.",
-	"credits.fullNotices": "Úplná oznámení třetích stran",
 	"credits.introBeforeNotices":
 		"Callout Studio používá open-source knihovny ikon; níže si zobrazte licenci, uvedení autorství a úpravy každé knihovny, nebo si přečtěte ",
 	"credits.fullNoticesInline": "úplná oznámení třetích stran",
-	"credits.pluginLicense":
-		"Vlastní kód Callout Studio je pod licencí permissive; knihovny ikon si zachovávají své vlastní licence.",
 
 	"contextMenu.editCallout": "Upravit nastavení callout",
 	"contextMenu.createCallout": "Vytvořit nový callout",
@@ -673,8 +652,6 @@ export const cs: Record<string, string> = {
 	"contextMenu.deleteSection": "Smazat sekci nadpisu",
 	"heading.toggleFold": "Přepnout sbalení",
 	"settings.globalSettings": "Globální možnosti stylu Callout Studio",
-	"settings.globalSettingsScope":
-		"Toto jsou globální nastavení: každé z nich naráz změní tvar, rozestupy a velikost každého callout, který stylizuje Callout Studio. Callouts stylizované vaším tématem si zachovávají vlastní vzhled tématu.",
 	"settings.globalSettingsRegularDesc":
 		"Upravte ohraničení, poloměr, měřítko písma a zarovnání každého blokového callout ve vašem trezoru.",
 	"settings.globalSettingsHeadingDesc":
@@ -736,8 +713,6 @@ export const cs: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{count}} odkazů v {{files}} souboru(ech) používá vlastní aliasy: {{aliases}}. Po obnovení přestanou fungovat. Pokračovat?",
 	"vault.resetConfirm": "Obnovit",
-	"vault.resetAllInUse":
-		"⚠ {{count}} odkazů na callout v {{files}} souboru(ech) používá vlastní typy callout, které budou odstraněny.",
 
 	"quickInsert.title": "Rychlé vložení blokového callout",
 	"quickInsert.desc": "Vyberte callout pro vložení na pozici kurzoru. Pouze blokové callouty.",
@@ -761,29 +736,10 @@ export const cs: Record<string, string> = {
 	"quickInsert.noEditorHint": "Není otevřena žádná poznámka v režimu úprav, takže nelze nic vložit.",
 	"quickInsert.noEditor": "Otevřete poznámku v režimu úprav pro vložení callout.",
 
-	"vaultStats.title": "Statistiky callout",
-	"vaultStats.totalCallouts": "Celkem callouts",
-	"vaultStats.typesFound": "Nalezené typy",
-	"vaultStats.filesWithCallouts": "Soubory s callouts",
-	"vaultStats.filesScanned": "Prohledané soubory Markdown",
-	"vaultStats.empty": "V poznámkách Markdown nebyly nalezeny žádné callouts.",
 	"vaultStats.columnType": "Typ",
-	"vaultStats.columnName": "Název",
-	"vaultStats.columnSource": "Zdroj",
-	"vaultStats.columnCount": "Počet",
-	"vaultStats.columnFiles": "Soubory",
-	"vaultStats.unknown": "Neznámý",
-	"vaultStats.sourceBuiltIn": "Vestavěný",
-	"vaultStats.sourceCustom": "Vlastní",
-	"vaultStats.sourceAutoFallback": "Aut. záložní",
-	"vaultStats.sourceTheme": "Fragment CSS",
-	"vaultStats.sourceAlias": "Alias pro {{id}}",
-	"vaultStats.sourceUnknown": "Neznámý",
-	"vaultStats.byRole": "Zapsáno jako",
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Nadpis",
 	"vaultStats.roleInline": "Vložený v textu",
-	"vaultStats.close": "Zavřít",
 
 	"portable.reviewTitle": "Zkontrolovat převod",
 	"portable.helpIntro": "Vyberte náhrady, které chcete použít. Kliknutím na tužku nebo text náhrady ji upravíte; uložte ji klávesou Enter nebo kliknutím mimo pole. Ikonou resetu zahoďte rozpracovanou změnu nebo obnovte výchozí náhradu. Poznámky se změní až po výběru možnosti Převést vybrané a potvrzení. Odkazy na nadpisy se aktualizují spolu s vybranými nadpisy.",
@@ -794,7 +750,6 @@ export const cs: Record<string, string> = {
 	"portable.selectionConflict": "Tato volba by způsobila nejednoznačnost odkazů na nadpisy. Váš předchozí výběr byl zachován.",
 	"portable.selectAll": "Vybrat vše",
 	"portable.selectNone": "Zrušit výběr",
-	"portable.waiting": "Poznámky se změnily. Aktualizuje se náhled…",
 	"portable.relatedLinksHint": "Odkazy a vložené obsahy následují vybrané nadpisy a převádějí se spolu s nimi.",
 	"portable.selectChange": "Převést {{path}}, řádek {{line}}",
 	"portable.showMore": "Zobrazit dalších {{count}}",
@@ -821,10 +776,8 @@ export const cs: Record<string, string> = {
 	"portable.backup": "Doporučujeme před převodem trezor zálohovat. Převod upraví původní poznámky a v Callout Studio jej nelze vrátit zpět.",
 	"portable.scanning": "Čtení poznámek Markdown…",
 	"portable.progress": "Čtení poznámek: {{done}} z {{total}}",
-	"portable.summary": "{{count}} náhrad v {{files}} poznámkách · {{headings}} v nadpisech · {{inline}} v textu",
 	"portable.empty": "Nebyly nalezeny žádné vhodné callouty v nadpisech ani v textu. Nic se nezmění.",
 	"portable.skipped": "{{count}} neúplných nebo nepodporovaných výskytů bylo ponecháno beze změny k ruční kontrole.",
-	"portable.location": "{{path}} · řádek {{line}}",
 	"portable.confirmTitle": "Trvale převést tento trezor?",
 	"portable.confirmBody": "Převést {{count}} výskytů a aktualizovat {{links}} odkazů na nadpisy v {{files}} poznámkách?\nTím se změní původní soubory a v Callout Studio to nelze vrátit zpět. Automatická záloha se nevytváří. Nejprve trezor zálohujte, uložte otevřené poznámky a až do dokončení převodu pozastavte úpravy i synchronizaci.\nPokud se soubor změní nebo zápis selže, převod se zastaví. Již převedené poznámky zůstanou změněné.",
 	"portable.confirmAction": "Trvale převést",
@@ -859,7 +812,6 @@ export const cs: Record<string, string> = {
 	"usage.registeredCallouts": "Registrované callouty",
 	"usage.unregisteredCallouts": "Neregistrované callouty",
 	"usage.summary": "{{count}} výskytů v {{files}} souborech",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "Všechny formáty",
 	"usage.failed": "Výskyty calloutů se nepodařilo aktualizovat.",
 	"usage.loading": "Prohledávání poznámek Markdown…",
@@ -1064,9 +1016,6 @@ export const cs: Record<string, string> = {
 	"footer.contribute": "Přispět",
 	"footer.license": "Licence pluginu",
 	"footer.iconCredits": "Licence ikon",
-	"footer.tagline":
-		"Máte zpětnou vazbu, komentáře nebo návrhy? Rád je uslyším!",
-	"footer.madeBy": "Vytvořil Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Smazat paletu "{{name}}"?\nPoužívá ji 1 callout. Zachová si své barvy a později ho můžete znovu propojit z řádku Barva v jeho editoru.',
 	"settings.deletePaletteConfirmLinked":
@@ -1120,10 +1069,7 @@ export const cs: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"Tímto uložíte nastavení, které nyní vidíte, jako soubor nastavení a znovu zapnete ukládání. Záložní kopie, kterou toto zařízení uchovává, se nejprve zazálohuje.\nPokud může mít jiné zařízení novější změny, které chcete zachovat, nechte ho před pokračováním dokončit synchronizaci. Vaše synchronizační aplikace může tento soubor poslat na vaše další zařízení.\nPřed uložením se Callout Studio ještě jednou podívá, zda soubor nastavení existuje. Pokud se vrátil, ponechá ho.",
 	"notice.settingsBackupFailed": "Obnovu nastavení nebylo možné dokončit, protože se nepodařilo uložit bezpečnostní zálohu. Zkontrolujte dostupný úložný prostor a oprávnění k zápisu, poté to zkuste znovu.",
-	"notice.settingsBackupSaved": "Před použitím příchozího nastavení byla uložena záloha pro obnovení místních definic calloutů: {{path}}.",
-	"notice.settingsChangedElsewhere": "Nastavení Callout Studia byla změněna na jiném zařízení, takže tato změna nebyla uložena. Nastavení z druhého zařízení se nyní načítají — proveďte prosím změnu znovu.",
 	"notice.settingsNewerVersion": "Nastavení Callout Studia byla uložena novější verzí doplňku, takže na tomto zařízení nebude nic zapsáno, dokud jej neaktualizujete. Vaše nastavení jsou v bezpečí — aktualizujte Callout Studio zde a znovu načtěte Obsidian.",
-	"notice.settingsNotSaved": "Tato změna nebyla uložena. Callout Studio nemohlo při spuštění Obsidianu použít svůj soubor s nastavením, takže se na tomto zařízení nic nezapisuje — vaše změny vydrží, dokud Obsidian nezavřete. Co dělat, najdete v Nastavení → Callout Studio.",
 	"saveStatus.changed":
 		"Soubor nastavení se změnil, zatímco jste upravovali. Váš koncept je stále k dispozici. Zvolte Zkusit znovu, načtěte příchozí nastavení a pak koncept zkontrolujte a uložte znovu.",
 	"saveStatus.missing": "Ukládání je pozastaveno, protože soubor s nastavením chybí. To se může stát po přeinstalování nebo během probíhající synchronizace. Dokončete synchronizaci a zkuste to znovu. Chcete-li chybějící soubor záměrně nahradit, použijte Vytvořit nový soubor s nastavením v nastavení Callout Studia.",
@@ -1200,20 +1146,14 @@ export const cs: Record<string, string> = {
 	"recovery.title": "Obnovit dřívější konfiguraci",
 	"recovery.intro":
 		"Callout Studio uchovává dřívější verze vaší konfigurace na tomto zařízení a ve složce záloh doplňku. Obnovení verze nahradí vaši aktuální konfiguraci na každém synchronizovaném zařízení. Nejprve se uloží záloha aktuální konfigurace.",
-	"recovery.pausedHint": "Ukládání je pozastaveno, takže obnova je nedostupná, dokud se to nevyřeší. Stále můžete exportovat kopii.",
 	"recovery.loading": "Hledají se dřívější verze…",
 	"recovery.empty": "Nebyly nalezeny žádné dřívější verze.",
 	"recovery.sectionHistory": "Uloženo na tomto zařízení",
 	"recovery.sectionBackups": "Zálohy",
 	"recovery.sectionCopies": "Jiné kopie souboru s nastavením",
-	"recovery.originThisDevice": "Toto zařízení",
-	"recovery.originOtherDevice": "Jiné zařízení",
-	"recovery.originOlderVersion": "Uloženo starší verzí",
 	"recovery.unreadable": "Nelze načíst jako nastavení",
 	"recovery.same": "Stejné jako vaše aktuální konfigurace",
 	"recovery.restoreSame": "Toto nastavení je stejné jako to současné, takže není co obnovovat.",
-	"recovery.summary": "{{callouts}} uložený(ch) typ(ů) calloutu, {{count}} rozdíl(ů) oproti nynějšímu stavu",
-	"recovery.export": "Exportovat kopii",
 	"recovery.restore": "Obnovit",
 	"recovery.confirmTitle": "Obnovit tuto konfiguraci",
 	"recovery.confirmBody":
@@ -1224,21 +1164,14 @@ export const cs: Record<string, string> = {
 	"recovery.failed": "Konfiguraci se nepodařilo obnovit. Nic se nezměnilo.",
 	"notice.unsavedChangesReplaced":
 		"Některé změny provedené na tomto zařízení ještě nebyly uloženy a nahradilo je novější nastavení z jiného zařízení. Vaše verze byla nejprve uložena: otevřete Obnovit dřívější konfiguraci v nastavení Callout Studia, abyste ji získali zpět.",
-	"notice.diagnosticsCopied": "Diagnostika synchronizace zkopírována.",
-	"notice.diagnosticsFailed": "Diagnostiku synchronizace se nepodařilo zkopírovat.",
 	"notice.recoveryCopyStale": "Vaše nastavení bylo uloženo, ale záložní kopii pro obnovu na tomto zařízení se nepodařilo aktualizovat. Zkontrolujte dostupný úložný prostor na tomto zařízení. Callout Studio to zkusí znovu při vaší příští změně.",
 	"notice.blockedWhilePaused": "Ukládání je pozastaveno, takže tuto změnu nyní nelze zachovat. Nejprve vyřešte problém s ukládáním zobrazený v nastavení Callout Studia.",
 	"welcome.syncNote": "Už používáte Callout Studio na jiném zařízení? Nechte nejprve synchronizační službu doběhnout. Vaše callouty a nastavení se zde objeví, jakmile dorazí.",
-	"settings.resetAllConfirmFull":
-		"Tím se odstraní každý vlastní typ calloutu, nahraný obrázek a vlastní příkaz a obnoví se výchozí nastavení vestavěných calloutů, globálních stylů, uložených barevných palet, kontextové nabídky, nastavení nadpisových a vložených calloutů a záložního stylu. Nejprve se uloží záloha vaší aktuální konfigurace do složky záloh doplňku. Vaše synchronizační služba může resetování odeslat na ostatní vaše zařízení.",
 	"settings.resetBackupFailed": "Nic nebylo resetováno: nejprve se nepodařilo uložit zálohu vaší aktuální konfigurace. Zkontrolujte dostupný úložný prostor a poté to zkuste znovu.",
 	"settings.resetNotSaved": "Resetování je zobrazeno, ale ještě se nepodařilo ho uložit, takže váš soubor s nastavením stále obsahuje předchozí konfiguraci. Zkontrolujte stav ukládání v nastavení Callout Studia.",
 	"settings.recovery": "Dřívější konfigurace",
 	"settings.recoveryDesc": "Obnovte verzi své konfigurace uloženou dříve na tomto zařízení nebo ve složce záloh doplňku.",
 	"settings.recoveryButton": "Obnovit dřívější konfiguraci",
-	"settings.diagnostics": "Diagnostika synchronizace",
-	"settings.diagnosticsDesc": "Zkopírujte souhrn toho, jak funguje ukládání a synchronizace, pro zařazení do hlášení chyby. Neobsahuje žádné callouty ani nastavení.",
-	"settings.diagnosticsButton": "Kopírovat diagnostiku",
 	"confirm.titleResetEverything": "Resetovat vše",
 	"confirm.titleReplaceUnreadable": "Nahradit soubor s nastavením",
 	"confirm.replaceUnreadable": "Nejprve se do složky záloh doplňku uloží přesná kopie aktuálního souboru. Soubor je pak nahrazen konfigurací zobrazenou zde a vaše synchronizační služba ji odešle na ostatní vaše zařízení.",

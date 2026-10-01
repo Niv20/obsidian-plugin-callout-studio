@@ -131,20 +131,14 @@ export const en: Record<string, string> = {
 	"recovery.intro":
 		"Callout Studio keeps earlier versions of your setup on this device and in the plugin's backups folder. Restoring one replaces your current setup on every synced device. A backup of the current setup is saved first.",
 	"recovery.pausedViewHint": "Saving is paused, so restoring is unavailable. You can still compare or delete earlier setups.",
-	"recovery.pausedHint": "Saving is paused, so restoring is unavailable until that is resolved.",
 	"recovery.loading": "Looking for earlier versions…",
 	"recovery.empty": "No earlier versions were found.",
 	"recovery.sectionHistory": "Saved on this device",
 	"recovery.sectionBackups": "Backups",
 	"recovery.sectionCopies": "Other copies of the settings file",
-	"recovery.export": "Export copy",
-	"recovery.originThisDevice": "This device",
-	"recovery.originOtherDevice": "Another device",
-	"recovery.originOlderVersion": "Saved by an older version",
 	"recovery.unreadable": "Can't be read as settings",
 	"recovery.same": "Same as your current setup",
 	"recovery.restoreSame": "This setup is the same as your current one, so there is nothing to restore.",
-	"recovery.summary": "{{callouts}} saved callout type(s), {{count}} difference(s) from now",
 	"recovery.summaryCallouts": "{{callouts}} saved callout type(s)",
 	"recovery.summaryChanges": "{{count}} difference(s) from now",
 	"recovery.details.view": "View details",
@@ -346,15 +340,12 @@ export const en: Record<string, string> = {
 		"recovery.deleteFailed": "This copy could not be deleted. Nothing was changed.",
 	"notice.unsavedChangesReplaced":
 		"Some changes made on this device had not been saved yet, and newer settings from another device replaced them. Your version was saved first: open Restore an earlier setup in Callout Studio settings to get it back.",
-	"notice.diagnosticsCopied": "Sync diagnostics copied.",
-	"notice.diagnosticsFailed": "The sync diagnostics could not be copied.",
 	"notice.recoveryCopyStale":
 		"Your settings were saved, but this device's recovery copy could not be updated. Check available storage on this device. Callout Studio tries again with your next change.",
 	"notice.blockedWhilePaused":
 		"Saving is paused, so this change cannot be kept right now. Resolve the saving problem shown in Callout Studio settings first.",
 	"notice.openSettingsFailed": "Callout Studio settings could not be opened. Open Settings → Callout Studio to choose what to do.",
 	"notice.settingsBackupFailed": "Settings recovery could not continue because a safety backup could not be saved. Check available storage and write permissions, then retry.",
-	"notice.settingsBackupSaved": "A recovery copy of local callout definitions was saved before applying incoming settings: {{path}}.",
 	"commandBuilder.missingCallout": "Paused: the callout is missing. Discover or create it to restore this command, or edit the command to choose another type.",
 	"manualDiscovery.scanning": "Scanning…",
 	"settings.rescanComplete":
@@ -461,7 +452,6 @@ export const en: Record<string, string> = {
 	// Settings — Row actions
 	"settings.editAria": "Edit {{name}}",
 	"settings.moreRowActionsAria": "More actions for {{name}}",
-	"settings.usageInfo": "{{count}} use(s) in {{files}} file(s)",
 	"settings.replaceAction": "Replace in vault",
 	"settings.deleteAction": "Delete",
 	"settings.duplicateAction": "Duplicate",
@@ -491,7 +481,6 @@ export const en: Record<string, string> = {
 		"Unrecognized callout types in your vault will inherit the style of this callout.",
 
 	// Settings — Global style
-	"settings.globalStyle": "Global callout style",
 	"settings.globalStyleRegularTitle": "Global Block callout style",
 	"settings.globalStyleHeadingTitle": "Global Heading callout style",
 	"settings.globalStyleInlineTitle": "Global Inline callout style",
@@ -645,7 +634,6 @@ export const en: Record<string, string> = {
 	"portable.selectionConflict": "That choice would make heading links ambiguous. Your previous selection was kept.",
 	"portable.selectAll": "Select all",
 	"portable.selectNone": "Deselect all",
-	"portable.waiting": "Notes changed. Updating the review…",
 	"portable.relatedLinksHint": "Links and embeds follow the selected headings and are converted with them.",
 	"portable.selectChange": "Convert {{path}}, line {{line}}",
 	"portable.showMore": "Show {{count}} more",
@@ -672,10 +660,8 @@ export const en: Record<string, string> = {
 	"portable.backup": "We recommend backing up your vault before converting. This edits the original notes and cannot be undone in Callout Studio.",
 	"portable.scanning": "Reading Markdown notes…",
 	"portable.progress": "Reading notes: {{done}} of {{total}}",
-	"portable.summary": "{{count}} replacements in {{files}} notes · {{headings}} in headings · {{inline}} inline",
 	"portable.empty": "No eligible heading or inline callouts found. Nothing will be changed.",
 	"portable.skipped": "{{count}} incomplete or unsupported occurrences were left unchanged for manual review.",
-	"portable.location": "{{path}} · line {{line}}",
 	"portable.confirmTitle": "Permanently convert this vault?",
 	"portable.confirmBody": "Convert {{count}} occurrences and update {{links}} heading links in {{files}} notes?\nThis changes the original files and cannot be undone in Callout Studio. No automatic backup is created. Back up your vault first, save open notes, and pause editing and sync until conversion finishes.\nIf a file changes or a write fails, conversion stops. Notes already converted remain changed.",
 	"portable.confirmAction": "Convert permanently",
@@ -693,12 +679,6 @@ export const en: Record<string, string> = {
 	"portable.blockedNothingSelected": "Select at least one replacement to convert.",
 
 	"settings.maintenance": "Danger zone",
-	"settings.vaultMaintenance": "Vault insights & maintenance",
-	"settings.vaultStats": "Callout statistics",
-	"settings.vaultStatsDesc":
-		"Count every callout in your Markdown notes — block, heading and inline — and group them by type.",
-	"settings.vaultStatsButton": "View statistics",
-	"settings.vaultStatsScanning": "Scanning",
 	"settings.resetAll": "Reset everything",
 	"settings.resetAllDesc":
 		"Delete all user callouts, reset built-in callouts, global styles (borders, font scale, shape), saved color palettes, the right-click menu customization, and downloaded Material SVGs.",
@@ -725,8 +705,6 @@ export const en: Record<string, string> = {
 		"Don't worry: before resetting, we save a backup of your current setup. You can restore it at any time from the Backups section in the settings.\nIf you use a sync service, the reset might travel to your other devices too.",
 	// No longer drawn: the list above replaced it. Kept because every locale
 	// still carries it, and a locale may not hold a key English lacks.
-	"settings.resetAllConfirmFull":
-		"Heads up: this wipes every custom callout type, uploaded picture and custom command.\nBuilt-in callouts, global styles, saved palettes, the right-click menu, heading and inline callout settings, and the fallback style all go back to their defaults.\nDon't worry, we save a backup of your current setup in the plugin's backups folder first.\nIf you use a sync service, the reset might travel to your other devices too.",
 	"settings.resetNothing": "Nothing to reset: everything is already at its defaults.",
 	"settings.resetBackupFailed":
 		"Nothing was reset: a backup of your current setup could not be saved first. Check available storage, then try again.",
@@ -736,14 +714,8 @@ export const en: Record<string, string> = {
 	"settings.recovery": "Earlier setups",
 	"settings.recoveryDesc": "Restore a version of your setup saved earlier on this device or in the plugin's backups folder.",
 	"settings.recoveryButton": "Restore an earlier setup",
-	"settings.diagnostics": "Sync diagnostics",
-	"settings.diagnosticsDesc":
-		"Copy a summary of how saving and sync are working, to include in a bug report. It contains no callouts or settings.",
-	"settings.diagnosticsButton": "Copy diagnostics",
 
 	// Notices
-	"notice.customCommandsRemoved":
-		"Removed {{count}} custom command(s) whose callout type no longer exists.",
 	"notice.customCommandMissingCallout":
 		"That command's callout type no longer exists.",
 	"notice.exportedCssCreated": "CSS snippet saved to {{path}}",
@@ -772,16 +744,8 @@ export const en: Record<string, string> = {
 		"Some notes could not be converted. The callout type was kept. Completed conversions are saved; resolve the file problem, then run the action again to finish.",
 	"notice.vaultScanFailed":
 		"Callout usage could not be counted because {{count}} note(s) could not be read. Check storage and synchronization, then try again.",
-	"notice.settingsUnreadable":
-		"Callout Studio could not read its settings file, so your callout types are missing from this session. Nothing has been written and the file on disk is unchanged \u2014 reload Obsidian to try again.",
-	"notice.settingsMissing":
-		"Callout Studio's settings file is missing, so your callout types are missing from this session. Nothing has been written — if you sync this vault, let the sync finish and reload Obsidian before making any changes.",
-	"notice.settingsNotSaved":
-		"That change was not saved. Callout Studio could not use its settings file when Obsidian started, so nothing is being written on this device — your changes will last until you close Obsidian. See Settings \u2192 Callout Studio for what to do.",
 	"notice.settingsNewerVersion":
 		"Callout Studio's settings were saved by a newer version of the plugin, so nothing will be written on this device until you update it. Your settings are safe — update Callout Studio here and reload Obsidian.",
-	"notice.settingsChangedElsewhere":
-		"Callout Studio's settings were changed on another device, so this change was not saved. The other device's settings are being loaded now — please make the change again.",
 	"notice.nothingToWrap": "Nothing to wrap.",
 	"notice.cursorNotInsideCallout": "Cursor is not inside a callout.",
 	"notice.autocompleteTargetMoved":
@@ -828,7 +792,6 @@ export const en: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Obsidian callouts",
 	"editor.paletteGroupPresets": "Color presets",
 	"editor.paletteGroupCustom": "Custom",
-	"editor.paletteNewColor": "New color…",
 	"editor.paletteSearchPlaceholder": "Search colors…",
 	"editor.paletteNoMatches": "No color matches “{{query}}”.",
 	"editor.contrastWarning":
@@ -843,7 +806,6 @@ export const en: Record<string, string> = {
 	"editor.saveChanges": "Save changes",
 	"editor.saving": "Saving…",
 	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
-	"notice.settingsSaveFailed": "Callout Studio could not save your changes. Check available storage and synchronization, then retry before closing Obsidian.",
 	"editor.createCallout": "Create callout",
 	"editor.nameRequired":
 		"A display name is required before creating a callout.",
@@ -1161,14 +1123,9 @@ export const en: Record<string, string> = {
 
 	// Icon licenses & credits
 	"credits.title": "Icon licenses & credits",
-	"credits.intro":
-		"Callout Studio uses open-source icon libraries. View each library's license, attribution, and modifications below.",
-	"credits.fullNotices": "Full third-party notices",
 	"credits.introBeforeNotices":
 		"Callout Studio uses open-source icon libraries; view each library's license, attribution, and modifications below, or read the ",
 	"credits.fullNoticesInline": "full third-party notices",
-	"credits.pluginLicense":
-		"Callout Studio's own code is under a permissive license; the icon libraries keep their own licences.",
 
 	// Context Menu
 	"contextMenu.editCallout": "Edit callout settings",
@@ -1189,8 +1146,6 @@ export const en: Record<string, string> = {
 
 	// Global settings section (per-role style popups)
 	"settings.globalSettings": "Global Callout Studio style options",
-	"settings.globalSettingsScope":
-		"These are global settings: each one changes the shape, spacing, and size of every callout Callout Studio styles at once. Callouts your theme styles keep the theme's own design.",
 	"settings.globalSettingsRegularDesc":
 		"Adjust the border, radius, font scale, and alignment of every block callout in your vault.",
 	"settings.globalSettingsHeadingDesc":
@@ -1279,20 +1234,9 @@ export const en: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{count}} reference(s) in {{files}} file(s) use custom alias(es): {{aliases}}. These will stop working after reset. Continue?",
 	"vault.resetConfirm": "Reset",
-	"vault.resetAllInUse":
-		"⚠ {{count}} callout reference(s) in {{files}} file(s) use custom callout types that will be deleted.",
 
 	// Vault statistics modal
-	"vaultStats.title": "Callout statistics",
-	"vaultStats.totalCallouts": "Total callouts",
-	"vaultStats.typesFound": "Types found",
-	"vaultStats.filesWithCallouts": "Files with callouts",
-	"vaultStats.filesScanned": "Markdown files scanned",
-	"vaultStats.empty": "No callouts were found in Markdown notes.",
 	"vaultStats.columnType": "Type",
-	"vaultStats.columnFiles": "Files",
-	"vaultStats.sourceAlias": "Alias of {{id}}",
-	"vaultStats.sourceUnknown": "Not defined",
 	// Retained unused. The report is three columns now — type, how it is written
 	// (`byRole`) and files — so the Name, Source and Count headers are gone with
 	// their columns, `unknown` went when an unresolved row started being named
@@ -1300,19 +1244,9 @@ export const en: Record<string, string> = {
 	// as a tag beside the id. Deleting an English key while the 31 generated
 	// locale files still carry it fails their "no key English lacks" check until
 	// the next translation pass, and the strings cost nothing to keep.
-	"vaultStats.unknown": "Unknown",
-	"vaultStats.columnName": "Name",
-	"vaultStats.columnSource": "Source",
-	"vaultStats.columnCount": "Count",
-	"vaultStats.sourceBuiltIn": "Built-in",
-	"vaultStats.sourceCustom": "Custom",
-	"vaultStats.sourceAutoFallback": "Auto fallback",
-	"vaultStats.sourceTheme": "CSS snippet",
-	"vaultStats.byRole": "Written as",
 	"vaultStats.roleBlock": "Block",
 	"vaultStats.roleHeading": "Heading",
 	"vaultStats.roleInline": "Inline",
-	"vaultStats.close": "Close",
 
 	"usage.title": "Find callouts",
 	"usage.command": "Callout occurrences",
@@ -1322,7 +1256,6 @@ export const en: Record<string, string> = {
 	"usage.registeredCallouts": "Registered callouts",
 	"usage.unregisteredCallouts": "Unregistered callouts",
 	"usage.summary": "{{count}} occurrences in {{files}} files",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "All formats",
 	"usage.failed": "Could not update callout occurrences.",
 	"usage.loading": "Scanning Markdown notes…",
@@ -1565,8 +1498,6 @@ export const en: Record<string, string> = {
 	"footer.contribute": "Contribute",
 	"footer.license": "Plugin license",
 	"footer.iconCredits": "Icon licenses",
-	"footer.tagline":
-		"Have feedback, comments, or suggestions? I'd love to hear from you!",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Delete palette "{{name}}"?\n1 callout uses it. It keeps its colors, and you can reconnect it later from the Color row in its editor.',
 	"settings.deletePaletteConfirmLinked":
@@ -1581,6 +1512,5 @@ export const en: Record<string, string> = {
 	"palette.colorExistsUse":
 		'These colors are identical to "{{name}}". Two saved colors cannot be the same — change a color, or {{link}}.',
 	"palette.colorExistsUseLink": "use the existing one",
-	"footer.madeBy": "Made by Niv  •  ",
 	"notice.legacyDiscoveryArchiveFailed": "The upgrade recovery copy could not be completed. The previous local discovery cache and startup CSS have been kept unchanged. Check write access and free space, then restart Obsidian to retry.",
 };

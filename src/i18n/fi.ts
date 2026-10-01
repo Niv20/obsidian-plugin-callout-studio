@@ -99,7 +99,6 @@ export const fi: Record<string, string> = {
 	"settings.noCalloutsNow": "Ei mukautettuja callouteja tällä hetkellä.",
 	"settings.editAria": "Muokkaa {{name}}",
 	"settings.moreRowActionsAria": "Lisää toimintoja kohteelle {{name}}",
-	"settings.usageInfo": "{{count}} käyttö(ä) {{files}} tiedostossa",
 	"settings.replaceAction": "Korvaa holvissa",
 	"settings.deleteAction": "Poista",
 	"settings.duplicateAction": "Monista",
@@ -123,7 +122,6 @@ export const fi: Record<string, string> = {
 	"settings.fallbackCallout": "Oletus-varausCallout",
 	"settings.fallbackCalloutDesc":
 		"Holvisi tuntemattomat callout-tyypit perivät tämän calloutin tyylin.",
-	"settings.globalStyle": "Callout-yleistyyli",
 	"settings.globalStyleRegularTitle": "Block-calloutien yleistyyli",
 	"settings.globalStyleHeadingTitle": "Otsikko-calloutien yleistyyli",
 	"settings.globalStyleInlineTitle": "Rivinsisäisten calloutien yleistyyli",
@@ -218,12 +216,6 @@ export const fi: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"Keskeytetty: teemasi tarjoaa tämän calloutin, joten sillä on vain lohkomuoto. Tämä komento toimii taas, kun teema lakkaa tarjoamasta sitä.",
 
-	"settings.vaultMaintenance": "Holvin näkemykset ja huolto",
-	"settings.vaultStats": "Callout-tilastot",
-	"settings.vaultStatsDesc":
-		"Laskee jokaisen calloutin Markdown-muistiinpanoissasi — lohko-, otsikko- ja rivinsisäisen — ja ryhmittelee ne tyypin mukaan.",
-	"settings.vaultStatsButton": "Näytä tilastot",
-	"settings.vaultStatsScanning": "Skannataan",
 	"settings.resetAll": "Palauta",
 	"settings.resetAllDesc":
 		"Poistaa kaikki käyttäjän calloutit, palauttaa sisäänrakennetut calloutit, yleiset tyylit, tallennetut väripaletit, hiiren kakkospainikkeen valikon mukautukset ja ladatut Material-SVG:t.",
@@ -245,8 +237,6 @@ export const fi: Record<string, string> = {
 	"settings.resetItemFallback": "Varatyyli",
 	"settings.resetAllConfirmAfter": "Ei huolta: ennen palautusta tallennamme varmuuskopion nykyisestä kokoonpanostasi. Voit palauttaa sen milloin tahansa asetusten Varmuuskopiot-osiosta.\nJos käytät synkronointipalvelua, palautus voi siirtyä myös muille laitteillesi.",
 	"settings.resetNothing": "Ei mitään palautettavaa: kaikki on jo oletuksissa.",
-	"notice.customCommandsRemoved":
-		"Poistettiin {{count}} mukautettu(a) komento(a), joiden callout-tyyppiä ei enää ole.",
 	"notice.customCommandMissingCallout":
 		"Tämän komennon callout-tyyppiä ei enää ole.",
 	"notice.importedJSON": "{{count}} callout-tyyppiä tuotu JSONista.",
@@ -267,10 +257,6 @@ export const fi: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} muistiinpanoa ei voitu päivittää ja ne jätettiin ennalleen. Katso lisätietoja kehittäjäkonsolista.",
 	"notice.calloutDeleteIncomplete": "Joitakin muistiinpanoja ei voitu muuntaa. Callout-tyyppi säilytettiin. Valmiit muunnokset on tallennettu; korjaa tiedosto-ongelma ja suorita toiminto uudelleen, niin se valmistuu.",
-	"notice.settingsUnreadable":
-		"Callout Studio ei pystynyt lukemaan asetustiedostoaan, joten callout-tyyppisi puuttuvat tästä istunnosta. Mitään ei kirjoitettu, ja levyllä oleva tiedosto on muuttumaton — lataa Obsidian uudelleen yrittääksesi uudelleen.",
-	"notice.settingsMissing":
-		"Callout Studion asetustiedosto puuttuu, joten callout-tyyppisi puuttuvat tästä istunnosta. Mitään ei kirjoitettu — jos synkronoit tätä holvia, anna synkronoinnin valmistua ja lataa Obsidian uudelleen ennen muutosten tekemistä.",
 
 	"notice.nothingToWrap": "Ei mitään kääriä.",
 	"notice.cursorNotInsideCallout": "Kursori ei ole calloutin sisällä.",
@@ -315,7 +301,6 @@ export const fi: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Obsidian-calloutit",
 	"editor.paletteGroupPresets": "Väriesiasennukset",
 	"editor.paletteGroupCustom": "Mukautettu",
-	"editor.paletteNewColor": "Uusi väri…",
 	"editor.contrastWarning":
 		"Heikko kontrasti taustaan — voi olla vaikea lukea",
 	"editor.foldable": "Taitettava",
@@ -328,7 +313,6 @@ export const fi: Record<string, string> = {
 	"editor.saveChanges": "Tallenna muutokset",
 	"editor.saving": "Tallennetaan…",
 	"editor.saveFailed": "Tallennusta ei voitu viimeistellä. Jos tämä muokkain on yhä auki, pidä se auki ja yritä uudelleen tarkistettuasi tallennustilan ja synkronoinnin. Osa asetuksista tai muistiinpanojen päivityksistä on voitu jo tallentaa.",
-	"notice.settingsSaveFailed": "Callout Studio ei voinut tallentaa muutoksiasi. Tarkista vapaa tallennustila ja synkronointi ja yritä uudelleen ennen Obsidianin sulkemista.",
 	"editor.createCallout": "Luo callout",
 	"editor.nameRequired": "Näyttönimi vaaditaan ennen calloutin luomista.",
 	"editor.noChangesToSave": "Muutoksia ei tehty.",
@@ -647,14 +631,9 @@ export const fi: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "Kuvakkeiden lisenssit ja kiitokset",
-	"credits.intro":
-		"Callout Studio käyttää avoimen lähdekoodin kuvakekirjastoja. Katso alta kunkin kirjaston lisenssi, tekijämerkinnät ja tehdyt muutokset.",
-	"credits.fullNotices": "Täydelliset kolmannen osapuolen ilmoitukset",
 	"credits.introBeforeNotices":
 		"Callout Studio käyttää avoimen lähdekoodin kuvakekirjastoja; katso alta kunkin kirjaston lisenssi, tekijämerkinnät ja tehdyt muutokset, tai lue ",
 	"credits.fullNoticesInline": "täydelliset kolmannen osapuolen ilmoitukset",
-	"credits.pluginLicense":
-		"Callout Studion oma koodi on permissive-lisenssissä; kuvakekirjastot säilyttävät omat lisenssinsä.",
 	"contextMenu.editCallout": "Muokkaa callout-asetuksia",
 	"contextMenu.createCallout": "Luo uusi callout",
 	"contextMenu.copyMarkdown": "Kopioi callout Markdown",
@@ -669,8 +648,6 @@ export const fi: Record<string, string> = {
 	"contextMenu.deleteSection": "Poista otsikko-osio",
 	"heading.toggleFold": "Vaihda taitto",
 	"settings.globalSettings": "Callout Studion yleiset tyyliasetukset",
-	"settings.globalSettingsScope":
-		"Nämä ovat yleisiä asetuksia: kukin niistä muuttaa kerralla jokaisen Callout Studion tyylitteleman calloutin muotoa, välejä ja kokoa. Teemasi tyylittelemät calloutit säilyttävät teeman oman ulkoasun.",
 	"settings.globalSettingsRegularDesc":
 		"Säädä jokaisen holvisi lohko-calloutin reunaa, pyöristystä, fonttiskaalaa ja tasausta.",
 	"settings.globalSettingsHeadingDesc":
@@ -728,8 +705,6 @@ export const fi: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{count}} viite(ttä) {{files}} tiedostossa käyttää mukautettuja aliaksia: {{aliases}}. Ne lopettavat toimintansa palautuksen jälkeen. Jatketaanko?",
 	"vault.resetConfirm": "Palauta",
-	"vault.resetAllInUse":
-		"⚠ {{count}} callout-viite(ttä) {{files}} tiedostossa käyttää mukautettuja callout-tyyppejä, jotka poistetaan.",
 	"quickInsert.title": "Lisää lohko-callout nopeasti",
 	"quickInsert.desc": "Valitse callout lisättäväksi kohdistimen kohdalle. Vain lohko-callout.",
 	"quickInsert.searchPlaceholder": "Hae callouteja",
@@ -752,29 +727,10 @@ export const fi: Record<string, string> = {
 	"quickInsert.noEditorHint": "Yhtään muistiinpanoa ei ole avoinna muokkaustilassa, joten mitään ei voida lisätä.",
 	"quickInsert.noEditor": "Avaa muistiinpano muokkaustilassa lisätäksesi calloutin.",
 
-	"vaultStats.title": "Callout-tilastot",
-	"vaultStats.totalCallouts": "Callouteja yhteensä",
-	"vaultStats.typesFound": "Löydetyt tyypit",
-	"vaultStats.filesWithCallouts": "Tiedostot, joissa on callouteja",
-	"vaultStats.filesScanned": "Skannatut Markdown-tiedostot",
-	"vaultStats.empty": "Markdown-muistiinpanoissa ei löydetty callouteja.",
 	"vaultStats.columnType": "Tyyppi",
-	"vaultStats.columnName": "Nimi",
-	"vaultStats.columnSource": "Lähde",
-	"vaultStats.columnCount": "Määrä",
-	"vaultStats.columnFiles": "Tiedostot",
-	"vaultStats.unknown": "Tuntematon",
-	"vaultStats.sourceBuiltIn": "Sisäänrakennettu",
-	"vaultStats.sourceCustom": "Mukautettu",
-	"vaultStats.sourceAutoFallback": "Automaattinen vara",
-	"vaultStats.sourceTheme": "CSS-katkelma",
-	"vaultStats.sourceAlias": "{{id}}:n alias",
-	"vaultStats.sourceUnknown": "Tuntematon",
-	"vaultStats.byRole": "Kirjoitettu muodossa",
 	"vaultStats.roleBlock": "Lohko",
 	"vaultStats.roleHeading": "Otsikko",
 	"vaultStats.roleInline": "Rivin sisäinen",
-	"vaultStats.close": "Sulje",
 
 	"portable.reviewTitle": "Tarkista muunnos",
 	"portable.helpIntro": "Valitse käytettävät korvaukset. Muokkaa korvausta napsauttamalla kynää tai korvaustekstiä ja tallenna painamalla Enter tai napsauttamalla kentän ulkopuolelle. Hylkää luonnos tai palauta oletuskorvaus palautuskuvakkeella. Muistiinpanot muuttuvat vasta, kun valitset Muunna valitut ja vahvistat. Otsikkolinkit päivittyvät valittujen otsikoiden mukana.",
@@ -785,7 +741,6 @@ export const fi: Record<string, string> = {
 	"portable.selectionConflict": "Tämä valinta tekisi otsikkolinkeistä monitulkintaisia. Aiempi valintasi säilytettiin.",
 	"portable.selectAll": "Valitse kaikki",
 	"portable.selectNone": "Poista valinnat",
-	"portable.waiting": "Muistiinpanot muuttuivat. Päivitetään esikatselua…",
 	"portable.relatedLinksHint": "Linkit ja upotukset seuraavat valittuja otsikoita ja muunnetaan niiden mukana.",
 	"portable.selectChange": "Muunna {{path}}, rivi {{line}}",
 	"portable.showMore": "Näytä {{count}} lisää",
@@ -812,10 +767,8 @@ export const fi: Record<string, string> = {
 	"portable.backup": "Suosittelemme holvin varmuuskopiointia ennen muunnosta. Tämä muuttaa alkuperäisiä muistiinpanoja, eikä sitä voi kumota Callout Studiossa.",
 	"portable.scanning": "Luetaan Markdown-muistiinpanoja…",
 	"portable.progress": "Luetaan muistiinpanoja: {{done}}/{{total}}",
-	"portable.summary": "{{count}} korvausta {{files}} muistiinpanossa · {{headings}} otsikoissa · {{inline}} tekstin sisällä",
 	"portable.empty": "Sopivia otsikoiden tai tekstin sisäisiä callouteja ei löytynyt. Mitään ei muuteta.",
 	"portable.skipped": "{{count}} keskeneräistä tai tukematonta esiintymää jätettiin ennalleen käsin tarkistettaviksi.",
-	"portable.location": "{{path}} · rivi {{line}}",
 	"portable.confirmTitle": "Muunna tämä holvi pysyvästi?",
 	"portable.confirmBody": "Muunna {{count}} esiintymää ja päivitä {{links}} otsikkolinkkiä {{files}} muistiinpanossa?\nTämä muuttaa alkuperäisiä tiedostoja, eikä sitä voi kumota Callout Studiossa. Automaattista varmuuskopiota ei luoda. Varmuuskopioi holvi ensin, tallenna avoimet muistiinpanot ja keskeytä muokkaus sekä synkronointi muunnoksen ajaksi.\nJos tiedosto muuttuu tai kirjoittaminen epäonnistuu, muunnos pysähtyy. Jo muunnetut muistiinpanot säilyvät muutettuina.",
 	"portable.confirmAction": "Muunna pysyvästi",
@@ -850,7 +803,6 @@ export const fi: Record<string, string> = {
 	"usage.registeredCallouts": "Rekisteröidyt calloutit",
 	"usage.unregisteredCallouts": "Rekisteröimättömät calloutit",
 	"usage.summary": "{{count}} esiintymää {{files}} tiedostossa",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "Kaikki muodot",
 	"usage.failed": "Callout-esiintymiä ei voitu päivittää.",
 	"usage.loading": "Skannataan Markdown-muistiinpanoja…",
@@ -1053,9 +1005,6 @@ export const fi: Record<string, string> = {
 	"footer.contribute": "Osallistu",
 	"footer.license": "Lisäosan lisenssi",
 	"footer.iconCredits": "Kuvakkeiden lisenssit",
-	"footer.tagline":
-		"Onko sinulla palautetta, kommentteja tai ehdotuksia? Kuulisin mielelläni!",
-	"footer.madeBy": "Luonut Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Poistetaanko paletti "{{name}}"?\n1 callout käyttää sitä. Se säilyttää värinsä, ja voit yhdistää sen myöhemmin uudelleen editorin Väririviltä.',
 	"settings.deletePaletteConfirmLinked":
@@ -1109,10 +1058,7 @@ export const fi: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"Tämä tallentaa nyt näkemäsi asetukset asetustiedostoksi ja kytkee tallennuksen takaisin päälle. Tämän laitteen säilyttämästä varakopiosta tehdään ensin varmuuskopio.\nJos toisella laitteella voi olla uudempia muutoksia, jotka haluat säilyttää, anna sen viimeistellä synkronointi ennen kuin jatkat. Synkronointisovelluksesi voi lähettää tämän tiedoston muille laitteillesi.\nCallout Studio etsii asetustiedostoa vielä kerran ennen tallennusta. Jos se on palannut, Callout Studio säilyttää sen.",
 	"notice.settingsBackupFailed": "Asetusten palautusta ei voitu jatkaa, koska varmuuskopiota ei voitu tallentaa. Tarkista käytettävissä oleva tallennustila ja kirjoitusoikeudet, ja yritä sitten uudelleen.",
-	"notice.settingsBackupSaved": "Paikallisten callout-määritysten palautuskopio tallennettiin ennen saapuvien asetusten käyttöönottoa: {{path}}.",
-	"notice.settingsChangedElsewhere": "Callout Studion asetuksia muutettiin toisella laitteella, joten tätä muutosta ei tallennettu. Toisen laitteen asetuksia ladataan nyt — tee muutos uudelleen.",
 	"notice.settingsNewerVersion": "Callout Studion asetukset tallensi lisäosan uudempi versio, joten tälle laitteelle ei kirjoiteta mitään ennen kuin päivität sen. Asetuksesi ovat turvassa — päivitä Callout Studio täältä ja lataa Obsidian uudelleen.",
-	"notice.settingsNotSaved": "Tuota muutosta ei tallennettu. Callout Studio ei voinut käyttää asetustiedostoaan Obsidianin käynnistyessä, joten tälle laitteelle ei kirjoiteta mitään — muutoksesi säilyvät, kunnes suljet Obsidianin. Katso Asetukset → Callout Studio nähdäksesi, mitä tehdä.",
 	"saveStatus.changed":
 		"Asetustiedosto muuttui, kun muokkasit sitä. Luonnoksesi on yhä saatavilla. Valitse Yritä uudelleen ladataksesi saapuneet asetukset, tarkista sitten luonnos ja tallenna uudelleen.",
 	"saveStatus.missing": "Tallennus on keskeytetty, koska asetustiedosto puuttuu. Näin voi käydä uudelleenasennuksen jälkeen tai kun synkronointi on vielä käynnissä. Viimeistele synkronointi ja yritä uudelleen. Korvataksesi puuttuvan tiedoston tarkoituksella, käytä Luo uusi asetustiedosto -toimintoa Callout Studion asetuksissa.",
@@ -1186,20 +1132,14 @@ export const fi: Record<string, string> = {
 	"notice.recoveryStorageUnavailable": "Tämän laitteen palautustallennustila ei vastaa, joten kopiota ei voi hylätä. Käynnistä Obsidian uudelleen ja yritä sitten uudelleen.",
 	"recovery.title": "Palauta aiempi asetuskokonaisuus",
 	"recovery.intro": "Callout Studio säilyttää asetuskokonaisuutesi aiempia versioita tällä laitteella ja lisäosan varmuuskopiokansiossa. Version palauttaminen korvaa nykyisen kokonaisuutesi jokaisella synkronoidulla laitteella. Nykyisestä kokonaisuudesta tallennetaan ensin varmuuskopio.",
-	"recovery.pausedHint": "Tallennus on keskeytetty, joten palautus ei ole käytettävissä ennen kuin ongelma on ratkaistu. Voit silti viedä kopion.",
 	"recovery.loading": "Etsitään aiempia versioita…",
 	"recovery.empty": "Aiempia versioita ei löytynyt.",
 	"recovery.sectionHistory": "Tallennettu tällä laitteella",
 	"recovery.sectionBackups": "Varmuuskopiot",
 	"recovery.sectionCopies": "Muut asetustiedoston kopiot",
-	"recovery.originThisDevice": "Tämä laite",
-	"recovery.originOtherDevice": "Toinen laite",
-	"recovery.originOlderVersion": "Tallennettu vanhemmalla versiolla",
 	"recovery.unreadable": "Ei voida lukea asetuksina",
 	"recovery.same": "Sama kuin nykyinen kokonaisuutesi",
 	"recovery.restoreSame": "Tämä asetus on sama kuin nykyinen, joten palautettavaa ei ole.",
-	"recovery.summary": "{{callouts}} tallennettua callout-tyyppiä, {{count}} eroa nykyiseen",
-	"recovery.export": "Vie kopio",
 	"recovery.restore": "Palauta",
 	"recovery.confirmTitle": "Palauta tämä kokonaisuus",
 	"recovery.confirmBody": "Nykyinen kokonaisuutesi korvataan versiolla ajalta {{when}} ({{count}} eroa). Nykyisestä kokonaisuudesta tallennetaan ensin varmuuskopio, ja synkronointipalvelusi lähettää palautetun kokonaisuuden muille laitteillesi.",
@@ -1208,20 +1148,14 @@ export const fi: Record<string, string> = {
 	"recovery.backupFailed": "Mitään ei palautettu: nykyisestä kokonaisuudesta ei voitu ensin tallentaa varmuuskopiota. Tarkista käytettävissä oleva tallennustila ja yritä sitten uudelleen.",
 	"recovery.failed": "Kokonaisuutta ei voitu palauttaa. Mitään ei muutettu.",
 	"notice.unsavedChangesReplaced": "Osaa tällä laitteella tehdyistä muutoksista ei ollut vielä tallennettu, ja toisen laitteen uudemmat asetukset korvasivat ne. Versiosi tallennettiin ensin: avaa Palauta aiempi asetuskokonaisuus Callout Studion asetuksista saadaksesi sen takaisin.",
-	"notice.diagnosticsCopied": "Synkronoinnin diagnostiikka kopioitu.",
-	"notice.diagnosticsFailed": "Synkronoinnin diagnostiikkaa ei voitu kopioida.",
 	"notice.recoveryCopyStale": "Asetuksesi tallennettiin, mutta tämän laitteen palautuskopiota ei voitu päivittää. Tarkista tämän laitteen käytettävissä oleva tallennustila. Callout Studio yrittää uudelleen seuraavan muutoksesi yhteydessä.",
 	"notice.blockedWhilePaused": "Tallennus on keskeytetty, joten tätä muutosta ei voida säilyttää juuri nyt. Ratkaise ensin Callout Studion asetuksissa näkyvä tallennusongelma.",
 	"welcome.syncNote": "Käytätkö jo Callout Studiota toisella laitteella? Anna synkronointipalvelusi valmistua ensin. Calloutisi ja asetuksesi ilmestyvät tänne, kun ne saapuvat.",
-	"settings.resetAllConfirmFull": "Tämä poistaa jokaisen mukautetun callout-tyypin, ladatun kuvan ja mukautetun komennon, ja palauttaa sisäänrakennetut calloutit, yleiset tyylit, tallennetut väripaletit, hiiren oikean painikkeen valikon, otsikko- ja rivinsisäisten callouttien asetukset sekä varatyylin. Nykyisestä kokonaisuudesta tallennetaan ensin varmuuskopio lisäosan varmuuskopiokansioon. Synkronointipalvelusi saattaa lähettää palautuksen muille laitteillesi.",
 	"settings.resetBackupFailed": "Mitään ei palautettu: nykyisestä kokonaisuudesta ei voitu ensin tallentaa varmuuskopiota. Tarkista käytettävissä oleva tallennustila ja yritä sitten uudelleen.",
 	"settings.resetNotSaved": "Palautus näkyy, mutta sitä ei vielä voitu tallentaa, joten asetustiedostossasi on yhä edellinen kokonaisuus. Tarkista tallennuksen tila Callout Studion asetuksista.",
 	"settings.recovery": "Aiemmat kokonaisuudet",
 	"settings.recoveryDesc": "Palauta tällä laitteella tai lisäosan varmuuskopiokansiossa aiemmin tallennettu versio kokonaisuudestasi.",
 	"settings.recoveryButton": "Palauta aiempi asetuskokonaisuus",
-	"settings.diagnostics": "Synkronoinnin diagnostiikka",
-	"settings.diagnosticsDesc": "Kopioi yhteenveto siitä, miten tallennus ja synkronointi toimivat, liitettäväksi virheraporttiin. Se ei sisällä callouteja tai asetuksia.",
-	"settings.diagnosticsButton": "Kopioi diagnostiikka",
 	"confirm.titleResetEverything": "Palauta kaikki",
 	"confirm.titleReplaceUnreadable": "Korvaa asetustiedosto",
 	"confirm.replaceUnreadable": "Tarkka kopio nykyisestä tiedostosta tallennetaan ensin lisäosan varmuuskopiokansioon. Tiedosto korvataan sitten tässä näkyvällä kokonaisuudella, ja synkronointipalvelusi lähettää sen muille laitteillesi.",

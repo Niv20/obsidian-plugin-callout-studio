@@ -105,7 +105,6 @@ export const ja: Record<string, string> = {
 
 	"settings.editAria": "{{name}}を編集",
 	"settings.moreRowActionsAria": "{{name}}のその他の操作",
-	"settings.usageInfo": "{{files}}個のファイルで{{count}}回使用",
 	"settings.replaceAction": "vaultで置き換え",
 	"settings.deleteAction": "削除",
 	"settings.duplicateAction": "複製",
@@ -131,7 +130,6 @@ export const ja: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"vaultで認識されないcalloutタイプはこのcalloutのスタイルを継承します。",
 
-	"settings.globalStyle": "グローバルcalloutスタイル",
 	"settings.globalStyleRegularTitle": "ブロック callout のグローバルスタイル",
 	"settings.globalStyleHeadingTitle": "見出し callout のグローバルスタイル",
 	"settings.globalStyleInlineTitle": "インライン callout のグローバルスタイル",
@@ -226,12 +224,6 @@ export const ja: Record<string, string> = {
 	"commandBuilder.noCalloutChosen": "先にこのコマンド用のcalloutを選択してください。",
 	"commandBuilder.save": "保存",
 
-	"settings.vaultMaintenance": "vaultの洞察とメンテナンス",
-	"settings.vaultStats": "callout統計",
-	"settings.vaultStatsDesc":
-		"Markdownノート内のすべてのcallout（ブロック、見出し、インライン）をカウントし、タイプ別にグループ化します。",
-	"settings.vaultStatsButton": "統計を表示",
-	"settings.vaultStatsScanning": "スキャン中",
 	"settings.resetAll": "リセット",
 	"settings.resetAllDesc":
 		"すべてのユーザーcalloutを削除し、組み込みcallout、グローバルスタイル（ボーダー、フォントスケール、形状）、保存済みのカラーパレット、右クリックメニューのカスタマイズ、ダウンロード済みMaterial SVGをリセットします。",
@@ -254,8 +246,6 @@ export const ja: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "ご安心ください。リセットの前に、現在の設定のバックアップを保存します。設定の「バックアップ」セクションからいつでも復元できます。\n同期サービスをお使いの場合、リセットは他の端末にも反映される可能性があります。",
 	"settings.resetNothing": "リセットするものはありません。すべてすでにデフォルトです。",
 
-	"notice.customCommandsRemoved":
-		"calloutタイプが存在しなくなったカスタムコマンドを{{count}}件削除しました。",
 	"notice.customCommandMissingCallout":
 		"このコマンドのcalloutタイプはもう存在しません。",
 
@@ -277,10 +267,6 @@ export const ja: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} 件のノートを更新できなかったため、変更されずに残されました。詳細は開発者コンソールを確認してください。",
 	"notice.calloutDeleteIncomplete": "一部のノートを変換できませんでした。callout タイプは保持されました。完了した変換は保存されています。ファイルの問題を解決してから、操作をもう一度実行して完了してください。",
-	"notice.settingsUnreadable":
-		"Callout Studio は設定ファイルを読み込めなかったため、このセッションではコールアウトの種類が表示されません。何も書き込まれておらず、ディスク上のファイルも変更されていません — もう一度試すには Obsidian を再読み込みしてください。",
-	"notice.settingsMissing":
-		"Callout Studio の設定ファイルが見つからないため、このセッションではコールアウトの種類が表示されません。何も書き込まれていません — このボールトを同期している場合は、同期が完了するのを待ってから、変更を加える前に Obsidian を再読み込みしてください。",
 	"notice.nothingToWrap": "囲むものがありません。",
 	"notice.cursorNotInsideCallout": "カーソルがcallout内にありません。",
 	"notice.autocompleteTargetMoved":
@@ -324,7 +310,6 @@ export const ja: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Obsidian callout",
 	"editor.paletteGroupPresets": "カラープリセット",
 	"editor.paletteGroupCustom": "カスタム",
-	"editor.paletteNewColor": "新しい色…",
 	"editor.contrastWarning":
 		"背景とのコントラストが低く、読みにくい場合があります",
 	"editor.foldable": "折りたたみ可能",
@@ -337,7 +322,6 @@ export const ja: Record<string, string> = {
 	"editor.saveChanges": "変更を保存",
 	"editor.saving": "保存中…",
 	"editor.saveFailed": "保存を完了できませんでした。このエディターがまだ開いている場合は閉じずに、保存先の空き容量と同期を確認してから再試行してください。設定やノートの更新の一部はすでに保存されている可能性があります。",
-	"notice.settingsSaveFailed": "Callout Studioは変更を保存できませんでした。空き容量と同期を確認し、Obsidianを閉じる前に再試行してください。",
 	"editor.createCallout": "calloutを作成",
 	"editor.nameRequired": "calloutを作成する前に表示名が必要です。",
 	"editor.noChangesToSave": "変更はありませんでした。",
@@ -655,14 +639,9 @@ export const ja: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "アイコンライセンスとクレジット",
-	"credits.intro":
-		"Callout Studio はオープンソースのアイコンライブラリを使用しています。各ライブラリのライセンス、帰属表示、変更点を以下で確認できます。",
-	"credits.fullNotices": "サードパーティの完全な通知",
 	"credits.introBeforeNotices":
 		"Callout Studio はオープンソースのアイコンライブラリを使用しています。各ライブラリのライセンス、帰属表示、変更点を以下で確認するか、",
 	"credits.fullNoticesInline": "サードパーティの完全な通知",
-	"credits.pluginLicense":
-		"Callout Studio自体のコードは permissive ライセンスです。アイコン ライブラリはそれぞれのライセンスを保持します。",
 
 	"contextMenu.editCallout": "callout設定を編集",
 	"contextMenu.createCallout": "新しいcalloutを作成",
@@ -680,8 +659,6 @@ export const ja: Record<string, string> = {
 	"heading.toggleFold": "折りたたみを切り替え",
 
 	"settings.globalSettings": "Callout Studioのグローバルスタイルオプション",
-	"settings.globalSettingsScope":
-		"これはグローバル設定です。それぞれが、Callout Studioがスタイル設定するすべてのcalloutの形状・間隔・サイズを一度に変更します。テーマがスタイル設定するcalloutはテーマ自体のデザインのままです。",
 	"settings.globalSettingsRegularDesc":
 		"vault内のすべてのblock calloutのボーダー、半径、フォントスケール、整列を調整します。",
 	"settings.globalSettingsHeadingDesc":
@@ -743,8 +720,6 @@ export const ja: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{files}}個のファイルの{{count}}件の参照がカスタムエイリアスを使用しています: {{aliases}}。リセット後これらは機能しなくなります。続行しますか？",
 	"vault.resetConfirm": "リセット",
-	"vault.resetAllInUse":
-		"⚠ {{files}}個のファイルの{{count}}件のcallout参照が削除されるカスタムcalloutタイプを使用しています。",
 
 	"quickInsert.title": "ブロックcalloutをクイック挿入",
 	"quickInsert.desc": "カーソル位置に挿入するcalloutを選択します。ブロックcalloutのみです。",
@@ -766,29 +741,10 @@ export const ja: Record<string, string> = {
 	"quickInsert.noEditorHint": "編集モードで開いているノートがないため、何も挿入できません。",
 	"quickInsert.noEditor": "calloutを挿入するには、ノートを編集モードで開いてください。",
 
-	"vaultStats.title": "callout統計",
-	"vaultStats.totalCallouts": "callout総数",
-	"vaultStats.typesFound": "見つかったタイプ",
-	"vaultStats.filesWithCallouts": "calloutを含むファイル",
-	"vaultStats.filesScanned": "スキャン済みMarkdownファイル",
-	"vaultStats.empty": "Markdownノートにcalloutが見つかりませんでした。",
 	"vaultStats.columnType": "タイプ",
-	"vaultStats.columnName": "名前",
-	"vaultStats.columnSource": "ソース",
-	"vaultStats.columnCount": "数",
-	"vaultStats.columnFiles": "ファイル",
-	"vaultStats.unknown": "不明",
-	"vaultStats.sourceBuiltIn": "組み込み",
-	"vaultStats.sourceCustom": "カスタム",
-	"vaultStats.sourceAutoFallback": "自動フォールバック",
-	"vaultStats.sourceTheme": "CSSスニペット",
-	"vaultStats.sourceAlias": "{{id}}のエイリアス",
-	"vaultStats.sourceUnknown": "不明",
-	"vaultStats.byRole": "記述形式",
 	"vaultStats.roleBlock": "ブロック",
 	"vaultStats.roleHeading": "見出し",
 	"vaultStats.roleInline": "インライン",
-	"vaultStats.close": "閉じる",
 	"portable.subtitle": "Callout Studio の使用をやめる前に、標準 Markdown に変換する見出しコールアウトとインラインコールアウトを選択します。",
 	"portable.customize": "カスタム置換…",
 	"portable.editCustom": "カスタム置換を編集…",
@@ -808,7 +764,6 @@ export const ja: Record<string, string> = {
 	"usage.registeredCallouts": "登録済みのcallout",
 	"usage.unregisteredCallouts": "未登録のcallout",
 	"usage.summary": "{{files}}個のファイルに{{count}}件の出現箇所",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "すべての形式",
 	"usage.failed": "calloutの出現箇所を更新できませんでした。",
 	"usage.loading": "Markdownノートをスキャン中…",
@@ -1011,9 +966,6 @@ export const ja: Record<string, string> = {
 	"footer.contribute": "貢献する",
 	"footer.license": "プラグインライセンス",
 	"footer.iconCredits": "アイコンライセンス",
-	"footer.tagline":
-		"フィードバック、コメント、提案はありますか？ぜひお聞かせください！",
-	"footer.madeBy": "Nivが作成  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		"パレット「{{name}}」を削除しますか？\n1 件の callout が使用しています。色は保持され、後でエディターの色の行から再接続できます。",
 	"settings.deletePaletteConfirmLinked":
@@ -1067,10 +1019,7 @@ export const ja: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"現在表示されている設定を設定ファイルとして保存し、保存を再開します。このデバイスが保管している予備コピーは、先にバックアップされます。\n別のデバイスに残しておきたい新しい変更がある可能性がある場合は、続行する前に同期が終わるのを待ってください。同期アプリがこのファイルを他のデバイスに送ることがあります。\nCallout Studioは保存する前に、もう一度だけ設定ファイルを探します。戻っていた場合は、そちらを保持します。",
 	"notice.settingsBackupFailed": "安全のためのバックアップを保存できなかったため、設定の復旧を続行できませんでした。利用可能なストレージと書き込み権限を確認してから、再試行してください。",
-	"notice.settingsBackupSaved": "受信した設定を適用する前に、ローカルの callout 定義の復旧コピーが保存されました: {{path}}。",
-	"notice.settingsChangedElsewhere": "Callout Studio の設定が別のデバイスで変更されたため、この変更は保存されませんでした。もう一方のデバイスの設定が現在読み込まれています — もう一度変更を行ってください。",
 	"notice.settingsNewerVersion": "Callout Studio の設定はプラグインの新しいバージョンによって保存されたため、更新するまでこのデバイスには何も書き込まれません。設定は安全です — ここから Callout Studio を更新し、Obsidian を再読み込みしてください。",
-	"notice.settingsNotSaved": "その変更は保存されませんでした。Obsidian の起動時に Callout Studio が設定ファイルを使用できなかったため、このデバイスには何も書き込まれていません — 変更は Obsidian を閉じるまで保持されます。対処方法については設定 → Callout Studio を確認してください。",
 	"saveStatus.changed": "編集中に設定ファイルが変更されました。下書きはそのまま残っています。「再試行」を選んで届いた設定を読み込み、下書きを確認してからもう一度保存してください。",
 	"saveStatus.missing": "設定ファイルが見つからないため、保存は一時停止しています。これは再インストール後や、同期がまだ実行中のときに発生することがあります。同期を完了させてから再試行してください。見つからないファイルを意図的に置き換えるには、Callout Studio の設定にある新しい設定ファイルを作成を使用してください。",
 	"saveStatus.restoreSettings": "これらの設定を復元",
@@ -1104,7 +1053,6 @@ export const ja: Record<string, string> = {
 	"portable.selectionConflict": "この選択では見出しリンクの参照先が曖昧になります。前の選択を維持しました。",
 	"portable.selectAll": "すべて選択",
 	"portable.selectNone": "すべて選択解除",
-	"portable.waiting": "ノートが変更されました。確認内容を更新中…",
 	"portable.relatedLinksHint": "リンクと埋め込みは、選択した見出しに合わせて一緒に変換されます。",
 	"portable.selectChange": "{{path}} の {{line}} 行目を変換",
 	"portable.showMore": "さらに {{count}} 件表示",
@@ -1131,10 +1079,8 @@ export const ja: Record<string, string> = {
 	"portable.backup": "変換前に保管庫のバックアップを取ることをおすすめします。元のノートが変更され、Callout Studio では元に戻せません。",
 	"portable.scanning": "Markdown ノートを読み込み中…",
 	"portable.progress": "ノートを読み込み中: {{total}} 件中 {{done}} 件",
-	"portable.summary": "{{files}} 件のノートで {{count}} 件を置換 · 見出し {{headings}} 件 · インライン {{inline}} 件",
 	"portable.empty": "変換できる見出しコールアウトやインラインコールアウトはありません。何も変更されません。",
 	"portable.skipped": "不完全または未対応の {{count}} 件は変更せず、手動確認のために残しました。",
-	"portable.location": "{{path}} · {{line}} 行目",
 	"portable.confirmTitle": "この保管庫を恒久的に変換しますか？",
 	"portable.confirmBody": "{{files}} 件のノートで {{count}} 件を変換し、{{links}} 件の見出しリンクを更新しますか？\n元のファイルが変更され、Callout Studio では元に戻せません。自動バックアップは作成されません。先に保管庫をバックアップし、開いているノートを保存して、変換が終わるまで編集と同期を一時停止してください。\nファイルが変更されたり書き込みに失敗したりすると、変換は停止します。変換済みのノートは変更されたままになります。",
 	"portable.confirmAction": "恒久的に変換",
@@ -1190,20 +1136,14 @@ export const ja: Record<string, string> = {
 	"notice.recoveryStorageUnavailable": "この端末の復元用ストレージが応答していないため、コピーを破棄できません。Obsidianを再起動してから再試行してください。",
 	"recovery.title": "以前の設定一式を復元",
 	"recovery.intro": "Callout Studioは、この端末とプラグインのバックアップフォルダに、設定一式の以前のバージョンを保持しています。いずれかを復元すると、同期しているすべての端末で現在の設定一式が置き換えられます。現在の設定一式のバックアップが先に保存されます。",
-	"recovery.pausedHint": "保存が一時停止しているため、この問題が解決するまで復元は利用できません。コピーのエクスポートは引き続き行えます。",
 	"recovery.loading": "以前のバージョンを検索しています…",
 	"recovery.empty": "以前のバージョンは見つかりませんでした。",
 	"recovery.sectionHistory": "この端末に保存されたもの",
 	"recovery.sectionBackups": "バックアップ",
 	"recovery.sectionCopies": "設定ファイルの他のコピー",
-	"recovery.originThisDevice": "この端末",
-	"recovery.originOtherDevice": "他の端末",
-	"recovery.originOlderVersion": "古いバージョンによって保存されたもの",
 	"recovery.unreadable": "設定として読み込めません",
 	"recovery.same": "現在の設定一式と同じです",
 	"recovery.restoreSame": "この設定は現在の設定と同じなので、復元するものはありません。",
-	"recovery.summary": "保存されたcalloutタイプ {{callouts}}件、現在との差分 {{count}}件",
-	"recovery.export": "コピーをエクスポート",
 	"recovery.restore": "復元",
 	"recovery.confirmTitle": "この設定一式を復元",
 	"recovery.confirmBody": "現在の設定一式は{{when}}のものに置き換えられます（差分{{count}}件）。現在の設定一式のバックアップが先に保存され、同期サービスが復元した設定一式を他の端末に送信します。",
@@ -1212,20 +1152,14 @@ export const ja: Record<string, string> = {
 	"recovery.backupFailed": "何も復元されませんでした。現在の設定一式のバックアップを先に保存できませんでした。利用可能なストレージを確認してから再試行してください。",
 	"recovery.failed": "設定一式を復元できませんでした。変更は行われていません。",
 	"notice.unsavedChangesReplaced": "この端末で行われた一部の変更はまだ保存されておらず、他の端末からのより新しい設定に置き換えられました。あなたのバージョンは先に保存されています。それを取り戻すには、Callout Studioの設定で「以前の設定一式を復元」を開いてください。",
-	"notice.diagnosticsCopied": "同期診断情報をコピーしました。",
-	"notice.diagnosticsFailed": "同期診断情報をコピーできませんでした。",
 	"notice.recoveryCopyStale": "設定は保存されましたが、この端末の復元用コピーを更新できませんでした。この端末で利用可能なストレージを確認してください。Callout Studioは次回の変更時に再試行します。",
 	"notice.blockedWhilePaused": "保存が一時停止しているため、この変更は今は保持できません。まずCallout Studioの設定に表示されている保存の問題を解決してください。",
 	"welcome.syncNote": "他の端末ですでにCallout Studioを使っていますか？まず同期サービスを完了させてください。calloutと設定は到着次第ここに表示されます。",
-	"settings.resetAllConfirmFull": "これにより、すべてのカスタムcalloutタイプ、アップロードした画像、カスタムコマンドが削除され、組み込みのcallout、グローバルスタイル、保存済みのカラーパレット、右クリックメニュー、見出しおよびインラインcalloutの設定、フォールバックスタイルがリセットされます。現在の設定一式のバックアップは、先にプラグインのバックアップフォルダに保存されます。同期サービスがこのリセットを他の端末に送信する場合があります。",
 	"settings.resetBackupFailed": "何もリセットされませんでした。現在の設定一式のバックアップを先に保存できませんでした。利用可能なストレージを確認してから再試行してください。",
 	"settings.resetNotSaved": "リセットは表示されていますが、まだ保存できていないため、設定ファイルには依然として以前の設定一式が保持されています。Callout Studioの設定で保存状況を確認してください。",
 	"settings.recovery": "以前の設定一式",
 	"settings.recoveryDesc": "この端末またはプラグインのバックアップフォルダに以前保存された設定一式のバージョンを復元します。",
 	"settings.recoveryButton": "以前の設定一式を復元",
-	"settings.diagnostics": "同期診断",
-	"settings.diagnosticsDesc": "保存と同期がどのように機能しているかの概要をコピーして、バグ報告に含めます。calloutや設定は含まれません。",
-	"settings.diagnosticsButton": "診断情報をコピー",
 	"confirm.titleResetEverything": "すべてリセット",
 	"confirm.titleReplaceUnreadable": "設定ファイルを置き換える",
 	"confirm.replaceUnreadable": "現在のファイルの正確なコピーが、先にプラグインのバックアップフォルダに保存されます。その後、ファイルはここに表示されている設定一式に置き換えられ、同期サービスが他の端末に送信します。",

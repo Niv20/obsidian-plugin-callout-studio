@@ -105,7 +105,6 @@ export const nl: Record<string, string> = {
 
 	"settings.editAria": "{{name}} bewerken",
 	"settings.moreRowActionsAria": "Meer acties voor {{name}}",
-	"settings.usageInfo": "{{count}} gebruik(en) in {{files}} bestand(en)",
 	"settings.replaceAction": "In vault vervangen",
 	"settings.deleteAction": "Verwijderen",
 	"settings.duplicateAction": "Dupliceren",
@@ -130,7 +129,6 @@ export const nl: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Niet-herkende callout-types in uw vault nemen de stijl van deze callout over.",
 
-	"settings.globalStyle": "Globale callout-stijl",
 	"settings.globalStyleRegularTitle": "Globale stijl voor block callouts",
 	"settings.globalStyleHeadingTitle": "Globale stijl voor kop-callouts",
 	"settings.globalStyleInlineTitle": "Globale stijl voor inline callouts",
@@ -226,12 +224,6 @@ export const nl: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"Gepauzeerd: uw thema levert deze callout, dus heeft deze alleen een Blok-indeling. Deze opdracht werkt weer zodra het thema deze niet meer levert.",
 
-	"settings.vaultMaintenance": "Vault-inzichten & onderhoud",
-	"settings.vaultStats": "Callout-statistieken",
-	"settings.vaultStatsDesc":
-		"Telt elke callout in uw Markdown-notities — blok, kop en inline — en groepeert ze op type.",
-	"settings.vaultStatsButton": "Statistieken bekijken",
-	"settings.vaultStatsScanning": "Scannen",
 	"settings.resetAll": "Terugzetten",
 	"settings.resetAllDesc":
 		"Verwijdert alle gebruikerscallouts, zet ingebouwde callouts, globale stijlen (randen, lettertypeschaal, vorm), opgeslagen kleurenpaletten, de aanpassing van het rechtsklikmenu en gedownloade Material SVG's terug.",
@@ -254,8 +246,6 @@ export const nl: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "Geen zorgen: voordat we terugzetten, slaan we een back-up van je huidige configuratie op. Je kunt die op elk moment herstellen via het onderdeel Back-ups in de instellingen.\nAls je een synchronisatieservice gebruikt, kan het terugzetten ook naar je andere apparaten worden doorgegeven.",
 	"settings.resetNothing": "Niets om terug te zetten: alles staat al op de standaardinstellingen.",
 
-	"notice.customCommandsRemoved":
-		"{{count}} aangepaste opdracht(en) verwijderd waarvan het callout-type niet meer bestaat.",
 	"notice.customCommandMissingCallout":
 		"Het callout-type van deze opdracht bestaat niet meer.",
 	"notice.importedJSON": "{{count}} callout-type(s) geïmporteerd uit JSON.",
@@ -277,10 +267,6 @@ export const nl: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} notitie(s) konden niet worden bijgewerkt en zijn ongewijzigd gebleven. Zie de ontwikkelaarsconsole voor details.",
 	"notice.calloutDeleteIncomplete": "Sommige notities konden niet worden geconverteerd. Het callout-type is behouden. Voltooide conversies zijn opgeslagen; los het bestandsprobleem op en voer de actie opnieuw uit om te voltooien.",
-	"notice.settingsUnreadable":
-		"Callout Studio kon zijn instellingenbestand niet lezen, dus je callout-typen ontbreken in deze sessie. Er is niets geschreven en het bestand op schijf is ongewijzigd — herlaad Obsidian om het opnieuw te proberen.",
-	"notice.settingsMissing":
-		"Het instellingenbestand van Callout Studio ontbreekt, dus je callout-typen ontbreken in deze sessie. Er is niets geschreven — als je deze kluis synchroniseert, laat de synchronisatie dan voltooien en herlaad Obsidian voordat je wijzigingen aanbrengt.",
 
 	"notice.nothingToWrap": "Niets om in te pakken.",
 	"notice.cursorNotInsideCallout":
@@ -329,7 +315,6 @@ export const nl: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Obsidian-callouts",
 	"editor.paletteGroupPresets": "Kleurvoorinstellingen",
 	"editor.paletteGroupCustom": "Aangepast",
-	"editor.paletteNewColor": "Nieuwe kleur…",
 	"editor.contrastWarning":
 		"Laag contrast met de achtergrond — kan moeilijk leesbaar zijn",
 	"editor.foldable": "Opvouwbaar",
@@ -342,7 +327,6 @@ export const nl: Record<string, string> = {
 	"editor.saveChanges": "Wijzigingen opslaan",
 	"editor.saving": "Opslaan…",
 	"editor.saveFailed": "Opslaan is niet voltooid. Als deze editor nog open is, laat hem dan open en probeer het opnieuw nadat je de opslagruimte en synchronisatie hebt gecontroleerd. Sommige instellingen of wijzigingen in notities zijn mogelijk al opgeslagen.",
-	"notice.settingsSaveFailed": "Callout Studio kon je wijzigingen niet opslaan. Controleer de beschikbare opslagruimte en synchronisatie en probeer het opnieuw voordat je Obsidian sluit.",
 	"editor.createCallout": "Callout aanmaken",
 	"editor.nameRequired":
 		"Een weergavenaam is vereist voordat u een callout aanmaakt.",
@@ -663,14 +647,9 @@ export const nl: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "Iconlicenties en credits",
-	"credits.intro":
-		"Callout Studio gebruikt opensource-iconenbibliotheken. Bekijk hieronder de licentie, naamsvermelding en wijzigingen van elke bibliotheek.",
-	"credits.fullNotices": "Volledige berichten van derden",
 	"credits.introBeforeNotices":
 		"Callout Studio gebruikt opensource-iconenbibliotheken; bekijk hieronder de licentie, naamsvermelding en wijzigingen van elke bibliotheek, of lees de ",
 	"credits.fullNoticesInline": "volledige berichten van derden",
-	"credits.pluginLicense":
-		"De eigen code van Callout Studio valt onder een permissieve licentie; de pictogrambibliotheken behouden hun eigen licenties.",
 
 	"contextMenu.editCallout": "Callout-instellingen bewerken",
 	"contextMenu.createCallout": "Nieuwe callout aanmaken",
@@ -686,8 +665,6 @@ export const nl: Record<string, string> = {
 	"contextMenu.deleteSection": "Kopsectie verwijderen",
 	"heading.toggleFold": "Vouwen omschakelen",
 	"settings.globalSettings": "Globale Callout Studio-stijlopties",
-	"settings.globalSettingsScope":
-		"Dit zijn globale instellingen: elke instelling wijzigt in één keer de vorm, ruimte en grootte van elke callout die Callout Studio stijlt. Callouts die uw thema stijlt behouden het eigen ontwerp van het thema.",
 	"settings.globalSettingsRegularDesc":
 		"Pas de rand, hoekafronding, lettertypeschaal en uitlijning van elke block callout in uw vault aan.",
 	"settings.globalSettingsHeadingDesc":
@@ -748,8 +725,6 @@ export const nl: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{count}} referentie(s) in {{files}} bestand(en) gebruiken aangepaste aliassen: {{aliases}}. Deze werken niet meer na het terugzetten. Doorgaan?",
 	"vault.resetConfirm": "Terugzetten",
-	"vault.resetAllInUse":
-		"⚠ {{count}} callout-referentie(s) in {{files}} bestand(en) gebruiken aangepaste callout-types die worden verwijderd.",
 
 	"quickInsert.title": "Blok-callout snel invoegen",
 	"quickInsert.desc": "Kies een callout om in te voegen op de cursorpositie. Alleen blok-callouts.",
@@ -773,29 +748,10 @@ export const nl: Record<string, string> = {
 	"quickInsert.noEditorHint": "Er is geen notitie geopend in bewerkingsmodus, dus er kan niets worden ingevoegd.",
 	"quickInsert.noEditor": "Open een notitie in bewerkingsmodus om een callout in te voegen.",
 
-	"vaultStats.title": "Callout-statistieken",
-	"vaultStats.totalCallouts": "Totaal callouts",
-	"vaultStats.typesFound": "Gevonden types",
-	"vaultStats.filesWithCallouts": "Bestanden met callouts",
-	"vaultStats.filesScanned": "Gescande Markdown-bestanden",
-	"vaultStats.empty": "Geen callouts gevonden in Markdown-notities.",
 	"vaultStats.columnType": "Type",
-	"vaultStats.columnName": "Naam",
-	"vaultStats.columnSource": "Bron",
-	"vaultStats.columnCount": "Aantal",
-	"vaultStats.columnFiles": "Bestanden",
-	"vaultStats.unknown": "Onbekend",
-	"vaultStats.sourceBuiltIn": "Ingebouwd",
-	"vaultStats.sourceCustom": "Aangepast",
-	"vaultStats.sourceAutoFallback": "Automatische fallback",
-	"vaultStats.sourceTheme": "CSS-fragment",
-	"vaultStats.sourceAlias": "Alias van {{id}}",
-	"vaultStats.sourceUnknown": "Onbekend",
-	"vaultStats.byRole": "Geschreven als",
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Kop",
 	"vaultStats.roleInline": "In de tekst",
-	"vaultStats.close": "Sluiten",
 	"portable.subtitle": "Kies welke callouts in koppen en tekst je naar standaard Markdown wilt omzetten voordat je stopt met Callout Studio.",
 	"portable.customize": "Aangepaste vervanging…",
 	"portable.editCustom": "Aangepaste vervanging bewerken…",
@@ -815,7 +771,6 @@ export const nl: Record<string, string> = {
 	"usage.registeredCallouts": "Geregistreerde callouts",
 	"usage.unregisteredCallouts": "Niet-geregistreerde callouts",
 	"usage.summary": "{{count}} vindplaatsen in {{files}} bestanden",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "Alle formaten",
 	"usage.failed": "Kan de vindplaatsen van callouts niet bijwerken.",
 	"usage.loading": "Markdown-notities scannen…",
@@ -1023,9 +978,6 @@ export const nl: Record<string, string> = {
 	"footer.contribute": "Bijdragen",
 	"footer.license": "Pluginlicentie",
 	"footer.iconCredits": "Iconlicenties",
-	"footer.tagline":
-		"Hebt u feedback, opmerkingen of suggesties? Ik hoor het graag!",
-	"footer.madeBy": "Gemaakt door Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Palet "{{name}}" verwijderen?\n1 callout gebruikt het. Het behoudt zijn kleuren en je kunt het later opnieuw koppelen via de rij Kleur in de editor.',
 	"settings.deletePaletteConfirmLinked":
@@ -1080,10 +1032,7 @@ export const nl: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"Hiermee sla je de opzet die je nu ziet op als je instellingenbestand en zet je het opslaan weer aan. De reservekopie die dit apparaat bewaart, wordt eerst geback-upt.\nKan een ander apparaat nieuwere wijzigingen hebben die je wilt behouden, laat het dan eerst klaar zijn met synchroniseren voordat je doorgaat. Je synchronisatie-app kan dit bestand naar je andere apparaten sturen.\nCallout Studio zoekt nog één keer naar het instellingenbestand voordat het opslaat. Is het teruggekomen, dan behoudt Callout Studio dat bestand.",
 	"notice.settingsBackupFailed": "Het herstellen van instellingen kon niet doorgaan omdat een veiligheidsback-up niet kon worden opgeslagen. Controleer de beschikbare opslagruimte en schrijfrechten, en probeer het opnieuw.",
-	"notice.settingsBackupSaved": "Er is een herstelkopie van lokale callout-definities opgeslagen voordat de binnenkomende instellingen werden toegepast: {{path}}.",
-	"notice.settingsChangedElsewhere": "De instellingen van Callout Studio zijn op een ander apparaat gewijzigd, dus deze wijziging is niet opgeslagen. De instellingen van het andere apparaat worden nu geladen — voer de wijziging opnieuw door.",
 	"notice.settingsNewerVersion": "De instellingen van Callout Studio zijn opgeslagen door een nieuwere versie van de plugin, dus er wordt niets op dit apparaat geschreven totdat je die bijwerkt. Je instellingen zijn veilig — werk Callout Studio hier bij en herlaad Obsidian.",
-	"notice.settingsNotSaved": "Die wijziging is niet opgeslagen. Callout Studio kon zijn instellingenbestand niet gebruiken toen Obsidian opstartte, dus er wordt niets op dit apparaat geschreven — je wijzigingen blijven bestaan totdat je Obsidian sluit. Zie Instellingen → Callout Studio voor wat je moet doen.",
 	"saveStatus.changed":
 		"Het instellingenbestand is gewijzigd terwijl je aan het bewerken was. Je concept is nog beschikbaar. Kies Opnieuw proberen om de binnengekomen instellingen te laden, controleer daarna je concept en sla opnieuw op.",
 	"saveStatus.missing": "Opslaan is gepauzeerd omdat het instellingenbestand ontbreekt. Dit kan gebeuren na een herinstallatie of terwijl er nog wordt gesynchroniseerd. Rond de synchronisatie af en probeer het opnieuw. Gebruik Nieuw instellingenbestand maken in de instellingen van Callout Studio om het ontbrekende bestand bewust te vervangen.",
@@ -1118,7 +1067,6 @@ export const nl: Record<string, string> = {
 	"portable.selectionConflict": "Die keuze zou koplinks dubbelzinnig maken. Je vorige selectie is behouden.",
 	"portable.selectAll": "Alles selecteren",
 	"portable.selectNone": "Alles deselecteren",
-	"portable.waiting": "Notities zijn gewijzigd. Overzicht bijwerken…",
 	"portable.relatedLinksHint": "Links en insluitingen volgen de geselecteerde koppen en worden samen daarmee omgezet.",
 	"portable.selectChange": "{{path}}, regel {{line}} omzetten",
 	"portable.showMore": "Nog {{count}} tonen",
@@ -1145,10 +1093,8 @@ export const nl: Record<string, string> = {
 	"portable.backup": "We raden aan om vóór de conversie een back-up van je kluis te maken. Dit wijzigt de oorspronkelijke notities en kan niet ongedaan worden gemaakt in Callout Studio.",
 	"portable.scanning": "Markdown-notities lezen…",
 	"portable.progress": "Notities lezen: {{done}} van {{total}}",
-	"portable.summary": "{{count}} vervangingen in {{files}} notities · {{headings}} in koppen · {{inline}} inline",
 	"portable.empty": "Geen geschikte kop- of inline-callouts gevonden. Er wordt niets gewijzigd.",
 	"portable.skipped": "{{count}} onvolledige of niet-ondersteunde voorkomens zijn ongewijzigd gebleven voor handmatige controle.",
-	"portable.location": "{{path}} · regel {{line}}",
 	"portable.confirmTitle": "Deze kluis definitief omzetten?",
 	"portable.confirmBody": "{{count}} voorkomens omzetten en {{links}} koplinks in {{files}} notities bijwerken?\nDit wijzigt de oorspronkelijke bestanden en kan niet ongedaan worden gemaakt in Callout Studio. Er wordt geen automatische back-up gemaakt. Maak eerst een back-up van je kluis, sla open notities op en pauzeer bewerken en synchroniseren totdat de conversie klaar is.\nAls een bestand verandert of schrijven mislukt, stopt de conversie. Reeds omgezette notities blijven gewijzigd.",
 	"portable.confirmAction": "Definitief omzetten",
@@ -1221,20 +1167,14 @@ export const nl: Record<string, string> = {
 	"recovery.title": "Een eerdere configuratie herstellen",
 	"recovery.intro":
 		"Callout Studio bewaart eerdere versies van je configuratie op dit apparaat en in de back-upmap van de plugin. Een ervan herstellen vervangt je huidige configuratie op elk gesynchroniseerd apparaat. Eerst wordt een back-up van de huidige configuratie opgeslagen.",
-	"recovery.pausedHint": "Opslaan is gepauzeerd, dus herstellen is niet mogelijk totdat dat is opgelost. Je kunt nog steeds een kopie exporteren.",
 	"recovery.loading": "Eerdere versies worden gezocht…",
 	"recovery.empty": "Er zijn geen eerdere versies gevonden.",
 	"recovery.sectionHistory": "Opgeslagen op dit apparaat",
 	"recovery.sectionBackups": "Back-ups",
 	"recovery.sectionCopies": "Andere kopieën van het instellingenbestand",
-	"recovery.originThisDevice": "Dit apparaat",
-	"recovery.originOtherDevice": "Een ander apparaat",
-	"recovery.originOlderVersion": "Opgeslagen door een oudere versie",
 	"recovery.unreadable": "Kan niet als instellingen worden gelezen",
 	"recovery.same": "Hetzelfde als je huidige configuratie",
 	"recovery.restoreSame": "Deze configuratie is hetzelfde als je huidige, dus er is niets om te herstellen.",
-	"recovery.summary": "{{callouts}} opgeslagen callout-type(n), {{count}} verschil(len) met nu",
-	"recovery.export": "Kopie exporteren",
 	"recovery.restore": "Herstellen",
 	"recovery.confirmTitle": "Deze configuratie herstellen",
 	"recovery.confirmBody":
@@ -1247,16 +1187,12 @@ export const nl: Record<string, string> = {
 	"recovery.failed": "De configuratie kon niet worden hersteld. Er is niets gewijzigd.",
 	"notice.unsavedChangesReplaced":
 		"Sommige wijzigingen op dit apparaat waren nog niet opgeslagen, en nieuwere instellingen van een ander apparaat hebben ze vervangen. Jouw versie is eerst opgeslagen: open Een eerdere configuratie herstellen in de Callout Studio-instellingen om die terug te krijgen.",
-	"notice.diagnosticsCopied": "Synchronisatiediagnose gekopieerd.",
-	"notice.diagnosticsFailed": "De synchronisatiediagnose kon niet worden gekopieerd.",
 	"notice.recoveryCopyStale":
 		"Je instellingen zijn opgeslagen, maar de herstelkopie van dit apparaat kon niet worden bijgewerkt. Controleer de beschikbare opslagruimte op dit apparaat. Callout Studio probeert het opnieuw bij je volgende wijziging.",
 	"notice.blockedWhilePaused":
 		"Opslaan is gepauzeerd, dus deze wijziging kan nu niet worden bewaard. Los eerst het opslagprobleem op dat in de Callout Studio-instellingen wordt getoond.",
 	"welcome.syncNote":
 		"Gebruik je Callout Studio al op een ander apparaat? Laat je synchronisatiedienst eerst afronden. Je callouts en instellingen verschijnen hier zodra ze aankomen.",
-	"settings.resetAllConfirmFull":
-		"Dit verwijdert elk aangepast callout-type, geüploade afbeelding en aangepast commando, en herstelt ingebouwde callouts, globale stijlen, opgeslagen kleurenpaletten, het rechtsklikmenu, kop- en inline-callout-instellingen, en de terugvalstijl naar de standaard. Eerst wordt een back-up van je huidige configuratie opgeslagen in de back-upmap van de plugin. Je synchronisatiedienst kan de reset naar je andere apparaten sturen.",
 	"settings.resetBackupFailed":
 		"Er is niets gereset: er kon geen back-up van je huidige configuratie worden opgeslagen. Controleer de beschikbare opslagruimte en probeer het opnieuw.",
 	"settings.resetNotSaved":
@@ -1264,10 +1200,6 @@ export const nl: Record<string, string> = {
 	"settings.recovery": "Eerdere configuraties",
 	"settings.recoveryDesc": "Herstel een eerder opgeslagen versie van je configuratie op dit apparaat of in de back-upmap van de plugin.",
 	"settings.recoveryButton": "Een eerdere configuratie herstellen",
-	"settings.diagnostics": "Synchronisatiediagnose",
-	"settings.diagnosticsDesc":
-		"Kopieer een samenvatting van hoe opslaan en synchroniseren werken, om op te nemen in een bugrapport. Het bevat geen callouts of instellingen.",
-	"settings.diagnosticsButton": "Diagnose kopiëren",
 	"confirm.titleResetEverything": "Alles resetten",
 	"confirm.titleReplaceUnreadable": "Instellingenbestand vervangen",
 	"confirm.replaceUnreadable":

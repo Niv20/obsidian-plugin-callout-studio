@@ -99,7 +99,6 @@ export const nb: Record<string, string> = {
 	"settings.noCalloutsNow": "Ingen tilpassede callouts for øyeblikket.",
 	"settings.editAria": "Rediger {{name}}",
 	"settings.moreRowActionsAria": "Flere handlinger for {{name}}",
-	"settings.usageInfo": "{{count}} bruk i {{files}} fil(er)",
 	"settings.replaceAction": "Erstatt i vault",
 	"settings.deleteAction": "Slett",
 	"settings.duplicateAction": "Dupliser",
@@ -122,7 +121,6 @@ export const nb: Record<string, string> = {
 	"settings.fallbackCallout": "Standard reserve-callout",
 	"settings.fallbackCalloutDesc":
 		"Ukjente callout-typer i valvet ditt vil arve stilen fra denne callout-en.",
-	"settings.globalStyle": "Global callout-stil",
 	"settings.globalStyleRegularTitle": "Global stil for blokk-callouts",
 	"settings.globalStyleHeadingTitle": "Global stil for overskrift-callouts",
 	"settings.globalStyleInlineTitle": "Global stil for callouts i teksten",
@@ -213,12 +211,6 @@ export const nb: Record<string, string> = {
 		"Det finnes ingen callout-typer å bygge en kommando fra ennå.",
 	"commandBuilder.noCalloutChosen": "Velg en callout for denne kommandoen først.",
 	"commandBuilder.save": "Lagre",
-	"settings.vaultMaintenance": "Vault-innsikt og vedlikehold",
-	"settings.vaultStats": "Callout-statistikk",
-	"settings.vaultStatsDesc":
-		"Teller hver callout i Markdown-notatene dine — blokk, overskrift og inline — og grupperer dem etter type.",
-	"settings.vaultStatsButton": "Vis statistikk",
-	"settings.vaultStatsScanning": "Skanner",
 	"settings.resetAll": "Tilbakestill",
 	"settings.resetAllDesc":
 		"Sletter alle brukercallouts, tilbakestiller innebygde callouts, globale stiler, lagrede fargepaletter, tilpasningen av høyreklikkmenyen og nedlastede Material-SVG-er.",
@@ -240,8 +232,6 @@ export const nb: Record<string, string> = {
 	"settings.resetItemFallback": "Reservestil",
 	"settings.resetAllConfirmAfter": "Ingen grunn til bekymring: før tilbakestillingen lagrer vi en sikkerhetskopi av det nåværende oppsettet ditt. Du kan gjenopprette den når som helst fra Sikkerhetskopier-delen i innstillingene.\nHvis du bruker en synkroniseringstjeneste, kan tilbakestillingen også nå de andre enhetene dine.",
 	"settings.resetNothing": "Ingenting å tilbakestille: alt er allerede på standardinnstillingene.",
-	"notice.customCommandsRemoved":
-		"Fjernet {{count}} tilpasset(e) kommando(er) hvis callout-type ikke lenger finnes.",
 	"notice.customCommandMissingCallout":
 		"Denne kommandoens callout-type finnes ikke lenger.",
 	"notice.importedJSON": "{{count}} callout-type(r) importert fra JSON.",
@@ -262,10 +252,6 @@ export const nb: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} notat kunne ikke oppdateres og ble stående uendret. Se utviklerkonsollen for detaljer.",
 	"notice.calloutDeleteIncomplete": "Noen notater kunne ikke konverteres. Callout-typen ble beholdt. Fullførte konverteringer er lagret; løs filproblemet, og kjør handlingen på nytt for å fullføre.",
-	"notice.settingsUnreadable":
-		"Callout Studio klarte ikke å lese innstillingsfilen sin, så callout-typene dine mangler i denne økten. Ingenting er skrevet, og filen på disken er uendret — last inn Obsidian på nytt for å prøve igjen.",
-	"notice.settingsMissing":
-		"Callout Studios innstillingsfil mangler, så callout-typene dine mangler i denne økten. Ingenting er skrevet — hvis du synkroniserer dette hvelvet, la synkroniseringen fullføres og last inn Obsidian på nytt før du gjør endringer.",
 	"notice.nothingToWrap": "Ingenting å pakke inn.",
 	"notice.cursorNotInsideCallout": "Markøren er ikke inne i en callout.",
 	"notice.autocompleteTargetMoved":
@@ -311,7 +297,6 @@ export const nb: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Obsidian-callouts",
 	"editor.paletteGroupPresets": "Fargeforhåndsinnstillinger",
 	"editor.paletteGroupCustom": "Tilpasset",
-	"editor.paletteNewColor": "Ny farge…",
 	"editor.contrastWarning":
 		"Lav kontrast mot bakgrunnen — kan være vanskelig å lese",
 	"editor.foldable": "Foldbar",
@@ -324,7 +309,6 @@ export const nb: Record<string, string> = {
 	"editor.saveChanges": "Lagre endringer",
 	"editor.saving": "Lagrer…",
 	"editor.saveFailed": "Lagringen kunne ikke fullføres. Hvis dette redigeringsvinduet fortsatt er åpent, lar du det stå åpent og prøver igjen etter å ha kontrollert lagringsplass og synkronisering. Noen innstillinger eller notatoppdateringer kan allerede være lagret.",
-	"notice.settingsSaveFailed": "Callout Studio kunne ikke lagre endringene dine. Kontroller tilgjengelig lagringsplass og synkronisering, og prøv igjen før du lukker Obsidian.",
 	"editor.createCallout": "Opprett callout",
 	"editor.nameRequired":
 		"Et visningsnavn er påkrevd før du oppretter en callout.",
@@ -640,14 +624,9 @@ export const nb: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "Ikonlisenser og kreditering",
-	"credits.intro":
-		"Callout Studio bruker ikonbiblioteker med åpen kildekode. Se lisens, kreditering og endringer for hvert bibliotek nedenfor.",
-	"credits.fullNotices": "Fullstendige tredjeparts meldinger",
 	"credits.introBeforeNotices":
 		"Callout Studio bruker ikonbiblioteker med åpen kildekode; se lisens, kreditering og endringer for hvert bibliotek nedenfor, eller les ",
 	"credits.fullNoticesInline": "de fullstendige tredjepartsmerknadene",
-	"credits.pluginLicense":
-		"Callout Studios egen kode er under en permissiv lisens; ikonbibliotekene beholder sine egne lisenser.",
 	"contextMenu.editCallout": "Rediger callout-innstillinger",
 	"contextMenu.createCallout": "Opprett ny callout",
 	"contextMenu.copyMarkdown": "Kopier callout Markdown",
@@ -662,8 +641,6 @@ export const nb: Record<string, string> = {
 	"contextMenu.deleteSection": "Slett overskriftsseksjon",
 	"heading.toggleFold": "Veksle folding",
 	"settings.globalSettings": "Globale stilvalg for Callout Studio",
-	"settings.globalSettingsScope":
-		"Dette er globale innstillinger: hver av dem endrer form, avstand og størrelse på hver callout Callout Studio stiler, på én gang. Callouts som temaet ditt stiler, beholder temaets eget design.",
 	"settings.globalSettingsRegularDesc":
 		"Juster kant, radius, skriftstørrelse og justering for hver block callout i vaulten din.",
 	"settings.globalSettingsHeadingDesc":
@@ -721,8 +698,6 @@ export const nb: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{count}} referanse(r) i {{files}} fil(er) bruker tilpassede aliaser: {{aliases}}. Disse vil slutte å fungere etter tilbakestilling. Fortsett?",
 	"vault.resetConfirm": "Tilbakestill",
-	"vault.resetAllInUse":
-		"⚠ {{count}} callout-referanse(r) i {{files}} fil(er) bruker tilpassede callout-typer som vil bli slettet.",
 	"quickInsert.title": "Hurtiginnsetting av blokk-callout",
 	"quickInsert.desc": "Velg en callout som skal settes inn ved markøren. Kun blokk-callouter.",
 	"quickInsert.searchPlaceholder": "Søk i callouter",
@@ -745,29 +720,10 @@ export const nb: Record<string, string> = {
 	"quickInsert.noEditorHint": "Ingen notat er åpent i redigeringsmodus, så ingenting kan settes inn.",
 	"quickInsert.noEditor": "Åpne et notat i redigeringsmodus for å sette inn en callout.",
 
-	"vaultStats.title": "Callout-statistikk",
-	"vaultStats.totalCallouts": "Totalt callouts",
-	"vaultStats.typesFound": "Funnet typer",
-	"vaultStats.filesWithCallouts": "Filer med callouts",
-	"vaultStats.filesScanned": "Skannede Markdown-filer",
-	"vaultStats.empty": "Ingen callouts funnet i Markdown-notater.",
 	"vaultStats.columnType": "Type",
-	"vaultStats.columnName": "Navn",
-	"vaultStats.columnSource": "Kilde",
-	"vaultStats.columnCount": "Antall",
-	"vaultStats.columnFiles": "Filer",
-	"vaultStats.unknown": "Ukjent",
-	"vaultStats.sourceBuiltIn": "Innebygd",
-	"vaultStats.sourceCustom": "Tilpasset",
-	"vaultStats.sourceAutoFallback": "Automatisk reserve",
-	"vaultStats.sourceTheme": "CSS-kodesnutt",
-	"vaultStats.sourceAlias": "Alias for {{id}}",
-	"vaultStats.sourceUnknown": "Ukjent",
-	"vaultStats.byRole": "Skrevet som",
 	"vaultStats.roleBlock": "Blokk",
 	"vaultStats.roleHeading": "Overskrift",
 	"vaultStats.roleInline": "I teksten",
-	"vaultStats.close": "Lukk",
 	"portable.subtitle": "Velg hvilke callouts i overskrifter og tekst som skal konverteres til standard Markdown før du slutter å bruke Callout Studio.",
 	"portable.customize": "Egendefinert erstatning…",
 	"portable.editCustom": "Rediger egendefinert erstatning…",
@@ -787,7 +743,6 @@ export const nb: Record<string, string> = {
 	"usage.registeredCallouts": "Registrerte callouter",
 	"usage.unregisteredCallouts": "Uregistrerte callouter",
 	"usage.summary": "{{count}} forekomster i {{files}} filer",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "Alle formater",
 	"usage.failed": "Kunne ikke oppdatere callout-forekomstene.",
 	"usage.loading": "Skanner Markdown-notater…",
@@ -985,9 +940,6 @@ export const nb: Record<string, string> = {
 	"footer.contribute": "Bidra",
 	"footer.license": "Plugin-lisens",
 	"footer.iconCredits": "Ikonlisenser",
-	"footer.tagline":
-		"Har du tilbakemeldinger, kommentarer eller forslag? Jeg vil gjerne høre det!",
-	"footer.madeBy": "Laget av Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Slette paletten "{{name}}"?\n1 callout bruker den. Den beholder fargene sine, og du kan koble den til igjen senere fra Farge-raden i redigereren.',
 	"settings.deletePaletteConfirmLinked":
@@ -1042,10 +994,7 @@ export const nb: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"Dette lagrer oppsettet du ser nå som innstillingsfilen din og slår lagringen på igjen. Reservekopien som denne enheten oppbevarer, sikkerhetskopieres først.\nHvis en annen enhet kan ha nyere endringer du vil beholde, la den bli ferdig med å synkronisere før du fortsetter. Synkroniseringsappen din kan sende denne filen til de andre enhetene dine.\nCallout Studio leter etter innstillingsfilen én gang til før lagring. Hvis den har kommet tilbake, beholder Callout Studio den i stedet.",
 	"notice.settingsBackupFailed": "Gjenoppretting av innstillinger kunne ikke fortsette fordi en sikkerhetskopi ikke kunne lagres. Sjekk tilgjengelig lagringsplass og skrivetillatelser, og prøv igjen.",
-	"notice.settingsBackupSaved": "En gjenopprettingskopi av lokale callout-definisjoner ble lagret før innkommende innstillinger ble brukt: {{path}}.",
-	"notice.settingsChangedElsewhere": "Callout Studios innstillinger ble endret på en annen enhet, så denne endringen ble ikke lagret. Innstillingene fra den andre enheten lastes nå — gjør endringen på nytt.",
 	"notice.settingsNewerVersion": "Callout Studios innstillinger ble lagret av en nyere versjon av utvidelsen, så ingenting blir skrevet på denne enheten før du oppdaterer den. Innstillingene dine er trygge — oppdater Callout Studio her og last inn Obsidian på nytt.",
-	"notice.settingsNotSaved": "Den endringen ble ikke lagret. Callout Studio kunne ikke bruke innstillingsfilen sin da Obsidian startet, så ingenting skrives på denne enheten — endringene dine varer til du lukker Obsidian. Se Innstillinger → Callout Studio for hva du kan gjøre.",
 	"saveStatus.changed":
 		"Innstillingsfilen endret seg mens du redigerte. Utkastet ditt er fortsatt tilgjengelig. Velg Prøv igjen for å laste inn de innkomne innstillingene, gå deretter gjennom utkastet og lagre på nytt.",
 	"saveStatus.missing": "Lagring er satt på pause fordi innstillingsfilen mangler. Dette kan skje etter ominstallering eller mens en synkronisering fortsatt kjører. Fullfør synkroniseringen og prøv igjen. For bevisst å erstatte den manglende filen, bruk Opprett en ny innstillingsfil i Callout Studios innstillinger.",
@@ -1080,7 +1029,6 @@ export const nb: Record<string, string> = {
 	"portable.selectionConflict": "Dette valget ville gjort overskriftslenkene tvetydige. Det forrige utvalget ble beholdt.",
 	"portable.selectAll": "Velg alle",
 	"portable.selectNone": "Fjern alle valg",
-	"portable.waiting": "Notatene er endret. Oppdaterer gjennomgangen…",
 	"portable.relatedLinksHint": "Lenker og innbygginger følger de valgte overskriftene og konverteres sammen med dem.",
 	"portable.selectChange": "Konverter {{path}}, linje {{line}}",
 	"portable.showMore": "Vis {{count}} flere",
@@ -1107,10 +1055,8 @@ export const nb: Record<string, string> = {
 	"portable.backup": "Vi anbefaler å sikkerhetskopiere hvelvet før konvertering. Dette endrer de opprinnelige notatene og kan ikke angres i Callout Studio.",
 	"portable.scanning": "Leser Markdown-notater…",
 	"portable.progress": "Leser notater: {{done}} av {{total}}",
-	"portable.summary": "{{count}} erstatninger i {{files}} notater · {{headings}} i overskrifter · {{inline}} i løpende tekst",
 	"portable.empty": "Fant ingen callouts i overskrifter eller løpende tekst som kan konverteres. Ingenting blir endret.",
 	"portable.skipped": "{{count}} ufullstendige eller ikke støttede forekomster ble stående uendret for manuell gjennomgang.",
-	"portable.location": "{{path}} · linje {{line}}",
 	"portable.confirmTitle": "Konverter dette hvelvet permanent?",
 	"portable.confirmBody": "Konverter {{count}} forekomster og oppdater {{links}} overskriftslenker i {{files}} notater?\nDette endrer de opprinnelige filene og kan ikke angres i Callout Studio. Det opprettes ingen automatisk sikkerhetskopi. Sikkerhetskopier hvelvet først, lagre åpne notater, og sett redigering og synkronisering på pause til konverteringen er ferdig.\nHvis en fil endres eller en skriving mislykkes, stopper konverteringen. Notater som allerede er konvertert, forblir endret.",
 	"portable.confirmAction": "Konverter permanent",
@@ -1182,20 +1128,14 @@ export const nb: Record<string, string> = {
 	"recovery.title": "Gjenopprett et tidligere oppsett",
 	"recovery.intro":
 		"Callout Studio beholder tidligere versjoner av oppsettet ditt på denne enheten og i pluginens sikkerhetskopimappe. Å gjenopprette en av dem erstatter det nåværende oppsettet ditt på alle synkroniserte enheter. En sikkerhetskopi av det nåværende oppsettet lagres først.",
-	"recovery.pausedHint": "Lagring er satt på pause, så gjenoppretting er ikke tilgjengelig før det er løst. Du kan fortsatt eksportere en kopi.",
 	"recovery.loading": "Ser etter tidligere versjoner…",
 	"recovery.empty": "Ingen tidligere versjoner ble funnet.",
 	"recovery.sectionHistory": "Lagret på denne enheten",
 	"recovery.sectionBackups": "Sikkerhetskopier",
 	"recovery.sectionCopies": "Andre kopier av innstillingsfilen",
-	"recovery.originThisDevice": "Denne enheten",
-	"recovery.originOtherDevice": "En annen enhet",
-	"recovery.originOlderVersion": "Lagret av en eldre versjon",
 	"recovery.unreadable": "Kan ikke leses som innstillinger",
 	"recovery.same": "Samme som ditt nåværende oppsett",
 	"recovery.restoreSame": "Dette oppsettet er det samme som det nåværende, så det er ingenting å gjenopprette.",
-	"recovery.summary": "{{callouts}} lagret(e) callout-type(r), {{count}} forskjell(er) fra nå",
-	"recovery.export": "Eksporter kopi",
 	"recovery.restore": "Gjenopprett",
 	"recovery.confirmTitle": "Gjenopprett dette oppsettet",
 	"recovery.confirmBody":
@@ -1208,16 +1148,12 @@ export const nb: Record<string, string> = {
 	"recovery.failed": "Oppsettet kunne ikke gjenopprettes. Ingenting ble endret.",
 	"notice.unsavedChangesReplaced":
 		"Noen endringer gjort på denne enheten var ikke lagret ennå, og nyere innstillinger fra en annen enhet erstattet dem. Din versjon ble lagret først: åpne Gjenopprett et tidligere oppsett i Callout Studio-innstillingene for å få den tilbake.",
-	"notice.diagnosticsCopied": "Synkroniseringsdiagnostikk kopiert.",
-	"notice.diagnosticsFailed": "Synkroniseringsdiagnostikken kunne ikke kopieres.",
 	"notice.recoveryCopyStale":
 		"Innstillingene dine ble lagret, men denne enhetens gjenopprettingskopi kunne ikke oppdateres. Sjekk tilgjengelig lagringsplass på denne enheten. Callout Studio prøver igjen ved din neste endring.",
 	"notice.blockedWhilePaused":
 		"Lagring er satt på pause, så denne endringen kan ikke beholdes akkurat nå. Løs lagringsproblemet vist i Callout Studio-innstillingene først.",
 	"welcome.syncNote":
 		"Bruker du allerede Callout Studio på en annen enhet? La synkroniseringstjenesten din fullføre først. Calloutene og innstillingene dine vises her så snart de ankommer.",
-	"settings.resetAllConfirmFull":
-		"Dette sletter hver egendefinerte callout-type, opplastede bilder og egendefinerte kommandoer, og tilbakestiller innebygde callouter, globale stiler, lagrede fargepaletter, høyreklikkmenyen, overskrift- og inline-callout-innstillinger, og reservestilen. En sikkerhetskopi av ditt nåværende oppsett lagres først i pluginens sikkerhetskopimappe. Synkroniseringstjenesten din kan sende tilbakestillingen til dine andre enheter.",
 	"settings.resetBackupFailed":
 		"Ingenting ble tilbakestilt: en sikkerhetskopi av ditt nåværende oppsett kunne ikke lagres først. Sjekk tilgjengelig lagringsplass, og prøv igjen.",
 	"settings.resetNotSaved":
@@ -1225,10 +1161,6 @@ export const nb: Record<string, string> = {
 	"settings.recovery": "Tidligere oppsett",
 	"settings.recoveryDesc": "Gjenopprett en versjon av oppsettet ditt lagret tidligere på denne enheten eller i pluginens sikkerhetskopimappe.",
 	"settings.recoveryButton": "Gjenopprett et tidligere oppsett",
-	"settings.diagnostics": "Synkroniseringsdiagnostikk",
-	"settings.diagnosticsDesc":
-		"Kopier et sammendrag av hvordan lagring og synkronisering fungerer, til bruk i en feilrapport. Det inneholder ingen callouter eller innstillinger.",
-	"settings.diagnosticsButton": "Kopier diagnostikk",
 	"confirm.titleResetEverything": "Tilbakestill alt",
 	"confirm.titleReplaceUnreadable": "Erstatt innstillingsfil",
 	"confirm.replaceUnreadable":

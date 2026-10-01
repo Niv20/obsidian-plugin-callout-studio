@@ -105,7 +105,6 @@ export const it: Record<string, string> = {
 
 	"settings.editAria": "Modifica {{name}}",
 	"settings.moreRowActionsAria": "Altre azioni per {{name}}",
-	"settings.usageInfo": "{{count}} utilizzo/i in {{files}} file",
 	"settings.replaceAction": "Sostituisci nel vault",
 	"settings.deleteAction": "Elimina",
 	"settings.duplicateAction": "Duplica",
@@ -130,7 +129,6 @@ export const it: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"I tipi di callout non riconosciuti nel vault erediteranno lo stile di questo callout.",
 
-	"settings.globalStyle": "Stile callout globale",
 	"settings.globalStyleRegularTitle": "Stile globale dei callout a blocco",
 	"settings.globalStyleHeadingTitle": "Stile globale dei callout di intestazione",
 	"settings.globalStyleInlineTitle": "Stile globale dei callout in linea",
@@ -226,12 +224,6 @@ export const it: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"In pausa: il tuo tema fornisce questo callout, quindi ha solo il formato Block. Questo comando funzionerà di nuovo quando il tema smetterà di fornirlo.",
 
-	"settings.vaultMaintenance": "Approfondimenti e manutenzione vault",
-	"settings.vaultStats": "Statistiche callout",
-	"settings.vaultStatsDesc":
-		"Conta ogni callout nelle tue note Markdown — a blocco, di intestazione e in linea — e li raggruppa per tipo.",
-	"settings.vaultStatsButton": "Visualizza statistiche",
-	"settings.vaultStatsScanning": "Scansione",
 	"settings.resetAll": "Ripristina",
 	"settings.resetAllDesc":
 		"Elimina tutti i callout utente, ripristina i callout integrati, gli stili globali (bordi, scala font, forma), le tavolozze di colori salvate, la personalizzazione del menu del clic destro e gli SVG Material scaricati.",
@@ -254,8 +246,6 @@ export const it: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "Niente paura: prima del ripristino salviamo un backup della tua configurazione attuale. Puoi ripristinarlo in qualsiasi momento dalla sezione Backup nelle impostazioni.\nSe usi un servizio di sincronizzazione, il ripristino potrebbe arrivare anche sugli altri tuoi dispositivi.",
 	"settings.resetNothing": "Niente da ripristinare: tutto è già ai valori predefiniti.",
 
-	"notice.customCommandsRemoved":
-		"Rimosso/i {{count}} comando/i personalizzato/i il cui tipo di callout non esiste più.",
 	"notice.customCommandMissingCallout":
 		"Il tipo di callout di questo comando non esiste più.",
 
@@ -278,10 +268,6 @@ export const it: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} nota/e non è stato possibile aggiornare ed è rimasta invariata. Vedi la console per sviluppatori per i dettagli.",
 	"notice.calloutDeleteIncomplete": "Alcune note non sono state convertite. Il tipo di callout è stato mantenuto. Le conversioni completate sono salvate; risolvi il problema del file, quindi esegui di nuovo l'azione per completare.",
-	"notice.settingsUnreadable":
-		"Callout Studio non è riuscito a leggere il proprio file di impostazioni, quindi i tuoi tipi di callout mancano in questa sessione. Non è stato scritto nulla e il file su disco è invariato — ricarica Obsidian per riprovare.",
-	"notice.settingsMissing":
-		"Il file delle impostazioni di Callout Studio è mancante, quindi i tuoi tipi di callout mancano in questa sessione. Non è stato scritto nulla — se sincronizzi questo vault, lascia che la sincronizzazione finisca e ricarica Obsidian prima di apportare modifiche.",
 
 	"notice.nothingToWrap": "Niente da racchiudere.",
 	"notice.cursorNotInsideCallout": "Il cursore non è dentro un callout.",
@@ -328,7 +314,6 @@ export const it: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Callout Obsidian",
 	"editor.paletteGroupPresets": "Preimpostazioni colore",
 	"editor.paletteGroupCustom": "Personalizzati",
-	"editor.paletteNewColor": "Nuovo colore…",
 	"editor.contrastWarning":
 		"Contrasto basso rispetto allo sfondo — potrebbe essere difficile da leggere",
 	"editor.foldable": "Pieghevole",
@@ -341,7 +326,6 @@ export const it: Record<string, string> = {
 	"editor.saveChanges": "Salva modifiche",
 	"editor.saving": "Salvataggio…",
 	"editor.saveFailed": "Impossibile completare il salvataggio. Se questa finestra di modifica è ancora aperta, lasciala aperta e riprova dopo aver controllato lo spazio di archiviazione e la sincronizzazione. Alcune impostazioni o modifiche alle note potrebbero essere già state salvate.",
-	"notice.settingsSaveFailed": "Callout Studio non è riuscito a salvare le modifiche. Controlla lo spazio disponibile e la sincronizzazione, poi riprova prima di chiudere Obsidian.",
 	"editor.createCallout": "Crea callout",
 	"editor.nameRequired":
 		"È necessario un nome visualizzato prima di creare un callout.",
@@ -662,14 +646,9 @@ export const it: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "Licenze icone e crediti",
-	"credits.intro":
-		"Callout Studio usa librerie di icone open source. Visualizza di seguito la licenza, l’attribuzione e le modifiche di ciascuna libreria.",
-	"credits.fullNotices": "Avvisi terze parti completi",
 	"credits.introBeforeNotices":
 		"Callout Studio usa librerie di icone open source; visualizza di seguito la licenza, l’attribuzione e le modifiche di ciascuna libreria, oppure leggi gli ",
 	"credits.fullNoticesInline": "avvisi completi di terze parti",
-	"credits.pluginLicense":
-		"Il codice proprio di Callout Studio è rilasciato con una licenza permissive; le librerie di icone mantengono le proprie licenze.",
 
 	"contextMenu.editCallout": "Modifica impostazioni callout",
 	"contextMenu.createCallout": "Crea nuovo callout",
@@ -687,8 +666,6 @@ export const it: Record<string, string> = {
 	"heading.toggleFold": "Attiva/disattiva la piegatura",
 
 	"settings.globalSettings": "Opzioni di stile globali di Callout Studio",
-	"settings.globalSettingsScope":
-		"Queste sono impostazioni globali: ognuna modifica in una sola volta la forma, la spaziatura e la dimensione di ogni callout a cui Callout Studio applica uno stile. I callout stilizzati dal tuo tema mantengono il design proprio del tema.",
 	"settings.globalSettingsRegularDesc":
 		"Regola bordo, raggio, scala font e allineamento di ogni block callout nel tuo vault.",
 	"settings.globalSettingsHeadingDesc":
@@ -752,8 +729,6 @@ export const it: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{count}} riferimento/i in {{files}} file usano alias personalizzati: {{aliases}}. Dopo il ripristino non funzioneranno più. Continuare?",
 	"vault.resetConfirm": "Ripristina",
-	"vault.resetAllInUse":
-		"⚠ {{count}} riferimento/i callout in {{files}} file usano tipi di callout personalizzati che verranno eliminati.",
 
 	"quickInsert.title": "Inserimento rapido di callout a blocco",
 	"quickInsert.desc": "Scegli un callout da inserire nella posizione del cursore. Solo callout a blocco.",
@@ -777,29 +752,10 @@ export const it: Record<string, string> = {
 	"quickInsert.noEditorHint": "Nessuna nota è aperta in modalità modifica, quindi non è possibile inserire nulla.",
 	"quickInsert.noEditor": "Apri una nota in modalità modifica per inserire un callout.",
 
-	"vaultStats.title": "Statistiche callout",
-	"vaultStats.totalCallouts": "Callout totali",
-	"vaultStats.typesFound": "Tipi trovati",
-	"vaultStats.filesWithCallouts": "File con callout",
-	"vaultStats.filesScanned": "File Markdown scansionati",
-	"vaultStats.empty": "Nessun callout trovato nelle note Markdown.",
 	"vaultStats.columnType": "Tipo",
-	"vaultStats.columnName": "Nome",
-	"vaultStats.columnSource": "Fonte",
-	"vaultStats.columnCount": "Conteggio",
-	"vaultStats.columnFiles": "File",
-	"vaultStats.unknown": "Sconosciuto",
-	"vaultStats.sourceBuiltIn": "Integrato",
-	"vaultStats.sourceCustom": "Personalizzato",
-	"vaultStats.sourceAutoFallback": "Fallback automatico",
-	"vaultStats.sourceTheme": "Snippet CSS",
-	"vaultStats.sourceAlias": "Alias di {{id}}",
-	"vaultStats.sourceUnknown": "Sconosciuto",
-	"vaultStats.byRole": "Scritto come",
 	"vaultStats.roleBlock": "Blocco",
 	"vaultStats.roleHeading": "Titolo",
 	"vaultStats.roleInline": "In linea",
-	"vaultStats.close": "Chiudi",
 	"portable.subtitle": "Scegli quali callout nei titoli e in linea convertire in Markdown standard prima di smettere di usare Callout Studio.",
 	"portable.customize": "Sostituzione personalizzata…",
 	"portable.editCustom": "Modifica sostituzione personalizzata…",
@@ -819,7 +775,6 @@ export const it: Record<string, string> = {
 	"usage.registeredCallouts": "Callout registrati",
 	"usage.unregisteredCallouts": "Callout non registrati",
 	"usage.summary": "{{count}} occorrenze in {{files}} file",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "Tutti i formati",
 	"usage.failed": "Impossibile aggiornare le occorrenze dei callout.",
 	"usage.loading": "Scansione delle note Markdown…",
@@ -1028,9 +983,6 @@ export const it: Record<string, string> = {
 	"footer.contribute": "Contribuisci",
 	"footer.license": "Licenza del plugin",
 	"footer.iconCredits": "Licenze delle icone",
-	"footer.tagline":
-		"Hai feedback, commenti o suggerimenti? Mi farebbe piacere sentirti!",
-	"footer.madeBy": "Creato da Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Eliminare la palette "{{name}}"?\n1 callout la usa. Mantiene i suoi colori e potrai ricollegarla più tardi dalla riga Colore nel suo editor.',
 	"settings.deletePaletteConfirmLinked":
@@ -1084,10 +1036,7 @@ export const it: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"Questo salva la configurazione che vedi ora come file delle impostazioni e riattiva il salvataggio. La copia di riserva che questo dispositivo conserva viene prima messa in backup.\nSe un altro dispositivo potrebbe avere modifiche più recenti che vuoi tenere, lascia che finisca di sincronizzarsi prima di continuare. La tua app di sincronizzazione potrebbe inviare questo file ai tuoi altri dispositivi.\nPrima di salvare, Callout Studio cerca ancora una volta il file delle impostazioni. Se è tornato, Callout Studio mantiene quello.",
 	"notice.settingsBackupFailed": "Il ripristino delle impostazioni non ha potuto continuare perché non è stato possibile salvare un backup di sicurezza. Controlla lo spazio di archiviazione disponibile e i permessi di scrittura, poi riprova.",
-	"notice.settingsBackupSaved": "Una copia di ripristino delle definizioni di callout locali è stata salvata prima di applicare le impostazioni in arrivo: {{path}}.",
-	"notice.settingsChangedElsewhere": "Le impostazioni di Callout Studio sono state modificate su un altro dispositivo, quindi questa modifica non è stata salvata. Le impostazioni dell'altro dispositivo si stanno caricando ora — effettua di nuovo la modifica.",
 	"notice.settingsNewerVersion": "Le impostazioni di Callout Studio sono state salvate da una versione più recente del plugin, quindi non verrà scritto nulla su questo dispositivo finché non lo aggiorni. Le tue impostazioni sono al sicuro — aggiorna Callout Studio qui e ricarica Obsidian.",
-	"notice.settingsNotSaved": "Quella modifica non è stata salvata. Callout Studio non ha potuto usare il suo file delle impostazioni all'avvio di Obsidian, quindi non viene scritto nulla su questo dispositivo — le tue modifiche dureranno finché non chiudi Obsidian. Consulta Impostazioni → Callout Studio per sapere cosa fare.",
 	"saveStatus.changed":
 		"Il file delle impostazioni è cambiato mentre lo modificavi. La tua bozza è ancora disponibile. Scegli Riprova per caricare le impostazioni in arrivo, poi rivedi la bozza e salva di nuovo.",
 	"saveStatus.missing": "Il salvataggio è in pausa perché il file delle impostazioni è mancante. Questo può succedere dopo una reinstallazione o mentre una sincronizzazione è ancora in corso. Completa la sincronizzazione e riprova. Per sostituire intenzionalmente il file mancante, usa Crea un nuovo file delle impostazioni nelle impostazioni di Callout Studio.",
@@ -1122,7 +1071,6 @@ export const it: Record<string, string> = {
 	"portable.selectionConflict": "Questa scelta renderebbe ambigui i collegamenti ai titoli. La selezione precedente è stata mantenuta.",
 	"portable.selectAll": "Seleziona tutto",
 	"portable.selectNone": "Deseleziona tutto",
-	"portable.waiting": "Le note sono cambiate. Aggiornamento dell’anteprima…",
 	"portable.relatedLinksHint": "Collegamenti e incorporamenti seguono i titoli selezionati e vengono convertiti insieme a essi.",
 	"portable.selectChange": "Converti {{path}}, riga {{line}}",
 	"portable.showMore": "Mostra altri {{count}}",
@@ -1149,10 +1097,8 @@ export const it: Record<string, string> = {
 	"portable.backup": "Ti consigliamo di eseguire un backup del vault prima della conversione. Questa operazione modifica le note originali e non può essere annullata in Callout Studio.",
 	"portable.scanning": "Lettura delle note Markdown…",
 	"portable.progress": "Lettura delle note: {{done}} di {{total}}",
-	"portable.summary": "{{count}} sostituzioni in {{files}} note · {{headings}} nei titoli · {{inline}} in linea",
 	"portable.empty": "Nessun callout nei titoli o in linea da convertire. Non verrà modificato nulla.",
 	"portable.skipped": "{{count}} occorrenze incomplete o non supportate sono rimaste invariate per una verifica manuale.",
-	"portable.location": "{{path}} · riga {{line}}",
 	"portable.confirmTitle": "Convertire questo vault in modo permanente?",
 	"portable.confirmBody": "Convertire {{count}} occorrenze e aggiornare {{links}} collegamenti ai titoli in {{files}} note?\nQuesta operazione modifica i file originali e non può essere annullata in Callout Studio. Non viene creato un backup automatico. Esegui prima un backup del vault, salva le note aperte e sospendi modifiche e sincronizzazione fino al termine della conversione.\nSe un file cambia o una scrittura non riesce, la conversione si interrompe. Le note già convertite restano modificate.",
 	"portable.confirmAction": "Converti in modo permanente",
@@ -1218,20 +1164,14 @@ export const it: Record<string, string> = {
 	"notice.recoveryStorageUnavailable": "L'archiviazione di ripristino di questo dispositivo non risponde, quindi la copia non può essere scartata. Riavvia Obsidian, poi riprova.",
 	"recovery.title": "Ripristina una configurazione precedente",
 	"recovery.intro": "Callout Studio conserva versioni precedenti della tua configurazione su questo dispositivo e nella cartella dei backup del plugin. Ripristinarne una sostituisce la tua configurazione attuale su ogni dispositivo sincronizzato. Un backup della configurazione attuale viene salvato per primo.",
-	"recovery.pausedHint": "Il salvataggio è in pausa, quindi il ripristino non è disponibile finché il problema non viene risolto. Puoi comunque esportare una copia.",
 	"recovery.loading": "Ricerca di versioni precedenti…",
 	"recovery.empty": "Nessuna versione precedente trovata.",
 	"recovery.sectionHistory": "Salvato su questo dispositivo",
 	"recovery.sectionBackups": "Backup",
 	"recovery.sectionCopies": "Altre copie del file delle impostazioni",
-	"recovery.originThisDevice": "Questo dispositivo",
-	"recovery.originOtherDevice": "Un altro dispositivo",
-	"recovery.originOlderVersion": "Salvato da una versione precedente",
 	"recovery.unreadable": "Non può essere letto come impostazioni",
 	"recovery.same": "Uguale alla tua configurazione attuale",
 	"recovery.restoreSame": "Questa configurazione è identica a quella attuale, quindi non c’è nulla da ripristinare.",
-	"recovery.summary": "{{callouts}} tipo/i di callout salvati, {{count}} differenza/e rispetto a ora",
-	"recovery.export": "Esporta copia",
 	"recovery.restore": "Ripristina",
 	"recovery.confirmTitle": "Ripristina questa configurazione",
 	"recovery.confirmBody": "La tua configurazione attuale viene sostituita con quella del {{when}} ({{count}} differenza/e). Un backup della tua configurazione attuale viene salvato per primo, e il tuo servizio di sincronizzazione invia la configurazione ripristinata agli altri tuoi dispositivi.",
@@ -1240,20 +1180,14 @@ export const it: Record<string, string> = {
 	"recovery.backupFailed": "Non è stato ripristinato nulla: non è stato possibile salvare prima un backup della tua configurazione attuale. Controlla lo spazio di archiviazione disponibile, poi riprova.",
 	"recovery.failed": "Non è stato possibile ripristinare la configurazione. Nulla è stato modificato.",
 	"notice.unsavedChangesReplaced": "Alcune modifiche apportate su questo dispositivo non erano ancora state salvate, e impostazioni più recenti da un altro dispositivo le hanno sostituite. La tua versione è stata salvata per prima: apri Ripristina una configurazione precedente nelle impostazioni di Callout Studio per recuperarla.",
-	"notice.diagnosticsCopied": "Diagnostica di sincronizzazione copiata.",
-	"notice.diagnosticsFailed": "Non è stato possibile copiare la diagnostica di sincronizzazione.",
 	"notice.recoveryCopyStale": "Le tue impostazioni sono state salvate, ma la copia di ripristino di questo dispositivo non ha potuto essere aggiornata. Controlla lo spazio di archiviazione disponibile su questo dispositivo. Callout Studio riproverà alla tua prossima modifica.",
 	"notice.blockedWhilePaused": "Il salvataggio è in pausa, quindi questa modifica non può essere mantenuta in questo momento. Risolvi prima il problema di salvataggio mostrato nelle impostazioni di Callout Studio.",
 	"welcome.syncNote": "Usi già Callout Studio su un altro dispositivo? Lascia che il tuo servizio di sincronizzazione finisca prima. I tuoi callout e impostazioni appariranno qui non appena arrivano.",
-	"settings.resetAllConfirmFull": "Questo elimina ogni tipo di callout personalizzato, immagine caricata e comando personalizzato, e reimposta i callout integrati, gli stili globali, le palette di colori salvate, il menu del tasto destro, le impostazioni dei callout di titolo e in linea, e lo stile di riserva. Un backup della tua configurazione attuale viene salvato per primo nella cartella dei backup del plugin. Il tuo servizio di sincronizzazione potrebbe inviare il reset agli altri tuoi dispositivi.",
 	"settings.resetBackupFailed": "Nulla è stato reimpostato: non è stato possibile salvare prima un backup della tua configurazione attuale. Controlla lo spazio di archiviazione disponibile, poi riprova.",
 	"settings.resetNotSaved": "Il reset è mostrato ma non è ancora stato possibile salvarlo, quindi il tuo file delle impostazioni contiene ancora la configurazione precedente. Controlla lo stato del salvataggio nelle impostazioni di Callout Studio.",
 	"settings.recovery": "Configurazioni precedenti",
 	"settings.recoveryDesc": "Ripristina una versione della tua configurazione salvata in precedenza su questo dispositivo o nella cartella dei backup del plugin.",
 	"settings.recoveryButton": "Ripristina una configurazione precedente",
-	"settings.diagnostics": "Diagnostica di sincronizzazione",
-	"settings.diagnosticsDesc": "Copia un riepilogo di come funzionano il salvataggio e la sincronizzazione, da includere in una segnalazione di bug. Non contiene callout o impostazioni.",
-	"settings.diagnosticsButton": "Copia diagnostica",
 	"confirm.titleResetEverything": "Reimposta tutto",
 	"confirm.titleReplaceUnreadable": "Sostituisci il file delle impostazioni",
 	"confirm.replaceUnreadable": "Una copia esatta del file attuale viene salvata per prima nella cartella dei backup del plugin. Il file viene quindi sostituito con la configurazione mostrata qui, e il tuo servizio di sincronizzazione la invia agli altri tuoi dispositivi.",

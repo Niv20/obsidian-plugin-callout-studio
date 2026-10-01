@@ -105,7 +105,6 @@ export const ko: Record<string, string> = {
 
 	"settings.editAria": "{{name}} 편집",
 	"settings.moreRowActionsAria": "{{name}}에 대한 추가 작업",
-	"settings.usageInfo": "{{files}}개의 파일에서 {{count}}번 사용",
 	"settings.replaceAction": "볼트에서 교체",
 	"settings.deleteAction": "삭제",
 	"settings.duplicateAction": "복제",
@@ -131,7 +130,6 @@ export const ko: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"볼트에서 인식되지 않는 callout 유형은 이 callout의 스타일을 상속합니다.",
 
-	"settings.globalStyle": "전역 callout 스타일",
 	"settings.globalStyleRegularTitle": "블록 callout 전역 스타일",
 	"settings.globalStyleHeadingTitle": "제목 callout 전역 스타일",
 	"settings.globalStyleInlineTitle": "인라인 callout 전역 스타일",
@@ -225,12 +223,6 @@ export const ko: Record<string, string> = {
 	"commandBuilder.noCalloutChosen": "먼저 이 명령어에 사용할 callout을 선택하세요.",
 	"commandBuilder.save": "저장",
 
-	"settings.vaultMaintenance": "볼트 인사이트 및 유지보수",
-	"settings.vaultStats": "Callout 통계",
-	"settings.vaultStatsDesc":
-		"Markdown 노트의 모든 callout(블록, 헤딩, 인라인)을 계산하고 유형별로 그룹화합니다.",
-	"settings.vaultStatsButton": "통계 보기",
-	"settings.vaultStatsScanning": "스캔 중",
 	"settings.resetAll": "재설정",
 	"settings.resetAllDesc":
 		"모든 사용자 callout을 삭제하고, 기본 제공 callout, 전역 스타일 (테두리, 폰트 크기, 모양), 저장된 색상 팔레트, 마우스 오른쪽 버튼 메뉴 사용자 지정 및 다운로드된 Material SVG를 재설정합니다.",
@@ -253,8 +245,6 @@ export const ko: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "걱정하지 마세요. 재설정하기 전에 현재 설정의 백업을 저장합니다. 설정의 백업 섹션에서 언제든 복원할 수 있습니다.\n동기화 서비스를 사용한다면 재설정이 다른 기기에도 전달될 수 있습니다.",
 	"settings.resetNothing": "재설정할 항목이 없습니다. 모든 것이 이미 기본값입니다.",
 
-	"notice.customCommandsRemoved":
-		"callout 유형이 더 이상 존재하지 않는 사용자 정의 명령어 {{count}}개를 제거했습니다.",
 	"notice.customCommandMissingCallout":
 		"해당 명령어의 callout 유형이 더 이상 존재하지 않습니다.",
 
@@ -276,10 +266,6 @@ export const ko: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}}개의 노트를 업데이트할 수 없어 변경되지 않은 상태로 남았습니다. 자세한 내용은 개발자 콘솔을 확인하세요.",
 	"notice.calloutDeleteIncomplete": "일부 노트를 변환하지 못했습니다. callout 유형은 유지되었습니다. 완료된 변환은 저장되었습니다. 파일 문제를 해결한 다음 작업을 다시 실행하여 완료하세요.",
-	"notice.settingsUnreadable":
-		"Callout Studio가 설정 파일을 읽을 수 없어 이 세션에서 콜아웃 유형이 누락되었습니다. 아무것도 기록되지 않았으며 디스크의 파일은 변경되지 않았습니다 — 다시 시도하려면 Obsidian을 다시 로드하세요.",
-	"notice.settingsMissing":
-		"Callout Studio의 설정 파일이 없어 이 세션에서 콜아웃 유형이 누락되었습니다. 아무것도 기록되지 않았습니다 — 이 볼트를 동기화하는 경우 동기화가 끝날 때까지 기다렸다가 변경하기 전에 Obsidian을 다시 로드하세요.",
 	"notice.nothingToWrap": "감쌀 내용이 없습니다.",
 	"notice.cursorNotInsideCallout": "커서가 callout 안에 있지 않습니다.",
 	"notice.autocompleteTargetMoved":
@@ -324,7 +310,6 @@ export const ko: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Obsidian callout",
 	"editor.paletteGroupPresets": "색상 사전 설정",
 	"editor.paletteGroupCustom": "사용자 지정",
-	"editor.paletteNewColor": "새 색상…",
 	"editor.contrastWarning":
 		"배경과의 대비가 낮습니다 — 읽기 어려울 수 있습니다",
 	"editor.foldable": "접을 수 있음",
@@ -337,7 +322,6 @@ export const ko: Record<string, string> = {
 	"editor.saveChanges": "변경 사항 저장",
 	"editor.saving": "저장 중…",
 	"editor.saveFailed": "저장을 완료하지 못했습니다. 이 편집기가 아직 열려 있다면 닫지 말고 저장 공간과 동기화 상태를 확인한 후 다시 시도하세요. 일부 설정이나 노트 변경 사항은 이미 저장되었을 수 있습니다.",
-	"notice.settingsSaveFailed": "Callout Studio가 변경 사항을 저장하지 못했습니다. 저장 공간과 동기화 상태를 확인하고 Obsidian을 닫기 전에 다시 시도하세요.",
 	"editor.createCallout": "callout 만들기",
 	"editor.nameRequired": "callout을 만들기 전에 표시 이름이 필요합니다.",
 	"editor.noChangesToSave": "변경 사항이 없습니다.",
@@ -653,14 +637,9 @@ export const ko: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "아이콘 라이선스 및 크레딧",
-	"credits.intro":
-		"Callout Studio는 오픈 소스 아이콘 라이브러리를 사용합니다. 각 라이브러리의 라이선스, 저작자 표시, 수정 사항을 아래에서 확인하세요.",
-	"credits.fullNotices": "전체 서드파티 고지사항",
 	"credits.introBeforeNotices":
 		"Callout Studio는 오픈 소스 아이콘 라이브러리를 사용합니다. 각 라이브러리의 라이선스, 저작자 표시, 수정 사항을 아래에서 확인하거나 ",
 	"credits.fullNoticesInline": "전체 서드파티 고지사항",
-	"credits.pluginLicense":
-		"Callout Studio 자체 코드는 permissive 라이선스입니다. 아이콘 라이브러리는 각자의 라이선스를 유지합니다.",
 
 	"contextMenu.editCallout": "callout 설정 편집",
 	"contextMenu.createCallout": "새 callout 만들기",
@@ -678,8 +657,6 @@ export const ko: Record<string, string> = {
 	"heading.toggleFold": "접기 전환",
 
 	"settings.globalSettings": "Callout Studio 전역 스타일 옵션",
-	"settings.globalSettingsScope":
-		"이것은 전역 설정입니다. 각 설정은 Callout Studio가 스타일을 지정하는 모든 callout의 모양, 간격, 크기를 한 번에 변경합니다. 테마가 스타일을 지정하는 callout은 테마 고유의 디자인을 유지합니다.",
 	"settings.globalSettingsRegularDesc":
 		"볼트에 있는 모든 block callout의 테두리, 반지름, 폰트 크기, 정렬을 조정합니다.",
 	"settings.globalSettingsHeadingDesc":
@@ -741,8 +718,6 @@ export const ko: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{files}}개의 파일에서 {{count}}개의 참조가 사용자 정의 별칭을 사용합니다: {{aliases}}. 재설정 후 작동하지 않습니다. 계속하시겠습니까?",
 	"vault.resetConfirm": "재설정",
-	"vault.resetAllInUse":
-		"⚠ {{files}}개의 파일에서 {{count}}개의 callout 참조가 삭제될 사용자 정의 callout 유형을 사용합니다.",
 
 	"quickInsert.title": "블록 callout 빠른 삽입",
 	"quickInsert.desc": "커서 위치에 삽입할 callout을 선택하세요. 블록 callout만 해당됩니다.",
@@ -765,29 +740,10 @@ export const ko: Record<string, string> = {
 	"quickInsert.noEditorHint": "편집 모드로 열린 노트가 없어 아무것도 삽입할 수 없습니다.",
 	"quickInsert.noEditor": "callout을 삽입하려면 노트를 편집 모드로 여세요.",
 
-	"vaultStats.title": "Callout 통계",
-	"vaultStats.totalCallouts": "총 callout",
-	"vaultStats.typesFound": "발견된 유형",
-	"vaultStats.filesWithCallouts": "callout이 있는 파일",
-	"vaultStats.filesScanned": "스캔된 Markdown 파일",
-	"vaultStats.empty": "Markdown 노트에서 callout을 찾지 못했습니다.",
 	"vaultStats.columnType": "유형",
-	"vaultStats.columnName": "이름",
-	"vaultStats.columnSource": "소스",
-	"vaultStats.columnCount": "수",
-	"vaultStats.columnFiles": "파일",
-	"vaultStats.unknown": "알 수 없음",
-	"vaultStats.sourceBuiltIn": "기본 제공",
-	"vaultStats.sourceCustom": "사용자 정의",
-	"vaultStats.sourceAutoFallback": "자동 폴백",
-	"vaultStats.sourceTheme": "CSS 스니펫",
-	"vaultStats.sourceAlias": "{{id}}의 별칭",
-	"vaultStats.sourceUnknown": "알 수 없음",
-	"vaultStats.byRole": "작성 형식",
 	"vaultStats.roleBlock": "블록",
 	"vaultStats.roleHeading": "제목",
 	"vaultStats.roleInline": "인라인",
-	"vaultStats.close": "닫기",
 	"portable.subtitle": "Callout Studio 사용을 중단하기 전에 표준 Markdown으로 변환할 제목 및 인라인 콜아웃을 선택하세요.",
 	"portable.customize": "사용자 지정 바꾸기…",
 	"portable.editCustom": "사용자 지정 바꾸기 편집…",
@@ -807,7 +763,6 @@ export const ko: Record<string, string> = {
 	"usage.registeredCallouts": "등록된 callout",
 	"usage.unregisteredCallouts": "등록되지 않은 callout",
 	"usage.summary": "{{files}}개의 파일에 {{count}}개의 사용 위치",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "모든 형식",
 	"usage.failed": "callout 사용 위치를 업데이트하지 못했습니다.",
 	"usage.loading": "Markdown 노트 스캔 중…",
@@ -1007,8 +962,6 @@ export const ko: Record<string, string> = {
 	"footer.contribute": "기여하기",
 	"footer.license": "플러그인 라이선스",
 	"footer.iconCredits": "아이콘 라이선스",
-	"footer.tagline": "피드백, 의견 또는 제안이 있으신가요? 꼭 들려주세요!",
-	"footer.madeBy": "Niv 제작  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'팔레트 "{{name}}"을 삭제할까요?\n1개의 callout이 이 팔레트를 사용합니다. 색상은 유지되며, 나중에 편집기의 색상 행에서 다시 연결할 수 있습니다.',
 	"settings.deletePaletteConfirmLinked":
@@ -1062,10 +1015,7 @@ export const ko: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"지금 보이는 설정을 설정 파일로 저장하고 저장을 다시 켭니다. 이 기기가 보관 중인 예비 사본은 먼저 백업됩니다.\n다른 기기에 유지하고 싶은 더 최신 변경 사항이 있을 수 있다면, 계속하기 전에 그 기기의 동기화가 끝나도록 기다리세요. 동기화 앱이 이 파일을 다른 기기로 보낼 수 있습니다.\nCallout Studio는 저장하기 전에 설정 파일을 한 번 더 찾습니다. 파일이 돌아왔다면 Callout Studio는 그 파일을 대신 유지합니다.",
 	"notice.settingsBackupFailed": "안전 백업을 저장할 수 없어 설정 복구를 계속할 수 없습니다. 사용 가능한 저장 공간과 쓰기 권한을 확인한 후 다시 시도하세요.",
-	"notice.settingsBackupSaved": "수신된 설정을 적용하기 전에 로컬 callout 정의의 복구 사본이 저장되었습니다: {{path}}.",
-	"notice.settingsChangedElsewhere": "Callout Studio의 설정이 다른 기기에서 변경되어 이 변경 사항이 저장되지 않았습니다. 다른 기기의 설정을 지금 불러오는 중입니다 — 변경 사항을 다시 적용해 주세요.",
 	"notice.settingsNewerVersion": "Callout Studio의 설정이 더 새로운 버전의 플러그인에 의해 저장되어, 업데이트할 때까지 이 기기에는 아무것도 기록되지 않습니다. 설정은 안전합니다 — 여기에서 Callout Studio를 업데이트하고 Obsidian을 다시 불러오세요.",
-	"notice.settingsNotSaved": "그 변경 사항은 저장되지 않았습니다. Obsidian이 시작될 때 Callout Studio가 설정 파일을 사용할 수 없어 이 기기에는 아무것도 기록되지 않습니다 — 변경 사항은 Obsidian을 닫을 때까지 유지됩니다. 무엇을 해야 할지는 설정 → Callout Studio를 확인하세요.",
 	"saveStatus.changed": "편집하는 동안 설정 파일이 변경되었습니다. 초안은 그대로 남아 있습니다. 다시 시도을(를) 선택해 들어온 설정을 불러온 다음, 초안을 검토하고 다시 저장하세요.",
 	"saveStatus.missing": "설정 파일이 없어 저장이 일시 중지되었습니다. 재설치 후나 동기화가 아직 실행 중일 때 발생할 수 있습니다. 동기화를 완료한 후 다시 시도하세요. 누락된 파일을 의도적으로 교체하려면 Callout Studio 설정에서 새 설정 파일 만들기를 사용하세요.",
 	"saveStatus.restoreSettings": "이 설정 복원",
@@ -1099,7 +1049,6 @@ export const ko: Record<string, string> = {
 	"portable.selectionConflict": "이 항목을 선택하면 제목 링크의 대상이 모호해집니다. 이전 선택을 유지했습니다.",
 	"portable.selectAll": "모두 선택",
 	"portable.selectNone": "모두 선택 해제",
-	"portable.waiting": "노트가 변경되었습니다. 검토 내용을 업데이트하는 중…",
 	"portable.relatedLinksHint": "링크와 임베드는 선택한 제목을 따라 함께 변환됩니다.",
 	"portable.selectChange": "{{path}}의 {{line}}번째 줄 변환",
 	"portable.showMore": "{{count}}개 더 표시",
@@ -1126,10 +1075,8 @@ export const ko: Record<string, string> = {
 	"portable.backup": "변환 전에 보관함을 백업하는 것이 좋습니다. 원본 노트가 변경되며 Callout Studio에서 되돌릴 수 없습니다.",
 	"portable.scanning": "Markdown 노트 읽는 중…",
 	"portable.progress": "노트 읽는 중: {{total}}개 중 {{done}}개",
-	"portable.summary": "노트 {{files}}개에서 {{count}}개 교체 · 제목 {{headings}}개 · 인라인 {{inline}}개",
 	"portable.empty": "변환할 수 있는 제목 또는 인라인 콜아웃이 없습니다. 아무것도 변경되지 않습니다.",
 	"portable.skipped": "불완전하거나 지원되지 않는 {{count}}개 항목은 수동 검토를 위해 변경하지 않았습니다.",
-	"portable.location": "{{path}} · {{line}}번째 줄",
 	"portable.confirmTitle": "이 보관함을 영구적으로 변환할까요?",
 	"portable.confirmBody": "노트 {{files}}개에서 {{count}}개 항목을 변환하고 제목 링크 {{links}}개를 업데이트할까요?\n원본 파일이 변경되며 Callout Studio에서 되돌릴 수 없습니다. 자동 백업은 생성되지 않습니다. 먼저 보관함을 백업하고 열린 노트를 저장한 뒤, 변환이 끝날 때까지 편집과 동기화를 일시 중지하세요.\n파일이 변경되거나 쓰기에 실패하면 변환이 중지됩니다. 이미 변환된 노트는 변경된 상태로 유지됩니다.",
 	"portable.confirmAction": "영구적으로 변환",
@@ -1192,20 +1139,14 @@ export const ko: Record<string, string> = {
 	"recovery.title": "이전 설정 복원",
 	"recovery.intro":
 		"Callout Studio는 이 기기와 플러그인의 백업 폴더에 이전 버전의 설정을 보관합니다. 복원하면 동기화된 모든 기기의 현재 설정이 교체됩니다. 먼저 현재 설정의 백업이 저장됩니다.",
-	"recovery.pausedHint": "저장이 일시 중지되어 있어 이 문제가 해결될 때까지 복원할 수 없습니다. 그래도 사본을 내보낼 수는 있습니다.",
 	"recovery.loading": "이전 버전을 찾는 중…",
 	"recovery.empty": "이전 버전을 찾을 수 없습니다.",
 	"recovery.sectionHistory": "이 기기에 저장됨",
 	"recovery.sectionBackups": "백업",
 	"recovery.sectionCopies": "설정 파일의 다른 사본",
-	"recovery.originThisDevice": "이 기기",
-	"recovery.originOtherDevice": "다른 기기",
-	"recovery.originOlderVersion": "이전 버전에서 저장됨",
 	"recovery.unreadable": "설정으로 읽을 수 없음",
 	"recovery.same": "현재 설정과 동일함",
 	"recovery.restoreSame": "이 설정은 현재 설정과 같아서 복원할 것이 없습니다.",
-	"recovery.summary": "저장된 콜아웃 유형 {{callouts}}개, 지금과의 차이 {{count}}개",
-	"recovery.export": "사본 내보내기",
 	"recovery.restore": "복원",
 	"recovery.confirmTitle": "이 설정 복원",
 	"recovery.confirmBody":
@@ -1218,16 +1159,12 @@ export const ko: Record<string, string> = {
 	"recovery.failed": "설정을 복원할 수 없었습니다. 아무것도 변경되지 않았습니다.",
 	"notice.unsavedChangesReplaced":
 		"이 기기에서 저장되지 않은 일부 변경 사항이 다른 기기의 최신 설정으로 교체되었습니다. 사용자의 버전은 먼저 저장되었으니, Callout Studio 설정의 '이전 설정 복원'에서 되찾을 수 있습니다.",
-	"notice.diagnosticsCopied": "동기화 진단 정보를 복사했습니다.",
-	"notice.diagnosticsFailed": "동기화 진단 정보를 복사할 수 없었습니다.",
 	"notice.recoveryCopyStale":
 		"설정은 저장되었지만 이 기기의 복구 사본은 업데이트할 수 없었습니다. 이 기기의 사용 가능한 저장 공간을 확인하세요. Callout Studio가 다음 변경 시 다시 시도합니다.",
 	"notice.blockedWhilePaused":
 		"저장이 일시 중지되어 있어 지금은 이 변경 사항을 유지할 수 없습니다. Callout Studio 설정에 표시된 저장 문제를 먼저 해결하세요.",
 	"welcome.syncNote":
 		"이미 다른 기기에서 Callout Studio를 사용 중이신가요? 먼저 동기화 서비스가 끝나도록 두세요. 콜아웃과 설정은 도착하는 즉시 여기에 나타납니다.",
-	"settings.resetAllConfirmFull":
-		"이 작업은 모든 사용자 지정 콜아웃 유형, 업로드한 이미지, 사용자 지정 명령을 삭제하고, 기본 콜아웃, 전역 스타일, 저장된 색상 팔레트, 우클릭 메뉴, 제목 및 인라인 콜아웃 설정, 대체 스타일을 초기화합니다. 먼저 현재 설정의 백업이 플러그인의 백업 폴더에 저장됩니다. 동기화 서비스가 초기화 내용을 다른 기기로 전송할 수 있습니다.",
 	"settings.resetBackupFailed":
 		"아무것도 초기화되지 않았습니다. 현재 설정의 백업을 먼저 저장할 수 없었습니다. 사용 가능한 저장 공간을 확인한 후 다시 시도하세요.",
 	"settings.resetNotSaved":
@@ -1235,10 +1172,6 @@ export const ko: Record<string, string> = {
 	"settings.recovery": "이전 설정",
 	"settings.recoveryDesc": "이 기기나 플러그인의 백업 폴더에 저장된 이전 버전의 설정을 복원합니다.",
 	"settings.recoveryButton": "이전 설정 복원",
-	"settings.diagnostics": "동기화 진단",
-	"settings.diagnosticsDesc":
-		"저장과 동기화가 어떻게 작동하고 있는지 요약해서 복사합니다. 버그 신고에 포함할 수 있습니다. 콜아웃이나 설정 내용은 포함되지 않습니다.",
-	"settings.diagnosticsButton": "진단 정보 복사",
 	"confirm.titleResetEverything": "전체 초기화",
 	"confirm.titleReplaceUnreadable": "설정 파일 교체",
 	"confirm.replaceUnreadable":

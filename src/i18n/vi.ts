@@ -8,7 +8,6 @@ export const vi: Record<string, string> = {
 	"portable.selectionConflict": "Lựa chọn này sẽ khiến liên kết tiêu đề không rõ đích đến. Lựa chọn trước đó được giữ nguyên.",
 	"portable.selectAll": "Chọn tất cả",
 	"portable.selectNone": "Bỏ chọn tất cả",
-	"portable.waiting": "Ghi chú đã thay đổi. Đang cập nhật bản xem trước…",
 	"portable.relatedLinksHint": "Liên kết và nội dung nhúng đi theo các tiêu đề đã chọn và được chuyển đổi cùng với chúng.",
 	"portable.selectChange": "Chuyển đổi {{path}}, dòng {{line}}",
 	"portable.showMore": "Hiển thị thêm {{count}}",
@@ -35,10 +34,8 @@ export const vi: Record<string, string> = {
 	"portable.backup": "Bạn nên sao lưu kho ghi chú trước khi chuyển đổi. Thao tác này sửa các ghi chú gốc và không thể hoàn tác trong Callout Studio.",
 	"portable.scanning": "Đang đọc ghi chú Markdown…",
 	"portable.progress": "Đang đọc ghi chú: {{done}} trên {{total}}",
-	"portable.summary": "{{count}} thay thế trong {{files}} ghi chú · {{headings}} ở tiêu đề · {{inline}} nội dòng",
 	"portable.empty": "Không tìm thấy callout ở tiêu đề hoặc nội dòng có thể chuyển đổi. Sẽ không có gì thay đổi.",
 	"portable.skipped": "{{count}} lần xuất hiện chưa hoàn chỉnh hoặc không được hỗ trợ được giữ nguyên để kiểm tra thủ công.",
-	"portable.location": "{{path}} · dòng {{line}}",
 	"portable.confirmTitle": "Chuyển đổi vĩnh viễn kho ghi chú này?",
 	"portable.confirmBody": "Chuyển đổi {{count}} lần xuất hiện và cập nhật {{links}} liên kết tiêu đề trong {{files}} ghi chú?\nThao tác này thay đổi các tệp gốc và không thể hoàn tác trong Callout Studio. Không có bản sao lưu tự động. Hãy sao lưu kho ghi chú trước, lưu các ghi chú đang mở và tạm dừng chỉnh sửa cùng đồng bộ cho đến khi chuyển đổi xong.\nNếu một tệp thay đổi hoặc việc ghi thất bại, quá trình chuyển đổi sẽ dừng. Các ghi chú đã chuyển đổi vẫn giữ những thay đổi đó.",
 	"portable.confirmAction": "Chuyển đổi vĩnh viễn",
@@ -160,7 +157,6 @@ export const vi: Record<string, string> = {
 
 	"settings.editAria": "Chỉnh sửa {{name}}",
 	"settings.moreRowActionsAria": "Thêm hành động cho {{name}}",
-	"settings.usageInfo": "{{count}} lần sử dụng trong {{files}} tệp",
 	"settings.replaceAction": "Thay thế trong vault",
 	"settings.deleteAction": "Xóa",
 	"settings.duplicateAction": "Nhân bản",
@@ -186,7 +182,6 @@ export const vi: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Các loại callout không nhận dạng được trong vault sẽ kế thừa kiểu của callout này.",
 
-	"settings.globalStyle": "Kiểu callout toàn cục",
 	"settings.globalStyleRegularTitle": "Kiểu toàn cục cho callout khối",
 	"settings.globalStyleHeadingTitle": "Kiểu toàn cục cho callout tiêu đề",
 	"settings.globalStyleInlineTitle": "Kiểu toàn cục cho callout nội tuyến",
@@ -280,12 +275,6 @@ export const vi: Record<string, string> = {
 	"commandBuilder.commandSuspended":
 		"Đã tạm dừng: giao diện của bạn cung cấp callout này, nên nó chỉ có định dạng Khối. Lệnh này sẽ hoạt động trở lại khi giao diện ngừng cung cấp nó.",
 
-	"settings.vaultMaintenance": "Thông tin & bảo trì vault",
-	"settings.vaultStats": "Thống kê callout",
-	"settings.vaultStatsDesc":
-		"Đếm mọi callout trong ghi chú Markdown của bạn — dạng khối, tiêu đề và nội tuyến — và nhóm theo loại.",
-	"settings.vaultStatsButton": "Xem thống kê",
-	"settings.vaultStatsScanning": "Đang quét",
 	"settings.resetAll": "Đặt lại",
 	"settings.resetAllDesc":
 		"Xóa tất cả callouts người dùng, đặt lại callouts tích hợp, kiểu toàn cục (viền, tỷ lệ phông, hình dạng), bảng màu đã lưu, tùy chỉnh menu chuột phải và SVG Material đã tải.",
@@ -308,8 +297,6 @@ export const vi: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "Đừng lo: trước khi đặt lại, chúng tôi lưu một bản sao lưu thiết lập hiện tại của bạn. Bạn có thể khôi phục bất cứ lúc nào từ mục Bản sao lưu trong phần cài đặt.\nNếu bạn dùng dịch vụ đồng bộ, việc đặt lại có thể lan sang các thiết bị khác của bạn.",
 	"settings.resetNothing": "Không có gì để đặt lại: mọi thứ đã ở mặc định.",
 
-	"notice.customCommandsRemoved":
-		"Đã xóa {{count}} lệnh tùy chỉnh có loại callout không còn tồn tại.",
 	"notice.customCommandMissingCallout":
 		"Loại callout của lệnh đó không còn tồn tại.",
 	"notice.importedJSON": "Đã nhập {{count}} loại callout từ JSON.",
@@ -331,10 +318,6 @@ export const vi: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} ghi chú không thể cập nhật và được giữ nguyên. Xem bảng điều khiển nhà phát triển để biết chi tiết.",
 	"notice.calloutDeleteIncomplete": "Không thể chuyển đổi một số ghi chú. Loại callout đã được giữ lại. Các chuyển đổi đã hoàn tất được lưu; hãy khắc phục sự cố tệp, sau đó chạy lại hành động để hoàn tất.",
-	"notice.settingsUnreadable":
-		"Callout Studio không thể đọc tệp cài đặt của nó, vì vậy các loại callout của bạn bị thiếu trong phiên này. Không có gì được ghi và tệp trên đĩa không thay đổi — tải lại Obsidian để thử lại.",
-	"notice.settingsMissing":
-		"Tệp cài đặt của Callout Studio bị thiếu, vì vậy các loại callout của bạn bị thiếu trong phiên này. Không có gì được ghi — nếu bạn đồng bộ hóa kho lưu trữ này, hãy để việc đồng bộ hóa hoàn tất và tải lại Obsidian trước khi thực hiện bất kỳ thay đổi nào.",
 
 	"notice.nothingToWrap": "Không có gì để bọc.",
 	"notice.cursorNotInsideCallout": "Con trỏ không nằm trong callout.",
@@ -380,7 +363,6 @@ export const vi: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
 	"editor.paletteGroupPresets": "Cài đặt màu trước",
 	"editor.paletteGroupCustom": "Tùy chỉnh",
-	"editor.paletteNewColor": "Màu mới…",
 	"editor.contrastWarning": "Độ tương phản thấp so với nền — có thể khó đọc",
 	"editor.foldable": "Có thể gập",
 	"editor.foldableDesc":
@@ -392,7 +374,6 @@ export const vi: Record<string, string> = {
 	"editor.saveChanges": "Lưu thay đổi",
 	"editor.saving": "Đang lưu…",
 	"editor.saveFailed": "Không thể hoàn tất việc lưu. Nếu cửa sổ chỉnh sửa này vẫn đang mở, hãy giữ nguyên và thử lại sau khi kiểm tra bộ nhớ cùng trạng thái đồng bộ. Một số cài đặt hoặc thay đổi trong ghi chú có thể đã được lưu.",
-	"notice.settingsSaveFailed": "Callout Studio không thể lưu các thay đổi của bạn. Hãy kiểm tra dung lượng còn trống và trạng thái đồng bộ, rồi thử lại trước khi đóng Obsidian.",
 	"editor.createCallout": "Tạo callout",
 	"editor.nameRequired": "Cần có tên hiển thị trước khi tạo callout.",
 	"editor.noChangesToSave": "Không có thay đổi nào được thực hiện.",
@@ -713,14 +694,9 @@ export const vi: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "Giấy phép biểu tượng và ghi công",
-	"credits.intro":
-		"Callout Studio sử dụng các thư viện biểu tượng mã nguồn mở. Xem giấy phép, ghi công và các sửa đổi của từng thư viện bên dưới.",
-	"credits.fullNotices": "Thông báo đầy đủ của bên thứ ba",
 	"credits.introBeforeNotices":
 		"Callout Studio sử dụng các thư viện biểu tượng mã nguồn mở; xem giấy phép, ghi công và các sửa đổi của từng thư viện bên dưới, hoặc đọc ",
 	"credits.fullNoticesInline": "thông báo đầy đủ của bên thứ ba",
-	"credits.pluginLicense":
-		"Mã nguồn của Callout Studio thuộc giấy phép permissive; các thư viện biểu tượng giữ nguyên giấy phép riêng.",
 
 	"contextMenu.editCallout": "Chỉnh sửa cài đặt callout",
 	"contextMenu.createCallout": "Tạo callout mới",
@@ -738,8 +714,6 @@ export const vi: Record<string, string> = {
 	"heading.toggleFold": "Chuyển đổi gập",
 
 	"settings.globalSettings": "Tùy chọn kiểu toàn cục của Callout Studio",
-	"settings.globalSettingsScope":
-		"Đây là các thiết lập toàn cục: mỗi thiết lập thay đổi cùng lúc hình dạng, khoảng cách và kích thước của mọi callout mà Callout Studio tạo kiểu. Các callout mà giao diện của bạn tạo kiểu vẫn giữ thiết kế riêng của giao diện.",
 	"settings.globalSettingsRegularDesc":
 		"Điều chỉnh viền, độ bo góc, tỷ lệ phông và căn chỉnh của mọi block callout trong vault của bạn.",
 	"settings.globalSettingsHeadingDesc":
@@ -801,8 +775,6 @@ export const vi: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{count}} tham chiếu trong {{files}} tệp đang sử dụng bí danh tùy chỉnh: {{aliases}}. Chúng sẽ ngừng hoạt động sau khi đặt lại. Tiếp tục?",
 	"vault.resetConfirm": "Đặt lại",
-	"vault.resetAllInUse":
-		"⚠ {{count}} tham chiếu callout trong {{files}} tệp đang sử dụng các loại callout tùy chỉnh sẽ bị xóa.",
 
 	"quickInsert.title": "Chèn nhanh callout khối",
 	"quickInsert.desc": "Chọn một callout để chèn vào vị trí con trỏ. Chỉ callout dạng khối.",
@@ -826,29 +798,10 @@ export const vi: Record<string, string> = {
 	"quickInsert.noEditorHint": "Không có ghi chú nào đang mở ở chế độ chỉnh sửa, nên không thể chèn gì cả.",
 	"quickInsert.noEditor": "Mở một ghi chú ở chế độ chỉnh sửa để chèn callout.",
 
-	"vaultStats.title": "Thống kê callout",
-	"vaultStats.totalCallouts": "Tổng callouts",
-	"vaultStats.typesFound": "Loại tìm thấy",
-	"vaultStats.filesWithCallouts": "Tệp có callouts",
-	"vaultStats.filesScanned": "Tệp Markdown đã quét",
-	"vaultStats.empty": "Không tìm thấy callouts trong ghi chú Markdown.",
 	"vaultStats.columnType": "Loại",
-	"vaultStats.columnName": "Tên",
-	"vaultStats.columnSource": "Nguồn",
-	"vaultStats.columnCount": "Số lượng",
-	"vaultStats.columnFiles": "Tệp",
-	"vaultStats.unknown": "Không rõ",
-	"vaultStats.sourceBuiltIn": "Tích hợp",
-	"vaultStats.sourceCustom": "Tùy chỉnh",
-	"vaultStats.sourceAutoFallback": "Dự phòng tự động",
-	"vaultStats.sourceTheme": "Đoạn CSS",
-	"vaultStats.sourceAlias": "Bí danh của {{id}}",
-	"vaultStats.sourceUnknown": "Không rõ",
-	"vaultStats.byRole": "Được viết dưới dạng",
 	"vaultStats.roleBlock": "Khối",
 	"vaultStats.roleHeading": "Tiêu đề",
 	"vaultStats.roleInline": "Nội dòng",
-	"vaultStats.close": "Đóng",
 	"portable.subtitle": "Chọn callout tiêu đề và nội tuyến cần chuyển sang Markdown chuẩn trước khi ngừng dùng Callout Studio.",
 	"portable.customize": "Nội dung thay thế tùy chỉnh…",
 	"portable.editCustom": "Sửa nội dung thay thế tùy chỉnh…",
@@ -868,7 +821,6 @@ export const vi: Record<string, string> = {
 	"usage.registeredCallouts": "Callout đã đăng ký",
 	"usage.unregisteredCallouts": "Callout chưa đăng ký",
 	"usage.summary": "{{count}} lần xuất hiện trong {{files}} tệp",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "Tất cả định dạng",
 	"usage.failed": "Không thể cập nhật các vị trí xuất hiện của callout.",
 	"usage.loading": "Đang quét ghi chú Markdown…",
@@ -1073,8 +1025,6 @@ export const vi: Record<string, string> = {
 	"footer.contribute": "Đóng góp",
 	"footer.license": "Giấy phép plugin",
 	"footer.iconCredits": "Giấy phép biểu tượng",
-	"footer.tagline": "Có phản hồi, nhận xét hoặc đề xuất? Tôi rất muốn nghe!",
-	"footer.madeBy": "Được tạo bởi Niv  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Xóa bảng màu "{{name}}"?\nCó 1 callout đang dùng nó. Callout đó giữ nguyên màu, và bạn có thể liên kết lại sau từ hàng Màu trong trình chỉnh sửa của nó.',
 	"settings.deletePaletteConfirmLinked":
@@ -1128,10 +1078,7 @@ export const vi: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"Thao tác này lưu thiết lập bạn đang thấy làm tệp cài đặt của bạn và bật lại việc lưu. Bản sao dự phòng mà thiết bị này giữ sẽ được sao lưu trước.\nNếu một thiết bị khác có thể có thay đổi mới hơn mà bạn muốn giữ, hãy để nó đồng bộ xong trước khi tiếp tục. Ứng dụng đồng bộ của bạn có thể gửi tệp này tới các thiết bị khác của bạn.\nTrước khi lưu, Callout Studio tìm tệp cài đặt thêm một lần nữa. Nếu tệp đã quay lại, Callout Studio sẽ giữ tệp đó thay vào.",
 	"notice.settingsBackupFailed": "Không thể tiếp tục khôi phục cài đặt vì không thể lưu bản sao lưu an toàn. Kiểm tra bộ nhớ khả dụng và quyền ghi, sau đó thử lại.",
-	"notice.settingsBackupSaved": "Một bản sao khôi phục của các định nghĩa callout cục bộ đã được lưu trước khi áp dụng cài đặt đến: {{path}}.",
-	"notice.settingsChangedElsewhere": "Cài đặt của Callout Studio đã được thay đổi trên thiết bị khác, vì vậy thay đổi này chưa được lưu. Cài đặt của thiết bị kia hiện đang được tải — vui lòng thực hiện lại thay đổi.",
 	"notice.settingsNewerVersion": "Cài đặt của Callout Studio đã được lưu bởi một phiên bản plugin mới hơn, vì vậy sẽ không có gì được ghi vào thiết bị này cho đến khi bạn cập nhật. Cài đặt của bạn vẫn an toàn — cập nhật Callout Studio tại đây và tải lại Obsidian.",
-	"notice.settingsNotSaved": "Thay đổi đó chưa được lưu. Callout Studio không thể sử dụng tệp cài đặt của nó khi Obsidian khởi động, vì vậy không có gì được ghi vào thiết bị này — các thay đổi của bạn sẽ tồn tại cho đến khi bạn đóng Obsidian. Xem Cài đặt → Callout Studio để biết việc cần làm.",
 	"saveStatus.changed":
 		"Tệp cài đặt đã thay đổi trong lúc bạn chỉnh sửa. Bản nháp của bạn vẫn còn. Hãy chọn Thử lại để tải các cài đặt mới đến, rồi xem lại bản nháp và lưu lại.",
 	"saveStatus.missing": "Việc lưu đang tạm dừng vì tệp cài đặt bị thiếu. Điều này có thể xảy ra sau khi cài đặt lại hoặc trong khi đồng bộ hóa vẫn đang chạy. Hoàn tất đồng bộ hóa và thử lại. Để cố ý thay thế tệp bị thiếu, hãy dùng Tạo tệp cài đặt mới trong cài đặt của Callout Studio.",
@@ -1208,20 +1155,14 @@ export const vi: Record<string, string> = {
 	"recovery.title": "Khôi phục một thiết lập trước đó",
 	"recovery.intro":
 		"Callout Studio giữ các phiên bản trước đó của thiết lập của bạn trên thiết bị này và trong thư mục sao lưu của plugin. Khôi phục một phiên bản sẽ thay thế thiết lập hiện tại của bạn trên mọi thiết bị được đồng bộ hóa. Một bản sao lưu của thiết lập hiện tại được lưu trước.",
-	"recovery.pausedHint": "Việc lưu đang tạm dừng, nên khôi phục không khả dụng cho đến khi vấn đề đó được giải quyết. Bạn vẫn có thể xuất một bản sao.",
 	"recovery.loading": "Đang tìm các phiên bản trước đó…",
 	"recovery.empty": "Không tìm thấy phiên bản trước đó nào.",
 	"recovery.sectionHistory": "Đã lưu trên thiết bị này",
 	"recovery.sectionBackups": "Bản sao lưu",
 	"recovery.sectionCopies": "Bản sao khác của tệp cài đặt",
-	"recovery.originThisDevice": "Thiết bị này",
-	"recovery.originOtherDevice": "Thiết bị khác",
-	"recovery.originOlderVersion": "Đã lưu bởi phiên bản cũ hơn",
 	"recovery.unreadable": "Không thể đọc được như một tệp cài đặt",
 	"recovery.same": "Giống với thiết lập hiện tại của bạn",
 	"recovery.restoreSame": "Thiết lập này giống với thiết lập hiện tại của bạn nên không có gì để khôi phục.",
-	"recovery.summary": "{{callouts}} loại callout đã lưu, {{count}} điểm khác biệt so với hiện tại",
-	"recovery.export": "Xuất bản sao",
 	"recovery.restore": "Khôi phục",
 	"recovery.confirmTitle": "Khôi phục thiết lập này",
 	"recovery.confirmBody":
@@ -1232,21 +1173,14 @@ export const vi: Record<string, string> = {
 	"recovery.failed": "Không thể khôi phục thiết lập. Không có gì thay đổi.",
 	"notice.unsavedChangesReplaced":
 		"Một số thay đổi được thực hiện trên thiết bị này chưa được lưu, và cài đặt mới hơn từ thiết bị khác đã thay thế chúng. Phiên bản của bạn đã được lưu trước: mở Khôi phục một thiết lập trước đó trong cài đặt Callout Studio để lấy lại nó.",
-	"notice.diagnosticsCopied": "Đã sao chép chẩn đoán đồng bộ hóa.",
-	"notice.diagnosticsFailed": "Không thể sao chép chẩn đoán đồng bộ hóa.",
 	"notice.recoveryCopyStale": "Cài đặt của bạn đã được lưu, nhưng bản sao khôi phục của thiết bị này không thể được cập nhật. Kiểm tra bộ nhớ khả dụng trên thiết bị này. Callout Studio sẽ thử lại vào lần thay đổi tiếp theo của bạn.",
 	"notice.blockedWhilePaused": "Việc lưu đang tạm dừng, nên thay đổi này không thể được giữ lại ngay bây giờ. Trước tiên hãy giải quyết vấn đề lưu được hiển thị trong cài đặt Callout Studio.",
 	"welcome.syncNote": "Đã sử dụng Callout Studio trên thiết bị khác? Hãy để dịch vụ đồng bộ hóa của bạn hoàn tất trước. Các callout và cài đặt của bạn sẽ xuất hiện ở đây khi chúng đến.",
-	"settings.resetAllConfirmFull":
-		"Thao tác này xóa mọi loại callout tùy chỉnh, hình ảnh đã tải lên và lệnh tùy chỉnh, đồng thời đặt lại các callout tích hợp sẵn, kiểu toàn cục, bảng màu đã lưu, menu chuột phải, cài đặt callout tiêu đề và nội tuyến, và kiểu dự phòng. Một bản sao lưu của thiết lập hiện tại của bạn được lưu vào thư mục sao lưu của plugin trước. Dịch vụ đồng bộ hóa của bạn có thể gửi việc đặt lại này đến các thiết bị khác của bạn.",
 	"settings.resetBackupFailed": "Không có gì được đặt lại: không thể lưu bản sao lưu của thiết lập hiện tại của bạn trước. Kiểm tra bộ nhớ khả dụng, sau đó thử lại.",
 	"settings.resetNotSaved": "Việc đặt lại được hiển thị nhưng chưa thể lưu được, vì vậy tệp cài đặt của bạn vẫn giữ thiết lập trước đó. Kiểm tra trạng thái lưu trong cài đặt Callout Studio.",
 	"settings.recovery": "Các thiết lập trước đó",
 	"settings.recoveryDesc": "Khôi phục một phiên bản thiết lập của bạn đã được lưu trước đó trên thiết bị này hoặc trong thư mục sao lưu của plugin.",
 	"settings.recoveryButton": "Khôi phục một thiết lập trước đó",
-	"settings.diagnostics": "Chẩn đoán đồng bộ hóa",
-	"settings.diagnosticsDesc": "Sao chép bản tóm tắt về cách lưu và đồng bộ hóa đang hoạt động, để đưa vào báo cáo lỗi. Nó không chứa callout hay cài đặt nào.",
-	"settings.diagnosticsButton": "Sao chép chẩn đoán",
 	"confirm.titleResetEverything": "Đặt lại tất cả",
 	"confirm.titleReplaceUnreadable": "Thay thế tệp cài đặt",
 	"confirm.replaceUnreadable": "Một bản sao chính xác của tệp hiện tại được lưu vào thư mục sao lưu của plugin trước. Sau đó tệp được thay thế bằng thiết lập được hiển thị ở đây, và dịch vụ đồng bộ hóa của bạn gửi nó đến các thiết bị khác của bạn.",

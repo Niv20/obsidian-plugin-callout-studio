@@ -104,7 +104,6 @@ export const hi: Record<string, string> = {
 
 	"settings.editAria": "{{name}} संपादित करें",
 	"settings.moreRowActionsAria": "{{name}} के लिए और कार्य",
-	"settings.usageInfo": "{{files}} फ़ाइल(ों) में {{count}} बार उपयोग",
 	"settings.replaceAction": "vault में बदलें",
 	"settings.deleteAction": "हटाएँ",
 	"settings.duplicateAction": "डुप्लिकेट करें",
@@ -128,7 +127,6 @@ export const hi: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"vault में अज्ञात callout प्रकार इस callout की स्टाइल विरासत में लेंगे।",
 
-	"settings.globalStyle": "वैश्विक callout स्टाइल",
 	"settings.globalStyleRegularTitle": "ब्लॉक callout की वैश्विक शैली",
 	"settings.globalStyleHeadingTitle": "शीर्षक callout की वैश्विक शैली",
 	"settings.globalStyleInlineTitle": "इनलाइन callout की वैश्विक शैली",
@@ -224,12 +222,6 @@ export const hi: Record<string, string> = {
 	"commandBuilder.noCalloutChosen": "पहले इस कमांड के लिए कोई callout चुनें।",
 	"commandBuilder.save": "सहेजें",
 
-	"settings.vaultMaintenance": "vault अंतर्दृष्टि और रखरखाव",
-	"settings.vaultStats": "Callout आँकड़े",
-	"settings.vaultStatsDesc":
-		"आपके Markdown नोट्स में हर callout — ब्लॉक, हेडिंग और इनलाइन — गिनता है और प्रकार के अनुसार समूहित करता है।",
-	"settings.vaultStatsButton": "आँकड़े देखें",
-	"settings.vaultStatsScanning": "स्कैन हो रहा है",
 	"settings.resetAll": "रीसेट",
 	"settings.resetAllDesc":
 		"सभी उपयोगकर्ता callouts हटाता है, बिल्ट-इन callouts, वैश्विक स्टाइल (बॉर्डर, फ़ॉन्ट स्केल, आकार), सहेजे गए रंग पैलेट, राइट-क्लिक मेनू का कस्टमाइज़ेशन और डाउनलोड किए गए Material SVG रीसेट करता है।",
@@ -252,8 +244,6 @@ export const hi: Record<string, string> = {
 	"settings.resetAllConfirmAfter": "चिंता न करें: रीसेट से पहले हम आपके मौजूदा सेटअप का बैकअप सहेजते हैं। आप उसे कभी भी सेटिंग के बैकअप सेक्शन से बहाल कर सकते हैं।\nअगर आप सिंक सेवा का उपयोग करते हैं, तो रीसेट आपके दूसरे डिवाइस तक भी पहुँच सकता है।",
 	"settings.resetNothing": "रीसेट करने के लिए कुछ नहीं है: सब कुछ पहले से डिफ़ॉल्ट पर है।",
 
-	"notice.customCommandsRemoved":
-		"{{count}} कस्टम कमांड हटा दिए गए जिनका callout प्रकार अब मौजूद नहीं है।",
 	"notice.customCommandMissingCallout":
 		"उस कमांड का callout प्रकार अब मौजूद नहीं है।",
 
@@ -275,10 +265,6 @@ export const hi: Record<string, string> = {
 	"notice.vaultRewritePartial":
 		"{{count}} नोट अपडेट नहीं हो सके और बिना बदलाव के रह गए। विवरण के लिए डेवलपर कंसोल देखें।",
 	"notice.calloutDeleteIncomplete": "कुछ नोट रूपांतरित नहीं किए जा सके। callout प्रकार रखा गया। पूर्ण हो चुके रूपांतरण सहेजे गए हैं; फ़ाइल समस्या हल करें, फिर पूरा करने के लिए क्रिया दोबारा चलाएँ।",
-	"notice.settingsUnreadable":
-		"Callout Studio अपनी सेटिंग्स फ़ाइल नहीं पढ़ सका, इसलिए आपके callout प्रकार इस सत्र में गायब हैं। कुछ भी नहीं लिखा गया है और डिस्क पर फ़ाइल अपरिवर्तित है — फिर से कोशिश करने के लिए Obsidian को रीलोड करें।",
-	"notice.settingsMissing":
-		"Callout Studio की सेटिंग्स फ़ाइल गायब है, इसलिए आपके callout प्रकार इस सत्र में गायब हैं। कुछ भी नहीं लिखा गया है — यदि आप इस वॉल्ट को सिंक करते हैं, तो सिंक पूरा होने दें और कोई बदलाव करने से पहले Obsidian को रीलोड करें।",
 	"notice.nothingToWrap": "लपेटने के लिए कुछ नहीं।",
 	"notice.cursorNotInsideCallout": "कर्सर callout के अंदर नहीं है।",
 	"notice.autocompleteTargetMoved":
@@ -323,7 +309,6 @@ export const hi: Record<string, string> = {
 	"editor.paletteGroupObsidian": "Obsidian के callout",
 	"editor.paletteGroupPresets": "रंग प्रीसेट",
 	"editor.paletteGroupCustom": "कस्टम",
-	"editor.paletteNewColor": "नया रंग…",
 	"editor.contrastWarning":
 		"पृष्ठभूमि की तुलना में कम कंट्रास्ट — पढ़ना मुश्किल हो सकता है",
 	"editor.foldable": "मोड़ने योग्य",
@@ -336,7 +321,6 @@ export const hi: Record<string, string> = {
 	"editor.saveChanges": "परिवर्तन सहेजें",
 	"editor.saving": "सहेजा जा रहा है…",
 	"editor.saveFailed": "सहेजना पूरा नहीं हो सका। यदि यह संपादक अभी खुला है, तो इसे खुला रखें और संग्रहण व सिंक की जाँच के बाद फिर से प्रयास करें। कुछ सेटिंग या नोट अपडेट पहले ही सहेजे जा चुके हो सकते हैं।",
-	"notice.settingsSaveFailed": "Callout Studio आपके बदलाव सहेज नहीं सका। उपलब्ध संग्रहण और सिंक की जाँच करें, फिर Obsidian बंद करने से पहले दोबारा प्रयास करें।",
 	"editor.createCallout": "callout बनाएँ",
 	"editor.nameRequired": "callout बनाने से पहले प्रदर्शन नाम आवश्यक है।",
 	"editor.noChangesToSave": "कोई परिवर्तन नहीं हुआ।",
@@ -653,14 +637,9 @@ export const hi: Record<string, string> = {
 
 	// Icon licences & credits
 	"credits.title": "आइकन लाइसेंस और श्रेय",
-	"credits.intro":
-		"Callout Studio ओपन-सोर्स आइकन लाइब्रेरी का उपयोग करता है। नीचे हर लाइब्रेरी का लाइसेंस, श्रेय और किए गए बदलाव देखें।",
-	"credits.fullNotices": "पूर्ण तृतीय-पक्ष सूचनाएं",
 	"credits.introBeforeNotices":
 		"Callout Studio ओपन-सोर्स आइकन लाइब्रेरी का उपयोग करता है; नीचे हर लाइब्रेरी का लाइसेंस, श्रेय और किए गए बदलाव देखें, या ",
 	"credits.fullNoticesInline": "पूर्ण तृतीय-पक्ष सूचनाएं",
-	"credits.pluginLicense":
-		"Callout Studio का अपना कोड permissive लाइसेंस के अंतर्गत है; आइकन लाइब्रेरी अपने अपने लाइसेंस बनाए रखती हैं।",
 
 	"contextMenu.editCallout": "callout सेटिंग संपादित करें",
 	"contextMenu.createCallout": "नया callout बनाएँ",
@@ -676,8 +655,6 @@ export const hi: Record<string, string> = {
 	"contextMenu.deleteSection": "शीर्षक अनुभाग हटाएँ",
 	"heading.toggleFold": "मोड़ना टॉगल करें",
 	"settings.globalSettings": "Callout Studio के वैश्विक स्टाइल विकल्प",
-	"settings.globalSettingsScope":
-		"ये वैश्विक सेटिंग्स हैं: इनमें से हर एक Callout Studio द्वारा स्टाइल किए जाने वाले हर callout के आकार, दूरी और साइज़ को एक साथ बदल देती है। जिन callouts को आपकी थीम स्टाइल करती है वे थीम के अपने डिज़ाइन में ही रहते हैं।",
 	"settings.globalSettingsRegularDesc":
 		"अपने वॉल्ट के हर ब्लॉक callout का बॉर्डर, रेडियस, फ़ॉन्ट स्केल और संरेखण समायोजित करें।",
 	"settings.globalSettingsHeadingDesc":
@@ -737,8 +714,6 @@ export const hi: Record<string, string> = {
 	"vault.resetAliasWarning":
 		"{{files}} फ़ाइल(ों) में {{count}} संदर्भ कस्टम उपनाम उपयोग कर रहे हैं: {{aliases}}। रीसेट के बाद ये काम करना बंद कर देंगे। जारी रखें?",
 	"vault.resetConfirm": "रीसेट करें",
-	"vault.resetAllInUse":
-		"⚠ {{files}} फ़ाइल(ों) में {{count}} callout संदर्भ कस्टम callout प्रकार उपयोग कर रहे हैं जो हटाए जाएँगे।",
 
 	"quickInsert.title": "ब्लॉक callout जल्दी डालें",
 	"quickInsert.desc": "कर्सर पर डालने के लिए एक callout चुनें। केवल ब्लॉक callout।",
@@ -762,29 +737,10 @@ export const hi: Record<string, string> = {
 	"quickInsert.noEditorHint": "संपादन मोड में कोई नोट खुला नहीं है, इसलिए कुछ भी नहीं डाला जा सकता।",
 	"quickInsert.noEditor": "callout डालने के लिए एक नोट संपादन मोड में खोलें।",
 
-	"vaultStats.title": "Callout आँकड़े",
-	"vaultStats.totalCallouts": "कुल callouts",
-	"vaultStats.typesFound": "मिले प्रकार",
-	"vaultStats.filesWithCallouts": "callouts वाली फ़ाइलें",
-	"vaultStats.filesScanned": "स्कैन की गई Markdown फ़ाइलें",
-	"vaultStats.empty": "Markdown नोट्स में कोई callout नहीं मिला।",
 	"vaultStats.columnType": "प्रकार",
-	"vaultStats.columnName": "नाम",
-	"vaultStats.columnSource": "स्रोत",
-	"vaultStats.columnCount": "संख्या",
-	"vaultStats.columnFiles": "फ़ाइलें",
-	"vaultStats.unknown": "अज्ञात",
-	"vaultStats.sourceBuiltIn": "बिल्ट-इन",
-	"vaultStats.sourceCustom": "कस्टम",
-	"vaultStats.sourceAutoFallback": "स्वतः फ़ॉलबैक",
-	"vaultStats.sourceTheme": "CSS स्निपेट",
-	"vaultStats.sourceAlias": "{{id}} का उपनाम",
-	"vaultStats.sourceUnknown": "अज्ञात",
-	"vaultStats.byRole": "इस रूप में लिखा गया",
 	"vaultStats.roleBlock": "ब्लॉक",
 	"vaultStats.roleHeading": "शीर्षक",
 	"vaultStats.roleInline": "इनलाइन",
-	"vaultStats.close": "बंद करें",
 	"portable.subtitle": "Callout Studio का उपयोग बंद करने से पहले चुनें कि किन शीर्षक और इनलाइन callout को मानक Markdown में बदलना है।",
 	"portable.customize": "कस्टम प्रतिस्थापन…",
 	"portable.editCustom": "कस्टम प्रतिस्थापन संपादित करें…",
@@ -804,7 +760,6 @@ export const hi: Record<string, string> = {
 	"usage.registeredCallouts": "पंजीकृत callout",
 	"usage.unregisteredCallouts": "अपंजीकृत callout",
 	"usage.summary": "{{files}} फ़ाइलों में {{count}} उपयोग",
-	"usage.fileCount": "{{path}} ({{count}})",
 	"usage.allRoles": "सभी प्रारूप",
 	"usage.failed": "Callout के उपयोगों को अपडेट नहीं किया जा सका।",
 	"usage.loading": "Markdown नोट्स स्कैन किए जा रहे हैं…",
@@ -1004,8 +959,6 @@ export const hi: Record<string, string> = {
 	"footer.contribute": "योगदान दें",
 	"footer.license": "प्लगइन लाइसेंस",
 	"footer.iconCredits": "आइकन लाइसेंस",
-	"footer.tagline": "कोई फ़ीडबैक, टिप्पणी या सुझाव है? मुझे बताएँ!",
-	"footer.madeBy": "Niv द्वारा निर्मित  •  ",
 	"settings.deletePaletteConfirmLinkedOne":
 		'"{{name}}" पैलेट हटाएँ?\nइसे 1 callout उपयोग करता है। उसके रंग बने रहेंगे, और आप बाद में उसके एडिटर की Color पंक्ति से फिर से जोड़ सकते हैं।',
 	"settings.deletePaletteConfirmLinked":
@@ -1059,10 +1012,7 @@ export const hi: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"यह आपका अभी दिख रहा सेटअप आपकी सेटिंग्स फ़ाइल के रूप में सहेजता है और सहेजना फिर से चालू कर देता है। इस डिवाइस द्वारा रखी गई अतिरिक्त कॉपी का पहले बैकअप लिया जाता है।\nअगर किसी दूसरे डिवाइस पर ऐसे नए बदलाव हो सकते हैं जिन्हें आप रखना चाहते हैं, तो आगे बढ़ने से पहले उसे सिंक पूरा करने दें। आपका सिंक ऐप यह फ़ाइल आपके दूसरे डिवाइस पर भेज सकता है।\nसहेजने से पहले Callout Studio सेटिंग्स फ़ाइल को एक बार और खोजता है। अगर वह वापस आ गई है, तो Callout Studio उसे ही रखता है।",
 	"notice.settingsBackupFailed": "सेटिंग्स रिकवरी जारी नहीं रह सकी क्योंकि एक सुरक्षा बैकअप सहेजा नहीं जा सका। उपलब्ध स्टोरेज और लिखने की अनुमतियां जांचें, फिर पुनः प्रयास करें।",
-	"notice.settingsBackupSaved": "आने वाली सेटिंग्स लागू करने से पहले स्थानीय callout परिभाषाओं की एक रिकवरी कॉपी सहेजी गई: {{path}}।",
-	"notice.settingsChangedElsewhere": "Callout Studio की सेटिंग्स किसी अन्य डिवाइस पर बदली गईं, इसलिए यह बदलाव सहेजा नहीं गया। दूसरे डिवाइस की सेटिंग्स अभी लोड हो रही हैं — कृपया बदलाव फिर से करें।",
 	"notice.settingsNewerVersion": "Callout Studio की सेटिंग्स प्लगइन के नए संस्करण द्वारा सहेजी गई थीं, इसलिए जब तक आप इसे अपडेट नहीं करते, इस डिवाइस पर कुछ भी नहीं लिखा जाएगा। आपकी सेटिंग्स सुरक्षित हैं — यहां से Callout Studio अपडेट करें और Obsidian को रीलोड करें।",
-	"notice.settingsNotSaved": "वह बदलाव सहेजा नहीं गया। जब Obsidian शुरू हुआ तब Callout Studio अपनी सेटिंग्स फ़ाइल का उपयोग नहीं कर सका, इसलिए इस डिवाइस पर कुछ भी नहीं लिखा जा रहा है — आपके बदलाव तब तक बने रहेंगे जब तक आप Obsidian बंद नहीं करते। क्या करना है यह जानने के लिए सेटिंग्स → Callout Studio देखें।",
 	"saveStatus.changed":
 		"आपके संपादन करते समय सेटिंग्स फ़ाइल बदल गई। आपका ड्राफ़्ट अभी भी उपलब्ध है। आई हुई सेटिंग्स लोड करने के लिए फिर कोशिश करें चुनें, फिर अपना ड्राफ़्ट देखें और दोबारा सहेजें।",
 	"saveStatus.missing": "सहेजना रोका गया है क्योंकि सेटिंग्स फ़ाइल गुम है। यह पुनः इंस्टॉल करने के बाद या सिंक अभी भी चलने के दौरान हो सकता है। सिंक पूरा करें और पुनः प्रयास करें। गुम फ़ाइल को जानबूझकर बदलने के लिए, Callout Studio सेटिंग्स में नई सेटिंग्स फ़ाइल बनाएं का उपयोग करें।",
@@ -1097,7 +1047,6 @@ export const hi: Record<string, string> = {
 	"portable.selectionConflict": "इस चयन से शीर्षक लिंक अस्पष्ट हो जाएँगे। आपका पिछला चयन रखा गया है।",
 	"portable.selectAll": "सभी चुनें",
 	"portable.selectNone": "सभी का चयन हटाएँ",
-	"portable.waiting": "नोट बदल गए हैं। समीक्षा अपडेट हो रही है…",
 	"portable.relatedLinksHint": "लिंक और एम्बेड चुने हुए शीर्षकों के साथ बदलते हैं और उनके साथ ही रूपांतरित होते हैं।",
 	"portable.selectChange": "{{path}} की पंक्ति {{line}} बदलें",
 	"portable.showMore": "{{count}} और दिखाएँ",
@@ -1124,10 +1073,8 @@ export const hi: Record<string, string> = {
 	"portable.backup": "रूपांतरण से पहले वॉल्ट का बैकअप लेने की सलाह दी जाती है। इससे मूल नोट बदलते हैं और Callout Studio में यह बदलाव वापस नहीं किया जा सकता।",
 	"portable.scanning": "Markdown नोट पढ़े जा रहे हैं…",
 	"portable.progress": "नोट पढ़े जा रहे हैं: {{total}} में से {{done}}",
-	"portable.summary": "{{files}} नोटों में {{count}} प्रतिस्थापन · शीर्षकों में {{headings}} · इनलाइन {{inline}}",
 	"portable.empty": "बदलने योग्य शीर्षक या इनलाइन callout नहीं मिले। कुछ भी नहीं बदलेगा।",
 	"portable.skipped": "{{count}} अधूरी या असमर्थित प्रविष्टियाँ मैन्युअल समीक्षा के लिए बिना बदले छोड़ दी गईं।",
-	"portable.location": "{{path}} · पंक्ति {{line}}",
 	"portable.confirmTitle": "इस वॉल्ट को स्थायी रूप से बदलें?",
 	"portable.confirmBody": "{{files}} नोटों में {{count}} प्रविष्टियाँ बदलें और {{links}} शीर्षक लिंक अपडेट करें?\nइससे मूल फ़ाइलें बदलेंगी और Callout Studio में इसे वापस नहीं किया जा सकता। कोई स्वचालित बैकअप नहीं बनता। पहले वॉल्ट का बैकअप लें, खुले नोट सहेजें और रूपांतरण पूरा होने तक संपादन व सिंक रोक दें।\nयदि कोई फ़ाइल बदलती है या लिखना विफल होता है, तो रूपांतरण रुक जाएगा। पहले से बदले गए नोट बदले हुए ही रहेंगे।",
 	"portable.confirmAction": "स्थायी रूप से बदलें",
@@ -1189,20 +1136,14 @@ export const hi: Record<string, string> = {
 	"notice.recoveryStorageUnavailable": "इस डिवाइस का रिकवरी स्टोरेज जवाब नहीं दे रहा, इसलिए कॉपी हटाई नहीं जा सकती। Obsidian को फिर से शुरू करें, फिर कोशिश करें।",
 	"recovery.title": "पहले का सेटअप पुनर्स्थापित करें",
 	"recovery.intro": "Callout Studio इस डिवाइस पर और प्लगइन के बैकअप फ़ोल्डर में आपके सेटअप के पुराने वर्शन रखता है। किसी को पुनर्स्थापित करने से आपका मौजूदा सेटअप हर सिंक किए गए डिवाइस पर बदल जाता है। पहले मौजूदा सेटअप का बैकअप सेव किया जाता है।",
-	"recovery.pausedHint": "सेविंग रुकी हुई है, इसलिए यह हल होने तक पुनर्स्थापना उपलब्ध नहीं है। आप अब भी एक कॉपी एक्सपोर्ट कर सकते हैं।",
 	"recovery.loading": "पुराने वर्शन खोजे जा रहे हैं…",
 	"recovery.empty": "कोई पुराना वर्शन नहीं मिला।",
 	"recovery.sectionHistory": "इस डिवाइस पर सेव किया गया",
 	"recovery.sectionBackups": "बैकअप",
 	"recovery.sectionCopies": "सेटिंग फ़ाइल की अन्य कॉपियाँ",
-	"recovery.originThisDevice": "यह डिवाइस",
-	"recovery.originOtherDevice": "कोई और डिवाइस",
-	"recovery.originOlderVersion": "पुराने वर्शन द्वारा सेव किया गया",
 	"recovery.unreadable": "सेटिंग के रूप में नहीं पढ़ा जा सकता",
 	"recovery.same": "आपके मौजूदा सेटअप जैसा ही",
 	"recovery.restoreSame": "यह सेटअप आपके मौजूदा सेटअप जैसा ही है, इसलिए पुनर्स्थापित करने के लिए कुछ नहीं है।",
-	"recovery.summary": "{{callouts}} सेव किए गए callout प्रकार, अभी से {{count}} अंतर",
-	"recovery.export": "कॉपी एक्सपोर्ट करें",
 	"recovery.restore": "पुनर्स्थापित करें",
 	"recovery.confirmTitle": "यह सेटअप पुनर्स्थापित करें",
 	"recovery.confirmBody": "आपका मौजूदा सेटअप {{when}} के सेटअप से बदल दिया जाएगा ({{count}} अंतर)। पहले आपके मौजूदा सेटअप का बैकअप सेव किया जाता है, और आपकी सिंक सेवा पुनर्स्थापित सेटअप को आपके अन्य डिवाइस पर भेजती है।",
@@ -1211,20 +1152,14 @@ export const hi: Record<string, string> = {
 	"recovery.backupFailed": "कुछ भी पुनर्स्थापित नहीं हुआ: आपके मौजूदा सेटअप का बैकअप पहले सेव नहीं किया जा सका। उपलब्ध स्टोरेज जाँचें, फिर कोशिश करें।",
 	"recovery.failed": "सेटअप पुनर्स्थापित नहीं किया जा सका। कुछ भी नहीं बदला।",
 	"notice.unsavedChangesReplaced": "इस डिवाइस पर किए गए कुछ बदलाव अभी सेव नहीं हुए थे, और किसी और डिवाइस की नई सेटिंग ने उनकी जगह ले ली। आपका वर्शन पहले सेव किया गया था: उसे वापस पाने के लिए Callout Studio सेटिंग में पहले का सेटअप पुनर्स्थापित करें खोलें।",
-	"notice.diagnosticsCopied": "सिंक डायग्नोस्टिक्स कॉपी हुए।",
-	"notice.diagnosticsFailed": "सिंक डायग्नोस्टिक्स कॉपी नहीं हो सके।",
 	"notice.recoveryCopyStale": "आपकी सेटिंग सेव हो गईं, लेकिन इस डिवाइस की रिकवरी कॉपी अपडेट नहीं हो सकी। इस डिवाइस पर उपलब्ध स्टोरेज जाँचें। आपके अगले बदलाव पर Callout Studio फिर कोशिश करेगा।",
 	"notice.blockedWhilePaused": "सेविंग रुकी हुई है, इसलिए यह बदलाव अभी सेव नहीं रखा जा सकता। पहले Callout Studio सेटिंग में दिखाई गई सेविंग की समस्या हल करें।",
 	"welcome.syncNote": "क्या आप पहले से किसी और डिवाइस पर Callout Studio इस्तेमाल करते हैं? पहले अपनी सिंक सेवा को पूरा होने दें। आपके callout और सेटिंग यहाँ आते ही दिखाई देंगी।",
-	"settings.resetAllConfirmFull": "इससे हर कस्टम callout प्रकार, अपलोड की गई तस्वीर और कस्टम कमांड मिट जाते हैं, और बिल्ट-इन callout, ग्लोबल स्टाइल, सेव किए गए रंग पैलेट, राइट-क्लिक मेनू, हेडिंग और इनलाइन callout सेटिंग, और फ़ॉलबैक स्टाइल रीसेट हो जाते हैं। पहले आपके मौजूदा सेटअप का बैकअप प्लगइन के बैकअप फ़ोल्डर में सेव किया जाता है। आपकी सिंक सेवा रीसेट को आपके अन्य डिवाइस पर भेज सकती है।",
 	"settings.resetBackupFailed": "कुछ भी रीसेट नहीं हुआ: आपके मौजूदा सेटअप का बैकअप पहले सेव नहीं किया जा सका। उपलब्ध स्टोरेज जाँचें, फिर कोशिश करें।",
 	"settings.resetNotSaved": "रीसेट दिख रहा है लेकिन अभी सेव नहीं हो सका, इसलिए आपकी सेटिंग फ़ाइल में अब भी पिछला सेटअप है। Callout Studio सेटिंग में सेविंग की स्थिति जाँचें।",
 	"settings.recovery": "पहले के सेटअप",
 	"settings.recoveryDesc": "इस डिवाइस पर या प्लगइन के बैकअप फ़ोल्डर में पहले सेव किए गए अपने सेटअप का कोई वर्शन पुनर्स्थापित करें।",
 	"settings.recoveryButton": "पहले का सेटअप पुनर्स्थापित करें",
-	"settings.diagnostics": "सिंक डायग्नोस्टिक्स",
-	"settings.diagnosticsDesc": "बग रिपोर्ट में शामिल करने के लिए सेविंग और सिंक के काम करने का सारांश कॉपी करें। इसमें कोई callout या सेटिंग नहीं होती।",
-	"settings.diagnosticsButton": "डायग्नोस्टिक्स कॉपी करें",
 	"confirm.titleResetEverything": "सब कुछ रीसेट करें",
 	"confirm.titleReplaceUnreadable": "सेटिंग फ़ाइल बदलें",
 	"confirm.replaceUnreadable": "मौजूदा फ़ाइल की एक सटीक कॉपी पहले प्लगइन के बैकअप फ़ोल्डर में सेव की जाती है। फिर फ़ाइल यहाँ दिखाए गए सेटअप से बदल दी जाती है, और आपकी सिंक सेवा इसे आपके अन्य डिवाइस पर भेजती है।",

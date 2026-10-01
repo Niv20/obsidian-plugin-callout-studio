@@ -959,7 +959,7 @@ export class CalloutEditor extends Modal {
 		 * Leave the deleted-colour state. For the paths that set the trigger
 		 * label themselves and so never re-run `refreshTriggerFromCurrentColors`
 		 * — picking a palette from the menu, or creating one through
-		 * "+ New color…".
+		 * the Create "name" row.
 		 */
 		const clearOrphanState = (): void => {
 			if (!isOrphanColor) return;
@@ -1136,7 +1136,7 @@ export class CalloutEditor extends Modal {
 			selectPaletteEntry(entry);
 		};
 
-		// ── "+ New color…" flow ──
+		// ── Create "name" flow ──
 		// Opens the same palette editor the settings section uses; saving the
 		// new palette immediately selects and applies it to this callout.
 		const pickNewPaletteColor = async (seedName = ""): Promise<void> => {
@@ -1167,7 +1167,7 @@ export class CalloutEditor extends Modal {
 		};
 
 		// ── "Deleted color" → save it again ──
-		// Same palette editor as "+ New color…", but seeded with this callout's
+		// Same palette editor as the Create "name" row, but seeded with this callout's
 		// own colours, so reviving a deleted palette is only a matter of naming
 		// it. Every other callout orphaned by the same deletion is re-pointed at
 		// the result, which is what puts the group back together.
