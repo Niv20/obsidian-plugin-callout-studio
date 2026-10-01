@@ -133,13 +133,17 @@ describe("the shared import/export boxes on hover", () => {
 		for (const rule of hovering) {
 			assert.deepEqual(rule.at, [HOVER_MEDIA]);
 			// A chooser's box (`[tabindex="0"]`), a card that a click would
-			// choose (`is-choosable`), and a card's own button. The active card
-			// and an empty one stay as they are under the pointer.
-			assert.match(
-				rule.selector,
-				/^\.cs-option-box(?:\[tabindex="0"\]:hover(?: \.cs-option-box-mark)?|\.is-choosable:hover| \.cs-import-action:hover)$/,
-				rule.selector,
-			);
+			// choose (`is-choosable`), and a card's own button — which also
+			// steps off the card's fill while the pointer is on the card but
+			// not on it. The active card and an empty one stay as they are
+			// under the pointer.
+			for (const selector of rule.selector.split(/,\s*/)) {
+				assert.match(
+					selector,
+					/^\.cs-option-box(?:\[tabindex="0"\]:hover(?: \.cs-option-box-mark)?|\.is-choosable:hover| \.cs-import-action:hover|(?:\[tabindex="0"\]|\.is-choosable):hover:not\(:has\(\.cs-import-action:hover\)\) \.cs-import-action)$/,
+					selector,
+				);
+			}
 		}
 	});
 

@@ -20,7 +20,7 @@ There's a lot to explore in Callout Studio — from callout types and custom col
 | [14 - Danger zone](14-danger-zone.md)                                      | Convert heading and inline callouts to standard Markdown, or reset Callout Studio. |
 | [15 - Quick insert](15-quick-insert.md)                                    | Insert and edit block callouts from the ribbon.                                    |
 | [16 - Advanced heading callouts](16-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                |
-| [17 - Theme integration](17-theme-integration.md)                          | Understand which callouts your theme controls.                                     |
+| [17 - Theme integration](17-theme-integration.md)                          | Understand which callouts your theme controls, and how the windows follow it.      |
 
 Some buttons and menu items end in dots, like *Import…*. The dots mean the next
 step asks you for one more detail, such as a source, a format, or a file, before

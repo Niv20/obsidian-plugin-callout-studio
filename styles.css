@@ -78,14 +78,24 @@
 .callout-studio-editor,
 .cs-occurrences-view,
 .cs-portable-view {
-	--cs-btn-face: var(--interactive-normal);
-	--cs-btn-face-hover: color-mix(
-		in srgb,
-		var(--interactive-normal) 92%,
-		rgb(var(--mono-rgb-100))
+	/* Every value below is the light palette's swatch when there is one and
+	   Obsidian's own derivation when there is not (dark mode, or any community
+	   theme) — see "The light palette" right after this block. The fallbacks are
+	   what these declarations were before the palette existed, unchanged. */
+	--cs-btn-face: var(--cs-light-face, var(--interactive-normal));
+	--cs-btn-face-hover: var(
+		--cs-light-face-hover,
+		color-mix(
+			in srgb,
+			var(--interactive-normal) 92%,
+			rgb(var(--mono-rgb-100))
+		)
 	);
-	--cs-btn-border: var(--background-modifier-border);
-	--cs-btn-border-hover: var(--background-modifier-border-hover);
+	--cs-btn-border: var(--cs-light-line, var(--background-modifier-border));
+	--cs-btn-border-hover: var(
+		--cs-light-line-strong,
+		var(--background-modifier-border-hover)
+	);
 
 	/* The edge a FIELD (text box, dropdown) shows under the pointer. Fields do
 	   not repaint their fill on hover — buttons do, fields answer with an edge,
@@ -103,11 +113,16 @@
 	       light   #e4e4e4 → #bdbdbd   hover edge #cdcdcd   (macOS; Windows rests on #ffffff)
 
 	   So the three states read as rest < hover < focus, and a theme that moves
-	   either endpoint moves the hover edge with it. */
-	--cs-field-border-hover: color-mix(
-		in srgb,
-		var(--background-modifier-border-focus) 60%,
-		var(--background-modifier-border)
+	   either endpoint moves the hover edge with it. (Under the light palette the
+	   resting border is no longer the face's own colour, and the edge is simply
+	   `--cs-light-line-strong`.) */
+	--cs-field-border-hover: var(
+		--cs-light-line-strong,
+		color-mix(
+			in srgb,
+			var(--background-modifier-border-focus) 60%,
+			var(--background-modifier-border)
+		)
 	);
 	--cs-btn-accent-face-hover: color-mix(
 		in srgb,
@@ -152,6 +167,78 @@
 		var(--background-modifier-error) 92%,
 		rgb(var(--mono-rgb-100))
 	);
+}
+
+/* ─── The light palette ───────────────────────────────────────────
+   What the plugin's controls look like in Obsidian's light mode, when no
+   community theme is active.
+
+   **Why it exists.** Every field, dropdown and list in these windows draws its
+   face from `--interactive-normal` (through `--cs-btn-face` above), and on macOS
+   Obsidian points that token at `--background-modifier-border` — #e4e4e4, a flat
+   grey that suits a native-looking *button* and nothing else. A text box, a
+   dropdown and the list that opens from it all came out as the same borderless
+   grey slab, with a heavy shadow under the list and a mid-grey selected row.
+   (Windows and Linux never had the problem: there the token is white.) The
+   palette gives every platform the same ordinary light look — a white face, a
+   soft 1px line, a firmer line when engaged, a pale accent tint for the chosen
+   row — in seven swatches:
+
+       --cs-light-face                 #ffffff                  every control, list and popup
+       --cs-light-face-hover           #ebebeb                  a hovered button (92% face, 8% black)
+       --cs-light-line                 #d4d4d4   1.48:1         a field's or button's edge at rest
+       --cs-light-line-strong          #a6a6a6   2.43:1         the edge when engaged (hover, focus, open)
+       --cs-light-row-selected         accent 12% on the face   the chosen row of a list
+       --cs-light-row-selected-active  accent 20% on the face   ...while it is also the highlighted one
+       --cs-light-menu-shadow          two soft layers          under a popup
+
+   (Contrast figures are against the white face. A field also has to read on the
+   settings tab's #f6f6f6 cards, where the same lines are 1.37:1 and 2.25:1 — the
+   white face is what lifts it there.)
+
+   **How it works.** The swatches are declared once, below, on `<body>`. The
+   tokens above, and the few rules further down that read a swatch directly, take
+   one WITH A FALLBACK that is what they were before the palette existed. A
+   swatch that is not declared therefore changes nothing at all, and that is the
+   whole off switch: it is how dark mode, and a community theme, keep exactly the
+   look they had.
+
+   **Why a theme wins.** The gate is `body.theme-light.cs-default-theme`.
+   `theme-light` is Obsidian's own colour-scheme class; `cs-default-theme` is the
+   plugin's, set only while Obsidian's Default theme is active (see
+   manager/theme/defaultThemeClass.ts for why CSS cannot ask that itself). With
+   any community theme installed the swatches do not exist, every token falls
+   back to what it reads from Obsidian, and the theme's own colours reach these
+   windows the way they always did.
+
+   **Why the gate is inside `:where()`.** It adds no specificity, so the rule is
+   (0,0,0) and anything that comes later at all — a user's snippet — can retune a
+   swatch with a plain `body { --cs-light-line: #ccc }`, no `!important`.
+
+   Not part of it: dark mode, callouts as they are drawn in a note, and
+   Obsidian's own widgets. */
+:where(body.theme-light.cs-default-theme) {
+	--cs-light-face: #ffffff;
+	--cs-light-face-hover: color-mix(
+		in srgb,
+		var(--cs-light-face) 92%,
+		rgb(var(--mono-rgb-100))
+	);
+	--cs-light-line: #d4d4d4;
+	--cs-light-line-strong: #a6a6a6;
+	--cs-light-row-selected: color-mix(
+		in srgb,
+		var(--interactive-accent) 12%,
+		var(--cs-light-face)
+	);
+	--cs-light-row-selected-active: color-mix(
+		in srgb,
+		var(--interactive-accent) 20%,
+		var(--cs-light-face)
+	);
+	--cs-light-menu-shadow:
+		0 8px 24px rgba(0, 0, 0, 0.12),
+		0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 /* Obsidian's accent hover can move toward a lighter purple in the light theme.
@@ -1655,6 +1742,25 @@ body:not(.is-phone)
 	width: 44px;
 }
 
+/* Under the light palette the tile is a field like the two above it: the same
+   white face and the same resting line. Without this it paints Obsidian's own
+   button face — `button:not(.clickable-icon)` is (0,1,1) and beats the
+   `background-color` in the base rule, which is why the tile was a grey slab
+   beside its white-ish neighbours on macOS although that rule names the
+   form-field token.
+
+   The palette's gate sits inside `:where()`, so this is (0,3,0): over Obsidian's
+   button rules (at most (0,2,1), with `.mobile-tap`), under every hover, focus
+   and press rule below, which keep drawing the engaged edge. The fill is
+   declared here once and never repainted, like a field's. The empty state is
+   left out: its dashed box is transparent on purpose. */
+:where(body.theme-light.cs-default-theme)
+	.cs-icon-tile-wrap:not(.is-empty)
+	.cs-icon-tile {
+	background-color: var(--cs-light-face);
+	border-color: var(--cs-light-line);
+}
+
 /* ── Hover, press and focus ──
 
    The tile is a box the user edits without typing into, and it sits directly
@@ -2928,20 +3034,28 @@ button.callout-studio-icon-picker-loading {
    popup, for the built-in accents: dark Note blue #027aff 4.2:1 → 3.1:1 and
    Danger red 4.9:1 → 3.7:1; light teal #00bfbc 2.3:1 → 1.8:1 on macOS, where
    the light field is itself grey, and unchanged on Windows/Linux, where it is
-   white. */
+   white. Under the light palette (see "The light palette") that last case is
+   gone too: the face is white everywhere.
+
+   The light palette replaces three of the derivations below with swatches — the
+   two selected-row fills become a tint of the accent instead of a step toward the
+   text colour, and the divider becomes the soft resting line, since the resting
+   line is no longer the face's own colour. Each still falls back to the
+   derivation, which is what dark mode and a community theme keep using. */
 .cs-combobox-menu,
 .cs-palette-menu {
 	--cs-menu-face: var(--cs-btn-face, var(--interactive-normal));
-	--cs-menu-divider: var(--cs-field-border-hover, var(--background-modifier-border-hover));
-	--cs-menu-row-selected: color-mix(
-		in srgb,
-		var(--cs-menu-face) 88%,
-		var(--text-normal)
+	--cs-menu-divider: var(
+		--cs-light-line,
+		var(--cs-field-border-hover, var(--background-modifier-border-hover))
 	);
-	--cs-menu-row-selected-active: color-mix(
-		in srgb,
-		var(--cs-menu-face) 80%,
-		var(--text-normal)
+	--cs-menu-row-selected: var(
+		--cs-light-row-selected,
+		color-mix(in srgb, var(--cs-menu-face) 88%, var(--text-normal))
+	);
+	--cs-menu-row-selected-active: var(
+		--cs-light-row-selected-active,
+		color-mix(in srgb, var(--cs-menu-face) 80%, var(--text-normal))
 	);
 }
 
@@ -2968,9 +3082,11 @@ button.callout-studio-icon-picker-loading {
 	corner-shape: var(--input-corner-shape, round);
 	border: 1px solid var(--cs-field-border-hover, var(--background-modifier-border-hover));
 	background-color: var(--cs-menu-face);
-	box-shadow:
+	box-shadow: var(
+		--cs-light-menu-shadow,
 		0 10px 28px rgba(0, 0, 0, 0.34),
-		0 3px 8px rgba(0, 0, 0, 0.24);
+		0 3px 8px rgba(0, 0, 0, 0.24)
+	);
 	outline: none;
 }
 
@@ -3634,9 +3750,11 @@ button.callout-studio-icon-picker-loading {
 	corner-shape: var(--input-corner-shape, round);
 	border: 1px solid var(--cs-field-border-hover, var(--background-modifier-border-hover));
 	background-color: var(--cs-menu-face);
-	box-shadow:
+	box-shadow: var(
+		--cs-light-menu-shadow,
 		0 10px 28px rgba(0, 0, 0, 0.34),
-		0 3px 8px rgba(0, 0, 0, 0.24);
+		0 3px 8px rgba(0, 0, 0, 0.24)
+	);
 	outline: none;
 	text-align: start;
 }
@@ -6348,6 +6466,23 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 }
 .cs-option-box .cs-import-action:focus-visible {
 	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+}
+/* Under the pointer on the card but not on its button, the card steps toward
+   the text colour (see `.cs-option-box.is-choosable:hover`) — which is the
+   very step the button's own face is made of, so the two read as one grey.
+   The button steps the other way, toward the window's own colour, so it keeps
+   standing out of the card; whichever direction the card moved, that one is
+   the opposite. Over the button itself it answers with its usual hover. */
+@media (hover: hover) {
+	.cs-option-box[tabindex="0"]:hover:not(:has(.cs-import-action:hover)) .cs-import-action,
+	.cs-option-box.is-choosable:hover:not(:has(.cs-import-action:hover)) .cs-import-action {
+		background-color: color-mix(
+			in srgb,
+			var(--cs-btn-face, var(--interactive-normal)) 45%,
+			var(--cs-surface, var(--background-primary))
+		);
+		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
+	}
 }
 
 /* A plain text box of one fixed height, across the paste card's full width: it

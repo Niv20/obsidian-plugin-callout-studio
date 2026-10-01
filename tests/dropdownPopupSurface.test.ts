@@ -58,6 +58,19 @@ function valueOf(selector: string, property: string): string {
 	return hits[0]!.decls.get(property)!;
 }
 
+/**
+ * The light palette puts one of its swatches in front of a derivation: the value
+ * is `var(<swatch>, <what it was before the palette>)`. Dark mode and a community
+ * theme never declare the swatch, so what they get is the fallback — which is why
+ * the rules below are asserted on the fallback, and the swatch is asserted by
+ * name.
+ */
+function fallbackOf(value: string, swatch: string): string {
+	const prefix = `var(${swatch}, `;
+	assert.ok(value.startsWith(prefix) && value.endsWith(")"), `expected ${swatch} first, then the old value, in: ${value}`);
+	return value.slice(prefix.length, -1);
+}
+
 const POPUPS = [".cs-combobox-menu", ".cs-palette-menu"];
 const FACE = "var(--cs-menu-face)";
 const DROPDOWN_BASE = ".cs-dropdown-control.cs-dropdown-control.cs-dropdown-control";
@@ -118,9 +131,11 @@ describe("every state that leaned on the old dark ground is derived from the new
 	const mix = /^color-mix\(in srgb, var\(--cs-menu-face\) (\d+)%, var\(--text-normal\)\)$/;
 
 	it("steps selected rows away from the face toward the text colour, harder when also active", () => {
+		// What dark mode and a community theme keep: the light palette's tint of
+		// the accent sits in front of this and is left alone by them.
 		for (const popup of POPUPS) {
-			const selected = mix.exec(valueOf(popup, "--cs-menu-row-selected"));
-			const active = mix.exec(valueOf(popup, "--cs-menu-row-selected-active"));
+			const selected = mix.exec(fallbackOf(valueOf(popup, "--cs-menu-row-selected"), "--cs-light-row-selected"));
+			const active = mix.exec(fallbackOf(valueOf(popup, "--cs-menu-row-selected-active"), "--cs-light-row-selected-active"));
 			assert.ok(selected && active, `${popup} must mix both selected fills from its face`);
 			assert.ok(Number(active[1]) < Number(selected[1]), "selected + active must sit further from the face than selected alone");
 		}
@@ -146,7 +161,11 @@ describe("every state that leaned on the old dark ground is derived from the new
 		// `--background-modifier-border` equals the resting face in dark and in
 		// macOS light, so a divider in it would not show at all.
 		const edge = "var(--cs-field-border-hover, var(--background-modifier-border-hover))";
-		for (const popup of POPUPS) assert.strictEqual(valueOf(popup, "--cs-menu-divider"), edge, popup);
+		// The light palette's soft resting line goes first: under it the resting
+		// border is no longer the face's own colour, so it can draw the divider.
+		for (const popup of POPUPS) {
+			assert.strictEqual(fallbackOf(valueOf(popup, "--cs-menu-divider"), "--cs-light-line"), edge, popup);
+		}
 		assert.strictEqual(
 			valueOf(".cs-combobox-group + .cs-combobox-group", "border-top"),
 			"1px solid var(--cs-menu-divider, var(--background-modifier-border))",

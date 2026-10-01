@@ -1181,24 +1181,29 @@ the hover edge to that on every click was the thing to lose.
 Two more reasons for the edge. The list that opens from a dropdown wears the
 field's own face ([Dropdown popups wear their control's face](#dropdown-popups-wear-their-controls-face)),
 and a field that repainted itself would be a different grey from its own list
-whenever the pointer was on it. And in dark and in macOS light the resting border
-*is* the face's colour, so the field is a borderless grey slab at rest, which
-leaves the edge free to carry the state.
+whenever the pointer was on it. And in dark — and in macOS light wherever the
+[light palette](#the-light-palette) is not in force — the resting border *is* the
+face's colour, so the field is a borderless grey slab at rest, which leaves the
+edge free to carry the state.
 
 `--cs-field-border-hover` is declared with the other `--cs-btn-*` tokens as
-`color-mix(in srgb, var(--background-modifier-border-focus) 60%, var(--background-modifier-border))`,
-not as Obsidian's `--background-modifier-border-hover`, which is a step nobody
-sees on these faces. Measured against the real `app.css`, edge against face:
+`var(--cs-light-line-strong, color-mix(in srgb, var(--background-modifier-border-focus) 60%, var(--background-modifier-border)))`:
+the light palette's engaged line where there is one, otherwise the `color-mix`,
+which is not Obsidian's `--background-modifier-border-hover` because that is a
+step nobody sees on these faces. Measured against the real `app.css`, edge
+against face:
 
 | | rest → engaged edge | Obsidian's own hover border |
 | --- | --- | --- |
 | Dark (face `#333333`) | `#333333` → `#474747` (1.36:1) | `#3f3f3f`, 1.20:1 |
-| Light, macOS (face `#e4e4e4`) | `#e4e4e4` → `#cdcdcd` (1.25:1) | `#dadada`, 1.10:1 |
-| Light, Windows/Linux (face `#ffffff`) | `#e4e4e4` → `#cdcdcd` (1.59:1) | `#dadada`, 1.40:1 |
+| Light, palette off, macOS (face `#e4e4e4`) | `#e4e4e4` → `#cdcdcd` (1.25:1) | `#dadada`, 1.10:1 |
+| Light, palette off, Windows/Linux (face `#ffffff`) | `#e4e4e4` → `#cdcdcd` (1.59:1) | `#dadada`, 1.40:1 |
+| Light, Default theme, every platform (palette; face `#ffffff`) | `#d4d4d4` → `#a6a6a6` (1.48:1 → 2.43:1) | — |
 
-Both ends are Obsidian's tokens, so a theme that moves either moves the edge with
-it; a theme that invalidates the `color-mix` falls back to Obsidian's own hover
-border. The cost of one edge for every engaged state is that keyboard focus and
+"Palette off" is a community theme, or the plugin not being able to tell. Both
+ends of the `color-mix` are Obsidian's tokens, so a theme that moves either
+moves the edge with it; a theme that invalidates the `color-mix` falls back to
+Obsidian's own hover border. The cost of one edge for every engaged state is that keyboard focus and
 hover look the same; a text field still shows its caret, and a dropdown its open
 list. If that ever needs to change, add a `:focus-visible` rule for keyboard focus
 alone rather than giving the pointer a stronger border again.
@@ -1383,17 +1388,29 @@ Data management), the bare `<button>`s a window's `.cs-modal-footer` carries
 tokens, declared once near the top of `styles.css`:
 
 ```css
---cs-btn-face: var(--interactive-normal);
---cs-btn-face-hover: color-mix(
-	in srgb,
-	var(--interactive-normal) 92%,
-	rgb(var(--mono-rgb-100))
+--cs-btn-face: var(--cs-light-face, var(--interactive-normal));
+--cs-btn-face-hover: var(
+	--cs-light-face-hover,
+	color-mix(
+		in srgb,
+		var(--interactive-normal) 92%,
+		rgb(var(--mono-rgb-100))
+	)
 );
 ```
 
+(The `--cs-light-*` swatch in front is the [light palette](#the-light-palette);
+it is declared only in light mode under the Default theme, so everywhere else
+these read exactly as they did before it existed. The prose below describes
+that fallback.)
+
 `--interactive-normal` is Obsidian's own button face — white
-(`--color-base-00`) in light, `#363636` (`--color-base-30`) in dark — so the
-resting look is unchanged and stays whatever a theme makes it.
+(`--color-base-00`) in light on Windows and Linux, `#363636` (`--color-base-30`)
+in dark, and `#e4e4e4` on macOS, where `.mod-macos` points it at
+`--background-modifier-border` — so the resting look is unchanged and stays
+whatever a theme makes it. In light mode with Obsidian's Default theme the two
+tokens are replaced by the [light palette](#the-light-palette)'s swatches and
+fall back to exactly the expressions above everywhere else.
 
 ### Why the hover is a `color-mix` and not `--background-modifier-hover`
 
@@ -1576,6 +1593,143 @@ Do not infer the runtime class from a search for literal `.mod-destructive`
 call sites in `src/`: it is added inside Obsidian's `ButtonComponent`. The
 regression test intentionally covers the real `mod-destructive mod-cta`
 combination so a future accent change cannot capture warning buttons again.
+
+## The light palette
+
+In light mode, with Obsidian's Default theme, the plugin's windows draw their
+controls from a small palette of their own instead of from Obsidian's button
+colour. Under a community theme they do not: the theme's colours reach the
+windows exactly as they did before the palette existed.
+
+### Why it exists
+
+Every field, dropdown and list draws its face from `--cs-btn-face`, which reads
+`--interactive-normal`. On macOS Obsidian sets that to
+`--background-modifier-border` (`.mod-macos { --interactive-normal:
+var(--background-modifier-border) }`, `#e4e4e4` in light): a flat grey that
+suits a native-looking *button* and nothing else. Obsidian's own text boxes do
+not use it — `input[type='text']` paints `--background-modifier-form-field`,
+white in light — but this plugin deliberately gives text fields, dropdowns and
+the list that opens from them one shared face, so on macOS all of them came out
+as the same borderless grey slab, with a heavy shadow under the list and a
+mid-grey selected row. Windows and Linux never had it (there the token is white),
+and phones had a milder version (`#f6f6f6`).
+
+Measured in five real windows against Obsidian 1.13.7's `app.css`, the elements
+painted `#e4e4e4` before the palette were: every text control, the Callout IDs
+field and its **+** end-cap, the icon tile, every dropdown control and its open
+list and group headings, every window footer button, the settings tab's neutral
+buttons and the gradient-direction buttons. After it, the only neutral
+non-white backgrounds left are the cards behind rows (`#fafafa`, `#f6f6f6`),
+which are surfaces and not control faces.
+
+### The swatches
+
+Declared once, in one rule near the top of `styles.css`:
+
+| Swatch | Value | Paints |
+| --- | --- | --- |
+| `--cs-light-face` | `#ffffff` | the face of every control, list and popup |
+| `--cs-light-face-hover` | 92% face, 8% `--mono-rgb-100` → `#ebebeb` | a hovered button |
+| `--cs-light-line` | `#d4d4d4` (1.48:1 on white, 1.37:1 on a `#f6f6f6` card) | a field's or button's edge at rest, and the divider between popup groups |
+| `--cs-light-line-strong` | `#a6a6a6` (2.43:1 on white, 2.25:1 on a card) | the one edge a field draws when engaged, and a hovered button's border |
+| `--cs-light-row-selected` | accent 12% over the face | the committed row of a list |
+| `--cs-light-row-selected-active` | accent 20% over the face | that row while it is also the highlighted one |
+| `--cs-light-menu-shadow` | `0 8px 24px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.08)` | under a popup |
+
+The resting line is a notch firmer than Obsidian's own `#e4e4e4` (1.27:1 on
+white), which is what made a white field there look borderless; the engaged line
+is the *rest → engaged* step of [A field answers with its edge](#a-field-answers-with-its-edge-not-its-fill),
+now `#d4d4d4 → #a6a6a6`. The selected row is a tint of `--interactive-accent`
+rather than a step toward the text colour, so it follows the user's accent and
+stays at ~14:1 for the text on it.
+
+### How it is wired
+
+- **The swatches are declared once, on `<body>`, behind one gate**:
+  `:where(body.theme-light.cs-default-theme)`. `theme-light` is Obsidian's colour
+  scheme class. `cs-default-theme` is the plugin's, below.
+- **Every consumer reads a swatch in front of what it used to be.** The five
+  `--cs-btn-*` / `--cs-field-border-hover` declarations, the popups'
+  `--cs-menu-divider`, `--cs-menu-row-selected(-active)` and `box-shadow` all read
+  `var(--cs-light-x, <the old value>)`. A swatch that is not declared therefore
+  changes nothing, which is the whole off switch: dark mode and every community
+  theme resolve to the pre-palette expressions, byte for byte. Checked by
+  comparing computed `background-color`, the four border colours, `box-shadow`,
+  `color`, `outline-color` and `opacity` of every element in five windows
+  (editor with a callout list open, editor with the colour list open, settings
+  tab, palette editor, import window) for the pre-palette stylesheet against this
+  one: identical in dark, identical in light with the class absent, and
+  identical in light under a stand-in community theme that sets its own
+  `--interactive-normal` and border tokens — with that theme's colours visibly
+  reaching the fields, which is the point.
+- **The gate is inside `:where()` so it adds no specificity.** The swatch rule
+  is (0,0,0): a user's snippet can retune one with a plain
+  `body { --cs-light-line: #ccc }` and no `!important`.
+- **The icon tile is the one consumer that needed a rule of its own.** It is a
+  `<button>`, so Obsidian paints it `--interactive-normal` through
+  `button:not(.clickable-icon)` (0,1,1), which beats the tile's own
+  `background-color` (the form-field token, 0,1,0): it was a grey slab beside two
+  white-ish fields. A gated rule `.cs-icon-tile-wrap:not(.is-empty) .cs-icon-tile`
+  (0,3,0) gives it the face and the resting line. That is above Obsidian's
+  button fills (at most (0,2,1)) and below the tile's own hover, focus and press
+  rules ((0,4,1) and up), so the engaged edge still wins; the empty tile's
+  hollow dashed box is left out.
+
+### `cs-default-theme` — why a class, and why it is the positive one
+
+CSS cannot ask which theme is active: Obsidian marks the colour scheme on
+`<body>` but never the community theme, which is a name in `app.customCss` and a
+`<style>` element. [`registerDefaultThemeClass`](../../src/manager/theme/defaultThemeClass.ts)
+mirrors the one fact needed — `app.customCss.theme === ""`, Obsidian's Default —
+onto the main window's `<body>`, at once and again on every `css-change`
+(Obsidian writes `customCss.theme` first and triggers the event once the new
+theme's CSS is in place, so the name read there is already the new one), and
+removes it on unload.
+
+It is the *positive* statement on purpose. `usesDefaultTheme()` returns true only
+when the field is present and is the empty string; a missing or renamed
+`customCss` is not "no theme", and the class stays off. If the module never ran
+or Obsidian changed the field, the failure is the windows keeping the look they
+had before the palette — not the plugin painting over a theme it could not see.
+`activeThemeName()` cannot serve here: it returns `null` for both "default" and
+"cannot tell".
+
+Pop-out windows need nothing extra: Obsidian copies the main body's classes onto
+every pop-out's own `<body>` and keeps them in step (a `MutationObserver` on the
+main body's `class` attribute), and clones the plugin's stylesheet. The class is
+therefore set on the main renderer document
+(`app.workspace.containerEl.ownerDocument`, as `CSSInjector` finds it), never on
+`activeDocument`.
+
+### Not part of it
+
+Dark mode; callouts as they are drawn in a note; Obsidian's own widgets; the
+cards behind rows (`--background-secondary`), which are surfaces; and the tag
+chips, which are a translucent overlay on whatever they sit on. The palette also
+applies on phone and tablet (`is-mobile`), where it replaces a borderless
+`#f6f6f6` pill with a white one that has the same soft line — one palette for the
+light scheme rather than a per-device variant. A **user setting** to switch it
+off was deliberately not added: choosing a theme is the switch.
+
+`tests/lightPalette.test.ts` pins the shape (one declaration site, the gate's
+selector and zero specificity, every fallback equal to the pre-palette value, no
+bare read outside the gate, the swatches' contrast figures stated as properties
+rather than hex codes, the tile's specificity band) and
+`tests/defaultThemeClass.test.ts` the class (positive statement, live updates,
+`registerEvent`, removal on unload). To look at it, render the real widgets
+(`SelectDropdown`, `ListboxPopup`, `TagInput`, the colour swatch input, the
+direction picker, the option boxes) on `tests/support/fakeDom.ts` inside the
+real modal shell (`.modal.cs-modal` → header, `.modal-content`,
+`.cs-modal-footer`), serialise `outerHTML`, and put it in a page that links
+Obsidian's `app.css` and `styles.css` with body classes
+`theme-light mod-macos cs-default-theme`; then repeat without
+`cs-default-theme`, with a stand-in theme file linked after `styles.css`, and
+with `mod-windows` and `is-mobile is-phone`. Use the *headless shell* binary
+(`chrome-headless-shell`) for screenshots — the full headless Chrome returned a
+black frame for a page this size — and read the real `app.css` out of the
+running version's `.asar` (see [Checking a theme against the real
+cascade](18-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade)).
 
 ## Blocked main buttons say why
 
@@ -2039,9 +2193,17 @@ The two popups that open from a `cs-dropdown-control` — `.cs-combobox-menu`
 | Token | Value | Paints |
 | --- | --- | --- |
 | `--cs-menu-face` | `var(--cs-btn-face, var(--interactive-normal))`, the control's own face | the popup, its sticky group heading, and the ring around overlapping colour circles |
-| `--cs-menu-divider` | `var(--cs-field-border-hover, var(--background-modifier-border-hover))` | the line between two groups |
-| `--cs-menu-row-selected` | `color-mix(in srgb, var(--cs-menu-face) 88%, var(--text-normal))` | the committed row |
-| `--cs-menu-row-selected-active` | the same at 80% | the committed row while the pointer or keyboard is on it |
+| `--cs-menu-divider` | `var(--cs-light-line, var(--cs-field-border-hover, var(--background-modifier-border-hover)))` | the line between two groups |
+| `--cs-menu-row-selected` | `var(--cs-light-row-selected, color-mix(in srgb, var(--cs-menu-face) 88%, var(--text-normal)))` | the committed row |
+| `--cs-menu-row-selected-active` | the same shape, at 80% | the committed row while the pointer or keyboard is on it |
+
+The `--cs-light-*` swatch in front of each of the last three is the [light
+palette](#the-light-palette): an accent tint for the two rows and the soft resting
+line for the divider, since under the palette the resting line is no longer the
+face's own colour. The popups' `box-shadow` likewise reads
+`var(--cs-light-menu-shadow, <the two-layer shadow below>)`. The prose from here
+on describes the fallback, which dark mode and every community theme keep using
+unchanged.
 
 They used to be `--cs-surface` with a fixed `--radius-s`, which under a grey,
 8px field read as a second object stuck onto it: near black beneath a `#333333`
@@ -2093,7 +2255,10 @@ for the built-in accents, worst case: dark (default theme) Note/Info/Todo blue
 teal `#00bfbc` (already 2.3:1 on white) is unchanged on Windows/Linux, where the
 face is white, and falls to 1.8:1 on macOS, where the light field is itself grey.
 (Painting the popup the field's hover fill instead would have cost 2.5:1, 2.9:1
-and 1.9:1/1.5:1 — the reason that version was dropped.)
+and 1.9:1/1.5:1 — the reason that version was dropped.) Under the [light
+palette](#the-light-palette) the macOS light case is gone: the face is white
+there too, so the teal sits on the same ground as on Windows. The figures above
+remain what a community theme in light mode on macOS gets.
 
 `tests/dropdownPopupSurface.test.ts` pins the links (face = the control's face,
 corners, outline, every derived state); `tests/modalBodyLayers.test.ts` allows the

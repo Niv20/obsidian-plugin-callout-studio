@@ -42,6 +42,20 @@ export function activeThemeName(app: App): string | null {
 }
 
 /**
+ * True only when Obsidian says, in so many words, that its Default theme is in
+ * use — `app.customCss.theme` is the empty string.
+ *
+ * Not the same question as `activeThemeName(app) === null`, which is also what a
+ * missing or renamed `customCss` reads as. "I cannot tell" has to answer *no*
+ * for anything that decides whether the plugin may paint over a theme, so this
+ * is the reader for that decision and `activeThemeName` stays the one for
+ * "which theme should I name to the user".
+ */
+export function usesDefaultTheme(app: App): boolean {
+	return api(app)?.theme === "";
+}
+
+/**
  * A cheap identity for "the styling that is currently loaded".
  *
  * Theme name plus version plus the enabled snippet names. Deliberately *not* a
