@@ -188,6 +188,17 @@ sufficient**. Common cases that also need an explicit follow-up call:
   `this.sel()` would put an opaque tint over AnuPpuccin's Vanilla Normal — worse
   than the bug it exists to fix. See
   [CSS generation § the core accent shim](06-css-generation.md#the-core-accent-shim).
+- **`.theme-dark ` as a prefix cannot combine with a theme's guard.** Most
+  Style Settings guards are body classes, and so is `.theme-dark`, so
+  `.theme-dark .anp-callout-sleek .callout…` never matches anything. A
+  dark-mode copy of a guarded rule carries the mode on the callout instead —
+  `…[data-callout="x"]:is(.theme-dark *)` — which is what `themeSurfaceCSS`'s
+  relocation does. See
+  [CSS generation § the theme-owned surface](06-css-generation.md#the-theme-owned-surface).
+- **A scanned prelude still has its trailing whitespace.** `eachBlock` hands
+  over everything before `{`, so `body.callout-on .callout ` ends in a space,
+  and a subject-compound walk that treats whitespace as a combinator finds an
+  empty last compound and silently measures nothing. Trim first.
 - **The spelling of a `--callout-<type>` is a fact about the theme AND about the
   MODE.** Ten installed themes declare an accent variable under `.theme-dark` (or
   `.theme-light`) alone and leave the other mode on core's value — Nier does it

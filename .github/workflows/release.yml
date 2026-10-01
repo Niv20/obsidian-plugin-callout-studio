@@ -85,9 +85,16 @@ jobs:
             # logos — slugs, the titles that say more than their slug, and
             # upstream's aliases — is 45 KB of the bundle, which keeps the
             # headroom where it was (about 8 KB) rather than widening it.
+            # Raised by 8 KiB for theme-surface relocation: reading which box a
+            # theme colours instead of the callout root (AnuPpuccin Sleek's
+            # title stripe, Cyber Glow's two boxes, Ultra Lobster's ::after
+            # layer) so gradients and solid colours move there, clearing every
+            # box and surface layer of a transparent callout, and counting a
+            # theme's generic !important rules in the studio weight — 7.4 KB,
+            # which leaves the headroom about where it was.
             - name: Check bundle size
               run: |
-                  limit=2215936  # 2 MiB + 116 KiB
+                  limit=2224128  # 2 MiB + 124 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

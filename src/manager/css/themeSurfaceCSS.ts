@@ -24,6 +24,28 @@
  * is a 4px halo in a different radius around a box it does not belong to, which
  * is what reads as a colour "spilling" out of the bottom-right corner.
  *
+ * ## Where the background goes instead
+ *
+ *     <guard> .callout…[data-callout="x"]<conditions> > .callout-title {
+ *       background-color: <authored tint> !important;
+ *       background-image: <authored gradient | none> !important;
+ *     }
+ *
+ * Cancelling the root does not cancel the user's choice of background; it moves
+ * it. Under AnuPpuccin Sleek the theme's colour lives on a title stripe, so the
+ * cancel alone left a Saved Palette's gradient nowhere — the stripe kept the
+ * theme's flat `rgba(var(--callout-color), 0.1)` and read as a single solid
+ * colour. Every box `calloutSurface.ts` lists as carrying the accent
+ * (Vanilla's title, Cyber Glow's title *and* content, the whole-callout
+ * `::after` of Ultra Lobster's line style) receives the authored background
+ * instead, at the same weight and under the same conditions as the root
+ * cancel, so a Style Settings toggle moves it back live. The dark copy adds
+ * `:is(.theme-dark *)` to the callout compound rather than prefixing
+ * `.theme-dark`: the guard is usually a body class, and `.theme-dark .x` cannot
+ * match when both classes sit on `<body>`. A theme that fills no child box
+ * (GitHub Theme, Prism, Minimal's outlined style) gets no copy, and the callout
+ * stays as flat as the theme draws its own.
+ *
  * Emitted as a **cancel** rather than by suppressing `bgProps` at the source,
  * and that is the whole reason a Style Settings toggle works live. Style
  * Settings' `setSetting` adds and removes body classes and fires no
@@ -87,6 +109,7 @@
  * one, with no dependence on where in the file this lands.
  */
 import type { CalloutSurface } from "../theme/calloutSurface";
+import type { SurfaceFill } from "../theme/calloutSurfaceScan";
 import { guardPrefix } from "../theme/calloutSurface";
 import { splitSelectorList } from "../../utils/selectorText";
 
@@ -103,10 +126,33 @@ export interface ThemeSurfaceInput {
 	surface: CalloutSurface;
 	/** True when this def emits background declarations there would be anything to cancel. */
 	paintsBackground: boolean;
+	/**
+	 * The authored background for the child boxes that carry the colour, or
+	 * `null` when the def paints none. `dark` is `null` when it matches `light`.
+	 * `print` builds the PDF-export repaint for one box from a selector
+	 * callback shaped like `printGradientCSS`'s, and returns `""` without a
+	 * gradient.
+	 */
+	childBackground: {
+		light: readonly string[];
+		dark: readonly string[] | null;
+		print(selFor: (themePrefix: string, suffix: string) => string): string;
+	} | null;
 	/** True when it emits a `.callout-content { color }` that is the plugin's own default. */
 	cancelsContentColor: boolean;
 	/** True when the def asked to be transparent — the frame rule stands down. */
 	transparentBg: boolean;
+}
+
+/**
+ * Dark mode as a condition on the callout itself. See "Where the background goes
+ * instead" for why this is not a `.theme-dark` prefix.
+ */
+const DARK = ":is(.theme-dark *)";
+
+/** What to append to a callout selector to reach one filled box. */
+function boxSuffix(fill: SurfaceFill): string {
+	return `${fill.box === "root" ? "" : ` > .callout-${fill.box}`}${fill.pseudo}`;
 }
 
 /** Re-point a comma-joined selector list at one child or pseudo of each part. */
@@ -152,6 +198,50 @@ export function themeSurfaceCSS(input: ThemeSurfaceInput): string {
 		if (input.cancelsContentColor) {
 			parts.push(
 				`${each(sels, " > .callout-content")} {\n  color: inherit !important;\n}`,
+			);
+		}
+	}
+
+	const child = input.childBackground;
+	if (child !== null) {
+		for (const fill of input.surface.relocations) {
+			const guard = guardPrefix(fill.guard);
+			const light = each(input.selectorsFor(guard, fill.rootQualifier), boxSuffix(fill));
+			const dark = each(input.selectorsFor(guard, `${fill.rootQualifier}${DARK}`), boxSuffix(fill));
+			if (child.light.length > 0) parts.push(`${light} {\n${child.light.join("\n")}\n}`);
+			if (child.dark !== null) parts.push(`${dark} {\n${child.dark.join("\n")}\n}`);
+			// The PDF repaint is itself a `::before`, so a pseudo-element box
+			// keeps its plain on-screen gradient in print.
+			if (fill.pseudo !== "") continue;
+			const print = child.print((themePrefix, suffix) =>
+				themePrefix === "" ? each(light, suffix) : each(dark, suffix),
+			);
+			if (print) parts.push(print);
+		}
+	}
+
+	if (input.transparentBg) {
+		// The theme's title ink was chosen against a fill this callout no longer
+		// has. Back to the accent, which is what Transparent promises the title
+		// and icon anyway — see `CalloutSurface.inkedTitles`.
+		for (const fill of input.surface.inkedTitles) {
+			const sels = input.selectorsFor(guardPrefix(fill.guard), fill.rootQualifier);
+			const ink = [
+				each(sels, " > .callout-title"),
+				each(sels, " > .callout-title .callout-title-inner"),
+				each(sels, " > .callout-title .callout-icon"),
+			].join(",\n");
+			parts.push(`${ink} {\n  color: var(--cs-accent) !important;\n}`);
+		}
+		// The two boxes are cleared in every theme by `transparentChildrenCSS`;
+		// a surface laid over a box as a pseudo-element is cleared here.
+		for (const layer of input.surface.surfaceLayers) {
+			const sels = input.selectorsFor(guardPrefix(layer.guard), layer.rootQualifier);
+			parts.push(
+				`${each(sels, boxSuffix(layer))} {\n` +
+					`  background-color: transparent !important;\n` +
+					`  background-image: none !important;\n` +
+					`}`,
 			);
 		}
 	}

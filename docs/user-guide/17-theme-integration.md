@@ -12,6 +12,10 @@ If the theme styles a callout, the theme stays in complete control. Callout Stud
 
 Older versions included a setting that let an individual callout yield to external CSS. That option has been removed: theme and snippet CSS already participate in Obsidian's normal cascade, and keeping a separate Callout Studio setting for the same job proved redundant and not useful in practice.
 
+## Your callouts in a theme's callout layout
+
+Callouts you create in Callout Studio follow the layout your theme gives callouts in general. When a theme or one of its **Style Settings** options draws callouts with a neutral body and the color on a title bar (for example AnuPpuccin's **Sleek** callout style), your callout's background — solid or gradient — moves to that title bar too, and a transparent callout shows no background anywhere. Switching the option in Style Settings updates open notes immediately; nothing needs to be reloaded. See [Background styles](03-custom-color-palettes.md#background-styles).
+
 ## Read-only theme callouts
 
 Because the theme draws these callouts, their rows are read-only in Callout Studio. Click the eye icon to preview one; vault actions remain available from its three-dot menu, but you will not see Callout Studio's normal color picker or customization controls.

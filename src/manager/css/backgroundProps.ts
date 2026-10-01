@@ -116,3 +116,26 @@ export function bgImageFor(
 		),
 	};
 }
+
+/**
+ * The rule that keeps a `transparentBg` callout transparent all the way down:
+ * no fill on its title or content box either.
+ *
+ * Clearing the root is not enough on its own, because a theme can paint the
+ * children instead. AnuPpuccin's Sleek and Vanilla styles tint the title from
+ * the accent, Vanilla fills the content with its neutral `--ctp-mantle`, and
+ * Willemstad, Serenity and a dozen others draw the content as a card — so a
+ * callout the user asked to be transparent still showed a coloured stripe or a
+ * grey panel. Every theme, unconditionally: a theme that paints neither box
+ * (core, and most of the vault) gets a rule that changes nothing.
+ *
+ * Only the two boxes, and only their fill. Borders and pseudo-element
+ * decorations — Vanilla's accent edge, a dog-eared corner, a title underline —
+ * are the theme's frame, which `transparentBorderProps` already governs on the
+ * root and which a transparent callout keeps everywhere else.
+ */
+export function transparentChildrenCSS(selectors: readonly string[], important = false): string {
+	const imp = important ? " !important" : "";
+	const boxes = selectors.flatMap((sel) => [`${sel} > .callout-title`, `${sel} > .callout-content`]);
+	return `${boxes.join(",\n")} {\n  background-color: transparent${imp};\n  background-image: none${imp};\n}`;
+}

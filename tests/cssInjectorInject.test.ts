@@ -243,9 +243,10 @@ describe("generateCalloutCSS — structural snapshot", () => {
 		]);
 	});
 
-	it("a transparent callout adds the outline half, light rule only", () => {
+	it("a transparent callout adds the outline half and clears both child boxes, light rule only", () => {
 		assert.deepStrictEqual(snap({ transparentBg: true }), [
 			'.callout[data-callout="quiet"] { --callout-color, --cs-accent, --cs-color-rgb, --callout-icon, background-color, background-image, box-shadow, border-color }',
+			'.callout[data-callout="quiet"] > .callout-title, .callout[data-callout="quiet"] > .callout-content { background-color, background-image }',
 			'.theme-dark .callout[data-callout="quiet"] { --callout-color, --cs-accent, --cs-color-rgb, background-color, background-image }',
 			'.cs-inline-callout[data-callout="quiet"], .cs-heading-callout[data-callout="quiet"], .cs-ref-token[data-callout="quiet"] { --cs-accent, --cs-color-rgb }',
 			'.theme-dark .cs-inline-callout[data-callout="quiet"], .theme-dark .cs-heading-callout[data-callout="quiet"], .theme-dark .cs-ref-token[data-callout="quiet"] { --cs-accent, --cs-color-rgb }',

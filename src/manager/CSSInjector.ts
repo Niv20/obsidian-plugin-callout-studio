@@ -60,7 +60,12 @@ import { obsidianCalloutAttrId } from "../utils/calloutId";
 import { StudioWeightCache } from "./theme/StudioWeightCache";
 import type { ThemeCalloutStore } from "./theme/ThemeCalloutStore";
 import { generateFallbackCSS } from "./css/fallbackCSS";
-import { bgImageFor, bgProps, type BgLayer } from "./css/backgroundProps";
+import {
+	bgImageFor,
+	bgProps,
+	transparentChildrenCSS,
+	type BgLayer,
+} from "./css/backgroundProps";
 import { themeSurfaceCSS } from "./css/themeSurfaceCSS";
 import {
 	calloutIconProp,
@@ -705,6 +710,17 @@ export class CSSInjector {
 			);
 		}
 		parts.push(`${this.sel(def.id)} {\n${lightProps.join("\n")}\n}`);
+		// A theme can paint the title or the content instead of the root — see
+		// `transparentChildrenCSS` — so transparent has to reach both. One rule,
+		// aliases included, the same in either mode.
+		if (def.transparentBg) {
+			parts.push(
+				transparentChildrenCSS(
+					[def.id, ...(def.aliases ?? [])].map((id) => this.sel(id)),
+					true,
+				),
+			);
+		}
 
 		// What core stops painting when the theme's spelling is not core's. Its
 		// own rule at weight 1, deliberately below everything above it — see
@@ -902,23 +918,52 @@ export class CSSInjector {
 		const surface = this.studioWeights.surface();
 		if (
 			surface.neutralBackground.length === 0 &&
-			surface.colorlessFrame.length === 0
+			surface.colorlessFrame.length === 0 &&
+			(def.transparentBg !== true ||
+				(surface.inkedTitles.length === 0 && surface.surfaceLayers.length === 0))
 		) {
 			return "";
 		}
 		const weight = this.emitWeight + 2;
+		const paintsBackground =
+			def.transparentBg !== true &&
+			(this.bgProps(def, "light").length > 0 ||
+				this.bgProps(def, "dark").length > 0);
+		const light = this.childBgProps(def, "light");
+		const dark = this.needsDarkBlock(def) ? this.childBgProps(def, "dark") : [];
 		return themeSurfaceCSS({
 			selectorsFor: (guard, rootQualifier) => selectorsAt(guard, weight, rootQualifier),
 			surface,
-			paintsBackground:
-				def.transparentBg !== true &&
-				(this.bgProps(def, "light").length > 0 ||
-					this.bgProps(def, "dark").length > 0),
+			paintsBackground,
+			childBackground: paintsBackground
+				? {
+						light,
+						dark: dark.length > 0 && dark.join("") !== light.join("") ? dark : null,
+						print: (selFor) =>
+							this.printGradientCSS(def, selFor, false, " !important"),
+					}
+				: null,
 			cancelsContentColor:
 				def.textColorLight === DEFAULT_TEXT_COLOR_LIGHT ||
 				def.textColorDark === DEFAULT_TEXT_COLOR_DARK,
 			transparentBg: def.transparentBg === true,
 		});
+	}
+
+	/**
+	 * The authored background as it lands on a child box the theme colours
+	 * instead of the root — see "Where the background goes instead" in
+	 * `themeSurfaceCSS.ts`. The root's own declarations, plus an explicit
+	 * `background-image: none` for a solid colour: the theme's fill on that box
+	 * may be an image of its own, and a solid authored background replaces it
+	 * rather than sitting under it. Empty when the mode has no background.
+	 */
+	private childBgProps(def: CalloutDefinition, mode: "light" | "dark"): string[] {
+		const props = this.bgProps(def, mode, true);
+		if (props.length === 0) return [];
+		return props.some((p) => p.trimStart().startsWith("background-image:"))
+			? props
+			: [...props, "  background-image: none !important;"];
 	}
 
 	/**

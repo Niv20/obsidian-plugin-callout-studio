@@ -47,7 +47,13 @@ import {
 	specificityOf,
 	type Specificity,
 } from "../../utils/cssSpecificity";
-import { blankNegations, splitSelectorList } from "../../utils/selectorText";
+import {
+	blankNegations,
+	matchParen,
+	skipBrackets,
+	skipString,
+	splitSelectorList,
+} from "../../utils/selectorText";
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
 import { eachBlock, stripComments } from "./cssBlocks";
 
@@ -101,6 +107,82 @@ export interface ThemeScan {
 	byId: Map<string, ThemeClaim>;
 	/** Family claims — matched by `themeClaimLookup`, never enumerated. */
 	patterns: PatternClaim[];
+	/**
+	 * The heaviest specificity among generic callout rules — ones that name no
+	 * id — whose subject is the callout itself, its title or its content, and
+	 * which force with `!important` a property this plugin also forces there.
+	 *
+	 * Neither map above can see these, because neither names a callout, yet they
+	 * compete with the plugin exactly as a claim does. GitHubDHC writes
+	 * `body.callout-on .callout { background-color: var(--background-primary)
+	 * !important }` and TerraFlow's focus mode the same on
+	 * `body.focus-mode :is(.callout, .cm-callout)`: `(0,2,1)` each, one element
+	 * heavier than the plugin's `(0,2,0)`, so a transparent callout came out
+	 * page-coloured and a Saved Palette's colour never showed. Only the forced
+	 * properties count, and only on the callout's own boxes — an `!important`
+	 * margin on a nested list item is no contest at all, and counting it would
+	 * lengthen every selector in the sheet for nothing.
+	 */
+	genericImportant: Specificity;
+}
+
+/** The fill and frame-colour declarations, on any of the three boxes. */
+const FILL_OR_FRAME =
+	"background(?:-color|-image)?|border(?:-(?:top|right|bottom|left|block|inline)(?:-(?:start|end))?)?(?:-color)?";
+
+/**
+ * What this plugin forces with `!important` on each of a callout's boxes: the
+ * background and frame everywhere (the root's own, the relocated or cleared
+ * child fills, the accent frame `themeSurfaceCSS` draws on the children), plus
+ * the shadow and the accent and icon variables on the root and the text colour
+ * on the content. A theme forcing anything else there — a title's `color`, a
+ * margin — is not competing with it.
+ */
+const FORCED_ON: Record<"root" | "title" | "content", RegExp> = {
+	root: new RegExp(`^(?:${FILL_OR_FRAME}|box-shadow|--callout-color|--callout-icon)$`),
+	title: new RegExp(`^(?:${FILL_OR_FRAME})$`),
+	content: new RegExp(`^(?:${FILL_OR_FRAME}|color)$`),
+};
+
+/** The last compound of one selector — the element its declarations land on. */
+function subjectCompound(selector: string): string {
+	// Preludes keep the whitespace before `{`, which would otherwise read as a
+	// combinator with an empty compound after it.
+	const sel = selector.trim();
+	let start = 0;
+	let i = 0;
+	while (i < sel.length) {
+		const ch = sel[i] ?? "";
+		if (ch === '"' || ch === "'") {
+			i = skipString(sel, i);
+			continue;
+		}
+		if (ch === "[") {
+			i = skipBrackets(sel, i);
+			continue;
+		}
+		if (ch === "(") {
+			i = matchParen(sel, i) + 1;
+			continue;
+		}
+		if (/[\s>+~]/.test(ch)) start = i + 1;
+		i++;
+	}
+	return sel.slice(start).trim();
+}
+
+/**
+ * Which of the callout's own boxes a generic selector lands on, or `null`. A
+ * pseudo-element is a different box — the plugin forces nothing on screen there
+ * — and so is anything named only inside `:not()`.
+ */
+function calloutBoxOf(sel: string): "root" | "title" | "content" | null {
+	const subject = blankNegations(subjectCompound(sel));
+	// Either spelling — Ultra Lobster still writes `.callout:before`.
+	if (/::|:(?:before|after|first-line|first-letter)\b/i.test(subject)) return null;
+	if (/\.callout-title(?![\w-])/.test(subject)) return "title";
+	if (/\.callout-content(?![\w-])/.test(subject)) return "content";
+	return /\.callout(?![\w-])/.test(subject) ? "root" : null;
 }
 
 /** Every `[data-callout<op>=<value>]` in one selector. */
@@ -175,10 +257,25 @@ function absorb(
 export function scanCalloutClaims(css: string): ThemeScan {
 	const byId = new Map<string, ThemeClaim>();
 	const patterns: PatternClaim[] = [];
+	let genericImportant: Specificity = [0, 0, 0];
 
 	eachBlock(stripComments(css), (prelude, body) => {
-		if (!prelude.includes("data-callout")) return;
+		const names = prelude.includes("data-callout");
+		if (!names && !prelude.includes(".callout")) return;
 		const decls = declarationsOf(body);
+
+		// See `ThemeScan.genericImportant`. A part that names an id is measured
+		// here as well as below; the larger of the two answers is the same one.
+		if (decls.some(({ bang }) => bang)) {
+			for (const part of splitSelectorList(prelude)) {
+				const box = calloutBoxOf(part);
+				if (box === null) continue;
+				if (!decls.some(({ name, bang }) => bang && FORCED_ON[box].test(name))) continue;
+				const weight = specificityOf(part);
+				if (compareSpecificity(weight, genericImportant) > 0) genericImportant = weight;
+			}
+		}
+		if (!names) return;
 
 		// A selector list; each part is scored on its own. The split has to
 		// respect parentheses — see splitSelectorList for the ITS Theme
@@ -200,13 +297,16 @@ export function scanCalloutClaims(css: string): ThemeScan {
 		}
 	});
 
-	return { byId, patterns };
+	return { byId, patterns, genericImportant };
 }
 
 /** Merge two scans, keeping the strongest claim per id. Snippets over theme. */
 export function mergeScans(scans: ThemeScan[]): ThemeScan {
-	const out: ThemeScan = { byId: new Map(), patterns: [] };
+	const out: ThemeScan = { byId: new Map(), patterns: [], genericImportant: [0, 0, 0] };
 	for (const scan of scans) {
+		if (compareSpecificity(scan.genericImportant, out.genericImportant) > 0) {
+			out.genericImportant = scan.genericImportant;
+		}
 		for (const [id, claim] of scan.byId) {
 			mergeInto(exactClaim(out.byId, id), claim);
 		}

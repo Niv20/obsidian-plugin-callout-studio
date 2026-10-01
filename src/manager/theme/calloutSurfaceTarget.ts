@@ -194,3 +194,96 @@ export function surfaceTargetOf(part: string): SurfaceHit | null {
 		rootQualifier: rootQualifier(steps[cut] ?? ""),
 	};
 }
+
+/** The three boxes of a callout: the root and its two children. */
+export type CalloutBox = "root" | "title" | "content";
+
+/** One box a generic rule fills, with the conditions it applies under. */
+export interface BoxFillHit {
+	box: CalloutBox;
+	/**
+	 * `""` for the box itself, or the pseudo-element it paints — always written
+	 * `::before` / `::after`, however the theme spelled it.
+	 */
+	pseudo: "" | "::before" | "::after";
+	/** Ancestor steps before the callout root, verbatim, as in {@link SurfaceHit}. */
+	guard: string;
+	/** Conditions on `.callout` itself; `""` when the rule names no root step. */
+	rootQualifier: string;
+}
+
+/**
+ * The plain child box a selector part ends on: `.callout-title` or
+ * `.callout-content` after a descendant or child combinator, with nothing else
+ * in its compound but an optional pseudo-element.
+ *
+ * A child qualified any other way (`.callout-title:hover`,
+ * `.callout-content:empty`) is refused rather than read: its fill is a state the
+ * theme draws on top of the box, and a background moved onto the box itself
+ * would then be painted permanently.
+ */
+const CHILD_STEP = /^([\s\S]*?)(?:\s*>\s*|\s+|^)\.callout-(title|content)\s*$/;
+
+/** A trailing `::before` / `::after` (or the legacy one-colon spelling). */
+const PSEUDO = /::?(before|after)\s*$/i;
+
+/**
+ * Which box of a callout a generic rule fills, or `null` when the rule is not
+ * generic, lands somewhere else, or its conditions cannot be restated.
+ *
+ * Three shapes reach a child box, and the corpus uses all of them:
+ *
+ *     .anp-callout-sleek .callout:not(…) > .callout-title   AnuPpuccin — root step, child combinator
+ *     .callout:not(.is-collapsible) .callout-title          Cyber Glow — root step, descendant
+ *     .composer--WindowPanelCallout .callout-title          Composer — no root step at all
+ *
+ * The first two keep the root's own conditions, exactly as
+ * {@link surfaceTargetOf} reads them. The third has nothing on the root to
+ * keep, so everything before the child is the guard — and has to be restatable
+ * by the same rule as any other guard.
+ *
+ * A pseudo-element is read on any of the three boxes (`.glow-callouts
+ * .callout::after`, `.draa-callouts .callout .callout-title::before`). Whether
+ * it is a *surface* rather than a decoration is a question about its geometry,
+ * which only the declarations can answer — see `calloutSurfaceScan.ts`.
+ */
+export function boxFillTargetOf(part: string): BoxFillHit | null {
+	if (namesCalloutId(part)) return null;
+	let sel = part.trim();
+	const pm = PSEUDO.exec(sel);
+	const pseudo = pm === null ? "" : pm[1]?.toLowerCase() === "before" ? "::before" : "::after";
+	if (pm !== null) sel = sel.slice(0, pm.index).trim();
+
+	const m = CHILD_STEP.exec(sel);
+	if (m === null) {
+		// No child step: only a root pseudo-element is a box this reads.
+		if (pseudo === "") return null;
+		const hit = surfaceTargetOf(sel);
+		return hit?.target === "root"
+			? { box: "root", pseudo, guard: hit.guard, rootQualifier: hit.rootQualifier }
+			: null;
+	}
+	const box = m[2] === "title" ? "title" : "content";
+	const before = (m[1] ?? "").trim();
+	if (before === "") return { box, pseudo, guard: "", rootQualifier: "" };
+	const hit = surfaceTargetOf(before);
+	if (hit !== null) {
+		return hit.target === "root"
+			? { box, pseudo, guard: hit.guard, rootQualifier: hit.rootQualifier }
+			: null;
+	}
+	// No callout root above the child: the whole prefix is the guard. A step
+	// that IS a callout root got here only because its guard was refused, and
+	// refusing it again here is the point.
+	const steps = selectorSteps(before);
+	if (
+		steps === null ||
+		steps.some((step) => {
+			const classes = compoundClasses(step);
+			return classes === null || isCalloutRoot(classes) || isCalloutChild(classes);
+		})
+	) {
+		return null;
+	}
+	return { box, pseudo, guard: steps.join(" "), rootQualifier: "" };
+}

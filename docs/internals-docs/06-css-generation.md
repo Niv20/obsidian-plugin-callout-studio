@@ -245,6 +245,21 @@ nothing" fallthrough, because a transparent definition genuinely carries no
 "nothing" means "hand the callout back to core's own default tint," which is
 not the same as transparent.
 
+The root is not the only box a theme fills, so transparent reaches the
+children too: `transparentChildrenCSS` (`manager/css/backgroundProps.ts`) clears
+`> .callout-title` and `> .callout-content` at the studio weight, in **every**
+theme. AnuPpuccin's Sleek and Vanilla styles tint the title from the accent,
+Vanilla fills the content with its neutral mantle, and Willemstad, Serenity,
+Border and a dozen others draw the content as a card — each of which used to
+leave a "transparent" callout with a coloured stripe or a grey panel. In a theme
+that paints neither box the rule changes nothing. Borders and small
+pseudo-element decorations (an accent bar, a dog-eared corner, a title
+underline) are left alone: they are the theme's frame, which
+`transparentBorderProps` governs on the root. Two theme-specific halves — a
+surface laid over a box as a pseudo-element, and the title ink an opaque badge
+leaves behind — live in the theme-owned surface band; see
+[The theme-owned surface](#the-theme-owned-surface).
+
 ### Gradients
 
 A gradient adds a `background-image` layer on top of the flat colour (which
@@ -392,7 +407,7 @@ apply:
 | **Unknown native Block fallback** | `.callout:not(:where(<known ids>))` = `(0,1,0)`, **no `!important`** | generic core/theme defaults on a later-source tie | every ordinary exact `[data-callout="x"]` definition |
 | **Derived surface** — core's own defaults, restated because the accent spelling broke them | `:where(.callout)[data-callout="x"]` = `(0,1,0)`, **no `!important`** | core, on source order | every theme rule from `(0,2,0)` up |
 | **Explicit Studio choice** — chosen accent, authored background, gradient, transparency, icon, global style | `CSSInjector.sel()` at the studio weight, **`!important`** | theme and snippets | a user snippet at `!important` plus one more class-unit |
-| **Theme-owned surface** — the active styling makes the root transparent or gives it a neutral colour while tinting the title, or frames it in `currentColor` | the theme's own guard and callout-root conditions + `.callout` at **`weight + 2`**, `!important` | the row above, where the theme's condition matches | nothing this sheet emits |
+| **Theme-owned surface** — the active styling makes the root transparent or gives it a neutral colour while colouring the title or content instead, lays a surface over the callout as a pseudo-element, or frames it in `currentColor` | the theme's own guard and callout-root conditions + `.callout` at **`weight + 2`**, `!important` | the row above, where the theme's condition matches | nothing this sheet emits |
 
 The line between the derived-surface and explicit-Studio rows is the one that
 is easy to get wrong: **a chosen accent colour is not a chosen background.** A background *derived* from
@@ -400,8 +415,9 @@ the accent defers to the theme; a background the user authored — a Saved
 Palette, a custom colour, a gradient, "transparent" — wins, for that one
 property and no other.
 
-And the theme-owned-surface band inverts the explicit-Studio band: **an authored
-background is still not a claim on a surface the theme has taken away.** See
+And the theme-owned-surface band refines the explicit-Studio band: **an authored
+background is still not a claim on a surface the theme has taken away — it
+moves to wherever the theme put the colour instead.** See
 [The theme-owned surface](#the-theme-owned-surface) below.
 
 Two consequences worth keeping in mind before touching any of this:
@@ -442,10 +458,36 @@ there. And the plugin's `.callout-content { color }` reaches the frame through
 cyan `--text-normal`, the studio callout's frame measured `rgb(224,224,224)` —
 `#e0e0e0`, which is `DEFAULT_TEXT_COLOR_DARK`.
 
+Restoring the root is only half of it, because a theme that takes the colour
+off the root usually puts it somewhere else. Under AnuPpuccin Sleek the callout's
+colour is a title stripe — `rgba(var(--callout-color), 0.1)` over the neutral
+root — so with the root restored and the stripe left to the theme, a Saved
+Palette's gradient had nowhere to go: it rendered as the theme's flat accent
+tint, one solid colour, and a transparent callout kept the tinted stripe. The
+same shape is AnuPpuccin's two Vanilla styles, Soft Paper, Composer's
+WindowPanel style, Iridium's default, Shiba Inu's first style, Cyber Glow (title
+*and* content), and two themes that lay the fill on a whole-callout `::after`
+(Ultra Lobster's line style, Glass Robo's glow style).
+
 So [`manager/theme/calloutSurface.ts`](../../src/manager/theme/calloutSurface.ts)
-resolves two facts and
+resolves what the active styling says, and
 [`manager/css/themeSurfaceCSS.ts`](../../src/manager/css/themeSurfaceCSS.ts) emits
-what they cost. Five properties of that block are the whole design:
+what it costs:
+
+| Fact | Emitted, under the fact's own guard and root conditions |
+| --- | --- |
+| `neutralBackground` — the root is blank, or a neutral colour beside an accent title | the root restored to the theme's own value, `background-image: none`, and the print `::before`'s image cancelled |
+| `relocations` — a box filled from the accent wherever a neutral root claim also holds | the authored background (solid or gradient, light and dark) on that box: `> .callout-title`, `> .callout-content`, or a whole-callout `::before`/`::after`, plus the PDF-export `::before` repaint for the two children |
+| `inkedTitles` — an *opaque* title fill, or one whose rule picks the title's ink | for a transparent callout only: the title, its text and its icon back to `var(--cs-accent)`. Glass Robo and flexcyon write the title in the page colour on a badge; without the badge it was invisible |
+| `surfaceLayers` — a pseudo-element laid over a whole box (`inset: 0`, `100%` × `100%`, every side zero, logical insets included) | for a transparent callout only: that layer cleared. Ultra Lobster's line and brutal styles, Glass Robo's glow and loli styles, TerraFlow's glass and liquid sheens |
+| `colorlessFrame` — title/content borders with no colour | the frame's ink from `var(--cs-accent)` |
+
+A theme that removes the root's fill and fills nothing else — GitHub Theme,
+Prism and Cybertron for an id they do not name, Minimal's and Oxygen's outlined
+style, Notation 2, Polka, Typomagical — gets no relocation, and the callout is as
+flat as the theme draws its own; a solid colour shows nowhere there either.
+
+The properties of that block that are the whole design:
 
 - **The guard and callout-root conditions travel with the fact.** Many themes
   hide this behind a Style Settings class, and Style Settings'
@@ -464,6 +506,18 @@ what they cost. Five properties of that block are the whole design:
   root rules become `transparent`; a neutral root paired with an accent-tinted
   title keeps its theme variable or colour expression. No page colour is baked
   into the generated stylesheet.
+- **A relocation needs proof that the root is neutral whenever the box is
+  filled.** `neutralWhenFilled` accepts an unconditional root claim, the same
+  guard with the same (or no) root conditions, or two `:not()`-qualified
+  compounds where the fill's excludes everything the root's does (Iridium). A
+  theme that tints the title *over* a root it leaves painted — Shimmering Focus,
+  Blue Topaz — is not this: the title would show the background twice. A
+  surface carrying its own `opacity` (Ultra Lobster's 20% brutal block) is never
+  given one, because the colour would not render as written.
+- **Dark mode is a condition on the callout, not a prefix.** The relocation's
+  dark copy appends `:is(.theme-dark *)` to the callout compound. The guard is
+  usually a body class, and `.theme-dark .anp-callout-sleek` can never match
+  when both classes sit on `<body>`.
 - **`weight + 2`, not `weight + 1`.** The heaviest thing being cancelled is the
   dark block, whose `.theme-dark` is a class of its own. `weight + 1` would only
   tie it and win on source order.
@@ -472,6 +526,10 @@ what they cost. Five properties of that block are the whole design:
   `generateGlobalStyleCSS` paints the plugin's own border setting — so the two
   features cannot collide. It also stands down entirely for `transparentBg`,
   whose `transparentBorderProps` already asked for `border-color: transparent`.
+- **A small decoration is not a surface.** A 3px accent bar (Light & Bright,
+  Mushin), a dot, a dog-eared corner (Qlean) or a 1px title underline (Ultra
+  Lobster, Composer) is read from its geometry and left alone, transparent or
+  not — like a border, it is the theme's frame.
 - **The content-colour cancel is gated on the value being invented, not on the
   field being set.** `DEFAULT_TEXT_COLOR_LIGHT`/`_DARK` are what the editor fills
   a swatch with; a colour the user picked survives in every theme. Same line
@@ -753,6 +811,19 @@ corpus both exceeds the ceiling and uses `!important`**, which is the property
 that makes 14 a safe number rather than a hopeful one.
 Most themes have none, so most vaults stay at `STUDIO_WEIGHT_BASE` (1) and the
 emitted selectors are exactly the shape they always were, plus the suffix.
+
+"Callout selectors" includes the generic ones that name no id
+(`ThemeScan.genericImportant`), but only where they could actually contest
+something: a rule whose subject is the callout root, its title or its content —
+not a pseudo-element, not a descendant — forcing a property the plugin forces on
+that box (a fill or frame colour anywhere, the shadow and the accent and icon
+variables on the root, the text colour on the content). GitHubDHC's
+`body.callout-on .callout { background-color: var(--background-primary)
+!important }` is `(0,2,1)`, one element heavier than `.callout[data-callout]`;
+before this was measured, a transparent callout there came out page-coloured
+and a Saved Palette's colour never showed. Nine of the 257 themes move:
+Blue Topaz 5, Bolt 4, GitHubDHC 3, Glass Robo 4, Notation 2 3, TerraFlow 3,
+Typomagical 3, Ukiyo 4, deeper work 4.
 `STUDIO_WEIGHT_MAX` (14) is the ceiling: past that a theme is doing something
 pathological and an arms race lengthens every selector in the sheet for
 everyone.
@@ -781,7 +852,8 @@ scan asked two different questions:
   at all.
 - **What is the heaviest `!important` callout selector?**
   (`maxImportantClasses()` — theme **plus** every enabled snippet, every
-  operator.) This decides the weight everything else is emitted at.
+  operator, and the generic rules that force what the plugin forces.) This
+  decides the weight everything else is emitted at.
 
 Collapsing the two breaks both. The scanner itself, the operator rules, what it
 can and cannot see, and the row-minting sweep built on top of it are

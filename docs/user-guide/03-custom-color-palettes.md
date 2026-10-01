@@ -31,16 +31,22 @@ The **Style** menu offers three choices:
 
 - **Solid** uses a single background color.
 - **Gradient** adds a second color and a direction control. You can also enable **Gradient title text**.
-- **Transparent** removes Callout Studio's background while keeping the base color on the title and icon. Your theme may still paint the content area.
+- **Transparent** removes the callout's background, including a tinted title bar or a content panel your theme would otherwise draw, while keeping the base color on the title and icon. The theme's borders and small decorations stay.
 
 In the palette editor, **Name** and **Style** have the same rounded field shape
 and hover and focus feedback as other text and selection fields. Open
 **Style** to choose from the list; it does not accept typed text.
 
-In AnuPpuccin's Vanilla Normal, Vanilla Plus, and Sleek layouts, Block callouts
-keep the theme's neutral content background with a custom palette. The palette's
-base color still colors the title, icon, and border, and the neutral surface
-follows the theme in light and dark mode.
+Some themes and Style Settings layouts keep a callout's body neutral and put its
+color somewhere else — AnuPpuccin's Sleek, Vanilla Normal, and Vanilla Plus
+layouts put it on a title bar. Block callouts follow the layout: the body keeps
+the theme's neutral surface in light and dark mode, and the palette's
+background, solid or gradient, fills the title bar instead. A transparent
+palette leaves the title bar empty.
+
+Layouts that give callouts no background at all, such as GitHub Theme's callout
+style or Minimal's outlined callouts, show neither a solid nor a gradient
+background; the palette's base color still colors the title, icon, and frame.
 
 ## Edit, delete, and restore palettes
 

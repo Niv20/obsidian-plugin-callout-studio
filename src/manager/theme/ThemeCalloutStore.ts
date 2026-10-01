@@ -38,7 +38,7 @@ import {
 } from "./calloutSurfaceScan";
 import { resolveCalloutSurface, type CalloutSurface } from "./calloutSurface";
 
-const EMPTY_SCAN: ThemeScan = { byId: new Map(), patterns: [] };
+const EMPTY_SCAN: ThemeScan = { byId: new Map(), patterns: [], genericImportant: [0, 0, 0] };
 const EMPTY_PROPS: ReadonlySet<string> = new Set();
 
 export class ThemeCalloutStore {
@@ -197,6 +197,8 @@ export class ThemeCalloutStore {
 		};
 		for (const claim of this.allScan.byId.values()) consider(claim);
 		for (const { claim } of this.allScan.patterns) consider(claim);
-		return max;
+		// The rules that name no callout but force what the plugin forces —
+		// see `ThemeScan.genericImportant`.
+		return Math.max(max, this.allScan.genericImportant[1]);
 	}
 }

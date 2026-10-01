@@ -210,13 +210,28 @@ sheets into the answer `StudioWeightCache.surface()` memoises beside the dialect
 for the same reason the dialect does: what has to work is what is on the page,
 whoever wrote it.
 
-Two facts come out. Background claims keep the **guard** and conditions on the
-callout root; frame claims keep the ancestor guard:
+Three kinds of fact come out. Background and fill claims keep the **guard** and
+conditions on the callout root; frame claims keep the ancestor guard:
 
 | Fact | Recorded when | Examples |
 | --- | --- | --- |
 | `neutralBackground` | a generic `.callout` rule removes the root background, or paints a neutral root while a matching title rule uses `--callout-color`; the root's CSS value is retained | GitHub Theme, Prism, AnuPpuccin Vanilla Normal/Plus/Sleek, Soft Paper |
+| `fills` | a generic rule fills the title or content box, or lays a pseudo-element over a whole box; each records whether it reads the accent, whether it is opaque or picks the title's ink, and whether it carries its own `opacity` | AnuPpuccin's stripe, Cyber Glow's two boxes, Glass Robo's badges, Ultra Lobster's `::after` layer |
 | `colorlessFrame` | a generic `.callout-title` / `.callout-content` rule uses a `border` shorthand with a line style and **no colour token** | Prism, Cybertron |
+
+`fills` reads [`boxFillTargetOf`](../../src/manager/theme/calloutSurfaceTarget.ts):
+the child box after a child or descendant combinator, or with no callout root
+above it at all (Composer writes `.composer--WindowPanelCallout .callout-title`),
+plus an optional `::before`/`::after` in either spelling. A child qualified any
+other way — `:hover`, `:active`, `:empty` — is refused: Cyber Glow brightens its
+title on hover, and a background moved onto the title because of that would be
+painted permanently. A pseudo-element counts only when its own rule pins it over
+the whole box — `inset: 0`, `100%` × `100%`, every side zero, or TerraFlow's
+`inset-block-start` / `inset-inline` / `inset-block-end` — so a 3px accent bar, a
+dot or a dog-eared corner never reads as a fill. `calloutSurface.ts` folds them
+into the three lists the emitter uses (`relocations`, `inkedTitles`,
+`surfaceLayers`); see
+[06-css-generation.md § The theme-owned surface](06-css-generation.md#the-theme-owned-surface).
 
 `background-color: none` is deliberately *not* accepted: it is invalid and the
 parser drops it, so reading it as "no background" would be believing a
@@ -250,6 +265,13 @@ and Oxygen `callouts-outlined`, Composer, Glass Robo, Iridium, ITS Theme, Shiba
 Inu, Typomagical, Underwater); behind a class and callout metadata conditions
 (AnuPpuccin Vanilla Normal/Plus/Sleek). AnuPpuccin Sleek and Soft Paper also
 provide neutral root colours paired with accent-tinted titles.
+
+Where the colour goes instead, measured over every installed theme and every
+callout-related Style Settings option alone and in pairs: a title stripe
+(AnuPpuccin Sleek, Vanilla Normal, Vanilla Plus; Soft Paper; Composer's
+WindowPanel; Iridium's default; Shiba Inu's first style), both boxes (Cyber
+Glow), or a whole-callout `::after` (Ultra Lobster's line style, Glass Robo's
+glow style). The rest of the neutral-root themes fill nothing else.
 
 ### The accent dialect
 
@@ -313,7 +335,7 @@ collapsing them breaks both.
 | --- | --- | --- |
 | Entry point | `ThemeCalloutStore.themeDefinedIds()` | `ThemeCalloutStore.maxImportantClasses()` |
 | Input | the **theme's** stylesheet only | theme **and every enabled snippet** |
-| Operators | `=` and `~=` only | every operator |
+| Operators | `=` and `~=` only | every operator — and generic rules that name no id but force, with `!important`, what the plugin forces on the callout's own boxes (`ThemeScan.genericImportant`) |
 | Why | *Callouts from your theme* has to mean it — a snippet the user wrote is their own work, and a family pattern names no callout | The emitted CSS has to outrank whatever is on the page, whoever wrote it |
 
 A third, laxer question — *does this stylesheet style the callout I already
@@ -950,6 +972,22 @@ color-mix(in srgb, var(--callout-color) 40%, transparent)` beside your
 `border: 2px solid` is enough, reads better in your own callouts too, and is
 what Shiba Inu does.
 
+If the colour moves to a stripe or a panel instead — a neutral root with the
+accent on the title, as AnuPpuccin's Sleek style does — fill that box from
+`--callout-color` under the same guard as the root rule:
+
+```css
+/* read: the user's background (solid or gradient) moves to the title */
+.my-stripes .callout                 { background-color: var(--background-secondary); }
+.my-stripes .callout > .callout-title { background-color: rgba(var(--callout-color), 0.1); }
+```
+
+A callout with a Saved Palette then shows that palette's background on the
+stripe, and a transparent one shows none. A pseudo-element works too, if its
+rule pins it over the whole box (`position: absolute; inset: 0`). Writing the
+stripe *without* a matching root rule tells Callout Studio the root keeps its
+colour, and the stripe stays yours.
+
 ### Colours
 
 The accent is read as a **used value** off a rendered callout, in this order:
@@ -1128,6 +1166,41 @@ Three assertions carry most of the value:
 That last one is the sharpest instrument in this chapter: it turns "does this
 theme still look right?" into a list of named properties, and it is how the
 `PAINTERS` and per-mode bugs above were both found and proved fixed.
+
+### Sweeping every theme and Style Settings state for backgrounds
+
+The relocation and transparent work above was verified by a sweep rather than
+by sampling, because the bug it fixed lived in one Style Settings option of one
+theme. The shape is worth keeping:
+
+- **States, not themes.** Read every theme's `/* @settings */` YAML, keep the
+  `class-toggle` and `class-select` entries whose classes appear in a selector
+  mentioning `callout`, and measure the default install, each option alone, each
+  pair of options from two different settings, and the vault's own saved
+  `obsidian-style-settings/data.json` — light and dark, Reading view and the Live
+  Preview chain. Flipping `<body>` classes on one loaded page per theme is
+  exactly what Style Settings does, and measures thousands of states in seconds.
+- **Generate the sheet per theme** with `themedHarness(themeCss)` and the same
+  assembly as `injectNow`, for a fixed set of definitions: accent only, solid,
+  gradient (an unusual angle, so its computed `background-image` is
+  recognisable), gradient with title text, and transparent.
+- **Read every box**: root, title, content, and the `::before`/`::after` of each,
+  with their sizes, so a pseudo-element can be told apart as a surface (most of
+  its box, full opacity) or a decoration.
+- **Two invariants, and their honest exceptions.** *Transparent*: no fill on any
+  box or surface. *Gradient*: visible on some box, never replaced by a solid
+  accent fill, never under an opaque surface. A missing gradient is a bug only
+  when the solid definition shows its colour somewhere in the same state — when
+  it does not, the theme draws that state flat for everyone. A content card or
+  an opaque title badge partly covering the gradient is the theme's own design,
+  reported rather than failed.
+
+Measured on 2026-10-01 over the 257 installed themes and 4,732 states (theme × Style Settings state × mode, each in Reading view and Live Preview): 2,528
+failures in 35 themes before, none after. What remains by design is flat
+styles (GitHub Theme, Prism and Cybertron for unnamed ids, Minimal's and
+Oxygen's outlined style, Notation 2, Polka, Typomagical, Ultra Lobster's default),
+content cards (Willemstad, Serenity, Border, Vicious, Primary and others) and
+title badges (Glass Robo, flexcyon).
 
 ## What the most-tested themes do
 

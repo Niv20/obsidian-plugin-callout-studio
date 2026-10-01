@@ -448,3 +448,56 @@ describe("mergeScans — theme plus enabled snippets", () => {
 		assert.strictEqual(scanCalloutClaims("").byId.size, 0);
 	});
 });
+
+describe("the generic !important a studio callout has to outweigh", () => {
+	const generic = (css: string) => scanCalloutClaims(css).genericImportant;
+
+	it("measures a generic rule forcing a background onto the callout", () => {
+		// Verbatim from GitHubDHC: one element heavier than `.callout[data-callout]`.
+		assert.deepStrictEqual(
+			generic(`body.callout-on .callout { border-left: 4px solid var(--callout-color); background-color: var(--background-primary) !important; }`),
+			[0, 2, 1],
+		);
+		// TerraFlow's focus mode reaches the callout through :is().
+		assert.deepStrictEqual(
+			generic(`body.focus-mode :is(.callout, .cm-callout) { background-color: var(--background-secondary) !important; }`),
+			[0, 2, 1],
+		);
+	});
+
+	it("counts each box only for what the plugin forces there", () => {
+		// Content text colour is forced; a title's text colour is not.
+		assert.deepStrictEqual(
+			generic(`.callout .callout .callout-content { color: var(--on-primary-container) !important; }`),
+			[0, 3, 0],
+		);
+		assert.deepStrictEqual(
+			generic(`body[class*="-glow-general"] .markdown-preview-view.homepage .callout-title { color: #ffffff !important; }`),
+			[0, 0, 0],
+		);
+		// Ukiyo forces the title's fill, which transparent and the stripe both set.
+		assert.deepStrictEqual(
+			generic(`.theme-dark .callout .callout-title { background-color: rgba(var(--callout-color), .1) !important; }`),
+			[0, 3, 0],
+		);
+	});
+
+	it("ignores a descendant, a pseudo-element, ordinary importance and anything inside :not()", () => {
+		assert.deepStrictEqual(
+			generic(`
+				.markdown-source-view.mod-cm6 .callout-content ul > li > ul { background: red !important; }
+				.ulu-brutal-callouts .callout:before { background: rgb(var(--callout-color)) !important; }
+				.a .b .c .callout { background-color: red; }
+				body:not(.callout) .x { background-color: red !important; }`),
+			[0, 0, 0],
+		);
+	});
+
+	it("keeps the heaviest across merged sheets", () => {
+		const merged = mergeScans([
+			scanCalloutClaims(`.a .callout { box-shadow: none !important; }`),
+			scanCalloutClaims(`.a .b .c .callout { border-color: red !important; }`),
+		]);
+		assert.deepStrictEqual(merged.genericImportant, [0, 4, 0]);
+	});
+});
