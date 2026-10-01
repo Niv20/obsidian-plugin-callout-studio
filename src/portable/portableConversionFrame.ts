@@ -54,12 +54,17 @@ export function createPortableConversionFrame(root: HTMLElement): PortableConver
 	return { convert, summary, status, all, retry, hint, shell, scroll, overlay, results };
 }
 
+/**
+ * Paint what the plan alone decides: the summary, the Convert label and the
+ * select-all box. Whether Convert can act is not here — that also depends on
+ * the review being open, scanning, failed or mid-edit, so the view decides it
+ * and dims the button itself (`PortableConversionView.convertBlockedReason`).
+ */
 export function updatePortableSelection(frame: PortableConversionFrame, plan: PortableCalloutConversionPlan | undefined, ready: boolean): void {
 	frame.summary.setText(plan ? t("portable.selectionSummary", {
 		selected: plan.selectedIds.length, total: plan.changes.length, links: plan.linkCount,
 	}) : "");
 	frame.convert.setText(t(plan?.recovery ? "portable.finishConversion" : "portable.convertSelected"));
-	frame.convert.disabled = !ready || !(plan?.count || plan?.linkCount);
 	const selected = plan?.selectedIds.length ?? 0, total = plan?.changes.length ?? 0;
 	frame.all.checked = total > 0 && selected === total;
 	frame.all.indeterminate = selected > 0 && selected < total;

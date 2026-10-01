@@ -19,6 +19,8 @@ export const fi: Record<string, string> = {
 	"editor.paletteNoMatches": "Yksikään väri ei vastaa hakua ”{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Hae värejä…",
 	"replaceModal.searchPlaceholder": "Hae callouteja",
+	"replaceModal.chooseFirst": "Jatka valitsemalla korvaava callout tai ”{{delete}}”.",
+	"replaceModal.chooseFirstReplace": "Valitse ensin callout, jolla se korvataan.",
 	"settings.fallbackTag": "Oletus",
 	"settings.fallbackTagAuto": "Automaattinen oletus",
 	"settings.rescanVaultDesc": "Lisää muistiinpanoissasi käytetyt callout-tyypit, joita ei vielä ole tässä luettelossa. Nykyisiä calloutejasi ja muistiinpanojasi ei muuteta.",
@@ -208,6 +210,7 @@ export const fi: Record<string, string> = {
 		"Sinulla on jo täsmälleen tämän tekevä komento.",
 	"commandBuilder.noCallouts":
 		"Ei vielä callout-tyyppejä, joista rakentaa komento.",
+	"commandBuilder.noCalloutChosen": "Valitse ensin callout tälle komennolle.",
 	"commandBuilder.save": "Tallenna",
 
 	"commandBuilder.roleThemeOwned":
@@ -369,6 +372,7 @@ export const fi: Record<string, string> = {
 	"palette.name": "Nimi",
 	"palette.namePlaceholder": "Oma paletti",
 	"palette.nameExists": "Tämän niminen paletti on jo olemassa",
+	"palette.saveBlockedName": "Tämän niminen paletti on jo olemassa. Tallenna se valitsemalla toinen nimi.",
 	"palette.baseColor": "Perusväri",
 	"palette.baseColorHint":
 		"Sovitamme taustavärin automaattisesti siihen. Jos haluat, voit hallita sitä erikseen {{link}}.",
@@ -453,6 +457,7 @@ export const fi: Record<string, string> = {
 	"iconPicker.skinTone": "Ihonsävy",
 	"iconPicker.allCategories": "Kaikki kategoriat",
 	"iconPicker.noIconSelected": "Kuvaketta ei valittu",
+	"iconPicker.chooseFirst": "Valitse ensin kuvake.",
 	"iconPicker.noResults": "Mikään kuvake ei vastaa hakuasi.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Hae Octicons-kuvakkeita",
@@ -821,6 +826,10 @@ export const fi: Record<string, string> = {
 	"portable.errorChanged": "Muistiinpanot muuttuivat. Tarkista päivitetyt muutokset ennen muunnosta.",
 	"portable.errorBusy": "Toinen muunnos on käynnissä. Odota sen valmistumista.",
 	"portable.error": "Holvia ei voitu lukea tai päivittää turvallisesti. Tarkista tiedostojen käyttöoikeudet ja yritä uudelleen.",
+	"portable.blockedConverting": "Muunnos on jo käynnissä. Odota, että se valmistuu.",
+	"portable.blockedUpdating": "Tarkastelu on vielä päivittymässä. Odota sen valmistumista ennen muuntamista.",
+	"portable.blockedEditing": "Viimeistele ensin korvaajan muokkaus: tallenna painamalla Enter tai hylkää painamalla Esc.",
+	"portable.blockedNothingSelected": "Valitse vähintään yksi korvaaja muunnettavaksi.",
 	"settings.maintenance": "Vaara-alue",
 	"portable.subtitle": "Valitse, mitkä otsikoiden ja tekstin sisäiset calloutit muunnetaan tavalliseksi Markdowniksi ennen Callout Studion käytön lopettamista.",
 	"portable.customize": "Mukautettu korvaus…",
@@ -869,6 +878,7 @@ export const fi: Record<string, string> = {
 		"{{valid}}/{{total}} merkintää on kelvollisia · löydetty {{issues}} ongelma(a).",
 	"import.btnCancel": "Peruuta",
 	"import.btnImportValid": "Tuo vain kelvolliset ({{count}})",
+	"import.nothingValid": "Mikään merkinnöistä ei ole kelvollinen, joten tuotavaa ei ole. Peruuta, korjaa tässä luetellut ongelmat ja tuo uudelleen.",
 	"import.err.notRecognized":
 		"Tunnistamaton tiedosto: odotettiin callout-määritelmien taulukkoa tai Callout Studio -vientiä.",
 	"import.warn.settingsIgnored":
@@ -1187,6 +1197,7 @@ export const fi: Record<string, string> = {
 	"recovery.originOlderVersion": "Tallennettu vanhemmalla versiolla",
 	"recovery.unreadable": "Ei voida lukea asetuksina",
 	"recovery.same": "Sama kuin nykyinen kokonaisuutesi",
+	"recovery.restoreSame": "Tämä asetus on sama kuin nykyinen, joten palautettavaa ei ole.",
 	"recovery.summary": "{{callouts}} tallennettua callout-tyyppiä, {{count}} eroa nykyiseen",
 	"recovery.export": "Vie kopio",
 	"recovery.restore": "Palauta",

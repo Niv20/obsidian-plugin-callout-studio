@@ -21,6 +21,8 @@ Open the main plugin settings, find **Saved color palettes**, and click **New pa
 4. Review any contrast warning. It identifies combinations that may be difficult to read but does not prevent you from saving the design.
 5. Click **Save**.
 
+**Save** stays dimmed while the name is already used by another palette, or while the colors are identical to another palette's. Press it and a message says which.
+
 Saved palettes appear at the top of every callout color menu under **Custom**.
 
 ## Background styles

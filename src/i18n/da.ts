@@ -19,6 +19,8 @@ export const da: Record<string, string> = {
 	"editor.paletteNoMatches": "Ingen farver matcher “{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Søg efter farver…",
 	"replaceModal.searchPlaceholder": "Søg i callouts",
+	"replaceModal.chooseFirst": "Vælg en erstatnings-callout, eller “{{delete}}”, for at fortsætte.",
+	"replaceModal.chooseFirstReplace": "Vælg først den callout, den skal erstattes med.",
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
 	"settings.rescanVaultDesc": "Tilføjer callout-typer, der bruges i dine noter, og som endnu ikke er på denne liste. Dine eksisterende callouts og noter ændres ikke.",
@@ -203,6 +205,7 @@ export const da: Record<string, string> = {
 		"Du har allerede en kommando, der gør præcis det samme.",
 	"commandBuilder.noCallouts":
 		"Der er endnu ingen callout-typer at bygge en kommando ud fra.",
+	"commandBuilder.noCalloutChosen": "Vælg først en callout til denne kommando.",
 	"commandBuilder.save": "Gem",
 	"commandBuilder.roleThemeOwned":
 		"Dit tema leverer denne callout, så den har kun et blok-format.",
@@ -359,6 +362,7 @@ export const da: Record<string, string> = {
 	"palette.name": "Navn",
 	"palette.namePlaceholder": "Min palet",
 	"palette.nameExists": "Der findes allerede en palet med dette navn",
+	"palette.saveBlockedName": "Der findes allerede en palet med dette navn. Vælg et andet navn for at gemme den.",
 	"palette.baseColor": "Basisfarve",
 	"palette.baseColorHint":
 		"Vi tilpasser automatisk baggrundsfarven til den. Hvis du vil, kan du styre den separat ved at {{link}}.",
@@ -444,6 +448,7 @@ export const da: Record<string, string> = {
 	"iconPicker.skinTone": "Hudfarve",
 	"iconPicker.allCategories": "Alle kategorier",
 	"iconPicker.noIconSelected": "Intet ikon valgt",
+	"iconPicker.chooseFirst": "Vælg først et ikon.",
 	"iconPicker.noResults": "Ingen ikoner matcher din søgning.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Søg i Octicons",
@@ -809,6 +814,10 @@ export const da: Record<string, string> = {
 	"portable.errorChanged": "Noterne er ændret. Gennemgå de opdaterede ændringer, før du konverterer.",
 	"portable.errorBusy": "En anden konvertering kører. Vent, til den er færdig.",
 	"portable.error": "Boksen kunne ikke læses eller opdateres sikkert. Kontrollér filadgangen, og prøv igen.",
+	"portable.blockedConverting": "En konvertering kører allerede. Vent, til den er færdig.",
+	"portable.blockedUpdating": "Gennemgangen opdateres stadig. Vent, til den er færdig, før du konverterer.",
+	"portable.blockedEditing": "Afslut først redigeringen af erstatningen: tryk på Enter for at gemme den, eller Esc for at kassere den.",
+	"portable.blockedNothingSelected": "Vælg mindst én erstatning at konvertere.",
 	"settings.maintenance": "Farezone",
 	"portable.subtitle": "Vælg, hvilke callouts i overskrifter og tekst der skal konverteres til standard-Markdown, før du stopper med at bruge Callout Studio.",
 	"portable.customize": "Tilpasset erstatning…",
@@ -857,6 +866,7 @@ export const da: Record<string, string> = {
 		"{{valid}} af {{total}} poster er gyldige · {{issues}} problem(er) fundet.",
 	"import.btnCancel": "Annuller",
 	"import.btnImportValid": "Importer kun gyldige ({{count}})",
+	"import.nothingValid": "Ingen af posterne er gyldige, så der er intet at importere. Annuller, ret de problemer, der er angivet her, og importér igen.",
 	"import.err.notRecognized":
 		"Ukendt fil: forventede et array af callout-definitioner eller en Callout Studio-eksport.",
 	"import.warn.settingsIgnored":
@@ -1178,6 +1188,7 @@ export const da: Record<string, string> = {
 	"recovery.originOlderVersion": "Gemt af en ældre version",
 	"recovery.unreadable": "Kan ikke læses som indstillinger",
 	"recovery.same": "Samme som din nuværende opsætning",
+	"recovery.restoreSame": "Denne opsætning er den samme som din nuværende, så der er intet at gendanne.",
 	"recovery.summary": "{{callouts}} gemt(e) callout-type(r), {{count}} forskel(le) fra nu",
 	"recovery.export": "Eksportér kopi",
 	"recovery.restore": "Gendan",

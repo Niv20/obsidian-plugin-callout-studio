@@ -30,6 +30,7 @@ import {
 	resolveFold,
 	resolveHeadingLevel,
 } from "../utils/customCommands";
+import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
 import { committedDefinitions } from "../utils/usableCallouts";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
@@ -172,7 +173,10 @@ export class CommandEditorModal extends Modal {
 			text: t("commandBuilder.save"),
 			cls: "mod-cta",
 		});
-		this.saveBtnEl.addEventListener("click", () => this.finish(true));
+		this.saveBtnEl.addEventListener("click", () => {
+			if (explainIfBlocked(this.saveBlockedReason())) return;
+			this.finish(true);
+		});
 
 		this.syncVisibility();
 	}
@@ -263,10 +267,7 @@ export class CommandEditorModal extends Modal {
 			);
 		}
 
-		const duplicate =
-			this.options.takenSignatures?.has(
-				commandSignature(this.draft()),
-			) === true;
+		const duplicate = this.isDuplicate();
 		if (this.errorEl) {
 			this.errorEl.setText(
 				duplicate ? t("commandBuilder.duplicate") : "",
@@ -274,11 +275,25 @@ export class CommandEditorModal extends Modal {
 			this.errorEl.toggleClass("is-visible", duplicate);
 		}
 
-		const valid = def !== undefined && !duplicate;
-		if (this.saveBtnEl) {
-			this.saveBtnEl.disabled = !valid;
-			this.saveBtnEl.toggleClass("cs-btn-disabled", !valid);
+		if (this.saveBtnEl) paintBlocked(this.saveBtnEl, this.saveBlockedReason());
+	}
+
+	/** Whether the command the form describes is one the user already has. */
+	private isDuplicate(): boolean {
+		return this.options.takenSignatures?.has(commandSignature(this.draft())) === true;
+	}
+
+	/**
+	 * Why Save cannot act, or null: there is no callout to build the command from
+	 * (none exist, none is chosen, or the chosen one was deleted while this window
+	 * sat open), or the same command is already saved. Dimmed rather than
+	 * disabled, so pressing it says which.
+	 */
+	private saveBlockedReason(): string | null {
+		if (!this.host.registry.get(this.calloutId)) {
+			return t(this.getChoices().length === 0 ? "commandBuilder.noCallouts" : "commandBuilder.noCalloutChosen");
 		}
+		return this.isDuplicate() ? t("commandBuilder.duplicate") : null;
 	}
 
 	private finish(save: boolean): void {

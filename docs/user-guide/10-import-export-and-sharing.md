@@ -27,6 +27,7 @@ The Callout Studio backup option uses the same paintbrush icon in both
 choosers.
 
 The importer reports unsupported or invalid entries before applying the valid data.
+When no entry is valid, **Import valid only** stays dimmed and a message says there is nothing to import; cancel, fix the problems the report lists, and import again.
 It does not scan, import, enable, disable, or modify existing files in the
 vault's CSS snippets folder.
 

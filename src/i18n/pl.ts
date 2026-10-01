@@ -22,6 +22,8 @@ export const pl: Record<string, string> = {
 	"editor.paletteNoMatches": "Nie znaleziono kolorów pasujących do „{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Szukaj kolorów…",
 	"replaceModal.searchPlaceholder": "Szukaj callout",
+	"replaceModal.chooseFirst": "Aby kontynuować, wybierz zastępczy callout lub „{{delete}}”.",
+	"replaceModal.chooseFirstReplace": "Najpierw wybierz callout, którym ma zostać zastąpiony.",
 	"settings.fallbackTag": "Domyślny",
 	"settings.fallbackTagAuto": "Aut. domyślny",
 	"settings.rescanVaultDesc": "Dodaje typy calloutów używane w Twoich notatkach, których nie ma jeszcze na tej liście. Twoje istniejące callouty i notatki nie są zmieniane.",
@@ -218,6 +220,7 @@ export const pl: Record<string, string> = {
 		"Masz już polecenie, które robi dokładnie to samo.",
 	"commandBuilder.noCallouts":
 		"Nie ma jeszcze żadnych typów callout, na podstawie których można zbudować polecenie.",
+	"commandBuilder.noCalloutChosen": "Najpierw wybierz callout dla tego polecenia.",
 	"commandBuilder.save": "Zapisz",
 
 	"settings.vaultMaintenance": "Wgląd w vault i konserwacja",
@@ -376,6 +379,7 @@ export const pl: Record<string, string> = {
 	"palette.name": "Nazwa",
 	"palette.namePlaceholder": "Moja paleta",
 	"palette.nameExists": "Paleta o tej nazwie już istnieje",
+	"palette.saveBlockedName": "Paleta o tej nazwie już istnieje. Wybierz inną nazwę, aby ją zapisać.",
 	"palette.baseColor": "Kolor bazowy",
 	"palette.baseColorHint":
 		"Automatycznie dopasujemy do niego kolor tła. Jeśli chcesz, możesz kontrolować go osobno, {{link}}.",
@@ -460,6 +464,7 @@ export const pl: Record<string, string> = {
 	"iconPicker.skinTone": "Odcień skóry",
 	"iconPicker.allCategories": "Wszystkie kategorie",
 	"iconPicker.noIconSelected": "Nie wybrano ikony",
+	"iconPicker.chooseFirst": "Najpierw wybierz ikonę.",
 	"iconPicker.noResults": "Żadna ikona nie pasuje do wyszukiwania.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Szukaj w Octicons",
@@ -829,6 +834,7 @@ export const pl: Record<string, string> = {
 		"{{valid}} z {{total}} wpisów jest prawidłowych · znaleziono {{issues}} problem(ów).",
 	"import.btnCancel": "Anuluj",
 	"import.btnImportValid": "Importuj tylko prawidłowe ({{count}})",
+	"import.nothingValid": "Żaden z wpisów nie jest prawidłowy, więc nie ma czego importować. Anuluj, popraw wymienione tu problemy i zaimportuj ponownie.",
 	"import.err.notRecognized":
 		"Nierozpoznany plik: oczekiwano tablicy definicji callout lub eksportu z Callout Studio.",
 	"import.warn.settingsIgnored":
@@ -1142,6 +1148,10 @@ export const pl: Record<string, string> = {
 	"portable.errorChanged": "Notatki się zmieniły. Przed konwersją przejrzyj zaktualizowane zmiany.",
 	"portable.errorBusy": "Trwa inna konwersja. Poczekaj na jej zakończenie.",
 	"portable.error": "Nie można bezpiecznie odczytać ani zaktualizować skarbca. Sprawdź dostęp do plików i spróbuj ponownie.",
+	"portable.blockedConverting": "Konwersja już trwa. Poczekaj na jej zakończenie.",
+	"portable.blockedUpdating": "Przegląd jest nadal aktualizowany. Przed konwersją poczekaj na jego zakończenie.",
+	"portable.blockedEditing": "Najpierw zakończ edycję zamiennika: naciśnij Enter, aby go zapisać, lub Esc, aby go odrzucić.",
+	"portable.blockedNothingSelected": "Wybierz co najmniej jeden zamiennik do konwersji.",
 	"settings.maintenance": "Strefa niebezpieczna",
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
@@ -1209,6 +1219,7 @@ export const pl: Record<string, string> = {
 	"recovery.originOlderVersion": "Zapisane przez starszą wersję",
 	"recovery.unreadable": "Nie można odczytać jako ustawień",
 	"recovery.same": "Takie samo jak Twoja bieżąca konfiguracja",
+	"recovery.restoreSame": "Ta konfiguracja jest taka sama jak obecna, więc nie ma czego przywracać.",
 	"recovery.summary": "{{callouts}} zapisanych typów callout, {{count}} różnic względem teraz",
 	"recovery.export": "Eksportuj kopię",
 	"recovery.restore": "Przywróć",

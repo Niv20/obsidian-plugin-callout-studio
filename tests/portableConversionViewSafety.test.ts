@@ -11,7 +11,7 @@ describe("portable conversion sidebar freshness and confirmation", () => {
 			await h.view.onOpen(); h.choose(1, false);
 			h.edit("a.md", "Changed [!note]\n[!tip]");
 			for (let i = 0; i < 4; i++) h.vaultEvents.emit("modify", h.handles.get("a.md"));
-			assert.equal(h.button("convert").disabled, true);
+			assert.equal(h.blocked("convert"), true);
 			assert.ok(h.inputs().every(input => input.disabled));
 			await h.settle();
 			assert.deepEqual(h.reads, ["a.md", "b.md", "a.md"]);
@@ -33,7 +33,7 @@ describe("portable conversion sidebar freshness and confirmation", () => {
 			assert.equal(h.root.querySelectorAll(".cs-portable-change").length, 3);
 			h.remove("b.md"); h.vaultEvents.emit("delete", {}); await h.settle();
 			assert.ok(h.inputs().every(input => !input.checked));
-			assert.equal(h.button("convert").disabled, true);
+			assert.equal(h.blocked("convert"), true);
 		} finally { await h.destroy(); }
 	});
 	it("blocks unsaved editor changes and resumes automatically after the save event", async () => {
@@ -43,14 +43,14 @@ describe("portable conversion sidebar freshness and confirmation", () => {
 			await h.view.onOpen();
 			editor.text = "Changed [!note]";
 			h.workspaceEvents.emit("editor-change", {}, { file: h.handles.get("a.md") });
-			assert.equal(h.button("convert").disabled, true);
+			assert.equal(h.blocked("convert"), true);
 			await h.settle();
 			assert.equal(h.status(), t("portable.errorEditor"));
-			assert.equal(h.button("convert").disabled, true);
+			assert.equal(h.blocked("convert"), true);
 			h.edit("a.md", editor.text); h.vaultEvents.emit("modify", h.handles.get("a.md"));
 			await h.settle();
 			assert.equal(h.status(), "");
-			assert.equal(h.button("convert").disabled, false);
+			assert.equal(h.blocked("convert"), false);
 			assert.deepEqual(h.inputs().map(input => input.checked), [false, true]);
 		} finally { await h.destroy(); }
 	});
@@ -74,7 +74,7 @@ describe("portable conversion sidebar freshness and confirmation", () => {
 		try {
 			await h.view.onOpen(); h.click("convert"); await h.tasks[h.tasks.length - 1]; await h.settle();
 			assert.deepEqual(h.written, []);
-			assert.equal(h.button("convert").disabled, true);
+			assert.equal(h.blocked("convert"), true);
 			assert.equal(h.root.querySelectorAll(".cs-portable-change").length, 0);
 		} finally { await h.destroy(); }
 	});
@@ -86,7 +86,7 @@ describe("portable conversion sidebar freshness and confirmation", () => {
 			await h.view.onClose(); await h.view.onOpen();
 			confirmation.resolve(); await converting;
 			assert.deepEqual(h.written, []);
-			assert.equal(h.button("convert").disabled, false);
+			assert.equal(h.blocked("convert"), false);
 			assert.equal(h.vaultEvents.count(), 4);
 			assert.equal(h.workspaceEvents.count(), 3);
 		} finally { confirmation.resolve(); await h.destroy(); }
@@ -124,11 +124,11 @@ describe("portable conversion sidebar freshness and confirmation", () => {
 		h.hooks.beforeRead = () => { throw new Error("Unreadable"); };
 		try {
 			await h.view.onOpen(); assert.equal(h.button("retry").hidden, false);
-			assert.equal(h.button("convert").disabled, true);
+			assert.equal(h.blocked("convert"), true);
 			delete h.hooks.beforeRead; h.click("retry"); await h.settle();
 			assert.equal(h.button("retry").hidden, true);
 			assert.equal(h.status(), t("portable.empty"));
-			assert.equal(h.button("convert").disabled, true);
+			assert.equal(h.blocked("convert"), true);
 		} finally { await h.destroy(); }
 	});
 	it("keeps pending heading-link repairs visible after a partial failure and retries the same plan", async () => {
@@ -140,11 +140,11 @@ describe("portable conversion sidebar freshness and confirmation", () => {
 			assert.equal(h.contents.get("a.md"), "# Report");
 			assert.equal(h.contents.get("b.md"), "[[a#Report note]]");
 			assert.equal(h.button("convert").textContent, t("portable.finishConversion"));
-			assert.equal(h.button("convert").disabled, false, "link-only remainder can be approved");
+			assert.equal(h.blocked("convert"), false, "link-only remainder can be approved");
 			assert.equal(h.root.querySelectorAll(".cs-portable-link-change").length, 1);
 			assert.ok(h.inputs().every(input => input.disabled));
 			await h.view.onClose(); await h.view.onOpen();
-			assert.equal(h.button("convert").disabled, false, "reopening keeps the pending link repair actionable");
+			assert.equal(h.blocked("convert"), false, "reopening keeps the pending link repair actionable");
 			const readCount = h.reads.length;
 			h.vaultEvents.emit("modify", h.handles.get("b.md")); await h.settle();
 			assert.equal(h.reads.length, readCount, "recovery must not become a new ordinary scan");
@@ -152,7 +152,7 @@ describe("portable conversion sidebar freshness and confirmation", () => {
 			delete h.hooks.beforeProcess;
 			h.click("convert"); await h.tasks[h.tasks.length - 1]; await h.settle();
 			assert.equal(h.contents.get("b.md"), "[[a#Report]]");
-			assert.equal(h.button("convert").disabled, true);
+			assert.equal(h.blocked("convert"), true);
 		} finally { await h.destroy(); }
 	});
 });

@@ -33,6 +33,8 @@ export const he: Record<string, string> = {
 	"editor.paletteNoMatches": "לא נמצאו צבעים התואמים לחיפוש „{{query}}”.",
 	"editor.paletteSearchPlaceholder": "חיפוש צבעים…",
 	"replaceModal.searchPlaceholder": "חיפוש תיבות־הבלטה",
+	"replaceModal.chooseFirst": "כדי להמשיך, יש לבחור תיבת־הבלטה חלופית או “{{delete}}”.",
+	"replaceModal.chooseFirstReplace": "יש לבחור קודם את תיבת־ההבלטה שתחליף אותה.",
 	"settings.fallbackTag": "ברירת־מחדל",
 	"settings.fallbackTagAuto": "ברירת־מחדל אוטומטית",
 	"settings.rescanVaultDesc": "מוסיף סוגי תיבות־הבלטה שבשימוש בפתקים שלכם ועדיין אינם ברשימה הזו. תיבות־ההבלטה והפתקים הקיימים שלכם לא משתנים.",
@@ -242,6 +244,7 @@ export const he: Record<string, string> = {
 	"commandBuilder.duplicate": "כבר יש לכם פקודה שעושה בדיוק את זה.",
 	"commandBuilder.noCallouts":
 		"אין עדיין סוגי תיבות־הבלטה שניתן לבנות מהם פקודה.",
+	"commandBuilder.noCalloutChosen": "יש לבחור קודם תיבת־הבלטה לפקודה הזו.",
 	"commandBuilder.save": "שמירה",
 
 	// Settings — Reset
@@ -305,6 +308,10 @@ export const he: Record<string, string> = {
 	"portable.errorChanged": "הפתקים השתנו. יש לבדוק את השינויים המעודכנים לפני ההמרה.",
 	"portable.errorBusy": "המרה אחרת מתבצעת כעת. יש להמתין לסיומה.",
 	"portable.error": "לא ניתן היה לקרוא או לעדכן את הכספת בבטחה. יש לבדוק את הגישה לקבצים ולנסות שוב.",
+	"portable.blockedConverting": "תהליך המרה כבר רץ. יש להמתין לסיומו.",
+	"portable.blockedUpdating": "הסקירה עדיין מתעדכנת. יש להמתין לסיומה לפני ההמרה.",
+	"portable.blockedEditing": "יש לסיים קודם את עריכת ההחלפה: Enter לשמירה או Esc לביטול.",
+	"portable.blockedNothingSelected": "יש לבחור לפחות החלפה אחת להמרה.",
 
 	"settings.maintenance": "אזור מסוכן",
 	"settings.vaultMaintenance": "סקירה ותחזוקה של הכספת",
@@ -463,6 +470,7 @@ export const he: Record<string, string> = {
 	"palette.name": "שם",
 	"palette.namePlaceholder": "הפלטה שלי",
 	"palette.nameExists": "כבר קיימת פלטה בשם הזה",
+	"palette.saveBlockedName": "כבר קיימת פלטה בשם הזה. יש לבחור שם אחר כדי לשמור.",
 	"palette.baseColor": "צבע בסיס",
 	"palette.baseColorHint":
 		"נתאים את צבע הרקע לצבע הזה באופן אוטומטי. אם תרצו, אפשר לשלוט בזה בנפרד על ידי {{link}}.",
@@ -547,6 +555,7 @@ export const he: Record<string, string> = {
 	"iconPicker.skinTone": "גוון עור",
 	"iconPicker.allCategories": "כל הקטגוריות",
 	"iconPicker.noIconSelected": "לא נבחר אייקון",
+	"iconPicker.chooseFirst": "יש לבחור קודם אייקון.",
 	"iconPicker.noResults": "לא נמצאו אייקונים התואמים לחיפוש.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "חיפוש אייקוני Octicons",
@@ -918,6 +927,7 @@ export const he: Record<string, string> = {
 		"{{valid}} מתוך {{total}} רשומות נמצאו תקינות · התגלו {{issues}} בעיות.",
 	"import.btnCancel": "ביטול",
 	"import.btnImportValid": "ייבוא הרשומות התקינות בלבד ({{count}})",
+	"import.nothingValid": "אף אחת מהרשומות אינה תקינה, ולכן אין מה לייבא. יש לבטל, לתקן את הבעיות שמופיעות כאן ולייבא שוב.",
 	"import.err.notRecognized":
 		"קובץ לא מזוהה: נדרש מערך של הגדרות תיבת־הבלטה או קובץ ייצוא של Callout Studio.",
 	"import.warn.settingsIgnored":
@@ -1227,6 +1237,7 @@ export const he: Record<string, string> = {
 	"recovery.originOlderVersion": "נשמר בגרסה ישנה יותר",
 	"recovery.unreadable": "לא ניתן לקרוא כהגדרות",
 	"recovery.same": "זהה לתצורה הנוכחית שלכם",
+	"recovery.restoreSame": "התצורה הזו זהה לתצורה הנוכחית שלכם, ולכן אין מה לשחזר.",
 	"recovery.summary": "{{callouts}} סוגי תיבות־הבלטה שמורים, {{count}} הבדלים מהמצב הנוכחי",
 	"recovery.export": "ייצוא עותק",
 	"recovery.restore": "שחזור",

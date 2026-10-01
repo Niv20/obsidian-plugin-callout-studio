@@ -74,8 +74,13 @@ export class PortableConversionCustom {
 		if (!editor || !target || editor.view.element.contains(target)) return;
 		const action = target.closest<HTMLElement>("button[data-action]");
 		if (action?.dataset.action === "edit" && action.closest<HTMLElement>("[data-row-id]")?.dataset.rowId === `source:${editor.id}`) return;
+		// A dimmed control does not act, so it does not commit the draft either:
+		// Convert answers the press with the Enter it is waiting for, and the draft stays open for it.
+		if (action?.getAttribute("aria-disabled") === "true") return;
 		this.finish();
 	}
+	/** Put the caret back in the open draft, so the Enter a blocked Convert asks for lands in it. */
+	focusDraft(): void { this.editor?.view.focus(); }
 	finish(): void {
 		const message = this.editor?.view.submit(false);
 		if (message) { new Notice(message); this.close(); this.redraw(); }

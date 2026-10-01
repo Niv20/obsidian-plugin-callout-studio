@@ -49,6 +49,10 @@ export const ro: Record<string, string> = {
 	"portable.errorChanged": "Notele s-au schimbat. Verifică modificările actualizate înainte de conversie.",
 	"portable.errorBusy": "O altă conversie este în desfășurare. Așteaptă să se termine.",
 	"portable.error": "Seiful nu a putut fi citit sau actualizat în siguranță. Verifică accesul la fișiere, apoi încearcă din nou.",
+	"portable.blockedConverting": "O conversie este deja în desfășurare. Așteaptă să se termine.",
+	"portable.blockedUpdating": "Revizuirea încă se actualizează. Așteaptă să se termine înainte de a converti.",
+	"portable.blockedEditing": "Termină mai întâi editarea înlocuirii: apasă Enter pentru a o salva sau Esc pentru a o anula.",
+	"portable.blockedNothingSelected": "Selectează cel puțin o înlocuire de convertit.",
 	"settings.maintenance": "Zonă de pericol",
 	"cmd.openSettings": "Deschide setări",
 	"cmd.createCallout": "Creează tip callout nou",
@@ -73,6 +77,8 @@ export const ro: Record<string, string> = {
 	"editor.paletteNoMatches": "Nicio culoare nu corespunde căutării „{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Căutați culori…",
 	"replaceModal.searchPlaceholder": "Caută callout-uri",
+	"replaceModal.chooseFirst": "Alege un callout de înlocuire sau „{{delete}}” pentru a continua.",
+	"replaceModal.chooseFirstReplace": "Alege mai întâi callout-ul cu care va fi înlocuit.",
 	"settings.fallbackTag": "Implicit",
 	"settings.fallbackTagAuto": "Implicit automat",
 	"settings.rescanVaultDesc": "Adaugă tipurile de callout folosite în notițele tale care nu sunt încă în această listă. Callout-urile și notițele tale existente nu sunt modificate.",
@@ -270,6 +276,7 @@ export const ro: Record<string, string> = {
 		"Aveți deja o comandă care face exact acest lucru.",
 	"commandBuilder.noCallouts":
 		"Nu există încă tipuri de callout din care să construiți o comandă.",
+	"commandBuilder.noCalloutChosen": "Alege mai întâi un callout pentru această comandă.",
 	"commandBuilder.save": "Salvați",
 
 	"settings.vaultMaintenance": "Informații și întreținere vault",
@@ -429,6 +436,7 @@ export const ro: Record<string, string> = {
 	"palette.name": "Nume",
 	"palette.namePlaceholder": "Paleta mea",
 	"palette.nameExists": "Există deja o paletă cu acest nume",
+	"palette.saveBlockedName": "Există deja o paletă cu acest nume. Alege alt nume pentru a o salva.",
 	"palette.baseColor": "Culoare de bază",
 	"palette.baseColorHint":
 		"Vom potrivi automat culoarea de fundal cu aceasta. Dacă dorești, o poți controla separat {{link}}.",
@@ -513,6 +521,7 @@ export const ro: Record<string, string> = {
 	"iconPicker.skinTone": "Ton de piele",
 	"iconPicker.allCategories": "Toate categoriile",
 	"iconPicker.noIconSelected": "Nicio pictogramă selectată",
+	"iconPicker.chooseFirst": "Selectează mai întâi o pictogramă.",
 	"iconPicker.noResults": "Nicio pictogramă nu corespunde căutării dvs.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Caută în Octicons",
@@ -884,6 +893,7 @@ export const ro: Record<string, string> = {
 		"{{valid}} din {{total}} intrări sunt valide · {{issues}} problemă(e) găsită(e).",
 	"import.btnCancel": "Anulare",
 	"import.btnImportValid": "Importați doar cele valide ({{count}})",
+	"import.nothingValid": "Niciuna dintre intrări nu este validă, deci nu există nimic de importat. Anulează, rezolvă problemele enumerate aici și importă din nou.",
 	"import.err.notRecognized":
 		"Fișier nerecunoscut: se aștepta un array de definiții callout sau un export Callout Studio.",
 	"import.warn.settingsIgnored":
@@ -1214,6 +1224,7 @@ export const ro: Record<string, string> = {
 	"recovery.originOlderVersion": "Salvată de o versiune mai veche",
 	"recovery.unreadable": "Nu poate fi citită ca setări",
 	"recovery.same": "Identică cu configurația ta curentă",
+	"recovery.restoreSame": "Această configurare este identică cu cea curentă, deci nu există nimic de restaurat.",
 	"recovery.summary": "{{callouts}} tip(uri) de callout salvate, {{count}} diferență/e față de acum",
 	"recovery.export": "Exportă copie",
 	"recovery.restore": "Restaurează",

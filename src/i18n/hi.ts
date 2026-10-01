@@ -22,6 +22,8 @@ export const hi: Record<string, string> = {
 	"editor.paletteNoMatches": "“{{query}}” से मेल खाने वाला कोई रंग नहीं मिला।",
 	"editor.paletteSearchPlaceholder": "रंग खोजें…",
 	"replaceModal.searchPlaceholder": "callout खोजें",
+	"replaceModal.chooseFirst": "आगे बढ़ने के लिए कोई प्रतिस्थापन callout या “{{delete}}” चुनें।",
+	"replaceModal.chooseFirstReplace": "पहले वह callout चुनें जिससे इसे बदलना है।",
 	"settings.fallbackTag": "डिफ़ॉल्ट",
 	"settings.fallbackTagAuto": "स्वतः डिफ़ॉल्ट",
 	"settings.rescanVaultDesc": "आपके नोट्स में इस्तेमाल हो रहे ऐसे callout प्रकार जोड़ता है जो अभी इस सूची में नहीं हैं। आपके मौजूदा callout और नोट्स नहीं बदले जाते।",
@@ -219,6 +221,7 @@ export const hi: Record<string, string> = {
 		"आपके पास पहले से ही बिल्कुल यही काम करने वाला कमांड है।",
 	"commandBuilder.noCallouts":
 		"अभी तक कोई callout प्रकार नहीं है जिससे कमांड बनाया जा सके।",
+	"commandBuilder.noCalloutChosen": "पहले इस कमांड के लिए कोई callout चुनें।",
 	"commandBuilder.save": "सहेजें",
 
 	"settings.vaultMaintenance": "vault अंतर्दृष्टि और रखरखाव",
@@ -376,6 +379,7 @@ export const hi: Record<string, string> = {
 	"palette.name": "नाम",
 	"palette.namePlaceholder": "मेरा पैलेट",
 	"palette.nameExists": "इस नाम का पैलेट पहले से मौजूद है",
+	"palette.saveBlockedName": "इस नाम का पैलेट पहले से मौजूद है। उसे सहेजने के लिए कोई दूसरा नाम चुनें।",
 	"palette.baseColor": "आधार रंग",
 	"palette.baseColorHint":
 		"हम पृष्ठभूमि के रंग को स्वतः इससे मिला देंगे। यदि आप चाहें, तो {{link}} करके इसे अलग से नियंत्रित कर सकते हैं।",
@@ -460,6 +464,7 @@ export const hi: Record<string, string> = {
 	"iconPicker.skinTone": "त्वचा का रंग",
 	"iconPicker.allCategories": "सभी श्रेणियाँ",
 	"iconPicker.noIconSelected": "कोई आइकन नहीं चुना",
+	"iconPicker.chooseFirst": "पहले कोई आइकन चुनें।",
 	"iconPicker.noResults": "आपकी खोज से कोई आइकन मेल नहीं खाता।",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Octicons में खोजें",
@@ -828,6 +833,7 @@ export const hi: Record<string, string> = {
 		"{{total}} में से {{valid}} प्रविष्टियाँ वैध हैं · {{issues}} समस्या मिली।",
 	"import.btnCancel": "रद्द करें",
 	"import.btnImportValid": "केवल वैध आयात करें ({{count}})",
+	"import.nothingValid": "कोई भी प्रविष्टि मान्य नहीं है, इसलिए आयात करने के लिए कुछ नहीं है। रद्द करें, यहाँ सूचीबद्ध समस्याएँ ठीक करें और फिर से आयात करें।",
 	"import.err.notRecognized":
 		"अपरिचित फ़ाइल: callout परिभाषाओं का array या Callout Studio एक्सपोर्ट अपेक्षित था।",
 	"import.warn.settingsIgnored":
@@ -1132,6 +1138,10 @@ export const hi: Record<string, string> = {
 	"portable.errorChanged": "नोट बदल गए हैं। रूपांतरण से पहले अपडेट हुए बदलावों की समीक्षा करें।",
 	"portable.errorBusy": "एक और रूपांतरण चल रहा है। उसके पूरा होने तक प्रतीक्षा करें।",
 	"portable.error": "वॉल्ट को सुरक्षित रूप से पढ़ा या अपडेट नहीं किया जा सका। फ़ाइलों की पहुँच जाँचें, फिर कोशिश करें।",
+	"portable.blockedConverting": "एक रूपांतरण पहले से चल रहा है। उसके पूरा होने तक प्रतीक्षा करें।",
+	"portable.blockedUpdating": "समीक्षा अभी अपडेट हो रही है। रूपांतरण से पहले उसके पूरा होने तक प्रतीक्षा करें।",
+	"portable.blockedEditing": "पहले प्रतिस्थापन का संपादन पूरा करें: उसे सहेजने के लिए Enter दबाएँ या छोड़ने के लिए Esc दबाएँ।",
+	"portable.blockedNothingSelected": "रूपांतरण के लिए कम से कम एक प्रतिस्थापन चुनें।",
 	"settings.maintenance": "खतरनाक क्षेत्र",
 
 	// Sync safety hardening
@@ -1190,6 +1200,7 @@ export const hi: Record<string, string> = {
 	"recovery.originOlderVersion": "पुराने वर्शन द्वारा सेव किया गया",
 	"recovery.unreadable": "सेटिंग के रूप में नहीं पढ़ा जा सकता",
 	"recovery.same": "आपके मौजूदा सेटअप जैसा ही",
+	"recovery.restoreSame": "यह सेटअप आपके मौजूदा सेटअप जैसा ही है, इसलिए पुनर्स्थापित करने के लिए कुछ नहीं है।",
 	"recovery.summary": "{{callouts}} सेव किए गए callout प्रकार, अभी से {{count}} अंतर",
 	"recovery.export": "कॉपी एक्सपोर्ट करें",
 	"recovery.restore": "पुनर्स्थापित करें",

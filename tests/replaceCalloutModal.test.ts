@@ -8,10 +8,12 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { setImmediate } from "node:timers/promises";
 import type { App } from "obsidian";
+import { t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { ReplaceCalloutModal, type DeleteAction } from "../src/utils/ReplaceCalloutModal";
 import { fakeDom, type FakeElement } from "./support/fakeDom";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
+import { Notice } from "./support/obsidianStub";
 
 function open(mode: "replace" | "delete") {
 	fakeDom.light();
@@ -56,13 +58,33 @@ describe("the replacement picker", () => {
 			assert.equal(h.answer(), undefined, "Enter confirmed a vault-wide rewrite");
 			const chosen = h.contentEl.querySelectorAll(".callout-studio-replace-item.is-selected");
 			assert.equal(chosen.length, 1);
-			assert.equal(h.confirm().disabled, false);
+			assert.equal(h.confirm().getAttribute("aria-disabled"), "false");
 			const id = chosen[0]!.querySelector(".callout-studio-replace-item-id")!.textContent;
 			h.confirm().fire("click");
 			await setImmediate();
 			assert.deepEqual(h.answer(), { action: "replace", replaceWith: id });
 		} finally { h.close(); }
 	});
+
+	for (const mode of ["replace", "delete"] as const) {
+		it(`dims its ${mode} button until a row is chosen, and says what to choose when it is pressed`, async () => {
+			const h = open(mode);
+			try {
+				assert.equal(h.confirm().getAttribute("aria-disabled"), "true");
+				assert.equal(h.confirm().hasClass("cs-btn-disabled"), true);
+				h.confirm().fire("click");
+				await setImmediate();
+				assert.equal(h.answer(), undefined, "a dimmed button must not confirm");
+				// Only delete mode offers "delete without replacing", so only it names it.
+				assert.equal(String(Notice.last?.message), mode === "replace"
+					? t("replaceModal.chooseFirstReplace")
+					: t("replaceModal.chooseFirst", { delete: t("vault.deleteWithout") }));
+				h.search().fire("keydown", { type: "keydown", key: "Enter", preventDefault: () => {} });
+				assert.equal(h.confirm().getAttribute("aria-disabled"), "false");
+				assert.equal(h.confirm().hasClass("cs-btn-disabled"), false);
+			} finally { h.close(); }
+		});
+	}
 
 	for (const mode of ["replace", "delete"] as const) {
 		it(`marks its ${mode} button as destructive`, () => {

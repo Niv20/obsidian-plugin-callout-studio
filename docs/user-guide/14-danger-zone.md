@@ -87,7 +87,8 @@ unfinished change and returns to the last saved replacement. If the text has
 not changed since you opened the editor, the arrow restores the automatic
 replacement instead. Finishing an unchanged edit simply closes the editor.
 Conversion is unavailable until you finish or
-discard the active edit. Custom replacements must fit on one line;
+discard the active edit; pressing the dimmed **Convert selected…** meanwhile
+reminds you to press Enter or Escape, and leaves your draft open. Custom replacements must fit on one line;
 multiline pastes are blocked. A heading title can be renamed, but not removed,
 moved to another level, or changed to introduce another heading or protected
 syntax. Saving changes the preview only; you still need to select and confirm
@@ -120,6 +121,11 @@ web links and block references are not rewritten.
 The preview refreshes after note edits. New or changed proposals are deselected
 until reviewed, and conversion is unavailable while the preview is stale or an
 editor has unsaved changes.
+
+**Convert selected…** stays dimmed whenever it cannot act, and pressing it
+tells you why: the review is still updating, an open note has unsaved changes,
+a replacement is still being edited, nothing is selected, nothing was found to
+convert, or a conversion is already running.
 
 ### Apply the conversion
 

@@ -49,6 +49,10 @@ export const ru: Record<string, string> = {
 	"portable.errorChanged": "Заметки изменились. Проверьте обновлённые изменения перед преобразованием.",
 	"portable.errorBusy": "Уже выполняется другое преобразование. Дождитесь его завершения.",
 	"portable.error": "Не удалось безопасно прочитать или обновить хранилище. Проверьте доступ к файлам и повторите попытку.",
+	"portable.blockedConverting": "Преобразование уже выполняется. Дождитесь его завершения.",
+	"portable.blockedUpdating": "Проверка ещё обновляется. Дождитесь её завершения перед преобразованием.",
+	"portable.blockedEditing": "Сначала завершите редактирование замены: нажмите Enter, чтобы сохранить её, или Esc, чтобы отменить.",
+	"portable.blockedNothingSelected": "Выберите хотя бы одну замену для преобразования.",
 	"settings.maintenance": "Опасная зона",
 	"cmd.openSettings": "Открыть настройки",
 	"cmd.createCallout": "Создать новый тип callout",
@@ -74,6 +78,8 @@ export const ru: Record<string, string> = {
 	"editor.paletteNoMatches": "Для запроса «{{query}}» не найдено цветов.",
 	"editor.paletteSearchPlaceholder": "Поиск цветов…",
 	"replaceModal.searchPlaceholder": "Поиск callout",
+	"replaceModal.chooseFirst": "Чтобы продолжить, выберите callout-замену или «{{delete}}».",
+	"replaceModal.chooseFirstReplace": "Сначала выберите callout, на который его нужно заменить.",
 	"settings.fallbackTag": "По умолчанию",
 	"settings.fallbackTagAuto": "Авт. по умолчанию",
 	"settings.rescanVaultDesc": "Добавляет типы callout, используемые в ваших заметках, которых ещё нет в этом списке. Ваши существующие callout и заметки не изменяются.",
@@ -270,6 +276,7 @@ export const ru: Record<string, string> = {
 		"У вас уже есть команда, которая делает то же самое.",
 	"commandBuilder.noCallouts":
 		"Пока нет типов callout, из которых можно создать команду.",
+	"commandBuilder.noCalloutChosen": "Сначала выберите callout для этой команды.",
 	"commandBuilder.save": "Сохранить",
 
 	"settings.vaultMaintenance": "Аналитика и обслуживание хранилища",
@@ -426,6 +433,7 @@ export const ru: Record<string, string> = {
 	"palette.name": "Название",
 	"palette.namePlaceholder": "Моя палитра",
 	"palette.nameExists": "Палитра с таким названием уже существует",
+	"palette.saveBlockedName": "Палитра с таким названием уже существует. Выберите другое название, чтобы сохранить её.",
 	"palette.baseColor": "Базовый цвет",
 	"palette.baseColorHint":
 		"Мы автоматически подберём цвет фона под него. При желании вы можете настроить его отдельно, {{link}}.",
@@ -510,6 +518,7 @@ export const ru: Record<string, string> = {
 	"iconPicker.skinTone": "Тон кожи",
 	"iconPicker.allCategories": "Все категории",
 	"iconPicker.noIconSelected": "Иконка не выбрана",
+	"iconPicker.chooseFirst": "Сначала выберите значок.",
 	"iconPicker.noResults": "Иконки, соответствующие запросу, не найдены.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Поиск в Octicons",
@@ -879,6 +888,7 @@ export const ru: Record<string, string> = {
 		"{{valid}} из {{total}} записей действительны · найдено {{issues}} проблем.",
 	"import.btnCancel": "Отмена",
 	"import.btnImportValid": "Импортировать только действительные ({{count}})",
+	"import.nothingValid": "Ни одна из записей не является допустимой, поэтому импортировать нечего. Отмените импорт, исправьте перечисленные здесь проблемы и импортируйте снова.",
 	"import.err.notRecognized":
 		"Нераспознанный файл: ожидался массив определений callout или экспорт Callout Studio.",
 	"import.warn.settingsIgnored":
@@ -1205,6 +1215,7 @@ export const ru: Record<string, string> = {
 	"recovery.originOlderVersion": "Сохранено более старой версией",
 	"recovery.unreadable": "Не удаётся прочитать как настройки",
 	"recovery.same": "Совпадает с вашей текущей настройкой",
+	"recovery.restoreSame": "Эта конфигурация совпадает с текущей, поэтому восстанавливать нечего.",
 	"recovery.summary": "Сохранено типов callout: {{callouts}}, отличий от текущей версии: {{count}}",
 	"recovery.export": "Экспортировать копию",
 	"recovery.restore": "Восстановить",

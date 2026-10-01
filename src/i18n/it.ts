@@ -22,6 +22,8 @@ export const it: Record<string, string> = {
 	"editor.paletteNoMatches": "Nessun colore corrisponde a “{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Cerca colori…",
 	"replaceModal.searchPlaceholder": "Cerca callout",
+	"replaceModal.chooseFirst": "Scegli un callout sostitutivo, o «{{delete}}», per continuare.",
+	"replaceModal.chooseFirstReplace": "Scegli prima il callout con cui sostituirlo.",
 	"settings.fallbackTag": "Predefinito",
 	"settings.fallbackTagAuto": "Predefinito automatico",
 	"settings.rescanVaultDesc": "Aggiunge i tipi di callout usati nelle tue note che non sono ancora in questo elenco. I tuoi callout e le tue note esistenti non vengono modificati.",
@@ -216,6 +218,7 @@ export const it: Record<string, string> = {
 	"commandBuilder.duplicate": "Hai già un comando che fa esattamente questo.",
 	"commandBuilder.noCallouts":
 		"Non ci sono ancora tipi di callout da cui creare un comando.",
+	"commandBuilder.noCalloutChosen": "Scegli prima un callout per questo comando.",
 	"commandBuilder.save": "Salva",
 
 	"commandBuilder.roleThemeOwned":
@@ -383,6 +386,7 @@ export const it: Record<string, string> = {
 	"palette.name": "Nome",
 	"palette.namePlaceholder": "La mia tavolozza",
 	"palette.nameExists": "Esiste già una tavolozza con questo nome",
+	"palette.saveBlockedName": "Esiste già una tavolozza con questo nome. Scegli un altro nome per salvarla.",
 	"palette.baseColor": "Colore di base",
 	"palette.baseColorHint":
 		"Adatteremo automaticamente il colore di sfondo a questo. Se preferisci, puoi controllarlo separatamente {{link}}.",
@@ -467,6 +471,7 @@ export const it: Record<string, string> = {
 	"iconPicker.skinTone": "Tono della pelle",
 	"iconPicker.allCategories": "Tutte le categorie",
 	"iconPicker.noIconSelected": "Nessuna icona selezionata",
+	"iconPicker.chooseFirst": "Seleziona prima un’icona.",
 	"iconPicker.noResults": "Nessuna icona corrisponde alla ricerca.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Cerca in Octicons",
@@ -843,6 +848,7 @@ export const it: Record<string, string> = {
 		"{{valid}} su {{total}} voci sono valide · {{issues}} problema/i trovato/i.",
 	"import.btnCancel": "Annulla",
 	"import.btnImportValid": "Importa solo le valide ({{count}})",
+	"import.nothingValid": "Nessuna delle voci è valida, quindi non c’è nulla da importare. Annulla, correggi i problemi elencati qui e importa di nuovo.",
 	"import.err.notRecognized":
 		"File non riconosciuto: atteso un array di definizioni callout o un'esportazione di Callout Studio.",
 	"import.warn.settingsIgnored":
@@ -1157,6 +1163,10 @@ export const it: Record<string, string> = {
 	"portable.errorChanged": "Le note sono cambiate. Esamina le modifiche aggiornate prima di convertire.",
 	"portable.errorBusy": "È in corso un’altra conversione. Attendi che termini.",
 	"portable.error": "Impossibile leggere o aggiornare il vault in sicurezza. Controlla l’accesso ai file e riprova.",
+	"portable.blockedConverting": "È già in corso una conversione. Attendi che termini.",
+	"portable.blockedUpdating": "La revisione si sta ancora aggiornando. Attendi che termini prima di convertire.",
+	"portable.blockedEditing": "Termina prima la modifica della sostituzione: premi Invio per salvarla o Esc per scartarla.",
+	"portable.blockedNothingSelected": "Seleziona almeno una sostituzione da convertire.",
 	"settings.maintenance": "Zona pericolosa",
 
 	// Sync safety hardening
@@ -1219,6 +1229,7 @@ export const it: Record<string, string> = {
 	"recovery.originOlderVersion": "Salvato da una versione precedente",
 	"recovery.unreadable": "Non può essere letto come impostazioni",
 	"recovery.same": "Uguale alla tua configurazione attuale",
+	"recovery.restoreSame": "Questa configurazione è identica a quella attuale, quindi non c’è nulla da ripristinare.",
 	"recovery.summary": "{{callouts}} tipo/i di callout salvati, {{count}} differenza/e rispetto a ora",
 	"recovery.export": "Esporta copia",
 	"recovery.restore": "Ripristina",

@@ -22,6 +22,8 @@ export const ja: Record<string, string> = {
 	"editor.paletteNoMatches": "「{{query}}」に一致する色はありません。",
 	"editor.paletteSearchPlaceholder": "色を検索…",
 	"replaceModal.searchPlaceholder": "calloutを検索",
+	"replaceModal.chooseFirst": "続行するには、置き換え先のcalloutまたは「{{delete}}」を選択してください。",
+	"replaceModal.chooseFirstReplace": "先に置き換え先のcalloutを選択してください。",
 	"settings.fallbackTag": "デフォルト",
 	"settings.fallbackTagAuto": "自動デフォルト",
 	"settings.rescanVaultDesc": "ノートで使われていて、まだこの一覧にないcalloutタイプを追加します。既存のcalloutとノートは変更されません。",
@@ -221,6 +223,7 @@ export const ja: Record<string, string> = {
 		"まったく同じことを行うコマンドが既に存在します。",
 	"commandBuilder.noCallouts":
 		"コマンドを作成するためのcalloutタイプがまだありません。",
+	"commandBuilder.noCalloutChosen": "先にこのコマンド用のcalloutを選択してください。",
 	"commandBuilder.save": "保存",
 
 	"settings.vaultMaintenance": "vaultの洞察とメンテナンス",
@@ -376,6 +379,7 @@ export const ja: Record<string, string> = {
 	"palette.name": "名前",
 	"palette.namePlaceholder": "マイパレット",
 	"palette.nameExists": "この名前のパレットはすでに存在します",
+	"palette.saveBlockedName": "この名前のパレットはすでに存在します。別の名前を選んで保存してください。",
 	"palette.baseColor": "ベースカラー",
 	"palette.baseColorHint":
 		"背景色を自動的にこの色に合わせます。ご希望であれば、{{link}}で個別に設定することもできます。",
@@ -460,6 +464,7 @@ export const ja: Record<string, string> = {
 	"iconPicker.skinTone": "肌の色調",
 	"iconPicker.allCategories": "すべてのカテゴリ",
 	"iconPicker.noIconSelected": "アイコンが選択されていません",
+	"iconPicker.chooseFirst": "先にアイコンを選択してください。",
 	"iconPicker.noResults": "検索に一致するアイコンはありません。",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Octiconsを検索",
@@ -832,6 +837,7 @@ export const ja: Record<string, string> = {
 		"{{total}}件中{{valid}}件のエントリが有効 · {{issues}}件の問題が見つかりました。",
 	"import.btnCancel": "キャンセル",
 	"import.btnImportValid": "有効なもののみインポート（{{count}}件）",
+	"import.nothingValid": "有効なエントリーがないため、インポートするものがありません。キャンセルして、ここに表示された問題を修正してから、もう一度インポートしてください。",
 	"import.err.notRecognized":
 		"認識できないファイル: callout定義の配列またはCallout Studioのエクスポートが必要です。",
 	"import.warn.settingsIgnored":
@@ -1139,6 +1145,10 @@ export const ja: Record<string, string> = {
 	"portable.errorChanged": "ノートが変更されました。変換する前に、更新された変更内容を確認してください。",
 	"portable.errorBusy": "別の変換が実行中です。完了するまでお待ちください。",
 	"portable.error": "保管庫を安全に読み込み、または更新できませんでした。ファイルへのアクセス権を確認して、もう一度お試しください。",
+	"portable.blockedConverting": "変換はすでに実行中です。完了するまでお待ちください。",
+	"portable.blockedUpdating": "レビューはまだ更新中です。完了してから変換してください。",
+	"portable.blockedEditing": "先に置換内容の編集を終えてください。Enterで保存、Escで破棄します。",
+	"portable.blockedNothingSelected": "変換する置換を1つ以上選択してください。",
 	"settings.maintenance": "危険な操作",
 
 	// Sync safety hardening
@@ -1191,6 +1201,7 @@ export const ja: Record<string, string> = {
 	"recovery.originOlderVersion": "古いバージョンによって保存されたもの",
 	"recovery.unreadable": "設定として読み込めません",
 	"recovery.same": "現在の設定一式と同じです",
+	"recovery.restoreSame": "この設定は現在の設定と同じなので、復元するものはありません。",
 	"recovery.summary": "保存されたcalloutタイプ {{callouts}}件、現在との差分 {{count}}件",
 	"recovery.export": "コピーをエクスポート",
 	"recovery.restore": "復元",

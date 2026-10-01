@@ -22,6 +22,8 @@ export const ko: Record<string, string> = {
 	"editor.paletteNoMatches": "“{{query}}”와 일치하는 색상이 없습니다.",
 	"editor.paletteSearchPlaceholder": "색상 검색…",
 	"replaceModal.searchPlaceholder": "callout 검색",
+	"replaceModal.chooseFirst": "계속하려면 대체할 callout 또는 “{{delete}}”을(를) 선택하세요.",
+	"replaceModal.chooseFirstReplace": "먼저 대체할 callout을 선택하세요.",
 	"settings.fallbackTag": "기본값",
 	"settings.fallbackTagAuto": "자동 기본값",
 	"settings.rescanVaultDesc": "노트에서 사용 중이지만 아직 이 목록에 없는 callout 유형을 추가합니다. 기존 callout과 노트는 변경되지 않습니다.",
@@ -220,6 +222,7 @@ export const ko: Record<string, string> = {
 	"commandBuilder.duplicate": "이미 똑같은 작업을 하는 명령어가 있습니다.",
 	"commandBuilder.noCallouts":
 		"아직 명령어를 만들 수 있는 callout 유형이 없습니다.",
+	"commandBuilder.noCalloutChosen": "먼저 이 명령어에 사용할 callout을 선택하세요.",
 	"commandBuilder.save": "저장",
 
 	"settings.vaultMaintenance": "볼트 인사이트 및 유지보수",
@@ -376,6 +379,7 @@ export const ko: Record<string, string> = {
 	"palette.name": "이름",
 	"palette.namePlaceholder": "내 팔레트",
 	"palette.nameExists": "이 이름의 팔레트가 이미 있습니다",
+	"palette.saveBlockedName": "이 이름의 팔레트가 이미 있습니다. 저장하려면 다른 이름을 선택하세요.",
 	"palette.baseColor": "기본 색상",
 	"palette.baseColorHint":
 		"배경색을 자동으로 이 색상에 맞춥니다. 원하시면 {{link}}하여 별도로 설정할 수 있습니다.",
@@ -460,6 +464,7 @@ export const ko: Record<string, string> = {
 	"iconPicker.skinTone": "피부 톤",
 	"iconPicker.allCategories": "모든 카테고리",
 	"iconPicker.noIconSelected": "선택된 아이콘 없음",
+	"iconPicker.chooseFirst": "먼저 아이콘을 선택하세요.",
 	"iconPicker.noResults": "검색과 일치하는 아이콘이 없습니다.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Octicons 검색",
@@ -830,6 +835,7 @@ export const ko: Record<string, string> = {
 		"{{total}}개 중 {{valid}}개 항목이 유효합니다 · {{issues}}개의 문제가 발견되었습니다.",
 	"import.btnCancel": "취소",
 	"import.btnImportValid": "유효한 항목만 가져오기 ({{count}}개)",
+	"import.nothingValid": "유효한 항목이 없어 가져올 것이 없습니다. 취소하고 여기에 나열된 문제를 해결한 다음 다시 가져오세요.",
 	"import.err.notRecognized":
 		"인식할 수 없는 파일: callout 정의 배열 또는 Callout Studio 내보내기가 필요합니다.",
 	"import.warn.settingsIgnored":
@@ -1134,6 +1140,10 @@ export const ko: Record<string, string> = {
 	"portable.errorChanged": "노트가 변경되었습니다. 변환하기 전에 업데이트된 변경 사항을 검토하세요.",
 	"portable.errorBusy": "다른 변환이 진행 중입니다. 완료될 때까지 기다리세요.",
 	"portable.error": "보관함을 안전하게 읽거나 업데이트하지 못했습니다. 파일 접근 권한을 확인한 후 다시 시도하세요.",
+	"portable.blockedConverting": "변환이 이미 진행 중입니다. 완료될 때까지 기다리세요.",
+	"portable.blockedUpdating": "검토가 아직 업데이트 중입니다. 완료된 후에 변환하세요.",
+	"portable.blockedEditing": "먼저 대체 항목 편집을 마치세요. Enter를 누르면 저장하고 Esc를 누르면 취소합니다.",
+	"portable.blockedNothingSelected": "변환할 대체 항목을 하나 이상 선택하세요.",
 	"settings.maintenance": "위험 구역",
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
@@ -1193,6 +1203,7 @@ export const ko: Record<string, string> = {
 	"recovery.originOlderVersion": "이전 버전에서 저장됨",
 	"recovery.unreadable": "설정으로 읽을 수 없음",
 	"recovery.same": "현재 설정과 동일함",
+	"recovery.restoreSame": "이 설정은 현재 설정과 같아서 복원할 것이 없습니다.",
 	"recovery.summary": "저장된 콜아웃 유형 {{callouts}}개, 지금과의 차이 {{count}}개",
 	"recovery.export": "사본 내보내기",
 	"recovery.restore": "복원",

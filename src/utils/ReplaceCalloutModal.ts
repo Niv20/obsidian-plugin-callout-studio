@@ -13,6 +13,7 @@ import type { CalloutDefinition } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import { getLocale, t } from "../i18n";
+import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { filterCalloutList } from "./calloutSearch";
 import { applyModalChrome } from "../settings/modalChrome";
 import { autofocusOnDesktop } from "../settings/modalAutofocus";
@@ -129,9 +130,10 @@ export class ReplaceCalloutModal extends Modal {
 			text: confirmText,
 			cls: "mod-warning",
 		});
-		this.confirmBtn.disabled = true;
+		// Dimmed until a row is chosen, but still pressable: pressing it says what to choose.
+		paintBlocked(this.confirmBtn, this.confirmBlockedReason());
 		this.confirmBtn.addEventListener("click", () => {
-			if (this.selectedId === undefined) return;
+			if (explainIfBlocked(this.confirmBlockedReason())) return;
 			this.resolved = true;
 			if (this.selectedId) {
 				this.resolve({
@@ -197,6 +199,18 @@ export class ReplaceCalloutModal extends Modal {
 		}
 	}
 
+	/**
+	 * Why confirming cannot act yet, or null: nothing is chosen until a row is
+	 * picked. The window offers "delete without replacing" only in delete mode,
+	 * so only there does the sentence name it as the other way forward.
+	 */
+	private confirmBlockedReason(): string | null {
+		if (this.selectedId !== undefined) return null;
+		return this.disallowDeleteWithoutReplace
+			? t("replaceModal.chooseFirstReplace")
+			: t("replaceModal.chooseFirst", { delete: t("vault.deleteWithout") });
+	}
+
 	/** Arrow and Enter drive the list from the search field. */
 	private onSearchKey(ev: KeyboardEvent): void {
 		const ids = [...this.itemEls.keys()];
@@ -227,7 +241,7 @@ export class ReplaceCalloutModal extends Modal {
 		this.selectedId = id;
 		const el = this.itemEls.get(id);
 		if (el) el.addClass("is-selected");
-		if (this.confirmBtn) this.confirmBtn.disabled = false;
+		if (this.confirmBtn) paintBlocked(this.confirmBtn, this.confirmBlockedReason());
 
 		// Scroll selected item into view
 		el?.scrollIntoView({ block: "nearest" });

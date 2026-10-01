@@ -1,6 +1,7 @@
 import { ItemView, Notice, type WorkspaceLeaf } from "obsidian";
 import { t } from "../i18n";
 import { PORTABLE_CONVERSION_ICON_ID } from "../icons/uiIcons";
+import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { ConfirmModal } from "../utils/ConfirmModal";
 import {
 	applyPortableCalloutConversion, preparePortableCalloutConversion,
@@ -225,6 +226,23 @@ export class PortableConversionView extends ItemView {
 	private ready(): boolean {
 		return this.opened && !this.stale && !this.scanning && !this.confirming && !this.applying;
 	}
+	/**
+	 * Why Convert cannot act right now, or null when it can: the one answer behind
+	 * both its dimmed look and the notice a press on it shows. Ordered the way the
+	 * user would have to clear them — a running conversion, a broken or still
+	 * updating review, an open draft, then an empty selection. A failed review is
+	 * explained by the error already on the status line, not by a generic sentence.
+	 */
+	private convertBlockedReason(): string | null {
+		if (this.applying || this.confirming) return t("portable.blockedConverting");
+		if (this.unrecoverable) return t("portable.recoveryUnavailable");
+		if (this.failed) return this.status() || t("portable.error");
+		if (!this.ready()) return t("portable.blockedUpdating");
+		if (this.custom.editing) return t("portable.blockedEditing");
+		const plan = this.plan;
+		if (plan?.count || plan?.linkCount) return null;
+		return t(plan?.changes.length ? "portable.blockedNothingSelected" : "portable.empty");
+	}
 	private setStatus(key: string, vars: Record<string, string | number> = {}): void {
 		this.status = () => key ? t(key, vars) : "";
 		this.frame?.status.setText(this.status());
@@ -240,7 +258,7 @@ export class PortableConversionView extends ItemView {
 		const frame = this.frame ??= createPortableConversionFrame(this.contentEl);
 		const plan = this.plan;
 		updatePortableSelection(frame, plan, this.ready());
-		if (this.custom.editing) frame.convert.disabled = true;
+		paintBlocked(frame.convert, this.convertBlockedReason());
 		frame.status.setText(this.status());
 		frame.hint.setText(plan?.recovery ? t("portable.recovery") : "");
 		frame.retry.hidden = !this.failed || this.unrecoverable;
@@ -257,8 +275,12 @@ export class PortableConversionView extends ItemView {
 		this.resultNavigation.sync(!this.stale, this.failed);
 	}
 	private async convert(): Promise<void> {
+		// The button is only dimmed, so a press on it lands here and is answered
+		// with why. The caret goes back to an open draft: the Enter asked for is its.
+		if (explainIfBlocked(this.convertBlockedReason())) { this.custom.focusDraft(); return; }
 		const plan = this.plan;
-		if (!this.ready() || this.custom.editing || !plan || !(plan.count || plan.linkCount)) return;
+		// Narrowing only: with no plan there is always a reason above.
+		if (!plan) return;
 		const revision = this.revision;
 		this.confirming = true;
 		this.resultNavigation.invalidate();

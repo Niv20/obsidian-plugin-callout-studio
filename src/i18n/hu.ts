@@ -22,6 +22,8 @@ export const hu: Record<string, string> = {
 	"editor.paletteNoMatches": "Nincs a(z) „{{query}}” keresésnek megfelelő szín.",
 	"editor.paletteSearchPlaceholder": "Színek keresése…",
 	"replaceModal.searchPlaceholder": "Callout-ok keresése",
+	"replaceModal.chooseFirst": "A folytatáshoz válasszon egy helyettesítő calloutot, vagy a(z) „{{delete}}” lehetőséget.",
+	"replaceModal.chooseFirstReplace": "Először válassza ki a calloutot, amelyre cserélni szeretné.",
 	"settings.fallbackTag": "Alapértelmezett",
 	"settings.fallbackTagAuto": "Aut. alapértelmezett",
 	"settings.rescanVaultDesc": "Hozzáadja a jegyzeteidben használt, ezen a listán még nem szereplő callout-típusokat. A meglévő calloutjaid és jegyzeteid nem változnak.",
@@ -219,6 +221,7 @@ export const hu: Record<string, string> = {
 		"Már van egy parancsa, amely pontosan ezt teszi.",
 	"commandBuilder.noCallouts":
 		"Még nincs callout-típus, amiből parancsot lehetne készíteni.",
+	"commandBuilder.noCalloutChosen": "Először válasszon egy calloutot ehhez a parancshoz.",
 	"commandBuilder.save": "Mentés",
 
 	"settings.vaultMaintenance": "Tár-elemzések és karbantartás",
@@ -379,6 +382,7 @@ export const hu: Record<string, string> = {
 	"palette.name": "Név",
 	"palette.namePlaceholder": "Saját paletta",
 	"palette.nameExists": "Már létezik paletta ezzel a névvel",
+	"palette.saveBlockedName": "Már létezik paletta ezzel a névvel. A mentéshez válasszon másik nevet.",
 	"palette.baseColor": "Alapszín",
 	"palette.baseColorHint":
 		"Automatikusan hozzá igazítjuk a háttérszínt. Ha szeretné, külön is beállíthatja a(z) {{link}} lehetőséggel.",
@@ -463,6 +467,7 @@ export const hu: Record<string, string> = {
 	"iconPicker.skinTone": "Bőrtónus",
 	"iconPicker.allCategories": "Összes kategória",
 	"iconPicker.noIconSelected": "Nincs ikon kiválasztva",
+	"iconPicker.chooseFirst": "Először válasszon ki egy ikont.",
 	"iconPicker.noResults": "Egyetlen ikon sem egyezik a keresésre.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Keresés az Octicons-ban",
@@ -834,6 +839,7 @@ export const hu: Record<string, string> = {
 		"{{valid}} / {{total}} bejegyzés érvényes · {{issues}} probléma találva.",
 	"import.btnCancel": "Mégse",
 	"import.btnImportValid": "Csak érvényesek importálása ({{count}})",
+	"import.nothingValid": "Egyik bejegyzés sem érvényes, ezért nincs mit importálni. Szakítsa meg, javítsa az itt felsorolt hibákat, majd importáljon újra.",
 	"import.err.notRecognized":
 		"Ismeretlen fájl: callout-definíciók tömbje vagy Callout Studio exportálás volt várható.",
 	"import.warn.settingsIgnored":
@@ -1148,6 +1154,10 @@ export const hu: Record<string, string> = {
 	"portable.errorChanged": "A jegyzetek megváltoztak. Átalakítás előtt tekintse át a frissített módosításokat.",
 	"portable.errorBusy": "Egy másik átalakítás folyamatban van. Várja meg a befejezését.",
 	"portable.error": "A tár nem olvasható vagy frissíthető biztonságosan. Ellenőrizze a fájlok hozzáférési jogosultságait, majd próbálja újra.",
+	"portable.blockedConverting": "Már folyamatban van egy átalakítás. Várja meg a befejezését.",
+	"portable.blockedUpdating": "Az áttekintés még frissül. Az átalakítás előtt várja meg a befejezését.",
+	"portable.blockedEditing": "Először fejezze be a csere szerkesztését: az Enter mentés, az Esc elvetés.",
+	"portable.blockedNothingSelected": "Válasszon ki legalább egy cserét az átalakításhoz.",
 	"settings.maintenance": "Veszélyzóna",
 
 	// Sync safety hardening
@@ -1213,6 +1223,7 @@ export const hu: Record<string, string> = {
 	"recovery.originOlderVersion": "Egy régebbi verzió mentette",
 	"recovery.unreadable": "Nem olvasható be beállításként",
 	"recovery.same": "Megegyezik a jelenlegi konfigurációjával",
+	"recovery.restoreSame": "Ez a beállítás megegyezik a jelenlegivel, ezért nincs mit visszaállítani.",
 	"recovery.summary": "{{callouts}} mentett callout-típus, {{count}} eltérés a jelenlegihez képest",
 	"recovery.export": "Másolat exportálása",
 	"recovery.restore": "Visszaállítás",

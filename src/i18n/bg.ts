@@ -20,6 +20,8 @@ export const bg: Record<string, string> = {
 	"editor.paletteNoMatches": "Няма цвят, който да съответства на „{{query}}“.",
 	"editor.paletteSearchPlaceholder": "Търсене на цветове…",
 	"replaceModal.searchPlaceholder": "Търсене на callout",
+	"replaceModal.chooseFirst": "Изберете callout за замяна или „{{delete}}“, за да продължите.",
+	"replaceModal.chooseFirstReplace": "Първо изберете callout, с който да го замените.",
 	"settings.fallbackTag": "По подразбиране",
 	"settings.fallbackTagAuto": "Авт. по подразбиране",
 	"settings.rescanVaultDesc": "Добавя типовете callout, използвани в бележките ви, които още ги няма в този списък. Съществуващите ви callout и бележки не се променят.",
@@ -202,6 +204,7 @@ export const bg: Record<string, string> = {
 	"commandBuilder.duplicate": "Вече имате команда, която прави точно това.",
 	"commandBuilder.noCallouts":
 		"Все още няма типове callout, от които да се създаде команда.",
+	"commandBuilder.noCalloutChosen": "Първо изберете callout за тази команда.",
 	"commandBuilder.save": "Запазване",
 	"commandBuilder.roleThemeOwned":
 		"Вашата тема предоставя този callout, затова той има само блоков формат.",
@@ -357,6 +360,7 @@ export const bg: Record<string, string> = {
 	"palette.name": "Име",
 	"palette.namePlaceholder": "Моята палитра",
 	"palette.nameExists": "Вече съществува палитра с това име",
+	"palette.saveBlockedName": "Палитра с това име вече съществува. Изберете друго име, за да я запазите.",
 	"palette.baseColor": "Основен цвят",
 	"palette.baseColorHint":
 		"Автоматично ще съпоставим цвета на фона с него. Ако желаете, можете да го контролирате отделно чрез {{link}}.",
@@ -442,6 +446,7 @@ export const bg: Record<string, string> = {
 	"iconPicker.skinTone": "Тон на кожата",
 	"iconPicker.allCategories": "Всички категории",
 	"iconPicker.noIconSelected": "Не е избрана икона",
+	"iconPicker.chooseFirst": "Първо изберете икона.",
 	"iconPicker.noResults": "Няма икони, отговарящи на търсенето ви.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Търсене в Octicons",
@@ -812,6 +817,10 @@ export const bg: Record<string, string> = {
 	"portable.errorChanged": "Бележките са променени. Прегледайте актуализираните промени преди преобразуването.",
 	"portable.errorBusy": "Изпълнява се друго преобразуване. Изчакайте да завърши.",
 	"portable.error": "Хранилището не можа да бъде прочетено или актуализирано безопасно. Проверете достъпа до файловете и опитайте отново.",
+	"portable.blockedConverting": "Вече се изпълнява преобразуване. Изчакайте да завърши.",
+	"portable.blockedUpdating": "Прегледът все още се обновява. Изчакайте да завърши, преди да преобразувате.",
+	"portable.blockedEditing": "Първо завършете редактирането на замяната: натиснете Enter, за да я запазите, или Esc, за да я отхвърлите.",
+	"portable.blockedNothingSelected": "Изберете поне една замяна за преобразуване.",
 	"settings.maintenance": "Опасна зона",
 	"portable.subtitle": "Изберете кои callout в заглавията и в текста да преобразувате в стандартен Markdown, преди да спрете да използвате Callout Studio.",
 	"portable.customize": "Персонализирана замяна…",
@@ -860,6 +869,7 @@ export const bg: Record<string, string> = {
 		"{{valid}} от {{total}} записа са валидни · намерени са {{issues}} проблема/и.",
 	"import.btnCancel": "Отказ",
 	"import.btnImportValid": "Импортиране само на валидните ({{count}})",
+	"import.nothingValid": "Нито един от записите не е валиден, така че няма какво да се импортира. Отменете, поправете проблемите, изброени тук, и импортирайте отново.",
 	"import.err.notRecognized":
 		"Неразпознат файл: очакваше се масив от дефиниции на callout или експорт от Callout Studio.",
 	"import.warn.settingsIgnored":
@@ -1185,6 +1195,7 @@ export const bg: Record<string, string> = {
 	"recovery.originOlderVersion": "Запазено от по-стара версия",
 	"recovery.unreadable": "Не може да се прочете като настройки",
 	"recovery.same": "Същото като текущата ви конфигурация",
+	"recovery.restoreSame": "Тази настройка е същата като текущата ви, така че няма какво да се възстановява.",
 	"recovery.summary": "{{callouts}} запазен(и) тип(ове) callout, {{count}} разлика(и) спрямо сега",
 	"recovery.export": "Експортиране на копие",
 	"recovery.restore": "Възстановяване",

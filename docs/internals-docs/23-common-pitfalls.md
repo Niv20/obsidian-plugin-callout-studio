@@ -137,6 +137,17 @@ concatenation — see [Localization § t()](17-i18n.md#t--the-translation-functi
 for why a plain string `.replace()` on user-typed content is a real bug, not
 just a style nit.
 
+## A main button that can be blocked is dimmed, not disabled
+
+`button.disabled = true` swallows the click, so a main button that is blocked
+for a reason the screen does not show goes quiet and the user cannot find out
+what it is waiting for. Dim it with `paintBlocked()` and answer the press with
+`explainIfBlocked()` (both in `ui/blockedButton.ts`), driven by one
+`…BlockedReason()` method per button — see
+[Blocked main buttons say why](16-settings-ui-and-modals.md#blocked-main-buttons-say-why).
+Keep `disabled` only for a button that is merely *busy* and says so in its
+label ("Saving…", "Scanning…").
+
 ## Settings that require a runtime refresh, not just a save
 
 Saving `settings.<field>` to disk is necessary but frequently **not

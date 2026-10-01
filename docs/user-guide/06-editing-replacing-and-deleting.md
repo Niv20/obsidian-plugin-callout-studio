@@ -29,6 +29,8 @@ Use **Replace in vault** when every use of one type should become another:
 3. Select the replacement callout. You can type to filter the list; pressing **Enter** selects the top match.
 4. Choose **Replace**.
 
+**Replace** stays dimmed until you have chosen the callout to replace it with. Press it and a message says what to choose.
+
 On desktop, the replacement search is ready for typing when the window opens. On a phone or tablet, tap it to bring up the keyboard.
 
 Callout Studio updates matching Block, Heading, and Inline callouts throughout the vault while keeping their content. The change edits your notes directly, so **Enter** never starts it; only the **Replace** button does.

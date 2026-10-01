@@ -22,6 +22,8 @@ export const fr: Record<string, string> = {
 	"editor.paletteNoMatches": "Aucune couleur ne correspond à « {{query}} ».",
 	"editor.paletteSearchPlaceholder": "Rechercher des couleurs…",
 	"replaceModal.searchPlaceholder": "Rechercher des callouts",
+	"replaceModal.chooseFirst": "Choisissez un callout de remplacement, ou « {{delete}} », pour continuer.",
+	"replaceModal.chooseFirstReplace": "Choisissez d’abord le callout par lequel le remplacer.",
 	"settings.fallbackTag": "Par défaut",
 	"settings.fallbackTagAuto": "Par défaut automatique",
 	"settings.rescanVaultDesc": "Ajoute les types de callout utilisés dans vos notes qui ne figurent pas encore dans cette liste. Vos callouts et vos notes existants ne sont pas modifiés.",
@@ -218,6 +220,7 @@ export const fr: Record<string, string> = {
 		"Vous avez déjà une commande qui fait exactement cela.",
 	"commandBuilder.noCallouts":
 		"Il n'y a pas encore de type de callout à partir duquel créer une commande.",
+	"commandBuilder.noCalloutChosen": "Choisissez d’abord un callout pour cette commande.",
 	"commandBuilder.save": "Enregistrer",
 
 	"commandBuilder.roleThemeOwned":
@@ -386,6 +389,7 @@ export const fr: Record<string, string> = {
 	"palette.name": "Nom",
 	"palette.namePlaceholder": "Ma palette",
 	"palette.nameExists": "Une palette portant ce nom existe déjà",
+	"palette.saveBlockedName": "Une palette portant ce nom existe déjà. Choisissez un autre nom pour l’enregistrer.",
 	"palette.baseColor": "Couleur de base",
 	"palette.baseColorHint":
 		"Nous adapterons automatiquement la couleur d'arrière-plan à celle-ci. Si vous le souhaitez, vous pouvez la contrôler séparément en {{link}}.",
@@ -470,6 +474,7 @@ export const fr: Record<string, string> = {
 	"iconPicker.skinTone": "Teinte de peau",
 	"iconPicker.allCategories": "Toutes les catégories",
 	"iconPicker.noIconSelected": "Aucune icône sélectionnée",
+	"iconPicker.chooseFirst": "Sélectionnez d’abord une icône.",
 	"iconPicker.noResults": "Aucune icône ne correspond à votre recherche.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Rechercher dans Octicons",
@@ -847,6 +852,10 @@ export const fr: Record<string, string> = {
 	"portable.errorChanged": "Les notes ont changé. Vérifiez les changements actualisés avant la conversion.",
 	"portable.errorBusy": "Une autre conversion est en cours. Attendez qu’elle se termine.",
 	"portable.error": "Le coffre n’a pas pu être lu ou mis à jour en toute sécurité. Vérifiez l’accès aux fichiers, puis réessayez.",
+	"portable.blockedConverting": "Une conversion est déjà en cours. Attendez qu’elle se termine.",
+	"portable.blockedUpdating": "La vérification est encore en cours de mise à jour. Attendez qu’elle se termine avant de convertir.",
+	"portable.blockedEditing": "Terminez d’abord la modification du remplacement : appuyez sur Entrée pour l’enregistrer ou sur Échap pour l’abandonner.",
+	"portable.blockedNothingSelected": "Sélectionnez au moins un remplacement à convertir.",
 	"settings.maintenance": "Zone dangereuse",
 	"portable.subtitle": "Choisissez les callouts de titre et en ligne à convertir en Markdown standard avant de cesser d’utiliser Callout Studio.",
 	"portable.customize": "Remplacement personnalisé…",
@@ -896,6 +905,7 @@ export const fr: Record<string, string> = {
 		"{{valid}} sur {{total}} entrées sont valides · {{issues}} problème(s) trouvé(s).",
 	"import.btnCancel": "Annuler",
 	"import.btnImportValid": "Importer seulement les valides ({{count}})",
+	"import.nothingValid": "Aucune des entrées n’est valide, il n’y a donc rien à importer. Annulez, corrigez les problèmes listés ici, puis importez à nouveau.",
 	"import.err.notRecognized":
 		"Fichier non reconnu : un tableau de définitions de callout ou une exportation de Callout Studio était attendu.",
 	"import.warn.settingsIgnored":
@@ -1223,6 +1233,7 @@ export const fr: Record<string, string> = {
 	"recovery.originOlderVersion": "Enregistré par une version antérieure",
 	"recovery.unreadable": "Ne peut pas être lu comme des paramètres",
 	"recovery.same": "Identique à votre configuration actuelle",
+	"recovery.restoreSame": "Cette configuration est identique à la configuration actuelle, il n’y a donc rien à restaurer.",
 	"recovery.summary": "{{callouts}} type(s) de callout enregistré(s), {{count}} différence(s) par rapport à maintenant",
 	"recovery.export": "Exporter la copie",
 	"recovery.restore": "Restaurer",

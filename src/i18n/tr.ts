@@ -49,6 +49,10 @@ export const tr: Record<string, string> = {
 	"portable.errorChanged": "Notlar değişti. Dönüştürmeden önce güncellenmiş değişiklikleri inceleyin.",
 	"portable.errorBusy": "Başka bir dönüşüm devam ediyor. Bitmesini bekleyin.",
 	"portable.error": "Kasa güvenli biçimde okunamadı veya güncellenemedi. Dosya erişimini kontrol edip yeniden deneyin.",
+	"portable.blockedConverting": "Bir dönüştürme zaten çalışıyor. Bitmesini bekleyin.",
+	"portable.blockedUpdating": "İnceleme hâlâ güncelleniyor. Dönüştürmeden önce bitmesini bekleyin.",
+	"portable.blockedEditing": "Önce değiştirme düzenlemesini bitirin: kaydetmek için Enter'a, vazgeçmek için Esc'ye basın.",
+	"portable.blockedNothingSelected": "Dönüştürmek için en az bir değiştirme seçin.",
 	"settings.maintenance": "Tehlikeli alan",
 	"cmd.openSettings": "Ayarları aç",
 	"cmd.createCallout": "Yeni callout türü oluştur",
@@ -73,6 +77,8 @@ export const tr: Record<string, string> = {
 	"editor.paletteNoMatches": "“{{query}}” ile eşleşen renk bulunamadı.",
 	"editor.paletteSearchPlaceholder": "Renk ara…",
 	"replaceModal.searchPlaceholder": "Callout ara",
+	"replaceModal.chooseFirst": "Devam etmek için bir yedek callout veya “{{delete}}” seçin.",
+	"replaceModal.chooseFirstReplace": "Önce yerine geçecek callout'u seçin.",
 	"settings.fallbackTag": "Varsayılan",
 	"settings.fallbackTagAuto": "Otomatik varsayılan",
 	"settings.rescanVaultDesc": "Notlarınızda kullanılan ve bu listede henüz yer almayan callout türlerini ekler. Mevcut callout'larınız ve notlarınız değiştirilmez.",
@@ -269,6 +275,7 @@ export const tr: Record<string, string> = {
 		"Tam olarak aynısını yapan bir komutunuz zaten var.",
 	"commandBuilder.noCallouts":
 		"Henüz bir komut oluşturabileceğiniz callout türü yok.",
+	"commandBuilder.noCalloutChosen": "Önce bu komut için bir callout seçin.",
 	"commandBuilder.save": "Kaydet",
 
 	"settings.vaultMaintenance": "Vault içgörüleri ve bakımı",
@@ -424,6 +431,7 @@ export const tr: Record<string, string> = {
 	"palette.name": "Ad",
 	"palette.namePlaceholder": "Paletim",
 	"palette.nameExists": "Bu adla bir palet zaten var",
+	"palette.saveBlockedName": "Bu adla bir palet zaten var. Kaydetmek için farklı bir ad seçin.",
 	"palette.baseColor": "Temel renk",
 	"palette.baseColorHint":
 		"Arka plan rengini otomatik olarak buna uyduracağız. İsterseniz {{link}} ile ayrı olarak kontrol edebilirsiniz.",
@@ -509,6 +517,7 @@ export const tr: Record<string, string> = {
 	"iconPicker.skinTone": "Ten rengi",
 	"iconPicker.allCategories": "Tüm kategoriler",
 	"iconPicker.noIconSelected": "Simge seçilmedi",
+	"iconPicker.chooseFirst": "Önce bir simge seçin.",
 	"iconPicker.noResults": "Aramanızla eşleşen simge yok.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Octicons ara",
@@ -880,6 +889,7 @@ export const tr: Record<string, string> = {
 		"{{total}} girişten {{valid}} tanesi geçerli · {{issues}} sorun bulundu.",
 	"import.btnCancel": "İptal",
 	"import.btnImportValid": "Yalnızca geçerli olanları içe aktar ({{count}})",
+	"import.nothingValid": "Hiçbir giriş geçerli değil, bu yüzden içe aktarılacak bir şey yok. İptal edin, burada listelenen sorunları düzeltin ve yeniden içe aktarın.",
 	"import.err.notRecognized":
 		"Tanınmayan dosya: bir callout tanımları dizisi veya bir Callout Studio dışa aktarımı bekleniyordu.",
 	"import.warn.settingsIgnored":
@@ -1198,6 +1208,7 @@ export const tr: Record<string, string> = {
 	"recovery.originOlderVersion": "Daha eski bir sürüm tarafından kaydedildi",
 	"recovery.unreadable": "Ayarlar olarak okunamıyor",
 	"recovery.same": "Mevcut kurulumunuzla aynı",
+	"recovery.restoreSame": "Bu kurulum mevcut kurulumunuzla aynı, bu yüzden geri yüklenecek bir şey yok.",
 	"recovery.summary": "{{callouts}} kaydedilmiş callout türü, şu andan {{count}} fark",
 	"recovery.export": "Kopyayı dışa aktar",
 	"recovery.restore": "Geri yükle",

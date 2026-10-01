@@ -72,6 +72,8 @@ export function portableConversionViewHarness(notes: Record<string, string> = { 
 		assert.ok(found, action);
 		return found as FakeElement & { hidden: boolean };
 	};
+	/** Dimmed rather than `disabled`, so a press still arrives and can be answered. */
+	const blocked = (action: string): boolean => button(action).getAttribute("aria-disabled") === "true";
 	const inputs = (): (FakeElement & { checked: boolean })[] =>
 		root.querySelectorAll("input[data-change-id]") as (FakeElement & { checked: boolean })[];
 	const click = (action: string): void => { root.fire("click", { target: button(action) }); };
@@ -81,7 +83,7 @@ export function portableConversionViewHarness(notes: Record<string, string> = { 
 		root.fire("change", { target: input });
 	};
 	return { ...h, view, root, hooks, opened, selections, documentView, documentLeaf,
-		setLiveText: (value: string | undefined) => { liveText = value; }, confirmations, tasks, vaultEvents, workspaceEvents, actions, inputs, button, click, choose,
+		setLiveText: (value: string | undefined) => { liveText = value; }, confirmations, tasks, vaultEvents, workspaceEvents, actions, inputs, button, blocked, click, choose,
 		status: () => root.querySelector(".cs-portable-review-status")!.textContent,
 		settle: async () => {
 			for (let i = 0; i < 50; i++) {

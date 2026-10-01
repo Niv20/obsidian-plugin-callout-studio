@@ -4,11 +4,13 @@
  * Displayed after importValidator finds errors or warnings in the user's
  * JSON file. Groups issues per entry, shows a count of valid vs. total, and
  * lets the user either cancel the import or proceed with only the valid rows.
- * A fatal error (unparseable JSON or wrong root type) disables the import button.
+ * A fatal error (unparseable JSON or wrong root type) leaves no import button
+ * at all; a report with no valid entry keeps it, dimmed, and pressing it says why.
  */
 import { Modal } from "obsidian";
 import type { App } from "obsidian";
 import { t } from "../i18n";
+import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import type { ValidationIssue } from "./importValidator";
 import { applyModalChrome } from "../settings/modalChrome";
 
@@ -129,12 +131,14 @@ export class ImportReportModal extends Modal {
 				text: t("import.btnImportValid", { count: this.validCount }),
 				cls: "mod-cta",
 			});
-			if (this.validCount === 0) {
-				importBtn.disabled = true;
-			}
-			importBtn.addEventListener("click", () =>
-				this.finish("importValid"),
-			);
+			// With nothing valid there is nothing to import. Dimmed rather than
+			// disabled, so pressing it says why instead of going quiet.
+			const blockedReason = this.validCount === 0 ? t("import.nothingValid") : null;
+			paintBlocked(importBtn, blockedReason);
+			importBtn.addEventListener("click", () => {
+				if (explainIfBlocked(blockedReason)) return;
+				this.finish("importValid");
+			});
 		}
 	}
 

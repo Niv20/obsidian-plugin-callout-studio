@@ -16,13 +16,13 @@ describe("portable conversion sidebar", () => {
 		h.app.vault.read = async () => { await read.promise; return h.contents.get("a.md")!; };
 		try {
 			const opening = h.view.onOpen();
-			assert.equal(h.button("convert").disabled, true);
+			assert.equal(h.blocked("convert"), true);
 			h.click("convert");
 			assert.equal(h.confirmations.length, 0);
 			read.resolve(); await opening;
 			assert.equal(h.inputs().length, 2);
 			assert.ok(h.inputs().every(input => input.checked));
-			assert.equal(h.button("convert").disabled, false);
+			assert.equal(h.blocked("convert"), false);
 			assert.deepEqual(h.written, []);
 			assert.equal(h.root.querySelector('button[data-action="refresh"]'), null);
 		} finally { read.resolve(); await h.destroy(); }
@@ -41,7 +41,7 @@ describe("portable conversion sidebar", () => {
 			h.hooks.confirm = async () => true;
 			h.click("convert"); await h.tasks[h.tasks.length - 1]; await h.settle();
 			assert.equal(h.contents.get("a.md"), "note [!tip]\n[!warning]{Keep me}");
-			assert.equal(h.button("convert").disabled, true);
+			assert.equal(h.blocked("convert"), true);
 			assert.equal(h.inputs()[0]!.checked, false);
 		} finally { await h.destroy(); }
 	});

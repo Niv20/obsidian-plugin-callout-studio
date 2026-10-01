@@ -22,6 +22,8 @@ export const fa: Record<string, string> = {
 	"editor.paletteNoMatches": "هیچ رنگی با «{{query}}» مطابقت ندارد.",
 	"editor.paletteSearchPlaceholder": "جستجوی رنگ‌ها…",
 	"replaceModal.searchPlaceholder": "جستجوی callout‌ها",
+	"replaceModal.chooseFirst": "برای ادامه، یک callout جایگزین یا «{{delete}}» را انتخاب کنید.",
+	"replaceModal.chooseFirstReplace": "ابتدا calloutی را که باید جایگزین آن شود انتخاب کنید.",
 	"settings.fallbackTag": "پیش‌فرض",
 	"settings.fallbackTagAuto": "پیش‌فرض خودکار",
 	"settings.rescanVaultDesc": "انواع callout به‌کاررفته در یادداشت‌های شما را که هنوز در این فهرست نیستند اضافه می‌کند. calloutها و یادداشت‌های موجود شما تغییر نمی‌کنند.",
@@ -218,6 +220,7 @@ export const fa: Record<string, string> = {
 		"شما همین حالا دستوری دارید که دقیقاً همین کار را انجام می‌دهد.",
 	"commandBuilder.noCallouts":
 		"هنوز هیچ نوع calloutای برای ساخت یک دستور از آن وجود ندارد.",
+	"commandBuilder.noCalloutChosen": "ابتدا یک callout برای این دستور انتخاب کنید.",
 	"commandBuilder.save": "ذخیره",
 
 	"settings.vaultMaintenance": "بینش‌ها و نگهداری vault",
@@ -374,6 +377,7 @@ export const fa: Record<string, string> = {
 	"palette.name": "نام",
 	"palette.namePlaceholder": "پالت من",
 	"palette.nameExists": "پالتی با این نام از قبل وجود دارد",
+	"palette.saveBlockedName": "پالتی با این نام از قبل وجود دارد. برای ذخیره، نام دیگری انتخاب کنید.",
 	"palette.baseColor": "رنگ پایه",
 	"palette.baseColorHint":
 		"رنگ پس‌زمینه را به‌طور خودکار با آن هماهنگ می‌کنیم. در صورت تمایل، می‌توانید با {{link}} آن را جداگانه کنترل کنید.",
@@ -459,6 +463,7 @@ export const fa: Record<string, string> = {
 	"iconPicker.skinTone": "رنگ پوست",
 	"iconPicker.allCategories": "همه دسته‌ها",
 	"iconPicker.noIconSelected": "هیچ آیکونی انتخاب نشده",
+	"iconPicker.chooseFirst": "ابتدا یک آیکون انتخاب کنید.",
 	"iconPicker.noResults": "هیچ آیکونی با جستجوی شما مطابقت ندارد.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "جستجو در Octicons",
@@ -833,6 +838,10 @@ export const fa: Record<string, string> = {
 	"portable.errorChanged": "یادداشت‌ها تغییر کردند. پیش از تبدیل، تغییرات به‌روز را بررسی کنید.",
 	"portable.errorBusy": "تبدیل دیگری در حال انجام است. منتظر پایان آن بمانید.",
 	"portable.error": "خواندن یا به‌روزرسانی ایمن خزانه ممکن نشد. دسترسی به فایل‌ها را بررسی کنید، سپس دوباره تلاش کنید.",
+	"portable.blockedConverting": "یک تبدیل از قبل در حال انجام است. منتظر پایان آن بمانید.",
+	"portable.blockedUpdating": "بازبینی هنوز در حال به‌روزرسانی است. پیش از تبدیل منتظر پایان آن بمانید.",
+	"portable.blockedEditing": "ابتدا ویرایش جایگزین را تمام کنید: برای ذخیره Enter و برای صرف‌نظر Esc را بزنید.",
+	"portable.blockedNothingSelected": "دست‌کم یک جایگزین را برای تبدیل انتخاب کنید.",
 	"settings.maintenance": "ناحیه خطر",
 	"portable.subtitle": "پیش از کنار گذاشتن Callout Studio، انتخاب کنید کدام calloutهای عنوان و درون‌خطی به Markdown استاندارد تبدیل شوند.",
 	"portable.customize": "جایگزین سفارشی…",
@@ -882,6 +891,7 @@ export const fa: Record<string, string> = {
 		"{{valid}} از {{total}} ورودی معتبر است · {{issues}} مشکل یافت شد.",
 	"import.btnCancel": "لغو",
 	"import.btnImportValid": "فقط معتبرها را وارد کن ({{count}})",
+	"import.nothingValid": "هیچ‌کدام از موارد معتبر نیستند، پس چیزی برای درون‌ریزی وجود ندارد. لغو کنید، مشکلات فهرست‌شده در اینجا را رفع کنید و دوباره درون‌ریزی کنید.",
 	"import.err.notRecognized":
 		"فایل ناشناخته: انتظار می‌رفت آرایه‌ای از تعاریف callout یا خروجی Callout Studio باشد.",
 	"import.warn.settingsIgnored":
@@ -1202,6 +1212,7 @@ export const fa: Record<string, string> = {
 	"recovery.originOlderVersion": "ذخیره‌شده توسط نسخهٔ قدیمی‌تر",
 	"recovery.unreadable": "نمی‌توان آن را به‌عنوان تنظیمات خواند",
 	"recovery.same": "مشابه پیکربندی فعلی شما",
+	"recovery.restoreSame": "این پیکربندی با پیکربندی فعلی شما یکسان است، پس چیزی برای بازیابی وجود ندارد.",
 	"recovery.summary": "{{callouts}} نوع callout ذخیره‌شده، {{count}} تفاوت با اکنون",
 	"recovery.export": "صادرکردن نسخه",
 	"recovery.restore": "بازیابی",

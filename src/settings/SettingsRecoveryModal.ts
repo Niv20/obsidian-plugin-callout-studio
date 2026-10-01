@@ -17,6 +17,7 @@ import { getLocale, t } from "../i18n";
 import type { RecoverySource, RecoverySourceKind, RestoreOutcome, SettingsRecoveryService } from "../manager/settingsRecoveryService";
 import type { SettingsWriter } from "../manager/SettingsWriter";
 import { ConfirmModal } from "../utils/ConfirmModal";
+import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { applyModalChrome } from "./modalChrome";
 import { blockedWhilePaused } from "./pausedGuard";
 import { SettingsRecoveryDetailsModal } from "./SettingsRecoveryDetailsModal";
@@ -150,10 +151,24 @@ export class SettingsRecoveryModal extends Modal {
 		}
 		row.addButton(button => {
 			button.setButtonText(t("recovery.restore")).setWarning()
-				.onClick(() => { void this.restore(data, label, difference.changed); });
-			button.setDisabled(this.plugin.settingsWriter.isFrozen || difference.changed === 0);
+				.onClick(() => {
+					if (explainIfBlocked(this.restoreBlockedReason(difference.changed))) return;
+					void this.restore(data, label, difference.changed);
+				});
+			paintBlocked(button.buttonEl, this.restoreBlockedReason(difference.changed));
 			button.buttonEl.addClass("cs-recovery-restore-btn");
 		});
+	}
+
+	/**
+	 * Why Restore cannot act on a row, or null: saving is paused (a restored
+	 * setup could not be kept), or the row is already what is shown now. Dimmed
+	 * rather than disabled, so pressing it says which. Read again at the press —
+	 * saving can pause, or resume, while this window is open.
+	 */
+	private restoreBlockedReason(changed: number): string | null {
+		if (this.plugin.settingsWriter.isFrozen) return t("notice.blockedWhilePaused");
+		return changed === 0 ? t("recovery.restoreSame") : null;
 	}
 
 	private async restore(data: NonNullable<RecoverySource["data"]>, label: string, count: number): Promise<void> {

@@ -418,7 +418,7 @@ the field does not remain visibly active after focus leaves it.
 Newline insertion and multiline paste cannot alter the source-line structure.
 A draft is scoped to the active review: redraws preserve its text, while a stale
 or closed review cancels it.
-Conversion is disabled until the draft is saved or cancelled. Only a validated
+Convert is dimmed until the draft is saved or cancelled, and pressing it says so. Only a validated
 save rebuilds the proposal; editing never writes notes directly.
 Validation also rejects custom text that changes quote/list nesting or indentation
 into a code block, preventing an edited token from reinterpreting neighboring prose.

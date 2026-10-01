@@ -23,6 +23,8 @@ export const es: Record<string, string> = {
 	"editor.paletteNoMatches": "Ningún color coincide con «{{query}}».",
 	"editor.paletteSearchPlaceholder": "Buscar colores…",
 	"replaceModal.searchPlaceholder": "Buscar callouts",
+	"replaceModal.chooseFirst": "Elige un callout de reemplazo, o «{{delete}}», para continuar.",
+	"replaceModal.chooseFirstReplace": "Elige primero el callout con el que reemplazarlo.",
 	"settings.fallbackTag": "Predeterminado",
 	"settings.fallbackTagAuto": "Predeterminado automático",
 	"settings.rescanVaultDesc": "Añade los tipos de callout usados en tus notas que aún no están en esta lista. Tus callouts y notas existentes no se modifican.",
@@ -220,6 +222,7 @@ export const es: Record<string, string> = {
 		"Ya tiene un comando que hace exactamente esto.",
 	"commandBuilder.noCallouts":
 		"Todavía no hay tipos de callout con los que crear un comando.",
+	"commandBuilder.noCalloutChosen": "Elige primero un callout para este comando.",
 	"commandBuilder.save": "Guardar",
 
 	"settings.vaultMaintenance": "Información y mantenimiento del vault",
@@ -379,6 +382,7 @@ export const es: Record<string, string> = {
 	"palette.name": "Nombre",
 	"palette.namePlaceholder": "Mi paleta",
 	"palette.nameExists": "Ya existe una paleta con este nombre",
+	"palette.saveBlockedName": "Ya existe una paleta con este nombre. Elige otro nombre para guardarla.",
 	"palette.baseColor": "Color base",
 	"palette.baseColorHint":
 		"Ajustaremos automáticamente el color de fondo a este. Si lo prefieres, puedes controlarlo por separado {{link}}.",
@@ -463,6 +467,7 @@ export const es: Record<string, string> = {
 	"iconPicker.skinTone": "Tono de piel",
 	"iconPicker.allCategories": "Todas las categorías",
 	"iconPicker.noIconSelected": "Ningún icono seleccionado",
+	"iconPicker.chooseFirst": "Selecciona primero un icono.",
 	"iconPicker.noResults": "Ningún icono coincide con su búsqueda.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Buscar en Octicons",
@@ -837,6 +842,10 @@ export const es: Record<string, string> = {
 	"portable.errorChanged": "Las notas han cambiado. Revisa los cambios actualizados antes de convertir.",
 	"portable.errorBusy": "Hay otra conversión en curso. Espera a que termine.",
 	"portable.error": "No se pudo leer o actualizar la bóveda de forma segura. Comprueba el acceso a los archivos e inténtalo de nuevo.",
+	"portable.blockedConverting": "Ya hay una conversión en curso. Espera a que termine.",
+	"portable.blockedUpdating": "La revisión se sigue actualizando. Espera a que termine antes de convertir.",
+	"portable.blockedEditing": "Termina primero de editar el reemplazo: pulsa Enter para guardarlo o Esc para descartarlo.",
+	"portable.blockedNothingSelected": "Selecciona al menos un reemplazo para convertir.",
 	"settings.maintenance": "Zona de peligro",
 	"portable.subtitle": "Elige qué callouts de encabezado y en línea convertir a Markdown estándar antes de dejar de usar Callout Studio.",
 	"portable.customize": "Reemplazo personalizado…",
@@ -886,6 +895,7 @@ export const es: Record<string, string> = {
 		"{{valid}} de {{total}} entradas son válidas · {{issues}} problema(s) encontrado(s).",
 	"import.btnCancel": "Cancelar",
 	"import.btnImportValid": "Importar solo las válidas ({{count}})",
+	"import.nothingValid": "Ninguna de las entradas es válida, así que no hay nada que importar. Cancela, corrige los problemas que se indican aquí e importa de nuevo.",
 	"import.err.notRecognized":
 		"Archivo no reconocido: se esperaba un array de definiciones de callout o una exportación de Callout Studio.",
 	"import.warn.settingsIgnored":
@@ -1216,6 +1226,7 @@ export const es: Record<string, string> = {
 	"recovery.originOlderVersion": "Guardado por una versión anterior",
 	"recovery.unreadable": "No se puede leer como configuración",
 	"recovery.same": "Igual que tu configuración actual",
+	"recovery.restoreSame": "Esta configuración es igual a la actual, así que no hay nada que restaurar.",
 	"recovery.summary": "{{callouts}} tipo(s) de callout guardado(s), {{count}} diferencia(s) respecto a ahora",
 	"recovery.export": "Exportar copia",
 	"recovery.restore": "Restaurar",

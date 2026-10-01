@@ -22,6 +22,8 @@ export const id: Record<string, string> = {
 	"editor.paletteNoMatches": "Tidak ada warna yang cocok dengan “{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Cari warna…",
 	"replaceModal.searchPlaceholder": "Cari callout",
+	"replaceModal.chooseFirst": "Pilih callout pengganti, atau “{{delete}}”, untuk melanjutkan.",
+	"replaceModal.chooseFirstReplace": "Pilih dulu callout yang akan menggantikannya.",
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default otomatis",
 	"settings.rescanVaultDesc": "Menambahkan tipe callout yang digunakan di catatan Anda yang belum ada di daftar ini. Callout dan catatan Anda yang sudah ada tidak diubah.",
@@ -218,6 +220,7 @@ export const id: Record<string, string> = {
 		"Anda sudah memiliki perintah yang melakukan persis hal ini.",
 	"commandBuilder.noCallouts":
 		"Belum ada tipe callout untuk membuat perintah.",
+	"commandBuilder.noCalloutChosen": "Pilih callout untuk perintah ini terlebih dahulu.",
 	"commandBuilder.save": "Simpan",
 
 	"settings.vaultMaintenance": "Wawasan & pemeliharaan vault",
@@ -376,6 +379,7 @@ export const id: Record<string, string> = {
 	"palette.name": "Nama",
 	"palette.namePlaceholder": "Palet saya",
 	"palette.nameExists": "Palet dengan nama ini sudah ada",
+	"palette.saveBlockedName": "Palet dengan nama ini sudah ada. Pilih nama lain untuk menyimpannya.",
 	"palette.baseColor": "Warna dasar",
 	"palette.baseColorHint":
 		"Kami akan otomatis menyesuaikan warna latar belakang dengannya. Jika mau, Anda dapat mengaturnya secara terpisah dengan {{link}}.",
@@ -460,6 +464,7 @@ export const id: Record<string, string> = {
 	"iconPicker.skinTone": "Warna kulit",
 	"iconPicker.allCategories": "Semua kategori",
 	"iconPicker.noIconSelected": "Tidak ada ikon yang dipilih",
+	"iconPicker.chooseFirst": "Pilih ikon terlebih dahulu.",
 	"iconPicker.noResults": "Tidak ada ikon yang cocok dengan pencarian Anda.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Cari Octicons",
@@ -833,6 +838,7 @@ export const id: Record<string, string> = {
 		"{{valid}} dari {{total}} entri valid · {{issues}} masalah ditemukan.",
 	"import.btnCancel": "Batal",
 	"import.btnImportValid": "Impor yang valid saja ({{count}})",
+	"import.nothingValid": "Tidak ada entri yang valid, jadi tidak ada yang bisa diimpor. Batalkan, perbaiki masalah yang tercantum di sini, lalu impor lagi.",
 	"import.err.notRecognized":
 		"File tidak dikenali: harus berupa array definisi callout atau ekspor Callout Studio.",
 	"import.warn.settingsIgnored":
@@ -1143,6 +1149,10 @@ export const id: Record<string, string> = {
 	"portable.errorChanged": "Catatan berubah. Tinjau perubahan terbaru sebelum mengonversi.",
 	"portable.errorBusy": "Konversi lain sedang berjalan. Tunggu hingga selesai.",
 	"portable.error": "Vault tidak dapat dibaca atau diperbarui dengan aman. Periksa akses berkas, lalu coba lagi.",
+	"portable.blockedConverting": "Konversi sedang berjalan. Tunggu hingga selesai.",
+	"portable.blockedUpdating": "Tinjauan masih diperbarui. Tunggu hingga selesai sebelum mengonversi.",
+	"portable.blockedEditing": "Selesaikan dulu pengeditan pengganti: tekan Enter untuk menyimpannya atau Esc untuk membuangnya.",
+	"portable.blockedNothingSelected": "Pilih setidaknya satu pengganti untuk dikonversi.",
 	"settings.maintenance": "Zona berbahaya",
 
 	// Sync safety hardening
@@ -1206,6 +1216,7 @@ export const id: Record<string, string> = {
 	"recovery.originOlderVersion": "Disimpan oleh versi yang lebih lama",
 	"recovery.unreadable": "Tidak dapat dibaca sebagai pengaturan",
 	"recovery.same": "Sama seperti konfigurasi Anda saat ini",
+	"recovery.restoreSame": "Pengaturan ini sama dengan pengaturan Anda saat ini, jadi tidak ada yang perlu dipulihkan.",
 	"recovery.summary": "{{callouts}} tipe callout tersimpan, {{count}} perbedaan dari sekarang",
 	"recovery.export": "Ekspor salinan",
 	"recovery.restore": "Pulihkan",

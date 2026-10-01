@@ -9,6 +9,7 @@ import { IconPicker, type IconPickerPlugin } from "../src/settings/iconpicker/Ic
 import type { CalloutIcon, UserImageIcon } from "../src/types";
 import { ConfirmModal } from "../src/utils/ConfirmModal";
 import { asEl, fakeDom, type FakeElement } from "./support/fakeDom";
+import { Notice } from "./support/obsidianStub";
 
 function picture(id: string, name: string, addedAt: number): UserImageIcon {
 	return {
@@ -197,6 +198,7 @@ describe("custom icon picker actions", () => {
 		const privatePicker = picker as unknown as {
 			showPanel(): Promise<void>;
 			updatePreview(): void;
+			confirm(): Promise<void>;
 			panel: { dispose(): void } | null;
 		};
 		const originalConfirm = Object.getOwnPropertyDescriptor(ConfirmModal.prototype, "confirm")!;
@@ -211,7 +213,11 @@ describe("custom icon picker actions", () => {
 			await Promise.resolve();
 			assert.deepEqual(images, []);
 			assert.equal(previewEl.textContent, t("iconPicker.noIconSelected"));
-			assert.equal(confirmBtn.hasClass("is-disabled"), true);
+			// Dimmed, not disabled: it still takes the press and says what is missing.
+			assert.equal(confirmBtn.getAttribute("aria-disabled"), "true");
+			assert.equal(confirmBtn.hasClass("cs-btn-disabled"), true);
+			await privatePicker.confirm();
+			assert.equal(String(Notice.last?.message), t("iconPicker.chooseFirst"));
 		} finally {
 			Object.defineProperty(ConfirmModal.prototype, "confirm", originalConfirm);
 			privatePicker.panel?.dispose();

@@ -20,6 +20,8 @@ export const nb: Record<string, string> = {
 	"editor.paletteNoMatches": "Ingen farger samsvarer med «{{query}}».",
 	"editor.paletteSearchPlaceholder": "Søk etter farger…",
 	"replaceModal.searchPlaceholder": "Søk i callouter",
+	"replaceModal.chooseFirst": "Velg en erstatnings-callout, eller «{{delete}}», for å fortsette.",
+	"replaceModal.chooseFirstReplace": "Velg først callouten den skal erstattes med.",
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
 	"settings.rescanVaultDesc": "Legger til callout-typer som brukes i notatene dine og som ennå ikke er i denne listen. Dine eksisterende callouts og notater endres ikke.",
@@ -209,6 +211,7 @@ export const nb: Record<string, string> = {
 		"Du har allerede en kommando som gjør nøyaktig dette.",
 	"commandBuilder.noCallouts":
 		"Det finnes ingen callout-typer å bygge en kommando fra ennå.",
+	"commandBuilder.noCalloutChosen": "Velg en callout for denne kommandoen først.",
 	"commandBuilder.save": "Lagre",
 	"settings.vaultMaintenance": "Vault-innsikt og vedlikehold",
 	"settings.vaultStats": "Callout-statistikk",
@@ -363,6 +366,7 @@ export const nb: Record<string, string> = {
 	"palette.name": "Navn",
 	"palette.namePlaceholder": "Min palett",
 	"palette.nameExists": "Det finnes allerede en palett med dette navnet",
+	"palette.saveBlockedName": "Det finnes allerede en palett med dette navnet. Velg et annet navn for å lagre den.",
 	"palette.baseColor": "Grunnfarge",
 	"palette.baseColorHint":
 		"Vi tilpasser automatisk bakgrunnsfargen til denne. Hvis du vil, kan du styre den separat ved å {{link}}.",
@@ -448,6 +452,7 @@ export const nb: Record<string, string> = {
 	"iconPicker.skinTone": "Hudtone",
 	"iconPicker.allCategories": "Alle kategorier",
 	"iconPicker.noIconSelected": "Ingen ikon valgt",
+	"iconPicker.chooseFirst": "Velg et ikon først.",
 	"iconPicker.noResults": "Ingen ikoner samsvarer med søket ditt.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Søk i Octicons",
@@ -810,6 +815,7 @@ export const nb: Record<string, string> = {
 		"{{valid}} av {{total}} poster er gyldige · {{issues}} problem(er) funnet.",
 	"import.btnCancel": "Avbryt",
 	"import.btnImportValid": "Importer bare gyldige ({{count}})",
+	"import.nothingValid": "Ingen av oppføringene er gyldige, så det er ingenting å importere. Avbryt, rett opp problemene som er oppført her, og importer på nytt.",
 	"import.err.notRecognized":
 		"Ukjent fil: forventet et array med callout-definisjoner eller en Callout Studio-eksport.",
 	"import.warn.settingsIgnored":
@@ -1115,6 +1121,10 @@ export const nb: Record<string, string> = {
 	"portable.errorChanged": "Notatene er endret. Gjennomgå de oppdaterte endringene før du konverterer.",
 	"portable.errorBusy": "En annen konvertering pågår. Vent til den er ferdig.",
 	"portable.error": "Hvelvet kunne ikke leses eller oppdateres trygt. Kontroller filtilgangen og prøv igjen.",
+	"portable.blockedConverting": "En konvertering pågår allerede. Vent til den er ferdig.",
+	"portable.blockedUpdating": "Gjennomgangen oppdateres fortsatt. Vent til den er ferdig før du konverterer.",
+	"portable.blockedEditing": "Fullfør redigeringen av erstatningen først: trykk Enter for å lagre den, eller Esc for å forkaste den.",
+	"portable.blockedNothingSelected": "Velg minst én erstatning som skal konverteres.",
 	"settings.maintenance": "Faresone",
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
@@ -1183,6 +1193,7 @@ export const nb: Record<string, string> = {
 	"recovery.originOlderVersion": "Lagret av en eldre versjon",
 	"recovery.unreadable": "Kan ikke leses som innstillinger",
 	"recovery.same": "Samme som ditt nåværende oppsett",
+	"recovery.restoreSame": "Dette oppsettet er det samme som det nåværende, så det er ingenting å gjenopprette.",
 	"recovery.summary": "{{callouts}} lagret(e) callout-type(r), {{count}} forskjell(er) fra nå",
 	"recovery.export": "Eksporter kopi",
 	"recovery.restore": "Gjenopprett",

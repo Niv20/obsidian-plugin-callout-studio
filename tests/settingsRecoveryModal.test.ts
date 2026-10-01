@@ -154,17 +154,37 @@ describe("the earlier-setups window", () => {
 			restore.fire("click");
 			await setImmediate();
 			assert.deepEqual(h.restored, []);
+			assert.equal(String(Notice.last?.message), en["notice.blockedWhilePaused"], "the dimmed button says why");
 			assert.equal(h.contentEl.querySelectorAll(".clickable-icon").filter(button => button.dataset.csTooltip === en["recovery.details.view"]).length,
 				1, "viewing details still works");
 		} finally { h.destroy(); }
 	});
 
-	it("disables restoring a setup that is the same as now", async () => {
+	it("dims restoring a setup that is the same as now, and says so when it is pressed", async () => {
+		const confirm = stubConfirm(true);
 		const h = open(false, [unchanged]);
 		try {
 			await setImmediate();
-			assert.equal(h.buttons(en["recovery.restore"]!)[0]!.getAttribute("aria-disabled"), "true");
-		} finally { h.destroy(); }
+			const restore = h.buttons(en["recovery.restore"]!)[0]!;
+			assert.equal(restore.getAttribute("aria-disabled"), "true");
+			restore.fire("click");
+			await setImmediate();
+			assert.equal(String(Notice.last?.message), en["recovery.restoreSame"]);
+			assert.deepEqual(h.restored, [], "nothing was restored, and nobody was asked");
+		} finally { confirm.restore(); h.destroy(); }
+	});
+
+	it("leaves a restorable setup undimmed", async () => {
+		const confirm = stubConfirm(true);
+		const h = open(false, [history]);
+		try {
+			await setImmediate();
+			const restore = h.buttons(en["recovery.restore"]!)[0]!;
+			assert.equal(restore.getAttribute("aria-disabled"), "false");
+			restore.fire("click");
+			await setImmediate();
+			assert.deepEqual(h.restored, [older]);
+		} finally { confirm.restore(); h.destroy(); }
 	});
 
 	// The row wears `.callout-studio-row`, a size container. Obsidian's unnamed

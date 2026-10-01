@@ -115,6 +115,8 @@ Long menus stay inside the window and scroll. All choices have the same
 comfortable spacing, and menus start and end at the first and last choice
 without empty strips.
 
+**Save** stays dimmed when there is no callout to build the command from, or when you already have a command that does exactly the same. Press it and a message says which.
+
 A Heading command can insert a chosen callout at a specific heading level. An Inline command inserts a chosen inline callout. A Block command can either insert a new block or wrap the current selection, and it can set the initial fold state:
 
 | Fold state | Markdown |

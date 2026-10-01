@@ -20,6 +20,8 @@ export const el: Record<string, string> = {
 	"editor.paletteNoMatches": "Κανένα χρώμα δεν αντιστοιχεί στο «{{query}}».",
 	"editor.paletteSearchPlaceholder": "Αναζήτηση χρωμάτων…",
 	"replaceModal.searchPlaceholder": "Αναζήτηση callout",
+	"replaceModal.chooseFirst": "Για να συνεχίσετε, επιλέξτε ένα callout αντικατάστασης ή «{{delete}}».",
+	"replaceModal.chooseFirstReplace": "Επιλέξτε πρώτα το callout με το οποίο θα αντικατασταθεί.",
 	"settings.fallbackTag": "Προεπιλογή",
 	"settings.fallbackTagAuto": "Αυτόματη προεπιλογή",
 	"settings.rescanVaultDesc": "Προσθέτει τύπους callout που χρησιμοποιούνται στις σημειώσεις σας και δεν βρίσκονται ακόμη σε αυτήν τη λίστα. Τα υπάρχοντα callout και οι σημειώσεις σας δεν αλλάζουν.",
@@ -208,6 +210,7 @@ export const el: Record<string, string> = {
 	"commandBuilder.duplicate": "Έχετε ήδη μια εντολή που κάνει ακριβώς αυτό.",
 	"commandBuilder.noCallouts":
 		"Δεν υπάρχουν ακόμη τύποι callout για να δημιουργήσετε μια εντολή.",
+	"commandBuilder.noCalloutChosen": "Επιλέξτε πρώτα ένα callout για αυτήν την εντολή.",
 	"commandBuilder.save": "Αποθήκευση",
 	"settings.vaultMaintenance": "Πληροφορίες vault και συντήρηση",
 	"settings.vaultStats": "Στατιστικά callout",
@@ -363,6 +366,7 @@ export const el: Record<string, string> = {
 	"palette.name": "Όνομα",
 	"palette.namePlaceholder": "Η παλέτα μου",
 	"palette.nameExists": "Υπάρχει ήδη παλέτα με αυτό το όνομα",
+	"palette.saveBlockedName": "Υπάρχει ήδη παλέτα με αυτό το όνομα. Επιλέξτε διαφορετικό όνομα για να την αποθηκεύσετε.",
 	"palette.baseColor": "Βασικό χρώμα",
 	"palette.baseColorHint":
 		"Θα ταιριάξουμε αυτόματα το χρώμα φόντου με αυτό. Αν θέλετε, μπορείτε να το ελέγξετε ξεχωριστά κάνοντας {{link}}.",
@@ -448,6 +452,7 @@ export const el: Record<string, string> = {
 	"iconPicker.skinTone": "Χρώμα δέρματος",
 	"iconPicker.allCategories": "Όλες οι κατηγορίες",
 	"iconPicker.noIconSelected": "Δεν επιλέχθηκε εικονίδιο",
+	"iconPicker.chooseFirst": "Επιλέξτε πρώτα ένα εικονίδιο.",
 	"iconPicker.noResults":
 		"Κανένα εικονίδιο δεν ταιριάζει στην αναζήτησή σας.",
 	"iconPicker.octicons": "Octicons",
@@ -821,6 +826,10 @@ export const el: Record<string, string> = {
 	"portable.errorChanged": "Οι σημειώσεις άλλαξαν. Ελέγξτε τις ενημερωμένες αλλαγές πριν από τη μετατροπή.",
 	"portable.errorBusy": "Εκτελείται άλλη μετατροπή. Περιμένετε να ολοκληρωθεί.",
 	"portable.error": "Δεν ήταν δυνατή η ασφαλής ανάγνωση ή ενημέρωση του θησαυροφυλακίου. Ελέγξτε την πρόσβαση στα αρχεία και δοκιμάστε ξανά.",
+	"portable.blockedConverting": "Μια μετατροπή εκτελείται ήδη. Περιμένετε να ολοκληρωθεί.",
+	"portable.blockedUpdating": "Η αναθεώρηση ενημερώνεται ακόμη. Περιμένετε να ολοκληρωθεί πριν από τη μετατροπή.",
+	"portable.blockedEditing": "Ολοκληρώστε πρώτα την επεξεργασία της αντικατάστασης: πατήστε Enter για αποθήκευση ή Esc για απόρριψη.",
+	"portable.blockedNothingSelected": "Επιλέξτε τουλάχιστον μία αντικατάσταση για μετατροπή.",
 	"settings.maintenance": "Επικίνδυνη ζώνη",
 	"portable.subtitle": "Επιλέξτε ποια callout επικεφαλίδων και εντός κειμένου θα μετατραπούν σε τυπικό Markdown πριν σταματήσετε να χρησιμοποιείτε το Callout Studio.",
 	"portable.customize": "Προσαρμοσμένη αντικατάσταση…",
@@ -869,6 +878,7 @@ export const el: Record<string, string> = {
 		"{{valid}} από {{total}} καταχωρήσεις είναι έγκυρες · βρέθηκαν {{issues}} πρόβλημα/τα.",
 	"import.btnCancel": "Ακύρωση",
 	"import.btnImportValid": "Εισαγωγή μόνο έγκυρων ({{count}})",
+	"import.nothingValid": "Καμία από τις εγγραφές δεν είναι έγκυρη, επομένως δεν υπάρχει τίποτα για εισαγωγή. Ακυρώστε, διορθώστε τα προβλήματα που αναφέρονται εδώ και εισαγάγετε ξανά.",
 	"import.err.notRecognized":
 		"Μη αναγνωρίσιμο αρχείο: αναμενόταν πίνακας ορισμών callout ή εξαγωγή από το Callout Studio.",
 	"import.warn.settingsIgnored":
@@ -1204,6 +1214,7 @@ export const el: Record<string, string> = {
 	"recovery.originOlderVersion": "Αποθηκεύτηκε από παλαιότερη έκδοση",
 	"recovery.unreadable": "Δεν μπορεί να αναγνωστεί ως ρυθμίσεις",
 	"recovery.same": "Ίδιο με την τρέχουσα διαμόρφωσή σας",
+	"recovery.restoreSame": "Αυτή η ρύθμιση είναι ίδια με την τρέχουσα, επομένως δεν υπάρχει τίποτα για επαναφορά.",
 	"recovery.summary": "{{callouts}} αποθηκευμένος(οι) τύπος(οι) callout, {{count}} διαφορά(ές) από τώρα",
 	"recovery.export": "Εξαγωγή αντιγράφου",
 	"recovery.restore": "Επαναφορά",

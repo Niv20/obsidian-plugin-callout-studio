@@ -49,6 +49,10 @@ export const pt: Record<string, string> = {
 	"portable.errorChanged": "As notas mudaram. Revise as alterações atualizadas antes de converter.",
 	"portable.errorBusy": "Outra conversão está em andamento. Aguarde a conclusão.",
 	"portable.error": "Não foi possível ler ou atualizar o cofre com segurança. Verifique o acesso aos arquivos e tente novamente.",
+	"portable.blockedConverting": "Uma conversão já está em andamento. Aguarde a conclusão.",
+	"portable.blockedUpdating": "A revisão ainda está sendo atualizada. Aguarde a conclusão antes de converter.",
+	"portable.blockedEditing": "Termine primeiro de editar a substituição: pressione Enter para salvá-la ou Esc para descartá-la.",
+	"portable.blockedNothingSelected": "Selecione pelo menos uma substituição para converter.",
 	"settings.maintenance": "Zona de perigo",
 	"cmd.openSettings": "Abrir configurações",
 	"cmd.createCallout": "Criar novo tipo de callout",
@@ -73,6 +77,8 @@ export const pt: Record<string, string> = {
 	"editor.paletteNoMatches": "Nenhuma cor corresponde a “{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Pesquisar cores…",
 	"replaceModal.searchPlaceholder": "Pesquisar callouts",
+	"replaceModal.chooseFirst": "Escolha um callout substituto, ou “{{delete}}”, para continuar.",
+	"replaceModal.chooseFirstReplace": "Escolha primeiro o callout que vai substituí-lo.",
 	"settings.fallbackTag": "Padrão",
 	"settings.fallbackTagAuto": "Padrão automático",
 	"settings.rescanVaultDesc": "Adiciona os tipos de callout usados nas suas notas que ainda não estão nesta lista. Os seus callouts e notas existentes não são alterados.",
@@ -269,6 +275,7 @@ export const pt: Record<string, string> = {
 		"Você já tem um comando que faz exatamente isso.",
 	"commandBuilder.noCallouts":
 		"Ainda não há tipos de callout para construir um comando.",
+	"commandBuilder.noCalloutChosen": "Escolha primeiro um callout para este comando.",
 	"commandBuilder.save": "Salvar",
 
 	"settings.vaultMaintenance": "Insights e manutenção do vault",
@@ -426,6 +433,7 @@ export const pt: Record<string, string> = {
 	"palette.name": "Nome",
 	"palette.namePlaceholder": "Minha paleta",
 	"palette.nameExists": "Já existe uma paleta com esse nome",
+	"palette.saveBlockedName": "Já existe uma paleta com esse nome. Escolha outro nome para salvá-la.",
 	"palette.baseColor": "Cor base",
 	"palette.baseColorHint":
 		"Ajustaremos automaticamente a cor de fundo a esta. Se preferir, pode controlá-la separadamente ao {{link}}.",
@@ -510,6 +518,7 @@ export const pt: Record<string, string> = {
 	"iconPicker.skinTone": "Tom de pele",
 	"iconPicker.allCategories": "Todas as categorias",
 	"iconPicker.noIconSelected": "Nenhum ícone selecionado",
+	"iconPicker.chooseFirst": "Selecione um ícone primeiro.",
 	"iconPicker.noResults": "Nenhum ícone corresponde à sua pesquisa.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Pesquisar no Octicons",
@@ -882,6 +891,7 @@ export const pt: Record<string, string> = {
 		"{{valid}} de {{total}} entradas são válidas · {{issues}} problema(s) encontrado(s).",
 	"import.btnCancel": "Cancelar",
 	"import.btnImportValid": "Importar apenas as válidas ({{count}})",
+	"import.nothingValid": "Nenhuma das entradas é válida, então não há nada para importar. Cancele, corrija os problemas listados aqui e importe novamente.",
 	"import.err.notRecognized":
 		"Arquivo não reconhecido: esperava-se um array de definições de callout ou uma exportação do Callout Studio.",
 	"import.warn.settingsIgnored":
@@ -1218,6 +1228,7 @@ export const pt: Record<string, string> = {
 	"recovery.originOlderVersion": "Salva por uma versão mais antiga",
 	"recovery.unreadable": "Não pode ser lida como configurações",
 	"recovery.same": "Igual à sua configuração atual",
+	"recovery.restoreSame": "Esta configuração é igual à atual, então não há nada para restaurar.",
 	"recovery.summary": "{{callouts}} tipo(s) de callout salvos, {{count}} diferença(s) em relação a agora",
 	"recovery.export": "Exportar cópia",
 	"recovery.restore": "Restaurar",

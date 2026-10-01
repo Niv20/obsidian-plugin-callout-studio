@@ -106,9 +106,10 @@ again before rebuilding the reviewed proposal. The editor snapshots the opening
 value; finishing an unchanged draft exits editing without mutating the review.
 Escape or the active card's return-arrow button on a dirty draft restores its
 last saved/default preview. An outside click closes an invalid draft and shows
-a notice rather than leaving the input's editing appearance active. Conversion
-stays disabled until the active draft is saved or cancelled. Drafts survive
-redraws; they are cancelled when the current review becomes stale or closes.
+a notice rather than leaving the input's editing appearance active. Convert
+stays dimmed until the active draft is saved or cancelled; pressing it says so
+and leaves the draft open (see [Blocked main buttons say why](#blocked-main-buttons-say-why)).
+Drafts survive redraws; they are cancelled when the current review becomes stale or closes.
 A purple **Custom** badge sits beside the format/line label. Outside an
 active edit, the return-arrow button restores the default replacement, as does
 the context-menu action; both rebuild dependent heading-link repairs. Saved
@@ -1564,6 +1565,69 @@ call sites in `src/`: it is added inside Obsidian's `ButtonComponent`. The
 regression test intentionally covers the real `mod-destructive mod-cta`
 combination so a future accent change cannot capture warning buttons again.
 
+## Blocked main buttons say why
+
+A button that cannot act must not go quiet. A `disabled` button swallows the
+click, so the user is left looking at a dimmed control that never says what it
+is waiting for — a name still to be typed, a row still to be chosen, a draft
+still to be confirmed with Enter. Every *main* button that can be blocked for a
+reason the screen does not already show is therefore **dimmed instead of
+disabled**, and answers a press with a notice naming the one thing in the way.
+
+[`ui/blockedButton.ts`](../../src/ui/blockedButton.ts) is the whole mechanism:
+two functions over one reason string.
+
+- **`paintBlocked(button, reason)`** sets `aria-disabled` and `cs-btn-disabled`
+  while `reason` is non-null and clears both otherwise. Obsidian's own
+  stylesheet draws `button[aria-disabled="true"]` exactly like
+  `button[disabled]` (`opacity: 0.7`, `cursor: not-allowed`);
+  `cs-btn-disabled` is what the plugin's own rules key on — the accent and red
+  hover rules skip it, and the modal footer dims it further (`opacity: 0.4`).
+- **`explainIfBlocked(reason)`** is the first line of the click handler:
+  `if (explainIfBlocked(this.saveBlockedReason())) return;`. It returns true
+  after showing the reason, so the handler stops. The notice stays up for
+  Obsidian's five seconds, stretched at about 60 ms a character (to 12 s) for a
+  longer sentence, and a second press *replaces* it rather than stacking
+  another.
+
+Each button owns a private `…BlockedReason(): string | null` that returns the
+translated sentence for the first thing in the way, or `null`. The same method
+paints and answers, so the dimmed look and the words cannot disagree, and the
+click recomputes it instead of trusting the last paint — a state that changed
+without a redraw is still answered truthfully. The sentences name what to do
+(*Choose a replacement callout…*), not the button; a sentence that has to name
+another control takes its label as a `{{placeholder}}` so it cannot drift from
+the label.
+
+| Button | Reason method | Blocked while → notice |
+| --- | --- | --- |
+| **Convert selected…** / **Finish conversion…** (Review conversion) | `PortableConversionView.convertBlockedReason()` | a conversion is running → `portable.blockedConverting`; pending link updates unrecoverable → `portable.recoveryUnavailable`; the review failed → the error already on its status line; the review is updating → `portable.blockedUpdating`; a replacement draft is open → `portable.blockedEditing`; every replacement unchecked → `portable.blockedNothingSelected`; nothing eligible → `portable.empty` |
+| **Save** (command editor) | `CommandEditorModal.saveBlockedReason()` | no callout exists or is chosen → `commandBuilder.noCallouts` / `commandBuilder.noCalloutChosen`; the same command already exists → `commandBuilder.duplicate` |
+| **Save** (palette editor) | `PaletteEditorModal.saveBlockedReason()` | the name is taken → `palette.saveBlockedName`; the colours duplicate another palette → `palette.colorExists` |
+| **Replace** / **Confirm** (replacement picker) | `ReplaceCalloutModal.confirmBlockedReason()` | no row chosen → `replaceModal.chooseFirst` (delete mode names "delete without replacing") / `replaceModal.chooseFirstReplace` |
+| **Import valid only (N)** (import report) | `ImportReportModal` | N is 0 → `import.nothingValid` |
+| **Confirm** (icon picker) | `IconPicker.confirmBlockedReason()` | no icon selected, which is also what switching source does → `iconPicker.chooseFirst` |
+| **Restore** (earlier setups) | `SettingsRecoveryModal.restoreBlockedReason()` | saving is paused → `notice.blockedWhilePaused`; the setup equals the current one → `recovery.restoreSame` |
+
+The callout editor's **Save** (`showSaveBlockedNotice`), the quick-insert
+**Insert** (`quickInsertNotice`) and the plugin import's **Import**
+(`noticeFillFirst`) were the first three to work this way and keep their own
+copy; **Reset everything**'s acknowledgement answers a press with a nudge on
+the checkbox instead (see [`ConfirmModal`](#confirmmodal--the-generic-yesno-dialog)).
+
+**Where `disabled` stays right.** A button that is merely *busy* and whose
+label already says so: **Saving…** and **Importing…**, the discovery button's
+**Scanning…**, the saving banner's **Working on it…**, and the icon picker's
+Confirm while its artwork downloads. Pressing one of those teaches nothing.
+
+**Two consequences to keep.** A dimmed button is focusable, so Enter and Space
+answer too. And a press on one is *not* "clicking away": while a Review
+conversion replacement draft is open, a document-level handler commits it on
+any outside click, so `PortableConversionCustom.outsideClick` ignores a press
+on an `aria-disabled` control, and the view puts the caret back in the draft
+(`focusDraft`) — the notice says *press Enter*, and focus would otherwise sit
+on the very button that just refused.
+
 ## Notable individual modals
 
 ### `ConfirmModal` — the generic yes/no dialog
@@ -2372,8 +2436,10 @@ where the entry came from and how far it is from now, and an eye icon with the
 **View details** tooltip. Readable entries also have a **Restore** action.
 There is no per-entry export action; the settings page's ordinary **Export**
 continues to export the displayed setup.
-**Restore** is `mod-warning`, disabled while saving is paused or when the entry
-equals the current setup, and confirms before calling `recovery.restore()`. A
+**Restore** is `mod-warning`, dimmed (not disabled — a press says why, see
+[Blocked main buttons say why](#blocked-main-buttons-say-why)) while saving is
+paused or when the entry equals the current setup, and confirms before calling
+`recovery.restore()`. A
 source that cannot be read as settings still has **View details**, but no restore
 button. The behavior behind these actions is in
 [Recovery without file surgery](08-settings-sync-and-recovery.md#recovery-without-file-surgery).

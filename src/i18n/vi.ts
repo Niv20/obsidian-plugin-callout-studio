@@ -49,6 +49,10 @@ export const vi: Record<string, string> = {
 	"portable.errorChanged": "Ghi chú đã thay đổi. Hãy xem xét các thay đổi mới trước khi chuyển đổi.",
 	"portable.errorBusy": "Một quá trình chuyển đổi khác đang chạy. Hãy chờ quá trình đó hoàn tất.",
 	"portable.error": "Không thể đọc hoặc cập nhật kho ghi chú một cách an toàn. Kiểm tra quyền truy cập tệp rồi thử lại.",
+	"portable.blockedConverting": "Một quá trình chuyển đổi đang chạy. Hãy chờ quá trình đó hoàn tất.",
+	"portable.blockedUpdating": "Bản xem lại vẫn đang cập nhật. Hãy chờ hoàn tất trước khi chuyển đổi.",
+	"portable.blockedEditing": "Hãy hoàn tất chỉnh sửa phần thay thế trước: nhấn Enter để lưu hoặc Esc để bỏ.",
+	"portable.blockedNothingSelected": "Chọn ít nhất một phần thay thế để chuyển đổi.",
 	"settings.maintenance": "Vùng nguy hiểm",
 	"cmd.openSettings": "Mở cài đặt",
 	"cmd.createCallout": "Tạo loại callout mới",
@@ -73,6 +77,8 @@ export const vi: Record<string, string> = {
 	"editor.paletteNoMatches": "Không có màu nào khớp với “{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Tìm màu…",
 	"replaceModal.searchPlaceholder": "Tìm kiếm callout",
+	"replaceModal.chooseFirst": "Để tiếp tục, hãy chọn một callout thay thế hoặc “{{delete}}”.",
+	"replaceModal.chooseFirstReplace": "Hãy chọn callout sẽ thay thế nó trước.",
 	"settings.fallbackTag": "Mặc định",
 	"settings.fallbackTagAuto": "Mặc định tự động",
 	"settings.rescanVaultDesc": "Thêm các loại callout được dùng trong ghi chú của bạn mà chưa có trong danh sách này. Các callout và ghi chú hiện có của bạn không bị thay đổi.",
@@ -266,6 +272,7 @@ export const vi: Record<string, string> = {
 	"commandBuilder.preview": "Tên lệnh",
 	"commandBuilder.duplicate": "Bạn đã có một lệnh làm chính xác việc này.",
 	"commandBuilder.noCallouts": "Chưa có loại callout nào để tạo lệnh.",
+	"commandBuilder.noCalloutChosen": "Hãy chọn một callout cho lệnh này trước.",
 	"commandBuilder.save": "Lưu",
 
 	"commandBuilder.roleThemeOwned":
@@ -429,6 +436,7 @@ export const vi: Record<string, string> = {
 	"palette.name": "Tên",
 	"palette.namePlaceholder": "Bảng màu của tôi",
 	"palette.nameExists": "Đã tồn tại bảng màu với tên này",
+	"palette.saveBlockedName": "Đã tồn tại bảng màu với tên này. Hãy chọn tên khác để lưu.",
 	"palette.baseColor": "Màu gốc",
 	"palette.baseColorHint":
 		"Chúng tôi sẽ tự động khớp màu nền với màu này. Nếu muốn, bạn có thể điều khiển riêng bằng cách {{link}}.",
@@ -514,6 +522,7 @@ export const vi: Record<string, string> = {
 	"iconPicker.skinTone": "Tông màu da",
 	"iconPicker.allCategories": "Tất cả danh mục",
 	"iconPicker.noIconSelected": "Chưa chọn biểu tượng",
+	"iconPicker.chooseFirst": "Hãy chọn một biểu tượng trước.",
 	"iconPicker.noResults":
 		"Không có biểu tượng nào khớp với tìm kiếm của bạn.",
 	"iconPicker.octicons": "Octicons",
@@ -888,6 +897,7 @@ export const vi: Record<string, string> = {
 		"{{valid}} trong {{total}} mục hợp lệ · tìm thấy {{issues}} vấn đề.",
 	"import.btnCancel": "Hủy",
 	"import.btnImportValid": "Chỉ nhập hợp lệ ({{count}})",
+	"import.nothingValid": "Không có mục nào hợp lệ nên không có gì để nhập. Hãy hủy, sửa các vấn đề được liệt kê ở đây rồi nhập lại.",
 	"import.err.notRecognized":
 		"Tệp không được nhận dạng: cần một mảng định nghĩa callout hoặc một tệp xuất Callout Studio.",
 	"import.warn.settingsIgnored":
@@ -1209,6 +1219,7 @@ export const vi: Record<string, string> = {
 	"recovery.originOlderVersion": "Đã lưu bởi phiên bản cũ hơn",
 	"recovery.unreadable": "Không thể đọc được như một tệp cài đặt",
 	"recovery.same": "Giống với thiết lập hiện tại của bạn",
+	"recovery.restoreSame": "Thiết lập này giống với thiết lập hiện tại của bạn nên không có gì để khôi phục.",
 	"recovery.summary": "{{callouts}} loại callout đã lưu, {{count}} điểm khác biệt so với hiện tại",
 	"recovery.export": "Xuất bản sao",
 	"recovery.restore": "Khôi phục",

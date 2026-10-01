@@ -23,6 +23,8 @@ export const de: Record<string, string> = {
 	"editor.paletteNoMatches": "Keine Farbe entspricht „{{query}}“.",
 	"editor.paletteSearchPlaceholder": "Farben suchen…",
 	"replaceModal.searchPlaceholder": "Callouts durchsuchen",
+	"replaceModal.chooseFirst": "Wähle ein Ersatz-Callout oder „{{delete}}“, um fortzufahren.",
+	"replaceModal.chooseFirstReplace": "Wähle zuerst das Callout aus, durch das es ersetzt werden soll.",
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatischer Standard",
 	"settings.rescanVaultDesc": "Fügt Callout-Typen hinzu, die in deinen Notizen verwendet werden und noch nicht in dieser Liste stehen. Deine vorhandenen Callouts und Notizen werden nicht geändert.",
@@ -216,6 +218,7 @@ export const de: Record<string, string> = {
 		"Sie haben bereits einen Befehl, der genau das tut.",
 	"commandBuilder.noCallouts":
 		"Es gibt noch keine Callout-Typen, aus denen ein Befehl erstellt werden kann.",
+	"commandBuilder.noCalloutChosen": "Wähle zuerst ein Callout für diesen Befehl aus.",
 	"commandBuilder.save": "Speichern",
 	"commandBuilder.roleThemeOwned":
 		"Ihr Theme liefert diesen Callout, daher hat er nur ein Block-Format.",
@@ -379,6 +382,7 @@ export const de: Record<string, string> = {
 	"palette.name": "Name",
 	"palette.namePlaceholder": "Meine Palette",
 	"palette.nameExists": "Es gibt bereits eine Palette mit diesem Namen",
+	"palette.saveBlockedName": "Es gibt bereits eine Palette mit diesem Namen. Wähle einen anderen Namen, um sie zu speichern.",
 	"palette.baseColor": "Basisfarbe",
 	"palette.baseColorHint":
 		"Wir passen die Hintergrundfarbe automatisch daran an. Wenn du möchtest, kannst du sie separat steuern, indem du {{link}}.",
@@ -464,6 +468,7 @@ export const de: Record<string, string> = {
 	"iconPicker.skinTone": "Hautton",
 	"iconPicker.allCategories": "Alle Kategorien",
 	"iconPicker.noIconSelected": "Kein Symbol ausgewählt",
+	"iconPicker.chooseFirst": "Wähle zuerst ein Symbol aus.",
 	"iconPicker.noResults": "Keine Symbole entsprechen Ihrer Suche.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Octicons durchsuchen",
@@ -840,6 +845,10 @@ export const de: Record<string, string> = {
 	"portable.errorChanged": "Die Notizen wurden geändert. Prüfe die aktualisierten Änderungen vor der Konvertierung.",
 	"portable.errorBusy": "Eine andere Konvertierung läuft. Warte, bis sie abgeschlossen ist.",
 	"portable.error": "Der Vault konnte nicht sicher gelesen oder aktualisiert werden. Prüfe den Dateizugriff und versuche es erneut.",
+	"portable.blockedConverting": "Eine Konvertierung läuft bereits. Warte, bis sie abgeschlossen ist.",
+	"portable.blockedUpdating": "Die Prüfung wird noch aktualisiert. Warte, bis sie abgeschlossen ist, bevor du konvertierst.",
+	"portable.blockedEditing": "Beende zuerst die Bearbeitung der Ersetzung: Drücke Enter zum Speichern oder Esc zum Verwerfen.",
+	"portable.blockedNothingSelected": "Wähle mindestens eine Ersetzung zum Konvertieren aus.",
 	"settings.maintenance": "Gefahrenbereich",
 	"portable.subtitle": "Wähle aus, welche Überschriften- und Inline-Callouts du in Standard-Markdown umwandeln möchtest, bevor du Callout Studio nicht mehr verwendest.",
 	"portable.customize": "Benutzerdefinierte Ersetzung…",
@@ -889,6 +898,7 @@ export const de: Record<string, string> = {
 		"{{valid}} von {{total}} Einträgen sind gültig · {{issues}} Problem(e) gefunden.",
 	"import.btnCancel": "Abbrechen",
 	"import.btnImportValid": "Nur gültige importieren ({{count}})",
+	"import.nothingValid": "Keiner der Einträge ist gültig, daher gibt es nichts zu importieren. Brich ab, behebe die hier aufgeführten Probleme und importiere erneut.",
 	"import.err.notRecognized":
 		"Datei nicht erkannt: Es wurde ein Array von Callout-Definitionen oder ein Callout-Studio-Export erwartet.",
 	"import.warn.settingsIgnored":
@@ -1226,6 +1236,7 @@ export const de: Record<string, string> = {
 	"recovery.originOlderVersion": "Von einer älteren Version gespeichert",
 	"recovery.unreadable": "Kann nicht als Einstellungen gelesen werden",
 	"recovery.same": "Identisch mit deiner aktuellen Konfiguration",
+	"recovery.restoreSame": "Dieses Setup ist identisch mit deinem aktuellen, daher gibt es nichts wiederherzustellen.",
 	"recovery.summary": "{{callouts}} gespeicherte(r) Callout-Typ(en), {{count}} Unterschied(e) zu jetzt",
 	"recovery.export": "Kopie exportieren",
 	"recovery.restore": "Wiederherstellen",

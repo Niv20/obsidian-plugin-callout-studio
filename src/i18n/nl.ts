@@ -22,6 +22,8 @@ export const nl: Record<string, string> = {
 	"editor.paletteNoMatches": "Geen kleuren gevonden voor ‘{{query}}’.",
 	"editor.paletteSearchPlaceholder": "Kleuren zoeken…",
 	"replaceModal.searchPlaceholder": "Callouts zoeken",
+	"replaceModal.chooseFirst": "Kies een vervangende callout, of “{{delete}}”, om verder te gaan.",
+	"replaceModal.chooseFirstReplace": "Kies eerst de callout waarmee je deze wilt vervangen.",
 	"settings.fallbackTag": "Standaard",
 	"settings.fallbackTagAuto": "Automatisch standaard",
 	"settings.rescanVaultDesc": "Voegt callouttypen toe die in je notities worden gebruikt en nog niet in deze lijst staan. Je bestaande callouts en notities worden niet gewijzigd.",
@@ -216,6 +218,7 @@ export const nl: Record<string, string> = {
 		"U hebt al een opdracht die precies hetzelfde doet.",
 	"commandBuilder.noCallouts":
 		"Er zijn nog geen callout-types om een opdracht van te maken.",
+	"commandBuilder.noCalloutChosen": "Kies eerst een callout voor deze opdracht.",
 	"commandBuilder.save": "Opslaan",
 
 	"commandBuilder.roleThemeOwned":
@@ -384,6 +387,7 @@ export const nl: Record<string, string> = {
 	"palette.name": "Naam",
 	"palette.namePlaceholder": "Mijn palet",
 	"palette.nameExists": "Er bestaat al een palet met deze naam",
+	"palette.saveBlockedName": "Er bestaat al een palet met deze naam. Kies een andere naam om het op te slaan.",
 	"palette.baseColor": "Basiskleur",
 	"palette.baseColorHint":
 		"We passen de achtergrondkleur hier automatisch op aan. Als je wilt, kun je dit apart aansturen door {{link}}.",
@@ -468,6 +472,7 @@ export const nl: Record<string, string> = {
 	"iconPicker.skinTone": "Huidskleur",
 	"iconPicker.allCategories": "Alle categorieën",
 	"iconPicker.noIconSelected": "Geen pictogram geselecteerd",
+	"iconPicker.chooseFirst": "Selecteer eerst een pictogram.",
 	"iconPicker.noResults":
 		"Geen pictogrammen komen overeen met uw zoekopdracht.",
 	"iconPicker.octicons": "Octicons",
@@ -839,6 +844,7 @@ export const nl: Record<string, string> = {
 		"{{valid}} van {{total}} vermeldingen zijn geldig · {{issues}} probleem/problemen gevonden.",
 	"import.btnCancel": "Annuleren",
 	"import.btnImportValid": "Alleen geldige importeren ({{count}})",
+	"import.nothingValid": "Geen van de items is geldig, dus er is niets om te importeren. Annuleer, los de hier genoemde problemen op en importeer opnieuw.",
 	"import.err.notRecognized":
 		"Onbekend bestand: er werd een array van callout-definities of een Callout Studio-export verwacht.",
 	"import.warn.settingsIgnored":
@@ -1153,6 +1159,10 @@ export const nl: Record<string, string> = {
 	"portable.errorChanged": "De notities zijn gewijzigd. Bekijk de bijgewerkte wijzigingen voordat je ze omzet.",
 	"portable.errorBusy": "Er wordt al een andere conversie uitgevoerd. Wacht tot deze klaar is.",
 	"portable.error": "De kluis kon niet veilig worden gelezen of bijgewerkt. Controleer de bestandstoegang en probeer het opnieuw.",
+	"portable.blockedConverting": "Er wordt al een conversie uitgevoerd. Wacht tot deze klaar is.",
+	"portable.blockedUpdating": "De controle wordt nog bijgewerkt. Wacht tot deze klaar is voordat je converteert.",
+	"portable.blockedEditing": "Rond eerst het bewerken van de vervanging af: druk op Enter om op te slaan of op Esc om te verwerpen.",
+	"portable.blockedNothingSelected": "Selecteer minstens één vervanging om te converteren.",
 	"settings.maintenance": "Gevarenzone",
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
@@ -1222,6 +1232,7 @@ export const nl: Record<string, string> = {
 	"recovery.originOlderVersion": "Opgeslagen door een oudere versie",
 	"recovery.unreadable": "Kan niet als instellingen worden gelezen",
 	"recovery.same": "Hetzelfde als je huidige configuratie",
+	"recovery.restoreSame": "Deze configuratie is hetzelfde als je huidige, dus er is niets om te herstellen.",
 	"recovery.summary": "{{callouts}} opgeslagen callout-type(n), {{count}} verschil(len) met nu",
 	"recovery.export": "Kopie exporteren",
 	"recovery.restore": "Herstellen",

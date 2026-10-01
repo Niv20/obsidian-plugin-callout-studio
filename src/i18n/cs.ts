@@ -22,6 +22,8 @@ export const cs: Record<string, string> = {
 	"editor.paletteNoMatches": "Žádná barva neodpovídá dotazu „{{query}}“.",
 	"editor.paletteSearchPlaceholder": "Hledat barvy…",
 	"replaceModal.searchPlaceholder": "Hledat callouty",
+	"replaceModal.chooseFirst": "Chcete-li pokračovat, vyberte náhradní callout nebo „{{delete}}“.",
+	"replaceModal.chooseFirstReplace": "Nejprve vyberte callout, kterým ho nahradíte.",
 	"settings.fallbackTag": "Výchozí",
 	"settings.fallbackTagAuto": "Aut. výchozí",
 	"settings.rescanVaultDesc": "Přidá typy calloutů použité ve vašich poznámkách, které zatím nejsou v tomto seznamu. Vaše stávající callouty a poznámky se nezmění.",
@@ -213,6 +215,7 @@ export const cs: Record<string, string> = {
 	"commandBuilder.duplicate": "Takový příkaz už máte.",
 	"commandBuilder.noCallouts":
 		"Zatím neexistují žádné typy callout, ze kterých by šlo příkaz vytvořit.",
+	"commandBuilder.noCalloutChosen": "Nejprve vyberte callout pro tento příkaz.",
 	"commandBuilder.save": "Uložit",
 	"commandBuilder.roleThemeOwned":
 		"Tento callout dodává vaše téma, takže má pouze blokový formát.",
@@ -373,6 +376,7 @@ export const cs: Record<string, string> = {
 	"palette.name": "Název",
 	"palette.namePlaceholder": "Moje paleta",
 	"palette.nameExists": "Paleta s tímto názvem již existuje",
+	"palette.saveBlockedName": "Paleta s tímto názvem již existuje. Pro uložení zvolte jiný název.",
 	"palette.baseColor": "Základní barva",
 	"palette.baseColorHint":
 		"Barvu pozadí automaticky přizpůsobíme této barvě. Pokud chcete, můžete ji ovládat samostatně kliknutím na {{link}}.",
@@ -458,6 +462,7 @@ export const cs: Record<string, string> = {
 	"iconPicker.skinTone": "Tón pleti",
 	"iconPicker.allCategories": "Všechny kategorie",
 	"iconPicker.noIconSelected": "Není vybrána žádná ikona",
+	"iconPicker.chooseFirst": "Nejprve vyberte ikonu.",
 	"iconPicker.noResults": "Žádné ikony neodpovídají vašemu hledání.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Hledat v Octicons",
@@ -830,6 +835,10 @@ export const cs: Record<string, string> = {
 	"portable.errorChanged": "Poznámky se změnily. Před převodem zkontrolujte aktualizované změny.",
 	"portable.errorBusy": "Probíhá jiný převod. Počkejte na jeho dokončení.",
 	"portable.error": "Trezor se nepodařilo bezpečně přečíst nebo aktualizovat. Zkontrolujte přístup k souborům a zkuste to znovu.",
+	"portable.blockedConverting": "Převod již probíhá. Počkejte na jeho dokončení.",
+	"portable.blockedUpdating": "Kontrola se stále aktualizuje. Před převodem počkejte na její dokončení.",
+	"portable.blockedEditing": "Nejprve dokončete úpravu náhrady: stisknutím Enter ji uložíte, stisknutím Esc ji zahodíte.",
+	"portable.blockedNothingSelected": "Vyberte alespoň jednu náhradu k převodu.",
 	"settings.maintenance": "Nebezpečná zóna",
 	"portable.subtitle": "Než přestanete používat Callout Studio, vyberte, které callouty v nadpisech a textu chcete převést na standardní Markdown.",
 	"portable.customize": "Vlastní náhrada…",
@@ -879,6 +888,7 @@ export const cs: Record<string, string> = {
 		"{{valid}} z {{total}} položek je platných · nalezeno {{issues}} problémů.",
 	"import.btnCancel": "Zrušit",
 	"import.btnImportValid": "Importovat pouze platné ({{count}})",
+	"import.nothingValid": "Žádná z položek není platná, takže není co importovat. Zrušte import, opravte zde uvedené problémy a importujte znovu.",
 	"import.err.notRecognized":
 		"Nerozpoznaný soubor: očekávalo se pole definic callout nebo export z Callout Studia.",
 	"import.warn.settingsIgnored":
@@ -1201,6 +1211,7 @@ export const cs: Record<string, string> = {
 	"recovery.originOlderVersion": "Uloženo starší verzí",
 	"recovery.unreadable": "Nelze načíst jako nastavení",
 	"recovery.same": "Stejné jako vaše aktuální konfigurace",
+	"recovery.restoreSame": "Toto nastavení je stejné jako to současné, takže není co obnovovat.",
 	"recovery.summary": "{{callouts}} uložený(ch) typ(ů) calloutu, {{count}} rozdíl(ů) oproti nynějšímu stavu",
 	"recovery.export": "Exportovat kopii",
 	"recovery.restore": "Obnovit",

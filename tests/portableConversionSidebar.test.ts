@@ -190,7 +190,7 @@ describe("conversion file groups and cards", () => {
 			await h.view.onOpen(); h.setLiveText("An unrelated line");
 			h.root.fire("click", { target: h.root.querySelector('button[data-action="result"]') }); await h.settle();
 			assert.deepEqual(h.selections, []);
-			assert.equal(h.button("convert").disabled, true);
+			assert.equal(h.blocked("convert"), true);
 		} finally { await h.destroy(); }
 	});
 	it("shows adjacent link repairs separately from a token-only source row", async () => {

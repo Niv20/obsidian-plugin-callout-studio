@@ -49,6 +49,10 @@ export const sv: Record<string, string> = {
 	"portable.errorChanged": "Anteckningarna har ändrats. Granska de uppdaterade ändringarna innan du konverterar.",
 	"portable.errorBusy": "En annan konvertering pågår. Vänta tills den är klar.",
 	"portable.error": "Det gick inte att läsa eller uppdatera valvet säkert. Kontrollera filåtkomsten och försök igen.",
+	"portable.blockedConverting": "En konvertering pågår redan. Vänta tills den är klar.",
+	"portable.blockedUpdating": "Granskningen uppdateras fortfarande. Vänta tills den är klar innan du konverterar.",
+	"portable.blockedEditing": "Slutför redigeringen av ersättningen först: tryck på Enter för att spara den eller Esc för att förkasta den.",
+	"portable.blockedNothingSelected": "Välj minst en ersättning att konvertera.",
 	"settings.maintenance": "Riskområde",
 	"cmd.openSettings": "Öppna inställningar",
 	"cmd.createCallout": "Skapa ny callout-typ",
@@ -73,6 +77,8 @@ export const sv: Record<string, string> = {
 	"editor.paletteNoMatches": "Ingen färg matchar ”{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Sök färger…",
 	"replaceModal.searchPlaceholder": "Sök callouts",
+	"replaceModal.chooseFirst": "Välj en ersättnings-callout, eller ”{{delete}}”, för att fortsätta.",
+	"replaceModal.chooseFirstReplace": "Välj först den callout den ska ersättas med.",
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
 	"settings.rescanVaultDesc": "Lägger till callout-typer som används i dina anteckningar och som inte redan finns i den här listan. Dina befintliga callouts och anteckningar ändras inte.",
@@ -270,6 +276,7 @@ export const sv: Record<string, string> = {
 		"Du har redan ett kommando som gör exakt detta.",
 	"commandBuilder.noCallouts":
 		"Det finns inga callout-typer att bygga ett kommando från än.",
+	"commandBuilder.noCalloutChosen": "Välj först en callout för det här kommandot.",
 	"commandBuilder.save": "Spara",
 
 	"settings.vaultMaintenance": "Vault-insikter och underhåll",
@@ -425,6 +432,7 @@ export const sv: Record<string, string> = {
 	"palette.name": "Namn",
 	"palette.namePlaceholder": "Min palett",
 	"palette.nameExists": "En palett med detta namn finns redan",
+	"palette.saveBlockedName": "En palett med detta namn finns redan. Välj ett annat namn för att spara den.",
 	"palette.baseColor": "Basfärg",
 	"palette.baseColorHint":
 		"Vi matchar automatiskt bakgrundsfärgen till den. Om du vill kan du styra den separat genom att {{link}}.",
@@ -509,6 +517,7 @@ export const sv: Record<string, string> = {
 	"iconPicker.skinTone": "Hudton",
 	"iconPicker.allCategories": "Alla kategorier",
 	"iconPicker.noIconSelected": "Ingen ikon vald",
+	"iconPicker.chooseFirst": "Välj först en ikon.",
 	"iconPicker.noResults": "Inga ikoner matchar din sökning.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Sök i Octicons",
@@ -876,6 +885,7 @@ export const sv: Record<string, string> = {
 		"{{valid}} av {{total}} poster är giltiga · {{issues}} problem hittades.",
 	"import.btnCancel": "Avbryt",
 	"import.btnImportValid": "Importera bara giltiga ({{count}})",
+	"import.nothingValid": "Ingen av posterna är giltig, så det finns inget att importera. Avbryt, åtgärda problemen som listas här och importera igen.",
 	"import.err.notRecognized":
 		"Okänd fil: en array med callout-definitioner eller en Callout Studio-export förväntades.",
 	"import.warn.settingsIgnored":
@@ -1199,6 +1209,7 @@ export const sv: Record<string, string> = {
 	"recovery.originOlderVersion": "Sparat av en äldre version",
 	"recovery.unreadable": "Kan inte läsas som inställningar",
 	"recovery.same": "Samma som din nuvarande uppsättning",
+	"recovery.restoreSame": "Den här konfigurationen är densamma som din nuvarande, så det finns inget att återställa.",
 	"recovery.summary": "{{callouts}} sparad(e) callout-typ(er), {{count}} skillnad(er) från nu",
 	"recovery.export": "Exportera kopia",
 	"recovery.restore": "Återställ",

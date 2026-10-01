@@ -1,13 +1,15 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { Platform } from "obsidian";
+import { t } from "../src/i18n";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import { getSource, ICON_SOURCE_IDS } from "../src/icons/registry";
 import type { IconIndex } from "../src/icons/types";
 import { IconPicker, type IconPickerPlugin } from "../src/settings/iconpicker/IconPickerModal";
 import type { IconSourceId } from "../src/types";
-import { fakeDom } from "./support/fakeDom";
+import { fakeDom, type FakeElement } from "./support/fakeDom";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
+import { Notice } from "./support/obsidianStub";
 
 function deferred<T>() {
 	let resolve!: (value: T) => void;
@@ -82,6 +84,23 @@ describe("icon picker asynchronous lifecycle", () => {
 				} finally { h.destroy(); }
 			}
 		} finally { Platform.isMobile = wasMobile; }
+	});
+
+	it("dims Confirm once switching source clears the choice, and says why when it is pressed", async () => {
+		const h = harness(async () => {});
+		try {
+			h.modal.onOpen();
+			await Promise.all(h.tasks);
+			const confirm = (h.modal.modalEl as unknown as FakeElement).querySelector(".cs-modal-footer button.mod-cta");
+			assert.ok(confirm);
+			assert.equal(confirm.getAttribute("aria-disabled"), "false", "the icon being edited is selected");
+			// An icon only means something within its own source, so switching drops it.
+			(h.modal as unknown as { selectSource(id: IconSourceId): void }).selectSource("tabler");
+			assert.equal(confirm.getAttribute("aria-disabled"), "true");
+			assert.equal(confirm.hasClass("cs-btn-disabled"), true);
+			confirm.fire("click");
+			assert.equal(String(Notice.last?.message), t("iconPicker.chooseFirst"));
+		} finally { h.destroy(); }
 	});
 
 	it("does not create toolbar listeners after closing during disk loading", async () => {

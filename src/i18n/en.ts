@@ -143,6 +143,7 @@ export const en: Record<string, string> = {
 	"recovery.originOlderVersion": "Saved by an older version",
 	"recovery.unreadable": "Can't be read as settings",
 	"recovery.same": "Same as your current setup",
+	"recovery.restoreSame": "This setup is the same as your current one, so there is nothing to restore.",
 	"recovery.summary": "{{callouts}} saved callout type(s), {{count}} difference(s) from now",
 	"recovery.summaryCallouts": "{{callouts}} saved callout type(s)",
 	"recovery.summaryChanges": "{{count}} difference(s) from now",
@@ -364,6 +365,8 @@ export const en: Record<string, string> = {
 	"replaceModal.titleDelete": "Delete callout",
 	"replaceModal.titleReplace": "Replace in vault",
 	"replaceModal.searchPlaceholder": "Search callouts…",
+	"replaceModal.chooseFirst": "Choose a replacement callout, or “{{delete}}”, to continue.",
+	"replaceModal.chooseFirstReplace": "Choose the callout to replace it with first.",
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
 	"welcome.tooltip": "About Callout Studio",
@@ -582,6 +585,7 @@ export const en: Record<string, string> = {
 		"You already have a command that does exactly this.",
 	"commandBuilder.noCallouts":
 		"There are no callout types to build a command from yet.",
+	"commandBuilder.noCalloutChosen": "Choose a callout for this command first.",
 	"commandBuilder.save": "Save",
 
 	// Quick insert window (the ribbon icon). Block callouts only — the wording
@@ -682,6 +686,11 @@ export const en: Record<string, string> = {
 	"portable.errorChanged": "The notes changed. Review the updated changes before converting.",
 	"portable.errorBusy": "Another conversion is running. Wait for it to finish.",
 	"portable.error": "The vault could not be read or updated safely. Check file access, then try again.",
+	// Shown when the dimmed Convert button is pressed: one sentence per reason it is blocked.
+	"portable.blockedConverting": "A conversion is already running. Wait for it to finish.",
+	"portable.blockedUpdating": "The review is still updating. Wait for it to finish before converting.",
+	"portable.blockedEditing": "Finish editing the replacement first: press Enter to save it, or Esc to discard it.",
+	"portable.blockedNothingSelected": "Select at least one replacement to convert.",
 
 	"settings.maintenance": "Danger zone",
 	"settings.vaultMaintenance": "Vault insights & maintenance",
@@ -876,6 +885,7 @@ export const en: Record<string, string> = {
 	"palette.name": "Name",
 	"palette.namePlaceholder": "My palette",
 	"palette.nameExists": "A palette with this name already exists",
+	"palette.saveBlockedName": "A palette with this name already exists. Choose a different name to save it.",
 	"palette.baseColor": "Base color",
 	"palette.baseColorHint":
 		"We'll automatically match the background color to it. If you'd like, you can control it separately by {{link}}.",
@@ -963,6 +973,7 @@ export const en: Record<string, string> = {
 	"iconPicker.skinTone": "Skin tone",
 	"iconPicker.allCategories": "All categories",
 	"iconPicker.noIconSelected": "No icon selected",
+	"iconPicker.chooseFirst": "Select an icon first.",
 	"iconPicker.noResults": "No icons match your search.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Search Octicons",
@@ -1341,6 +1352,7 @@ export const en: Record<string, string> = {
 		"{{valid}} of {{total}} entries are valid · {{issues}} issue(s) found.",
 	"import.btnCancel": "Cancel",
 	"import.btnImportValid": "Import valid only ({{count}})",
+	"import.nothingValid": "None of the entries are valid, so there is nothing to import. Cancel, fix the issues listed here, and import again.",
 	"import.err.notRecognized":
 		"Unrecognized file: expected a callout definitions array or a Callout Studio export.",
 	"import.warn.settingsIgnored":

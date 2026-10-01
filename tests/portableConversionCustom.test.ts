@@ -100,7 +100,7 @@ describe("inline custom replacement review", () => {
 				assert.equal(h.root.ownerDocument.activeElement, editor.input);
 				assert.deepEqual(h.opened, []);
 				assert.deepEqual(h.selections, []);
-				assert.equal(h.button("convert").disabled, true);
+				assert.equal(h.blocked("convert"), true);
 				assert.equal(editor.card.querySelector('[data-action="save-replacement"]'), null);
 				assert.equal(editor.card.querySelector('[data-action="cancel-replacement"]'), null);
 				editor.input.value = "Unsaved"; editor.input.fire("input");
@@ -275,7 +275,7 @@ describe("inline custom replacement review", () => {
 			h.root.ownerDocument.fire("click", { target: restore }); await h.settle();
 			assert.equal(h.root.querySelector("textarea"), null);
 			assert.equal(h.root.querySelectorAll(".cs-portable-change")[1]!.querySelector(".cs-portable-after")!.textContent, "tip");
-			assert.equal(h.badges().length, 1); assert.equal(h.button("convert").disabled, false);
+			assert.equal(h.badges().length, 1); assert.equal(h.blocked("convert"), false);
 			assert.equal(h.after(), "Unsaved note"); assert.equal(h.after(1), "tip");
 			assert.deepEqual(h.inputs().map(input => input.checked), [true, true]);
 			assert.deepEqual(h.written, []);
@@ -309,10 +309,10 @@ describe("inline custom replacement review", () => {
 			assert.equal(input, editor.input); assert.equal(input.value, "Unsaved draft");
 			assert.equal(input.ownerDocument.activeElement, input);
 			assert.deepEqual([input.selectionStart, input.selectionEnd], [2, 6]);
-			assert.equal(h.reads.length, reads); assert.equal(h.button("convert").disabled, true);
+			assert.equal(h.reads.length, reads); assert.equal(h.blocked("convert"), true);
 			h.click("convert"); assert.equal(h.confirmations.length, 0);
 			assert.equal(editor.save("Custom"), undefined);
-			assert.equal(h.after(), "Custom"); assert.equal(h.button("convert").disabled, false);
+			assert.equal(h.after(), "Custom"); assert.equal(h.blocked("convert"), false);
 			assert.deepEqual(h.written, []);
 		} finally { setLocale(previousLocale); await h.destroy(); }
 	});

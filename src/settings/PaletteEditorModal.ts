@@ -35,6 +35,7 @@ import {
 	createColorSwatchInput,
 	setContrastWarning,
 } from "../ui/ColorSwatchInput";
+import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
 import type { SelectDropdown } from "../ui/selectDropdown";
 import { buildPaletteBgStyleRow, type BgStyle } from "./paletteBgStyleRow";
@@ -434,7 +435,10 @@ export class PaletteEditorModal extends Modal {
 			text: t("palette.save"),
 			cls: "mod-cta",
 		});
-		this.saveBtnEl.addEventListener("click", () => this.finish(true));
+		this.saveBtnEl.addEventListener("click", () => {
+			if (explainIfBlocked(this.saveBlockedReason())) return;
+			this.finish(true);
+		});
 		this.updateValidity();
 
 		// Creating only, and last, on the finished window — `existing` is the
@@ -474,8 +478,8 @@ export class PaletteEditorModal extends Modal {
 
 	/**
 	 * Duplicate names AND duplicate colors are both hard-blocked: the offending
-	 * control is marked, an error shows beside it, and Save stays disabled until
-	 * the palette is unique on both axes.
+	 * control is marked, an error shows beside it, and Save stays dimmed until
+	 * the palette is unique on both axes — pressing it meanwhile says which.
 	 *
 	 * The color half runs from the live preview's `beforeRender`, which is the
 	 * one funnel every color change already goes through — hooking the
@@ -492,9 +496,17 @@ export class PaletteEditorModal extends Modal {
 		}
 		this.colorClash = this.findColorClash();
 		this.renderColorError();
-		if (this.saveBtnEl) {
-			this.saveBtnEl.disabled = nameTaken || this.colorClash !== null;
-		}
+		if (this.saveBtnEl) paintBlocked(this.saveBtnEl, this.saveBlockedReason(this.colorClash));
+	}
+
+	/**
+	 * Why Save cannot act, or null. The name comes first, as its error does on
+	 * screen. `clash` is passed by the caller that has just worked it out, so
+	 * the preview's per-frame pass does not compare every palette twice.
+	 */
+	private saveBlockedReason(clash: ColorPalette | null = this.findColorClash()): string | null {
+		if (this.isNameTaken()) return t("palette.saveBlockedName");
+		return clash ? t("palette.colorExists", { name: clash.name }) : null;
 	}
 
 	/**
@@ -998,8 +1010,8 @@ export class PaletteEditorModal extends Modal {
 	}
 
 	private finish(save: boolean): void {
-		// Save stays disabled on a duplicate name or duplicate colors, but
-		// guard anyway.
+		// Save stays dimmed on a duplicate name or duplicate colors and its press
+		// is answered before it gets here, but guard anyway.
 		if (save && (this.isNameTaken() || this.findColorClash())) return;
 		const resolve = this.resolve;
 		this.resolve = null;

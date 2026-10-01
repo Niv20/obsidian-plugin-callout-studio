@@ -36,6 +36,7 @@ import {
 import { PackPanel } from "./PackPanel";
 import { ImagePanel } from "./ImagePanel";
 import { alignIconPickerRows, mountIconSourcePicker } from "./sourcePicker";
+import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
 import type { ListboxPopup } from "../../ui/listboxPopup";
 import { applyModalChrome, removeModalChrome } from "../modalChrome";
 import { t } from "../../i18n";
@@ -157,6 +158,8 @@ export class IconPicker extends Modal {
 			cls: "mod-cta",
 		});
 		this.confirmBtn.addEventListener("click", () => void this.confirm());
+		// The preview above was drawn before this button existed.
+		paintBlocked(this.confirmBtn, this.confirmBlockedReason());
 
 		void this.openInitialPanel(generation);
 	}
@@ -415,15 +418,25 @@ export class IconPicker extends Modal {
 
 	private updatePreview(): void {
 		this.previewEl.empty();
+		if (this.confirmBtn) paintBlocked(this.confirmBtn, this.confirmBlockedReason());
 		if (!this.selectedIcon) {
 			this.previewEl.setText(t("iconPicker.noIconSelected"));
-			this.confirmBtn?.toggleClass("is-disabled", true);
 			return;
 		}
-		this.confirmBtn?.toggleClass("is-disabled", false);
 		this.previewEl
 			.createDiv("icon-picker-preview-label")
 			.setText(describeIcon(this.selectedIcon, this.plugin.registry.getUserImages()));
+	}
+
+	/**
+	 * Why Confirm cannot act, or null: no icon is chosen — which is also what
+	 * switching to another source does, since an icon only means something
+	 * within the source it came from. Dimmed rather than disabled, so pressing
+	 * it says so. (While the artwork downloads it is truly disabled: the
+	 * spinner and "Downloading icon" in its label already say why.)
+	 */
+	private confirmBlockedReason(): string | null {
+		return this.selectedIcon ? null : t("iconPicker.chooseFirst");
 	}
 
 	/**
@@ -432,6 +445,7 @@ export class IconPicker extends Modal {
 	 * Sources whose artwork is already local return immediately.
 	 */
 	private async confirm(): Promise<void> {
+		if (explainIfBlocked(this.confirmBlockedReason())) return;
 		if (!this.selectedIcon || !this.resolve) {
 			this.close();
 			return;
