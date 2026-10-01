@@ -40,7 +40,7 @@ const LONG_TEXT = 160;
 const MAX_ENTRIES = 40;
 /** Nesting shown for unknown values; deeper levels are summarized. */
 const MAX_DEPTH = 6;
-const SIDES = ["top", "right", "bottom", "left"] as const;
+export const SIDES = ["top", "right", "bottom", "left"] as const;
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -164,7 +164,7 @@ const PACK_STYLES: Readonly<Record<string, string>> = {
 	"tabler-outline": "iconPicker.tablerStyleOutline", "tabler-filled": "iconPicker.tablerStyleFilled",
 	"fa-solid": "iconPicker.faStyleSolid", "fa-regular": "iconPicker.faStyleRegular", "fa-brands": "iconPicker.faStyleBrands",
 };
-const MATERIAL_WEIGHTS: readonly number[] = [100, 200, 300, 400, 500, 600, 700];
+export const MATERIAL_WEIGHTS: readonly number[] = [100, 200, 300, 400, 500, 600, 700];
 
 function materialWeightText(weight: number): string {
 	return MATERIAL_WEIGHTS.includes(weight)

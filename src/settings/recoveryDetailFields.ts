@@ -1,6 +1,6 @@
 import { t } from "../i18n";
 
-const FIELDS: Readonly<Record<string, string>> = {
+export const FIELDS: Readonly<Record<string, string>> = {
 	id: "id", displayName: "displayName", name: "name", icon: "icon", type: "type", value: "value",
 	style: "style", weight: "weight", recolor: "recolor", hideIcon: "hideIcon",
 	colorLight: "colorLight", colorDark: "colorDark", bgColorLight: "bgColorLight", bgColorDark: "bgColorDark",

@@ -14,7 +14,7 @@ import { hexToHsl, hexToRgb, relativeLuminance } from "./colorUtils";
 import { t } from "../i18n";
 
 /** Anchor reference points; key doubles as the `colorName.<key>` i18n suffix. */
-const COLOR_ANCHORS: { key: string; hex: string }[] = [
+export const COLOR_ANCHORS: { key: string; hex: string }[] = [
 	{ key: "red", hex: "#f44336" },
 	{ key: "orange", hex: "#ff9800" },
 	{ key: "amber", hex: "#ffc107" },
