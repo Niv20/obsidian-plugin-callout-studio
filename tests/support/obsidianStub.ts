@@ -65,6 +65,7 @@ interface TestGlobals {
 	__CS_NOTICES__?: string[];
 	__CS_MACOS__?: boolean;
 	__CS_REQUEST_URL__?: (url: string) => Promise<StubResponse>;
+	__CS_LANGUAGE__?: string;
 }
 
 const seams = globalThis as unknown as TestGlobals;
@@ -120,6 +121,15 @@ export function requestUrl(options: { url: string }): Promise<StubResponse> {
 
 export function requireApiVersion(): boolean {
 	return true;
+}
+
+/**
+ * Obsidian's interface language, as Settings → General sets it. A suite sets
+ * `__CS_LANGUAGE__` to play a user whose Obsidian speaks something else;
+ * unset, it is the API's own default.
+ */
+export function getLanguage(): string {
+	return seams.__CS_LANGUAGE__ ?? "en";
 }
 
 /* -------------------------------------------------------------------------- */

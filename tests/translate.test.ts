@@ -303,21 +303,39 @@ describe("a locale code resolves to the file that serves it", () => {
 		// helper precisely so the file downloaded and the table rendered cannot
 		// disagree; "auto" is the case where the answer comes from outside the
 		// plugin, so it is the one worth pinning.
-		const globals = globalThis as { window?: unknown };
-		const saved = globals.window;
+		const globals = globalThis as { __CS_LANGUAGE__?: string };
 		try {
-			globals.window = { moment: { locale: () => "zh-HK" } };
+			globals.__CS_LANGUAGE__ = "zh-HK";
 			assert.strictEqual(resolveLocaleCode("auto"), "zh-hk");
 			assert.strictEqual(resolveLocaleFile("auto"), "zhTW");
 
-			globals.window = { moment: { locale: () => "pt-BR" } };
+			globals.__CS_LANGUAGE__ = "pt-BR";
 			assert.strictEqual(resolveLocaleCode("auto"), "pt");
 
-			globals.window = {};
+			// An older Obsidian's code for Czech, which moment knew as `cs`.
+			globals.__CS_LANGUAGE__ = "cz";
+			assert.strictEqual(resolveLocaleCode("auto"), "cs");
+
+			globals.__CS_LANGUAGE__ = "";
 			assert.strictEqual(resolveLocaleCode("auto"), "en");
 			assert.strictEqual(resolveLocaleFile("auto"), null);
 		} finally {
+			delete globals.__CS_LANGUAGE__;
+		}
+	});
+
+	it("asks Obsidian for its language, not moment, which other plugins re-point", () => {
+		// Calendar's "Override locale" moves moment's global locale for its
+		// date formats. Read from there, "follow Obsidian" followed Calendar.
+		const globals = globalThis as { window?: unknown; __CS_LANGUAGE__?: string };
+		const saved = globals.window;
+		try {
+			globals.window = { moment: { locale: () => "fr" } };
+			globals.__CS_LANGUAGE__ = "he";
+			assert.strictEqual(resolveLocaleCode("auto"), "he");
+		} finally {
 			globals.window = saved;
+			delete globals.__CS_LANGUAGE__;
 		}
 	});
 });

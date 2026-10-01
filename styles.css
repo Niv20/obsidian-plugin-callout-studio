@@ -3776,8 +3776,8 @@ button.callout-studio-icon-picker-loading {
 
 /* Sized from the widest option plus the reset arrow's room (LanguageSection.ts)
    and never shrunk: in a narrow pane the description wraps instead. Shrinking
-   this column is what cut "Bahasa Indonesia" and Automatic short in the menu,
-   which is exactly as wide as the picker. */
+   this column is what cut "Bahasa Indonesia" short in the menu, which is
+   exactly as wide as the picker. */
 .cs-language-setting .setting-item-control {
 	flex: 0 0 auto;
 	inline-size: var(--cs-language-control-width, max-content);
@@ -3800,38 +3800,6 @@ button.callout-studio-icon-picker-loading {
 	grid-area: 1 / 1;
 	padding-inline: 10px 34px;
 	white-space: nowrap;
-}
-
-/* The Automatic row adds a 16px icon and an 8px gap before its label. */
-.cs-language-width-sizer > .cs-language-width-sizer-auto {
-	padding-inline-start: calc(10px + 16px + 8px);
-}
-
-/* Automatic is a mode, not a language: an icon marks it, and a rule divides it
-   from the languages below. */
-.cs-combobox-option.cs-language-option-auto {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding-inline-start: 12px;
-	border-block-end: 1px solid var(--background-modifier-border);
-}
-
-.cs-language-option-auto .cs-language-option-label {
-	flex: 1 1 auto;
-	min-width: 0;
-	padding-inline-start: 0;
-}
-
-.cs-language-option-icon {
-	display: flex;
-	flex-shrink: 0;
-	color: var(--text-muted);
-}
-
-.cs-language-option-icon .svg-icon {
-	width: 16px;
-	height: 16px;
 }
 
 /* The renderer adds this class only while Obsidian has actually stacked the

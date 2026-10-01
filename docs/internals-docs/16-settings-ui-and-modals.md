@@ -1803,22 +1803,47 @@ the picker shrinks to make room, as in the callout editor's color row.
 The **Language** column is sized from its content, not the fixed 260px the other
 reset rows use. The picker's menu is exactly as wide as the picker, so the
 column has to fit the longest option. `LanguageSection` measures a hidden stack
-of every translated label and adds the reset arrow's width plus the gap.
-It un-hides the arrow for that one synchronous read, because Automatic keeps it
-`display: none`. The sum becomes `--cs-language-control-width`. The column
-never shrinks (`flex: 0 0 auto`): in a narrow pane the description wraps, and
-Obsidian stacks the row below 400px. Before this, a shrinking column and an
-arrow that took its room from the picker cut "Bahasa Indonesia" and Automatic
-short.
+of every language name and adds the reset arrow's width plus the gap.
+It un-hides the arrow for that one synchronous read, because a picker showing
+Obsidian's language keeps it `display: none`. The sum becomes
+`--cs-language-control-width`. The column never shrinks (`flex: 0 0 auto`): in
+a narrow pane the description wraps, and Obsidian stacks the row below 400px.
+Before this, a shrinking column and an arrow that took its room from the picker
+cut "Bahasa Indonesia" short.
 
-**Automatic** is the first row and is drawn as a mode, not a language: a
-`globe` icon (symmetric, so the RTL mirroring Obsidian applies to every icon
-changes nothing) and a rule beneath it. The closed picker shows only its label.
-Every language row is its own native name, with no flags and no regional
-grouping. Flags stand for countries, not languages (W3C i18n Best Practice 16),
-and Windows' emoji font draws flag emoji as two letters.
-When Automatic follows a language that has not downloaded, the warning names
-that language, matched by locale *file* so `zh-hk` reads as 繁體中文.
+The menu lists languages only, each under its own native name, with no flags
+and no regional grouping. Flags stand for countries, not languages (W3C i18n
+Best Practice 16), and Windows' emoji font draws flag emoji as two letters.
+There is **no Automatic row**. The saved value still has two kinds, `"auto"` to
+follow Obsidian and a locale code to pin one, but the picker never names the
+first. It shows the language a preference renders in instead (`shownLanguage`,
+matched by locale *file*):
+
+- `"auto"` shows Obsidian's language, or English when the plugin lacks it.
+- An alias (`no`, `zh-hk`) shows the row that serves it.
+- A code no row offers shows English, since that is what renders. That covers
+  a value from another version on a synced device, or one typed by hand.
+
+The arrow shows exactly while that language differs from Obsidian's
+(`showsObsidianLanguage`). A pick saves by these rules (`preferenceFor`):
+
+| Picked row | Saved |
+| --- | --- |
+| The row already shown | Nothing. No save, no redraw; if its file has not downloaded, the pick retries it. |
+| Obsidian's language | `"auto"`, exactly as the reset arrow does. |
+| Any other row | That code, pinned. |
+
+**Nothing is migrated, and "the same as Obsidian" is never written back.**
+Obsidian's language belongs to the device, while `data.json` syncs. Take a
+pin saved under the old Automatic row that equals Obsidian's language here.
+It loads unchanged and shows no arrow. On a synced device whose Obsidian is in
+another language, it is still a pin, with the arrow. Rewriting it to `"auto"`
+on load, or on a re-pick of the row already shown, would silently change that
+other device. Older versions read the same two kinds of value, so mixed
+versions across devices keep working.
+
+When the language a preference asks for has not downloaded, the warning below
+the picker names it after the row the picker shows, so `zh-hk` reads as 繁體中文.
 
 Colored option headers reserve space at their trailing edge for the compact
 reset control without increasing the header's original height. The rule also

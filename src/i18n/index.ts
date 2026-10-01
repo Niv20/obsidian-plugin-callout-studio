@@ -22,6 +22,7 @@
  * `LOCALE_FILES` maps the first onto the second, which is why picking Norwegian
  * or Hong Kong Chinese downloads nothing new when the file is already there.
  */
+import { getLanguage, requireApiVersion } from "obsidian";
 import { en } from "./en";
 import type { LocaleFileId } from "./localeManifest";
 
@@ -169,9 +170,38 @@ export function isLocaleRegistered(code: string): boolean {
 type MomentLike = { locale: () => string };
 type WindowWithMoment = Window & { moment?: MomentLike };
 
-/** The locale Obsidian's own interface is using, lowercased. */
+/**
+ * Codes an older Obsidian may have saved, renamed the way Obsidian renames
+ * them for moment. Czech is `cs` in Obsidian's list now; a `cz` left behind
+ * must not drop a Czech user to English, nor reach number formatting, which
+ * takes `cz` for no language at all.
+ */
+const OBSIDIAN_LEGACY_CODES: Record<string, string> = { cz: "cs" };
+
+/**
+ * The language Obsidian's own interface is set to, lowercased.
+ *
+ * `getLanguage()` (Obsidian 1.8.7) reads that setting itself. Before it the
+ * only signal was moment's global locale, which Obsidian points at the same
+ * language on launch, but which any plugin may re-point for its own date
+ * formats: Calendar's "Override locale" does. As the source, that made
+ * "follow Obsidian" follow Calendar, and the picker name a language Obsidian
+ * is not in, so moment is now only the fallback for versions without the API.
+ *
+ * Never throws. This runs inside `onload` before anything is registered, so a
+ * failure here would cost every callout its styling, not just the language.
+ */
 function obsidianLocale(): string {
-	return ((window as WindowWithMoment).moment?.locale() ?? "en").toLowerCase();
+	let lang: string | undefined;
+	try {
+		lang = requireApiVersion("1.8.7")
+			? getLanguage()
+			: (window as WindowWithMoment).moment?.locale();
+	} catch {
+		lang = undefined;
+	}
+	const code = (typeof lang === "string" && lang !== "" ? lang : "en").toLowerCase();
+	return owns(OBSIDIAN_LEGACY_CODES, code) ? (OBSIDIAN_LEGACY_CODES[code] ?? code) : code;
 }
 
 /**

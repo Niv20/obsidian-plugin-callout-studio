@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import { DEFAULT_SETTINGS } from "../src/constants";
-import { setLocale, t } from "../src/i18n";
+import { setLocale } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { renderFallbackSection } from "../src/settings/sections/FallbackSection";
 import { renderLanguageSection } from "../src/settings/sections/LanguageSection";
@@ -87,7 +87,8 @@ describe("settings row resets", () => {
 
 	for (const ready of [true, false]) {
 		it(`restores automatic language using the ${ready ? "cached" : "download"} locale path`, async () => {
-			const h = harness("note", "en", ready);
+			// Obsidian is in English here (the stub's default), so Hebrew is a pin.
+			const h = harness("note", "he", ready);
 			const host = el();
 			try {
 				renderLanguageSection(h.ctx, asEl(host));
@@ -95,7 +96,8 @@ describe("settings row resets", () => {
 				assert.equal(reset.hasClass("cs-hidden"), false);
 				reset.fire("click");
 				assert.equal(h.settings.language, DEFAULT_SETTINGS.language);
-				assert.equal(host.querySelector(".cs-combobox-input")?.value, t("settings.languageAuto"));
+				// Following Obsidian shows as Obsidian's own language.
+				assert.equal(host.querySelector(".cs-combobox-input")?.value, "English");
 				assert.equal(reset.hasClass("cs-hidden"), true);
 				await Promise.resolve();
 				await Promise.resolve();

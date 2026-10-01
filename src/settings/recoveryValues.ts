@@ -12,7 +12,7 @@
  * interpolated into CSS, and saved artwork renders only through the sanitizing
  * paths in recoveryPreview.ts.
  */
-import { getLocale, getSelectableLocales, t } from "../i18n";
+import { getLocale, getSelectableLocales, resolveLocaleFile, t } from "../i18n";
 import { emojiLabelFor } from "../icons/packs/emoji";
 import { packFor } from "../icons/registry";
 import type { CalloutDefinition, CalloutIcon, PluginData } from "../types";
@@ -307,12 +307,21 @@ export const renderDate: ValueRenderer = (parent, value, side) => {
 	parent.createSpan({ text: formatDate(value) });
 };
 
+/** The picker row that serves a locale file; English when no file is needed. */
+function languageNameForFile(file: string | null): string | undefined {
+	const code = file === null ? "en" : getSelectableLocales().find(l => resolveLocaleFile(l.code) === file)?.code;
+	return getSelectableLocales().find(l => l.code === code)?.name;
+}
+
 /** An interface language, by its own name. */
 export const renderLanguage: ValueRenderer = (parent, value, side) => {
 	if (typeof value !== "string") { generic(parent, value, side, 0); return; }
-	if (value === "auto") { parent.createSpan({ text: t("settings.languageAuto") }); return; }
 	const row = inline(parent);
-	const name = getSelectableLocales().find(locale => locale.code === value)?.name;
+	// "auto" has no name of its own: it shows the language it resolves to on
+	// this device, beside the saved code, so a pin and "follow Obsidian" differ.
+	const name = value === "auto"
+		? languageNameForFile(resolveLocaleFile(value))
+		: getSelectableLocales().find(locale => locale.code === value)?.name;
 	if (name) row.createSpan({ text: name });
 	row.createEl("code", { cls: "cs-recovery-code", text: value });
 };
