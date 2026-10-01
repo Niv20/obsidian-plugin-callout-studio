@@ -328,6 +328,26 @@ describe("main.js stays inside its budget", () => {
 			);
 			return;
 		}
+		if (/^\/\/# sourceMappingURL=data:application\/json/m.test(readRepoFile("main.js"))) {
+			// A running `npm run dev` watcher rewrites main.js as the
+			// inline-sourcemap dev bundle on every source or locale write —
+			// about five times the production size. The limit governs what
+			// release.yml builds, not what a watcher wrote a moment ago, so
+			// the size says nothing here. Even a fresh `npm run build` loses
+			// that race: `prebuild` regenerates localeManifest.ts, which wakes
+			// the watcher. Production is built with `sourcemap: false`, so the
+			// inline map is what tells the two apart. Same rule as a missing
+			// file: tolerated locally, fatal in CI, where only a production
+			// build ever exists.
+			assert.ok(
+				!process.env.CI,
+				"main.js is a dev bundle (inline sourcemap), but this is CI, where `npm run build` runs before `npm test` — the size gate just measured the wrong artifact",
+			);
+			console.warn(
+				"  ! main.js is a dev bundle (a `npm run dev` watcher is running) — bundle size not checked; stop the watcher and run `npm run build` to check it",
+			);
+			return;
+		}
 		const limit = Number(declared?.[1]);
 		const size = statSync(join(REPO_ROOT, "main.js")).size;
 		assert.ok(
