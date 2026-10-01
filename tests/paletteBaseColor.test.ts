@@ -13,6 +13,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import {
+	DEFAULT_BG_COLOR_AMOUNT,
 	derivePaletteFromColor,
 	MAX_BG_COLOR_AMOUNT,
 	MIN_BG_COLOR_AMOUNT,
@@ -20,10 +21,15 @@ import {
 } from "../src/utils/colorUtils";
 import {
 	seedBaseColor,
+	unclaimedBaseColor,
 } from "../src/settings/paletteBaseColorRow";
 import { sanitizeCustomPalettes } from "../src/utils/paletteSanitize";
 import { mergeSavedSettings } from "../src/utils/settingsMerge";
-import { palettesVisuallyEqual, customPaletteToColorPalette } from "../src/utils/colorPalettes";
+import {
+	palettesVisuallyEqual,
+	customPaletteToColorPalette,
+	type ColorPalette,
+} from "../src/utils/colorPalettes";
 import type { CustomPalette } from "../src/types";
 
 /** Pure yellow: the loudest case, and the one this was reported against. */
@@ -249,5 +255,80 @@ describe("sanitizeCustomPalettes and baseColor", () => {
 			),
 			true,
 		);
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* 5 — unclaimedBaseColor: a new palette never opens on a duplicate            */
+/* -------------------------------------------------------------------------- */
+
+/** A saved palette wearing exactly what `hex` derives to. */
+const wearing = (hex: string, id = "cp-owner"): ColorPalette => ({
+	id,
+	name: `Owner ${id}`,
+	group: "custom",
+	...derivePaletteFromColor(hex, DEFAULT_BG_COLOR_AMOUNT),
+});
+
+const clashes = (hex: string, taken: ColorPalette[]): boolean => {
+	const candidate = wearing(hex, "candidate");
+	return taken.some((p) => palettesVisuallyEqual(p, candidate));
+};
+
+describe("unclaimedBaseColor", () => {
+	it("leaves the default alone when nothing owns it", () => {
+		assert.equal(unclaimedBaseColor(FALLBACK, DEFAULT_BG_COLOR_AMOUNT, []), FALLBACK);
+		assert.equal(
+			unclaimedBaseColor(FALLBACK, DEFAULT_BG_COLOR_AMOUNT, [wearing("#e93147")]),
+			FALLBACK,
+		);
+	});
+
+	it("moves one channel by one step when the default is owned", () => {
+		const taken = [wearing(FALLBACK)];
+		const next = unclaimedBaseColor(FALLBACK, DEFAULT_BG_COLOR_AMOUNT, taken);
+		assert.notEqual(next, FALLBACK);
+		assert.equal(maxDelta(next, FALLBACK), 1, "should be an imperceptible nudge");
+		const a = hexToRgb(next);
+		const b = hexToRgb(FALLBACK);
+		const changed = [a.r !== b.r, a.g !== b.g, a.b !== b.b].filter(Boolean).length;
+		assert.equal(changed, 1, "exactly one channel moves");
+		assert.equal(clashes(next, taken), false, "and the result no longer clashes");
+	});
+
+	it("steps a channel at 255 down instead of off the end", () => {
+		// #448aff has blue at 255: +1 would overflow, so it goes to #448afe.
+		const next = unclaimedBaseColor(FALLBACK, DEFAULT_BG_COLOR_AMOUNT, [wearing(FALLBACK)]);
+		assert.equal(next, "#448afe");
+	});
+
+	it("keeps looking when the first nudge is owned as well", () => {
+		// The user may already have saved the nudged color too (every New color
+		// before this fix could have been followed by the next). Walk on.
+		const first = unclaimedBaseColor(FALLBACK, DEFAULT_BG_COLOR_AMOUNT, [wearing(FALLBACK)]);
+		const taken = [wearing(FALLBACK), wearing(first, "cp-second")];
+		const next = unclaimedBaseColor(FALLBACK, DEFAULT_BG_COLOR_AMOUNT, taken);
+		assert.notEqual(next, FALLBACK);
+		assert.notEqual(next, first);
+		assert.equal(clashes(next, taken), false);
+		assert.ok(maxDelta(next, FALLBACK) <= 2, "still a negligible change");
+	});
+
+	it("compares derived palettes, so a nudge the derivation rounds away is skipped", () => {
+		// Whatever the first candidate is, anything it returns must differ from
+		// every taken palette by the six colors a callout is painted with.
+		for (const hex of ["#000000", "#ffffff", "#ffff00", "#448aff"]) {
+			const taken = [wearing(hex)];
+			const next = unclaimedBaseColor(hex, DEFAULT_BG_COLOR_AMOUNT, taken);
+			assert.equal(clashes(next, taken), false, hex);
+			assert.ok(maxDelta(next, hex) <= 2, `${hex} -> ${next}`);
+		}
+	});
+
+	it("respects the intensity the editor will derive at", () => {
+		// A palette saved at a different Intensity paints different backgrounds,
+		// so it does not own the default as the editor will actually derive it.
+		const other = { ...wearing(FALLBACK), ...derivePaletteFromColor(FALLBACK, 0.3) };
+		assert.equal(unclaimedBaseColor(FALLBACK, DEFAULT_BG_COLOR_AMOUNT, [other]), FALLBACK);
 	});
 });

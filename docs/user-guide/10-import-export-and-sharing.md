@@ -64,7 +64,8 @@ Before anything changes, Callout Studio shows what the file will do: how many ca
 
 - Callouts with the same id are replaced by the file's version; others are added.
 - Only the setting groups the file contains are restored. A backup made before a newer setting existed leaves that setting as it is.
-- Saved palettes, uploaded pictures and custom commands are merged by id, so your other ones stay.
+- Uploaded pictures and custom commands are merged by id, so your other ones stay.
+- Saved palettes are merged by id and by name, so your other ones stay. A palette in the file that has the same name as one of yours replaces it instead of becoming a second palette with that name, and the callouts that use it take on the file's colors. Names are compared ignoring capitals and spaces around them.
 - While saving is paused, **Import** is unavailable. If the import is displayed but could not be saved, a message says so.
 
 For sync guidance and recovery steps, see [Syncing & backups](13-syncing-and-backups.md).

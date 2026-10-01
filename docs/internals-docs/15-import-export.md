@@ -281,7 +281,7 @@ its report or its explicit **Import** click is the confirmation.
 const present = presentSettingGroups(parsed);  // the settings keys the file itself carries
 const restored = Object.keys(result.settings).filter(key => present.has(key) && !LIST_GROUPS.has(key));
 Object.assign(registry.settings, pick(restSettings, restored));  // ← only those groups
-registry.settings.customPalettes = mergeById(registry.settings.customPalettes, customPalettes);
+applyPaletteMerge(registry, mergePalettes(registry.settings.customPalettes, customPalettes));  // by id AND by name
 registry.setUserImages(mergeById(registry.getUserImages(), userImages));
 registry.settings.customCommands = mergeById(registry.settings.customCommands, customCommands);
 ```
@@ -306,15 +306,45 @@ reads it into.
 > [`mergeById`](../../src/utils/mergeById.ts): a repeated id overwrites in
 > place (so re-importing the same backup rewrites, not duplicates, without
 > reshuffling the list), a new id is appended, and an empty incoming list
-> changes nothing at all.
+> changes nothing at all. Palettes layer a name match on top of this rule —
+> see below.
 >
 > **The rule generalizes to any *new* settings-level list**: it must merge
 > by id on import, or it will silently wipe the user's own list the same
 > way. See also [Data model § `PluginSettings`](04-data-model.md#pluginsettings)
 > for the three places a new settings field has to be registered.
 
-A palette merge can produce **cross-vault duplicate colours** — two vaults
-independently naming the same colour under different ids — so
+**Palettes are also matched by name.** They use
+[`mergePalettes`](../../src/utils/mergePalettes.ts) rather than plain
+`mergeById`, because the palette editor treats the *name* as the
+palette's identity (it refuses a second palette under a taken name,
+case-insensitively) and its auto-suggested name for any blue is "Blue 2". Two
+vaults that each made a blue palette therefore carry a "Blue 2" apiece under
+different ids, and merging by id alone left both in the list — twins no
+dropdown could tell apart.
+
+- An incoming palette whose **id or name** (`normalizeName`: trimmed,
+  case-insensitive) matches palettes the vault already had **replaces them in
+  place, keeping the vault's id**. Local callouts therefore stay linked, and the
+  palette keeps its place in the list. A vault holding several palettes under
+  that name (the state the older merge left behind) has them all rewritten to
+  the file's version, which makes them identical for the consolidation below to
+  fold — so importing the file again repairs such a vault.
+- A palette the file has itself written is never matched by name again, so a
+  file that carries two same-named palettes brings both across instead of one
+  eating the other.
+- `PaletteMerge.remap` records file id → vault id for the name matches, and
+  `applyPaletteMerge` re-points the callouts the file brought for it with
+  `registry.relinkPalette`. `PaletteMerge.restyled` lists the palettes whose
+  *colours* changed; `applyPaletteMerge` repaints their linked callouts with
+  `registry.applyPaletteColors`, the call editing a palette makes, so a
+  callout the file does not carry follows its palette instead of keeping the old
+  look under the same name. Nothing is repainted when the colours are the ones
+  the vault already had, which is also what keeps re-importing a file inert.
+  This applies to an id match as well as a name match.
+
+A palette merge can also produce **cross-vault duplicate colours** — two
+vaults independently making the same colour under different names and ids — so
 `consolidateDuplicatePalettes()` runs immediately after the palette merge,
 folding duplicates and re-pointing any callout that referenced the
 now-merged-away id, with a one-time notice.

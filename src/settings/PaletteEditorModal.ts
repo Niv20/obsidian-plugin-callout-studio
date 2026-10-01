@@ -39,7 +39,11 @@ import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
 import type { SelectDropdown } from "../ui/selectDropdown";
 import { buildPaletteBgStyleRow, type BgStyle } from "./paletteBgStyleRow";
-import { renderBaseColorRow, seedBaseColor } from "./paletteBaseColorRow";
+import {
+	renderBaseColorRow,
+	seedBaseColor,
+	unclaimedBaseColor,
+} from "./paletteBaseColorRow";
 import { renderDirectionPicker } from "./paletteDirectionPicker";
 import { LiveCalloutPreview } from "./LiveCalloutPreview";
 import {
@@ -277,6 +281,16 @@ export class PaletteEditorModal extends Modal {
 			(this.bgStyle === "gradient"
 				? DEFAULT_BG_INTENSITY_GRADIENT
 				: DEFAULT_BG_INTENSITY_SOLID);
+		// A brand-new palette must not open already clashing with one the user
+		// has: see unclaimedBaseColor. A seed or an existing palette keeps its
+		// own colors — they are authoritative, not a default to move off.
+		if (!base) {
+			this.baseColor = unclaimedBaseColor(
+				this.baseColor,
+				this.bgIntensity,
+				this.takenColors,
+			);
+		}
 		this.colors = base
 			? {
 					colorLight: base.colorLight,

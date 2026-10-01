@@ -16,7 +16,7 @@ Group headings stay visible at the top of the color menu as you scroll.
 Open the main plugin settings, find **Saved color palettes**, and click **New palette**.
 
 1. Give the palette a name.
-2. Choose a **Base color**. The background initially follows that color automatically.
+2. Choose a **Base color**. The background initially follows that color automatically. A new palette starts on a default blue; if you already have a palette with exactly that look, it starts on a blue one shade off, so the window never opens on a "duplicate" message.
 3. If you want a different background, open the separate background controls.
 4. Review any contrast warning. It identifies combinations that may be difficult to read but does not prevent you from saving the design.
 5. Click **Save**.

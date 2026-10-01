@@ -15,6 +15,7 @@ import { ImportReportModal } from "../../utils/ImportReportModal";
 import { validateImportPayload } from "../../utils/importValidator";
 import { assertImportSize, ImportLimitError, parseImportJson } from "../../utils/importLimits";
 import { mergeById } from "../../utils/mergeById";
+import { applyPaletteMerge, mergePalettes } from "../../utils/mergePalettes";
 import { userImagesFitResourceBudget } from "../../utils/userImages";
 import { addImportedCallout, applyImportedCallout } from "../../utils/importedCallout";
 import { ImportSourceModal } from "../ImportSourceModal";
@@ -307,7 +308,8 @@ export async function processImportedJSON(
 		// user builds up. Merge them by id rather than letting Object.assign
 		// replace the arrays — otherwise importing a file with none of either
 		// would silently wipe the user's existing ones. This mirrors how
-		// callouts are merged (add new / overwrite same id).
+		// callouts are merged (add new / overwrite same id). Palettes are also
+		// matched by name, since that is how the user tells them apart.
 		// Commands are on that list too: an export predating them carries
 		// none, and replacing the array wholesale would delete every
 		// command the user had built here.
@@ -322,12 +324,12 @@ export async function processImportedJSON(
 			Object.fromEntries(Object.entries(restSettings).filter(([key]) => restored.includes(key))),
 		);
 		if (importedPalettes) {
-			ctx.plugin.registry.settings.customPalettes = mergeById(
-				ctx.plugin.registry.settings.customPalettes,
-				importedPalettes,
+			applyPaletteMerge(
+				ctx.plugin.registry,
+				mergePalettes(ctx.plugin.registry.settings.customPalettes, importedPalettes),
 			);
-			// Merging by id routinely brings in a palette that duplicates a
-			// local one's colors under a different id — the two vaults named
+			// Merging routinely brings in a palette that duplicates a local
+			// one's colors under a different id and name — the two vaults made
 			// the same color independently. No vault may hold two of those, so
 			// fold them together here rather than leaving a state the next
 			// launch would silently repair. The callouts that referenced the

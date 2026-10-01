@@ -14,14 +14,18 @@
  * palettes, pictures and commands quietly gone after importing a file that
  * never mentioned them.
  *
- * So the rule now lives in `utils/mergeById.ts` and is tested here directly. The
- * last suite keeps the two halves tied together: the importer still has to route
- * all three lists through it, and still has to keep them out of the wholesale
- * `Object.assign` that carries everything else.
+ * So the rule now lives in `utils/mergeById.ts` and is tested here directly.
+ * Palettes add one thing to it — a name is also an identity — and that lives in
+ * `utils/mergePalettes.ts`, tested below it. The last suite keeps the two halves
+ * tied together: the importer still has to route all three lists through their
+ * merge, and still has to keep them out of the wholesale `Object.assign` that
+ * carries everything else.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
+import type { CustomPalette } from "../src/types";
 import { mergeById } from "../src/utils/mergeById";
+import { mergePalettes, type PaletteMerge } from "../src/utils/mergePalettes";
 import { readRepoFile } from "./support/sourceScan";
 
 interface Row {
@@ -96,18 +100,143 @@ describe("mergeById — what the vault already has", () => {
 	});
 });
 
+/** A palette of one colour, enough for `mergePalettes` to tell two looks apart. */
+const pal = (id: string, name: string, accent = "#336699"): CustomPalette => ({
+	id,
+	name,
+	colorLight: accent,
+	colorDark: accent,
+	bgColorLight: "#eeeeee",
+	bgColorDark: "#222222",
+	textColorLight: "#111111",
+	textColorDark: "#eeeeee",
+});
+const palIds = (merge: PaletteMerge): string[] => merge.palettes.map((p) => p.id);
+
+describe("mergePalettes — a name is how the user tells palettes apart", () => {
+	it("merges by id exactly like mergeById when no names collide", () => {
+		const mine = [pal("a", "Mine"), pal("b", "Other")];
+		const theirs = [pal("b", "Other", "#ff0000"), pal("c", "New")];
+		const merge = mergePalettes(mine, theirs);
+		assert.deepStrictEqual(merge.palettes, mergeById(mine, theirs));
+		assert.strictEqual(merge.remap.size, 0, "an id match needs no re-pointing");
+		assert.deepStrictEqual(merge.restyled, ["b"]);
+	});
+
+	it("replaces the palette of the same name, keeping the vault's id and place", () => {
+		const merge = mergePalettes(
+			[pal("a", "Blue 2"), pal("z", "Zed")],
+			[pal("file-id", "Blue 2", "#ff0000")],
+		);
+		assert.deepStrictEqual(palIds(merge), ["a", "z"]);
+		assert.strictEqual(merge.palettes[0]?.colorLight, "#ff0000");
+		assert.strictEqual(merge.remap.get("file-id"), "a");
+		assert.deepStrictEqual(merge.restyled, ["a"]);
+	});
+
+	it("compares names ignoring case and surrounding spaces, like the editor", () => {
+		const merge = mergePalettes([pal("a", "Blue 2")], [pal("b", "  blue 2 ")]);
+		assert.deepStrictEqual(palIds(merge), ["a"]);
+	});
+
+	it("keeps a differently named palette apart even when its id is new", () => {
+		const merge = mergePalettes([pal("a", "Blue 2")], [pal("b", "Blue 3")]);
+		assert.deepStrictEqual(palIds(merge), ["a", "b"]);
+		assert.strictEqual(merge.remap.size, 0);
+	});
+
+	it("does not repaint anything when the colours are the ones the vault already had", () => {
+		// Same name, same look: the callouts using it have nothing to follow, and
+		// a callout the user tuned by hand since must not be touched.
+		const merge = mergePalettes([pal("a", "Blue 2")], [pal("b", "Blue 2")]);
+		assert.deepStrictEqual(palIds(merge), ["a"]);
+		assert.deepStrictEqual(merge.restyled, []);
+	});
+
+	it("reports a rename-only change as no repaint", () => {
+		// `restyled` feeds the cascade onto linked callouts, which carry colours,
+		// not names.
+		const merge = mergePalettes([pal("a", "Old name")], [pal("a", "New name")]);
+		assert.strictEqual(merge.palettes[0]?.name, "New name");
+		assert.deepStrictEqual(merge.restyled, []);
+	});
+
+	it("rewrites every vault palette that carries the name, so the twins become one look", () => {
+		// What an earlier version left behind. All of them take the file's version
+		// (keeping their own ids); the consolidation that follows an import then
+		// folds them, since they are now identical.
+		const merge = mergePalettes(
+			[pal("a", "Blue 2"), pal("b", "Blue 2", "#00ff00")],
+			[pal("file-id", "Blue 2", "#ff0000")],
+		);
+		assert.deepStrictEqual(palIds(merge), ["a", "b"]);
+		assert.deepStrictEqual(
+			merge.palettes.map((p) => p.colorLight),
+			["#ff0000", "#ff0000"],
+		);
+		assert.strictEqual(merge.remap.get("file-id"), "a");
+	});
+
+	it("matches by id and by name together, with no re-pointing when its own id matched", () => {
+		const merge = mergePalettes(
+			[pal("a", "Blue 2"), pal("b", "Blue 2", "#00ff00")],
+			[pal("b", "Blue 2", "#ff0000")],
+		);
+		assert.deepStrictEqual(
+			merge.palettes.map((p) => p.colorLight),
+			["#ff0000", "#ff0000"],
+		);
+		assert.strictEqual(merge.remap.size, 0);
+	});
+
+	it("brings across two same-named palettes the file itself carries", () => {
+		// A palette this file has written is not matched by name again, so the
+		// second does not overwrite the first.
+		const merge = mergePalettes([], [pal("a", "Blue 2"), pal("b", "Blue 2", "#ff0000")]);
+		assert.deepStrictEqual(palIds(merge), ["a", "b"]);
+	});
+
+	it("does the same when the vault holds one of that name", () => {
+		const merge = mergePalettes(
+			[pal("mine", "Blue 2")],
+			[pal("a", "Blue 2", "#ff0000"), pal("b", "Blue 2", "#00ff00")],
+		);
+		assert.deepStrictEqual(palIds(merge), ["mine", "b"]);
+		assert.strictEqual(merge.palettes[0]?.colorLight, "#ff0000");
+		assert.strictEqual(merge.remap.get("a"), "mine");
+		assert.strictEqual(merge.remap.has("b"), false, "the second one was appended under its own id");
+	});
+
+	it("never matches on an empty name", () => {
+		const merge = mergePalettes([pal("a", "  ")], [pal("b", " ")]);
+		assert.deepStrictEqual(palIds(merge), ["a", "b"]);
+	});
+
+	it("mutates neither argument", () => {
+		const mine = [pal("a", "Blue 2")];
+		const theirs = [pal("b", "Blue 2", "#ff0000")];
+		const mineBefore = JSON.stringify(mine);
+		const theirsBefore = JSON.stringify(theirs);
+		const merge = mergePalettes(mine, theirs);
+		assert.strictEqual(JSON.stringify(mine), mineBefore);
+		assert.strictEqual(JSON.stringify(theirs), theirsBefore);
+		assert.notStrictEqual(merge.palettes, mine);
+	});
+});
+
 describe("the importer still uses it — for all three lists", () => {
 	const source = readRepoFile("src/settings/sections/DataManagementSection.ts");
 
-	it("routes three lists through mergeById", () => {
+	it("routes three lists through their merge when applied", () => {
 		// Budget checks may also compute a prospective merge. Pin each applied
-		// list, rather than counting unrelated read-only merge calls.
+		// list, rather than counting unrelated read-only merge calls. Palettes
+		// have their own rule (by id and by name); the other two merge by id.
 		for (const [list, pattern] of [
-			["palettes", /customPalettes\s*=\s*mergeById\([\s\S]*?importedPalettes/],
+			["palettes", /applyPaletteMerge\(\s*ctx\.plugin\.registry,\s*mergePalettes\([\s\S]*?importedPalettes/],
 			["pictures", /setUserImages\(\s*mergeById\([\s\S]*?importedImages/],
 			["commands", /customCommands\s*=\s*mergeById\([\s\S]*?importedCommands/],
 		] as const) {
-			assert.match(source, pattern, `${list} must still merge by id when applied`);
+			assert.match(source, pattern, `${list} must still merge when applied`);
 		}
 	});
 

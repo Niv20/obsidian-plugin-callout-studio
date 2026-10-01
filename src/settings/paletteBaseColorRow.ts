@@ -19,7 +19,13 @@
  * it is the whole reason `CustomPalette.baseColor` exists.
  */
 import { Setting } from "obsidian";
-import { isValidHexColor } from "../utils/colorUtils";
+import {
+	derivePaletteFromColor,
+	hexToRgb,
+	isValidHexColor,
+	rgbToHex,
+} from "../utils/colorUtils";
+import { palettesVisuallyEqual, type ColorPalette } from "../utils/colorPalettes";
 import { createColorSwatchInput } from "../ui/ColorSwatchInput";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
 import type { CustomPalette } from "../types";
@@ -50,6 +56,54 @@ export function seedBaseColor(
 		return base.colorLight;
 	}
 	return fallback;
+}
+
+/**
+ * The base color a brand-new palette opens on: `preferred`, unless the six
+ * colors it derives already belong to a saved palette or a preset.
+ *
+ * Without this, a user who once saved the default color is greeted by the
+ * duplicate-color error on every later "New color" — before they have touched
+ * anything. When (and only when) that is the case, one channel moves by a
+ * single step, which no one can see and which makes the palette unique.
+ *
+ * The test is on the derived palette, not the base hex, because that is what
+ * `findColorClash` compares and what two palettes can actually share: the
+ * derivation rounds, so one step does not always change the result and the
+ * search keeps going (blue, then green, then red, then two steps, ...). A
+ * channel at 255 steps down instead of up. Returns `preferred` untouched when
+ * nothing is taken, which is the common case and costs one derivation.
+ */
+export function unclaimedBaseColor(
+	preferred: string,
+	amount: number,
+	taken: readonly ColorPalette[],
+): string {
+	const isTaken = (hex: string): boolean => {
+		const candidate: ColorPalette = {
+			id: "",
+			name: "",
+			group: "custom",
+			...derivePaletteFromColor(hex, amount),
+		};
+		return taken.some((p) => palettesVisuallyEqual(p, candidate));
+	};
+	if (!isTaken(preferred)) return preferred;
+	const rgb = hexToRgb(preferred);
+	for (let step = 1; step <= 255; step++) {
+		for (const channel of ["b", "g", "r"] as const) {
+			const up = rgb[channel] + step;
+			const value = up <= 255 ? up : rgb[channel] - step;
+			if (value < 0) continue;
+			const next = rgbToHex(
+				channel === "r" ? value : rgb.r,
+				channel === "g" ? value : rgb.g,
+				channel === "b" ? value : rgb.b,
+			);
+			if (!isTaken(next)) return next;
+		}
+	}
+	return preferred;
 }
 
 /** Builds the row and returns it, for the card's teardown list. */

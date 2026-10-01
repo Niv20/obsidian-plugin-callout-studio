@@ -212,6 +212,19 @@ a palette saved before the field existed, or a seed built by
 `paletteSeedFromDefinition` from a baked callout, has nothing better than
 `colorLight`, because the correction is not invertible.
 
+A **brand-new** palette (no `existing`, no `seed`) opens on `#448aff`, unless
+the six colours that default derives are already worn by a saved palette or a
+preset — then it would open on the duplicate-colour error before the user had
+touched anything. `unclaimedBaseColor` (same module) is called from the
+`PaletteEditorModal` constructor, after the intensity is known, and nudges one
+channel by one step (blue, then green, then red; a channel at 255 steps down;
+two steps only if one step is owned too). It tests the *derived* palette with
+`palettesVisuallyEqual`, not the base hex, because the derivation rounds and a
+one-step move does not always change the result. In the common case — nothing
+owns the default — it costs one derivation and a scan of the taken list, which
+`findColorClash` runs on every open anyway. A seed or an existing palette is
+never moved: its colours are authoritative.
+
 The correction itself stays **silent**, and that is a deliberate call rather
 than an oversight. Simple mode is the "pick one colour and let us handle it"
 route, so it auto-fixes and says nothing; the advanced per-channel grid — one
@@ -260,6 +273,11 @@ colour the palette never had.
   linked callouts; it shows the callout's retained colour circles and opens
   the palette save popup. See
   [Callout registry](05-callout-registry.md) for the mechanics.
+- **Importing** a backup merges palettes by id *and by name*
+  (`mergePalettes`): a palette whose name a vault palette already carries
+  replaces it under the vault's id and repaints the callouts linked to it, so a
+  name never ends up on two palettes. See
+  [Import and export](15-import-export.md#settings-import-restore-the-groups-the-file-carries-three-lists-merge-by-id).
 - **Consolidation on load**: `consolidateDuplicatePalettes()` merges any two
   saved palettes with identical colours (by the same equality test the
   editor's dropdown and the paletteId-adoption migration use), relinking

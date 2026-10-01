@@ -14,6 +14,10 @@
  * Lifted out of `DataManagementSection.applyImport`, which needs a live
  * registry, a live plugin and a modal before a single line of it runs, so the
  * rule could be a test rather than a comment.
+ *
+ * Palettes are the exception to the exception: a name identifies one as surely
+ * as its id does, so they go through `mergePalettes` instead (same-id behaviour
+ * unchanged, plus a name match).
  */
 
 /** One entry of a list the user builds up, keyed by an id it carries itself. */
