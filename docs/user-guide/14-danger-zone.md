@@ -69,7 +69,7 @@ to that file's results.
 To change a proposed replacement, click its **After** text or the pencil in the
 card's upper corner. The pencil fades in when you hover over the card or focus
 its controls, and stays visible on touch devices. Right-clicking the card and
-choosing **Custom replacement…** opens the same inline editor. The **After**
+choosing **Custom replacement** opens the same inline editor. The **After**
 text becomes an editable field while **Before** stays visible. All editable
 text is selected so typing replaces it immediately. The card gains a purple
 highlight while the note stays in place; any previous card highlight clears.
@@ -87,7 +87,7 @@ unfinished change and returns to the last saved replacement. If the text has
 not changed since you opened the editor, the arrow restores the automatic
 replacement instead. Finishing an unchanged edit simply closes the editor.
 Conversion is unavailable until you finish or
-discard the active edit; pressing the dimmed **Convert selected…** meanwhile
+discard the active edit; pressing the dimmed **Convert selected** meanwhile
 reminds you to press Enter or Escape, and leaves your draft open. Custom replacements must fit on one line;
 multiline pastes are blocked. A heading title can be renamed, but not removed,
 moved to another level, or changed to introduce another heading or protected
@@ -122,7 +122,7 @@ The preview refreshes after note edits. New or changed proposals are deselected
 until reviewed, and conversion is unavailable while the preview is stale or an
 editor has unsaved changes.
 
-**Convert selected…** stays dimmed whenever it cannot act, and pressing it
+**Convert selected** stays dimmed whenever it cannot act, and pressing it
 tells you why: the review is still updating, an open note has unsaved changes,
 a replacement is still being edited, nothing is selected, nothing was found to
 convert, or a conversion is already running.
@@ -134,7 +134,7 @@ back up notes. Conversion edits the original Markdown files directly. It has
 no automatic backup and no undo in Callout Studio.
 
 Save open notes, then pause editing and sync until conversion finishes. Choose
-**Convert selected…** in the sidebar, review the separate irreversible-action
+**Convert selected** in the sidebar, review the separate irreversible-action
 warning, and choose **Convert permanently**. Cancelling before that
 confirmation leaves notes unchanged. Closing the sidebar after conversion
 starts does not stop it.
@@ -143,7 +143,7 @@ Before writing, the converter checks that the vault still matches the preview.
 Changed, moved, deleted, or unreadable notes, and unsaved editor text, prevent
 conversion. If a problem occurs after some notes have been written, conversion
 stops and reports what was completed. The sidebar keeps the remaining changes
-as a pending plan and offers **Finish conversion…**. The finish step checks the
+as a pending plan and offers **Finish conversion**. The finish step checks the
 expected content again and will not overwrite later edits. Finish it before
 restarting or disabling the plugin; the plan is kept in memory, not saved as a
 recovery file.

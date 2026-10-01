@@ -22,6 +22,10 @@ There's a lot to explore in Callout Studio — from callout types and custom col
 | [16 - Advanced heading callouts](16-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                |
 | [17 - Theme integration](17-theme-integration.md)                          | Understand which callouts your theme controls.                                     |
 
+Some buttons and menu items end in dots, like *Import…*. The dots mean the next
+step asks you for one more detail, such as a source, a format, or a file, before
+anything happens. This guide writes the name without them: **Import**.
+
 ---
 
 At the bottom of **Settings → Callout Studio**, the contact links have equal,

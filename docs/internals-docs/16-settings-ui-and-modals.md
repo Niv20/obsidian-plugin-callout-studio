@@ -1613,7 +1613,7 @@ the label.
 
 | Button | Reason method | Blocked while → notice |
 | --- | --- | --- |
-| **Convert selected…** / **Finish conversion…** (Review conversion) | `PortableConversionView.convertBlockedReason()` | a conversion is running → `portable.blockedConverting`; pending link updates unrecoverable → `portable.recoveryUnavailable`; the review failed → the error already on its status line; the review is updating → `portable.blockedUpdating`; a replacement draft is open → `portable.blockedEditing`; every replacement unchecked → `portable.blockedNothingSelected`; nothing eligible → `portable.empty` |
+| **Convert selected** / **Finish conversion** (Review conversion) | `PortableConversionView.convertBlockedReason()` | a conversion is running → `portable.blockedConverting`; pending link updates unrecoverable → `portable.recoveryUnavailable`; the review failed → the error already on its status line; the review is updating → `portable.blockedUpdating`; a replacement draft is open → `portable.blockedEditing`; every replacement unchecked → `portable.blockedNothingSelected`; nothing eligible → `portable.empty` |
 | **Save** (command editor) | `CommandEditorModal.saveBlockedReason()` | no callout exists or is chosen → `commandBuilder.noCallouts` / `commandBuilder.noCalloutChosen`; the same command already exists → `commandBuilder.duplicate` |
 | **Save** (palette editor) | `PaletteEditorModal.saveBlockedReason()` | the name is taken → `palette.saveBlockedName`; the colours duplicate another palette → `palette.colorExists` |
 | **Replace** / **Confirm** (replacement picker) | `ReplaceCalloutModal.confirmBlockedReason()` | no row chosen → `replaceModal.chooseFirst` (delete mode names "delete without replacing") / `replaceModal.chooseFirstReplace` |
@@ -1639,6 +1639,73 @@ any outside click, so `PortableConversionCustom.outsideClick` ignores a press
 on an `aria-disabled` control, and the view puts the caret back in the draft
 (`focusDraft`) — the notice says *press Enter*, and focus would otherwise sit
 on the very button that just refused.
+
+## Button labels and the ellipsis
+
+A trailing `…` on a button or menu item says one thing: **pressing this does not
+act yet, and the next step asks for a detail the label does not name.** The reader
+learns to trust it — a plain label acts, a dotted one asks first — so it only works
+if it is spent narrowly. Before it was written down, four labels out of some sixty
+carried it, and two of those for the wrong reason: **Convert selected…** opened
+only a yes/no confirmation, like **Delete** and **Reset everything**, which had
+none, while **Import**, **Export** and **Replace in vault** each opened a step that
+asks for a source, a format or a replacement, and had none either.
+
+Ask three questions, in order:
+
+1. **Does pressing it act at once?** No dots. (**Duplicate**, **Scan for
+   callouts**, **Retry**.)
+2. **Is the next step only "sure?", or the form or window the label already
+   names?** No dots. (**Delete**, **Reset everything**, **Convert selected**,
+   **Add new callout**, **New palette**, **Manage commands**, **Review
+   conversion**.)
+3. **Does the next step ask for something the label does not say** — a source, a
+   format, a file, a replacement, the text itself? Dots. (**Import…**,
+   **Export…**, **Upload…**, **Replace in vault…**, **Custom replacement…**.)
+
+The boundary cases, and why they fall where they do:
+
+- **A confirmation is not a missing detail.** A destructive button's red styling
+  and its dialog already carry the weight; dots on **Delete…** would add noise,
+  not information. Obsidian's own **Delete** has none either.
+- **A window that is the destination is not a missing detail.** **Manage
+  commands**, **Customize**, **Review conversion** and **Restore an earlier
+  setup** open the thing the label names; nothing is left to ask. (The last is
+  the closest call: its window lists setups to choose from, but it carries the
+  label's own title and is as often opened to compare as to restore.)
+- **A form the label names is not a missing detail.** **Add new callout** opens
+  the callout editor, which is what it said.
+- **The last step of a dialog never has dots.** **Replace**, **Import** and
+  **Delete** inside their dialogs are the action itself. Their keys are often
+  shared with the button that opened the dialog, so a trigger that needs dots
+  gets a key of its own first.
+- **Icon-only buttons never have dots.** Their string is an `aria-label`, not a
+  visible label. A button that opens a dropdown wears the chevron instead.
+
+Other `…` in the strings keep their own meaning and are not action labels:
+progress text (**Saving…**, **Scanning…**), placeholders (**Search callouts…**)
+and a cut-short list (*…and 3 more*). A busy button may show progress dots where
+its action label had none, or in its place: **Importing…** stands in for **Import…**
+while the work runs.
+
+Three habits go with the rule:
+
+- **One character.** The mark is `…` (U+2026), never `...` and never preceded by a
+  space; GNOME's and KDE's guidelines ask for the same, and all of `en.ts`
+  already did it. (Obsidian's own strings use three ASCII periods; this plugin
+  deliberately does not follow.)
+- **Documentation names a button without its dots**: **Import**, not *Import…*.
+  The label can change; the instruction should not.
+- **Translations mirror English.** A locale ends a label in its language's
+  ellipsis exactly when the English label does. A dots-only edit leaves every
+  translation true, so none needs retiring (see [Localization](17-i18n.md)).
+
+[`tests/uiCopyEllipsis.test.ts`](../../tests/uiCopyEllipsis.test.ts) is the
+executable form. Every English string with a `…` must be filed under what its dots
+mean (asks for a detail, in progress, placeholder, cut-short list);
+the asking actions must end in it; a list of the near misses must not; and `...`
+is rejected. Adding a dotted string therefore means choosing a meaning, which is
+the step that used to be skipped.
 
 ## Notable individual modals
 
