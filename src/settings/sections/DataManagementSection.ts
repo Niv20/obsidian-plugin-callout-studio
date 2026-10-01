@@ -335,7 +335,11 @@ export async function processImportedJSON(
 			const merges = ctx.plugin.registry.consolidateDuplicatePalettes();
 			if (merges.length > 0) {
 				new Notice(
-					t("settings.palettesMergedNotice", { count: merges.length }),
+					t("notice.palettesMerged", {
+						count: merges.length,
+						names: merges.map((m) => m.from).join(", "),
+					}),
+					10000,
 				);
 			}
 		}
