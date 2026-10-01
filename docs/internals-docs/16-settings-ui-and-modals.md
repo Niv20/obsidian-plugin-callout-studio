@@ -2072,6 +2072,48 @@ the window has room and shorten only at a real narrow-width limit. The saved
 `edit` row is labelled **Create or edit callout** because it is one toggle for
 both runtime outcomes, not two mutually visible actions.
 
+#### Why this is not Obsidian's own list component
+
+Obsidian 1.13's **Settings → Appearance → Ribbon menu configuration** looks like
+the same job: a list you reorder and remove from. It was checked against the
+1.13.7 `app.js` and the 1.13.1 typings, and it cannot be borrowed here.
+
+It is a declarative settings page. `buildRibbonPage()` returns two
+`type: "list"` definitions — the public `SettingDefinitionList` (1.13.0+, with
+`onReorder`, `onDelete`, `emptyState` and `addItem`). Visible items get an X
+(tooltip **Delete**) and a handle; hidden ones sit in an **Other ribbon items**
+list as click-to-restore rows.
+
+- **No way in from a modal.** A definition list is reachable only through
+  `getSettingDefinitions()` (or a `SettingDefinitionPage`'s `items`). Nothing
+  public renders definitions into a `Modal`.
+- **All or nothing.** A non-empty `getSettingDefinitions()` turns `display()`
+  off for the whole tab (see "`getSettingDefinitions()` returns `[]`" above), so
+  using it means moving all 11 sections at once.
+- **Version.** It needs Obsidian 1.13; `minAppVersion` is 1.7.2.
+- **The behaviour is private.** The drag engine is a function inside `app.js`,
+  not one of the `obsidian` module's exports. `SettingGroup.onDeleteItem`,
+  `onReorderItem` and `focusNearestItem` exist at runtime but not in the
+  typings, so they may change without notice. `SettingGroup` (1.11+) is the only
+  public piece, and the `mod-list` class is just CSS in the app's stylesheet;
+  both are the look, not the drag.
+
+The delete-versus-toggle model is not what rules it out. A declarative row can
+carry a toggle (`control: { type: "toggle" }`, which `mod-list` draws smaller on
+desktop), two lists could stand in for the enabled and disabled bands as the
+Ribbon page does, and `extraButtons` could host the per-category reset. What a
+rebuild would inherit is Obsidian's drag engine as it is: a touch drag starts
+only after a 250 ms press-and-hold, the keyboard reorder is Alt+↑/↓ on a focused
+row (rows and handles are `tabIndex -1`, so the handle is not a Tab stop), and
+neither `app.js` nor `app.css` mentions `prefers-reduced-motion`. This modal's
+handle starts a touch drag at once (`touch-action: none`), is a Tab stop that
+moves its row with ↑/↓, and honours reduced motion. Obsidian's engine does
+auto-scroll while dragging, which lists of two to five rows never need.
+
+Revisit this only if `minAppVersion` reaches 1.13 *and* the settings tab moves
+to `getSettingDefinitions()`. Until then `MenuCustomizationModal` and
+`ui/DragSortList.ts` stay.
+
 ### `CommandBuilderModal` — fixed + custom commands, one window
 
 Two lists in one modal: the built-in commands (plain rows — nothing to
