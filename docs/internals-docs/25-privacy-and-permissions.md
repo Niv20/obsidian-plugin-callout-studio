@@ -26,7 +26,7 @@ There is exactly one exception that isn't tied to pressing a button: downloading
 
 ## Downloadable icon libraries
 
-Tabler Icons, Font Awesome, Octicons, RPG Awesome, and Simple Icons provide their artwork as downloadable files. After you press **Download** for a source once, it works offline. Approximate sizes:
+Tabler Icons, Font Awesome, Octicons, RPG Awesome, and Simple Icons provide their artwork as downloadable files. After you press **Download** for a source once — in the **Manage icon libraries** window, opened from **Manage libraries** beside the source menu, or in the icon picker's own prompt when the icon you are editing comes from a library this device does not have — it works offline. Approximate sizes:
 
 - **Tabler Icons:** 1.7 MB total (Outline 1.14 MB, Filled 503 KB)
 - **Font Awesome:** 1.4 MB total (Solid 794 KB, Regular 105 KB, Brands 559 KB)
@@ -41,11 +41,13 @@ Two situations can download a source automatically, both involving icons you alr
 1. Importing callouts that reference icons your vault doesn't have yet.
 2. Automatically repairing a downloaded pack file that's gone missing or no longer matches its checksum, but only if a callout would otherwise be undrawable.
 
+**Delete** in the Manage icon libraries window removes only that library's own file from the plugin's `icon-packs` folder, and nothing else. Before it does, the artwork of every icon your callouts use from that library — including one you have just picked in a callout you are still editing — is saved into the plugin's data file, so those callouts keep their icons and the repair above has nothing to download. Picking new icons from a deleted library needs the library downloaded again. The window's reset arrow does the same for every downloaded library at once, after listing them and asking; it also touches nothing outside `icon-packs`.
+
 ## Material Symbols
 
 Material Symbols does not use one file for the whole source because it offers more than 100,000 style and weight combinations. While its tab is open, the picker loads a Google Fonts stylesheet to preview the grid and saves the referenced font locally for future offline use. Expect roughly 1.0–1.5 MB for each style you open. The cached font is safe to delete and will be downloaded again when needed. Selecting an icon downloads that individual SVG.
 
-If the preview font can't be reached, the grid falls back to showing icon names instead of pictures, and a **Try again** button lets you retry once you're back online. None of this happens unless you open the Material source yourself.
+If the preview font can't be reached, the grid falls back to showing icon names instead of pictures, and a **Try again** button lets you retry once you're back online. None of this happens unless you open the Material source yourself, or the **All sources** list while Material is part of it. Hiding Material in the Icon libraries window takes it out of both, so its font is never requested.
 
 ## Translations
 
@@ -99,7 +101,7 @@ These pictures live in the plugin's own data file alongside the rest of your set
   comparison contains user-authored setup content; review it before sharing it.
 
 - **The commands you've built:** a few bytes each. Shortcuts live in Obsidian's hotkeys file, so they survive when you edit a command.
-- **Downloaded icon library files:** safe to delete because in-use artwork is also saved in the plugin's data file.
+- **Downloaded icon library files:** safe to delete because in-use artwork is also saved in the plugin's data file. **Delete** in the Manage icon libraries window does it for you, and its reset arrow does it for all of them.
 - **The interface translation file:** one language only and safe to delete. The plugin falls back to English and downloads it again when needed.
 - **The Material Symbols preview font:** used only for the icon picker's grid, never for your notes.
 - **A small local snapshot of the plugin's generated CSS**, purely to shorten the flash of unstyled callouts on a slow startup (mainly on mobile). It lives in the app's own local storage, never in the vault, and never leaves the device.

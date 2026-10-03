@@ -15,6 +15,14 @@ export interface ListboxPopupOptions<T> extends ComboboxRowContract<T> {
 	/** One extra action pinned below the list — e.g. the palette picker's Create "name" row. */
 	footerRow?: FooterRowSpec;
 	/**
+	 * A line of plain text closing the list — the source menu's "3 more
+	 * libraries available for download". Asked on every rebuild, so it can
+	 * follow what changed while the popup was open; an empty string draws
+	 * nothing. It is information, not a row: the arrow keys never reach it and
+	 * pressing it does nothing.
+	 */
+	footerNote?(): string;
+	/**
 	 * Offered *instead of* the empty state when a non-empty query matches
 	 * nothing. Unlike `footerRow` it is a real row: the keyboard reaches it.
 	 */

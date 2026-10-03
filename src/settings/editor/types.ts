@@ -3,7 +3,7 @@ import type { App } from "obsidian";
 import type { CalloutRegistry } from "../../manager/CalloutRegistry";
 import type { SettingsWriter } from "../../manager/SettingsWriter";
 import type { CSSInjector } from "../../manager/CSSInjector";
-import type { PackDataStore } from "../../icons/PackDataStore";
+import type { IconService } from "../../icons/IconService";
 import type {
 	CalloutIcon,
 	CalloutRenderRole,
@@ -34,7 +34,8 @@ export interface CalloutEditorPlugin {
 	ensureIconArtwork(icon: CalloutIcon): Promise<void>;
 	hasIconFetchFailed(icon: CalloutIcon, role: CalloutRenderRole): boolean;
 
-	icons: { packs: PackDataStore };
+	/** Handed on to the icon picker, whose Icon libraries window deletes libraries. */
+	icons: Pick<IconService, "packs" | "deleteLibrary">;
 
 	customCommands: {
 		migrateCalloutId(oldId: string, newId: string): void;

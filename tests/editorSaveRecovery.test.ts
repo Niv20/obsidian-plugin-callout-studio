@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { TFile, type App } from "obsidian";
+import { calloutNamesUsingLibrary } from "../src/icons/iconLibraries";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { SettingsWriter } from "../src/manager/SettingsWriter";
 import { CalloutEditor } from "../src/settings/CalloutEditor";
@@ -86,6 +87,17 @@ describe("editor rename work survives failed saves and partial note rewrites", (
 		assert.deepEqual(h.registry.get("new")?.metadata, metadata);
 		assert.deepEqual(h.state.disk.callouts.find((row) => row.id === "new")?.metadata, metadata);
 		assert.notEqual(h.registry.get("new")?.metadata, metadata);
+	});
+	it("a callout saved with an icon from a downloadable library is found by the Manage icon libraries window", async () => {
+		// The saved half of "download a library, apply one of its icons, delete
+		// the library": once Save has run, the registry — not just the editor —
+		// holds the icon, and deleting the library has to ask about the callout.
+		// (Before Save only the editor knows; see iconLibrariesModal.test.ts.)
+		const h = recoveryHarness();
+		assert.deepEqual(calloutNamesUsingLibrary(h.registry.getCommitted(), "octicons"), []);
+		assert.ok(await h.save({ icon: { type: "octicons", value: "alert" } }));
+		assert.deepEqual(calloutNamesUsingLibrary(h.registry.getCommitted(), "octicons"), ["New"]);
+		assert.deepEqual(calloutNamesUsingLibrary(h.registry.getCommitted(), "fa"), []);
 	});
 	it("renaming the chosen fallback keeps its selection and discovered-row appearance", async () => {
 		const h = recoveryHarness();

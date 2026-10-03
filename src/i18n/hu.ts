@@ -241,6 +241,7 @@ export const hu: Record<string, string> = {
 	"settings.resetItemHeading": "Címsor-callout beállításai",
 	"settings.resetItemInline": "Soron belüli callout beállításai",
 	"settings.resetItemFallback": "Tartalék stílus",
+	"settings.resetItemIconLibraries": "Az ikonkönyvtárak sorrendje és a rejtett könyvtárak",
 	"settings.resetAllConfirmAfter": "Ne aggódjon: a visszaállítás előtt biztonsági mentést készítünk a jelenlegi beállításairól. Bármikor visszaállíthatja a Beállítások Biztonsági mentések szakaszából.\nHa szinkronizálási szolgáltatást használ, a visszaállítás eljuthat a többi eszközére is.",
 	"settings.resetNothing": "Nincs mit visszaállítani: minden már az alapértelmezett állapotban van.",
 
@@ -493,6 +494,14 @@ export const hu: Record<string, string> = {
 	"iconPicker.chooseSource": "Forrás kiválasztása",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Nincs letöltve",
+	"iconPicker.librariesAvailable": "Elérhető könyvtárak",
+	"iconPicker.librariesToDownload": "Letölthető könyvtárak",
+	"iconPicker.groupCurrent": "Jelenlegi ikon",
+	"iconPicker.groupSearch": "Keresés",
+	"iconPicker.groupLibraries": "Könyvtárak",
+	"iconPicker.moreToDownloadOne": "Még 1 könyvtár érhető el letöltésre",
+	"iconPicker.moreToDownload": "Még {{count}} könyvtár érhető el letöltésre",
+	"iconPicker.manageLibraries": "Könyvtárak kezelése",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "egyszerre keresés az összes könyvtárban",
@@ -638,6 +647,34 @@ export const hu: Record<string, string> = {
 		"Az ikonok grafikája letöltve a(z) {{names}} számára.",
 	"iconPack.diskWriteFailed":
 		"A Callout Studio nem tudta menteni az ikoncsomagot a lemezre, ezért legközelebb újra le kell tölteni. A választott ikonok továbbra is mentve vannak a beállításaiban.",
+	"iconLibraries.manage": "Ikonkönyvtárak kezelése",
+	"iconLibraries.title": "Ikonkönyvtárak",
+	"iconLibraries.desc":
+		"Húzással módosíthatod a könyvtárak sorrendjét az Ikon kiválasztása ablakban.\nNéhány könyvtár letölthető és törölhető.\nA Lucide, az Emoji és a Material a bővítménnyel együtt érkezik, ezért csak elrejthetők.",
+	"iconLibraries.librariesHidden": "Rejtett könyvtárak",
+	"iconLibraries.reset": "Visszaállítás a bővítménnyel érkezett könyvtárakra",
+	"iconLibraries.download": "{{name}} letöltése",
+	"iconLibraries.delete": "{{name}} törlése",
+	"iconLibraries.hide": "{{name}} elrejtése",
+	"iconLibraries.show": "{{name}} megjelenítése",
+	"iconLibraries.iconCount": "{{count}} ikon",
+	"iconLibraries.noDownload": "nincs szükség letöltésre",
+	"iconLibraries.perIcon": "minden ikon kiválasztáskor töltődik le",
+	"iconLibraries.hidden": "Rejtett",
+	"iconLibraries.downloading": "Letöltés…",
+	"iconLibraries.deleting": "Törlés…",
+	"iconLibraries.keepOne": "Hagyj meg legalább egy könyvtárat az Ikon kiválasztása ablakban.",
+	"iconLibraries.deleteFailed": "A(z) {{name}} törlése nem sikerült. Próbáld újra.",
+	"iconLibraries.inUseOne": "1 callout használ ikonokat a(z) {{name}} könyvtárból:",
+	"iconLibraries.inUse": "{{count}} callout használ ikonokat a(z) {{name}} könyvtárból:",
+	"iconLibraries.inUseMore": "és még {{count}}",
+	"iconLibraries.inUseKeeps":
+		"Megtartják az ikonjaikat — mindegyikről másolat készül a beállításaid mellett. Ha később új ikonokat szeretnél választani a(z) {{name}} könyvtárból, töltsd le újra.",
+	"iconLibraries.resetConfirm":
+		"Ezzel a könyvtárak visszaállnak abba az állapotba, amelyben a bővítmény érkezett: alapértelmezett sorrend, semmi sem rejtett, és egyik letöltött könyvtár sincs meg. Ezek törlődnek:",
+	"iconLibraries.resetKeeps":
+		"Azok a calloutok, amelyek már használják az ikonjaikat, megtartják azokat. Ha később új ikonokat szeretnél választani ezekből a könyvtárakból, töltsd le őket újra.",
+	"iconLibraries.resetButton": "Visszaállítás",
 
 	// Icon licences & credits
 	"credits.title": "Ikonlicencek és köszönet",
@@ -698,6 +735,8 @@ export const hu: Record<string, string> = {
 	"confirm.titleResetCallout": "Callout visszaállítása",
 	"confirm.titleDeletePalette": "Paletta törlése",
 	"confirm.titleDeleteImage": "Kép törlése",
+	"confirm.titleDeleteLibrary": "Ikonkönyvtár törlése",
+	"confirm.titleResetLibraries": "Ikonkönyvtárak visszaállítása",
 
 	"vault.filesUpdated":
 		"{{count}} callout-hivatkozás frissítve a tárfájlokban.",
@@ -1263,6 +1302,9 @@ export const hu: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Helyi menü",
 	"recovery.details.field.autocomplete": "Automatikus kiegészítés",
 	"recovery.details.field.iconSources": "Ikonforrások és a választó beállításai",
+	"recovery.details.field.iconLibraries": "Ikonkönyvtárak",
+	"recovery.details.field.libraryOrder": "A könyvtárak sorrendje",
+	"recovery.details.field.hiddenLibraries": "Rejtett könyvtárak",
 	"recovery.details.field.headingCallouts": "Címsor-calloutok",
 	"recovery.details.field.inlineCallouts": "Szövegbe ágyazott calloutok",
 	"recovery.details.field.fallbackCalloutId": "Tartalék callout azonosítója",

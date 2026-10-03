@@ -327,6 +327,7 @@ export const he: Record<string, string> = {
 	"settings.resetItemHeading": "הגדרות תיבות־הבלטה בכותרות",
 	"settings.resetItemInline": "הגדרות תיבות־הבלטה בתוך השורה",
 	"settings.resetItemFallback": "סגנון ברירת־מחדל",
+	"settings.resetItemIconLibraries": "סדר ספריות האייקונים וספריות מוסתרות",
 	"settings.resetAllConfirmAfter": "אל דאגה: לפני האיפוס נשמור גיבוי של התצורה הנוכחית שלכם. אפשר לשחזר אותו בכל עת מהקטע גיבויים בהגדרות.\nאם אתם משתמשים בשירות סנכרון, האיפוס עשוי להגיע גם למכשירים האחרים שלכם.",
 	"settings.resetNothing": "אין מה לאפס: הכול כבר בברירות־המחדל.",
 
@@ -577,6 +578,14 @@ export const he: Record<string, string> = {
 	"iconPicker.chooseSource": "בחירת מקור",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "לא הורד",
+	"iconPicker.librariesAvailable": "ספריות זמינות",
+	"iconPicker.librariesToDownload": "ספריות להורדה",
+	"iconPicker.groupCurrent": "האייקון הנוכחי",
+	"iconPicker.groupSearch": "חיפוש",
+	"iconPicker.groupLibraries": "ספריות",
+	"iconPicker.moreToDownloadOne": "ספרייה נוספת אחת זמינה להורדה",
+	"iconPicker.moreToDownload": "{{count}} ספריות נוספות זמינות להורדה",
+	"iconPicker.manageLibraries": "ניהול ספריות",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "חיפוש בכל הספריות בבת אחת",
@@ -719,6 +728,34 @@ export const he: Record<string, string> = {
 	"iconPack.artworkRestored": "האייקונים של {{names}} הורדו.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio לא הצליח לשמור את חבילת האייקונים לדיסק, ולכן היא תידרש להורדה מחדש בפעם הבאה. האייקונים שבחרתם עדיין נשמרים יחד עם ההגדרות.",
+	"iconLibraries.manage": "ניהול ספריות אייקונים",
+	"iconLibraries.title": "ספריות אייקונים",
+	"iconLibraries.desc":
+		"גררו כדי לשנות את סדר הספריות בבחירת אייקון.\nאפשר להוריד ולמחוק חלק מהספריות.\nLucide, Emoji ו־Material מגיעות עם התוסף, ולכן אפשר רק להסתיר אותן.",
+	"iconLibraries.librariesHidden": "ספריות מוסתרות",
+	"iconLibraries.reset": "איפוס לספריות שהתוסף הגיע איתן",
+	"iconLibraries.download": "הורדת {{name}}",
+	"iconLibraries.delete": "מחיקת {{name}}",
+	"iconLibraries.hide": "הסתרת {{name}}",
+	"iconLibraries.show": "הצגת {{name}}",
+	"iconLibraries.iconCount": "{{count}} אייקונים",
+	"iconLibraries.noDownload": "אין צורך בהורדה",
+	"iconLibraries.perIcon": "כל אייקון יורד כשבוחרים בו",
+	"iconLibraries.hidden": "מוסתרת",
+	"iconLibraries.downloading": "מוריד…",
+	"iconLibraries.deleting": "מוחק…",
+	"iconLibraries.keepOne": "השאירו לפחות ספרייה אחת בבחירת אייקון.",
+	"iconLibraries.deleteFailed": "לא ניתן היה למחוק את {{name}}. נסו שוב.",
+	"iconLibraries.inUseOne": "תיבת־הבלטה אחת משתמשת באייקונים מ־{{name}}:",
+	"iconLibraries.inUse": "{{count}} תיבות־הבלטה משתמשות באייקונים מ־{{name}}:",
+	"iconLibraries.inUseMore": "ועוד {{count}}",
+	"iconLibraries.inUseKeeps":
+		"האייקונים שלהן נשארים — עותק של כל אחד נשמר עם ההגדרות שלכם. כדי לבחור אייקונים חדשים מ־{{name}} בהמשך, הורידו אותה שוב.",
+	"iconLibraries.resetConfirm":
+		"הפעולה מחזירה את הספריות למצב שבו התוסף הגיע: סדר ברירת המחדל, בלי ספריות מוסתרות ובלי אף אחת מהספריות שהורדו. הספריות האלה יימחקו:",
+	"iconLibraries.resetKeeps":
+		"תיבות־הבלטה שכבר משתמשות באייקונים שלהן שומרות עליהם. כדי לבחור אייקונים חדשים מהספריות האלה בהמשך, הורידו אותן שוב.",
+	"iconLibraries.resetButton": "איפוס",
 
 	// Icon licences & credits
 	"credits.title": "רישיונות וקרדיטים לאייקונים",
@@ -788,6 +825,8 @@ export const he: Record<string, string> = {
 	"confirm.titleResetCallout": "איפוס תיבת הבלטה",
 	"confirm.titleDeletePalette": "מחיקת פלטה",
 	"confirm.titleDeleteImage": "מחיקת תמונה",
+	"confirm.titleDeleteLibrary": "מחיקת ספריית אייקונים",
+	"confirm.titleResetLibraries": "איפוס ספריות האייקונים",
 
 	// Vault edge-case modals
 	"vault.filesUpdated": "עודכנו {{count}} הפניות בקובצי הכספת.",
@@ -1278,6 +1317,9 @@ export const he: Record<string, string> = {
 	"recovery.details.field.contextMenu": "תפריט הקשר",
 	"recovery.details.field.autocomplete": "השלמה אוטומטית",
 	"recovery.details.field.iconSources": "מקורות אייקונים והעדפות הבורר",
+	"recovery.details.field.iconLibraries": "ספריות אייקונים",
+	"recovery.details.field.libraryOrder": "סדר הספריות",
+	"recovery.details.field.hiddenLibraries": "ספריות מוסתרות",
 	"recovery.details.field.headingCallouts": "תיבות־הבלטה של כותרות",
 	"recovery.details.field.inlineCallouts": "תיבות־הבלטה בתוך שורה",
 	"recovery.details.field.fallbackCalloutId": "מזהה תיבת־הבלטה חלופי",

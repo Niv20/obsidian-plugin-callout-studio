@@ -17,8 +17,17 @@ import type {
 } from "../../types";
 import type { IconVariantState } from "../../icons/types";
 import { ICON_SOURCE_IDS, getSource, packFor } from "../../icons/registry";
-import type { PackDataStore } from "../../icons/PackDataStore";
+import type { IconService } from "../../icons/IconService";
+import {
+	isDownloaded,
+	libraryBytes,
+	menuLibraries,
+	pickerSources,
+	type EditedCallout,
+	type MenuLibraries,
+} from "../../icons/iconLibraries";
 import type { DeviceLocalStore } from "../../manager/DeviceLocalStore";
+import type { SettingsWriter } from "../../manager/SettingsWriter";
 import {
 	MATERIAL_DEFAULT_STYLE,
 	MATERIAL_DEFAULT_WEIGHT,
@@ -28,14 +37,17 @@ import { TABLER_DEFAULT_STYLE, tablerStyleOf } from "../../icons/packs/tabler";
 import { describeIcon } from "../../icons/describeIcon";
 import {
 	ALL_SOURCES,
-	availableSources,
 	createAllSourcesPack,
-	missingSources,
 	type PickerSourceId,
 } from "./allSources";
 import { PackPanel } from "./PackPanel";
 import { ImagePanel } from "./ImagePanel";
-import { alignIconPickerRows, mountIconSourcePicker } from "./sourcePicker";
+import { IconLibrariesModal } from "./IconLibrariesModal";
+import {
+	alignIconPickerRows,
+	mountIconSourcePicker,
+	showIconSource,
+} from "./sourcePicker";
 import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
 import type { ListboxPopup } from "../../ui/listboxPopup";
 import { applyModalChrome, removeModalChrome } from "../modalChrome";
@@ -77,16 +89,21 @@ export interface IconPickerPlugin {
 	 */
 	localState?: Pick<DeviceLocalStore, "iconCategory" | "setIconCategory" | "emojiSkinTone" | "setEmojiSkinTone">;
 	ensureIconArtwork(icon: CalloutIcon): Promise<void>;
-	icons: { packs: PackDataStore };
+	/** Pack files for the panels; deleting a whole library for the Icon libraries window. */
+	icons: Pick<IconService, "packs" | "deleteLibrary">;
+	/** The Icon libraries window refuses to delete an in-use library while saving is paused. */
+	settingsWriter: Pick<SettingsWriter, "isFrozen">;
 	/**
 	 * The slice of the registry the "Custom Icons" panel needs: the picture list
 	 * and its one writer, plus the callouts, so deleting a picture can say how
-	 * many callouts are about to lose their icon.
+	 * many callouts are about to lose their icon. `getCommitted` is the same
+	 * question for a whole icon library, without the callout editor's draft.
 	 */
 	registry: {
 		getUserImages(): readonly UserImageIcon[];
 		setUserImages(images: readonly UserImageIcon[]): void;
 		getAll(): CalloutDefinition[];
+		getCommitted(): CalloutDefinition[];
 	};
 }
 
@@ -109,9 +126,16 @@ export class IconPicker extends Modal {
 	/** How many icons each source offers; filled in the background on open. */
 	private sourceCounts = new Map<IconSourceId, number>();
 
+	/**
+	 * `editing` names the callout the icon is being chosen for. Its icon is the
+	 * one the picker opens on (`currentIcon`), which the editor holds unsaved —
+	 * so the registry does not know it — and the Icon libraries window needs
+	 * both to count it as a user of the library it is asked to delete.
+	 */
 	constructor(
 		private readonly plugin: IconPickerPlugin,
 		currentIcon?: CalloutIcon,
+		private readonly editing?: { id: string | null; name: string },
 	) {
 		super(plugin.app);
 		this.currentIcon = currentIcon ?? null;
@@ -173,9 +197,10 @@ export class IconPicker extends Modal {
 		await this.plugin.icons.packs.loadAllFromDisk();
 		if (generation !== this.openGeneration) return;
 		this.packStatesLoaded = true;
-		await this.showPanel();
-		if (generation !== this.openGeneration) return;
+		// The menu lists only what is on the device, so it is redrawn as soon as
+		// that is known — not after the panel, which can wait on Material's font.
 		this.sourcePicker?.setItems();
+		await this.showPanel();
 	}
 
 	onClose(): void {
@@ -203,20 +228,53 @@ export class IconPicker extends Modal {
 	private buildSourcePicker(container: HTMLElement): void {
 		this.sourcePicker = mountIconSourcePicker(container, {
 			value: this.activeSource,
+			sources: () => this.menuLibraries(),
 			countFor: (id) => this.countFor(id),
-			isMissing: (id) => this.packStatesLoaded &&
-				missingSources(this.plugin.icons.packs).some((pack) => pack.id === id),
 			onPick: (id) => this.selectSource(id),
+			onManage: () => void this.openLibraries(),
 		});
+	}
+
+	/**
+	 * What the source menu lists: the libraries Pick an icon offers on this
+	 * device, in the user's order, and — under a heading of its own — the
+	 * library of the icon being edited when it is not one of them, so that
+	 * re-editing the icon can show where it lives. See `menuLibraries`.
+	 *
+	 * The count of libraries left to download waits for the pack files to be
+	 * read back: until then a library downloaded in an earlier session reads as
+	 * missing, and the menu would quote a number about to drop.
+	 */
+	private menuLibraries(): MenuLibraries {
+		const current = this.currentIcon ? packFor(this.currentIcon)?.id : undefined;
+		const menu = menuLibraries(
+			this.plugin.settings.iconLibraries,
+			this.plugin.icons.packs,
+			current,
+		);
+		return this.packStatesLoaded ? menu : { ...menu, toDownload: [] };
+	}
+
+	/** The callout being edited, with the icon the picker opened on; absent outside the editor. */
+	private editedCallout(): EditedCallout | undefined {
+		return this.editing && this.currentIcon
+			? { ...this.editing, icon: this.currentIcon }
+			: undefined;
+	}
+
+	/** What the pooled list holds: the offered libraries, in the user's order. */
+	private pooledSources(): IconSourceId[] {
+		return pickerSources(this.plugin.settings.iconLibraries, this.plugin.icons.packs);
 	}
 
 	/** Distinct icon names; style and weight variants do not inflate the count. */
 	private countFor(id: PickerSourceId): number | undefined {
 		if (id !== ALL_SOURCES) return this.sourceCount(id);
 		if (this.sourceCounts.size === 0) return undefined;
-		// Only what the pool actually contains, which grows as sources download.
-		return availableSources(this.plugin.icons.packs).reduce(
-			(total, pack) => total + (this.sourceCount(pack.id) ?? 0),
+		// Only what the pool actually contains, which changes as libraries are
+		// downloaded, deleted or hidden.
+		return this.pooledSources().reduce(
+			(total, source) => total + (this.sourceCount(source) ?? 0),
 			0,
 		);
 	}
@@ -242,6 +300,72 @@ export class IconPicker extends Modal {
 		this.sourcePicker?.setItems();
 	}
 
+	/**
+	 * Open Manage icon libraries over the picker, and take in whatever it
+	 * changed when it closes: the menu is rebuilt, a library that was offered
+	 * and no longer is gives way to All sources, and an icon picked from such a
+	 * library stops being the selection — confirming it would otherwise download
+	 * that library again.
+	 *
+	 * The edited icon's own library is the exception, as in the menu: it stays
+	 * on screen (under its own heading in the menu, with the download prompt if
+	 * its files are gone), and the icon keeps its drawings, which are already
+	 * saved with the callout.
+	 */
+	private async openLibraries(): Promise<void> {
+		const generation = this.openGeneration;
+		// A library downloaded in an earlier session reads as missing until its
+		// file has been read back, which the picker does as it opens. Pressing
+		// Manage libraries first would list a library the person already has
+		// under "to download" — so wait for the same read, free once done.
+		await this.plugin.icons.packs.loadAllFromDisk();
+		if (generation !== this.openGeneration) return;
+		const offeredBefore = new Set(this.pooledSources());
+		const shownBefore = this.panelContents();
+		const changed = await new IconLibrariesModal({
+			app: this.plugin.app,
+			settings: this.plugin.settings,
+			saveSettings: () => this.plugin.saveSettings(),
+			settingsWriter: this.plugin.settingsWriter,
+			registry: this.plugin.registry,
+			icons: this.plugin.icons,
+			countFor: (id) => this.sourceCount(id),
+			editing: this.editedCallout(),
+		}).openAndWait();
+		if (!changed || generation !== this.openGeneration) return;
+
+		const offered = new Set(this.pooledSources());
+		const current = this.currentIcon && packFor(this.currentIcon)?.id;
+		const gone = (id: IconSourceId): boolean =>
+			offeredBefore.has(id) && !offered.has(id) && id !== current;
+		const selectedSource = this.selectedIcon && packFor(this.selectedIcon)?.id;
+		if (selectedSource && gone(selectedSource)) {
+			this.selectedIcon = null;
+			this.updatePreview();
+		}
+		if (this.activeSource !== ALL_SOURCES && gone(this.activeSource)) {
+			this.activeSource = ALL_SOURCES;
+		}
+		if (this.sourcePicker) showIconSource(this.sourcePicker, this.activeSource);
+		// Rebuilding the panel sends its grid back to the selected icon, or to
+		// the top: a jump nobody asked for when the change was about some other
+		// library. So only when what the panel shows has changed.
+		if (this.panelContents() !== shownBefore) await this.showPanel();
+	}
+
+	/**
+	 * What the active panel draws from the library settings, as one string —
+	 * the pooled list is its members in order, a downloadable library is how
+	 * much of it is still to download — so the panel is rebuilt exactly when
+	 * this changes.
+	 */
+	private panelContents(): string {
+		const source = this.activeSource;
+		if (source === ALL_SOURCES) return `${source}:${this.pooledSources().join(",")}`;
+		const packs = this.plugin.icons.packs;
+		return `${source}:${isDownloaded(source, packs)}:${libraryBytes(source, packs, true)}`;
+	}
+
 	private selectSource(id: PickerSourceId): void {
 		if (id === this.activeSource) return;
 		this.activeSource = id;
@@ -253,7 +377,6 @@ export class IconPicker extends Modal {
 	}
 
 	private async showPanel(): Promise<void> {
-		const generation = this.openGeneration;
 		this.panel?.dispose();
 		this.panelHostEl.empty();
 		const host = this.panelHostEl.createDiv("icon-picker-panel");
@@ -299,32 +422,14 @@ export class IconPicker extends Modal {
 				},
 			},
 		);
-		const panel = this.panel;
-		await panel.render();
-		if (generation !== this.openGeneration || this.panel !== panel) return;
-		if (this.activeSource === ALL_SOURCES) this.renderMissingSourcesHint();
+		await this.panel.render();
 	}
 
 	private activePack() {
 		if (this.activeSource !== ALL_SOURCES) return getSource(this.activeSource);
-		// Rebuilt each time, because downloading a source mid-session should
-		// fold it into the pooled list without reopening the picker.
-		return createAllSourcesPack(availableSources(this.plugin.icons.packs));
-	}
-
-	/**
-	 * Say which sources the pooled list is missing, rather than letting them
-	 * silently not be in the results.
-	 */
-	private renderMissingSourcesHint(): void {
-		const missing = missingSources(this.plugin.icons.packs);
-		if (missing.length === 0) return;
-		const hint = this.panelHostEl.createDiv("icon-picker-missing-sources");
-		hint.setText(
-			t("iconPicker.sourcesNotDownloaded", {
-				names: missing.map((p) => t(p.labelKey)).join(", "),
-			}),
-		);
+		// Rebuilt each time, because downloading, deleting or hiding a library
+		// mid-session should change the pooled list without reopening the picker.
+		return createAllSourcesPack(this.pooledSources().map(getSource));
 	}
 
 	// ── Persisted picker state ──────────────────────────────────────────

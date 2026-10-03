@@ -674,7 +674,15 @@ export class CalloutEditor extends Modal {
 			// `this.icon` even while hidden: the picker seeds its source, style
 			// controls and category from the current icon and highlights it in the
 			// grid, so an accidental ⓧ is two clicks from undone.
-			const picker = new IconPicker(this.plugin, this.icon);
+			//
+			// The callout's id and name ride along because `this.icon` is a draft
+			// until Save: the registry does not know it, yet it is the first thing
+			// to warn about when the person deletes the icon library it came from
+			// in the picker's Icon libraries window.
+			const picker = new IconPicker(this.plugin, this.icon, {
+				id: this.existingId,
+				name: this.displayName.trim() || t("editor.untitledCallout"),
+			});
 			const result = await picker.openAndWait();
 			if (!result) return;
 			this.icon = result;

@@ -235,6 +235,7 @@ export const fi: Record<string, string> = {
 	"settings.resetItemHeading": "Otsikko-calloutien asetukset",
 	"settings.resetItemInline": "Rivinsisäisten calloutien asetukset",
 	"settings.resetItemFallback": "Varatyyli",
+	"settings.resetItemIconLibraries": "Kuvakekirjastojen järjestys ja piilotetut kirjastot",
 	"settings.resetAllConfirmAfter": "Ei huolta: ennen palautusta tallennamme varmuuskopion nykyisestä kokoonpanostasi. Voit palauttaa sen milloin tahansa asetusten Varmuuskopiot-osiosta.\nJos käytät synkronointipalvelua, palautus voi siirtyä myös muille laitteillesi.",
 	"settings.resetNothing": "Ei mitään palautettavaa: kaikki on jo oletuksissa.",
 	"notice.customCommandMissingCallout":
@@ -483,6 +484,14 @@ export const fi: Record<string, string> = {
 	"iconPicker.chooseSource": "Valitse lähde",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Ei ladattu",
+	"iconPicker.librariesAvailable": "Saatavilla olevat kirjastot",
+	"iconPicker.librariesToDownload": "Ladattavat kirjastot",
+	"iconPicker.groupCurrent": "Nykyinen kuvake",
+	"iconPicker.groupSearch": "Haku",
+	"iconPicker.groupLibraries": "Kirjastot",
+	"iconPicker.moreToDownloadOne": "1 kirjasto lisää ladattavissa",
+	"iconPicker.moreToDownload": "{{count}} kirjastoa lisää ladattavissa",
+	"iconPicker.manageLibraries": "Hallitse kirjastoja",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "hae kaikista kirjastoista kerralla",
@@ -628,6 +637,34 @@ export const fi: Record<string, string> = {
 		"Kuvakkeiden grafiikka ladattiin kohteille {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio ei voinut tallentaa kuvakepakettia levylle, joten se on ladattava uudelleen ensi kerralla. Valitsemasi kuvakkeet on silti tallennettu asetuksiisi.",
+	"iconLibraries.manage": "Hallitse kuvakekirjastoja",
+	"iconLibraries.title": "Kuvakekirjastot",
+	"iconLibraries.desc":
+		"Vedä muuttaaksesi kirjastojen järjestystä Valitse kuvake -ikkunassa.\nJotkin kirjastot voi ladata ja poistaa.\nLucide, Emoji ja Material tulevat lisäosan mukana, joten ne voi vain piilottaa.",
+	"iconLibraries.librariesHidden": "Piilotetut kirjastot",
+	"iconLibraries.reset": "Palauta lisäosan mukana tulleet kirjastot",
+	"iconLibraries.download": "Lataa {{name}}",
+	"iconLibraries.delete": "Poista {{name}}",
+	"iconLibraries.hide": "Piilota {{name}}",
+	"iconLibraries.show": "Näytä {{name}}",
+	"iconLibraries.iconCount": "{{count}} kuvaketta",
+	"iconLibraries.noDownload": "latausta ei tarvita",
+	"iconLibraries.perIcon": "jokainen kuvake ladataan, kun se valitaan",
+	"iconLibraries.hidden": "Piilotettu",
+	"iconLibraries.downloading": "Ladataan…",
+	"iconLibraries.deleting": "Poistetaan…",
+	"iconLibraries.keepOne": "Jätä Valitse kuvake -ikkunaan vähintään yksi kirjasto.",
+	"iconLibraries.deleteFailed": "Kirjastoa {{name}} ei voitu poistaa. Yritä uudelleen.",
+	"iconLibraries.inUseOne": "1 callout käyttää kuvakkeita kirjastosta {{name}}:",
+	"iconLibraries.inUse": "{{count}} calloutia käyttää kuvakkeita kirjastosta {{name}}:",
+	"iconLibraries.inUseMore": "ja {{count}} muuta",
+	"iconLibraries.inUseKeeps":
+		"Ne säilyttävät kuvakkeensa — kopio jokaisesta tallennetaan asetustesi mukana. Jos haluat myöhemmin valita uusia kuvakkeita kirjastosta {{name}}, lataa se uudelleen.",
+	"iconLibraries.resetConfirm":
+		"Tämä palauttaa kirjastot siihen tilaan, jossa lisäosa tuli: oletusjärjestys, ei piilotettuja kirjastoja eikä yhtään ladattua kirjastoa. Nämä poistetaan:",
+	"iconLibraries.resetKeeps":
+		"Calloutit, jotka jo käyttävät kuvakkeitaan, säilyttävät ne. Jos haluat myöhemmin valita uusia kuvakkeita näistä kirjastoista, lataa ne uudelleen.",
+	"iconLibraries.resetButton": "Palauta",
 
 	// Icon licences & credits
 	"credits.title": "Kuvakkeiden lisenssit ja kiitokset",
@@ -685,6 +722,8 @@ export const fi: Record<string, string> = {
 	"confirm.titleResetCallout": "Palauta callout",
 	"confirm.titleDeletePalette": "Poista paletti",
 	"confirm.titleDeleteImage": "Poista kuva",
+	"confirm.titleDeleteLibrary": "Poista kuvakekirjasto",
+	"confirm.titleResetLibraries": "Palauta kuvakekirjastot",
 	"vault.filesUpdated":
 		"{{count}} callout-viite(ttä) päivitetty holvin tiedostoissa.",
 	"vault.idsUpdated":
@@ -1237,6 +1276,9 @@ export const fi: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Kontekstivalikko",
 	"recovery.details.field.autocomplete": "Automaattinen täydennys",
 	"recovery.details.field.iconSources": "Kuvakelähteet ja valitsimen asetukset",
+	"recovery.details.field.iconLibraries": "Kuvakekirjastot",
+	"recovery.details.field.libraryOrder": "Kirjastojen järjestys",
+	"recovery.details.field.hiddenLibraries": "Piilotetut kirjastot",
 	"recovery.details.field.headingCallouts": "Otsikko-calloutit",
 	"recovery.details.field.inlineCallouts": "Tekstinsisäiset calloutit",
 	"recovery.details.field.fallbackCalloutId": "Varacalloutin tunniste",

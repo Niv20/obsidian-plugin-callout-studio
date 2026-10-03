@@ -60,10 +60,22 @@ describe("Reset inventory", () => {
 		registry.add(definition({ id: "mine", displayName: "Mine" }));
 		Object.assign(registry.settings, {
 			globalStyle: {}, contextMenu: {}, headingCallouts: {}, inlineCallouts: {}, fallbackCalloutId: "",
+			iconLibraries: { order: [], hidden: ["emoji"] },
 		});
 		const { deleted, restored } = resetInventory(registry);
-		assert.equal(restored.length, 5);
+		assert.equal(restored.length, 6);
 		for (const row of [...deleted, ...restored]) assert.ok(en[row.labelKey], row.labelKey);
+	});
+
+	it("names the icon libraries once they differ, and the reset puts them back", () => {
+		// Their order and what is hidden are settings; the downloaded files are
+		// this device's cache, which no reset of settings touches.
+		const registry = fresh();
+		registry.settings.iconLibraries.hidden = ["emoji"];
+		assert.deepEqual(resetInventory(registry).restored, [{ labelKey: "settings.resetItemIconLibraries" }]);
+		registry.resetAll();
+		assert.deepEqual(registry.settings.iconLibraries, { order: [], hidden: [] });
+		assert.ok(isResetInventoryEmpty(resetInventory(registry)));
 	});
 
 	it("puts the number first in every counted row's sentence", () => {

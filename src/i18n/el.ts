@@ -229,6 +229,7 @@ export const el: Record<string, string> = {
 	"settings.resetItemHeading": "Ρυθμίσεις callout επικεφαλίδων",
 	"settings.resetItemInline": "Ρυθμίσεις ενσωματωμένων callout",
 	"settings.resetItemFallback": "Εφεδρικό στυλ",
+	"settings.resetItemIconLibraries": "Σειρά βιβλιοθηκών εικονιδίων και κρυφές βιβλιοθήκες",
 	"settings.resetAllConfirmAfter": "Μην ανησυχείτε: πριν από την επαναφορά αποθηκεύουμε αντίγραφο ασφαλείας της τρέχουσας διαμόρφωσής σας. Μπορείτε να το επαναφέρετε οποτεδήποτε από την ενότητα Αντίγραφα ασφαλείας στις ρυθμίσεις.\nΑν χρησιμοποιείτε υπηρεσία συγχρονισμού, η επαναφορά μπορεί να φτάσει και στις άλλες συσκευές σας.",
 	"settings.resetNothing": "Δεν υπάρχει τίποτα για επαναφορά: όλα είναι ήδη στις προεπιλογές.",
 	"notice.customCommandMissingCallout":
@@ -480,6 +481,14 @@ export const el: Record<string, string> = {
 	"iconPicker.chooseSource": "Επιλογή πηγής",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Δεν έχει ληφθεί",
+	"iconPicker.librariesAvailable": "Διαθέσιμες βιβλιοθήκες",
+	"iconPicker.librariesToDownload": "Βιβλιοθήκες προς λήψη",
+	"iconPicker.groupCurrent": "Τρέχον εικονίδιο",
+	"iconPicker.groupSearch": "Αναζήτηση",
+	"iconPicker.groupLibraries": "Βιβλιοθήκες",
+	"iconPicker.moreToDownloadOne": "Διατίθεται για λήψη ακόμα 1 βιβλιοθήκη",
+	"iconPicker.moreToDownload": "Διατίθενται για λήψη ακόμα {{count}} βιβλιοθήκες",
+	"iconPicker.manageLibraries": "Διαχείριση βιβλιοθηκών",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "αναζήτηση σε όλες τις βιβλιοθήκες ταυτόχρονα",
@@ -626,6 +635,34 @@ export const el: Record<string, string> = {
 	"iconPack.artworkRestored": "Λήψη γραφικών εικονιδίων για {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Το Callout Studio δεν μπόρεσε να αποθηκεύσει το πακέτο εικονιδίων στο δίσκο, οπότε θα χρειαστεί να γίνει λήψη ξανά την επόμενη φορά. Τα εικονίδια που επιλέγετε αποθηκεύονται στις ρυθμίσεις σας.",
+	"iconLibraries.manage": "Διαχείριση βιβλιοθηκών εικονιδίων",
+	"iconLibraries.title": "Βιβλιοθήκες εικονιδίων",
+	"iconLibraries.desc":
+		"Σύρετε για να αλλάξετε τη σειρά των βιβλιοθηκών στην «Επιλογή εικονιδίου».\nΟρισμένες βιβλιοθήκες μπορούν να ληφθούν και να διαγραφούν.\nΟι Lucide, Emoji και Material συνοδεύουν το πρόσθετο, γι’ αυτό μπορούν μόνο να κρυφτούν.",
+	"iconLibraries.librariesHidden": "Κρυφές βιβλιοθήκες",
+	"iconLibraries.reset": "Επαναφορά στις βιβλιοθήκες με τις οποίες ήρθε το πρόσθετο",
+	"iconLibraries.download": "Λήψη {{name}}",
+	"iconLibraries.delete": "Διαγραφή {{name}}",
+	"iconLibraries.hide": "Απόκρυψη {{name}}",
+	"iconLibraries.show": "Εμφάνιση {{name}}",
+	"iconLibraries.iconCount": "{{count}} εικονίδια",
+	"iconLibraries.noDownload": "δεν χρειάζεται λήψη",
+	"iconLibraries.perIcon": "κάθε εικονίδιο λαμβάνεται όταν επιλεγεί",
+	"iconLibraries.hidden": "Κρυφή",
+	"iconLibraries.downloading": "Λήψη…",
+	"iconLibraries.deleting": "Διαγραφή…",
+	"iconLibraries.keepOne": "Κρατήστε τουλάχιστον μία βιβλιοθήκη στην «Επιλογή εικονιδίου».",
+	"iconLibraries.deleteFailed": "Δεν ήταν δυνατή η διαγραφή της {{name}}. Δοκιμάστε ξανά.",
+	"iconLibraries.inUseOne": "1 callout χρησιμοποιεί εικονίδια από την {{name}}:",
+	"iconLibraries.inUse": "{{count}} callouts χρησιμοποιούν εικονίδια από την {{name}}:",
+	"iconLibraries.inUseMore": "και άλλα {{count}}",
+	"iconLibraries.inUseKeeps":
+		"Διατηρούν τα εικονίδιά τους — ένα αντίγραφο κάθε εικονιδίου αποθηκεύεται με τις ρυθμίσεις σας. Για να επιλέξετε αργότερα νέα εικονίδια από την {{name}}, κάντε ξανά λήψη της.",
+	"iconLibraries.resetConfirm":
+		"Έτσι οι βιβλιοθήκες επανέρχονται όπως ήρθε το πρόσθετο: προεπιλεγμένη σειρά, τίποτα κρυφό και καμία από τις βιβλιοθήκες που έχουν ληφθεί. Αυτές θα διαγραφούν:",
+	"iconLibraries.resetKeeps":
+		"Τα callouts που ήδη χρησιμοποιούν τα εικονίδιά τους τα διατηρούν. Για να επιλέξετε αργότερα νέα εικονίδια από αυτές τις βιβλιοθήκες, κάντε ξανά λήψη τους.",
+	"iconLibraries.resetButton": "Επαναφορά",
 
 	// Icon licences & credits
 	"credits.title": "Άδειες εικονιδίων και αναφορές",
@@ -684,6 +721,8 @@ export const el: Record<string, string> = {
 	"confirm.titleResetCallout": "Επαναφορά callout",
 	"confirm.titleDeletePalette": "Διαγραφή παλέτας",
 	"confirm.titleDeleteImage": "Διαγραφή εικόνας",
+	"confirm.titleDeleteLibrary": "Διαγραφή βιβλιοθήκης εικονιδίων",
+	"confirm.titleResetLibraries": "Επαναφορά βιβλιοθηκών εικονιδίων",
 	"vault.filesUpdated":
 		"Ενημερώθηκαν {{count}} αναφορές callout σε αρχεία vault.",
 	"vault.idsUpdated":
@@ -1258,6 +1297,9 @@ export const el: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Μενού περιβάλλοντος",
 	"recovery.details.field.autocomplete": "Αυτόματη συμπλήρωση",
 	"recovery.details.field.iconSources": "Πηγές εικονιδίων και προτιμήσεις επιλογέα",
+	"recovery.details.field.iconLibraries": "Βιβλιοθήκες εικονιδίων",
+	"recovery.details.field.libraryOrder": "Σειρά βιβλιοθηκών",
+	"recovery.details.field.hiddenLibraries": "Κρυφές βιβλιοθήκες",
 	"recovery.details.field.headingCallouts": "Callout επικεφαλίδων",
 	"recovery.details.field.inlineCallouts": "Ενσωματωμένα callout",
 	"recovery.details.field.fallbackCalloutId": "Αναγνωριστικό εφεδρικού callout",

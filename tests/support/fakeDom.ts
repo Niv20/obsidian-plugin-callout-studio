@@ -204,6 +204,10 @@ export class FakeDocumentFragment {
 		return this.make("span", options);
 	}
 
+	appendText(text: string): void {
+		this.appendChild(new FakeText(text));
+	}
+
 	private make(tag: string, options?: ElOptions): FakeElement {
 		const el = new FakeElement(tag, sharedDocument);
 		applyElOptions(el, options);
@@ -1421,7 +1425,11 @@ export function installFakeDom(): FakeDomHandle {
 	g.createEl = make;
 	g.createDiv = (options?: ElOptions | string) => make("div", options);
 	g.createSpan = (options?: ElOptions | string) => make("span", options);
-	g.createFragment = () => new FakeDocumentFragment();
+	g.createFragment = (callback?: (fragment: FakeDocumentFragment) => void) => {
+		const fragment = new FakeDocumentFragment();
+		callback?.(fragment);
+		return fragment;
+	};
 	g.HTMLElement = FakeElement;
 	g.Node = {
 		ELEMENT_NODE: NODE_ELEMENT,

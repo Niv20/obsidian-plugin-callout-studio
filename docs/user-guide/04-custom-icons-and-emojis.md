@@ -8,9 +8,13 @@ On desktop, the available search field is ready for typing when an icon source o
 
 ## Built-in sources
 
-The picker includes Lucide, Tabler Icons, Material Symbols, Emoji, Font Awesome, Octicons, RPG Awesome, and Simple Icons.
+The picker can offer Lucide, Tabler Icons, Material Symbols, Emoji, Font Awesome, Octicons, RPG Awesome, and Simple Icons.
 
-The source menu keeps catalog sizes easy to scan with rounded counts such as **3.8K+**. A grey outlined **Not downloaded** badge marks whole-library packs that are not stored on this device yet; selecting one opens its one-time download prompt.
+The source menu lists only what you can pick from right now. Under **Search** is **All sources**, which searches every library at once. Under **Libraries** are the libraries on this device, in the order you set in **Manage icon libraries** (see below), with rounded counts such as **3.8K+** that keep catalog sizes easy to scan. Each heading stays pinned to the top of the menu while its rows scroll underneath it. A line at the bottom, such as **3 more libraries available for download**, tells you how many more you can get. It isn't a button: you download libraries with **Manage libraries**, next to the menu. Once every library is on this device the line goes away, and it comes back as soon as you delete one. On a phone, the menu leaves out its **Choose source** caption to keep room for the library's name.
+
+If you edit a callout whose icon comes from a library this device doesn't have — you deleted it, or you downloaded it only on another device — the callout keeps its icon, and the picker opens on that library. The source menu names it, and when you open the menu it is listed first, under its own **Current icon** heading. It stays there while you look through other libraries, so you can always go back to it. That library shows its one-time download prompt, in the middle of the picker, where its icons would be: download it to choose a new icon from it, or choose from another library instead. The library of the icon you are editing is listed under **Current icon** in the same way if you hid it.
+
+A library's license and credit line stays at the bottom of the picker, even when a search leaves only a few icons.
 
 The menu fits the available window height and scrolls internally, including
 with larger interface text. Moving the pointer away clears its hover highlight;
@@ -28,6 +32,31 @@ For Tabler Icons, the search field is slightly narrower to leave more room for t
 For Material Symbols, search sits above the style, weight, and category filters so their choices stay readable.
 The source and filters use matching selection fields and menus. The emoji skin tone menu shows a
 sample hand beside each tone, so you can see the choice before selecting it.
+
+## Manage icon libraries
+
+Click **Manage libraries** at the end of the source row to open **Manage icon libraries**. This is also where you download a library: the source menu lists only the libraries already on this device. The window works like **Customize menu items**: one list, divided by lines, under these headings.
+
+- **Available libraries** are the ones the picker offers, in the order it offers them. Drag a row by its handle — or focus the handle and press the up and down arrow keys — to change that order. The reset arrow sits on this heading.
+- **Libraries to download** are the ones not downloaded on this device yet. Their rows are dimmed and have no handle, because their order can't change anything until they're downloaded.
+- **Hidden libraries** appears only while you have hidden one of the libraries that come with the plugin, and lists it so you can show it again.
+
+The three headings are as large as **Built-in commands** in **Commands and shortcuts**.
+
+Each row has one button:
+
+- A library you download has a **trash** button above the line and a **download** button below it. Under its name you see how many icons it has and its size, so you know what a download costs and what deleting frees.
+- **Lucide, Material, Emoji, and Custom Icons** come with the plugin and can't be deleted, so their button hides them from the picker instead, and shows them again from below the line. Hiding **Material** also stops the picker from loading its preview font from Google.
+
+Some libraries can be downloaded and deleted; **Lucide**, **Emoji** and **Material** come with the plugin, so they can only be hidden. A library you download takes its place in your order rather than jumping to the end. The picker always keeps at least one library, so the last one above the line can't be removed.
+
+The window scrolls only when the library you pressed moves to a place you can't see. Delete or hide one and it drops below the line; the window scrolls down with it, so you see where it went. Download one and, the moment the download finishes, the row rises into **Available libraries**; the window scrolls up with it. In every other case — dragging, the arrow keys, the reset arrow, a download that is still running or fails, a question you decline, a library that lands in view anyway — the window stays where it is.
+
+The arrow on the **Available libraries** heading resets everything to how the plugin came: the default order, every library shown, and none of the libraries you downloaded. If any are on the device, it lists them and asks before it deletes them; callouts that use their icons keep them, as with any delete. It never downloads anything. The arrow shows only while something differs from that, so it is also the quickest way to see whether a library is still taking up space.
+
+If callouts use icons from a library you delete, Callout Studio first lists them by name. That includes the callout you're editing right now: an icon you've just picked from the library counts even before you save the callout. They keep their icons — a copy of each is saved with your settings — and you only need the library again to pick new icons from it. A library nothing uses is deleted at once, with no question. While saving is paused, a library that callouts use can't be deleted.
+
+Your order and the libraries you hid sync with the rest of your settings. Downloads don't: each device keeps its own, so a library downloaded on one device appears under **Libraries to download** on another until you download it there too.
 
 ## Brand logos
 

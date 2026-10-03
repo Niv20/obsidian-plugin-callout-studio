@@ -178,6 +178,7 @@ strategies behind one interface.
 initialize(): Promise<void>          // startup — see below
 ensureArtwork(icon): Promise<void>     // the picker's "Confirm" button
 ensureArtworkFor(icons): Promise<void>  // the ONLY repair path — batches
+deleteLibrary(source, alsoKeep?): Promise<boolean> // the Manage icon libraries window's Delete
 hasFailed(icon, role): boolean
 ```
 
@@ -251,6 +252,7 @@ Icons).
 ```ts
 loadFromDisk(id): Promise<PackDiskResult>   // "ready" | "missing" | "corrupt" — NEVER fetches
 download(id): Promise<boolean>               // fetches, verifies, persists
+remove(id): Promise<boolean>                 // deletes the file, forgets the artwork
 ```
 
 **Every read — download or disk — is SHA-256-verified against
@@ -301,6 +303,111 @@ on a desktop, in one uninterrupted main-thread block, at startup for any vault
 that uses one of its logos. `tests/iconPackData.test.ts` holds the loop to the
 expression on all 65,536 code units, and to the generator's copy of it by
 quoting the literal — edit one without the others and something fails.
+
+## Icon libraries — what the picker offers
+
+[`src/icons/iconLibraries.ts`](../../src/icons/iconLibraries.ts) is the one
+reader of `settings.iconLibraries` (see [Data model](04-data-model.md#pluginsettings)).
+The picker's source menu, its All sources pool and the **Manage icon libraries**
+window all ask it which libraries this device offers, and in what order:
+
+- A **downloadable** (`bundledRemote`) library is offered exactly when every
+  file in its `dataPacks` is `"ready"`. Font Awesome with only Brands on disk is
+  not offered: the same "all, not any" rule the pool has always applied.
+- Every other library — Lucide, Material, Emoji, Custom Icons — ships with the
+  plugin and is offered unless it is listed in `hidden`. A downloadable id in
+  `hidden` is ignored: deleting its files is how it leaves.
+- `libraryOrder()` completes the saved order. Unknown ids are skipped, and a
+  library the list lacks (the list is still empty, or a later release added
+  the library) goes right after its catalog predecessor, wherever that one sits.
+- `pickerSources()` is never empty. Settings synced from a device with
+  downloads can hide every built-in library on one without any; Lucide is then
+  offered anyway, since it draws offline and cannot fail.
+- `menuLibraries()` is the source menu. `libraries` is exactly
+  `pickerSources()` — what the picker offers, which is also the All sources
+  pool — so every library the menu lists can be drawn from right now.
+  `toDownload` is every downloadable library the device does not fully have, in
+  catalog order; the menu does not list them, it counts them in its closing
+  line, and they are downloaded in the Manage icon libraries window. `current`
+  is the one exception: the edited icon's own library when the picker does not
+  offer it — deleted here, downloaded only on another device, partly
+  downloaded, or a built-in one the user hid. The menu lists it apart, under its
+  own heading, so re-editing that icon can always show where it lives, and it is
+  left out of `toDownload`, being listed already. Any other hidden built-in
+  library is in none of the three.
+- `isInstalled()` is the looser question — any file of the library on the
+  device. A library with only some of its files is not offered, but it still
+  takes up space, so Delete and the window's reset arrow have to see it.
+- `reorderShown()` saves a drag by moving only the libraries this device shows,
+  each into a slot one of them already held, so a library downloaded only on
+  another device keeps the place it was given there. `savedLibraryOrder()`
+  writes the catalog order back as `[]` and keeps a newer build's ids at the end.
+
+A download keeps the library's saved slot and writes no settings. Downloads are
+per device; one device's download must not reorder every other device's list.
+
+The pooled pack records what it pools (`AllSourcesPack.memberIds`), and
+`PackPanel` loads Material's Google webfont for the pool only while Material is
+a member. Hiding Material therefore stops that request as well as the menu row.
+
+### Deleting a library keeps its callouts' icons
+
+`IconService.deleteLibrary(source, alsoKeep)` is the window's **Delete**:
+
+1. **Seal.** Every committed callout using the library gets
+   `copyIconPackArtwork` for all three roles, copied out of the still-loaded
+   pack. `calloutsUsingLibrary()` runs over `registry.getCommitted()`, which
+   leaves out theme rows and the callout editor's draft but includes callouts
+   whose icon is turned off. `alsoKeep` is the editor's draft, handed in
+   explicitly (below), and gets the same treatment.
+2. If anything new was copied, one `publish()` — inject, save, notify.
+3. `PackDataStore.remove(id)` for each file deletes `icon-packs/<id>.json`,
+   forgets the parsed artwork (`forgetPackData`), clears the state and
+   notifies. It refuses while that pack is downloading.
+
+The seal is what makes "they keep their icons" true on every synced device, and
+it is what keeps a deletion final: a callout left without its copy would send
+the startup repair (`ensureArtworkFor`) to download the library straight back.
+The window therefore refuses to delete a library callouts use while saving is
+paused, because the copy has to reach the disk before the file goes.
+
+#### The callout being edited counts as a user
+
+The only road to the window is *callout editor → Pick an icon → Manage libraries*, so a
+callout editor is always open behind it, and the icon the person just picked
+sits in `CalloutEditor.icon` until **Save** — the registry knows nothing of it.
+Download a library, pick one of its icons, open the window again and press
+**Delete**: if "who uses this library?" were answered from the registry alone
+there would be no users, no question, and the library would go without a word.
+That was the bug behind a missing dialog, and it was never about timing —
+`registry.getCommitted()` leaves the draft out by design, so no amount of waiting
+would have put it in.
+
+The fix keeps `getCommitted()` as it is and adds the draft from the one place
+that really knows it. `CalloutEditor` opens the picker with
+`{ id: existingId, name }`; the picker pairs that with the icon it was opened on
+(`currentIcon`, which *is* the draft's icon, and cannot change while a modal sits
+on top of the editor) into an `EditedCallout`; the window's host carries it as
+`editing`. `iconLibraries.ts` then answers:
+
+- `calloutNamesUsingLibrary(committed, id, edited)` — the committed callouts
+  using the library, by name, plus the edit when its icon is from the library.
+  One callout counts once however many of its versions use the library (matched
+  by id), and a committed callout keeps counting after its edit moves to another
+  library, because until **Save** the committed icon is what every note draws.
+  An empty list is what lets the library be deleted without asking.
+- `editedUsingLibrary(edited, id)` — the edit when its icon is from the
+  library, which the window passes on as `alsoKeep`.
+
+The registry's preview slot (`setPreviewDefinition`) is deliberately **not** the
+source: it holds the half-typed callout under a placeholder id so it can be
+*drawn*, it is cleared and restored by other modals, and a rename of the id
+field would make it disagree with the real callout it shadows.
+
+`fetchArtwork` returns early for an icon that `isIconFullyCached`, before it
+looks at the pack. Confirming a callout's own icon in the picker — on a device
+that never had its library, or after deleting it — used to download the whole
+library for artwork that was already saved.
 
 ## Simple Icons — a pack decided logo by logo
 

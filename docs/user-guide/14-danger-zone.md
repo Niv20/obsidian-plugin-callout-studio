@@ -160,10 +160,13 @@ or restores:
 - Heading and inline callout settings, and the fallback style.
 - Saved color palettes.
 - Right-click menu customization.
+- The order of the icon libraries in the icon picker, and any you hid there.
 - Downloaded Material Symbols artwork and other resettable cached data.
 
 Callouts supplied by the active theme are not deleted from the theme. They
-remain available while that theme is active.
+remain available while that theme is active. Icon libraries you downloaded stay
+on the device; delete them from **Manage icon libraries** in the icon picker if you no
+longer want them — the reset arrow there removes them all at once.
 
 Before the reset runs, Callout Studio shows a confirmation. It opens with a
 reminder that everything you built is about to be deleted, then lists, as a

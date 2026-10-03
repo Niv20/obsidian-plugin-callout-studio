@@ -106,10 +106,11 @@ const find = (selector: string): Rule | undefined =>
 	rules.find((r) => r.selector.replace(/\s+/g, " ") === selector);
 
 /**
- * The four faces, by the selector that owns each one's resting fill. Kept as a
- * literal list rather than discovered by pattern: a fifth grey button appearing
- * without an entry here is exactly the drift this file exists to catch, and a
- * pattern would silently adopt it.
+ * The faces, by the selector that owns each one's resting fill: the four above,
+ * and the fifth that came later — Pick an icon's **Manage libraries**, which
+ * replaced a gear. Kept as a literal list rather than discovered by pattern: a
+ * new grey button appearing without an entry here is exactly the drift this
+ * file exists to catch, and a pattern would silently adopt it.
  */
 const FACES = [
 	{
@@ -132,6 +133,11 @@ const FACES = [
 		label: "segmented: gradient direction",
 		base: ".cs-gradient-dir-btn.cs-gradient-dir-btn",
 		hover: ".cs-gradient-dir-btn:hover",
+	},
+	{
+		label: "Pick an icon's Manage libraries",
+		base: ".icon-picker-source-row button.icon-picker-manage-libraries",
+		hover: ".icon-picker-source-row button.icon-picker-manage-libraries:hover",
 	},
 ];
 
@@ -227,7 +233,7 @@ describe("a selected segment still answers the pointer", () => {
  * The regression that started this: a translucent overlay standing in for a
  * button's fill. It is still the right answer for a list row, an icon button or
  * a chip — all of which sit on the surface behind them rather than owning a
- * face — so this is scoped to the four rules above rather than to the file.
+ * face — so this is scoped to the faces listed above rather than to the file.
  */
 describe("no grey button paints the hover overlay", () => {
 	const OVERLAY = /var\(\s*--background-modifier-hover\s*\)/;

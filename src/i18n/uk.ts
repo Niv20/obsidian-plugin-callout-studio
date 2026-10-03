@@ -297,6 +297,7 @@ export const uk: Record<string, string> = {
 	"settings.resetItemHeading": "Налаштування callout у заголовках",
 	"settings.resetItemInline": "Налаштування вбудованих у рядок callout",
 	"settings.resetItemFallback": "Резервний стиль",
+	"settings.resetItemIconLibraries": "Порядок бібліотек іконок і приховані бібліотеки",
 	"settings.resetAllConfirmAfter": "Не хвилюйтеся: перед скиданням ми збережемо резервну копію вашої поточної конфігурації. Її можна відновити будь-коли в розділі «Резервні копії» в налаштуваннях.\nЯкщо ви користуєтеся службою синхронізації, скидання може дійти й до ваших інших пристроїв.",
 	"settings.resetNothing": "Скидати нічого: усе вже має типові значення.",
 
@@ -552,6 +553,14 @@ export const uk: Record<string, string> = {
 	"iconPicker.chooseSource": "Вибрати джерело",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Не завантажено",
+	"iconPicker.librariesAvailable": "Доступні бібліотеки",
+	"iconPicker.librariesToDownload": "Бібліотеки для завантаження",
+	"iconPicker.groupCurrent": "Поточна іконка",
+	"iconPicker.groupSearch": "Пошук",
+	"iconPicker.groupLibraries": "Бібліотеки",
+	"iconPicker.moreToDownloadOne": "Для завантаження доступна ще 1 бібліотека",
+	"iconPicker.moreToDownload": "Для завантаження доступні ще бібліотеки: {{count}}",
+	"iconPicker.manageLibraries": "Керування бібліотеками",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "пошук в усіх бібліотеках одночасно",
@@ -696,6 +705,34 @@ export const uk: Record<string, string> = {
 	"iconPack.artworkRestored": "Графіку іконок для {{names}} завантажено.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio не вдалося зберегти пакет іконок на диск, тому наступного разу його потрібно буде завантажити знову. Вибрані вами іконки зберігаються з налаштуваннями.",
+	"iconLibraries.manage": "Керування бібліотеками іконок",
+	"iconLibraries.title": "Бібліотеки іконок",
+	"iconLibraries.desc":
+		"Перетягуйте, щоб змінити порядок бібліотек у вікні «Вибрати іконку».\nДеякі бібліотеки можна завантажити й видалити.\nLucide, Emoji та Material входять до складу плагіна, тому їх можна лише приховати.",
+	"iconLibraries.librariesHidden": "Приховані бібліотеки",
+	"iconLibraries.reset": "Повернути бібліотеки, з якими постачався плагін",
+	"iconLibraries.download": "Завантажити {{name}}",
+	"iconLibraries.delete": "Видалити {{name}}",
+	"iconLibraries.hide": "Приховати {{name}}",
+	"iconLibraries.show": "Показати {{name}}",
+	"iconLibraries.iconCount": "Іконок: {{count}}",
+	"iconLibraries.noDownload": "завантаження не потрібне",
+	"iconLibraries.perIcon": "кожна іконка завантажується під час вибору",
+	"iconLibraries.hidden": "Приховано",
+	"iconLibraries.downloading": "Завантаження…",
+	"iconLibraries.deleting": "Видалення…",
+	"iconLibraries.keepOne": "Залиште у вікні «Вибрати іконку» хоча б одну бібліотеку.",
+	"iconLibraries.deleteFailed": "Не вдалося видалити {{name}}. Спробуйте ще раз.",
+	"iconLibraries.inUseOne": "1 callout використовує іконки з {{name}}:",
+	"iconLibraries.inUse": "Callout, що використовують іконки з {{name}}: {{count}}",
+	"iconLibraries.inUseMore": "і ще {{count}}",
+	"iconLibraries.inUseKeeps":
+		"Вони зберігають свої іконки — копію кожної збережено разом із вашими налаштуваннями. Щоб пізніше вибрати нові іконки з {{name}}, завантажте бібліотеку знову.",
+	"iconLibraries.resetConfirm":
+		"Бібліотеки повернуться до стану, в якому постачався плагін: порядок за замовчуванням, нічого не приховано, жодної завантаженої бібліотеки. Буде видалено:",
+	"iconLibraries.resetKeeps":
+		"Callout, які вже використовують свої іконки, збережуть їх. Щоб пізніше вибрати нові іконки з цих бібліотек, завантажте їх знову.",
+	"iconLibraries.resetButton": "Скинути",
 
 	// Icon licences & credits
 	"credits.title": "Ліцензії іконок та авторство",
@@ -760,6 +797,8 @@ export const uk: Record<string, string> = {
 	"confirm.titleResetCallout": "Скинути callout",
 	"confirm.titleDeletePalette": "Видалити палітру",
 	"confirm.titleDeleteImage": "Видалити зображення",
+	"confirm.titleDeleteLibrary": "Видалити бібліотеку іконок",
+	"confirm.titleResetLibraries": "Скинути бібліотеки іконок",
 
 	"vault.filesUpdated":
 		"Оновлено {{count}} посилань на callout у файлах сховища.",
@@ -1266,6 +1305,9 @@ export const uk: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Контекстне меню",
 	"recovery.details.field.autocomplete": "Автодоповнення",
 	"recovery.details.field.iconSources": "Джерела піктограм і налаштування вибору",
+	"recovery.details.field.iconLibraries": "Бібліотеки іконок",
+	"recovery.details.field.libraryOrder": "Порядок бібліотек",
+	"recovery.details.field.hiddenLibraries": "Приховані бібліотеки",
 	"recovery.details.field.headingCallouts": "Callout у заголовках",
 	"recovery.details.field.inlineCallouts": "Рядкові callout",
 	"recovery.details.field.fallbackCalloutId": "Ідентифікатор резервного callout",

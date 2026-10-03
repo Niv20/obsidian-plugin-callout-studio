@@ -207,6 +207,7 @@ interface PluginSettings {
   contextMenu: ContextMenuSettings;
   autocomplete: AutocompleteSettings;    // compatibility marker; enabled is always true
   iconSources: IconSourceSettings;
+  iconLibraries: IconLibrarySettings;    // { order: string[]; hidden: string[] }
   headingCallouts: HeadingCalloutSettings;
   inlineCallouts: InlineCalloutSettings;
   welcomeSeen?: boolean;
@@ -228,6 +229,20 @@ values are sanitized back to `all` during settings merge. `theme` remains a vali
 choice when the current theme owns no usable rows; that modal temporarily
 resolves it to `all` without erasing the preference. `iconSources.lastCategory`
 and `iconSources.lastEmojiSkinTone` follow the same rule for the icon picker.
+
+`iconLibraries` is what the **Manage icon libraries** window edits: `order` is every
+library in the order Pick an icon lists them (empty — the default — means the
+catalog order), and `hidden` the libraries that ship with the plugin that the
+user took out of the picker. Whether a *downloadable* library is offered is not
+stored anywhere: it is whether its files are on this device. Both lists hold
+plain strings, so an id written by a newer build survives a save here; only
+`icons/iconLibraries.ts` reads them, skipping ids it does not know.
+
+It is a top-level key on purpose, not two more fields on `iconSources`. A build
+that predates it rebuilds `iconSources` from the fields it knows and would drop
+the new ones on its next save, while a whole top-level key it does not know is
+carried through by `foreignFields.ts`. Two devices one release apart therefore
+keep each other's library order.
 
 `autocomplete.enabled` remains in the serialized shape so older settings files
 and exports have an explicit upgrade target, but it is no longer mutable

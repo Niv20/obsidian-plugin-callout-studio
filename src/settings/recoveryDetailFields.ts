@@ -12,6 +12,8 @@ export const FIELDS: Readonly<Record<string, string>> = {
 	regular: "regular", heading: "heading", inline: "inline", version: "version",
 	globalStyle: "globalStyle", contextMenu: "contextMenu", autocomplete: "autocomplete",
 	iconSources: "iconSources", headingCallouts: "headingCallouts", inlineCallouts: "inlineCallouts",
+	// `order` and `hidden` occur only inside `iconLibraries`, so they can carry its labels.
+	iconLibraries: "iconLibraries", order: "libraryOrder", hidden: "hiddenLibraries",
 	fallbackCalloutId: "fallbackCalloutId", language: "language", customPalettes: "customPalettes",
 	userImages: "userImages", customCommands: "customCommands", disabledFixedCommands: "disabledFixedCommands",
 	quickInsertSource: "quickInsertSource", welcomeSeen: "welcomeSeen",

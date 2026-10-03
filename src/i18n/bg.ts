@@ -227,6 +227,7 @@ export const bg: Record<string, string> = {
 	"settings.resetItemHeading": "Настройки на callout в заглавия",
 	"settings.resetItemInline": "Настройки на вградените в реда callout",
 	"settings.resetItemFallback": "Резервен стил",
+	"settings.resetItemIconLibraries": "Редът на библиотеките с икони и скритите библиотеки",
 	"settings.resetAllConfirmAfter": "Спокойно: преди нулирането запазваме резервно копие на текущата ви конфигурация. Можете да я възстановите по всяко време от раздела Резервни копия в настройките.\nАко използвате услуга за синхронизиране, нулирането може да стигне и до другите ви устройства.",
 	"settings.resetNothing": "Няма какво да се нулира: всичко вече е със стандартните стойности.",
 	"notice.customCommandMissingCallout":
@@ -473,6 +474,14 @@ export const bg: Record<string, string> = {
 	"iconPicker.chooseSource": "Изберете източник",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Не е изтеглен",
+	"iconPicker.librariesAvailable": "Налични библиотеки",
+	"iconPicker.librariesToDownload": "Библиотеки за изтегляне",
+	"iconPicker.groupCurrent": "Текуща икона",
+	"iconPicker.groupSearch": "Търсене",
+	"iconPicker.groupLibraries": "Библиотеки",
+	"iconPicker.moreToDownloadOne": "Още 1 библиотека е налична за изтегляне",
+	"iconPicker.moreToDownload": "Още {{count}} библиотеки са налични за изтегляне",
+	"iconPicker.manageLibraries": "Управление на библиотеките",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "търсене в всички библиотеки едновременно",
@@ -619,6 +628,34 @@ export const bg: Record<string, string> = {
 		"Изтеглени са графиките на иконите за {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio не успя да запази пакета с икони на диска, затова ще трябва да бъде изтеглен отново следващия път. Избраните от вас икони са все още запазени с настройките ви.",
+	"iconLibraries.manage": "Управление на библиотеките с икони",
+	"iconLibraries.title": "Библиотеки с икони",
+	"iconLibraries.desc":
+		"Плъзнете, за да промените реда на библиотеките в „Избор на икона“.\nНякои библиотеки могат да се изтеглят и изтриват.\nLucide, Emoji и Material идват с добавката, затова могат само да се скриват.",
+	"iconLibraries.librariesHidden": "Скрити библиотеки",
+	"iconLibraries.reset": "Връщане към библиотеките, с които дойде добавката",
+	"iconLibraries.download": "Изтегляне на {{name}}",
+	"iconLibraries.delete": "Изтриване на {{name}}",
+	"iconLibraries.hide": "Скриване на {{name}}",
+	"iconLibraries.show": "Показване на {{name}}",
+	"iconLibraries.iconCount": "{{count}} икони",
+	"iconLibraries.noDownload": "не е нужно изтегляне",
+	"iconLibraries.perIcon": "всяка икона се изтегля при избора ѝ",
+	"iconLibraries.hidden": "Скрита",
+	"iconLibraries.downloading": "Изтегляне…",
+	"iconLibraries.deleting": "Изтриване…",
+	"iconLibraries.keepOne": "Оставете поне една библиотека в „Избор на икона“.",
+	"iconLibraries.deleteFailed": "{{name}} не можа да бъде изтрита. Опитайте отново.",
+	"iconLibraries.inUseOne": "1 callout използва икони от {{name}}:",
+	"iconLibraries.inUse": "{{count}} callout-а използват икони от {{name}}:",
+	"iconLibraries.inUseMore": "и още {{count}}",
+	"iconLibraries.inUseKeeps":
+		"Те запазват иконите си — копие на всяка е записано с вашите настройки. За да изберете нови икони от {{name}} по-късно, изтеглете я отново.",
+	"iconLibraries.resetConfirm":
+		"Така библиотеките се връщат във вида, в който е дошла добавката: редът по подразбиране, нищо скрито и без изтеглените библиотеки. Тези ще бъдат изтрити:",
+	"iconLibraries.resetKeeps":
+		"Callout-ите, които вече използват иконите си, ги запазват. За да изберете нови икони от тези библиотеки по-късно, изтеглете ги отново.",
+	"iconLibraries.resetButton": "Нулиране",
 
 	// Icon licences & credits
 	"credits.title": "Лицензи и кредити за икони",
@@ -677,6 +714,8 @@ export const bg: Record<string, string> = {
 	"confirm.titleResetCallout": "Нулиране на callout",
 	"confirm.titleDeletePalette": "Изтриване на палитра",
 	"confirm.titleDeleteImage": "Изтриване на изображение",
+	"confirm.titleDeleteLibrary": "Изтриване на библиотека с икони",
+	"confirm.titleResetLibraries": "Нулиране на библиотеките с икони",
 	"vault.filesUpdated":
 		"Актуализирани са {{count}} препратка/и към callout в файловете на хранилището.",
 	"vault.idsUpdated":
@@ -1239,6 +1278,9 @@ export const bg: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Контекстно меню",
 	"recovery.details.field.autocomplete": "Автоматично довършване",
 	"recovery.details.field.iconSources": "Източници на икони и предпочитания на селектора",
+	"recovery.details.field.iconLibraries": "Библиотеки с икони",
+	"recovery.details.field.libraryOrder": "Ред на библиотеките",
+	"recovery.details.field.hiddenLibraries": "Скрити библиотеки",
 	"recovery.details.field.headingCallouts": "Callout за заглавия",
 	"recovery.details.field.inlineCallouts": "Вградени callout",
 	"recovery.details.field.fallbackCalloutId": "Идентификатор на резервния callout",

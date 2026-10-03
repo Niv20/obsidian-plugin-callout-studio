@@ -240,6 +240,7 @@ export const id: Record<string, string> = {
 	"settings.resetItemHeading": "Pengaturan callout judul",
 	"settings.resetItemInline": "Pengaturan callout inline",
 	"settings.resetItemFallback": "Gaya cadangan",
+	"settings.resetItemIconLibraries": "Urutan pustaka ikon dan pustaka tersembunyi",
 	"settings.resetAllConfirmAfter": "Tenang: sebelum mereset, kami menyimpan cadangan penyiapan Anda saat ini. Anda bisa memulihkannya kapan saja dari bagian Cadangan di pengaturan.\nJika Anda memakai layanan sinkronisasi, reset ini mungkin juga sampai ke perangkat Anda yang lain.",
 	"settings.resetNothing": "Tidak ada yang perlu direset: semuanya sudah di pengaturan default.",
 
@@ -491,6 +492,14 @@ export const id: Record<string, string> = {
 	"iconPicker.chooseSource": "Pilih sumber",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Belum diunduh",
+	"iconPicker.librariesAvailable": "Pustaka tersedia",
+	"iconPicker.librariesToDownload": "Pustaka untuk diunduh",
+	"iconPicker.groupCurrent": "Ikon saat ini",
+	"iconPicker.groupSearch": "Cari",
+	"iconPicker.groupLibraries": "Pustaka",
+	"iconPicker.moreToDownloadOne": "1 pustaka lagi tersedia untuk diunduh",
+	"iconPicker.moreToDownload": "{{count}} pustaka lagi tersedia untuk diunduh",
+	"iconPicker.manageLibraries": "Kelola pustaka",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "cari semua pustaka sekaligus",
@@ -635,6 +644,34 @@ export const id: Record<string, string> = {
 		"Karya seni ikon untuk {{names}} telah diunduh.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio tidak dapat menyimpan paket ikon ke disk, sehingga perlu diunduh ulang lain kali. Ikon yang Anda pilih tetap tersimpan dengan pengaturan Anda.",
+	"iconLibraries.manage": "Kelola pustaka ikon",
+	"iconLibraries.title": "Pustaka ikon",
+	"iconLibraries.desc":
+		"Seret untuk mengubah urutan pustaka di Pilih ikon.\nBeberapa pustaka dapat diunduh dan dihapus.\nLucide, Emoji, dan Material sudah disertakan dengan plugin, jadi hanya bisa disembunyikan.",
+	"iconLibraries.librariesHidden": "Pustaka tersembunyi",
+	"iconLibraries.reset": "Setel ulang ke pustaka bawaan plugin",
+	"iconLibraries.download": "Unduh {{name}}",
+	"iconLibraries.delete": "Hapus {{name}}",
+	"iconLibraries.hide": "Sembunyikan {{name}}",
+	"iconLibraries.show": "Tampilkan {{name}}",
+	"iconLibraries.iconCount": "{{count}} ikon",
+	"iconLibraries.noDownload": "tidak perlu diunduh",
+	"iconLibraries.perIcon": "setiap ikon diunduh saat dipilih",
+	"iconLibraries.hidden": "Tersembunyi",
+	"iconLibraries.downloading": "Mengunduh…",
+	"iconLibraries.deleting": "Menghapus…",
+	"iconLibraries.keepOne": "Sisakan setidaknya satu pustaka di Pilih ikon.",
+	"iconLibraries.deleteFailed": "Tidak dapat menghapus {{name}}. Coba lagi.",
+	"iconLibraries.inUseOne": "1 callout menggunakan ikon dari {{name}}:",
+	"iconLibraries.inUse": "{{count}} callout menggunakan ikon dari {{name}}:",
+	"iconLibraries.inUseMore": "dan {{count}} lainnya",
+	"iconLibraries.inUseKeeps":
+		"Ikonnya tetap ada — salinan setiap ikon disimpan bersama pengaturan Anda. Untuk memilih ikon baru dari {{name}} nanti, unduh lagi pustaka tersebut.",
+	"iconLibraries.resetConfirm":
+		"Ini mengembalikan pustaka seperti saat plugin datang: urutan bawaan, tidak ada yang disembunyikan, dan tanpa pustaka yang telah diunduh. Pustaka berikut akan dihapus:",
+	"iconLibraries.resetKeeps":
+		"Callout yang sudah memakai ikonnya tetap menyimpannya. Untuk memilih ikon baru dari pustaka ini nanti, unduh lagi.",
+	"iconLibraries.resetButton": "Setel ulang",
 
 	// Icon licences & credits
 	"credits.title": "Lisensi ikon dan kredit",
@@ -698,6 +735,8 @@ export const id: Record<string, string> = {
 	"confirm.titleResetCallout": "Setel ulang callout",
 	"confirm.titleDeletePalette": "Hapus palet",
 	"confirm.titleDeleteImage": "Hapus gambar",
+	"confirm.titleDeleteLibrary": "Hapus pustaka ikon",
+	"confirm.titleResetLibraries": "Setel ulang pustaka ikon",
 
 	"vault.filesUpdated":
 		"{{count}} referensi callout diperbarui di file vault.",
@@ -1256,6 +1295,9 @@ export const id: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Menu konteks",
 	"recovery.details.field.autocomplete": "Pelengkapan otomatis",
 	"recovery.details.field.iconSources": "Sumber ikon dan preferensi pemilih",
+	"recovery.details.field.iconLibraries": "Pustaka ikon",
+	"recovery.details.field.libraryOrder": "Urutan pustaka",
+	"recovery.details.field.hiddenLibraries": "Pustaka tersembunyi",
 	"recovery.details.field.headingCallouts": "Callout judul",
 	"recovery.details.field.inlineCallouts": "Callout sebaris",
 	"recovery.details.field.fallbackCalloutId": "Pengenal callout cadangan",

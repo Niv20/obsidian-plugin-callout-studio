@@ -204,6 +204,9 @@ export const en: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Context menu",
 	"recovery.details.field.autocomplete": "Autocomplete",
 	"recovery.details.field.iconSources": "Icon sources and picker preferences",
+	"recovery.details.field.iconLibraries": "Icon libraries",
+	"recovery.details.field.libraryOrder": "Library order",
+	"recovery.details.field.hiddenLibraries": "Hidden libraries",
 	"recovery.details.field.headingCallouts": "Heading callouts",
 	"recovery.details.field.inlineCallouts": "Inline callouts",
 	"recovery.details.field.fallbackCalloutId": "Fallback callout identifier",
@@ -701,6 +704,7 @@ export const en: Record<string, string> = {
 	"settings.resetItemHeading": "Heading callout settings",
 	"settings.resetItemInline": "Inline callout settings",
 	"settings.resetItemFallback": "Fallback style",
+	"settings.resetItemIconLibraries": "Icon library order and hidden libraries",
 	"settings.resetAllConfirmAfter":
 		"Don't worry: before resetting, we save a backup of your current setup. You can restore it at any time from the Backups section in the settings.\nIf you use a sync service, the reset might travel to your other devices too.",
 	// No longer drawn: the list above replaced it. Kept because every locale
@@ -976,7 +980,22 @@ export const en: Record<string, string> = {
 		"Not included yet: {{names}}. Pick a source above to download it.",
 	"iconPicker.chooseSource": "Choose source",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	// No longer drawn: the source menu lists only libraries on the device, so
+	// no row needs the badge. Kept because every locale carries it.
 	"iconPicker.notDownloaded": "Not downloaded",
+	// The Manage icon libraries window's band headings; the source menu used
+	// them too until it stopped listing libraries to download.
+	"iconPicker.librariesAvailable": "Available libraries",
+	"iconPicker.librariesToDownload": "Libraries to download",
+	// The source menu's sticky headings: the library of the icon being edited
+	// when the picker does not offer it, All sources, and the offered libraries.
+	"iconPicker.groupCurrent": "Current icon",
+	"iconPicker.groupSearch": "Search",
+	"iconPicker.groupLibraries": "Libraries",
+	// The text closing the source menu, and the button beside it.
+	"iconPicker.moreToDownloadOne": "1 more library available for download",
+	"iconPicker.moreToDownload": "{{count}} more libraries available for download",
+	"iconPicker.manageLibraries": "Manage libraries",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "search every library at once",
@@ -1121,6 +1140,38 @@ export const en: Record<string, string> = {
 	"iconPack.diskWriteFailed":
 		"Callout Studio could not save the icon pack to disk, so it will need downloading again next time. The icons you pick are still saved with your settings.",
 
+	// Icon libraries window (the button beside Pick an icon's library menu)
+	"iconLibraries.manage": "Manage icon libraries",
+	"iconLibraries.title": "Icon libraries",
+	"iconLibraries.desc":
+		"Drag to change the order of the libraries in Pick an icon.\n" +
+		"Some libraries can be downloaded and deleted.\n" +
+		"Lucide, Emoji and Material come with the plugin, so they can only be hidden.",
+	"iconLibraries.librariesHidden": "Hidden libraries",
+	"iconLibraries.reset": "Reset to the libraries the plugin came with",
+	"iconLibraries.download": "Download {{name}}",
+	"iconLibraries.delete": "Delete {{name}}",
+	"iconLibraries.hide": "Hide {{name}}",
+	"iconLibraries.show": "Show {{name}}",
+	"iconLibraries.iconCount": "{{count}} icons",
+	"iconLibraries.noDownload": "no download needed",
+	"iconLibraries.perIcon": "each icon downloads when picked",
+	"iconLibraries.hidden": "Hidden",
+	"iconLibraries.downloading": "Downloading…",
+	"iconLibraries.deleting": "Deleting…",
+	"iconLibraries.keepOne": "Keep at least one library in Pick an icon.",
+	"iconLibraries.deleteFailed": "Could not delete {{name}}. Try again.",
+	"iconLibraries.inUseOne": "1 callout uses icons from {{name}}:",
+	"iconLibraries.inUse": "{{count}} callouts use icons from {{name}}:",
+	"iconLibraries.inUseMore": "and {{count}} more",
+	"iconLibraries.inUseKeeps":
+		"They keep their icons — a copy of each is saved with your settings. To choose new icons from {{name}} later, download it again.",
+	"iconLibraries.resetConfirm":
+		"This puts the libraries back the way the plugin came: the default order, nothing hidden, and none of the downloaded libraries. These will be deleted:",
+	"iconLibraries.resetKeeps":
+		"Callouts that already use their icons keep them. To choose new icons from these libraries later, download them again.",
+	"iconLibraries.resetButton": "Reset",
+
 	// Icon licenses & credits
 	"credits.title": "Icon licenses & credits",
 	"credits.introBeforeNotices":
@@ -1198,6 +1249,8 @@ export const en: Record<string, string> = {
 	"confirm.titleResetCallout": "Reset callout",
 	"confirm.titleDeletePalette": "Delete palette",
 	"confirm.titleDeleteImage": "Delete image",
+	"confirm.titleDeleteLibrary": "Delete icon library",
+	"confirm.titleResetLibraries": "Reset icon libraries",
 	"confirm.titleOverwriteSnippet": "Overwrite CSS snippet",
 	"confirm.overwriteSnippet":
 		"The CSS snippet in your snippets folder has changed since Callout Studio wrote it. Exporting again replaces the whole file.",

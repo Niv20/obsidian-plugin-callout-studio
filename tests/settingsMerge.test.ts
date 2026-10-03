@@ -66,6 +66,7 @@ const FIELD_KIND: Record<keyof PluginSettings, "value" | "list"> = {
 	contextMenu: "value",
 	autocomplete: "value",
 	iconSources: "value",
+	iconLibraries: "value",
 	headingCallouts: "value",
 	inlineCallouts: "value",
 	welcomeSeen: "value",
@@ -514,6 +515,37 @@ describe("mergeSavedSettings — keys that must NOT survive", () => {
  * ──────────────────────────────────────────────────────────────────────────── */
 
 const ids = (items: ContextMenuItemConfig[]): string[] => items.map((i) => i.id);
+
+describe("mergeSavedSettings — the icon library order and hidden list", () => {
+	it("keeps both lists as saved, ids this build does not know included", () => {
+		// A newer build sharing the file may know a library this one does not;
+		// dropping its id here would undo that build's order on the next save.
+		const merged = mergeSavedSettings({
+			iconLibraries: { order: ["emoji", "phosphor", "lucide"], hidden: ["material"] },
+		} as Partial<PluginSettings>);
+		assert.deepStrictEqual(merged.iconLibraries, {
+			order: ["emoji", "phosphor", "lucide"],
+			hidden: ["material"],
+		});
+	});
+
+	it("drops what is not a short id, and each id's second appearance", () => {
+		const merged = mergeSavedSettings({
+			iconLibraries: {
+				order: ["fa", 7, null, "", "fa", "x".repeat(40), { id: "tabler" }, "tabler"],
+				hidden: "emoji",
+			},
+		} as unknown as Partial<PluginSettings>);
+		assert.deepStrictEqual(merged.iconLibraries, { order: ["fa", "tabler"], hidden: [] });
+	});
+
+	it("reads anything that is not an object as the defaults", () => {
+		for (const saved of [null, "lucide", ["lucide"], 3]) {
+			const merged = mergeSavedSettings({ iconLibraries: saved } as unknown as Partial<PluginSettings>);
+			assert.deepStrictEqual(merged.iconLibraries, DEFAULT_SETTINGS.iconLibraries, String(saved));
+		}
+	});
+});
 
 describe("mergeSavedSettings — the context menu's item lists", () => {
 	it("defaults every role when the file says nothing", () => {

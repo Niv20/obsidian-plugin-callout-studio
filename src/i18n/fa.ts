@@ -240,6 +240,7 @@ export const fa: Record<string, string> = {
 	"settings.resetItemHeading": "تنظیمات callout عنوان",
 	"settings.resetItemInline": "تنظیمات callout درون‌خطی",
 	"settings.resetItemFallback": "سبک جایگزین",
+	"settings.resetItemIconLibraries": "ترتیب کتابخانه‌های نماد و کتابخانه‌های پنهان",
 	"settings.resetAllConfirmAfter": "نگران نباشید: پیش از بازنشانی، از پیکربندی فعلی شما یک پشتیبان ذخیره می‌کنیم. هر زمان می‌توانید آن را از بخش پشتیبان‌ها در تنظیمات بازیابی کنید.\nاگر از سرویس همگام‌سازی استفاده می‌کنید، ممکن است بازنشانی به دستگاه‌های دیگر شما هم برسد.",
 	"settings.resetNothing": "چیزی برای بازنشانی نیست: همه چیز از قبل روی پیش‌فرض است.",
 
@@ -489,6 +490,14 @@ export const fa: Record<string, string> = {
 	"iconPicker.chooseSource": "انتخاب منبع",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "دانلود نشده",
+	"iconPicker.librariesAvailable": "کتابخانه‌های موجود",
+	"iconPicker.librariesToDownload": "کتابخانه‌ها برای دانلود",
+	"iconPicker.groupCurrent": "نماد فعلی",
+	"iconPicker.groupSearch": "جستجو",
+	"iconPicker.groupLibraries": "کتابخانه‌ها",
+	"iconPicker.moreToDownloadOne": "۱ کتابخانهٔ دیگر برای دانلود موجود است",
+	"iconPicker.moreToDownload": "{{count}} کتابخانهٔ دیگر برای دانلود موجود است",
+	"iconPicker.manageLibraries": "مدیریت کتابخانه‌ها",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "جستجو در همه کتابخانه‌ها به یکباره",
@@ -631,6 +640,34 @@ export const fa: Record<string, string> = {
 	"iconPack.artworkRestored": "آثار هنری آیکون‌ها برای {{names}} دانلود شد.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio نتوانست بسته آیکون را روی دیسک ذخیره کند، بنابراین دفعه بعد باید دوباره دانلود شود. آیکون‌هایی که انتخاب می‌کنید همچنان در تنظیمات شما ذخیره هستند.",
+	"iconLibraries.manage": "مدیریت کتابخانه‌های نماد",
+	"iconLibraries.title": "کتابخانه‌های نماد",
+	"iconLibraries.desc":
+		"برای تغییر ترتیب کتابخانه‌ها در «انتخاب آیکون» بکشید.\nبرخی کتابخانه‌ها را می‌توان دانلود و حذف کرد.\nLucide، Emoji و Material همراه افزونه می‌آیند، پس فقط می‌توان آن‌ها را پنهان کرد.",
+	"iconLibraries.librariesHidden": "کتابخانه‌های پنهان",
+	"iconLibraries.reset": "بازنشانی به کتابخانه‌هایی که افزونه با آن‌ها آمده بود",
+	"iconLibraries.download": "دانلود {{name}}",
+	"iconLibraries.delete": "حذف {{name}}",
+	"iconLibraries.hide": "پنهان کردن {{name}}",
+	"iconLibraries.show": "نمایش {{name}}",
+	"iconLibraries.iconCount": "{{count}} نماد",
+	"iconLibraries.noDownload": "نیازی به دانلود نیست",
+	"iconLibraries.perIcon": "هر نماد هنگام انتخاب دانلود می‌شود",
+	"iconLibraries.hidden": "پنهان",
+	"iconLibraries.downloading": "در حال دانلود…",
+	"iconLibraries.deleting": "در حال حذف…",
+	"iconLibraries.keepOne": "دست‌کم یک کتابخانه را در «انتخاب آیکون» نگه دارید.",
+	"iconLibraries.deleteFailed": "حذف {{name}} ممکن نشد. دوباره تلاش کنید.",
+	"iconLibraries.inUseOne": "۱ کال‌اوت از نمادهای {{name}} استفاده می‌کند:",
+	"iconLibraries.inUse": "{{count}} کال‌اوت از نمادهای {{name}} استفاده می‌کنند:",
+	"iconLibraries.inUseMore": "و {{count}} مورد دیگر",
+	"iconLibraries.inUseKeeps":
+		"نمادهایشان را حفظ می‌کنند — نسخه‌ای از هر نماد همراه تنظیمات شما ذخیره می‌شود. برای انتخاب نمادهای جدید از {{name}} در آینده، دوباره آن را دانلود کنید.",
+	"iconLibraries.resetConfirm":
+		"این کار کتابخانه‌ها را به حالتی برمی‌گرداند که افزونه با آن آمده بود: ترتیب پیش‌فرض، بدون هیچ مورد پنهان و بدون هیچ‌یک از کتابخانه‌های دانلودشده. این‌ها حذف می‌شوند:",
+	"iconLibraries.resetKeeps":
+		"کال‌اوت‌هایی که از قبل از نمادهایشان استفاده می‌کنند، آن‌ها را حفظ می‌کنند. برای انتخاب نمادهای جدید از این کتابخانه‌ها در آینده، دوباره آن‌ها را دانلود کنید.",
+	"iconLibraries.resetButton": "بازنشانی",
 
 	// Icon licences & credits
 	"credits.title": "مجوزها و اعتباردهی آیکون‌ها",
@@ -690,6 +727,8 @@ export const fa: Record<string, string> = {
 	"confirm.titleResetCallout": "بازنشانی callout",
 	"confirm.titleDeletePalette": "حذف پالت",
 	"confirm.titleDeleteImage": "حذف تصویر",
+	"confirm.titleDeleteLibrary": "حذف کتابخانهٔ نماد",
+	"confirm.titleResetLibraries": "بازنشانی کتابخانه‌های نماد",
 
 	"vault.filesUpdated":
 		"{{count}} مرجع callout در فایل‌های vault به‌روزرسانی شد.",
@@ -1257,6 +1296,9 @@ export const fa: Record<string, string> = {
 	"recovery.details.field.contextMenu": "منوی زمینه",
 	"recovery.details.field.autocomplete": "تکمیل خودکار",
 	"recovery.details.field.iconSources": "منابع نماد و ترجیحات انتخابگر",
+	"recovery.details.field.iconLibraries": "کتابخانه‌های نماد",
+	"recovery.details.field.libraryOrder": "ترتیب کتابخانه‌ها",
+	"recovery.details.field.hiddenLibraries": "کتابخانه‌های پنهان",
 	"recovery.details.field.headingCallouts": "callout‌های سرتیتر",
 	"recovery.details.field.inlineCallouts": "callout‌های درون‌خطی",
 	"recovery.details.field.fallbackCalloutId": "شناسه callout جایگزین",

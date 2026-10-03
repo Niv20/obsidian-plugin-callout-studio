@@ -40,7 +40,7 @@ import { isCalloutSourceFilter } from "./calloutSearch";
 import { booleanPreference, clampGlobalStyle, localePreference } from "./settingsGuards";
 import { sanitizeUserImages } from "./userImages";
 import { sanitizeCustomCommands } from "./customCommands";
-import { mergeIconSources } from "./iconSourcesMerge";
+import { mergeIconLibraries, mergeIconSources } from "./iconSourcesMerge";
 
 /**
  * The three per-item booleans the context menu had until 1.2.2, when it became
@@ -179,6 +179,7 @@ export function mergeSavedSettings(
 			enabled: true,
 		},
 		iconSources: mergeIconSources(savedSettings.iconSources),
+		iconLibraries: mergeIconLibraries(savedSettings.iconLibraries),
 		headingCallouts: {
 			enabled:
 				booleanPreference(savedSettings.headingCallouts?.enabled,

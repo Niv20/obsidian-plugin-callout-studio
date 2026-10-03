@@ -35,3 +35,27 @@ it("centers only an empty icon grid and clears that layout for entries and notic
 	assertEmptyLayout(true);
 	assert.equal(body.querySelector(".icon-picker-notice"), null);
 });
+
+it("marks the grid while a message stands in for its cells, and only then", () => {
+	// A library's panel centres the download prompt by growing the grid that
+	// holds it; cells must never be stretched that way.
+	fakeDom.light();
+	const body = el();
+	const grid = new IconGrid(asEl(body), {
+		renderCell: (cell, entry) => cell.setText(entry.name),
+		isSelected: () => false,
+		onSelect: () => {},
+		labelFor: (entry) => entry.name,
+		emptyText: "Empty collection",
+		loadMoreText: "Load more",
+	});
+	const gridEl = body.querySelector(".icon-picker-grid")!;
+	assert.equal(gridEl.hasClass("has-message"), false);
+	grid.showMessage((notice) => notice.setText("Not downloaded yet"));
+	assert.equal(gridEl.hasClass("has-message"), true);
+	grid.setEntries([{ name: "star", categories: [], keywords: [] }]);
+	assert.equal(gridEl.hasClass("has-message"), false, "icons back, so the grid sizes to them again");
+	grid.showMessage((notice) => notice.setText("Downloading"));
+	grid.setEntries([]);
+	assert.equal(gridEl.hasClass("has-message"), false, "the empty state is not a message");
+});

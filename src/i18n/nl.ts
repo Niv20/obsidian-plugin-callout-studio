@@ -243,6 +243,7 @@ export const nl: Record<string, string> = {
 	"settings.resetItemHeading": "Instellingen voor koptekst-callouts",
 	"settings.resetItemInline": "Instellingen voor inline callouts",
 	"settings.resetItemFallback": "Terugvalstijl",
+	"settings.resetItemIconLibraries": "Volgorde van pictogrambibliotheken en verborgen bibliotheken",
 	"settings.resetAllConfirmAfter": "Geen zorgen: voordat we terugzetten, slaan we een back-up van je huidige configuratie op. Je kunt die op elk moment herstellen via het onderdeel Back-ups in de instellingen.\nAls je een synchronisatieservice gebruikt, kan het terugzetten ook naar je andere apparaten worden doorgegeven.",
 	"settings.resetNothing": "Niets om terug te zetten: alles staat al op de standaardinstellingen.",
 
@@ -500,6 +501,14 @@ export const nl: Record<string, string> = {
 	"iconPicker.chooseSource": "Bron kiezen",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Niet gedownload",
+	"iconPicker.librariesAvailable": "Beschikbare bibliotheken",
+	"iconPicker.librariesToDownload": "Bibliotheken om te downloaden",
+	"iconPicker.groupCurrent": "Huidig pictogram",
+	"iconPicker.groupSearch": "Zoeken",
+	"iconPicker.groupLibraries": "Bibliotheken",
+	"iconPicker.moreToDownloadOne": "Nog 1 bibliotheek beschikbaar om te downloaden",
+	"iconPicker.moreToDownload": "Nog {{count}} bibliotheken beschikbaar om te downloaden",
+	"iconPicker.manageLibraries": "Bibliotheken beheren",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "zoek in alle bibliotheken tegelijk",
@@ -644,6 +653,34 @@ export const nl: Record<string, string> = {
 	"iconPack.artworkRestored": "De icoongrafiek voor {{names}} is gedownload.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio kon het iconpakket niet opslaan op schijf, dus moet het de volgende keer opnieuw worden gedownload. De iconen die u kiest worden nog steeds opgeslagen met uw instellingen.",
+	"iconLibraries.manage": "Pictogrambibliotheken beheren",
+	"iconLibraries.title": "Pictogrambibliotheken",
+	"iconLibraries.desc":
+		"Sleep om de volgorde van de bibliotheken in Een pictogram kiezen te wijzigen.\nSommige bibliotheken kun je downloaden en verwijderen.\nLucide, Emoji en Material worden met de plug-in meegeleverd, dus die kun je alleen verbergen.",
+	"iconLibraries.librariesHidden": "Verborgen bibliotheken",
+	"iconLibraries.reset": "Terugzetten naar de bibliotheken waarmee de plug-in kwam",
+	"iconLibraries.download": "{{name}} downloaden",
+	"iconLibraries.delete": "{{name}} verwijderen",
+	"iconLibraries.hide": "{{name}} verbergen",
+	"iconLibraries.show": "{{name}} tonen",
+	"iconLibraries.iconCount": "{{count}} pictogrammen",
+	"iconLibraries.noDownload": "downloaden is niet nodig",
+	"iconLibraries.perIcon": "elk pictogram wordt gedownload zodra je het kiest",
+	"iconLibraries.hidden": "Verborgen",
+	"iconLibraries.downloading": "Downloaden…",
+	"iconLibraries.deleting": "Verwijderen…",
+	"iconLibraries.keepOne": "Houd minstens één bibliotheek over in Een pictogram kiezen.",
+	"iconLibraries.deleteFailed": "{{name}} kon niet worden verwijderd. Probeer het opnieuw.",
+	"iconLibraries.inUseOne": "1 callout gebruikt pictogrammen uit {{name}}:",
+	"iconLibraries.inUse": "{{count}} callouts gebruiken pictogrammen uit {{name}}:",
+	"iconLibraries.inUseMore": "en nog {{count}}",
+	"iconLibraries.inUseKeeps":
+		"Ze behouden hun pictogrammen — van elk pictogram wordt een kopie bij je instellingen bewaard. Om later nieuwe pictogrammen uit {{name}} te kiezen, download je de bibliotheek opnieuw.",
+	"iconLibraries.resetConfirm":
+		"Hiermee komen de bibliotheken terug in de staat waarin de plug-in kwam: de standaardvolgorde, niets verborgen en geen enkele gedownloade bibliotheek. Deze worden verwijderd:",
+	"iconLibraries.resetKeeps":
+		"Callouts die hun pictogrammen al gebruiken, houden ze. Om later nieuwe pictogrammen uit deze bibliotheken te kiezen, download je ze opnieuw.",
+	"iconLibraries.resetButton": "Terugzetten",
 
 	// Icon licences & credits
 	"credits.title": "Iconlicenties en credits",
@@ -703,6 +740,8 @@ export const nl: Record<string, string> = {
 	"confirm.titleResetCallout": "Callout terugzetten",
 	"confirm.titleDeletePalette": "Palet verwijderen",
 	"confirm.titleDeleteImage": "Afbeelding verwijderen",
+	"confirm.titleDeleteLibrary": "Pictogrambibliotheek verwijderen",
+	"confirm.titleResetLibraries": "Pictogrambibliotheken terugzetten",
 
 	"vault.filesUpdated":
 		"{{count}} callout-referentie(s) bijgewerkt in vault-bestanden.",
@@ -1288,6 +1327,9 @@ export const nl: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Contextmenu",
 	"recovery.details.field.autocomplete": "Automatisch aanvullen",
 	"recovery.details.field.iconSources": "Pictogrambronnen en kiezervoorkeuren",
+	"recovery.details.field.iconLibraries": "Pictogrambibliotheken",
+	"recovery.details.field.libraryOrder": "Volgorde van de bibliotheken",
+	"recovery.details.field.hiddenLibraries": "Verborgen bibliotheken",
 	"recovery.details.field.headingCallouts": "Koptekstcallouts",
 	"recovery.details.field.inlineCallouts": "Inline callouts",
 	"recovery.details.field.fallbackCalloutId": "Id van de terugvalcallout",

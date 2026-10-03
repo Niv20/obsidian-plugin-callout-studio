@@ -934,7 +934,12 @@ icons and icon-picker defaults, fallback, palettes, global style, context menu,
 commands, language, then "Other settings" for groups this build does not know).
 `recoverySections.ts` and `recoveryCollections.ts` turn `SetupDetails` into items —
 one callout type, palette, custom icon, command, menu, built-in command or setting —
-matched by id, each holding only its differing fields. `recoveryComparisonTable.ts`
+matched by id, each holding only its differing fields. The icon-picker defaults
+section also carries an **Icon libraries** item: each library that ships with the
+plugin shown or hidden, and the library order, compared as the Manage icon
+libraries window shows them (`libraryOrder()`), so an empty order and the catalog order
+written out in full are no difference. Which downloadable libraries a device
+offers is not a setting, so it never appears. `recoveryComparisonTable.ts`
 lays each section out as its own four-column table (**No.**, **Item**, **Current
 setup**, **After restoring this version**) whose head, the folding section title
 plus the column headings, pins as one sticky block. Each item is one numbered row

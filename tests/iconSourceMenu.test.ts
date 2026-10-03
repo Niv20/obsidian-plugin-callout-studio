@@ -4,6 +4,7 @@ import {
 	createSourceMenuTitle,
 	formatIconCount,
 } from "../src/settings/iconpicker/sourceMenuPresentation";
+import { readRepoFile } from "./support/sourceScan";
 import { installFakeDom } from "./support/fakeDom";
 
 installFakeDom();
@@ -20,44 +21,44 @@ describe("icon source menu counts", () => {
 	});
 });
 
-describe("icon source download status", () => {
-	it("renders a visible, labelled status only when artwork is missing", () => {
-		const host = createDiv();
-		host.appendChild(
-			createSourceMenuTitle({
-				label: "Tabler Icons",
-				description: "clean and consistent UI icons",
-				count: 5_130,
-				locale: "en-US",
-				exactCount: false,
-				notDownloaded: true,
-				notDownloadedLabel: "Not downloaded",
-				selected: false,
-			}),
-		);
-
-		const badge = host.querySelector<HTMLElement>(
-			".cs-source-download-badge",
-		);
-		assert.equal(badge?.textContent, "Not downloaded");
-		assert.equal(badge?.getAttribute("aria-label"), null);
-		assert.equal(badge?.dataset.csTooltip, undefined);
-		assert.equal(badge?.querySelector('[aria-hidden="true"]'), null);
-
-		const available = createSourceMenuTitle({
+describe("icon source menu rows", () => {
+	it("draws the name over the description and its isolated count, and nothing else", () => {
+		const row = createSourceMenuTitle({
 			label: "Lucide",
 			description: "Obsidian's own set",
 			count: 1_640,
 			locale: "he",
 			exactCount: false,
-			notDownloaded: false,
-			notDownloadedLabel: "Not downloaded",
 			selected: false,
 		});
-		assert.equal(available.querySelector(".cs-source-download-badge"), null);
-		assert.match(
-			available.querySelector(".cs-source-desc")?.textContent ?? "",
-			/\u2068.+\u2069/u,
+		const text = row.querySelector(".cs-source-text");
+		assert.deepEqual(
+			Array.from(text?.children ?? [], (child) => child.className),
+			["cs-source-name", "cs-source-desc"],
 		);
+		assert.equal(row.querySelector(".cs-source-name")?.textContent, "Lucide");
+		assert.match(row.querySelector(".cs-source-desc")?.textContent ?? "", /⁨.+⁩/u);
+		assert.equal(row.querySelector(".cs-source-check"), null);
+	});
+
+	it("checks the chosen library", () => {
+		const row = createSourceMenuTitle({
+			label: "Tabler Icons",
+			description: "clean and consistent UI icons",
+			count: 5_130,
+			locale: "en-US",
+			exactCount: false,
+			selected: true,
+		});
+		assert.ok(row.querySelector(".cs-source-check"));
+	});
+
+	it("has no download badge left, in the markup or the stylesheet", () => {
+		// The menu lists only libraries this device can draw from, plus the
+		// edited icon's own under its own heading, so a per-row status would only
+		// repeat a heading. The badge is gone on purpose — not just unstyled.
+		const source = readRepoFile("src/settings/iconpicker/sourceMenuPresentation.ts");
+		assert.doesNotMatch(source, /download-badge|notDownloaded/);
+		assert.doesNotMatch(readRepoFile("styles.css"), /cs-source-download-badge/);
 	});
 });

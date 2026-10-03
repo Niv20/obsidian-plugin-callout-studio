@@ -290,6 +290,7 @@ export const th: Record<string, string> = {
 	"settings.resetItemHeading": "การตั้งค่า callout หัวข้อ",
 	"settings.resetItemInline": "การตั้งค่า callout แบบอินไลน์",
 	"settings.resetItemFallback": "สไตล์สำรอง",
+	"settings.resetItemIconLibraries": "ลำดับคลังไอคอนและคลังที่ซ่อนไว้",
 	"settings.resetAllConfirmAfter": "ไม่ต้องกังวล: ก่อนรีเซ็ต เราจะบันทึกข้อมูลสำรองของการตั้งค่าปัจจุบันของคุณไว้ คุณกู้คืนได้ทุกเมื่อจากส่วนข้อมูลสำรองในการตั้งค่า\nหากคุณใช้บริการซิงก์ การรีเซ็ตอาจส่งไปถึงอุปกรณ์เครื่องอื่นของคุณด้วย",
 	"settings.resetNothing": "ไม่มีอะไรให้รีเซ็ต: ทุกอย่างเป็นค่าเริ่มต้นอยู่แล้ว",
 
@@ -536,6 +537,14 @@ export const th: Record<string, string> = {
 	"iconPicker.chooseSource": "เลือกแหล่งข้อมูล",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "ยังไม่ได้ดาวน์โหลด",
+	"iconPicker.librariesAvailable": "คลังที่ใช้ได้",
+	"iconPicker.librariesToDownload": "คลังที่ดาวน์โหลดได้",
+	"iconPicker.groupCurrent": "ไอคอนปัจจุบัน",
+	"iconPicker.groupSearch": "ค้นหา",
+	"iconPicker.groupLibraries": "คลัง",
+	"iconPicker.moreToDownloadOne": "ยังมีอีก 1 คลังที่ดาวน์โหลดได้",
+	"iconPicker.moreToDownload": "ยังมีอีก {{count}} คลังที่ดาวน์โหลดได้",
+	"iconPicker.manageLibraries": "จัดการคลัง",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "ค้นหาทุกไลบรารีพร้อมกัน",
@@ -679,6 +688,34 @@ export const th: Record<string, string> = {
 	"iconPack.artworkRestored": "ดาวน์โหลดงานศิลป์ไอคอนสำหรับ {{names}} แล้ว",
 	"iconPack.diskWriteFailed":
 		"Callout Studio ไม่สามารถบันทึกชุดไอคอนลงดิสก์ได้ จึงต้องดาวน์โหลดใหม่ในครั้งถัดไป ไอคอนที่คุณเลือกยังคงบันทึกไว้ในการตั้งค่า",
+	"iconLibraries.manage": "จัดการคลังไอคอน",
+	"iconLibraries.title": "คลังไอคอน",
+	"iconLibraries.desc":
+		"ลากเพื่อเปลี่ยนลำดับของคลังใน “เลือกไอคอน”\nบางคลังดาวน์โหลดและลบได้\nLucide, Emoji และ Material มาพร้อมกับปลั๊กอิน จึงซ่อนได้อย่างเดียว",
+	"iconLibraries.librariesHidden": "คลังที่ซ่อนไว้",
+	"iconLibraries.reset": "รีเซ็ตเป็นคลังที่มากับปลั๊กอิน",
+	"iconLibraries.download": "ดาวน์โหลด {{name}}",
+	"iconLibraries.delete": "ลบ {{name}}",
+	"iconLibraries.hide": "ซ่อน {{name}}",
+	"iconLibraries.show": "แสดง {{name}}",
+	"iconLibraries.iconCount": "{{count}} ไอคอน",
+	"iconLibraries.noDownload": "ไม่ต้องดาวน์โหลด",
+	"iconLibraries.perIcon": "แต่ละไอคอนจะดาวน์โหลดเมื่อเลือก",
+	"iconLibraries.hidden": "ซ่อนอยู่",
+	"iconLibraries.downloading": "กำลังดาวน์โหลด…",
+	"iconLibraries.deleting": "กำลังลบ…",
+	"iconLibraries.keepOne": "เก็บคลังไว้อย่างน้อยหนึ่งคลังใน “เลือกไอคอน”",
+	"iconLibraries.deleteFailed": "ลบ {{name}} ไม่ได้ ลองอีกครั้ง",
+	"iconLibraries.inUseOne": "มี callout 1 รายการที่ใช้ไอคอนจาก {{name}}:",
+	"iconLibraries.inUse": "มี callout {{count}} รายการที่ใช้ไอคอนจาก {{name}}:",
+	"iconLibraries.inUseMore": "และอีก {{count}} รายการ",
+	"iconLibraries.inUseKeeps":
+		"ไอคอนของ callout เหล่านั้นจะยังอยู่ — สำเนาของแต่ละไอคอนถูกบันทึกไว้กับการตั้งค่าของคุณ หากต้องการเลือกไอคอนใหม่จาก {{name}} ภายหลัง ให้ดาวน์โหลดอีกครั้ง",
+	"iconLibraries.resetConfirm":
+		"การทำเช่นนี้จะคืนคลังให้เป็นอย่างที่ปลั๊กอินมา คือลำดับเริ่มต้น ไม่มีอะไรถูกซ่อน และไม่มีคลังที่ดาวน์โหลดไว้เลย คลังเหล่านี้จะถูกลบ:",
+	"iconLibraries.resetKeeps":
+		"callout ที่ใช้ไอคอนของตนอยู่แล้วจะยังคงมีไอคอนเหล่านั้น หากต้องการเลือกไอคอนใหม่จากคลังเหล่านี้ภายหลัง ให้ดาวน์โหลดอีกครั้ง",
+	"iconLibraries.resetButton": "รีเซ็ต",
 
 	// Icon licences & credits
 	"credits.title": "ใบอนุญาตไอคอนและเครดิต",
@@ -742,6 +779,8 @@ export const th: Record<string, string> = {
 	"confirm.titleResetCallout": "รีเซ็ต callout",
 	"confirm.titleDeletePalette": "ลบชุดสี",
 	"confirm.titleDeleteImage": "ลบรูปภาพ",
+	"confirm.titleDeleteLibrary": "ลบคลังไอคอน",
+	"confirm.titleResetLibraries": "รีเซ็ตคลังไอคอน",
 
 	"vault.filesUpdated":
 		"อัปเดต {{count}} การอ้างอิง callout ในไฟล์ vault แล้ว",
@@ -1237,6 +1276,9 @@ export const th: Record<string, string> = {
 	"recovery.details.field.contextMenu": "เมนูบริบท",
 	"recovery.details.field.autocomplete": "เติมข้อความอัตโนมัติ",
 	"recovery.details.field.iconSources": "แหล่งไอคอนและการตั้งค่าตัวเลือก",
+	"recovery.details.field.iconLibraries": "คลังไอคอน",
+	"recovery.details.field.libraryOrder": "ลำดับของคลัง",
+	"recovery.details.field.hiddenLibraries": "คลังที่ซ่อนไว้",
 	"recovery.details.field.headingCallouts": "callout หัวข้อ",
 	"recovery.details.field.inlineCallouts": "callout ในบรรทัด",
 	"recovery.details.field.fallbackCalloutId": "ตัวระบุ callout สำรอง",

@@ -12,8 +12,13 @@ import { t } from "../i18n";
 import { FIXED_COMMAND_IDS, FIXED_COMMAND_NAME_KEYS } from "../editor/commands";
 import { keyedRows, type SetupChange } from "../manager/setupDetails";
 import { canonical } from "../manager/syncTree";
-import type { CalloutDefinition, CalloutRenderRole, CustomCommand, UserImageIcon } from "../types";
+import type {
+	CalloutDefinition, CalloutRenderRole, CustomCommand, IconLibrarySettings, IconSourceId, UserImageIcon,
+} from "../types";
 import { describeCommand, resolveAction, resolveFold, resolveHeadingLevel } from "../utils/customCommands";
+import { mergeIconLibraries } from "../utils/iconSourcesMerge";
+import { ICON_SOURCES, ICON_SOURCE_IDS } from "../icons/registry";
+import { isDownloadable, libraryOrder } from "../icons/iconLibraries";
 import { ITEM_LABEL_KEY } from "./MenuCustomizationModal";
 import {
 	ROLE_LABELS, ROLE_ORDER, absentText, recordFields, type FieldSpec, type RecoveryField, type RecoveryItem,
@@ -232,3 +237,37 @@ export function contextMenuItems(change: SetupChange | undefined): RecoveryItem[
 	return items;
 }
 
+/** A library's name as Pick an icon shows it; an id this build does not know, as saved. */
+function libraryLabel(id: string): string {
+	return Object.hasOwn(ICON_SOURCES, id) ? t(ICON_SOURCES[id as IconSourceId].labelKey) : id;
+}
+
+/**
+ * The Icon libraries window's settings: each library that ships with the
+ * plugin shown or hidden, and the order Pick an icon lists the libraries in.
+ * Compared as the window shows them, so a list still empty and the same order
+ * written out are no difference. Which downloadable libraries a device offers
+ * is not a setting — it is what is downloaded there — so it never appears.
+ */
+export function iconLibraryItems(change: SetupChange | undefined): RecoveryItem[] {
+	if (!change) return [];
+	const read = (value: unknown): IconLibrarySettings =>
+		mergeIconLibraries(isRecord(value) ? value as Partial<IconLibrarySettings> : undefined);
+	const before = read(change.before), after = read(change.after);
+	const fields: RecoveryField[] = [];
+	for (const id of ICON_SOURCE_IDS) {
+		if (isDownloadable(id)) continue;
+		const shownBefore = !before.hidden.includes(id), shownAfter = !after.hidden.includes(id);
+		if (shownBefore !== shownAfter) {
+			fields.push({ label: libraryLabel(id), before: shownBefore, after: shownAfter, render: renderShown });
+		}
+	}
+	const orderBefore = libraryOrder(before), orderAfter = libraryOrder(after);
+	if (canonical(orderBefore) !== canonical(orderAfter)) {
+		fields.push({ label: t("recovery.details.order"), before: orderBefore, after: orderAfter,
+			render: renderOrder(libraryLabel) });
+	}
+	return fields.length
+		? [{ key: "iconLibraries", kind: "changed", title: t("iconLibraries.title"), fields }]
+		: [];
+}

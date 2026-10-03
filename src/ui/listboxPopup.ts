@@ -13,6 +13,7 @@ import {
 	buildComboboxSkeleton,
 	renderComboboxCreateRow,
 	renderComboboxEmptyState,
+	renderComboboxFooterNote,
 	renderComboboxFooterRow,
 	renderComboboxRows,
 } from "./listboxPopupDom";
@@ -219,6 +220,8 @@ export class ListboxPopup<T> {
 
 		if (this.options.footerRow)
 			renderComboboxFooterRow(this.menuEl, this.options.footerRow, () => this.restorePointerHighlight(-1));
+		const note = this.options.footerNote?.() ?? "";
+		if (note !== "") renderComboboxFooterNote(this.menuEl, note);
 
 		// Open on the committed row. An unresolved selection opens idle rather
 		// than making the first real option look chosen; typing still activates it.

@@ -292,6 +292,7 @@ export const tr: Record<string, string> = {
 	"settings.resetItemHeading": "Başlık callout ayarları",
 	"settings.resetItemInline": "Satır içi callout ayarları",
 	"settings.resetItemFallback": "Yedek stil",
+	"settings.resetItemIconLibraries": "Simge kitaplıklarının sırası ve gizli kitaplıklar",
 	"settings.resetAllConfirmAfter": "Merak etmeyin: sıfırlamadan önce mevcut kurulumunuzun bir yedeğini kaydederiz. Ayarlardaki Yedekler bölümünden istediğiniz zaman geri yükleyebilirsiniz.\nBir eşitleme hizmeti kullanıyorsanız, sıfırlama diğer cihazlarınıza da ulaşabilir.",
 	"settings.resetNothing": "Sıfırlanacak bir şey yok: her şey zaten varsayılanlarda.",
 
@@ -540,6 +541,14 @@ export const tr: Record<string, string> = {
 	"iconPicker.chooseSource": "Kaynak seç",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "İndirilmedi",
+	"iconPicker.librariesAvailable": "Kullanılabilir kitaplıklar",
+	"iconPicker.librariesToDownload": "İndirilecek kitaplıklar",
+	"iconPicker.groupCurrent": "Geçerli simge",
+	"iconPicker.groupSearch": "Ara",
+	"iconPicker.groupLibraries": "Kitaplıklar",
+	"iconPicker.moreToDownloadOne": "İndirilebilecek 1 kitaplık daha var",
+	"iconPicker.moreToDownload": "İndirilebilecek {{count}} kitaplık daha var",
+	"iconPicker.manageLibraries": "Kitaplıkları yönet",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "tüm kütüphanelerde aynı anda ara",
@@ -683,6 +692,34 @@ export const tr: Record<string, string> = {
 	"iconPack.artworkRestored": "{{names}} için simge çizimleri indirildi.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio simge paketini diske kaydedemedi, bu nedenle bir sonraki seferde yeniden indirilmesi gerekecek. Seçtiğiniz simgeler hâlâ ayarlarınıza kaydedildi.",
+	"iconLibraries.manage": "Simge kitaplıklarını yönet",
+	"iconLibraries.title": "Simge kitaplıkları",
+	"iconLibraries.desc":
+		"“Simge seç” içindeki kitaplıkların sırasını değiştirmek için sürükleyin.\nBazı kitaplıklar indirilebilir ve silinebilir.\nLucide, Emoji ve Material eklentiyle birlikte gelir, bu yüzden yalnızca gizlenebilir.",
+	"iconLibraries.librariesHidden": "Gizli kitaplıklar",
+	"iconLibraries.reset": "Eklentiyle gelen kitaplıklara sıfırla",
+	"iconLibraries.download": "{{name}} kitaplığını indir",
+	"iconLibraries.delete": "{{name}} kitaplığını sil",
+	"iconLibraries.hide": "{{name}} kitaplığını gizle",
+	"iconLibraries.show": "{{name}} kitaplığını göster",
+	"iconLibraries.iconCount": "{{count}} simge",
+	"iconLibraries.noDownload": "indirme gerekmez",
+	"iconLibraries.perIcon": "her simge seçildiğinde indirilir",
+	"iconLibraries.hidden": "Gizli",
+	"iconLibraries.downloading": "İndiriliyor…",
+	"iconLibraries.deleting": "Siliniyor…",
+	"iconLibraries.keepOne": "“Simge seç” içinde en az bir kitaplık bırakın.",
+	"iconLibraries.deleteFailed": "{{name}} silinemedi. Tekrar deneyin.",
+	"iconLibraries.inUseOne": "1 callout {{name}} kitaplığındaki simgeleri kullanıyor:",
+	"iconLibraries.inUse": "{{count}} callout {{name}} kitaplığındaki simgeleri kullanıyor:",
+	"iconLibraries.inUseMore": "ve {{count}} tane daha",
+	"iconLibraries.inUseKeeps":
+		"Simgelerini korurlar — her simgenin bir kopyası ayarlarınızla birlikte kaydedilir. Daha sonra {{name}} kitaplığından yeni simgeler seçmek için kitaplığı yeniden indirin.",
+	"iconLibraries.resetConfirm":
+		"Bu işlem kitaplıkları eklentinin geldiği haline döndürür: varsayılan sıra, hiçbir şey gizli değil ve indirilen kitaplıkların hiçbiri yok. Şunlar silinecek:",
+	"iconLibraries.resetKeeps":
+		"Simgelerini zaten kullanan callout’lar onları korur. Daha sonra bu kitaplıklardan yeni simgeler seçmek için kitaplıkları yeniden indirin.",
+	"iconLibraries.resetButton": "Sıfırla",
 
 	// Icon licences & credits
 	"credits.title": "Simge lisansları ve katkılar",
@@ -746,6 +783,8 @@ export const tr: Record<string, string> = {
 	"confirm.titleResetCallout": "Callout'u sıfırla",
 	"confirm.titleDeletePalette": "Paleti sil",
 	"confirm.titleDeleteImage": "Resmi sil",
+	"confirm.titleDeleteLibrary": "Simge kitaplığını sil",
+	"confirm.titleResetLibraries": "Simge kitaplıklarını sıfırla",
 
 	"vault.filesUpdated":
 		"Vault dosyalarında {{count}} callout referansı güncellendi.",
@@ -1251,6 +1290,9 @@ export const tr: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Bağlam menüsü",
 	"recovery.details.field.autocomplete": "Otomatik tamamlama",
 	"recovery.details.field.iconSources": "Simge kaynakları ve seçici tercihleri",
+	"recovery.details.field.iconLibraries": "Simge kitaplıkları",
+	"recovery.details.field.libraryOrder": "Kitaplık sırası",
+	"recovery.details.field.hiddenLibraries": "Gizli kitaplıklar",
 	"recovery.details.field.headingCallouts": "Başlık callout'ları",
 	"recovery.details.field.inlineCallouts": "Satır içi callout'lar",
 	"recovery.details.field.fallbackCalloutId": "Yedek callout tanımlayıcısı",

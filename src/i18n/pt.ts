@@ -292,6 +292,7 @@ export const pt: Record<string, string> = {
 	"settings.resetItemHeading": "Configurações de callouts de título",
 	"settings.resetItemInline": "Configurações de callouts em linha",
 	"settings.resetItemFallback": "Estilo de reserva",
+	"settings.resetItemIconLibraries": "Ordem das bibliotecas de ícones e bibliotecas ocultas",
 	"settings.resetAllConfirmAfter": "Fique tranquilo: antes de redefinir, salvamos um backup da sua configuração atual. Você pode restaurá-lo a qualquer momento na seção Backups das configurações.\nSe você usa um serviço de sincronização, a redefinição pode chegar também aos seus outros dispositivos.",
 	"settings.resetNothing": "Nada para redefinir: tudo já está nos padrões.",
 
@@ -542,6 +543,14 @@ export const pt: Record<string, string> = {
 	"iconPicker.chooseSource": "Escolher fonte",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Não descarregado",
+	"iconPicker.librariesAvailable": "Bibliotecas disponíveis",
+	"iconPicker.librariesToDownload": "Bibliotecas para descarregar",
+	"iconPicker.groupCurrent": "Ícone atual",
+	"iconPicker.groupSearch": "Pesquisar",
+	"iconPicker.groupLibraries": "Bibliotecas",
+	"iconPicker.moreToDownloadOne": "Mais 1 biblioteca disponível para descarregar",
+	"iconPicker.moreToDownload": "Mais {{count}} bibliotecas disponíveis para descarregar",
+	"iconPicker.manageLibraries": "Gerir bibliotecas",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "pesquisar em todas as bibliotecas de uma vez",
@@ -688,6 +697,34 @@ export const pt: Record<string, string> = {
 		"O artwork dos ícones para {{names}} foi descarregado.",
 	"iconPack.diskWriteFailed":
 		"O Callout Studio não conseguiu guardar o pacote de ícones no disco, pelo que precisará de ser descarregado novamente na próxima vez. Os ícones que escolher continuam guardados nas suas definições.",
+	"iconLibraries.manage": "Gerir bibliotecas de ícones",
+	"iconLibraries.title": "Bibliotecas de ícones",
+	"iconLibraries.desc":
+		"Arraste para mudar a ordem das bibliotecas em «Escolher um ícone».\nAlgumas bibliotecas podem ser descarregadas e eliminadas.\nLucide, Emoji e Material vêm com o plugin, por isso só podem ser ocultadas.",
+	"iconLibraries.librariesHidden": "Bibliotecas ocultas",
+	"iconLibraries.reset": "Repor as bibliotecas com que o plugin veio",
+	"iconLibraries.download": "Descarregar {{name}}",
+	"iconLibraries.delete": "Eliminar {{name}}",
+	"iconLibraries.hide": "Ocultar {{name}}",
+	"iconLibraries.show": "Mostrar {{name}}",
+	"iconLibraries.iconCount": "{{count}} ícones",
+	"iconLibraries.noDownload": "não é preciso descarregar",
+	"iconLibraries.perIcon": "cada ícone é descarregado quando é escolhido",
+	"iconLibraries.hidden": "Oculta",
+	"iconLibraries.downloading": "A descarregar…",
+	"iconLibraries.deleting": "A eliminar…",
+	"iconLibraries.keepOne": "Mantenha pelo menos uma biblioteca em «Escolher um ícone».",
+	"iconLibraries.deleteFailed": "Não foi possível eliminar {{name}}. Tente novamente.",
+	"iconLibraries.inUseOne": "1 callout usa ícones de {{name}}:",
+	"iconLibraries.inUse": "{{count}} callouts usam ícones de {{name}}:",
+	"iconLibraries.inUseMore": "e mais {{count}}",
+	"iconLibraries.inUseKeeps":
+		"Mantêm os seus ícones — uma cópia de cada um fica guardada com as suas definições. Para escolher novos ícones de {{name}} mais tarde, descarregue-a novamente.",
+	"iconLibraries.resetConfirm":
+		"Isto repõe as bibliotecas como o plugin veio: a ordem predefinida, nada oculto e nenhuma das bibliotecas descarregadas. Estas serão eliminadas:",
+	"iconLibraries.resetKeeps":
+		"Os callouts que já usam os seus ícones mantêm-nos. Para escolher novos ícones destas bibliotecas mais tarde, descarregue-as novamente.",
+	"iconLibraries.resetButton": "Redefinir",
 
 	// Icon licences & credits
 	"credits.title": "Licenças de ícones e créditos",
@@ -747,6 +784,8 @@ export const pt: Record<string, string> = {
 	"confirm.titleResetCallout": "Redefinir callout",
 	"confirm.titleDeletePalette": "Excluir paleta",
 	"confirm.titleDeleteImage": "Excluir imagem",
+	"confirm.titleDeleteLibrary": "Eliminar biblioteca de ícones",
+	"confirm.titleResetLibraries": "Redefinir bibliotecas de ícones",
 
 	"vault.filesUpdated":
 		"{{count}} referência(s) de callout atualizadas nos arquivos do vault.",
@@ -1284,6 +1323,9 @@ export const pt: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Menu de contexto",
 	"recovery.details.field.autocomplete": "Preenchimento automático",
 	"recovery.details.field.iconSources": "Fontes de ícones e preferências do seletor",
+	"recovery.details.field.iconLibraries": "Bibliotecas de ícones",
+	"recovery.details.field.libraryOrder": "Ordem das bibliotecas",
+	"recovery.details.field.hiddenLibraries": "Bibliotecas ocultas",
 	"recovery.details.field.headingCallouts": "Callouts de título",
 	"recovery.details.field.inlineCallouts": "Callouts em linha",
 	"recovery.details.field.fallbackCalloutId": "Identificador do callout reserva",

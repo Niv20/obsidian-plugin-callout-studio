@@ -33,6 +33,7 @@ import {
 	materialFontFamily,
 } from "../../icons/packs/materialFont";
 import type { PackDataStore } from "../../icons/PackDataStore";
+import { formatBytes } from "../../icons/iconLibraries";
 import { isAllSources } from "./allSources";
 import { IconGrid } from "./IconGrid";
 import { PackToolbarFilters } from "./PackToolbarFilters";
@@ -100,6 +101,10 @@ export class PackPanel {
 	) {
 		this.variants = { ...host.variantsFor(pack.id) };
 		this.category = host.lastCategoryFor(pack.id);
+		// ImagePanel builds a toolbar and a body under the same class names; this
+		// is the marker for the layout only a library's panel has — the credit
+		// at the bottom, and the download prompt in the middle.
+		container.addClass("icon-picker-pack-panel");
 		this.toolbarEl = container.createDiv("icon-picker-toolbar");
 		this.bodyEl = container.createDiv("icon-picker-body");
 	}
@@ -455,11 +460,13 @@ export class PackPanel {
 
 	/**
 	 * Whether this panel draws any cell from the Material webfont — its own
-	 * source being Material, or the pooled list, which mixes Material cells in
-	 * among everyone else's.
+	 * source being Material, or the pooled list while Material is in it. Once
+	 * the user hides Material, the pool leaves it out, and the font must not be
+	 * fetched from Google for cells nobody will see.
 	 */
 	private showsMaterialCells(): boolean {
-		return this.pack.kind === "perIconRemote" || isAllSources(this.pack);
+		if (this.pack.kind === "perIconRemote") return true;
+		return isAllSources(this.pack) && this.pack.memberIds.includes(materialPack.id);
 	}
 
 	/**
@@ -593,17 +600,26 @@ export class PackPanel {
 	 *
 	 * Font Awesome's icons are CC BY 4.0, which requires attribution wherever
 	 * the work is used — this is that surface, alongside the settings credits.
+	 *
+	 * Both go in one footer that the stylesheet pins to the bottom of the
+	 * panel. Under a short grid, a search with few results, or the download
+	 * prompt, the credit would otherwise float up to just below whatever is
+	 * there, and move every time the results changed.
 	 */
 	private renderAttribution(): void {
 		const { attribution } = this.pack;
 		// The pooled source credits nothing itself; each icon's own source is
 		// credited on its own panel and in the settings credits section.
 		if (attribution.licenses.length === 0) return;
-		this.noticeEl = this.bodyEl.createDiv("icon-picker-pack-notice");
+		const footer = this.bodyEl.createDiv("icon-picker-pack-footer");
+		this.noticeEl = footer.createDiv("icon-picker-pack-notice");
 		this.updateNotice();
-		const line = this.bodyEl.createDiv("icon-picker-pack-credit");
+		const line = footer.createDiv("icon-picker-pack-credit");
 		const licenses = attribution.licenses.map((l) => l.spdx).join(", ");
-		line.setText(`${attribution.title} — ${licenses}`);
+		// A real space, not a margin on the link: under RTL the whole line is one
+		// left-to-right run, and an inline-start margin falls on the link's far
+		// edge there instead of between it and the licence.
+		line.setText(`${attribution.title} — ${licenses} `);
 		line.createEl("a", {
 			text: attribution.homepage.replace(/^https?:\/\//, ""),
 			href: attribution.homepage,
@@ -624,9 +640,4 @@ export class PackPanel {
 		el.setText(key ? t(key) : "");
 		el.toggleClass("is-hidden", !key);
 	}
-}
-
-function formatBytes(bytes: number): string {
-	const kb = bytes / 1024;
-	return kb >= 1024 ? `${(kb / 1024).toFixed(1)} MB` : `${Math.round(kb)} KB`;
 }

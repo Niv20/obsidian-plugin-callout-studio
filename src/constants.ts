@@ -272,6 +272,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 		lastCategory: { material: "" },
 		lastEmojiSkinTone: 0,
 	},
+	iconLibraries: { order: [], hidden: [] },
 	headingCallouts: {
 		enabled: true,
 		refCleanTitles: true,

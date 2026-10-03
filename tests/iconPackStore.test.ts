@@ -46,6 +46,9 @@ interface Harness {
 	writes: Map<string, string>;
 	/** Paths whose read must throw, standing in for an unreadable file. */
 	unreadable: Set<string>;
+	/** Paths whose deletion must throw, standing in for a locked file. */
+	undeletable: Set<string>;
+	removeCalls: string[];
 	notifications: number;
 }
 
@@ -55,6 +58,8 @@ function harness(): Harness {
 	const existsCalls: string[] = [];
 	const readCalls: string[] = [];
 	const unreadable = new Set<string>();
+	const undeletable = new Set<string>();
+	const removeCalls: string[] = [];
 	const dirs = new Set<string>();
 
 	const adapter = {
@@ -78,6 +83,12 @@ function harness(): Harness {
 			dirs.add(path);
 			return Promise.resolve();
 		},
+		remove(path: string): Promise<void> {
+			removeCalls.push(path);
+			if (undeletable.has(path)) return Promise.reject(new Error("EPERM"));
+			files.delete(path);
+			return Promise.resolve();
+		},
 	};
 
 	const app = { vault: { adapter, configDir: ".obsidian" } } as unknown as App;
@@ -93,6 +104,8 @@ function harness(): Harness {
 		readCalls,
 		writes,
 		unreadable,
+		undeletable,
+		removeCalls,
 		notifications: 0,
 	};
 	h.store.onChange(() => {
@@ -391,5 +404,67 @@ describe("listeners", () => {
 		});
 		await h.store.loadUsed(["octicons"]);
 		assert.ok(reached);
+	});
+});
+
+/* ------------------------------------------------------------------ *
+ * Deleting a pack — the Icon libraries window's Delete
+ * ------------------------------------------------------------------ */
+
+// Simple Icons, because no other suite in this file touches it: the store of
+// loaded artwork is module-level, so what one test unloads, the next one sees.
+describe("remove — deleting a downloaded pack", () => {
+	it("deletes the file, forgets the artwork, and says so", async () => {
+		const h = harness();
+		place(h, "simple-icons");
+		assert.equal(await h.store.loadFromDisk("simple-icons"), "ready");
+		const before = h.notifications;
+
+		assert.equal(await h.store.remove("simple-icons"), true);
+		assert.deepStrictEqual(h.removeCalls, [h.store.packPath("simple-icons")]);
+		assert.equal(h.files.has(h.store.packPath("simple-icons")), false);
+		assert.equal(isPackLoaded("simple-icons"), false, "the artwork must leave memory with the file");
+		assert.equal(h.store.state("simple-icons"), "unavailable");
+		assert.equal(h.notifications, before + 1);
+	});
+
+	it("succeeds when there was no file to delete, and leaves nothing loaded", async () => {
+		// A pack held for the session only — its disk write failed — has no file,
+		// and deleting it still has to take it out of the picker.
+		const h = harness();
+		assert.equal(await h.store.remove("simple-icons"), true);
+		assert.deepStrictEqual(h.removeCalls, [], "nothing was there to delete");
+		assert.equal(h.store.state("simple-icons"), "unavailable");
+	});
+
+	it("keeps the pack when the file cannot be deleted", async () => {
+		const h = harness();
+		place(h, "simple-icons");
+		assert.equal(await h.store.loadFromDisk("simple-icons"), "ready");
+		h.undeletable.add(h.store.packPath("simple-icons"));
+
+		assert.equal(await h.store.remove("simple-icons"), false);
+		assert.ok(isPackLoaded("simple-icons"), "a file still on disk is still a downloaded pack");
+		assert.equal(h.store.state("simple-icons"), "ready");
+	});
+
+	it("refuses while the same pack is still downloading", async () => {
+		// The download would write the file straight back afterwards.
+		const h = harness();
+		// The previous test left the pack loaded, and a loaded pack downloads
+		// nothing at all; delete it first so the download really starts.
+		place(h, "simple-icons");
+		assert.equal(await h.store.remove("simple-icons"), true);
+		const pending = h.store.download("simple-icons");
+		assert.equal(await h.store.remove("simple-icons"), false);
+		await pending;
+	});
+
+	it("does nothing once the store has been destroyed", async () => {
+		const h = harness();
+		place(h, "simple-icons");
+		h.store.destroy();
+		assert.equal(await h.store.remove("simple-icons"), false);
+		assert.deepStrictEqual(h.removeCalls, []);
 	});
 });

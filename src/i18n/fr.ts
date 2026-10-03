@@ -245,6 +245,7 @@ export const fr: Record<string, string> = {
 	"settings.resetItemHeading": "Réglages des callouts de titre",
 	"settings.resetItemInline": "Réglages des callouts en ligne",
 	"settings.resetItemFallback": "Style de repli",
+	"settings.resetItemIconLibraries": "Ordre des bibliothèques d’icônes et bibliothèques masquées",
 	"settings.resetAllConfirmAfter": "Pas d'inquiétude : avant la réinitialisation, nous enregistrons une sauvegarde de votre configuration actuelle. Vous pouvez la restaurer à tout moment depuis la section Sauvegardes des réglages.\nSi vous utilisez un service de synchronisation, la réinitialisation peut aussi se propager à vos autres appareils.",
 	"settings.resetNothing": "Rien à réinitialiser : tout est déjà aux valeurs par défaut.",
 
@@ -502,6 +503,14 @@ export const fr: Record<string, string> = {
 	"iconPicker.chooseSource": "Choisir une source",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Non téléchargé",
+	"iconPicker.librariesAvailable": "Bibliothèques disponibles",
+	"iconPicker.librariesToDownload": "Bibliothèques à télécharger",
+	"iconPicker.groupCurrent": "Icône actuelle",
+	"iconPicker.groupSearch": "Rechercher",
+	"iconPicker.groupLibraries": "Bibliothèques",
+	"iconPicker.moreToDownloadOne": "1 autre bibliothèque disponible au téléchargement",
+	"iconPicker.moreToDownload": "{{count}} autres bibliothèques disponibles au téléchargement",
+	"iconPicker.manageLibraries": "Gérer les bibliothèques",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources":
@@ -649,6 +658,34 @@ export const fr: Record<string, string> = {
 		"Les graphismes d'icônes pour {{names}} ont été téléchargés.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio n'a pas pu enregistrer le pack d'icônes sur le disque, il devra donc être retéléchargé la prochaine fois. Les icônes que vous choisissez sont toujours enregistrées dans vos paramètres.",
+	"iconLibraries.manage": "Gérer les bibliothèques d’icônes",
+	"iconLibraries.title": "Bibliothèques d’icônes",
+	"iconLibraries.desc":
+		"Faites glisser pour changer l’ordre des bibliothèques dans « Choisir une icône ».\nCertaines bibliothèques peuvent être téléchargées et supprimées.\nLucide, Emoji et Material sont fournies avec l’extension : elles peuvent seulement être masquées.",
+	"iconLibraries.librariesHidden": "Bibliothèques masquées",
+	"iconLibraries.reset": "Revenir aux bibliothèques fournies avec l’extension",
+	"iconLibraries.download": "Télécharger {{name}}",
+	"iconLibraries.delete": "Supprimer {{name}}",
+	"iconLibraries.hide": "Masquer {{name}}",
+	"iconLibraries.show": "Afficher {{name}}",
+	"iconLibraries.iconCount": "{{count}} icônes",
+	"iconLibraries.noDownload": "aucun téléchargement nécessaire",
+	"iconLibraries.perIcon": "chaque icône est téléchargée quand on la choisit",
+	"iconLibraries.hidden": "Masquée",
+	"iconLibraries.downloading": "Téléchargement…",
+	"iconLibraries.deleting": "Suppression…",
+	"iconLibraries.keepOne": "Gardez au moins une bibliothèque dans « Choisir une icône ».",
+	"iconLibraries.deleteFailed": "Impossible de supprimer {{name}}. Réessayez.",
+	"iconLibraries.inUseOne": "1 callout utilise des icônes de {{name}} :",
+	"iconLibraries.inUse": "{{count}} callouts utilisent des icônes de {{name}} :",
+	"iconLibraries.inUseMore": "et {{count}} de plus",
+	"iconLibraries.inUseKeeps":
+		"Ils gardent leurs icônes : une copie de chacune est enregistrée avec vos réglages. Pour choisir de nouvelles icônes de {{name}} plus tard, téléchargez-la à nouveau.",
+	"iconLibraries.resetConfirm":
+		"Cela remet les bibliothèques dans l’état où l’extension est arrivée : ordre par défaut, rien de masqué et aucune des bibliothèques téléchargées. Celles-ci seront supprimées :",
+	"iconLibraries.resetKeeps":
+		"Les callouts qui utilisent déjà leurs icônes les gardent. Pour choisir de nouvelles icônes dans ces bibliothèques plus tard, téléchargez-les à nouveau.",
+	"iconLibraries.resetButton": "Réinitialiser",
 
 	// Icon licences & credits
 	"credits.title": "Licences d'icônes et crédits",
@@ -708,6 +745,8 @@ export const fr: Record<string, string> = {
 	"confirm.titleResetCallout": "Réinitialiser le callout",
 	"confirm.titleDeletePalette": "Supprimer la palette",
 	"confirm.titleDeleteImage": "Supprimer l'image",
+	"confirm.titleDeleteLibrary": "Supprimer la bibliothèque d’icônes",
+	"confirm.titleResetLibraries": "Réinitialiser les bibliothèques d’icônes",
 
 	"vault.filesUpdated":
 		"{{count}} référence(s) de callout mises à jour dans les fichiers du vault.",
@@ -1273,6 +1312,9 @@ export const fr: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Menu contextuel",
 	"recovery.details.field.autocomplete": "Saisie semi-automatique",
 	"recovery.details.field.iconSources": "Sources d’icônes et préférences du sélecteur",
+	"recovery.details.field.iconLibraries": "Bibliothèques d’icônes",
+	"recovery.details.field.libraryOrder": "Ordre des bibliothèques",
+	"recovery.details.field.hiddenLibraries": "Bibliothèques masquées",
 	"recovery.details.field.headingCallouts": "Callouts de titre",
 	"recovery.details.field.inlineCallouts": "Callouts en ligne",
 	"recovery.details.field.fallbackCalloutId": "Identifiant du callout de secours",

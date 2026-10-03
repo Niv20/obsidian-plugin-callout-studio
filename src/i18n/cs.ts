@@ -239,6 +239,7 @@ export const cs: Record<string, string> = {
 	"settings.resetItemHeading": "Nastavení callout v nadpisech",
 	"settings.resetItemInline": "Nastavení inline callout",
 	"settings.resetItemFallback": "Záložní styl",
+	"settings.resetItemIconLibraries": "Pořadí knihoven ikon a skryté knihovny",
 	"settings.resetAllConfirmAfter": "Žádný strach: před obnovením uložíme zálohu vaší aktuální konfigurace. Můžete ji kdykoli obnovit v části Zálohy v nastavení.\nPokud používáte synchronizační službu, obnovení se může přenést i na vaše další zařízení.",
 	"settings.resetNothing": "Není co obnovovat: vše je již ve výchozím stavu.",
 
@@ -488,6 +489,14 @@ export const cs: Record<string, string> = {
 	"iconPicker.chooseSource": "Vybrat zdroj",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Nestaženo",
+	"iconPicker.librariesAvailable": "Dostupné knihovny",
+	"iconPicker.librariesToDownload": "Knihovny ke stažení",
+	"iconPicker.groupCurrent": "Aktuální ikona",
+	"iconPicker.groupSearch": "Hledat",
+	"iconPicker.groupLibraries": "Knihovny",
+	"iconPicker.moreToDownloadOne": "K stažení je dostupná ještě 1 knihovna",
+	"iconPicker.moreToDownload": "Další knihovny ke stažení: {{count}}",
+	"iconPicker.manageLibraries": "Spravovat knihovny",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "prohledávat všechny knihovny najednou",
@@ -631,6 +640,34 @@ export const cs: Record<string, string> = {
 	"iconPack.artworkRestored": "Byla stažena kresba ikon pro {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio nemohlo uložit balíček ikon na disk, takže ho bude nutné příště stáhnout znovu. Vybrané ikony jsou stále uloženy ve vašem nastavení.",
+	"iconLibraries.manage": "Spravovat knihovny ikon",
+	"iconLibraries.title": "Knihovny ikon",
+	"iconLibraries.desc":
+		"Přetažením změníte pořadí knihoven ve výběru ikony.\nNěkteré knihovny lze stáhnout a smazat.\nLucide, Emoji a Material jsou součástí doplňku, takže je lze jen skrýt.",
+	"iconLibraries.librariesHidden": "Skryté knihovny",
+	"iconLibraries.reset": "Obnovit knihovny, se kterými doplněk přišel",
+	"iconLibraries.download": "Stáhnout {{name}}",
+	"iconLibraries.delete": "Smazat {{name}}",
+	"iconLibraries.hide": "Skrýt {{name}}",
+	"iconLibraries.show": "Zobrazit {{name}}",
+	"iconLibraries.iconCount": "Ikon: {{count}}",
+	"iconLibraries.noDownload": "stahování není potřeba",
+	"iconLibraries.perIcon": "každá ikona se stáhne při výběru",
+	"iconLibraries.hidden": "Skryto",
+	"iconLibraries.downloading": "Stahování…",
+	"iconLibraries.deleting": "Mazání…",
+	"iconLibraries.keepOne": "Ve výběru ikony ponechte alespoň jednu knihovnu.",
+	"iconLibraries.deleteFailed": "Knihovnu {{name}} se nepodařilo smazat. Zkuste to znovu.",
+	"iconLibraries.inUseOne": "1 callout používá ikony z knihovny {{name}}:",
+	"iconLibraries.inUse": "{{count}} calloutů používá ikony z knihovny {{name}}:",
+	"iconLibraries.inUseMore": "a dalších {{count}}",
+	"iconLibraries.inUseKeeps":
+		"Své ikony si ponechají — kopie každé je uložena spolu s nastavením. Chcete-li později vybrat nové ikony z knihovny {{name}}, stáhněte ji znovu.",
+	"iconLibraries.resetConfirm":
+		"Knihovny se vrátí do podoby, v jaké doplněk přišel: výchozí pořadí, nic skrytého a žádná stažená knihovna. Tyto knihovny budou smazány:",
+	"iconLibraries.resetKeeps":
+		"Calloutům, které už své ikony používají, zůstanou. Chcete-li později vybrat nové ikony z těchto knihoven, stáhněte je znovu.",
+	"iconLibraries.resetButton": "Obnovit",
 
 	// Icon licences & credits
 	"credits.title": "Licence ikon a poděkování",
@@ -691,6 +728,8 @@ export const cs: Record<string, string> = {
 	"confirm.titleResetCallout": "Obnovit callout",
 	"confirm.titleDeletePalette": "Smazat paletu",
 	"confirm.titleDeleteImage": "Smazat obrázek",
+	"confirm.titleDeleteLibrary": "Smazat knihovnu ikon",
+	"confirm.titleResetLibraries": "Obnovit knihovny ikon",
 
 	"vault.filesUpdated":
 		"Aktualizováno {{count}} odkazů na callout v souborech vaultu.",
@@ -1255,6 +1294,9 @@ export const cs: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Kontextová nabídka",
 	"recovery.details.field.autocomplete": "Automatické dokončování",
 	"recovery.details.field.iconSources": "Zdroje ikon a předvolby výběru",
+	"recovery.details.field.iconLibraries": "Knihovny ikon",
+	"recovery.details.field.libraryOrder": "Pořadí knihoven",
+	"recovery.details.field.hiddenLibraries": "Skryté knihovny",
 	"recovery.details.field.headingCallouts": "Calloutty nadpisů",
 	"recovery.details.field.inlineCallouts": "Řádkové calloutty",
 	"recovery.details.field.fallbackCalloutId": "Identifikátor záložního calloutu",

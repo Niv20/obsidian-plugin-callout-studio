@@ -241,6 +241,7 @@ export const hi: Record<string, string> = {
 	"settings.resetItemHeading": "हेडिंग callout की सेटिंग",
 	"settings.resetItemInline": "इनलाइन callout की सेटिंग",
 	"settings.resetItemFallback": "फ़ॉलबैक स्टाइल",
+	"settings.resetItemIconLibraries": "आइकन लाइब्रेरी का क्रम और छिपी हुई लाइब्रेरी",
 	"settings.resetAllConfirmAfter": "चिंता न करें: रीसेट से पहले हम आपके मौजूदा सेटअप का बैकअप सहेजते हैं। आप उसे कभी भी सेटिंग के बैकअप सेक्शन से बहाल कर सकते हैं।\nअगर आप सिंक सेवा का उपयोग करते हैं, तो रीसेट आपके दूसरे डिवाइस तक भी पहुँच सकता है।",
 	"settings.resetNothing": "रीसेट करने के लिए कुछ नहीं है: सब कुछ पहले से डिफ़ॉल्ट पर है।",
 
@@ -491,6 +492,14 @@ export const hi: Record<string, string> = {
 	"iconPicker.chooseSource": "स्रोत चुनें",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "डाउनलोड नहीं किया गया",
+	"iconPicker.librariesAvailable": "उपलब्ध लाइब्रेरी",
+	"iconPicker.librariesToDownload": "डाउनलोड के लिए लाइब्रेरी",
+	"iconPicker.groupCurrent": "मौजूदा आइकन",
+	"iconPicker.groupSearch": "खोजें",
+	"iconPicker.groupLibraries": "लाइब्रेरी",
+	"iconPicker.moreToDownloadOne": "डाउनलोड के लिए 1 और लाइब्रेरी उपलब्ध है",
+	"iconPicker.moreToDownload": "डाउनलोड के लिए {{count}} और लाइब्रेरी उपलब्ध हैं",
+	"iconPicker.manageLibraries": "लाइब्रेरी प्रबंधित करें",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "एक साथ सभी लाइब्रेरी में खोजें",
@@ -634,6 +643,34 @@ export const hi: Record<string, string> = {
 		"{{names}} के लिए आइकन आर्टवर्क डाउनलोड किया गया।",
 	"iconPack.diskWriteFailed":
 		"Callout Studio आइकन पैक को डिस्क पर सहेज नहीं सका, इसलिए अगली बार फिर से डाउनलोड करना होगा। आपके द्वारा चुने गए आइकन आपकी सेटिंग के साथ सहेजे गए हैं।",
+	"iconLibraries.manage": "आइकन लाइब्रेरी प्रबंधित करें",
+	"iconLibraries.title": "आइकन लाइब्रेरी",
+	"iconLibraries.desc":
+		"“आइकन चुनें” में लाइब्रेरी का क्रम बदलने के लिए खींचें।\nकुछ लाइब्रेरी डाउनलोड और हटाई जा सकती हैं।\nLucide, Emoji और Material प्लगइन के साथ आती हैं, इसलिए उन्हें केवल छिपाया जा सकता है।",
+	"iconLibraries.librariesHidden": "छिपी हुई लाइब्रेरी",
+	"iconLibraries.reset": "प्लगइन के साथ आई लाइब्रेरी पर रीसेट करें",
+	"iconLibraries.download": "{{name}} डाउनलोड करें",
+	"iconLibraries.delete": "{{name}} हटाएँ",
+	"iconLibraries.hide": "{{name}} छिपाएँ",
+	"iconLibraries.show": "{{name}} दिखाएँ",
+	"iconLibraries.iconCount": "{{count}} आइकन",
+	"iconLibraries.noDownload": "डाउनलोड की ज़रूरत नहीं",
+	"iconLibraries.perIcon": "हर आइकन चुनने पर डाउनलोड होता है",
+	"iconLibraries.hidden": "छिपी हुई",
+	"iconLibraries.downloading": "डाउनलोड हो रहा है…",
+	"iconLibraries.deleting": "हटाया जा रहा है…",
+	"iconLibraries.keepOne": "“आइकन चुनें” में कम से कम एक लाइब्रेरी रखें।",
+	"iconLibraries.deleteFailed": "{{name}} को हटाया नहीं जा सका। फिर से कोशिश करें।",
+	"iconLibraries.inUseOne": "1 callout {{name}} के आइकन इस्तेमाल करता है:",
+	"iconLibraries.inUse": "{{count}} callout {{name}} के आइकन इस्तेमाल करते हैं:",
+	"iconLibraries.inUseMore": "और {{count}} और",
+	"iconLibraries.inUseKeeps":
+		"वे अपने आइकन बनाए रखते हैं — हर आइकन की एक प्रति आपकी सेटिंग के साथ सहेजी जाती है। बाद में {{name}} से नए आइकन चुनने के लिए, उसे फिर से डाउनलोड करें।",
+	"iconLibraries.resetConfirm":
+		"इससे लाइब्रेरी वैसी हो जाएँगी जैसी प्लगइन के साथ आई थीं: डिफ़ॉल्ट क्रम, कुछ भी छिपा नहीं, और डाउनलोड की गई कोई लाइब्रेरी नहीं। ये हटा दी जाएँगी:",
+	"iconLibraries.resetKeeps":
+		"जो callout पहले से अपने आइकन इस्तेमाल कर रहे हैं, वे उन्हें बनाए रखते हैं। बाद में इन लाइब्रेरी से नए आइकन चुनने के लिए, इन्हें फिर से डाउनलोड करें।",
+	"iconLibraries.resetButton": "रीसेट करें",
 
 	// Icon licences & credits
 	"credits.title": "आइकन लाइसेंस और श्रेय",
@@ -693,6 +730,8 @@ export const hi: Record<string, string> = {
 	"confirm.titleResetCallout": "callout रीसेट करें",
 	"confirm.titleDeletePalette": "पैलेट हटाएँ",
 	"confirm.titleDeleteImage": "छवि हटाएँ",
+	"confirm.titleDeleteLibrary": "आइकन लाइब्रेरी हटाएँ",
+	"confirm.titleResetLibraries": "आइकन लाइब्रेरी रीसेट करें",
 
 	"vault.filesUpdated":
 		"vault फ़ाइलों में {{count}} callout संदर्भ अपडेट किए गए।",
@@ -1241,6 +1280,9 @@ export const hi: Record<string, string> = {
 	"recovery.details.field.contextMenu": "संदर्भ मेनू",
 	"recovery.details.field.autocomplete": "स्वतः पूर्ण",
 	"recovery.details.field.iconSources": "आइकन स्रोत और चयनकर्ता की प्राथमिकताएँ",
+	"recovery.details.field.iconLibraries": "आइकन लाइब्रेरी",
+	"recovery.details.field.libraryOrder": "लाइब्रेरी का क्रम",
+	"recovery.details.field.hiddenLibraries": "छिपी हुई लाइब्रेरी",
 	"recovery.details.field.headingCallouts": "शीर्षक callout",
 	"recovery.details.field.inlineCallouts": "इनलाइन callout",
 	"recovery.details.field.fallbackCalloutId": "वैकल्पिक callout का पहचानकर्ता",

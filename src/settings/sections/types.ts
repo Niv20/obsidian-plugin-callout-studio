@@ -8,7 +8,7 @@ import type { CSSInjector } from "../../manager/CSSInjector";
 import type { CustomCommandManager } from "../../editor/CustomCommandManager";
 import type { FixedCommandId } from "../../editor/commands";
 import type { OutlineDecorator } from "../../outline/OutlineDecorator";
-import type { PackDataStore } from "../../icons/PackDataStore";
+import type { IconService } from "../../icons/IconService";
 import type { LocaleStore } from "../../i18n/LocaleStore";
 import type {
 	CalloutDefinition,
@@ -39,7 +39,8 @@ export type SettingsTabPlugin = Plugin & {
 	refreshRenderModes(): void;
 	hasIconFetchFailed(icon: CalloutIcon, role: CalloutRenderRole): boolean;
 
-	icons: { packs: PackDataStore };
+	/** The pack files, and deleting a whole library (the icon picker's Icon libraries window). */
+	icons: Pick<IconService, "packs" | "deleteLibrary">;
 
 	locales: Pick<LocaleStore, "isReady">;
 

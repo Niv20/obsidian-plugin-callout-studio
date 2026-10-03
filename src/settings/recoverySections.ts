@@ -22,7 +22,7 @@ import { canonical } from "../manager/syncTree";
 import type { CalloutDefinition, CalloutRenderRole, PluginData } from "../types";
 import { compareText } from "../utils/sorting";
 import {
-	builtInCommandItems, contextMenuItems, customCommandItems, imageItems, paletteItems,
+	builtInCommandItems, contextMenuItems, customCommandItems, iconLibraryItems, imageItems, paletteItems,
 } from "./recoveryCollections";
 import { recoveryFieldLabel } from "./recoveryDetailFields";
 import {
@@ -199,8 +199,9 @@ function otherItems(changes: readonly SetupChange[], handled: ReadonlySet<string
 }
 
 /** Settings groups with a section of their own; everything else is "Other settings". */
-const HANDLED_GROUPS: ReadonlySet<string> = new Set(["userImages", "iconSources", "fallbackCalloutId", "customPalettes",
-	"globalStyle", "headingCallouts", "inlineCallouts", "contextMenu", "customCommands", "disabledFixedCommands", "language"]
+const HANDLED_GROUPS: ReadonlySet<string> = new Set(["userImages", "iconSources", "iconLibraries", "fallbackCalloutId",
+	"customPalettes", "globalStyle", "headingCallouts", "inlineCallouts", "contextMenu", "customCommands",
+	"disabledFixedCommands", "language"]
 	.map(name => `settings:${name}`));
 
 /** Every difference restoring would make, grouped and ordered as the settings page is. */
@@ -214,7 +215,9 @@ export function recoveryReport(details: SetupDetails): RecoveryReport {
 		{ id: "user", title: t("settings.myCalloutTypes"), items: calloutItems(details, sides, false) },
 		{ id: "builtin", title: t("settings.builtInCallouts"), items: calloutItems(details, sides, true) },
 		{ id: "images", title: t("iconPicker.custom"), items: imageItems(group("userImages"), sides) },
-		{ id: "iconSources", title: t("recovery.details.section.iconSources"), items: iconSourceItems(group("iconSources")) },
+		{ id: "iconSources", title: t("recovery.details.section.iconSources"), items: [
+			...iconSourceItems(group("iconSources")), ...iconLibraryItems(group("iconLibraries")),
+		] },
 		{ id: "fallback", title: t("settings.fallbackCallout"), items: singleValueItem(group("fallbackCalloutId"), "fallback",
 			t("settings.fallbackCallout"), (parent, value, which, component) => {
 				renderCalloutRef(parent, value, sides[which]);

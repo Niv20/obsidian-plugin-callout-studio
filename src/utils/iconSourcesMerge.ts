@@ -1,6 +1,33 @@
 /** Rebuild picker preferences without trusting values carried by JSON. */
 import { DEFAULT_SETTINGS } from "../constants";
-import type { IconSourceSettings } from "../types";
+import type { IconLibrarySettings, IconSourceSettings } from "../types";
+
+/** Longer than any library id, so a real one is never cut off. */
+const MAX_LIBRARY_ID_LENGTH = 32;
+/** Far above the nine libraries there are; only stops a hand-edited file growing a list without end. */
+const MAX_LIBRARY_IDS = 64;
+
+/**
+ * A saved list of library ids: short strings only, each once, in saved order.
+ *
+ * Ids this build does not know are kept on purpose — a newer build that shares
+ * the file wrote them, and dropping them here would undo its order on the next
+ * save. `icons/iconLibraries.ts` ignores them when it reads the list.
+ */
+function libraryIds(value: unknown): string[] {
+	if (!Array.isArray(value)) return [];
+	const ids = value.filter((id): id is string =>
+		typeof id === "string" && id.length > 0 && id.length <= MAX_LIBRARY_ID_LENGTH);
+	return [...new Set(ids)].slice(0, MAX_LIBRARY_IDS);
+}
+
+export function mergeIconLibraries(saved: Partial<IconLibrarySettings> | undefined): IconLibrarySettings {
+	const source = saved && typeof saved === "object" && !Array.isArray(saved) ? saved : undefined;
+	return {
+		order: libraryIds(source?.order),
+		hidden: libraryIds(source?.hidden),
+	};
+}
 
 const MATERIAL_STYLES = ["outlined", "filled", "rounded", "sharp"] as const;
 const FA_STYLES = ["solid", "regular", "brands"] as const;

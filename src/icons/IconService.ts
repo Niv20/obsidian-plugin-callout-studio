@@ -16,8 +16,9 @@
  */
 import { Notice } from "obsidian";
 import type { App, PluginManifest } from "obsidian";
-import type { CalloutIcon, CalloutRenderRole, IconPackId } from "../types";
+import type { CalloutIcon, CalloutRenderRole, IconPackId, IconSourceId } from "../types";
 import { copyIconPackArtwork, isIconFullyCached } from "./iconArtworkCache";
+import { calloutsUsingLibrary, libraryFiles } from "./iconLibraries";
 import { t } from "../i18n";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CSSInjector } from "../manager/CSSInjector";
@@ -173,6 +174,13 @@ export class IconService implements IconResolver {
 		}
 		if (pack.kind !== "bundledRemote") return false;
 
+		// Every drawing it could need is already in `data.json`, so the pack has
+		// nothing to add. Without this, confirming a callout's own icon in the
+		// picker on a device without its library — or after deleting it in the
+		// Icon libraries window — downloaded the whole library again for
+		// artwork that was already there.
+		if (isIconFullyCached(this.host.registry, icon)) return false;
+
 		// Only the file this icon's own style lives in — picking one Font Awesome
 		// Brands icon must not pull down Solid and Regular as well.
 		if (this.packs.state(icon.type) !== "ready") {
@@ -183,6 +191,62 @@ export class IconService implements IconResolver {
 			if (result !== "ready") await this.packs.download(icon.type);
 		}
 		return !this.destroyed && copyIconPackArtwork(this.host.registry, icon);
+	}
+
+	/**
+	 * Delete a downloaded library from this device — the **Delete** button in
+	 * the Icon libraries window. Resolves to whether all of its files are gone.
+	 *
+	 * The callouts using it keep their icons. Before any file goes, every
+	 * drawing they could need — all three roles, icons turned off included — is
+	 * copied out of the still-loaded pack into `data.json`, which draws them
+	 * from then on, here and on every device that syncs the settings. Confirming
+	 * an icon in the picker has normally made that copy already; this makes
+	 * sure, because a callout left without one would send the startup repair to
+	 * download the library straight back.
+	 *
+	 * `alsoKeep` is for icons no saved callout has yet — the one the callout
+	 * editor holds until Save. The registry cannot tell this method about them
+	 * (its preview slot is a half-typed callout under a placeholder id, there to
+	 * be drawn, not a record of a choice), so the window passes them in, and
+	 * they are kept exactly like a saved callout's. Without that, saving the
+	 * callout after the library was deleted would find no drawing in `data.json`
+	 * and download the library again.
+	 *
+	 * The caller refuses while saving is paused: the copy has to reach the disk
+	 * before the file it was taken from is deleted.
+	 */
+	async deleteLibrary(
+		source: IconSourceId,
+		alsoKeep: readonly CalloutIcon[] = [],
+	): Promise<boolean> {
+		if (this.destroyed) return false;
+		const files = libraryFiles(source);
+		if (files.length === 0) return false;
+
+		const icons = [
+			...calloutsUsingLibrary(this.host.registry.getCommitted(), source).map((def) => def.icon),
+			...alsoKeep.filter((icon) => files.includes(icon.type)),
+		];
+		let stored = false;
+		for (const icon of icons) {
+			// Loaded whenever the library is offered; read back from disk if a
+			// file is not, so the copy has something to copy from.
+			if (this.packs.state(icon.type) !== "ready") {
+				await this.packs.loadFromDisk(icon.type);
+				if (this.destroyed) return false;
+			}
+			if (copyIconPackArtwork(this.host.registry, icon)) stored = true;
+		}
+		if (stored) await this.publish();
+		if (this.destroyed) return false;
+
+		let removed = true;
+		for (const file of files) {
+			if (!(await this.packs.remove(file))) removed = false;
+			if (this.destroyed) return false;
+		}
+		return removed;
 	}
 
 	/** Repaint and persist newly cached artwork. */

@@ -249,3 +249,15 @@ export function renderComboboxFooterRow(
 	rowEl.addEventListener("mousemove", onPointer);
 	rowEl.addEventListener("click", () => footer.onClick());
 }
+
+/**
+ * The plain text that can close the list — see `footerNote`.
+ *
+ * Unlike {@link renderComboboxFooterRow} it is not an action, so it has no
+ * role and no listeners: nothing highlights it, the popup never counts it among
+ * its rows, and a press on it is swallowed by the menu's own `mousedown`, which
+ * keeps focus in the input and the menu open.
+ */
+export function renderComboboxFooterNote(menuEl: HTMLElement, text: string): void {
+	menuEl.createDiv({ cls: "cs-combobox-footer-note", text });
+}

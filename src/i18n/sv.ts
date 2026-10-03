@@ -293,6 +293,7 @@ export const sv: Record<string, string> = {
 	"settings.resetItemHeading": "Inställningar för rubrik-callouts",
 	"settings.resetItemInline": "Inställningar för inline-callouts",
 	"settings.resetItemFallback": "Reservstil",
+	"settings.resetItemIconLibraries": "Ikonbibliotekens ordning och dolda bibliotek",
 	"settings.resetAllConfirmAfter": "Ingen fara: innan återställningen sparar vi en säkerhetskopia av din nuvarande konfiguration. Du kan återställa den när som helst från avsnittet Säkerhetskopior i inställningarna.\nOm du använder en synkroniseringstjänst kan återställningen även nå dina andra enheter.",
 	"settings.resetNothing": "Inget att återställa: allt är redan på standard.",
 
@@ -540,6 +541,14 @@ export const sv: Record<string, string> = {
 	"iconPicker.chooseSource": "Välj källa",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Inte nedladdat",
+	"iconPicker.librariesAvailable": "Tillgängliga bibliotek",
+	"iconPicker.librariesToDownload": "Bibliotek att ladda ner",
+	"iconPicker.groupCurrent": "Nuvarande ikon",
+	"iconPicker.groupSearch": "Sök",
+	"iconPicker.groupLibraries": "Bibliotek",
+	"iconPicker.moreToDownloadOne": "1 bibliotek till kan laddas ner",
+	"iconPicker.moreToDownload": "{{count}} bibliotek till kan laddas ner",
+	"iconPicker.manageLibraries": "Hantera bibliotek",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "sök i alla bibliotek på en gång",
@@ -683,6 +692,34 @@ export const sv: Record<string, string> = {
 	"iconPack.artworkRestored": "Ikonbilderna för {{names}} har laddats ner.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio kunde inte spara ikonpaketet på disk, så det måste laddas ner igen nästa gång. Ikonerna du väljer sparas fortfarande med dina inställningar.",
+	"iconLibraries.manage": "Hantera ikonbibliotek",
+	"iconLibraries.title": "Ikonbibliotek",
+	"iconLibraries.desc":
+		"Dra för att ändra ordningen på biblioteken i Välj en ikon.\nVissa bibliotek kan laddas ner och tas bort.\nLucide, Emoji och Material följer med tillägget, så de kan bara döljas.",
+	"iconLibraries.librariesHidden": "Dolda bibliotek",
+	"iconLibraries.reset": "Återställ till de bibliotek som tillägget kom med",
+	"iconLibraries.download": "Ladda ner {{name}}",
+	"iconLibraries.delete": "Ta bort {{name}}",
+	"iconLibraries.hide": "Dölj {{name}}",
+	"iconLibraries.show": "Visa {{name}}",
+	"iconLibraries.iconCount": "{{count}} ikoner",
+	"iconLibraries.noDownload": "ingen nedladdning behövs",
+	"iconLibraries.perIcon": "varje ikon laddas ner när den väljs",
+	"iconLibraries.hidden": "Dold",
+	"iconLibraries.downloading": "Laddar ner …",
+	"iconLibraries.deleting": "Tar bort …",
+	"iconLibraries.keepOne": "Behåll minst ett bibliotek i Välj en ikon.",
+	"iconLibraries.deleteFailed": "Det gick inte att ta bort {{name}}. Försök igen.",
+	"iconLibraries.inUseOne": "1 callout använder ikoner från {{name}}:",
+	"iconLibraries.inUse": "{{count}} callouts använder ikoner från {{name}}:",
+	"iconLibraries.inUseMore": "och {{count}} till",
+	"iconLibraries.inUseKeeps":
+		"De behåller sina ikoner — en kopia av varje ikon sparas med dina inställningar. Om du senare vill välja nya ikoner från {{name}} laddar du ner det igen.",
+	"iconLibraries.resetConfirm":
+		"Det här sätter tillbaka biblioteken som tillägget kom: standardordning, inget dolt och inga av de nedladdade biblioteken. Dessa tas bort:",
+	"iconLibraries.resetKeeps":
+		"Callouts som redan använder sina ikoner behåller dem. Om du senare vill välja nya ikoner från de här biblioteken laddar du ner dem igen.",
+	"iconLibraries.resetButton": "Återställ",
 
 	// Icon licences & credits
 	"credits.title": "Ikonlicenser och erkännanden",
@@ -742,6 +779,8 @@ export const sv: Record<string, string> = {
 	"confirm.titleResetCallout": "Återställ callout",
 	"confirm.titleDeletePalette": "Ta bort palett",
 	"confirm.titleDeleteImage": "Ta bort bild",
+	"confirm.titleDeleteLibrary": "Ta bort ikonbibliotek",
+	"confirm.titleResetLibraries": "Återställ ikonbibliotek",
 
 	"vault.filesUpdated":
 		"{{count}} callout-referens(er) uppdaterade i vault-filer.",
@@ -1252,6 +1291,9 @@ export const sv: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Snabbmeny",
 	"recovery.details.field.autocomplete": "Autokomplettering",
 	"recovery.details.field.iconSources": "Ikonkällor och väljarinställningar",
+	"recovery.details.field.iconLibraries": "Ikonbibliotek",
+	"recovery.details.field.libraryOrder": "Bibliotekens ordning",
+	"recovery.details.field.hiddenLibraries": "Dolda bibliotek",
 	"recovery.details.field.headingCallouts": "Rubrik-callouts",
 	"recovery.details.field.inlineCallouts": "Inline-callouts",
 	"recovery.details.field.fallbackCalloutId": "Identifierare för reservcallout",

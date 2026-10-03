@@ -236,6 +236,7 @@ export const ms: Record<string, string> = {
 	"settings.resetItemHeading": "Tetapan callout tajuk",
 	"settings.resetItemInline": "Tetapan callout sebaris",
 	"settings.resetItemFallback": "Gaya sandaran",
+	"settings.resetItemIconLibraries": "Susunan pustaka ikon dan pustaka tersembunyi",
 	"settings.resetAllConfirmAfter": "Jangan risau: sebelum menetapkan semula, kami menyimpan sandaran persediaan semasa anda. Anda boleh memulihkannya pada bila-bila masa daripada bahagian Sandaran dalam tetapan.\nJika anda menggunakan perkhidmatan penyegerakan, penetapan semula mungkin sampai ke peranti anda yang lain juga.",
 	"settings.resetNothing": "Tiada apa untuk ditetapkan semula: semuanya sudah pada tetapan lalai.",
 
@@ -486,6 +487,14 @@ export const ms: Record<string, string> = {
 	"iconPicker.chooseSource": "Pilih sumber",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Belum dimuat turun",
+	"iconPicker.librariesAvailable": "Pustaka tersedia",
+	"iconPicker.librariesToDownload": "Pustaka untuk dimuat turun",
+	"iconPicker.groupCurrent": "Ikon semasa",
+	"iconPicker.groupSearch": "Cari",
+	"iconPicker.groupLibraries": "Pustaka",
+	"iconPicker.moreToDownloadOne": "1 lagi pustaka tersedia untuk dimuat turun",
+	"iconPicker.moreToDownload": "{{count}} lagi pustaka tersedia untuk dimuat turun",
+	"iconPicker.manageLibraries": "Urus pustaka",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "cari semua pustaka serentak",
@@ -629,6 +638,34 @@ export const ms: Record<string, string> = {
 	"iconPack.artworkRestored": "Seni ikon untuk {{names}} telah dimuat turun.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio tidak dapat menyimpan pakej ikon ke cakera, jadi ia perlu dimuat turun semula lain kali. Ikon yang anda pilih masih disimpan dengan tetapan anda.",
+	"iconLibraries.manage": "Urus pustaka ikon",
+	"iconLibraries.title": "Pustaka ikon",
+	"iconLibraries.desc":
+		"Seret untuk menukar susunan pustaka dalam Pilih ikon.\nSesetengah pustaka boleh dimuat turun dan dipadam.\nLucide, Emoji dan Material disertakan bersama pemalam, jadi ia hanya boleh disembunyikan.",
+	"iconLibraries.librariesHidden": "Pustaka tersembunyi",
+	"iconLibraries.reset": "Set semula kepada pustaka yang disertakan pemalam",
+	"iconLibraries.download": "Muat turun {{name}}",
+	"iconLibraries.delete": "Padam {{name}}",
+	"iconLibraries.hide": "Sembunyikan {{name}}",
+	"iconLibraries.show": "Tunjukkan {{name}}",
+	"iconLibraries.iconCount": "{{count}} ikon",
+	"iconLibraries.noDownload": "tidak perlu dimuat turun",
+	"iconLibraries.perIcon": "setiap ikon dimuat turun apabila dipilih",
+	"iconLibraries.hidden": "Disembunyikan",
+	"iconLibraries.downloading": "Sedang memuat turun…",
+	"iconLibraries.deleting": "Sedang memadam…",
+	"iconLibraries.keepOne": "Kekalkan sekurang-kurangnya satu pustaka dalam Pilih ikon.",
+	"iconLibraries.deleteFailed": "Tidak dapat memadam {{name}}. Cuba lagi.",
+	"iconLibraries.inUseOne": "1 callout menggunakan ikon daripada {{name}}:",
+	"iconLibraries.inUse": "{{count}} callout menggunakan ikon daripada {{name}}:",
+	"iconLibraries.inUseMore": "dan {{count}} lagi",
+	"iconLibraries.inUseKeeps":
+		"Ikonnya kekal — salinan setiap ikon disimpan bersama tetapan anda. Untuk memilih ikon baharu daripada {{name}} kemudian, muat turunnya semula.",
+	"iconLibraries.resetConfirm":
+		"Ini mengembalikan pustaka seperti ketika pemalam datang: susunan lalai, tiada yang disembunyikan, dan tiada pustaka yang dimuat turun. Pustaka ini akan dipadam:",
+	"iconLibraries.resetKeeps":
+		"Callout yang sudah menggunakan ikonnya akan mengekalkannya. Untuk memilih ikon baharu daripada pustaka ini kemudian, muat turunnya semula.",
+	"iconLibraries.resetButton": "Set semula",
 
 	// Icon licences & credits
 	"credits.title": "Lesen ikon dan kredit",
@@ -686,6 +723,8 @@ export const ms: Record<string, string> = {
 	"confirm.titleResetCallout": "Set semula callout",
 	"confirm.titleDeletePalette": "Padam palet",
 	"confirm.titleDeleteImage": "Padam gambar",
+	"confirm.titleDeleteLibrary": "Padam pustaka ikon",
+	"confirm.titleResetLibraries": "Set semula pustaka ikon",
 	"vault.filesUpdated":
 		"{{count}} rujukan callout dikemas kini dalam fail vault.",
 	"vault.idsUpdated":
@@ -1261,6 +1300,9 @@ export const ms: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Menu konteks",
 	"recovery.details.field.autocomplete": "Lengkap automatik",
 	"recovery.details.field.iconSources": "Sumber ikon dan keutamaan pemilih",
+	"recovery.details.field.iconLibraries": "Pustaka ikon",
+	"recovery.details.field.libraryOrder": "Susunan pustaka",
+	"recovery.details.field.hiddenLibraries": "Pustaka tersembunyi",
 	"recovery.details.field.headingCallouts": "Callout tajuk",
 	"recovery.details.field.inlineCallouts": "Callout sebaris",
 	"recovery.details.field.fallbackCalloutId": "Pengecam callout sandaran",

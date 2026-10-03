@@ -1089,6 +1089,17 @@ export class CalloutRegistry {
 	}
 
 	/**
+	 * Every committed callout — {@link realDefinitions} as a list. The callout
+	 * editor's in-progress draft is left out and the real callout it shadows
+	 * stands in its place, so a count or a list of names shown to the user (the
+	 * callouts using an icon library about to be deleted) never includes a
+	 * callout that does not exist yet.
+	 */
+	getCommitted(): CalloutDefinition[] {
+		return Array.from(this.realDefinitions());
+	}
+
+	/**
 	 * The user's own callouts — neither a built-in nor a row minted from the
 	 * active theme's stylesheet. Theme rows are excluded here rather than only
 	 * in the settings list because this also feeds `getExportableDefinitions`,
@@ -1522,6 +1533,12 @@ export class CalloutRegistry {
 		);
 		this.settings.inlineCallouts = structuredClone(
 			DEFAULT_SETTINGS.inlineCallouts,
+		);
+		// The library order and the hidden libraries go back to the catalog's.
+		// Downloaded library files stay: they are this device's cache, not a
+		// setting, and deleting them would only cost a download later.
+		this.settings.iconLibraries = structuredClone(
+			DEFAULT_SETTINGS.iconLibraries,
 		);
 		// Reset fallback callout – the previously-selected callout may no
 		// longer exist after the reset, which would leave the dropdown blank.

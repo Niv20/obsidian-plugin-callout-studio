@@ -114,6 +114,11 @@ export function setPackData(id: IconPackId, file: PackFile): void {
 	loaded.set(id, file);
 }
 
+/** Drop a pack's artwork from memory, once its file has been deleted. */
+export function forgetPackData(id: IconPackId): void {
+	loaded.delete(id);
+}
+
 /**
  * Validate parsed JSON as a pack file for `id`, or explain why it is not.
  *

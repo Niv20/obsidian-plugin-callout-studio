@@ -8,7 +8,8 @@
  *   the picker does.
  * - **A pack is fetched at most once.** It lands in the plugin's own folder and
  *   is read from there on every later launch, so the pack works offline
- *   afterwards and survives a restart.
+ *   afterwards and survives a restart — until the user deletes it in the Icon
+ *   libraries window, after which only another Download brings it back.
  * - **Only the exact expected bytes are accepted**, on download and on every
  *   later read. The build knows each pack's SHA-256 (see packManifest.ts);
  *   anything else is discarded, whether it came from a compromised CDN, a
@@ -26,7 +27,7 @@ import {
 	packUrls,
 	type PackManifestEntry,
 } from "./data/packManifest";
-import { isPackLoaded, setPackData } from "./packData";
+import { forgetPackData, isPackLoaded, setPackData } from "./packData";
 import { parseVerifiedPack, verifyPackText } from "./packValidation";
 import { IconTaskScope } from "./IconTaskScope";
 
@@ -216,6 +217,36 @@ export class PackDataStore {
 				new Notice(t("iconPack.diskWriteFailed"));
 			}
 		}
+	}
+
+	/**
+	 * Delete a pack's file and forget its artwork for this session — the
+	 * **Delete** button in the Icon libraries window. Resolves to whether the
+	 * pack is gone.
+	 *
+	 * Refused while that pack is still downloading: the download would write
+	 * the file straight back. The artwork of icons callouts already use is not
+	 * this class's concern — IconService.deleteLibrary saves it into `data.json`
+	 * before it calls this.
+	 */
+	async remove(id: IconPackId): Promise<boolean> {
+		if (this.work.destroyed || this.inFlight.has(id)) return false;
+		const path = this.packPath(id);
+		try {
+			const adapter = this.app.vault.adapter;
+			const exists = await this.work.wait(adapter.exists(path));
+			if (this.work.destroyed) return false;
+			if (exists) await this.work.wait(adapter.remove(path));
+			if (this.work.destroyed) return false;
+		} catch (e) {
+			if (this.work.destroyed) return false;
+			console.warn(`[CalloutStudio] could not delete pack "${id}"`, e);
+			return false;
+		}
+		forgetPackData(id);
+		this.states.delete(id);
+		this.notify();
+		return true;
 	}
 
 	// ── Download ────────────────────────────────────────────────────────

@@ -294,6 +294,7 @@ export const vi: Record<string, string> = {
 	"settings.resetItemHeading": "Cài đặt callout tiêu đề",
 	"settings.resetItemInline": "Cài đặt callout nội dòng",
 	"settings.resetItemFallback": "Kiểu dự phòng",
+	"settings.resetItemIconLibraries": "Thứ tự thư viện biểu tượng và thư viện đã ẩn",
 	"settings.resetAllConfirmAfter": "Đừng lo: trước khi đặt lại, chúng tôi lưu một bản sao lưu thiết lập hiện tại của bạn. Bạn có thể khôi phục bất cứ lúc nào từ mục Bản sao lưu trong phần cài đặt.\nNếu bạn dùng dịch vụ đồng bộ, việc đặt lại có thể lan sang các thiết bị khác của bạn.",
 	"settings.resetNothing": "Không có gì để đặt lại: mọi thứ đã ở mặc định.",
 
@@ -546,6 +547,14 @@ export const vi: Record<string, string> = {
 	"iconPicker.chooseSource": "Chọn nguồn",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Chưa tải xuống",
+	"iconPicker.librariesAvailable": "Thư viện có sẵn",
+	"iconPicker.librariesToDownload": "Thư viện để tải xuống",
+	"iconPicker.groupCurrent": "Biểu tượng hiện tại",
+	"iconPicker.groupSearch": "Tìm kiếm",
+	"iconPicker.groupLibraries": "Thư viện",
+	"iconPicker.moreToDownloadOne": "Còn 1 thư viện có thể tải xuống",
+	"iconPicker.moreToDownload": "Còn {{count}} thư viện có thể tải xuống",
+	"iconPicker.manageLibraries": "Quản lý thư viện",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "tìm kiếm mọi thư viện cùng lúc",
@@ -691,6 +700,34 @@ export const vi: Record<string, string> = {
 		"Đã tải xuống hình ảnh biểu tượng cho {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio không thể lưu gói biểu tượng vào đĩa, vì vậy cần tải xuống lại lần sau. Các biểu tượng bạn chọn vẫn được lưu cùng cài đặt.",
+	"iconLibraries.manage": "Quản lý thư viện biểu tượng",
+	"iconLibraries.title": "Thư viện biểu tượng",
+	"iconLibraries.desc":
+		"Kéo để đổi thứ tự các thư viện trong “Chọn biểu tượng”.\nMột số thư viện có thể tải xuống và xóa.\nLucide, Emoji và Material đi kèm plugin nên chỉ có thể ẩn.",
+	"iconLibraries.librariesHidden": "Thư viện đã ẩn",
+	"iconLibraries.reset": "Đặt lại về các thư viện đi kèm plugin",
+	"iconLibraries.download": "Tải xuống {{name}}",
+	"iconLibraries.delete": "Xóa {{name}}",
+	"iconLibraries.hide": "Ẩn {{name}}",
+	"iconLibraries.show": "Hiện {{name}}",
+	"iconLibraries.iconCount": "{{count}} biểu tượng",
+	"iconLibraries.noDownload": "không cần tải xuống",
+	"iconLibraries.perIcon": "mỗi biểu tượng được tải xuống khi bạn chọn",
+	"iconLibraries.hidden": "Đã ẩn",
+	"iconLibraries.downloading": "Đang tải xuống…",
+	"iconLibraries.deleting": "Đang xóa…",
+	"iconLibraries.keepOne": "Hãy giữ lại ít nhất một thư viện trong “Chọn biểu tượng”.",
+	"iconLibraries.deleteFailed": "Không thể xóa {{name}}. Hãy thử lại.",
+	"iconLibraries.inUseOne": "1 callout dùng biểu tượng từ {{name}}:",
+	"iconLibraries.inUse": "{{count}} callout dùng biểu tượng từ {{name}}:",
+	"iconLibraries.inUseMore": "và {{count}} mục nữa",
+	"iconLibraries.inUseKeeps":
+		"Chúng vẫn giữ biểu tượng của mình — một bản sao của từng biểu tượng được lưu cùng cài đặt của bạn. Để chọn biểu tượng mới từ {{name}} sau này, hãy tải xuống lại.",
+	"iconLibraries.resetConfirm":
+		"Thao tác này đưa các thư viện về như khi plugin mới cài: thứ tự mặc định, không có gì bị ẩn và không còn thư viện nào đã tải xuống. Những thư viện này sẽ bị xóa:",
+	"iconLibraries.resetKeeps":
+		"Các callout đã dùng biểu tượng của mình vẫn giữ chúng. Để chọn biểu tượng mới từ các thư viện này sau này, hãy tải xuống lại.",
+	"iconLibraries.resetButton": "Đặt lại",
 
 	// Icon licences & credits
 	"credits.title": "Giấy phép biểu tượng và ghi công",
@@ -754,6 +791,8 @@ export const vi: Record<string, string> = {
 	"confirm.titleResetCallout": "Đặt lại callout",
 	"confirm.titleDeletePalette": "Xóa bảng màu",
 	"confirm.titleDeleteImage": "Xóa hình ảnh",
+	"confirm.titleDeleteLibrary": "Xóa thư viện biểu tượng",
+	"confirm.titleResetLibraries": "Đặt lại thư viện biểu tượng",
 
 	"vault.filesUpdated":
 		"Đã cập nhật {{count}} tham chiếu callout trong các tệp vault.",
@@ -1263,6 +1302,9 @@ export const vi: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Menu ngữ cảnh",
 	"recovery.details.field.autocomplete": "Tự động hoàn thành",
 	"recovery.details.field.iconSources": "Nguồn biểu tượng và tùy chọn của bộ chọn",
+	"recovery.details.field.iconLibraries": "Thư viện biểu tượng",
+	"recovery.details.field.libraryOrder": "Thứ tự thư viện",
+	"recovery.details.field.hiddenLibraries": "Thư viện đã ẩn",
 	"recovery.details.field.headingCallouts": "Callout tiêu đề",
 	"recovery.details.field.inlineCallouts": "Callout nội dòng",
 	"recovery.details.field.fallbackCalloutId": "Mã định danh callout dự phòng",

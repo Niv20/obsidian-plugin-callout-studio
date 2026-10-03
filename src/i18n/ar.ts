@@ -238,6 +238,7 @@ export const ar: Record<string, string> = {
 	"settings.resetItemHeading": "إعدادات callout في العناوين",
 	"settings.resetItemInline": "إعدادات callout المضمّنة في السطر",
 	"settings.resetItemFallback": "النمط الاحتياطي",
+	"settings.resetItemIconLibraries": "ترتيب مكتبات الأيقونات والمكتبات المخفية",
 	"settings.resetAllConfirmAfter": "لا تقلق: قبل إعادة التعيين نحفظ نسخة احتياطية من إعداداتك الحالية. يمكنك استعادتها في أي وقت من قسم النسخ الاحتياطية في الإعدادات.\nإذا كنت تستخدم خدمة مزامنة، فقد تصل إعادة التعيين إلى أجهزتك الأخرى أيضًا.",
 	"settings.resetNothing": "لا يوجد ما يُعاد تعيينه: كل شيء على إعداداته الافتراضية بالفعل.",
 
@@ -482,6 +483,14 @@ export const ar: Record<string, string> = {
 	"iconPicker.chooseSource": "اختر مصدرًا",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "لم يتم تنزيله",
+	"iconPicker.librariesAvailable": "المكتبات المتاحة",
+	"iconPicker.librariesToDownload": "مكتبات للتنزيل",
+	"iconPicker.groupCurrent": "الأيقونة الحالية",
+	"iconPicker.groupSearch": "بحث",
+	"iconPicker.groupLibraries": "المكتبات",
+	"iconPicker.moreToDownloadOne": "مكتبة واحدة أخرى متاحة للتنزيل",
+	"iconPicker.moreToDownload": "{{count}} مكتبات أخرى متاحة للتنزيل",
+	"iconPicker.manageLibraries": "إدارة المكتبات",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "البحث في جميع المكتبات دفعة واحدة",
@@ -624,6 +633,34 @@ export const ar: Record<string, string> = {
 	"iconPack.artworkRestored": "تم تنزيل رسومات الأيقونات لـ {{names}}.",
 	"iconPack.diskWriteFailed":
 		"تعذر على Callout Studio حفظ حزمة الأيقونات على القرص، لذا ستحتاج إلى تنزيلها مرة أخرى في المرة القادمة. الأيقونات التي تختارها لا تزال محفوظة في إعداداتك.",
+	"iconLibraries.manage": "إدارة مكتبات الأيقونات",
+	"iconLibraries.title": "مكتبات الأيقونات",
+	"iconLibraries.desc":
+		"اسحب لتغيير ترتيب المكتبات في «اختيار أيقونة».\nيمكن تنزيل بعض المكتبات وحذفها.\nتأتي Lucide وEmoji وMaterial مع الإضافة، لذا يمكن إخفاؤها فقط.",
+	"iconLibraries.librariesHidden": "المكتبات المخفية",
+	"iconLibraries.reset": "إعادة التعيين إلى المكتبات التي جاءت مع الإضافة",
+	"iconLibraries.download": "تنزيل {{name}}",
+	"iconLibraries.delete": "حذف {{name}}",
+	"iconLibraries.hide": "إخفاء {{name}}",
+	"iconLibraries.show": "إظهار {{name}}",
+	"iconLibraries.iconCount": "{{count}} أيقونة",
+	"iconLibraries.noDownload": "لا حاجة إلى تنزيل",
+	"iconLibraries.perIcon": "تُنزَّل كل أيقونة عند اختيارها",
+	"iconLibraries.hidden": "مخفية",
+	"iconLibraries.downloading": "جارٍ التنزيل…",
+	"iconLibraries.deleting": "جارٍ الحذف…",
+	"iconLibraries.keepOne": "أبقِ مكتبة واحدة على الأقل في «اختيار أيقونة».",
+	"iconLibraries.deleteFailed": "تعذّر حذف {{name}}. حاول مرة أخرى.",
+	"iconLibraries.inUseOne": "callout واحد يستخدم أيقونات من {{name}}:",
+	"iconLibraries.inUse": "{{count}} من callouts تستخدم أيقونات من {{name}}:",
+	"iconLibraries.inUseMore": "و{{count}} أخرى",
+	"iconLibraries.inUseKeeps":
+		"تحتفظ بأيقوناتها — تُحفظ نسخة من كل أيقونة مع إعداداتك. لاختيار أيقونات جديدة من {{name}} لاحقًا، نزّلها مرة أخرى.",
+	"iconLibraries.resetConfirm":
+		"سيعيد هذا المكتبات إلى حالتها عند تثبيت الإضافة: الترتيب الافتراضي، دون أي مكتبة مخفية، ودون أي من المكتبات التي نُزّلت. ستُحذف هذه المكتبات:",
+	"iconLibraries.resetKeeps":
+		"تحتفظ callouts التي تستخدم أيقوناتها بالفعل بها. لاختيار أيقونات جديدة من هذه المكتبات لاحقًا، نزّلها مرة أخرى.",
+	"iconLibraries.resetButton": "إعادة التعيين",
 
 	// Icon licences & credits
 	"credits.title": "تراخيص الأيقونات والاعتمادات",
@@ -683,6 +720,8 @@ export const ar: Record<string, string> = {
 	"confirm.titleResetCallout": "إعادة تعيين الـ callout",
 	"confirm.titleDeletePalette": "حذف لوحة الألوان",
 	"confirm.titleDeleteImage": "حذف الصورة",
+	"confirm.titleDeleteLibrary": "حذف مكتبة أيقونات",
+	"confirm.titleResetLibraries": "إعادة تعيين مكتبات الأيقونات",
 
 	"vault.filesUpdated": "تم تحديث {{count}} مرجع callout في ملفات المخزن.",
 	// The arrow stays "→" although the sentence is RTL: it sits between two
@@ -1241,6 +1280,9 @@ export const ar: Record<string, string> = {
 	"recovery.details.field.contextMenu": "القائمة السياقية",
 	"recovery.details.field.autocomplete": "الإكمال التلقائي",
 	"recovery.details.field.iconSources": "مصادر الأيقونات وتفضيلات المحدِّد",
+	"recovery.details.field.iconLibraries": "مكتبات الأيقونات",
+	"recovery.details.field.libraryOrder": "ترتيب المكتبات",
+	"recovery.details.field.hiddenLibraries": "المكتبات المخفية",
 	"recovery.details.field.headingCallouts": "callout العناوين",
 	"recovery.details.field.inlineCallouts": "الـ callout المضمَّن",
 	"recovery.details.field.fallbackCalloutId": "معرّف الـ callout الاحتياطي",

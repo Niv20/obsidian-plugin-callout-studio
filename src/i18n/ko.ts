@@ -242,6 +242,7 @@ export const ko: Record<string, string> = {
 	"settings.resetItemHeading": "제목 callout 설정",
 	"settings.resetItemInline": "인라인 callout 설정",
 	"settings.resetItemFallback": "대체 스타일",
+	"settings.resetItemIconLibraries": "아이콘 라이브러리 순서 및 숨긴 라이브러리",
 	"settings.resetAllConfirmAfter": "걱정하지 마세요. 재설정하기 전에 현재 설정의 백업을 저장합니다. 설정의 백업 섹션에서 언제든 복원할 수 있습니다.\n동기화 서비스를 사용한다면 재설정이 다른 기기에도 전달될 수 있습니다.",
 	"settings.resetNothing": "재설정할 항목이 없습니다. 모든 것이 이미 기본값입니다.",
 
@@ -490,6 +491,14 @@ export const ko: Record<string, string> = {
 	"iconPicker.chooseSource": "소스 선택",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "다운로드 안 됨",
+	"iconPicker.librariesAvailable": "사용 가능한 라이브러리",
+	"iconPicker.librariesToDownload": "다운로드할 라이브러리",
+	"iconPicker.groupCurrent": "현재 아이콘",
+	"iconPicker.groupSearch": "검색",
+	"iconPicker.groupLibraries": "라이브러리",
+	"iconPicker.moreToDownloadOne": "다운로드할 수 있는 라이브러리 1개 더 있음",
+	"iconPicker.moreToDownload": "다운로드할 수 있는 라이브러리 {{count}}개 더 있음",
+	"iconPicker.manageLibraries": "라이브러리 관리",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "모든 라이브러리를 한 번에 검색",
@@ -634,6 +643,33 @@ export const ko: Record<string, string> = {
 		"{{names}}의 아이콘 아트워크를 다운로드했습니다.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio가 아이콘 팩을 디스크에 저장할 수 없어 다음에 다시 다운로드해야 합니다. 선택한 아이콘은 설정에 저장되어 있습니다.",
+	"iconLibraries.manage": "아이콘 라이브러리 관리",
+	"iconLibraries.title": "아이콘 라이브러리",
+	"iconLibraries.desc":
+		"끌어서 ‘아이콘 선택’의 라이브러리 순서를 바꿉니다.\n일부 라이브러리는 다운로드하고 삭제할 수 있습니다.\nLucide, Emoji, Material은 플러그인에 포함되어 있어 숨길 수만 있습니다.",
+	"iconLibraries.librariesHidden": "숨긴 라이브러리",
+	"iconLibraries.reset": "플러그인 기본 라이브러리로 재설정",
+	"iconLibraries.download": "{{name}} 다운로드",
+	"iconLibraries.delete": "{{name}} 삭제",
+	"iconLibraries.hide": "{{name}} 숨기기",
+	"iconLibraries.show": "{{name}} 표시",
+	"iconLibraries.iconCount": "아이콘 {{count}}개",
+	"iconLibraries.noDownload": "다운로드 필요 없음",
+	"iconLibraries.perIcon": "각 아이콘은 선택할 때 다운로드됩니다",
+	"iconLibraries.hidden": "숨김",
+	"iconLibraries.downloading": "다운로드 중…",
+	"iconLibraries.deleting": "삭제 중…",
+	"iconLibraries.keepOne": "‘아이콘 선택’에는 라이브러리를 하나 이상 남겨 두세요.",
+	"iconLibraries.deleteFailed": "{{name}}을(를) 삭제할 수 없습니다. 다시 시도하세요.",
+	"iconLibraries.inUseOne": "callout 1개가 {{name}}의 아이콘을 사용합니다:",
+	"iconLibraries.inUse": "callout {{count}}개가 {{name}}의 아이콘을 사용합니다:",
+	"iconLibraries.inUseMore": "외 {{count}}개",
+	"iconLibraries.inUseKeeps":
+		"아이콘은 그대로 유지됩니다. 각 아이콘의 사본이 설정과 함께 저장되어 있습니다. 나중에 {{name}}에서 새 아이콘을 고르려면 다시 다운로드하세요.",
+	"iconLibraries.resetConfirm":
+		"라이브러리를 플러그인 설치 당시 상태로 되돌립니다. 기본 순서로 돌아가고, 숨긴 항목이 없어지고, 다운로드한 라이브러리는 모두 사라집니다. 다음 라이브러리가 삭제됩니다:",
+	"iconLibraries.resetKeeps": "이미 아이콘을 사용 중인 callout은 그대로 유지합니다. 나중에 이 라이브러리에서 새 아이콘을 고르려면 다시 다운로드하세요.",
+	"iconLibraries.resetButton": "재설정",
 
 	// Icon licences & credits
 	"credits.title": "아이콘 라이선스 및 크레딧",
@@ -697,6 +733,8 @@ export const ko: Record<string, string> = {
 	"confirm.titleResetCallout": "callout 재설정",
 	"confirm.titleDeletePalette": "팔레트 삭제",
 	"confirm.titleDeleteImage": "이미지 삭제",
+	"confirm.titleDeleteLibrary": "아이콘 라이브러리 삭제",
+	"confirm.titleResetLibraries": "아이콘 라이브러리 재설정",
 
 	"vault.filesUpdated":
 		"볼트 파일에서 {{count}}개의 callout 참조를 업데이트했습니다.",
@@ -1260,6 +1298,9 @@ export const ko: Record<string, string> = {
 	"recovery.details.field.contextMenu": "컨텍스트 메뉴",
 	"recovery.details.field.autocomplete": "자동 완성",
 	"recovery.details.field.iconSources": "아이콘 출처 및 선택기 환경설정",
+	"recovery.details.field.iconLibraries": "아이콘 라이브러리",
+	"recovery.details.field.libraryOrder": "라이브러리 순서",
+	"recovery.details.field.hiddenLibraries": "숨긴 라이브러리",
 	"recovery.details.field.headingCallouts": "제목 callout",
 	"recovery.details.field.inlineCallouts": "인라인 callout",
 	"recovery.details.field.fallbackCalloutId": "대체 callout 식별자",

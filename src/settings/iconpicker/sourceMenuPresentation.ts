@@ -32,25 +32,23 @@ export interface SourceMenuTitleOptions {
 	count: number | undefined;
 	locale: string;
 	exactCount: boolean;
-	notDownloaded: boolean;
-	notDownloadedLabel: string;
 	selected: boolean;
 }
 
+/**
+ * One library's row: its name, and under it what it holds and how much.
+ *
+ * Nothing on a row says whether the library is downloaded. The menu lists only
+ * libraries this device can draw from — plus, under its own heading, the
+ * library of the icon being edited — so a status on every row would only ever
+ * repeat the heading above it.
+ */
 export function createSourceMenuTitle(
 	options: SourceMenuTitleOptions,
 ): HTMLElement {
 	const wrap = createDiv("cs-source-item");
 	const text = wrap.createDiv("cs-source-text");
-	const nameRow = text.createDiv("cs-source-name-row");
-	nameRow.createSpan({ cls: "cs-source-name", text: options.label });
-
-	if (options.notDownloaded) {
-		nameRow.createSpan({
-			cls: "cs-source-download-badge",
-			text: options.notDownloadedLabel,
-		});
-	}
+	text.createSpan({ cls: "cs-source-name", text: options.label });
 
 	const count =
 		options.count === undefined

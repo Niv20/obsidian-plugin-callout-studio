@@ -1472,6 +1472,185 @@ body:not(.is-phone)
 	will-change: transform;
 }
 
+/* ─── Icon Libraries Window ───────────────────────────────────── */
+
+/* The list, its rows, the handle and the band line are Customize menu items'
+   (above). What follows is what a library row has and a menu row does not: an
+   emblem, a second line, and one icon button instead of a toggle. */
+
+/* The heading of the first group sits above the list and carries the reset
+   arrow. It is not a setting, so it does not want what Obsidian gives a
+   settings row in a window — 16px above and below and a rule along the top
+   (`.modal:not(.mod-settings) .setting-item:not(…)`, 0,4,0). `.modal` and a
+   doubled class outrank it. */
+.modal .cs-icon-libraries .setting-item.cs-icon-library-heading.cs-icon-library-heading {
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
+	padding: 0;
+	border: none;
+}
+
+/* Obsidian stacks a phone's setting rows, label over control
+   (`.is-phone .modal .setting-item:not(…)`, 0,4,0); the heading keeps its arrow
+   beside the words rather than alone on a line of its own. */
+.is-phone .modal .cs-icon-libraries .setting-item.cs-icon-library-heading {
+	flex-direction: row;
+	align-items: center;
+}
+
+/* The three group headings — the first group's is a row of its own above the
+   list, the others are captions inside it — are drawn exactly as a section
+   heading is: the one **Built-in commands** has in the Commands and shortcuts
+   window. Size, weight, colour and line height are not numbers copied from it
+   but the variables Obsidian draws every setting heading with
+   (`--setting-group-heading-*`), so the three stay level with it wherever
+   those are set — by a theme, or by the phone's own scale. They are not the
+   small muted capitals of a menu's `.cs-combobox-group-label`, on purpose.
+   They are set in from the rows' edge to where their content starts. */
+.modal .cs-icon-libraries .setting-item.cs-icon-library-heading.cs-icon-library-heading {
+	/* A heading straight under the window's description, as Built-in commands is
+	   under its own: 24px of air above, none of its own below the text but the
+	   16px every setting heading has. */
+	margin-top: 24px;
+	margin-bottom: var(--size-4-4);
+}
+
+.cs-icon-libraries .cs-icon-library-heading .setting-item-name,
+.cs-menu-band-caption {
+	font-size: var(--setting-group-heading-size, var(--font-ui-medium));
+	font-weight: var(--setting-group-heading-weight, var(--font-semibold));
+	line-height: var(--line-height-tight);
+	color: var(--setting-group-heading-color, var(--text-normal));
+	text-align: start;
+	/* Obsidian reads a setting's name as plain text, so its own direction wins
+	   over the window's; a heading is the plugin's wording, and follows the
+	   window, like the captions under it. */
+	unicode-bidi: isolate;
+}
+
+/* The line and caption of a group below the first are a heading with a rule
+   over it, as Built-in commands is below Your commands: 36px, the rule, 36px,
+   the text, then the heading's 16px. The list puts a 4px gap between its
+   children, so each space is 4px short of what is written here. */
+.cs-icon-library-list .cs-menu-band-divider {
+	margin: 32px 0 0;
+}
+
+.cs-icon-library-list .cs-menu-band-caption {
+	padding: 32px 0 0;
+	margin-bottom: 12px;
+}
+
+/* Obsidian's mobile `.is-mobile .setting-item-name { font-weight: var(--font-medium) }`
+   comes after its heading rule and wins, so on a phone or tablet Built-in
+   commands is medium, not the variable's semibold. Do the same, or these would
+   come out heavier than the heading they are meant to match. */
+.is-mobile .cs-icon-libraries .cs-icon-library-heading .setting-item-name,
+.is-mobile .cs-menu-band-caption {
+	font-weight: var(--font-medium);
+}
+
+/* Centred over the rows' button column — 32px wide, 12px in from the row's
+   edge — the way Customize menu items centres its arrows over the toggles.
+   The heading has no inset of its own, so the arrow keeps that 12px as margin. */
+.cs-icon-library-heading .setting-item-control {
+	flex: 0 0 32px;
+	justify-content: center;
+	/* Taller than the heading's line, and it comes and goes: pulled out of the
+	   row's height so neither the heading's spacing nor the list moves. */
+	margin: -8px 0;
+	margin-inline-start: auto;
+	margin-inline-end: 12px;
+	padding: 0;
+}
+
+.cs-icon-library-list {
+	margin-top: 0;
+}
+
+/* Below the line there is no handle — the catalog decides that order — and
+   this keeps every name in one column. */
+.cs-drag-handle-spacer {
+	width: 32px;
+	height: 32px;
+	flex-shrink: 0;
+}
+
+.cs-icon-library-emblem {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+	color: var(--text-muted);
+}
+
+.cs-icon-library-emblem .svg-icon {
+	width: var(--icon-s);
+	height: var(--icon-s);
+}
+
+/* Name over its detail line, where a callout row puts them side by side. */
+.cs-icon-library-row .callout-studio-row-info {
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: flex-start;
+	gap: 2px;
+}
+
+.cs-icon-library-meta {
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+}
+
+/* Below the line the library is out of the picker, so its emblem and text fade
+   — but not its button: downloading or showing it is what the row is for. */
+.cs-menu-row.cs-icon-library-row.is-disabled {
+	opacity: 1;
+}
+
+.cs-icon-library-row.is-disabled .cs-icon-library-emblem,
+.cs-icon-library-row.is-disabled .callout-studio-row-info {
+	opacity: 0.55;
+}
+
+.cs-icon-library-row button.cs-icon-library-action {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 32px;
+	width: 32px;
+	height: 32px;
+	padding: 6px;
+	border: 0;
+	border-radius: var(--radius-s);
+	background: transparent;
+	box-shadow: none;
+	color: var(--text-muted);
+}
+
+.cs-icon-library-row button.cs-icon-library-action:hover,
+.cs-icon-library-row button.cs-icon-library-action:focus-visible {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+/* Deleting is the one action here that costs a download to undo. */
+.cs-icon-library-row button.cs-icon-library-delete:hover,
+.cs-icon-library-row button.cs-icon-library-delete:focus-visible {
+	color: var(--text-error);
+}
+
+/* The spinner fills the button on its own; its margin is for sitting beside text. */
+.cs-icon-library-action .callout-studio-spinner {
+	margin: 0;
+}
+
+/* The callouts the delete dialog names, and the libraries the reset one does. */
+.cs-icon-library-users {
+	margin: 0 0 12px;
+	padding-inline-start: 1.5em;
+}
+
 /* ─── Callout Editor Modal ────────────────────────────────────── */
 
 /* One width for every control in the form's top rows — the display name field,
@@ -3973,6 +4152,21 @@ button.callout-studio-icon-picker-loading {
 	min-width: 0;
 }
 
+/* Text that closes the list — the source menu's "3 more libraries available
+   for download". Information, not an action: no hover, no pointer, and the
+   menu's own mousedown swallows a press on it. The rule above it is the one
+   between groups, so it reads as the end of the list rather than one more
+   row; its text starts where the group headings start. */
+.cs-combobox-footer-note {
+	padding: 8px 12px;
+	border-top: 1px solid var(--cs-menu-divider, var(--background-modifier-border));
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	line-height: var(--line-height-normal);
+	text-align: start;
+	cursor: default;
+}
+
 /* All five command pickers share one control width. They become full-width
    when Obsidian stacks setting rows on a phone. */
 .cs-command-field {
@@ -4038,6 +4232,7 @@ button.callout-studio-icon-picker-loading {
    thousands of icons long, and switching source has to stay in reach. */
 .icon-picker-source-row {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	gap: 8px;
 	border-bottom: 1px solid var(--background-modifier-border);
@@ -4055,10 +4250,62 @@ button.callout-studio-icon-picker-loading {
 	font-weight: var(--font-medium);
 }
 
-/* Source and toolbar filters share the same control and popup geometry. */
+/* A phone cannot fit the caption, the library menu and the Manage libraries
+   button on one line: at 320–360px the menu shrank until the chosen library's
+   name was gone. The menu carries its own accessible name, so the caption only
+   leaves the screen, and only on a phone. */
+.is-phone .icon-picker-source-row .icon-picker-source-label {
+	display: none;
+}
+
+/* Source and toolbar filters share the same control and popup geometry.
+
+   The menu asks for room for a whole library name — "Font Awesome", the
+   longest, needs 162px on the desktop and 178px on a phone, measured in
+   Chrome against Obsidian's own fonts; 11.25em is 169px and 180px at the
+   menu's font sizes there. Where the row has less, the Manage libraries
+   button wraps onto a line of its own (320–360px phones) instead of the menu
+   cutting the name to "Font /". The 1000 against the button's 1 hands the menu
+   all the spare width while they share a line, and the button all of its own
+   line once it wraps, so a wrapped row is two full-width controls, as the
+   toolbar's filters are below it. */
 .icon-picker-source-dropdown {
-	flex: 1;
+	flex: 1000 1 11.25em;
 	min-width: 0;
+}
+
+/* Opens Manage icon libraries. Words rather than a gear, so what it does is
+   read, not guessed. It is a grey button like the window's own Cancel, so it
+   wears the shared face (see the window footer's rule), and it stands exactly
+   as tall as the menu beside it — the field rule's own height. Its label never
+   wraps; on a row too narrow for it and a library's name, it moves to a line
+   of its own (see the menu's rule above). */
+.icon-picker-source-row button.icon-picker-manage-libraries {
+	flex: 1 0 auto;
+	height: auto;
+	min-height: max(36px, var(--input-height));
+	padding: 6px 12px;
+	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
+	background-color: var(--cs-btn-face, var(--interactive-normal));
+	box-shadow: none;
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
+	white-space: nowrap;
+}
+
+@media (hover: hover) {
+	.icon-picker-source-row button.icon-picker-manage-libraries:hover {
+		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
+		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
+		color: var(--text-normal);
+		box-shadow: none;
+	}
+}
+
+/* `box-shadow: none` above outranks Obsidian's own focus ring, so it is put
+   back, as the window footer does for Cancel. */
+.icon-picker-source-row button.icon-picker-manage-libraries:focus-visible {
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
 }
 
 .icon-picker-source-menu-item {
@@ -4102,33 +4349,6 @@ button.callout-studio-icon-picker-loading {
 	flex-direction: column;
 	row-gap: 0.1em;
 	min-width: 0;
-}
-
-.cs-source-name-row {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 0.4em;
-}
-
-/* Informational rather than warning-coloured: the row is available, and
-   choosing it opens the existing one-time download prompt. */
-.callout-studio-icon-picker .cs-source-download-badge {
-	display: inline-flex;
-	align-items: center;
-	padding: 1px 6px;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 999px;
-	background: transparent;
-	color: #737373;
-	font-size: var(--font-ui-smaller);
-	font-weight: var(--font-normal);
-	line-height: 1.25;
-	white-space: nowrap;
-}
-
-.theme-dark .callout-studio-icon-picker .cs-source-download-badge {
-	color: #a3a3a3;
 }
 
 .cs-source-desc {
@@ -4228,7 +4448,6 @@ button.callout-studio-icon-picker-loading {
 }
 
 .icon-picker-pack-credit a {
-	margin-inline-start: 0.4em;
 	color: var(--text-accent);
 	text-decoration: none;
 }
@@ -4245,6 +4464,41 @@ button.callout-studio-icon-picker-loading {
 	scrollbar-gutter: stable;
 	padding: 0 var(--cs-modal-inset) 12px;
 	padding-inline-start: calc(var(--cs-modal-inset) + var(--cs-icon-grid-scrollbar, 0px));
+}
+
+/* A library's panel is at least as tall as the room under the source row, and
+   its body takes whatever the toolbar leaves. That room is what the two rules
+   below share out: the credit footer sits at the bottom of it however few
+   icons there are, and a download prompt in the middle of it. With more icons
+   than fit, the panel simply grows and the footer follows the grid, at the end
+   of the scroll. (`min-height: 100%` resolves because the scroller is a flex
+   item of a container with a fixed height; the Custom Icons panel relies on
+   the same.) */
+.icon-picker-pack-panel {
+	display: flex;
+	flex-direction: column;
+	min-height: 100%;
+}
+
+.icon-picker-pack-panel > .icon-picker-body {
+	display: flex;
+	flex-direction: column;
+	flex: 1 0 auto;
+}
+
+/* The download prompt, its progress line and its failure stand in for the
+   grid (`IconGrid.showMessage`): the grid takes all the free height and puts
+   its one row in the middle of it, between the toolbar and the footer. */
+.icon-picker-pack-panel .icon-picker-grid.has-message {
+	flex-grow: 1;
+	align-content: center;
+}
+
+/* The trademark notice and the credit line, held at the bottom of the panel
+   by the free space above them. Their own top margins remain the least gap to
+   the grid. */
+.icon-picker-pack-footer {
+	margin-top: auto;
 }
 
 .icon-picker-toolbar {
@@ -4701,6 +4955,16 @@ button.callout-studio-icon-picker-loading {
 	white-space: normal;
 	max-width: 320px;
 	margin: 0 auto;
+}
+
+/* The download prompt wraps too. Its title names the library, and its failure
+   is a whole sentence ("Could not download Simple Icons. Check your connection
+   and try again."): kept on one line, they ran off both edges of a phone — the
+   failure by 139px at 320px. Balanced, so a title broken in two reads as two
+   even lines rather than one long line and a stray word. */
+.icon-picker-notice {
+	white-space: normal;
+	text-wrap: balance;
 }
 
 .icon-picker-image-panel .icon-picker-image-empty {
@@ -8391,14 +8655,6 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
    block would outweigh every real setting around it. */
 .callout-studio-locale-warning .setting-item-name {
 	color: var(--text-warning);
-}
-
-/* Sources the pooled "All sources" list cannot include yet. */
-.icon-picker-missing-sources {
-	padding: 8px 0 4px;
-	color: var(--text-faint);
-	font-size: var(--font-ui-smaller);
-	text-align: center;
 }
 
 /* The way out of a frozen session, offered inside the notice that announces one

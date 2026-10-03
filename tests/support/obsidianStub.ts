@@ -441,9 +441,16 @@ export class Setting {
 		return this;
 	}
 
-	setDesc(desc?: string): this {
-		if (this.settingEl.dataset) this.settingEl.dataset.csDesc = desc ?? "";
-		this.descEl.textContent = desc ?? "";
+	setDesc(desc?: string | DocumentFragment): this {
+		if (desc === undefined || typeof desc === "string") {
+			this.descEl.textContent = desc ?? "";
+		} else {
+			// A fragment's children move in, as they do in Obsidian — a
+			// description with line breaks arrives this way.
+			this.descEl.textContent = "";
+			for (const child of Array.from(desc.childNodes)) this.descEl.appendChild?.(child);
+		}
+		if (this.settingEl.dataset) this.settingEl.dataset.csDesc = this.descEl.textContent;
 		return this;
 	}
 

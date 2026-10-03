@@ -180,10 +180,12 @@ describe("custom icon picker actions", () => {
 				getUserImages: () => images,
 				setUserImages: (next: readonly UserImageIcon[]) => { images = [...next]; },
 				getAll: () => [],
+				getCommitted: () => [],
 			},
 			saveSettings: async () => {},
 			ensureIconArtwork: async () => {},
-			icons: { packs: {} as PackDataStore },
+			icons: { packs: {} as PackDataStore, deleteLibrary: async () => false },
+			settingsWriter: { isFrozen: false },
 		} as IconPickerPlugin;
 		const picker = new IconPicker(plugin, { type: "image", value: selected.id });
 		const root = fakeDom.document.body.createDiv();

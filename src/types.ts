@@ -645,6 +645,39 @@ export interface IconSourceSettings {
 	lastEmojiSkinTone?: number;
 }
 
+/**
+ * Which icon libraries Pick an icon offers, and in what order — what the
+ * **Icon libraries** window edits.
+ *
+ * A top-level settings key rather than two more fields on `iconSources`, and
+ * that is what keeps it alive across versions: an older build rebuilds
+ * `iconSources` from the fields it knows and would drop these on its next save,
+ * while a whole top-level key it does not know is carried through untouched
+ * (`manager/foreignFields.ts`). Two devices one release apart then cannot erase
+ * each other's order.
+ *
+ * Whether a *downloadable* library is offered is not stored at all: it is
+ * whether its files are on this device, which differs per device and is read
+ * off disk. What syncs is only the order and which built-in libraries are
+ * hidden. Plain strings rather than `IconSourceId`s, so an id a newer build
+ * wrote is kept for that build and simply ignored here — see
+ * `icons/iconLibraries.ts`, the one place these lists are read.
+ */
+export interface IconLibrarySettings {
+	/**
+	 * Every library in the order the user arranged them. Empty until the first
+	 * reorder, and empty means the catalog order (`ICON_SOURCE_IDS`), so an
+	 * untouched install stores nothing that a later release has to work around.
+	 */
+	order: string[];
+	/**
+	 * Libraries that ship with the plugin and that the user took out of the
+	 * picker (Lucide, Material, Emoji, Custom Icons). A downloadable library is
+	 * never listed here: deleting its file is how it leaves.
+	 */
+	hidden: string[];
+}
+
 /** Per-side border toggles shared by every render role's frame style. */
 export interface BorderSidesSettings {
 	top: boolean;
@@ -735,6 +768,8 @@ export interface PluginSettings {
 	contextMenu: ContextMenuSettings;
 	autocomplete: AutocompleteSettings;
 	iconSources: IconSourceSettings;
+	/** Order and visibility of the libraries in Pick an icon. */
+	iconLibraries: IconLibrarySettings;
 	/** Heading callouts (`## [!name]`) — optional role, can be disabled. */
 	headingCallouts: HeadingCalloutSettings;
 	/** Inline callouts (`[!name]` mid-line) — optional role, can be disabled. */

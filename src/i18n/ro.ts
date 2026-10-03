@@ -293,6 +293,7 @@ export const ro: Record<string, string> = {
 	"settings.resetItemHeading": "Setările callout-urilor de titlu",
 	"settings.resetItemInline": "Setările callout-urilor inline",
 	"settings.resetItemFallback": "Stil de rezervă",
+	"settings.resetItemIconLibraries": "Ordinea bibliotecilor de pictograme și bibliotecile ascunse",
 	"settings.resetAllConfirmAfter": "Nu vă faceți griji: înainte de resetare salvăm un backup al configurației curente. Îl puteți restaura oricând din secțiunea Backup-uri din setări.\nDacă folosiți un serviciu de sincronizare, resetarea poate ajunge și pe celelalte dispozitive ale dumneavoastră.",
 	"settings.resetNothing": "Nimic de resetat: totul este deja la valorile implicite.",
 
@@ -544,6 +545,14 @@ export const ro: Record<string, string> = {
 	"iconPicker.chooseSource": "Alege sursa",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Nedescărcat",
+	"iconPicker.librariesAvailable": "Biblioteci disponibile",
+	"iconPicker.librariesToDownload": "Biblioteci de descărcat",
+	"iconPicker.groupCurrent": "Pictograma curentă",
+	"iconPicker.groupSearch": "Căutare",
+	"iconPicker.groupLibraries": "Biblioteci",
+	"iconPicker.moreToDownloadOne": "Încă 1 bibliotecă disponibilă pentru descărcare",
+	"iconPicker.moreToDownload": "Încă {{count}} biblioteci disponibile pentru descărcare",
+	"iconPicker.manageLibraries": "Gestionați bibliotecile",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "caută în toate bibliotecile deodată",
@@ -689,6 +698,34 @@ export const ro: Record<string, string> = {
 		"Arta pictogramelor pentru {{names}} a fost descărcată.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio nu a putut salva pachetul de pictograme pe disc, deci va trebui descărcat din nou data viitoare. Pictogramele alese sunt încă salvate în setările dvs.",
+	"iconLibraries.manage": "Gestionați bibliotecile de pictograme",
+	"iconLibraries.title": "Biblioteci de pictograme",
+	"iconLibraries.desc":
+		"Trageți pentru a schimba ordinea bibliotecilor în „Alegeți o pictogramă”.\nUnele biblioteci pot fi descărcate și șterse.\nLucide, Emoji și Material vin împreună cu pluginul, deci pot fi doar ascunse.",
+	"iconLibraries.librariesHidden": "Biblioteci ascunse",
+	"iconLibraries.reset": "Readuceți bibliotecile cu care a venit pluginul",
+	"iconLibraries.download": "Descarcă {{name}}",
+	"iconLibraries.delete": "Șterge {{name}}",
+	"iconLibraries.hide": "Ascunde {{name}}",
+	"iconLibraries.show": "Afișează {{name}}",
+	"iconLibraries.iconCount": "{{count}} pictograme",
+	"iconLibraries.noDownload": "nu e nevoie de descărcare",
+	"iconLibraries.perIcon": "fiecare pictogramă se descarcă atunci când este aleasă",
+	"iconLibraries.hidden": "Ascunsă",
+	"iconLibraries.downloading": "Se descarcă…",
+	"iconLibraries.deleting": "Se șterge…",
+	"iconLibraries.keepOne": "Păstrați cel puțin o bibliotecă în „Alegeți o pictogramă”.",
+	"iconLibraries.deleteFailed": "Nu s-a putut șterge {{name}}. Încercați din nou.",
+	"iconLibraries.inUseOne": "1 callout folosește pictograme din {{name}}:",
+	"iconLibraries.inUse": "{{count}} callout-uri folosesc pictograme din {{name}}:",
+	"iconLibraries.inUseMore": "și încă {{count}}",
+	"iconLibraries.inUseKeeps":
+		"Își păstrează pictogramele — o copie a fiecăreia este salvată cu setările dvs. Pentru a alege mai târziu pictograme noi din {{name}}, descărcați-o din nou.",
+	"iconLibraries.resetConfirm":
+		"Aceasta readuce bibliotecile la starea în care a venit pluginul: ordinea implicită, nimic ascuns și niciuna dintre bibliotecile descărcate. Acestea vor fi șterse:",
+	"iconLibraries.resetKeeps":
+		"Callout-urile care își folosesc deja pictogramele le păstrează. Pentru a alege mai târziu pictograme noi din aceste biblioteci, descărcați-le din nou.",
+	"iconLibraries.resetButton": "Resetați",
 
 	// Icon licences & credits
 	"credits.title": "Licențe pictograme și credite",
@@ -749,6 +786,8 @@ export const ro: Record<string, string> = {
 	"confirm.titleResetCallout": "Resetează callout",
 	"confirm.titleDeletePalette": "Șterge paleta",
 	"confirm.titleDeleteImage": "Șterge imaginea",
+	"confirm.titleDeleteLibrary": "Ștergeți biblioteca de pictograme",
+	"confirm.titleResetLibraries": "Resetați bibliotecile de pictograme",
 
 	"vault.filesUpdated":
 		"Au fost actualizate {{count}} referință(e) callout în fișierele vault.",
@@ -1280,6 +1319,9 @@ export const ro: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Meniu contextual",
 	"recovery.details.field.autocomplete": "Completare automată",
 	"recovery.details.field.iconSources": "Surse de pictograme și preferințele selectorului",
+	"recovery.details.field.iconLibraries": "Biblioteci de pictograme",
+	"recovery.details.field.libraryOrder": "Ordinea bibliotecilor",
+	"recovery.details.field.hiddenLibraries": "Biblioteci ascunse",
 	"recovery.details.field.headingCallouts": "Callout-uri de titlu",
 	"recovery.details.field.inlineCallouts": "Callout-uri în rând",
 	"recovery.details.field.fallbackCalloutId": "Identificatorul callout-ului de rezervă",

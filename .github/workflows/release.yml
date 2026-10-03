@@ -91,10 +91,15 @@ jobs:
             # layer) so gradients and solid colours move there, clearing every
             # box and surface layer of a transparent callout, and counting a
             # theme's generic !important rules in the studio weight — 7.4 KB,
-            # which leaves the headroom about where it was.
+            # which leaves the headroom about where it was. Raised by 12 KiB for
+            # the Icon libraries window: reordering, hiding, downloading and
+            # deleting libraries from Pick an icon, the drag list it now shares
+            # with Customize menu items, the dialog naming the callouts that keep
+            # their icons when a library goes, and its strings — 11.7 KB, which
+            # again leaves the headroom about where it was.
             - name: Check bundle size
               run: |
-                  limit=2224128  # 2 MiB + 124 KiB
+                  limit=2236416  # 2 MiB + 136 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

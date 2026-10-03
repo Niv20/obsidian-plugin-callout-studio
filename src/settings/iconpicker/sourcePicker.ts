@@ -1,21 +1,47 @@
 /** The icon source list uses the same field and popup as the other filters. */
 import { setIcon } from "obsidian";
 import { getLocale, t } from "../../i18n";
-import { getSource, ICON_SOURCE_IDS } from "../../icons/registry";
-import type { IconSourceId } from "../../types";
+import { getSource } from "../../icons/registry";
+import type { MenuLibraries } from "../../icons/iconLibraries";
 import { ListboxPopup } from "../../ui/listboxPopup";
 import { ALL_SOURCES, ALL_SOURCES_META, type PickerSourceId } from "./allSources";
 import { createSourceMenuTitle } from "./sourceMenuPresentation";
 
 interface SourcePickerOptions {
 	value: PickerSourceId;
+	/**
+	 * What the menu lists besides All sources, and what its closing line
+	 * counts. Asked afresh every time the menu is built, because downloading or
+	 * deleting a library changes it while the picker is open.
+	 */
+	sources(): MenuLibraries;
 	countFor(id: PickerSourceId): number | undefined;
-	isMissing(id: IconSourceId): boolean;
 	onPick(id: PickerSourceId): void;
+	/** Opens Manage icon libraries; the row gets its button when set. */
+	onManage?(): void;
 }
 
 function sourceMeta(id: PickerSourceId) {
 	return id === ALL_SOURCES ? ALL_SOURCES_META : getSource(id);
+}
+
+/**
+ * The menu's sticky headings. All sources is not a library, so it has a
+ * heading of its own above the libraries; the edited icon's library, when the
+ * picker does not offer it, has one above both.
+ */
+function groupOf(id: PickerSourceId, listed: MenuLibraries): { key: string; label: string } {
+	if (id === ALL_SOURCES) return { key: "search", label: t("iconPicker.groupSearch") };
+	if (id === listed.current) return { key: "current", label: t("iconPicker.groupCurrent") };
+	return { key: "libraries", label: t("iconPicker.groupLibraries") };
+}
+
+/** "3 more libraries available for download", or nothing when there are none. */
+function moreToDownload(count: number): string {
+	if (count === 0) return "";
+	return count === 1
+		? t("iconPicker.moreToDownloadOne")
+		: t("iconPicker.moreToDownload", { count });
 }
 
 /** Align the fixed source row with the toolbar inside the scrollable grid. */
@@ -45,12 +71,24 @@ export function mountIconSourcePicker(
 		cls: "icon-picker-source-label",
 		attr: { for: "cs-icon-source" },
 	});
-	let selected = options.value;
-	const popup = new ListboxPopup<PickerSourceId>(row, {
+	/** The menu as last built — `groupOf` and the closing line read it. */
+	let listed: MenuLibraries = { current: null, libraries: [], toDownload: [] };
+	const popup: ListboxPopup<PickerSourceId> = new ListboxPopup<PickerSourceId>(row, {
 		ariaLabel: t("iconPicker.chooseSource"),
 		placeholder: "",
 		searchable: false,
-		itemsFor: () => [ALL_SOURCES, ...ICON_SOURCE_IDS],
+		// Only libraries that can be drawn from here and now, so no row needs a
+		// download status. The edited icon's own library is the exception, first
+		// and under its own heading; see `menuLibraries`.
+		itemsFor: () => {
+			listed = options.sources();
+			return [
+				...(listed.current === null ? [] : [listed.current]),
+				ALL_SOURCES,
+				...listed.libraries,
+			];
+		},
+		groupOf: (id) => groupOf(id, listed),
 		keyOf: (id) => id,
 		labelOf: (id) => t(sourceMeta(id).labelKey),
 		emptyText: () => "",
@@ -65,24 +103,47 @@ export function mountIconSourcePicker(
 				count: options.countFor(id),
 				locale: getLocale(),
 				exactCount: id === "image",
-				notDownloaded: id !== ALL_SOURCES && options.isMissing(id),
-				notDownloadedLabel: t("iconPicker.notDownloaded"),
-				selected: id === selected,
+				// The popup's own record of what is chosen, so a library shown
+				// by showIconSource is the one that carries the check.
+				selected: id === popup.value,
 			}));
 		},
+		// What is left to download is said, not offered: the libraries are got
+		// in Manage icon libraries, beside the menu.
+		footerNote: () => moreToDownload(listed.toDownload.length),
 		onCommit: (id) => {
-			selected = id;
-			paintLead(id);
+			paintLead(popup, id);
 			options.onPick(id);
 		},
 	});
-	function paintLead(id: PickerSourceId): void {
-		popup.leadEl.empty();
-		setIcon(popup.leadEl, sourceMeta(id).emblemIcon);
-	}
 	popup.el.addClass("icon-picker-source-dropdown");
 	popup.inputEl.id = "cs-icon-source";
-	popup.setSelected(selected);
-	paintLead(selected);
+	showIconSource(popup, options.value);
+
+	if (options.onManage) {
+		// Words rather than a gear: the button is where libraries are downloaded
+		// now, which an icon left people to guess. The visible label names it,
+		// so it carries no aria-label (Obsidian would show that as a tooltip).
+		const manage = row.createEl("button", {
+			cls: "icon-picker-manage-libraries",
+			text: t("iconPicker.manageLibraries"),
+			attr: { type: "button" },
+		});
+		manage.addEventListener("click", () => options.onManage?.());
+	}
 	return popup;
+}
+
+/**
+ * Show `id` as the chosen library without anyone picking it, and without
+ * `onPick` firing — for when the library shown has just left the menu.
+ */
+export function showIconSource(popup: ListboxPopup<PickerSourceId>, id: PickerSourceId): void {
+	popup.setSelected(id);
+	paintLead(popup, id);
+}
+
+function paintLead(popup: ListboxPopup<PickerSourceId>, id: PickerSourceId): void {
+	popup.leadEl.empty();
+	setIcon(popup.leadEl, sourceMeta(id).emblemIcon);
 }

@@ -392,7 +392,99 @@ immediately. Network availability is not a prerequisite for keeping a callout.
 (source menu, search, preview, confirm), `PackPanel` (one source's toolbar +
 grid, driven entirely by its `IconPack`), `IconGrid` (paging + keyboard
 navigation), `ImagePanel` ("Your images" upload/manage), `allSources.ts` (the
-pooled cross-source search).
+pooled cross-source search), `IconLibrariesModal` (the **Manage icon libraries**
+window — see [Settings UI and modals](16-settings-ui-and-modals.md#iconlibrariesmodal--libraries-in-two-bands)).
+
+The source menu lists only what can be picked from right now:
+`icons/iconLibraries.ts` decides it (`menuLibraries()`,
+[Icons](13-icons.md#icon-libraries--what-the-picker-offers)), and
+`sourcePicker.ts` lays it out in up to three groups, each the listbox's own
+`groupOf` heading (`.cs-combobox-group-label`, sticky at the top of the
+scrolling menu, each held inside its own `.cs-combobox-group`), always shown —
+there is no `hideSingleGroup` here:
+
+| Heading (key) | Rows | When |
+| --- | --- | --- |
+| **Current icon** (`iconPicker.groupCurrent`) | the edited icon's library | only while the picker does not offer it |
+| **Search** (`iconPicker.groupSearch`) | All sources | always |
+| **Libraries** (`iconPicker.groupLibraries`) | `pickerSources()`, in the user's order | always |
+
+All sources has a heading of its own because it is a search, not a library. A
+downloadable library this device lacks is not a row at all — not even a dimmed
+one — so no row carries a download status and the old **Not downloaded** badge
+is gone (`iconPicker.notDownloaded` is left unread, as is every key a locale
+still carries). Instead `footerNote`, a `ListboxPopup` option, closes the list
+with plain text — "3 more libraries available for download"
+(`iconPicker.moreToDownload`, or `…One` for one) — counting `toDownload`, or
+nothing when it is empty. It is `div.cs-combobox-footer-note`: no role, no
+listener, not in `rowEls`, so the arrow keys stop at the last library and a
+press on it is swallowed by the menu's `mousedown` (the menu stays open). The
+libraries are downloaded in the window the button beside the menu opens.
+
+**The edited icon's library is the exception** (`MenuLibraries.current`). A
+callout keeps its icon when its library is deleted, and one synced from
+another device can use a library this device never downloaded; editing it
+opens the picker on that library (`activeSource` is the icon's own source), so
+the closed menu has to name it. It is listed first, under **Current icon** —
+apart from the libraries on offer rather than among them — with the check while
+it is on screen, and it stays there after the person looks elsewhere, as the
+way back. Choosing it shows the panel's download prompt; downloading from there
+moves it under **Libraries** on the next build of the menu, and the heading
+goes. The closing line does not count it, since it is listed already. A hidden
+built-in library of the edited icon goes under the same heading, so
+**Libraries** is always exactly what the picker offers — the **Available
+libraries** band of the window.
+
+`menuLibraries()` in the modal withholds `toDownload` until `packStatesLoaded`:
+before `loadAllFromDisk()` finishes, a library downloaded in an earlier session
+reads as missing and the line would quote a number about to drop. The menu is
+redrawn the moment the read finishes (before the first panel, which can wait on
+Material's webfont), so an open menu catches up.
+
+A text button, **Manage libraries** (`iconPicker.manageLibraries`), ends the
+source row and opens the **Manage icon libraries** window on top. It replaced a
+gear: it is where libraries are downloaded now, which an icon left people to
+guess. It wears the shared grey face (`--cs-btn-face`, held by
+`secondaryButtons.test.ts` like the window footer's Cancel) and the field
+rule's own height, so it stands level with the menu; its label never wraps, and
+it has no `aria-label`, since its words name it and Obsidian would turn the
+attribute into a tooltip. The editor opens the
+picker as `new IconPicker(plugin, this.icon, { id: this.existingId, name })`:
+`this.icon` is a draft until **Save**, so the registry does not know it, and the
+picker hands the window the callout being edited (`EditedCallout`: that id and
+name plus the icon it was opened on) so deleting a library the draft uses
+asks first — see [Icons](13-icons.md#the-callout-being-edited-counts-as-a-user).
+`openLibraries()` first awaits `packs.loadAllFromDisk()`, the same read the picker
+does before its first paint (free once done): a library downloaded in an earlier
+session reads as missing until its file is read back, and a quick press on
+**Manage libraries** would otherwise list it under **Libraries to download** for
+a moment.
+When that window closes
+having changed something, `openLibraries()` takes it in: a library that was
+offered and no longer is (deleted, or hidden) gives way to All sources, and an
+icon picked from it stops being the selection, since confirming it would
+download that library again — except the edited icon's own library, whose
+drawings are already saved with the callout. The panel is rebuilt **only when
+what it shows changed** (`panelContents()`: the pool's members in order, or
+how much of the active library is still to download). Rebuilding sends the grid
+back to the selected icon or to the top, so doing it after every change — which
+this once did — made the icon list jump whenever someone hid an unrelated
+library. On a phone the row drops its **Choose source** caption from view so
+the menu keeps room for the library's name beside **Manage libraries**.
+
+A library's panel (`PackPanel`, marked `.icon-picker-pack-panel`; the Custom
+Icons panel has its own layout) fills the room under the source row: the panel
+is a flex column with `min-height: 100%` of the scroller, and its body takes
+what the toolbar leaves. The trademark notice and the credit line sit together
+in `.icon-picker-pack-footer`, pushed to the bottom by `margin-top: auto`, so
+under a short grid — a search with few results — the credit stays at the bottom
+of the picker instead of floating up beneath the last icons; with more icons
+than fit, the footer simply follows the grid at the end of the scroll. When the
+grid holds a message instead of cells (`IconGrid.showMessage`: the download
+prompt, its progress line, its failure), it carries `has-message`, grows into
+the free height and centres the message there with `align-content: center` —
+between the toolbar and the footer. Cells are never stretched that way:
+`setEntries` takes the class off again.
 
 `ImagePanel` keeps its file-upload control beside search as an icon-only
 button with a localized accessible name. Each uploaded icon exposes its delete
@@ -410,14 +502,16 @@ interface without being a real library), specifically so the picker panel
 needs **no special case** to render it; it's just another source as far as
 `PackPanel` is concerned.
 
-`availableSources(packs)` filters to sources where **every** file a source
-draws from is present — not "any": Font Awesome pools names across three
-separate files (Solid/Regular/Brands), and a missing file would silently drop
-every name only that file can draw, producing an inconsistent pooled list.
-`missingSources(packs)` is the complement, used both for the source menu's
-**Not downloaded** badges and its "Some sources aren't downloaded yet" hint.
-The badge waits for `loadAllFromDisk()` before appearing, so a cached but unused
-pack is never briefly mislabeled while the picker warms its disk state. Fixed
+The pool is built from `pickerSources()` — the libraries the picker offers,
+in the user's order — so its result groups come in that order too. A
+downloadable source counts only when **every** file it draws from is present —
+not "any": Font Awesome pools names across three separate files
+(Solid/Regular/Brands), and a missing file would silently drop every name only
+that file can draw, producing an inconsistent pooled list. A library that is
+not downloaded, or that the user hid, is simply not in the pool — the same list
+the menu shows under **Libraries**; the old "not included yet" hint under the
+pool is gone, since the menu's closing line counts what is left to download and
+the Manage icon libraries window lists it. Fixed
 catalog sizes use locale-aware, hundred-icon lower bounds (compact where the
 locale supports them); the user-owned **Custom Icons** count remains exact.
 
@@ -439,8 +533,9 @@ empty. The extra inset is zero when scrollbars overlay the content.
 
 Consistent with the network-disclosure policy stated throughout the codebase:
 opening the picker, browsing, and searching are always offline (the search
-index is bundled). Only pressing **Download** for a `bundledRemote` source,
-or confirming a pick from a `perIconRemote`/`bundledRemote` source, ever
+index is bundled). Only pressing **Download** for a `bundledRemote` source — in
+its panel or in the Icon libraries window — or confirming a pick from a
+`perIconRemote`/`bundledRemote` source whose artwork is not already saved, ever
 touches the network. See [Icons](13-icons.md) for the fetch/cache mechanics
 this triggers.
 

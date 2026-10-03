@@ -242,6 +242,7 @@ export const de: Record<string, string> = {
 	"settings.resetItemHeading": "Einstellungen für Überschrift-Callouts",
 	"settings.resetItemInline": "Einstellungen für Inline-Callouts",
 	"settings.resetItemFallback": "Ausweichstil",
+	"settings.resetItemIconLibraries": "Reihenfolge der Symbolbibliotheken und ausgeblendete Bibliotheken",
 	"settings.resetAllConfirmAfter": "Keine Sorge: Vor dem Zurücksetzen speichern wir ein Backup deiner aktuellen Konfiguration. Du kannst es jederzeit im Bereich Backups in den Einstellungen wiederherstellen.\nWenn du einen Synchronisierungsdienst nutzt, kann das Zurücksetzen auch auf deine anderen Geräte übertragen werden.",
 	"settings.resetNothing": "Nichts zurückzusetzen: Alles ist bereits auf den Standardwerten.",
 
@@ -495,6 +496,14 @@ export const de: Record<string, string> = {
 	"iconPicker.chooseSource": "Quelle wählen",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Nicht heruntergeladen",
+	"iconPicker.librariesAvailable": "Verfügbare Bibliotheken",
+	"iconPicker.librariesToDownload": "Bibliotheken zum Herunterladen",
+	"iconPicker.groupCurrent": "Aktuelles Symbol",
+	"iconPicker.groupSearch": "Suchen",
+	"iconPicker.groupLibraries": "Bibliotheken",
+	"iconPicker.moreToDownloadOne": "1 weitere Bibliothek zum Herunterladen verfügbar",
+	"iconPicker.moreToDownload": "{{count}} weitere Bibliotheken zum Herunterladen verfügbar",
+	"iconPicker.manageLibraries": "Bibliotheken verwalten",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "alle Bibliotheken auf einmal durchsuchen",
@@ -641,6 +650,34 @@ export const de: Record<string, string> = {
 		"Die Symbol-Grafiken für {{names}} wurden heruntergeladen.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio konnte das Symbol-Paket nicht auf der Festplatte speichern; es muss beim nächsten Mal erneut heruntergeladen werden. Die ausgewählten Symbole werden weiterhin mit Ihren Einstellungen gespeichert.",
+	"iconLibraries.manage": "Symbolbibliotheken verwalten",
+	"iconLibraries.title": "Symbolbibliotheken",
+	"iconLibraries.desc":
+		"Ziehe, um die Reihenfolge der Bibliotheken in „Symbol auswählen“ zu ändern.\nEinige Bibliotheken lassen sich herunterladen und löschen.\nLucide, Emoji und Material gehören zum Plugin und können deshalb nur ausgeblendet werden.",
+	"iconLibraries.librariesHidden": "Ausgeblendete Bibliotheken",
+	"iconLibraries.reset": "Auf die Bibliotheken zurücksetzen, mit denen das Plugin geliefert wurde",
+	"iconLibraries.download": "{{name}} herunterladen",
+	"iconLibraries.delete": "{{name}} löschen",
+	"iconLibraries.hide": "{{name}} ausblenden",
+	"iconLibraries.show": "{{name}} einblenden",
+	"iconLibraries.iconCount": "{{count}} Symbole",
+	"iconLibraries.noDownload": "kein Download nötig",
+	"iconLibraries.perIcon": "jedes Symbol wird beim Auswählen heruntergeladen",
+	"iconLibraries.hidden": "Ausgeblendet",
+	"iconLibraries.downloading": "Wird heruntergeladen …",
+	"iconLibraries.deleting": "Wird gelöscht …",
+	"iconLibraries.keepOne": "Behalte mindestens eine Bibliothek in „Symbol auswählen“.",
+	"iconLibraries.deleteFailed": "{{name}} konnte nicht gelöscht werden. Versuche es erneut.",
+	"iconLibraries.inUseOne": "1 Callout verwendet Symbole aus {{name}}:",
+	"iconLibraries.inUse": "{{count}} Callouts verwenden Symbole aus {{name}}:",
+	"iconLibraries.inUseMore": "und {{count}} weitere",
+	"iconLibraries.inUseKeeps":
+		"Sie behalten ihre Symbole — eine Kopie jedes Symbols wird mit deinen Einstellungen gespeichert. Um später neue Symbole aus {{name}} auszuwählen, lade die Bibliothek erneut herunter.",
+	"iconLibraries.resetConfirm":
+		"Damit werden die Bibliotheken in den Zustand zurückversetzt, in dem das Plugin geliefert wurde: Standardreihenfolge, nichts ausgeblendet und keine heruntergeladenen Bibliotheken. Diese werden gelöscht:",
+	"iconLibraries.resetKeeps":
+		"Callouts, die ihre Symbole bereits verwenden, behalten sie. Um später neue Symbole aus diesen Bibliotheken auszuwählen, lade sie erneut herunter.",
+	"iconLibraries.resetButton": "Zurücksetzen",
 
 	// Icon licences & credits
 	"credits.title": "Symbol-Lizenzen und Quellenangaben",
@@ -701,6 +738,8 @@ export const de: Record<string, string> = {
 	"confirm.titleResetCallout": "Callout zurücksetzen",
 	"confirm.titleDeletePalette": "Palette löschen",
 	"confirm.titleDeleteImage": "Bild löschen",
+	"confirm.titleDeleteLibrary": "Symbolbibliothek löschen",
+	"confirm.titleResetLibraries": "Symbolbibliotheken zurücksetzen",
 
 	"vault.filesUpdated":
 		"{{count}} Callout-Referenz(en) in Vault-Dateien aktualisiert.",
@@ -1280,6 +1319,9 @@ export const de: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Kontextmenü",
 	"recovery.details.field.autocomplete": "Autovervollständigung",
 	"recovery.details.field.iconSources": "Symbolquellen und Auswahleinstellungen",
+	"recovery.details.field.iconLibraries": "Symbolbibliotheken",
+	"recovery.details.field.libraryOrder": "Reihenfolge der Bibliotheken",
+	"recovery.details.field.hiddenLibraries": "Ausgeblendete Bibliotheken",
 	"recovery.details.field.headingCallouts": "Überschrift-Callouts",
 	"recovery.details.field.inlineCallouts": "Inline-Callouts",
 	"recovery.details.field.fallbackCalloutId": "Kennung des Ersatz-Callouts",

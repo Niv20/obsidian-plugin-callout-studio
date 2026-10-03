@@ -241,6 +241,7 @@ export const pl: Record<string, string> = {
 	"settings.resetItemHeading": "Ustawienia callout w nagłówkach",
 	"settings.resetItemInline": "Ustawienia callout śródliniowych",
 	"settings.resetItemFallback": "Styl zastępczy",
+	"settings.resetItemIconLibraries": "Kolejność bibliotek ikon i ukryte biblioteki",
 	"settings.resetAllConfirmAfter": "Spokojnie: przed resetem zapisujemy kopię zapasową Twojej obecnej konfiguracji. Możesz ją w każdej chwili przywrócić w sekcji Kopie zapasowe w ustawieniach.\nJeśli korzystasz z usługi synchronizacji, reset może dotrzeć także na Twoje inne urządzenia.",
 	"settings.resetNothing": "Nie ma czego resetować: wszystko ma już ustawienia domyślne.",
 
@@ -490,6 +491,14 @@ export const pl: Record<string, string> = {
 	"iconPicker.chooseSource": "Wybierz źródło",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Nie pobrano",
+	"iconPicker.librariesAvailable": "Dostępne biblioteki",
+	"iconPicker.librariesToDownload": "Biblioteki do pobrania",
+	"iconPicker.groupCurrent": "Bieżąca ikona",
+	"iconPicker.groupSearch": "Szukaj",
+	"iconPicker.groupLibraries": "Biblioteki",
+	"iconPicker.moreToDownloadOne": "Do pobrania jest jeszcze 1 biblioteka",
+	"iconPicker.moreToDownload": "Do pobrania jest jeszcze {{count}} bibliotek",
+	"iconPicker.manageLibraries": "Zarządzaj bibliotekami",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources":
@@ -635,6 +644,34 @@ export const pl: Record<string, string> = {
 	"iconPack.artworkRestored": "Pobrano grafikę ikon dla {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio nie mogło zapisać pakietu ikon na dysku, więc następnym razem będzie trzeba go pobrać ponownie. Wybrane ikony są nadal zapisane w ustawieniach.",
+	"iconLibraries.manage": "Zarządzaj bibliotekami ikon",
+	"iconLibraries.title": "Biblioteki ikon",
+	"iconLibraries.desc":
+		"Przeciągnij, aby zmienić kolejność bibliotek w oknie „Wybierz ikonę”.\nNiektóre biblioteki można pobrać i usunąć.\nLucide, Emoji i Material są dołączone do wtyczki, więc można je tylko ukryć.",
+	"iconLibraries.librariesHidden": "Ukryte biblioteki",
+	"iconLibraries.reset": "Przywróć biblioteki dołączone do wtyczki",
+	"iconLibraries.download": "Pobierz {{name}}",
+	"iconLibraries.delete": "Usuń {{name}}",
+	"iconLibraries.hide": "Ukryj {{name}}",
+	"iconLibraries.show": "Pokaż {{name}}",
+	"iconLibraries.iconCount": "Ikon: {{count}}",
+	"iconLibraries.noDownload": "pobieranie niepotrzebne",
+	"iconLibraries.perIcon": "każda ikona jest pobierana po wybraniu",
+	"iconLibraries.hidden": "Ukryta",
+	"iconLibraries.downloading": "Pobieranie…",
+	"iconLibraries.deleting": "Usuwanie…",
+	"iconLibraries.keepOne": "Zostaw w oknie „Wybierz ikonę” co najmniej jedną bibliotekę.",
+	"iconLibraries.deleteFailed": "Nie udało się usunąć biblioteki {{name}}. Spróbuj ponownie.",
+	"iconLibraries.inUseOne": "1 callout używa ikon z biblioteki {{name}}:",
+	"iconLibraries.inUse": "Calloutów używających ikon z biblioteki {{name}}: {{count}}",
+	"iconLibraries.inUseMore": "i jeszcze {{count}}",
+	"iconLibraries.inUseKeeps":
+		"Zachowują swoje ikony — kopia każdej jest zapisana razem z ustawieniami. Aby później wybrać nowe ikony z biblioteki {{name}}, pobierz ją ponownie.",
+	"iconLibraries.resetConfirm":
+		"To przywróci biblioteki do stanu, w jakim dotarła wtyczka: domyślna kolejność, nic ukrytego i żadna z pobranych bibliotek. Te biblioteki zostaną usunięte:",
+	"iconLibraries.resetKeeps":
+		"Calloutom, które już używają swoich ikon, zostaną one zachowane. Aby później wybrać nowe ikony z tych bibliotek, pobierz je ponownie.",
+	"iconLibraries.resetButton": "Resetuj",
 
 	// Icon licences & credits
 	"credits.title": "Licencje ikon i podziękowania",
@@ -694,6 +731,8 @@ export const pl: Record<string, string> = {
 	"confirm.titleResetCallout": "Resetuj callout",
 	"confirm.titleDeletePalette": "Usuń paletę",
 	"confirm.titleDeleteImage": "Usuń obraz",
+	"confirm.titleDeleteLibrary": "Usuń bibliotekę ikon",
+	"confirm.titleResetLibraries": "Resetuj biblioteki ikon",
 
 	"vault.filesUpdated":
 		"Zaktualizowano {{count}} odwołanie(ń) callout w plikach vault.",
@@ -1276,6 +1315,9 @@ export const pl: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Menu kontekstowe",
 	"recovery.details.field.autocomplete": "Autouzupełnianie",
 	"recovery.details.field.iconSources": "Źródła ikon i preferencje selektora",
+	"recovery.details.field.iconLibraries": "Biblioteki ikon",
+	"recovery.details.field.libraryOrder": "Kolejność bibliotek",
+	"recovery.details.field.hiddenLibraries": "Ukryte biblioteki",
 	"recovery.details.field.headingCallouts": "Calloutty nagłówkowe",
 	"recovery.details.field.inlineCallouts": "Calloutty liniowe",
 	"recovery.details.field.fallbackCalloutId": "Identyfikator calloutu zapasowego",

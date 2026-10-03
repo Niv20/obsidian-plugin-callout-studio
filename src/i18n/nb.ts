@@ -230,6 +230,7 @@ export const nb: Record<string, string> = {
 	"settings.resetItemHeading": "Innstillinger for overskrifts-callouts",
 	"settings.resetItemInline": "Innstillinger for inline-callouts",
 	"settings.resetItemFallback": "Reservestil",
+	"settings.resetItemIconLibraries": "Rekkefølge på ikonbiblioteker og skjulte biblioteker",
 	"settings.resetAllConfirmAfter": "Ingen grunn til bekymring: før tilbakestillingen lagrer vi en sikkerhetskopi av det nåværende oppsettet ditt. Du kan gjenopprette den når som helst fra Sikkerhetskopier-delen i innstillingene.\nHvis du bruker en synkroniseringstjeneste, kan tilbakestillingen også nå de andre enhetene dine.",
 	"settings.resetNothing": "Ingenting å tilbakestille: alt er allerede på standardinnstillingene.",
 	"notice.customCommandMissingCallout":
@@ -478,6 +479,14 @@ export const nb: Record<string, string> = {
 	"iconPicker.chooseSource": "Velg kilde",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "Ikke lastet ned",
+	"iconPicker.librariesAvailable": "Tilgjengelige biblioteker",
+	"iconPicker.librariesToDownload": "Biblioteker som kan lastes ned",
+	"iconPicker.groupCurrent": "Gjeldende ikon",
+	"iconPicker.groupSearch": "Søk",
+	"iconPicker.groupLibraries": "Biblioteker",
+	"iconPicker.moreToDownloadOne": "1 bibliotek til kan lastes ned",
+	"iconPicker.moreToDownload": "{{count}} biblioteker til kan lastes ned",
+	"iconPicker.manageLibraries": "Administrer biblioteker",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "søk i alle biblioteker på én gang",
@@ -621,6 +630,34 @@ export const nb: Record<string, string> = {
 	"iconPack.artworkRestored": "Ikongrafikken for {{names}} ble lastet ned.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio kunne ikke lagre ikonpakken til disk, så den må lastes ned igjen neste gang. Ikonene du velger er fortsatt lagret med innstillingene dine.",
+	"iconLibraries.manage": "Administrer ikonbiblioteker",
+	"iconLibraries.title": "Ikonbiblioteker",
+	"iconLibraries.desc":
+		"Dra for å endre rekkefølgen på bibliotekene i Velg et ikon.\nNoen biblioteker kan lastes ned og slettes.\nLucide, Emoji og Material følger med tillegget, så de kan bare skjules.",
+	"iconLibraries.librariesHidden": "Skjulte biblioteker",
+	"iconLibraries.reset": "Tilbakestill til bibliotekene tillegget kom med",
+	"iconLibraries.download": "Last ned {{name}}",
+	"iconLibraries.delete": "Slett {{name}}",
+	"iconLibraries.hide": "Skjul {{name}}",
+	"iconLibraries.show": "Vis {{name}}",
+	"iconLibraries.iconCount": "{{count}} ikoner",
+	"iconLibraries.noDownload": "ingen nedlasting nødvendig",
+	"iconLibraries.perIcon": "hvert ikon lastes ned når det velges",
+	"iconLibraries.hidden": "Skjult",
+	"iconLibraries.downloading": "Laster ned …",
+	"iconLibraries.deleting": "Sletter …",
+	"iconLibraries.keepOne": "Behold minst ett bibliotek i Velg et ikon.",
+	"iconLibraries.deleteFailed": "Kunne ikke slette {{name}}. Prøv igjen.",
+	"iconLibraries.inUseOne": "1 callout bruker ikoner fra {{name}}:",
+	"iconLibraries.inUse": "{{count}} callouter bruker ikoner fra {{name}}:",
+	"iconLibraries.inUseMore": "og {{count}} til",
+	"iconLibraries.inUseKeeps":
+		"De beholder ikonene sine — en kopi av hvert ikon lagres sammen med innstillingene dine. Hvis du senere vil velge nye ikoner fra {{name}}, må du laste det ned igjen.",
+	"iconLibraries.resetConfirm":
+		"Dette setter bibliotekene tilbake slik tillegget kom: standard rekkefølge, ingenting skjult og ingen av de nedlastede bibliotekene. Disse blir slettet:",
+	"iconLibraries.resetKeeps":
+		"Callouter som allerede bruker ikonene sine, beholder dem. Hvis du senere vil velge nye ikoner fra disse bibliotekene, må du laste dem ned igjen.",
+	"iconLibraries.resetButton": "Tilbakestill",
 
 	// Icon licences & credits
 	"credits.title": "Ikonlisenser og kreditering",
@@ -678,6 +715,8 @@ export const nb: Record<string, string> = {
 	"confirm.titleResetCallout": "Tilbakestill callout",
 	"confirm.titleDeletePalette": "Slett palett",
 	"confirm.titleDeleteImage": "Slett bilde",
+	"confirm.titleDeleteLibrary": "Slett ikonbibliotek",
+	"confirm.titleResetLibraries": "Tilbakestill ikonbiblioteker",
 	"vault.filesUpdated":
 		"{{count}} callout-referanse(r) oppdatert i vault-filer.",
 	"vault.idsUpdated":
@@ -1249,6 +1288,9 @@ export const nb: Record<string, string> = {
 	"recovery.details.field.contextMenu": "Kontekstmeny",
 	"recovery.details.field.autocomplete": "Autofullføring",
 	"recovery.details.field.iconSources": "Ikonkilder og valgpreferanser",
+	"recovery.details.field.iconLibraries": "Ikonbiblioteker",
+	"recovery.details.field.libraryOrder": "Rekkefølge på bibliotekene",
+	"recovery.details.field.hiddenLibraries": "Skjulte biblioteker",
 	"recovery.details.field.headingCallouts": "Overskrift-callouts",
 	"recovery.details.field.inlineCallouts": "Linje-callouts",
 	"recovery.details.field.fallbackCalloutId": "Identifikator for reserve-callout",

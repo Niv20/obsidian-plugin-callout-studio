@@ -243,6 +243,7 @@ export const ja: Record<string, string> = {
 	"settings.resetItemHeading": "見出しcalloutの設定",
 	"settings.resetItemInline": "インラインcalloutの設定",
 	"settings.resetItemFallback": "フォールバックスタイル",
+	"settings.resetItemIconLibraries": "アイコンライブラリの順序と非表示のライブラリ",
 	"settings.resetAllConfirmAfter": "ご安心ください。リセットの前に、現在の設定のバックアップを保存します。設定の「バックアップ」セクションからいつでも復元できます。\n同期サービスをお使いの場合、リセットは他の端末にも反映される可能性があります。",
 	"settings.resetNothing": "リセットするものはありません。すべてすでにデフォルトです。",
 
@@ -491,6 +492,14 @@ export const ja: Record<string, string> = {
 	"iconPicker.chooseSource": "ソースを選択",
 	"iconPicker.sourceGroup": "{{name}} · {{count}}",
 	"iconPicker.notDownloaded": "未ダウンロード",
+	"iconPicker.librariesAvailable": "利用可能なライブラリ",
+	"iconPicker.librariesToDownload": "ダウンロードするライブラリ",
+	"iconPicker.groupCurrent": "現在のアイコン",
+	"iconPicker.groupSearch": "検索",
+	"iconPicker.groupLibraries": "ライブラリ",
+	"iconPicker.moreToDownloadOne": "ダウンロードできるライブラリがあと1件あります",
+	"iconPicker.moreToDownload": "ダウンロードできるライブラリがあと{{count}}件あります",
+	"iconPicker.manageLibraries": "ライブラリを管理",
 
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "すべてのライブラリを一度に検索",
@@ -636,6 +645,34 @@ export const ja: Record<string, string> = {
 		"{{names}}のアイコンアートワークをダウンロードしました。",
 	"iconPack.diskWriteFailed":
 		"Callout Studioはアイコンパックをディスクに保存できませんでした。次回また再ダウンロードが必要です。選んだアイコンは設定に保存されています。",
+	"iconLibraries.manage": "アイコンライブラリを管理",
+	"iconLibraries.title": "アイコンライブラリ",
+	"iconLibraries.desc":
+		"ドラッグすると、「アイコンを選択」でのライブラリの順序を変更できます。\n一部のライブラリはダウンロードや削除ができます。\nLucide、Emoji、Materialはプラグインに同梱されているため、非表示にすることしかできません。",
+	"iconLibraries.librariesHidden": "非表示のライブラリ",
+	"iconLibraries.reset": "プラグイン同梱のライブラリに戻す",
+	"iconLibraries.download": "{{name}}をダウンロード",
+	"iconLibraries.delete": "{{name}}を削除",
+	"iconLibraries.hide": "{{name}}を非表示",
+	"iconLibraries.show": "{{name}}を表示",
+	"iconLibraries.iconCount": "{{count}}個のアイコン",
+	"iconLibraries.noDownload": "ダウンロード不要",
+	"iconLibraries.perIcon": "各アイコンは選択時にダウンロードされます",
+	"iconLibraries.hidden": "非表示",
+	"iconLibraries.downloading": "ダウンロード中…",
+	"iconLibraries.deleting": "削除中…",
+	"iconLibraries.keepOne": "「アイコンを選択」には少なくとも1つのライブラリを残してください。",
+	"iconLibraries.deleteFailed": "{{name}}を削除できませんでした。もう一度お試しください。",
+	"iconLibraries.inUseOne": "1件のcalloutが{{name}}のアイコンを使用しています:",
+	"iconLibraries.inUse": "{{count}}件のcalloutが{{name}}のアイコンを使用しています:",
+	"iconLibraries.inUseMore": "ほか{{count}}件",
+	"iconLibraries.inUseKeeps":
+		"アイコンはそのまま残ります。各アイコンのコピーが設定とともに保存されています。後で{{name}}から新しいアイコンを選ぶには、もう一度ダウンロードしてください。",
+	"iconLibraries.resetConfirm":
+		"ライブラリをプラグイン導入時の状態に戻します。順序は既定に戻り、非表示は解除され、ダウンロードしたライブラリはすべてなくなります。次のライブラリが削除されます:",
+	"iconLibraries.resetKeeps":
+		"すでにアイコンを使用しているcalloutは、そのアイコンを保持します。後でこれらのライブラリから新しいアイコンを選ぶには、もう一度ダウンロードしてください。",
+	"iconLibraries.resetButton": "リセット",
 
 	// Icon licences & credits
 	"credits.title": "アイコンライセンスとクレジット",
@@ -699,6 +736,8 @@ export const ja: Record<string, string> = {
 	"confirm.titleResetCallout": "calloutをリセット",
 	"confirm.titleDeletePalette": "パレットを削除",
 	"confirm.titleDeleteImage": "画像を削除",
+	"confirm.titleDeleteLibrary": "アイコンライブラリを削除",
+	"confirm.titleResetLibraries": "アイコンライブラリをリセット",
 
 	"vault.filesUpdated":
 		"vaultファイルの{{count}}件のcallout参照を更新しました。",
@@ -1241,6 +1280,9 @@ export const ja: Record<string, string> = {
 	"recovery.details.field.contextMenu": "コンテキストメニュー",
 	"recovery.details.field.autocomplete": "オートコンプリート",
 	"recovery.details.field.iconSources": "アイコンの取得元とピッカーの設定",
+	"recovery.details.field.iconLibraries": "アイコンライブラリ",
+	"recovery.details.field.libraryOrder": "ライブラリの順序",
+	"recovery.details.field.hiddenLibraries": "非表示のライブラリ",
 	"recovery.details.field.headingCallouts": "見出しcallout",
 	"recovery.details.field.inlineCallouts": "インラインcallout",
 	"recovery.details.field.fallbackCalloutId": "フォールバックcalloutの識別子",

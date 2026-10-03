@@ -219,6 +219,34 @@ describe("earlier setup detail reports", () => {
 		} finally { h.destroy(); }
 	});
 
+	it("names each library shown or hidden in Pick an icon, and lists a changed library order", async () => {
+		const current = savedSetup(), earlier = savedSetup();
+		earlier.settings.iconLibraries = {
+			order: ["image", "lucide", "tabler", "material", "emoji", "octicons", "fa", "rpg-awesome", "simple-icons"],
+			hidden: ["emoji"],
+		};
+		const h = await render(compare(current, earlier));
+		try {
+			assert.deepEqual(sections(h.root), ["iconSources"]);
+			const group = item(h.root, "iconLibraries");
+			assert.deepEqual(labels(group), [t("iconPicker.emoji"), t("recovery.details.order")]);
+			assert.equal(group.querySelectorAll("ol").length, 2, "the order as it is, and as it would be");
+			assert.ok(text(group).includes(t("iconPicker.custom")), "libraries are named as the picker names them");
+		} finally { h.destroy(); }
+	});
+
+	it("reads an order written out in the catalog's own sequence as no difference", async () => {
+		const current = savedSetup(), earlier = savedSetup();
+		earlier.settings.iconLibraries = {
+			order: ["lucide", "tabler", "material", "emoji", "octicons", "fa", "rpg-awesome", "simple-icons", "image"],
+			hidden: [],
+		};
+		const h = await render(compare(current, earlier));
+		try {
+			assert.deepEqual(sections(h.root), []);
+		} finally { h.destroy(); }
+	});
+
 	it("shows custom commands by their setup and built-in commands as on or off", async () => {
 		const current = savedSetup(), earlier = savedSetup();
 		earlier.settings.customCommands = [{ id: "cc-one", calloutId: "note", role: "heading", headingLevel: 3 }];

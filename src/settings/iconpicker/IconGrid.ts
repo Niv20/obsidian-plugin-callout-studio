@@ -78,6 +78,7 @@ export class IconGrid {
 		this.segments = this.partition(entries);
 		this.gridEl.empty();
 		this.parent.toggleClass("icon-picker-grid-empty", entries.length === 0);
+		this.gridEl.removeClass("has-message");
 		this.gridEl.removeClass("is-loaded");
 		for (const segment of this.segments) this.renderSegment(segment);
 		this.gridEl.addClass("is-loaded");
@@ -88,11 +89,17 @@ export class IconGrid {
 		}
 	}
 
-	/** Replace the grid with a message (download prompt, error, spinner). */
+	/**
+	 * Replace the grid with a message (download prompt, error, spinner).
+	 *
+	 * `has-message` says so to the stylesheet, which lets a library's panel
+	 * give the message the grid's whole height and centre it there.
+	 */
 	showMessage(build: (host: HTMLElement) => void): void {
 		this.segments = [];
 		this.gridEl.empty();
 		this.parent.removeClass("icon-picker-grid-empty");
+		this.gridEl.addClass("has-message");
 		this.gridEl.addClass("is-loaded");
 		build(this.gridEl.createDiv("icon-picker-notice"));
 	}
