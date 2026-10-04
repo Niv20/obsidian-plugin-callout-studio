@@ -9219,8 +9219,10 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 }
 
 /* ── The table ── */
-/* Clip the frame and cell backgrounds to the theme's radius without creating
-   a scroll container, so the section head still pins inside the modal body. */
+/* An opaque mask keeps every pixel inside the rounded border box. It clips
+   descendant backgrounds without creating a scroll container, so the section
+   head still pins inside the modal body. The prefixed declaration also keeps
+   rounded corners on older iOS versions supported by earlier Obsidian builds. */
 .cs-recovery-comparison {
 	width: 100%;
 	border-collapse: separate;
@@ -9228,7 +9230,8 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	table-layout: fixed;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
-	clip-path: inset(0 round var(--radius-m));
+	-webkit-mask-image: linear-gradient(#fff, #fff);
+	mask-image: linear-gradient(#fff, #fff);
 }
 
 .cs-recovery-comparison + .cs-recovery-comparison {

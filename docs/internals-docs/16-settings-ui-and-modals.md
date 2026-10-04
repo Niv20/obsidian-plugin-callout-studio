@@ -3143,9 +3143,16 @@ headings — and the whole `<thead>` is the sticky layer at `top: 0`, so the two
 as one block and let go with the section's last row. The window body's top padding
 moves into the report, so nothing shows above a pinned head (the rules are in
 `tests/modalBodyLayers.test.ts`). Tables use the theme's `--radius-m` for their
-outer corners. `clip-path: inset(0 round var(--radius-m))` clips the cell backgrounds
-without the scroll container that `overflow: hidden` would introduce and that
-would break the sticky header. Each item is one `<tbody>`: a number cell spanning
+outer corners. An opaque `mask-image: linear-gradient(#fff, #fff)` uses the
+default `mask-clip: border-box` to clip the table and cell backgrounds to that
+rounded frame. The prefixed `-webkit-mask-image` declaration preserves this on
+older iOS versions supported by earlier Obsidian builds. The mask creates no
+scroll container, so the modal body remains the sticky header's scrollport;
+`overflow: hidden` on the table would break that relationship. The same rule
+applies when the table becomes a block on narrow screens. Masking changes painting
+rather than pointer hit-testing: the full-width heading button remains clickable
+in the tiny transparent areas inside its rectangular bounds at the rounded corners.
+Each item is one `<tbody>`: a number cell spanning
 all of its rows (numbers run on across sections), its title with a
 Changed/Added/Removed badge, a drawing of the whole item per side where one exists,
 then one row per changed field with the label in the Item column. An absent side

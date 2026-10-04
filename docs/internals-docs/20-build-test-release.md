@@ -125,6 +125,23 @@ is a gate, not a substitute for that — it covers the pure utilities, the
 registry, the CSS it generates, both editor surfaces, the public API, and
 the repo's own conventions (below).
 
+### Recovery table browser check
+
+`node scripts/test-recovery-table-corners.mjs` renders the real comparison table
+and its callout previews in an isolated Chromium page. Set `OBSIDIAN_APP_CSS` to
+a local copy of Obsidian's `app.css`, and `PLAYWRIGHT_MODULE` to an existing
+Playwright installation when it is not available through normal resolution.
+`BROWSER_EXECUTABLE` optionally selects an installed Chromium executable.
+All page network requests are blocked.
+
+The check covers wide and narrow layouts, both text directions and color modes,
+the different final-row shapes, sticky header pinning and release, pointer and
+keyboard section folding, focus outlines, and callout preview controls. Set
+`RECOVERY_BASELINE_CSS` to a saved earlier stylesheet for a before/after comparison;
+the candidate defaults to the current `styles.css`. `RECOVERY_SCREENSHOTS` names
+an optional output directory for visual review. This remains a browser fixture,
+not a substitute for checking the window in Obsidian and on an iPhone.
+
 ## Repo-convention tests — the automated rules that hold the codebase together
 
 Several test files check the **repository itself**, not runtime behaviour —
