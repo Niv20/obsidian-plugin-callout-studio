@@ -847,7 +847,7 @@ export const fa: Record<string, string> = {
 	"portable.customBadge": "سفارشی",
 
 	"usage.title": "یافتن calloutها",
-	"usage.command": "موارد استفاده از callout",
+	"usage.command": "یافتن calloutها",
 	"usage.subtitle": "calloutها را در خزانه پیدا کنید و به منبع آن‌ها بروید.",
 	"usage.browse": "مرور",
 	"usage.allTypes": "همهٔ انواع",
@@ -867,9 +867,9 @@ export const fa: Record<string, string> = {
 	"usage.missing": "این یادداشت دیگر وجود ندارد. در حال به‌روزرسانی نتایج…",
 	"usage.changed": "این مورد تغییر کرده یا به مکانی جابه‌جا شده که نمی‌توان آن را با قطعیت تعیین کرد. در حال به‌روزرسانی نتایج…",
 	"usage.openFailed": "باز کردن این مورد استفاده از callout ممکن نشد.",
-	"usage.menuCount": "یافتن موارد استفاده ({{count}})",
-	"usage.menuIncomplete": "یافتن موارد استفاده — اسکن کامل نیست",
-	"usage.menu": "یافتن موارد استفاده",
+	"usage.menuCount": "یافتن calloutها ({{count}})",
+	"usage.menuIncomplete": "یافتن calloutها — اسکن کامل نیست",
+	"usage.menu": "یافتن calloutها",
 	"usage.closeSettings": "برای دیدن نتایج callout در نوار کناری، تنظیمات را ببندید.",
 
 	"import.title": "مشکلات وارد کردن",

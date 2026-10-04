@@ -826,7 +826,7 @@ export const bg: Record<string, string> = {
 	"portable.customBadge": "Персонализирана",
 
 	"usage.title": "Намерете callout-и",
-	"usage.command": "Срещания на callout-и",
+	"usage.command": "Намерете callout-и",
 	"usage.subtitle": "Намерете callout-и в хранилището и преминете към източника им.",
 	"usage.browse": "Разглеждане",
 	"usage.allTypes": "Всички типове",
@@ -846,9 +846,9 @@ export const bg: Record<string, string> = {
 	"usage.missing": "Тази бележка вече не съществува. Обновяване на резултатите…",
 	"usage.changed": "Това срещане е променено или преместено на нееднозначно място. Обновяване на резултатите…",
 	"usage.openFailed": "Това срещане на callout не можа да се отвори.",
-	"usage.menuCount": "Търсене на употреби ({{count}})",
-	"usage.menuIncomplete": "Търсене на употреби — непълно сканиране",
-	"usage.menu": "Търсене на употреби",
+	"usage.menuCount": "Намерете callout-и ({{count}})",
+	"usage.menuIncomplete": "Намерете callout-и — непълно сканиране",
+	"usage.menu": "Намерете callout-и",
 	"usage.closeSettings": "Затворете настройките, за да видите резултатите за callout-и в страничната лента.",
 	"import.title": "Проблеми с импортирането",
 	"import.reportLeadIn":

@@ -17,7 +17,7 @@
  * opens a flex item of its own.
  *
  * Only for a count that annotates a heading. A count that is part of a label —
- * "Find usages (134)" in a callout's menu, "Load more (14)", "Import valid
+ * "Find callouts (134)" in a callout's menu, "Load more (14)", "Import valid
  * only (3)", the icon total in an icon source's description — reads as one
  * piece of text and stays in that text's colour and spacing.
  */

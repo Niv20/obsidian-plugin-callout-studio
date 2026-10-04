@@ -803,7 +803,7 @@ export const nl: Record<string, string> = {
 	"portable.customBadge": "Aangepast",
 
 	"usage.title": "Callouts vinden",
-	"usage.command": "Vindplaatsen van callouts",
+	"usage.command": "Callouts vinden",
 	"usage.subtitle": "Vind callouts in je kluis en ga direct naar hun bron.",
 	"usage.browse": "Bladeren",
 	"usage.allTypes": "Alle typen",
@@ -823,9 +823,9 @@ export const nl: Record<string, string> = {
 	"usage.missing": "Deze notitie bestaat niet meer. Resultaten worden bijgewerkt…",
 	"usage.changed": "Deze vindplaats is gewijzigd of verplaatst naar een onduidelijke plek. Resultaten worden bijgewerkt…",
 	"usage.openFailed": "Kan deze vindplaats van de callout niet openen.",
-	"usage.menuCount": "Gebruik zoeken ({{count}})",
-	"usage.menuIncomplete": "Gebruik zoeken — scan onvolledig",
-	"usage.menu": "Gebruik zoeken",
+	"usage.menuCount": "Callouts vinden ({{count}})",
+	"usage.menuIncomplete": "Callouts vinden — scan onvolledig",
+	"usage.menu": "Callouts vinden",
 	"usage.closeSettings": "Sluit Instellingen om de callout-resultaten in de zijbalk te bekijken.",
 
 	"import.title": "Importeerproblemen",

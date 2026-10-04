@@ -844,7 +844,7 @@ export const cs: Record<string, string> = {
 	"portable.customBadge": "Vlastní",
 
 	"usage.title": "Najít callouty",
-	"usage.command": "Výskyty calloutů",
+	"usage.command": "Najít callouty",
 	"usage.subtitle": "Najděte callouty ve svém trezoru a přejděte k jejich zdroji.",
 	"usage.browse": "Procházet",
 	"usage.allTypes": "Všechny typy",
@@ -864,9 +864,9 @@ export const cs: Record<string, string> = {
 	"usage.missing": "Tato poznámka již neexistuje. Aktualizace výsledků…",
 	"usage.changed": "Tento výskyt se změnil nebo se přesunul na nejednoznačné místo. Aktualizace výsledků…",
 	"usage.openFailed": "Tento výskyt calloutu se nepodařilo otevřít.",
-	"usage.menuCount": "Najít použití ({{count}})",
-	"usage.menuIncomplete": "Najít použití — prohledávání není dokončeno",
-	"usage.menu": "Najít použití",
+	"usage.menuCount": "Najít callouty ({{count}})",
+	"usage.menuIncomplete": "Najít callouty — prohledávání není dokončeno",
+	"usage.menu": "Najít callouty",
 	"usage.closeSettings": "Zavřete nastavení, abyste výsledky pro callouty viděli v postranním panelu.",
 
 	"import.title": "Problémy s importem",

@@ -851,7 +851,7 @@ export const es: Record<string, string> = {
 	"portable.customBadge": "Personalizado",
 
 	"usage.title": "Buscar callouts",
-	"usage.command": "Apariciones de callouts",
+	"usage.command": "Buscar callouts",
 	"usage.subtitle": "Encuentra callouts en tu bóveda y salta a su origen.",
 	"usage.browse": "Explorar",
 	"usage.allTypes": "Todos los tipos",
@@ -871,9 +871,9 @@ export const es: Record<string, string> = {
 	"usage.missing": "Esta nota ya no existe. Actualizando los resultados…",
 	"usage.changed": "Esta aparición ha cambiado o se ha movido a una ubicación que no se puede determinar con certeza. Actualizando los resultados…",
 	"usage.openFailed": "No se pudo abrir esta aparición de callout.",
-	"usage.menuCount": "Buscar usos ({{count}})",
-	"usage.menuIncomplete": "Buscar usos — escaneo incompleto",
-	"usage.menu": "Buscar usos",
+	"usage.menuCount": "Buscar callouts ({{count}})",
+	"usage.menuIncomplete": "Buscar callouts — escaneo incompleto",
+	"usage.menu": "Buscar callouts",
 	"usage.closeSettings": "Cierra Ajustes para ver los resultados de callouts en la barra lateral.",
 
 	"import.title": "Problemas de importación",

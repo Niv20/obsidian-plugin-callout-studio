@@ -775,7 +775,7 @@ export const nb: Record<string, string> = {
 	"portable.customBadge": "Egendefinert",
 
 	"usage.title": "Finn callouts",
-	"usage.command": "Callout-forekomster",
+	"usage.command": "Finn callouts",
 	"usage.subtitle": "Finn callouts i hvelvet ditt og gå til kilden deres.",
 	"usage.browse": "Bla gjennom",
 	"usage.allTypes": "Alle typer",
@@ -795,9 +795,9 @@ export const nb: Record<string, string> = {
 	"usage.missing": "Dette notatet finnes ikke lenger. Oppdaterer resultatene…",
 	"usage.changed": "Denne forekomsten er endret eller flyttet til et uklart sted. Oppdaterer resultatene…",
 	"usage.openFailed": "Kunne ikke åpne denne callout-forekomsten.",
-	"usage.menuCount": "Finn bruk ({{count}})",
-	"usage.menuIncomplete": "Finn bruk — ufullstendig skanning",
-	"usage.menu": "Finn bruk",
+	"usage.menuCount": "Finn callouts ({{count}})",
+	"usage.menuIncomplete": "Finn callouts — ufullstendig skanning",
+	"usage.menu": "Finn callouts",
 	"usage.closeSettings": "Lukk Innstillinger for å se callout-resultatene i sidepanelet.",
 	"import.title": "Importproblemer",
 	"import.reportLeadIn":

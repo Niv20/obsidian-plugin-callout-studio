@@ -836,7 +836,7 @@ export const ar: Record<string, string> = {
 	"portable.customBadge": "مخصص",
 
 	"usage.title": "ابحث عن callout",
-	"usage.command": "مواضع ظهور الـ callout",
+	"usage.command": "ابحث عن callout",
 	"usage.subtitle": "اعثر على callout في خزنتك وانتقل إلى مصدرها.",
 	"usage.browse": "تصفّح",
 	"usage.allTypes": "كل الأنواع",
@@ -856,9 +856,9 @@ export const ar: Record<string, string> = {
 	"usage.missing": "لم تعد هذه الملاحظة موجودة. جارٍ تحديث النتائج…",
 	"usage.changed": "تغيّر موضع الظهور هذا أو انتقل إلى مكان لا يمكن تحديده بدقة. جارٍ تحديث النتائج…",
 	"usage.openFailed": "تعذّر فتح موضع ظهور الـ callout هذا.",
-	"usage.menuCount": "البحث عن الاستخدامات ({{count}})",
-	"usage.menuIncomplete": "البحث عن الاستخدامات — الفحص غير مكتمل",
-	"usage.menu": "البحث عن الاستخدامات",
+	"usage.menuCount": "ابحث عن callout ({{count}})",
+	"usage.menuIncomplete": "ابحث عن callout — الفحص غير مكتمل",
+	"usage.menu": "ابحث عن callout",
 	"usage.closeSettings": "أغلق الإعدادات لعرض نتائج الـ callout في الشريط الجانبي.",
 
 	"import.title": "مشاكل الاستيراد",

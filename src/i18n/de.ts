@@ -854,7 +854,7 @@ export const de: Record<string, string> = {
 	"portable.customBadge": "Benutzerdefiniert",
 
 	"usage.title": "Callouts finden",
-	"usage.command": "Callout-Vorkommen",
+	"usage.command": "Callouts finden",
 	"usage.subtitle": "Finde Callouts in deinem Vault und springe zu ihrer Quelle.",
 	"usage.browse": "Durchsuchen",
 	"usage.allTypes": "Alle Typen",
@@ -874,9 +874,9 @@ export const de: Record<string, string> = {
 	"usage.missing": "Diese Notiz existiert nicht mehr. Ergebnisse werden aktualisiert…",
 	"usage.changed": "Dieses Vorkommen hat sich geändert oder sein neuer Ort ist nicht eindeutig. Ergebnisse werden aktualisiert…",
 	"usage.openFailed": "Dieses Callout-Vorkommen konnte nicht geöffnet werden.",
-	"usage.menuCount": "Verwendungen finden ({{count}})",
-	"usage.menuIncomplete": "Verwendungen finden — Suche unvollständig",
-	"usage.menu": "Verwendungen finden",
+	"usage.menuCount": "Callouts finden ({{count}})",
+	"usage.menuIncomplete": "Callouts finden — Suche unvollständig",
+	"usage.menu": "Callouts finden",
 	"usage.closeSettings": "Einstellungen schließen, um die Callout-Ergebnisse in der Seitenleiste anzuzeigen.",
 
 	"import.title": "Importprobleme",

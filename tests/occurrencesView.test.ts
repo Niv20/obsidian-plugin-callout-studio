@@ -169,7 +169,7 @@ describe("callout occurrence sidebar", () => {
 		}) as Plugin;
 		assert.doesNotThrow(() => refreshOccurrencesViewLocale(plugin));
 	});
-	it("opens general browsing with all types and formats, and Find usages with its type and all formats", async () => {
+	it("opens general browsing with all types and formats, and Find callouts with its type and all formats", async () => {
 		const commands: Command[] = [];
 		const states: unknown[] = [];
 		const sides: string[] = [];
@@ -336,7 +336,7 @@ describe("callout occurrence sidebar", () => {
 		await h.view.setState({ ids: ["warning"], role: undefined }, { history: false });
 		assert.deepEqual(h.view.getState(), { ids: h.registry.vaultIdFormsFor(h.registry.get("warning")!), role: undefined });
 		assert.equal(input.value, "warning");
-		assert.equal(formatInput.value, t("usage.allRoles"), "Find usages clears a previous format filter");
+		assert.equal(formatInput.value, t("usage.allRoles"), "Find callouts clears a previous format filter");
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
 		await h.view.setState({ ids: [], role: undefined, allTypes: true }, { history: false });
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 4);

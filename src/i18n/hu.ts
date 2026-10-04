@@ -798,7 +798,7 @@ export const hu: Record<string, string> = {
 	"portable.customBadge": "Egyéni",
 
 	"usage.title": "Calloutok keresése",
-	"usage.command": "Callout-előfordulások",
+	"usage.command": "Calloutok keresése",
 	"usage.subtitle": "Keresse meg a calloutokat a széfjében, és ugorjon a forrásukhoz.",
 	"usage.browse": "Böngészés",
 	"usage.allTypes": "Minden típus",
@@ -818,9 +818,9 @@ export const hu: Record<string, string> = {
 	"usage.missing": "Ez a jegyzet már nem létezik. Az eredmények frissítése…",
 	"usage.changed": "Ez az előfordulás megváltozott, vagy nem egyértelműen más helyre került. Az eredmények frissítése…",
 	"usage.openFailed": "Nem sikerült megnyitni ezt a callout-előfordulást.",
-	"usage.menuCount": "Előfordulások keresése ({{count}})",
-	"usage.menuIncomplete": "Előfordulások keresése — a vizsgálat nem teljes",
-	"usage.menu": "Előfordulások keresése",
+	"usage.menuCount": "Calloutok keresése ({{count}})",
+	"usage.menuIncomplete": "Calloutok keresése — a vizsgálat nem teljes",
+	"usage.menu": "Calloutok keresése",
 	"usage.closeSettings": "Zárd be a Beállításokat, hogy a callout-eredményeket az oldalsávban lásd.",
 
 	"import.title": "Importálási problémák",

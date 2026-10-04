@@ -793,7 +793,7 @@ export const pl: Record<string, string> = {
 	"portable.customBadge": "Własna",
 
 	"usage.title": "Znajdź callouty",
-	"usage.command": "Wystąpienia calloutów",
+	"usage.command": "Znajdź callouty",
 	"usage.subtitle": "Znajdź callouty w swoim skarbcu i przejdź do ich źródła.",
 	"usage.browse": "Przeglądaj",
 	"usage.allTypes": "Wszystkie typy",
@@ -813,9 +813,9 @@ export const pl: Record<string, string> = {
 	"usage.missing": "Ta notatka już nie istnieje. Aktualizowanie wyników…",
 	"usage.changed": "To wystąpienie zmieniło się lub zostało przeniesione w niejednoznaczny sposób. Aktualizowanie wyników…",
 	"usage.openFailed": "Nie udało się otworzyć tego wystąpienia calloutu.",
-	"usage.menuCount": "Znajdź użycia ({{count}})",
-	"usage.menuIncomplete": "Znajdź użycia — skanowanie niepełne",
-	"usage.menu": "Znajdź użycia",
+	"usage.menuCount": "Znajdź callouty ({{count}})",
+	"usage.menuIncomplete": "Znajdź callouty — skanowanie niepełne",
+	"usage.menu": "Znajdź callouty",
 	"usage.closeSettings": "Zamknij Ustawienia, aby zobaczyć wyniki dla calloutów na pasku bocznym.",
 
 	"import.title": "Problemy z importem",

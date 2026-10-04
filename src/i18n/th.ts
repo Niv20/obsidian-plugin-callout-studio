@@ -841,7 +841,7 @@ export const th: Record<string, string> = {
 	"portable.customBadge": "กำหนดเอง",
 
 	"usage.title": "ค้นหา callout",
-	"usage.command": "ตำแหน่งที่พบ callout",
+	"usage.command": "ค้นหา callout",
 	"usage.subtitle": "ค้นหา callout ในคลังของคุณและไปยังตำแหน่งต้นฉบับ",
 	"usage.browse": "เรียกดู",
 	"usage.allTypes": "ทุกประเภท",
@@ -861,9 +861,9 @@ export const th: Record<string, string> = {
 	"usage.missing": "โน้ตนี้ไม่มีอยู่แล้ว กำลังอัปเดตผลลัพธ์…",
 	"usage.changed": "รายการนี้เปลี่ยนแปลงหรือถูกย้ายโดยไม่สามารถระบุตำแหน่งใหม่ได้ กำลังอัปเดตผลลัพธ์…",
 	"usage.openFailed": "ไม่สามารถเปิดตำแหน่งที่พบ callout นี้ได้",
-	"usage.menuCount": "ค้นหาการใช้งาน ({{count}})",
-	"usage.menuIncomplete": "ค้นหาการใช้งาน — สแกนไม่ครบ",
-	"usage.menu": "ค้นหาการใช้งาน",
+	"usage.menuCount": "ค้นหา callout ({{count}})",
+	"usage.menuIncomplete": "ค้นหา callout — สแกนไม่ครบ",
+	"usage.menu": "ค้นหา callout",
 	"usage.closeSettings": "ปิดการตั้งค่าเพื่อดูผลลัพธ์ของ callout ในแถบด้านข้าง",
 
 	"import.title": "ปัญหาการนำเข้า",

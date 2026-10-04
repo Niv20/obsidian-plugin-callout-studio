@@ -131,7 +131,7 @@ that retained choice if it no longer occurs. Registering a selected identity or
 claiming it as an alias promotes selection to its committed owner.
 The view keeps the picker DOM stable during index updates and destroys its
 listeners on close. A general command opening starts with the all-types scope
-and no role filter. **Find usages** supplies a specific type and clears the role
+and no role filter. **Find callouts** in a type's menu supplies that specific type and clears the role
 filter, including when it reuses an existing sidebar. Workspace state holds
 filters, never the index.
 
@@ -209,7 +209,7 @@ Escape/Tab, window blur, Settings hide/redraw or index disposal cancels the
 pending opening; a detached trigger cannot open a delayed menu. Every settlement
 cleans up the temporary resources.
 Fast scans show the exact count from the menu's first frame. On timeout, DOM
-menus open with the plain localized **Find usages** label and observe the existing
+menus open with the plain localized **Find callouts** label and observe the existing
 scan without requesting another. Once ready, the added count fades in over
 180 ms using a document-fragment title; the action label stays visible. Counts
 already ready at opening do not animate, unchanged titles are not replaced, and
@@ -220,7 +220,7 @@ Views unsubscribe from both index and registry changes when closed.
 The list starts with 100 results and adds 100 per **Show more** action. Per-file
 heading counts cover the complete filtered query, including unloaded cards.
 The native right-sidebar tab is the sole visible occurrences control. It is
-created automatically at startup, and the fixed command and **Find usages**
+created automatically at startup, and the fixed command and **Find callouts**
 menu reopen it after its tab is closed. The plugin does not add an occurrences
 button to Obsidian's left ribbon.
 

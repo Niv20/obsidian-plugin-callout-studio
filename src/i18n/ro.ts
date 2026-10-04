@@ -849,7 +849,7 @@ export const ro: Record<string, string> = {
 	"portable.customBadge": "Personalizat",
 
 	"usage.title": "Găsește callout-uri",
-	"usage.command": "Apariții ale callout-urilor",
+	"usage.command": "Găsește callout-uri",
 	"usage.subtitle": "Găsiți callout-uri în seif și mergeți la sursa lor.",
 	"usage.browse": "Răsfoire",
 	"usage.allTypes": "Toate tipurile",
@@ -869,9 +869,9 @@ export const ro: Record<string, string> = {
 	"usage.missing": "Această notă nu mai există. Se actualizează rezultatele…",
 	"usage.changed": "Această apariție s-a modificat sau a fost mutată într-un loc incert. Se actualizează rezultatele…",
 	"usage.openFailed": "Nu s-a putut deschide această apariție de callout.",
-	"usage.menuCount": "Găsește utilizări ({{count}})",
-	"usage.menuIncomplete": "Găsește utilizări — scanare incompletă",
-	"usage.menu": "Găsește utilizări",
+	"usage.menuCount": "Găsește callout-uri ({{count}})",
+	"usage.menuIncomplete": "Găsește callout-uri — scanare incompletă",
+	"usage.menu": "Găsește callout-uri",
 	"usage.closeSettings": "Închide Setări pentru a vedea rezultatele pentru callout-uri în bara laterală.",
 
 	"import.title": "Probleme de import",

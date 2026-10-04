@@ -830,7 +830,7 @@ mobile, Obsidian paints settings headings in `--text-muted` themselves
 `.is-mobile .setting-item-heading .cs-heading-count` steps down to
 `--text-faint` to stay distinct from its title.
 
-Not every "(N)" is a heading count. **Find usages (134)** in a callout's menu,
+Not every "(N)" is a heading count. **Find callouts (134)** in a callout's menu,
 **Load more (14)**, **Import valid only (3)** and the icon total in an icon
 source's description are part of a label, and stay plain text in that label's
 colour. `tests/headingCount.test.ts` pins the helpers and the rule; each

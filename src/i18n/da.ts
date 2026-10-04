@@ -823,7 +823,7 @@ export const da: Record<string, string> = {
 	"portable.customBadge": "Tilpasset",
 
 	"usage.title": "Find callouts",
-	"usage.command": "Forekomster af callouts",
+	"usage.command": "Find callouts",
 	"usage.subtitle": "Find callouts i din boks, og gå til deres kilde.",
 	"usage.browse": "Gennemse",
 	"usage.allTypes": "Alle typer",
@@ -843,9 +843,9 @@ export const da: Record<string, string> = {
 	"usage.missing": "Denne note findes ikke længere. Opdaterer resultaterne…",
 	"usage.changed": "Denne forekomst er ændret eller flyttet til en placering, der ikke kan bestemmes entydigt. Opdaterer resultaterne…",
 	"usage.openFailed": "Denne callout-forekomst kunne ikke åbnes.",
-	"usage.menuCount": "Find anvendelser ({{count}})",
-	"usage.menuIncomplete": "Find anvendelser — scanning ufuldstændig",
-	"usage.menu": "Find anvendelser",
+	"usage.menuCount": "Find callouts ({{count}})",
+	"usage.menuIncomplete": "Find callouts — scanning ufuldstændig",
+	"usage.menu": "Find callouts",
 	"usage.closeSettings": "Luk indstillingerne for at se callout-resultaterne i sidepanelet.",
 	"import.title": "Importproblemer",
 	"import.reportLeadIn":

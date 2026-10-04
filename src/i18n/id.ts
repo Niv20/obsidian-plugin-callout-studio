@@ -797,7 +797,7 @@ export const id: Record<string, string> = {
 	"portable.customBadge": "Khusus",
 
 	"usage.title": "Temukan callout",
-	"usage.command": "Kemunculan callout",
+	"usage.command": "Temukan callout",
 	"usage.subtitle": "Temukan callout di vault Anda dan langsung buka sumbernya.",
 	"usage.browse": "Jelajahi",
 	"usage.allTypes": "Semua tipe",
@@ -817,9 +817,9 @@ export const id: Record<string, string> = {
 	"usage.missing": "Catatan ini sudah tidak ada. Memperbarui hasil…",
 	"usage.changed": "Kemunculan ini berubah atau berpindah ke lokasi yang tidak pasti. Memperbarui hasil…",
 	"usage.openFailed": "Tidak dapat membuka kemunculan callout ini.",
-	"usage.menuCount": "Temukan penggunaan ({{count}})",
-	"usage.menuIncomplete": "Temukan penggunaan — pemindaian belum lengkap",
-	"usage.menu": "Temukan penggunaan",
+	"usage.menuCount": "Temukan callout ({{count}})",
+	"usage.menuIncomplete": "Temukan callout — pemindaian belum lengkap",
+	"usage.menu": "Temukan callout",
 	"usage.closeSettings": "Tutup Pengaturan untuk melihat hasil callout di bilah samping.",
 
 	"import.title": "Masalah impor",

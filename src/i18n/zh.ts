@@ -828,7 +828,7 @@ export const zh: Record<string, string> = {
 	"portable.customBadge": "自定义",
 
 	"usage.title": "查找 Callout",
-	"usage.command": "Callout 出现位置",
+	"usage.command": "查找 Callout",
 	"usage.subtitle": "查找仓库中的 Callout，并跳转到其源位置。",
 	"usage.browse": "浏览",
 	"usage.allTypes": "所有类型",
@@ -848,9 +848,9 @@ export const zh: Record<string, string> = {
 	"usage.missing": "此笔记已不存在。正在更新结果…",
 	"usage.changed": "此处内容已更改或已移动，无法确定新位置。正在更新结果…",
 	"usage.openFailed": "无法打开此处的 Callout。",
-	"usage.menuCount": "查找使用位置 ({{count}})",
-	"usage.menuIncomplete": "查找使用位置 — 扫描未完成",
-	"usage.menu": "查找使用位置",
+	"usage.menuCount": "查找 Callout ({{count}})",
+	"usage.menuIncomplete": "查找 Callout — 扫描未完成",
+	"usage.menu": "查找 Callout",
 	"usage.closeSettings": "关闭“设置”，即可在侧边栏查看 Callout 结果。",
 
 	"import.title": "导入问题",

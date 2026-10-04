@@ -845,7 +845,7 @@ export const tr: Record<string, string> = {
 	"portable.customBadge": "Özel",
 
 	"usage.title": "Callout’ları bul",
-	"usage.command": "Callout kullanımları",
+	"usage.command": "Callout’ları bul",
 	"usage.subtitle": "Kasanızdaki callout’ları bulun ve kaynaklarına gidin.",
 	"usage.browse": "Göz at",
 	"usage.allTypes": "Tüm türler",
@@ -865,9 +865,9 @@ export const tr: Record<string, string> = {
 	"usage.missing": "Bu not artık mevcut değil. Sonuçlar güncelleniyor…",
 	"usage.changed": "Bu kullanım değişti veya yeni konumu belirsiz. Sonuçlar güncelleniyor…",
 	"usage.openFailed": "Bu callout kullanımı açılamadı.",
-	"usage.menuCount": "Kullanımları bul ({{count}})",
-	"usage.menuIncomplete": "Kullanımları bul — tarama tamamlanmadı",
-	"usage.menu": "Kullanımları bul",
+	"usage.menuCount": "Callout’ları bul ({{count}})",
+	"usage.menuIncomplete": "Callout’ları bul — tarama tamamlanmadı",
+	"usage.menu": "Callout’ları bul",
 	"usage.closeSettings": "Callout sonuçlarını kenar çubuğunda görmek için Ayarlar bölümünü kapatın.",
 
 	"import.title": "İçe aktarma sorunları",

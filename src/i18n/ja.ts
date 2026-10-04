@@ -796,7 +796,7 @@ export const ja: Record<string, string> = {
 	"portable.customBadge": "カスタム",
 
 	"usage.title": "calloutを探す",
-	"usage.command": "calloutの出現箇所",
+	"usage.command": "calloutを探す",
 	"usage.subtitle": "保管庫内のcalloutを探し、ソースに移動します。",
 	"usage.browse": "参照",
 	"usage.allTypes": "すべての種類",
@@ -816,9 +816,9 @@ export const ja: Record<string, string> = {
 	"usage.missing": "このノートは存在しません。結果を更新中…",
 	"usage.changed": "この出現箇所は変更されたか、移動先を特定できません。結果を更新中…",
 	"usage.openFailed": "このcalloutの出現箇所を開けませんでした。",
-	"usage.menuCount": "使用箇所を検索 ({{count}})",
-	"usage.menuIncomplete": "使用箇所を検索 — スキャンが不完全",
-	"usage.menu": "使用箇所を検索",
+	"usage.menuCount": "calloutを探す ({{count}})",
+	"usage.menuIncomplete": "calloutを探す — スキャンが不完全",
+	"usage.menu": "calloutを探す",
 	"usage.closeSettings": "サイドバーでcalloutの結果を表示するには、設定を閉じてください。",
 
 	"import.title": "インポートの問題",

@@ -208,7 +208,7 @@ describe("open-quick-insert", () => {
 		assert.deepStrictEqual(h.triggered, []);
 	});
 
-	it("appends Callout occurrences after the existing built-ins", () => {
+	it("appends Find callouts after the existing built-ins", () => {
 		assert.deepStrictEqual(FIXED_COMMAND_IDS.slice(0, 6), [
 			"open-settings", "create-callout", "insert-empty-callout",
 			"callout-wrap", "callout-unwrap", "open-quick-insert",
@@ -224,7 +224,7 @@ describe("show-callout-occurrences", () => {
 		registerCalloutCommands(h.plugin, { ...deps(), openOccurrences: () => { opens += 1; } });
 		const command = h.added.find((item) => item.id === "show-callout-occurrences");
 		assert.ok(command?.callback);
-		assert.equal(command.name, "Callout occurrences");
+		assert.equal(command.name, "Find callouts");
 		command.callback();
 		assert.equal(opens, 1);
 	});
@@ -407,7 +407,7 @@ describe("refreshFixedCommandNames", () => {
 			"cmd.calloutWrap": "Envelopper",
 			"cmd.calloutUnwrap": "Désenvelopper",
 			"cmd.openQuickInsert": "Insertion rapide",
-			"usage.command": "Occurrences de callouts",
+			"usage.command": "Trouver des callouts",
 		});
 		setLocale("cs-test");
 		try {
@@ -416,7 +416,7 @@ describe("refreshFixedCommandNames", () => {
 			const again = h.added.slice(before);
 			assert.deepStrictEqual(idsOf(again), [...FIXED_COMMAND_IDS]);
 			assert.strictEqual(again[0]?.name, "Ouvrir les paramètres");
-			assert.strictEqual(again.at(-1)?.name, "Occurrences de callouts");
+			assert.strictEqual(again.at(-1)?.name, "Trouver des callouts");
 			// Never removed and re-added — Obsidian keys the hotkey by id, so
 			// re-adding in place is exactly what preserves it.
 			assert.deepStrictEqual(h.removed, []);

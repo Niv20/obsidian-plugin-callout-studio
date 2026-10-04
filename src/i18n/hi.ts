@@ -792,7 +792,7 @@ export const hi: Record<string, string> = {
 	"portable.customBadge": "कस्टम",
 
 	"usage.title": "callout खोजें",
-	"usage.command": "Callout के उपयोग",
+	"usage.command": "callout खोजें",
 	"usage.subtitle": "अपने वॉल्ट में callout खोजें और सीधे उनके स्रोत पर जाएँ।",
 	"usage.browse": "ब्राउज़ करें",
 	"usage.allTypes": "सभी प्रकार",
@@ -812,9 +812,9 @@ export const hi: Record<string, string> = {
 	"usage.missing": "यह नोट अब मौजूद नहीं है। परिणाम अपडेट किए जा रहे हैं…",
 	"usage.changed": "यह उपयोग स्थान बदल गया है या इसका नया स्थान स्पष्ट नहीं है। परिणाम अपडेट किए जा रहे हैं…",
 	"usage.openFailed": "इस callout के उपयोग स्थान को नहीं खोला जा सका।",
-	"usage.menuCount": "उपयोग खोजें ({{count}})",
-	"usage.menuIncomplete": "उपयोग खोजें — स्कैन अधूरा है",
-	"usage.menu": "उपयोग खोजें",
+	"usage.menuCount": "callout खोजें ({{count}})",
+	"usage.menuIncomplete": "callout खोजें — स्कैन अधूरा है",
+	"usage.menu": "callout खोजें",
 	"usage.closeSettings": "साइडबार में callout के परिणाम देखने के लिए सेटिंग बंद करें।",
 
 	"import.title": "आयात समस्याएँ",

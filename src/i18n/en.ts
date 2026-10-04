@@ -1318,7 +1318,7 @@ export const en: Record<string, string> = {
 	"vaultStats.roleInline": "Inline",
 
 	"usage.title": "Find callouts",
-	"usage.command": "Callout occurrences",
+	"usage.command": "Find callouts",
 	"usage.subtitle": "Find callouts in your vault and jump to their source.",
 	"usage.browse": "Browse",
 	"usage.allTypes": "All types",
@@ -1338,9 +1338,9 @@ export const en: Record<string, string> = {
 	"usage.missing": "This note no longer exists. Updating results…",
 	"usage.changed": "This occurrence has changed or moved ambiguously. Updating results…",
 	"usage.openFailed": "Could not open this callout occurrence.",
-	"usage.menuCount": "Find usages ({{count}})",
-	"usage.menuIncomplete": "Find usages — scan incomplete",
-	"usage.menu": "Find usages",
+	"usage.menuCount": "Find callouts ({{count}})",
+	"usage.menuIncomplete": "Find callouts — scan incomplete",
+	"usage.menu": "Find callouts",
 	"usage.closeSettings": "Close Settings to view the callout results in the sidebar.",
 
 	// Import validation

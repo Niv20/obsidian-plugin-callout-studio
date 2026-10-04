@@ -783,7 +783,7 @@ export const ms: Record<string, string> = {
 	"portable.customBadge": "Tersuai",
 
 	"usage.title": "Cari callout",
-	"usage.command": "Kemunculan callout",
+	"usage.command": "Cari callout",
 	"usage.subtitle": "Cari callout dalam vault anda dan terus ke sumbernya.",
 	"usage.browse": "Teroka",
 	"usage.allTypes": "Semua jenis",
@@ -803,9 +803,9 @@ export const ms: Record<string, string> = {
 	"usage.missing": "Nota ini tidak lagi wujud. Mengemas kini hasil…",
 	"usage.changed": "Kemunculan ini telah berubah atau berpindah ke lokasi yang tidak jelas. Mengemas kini hasil…",
 	"usage.openFailed": "Tidak dapat membuka kemunculan callout ini.",
-	"usage.menuCount": "Cari penggunaan ({{count}})",
-	"usage.menuIncomplete": "Cari penggunaan — imbasan tidak lengkap",
-	"usage.menu": "Cari penggunaan",
+	"usage.menuCount": "Cari callout ({{count}})",
+	"usage.menuIncomplete": "Cari callout — imbasan tidak lengkap",
+	"usage.menu": "Cari callout",
 	"usage.closeSettings": "Tutup Tetapan untuk melihat hasil callout dalam bar sisi.",
 	"import.title": "Masalah import",
 	"import.reportLeadIn":

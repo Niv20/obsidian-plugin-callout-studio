@@ -835,7 +835,7 @@ export const el: Record<string, string> = {
 	"portable.customBadge": "Προσαρμοσμένη",
 
 	"usage.title": "Εύρεση callout",
-	"usage.command": "Εμφανίσεις callout",
+	"usage.command": "Εύρεση callout",
 	"usage.subtitle": "Βρείτε callout στο θησαυροφυλάκιό σας και μεταβείτε στην πηγή τους.",
 	"usage.browse": "Περιήγηση",
 	"usage.allTypes": "Όλοι οι τύποι",
@@ -855,9 +855,9 @@ export const el: Record<string, string> = {
 	"usage.missing": "Αυτή η σημείωση δεν υπάρχει πλέον. Ενημέρωση αποτελεσμάτων…",
 	"usage.changed": "Αυτή η εμφάνιση άλλαξε ή μετακινήθηκε σε θέση που δεν μπορεί να προσδιοριστεί με βεβαιότητα. Ενημέρωση αποτελεσμάτων…",
 	"usage.openFailed": "Δεν ήταν δυνατό το άνοιγμα αυτής της εμφάνισης callout.",
-	"usage.menuCount": "Εύρεση χρήσεων ({{count}})",
-	"usage.menuIncomplete": "Εύρεση χρήσεων — η σάρωση δεν ολοκληρώθηκε",
-	"usage.menu": "Εύρεση χρήσεων",
+	"usage.menuCount": "Εύρεση callout ({{count}})",
+	"usage.menuIncomplete": "Εύρεση callout — η σάρωση δεν ολοκληρώθηκε",
+	"usage.menu": "Εύρεση callout",
 	"usage.closeSettings": "Κλείστε τις ρυθμίσεις για να δείτε τα αποτελέσματα των callout στην πλαϊνή στήλη.",
 	"import.title": "Προβλήματα εισαγωγής",
 	"import.reportLeadIn":

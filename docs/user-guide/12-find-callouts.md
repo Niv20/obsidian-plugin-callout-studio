@@ -8,15 +8,15 @@ notes, lets you filter them by type and format, and jumps to the exact line.
 
 The **Find callouts** tab appears automatically at the top of Obsidian's right
 sidebar when Callout Studio starts. Select it to open the panel; the sidebar
-does not open automatically. You can also run **Callout Studio: Callout
-occurrences** from the Command palette, or select **Find usages** from a
+does not open automatically. You can also run **Callout Studio: Find callouts**
+from the Command palette, or select **Find callouts** from a
 callout's three-dot menu. If you close the tab, either action opens it again.
 This is the only on-screen occurrences control; there is no separate ribbon
 button or statistics window in Settings. The sidebar helps you filter callouts
 and navigate to their Markdown source.
 
-Opening **Callout Studio: Callout occurrences** from the Command palette starts
-with **All types** and **All formats**. Opening **Find usages** from a callout's
+Opening **Callout Studio: Find callouts** from the Command palette starts
+with **All types** and **All formats**. Opening **Find callouts** from a callout's
 three-dot menu starts with that callout type and **All formats**, even if you
 previously selected a different format in the sidebar.
 
@@ -110,14 +110,14 @@ reach the opened sidebar.
 
 ## Usage counts in menus
 
-A callout's three-dot menu shows **Find usages** with its total across all three
+A callout's three-dot menu shows **Find callouts** with its total across all three
 formats. Select it to open those results. Definition menus include the type's
 aliases, so their occurrences contribute to the total.
 
 When the count is already current, the menu opens immediately with the number.
 Otherwise it waits up to 200 milliseconds for the shared scan. If the count is
 ready within that time, the menu opens with it; if scanning takes longer, the
-menu opens with **Find usages**, and the number fades in when ready. Opening
+menu opens with **Find callouts**, and the number fades in when ready. Opening
 another callout's menu reuses the same index rather than scanning the vault again.
 Clicking elsewhere or closing Settings cancels a pending menu opening.
 The fade respects your system's reduced-motion preference. Incomplete scans are

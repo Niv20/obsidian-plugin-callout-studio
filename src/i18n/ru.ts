@@ -844,7 +844,7 @@ export const ru: Record<string, string> = {
 	"portable.customBadge": "Своя",
 
 	"usage.title": "Найти callout",
-	"usage.command": "Вхождения callout",
+	"usage.command": "Найти callout",
 	"usage.subtitle": "Найдите callout в хранилище и перейдите к их исходному тексту.",
 	"usage.browse": "Обзор",
 	"usage.allTypes": "Все типы",
@@ -864,9 +864,9 @@ export const ru: Record<string, string> = {
 	"usage.missing": "Этой заметки больше нет. Обновление результатов…",
 	"usage.changed": "Это вхождение изменилось или было перемещено, и его новое положение неясно. Обновление результатов…",
 	"usage.openFailed": "Не удалось открыть это вхождение callout.",
-	"usage.menuCount": "Найти использования ({{count}})",
-	"usage.menuIncomplete": "Найти использования — сканирование не завершено",
-	"usage.menu": "Найти использования",
+	"usage.menuCount": "Найти callout ({{count}})",
+	"usage.menuIncomplete": "Найти callout — сканирование не завершено",
+	"usage.menu": "Найти callout",
 	"usage.closeSettings": "Закройте настройки, чтобы увидеть результаты по callout на боковой панели.",
 
 	"import.title": "Проблемы импорта",

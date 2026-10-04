@@ -881,7 +881,7 @@ export const he: Record<string, string> = {
 	"vaultStats.roleInline": "מוטבע",
 
 	"usage.title": "מצאו תיבות־הבלטה",
-	"usage.command": "מופעי תיבות־הבלטה",
+	"usage.command": "מצאו תיבות־הבלטה",
 	"usage.subtitle": "מצאו תיבות־הבלטה בכספת ועברו ישירות למקור שלהן.",
 	"usage.browse": "עיון",
 	"usage.allTypes": "כל הסוגים",
@@ -901,9 +901,9 @@ export const he: Record<string, string> = {
 	"usage.missing": "הפתק הזה כבר אינו קיים. התוצאות מתעדכנות…",
 	"usage.changed": "המופע הזה השתנה או הועבר למיקום שאינו חד־משמעי. התוצאות מתעדכנות…",
 	"usage.openFailed": "לא ניתן לפתוח את המופע הזה של תיבת־ההבלטה.",
-	"usage.menuCount": "איתור שימושים ({{count}})",
-	"usage.menuIncomplete": "איתור שימושים — הסריקה לא הושלמה",
-	"usage.menu": "איתור שימושים",
+	"usage.menuCount": "מצאו תיבות־הבלטה ({{count}})",
+	"usage.menuIncomplete": "מצאו תיבות־הבלטה — הסריקה לא הושלמה",
+	"usage.menu": "מצאו תיבות־הבלטה",
 	"usage.closeSettings": "יש לסגור את ההגדרות כדי לראות את תוצאות תיבות־ההבלטה בסרגל הצד.",
 
 	// Import validation

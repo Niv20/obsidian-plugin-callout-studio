@@ -835,7 +835,7 @@ export const fi: Record<string, string> = {
 	"portable.customBadge": "Mukautettu",
 
 	"usage.title": "Etsi calloutit",
-	"usage.command": "Callout-esiintymät",
+	"usage.command": "Etsi calloutit",
 	"usage.subtitle": "Etsi calloutit holvistasi ja siirry niiden lähteeseen.",
 	"usage.browse": "Selaa",
 	"usage.allTypes": "Kaikki tyypit",
@@ -855,9 +855,9 @@ export const fi: Record<string, string> = {
 	"usage.missing": "Tätä muistiinpanoa ei enää ole. Päivitetään tuloksia…",
 	"usage.changed": "Tämä esiintymä on muuttunut tai siirtynyt paikkaan, jota ei voi määrittää yksiselitteisesti. Päivitetään tuloksia…",
 	"usage.openFailed": "Tätä callout-esiintymää ei voitu avata.",
-	"usage.menuCount": "Etsi esiintymiä ({{count}})",
-	"usage.menuIncomplete": "Etsi esiintymiä — skannaus kesken",
-	"usage.menu": "Etsi esiintymiä",
+	"usage.menuCount": "Etsi calloutit ({{count}})",
+	"usage.menuIncomplete": "Etsi calloutit — skannaus kesken",
+	"usage.menu": "Etsi calloutit",
 	"usage.closeSettings": "Sulje asetukset, jotta näet callout-tulokset sivupaneelissa.",
 	"import.title": "Tuontiongelmat",
 	"import.reportLeadIn":

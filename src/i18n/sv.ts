@@ -841,7 +841,7 @@ export const sv: Record<string, string> = {
 	"portable.customBadge": "Anpassad",
 
 	"usage.title": "Hitta callouts",
-	"usage.command": "Callout-förekomster",
+	"usage.command": "Hitta callouts",
 	"usage.subtitle": "Hitta callouts i ditt valv och gå direkt till deras källa.",
 	"usage.browse": "Bläddra",
 	"usage.allTypes": "Alla typer",
@@ -861,9 +861,9 @@ export const sv: Record<string, string> = {
 	"usage.missing": "Anteckningen finns inte längre. Uppdaterar resultaten…",
 	"usage.changed": "Den här förekomsten har ändrats eller flyttats på ett oklart sätt. Uppdaterar resultaten…",
 	"usage.openFailed": "Det gick inte att öppna den här callout-förekomsten.",
-	"usage.menuCount": "Hitta användningar ({{count}})",
-	"usage.menuIncomplete": "Hitta användningar — skanningen är ofullständig",
-	"usage.menu": "Hitta användningar",
+	"usage.menuCount": "Hitta callouts ({{count}})",
+	"usage.menuIncomplete": "Hitta callouts — skanningen är ofullständig",
+	"usage.menu": "Hitta callouts",
 	"usage.closeSettings": "Stäng Inställningar för att se callout-resultaten i sidofältet.",
 
 	"import.title": "Importproblem",

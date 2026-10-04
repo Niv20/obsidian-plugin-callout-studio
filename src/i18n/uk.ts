@@ -858,7 +858,7 @@ export const uk: Record<string, string> = {
 	"portable.customBadge": "Власна",
 
 	"usage.title": "Знайти callout",
-	"usage.command": "Входження callout",
+	"usage.command": "Знайти callout",
 	"usage.subtitle": "Знайдіть callout у сховищі та перейдіть до їхнього вихідного тексту.",
 	"usage.browse": "Огляд",
 	"usage.allTypes": "Усі типи",
@@ -878,9 +878,9 @@ export const uk: Record<string, string> = {
 	"usage.missing": "Цієї нотатки більше немає. Оновлення результатів…",
 	"usage.changed": "Це входження змінилося або перемістилося, і його нове розташування невідоме. Оновлення результатів…",
 	"usage.openFailed": "Не вдалося відкрити це входження callout.",
-	"usage.menuCount": "Знайти використання ({{count}})",
-	"usage.menuIncomplete": "Знайти використання — сканування не завершено",
-	"usage.menu": "Знайти використання",
+	"usage.menuCount": "Знайти callout ({{count}})",
+	"usage.menuIncomplete": "Знайти callout — сканування не завершено",
+	"usage.menu": "Знайти callout",
 	"usage.closeSettings": "Закрийте налаштування, щоб побачити результати для callout на бічній панелі.",
 
 	"import.title": "Проблеми імпорту",

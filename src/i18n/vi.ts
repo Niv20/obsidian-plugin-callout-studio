@@ -853,7 +853,7 @@ export const vi: Record<string, string> = {
 	"portable.customBadge": "Tùy chỉnh",
 
 	"usage.title": "Tìm callout",
-	"usage.command": "Các vị trí xuất hiện của callout",
+	"usage.command": "Tìm callout",
 	"usage.subtitle": "Tìm callout trong kho lưu trữ và chuyển đến nguồn của chúng.",
 	"usage.browse": "Duyệt",
 	"usage.allTypes": "Tất cả loại",
@@ -873,9 +873,9 @@ export const vi: Record<string, string> = {
 	"usage.missing": "Ghi chú này không còn tồn tại. Đang cập nhật kết quả…",
 	"usage.changed": "Vị trí này đã thay đổi hoặc đã di chuyển nhưng không xác định được vị trí mới. Đang cập nhật kết quả…",
 	"usage.openFailed": "Không thể mở vị trí xuất hiện của callout này.",
-	"usage.menuCount": "Tìm nơi sử dụng ({{count}})",
-	"usage.menuIncomplete": "Tìm nơi sử dụng — chưa quét xong",
-	"usage.menu": "Tìm nơi sử dụng",
+	"usage.menuCount": "Tìm callout ({{count}})",
+	"usage.menuIncomplete": "Tìm callout — chưa quét xong",
+	"usage.menu": "Tìm callout",
 	"usage.closeSettings": "Đóng Cài đặt để xem kết quả callout trong thanh bên.",
 
 	"import.title": "Vấn đề nhập",

@@ -10,7 +10,7 @@ The built-in commands are:
 - **Callout Studio: Wrap in callout**
 - **Callout Studio: Unwrap from callout**
 - **Callout Studio: Quick insert block callout**
-- **Callout Studio: Callout occurrences**
+- **Callout Studio: Find callouts**
 
 The three commands that edit note text — **Insert empty callout**, **Wrap in
 callout**, and **Unwrap from callout** — appear in the Command Palette when a

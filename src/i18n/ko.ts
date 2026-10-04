@@ -794,7 +794,7 @@ export const ko: Record<string, string> = {
 	"portable.customBadge": "사용자 지정",
 
 	"usage.title": "callout 찾기",
-	"usage.command": "callout 사용 위치",
+	"usage.command": "callout 찾기",
 	"usage.subtitle": "보관함에서 callout을 찾고 원본 위치로 이동하세요.",
 	"usage.browse": "찾아보기",
 	"usage.allTypes": "모든 유형",
@@ -814,9 +814,9 @@ export const ko: Record<string, string> = {
 	"usage.missing": "이 노트는 더 이상 존재하지 않습니다. 결과를 업데이트하는 중…",
 	"usage.changed": "이 사용 위치가 변경되었거나 이동한 위치를 명확히 알 수 없습니다. 결과를 업데이트하는 중…",
 	"usage.openFailed": "이 callout 사용 위치를 열지 못했습니다.",
-	"usage.menuCount": "사용 위치 찾기 ({{count}})",
-	"usage.menuIncomplete": "사용 위치 찾기 — 스캔이 완료되지 않음",
-	"usage.menu": "사용 위치 찾기",
+	"usage.menuCount": "callout 찾기 ({{count}})",
+	"usage.menuIncomplete": "callout 찾기 — 스캔이 완료되지 않음",
+	"usage.menu": "callout 찾기",
 	"usage.closeSettings": "사이드바에서 callout 결과를 보려면 설정을 닫으세요.",
 
 	"import.title": "가져오기 문제",
