@@ -5,7 +5,7 @@ section modules under `src/settings/sections/`, the shared modal chrome, and
 the individual modals not already covered by
 [Callout editor](14-callout-editor.md) or [Icons](13-icons.md).
 
-## `SettingsTab` — composition and refresh plumbing
+## `SettingsTab` - composition and refresh plumbing
 
 `CalloutStudioSettingsTab.display()` renders its sections in a fixed order into
 one scrollable tab: callout lists → fallback → custom palettes → global settings
@@ -57,7 +57,7 @@ changed documents may relocate only a unique unchanged line. Navigation never
 modifies text or conversion choices, and stale asynchronous selections cancel.
 Both sidebars open a note at its beginning when its file heading is clicked;
 counts appear in parentheses after the file name, drawn like every other
-heading count (see [Heading counts](#heading-counts--one-n-everywhere)). The
+heading count (see [Heading counts](#heading-counts---one-n-everywhere)). The
 shared file-heading button uses its visible name and count as its accessible
 label, without a redundant hover tooltip. The shared
 `ui/sidebarSelection.ts` observes selection transactions forwarded by the existing
@@ -145,20 +145,20 @@ without reserving a long disclosure row at the bottom of the settings page.
 the disclosure control, so clicking an action never folds the list.
 
 Discovery is written into `controlEl` **first** and the CTA last, which puts the
-CTA on the row's outer edge — its right end under LTR, its left under RTL — the
+CTA on the row's outer edge - its right end under LTR, its left under RTL - the
 side every other section in the tab puts its primary button on.
 
 Colour is what separates them, not size. Add wears `.mod-cta`; **Discover
 now** wears `.cs-settings-neutral-btn`, the tab's grey secondary button. The
 class rather than a bare `<button>` for a mobile reason: there
 `--interactive-normal` resolves to `--background-secondary`, which *is* the
-settings pane, and `--input-shadow` is `none` — so Obsidian's plain grey button
+settings pane, and `--input-shadow` is `none` - so Obsidian's plain grey button
 is the pane colour with nothing to separate it from the pane. The class's
 hairline border is what keeps it a button on a phone. (**Load more** is bare and
 does vanish there.)
 
-Both take their height from `--input-height` — already 30px on desktop and 44px
-(`--touch-size-m`) on mobile — so they match **New palette** and every other
+Both take their height from `--input-height` - already 30px on desktop and 44px
+(`--touch-size-m`) on mobile - so they match **New palette** and every other
 button in the tab on each platform; a hardcoded 44px minimum used to sit there
 and made these the only oversized buttons on desktop. It is a *minimum*, so a
 long translation still wraps to a second line rather than spilling out.
@@ -171,21 +171,21 @@ are guarded by `tests/subheaderRowWrapping.test.ts`:
 - **`flex-wrap: wrap` on `.cs-subheader-row`**, shared with the palettes heading
   rather than written per row. Obsidian's `.setting-item` is `nowrap`, so its
   answer to a narrow pane is to shrink the info box while the buttons hold their
-  width — at a phone width that left *Saved color palettes (1)* stacking a word
+  width - at a phone width that left *Saved color palettes (1)* stacking a word
   per line beside a button that had not moved. Wrapping picks the other answer:
   the action group drops whole to the next line and the title takes the width
   back. Line breaking measures each item at its max-content size, so the break
-  lands exactly where crushing would otherwise begin — no breakpoint to pick, and
+  lands exactly where crushing would otherwise begin - no breakpoint to pick, and
   none to keep in step with a translation.
 - **`margin-inline-start: auto` on the control**, because a wrapped flex item
-  starts its new line at the *leading* edge — the buttons reappeared under the
+  starts its new line at the *leading* edge - the buttons reappeared under the
   first letter of the title instead of out where they had been a pixel earlier.
   The auto margin is inert on the unwrapped line (flexing has already taken the
   free space), so one declaration covers both states.
 - **`flex-wrap: wrap-reverse` on the callout-list control**, which is what stacks
   **Add new callout** above **Scan for callouts** when even a line of their own
   is too narrow for both. It hangs the *last* line at the top, so it is true only
-  while the CTA is last in the DOM — the same ordering that lands it on the row's
+  while the CTA is last in the DOM - the same ordering that lands it on the row's
   outer edge horizontally. Swapping the two `addButton` calls looks like nothing
   and silently inverts the stack; the test's DOM half exists for that.
   `justify-content: flex-end` is restated on the control rather than inherited
@@ -197,7 +197,7 @@ is scoped to `.cs-subheader-row`, not to the callout-list heading alone. Obsidia
 `button` is `white-space: nowrap` with a fixed `height`, so its min-content width
 is the whole label: scoped narrowly, a long translation of **New palette**
 ("Neue Farbpalette erstellen") ran off the trailing edge of the pane instead of
-wrapping inside its own box — before this row could wrap and after.
+wrapping inside its own box - before this row could wrap and after.
 
 `manualDiscoveryButton.ts` shares only transient running state per plugin through
 a `WeakMap`. Settings redraws and reopenings reuse that state and remove obsolete
@@ -206,7 +206,7 @@ nothing. The button catches scan failures, restores its label/disabled state, an
 never calls `display()` or focuses a control after completion. Existing registry
 subscriptions refresh rows and counts while preserving paging and scroll.
 
-### `getSettingDefinitions()` returns `[]` — deliberately, and only for now
+### `getSettingDefinitions()` returns `[]` - deliberately, and only for now
 
 ```ts
 getSettingDefinitions(): unknown[] { return []; }
@@ -217,11 +217,11 @@ in-app settings search index. **Returning an empty array is what keeps
 `display()` running on every Obsidian version**: on <1.13 the method doesn't
 exist and is never called; on 1.13+, an *empty* result falls back to
 `display()` (a **non-empty** result would disable `display()` entirely and
-render only from the declared definitions). Defining the method at all —
-even empty — is the sanctioned way to satisfy the `obsidianmd/settings-tab/
+render only from the declared definitions). Defining the method at all -
+even empty - is the sanctioned way to satisfy the `obsidianmd/settings-tab/
 prefer-setting-definitions` lint rule without actually re-architecting the
 tab. Populating real per-setting entries would mean reproducing all 11
-sections declaratively, verified on a real 1.13 build — deliberately
+sections declaratively, verified on a real 1.13 build - deliberately
 deferred (see the [`settings-getsettingdefinitions`](#) memory note if one
 exists in this project's history; functionally, this is a `[]` returned on
 purpose, not a stub someone forgot).
@@ -244,7 +244,7 @@ that *also* triggers `css-change`) costs exactly one re-render, landing on
 the very next paint rather than a beat later. The `onPreviewChange`
 subscription specifically is what keeps a row's swatch tracking the callout
 editor's in-progress colour picks live, without the preview reaching
-`saveSettings()` or forcing a document-wide re-render — see
+`saveSettings()` or forcing a document-wide re-render - see
 [Callout registry § the transient live-preview slot](05-callout-registry.md#the-transient-live-preview-slot).
 
 Subscribed **once per visit, not per render.** `display()` re-runs for things
@@ -262,9 +262,9 @@ other two describe changes it structurally **cannot** see, and those pass
 | Signal | `force` | Why |
 | --- | --- | --- |
 | `registry.onChange` | no | A real mutation, read straight off the registry |
-| `workspace.on("css-change")` | no | Moves the colour scheme, the theme's name and its measured appearances — all in the signature |
+| `workspace.on("css-change")` | no | Moves the colour scheme, the theme's name and its measured appearances - all in the signature |
 | `registry.onPreviewChange` | **yes** | Registered transiently and *without* a registry mutation, by contract, so it may not be visible from the signature at all |
-| `plugin.onIconCacheChange` | **yes** | Artwork lives in a download cache keyed by icon name, so a definition naming a not-yet-downloaded icon is byte-identical to the one naming it a second later — guarding this would leave every spinner spinning for good |
+| `plugin.onIconCacheChange` | **yes** | Artwork lives in a download cache keyed by icon name, so a definition naming a not-yet-downloaded icon is byte-identical to the one naming it a second later - guarding this would leave every spinner spinning for good |
 
 `force` is sticky across the coalescing frame: a frame that coalesced an icon
 landing with an unrelated `css-change` still honours the icon.
@@ -272,14 +272,14 @@ landing with an unrelated `css-change` still honours the icon.
 The signature serialises **whole definitions**, not the fields a row happens to
 read today, and the module says why at length: a curated list is how the tenth
 field added later goes stale on screen. Both directions of failure are named
-there too — a signature that changes when nothing did costs one repaint the
+there too - a signature that changes when nothing did costs one repaint the
 scroll anchor already hides, while one that fails to change leaves a stale row
 with nothing to catch it, so it errs toward including more.
 
 ### The repaint must not move the page under the reader
 
-The tab renders **into Obsidian's own scroller** — `containerEl` *is*
-`.vertical-tab-content` — and the four sections that repaint asynchronously all
+The tab renders **into Obsidian's own scroller** - `containerEl` *is*
+`.vertical-tab-content` - and the four sections that repaint asynchronously all
 sit above the other eleven. So every repaint above happens above the fold for
 anyone reading a section below it: rows appear and vanish, the whole theme
 section comes and goes with `cs-hidden`, and a theme row grows when the
@@ -288,7 +288,7 @@ than the offset the reader was at, the browser clamps it and the place is lost
 outright rather than merely shifted.
 
 Both async repaint paths therefore run inside
-`sections/foldAnchor.ts`'s `keepScrollAnchored` — `SettingsTab.refreshLists`
+`sections/foldAnchor.ts`'s `keepScrollAnchored` - `SettingsTab.refreshLists`
 and `CustomPalettesSection`'s 60 ms `css-change` debounce. It measures the
 topmost *direct child* of the container still on screen, runs the mutation, and
 hands the difference back to the scroller. Direct children are the right depth
@@ -297,7 +297,7 @@ nested inside the section wrappers, never the wrappers themselves.
 
 It is the same two-reads-and-one-write shape as `keepHeadingInPlace`
 ([Folding a pinned heading](#folding-a-pinned-heading)), differing in two ways
-that matter — the anchor is chosen rather than handed in, and the correction
+that matter - the anchor is chosen rather than handed in, and the correction
 runs in **both** directions, because content above the fold here can grow as
 well as shrink. It does not double-count Chromium's own scroll anchoring:
 reading the second measurement forces layout, so any adjustment the browser
@@ -319,14 +319,14 @@ The occurrence sidebar owns read-only statistics and navigation; Settings has no
 ### `display()` is not only run by someone opening the tab
 
 `manager/settingsBoot.ts`'s `adoptExternalSettings` re-runs it whenever another
-device's `data.json` lands — i.e. on every sync round trip — and
+device's `data.json` lands - i.e. on every sync round trip - and
 `applyLocaleChange` does the same when a locale finishes downloading. Neither is
 a gesture the reader made, and `display()` empties the container, so both used
 to drop them at the top of a fifteen-section page mid-scroll **and** fold every
 list back to its first 20 rows. Two things answer that:
 
 - **Scroll.** `display()` reads `containerEl.scrollTop` on entry and writes it
-  back after the last section renders — last, because assigning past the end of
+  back after the last section renders - last, because assigning past the end of
   a still-short page would be clamped and lost. It is self-limiting rather than
   stateful: a freshly opened pane is already at 0, so a genuine open restores
   nothing and behaves exactly as it always has.
@@ -343,14 +343,14 @@ list back to its first 20 rows. Two things answer that:
   > container is `createDiv("vertical-tab-content")`, the only two overflow
   > rules on the pair are `.vertical-tab-content-container { overflow: hidden }`
   > and `.vertical-tab-content { overflow-y: auto; height: 100% }` with no
-  > mobile override, and `vertical-tab-content-inner` — which `foldAnchor` used
-  > to warn "could move the overflow up to the container" — appears **zero**
+  > mobile override, and `vertical-tab-content-inner` - which `foldAnchor` used
+  > to warn "could move the overflow up to the container" - appears **zero**
   > times in `app.js` and only ever as a *descendant* of the scroller in
   > `app.css`, for the phone's rounded-card look. That warning was wrong in both
   > halves and is corrected in place, because it points a reader at the wrong
   > element when they go looking for a scroll bug.
 - **Paging.** The cursors moved out of the controller closure and onto
-  `SettingsTab` — see
+  `SettingsTab` - see
   [Where the state lives, and how long](#where-the-state-lives-and-how-long).
 
 ### Section disposers
@@ -361,19 +361,19 @@ every previously-registered disposer **before** rebuilding, and `hide()`
 runs them on tab close. This is what keeps a section's `MutationObserver` or
 subscription from silently accumulating across repeated `display()` calls.
 
-## Folding and paging — the callout lists, and Saved color palettes
+## Folding and paging - the callout lists, and Saved color palettes
 
 [`CalloutListsSection.ts`](../../src/settings/sections/CalloutListsSection.ts)
 builds *Callouts from your theme*, *My callout types* and *Built-in
 callouts*, in that order, from one pass over one combined list (see
 [Theme callout discovery](18-theme-callout-discovery.md) for who lands
-where). Two behaviours sit on top of that split, each in its own helper —
+where). Two behaviours sit on top of that split, each in its own helper -
 and [`CustomPalettesSection.ts`](../../src/settings/sections/CustomPalettesSection.ts)'s
 *Saved color palettes* heading is a fourth member of the same family rather than
 a parallel implementation: it calls the identical `attachPersistedFold` and
 `renderPagedList` helpers, just keyed `"palettes"` instead of a `RowKind`, and
 wraps itself in the same `createStickySection` the trio uses so the heading pins
-too (see [The three sections pin their headings](#the-three-sections-pin-their-headings) —
+too (see [The three sections pin their headings](#the-three-sections-pin-their-headings) -
 palettes is the standalone fourth). Unlike the other sections, it keeps only the
 list of saved palettes and no additional orphan groups.
 
@@ -441,13 +441,13 @@ error `Notice`. If a final recovery-checkpoint failure occurs after the valid
 copy has reached disk and the registry, the action keeps that durable copy,
 refreshes the list and shows the error `Notice`. No vault tokens are rewritten.
 
-### `sectionDisclosure.ts` — a heading you can fold
+### `sectionDisclosure.ts` - a heading you can fold
 
 `attachSectionDisclosure(setting, bodyEl, initiallyExpanded = true, onToggle?)`
 gives a heading a compact rotating chevron and returns
 `{ setName, setExpanded, isExpanded }`. `onToggle`, if given,
-fires with the new state on a user-driven click or keypress only — not when a
-caller drives the returned `setExpanded` — which is what lets a caller
+fires with the new state on a user-driven click or keypress only - not when a
+caller drives the returned `setExpanded` - which is what lets a caller
 persist just the user's own choice; see
 [Where the state lives, and how long](#where-the-state-lives-and-how-long)
 for the one caller that does.
@@ -455,7 +455,7 @@ for the one caller that does.
 Three things about it are decisions, not incidentals:
 
 - **It is not `<details>`/`<summary>`.** These headings are `Setting` rows, and
-  *My callout types* carries the **Add new callout** CTA in its control slot —
+  *My callout types* carries the **Add new callout** CTA in its control slot -
   a `<summary>` wrapping a button is a button that folds the section every time
   it is pressed. So the state, the keyboard (`Enter`, `Space`) and the aria
   contract are written out here.
@@ -467,8 +467,8 @@ Three things about it are decisions, not incidentals:
   `aria-expanded` and `aria-controls` all live on it; the chevron is
   `aria-hidden`, because `aria-expanded` already says what it says.
 - **`setName` is wrapped.** Each list rewrites its heading on every render to
-  update the `(N)` — the fragment `headingWithCount` builds (see
-  [Heading counts](#heading-counts--one-n-everywhere)) — and Obsidian's
+  update the `(N)` - the fragment `headingWithCount` builds (see
+  [Heading counts](#heading-counts---one-n-everywhere)) - and Obsidian's
   `setName` *replaces* `nameEl`'s children, which is where the chevron lives.
   Attributes survive that; elements do not. Callers therefore go through
   `fold.setName(...)`, never `setting.setName(...)`.
@@ -476,18 +476,18 @@ Three things about it are decisions, not incidentals:
 Folding toggles `is-collapsed` on the heading and on the body. That is
 deliberately **not** `cs-hidden`: the theme *section* hides itself with
 `cs-hidden` when it has no rows, and one class toggled for two reasons means
-whichever ran last decides — a fold would reopen an empty section, or an
+whichever ran last decides - a fold would reopen an empty section, or an
 empty section would reopen a folded one. The two now sit on different
 elements as well (the section wrapper hides, the body folds), which makes the
 collision impossible rather than merely avoided.
 
 A user-driven toggle is wrapped in
-[`foldAnchor.keepHeadingInPlace`](../../src/settings/sections/foldAnchor.ts) —
+[`foldAnchor.keepHeadingInPlace`](../../src/settings/sections/foldAnchor.ts) -
 see [Folding a pinned heading](#folding-a-pinned-heading).
 
 Note also that *Built-in callouts* does **not** get `cs-subheader-row` to
 reach the chevron styling: that class also sets the smaller type, and this
-heading is a size larger. It is the only one of the four — *Callouts from your
+heading is a size larger. It is the only one of the four - *Callouts from your
 theme*, *My callout types* and *Saved color palettes* all carry it, for the
 smaller type and the tighter box its CTA-bearing rows need. The chevron layout
 itself rides on `cs-collapsible-heading`, which every foldable heading gets
@@ -500,7 +500,7 @@ Each of the three callout lists is built into a `div.cs-sticky-section` by
 heading carrying `cs-sticky-heading`. The wrapper *is* the feature: a sticky
 box cannot be shifted outside its containing block, so a heading wrapped
 together with its own rows is pinned to the top of the settings pane for
-exactly as long as those rows last — it is pushed off by the next section's
+exactly as long as those rows last - it is pushed off by the next section's
 heading, and the last one lets go with its own last row instead of hanging
 over the eight sections below. No scroll listener and no measurement.
 
@@ -508,35 +508,35 @@ The three used to be flat siblings of each other and of everything under
 them, and that is the one arrangement that cannot work: one containing block
 between them, so all three would pin at the same offset, stack, and never let
 go. Un-wrapping them leaves every CSS rule parsing and applying, and silently
-removes the behaviour — which is why the structure is asserted in
+removes the behaviour - which is why the structure is asserted in
 `tests/calloutListsSectionDisclosure.test.ts` rather than left to the
 stylesheet.
 
 **A fourth section pins the same way: *Saved color palettes*.** It is built to
-be a clone of *My callout types* — the same `createStickySection` wrapper, the
+be a clone of *My callout types* - the same `createStickySection` wrapper, the
 same `cs-subheader-row` heading box (tight, borderless, laid out for a CTA
-button, and wrapping that button below the title on a narrow pane), the same `cs-sticky-heading` / `cs-section-body` classes — so almost
+button, and wrapping that button below the title on a narrow pane), the same `cs-sticky-heading` / `cs-section-body` classes - so almost
 everything below applies to it unchanged. It is not one of the contiguous
 three, though: *Fallback callout* sits between *Built-in callouts* and it, so
 two things differ, both carried on its wrapper:
 
 - **`cs-sticky-section-last`**, because nothing sticky follows it either. That
   class is now on two wrappers, and the `cs-sticky-section-last + heading` rule
-  now also spaces the *Global settings* heading below it — the same
+  now also spaces the *Global settings* heading below it - the same
   `margin-top: 0; padding-top: var(--cs-sticky-heading-pad-top)` treatment
   *Fallback callout* gets under *Built-in callouts*.
 - **`cs-palettes-section`**, for the one thing the stylesheet must special-case.
   The section above it is not pinned, so no body hands a `--cs-section-gap`
   down to its divider the way *My callout types*' body does for *Built-in
   callouts*. The wrapper makes up the gap with its own `margin-top:
-  calc(var(--cs-section-gap) - 0.75em)` — the only place a sticky wrapper is
+  calc(var(--cs-section-gap) - 0.75em)` - the only place a sticky wrapper is
   allowed a margin, safe because nothing hands over to it (the space just
   scrolls). It tracks `--cs-section-gap` rather than a number of its own so it
   never drifts out of step with the trio; the `0.75em` subtracted is Obsidian's
   `.setting-item` block padding, which the Fallback dropdown row directly above
   already spends below its own text, so the two land the last-row-to-divider gap
   on the same 40px. It is written on the wrapper, not spent on the body through
-  `--cs-section-gap`, because it is *leading* space and has to survive a fold —
+  `--cs-section-gap`, because it is *leading* space and has to survive a fold -
   a folded palettes section still has to clear *Fallback callout* above it.
   `sectionTrailingGap.test.ts` holds both halves.
 
@@ -544,7 +544,7 @@ There is also a `margin-block: 0` on the shared `.cs-sticky-heading` rule that
 this fourth section is the reason for. Obsidian gives a `.setting-item-heading`
 a `0.75em` top margin whenever it follows a `.setting-item` sibling *or* sits in
 a `<div>` immediately after one (`.setting-item + div > .setting-item-heading`)
-— which is exactly where the palettes wrapper lands, under the Fallback dropdown
+ - which is exactly where the palettes wrapper lands, under the Fallback dropdown
 row. On a band meant to sit flush against its divider hairline, that margin
 opens an 11px strip of bare pane between the line and the paint. The trio never
 trips it (each of their wrappers follows another `<div>`), but zeroing it on the
@@ -554,7 +554,7 @@ theme*'s own 4px top nudge is higher-specificity and unaffected.
 This section's list scrolls under the band like any other row.
 The `.callout-studio-callout-list` 24px-margin zeroing now reaches the palette
 list too (it is inside a `cs-sticky-section` now), trimming 24px between it and
-the heading — which is fine, the heading carries its own full divider.
+the heading - which is fine, the heading carries its own full divider.
 
 Nine consequences are written into `styles.css` beside the rules, and are
 worth knowing before touching any of them:
@@ -564,24 +564,24 @@ worth knowing before touching any of them:
   scrollport's *content* box, so Obsidian's `padding-top: var(--size-4-12)`
   would park the band 48px down with rows scrolling visibly through the strip
   above it. Obsidian's own sticky settings header does the same thing one line
-  away — `.setting-page.vertical-tab-content { padding-top: 0 }` beside
+  away - `.setting-page.vertical-tab-content { padding-top: 0 }` beside
   `.setting-page-titlebar { position: sticky; top: 0 }`.
 
   The weight is the part that was missing, and it is not defensive padding.
   `containerEl` **is** `.vertical-tab-content`, so the reset lands on the very
   element a theme styles, at the same `(0,1,0)` a bare `.vertical-tab-content`
-  carries — and the theme sheet loads after this plugin's. Measured over the
+  carries - and the theme sheet loads after this plugin's. Measured over the
   257 themes installed in the development vault, **26 declare padding on that
   element and 20 put a non-zero top inset back**, from `(0,1,0)` (ITS Theme's
   `padding: 35px`, NotSwift's `padding-top: 60px`, Kakano, Terminal, Sandstorm,
   Subtlegold, TerraFlow, Cybertron, Ono Sendai, Suddha, Pine Forest Berry)
-  through `(0,7,1)` (Maple), one of them — Elegance — with `!important`. Every
+  through `(0,7,1)` (Maple), one of them - Elegance - with `!important`. Every
   one of them un-sticks all four bands identically, at whatever distance it
   chose. So the reset is written
   `body:not(.is-phone) .callout-studio-settings×3 { padding-top: 0 !important }`:
   `!important` because nothing else outranks Elegance's, the class tripled to
   `(0,4,1)` for headroom over a future important rule, and the phone excluded
-  *explicitly* — with an `!important` in play it would otherwise have beaten
+  *explicitly* - with an `!important` in play it would otherwise have beaten
   Obsidian's own `(0,5,0)` phone rule, whose padding is reserving the top of the
   screen for the floating back and close buttons. `padding-block-start`
   (flexcyon's spelling) cascades in the same slot and needs no separate
@@ -591,7 +591,7 @@ worth knowing before touching any of them:
   verbatim.
 - **The band paints `background-color: inherit`, not the `--cs-surface`
   pair.** That pair is defined inside `.cs-modal` and nowhere else, so on the
-  settings tab it falls through to `--background-primary` — and that is what
+  settings tab it falls through to `--background-primary` - and that is what
   Obsidian paints this pane on the *desktop only*: under `.is-mobile` the pane
   takes `--settings-background`, which is itself `--background-secondary`,
   `--background-primary` or `--background-primary-alt` depending on phone,
@@ -603,16 +603,16 @@ worth knowing before touching any of them:
   property and the band would otherwise inherit `transparent`.
 - **Under that paint is a floor, because `inherit` is only as opaque as what
   it copies.** Replayed through a headless Chrome against the running
-  Obsidian's own `app.css`, this stylesheet and one theme at a time — the 257
-  installed in the development vault, in both colour schemes — the band
+  Obsidian's own `app.css`, this stylesheet and one theme at a time - the 257
+  installed in the development vault, in both colour schemes - the band
   computes **transparent under a good many of them**. Most of those leave the
   pane itself see-through (Sodalite paints `.vertical-tab-content` `transparent` and puts the surface
   on the container behind it; TerraFlow's dark pane is glass; Velocity's whole
   window is, `--modal-background` included, at `oklch(… / 0.625)`), so the
   chain has nothing opaque to carry down. Three others beat the band's own
   declaration: Elegance and Lagom write `background-color: transparent
-  !important` on `.setting-item-heading` — at `(0,2,0)` and, nested under
-  `.mod-settings`, at the band rule's own `(0,3,0)` — and Micro Mike wins a
+  !important` on `.setting-item-heading` - at `(0,2,0)` and, nested under
+  `.mod-settings`, at the band rule's own `(0,3,0)` - and Micro Mike wins a
   `(0,3,0)` tie through `.modal.mod-settings :is(h1, …,
   .setting-item-heading)`. Either way rows scroll visibly through a heading
   that is pinned exactly right.
@@ -620,23 +620,23 @@ worth knowing before touching any of them:
   The fix is a floor rather than a fight, because `!important` is not
   available: Lagom's is already at the band rule's specificity, so winning
   means out-specifying the *next* theme rather than that one. So
-  `.cs-sticky-heading::before` lays an opaque base — `--background-primary`
+  `.cs-sticky-heading::before` lays an opaque base - `--background-primary`
   with `var(--settings-background, var(--modal-background))` over it, the
   theme's own surface tokens and never a colour named here; the top layer is
   the token core paints this pane *with*, so measured on desktop, tablet and
-  phone in both schemes it comes out the pane's own colour every time — and
+  phone in both schemes it comes out the pane's own colour every time - and
   `.cs-sticky-heading::after` repaints the band's whole
   background over that with `background: inherit`, image included, so a theme's
   heading gradient still paints. Both sit at `z-index: -1` inside the band's
   own stacking context, so they are above its background and below its title,
   and both are scoped `body:not(.is-phone)`, where the band is `position:
-  static` and so not a containing block. Where the band's paint is opaque — the
-  great majority of themes, and every platform with no theme installed — the
+  static` and so not a containing block. Where the band's paint is opaque - the
+  great majority of themes, and every platform with no theme installed - the
   `::after` covers the floor completely and nothing changes: with no theme the
   rendered pane is pixel-identical before and after.
 
   It reaches all but a few. The ones left over are the themes that name no
-  opaque surface anywhere — see the rules' own comment in `styles.css` for the
+  opaque surface anywhere - see the rules' own comment in `styles.css` for the
   roll call and the reason each one is out of reach. That is deliberately where it stops: the only floor
   that could not itself be see-through is a colour named here, and on a theme
   whose every surface is transparent on purpose it would be the one opaque
@@ -645,11 +645,11 @@ worth knowing before touching any of them:
 - **The gap under a section lives on that section's own body, and nothing
   else contributes to it.** Space outside a wrapper's content box is space
   with no heading pinned to it, so a 36px margin between wrappers would be
-  36px where one heading has let go and the next has not yet caught — the band
+  36px where one heading has let go and the next has not yet caught - the band
   blinks out and back instead of handing over. So `--cs-section-gap` (40px) is
   spent on `.cs-section-body` and only there, the divider between two sections
   is a hairline `border-top` on the wrapper and nothing more, and folded
-  sections carry no gap at all — the body is `display: none`, so the gap goes
+  sections carry no gap at all - the body is `display: none`, so the gap goes
   with the content it was spacing. (A gap on the heading could not do that
   anyway: a sticky box is constrained by its *margin* box, so a bottom margin
   travels with it and buys no pinned distance.) Three details make "and only
@@ -660,7 +660,7 @@ worth knowing before touching any of them:
     bottom margin on the last in-flow child collapses out through the wrapper
     instead, so the space lands outside and the heading lets go with its last
     row. That gap used to live on the `margin-top` of the plain heading below
-    (Fallback callout), which cannot see a fold — collapsed, "Built-in
+    (Fallback callout), which cannot see a fold - collapsed, "Built-in
     callouts" carried 40px of empty space no content justified. That heading
     now sets `margin-top: 0` and keeps only `padding-top:
     var(--cs-sticky-heading-pad-top)`, which is what puts its title as far
@@ -672,7 +672,7 @@ worth knowing before touching any of them:
     (the Quick insert window), which is why they are dropped here in a
     `cs-sticky-section`-scoped rule rather than removed outright. Inside the
     palettes section the zeroing does now reach a list that ends mid-section
-    — the palette list inside its section — which is
+ - the palette list inside its section - which is
     harmless: that sub-heading carries its own full divider.
   - Both of those rules reach through a **child combinator**, so a wrapper
     element between a section body and its list would silently stop them
@@ -680,14 +680,14 @@ worth knowing before touching any of them:
     `styles.css` and that structure against the rendered DOM.
 
   Measured in headless Chrome against Obsidian's real `app.css`, every section
-  in every state now ends 40px above its divider — full list, `Load more`
-  button, or empty state — and every folded one sits on its divider with only
+  in every state now ends 40px above its divider - full list, `Load more`
+  button, or empty state - and every folded one sits on its divider with only
   the band's own 24px of bottom padding between them.
 - **Not on a phone.** `.is-phone` sets `position: static`, and Obsidian makes
   the same call for its own header (`.is-phone .setting-page-titlebar {
   display: none }`). There the pane sits at the top of the modal and reserves
-  the band over it — for the floating back and close buttons at
-  `--layer-modal` — with `padding-top` rather than by starting lower. Padding
+  the band over it - for the floating back and close buttons at
+  `--layer-modal` - with `padding-top` rather than by starting lower. Padding
   does not clip, so a band pinned below that strip has rows scrolling through
   it *above* the heading; pinning flush instead only trades that for a title
   under the ✕.
@@ -695,43 +695,43 @@ worth knowing before touching any of them:
   carries a corner radius; the plain headings reset it to `0` through the
   `:not(.cs-sticky-heading)` divider rule, which these three are excluded
   from, so they need their own `border-radius: 0` or they are the one rounded
-  bar in a pane of square ones — and a round top corner on a box pinned flush
+  bar in a pane of square ones - and a round top corner on a box pinned flush
   against the pane's own edge reads as a gap the content behind it peeks
   through.
 - **"Callouts from your theme"'s description is a sibling of the heading, not
   part of it.** `renderThemeList` used to write the active theme's name onto
   the heading's own `Setting.setDesc`, which pinned the sentence along with
   the title for as long as the section was on screen. It is now a plain
-  `<p class="cs-theme-desc">` next to the heading in the wrapper — written
+  `<p class="cs-theme-desc">` next to the heading in the wrapper - written
   from the same place, still folded away with the rest of the section (via a
   `.cs-collapsible-heading.is-collapsed + .cs-theme-desc` sibling rule, since
-  it is no longer a descendant of the heading that folds) — so it scrolls out
+  it is no longer a descendant of the heading that folds) - so it scrolls out
   from behind the band like any other row instead of staying glued beside the
   title.
 - **A row's colour circles need their own stacking context, or they float
   above the band.** `.cs-color-circle-l/-r/-r2` stack front-to-back with
   `z-index: 2/1/0` so the three overlap correctly, but nothing between that
-  widget and the pane establishes a stacking context of its own — so those
+  widget and the pane establishes a stacking context of its own - so those
   values aren't scoped to the widget, they're compared directly against
   whatever else shares the nearest real one, which for a row inside these
   three sections is the pinned heading's `z-index: 1`. Left alone, the front
   circle (`z-index: 2`) outranks the header it's supposed to scroll under, and
   every row's circles paint on top of the band as they pass beneath it.
   `.cs-color-circles` carries `isolation: isolate` to contain its own 0/1/2
-  stack — chosen over `position: relative; z-index: 0` because it changes
+  stack - chosen over `position: relative; z-index: 0` because it changes
   nothing about layout or the scrollport, which matters next to a wrapper
   that is deliberately forbidden from setting anything that would (see the
   "nothing between the band and the scroller" test in
   `modalBodyLayers.test.ts`). The same shared class renders in the *Saved
-  color palettes* section — where the heading pins too, so the fix carries its
-  weight there as well — and inside the callout editor's palette trigger,
+  color palettes* section - where the heading pins too, so the fix carries its
+  weight there as well - and inside the callout editor's palette trigger,
   where nothing is pinned and it is a no-op.
 - **Folded, the heading's bottom padding is bumped to match its top.** Open,
-  the band's top padding is deliberately larger than its bottom — nothing but
+  the band's top padding is deliberately larger than its bottom - nothing but
   a hairline sits above the title, while the first row below carries its own
   visual weight. Folded, `.cs-section-body` is `display: none`, so that row is
   gone: the next thing down is another folded heading's divider (or, for the
-  last section, an unrelated one) — the same "hairline with nothing else
+  last section, an unrelated one) - the same "hairline with nothing else
   beside it" the top padding exists for, now on both sides. `.cs-sticky-heading.is-collapsed`
   sets `padding-bottom` to `--cs-sticky-heading-pad-top` so a folded title
   stays centred between the two dividers instead of sitting closer to the
@@ -745,22 +745,22 @@ Folding a section whose heading is pinned takes the content out from under
 it: the heading stops being stuck, drops back to its own place above the
 fold, and everything below jumps up by the height of what went away.
 `keepHeadingInPlace` reads the heading's box on both sides of the fold and
-hands the difference back to the scroller — two reads and one write, on a
+hands the difference back to the scroller - two reads and one write, on a
 click, with nothing on the scroll path.
 
 It is applied unconditionally on the shared toggle because it is a no-op
 wherever the heading is not actually stuck: only a *stuck* box reports a
 different top before and after a change made below it, so a heading folded
-from its resting place — one below the fold, or any heading on a phone, where
-`position: static` — measures zero and the scroller is never touched. All four
+from its resting place - one below the fold, or any heading on a phone, where
+`position: static` - measures zero and the scroller is never touched. All four
 sticky headings share the helper, so all four are corrected when folded while
-pinned. The measurement is guarded rather than assumed — the test DOM has no
+pinned. The measurement is guarded rather than assumed - the test DOM has no
 layout and therefore no `getBoundingClientRect`, and that absence is what
 makes the anchor inert there instead of throwing on every fold.
 
 `foldAnchor.ts` has a second export built on the same three lines,
 `keepScrollAnchored`, which anchors the *asynchronous repaints* rather than the
-click — see
+click - see
 [The repaint must not move the page under the reader](#the-repaint-must-not-move-the-page-under-the-reader).
 The two differ in the direction they correct, and deliberately: this one returns
 early on a negative drift, because the browser's own `scrollTop` clamp has
@@ -776,15 +776,15 @@ regression, not a feature. So the chevron does not take space from the title:
 `margin-inline-start` of `calc(-1 * (var(--cs-disclosure-size) +
 var(--cs-disclosure-gap)))`, moving the whole title line start-ward by
 exactly the chevron's footprint. The chevron fills the space that opens up,
-and the first glyph of the title — and the `(N)` after it — lands back on the
+and the first glyph of the title - and the `(N)` after it - lands back on the
 x it had before there was anything to fold.
 
 Two properties, `--cs-disclosure-size` and `--cs-disclosure-gap`, are the
 single source for that: declared once on `.cs-collapsible-heading`, read back
 by the chevron, which is sized to them, and by the heading, which offsets itself
 by their sum. Because a custom property is substituted where it is *used*, the
-`1em` size resolves against each heading's own font-size — 15.75px under
-`cs-subheader-row`, 15px for *Built-in callouts* — so one rule serves all
+`1em` size resolves against each heading's own font-size - 15.75px under
+`cs-subheader-row`, 15px for *Built-in callouts* - so one rule serves all
 three sections and no section carries an offset of its own. The chevron's box
 is pinned to the token (`inline-size`/`block-size`) rather than left to the
 SVG, because that is what keeps the offset and the thing it offsets in step
@@ -795,32 +795,32 @@ and nothing between there and the settings pane clips it: `.setting-item-name`
 has `overflow: hidden` in Obsidian's own CSS, but the box is *moved* rather
 than overflowed, so the chevron sits inside it; `.setting-item-info` has no
 overflow of its own. `margin-inline-start` also means RTL needs nothing extra
-— the title's inline-start edge is preserved there the same way.
+ - the title's inline-start edge is preserved there the same way.
 
 Which way the chevron points is RTL's one catch. Obsidian marks a
-right-to-left interface with `.mod-rtl` on the body — never `dir="rtl"` — and
+right-to-left interface with `.mod-rtl` on the body - never `dir="rtl"` - and
 already mirrors every `svg.svg-icon` under it, so a folded chevron points along
 the title with no help. An open one must then turn *against* that mirror, or a
 fixed +90° turns the mirrored `<` into `^`. The open rule therefore turns by
 `calc(var(--direction, 1) * 90deg)`: core's `--direction` is 1, or -1 under
 `.mod-rtl`, and core's own fold indicators turn by it too. The folded rule
 must not read it, because core resets `--direction` to 1 on every
-`.is-collapsed:dir(ltr)` — which, with no `dir` attribute in the interface, is
+`.is-collapsed:dir(ltr)` - which, with no `dir` attribute in the interface, is
 every folded heading. The icon picker's group chevron follows the same two
 rules.
 
 Its stroke is set, not inherited. Every fold chevron in the plugin's own UI
-sits beside a semibold heading — the settings lists, the sections of
-**Version details**, and the icon picker's source groups — and
+sits beside a semibold heading - the settings lists, the sections of
+**Version details**, and the icon picker's source groups - and
 Obsidian's default icon stroke (1.75 of the icon's 24 units) is a
 regular-weight line that reads as a hairline there. One rule,
 `.cs-disclosure-chevron svg, .icon-picker-group-chevron svg`, draws both at
 `stroke-width: 2.5px`; with the icon at `1em` that is about `0.1em` at any
 heading size, a semibold stem. A callout's own fold arrow (heading callout,
-block callout, and their previews) is deliberately left out — it follows
+block callout, and their previews) is deliberately left out - it follows
 Obsidian's look for callouts.
 
-### Heading counts — one "(N)" everywhere
+### Heading counts - one "(N)" everywhere
 
 Every heading that counts what it holds ends the same way: the four settings
 lists (*Callouts from your theme*, *My callout types*, *Built-in callouts*,
@@ -836,21 +836,21 @@ one place and grey in the next.
 - `appendHeadingCount(heading, count)` appends
   `<span class="cs-heading-count"> (N)</span>`, the number formatted with
   `toLocaleString(getLocale())`. The space before "(" is part of the text, so
-  the heading reads — and is announced as — "My callout types (4)".
+  the heading reads - and is announced as - "My callout types (4)".
 - `headingWithCount(title, count)` returns the same thing as a fragment for a
   `Setting` heading's `setName`, with the title and its count wrapped in one
   span. A foldable heading's `nameEl` is a flex row (chevron, then title);
-  unwrapped, title and count would be two flex items — the row's gap between
+  unwrapped, title and count would be two flex items - the row's gap between
   them, and a long title wrapping beside its count instead of carrying it to
   the end of its last line.
 - The setup comparison's title row keeps the count as its own flex item beside
   `.cs-recovery-section-title`, so a title cut short with an ellipsis still
-  shows its count. That row therefore has no flex `gap` — its chevron carries
-  `margin-inline-end: var(--cs-disclosure-gap)` instead — because a gap would
+  shows its count. That row therefore has no flex `gap` - its chevron carries
+  `margin-inline-end: var(--cs-disclosure-gap)` instead - because a gap would
   open between the title and its count as well.
 
-The rule is the count's own word space plus `margin-inline-start: 0.3em` —
-about half an em in all, in `em` so it scales with each heading's type —
+The rule is the count's own word space plus `margin-inline-start: 0.3em` -
+about half an em in all, in `em` so it scales with each heading's type -
 `--text-muted`, `font-size: 0.85em` (a step below the heading, whatever size
 that is), `font-weight: var(--font-medium)`, `tabular-nums`, and
 `white-space: pre`. The margin is 0.3em rather than 0.25em because it is
@@ -871,11 +871,11 @@ source's description are part of a label, and stay plain text in that label's
 colour. `tests/headingCount.test.ts` pins the helpers and the rule; each
 surface's own suite checks that it goes through them.
 
-### `listPaging.ts` — the first 20 rows, then a button
+### `listPaging.ts` - the first 20 rows, then a button
 
 `renderPagedList(host, items, state, renderItem, onLoadMore)` renders at most
 `LIST_PAGE_SIZE` (20) rows and, when anything is left over, appends
-`.callout-studio-load-more` **as the last child of the list element** — the
+`.callout-studio-load-more` **as the last child of the list element** - the
 list is already a column flex box, so whatever trailing space it sits in (its
 own margin mid-section, the section's `--cs-section-gap` when it ends one)
 falls under the button exactly as it would under a last row. A sibling would
@@ -884,15 +884,15 @@ need spacing of its own, and one more number to keep in step.
 One press reveals everything rather than another page: these sections are
 tens of rows, not thousands, and a second press would only be a second chance
 to lose your place. (`iconpicker/IconGrid.ts` pages repeatedly, per segment,
-because its grids run to thousands — a different problem, deliberately not
+because its grids run to thousands - a different problem, deliberately not
 shared code.)
 
 The button's label is `t("iconPicker.loadMore")` with the hidden count
-appended in code — `Load more (14)` — the same trick the heading counts use: a
+appended in code - `Load more (14)` - the same trick the heading counts use: a
 numeric suffix on whatever `t()` returns, so it needs no key of its own in any
 of the 31 translated locales. Unlike a heading's count it stays plain text in
 the button's colour, because it is part of the label (see
-[Heading counts](#heading-counts--one-n-everywhere)). `focusFirstRevealed`
+[Heading counts](#heading-counts---one-n-everywhere)). `focusFirstRevealed`
 (below) is an export of `listPaging.ts` rather than a per-section helper,
 which is what lets `CustomPalettesSection.ts` reuse it verbatim instead of
 reimplementing the same focus-on-reveal logic.
@@ -907,7 +907,7 @@ would otherwise fall to the document body; `focusFirstRevealed` sends it to
 the first row that just appeared, with `tabindex="-1"` so the row is a target
 for that jump and not a stop on the way through the tab. It finds that row by
 querying for `.callout-studio-callout-list` inside whatever host it is given,
-so it works for any paged section — Saved color palettes included — not just
+so it works for any paged section - Saved color palettes included - not just
 the callout lists it was written for.
 
 ### Where the state lives, and how long
@@ -922,7 +922,7 @@ flip; in both cases a list the user expanded must not fold back up under them.
 The page cursor is session-only, and *which* lifetime that means was a bug
 report: **"it keeps jumping back to the top and re-collapsing the view more
 callouts list."** The three callout-list cursors used to be closure variables on
-the controller — and a controller lives exactly one `display()`, which re-runs
+the controller - and a controller lives exactly one `display()`, which re-runs
 for things nobody asked for (above). Pressing **Load more** and then having
 another device's settings file land was enough to lose it.
 
@@ -933,16 +933,16 @@ They are held by `SettingsTab` now (`freshPaging()`, in
 session-only in the sense that was always meant: a genuine reopen still starts
 every section back behind its `Load more` button. Nobody has asked to keep a
 whole vault's saved palettes on screen by default, and paging past the cap is a
-cheap habit to reform — but losing your place to a repaint you did not cause is
+cheap habit to reform - but losing your place to a repaint you did not cause is
 not that. (Saved color palettes keeps its own single cursor in
 `CustomPalettesSection.ts`, which is rebuilt by the same `display()`; its
 `Load more` is one press on a much shorter list.)
 
 The **fold** is not session-only. `settings/sections/calloutListsFold.ts`
 mirrors each section's `SectionDisclosure` into
-`DeviceLocalStore.listsExpanded` (`{ theme, user, builtin, palettes }` — the
+`DeviceLocalStore.listsExpanded` (`{ theme, user, builtin, palettes }` - the
 first three keyed the same way as `RowKind`, `palettes` added for Saved color
-palettes) the moment the user folds or unfolds it by hand —
+palettes) the moment the user folds or unfolds it by hand -
 `attachSectionDisclosure`'s `onToggle` fires only on that user gesture, never
 when a caller drives `setExpanded` programmatically, so a save only happens
 for a choice the user actually made. `attachPersistedFold` takes any
@@ -962,17 +962,17 @@ which on a synced vault is one more file event for the sync client to
 reconcile, and what is folded on a phone has nothing to say to a desktop. See
 [Persistence § the device-local store](07-persistence-and-caching.md).
 
-The heading count is always the full list a section has — the partitioned
+The heading count is always the full list a section has - the partitioned
 length for a callout list, `settings.customPalettes.length` for Saved color
-palettes — never the visible slice. Folding a section, or leaving 20 of 34
-rows on screen, changes what is drawn — not how many the user has.
+palettes - never the visible slice. Folding a section, or leaving 20 of 34
+rows on screen, changes what is drawn - not how many the user has.
 
-## Modal chrome — the one shell every window wears
+## Modal chrome - the one shell every window wears
 
 [`src/settings/modalChrome.ts`](../../src/settings/modalChrome.ts) is a small
 file with an outsized effect on the whole UI's consistency. Before it
 existed, different modals had independently reinvented a sticky title, a
-pinned button bar, or neither — "two carried a sticky title with a rule
+pinned button bar, or neither - "two carried a sticky title with a rule
 under it and a pinned button bar, one drew its rule on a toolbar instead of
 the title, and the rest had neither."
 
@@ -985,11 +985,11 @@ Three fixed bands:
 
 ```text
 ┌───────────────────────────────┐
-│ title                       ✕ │  header — fixed, rule along its bottom
+│ title                       ✕ │  header - fixed, rule along its bottom
 ├───────────────────────────────┤
-│ content …                     │  body — the ONLY scroll container
+│ content …                     │  body - the ONLY scroll container
 ├───────────────────────────────┤
-│              [Cancel] [Save]  │  footer — fixed, rule along its top; optional
+│              [Cancel] [Save]  │  footer - fixed, rule along its top; optional
 └───────────────────────────────┘
 ```
 
@@ -997,33 +997,33 @@ Both rules run **edge to edge**, which is why the geometry lives in this one
 module rather than per-modal CSS: `.modal` gives up its own 16px padding to
 `.cs-modal`, redistributed to each band as `--cs-modal-inset`, so a rule can
 reach the window's sides while text still lines up with the inset. **A new
-modal must never re-add padding to `.modal` or `.modal-content` directly** —
+modal must never re-add padding to `.modal` or `.modal-content` directly** -
 that would double the inset.
 
 > [!IMPORTANT]
 > **Every window wearing this chrome must set a title, with no opt-out.**
 > The two windows that used to skip the header band (a generic confirmation
-> dialog and the replace-callout picker) read as unlabelled boxes — Obsidian
+> dialog and the replace-callout picker) read as unlabelled boxes - Obsidian
 > still renders an empty, padded `.modal-title` band even with no text set,
 > so *skipping* the title doesn't remove the band, it just leaves it blank
 > and confusing. This is enforced structurally, not just by convention:
 > `ConfirmModal`'s constructor takes `title` as a **required** parameter
-> specifically because it's a generic, reusable dialog — only the caller
+> specifically because it's a generic, reusable dialog - only the caller
 > knows what's being confirmed, and a compiler-enforced parameter is what
 > keeps a future caller from shipping a headerless one. `ReplaceCalloutModal`
 > defaults its title from its `mode` for the same reason.
 >
-> **`WelcomeModal` is the one deliberate exception** — it's a splash screen,
+> **`WelcomeModal` is the one deliberate exception** - it's a splash screen,
 > opts out of the chrome entirely (`this.titleEl.remove()`), and carries its
 > own name as a hero heading in a dedicated left column instead of a
 > generic title bar.
 
-`applyModalChrome` is safe to call again on a reopened modal — Obsidian
+`applyModalChrome` is safe to call again on a reopened modal - Obsidian
 reuses `modalEl` across open/close cycles, so a stale footer from a previous
 open is detached rather than duplicated. It also stamps `cs-modal-stacked`
 on the container when another modal is already open underneath it (used by
 `styles.css` to paint the correct backdrop dimming for stacked modals on
-mobile, where Obsidian's own backdrop layering can't be relied on) — the
+mobile, where Obsidian's own backdrop layering can't be relied on) - the
 open count check is reliable specifically because `Modal.open()` appends
 `containerEl` to the document **before** calling `onOpen()`, so this modal is
 already counted by the time the check runs.
@@ -1056,14 +1056,14 @@ own title asks**:
 
 > [!IMPORTANT]
 > `CalloutEditor` used to ask **`!this.isBuiltIn`**, which is a different
-> question — whether the name field is *editable*, not whether the window is
+> question - whether the name field is *editable*, not whether the window is
 > *creating* anything. Every edit of a custom callout therefore grabbed the name
 > field too. `tests/modalAutofocus.test.ts` pins the guard against the title key
 > so the two cannot drift apart again.
 
 For `PaletteEditorModal` the gate is `existing`, **not** the seeded state: the
 `seed` option pre-fills every colour but stays a *new* palette (it rebuilds one
-deleted out from under a callout, so the user "only has to type a name") — which
+deleted out from under a callout, so the user "only has to type a name") - which
 is the case that most wants the cursor.
 
 `CommandEditorModal` is the third create/edit window and is deliberately *not*
@@ -1091,7 +1091,7 @@ window the user has not read yet moves while they are looking at it.
 > scroller's `scrollTop` at its pre-focus value
 > for `KEYBOARD_SETTLE_MS` (400ms, covering the ~250-300ms iOS slide-in),
 > releasing early on `pointerdown`, `touchstart` or `wheel`. It did not work
-> well — it read as a delayed, clunky lurch rather than as no jump at all — and
+> well - it read as a delayed, clunky lurch rather than as no jump at all - and
 > it cost every window a scroll listener plus a disposer to run from `onClose()`,
 > for a problem no desktop user has. **It has been removed rather than tuned;
 > don't reach for it again.** `tests/modalAutofocus.test.ts` fails if a timer, a
@@ -1120,19 +1120,19 @@ both.
 ## Two theme-aware surface tokens
 
 Defined **only** on `.modal.cs-modal` (never redefined per-modal), so
-falling through to the bare CSS variable keeps the plain settings tab —
-which Obsidian itself paints `--background-primary` — visually unchanged:
+falling through to the bare CSS variable keeps the plain settings tab -
+which Obsidian itself paints `--background-primary` - visually unchanged:
 
 ```css
 .modal.cs-modal { --cs-surface: var(--modal-background); --cs-surface-raised: var(--background-secondary); }
 ```
 
-- **`--cs-surface`** (fallback `--background-primary`) — anything meant to
+- **`--cs-surface`** (fallback `--background-primary`) - anything meant to
   read as flush with the modal window itself: fixed bands, panels, the ring
   cut around an icon tile's ✕. Not dropdown lists: those wear the face of the
   control that opened them (see
   [Dropdown popups wear their control's face](#dropdown-popups-wear-their-controls-face)).
-- **`--cs-surface-raised`** (fallback `--background-secondary`) — anything
+- **`--cs-surface-raised`** (fallback `--background-secondary`) - anything
   meant to read as *raised off* that surface: a group-box header strip, a
   card, a control, a row pill.
 
@@ -1140,7 +1140,7 @@ which Obsidian itself paints `--background-primary` — visually unchanged:
 > **The two tokens are a pair and must always move together.** Setting one
 > alone is precisely how the group boxes broke once: `--background-secondary`
 > is only the correct "raised" shade *while* `--modal-background` equals
-> `--background-primary` — and mobile dark theme is exactly where that
+> `--background-primary` - and mobile dark theme is exactly where that
 > relationship stops holding. `.is-mobile.theme-dark` (phone and tablet)
 > repoints `--modal-background` **onto** `--background-secondary` itself
 > (for OLED-friendly true-black elsewhere), which means a strip painted with
@@ -1148,19 +1148,19 @@ which Obsidian itself paints `--background-primary` — visually unchanged:
 > it's meant to sit *above*, and visually disappears. The fix,
 > `.is-mobile.theme-dark .modal.cs-modal` re-derives `--cs-surface-raised` as
 > a `color-mix()` step **off `--cs-surface`** rather than naming a fixed
-> replacement colour — reproducing the same visual step desktop gets
+> replacement colour - reproducing the same visual step desktop gets
 > (`#1C1C1C` → `#282828`) on whatever the window turns out to be, and
 > surviving yet another theme repointing `--modal-background` again in the
 > future.
 
 **Deliberately not covered**: `.cs-live-preview-body` and `.cs-gap-demo`,
 which are meant to emulate an actual **note** surface inside the modal (the
-callout editor's live preview, the spacing-demo widget) — those genuinely
+callout editor's live preview, the spacing-demo widget) - those genuinely
 want `--background-primary` regardless of what the surrounding modal chrome
 is doing.
 
 > [!TIP]
-> Any sticky element must sit at `top: 0`, never a positive offset — a
+> Any sticky element must sit at `top: 0`, never a positive offset - a
 > positive offset parks an opaque layer *below* the header's rule, which
 > visually eats scrolling text passing behind it. See
 > `.callout-studio-preview-col` in `styles.css` for the enforced example, and
@@ -1171,11 +1171,11 @@ is doing.
 > Two things the settings-tab band added to that contract. The offset is
 > measured from the scrollport's **content** box, so a scroller with its own
 > `padding-top` needs that padding moved onto the content before `top: 0`
-> means the top of the pane — and where that scroller is Obsidian's rather
+> means the top of the pane - and where that scroller is Obsidian's rather
 > than this plugin's, the rule doing the moving has to outrank the active
 > theme, which is a second question and the one that actually regressed. And
 > `background-color: inherit` is the third sanctioned paint beside the two
-> surface tokens — it is the only one available to a band sitting *on* a pane
+> surface tokens - it is the only one available to a band sitting *on* a pane
 > whose colour the plugin does not choose. See [The three sections pin their headings](#the-three-sections-pin-their-headings).
 >
 > Quick Insert applies the same padding rule inside the modal chrome: its
@@ -1207,8 +1207,8 @@ small UI font. Each screen retains its own control width.
 
 Buttons change fill under the pointer (`--cs-btn-face-hover`, see
 [Why the hover is a `color-mix`](#why-the-hover-is-a-color-mix-and-not---background-modifier-hover));
-fields never do. A field has two looks: at rest, and **engaged** — hovered,
-focused, pressed, or with its list open — and the engaged look is one thin edge.
+fields never do. A field has two looks: at rest, and **engaged** - hovered,
+focused, pressed, or with its list open - and the engaged look is one thin edge.
 There is deliberately no third, stronger state: an earlier version gave focus a
 `--background-modifier-border-focus` border plus a 2px ring, and the jump from
 the hover edge to that on every click was the thing to lose.
@@ -1216,8 +1216,8 @@ the hover edge to that on every click was the thing to lose.
 Two more reasons for the edge. The list that opens from a dropdown wears the
 field's own face ([Dropdown popups wear their control's face](#dropdown-popups-wear-their-controls-face)),
 and a field that repainted itself would be a different grey from its own list
-whenever the pointer was on it. And in dark — and in macOS light wherever the
-[light palette](#the-light-palette) is not in force — the resting border *is* the
+whenever the pointer was on it. And in dark - and in macOS light wherever the
+[light palette](#the-light-palette) is not in force - the resting border *is* the
 face's colour, so the field is a borderless grey slab at rest, which leaves the
 edge free to carry the state.
 
@@ -1233,7 +1233,7 @@ against face:
 | Dark (face `#333333`) | `#333333` → `#474747` (1.36:1) | `#3f3f3f`, 1.20:1 |
 | Light, palette off, macOS (face `#e4e4e4`) | `#e4e4e4` → `#cdcdcd` (1.25:1) | `#dadada`, 1.10:1 |
 | Light, palette off, Windows/Linux (face `#ffffff`) | `#e4e4e4` → `#cdcdcd` (1.59:1) | `#dadada`, 1.40:1 |
-| Light, Default theme, every platform (palette; face `#ffffff`) | `#d4d4d4` → `#a6a6a6` (1.48:1 → 2.43:1) | — |
+| Light, Default theme, every platform (palette; face `#ffffff`) | `#d4d4d4` → `#a6a6a6` (1.48:1 → 2.43:1) | - |
 
 "Palette off" is a community theme, or the plugin not being able to tell. Both
 ends of the `color-mix` are Obsidian's tokens, so a theme that moves either
@@ -1247,7 +1247,7 @@ The standalone fields are the callout editor's **Display name** and **Callout
 IDs**,The standalone fields are the callout editor's **Display name** and **Callout
 IDs**, the palette editor's **Name**, the Quick Insert and replacement-dialog
 searches, the search box in every icon source, and the text box on Callout
-Manager's import window's paste card — a `<textarea>` of one fixed height on
+Manager's import window's paste card - a `<textarea>` of one fixed height on
 the same `cs-text-control` face (see
 [Import and export](15-import-export.md#the-plugin-import-window)).
 Searchable callout and color pickers remain comboboxes: their outer
@@ -1279,7 +1279,7 @@ There are three cascade constraints:
   press class, `.mobile-tap`, is listed there too since a phone has no hover.
 - The Callout IDs field reserves trailing space for its **+** button.
   `cs-tag-add-slot` overlays the field and paints the same `--cs-tag-field-bg`,
-  declared once on the row as the resting face — a field's fill never changes —
+  declared once on the row as the resting face - a field's fill never changes -
   so its background never becomes a separate rectangular patch. Preserve the
   trailing padding and the row's existing width when adjusting the shared
   chrome. The edge is set from the row's `:hover`, not only the input's: the
@@ -1296,7 +1296,7 @@ so `buildComboboxSkeleton` uses a unique hidden text node referenced through
 
 Check these rules against the actual cascade, including light and dark modes,
 invalid and disabled fields, and the IDs field with its **+** visible. The
-harness in [17 — Checking a theme against the real
+harness in [17 - Checking a theme against the real
 cascade](18-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade)
 explains how to compare `styles.css` with Obsidian's `app.css`; reading either
 stylesheet alone does not prove the computed result.
@@ -1335,7 +1335,7 @@ beside the plugin's fields under the harness linked above, with body classes
 
 ### The one control that is not a field but focuses like one
 
-The **icon tile** in the callout editor (`.cs-icon-tile` — the 44px box that
+The **icon tile** in the callout editor (`.cs-icon-tile` - the 44px box that
 *is* the icon picker's button, with the ⓧ badge straddling its corner) sits
 directly under the Display name and Callout IDs fields, and it is the third row
 of the same form, so it answers the pointer exactly as they do ([see
@@ -1348,10 +1348,10 @@ edge next to its neighbours.)
 Three things about it are easy to get wrong a second time:
 
 - **The box needs four classes.** `box-shadow` is contested
-  three ways — `button:not(.clickable-icon)` (0,1,1) sets `--input-shadow`,
+  three ways - `button:not(.clickable-icon)` (0,1,1) sets `--input-shadow`,
   `button:hover` (0,1,1) sets `--input-shadow-hover`, and
   `button:not(.clickable-icon).mobile-tap` (0,2,1) sets it again the moment a
-  finger lands — so `box-shadow: none` is written at (0,4,1), the same count and
+  finger lands - so `box-shadow: none` is written at (0,4,1), the same count and
   the same reason as the ⓧ badge. The fill is not repainted at all, so the
   empty state's transparent "add one" box stays hollow under the pointer.
 - **`border-color`, never the `border` shorthand.** The empty state swaps
@@ -1364,8 +1364,8 @@ Three things about it are easy to get wrong a second time:
 
 #### Hover is desktop-only, and the press is the touch half
 
-Every hover-driven change the tile makes — the edge, fading the
-artwork out, revealing the swap arrows, the ⓧ badge appearing — lives in one
+Every hover-driven change the tile makes - the edge, fading the
+artwork out, revealing the swap arrows, the ⓧ badge appearing - lives in one
 `@media (hover: hover) and (pointer: fine)` block. The `hover: hover` half is
 old and load-bearing: iOS Safari applies `:hover` on the first tap of an element
 that has hover styles ("sticky hover"), which here blanked the artwork and left
@@ -1374,7 +1374,7 @@ half, and it excludes the stylus and the hybrid laptops that answer
 `hover: hover` from a touchscreen.
 
 Touch gets the complement, written as `@media (hover: none), (pointer: coarse)`
-rather than `not ((hover: hover) and (pointer: fine))` — Safari only learned
+rather than `not ((hover: hover) and (pointer: fine))` - Safari only learned
 that boolean form in 16.4, and this is the block whose whole job is the phone.
 There the press carries the box instead: the same thin edge on `:active`
 **and** on `.mobile-tap`, Obsidian's own press class (it adds it to every
@@ -1385,19 +1385,19 @@ behind a tap that opened a picker on top of it. The artwork is deliberately
 *not* swapped for the arrows on touch: a finger has nothing to reveal with, only
 something to commit with, and the drawing is the content.
 
-The ⓧ badge's own pair moved with it, and has to stay its exact complement — a
+The ⓧ badge's own pair moved with it, and has to stay its exact complement - a
 coarse pointer that also reports `hover: hover` must land in one of the two
 blocks, and the one it should land in is the permanent, 22px, tappable badge.
 
 #### The swap arrows drift
 
 The glyph revealed on hover is Lucide's `arrow-left-right`, and Obsidian builds
-a lucide icon as bare shape children of the `<svg>` with no `<g>` wrapper — for
+a lucide icon as bare shape children of the `<svg>` with no `<g>` wrapper - for
 this one, four `<path>`s in drawing order: the top arrow's head and shaft
 (pointing left), then the bottom arrow's head and shaft (pointing right). That
 is what lets a plain `:nth-child(-n + 2)` / `:nth-child(n + 3)` split hand one
 arrow to each of two keyframe sets and slide them apart, each in the direction
-it already points, and back — 3.5 user units on a 24-unit viewBox drawn at
+it already points, and back - 3.5 user units on a 24-unit viewBox drawn at
 18px, about 2.6 device pixels, on a 1.05s `ease-in-out infinite` loop.
 
 - It is scoped off `.is-empty` because the glyph there is `plus`, whose two
@@ -1415,11 +1415,11 @@ it already points, and back — 3.5 user units on a 24-unit viewBox drawn at
 The companion to the section above, and it went wrong the same way: four
 places each answering "what does a grey button look like" for themselves.
 
-Everything that is not a call to action — the settings tab's
+Everything that is not a call to action - the settings tab's
 `.cs-settings-neutral-btn` row (Discover, Import, Export, Reset, and the two in
 Data management), the bare `<button>`s a window's `.cs-modal-footer` carries
 (Cancel), and the two segmented rows, `.cs-border-side-btn`
-(All/Top/Right/Bottom/Left) and `.cs-gradient-dir-btn` — now reads one pair of
+(All/Top/Right/Bottom/Left) and `.cs-gradient-dir-btn` - now reads one pair of
 tokens, declared once near the top of `styles.css`:
 
 ```css
@@ -1439,10 +1439,10 @@ it is declared only in light mode under the Default theme, so everywhere else
 these read exactly as they did before it existed. The prose below describes
 that fallback.)
 
-`--interactive-normal` is Obsidian's own button face — white
+`--interactive-normal` is Obsidian's own button face - white
 (`--color-base-00`) in light on Windows and Linux, `#363636` (`--color-base-30`)
 in dark, and `#e4e4e4` on macOS, where `.mod-macos` points it at
-`--background-modifier-border` — so the resting look is unchanged and stays
+`--background-modifier-border` - so the resting look is unchanged and stays
 whatever a theme makes it. In light mode with Obsidian's Default theme the two
 tokens are replaced by the [light palette](#the-light-palette)'s swatches and
 fall back to exactly the expressions above everywhere else.
@@ -1450,19 +1450,19 @@ fall back to exactly the expressions above everywhere else.
 ### Why the hover is a `color-mix` and not `--background-modifier-hover`
 
 Because **that token is not a colour**. It is a translucent mono overlay,
-`rgba(var(--mono-rgb-100), 0.067)` — black at 6.7% under `.theme-light`, white
+`rgba(var(--mono-rgb-100), 0.067)` - black at 6.7% under `.theme-light`, white
 at 6.7% under `.theme-dark`. Two things follow, and both shipped:
 
 - **It composites against what is behind the button, not against the button's
-  own fill.** Discover rested on `--background-modifier-form-field` — an
-  *input* token, `--color-base-25` (`#2a2a2a`) — over a `#1e1e1e` pane, and
+  own fill.** Discover rested on `--background-modifier-form-field` - an
+  *input* token, `--color-base-25` (`#2a2a2a`) - over a `#1e1e1e` pane, and
   hovered to `#2d2d2d`. That is a luminance change of 0.3%: **no hover at all
   in dark mode**, while the very same rule in light moved `#ffffff` → `#eeeeee`
   and looked correct. One rule, one theme broken.
 - **Its direction flips with the theme**, because it always moves *away* from
   the background. The segmented rows rest on `--interactive-normal` (`#363636`
   in dark) but hovered to that overlay composited over the group box behind
-  them (`#1e1e1e`), landing at `#2d2d2d` — *darker than the button*. That is
+  them (`#1e1e1e`), landing at `#2d2d2d` - *darker than the button*. That is
   the "these get darker" report, and it is the same trap reached from the
   other side.
 
@@ -1478,7 +1478,7 @@ contrast". Measured in headless Chrome against real `app.css`:
 
 identical for all four, against `#ffffff` → `#fafafa` (−4.4%) and `#363636` →
 `#3f3f3f` (+1.3%) for a native Obsidian button, which is deliberately left
-alone — every rule here is scoped to `.callout-studio-settings` or
+alone - every rule here is scoped to `.callout-studio-settings` or
 `.cs-modal > .cs-modal-footer`, so nothing reaches a core dialog. The coloured
 variants keep their own faces: the footer rule carves out `.mod-cta`,
 `.mod-warning` and `.mod-destructive` with a `:not()` **list**, which takes the
@@ -1493,7 +1493,7 @@ button:not(.clickable-icon) { background-color: var(--interactive-normal) }
 ```
 
 which is **(0,1,1)**. A single-class rule is (0,1,0) and *does not get the
-resting fill at all* — which is why the `background: transparent` the
+resting fill at all* - which is why the `background: transparent` the
 border-side buttons carried for their whole life never once took effect, and
 why their hover looked like it was darkening from a transparent base when it
 was really darkening from Obsidian's grey one. Both segmented rows double their
@@ -1505,8 +1505,8 @@ tale: Obsidian 1.13's `.is-phone .modal .setting-item-control
 button:not(.clickable-icon) { width: 100% }` is **(0,4,1)**, so
 `.is-mobile .cs-gradient-dir-row .cs-gradient-dir-btn.cs-gradient-dir-btn`
 (0,4,0) lost `width: 26px` on the element tie-break and now carries a third
-copy of the class. Chrome hid the loss — `flex: 0 0 26px` still sized the
-buttons — but WebKit sizes the shrink-wrapped control column from `width`, got
+copy of the class. Chrome hid the loss - `flex: 0 0 26px` still sized the
+buttons - but WebKit sizes the shrink-wrapped control column from `width`, got
 56px for three 26px arrows, and the last one spilled out of the card on iOS.
 `tests/gradientDirectionMobileSize.test.ts` pins the specificity; check a phone
 override in WebKit as well as Chrome (see "Checking a theme against the real
@@ -1521,7 +1521,7 @@ Two more consequences worth keeping:
   for an unselected segment.
 - **`box-shadow: none` must not eat the focus ring.** `:focus-visible` used to
   be grouped in with `:hover` on the neutral buttons, and at (0,3,0) that
-  `box-shadow: none` beat Obsidian's (0,1,1) `button:focus-visible` — so six
+  `box-shadow: none` beat Obsidian's (0,1,1) `button:focus-visible` - so six
   buttons focused invisibly. Each now restates the ring itself, in the grey
   described in [How an input field focuses](#how-an-input-field-focuses).
 
@@ -1530,8 +1530,8 @@ faces reading them, the specificity bar, the `.is-active`/`:hover` ordering,
 and the two tokens that must never come back to a button face.
 
 > [!NOTE]
-> The overlay is still right for a **list row, an icon button or a chip** —
-> anything that sits on the surface behind it rather than owning a face — so
+> The overlay is still right for a **list row, an icon button or a chip** -
+> anything that sits on the surface behind it rather than owning a face - so
 > `--background-modifier-hover` is deliberately untouched on
 > `.cs-combobox-option`, `.callout-studio-row-buttons button`, `.cs-icon-tile`,
 > `.cs-drag-handle` and friends. The rule is about which of the two a control
@@ -1541,7 +1541,7 @@ and the two tokens that must never come back to a button face.
 > When measuring this with the headless-Chrome harness, **disable transitions
 > first**. These buttons carry `transition: background 0.12s`, and
 > `getComputedStyle` immediately after forcing the hover state returns the
-> *interpolating* value — which Chrome reports in `oklab`. A first pass at the
+> *interpolating* value - which Chrome reports in `oklab`. A first pass at the
 > harness measured the resting colour twice that way and reported the fix as
 > broken.
 
@@ -1568,7 +1568,7 @@ and then, under `body`, defines both of those tokens as the same colour:
 
 So the hover matches, fires, and paints the colour that is already there. Read
 out of headless Chrome against the real `app.css`, both tokens resolve to
-`rgb(233, 49, 71)` in light and `rgb(251, 70, 76)` in dark — **identical**,
+`rgb(233, 49, 71)` in light and `rgb(251, 70, 76)` in dark - **identical**,
 where the accent pair beside them genuinely differs. Delete, Replace and
 "Reset everything" were never missing a hover rule; they were running a no-op,
 Δlum 0.0% in both themes, which is why the gap outlived the grey-button pass
@@ -1599,7 +1599,7 @@ AA.
 
 > [!WARNING]
 > Measure a step like this in **CIEDE2000**. Plain CIE76 ΔE scores the two rows
-> above 6.5 and 7.4 — "already matched" — and it is wrong in exactly the
+> above 6.5 and 7.4 - "already matched" - and it is wrong in exactly the
 > saturated region a red button lives in. The greys above are near-neutral,
 > which is the case where the two measures happen to agree.
 
@@ -1616,7 +1616,7 @@ Three constraints shape the rule itself:
 - **(0,5,2) against Obsidian's (0,2,1)**, so it lands without `!important`.
 
 > [!NOTE]
-> `.cs-icon-tile-clear` — the small red ✕ on an icon tile — is the one red
+> `.cs-icon-tile-clear` - the small red ✕ on an icon tile - is the one red
 > control that does **not** follow this, and that is deliberate. It mixes toward
 > a hardcoded `black` in both themes, so it darkens in dark mode against the
 > house direction rule. It also carries a hardcoded white glyph, and darkening
@@ -1643,8 +1643,8 @@ Every field, dropdown and list draws its face from `--cs-btn-face`, which reads
 `--background-modifier-border` (`.mod-macos { --interactive-normal:
 var(--background-modifier-border) }`, `#e4e4e4` in light): a flat grey that
 suits a native-looking *button* and nothing else. Obsidian's own text boxes do
-not use it — `input[type='text']` paints `--background-modifier-form-field`,
-white in light — but this plugin deliberately gives text fields, dropdowns and
+not use it - `input[type='text']` paints `--background-modifier-form-field`,
+white in light - but this plugin deliberately gives text fields, dropdowns and
 the list that opens from them one shared face, so on macOS all of them came out
 as the same borderless grey slab, with a heavy shadow under the list and a
 mid-grey selected row. Windows and Linux never had it (there the token is white),
@@ -1696,7 +1696,7 @@ stays at ~14:1 for the text on it.
   tab, palette editor, import window) for the pre-palette stylesheet against this
   one: identical in dark, identical in light with the class absent, and
   identical in light under a stand-in community theme that sets its own
-  `--interactive-normal` and border tokens — with that theme's colours visibly
+  `--interactive-normal` and border tokens - with that theme's colours visibly
   reaching the fields, which is the point.
 - **The gate is inside `:where()` so it adds no specificity.** The swatch rule
   is (0,0,0): a user's snippet can retune one with a plain
@@ -1711,12 +1711,12 @@ stays at ~14:1 for the text on it.
   rules ((0,4,1) and up), so the engaged edge still wins; the empty tile's
   hollow dashed box is left out.
 
-### `cs-default-theme` — why a class, and why it is the positive one
+### `cs-default-theme` - why a class, and why it is the positive one
 
 CSS cannot ask which theme is active: Obsidian marks the colour scheme on
 `<body>` but never the community theme, which is a name in `app.customCss` and a
 `<style>` element. [`registerDefaultThemeClass`](../../src/manager/theme/defaultThemeClass.ts)
-mirrors the one fact needed — `app.customCss.theme === ""`, Obsidian's Default —
+mirrors the one fact needed - `app.customCss.theme === ""`, Obsidian's Default -
 onto the main window's `<body>`, at once and again on every `css-change`
 (Obsidian writes `customCss.theme` first and triggers the event once the new
 theme's CSS is in place, so the name read there is already the new one), and
@@ -1726,7 +1726,7 @@ It is the *positive* statement on purpose. `usesDefaultTheme()` returns true onl
 when the field is present and is the empty string; a missing or renamed
 `customCss` is not "no theme", and the class stays off. If the module never ran
 or Obsidian changed the field, the failure is the windows keeping the look they
-had before the palette — not the plugin painting over a theme it could not see.
+had before the palette - not the plugin painting over a theme it could not see.
 `activeThemeName()` cannot serve here: it returns `null` for both "default" and
 "cannot tell".
 
@@ -1743,7 +1743,7 @@ Dark mode; callouts as they are drawn in a note; Obsidian's own widgets; the
 cards behind rows (`--background-secondary`), which are surfaces; and the tag
 chips, which are a translucent overlay on whatever they sit on. The palette also
 applies on phone and tablet (`is-mobile`), where it replaces a borderless
-`#f6f6f6` pill with a white one that has the same soft line — one palette for the
+`#f6f6f6` pill with a white one that has the same soft line - one palette for the
 light scheme rather than a per-device variant. A **user setting** to switch it
 off was deliberately not added: choosing a theme is the switch.
 
@@ -1761,8 +1761,8 @@ Obsidian's `app.css` and `styles.css` with body classes
 `theme-light mod-macos cs-default-theme`; then repeat without
 `cs-default-theme`, with a stand-in theme file linked after `styles.css`, and
 with `mod-windows` and `is-mobile is-phone`. Use the *headless shell* binary
-(`chrome-headless-shell`) for screenshots — the full headless Chrome returned a
-black frame for a page this size — and read the real `app.css` out of the
+(`chrome-headless-shell`) for screenshots - the full headless Chrome returned a
+black frame for a page this size - and read the real `app.css` out of the
 running version's `.asar` (see [Checking a theme against the real
 cascade](18-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade)).
 
@@ -1770,7 +1770,7 @@ cascade](18-theme-callout-discovery.md#checking-a-theme-against-the-real-cascade
 
 A button that cannot act must not go quiet. A `disabled` button swallows the
 click, so the user is left looking at a dimmed control that never says what it
-is waiting for — a name still to be typed, a row still to be chosen, a draft
+is waiting for - a name still to be typed, a row still to be chosen, a draft
 still to be confirmed with Enter. Every *main* button that can be blocked for a
 reason the screen does not already show is therefore **dimmed instead of
 disabled**, and answers a press with a notice naming the one thing in the way.
@@ -1782,7 +1782,7 @@ two functions over one reason string.
   while `reason` is non-null and clears both otherwise. Obsidian's own
   stylesheet draws `button[aria-disabled="true"]` exactly like
   `button[disabled]` (`opacity: 0.7`, `cursor: not-allowed`);
-  `cs-btn-disabled` is what the plugin's own rules key on — the accent and red
+  `cs-btn-disabled` is what the plugin's own rules key on - the accent and red
   hover rules skip it, and the modal footer dims it further (`opacity: 0.4`).
 - **`explainIfBlocked(reason)`** is the first line of the click handler:
   `if (explainIfBlocked(this.saveBlockedReason())) return;`. It returns true
@@ -1794,7 +1794,7 @@ two functions over one reason string.
 Each button owns a private `…BlockedReason(): string | null` that returns the
 translated sentence for the first thing in the way, or `null`. The same method
 paints and answers, so the dimmed look and the words cannot disagree, and the
-click recomputes it instead of trusting the last paint — a state that changed
+click recomputes it instead of trusting the last paint - a state that changed
 without a redraw is still answered truthfully. The sentences name what to do
 (*Choose a replacement callout…*), not the button; a sentence that has to name
 another control takes its label as a `{{placeholder}}` so it cannot drift from
@@ -1814,7 +1814,7 @@ The callout editor's **Save** (`showSaveBlockedNotice`), the quick-insert
 **Insert** (`quickInsertNotice`) and the plugin import's **Import**
 (`noticeFillFirst`) were the first three to work this way and keep their own
 copy; **Reset everything**'s acknowledgement answers a press with a nudge on
-the checkbox instead (see [`ConfirmModal`](#confirmmodal--the-generic-yesno-dialog)).
+the checkbox instead (see [`ConfirmModal`](#confirmmodal---the-generic-yesno-dialog)).
 
 **Where `disabled` stays right.** A button that is merely *busy* and whose
 label already says so: **Saving…** and **Importing…**, the discovery button's
@@ -1826,14 +1826,14 @@ answer too. And a press on one is *not* "clicking away": while a Review
 conversion replacement draft is open, a document-level handler commits it on
 any outside click, so `PortableConversionCustom.outsideClick` ignores a press
 on an `aria-disabled` control, and the view puts the caret back in the draft
-(`focusDraft`) — the notice says *press Enter*, and focus would otherwise sit
+(`focusDraft`) - the notice says *press Enter*, and focus would otherwise sit
 on the very button that just refused.
 
 ## Button labels and the ellipsis
 
 A trailing `…` on a button or menu item says one thing: **pressing this does not
 act yet, and the next step asks for a detail the label does not name.** The reader
-learns to trust it — a plain label acts, a dotted one asks first — so it only works
+learns to trust it - a plain label acts, a dotted one asks first - so it only works
 if it is spent narrowly. Before it was written down, four labels out of some sixty
 carried it, and two of those for the wrong reason: **Convert selected…** opened
 only a yes/no confirmation, like **Delete** and **Reset everything**, which had
@@ -1848,7 +1848,7 @@ Ask three questions, in order:
    names?** No dots. (**Delete**, **Reset everything**, **Convert selected**,
    **Add new callout**, **New palette**, **Manage commands**, **Review
    conversion**.)
-3. **Does the next step ask for something the label does not say** — a source, a
+3. **Does the next step ask for something the label does not say** - a source, a
    format, a file, a replacement, the text itself? Dots. (**Import…**,
    **Export…**, **Upload…**, **Replace in vault…**, **Custom replacement…**.)
 
@@ -1898,11 +1898,11 @@ the step that used to be skipped.
 
 ## Notable individual modals
 
-### `ConfirmModal` — the generic yes/no dialog
+### `ConfirmModal` - the generic yes/no dialog
 
 Resolves `Promise<boolean>`. Required `title` (see above), optional
 `confirmLabel`/`cancelLabel`/`confirmClass` (defaults to
-`"mod-warning"` — a destructive action reads as one by default unless the
+`"mod-warning"` - a destructive action reads as one by default unless the
 caller overrides it). Used throughout for anything destructive that isn't
 specific enough to warrant its own modal (bulk vault edits, full reset).
 
@@ -1949,24 +1949,24 @@ inventory means there is nothing to reset, and the button answers with a notice
 Covered in depth in [Vault discovery § delete flow](11-vault-discovery.md#delete-flow).
 UI-wise: two body copy variants (in-use vs. unused), and an in-use callout's
 footer offers **three** buttons (Cancel, "Replace instead…", Delete) rather
-than the usual two — the replace pivot exists specifically because deleting
+than the usual two - the replace pivot exists specifically because deleting
 an in-use callout is presented as a choice, not a single destructive action.
 
-### `PaletteEditorModal` — simple vs. advanced, two background styles
+### `PaletteEditorModal` - simple vs. advanced, two background styles
 
 Two-column layout mirroring the per-role global-style popups: a sticky live
 preview on the left, titled control cards on the right. **Simple mode**: one
 base colour, and the full six-value palette (light/dark accent, background,
 text) is auto-derived with contrast correction
-(`derivePaletteFromColor` — see [Colour system](12-color-system.md)).
+(`derivePaletteFromColor` - see [Colour system](12-color-system.md)).
 **Advanced mode** exposes independent accent/background/text rows per theme
 mode directly, each edit inferring the opposite mode's value
-(`inferOppositeModeColor`) — but is only offered while the background style
+(`inferOppositeModeColor`) - but is only offered while the background style
 is **Solid**; a Gradient palette has no advanced per-colour view.
 
 Background style is a further 3-way choice: Solid, Gradient (two-stop linear,
 preset direction, an off-by-default "Gradient title text" toggle), or None
-(transparent — see [Colour system](12-color-system.md#preset-palettes--hue-named-not-role-named)
+(transparent - see [Colour system](12-color-system.md#preset-palettes---hue-named-not-role-named)
 for why this is the *only* route to a transparent palette).
 
 The palette card keeps **Name** and **Style** at the same control-column width.
@@ -1976,7 +1976,7 @@ hover/focus edge. The popup is destroyed when the modal closes.
 
 The preview renders on a **reserved demo id** (`PALETTE_DEMO_ID =
 "palette-demo"`), registered through the same registry preview slot the
-callout editor uses — and, notably, **deliberately not**
+callout editor uses - and, notably, **deliberately not**
 `PREVIEW_PLACEHOLDER_ID` (the callout editor's own reserved id), because two
 concurrently-open demo previews (opening the palette editor from inside the
 callout editor) must not collide on one registry slot.
@@ -2045,7 +2045,7 @@ applies to the callout editor's icon-adjustment headers. Menu-category and
 built-in-command resets sit at the trailing edge of their headings, above the
 toggle rows.
 
-### `GlobalStyleModal` — the three per-role style popups
+### `GlobalStyleModal` - the three per-role style popups
 
 Also uses a reserved demo id (`STYLE_DEMO_ID = "global-style-demo"`) and the
 same live-preview-on-a-registered-row pattern, letting the border/radius/
@@ -2068,10 +2068,10 @@ label follows the selected language. The
 inline corner-radius slider reaches 25px for the 1.5× text scale. The settings
 guard still accepts previously saved values up to 64px.
 
-### `MenuCustomizationModal` — reorder without replacing a grabbed row
+### `MenuCustomizationModal` - reorder without replacing a grabbed row
 
 Each render role has one persistent list container with a banded list from
-[`ui/bandedSortList.ts`](../../src/ui/bandedSortList.ts) attached — the same
+[`ui/bandedSortList.ts`](../../src/ui/bandedSortList.ts) attached - the same
 list the Manage icon libraries window uses (below). It owns the band line, the
 handles with their ArrowUp/ArrowDown moves, and the one `makeDragSortable`
 attachment whose `groupOf` keeps each band to itself; the modal supplies each
@@ -2132,8 +2132,8 @@ and lighter in light mode than the hover-border shade. Reading the semantic
 token directly follows the theme's UI palette without a plugin-defined
 colour or mixing ratio.
 
-- **The slot is the dragged row's own box.** The row never leaves the flow —
-  it sits in its slot with a `translateY` floating it under the pointer — so
+- **The slot is the dragged row's own box.** The row never leaves the flow -
+  it sits in its slot with a `translateY` floating it under the pointer - so
   `coverSlot()` reads its `getBoundingClientRect()` less `currentTransform`,
   relative to the list's, and hands top, left, width and height over as
   `--cs-drag-placeholder-*` properties, which `styles.css` turns into an
@@ -2152,7 +2152,7 @@ colour or mixing ratio.
   context (`isolation`, a `z-index`): that would confine the dragged row's
   z-index to its own list, and a later list in the same window would paint over
   a row dragged onto it. Being absolutely positioned, the box takes no flex
-  `gap` and no row index — `rows()` matches `rowSelector` and never sees it.
+  `gap` and no row index - `rows()` matches `rowSelector` and never sees it.
 - **Entrance.** It fades in and opens out from 97% over 200ms
   (`cs-drag-placeholder-in`, behind `prefers-reduced-motion: no-preference`),
   mostly under the lifted row. The keyframes animate the `scale` property,
@@ -2161,8 +2161,8 @@ colour or mixing ratio.
   its settle finishes, is cut short by the next grab, or the window closes;
   then the `is-dragging` look and the placeholder go together, unseen, since
   the row now covers the box exactly. A row let go in its own slot loses both
-  at once. A rebuild that lands mid-settle — the libraries window's deferred
-  refresh — takes the placeholder out with the old rows; the later removal is
+  at once. A rebuild that lands mid-settle - the libraries window's deferred
+  refresh - takes the placeholder out with the old rows; the later removal is
   a no-op.
 - **Reduced motion draws none.** The row never leaves its slot then, so it
   marks the slot itself.
@@ -2174,7 +2174,7 @@ the same job: a list you reorder and remove from. It was checked against the
 1.13.7 `app.js` and the 1.13.1 typings, and it cannot be borrowed here.
 
 It is a declarative settings page. `buildRibbonPage()` returns two
-`type: "list"` definitions — the public `SettingDefinitionList` (1.13.0+, with
+`type: "list"` definitions - the public `SettingDefinitionList` (1.13.0+, with
 `onReorder`, `onDelete`, `emptyState` and `addItem`). Visible items get an X
 (tooltip **Delete**) and a handle; hidden ones sit in an **Other ribbon items**
 list as click-to-restore rows.
@@ -2209,17 +2209,17 @@ Revisit this only if `minAppVersion` reaches 1.13 *and* the settings tab moves
 to `getSettingDefinitions()`. Until then `MenuCustomizationModal` and
 `ui/DragSortList.ts` stay.
 
-### `IconLibrariesModal` — libraries in two bands
+### `IconLibrariesModal` - libraries in two bands
 
 Opened by the **Manage libraries** text button at the end of Pick an icon's
-source row; titled **Manage icon libraries** — the button's words with "icon"
+source row; titled **Manage icon libraries** - the button's words with "icon"
 put back, since the button is read inside a window already about icons and the
 title has to stand on its own
 ([`iconpicker/IconLibrariesModal.ts`](../../src/settings/iconpicker/IconLibrariesModal.ts)).
 It is the Customize menu items list with a different control on each row;
 `ui/bandedSortList.ts` draws both. Above the line are the libraries the picker
 offers, in its order. Below it are the rest, in catalog order and without
-handles — reordering libraries the picker does not show would change nothing —
+handles - reordering libraries the picker does not show would change nothing -
 with a `cs-drag-handle-spacer` keeping every name in one column.
 
 This window is also the only place a new library is downloaded: the Choose
@@ -2228,7 +2228,7 @@ source menu lists only the libraries the picker offers (see
 counting the ones left to download here.
 
 The groups' headings are keyed `iconPicker.librariesAvailable` and
-`iconPicker.librariesToDownload` — keys the Choose source menu shared until it
+`iconPicker.librariesToDownload` - keys the Choose source menu shared until it
 stopped listing libraries to download; they are now this window's alone:
 
 | Heading | Holds | Order |
@@ -2237,19 +2237,19 @@ stopped listing libraries to download; they are now this window's alone:
 | **Libraries to download** | downloadable libraries this device lacks | catalog order |
 | **Hidden libraries** | built-in libraries the person hid | catalog order |
 
-A hidden library cannot sit under *Libraries to download* — there is nothing to
-download — and the window has to list it to offer **Show**, hence the third
+A hidden library cannot sit under *Libraries to download* - there is nothing to
+download - and the window has to list it to offer **Show**, hence the third
 group. Its caption appears only while a built-in library is hidden, after the
 to-download group. `computeRows()`
 therefore returns the shown libraries, then the downloadable ones that are not
 offered, then the hidden ones, and `groupOf(row)` names each row's group for
 `captionOf`; a caption comes with a line above it, except at the very top.
 
-The headings are not drawn like the menu's small muted capitals. All three —
+The headings are not drawn like the menu's small muted capitals. All three -
 **Available libraries**, **Libraries to
-download** and **Hidden libraries** — are drawn exactly as **Built-in commands**
+download** and **Hidden libraries** - are drawn exactly as **Built-in commands**
 is in Commands and shortcuts: same size, weight, colour and line height, no
-capitals, and the same spacing — 36px, a rule, 36px before a later heading, 24px
+capitals, and the same spacing - 36px, a rule, 36px before a later heading, 24px
 under the description for the first, 16px before the list. The description is a
 plain `p.setting-item-description`, as that window's is, so the first gap also
 matches on a phone, where a paragraph carries a margin a settings row does not.
@@ -2261,10 +2261,10 @@ name reads Obsidian's own `--setting-group-heading-size`, `-weight` and `-color`
 and `--line-height-tight`, the variables that heading is drawn with, rather than
 numbers copied from it, so the three follow a theme that restyles setting
 headings and the phone's own scale (15px on the desktop, 14.99px on a phone,
-where the variables also point at a muted colour — read from a browser, against
+where the variables also point at a muted colour - read from a browser, against
 Obsidian's `app.css`). `iconLibrariesModal.test.ts` pins the variables, and pins
-the premise — that **Built-in commands** is a plain `setHeading()` row nothing in
-`styles.css` resizes — so a size given to that heading shows up as a failure
+the premise - that **Built-in commands** is a plain `setHeading()` row nothing in
+`styles.css` resizes - so a size given to that heading shows up as a failure
 there.
 
 **Available libraries** is a row of its own *above* the list rather than a
@@ -2300,7 +2300,7 @@ it is:
 | Ships with the plugin: Lucide, Material, Emoji, Custom Icons | `eye-off`: hide | `eye`: show |
 
 The line under each name says what the library costs: its icon count and, for a
-downloadable library, its size — above the line the space it takes, below it
+downloadable library, its size - above the line the space it takes, below it
 what a download would fetch (only the missing files, so Font Awesome with Brands
 already on disk quotes Solid and Regular). Built-in libraries say "no download
 needed"; Material says "each icon downloads when picked". The count and the
@@ -2311,15 +2311,15 @@ between number and unit so a phone row never parts "625" from "KB".
 Behaviour to keep in mind before changing it:
 
 - **Rows are recomputed, not kept.** Hiding, showing, a deletion, or a
-  download finishing — here or in the picker's own prompt, heard through
-  `packs.onChange` — rebuilds both bands from settings and pack state inside
+  download finishing - here or in the picker's own prompt, heard through
+  `packs.onChange` - rebuilds both bands from settings and pack state inside
   `animate()`, so rows slide into their new band. A change that arrives
   mid-drag waits for the drag's `pointerup`, `pointercancel` or
   `lostpointercapture`: rebuilding under the pointer would detach the dragged
   row.
 - **The window scrolls in exactly one case: the library whose button was
   pressed changed band and landed out of view.** Then the list scrolls with the
-  row, just far enough to show where it went — down to **Libraries to download**
+  row, just far enough to show where it went - down to **Libraries to download**
   or **Hidden libraries** for a delete or a hide, up into **Available
   libraries** for a download that has *finished* or a show. Nothing else moves
   it: not a drag, an arrow key, the reset arrow, a download still running
@@ -2330,12 +2330,12 @@ Behaviour to keep in mind before changing it:
   removes it in a `finally`, so a press that ends without the row moving is
   forgotten and a later move of that library by someone else scrolls nothing).
   Every refresh asks `takeMovedFollowed()` whether one of them has changed band
-  since the last rows — a hide at once, a delete when its first file is gone, a
-  download when its last file has arrived — and hands that key to
+  since the last rows - a hide at once, a delete when its first file is gone, a
+  download when its last file has arrived - and hands that key to
   `list.animate(change, follow)`. There, after the rebuild and before the slide
   is measured, `scrollToReveal()` (`ui/scrollToReveal.ts`) moves the window's
-  body — `contentEl`, the one scroll container of the chrome
-  ([Modal chrome](#modal-chrome--the-one-shell-every-window-wears)) — by the least that puts the row inside it with
+  body - `contentEl`, the one scroll container of the chrome
+  ([Modal chrome](#modal-chrome---the-one-shell-every-window-wears)) - by the least that puts the row inside it with
   `REVEAL_MARGIN_PX` (40px, room for a group's caption and line above its first
   row) to spare, and not at all when it is already in. Because the scroll is
   instant and happens *before* `animateReorder` reads where the rows now are,
@@ -2348,7 +2348,7 @@ Behaviour to keep in mind before changing it:
   detached element and puts them in with one `replaceChildren()`; it used to
   `empty()` the list and append. The row whose button was just pressed has
   focus, and Chromium lays the page out on the spot when it takes focus off a
-  node being removed — with the rows after it already gone, since Obsidian's
+  node being removed - with the rows after it already gone, since Obsidian's
   `empty()` removes from the last child. The scroller is then too short for
   where it was scrolled, clamps, and stays clamped once the rows are back: with
   this window's list being most of its content, pressing a button on a row near
@@ -2356,7 +2356,7 @@ Behaviour to keep in mind before changing it:
   last row lost nothing, which is why it looked erratic). `replaceChildren`
   removes and inserts in one step, so the layout it forces sees the full list.
   `.click()` from a script never reproduces this, because it does not focus the
-  button — use real pointer input. Customize menu items shares the list and was
+  button - use real pointer input. Customize menu items shares the list and was
   checked too; its lists are short next to the rest of its window, so the same
   press there never clamped.
 - **A download writes no settings.** The library lands in its saved slot.
@@ -2365,7 +2365,7 @@ Behaviour to keep in mind before changing it:
 - **The last library cannot leave the picker.** Its button is dimmed with
   `paintBlocked` and explains itself through `explainIfBlocked`.
 - **Deleting asks only when something uses the library.** The `ConfirmModal`
-  names the callouts — up to ten, then "and N more" — and says they keep their
+  names the callouts - up to ten, then "and N more" - and says they keep their
   icons, which `IconService.deleteLibrary` makes true
   ([Icons](13-icons.md#deleting-a-library-keeps-its-callouts-icons)). "Something"
   includes the callout being edited whose picked-but-unsaved icon is from the
@@ -2386,7 +2386,7 @@ Behaviour to keep in mind before changing it:
   its spinner and sliding below the line as its files go. It never downloads.
   When something would be deleted it asks first, naming the libraries and
   saying callouts keep their icons; with nothing to delete it does not ask. It
-  is refused while saving is paused if a callout — or the edit — uses one of
+  is refused while saving is paused if a callout - or the edit - uses one of
   the libraries (the same seal as a single delete), and a library that cannot
   be deleted raises its own notice, leaves the arrow showing, and does not stop
   the rest. Obsidian stacks a phone's setting rows; a phone-scoped rule keeps
@@ -2395,13 +2395,13 @@ Behaviour to keep in mind before changing it:
   closes, which is what tells the picker to take it in: it rebuilds its menu
   and, only if what the panel shows changed, the panel
   ([The icon picker](14-callout-editor.md#the-icon-picker)). A deletion still
-  running when the window is closed — a reset's last libraries included — is
+  running when the window is closed - a reset's last libraries included - is
   seen through first (`deletions`), because the picker reads the pack files
   when it hears back and a half-deleted library would still look downloaded.
 
-### `CommandBuilderModal` — fixed + custom commands, one window
+### `CommandBuilderModal` - fixed + custom commands, one window
 
-Two lists in one modal: the built-in commands (plain rows — nothing to
+Two lists in one modal: the built-in commands (plain rows - nothing to
 configure but a hotkey), and the user's own built commands (full rows with
 add/edit/delete). Both kinds display the same two pieces of information side
 by side, deliberately kept separate:
@@ -2420,16 +2420,16 @@ existing command-registration path and leaves custom commands untouched.
 Assigned hotkeys are preserved: Obsidian exposes no public API for deleting
 user bindings, and this reset does not write its undocumented hotkey store.
 
-The list **subscribes to the registry while open** — deleting a callout from
+The list **subscribes to the registry while open** - deleting a callout from
 another surface (the settings row menu) prunes any command depending on it
 (via `CustomCommandManager.syncAll()`, see
-[Editor integrations](10-editor-integrations.md#customcommandmanager--one-idempotent-sweep)),
+[Editor integrations](10-editor-integrations.md#customcommandmanager---one-idempotent-sweep)),
 and this window has to stop showing a now-deleted command in the same
 moment rather than offering a dead row. Everything here **saves itself
-immediately** on every change — there's no separate OK/Cancel, matching the
+immediately** on every change - there's no separate OK/Cancel, matching the
 plugin's general save-on-change convention.
 
-#### `CommandEditorModal` — the rows, and where each one's rule lives
+#### `CommandEditorModal` - the rows, and where each one's rule lives
 
 The form is *Callout type*, *Callout format*, *Heading level*, *Action*, *Fold
 state*, then a live preview of the command name. Every row is built
@@ -2450,14 +2450,14 @@ their saved callout id and can still edit a pinned legacy theme choice.
 The choice rows live under `settings/command/` rather than in the modal, which
 keeps each control beside its option rule and supplies one popup teardown path:
 
-- **`commandRoles.ts`** — the format list refills itself per callout
+- **`commandRoles.ts`** - the format list refills itself per callout
   (a theme-owned callout has only Block), with a line explaining the absence.
-- **`calloutRow.ts`** — the *Callout type* picker, over the shared
+- **`calloutRow.ts`** - the *Callout type* picker, over the shared
   [combobox](#the-shared-callout-picker). This was a `<select>` whose every
   option read `Abstract (abstract)`; the id is now shown only on a row it
   actually explains. Registered choices form one flat list without headings.
-- **`optionRows.ts`** — the fixed Heading level and Action choices.
-- **`foldStateRow.ts`** — the three fold states, shown only for Block. Heading
+- **`optionRows.ts`** - the fixed Heading level and Action choices.
+- **`foldStateRow.ts`** - the three fold states, shown only for Block. Heading
   and inline are not narrower versions of the same choice, they have no fold
   syntax at all, so the row hides rather than greying out. Both block *actions*
   show it: Wrap selection and Insert new write the same header line.
@@ -2468,7 +2468,7 @@ option refresh methods so the modal can sync dependent rows, and returns a
 disposer for every popup.
 
 `draft()` mirrors the sanitizer's shape, including omitting `fold` when it is
-`"none"` — otherwise a command saved from this window and the same command
+`"none"` - otherwise a command saved from this window and the same command
 reloaded would differ by a key that means nothing. See
 [`CustomCommand`](04-data-model.md#customcommand).
 
@@ -2513,9 +2513,9 @@ callout and color pickers retain their editable query behavior.
 
 ### Dropdown popups wear their control's face
 
-The two popups that open from a `cs-dropdown-control` — `.cs-combobox-menu`
+The two popups that open from a `cs-dropdown-control` - `.cs-combobox-menu`
 (every `ListboxPopup`, so every `SelectDropdown` too) and the Fold selector's
-`.cs-palette-menu` — are painted from four tokens declared once on both:
+`.cs-palette-menu` - are painted from four tokens declared once on both:
 
 | Token | Value | Paints |
 | --- | --- | --- |
@@ -2539,8 +2539,8 @@ field in the default dark theme, and square-shouldered beside a macOS
 outline:
 
 - **Fill.** The popup is defined as the expression the field itself rests on, and
-  the field never repaints it — it answers the pointer and focus with its edge
-  ([A field answers with its edge, not its fill](#a-field-answers-with-its-edge-not-its-fill)) —
+  the field never repaints it - it answers the pointer and focus with its edge
+  ([A field answers with its edge, not its fill](#a-field-answers-with-its-edge-not-its-fill)) -
   so the two are one grey in every state, not just at the moment the list opens.
   Tests pin both halves: the popup's face is the control's, and nothing but the
   shared base paints a fill on a field. An earlier version wore the field's
@@ -2550,7 +2550,7 @@ outline:
   with `corner-shape: var(--input-corner-shape, round)`. A list is taller than a
   line, so it takes the radius Obsidian gives such a box: `--textarea-radius`
   where defined (mobile only, 24px, because `--input-radius` there is a 44px
-  pill that would clip the first row's text), otherwise the field's own — 5px by
+  pill that would clip the first row's text), otherwise the field's own - 5px by
   default, 8px superellipse on macOS. The import window's paste box uses the
   same expression.
 - **Outline.** `--cs-field-border-hover`, the colour an engaged field draws its
@@ -2561,7 +2561,7 @@ outline:
 Five things leaned on the old dark ground and are re-derived from the face:
 
 - *Selected rows* were `--background-secondary-alt`, which in `.theme-dark` is
-  `--interactive-normal` — the face itself, so a selection would vanish. They mix
+  `--interactive-normal` - the face itself, so a selection would vanish. They mix
   from the face toward `--text-normal`, which steps away in whichever direction
   the theme reads as "more contrast", as `--cs-btn-face-hover` does.
 - *Group headings* use `--text-muted`: `--text-faint` is 2.2:1 on the dark face.
@@ -2582,7 +2582,7 @@ for the built-in accents, worst case: dark (default theme) Note/Info/Todo blue
 teal `#00bfbc` (already 2.3:1 on white) is unchanged on Windows/Linux, where the
 face is white, and falls to 1.8:1 on macOS, where the light field is itself grey.
 (Painting the popup the field's hover fill instead would have cost 2.5:1, 2.9:1
-and 1.9:1/1.5:1 — the reason that version was dropped.) Under the [light
+and 1.9:1/1.5:1 - the reason that version was dropped.) Under the [light
 palette](#the-light-palette) the macOS light case is gone: the face is white
 there too, so the teal sits on the same ground as on Windows. The figures above
 remain what a community theme in light mode on macOS gets.
@@ -2596,9 +2596,9 @@ with body classes `theme-dark`/`theme-light` × `mod-macos`/`mod-windows`/`is-mo
 is-phone`. The open field needs no stand-in for `:focus-within`: `.is-open`
 carries the edge. For hover, drive a real pointer (Chrome's
 `Input.dispatchMouseEvent` over the DevTools protocol) rather than a forced
-class, so Obsidian's own `:hover` rules take part — and read
+class, so Obsidian's own `:hover` rules take part - and read
 `getComputedStyle(...).borderTopColor` as `color(srgb r g b)` with components in
-0–1 when it comes from a `color-mix`, not as `rgb()`: parsing it as 0–255 reads
+0 - 1 when it comes from a `color-mix`, not as `rgb()`: parsing it as 0 - 255 reads
 every mixed colour as black.
 
 ### Option rows are padded once
@@ -2608,8 +2608,8 @@ the **label** owns the padding (`6px 12px`): text starts 13px inside the popup,
 28.9px rows, the same in the language list, the occurrence **Format** filter,
 the command editor and the palette editor. The command editor's four selects and
 the palette editor's **Style** select used to add `padding: 8px 12px` to the
-*row* as well, on top of the label's, which put their text 25px in — the field's
-own text starts 11px in — and made their rows 45px tall. That rule is gone;
+*row* as well, on top of the label's, which put their text 25px in - the field's
+own text starts 11px in - and made their rows 45px tall. That rule is gone;
 `tests/dropdownOptionRows.test.ts` fails if a row-level padding comes back.
 
 ### The id line under a callout's name
@@ -2619,15 +2619,15 @@ own text starts 11px in — and made their rows 45px tall. That rule is gone;
 `", "` (the last has none), inside `.callout-studio-suggestion-id`. The line is
 cut by the browser and by nothing else: `text-overflow: ellipsis` on the line
 hides atomic inline boxes whole, so a line that does not fit always ends
-`abstract, …` — cut between ids, the native `…` after a comma and a space,
+`abstract, …` - cut between ids, the native `…` after a comma and a space,
 identical on every row. A single id longer than the whole line ellipsizes inside
 its own item.
 
 It used to work out how many ids fit with a canvas measurement and append a
 literal `...`, *and* carried the native ellipsis as a fallback. The measurement
 ran while the rows were being built, before the list overflowed and a scrollbar
-(12–17px) narrowed every row, so rows that had just fit now overflowed and got
-the browser's `…` on top of the typed `...` — in one list, `check, ...`
+(12 - 17px) narrowed every row, so rows that had just fit now overflowed and got
+the browser's `…` on top of the typed `...` - in one list, `check, ...`
 (three monospace cells wide), a glued `…` and the two overlapping. Never measure
 this line. The id line is also `direction: ltr` in any window, right-aligned under
 `.mod-rtl` so it lines up with the name above it: ids are code, and in an RTL
@@ -2638,9 +2638,9 @@ window the bidi algorithm reordered the run and stranded the commas.
 Every place the user picks one callout out of a list is the same control:
 [`calloutCombobox.ts`](../../src/settings/calloutCombobox.ts), over
 [`ui/listboxPopup.ts`](../../src/ui/listboxPopup.ts). It replaced two native
-`<select>`s — *Default fallback callout*
+`<select>`s - *Default fallback callout*
 ([`FallbackSection.ts`](../../src/settings/sections/FallbackSection.ts)) and
-*Callout type* above — neither of which could be typed into or showed a callout's
+*Callout type* above - neither of which could be typed into or showed a callout's
 icon or colour, while the `[!` popover in the editor had done both for a long
 time. The fallback picker uses the shared field face and interaction rules;
 there is no fallback-specific button styling.
@@ -2648,10 +2648,10 @@ there is no fallback-specific button styling.
 The rows are literally the popover's markup
 ([`calloutComboboxRow.ts`](../../src/settings/calloutComboboxRow.ts) reuses the
 `callout-studio-suggestion*` classes), and the id/alias second line is the same
-function in both — `renderCalloutIdLine`, which `AutoComplete.renderSuggestion`
+function in both - `renderCalloutIdLine`, which `AutoComplete.renderSuggestion`
 calls too, so a callout cannot describe itself one way in the editor and another
-way in settings. Matching goes through the same `calloutMatchesQuery` — id,
-display name and **aliases**, substring rather than fuzzy — ordered by
+way in settings. Matching goes through the same `calloutMatchesQuery` - id,
+display name and **aliases**, substring rather than fuzzy - ordered by
 `matchRank`'s four tiers (exact, name-prefix, id/alias-prefix, anywhere) so that
 typing `no` answers `Note` rather than `Annotation`.
 
@@ -2677,8 +2677,8 @@ ungrouped, empty, or create-only results.
 
 Two options add something after the rows, and they are opposites. `footerRow`
 is an action (the palette picker's Create "name"): it answers the pointer and
-runs on click, though the arrow keys skip it. `footerNote()` is information —
-plain text asked on every rebuild, nothing when it returns `""` — drawn last as
+runs on click, though the arrow keys skip it. `footerNote()` is information -
+plain text asked on every rebuild, nothing when it returns `""` - drawn last as
 `cs-combobox-footer-note` with no role and no listener, outside `rowEls`, so
 nothing highlights it and a press on it is swallowed by the menu's
 `mousedown`. A rule above it, the same as between groups, marks the end of the
@@ -2691,7 +2691,7 @@ listbox. Their readonly input displays the chosen value without filtering.
 
 A query that matches nothing does **not** dead-end. When the call site supplies
 `onCreate`, the empty state is replaced by a real, keyboard-reachable row
-offering to create the callout under that name — the same offer, and the same
+offering to create the callout under that name - the same offer, and the same
 `callout-studio-suggestion-create-new` markup, as the `[!` popover. The picker
 then adopts what comes back, which is why `choices` is a *function*: the list is
 re-read after the editor closes, so the new row is simply there.
@@ -2728,8 +2728,8 @@ distinction through its single `is-active` highlight. A row that is both
 `is-selected` and `is-active` gets a visible active treatment while retaining
 its selected state; hovering the committed option must not look inert.
 
-Callers **must** call `destroy()` — a modal from `onClose`, a settings section
-through `registerDisposer` — because the popup holds a document-level click
+Callers **must** call `destroy()` - a modal from `onClose`, a settings section
+through `registerDisposer` - because the popup holds a document-level click
 listener. Destruction also disables the detached input permanently so stale
 DOM events cannot reopen a menu and attach new listeners.
 
@@ -2759,7 +2759,7 @@ load-bearing and have already been bugs. Selecting the label on click has to
 happen on `click`, not on `focus`: the browser fires mousedown → focus →
 mouseup → click, and mouseup places a caret that undoes an earlier `select()`.
 And the menu's `mousedown` `preventDefault()` is what lets a mouse selection
-commit at all — a click on a row is also a blur, and blur lands first.
+commit at all - a click on a row is also a blur, and blur lands first.
 
 Field names are assigned by `fieldAccessibleName.ts`, using a hidden sibling
 label referenced through `aria-labelledby`. The label has the `hidden`
@@ -2771,7 +2771,7 @@ The control itself uses the [shared dropdown styling](#shared-dropdown-controls)
 matching the other listbox triggers. The input inside is
 painted down to nothing, and **its rules are descendant-
 qualified on purpose**: Obsidian styles `input[type='text']` at specificity
-(0,1,1), which beats a lone class — a bare `.cs-combobox-input` rule loses, and
+(0,1,1), which beats a lone class - a bare `.cs-combobox-input` rule loses, and
 that is how the field first came to look like a second box drawn inside the
 control.
 
@@ -2785,20 +2785,20 @@ resolve to, the "Deleted color" state when they resolve to none, and the
 save-state baseline that feeds all stayed, because they read and write editor
 state.
 
-### `hotkeyLink.ts` — reading a binding Obsidian doesn't expose a public API for
+### `hotkeyLink.ts` - reading a binding Obsidian doesn't expose a public API for
 
 `printHotkeyForCommand` goes through the undocumented `app.hotkeyManager`,
 guarded structurally (an unreadable binding reads as `""`/unassigned rather
-than throwing — every internal API access in this codebase follows this
+than throwing - every internal API access in this codebase follows this
 pattern). Because that helper only ever formats the **first** binding on a
 command bound to more than one shortcut, showing every binding means
 re-implementing Obsidian's own key-formatting tables by hand
 (`MODIFIER_GLYPHS`, platform-specific: `⌘⌃⌥⇧` stacked with no separator on
-macOS, `Ctrl + Alt + Shift` spelled out with `+` elsewhere) — duplicated
+macOS, `Ctrl + Alt + Shift` spelled out with `+` elsewhere) - duplicated
 rather than simplified, specifically so the same shortcut can never read two
 different ways in two different windows of this plugin.
 
-### `WelcomeModal` — the one chrome opt-out
+### `WelcomeModal` - the one chrome opt-out
 
 Covered above under Modal chrome. Automatic onboarding requires confirmed
 fresh-install eligibility and checks both `settings.welcomeSeen` and the
@@ -2824,11 +2824,11 @@ built-ins `tip`, `warning` and `note`, and that was wrong twice over:
   themes the heading and inline examples were unreadable.
 - For an *unmodified* built-in, `CSSInjector` deliberately hands the accent to
   Obsidian's own `--callout-tip` variable rather than a hex (see
-  [CSS generation](06-css-generation.md)) — so the splash was advertising the
+  [CSS generation](06-css-generation.md)) - so the splash was advertising the
   theme's colours rather than the plugin's.
 
 It now uses `WELCOME_DEMO_ID` (`demo`) and registers its own violet definition
-into the registry's transient preview slot via `beforeRender` —
+into the registry's transient preview slot via `beforeRender` -
 [`welcomeDemo.ts`](../../src/settings/welcomeDemo.ts).
 
 ##### Why this one id is *not* reserved
@@ -2836,7 +2836,7 @@ into the registry's transient preview slot via `beforeRender` —
 `demo` is deliberately **absent** from `RESERVED_DEMO_IDS`, and that is the
 single respect in which it differs from the other two demo ids. The splash
 sample is copy a user reads, and `> [!global-style-demo]` puts plumbing in the
-middle of the one screen whose whole job is to teach the syntax — so this id is
+middle of the one screen whose whole job is to teach the syntax - so this id is
 spelled the way a person would write it.
 
 The price is exactly what reservation buys, and it is not worth paying here.
@@ -2845,7 +2845,7 @@ The price is exactly what reservation buys, and it is not worth paying here.
 reserving them costs nothing. `demo` is an ordinary word the editor does
 produce (`"Demo"` → `demo`), so reserving it would quietly cripple a callout
 somebody legitimately named "Demo": filtered out of the autocomplete, dropped
-from their export, rejected by their own re-import — with nothing in the editor
+from their export, rejected by their own re-import - with nothing in the editor
 telling them the name was taken. A reserved id has to be one nobody can reach.
 
 What stands in for reservation is that the definition exists **only while the
@@ -2853,24 +2853,24 @@ splash is open**, which is all the isolation it needs: `setPreviewDefinition`
 never persists and never notifies, `definitionsForLists()` hides it from every
 settings list, and if the user *does* own a real `demo` the preview slot
 shadows it and hands the real row back on close (`previewShadowedDef`). The one
-residue is cosmetic and transient — their own `[!demo]` callouts in a note
+residue is cosmetic and transient - their own `[!demo]` callouts in a note
 behind the modal repaint violet until it closes. `tests/welcomeSample.test.ts`
 pins the non-reservation so a later tidy-up cannot undo the reasoning.
 
 Two halves are needed, and only together:
 
-1. **The id**, which removes the by-name attack — no theme has a rule for an id
+1. **The id**, which removes the by-name attack - no theme has a rule for an id
    it has never heard of.
 2. **A scoped hardening block in `styles.css`**, which handles what an id change
    structurally cannot: a theme's *generic* selectors. `.callout { … !important }`
    still reaches the block role, and plain heading rules still reach the heading
-   role — the injected `.cs-heading-callout` / `.cs-inline-callout` rules carry
+   role - the injected `.cs-heading-callout` / `.cs-inline-callout` rules carry
    no `!important` at all, on purpose, so a theme wins those without a fight.
    The block restates the same values under `.cs-welcome-modal`, keyed on the
    demo id, with repeated compounds for weight (the trick
    `manager/theme/studioWeight.ts` uses). Among `!important` author declarations
    the higher specificity wins, so it survives; and because it is scoped to the
-   modal and the id, it can reach nothing else — load-bearing here rather than
+   modal and the id, it can reach nothing else - load-bearing here rather than
    tidiness, since a user may own a real `demo`.
 
    It restates, and does not invent. All three roles carry
@@ -2878,17 +2878,17 @@ Two halves are needed, and only together:
    `.cs-heading-callout`'s and `.cs-inline-callout`'s own default formula copied
    verbatim: the hardening changes the *weight* of the plugin's answer, never
    the answer. That is also why the inline example is a tint and not the solid
-   violet lozenge it was for one revision — a solid pill is a look the plugin
+   violet lozenge it was for one revision - a solid pill is a look the plugin
    gives no other inline callout, so the splash was demonstrating something
    users could not reproduce.
 
 `onDestroy` clears the slot and re-injects. That inject is not just tidying: on
 a fresh install this modal holds a preview definition during the very first
 launch, and `injectNow` skips the startup CSS snapshot for as long as one is
-live — so this is the inject that writes it.
+live - so this is the inject that writes it.
 
 The demo never becomes a real callout. `isDemo` keeps it out of the settings
-lists and out of `data.json`, and the slot is cleared on close — see
+lists and out of `data.json`, and the slot is cleared on close - see
 [Callout registry](05-callout-registry.md#reserved-demo-ids) for the permanent
 guarantees the other two demo ids get on top of that, and the section above for
 why this one does not take them.
@@ -2899,7 +2899,7 @@ why this one does not take them.
 It subscribes to `SettingsWriter.status` and redraws only its own slot, preserving
 scroll position and form fields.
 
-On the settings page the slot is `CalloutListsScaffold.bannerSlotEl` — an empty
+On the settings page the slot is `CalloutListsScaffold.bannerSlotEl` - an empty
 div the lists scaffold creates directly under the **Callout Studio** title row,
 which is why `SettingsTab.display()` renders the banner *after*
 `calloutLists.render()` rather than first. It is still ahead of every section,
@@ -2908,9 +2908,9 @@ as a message about the settings window rather than about this plugin.
 
 Each redraw builds the same three parts: a header (`alert-triangle` plus a title
 row), the message paragraphs, and `.cs-readonly-banner-actions` holding whatever
-actions apply. The title is chosen from the writer, not from the message —
+actions apply. The title is chosen from the writer, not from the message -
 `isFrozen || status.frozenReason` reads as *Saving is paused*, a bare
-`status.failure` as *Settings were not saved* — so a frozen session that also
+`status.failure` as *Settings were not saved* - so a frozen session that also
 fails a retry still says it is paused. The card is outlined on all four sides
 rather than barred down one edge, which is also what makes it read the same way
 in an RTL locale; the action row is `flex-start`-aligned with the prose and
@@ -2944,12 +2944,12 @@ is offered in every state on the settings page (below). The settings page passes
 ### What a paused banner says
 
 Whoever reads a paused banner has usually just seen "missing" next to their
-settings and assumed the worst, so every paused state — frozen for `missing`,
-`unreadable`, `recovery-read` or `newer-version` — reads the same way, in two
+settings and assumed the worst, so every paused state - frozen for `missing`,
+`unreadable`, `recovery-read` or `newer-version` - reads the same way, in two
 or three short paragraphs chosen by `pausedCopy()` in
 [`saveStatusCopy.ts`](../../src/settings/saveStatusCopy.ts):
 
-1. **Calm.** "First of all, take a deep breath — everything is going to be
+1. **Calm.** "First of all, take a deep breath - everything is going to be
    okay", then what is safe, then why the page is read-only (`pausedNote`,
    because `SettingsTab` makes every edit `inert`; see
    `sections/pausedReadOnly.ts`). The editor gets the same paragraph without
@@ -2958,7 +2958,7 @@ or three short paragraphs chosen by `pausedCopy()` in
    reason). After a manual **Check again** finds the file still missing, it
    gets more specific and names the cloud-storage "keep it downloaded" setting
    that most often keeps a synced file away.
-3. **What to do**, from `status.frozenReason` — the field that decides the
+3. **What to do**, from `status.frozenReason` - the field that decides the
    buttons. A known cause of an unreadable file goes here, as the existing
    `saveStatus.diagnosis.*` text.
 
@@ -2978,8 +2978,8 @@ across every paused state, failure, surface and diagnosis:
   **Try again**, which reads **Check again** for a missing file.
 - **A comforting claim needs a fact.** "Your callouts are still here on this
   device" only when `writer.hasRecoveryState`, never over a page of built-ins.
-  "Checks again every minute" only where `rechecksWhilePaused()` — the same
-  function `pausedRecheck.ts` runs on — says the timer covers the state.
+  "Checks again every minute" only where `rechecksWhilePaused()` - the same
+  function `pausedRecheck.ts` runs on - says the timer covers the state.
 
 ### Guided order for a missing file
 
@@ -3019,8 +3019,8 @@ on every re-render and on `hide()`.
 Keyboard focus goes with the reader, before the scroll starts and with
 `preventScroll`, so the glide is not cut short and a screen reader announces
 the destination at once. Obsidian 1.13 makes every settings row focusable
-(`tabindex="-1"`) and moves between rows itself — the arrow keys go row to row,
-Enter reaches the row's button — so the row takes focus; older Obsidian rows
+(`tabindex="-1"`) and moves between rows itself - the arrow keys go row to row,
+Enter reaches the row's button - so the row takes focus; older Obsidian rows
 cannot, and there the row's first usable control does. An inert row (Import,
 while saving is paused) is left alone. `run(fromKeyboard)` passes `focusVisible`:
 the buttons report a click with `event.detail === 0` (Enter or Space) as from
@@ -3029,7 +3029,7 @@ With `prefers-reduced-motion: reduce` the scroll jumps (`behavior: "auto"`,
 via `prefersReducedMotion()` in `ui/flip.ts`); the pulse only fades a colour and
 stays.
 
-## `SettingsRecoveryModal` — Version history
+## `SettingsRecoveryModal` - Version history
 
 Opened from **Earlier versions** in the **Version history** section
 (`renderBackupSection`, between **Import and export** and **Language**), whose
@@ -3093,7 +3093,7 @@ Each row is an ordinary `Setting`:
 file deletion syncing only when the version includes backup or sync-copy files.
 Another device's private history may retain the version. Then
 `recovery.removeVersion()` deletes every available copy; the list is read again
-either way. **Restore** is `mod-warning`, dimmed (not disabled — a press says
+either way. **Restore** is `mod-warning`, dimmed (not disabled - a press says
 why, see [Blocked main buttons say why](#blocked-main-buttons-say-why)) while
 saving is paused or when the version equals the current setup, and confirms
 before calling `recovery.restore()`; both confirmations and their notices quote
@@ -3104,7 +3104,7 @@ The row floor for the text column is `12rem` (`min(12rem, 100%)`): about what a
 version name needs before it breaks a word per line. On a desktop window
 the controls sit beside the text; on a phone there is no room for the floor
 beside them, so the control cluster wraps onto its own line under the text and
-stays at the end — still compact, never Obsidian's full-width phone button.
+stays at the end - still compact, never Obsidian's full-width phone button.
 `versionRowLayout.ts` observes the rows and their info/control boxes with the
 owning window's `ResizeObserver`, and toggles `.cs-recovery-controls-wrapped`
 when the controls are below the info box. This follows actual flex wrapping
@@ -3137,9 +3137,9 @@ on that snapshot until closed; reopening details captures a new comparison.
 
 `recoveryComparisonTable.ts` lays the report out as one table per settings section,
 in the settings page's order, each with four columns: **No.**, **Item**, **Current
-setup** and **After restoring this version**. A table's head has two rows — the
+setup** and **After restoring this version**. A table's head has two rows - the
 section title, a `<button>` that folds the section down to that row, and the column
-headings — and the whole `<thead>` is the sticky layer at `top: 0`, so the two pin
+headings - and the whole `<thead>` is the sticky layer at `top: 0`, so the two pin
 as one block and let go with the section's last row. The window body's top padding
 moves into the report, so nothing shows above a pinned head (the rules are in
 `tests/modalBodyLayers.test.ts`). Tables use the theme's `--radius-m` for their
@@ -3209,19 +3209,19 @@ prefers-reduced-motion**.
 There are two entry points, and a new animation uses whichever matches how it
 is driven.
 
-**From JavaScript** — `prefersReducedMotion()` in
+**From JavaScript** - `prefersReducedMotion()` in
 [`ui/flip.ts`](../../src/ui/flip.ts) is the only function; it is a fresh
 `matchMedia` read on every call, so a change in the system setting applies to
 the next animation without a reload. It is exported from `flip.ts` for
 historical reasons, not because the check belongs to FLIP. Its callers:
 
-- `flip.ts` itself — row reorders skip the FLIP animation and just land.
-- `DragSortList.ts` (and so `bandedSortList.ts`, which drags through it) — read once when a drag starts; the settle and slide
+- `flip.ts` itself - row reorders skip the FLIP animation and just land.
+- `DragSortList.ts` (and so `bandedSortList.ts`, which drags through it) - read once when a drag starts; the settle and slide
   animations are skipped and no drop placeholder is drawn (see the drag section above).
-- `settings/targetHighlighter.ts` — `scrollIntoView` uses `behavior: "auto"`
+- `settings/targetHighlighter.ts` - `scrollIntoView` uses `behavior: "auto"`
   instead of `"smooth"`; the pulse only fades a colour.
 
-**From CSS** — `@media (prefers-reduced-motion: …)` blocks in
+**From CSS** - `@media (prefers-reduced-motion: …)` blocks in
 [`styles.css`](../../styles.css). They take two shapes:
 
 - **`reduce` blocks** turn something off: `transition: none` on the portable

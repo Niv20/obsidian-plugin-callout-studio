@@ -1,6 +1,6 @@
 # Icons
 
-Covers the whole icon subsystem: [`src/icons/`](../../src/icons/) — the service
+Covers the whole icon subsystem: [`src/icons/`](../../src/icons/) - the service
 layer (fetching, caching, resolving), the pack registry (what each library
 looks like as data), rendering, and the "Your images" user-upload source.
 
@@ -98,26 +98,26 @@ From [Architecture](02-architecture.md#two-id-spaces-for-icons):
 except for Font Awesome (`fa` → `fa-solid`/`fa-regular`/`fa-brands`) and
 Tabler (`tabler` → `tabler-outline`/`tabler-filled`).
 [`src/icons/registry.ts`](../../src/icons/registry.ts) holds both mappings as
-**total, frozen `Record`s** — declaring a member on one union without a line
+**total, frozen `Record`s** - declaring a member on one union without a line
 in the corresponding record is a compile error, not a silently-blank grid.
 
 ```ts
 ICON_SOURCES: Record<IconSourceId, IconPack>       // the 9 libraries
 SOURCE_OF_TYPE: Record<IconPackId, IconSourceId>    // which source owns each body of artwork
 packFor(icon: CalloutIcon): IconPack | undefined     // undefined ⟺ icon.type unknown to this build
-iconCacheKey(pack, name, variant): string             // "pack name variant" — pack-scoped, never source-scoped
+iconCacheKey(pack, name, variant): string             // "pack name variant" - pack-scoped, never source-scoped
 ```
 
 > [!IMPORTANT]
 > **Cache keys and pack-store calls always use `icon.type` (an `IconPackId`),
 > never `pack.id` (an `IconSourceId`).** Using the source id would collapse
-> Font Awesome's three styles onto one cache entry and one download state —
+> Font Awesome's three styles onto one cache entry and one download state -
 > picking a Brands icon would look "ready" for Solid too, and vice versa.
 
 ## The `IconPack` contract
 
 [`src/icons/types.ts`](../../src/icons/types.ts) defines the interface every
-library implements — **pure data and pure functions, no I/O**. Downloading is
+library implements - **pure data and pure functions, no I/O**. Downloading is
 strictly `IconService`'s job, which is what keeps a pack trivially testable
 and unable to stall a render:
 
@@ -136,73 +136,73 @@ interface IconPack {
   entryMatches?(entry, variants): boolean;            // filter the grid by variant (FA style, Tabler style)
   pickerNotice?(variants): LocaleKey | undefined;      // standing notice for some variant states
   cacheVariant(icon, role): string;                     // everything besides name that changes the drawing
-  buildSvg?(icon, role): string | null;                  // synchronous — a render path cannot wait
+  buildSvg?(icon, role): string | null;                  // synchronous - a render path cannot wait
 }
 ```
 
-### `IconPackKind` — five supply models
+### `IconPackKind` - five supply models
 
 | Kind | Members | How artwork reaches the screen |
 | --- | --- | --- |
 | `builtin` | Lucide | Obsidian's own `setIcon()`. No data, no network, ever. |
 | `glyph` | Emoji | A text glyph drawn as a text node. No SVG at all. |
-| `perIconRemote` | Material Symbols | One SVG fetched per icon, from Google, on choice — see below. |
+| `perIconRemote` | Material Symbols | One SVG fetched per icon, from Google, on choice - see below. |
 | `bundledRemote` | Tabler, Font Awesome, Octicons, RPG Awesome, Simple Icons | One file per pack downloaded once, then fully offline. |
 | `local` | Your images | Held in `settings.userImages`. Never fetched, ever. |
 
-### `cacheVariant` — everything besides the name that changes the drawing
+### `cacheVariant` - everything besides the name that changes the drawing
 
 Must cover **every** axis that changes the *artwork itself*, or two visually
 different drawings collide on one cache entry:
 
 - Material encodes `style` + `weight` (100,000+ combinations, hence
   `perIconRemote`).
-- Octicons encodes the **pixel height it drew at** — it ships two sizes (16px
+- Octicons encodes the **pixel height it drew at** - it ships two sizes (16px
   for small surfaces, 24px for large) and `entryMatches`/role dispatch pick
   between them.
-- "Your images" encodes the picture's `rev` (bumped on every edit — this is
+- "Your images" encodes the picture's `rev` (bumped on every edit - this is
   what makes replacing a picture repaint every open note that uses it,
   because otherwise the render key would be unchanged before and after) plus
-  a `c` suffix when `icon.recolor` is set — two callouts sharing one picture
+  a `c` suffix when `icon.recolor` is set - two callouts sharing one picture
   with different recolour settings must not share a cache entry, or one
   would keep the other's paint.
 - Packs with a single drawing per icon (Tabler, Font Awesome, RPG Awesome,
   Simple Icons) use `""`.
 
-## `IconService` — the one entry point
+## `IconService` - the one entry point
 
 [`src/icons/IconService.ts`](../../src/icons/IconService.ts) is what `main.ts`
 and every other consumer talks to; it composes two very different fetch
 strategies behind one interface.
 
 ```ts
-initialize(): Promise<void>          // startup — see below
+initialize(): Promise<void>          // startup - see below
 ensureArtwork(icon): Promise<void>     // the picker's "Confirm" button
-ensureArtworkFor(icons): Promise<void>  // the ONLY repair path — batches
+ensureArtworkFor(icons): Promise<void>  // the ONLY repair path - batches
 deleteLibrary(source, alsoKeep?): Promise<boolean> // the Manage icon libraries window's Delete
 hasFailed(icon, role): boolean
 ```
 
-### `initialize()` — startup order matters
+### `initialize()` - startup order matters
 
 ```text
 1. Filter registry.getAll() to icons whose callout actually shows one (hideIcon !== true)
-2. packs.loadUsed(types)     — read from DISK only the packs this vault references
-3. cssInjector.inject()       — repaint with whatever was already on disk
-4. fetch.ensureAll()           — Material's per-icon sweep FIRST (one attempt per icon)
-5. ensureArtworkFor(icons)      — repair whatever the packs would still need
+2. packs.loadUsed(types) - read from DISK only the packs this vault references
+3. cssInjector.inject() - repaint with whatever was already on disk
+4. fetch.ensureAll() - Material's per-icon sweep FIRST (one attempt per icon)
+5. ensureArtworkFor(icons) - repair whatever the packs would still need
 ```
 
 > [!NOTE]
 > **Material runs before the general repair pass, deliberately.** Material's
-> `ensureAll()` is built for exactly this moment — one attempt per missing
+> `ensureAll()` is built for exactly this moment - one attempt per missing
 > icon, no retries. Running the general `ensureArtworkFor` first would send
 > every missing Material icon through `cacheOne`'s full three-attempt retry
-> loop (with waits between attempts) on a vault that may simply be offline —
+> loop (with waits between attempts) on a vault that may simply be offline -
 > multiplying startup latency for no benefit.
 
 A callout with `hideIcon: true` is explicitly excluded from this whole
-sweep — nothing paints it, so pulling its pack off disk (or worse, the
+sweep - nothing paints it, so pulling its pack off disk (or worse, the
 network) would be pure waste. Its cached SVG is left untouched by cleanup
 passes, so turning the icon back on later needs neither a re-download nor a
 re-fetch.
@@ -216,7 +216,7 @@ but its late completion cannot begin another operation or revive the old service
 `packValidation.ts` holds the verification/parsing helpers separately from this
 lifecycle, and `iconArtworkCache.ts` holds the synchronous role-aware cache copy.
 
-### `ensureArtworkFor(icons)` — the only repair path
+### `ensureArtworkFor(icons)` - the only repair path
 
 This is the function called from **both** places an icon can arrive without
 having gone through the picker: **import** (a file names icons this vault may
@@ -225,46 +225,46 @@ or failed its checksum). It:
 
 1. Filters to icons not already fully cached and not already known-failed
    this session.
-2. Groups by `icon.type` (never by source) — so twenty Font Awesome Brands
+2. Groups by `icon.type` (never by source) - so twenty Font Awesome Brands
    icons cost **one** download, not twenty.
-3. Fetches **sequentially within a group** — "parallel requests to one CDN
+3. Fetches **sequentially within a group** - "parallel requests to one CDN
    gain nothing and make a failure harder to attribute," per the source
    comment; the first icon in a group triggers the pack download, the rest
    just copy artwork out of the now-present pack.
-4. Announces what was restored **once, for the whole batch** — anything that
+4. Announces what was restored **once, for the whole batch** - anything that
    failed has already announced itself individually (a per-icon Notice from
    `IconFetchManager`, or a permanent error state via `hasFailed`).
 
-### `isFullyCached(icon)` — checked per render role, not just the one on screen
+### `isFullyCached(icon)` - checked per render role, not just the one on screen
 
 A pack can draw the same icon differently per role (Octicons' two sizes), and
 `copyPackArtwork` stores **every** role's drawing when an icon is first
-committed — not just the block-callout drawing. `isFullyCached` mirrors this:
+committed - not just the block-callout drawing. `isFullyCached` mirrors this:
 it checks all three `CALLOUT_RENDER_ROLES`, which is what lets a user enable
 the (previously disabled) inline-callout role later without needing the
 source pack to still be downloaded.
 
-## `PackDataStore` — bundled-file download and verification
+## `PackDataStore` - bundled-file download and verification
 
 [`src/icons/PackDataStore.ts`](../../src/icons/PackDataStore.ts) handles the
 `bundledRemote` packs (Tabler, Font Awesome, Octicons, RPG Awesome, Simple
 Icons).
 
 ```ts
-loadFromDisk(id): Promise<PackDiskResult>   // "ready" | "missing" | "corrupt" — NEVER fetches
+loadFromDisk(id): Promise<PackDiskResult>   // "ready" | "missing" | "corrupt" - NEVER fetches
 download(id): Promise<boolean>               // fetches, verifies, persists
 remove(id): Promise<boolean>                 // deletes the file, forgets the artwork
 ```
 
-**Every read — download or disk — is SHA-256-verified against
+**Every read - download or disk - is SHA-256-verified against
 `PACK_MANIFEST` baked into the build.** Two URLs are tried in order
-(`packUrls(id)` — jsDelivr first, `raw.githubusercontent.com` fallback), each
+(`packUrls(id)` - jsDelivr first, `raw.githubusercontent.com` fallback), each
 pinned to the **`packs-v3`** immutable tag (see
 [Adding or modifying features](22-extending.md#refreshing-icon-pack-artwork)
 for what "refreshing" a pack actually requires).
 
 > [!CAUTION]
-> **A checksum mismatch on disk is treated as `"corrupt"` — rejected
+> **A checksum mismatch on disk is treated as `"corrupt"` - rejected
 > outright, unlike a locale file's staleness handling.** This is a
 > deliberate difference from `LocaleStore` (see
 > [Localization](17-i18n.md#locale-file-staleness-vs-a-corrupt-icon-pack)):
@@ -272,17 +272,17 @@ for what "refreshing" a pack actually requires).
 > change (a refresh with a new tag), so a mismatch here means edited or
 > damaged data, not "an older but still-valid copy." A locale mismatch, in
 > contrast, is nearly always just an older-but-fine translation missing a
-> few newer keys — hence that one is accepted as "stale" rather than
+> few newer keys - hence that one is accepted as "stale" rather than
 > discarded.
 
-`persist()` is best-effort — a read-only vault or a suspended mobile app must
+`persist()` is best-effort - a read-only vault or a suspended mobile app must
 not cost the user the download they just completed, so a write failure only
 downgrades the pack to session-only availability (with a one-time warning
 Notice, `diskWriteBroken`, so the user isn't nagged on every subsequent
 failure).
 
 **Manual install**: dropping a correctly-named file into `icon-packs/` by
-hand works — it's read and verified on the next launch exactly like a
+hand works - it's read and verified on the next launch exactly like a
 downloaded one. This is intentionally undocumented in the picker UI itself
 (README: "a path for someone who already knows to look, not an option worth
 putting in front of everyone downloading an icon set").
@@ -296,16 +296,16 @@ nothing else, and one bad path rejects the file, not the icon. The grammar is
 the one the generator asserts when it writes the file,
 `/^[MmLlHhVvCcSsQqTtAaZz0-9eE+\-.,\s]+$/`.
 
-At load time that grammar is applied by `isPathData` — a 128-entry lookup table
-and a loop — rather than by running the expression. The two accept exactly the
+At load time that grammar is applied by `isPathData` - a 128-entry lookup table
+and a loop - rather than by running the expression. The two accept exactly the
 same strings; the loop is about eight times faster, which started to matter
 with Simple Icons: 4.6 MB of path data cost some 55 ms through the expression
 on a desktop, in one uninterrupted main-thread block, at startup for any vault
 that uses one of its logos. `tests/iconPackData.test.ts` holds the loop to the
 expression on all 65,536 code units, and to the generator's copy of it by
-quoting the literal — edit one without the others and something fails.
+quoting the literal - edit one without the others and something fails.
 
-## Icon libraries — what the picker offers
+## Icon libraries - what the picker offers
 
 [`src/icons/iconLibraries.ts`](../../src/icons/iconLibraries.ts) is the one
 reader of `settings.iconLibraries` (see [Data model](04-data-model.md#pluginsettings)).
@@ -315,7 +315,7 @@ window all ask it which libraries this device offers, and in what order:
 - A **downloadable** (`bundledRemote`) library is offered exactly when every
   file in its `dataPacks` is `"ready"`. Font Awesome with only Brands on disk is
   not offered: the same "all, not any" rule the pool has always applied.
-- Every other library — Lucide, Material, Emoji, Custom Icons — ships with the
+- Every other library - Lucide, Material, Emoji, Custom Icons - ships with the
   plugin and is offered unless it is listed in `hidden`. A downloadable id in
   `hidden` is ignored: deleting its files is how it leaves.
 - `libraryOrder()` completes the saved order. Unknown ids are skipped, and a
@@ -325,13 +325,13 @@ window all ask it which libraries this device offers, and in what order:
   downloads can hide every built-in library on one without any; Lucide is then
   offered anyway, since it draws offline and cannot fail.
 - `menuLibraries()` is the source menu. `libraries` is exactly
-  `pickerSources()` — what the picker offers, which is also the All sources
-  pool — so every library the menu lists can be drawn from right now.
+  `pickerSources()` - what the picker offers, which is also the All sources
+  pool - so every library the menu lists can be drawn from right now.
   `toDownload` is every downloadable library the device does not fully have, in
   catalog order; the menu does not list them, it counts them in its closing
   line, and they are downloaded in the Manage icon libraries window. `current`
   is the one exception: the edited icon's own library when the picker does not
-  offer it — deleted here, downloaded only on another device, partly
+  offer it - deleted here, downloaded only on another device, partly
   downloaded, or a built-in one the user hid. The menu lists it apart, under its
   own heading, so re-editing that icon can always show where it lives. A missing
   downloadable `current` remains in `toDownload`: keeping its icon does not
@@ -339,7 +339,7 @@ window all ask it which libraries this device offers, and in what order:
   which callout is being edited. Its heading is **Deleted library**; a hidden
   built-in `current` keeps **Current icon**. Any other hidden built-in library
   is in none of the three.
-- `isInstalled()` is the looser question — any file of the library on the
+- `isInstalled()` is the looser question - any file of the library on the
   device. A library with only some of its files is not offered, but it still
   takes up space, so Delete and the window's reset arrow have to see it.
 - `reorderShown()` saves a drag by moving only the libraries this device shows,
@@ -364,7 +364,7 @@ a member. Hiding Material therefore stops that request as well as the menu row.
    leaves out theme rows and the callout editor's draft but includes callouts
    whose icon is turned off. `alsoKeep` is the editor's draft, handed in
    explicitly (below), and gets the same treatment.
-2. If anything new was copied, one `publish()` — inject, save, notify.
+2. If anything new was copied, one `publish()` - inject, save, notify.
 3. `PackDataStore.remove(id)` for each file deletes `icon-packs/<id>.json`,
    forgets the parsed artwork (`forgetPackData`), clears the state and
    notifies. It refuses while that pack is downloading.
@@ -379,11 +379,11 @@ paused, because the copy has to reach the disk before the file goes.
 
 The only road to the window is *callout editor → Pick an icon → Manage libraries*, so a
 callout editor is always open behind it, and the icon the person just picked
-sits in `CalloutEditor.icon` until **Save** — the registry knows nothing of it.
+sits in `CalloutEditor.icon` until **Save** - the registry knows nothing of it.
 Download a library, pick one of its icons, open the window again and press
 **Delete**: if "who uses this library?" were answered from the registry alone
 there would be no users, no question, and the library would go without a word.
-That was the bug behind a missing dialog, and it was never about timing —
+That was the bug behind a missing dialog, and it was never about timing -
 `registry.getCommitted()` leaves the draft out by design, so no amount of waiting
 would have put it in.
 
@@ -394,13 +394,13 @@ that really knows it. `CalloutEditor` opens the picker with
 on top of the editor) into an `EditedCallout`; the window's host carries it as
 `editing`. `iconLibraries.ts` then answers:
 
-- `calloutNamesUsingLibrary(committed, id, edited)` — the committed callouts
+- `calloutNamesUsingLibrary(committed, id, edited)` - the committed callouts
   using the library, by name, plus the edit when its icon is from the library.
   One callout counts once however many of its versions use the library (matched
   by id), and a committed callout keeps counting after its edit moves to another
   library, because until **Save** the committed icon is what every note draws.
   An empty list is what lets the library be deleted without asking.
-- `editedUsingLibrary(edited, id)` — the edit when its icon is from the
+- `editedUsingLibrary(edited, id)` - the edit when its icon is from the
   library, which the window passes on as `alsoKeep`.
 
 The registry's preview slot (`setPreviewDefinition`) is deliberately **not** the
@@ -409,16 +409,16 @@ source: it holds the half-typed callout under a placeholder id so it can be
 field would make it disagree with the real callout it shadows.
 
 `fetchArtwork` returns early for an icon that `isIconFullyCached`, before it
-looks at the pack. Confirming a callout's own icon in the picker — on a device
-that never had its library, or after deleting it — used to download the whole
+looks at the pack. Confirming a callout's own icon in the picker - on a device
+that never had its library, or after deleting it - used to download the whole
 library for artwork that was already saved.
 
-## Simple Icons — a pack decided logo by logo
+## Simple Icons - a pack decided logo by logo
 
 Mechanically [`packs/simpleIcons.ts`](../../src/icons/packs/simpleIcons.ts) is
 the simplest `bundledRemote` pack there is: one path per logo on a 24-unit
 square, one drawing, no styles, no categories. It is `bundledRemote` rather
-than `perIconRemote` for the opposite of Material's reason — there is exactly
+than `perIconRemote` for the opposite of Material's reason - there is exactly
 one drawing of each logo, so a whole-library file exists, the picker grid can
 draw from it, and one checksum vouches for all of it. What is different is the
 artwork: every icon is somebody else's mark. Three consequences.
@@ -441,20 +441,20 @@ The allow-list has one principle: everything the licence asks of someone
 passing the logo on *unchanged* can be met with a notice. ShareAlike and MPL
 qualify because their copyleft attaches to a modified logo, and the pack
 carries every path exactly as published. The withheld ones each ask for
-something a downloaded pack cannot promise on its users' behalf — see the
+something a downloaded pack cannot promise on its users' behalf - see the
 comments on the two lists for the reasoning per licence.
 
 `SI_WITHDRAWN` is a third, manual list: slugs withdrawn at their owner's
 request, ahead of upstream's own next major release. It is empty until someone
-asks. Adding a slug is a pack refresh like any other — new tag, new checksums
-— because the old tag stays cached on the CDN.
+asks. Adding a slug is a pack refresh like any other - new tag, new checksums
+ - because the old tag stays cached on the CDN.
 
 **The credit is generated, and is an artefact of the build.** The same pass
 that writes `packs/simple-icons.json` writes
 [`docs/SIMPLE-ICONS-LICENSES.md`](../SIMPLE-ICONS-LICENSES.md): every shipped
 logo that carries a licence, with its owner, licence and source, and every
 logo left out, with why. It is the attribution those licences require, so it
-must describe the pack file exactly — `tests/repoGenerated.test.ts` regenerates
+must describe the pack file exactly - `tests/repoGenerated.test.ts` regenerates
 it byte-for-byte, and `tests/simpleIconsPack.test.ts` re-derives the whole
 policy from upstream's records independently of the generator and checks the
 file, the index and the notices against it. The credits modal links that file
@@ -469,7 +469,7 @@ marks.
 Two smaller things follow from upstream's naming. An icon's `value` is
 upstream's **slug** (`nodedotjs`), its stable id and file name; the title
 rides along as a label only where it says something the slug does not
-(`Node.js`, `AT&T`) — fewer than one entry in twenty, and the first bundled
+(`Node.js`, `AT&T`) - fewer than one entry in twenty, and the first bundled
 index to have a label column at all. And the search terms are upstream's aliases plus one
 derived term, the title with its punctuation closed up (`nodejs`, `att`),
 added only when the slug does not already contain it.
@@ -478,15 +478,15 @@ added only when the slug does not already contain it.
 byte-identical to upstream's. "No outline is altered" is said in the credits
 and in both notices files, and for a logo it is the claim that matters most.
 
-## `IconFetchManager` — Material Symbols, one icon at a time
+## `IconFetchManager` - Material Symbols, one icon at a time
 
 [`src/icons/IconFetchManager.ts`](../../src/icons/IconFetchManager.ts) is the
 `perIconRemote` counterpart, needed because Material's 3,870 icons × 4 styles
-× 7 weights is over 100,000 combinations — no bulk file could cover it.
+× 7 weights is over 100,000 combinations - no bulk file could cover it.
 
 - **3 attempts, 2-second delay between them** (`MAX_ATTEMPTS`,
   `RETRY_DELAY_MS`), then permanent failure for the session
-  (`failed: Set<string>`, **in-memory only** — every launch is a fresh
+  (`failed: Set<string>`, **in-memory only** - every launch is a fresh
   chance, which is what makes it safe for the startup sweep to record
   failures for a vault that simply happened to be offline at that moment).
 - **Each HTTP attempt has a 30-second deadline.** A stalled request becomes
@@ -494,11 +494,11 @@ and in both notices files, and for a logo it is the claim that matters most.
   can finish its bounded retries. The underlying Obsidian request cannot be
   aborted; late results are ignored and the deadline timer is always cleared.
 - **Concurrent requests for the same drawing share one promise**
-  (`inFlight`), keyed identically to the cache — so the picker's "Confirm"
+  (`inFlight`), keyed identically to the cache - so the picker's "Confirm"
   and the callout editor's save both asking for the same icon at once cost
   one fetch, not two racing to write the same bytes.
 - **Deliberately does not run `cleanupUnusedIconSvgs()`** after a successful
-  fetch — the icon may have just been picked in the picker and not yet
+  fetch - the icon may have just been picked in the picker and not yet
   attached to any callout; a cleanup sweep at that moment would delete
   exactly what was just fetched.
 
@@ -519,13 +519,13 @@ store is still current and alive. Browser requests already in progress cannot
 be aborted through Obsidian's `requestUrl`, but their late results cannot add a
 font, start another request, or write through a stale loader after disable.
 
-## `IconResolver` — the read-only, synchronous view every renderer uses
+## `IconResolver` - the read-only, synchronous view every renderer uses
 
 [`src/icons/resolver.ts`](../../src/icons/resolver.ts) is what stands between
 "an icon might need fetching" and "a render path that cannot wait":
 
 ```ts
-resolveSvg(icon, role): string | null   // data.json cache first, then pack.buildSvg() — never fetches
+resolveSvg(icon, role): string | null   // data.json cache first, then pack.buildSvg() - never fetches
 hasFailed(icon, role): boolean
 ```
 
@@ -534,13 +534,13 @@ first (that's the copy that syncs across devices, so it renders correctly
 even where the pack was never downloaded), falling back to
 `pack.buildSvg(icon, role)` for artwork the pack can construct from data it
 already holds locally (bundled path data, or a locally-held user image).
-Neither step ever touches the network — a resolver is purely synchronous.
+Neither step ever touches the network - a resolver is purely synchronous.
 
 `createIconResolver` memoizes the no-failure-tracking variant per lookup
 object (`WeakMap`) because a full-document repaint sweep requests one per
 token; `createStatusIconResolver` is the failure-aware variant used only by
 the two surfaces that need to distinguish "still downloading" from "gave up"
-— the settings callout list and the editor's icon preview. Every other
+ - the settings callout list and the editor's icon preview. Every other
 surface (block/heading/inline rendering, autocomplete, PDF export) just
 shows a placeholder either way.
 
@@ -551,7 +551,7 @@ the sanitized copy. Edited or synchronized cache entries therefore cannot
 bypass sanitization. Rejected markup follows the caller's existing missing-icon
 behavior; sanitization does not rewrite the stored cache during a paint.
 
-## `renderIcon.ts` — the only "icon → DOM" painter
+## `renderIcon.ts` - the only "icon → DOM" painter
 
 [`src/icons/renderIcon.ts`](../../src/icons/renderIcon.ts) is explicitly the
 **one** place that turns an icon into DOM; every render surface calls
@@ -575,13 +575,13 @@ renderIconInto(target, icon, resolver, {
 > agnostic to *where* an icon's artwork actually lives (cache vs. bundled vs.
 > user-held) and to the packs' own async fetch machinery.
 
-`renderIconInto` is wrapped in a `try/catch` — `setIcon` and `DOMParser` can
+`renderIconInto` is wrapped in a `try/catch` - `setIcon` and `DOMParser` can
 both be missing in "exotic render realms" (a PDF-export clone, a pop-out
 window mid-teardown), and a missing icon there is always preferable to a
 crash mid-render.
 
 The "gave up" state draws a question mark, `HELP_ICON_ID` from
-[`constants.ts`](../../src/constants.ts) — as does the **About conversion**
+[`constants.ts`](../../src/constants.ts) - as does the **About conversion**
 button in Review conversion. It is Lucide's older name, `help-circle`, not
 `circle-help`, on purpose: the drawing is identical, but a right-to-left
 interface mirrors every icon and Obsidian un-mirrors only `.lucide-help-circle`
@@ -592,13 +592,13 @@ is). Under the newer name the "?" stayed backwards in Hebrew.
 `renderNoIcon(target)` is the **separate** function for a callout the user
 explicitly set to `hideIcon`, and it is used **only** on surfaces that
 *manage* callouts (settings list, autocomplete popup, statistics/replace
-modals) — those are columns of rows where a genuinely empty slot would both
+modals) - those are columns of rows where a genuinely empty slot would both
 break the column layout and look identical to "still downloading." It draws
 a faint dashed ring instead. Content surfaces (the actual rendered callout,
 heading/inline tokens, PDF export) draw **nothing at all** and let the flex
-gap collapse — see [Render roles § hideIcon](09-render-roles.md#hideicon-and-flex-gap-collapse).
+gap collapse - see [Render roles § hideIcon](09-render-roles.md#hideicon-and-flex-gap-collapse).
 
-## SVG sanitization — two sanitizers, two threat models
+## SVG sanitization - two sanitizers, two threat models
 
 [`src/icons/svg.ts`](../../src/icons/svg.ts) makes the distinction explicit and
 deliberate:
@@ -606,16 +606,16 @@ deliberate:
 | Function | Input | Model | Approach |
 | --- | --- | --- | --- |
 | `sanitizeSVG` | Material Symbols, fetched individually from Google | One known vendor, one known output shape | **Deny-list** of the obviously executable (`<script>`, event handlers, `javascript:`/`data:text/html` URLs) |
-| `sanitizeUserSvg` | A file the user picked off their own disk | Could be *anything*, and it's inserted into the live DOM | **Allow-list** — unknown elements and unknown attributes simply do not survive |
+| `sanitizeUserSvg` | A file the user picked off their own disk | Could be *anything*, and it's inserted into the live DOM | **Allow-list** - unknown elements and unknown attributes simply do not survive |
 
 Downloadable bundled packs (Tabler, FA, Octicons, RPG Awesome, Simple Icons)
 ship **bare path data**, not full SVG documents, and need no sanitization at
-all — there is no markup to sanitize. What they get instead is
+all - there is no markup to sanitize. What they get instead is
 `parsePackFile`'s grammar check, described under
-[PackDataStore](#packdatastore--bundled-file-download-and-verification).
+[PackDataStore](#packdatastore---bundled-file-download-and-verification).
 
 The user-image allow-list (`USER_SVG_ELEMENTS`) permits shapes, grouping,
-gradients, and clipping — enough to draw any icon — and explicitly excludes
+gradients, and clipping - enough to draw any icon - and explicitly excludes
 `<use>` and `<foreignObject>` (both pull in content by reference),
 `<animate>`/`<set>` (can assign event-handler attributes at runtime), and any
 nested `<svg>` (would re-open the whole attack surface one level down).
@@ -660,18 +660,18 @@ and fail the test; no package or browser download is part of the runner.
 > [!IMPORTANT]
 > **User SVG is re-sanitized on every read, not just when first added.**
 > `data.json` syncs between devices and can be hand-edited or arrive via
-> import — trusting a check that happened on some *other* machine would be
+> import - trusting a check that happened on some *other* machine would be
 > trusting nothing at all. This is the same defensive posture
 > `PackDataStore` takes toward its own checksums.
 
-## "Your images" — the local, never-downloaded source
+## "Your images" - the local, never-downloaded source
 
 [`src/icons/userImageImport.ts`](../../src/icons/userImageImport.ts) +
 [`src/icons/packs/userImages.ts`](../../src/icons/packs/userImages.ts).
 
 - **One stored representation for everything uploaded.** An SVG stays SVG
-  (sanitized, kept as vector — sharp at any size). A PNG/JPEG/WebP is
-  **decoded, scaled so its longest side is ≤128px** (`MAX_RENDITION_PX` —
+  (sanitized, kept as vector - sharp at any size). A PNG/JPEG/WebP is
+  **decoded, scaled so its longest side is ≤128px** (`MAX_RENDITION_PX` -
   chosen so a 3× device-pixel-ratio render at the icon-size slider's 150%
   maximum still has headroom), drawn onto a canvas, and re-encoded, then
   wrapped in `<svg><image href="data:…"></svg>`. **This is the security
@@ -679,33 +679,33 @@ and fail the test; no package or browser download is part of the runner.
   the original file's structure survives to be interpreted by anything
   later.
 - **Format detection reads file bytes, not the extension** (`detectFormat`)
-  — a mislabeled `.png` that's actually a JPEG is routine, and trusting the
+ - a mislabeled `.png` that's actually a JPEG is routine, and trusting the
   filename would reject perfectly good pictures.
 - **Dimensions are checked before decoding**, in addition to the 5 MiB source
   file limit. A highly compressed oversized PNG is rejected before assigning
   its object URL to an `Image`; a decoded-dimension check runs again after load.
 - **Uniqueness key is the filename**, compared case-insensitively (matching
-  how macOS/Windows filesystems already treat names) — `logo.svg` and
+  how macOS/Windows filesystems already treat names) - `logo.svg` and
   `logo.png` are two pictures; two `logo.png` uploads are the same one
   twice, and adding the second is refused. This check happens **only** at
-  upload time — an import (which merges by id) or a hand-edited
+  upload time - an import (which merges by id) or a hand-edited
   `data.json` can still end up with colliding names, and nothing on the
   read side drops a picture over it, because that would delete artwork
   callouts are actively pointing at.
 - **`monochrome` is detected on import** (a flat one-colour SVG drawing) and
-  seeds `CalloutIcon.recolor`'s default — only an SVG is offered as
+  seeds `CalloutIcon.recolor`'s default - only an SVG is offered as
   recolourable at all; a raster never is, because a mask is a stencil and
   running a photograph through one would flatten it to a silhouette.
-  `followsCalloutColor(icon, image)` — `image.format === "svg" && icon.recolor
-  === true` — is the single predicate both `CSSInjector` (mask vs.
+  `followsCalloutColor(icon, image)` - `image.format === "svg" && icon.recolor
+  === true` - is the single predicate both `CSSInjector` (mask vs.
   background-image) and `renderIconInto` (stencil vs. keep-own-colour) read,
   so the two paths can't drift apart.
 - **`rev`** is bumped on every edit and folded into the pack's `cacheVariant`
-  — this is what makes replacing a picture repaint every open note using it;
+ - this is what makes replacing a picture repaint every open note using it;
   without it, the render key would be identical before and after the
   replace, and nothing would know to redraw.
-- **Storage is `settings.userImages`, inside `data.json`** — not a file on
-  disk — specifically so it syncs with the rest of settings and travels
+- **Storage is `settings.userImages`, inside `data.json`** - not a file on
+  disk - specifically so it syncs with the rest of settings and travels
   inside a plain JSON export without the export having to become an
   archive.
 
@@ -719,7 +719,7 @@ plugin instance.
 
 Every pack's **search index** (names, keywords, categories) ships inside
 `main.js`, encoded via [`src/icons/data/codec.ts`](../../src/icons/data/codec.ts)
-— this is what makes searching every source work fully offline from install,
+ - this is what makes searching every source work fully offline from install,
 before any artwork download. Icon-pack artwork is not bundled: Lucide comes
 from Obsidian, and the other SVG libraries are fetched as described above.
 [`PackToolbarFilters`](../../src/settings/iconpicker/PackToolbarFilters.ts)
@@ -757,7 +757,7 @@ while it renders the empty-collection message, clearing it for entries or
 prompts, loading, and errors keep their separate message layout.
 The two plugin UI composites are the only bundled icon artwork. Regeneration
 of search indexes and downloadable packs is a deliberately
-separate, manual step — `npm run icons:generate` — **never** part of
+separate, manual step - `npm run icons:generate` - **never** part of
 `npm run build`, and its output **is committed to the repo**. See
 [Build, test, and release](20-build-test-release.md#regenerating-icon-and-locale-data)
 and [Adding or modifying features](22-extending.md#refreshing-icon-pack-artwork).

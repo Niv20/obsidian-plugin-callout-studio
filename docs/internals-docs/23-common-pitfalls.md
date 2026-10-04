@@ -1,7 +1,7 @@
 # Common pitfalls
 
 A concentrated list of non-obvious traps this codebase has already hit once
-— each backed by a comment or a migration in the source that exists
+ - each backed by a comment or a migration in the source that exists
 specifically because the trap was real. Read this before making a change
 that feels like it "should just work."
 
@@ -10,7 +10,7 @@ that feels like it "should just work."
 > [!WARNING]
 > **A registry mutation without a matching CSS re-inject leaves the
 > settings UI and the rendered vault disagreeing.** `registry.onChange` is
-> what triggers `CSSInjector.inject()` — if you mutate `registry.callouts`
+> what triggers `CSSInjector.inject()` - if you mutate `registry.callouts`
 > or `registry.settings` through anything other than the registry's own
 > methods (`add`/`update`/`remove`/`batch`/`setUserImages`/etc.), nothing
 > will repaint. There is no other path. See
@@ -21,9 +21,9 @@ that feels like it "should just work."
 > Live Preview decorations on its own.** After any registry change that
 > should be visible in an open note's heading/inline rendering, either rely
 > on the standard `onChange → inject() → refreshAllCalloutEditors()` chain,
-> or — if you bypassed the normal inject path (a preview, for instance) —
+> or - if you bypassed the normal inject path (a preview, for instance) -
 > call `refreshAllCalloutEditors()` explicitly. See
-> [Render roles § refreshAllCalloutEditors](09-render-roles.md#refreshallcallouteditors--why-registry-edits-need-an-explicit-nudge).
+> [Render roles § refreshAllCalloutEditors](09-render-roles.md#refreshallcallouteditors---why-registry-edits-need-an-explicit-nudge).
 
 > [!WARNING]
 > **`cleanupUnusedIconSvgs()` does not call `notifyChange()`.** It mutates
@@ -57,54 +57,54 @@ The state-synchronization warnings above concern repainting, not cloud transport
 
 > [!WARNING]
 > **A `"` or `\` can reach a callout id without the user ever typing an
-> unusual character intentionally** — vault discovery's own header regex and
+> unusual character intentionally** - vault discovery's own header regex and
 > the JSON importer's `ID_BAD_CHAR_RE` both permit them. Any new code that
 > interpolates a callout id into a CSS selector string **must** go through
 > `calloutSel`/`tokenAttrSel` (`utils/calloutSelector.ts`), which escape via
 > `cssAttrValue`. A raw interpolation can corrupt the entire generated
 > stylesheet from that rule onward. See
-> [CSS generation § selector escaping](06-css-generation.md#calloutsel-vs-tokenattrsel--the-selector-escaping-rule).
+> [CSS generation § selector escaping](06-css-generation.md#calloutsel-vs-tokenattrsel---the-selector-escaping-rule).
 
 ## Data that should never be mutated directly
 
 > [!WARNING]
 > **Never write to a `CalloutDefinition` object read from the registry in
 > place.** Always go through `registry.update(id, partial)` (which spreads
-> a fresh object) — a direct mutation bypasses `notifyChange()` entirely and
+> a fresh object) - a direct mutation bypasses `notifyChange()` entirely and
 > also risks corrupting shared references. `discoveredRow.ts`'s explicit
 > deep-cloning of `icon`/`bgGradient`/`iconAdjust` exists specifically
 > because a naive `{...fallback}` spread shares the *same* `CalloutIcon`
-> object across every discovered row and the live fallback definition — a
+> object across every discovered row and the live fallback definition - a
 > single future in-place write anywhere would then silently propagate to
 > every row that shares it.
 
 > [!WARNING]
 > **Never mutate an array or object returned from the public API
 > (`plugin.api`).** Everything it returns is frozen at every depth
-> specifically to prevent this — but if you're the one *implementing* a new
+> specifically to prevent this - but if you're the one *implementing* a new
 > API mapper, remember to freeze it too. See
 > [Public API § nothing live escapes](21-public-api.md#nothing-live-escapes).
 
 ## Helpers that must always be used
 
-- **`resolveIconAdjust(def, role)`** — never read `iconAdjust` or the legacy
+- **`resolveIconAdjust(def, role)`** - never read `iconAdjust` or the legacy
   flat trio directly; the two-layer fallback is required for old data to
   keep rendering correctly. See [Colour system](12-color-system.md#globalstylemergets-and-iconadjustts).
-- **`resolveCalloutDef(registry, rawId)`** (`renderShared.ts`) — the one
+- **`resolveCalloutDef(registry, rawId)`** (`renderShared.ts`) - the one
   resolution ladder every renderer must use; `CSSInjector` mirrors it
   independently and the two must never diverge, or DOM icons and generated
   CSS colours disagree about which definition a token means.
-- **`shouldRenderToken(resolved)`** — call this before building **any** DOM
+- **`shouldRenderToken(resolved)`** - call this before building **any** DOM
   for the heading/inline/ref roles. Skipping it for a new render surface
   means a theme-owned callout gets painted anyway, defeating the Block-only
   ownership rule.
-- **`buildCalloutTokenDom` / `buildContentPillDom`** (`renderShared.ts`) —
+- **`buildCalloutTokenDom` / `buildContentPillDom`** (`renderShared.ts`) -
   the one place heading/inline/ref token DOM is built. A new rendering
   surface that builds its own competing DOM shape breaks the icon-repaint
   sweep, which targets these exact classes.
-- **`renderIconInto`** (`renderIcon.ts`) — the only "icon → DOM" painter.
+- **`renderIconInto`** (`renderIcon.ts`) - the only "icon → DOM" painter.
   Never reach into `iconSvgCache` directly from a new renderer; go through
-  an `IconResolver`. See [Icons § renderIcon.ts](13-icons.md#rendericonts--the-only-icon--dom-painter).
+  an `IconResolver`. See [Icons § renderIcon.ts](13-icons.md#rendericonts---the-only-icon--dom-painter).
 
 ## Registration/unregistration pairs
 
@@ -117,7 +117,7 @@ The state-synchronization warnings above concern repainting, not cloud transport
 > "nothing listens on a document or window without taking it back," "no
 > interval runs outside registerInterval"). A raw `addEventListener` or
 > `setInterval` that isn't caught by that scan will leak past plugin unload
-> — most visibly on a disable/re-enable cycle, where a leaked listener from
+> - most visibly on a disable/re-enable cycle, where a leaked listener from
 > the *previous* instance keeps firing alongside the new one.
 
 `ManualCalloutDiscovery.destroy()`, `CSSInjector.destroy()`,
@@ -133,7 +133,7 @@ Every user-facing string goes through `t()`. This is enforced mechanically
 literal," "no Notice is raised with a bare literal," "aria-labels go through
 t() too"). A string interpolated into a translated value must use the
 **object** form (`t(key, {name: value})`), never manual string
-concatenation — see [Localization § t()](17-i18n.md#t--the-translation-function)
+concatenation - see [Localization § t()](17-i18n.md#t---the-translation-function)
 for why a plain string `.replace()` on user-typed content is a real bug, not
 just a style nit.
 
@@ -143,7 +143,7 @@ just a style nit.
 for a reason the screen does not show goes quiet and the user cannot find out
 what it is waiting for. Dim it with `paintBlocked()` and answer the press with
 `explainIfBlocked()` (both in `ui/blockedButton.ts`), driven by one
-`…BlockedReason()` method per button — see
+`…BlockedReason()` method per button - see
 [Blocked main buttons say why](16-settings-ui-and-modals.md#blocked-main-buttons-say-why).
 Keep `disabled` only for a button that is merely *busy* and says so in its
 label ("Saving…", "Scanning…").
@@ -156,8 +156,8 @@ sufficient**. Common cases that also need an explicit follow-up call:
 | Change | Also requires |
 | --- | --- |
 | Anything affecting generated CSS | `cssInjector.inject()` (usually automatic via `onChange`, but a **preview-only** or **out-of-band** mutation must call it explicitly with `inject(false)`) |
-| `headingCallouts.enabled` / `inlineCallouts.enabled` toggled | `plugin.refreshRenderModes()` — re-runs reading-view post-processors so already-baked DOM is added/stripped immediately, not just on next file open |
-| Language changed, or a locale download lands mid-session | `plugin.applyLocaleChange()` — re-renders the three surfaces that snapshot translated text (see [Localization § three surfaces](17-i18n.md#surfaces-that-snapshot-translated-text-and-need-a-manual-refresh)) |
+| `headingCallouts.enabled` / `inlineCallouts.enabled` toggled | `plugin.refreshRenderModes()` - re-runs reading-view post-processors so already-baked DOM is added/stripped immediately, not just on next file open |
+| Language changed, or a locale download lands mid-session | `plugin.applyLocaleChange()` - re-renders the three surfaces that snapshot translated text (see [Localization § three surfaces](17-i18n.md#surfaces-that-snapshot-translated-text-and-need-a-manual-refresh)) |
 | Fallback callout id changed | `restyleUncustomizedFallbackRows()` before saving, or every uncustomized fallback row keeps its stale look until some unrelated edit happens to trigger a re-mirror |
 
 ## CSS ordering/specificity assumptions
@@ -166,7 +166,7 @@ sufficient**. Common cases that also need an explicit follow-up call:
   allow-list.** Do not replace it with a generic `.callout` selector plus theme
   exclusions: that would put Studio border/radius/scale/alignment onto every
   unrecognized native Block and defeat the deliberately weak fallback. See
-  [CSS generation § standing down](06-css-generation.md#standing-down--why-emit-nothing-needs-three-separate-mechanisms).
+  [CSS generation § standing down](06-css-generation.md#standing-down---why-emit-nothing-needs-three-separate-mechanisms).
 - **The unknown Block fallback also wraps its complete exclusion list in
   `:where()`**, leaving the selector at exactly `(0,1,0)` regardless of how
   many known ids and aliases exist. Do not replace it with a growing `:not()`
@@ -178,21 +178,21 @@ sufficient**. Common cases that also need an explicit follow-up call:
   visually but would defeat the actual mechanism a theme relies on to
   override core's own rule at its own specificity. See
   [Colour system § built-ins](12-color-system.md#built-ins-no---callout-color-at-all-until-edited).
-- **`this.sel(id)` inside `CSSInjector` is not weight 1 — it is the *studio*
+- **`this.sel(id)` inside `CSSInjector` is not weight 1 - it is the *studio*
   weight**, set from the active theme's heaviest `!important` callout selector
   at the top of `generateCalloutCSS`. It is 5 under AnuPpuccin, where a single
   `.callout[data-callout=formula] .callout-title { … !important }` lifts it. Any
   rule that is meant to **defer** to the theme must be built from
   `calloutSelDeferring(id)` instead and kept out of `lightProps`, or it inherits
   a weight that beats the theme outright. Emitting the core accent shim through
-  `this.sel()` would put an opaque tint over AnuPpuccin's Vanilla Normal — worse
+  `this.sel()` would put an opaque tint over AnuPpuccin's Vanilla Normal - worse
   than the bug it exists to fix. See
   [CSS generation § the core accent shim](06-css-generation.md#the-core-accent-shim).
 - **`.theme-dark ` as a prefix cannot combine with a theme's guard.** Most
   Style Settings guards are body classes, and so is `.theme-dark`, so
   `.theme-dark .anp-callout-sleek .callout…` never matches anything. A
-  dark-mode copy of a guarded rule carries the mode on the callout instead —
-  `…[data-callout="x"]:is(.theme-dark *)` — which is what `themeSurfaceCSS`'s
+  dark-mode copy of a guarded rule carries the mode on the callout instead -
+  `…[data-callout="x"]:is(.theme-dark *)` - which is what `themeSurfaceCSS`'s
   relocation does. See
   [CSS generation § the theme-owned surface](06-css-generation.md#the-theme-owned-surface).
 - **A scanned prelude still has its trailing whitespace.** `eachBlock` hands
@@ -201,7 +201,7 @@ sufficient**. Common cases that also need an explicit follow-up call:
   empty last compound and silently measures nothing. Trim first.
 - **The spelling of a `--callout-<type>` is a fact about the theme AND about the
   MODE.** Ten installed themes declare an accent variable under `.theme-dark` (or
-  `.theme-light`) alone and leave the other mode on core's value — Nier does it
+  `.theme-light`) alone and leave the other mode on core's value - Nier does it
   for all thirteen. `accentVarSpelling` therefore takes a mode, and
   `accentDeclarations.needsDarkBlock()` returns true when only the *spelling*
   splits, even though every colour is identical. Getting it wrong is silent and
@@ -214,22 +214,22 @@ sufficient**. Common cases that also need an explicit follow-up call:
   option (Aura's `.aura-origin-layout`, TerraFlow's `.academia-theme`) for the
   same reason `unguarded` ignores a guarded property: in the state almost
   everyone is in, the class is absent and the variable still holds core's value.
-  A `:not()` guard is the opposite — that *is* the default state — and so is
+  A `:not()` guard is the opposite - that *is* the default state - and so is
   `.callout` itself.
 - **The settings tab's scroller is Obsidian's, not this plugin's, and a theme
   can reach it.** `PluginSettingTab.containerEl` **is** `.vertical-tab-content`
-  — the element that scrolls — so `.callout-studio-settings` lands on it and any
+ - the element that scrolls - so `.callout-studio-settings` lands on it and any
   rule this plugin writes about the pane competes directly with the theme's own
   `.vertical-tab-content` rules, at equal specificity and from an *earlier*
   sheet. That matters for one property in particular: a sticky `top` is measured
   from the scrollport's **content** box, so the pane's `padding-top` has to be
   zero or every pinned section heading parks that far down with rows scrolling
   through the strip above it. 20 of the 257 themes in the development vault put
-  that padding back, one with `!important` — which is why the reset carries an
+  that padding back, one with `!important` - which is why the reset carries an
   `!important` of its own and an explicit `body:not(.is-phone)`. The band's
   *paint* is the same problem one level down and does not have the same answer:
   `background-color: inherit` copies the pane, a good many themes leave the
-  pane see-through, and three more beat the declaration outright — one of them (Lagom)
+  pane see-through, and three more beat the declaration outright - one of them (Lagom)
   with an `!important` already at the band rule's own `(0,3,0)`, so there is no
   weight to win with. That one is answered by a floor instead: a `::before` of
   the theme's own surface tokens under the band and an `::after` repainting the
@@ -243,7 +243,7 @@ sufficient**. Common cases that also need an explicit follow-up call:
   about the running Obsidian version.** `requireApiVersion("1.13.0")` answers
   only what *core* wants; a theme that never updated still reads
   `rgba(var(--callout-color), …)` and a hex makes every such declaration invalid
-  at computed-value time — it unsets silently, so the symptom is a missing
+  at computed-value time - it unsets silently, so the symptom is a missing
   background or a vanished side accent, never an error. See
   [Colour system § accent dialect](12-color-system.md#accent-dialect-version-drift-and-theme-drift).
 - **`.callout-studio-row` is a size container, and Obsidian's settings-tab
@@ -269,7 +269,7 @@ plugin decision that depends on a Style Settings class will be taken once and
 never revisited, and the user sees the option do nothing until they restart.
 
 The fix used by `manager/css/themeSurfaceCSS.ts` is to never take the decision
-in JS — record the theme's own guard during the scan and re-state it in the
+in JS - record the theme's own guard during the scan and re-state it in the
 emitted selector, so the browser evaluates it live. Anything else needs a
 `MutationObserver` on `document.body`'s `class` attribute, which is a cost and a
 lifetime this plugin has so far not had to take on.
@@ -277,7 +277,7 @@ lifetime this plugin has so far not had to take on.
 ## A guard on `<body>` cannot be prefixed onto a selector that already says `body`
 
 Style Settings puts its classes on `<body>` itself, so a scanned guard is a
-compound *on* that element — `body.callout-on`, `.callouts-outlined`,
+compound *on* that element - `body.callout-on`, `.callouts-outlined`,
 `body:not(.pt-disable-callout-styling)`. Prefixing one onto a selector that
 already starts with `body` (which `generateFallbackCSS` does) produces
 `body.callout-on body .callout…`: a body inside a body, which matches nothing,
@@ -289,11 +289,11 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
 - **`app.hotkeyManager`, `app.customCss`, `app.setting`** are all
   undocumented internals. Every access to them in this codebase is guarded
   structurally (optional chaining, a fallback that reads as "unassigned" or
-  "not available" rather than throwing) — follow that pattern for any new
+  "not available" rather than throwing) - follow that pattern for any new
   internal-API access, never assume the shape is stable across Obsidian
   versions.
 - **A block callout's icon element is resolved by Obsidian exactly once,
-  ever**, the first time it renders — its post-processor bails early on an
+  ever**, the first time it renders - its post-processor bails early on an
   element that already has a child. Any code that wants to "undo" this
   plugin's icon painting (handing a callout to the theme) must actively
   **re-derive and re-paint** what core would have drawn
@@ -310,15 +310,15 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
 - **Discovery is manual and additive on mobile and desktop.** Do not add
   startup scans, discovery timers, open-note triggers or automatic pruning.
   Mobile foreground checks may adopt saved settings but must not discover types.
-- **The Live Preview mousedown-freeze window is much wider on mobile** —
+- **The Live Preview mousedown-freeze window is much wider on mobile** -
   core arms the same flag on every caret move with a 700ms debounce, not
   just on an actual mouse hold. See
   [Render roles § the raw-syntax reveal](09-render-roles.md#the-raw-syntax-reveal-and-the-mousedown-freeze).
 - **`.is-mobile.theme-dark` repoints `--modal-background` onto
-  `--background-secondary`** — this is precisely what broke the modal
+  `--background-secondary`** - this is precisely what broke the modal
   surface tokens once and required the `color-mix()`-based re-derivation.
   See [Settings UI § two theme-aware surface tokens](16-settings-ui-and-modals.md#two-theme-aware-surface-tokens).
-- **`isDesktopOnly` is `false`** — any new feature must avoid Node/Electron-
+- **`isDesktopOnly` is `false`** - any new feature must avoid Node/Electron-
   only APIs. The startup CSS-snapshot cache exists specifically to soften
   slow mobile launches (see [Persistence and caching](07-persistence-and-caching.md#the-startup-css-snapshot)).
 - **Opening a window must not autofocus a text field on mobile or
@@ -328,7 +328,7 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   loading after the window opens or appears after a source change. On desktop,
   the applicable name or search field receives focus. The 400ms `scrollTop`
   hold once used to accommodate the mobile keyboard read as a clunky lurch
-  and was removed, not tuned. Don't reinstate it — see
+  and was removed, not tuned. Don't reinstate it - see
   [Settings UI § where the cursor lands](16-settings-ui-and-modals.md#where-the-cursor-lands-when-a-window-opens).
   The Hotkeys-settings DOM fallback may fill its query on mobile, but it must
   not focus or select the field there.
@@ -336,26 +336,26 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
 ## Backward compatibility constraints
 
 - **Command ids are permanent.** The built-in command ids, and every
-  minted custom-command id once created, can never be renamed —
+  minted custom-command id once created, can never be renamed -
   hotkeys are bound to them.
-- **`manifest.json`'s `id`** (`callout-studio`) can never change — it's the
+- **`manifest.json`'s `id`** (`callout-studio`) can never change - it's the
   vault folder name and the community-plugin registry key.
 - **Every load-time migration in `CalloutRegistry.load()` must stay
-  idempotent and content-keyed**, never version-keyed — an imported or
+  idempotent and content-keyed**, never version-keyed - an imported or
   hand-edited file can carry any version stamp. See
   [Callout registry § load-time migrations](05-callout-registry.md#load-time-migrations).
 - **A field retired from `CalloutDefinition` needs an entry in both
   `RETIRED_FIELDS` (importValidator) and, if old `data.json` data could
   still carry it, a load-time cleanup migration** (see
-  `dropSolidBackgroundFlags` for the pattern) — otherwise it's silently
+  `dropSolidBackgroundFlags` for the pattern) - otherwise it's silently
   re-written forever by every subsequent save/export.
 
 ## Import/export compatibility
 
-- **The legacy flat-array export shape must keep working** — it's public
+- **The legacy flat-array export shape must keep working** - it's public
   API surface (`registry.exportToJSON()`), not just an internal format.
 - **A settings-level list that merges by id must actually merge, never
-  `Object.assign`** — see
+  `Object.assign`** - see
   [Import and export § the three exceptions](15-import-export.md#settings-import-restore-the-groups-the-file-carries-three-lists-merge-by-id).
   It's easy to add a new list field and forget this step, and the failure
   mode (silent data loss on import) is severe and easy to miss in testing.
@@ -373,7 +373,7 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   checksums on every disk read, not just on download.
 - **`isModified()`'s `?? null` normalization** (treating absent and
   explicit-`undefined` as equal) looks unnecessary until you remember a
-  JSON round-trip through `data.json` produces exactly that ambiguity —
+  JSON round-trip through `data.json` produces exactly that ambiguity -
   removing it would make a built-in read as "modified" after any save/load
   cycle even with no real change.
 

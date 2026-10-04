@@ -3,7 +3,7 @@
 How Callout Studio finds out which callout types the **active Obsidian theme**
 supplies, what those callouts look like, and what it then does with that
 knowledge for an existing or manually discovered type: a row under *Callouts from your theme*, an entry in *Quick insert
-block callout*, and — deliberately — no CSS of its own.
+block callout*, and - deliberately - no CSS of its own.
 
 This chapter has two audiences, and they want different halves of it:
 
@@ -15,7 +15,7 @@ This chapter has two audiences, and they want different halves of it:
   [For theme authors](#for-theme-authors); everything before it is the
   derivation behind that advice.
 
-Everything here is *discovery* — finding and reading the theme. What the plugin
+Everything here is *discovery* - finding and reading the theme. What the plugin
 **emits** (or refuses to emit) once ownership is decided is
 [06-css-generation.md](06-css-generation.md), which owns the emission gate, the
 `!important` argument and the selector-weight arithmetic.
@@ -41,9 +41,9 @@ happen in this order.
 | 4 | List theme ids locally; persist only explicit scans/imports | [`themeOverlayRows.ts`](../../src/manager/theme/themeOverlayRows.ts), [`ManualCalloutDiscovery.ts`](../../src/manager/ManualCalloutDiscovery.ts) | Ephemeral theme rows or durable definitions |
 | 5 | Measure what the theme actually draws | [`ThemeAppearanceProbe.ts`](../../src/manager/theme/ThemeAppearanceProbe.ts) + [`readCalloutStyle.ts`](../../src/manager/theme/readCalloutStyle.ts) + [`themeAppearance.ts`](../../src/manager/theme/themeAppearance.ts) / [`themeIcon.ts`](../../src/manager/theme/themeIcon.ts) | `ThemeAppearance` per id |
 | 6 | Reproduce it wherever the plugin lists callouts | [`renderThemeIcon.ts`](../../src/manager/theme/renderThemeIcon.ts), [`calloutListIcon.ts`](../../src/manager/theme/calloutListIcon.ts) | icons and swatches on rows, menus, pickers |
-| — | Decide how the theme **spells** a callout accent | [`accentDialectScan.ts`](../../src/manager/theme/accentDialectScan.ts) + [`accentDialect.ts`](../../src/manager/theme/accentDialect.ts) + [`accentValueFormat.ts`](../../src/manager/theme/accentValueFormat.ts), cached alongside stage 2 | `AccentDialect` — see [The accent dialect](#the-accent-dialect) |
+| - | Decide how the theme **spells** a callout accent | [`accentDialectScan.ts`](../../src/manager/theme/accentDialectScan.ts) + [`accentDialect.ts`](../../src/manager/theme/accentDialect.ts) + [`accentValueFormat.ts`](../../src/manager/theme/accentValueFormat.ts), cached alongside stage 2 | `AccentDialect` - see [The accent dialect](#the-accent-dialect) |
 
-Scheduling — when the whole thing runs and in which order — is
+Scheduling - when the whole thing runs and in which order - is
 [`themeAppearanceSync.ts`](../../src/manager/theme/themeAppearanceSync.ts), covered under
 [When theme appearance refreshes](#when-theme-appearance-refreshes).
 
@@ -54,7 +54,7 @@ sit under `ThemeAppearanceProbe` (DOM). The pure halves carry all of the
 judgement and all of the unit tests; the repo's test DOM has neither a
 `CSSStyleSheet` nor a cascade, so anything that needed one would be untestable.
 
-## Stage 1 — Finding the active theme
+## Stage 1 - Finding the active theme
 
 [`customCssApi.ts`](../../src/manager/theme/customCssApi.ts) is the **only** place
 `app.customCss` is named. None of it is in `obsidian.d.ts`: it is real and
@@ -70,7 +70,7 @@ than one that quietly stops offering a convenience.
 | `themeCss(app)` | The theme's stylesheet text (`styleEl.textContent`), or `""` |
 | `enabledSnippetNames(app)` | Enabled snippet names, in load order |
 | `enabledSnippetCss(app)` | Each enabled snippet's text |
-| `stylingSignature(app)` | `name@version` + the enabled snippet names — a cheap identity for "the styling currently loaded" |
+| `stylingSignature(app)` | `name@version` + the enabled snippet names - a cheap identity for "the styling currently loaded" |
 
 Two traps this module exists to absorb:
 
@@ -80,23 +80,23 @@ Two traps this module exists to absorb:
 - **`stylingSignature` is deliberately not a hash of the CSS.** It is used to
   decide whether a re-scan is needed, and hashing a megabyte to find out costs
   about as much as re-scanning it. The miss is a theme *edited in place* and
-  reloaded, which moves neither name nor version — see
+  reloaded, which moves neither name nor version - see
   [the fingerprint](#when-theme-appearance-refreshes).
 
 > [!NOTE]
 > Only the text inside that one `<style>` element is ever scanned. Anything a
-> theme brings in some other way — an `@import`, a stylesheet a companion
-> plugin injects — is invisible to enumeration, though the
-> [appearance probe](#stage-5--reading-the-colours-and-the-icon-back) still
+> theme brings in some other way - an `@import`, a stylesheet a companion
+> plugin injects - is invisible to enumeration, though the
+> [appearance probe](#stage-5---reading-the-colours-and-the-icon-back) still
 > measures its effect, because that reads the rendered page rather than the
 > text.
 
-## Stage 2 — Scanning the stylesheet for callout claims
+## Stage 2 - Scanning the stylesheet for callout claims
 
 [`themeCalloutScan.ts`](../../src/manager/theme/themeCalloutScan.ts) is pure text
 in, plain data out. The obvious implementation is to `replaceSync()` the theme
-into an unadopted `CSSStyleSheet` and walk `cssRules` — which is what Callout
-Manager does — but `CSSStyleSheet` does not exist in this repo's test DOM, and a
+into an unadopted `CSSStyleSheet` and walk `cssRules` - which is what Callout
+Manager does - but `CSSStyleSheet` does not exist in this repo's test DOM, and a
 scanner nobody can test is how a wrong answer ships. Comments are stripped up
 front and blocks are walked by brace depth, which is what the CSSOM was really
 buying.
@@ -108,7 +108,7 @@ do not hide later rules or become false nested blocks.
 Cutting the sheet into rules is its own module,
 [`cssBlocks.ts`](../../src/manager/theme/cssBlocks.ts), which hands the scanner one
 `(selector, declarations)` pair per rule. It resolves **native CSS nesting**
-first, so a nested sheet is read exactly as its flat equivalent would be — same
+first, so a nested sheet is read exactly as its flat equivalent would be - same
 ids, same property names, same specificity. That is not a nicety: nesting is a
 choice about source formatting, and the browser resolves it away before anything
 this plugin cares about happens.
@@ -126,8 +126,8 @@ interface ThemeClaim {
 
 `props` holds **names only**. The scan can say a theme declares
 `--callout-color` for `[!note]`; it can never say what colour that is. That
-limitation is not a gap to be closed by better parsing — it is why
-[stage 5](#stage-5--reading-the-colours-and-the-icon-back) exists.
+limitation is not a gap to be closed by better parsing - it is why
+[stage 5](#stage-5---reading-the-colours-and-the-icon-back) exists.
 
 ### Which operators name a callout
 
@@ -137,8 +137,8 @@ Enumeration may only read the operators that name **exactly one** id.
 | --- | --- | --- |
 | `[data-callout="recite"]` | **yes** | Names one callout |
 | `[data-callout~="infobox"]` | **yes** | Matches a whitespace-separated word list, and Obsidian writes only the *type* into `data-callout` (metadata goes to `data-callout-metadata`), so that list is always one word |
-| `[data-callout*="column"]` | no — a *family pattern* | Says "everything containing this"; reading it as an id invents a callout named *column* that nobody has |
-| `[data-callout^="col"]`, `[data-callout$="-md"]`, `[data-callout\|="col"]` | no — family patterns | Same reason |
+| `[data-callout*="column"]` | no - a *family pattern* | Says "everything containing this"; reading it as an id invents a callout named *column* that nobody has |
+| `[data-callout^="col"]`, `[data-callout$="-md"]`, `[data-callout\|="col"]` | no - family patterns | Same reason |
 | `[data-callout]` | no | Names nothing |
 | `.callout`, `.callout-recite` | no | Not an attribute claim at all |
 
@@ -146,7 +146,7 @@ Including `~=` was a **measured** decision, not a liberty: ITS Theme declares
 `infobox`, `cards`, `timeline`, `aside` and `kanban` that way and no other way,
 so excluding it hid the five types its users reach for most.
 
-Family patterns are kept — in `ThemeScan.patterns`, with `certain: false` — but
+Family patterns are kept - in `ThemeScan.patterns`, with `certain: false` - but
 they are never enumerated. They are read by exactly one production surface: the
 callout editor's ID field, which warns (never blocks) that a family selector
 would also catch the id you are typing.
@@ -160,14 +160,14 @@ Confirmed against the scanner itself; every row here is behaviour, not intent.
 | `@media`, `@supports`, `@layer` wrappers | descended into; inner claims found |
 | A selector list, including one split across lines or containing `(` `)` | each part scored separately (`splitSelectorList`) |
 | `:is([data-callout="a"], [data-callout="b"])` | both ids claimed |
-| `:not([data-callout="note"])` | **dropped** — an anti-claim is not a claim (`blankNegations`) |
+| `:not([data-callout="note"])` | **dropped** - an anti-claim is not a claim (`blankNegations`) |
 | `[data-callout=recite i]` | claimed; the case-insensitivity flag is tolerated |
-| `[data-callout~=Metadata]` | claimed as `metadata` — keys are normalised |
+| `[data-callout~=Metadata]` | claimed as `metadata` - keys are normalised |
 | `[data-callout="my note"]` | claimed as `my-note` |
-| `[data-callout="x"] { }` | **claimed** — an empty rule body still names the id |
+| `[data-callout="x"] { }` | **claimed** - an empty rule body still names the id |
 | `body.some-style-settings-class [data-callout="y"]` | **claimed**, whether or not that class is currently on `<body>` |
 | Anything inside a `/* … */` comment | not claimed |
-| Native CSS nesting — a rule that names an id **and** nests child rules | read as its flat equivalent: the parent's own declarations are its claim, and each nested rule is resolved against it (`&`, or the implied descendant) |
+| Native CSS nesting - a rule that names an id **and** nests child rules | read as its flat equivalent: the parent's own declarations are its claim, and each nested rule is resolved against it (`&`, or the implied descendant) |
 | A nested `@media` / `@supports` inside a style rule | its declarations belong to the rule around it, exactly as the browser reads them |
 
 **Keys are the attribute form** (`obsidianCalloutAttrId`: trimmed, lower-cased,
@@ -181,7 +181,7 @@ the theme claims.
 
 `scanCalloutClaims` opens with `if (!prelude.includes("data-callout")) return;`,
 so a theme rule that styles *every* callout without naming one is invisible to
-it. That is correct for its own question — such a rule claims no id — but it is
+it. That is correct for its own question - such a rule claims no id - but it is
 exactly the rule the core accent shim has to know about: Obsidian gruvbox's
 entire callout section is `.callout { background-color: rgba(var(--callout-color), 0.2) }`
 at `(0,1,0)`, which ties the shim and would lose on source order alone.
@@ -189,8 +189,8 @@ at `(0,1,0)`, which ties the shim and would lose on source order alone.
 `accentDialect.ts` therefore runs its **own** walk rather than extending this
 one, pre-filtered on `.callout` rather than `data-callout`, and records the
 properties declared on a compound that is `.callout` (optionally repeated) **and
-nothing else**. Anything with a guard on it — a body class, a
-`[data-callout-metadata*=…]`, an id — is deliberately not recorded: it is
+nothing else**. Anything with a guard on it - a body class, a
+`[data-callout-metadata*=…]`, an id - is deliberately not recorded: it is
 conditional, so it says nothing about callouts in general, and when it does
 apply its extra class-unit already beats the shim.
 
@@ -223,11 +223,11 @@ conditions on the callout root; frame claims keep the ancestor guard:
 the child box after a child or descendant combinator, or with no callout root
 above it at all (Composer writes `.composer--WindowPanelCallout .callout-title`),
 plus an optional `::before`/`::after` in either spelling. A child qualified any
-other way — `:hover`, `:active`, `:empty` — is refused: Cyber Glow brightens its
+other way - `:hover`, `:active`, `:empty` - is refused: Cyber Glow brightens its
 title on hover, and a background moved onto the title because of that would be
 painted permanently. A pseudo-element counts only when its own rule pins it over
-the whole box — `inset: 0`, `100%` × `100%`, every side zero, or TerraFlow's
-`inset-block-start` / `inset-inline` / `inset-block-end` — so a 3px accent bar, a
+the whole box - `inset: 0`, `100%` × `100%`, every side zero, or TerraFlow's
+`inset-block-start` / `inset-inline` / `inset-block-end` - so a 3px accent bar, a
 dot or a dog-eared corner never reads as a fill. `calloutSurface.ts` folds them
 into the three lists the emitter uses (`relocations`, `inkedTitles`,
 `surfaceLayers`); see
@@ -237,7 +237,7 @@ into the three lists the emitter uses (`relocations`, `inkedTitles`,
 parser drops it, so reading it as "no background" would be believing a
 declaration that never applied.
 
-The **guard** is every selector step before the callout compound, verbatim — it
+The **guard** is every selector step before the callout compound, verbatim - it
 stops at the *last* `.callout` step, because this plugin replaces that step with
 its own selector. Conditions on the callout root are kept on the generated
 cancel. AnuPpuccin's Vanilla Normal rule excludes callouts marked
@@ -245,7 +245,7 @@ cancel. AnuPpuccin's Vanilla Normal rule excludes callouts marked
 opts a callout into Vanilla Normal through metadata. Keeping those conditions
 lets the theme's neutral content surface show only in the matching layout.
 
-An ancestor guard is only recorded when every step is a plain compound — an
+An ancestor guard is only recorded when every step is a plain compound - an
 element name, classes, and `:not()`. A child combinator, an id, an attribute on
 an ancestor, a universal selector or a pseudo-element **drops the fact
 entirely**, because the guard is re-stated in front of a selector this plugin
@@ -278,16 +278,16 @@ glow style). The rest of the neutral-root themes fill nothing else.
 A separate question from ownership, answered from the same text: **which
 spelling of `--callout-*` does this theme expect?** Obsidian 1.13 changed its
 own accent variables from a bare RGB triplet to a full CSS colour, and a theme
-that predates that change still reads `rgba(var(--callout-color), 0.1)` — which
+that predates that change still reads `rgba(var(--callout-color), 0.1)` - which
 a hex makes invalid at computed-value time, so the declaration silently unsets.
 The consequences are visible and confusing: a missing background, a side accent
 that does not draw at all.
 
 Two answers, not one, because themes disagree with themselves:
 
-- **`read`** — one answer per sheet, by majority of `var(--callout-…)` read
+- **`read`** - one answer per sheet, by majority of `var(--callout-…)` read
   sites. Decides what goes *into* `--callout-color`.
-- **`declared`** — per variable **and per mode**, from the theme's own
+- **`declared`** - per variable **and per mode**, from the theme's own
   declarations, following `var()` hops and fallbacks. Decides whether
   `--cs-accent-theme` takes `var(--callout-info)` or `rgb(var(--callout-info))`.
 
@@ -306,15 +306,15 @@ each has a test that freezes it:
 | relative colour is a **colour** read | `hsl(from var(--callout-color) h s l / .1)` (Baseline, Cupertino) and `oklch(from …)` (Iridium) look legacy and are not |
 
 And three **declaration** rules, each for a place a value hides from a naive
-scan. Getting one wrong is not a near-miss — `--cs-accent-theme` is registered
+scan. Getting one wrong is not a near-miss - `--cs-accent-theme` is registered
 `<color>`, so the wrong wrapper falls back to its grey initial and takes every
 heading bar, inline pill, ref token and icon tint on that built-in with it:
 
 | Rule | Why |
 | --- | --- |
 | the answer is **per mode** | 10 themes declare an accent variable in one mode only. Nier puts all thirteen under `.theme-dark`, as triplets, leaving light mode on core's colours. `undefined` for a mode means "core supplies it there" |
-| a chain that **leaves the sheet** falls back to the sheet's own `read` | Arcane ends on core's `--color-blue` (a colour); Aura, Nier and Vicious on `--color-*-rgb` (triplets). A stylesheet is consistent with itself — and Arcane is why this is the read dialect, not a `-rgb` name check |
-| a declaration behind a **theme option** is ignored | Aura's `.aura-origin-layout` is one layout of three and not the default; TerraFlow's `.academia-theme` one palette of eleven. In the state almost everyone is in, the variable still holds core's value. A `:not()` guard is trusted — Velocity's `body:not(.disable-callout-styling)` is its *normal* styling — and so is `.callout` itself, where RetroNotes puts all fourteen |
+| a chain that **leaves the sheet** falls back to the sheet's own `read` | Arcane ends on core's `--color-blue` (a colour); Aura, Nier and Vicious on `--color-*-rgb` (triplets). A stylesheet is consistent with itself - and Arcane is why this is the read dialect, not a `-rgb` name check |
+| a declaration behind a **theme option** is ignored | Aura's `.aura-origin-layout` is one layout of three and not the default; TerraFlow's `.academia-theme` one palette of eleven. In the state almost everyone is in, the variable still holds core's value. A `:not()` guard is trusted - Velocity's `body:not(.disable-callout-styling)` is its *normal* styling - and so is `.callout` itself, where RetroNotes puts all fourteen |
 
 Across the 257 themes in the dev vault: **36** read a triplet, **25** read a
 colour, **0** tie. The remaining 196 never touch these variables and fall back
@@ -335,11 +335,11 @@ collapsing them breaks both.
 | --- | --- | --- |
 | Entry point | `ThemeCalloutStore.themeDefinedIds()` | `ThemeCalloutStore.maxImportantClasses()` |
 | Input | the **theme's** stylesheet only | theme **and every enabled snippet** |
-| Operators | `=` and `~=` only | every operator — and generic rules that name no id but force, with `!important`, what the plugin forces on the callout's own boxes (`ThemeScan.genericImportant`) |
-| Why | *Callouts from your theme* has to mean it — a snippet the user wrote is their own work, and a family pattern names no callout | The emitted CSS has to outrank whatever is on the page, whoever wrote it |
+| Operators | `=` and `~=` only | every operator - and generic rules that name no id but force, with `!important`, what the plugin forces on the callout's own boxes (`ThemeScan.genericImportant`) |
+| Why | *Callouts from your theme* has to mean it - a snippet the user wrote is their own work, and a family pattern names no callout | The emitted CSS has to outrank whatever is on the page, whoever wrote it |
 
-A third, laxer question — *does this stylesheet style the callout I already
-have?* — is [`themeClaimLookup.ts`](../../src/manager/theme/themeClaimLookup.ts).
+A third, laxer question - *does this stylesheet style the callout I already
+have?* - is [`themeClaimLookup.ts`](../../src/manager/theme/themeClaimLookup.ts).
 It is allowed to consult every operator because it is only ever handed an id the
 registry already holds, so there is nothing left to invent. `patternMatches()`
 is its production export (the editor's fuzzy warning); `claimForId()` is
@@ -348,10 +348,10 @@ exercised by the suites.
 Both answers are memoised on `stylingSignature`, because parsing ITS Theme is
 ~850 KB of text.
 
-## Stage 3 — Ownership
+## Stage 3 - Ownership
 
 [`ThemeFacts.ts`](../../src/manager/theme/ThemeFacts.ts) holds the two derived
-theme facts — which ids are owned, and what they look like — and both are read
+theme facts - which ids are owned, and what they look like - and both are read
 back through `CalloutRegistry`, because every surface that draws a callout
 already has the registry. Threading a theme store through the eight surfaces
 that draw an icon is eight chances for one of them to keep drawing the stored
@@ -372,7 +372,7 @@ participate through the cascade rather than by changing registry ownership.
 Three properties of ownership, each of which was a decision:
 
 **Every id form counts.** `ThemeFacts.owns` walks `registry.vaultIdFormsFor(def)`
-— the id, its aliases, and each one's dasherized attribute form where no other
+ - the id, its aliases, and each one's dasherized attribute form where no other
 definition owns it. A theme that styles `[data-callout="tldr"]` but not
 `abstract` owns the whole callout. Letting the two halves render differently is
 precisely the split this model exists to abolish.
@@ -382,9 +382,9 @@ the dev vault, only 63 name a callout id in `theme.css`; a large group styles
 callouts without naming one. Counting those would hand the plugin's entire job
 to the theme for rules that mostly set a radius.
 
-**Derived, never stored — and the empty state is the safe one.** `CalloutRegistry`
+**Derived, never stored - and the empty state is the safe one.** `CalloutRegistry`
 takes no `App` and cannot see the theme when `load()` runs, so for the first
-moments of a session — and forever in a test, an import or a headless run —
+moments of a session - and forever in a test, an import or a headless run -
 nothing is owned and the plugin styles everything. Standing *down* on that blank
 would silently strip the styling from every callout the user has configured;
 standing up cannot hurt anyone, because the worst case is painting a callout the
@@ -396,7 +396,7 @@ would silently stop being exported; the sweep's `stale` branch **deletes** an
 uncustomized theme row on the next theme switch; and `importValidator` re-stamps
 `source: "user"` on every import, so the flip would not even stay done.
 
-## Stage 4 — The overlay, and adding theme types permanently
+## Stage 4 - The overlay, and adding theme types permanently
 
 A theme-declared id with **no row at all** is also treated as unknown by
 `generateFallbackCSS`, whose exclusion list is built from `getAll()`. The
@@ -421,7 +421,7 @@ disabled. The preview listener is removed on plugin unload.
 | Dropped from the saved payload, unconditionally | `discoveredRowPersistence.ts` |
 | Out of `getUserDefined`, so out of exports | `CalloutRegistry.getUserDefined` |
 | Never counted as "known", so a scan still sees the id | `knownCalloutIds.ts` |
-| Never offered as the fallback target — that id **is** persisted | `settings/sections/FallbackSection.ts` |
+| Never offered as the fallback target - that id **is** persisted | `settings/sections/FallbackSection.ts` |
 | Never a merge base for an import | `utils/importedCallout.ts` |
 | Never fetches artwork | `IconService.initialize`, `IconFetchManager.ensureAll` |
 | Never keeps an `iconSvgCache` entry alive | `CalloutRegistry.cleanupUnusedIconSvgs` |
@@ -433,7 +433,7 @@ aliases. Temporary rows are rebuilt from defaults so they cannot retain referenc
 to pictures or palettes that reset removed.
 
 Because ownership is derived per machine, a laptop with a different theme holds
-a different overlay and still writes the same settings body — the property
+a different overlay and still writes the same settings body - the property
 `syncThemeOverlay.test.ts` exists to pin. `tests/themeOverlayRows.test.ts` adds
 a source-scan assertion that `themeOverlayRows.ts` is the **only** file in
 `src/` that constructs a `source: "theme"` row, which is what makes "no other
@@ -441,7 +441,7 @@ path can mint machine-local state" a failing test rather than a claim.
 
 **Making one permanent.** `ManualCalloutDiscovery` seeds its found-set with the
 same declared ids, so **Scan for callouts** promotes them to durable
-`source: "fallback"` rows — retiring the ephemeral row first, since `add` would
+`source: "fallback"` rows - retiring the ephemeral row first, since `add` would
 otherwise refuse the id. JSON, Callout Manager and Admonition imports can also
 create durable definitions. Their planners ignore temporary rows; replacement
 checks all id/alias conflicts before removing any overlay and publishes one
@@ -542,11 +542,11 @@ disclose that it is only a partial snapshot; it cannot be implemented as a live
 reference from `fallbackCalloutId` to the overlay.
 
 
-## Stage 5 — Reading the colours and the icon back
+## Stage 5 - Reading the colours and the icon back
 
 The scan knows property names; the user needs to see a swatch and an icon. The
 gap cannot be closed by parsing, because the answer is whatever the cascade
-computes — through variables, `color-mix()`, inheritance, or a Style Settings
+computes - through variables, `color-mix()`, inheritance, or a Style Settings
 body class the user toggled ten minutes ago.
 
 So [`ThemeAppearanceProbe`](../../src/manager/theme/ThemeAppearanceProbe.ts)
@@ -563,7 +563,7 @@ it. Three things about that rendering are load-bearing:
   unknown. The host is parked at `left: -10000px` with `contain: layout style`
   (`.cs-theme-probe` in `styles.css`).
 - **One batch per theme change.** Every wanted id goes into a single
-  `MarkdownRenderer.render` call as `> [!id] ` lines — the header alone, never
+  `MarkdownRenderer.render` call as `> [!id] ` lines - the header alone, never
   the user's display name, because a name carrying a newline would split into two
   blockquotes and shift every callout after it onto the wrong id.
 
@@ -575,7 +575,7 @@ plausible, so nothing would ever report it.
 
 The cache is keyed on `stylingSignature` + light/dark + the sorted id set, and
 dropped outright on `css-change`. A request arriving mid-pass is **held in one
-slot and re-run**, never dropped — the one request that is never redundant is
+slot and re-run**, never dropped - the one request that is never redundant is
 `css-change`'s, and dropping it left the running pass free to write the
 *outgoing* theme's readings into a cache that had just been cleared. A failed
 read clears both the cache and the signature, so the next repaint tries again
@@ -604,13 +604,13 @@ Obsidian's own stylesheet explains both:
 ```
 
 `--callout-title-color` is core's documented hook for a callout title's colour,
-and 25 of the 257 installed themes use it — 13 of them without ever setting
+and 25 of the 257 installed themes use it - 13 of them without ever setting
 `--callout-color`, so `.callout-title` keeps core's default hue forever while
 the title the reader sees carries the theme's. Separately, 21 themes hide the
 *drawing* rather than the slot (`.callout-icon > svg { display: none }`) and
 paint their own artwork on `.callout-icon::before`.
 
-The readout therefore takes six readings — five elements and one
+The readout therefore takes six readings - five elements and one
 pseudo-element: `.callout`, `.callout-title`, `.callout-title-inner`,
 `.callout-icon`, that slot's first element child, and `.callout-icon::before`. Both mask spellings (`mask-image` and
 `-webkit-mask-image`) are asked of every node that could carry one, because
@@ -623,7 +623,7 @@ the evidence is rather than by how common the mechanism is:
 
 | Rung | Evidence | Reproduced as |
 | --- | --- | --- |
-| `hidden` | computed `display: none` on `.callout-icon` | nothing — a genuinely empty slot |
+| `hidden` | computed `display: none` on `.callout-icon` | nothing - a genuinely empty slot |
 | `mask` (slot) | `mask-image` on `.callout-icon` **itself** | a painted box under the same stencil |
 | `svg` | real child markup **that is itself displayed** | the markup, cloned and sanitized |
 | `mask` (pseudo) | `mask-image` on `.callout-icon::before` | a painted box under that stencil |
@@ -648,7 +648,7 @@ Three orderings in that table are decisions, not accidents:
   rows): 94 rows carry a slot mask and 60 a `::before`-only mask, and splitting
   the rung moves those 94 and no row in any other theme.
 
-`iconKey()` folds each rung's **payload** into the identity, not just its kind —
+`iconKey()` folds each rung's **payload** into the identity, not just its kind -
 two themes both reaching `mask` draw different pictures, and a comparison on
 kinds alone would call that "unchanged" and keep the outgoing theme's artwork.
 
@@ -657,13 +657,13 @@ kinds alone would call that "unchanged" and keep the outgoing theme's artwork.
 [`themeAppearance.ts`](../../src/manager/theme/themeAppearance.ts), same
 evidence-first ordering:
 
-1. **The `::before`'s own paint**, when the `::before` is what drew the icon —
+1. **The `::before`'s own paint**, when the `::before` is what drew the icon -
    its `background-color` under a mask, its `color` under a glyph. Core paints
    no `::before` at all, so a painted one is always a theme saying so.
-2. **`.callout-title-inner`'s colour** — the hook above. Safe to add precisely
+2. **`.callout-title-inner`'s colour** - the hook above. Safe to add precisely
    because it defaults to `inherit`, making it byte-identical to rung 3 for
    every theme that ignores it.
-3. **`.callout-title`'s colour** — `rgb(var(--callout-color))`.
+3. **`.callout-title`'s colour** - `rgb(var(--callout-color))`.
 
 The child `<svg>`'s own colour is deliberately **not** a rung: core paints it
 `rgb(var(--callout-color))`, so it would duplicate rung 3 while letting the
@@ -671,7 +671,7 @@ handful of themes that neutralise their icon artwork (`--text-muted`,
 `transparent`) drain the colour out of a swatch that is currently right.
 
 The background is `.callout`'s computed `background-color`, falling back to the
-first concrete colour stop inside its `background-image` — a theme that paints
+first concrete colour stop inside its `background-image` - a theme that paints
 callouts with a gradient leaves `background-color` transparent, so the swatch
 would come out empty for exactly the themes that put the most work in. One stop
 is not the gradient, but it is a colour the reader can genuinely see.
@@ -679,30 +679,30 @@ is not the gradient, but it is a colour the reader can genuinely see.
 Blank readings become `null`, and *blank* is named rather than guessed at:
 `ZERO_ALPHA_RE` matches the alpha component specifically. The regex it replaced
 let its lazy head slide onto the **blue** channel, so every opaque colour whose
-last channel is zero — `rgb(184, 131, 0)`, Sanctum's amber, and so its
-`warning`, `caution`, `attention`, `alarm`, `idea` and `win` — came back
+last channel is zero - `rgb(184, 131, 0)`, Sanctum's amber, and so its
+`warning`, `caution`, `attention`, `alarm`, `idea` and `win` - came back
 transparent and drew no swatch at all.
 
 > [!IMPORTANT]
 > **The fallback is never the row's stored icon or colour.** `null` accent,
 > `null` background and `{ kind: "unknown" }` mean *draw a neutral placeholder*.
 > A caller that substitutes `def.icon` or `def.colorLight` there has
-> reintroduced the exact bug this module exists to remove — confidently naming
+> reintroduced the exact bug this module exists to remove - confidently naming
 > a design that is not on screen, which is indistinguishable from a right answer
 > until you compare.
 
-## Stage 6 — Reproducing what was measured
+## Stage 6 - Reproducing what was measured
 
 [`renderThemeIcon.ts`](../../src/manager/theme/renderThemeIcon.ts) is the **only**
 code allowed to draw a *theme's* callout icon, exactly as
 `icons/renderIcon.ts` is the only code allowed to draw a *Callout Studio* one.
 Each rung reproduces what was measured rather than interpreting it again:
 
-- `svg` — parsed as `image/svg+xml` (no scripting context), sanitized through
+- `svg` - parsed as `image/svg+xml` (no scripting context), sanitized through
   `icons/svgSafety.ts` and isolated before insertion.
-- `mask` — `.cs-theme-icon-mask` with `--cs-theme-mask`; there is no drawing to
+- `mask` - `.cs-theme-icon-mask` with `--cs-theme-mask`; there is no drawing to
   copy, so the painted box under the stencil is what gets reproduced.
-- `glyph` — a real span carrying the measured `font-family`, because a
+- `glyph` - a real span carrying the measured `font-family`, because a
   pseudo-element cannot be cloned.
 - `hidden` → nothing; `unknown` → `renderNoIcon`'s dashed placeholder. The
   distinction matters: `hidden` is the theme's decision, `unknown` is our
@@ -713,7 +713,7 @@ accent on the container gets a matching drawing without this function knowing
 anything about colour.
 
 [`calloutListIcon.ts`](../../src/manager/theme/calloutListIcon.ts) is the single
-answer for every list that draws a callout *small* — autocomplete, *Replace in
+answer for every list that draws a callout *small* - autocomplete, *Replace in
 vault*, vault stats, the command builder, and the settings callout picker
 ([`calloutComboboxRow.ts`](../../src/settings/calloutComboboxRow.ts)). These
 surfaces once drifted into different answers, some with no ownership check at
@@ -726,7 +726,7 @@ all:
 
 **Quick Insert is deliberately not a caller.** It renders a *real* callout
 through `MarkdownRenderer`, so the theme paints the row directly and there is
-nothing to reproduce — the better mechanism wherever a full callout fits. The
+nothing to reproduce - the better mechanism wherever a full callout fits. The
 settings row uses the same measured pair for its two swatches
 (`CalloutRowRenderer.ts`), and shows no swatch at all when the accent came back
 `null`.
@@ -750,12 +750,12 @@ in saved data are preserved as durable fallback definitions.
 
 
 
-## Where theme callouts appear — and why Block only
+## Where theme callouts appear - and why Block only
 
 | Surface | Theme callouts appear? |
 | --- | --- |
 | Settings → *Callouts from your theme* | yes, one row each, read-only |
-| *Quick insert block callout* | yes — rendered by Obsidian, so the theme draws the row itself, and grouped under a named filter that appears only while at least one theme-owned row exists |
+| *Quick insert block callout* | yes - rendered by Obsidian, so the theme draws the row itself, and grouped under a named filter that appears only while at least one theme-owned row exists |
 | The `[!` autocomplete, **block** position | yes |
 | The `[!` autocomplete, **heading / inline** position | no (`suggestableCallouts`) |
 | *Replace in vault*, vault stats, command builder and settings pickers | yes, drawn through `calloutListIcon` |
@@ -764,11 +764,11 @@ in saved data are preserved as durable fallback definitions.
 
 **A theme callout has exactly one format.** Heading callouts (`## [!recite]`)
 and inline callouts (`word [!recite] word`) are Callout Studio's own invented
-`.cs-*` DOM, which no theme selector can match — so painting them would override
+`.cs-*` DOM, which no theme selector can match - so painting them would override
 nothing, and an earlier build did exactly that on that argument. It was the
 wrong call: it offers two formats the theme has no design for and cannot follow,
 beside a Block callout the theme draws itself. Three renderings of one callout,
-two of them invented, is worse than one rendering and some literal text — and
+two of them invented, is worse than one rendering and some literal text - and
 literal text is at least legible *as syntax*, which is what tells the user the
 format is unavailable.
 
@@ -790,7 +790,7 @@ Three consequences downstream, each handled rather than left to fall out:
 - **An existing heading/inline command is *suspended*, never deleted**
   (`isSuspendedByTheme`): unregistered from the palette, left untouched in
   `settings.customCommands`, re-registered at the same id when the theme lets
-  go — so the user's own hotkey survives the round trip. The gate is on
+  go - so the user's own hotkey survives the round trip. The gate is on
   `desiredNames` and never on `kept`, because `kept` is written straight back to
   settings.
 
@@ -810,7 +810,7 @@ preview visually collapses its terminal blank editor row so the box ends with
 content, while retaining the underlying line as a safe caret target; every
 ordinary preview remains unchanged. Its `⋯` menu
 ([`themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts)) carries
-usage information, and — only when the callout is actually written somewhere —
+usage information, and - only when the callout is actually written somewhere -
 *Replace in vault* and *Clear uses in your notes*. Never *Delete*, which would
 be a lie since the theme keeps supplying the type; `deleteRemovesRow`
 ([`rowOwnership.ts`](../../src/settings/sections/rowOwnership.ts)) is the single
@@ -834,7 +834,7 @@ short version:
 > Name each callout with a plain `[data-callout="id"]` (or `~=`) attribute
 > selector, set `--callout-color` for the accent and `--callout-icon` for the
 > artwork, and Callout Studio will list your callout with the right id, the
-> right colour and the right icon — and then get out of your way. Nest or don't;
+> right colour and the right icon - and then get out of your way. Nest or don't;
 > both are read the same.
 
 ### What the plugin does with what it finds
@@ -850,11 +850,11 @@ short version:
 ```css
 /* Best: one id, a colour hook and an icon hook. */
 .callout[data-callout="recite"] {
-	--callout-color: 174, 129, 255;      /* R, G, B — core's pre-1.13 format */
+	--callout-color: 174, 129, 255;      /* R, G, B - core's pre-1.13 format */
 	--callout-icon: lucide-quote;        /* any Lucide id core knows */
 }
 
-/* Native nesting is read as its flat equivalent — declarations on the rule
+/* Native nesting is read as its flat equivalent - declarations on the rule
    itself, `&`, an implied descendant, and any depth of either. */
 body.theme-dark .callout[data-callout="recite"] {
 	background: rgba(174, 129, 255, 0.1);
@@ -865,7 +865,7 @@ body.theme-dark .callout[data-callout="recite"] {
 /* Word-list form, read identically. */
 [data-callout~="infobox"] { --callout-color: 90, 160, 240; }
 
-/* Selector lists, appearance scoping, at-rule wrappers, :is() — all fine. */
+/* Selector lists, appearance scoping, at-rule wrappers, :is() - all fine. */
 .callout[data-callout="tip"],
 .callout[data-callout="hint"] { --callout-color: 120, 200, 120; }
 
@@ -881,8 +881,8 @@ body.theme-dark .callout[data-callout="recite"] {
 > [!IMPORTANT]
 > **`--callout-color` changed format in Obsidian 1.13**: before it, a bare
 > `R, G, B` triplet that core wraps in `rgb(…)`; from 1.13 on, a full CSS
-> colour string. Discovery does not care either way — it reads the *computed*
-> result — but everything else does.
+> colour string. Discovery does not care either way - it reads the *computed*
+> result - but everything else does.
 >
 > Callout Studio hands your theme **whichever spelling your own stylesheet uses**.
 > It works that out by reading your CSS: if your rules say
@@ -894,16 +894,16 @@ body.theme-dark .callout[data-callout="recite"] {
 > Two things to know if you are writing a theme today:
 >
 > - **Be consistent.** The read spelling is decided by majority across your whole
->   sheet, so a handful of rules in the other convention will break — and they
+>   sheet, so a handful of rules in the other convention will break - and they
 >   break silently, because an unparseable `var()` substitution unsets the
 >   property rather than raising anything.
-> - **A bare `.callout { background-color: … }`** — no guard, no id — tells the
+> - **A bare `.callout { background-color: … }`** - no guard, no id - tells the
 >   plugin you are painting every callout's background yourself, and it will stop
 >   supplying its own. Put a guard on it (a body class, a `[data-callout=…]`) if
 >   you meant it as a default rather than a decision.
 
 - **Case and spacing do not matter.** `[data-callout~=Metadata i]` is read as
-  `metadata`; `[data-callout="my note"]` as `my-note` — the same normalisation
+  `metadata`; `[data-callout="my note"]` as `my-note` - the same normalisation
   Obsidian applies when it writes the attribute.
 - **`@media`, `@supports` and `@layer` wrappers are descended into.**
 - **A rule that sets nothing still claims the id.** `[data-callout="x"] {}` is a
@@ -917,14 +917,14 @@ body.theme-dark .callout[data-callout="recite"] {
   [data-callout="y"]` claims `y` whether or not that class is currently applied.
 - **Light and dark variants both claim the same id**, so a callout styled only
   in `.theme-dark` is still owned in light mode. What the *swatch* shows is the
-  current appearance mode only — see
+  current appearance mode only - see
   [Limitations](#limitations-and-edge-cases).
 
 ### Patterns that prevent discovery
 
 | Pattern | Effect |
 | --- | --- |
-| `[data-callout*="col"]`, `^=`, `$=`, `\|=` | Kept as a family pattern, never listed as a callout type — a pattern names no id. Intended, and the editor warns a user whose id would be caught |
+| `[data-callout*="col"]`, `^=`, `$=`, `\|=` | Kept as a family pattern, never listed as a callout type - a pattern names no id. Intended, and the editor warns a user whose id would be caught |
 | `:not([data-callout="note"])` | An anti-claim; dropped |
 | `.callout-recite`, or any class-only convention | Not a `data-callout` claim; invisible |
 | `[data-callout]` alone | Names nothing |
@@ -936,8 +936,8 @@ body.theme-dark .callout[data-callout="recite"] {
 > walker treated any body containing a `{` as a wrapper and descended past the
 > rule that owned it, so a rule that both declared something and nested a child
 > lost its claim outright. Measured across the 257 themes installed in the dev
-> vault, seven write callout rules that way, and *Minimal Dracula* — which
-> nests all of them — was read as having no callout rules at all. Resolving
+> vault, seven write callout rules that way, and *Minimal Dracula* - which
+> nests all of them - was read as having no callout rules at all. Resolving
 > nesting recovered 16 callout ids across three themes (Minimal Dracula's 13,
 > Brainhack's `brainhack` and `1`, Underwater's `box`) and four family
 > patterns, and corrected the `!important` escalation measurement for five
@@ -946,8 +946,8 @@ body.theme-dark .callout[data-callout="recite"] {
 
 ### Backgrounds you deliberately remove
 
-If your theme gives callouts no background of their own — a flat or outlined
-design where the colour lives in the icon, the title and a frame — write it on a
+If your theme gives callouts no background of their own - a flat or outlined
+design where the colour lives in the icon, the title and a frame - write it on a
 selector that names no id and Callout Studio will follow it for the callouts its
 users invent:
 
@@ -960,20 +960,20 @@ body.my-flat-callouts .callout { background-color: unset; }
 The guard is kept and re-stated, so a Style Settings `class-toggle` works live in
 both directions with nothing to reload. Four things stop it being read: a child
 combinator (`body > .callout`), an id or attribute in the guard, a value that is
-not one of `transparent` / `unset` / `initial` / `revert` / `rgba(0,0,0,0)` — or
-`background: none` for the shorthand — and naming a `data-callout` id, which says
+not one of `transparent` / `unset` / `initial` / `revert` / `rgba(0,0,0,0)` - or
+`background: none` for the shorthand - and naming a `data-callout` id, which says
 nothing about a callout you have never heard of.
 
 If you also frame the callout through `.callout-title` / `.callout-content`
 borders and leave the colour to `currentColor`, Callout Studio supplies the
 callout's own accent so your frame is coloured rather than drawn in body text.
-**State a colour yourself and it will not touch it** — `border-color:
+**State a colour yourself and it will not touch it** - `border-color:
 color-mix(in srgb, var(--callout-color) 40%, transparent)` beside your
 `border: 2px solid` is enough, reads better in your own callouts too, and is
 what Shiba Inu does.
 
-If the colour moves to a stripe or a panel instead — a neutral root with the
-accent on the title, as AnuPpuccin's Sleek style does — fill that box from
+If the colour moves to a stripe or a panel instead - a neutral root with the
+accent on the title, as AnuPpuccin's Sleek style does - fill that box from
 `--callout-color` under the same guard as the root rule:
 
 ```css
@@ -998,7 +998,7 @@ means:
 - Setting `--callout-color` works, because core resolves it onto
   `.callout-title`.
 - Setting `--callout-title-color` works, because that is the node actually asked.
-- `color-mix()`, `var()` chains, `oklch()` — all fine. The probe reads the
+- `color-mix()`, `var()` chains, `oklch()` - all fine. The probe reads the
   computed result, not your source text.
 - Painting **only** the child `<svg>`'s colour will *not* register as an accent,
   by design.
@@ -1012,11 +1012,11 @@ Ranked by how well they reproduce on the plugin's own small surfaces:
 
 | Mechanism | Rung | Reproduces as |
 | --- | --- | --- |
-| `--callout-icon: lucide-quote` | `svg` | The real drawing — best supported. Core injects the `<svg>`, and it is cloned |
+| `--callout-icon: lucide-quote` | `svg` | The real drawing - best supported. Core injects the `<svg>`, and it is cloned |
 | `--callout-icon: '<svg …>'` | `svg` | Same, after sanitizing |
-| `mask-image` on `.callout-icon` | `mask` (slot) | A `currentColor` box under your stencil — accurate, and it inherits the row's accent |
+| `mask-image` on `.callout-icon` | `mask` (slot) | A `currentColor` box under your stencil - accurate, and it inherits the row's accent |
 | `mask-image` on `.callout-icon::before` | `mask` (pseudo) | The same, as long as the child `<svg>` is hidden or absent |
-| An icon-font glyph in `::before { content: "\f0eb" }` | `glyph` | The character, carrying your `font-family` — correct only if that font is loaded where the plugin draws it |
+| An icon-font glyph in `::before { content: "\f0eb" }` | `glyph` | The character, carrying your `font-family` - correct only if that font is loaded where the plugin draws it |
 | `.callout-icon { display: none }` | `hidden` | An empty slot, faithfully |
 | Anything else | `unknown` | A neutral dashed placeholder, never your row's stored icon |
 
@@ -1024,7 +1024,7 @@ Ranked by how well they reproduce on the plugin's own small surfaces:
 > If you paint on `.callout-icon::before` **and** leave core's `<svg>` visible,
 > the `svg` rung wins and small surfaces will show core's drawing rather than
 > yours. Hide the child (`.callout-icon > svg { display: none }`) or mask the
-> slot itself — which is what the themes that get this right already do.
+> slot itself - which is what the themes that get this right already do.
 
 ### Testing your theme against Callout Studio
 
@@ -1033,19 +1033,19 @@ through **the plugin's own scanner**, and writes a Markdown worksheet next to
 the vault root. Reusing the real scanner is the point: the *callout types it
 adds* column is literally the set the settings tab will list, not an
 approximation, so a disagreement is a plugin bug rather than a reporting one.
-It is deliberately **not** part of `npm run build` — its output goes into a
+It is deliberately **not** part of `npm run build` - its output goes into a
 vault, not the repo, and it depends on which themes happen to be installed.
 
 The columns worth checking for your own theme:
 
-- **Callout types it adds** — should be exactly the ids you intended. An empty
+- **Callout types it adds** - should be exactly the ids you intended. An empty
   column on a theme that styles callouts means a discovery-blocking pattern
   above.
-- **Fuzzy** — family selectors, listed as `*=col` strings. These capture users'
+- **Fuzzy** - family selectors, listed as `*=col` strings. These capture users'
   own ids silently.
-- **`!important` count** and **heaviest selector** — the inputs to the plugin's
+- **`!important` count** and **heaviest selector** - the inputs to the plugin's
   escalation. The ceiling is 14 class units.
-- **Style Settings classes** and **`:has()`** — flagged because a static scan
+- **Style Settings classes** and **`:has()`** - flagged because a static scan
   cannot predict them; those rows need a human.
 
 ## Limitations and edge cases
@@ -1059,14 +1059,14 @@ The columns worth checking for your own theme:
   is off. The plugin stands down; the probe then measures whatever *is* on
   screen, which may be core's defaults.
 - **Ownership is per id, not per property.** A theme that sets one variable for
-  `note` owns `note` entirely. This is the whole point — a partial override is
-  the split the model exists to abolish — but it does mean a very light touch
+  `note` owns `note` entirely. This is the whole point - a partial override is
+  the split the model exists to abolish - but it does mean a very light touch
   costs the theme the full callout.
 - **Layout is not undone.** The plugin wins the properties it sets; it does not
   reverse `display: grid` or a `transform` a theme adds.
 - **Enumeration reads the theme only.** A user snippet that declares
   `[data-callout="foo"]` does *not* create a theme row and does not make the
-  plugin stand down — snippets count only toward the `!important` escalation
+  plugin stand down - snippets count only toward the `!important` escalation
   measurement. For an unrecognized native Block callout, the generated fallback
   deliberately has only one class of specificity and no `!important`, so an
   ordinary exact snippet definition wins without being inferred as registry
@@ -1079,24 +1079,24 @@ The columns worth checking for your own theme:
 - **`source: "theme"` in an imported file is not authority.** `importValidator`
   re-stamps `source: "user"`; only the live sweep can make a row a theme row.
 - **A `"` or `\` can reach a callout id** without the user typing it, so every
-  emitted selector escapes through `utils/calloutSelector.ts` — see
-  [06-css-generation.md](06-css-generation.md#calloutsel-vs-tokenattrsel--the-selector-escaping-rule).
+  emitted selector escapes through `utils/calloutSelector.ts` - see
+  [06-css-generation.md](06-css-generation.md#calloutsel-vs-tokenattrsel---the-selector-escaping-rule).
 - **Style Settings' own `<style id="css-settings-manager">` is invisible** to
   `themeCss()` and `enabledSnippetCss()`, so the accent dialect is not re-derived
   when an option changes. That is correct rather than a gap: Style Settings
   changes body classes and variable *values*, never read sites. Two themes in the
-  dev vault expose a `--callout-<type>` as a settable variable — Iridium, and
-  Tokyo Night, which offers a `variable-themed-color` picker for all thirteen —
+  dev vault expose a `--callout-<type>` as a settable variable - Iridium, and
+  Tokyo Night, which offers a `variable-themed-color` picker for all thirteen -
   and both are colour-dialect with colour pickers, so the spelling stays
   consistent whatever the reader picks. It does fire `css-change`, so the pass
-  runs and comes out byte-identical — which is the point: the theme's guarded
+  runs and comes out byte-identical - which is the point: the theme's guarded
   rules take effect live, with nothing re-injected.
 
   Verified end to end in the cascade harness: overriding Tokyo Night's
   `--callout-default` to `#00cc44` moves an unmodified built-in's box, title,
   `--cs-accent` and heading bar to that green, on the same generated sheet, while
   a user-coloured callout beside it does not move at all. That split is the whole
-  contract — the theme's variables stay the theme's, the user's colour stays the
+  contract - the theme's variables stay the theme's, the user's colour stays the
   user's.
 - **The accent dialect's `read` is one answer per sheet, while ownership is per
   id.** A theme that mixes both spellings loses its minority: Aura 1 read of 18,
@@ -1114,23 +1114,23 @@ The columns worth checking for your own theme:
   already broken on stock Obsidian 1.13, and this plugin neither causes that nor
   makes it worse. The same is true of **Shiba Inu**'s `failure`, whose
   `--color-red: rgb(var(--red))` fails two hops above anything a callout scan can
-  see. A third `hsl-triplet` spelling would fix the first group — `hexToHsl` is
-  already in `colorUtils` — but it changes what goes *into* `--callout-color`, so
+  see. A third `hsl-triplet` spelling would fix the first group - `hexToHsl` is
+  already in `colorUtils` - but it changes what goes *into* `--callout-color`, so
   it is a design decision rather than a patch, and it is deliberately not taken
   here. Nothing else in the 257 greys out.
 - **A runtime probe could answer `declared` exactly.** `ThemeAppearanceProbe`
   already reads computed styles through an injectable reader; registering a
   sentinel `@property`, assigning the theme's variable to it and reading it back
   would see Style Settings, snippets and `var()` chains for free. It is rejected
-  for now because it is asynchronous and cannot answer `read` at all — that would
-  still need the text scan — but it is the documented upgrade path if the scan
+  for now because it is asynchronous and cannot answer `read` at all - that would
+  still need the text scan - but it is the documented upgrade path if the scan
   ever proves too coarse.
 
 ## Checking a theme against the real cascade
 
 `npm test` cannot see this. Its DOM is a stand-in and its `obsidian` module is a
 stub, so it can assert **what CSS is emitted** but never **which declaration
-wins** — and every question in this chapter is a cascade question. The answer is
+wins** - and every question in this chapter is a cascade question. The answer is
 to replay the cascade in headless Chrome and read computed values. It takes
 minutes, needs no Obsidian launch, and is what every measurement above was
 settled with.
@@ -1145,22 +1145,22 @@ app.css  →  the plugin's styles.css  →  theme.css  →  enabled snippets
 Eight things that are easy to get wrong, and each one silently invalidates the
 result:
 
-- **Extract `app.css` from the *running* asar** — `~/Library/Application Support/obsidian/obsidian-<v>.asar`, not the copy inside `Obsidian.app`, which lags badly. The two disagree about whether `--callout-color` is a triplet or a colour, which is the whole subject.
-- **Link every sheet, never inline it into a `<style>`.** Several installed themes — Border, NeuBorder, Tokyo Night, Poimandres Extended, Glass Robo and Olivier's Theme — carry a literal `</style>` inside their Style Settings YAML comment; inlined, that ends the element early and Chrome parses 301 of Border's rules and silently drops the rest, including the entire `callout-style-N` family. It is not only a callout question: inlined, Glass Robo lost the `--modal-background` its whole window is painted with, and read as a theme with no surface at all. Obsidian assigns theme CSS through `styleEl.textContent`, which never re-enters the HTML parser.
+- **Extract `app.css` from the *running* asar** - `~/Library/Application Support/obsidian/obsidian-<v>.asar`, not the copy inside `Obsidian.app`, which lags badly. The two disagree about whether `--callout-color` is a triplet or a colour, which is the whole subject.
+- **Link every sheet, never inline it into a `<style>`.** Several installed themes - Border, NeuBorder, Tokyo Night, Poimandres Extended, Glass Robo and Olivier's Theme - carry a literal `</style>` inside their Style Settings YAML comment; inlined, that ends the element early and Chrome parses 301 of Border's rules and silently drops the rest, including the entire `callout-style-N` family. It is not only a callout question: inlined, Glass Robo lost the `--modal-background` its whole window is painted with, and read as a theme with no surface at all. Obsidian assigns theme CSS through `styleEl.textContent`, which never re-enters the HTML parser.
 - **Publish theme ownership.** `registerThemeAppearance` hands `registry.setThemeOwnedIds` every id the theme names, built-ins included, so the emission gates silence the plugin for them. Measuring without it measures a configuration that cannot occur.
 - **Model Style Settings exactly.** Class toggles and class selects add classes to `<body>`; variables land in `body.css-settings-manager` and `body.theme-{light,dark}.css-settings-manager`, in a `<style>` appended last to `<head>`. Read them out of the theme's own `/* @settings */` YAML rather than guessing.
-- **Read numbers, not pixels.** Without real CodeMirror the layout collapses, so a screenshot lies where `getComputedStyle` does not. (Settings-pane questions are the exception: that DOM is plain markup and a screenshot of it is real — which is how the sticky band's paint was verified pixel-identical before and after a change.)
-- **A width question needs the modal chain's own widths overridden.** `.modal` is `width: var(--dialog-width)` with a `max-width`, and `.vertical-tab-content` adds `padding-inline: var(--size-4-12)` and `container-type: inline-size`. So sizing the *host* element proves nothing: a sweep from 900px down to 220px reports byte-identical geometry at every step, because the pane never actually narrowed. Set `width: 100% !important; max-width: none; min-width: 0` on `.modal`, `.vertical-tab-content-container` and `.vertical-tab-content`, then size the wrapper — that is what makes a responsive question measurable. Read logical edges, too: `getBoundingClientRect` is physical, so an assertion written as "16px from the right" passes in LTR and fails in RTL for a layout that is correct in both.
-- **Put only the classes a default install has on `<body>`.** `is-translucent` is a setting that is off by default, and a theme is free to key its whole see-through look off it; measuring with it on measures somebody else's install. `theme-{dark,light}`, `mod-macos`, `is-focused` — and `is-mobile is-tablet` / `is-mobile is-phone` when the question is a mobile one, which for anything painted per device it usually is.
+- **Read numbers, not pixels.** Without real CodeMirror the layout collapses, so a screenshot lies where `getComputedStyle` does not. (Settings-pane questions are the exception: that DOM is plain markup and a screenshot of it is real - which is how the sticky band's paint was verified pixel-identical before and after a change.)
+- **A width question needs the modal chain's own widths overridden.** `.modal` is `width: var(--dialog-width)` with a `max-width`, and `.vertical-tab-content` adds `padding-inline: var(--size-4-12)` and `container-type: inline-size`. So sizing the *host* element proves nothing: a sweep from 900px down to 220px reports byte-identical geometry at every step, because the pane never actually narrowed. Set `width: 100% !important; max-width: none; min-width: 0` on `.modal`, `.vertical-tab-content-container` and `.vertical-tab-content`, then size the wrapper - that is what makes a responsive question measurable. Read logical edges, too: `getBoundingClientRect` is physical, so an assertion written as "16px from the right" passes in LTR and fails in RTL for a layout that is correct in both.
+- **Put only the classes a default install has on `<body>`.** `is-translucent` is a setting that is off by default, and a theme is free to key its whole see-through look off it; measuring with it on measures somebody else's install. `theme-{dark,light}`, `mod-macos`, `is-focused` - and `is-mobile is-tablet` / `is-mobile is-phone` when the question is a mobile one, which for anything painted per device it usually is.
 - **Do not use `--virtual-time-budget`.** Virtual time does not advance while an animation is running, so any theme with one hangs the run until it is killed, and a sweep across every installed theme will hit several. The page has no async work of its own: `--dump-dom` after the load event is enough, with a wall-clock timeout per run.
-- **A rule walk needs a `try` around every rule, and still cannot see a nested one.** Reading `document.styleSheets` to find *which* declaration won is the natural follow-up to a surprising computed value, and it has two traps: one unusual rule type throws and takes the rest of that sheet's rules with it unless each is caught on its own, and `el.matches(rule.selectorText)` throws outright on a nested rule, whose `selectorText` starts with `&`. A theme written with CSS nesting then looks like it has no opinion at all — Lagom's `background-color: transparent !important` on settings headings, nested under `.mod-settings`, was invisible that way, and it is the reason the band's paint could not be fixed with an `!important`.
+- **A rule walk needs a `try` around every rule, and still cannot see a nested one.** Reading `document.styleSheets` to find *which* declaration won is the natural follow-up to a surprising computed value, and it has two traps: one unusual rule type throws and takes the rest of that sheet's rules with it unless each is caught on its own, and `el.matches(rule.selectorText)` throws outright on a nested rule, whose `selectorText` starts with `&`. A theme written with CSS nesting then looks like it has no opinion at all - Lagom's `background-color: transparent !important` on settings headings, nested under `.mod-settings`, was invisible that way, and it is the reason the band's paint could not be fixed with an `!important`.
 
 Three assertions carry most of the value:
 
 | Check | What a failure means |
 | --- | --- |
-| no built-in's `--cs-accent-theme` computes to `rgb(125, 125, 125)` | the `@property` grey initial — the spelling handed to it did not parse. Skip rows with no `--cs-color-rgb`: those are theme-owned, where the plugin emits nothing by design |
-| `--cs-accent` agrees with the `--callout-color` the page computed | this plugin's own surfaces have drifted from the box the theme painted. Compare rounded channels, not strings — Maple serialises `rgba(5.202, 132.8822, 168.198, 1)` for the same colour |
+| no built-in's `--cs-accent-theme` computes to `rgb(125, 125, 125)` | the `@property` grey initial - the spelling handed to it did not parse. Skip rows with no `--cs-color-rgb`: those are theme-owned, where the plugin emits nothing by design |
+| `--cs-accent` agrees with the `--callout-color` the page computed | this plugin's own surfaces have drifted from the box the theme painted. Compare rounded channels, not strings - Maple serialises `rgba(5.202, 132.8822, 168.198, 1)` for the same colour |
 | render the same DOM with the generated sheet **and without it**, and diff | every property that moved should be one the user chose. Anything else is an over-reach; anything expected and missing is an under-reach |
 
 That last one is the sharpest instrument in this chapter: it turns "does this
@@ -1177,7 +1177,7 @@ theme. The shape is worth keeping:
   `class-toggle` and `class-select` entries whose classes appear in a selector
   mentioning `callout`, and measure the default install, each option alone, each
   pair of options from two different settings, and the vault's own saved
-  `obsidian-style-settings/data.json` — light and dark, Reading view and the Live
+  `obsidian-style-settings/data.json` - light and dark, Reading view and the Live
   Preview chain. Flipping `<body>` classes on one loaded page per theme is
   exactly what Style Settings does, and measures thousands of states in seconds.
 - **Generate the sheet per theme** with `themedHarness(themeCss)` and the same
@@ -1190,7 +1190,7 @@ theme. The shape is worth keeping:
 - **Two invariants, and their honest exceptions.** *Transparent*: no fill on any
   box or surface. *Gradient*: visible on some box, never replaced by a solid
   accent fill, never under an opaque surface. A missing gradient is a bug only
-  when the solid definition shows its colour somewhere in the same state — when
+  when the solid definition shows its colour somewhere in the same state - when
   it does not, the theme draws that state flat for everyone. A content card or
   an opaque title badge partly covering the gradient is the theme's own design,
   reported rather than failed.
@@ -1211,7 +1211,7 @@ callout accent variable, so nothing about this machinery is visible in it.
 | Theme | Callout rules | Read dialect | Guard classes (Style Settings) | Notes |
 | --- | --- | --- | --- | --- |
 | AnuPpuccin | ~25 | **triplet** | `anp-callout-{vanilla-normal,vanilla-plus,sleek,block}`, `anp-callout-color-toggle` | layout rules generic, colour rules a 28-id allowlist. Sets `--callout-blend-mode: normal` globally. Carries one `!important` callout rule, which lifts the studio weight to 5 |
-| Obsidian gruvbox | 2 | **triplet** | none | unguarded `.callout` background at `(0,1,0)` — the suppression case. Declares `--callout-<type>` through a triplet `var()` chain — the grey-accent case |
+| Obsidian gruvbox | 2 | **triplet** | none | unguarded `.callout` background at `(0,1,0)` - the suppression case. Declares `--callout-<type>` through a triplet `var()` chain - the grey-accent case |
 | Blue Topaz | ~120 | colour | `admonition-bg-color-same`, `border-callout-style`, `shade-callout-style`, `full-width-callout` | `.callout` background is `var(--admonition-bg-color)` (`#11111100`), not accent-derived |
 | ITS Theme | ~300 | colour | `callout-{original,block,alternate-line,bordered}`, `callout-no-metadata` | selectors up to `.callout×6` = `(0,6,0)`; private palette; large `[data-callout-metadata~=…]` grammar |
 | Minimal | 4 | neutral | `callouts-outlined`, `callout-blend-mode` | never reads `--callout-color` at all |
@@ -1227,18 +1227,18 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 
 | Theme | Callout rules | Read dialect | Style Settings that reach callouts | Notes |
 | --- | --- | --- | --- | --- |
-| Primary | 36 | **triplet** | none | reads `rgba(var(--callout-color))` and sets `--callout-color: var(--callout-rgb-<id>)` **per id**, so it names all 28 and owns them. Unguarded `.callout` background, padding and box-shadow — all three suppressed in the shim |
-| Sanctum | 81 | **triplet** | `callout-border-width`, `callout-border-opacity` (`format: '%'`) | one bare `.callout` rule carrying `border` **and** `background-color`. The `border` shorthand is why `PAINTERS` exists — see [06](06-css-generation.md#the-core-accent-shim) |
+| Primary | 36 | **triplet** | none | reads `rgba(var(--callout-color))` and sets `--callout-color: var(--callout-rgb-<id>)` **per id**, so it names all 28 and owns them. Unguarded `.callout` background, padding and box-shadow - all three suppressed in the shim |
+| Sanctum | 81 | **triplet** | `callout-border-width`, `callout-border-opacity` (`format: '%'`) | one bare `.callout` rule carrying `border` **and** `background-color`. The `border` shorthand is why `PAINTERS` exists - see [06](06-css-generation.md#the-core-accent-shim) |
 | Catppuccin | 27 | colour | none (its 8 blocks are accent/flavour) | `.callout` at `(0,1,0)`: 10% background, 60% border, both from `--callout-color`. Follows a chosen accent exactly |
-| Willemstad | 358 | colour | 43 options — `ssopt-callout-style` (Willemstad / IBM Carbon), `ssopt-callout-standard`, `callout-border-left-extra`, infobox / aside / columns / gallery families | per-side border colours (its left stripe) all follow the accent; 12.5% tint |
+| Willemstad | 358 | colour | 43 options - `ssopt-callout-style` (Willemstad / IBM Carbon), `ssopt-callout-standard`, `callout-border-left-extra`, infobox / aside / columns / gallery families | per-side border colours (its left stripe) all follow the accent; 12.5% tint |
 | Prism | 47 | colour, **0 reads** | `pt-disable-callout-styling` | `background-color: unset` on every callout at `(0,3,1)`, then paints `.callout-title` / `.callout-content` from its own palette per id. A preset colour leaves that alone; a Saved Palette wins it, as designed |
 | Border | 9 | colour, 0 reads | `callout-style-select` (`callout-style-1…4`) + 11 layout variables | the style classes land on `<body>`, so `--callout-border-width: 0 0 0 4px` with opacity 1 gives a 4px left stripe **in the user's colour** |
 | Tokyo Night | 9 | colour, 0 reads | same `callout-style-select` family, plus `variable-themed-color` for all 13 `--callout-<type>` | the live-update case above |
 | GitHub Theme | 5 | colour, 0 reads | `callout-on` (**default true**) | `body.callout-on .callout` at `(0,2,1)`: transparent background, grey `border-left`. A preset colour keeps both; only the accent-derived properties move |
-| Shimmering Focus | 21 | colour | none callout-named | tints `.callout-title` at 15% and its bottom border at 25% from the accent — both follow the user's colour |
+| Shimmering Focus | 21 | colour | none callout-named | tints `.callout-title` at 15% and its bottom border at 25% from the accent - both follow the user's colour |
 | Cybertron | 7 | colour, 0 reads | none | nothing accent-derived of its own; core's defaults carry the colour |
 | Everforest | 0 | colour | none | palette only: declares all 13 `--callout-<type>`, which an unmodified built-in follows through `--cs-accent-theme` |
-| Dracula for Obsidian | 0 | colour, 0 reads | none | no callout CSS at all — the pure-neutral case, byte-identical to a vault with no theme |
+| Dracula for Obsidian | 0 | colour, 0 reads | none | no callout CSS at all - the pure-neutral case, byte-identical to a vault with no theme |
 
 ## Where the code lives
 
@@ -1263,7 +1263,7 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 | [`manager/theme/renderThemeIcon.ts`](../../src/manager/theme/renderThemeIcon.ts) | Reproducing a measured icon |
 | [`manager/theme/calloutListIcon.ts`](../../src/manager/theme/calloutListIcon.ts) | One answer for every small callout list |
 | [`manager/theme/studioWeight.ts`](../../src/manager/theme/studioWeight.ts) / [`StudioWeightCache.ts`](../../src/manager/theme/StudioWeightCache.ts) | How hard the plugin pushes on what it *does* own |
-| [`manager/theme/themeReport*.ts`](../../src/manager/theme/themeReport.ts) | The `themes:report` worksheet — not bundled into `main.js` |
+| [`manager/theme/themeReport*.ts`](../../src/manager/theme/themeReport.ts) | The `themes:report` worksheet - not bundled into `main.js` |
 | [`settings/sections/rowOwnership.ts`](../../src/settings/sections/rowOwnership.ts) | Which of the three lists a row belongs in |
 | [`settings/sections/themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts), [`usage/usageMenuItem.ts`](../../src/usage/usageMenuItem.ts) | The theme row's controls and its shared occurrence-index menu |
 | [`settings/ThemeCalloutPreviewModal.ts`](../../src/settings/ThemeCalloutPreviewModal.ts) | The read-only window behind the eye icon |

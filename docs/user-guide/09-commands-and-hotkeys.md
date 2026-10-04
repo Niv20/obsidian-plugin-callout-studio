@@ -12,8 +12,8 @@ The built-in commands are:
 - **Callout Studio: Quick insert block callout**
 - **Callout Studio: Find callouts**
 
-The three commands that edit note text — **Insert empty callout**, **Wrap in
-callout**, and **Unwrap from callout** — appear in the Command Palette when a
+The three commands that edit note text - **Insert empty callout**, **Wrap in
+callout**, and **Unwrap from callout** - appear in the Command Palette when a
 Markdown note is open in an editing mode and its text editor is focused. They
 are unavailable in Reading view or when focus is in a surface without an active
 note editor.

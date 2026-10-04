@@ -1,36 +1,36 @@
 # Adding or modifying features
 
-"I want to add a feature — where do I start?" This document walks through
+"I want to add a feature - where do I start?" This document walks through
 the extension paths that actually apply to this codebase, and for each one,
 every place a change needs to land together. Missing one of these is the
-most common way a change looks finished but isn't — the classic failure
+most common way a change looks finished but isn't - the classic failure
 mode is "I updated the UI but forgot persistence/i18n/cleanup/export/
 migration/runtime-refresh."
 
 ## Adding a new setting
 
-1. **`src/types.ts`** — add the field to `PluginSettings` (or a nested
+1. **`src/types.ts`** - add the field to `PluginSettings` (or a nested
    settings interface it contains).
-2. **`src/constants.ts`** — add a default value to `DEFAULT_SETTINGS`.
-3. **`src/utils/settingsMerge.ts`** — add an **explicit** line in
+2. **`src/constants.ts`** - add a default value to `DEFAULT_SETTINGS`.
+3. **`src/utils/settingsMerge.ts`** - add an **explicit** line in
    `mergeSavedSettings()` that reads the saved value with a fallback to the
    default. See
-   [Persistence and caching § settings merge](07-persistence-and-caching.md#settings-merge--never-a-raw-spread)
-   for why a spread doesn't substitute for this — it must be a *named*
+   [Persistence and caching § settings merge](07-persistence-and-caching.md#settings-merge---never-a-raw-spread)
+   for why a spread doesn't substitute for this - it must be a *named*
    field, or the value is silently dropped on every load.
 4. If the field needs bounds-checking on untrusted data, add a clamp in
    `src/utils/settingsGuards.ts` (see `clampGlobalStyle` for the pattern).
 5. If it belongs to a **list the user builds up** (like `customPalettes`,
    `userImages`, `customCommands`), it must also be added to `mergeById`
    handling in the JSON importer
-   (`DataManagementSection.processImportedJSON`) — see
+   (`DataManagementSection.processImportedJSON`) - see
    [Import and export § the three exceptions](15-import-export.md#settings-import-restore-the-groups-the-file-carries-three-lists-merge-by-id).
    A brand-new such list needs a fourth stop: register it in `mergeById`'s
    call site the same way the existing three are handled, and add it to
    `LIST_GROUPS` there, so the group restore never assigns it wholesale.
 6. Add the UI control in the relevant `src/settings/sections/*.ts` module
    (or a modal), reading/writing `ctx.plugin.settings.<field>` and calling
-   `ctx.plugin.saveSettings()` on change — every settings write in this
+   `ctx.plugin.saveSettings()` on change - every settings write in this
    codebase saves immediately (no OK/Cancel convention).
 7. If the setting affects generated CSS, make sure `CSSInjector.inject()`
    actually reads it (see [CSS generation](06-css-generation.md)) and that
@@ -52,7 +52,7 @@ registrations added elsewhere. See
 [Editor integrations § built-in commands](10-editor-integrations.md#built-in-commands-and-availability).
 
 Anything tied to "wrap this callout type" belongs in the **custom command**
-system instead (`CustomCommandManager` — users build these themselves via
+system instead (`CustomCommandManager` - users build these themselves via
 `CommandBuilderModal`; there's nothing for a contributor to add here beyond
 new *roles/actions* the builder can offer, which would touch
 `CustomCommandAction`/`CustomCommand.role` in `src/types.ts`,
@@ -60,16 +60,16 @@ new *roles/actions* the builder can offer, which would touch
 `CustomCommandManager.run()`'s dispatch).
 
 If you're modifying an *existing* fixed command's behaviour: never change its
-`id` (it's a stable API users have hotkeys bound to — enforced by
+`id` (it's a stable API users have hotkeys bound to - enforced by
 `repoRelease.test.ts`), and route the actual editor manipulation through
 [`CalloutBlockTools.ts`](../../src/editor/CalloutBlockTools.ts) so the fixed
 command and any custom command sharing the same operation can't drift apart.
 
 ## Adding a callout-related behaviour (new field on `CalloutDefinition`)
 
-1. **`src/types.ts`** — add the field.
-2. **`src/manager/CalloutRegistry.ts`** — add it to `COMPARED_FIELDS` (the
-   `isModified` comparison — a field missing here silently never triggers a
+1. **`src/types.ts`** - add the field.
+2. **`src/manager/CalloutRegistry.ts`** - add it to `COMPARED_FIELDS` (the
+   `isModified` comparison - a field missing here silently never triggers a
    built-in save, see
    [Callout registry § isModified](05-callout-registry.md#ismodified-and-the-built-in-deference-mechanism)),
    and decide whether it belongs in `COLOUR_NEUTRAL_FIELDS` too.
@@ -77,60 +77,60 @@ command and any custom command sharing the same operation can't drift apart.
    is meaningfully *optional* on the definition (like backgrounds, text
    colours, icon adjustment), add a predicate to
    `src/settings/editor/authoredStyle.ts` and use it from **both**
-   `CalloutEditorSave.ts` and the live-preview build path — see
+   `CalloutEditorSave.ts` and the live-preview build path - see
    [Callout editor § the core tension](14-callout-editor.md#the-core-tension-concrete-form-state-vs-optional-definition-fields).
    Skipping this reintroduces the exact "opening the editor restyles the
    vault behind the modal" bug class documented there.
 4. If it's `true`-or-absent (not a real boolean), follow the
    `transparentBg` convention: writers must **omit the key** to turn it off,
-   never write `false` — see
+   never write `false` - see
    [Data model](04-data-model.md#calloutdefinition).
-5. **`src/utils/importValidator.ts`** — add the field to `KNOWN_FIELD_MAP`
+5. **`src/utils/importValidator.ts`** - add the field to `KNOWN_FIELD_MAP`
    (a total `Record`, so this is a compile error if skipped) and add
    validation logic if the field needs it.
-6. **`CSSInjector.ts`** — if the field affects rendering, read it in the
+6. **`CSSInjector.ts`** - if the field affects rendering, read it in the
    relevant generator method.
 7. Add a UI control in `CalloutEditor.ts`, wired through
    `CalloutEditorSave.ts`.
 8. Consider whether the field needs a **load-time migration** for existing
    data (see [Callout registry § load-time migrations](05-callout-registry.md#load-time-migrations)
-   for the pattern — content-keyed, idempotent, sets
+   for the pattern - content-keyed, idempotent, sets
    `pendingLoadMigrationSave`).
 
 ## Adding a context-menu item
 
-1. **`src/types.ts`** — add the id to `ContextMenuItemId`.
-2. **`src/constants.ts`** — add it to `DEFAULT_CONTEXT_MENU_ITEMS` for
+1. **`src/types.ts`** - add the id to `ContextMenuItemId`.
+2. **`src/constants.ts`** - add it to `DEFAULT_CONTEXT_MENU_ITEMS` for
    whichever role(s) it applies to.
-3. **`src/editor/contextmenu/items.ts`** — write the `ItemBuilder` function
+3. **`src/editor/contextmenu/items.ts`** - write the `ItemBuilder` function
    and register it in `BUILDERS[role]`. An id with no builder for a given
    role is simply skipped, so the same `ContextMenuItemConfig` shape can
    carry role-specific ids safely.
-4. **`src/i18n/en.ts`** — add the label key (`menuItem.<id>` convention, see
+4. **`src/i18n/en.ts`** - add the label key (`menuItem.<id>` convention, see
    `MenuCustomizationModal.ITEM_LABEL_KEY`) and the menu-item's own display
    string.
-5. **`src/settings/MenuCustomizationModal.ts`** — add it to
+5. **`src/settings/MenuCustomizationModal.ts`** - add it to
    `ITEM_LABEL_KEY` so it appears in the drag-sortable customization list.
 6. `mergeMenuItems()` in `settingsMerge.ts` already handles new-id-appended
-   automatically for upgrading users — no change needed there unless the
+   automatically for upgrading users - no change needed there unless the
    new item needs a specific *default position* rather than appended last.
 
 ## Adding a translation string
 
 1. **Add the key only to `src/i18n/en.ts`.** Do not touch the other 31
-   locale files for a routine addition — `t()` already falls back to
+   locale files for a routine addition - `t()` already falls back to
    English for any key missing elsewhere, by design.
 2. Wait until the English wording is settled before offering to translate
-   into other locales — see [Localization](17-i18n.md), don't re-translate
+   into other locales - see [Localization](17-i18n.md), don't re-translate
    on every small edit.
-3. `npm run i18n:generate` runs automatically as `prebuild` — you don't need
+3. `npm run i18n:generate` runs automatically as `prebuild` - you don't need
    to run it by hand, but if you do touch a *non-English* locale file, run
    it and commit the regenerated `locales/*.json` +
    `src/i18n/localeManifest.ts`, or CI's `git diff --exit-code` check fails
    the build. See [Localization](17-i18n.md) and
    [Build, test, and release](20-build-test-release.md).
 4. **Never hardcode UI-facing text.** `tests/repoSourceRules.test.ts`
-   ("no hardcoded UI copy") enforces this mechanically — a bare English
+   ("no hardcoded UI copy") enforces this mechanically - a bare English
    literal handed to a text setter, `Notice`, or `aria-label` fails the
    build.
 
@@ -141,7 +141,7 @@ but specifically through `GlobalStyleSettings` /
 `HeadingFrameStyleSettings` / `InlineFrameStyleSettings` in `src/types.ts`,
 with the merge logic in **`src/utils/globalStyleMerge.ts`** (its own module,
 not `settingsMerge.ts` directly, because this section is deep enough to
-warrant one — see [Colour system](12-color-system.md#globalstylemergets-and-iconadjustts)).
+warrant one - see [Colour system](12-color-system.md#globalstylemergets-and-iconadjustts)).
 The UI lives in `GlobalStyleModal.ts`'s per-role popups, driven by
 `styleControls.ts`'s shared slider/toggle builders. Remember: a new numeric
 style field almost certainly needs a clamp in `clampGlobalStyle`
@@ -154,37 +154,37 @@ to something absurd.
   above; the validator changes (`KNOWN_FIELD_MAP`) are mandatory, not
   optional.
 - **A new foreign-plugin importer** (a third "Import from X"): follow the
-  `calloutManagerImport.ts` / `admonitionImport.ts` split exactly — a pure
+  `calloutManagerImport.ts` / `admonitionImport.ts` split exactly - a pure
   `format.ts` that shape-reads the foreign data, a pure `<name>Import.ts`
   that **plans** (reads the registry, decides update-vs-create per entry,
   never mutates), and a single `CalloutRegistry.apply<Name>Import()` method
   that actually mutates, inside one `batch()`. This is what lets the import
-  modal show a report **before** anything changes — see
+  modal show a report **before** anything changes - see
   [Import and export](15-import-export.md#import-from-callout-manager). The
   window itself is not yours to write: add a `PluginImportSource` beside
   `admonitionImportSource.ts` and open `PluginImportModal` with it from a new
   `ImportSourceModal` row, under that window's **From another plugin** caption
-  — see
+ - see
   [the plugin import window](15-import-export.md#the-plugin-import-window).
   The source names **one** fallback besides the vault (`manual`: a file
-  with its `accept`, or pasted text with its `placeholder`) — whichever the
+  with its `accept`, or pasted text with its `placeholder`) - whichever the
   other plugin actually hands its users. The window shows both on one screen
   when it finds the plugin's data, and the fallback alone otherwise; it cannot
   be given a third route.
 - **A new export format**: add a row inside `ExportFormatModal`, not a new
-  top-level settings-tab row — the project's stated rationale is that a
+  top-level settings-tab row - the project's stated rationale is that a
   second top-level row would leave Import and Export shaped inconsistently.
 
 ## Refreshing icon pack artwork
 
-This is **not** a code change in the usual sense — it's a data-publishing
+This is **not** a code change in the usual sense - it's a data-publishing
 step with real consequences if done wrong:
 
 1. Regenerate locally: `npm run icons:generate` (reads from `node_modules`,
    writes `src/icons/data/*.index.ts` and `packs/*.json`). To refresh one
    library and leave the rest byte-identical, name it:
    `npm run icons:generate -- --pack=simple-icons`.
-2. **Mint a new git tag** for the pack files — do **not** push new pack
+2. **Mint a new git tag** for the pack files - do **not** push new pack
    content to the existing `packs-v3` tag. jsDelivr caches a tag's contents
    **permanently**; overwriting an existing tag's blobs would leave every
    already-cached CDN edge serving stale bytes forever to some users while
@@ -194,16 +194,16 @@ step with real consequences if done wrong:
    bytes, and the version the pack module credits
    (`tests/simpleIconsPack.test.ts` holds every downloadable source's credit
    to its manifest entry).
-4. Commit the regenerated files and the manifest checksums together —
+4. Commit the regenerated files and the manifest checksums together -
    `tests/repoGenerated.test.ts` enforces that the committed pack files,
    index files and generated notices regenerate byte-for-byte from source.
 5. **Push the tag before releasing a build that names it**, and check both
    hosts serve the expected bytes. `PACKS_TAG` is one tag for *every* pack, so
    a release that points at a tag the remote does not have ships a Download
-   button that can only fail — for all eight files, not just a new one. Packs
+   button that can only fail - for all eight files, not just a new one. Packs
    already on a user's disk are unaffected either way.
 
-See [Icons § PackDataStore](13-icons.md#packdatastore--bundled-file-download-and-verification)
+See [Icons § PackDataStore](13-icons.md#packdatastore---bundled-file-download-and-verification)
 for why the checksum has to match exactly (a mismatch on disk is treated as
 `"corrupt"` and rejected, not accepted-as-stale the way a locale file is).
 
@@ -218,31 +218,31 @@ the other packs' refreshes do not:
   A logo whose newly recorded licence is on the withheld list drops out of the
   pack; one under a licence on neither list **stops the build** until someone
   has read that licence and added it to `SI_SHIPPED_LICENSES` or
-  `SI_WITHHELD_LICENSES` — and to the matching lists in
+  `SI_WITHHELD_LICENSES` - and to the matching lists in
   `tests/simpleIconsPack.test.ts`, which restate the policy on purpose. See
-  [Icons § Simple Icons](13-icons.md#simple-icons--a-pack-decided-logo-by-logo).
+  [Icons § Simple Icons](13-icons.md#simple-icons---a-pack-decided-logo-by-logo).
 - **It rewrites `docs/SIMPLE-ICONS-LICENSES.md`.** Commit it with the pack; it
   is the credit the per-logo licences ask for. Update the version in the
-  `## Simple Icons …` heading of `docs/THIRD-PARTY-NOTICES.md` by hand — the
+  `## Simple Icons …` heading of `docs/THIRD-PARTY-NOTICES.md` by hand - the
   same test fails until it matches.
 - **A major release removes logos**, by design: that is how upstream honours a
   brand's request to be taken out. A callout already using a removed logo keeps
   rendering, from the copy in `data.json`, but the picker stops offering it and
   an import naming it falls back to the placeholder icon.
 
-To withdraw one logo without waiting for upstream — a brand owner asked — add
+To withdraw one logo without waiting for upstream - a brand owner asked - add
 its slug to `SI_WITHDRAWN` in the generator and refresh as above.
 
 ## Adding a new icon source/pack
 
-1. **`src/types.ts`** — add a member to `IconPackId` and, if it's a new
+1. **`src/types.ts`** - add a member to `IconPackId` and, if it's a new
    library rather than a new style of an existing one, `IconSourceId` too.
-2. **`src/icons/registry.ts`** — add an entry to `ICON_SOURCES` and
+2. **`src/icons/registry.ts`** - add an entry to `ICON_SOURCES` and
    `SOURCE_OF_TYPE` (both **total `Record`s**, so a missing entry is a
    compile error, not a silently blank grid).
-3. **`src/icons/packs/<name>.ts`** — implement the `IconPack` interface (see
+3. **`src/icons/packs/<name>.ts`** - implement the `IconPack` interface (see
    [Icons § the `IconPack` contract](13-icons.md#the-iconpack-contract)).
-   Decide `IconPackKind` carefully — it drives the fetch strategy end to
+   Decide `IconPackKind` carefully - it drives the fetch strategy end to
    end.
 4. If it's `bundledRemote`, add its file(s) to `scripts/generate-icon-packs.mjs`
    and follow the pack-refresh process above for publishing.
@@ -255,10 +255,10 @@ its slug to `SI_WITHDRAWN` in the generator and refresh as above.
    [`THIRD-PARTY-NOTICES.md`](../THIRD-PARTY-NOTICES.md) with the modifications
    stated, and a standing `noticeKey` if the artwork includes other people's
    marks. A library whose icons do not all share one licence needs what Simple
-   Icons has — a per-icon decision in the generator and a generated credit.
+   Icons has - a per-icon decision in the generator and a generated credit.
 8. Let the suites find the rest: the two counts and the id map in
    `tests/iconRegistry.test.ts`, the index list in `tests/iconIndex.test.ts`,
-   and — for the homepage the credit links to — the host list in
+   and - for the homepage the credit links to - the host list in
    `tests/repoSourceRules.test.ts`. `main.js` grows by the size of the search
    index, so check it against the bundle budget in `release.yml`.
 9. Name the library where users read about them: the source list in
@@ -276,7 +276,7 @@ Before considering a registry-touching change done, verify:
 - [ ] Does this preserve commands whose targets may be temporarily absent?
 - [ ] Does a rename need `customCommands.migrateCalloutId()` called
       **inside** the same batch, before the batched `onChange` fires?
-- [ ] Does the icon cache need `cleanupUnusedIconSvgs()` — and if so, is the
+- [ ] Does the icon cache need `cleanupUnusedIconSvgs()` - and if so, is the
       resulting write actually `await`ed into a save, since that method
       doesn't itself call `notifyChange()`?
 

@@ -3,7 +3,7 @@
 [`src/api/PluginAPI.ts`](../../src/api/PluginAPI.ts) + `src/api/types.ts`.
 Exposed at `app.plugins.plugins["callout-studio"].api`. This is the
 plugin's one committed, versioned integration surface for *other* Obsidian
-plugins — everything else in this codebase is free to change at will.
+plugins - everything else in this codebase is free to change at will.
 [`API.md`](../API.md) in `docs/` is the consumer-facing contract
 document; this page explains how the implementation actually enforces what
 that document promises.
@@ -21,7 +21,7 @@ interface CalloutStudioApi {
 ```
 
 `version: 2` today. `tests/publicApiContract.test.ts` pins the exact member
-count, each one's kind and arity, and — separately — that `API.md`'s stated
+count, each one's kind and arity, and - separately - that `API.md`'s stated
 member count agrees with the implementation. New detail members may be
 **added** without a version bump, and consumers are told to feature-detect
 them. Removing v1's `CalloutDetails.externalStyle` was a breaking shape change,
@@ -32,7 +32,7 @@ real Block callout and letting the cascade resolve it.
 
 **It deliberately does not write markdown for you.** Inserting a callout
 into a note is one line of text, and every consuming plugin wants to place
-it differently — the API answers *which callouts exist* and *what changed*,
+it differently - the API answers *which callouts exist* and *what changed*,
 never *how to use them*.
 
 ## Nothing live escapes
@@ -40,21 +40,21 @@ never *how to use them*.
 > [!IMPORTANT]
 > **Every value handed out is a frozen, structurally independent copy**,
 > built by mapper functions (`toCallout`, `toDetails`, `toIconInfo`) at the
-> bottom of `PluginAPI.ts` — never a live `CalloutDefinition` reference. The
+> bottom of `PluginAPI.ts` - never a live `CalloutDefinition` reference. The
 > registry hands *its own* renderer real, mutable objects on every paint; if
 > an external consumer held one of those same objects, a stray property
 > assignment from outside the plugin could change styling with **no
-> re-inject and no save** — a silent, hard-to-diagnose desync between what
+> re-inject and no save** - a silent, hard-to-diagnose desync between what
 > `data.json` says and what's actually rendering.
 
 Enforced at three separate depths, all tested: the returned **array** is
 frozen, every **element** in it is frozen, and nested objects (`aliases`,
 `icon`) are **also** frozen and are fresh copies rather than shared
-references — mutating an array returned from one call cannot affect a
+references - mutating an array returned from one call cannot affect a
 later call's result, and `getCallouts()` and `getCalloutsDetailed()` never
 hand back anything the registry itself is still holding onto.
 
-## Real ECMAScript privacy — not TypeScript's
+## Real ECMAScript privacy - not TypeScript's
 
 ```ts
 export class CalloutStudioAPI implements CalloutStudioApi {
@@ -67,10 +67,10 @@ export class CalloutStudioAPI implements CalloutStudioApi {
 > [!WARNING]
 > **`constructor(private readonly plugin: CalloutStudioPlugin)` would have
 > been a real vulnerability here, not just a style choice.** TypeScript's
-> `private` keyword is a compile-time-only annotation — it compiles down to
+> `private` keyword is a compile-time-only annotation - it compiles down to
 > a completely ordinary `this.plugin = plugin` with no runtime enforcement
 > at all. A consumer holding the `api` object could reach `api.plugin`
-> directly at runtime (TypeScript wouldn't even need to be bypassed — plain
+> directly at runtime (TypeScript wouldn't even need to be bypassed - plain
 > JavaScript sees it fine) and from there reach `registry.update()`,
 > `registry.remove()`, live settings, every live definition. `#plugin` is a
 > genuine ECMAScript private field, invisible and unreachable outside the
@@ -78,11 +78,11 @@ export class CalloutStudioAPI implements CalloutStudioApi {
 > members the *only* five that exist.
 
 The list-builder function (`usableDefinitions`) is likewise a **module-level
-function, not a class method** — an ordinary method is a perfectly reachable
+function, not a class method** - an ordinary method is a perfectly reachable
 prototype member at runtime (`Object.getPrototypeOf(api).usableDefinitions`),
 so keeping it off the class entirely is part of the same guarantee.
 
-## `usableDefinitions()` — the one list, and it's *committed* state
+## `usableDefinitions()` - the one list, and it's *committed* state
 
 ```ts
 const usableDefinitions = (plugin): CalloutDefinition[] => {
@@ -104,11 +104,11 @@ Three deliberate steps, each closing a real gap:
    whether or not the user has ever touched them.
 2. **All saved manual results are included**, regardless of note usage. There
    is no usage-based discovery filter or background pruning.
-3. **Every row is re-resolved through `registry.getReal(id)`** — this is
+3. **Every row is re-resolved through `registry.getReal(id)`** - this is
    the step that makes the list answer with **saved** state, not
    in-progress editor state. The settings-list view *deliberately* lets a
    preview standing in for an existing callout pass through as-is (those
-   rows are meant to track the open editor keystroke-by-keystroke) — but an
+   rows are meant to track the open editor keystroke-by-keystroke) - but an
    external consumer is not the settings UI: a preview fires no
    `onChange`, so a consumer that happened to re-read the list during that
    window (any unrelated mutation would trigger it) could cache a title the
@@ -121,12 +121,12 @@ Three deliberate steps, each closing a real gap:
 - **Everything the user created themselves.**
 - **Manually discovered theme types and saved plugin-provided definitions.**
 - **All manually discovered callouts**, including uncustomized or unused types.
-- **Theme-owned callouts** — deliberately included even though Callout Studio
+- **Theme-owned callouts** - deliberately included even though Callout Studio
   does not draw them: the id is still valid Markdown, and `themeStyled` tells a
   consumer not to substitute the stored icon and colours for the theme's live
   appearance.
 
-## `getCallout(id)` — the lookup ladder, deliberately shallower than the renderer's
+## `getCallout(id)` - the lookup ladder, deliberately shallower than the renderer's
 
 ```ts
 getCallout(id: string): Callout | undefined {
@@ -143,17 +143,17 @@ Forgiving in the same three ways Obsidian itself is (case-insensitive,
 `data-callout` spelling resolves via `findByAttrId`). **Deliberately stops
 one rung short of what the renderer does**: it tries id → alias → attribute
 form, but never falls through to substituting the configured *fallback*
-callout for a genuinely unknown id — an API meant to answer "does this
+callout for a genuinely unknown id - an API meant to answer "does this
 callout exist" would be useless if every id, known or not, always answered
 with something.
 
 The final **re-find by id in the published list** (rather than returning
-`resolved` directly) is what makes the substitution described above work —
+`resolved` directly) is what makes the substitution described above work -
 `resolved` here is very often the live-preview stand-in itself, and
 matching by id against the *filtered, `getReal`-resolved* list is what
 routes around it to the committed row.
 
-## `onChange` — no payload, and explicitly documented as imprecise
+## `onChange` - no payload, and explicitly documented as imprecise
 
 ```ts
 onChange(callback: () => void): () => void {
@@ -165,9 +165,9 @@ onChange(callback: () => void): () => void {
 A thin pass-through to the registry's own change list (see
 [Callout registry § onChange carries no payload](05-callout-registry.md#onchange-carries-no-payload)).
 `API.md` is explicit that consumers must **not** treat this as a precise
-diff: "A single user action can fire it more than once — editing the
+diff: "A single user action can fire it more than once - editing the
 callout that other manually discovered callouts mirror emits one event for the
-edit and another for the rows it restyled — and most events change nothing
+edit and another for the rows it restyled - and most events change nothing
 you care about, since a colour tweak fires it just as a rename does."
 Consumers wanting to skip expensive rebuilds are told to diff the resolved
 list themselves (a snippet showing exactly this is in `API.md`).
@@ -175,7 +175,7 @@ list themselves (a snippet showing exactly this is in `API.md`).
 > [!WARNING]
 > **Subscriptions are not cleaned up automatically.** The API hands back an
 > unsubscribe function specifically so a consumer plugin can, and must, call
-> it on its own unload — `API.md` shows `this.register(unsubscribe)` as the
+> it on its own unload - `API.md` shows `this.register(unsubscribe)` as the
 > idiomatic pattern. An orphaned subscription would keep firing into a
 > torn-down consumer forever.
 
@@ -185,11 +185,11 @@ list themselves (a snippet showing exactly this is in `API.md`).
 | --- | --- |
 | Creating/editing callouts | Read-only removes a whole class of cross-plugin conflicts; the user creates callouts through this plugin's own UI. |
 | Opening any modal | The icon picker and callout editor are internal UI, not an integration surface. |
-| Icon artwork (beyond a Lucide name) | Only `pack: "lucide"` names are independently usable — pass `icon.name` straight to Obsidian's own `setIcon()`. Every other pack's artwork is fetched/cached by this plugin for itself. |
-| Wrap/unwrap helpers | Every plugin scopes selection-wrapping differently; a consumer wanting this exact fence-aware, frontmatter-skipping behaviour is told to copy `CalloutBlockTools.ts` directly — the licence explicitly permits it. |
+| Icon artwork (beyond a Lucide name) | Only `pack: "lucide"` names are independently usable - pass `icon.name` straight to Obsidian's own `setIcon()`. Every other pack's artwork is fetched/cached by this plugin for itself. |
+| Wrap/unwrap helpers | Every plugin scopes selection-wrapping differently; a consumer wanting this exact fence-aware, frontmatter-skipping behaviour is told to copy `CalloutBlockTools.ts` directly - the licence explicitly permits it. |
 
 The earlier `registerCallout`/`unregisterCallout` pair (a mutation surface)
-was **removed rather than fixed** — it had no ownership model at all and
+was **removed rather than fixed** - it had no ownership model at all and
 left `source: "plugin"` rows permanently stuck in `data.json` with no way
 to clean them up. This is the concrete cautionary precedent behind the
 current read-only design; don't reintroduce a mutation surface without
@@ -198,7 +198,7 @@ solving that problem first.
 ## `src/api/types.ts` is intentionally a separate module
 
 `CalloutDefinition` (in `src/types.ts`) is free to grow and reshape as
-features land — `src/api/types.ts` (`Callout`, `CalloutDetails`,
+features land - `src/api/types.ts` (`Callout`, `CalloutDetails`,
 `CalloutIconInfo`) is a **stable, separately-versioned public shape** that
 must not move in lockstep with it. The mapper functions in `PluginAPI.ts`
 are the seam between the two.

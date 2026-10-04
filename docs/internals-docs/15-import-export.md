@@ -1,13 +1,13 @@
 # Import and export
 
 Covers the JSON backup format, the validator, the CSS-snippet export (recap
-— full mechanics in [Persistence and caching](07-persistence-and-caching.md#the-user-requested-css-snippet-export)),
+ - full mechanics in [Persistence and caching](07-persistence-and-caching.md#the-user-requested-css-snippet-export)),
 and the two foreign-plugin importers (Callout Manager, Admonition).
 
 ## Export
 
 `ImportSourceModal` and `ExportFormatModal` are each a single settings row
-opening a chooser — one picks a source, the other picks a format — rather
+opening a chooser - one picks a source, the other picks a format - rather
 than one top-level row per option, per the project's own stated design
 rationale ("a second top-level row for a new format would leave the two
 halves of one section shaped differently"). Both choosers show the backup
@@ -33,14 +33,14 @@ Both choosers and the plugin import window use `settings/optionBox.ts`:
 icon, title, description and badge. A box comes in two forms, told apart by
 whether it is given an `onActivate`:
 
-- **A choice** — a chooser's box. The whole box is the control
+- **A choice** - a chooser's box. The whole box is the control
   (`role="button"`, `tabindex="0"`, a chevron at its trailing edge) with click,
   Enter, and Space handling. Only the first click of a double-click and the
   first keydown of a held key activate it, so one gesture cannot open the file
   picker twice or start a second export.
-- **A card** — no `onActivate`: the box alone, with no role, no focus stop,
+- **A card** - no `onActivate`: the box alone, with no role, no focus stop,
   no chevron and no listeners. The plugin import window builds its two
-  options on it and adds what is its own to say — a radio dot, a button, a
+  options on it and adds what is its own to say - a radio dot, a button, a
   text box (see [the plugin import window](#the-plugin-import-window)).
   `renderOptionBox()` returns the card's `titleEl` and `descEl` so that window
   can rewrite them in place.
@@ -54,7 +54,7 @@ rather than as dialogs of their own:
 - **A borderless pill on the raised surface.** `border-radius: 8px`, no border,
   and `var(--cs-surface-raised, var(--background-secondary))` as its fill. The
   icon sits on a 36px tile painted `var(--cs-surface, var(--background-primary))`
-  — the window's own colour, as a row's syntax chip is — and so does the
+ - the window's own colour, as a row's syntax chip is - and so does the
   **Recommended** pill. Those two tokens are the pair
   [Settings UI and modals](16-settings-ui-and-modals.md) describes, and nothing
   else may be used here: on mobile dark `--background-secondary` *is* the
@@ -72,8 +72,8 @@ rather than as dialogs of their own:
   `.mod-rtl`), drawn on a choice only, because the click opens something. A
   plugin import card ends in a radio dot instead, because a click there only
   chooses.
-- **Hover.** A choice steps its own fill 7% toward `--text-normal` — darker
-  over a light window, lighter over a dark one — and its chevron goes from
+- **Hover.** A choice steps its own fill 7% toward `--text-normal` - darker
+  over a light window, lighter over a dark one - and its chevron goes from
   `--text-faint` to `--text-muted`. (A callout row hovers to
   `--background-secondary-alt` instead, which on a light desktop is nearly the
   window's white: fine for a row whose buttons carry the feedback, too faint
@@ -94,7 +94,7 @@ Neither export format records device history or creates a vault settings backup.
 JSON serializes the displayed registry and passes it to `downloadText()`; CSS
 writes the snippet. Neither invokes the settings writer or recovery service.
 
-1. **Callout Studio backup (`.json`)** — `registry.exportToJSONv2()`:
+1. **Callout Studio backup (`.json`)** - `registry.exportToJSONv2()`:
    ```json
    {
      "format": "callout-studio",
@@ -104,15 +104,15 @@ writes the snippet. Neither invokes the settings writer or recovery service.
    }
    ```
    `getExportableDefinitions()` is `getUserDefined()` **plus every modified
-   built-in** — see [Callout registry](05-callout-registry.md#which-rows-are-persisted-the-built-in-rule).
+   built-in** - see [Callout registry](05-callout-registry.md#which-rows-are-persisted-the-built-in-rule).
    The v2 JSON backup is the **only supported full-fidelity restore and
    cross-vault transfer format** for Callout Studio. It is the format users
    should choose when the destination vault also has the plugin installed.
    A legacy `exportToJSON()` (flat array, no envelope, no settings) still
    exists and is kept **because it's part of the public plugin API surface**
-   — the importer accepts both shapes, but the legacy array is not a complete
+ - the importer accepts both shapes, but the legacy array is not a complete
    setup backup because it carries no settings.
-2. **CSS snippet (`.css`)** — see
+2. **CSS snippet (`.css`)** - see
    [Persistence and caching](07-persistence-and-caching.md#the-user-requested-css-snippet-export)
    for the full write/overwrite/fingerprint mechanics. In short: block-role
    callouts only, a snapshot (not live-linked), byte-identical re-export
@@ -127,7 +127,7 @@ clipboard. This is a partial recovery/migration path, not a restore of the
 backup format or a full-fidelity one: CSS cannot carry the complete definitions,
 settings, palettes, commands, or stored image data in the JSON backup.
 
-## Import — the JSON backup
+## Import - the JSON backup
 
 This is the matching restore path for Callout Studio's own exported state.
 Users select a JSON backup explicitly; the plugin does not infer an import from
@@ -138,7 +138,7 @@ lines) is the gate every import file passes through before a single
 `registry.add()`/`update()` call happens. `validateImportPayload(raw,
 registry)` accepts **both** the legacy flat-array shape and the v2 envelope,
 never bails early on one bad entry, and collects **every** issue across the
-whole file in one pass — so `ImportReportModal` can show the complete
+whole file in one pass - so `ImportReportModal` can show the complete
 picture at once rather than one error at a time across repeated attempts.
 
 ### Resource limits and hostile input
@@ -181,23 +181,23 @@ table is changed by this hardening.
 ### Per-field validation
 
 - **IDs**: `ID_BAD_CHAR_RE` rejects pipes, brackets, and non-space
-  whitespace (tabs/newlines) — but explicitly **permits** spaces (multi-word
+  whitespace (tabs/newlines) - but explicitly **permits** spaces (multi-word
   labels are valid) and, notably, permits `"` and `\`. This is exactly the
-  gap [CSS generation § selector escaping](06-css-generation.md#calloutsel-vs-tokenattrsel--the-selector-escaping-rule)
-  exists to cover — an imported id can carry those characters into the
+  gap [CSS generation § selector escaping](06-css-generation.md#calloutsel-vs-tokenattrsel---the-selector-escaping-rule)
+  exists to cover - an imported id can carry those characters into the
   registry with nothing here to stop it.
-- **Colours**: `HEX_COLOR_RE` — `#rgb` or `#rrggbb` only.
+- **Colours**: `HEX_COLOR_RE` - `#rgb` or `#rrggbb` only.
 - **Icons**: `type` checked against `ICON_PACK_IDS` (derived from the pack
-  registry, never hand-duplicated — so adding a new pack can never leave the
+  registry, never hand-duplicated - so adding a new pack can never leave the
   validator rejecting icons the plugin itself now produces); Material
   `style` checked against the four known values; `weight` range-checked.
   **Icon *name* validity is checked separately and asynchronously**
-  (`unknownIconNameIssues`) — after the rest of an entry validates, because
+  (`unknownIconNameIssues`) - after the rest of an entry validates, because
   the packs' search indexes decode on demand and it isn't worth failing an
   otherwise-fine entry over one bad icon name. A name that exists in no pack
   is replaced with `FALLBACK_ICON` (the Lucide pencil) and reported as a
   **warning**, not an error.
-- **Tags/aliases**: length-capped at `MAX_TAG_LENGTH` (200 — a generous
+- **Tags/aliases**: length-capped at `MAX_TAG_LENGTH` (200 - a generous
   safety net on *imported*, untrusted data only; the editor itself imposes
   no length limit), count-capped at `MAX_TAGS_COUNT`.
 - **Metadata**: every value must be a string. Keys such as `__proto__`,
@@ -205,19 +205,19 @@ table is changed by this hardening.
   and export; safe object construction avoids invoking inherited setters or
   silently discarding a metadata entry.
 - **Unknown top-level fields** are reported as warnings via `KNOWN_FIELD_MAP`
-  — a **total `Record`** over `keyof CalloutDefinition`, so adding a field
+ - a **total `Record`** over `keyof CalloutDefinition`, so adding a field
   to the type without adding it here is a compile error, which is what stops
   the plugin from warning about its *own* export the moment a new field
   ships.
 - **`RETIRED_FIELDS`** (`solidBackground`, `styleMode`, and `externalStyle`) are dropped
-  **silently**, with no warning — an export from an older build of the
+  **silently**, with no warning - an export from an older build of the
   plugin itself carrying a since-retired field isn't a file the plugin
   "doesn't understand," so it doesn't get the generic unknown-field warning.
   In particular, an old `externalStyle: true` does not restore the removed
   personal-CSS ownership mode: the imported callout uses its stored appearance
   normally, and an import does not trigger the load-migration notice.
 
-### `missingImageIssues` — pictures that didn't travel with their callout
+### `missingImageIssues` - pictures that didn't travel with their callout
 
 This check runs for both the v2 envelope and legacy flat arrays. A legacy array
 cannot carry pictures itself, so its image ids must already exist in the target
@@ -226,9 +226,9 @@ vault or the user sees a warning before importing.
 An ordinary export carries the user's pictures inside `settings.userImages`,
 so this normally finds nothing. It fires specifically when someone
 hand-edits a file, or pastes one vault's exported *callouts* array beside
-another vault's *settings* — without this check, a callout referencing a
+another vault's *settings* - without this check, a callout referencing a
 picture id nobody has would simply render blank with no explanation. A
-picture the target vault **already holds** under that id is fine — the id
+picture the target vault **already holds** under that id is fine - the id
 alone is enough, and re-importing a callout back onto the device that first
 made the picture is the ordinary, expected case.
 
@@ -242,7 +242,7 @@ for (const def of defs) {
 ```
 
 An id already in the registry is **updated in place**, not skipped or
-duplicated — this is what makes re-importing the same backup, or importing
+duplicated - this is what makes re-importing the same backup, or importing
 one vault's export into another that shares some built-in customizations,
 converge rather than error.
 
@@ -276,7 +276,7 @@ registry mutation:
    If not, it says the import is shown but not saved, instead of reporting
    success.
 
-The foreign-plugin window (`PluginImportModal.apply`) takes steps 2–4 as well;
+The foreign-plugin window (`PluginImportModal.apply`) takes steps 2 - 4 as well;
 its report or its explicit **Import** click is the confirmation.
 
 ### Settings import: restore the groups the file carries; three lists merge by id
@@ -301,7 +301,7 @@ reads it into.
 > exceptions to "settings import restores the group," and this is
 > deliberate, not an oversight.** Every other settings field (global style,
 > context-menu config, fallback id, language) is a single value with no id
-> of its own — "keep both" has no meaning for a border width, so an import
+> of its own - "keep both" has no meaning for a border width, so an import
 > *is* a restore for those. But these three are **lists the user builds up
 > over time**, and `Object.assign`ing them from an import file would
 > silently **wipe** the user's existing palettes/pictures/commands the
@@ -310,7 +310,7 @@ reads it into.
 > [`mergeById`](../../src/utils/mergeById.ts): a repeated id overwrites in
 > place (so re-importing the same backup rewrites, not duplicates, without
 > reshuffling the list), a new id is appended, and an empty incoming list
-> changes nothing at all. Palettes layer a name match on top of this rule —
+> changes nothing at all. Palettes layer a name match on top of this rule -
 > see below.
 >
 > **The rule generalizes to any *new* settings-level list**: it must merge
@@ -324,7 +324,7 @@ reads it into.
 palette's identity (it refuses a second palette under a taken name,
 case-insensitively) and its auto-suggested name for any blue is "Blue 2". Two
 vaults that each made a blue palette therefore carry a "Blue 2" apiece under
-different ids, and merging by id alone left both in the list — twins no
+different ids, and merging by id alone left both in the list - twins no
 dropdown could tell apart.
 
 - An incoming palette whose **id or name** (`normalizeName`: trimmed,
@@ -333,7 +333,7 @@ dropdown could tell apart.
   palette keeps its place in the list. A vault holding several palettes under
   that name (the state the older merge left behind) has them all rewritten to
   the file's version, which makes them identical for the consolidation below to
-  fold — so importing the file again repairs such a vault.
+  fold - so importing the file again repairs such a vault.
 - A palette the file has itself written is never matched by name again, so a
   file that carries two same-named palettes brings both across instead of one
   eating the other.
@@ -347,15 +347,15 @@ dropdown could tell apart.
   the vault already had, which is also what keeps re-importing a file inert.
   This applies to an id match as well as a name match.
 
-A palette merge can also produce **cross-vault duplicate colours** — two
-vaults independently making the same colour under different names and ids — so
+A palette merge can also produce **cross-vault duplicate colours** - two
+vaults independently making the same colour under different names and ids - so
 `consolidateDuplicatePalettes()` runs immediately after the palette merge,
 folding duplicates and re-pointing any callout that referenced the
 now-merged-away id, with a one-time notice.
 
 An import that adds callouts also triggers `ensureIconArtworkFor()` for
-every imported icon whose callout doesn't hide it — see
-[Icons § the only repair path](13-icons.md#ensureartworkforicons--the-only-repair-path).
+every imported icon whose callout doesn't hide it - see
+[Icons § the only repair path](13-icons.md#ensureartworkforicons---the-only-repair-path).
 
 ## The plugin import window
 
@@ -378,17 +378,17 @@ one more source object and one more row in `ImportSourceModal`.
 show an Import inside the "This vault" row as well as a footer Import that only
 read the paste box, and Admonition's "Choose file…" imported the moment a file
 was picked. Later versions split it into views behind a header Back arrow,
-made each option a box that was its own button — one of which read the
-clipboard the moment it was clicked, which nothing on screen announced — and
+made each option a box that was its own button - one of which read the
+clipboard the moment it was clicked, which nothing on screen announced - and
 then showed one option at a time behind a small text link, which hid the
 choice. Now both options are on one screen:
 
-- **This vault** — a card saying what was found. On screen while the probe is
+- **This vault** - a card saying what was found. On screen while the probe is
   still looking and once it has found something.
-- **The source's one fallback** — always on screen, and alone when the vault
+- **The source's one fallback** - always on screen, and alone when the vault
   holds nothing to import.
 
-The fallback is the source's to name —
+The fallback is the source's to name -
 
 ```ts
 type PluginImportManual =
@@ -396,7 +396,7 @@ type PluginImportManual =
   | { kind: "paste"; placeholder: string }; // Callout Manager
 ```
 
-— matching what each plugin hands its users: Admonition's export button writes
+ - matching what each plugin hands its users: Admonition's export button writes
 a file, so its window takes an uploaded file; Callout Manager's Copy button
 fills the clipboard, so its window has a text box and a Paste button. The
 footer Import is the only import control. Which option is active, and so what
@@ -417,7 +417,7 @@ rather than merely not drawn:
 `activeOption()` is the user's last choice (`flow.chosen`) while that option
 still holds something; otherwise the vault once found, as the recommended
 default; and otherwise whatever the fallback holds, being the only thing on
-screen. Filling the fallback — a file staged, text typed or pasted — chooses
+screen. Filling the fallback - a file staged, text typed or pasted - chooses
 it; a click on the vault card, or on its radio dot, chooses the vault. Each
 option keeps what it was given while the other is active, and Import only ever
 reads the active one.
@@ -425,8 +425,8 @@ reads the active one.
 - **The cards** (`renderOptions`,
   [`pluginImportViews.ts`](../../src/settings/pluginImport/pluginImportViews.ts))
   are option boxes drawn as cards (`.cs-import-vault`, `.cs-import-manual`),
-  built **once** per open. `update()` writes everything that changes in place —
-  the count, the Recommended pill, a staged file's name, which card is active —
+  built **once** per open. `update()` writes everything that changes in place -
+  the count, the Recommended pill, a staged file's name, which card is active -
   so nothing the user is in is ever replaced: the Upload button that becomes
   Replace is the same button, typing never moves the caret, and the probe
   settling touches neither the text box nor focus.
@@ -438,12 +438,12 @@ reads the active one.
   its status line. The dot, not the card, is the radio, because a radio may
   hold no control and the fallback's card holds a button and, for a paste, a
   text box. The whole card is still one pointer target for the same thing: a
-  click anywhere on it chooses it — except on its own button or text box
+  click anywhere on it chooses it - except on its own button or text box
   (`closest("button, textarea")`), which does what it says instead. Enter and
   Space on a dot choose it; a held key is claimed but counted once. A dot is a
   focus stop only while its card holds something; an empty fallback's dot is
   `aria-disabled` and faded, and a click on the empty card or its dot chooses
-  nothing — it waits to be filled by its own button or box, and a notice says
+  nothing - it waits to be filled by its own button or box, and a notice says
   which: `import.uploadFirst` (Admonition) or `import.pasteFirst` (Callout
   Manager), picked by `source.manual.kind`. Going back into a text box that
   holds text (`focus`) chooses it; focus entering an *empty* box is silent,
@@ -457,13 +457,13 @@ reads the active one.
 - **Nothing in the vault.** When the probe settles on `notInstalled`, `empty`,
   or `unreadable`, the vault card is removed, and with it the radiogroup role
   and the fallback's radio dot: alone, it has nothing to be chosen against, and
-  wears no ring, and a click on its card says nothing. **Nothing says why** —
+  wears no ring, and a click on its card says nothing. **Nothing says why** -
   no greyed-out card, no line saying the plugin isn't installed, and nothing
   announced. The three probe results stay
   distinct in `probeVault` and the flow; the window simply treats them alike.
   Their sentences are retired keys.
-- **The instructions** above the cards — what comes over and what is left
-  behind — are a caption (`.cs-import-instructions`: `--font-ui-small`,
+- **The instructions** above the cards - what comes over and what is left
+  behind - are a caption (`.cs-import-instructions`: `--font-ui-small`,
   `--text-muted`), set as the Restore window sets its own intro.
 - **The probe.** `probeVault` reads the file rather than asking
   `app.plugins`, because a plugin being migrated off is often already
@@ -511,18 +511,18 @@ reads the active one.
   text over the import size limit that limit's own notice; each leaves the box,
   the choice and focus as they were. (`import.clipboardBlocked` is a new key
   rather than new words under the old, since removed, key that told the user
-  to choose a file instead — advice this window can't honour, and that an
+  to choose a file instead - advice this window can't honour, and that an
   older translation would keep giving.) A read that answers after the
   window was asked to close does nothing.
 - **Uploading a file** (Admonition's window). The file card carries a
   standard `<button class="cs-import-action">` before its radio dot that reads
   **Upload**, `aria-describedby` the card's two lines. Picking a file, or
   dropping one onto the card, only stages it (`stageFile()`): the card is
-  rewritten in place — its title becomes the file's name
+  rewritten in place - its title becomes the file's name
   (`cs-option-box-name`, `dir="auto"`), its status line "Ready to import.",
-  and **the same button now reads Replace** — and the file becomes the active
+  and **the same button now reads Replace** - and the file becomes the active
   option. Its icon does not change and nothing turns green; the confirmation
-  is an Obsidian `Notice` — `import.fileUploaded` for a first file,
+  is an Obsidian `Notice` - `import.fileUploaded` for a first file,
   `import.fileReplaced` for one that replaces a file already staged, each
   naming the file. Focus goes to Import. A picker closed without a file
   changes nothing and says nothing. The file is read when Import is pressed,
@@ -553,7 +553,7 @@ reads the active one.
   `cs-btn-disabled`, like the callout editor's Save, rather than with
   `disabled`. It stays focusable, and Obsidian can return focus to it when the
   stacked `ImportReportModal` closes. Pressed with nothing to import, it
-  raises the same `import.uploadFirst` / `import.pasteFirst` notice — except
+  raises the same `import.uploadFirst` / `import.pasteFirst` notice - except
   while the probe is still `checking`, when the vault may yet arm it. Its
   `aria-describedby` points at the active card's title line and status line. While an import runs, its label
   reads "Importing…" and choosing, Upload, Paste and a drop are no-ops.
@@ -574,7 +574,7 @@ close. The source's `afterApply` runs last; Admonition uses it for
 ## Import from Callout Manager
 
 [`src/utils/calloutManagerImport.ts`](../../src/utils/calloutManagerImport.ts)
-+ `calloutManagerFormat.ts`. **Two entry routes, one shape, one planner** —
++ `calloutManagerFormat.ts`. **Two entry routes, one shape, one planner** -
 whichever route data arrives by, it becomes a `CalloutManagerEntry[]` and
 goes through the same `planCalloutManagerImport`:
 
@@ -583,10 +583,10 @@ goes through the same `planCalloutManagerImport`:
    to it. This route brings over **more** than the clipboard route: colours
    Callout Manager stored **separately per light/dark scheme** arrive as
    both (`colorLight`/`colorDark`), and callouts the user created but never
-   restyled (`declared: true`, no colour) come across too — neither of
+   restyled (`declared: true`, no colour) come across too - neither of
    which the CSS-copy route can see at all, since a copied stylesheet is
    already flattened to whichever scheme was active when it was copied.
-2. **Paste the CSS the plugin's own "Copy" button puts on the clipboard** —
+2. **Paste the CSS the plugin's own "Copy" button puts on the clipboard** -
    pasted into the window's text box (by hand, or with its **Paste** button)
    and parsed directly
    (`.callout[data-callout="test"] { --callout-icon: ...; --callout-color:
@@ -603,7 +603,7 @@ rule with no colour teaches nothing), while a callout genuinely created in
 Callout Manager (even one that plugin stored no colour for) is still worth
 importing, because it exists in the user's notes either way.
 
-An unstyled callout defaults to `#9e9e9e` — deliberately matching Callout
+An unstyled callout defaults to `#9e9e9e` - deliberately matching Callout
 Manager's own default grey (its `default_colors.json`, "light gray") rather
 than this plugin's own house colour, because fidelity to what the user was
 actually looking at beats consistency with this plugin's conventions here.
@@ -623,7 +623,7 @@ the background; explicitly choosing or editing a palette still applies that
 palette's authored appearance.
 
 **Per-theme styling and custom CSS have no equivalent and are left behind**
-— reported to the user before the import runs, same as the JSON importer's
+ - reported to the user before the import runs, same as the JSON importer's
 report modal.
 
 Callout Studio has one icon per definition, so scheme-dependent icons are
@@ -642,16 +642,16 @@ can be shown before anything changes.
 
 Two entry routes: Admonition's own `data.json` read straight out of the
 vault (again: nothing exported first, nothing written back), or an uploaded
-file — an `admonitions.json` its export button wrote, a shared pack, or a
+file - an `admonitions.json` its export button wrote, a shared pack, or a
 `data.json` taken from another vault.
 
 - **Every icon library Admonition offers maps to one this plugin already
-  has** — its own bundled set, Font Awesome, Octicons, and RPG Awesome are
+  has** - its own bundled set, Font Awesome, Octicons, and RPG Awesome are
   all libraries this plugin also carries. Pictures the user uploaded into
   Admonition come across into **Your images**
-  (`convertAdmonitionImage` — same re-encode-through-canvas pipeline as a
-  fresh upload, see [Icons § Your images](13-icons.md#your-images--the-local-never-downloaded-source)).
-- **A missing colour** defaults to `#448aff` (Obsidian's own Note blue) —
+  (`convertAdmonitionImage` - same re-encode-through-canvas pipeline as a
+  fresh upload, see [Icons § Your images](13-icons.md#your-images---the-local-never-downloaded-source)).
+- **A missing colour** defaults to `#448aff` (Obsidian's own Note blue) -
   deliberately **not** Admonition's own behaviour of picking a random colour
   per import, which the source comment calls out as "friendly in the moment
   and unrepeatable afterwards": importing the same file twice would
@@ -668,7 +668,7 @@ file — an `admonitions.json` its export button wrote, a shared pack, or a
   choice for ambiguous names: upstream inference depends on its loaded pack
   order, while this importer uses a deterministic order.
 - **An update never renames a callout unless the admonition explicitly
-  stated a title** — `AdmonitionEntry.displayName` is only set on an update
+  stated a title** - `AdmonitionEntry.displayName` is only set on an update
   branch when the source file carried an explicit `title` field, so
   re-importing a file that predates a rename the user made locally doesn't
   clobber it.

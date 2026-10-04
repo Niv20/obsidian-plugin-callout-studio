@@ -1,4 +1,4 @@
-# Import compatibility and hostile-input audit — 26 September 2026
+# Import compatibility and hostile-input audit - 26 September 2026
 
 Scope: Callout Studio's current working tree, its native backup importer, and
 the file, clipboard, and vault routes for Callout Manager and Admonition.

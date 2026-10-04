@@ -7,7 +7,7 @@ plus its focused helper modules under `src/settings/editor/`. This is the most
 state-heavy UI in the plugin, and understanding *why* is the point of this
 document: a `CalloutDefinition` distinguishes "the user picked white" from
 "nothing was picked, so it renders as Obsidian's default" via field
-*presence* — but a form field always has to show *something* concrete. Nearly
+*presence* - but a form field always has to show *something* concrete. Nearly
 every subtlety here traces back to reconciling those two facts.
 
 ## The core tension: concrete form state vs. optional definition fields
@@ -23,24 +23,24 @@ the real definition:
 - No `iconAdjust` → the form starts every slider at `DEFAULT_ICON_ADJUST`.
 
 But on a `CalloutDefinition`, **absence is meaningful**: no background means
-Obsidian's own translucent fill keeps painting (the nesting invariant — see
+Obsidian's own translucent fill keeps painting (the nesting invariant - see
 [Colour system](12-color-system.md)); no text colour means the theme's
 `--text-normal` keeps winning; no icon adjustment means the default
 positioning. Writing a *default the user never actually picked* back onto the
 definition would silently pin every built-in the user merely opened to a hex
 forever, defeating `isUnmodifiedBuiltIn`.
 
-### `authoredStyle.ts` — the shared answer
+### `authoredStyle.ts` - the shared answer
 
 [`src/settings/editor/authoredStyle.ts`](../../src/settings/editor/authoredStyle.ts)
-holds three predicates — `hasAuthoredBackground`, `hasAuthoredTextColors`,
-`hasAuthoredIconAdjust` — each answering "did the user actually author this,
+holds three predicates - `hasAuthoredBackground`, `hasAuthoredTextColors`,
+`hasAuthoredIconAdjust` - each answering "did the user actually author this,
 or is the form merely showing an invented default?" **Two entirely separate
 call sites need the exact same answer**: the save pipeline (deciding what to
 write to the definition) and the live preview (deciding what the in-progress
 draft should render as). The file-header comment states the bug this fixes
 explicitly: when only the save path had these predicates, *opening the
-editor* — before any change — would restyle every callout of that type
+editor* - before any change - would restyle every callout of that type
 vault-wide behind the modal, because the preview definition carried an
 invented 18% background where the real row had none, and the extra fields
 also flipped `isUnmodifiedBuiltIn`.
@@ -53,7 +53,7 @@ also flipped `isUnmodifiedBuiltIn`.
 > class of bug the module exists to prevent.
 
 For the background specifically, `hasAuthoredBackground` doesn't compare
-against one fixed tint strength — it calls `derivedBgAmount()` (see
+against one fixed tint strength - it calls `derivedBgAmount()` (see
 [Colour system](12-color-system.md)) to check whether the current background
 **solves** as *some* tint strength of the current accent, because the
 palette editor's intensity slider produces tints at any strength between
@@ -104,30 +104,30 @@ a still-nudged Regular role.
 
 [`src/settings/LiveCalloutPreview.ts`](../../src/settings/LiveCalloutPreview.ts)
 hosts a genuine **embedded Obsidian markdown editor**
-(`EmbeddableMarkdownEditor` — an undocumented Obsidian internal), not a mock
+(`EmbeddableMarkdownEditor` - an undocumented Obsidian internal), not a mock
 render. Because editor extensions registered via `registerEditorExtension`
 apply to **every** markdown editor in the workspace, the embedded instance
 automatically inherits: Obsidian's native block-callout rendering, this
 plugin's heading/inline `ViewPlugin`, and the currently-injected per-callout
 CSS. The preview is therefore genuinely 1:1 with how the callout would render
-in a real note, in whatever theme is active — not an approximation.
+in a real note, in whatever theme is active - not an approximation.
 
 - **Pinned to Live Preview regardless of the vault's "Default editing mode."**
   A vault set to Source mode would otherwise show raw markdown in the
   preview pane, defeating its purpose.
-- **Read-only, but interactive** — clicking reveals raw source (the normal
+- **Read-only, but interactive** - clicking reveals raw source (the normal
   Live Preview affordance) but an actual edit attempt is blocked and
-  surfaces a throttled Notice (`READ_ONLY_NOTICE_THROTTLE_MS = 1500` —
+  surfaces a throttled Notice (`READ_ONLY_NOTICE_THROTTLE_MS = 1500` -
   throttled so rapid attempted keystrokes don't spam notices). What
   "blocked" means is
   [`src/settings/previewReadOnly.ts`](../../src/settings/previewReadOnly.ts),
-  and it is worth reading before touching it — see below.
+  and it is worth reading before touching it - see below.
 - **Graceful degradation**: the embed API is explicitly undocumented and may
   change out from under the plugin. If constructing it throws, the preview
-  falls back to a static (non-editable) `MarkdownRenderer.render()` pass —
+  falls back to a static (non-editable) `MarkdownRenderer.render()` pass -
   still full-fidelity (the reading-view post-processors give it the same
   three roles and painted icons), just not click-to-reveal.
-- **`beforeRender`** runs before every construction *and* every refresh — this
+- **`beforeRender`** runs before every construction *and* every refresh - this
   is the hook the callout editor uses to push its in-progress draft into the
   registry's preview slot and re-inject CSS **before** the editor's
   decorations are built, so the very first paint already reflects the
@@ -137,7 +137,7 @@ in a real note, in whatever theme is active — not an approximation.
 
 `EditorState.readOnly.of(true)` is **advisory**. CodeMirror's own
 documentation says it "is consulted by commands and extensions that implement
-editing functionality" — it does not reject a programmatic
+editing functionality" - it does not reject a programmatic
 `dispatch({changes})`. So it stopped typing, and stopped nothing that called
 the editor API directly.
 
@@ -155,7 +155,7 @@ Two layers now, and only the first is a guarantee:
 1. **`EditorState.transactionFilter`** in
    [`previewReadOnly.ts`](../../src/settings/previewReadOnly.ts) drops any
    transaction with `docChanged` and reports it through `onEditAttempt`. Every
-   route converges on `cm.dispatch`, so this sees all of them — menu commands,
+   route converges on `cm.dispatch`, so this sees all of them - menu commands,
    `Editor.*` writes, other plugins' editor commands, raw dispatches. Selection
    moves and effect-only transactions pass untouched, which is what keeps
    click-to-reveal-source, `parkCursor()` and `calloutStudioRefresh` working.
@@ -179,7 +179,7 @@ preview mirrors changes, and that reseed is a doc-changing transaction like any
 other. `readOnlyPreviewExtensions()` therefore returns a `PreviewWriteGate`
 alongside its extensions; `setValue` wraps its `instance.set()` in
 `gate.allow(…)`, which opens synchronously and closes in a `finally`. Anything
-else that needs to write the preview must go through the same gate — do not
+else that needs to write the preview must go through the same gate - do not
 loosen the filter instead.
 
 ## Registering the in-progress draft: the preview slot, from the editor's side
@@ -206,22 +206,22 @@ this.preview = new LiveCalloutPreview(this.app, previewCol, {
 This is the editor-side half of `CalloutRegistry`'s preview mechanism (full
 mechanics in [Callout registry](05-callout-registry.md#the-transient-live-preview-slot)):
 
-- **`isDemo = this.existingId === null`** — a brand-new callout with no ID yet
+- **`isDemo = this.existingId === null`** - a brand-new callout with no ID yet
   registers as a *demo* (hidden from settings lists, since there's no real row
   it stands in for); editing an existing callout registers as a live,
   list-visible preview of that row.
-- **`notifyLists = this.previewColorOverride === null`** — while the user is
+- **`notifyLists = this.previewColorOverride === null`** - while the user is
   merely *hovering* a colour in the palette dropdown (not yet committed), the
-  settings-list row swatches deliberately do **not** repaint — they should
+  settings-list row swatches deliberately do **not** repaint - they should
   keep showing the colour the user actually clicked, not a hover preview.
   Every *other* kind of edit (icon, name, sliders, a click-committed palette)
   does notify.
 - **`onDestroy` clears the preview and forces a synchronous editor refresh**
-  — this is what makes closing the modal (save, cancel, or dismiss) instantly
+ - this is what makes closing the modal (save, cancel, or dismiss) instantly
   revert every open note's rendering back to committed state, with no
   leftover draft styling lingering until the next unrelated change.
 - `PREVIEW_PLACEHOLDER_ID = "new-callout-preview"` is the id a brand-new
-  callout's demo preview registers under before the user has typed a name —
+  callout's demo preview registers under before the user has typed a name -
   see [Data model](04-data-model.md) for why it can't be a real callout id
   like the old `"example"` placeholder.
 
@@ -258,9 +258,9 @@ hasStateChanges(initial, current): boolean
 > [!NOTE]
 > **`findAttrIdCollision` is a separate check from `canUseCalloutId`,
 > reported separately.** `my note` and `my-note` both dasherize to
-> `data-callout="my-note"` — they'd fight over one CSS rule and the block
+> `data-callout="my-note"` - they'd fight over one CSS rule and the block
 > callout could only ever show one of them, so this is treated as a hard
-> block on saving, exactly like an exact id clash — even though heading and
+> block on saving, exactly like an exact id clash - even though heading and
 > inline callouts (which keep the space-form attribute) would stay distinct.
 > Shipping a type that's half-broken for one of three roles isn't worth it.
 
@@ -269,16 +269,16 @@ hasStateChanges(initial, current): boolean
 `SnapshotInput` explicitly documents why `hideIcon` and `transparentBg` are
 included in the JSON snapshot compared for "has anything changed": both are
 edits that leave **every other form field untouched** (removing the icon
-doesn't clear the `icon` field — see [Data model](04-data-model.md) — and
+doesn't clear the `icon` field - see [Data model](04-data-model.md) - and
 switching to "None" background doesn't clear the colour fields either). Without
 including these two flags explicitly, toggling either one would leave the
 Save button disabled on the one and only change the user came to make.
 
-### `isOverwritingAutoFallbackRow` — the token-based create special case
+### `isOverwritingAutoFallbackRow` - the token-based create special case
 
-When a callout is created for a token already present in a note — through
+When a callout is created for a token already present in a note - through
 autocomplete's **Create new** result or the right-click menu's adaptive
-create/edit action — the editor opens with `createFromToken: true`. If a
+create/edit action - the editor opens with `createFromToken: true`. If a
 background vault scan files an **existing, uncustomized fallback row** for that
 id while the editor is open, saving may overwrite the row in place rather than
 refusing it as a duplicate: the user is effectively adopting the discovered
@@ -320,7 +320,7 @@ that plan against a different definition. Banner subscriptions are released on c
 
 When `saveAsFallback` is true, nearly every field is taken from
 `getFallbackBase()` (the current default-fallback callout's definition)
-**instead of** the form state — icon, colours, background, gradient, text
+**instead of** the form state - icon, colours, background, gradient, text
 colours, fold behaviour, icon adjustment, palette link, all overridden
 wholesale. This is what "adopt this row and let it follow the fallback
 style" means concretely: the row's *identity* (id, aliases) is the user's,
@@ -349,10 +349,10 @@ After the definition is written, three vault-wide operations may run,
 
 1. **ID change** → `replaceCalloutIdsInVault` rewrites every vault usage of
    the *removed* id forms to the new one (only if there was actual vault
-   usage — `countCalloutUsages` checked first).
+   usage - `countCalloutUsages` checked first).
 2. **Display-name change** → `replaceCalloutTitlesInVault` rewrites titles,
    but **only where the existing title exactly matched the old display
-   name** — a title the user wrote themselves is never touched.
+   name** - a title the user wrote themselves is never touched.
 3. **Fold-behaviour change** (`foldable`/`defaultFolded`) →
    `normalizeFoldMarkersInVault` rewrites every existing header's fold mark to
    match the new default.
@@ -388,19 +388,19 @@ immediately. Network availability is not a prerequisite for keeping a callout.
 
 ## The icon picker
 
-[`src/settings/iconpicker/`](../../src/settings/iconpicker/) — `IconPickerModal`
+[`src/settings/iconpicker/`](../../src/settings/iconpicker/) - `IconPickerModal`
 (source menu, search, preview, confirm), `PackPanel` (one source's toolbar +
 grid, driven entirely by its `IconPack`), `IconGrid` (paging + keyboard
 navigation), `ImagePanel` ("Your images" upload/manage), `allSources.ts` (the
 pooled cross-source search), `IconLibrariesModal` (the **Manage icon libraries**
-window — see [Settings UI and modals](16-settings-ui-and-modals.md#iconlibrariesmodal--libraries-in-two-bands)).
+window - see [Settings UI and modals](16-settings-ui-and-modals.md#iconlibrariesmodal---libraries-in-two-bands)).
 
 The source menu lists only what can be picked from right now:
 `icons/iconLibraries.ts` decides it (`menuLibraries()`,
-[Icons](13-icons.md#icon-libraries--what-the-picker-offers)), and
+[Icons](13-icons.md#icon-libraries---what-the-picker-offers)), and
 `sourcePicker.ts` lays it out in up to three groups, each the listbox's own
 `groupOf` heading (`.cs-combobox-group-label`, sticky at the top of the
-scrolling menu, each held inside its own `.cs-combobox-group`), always shown —
+scrolling menu, each held inside its own `.cs-combobox-group`), always shown -
 there is no `hideSingleGroup` here:
 
 | Heading (key) | Rows | When |
@@ -411,12 +411,12 @@ there is no `hideSingleGroup` here:
 | **Libraries** (`iconPicker.groupLibraries`) | `pickerSources()`, in the user's order | always |
 
 All sources has a heading of its own because it is a search, not a library. A
-downloadable library this device lacks is not a row at all — not even a dimmed
-one — so no row carries a download status and the old **Not downloaded** badge
+downloadable library this device lacks is not a row at all - not even a dimmed
+one - so no row carries a download status and the old **Not downloaded** badge
 is gone (`iconPicker.notDownloaded` is left unread, as is every key a locale
 still carries). Instead `footerNote`, a `ListboxPopup` option, closes the list
-with plain text — "3 more libraries available for download"
-(`iconPicker.moreToDownload`, or `…One` for one) — counting `toDownload`, or
+with plain text - "3 more libraries available for download"
+(`iconPicker.moreToDownload`, or `…One` for one) - counting `toDownload`, or
 nothing when it is empty. It is `div.cs-combobox-footer-note`: no role, no
 listener, not in `rowEls`, so the arrow keys stop at the last library and a
 press on it is swallowed by the menu's `mousedown` (the menu stays open). The
@@ -426,8 +426,8 @@ libraries are downloaded in the window the button beside the menu opens.
 callout keeps its icon when its library is deleted, and one synced from
 another device can use a library this device never downloaded; editing it
 opens the picker on that library (`activeSource` is the icon's own source), so
-the closed menu has to name it. It is listed first, under **Deleted library** —
-apart from the libraries on offer rather than among them — with the check while
+the closed menu has to name it. It is listed first, under **Deleted library** -
+apart from the libraries on offer rather than among them - with the check while
 it is on screen, and it stays there after the person looks elsewhere, as the
 way back. Choosing it shows the panel's download prompt; downloading from there
 moves it under **Libraries** on the next build of the menu, and the heading
@@ -436,7 +436,7 @@ while it has its own row: the saved icon does not supply the full library.
 The heading also covers libraries never or only partly downloaded on this
 device, since pack state records availability rather than deletion history.
 A hidden built-in library of the edited icon goes under **Current icon**, so
-**Libraries** is always exactly what the picker offers — the **Available
+**Libraries** is always exactly what the picker offers - the **Available
 libraries** band of the window.
 
 `menuLibraries()` in the modal withholds `toDownload` until `packStatesLoaded`:
@@ -457,7 +457,7 @@ picker as `new IconPicker(plugin, this.icon, { id: this.existingId, name })`:
 `this.icon` is a draft until **Save**, so the registry does not know it, and the
 picker hands the window the callout being edited (`EditedCallout`: that id and
 name plus the icon it was opened on) so deleting a library the draft uses
-asks first — see [Icons](13-icons.md#the-callout-being-edited-counts-as-a-user).
+asks first - see [Icons](13-icons.md#the-callout-being-edited-counts-as-a-user).
 `openLibraries()` first awaits `packs.loadAllFromDisk()`, the same read the picker
 does before its first paint (free once done): a library downloaded in an earlier
 session reads as missing until its file is read back, and a quick press on
@@ -467,12 +467,12 @@ When that window closes
 having changed something, `openLibraries()` takes it in: a library that was
 offered and no longer is (deleted, or hidden) gives way to All sources, and an
 icon picked from it stops being the selection, since confirming it would
-download that library again — except the edited icon's own library, whose
+download that library again - except the edited icon's own library, whose
 drawings are already saved with the callout. The panel is rebuilt **only when
 what it shows changed** (`panelContents()`: the pool's members in order, or
 how much of the active library is still to download). Rebuilding sends the grid
-back to the selected icon or to the top, so doing it after every change — which
-this once did — made the icon list jump whenever someone hid an unrelated
+back to the selected icon or to the top, so doing it after every change - which
+this once did - made the icon list jump whenever someone hid an unrelated
 library. On a phone the row drops its **Choose source** caption from view so
 the menu keeps room for the library's name beside **Manage libraries**.
 
@@ -481,12 +481,12 @@ Icons panel has its own layout) fills the room under the source row: the panel
 is a flex column with `min-height: 100%` of the scroller, and its body takes
 what the toolbar leaves. The trademark notice and the credit line sit together
 in `.icon-picker-pack-footer`, pushed to the bottom by `margin-top: auto`, so
-under a short grid — a search with few results — the credit stays at the bottom
+under a short grid - a search with few results - the credit stays at the bottom
 of the picker instead of floating up beneath the last icons; with more icons
 than fit, the footer simply follows the grid at the end of the scroll. When the
 grid holds a message instead of cells (`IconGrid.showMessage`: the download
 prompt, its progress line, its failure), it carries `has-message`, grows into
-the free height and centres the message there with `align-content: center` —
+the free height and centres the message there with `align-content: center` -
 between the toolbar and the footer. Cells are never stretched that way:
 `setEntries` takes the class off again.
 
@@ -501,18 +501,18 @@ accepted formats. Its extra tile spacing keeps the delete targets clear.
 
 [`src/settings/iconpicker/allSources.ts`](../../src/settings/iconpicker/allSources.ts)
 pools every **currently drawable** source's index into one searchable list,
-and — notably — **is itself shaped as an `IconPack`** (borrowing the
+and - notably - **is itself shaped as an `IconPack`** (borrowing the
 interface without being a real library), specifically so the picker panel
 needs **no special case** to render it; it's just another source as far as
 `PackPanel` is concerned.
 
-The pool is built from `pickerSources()` — the libraries the picker offers,
-in the user's order — so its result groups come in that order too. A
-downloadable source counts only when **every** file it draws from is present —
+The pool is built from `pickerSources()` - the libraries the picker offers,
+in the user's order - so its result groups come in that order too. A
+downloadable source counts only when **every** file it draws from is present -
 not "any": Font Awesome pools names across three separate files
 (Solid/Regular/Brands), and a missing file would silently drop every name only
 that file can draw, producing an inconsistent pooled list. A library that is
-not downloaded, or that the user hid, is simply not in the pool — the same list
+not downloaded, or that the user hid, is simply not in the pool - the same list
 the menu shows under **Libraries**; the old "not included yet" hint under the
 pool is gone, since the menu's closing line counts what is left to download and
 the Manage icon libraries window lists it. Fixed
@@ -537,8 +537,8 @@ empty. The extra inset is zero when scrollbars overlay the content.
 
 Consistent with the network-disclosure policy stated throughout the codebase:
 opening the picker, browsing, and searching are always offline (the search
-index is bundled). Only pressing **Download** for a `bundledRemote` source — in
-its panel or in the Icon libraries window — or confirming a pick from a
+index is bundled). Only pressing **Download** for a `bundledRemote` source - in
+its panel or in the Icon libraries window - or confirming a pick from a
 `perIconRemote`/`bundledRemote` source whose artwork is not already saved, ever
 touches the network. See [Icons](13-icons.md) for the fetch/cache mechanics
 this triggers.

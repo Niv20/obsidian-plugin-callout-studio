@@ -7,21 +7,21 @@ with their own licences, and those are reproduced here in full.
 Three things are worth reading before you use them, rather than after:
 
 - **Font Awesome Free**'s icons are CC BY 4.0. Redistributing something built
-  with them — a theme, a vault template, a screenshot set — carries the same
+  with them - a theme, a vault template, a screenshot set - carries the same
   attribution requirement this file satisfies for the plugin.
 - **Brand icons** (every logo in Simple Icons, Font Awesome Brands, Tabler's
   Brand category, and GitHub's own marks in Octicons) are trademarks. No icon
   licence grants trademark rights, so their owners' usage guidelines apply
   regardless of what the icon licence permits.
-- **Some Simple Icons logos carry a licence of their own** on top of that —
+- **Some Simple Icons logos carry a licence of their own** on top of that -
   most of them one that asks for credit. They are credited one by one in
   [SIMPLE-ICONS-LICENSES.md](SIMPLE-ICONS-LICENSES.md), and redistributing
   something built with one of them carries the same requirement.
 
 ## What the plugin ships, and what it fetches
 
-The plugin bundle contains icon-library *search indexes* — names, keywords and
-categories — and three Lucide-derived UI icons for quick insert, statistics,
+The plugin bundle contains icon-library *search indexes* - names, keywords and
+categories - and three Lucide-derived UI icons for quick insert, statistics,
 and conversion.
 Icon-pack artwork is not bundled.
 
@@ -33,7 +33,7 @@ Artwork is supplied as follows:
 | Plugin UI icons | Three Lucide-derived SVG composites bundled with the plugin; no download |
 | Emoji | Rendered by your system's emoji font; nothing is downloaded |
 | Material Symbols | Fetched from Google, one icon at a time, only for icons you choose |
-| Tabler Icons, Octicons, Font Awesome, RPG Awesome, Simple Icons | Downloaded once when you press **Download** on that source in the icon picker — one file each, two for Tabler and three for Font Awesome (one per style) |
+| Tabler Icons, Octicons, Font Awesome, RPG Awesome, Simple Icons | Downloaded once when you press **Download** on that source in the icon picker - one file each, two for Tabler and three for Font Awesome (one per style) |
 
 Downloaded packs are verified against a SHA-256 checksum built into the plugin
 and cached in the plugin's own folder. See the README's *Network usage and
@@ -151,7 +151,7 @@ applies to Font Awesome Brands applies to those.
 
 **Modifications:** Icon names, categories and search keywords are extracted from
 Google's published metadata and stored in a compressed index. Icon artwork is
-not modified — each SVG is downloaded from Google as published, and only the
+not modified - each SVG is downloaded from Google as published, and only the
 fill colour is applied at render time.
 
 ```
@@ -185,14 +185,14 @@ Font Awesome Free is licensed in three parts:
 
 | Component | Licence | Applies here? |
 | --- | --- | --- |
-| Icons | **CC BY 4.0** | Yes — this is what the plugin uses |
+| Icons | **CC BY 4.0** | Yes - this is what the plugin uses |
 | Code | MIT | No code from Font Awesome is used |
 | Fonts | SIL OFL 1.1 | No fonts are shipped or downloaded |
 
 ### Attribution
 
-> Icons from **Font Awesome Free 7.3.1** by Fonticons, Inc. —
-> https://fontawesome.com — licensed under
+> Icons from **Font Awesome Free 7.3.1** by Fonticons, Inc. -
+> https://fontawesome.com - licensed under
 > [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 **Modifications:** Path data was extracted from the official Font Awesome Free
@@ -289,7 +289,7 @@ paper over it:
 | Font metadata | MIT |
 
 All four are permissive and compatible with this plugin. Callout Studio complies
-with the strictest reading — BSD 2-Clause, reproduced in full below — which
+with the strictest reading - BSD 2-Clause, reproduced in full below - which
 satisfies the requirements of the others as well. The README additionally states
 that "attribution is appreciated but not required"; it is given anyway.
 
@@ -331,7 +331,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **Modifications:** Path data is copied unchanged from the published SVGs into a
 compressed pack file; each file's `<title>` element and SVG wrapper are dropped,
 and the fill colour is applied at render time. No logo's outline is altered. Not
-every logo in the release is in the pack — see *It does not cover every logo*
+every logo in the release is in the pack - see *It does not cover every logo*
 below.
 
 Simple Icons dedicates its collection to the public domain under
@@ -353,8 +353,8 @@ Where a brand has published its logo under a licence of its own, Simple Icons
 records that licence on the icon, and Callout Studio decides logo by logo what
 the pack carries:
 
-- A logo whose licence is met by crediting it — the Creative Commons
-  attribution and ShareAlike licences, MIT, BSD, Apache 2.0, MPL 2.0 — or asks
+- A logo whose licence is met by crediting it - the Creative Commons
+  attribution and ShareAlike licences, MIT, BSD, Apache 2.0, MPL 2.0 - or asks
   for nothing at all (CC0, the Unlicense) **is in the pack**, and is credited
   to its owner, under its licence, from its source, in
   **[SIMPLE-ICONS-LICENSES.md](SIMPLE-ICONS-LICENSES.md)**. That file is
@@ -372,9 +372,9 @@ logo here, the owner's rights are the ones described next.
 
 ### It does not touch trademarks
 
-CC0 says so of itself — "No trademark or patent rights held by Affirmer are
+CC0 says so of itself - "No trademark or patent rights held by Affirmer are
 waived, abandoned, surrendered, licensed or otherwise affected by this
-document." — and the people who drew these icons are not the brands' owners in
+document." - and the people who drew these icons are not the brands' owners in
 any case. Every logo in Simple Icons is a trademark of the company or project it
 belongs to. Their inclusion does not indicate endorsement, in either direction.
 Use a logo only to represent the company, product or service it refers to, and

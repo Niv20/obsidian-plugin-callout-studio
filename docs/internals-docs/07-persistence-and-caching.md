@@ -1,6 +1,6 @@
 # Persistence and caching
 
-## `data.json` — the persisted settings file
+## `data.json` - the persisted settings file
 
 Every user-defined and manually discovered callout is durable configuration.
 `CalloutRegistry.toSaveData()` includes uncustomized `source: "fallback"` rows.
@@ -37,7 +37,7 @@ its scan results are ordinary saved configuration, not a local cache.
 Settings always come from the current `registry.settings` object; adoption can
 replace that object, so managers must not retain an earlier settings reference.
 
-### Settings merge — never a raw spread
+### Settings merge - never a raw spread
 
 ```ts
 mergeSavedSettings(savedSettings: LegacySavedSettings): PluginSettings
@@ -52,7 +52,7 @@ enough to warrant one).
 
 > [!WARNING]
 > This is deliberately *not* `{...DEFAULT_SETTINGS, ...saved}`. A spread is
-> total in *shape* but blind to anything **extra** the saved file carries — a
+> total in *shape* but blind to anything **extra** the saved file carries - a
 > key the current version knows nothing about would ride straight through
 > unchanged, and because settings are written back wholesale by both
 > `toSaveData()` and `exportToJSONv2()`, it would then be re-saved forever and
@@ -63,15 +63,15 @@ enough to warrant one).
 >
 > Dropped is right for an **import file**, which is a document this version is
 > being asked to read. It is wrong for `data.json`, which two versions of this
-> plugin share — see [Causal merge history and integrity](08-settings-sync-and-recovery.md#causal-merge-history-and-integrity), where
+> plugin share - see [Causal merge history and integrity](08-settings-sync-and-recovery.md#causal-merge-history-and-integrity), where
 > the top-level settings keys this build does not recognise are set aside by
 > [`manager/foreignFields.ts`](../../src/manager/foreignFields.ts) and handed back
 > on save. That quarantine sits *beside* this function, never inside it, so the
 > import path keeps the promise above unchanged.
 
-The same function is shared by two callers that ask the identical question —
+The same function is shared by two callers that ask the identical question -
 "what does this possibly-partial, possibly-ancient blob mean under the current
-version" — the registry's `load()` on startup, and `settingsValidator` on
+version" - the registry's `load()` on startup, and `settingsValidator` on
 every JSON import.
 
 `autocomplete.enabled` is a deliberate forced field in this merge. A historical
@@ -82,8 +82,8 @@ the core editor integration off in memory.
 
 `mergeMenuItems()` inside the same file is the other notable piece: it merges
 a saved per-role context-menu item **list** (order matters) against that
-role's defaults — unknown ids dropped, duplicates dropped, items introduced by
-a *newer* plugin version appended at the end — and folds in the pre-1.2.2
+role's defaults - unknown ids dropped, duplicates dropped, items introduced by
+a *newer* plugin version appended at the end - and folds in the pre-1.2.2
 three-boolean "popup" toggles (`legacyMenuState()`) so an upgrade from that era
 doesn't silently switch a hidden menu item back on.
 
@@ -94,11 +94,11 @@ doesn't silently switch a hidden menu item back on.
 | `SettingsWriter`'s belief about what is on disk | `SettingsWriter` | Seeded by the load at startup, and re-seeded whenever an external change is adopted |
 | `CSSInjector.lastCssText` | `CSSInjector` | Recomputed by the next `inject()` |
 | The registry's transient live-preview slot | `CalloutRegistry` | Cleared automatically when the editor modal closes |
-| `IconFetchManager`/`PackDataStore` in-flight promise maps | `IconService` | Nothing to rebuild — just de-duplicates concurrent requests |
+| `IconFetchManager`/`PackDataStore` in-flight promise maps | `IconService` | Nothing to rebuild - just de-duplicates concurrent requests |
 | `LocaleStore`'s per-file load state and in-flight map | `LocaleStore` | Re-derived by `prepare()`/`ensure()` on next launch |
 | The `i18n/index.ts` module-level locale table map | `i18n/index.ts` | Re-populated by `registerLocaleFile` when a file is read/downloaded again |
 | `startupEntranceActive` flag | `renderShared.ts` | Reset every launch; closes itself after `STARTUP_ENTRANCE_MS` |
-| The Live Preview content-pill render cache | `contentPillRender.ts` | Cleared on unload and by `plugin.refreshCallouts()` — **not** by every registry change; the generic `registry.onChange` listener in `main.ts` only re-injects CSS, it never calls `refreshCallouts()`. An ordinary `CalloutEditor` save does not clear this cache. Explicit callers include fallback-callout changes and row delete/reset. |
+| The Live Preview content-pill render cache | `contentPillRender.ts` | Cleared on unload and by `plugin.refreshCallouts()` - **not** by every registry change; the generic `registry.onChange` listener in `main.ts` only re-injects CSS, it never calls `refreshCallouts()`. An ordinary `CalloutEditor` save does not clear this cache. Explicit callers include fallback-callout changes and row delete/reset. |
 
 Derived render/cache state can be rebuilt. Writer baselines and sync-session state
 must instead be re-established from accepted settings/recovery history; do not
@@ -108,15 +108,15 @@ because their previews appear here. See
 
 ## Generated/derived state
 
-- **The adopted stylesheet and `<style>` element text** — entirely derived
+- **The adopted stylesheet and `<style>` element text** - entirely derived
   from the registry; regenerated on every `inject()`.
 - **DOM icon artwork** (the `::after` mask images in CSS, and the baked
-  `<svg>`/`<span>` copies in the DOM) — derived from `iconSvgCache` +
+  `<svg>`/`<span>` copies in the DOM) - derived from `iconSvgCache` +
   whatever's on disk; repainted by `paintIcons()`.
-- **The Outline pane's cleaned heading titles** — derived by `OutlineDecorator`
+- **The Outline pane's cleaned heading titles** - derived by `OutlineDecorator`
   from the registry's current definitions; recomputed on `layout-change` and
   on every registry change.
-- **CodeMirror's Live Preview widget DOM** for heading/inline tokens — rebuilt
+- **CodeMirror's Live Preview widget DOM** for heading/inline tokens - rebuilt
   by `refreshAllCalloutEditors()` whenever the registry changes (registry
   mutations don't touch the document text, so CodeMirror has no reason to
   rebuild its own decorations without being asked).
@@ -172,12 +172,12 @@ persist(cssText: string): void     // called at the end of every inject() whose 
 ```
 
 The key is vault-scoped:
-`${appId ?? vault.getName()}-callout-studio-css-v2` — `App.loadLocalStorage`'s
+`${appId ?? vault.getName()}-callout-studio-css-v2` - `App.loadLocalStorage`'s
 own `${appId}-${key}` convention, replicated by hand because that public API
 requires Obsidian ≥1.8.7 while this plugin's `minAppVersion` is lower.
 
 The snapshot holds the **exact text** the adopted stylesheet gets, so the
-handoff from cached-snapshot to freshly-generated CSS is invisible — there's
+handoff from cached-snapshot to freshly-generated CSS is invisible - there's
 no partial or summarized form. `CSSInjector.injectFromCache()` reads it as the
 literal first statement of `onload()`, before `loadData()` is even awaited
 (see [Plugin lifecycle](03-plugin-lifecycle.md#startup)).
@@ -193,25 +193,25 @@ legacy-discovery recovery archive; it is never installed as a stylesheet.
 > [!NOTE]
 > `persist()` is skipped while a transient live-preview definition is
 > registered (`registry.hasPreviewDefinition()`). That CSS describes an unsaved
-> draft — `toSaveData()` already goes out of its way to keep drafts off disk —
+> draft - `toSaveData()` already goes out of its way to keep drafts off disk -
 > and hovering a colour swatch in the palette menu would otherwise cost a
 > synchronous `localStorage` write on every hover. Closing the preview
 > re-injects the committed state, which persists normally.
 
-`persist()` also memoizes on `lastPersisted` to skip redundant writes, and —
-notably — only updates that memo **after** the write actually succeeds (a
+`persist()` also memoizes on `lastPersisted` to skip redundant writes, and -
+notably - only updates that memo **after** the write actually succeeds (a
 `try` failure due to quota leaves the memo unchanged, so a later session where
 storage frees up will retry rather than silently never writing again for the
 rest of the session).
 
 ### What this deliberately does not cover
 
-The window **before the plugin loads at all** — nothing running inside a
+The window **before the plugin loads at all** - nothing running inside a
 plugin can affect that. Versions up to 2.5.0 covered *that* window with a
 second copy of the CSS written into the vault as an auto-enabled snippet
 (`.obsidian/snippets/callout-studio-do-not-delete.css`), switched on through
 Obsidian's internal `app.customCss`. That layer cost a ~100 KB file (and a
-sync event) per style change, and — because nothing ever cleaned it up —
+sync event) per style change, and - because nothing ever cleaned it up -
 outlived the plugin on uninstall, leaving a dangling name in
 `appearance.json` forever.
 
@@ -232,7 +232,7 @@ are inert text files and are not pruned automatically, so personal edits survive
 even when the old generated filename was reused.
 
 > [!CAUTION]
-> This runs on every launch — not once behind a `data.json` flag — because a
+> This runs on every launch - not once behind a `data.json` flag - because a
 > flag would *sync*: it could reach a second device before the orphan file
 > itself synced there, and that device would then never clean up. It also
 > covers a device still literally running 2.5.0 that keeps re-creating the
@@ -242,7 +242,7 @@ even when the old generated filename was reused.
 
 ## The user-requested CSS snippet export
 
-A completely different, **current** feature — see the file-header comment in
+A completely different, **current** feature - see the file-header comment in
 `cssSnippetExport.ts` for the explicit contrast with the legacy auto-snippet
 above. Key properties:
 
@@ -256,37 +256,37 @@ above. Key properties:
   can hand it to the Callout Manager importer (file or paste), which recovers
   only each callout's id, icon and one colour. The v2 JSON backup is the only
   supported full-fidelity restore and cross-vault transfer format.
-- **Byte-identical re-export writes nothing at all** — `classifyExisting()`
+- **Byte-identical re-export writes nothing at all** - `classifyExisting()`
   hashes the file's own body (SHA-256, stored in its header as a
   `fingerprint:` line) and compares against a freshly rebuilt body. If they
   match, the write is skipped entirely, because every vault write is a sync
   event.
 - **A foreign or hand-edited file triggers a confirmation** before
-  overwriting — `classifyExisting()` returns `"foreign"` for anything that
+  overwriting - `classifyExisting()` returns `"foreign"` for anything that
   doesn't start with the exact marker comment, doesn't have a parseable
   fingerprint line, or whose fingerprint doesn't match its own body.
 - **`isSnippetEnabled()` can report `true` on the very first export of a
   session**, which reads as a bug but isn't: Obsidian's `enabledCssSnippets`
   is a list of *names*, and nothing prunes a name whose file has been deleted.
   If the user enabled this snippet once and later deleted the file, the very
-  next export brings the name back to life — already switched on. The
+  next export brings the name back to life - already switched on. The
   plugin surfaces this as a warning rather than silently enabling or
   disabling anything.
 
-## Icon artwork storage — three layers
+## Icon artwork storage - three layers
 
 Icon persistence spans three genuinely different mechanisms, covered in full
 in [Icons](13-icons.md), summarized here for the "what's stored where" view:
 
 | Layer | Where | Persisted? | Verified how |
 | --- | --- | --- | --- |
-| `iconSvgCache` (per-icon, in use) | `data.json` | Yes — syncs with the rest of settings | Trusted (it's this plugin's own settings file) |
+| `iconSvgCache` (per-icon, in use) | `data.json` | Yes - syncs with the rest of settings | Trusted (it's this plugin's own settings file) |
 | Downloaded pack files (Tabler, FA, Octicons, RPG Awesome, Simple Icons) | `<plugin-dir>/icon-packs/*.json` | On disk, outside `data.json` | SHA-256 checked on download **and on every disk read** |
 | Material Symbols preview webfont | `<plugin-dir>/icon-fonts/*` | On disk | Not integrity-checked (a rendering aid, not artwork of record) |
 
 `iconSvgCache` is the layer that makes a callout keep rendering correctly on a
 device that synced settings but never downloaded the pack, and after a cached
-pack file is deleted from disk — the SVG the callout actually needs is
+pack file is deleted from disk - the SVG the callout actually needs is
 already sitting in `data.json`.
 
 ## Locale file storage
@@ -296,7 +296,7 @@ purpose: downloaded locale JSON lives at
 `<plugin-dir>/translations/<file-id>.json`, outside `data.json`, SHA-256
 verified against a manifest baked into the build. A hash **mismatch on disk**
 is treated as *staleness* (an older build's copy, missing newer strings) and
-used anyway while a background refresh runs — deliberately different from a
+used anyway while a background refresh runs - deliberately different from a
 hash mismatch **from the network**, which is discarded outright. English never
 needs a file at all; it's bundled in `main.js`.
 

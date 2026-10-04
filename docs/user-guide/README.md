@@ -1,6 +1,6 @@
 # Callout Studio user guide
 
-There's a lot to explore in Callout Studio — from callout types and custom colors to icons, styling, and handy workflows. Dive into any topic that catches your eye, or start wherever you like.
+There's a lot to explore in Callout Studio - from callout types and custom colors to icons, styling, and handy workflows. Dive into any topic that catches your eye, or start wherever you like.
 
 | Chapter                                                                    | What it covers                                                                     |
 | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |

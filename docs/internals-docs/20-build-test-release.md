@@ -7,12 +7,12 @@ npm run dev       # i18n:generate, then esbuild watch mode (inline sourcemaps)
 npm run build      # i18n:generate (prebuild), typecheck with scripts/tsconfig.json, then esbuild production (minified)
 npm run lint       # eslint with scripts/eslint.config.mts (obsidianmd recommended config + project rules)
 npm test           # scripts/run-tests.mjs
-npm run icons:generate    # regenerate icon pack search indexes + manifest — NEVER auto-run
-npm run i18n:generate      # regenerate locales/*.json + localeManifest.ts — runs as `prebuild`
+npm run icons:generate    # regenerate icon pack search indexes + manifest - NEVER auto-run
+npm run i18n:generate      # regenerate locales/*.json + localeManifest.ts - runs as `prebuild`
 ```
 
 While `npm run dev` is running, `main.js` on disk is the ~10 MiB inline-sourcemap
-dev bundle, and the watcher rewrites it after every source or locale write —
+dev bundle, and the watcher rewrites it after every source or locale write -
 including the `prebuild` step of a fresh `npm run build`. The bundle-budget test
 recognises a dev bundle by its inline sourcemap and skips it with a warning
 (locally; in CI it fails, because only a production build exists there). To
@@ -29,7 +29,7 @@ Obsidian, then enable **Callout Studio** in **Settings → Community plugins**.
 > [!IMPORTANT]
 > **`repo-is-live-plugin-folder`**: this repository *is* the plugin's
 > installed folder inside the vault (`.obsidian/plugins/obsidian-Plugin-Callout-Studio`).
-> `npm run build`/`dev` write `main.js` straight into place — there is no
+> `npm run build`/`dev` write `main.js` straight into place - there is no
 > separate "install" or copy step. When a fix "doesn't seem to work" after a
 > rebuild, check `main.js`'s modification time and check for a duplicate
 > plugin folder with the same id before assuming the code is wrong.
@@ -47,7 +47,7 @@ minify: prod
 sourcemap: prod ? false : "inline"
 ```
 
-Obsidian and CodeMirror packages are externals — the app itself supplies
+Obsidian and CodeMirror packages are externals - the app itself supplies
 them at runtime, so bundling them would both bloat `main.js` and risk a
 duplicate/mismatched CodeMirror instance. Production builds strip
 sourcemaps entirely (dev builds inline them for fast iteration).
@@ -79,12 +79,12 @@ without type assertions and affects type checking only, not emitted JavaScript.
 
 > [!IMPORTANT]
 > **`tests/` is included in the same typecheck as `src/`.** `npm run
-> build`'s `tsc -noEmit` gate checks both trees together — a test suite that
+> build`'s `tsc -noEmit` gate checks both trees together - a test suite that
 > no longer compiles fails the *build*, not just `npm test`. This is
 > deliberate: the suites assert against real production signatures, and one
 > that's drifted off them is worth stopping the build for.
 >
-> **`target: ES6` rules out top-level `await` in a test file** — a dynamic
+> **`target: ES6` rules out top-level `await` in a test file** - a dynamic
 > import has to be awaited *inside* a test body instead.
 > `tests/repoTestGate.test.ts` holds both of these rules to account
 > mechanically (see below).
@@ -92,7 +92,7 @@ without type assertions and affects type checking only, not emitted JavaScript.
 ## Test runner (`scripts/run-tests.mjs`)
 
 `npm test` **bundles** every `tests/*.test.ts` with esbuild into `.test-out/`
-before handing the result to Node's built-in test runner — it does not run
+before handing the result to Node's built-in test runner - it does not run
 the TypeScript source directly. Two reasons, both structural:
 
 1. `scripts/tsconfig.json` uses `moduleResolution: "bundler"`, so the whole codebase
@@ -102,12 +102,12 @@ the TypeScript source directly. Two reasons, both structural:
 2. Several modules under test transitively import `obsidian`, which only
    exists inside the running app. esbuild's `alias` config swaps in
    [`tests/support/obsidianStub.ts`](../../tests/support/obsidianStub.ts)
-   instead — a minimal, hand-maintained stand-in kept in `tests/` rather than
+   instead - a minimal, hand-maintained stand-in kept in `tests/` rather than
    inlined, specifically because it needs to import `@codemirror/state` for
    `editorLivePreviewField` to be a real `StateField`.
 
 Test files are named **explicitly**, not discovered via `--test <dir>` or a
-glob — Node's test walker silently skips dot-prefixed directories
+glob - Node's test walker silently skips dot-prefixed directories
 (`.test-out`) and then mistakes the directory itself for a single test file;
 glob arguments to `node --test` only arrived in Node 22, while CI also runs
 20. Naming every bundled file avoids all three failure modes at once.
@@ -116,12 +116,12 @@ glob arguments to `node --test` only arrived in Node 22, while CI also runs
 
 `tests/support/fakeDom.ts` and `tests/support/obsidianStub.ts` stand in for
 the DOM and the `obsidian` module respectively. This is explicitly the
-boundary of the automated test suite — anything that has to *look* right
+boundary of the automated test suite - anything that has to *look* right
 (actual rendering, real theme interaction, real Obsidian internals like
 `app.hotkeyManager` or `app.customCss`) is **not** covered and must be
 verified by hand: copy `main.js`, `manifest.json`, `styles.css` into
 `<Vault>/.obsidian/plugins/callout-studio/` and reload Obsidian. `npm test`
-is a gate, not a substitute for that — it covers the pure utilities, the
+is a gate, not a substitute for that - it covers the pure utilities, the
 registry, the CSS it generates, both editor surfaces, the public API, and
 the repo's own conventions (below).
 
@@ -142,19 +142,19 @@ the candidate defaults to the current `styles.css`. `RECOVERY_SCREENSHOTS` names
 an optional output directory for visual review. This remains a browser fixture,
 not a substitute for checking the window in Obsidian and on an iPhone.
 
-## Repo-convention tests — the automated rules that hold the codebase together
+## Repo-convention tests - the automated rules that hold the codebase together
 
-Several test files check the **repository itself**, not runtime behaviour —
+Several test files check the **repository itself**, not runtime behaviour -
 these are the project's coding conventions turned into assertions rather
 than left as unenforced prose in `AGENTS.md`. Notable ones, by what they
-check (not exhaustive — see each file directly for the full list):
+check (not exhaustive - see each file directly for the full list):
 
 | File | Enforces |
 | --- | --- |
 | `repoSourceRules.test.ts` | No bare English UI-copy literal handed to a text setter or `Notice`; every `workspace`/`vault`/`metadataCache` listener is `registerEvent`'d or `offref`'d; nothing listens on `document`/`window` without an unregister; no interval outside `registerInterval`; no `any` without an explicit ESLint-disable; `main.ts` exists; the network surface is exactly what the README discloses; **handwritten source files stay at or below 500 nonblank, non-comment-only lines unless their exact path is explicitly exempted** |
 | `repoStyles.test.ts` | Every CSS custom property read with a fallback has a writer somewhere in `src/`; every class the code applies has a matching rule in `styles.css` and vice versa; no rule scoped to `.cs-modal` paints a raw `--background-primary` (see [Settings UI § surface tokens](16-settings-ui-and-modals.md)) |
 | `repoGenerated.test.ts` | `locales/*.json` and `src/icons/data/*` regenerate **byte-for-byte** identical to what's committed |
-| `i18nDynamicKeys.test.ts` | Every key built at runtime (`` t(`colorName.${key}`) `` and the rest) has an English entry, no key under those prefixes is unreachable, and every key-building template is listed — see [Localization § Keys built at runtime](17-i18n.md#keys-built-at-runtime) |
+| `i18nDynamicKeys.test.ts` | Every key built at runtime (`` t(`colorName.${key}`) `` and the rest) has an English entry, no key under those prefixes is unreachable, and every key-building template is listed - see [Localization § Keys built at runtime](17-i18n.md#keys-built-at-runtime) |
 | `repoRelease.test.ts` | `manifest.json`/`package.json`/`versions.json` agree on one version; the plugin id can never change; `manifest.json` has every required field and no unknown ones; built-in command ids match the released set; bundle-size limit is still declared where CI reads it |
 | `repoTestGate.test.ts` | `scripts/tsconfig.json` includes `tests/`; the build actually runs that typecheck; no test file uses top-level `await`; test setup/teardown hooks run in the right order |
 | `repoLicenseDocs.test.ts` | `LICENSE` is the plain 0BSD grant with no conditions attached; README/CONTRIBUTING both state the "don't republish as a new plugin" ask is *not* a license term |
@@ -162,7 +162,7 @@ check (not exhaustive — see each file directly for the full list):
 
 > [!TIP]
 > `npm test`'s output is the single source of truth for whether a
-> proposed change violates one of these conventions — don't try to
+> proposed change violates one of these conventions - don't try to
 > re-derive "is this file over 500 counted lines" or "is this listener registered
 > correctly" by inspection when the corresponding repo test will simply tell
 > you.
@@ -212,13 +212,13 @@ mixing them up is a real trap:
   Material/emoji data) and writes both the search-index files
   (`src/icons/data/*.index.ts`, committed and bundled into `main.js`) and
   the downloadable pack files
-  (`packs/*.json`, committed — **this repo is the CDN origin** for those
+  (`packs/*.json`, committed - **this repo is the CDN origin** for those
   files, served via jsDelivr at the pinned `packs-v3` tag). For Simple Icons
   it also writes `docs/SIMPLE-ICONS-LICENSES.md`, the per-logo credit that
   pack's licences ask for. Regenerating
   artwork content (not just the search index) requires **minting a new
   pinned tag** and updating the checksums in
-  `src/icons/data/packManifest.ts` — jsDelivr caches a tag's contents
+  `src/icons/data/packManifest.ts` - jsDelivr caches a tag's contents
   permanently, so re-pushing to the *same* tag would not actually refresh
   anything a user's cached copy sees. See
   [Adding or modifying features](22-extending.md#refreshing-icon-pack-artwork).
@@ -227,14 +227,14 @@ mixing them up is a real trap:
 
 Two workflows, `.github/workflows/`:
 
-### `lint.yml` — pushes to `master` and all pull requests, Node 20.x and 22.x
+### `lint.yml` - pushes to `master` and all pull requests, Node 20.x and 22.x
 
 ```text
 npm ci → npm run build → verify locales/ has no diff → npm run lint → npm test
 ```
 
 The locale-sync check runs **right after the build** (which already ran
-`i18n:generate` as `prebuild`) — its whole purpose is catching a translation
+`i18n:generate` as `prebuild`) - its whole purpose is catching a translation
 edited without the regenerated output committed alongside it, which would
 otherwise fail every download's checksum for the next release, discovered
 only in users' vaults instead of here.
@@ -242,7 +242,7 @@ only in users' vaults instead of here.
 `.github/dependabot.yml` also watches `eslint-plugin-obsidianmd` (weekly)
 and opens a PR on each new release, which `lint.yml` then runs against.
 
-### `release.yml` — triggered by pushing a bare-semver tag (`[0-9]+.[0-9]+.[0-9]+`, no `v`)
+### `release.yml` - triggered by pushing a bare-semver tag (`[0-9]+.[0-9]+.[0-9]+`, no `v`)
 
 ```text
 1. Verify manifest.json / package.json / versions.json all agree with the pushed tag exactly
@@ -251,7 +251,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 4. Check main.js is under the 2 MiB + 150 KiB bundle-size budget (2,250,752 bytes)
 5. Attest build provenance for main.js and styles.css
 6. Wait (poll, up to 15×2s) for the tag to be visible via the GitHub API
-   — the tag-push webhook can fire before the tag itself propagates
+ - the tag-push webhook can fire before the tag itself propagates
 7. Create a DRAFT GitHub release carrying main.js, styles.css, manifest.json
 ```
 
@@ -263,24 +263,24 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 
 > [!NOTE]
 > **The bundle-size budget (2 MiB + 150 KiB) is deliberately tight against the current
-> size**, not generously padded — "a careless import trips it here rather
+> size**, not generously padded - "a careless import trips it here rather
 > than in users' vaults; raise it consciously when a feature earns it." The
 > ceiling's own history is documented right in the workflow file: it moved
 > from 3 MiB (added for Tabler's search indexes) up to 4 MiB (custom
 > commands, Callout Manager import, Palette Editor work), then back **down**
 > to 2 MiB the moment the 31 non-English locales moved out of the bundle
-> entirely and became downloads — which alone took `main.js` from 3.70 MiB
+> entirely and became downloads - which alone took `main.js` from 3.70 MiB
 > to 1.70 MiB. The settings-safety work after 2.14.1 added verified backups,
 > device history, recovery UI and paused-saving safeguards, taking the bundle
 > just over 2 MiB; its allowance increased by 64 KiB. The calmer paused-saving
 > flow (three-paragraph banner, guided buttons, Go to backups with keyboard
 > focus, the saving-resumed notice) went 24 bytes past that, and the allowance
 > grew by another 8 KiB. Simple Icons then added the search index for 3,410
-> brand logos — 45 KB of the bundle — and the allowance grew by 44 KiB to match,
+> brand logos - 45 KB of the bundle - and the allowance grew by 44 KiB to match,
 > leaving the headroom where it had been. Theme-surface relocation (7.4 KB) took
-> another 8 KiB, and the Manage icon libraries window — reordering, hiding,
+> another 8 KiB, and the Manage icon libraries window - reordering, hiding,
 > downloading and deleting libraries, the drag list it shares with Customize menu
-> items, and the dialog that names the callouts keeping their icons — 11.7 KB,
+> items, and the dialog that names the callouts keeping their icons - 11.7 KB,
 > for which the allowance grew by 12 KiB, the headroom again about where it was.
 > The Version history allowance grew by 14 KiB for the timeline that merges
 > identical copies, automatic names based on saved reasons, storage markers and
@@ -291,7 +291,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > [!NOTE]
 > **The release is created as a `draft`, on purpose.** The `$release` skill
 > (`.agents/skills/release/SKILL.md`) is what writes the user-facing release
-> notes and flips it public — a workflow failure partway through therefore
+> notes and flips it public - a workflow failure partway through therefore
 > leaves a harmless draft rather than a half-published, half-broken public
 > release.
 
@@ -304,7 +304,7 @@ Bumping `manifest.json`/`package.json`/`versions.json` happens together, via
 
 > [!IMPORTANT]
 > **Never bump or tag by hand, and never do it inside a feature/fix PR.**
-> Both `AGENTS.md` and `docs/CONTRIBUTING.md` say releases are cut separately —
+> Both `AGENTS.md` and `docs/CONTRIBUTING.md` say releases are cut separately -
 > use the `$release` skill, which bumps all four version-bearing files
 > together, tags, pushes, waits for the CI build, writes release notes, and
 > publishes. Tags are bare semver (`1.5.0`), never `v1.5.0`.
@@ -312,7 +312,7 @@ Bumping `manifest.json`/`package.json`/`versions.json` happens together, via
 ## Husky / pre-commit
 
 A single pre-commit hook (`scripts/hooks/pre-commit: npx nano-staged`) runs ESLint
-against staged `*.ts`/`*.mts` files only — most style issues are caught
+against staged `*.ts`/`*.mts` files only - most style issues are caught
 before a push ever reaches CI.
 
 `npm install`/`npm ci` runs `prepare` (`husky scripts/hooks`) to install the

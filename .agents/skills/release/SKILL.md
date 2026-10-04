@@ -1,7 +1,7 @@
 ---
 name: release
 description: >-
-    Cut and publish a new version of the Callout Studio plugin — bump the
+    Cut and publish a new version of the Callout Studio plugin - bump the
     version files, tag, push, wait for the GitHub Actions build, write
     user-facing release notes, and publish the GitHub release. Triggers:
     "release", "cut a release", "ship a version", "new version", "publish
@@ -36,13 +36,13 @@ prefix, ever. The workflow now fails loudly if they drift apart.
 | `$release` | Infer the bump from the commits since the last tag |
 | `$release patch` / `minor` / `major` | Force the bump level |
 | `$release 2.4.0` | Use this exact version |
-| `$release --dry-run` | Run steps 0–4 only. Nothing is committed, tagged, or pushed |
+| `$release --dry-run` | Run steps 0 - 4 only. Nothing is committed, tagged, or pushed |
 
 `--dry-run` combines with any of the above.
 
 ---
 
-## Step 0 — Gather state
+## Step 0 - Gather state
 
 Run these first and keep the results; every later step reads from them.
 
@@ -57,10 +57,10 @@ jq -r '.packages[""].version' package-lock.json
 gh auth status
 ```
 
-## Step 1 — Preflight gates
+## Step 1 - Preflight gates
 
 Every one of these is a hard stop. If a gate fails, report exactly which one and
-what to do about it, then **end the turn** — do not attempt a workaround.
+what to do about it, then **end the turn** - do not attempt a workaround.
 
 1. **Branch is `master`.** Releases are only cut from master.
 2. **Working tree is clean.** No staged, unstaged, or untracked changes. Uncommitted
@@ -71,7 +71,7 @@ what to do about it, then **end the turn** — do not attempt a workaround.
 5. **Version files are consistent.** `manifest.json`, `package.json`, both
    version fields in `package-lock.json`, and the newest key in `versions.json`
    all agree with each other right now. If they don't, a previous release was
-   interrupted — say so and stop.
+   interrupted - say so and stop.
 6. **The target tag does not exist**, locally or on the remote:
    ```bash
    git rev-parse -q --verify "refs/tags/$VERSION"        # must fail
@@ -99,11 +99,11 @@ what to do about it, then **end the turn** — do not attempt a workaround.
    git ls-remote --exit-code --tags origin "$PACKS_TAG"   # must succeed
    ```
    A build that names a tag the remote does not have ships a Download button
-   that can only fail — for every library, since they share the one tag. If
+   that can only fail - for every library, since they share the one tag. If
    this fails, pack files were regenerated but never published; see
    "Refreshing icon pack artwork" in `docs/internals-docs/22-extending.md`.
 
-## Step 2 — Decide the version
+## Step 2 - Decide the version
 
 If the user gave an explicit version or bump level, use it. Otherwise infer from
 the commit subjects since the last tag:
@@ -116,28 +116,28 @@ git log --format='%s%n%b' "$(git describe --tags --abbrev=0)"..HEAD
 - Any `feat:` → **minor**
 - Otherwise → **patch**
 
-`chore:`/`docs:`/`style:`-only ranges still get a patch — but mention that the range
+`chore:`/`docs:`/`style:`-only ranges still get a patch - but mention that the range
 contains no user-visible changes so the user can cancel if they'd rather wait.
 
-## Step 3 — Draft the release notes
+## Step 3 - Draft the release notes
 
 Read the full subjects **and bodies** of the commits in the range. Rewrite them as
 release notes aimed at plugin users, not at developers.
 
-**House style — every release, no exceptions (standardized 2026-08-14 across all
+**House style - every release, no exceptions (standardized 2026-08-14 across all
 past releases too; see git history of this file if you need the old, inconsistent
 rule):**
 
 - English, plain sentences. Past tense: "Fixed…", "Added…", "Improved…".
-- No bold lead-in on list items. Just the sentence — "Fixed the icon picker
+- No bold lead-in on list items. Just the sentence - "Fixed the icon picker
   losing its scroll position when reopened," not "**Icon picker:** Fixed …".
 - **One change total** → a single plain sentence paragraph. No bullet, no header.
 - **Several changes, all one kind** (all fixes, or all new things) → a `-` bullet
   list, one line per change, no header.
 - **Several changes of more than one kind** → exactly two possible `##` headers,
   in this order, only the ones that have content:
-  - `## What's new` — new features and improvements
-  - `## Bug fixes` — fixes
+  - `## What's new` - new features and improvements
+  - `## Bug fixes` - fixes
   Each header's items are a `-` bullet list underneath it. Never invent other
   section names (no "Improvements", no emoji in headers, no per-feature bold
   sub-headers).
@@ -149,12 +149,12 @@ rule):**
   symbol names.
 - Collapse several commits that fix one user-facing problem into one line.
 - Skip pure `chore:` noise (lockfile bumps, formatting) unless it's the whole release.
-- Never add a "Full Changelog" line — GitHub already appends that to the draft
+- Never add a "Full Changelog" line - GitHub already appends that to the draft
   automatically; a manual one duplicates it.
 
-Write the result to a temp file — `notes=$(mktemp)` — and keep the path.
+Write the result to a temp file - `notes=$(mktemp)` - and keep the path.
 
-## Step 4 — The approval gate
+## Step 4 - The approval gate
 
 Show the user, in one message:
 
@@ -170,7 +170,7 @@ again.
 Nothing is committed, tagged, or pushed before this gate returns approval. If the
 invocation was `--dry-run`, stop here and report what *would* have happened.
 
-## Step 5 — Bump, commit, tag, push
+## Step 5 - Bump, commit, tag, push
 
 ```bash
 npm version <patch|minor|major|X.Y.Z> \
@@ -183,7 +183,7 @@ the `versions.json` entry; npm updates `package.json` and `package-lock.json`,
 commits all four, and creates the tag **on that same commit**. `.npmrc` sets
 `tag-version-prefix=""`, which is what keeps the tag bare.
 
-The husky pre-commit hook runs `nano-staged`, which only matches `*.{ts,mts}` — a
+The husky pre-commit hook runs `nano-staged`, which only matches `*.{ts,mts}` - a
 no-op for this commit.
 
 Then push the commit first and the tag second, so the tag never points at a commit
@@ -194,7 +194,7 @@ git push origin master
 git push origin "$VERSION"
 ```
 
-## Step 6 — Watch the build
+## Step 6 - Watch the build
 
 The run takes a few seconds to appear. Poll for it, matching on the tag name
 (`headBranch` is the tag for a tag push):
@@ -214,7 +214,7 @@ gh run watch "$RUN_ID" --exit-status
 If the run fails, print the failing step's log (`gh run view "$RUN_ID" --log-failed`),
 report it, and **stop without publishing**. Then follow step 8.
 
-## Step 7 — Publish and confirm
+## Step 7 - Publish and confirm
 
 ```bash
 gh release edit "$VERSION" --notes-file "$notes" --draft=false --latest
@@ -231,7 +231,7 @@ Confirm all four before reporting success:
 
 Report the release URL to the user.
 
-## Step 8 — If something fails after the tag was pushed
+## Step 8 - If something fails after the tag was pushed
 
 Do not silently retry, and do not run any of these on your own. Show the user the
 situation and the exact recovery commands, and ask before running them.
@@ -247,7 +247,7 @@ git revert --no-edit "$BUMP_COMMIT"                # undo the bump without rewri
 git push origin master                             # only if the bump was pushed
 ```
 
-If the release was already **published**, do not delete it — users may have pulled
+If the release was already **published**, do not delete it - users may have pulled
 it. Cut a follow-up patch release instead.
 
 ---
@@ -255,7 +255,7 @@ it. Cut a follow-up patch release instead.
 ## Notes
 
 - Never create the tag by hand. `npm version` is what guarantees the tag and the
-  version files land on the same commit — the drift that happened with `2.3.4`.
+  version files land on the same commit - the drift that happened with `2.3.4`.
 - Never add a `v` prefix. The workflow's tag filter (`[0-9]+.[0-9]+.[0-9]+`) simply
   won't fire for `v2.3.5`, and the push would look like it succeeded.
 - `minAppVersion` lives in `manifest.json` and is copied into `versions.json`

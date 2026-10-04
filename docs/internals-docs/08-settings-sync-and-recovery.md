@@ -428,7 +428,7 @@ later re-created under the same id without some old field, and a device that
 missed both still holds that field at its old stamp. With only the row
 tombstoned, the field's stamps tie, and the tie-break favors a present value,
 so the stale field reappears in the new row. The alternative, ignoring a field
-older than its row, makes 2.13.1–2.14.1 and newer builds merge the same files
+older than its row, makes 2.13.1 - 2.14.1 and newer builds merge the same files
 differently, so each would keep rewriting the other's result. Compaction needs
 an envelope change the fleet cannot take yet (see the rules below).
 
@@ -443,8 +443,8 @@ the guard.
 ### A device's first file and the shipped defaults
 
 Every field a user has not edited since 2.13.1 carries no stamp (`[0, ""]`). In
-2.13.1–2.14.1, a device that had never adopted a file — a new phone, a reinstall
-on iOS, cleared app data — ran `prepare()` against an empty base. It stamped
+2.13.1 - 2.14.1, a device that had never adopted a file - a new phone, a reinstall
+on iOS, cleared app data - ran `prepare()` against an empty base. It stamped
 *every* key `[1, actor]`, the root `"[]"` included, although its user had
 changed nothing. Once that file met the long-time file, the new device's defaults
 beat every unstamped customization on every device. With a callout-styling theme,
@@ -481,7 +481,7 @@ Two changes close it:
 
 ### Rules for every future build
 
-Released 2.13.1–2.14.1 gates are frozen in the field:
+Released 2.13.1 - 2.14.1 gates are frozen in the field:
 
 - **Add fields only; never retype one.** An older build's shape gate reads a
   retyped field as an unreadable file, not as "update needed".
@@ -729,8 +729,8 @@ best effort if IndexedDB is unavailable or rejects a write.
 contract: the user asked for that state to be gone, so a storage failure is
 reported to the caller rather than logged and swallowed. It still runs behind
 the same internal write queue as `record()`/`put()`, so the two cannot race each
-other over the same hash, but the queue itself is forked — `this.queue` always
-resolves, so one failed delete cannot poison a later `record()` — while the
+other over the same hash, but the queue itself is forked - `this.queue` always
+resolves, so one failed delete cannot poison a later `record()` - while the
 promise handed back to the caller still rejects. `SettingsWriter.deleteHistoryEntry()`
 is the one public entry point, mirroring `historyEntries()`'s own delegation to
 `host.history`.
@@ -904,7 +904,7 @@ changes nothing. The banner shows the cause under the general message and offers
 An unreadable primary does not override a `newer-version` or `recovery-read`
 checkpoint freeze: resolve that checkpoint state before replacing the primary.
 
-**Replace settings file** (`replaceUnreadable()`), after a confirmation — a
+**Replace settings file** (`replaceUnreadable()`), after a confirmation - a
 warning, except for `combined`, where the replacement keeps every setting and
 the banner re-diagnoses the file after the yes:
 
@@ -1005,7 +1005,7 @@ readability. The confirmation explains the removal once and adds a warning about
 deletion syncing only if the version contains a backup or sync-copy file. Copies
 in another device's private history may remain. It touches neither the settings
 file nor the writer, so
-— unlike **Restore** — it stays available while saving is paused. Each copy goes
+ - unlike **Restore** - it stays available while saving is paused. Each copy goes
 through `remove(source)`: a history entry through `SettingsWriter.deleteHistoryEntry()`
 → `SettingsHistoryStore.delete(hash)`, keyed by the `historyHash` a `RecoverySource`
 carries for that kind only; a backup or stray copy through
@@ -1016,7 +1016,7 @@ what is left shows.
 
 Each `RecoverySource` still carries an `origin` (`"this-device"`, `"other-device"`,
 `"older-version"`, or `null`) for backups and stray copies, but the modal never
-displays it — which device a copy came from is not something restoring it
+displays it - which device a copy came from is not something restoring it
 requires the user to know. The field stays on the type for the internal
 bookkeeping that constructs it
 (`settingsRecoveryService.ts`'s device comparison), not for display.
@@ -1058,7 +1058,7 @@ overlaid with each side's saved rows, without constructing a live registry. A
 missing custom definition can therefore be added or removed, while removing a
 built-in override compares against the default rather than implying that the
 built-in disappears. The visible comparison lists every callout type whose
-definition differs — additions, removals and changes — and every one whose stored
+definition differs - additions, removals and changes - and every one whose stored
 artwork differs. `SetupCalloutComparison.artworkChanged` compares only the artwork
 a visible icon draws, and only when both sides show an icon: uploaded
 SVG/format/dimensions or matching cached variants for each render role. Unrelated
@@ -1087,8 +1087,8 @@ version uses **Comparison unavailable** with its explanation below. The report i
 split into the settings page's sections, in its order (callout types, then custom
 icons and icon-picker defaults, fallback, palettes, global style, context menu,
 commands, language, then "Other settings" for groups this build does not know).
-`recoverySections.ts` and `recoveryCollections.ts` turn `SetupDetails` into items —
-one callout type, palette, custom icon, command, menu, built-in command or setting —
+`recoverySections.ts` and `recoveryCollections.ts` turn `SetupDetails` into items -
+one callout type, palette, custom icon, command, menu, built-in command or setting -
 matched by id, each holding only its differing fields. The icon-picker defaults
 section also carries an **Icon libraries** item: each library that ships with the
 plugin shown or hidden, and the library order, compared as the Manage icon
@@ -1114,8 +1114,8 @@ resolved from that snapshot's `userImages`, sanitized again, and rendered in
 isolated data images or stencil masks. Missing stored artwork gets a placeholder,
 never a fetch or substitution from the live image pack.
 
-Changed values are drawn by `recoveryValues.ts` — swatches, icons, gradients,
-border frames, numbered orders, On/Off — and never shown as raw JSON or behind a
+Changed values are drawn by `recoveryValues.ts` - swatches, icons, gradients,
+border frames, numbered orders, On/Off - and never shown as raw JSON or behind a
 disclosure: text over 160 characters becomes an excerpt with its length, and an
 unknown object becomes nested labelled lists (six levels, forty entries each, then
 a count). Markup inside values remains text. Visual previews use sanitized artwork
@@ -1173,9 +1173,9 @@ replaced, a notice (`notice.unsavedChangesKept`) says so and points to
 list names *Before changes from another device*.
 
 `recovery.diagnostics()` builds a plain-English report. It has no settings-page
-entry point of its own anymore — the **Sync diagnostics** row and its **Copy
+entry point of its own anymore - the **Sync diagnostics** row and its **Copy
 diagnostics** button were removed from `renderBackupSection`
-(`settings/sections/DataManagementSection.ts`) — but the method itself is
+(`settings/sections/DataManagementSection.ts`) - but the method itself is
 unchanged and is meant for another caller to invoke and copy on the user's
 behalf. The report:
 
@@ -1214,7 +1214,7 @@ every combination of OS, provider and hardware has been exercised.
 | Case | What the implementation must do / how to proceed |
 | --- | --- |
 | First installation, no saved file | Confirm local absence before enabling edits. Do not save for the welcome, a foreground event, a theme sweep, fetched artwork or a dismissed prompt. The first file stamps only what the user changed. |
-| New or reinstalled device meets a long-time file | Untouched defaults carry no stamps, so the long-time values win. A default already stamped by a 2.13.1–2.14.1 genesis write is rescued at merge time. |
+| New or reinstalled device meets a long-time file | Untouched defaults carry no stamps, so the long-time values win. A default already stamped by a 2.13.1 - 2.14.1 genesis write is rescued at merge time. |
 | First actual write fails | Keep the intended registry/checkpoint when available. Explicit Retry may retry that first write; failed verification must not mark the device initialized. |
 | Reinstall with old marker but no checkpoint | Protect absence. The settings page can explicitly create a file from what is displayed, after confirmation. The marker alone cannot recover deleted definitions. |
 | Reinstall with valid checkpoint | Display it, retain its causal history, and offer restoration. Visibility does not mean the primary has been restored. |

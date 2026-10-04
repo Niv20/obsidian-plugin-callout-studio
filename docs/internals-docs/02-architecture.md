@@ -3,36 +3,36 @@
 ## Component map
 
 ```text
-main.ts (CalloutStudioPlugin) — lifecycle and wiring only
-├── CalloutRegistry           — single source of truth: Map<id, CalloutDefinition> + PluginSettings
-├── CSSInjector                — reads the registry, writes generated CSS + paints icon DOM
-├── ManualCalloutDiscovery      — one explicit additive scan; no watchers or pruning
-├── CalloutOccurrenceIndex      — read-only note/editor references; lazy, in-memory
-├── CalloutOccurrencesView      — sidebar queries/navigation over that index
-├── IconService                  — icon artwork: fetch, cache, disk storage
+main.ts (CalloutStudioPlugin) - lifecycle and wiring only
+├── CalloutRegistry - single source of truth: Map<id, CalloutDefinition> + PluginSettings
+├── CSSInjector - reads the registry, writes generated CSS + paints icon DOM
+├── ManualCalloutDiscovery - one explicit additive scan; no watchers or pruning
+├── CalloutOccurrenceIndex - read-only note/editor references; lazy, in-memory
+├── CalloutOccurrencesView - sidebar queries/navigation over that index
+├── IconService - icon artwork: fetch, cache, disk storage
 │   ├── IconFetchManager          (Material's per-icon fetches)
 │   └── PackDataStore             (whole-pack downloads, SHA-256 verified)
-├── CustomCommandManager        — syncs settings.customCommands ↔ registered Obsidian commands
-├── OutlineDecorator             — cleans heading-callout titles in the Outline pane
-├── LinkSuggestDecorator         — cleans them in the [[ link popup
-├── LocaleStore                  — downloads/caches non-English UI translations
-├── CalloutStudioAPI            — read-only public surface at `plugin.api`
+├── CustomCommandManager - syncs settings.customCommands ↔ registered Obsidian commands
+├── OutlineDecorator - cleans heading-callout titles in the Outline pane
+├── LinkSuggestDecorator - cleans them in the [[ link popup
+├── LocaleStore - downloads/caches non-English UI translations
+├── CalloutStudioAPI - read-only public surface at `plugin.api`
 │
-├── editor/                     — markdown-side integrations
+├── editor/ - markdown-side integrations
 │   ├── AutoComplete              (EditorSuggest on `[!`)
 │   ├── CalloutBlockTools         (wrap/unwrap/insert)
-│   ├── calloutTokens              (the token grammar — parses everything)
+│   ├── calloutTokens              (the token grammar - parses everything)
 │   ├── calloutWriter               (the only place a definition becomes markdown)
 │   ├── commands.ts                (5 fixed commands)
 │   ├── contextmenu/                (right-click menu)
 │   └── livepreview/                 (CodeMirror ViewPlugin + StateField rendering)
 │
-├── reading/                     — Reading-view post-processors (heading/inline roles, gradient text)
-├── outline/                      — OutlineDecorator implementation
-├── icons/                        — icon pack registry, per-source implementations, resolver, renderer
-├── settings/                     — the settings tab, all modals, the callout editor, the icon picker
-├── utils/                        — pure helpers: colour math, id normalization, import validation, …
-└── api/                           — public API types and implementation
+├── reading/ - Reading-view post-processors (heading/inline roles, gradient text)
+├── outline/ - OutlineDecorator implementation
+├── icons/ - icon pack registry, per-source implementations, resolver, renderer
+├── settings/ - the settings tab, all modals, the callout editor, the icon picker
+├── utils/ - pure helpers: colour math, id normalization, import validation, …
+└── api/ - public API types and implementation
 ```
 
 `src/main.ts` is deliberately thin: lifecycle and wiring only, per the project's
@@ -54,15 +54,15 @@ Only a handful of classes actually **own** state:
 | `CalloutRegistry` | `Map<id, CalloutDefinition>`, `PluginSettings`, `iconSvgCache` | Yes, via `toSaveData()` → `data.json` |
 | `SettingsWriter` / `SettingsSync` | Accepted file baseline, causal history and write/recovery status | Baseline/status are session state; sync history is carried in settings data. See [state distinctions](08-settings-sync-and-recovery.md#safety-rules-and-the-different-kinds-of-state). |
 | `SettingsCheckpoint` / `DeviceLocalStore` | Independent recovery snapshot and device UI/prior-use markers | Device-local IndexedDB and vault-scoped localStorage, respectively; neither is the primary settings file. |
-| `CalloutOccurrenceIndex` | Per-file source occurrences, invalidation versions and read failures | No — session memory only, never saved definitions |
-| `ManualCalloutDiscovery` | one in-flight manual scan | No — only its successfully saved definitions persist |
+| `CalloutOccurrenceIndex` | Per-file source occurrences, invalidation versions and read failures | No - session memory only, never saved definitions |
+| `ManualCalloutDiscovery` | one in-flight manual scan | No - only its successfully saved definitions persist |
 | `CSSInjector` | the adopted stylesheet, the `<style>` element, `lastCssText` | No (but mirrors to `StartupStyleCache` → localStorage) |
 | `IconService` / `PackDataStore` | in-flight fetches, failure flags | Artwork lands in the registry's `iconSvgCache` (persisted); pack files live on disk under `icon-packs/` |
 | `LocaleStore` | per-locale load state, in-flight downloads | Locale files live on disk under `translations/`; the *table* is registered into `i18n/index.ts`'s module-level map (runtime only) |
-| `CustomCommandManager` | nothing of its own — re-derives from `settings.customCommands` on every registry change | `settings.customCommands` is persisted by the registry |
+| `CustomCommandManager` | nothing of its own - re-derives from `settings.customCommands` on every registry change | `settings.customCommands` is persisted by the registry |
 
-Rendering and settings consumers — `renderShared.ts`, the icon renderer, the
-settings sections and the modals — **read** the registry and **call its mutators**.
+Rendering and settings consumers - `renderShared.ts`, the icon renderer, the
+settings sections and the modals - **read** the registry and **call its mutators**.
 An editor can own an unsaved draft; it is not another source of committed
 definitions. If you cache a committed `CalloutDefinition` outside the registry's map, you
 are one edit away from it going stale. The public API guards against exactly this
@@ -78,28 +78,28 @@ because almost every bug report traces back to a step being skipped:
 Something mutates the registry
         │  (registry.add/update/remove/batch(...), or a preview via setPreviewDefinition)
         ▼
-registry.onChange fires (coalesced — see CalloutRegistry.batch)
+registry.onChange fires (coalesced - see CalloutRegistry.batch)
         │
-        ├──► CSSInjector.inject()            — regenerates CSS, swaps the stylesheet
-        │        │  (only if the text actually changed — see "Coalescing" below)
-        │        ├──► paintIcons()            — repaints DOM icons in every open window
-        │        ├──► refreshAllCalloutEditors() — asks CodeMirror to rebuild its widgets
-        │        └──► workspace.trigger("css-change") — forces every open editor/reading view to re-render
+        ├──► CSSInjector.inject() - regenerates CSS, swaps the stylesheet
+        │        │  (only if the text actually changed - see "Coalescing" below)
+        │        ├──► paintIcons() - repaints DOM icons in every open window
+        │        ├──► refreshAllCalloutEditors() - asks CodeMirror to rebuild its widgets
+        │        └──► workspace.trigger("css-change") - forces every open editor/reading view to re-render
         │
-        ├──► OutlineDecorator.refreshAll()    — repaints outline items
-        └──► plugin.saveSettings()             — writes data.json
+        ├──► OutlineDecorator.refreshAll() - repaints outline items
+        └──► plugin.saveSettings() - writes data.json
 ```
 
 `main.ts` wires exactly two `registry.onChange` listeners (see
 [Plugin lifecycle](03-plugin-lifecycle.md)): one for `customCommands.syncAll()`,
-one that does the inject + outline-refresh + save. Order matters — the command
+one that does the inject + outline-refresh + save. Order matters - the command
 sync is subscribed first, so a delete's command pruning is folded into the same
 settings snapshot the save writes, rather than racing it.
 
 > [!IMPORTANT]
 > **`onChange` carries no payload.** Every listener re-derives what it needs from
 > current registry state rather than being told what changed. This is deliberate
-> — an id rename is really `remove()` followed by `add()`, so no listener could
+> - an id rename is really `remove()` followed by `add()`, so no listener could
 > tell a rename from a delete-then-create anyway. `CustomCommandManager.syncAll()`
 > is designed entirely around this: it recomputes the whole desired command set
 > from scratch every time, which is what makes it converge correctly regardless
@@ -107,7 +107,7 @@ settings snapshot the save writes, rather than racing it.
 
 ### Coalescing: why a single edit is not four full passes
 
-A single `onChange` round is expensive — full stylesheet regeneration, every
+A single `onChange` round is expensive - full stylesheet regeneration, every
 open document's icons repainted, every CodeMirror editor's widgets refreshed, a
 `data.json` write, and (if the CSS actually moved) a `css-change` event that
 makes Obsidian core rebuild every open editor's cache. Three mechanisms exist
@@ -125,7 +125,7 @@ purely to keep that cost tied to real work:
    generated *text* stays identical.
 3. **`main.ts` has no separate debounced inject.** An earlier version scheduled
    a debounced `inject()` *and* let the `css-change` trigger re-enter the same
-   listener — which ran the whole pass twice per mutation. `inject()` now emits
+   listener - which ran the whole pass twice per mutation. `inject()` now emits
    `css-change` itself, once, only when text actually changed; there is no
    second path.
 
@@ -135,12 +135,12 @@ See [CSS generation](06-css-generation.md) for the injector's internals and
 ## Two id spaces for icons
 
 A second architecture worth knowing before touching icon code: `IconSourceId`
-(9 members — one row in the picker's source menu) and `IconPackId` (12 members
-— one body of downloaded/cached artwork) are deliberately different types, kept
+(9 members - one row in the picker's source menu) and `IconPackId` (12 members
+ - one body of downloaded/cached artwork) are deliberately different types, kept
 apart in [`src/icons/registry.ts`](../../src/icons/registry.ts). They coincide for
 every library except Font Awesome (one source, three files: solid/regular/brands)
 and Tabler (one source, two files: outline/filled). Cache keys and pack-store
-calls always use `icon.type` (an `IconPackId`) — using the source id would
+calls always use `icon.type` (an `IconPackId`) - using the source id would
 collapse both Font Awesome styles onto one cache entry. Full treatment in
 [Icons](13-icons.md).
 

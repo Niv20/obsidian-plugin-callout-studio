@@ -38,7 +38,7 @@ and hover and focus feedback as other text and selection fields. Open
 **Style** to choose from the list; it does not accept typed text.
 
 Some themes and Style Settings layouts keep a callout's body neutral and put its
-color somewhere else — AnuPpuccin's Sleek, Vanilla Normal, and Vanilla Plus
+color somewhere else - AnuPpuccin's Sleek, Vanilla Normal, and Vanilla Plus
 layouts put it on a title bar. Block callouts follow the layout: the body keeps
 the theme's neutral surface in light and dark mode, and the palette's
 background, solid or gradient, fills the title bar instead. A transparent

@@ -42,35 +42,35 @@ Field-by-field notes on the ones that are not self-explanatory:
 - **`source`** distinguishes provenance, not appearance. See the table in
   [Callout registry](05-callout-registry.md#sources).
 - **`hideIcon`** is a *display flag*, not an icon. It is deliberately not a
-  `"none"` member of `IconPackId` — see the "why" box below.
+  `"none"` member of `IconPackId` - see the "why" box below.
 - **`iconAdjust`** is the current per-role icon nudge; `iconOffsetX` /
   `iconOffsetY` / `iconSize` are the legacy flat trio that predates it. A role
-  missing from `iconAdjust` — or a single field missing inside one — falls back
+  missing from `iconAdjust` - or a single field missing inside one - falls back
   to the flat trio, which is exactly what the trio meant before `iconAdjust`
   existed. Always resolve through `resolveIconAdjust()` in
   `utils/iconAdjust.ts`, never by reading either layer directly.
-- **`transparentBg`** is typed `true` (not `boolean`) on purpose — see the
+- **`transparentBg`** is typed `true` (not `boolean`) on purpose - see the
   callout below.
 - **`customized`** marks a row the user explicitly created or edited. It prevents
   fallback restyling from replacing the authored appearance. Manually discovered
   rows start with it unset but remain durable regardless of note usage.
 - **`paletteId`** links a definition back to the `CustomPalette` its colors were
   last applied from, so a later edit to that palette can cascade. Left stale
-  (pointing at nothing) when the palette is deleted — see
+  (pointing at nothing) when the palette is deleted - see
   [Colour system](12-color-system.md#custom-palettes-simple-vs-advanced-and-the-baking-contract).
-- **`metadata`** here is a definition's own key/value bag — **not** the same
+- **`metadata`** here is a definition's own key/value bag - **not** the same
   thing as Obsidian's `data-callout-metadata` (the `|purple` after a pipe). Two
   different "metadata" concepts share the name; don't conflate them.
 
 > [!NOTE]
 > **Why `hideIcon` is a boolean flag and not `icon.type = "none"`.** `IconPackId`
-> means *one body of artwork* — a pack manifest entry, a downloaded file, an
+> means *one body of artwork* - a pack manifest entry, a downloaded file, an
 > SVG cache key. A `"none"` member would need a pack behind it that draws
 > nothing, would have to overwrite `icon` (losing what the user actually
 > picked), and would make every older plugin build reject the whole entry on
 > import, since `validateIcon` only accepts a type it recognizes. Keeping
 > `icon` untouched means turning the icon back on is instant and works offline
-> — nothing overwrote it, and the icon-cache cleanup pass still counts it as
+> - nothing overwrote it, and the icon-cache cleanup pass still counts it as
 > in use.
 
 > [!IMPORTANT]
@@ -78,7 +78,7 @@ Field-by-field notes on the ones that are not self-explanatory:
 > `CalloutRegistry.isModified()` compares
 > `JSON.stringify(value ?? null)` between the current definition and the
 > shipped built-in default. If the field could be written as literal `false`,
-> an explicit `false` would read as *different* from a pristine `undefined` —
+> an explicit `false` would read as *different* from a pristine `undefined` -
 > and a built-in nobody actually edited would start being persisted to
 > `data.json` and copied into every export forever. Every writer omits the key
 > to turn it off, rather than assigning `false`. If you
@@ -92,8 +92,8 @@ interface CalloutIcon {
   type: IconPackId;      // which body of artwork
   value: string;          // icon name, or a UserImageIcon.id for type "image"
   style?: "outlined" | "filled" | "rounded" | "sharp"; // Material only
-  weight?: number;         // Material only, 100–700
-  recolor?: boolean;        // "image" only — tint like a library icon vs. keep own colours
+  weight?: number;         // Material only, 100 - 700
+  recolor?: boolean;        // "image" only - tint like a library icon vs. keep own colours
 }
 ```
 
@@ -105,7 +105,7 @@ Two-stop linear background gradient. Stop 1 is always the owner's existing
 `bgColorLight`/`bgColorDark`; this object supplies the end colour per mode.
 Absent = solid background. `textGradient` additionally sweeps the *title text*
 of all three render roles, using a **separate** accent-strength pair
-(`textToColorLight`/`textToColorDark`) rather than the pale background stops —
+(`textToColorLight`/`textToColorDark`) rather than the pale background stops -
 painting a pale tint through glyph text would be nearly invisible. See
 [CSS generation § gradients](06-css-generation.md#gradients).
 
@@ -130,7 +130,7 @@ interface CustomPalette {
 }
 ```
 
-All six colours are always concrete `#rrggbb` values — unlike a definition's
+All six colours are always concrete `#rrggbb` values - unlike a definition's
 `transparentBg`, a palette's six hexes stay valid alongside the flag (the
 editor keeps deriving them so switching back to Solid finds them ready; they
 are simply not read while the flag is set). Editing a palette **cascades**
@@ -154,10 +154,10 @@ interface UserImageIcon {
 }
 ```
 
-Every uploaded picture — SVG or raster — is normalized to one representation
+Every uploaded picture - SVG or raster - is normalized to one representation
 (SVG markup) so every render surface, the SVG cache, and the PDF-export path
 need no special case. See the `user-image-icons` skill and
-[Icons](13-icons.md#your-images--the-local-never-downloaded-source).
+[Icons](13-icons.md#your-images---the-local-never-downloaded-source).
 
 ## `CustomCommand`
 
@@ -166,19 +166,19 @@ interface CustomCommand {
   id: string;                      // minted once, never derived from content
   calloutId: string;                // always canonical, never an alias
   role: CalloutRenderRole;
-  headingLevel?: number;             // 1–6, only read when role === "heading"
+  headingLevel?: number;             // 1 - 6, only read when role === "heading"
   action?: CustomCommandAction;      // "wrap" | "insert", only read when role === "regular"
   fold?: CustomCommandFold;          // "none" | "expanded" | "collapsed", only read when role === "regular"
 }
 ```
 
-`id` is deliberately independent of the command's content — Obsidian keys the
+`id` is deliberately independent of the command's content - Obsidian keys the
 user's hotkey by command id, and editing a command's callout/role/level must
 not orphan that binding. See
-[Editor integrations](10-editor-integrations.md#customcommandmanager--one-idempotent-sweep).
+[Editor integrations](10-editor-integrations.md#customcommandmanager---one-idempotent-sweep).
 
-`fold` decides which header the command writes — `> [!note]`, `> [!note]+` or
-`> [!note]-` — and is block-only for the same reason `splitFoldMark` takes a
+`fold` decides which header the command writes - `> [!note]`, `> [!note]+` or
+`> [!note]-` - and is block-only for the same reason `splitFoldMark` takes a
 role: the other two formats have no fold syntax, so a mark written for them is
 a stray character in the user's title.
 
@@ -186,18 +186,18 @@ Two rules hang off it, both in
 [`utils/customCommands.ts`](../../src/utils/customCommands.ts):
 
 - **Absent means `"none"`,** resolved by `resolveFold`. That is the upgrade
-  promise for every command saved before the field existed — same header, same
+  promise for every command saved before the field existed - same header, same
   palette name, same hotkey.
 - **`"none"` is never written.** The sanitizer stores `fold` only when it says
-  something, so an existing `data.json` — a file that syncs between devices — is
+  something, so an existing `data.json` - a file that syncs between devices - is
   not rewritten to record a default.
   `tests/upgradeFromAutoDiscovery.test.ts` holds a released version's saved
   commands to loading back identical, not merely equivalent.
 
 It also overrides `CalloutDefinition.foldable`/`defaultFolded` rather than
 deferring to them: the command carries its own answer, so a callout created by
-`applyCalloutManagerImport` or `applyAdmonitionImport` — both of which stamp
-`foldable: true` on everything — no longer decides what a command writes.
+`applyCalloutManagerImport` or `applyAdmonitionImport` - both of which stamp
+`foldable: true` on everything - no longer decides what a command writes.
 
 ## `PluginSettings`
 
@@ -231,7 +231,7 @@ resolves it to `all` without erasing the preference. `iconSources.lastCategory`
 and `iconSources.lastEmojiSkinTone` follow the same rule for the icon picker.
 
 `iconLibraries` is what the **Manage icon libraries** window edits: `order` is every
-library in the order Pick an icon lists them (empty — the default — means the
+library in the order Pick an icon lists them (empty - the default - means the
 catalog order), and `hidden` the libraries that ship with the plugin that the
 user took out of the picker. Whether a *downloadable* library is offered is not
 stored anywhere: it is whether its files are on this device. Both lists hold
@@ -255,12 +255,12 @@ ignored-id, first-run and theme-retirement settings are dropped on serialization
 Local UI folds and the initialized-installation marker live in `DeviceLocalStore`.
 See [Persistence](07-persistence-and-caching.md).
 
-## `PluginData` — the shape of `data.json`
+## `PluginData` - the shape of `data.json`
 
 ```ts
 interface PluginData {
   version: number;                        // CURRENT_DATA_VERSION = 5
-  callouts: CalloutDefinition[];            // only non-default rows — see below
+  callouts: CalloutDefinition[];            // only non-default rows - see below
   settings: PluginSettings;
   materialIconsCache?: unknown;              // legacy, ignored on save
   materialSvgCache?: MaterialSvgCacheEntry[]; // pre-2.4, read once by a load migration, never written again
@@ -277,45 +277,45 @@ and [startup classification](08-settings-sync-and-recovery.md#startup-and-file-c
 for the file gate. The additional `calloutStudioSync` envelope carries separate
 [causal history and integrity metadata](08-settings-sync-and-recovery.md#causal-merge-history-and-integrity).
 
-`callouts` is **not** every callout the registry holds — see
+`callouts` is **not** every callout the registry holds - see
 [Callout registry § which rows are persisted](05-callout-registry.md#which-rows-are-persisted-the-built-in-rule).
 
 ## Callout IDs and the normalizers
 
 Five helpers in [`src/utils/calloutId.ts`](../../src/utils/calloutId.ts), each
 with a distinct job. Confusing them is the single most common source of subtle
-bugs in this codebase — every one of them exists because a plausible-looking
+bugs in this codebase - every one of them exists because a plausible-looking
 shortcut breaks a specific real case.
 
 | Helper | Purpose | Splits `\|metadata`? |
 | --- | --- | --- |
-| `splitCalloutMetadata` | The one place the pipe rule is spelled out — splits `[!type\|metadata]` into `{id, metadata, hasMetadata}` | — |
+| `splitCalloutMetadata` | The one place the pipe rule is spelled out - splits `[!type\|metadata]` into `{id, metadata, hasMetadata}` | - |
 | `normalizeCalloutId` | **Permissive.** Reading an ID out of markdown, or matching against the registry: drops metadata, collapses whitespace, trims, lowercases | Yes |
-| `sanitizeCalloutIdInput` | **Restrictive.** The user *creating* an ID in the editor: keeps only letters/numbers/space/dash, folds dash runs into spaces | No — a pipe here is a character in a display name, not a token separator |
-| `obsidianCalloutAttrId` | The form **Obsidian itself** writes into `data-callout` — `trim().toLowerCase().replace(/\s+/g, "-")`. Selectors only | No |
-| `calloutIdentity` | **The one answer to "are these two IDs the same callout?"** — `obsidianCalloutAttrId(normalizeCalloutId(x))`. Every comparison, lookup, insertion, persistence check, discovery pass and import | Yes |
+| `sanitizeCalloutIdInput` | **Restrictive.** The user *creating* an ID in the editor: keeps only letters/numbers/space/dash, folds dash runs into spaces | No - a pipe here is a character in a display name, not a token separator |
+| `obsidianCalloutAttrId` | The form **Obsidian itself** writes into `data-callout` - `trim().toLowerCase().replace(/\s+/g, "-")`. Selectors only | No |
+| `calloutIdentity` | **The one answer to "are these two IDs the same callout?"** - `obsidianCalloutAttrId(normalizeCalloutId(x))`. Every comparison, lookup, insertion, persistence check, discovery pass and import | Yes |
 
 `normalizeCalloutId` is the funnel every raw-markdown-reading path goes
-through — discovery, the vault scanners, `resolveCalloutDef`, the context menu,
-the outline pane, the link-suggest popup — which is what makes a piped ID
+through - discovery, the vault scanners, `resolveCalloutDef`, the context menu,
+the outline pane, the link-suggest popup - which is what makes a piped ID
 **structurally unreachable** by the registry: nothing that reads markdown can
 hand the registry an id containing `|`.
 
 `obsidianCalloutAttrId` exists because Obsidian's own parser dasherizes
 whitespace in both its reading-view and Live Preview parsers, so `data-callout`
-on a block callout is always the dash form — even for a definition stored with
+on a block callout is always the dash form - even for a definition stored with
 spaces in its `id`. Use it **only** for `.callout[data-callout=…]` selectors
 and when reading that attribute back. The heading-callout / inline-callout /
 ref-token DOM is the plugin's **own** markup and is stamped with the
-space-preserving `normalizeCalloutId` form instead — mixing the two up is what
+space-preserving `normalizeCalloutId` form instead - mixing the two up is what
 `utils/calloutSelector.ts`'s `calloutSel` vs. `tokenAttrSel` split exists to
 prevent. See the `callout-metadata-pipe` skill for the full migration/edge-case
 derivation.
 
 `calloutIdentity` is the **uniqueness** question, which is a third thing again.
 `[!banner icon]`, `[!banner   icon]`, `[!Banner Icon]` and `[!banner-icon]` are
-four spellings of ONE callout — Obsidian renders them all as
-`data-callout="banner-icon"` — so a second registry row for a second spelling is
+four spellings of ONE callout - Obsidian renders them all as
+`data-callout="banner-icon"` - so a second registry row for a second spelling is
 never a second type. It is a duplicate that fights the first over a single CSS
 rule, splits its usage count, and shows up twice in every list.
 
@@ -324,16 +324,16 @@ spelling themselves, so no ingestion path can create the pair: discovery, the
 three importers, the theme sweep and the editor all go through one of them.
 A pair already in `data.json` is folded on load by `reconcileIdCollisions`
 ([`manager/idCollisionMigration.ts`](../../src/manager/idCollisionMigration.ts)),
-which merges rather than halves — see
-[Callout registry § reconcileIdCollisions](05-callout-registry.md#reconcileidcollisions--two-rows-that-are-one-callout).
+which merges rather than halves - see
+[Callout registry § reconcileIdCollisions](05-callout-registry.md#reconcileidcollisions---two-rows-that-are-one-callout).
 
 It composes the two above rather than replacing either, because all three are
 right about different questions. Identity has to fold a stray stored `|metadata`
 onto its base; `obsidianCalloutAttrId` must *not*, or an emitted selector could
 hijack a real callout's rule; and `normalizeCalloutId` must keep the space, or
 the plugin's own token DOM stops matching `tokenAttrSel`. For every ID the
-editor can actually produce — `sanitizeCalloutIdInput` emits neither a pipe nor
-a whitespace run — `calloutIdentity` and `obsidianCalloutAttrId` are the same
+editor can actually produce - `sanitizeCalloutIdInput` emits neither a pipe nor
+a whitespace run - `calloutIdentity` and `obsidianCalloutAttrId` are the same
 function.
 
 > [!TIP]

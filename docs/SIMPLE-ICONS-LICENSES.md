@@ -1,6 +1,6 @@
-# Simple Icons — per-logo licences
+# Simple Icons - per-logo licences
 
-> **Generated file — do not edit.** Written by
+> **Generated file - do not edit.** Written by
 > `scripts/generate-icon-packs.mjs` from `simple-icons` 16.33.0. Regenerate
 > with `npm run icons:generate -- --pack=simple-icons`.
 
@@ -18,7 +18,7 @@ below:
 
 - **It is a trademark of its owner.** No licence on this page grants trademark
   rights. Use a logo only to refer to the company, product or service it
-  belongs to, and follow its owner's brand guidelines — Simple Icons links the
+  belongs to, and follow its owner's brand guidelines - Simple Icons links the
   ones it knows of from each icon at <https://simpleicons.org>.
 - **Its outline is unmodified.** The path data is copied exactly as Simple
   Icons publishes it. The SVG wrapper and its `<title>` element are dropped,
@@ -218,11 +218,11 @@ specific language governing permissions and limitations under the License.
 87 logos in Simple Icons 16.33.0 are not in the pack. The reasons, each
 of them something a downloaded icon pack cannot settle on its users' behalf:
 
-- **brand-specific terms** — the brand's own conditions, behind the link, which have to be read and accepted one brand at a time.
-- **non-commercial use only** — the licence binds everyone downstream, and an icon picker cannot know what a vault is used for.
-- **no derivatives** — a logo drawn in a callout's colour and shared in an exported note is arguably an altered copy.
-- **copyright notice not recorded upstream** — the licence wants the owner's copyright line delivered with every copy, and Simple Icons keeps the licence per logo but not that line.
-- **GPL-family copyleft** — the licence wants its full text and the owner's copyright notice delivered with every copy.
+- **brand-specific terms** - the brand's own conditions, behind the link, which have to be read and accepted one brand at a time.
+- **non-commercial use only** - the licence binds everyone downstream, and an icon picker cannot know what a vault is used for.
+- **no derivatives** - a logo drawn in a callout's colour and shared in an exported note is arguably an altered copy.
+- **copyright notice not recorded upstream** - the licence wants the owner's copyright line delivered with every copy, and Simple Icons keeps the licence per logo but not that line.
+- **GPL-family copyleft** - the licence wants its full text and the owner's copyright notice delivered with every copy.
 
 Any of them can still be used in a callout by someone who has read its terms:
 download the logo from its owner and add it under **Custom Icons**.

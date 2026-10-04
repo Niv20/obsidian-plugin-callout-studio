@@ -1,7 +1,7 @@
 # Callout Studio internals
 
 This is a from-the-source guide to how Callout Studio actually works
-underneath — the mechanisms, the data flow, and the reasons a given piece of
+underneath - the mechanisms, the data flow, and the reasons a given piece of
 code looks the way it does. It's written for two audiences and no others:
 someone reading the source to understand a subsystem before changing it, and
 someone preparing a pull request who needs to know every place a change has
@@ -10,7 +10,7 @@ where something looked intentional but the reason wasn't provable from the
 code, that's said explicitly rather than guessed at.
 
 **This is not a how-to for using the plugin.** There's no "how to create your
-own callout" or "how to pick a colour" here — [`user-guide/`](../user-guide/README.md)
+own callout" or "how to pick a colour" here - [`user-guide/`](../user-guide/README.md)
 already covers that ground for end users, and duplicating it here would just
 give it a second place to go stale. If you're looking for that, start there
 instead.
@@ -26,13 +26,13 @@ network requests, downloaded assets, and local storage.
 It complements, rather than replaces, two other documents already in the
 repo:
 
-- **[`API.md`](../API.md)** — the public plugin API contract for other
+- **[`API.md`](../API.md)** - the public plugin API contract for other
   Obsidian plugins. [21-public-api.md](21-public-api.md) explains how the
   implementation enforces what that document promises.
-- **`AGENTS.md`** (repo root) — a short entry point for AI coding assistants:
+- **`AGENTS.md`** (repo root) - a short entry point for AI coding assistants:
   a one-paragraph project summary, essential project-level conventions, and
   pointers into this guide and into [`user-guide/`](../user-guide/README.md).
-  It deliberately carries none of the architectural detail itself — this
+  It deliberately carries none of the architectural detail itself - this
   guide is that detail, and is the one to trust and to update.
 
 ## Reading order
@@ -44,14 +44,14 @@ is shaped and stored, and how a callout actually gets from a definition to
 pixels on screen. After that, the remaining files are largely independent
 and can be read in whatever order matches what you're touching.
 
-## Core concepts — read in order
+## Core concepts - read in order
 
 The mental model: what the plugin is, how its pieces fit together, and the
 mutate → CSS → repaint loop everything else builds on.
 
 | File | What it covers |
 | --- | --- |
-| [01-overview.md](01-overview.md) | What the plugin does, the three callout render roles, and the project's own vocabulary — read this first. |
+| [01-overview.md](01-overview.md) | What the plugin does, the three callout render roles, and the project's own vocabulary - read this first. |
 | [02-architecture.md](02-architecture.md) | The component map, who owns state vs. who operates on it, and the core mutate → CSS → repaint data-flow loop. |
 | [03-plugin-lifecycle.md](03-plugin-lifecycle.md) | `onload()` walked step by step in its real order, and `onunload()` cleanup. |
 | [04-data-model.md](04-data-model.md) | Every persisted type (`CalloutDefinition`, `PluginSettings`, …) and the callout-id normalization rules. |
@@ -62,7 +62,7 @@ mutate → CSS → repaint loop everything else builds on.
 | [09-render-roles.md](09-render-roles.md) | The token grammar, and how heading/inline callouts render in Live Preview and Reading view. |
 | [10-editor-integrations.md](10-editor-integrations.md) | Autocomplete, wrap/unwrap, built-in command registration and availability, custom commands, the right-click menu, Outline/link cleanup. |
 
-## Subsystems — reference, as needed
+## Subsystems - reference, as needed
 
 Independent of each other and of reading order. Go straight to the one
 covering whatever you're touching.
@@ -76,7 +76,7 @@ covering whatever you're touching.
 | [15-import-export.md](15-import-export.md) | The JSON backup format and validator, the CSS-snippet export, and the Callout Manager / Admonition importers. |
 | [16-settings-ui-and-modals.md](16-settings-ui-and-modals.md) | The settings tab's composition, the shared modal chrome and autofocus, the light palette and the theme gate it yields to, the individual modals, and how reduced motion is honoured. |
 | [17-i18n.md](17-i18n.md) | How `t()` resolves strings, the locale download/verification pipeline, and the contribution workflow. |
-| [18-theme-callout-discovery.md](18-theme-callout-discovery.md) | How the active theme's callout types are found, read back and represented — and the compatibility guide for **theme authors**. |
+| [18-theme-callout-discovery.md](18-theme-callout-discovery.md) | How the active theme's callout types are found, read back and represented - and the compatibility guide for **theme authors**. |
 | [19-upgrading-manual-discovery.md](19-upgrading-manual-discovery.md) | Released 2.12.x compatibility, verified one-time recovery archives, and safe removal of legacy local discovery state. |
 
 ## Shipping a change
@@ -88,14 +88,14 @@ codebase has already been bitten by once.
 | File | What it covers |
 | --- | --- |
 | [20-build-test-release.md](20-build-test-release.md) | Build tooling, the test harness and what it can't see, CI, and the release process. |
-| [21-public-api.md](21-public-api.md) | How the read-only public API is actually enforced — real privacy, frozen copies, the committed-state guarantee. |
+| [21-public-api.md](21-public-api.md) | How the read-only public API is actually enforced - real privacy, frozen copies, the committed-state guarantee. |
 | [22-extending.md](22-extending.md) | Step-by-step checklists for adding a setting, a command, a callout field, a menu item, an icon source, and more. |
 | [23-common-pitfalls.md](23-common-pitfalls.md) | Concentrated warnings: state sync, id normalization, helpers that must always be used, mobile quirks, backward compatibility. |
 | [24-logging-and-diagnostics.md](24-logging-and-diagnostics.md) | Every `console.debug`/`warn`/`error` call site, the policy behind which one and when to use a `Notice` instead, and why there's no centralized logger. |
 | [25-privacy-and-permissions.md](25-privacy-and-permissions.md) | Vault access, network requests, downloaded assets, local storage, and the privacy boundaries around each one. |
 
 Opening a PR? [`CONTRIBUTING.md`](../CONTRIBUTING.md) has the
-process — fork, branch, lint, test, commit style. This guide is what to read
+process - fork, branch, lint, test, commit style. This guide is what to read
 *before* that, so the change itself lands right the first time.
 
 ---

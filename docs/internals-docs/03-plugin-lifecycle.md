@@ -7,7 +7,7 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
 
 1. Register the two bundled UI icons and their unload cleanup synchronously.
    Mirror "Obsidian's Default theme is in use" onto `<body>` as
-   `cs-default-theme` (`registerDefaultThemeClass`) — the gate of the light
+   `cs-default-theme` (`registerDefaultThemeClass`) - the gate of the light
    palette, kept in step on every `css-change` and removed on unload; see
    [The light palette](16-settings-ui-and-modals.md#the-light-palette).
    Read `workspace.layoutReady`, create the registry and inject the previous

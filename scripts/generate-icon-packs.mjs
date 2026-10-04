@@ -945,16 +945,16 @@ function simpleIconsNotices({ version, total, shippedCount, licensed, withheld }
 
 	const licenseCell = (brand) => {
 		const license = brand.license;
-		if (!license) return "—";
+		if (!license) return "-";
 		return markdownLink(license.type, license.url ?? licenseUrl(license.type));
 	};
 	// Grouped the way the rest of the documentation writes a count ("5,130").
 	const count = (value) => value.toLocaleString("en-US");
 
 	const lines = [
-		`# Simple Icons — per-logo licences`,
+		`# Simple Icons - per-logo licences`,
 		``,
-		`> **Generated file — do not edit.** Written by`,
+		`> **Generated file - do not edit.** Written by`,
 		`> \`scripts/generate-icon-packs.mjs\` from \`simple-icons\` ${version}. Regenerate`,
 		`> with \`npm run icons:generate -- --pack=simple-icons\`.`,
 		``,
@@ -972,7 +972,7 @@ function simpleIconsNotices({ version, total, shippedCount, licensed, withheld }
 		``,
 		`- **It is a trademark of its owner.** No licence on this page grants trademark`,
 		`  rights. Use a logo only to refer to the company, product or service it`,
-		`  belongs to, and follow its owner's brand guidelines — Simple Icons links the`,
+		`  belongs to, and follow its owner's brand guidelines - Simple Icons links the`,
 		`  ones it knows of from each icon at <https://simpleicons.org>.`,
 		`- **Its outline is unmodified.** The path data is copied exactly as Simple`,
 		`  Icons publishes it. The SVG wrapper and its \`<title>\` element are dropped,`,
@@ -1041,7 +1041,7 @@ function simpleIconsNotices({ version, total, shippedCount, licensed, withheld }
 					// table below it does not use.
 					...[...SI_WITHHELD_LICENSES, SI_WITHDRAWN_RULE]
 						.filter((rule) => withheld.some((entry) => entry.rules.includes(rule)))
-						.map((rule) => `- **${rule.reason}** — ${rule.because}.`),
+						.map((rule) => `- **${rule.reason}** - ${rule.because}.`),
 					``,
 					`Any of them can still be used in a callout by someone who has read its terms:`,
 					`download the logo from its owner and add it under **Custom Icons**.`,

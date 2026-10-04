@@ -501,7 +501,7 @@ after a successful callback; it is not a filesystem lock. There is no automatic
 backup or undo. The UI asks users to back up notes and pause editing/sync, and
 separates read-only review from the irreversible final confirmation.
 
-### `convertCalloutsToPlainTextInVault` — role-specific stripping
+### `convertCalloutsToPlainTextInVault` - role-specific stripping
 
 Converts every occurrence of a set of ids into plain text, with different
 rules per role:
@@ -514,10 +514,10 @@ rules per role:
   header turns into a blank line of its own, so it needs no separator. The
   editor's unwrap command keeps titles and separates them the same way. A
   **nested** `>> [!id] Title` (a callout inside a parent callout)
-  keeps its blockquote depth — that depth belongs to the parent — and loses
+  keeps its blockquote depth - that depth belongs to the parent - and loses
   only the token: `>> Title`.
 - **Heading**: `### [!id] Title` → `### Title`; `### [!id]` (no title of its
-  own) → `### <displayName>` — the fallback exists because a title-less
+  own) → `### <displayName>` - the fallback exists because a title-less
   heading callout carries no other text at all, and dropping the token
   outright would leave the line empty.
 - **Inline**: `[!id]` → `<displayName>`; a content pill's payload survives,
@@ -563,30 +563,30 @@ Clear-usages actions also request complete success and report unfinished work.
 
 > [!WARNING]
 > Step 8's `await` is not tidiness. `cleanupUnusedIconSvgs()` mutates
-> `registry.iconSvgCache` directly and does **not** call `notifyChange()` —
+> `registry.iconSvgCache` directly and does **not** call `notifyChange()` -
 > so without an explicit save right here, the trimmed cache would only reach
 > disk whenever some *unrelated* future mutation happened to trigger a save,
 > leaving orphaned icon SVGs in `data.json` in the meantime.
 
 A **built-in** callout follows a narrower path
-(`handleBuiltInCalloutDelete`) — it can only be "deleted" when it has vault
+(`handleBuiltInCalloutDelete`) - it can only be "deleted" when it has vault
 usages (there's nothing to convert or replace otherwise, since a built-in
 always exists in the registry), and there's no `registry.remove()` step at
 all: built-ins can never actually be removed, only reset or converted away
 from in the vault. `handleBuiltInReset` additionally warns before dropping
 **custom aliases** a built-in has accumulated, if any of them are still in
-vault use — a plain reset would silently orphan those references.
+vault use - a plain reset would silently orphan those references.
 
 ## Replace flow
 
 `handleCalloutReplace` counts usages, opens `ReplaceCalloutModal` (a dropdown
 of every *other* registered callout), and on confirmation calls
 `replaceCalloutIdsInVault`. If the replacement target's display name differs
-from the callout being replaced, the title rewrite rides along too — because
+from the callout being replaced, the title rewrite rides along too - because
 a header this plugin wrote carries the callout's display name as literal
 title text (`> [!danger] Warning`), so swapping only the id would leave a
 stale title behind. **Only a title that exactly matches the old display name
-is touched** — a title the user wrote themselves is never touched.
+is touched** - a title the user wrote themselves is never touched.
 
 ---
 Next chapter: [12-color-system.md](12-color-system.md)

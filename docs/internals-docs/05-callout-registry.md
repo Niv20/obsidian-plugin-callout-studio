@@ -4,7 +4,7 @@
 explicit exception to the [source file size limit](20-build-test-release.md#source-file-size),
 is the single source of truth for every
 callout definition and every setting. `CSSInjector`, `AutoComplete`,
-`SettingsTab`, the public API, discovery — everything reads through it, and
+`SettingsTab`, the public API, discovery - everything reads through it, and
 every mutation of callout data goes through its methods.
 
 ## Shape
@@ -38,7 +38,7 @@ from.
 | `plugin` | Injected by an older build's now-removed public API, or an import that carried that tag |
 
 `builtIn: boolean` is a separate field that's redundant with
-`source === "builtin"` in the common case — but `savedCalloutRows.ts`'s
+`source === "builtin"` in the common case - but `savedCalloutRows.ts`'s
 reconciliation logic (below) is precisely the code that has to handle the two
 disagreeing on data that predates or bypasses that invariant.
 
@@ -48,39 +48,39 @@ disagreeing on data that predates or bypasses that invariant.
 load(data: Partial<PluginData> | null): void
 ```
 
-Order matters here — every step depends on the ones before it:
+Order matters here - every step depends on the ones before it:
 
 ```text
 1. clear the map
 2. rebuild settings/cache state and inspect raw rows for retired personal-CSS flags
-3. seed all 13 built-ins from builtInDefaults (unconditionally — this always happens)
+3. seed all 13 built-ins from builtInDefaults (unconditionally - this always happens)
 4. if no data: return (fresh install; done)
 5. fold each saved row over the matching seeded built-in via reconcileSavedRow();
    the `setCallout` seam strips the retired `externalStyle` key
 6. migrate the remaining retired manual style-mode fields
 7. restore iconSvgCache; fold pre-2.4 materialSvgCache into it (migration)
 8. migrate any icon.type === "svg" (removed pack) → lucide pencil
-9. migrate v2.7.0–2.7.1's over-eager "lucide-" prefixing (resolveLucideId)
+9. migrate v2.7.0 - 2.7.1's over-eager "lucide-" prefixing (resolveLucideId)
 10. migrate recolor from picture-level to per-callout (icon.recolor)
-11. dropStaleTransparencyFlags()          — BEFORE step 13, see below
-12. consolidateDuplicatePalettes()         — BEFORE step 13
+11. dropStaleTransparencyFlags() - BEFORE step 13, see below
+12. consolidateDuplicatePalettes() - BEFORE step 13
 13. adoptOrphansMatchingPalettes()
 14. dropDerivedBackgrounds()
 15. dropSolidBackgroundFlags()
-16. stripMetadataFromIds()                 — BEFORE step 17
-17. reconcileIdCollisions()               — manager/idCollisionMigration.ts
+16. stripMetadataFromIds() - BEFORE step 17
+17. reconcileIdCollisions() - manager/idCollisionMigration.ts
 ```
 
 > [!IMPORTANT]
 > **Step 2 always seeds all 13 built-ins, whether or not `data` exists.** This
-> is the invariant `CalloutRegistry.getAll()` — and therefore `CSSInjector`,
-> the public API, and every settings list — depends on: `note`, `abstract`,
+> is the invariant `CalloutRegistry.getAll()` - and therefore `CSSInjector`,
+> the public API, and every settings list - depends on: `note`, `abstract`,
 > `info`… are *always* present, whether or not the user ever touched them.
-> Nothing may displace a built-in id either — a saved row on a built-in id is
+> Nothing may displace a built-in id either - a saved row on a built-in id is
 > **merged onto the default and re-stamped `builtIn: true`**, whatever its own
 > flag says, because there is only ever one callout per id (see below).
 
-### `reconcileSavedRow` — the "only one callout per id" repair
+### `reconcileSavedRow` - the "only one callout per id" repair
 
 [`src/manager/savedCalloutRows.ts`](../../src/manager/savedCalloutRows.ts) answers
 one narrow question in isolation from registry state: given a saved row and
@@ -90,7 +90,7 @@ whether this version ships a built-in for that id, what should be stored?
 function reconcileSavedRow(saved, seeded): { def, repaired: boolean }
 ```
 
-Two repair cases, both instances of the same rule — *a row whose `builtIn` flag
+Two repair cases, both instances of the same rule - *a row whose `builtIn` flag
 disagrees with the shipped set is that callout with its flag wrong, never a
 second callout to choose between*:
 
@@ -100,40 +100,40 @@ second callout to choose between*:
    built-in always present" invariant and made `isBuiltInModified("note")`
    answer about a row whose own `builtIn` was `false`. Now it's *merged* onto
    the seeded default (`{...seeded, ...saved, builtIn: true, source: "builtin"}`)
-   — every edit the row carries survives, the flags are re-stamped rather than
+ - every edit the row carries survives, the flags are re-stamped rather than
    trusted.
-2. **A saved row claims `builtIn: true` on an id this version does NOT ship** —
+2. **A saved row claims `builtIn: true` on an id this version does NOT ship** -
    a built-in retired in a later version. It used to be skipped entirely,
    which deleted the user's customization of a type their notes might still
    write. Now it's demoted: `builtIn: false`, and `source` becomes `"user"`
    (unless it already claimed something else, like `"fallback"` from
-   discovery — the only thing definitely wrong about it is the `builtin`
+   discovery - the only thing definitely wrong about it is the `builtin`
    claim).
 
 ## Load-time migrations
 
-The migrations below are **content-keyed, not version-keyed** — each one
+The migrations below are **content-keyed, not version-keyed** - each one
 checks the shape of the data itself rather than trusting `data.version`. This
 is deliberate and stated repeatedly in the source: an imported or hand-edited
 file can carry any version number it likes, and a migration that trusted the
 stamp would skip work the data genuinely needs. It also makes every migration
-**idempotent** — running it twice on already-clean data is a no-op, which
+**idempotent** - running it twice on already-clean data is a no-op, which
 matters because `load()` runs on every plugin start, every disable/re-enable,
 and every JSON import.
 
 | Migration | What it fixes |
 | --- | --- |
 | `svg` icon type → `lucide-pencil` | The removed `"svg"` icon pack; keeps old data rendering instead of crashing |
-| `resolveLucideId` repair | v2.7.0–2.7.1 over-eagerly prefixed every bare Lucide value with `lucide-`, which broke ids belonging to *other* plugins' `addIcon()` calls or Obsidian's own internal icons (`dice`, `discord`, `help`) |
+| `resolveLucideId` repair | v2.7.0 - 2.7.1 over-eagerly prefixed every bare Lucide value with `lucide-`, which broke ids belonging to *other* plugins' `addIcon()` calls or Obsidian's own internal icons (`dice`, `discord`, `help`) |
 | `recolor` migration | Moved from being shared per-*picture* to being per-*callout*, seeded from the picture's own `monochrome` flag so nothing changes appearance |
-| `dropStaleTransparencyFlags` | Retires a `transparentBg` flag left standing beside real background hexes — see below |
+| `dropStaleTransparencyFlags` | Retires a `transparentBg` flag left standing beside real background hexes - see below |
 | `consolidateDuplicatePalettes` | Enforces "no two saved palettes with identical colours," relinking affected callouts |
 | `adoptOrphansMatchingPalettes` | Links a callout whose baked colours exactly match a saved palette but whose `paletteId` names nothing |
-| `dropDerivedBackgrounds` | Drops a background the plugin *derived* rather than the user *chose* — see below |
+| `dropDerivedBackgrounds` | Drops a background the plugin *derived* rather than the user *chose* - see below |
 | `dropSolidBackgroundFlags` | Removes the retired `solidBackground` field entirely (nesting invariant) |
 | Personal-CSS retirement | Removes the retired `externalStyle` ownership flag and restores Callout Studio rendering; see below |
-| `stripMetadataFromIds` | Retires rows whose stored id itself carries `\|metadata` — see below |
-| `reconcileIdCollisions` | Merges rows that are one callout in two spellings — dash/space, repeated whitespace, case. Lives in `manager/idCollisionMigration.ts`; see below |
+| `stripMetadataFromIds` | Retires rows whose stored id itself carries `\|metadata` - see below |
+| `reconcileIdCollisions` | Merges rows that are one callout in two spellings - dash/space, repeated whitespace, case. Lives in `manager/idCollisionMigration.ts`; see below |
 
 Several are worth understanding in more depth because the reasoning is
 genuinely non-obvious:
@@ -174,13 +174,13 @@ retired field. With writable device-local storage, `pending` also survives a
 crash before UI readiness; the best-effort storage failure boundary is recorded
 in [Settings saving and recovery](08-settings-sync-and-recovery.md#startup-and-file-classification).
 
-### `dropDerivedBackgrounds` — the nesting invariant, retroactively
+### `dropDerivedBackgrounds` - the nesting invariant, retroactively
 
 Obsidian gives nested callouts their stacked look purely by compositing
-translucent layers — every `.callout` paints a ~10% tint of its own accent, so
+translucent layers - every `.callout` paints a ~10% tint of its own accent, so
 each nesting level lays another translucent layer over the one beneath it. An
 **opaque** background hides everything behind it, and under `mix-blend-mode:
-darken`, a colour composited over itself is `min(x, x) = x` — a step of
+darken`, a colour composited over itself is `min(x, x) = x` - a step of
 exactly zero. Vaults accumulated opaque-looking backgrounds without anyone
 asking for them: opening the editor on a callout used to *materialize* a
 derived tint into the form fields, saving wrote it back regardless of what the
@@ -190,56 +190,56 @@ copied that derived value onto every discovered row that mirrored it.
 Both write sites are fixed now (see [Colour system](12-color-system.md)); this
 migration retires what they already wrote to `data.json`. A background is
 dropped only when `derivedBgAmount` can prove it IS the accent at some tint
-strength, in **both** light and dark modes simultaneously — such a value
+strength, in **both** light and dark modes simultaneously - such a value
 carries no information the accent doesn't already carry. Anything else (picked
 by hand, or from a palette) is kept, because `CSSInjector` re-expresses
-*every* background as a translucent tint of the rendered colour regardless —
+*every* background as a translucent tint of the rendered colour regardless -
 so a hand-picked background nests correctly too, without being altered.
 
 A definition with `bgGradient` set is skipped outright, before the
 accent-match check even runs: a gradient is authored, never derived, and its
 start colour is the stop the sweep would otherwise mistake for a derived
-tint — removing it would delete the gradient.
+tint - removing it would delete the gradient.
 
-### `stripMetadataFromIds` — retiring pre-understanding rows
+### `stripMetadataFromIds` - retiring pre-understanding rows
 
 Before `splitCalloutMetadata` was understood, discovery read a callout's whole
 bracket body as its ID and auto-created a separate `fallback` row per metadata
-value seen in the vault — `note|green`, `note|purple`, `note|yellow` alongside
+value seen in the vault - `note|green`, `note|purple`, `note|yellow` alongside
 the real `note`. Those rows also styled nothing that mattered: their selector
 was `.callout[data-callout="note|green"]`, and Obsidian actually writes
 `data-callout="note"`.
 
 The migration renames a row to its base ID **when that base is free** (a
 genuinely customized row keeps its styling and starts matching the callout it
-always meant). When the base is already taken — the common case, since the
-base is usually a built-in — the row is **dropped**: it's unreachable by any
+always meant). When the base is already taken - the common case, since the
+base is usually a built-in - the row is **dropped**: it's unreachable by any
 spelling, and merging it into the survivor would silently restyle a callout the
 user never asked to touch. This is safe specifically because the retired
-spelling was never a real callout ID to begin with — Obsidian split the pipe
+spelling was never a real callout ID to begin with - Obsidian split the pipe
 off before this plugin ever saw the token.
 
 The same sweep also strips any piped entry out of a *surviving* row's
-`aliases` array, not just primary ids — an alias is reachable the same way an
+`aliases` array, not just primary ids - an alias is reachable the same way an
 id is, so a piped alias is exactly as unreachable. And when the dropped or
 renamed row was the configured `settings.fallbackCalloutId`,
 `releaseFallbackTarget()` repoints it to the row's replacement (or back to the
-default) in the same pass — otherwise `generateFallbackCSS` would bail on a
+default) in the same pass - otherwise `generateFallbackCSS` would bail on a
 fallback id that no longer resolves, and every unrecognized callout in the
 vault would silently lose its styling.
 
 > [!IMPORTANT]
-> **Only the piped ID itself is retired — not the "pipe-eaten" spelling an old
+> **Only the piped ID itself is retired - not the "pipe-eaten" spelling an old
 > editor may also have produced** (`notegreen` from `Pros|Cons` in a pre-2.x
 > editor that pinned ID to display name). An earlier draft of this migration
 > tried to retire that too, by matching an id that equalled the old sanitizer's
-> reading of its own display name — that test has zero false negatives but
+> reading of its own display name - that test has zero false negatives but
 > plenty of false positives: it would have renamed *every* user callout ever
 > named with a pipe, silently breaking any `[!proscons]` already written in
 > the vault. `notegreen`-style ids are left alone; an uncustomized one is
 > retained until the user explicitly deletes it, whether customized or not.
 
-### `reconcileIdCollisions` — two rows that are one callout
+### `reconcileIdCollisions` - two rows that are one callout
 
 Obsidian reduces a callout header to
 `type.trim().toLowerCase().replace(/\s+/g, "-")` before a plugin sees it, so
@@ -248,7 +248,7 @@ render as `data-callout="banner-icon"`. Two rows for that one callout would
 forever fight over a single CSS rule, split the usage count and appear twice in
 every list.
 
-Creating the pair is refused at the seam now — `add()` and the rename branch of
+Creating the pair is refused at the seam now - `add()` and the rename branch of
 `update()` both consult `findAttrIdConflict`, so no caller can forget (the JSON
 backup importer was the one that did). This migration is the other half: the
 pairs already sitting in `data.json`.
@@ -263,7 +263,7 @@ In short:
   auto-junk discovery would re-create anyway.
 - **Merge**: survivor wins, loser fills gaps. The survivor keeps every field it
   authored; a field it never set is taken from the loser. `id`, `aliases`,
-  `builtIn` and `source` are never taken — the first two are the identity being
+  `builtIn` and `source` are never taken - the first two are the identity being
   merged, the last two are provenance.
 - **The loser's id and aliases** become aliases of the survivor, so no vault
   usage is orphaned. A disposable loser is dropped outright instead.
@@ -279,7 +279,7 @@ rebuilds collision groups until no merge remains: an alias inherited from a
 deleted bridge row can connect another group, and must resolve in the same load.
 Each successful pass removes at least one row; fallback/command references follow
 every merge. See
-[Logging and diagnostics](24-logging-and-diagnostics.md#background-discovery-and-load-time-migrations--consoledebug)
+[Logging and diagnostics](24-logging-and-diagnostics.md#background-discovery-and-load-time-migrations---consoledebug)
 for the full catalog of these traces and why they stay at `console.debug`.
 
 ## `isModified` and the built-in-deference mechanism
@@ -289,24 +289,24 @@ private isModified(current, original, ignore?): boolean
 ```
 
 A structural compare over `COMPARED_FIELDS` (every field except `id`,
-`builtIn`, `source`) using `JSON.stringify(value ?? null)` per field — which is
+`builtIn`, `source`) using `JSON.stringify(value ?? null)` per field - which is
 what makes `undefined` and "absent" compare equal, matching how a JSON
 round-trip through `data.json` treats them. `icon` is special-cased through
 `iconsEqual()` rather than a raw string diff, because `constants.ts` spells a
 built-in's icon bare (`"pencil"`) while the picker spells the same drawing
-`"lucide-pencil"` — a raw diff would read an untouched built-in as customized
+`"lucide-pencil"` - a raw diff would read an untouched built-in as customized
 the moment its owner opened the icon picker once.
 
 Two related but distinct questions:
 
-- **`isBuiltInModified(id)`** — is this built-in different from its shipped
+- **`isBuiltInModified(id)`** - is this built-in different from its shipped
   default at all? Gates whether `toSaveData()` persists it.
-- **`isUnmodifiedBuiltIn(def)`** — a *narrower* question, using
+- **`isUnmodifiedBuiltIn(def)`** - a *narrower* question, using
   `COLOUR_NEUTRAL_FIELDS = {"hideIcon"}` to ignore edits that are real but say
   nothing about colour. `CSSInjector` reads this one to decide whether to emit
   a hex `--callout-color` or defer to Obsidian's own `--callout-*` variable.
   Hiding a built-in's icon has to persist (or it reverts on reload) but must
-  not cost the callout its theme deference — letting `hideIcon` count here
+  not cost the callout its theme deference - letting `hideIcon` count here
   would swap a theme's blue for a hard-coded hex the moment someone hides
   `[!note]`'s icon.
 
@@ -316,7 +316,7 @@ Two related but distinct questions:
 toSaveData(): PluginData
 ```
 
-- The transient live-preview definition is **never** persisted — if it shadows
+- The transient live-preview definition is **never** persisted - if it shadows
   a real callout, the *original shadowed row* is written instead (never the
   in-progress edit); if it occupies a fresh id, it's skipped entirely.
 - A built-in is written **only if `isModified()` is true** against its shipped
@@ -324,7 +324,7 @@ toSaveData(): PluginData
 - Every manually discovered fallback row is written, including uncustomized,
   unused types. Results are ordinary configuration; there is no discovery cache.
   Legacy theme rows in saved data are migrated to durable fallback definitions.
-- `materialSvgCache` is deliberately never written back — legacy entries were
+- `materialSvgCache` is deliberately never written back - legacy entries were
   folded into `iconSvgCache` on load, and writing both would let them drift.
 - `iconSvgCache` is written **sorted**, by
   [`manager/iconSvgCacheOrder.ts`](../../src/manager/iconSvgCacheOrder.ts). In
@@ -337,7 +337,7 @@ toSaveData(): PluginData
 > A modified built-in and a user-created callout are equally "real, authored
 > work" from the user's perspective. `getExportableDefinitions()` (used by
 > `exportToJSONv2`) explicitly includes modified built-ins alongside
-> `getUserDefined()` — leaving them out would make "export" quietly not mean
+> `getUserDefined()` - leaving them out would make "export" quietly not mean
 > "back up my callouts."
 
 ## CRUD and change notification
@@ -345,12 +345,12 @@ toSaveData(): PluginData
 ```ts
 add(def): boolean       // false on id/alias collision
 update(id, partial): boolean
-remove(id): boolean     // false for a built-in — built-ins can never be removed
+remove(id): boolean     // false for a built-in - built-ins can never be removed
 resetBuiltIn(id): boolean
 ```
 
 `update()` handles the rename case (partial carries a different `id`) by
-deleting the old key and setting the new one, inside `batch()` — because
+deleting the old key and setting the new one, inside `batch()` - because
 renaming may also require re-mirroring uncustomized fallback rows that copy
 the callout being renamed (if it's the active default fallback), and that
 mirror pass fires its own notification unless batched together.
@@ -363,22 +363,22 @@ offChange(callback): void
 ```
 
 Every listener re-derives what it needs from current state. There is no diff,
-no "what changed" argument — this is what makes `CustomCommandManager.syncAll()`
+no "what changed" argument - this is what makes `CustomCommandManager.syncAll()`
 correct (it recomputes the whole desired command set from scratch every time,
 converging regardless of *how* the registry changed) and it's also explicitly
 called out in `API.md` as the contract external plugins get too: "Treat it as
 a hint, not a precise event."
 
-### `batch(fn)` — coalescing
+### `batch(fn)` - coalescing
 
 ```ts
 batch<T>(body: () => T): T
 ```
 
 Re-entrant (depth-counted), exception-safe (`finally`), and fires at most one
-`notifyChange()` at the very end — none at all if nothing inside actually
+`notifyChange()` at the very end - none at all if nothing inside actually
 mutated the registry. It deliberately does **not** change what each individual
-mutation *does*, only when listeners hear about it — a per-call guard reading
+mutation *does*, only when listeners hear about it - a per-call guard reading
 live registry state from inside a batched loop keeps seeing exactly the state
 it would without batching. Used for: the rename pair, `applyCalloutManagerImport`
 / `applyAdmonitionImport` (a whole import is one round, not one per row),
@@ -389,7 +389,7 @@ it would without batching. Used for: the rename pair, `applyCalloutManagerImport
 
 The settings tab's edit modals (`CalloutEditor`, the palette editor, the
 global-style popups) need their preview pane to render through the **real**
-CSS/rendering pipeline — so keystroke-by-keystroke edits actually show up in a
+CSS/rendering pipeline - so keystroke-by-keystroke edits actually show up in a
 live embedded note, not a mocked-up preview widget. The registry supports this
 via one reserved slot rather than a parallel rendering path:
 
@@ -412,33 +412,33 @@ renders with in-progress styling. Bookkeeping:
   preview clears.
 - A preview that shadows a real callout **inherits that callout's identity**
   (`withIdentityOf`: `builtIn`, `source`, `customized`, `aliases`, `metadata`
-  are taken from the real row, not the draft) — so an in-progress edit can
+  are taken from the real row, not the draft) - so an in-progress edit can
   restyle a row live but can never re-home it between settings-list sections,
   strip its aliases, or make a built-in look deletable while its editor is
   open.
 - `isDemo` marks a placeholder preview with no real identity of its own (a
   brand-new unnamed draft, or the palette/global-style demo previews). Demo
-  previews are **hidden from the settings lists entirely** — `definitionsForLists()`
+  previews are **hidden from the settings lists entirely** - `definitionsForLists()`
   shows the *shadowed reality* in their place, or nothing if they shadow
-  nothing — but they still render through `getAll()` / the CSS pipeline, which
+  nothing - but they still render through `getAll()` / the CSS pipeline, which
   is exactly what makes the live preview pane live. This is why
   `PREVIEW_PLACEHOLDER_ID = "new-callout-preview"` had to stop being
   the built-in id `"example"`: a demo sharing an id with a real callout
   restyles that callout vault-wide for as long as the modal is open.
-- `setPreviewDefinition` deliberately does **not** call `notifyChange()` — that
+- `setPreviewDefinition` deliberately does **not** call `notifyChange()` - that
   would trigger `saveSettings()` and force every open note to re-render on
   every keystroke. It fires the separate `onPreviewChange` signal instead (see
   below), and the caller (`CalloutEditor`) explicitly requests a targeted
   `cssInjector.inject(false)`.
 
-### `onPreviewChange` — a second, deliberately separate listener list
+### `onPreviewChange` - a second, deliberately separate listener list
 
 ```ts
 onPreviewChange(callback): void
 offPreviewChange(callback): void
 ```
 
-A preview update is **not a mutation** — it must never reach `saveSettings()`
+A preview update is **not a mutation** - it must never reach `saveSettings()`
 or force a document-wide re-render. `SettingsTab` subscribes to this so its row
 swatches track the editor modal's colour picker live, without either side
 touching disk.
@@ -450,7 +450,7 @@ touching disk.
 export const PREVIEW_PLACEHOLDER_ID = "new-callout-preview";
 export const STYLE_DEMO_ID = "global-style-demo";
 export const RESERVED_DEMO_IDS: ReadonlySet<string> = new Set([...]);
-export const WELCOME_DEMO_ID = "demo"; // NOT in the set — see below
+export const WELCOME_DEMO_ID = "demo"; // NOT in the set - see below
 ```
 
 Two ids exist only to be previewed: the callout editor's placeholder for an
@@ -460,13 +460,13 @@ with.
 `isDemo` above is **not** the whole story, and reading it as such is the mistake
 this section exists to prevent. It hides a row from the settings lists, and only
 for as long as a modal holds the preview slot. But the preview reaches `getAll()`
-by design — that is what gets it styled at all — and several surfaces read
+by design - that is what gets it styled at all - and several surfaces read
 `getAll()` directly. So the ids are reserved *permanently*, and independently of
 any modal being open:
 
 | Surface | Where | What it stops |
 |---|---|---|
-| Manual discovery | `manager/knownCalloutIds.ts` seeds both id forms unconditionally | A note that writes `[!global-style-demo]` — pasted from a screenshot, or left by a crash — minting a row the user never made |
+| Manual discovery | `manager/knownCalloutIds.ts` seeds both id forms unconditionally | A note that writes `[!global-style-demo]` - pasted from a screenshot, or left by a crash - minting a row the user never made |
 | Autocomplete | `utils/usableCallouts.ts` → `suggestableCallouts` filters the set | The `[!` popover offering an id that stops existing when the modal closes |
 | Import | `utils/importValidator.ts` → `validateIdString` rejects with `import.err.idReserved` | An imported row inheriting a modal's vault-wide restyling power, permanently, from a list that never shows it |
 | Export | `getExportableDefinitions()` filters the set | A backup depending on which windows happened to be open |
@@ -487,8 +487,8 @@ has a demo callout too, `WELCOME_DEMO_ID = "demo"`, and it is deliberately
 **not** reserved. The dash is the whole mechanism above, and `demo` does not
 have one: `sanitizeCalloutIdInput("Demo")` returns exactly `demo`, so a user can
 own this id. Reserving it would then apply all four rows of that table to
-*their* callout — dropped from the autocomplete, dropped from the export,
-rejected by their own re-import — silently, since nothing in the editor checks
+*their* callout - dropped from the autocomplete, dropped from the export,
+rejected by their own re-import - silently, since nothing in the editor checks
 the set. A reserved id has to be one nobody can reach; this one is reachable, so
 it takes the `isDemo` half only and lives just as long as the modal does.
 

@@ -3,7 +3,7 @@
 Callout Studio exposes a small, read-only API so other Obsidian plugins can find
 out which callout types the user has available and react when that list changes.
 
-It answers three questions — *which callouts exist*, *what are they called*, and
+It answers three questions - *which callouts exist*, *what are they called*, and
 *tell me when that changes*. It deliberately does not write markdown for you:
 inserting a callout is one line of text, and every plugin wants to place it
 differently.
@@ -30,7 +30,7 @@ Two things to be aware of:
 * **Ask under `onLayoutReady`.** Callout Studio assigns `api` late in its own
   `onload()`, so a plugin that reads it during its own `onload()` may find
   `undefined` depending on load order.
-* **The plugin may not be installed.** Always handle `null` — do not assume the
+* **The plugin may not be installed.** Always handle `null` - do not assume the
   user has Callout Studio.
 
 ```ts
@@ -50,7 +50,7 @@ export default class MyPlugin extends Plugin {
 ## Type declarations
 
 No `.d.ts` is published, so copy this into your own project. Callout Studio is
-under a permissive 0BSD-style licence — copying is fine, no attribution
+under a permissive 0BSD-style licence - copying is fine, no attribution
 required.
 
 ```ts
@@ -118,7 +118,7 @@ for (const callout of api.getCallouts()) {
 ### `getCalloutsDetailed()`
 
 The same list with colours, icon and fold behaviour attached. Use this only if
-you draw callouts yourself — for naming them in a command or a dropdown,
+you draw callouts yourself - for naming them in a command or a dropdown,
 `getCallouts()` is enough.
 
 ```ts
@@ -129,7 +129,7 @@ first.foldable; // false
 ```
 
 Check `hideIcon` before you draw `icon`. A callout the user set to render with
-no icon still reports one — that is deliberate, so the choice stays undoable —
+no icon still reports one - that is deliberate, so the choice stays undoable -
 but Callout Studio paints nothing for it, and drawing the stored icon would not
 match what the vault shows.
 
@@ -141,7 +141,7 @@ if (!callout.hideIcon && callout.icon.pack === "lucide") {
 
 ### `getCallout(id)`
 
-Look up one callout. Returns `undefined` when nothing matches — it never
+Look up one callout. Returns `undefined` when nothing matches - it never
 substitutes a default.
 
 The lookup is forgiving in the three ways Obsidian itself is:
@@ -157,7 +157,7 @@ api.getCallout("nope"); // undefined
 
 ### `onChange(callback)`
 
-Fires whenever any callout is added, removed or edited — including colour and
+Fires whenever any callout is added, removed or edited - including colour and
 icon tweaks. The callback receives no arguments and no diff; re-read the list.
 
 **Subscriptions are not cleaned up for you.** Keep the returned function and
@@ -169,8 +169,8 @@ this.register(unsubscribe);
 ```
 
 **Treat it as a hint, not a precise event.** A single user action can fire it
-more than once — editing the callout that other manually discovered callouts mirror
-emits one event for the edit and another for the rows it restyled — and most
+more than once - editing the callout that other manually discovered callouts mirror
+emits one event for the edit and another for the rows it restyled - and most
 events change nothing you care about, since a colour tweak fires it just as a
 rename does. If reacting is expensive, diff against what you last saw:
 
@@ -196,9 +196,9 @@ this.register(api.onChange(resync));
 
 The list contains:
 
-* **All of Obsidian's built-in types** — `note`, `abstract`, `info`, `todo`,
+* **All of Obsidian's built-in types** - `note`, `abstract`, `info`, `todo`,
   `tip`, `success`, `question`, `warning`, `failure`, `danger`, `bug`,
-  `example`, `quote` — whether or not the user has customized them. Callout
+  `example`, `quote` - whether or not the user has customized them. Callout
   Studio lets users restyle the built-ins, so they belong in any list you show.
 * Everything the user created themselves.
 * Manually discovered theme types and saved types from another plugin.
@@ -227,7 +227,7 @@ the cascade do it, which is what Callout Studio itself does.
 
 The member reports the **resolved** answer. Theme ownership is derived from the
 active theme's stylesheet and is recorded nowhere on the definition, so do not
-try to work it out from a definition yourself — and expect it to change when
+try to work it out from a definition yourself - and expect it to change when
 the user changes theme.
 
 API v2 retired v1's `externalStyle` member together with the personal CSS
@@ -255,7 +255,7 @@ where `foldMark` is:
 
 | `foldable` | `defaultFolded` | `foldMark` |
 | ---------- | --------------- | ---------- |
-| `false`    | —               | `""`       |
+| `false`    | - | `""`       |
 | `true`     | `false`         | `"+"`      |
 | `true`     | `true`          | `"-"`      |
 
@@ -271,7 +271,7 @@ function calloutHeader(callout: CalloutDetails, title?: string): string {
 Colours and the icon are applied by CSS keyed on the rendered
 `data-callout` attribute, so they follow the user's settings no matter who wrote
 the markdown. **The title text does not.** Callout Studio deliberately leaves a
-regular callout's title alone — it is Obsidian's own DOM — so Obsidian derives
+regular callout's title alone - it is Obsidian's own DOM - so Obsidian derives
 the visible title from the id whenever the header carries no title text.
 
 That matters because Callout Studio lets users rename the built-ins:
@@ -290,7 +290,7 @@ own naming silently disappears.
   and `[!my-callout]` to the same `data-callout="my-callout"`. Write `id`
   through verbatim; don't slugify it.
 * **Obsidian splits the header at the first `|`.** Everything after it is
-  metadata, not part of the type — `> [!note|purple]` is the `note` callout
+  metadata, not part of the type - `> [!note|purple]` is the `note` callout
   carrying the metadata `purple`. No Callout Studio id ever contains a `|`, so
   you can append your own metadata safely.
 
@@ -307,7 +307,7 @@ bumping the version, so feature-detect those:
 if (typeof api.somethingNew === "function") { … }
 ```
 
-The plugin id `callout-studio` is permanent — it is the vault folder name and
+The plugin id `callout-studio` is permanent - it is the vault folder name and
 the community-plugin registry key, so it can never change.
 
 ---
@@ -318,8 +318,8 @@ the community-plugin registry key, so it can never change.
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Creating or editing callouts  | Keeping this read-only removes a whole class of conflicts between plugins. Ask the user to create the callout in Callout Studio's settings.                                                                                       |
 | Opening its modals            | Its icon picker and callout editor are internal UI, not an integration point.                                                                                                                                                     |
-| Icon artwork                  | Only `pack: "lucide"` names are usable outside the plugin — pass `icon.name` to Obsidian's `setIcon()`. Other packs need artwork Callout Studio downloads and caches for itself.                                                  |
-| Wrapping/unwrapping selection | Every plugin scopes this differently (lines vs. selection, titles kept or dropped). If you want Callout Studio's exact frontmatter-skipping, fence-aware version, copy `src/editor/CalloutBlockTools.ts` — the licence allows it. |
+| Icon artwork                  | Only `pack: "lucide"` names are usable outside the plugin - pass `icon.name` to Obsidian's `setIcon()`. Other packs need artwork Callout Studio downloads and caches for itself.                                                  |
+| Wrapping/unwrapping selection | Every plugin scopes this differently (lines vs. selection, titles kept or dropped). If you want Callout Studio's exact frontmatter-skipping, fence-aware version, copy `src/editor/CalloutBlockTools.ts` - the licence allows it. |
 
 ---
 

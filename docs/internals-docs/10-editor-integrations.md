@@ -5,7 +5,7 @@ autocomplete, wrap/unwrap/insert, the built-in commands, custom commands,
 the right-click context menu, and the two decorators that clean up callout
 syntax outside the editor (Outline pane, link suggestions).
 
-## `calloutWriter.ts` — the only place a definition becomes markdown
+## `calloutWriter.ts` - the only place a definition becomes markdown
 
 [`src/editor/calloutWriter.ts`](../../src/editor/calloutWriter.ts) is deliberately
 narrow: it turns a `CalloutDefinition` into token text for one role, and
@@ -15,17 +15,17 @@ config) write through here, so the fold mark, the title policy and the
 `|metadata` carry-over cannot drift apart between the two entry points.
 
 ```ts
-buildBlockHeaderToken(def, opts?)   // "[!warning]- Warning" — always titled
-buildHeadingToken(def, opts?)        // "[!note]" or "[!note] Title" — no fold mark, keeps existing title
-buildInlineToken(def, opts?)          // "[!important]" — never titled, the pill draws itself
+buildBlockHeaderToken(def, opts?)   // "[!warning]- Warning" - always titled
+buildHeadingToken(def, opts?)        // "[!note]" or "[!note] Title" - no fold mark, keeps existing title
+buildInlineToken(def, opts?)          // "[!important]" - never titled, the pill draws itself
 buildInlineContentToken(def, content, opts?)  // "[!important]{content}"
 foldMarkFor(def): "" | "+" | "-"
-splitFoldMark(afterBracket, role)     // the READING half — only "regular" has fold syntax
+splitFoldMark(afterBracket, role)     // the READING half - only "regular" has fold syntax
 ```
 
 `TokenBuildOptions.foldMark` overrides `foldMarkFor(def)` for one call, and is
 read with `??` rather than `||` because `""` is a real answer meaning *no mark,
-whatever the definition says*. Only `CustomCommandManager` passes it — a
+whatever the definition says*. Only `CustomCommandManager` passes it - a
 user-built command carries its own fold state; every other caller leaves it
 `undefined` and keeps following the definition. `buildHeadingToken` and
 `buildInlineToken` ignore the option entirely, for the reason the note below
@@ -33,23 +33,23 @@ gives.
 
 `resolveTitle()` decides whether an existing title survives a type change: an
 empty title, or one that merely echoes some *other* callout's display name
-(`isKnownDisplayName` callback), is replaced by the new callout's own name —
+(`isKnownDisplayName` callback), is replaced by the new callout's own name -
 otherwise a genuine user-authored title is preserved verbatim. This is what
 lets picking a different type from autocomplete's dropdown update a
 still-default title while leaving a custom one alone.
 
 > [!IMPORTANT]
 > **`splitFoldMark` takes `role` as an explicit argument, not an assumption
-> baked into the call site.** Only the block role has fold syntax at all —
+> baked into the call site.** Only the block role has fold syntax at all -
 > `### [!tip]- Title` is the `tip` callout titled `- Title`, and `[!tip]-`
 > written inline is a plain pill followed by a literal dash. Reading a fold
 > mark off any other role would silently delete a character the user typed.
 > Both call sites used to enforce this by *where the call happened to sit* (a
 > `token.role` test in one, two early returns in the other) rather than by a
-> signature the compiler checks — a rule that lived nowhere and that
+> signature the compiler checks - a rule that lived nowhere and that
 > refactoring the returns could quietly undo.
 
-## `CalloutBlockTools.ts` — wrap, unwrap, insert
+## `CalloutBlockTools.ts` - wrap, unwrap, insert
 
 [`src/editor/CalloutBlockTools.ts`](../../src/editor/CalloutBlockTools.ts) holds
 the pure editor-manipulation functions behind the three fixed editor commands and
@@ -149,7 +149,7 @@ one when the comment contains a blank line. A callout inside a list item
 read by their own `>` count, so a lazy continuation line with fewer markers
 ends its quote rather than continuing it.
 
-With no `def` passed, the header is the deliberately unfinished `[!` — the
+With no `def` passed, the header is the deliberately unfinished `[!` - the
 generic "Wrap in callout" command parks the cursor right there and triggers
 the autocomplete popup (see `triggerNow` below). A user-built custom command
 already knows its type, so it gets the finished header and no popup.
@@ -181,9 +181,9 @@ callout appended.
 
 ### `insertHeadingCallout`
 
-Turns the cursor's line into `## [!note] Title` — re-leveling and re-typing an
+Turns the cursor's line into `## [!note] Title` - re-leveling and re-typing an
 existing heading in place rather than nesting a second token, and donating a
-plain line's text as the title. **Quoted lines are never rewritten** — heading
+plain line's text as the title. **Quoted lines are never rewritten** - heading
 syntax is column-0-anchored (`HEADING_CALLOUT_RE` is anchored), so a heading
 callout inside a blockquote is impossible; the command instead inserts the
 new heading *below* the blockquote.
@@ -194,13 +194,13 @@ clamps the requested first body line back onto the closing delimiter.
 
 ### `insertInlineCallout`
 
-Inserts a plain pill at the cursor, or — when `allowContent` is on, the
-selection is non-empty, single-line, and its braces balance — wraps the
+Inserts a plain pill at the cursor, or - when `allowContent` is on, the
+selection is non-empty, single-line, and its braces balance - wraps the
 selection as the pill's `{…}` label instead. A multi-line or brace-unbalanced
 selection deliberately falls back to the plain-pill path rather than producing
 a broken pill, because braces cannot span lines or nest with no escape (see
 [Render roles § the `{…}` content payload](09-render-roles.md#the--content-payload-inline-pills-only)).
-The cursor always lands **after** the pill on the same line — pressing Enter
+The cursor always lands **after** the pill on the same line - pressing Enter
 on an inline suggestion must never break the surrounding paragraph.
 
 ### `unwrapCalloutAtSelection`
@@ -249,16 +249,16 @@ line:
 
 | Text before `[!` | Role |
 | --- | --- |
-| `>`, `>>`, … (optionally with spaces) | `regular` — native block header |
-| 1–6 `#` + whitespace, nothing else | `heading` (popup suppressed if `headingCallouts.enabled` is false) |
+| `>`, `>>`, … (optionally with spaces) | `regular` - native block header |
+| 1 - 6 `#` + whitespace, nothing else | `heading` (popup suppressed if `headingCallouts.enabled` is false) |
 | nothing (bare line start) | `inline` if enabled, else legacy `regular` fallback |
 | any other text | `inline` (popup suppressed if `inlineCallouts.enabled` is false) |
 
 It captures the **whole token body**, independent of exactly where the cursor
-sits inside it — reading only up to the cursor would mis-filter a mid-token
+sits inside it - reading only up to the cursor would mis-filter a mid-token
 cursor (`[!dang⎸aaaaa]` would otherwise match "Danger" instead of offering
 "Create new: dangaaaaa"). The popup **closes** once the cursor moves past the
-id into metadata, the fold mark, or title text — none of those are the type
+id into metadata, the fold mark, or title text - none of those are the type
 dropdown's business. A code-context check (`isCalloutTokenInCode`) runs
 **last**, deliberately, since it's the only check that reads past the current
 line and by that point the cursor is already known to sit inside a token.
@@ -267,7 +267,7 @@ line and by that point the cursor is already known to sit inside a token.
 
 `getSuggestions` filters `registry.getAll()` by id/display-name/alias
 substring match, excluding fallback rows the last prune scan **confirmed**
-have zero vault usage (`isKnownZeroUsageFallback`) — a row that's genuinely in
+have zero vault usage (`isKnownZeroUsageFallback`) - a row that's genuinely in
 use elsewhere but never adopted through the editor still autocompletes
 normally. A non-empty query with no exact id/alias match appends a synthetic
 "Create new: …" row.
@@ -279,7 +279,7 @@ only block titles strip the old fold marker before applying the new defaults.
 Because the modal can sit open for an arbitrary amount of
 time (minutes, if the user steps away), every position captured before that
 `await` is treated as **stale** and re-validated against the *live* document
-via `liveTriggerLine()` — checking the editor still belongs to the same file
+via `liveTriggerLine()` - checking the editor still belongs to the same file
 and that the `[!` is still exactly where it was. If not, a Notice explains the
 target moved rather than silently corrupting an unrelated part of the note
 (or a different note entirely, if the leaf was reused). This mirrors the same
@@ -322,15 +322,15 @@ them. The inline placement is synchronous.
 > with such ids kept the popover open and left the cursor where the rewrite
 > dropped it, just before `[!`. ASCII-only ids (every built-in) were unaffected.
 
-### `triggerNow` — opening the popup for a programmatically-inserted `[!`
+### `triggerNow` - opening the popup for a programmatically-inserted `[!`
 
 The "Insert empty callout" and "Wrap in callout" commands insert `[!` and want
-the suggestion popup to open immediately — but Obsidian's `EditorSuggest`
+the suggestion popup to open immediately - but Obsidian's `EditorSuggest`
 manager only calls `onTrigger` on real keystrokes. `triggerNow` routes through
 the workspace's internal `editorSuggest.trigger(editor, file, true)` (rather
 than calling `this.open()` directly) specifically so the popup registers as
 the manager's `currentSuggest` and behaves exactly like a natively-typed `!`
-— it follows scroll and auto-closes on delete, neither of which a
+ - it follows scroll and auto-closes on delete, neither of which a
 directly-opened popover would do.
 
 ## Built-in commands and availability
@@ -373,14 +373,14 @@ considers their execution context available. Hotkeys are also bound independentl
 of the active editor context.
 
 > [!IMPORTANT]
-> **These ids are a stable API — never rename one.** Users may have hotkeys
+> **These ids are a stable API - never rename one.** Users may have hotkeys
 > bound to them; a rename orphans the binding. `tests/repoRelease.test.ts`
 > pins the exact set and order.
 
 Each user can individually disable a built-in command
 (`settings.disabledFixedCommands`); `setFixedCommandEnabled()` calls
 `plugin.removeCommand()` / `plugin.addCommand()` directly, immediately, rather
-than merely hiding the command — this is what removes it from the command
+than merely hiding the command - this is what removes it from the command
 palette *and* the hotkeys pane, not just from view. Obsidian only clears a
 removed command's **default** hotkeys on `removeCommand`, never the user's own
 binding, so re-enabling restores it instantly.
@@ -394,7 +394,7 @@ assigning it elsewhere.
 
 `refreshFixedCommandNames()` re-registers a command **at the same id** whenever
 its rendered name changes (a locale arriving mid-session, or the user changing
-language) — same-id re-registration is what keeps the hotkey bound, since
+language) - same-id re-registration is what keeps the hotkey bound, since
 Obsidian keys bindings by command id, not by the registered object.
 
 ## Quick Insert targets
@@ -428,12 +428,12 @@ and switching themes can move a row without mutating its definition. With a
 blank query, an empty visible bucket gets a source-specific explanation; once a
 query is present, every empty result uses the ordinary no-match message.
 
-## `CustomCommandManager` — one idempotent sweep
+## `CustomCommandManager` - one idempotent sweep
 
 [`src/editor/CustomCommandManager.ts`](../../src/editor/CustomCommandManager.ts)
 is worth understanding in depth because its whole design follows from one
 constraint: `registry.onChange` carries **no payload**, and a callout id
-"rename" is really `remove()` followed by `add()` — so no per-event handler
+"rename" is really `remove()` followed by `add()` - so no per-event handler
 can distinguish a delete from a rename from an unrelated colour tweak.
 
 ```ts
@@ -445,7 +445,7 @@ time it runs, rather than reacting incrementally to what changed. This single
 design choice is what makes delete, manual discovery, edit, import, startup, and
 plugin re-enable all fall out of the *same* code path with no special-casing:
 
-1. Sanitize the stored list (`sanitizeCustomCommands` — drops structurally
+1. Sanitize the stored list (`sanitizeCustomCommands` - drops structurally
    malformed entries).
 2. Keep valid commands whose `calloutId` is temporarily absent in saved settings,
    but pause their registration until the target is restored.
@@ -460,7 +460,7 @@ and passes the resulting mark to `wrapSelectionInCallout` /
 `insertEmptyCallout` as `foldMark`. It is passed even when it is `""`, which is
 the point: that is what overrides a callout whose stored `foldable` would
 otherwise add a `+` the command's own dropdown says it does not want. Both block
-actions get it — they write the same header line — and neither of the other two
+actions get it - they write the same header line - and neither of the other two
 roles does. See [`CustomCommand`](04-data-model.md#customcommand) for the
 absence-means-`"none"` rule that keeps older commands writing what they always
 wrote.
@@ -469,26 +469,26 @@ wrote.
 > **Three invariants make this correct, and each one had to be deliberately
 > engineered:**
 > - **A command's `id` is minted once and never derived from its content**
->   (`generateCommandId()` — a timestamp+random string). Obsidian keys the
+>   (`generateCommandId()` - a timestamp+random string). Obsidian keys the
 >   user's hotkey by the *command id*, and `removeCommand` only clears
->   *default* hotkeys — so editing a command's callout, role, or heading level
+>   *default* hotkeys - so editing a command's callout, role, or heading level
 >   must never touch this id, or the binding orphans.
 > - **Only a changed rendered name triggers re-registration.** An icon or
 >   colour edit leaves the command's name identical, so it costs nothing; a
 >   `displayName` edit changes the name, so the palette label stays accurate.
 >   This matters because `addCommand` **mutates its argument in place** and
->   appends its own unload callback — calling it needlessly accumulates
+>   appends its own unload callback - calling it needlessly accumulates
 >   garbage.
 > - **Rename is the one thing a sweep genuinely can't infer**, because by the
->   time `syncAll()` runs, the old id is simply gone from the registry — there's
+>   time `syncAll()` runs, the old id is simply gone from the registry - there's
 >   nothing left pointing commands at it. `CalloutEditorSave` wraps its rename
 >   (`remove` + `add`) inside `registry.batch()` and calls
 >   `customCommands.migrateCalloutId(oldId, newId)` **inside that same batch**,
->   before the batched `onChange` fires — so the sweep that follows sees a
+>   before the batched `onChange` fires - so the sweep that follows sees a
 >   consistent world where every command already points at the new id.
 
 Discovery's prune pass explicitly checks `hasCommandFor(id)` before removing
-an unused fallback row — a custom command referencing a callout is a
+an unused fallback row - a custom command referencing a callout is a
 deliberate claim on it, exactly like `customized: true`. See
 [Vault discovery](11-vault-discovery.md).
 
@@ -508,11 +508,11 @@ Because Obsidian doesn't expose one reliable hook for "user right-clicked a
 callout," this hooks **three** paths simultaneously, all funneling into the
 same `maybeAddItems` guard (deduplicated per-menu via a `WeakSet`):
 
-1. **`workspace.on("editor-menu")`** — the primary, most reliable path for
+1. **`workspace.on("editor-menu")`** - the primary, most reliable path for
    Source mode and Live Preview.
-2. **A monkey-patched `Menu.prototype.showAtMouseEvent`** — catches menus
+2. **A monkey-patched `Menu.prototype.showAtMouseEvent`** - catches menus
    opened outside the `editor-menu` event, notably Reading view.
-3. **A monkey-patched `Menu.prototype.showAtPosition`** — catches
+3. **A monkey-patched `Menu.prototype.showAtPosition`** - catches
    touch/keyboard-opened menus, matched against the most recent captured
    pointer event by **position tolerance (12px) and age (750ms)**, since a
    position-only call carries no target element of its own.
@@ -529,10 +529,10 @@ resolveContext(plugin, trigger) =
   resolveInlinePillContext(...) ?? resolveHeadingContext(...) ?? resolveRegularContext(...)
 ```
 
-Inline pills are checked first (their DOM — `.cs-inline-callout` — is
+Inline pills are checked first (their DOM - `.cs-inline-callout` - is
 identical between Live Preview and Reading view), then heading callouts, then
 the native block callout (which itself tries the CodeMirror widget, editor
-coordinates, and reading-view DOM, in that order — unchanged from the
+coordinates, and reading-view DOM, in that order - unchanged from the
 pre-multi-role implementation). A content pill's own links get special
 treatment: `resolveInlinePillContext` explicitly bails if the click landed on
 an `<a>` inside the pill's payload, so right-clicking a link *inside*
@@ -546,20 +546,20 @@ BUILDERS: Record<CalloutRenderRole, Partial<Record<ContextMenuItemId, ItemBuilde
 ```
 
 `addItems()` walks `settings.contextMenu.items[role]` (the user's saved order
-+ enabled flags — see `DEFAULT_CONTEXT_MENU_ITEMS` in `constants.ts` and the
++ enabled flags - see `DEFAULT_CONTEXT_MENU_ITEMS` in `constants.ts` and the
 merge logic in `settingsMerge.ts`) and invokes whichever builder exists for
 each id on that role. An id with no builder for a given role (e.g.
-`copyMarkdown` on `heading`) is simply skipped — one config shape covers ids
+`copyMarkdown` on `heading`) is simply skipped - one config shape covers ids
 that only make sense for some roles.
 
 - **`edit`** is the stable persisted id for one adaptive create/edit action.
   It resolves through `resolveCalloutDef` (the same ladder the renderer uses)
-  rather than a plain lookup — so right-clicking `[!a-b]` written for the
+  rather than a plain lookup - so right-clicking `[!a-b]` written for the
   callout `a b` edits that definition. A genuinely unknown id merely borrows
   the fallback's *appearance*, not its identity, so the same configured action
   instead opens a new editor seeded with the token's exact normalized id.
 - **Block-role `foldDefaults`** offers the *other two* fold states (never the
-  current one) — open / closed / non-collapsible — by rewriting the header's
+  current one) - open / closed / non-collapsible - by rewriting the header's
   fold mark in place.
 - **Heading-role section operations** (`cutSection`/`copySection`/`deleteSection`)
   compute the section range via `getHeadingSectionRange` in
@@ -572,15 +572,15 @@ that only make sense for some roles.
   Without a following section it reaches end-of-document. Cut first awaits clipboard success, then checks
   that the complete document and captured file/editor/leaf ownership still match;
   a clipboard error or intervening change leaves the note untouched. These
-  are single editor transactions — undo works
+  are single editor transactions - undo works
   through the editor's own history, no confirmation modal needed (unlike
   deleting a callout *definition*, which is a destructive, harder-to-reverse
-  action guarded elsewhere — see [Vault discovery](11-vault-discovery.md#delete-flow)).
+  action guarded elsewhere - see [Vault discovery](11-vault-discovery.md#delete-flow)).
 
 ### The context menu inside a read-only preview
 
 The settings previews host a *real* embedded Obsidian editor, so they get
-Obsidian's real editor context menu — and none of its editing commands was ever
+Obsidian's real editor context menu - and none of its editing commands was ever
 stopped by `EditorState.readOnly` (see
 [Callout editor](14-callout-editor.md#why-read-only-needed-two-layers)). A user
 could right-click the splash screen and turn its sample into a bulleted list, an
@@ -590,13 +590,13 @@ H1, a table or a code block.
 menu half. `maybeAddItems` asks `isReadOnlyPreviewTarget(trigger.targetEl)`
 first, and when it answers yes:
 
-- `stripEditingItems(menu)` removes every item whose section is editing-only —
+- `stripEditingItems(menu)` removes every item whose section is editing-only -
   `selection-link`, `insert`, `correction`, `spellcheck`, and anything under
   `selection.format`, `selection.paragraph` or `selection.insert`. That is the
   whole Format / Paragraph / Insert set.
 - **None of this plugin's own items are added.** The fold-marker and
   cut/delete-section builders write through `context.editor`, which in a preview
-  is the preview's own editor — and the block-callout resolver reaches inside
+  is the preview's own editor - and the block-callout resolver reaches inside
   one regardless of `view`, via the `.cm-callout` widget path, so this is a real
   route rather than a hypothetical one.
 
@@ -608,13 +608,13 @@ Three details are load-bearing:
   something a user could switch off by accident.
 - **Sections, not titles.** The section strings are Obsidian's own identifiers,
   so the filter holds in every language. A rename in a future Obsidian version
-  degrades to the menu showing items that no longer do anything — never to a
+  degrades to the menu showing items that no longer do anything - never to a
   crash, and never to a mutable preview, because the transaction filter is the
   guarantee.
 - **`Menu.sort()` runs inside `showAtPosition()`**, i.e. *after* the
   `showAtMouseEvent` / `showAtPosition` patches above. At that moment `items` is
   complete and nothing has been rendered, so filtering the array in place is
-  enough — no DOM surgery, and a section left empty takes its submenu header
+  enough - no DOM surgery, and a section left empty takes its submenu header
   with it.
 
 `clipboard` is kept whole on purpose. Copy and Select all are exactly what a
@@ -646,14 +646,14 @@ filter, virtual-tree churn) as the signal to reprocess
 `schedulePass`).
 
 Every rewrite stamps the item with `data-cs-orig`, the untouched original
-text — this is what makes disabling the feature, or unloading the plugin,
+text - this is what makes disabling the feature, or unloading the plugin,
 restore the pane to exactly what core would have shown, rather than leaving
 stale decorated text behind. `destroy()` runs a restore-only pass on every
 attached leaf before disconnecting its observer.
 
 Ambiguity handling: an outline item's bracketless text (`!bug Title`) is
 inherently ambiguous between a real `# [!bug] Title` heading and a heading
-literally written `# !bug Title` — `parseOutlineHeadingText` reports a
+literally written `# !bug Title` - `parseOutlineHeadingText` reports a
 `bracketed` flag, and this file only trusts a bracketless match after
 confirming it against the file's own raw heading text
 (`SourceHeadings.bracketedIds`/`literalIds`), computed once per file.
@@ -664,7 +664,7 @@ Installed on `workspace.onLayoutReady` (so Obsidian's core link suggester
 already exists) and explicitly **excludes this plugin's own autocomplete**
 from the suggesters it wraps, because that one already renders callout
 suggestions itself and doesn't need cleanup. It cleans the `[[#` heading-link
-popup the same way the Outline pane is cleaned — stripping the raw `[!id]`
+popup the same way the Outline pane is cleaned - stripping the raw `[!id]`
 token from the displayed suggestion text.
 
 ---

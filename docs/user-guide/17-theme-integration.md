@@ -14,13 +14,13 @@ Older versions included a setting that let an individual callout yield to extern
 
 ## Callout Studio's own windows
 
-In light mode with Obsidian's **Default** theme, Callout Studio's windows — its settings, the callout editor, the pickers and the other dialogs — use their own light colors: white text boxes, dropdowns and lists with a soft outline that darkens when you point at or click one, white buttons, and a pale tint of your accent color on the chosen row. The colors are the same on macOS, Windows, Linux and phones. (Without this, macOS paints Obsidian's light-mode controls as flat grey slabs.)
+In light mode with Obsidian's **Default** theme, Callout Studio's windows - its settings, the callout editor, the pickers and the other dialogs - use their own light colors: white text boxes, dropdowns and lists with a soft outline that darkens when you point at or click one, white buttons, and a pale tint of your accent color on the chosen row. The colors are the same on macOS, Windows, Linux and phones. (Without this, macOS paints Obsidian's light-mode controls as flat grey slabs.)
 
 If you choose a community theme under **Settings → Appearance → Themes**, the theme takes command instead: the windows follow its own button, text-box and border colors, just as they did before. Dark mode is not affected either way. Switching theme or color scheme updates open windows immediately; nothing needs to be reloaded.
 
 ## Your callouts in a theme's callout layout
 
-Callouts you create in Callout Studio follow the layout your theme gives callouts in general. When a theme or one of its **Style Settings** options draws callouts with a neutral body and the color on a title bar (for example AnuPpuccin's **Sleek** callout style), your callout's background — solid or gradient — moves to that title bar too, and a transparent callout shows no background anywhere. Switching the option in Style Settings updates open notes immediately; nothing needs to be reloaded. See [Background styles](03-custom-color-palettes.md#background-styles).
+Callouts you create in Callout Studio follow the layout your theme gives callouts in general. When a theme or one of its **Style Settings** options draws callouts with a neutral body and the color on a title bar (for example AnuPpuccin's **Sleek** callout style), your callout's background - solid or gradient - moves to that title bar too, and a transparent callout shows no background anywhere. Switching the option in Style Settings updates open notes immediately; nothing needs to be reloaded. See [Background styles](03-custom-color-palettes.md#background-styles).
 
 ## Read-only theme callouts
 
