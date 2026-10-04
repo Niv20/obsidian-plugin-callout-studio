@@ -9,7 +9,7 @@
  * Left column: the plugin name and a one-line slogan, centered. Right
  * column: a real {@link LiveCalloutPreview} rendering a short sample whose copy
  * itself explains the three callout roles (heading, inline, regular) and links
- * back to the GitHub repo, so the preview both demonstrates and describes what
+ * to the user guide on GitHub, so the preview both demonstrates and describes what
  * the plugin can do. Closing the modal (Escape, click-outside, or the preview's
  * own link) resolves the first-run `prompt()` promise the same way.
  */
@@ -21,7 +21,7 @@ import { buildWelcomeDemoDefinition } from "./welcomeDemo";
 import type { SettingsTabPlugin } from "./sections/types";
 import { beginDemoPreview, endDemoPreview } from "./previewOwnership";
 
-const REPO_URL = "https://github.com/Niv20/obsidian-plugin-callout-studio";
+const USER_GUIDE_URL = "https://github.com/Niv20/obsidian-plugin-callout-studio/tree/fa1c8e29aa1f9a40b7a90226d12197c6fe96f1f4/docs/user-guide";
 
 export class WelcomeModal extends Modal {
 	private resolved = false;
@@ -69,7 +69,7 @@ export class WelcomeModal extends Modal {
 			title: t("welcome.previewTitle"),
 			initialText: t("welcome.sample", {
 				id: WELCOME_DEMO_ID,
-				repoUrl: REPO_URL,
+				repoUrl: USER_GUIDE_URL,
 			}),
 			beforeRender: () => {
 				// The splash demonstrates itself with a demo callout of its own,

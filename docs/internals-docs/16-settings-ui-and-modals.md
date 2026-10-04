@@ -2808,6 +2808,10 @@ The welcome screen can be reopened via the info icon in settings or the
 dev-convenience protocol handler `obsidian://callout-studio-welcome`
 registered in `main.ts`.
 
+The sample's **Learn more** link uses `USER_GUIDE_URL` in `WelcomeModal.ts`,
+passed through the existing `repoUrl` translation placeholder. It targets
+`docs/user-guide` on GitHub at revision `fa1c8e29aa1f9a40b7a90226d12197c6fe96f1f4`.
+
 Only the automatic first-launch welcome (`new WelcomeModal(plugin, true)`) adds
 `welcome.syncNote` below the tagline: a user joining from another device should
 let sync finish, and their setup appears once it arrives. It is informational;
