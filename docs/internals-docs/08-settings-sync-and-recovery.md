@@ -950,9 +950,11 @@ history entry of the setup it restores, and a time window would fold exactly the
 two versions someone most needs told apart. A copy whose `data` is null is never
 merged, not even with another unreadable copy: there is nothing to compare.
 
-The timeline groups these versions by local calendar day. **Today** and
-**Yesterday** have no repeated date; days two through six show the relative label
-before a localized date; earlier days show the full localized date. A continuous
+The timeline groups these versions by local calendar day. Each heading shows the
+full localized date first, followed by its relative age in parentheses: **today**,
+**yesterday**, or the number of days ago. Future dates show only the full date.
+The age counts calendar days rather than elapsed hours, so daylight-saving changes
+do not shift it. A continuous
 vertical line connects one small decorative dot per version. Versions with no saved
 date form a separate final group. This local display grouping does not change
 stored timestamps or retention rules.
