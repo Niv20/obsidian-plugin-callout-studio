@@ -147,3 +147,115 @@ describe("drag reorder gesture lifetime", () => {
 		});
 	}
 });
+
+describe("drop placeholder", () => {
+	it("marks the dragged row's slot with an empty box its exact size", () => {
+		const h = dragSortHarness();
+		try {
+			h.down(h.rows[1]!);
+			const [box, ...more] = h.placeholders();
+			assert.ok(box);
+			assert.equal(more.length, 0);
+			assert.equal(h.list.children[0], box, "first, so rows sliding past are painted over it");
+			assert.equal(box.getAttribute("aria-hidden"), "true");
+			assert.equal(box.children.length, 0);
+			assert.deepEqual(h.slot(box), { top: 40, left: 0, width: 240, height: 36 });
+		} finally { h.cleanup(); }
+	});
+
+	it("follows the slot past each neighbour, sliding there like the rows", () => {
+		const h = dragSortHarness();
+		try {
+			h.down(h.rows[0]!);
+			const box = h.placeholders()[0]!;
+			h.move(110);
+			assert.deepEqual(h.order(), ["b", "c", "a", "d"]);
+			assert.equal(h.slot(box).top, 80, "the third slot, where a now lands");
+			const slides = () => h.animations.filter((animation) => animation.row === box);
+			assert.deepEqual(slides().map((s) => s.transform), ["translateY(-80px)"], "from where it was drawn");
+			h.move(112);
+			assert.equal(slides().length, 1, "a move within the slot restarts nothing");
+			h.move(8);
+			assert.deepEqual(h.order(), ["a", "b", "c", "d"]);
+			assert.equal(h.slot(box).top, 0);
+			assert.deepEqual(h.placeholders(), [box], "moved, not redrawn");
+		} finally { h.cleanup(); }
+	});
+
+	it("stops where the row stops: at the end of its own band", () => {
+		const h = dragSortHarness({ groups: [false, false, true, true] });
+		try {
+			h.down(h.rows[0]!);
+			h.move(500);
+			assert.deepEqual(h.order(), ["b", "a", "c", "d"]);
+			assert.equal(h.slot(h.placeholders()[0]!).top, 40);
+		} finally { h.cleanup(); }
+	});
+
+	it("stays under the dropped row until the row has settled onto it", () => {
+		const h = dragSortHarness();
+		try {
+			h.down(h.rows[0]!);
+			h.move(110);
+			h.up();
+			const [box] = h.placeholders();
+			assert.ok(box, "the row is still on its way into the slot");
+			assert.equal(h.slot(box).top, 80);
+			assert.ok(h.rows[0]!.hasClass("is-dragging"));
+			h.finishAnimations();
+			assert.deepEqual(h.placeholders(), [], "gone as the row lands");
+			assert.ok(!h.rows[0]!.hasClass("is-dragging"));
+		} finally { h.cleanup(); }
+	});
+
+	it("goes at once when the row is let go in the slot it never left", () => {
+		const h = dragSortHarness();
+		try {
+			h.down(h.rows[2]!);
+			h.up();
+			assert.deepEqual(h.placeholders(), []);
+			assert.equal(h.moves.length, 0);
+		} finally { h.cleanup(); }
+	});
+
+	it("is never doubled when another row is grabbed mid-settle", () => {
+		const h = dragSortHarness();
+		try {
+			h.down(h.rows[0]!);
+			h.move(110);
+			h.up();
+			const settling = h.placeholders()[0];
+			h.down(h.rows[3]!);
+			const boxes = h.placeholders();
+			assert.equal(boxes.length, 1);
+			assert.notEqual(boxes[0], settling, "the cut-short settle took its own away");
+			assert.equal(h.slot(boxes[0]!).top, 120, "the slot of the row now held");
+			h.up();
+			assert.deepEqual(h.placeholders(), []);
+		} finally { h.cleanup(); }
+	});
+
+	for (const settling of [false, true]) {
+		it(`leaves with the window ${settling ? "mid-settle" : "mid-drag"}, its slide stopped`, () => {
+			const h = dragSortHarness();
+			h.down(h.rows[0]!);
+			h.move(110);
+			if (settling) h.up();
+			h.cleanup();
+			assert.deepEqual(h.placeholders(), []);
+			assert.ok(h.animations.every((animation) => !animation.running));
+		});
+	}
+
+	it("is not drawn under reduced motion, where the row never leaves its slot", () => {
+		const h = dragSortHarness({ reducedMotion: true });
+		try {
+			h.down(h.rows[0]!);
+			assert.deepEqual(h.placeholders(), []);
+			h.move(110);
+			assert.deepEqual(h.placeholders(), []);
+			h.up();
+			assert.deepEqual(h.order(), ["b", "c", "a", "d"]);
+		} finally { h.cleanup(); }
+	});
+});

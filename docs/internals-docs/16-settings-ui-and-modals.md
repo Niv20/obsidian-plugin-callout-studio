@@ -2082,6 +2082,51 @@ the window has room and shorten only at a real narrow-width limit. The saved
 `edit` row is labelled **Create or edit callout** because it is one toggle for
 both runtime outcomes, not two mutually visible actions.
 
+#### The drop placeholder
+
+While a row is dragged, `DragSortList.ts` marks the slot it lands in if let go
+now: an empty `div.cs-drag-placeholder` (`aria-hidden`), the row's exact size,
+filled with `--background-modifier-border`, the theme's neutral resting
+border shade. In Obsidian's default palette this grey is darker in dark mode
+and lighter in light mode than the hover-border shade. Reading the semantic
+token directly follows the theme's UI palette without a plugin-defined
+colour or mixing ratio.
+
+- **The slot is the dragged row's own box.** The row never leaves the flow —
+  it sits in its slot with a `translateY` floating it under the pointer — so
+  `coverSlot()` reads its `getBoundingClientRect()` less `currentTransform`,
+  relative to the list's, and hands top, left, width and height over as
+  `--cs-drag-placeholder-*` properties, which `styles.css` turns into an
+  absolutely positioned box. `.cs-menu-customize-list` is `position: relative`
+  for that. Measured rather than styled, so a taller library row gets a taller
+  slot; the corners are `.callout-studio-row`'s 8px.
+- **It moves inside the FLIP.** When the row changes slot, the placeholder is
+  re-covered within the same `animateReorder` mutation that moves the row, so
+  the FLIP slides it to the new slot in step with the neighbours trading places
+  with it (same 180ms ease, same cancel-and-restart on a fast drag). It is
+  placed with `top`, never `transform`, because the slide is a `transform`
+  animation.
+- **Paint order.** It is the list's first child, so a row sliding past it is
+  painted after it and passes over it, and the dragged row's `z-index: 1` lifts
+  that row above everything. The list is deliberately not made a stacking
+  context (`isolation`, a `z-index`): that would confine the dragged row's
+  z-index to its own list, and a later list in the same window would paint over
+  a row dragged onto it. Being absolutely positioned, the box takes no flex
+  `gap` and no row index — `rows()` matches `rowSelector` and never sees it.
+- **Entrance.** It fades in and opens out from 97% over 200ms
+  (`cs-drag-placeholder-in`, behind `prefers-reduced-motion: no-preference`),
+  mostly under the lifted row. The keyframes animate the `scale` property,
+  not `transform`, so a slide that starts mid-entrance is not overridden.
+- **It leaves with the settle.** A released row keeps its placeholder until
+  its settle finishes, is cut short by the next grab, or the window closes;
+  then the `is-dragging` look and the placeholder go together, unseen, since
+  the row now covers the box exactly. A row let go in its own slot loses both
+  at once. A rebuild that lands mid-settle — the libraries window's deferred
+  refresh — takes the placeholder out with the old rows; the later removal is
+  a no-op.
+- **Reduced motion draws none.** The row never leaves its slot then, so it
+  marks the slot itself.
+
 #### Why this is not Obsidian's own list component
 
 Obsidian 1.13's **Settings → Appearance → Ribbon menu configuration** looks like
@@ -3125,7 +3170,7 @@ historical reasons, not because the check belongs to FLIP. Its callers:
 
 - `flip.ts` itself — row reorders skip the FLIP animation and just land.
 - `DragSortList.ts` (and so `bandedSortList.ts`, which drags through it) — read once when a drag starts; the settle and slide
-  animations are skipped (see the drag section above).
+  animations are skipped and no drop placeholder is drawn (see the drag section above).
 - `settings/targetHighlighter.ts` — `scrollIntoView` uses `behavior: "auto"`
   instead of `"smooth"`; the pulse only fades a colour.
 
@@ -3137,8 +3182,8 @@ historical reasons, not because the check belongs to FLIP. Its callers:
   import window's "checking" vault card, the icon tile transitions, and the heading callout's entrance
   transition (which also never animates into a print or PDF snapshot).
 - **`no-preference` queries** switch something on only when motion is
-  allowed: the usage menu's count fade, and the icon swap arrows' drift loop
-  with its hover trigger. Use this shape when the selectors are so specific
+  allowed: the usage menu's count fade, the drop placeholder's entrance, and
+  the icon swap arrows' drift loop with its hover trigger. Use this shape when the selectors are so specific
   that an `animation: none` in a `reduce` block could not outrank them; a
   loop that never starts needs no stopping. The `reduce` block beside the
   icon tiles says so and deliberately leaves the arrows alone.

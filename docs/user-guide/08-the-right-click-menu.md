@@ -38,7 +38,7 @@ A block callout offers:
 
 ## Customize the menu
 
-Open **Settings → Callout Studio → Context menu**, then click **Customize menu items**. Toggle individual actions on or off and drag their handles into your preferred order. You can keep dragging the same row or another row without waiting for it to settle. Every change is saved immediately.
+Open **Settings → Callout Studio → Context menu**, then click **Customize menu items**. Toggle individual actions on or off and drag their handles into your preferred order. While you drag, a grey slot that follows the active palette shows where the row will land if you let go. You can keep dragging the same row or another row without waiting for it to settle. Every change is saved immediately.
 
 Each category shows a **Reset to default** arrow in its header after you change its toggles or order. Click it to turn every action in that category on and restore the original sorting order. The other categories keep their settings.
 

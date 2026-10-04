@@ -37,7 +37,7 @@ sample hand beside each tone, so you can see the choice before selecting it.
 
 Click **Manage libraries** at the end of the source row to open **Manage icon libraries**. This is also where you download a library: the source menu lists only the libraries already on this device. The window works like **Customize menu items**: one list, divided by lines, under these headings.
 
-- **Available libraries** are the ones the picker offers, in the order it offers them. Drag a row by its handle — or focus the handle and press the up and down arrow keys — to change that order. The reset arrow sits on this heading.
+- **Available libraries** are the ones the picker offers, in the order it offers them. Drag a row by its handle — or focus the handle and press the up and down arrow keys — to change that order. While you drag, a grey slot that follows the active palette shows where the row will land. The reset arrow sits on this heading.
 - **Libraries to download** are the ones not downloaded on this device yet. Their rows are dimmed and have no handle, because their order can't change anything until they're downloaded.
 - **Hidden libraries** appears only while you have hidden one of the libraries that come with the plugin, and lists it so you can show it again.
 

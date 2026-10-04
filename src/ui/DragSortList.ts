@@ -9,14 +9,23 @@
  * snapping. On release the row settles into its slot and the net move is
  * reported via `onReorder(from, to)`.
  *
+ * While the row floats, a placeholder marks the slot it lands in if released
+ * now: an empty grey box from the theme's UI palette, the row's exact size,
+ * under every row. It follows the slot from neighbour to neighbour, sliding
+ * with them, and goes when the dropped row has settled onto it.
+ *
  * Pointer Events are used (not HTML5 drag) so the same code works with mouse,
  * pen, and touch — the plugin runs on mobile (isDesktopOnly: false). The handle
  * must set `touch-action: none` in CSS so dragging from it does not scroll the
- * page. Because the container element itself never moves, reordering its
- * children keeps pointer capture intact for the whole gesture.
+ * page, and the container must be positioned (`position: relative`), since the
+ * placeholder is laid out against it. Because the container element itself
+ * never moves, reordering its children keeps pointer capture intact for the
+ * whole gesture.
  *
  * Motion honours `prefers-reduced-motion`: when reduced motion is requested the
  * float/slide/settle are skipped and reordering is instant (as it used to be).
+ * There is no placeholder then either — the row never leaves its slot, so it
+ * marks the slot itself.
  */
 import {
 	REORDER_DURATION_MS,
@@ -41,6 +50,16 @@ export interface DragSortOptions {
 	onReorder: (fromIndex: number, toIndex: number) => void;
 }
 
+/** The drop placeholder's class; styles.css draws it. */
+const PLACEHOLDER_CLASS = "cs-drag-placeholder";
+
+/** Take a placeholder out, stopping any slide still moving it. */
+function removePlaceholder(box: HTMLElement | null): void {
+	if (!box) return;
+	cancelReorderAnimation(box);
+	box.remove();
+}
+
 /**
  * Make `container`'s rows drag-reorderable. Returns a cleanup function that
  * detaches all listeners.
@@ -59,11 +78,46 @@ export function makeDragSortable(
 	let currentTransform = 0;
 	/** Settling is cosmetic; it must never own a delayed reorder callback. */
 	let stopSettling: (() => void) | null = null;
+	/**
+	 * The current drag's placeholder. Null between drags, and for the whole
+	 * drag when motion is reduced. A dropped row's settle takes its
+	 * placeholder along and removes it when it lands.
+	 */
+	let placeholder: HTMLElement | null = null;
 
 	const rows = (): HTMLElement[] =>
 		Array.from(container.querySelectorAll<HTMLElement>(opts.rowSelector)).filter(
 			(row) => row.parentElement === container,
 		);
+
+	/**
+	 * Lay `box` over the slot `row` holds in the list's layout: the row's own
+	 * box less the transform that floats it. Measured rather than styled, so it
+	 * is the row's exact size whatever the row holds. The list draws no border
+	 * and does not scroll itself, so its box is the one `box` is placed in.
+	 */
+	const coverSlot = (box: HTMLElement, row: HTMLElement): void => {
+		const slot = row.getBoundingClientRect();
+		const list = container.getBoundingClientRect();
+		box.setCssProps({
+			"--cs-drag-placeholder-top": `${slot.top - currentTransform - list.top}px`,
+			"--cs-drag-placeholder-left": `${slot.left - list.left}px`,
+			"--cs-drag-placeholder-width": `${slot.width}px`,
+			"--cs-drag-placeholder-height": `${slot.height}px`,
+		});
+	};
+
+	/**
+	 * Mark `row`'s slot. The box goes first in the list: a row sliding past it
+	 * comes later in paint order, so it passes over the box rather than under
+	 * it, and the dragged row is lifted above everything by its z-index.
+	 */
+	const createPlaceholder = (row: HTMLElement): HTMLElement => {
+		const box = createDiv({ cls: PLACEHOLDER_CLASS, attr: { "aria-hidden": "true" } });
+		container.insertBefore(box, container.firstChild);
+		coverSlot(box, row);
+		return box;
+	};
 
 	const onPointerMove = (e: PointerEvent): void => {
 		const dragEl = dragging;
@@ -113,9 +167,18 @@ export function makeDragSortable(
 		// Only reorder — and animate — when the slot actually changes, so ongoing
 		// neighbour slides are not cancelled and restarted on every stationary
 		// move. The FLIP slides the displaced neighbours; the dragged row is
-		// skipped because it tracks the pointer itself (below).
+		// skipped because it tracks the pointer itself (below). The placeholder
+		// is moved to the new slot inside the same mutation, so the FLIP slides
+		// it there too, in step with the neighbours trading places with it.
 		if (needsMove) {
-			animateReorder(container, place, { skip: (el) => el === dragEl });
+			animateReorder(
+				container,
+				() => {
+					place();
+					if (placeholder) coverSlot(placeholder, dragEl);
+				},
+				{ skip: (el) => el === dragEl },
+			);
 		}
 
 		if (reduceMotion) return;
@@ -154,11 +217,16 @@ export function makeDragSortable(
 		const finalIndex = rows().indexOf(dragEl);
 		const changed = finalIndex !== -1 && finalIndex !== from;
 		const offset = currentTransform;
+		// The row settles onto its placeholder, which goes when it lands. Taken
+		// off the drag here so a new grab mid-settle draws its own.
+		const box = placeholder;
+		placeholder = null;
 		detachGesture();
 
 		const finish = (): void => {
 			dragEl.removeClass("is-dragging");
 			dragEl.style.removeProperty("transform");
+			removePlaceholder(box);
 		};
 
 		if (!reduceMotion && Math.abs(offset) >= 0.5) {
@@ -214,6 +282,7 @@ export function makeDragSortable(
 		if (!reduceMotion) row.style.transform = `translateY(${currentTransform}px)`;
 		container.addClass("cs-dragging");
 		row.addClass("is-dragging");
+		if (!reduceMotion) placeholder = createPlaceholder(row);
 		container.setPointerCapture(pointerId);
 		container.addEventListener("pointermove", onPointerMove);
 		container.addEventListener("pointerup", onPointerUp);
@@ -228,6 +297,8 @@ export function makeDragSortable(
 		stopSettling?.();
 		dragging?.removeClass("is-dragging");
 		dragging?.style.removeProperty("transform");
+		removePlaceholder(placeholder);
+		placeholder = null;
 		detachGesture();
 		for (const row of rows()) cancelReorderAnimation(row);
 	};

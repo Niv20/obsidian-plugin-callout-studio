@@ -1360,6 +1360,8 @@ body:not(.is-phone)
 }
 
 .cs-menu-customize-list {
+	/* The drop placeholder (below) is laid out against the list. */
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -1470,6 +1472,46 @@ body:not(.is-phone)
 	   "settle" is a Web Animations API slide, unaffected by this. */
 	transition: none;
 	will-change: transform;
+}
+
+/* Where the dragged row lands if it is let go now (ui/DragSortList.ts): an
+   empty slot the row's exact size. DragSortList measures the row's box in the
+   list — not the floating copy — and hands it over in the four properties
+   below; the corners are the row's own (`.callout-studio-row`).
+
+   Use the theme's neutral resting-border shade: darker than its hover shade
+   in the default dark palette and lighter in the default light palette.
+   This grey follows the active light/dark palette and the theme's UI colours,
+   without a fixed colour or a plugin-defined mixing ratio.
+
+   It is the list's first child, so a row sliding past it is painted after it
+   and passes over it; the dragged row's z-index lifts it above all of them. */
+.cs-drag-placeholder {
+	position: absolute;
+	top: var(--cs-drag-placeholder-top, 0);
+	left: var(--cs-drag-placeholder-left, 0);
+	width: var(--cs-drag-placeholder-width, 100%);
+	height: var(--cs-drag-placeholder-height, 0);
+	border-radius: 8px;
+	background: var(--background-modifier-border);
+	pointer-events: none;
+}
+
+/* The slot fades in and opens out by 3% as the row lifts out of it — enough to
+   read as appearing, not enough to jump. `scale` rather than `transform`,
+   which the slide between slots animates. Reduced motion draws no placeholder
+   at all (the row never leaves its slot); this guard is the CSS half of that. */
+@media (prefers-reduced-motion: no-preference) {
+	.cs-drag-placeholder {
+		animation: cs-drag-placeholder-in 200ms ease-out;
+	}
+}
+
+@keyframes cs-drag-placeholder-in {
+	from {
+		opacity: 0;
+		scale: 0.97;
+	}
 }
 
 /* ─── Icon Libraries Window ───────────────────────────────────── */
