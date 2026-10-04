@@ -28,7 +28,7 @@ Thank you to everyone who reported bugs, tested fixes, and shared detailed feedb
 
 And thank you to everyone whose ideas and suggestions helped shape the plugin:
 
-[ericxob77](https://github.com/ericxob77) · [TechnoMaverick](https://github.com/TechnoMaverick) · [epilo9er](https://github.com/epilo9er) · [Xto-tT0](https://github.com/Xto-tT0) · [TyceHerrman](https://github.com/TyceHerrman) · [eth-p](https://github.com/eth-p) · [kwhsiung](https://github.com/kwhsiung) · [archangelglass](https://github.com/archangelglass) · [quantumstargazer](https://github.com/quantumstargazer) · [BloatedBlowfish](https://github.com/BloatedBlowfish) · [Camouflagee](https://github.com/Camouflagee) · [maxnabokow](https://github.com/maxnabokow)
+[ericxob77](https://github.com/ericxob77) · [TechnoMaverick](https://github.com/TechnoMaverick) · [epilo9er](https://github.com/epilo9er) · [Xto-tT0](https://github.com/Xto-tT0) · [TyceHerrman](https://github.com/TyceHerrman) · [eth-p](https://github.com/eth-p) · [kwhsiung](https://github.com/kwhsiung) · [archangelglass](https://github.com/archangelglass) · [quantumstargazer](https://github.com/quantumstargazer) · [BloatedBlowfish](https://github.com/BloatedBlowfish) · [Camouflagee](https://github.com/Camouflagee) · [maxnabokow](https://github.com/maxnabokow) · [rubcap](https://github.com/rubcap) 
 
 Thank you all for helping make Callout Studio better!
 
