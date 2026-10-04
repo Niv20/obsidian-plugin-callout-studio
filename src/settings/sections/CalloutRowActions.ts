@@ -8,7 +8,6 @@
  * offered. Menu counts come from the read-only occurrence index; operations
  * that rewrite notes still count current contents before confirmation.
  */
-import { Menu } from "obsidian";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { countCalloutUsages } from "../../utils/vaultCalloutScanner";
 import { t } from "../../i18n";
@@ -16,7 +15,7 @@ import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
 import { addDeleteItem } from "./rowOwnership";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
-import { prepareUsageMenu } from "../../usage/prepareUsageMenu";
+import { openCalloutRowMenu } from "./calloutRowMenu";
 import { addDuplicateItem } from "./duplicateCallout";
 import {
 	handleCalloutReplace,
@@ -33,48 +32,44 @@ export async function openBuiltInRowMenu(
 	event: MouseEvent,
 	def: CalloutDefinition,
 ): Promise<void> {
-	const preparation = prepareUsageMenu(ctx.app, event, ctx.registerDisposer);
-	if (preparation && !await preparation) return;
-	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
-	const menu = new Menu();
-	const usage = addUsageMenuItem(menu, ctx.app, allIds);
-	const modified = ctx.plugin.registry.isBuiltInModified(def.id);
+	return openCalloutRowMenu(ctx, event, (menu) => {
+		const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
+		const usage = addUsageMenuItem(menu, ctx.app, allIds);
+		const modified = ctx.plugin.registry.isBuiltInModified(def.id);
 
-	if (modified || usage?.fileCount !== 0) menu.addSeparator();
+		if (modified || usage?.fileCount !== 0) menu.addSeparator();
 
-	if (modified) {
-		menu.addItem((item) =>
-			item
-				.setTitle(t("settings.resetAction"))
-				.setIcon("rotate-ccw")
-				.onClick(() => {
-					void handleBuiltInReset(ctx, def);
-				}),
-		);
-	}
+		if (modified) {
+			menu.addItem((item) =>
+				item
+					.setTitle(t("settings.resetAction"))
+					.setIcon("rotate-ccw")
+					.onClick(() => {
+						void handleBuiltInReset(ctx, def);
+					}),
+			);
+		}
 
-	if (usage?.fileCount !== 0) {
-		menu.addItem((item) =>
-			item
-				.setTitle(t("settings.replaceAction"))
-				.setIcon("arrow-left-right")
-				.onClick(() => {
-					void handleCalloutReplace(ctx, def);
-				}),
-		);
+		if (usage?.fileCount !== 0) {
+			menu.addItem((item) =>
+				item
+					.setTitle(t("settings.replaceAction"))
+					.setIcon("arrow-left-right")
+					.onClick(() => {
+						void handleCalloutReplace(ctx, def);
+					}),
+			);
 
-		menu.addItem((item) =>
-			item
-				.setTitle(t("settings.deleteAction"))
-				.setIcon("trash-2")
-				.onClick(() => {
-					void handleClearCalloutUsages(ctx, def);
-				}),
-		);
-	}
-
-	menu.showAtMouseEvent(event);
-	await Promise.resolve();
+			menu.addItem((item) =>
+				item
+					.setTitle(t("settings.deleteAction"))
+					.setIcon("trash-2")
+					.onClick(() => {
+						void handleClearCalloutUsages(ctx, def);
+					}),
+			);
+		}
+	});
 }
 
 export async function openRowMenu(
@@ -82,44 +77,40 @@ export async function openRowMenu(
 	event: MouseEvent,
 	def: CalloutDefinition,
 ): Promise<void> {
-	const preparation = prepareUsageMenu(ctx.app, event, ctx.registerDisposer);
-	if (preparation && !await preparation) return;
-	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
-	const menu = new Menu();
-	const usage = addUsageMenuItem(menu, ctx.app, allIds);
+	return openCalloutRowMenu(ctx, event, (menu) => {
+		const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
+		const usage = addUsageMenuItem(menu, ctx.app, allIds);
 
-	menu.addSeparator();
-	addDuplicateItem(menu, ctx, def);
+		menu.addSeparator();
+		addDuplicateItem(menu, ctx, def);
 
-	if (usage?.fileCount !== 0) {
-		menu.addItem((item) =>
-			item
-				.setTitle(t("settings.replaceAction"))
-				.setIcon("arrow-left-right")
-				.onClick(() => {
-					void handleCalloutReplace(ctx, def);
-				}),
-		);
-	}
+		if (usage?.fileCount !== 0) {
+			menu.addItem((item) =>
+				item
+					.setTitle(t("settings.replaceAction"))
+					.setIcon("arrow-left-right")
+					.onClick(() => {
+						void handleCalloutReplace(ctx, def);
+					}),
+			);
+		}
 
-	addDeleteItem(menu, ctx, def, usage);
+		addDeleteItem(menu, ctx, def, usage);
 
-	const isFallbackTarget = def.id === ctx.plugin.settings.fallbackCalloutId;
-	const alreadyMirrors = def.source === "fallback" && def.customized !== true;
+		const isFallbackTarget = def.id === ctx.plugin.settings.fallbackCalloutId;
+		const alreadyMirrors = def.source === "fallback" && def.customized !== true;
 
-	if (!isFallbackTarget && !alreadyMirrors) {
-		menu.addItem((item) =>
-			item
-				.setTitle(t("settings.makeFallbackAction"))
-				.setIcon("rotate-ccw")
-				.onClick(() => {
-					void handleConvertToFallback(ctx, def);
-				}),
-		);
-	}
-
-	menu.showAtMouseEvent(event);
-	await Promise.resolve();
+		if (!isFallbackTarget && !alreadyMirrors) {
+			menu.addItem((item) =>
+				item
+					.setTitle(t("settings.makeFallbackAction"))
+					.setIcon("rotate-ccw")
+					.onClick(() => {
+						void handleConvertToFallback(ctx, def);
+					}),
+			);
+		}
+	});
 }
 
 async function handleConvertToFallback(

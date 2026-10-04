@@ -19,7 +19,7 @@
  * the shared index. A saved custom definition also offers Duplicate, which
  * copies its stored Studio style under a new identity without changing this row.
  */
-import { Menu, setIcon, setTooltip } from "obsidian";
+import { setIcon, setTooltip } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
@@ -28,7 +28,7 @@ import {
 	handleClearCalloutUsages,
 } from "./calloutVaultActions";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
-import { prepareUsageMenu } from "../../usage/prepareUsageMenu";
+import { openCalloutRowMenu } from "./calloutRowMenu";
 import { ThemeCalloutPreviewModal } from "../ThemeCalloutPreviewModal";
 import { addDuplicateItem } from "./duplicateCallout";
 
@@ -67,34 +67,30 @@ export async function openThemeRowMenu(
 	event: MouseEvent,
 	def: CalloutDefinition,
 ): Promise<void> {
-	const preparation = prepareUsageMenu(ctx.app, event, ctx.registerDisposer);
-	if (preparation && !await preparation) return;
-	const menu = new Menu();
-	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
-	menu.addSeparator();
-	addDuplicateItem(menu, ctx, def);
+	return openCalloutRowMenu(ctx, event, (menu) => {
+		const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
+		menu.addSeparator();
+		addDuplicateItem(menu, ctx, def);
 
-	if (usage?.fileCount !== 0) {
-		menu.addItem((item) =>
-			item
-				.setTitle(t("settings.replaceAction"))
-				.setIcon("arrow-left-right")
-				.onClick(() => {
-					void handleCalloutReplace(ctx, def);
-				}),
-		);
-		menu.addItem((item) =>
-			item
-				.setTitle(t("settings.clearUsesAction"))
-				.setIcon("eraser")
-				.onClick(() => {
-					void handleClearCalloutUsages(ctx, def);
-				}),
-		);
-	}
-
-	menu.showAtMouseEvent(event);
-	await Promise.resolve();
+		if (usage?.fileCount !== 0) {
+			menu.addItem((item) =>
+				item
+					.setTitle(t("settings.replaceAction"))
+					.setIcon("arrow-left-right")
+					.onClick(() => {
+						void handleCalloutReplace(ctx, def);
+					}),
+			);
+			menu.addItem((item) =>
+				item
+					.setTitle(t("settings.clearUsesAction"))
+					.setIcon("eraser")
+					.onClick(() => {
+						void handleClearCalloutUsages(ctx, def);
+					}),
+			);
+		}
+	});
 }
 
 /**

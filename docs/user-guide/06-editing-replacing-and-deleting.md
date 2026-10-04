@@ -2,6 +2,12 @@
 
 Changes to a callout's color, icon, name, or ID take effect across the vault. Callout Studio updates the definition and, when necessary, rewrites matching note tokens so existing notes keep working.
 
+A callout's three-dot menu closes when you scroll the settings list, resize the
+window, or rotate your device. This works with a mouse, trackpad, keyboard, or
+touch on desktop, phone, and tablet. You can still scroll inside a long menu.
+Scrolling also cancels a menu that is still waiting to open; it will not appear
+after its row has moved. Open the three-dot menu again when you need it.
+
 ## Edit a callout
 
 Click the pencil beside a callout to open its editor. Save the new color, icon, name, IDs, or icon adjustments when you are finished.

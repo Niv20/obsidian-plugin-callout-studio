@@ -208,6 +208,11 @@ index subscription and owner-document/window listeners. Clicking elsewhere,
 Escape/Tab, window blur, Settings hide/redraw or index disposal cancels the
 pending opening; a detached trigger cannot open a delayed menu. Every settlement
 cleans up the temporary resources.
+The settings row's surrounding `openCalloutRowMenu` lifetime remains active
+through this wait and after the menu opens. It also cancels on actual ancestor
+scrolling, viewport resize/pan or orientation changes, and a removed or moved
+trigger, including changes between index readiness and the awaiting continuation.
+See [settings menu lifetime](16-settings-ui-and-modals.md#callout-row-menu-lifetime).
 Fast scans show the exact count from the menu's first frame. On timeout, DOM
 menus open with the plain localized **Find callouts** label and observe the existing
 scan without requesting another. Once ready, the added count fades in over

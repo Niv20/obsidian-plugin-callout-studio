@@ -382,6 +382,36 @@ icon, matching the built-in **Reset to default** action. It calls
 `CalloutRegistry.convertToFallback()` to follow the current fallback and
 subsequent changes to its style.
 
+### Callout row menu lifetime
+
+Custom, built-in and theme row actions all use
+`settings/sections/calloutRowMenu.ts`. `openCalloutRowMenu` captures the trigger
+and its owner document/window synchronously, before `prepareUsageMenu` can await
+the usage index. One temporary `Component` owns both the pending opening and
+the visible menu. A newer row-menu request closes the previous one for that app;
+Settings hide/redraw also disposes it.
+
+The document's passive capture listener observes non-bubbling scroll events,
+but only changed scroll offsets on the trigger's captured ancestors dismiss
+the menu. A scroll event queued before opening, the menu's own scroll area,
+submenus and unrelated scrollports do not close it. No wheel/touch gesture is
+cancelled, and dismissal never focuses or scrolls the trigger back into view.
+This uses actual scroll movement for mouse, touch, trackpad and keyboard alike,
+including horizontal/RTL scrolling and momentum. Window resize, orientation,
+blur/pagehide and visual-viewport resize/pan also close it. A temporary child-list
+observer detects a detached, reparented or moved trigger during incremental list
+refreshes. The trigger is rechecked immediately before showing a delayed menu.
+
+Cleanup is idempotent and immediate on explicit dismissal. Obsidian's `Menu`
+unloads its old component lifetime while showing, so the unload cleanup is
+registered **after** `showAtMouseEvent`. `ui/menuOnHide.ts` also composes cleanup
+with the usage item's index unsubscribe: Obsidian's public `onHide` setter
+replaces its callback rather than adding one. That callback covers dismissal
+before the menu's deferred component load; the unload hook handles normal
+closure immediately even when phone hide animations delay `onHide`. Closed
+sessions release their references from the Settings disposer and cannot close
+a later menu. No custom mobile presentation replaces Obsidian's menu.
+
 ### Duplicating a saved custom callout
 
 The row's three-dot menu offers **Duplicate** with the Lucide `copy` icon for

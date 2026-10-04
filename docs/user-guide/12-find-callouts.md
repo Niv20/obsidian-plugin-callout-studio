@@ -119,7 +119,10 @@ Otherwise it waits up to 200 milliseconds for the shared scan. If the count is
 ready within that time, the menu opens with it; if scanning takes longer, the
 menu opens with **Find callouts**, and the number fades in when ready. Opening
 another callout's menu reuses the same index rather than scanning the vault again.
-Clicking elsewhere or closing Settings cancels a pending menu opening.
+Clicking elsewhere, scrolling the settings list, resizing the window, rotating
+the device, or closing Settings cancels a pending menu opening. The same list
+scroll and viewport changes close an already-open menu; scrolling inside the
+menu itself stays available.
 The fade respects your system's reduced-motion preference. Incomplete scans are
 labelled rather than reported as zero. Actions that change notes check current
 contents separately.

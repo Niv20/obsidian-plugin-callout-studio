@@ -145,9 +145,9 @@ export class Component {
 	private disposers: Array<() => void> = [];
 	load(): void {}
 	register(dispose: () => void): void { this.disposers.push(dispose); }
-	registerDomEvent(el: EventTarget, name: string, listener: EventListener): void {
-		el.addEventListener(name, listener);
-		this.register(() => el.removeEventListener(name, listener));
+	registerDomEvent(el: EventTarget, name: string, listener: EventListener, options?: boolean | AddEventListenerOptions): void {
+		el.addEventListener(name, listener, options);
+		this.register(() => el.removeEventListener(name, listener, options));
 	}
 	unload(): void { this.disposers.splice(0).forEach(dispose => dispose()); }
 }
@@ -155,14 +155,60 @@ export class Modal {}
 export class Editor {}
 
 /**
- * Settings-pane and menu constructors. These exist so the *bundle links*, and
+ * Settings-pane constructor. This exists so the *bundle links*, and
  * for no other reason: `AutoComplete` imports `CalloutEditor` as a value (it
  * opens one for "Create new"), which drags the whole settings UI into any suite
- * that touches the popover. None of it is constructed there, and a suite that
- * did construct one would need real implementations rather than these.
+ * that touches the popover. It is not constructed there, and a suite that
+ * did construct one would need a real implementation.
  */
 export class PluginSettingTab {}
-export class Menu { setUseNativeMenu(_native: boolean): this { return this; } }
+/** Menus retain one hide callback, as Obsidian does; later registrations replace it. */
+export const createdMenus: Menu[] = [];
+export class Menu extends Component {
+	readonly items: Array<{ title: string | DocumentFragment; titles: Array<string | DocumentFragment> }> = [];
+	shown = false;
+	hideCalls = 0;
+	delayHideCallback = false;
+	showEvent?: MouseEvent;
+	private hidden?: () => void;
+	constructor() { super(); createdMenus.push(this); }
+	setUseNativeMenu(_native: boolean): this { return this; }
+	addItem(callback: (item: {
+		setTitle(title: string | DocumentFragment): unknown;
+		setIcon(icon: string): unknown;
+		onClick(callback: () => unknown): unknown;
+	}) => void): this {
+		const record = { title: "" as string | DocumentFragment, titles: [] as Array<string | DocumentFragment> };
+		const item = {
+			setTitle(title: string | DocumentFragment) { record.title = title; record.titles.push(title); return this; },
+			setIcon(_icon: string) { return this; },
+			onClick(_callback: () => unknown) { return this; },
+		};
+		callback(item);
+		this.items.push(record);
+		return this;
+	}
+	addSeparator(): this { return this; }
+	onHide(callback: () => void): void { this.hidden = callback; }
+	showAtMouseEvent(event: MouseEvent): this {
+		this.unload();
+		this.shown = true;
+		this.showEvent = event;
+		this.load();
+		return this;
+	}
+	hide(): this {
+		this.hideCalls++;
+		this.shown = false;
+		this.unload();
+		if (!this.delayHideCallback) this.finishHide();
+		return this;
+	}
+	/** Phone close animation delivers this later than the component teardown. */
+	finishHide(): void { this.hidden?.(); }
+	/** A menu hidden before its deferred load only delivers onHide. */
+	earlyHide(): void { this.shown = false; this.hideCalls++; this.finishHide(); }
+}
 export class WorkspaceLeaf {}
 
 /** Minimal lifecycle/DOM host for occurrence view tests. */

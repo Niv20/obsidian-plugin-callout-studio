@@ -3,6 +3,7 @@ import { t } from "../i18n";
 import { STATISTICS_ICON_ID } from "../icons/uiIcons";
 import { getCalloutOccurrenceIndex } from "./occurrenceService";
 import { openOccurrencesFromSettings } from "./openFromSettings";
+import { onMenuHide } from "../ui/menuOnHide";
 
 export interface UsageCount { fileCount: number; totalCount: number }
 
@@ -16,7 +17,7 @@ export function addUsageMenuItem(
 	menu.setUseNativeMenu(false);
 	let active = true;
 	let unsubscribe = (): void => {};
-	menu.onHide(() => { active = false; unsubscribe(); });
+	onMenuHide(menu, () => { active = false; unsubscribe(); });
 	menu.addItem((item) => {
 		let previousTitle: string | undefined;
 		const update = (): void => {
