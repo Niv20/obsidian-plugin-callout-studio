@@ -9,8 +9,6 @@ only the keyboard's row is highlighted. Move the pointer again to return the
 highlight and preview to the row under it.
 Group headings stay visible at the top of the color menu as you scroll.
 
-![Per-mode colors](https://github.com/user-attachments/assets/8a37477c-2323-4464-9494-f3ed35e56f18)
-
 ## Create a saved palette
 
 Open the main plugin settings, find **Saved color palettes**, and click **New palette**.
@@ -25,6 +23,8 @@ Open the main plugin settings, find **Saved color palettes**, and click **New pa
 
 Saved palettes appear at the top of every callout color menu under **Custom**.
 
+![New Ocean palette with a base color, background intensity, and live previews in dark mode](assets/palette-editor.svg)
+
 ## Background styles
 
 The **Style** menu offers three choices:
@@ -32,6 +32,8 @@ The **Style** menu offers three choices:
 - **Solid** uses a single background color.
 - **Gradient** adds a second color and a direction control. You can also enable **Gradient title text**.
 - **Transparent** removes the callout's background, including a tinted title bar or a content panel your theme would otherwise draw, while keeping the base color on the title and icon. The theme's borders and small decorations stay.
+
+![Sunset gradient palette with two colors, direction controls, and live previews in dark mode](assets/palette-gradient.svg)
 
 In the palette editor, **Name** and **Style** have the same rounded field shape
 and hover and focus feedback as other text and selection fields. Open

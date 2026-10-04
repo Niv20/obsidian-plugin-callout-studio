@@ -142,6 +142,74 @@ the candidate defaults to the current `styles.css`. `RECOVERY_SCREENSHOTS` names
 an optional output directory for visual review. This remains a browser fixture,
 not a substitute for checking the window in Obsidian and on an iPhone.
 
+### User-guide SVG renders
+
+`node scripts/render-user-guide.mjs` generates the local illustrations for
+user-guide chapters 01 and 03–17. Pass scene names to regenerate selected assets;
+`--all` also regenerates the approved chapter 02 examples. It bundles the production
+settings, editors, pickers, context actions, sidebar components, decorators,
+registry, CSS injector, and Reading view postprocessor into isolated Chromium
+pages. The pages use dark mode and synthetic sample data; they cannot open a
+vault or save settings. All page network requests are blocked and fail the run.
+
+`scripts/user-guide/obsidian-runtime.ts` supplies Obsidian's DOM helpers and
+basic modal/control shells. The embedded Obsidian editor is unavailable in this
+host, so `LiveCalloutPreview` takes its existing Reading view fallback. A small
+Markdown host constructs its sample document, and the production postprocessor
+and CSS injector render its heading, inline, and block callouts. The autocomplete
+fixtures use real CodeMirror editors; their popover placement and native Outline,
+link-suggestion, and menu shells belong to the documentation host. The plugin's
+actual decorators and action builders populate those shells. Recovery versions,
+note scans, and conversion plans come from synthetic data; destructive actions
+are never confirmed. These are source-rendered illustrations, not a complete
+Obsidian session or a check of its Live Preview internals.
+
+The renderer reads `app.css` and the Lucide geometry table from locally installed
+Obsidian. On macOS it prefers the newest installed update archive in
+`~/Library/Application Support/obsidian/`, falling back to
+`/Applications/Obsidian.app/Contents/Resources/obsidian.asar`. Set `OBSIDIAN_ASAR`
+for another location, or supply `OBSIDIAN_APP_CSS`, `OBSIDIAN_ICON_DATA`, and
+`OBSIDIAN_VERSION` together to use extracted assets. The host uses that version
+for API checks, so the callout color format matches the loaded core stylesheet.
+`PLAYWRIGHT_MODULE` selects an existing Playwright
+installation and `BROWSER_EXECUTABLE` optionally selects Chromium. No additional
+production dependency or network download is introduced.
+
+Theme scenes load the locally installed AnuPpuccin stylesheet from
+`<Vault>/.obsidian/themes/AnuPpuccin/theme.css`; set `GUIDE_THEME_CSS` to its path
+on another machine. They apply the theme's dark Mocha and Sleek classes, and use
+the real theme scanner, overlay reconciliation, and appearance probe. External
+font declarations and imports are omitted from this isolated offline fixture;
+the theme's callout and control rules remain intact. The user's active theme is
+never changed.
+
+`vector-exporter.mjs` converts computed browser geometry, text, colors, and SVG
+icon paths into ordinary SVG primitives. The language selector additionally
+passes its non-Latin labels through the locally installed `rsvg-convert` tool
+(or the executable named by `GUIDE_RSVG_CONVERT`) so Hebrew, Chinese, and other
+scripts remain readable when the SVG is viewed on a machine without those
+fonts. The committed assets in
+`docs/user-guide/assets/` contain no screenshots, embedded bitmap images,
+`foreignObject`, scripts, or external resources. Markdown embeds them with
+relative image paths. Regenerate them after changing the illustrated components;
+check their vector output visually as well as checking the runner's assertions.
+New illustrations have a maximum height of 760 SVG pixels including padding.
+Their window body scrolls or clips within 704 pixels, retaining the production
+header and footer instead of expanding long forms. Text uses local font fallbacks;
+emoji remain Unicode text and follow the viewer's emoji font. The exporter keeps
+each line in logical text order for bidirectional shaping, preserves uppercase
+transforms and letter spacing, and adjusts spacing without stretching glyphs.
+Modern color spaces and gradient stops are converted to portable sRGB values.
+The context menu and fallback picker use measured bottom margins; the Outline
+preview uses compact, vertically centered rows. The language selector shows only
+its own section, while the localized and paused-saving examples use two separate
+framed crops. The paused-saving history crop omits the first heading's section
+divider and top gap, keeping the heading near the top of its frame.
+Absolutely positioned pseudo-elements are exported relative to
+their parent's padding box, preserving the native checkbox marker alignment.
+File-group headings in the find and conversion illustrations have transparent
+backgrounds. These framing overrides are confined to the documentation fixtures.
+
 ## Repo-convention tests - the automated rules that hold the codebase together
 
 Several test files check the **repository itself**, not runtime behaviour -

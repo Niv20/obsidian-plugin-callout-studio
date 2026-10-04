@@ -2,8 +2,6 @@
 
 Global styling gives every Callout Studio callout a consistent shape and layout. Open the plugin settings and find **Global settings**. Changes apply immediately across the vault.
 
-![Global callout style](https://github.com/user-attachments/assets/7558c077-1396-43de-9715-6538b4ca8297)
-
 Each callout format has its own controls, so changing one format does not force the others to use the same geometry.
 
 Each option box shows a **Reset to default** arrow in its header when its settings differ from the defaults. Click it to restore that box's settings immediately. Other boxes and callout formats keep their values.
@@ -16,6 +14,8 @@ For heading callouts, you can:
 - Set the exact border thickness.
 - Adjust vertical padding and the spacing between headings.
 - Control corner rounding and related heading geometry.
+
+![Heading callout style window with borders, shape, spacing, and a live preview in dark mode](assets/global-heading.svg)
 
 ## Inline callouts
 
@@ -33,6 +33,8 @@ The Inline preview shows a localized example pill between two sample
 sentences. Click it to reveal its Markdown syntax in the preview editor, using
 the translated label.
 
+![Inline callout style window with borders, text scale, corner rounding, and a live pill preview in dark mode](assets/global-inline.svg)
+
 ## Block callouts
 
 Block callouts include the broadest set of controls:
@@ -40,6 +42,8 @@ Block callouts include the broadest set of controls:
 - Border sides, thickness, and corner rounding.
 - Separate title and content scale.
 - **Align content with title**, which starts the content text at the same inline edge as the title text, in both left-to-right and right-to-left layouts. The spacing follows the icon's width, including wider images.
+
+![Block callout style window with border, text scale, shape, and alignment controls beside its dark-mode preview](assets/global-block.svg)
 
 These settings shape callouts drawn by Callout Studio. If your active theme owns a callout, the theme keeps control of its appearance; see [Theme integration](17-theme-integration.md).
 

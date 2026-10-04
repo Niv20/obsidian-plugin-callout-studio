@@ -52,6 +52,10 @@ type count as heading text, not as an inline payload.
 
 ### Review the proposed changes
 
+![Review conversion sidebar with selected heading and inline changes and Before and After previews](assets/conversion-review.svg)
+
+*Review each proposed replacement before converting. The selected-change summary stays visible while the file groups scroll below it.*
+
 The sidebar groups results by file and shows the number of changes beside each
 file name. Select a file to open its note. Each card shows the format and line
 number, followed by **Before** and **After** with the original text and proposed
@@ -129,6 +133,10 @@ convert, or a conversion is already running.
 
 ### Apply the conversion
 
+![About conversion window with the plugin's Before and After examples and backup advice](assets/conversion-help.svg)
+
+*The question-mark button opens the conversion rules and backup reminder without changing notes.*
+
 **Back up the entire vault first.** A Callout Studio settings export does not
 back up notes. Conversion edits the original Markdown files directly. It has
 no automatic backup and no undo in Callout Studio.
@@ -149,6 +157,10 @@ restarting or disabling the plugin; the plan is kept in memory, not saved as a
 recovery file.
 
 ## Reset everything
+
+![Reset everything confirmation listing the custom callouts and references affected, with an unticked acknowledgement](assets/reset-confirmation.svg)
+
+*The confirmation lists what your setup would lose. **Reset everything** stays locked until **I have read and understood** is ticked.*
 
 Use **Reset everything** to return Callout Studio to a clean state. It removes
 or restores:

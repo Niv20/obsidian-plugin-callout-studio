@@ -16,6 +16,10 @@ When importing a Callout Studio backup, matching entries are updated and valid s
 
 ## Version history
 
+![Version history listing saved setups, including versions kept before an import and a reset](assets/version-history.svg)
+
+***Version history** combines earlier setups into one timeline. Each row compares that setup with the one currently displayed.*
+
 The **Earlier versions** description flows as one paragraph, wrapping to fit the available width.
 
 Each date heading has space above and below it, with about twice as much above, so it clearly belongs to the versions beneath it. The first heading has only a small gap above it. A short horizontal line connects each heading to the timeline at the centre of the text.
@@ -67,6 +71,10 @@ The reason supplies the title when it is known. Otherwise, a version with any co
 Select the trash button, **Delete**, to permanently remove the available copies of a version after a warning confirmation. This includes this device's history entry and any listed backup or sync-copy files. When files are involved, the confirmation warns that their deletion may sync to other devices. Copies in another device's private history can remain. This cannot be undone, and it never changes your current setup or any other version. If a copy cannot be deleted, the list refreshes to show what remains. Unlike **Restore**, deleting works on a version that can't be read as settings and while saving is paused, because it never touches your settings file.
 
 ### View a version before restoring it
+
+![Version details comparing current callout colors and icons with an earlier setup](assets/version-details.svg)
+
+***View details** shows the changes restoring a version would make, including side-by-side callout previews. The comparison scrolls within the window.*
 
 Select the eye button, **View details**, beside any version to open **Version details**. The saved date and time appear in parentheses beside the window title, in smaller, muted text; an unknown date is shown there as **Save time not recorded**. The report starts directly with **What changed**.
 
@@ -126,6 +134,10 @@ To bring back a readable backup, use [Version history](#version-history). Routin
 The folder can sync if your provider includes it, and deleting the plugin folder removes it. A saved backup does not confirm that synchronization has completed. Keep an exported backup somewhere else as well.
 
 ## Recover paused saving
+
+![Two separate settings views: Saving is paused with recovery actions above, and Version history below](assets/saving-paused.svg)
+
+*When the settings file is missing, the banner starts with **Check again** and keeps the recovery and version-history actions available.*
 
 Callout Studio pauses saving when it cannot safely use its settings file. Your displayed setup may still be available from memory or a recovery copy kept on this device. Uninstalling the plugin on a synced device can remove the shared settings file on other devices too. A temporarily unavailable cloud file can look similar, so the plugin does not assume that missing settings should be reset.
 

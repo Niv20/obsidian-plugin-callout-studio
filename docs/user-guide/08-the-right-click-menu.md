@@ -6,7 +6,7 @@ The callout-type action adapts to the token under the pointer. A saved type
 shows **Edit callout settings**. An unknown type shows **Create new callout** and
 opens a new editor with that token's ID already filled in.
 
-![Right-click context menu](https://github.com/user-attachments/assets/4100cbe6-ba6f-45ce-986f-f3d7d17fdbac)
+![The right-click actions for a block callout, including copying Markdown and changing its fold state](assets/context-menu.svg)
 
 ## Heading callouts
 
@@ -39,6 +39,8 @@ A block callout offers:
 ## Customize the menu
 
 Open **Settings → Callout Studio → Context menu**, then click **Customize menu items**. Toggle individual actions on or off and drag their handles into your preferred order. While you drag, a grey slot that follows the active palette shows where the row will land if you let go. You can keep dragging the same row or another row without waiting for it to settle. Every change is saved immediately.
+
+![The menu customization window, with action toggles and drag handles for each callout format](assets/context-customization.svg)
 
 Each category shows a **Reset to default** arrow in its header after you change its toggles or order. Click it to turn every action in that category on and restore the original sorting order. The other categories keep their settings.
 

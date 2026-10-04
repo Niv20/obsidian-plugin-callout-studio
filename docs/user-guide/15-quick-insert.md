@@ -11,7 +11,15 @@ On desktop, the search field is ready for typing when the window opens. On a pho
 
 Quick Insert creates **Block callouts only**. Use autocomplete or a custom command for Heading and Inline callouts.
 
+![Quick insert block callout window with search, source filter, and rendered callout previews](assets/quick-insert.svg)
+
+*Search and choose from rendered block-callout previews. Each row offers an edit action and an insert action.*
+
 ## Filter by source
+
+![Quick insert filtered to My callouts, with the source choices open](assets/quick-insert-filter.svg)
+
+*Select **My callouts** to narrow the list to your own types. The source choice is remembered on this device.*
 
 The first time you open Quick Insert, it starts with **All** selected. After you change the source, Callout Studio remembers your latest choice for the next opening, including after restarting Obsidian. Each device remembers its own choice. The available source choices are shown in this order:
 

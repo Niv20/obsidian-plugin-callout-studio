@@ -6,11 +6,19 @@ A heading callout remains a real Obsidian heading. Callout Studio integrates it 
 
 Open Obsidian's Outline view. The heading appears at its normal level, but Callout Studio hides the raw `[!type]` token. The clean title keeps the callout's icon and color, making the section easy to recognize.
 
+![Heading callouts retain their icons and colors in Obsidian's Outline.](assets/heading-outline.svg)
+
+*The Tip and Warning headings appear with clean titles in both the note and its Outline.*
+
 ## Internal links
 
 Type `[[#` and start searching for the heading. Link suggestions show the clean title instead of the raw callout syntax.
 
 After you insert the link, it behaves like a normal heading link and renders with the callout's icon and color.
+
+![Clean heading suggestions and rendered internal links in dark mode.](assets/heading-links.svg)
+
+*Heading suggestions and links in Reading view use the same callout icons and clean titles.*
 
 ## Tables of contents
 

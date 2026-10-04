@@ -6,6 +6,8 @@ Callout Studio supports more than thirty interface languages. By default, it fol
 
 Open **Settings → Callout Studio** and select a language from the dropdown. Each language is listed under its own name.
 
+![The language picker open in dark mode, listing languages under their own names](assets/language-selector.svg)
+
 Until you choose a language, the dropdown shows the language Obsidian is using and keeps following it, even if you change Obsidian's language later. If Callout Studio has no translation for Obsidian's language, it shows English.
 
 When you choose a language other than Obsidian's, a **Reset to default** arrow appears beside the dropdown. To follow Obsidian's language again, click the arrow or choose Obsidian's language from the list.
@@ -13,6 +15,8 @@ When you choose a language other than Obsidian's, a **Reset to default** arrow a
 Obsidian's language is set separately on each device, but your choice here syncs with the rest of Callout Studio's settings. If you choose a language, every device uses it. If you follow Obsidian, each device uses its own Obsidian language.
 
 Changing this option affects only Callout Studio's settings, buttons, and messages. Version history also uses your selected language for version names, deletion confirmations, and the **What changed** heading.
+
+![Two separate settings views: the Spanish language choice above, and Callout Studio's translated callout settings below](assets/language-localized.svg)
 
 ## Download once, use offline
 

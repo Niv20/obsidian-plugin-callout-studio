@@ -4,8 +4,6 @@ Callout Studio includes Obsidian's thirteen built-in callouts. Open the plugin s
 
 Every built-in or custom callout can appear in three forms: Block, Heading, and Inline. One definition supplies the name, icon, and color for all three.
 
-![Three ways to use a callout](https://github.com/user-attachments/assets/3cf88262-184d-42e6-b810-d43889629afb)
-
 ## Block callout
 
 Use a block callout for a standalone box of information. Start the line with `>`, then place an exclamation mark and the callout ID inside square brackets:
@@ -23,6 +21,8 @@ Write a custom title immediately after the closing bracket. Start every addition
 >
 > Second paragraph.
 ```
+
+![Note and Tip block callouts, including a custom title and separate paragraphs](assets/formats-block.svg)
 
 ## Heading callout
 
@@ -50,6 +50,8 @@ Want an [!note]{inline callout}? Add [!type]{text} inside a sentence.
 
 The `{` must touch the closing `]`.
 
+![A Tip heading callout and Warning and Note inline callouts inside a note](assets/formats-heading-inline.svg)
+
 ## Picking from the autocomplete menu
 
 Type `[!` in any of the three positions and a menu of your callouts opens. Choosing one with **Enter** or a click writes the callout, then leaves the cursor where you would type next:
@@ -57,6 +59,8 @@ Type `[!` in any of the three positions and a menu of your callouts opens. Choos
 - **Block:** on a new `> ` line under the header, ready for the content.
 - **Heading:** on a new line under the heading.
 - **Inline:** right after the pill, on the same line.
+
+![The autocomplete menu offering Note while its block-callout token is being typed](assets/formats-autocomplete.svg)
 
 If you were only changing the type of a callout that already has a title, the cursor stays at the end of that line instead. This works the same for built-in callouts and for ones you created, whatever their ID.
 

@@ -32,6 +32,10 @@ is narrow. The header, pickers, and matching-result summary remain fixed while t
 file groups below scroll. Several inline callouts on one line count as separate
 occurrences. The former vault-wide statistics cards are no longer shown here.
 
+![The searchable type picker showing registered types and the unregistered idea type](assets/find-picker.svg)
+
+*The type picker includes registered callouts and unregistered types found in notes. Here, a search for “de” shows choices from both groups.*
+
 Use the searchable type picker to choose **All types**, a saved type,
 or an unregistered type found in your notes. The iconless **All types** option
 appears first under **Browse**. It shows every callout occurrence in the vault,
@@ -61,6 +65,10 @@ are editing. Once you select a different type, an unused unregistered type drops
 out of the picker.
 
 ## Navigate through occurrences
+
+![Find callouts filtered to project, with heading and block references grouped by note](assets/find-results.svg)
+
+*Choose a type to see its source references, grouped by note. The results scroll below the fixed filters and summary.*
 
 Results are grouped by note, with a bordered card for each occurrence. The file
 heading includes the matching count in parentheses after the file name, including matches not yet

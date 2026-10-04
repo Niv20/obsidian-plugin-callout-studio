@@ -8,6 +8,8 @@ On first installation, Callout Studio checks whether the vault contains **Callou
 
 To open the importer yourself, go to **Settings → Callout Studio → Import and export → Import**. The **Import from** window lists **Callout Studio** first, for your own backups, and then **Callout Manager** and **Admonition** under **From another plugin**.
 
+![The Import from chooser, offering a Callout Studio backup and imports from Callout Manager or Admonition](assets/import-source.svg)
+
 The importer brings over the available custom callout names, colors, icons, and uploaded images. The Callout Manager and Admonition importers work the same way. The window has one **Import** button at the bottom, and it always imports the selected option: the one with the purple ring and the filled dot.
 
 - **This vault** reads the other plugin's data straight from the current vault. If it finds some, it shows how many custom callouts it found, carries a **Recommended** badge, and is already selected. This is the most complete route, and nothing has to be exported from the other plugin first. If the other plugin isn't in this vault, or has nothing to import, this option doesn't appear at all.
@@ -73,6 +75,8 @@ For sync guidance and recovery steps, see [Syncing & backups](13-syncing-and-bac
 ## Export a CSS snippet
 
 Choose the CSS option to generate a standalone copy of your Block callout styles. Callout Studio saves the file in the vault's CSS snippets folder.
+
+![The export chooser, offering the recommended Callout Studio backup and a CSS snippet](assets/export-format.svg)
 
 The CSS file is a one-way styling snapshot, **not a Callout Studio backup**. The Callout Studio backup import can't restore it, and Callout Studio doesn't scan the snippets folder for it. To restore or move an editable Callout Studio setup, use the JSON backup instead.
 
