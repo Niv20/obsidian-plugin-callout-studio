@@ -31,7 +31,7 @@ After choosing a different fallback, click **Reset to default** beside the picke
 
 ## Apply or leave the fallback style
 
-To make an existing saved callout follow the fallback, open its three-dot menu and choose **Use default fallback style**. Its icon and color immediately match the fallback.
+To make an existing saved callout follow the fallback, open its three-dot menu and choose **Use default fallback style**, marked with a circular arrow. Its icon and color immediately match the fallback.
 
 To make it independent again, edit any part of its design. The **Default fallback** label disappears, and later fallback changes no longer change that callout.
 

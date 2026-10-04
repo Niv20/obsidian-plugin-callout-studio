@@ -111,7 +111,7 @@ export async function openRowMenu(
 		menu.addItem((item) =>
 			item
 				.setTitle(t("settings.makeFallbackAction"))
-				.setIcon("sparkles")
+				.setIcon("rotate-ccw")
 				.onClick(() => {
 					void handleConvertToFallback(ctx, def);
 				}),

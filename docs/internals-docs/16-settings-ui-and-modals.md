@@ -377,6 +377,11 @@ too (see [The three sections pin their headings](#the-three-sections-pin-their-h
 palettes is the standalone fourth). Unlike the other sections, it keeps only the
 list of saved palettes and no additional orphan groups.
 
+The row's **Use default fallback style** action uses the Lucide `rotate-ccw`
+icon, matching the built-in **Reset to default** action. It calls
+`CalloutRegistry.convertToFallback()` to follow the current fallback and
+subsequent changes to its style.
+
 ### Duplicating a saved custom callout
 
 The row's three-dot menu offers **Duplicate** with the Lucide `copy` icon for
