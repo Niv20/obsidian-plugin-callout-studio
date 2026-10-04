@@ -52,6 +52,13 @@ them at runtime, so bundling them would both bloat `main.js` and risk a
 duplicate/mismatched CodeMirror instance. Production builds strip
 sourcemaps entirely (dev builds inline them for fast iteration).
 
+Both the plugin's Obsidian API package and the linter's copy pin Moment
+2.29.4. The npm override resolves both to 2.31.0, which fixes
+[GHSA-4p3w-j4w9-5jqw](https://github.com/advisories/GHSA-4p3w-j4w9-5jqw).
+This changes the installed dependency tree, not Obsidian's runtime copy:
+Callout Studio does not bundle Moment and only reads the host's current
+locale through `window.moment.locale()` as an older-Obsidian language fallback.
+
 ## TypeScript config
 
 The canonical configuration lives in `scripts/tsconfig.json`. The build
