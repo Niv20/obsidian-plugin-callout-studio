@@ -420,7 +420,7 @@ export class PluginImportModal extends Modal {
 		// The banner can open this window straight away; saving may be paused.
 		if (blockedWhilePaused(this.ctx.plugin.settingsWriter)) return;
 		// An import updates existing callouts in place: keep a way back.
-		if (!await writeSettingsBackup(this.ctx.plugin, this.ctx.plugin.registry.toSaveData())) {
+		if (!await writeSettingsBackup(this.ctx.plugin, this.ctx.plugin.registry.toSaveData(), { reason: "before-import" })) {
 			new Notice(t("import.backupFailed"), 10000);
 			return;
 		}

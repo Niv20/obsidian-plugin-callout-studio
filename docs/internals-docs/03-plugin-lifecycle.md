@@ -13,7 +13,10 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
    Read `workspace.layoutReady`, create the registry and inject the previous
    startup CSS snapshot synchronously before the first await.
 2. Create `SettingsWriter`, `DeviceLocalStore`, `ReloadQueue` and the
-   `SettingsRecoveryService` (`plugin.recovery`). Read and validate `data.json`
+   `SettingsRecoveryService` (`plugin.recovery`). Apply history and backup retention
+   before adoption, including existing excess left by older builds. This best-effort
+   cleanup has a bounded wait and does not write settings or the checkpoint.
+   Read and validate `data.json`
    through `loadSettingsSafely()`; load definitions and ordinary settings. A
    legacy `autocomplete.enabled: false` is normalized to `true` and flushed
    through the ordinary migration-save path. Unreadable, unsupported or

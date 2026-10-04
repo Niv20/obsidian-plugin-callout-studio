@@ -180,6 +180,94 @@ describe("listing earlier setups", () => {
 	});
 });
 
+describe("versions: one row per setup, wherever its copies are", () => {
+	const labelsOf = (h: ReturnType<typeof recoveryActionHarness>) =>
+		JSON.parse(h.files.get(`${DIR}/backups/labels-${h.host.localState.deviceId}.json`) ?? "{}") as {
+			reasons?: Record<string, string>;
+		};
+
+	it("lists a setup kept on this device and in the vault once, named by why the vault kept it", async () => {
+		const h = recoveryActionHarness(); await h.boot();
+		try {
+			const service = new SettingsRecoveryService(h.host);
+			const setup = { callouts: [definition({ id: "both", icon: star })] };
+			h.host.settingsWriter.historyEntries = async () => [{ hash: "1111111111111111", savedAt: 200, bytes: 1, data: setup, reason: "edit" }];
+			const backup = `${DIR}/backups/data-2026-09-01T10-00-00-000Z-phone001-0123456789abcdef.json`;
+			h.files.set(backup, JSON.stringify(setup));
+			h.files.set(`${DIR}/backups/labels-phone001.json`, JSON.stringify({ reasons: { [backup.slice(backup.lastIndexOf("/") + 1)]: "before-import" } }));
+			const versions = (await service.listVersions()).filter(version => ids(version.data).includes("both"));
+			assert.equal(versions.length, 1);
+			assert.deepEqual(versions[0]!.copies.map(copy => copy.kind), ["backup", "history"]);
+			assert.deepEqual(versions[0]!.copies.map(copy => copy.reason), ["before-import", "edit"]);
+			assert.deepEqual(versions[0]!.reason, { kind: "backup", reason: "before-import" });
+		} finally { h.host.settingsWriter.destroy(); }
+	});
+
+	it("dates a sync service's copy by when its file last changed, when the vault can say", async () => {
+		const h = recoveryActionHarness(); await h.boot();
+		try {
+			h.files.set(`${DIR}/data 2.json`, JSON.stringify({ callouts: [] }));
+			const adapter = h.host.app.vault.adapter as unknown as { stat(path: string): Promise<{ mtime: number } | null> };
+			adapter.stat = path => Promise.resolve(path.endsWith("data 2.json") ? { mtime: 1_700_000_000_000 } : null);
+			const copy = (await new SettingsRecoveryService(h.host).listSources()).find(source => source.kind === "copy");
+			assert.equal(copy?.time, 1_700_000_000_000);
+		} finally { h.host.settingsWriter.destroy(); }
+	});
+
+	it("deletes every copy of a version and forgets why the backup was kept", async () => {
+		const h = recoveryActionHarness(); await h.boot();
+		try {
+			const service = new SettingsRecoveryService(h.host);
+			const setup = { callouts: [definition({ id: "gone", icon: star })] };
+			const deleted: string[] = [];
+			h.host.settingsWriter.historyEntries = async () => deleted.length ? [] : [{ hash: "1111111111111111", savedAt: 200, bytes: 1, data: setup }];
+			h.host.settingsWriter.deleteHistoryEntry = async (hash: string) => { deleted.push(hash); };
+			const mine = h.host.localState.deviceId;
+			const backup = `${DIR}/backups/data-2026-09-01T10-00-00-000Z-${mine}-0123456789abcdef.json`;
+			h.files.set(backup, JSON.stringify(setup));
+			h.files.set(`${DIR}/data 2.json`, JSON.stringify(setup));
+			const find = async () => (await service.listVersions()).find(candidate => ids(candidate.data).includes("gone"))!;
+			h.files.set(`${DIR}/backups/labels-${mine}.json`, JSON.stringify({
+				reasons: { [backup.slice(backup.lastIndexOf("/") + 1)]: "before-reset" },
+			}));
+			const version = await find();
+			assert.equal(version.copies.length, 3);
+			assert.equal(await service.removeVersion(version), true);
+			assert.deepEqual(deleted, ["1111111111111111"]);
+			assert.ok(!h.files.has(backup));
+			assert.ok(!h.files.has(`${DIR}/data 2.json`));
+			assert.deepEqual(labelsOf(h).reasons, {});
+			assert.equal((await service.listVersions()).filter(candidate => ids(candidate.data).includes("gone")).length, 0);
+		} finally { h.host.settingsWriter.destroy(); }
+	});
+
+	it("reports a version as not fully deleted when one copy stayed", async () => {
+		const h = recoveryActionHarness(); await h.boot();
+		const error = console.error; console.error = () => {};
+		try {
+			const service = new SettingsRecoveryService(h.host);
+			const setup = { callouts: [definition({ id: "stuck", icon: star })] };
+			h.host.settingsWriter.historyEntries = async () => [{ hash: "1111111111111111", savedAt: 200, bytes: 1, data: setup }];
+			h.host.settingsWriter.deleteHistoryEntry = () => Promise.reject(new Error("Storage busy"));
+			h.files.set(`${DIR}/data 2.json`, JSON.stringify(setup));
+			const version = (await service.listVersions()).find(candidate => ids(candidate.data).includes("stuck"))!;
+			assert.equal(await service.removeVersion(version), false);
+			assert.ok(!h.files.has(`${DIR}/data 2.json`), "what could go, went");
+		} finally { console.error = error; h.host.settingsWriter.destroy(); }
+	});
+
+	it("records Restore in the history as a restore, and its backup as taken before one", async () => {
+		const h = recoveryActionHarness(); await h.boot();
+		try {
+			const before = h.host.registry.toSaveData();
+			h.host.registry.add(definition({ id: "current", icon: star }));
+			await h.host.saveSettings();
+			assert.equal(await new SettingsRecoveryService(h.host).restore(before), "restored");
+			assert.deepEqual(Object.values(labelsOf(h).reasons ?? {}), ["before-restore"]);
+		} finally { h.host.settingsWriter.destroy(); }
+	});
+});
+
 describe("replacing an unreadable settings file", () => {
 	it("keeps an exact copy, then replaces a damaged file with the setup shown", async () => {
 		const h = recoveryActionHarness();

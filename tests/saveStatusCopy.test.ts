@@ -19,7 +19,7 @@ import { fakeDom } from "./support/fakeDom";
 /** Every label a banner button can carry. */
 const LABELS = [
 	"saveStatus.restoreSettings", "saveStatus.createSettingsFile", "saveStatus.checkAgain", "saveStatus.tryAgain",
-	"saveStatus.replaceUnreadable", "saveStatus.discardRecoveryCopy", "saveStatus.goToBackups",
+	"saveStatus.replaceUnreadable", "saveStatus.discardRecoveryCopy", "saveStatus.goToVersions",
 ].map((key) => en[key]!);
 
 const FROZEN: readonly SettingsSaveReason[] = ["missing", "unreadable", "recovery-read", "newer-version"];
@@ -97,7 +97,7 @@ describe("the paused saving banner's words", () => {
 				for (const label of LABELS) {
 					if (prose.includes(label) && !buttons.includes(label)) broken.push(`${at}: names "${label}" but shows ${JSON.stringify(buttons)}`);
 				}
-				if (prose.includes(en["saveStatus.guide.backup"]!) && !buttons.includes(en["saveStatus.goToBackups"]!)) {
+				if (prose.includes(en["saveStatus.guide.versions"]!) && !buttons.includes(en["saveStatus.goToVersions"]!)) {
 					broken.push(`${at}: points to backups without a way there`);
 				}
 				if (prose.includes(en["saveStatus.calm.kept"]!) !== state.kept) broken.push(`${at}: "still here" without a setup to show`);
@@ -116,9 +116,9 @@ describe("the paused saving banner's words", () => {
 		assert.deepEqual(paragraphs, [
 			"First of all, take a deep breath — everything is going to be okay. Your notes are safe, and your callouts are still here on this device. Callout Studio has only paused saving to protect your setup, so this page is read-only for now.",
 			"Callout Studio can't find its settings file. This usually happens while your sync app is still downloading it, or after Callout Studio was removed on another device.",
-			"Callout Studio checks again every minute while Obsidian is open, so this often fixes itself — or choose Check again to look right now. If your settings don't come back, choose Restore these settings to keep the callouts you see here. Once saving works again, you can also bring back an earlier version from the Backup section.",
+			"Callout Studio checks again every minute while Obsidian is open, so this often fixes itself — or choose Check again to look right now. If your settings don't come back, choose Restore these settings to keep the callouts you see here. Once saving works again, you can also bring back an earlier version from Version history.",
 		]);
-		assert.deepEqual(buttons, ["Check again", "Restore these settings", "Go to backups"]);
+		assert.deepEqual(buttons, ["Check again", "Restore these settings", "Go to version history"]);
 	});
 
 	it("gets more specific once a check has come back empty, and leads with restoring", async () => {
@@ -127,7 +127,7 @@ describe("the paused saving banner's words", () => {
 		});
 		assert.equal(paragraphs[1], en["saveStatus.explain.stillMissing"]);
 		assert.ok(paragraphs[2]!.startsWith(en["saveStatus.guide.restore"]!), "the next step comes first");
-		assert.deepEqual(buttons, ["Restore these settings", "Check again", "Go to backups"]);
+		assert.deepEqual(buttons, ["Restore these settings", "Check again", "Go to version history"]);
 	});
 
 	it("does not tell the reader to restore while the file that turned up cannot be read", async () => {

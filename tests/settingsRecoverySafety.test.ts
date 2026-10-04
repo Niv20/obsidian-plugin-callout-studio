@@ -88,7 +88,7 @@ describe("settings recovery uses the production freshness and reload path", () =
 		assert.equal(d.disk.json, before);
 		await d.queue.run();
 		assert.equal(d.registry.get("desktop-authored")?.icon.value, "star");
-		assert.equal(d.backups.size, 1, "the phone draft remains in the recovery copy");
+		assert.equal([...d.backups.keys()].filter(path => path.includes("/backups/data-")).length, 1, "the phone draft remains in the recovery copy");
 	});
 
 	it("remembers mobile foreground changes while an editor is open and applies them on close (#53)", async () => {
@@ -201,9 +201,12 @@ describe("settings recovery uses the production freshness and reload path", () =
 			let listeners = 0;
 			d.host.registerDomEvent = () => { listeners++; };
 			let release!: (value: unknown) => void;
-			d.host.loadData = () => new Promise(resolve => { release = resolve; });
+			let reading!: () => void;
+			const readStarted = new Promise<void>(resolve => { reading = resolve; });
+			d.host.loadData = () => new Promise(resolve => { release = resolve; reading(); });
 			if (kind === "unreadable") d.disk.json = "";
 			const pending = loadSettingsInto(d.host);
+			await readStarted;
 			d.host.settingsWriter.destroy();
 			release(kind === "loaded" ? { callouts: [] } : null);
 			await pending;

@@ -77,6 +77,8 @@ const seams = globalThis as unknown as TestGlobals;
 export const Platform = {
 	isMobile: false,
 	isDesktop: true,
+	isPhone: false,
+	isTablet: false,
 	isMacOS: seams.__CS_MACOS__ === true,
 };
 

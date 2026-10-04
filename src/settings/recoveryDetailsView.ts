@@ -1,10 +1,10 @@
 /**
- * settings/recoveryDetailsView.ts — the body of the Setup details window.
+ * settings/recoveryDetailsView.ts — the body of the Version details window.
  *
- * A line saying what is compared with what,
- * the number of changes, then the comparison itself: one pinned, foldable
- * table per settings section, built by recoverySections.ts and laid out by
- * recoveryComparisonTable.ts.
+ * A compact panel with the change count and comparison
+ * context. The date is in the window title. Then the comparison itself: one
+ * pinned, foldable table per settings section, built by recoverySections.ts
+ * and laid out by recoveryComparisonTable.ts.
  */
 import type { Component } from "obsidian";
 import { getLocale, t } from "../i18n";
@@ -25,27 +25,29 @@ export async function renderRecoveryDetails(
 ): Promise<void> {
 	const report = parent.createDiv({ cls: "cs-recovery-detail-report" });
 	const summary = report.createDiv({ cls: "cs-recovery-detail-summary" });
-	const source = summary.createDiv({ cls: "cs-recovery-detail-source" });
-	source.createDiv({
-		text: details.source.time === null ? recoverySourceTime(details.source) : t("recovery.details.savedOn", { date: recoverySourceTime(details.source) }),
-		cls: "cs-recovery-detail-saved",
-	});
-	source.createEl("p", { text: t("recovery.details.comparingNow"), cls: "cs-recovery-detail-prose" });
+	const outcome = summary.createDiv({ cls: "cs-recovery-detail-outcome" });
+	outcome.createDiv({ text: t("recovery.details.changesTitle"), cls: "cs-recovery-change-title" });
 	if (!details.source.data) {
-		summary.createEl("p", { text: t("recovery.details.unreadable"), cls: "cs-recovery-detail-prose" });
+		renderChangeDivider(outcome, t("versions.details.comparisonUnavailable"));
+		outcome.createEl("p", { text: t("recovery.details.unreadable"), cls: "cs-recovery-detail-prose" });
 		return;
 	}
 	const comparison = recoveryReport(details);
 	const items = comparison.sections.flatMap(section => section.items);
 	if (items.length === 0) {
-		summary.createEl("p", { text: t("recovery.same"), cls: "cs-recovery-detail-prose" });
+		renderChangeDivider(outcome, t("recovery.same"));
 		return;
 	}
-	const counts = summary.createDiv({ cls: "cs-recovery-change-counts" });
-	counts.createSpan({ text: t("recovery.details.count.total", { count: items.length }), cls: "cs-recovery-count-total" });
+	renderChangeDivider(outcome, t(items.length === 1 ? "versions.details.difference" : "versions.details.differences", { count: items.length }));
+	const counts = outcome.createDiv({ cls: "cs-recovery-change-counts" });
 	for (const kind of ["removed", "changed", "added"] as const) {
 		const count = items.filter(item => item.kind === kind).length;
 		if (count) counts.createSpan({ text: t(`recovery.details.count.${kind}`, { count }), cls: `cs-recovery-state is-${kind}` });
 	}
 	await renderRecoveryComparison(report, comparison, component, isCurrent);
+}
+
+function renderChangeDivider(parent: HTMLElement, label: string): void {
+	const divider = parent.createDiv({ cls: "cs-recovery-change-divider" });
+	divider.createSpan({ text: label, cls: "cs-recovery-count-total" });
 }

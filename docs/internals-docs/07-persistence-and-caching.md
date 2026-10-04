@@ -21,7 +21,7 @@ This chapter keeps the storage inventory and cache-specific behavior.
 | --- | --- |
 | Primary configuration | `<plugin-dir>/data.json`; durable definitions, preferences, in-use artwork and sync metadata. |
 | Device recovery checkpoint | App IndexedDB (`CalloutStudioRecovery`), separate from the vault; one snapshot per vault/configuration-profile/plugin. |
-| Device history | App IndexedDB (`CalloutStudioHistory`, its own database); this device's recent, daily and weekly accepted states, content only. |
+| Device history | App IndexedDB (`CalloutStudioHistory`, its own database); this device's ten newest accepted states within a size budget, content only. |
 | Recovery backups | `<plugin-dir>/backups/`; verified, content-only copies (no sync envelope), named by time, device and content hash, written before guarded adoption, missing-file restoration, **Reset everything** and every import. |
 | Device UI/prior-use state | Vault-scoped `localStorage`; folds and onboarding/migration markers, never a live definitions cache. |
 

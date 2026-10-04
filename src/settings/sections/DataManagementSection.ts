@@ -62,10 +62,11 @@ export function renderImportExportSection(
 }
 
 /**
- * Restoring an earlier setup; absent on minimal hosts.
+ * Version history; absent on minimal hosts.
  *
- * Returns the **Earlier setups** row, which the saving banner's **Go to
- * backups** scrolls to and highlights, or `null` when there is no section.
+ * Returns the **Earlier versions** row, which the saving banner's **Go to
+ * version history** scrolls to and highlights, or `null` when there is no
+ * section.
  */
 export function renderBackupSection(
 	ctx: SettingsSectionContext,
@@ -74,18 +75,18 @@ export function renderBackupSection(
 	const recovery = ctx.plugin.recovery;
 	if (!recovery) return null;
 
-	new Setting(containerEl).setName(t("settings.backup")).setHeading();
+	new Setting(containerEl).setName(t("settings.versionHistory")).setHeading();
 
-	const earlierSetups = new Setting(containerEl)
-		.setName(t("settings.recovery"))
-		.setDesc(t("settings.recoveryDesc"))
+	const earlierVersions = new Setting(containerEl)
+		.setName(t("settings.versions"))
+		.setDesc(t("settings.versionsDesc").replace(/\n/g, " "))
 		.setClass(PAUSED_ALLOWED)
 		.addButton((btn) => {
-			btn.setButtonText(t("settings.recoveryButton"))
+			btn.setButtonText(t("settings.versionsButton"))
 				.onClick(() => new SettingsRecoveryModal(ctx.app, ctx.plugin).open());
 			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
-	return earlierSetups.settingEl;
+	return earlierVersions.settingEl;
 }
 
 export function renderResetSection(
@@ -165,7 +166,7 @@ export function renderResetSection(
 					if (!confirmed || blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 					// The reset also replaces this device's recovery copy, so the
 					// backup is the only way back: no verified copy, no reset.
-					if (!await writeSettingsBackup(ctx.plugin, ctx.plugin.registry.toSaveData())) {
+					if (!await writeSettingsBackup(ctx.plugin, ctx.plugin.registry.toSaveData(), { reason: "before-reset" })) {
 						new Notice(t("settings.resetBackupFailed"), 10000);
 						return;
 					}
@@ -273,7 +274,7 @@ export async function processImportedJSON(
 	}
 	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 	// Same-id callouts and whole setting groups are replaced: keep a way back.
-	if (!await writeSettingsBackup(ctx.plugin, ctx.plugin.registry.toSaveData())) {
+	if (!await writeSettingsBackup(ctx.plugin, ctx.plugin.registry.toSaveData(), { reason: "before-import" })) {
 		new Notice(t("import.backupFailed"), 10000);
 		return;
 	}

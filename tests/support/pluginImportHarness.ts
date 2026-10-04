@@ -249,7 +249,8 @@ export function harness(options: HarnessOptions = {}): Harness {
 		displays: () => displays,
 		isClosed: () => closed,
 		pickerOpens: () => pickerOpens,
-		backups: () => [...own.files.keys()].filter((path) => path.includes("/backups/")),
+		// Backups only: their labels file lives in the same folder.
+		backups: () => [...own.files.keys()].filter((path) => path.includes("/backups/data-")),
 		destroy: () => {
 			if (!closed) modal.onClose();
 			containerEl.remove();

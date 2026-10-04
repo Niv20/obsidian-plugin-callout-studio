@@ -180,7 +180,7 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 		}
 		if (buttons.restore && buttons.checkFirst) addRestore();
 		if (actions.showBackup) {
-			const backup = actionsEl.createEl("button", { text: t("saveStatus.goToBackups") });
+			const backup = actionsEl.createEl("button", { text: t("saveStatus.goToVersions") });
 			backup.disabled = busy;
 			// A click from Enter or Space carries no pointer detail.
 			backup.addEventListener("click", (event) => { actions.showBackup!(event.detail === 0); });

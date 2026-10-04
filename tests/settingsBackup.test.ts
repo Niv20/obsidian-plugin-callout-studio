@@ -16,7 +16,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import type { App, PluginManifest } from "obsidian";
-import { SHARED_DEVICE_ID, writeSettingsBackup } from "../src/manager/settingsBackup";
+import { SHARED_DEVICE_ID, pruneSettingsBackups, writeSettingsBackup } from "../src/manager/settingsBackup";
 
 const DIR = ".obsidian/plugins/callout-studio/backups";
 
@@ -165,7 +165,7 @@ describe("keeping the folder from growing", () => {
 		assert.deepStrictEqual(v.kept(), [5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
 	});
 
-	it("also keeps its newest copy of each of the last fourteen days it saved one", async () => {
+	it("keeps only ten across many days, without extra daily copies", async () => {
 		const v = vault();
 
 		for (let d = 0; d < 20; d++) {
@@ -173,17 +173,15 @@ describe("keeping the folder from growing", () => {
 			for (let m = 0; m < 3; m++) await writeSettingsBackup(v.host, { n: d * 10 + m }, { now: day(d, m) });
 		}
 
-		// The newest ten span days 19 to 16; each of days 19 to 6 keeps its last copy.
+		// The newest ten span days 19 to 16; older daily copies no longer remain.
 		assert.deepStrictEqual(v.kept(), [
-			62, 72, 82, 92, 102, 112, 122, 132, 142, 152,
 			162, 170, 171, 172, 180, 181, 182, 190, 191, 192,
 		]);
 	});
 
-	it("never touches a file it did not name, including copies written by 2.14 and earlier", async () => {
+	it("leaves unrecognized files and legacy copies within their limit alone", async () => {
 		// The folder is inside the plugin directory, which syncs. Anything else
-		// in there belongs to the user, another tool, or an older build that
-		// still prunes its own names.
+		// in there belongs to the user, another tool, or an older build.
 		const legacy = `${DIR}/data-2026-01-01T00-00-00-000Z-4c6ac6e0-4032-4541-9446-9a06b9655ab3.json`;
 		const v = vault({ [`${DIR}/notes-of-my-own.json`]: "{}", [`${DIR}/data-my-recovery.json`]: "{}", [legacy]: "{}" });
 		v.folders.add(DIR);
@@ -238,12 +236,135 @@ describe("keeping the folder from growing", () => {
 		const recovery = await writeSettingsBackup(v.host, { rescued: true }, { now: at(0) });
 
 		assert.ok(recovery && v.files.has(recovery));
+		assert.strictEqual(v.backups().length, 10, "the protected copy takes a slot within the limit");
 	});
 
 	it("names copies from a device that cannot remember itself with one shared name", async () => {
 		const v = vault();
 		const path = await writeSettingsBackup({ ...v.host, localState: undefined }, { n: 1 }, { now: at(0) });
 		assert.ok(path?.includes(`-${SHARED_DEVICE_ID}-`));
+	});
+});
+
+describe("applying retention to existing backups", () => {
+	function seed(v: ReturnType<typeof vault>, device: string | null, count = 25) {
+		v.folders.add(DIR);
+		return Array.from({ length: count }, (_, n) => {
+			const time = day(n).toISOString().replace(/[:.]/g, "-");
+			const suffix = device ? `-${device}-${n.toString(16).padStart(16, "0")}`
+				: n % 2 ? "-4c6ac6e0-4032-4541-9446-9a06b9655ab3" : "";
+			const path = `${DIR}/data-${time}${suffix}.json`;
+			v.files.set(path, JSON.stringify({ n }));
+			return path;
+		});
+	}
+
+	it("deletes existing excess from this device and both legacy name formats without creating a backup", async () => {
+		const v = vault();
+		const own = seed(v, "mac00001"), legacy = seed(v, null), phone = seed(v, "phone001");
+		const untouched = [`${DIR}/notes.json`, `${DIR}/unreadable-old.txt`, `${DIR}/recovery-copy-old.txt`,
+			`${DIR}/nested/data-2026-01-01T12-00-00-000Z.json`];
+		for (const path of untouched) v.files.set(path, "kept");
+		await pruneSettingsBackups(v.host);
+		assert.deepStrictEqual(v.backups().filter(path => own.includes(path)), own.slice(-10));
+		assert.deepStrictEqual(v.backups().filter(path => legacy.includes(path)), legacy.slice(-10));
+		assert.ok(phone.every(path => v.files.has(path)), "other devices enforce their own limit on upgrade");
+		assert.ok(untouched.every(path => v.files.has(path)));
+		const remaining = [...v.files];
+		await pruneSettingsBackups(v.host);
+		assert.deepStrictEqual([...v.files], remaining, "cleanup is idempotent");
+	});
+
+	it("does not thin old backups from another device when this installation has none of its own", async () => {
+		const v = vault();
+		const phone = seed(v, "phone001");
+		await pruneSettingsBackups(v.host);
+		assert.ok(phone.every(path => v.files.has(path)));
+	});
+
+	it("also cleans up when identical content reuses an existing backup", async () => {
+		const v = vault();
+		const first = await writeSettingsBackup(v.host, { original: true }, { now: at(0) });
+		seed(v, "mac00001");
+		const again = await writeSettingsBackup(v.host, { original: true }, { now: day(30) });
+		assert.strictEqual(again, first);
+		assert.ok(v.files.has(first!));
+		assert.strictEqual(v.backups().length, 10);
+	});
+
+	it("reduces a completed oversized batch on the next cleanup", async () => {
+		const v = vault(), batch = new Set<string>();
+		for (let n = 0; n < 13; n++) await writeSettingsBackup(v.host, { n }, { now: at(n), batch });
+		await pruneSettingsBackups(v.host);
+		assert.deepStrictEqual(v.kept(), [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+	});
+
+	it("does not reuse or overwrite a path whose removal is still pending", async () => {
+		const v = vault();
+		const first = await writeSettingsBackup(v.host, { original: true }, { now: at(0) });
+		seed(v, "mac00001");
+		let finishRemove: () => void = () => {};
+		let started: () => void = () => {};
+		const removing = new Promise<void>(resolve => { started = resolve; });
+		let cancelled = false;
+		const remove = v.host.app.vault.adapter.remove.bind(v.host.app.vault.adapter);
+		v.host.app.vault.adapter.remove = async path => {
+			if (path === first) {
+				started();
+				await new Promise<void>(resolve => { finishRemove = resolve; });
+			}
+			await remove(path);
+		};
+		const pruning = pruneSettingsBackups(v.host, new Set(), () => cancelled);
+		await removing;
+		cancelled = true;
+		const replacement = await writeSettingsBackup(v.host, { original: true }, { now: at(0) });
+		finishRemove();
+		await pruning;
+		assert.ok(replacement && replacement !== first);
+		assert.ok(v.files.has(replacement));
+		assert.ok(!v.files.has(first!));
+	});
+
+	it("does not create a backup directory just to prune it", async () => {
+		const v = vault();
+		await pruneSettingsBackups(v.host);
+		assert.deepStrictEqual(v.calls, []);
+	});
+});
+
+describe("why a copy was kept", () => {
+	const LABELS = `${DIR}/labels-mac00001.json`;
+	type Labels = { reasons?: Record<string, string> };
+	const labels = (v: ReturnType<typeof vault>, path = LABELS) => JSON.parse(v.files.get(path) ?? "{}") as Labels;
+	const fileName = (path: string) => path.slice(path.lastIndexOf("/") + 1);
+
+	it("says why a new copy was taken, beside it, and leaves a reused copy's reason alone", async () => {
+		const v = vault();
+		const path = (await writeSettingsBackup(v.host, { n: 1 }, { now: at(0), reason: "before-import" }))!;
+		assert.deepEqual(labels(v).reasons, { [fileName(path)]: "before-import" });
+		assert.deepStrictEqual(JSON.parse(v.files.get(path)!) as unknown, { n: 1 }, "the copy itself carries no label");
+		assert.equal(await writeSettingsBackup(v.host, { n: 1 }, { now: at(5), reason: "before-reset" }), path);
+		assert.deepEqual(labels(v).reasons, { [fileName(path)]: "before-import" }, "the same content keeps its first reason");
+	});
+
+	it("forgets the reasons of the copies it prunes, and only its own", async () => {
+		const v = vault();
+		v.files.set(`${DIR}/labels-pho00001.json`, JSON.stringify({ reasons: { "data-gone.json": "before-sync" } }));
+		for (let n = 0; n <= 11; n++) await writeSettingsBackup(v.host, { n }, { now: at(n), reason: "before-import" });
+		assert.deepStrictEqual(Object.keys(labels(v).reasons ?? {}).sort(), v.backups().map(fileName).sort());
+		assert.deepEqual(labels(v, `${DIR}/labels-pho00001.json`).reasons, { "data-gone.json": "before-sync" }, "another device's file is its own to tidy");
+	});
+
+	it("still counts a copy as written when its label could not be", async t => {
+		t.mock.method(console, "error", () => undefined);
+		const v = vault();
+		const adapter = v.host.app.vault.adapter;
+		const write = adapter.write.bind(adapter);
+		adapter.write = (path, text) => path.includes("/labels-") ? Promise.reject(new Error("read-only")) : write(path, text);
+		const path = await writeSettingsBackup(v.host, { n: 1 }, { now: at(0), reason: "before-reset" });
+		assert.ok(path);
+		assert.equal(v.backups().length, 1);
 	});
 });
 

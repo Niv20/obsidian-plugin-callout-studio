@@ -194,8 +194,8 @@ saving problem first. If the reset is displayed but could not be saved, a
 message says so instead of reporting success.
 
 **There is no undo button.** To bring the previous setup back, open
-[Restore an earlier setup](13-syncing-and-backups.md#restore-an-earlier-setup)
-and restore the backup saved just before the reset. A synced vault can send the
+[Version history](13-syncing-and-backups.md#version-history) and restore the
+version named *Before Reset everything*, saved just before the reset. A synced vault can send the
 reset to your other devices, and the backups folder lives in the synced plugin
 folder. Export a [complete backup](13-syncing-and-backups.md) and keep it
 somewhere else if you may want your setup later.

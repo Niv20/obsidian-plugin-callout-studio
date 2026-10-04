@@ -1159,13 +1159,10 @@ export const ms: Record<string, string> = {
 	"saveStatus.guide.restore":
 		"Jika tetapan anda tidak kembali, pilih Pulihkan tetapan ini untuk mengekalkan callout yang anda lihat di sini.",
 	"saveStatus.guide.create": "Jika tetapan anda tidak kembali, pilih Cipta fail tetapan untuk mula menyimpan semula.",
-	"saveStatus.guide.backup":
-		"Setelah penyimpanan berfungsi semula, anda juga boleh mengembalikan versi terdahulu daripada bahagian Sandaran.",
 	"saveStatus.guide.recoveryRetry": "Pastikan peranti ini mempunyai sedikit ruang storan kosong, kemudian pilih Cuba lagi.",
 	"saveStatus.guide.recoveryDiscard":
 		"Jika itu tidak membantu, pilih Buang salinan pemulihan. Salinan tepat disimpan dahulu, dan fail tetapan anda tidak disentuh.",
 	"saveStatus.guide.newerVersion": "Kemas kini Callout Studio dalam Tetapan → Pemalam komuniti, kemudian muat semula Obsidian.",
-	"saveStatus.goToBackups": "Pergi ke sandaran",
 	"saveStatus.missingNotice":
 		"Nota anda selamat. Callout Studio telah menjeda penyimpanan kerana ia tidak dapat menemui fail tetapannya sekarang.",
 	"statusBar.paused": "Penyimpanan dijeda",
@@ -1176,29 +1173,11 @@ export const ms: Record<string, string> = {
 		"Fail tetapan tidak dapat diganti buat masa ini: ia sedang berubah, atau peranti ini tidak dapat membacanya. Cuba lagi sebentar lagi.",
 	"notice.recoveryStorageUnavailable":
 		"Storan pemulihan peranti ini tidak bertindak balas, jadi salinan itu tidak dapat dibuang. Mulakan semula Obsidian, kemudian cuba lagi.",
-	"recovery.title": "Pulihkan persediaan lama",
-	"recovery.intro":
-		"Callout Studio menyimpan versi lama persediaan anda pada peranti ini dan dalam folder sandaran plugin. Memulihkan salah satu akan menggantikan persediaan semasa anda pada setiap peranti yang disegerakkan. Sandaran persediaan semasa disimpan dahulu.",
-	"recovery.loading": "Mencari versi lama…",
-	"recovery.empty": "Tiada versi lama ditemui.",
-	"recovery.sectionHistory": "Disimpan pada peranti ini",
-	"recovery.sectionBackups": "Sandaran",
-	"recovery.sectionCopies": "Salinan lain fail tetapan",
 	"recovery.unreadable": "Tidak dapat dibaca sebagai tetapan",
 	"recovery.same": "Sama seperti persediaan semasa anda",
-	"recovery.restoreSame": "Persediaan ini sama dengan persediaan semasa anda, jadi tiada apa untuk dipulihkan.",
 	"recovery.restore": "Pulihkan",
-	"recovery.confirmTitle": "Pulihkan persediaan ini",
-	"recovery.confirmBody":
-		"Persediaan semasa anda digantikan dengan yang dari {{when}} ({{count}} perbezaan). Sandaran persediaan semasa anda disimpan dahulu, dan perkhidmatan penyegerakan anda menghantar persediaan yang dipulihkan itu ke peranti lain anda.",
-	"recovery.restored": "Persediaan dari {{when}} telah dipulihkan.",
 	"recovery.stale":
 		"Tiada yang dipulihkan: tetapan anda telah berubah atau tidak dapat disemak. Buka tetingkap ini semula dan semak senarai itu.",
-	"recovery.backupFailed":
-		"Tiada yang dipulihkan: sandaran persediaan semasa anda tidak dapat disimpan dahulu. Semak storan yang tersedia, kemudian cuba lagi.",
-	"recovery.failed": "Persediaan tidak dapat dipulihkan. Tiada apa yang berubah.",
-	"notice.unsavedChangesReplaced":
-		"Sesetengah perubahan yang dibuat pada peranti ini belum disimpan, dan tetapan lebih baharu daripada peranti lain telah menggantikannya. Versi anda disimpan dahulu: buka Pulihkan persediaan lama dalam tetapan Callout Studio untuk mendapatkannya semula.",
 	"notice.recoveryCopyStale":
 		"Tetapan anda telah disimpan, tetapi salinan pemulihan peranti ini tidak dapat dikemas kini. Semak storan yang tersedia pada peranti ini. Callout Studio akan cuba lagi pada perubahan seterusnya anda.",
 	"notice.blockedWhilePaused":
@@ -1209,9 +1188,6 @@ export const ms: Record<string, string> = {
 		"Tiada yang ditetapkan semula: sandaran persediaan semasa anda tidak dapat disimpan dahulu. Semak storan yang tersedia, kemudian cuba lagi.",
 	"settings.resetNotSaved":
 		"Set semula itu dipaparkan tetapi belum dapat disimpan, jadi fail tetapan anda masih menyimpan persediaan sebelumnya. Semak status penyimpanan dalam tetapan Callout Studio.",
-	"settings.recovery": "Persediaan lama",
-	"settings.recoveryDesc": "Pulihkan versi persediaan anda yang disimpan sebelum ini pada peranti ini atau dalam folder sandaran plugin.",
-	"settings.recoveryButton": "Pulihkan persediaan lama",
 	"confirm.titleResetEverything": "Tetapkan semula semuanya",
 	"confirm.titleReplaceUnreadable": "Ganti fail tetapan",
 	"confirm.replaceUnreadable":
@@ -1234,13 +1210,10 @@ export const ms: Record<string, string> = {
 	"import.notSaved":
 		"Import itu dipaparkan tetapi belum dapat disimpan. Semak status penyimpanan dalam tetapan Callout Studio.",
 
-	"recovery.pausedViewHint": "Penyimpanan dijeda, jadi pemulihan tidak tersedia. Anda masih boleh membandingkan atau memadam tetapan terdahulu.",
 	"recovery.summaryCallouts": "{{callouts}} jenis callout disimpan",
 	"recovery.summaryChanges": "{{count}} perbezaan daripada sekarang",
 	"recovery.details.view": "Lihat butiran",
-	"recovery.details.title": "Butiran tetapan",
-	"recovery.details.savedOn": "Disimpan pada {{date}}",
-	"recovery.details.comparingNow": "Dibandingkan dengan tetapan yang sedang digunakan pada peranti ini.",
+	"recovery.details.changesTitle": "Perkara yang berubah",
 	"recovery.details.loading": "Membina perbandingan sebelum dan selepas…",
 	"recovery.details.renderFailed": "Perbandingan tidak dapat dipaparkan.",
 	"recovery.details.count.changed": "Diubah: {{count}}",
@@ -1371,7 +1344,6 @@ export const ms: Record<string, string> = {
 	"recovery.details.previewUnavailable": "Pratonton tidak tersedia",
 	"recovery.details.column.number": "Bil.",
 	"recovery.details.column.item": "Item",
-	"recovery.details.count.total": "{{count}} perbezaan",
 	"recovery.details.section.iconSources": "Lalai pemilih ikon",
 	"recovery.details.section.other": "Tetapan lain",
 	"recovery.details.item.imageOrder": "Susunan ikon tersuai",
@@ -1422,9 +1394,46 @@ export const ms: Record<string, string> = {
 	"recovery.details.value.formatJpeg": "JPEG",
 	"recovery.details.value.formatWebp": "WebP",
 	"recovery.delete": "Padam",
-	"recovery.deleteConfirmTitle": "Padam salinan ini",
-	"recovery.deleteConfirmBody": "Salinan dari {{when}} dipadam secara kekal dan tidak dapat dipulihkan selepas itu. Tetapan semasa anda tidak terjejas.",
-	"recovery.deleted": "Salinan dari {{when}} telah dipadam.",
-	"recovery.deleteFailed": "Salinan ini tidak dapat dipadam. Tiada apa-apa yang berubah.",
-	"settings.backup": "Sandaran",
+
+	// Version history
+	"saveStatus.guide.versions": "Apabila penyimpanan berfungsi semula, anda juga boleh memulihkan versi terdahulu daripada sejarah versi.",
+	"saveStatus.goToVersions": "Pergi ke sejarah versi",
+	"versions.title": "Sejarah versi",
+	"versions.intro": "Callout Studio menyimpan versi konfigurasi anda secara automatik.\nVersi lama dibersihkan secara beransur-ansur.\nMemulihkan versi menggantikan konfigurasi semasa pada semua peranti yang disegerakkan.",
+	"versions.pausedHint": "Penyimpanan dijeda, jadi pemulihan tidak tersedia. Anda masih boleh membandingkan dan memadam versi.",
+	"versions.loading": "Mencari versi…",
+	"versions.empty": "Tiada versi ditemui.",
+	"versions.dayWithDate": "{{date}} ({{relative}})",
+	"versions.category.automatic": "Sandaran automatik",
+	"versions.category.syncCopy": "Salinan penyegerakan",
+	"versions.reason.edit": "Perubahan disimpan",
+	"versions.reason.load": "Dimuatkan daripada fail tetapan",
+	"versions.reason.restore": "Dipulihkan daripada sejarah versi",
+	"versions.reason.repair": "Fail tetapan dibaiki",
+	"versions.reason.beforeSync": "Sebelum perubahan daripada peranti lain",
+	"versions.reason.beforeRestore": "Sebelum memulihkan versi",
+	"versions.reason.beforeReset": "Sebelum Set semula semua",
+	"versions.reason.beforeImport": "Sebelum import",
+	"versions.reason.beforeRepair": "Sebelum fail tetapan dibaiki",
+	"versions.restoreTitle": "Pulihkan versi ini",
+	"versions.restoreBody": "Konfigurasi semasa anda digantikan dengan “{{name}}” dari {{when}} ({{count}} perbezaan).\nKonfigurasi semasa disimpan sebagai versi terlebih dahulu supaya anda boleh kembali kepadanya.\nPerkhidmatan penyegerakan kemudian menghantar konfigurasi yang dipulihkan ke peranti anda yang lain.",
+	"versions.restoreSame": "Versi ini sama dengan konfigurasi semasa anda, jadi tiada apa-apa untuk dipulihkan.",
+	"versions.restored": "“{{name}}” dari {{when}} dipulihkan.",
+	"versions.backupFailed": "Tiada apa-apa dipulihkan: konfigurasi semasa tidak dapat disimpan sebagai versi terlebih dahulu. Semak ruang storan yang tersedia, kemudian cuba lagi.",
+	"versions.restoreFailed": "Versi tidak dapat dipulihkan. Tiada apa-apa diubah.",
+	"versions.deleteTitle": "Padam versi ini",
+	"versions.deleteAvailableBody": "Versi “{{name}}” dari {{when}} dan semua salinannya yang tersedia akan dipadam secara kekal.",
+	"versions.deleteSyncedFiles": "Pemadaman fail-fail ini mungkin disegerakkan ke peranti anda yang lain. Salinan setempat pada peranti tersebut mungkin kekal.",
+	"versions.deleteFinal": "Tindakan ini tidak boleh dibuat asal. Konfigurasi semasa anda tidak terjejas.",
+	"versions.deleted": "“{{name}}” dari {{when}} dipadam.",
+	"versions.deleteFailed": "Sesetengah salinan versi ini tidak dapat dipadam. Senarai kini menunjukkan yang masih tinggal.",
+	"versions.details.title": "Butiran versi",
+	"versions.details.difference": "{{count}} perbezaan daripada tetapan semasa anda",
+	"versions.details.differences": "{{count}} perbezaan daripada tetapan semasa anda",
+	"versions.details.comparisonUnavailable": "Perbandingan tidak tersedia",
+	"notice.unsavedChangesKept": "Sesetengah perubahan pada peranti ini belum disimpan dan digantikan oleh tetapan lebih baharu daripada peranti lain. Versi anda disimpan terlebih dahulu: buka sejarah versi dalam tetapan Callout Studio untuk mendapatkannya semula.",
+	"settings.versionHistory": "Sejarah versi",
+	"settings.versions": "Versi terdahulu",
+	"settings.versionsDesc": "Callout Studio menyimpan versi konfigurasi anda secara automatik.\nBandingkan atau kembali kepada salah satunya.",
+	"settings.versionsButton": "Lihat versi",
 };

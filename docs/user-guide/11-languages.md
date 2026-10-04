@@ -12,7 +12,7 @@ When you choose a language other than Obsidian's, a **Reset to default** arrow a
 
 Obsidian's language is set separately on each device, but your choice here syncs with the rest of Callout Studio's settings. If you choose a language, every device uses it. If you follow Obsidian, each device uses its own Obsidian language.
 
-Changing this option affects only Callout Studio's settings, buttons, and messages.
+Changing this option affects only Callout Studio's settings, buttons, and messages. Version history also uses your selected language for version names, deletion confirmations, and the **What changed** heading.
 
 ## Download once, use offline
 

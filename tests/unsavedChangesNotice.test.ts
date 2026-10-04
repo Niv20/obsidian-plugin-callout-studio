@@ -47,7 +47,7 @@ describe("unsaved changes replaced by another device", () => {
 			h.state.disk = remoteEdit(h.state.disk!, ["Theirs", "Theirs again"]);
 			assert.equal(await tryAdoptExternalSettings(h.host), "applied");
 			assert.equal(h.host.registry.get("shared")?.displayName, "Theirs again");
-			assert.ok(notices.includes(en["notice.unsavedChangesReplaced"]!));
+			assert.ok(notices.includes(en["notice.unsavedChangesKept"]!));
 			const backups = [...h.files.values()].filter(text => text.includes("Mine, unsaved"));
 			assert.equal(backups.length, 1, "this device's version was not kept");
 		} finally {
@@ -66,7 +66,7 @@ describe("unsaved changes replaced by another device", () => {
 			await h.host.saveSettings();
 			h.state.disk = remoteEdit(h.state.disk!, ["Theirs"]);
 			assert.equal(await tryAdoptExternalSettings(h.host), "applied");
-			assert.ok(!notices.includes(en["notice.unsavedChangesReplaced"]!));
+			assert.ok(!notices.includes(en["notice.unsavedChangesKept"]!));
 		} finally {
 			delete (globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__;
 			h.host.settingsWriter.destroy();

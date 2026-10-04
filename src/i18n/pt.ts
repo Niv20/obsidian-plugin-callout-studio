@@ -1182,13 +1182,11 @@ export const pt: Record<string, string> = {
 	"saveStatus.guide.restore":
 		"Se suas configurações não voltarem, escolha Restaurar estas configurações para manter os callouts que você vê aqui.",
 	"saveStatus.guide.create": "Se suas configurações não voltarem, escolha Criar arquivo de configurações para voltar a salvar.",
-	"saveStatus.guide.backup": "Quando o salvamento voltar a funcionar, você também pode recuperar uma versão anterior na seção Backup.",
 	"saveStatus.guide.recoveryRetry":
 		"Confirme que este dispositivo tem algum espaço livre de armazenamento e depois escolha Tentar novamente.",
 	"saveStatus.guide.recoveryDiscard":
 		"Se isso não ajudar, escolha Descartar cópia de recuperação. Uma cópia exata é salva primeiro, e seu arquivo de configurações não é tocado.",
 	"saveStatus.guide.newerVersion": "Atualize o Callout Studio em Configurações → Plugins da comunidade e depois recarregue o Obsidian.",
-	"saveStatus.goToBackups": "Ir para os backups",
 	"saveStatus.missingNotice":
 		"Suas notas estão seguras. O Callout Studio pausou o salvamento porque não encontra o arquivo de configurações agora.",
 	"statusBar.paused": "Salvamento pausado",
@@ -1199,29 +1197,11 @@ export const pt: Record<string, string> = {
 		"O arquivo de configurações não pode ser substituído agora: ele está sendo alterado, ou este dispositivo não consegue lê-lo. Tente novamente daqui a pouco.",
 	"notice.recoveryStorageUnavailable":
 		"O armazenamento de recuperação deste dispositivo não está respondendo, então a cópia não pode ser descartada. Reinicie o Obsidian e tente novamente.",
-	"recovery.title": "Restaurar uma configuração anterior",
-	"recovery.intro":
-		"O Callout Studio mantém versões anteriores da sua configuração neste dispositivo e na pasta de backups do plugin. Restaurar uma delas substitui sua configuração atual em todos os dispositivos sincronizados. Um backup da configuração atual é salvo primeiro.",
-	"recovery.loading": "Procurando versões anteriores…",
-	"recovery.empty": "Nenhuma versão anterior foi encontrada.",
-	"recovery.sectionHistory": "Salvas neste dispositivo",
-	"recovery.sectionBackups": "Backups",
-	"recovery.sectionCopies": "Outras cópias do arquivo de configurações",
 	"recovery.unreadable": "Não pode ser lida como configurações",
 	"recovery.same": "Igual à sua configuração atual",
-	"recovery.restoreSame": "Esta configuração é igual à atual, então não há nada para restaurar.",
 	"recovery.restore": "Restaurar",
-	"recovery.confirmTitle": "Restaurar esta configuração",
-	"recovery.confirmBody":
-		"Sua configuração atual é substituída pela de {{when}} ({{count}} diferença(s)). Um backup da sua configuração atual é salvo primeiro, e seu serviço de sincronização envia a configuração restaurada para seus outros dispositivos.",
-	"recovery.restored": "Configuração de {{when}} restaurada.",
 	"recovery.stale":
 		"Nada foi restaurado: suas configurações mudaram ou não puderam ser verificadas. Abra esta janela novamente e revise a lista.",
-	"recovery.backupFailed":
-		"Nada foi restaurado: não foi possível salvar um backup da sua configuração atual primeiro. Verifique o armazenamento disponível e tente novamente.",
-	"recovery.failed": "Não foi possível restaurar a configuração. Nada foi alterado.",
-	"notice.unsavedChangesReplaced":
-		"Algumas alterações feitas neste dispositivo ainda não tinham sido salvas, e configurações mais recentes de outro dispositivo as substituíram. Sua versão foi salva primeiro: abra Restaurar uma configuração anterior nas configurações do Callout Studio para recuperá-la.",
 	"notice.recoveryCopyStale":
 		"Suas configurações foram salvas, mas a cópia de recuperação deste dispositivo não pôde ser atualizada. Verifique o armazenamento disponível neste dispositivo. O Callout Studio tentará novamente na próxima alteração.",
 	"notice.blockedWhilePaused":
@@ -1232,9 +1212,6 @@ export const pt: Record<string, string> = {
 		"Nada foi redefinido: não foi possível salvar um backup da sua configuração atual primeiro. Verifique o armazenamento disponível e tente novamente.",
 	"settings.resetNotSaved":
 		"A redefinição é exibida, mas ainda não pôde ser salva, então seu arquivo de configurações ainda contém a configuração anterior. Verifique o status de salvamento nas configurações do Callout Studio.",
-	"settings.recovery": "Configurações anteriores",
-	"settings.recoveryDesc": "Restaure uma versão da sua configuração salva anteriormente neste dispositivo ou na pasta de backups do plugin.",
-	"settings.recoveryButton": "Restaurar uma configuração anterior",
 	"confirm.titleResetEverything": "Redefinir tudo",
 	"confirm.titleReplaceUnreadable": "Substituir arquivo de configurações",
 	"confirm.replaceUnreadable":
@@ -1257,13 +1234,10 @@ export const pt: Record<string, string> = {
 	"import.notSaved":
 		"A importação é exibida, mas ainda não pôde ser salva. Verifique o status de salvamento nas configurações do Callout Studio.",
 
-	"recovery.pausedViewHint": "O salvamento está pausado, então a restauração não está disponível. Você ainda pode comparar ou excluir configurações anteriores.",
 	"recovery.summaryCallouts": "{{callouts}} tipo(s) de callout salvo(s)",
 	"recovery.summaryChanges": "{{count}} diferença(s) em relação a agora",
 	"recovery.details.view": "Ver detalhes",
-	"recovery.details.title": "Detalhes da configuração",
-	"recovery.details.savedOn": "Salva em {{date}}",
-	"recovery.details.comparingNow": "Comparada com a configuração em uso neste dispositivo agora.",
+	"recovery.details.changesTitle": "O que mudou",
 	"recovery.details.loading": "Criando a comparação de antes e depois…",
 	"recovery.details.renderFailed": "Não foi possível exibir a comparação.",
 	"recovery.details.count.changed": "Alterados: {{count}}",
@@ -1394,7 +1368,6 @@ export const pt: Record<string, string> = {
 	"recovery.details.previewUnavailable": "Pré-visualização indisponível",
 	"recovery.details.column.number": "N.º",
 	"recovery.details.column.item": "Item",
-	"recovery.details.count.total": "{{count}} diferença(s)",
 	"recovery.details.section.iconSources": "Padrões do seletor de ícones",
 	"recovery.details.section.other": "Outras configurações",
 	"recovery.details.item.imageOrder": "Ordem dos ícones personalizados",
@@ -1445,9 +1418,46 @@ export const pt: Record<string, string> = {
 	"recovery.details.value.formatJpeg": "JPEG",
 	"recovery.details.value.formatWebp": "WebP",
 	"recovery.delete": "Excluir",
-	"recovery.deleteConfirmTitle": "Excluir esta cópia",
-	"recovery.deleteConfirmBody": "A cópia de {{when}} será excluída permanentemente e não poderá ser recuperada depois. Sua configuração atual não é afetada.",
-	"recovery.deleted": "A cópia de {{when}} foi excluída.",
-	"recovery.deleteFailed": "Não foi possível excluir esta cópia. Nada foi alterado.",
-	"settings.backup": "Backup",
+
+	// Version history
+	"saveStatus.guide.versions": "Quando o salvamento voltar a funcionar, você também poderá restaurar uma versão anterior pelo histórico de versões.",
+	"saveStatus.goToVersions": "Ir para o histórico de versões",
+	"versions.title": "Histórico de versões",
+	"versions.intro": "O Callout Studio salva versões da sua configuração automaticamente.\nAs antigas são removidas com o tempo.\nRestaurar uma versão substitui sua configuração atual em todos os dispositivos sincronizados.",
+	"versions.pausedHint": "O salvamento está pausado, então a restauração não está disponível. Você ainda pode comparar e excluir versões.",
+	"versions.loading": "Buscando versões…",
+	"versions.empty": "Nenhuma versão encontrada.",
+	"versions.dayWithDate": "{{date}} ({{relative}})",
+	"versions.category.automatic": "Backup automático",
+	"versions.category.syncCopy": "Cópia de sincronização",
+	"versions.reason.edit": "Alterações salvas",
+	"versions.reason.load": "Carregada do arquivo de configurações",
+	"versions.reason.restore": "Restaurada do histórico de versões",
+	"versions.reason.repair": "Arquivo de configurações reparado",
+	"versions.reason.beforeSync": "Antes das alterações de outro dispositivo",
+	"versions.reason.beforeRestore": "Antes de restaurar uma versão",
+	"versions.reason.beforeReset": "Antes de Redefinir tudo",
+	"versions.reason.beforeImport": "Antes de uma importação",
+	"versions.reason.beforeRepair": "Antes do reparo do arquivo de configurações",
+	"versions.restoreTitle": "Restaurar esta versão",
+	"versions.restoreBody": "Sua configuração atual será substituída por “{{name}}” de {{when}} ({{count}} diferenças).\nSua configuração atual é salva primeiro como uma versão para que você possa voltar a ela.\nO serviço de sincronização envia então a configuração restaurada aos seus outros dispositivos.",
+	"versions.restoreSame": "Esta versão é igual à sua configuração atual, então não há nada para restaurar.",
+	"versions.restored": "“{{name}}” de {{when}} restaurada.",
+	"versions.backupFailed": "Nada foi restaurado: não foi possível salvar primeiro sua configuração atual como uma versão. Verifique o espaço disponível e tente novamente.",
+	"versions.restoreFailed": "Não foi possível restaurar a versão. Nada foi alterado.",
+	"versions.deleteTitle": "Excluir esta versão",
+	"versions.deleteAvailableBody": "A versão “{{name}}” de {{when}} e todas as suas cópias disponíveis serão excluídas permanentemente.",
+	"versions.deleteSyncedFiles": "A exclusão desses arquivos pode ser sincronizada com seus outros dispositivos. As cópias locais nesses dispositivos podem permanecer.",
+	"versions.deleteFinal": "Esta ação não pode ser desfeita. Sua configuração atual não será afetada.",
+	"versions.deleted": "“{{name}}” de {{when}} excluída.",
+	"versions.deleteFailed": "Algumas cópias desta versão não puderam ser excluídas. A lista agora mostra as que restaram.",
+	"versions.details.title": "Detalhes da versão",
+	"versions.details.difference": "{{count}} diferença em relação à sua configuração atual",
+	"versions.details.differences": "{{count}} diferenças em relação à sua configuração atual",
+	"versions.details.comparisonUnavailable": "Comparação indisponível",
+	"notice.unsavedChangesKept": "Algumas alterações neste dispositivo ainda não haviam sido salvas e foram substituídas por configurações mais recentes de outro dispositivo. Sua versão foi salva primeiro: abra o histórico de versões nas configurações do Callout Studio para recuperá-la.",
+	"settings.versionHistory": "Histórico de versões",
+	"settings.versions": "Versões anteriores",
+	"settings.versionsDesc": "O Callout Studio salva versões da sua configuração automaticamente.\nCompare-as ou volte a uma delas.",
+	"settings.versionsButton": "Ver versões",
 };

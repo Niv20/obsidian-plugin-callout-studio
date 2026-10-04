@@ -6612,7 +6612,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	max-width: 520px;
 }
 /* What comes over and what is left behind: a caption over the options, set as
-   the Restore window sets its own intro (`.cs-recovery-intro`), not a
+   Version history sets its own intro (`.cs-recovery-intro`), not a
    paragraph of body text competing with them. */
 .cs-import-instructions {
 	margin: 0 0 var(--size-4-3);
@@ -8780,10 +8780,9 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	height: var(--icon-xs);
 }
 
-/* Restore an earlier setup. Its groups use the same hand-built disclosure
-   heading as the main callout lists, and its entries reuse the same raised row
-   surface. The recovery-specific class names keep the ordinary settings tab
-   unchanged. */
+/* Version history: one list of versions, newest first, each a raised row like
+   a saved-palette row. The recovery-specific class names keep the ordinary
+   settings tab unchanged. @see src/settings/SettingsRecoveryModal.ts */
 .cs-recovery-intro,
 .cs-recovery-paused,
 .cs-recovery-status {
@@ -8801,50 +8800,101 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-warning);
 }
 
-/* Same 2px rhythm as .callout-studio-callout-list (the saved-palettes list and
-   the three callout lists): rows sit almost flush, as a stack of boxes, not
-   spaced out as separate cards. */
-.cs-recovery-group-rows {
+/* Day headings and cards share a rail on the inline-start side. Each segment
+   extends across the 2px gap, so the line stays continuous as rows wrap, with
+   its ends at the first heading and the final version's marker. */
+.cs-recovery-rows {
+	--cs-timeline-gutter: 6rem;
+	--cs-timeline-marker: 8px;
+	--cs-timeline-axis: calc(var(--cs-timeline-gutter) - 12px - var(--cs-timeline-marker) / 2);
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
-	margin-top: 8px;
+	padding-inline-start: var(--cs-timeline-gutter);
 }
 
-/* Match the callout-list headings: the shared modal rules above keep the
-   chevron in the gutter and the title on its original x-coordinate. This is
-   also where the divider between categories lives — the same hairline rule
-   "My callout types"/"Built-in callouts" draws between each other, and that
-   the Customize right-click menu and Commands modals already reuse for their
-   own sections, so every multi-section list in this plugin divides the same
-   way. It sits on the heading rather than between individual rows, which stay
-   a plain raised row (.cs-recovery-row below) with no border of their own:
-   only the boundary between "Saved on this device", "Backups" and "Other
-   copies" reads as a line. */
-.cs-recovery-group .cs-collapsible-heading.setting-item {
-	margin-top: 36px;
-	padding: 36px 12px 2px;
-	border-top: 1px solid var(--background-modifier-border);
-	border-radius: 0;
-	min-height: 0;
+.cs-recovery-day,
+.cs-recovery-row {
+	position: relative;
 }
 
-/* The first group that actually renders sits directly under the intro text
-   and needs no divider of its own — same as "My callout types" there. */
-.cs-recovery-group:first-child .cs-collapsible-heading.setting-item {
-	margin-top: 0;
-	padding-top: 4px;
-	border-top: none;
+.cs-recovery-day::before,
+.cs-recovery-row::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: calc(var(--cs-timeline-axis) - var(--cs-timeline-gutter));
+	inset-block: -2px;
+	inline-size: 1px;
+	background: var(--background-modifier-border);
+	pointer-events: none;
 }
 
-.cs-recovery-group .cs-collapsible-heading .setting-item-info {
-	flex: 1 1 auto;
-	min-width: 0;
+.cs-recovery-day:first-child::before {
+	inset-block-start: var(--cs-timeline-day-center);
+}
+
+.cs-recovery-row:last-child::before {
+	inset-block-end: 50%;
+}
+
+/* Times precede the rail; markers sit between the time and the card. Logical
+   positions mirror the layout in RTL without reversing the clock's digits. */
+.cs-recovery-list .cs-recovery-time {
+	position: absolute;
+	z-index: 1;
+	inset-inline-start: calc(0px - var(--cs-timeline-gutter));
+	inset-block-start: 50%;
+	transform: translateY(-50%);
+	inline-size: calc(var(--cs-timeline-axis) - var(--cs-timeline-marker) / 2 - 8px);
+	color: var(--text-faint);
+	font-size: calc(var(--font-ui-smaller) - 1px);
+	font-variant-numeric: tabular-nums;
+	line-height: 1.4;
+	text-align: end;
+	white-space: nowrap;
+	unicode-bidi: isolate;
+}
+
+.cs-version-marker {
+	position: absolute;
+	inset-inline-start: calc(var(--cs-timeline-axis) - var(--cs-timeline-gutter) - var(--cs-timeline-marker) / 2);
+	inset-block-start: 50%;
+	transform: translateY(-50%);
+	inline-size: var(--cs-timeline-marker);
+	block-size: var(--cs-timeline-marker);
+	border-radius: 50%;
+	background: var(--background-modifier-border);
+	pointer-events: none;
+}
+
+.cs-recovery-rows > .cs-recovery-day {
+	--cs-timeline-day-space-below: var(--size-4-4, 16px);
+	--cs-timeline-day-space: calc(2 * var(--cs-timeline-day-space-below));
+	--cs-timeline-day-center: calc(var(--cs-timeline-day-space) + 0.75em);
 	margin: 0;
+	padding: var(--cs-timeline-day-space) 0 var(--cs-timeline-day-space-below);
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-semibold);
+	line-height: 1.5;
 }
 
-.cs-recovery-group .cs-collapsible-heading .setting-item-control {
-	min-width: 0;
+/* The first day has no preceding versions to separate it from. */
+.cs-recovery-rows > .cs-recovery-day:first-child {
+	--cs-timeline-day-space: var(--size-4-1, 4px);
+}
+
+/* Join the rail to the centre of the heading's first text line, excluding
+   its extra top padding. Leave a small gap before the date, also in RTL. */
+.cs-recovery-day::after {
+	content: "";
+	position: absolute;
+	inset-inline-start: calc(var(--cs-timeline-axis) - var(--cs-timeline-gutter));
+	inset-block-start: var(--cs-timeline-day-center);
+	inline-size: calc(var(--cs-timeline-gutter) - var(--cs-timeline-axis) - var(--size-4-2));
+	block-size: 1px;
+	background: var(--background-modifier-border);
+	pointer-events: none;
 }
 
 /* The row lives in a modal, where Obsidian's own
@@ -8853,7 +8903,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
    a hairline `border-top` between every pair of rows, a transparent
    background and square corners. Matched at (0,5,0) and won on source order,
    so every entry is the same borderless raised box a saved-palette row is. */
-.modal .cs-recovery-group-rows > .cs-recovery-row.setting-item:not(.setting-item-heading) {
+.modal .cs-recovery-rows > .cs-recovery-row.setting-item:not(.setting-item-heading) {
 	min-width: 0;
 	margin: 0;
 	padding: 14px 16px;
@@ -8863,8 +8913,26 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	transition: background 120ms ease;
 }
 
-.modal .cs-recovery-group-rows > .cs-recovery-row.setting-item:not(.setting-item-heading):hover {
+.modal .cs-recovery-rows > .cs-recovery-row.setting-item:not(.setting-item-heading):hover {
 	background: var(--background-secondary-alt);
+}
+
+/* Include the timeline gutter in the row's hover area, even over the
+   decorative marker. Keep the time above it so its text remains selectable. */
+.cs-recovery-row::after {
+	content: "";
+	position: absolute;
+	inset-inline-start: calc(0px - var(--cs-timeline-gutter));
+	inset-block: 0;
+	inline-size: var(--cs-timeline-gutter);
+}
+
+.cs-recovery-list .cs-recovery-row:hover .cs-recovery-time {
+	color: var(--text-normal);
+}
+
+.cs-recovery-row:hover .cs-version-marker {
+	background: var(--text-muted);
 }
 
 /* The row wears `.callout-studio-row` for its surface, and that class makes it
@@ -8888,18 +8956,20 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 }
 
 /* A floor for the text column at every width: the cluster on the right keeps
-   its natural size, so without one the date and summary could still be
-   squeezed into a sliver. When the row is too narrow for the floor beside the
-   cluster, the cluster wraps onto its own line and stays at the end (the
-   control's `margin-inline-start: auto`). `.modal` and the doubled class clear
-   Obsidian's `.is-phone .modal .setting-item-info { min-width: 0 }` (0,3,0). */
+   its natural size, so without one the name and the summary could
+   still be squeezed into a sliver. 12rem is about what a version's name and
+   summary need before they break a word per line; a phone has less beside
+   three controls, so there the cluster wraps onto its own line under the text
+   and stays at the end (the control's `margin-inline-start: auto`). `.modal`
+   and the doubled class clear Obsidian's
+   `.is-phone .modal .setting-item-info { min-width: 0 }` (0,3,0). */
 .cs-recovery-row.setting-item {
 	flex-wrap: wrap;
 }
 
 .modal .cs-recovery-row.cs-recovery-row .setting-item-info {
-	flex: 1 1 8rem;
-	min-width: 8rem;
+	flex: 1 1 12rem;
+	min-width: min(12rem, 100%);
 	margin: 0;
 }
 
@@ -8918,6 +8988,18 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	padding-top: 2px;
 	line-height: 1.4;
 	overflow-wrap: break-word;
+}
+
+.cs-recovery-summary-counts {
+	display: flex;
+	flex-direction: column;
+}
+
+/* The full text width is available once the controls have their own line. */
+.cs-recovery-controls-wrapped .cs-recovery-summary-counts {
+	flex-direction: row;
+	flex-wrap: wrap;
+	column-gap: var(--size-4-3);
 }
 
 .cs-recovery-row .setting-item-control {
@@ -8939,11 +9021,17 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-error);
 }
 
-.is-mobile.theme-light .modal .cs-recovery-group-rows > .cs-recovery-row.setting-item:not(.setting-item-heading) {
+.cs-version-name {
+	min-width: 0;
+	overflow-wrap: break-word;
+	font-weight: var(--font-normal);
+}
+
+.is-mobile.theme-light .modal .cs-recovery-rows > .cs-recovery-row.setting-item:not(.setting-item-heading) {
 	background: var(--background-secondary-alt);
 }
 
-/* The row keeps its desktop shape on phone too — date + summary on the left,
+/* The row keeps its desktop shape on phone too — name + summary on the left,
    the eye/trash/Restore cluster vertically centred on the right — rather
    than stacking the control onto a full-width line of its own. `cs-row-inline`
    is the same opt-in this file already uses for the icon-tile and colour-swatch
@@ -8977,23 +9065,13 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	gap: 8px;
 }
 
-/* "24 difference(s) from now" always follows "1 saved callout type(s)" with
-   this literal comma-space between the two parts (`.cs-recovery-summary-part`
-   × 2, `.cs-recovery-summary-sep` between them — see renderRow()). On mobile
-   (phone, tablet, and desktop's mobile emulation, which is tablet whenever the
-   window is at least 600×600) the row is narrow and a wrapped mid-sentence
-   comma reads worse than two short lines, so the separator is dropped and each
-   part becomes its own line. */
-.is-mobile .cs-recovery-row .cs-recovery-summary-sep {
-	display: none;
-}
-
-.is-mobile .cs-recovery-row .cs-recovery-summary-part {
+/* Counts remain two separate lines on desktop and mobile alike. */
+.cs-recovery-row .cs-recovery-summary-part {
 	display: block;
 }
 
-/* ── Setup details ────────────────────────────────────────────────
-   One report per earlier setup: a line of context, the number of changes,
+/* ── Version details ──────────────────────────────────────────────
+   One report per earlier setup: a comparison summary,
    then one table per settings section. @see src/settings/recoveryComparisonTable.ts */
 .cs-recovery-detail-loading {
 	margin: 0;
@@ -9002,6 +9080,17 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 
 .cs-recovery-details-modal {
 	min-width: min(820px, 94vw);
+}
+
+.cs-recovery-details-modal .modal-title {
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.cs-version-detail-date {
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-normal);
 }
 
 /* Selectable, so a value can be copied out of a comparison. */
@@ -9014,26 +9103,12 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	-webkit-user-select: text;
 }
 
-/* The report's opening card: when this setup was saved and what it is compared
-   with, then the total and its breakdown under a
-   hairline. Grey-lit like the rest of the chrome: the accent colour belongs to
-   the callout being previewed. */
+/* The report starts directly with its comparison summary. */
 .cs-recovery-detail-summary {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-3);
 	margin: 0 0 var(--size-4-5);
-	padding: var(--size-4-3) var(--size-4-4);
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-m);
-	background: var(--cs-surface-raised, var(--background-secondary));
-}
-
-.cs-recovery-detail-source {
-	min-width: 0;
-}
-
-.cs-recovery-detail-saved {
-	color: var(--text-normal);
-	font-size: var(--font-ui-small);
-	font-weight: var(--font-medium);
 }
 
 .cs-recovery-detail-prose {
@@ -9042,8 +9117,36 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	font-size: var(--font-ui-smaller);
 }
 
-.cs-recovery-detail-summary > .cs-recovery-detail-prose {
-	margin-top: var(--size-4-2);
+.cs-recovery-detail-outcome {
+	min-width: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--size-4-2) var(--size-4-3);
+	padding: var(--size-4-3) var(--size-4-4);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	background: var(--cs-surface-raised, var(--background-secondary));
+}
+
+.cs-recovery-change-title {
+	flex-basis: 100%;
+}
+
+.cs-recovery-detail-outcome > .cs-recovery-detail-prose {
+	flex-basis: 100%;
+	margin: 0;
+}
+
+.cs-recovery-change-title {
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-medium);
+}
+
+.cs-recovery-change-divider {
+	flex: 1 1 auto;
+	min-width: 0;
 }
 
 .cs-recovery-change-counts {
@@ -9051,18 +9154,13 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	flex-wrap: wrap;
 	align-items: center;
 	gap: var(--size-4-2);
-	margin-top: var(--size-4-3);
-	padding-top: var(--size-4-3);
-	border-top: 1px solid var(--background-modifier-border);
 }
 
-/* Same weight as a section title (.cs-recovery-section-toggle): the total is
-   the headline of this report, not another pill beside "Changed"/"Added". */
+/* One quiet label contains both the total and what it is compared against. */
 .cs-recovery-count-total {
-	margin-inline-end: var(--size-4-1);
-	font-size: var(--font-ui-medium);
-	font-weight: var(--font-semibold);
-	color: var(--text-normal);
+	min-width: 0;
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
 }
 
 /* The window body's top padding moves into the report. A section's head
@@ -9079,14 +9177,16 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 }
 
 /* ── The table ── */
-/* A framed table. No `overflow: hidden` for rounded corners: it would make the
-   table its own scroll container and unpin the column headings. */
+/* Clip the frame and cell backgrounds to the theme's radius without creating
+   a scroll container, so the section head still pins inside the modal body. */
 .cs-recovery-comparison {
 	width: 100%;
 	border-collapse: separate;
 	border-spacing: 0;
 	table-layout: fixed;
 	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	clip-path: inset(0 round var(--radius-m));
 }
 
 .cs-recovery-comparison + .cs-recovery-comparison {
@@ -9274,6 +9374,11 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 .cs-recovery-state.is-removed {
 	color: var(--color-red);
 	background: rgba(var(--color-red-rgb), 0.12);
+}
+
+/* Summary pills sit on the same baseline as the panel's text. */
+.cs-recovery-change-counts > .cs-recovery-state {
+	margin-top: 0;
 }
 
 /* ── Values ── */

@@ -280,9 +280,9 @@ describe("the way out of an unreadable file", () => {
 			await settle();
 			const labels = h.buttons().map(button => button.textContent);
 			assert.ok(labels.includes(en["saveStatus.discardRecoveryCopy"]!));
-			assert.ok(labels.includes(en["saveStatus.goToBackups"]!));
-			h.buttons().find(button => button.textContent === en["saveStatus.goToBackups"])!.fire("click");
-			assert.deepEqual(h.calls, ["backup"], "Go to backups navigates; it runs no recovery action");
+			assert.ok(labels.includes(en["saveStatus.goToVersions"]!));
+			h.buttons().find(button => button.textContent === en["saveStatus.goToVersions"])!.fire("click");
+			assert.deepEqual(h.calls, ["backup"], "Go to version history navigates; it runs no recovery action");
 		} finally { h.dispose(); }
 	});
 });

@@ -251,8 +251,8 @@ sufficient**. Common cases that also need an explicit follow-up call:
   rules (written for `.vertical-tab-content`) give `.setting-item:not(…)
   .setting-item-control` and its `button:not(.clickable-icon)` `width: 100%`
   and left-align the control. An unnamed query matches the nearest container
-  of any kind, so a `Setting` row that also wears `.callout-studio-row` (the
-  recovery list's rows) becomes that container for its own children, in any
+  of any kind, so a `Setting` row that also wears `.callout-studio-row` (Version
+  history's rows) becomes that container for its own children, in any
   narrow window on any device class, not just `.is-phone`. With the control
   also set not to shrink, the text column collapsed to 0px and every row grew
   hundreds of pixels tall. `.cs-recovery-row.callout-studio-row` resets

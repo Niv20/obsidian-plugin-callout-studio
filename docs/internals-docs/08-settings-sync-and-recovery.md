@@ -84,7 +84,7 @@ The following rules explain the checks that can otherwise look redundant:
 | Normal disk baseline | `SaveGuard` inside `SettingsWriter`, in memory | Canonical contents of the last accepted file/write. It is not a file-existence cache or a cross-device lock. |
 | Committed merge state | `SettingsSync`, in memory and the persisted envelope | Causal history used to distinguish edits, deletions, and stale snapshots. It is not ordered by wall-clock time. |
 | Recovery checkpoint | `CalloutStudioRecovery` IndexedDB database | One independent device-local snapshot, scoped by vault identity, configuration folder, and plugin id. It may survive plugin removal. |
-| Device history | `CalloutStudioHistory` IndexedDB database | This device's recent accepted states: the last 20, plus the newest from each of the last 14 recorded days and 8 recorded weeks, within a size budget. Same scope as the checkpoint; never synced. |
+| Device history | `CalloutStudioHistory` IndexedDB database | This device's ten newest accepted states within a size budget. Same scope as the checkpoint; never synced. |
 | Recovery backups | `<plugin-dir>/backups/data-<timestamp>-<device>-<hash>.json` | Verified copies taken before particular replacements. These files are inside the vault and can be synced or deleted by a provider. |
 | Prior-use/UI markers | `DeviceLocalStore`, vault-scoped `localStorage` | Evidence that absence should not be treated as a never-used installation; not a source of callout definitions. |
 | Editor form | The open editor's own fields and save session | An unsaved draft. A checkpoint of the registry is not a backup of every form field. |
@@ -112,6 +112,7 @@ The source map is deliberately explicit:
 | Merge representation and integrity | [`settingsSync.ts`](../../src/manager/settingsSync.ts), [`settingsGenesis.ts`](../../src/manager/settingsGenesis.ts), [`syncTree.ts`](../../src/manager/syncTree.ts), [`syncFingerprint.ts`](../../src/manager/syncFingerprint.ts), [`foreignFields.ts`](../../src/manager/foreignFields.ts) |
 | Checkpoints, history, backups and conflict copies | [`settingsCheckpoint.ts`](../../src/manager/settingsCheckpoint.ts), [`settingsHistory.ts`](../../src/manager/settingsHistory.ts), [`settingsRecovery.ts`](../../src/manager/settingsRecovery.ts), [`settingsBackup.ts`](../../src/manager/settingsBackup.ts), [`settingsConflictBackup.ts`](../../src/manager/settingsConflictBackup.ts), [`settingsConflictFiles.ts`](../../src/manager/settingsConflictFiles.ts) |
 | Explicit recovery | [`settingsRecoveryActions.ts`](../../src/manager/settingsRecoveryActions.ts), [`missingSettingsRecovery.ts`](../../src/manager/missingSettingsRecovery.ts), [`settingsRecoveryService.ts`](../../src/manager/settingsRecoveryService.ts), [`settingsDiagnosis.ts`](../../src/manager/settingsDiagnosis.ts), [`SettingsRecoveryModal.ts`](../../src/settings/SettingsRecoveryModal.ts) |
+| Version history | [`setupVersions.ts`](../../src/manager/setupVersions.ts), [`versionLabels.ts`](../../src/manager/versionLabels.ts), [`versionRow.ts`](../../src/settings/versionRow.ts) |
 | Earlier-setup inspection | [`setupDetails.ts`](../../src/manager/setupDetails.ts), [`SettingsRecoveryDetailsModal.ts`](../../src/settings/SettingsRecoveryDetailsModal.ts), [`recoveryDetailsView.ts`](../../src/settings/recoveryDetailsView.ts), [`recoverySections.ts`](../../src/settings/recoverySections.ts), [`recoveryCollections.ts`](../../src/settings/recoveryCollections.ts), [`recoveryModel.ts`](../../src/settings/recoveryModel.ts), [`recoveryValues.ts`](../../src/settings/recoveryValues.ts), [`recoveryDetailFields.ts`](../../src/settings/recoveryDetailFields.ts), [`recoveryComparisonTable.ts`](../../src/settings/recoveryComparisonTable.ts), [`recoveryPreview.ts`](../../src/settings/recoveryPreview.ts), [`recoveryRolePreview.ts`](../../src/settings/recoveryRolePreview.ts) |
 | Paused state | [`pausedRecheck.ts`](../../src/manager/pausedRecheck.ts), [`pausedIndicator.ts`](../../src/settings/pausedIndicator.ts), [`withTimeout.ts`](../../src/utils/withTimeout.ts) |
 | Status and user feedback | [`settingsSaveStatus.ts`](../../src/manager/settingsSaveStatus.ts), [`settingsSaveReporter.ts`](../../src/manager/settingsSaveReporter.ts), [`settingsSaveMessage.ts`](../../src/manager/settingsSaveMessage.ts), [`saveStatusBanner.ts`](../../src/settings/saveStatusBanner.ts), [`saveStatusCopy.ts`](../../src/settings/saveStatusCopy.ts), [`settingsNotices.ts`](../../src/manager/settingsNotices.ts) |
@@ -529,6 +530,63 @@ echo still checks for conflict files, but a sidecar alone may not trigger an eve
 
 ## Device checkpoints and vault backups
 
+### Version history source comparison
+
+**Version history** keeps two derived categories only to choose a fallback title
+when no recognized reason is recorded: **Automatic backup** when any copy has
+kind `history` or `backup`, and **Sync copy** when every copy has kind `copy`.
+Automatic backup takes precedence for mixed versions. Category does not select
+a timeline icon, tooltip, or details badge; the timeline uses identical decorative
+dots and details begins with **What changed**. Storage, capture triggers,
+retention, and synchronization remain independent of this naming fallback.
+
+The table compares the three internal source kinds and their storage and retention
+contracts; these are not three UI choices. Copies with identical normalized
+settings become one timeline row through `mergeVersions()`, so these limits are
+not a combined ten-version limit for the window.
+
+| Parameter | Device history (`history`) | Vault backup (`backup`) | Settings-file copy (`copy`) |
+| --- | --- | --- | --- |
+| Purpose | Return to a previously accepted settings state. | Preserve settings before an operation replaces them. | Make an extra settings file left by a sync provider available for review and restoration. |
+| Created by | Callout Studio, through `SettingsHistory`. | Callout Studio, through `writeSettingsBackup()`. | Usually the sync provider; the plugin lists matching sidecar files. |
+| Capture trigger | Each verified primary-file write and each settings file adopted from disk. | Before import, reset, restoration, repair, or adoption that replaces authored settings. | Whenever a provider leaves an extra settings JSON file beside the primary file. |
+| Storage location | Device-local IndexedDB database `CalloutStudioHistory`, outside the vault. | `<plugin-dir>/backups/`. | Beside `<plugin-dir>/data.json`. |
+| Maximum count | The newest **10 distinct states**, subject to the size budget. | Normally **10 per device**; a protected operation batch can temporarily exceed this. Legacy names share a separate pool of 10. | No count limit enforced by the plugin. |
+| Separate quota per device? | Yes, scoped by vault identity, configuration folder, and plugin id on this device. | Yes for current backup names; older names cannot identify their device. | No plugin-managed quota. |
+| Size budget | **24 MiB**, estimated as `canonical(content).length * 2`; fewer than 10 may fit. The newest state always stays, even if it alone exceeds the budget. | No folder-wide byte budget. | No plugin-managed byte budget. |
+| Automatically deleted? | Yes, when count or size retention no longer keeps an older state. | Yes, for recognized automatic backup names under the retention rules below. | Never automatically deleted by the plugin. |
+| Cleanup timing | At startup and in the same transaction as every record or refresh. Listing does not prune. | At startup, after a new verified backup, and after reuse of an identical verified backup. | No automatic plugin cleanup. |
+| Age expiry | None. | No fixed expiry for this device's retained copies. Another device can be reduced to its newest copy under the relative **90-day rule** below. | None enforced by the plugin. |
+| Identical content | Refreshes the existing hash's timestamp rather than adding another state. | Reuses a matching verified content-hash backup; retention still runs with that copy protected. | Provider behavior determines file creation; the plugin combines identical normalized settings into one timeline row. |
+| Additional daily or weekly copies | None. | None. | Provider-specific; the plugin creates none. |
+| Available on other devices? | No; IndexedDB history is not synced. | Yes, if the provider syncs the plugin's backup directory. | Depends on the provider syncing that file. |
+| Survives uninstall? | The plugin does not erase it on uninstall; survival depends on the app/OS retaining local storage. | Physical files are lost if uninstall removes the plugin directory. | Physical files are lost if uninstall removes the plugin directory. |
+| Listed in Version history? | Yes, when the history store can be read. | Yes, for recognized current or legacy backup names. | Yes, for matching JSON sidecars found by `listSources()`; unreadable copies are also listed. |
+| Restorable? | Yes, if readable, supported, and saving is active. | Yes, if readable, supported, and saving is active. | Yes, if readable, supported, and saving is active. |
+| Manually deletable from Version history? | Yes; `deleteHistoryEntry()` removes the IndexedDB entry. | Yes; `adapter.remove()` deletes the physical file. | Yes; `adapter.remove()` deletes the physical file. |
+| Does deletion affect other devices? | This source's removal is local only. | The file deletion can propagate through the sync provider. | The file deletion can propagate through the sync provider. |
+
+The **90-day rule** compares the other device's newest backup timestamp with this
+device's newest backup timestamp. If the gap is greater than 90 days, cleanup
+keeps only the other device's newest backup, plus any copies protected by the
+current operation. It does not use the current date or device activity; without
+an own backup, this device does not thin other devices. The ten-backup quota is
+shared by all backup reasons, not ten copies for each kind of operation. There
+is no global file-count cap for the backup directory.
+
+The separate recovery checkpoint holds **one snapshot per device scope**, not
+ten history entries. Raw preservation files and archives retained while upgrading
+legacy discovery or startup-snippet storage are outside these three Version
+history source pools; they are not automatically pruned. A manually exported
+setup is also separate.
+
+**Delete** operates on a timeline version and removes every listed copy of it.
+If one row is kept both locally and in the vault, deletion removes both sources,
+and the file deletion can sync to other devices. Its confirmation adds that sync
+warning only when the version includes files. Another device's private IndexedDB
+history remains outside this operation; deletion is not a global erasure request.
+The source comparison above describes each underlying removal separately.
+
 ### Checkpoint transactions
 
 `SettingsCheckpoint` uses IndexedDB database `CalloutStudioRecovery`, store
@@ -586,30 +644,46 @@ Import's 1,000-key limit.
   missing-file restoration, earlier-setup restoration, **Reset everything** and
   both imports.
 - **Deduplicated by hash.** When a copy with the same content hash exists and
-  reads back correctly, it is returned and nothing is written. This early
-  return also skips pruning. Adoption used to back up every stale conflict copy
+  reads back correctly, it is returned without rewriting it; retention still
+  runs with that copy protected. Adoption used to back up every stale conflict copy
   again on each pass.
 - **Retention is per device.** The device part is
   `DeviceLocalStore.deviceId`, eight random characters kept in local storage. A
-  device keeps its newest 10 copies plus its newest copy of each of the last 14
-  UTC days on which it saved one. The two sets overlap, and the current
-  operation's protected batch can retain additional copies. Another device's
+  device keeps its newest 10 copies, without daily extras. The current
+  operation's protected copies take slots first; a protected batch larger than
+  10 temporarily exceeds the cap until later cleanup. Another device's
   copies are left alone until its newest backup is more than 90 days older than
   this device's newest backup; then all but its newest are removed. This uses
-  backup timestamps, not a live-device heartbeat or the current wall clock, so
+  backup timestamps, not a live-device heartbeat or the current wall clock; a
+  device without any own backup does not thin other devices. Thus
   an active device that has needed no backup can qualify as idle. A reinstalled
   phone can get a new device name. A device whose local storage cannot be
   written uses the shared name `device00`. In 2.14 every device pruned every copy
   to one shared window of five, so a busy device evicted another's copies and
   sometimes its own earlier copy from the same adoption.
-- **Only names this module writes are pruned.** Copies named by 2.14 and
-  earlier (`data-<timestamp>-<uuid>.json`) are never deleted here; those builds
-  prune their own. User files are never touched. A pruning failure is logged and
+- **Only recognized automatic backup names are pruned.** Copies named by 2.14
+  and earlier (`data-<timestamp>[-<uuid>].json`) share a separate newest-10 pool,
+  since their names do not identify a device. Only direct children of the backup
+  directory are eligible. Unrecognized user files are never touched. A pruning failure is logged and
   does not invalidate a copy that was already written and verified.
+- **Reasons are recorded separately.** When `pruneSettingsBackups()` deletes this device's
+  copies, it drops their reasons from this device's own labels file; another
+  device's file is that device's to tidy. Each caller says why it takes the copy
+  (`writeSettingsBackup(…, { reason })`: `before-sync` from adoption,
+  `before-restore`, `before-reset`, `before-import` from both imports,
+  `before-repair` from missing-file restoration), recorded for a new copy only and
+  never able to fail the backup.
 
-Pruning runs after a new backup has been written and verified, never as a
-scheduled task. Recorded days are not an age expiry: even old copies can remain
-in the newest-ten or daily sets until later writes displace them. Raw preservation
+Pruning runs at startup before settings adoption, after a new backup has been
+written and verified, and after an existing copy is reused. Startup also prunes
+device history, including when the primary is missing or unreadable. This applies
+the current limits to existing installations without a new save or backup.
+`settingsBoot.ts` bounds maintenance by `PRIMARY_IO_TIMEOUT_MS`; cancellation
+checks stop further backup removals after timeout or unload. An adapter removal
+already in progress cannot be cancelled, so pending-removal paths cannot be
+reused or overwritten by a later backup. A later startup/write retries cleanup.
+Maintenance never writes the primary or checkpoint. Retention is not an age
+expiry: copies within the newest-ten sets can remain indefinitely. Raw preservation
 files (`unreadable-*.txt`, `recovery-copy-*.txt`) are outside this filename matcher
 and are never pruned. The folder has no global file-count or byte budget: multiple
 devices, legacy names, protected batches and preservation files make its total
@@ -627,22 +701,31 @@ only, deduplicated by hash (a state that returns is refreshed, not duplicated).
 The writer never awaits it, and a failure never reaches a save.
 
 It lives in its own IndexedDB database, `CalloutStudioHistory`, scoped like the
-checkpoint. `historyToKeep()` keeps the last 20 distinct states, the newest of
-each of the last 14 days with a recorded state, and the newest of each of the
-last 8 weeks with a recorded state (Monday to Sunday, UTC). Days use UTC too.
-These are overlapping sets of recorded periods, not an expiry after 14 days or
-8 weeks. The 24 MiB budget is estimated from `canonical(content).length * 2`,
+checkpoint. `historyToKeep()` keeps the last 10 distinct states, with no daily
+or weekly extras and no age expiry. The 24 MiB budget is estimated from `canonical(content).length * 2`,
 not measured IndexedDB disk usage; beyond it older retained states go first,
 and the newest always stays even if it alone exceeds the budget.
 
+Each entry also records why it was recorded (`HistoryReason`: `edit` for an
+ordinary save, `load` for a file adopted from disk, `restore` for a commit made
+by **Restore**, `repair` for a replaced missing or unreadable file), which
+Version history uses as the version's automatic name. Every startup adopts the
+file it reads, so a `load` of a hash the store already holds keeps that entry's
+existing reason (or its absence) while its date still moves; any other reason
+replaces it. The reason is an extra field on the stored value, not a new object
+store: a build that predates it reads past it, and one that records the same hash
+again writes the entry back without it.
+
 Every record or refresh of an existing hash prunes the scope in the same
-transaction; listing history and the passage of time do not prune it. Writes
+transaction. Startup calls the best-effort `prune()` through `SettingsWriter.pruneHistory()`;
+it joins the same queue as recording and deletion and removes existing excess
+without recording a new state. Listing history and the passage of time do not prune it. Writes
 are issued from the read's success callback, because older WebKit committed a
 transaction before a promise continuation could add to it. History remains
 best effort if IndexedDB is unavailable or rejects a write.
 
-`delete(hash)` forgets one entry on request, from **Restore an earlier setup**'s
-own **Delete**, and deliberately does not share `record()`'s never-rejects
+`delete(hash)` forgets one entry on request, from Version history's own
+**Delete**, and deliberately does not share `record()`'s never-rejects
 contract: the user asked for that state to be gone, so a storage failure is
 reported to the caller rather than logged and swallowed. It still runs behind
 the same internal write queue as `record()`/`put()`, so the two cannot race each
@@ -789,7 +872,7 @@ its dialog closes, because saving can pause while the dialog is open.
 setting `inert`, and `SettingsTab` redraws whenever the writer freezes or thaws.
 A change made while paused used to look applied and vanish on the next launch.
 The title, the banner, folding the lists, and the rows marked `cs-paused-allowed`
-(Export, Earlier setups, Review conversion) stay usable.
+(Export, Earlier versions, Review conversion) stay usable.
 
 `SettingsWriter.persists(data)` answers whether the settings file now holds
 `data`, by content. `save()` resolves in every case, including when nothing was
@@ -806,9 +889,9 @@ Every other way out used to end in a hidden folder: copy a backup over
 On a phone that folder is out of reach, and a file-level rollback does not even
 stick, because running devices merge their newer stamps straight back over it.
 `SettingsRecoveryService` (`settingsRecoveryService.ts`, the plugin's `recovery`)
-offers diagnosis, replacement and discarding from the banner, and earlier setups
-from **Settings → Backup → Earlier setups**, which the banner's **Go to
-backups** scrolls to.
+offers diagnosis, replacement and discarding from the banner, and earlier
+versions from **Settings → Version history → Earlier versions**, which the
+banner's **Go to version history** scrolls to.
 
 **Diagnosis.** `inspectSettingsFile()` (`settingsDiagnosis.ts`) reads the raw
 bytes through the adapter, with the same timeout, and names the cause:
@@ -847,38 +930,96 @@ valid again just retries recovery. Otherwise the value is copied to
 checkpoint is replaced with the stamped display, and recovery is retried. The
 settings file is not touched.
 
-**Restore an earlier setup** (`SettingsRecoveryModal`) lists three sources:
+**Version history** (`SettingsRecoveryModal`) lists every earlier setup from three
+sources, as one timeline:
 
-- device history, newest first
+- device history (`historyEntries()`)
 - vault backups, from this device, another device, or 2.14 (`listSettingsBackups()`)
 - any other `data*.json` in the plugin folder, such as iCloud's `data 2.json` or a
-  Dropbox conflicted copy, which nothing else would mention
+  Dropbox conflicted copy, which nothing else would mention. A sync service names
+  these but does not date them, so their time is the file's `mtime`
+  (`adapter.stat()`), or null when the vault cannot say.
 
-Each available source group is a shared Callout Studio disclosure heading, initially
-expanded, with the same hairline divider the main settings tab draws between
-sections — on the heading, between groups, not on the individual rows, which are
-Callout Studio's ordinary raised row and carry no border of their own. Entries
-offer **View details**, **Delete**, and, when readable, **Restore**. There is no
-per-entry export button; the settings page's ordinary export still exports the
-displayed setup.
+`listSources()` returns one `RecoverySource` per copy. `listVersions()` passes them
+through `mergeVersions()` (`setupVersions.ts`): copies whose normalized `data` hash
+to the same `canonical()` text are one `SetupVersion`, whose `copies` are newest
+first; versions are newest first, a version with no time last, in a fixed order on
+ties (history, then backups, then copies). The merge is by content and never by
+time. The backup **Restore** takes of the setup it replaces is milliseconds from the
+history entry of the setup it restores, and a time window would fold exactly the
+two versions someone most needs told apart. A copy whose `data` is null is never
+merged, not even with another unreadable copy: there is nothing to compare.
 
-**Delete** (`SettingsRecoveryService.remove()`) permanently forgets one source
-after a warning confirmation, regardless of readability. It touches neither the
-settings file nor the writer, so — unlike **Restore** — it stays available while
-saving is paused. A history entry goes through `SettingsWriter.deleteHistoryEntry()`
+The timeline groups these versions by local calendar day. **Today** and
+**Yesterday** have no repeated date; days two through six show the relative label
+before a localized date; earlier days show the full localized date. A continuous
+vertical line connects one small decorative dot per version. Versions with no saved
+date form a separate final group. This local display grouping does not change
+stored timestamps or retention rules.
+
+Each row has its automatic name and a summary of its differences from now. Its
+short time is across the timeline from that content. All markers are small,
+decorative dots, hidden from assistive technology, with no source icon or tooltip.
+The list and details show no source badges, category explanation, or sync-copy
+filenames. These presentation choices do not change content grouping or the
+copies available to restoration and deletion. A version appearing in the list
+does not establish that any file has uploaded or reached another device.
+Names are plain text. The row controls are **View details**, **Delete** and, when
+readable, **Restore**. There is no per-entry export button; the settings page's
+ordinary export still exports the displayed setup.
+
+#### Automatic names and reasons
+
+A version is named by why it was kept: the reason of the newest copy that recorded
+one (`SetupVersion.reason`), mapped through a literal key table in
+`versionRow.ts`, with the **Automatic backup** or **Sync copy** category from
+`versionCategory()` as the fallback when there is no recognized reason. Any
+`history` or `backup` source makes the version automatic; only all-`copy`
+versions use the sync-copy fallback. Known reason titles remain unchanged.
+There is no custom-name field or
+rename action. Reasons are kept in these places:
+
+| Copy | Its reason |
+| --- | --- |
+| Device history | The entry's `reason` (see [Device history](#device-history)) |
+| Vault backup | `labels-<device>.json` beside the backups, keyed by file name, written by the device that wrote the backup (`BackupReason`, passed as `writeSettingsBackup(…, { reason })` by each caller) |
+| Sync copy | None; the version uses its derived category as the fallback title. |
+
+The reason cannot live in the backup itself. Older builds parse a backup's file
+name, so it cannot grow a part, and an extra top-level key in its content is a
+foreign field the registry keeps, which would ride into every restore; inside the
+`calloutStudioSync` envelope it would fail `validSyncEnvelope()` and make older
+builds list the backup as unreadable. So `versionLabels.ts` keeps one small file
+per device in the backups folder, for the same reason backups carry their device
+in their names: a file two devices write is a file a sync service turns into a
+conflict copy. A device writes only its own file (serialized per file, so two
+changes in a row both land) and reads every device's. Parsing skips malformed
+entries, including reason keys that are not a `data-….json` file name. A failed
+write resolves to `false`; a read that fails aborts the write rather than replacing
+an unavailable file with a near-empty one. A reused backup keeps the reason it was
+first saved for: `writeSettingsBackup()` records a reason only for a copy it writes.
+
+**Delete** (`SettingsRecoveryService.removeVersion()`) permanently deletes every
+available copy of a version after a warning confirmation, regardless of
+readability. The confirmation explains the removal once and adds a warning about
+deletion syncing only if the version contains a backup or sync-copy file. Copies
+in another device's private history may remain. It touches neither the settings
+file nor the writer, so
+— unlike **Restore** — it stays available while saving is paused. Each copy goes
+through `remove(source)`: a history entry through `SettingsWriter.deleteHistoryEntry()`
 → `SettingsHistoryStore.delete(hash)`, keyed by the `historyHash` a `RecoverySource`
-carries for that kind only; a backup or stray copy goes through
+carries for that kind only; a backup or stray copy through
 `adapter.remove(source.path)`, the same primitive `settingsBackup.ts`'s automatic
-pruning uses. The modal reloads the full list from `listSources()` on success
-rather than removing the row itself, so a group's count and its collapse-to-empty
-behavior stay correct without separate bookkeeping.
+pruning uses. A deleted backup's reason is dropped from this device's labels file.
+It resolves to whether every copy went; the modal reloads the list either way, so
+what is left shows.
 
 Each `RecoverySource` still carries an `origin` (`"this-device"`, `"other-device"`,
 `"older-version"`, or `null`) for backups and stray copies, but the modal never
 displays it — which device a copy came from is not something restoring it
-requires the user to know. The field stays on the type for whatever internal
-bookkeeping constructs it (`settingsRecoveryService.ts`'s device comparison),
-not for display.
+requires the user to know. The field stays on the type for the internal
+bookkeeping that constructs it
+(`settingsRecoveryService.ts`'s device comparison), not for display.
 
 Each source's `data` is its restorable setup normalized through a scratch registry.
 Malformed, unsupported or unreadable settings produce a null `data`; the list
@@ -886,17 +1027,18 @@ keeps the entry but cannot offer restoration. The comparison does not retain or
 display the original file text. `difference()` counts the callout rows and setting
 groups that differ from now.
 
-**View details** is available on every row, including unreadable entries and while
-saving is paused. `SettingsRecoveryService.details(source)` captures independent
+**View details** is available on every row, including unreadable entries, a version
+identical to the current setup (which shows **Same as your current setup**),
+and while saving is paused. `SettingsRecoveryService.details(source, version)` captures independent
 clones of the selected source and currently displayed registry and builds the
 report's changes through `setupDetails.ts`, using the same `differingEntries()`
 callout-row and settings-group comparison as the list summary. Incidental
 preferences, icon-cache changes and other top-level fields are not counted as
 differences. This is a
 point-in-time comparison when the details window opens, not a live preview or a
-promise about changes that may arrive before a later restore. The refresh control
-captures the latest displayed setup again against the same selected source and
-rebuilds the report; the source itself is not re-read from disk.
+promise about changes that may arrive before a later restore. The modal keeps
+that snapshot for its lifetime; reopening details captures the displayed setup
+again.
 
 `SetupChange.fields` contains the output of `setupFieldChanges(before, after)`:
 `SetupFieldChange` entries with a relative `path`, `before`, and `after`. Objects
@@ -928,7 +1070,20 @@ internal effective-definition union with `kind !== "unchanged" || artworkChanged
 this does not alter the persisted-row/group count used by the earlier-setups list.
 Unaffected callouts are omitted; there is no sample limit.
 
-`SettingsRecoveryDetailsModal` puts the saved date in its header. The report is
+`SettingsRecoveryDetailsModal` (**Version details**) shows the source's saved date
+and time in parentheses beside the window title, using smaller, muted text in
+that same header. A missing time uses localized `recovery.details.unknownTime` there.
+There is no separate version-name line, category row, storage card, or list of
+sync-copy filenames. The report starts directly with a bordered **What changed**
+panel, whose smaller, muted heading occupies its own row. The version's date,
+content grouping, and automatic name still use the existing copy metadata;
+removing source details from the display does not rewrite that metadata.
+The difference total and its context, such as **24 differences from your current
+setup**, and removed/changed/added pill badges share the row beneath where space allows.
+It wraps as needed; the total is smaller and muted, and the pills retain their
+red/yellow/green fills. An equal version
+uses **Same as your current setup** with no counters; an unreadable
+version uses **Comparison unavailable** with its explanation below. The report is
 split into the settings page's sections, in its order (callout types, then custom
 icons and icon-picker defaults, fallback, palettes, global style, context menu,
 commands, language, then "Other settings" for groups this build does not know).
@@ -1013,8 +1168,9 @@ device's file is adopted. `applyExternalSettings` compares the registry
 snapshot with `writer.lastSaved` (what the file held after this device's last
 write or adoption). If `unsavedChangesReplaced()` (`setupDifference.ts`) counts
 one or more callout types or setting groups that were changed here and then
-replaced, a notice says so and points to **Restore an earlier setup**. The
-adoption has already backed up that version.
+replaced, a notice (`notice.unsavedChangesKept`) says so and points to
+**Version history**. The adoption has already backed up that version, which the
+list names *Before changes from another device*.
 
 `recovery.diagnostics()` builds a plain-English report. It has no settings-page
 entry point of its own anymore — the **Sync diagnostics** row and its **Copy
@@ -1083,7 +1239,7 @@ every combination of OS, provider and hardware has been exercised.
 | Valid remote settings plus unsaved registry changes | Merge against accepted causal history, preserve losing authored versions as required, and save through the normal guard. |
 | Stale snapshot resurrects a deleted id | Retained tombstones block the stale recreation. A legitimate recreation after observing deletion is a new causal edit. |
 | Incompatible old device writes an unstamped snapshot | Do not let it undo stamped history. Preserve relevant losing authored data; manual recovery may be required. |
-| Recognized intact conflict copy | Validate and incorporate its stamped history without deleting the file. Unrecognized/unstamped copies are listed under **Restore an earlier setup**, never merged automatically. |
+| Recognized intact conflict copy | Validate and incorporate its stamped history without deleting the file. Unrecognized/unstamped copies are listed in **Version history** as sync copies, never merged automatically. |
 | Notes sync but settings do not | Check provider configuration/profile inclusion. The plugin cannot infer that settings synchronization is enabled from note events. |
 
 ### Storage failures and async boundaries
@@ -1168,7 +1324,7 @@ Related existing suites verify other layers:
 | Editor promises | [`editorSaveRecovery.test.ts`](../../tests/editorSaveRecovery.test.ts), [`calloutDeleteRecovery.test.ts`](../../tests/calloutDeleteRecovery.test.ts) |
 | First files, legacy rescue, backup integrity | [`syncGenesis.test.ts`](../../tests/syncGenesis.test.ts), [`syncBackupIntegrity.test.ts`](../../tests/syncBackupIntegrity.test.ts) |
 | Backups, history, device memory | [`settingsBackup.test.ts`](../../tests/settingsBackup.test.ts), [`settingsConflictBackup.test.ts`](../../tests/settingsConflictBackup.test.ts), [`settingsHistory.test.ts`](../../tests/settingsHistory.test.ts), [`deviceMemory.test.ts`](../../tests/deviceMemory.test.ts) |
-| Recovery without file surgery | [`settingsDiagnosis.test.ts`](../../tests/settingsDiagnosis.test.ts), [`settingsRecoveryService.test.ts`](../../tests/settingsRecoveryService.test.ts), [`settingsRecoveryModal.test.ts`](../../tests/settingsRecoveryModal.test.ts), [`settingsNewerFormat.test.ts`](../../tests/settingsNewerFormat.test.ts), [`pausedSaving.test.ts`](../../tests/pausedSaving.test.ts) |
+| Recovery without file surgery | [`settingsDiagnosis.test.ts`](../../tests/settingsDiagnosis.test.ts), [`settingsRecoveryService.test.ts`](../../tests/settingsRecoveryService.test.ts), [`settingsRecoveryModal.test.ts`](../../tests/settingsRecoveryModal.test.ts), [`setupVersions.test.ts`](../../tests/setupVersions.test.ts), [`versionLabels.test.ts`](../../tests/versionLabels.test.ts), [`settingsNewerFormat.test.ts`](../../tests/settingsNewerFormat.test.ts), [`pausedSaving.test.ts`](../../tests/pausedSaving.test.ts) |
 | Earlier-setup comparison | [`setupDetails.test.ts`](../../tests/setupDetails.test.ts), [`settingsRecoveryService.test.ts`](../../tests/settingsRecoveryService.test.ts), [`settingsRecoveryDetails.test.ts`](../../tests/settingsRecoveryDetails.test.ts), [`recoveryPreview.test.ts`](../../tests/recoveryPreview.test.ts) |
 | Paused page, unsaved changes, lifecycle, undo | [`pausedReadOnly.test.ts`](../../tests/pausedReadOnly.test.ts), [`unsavedChangesNotice.test.ts`](../../tests/unsavedChangesNotice.test.ts), [`writerLifecycle.test.ts`](../../tests/writerLifecycle.test.ts), [`noteRewriteUndo.test.ts`](../../tests/noteRewriteUndo.test.ts) |
 | Destructive actions | [`resetSafety.test.ts`](../../tests/resetSafety.test.ts), [`importSafety.test.ts`](../../tests/importSafety.test.ts), [`deleteWhilePaused.test.ts`](../../tests/deleteWhilePaused.test.ts), [`replaceCalloutModal.test.ts`](../../tests/replaceCalloutModal.test.ts) |

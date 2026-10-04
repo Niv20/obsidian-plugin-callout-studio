@@ -20,7 +20,10 @@ function fixture() {
 			list: () => Promise.resolve({ files: [...files.keys()], folders: [] }),
 			remove: (path: string) => { files.delete(path); return Promise.resolve(); },
 		} } } as unknown as App };
-	return { current, files, host, fail: () => { fail = true; } };
+	// The folder also holds the labels file that says why each backup was taken.
+	const backups = () => [...files].filter(([path]) => /\/data-[^/]*\.json$/.test(path)).map(([, text]) => text);
+	const labels = () => JSON.parse(files.get(".obsidian/plugins/callout-studio/backups/labels-device00.json") ?? "{}") as { reasons?: Record<string, string> };
+	return { current, files, backups, labels, host, fail: () => { fail = true; } };
 }
 
 describe("conflicting device settings retain a recovery copy", () => {
@@ -28,8 +31,9 @@ describe("conflicting device settings retain a recovery copy", () => {
 		const h = fixture(); const remote = { ...h.current, callouts: [definition({ id: "remote" })] };
 		assert.equal(settingsWouldDiscardRows(h.current, remote), true);
 		assert.equal(await backUpBeforeAdoption(h.host, h.current, remote), true);
-		assert.equal(h.files.size, 1);
-		assert.deepEqual(JSON.parse([...h.files.values()][0]!), JSON.parse(JSON.stringify(h.current)));
+		assert.equal(h.backups().length, 1);
+		assert.deepEqual(JSON.parse(h.backups()[0]!), JSON.parse(JSON.stringify(h.current)));
+		assert.deepEqual(Object.values(h.labels().reasons ?? {}), ["before-sync"], "Version history names it by why it was kept");
 	});
 	it("detects an edit to the same id, even when the other device adds more rows", () => {
 		const h = fixture();
@@ -48,7 +52,7 @@ describe("conflicting device settings retain a recovery copy", () => {
 		const h = fixture(); const time = new Date("2026-09-06T10:00:00Z");
 		const a = await writeSettingsBackup({ ...h.host, localState: { deviceId: "aaaaaaaa" } }, { same: true }, { now: time });
 		const b = await writeSettingsBackup({ ...h.host, localState: { deviceId: "bbbbbbbb" } }, { same: false }, { now: time });
-		assert.notEqual(a, b); assert.equal(h.files.size, 2);
+		assert.notEqual(a, b); assert.equal(h.backups().length, 2);
 	});
 	it("does not back up for picker memory or onboarding flags alone", async () => {
 		const h = fixture();
@@ -63,8 +67,8 @@ describe("conflicting device settings retain a recovery copy", () => {
 		const incoming = { ...h.current, settings: { ...h.current.settings, disabledFixedCommands: [] } };
 		assert.equal(settingsWouldDiscardRows(h.current, incoming), false);
 		assert.equal(await backUpBeforeAdoption(h.host, h.current, incoming), true);
-		assert.equal(h.files.size, 1);
-		const saved = JSON.parse([...h.files.values()][0]!) as { settings: { disabledFixedCommands: string[] } };
+		assert.equal(h.backups().length, 1);
+		const saved = JSON.parse(h.backups()[0]!) as { settings: { disabledFixedCommands: string[] } };
 		assert.deepEqual(saved.settings.disabledFixedCommands, ["wrap-selection"]);
 	});
 });

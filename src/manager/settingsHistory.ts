@@ -17,20 +17,34 @@
  * each file adopted from disk. Recording is best effort and never delays or
  * fails a save. States are stored as content, deduplicated by hash, and kept
  * by {@link historyToKeep}.
+ *
+ * Each state also carries why it was recorded, which Version history shows as
+ * its name. This is an extra field on the stored entry rather than a new
+ * store, for the reason above; a build that predates it reads past it.
  */
 import type { App, PluginManifest } from "obsidian";
 import { canonical, content } from "./syncTree";
 import { hash64 } from "./syncFingerprint";
 
+/**
+ * What this device had just done when it recorded a state. Stored as written:
+ * a later build may add reasons, and an earlier one shows those under its
+ * general name.
+ */
+export type HistoryReason =
+	/** A change made here was saved. */
+	| "edit"
+	/** The settings file was read: at startup, or after it changed on disk. */
+	| "load"
+	/** A version was restored from Version history. */
+	| "restore"
+	/** A missing or unreadable settings file was replaced. */
+	| "repair";
+
 /** The most recent distinct states, whatever their age. */
-const KEEP_RECENT = 20;
-/** Then the newest state of each of this many most recent days… */
-const KEEP_DAYS = 14;
-/** …and of each of this many most recent weeks. */
-const KEEP_WEEKS = 8;
+const KEEP_RECENT = 10;
 /** Beyond this many bytes, older states go first; the newest always stays. */
 const BUDGET_BYTES = 24 * 1024 * 1024;
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 const DATABASE = "CalloutStudioHistory";
 const STORE = "snapshots";
@@ -40,35 +54,29 @@ export interface SettingsHistoryEntry {
 	savedAt: number;
 	bytes: number;
 	data: Record<string, unknown>;
+	/** Why it was recorded; absent on a state an earlier build recorded. */
+	reason?: string;
 }
 
 export interface SettingsHistoryStore {
 	/** Remember `data` as a state this device accepted. Never rejects. */
-	record(data: unknown): Promise<void>;
+	record(data: unknown, reason?: HistoryReason): Promise<void>;
 	/** Every kept state, newest first. */
 	list(): Promise<SettingsHistoryEntry[]>;
 	/** Forget one kept state. Unlike `record`, a failure is reported to the caller. */
 	delete(hash: string): Promise<void>;
+	/** Apply current limits to existing states without recording one. Never rejects. */
+	prune?(): Promise<void>;
 }
 
-/** Which states to keep, by hash: see the constants above. */
+/** At most the ten newest distinct states, within the size budget. */
 export function historyToKeep(entries: readonly Pick<SettingsHistoryEntry, "hash" | "savedAt" | "bytes">[]): Set<string> {
-	const newest = [...entries].sort((a, b) => b.savedAt - a.savedAt);
 	const keep = new Set<string>();
-	const days = new Set<number>(), weeks = new Set<number>();
-	newest.forEach((entry, index) => {
-		if (index < KEEP_RECENT) keep.add(entry.hash);
-		const day = Math.floor(entry.savedAt / DAY_MS);
-		if (!days.has(day) && days.size < KEEP_DAYS) { days.add(day); keep.add(entry.hash); }
-		// 1970-01-01 was a Thursday; shifting by three days starts weeks on Monday.
-		const week = Math.floor((day + 3) / 7);
-		if (!weeks.has(week) && weeks.size < KEEP_WEEKS) { weeks.add(week); keep.add(entry.hash); }
-	});
+	const newest = [...entries].sort((a, b) => b.savedAt - a.savedAt).slice(0, KEEP_RECENT);
 	let bytes = 0;
 	for (const entry of newest) {
-		if (!keep.has(entry.hash)) continue;
 		bytes += entry.bytes;
-		if (bytes > BUDGET_BYTES && entry !== newest[0]) keep.delete(entry.hash);
+		if (bytes <= BUDGET_BYTES || entry === newest[0]) keep.add(entry.hash);
 	}
 	return keep;
 }
@@ -92,7 +100,7 @@ export class SettingsHistory implements SettingsHistoryStore {
 		return JSON.stringify([appId, this.app.vault.configDir, this.manifest.id]);
 	}
 
-	record(data: unknown): Promise<void> {
+	record(data: unknown, reason: HistoryReason = "edit"): Promise<void> {
 		// Nothing to keep it in; not worth a log line per save.
 		if (typeof indexedDB === "undefined") return Promise.resolve();
 		let entry: StoredEntry;
@@ -100,7 +108,7 @@ export class SettingsHistory implements SettingsHistoryStore {
 			// Captured now: the caller's object can change while this waits its turn.
 			const body = content(data);
 			const text = canonical(body);
-			entry = { scope: this.scope, hash: hash64(text), savedAt: this.now(), bytes: text.length * 2, data: body };
+			entry = { scope: this.scope, hash: hash64(text), savedAt: this.now(), bytes: text.length * 2, data: body, reason };
 		} catch (error) {
 			console.debug("[callout-studio] could not record settings history", error);
 			return Promise.resolve();
@@ -111,18 +119,32 @@ export class SettingsHistory implements SettingsHistoryStore {
 		return this.queue;
 	}
 
+	/** Upgrade existing history even when startup cannot accept a settings file. */
+	prune(): Promise<void> {
+		if (typeof indexedDB === "undefined") return Promise.resolve();
+		this.queue = this.queue.then(() => this.transact("readwrite", store =>
+			this.all(store, entries => this.dropExcess(store, entries)),
+		)).then(() => undefined).catch((error: unknown) => {
+			console.debug("[callout-studio] could not prune settings history", error);
+		});
+		return this.queue;
+	}
+
 	async list(): Promise<SettingsHistoryEntry[]> {
 		if (typeof indexedDB === "undefined") return [];
 		const entries = await this.transact("readonly", store => this.all(store));
 		return entries.sort((a, b) => b.savedAt - a.savedAt)
-			.map(({ hash, savedAt, bytes, data }) => ({ hash, savedAt, bytes, data }));
+			.map(({ hash, savedAt, bytes, data, reason }) => ({
+				hash, savedAt, bytes, data,
+				...typeof reason === "string" ? { reason } : {},
+			}));
 	}
 
 	/**
 	 * The user asked for this one to be gone, so — unlike `record`, which is
 	 * opportunistic bookkeeping that must never fail a save — a failure here is
 	 * not swallowed. It is still run behind `this.queue`, so it cannot race a
-	 * `record()`/`delete()` for the same hash, but the chain itself is forked:
+	 * `record()`/`prune()`/`delete()` for the same hash, but the chain itself is forked:
 	 * `this.queue` always resolves, so one failed delete cannot poison every
 	 * later history write, while the caller's own promise still rejects.
 	 */
@@ -162,14 +184,29 @@ export class SettingsHistory implements SettingsHistoryStore {
 	 */
 	private put(entry: StoredEntry): Promise<void> {
 		return this.transact("readwrite", store => this.all(store, existing => {
-			const entries = existing.filter(other => other.hash !== entry.hash);
-			entries.push(entry);
-			const keep = historyToKeep(entries);
-			store.put(entry, this.key(entry.hash));
-			for (const other of entries) {
-				if (!keep.has(other.hash)) store.delete(this.key(other.hash));
+			const stored: StoredEntry = { ...entry };
+			const previous = existing.find(other => other.hash === entry.hash);
+			if (previous) {
+				// Reading a state this device already had — every startup does —
+				// says nothing new about how it came about, so it keeps its reason.
+				if (entry.reason === "load") {
+					if (previous.reason === undefined) delete stored.reason;
+					else stored.reason = previous.reason;
+				}
 			}
+			const entries = existing.filter(other => other.hash !== entry.hash);
+			entries.push(stored);
+			store.put(stored, this.key(entry.hash));
+			this.dropExcess(store, entries);
 		})).then(() => undefined);
+	}
+
+	/** Called from a read's success callback while its transaction is still live. */
+	private dropExcess(store: IDBObjectStore, entries: StoredEntry[]): void {
+		const keep = historyToKeep(entries);
+		for (const entry of entries) {
+			if (!keep.has(entry.hash)) store.delete(this.key(entry.hash));
+		}
 	}
 
 	private open(): Promise<IDBDatabase> {

@@ -6,10 +6,11 @@ import { getLocale, registerLocale, setLocale, t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import type { RecoverySource, SettingsRecoveryService } from "../src/manager/settingsRecoveryService";
 import { setupDetails, type SetupDetails } from "../src/manager/setupDetails";
+import { mergeVersions, type SetupVersion } from "../src/manager/setupVersions";
 import { SettingsRecoveryDetailsModal } from "../src/settings/SettingsRecoveryDetailsModal";
 import { SettingsRecoveryModal } from "../src/settings/SettingsRecoveryModal";
 import { recoveryFieldLabel } from "../src/settings/recoveryDetailFields";
-import { renderRecoveryDetails } from "../src/settings/recoveryDetailsView";
+import { recoverySourceTime, renderRecoveryDetails } from "../src/settings/recoveryDetailsView";
 import { formatNumber } from "../src/settings/recoveryValues";
 import type { CustomPalette, PluginData } from "../src/types";
 import { definition } from "./support/discoveryHarness";
@@ -80,6 +81,61 @@ function everySection(): SetupDetails {
 }
 
 describe("earlier setup detail reports", () => {
+	it("starts with the titled change panel, without source information or filenames", async () => {
+		const current = savedSetup(), earlier = savedSetup();
+		earlier.callouts = [definition({ id: "mine" })];
+		const source: RecoverySource = { kind: "history", time: 3000, path: null, historyHash: "history", origin: "this-device", data: earlier, reason: "edit" };
+		const backup: RecoverySource = { ...source, kind: "backup", time: 2000, path: "backups/saved.json", historyHash: null, reason: "before-import" };
+		const copy: RecoverySource = { ...source, kind: "copy", time: null, path: "plugins/callout-studio/data conflicted copy.json", historyHash: null, reason: undefined };
+		const anotherCopy: RecoverySource = { ...copy, time: 1000, path: "plugins/callout-studio/data עותק.json" };
+		const version = mergeVersions([source, backup, copy, anotherCopy])[0]!;
+		const h = await render({ ...setupDetails(source, current), version });
+		try {
+			assert.equal(h.root.querySelector(".cs-version-category"), null);
+			assert.equal(h.root.querySelector(".cs-version-badge"), null);
+			assert.equal(h.root.querySelector(".cs-version-places"), null);
+			assert.equal(h.root.querySelectorAll(".cs-version-place").length, 0);
+			assert.equal(h.root.querySelector(".cs-version-detail-name"), null);
+			assert.equal(h.root.querySelector(".cs-recovery-detail-source"), null);
+			assert.equal(h.root.querySelector(".cs-recovery-detail-saved"), null);
+			assert.equal(h.root.querySelectorAll(".cs-version-detail-card").length, 0);
+			const outcome = h.root.querySelector(".cs-recovery-detail-outcome");
+			assert.ok(outcome);
+			assert.equal(h.root.querySelector(".cs-recovery-detail-summary")?.children[0], outcome);
+			assert.equal(outcome.children[0], outcome.querySelector(".cs-recovery-change-title"));
+			assert.equal(text(outcome.querySelector(".cs-recovery-change-title")), t("recovery.details.changesTitle"));
+			const divider = outcome.querySelector(".cs-recovery-change-divider");
+			assert.equal(text(divider?.querySelector(".cs-recovery-count-total")), t("versions.details.difference", { count: 1 }));
+			const counts = outcome.querySelector(".cs-recovery-change-counts");
+			assert.equal(text(counts?.querySelector(".cs-recovery-state.is-added")), t("recovery.details.count.added", { count: 1 }));
+			assert.equal(counts?.querySelector(".cs-recovery-count-total"), null, "the divider owns the total, separate from the kind badges");
+			assert.equal(outcome.querySelector(".cs-recovery-detail-prose"), null);
+			assert.equal(h.root.querySelectorAll(".cs-version-place-reason").length, 0);
+			assert.equal(h.root.querySelectorAll(".cs-version-place-when").length, 0);
+			assert.equal(h.root.querySelectorAll(".cs-version-copy-file").length, 0);
+			for (const filename of ["saved.json", "data עותק.json", "data conflicted copy.json"]) {
+				assert.ok(!h.root.textContent.includes(filename), "internal filenames are not user-facing");
+			}
+		} finally { h.destroy(); }
+	});
+
+	it("shows the comparison outcome for identical and unreadable versions, even with no known date", async () => {
+		for (const data of [savedSetup(), null]) {
+			const source: RecoverySource = { kind: "copy", time: null, path: "data copy.json", historyHash: null, origin: null, data };
+			const version = mergeVersions([source])[0]!;
+			const h = await render({ ...setupDetails(source, savedSetup()), version });
+			try {
+				assert.equal(h.root.querySelectorAll(".cs-version-category").length, 0);
+				assert.equal(h.root.querySelector(".cs-recovery-detail-saved"), null);
+				assert.equal(h.root.querySelector(".cs-version-copy-file"), null);
+				assert.equal(text(h.root.querySelector(".cs-recovery-change-divider")), t(data ? "recovery.same" : "versions.details.comparisonUnavailable"));
+				assert.equal(h.root.querySelector(".cs-recovery-change-counts"), null);
+				if (!data) assert.equal(text(h.root.querySelector(".cs-recovery-detail-prose")), t("recovery.details.unreadable"));
+				assert.equal(h.root.querySelectorAll("table").length, 0);
+			} finally { h.destroy(); }
+		}
+	});
+
 	it("splits the report into the settings page's sections, in its order, each a four-column table", async () => {
 		const h = await render(everySection());
 		try {
@@ -109,7 +165,7 @@ describe("earlier setup detail reports", () => {
 			for (const cell of numbers) {
 				assert.equal(cell.getAttribute("rowspan"), String(cell.closest("tbody")!.querySelectorAll("tr").length));
 			}
-			assert.ok(text(h.root).includes(t("recovery.details.count.total", { count: numbers.length })));
+			assert.equal(text(h.root.querySelector(".cs-recovery-count-total")), t("versions.details.differences", { count: numbers.length }));
 		} finally { h.destroy(); }
 	});
 
@@ -273,13 +329,20 @@ describe("earlier setup detail reports", () => {
 		} finally { h.destroy(); }
 	});
 
-	it("localizes known labels while identifiers stay literal", async () => {
-		registerLocale("fr", { "recovery.details.field.colorLight": "Couleur traduite" });
+	it("localizes the difference labels while identifiers stay literal", async () => {
+		registerLocale("fr", {
+			"recovery.details.field.colorLight": "Couleur traduite",
+			"recovery.details.changesTitle": "Modifications traduites",
+			"versions.details.difference": "{{count}} différence traduite",
+		});
 		const current = savedSetup(), earlier = savedSetup();
 		current.callouts = [definition({ id: "fixed-callout-id" })];
 		earlier.callouts = [definition({ id: "fixed-callout-id", colorLight: "#abcdef" })];
-		const h = await render(compare(current, earlier), "fr");
+		const details = compare(current, earlier);
+		const h = await render({ ...details, version: mergeVersions([details.source])[0]! }, "fr");
 		try {
+			assert.equal(text(h.root.querySelector(".cs-recovery-change-title")), "Modifications traduites");
+			assert.equal(text(h.root.querySelector(".cs-recovery-count-total")), "1 différence traduite");
 			assert.deepEqual(labels(item(h.root, "callout:fixed-callout-id")), ["Couleur traduite"]);
 			assert.ok(text(h.root).includes("[!fixed-callout-id]"));
 		} finally { h.destroy(); }
@@ -307,12 +370,13 @@ describe("earlier setup detail reports", () => {
 	});
 });
 
-describe("viewing details from the earlier-setups list", () => {
+describe("viewing details from Version history", () => {
 	it("renders the report in the window and cleans it up when the window closes", async () => {
 		const previous = getLocale(); setLocale("en");
 		const app = { keymap: new TestKeymap(), scope: new TestScope() } as unknown as App;
 		const earlier = savedSetup(); earlier.settings.globalStyle.borderRadius = 19;
-		const modal = new SettingsRecoveryDetailsModal(app, compare(savedSetup(), earlier));
+		const details = compare(savedSetup(), earlier);
+		const modal = new SettingsRecoveryDetailsModal(app, details);
 		const containerEl = fakeDom.document.body.createDiv({ cls: "modal-container" });
 		const modalEl = containerEl.createDiv({ cls: "modal" });
 		const titleEl = modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });
@@ -323,19 +387,42 @@ describe("viewing details from the earlier-setups list", () => {
 		try {
 			modal.onOpen();
 			await settle(ready);
-			assert.ok(titleEl.textContent.startsWith(t("recovery.details.title")));
+			assert.ok(titleEl.textContent.startsWith(t("versions.details.title")));
+			assert.equal(text(titleEl.querySelector(".cs-version-detail-date")), ` (${recoverySourceTime(details.source)})`);
 			assert.ok(modalEl.hasClass("cs-modal-wide"));
 			assert.deepEqual(sections(contentEl), ["style"]);
 			modal.onOpen();
 			await settle(ready);
 			assert.equal(contentEl.querySelectorAll(".cs-recovery-detail-report").length, 1, "reopening replaces the report");
+			assert.equal(titleEl.querySelectorAll(".cs-version-detail-date").length, 1, "reopening replaces the title date");
 			modal.onClose();
 			assert.equal(contentEl.children.length, 0);
 			assert.ok(!modalEl.hasClass("cs-modal-wide"));
 		} finally { modal.onClose(); containerEl.remove(); setLocale(previous); }
 	});
 
-	it("opens details for frozen and unreadable rows, and offers none for an identical one, without restoring anything", () => {
+	it("shows the unknown-time notice in the window title when the source has no date", async () => {
+		const previous = getLocale(); setLocale("en");
+		const app = { keymap: new TestKeymap(), scope: new TestScope() } as unknown as App;
+		const data = savedSetup();
+		const source: RecoverySource = { kind: "copy", time: null, path: "data copy.json", historyHash: null, origin: null, data };
+		const modal = new SettingsRecoveryDetailsModal(app, setupDetails(source, data));
+		const containerEl = fakeDom.document.body.createDiv({ cls: "modal-container" });
+		const modalEl = containerEl.createDiv({ cls: "modal" });
+		const titleEl = modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });
+		const contentEl = modalEl.createDiv({ cls: "modal-content" });
+		Object.assign(modal, { containerEl, modalEl, titleEl, contentEl, app, scope: app.scope,
+			setTitle: (title: string) => { titleEl.setText(title); return modal; } });
+		try {
+			modal.onOpen();
+			await settle(() => contentEl.getAttribute("aria-busy") === "false");
+			assert.equal(text(titleEl.querySelector(".cs-version-detail-date")), ` (${t("recovery.details.unknownTime")})`);
+			assert.equal(contentEl.querySelector(".cs-recovery-detail-source"), null);
+		} finally { modal.onClose(); containerEl.remove(); setLocale(previous); }
+	});
+
+	// Even a version identical to now has a comparison outcome to show.
+	it("opens details for frozen, identical and unreadable rows, without restoring anything", () => {
 		const previous = getLocale(); setLocale("en");
 		const opened: SettingsRecoveryDetailsModal[] = [];
 		const descriptor = Object.getOwnPropertyDescriptor(SettingsRecoveryDetailsModal.prototype, "open");
@@ -346,8 +433,14 @@ describe("viewing details from the earlier-setups list", () => {
 			for (const mode of ["frozen", "identical", "unreadable"] as const) {
 				const source: RecoverySource = { kind: "copy", time: null, path: "data copy.json", historyHash: null, origin: null,
 					data: mode === "unreadable" ? null : savedSetup() };
+				const [version] = mergeVersions([source]);
 				const recovery = {
-					details: (selected: RecoverySource) => { detailsCalls++; assert.equal(selected, source); return setupDetails(selected, savedSetup()); },
+					details: (selected: RecoverySource, of?: SetupVersion) => {
+						detailsCalls++;
+						assert.equal(selected, source);
+						assert.equal(of, version, "the report classifies the complete version");
+						return setupDetails(selected, savedSetup());
+					},
 					difference: () => ({ callouts: 1, changed: mode === "identical" ? 0 : 1 }),
 					restore: () => { restoreCalls++; return Promise.resolve("restored" as const); },
 					remove: () => Promise.resolve(true),
@@ -356,13 +449,9 @@ describe("viewing details from the earlier-setups list", () => {
 				Object.assign(modal, { app });
 				const root = fakeDom.document.body.createDiv();
 				try {
-					const renderer = modal as unknown as { renderRow(parent: HTMLElement, source: RecoverySource): void };
-					renderer.renderRow(root as unknown as HTMLElement, source);
+					const renderer = modal as unknown as { renderRow(parent: HTMLElement, version: SetupVersion): void };
+					renderer.renderRow(root as unknown as HTMLElement, version!);
 					const view = root.querySelectorAll(".clickable-icon").find(element => element.dataset.csTooltip === t("recovery.details.view"));
-					if (mode === "identical") {
-						assert.equal(view, undefined, "a setup identical to the current one has nothing to show");
-						continue;
-					}
 					assert.ok(view, mode);
 					assert.notEqual(view.getAttribute("aria-disabled"), "true");
 					view.fire("click");
@@ -370,8 +459,8 @@ describe("viewing details from the earlier-setups list", () => {
 					assert.equal(restoreCalls, 0);
 				} finally { root.remove(); }
 			}
-			assert.equal(detailsCalls, 2);
-			assert.equal(opened.length, 2);
+			assert.equal(detailsCalls, 3);
+			assert.equal(opened.length, 3);
 		} finally {
 			if (descriptor) Object.defineProperty(SettingsRecoveryDetailsModal.prototype, "open", descriptor);
 			else Reflect.deleteProperty(SettingsRecoveryDetailsModal.prototype, "open");

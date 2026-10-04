@@ -2,8 +2,8 @@
  * This device's settings history: the states it accepted, kept in IndexedDB
  * where neither a sync service nor uninstalling the plugin can reach them.
  *
- * Three things are pinned. What is kept (recent states, one per day, one per
- * week, within a size budget). That recording never fails or delays a save.
+ * Three things are pinned. What is kept (at most ten recent states within a
+ * size budget). That recording never fails or delays a save.
  * And that every accepted state is recorded: each file adopted from disk and
  * each verified write, but never a write that did not land.
  */
@@ -25,25 +25,15 @@ function entries(times: number[], bytes = 100) {
 }
 
 describe("which states the history keeps", () => {
-	it("keeps the twenty newest states of one busy hour", () => {
+	it("keeps the ten newest states of one busy hour", () => {
 		const keep = historyToKeep(entries(Array.from({ length: 25 }, (_, i) => START + i * MINUTE)));
-		assert.deepEqual([...keep].sort(), Array.from({ length: 20 }, (_, i) => `h${i + 5}`).sort());
+		assert.deepEqual([...keep].sort(), Array.from({ length: 10 }, (_, i) => `h${i + 15}`).sort());
 	});
 
-	it("keeps the newest state of each of the last fourteen days and eight weeks", () => {
-		// Three states a day for ninety days.
-		const times = Array.from({ length: 270 }, (_, i) => START + Math.floor(i / 3) * DAY + (i % 3) * MINUTE);
-		const all = entries(times);
-		const keep = historyToKeep(all);
-		const newestOfDay = (day: number) => `h${day * 3 + 2}`;
-		for (let day = 89; day > 89 - 14; day--) assert.ok(keep.has(newestOfDay(day)), `day ${day}`);
-		// START is a Monday, so days 7w..7w+6 are one week; its newest is the Sunday.
-		for (let week = 12; week > 12 - 8; week--) {
-			const newestDay = Math.min(week * 7 + 6, 89);
-			assert.ok(keep.has(newestOfDay(newestDay)), `week ${week}`);
-		}
-		assert.ok(!keep.has(newestOfDay(10)), "a state eleven weeks old outlived the weeks kept");
-		assert.ok(keep.size <= 20 + 14 + 8);
+	it("keeps the same ten-state cap across days and weeks without expiring sparse history", () => {
+		const all = entries(Array.from({ length: 30 }, (_, i) => START + i * 7 * DAY));
+		assert.deepEqual([...historyToKeep(all)].sort(), Array.from({ length: 10 }, (_, i) => `h${i + 20}`).sort());
+		assert.deepEqual([...historyToKeep(all.slice(0, 3))], ["h2", "h1", "h0"]);
 	});
 
 	it("drops older states beyond the size budget, but always keeps the newest", () => {
@@ -94,7 +84,7 @@ describe("the history store", () => {
 			const h = history("vault-a", () => clock);
 			for (let n = 0; n < 25; n++) { clock += MINUTE; await h.record({ n }); }
 			const kept = (await h.list()).map(entry => entry.data.n);
-			assert.deepEqual(kept, Array.from({ length: 20 }, (_, i) => 24 - i));
+			assert.deepEqual(kept, Array.from({ length: 10 }, (_, i) => 24 - i));
 		} finally { db.restore(); }
 	});
 
@@ -151,6 +141,86 @@ describe("the history store", () => {
 	});
 });
 
+describe("pruning history from an earlier release", () => {
+	/** Seed old entries directly: recording through today's store already applies its limits. */
+	async function oldHistory(db: ReturnType<typeof installFakeIndexedDb>, appId: string, count = 35, bytes = 100) {
+		const h = history(appId, () => START + count * 7 * DAY);
+		await h.list(); // Create the database without recording a current state.
+		const rows = db.databases.get("CalloutStudioHistory")!.stores.get("snapshots")!;
+		const scope = JSON.stringify([appId, ".obsidian", "callout-studio"]);
+		for (let n = 0; n < count; n++) {
+			rows.set(`${scope}\u0001old-${n}`, {
+				scope, hash: `old-${n}`, savedAt: START + n * 7 * DAY, bytes, data: { n }, reason: "edit",
+			});
+		}
+		return { h, rows, scope };
+	}
+
+	it("removes excess existing entries without adding or refreshing a state, and leaves other vaults alone", async () => {
+		const db = installFakeIndexedDb();
+		try {
+			const { h, rows } = await oldHistory(db, "vault-a");
+			const { h: other } = await oldHistory(db, "vault-b");
+			const original = await h.list(), otherOriginal = await other.list();
+			await h.prune();
+			assert.deepEqual(await h.list(), original.slice(0, 10));
+			assert.deepEqual(await other.list(), otherOriginal);
+			assert.equal(rows.size, 45, "older entries are deleted from storage, not merely hidden");
+			const afterFirst = structuredClone(rows);
+			await h.prune();
+			assert.deepEqual(rows, afterFirst, "repeated startup cleanup is idempotent");
+		} finally { db.restore(); }
+	});
+
+	it("also applies the byte budget to existing entries while always retaining the newest", async () => {
+		const db = installFakeIndexedDb();
+		try {
+			const { h, rows, scope } = await oldHistory(db, "vault-a", 12, 5 * 1024 * 1024);
+			await h.prune();
+			assert.deepEqual((await h.list()).map(entry => entry.data.n), [11, 10, 9, 8]);
+			const newest = rows.get(`${scope}\u0001old-11`) as { bytes: number };
+			newest.bytes = 64 * 1024 * 1024;
+			await h.prune();
+			assert.deepEqual((await h.list()).map(entry => entry.data.n), [11]);
+		} finally { db.restore(); }
+	});
+
+	it("does not reject or poison later recording when startup storage is unavailable", async t => {
+		t.mock.method(console, "debug", () => undefined);
+		const db = installFakeIndexedDb();
+		try {
+			const { h } = await oldHistory(db, "vault-a");
+			db.fail.open = true;
+			await assert.doesNotReject(h.prune());
+			db.fail.open = false;
+			await h.record({ n: "saved after cleanup failed" });
+			const kept = await h.list();
+			assert.equal(kept.length, 10);
+			assert.ok(kept.some(entry => entry.data.n === "saved after cleanup failed"));
+		} finally { db.restore(); }
+	});
+});
+
+describe("why a state was recorded", () => {
+	it("records why, and a reread of a state it already had keeps the reason that state has", async () => {
+		const db = installFakeIndexedDb();
+		try {
+			let clock = START;
+			const h = history("vault-a", () => clock);
+			await h.record({ n: 1 }, "edit");
+			clock += MINUTE; await h.record({ n: 2 }, "load");
+			// Every startup reads the file again; that is not how the state came about.
+			clock += MINUTE; await h.record({ n: 1 }, "load");
+			let list = await h.list();
+			assert.deepEqual(list.map(entry => [entry.data.n, entry.reason]), [[1, "edit"], [2, "load"]]);
+			assert.equal(list[0]!.savedAt, START + 2 * MINUTE, "its date still moves");
+			clock += MINUTE; await h.record({ n: 2 }, "restore");
+			list = await h.list();
+			assert.deepEqual(list.map(entry => [entry.data.n, entry.reason]), [[2, "restore"], [1, "edit"]], "a restore is news");
+		} finally { db.restore(); }
+	});
+});
+
 describe("what the writer records", () => {
 	function recorder(): SettingsHistoryStore & { states: unknown[] } {
 		const states: unknown[] = [];
@@ -169,6 +239,19 @@ describe("what the writer records", () => {
 		await writer.save();
 		fail = true; state = { n: 3 }; await assert.rejects(writer.save());
 		assert.deepEqual(history.states, [{ n: 1 }, { n: 2 }]);
+		writer.destroy();
+	});
+
+	it("tells the history why: a file read, an edit, a restore", async () => {
+		let state: { n: number } = { n: 1 };
+		const reasons: (string | undefined)[] = [];
+		const writer = new SettingsWriter({ build: () => state, write: () => Promise.resolve(),
+			history: { record: (_data, reason) => { reasons.push(reason); return Promise.resolve(); }, list: () => Promise.resolve([]),
+				delete: () => Promise.resolve() } });
+		writer.adopt(JSON.stringify(state));
+		state = { n: 2 }; await writer.save();
+		assert.equal(await writer.commit({ n: 3 }, () => true, () => { state = { n: 3 }; }, "restore"), true);
+		assert.deepEqual(reasons, ["load", "edit", "restore"]);
 		writer.destroy();
 	});
 

@@ -243,7 +243,7 @@ async function applyExternalSettings(
 	// A change made here that never reached the file lost to the incoming one.
 	// The backup above holds it; say so, since nothing else would.
 	if (lastSaved && unsavedChangesReplaced(lastSaved, before, merged) > 0) {
-		new Notice(t("notice.unsavedChangesReplaced"), 15000);
+		new Notice(t("notice.unsavedChangesKept"), 15000);
 	}
 
 	host.refreshCallouts();

@@ -2,7 +2,7 @@
  * While saving is paused the settings page takes no edits. A change made there
  * used to look applied and vanish on the next launch. Everything that would
  * change a setting is inert; the title, the banner, folding the lists, Export,
- * Earlier setups and Review conversion are not.
+ * Earlier versions and Review conversion are not.
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -46,7 +46,7 @@ describe("the settings page while saving is paused", () => {
 				[t("settings.importTitle"), true],
 				[t("settings.resetAll"), true],
 				[t("settings.exportTitle"), false],
-				[t("settings.recovery"), false],
+				[t("settings.versions"), false],
 				[t("portable.title"), false],
 			] as const) {
 				assert.equal(inert(p.row(label)), blocked, label);

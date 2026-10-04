@@ -3,7 +3,7 @@ import type { App } from "obsidian";
 import { t } from "../i18n";
 import type { SetupDetails } from "../manager/setupDetails";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
-import { renderRecoveryDetails } from "./recoveryDetailsView";
+import { recoverySourceTime, renderRecoveryDetails } from "./recoveryDetailsView";
 import { yieldRecoveryRender } from "./recoveryComparisonTable";
 
 /** A snapshot captured when View details was chosen; viewing never changes settings. */
@@ -21,7 +21,10 @@ export class SettingsRecoveryDetailsModal extends Modal {
 		this.component.load();
 		applyModalChrome(this, { wide: true });
 		this.modalEl.addClass("cs-recovery-details-modal");
-		this.setTitle(t("recovery.details.title"));
+		this.setTitle(t("versions.details.title"));
+		this.titleEl.createSpan({
+			text: ` (${recoverySourceTime(this.details.source)})`, cls: "cs-version-detail-date", attr: { dir: "auto" },
+		});
 		this.contentEl.empty();
 		const generation = ++this.generation;
 		const loading = this.contentEl.createEl("p", { text: t("recovery.details.loading"), cls: "cs-recovery-detail-loading", attr: { role: "status" } });

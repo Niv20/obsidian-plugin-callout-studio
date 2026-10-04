@@ -775,8 +775,8 @@ every folded heading. The icon picker's group chevron follows the same two
 rules.
 
 Its stroke is set, not inherited. Every fold chevron in the plugin's own UI
-sits beside a semibold heading — the settings lists, the groups and sections
-of **Restore an earlier setup**, and the icon picker's source groups — and
+sits beside a semibold heading — the settings lists, the sections of
+**Version details**, and the icon picker's source groups — and
 Obsidian's default icon stroke (1.75 of the icon's 24 units) is a
 regular-weight line that reads as a hairline there. One rule,
 `.cs-disclosure-chevron svg, .icon-picker-group-chevron svg`, draws both at
@@ -789,8 +789,8 @@ Obsidian's look for callouts.
 
 Every heading that counts what it holds ends the same way: the four settings
 lists (*Callouts from your theme*, *My callout types*, *Built-in callouts*,
-*Saved color palettes*), the source groups in **Restore an earlier setup**, the
-section titles of the setup comparison, and the file headings of the **Find
+*Saved color palettes*), the section titles of the setup comparison in
+**Version details**, and the file headings of the **Find
 callouts** and **Review conversion** sidebars.
 [`ui/headingCount.ts`](../../src/ui/headingCount.ts) builds all of them, and
 `.cs-heading-count` in `styles.css` is the one rule that places and colours
@@ -1773,7 +1773,7 @@ the label.
 | **Replace** / **Confirm** (replacement picker) | `ReplaceCalloutModal.confirmBlockedReason()` | no row chosen → `replaceModal.chooseFirst` (delete mode names "delete without replacing") / `replaceModal.chooseFirstReplace` |
 | **Import valid only (N)** (import report) | `ImportReportModal` | N is 0 → `import.nothingValid` |
 | **Confirm** (icon picker) | `IconPicker.confirmBlockedReason()` | no icon selected, which is also what switching source does → `iconPicker.chooseFirst` |
-| **Restore** (earlier setups) | `SettingsRecoveryModal.restoreBlockedReason()` | saving is paused → `notice.blockedWhilePaused`; the setup equals the current one → `recovery.restoreSame` |
+| **Restore** (Version history) | `SettingsRecoveryModal.restoreBlockedReason()` | saving is paused → `notice.blockedWhilePaused`; the version equals the current setup → `versions.restoreSame` |
 
 The callout editor's **Save** (`showSaveBlockedNotice`), the quick-insert
 **Insert** (`quickInsertNotice`) and the plugin import's **Import**
@@ -2852,8 +2852,8 @@ it keeps every setting, so **Replace settings file** is the main button
 (`mod-cta`), its confirmation's button is too, and after the yes the banner
 diagnoses the file once more and replaces nothing if it is no longer `combined`
 (or readable), because keeping everything was the promise. The retry button
-reads **Try again** (**Check again** for a missing file). **Go to backups** is
-offered in every state on the settings page (below). The settings page passes `plugin.recovery`'s methods in
+reads **Try again** (**Check again** for a missing file). **Go to version history**
+is offered in every state on the settings page (below). The settings page passes `plugin.recovery`'s methods in
 `ReadOnlyBanner.ts`; the callout editor passes only its retry.
 
 ### What a paused banner says
@@ -2902,8 +2902,8 @@ With a missing file on the settings page, the next step is the main button:
 
 | When | Buttons |
 | --- | --- |
-| Nobody has checked yet | **Check again** (`mod-cta`) · **Restore these settings** / **Create settings file** · **Go to backups** |
-| A manual check came back empty | **Restore these settings** (`mod-cta`) or **Create settings file** · **Check again** · **Go to backups** |
+| Nobody has checked yet | **Check again** (`mod-cta`) · **Restore these settings** / **Create settings file** · **Go to version history** |
+| A manual check came back empty | **Restore these settings** (`mod-cta`) or **Create settings file** · **Check again** · **Go to version history** |
 
 `checkedMissing` holds the second state for the rest of the missing episode, so
 the order does not flip back while an action runs or after a cancelled
@@ -2911,10 +2911,11 @@ confirmation; `stillMissing`, which only colours the message after a check, is
 separate. **Create settings file** is never the main button: what is shown may
 be only the built-ins. Every other state, and the editor, keep one order.
 
-### Go to backups, and scrolling to a row
+### Go to version history, and scrolling to a row
 
-**Go to backups** (`showBackup`) does not open the earlier-setups window. It
-scrolls to **Backup › Earlier setups** and highlights that row, the way the
+**Go to version history** (`showBackup`) does not open the Version history
+window. It scrolls to **Version history › Earlier versions** and highlights that
+row, the way the
 first-install import prompt takes the reader to the **Import** row: while
 saving is paused the window can only be browsed, and the banner is what says
 why. `renderBackupSection` returns the row, `SettingsTab.display()` passes it
@@ -2943,34 +2944,111 @@ With `prefers-reduced-motion: reduce` the scroll jumps (`behavior: "auto"`,
 via `prefersReducedMotion()` in `ui/flip.ts`); the pulse only fades a colour and
 stays.
 
-## `SettingsRecoveryModal` — earlier setups
+## `SettingsRecoveryModal` — Version history
 
-Opened from **Earlier setups** in the **Backup** section (`renderBackupSection`,
-between **Import and export** and **Language**). The saving banner's **Go to
-backups** scrolls to that row rather than opening the window itself. It asks
-`recovery.listSources()` once per open (a generation counter drops a late answer
-after close) and draws one shared Callout Studio disclosure heading per available
-source kind, initially expanded. **Saved on this device**, **Backups**, and **Other copies of the settings
-file** can be collapsed independently. Each disclosure contains ordinary `Setting`
-rows: a name (the time, or the file name for a stray copy), a description of
-where the entry came from and how far it is from now, and an eye icon with the
-**View details** tooltip. Readable entries also have a **Restore** action.
-There is no per-entry export action; the settings page's ordinary **Export**
-continues to export the displayed setup.
-**Restore** is `mod-warning`, dimmed (not disabled — a press says why, see
-[Blocked main buttons say why](#blocked-main-buttons-say-why)) while saving is
-paused or when the entry equals the current setup, and confirms before calling
-`recovery.restore()`. A
-source that cannot be read as settings still has **View details**, but no restore
-button. The behavior behind these actions is in
+Opened from **Earlier versions** in the **Version history** section
+(`renderBackupSection`, between **Import and export** and **Language**), whose
+button reads **View versions**. The saving banner's **Go to version history**
+scrolls to that row rather than opening the window itself. Its help text is one
+continuous paragraph via `setDesc(string)`; translation newlines are replaced with
+spaces so older locale tables also wrap naturally. The window asks `recovery.listVersions()` once per open
+(a generation counter drops a late answer after close) and draws one timeline,
+newest first, grouped by local calendar day. The day headings start with the
+localized date (`dateStyle: "long"`), then **today**, **yesterday** or **N days ago**
+in parentheses, including for versions older than a week. Relative wording uses
+`Intl.RelativeTimeFormat`, with `numeric: "auto"` for today and yesterday and
+`"always"` for earlier days; day differences use local calendar dates so DST and
+time of day cannot shift the age. Future dates have no relative suffix. A continuous
+vertical line connects one small decorative dot per version across the groups. Day
+headings have padding above and below, with twice as much above as below
+(normally 32px and 16px), to separate them from the preceding versions,
+except the first heading, whose top padding is `--size-4-1` (normally 4px)
+because no versions precede it. Each has a short horizontal connector from the rail to the centre of its first
+text line. The connector and the first rail segment share a position calculated
+from that padding and half the heading's line height, so spacing does not shift
+the connector away from the text. Spacing derives from `--size-4-4`, with a 16px
+fallback, so an undefined spacing token cannot erase the padding or invalidate
+the connector position; logical inline positions also mirror it in RTL. Unknown
+dates have their own final group. This display grouping does not change stored
+timestamps or retention rules. A setup kept in two places is one row; the merge rule and
+where the reasons behind its automatic name are stored are in
 [Recovery without file surgery](08-settings-sync-and-recovery.md#recovery-without-file-surgery).
 
-`SettingsRecoveryDetailsModal` opens over that list as a read-only report, including
-while saving is paused, with the saved date in the summary card that opens the report (not in the window title).
-`recovery.details(source)` captures the source and current setup when opened;
-rendering does not load that version into the active registry. The refresh icon
-captures the current setup again against the same source and rebuilds the report,
-unloading the old render's component listeners first.
+Each row is an ordinary `Setting`:
+
+- **Time:** a separate `<time>` element (`.cs-recovery-time`) displays the
+  short time in the interface locale across the timeline from the card, using
+  `--text-faint` and a font one pixel below `--font-ui-smaller`. It sits
+  outside the summary text; the group heading provides the date. Logical
+  positioning mirrors the time, marker and card together in right-to-left UIs.
+- **Timeline marker:** every version has the same small decorative dot on the
+  line, using `--background-modifier-border` to match the rail and day connectors.
+  It is hidden from assistive technology and has no source icon, accessible
+  source label, or tooltip. Storage location and category do not affect it.
+  Hovering the card, time or marker highlights the card background, changes the
+  time to `--text-normal` and the marker to `--text-muted`. A transparent row
+  pseudo-element extends the hover area across the timeline gutter; the time
+  sits above it so its text remains selectable.
+- **Name line** (`renderVersionName()` in [`versionRow.ts`](../../src/settings/versionRow.ts)):
+  plain text naming why the version was kept. If the reason is absent or unknown,
+  `versionCategory()` selects **Automatic backup** when any `history` or `backup`
+  source is present, or **Sync copy** for a version made entirely of `copy`
+  sources. This category is only a fallback title; known reason titles are
+  unchanged. The name has no edit button or field.
+- **Summary** (the description): "Same as your current setup", "Can't be read
+  as settings", or the callout-type and difference counts. The callout-type count and difference count always
+  occupy separate lines while the controls sit beside the text, and share a
+  wrapping horizontal group when the controls drop below it; identical or unreadable versions
+  retain their single status line. Sync-copy filenames are not displayed.
+- **Controls:** **View details** (eye; every row, including a version identical
+  to now, which shows **Same as your current setup**), **Delete** (trash, red only on hover or focus) and, for a
+  readable version, **Restore**.
+
+**Delete** confirms removal of the available copies once, adding a warning about
+file deletion syncing only when the version includes backup or sync-copy files.
+Another device's private history may retain the version. Then
+`recovery.removeVersion()` deletes every available copy; the list is read again
+either way. **Restore** is `mod-warning`, dimmed (not disabled — a press says
+why, see [Blocked main buttons say why](#blocked-main-buttons-say-why)) while
+saving is paused or when the version equals the current setup, and confirms
+before calling `recovery.restore()`; both confirmations and their notices quote
+the version's name. There is no per-entry export action; the settings page's
+ordinary **Export** continues to export the displayed setup.
+
+The row floor for the text column is `12rem` (`min(12rem, 100%)`): about what a
+version name needs before it breaks a word per line. On a desktop window
+the controls sit beside the text; on a phone there is no room for the floor
+beside them, so the control cluster wraps onto its own line under the text and
+stays at the end — still compact, never Obsidian's full-width phone button.
+`versionRowLayout.ts` observes the rows and their info/control boxes with the
+owning window's `ResizeObserver`, and toggles `.cs-recovery-controls-wrapped`
+when the controls are below the info box. This follows actual flex wrapping
+instead of a viewport breakpoint, including translated button widths. In that
+state the two counts share a line where space allows. The observer is disconnected
+before a list reload and on modal close, with the ordinary stacked counts as the
+fallback without it.
+
+`SettingsRecoveryDetailsModal` (**Version details**) opens over that list as a
+read-only report, including while saving is paused. The source's saved date and
+time appear in parentheses beside the modal title, in smaller, muted text within
+the same header; a missing time uses localized `recovery.details.unknownTime`. The
+version's automatic name remains in the history list rather than appearing again
+in this window. Details starts directly with **What changed**, without a category
+badge, source explanation, storage card, or sync-copy filenames. Underlying source
+metadata, dates, grouping, retention, and deletion behavior are unchanged.
+
+The bordered **What changed** panel has a smaller, muted heading
+on a full-width row. Below the heading, the
+difference total and comparison context (such as **24 differences from your
+current setup**) and removed/changed/added pill badges share one row where
+space allows. The flex layout wraps on narrower screens or with longer translations.
+The total uses smaller, muted text; the pills retain their red/yellow/green fills.
+An equal version uses **Same as your current setup** with no counters.
+An unreadable version uses **Comparison unavailable**, with its explanation
+on a full-width row below.
+`recovery.details(source, version)` captures the source and current setup when opened;
+rendering does not load that version into the active registry. The report stays
+on that snapshot until closed; reopening details captures a new comparison.
 
 `recoveryComparisonTable.ts` lays the report out as one table per settings section,
 in the settings page's order, each with four columns: **No.**, **Item**, **Current
@@ -2979,7 +3057,10 @@ section title, a `<button>` that folds the section down to that row, and the col
 headings — and the whole `<thead>` is the sticky layer at `top: 0`, so the two pin
 as one block and let go with the section's last row. The window body's top padding
 moves into the report, so nothing shows above a pinned head (the rules are in
-`tests/modalBodyLayers.test.ts`). Each item is one `<tbody>`: a number cell spanning
+`tests/modalBodyLayers.test.ts`). Tables use the theme's `--radius-m` for their
+outer corners. `clip-path: inset(0 round var(--radius-m))` clips the cell backgrounds
+without the scroll container that `overflow: hidden` would introduce and that
+would break the sticky header. Each item is one `<tbody>`: a number cell spanning
 all of its rows (numbers run on across sections), its title with a
 Changed/Added/Removed badge, a drawing of the whole item per side where one exists,
 then one row per changed field with the label in the Item column. An absent side
@@ -2998,7 +3079,7 @@ every callout it restyles. The comparison has no row cap.
 Rendering yields between batches of eight items. A loading message is delayed
 by 250 ms and, once shown, stays visible for at least 250 ms to avoid a flash on
 fast comparisons. A generation check and component-owned timers stop stale work
-after close or refresh. The comparison is published only when the current render
+after close or reopen. The comparison is published only when the current render
 finishes; a rendering failure leaves an error message instead of a partial table.
 
 `recoveryPreview.ts` provides `renderRecoveryPreview()` for a representative regular

@@ -90,6 +90,10 @@ chooser into a plugin import window doesn't resize the window under the pointer.
 
 ### Two export formats
 
+Neither export format records device history or creates a vault settings backup.
+JSON serializes the displayed registry and passes it to `downloadText()`; CSS
+writes the snippet. Neither invokes the settings writer or recovery service.
+
 1. **Callout Studio backup (`.json`)** — `registry.exportToJSONv2()`:
    ```json
    {

@@ -96,10 +96,14 @@ jobs:
             # deleting libraries from Pick an icon, the drag list it now shares
             # with Customize menu items, the dialog naming the callouts that keep
             # their icons when a library goes, and its strings — 11.7 KB, which
-            # again leaves the headroom about where it was.
+            # again leaves the headroom about where it was. Raised by 14 KiB for
+            # Version history: one timeline merging device history, vault
+            # backups and sync copies by content, storage-location markers,
+            # relative dates, automatic reason names and per-device reason
+            # labels beside the backups, plus the translated interface copy.
             - name: Check bundle size
               run: |
-                  limit=2236416  # 2 MiB + 136 KiB
+                  limit=2250752  # 2 MiB + 150 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

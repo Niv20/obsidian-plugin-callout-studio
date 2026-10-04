@@ -2,8 +2,8 @@
  * The notices under the settings title point at rows far below them. They take
  * the reader there the same way: a smooth scroll to the middle of the page,
  * then a short pulse once the row is in view. The import prompt did this for
- * Import; the saving banner's Go to backups now does it for Backup › Earlier
- * setups, instead of opening the earlier-setups window over the banner.
+ * Import; the saving banner's Go to version history now does it for Version
+ * history › Earlier versions, instead of opening the window over the banner.
  */
 import assert from "node:assert/strict";
 import { after, afterEach, before, describe, it } from "node:test";
@@ -161,7 +161,7 @@ describe("taking the reader to a settings row", () => {
 	});
 });
 
-describe("Go to backups in the saving banner", () => {
+describe("Go to version history in the saving banner", () => {
 	function page() {
 		const root = fakeDom.document.body.createDiv({ cls: "callout-studio-settings" });
 		const slot = root.createDiv();
@@ -188,22 +188,22 @@ describe("Go to backups in the saving banner", () => {
 		return { root, slot, status, target, scrolls, button, dispose };
 	}
 
-	it("is the Backup section's Earlier setups row that it takes the reader to", () => {
+	it("is the Version history section's Earlier versions row that it takes the reader to", () => {
 		const p = page();
 		try {
-			assert.equal(p.target.dataset.csName, t("settings.recovery"));
+			assert.equal(p.target.dataset.csName, t("settings.versions"));
 			assert.ok(p.target.hasClass("cs-paused-allowed"), "usable, and not faded, while saving is paused");
 		} finally { p.dispose(); }
 	});
 
-	it("scrolls to Earlier setups and highlights it, and does not open the earlier-setups window", () => {
+	it("scrolls to Earlier versions and highlights it, and does not open Version history", () => {
 		const p = page();
 		let opened = 0;
 		Object.defineProperty(SettingsRecoveryModal.prototype, "open", { configurable: true, value: () => { opened++; } });
 		try {
 			p.status.freeze("missing");
-			const go = p.button("Go to backups");
-			assert.ok(go, "the paused banner offers Go to backups");
+			const go = p.button("Go to version history");
+			assert.ok(go, "the paused banner offers Go to version history");
 			assert.ok(!go.hasClass("mod-cta"), "a way to look, not the step to take");
 			go.fire("click");
 			assert.deepEqual(p.scrolls, [{ behavior: "smooth", block: "center" }]);
@@ -226,7 +226,7 @@ describe("Go to backups in the saving banner", () => {
 		const p = page();
 		try {
 			p.status.freeze("missing");
-			assert.match(p.slot.textContent, /Once saving works again, you can also bring back an earlier version from the Backup section/);
+			assert.match(p.slot.textContent, /Once saving works again, you can also bring back an earlier version from Version history/);
 		} finally { p.dispose(); }
 	});
 });

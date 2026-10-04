@@ -133,13 +133,13 @@ function whatToDo(input: PausedCopyInput): string {
 			reason !== "unreadable" && buttons.restore === "create" && "saveStatus.guide.create",
 			// The editor cannot restore; the settings page can.
 			!onSettingsPage && "saveStatus.recoverInSettings",
-			backup && "saveStatus.guide.backup",
+			backup && "saveStatus.guide.versions",
 		);
 		case "unreadable": return sentences(
 			// A known cause says what to do about it, and Replace settings file
 			// is offered for exactly the causes it tells the reader to replace.
 			diagnosisKey(input.diagnosis) ?? (rechecks && "saveStatus.guide.rechecks"),
-			backup && "saveStatus.guide.backup",
+			backup && "saveStatus.guide.versions",
 		);
 		case "recovery-read": return sentences(
 			buttons.retry && "saveStatus.guide.recoveryRetry",

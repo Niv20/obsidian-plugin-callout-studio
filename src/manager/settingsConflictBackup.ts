@@ -42,7 +42,7 @@ export async function backUpBeforeAdoption(
 	batch?: Set<string>,
 ): Promise<boolean> {
 	if (!settingsWouldDiscardRows(current, incoming) && !settingsWouldReplacePreferences(current, incoming)) return true;
-	const path = await writeSettingsBackup(host, current, { batch });
+	const path = await writeSettingsBackup(host, current, { batch, reason: "before-sync" });
 	if (!path) {
 		host.settingsWriter?.status.fail("backup");
 		if (host.settingsWriter) reportSettingsSaveFailure(host.settingsWriter);

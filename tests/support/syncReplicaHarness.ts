@@ -112,7 +112,8 @@ export async function device(dir: string, seed?: unknown) {
 		read: async () => JSON.parse(await readFile(file, "utf8")) as unknown,
 		deliver: async (data: unknown) => { await writeFile(file, JSON.stringify(data)); await queue.run(); },
 		backupFailure: () => { backupFails = true; }, writeFailure: (failed: boolean) => { writeFails = failed; },
-		backups: async () => { try { return await Promise.all((await readdir(join(dir, "backups"))).map(async name => JSON.parse(await readFile(join(dir, "backups", name), "utf8")) as unknown)); } catch { return []; } },
+		// Backups only: their labels file lives in the same folder.
+		backups: async () => { try { return await Promise.all((await readdir(join(dir, "backups"))).filter(name => name.startsWith("data-")).map(async name => JSON.parse(await readFile(join(dir, "backups", name), "utf8")) as unknown)); } catch { return []; } },
 		close: () => { queue.destroy(); host.settingsWriter.destroy(); },
 	};
 }

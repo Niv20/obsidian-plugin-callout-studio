@@ -52,7 +52,7 @@ const ASKS_NEXT: readonly string[] = [
 /** Text that says something is going on. The dots mean "still running". */
 const IN_PROGRESS: readonly string[] = [
 	"saveStatus.working",
-	"recovery.loading",
+	"versions.loading",
 	"recovery.details.loading",
 	"manualDiscovery.scanning",
 	"locale.downloading",
@@ -115,7 +115,7 @@ const STAYS_PLAIN: Readonly<Record<string, string>> = {
 	"saveStatus.discardRecoveryCopy": "only a confirmation follows",
 
 	// A window that is itself the destination.
-	"settings.recoveryButton": "the window carries the same name",
+	"settings.versionsButton": "opens the window it names",
 	"portable.review": "opens the review it names",
 	"settings.customCommandsButton": "opens a manager",
 	"iconLibraries.manage": "opens a manager",
@@ -125,7 +125,7 @@ const STAYS_PLAIN: Readonly<Record<string, string>> = {
 	"footer.iconCredits": "opens a read-only window",
 	"contextMenu.openSettings": "opens settings",
 	"usage.menu": "opens the Find callouts view",
-	"saveStatus.goToBackups": "navigates, asks nothing",
+	"saveStatus.goToVersions": "navigates, asks nothing",
 
 	// Does it at once.
 	"settings.resetAction": "acts at once",

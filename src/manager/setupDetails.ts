@@ -4,6 +4,7 @@ import { packFor } from "../icons/registry";
 import type { CalloutDefinition, PluginData } from "../types";
 import { CALLOUT_RENDER_ROLES } from "../types";
 import type { RecoverySource } from "./settingsRecoveryService";
+import type { SetupVersion } from "./setupVersions";
 import { differingEntries } from "./setupDifference";
 import { withoutIncidental } from "./settingsGenesis";
 import { canonical } from "./syncTree";
@@ -44,6 +45,8 @@ export interface SetupCalloutComparison {
 
 export interface SetupDetails {
 	source: RecoverySource;
+	/** The version `source` is a copy of, when the report should say where it is kept. */
+	version?: SetupVersion;
 	/** The displayed setup when the details were opened. */
 	current: Partial<PluginData>;
 	/** The changes restoring this source would make, relative to `current`. */

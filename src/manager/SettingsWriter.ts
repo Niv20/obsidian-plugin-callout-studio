@@ -1,6 +1,6 @@
 import { SettingsSaveStatus, SettingsPersistenceError, settingsWriteReason, type SettingsSaveReason } from "./settingsSaveStatus";
 import type { SettingsCheckpointStore } from "./settingsCheckpoint";
-import type { SettingsHistoryEntry, SettingsHistoryStore } from "./settingsHistory";
+import type { HistoryReason, SettingsHistoryEntry, SettingsHistoryStore } from "./settingsHistory";
 import { canonical, content } from "./syncTree";
 import { SettingsSync, type GenesisSource } from "./settingsSync";
 import { SaveGuard } from "../utils/saveGuard";
@@ -112,12 +112,12 @@ export class SettingsWriter {
 		this.revision++;
 		this.stale.clear();
 		this.status.clear();
-		this.recordAccepted(data);
+		this.recordAccepted(data, "load");
 	}
 
 	/** Device history, never awaited: it must not slow or fail a save. */
-	private recordAccepted(data: unknown): void {
-		void this.host.history?.record(data);
+	private recordAccepted(data: unknown, reason: HistoryReason): void {
+		void this.host.history?.record(data, reason);
 	}
 
 	matchesLastWrite(json: string, contentOnly = false): boolean {
@@ -177,6 +177,12 @@ export class SettingsWriter {
 	/** This device's history of accepted states, newest first; empty without one. */
 	historyEntries(): Promise<SettingsHistoryEntry[]> {
 		return this.host.history?.list() ?? Promise.resolve([]);
+	}
+
+	/** Apply the current history cap even when startup cannot adopt a settings file. */
+	async pruneHistory(): Promise<void> {
+		try { await this.host.history?.prune?.(); }
+		catch (error) { console.debug("[callout-studio] could not prune settings history", error); }
 	}
 
 	/** Forget one state from this device's history; a no-op past a store that lacks one. */
@@ -368,7 +374,7 @@ export class SettingsWriter {
 		this.revision++;
 		this.stale.clear();
 		this.thaw();
-		this.recordAccepted(data);
+		this.recordAccepted(data, "repair");
 		return true;
 	}
 
@@ -399,17 +405,20 @@ export class SettingsWriter {
 		this.status.destroy();
 	}
 
-	/** Save an isolated manual change and publish it only after persistence succeeds. */
-	commit(data: unknown, isCurrent: () => boolean, publish: () => void): Promise<boolean> {
+	/**
+	 * Save an isolated manual change and publish it only after persistence
+	 * succeeds. `reason` is what device history records it as.
+	 */
+	commit(data: unknown, isCurrent: () => boolean, publish: () => void, reason: HistoryReason = "edit"): Promise<boolean> {
 		if (this.busy || this.holdDepth > 0 || this.frozen || this.destroyed) return Promise.resolve(false);
-		const task = this.commitPass(data, isCurrent, publish);
+		const task = this.commitPass(data, isCurrent, publish, reason);
 		this.inFlight = task.then(() => undefined).finally(() => { this.inFlight = null; });
 		// The caller owns failures. Keep the internal serialization promise handled too.
 		void this.inFlight.catch(() => undefined);
 		return task;
 	}
 
-	private async commitPass(data: unknown, isCurrent: () => boolean, publish: () => void): Promise<boolean> {
+	private async commitPass(data: unknown, isCurrent: () => boolean, publish: () => void, reason: HistoryReason): Promise<boolean> {
 		const revision = this.revision;
 		data = this.sync?.prepare(data) ?? data;
 		const payload = this.guard.prepare(data);
@@ -431,7 +440,7 @@ export class SettingsWriter {
 			if (this.sync) this.persistedContent = canonical(content(data));
 			this.stale.clear();
 			this.status.clear();
-			this.recordAccepted(data);
+			this.recordAccepted(data, reason);
 		}
 		if (this.destroyed) return false;
 		publish();
@@ -480,6 +489,6 @@ export class SettingsWriter {
 		if (this.sync) this.persistedContent = canonical(content(data));
 		this.stale.clear();
 		this.status.clear();
-		this.recordAccepted(data);
+		this.recordAccepted(data, "edit");
 	}
 }

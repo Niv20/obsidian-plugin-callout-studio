@@ -20,7 +20,7 @@ import { isNewerSettingsFormat } from "./foreignFields";
 import { registryIsOwned } from "./registryOwnership";
 import { tryAdoptExternalSettings, type ExternalReloadHost } from "./settingsAdopt";
 import {
-	backupDeviceOf, listSettingsBackups, writeRawSettingsCopy, writeSettingsBackup,
+	backupDeviceOf, listSettingsBackups, settingsBackupDir, writeRawSettingsCopy, writeSettingsBackup,
 } from "./settingsBackup";
 import { inspectSettingsFile, type SettingsDiagnosis } from "./settingsDiagnosis";
 import { settingsDataPath } from "./settingsFile";
@@ -28,7 +28,9 @@ import { hasSafeSettingsFileShape } from "./settingsFileShape";
 import { differingEntries } from "./setupDifference";
 import { setupDetails, type SetupDetails } from "./setupDetails";
 import { retrySettingsRecovery } from "./settingsRecoveryActions";
+import { mergeVersions, type SetupVersion } from "./setupVersions";
 import { canonical, content } from "./syncTree";
+import { forgetBackupReasons, readVersionLabels } from "./versionLabels";
 
 export type RecoverySourceKind = "history" | "backup" | "copy";
 
@@ -45,6 +47,8 @@ export interface RecoverySource {
 	origin: "this-device" | "other-device" | "older-version" | null;
 	/** The settings it holds, normalized; null when it cannot be read as settings. */
 	data: Partial<PluginData> | null;
+	/** Why it was kept, as recorded where it lives; null when nothing was. Absent: not known. */
+	reason?: string | null;
 }
 
 export interface SetupDifference {
@@ -55,6 +59,10 @@ export interface SetupDifference {
 }
 
 export type RestoreOutcome = "restored" | "paused" | "invalid" | "stale" | "backup" | "failed";
+
+function baseName(path: string): string {
+	return path.slice(path.lastIndexOf("/") + 1);
+}
 
 /** A settings object as this build would save it, or null when it is not one. */
 function normalized(data: unknown): Partial<PluginData> | null {
@@ -83,18 +91,24 @@ export class SettingsRecoveryService {
 		const sources: RecoverySource[] = [];
 		try {
 			for (const entry of await this.host.settingsWriter.historyEntries()) {
-				sources.push({ kind: "history", time: entry.savedAt, path: null, historyHash: entry.hash, origin: "this-device", data: normalized(entry.data) });
+				sources.push({ kind: "history", time: entry.savedAt, path: null, historyHash: entry.hash, origin: "this-device",
+					data: normalized(entry.data), reason: entry.reason ?? null });
 			}
 		} catch (error) { console.warn("[callout-studio] settings history could not be read", error); }
 		const { adapter } = this.host.app.vault;
+		const labels = await readVersionLabels(adapter, settingsBackupDir(this.host));
 		const read = async (path: string) => {
-			try { return normalized(JSON.parse(await adapter.read(path))); } catch { return null; }
+			try {
+				const raw: unknown = JSON.parse(await adapter.read(path));
+				return { data: normalized(raw) };
+			} catch { return { data: null }; }
 		};
 		try {
 			const device = backupDeviceOf(this.host);
 			for (const entry of await listSettingsBackups(this.host)) {
 				const origin = entry.device === null ? "older-version" : entry.device === device ? "this-device" : "other-device";
-				sources.push({ kind: "backup", time: entry.time, path: entry.path, historyHash: null, origin, data: await read(entry.path) });
+				sources.push({ kind: "backup", time: entry.time, path: entry.path, historyHash: null, origin,
+					reason: labels.reasons.get(baseName(entry.path)) ?? null, ...await read(entry.path) });
 			}
 		} catch (error) { console.warn("[callout-studio] settings backups could not be listed", error); }
 		try {
@@ -103,10 +117,28 @@ export class SettingsRecoveryService {
 			for (const path of (await adapter.list(dir)).files.sort()) {
 				// Any sync service's copy: `data 2.json`, `data (conflicted copy …).json`, …
 				if (path === primary || !/^data\b.*\.json$/i.test(path.slice(dir.length + 1))) continue;
-				sources.push({ kind: "copy", time: null, path, historyHash: null, origin: null, data: await read(path) });
+				sources.push({ kind: "copy", time: await this.modifiedTime(path), path, historyHash: null, origin: null,
+					reason: null, ...await read(path) });
 			}
 		} catch (error) { console.warn("[callout-studio] settings copies could not be listed", error); }
 		return sources;
+	}
+
+	/** Every earlier setup as one timeline: identical copies merged, newest first. */
+	async listVersions(): Promise<SetupVersion[]> {
+		return mergeVersions(await this.listSources());
+	}
+
+	/**
+	 * When a stray copy was last written, which is the best "saved" time it
+	 * has: a sync service names it, but does not date it. Null when the vault
+	 * cannot say.
+	 */
+	private async modifiedTime(path: string): Promise<number | null> {
+		try {
+			const mtime = (await this.host.app.vault.adapter.stat(path))?.mtime;
+			return typeof mtime === "number" && Number.isFinite(mtime) && mtime > 0 ? mtime : null;
+		} catch { return null; }
 	}
 
 	/** How `data` differs from what is displayed now. */
@@ -114,9 +146,13 @@ export class SettingsRecoveryService {
 		return { callouts: data.callouts?.length ?? 0, changed: differingEntries(this.host.registry.toSaveData(), data).size };
 	}
 
-	/** Inspect a captured source against what is displayed now, without touching storage. */
-	details(source: RecoverySource): SetupDetails {
-		return setupDetails(source, this.host.registry.toSaveData());
+	/**
+	 * Inspect a captured source against what is displayed now, without
+	 * touching storage. With the version it belongs to, the report also says
+	 * where that version is kept.
+	 */
+	details(source: RecoverySource, version?: SetupVersion): SetupDetails {
+		return { ...setupDetails(source, this.host.registry.toSaveData()), ...version ? { version } : {} };
 	}
 
 	/**
@@ -135,14 +171,14 @@ export class SettingsRecoveryService {
 		const snapshot = canonical(before);
 		const isCurrent = () => !host.settingsEditOpen && !host.registry.hasPreviewDefinition() &&
 			canonical(host.registry.toSaveData()) === snapshot;
-		if (!await writeSettingsBackup(host, before)) return "backup";
+		if (!await writeSettingsBackup(host, before, { reason: "before-restore" })) return "backup";
 		if (!isCurrent()) return "stale";
 		let published = false;
 		try {
 			const saved = await writer.commit(candidate, isCurrent, () => {
 				host.registry.load(structuredClone(candidate));
 				published = true;
-			});
+			}, "restore");
 			if (!saved || !published) return "failed";
 		} catch (error) {
 			console.error("[callout-studio] could not restore an earlier setup", error);
@@ -175,6 +211,22 @@ export class SettingsRecoveryService {
 			console.error("[callout-studio] an earlier setup could not be deleted", error);
 			return false;
 		}
+	}
+
+	/**
+	 * Called only after the user confirms. Delete every copy of a version: one
+	 * row is one version, so deleting it leaves none behind. Resolves to
+	 * whether every copy is gone.
+	 */
+	async removeVersion(version: SetupVersion): Promise<boolean> {
+		const { adapter } = this.host.app.vault;
+		const dir = settingsBackupDir(this.host), device = backupDeviceOf(this.host);
+		const gone: RecoverySource[] = [];
+		for (const copy of version.copies) if (await this.remove(copy)) gone.push(copy);
+		const vault = gone.filter(copy => copy.kind !== "history");
+		const backups = vault.flatMap(copy => copy.kind === "backup" && copy.path ? [copy.path] : []);
+		if (backups.length > 0) await forgetBackupReasons(adapter, dir, device, backups);
+		return gone.length === version.copies.length;
 	}
 
 	/**

@@ -74,12 +74,16 @@ These pictures live in the plugin's own data file alongside the rest of your set
 - **Earlier settings history**, also in device-only IndexedDB, in a separate
   database from the recovery copy. It contains accepted versions of the same
   plugin settings and artwork, deduplicated and retained within a size budget.
-  It survives unload/uninstall, but clearing app data can remove it. It is never
-  synced or sent to a server by this plugin; see
-  [Restore an earlier setup](../user-guide/13-syncing-and-backups.md#restore-an-earlier-setup).
+  It survives unload/uninstall, but clearing app data can remove it. Each entry
+  also holds why it was recorded, which supplies its automatic display name. It is never synced or
+  sent to a server by this plugin; see
+  [Version history](../user-guide/13-syncing-and-backups.md#version-history).
 - **Recovery backup files** inside the plugin's vault directory. These can sync
   through your chosen provider and can be removed with that directory. They are
   distinct from the device-only checkpoint; see the same chapter for retention.
+  Beside them, one small `labels-<device>.json` per device holds why each of that
+  device's backups was taken. These reasons supply the automatic names in
+  **Version history**; the file syncs like the backups do.
 - **The most recent note rewrite**, kept only in memory for **Undo** after
   replacing callouts or deleting a type and converting its notes. The journal
   holds note paths and their before/after text within a size budget; it creates
@@ -90,7 +94,7 @@ These pictures live in the plugin's own data file alongside the rest of your set
   or the plugin interface, including copies received through sync. Unsafe markup
   is removed; a damaged drawing uses the usual missing-icon display.
 
-  **View details** in **Restore an earlier setup** displays a selected version's
+  **View details** in **Version history** displays a selected version's
   changed fields and current/after-restoring visual previews entirely within the
   app. Only differences are displayed; there is no full-backup or original-file-text
   view. It does not send data, fetch assets, write a file, or restore the setup.

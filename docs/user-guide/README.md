@@ -16,7 +16,7 @@ There's a lot to explore in Callout Studio — from callout types and custom col
 | [10 - Import, export & sharing](10-import-export-and-sharing.md)           | Migrate from other plugins, import a backup, or export CSS.                        |
 | [11 - Languages](11-languages.md)                                          | Follow Obsidian's language or choose another interface language.                   |
 | [12 - Find callouts](12-find-callouts.md)                                  | Find where callouts are used across your notes.                                    |
-| [13 - Syncing & backups](13-syncing-and-backups.md)                        | Compare and restore earlier setups, understand backup retention, recover paused saving, and use synced vaults safely. |
+| [13 - Syncing & backups](13-syncing-and-backups.md)                        | Compare, restore and delete earlier versions, understand backup retention, recover paused saving, and use synced vaults safely. |
 | [14 - Danger zone](14-danger-zone.md)                                      | Convert heading and inline callouts to standard Markdown, or reset Callout Studio. |
 | [15 - Quick insert](15-quick-insert.md)                                    | Insert and edit block callouts from the ribbon.                                    |
 | [16 - Advanced heading callouts](16-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                |

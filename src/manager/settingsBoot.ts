@@ -10,15 +10,36 @@ import { watchForLateSettings } from "./settingsLateArrival";
 import { applySettingsRead } from "./settingsAdopt";
 import { hasSafeSettingsFileShape } from "./settingsFileShape";
 import type { ExternalReloadHost } from "./settingsAdopt";
+import { pruneSettingsBackups } from "./settingsBackup";
+import { PRIMARY_IO_TIMEOUT_MS } from "./settingsFile";
+import { withTimeout } from "../utils/withTimeout";
 
 export interface SettingsBootResult {
 
 	isFreshInstall: boolean;
 }
 
+/** Cleanup is best effort; an offline provider must not prevent startup. */
+async function pruneAtBoot(host: ExternalReloadHost): Promise<void> {
+	let finished = false;
+	try {
+		await withTimeout(Promise.all([
+			pruneSettingsBackups(host, new Set(), () => finished || host.settingsWriter.isDestroyed),
+			host.settingsWriter.pruneHistory(),
+		]), PRIMARY_IO_TIMEOUT_MS, () => new Error("Settings retention did not respond"));
+	} catch (error) {
+		console.debug("[callout-studio] could not finish settings retention", error);
+	} finally { finished = true; }
+}
+
 export async function loadSettingsInto(
 	host: ExternalReloadHost,
 ): Promise<SettingsBootResult> {
+	// Finish retention before adoption can start a protected backup batch.
+	// Also runs for paused/missing settings: upgrading requires no new save.
+	if (host.settingsWriter.isDestroyed) return { isFreshInstall: false };
+	await pruneAtBoot(host);
+	if (host.settingsWriter.isDestroyed) return { isFreshInstall: false };
 	const read = await readSettledSettingsFile(host, {
 		isCancelled: () => host.settingsWriter.isDestroyed,
 	});

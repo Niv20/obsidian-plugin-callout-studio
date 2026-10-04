@@ -75,7 +75,7 @@ export async function startFreshSettings(host: ExternalReloadHost): Promise<bool
 				return false;
 			}
 			if (!isCurrent()) return false;
-			if (saved && !await writeSettingsBackup(host, saved)) {
+			if (saved && !await writeSettingsBackup(host, saved, { reason: "before-repair" })) {
 				writer.status.fail("backup");
 				return false;
 			}
