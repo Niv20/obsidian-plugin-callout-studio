@@ -68,7 +68,6 @@ import {
 	refreshOccurrencesViewLocale,
 } from "./usage/registerOccurrencesView";
 import { registerPortableConversionView, refreshPortableConversionViewLocale } from "./portable/registerPortableConversionView";
-import { initializeSidebarTabs } from "./ui/initializeSidebarTabs";
 
 /**
  * How long the startup entrance animation window stays open. Long enough to
@@ -300,11 +299,6 @@ export default class CalloutStudioPlugin extends Plugin {
 		registerOccurrenceIndex(this);
 		registerOccurrencesView(this);
 		registerPortableConversionView(this);
-		onActiveLayoutReady(this, () => {
-			void initializeSidebarTabs(this.app).catch(error => {
-				console.warn("[CalloutStudio] could not initialize sidebar tabs", error);
-			});
-		});
 
 		// Commands
 		registerCalloutCommands(this, this.commandDeps());

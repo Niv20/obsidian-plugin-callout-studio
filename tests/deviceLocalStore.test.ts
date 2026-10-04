@@ -72,6 +72,7 @@ describe("device UI state without a discovery cache", () => {
   const store = fresh(); const before = storage.writes();
   assert.strictEqual(store.hasInitialized, false);
   assert.strictEqual(store.hasSeenWelcome, false);
+  assert.strictEqual(store.hasOfferedOccurrencesTab, false);
   assert.strictEqual(storage.writes(), before);
  });
  it("preserves legacy evidence until the verified archive and keeps section preferences", () => {
@@ -119,5 +120,68 @@ describe("device UI state without a discovery cache", () => {
   const store = fresh(); store.markInitialized(); const before = storage.writes();
   store.markInitialized(); store.setExpanded("theme", true);
   assert.strictEqual(storage.writes(), before);
+ });
+});
+
+describe("Find callouts onboarding marker", () => {
+ it("survives a new store without marking settings initialized or the welcome seen", () => {
+  const store = fresh();
+  assert.strictEqual(store.markOccurrencesTabOffered(), true);
+  assert.strictEqual(store.hasOfferedOccurrencesTab, true);
+  const restored = new DeviceLocalStore(app);
+  assert.strictEqual(restored.hasOfferedOccurrencesTab, true);
+  assert.strictEqual(restored.hasInitialized, false);
+  assert.strictEqual(restored.hasSeenWelcome, false);
+ });
+ it("accepts only a literal true marker from storage", () => {
+  for (const value of [undefined, false, 1, "true", {}, []]) {
+   const store = fresh({ v: 3, occurrencesTabOffered: value });
+   assert.strictEqual(store.hasOfferedOccurrencesTab, false);
+   assert.strictEqual((JSON.parse(storage.map.get(KEY)!) as Record<string, unknown>).occurrencesTabOffered, undefined);
+  }
+  assert.strictEqual(fresh({ v: 3, occurrencesTabOffered: true }).hasOfferedOccurrencesTab, true);
+ });
+ it("keeps the marker within the app id's device-local vault storage", () => {
+  fresh();
+  const firstApp = { appId: "first-vault-id", vault: { getName: () => "same-name" } } as unknown as App;
+  const secondApp = { appId: "second-vault-id", vault: { getName: () => "same-name" } } as unknown as App;
+  assert.strictEqual(new DeviceLocalStore(firstApp).markOccurrencesTabOffered(), true);
+  assert.strictEqual(new DeviceLocalStore(firstApp).hasOfferedOccurrencesTab, true);
+  assert.strictEqual(new DeviceLocalStore(secondApp).hasOfferedOccurrencesTab, false);
+  assert.strictEqual(new DeviceLocalStore(app).hasOfferedOccurrencesTab, false);
+  assert.strictEqual(storage.map.has("first-vault-id-callout-studio-local"), true);
+  // Another device has its own local storage even for the same app id.
+  storage.map.clear();
+  assert.strictEqual(new DeviceLocalStore(firstApp).hasOfferedOccurrencesTab, false);
+ });
+ it("reports refused writes and can retry the same in-memory marker", () => {
+  const store = fresh();
+  storage.failWrites(true);
+  assert.strictEqual(store.markOccurrencesTabOffered(), false);
+  assert.strictEqual(store.hasOfferedOccurrencesTab, true);
+  assert.strictEqual(new DeviceLocalStore(app).hasOfferedOccurrencesTab, false);
+  storage.failWrites(false);
+  assert.strictEqual(store.markOccurrencesTabOffered(), true);
+  assert.strictEqual(new DeviceLocalStore(app).hasOfferedOccurrencesTab, true);
+  const before = storage.writes();
+  storage.failWrites(true);
+  assert.strictEqual(store.markOccurrencesTabOffered(), true);
+  assert.strictEqual(storage.writes(), before);
+  storage.failWrites(false);
+ });
+ it("does not report a durable marker when local storage must be preserved", () => {
+  for (const seed of ["broken", { v: 99 }, { v: 1, discovered: ["old"] }]) {
+   const store = fresh(seed);
+   const original = storage.map.get(KEY);
+   assert.strictEqual(store.markOccurrencesTabOffered(), false);
+   assert.strictEqual(store.hasOfferedOccurrencesTab, true);
+   assert.strictEqual(storage.map.get(KEY), original);
+  }
+  fresh();
+  storage.failReads(true);
+  const unreadable = new DeviceLocalStore(app);
+  assert.strictEqual(unreadable.markOccurrencesTabOffered(), false);
+  storage.failReads(false);
+  assert.strictEqual(storage.map.has(KEY), false);
  });
 });

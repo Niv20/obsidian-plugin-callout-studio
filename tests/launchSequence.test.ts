@@ -51,6 +51,7 @@ function launch(options: {
 	competitorImportBannerHandled?: boolean;
 	/** Dismissed on this device while it had no settings file to record it in. */
 	localBannerHandled?: boolean;
+	sidebarRejects?: boolean;
 	saveRejects?: boolean;
 } = {}) {
 	const registry = new CalloutRegistry();
@@ -63,15 +64,29 @@ function launch(options: {
 		watchers: 0,
 		initialized: 0,
 		welcomeMarks: 0,
+		sidebarOffers: 0,
+		sidebarMarks: 0,
+		conversionCleanups: 0,
 	};
 	let localWelcomeSeen = options.localWelcomeSeen ?? false;
 	let localBannerHandled = options.localBannerHandled ?? false;
+	let tabOffered = false;
 
 	const app = {
 		vault: {
 			configDir: ".obsidian",
 			adapter: { exists: () => Promise.resolve(false) },
 			getMarkdownFiles: () => [],
+		},
+		workspace: {
+			detachLeavesOfType: () => { seen.conversionCleanups++; },
+			getLeavesOfType: () => [],
+			ensureSideLeaf: () => {
+				assert.strictEqual(settingsWriter.isFrozen, false, "confirm first installation before offering a tab");
+				assert.strictEqual(tabOffered, true);
+				seen.sidebarOffers++;
+				return options.sidebarRejects ? Promise.reject(new Error("No sidebar")) : Promise.resolve({});
+			},
 		},
 	} as unknown as App;
 
@@ -105,6 +120,8 @@ function launch(options: {
 				: Promise.resolve();
 		},
 		localState: {
+			get hasOfferedOccurrencesTab(): boolean { return tabOffered; },
+			markOccurrencesTabOffered: (): boolean => { tabOffered = true; seen.sidebarMarks++; return true; },
 			firstRunCompleted: options.firstRunCompleted ?? true,
 			markInitialized: (): void => { seen.initialized++; },
 			get hasSeenWelcome(): boolean { return localWelcomeSeen; },
@@ -178,6 +195,8 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 		);
 		assert.strictEqual(l.plugin.settings.welcomeSeen, false);
 		assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), false);
+		assert.strictEqual(l.seen.sidebarOffers, 0);
+		assert.strictEqual(l.seen.conversionCleanups, 1);
 	});
 	it("records the welcome locally without creating data.json or marking a prior save", async () => {
 		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
@@ -190,6 +209,8 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 			assert.strictEqual(l.seen.saves, 0);
 			assert.strictEqual(l.seen.initialized, 0);
 			assert.strictEqual(l.seen.welcomeMarks, 1);
+			assert.strictEqual(l.seen.sidebarOffers, 1);
+			assert.strictEqual(l.seen.sidebarMarks, 1);
 		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
 	});
 	it("re-arms an unhandled import banner after reload without reopening the welcome", async () => {
@@ -201,6 +222,7 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 			await l.run(true);
 			assert.strictEqual(prompts, 0);
 			assert.strictEqual(l.seen.welcomeMarks, 0);
+			assert.strictEqual(l.seen.sidebarOffers, 0);
 			assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), true);
 		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
 	});
@@ -232,6 +254,24 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 		await l.run(true);
 		assert.strictEqual(l.plugin.settings.welcomeSeen, false);
 		assert.strictEqual(l.seen.saves, 0);
+		assert.strictEqual(l.seen.sidebarOffers, 0);
+		assert.strictEqual(l.seen.conversionCleanups, 0);
+	});
+	it("continues welcome onboarding when the automatic sidebar offer fails", async () => {
+		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
+		const warn = console.warn;
+		WelcomeModal.prototype.prompt = () => Promise.resolve();
+		console.warn = () => undefined;
+		try {
+			const l = launch({ sidebarRejects: true });
+			await l.run(true);
+			assert.strictEqual(l.seen.sidebarOffers, 1);
+			assert.strictEqual(l.seen.welcomeMarks, 1);
+			assert.strictEqual(l.seen.saves, 0);
+		} finally {
+			Object.defineProperty(WelcomeModal.prototype, "prompt", prompt);
+			console.warn = warn;
+		}
 	});
 });
 

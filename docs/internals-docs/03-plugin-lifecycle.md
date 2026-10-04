@@ -39,15 +39,18 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
    reads no notes; its first usage request starts indexing. Subsequent Markdown
    changes are debounced independently of manual discovery.
    Missing custom-command targets are paused, never deleted as part of startup.
-6. Begin existing icon/locale preparation. At layout-ready, detach any
-   **Review conversion** leaf restored by Obsidian from the previous workspace.
-   Then ensure the **Find callouts** ItemView has a right-sidebar leaf. Reuse an
-   existing leaf when one is already in the workspace; otherwise create it with
-   `active: false` and `reveal: false`, adding its tab without revealing the
-   sidebar or opening the deferred view. Release the startup migration notices
-   and run `runLaunchSequence`, which confirms whether this is a fresh install,
-   shows the welcome screen where appropriate, and writes no welcome-only
-   settings file. The affected-user-only autocomplete notice is released only
+6. Begin existing icon/locale preparation. At layout-ready, release the startup
+   migration notices and run `runLaunchSequence`. After confirming whether this
+   is a fresh install, it runs `initializeSidebarTabs` before showing the welcome
+   screen where appropriate. Sidebar initialization detaches any restored
+   **Review conversion** leaf on every launch. It offers **Find callouts** only
+   once on a confirmed first install, recording `occurrencesTabOffered` in the
+   device-local store before adding an inactive, unrevealed tab. Existing welcome
+   markers exclude older untouched installs that have no `data.json`. Existing
+   leaves anywhere in the workspace are preserved; later launches and upgrades
+   leave an absent tab absent. If the local marker cannot be saved, automatic
+   creation is skipped. Neither this offer nor the welcome writes a settings
+   file. The affected-user-only autocomplete notice is released only
    after the writer proves the normalized settings are durable.
    A successful settings load or actual write marks the installation initialized.
    Startup does not scan solely to add the inactive tab; restoring an already
@@ -93,7 +96,8 @@ the two custom UI icon registrations. There are no
 discovery timers, note watchers, prune queues or rediscovery holds to clean up.
 
 The startup CSS snapshot is derived presentation state only. Local storage
-holds UI folds and an installation marker; it never restores callout definitions.
+holds UI folds, installation markers and the one-time sidebar offer; it never
+restores callout definitions.
 Disabling and re-enabling the plugin follows the same saved-settings load path.
 
 ---

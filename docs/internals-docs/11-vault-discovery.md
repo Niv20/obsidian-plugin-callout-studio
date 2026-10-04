@@ -135,11 +135,22 @@ and no role filter. **Find callouts** in a type's menu supplies that specific ty
 filter, including when it reuses an existing sidebar. Workspace state holds
 filters, never the index.
 
-At layout-ready, the **Find callouts** tab is ensured in the right sidebar,
-reusing a restored leaf when present. A newly created leaf is inactive and
-unrevealed, so it does not open the deferred view or start an occurrence scan;
-selecting it does. **Review conversion** has no startup tab: any leaf restored
-by Obsidian is closed, and a new review opens only when requested from Settings.
+After layout-ready fresh-install confirmation, **Find callouts** is offered
+once in the right sidebar. The device/vault-local `occurrencesTabOffered` marker
+is saved before creation; if it cannot be saved, no automatic tab is added.
+Existing `welcomeSeen` or local `hasSeenWelcome` evidence excludes older
+untouched installs even when they have no settings file. Existing leaves are
+preserved wherever they are, and subsequent launches and upgrades never recreate
+an absent tab. A newly created leaf is inactive and unrevealed, so it does not
+open the deferred view or start an occurrence scan; selecting it does.
+
+Obsidian's workspace owns the tab's presence, position and filters after that
+initial offer. Closing it stays effective across ordinary restarts; restoring a
+saved workspace can bring it back. There is no close-event preference to confuse
+plugin unloading with an explicit close, and no synced settings write for this
+behavior. **Review conversion** still has no startup tab: any leaf restored by
+Obsidian is closed on every launch, and a new review opens only when requested
+from Settings.
 
 The type and format controls have no visible labels; each keeps a localized
 accessible name. They share one grid row until the sidebar container is 440px
@@ -224,9 +235,9 @@ when hidden.
 Views unsubscribe from both index and registry changes when closed.
 The list starts with 100 results and adds 100 per **Show more** action. Per-file
 heading counts cover the complete filtered query, including unloaded cards.
-The native right-sidebar tab is the sole visible occurrences control. It is
-created automatically at startup, and the fixed command and **Find callouts**
-menu reopen it after its tab is closed. The plugin does not add an occurrences
+The native sidebar tab is the sole visible occurrences control. It is offered
+once on first install, and the fixed command and **Find callouts** menu reopen
+it after its tab is closed. The plugin does not add an occurrences
 button to Obsidian's left ribbon.
 
 Navigation uses public workspace/editor APIs, opens a document leaf in editing

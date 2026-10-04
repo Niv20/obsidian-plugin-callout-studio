@@ -17,6 +17,8 @@ interface DeviceLocalState {
 	initialized: boolean;
 	/** Prevent the automatic welcome from reopening before data.json exists. */
 	welcomeSeen: boolean;
+	/** The initial Find callouts tab was offered here, independently of data.json. */
+	occurrencesTabOffered?: true;
 	/** Pending is affected-user evidence; display waits for a durable migration. */
 	externalCssRetirement?: "pending" | "seen";
 	/** Pending is an explicit saved autocomplete opt-out awaiting its notice. */
@@ -79,6 +81,7 @@ export class DeviceLocalStore {
 				v: 3,
 				initialized: parsed.v === 1 || parsed.initialized === true,
 				welcomeSeen: parsed.v === 3 && parsed.welcomeSeen === true,
+				...(parsed.occurrencesTabOffered === true ? { occurrencesTabOffered: true as const } : {}),
 				...(parsed.externalCssRetirement === "pending" || parsed.externalCssRetirement === "seen"
 					? { externalCssRetirement: parsed.externalCssRetirement } : {}),
 				...(parsed.autocompleteAlwaysEnabled === "pending" || parsed.autocompleteAlwaysEnabled === "seen"
@@ -151,6 +154,16 @@ export class DeviceLocalStore {
 	markWelcomeSeen(): void {
 		this.state.welcomeSeen = true;
 		this.persist();
+	}
+
+	get hasOfferedOccurrencesTab(): boolean {
+		return this.state.occurrencesTabOffered === true;
+	}
+
+	/** Only offer the automatic tab once the marker is durable across launches. */
+	markOccurrencesTabOffered(): boolean {
+		this.state.occurrencesTabOffered = true;
+		return this.persist();
 	}
 
 	get hasPendingExternalCssNotice(): boolean {
@@ -253,15 +266,17 @@ export class DeviceLocalStore {
 		return `${appId ?? this.app.vault.getName()}-callout-studio-local`;
 	}
 
-	private persist(): void {
-		if (!this.writable) return;
+	private persist(): boolean {
+		if (!this.writable) return false;
 		const json = JSON.stringify(this.state);
-		if (this.memo.prepare(json) === null) return;
+		if (this.memo.prepare(json) === null) return true;
 		try {
 			window.localStorage.setItem(this.scopedKey(), json);
 			this.memo.commit(json);
+			return true;
 		} catch {
 			// A refused write must be retryable.
+			return false;
 		}
 	}
 }

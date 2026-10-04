@@ -124,12 +124,20 @@ because their previews appear here. See
 ## The device-local store
 
 `DeviceLocalStore` v3 stores section folds, prior-install/welcome markers, the
+one-time **Find callouts** offer (`occurrencesTabOffered`), the
 import prompt's dismissal (`importBannerHandled`, for a device that has no
 settings file to record it in), the device's name for backup files
 (`deviceId`), where the icon picker and Quick Insert were left
 (`iconCategories`, `emojiSkinTone`, `quickInsertSource`), and optional
 `pending | seen` markers for the one-time personal-CSS-retirement and
 autocomplete-migration notices in vault-scoped browser storage.
+
+`occurrencesTabOffered` records the initial offer, not whether the tab is open.
+It is saved before the tab is added on a confirmed first install; failed
+persistence skips automatic creation. Prior welcome evidence also prevents
+offering the tab to an older untouched install without `data.json`. This marker
+never enters synced settings. Obsidian's workspace stores the tab itself, so
+closing, moving or restoring it needs no local close-event preference.
 
 The picker and Quick Insert memory used to be synced settings, and every glance
 at another category wrote `data.json`, which every other device then adopted.

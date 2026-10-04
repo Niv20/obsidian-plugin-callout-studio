@@ -6,11 +6,17 @@ notes, lets you filter them by type and format, and jumps to the exact line.
 
 ## Open the sidebar
 
-The **Find callouts** tab appears automatically at the top of Obsidian's right
-sidebar when Callout Studio starts. Select it to open the panel; the sidebar
-does not open automatically. You can also run **Callout Studio: Find callouts**
-from the Command palette, or select **Find callouts** from a
-callout's three-dot menu. If you close the tab, either action opens it again.
+The **Find callouts** tab is added once to Obsidian's right sidebar when you
+first install Callout Studio. Select it to open the panel; the sidebar does not
+open automatically. If you close the tab, it stays closed on later launches.
+Updating Callout Studio does not add it again.
+
+You can reopen it with **Callout Studio: Find callouts** in the Command palette,
+or **Find callouts** in a callout's three-dot menu. Obsidian then remembers its
+presence and position as part of your workspace. Collapsing the sidebar or
+selecting another tab does not close it, and loading a saved workspace that
+contains the tab can restore it.
+
 This is the only on-screen occurrences control; there is no separate ribbon
 button or statistics window in Settings. The sidebar helps you filter callouts
 and navigate to their Markdown source.
@@ -131,9 +137,10 @@ contents separately.
 
 There is no automatic discovery or unconditional startup scan. Opening a usage
 surface, including selecting **Find callouts** or restoring an already-open
-sidebar, builds an in-memory index. Adding the inactive tab at startup does not
-start a scan. Subsequent requests reuse the index, and saved-note changes and
-edits in open Markdown editors are reflected automatically after a short delay.
+sidebar, builds an in-memory index. Adding the inactive tab on first install
+does not start a scan. Subsequent requests reuse the index, and saved-note
+changes and edits in open Markdown editors are reflected automatically after a
+short delay.
 There is no manual Refresh button. Nothing is uploaded or written to plugin
 settings by this index. Brief scans and updates stay quiet;
 if one remains in progress for two seconds, its status appears above the results.

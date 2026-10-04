@@ -77,9 +77,10 @@ explicit stroke widths so Obsidian can recolour it.
 
 Quick insert uses its ID for the ribbon and command. Occurrences uses its ID
 for the native **Find callouts** right-sidebar tab, **Find callouts** menus and
-command. The tab is created at startup without opening the sidebar, and is the
-only visible occurrences control. After closing it, the command or a
-**Find callouts** action reopens the sidebar. The **Review conversion** tab uses
+command. The tab is offered once on first install without opening the sidebar,
+and is the only visible occurrences control. Obsidian's workspace preserves its
+later presence and position; startup does not recreate a closed tab. The command
+or a **Find callouts** action reopens the sidebar. The **Review conversion** tab uses
 its own composite icon and is created only on demand; restored conversion tabs
 are closed at startup. The welcome hero keeps
 the stock `paintbrush` icon. Editable standalone exports live in
