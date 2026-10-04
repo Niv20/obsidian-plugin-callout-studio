@@ -6780,8 +6780,8 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
    standing out of the card; whichever direction the card moved, that one is
    the opposite. Over the button itself it answers with its usual hover. */
 @media (hover: hover) {
-	.cs-option-box[tabindex="0"]:hover:not(:has(.cs-import-action:hover)) .cs-import-action,
-	.cs-option-box.is-choosable:hover:not(:has(.cs-import-action:hover)) .cs-import-action {
+	.cs-option-box[tabindex="0"]:hover .cs-import-action:not(:hover),
+	.cs-option-box.is-choosable:hover .cs-import-action:not(:hover) {
 		background-color: color-mix(
 			in srgb,
 			var(--cs-btn-face, var(--interactive-normal)) 45%,
@@ -7121,7 +7121,7 @@ body:not(.is-phone)
 
 /* No `transition` on the outline. The tick's own fill flips at once, so a
    fading outline read as a lag; both change on the same frame. */
-.cs-confirm-acknowledge:has(input:checked) {
+.cs-confirm-acknowledge.is-checked {
 	border-color: var(--color-red);
 }
 
@@ -9041,7 +9041,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 .cs-recovery-controls-wrapped .cs-recovery-summary-counts {
 	flex-direction: row;
 	flex-wrap: wrap;
-	column-gap: var(--size-4-3);
+	gap: normal var(--size-4-3);
 }
 
 .cs-recovery-row .setting-item-control {
@@ -9219,8 +9219,10 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 }
 
 /* ── The table ── */
-/* Clip the frame and cell backgrounds to the theme's radius without creating
-   a scroll container, so the section head still pins inside the modal body. */
+/* An opaque mask keeps every pixel inside the rounded border box. It clips
+   descendant backgrounds without creating a scroll container, so the section
+   head still pins inside the modal body. The prefixed declaration also keeps
+   rounded corners on older iOS versions supported by earlier Obsidian builds. */
 .cs-recovery-comparison {
 	width: 100%;
 	border-collapse: separate;
@@ -9228,7 +9230,8 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	table-layout: fixed;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
-	clip-path: inset(0 round var(--radius-m));
+	-webkit-mask-image: linear-gradient(#fff, #fff);
+	mask-image: linear-gradient(#fff, #fff);
 }
 
 .cs-recovery-comparison + .cs-recovery-comparison {

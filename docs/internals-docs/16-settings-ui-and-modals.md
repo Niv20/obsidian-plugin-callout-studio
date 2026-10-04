@@ -1921,6 +1921,11 @@ scroller, so a long message pushes the box off screen. It is not
 so stops one bottom padding (16px) short of the end. **Reset everything** is
 the only caller that passes it (`confirm.acknowledge`).
 
+The existing checkbox change handler mirrors the checked state onto the label's
+`is-checked` class while updating the button lock. CSS reads that class for the
+red outline, so checking and unchecking stay in sync without a parent `:has()`
+selector.
+
 Its message is built from `settings/resetInventory.ts`, which reads the
 registry and returns two lists: what the reset deletes (custom callouts,
 pictures, commands, palettes, each with a count) and what it puts back to
@@ -3138,9 +3143,16 @@ headings — and the whole `<thead>` is the sticky layer at `top: 0`, so the two
 as one block and let go with the section's last row. The window body's top padding
 moves into the report, so nothing shows above a pinned head (the rules are in
 `tests/modalBodyLayers.test.ts`). Tables use the theme's `--radius-m` for their
-outer corners. `clip-path: inset(0 round var(--radius-m))` clips the cell backgrounds
-without the scroll container that `overflow: hidden` would introduce and that
-would break the sticky header. Each item is one `<tbody>`: a number cell spanning
+outer corners. An opaque `mask-image: linear-gradient(#fff, #fff)` uses the
+default `mask-clip: border-box` to clip the table and cell backgrounds to that
+rounded frame. The prefixed `-webkit-mask-image` declaration preserves this on
+older iOS versions supported by earlier Obsidian builds. The mask creates no
+scroll container, so the modal body remains the sticky header's scrollport;
+`overflow: hidden` on the table would break that relationship. The same rule
+applies when the table becomes a block on narrow screens. Masking changes painting
+rather than pointer hit-testing: the full-width heading button remains clickable
+in the tiny transparent areas inside its rectangular bounds at the rounded corners.
+Each item is one `<tbody>`: a number cell spanning
 all of its rows (numbers run on across sections), its title with a
 Changed/Added/Removed badge, a drawing of the whole item per side where one exists,
 then one row per changed field with the label in the Item column. An absent side

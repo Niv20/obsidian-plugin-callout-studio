@@ -50,6 +50,7 @@
 		"*.{ts,mts}": "eslint --config scripts/eslint.config.mts"
 	},
 	"overrides": {
-		"eslint-plugin-n": "17.24.0"
+		"eslint-plugin-n": "17.24.0",
+		"moment": "2.31.0"
 	}
 }

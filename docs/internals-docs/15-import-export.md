@@ -535,7 +535,11 @@ reads the active one.
 - **A card's own button** (Upload/Replace, Paste) takes the shared neutral face
   and border explicitly (`.cs-option-box .cs-import-action`), as a footer's
   Cancel does: on a phone Obsidian's own button face is the card's colour, and
-  the border is what keeps it a button there.
+  the border is what keeps it a button there. Hovering a choosable card shifts
+  its one action button toward the window's surface; hovering the button itself
+  uses its usual hover face. The card-hover selector targets
+  `.cs-import-action:not(:hover)` directly, without querying the parent's
+  descendants with `:has()`.
 - **Replacing, never emptying.** A file is swapped with **Replace** or by
   dropping another onto the card; pasted text is edited in its box or replaced
   with **Paste**. A staged file lasts until it is replaced or the window is
