@@ -252,7 +252,7 @@ function libraryLabel(id: string): string {
 export function iconLibraryItems(change: SetupChange | undefined): RecoveryItem[] {
 	if (!change) return [];
 	const read = (value: unknown): IconLibrarySettings =>
-		mergeIconLibraries(isRecord(value) ? value as Partial<IconLibrarySettings> : undefined);
+		mergeIconLibraries(isRecord(value) ? value : undefined);
 	const before = read(change.before), after = read(change.after);
 	const fields: RecoveryField[] = [];
 	for (const id of ICON_SOURCE_IDS) {
