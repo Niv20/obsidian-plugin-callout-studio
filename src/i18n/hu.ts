@@ -497,6 +497,7 @@ export const hu: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Elérhető könyvtárak",
 	"iconPicker.librariesToDownload": "Letölthető könyvtárak",
 	"iconPicker.groupCurrent": "Jelenlegi ikon",
+	"iconPicker.groupDeleted": "Törölt könyvtár",
 	"iconPicker.groupSearch": "Keresés",
 	"iconPicker.groupLibraries": "Könyvtárak",
 	"iconPicker.moreToDownloadOne": "Még 1 könyvtár érhető el letöltésre",

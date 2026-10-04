@@ -212,18 +212,18 @@ describe("menuLibraries — the library of the icon being edited", () => {
 	// use a library this device never downloaded. Editing it opens the picker on
 	// that library, so the menu must show it — apart from the libraries on offer.
 
-	it("sets a library that is not on the device apart, and does not count it as more to download", () => {
+	it("sets a library that is not on the device apart, and still counts it to download", () => {
 		const menu = menuLibraries(prefs(), device(), "tabler");
 		assert.equal(menu.current, "tabler");
 		assert.ok(!menu.libraries.includes("tabler"), "it is not one of the libraries on offer");
-		assert.deepEqual(menu.toDownload, ["octicons", "fa", "rpg-awesome", "simple-icons"],
-			"it is listed already, so the closing line counts the others");
+		assert.deepEqual(menu.toDownload, ["tabler", "octicons", "fa", "rpg-awesome", "simple-icons"],
+			"its retained icon does not make the library downloaded");
 	});
 
 	it("does the same for one with only some of its files", () => {
 		const menu = menuLibraries(prefs(), device(["fa-brands"]), "fa");
 		assert.equal(menu.current, "fa");
-		assert.ok(!menu.toDownload.includes("fa"));
+		assert.ok(menu.toDownload.includes("fa"), "the library still needs its missing files");
 	});
 
 	it("sets a hidden built-in library apart too, so the menu lists exactly what is offered", () => {
@@ -259,6 +259,24 @@ describe("menuLibraries — the library of the icon being edited", () => {
 				const where = `${id} with ${files.join(",") || "nothing"} downloaded`;
 				assert.ok(listed.includes(id), `${where}: the edited icon's library is listed`);
 				assert.equal(new Set(listed).size, listed.length, `${where}: no library twice`);
+			}
+		}
+	});
+
+	it("counts the same downloads regardless of the icon being edited", () => {
+		const settings = prefs({ hidden: ["emoji"] });
+		const states: IconPackId[][] = [
+			[],
+			["fa-brands", "tabler-outline"],
+			["tabler-outline", "tabler-filled", "octicons"],
+			ICON_SOURCE_IDS.flatMap((id) => [...libraryFiles(id)]),
+		];
+		for (const files of states) {
+			const packs = device(files);
+			const expected = menuLibraries(settings, packs).toDownload;
+			for (const current of ICON_SOURCE_IDS) {
+				assert.deepEqual(menuLibraries(settings, packs, current).toDownload, expected,
+					`${current} with ${files.join(",") || "nothing"} downloaded`);
 			}
 		}
 	});

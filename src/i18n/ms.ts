@@ -490,6 +490,7 @@ export const ms: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Pustaka tersedia",
 	"iconPicker.librariesToDownload": "Pustaka untuk dimuat turun",
 	"iconPicker.groupCurrent": "Ikon semasa",
+	"iconPicker.groupDeleted": "Pustaka yang dipadam",
 	"iconPicker.groupSearch": "Cari",
 	"iconPicker.groupLibraries": "Pustaka",
 	"iconPicker.moreToDownloadOne": "1 lagi pustaka tersedia untuk dimuat turun",

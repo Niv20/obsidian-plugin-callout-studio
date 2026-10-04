@@ -546,6 +546,7 @@ export const pt: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Bibliotecas disponíveis",
 	"iconPicker.librariesToDownload": "Bibliotecas para descarregar",
 	"iconPicker.groupCurrent": "Ícone atual",
+	"iconPicker.groupDeleted": "Biblioteca excluída",
 	"iconPicker.groupSearch": "Pesquisar",
 	"iconPicker.groupLibraries": "Bibliotecas",
 	"iconPicker.moreToDownloadOne": "Mais 1 biblioteca disponível para descarregar",

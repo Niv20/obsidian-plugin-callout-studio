@@ -495,6 +495,7 @@ export const id: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Pustaka tersedia",
 	"iconPicker.librariesToDownload": "Pustaka untuk diunduh",
 	"iconPicker.groupCurrent": "Ikon saat ini",
+	"iconPicker.groupDeleted": "Pustaka yang dihapus",
 	"iconPicker.groupSearch": "Cari",
 	"iconPicker.groupLibraries": "Pustaka",
 	"iconPicker.moreToDownloadOne": "1 pustaka lagi tersedia untuk diunduh",

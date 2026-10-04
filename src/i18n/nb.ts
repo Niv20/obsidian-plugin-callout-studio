@@ -482,6 +482,7 @@ export const nb: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Tilgjengelige biblioteker",
 	"iconPicker.librariesToDownload": "Biblioteker som kan lastes ned",
 	"iconPicker.groupCurrent": "Gjeldende ikon",
+	"iconPicker.groupDeleted": "Slettet bibliotek",
 	"iconPicker.groupSearch": "Søk",
 	"iconPicker.groupLibraries": "Biblioteker",
 	"iconPicker.moreToDownloadOne": "1 bibliotek til kan lastes ned",

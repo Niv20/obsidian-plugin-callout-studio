@@ -581,6 +581,7 @@ export const he: Record<string, string> = {
 	"iconPicker.librariesAvailable": "ספריות זמינות",
 	"iconPicker.librariesToDownload": "ספריות להורדה",
 	"iconPicker.groupCurrent": "האייקון הנוכחי",
+	"iconPicker.groupDeleted": "ספרייה שנמחקה",
 	"iconPicker.groupSearch": "חיפוש",
 	"iconPicker.groupLibraries": "ספריות",
 	"iconPicker.moreToDownloadOne": "ספרייה נוספת אחת זמינה להורדה",

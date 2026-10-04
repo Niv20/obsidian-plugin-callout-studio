@@ -504,6 +504,7 @@ export const nl: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Beschikbare bibliotheken",
 	"iconPicker.librariesToDownload": "Bibliotheken om te downloaden",
 	"iconPicker.groupCurrent": "Huidig pictogram",
+	"iconPicker.groupDeleted": "Verwijderde bibliotheek",
 	"iconPicker.groupSearch": "Zoeken",
 	"iconPicker.groupLibraries": "Bibliotheken",
 	"iconPicker.moreToDownloadOne": "Nog 1 bibliotheek beschikbaar om te downloaden",

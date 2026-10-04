@@ -1006,6 +1006,7 @@ export const en: Record<string, string> = {
 	// The source menu's sticky headings: the library of the icon being edited
 	// when the picker does not offer it, All sources, and the offered libraries.
 	"iconPicker.groupCurrent": "Current icon",
+	"iconPicker.groupDeleted": "Deleted library",
 	"iconPicker.groupSearch": "Search",
 	"iconPicker.groupLibraries": "Libraries",
 	// The text closing the source menu, and the button beside it.

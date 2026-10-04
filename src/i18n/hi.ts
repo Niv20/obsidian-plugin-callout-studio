@@ -495,6 +495,7 @@ export const hi: Record<string, string> = {
 	"iconPicker.librariesAvailable": "उपलब्ध लाइब्रेरी",
 	"iconPicker.librariesToDownload": "डाउनलोड के लिए लाइब्रेरी",
 	"iconPicker.groupCurrent": "मौजूदा आइकन",
+	"iconPicker.groupDeleted": "हटाई गई लाइब्रेरी",
 	"iconPicker.groupSearch": "खोजें",
 	"iconPicker.groupLibraries": "लाइब्रेरी",
 	"iconPicker.moreToDownloadOne": "डाउनलोड के लिए 1 और लाइब्रेरी उपलब्ध है",

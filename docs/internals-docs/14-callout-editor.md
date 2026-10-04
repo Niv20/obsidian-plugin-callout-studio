@@ -405,7 +405,8 @@ there is no `hideSingleGroup` here:
 
 | Heading (key) | Rows | When |
 | --- | --- | --- |
-| **Current icon** (`iconPicker.groupCurrent`) | the edited icon's library | only while the picker does not offer it |
+| **Deleted library** (`iconPicker.groupDeleted`) | the edited icon's downloadable library | only while the device does not fully have it |
+| **Current icon** (`iconPicker.groupCurrent`) | the edited icon's hidden built-in library | only while the picker does not offer it |
 | **Search** (`iconPicker.groupSearch`) | All sources | always |
 | **Libraries** (`iconPicker.groupLibraries`) | `pickerSources()`, in the user's order | always |
 
@@ -425,13 +426,16 @@ libraries are downloaded in the window the button beside the menu opens.
 callout keeps its icon when its library is deleted, and one synced from
 another device can use a library this device never downloaded; editing it
 opens the picker on that library (`activeSource` is the icon's own source), so
-the closed menu has to name it. It is listed first, under **Current icon** —
+the closed menu has to name it. It is listed first, under **Deleted library** —
 apart from the libraries on offer rather than among them — with the check while
 it is on screen, and it stays there after the person looks elsewhere, as the
 way back. Choosing it shows the panel's download prompt; downloading from there
 moves it under **Libraries** on the next build of the menu, and the heading
-goes. The closing line does not count it, since it is listed already. A hidden
-built-in library of the edited icon goes under the same heading, so
+goes. The closing line counts it until every pack file is downloaded, even
+while it has its own row: the saved icon does not supply the full library.
+The heading also covers libraries never or only partly downloaded on this
+device, since pack state records availability rather than deletion history.
+A hidden built-in library of the edited icon goes under **Current icon**, so
 **Libraries** is always exactly what the picker offers — the **Available
 libraries** band of the window.
 

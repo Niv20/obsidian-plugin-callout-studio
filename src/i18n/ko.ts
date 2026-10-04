@@ -494,6 +494,7 @@ export const ko: Record<string, string> = {
 	"iconPicker.librariesAvailable": "사용 가능한 라이브러리",
 	"iconPicker.librariesToDownload": "다운로드할 라이브러리",
 	"iconPicker.groupCurrent": "현재 아이콘",
+	"iconPicker.groupDeleted": "삭제된 라이브러리",
 	"iconPicker.groupSearch": "검색",
 	"iconPicker.groupLibraries": "라이브러리",
 	"iconPicker.moreToDownloadOne": "다운로드할 수 있는 라이브러리 1개 더 있음",

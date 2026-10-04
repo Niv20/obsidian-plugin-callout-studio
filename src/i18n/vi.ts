@@ -550,6 +550,7 @@ export const vi: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Thư viện có sẵn",
 	"iconPicker.librariesToDownload": "Thư viện để tải xuống",
 	"iconPicker.groupCurrent": "Biểu tượng hiện tại",
+	"iconPicker.groupDeleted": "Thư viện đã xóa",
 	"iconPicker.groupSearch": "Tìm kiếm",
 	"iconPicker.groupLibraries": "Thư viện",
 	"iconPicker.moreToDownloadOne": "Còn 1 thư viện có thể tải xuống",

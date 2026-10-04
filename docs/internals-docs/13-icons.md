@@ -332,9 +332,12 @@ window all ask it which libraries this device offers, and in what order:
   is the one exception: the edited icon's own library when the picker does not
   offer it — deleted here, downloaded only on another device, partly
   downloaded, or a built-in one the user hid. The menu lists it apart, under its
-  own heading, so re-editing that icon can always show where it lives, and it is
-  left out of `toDownload`, being listed already. Any other hidden built-in
-  library is in none of the three.
+  own heading, so re-editing that icon can always show where it lives. A missing
+  downloadable `current` remains in `toDownload`: keeping its icon does not
+  make its library downloaded, and the closing count must be independent of
+  which callout is being edited. Its heading is **Deleted library**; a hidden
+  built-in `current` keeps **Current icon**. Any other hidden built-in library
+  is in none of the three.
 - `isInstalled()` is the looser question — any file of the library on the
   device. A library with only some of its files is not offered, but it still
   takes up space, so Delete and the window's reset arrow have to see it.

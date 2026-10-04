@@ -525,6 +525,7 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.librariesAvailable": "可用的圖示庫",
 	"iconPicker.librariesToDownload": "可下載的圖示庫",
 	"iconPicker.groupCurrent": "目前的圖示",
+	"iconPicker.groupDeleted": "已刪除的圖示庫",
 	"iconPicker.groupSearch": "搜尋",
 	"iconPicker.groupLibraries": "圖示庫",
 	"iconPicker.moreToDownloadOne": "還有 1 個圖示庫可下載",

@@ -487,6 +487,7 @@ export const fi: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Saatavilla olevat kirjastot",
 	"iconPicker.librariesToDownload": "Ladattavat kirjastot",
 	"iconPicker.groupCurrent": "Nykyinen kuvake",
+	"iconPicker.groupDeleted": "Poistettu kirjasto",
 	"iconPicker.groupSearch": "Haku",
 	"iconPicker.groupLibraries": "Kirjastot",
 	"iconPicker.moreToDownloadOne": "1 kirjasto lisää ladattavissa",

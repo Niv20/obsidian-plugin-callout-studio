@@ -493,6 +493,7 @@ export const fa: Record<string, string> = {
 	"iconPicker.librariesAvailable": "کتابخانه‌های موجود",
 	"iconPicker.librariesToDownload": "کتابخانه‌ها برای دانلود",
 	"iconPicker.groupCurrent": "نماد فعلی",
+	"iconPicker.groupDeleted": "کتابخانهٔ حذف‌شده",
 	"iconPicker.groupSearch": "جستجو",
 	"iconPicker.groupLibraries": "کتابخانه‌ها",
 	"iconPicker.moreToDownloadOne": "۱ کتابخانهٔ دیگر برای دانلود موجود است",

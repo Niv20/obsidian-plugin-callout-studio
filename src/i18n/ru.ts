@@ -546,6 +546,7 @@ export const ru: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Доступные библиотеки",
 	"iconPicker.librariesToDownload": "Библиотеки для загрузки",
 	"iconPicker.groupCurrent": "Текущая иконка",
+	"iconPicker.groupDeleted": "Удалённая библиотека",
 	"iconPicker.groupSearch": "Поиск",
 	"iconPicker.groupLibraries": "Библиотеки",
 	"iconPicker.moreToDownloadOne": "Для загрузки доступна ещё 1 библиотека",

@@ -484,6 +484,7 @@ export const el: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Διαθέσιμες βιβλιοθήκες",
 	"iconPicker.librariesToDownload": "Βιβλιοθήκες προς λήψη",
 	"iconPicker.groupCurrent": "Τρέχον εικονίδιο",
+	"iconPicker.groupDeleted": "Διαγραμμένη βιβλιοθήκη",
 	"iconPicker.groupSearch": "Αναζήτηση",
 	"iconPicker.groupLibraries": "Βιβλιοθήκες",
 	"iconPicker.moreToDownloadOne": "Διατίθεται για λήψη ακόμα 1 βιβλιοθήκη",

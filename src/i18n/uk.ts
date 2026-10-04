@@ -556,6 +556,7 @@ export const uk: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Доступні бібліотеки",
 	"iconPicker.librariesToDownload": "Бібліотеки для завантаження",
 	"iconPicker.groupCurrent": "Поточна іконка",
+	"iconPicker.groupDeleted": "Видалена бібліотека",
 	"iconPicker.groupSearch": "Пошук",
 	"iconPicker.groupLibraries": "Бібліотеки",
 	"iconPicker.moreToDownloadOne": "Для завантаження доступна ще 1 бібліотека",

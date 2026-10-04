@@ -537,6 +537,7 @@ export const zh: Record<string, string> = {
 	"iconPicker.librariesAvailable": "可用的图标库",
 	"iconPicker.librariesToDownload": "可下载的图标库",
 	"iconPicker.groupCurrent": "当前图标",
+	"iconPicker.groupDeleted": "已删除的图标库",
 	"iconPicker.groupSearch": "搜索",
 	"iconPicker.groupLibraries": "图标库",
 	"iconPicker.moreToDownloadOne": "还有 1 个图标库可下载",

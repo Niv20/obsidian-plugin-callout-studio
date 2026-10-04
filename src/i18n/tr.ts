@@ -544,6 +544,7 @@ export const tr: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Kullanılabilir kitaplıklar",
 	"iconPicker.librariesToDownload": "İndirilecek kitaplıklar",
 	"iconPicker.groupCurrent": "Geçerli simge",
+	"iconPicker.groupDeleted": "Silinmiş kitaplık",
 	"iconPicker.groupSearch": "Ara",
 	"iconPicker.groupLibraries": "Kitaplıklar",
 	"iconPicker.moreToDownloadOne": "İndirilebilecek 1 kitaplık daha var",

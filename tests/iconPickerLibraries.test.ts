@@ -160,13 +160,49 @@ describe("Pick an icon — the library menu", () => {
 			assert.equal(h.picker.activeSource, "tabler", "the picker opens on the icon's own library");
 			assert.equal((h.sourceInput() as unknown as HTMLInputElement).value, t("iconPicker.tabler"));
 			open(h);
-			assert.deepEqual(headings(h), [t("iconPicker.groupCurrent"), t("iconPicker.groupSearch"), t("iconPicker.groupLibraries")]);
+			assert.deepEqual(headings(h), [t("iconPicker.groupDeleted"), t("iconPicker.groupSearch"), t("iconPicker.groupLibraries")]);
 			const first = h.contentEl.querySelector(".icon-picker-source-menu-item")!;
 			assert.ok(first.textContent.includes(t("iconPicker.tabler")));
-			assert.equal(closingLine(h), "4 more libraries available for download", "Tabler is listed already");
+			assert.equal(closingLine(h), "5 more libraries available for download", "the retained icon does not install Tabler");
 			// The panel offers the download, in place of the grid.
 			assert.equal(h.contentEl.querySelector(".icon-picker-notice-title")?.textContent,
 				t("iconPack.downloadTitle", { name: getSource("tabler").attribution.title }));
+		} finally { h.destroy(); }
+	});
+
+	it("still counts the edited icon's library when it is the only one left to download", async () => {
+		const ready = new Set<string>(ICON_SOURCE_IDS
+			.filter((id) => id !== "tabler")
+			.flatMap((id) => [...libraryFiles(id)]));
+		const h = harness({ type: "tabler-outline", value: "bulb" }, () => {}, ready);
+		try {
+			h.modal.onOpen();
+			await setImmediate();
+			open(h);
+			assert.deepEqual(h.picker.menuLibraries().toDownload, ["tabler"]);
+			assert.equal(closingLine(h), t("iconPicker.moreToDownloadOne"));
+			assert.equal(headings(h)[0], t("iconPicker.groupDeleted"));
+		} finally { h.destroy(); }
+	});
+
+	it("counts a deleted current library while preserving the callout's icon", async () => {
+		const ready = new Set<string>(libraryFiles("tabler"));
+		const icon: CalloutIcon = { type: "tabler-outline", value: "bulb" };
+		const h = harness(icon, () => {}, ready);
+		try {
+			h.modal.onOpen();
+			await setImmediate();
+			open(h);
+			assert.equal(closingLine(h), t("iconPicker.moreToDownload", { count: 4 }));
+			assert.equal(h.picker.menuLibraries().current, null);
+			await withLibraryWindow((_settings, files) => {
+				for (const file of libraryFiles("tabler")) files.delete(file);
+			}, async () => { await h.picker.openLibraries(); }, ready);
+			assert.equal(h.picker.activeSource, "tabler");
+			assert.deepEqual(h.picker.selectedIcon, icon, "the callout retains its stored icon");
+			assert.equal(h.picker.menuLibraries().current, "tabler");
+			assert.deepEqual(headings(h), [t("iconPicker.groupDeleted"), t("iconPicker.groupSearch"), t("iconPicker.groupLibraries")]);
+			assert.equal(closingLine(h), t("iconPicker.moreToDownload", { count: 5 }));
 		} finally { h.destroy(); }
 	});
 
@@ -177,6 +213,8 @@ describe("Pick an icon — the library menu", () => {
 			await setImmediate();
 			assert.equal(h.picker.menuLibraries().current, "lucide");
 			assert.ok(!h.picker.menuLibraries().libraries.includes("lucide"));
+			open(h);
+			assert.equal(headings(h)[0], t("iconPicker.groupCurrent"), "hiding a built-in library does not delete it");
 		} finally { h.destroy(); }
 	});
 

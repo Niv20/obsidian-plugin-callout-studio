@@ -544,6 +544,7 @@ export const sv: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Tillgängliga bibliotek",
 	"iconPicker.librariesToDownload": "Bibliotek att ladda ner",
 	"iconPicker.groupCurrent": "Nuvarande ikon",
+	"iconPicker.groupDeleted": "Borttaget bibliotek",
 	"iconPicker.groupSearch": "Sök",
 	"iconPicker.groupLibraries": "Bibliotek",
 	"iconPicker.moreToDownloadOne": "1 bibliotek till kan laddas ner",

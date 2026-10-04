@@ -478,6 +478,7 @@ export const da: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Tilgængelige biblioteker",
 	"iconPicker.librariesToDownload": "Biblioteker til download",
 	"iconPicker.groupCurrent": "Nuværende ikon",
+	"iconPicker.groupDeleted": "Slettet bibliotek",
 	"iconPicker.groupSearch": "Søg",
 	"iconPicker.groupLibraries": "Biblioteker",
 	"iconPicker.moreToDownloadOne": "1 bibliotek mere kan downloades",

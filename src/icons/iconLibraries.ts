@@ -132,8 +132,9 @@ export interface MenuLibraries {
 	/** What Pick an icon offers here, in the user's order — the All sources pool too. */
 	readonly libraries: readonly IconSourceId[];
 	/**
-	 * The downloadable libraries this device lacks, in catalog order, other than
-	 * `current`: the ones the menu's closing line counts.
+	 * Every downloadable library this device lacks, in catalog order, including
+	 * `current` when it still needs downloading. The menu's closing line counts
+	 * these libraries independently of which icon is being edited.
 	 */
 	readonly toDownload: readonly IconSourceId[];
 }
@@ -165,7 +166,7 @@ export function menuLibraries(
 		current: edited,
 		libraries,
 		toDownload: ICON_SOURCE_IDS.filter(
-			(id) => id !== edited && isDownloadable(id) && !isDownloaded(id, packs),
+			(id) => isDownloadable(id) && !isDownloaded(id, packs),
 		),
 	};
 }

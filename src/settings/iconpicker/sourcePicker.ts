@@ -2,7 +2,7 @@
 import { setIcon } from "obsidian";
 import { getLocale, t } from "../../i18n";
 import { getSource } from "../../icons/registry";
-import type { MenuLibraries } from "../../icons/iconLibraries";
+import { isDownloadable, type MenuLibraries } from "../../icons/iconLibraries";
 import { ListboxPopup } from "../../ui/listboxPopup";
 import { ALL_SOURCES, ALL_SOURCES_META, type PickerSourceId } from "./allSources";
 import { createSourceMenuTitle } from "./sourceMenuPresentation";
@@ -32,7 +32,12 @@ function sourceMeta(id: PickerSourceId) {
  */
 function groupOf(id: PickerSourceId, listed: MenuLibraries): { key: string; label: string } {
 	if (id === ALL_SOURCES) return { key: "search", label: t("iconPicker.groupSearch") };
-	if (id === listed.current) return { key: "current", label: t("iconPicker.groupCurrent") };
+	if (id === listed.current) {
+		return {
+			key: "current",
+			label: t(isDownloadable(id) ? "iconPicker.groupDeleted" : "iconPicker.groupCurrent"),
+		};
+	}
 	return { key: "libraries", label: t("iconPicker.groupLibraries") };
 }
 

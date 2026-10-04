@@ -6,7 +6,8 @@ import { must, ruleFor, valueOf } from "./support/cssInjectorHarness";
 import { readRepoFile } from "./support/sourceScan";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
 import { mountIconSourcePicker } from "../src/settings/iconpicker/sourcePicker";
-import { t } from "../src/i18n";
+import { getLocale, registerLocale, setLocale, t } from "../src/i18n";
+import { he } from "../src/i18n/he";
 import type { MenuLibraries } from "../src/icons/iconLibraries";
 import { ICON_SOURCE_IDS, getSource } from "../src/icons/registry";
 import type { PickerSourceId } from "../src/settings/iconpicker/allSources";
@@ -295,7 +296,7 @@ describe("icon library menu — the edited icon's library when the picker does n
 	const EDITING_TABLER: MenuLibraries = {
 		current: "tabler",
 		libraries: ["lucide", "material", "emoji", "image"],
-		toDownload: ["octicons", "fa", "rpg-awesome", "simple-icons"],
+		toDownload: ["tabler", "octicons", "fa", "rpg-awesome", "simple-icons"],
 	};
 	const groups = (menu: FakeElement): FakeElement[] => menu.querySelectorAll(".cs-combobox-group");
 
@@ -308,17 +309,39 @@ describe("icon library menu — the edited icon's library when the picker does n
 		} finally { h.destroy(); }
 	});
 
-	it("lists it first, alone under Current icon, with the check", () => {
+	it("lists it first, alone under Deleted library, with the check", () => {
 		const h = mount(() => EDITING_TABLER, "tabler");
 		try {
 			const [current, search, libraries] = groups(h.menu);
-			assert.equal(must(current, "current").querySelector(".cs-combobox-group-label")?.textContent, t("iconPicker.groupCurrent"));
+			assert.equal(must(current, "current").querySelector(".cs-combobox-group-label")?.textContent, t("iconPicker.groupDeleted"));
 			assert.deepEqual(must(current, "current").querySelectorAll(".cs-source-name").map((n) => n.textContent), [t("iconPicker.tabler")]);
 			assert.ok(must(current, "current").querySelector(".cs-source-check"), "it is the library on screen");
 			assert.equal(must(search, "search").querySelector(".cs-combobox-group-label")?.textContent, t("iconPicker.groupSearch"));
 			assert.equal(must(libraries, "libraries").querySelectorAll(".cs-source-name").length, 4);
 			assert.ok(h.rows[0]?.hasClass("is-active"), "the menu opens on it");
 		} finally { h.destroy(); }
+	});
+
+	it("uses the localized deleted-library heading while keeping hidden built-ins under Current icon", () => {
+		const previousLocale = getLocale();
+		registerLocale("he", he);
+		setLocale("he");
+		try {
+			const deleted = mount(() => EDITING_TABLER, "tabler");
+			try {
+				assert.equal(groups(deleted.menu)[0]?.querySelector(".cs-combobox-group-label")?.textContent,
+					he["iconPicker.groupDeleted"]);
+			} finally { deleted.destroy(); }
+			const hidden = mount(() => ({
+				...EDITING_TABLER,
+				current: "emoji",
+				libraries: ["lucide", "material", "image"],
+			}), "emoji");
+			try {
+				assert.equal(groups(hidden.menu)[0]?.querySelector(".cs-combobox-group-label")?.textContent,
+					he["iconPicker.groupCurrent"]);
+			} finally { hidden.destroy(); }
+		} finally { setLocale(previousLocale); }
 	});
 
 	it("keeps it there after another library is chosen, as the way back", () => {
@@ -337,11 +360,15 @@ describe("icon library menu — the edited icon's library when the picker does n
 		} finally { h.destroy(); }
 	});
 
-	it("has no Current icon heading once the library is back among the others", () => {
+	it("has no Deleted library heading once the library is back among the others", () => {
 		let menu = EDITING_TABLER;
 		const h = mount(() => menu, "tabler");
 		try {
-			menu = { current: null, libraries: ["lucide", "tabler", "material", "emoji", "image"], toDownload: EDITING_TABLER.toDownload };
+			menu = {
+				current: null,
+				libraries: ["lucide", "tabler", "material", "emoji", "image"],
+				toDownload: EDITING_TABLER.toDownload.filter((id) => id !== "tabler"),
+			};
 			h.popup.setItems();
 			const labels = h.menu.querySelectorAll(".cs-combobox-group-label").map((el) => el.textContent);
 			assert.deepEqual(labels, [t("iconPicker.groupSearch"), t("iconPicker.groupLibraries")]);

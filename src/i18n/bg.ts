@@ -477,6 +477,7 @@ export const bg: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Налични библиотеки",
 	"iconPicker.librariesToDownload": "Библиотеки за изтегляне",
 	"iconPicker.groupCurrent": "Текуща икона",
+	"iconPicker.groupDeleted": "Изтрита библиотека",
 	"iconPicker.groupSearch": "Търсене",
 	"iconPicker.groupLibraries": "Библиотеки",
 	"iconPicker.moreToDownloadOne": "Още 1 библиотека е налична за изтегляне",

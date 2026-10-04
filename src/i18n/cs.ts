@@ -492,6 +492,7 @@ export const cs: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Dostupné knihovny",
 	"iconPicker.librariesToDownload": "Knihovny ke stažení",
 	"iconPicker.groupCurrent": "Aktuální ikona",
+	"iconPicker.groupDeleted": "Smazaná knihovna",
 	"iconPicker.groupSearch": "Hledat",
 	"iconPicker.groupLibraries": "Knihovny",
 	"iconPicker.moreToDownloadOne": "K stažení je dostupná ještě 1 knihovna",

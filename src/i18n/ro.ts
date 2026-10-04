@@ -548,6 +548,7 @@ export const ro: Record<string, string> = {
 	"iconPicker.librariesAvailable": "Biblioteci disponibile",
 	"iconPicker.librariesToDownload": "Biblioteci de descărcat",
 	"iconPicker.groupCurrent": "Pictograma curentă",
+	"iconPicker.groupDeleted": "Bibliotecă ștearsă",
 	"iconPicker.groupSearch": "Căutare",
 	"iconPicker.groupLibraries": "Biblioteci",
 	"iconPicker.moreToDownloadOne": "Încă 1 bibliotecă disponibilă pentru descărcare",

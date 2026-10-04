@@ -495,6 +495,7 @@ export const ja: Record<string, string> = {
 	"iconPicker.librariesAvailable": "利用可能なライブラリ",
 	"iconPicker.librariesToDownload": "ダウンロードするライブラリ",
 	"iconPicker.groupCurrent": "現在のアイコン",
+	"iconPicker.groupDeleted": "削除されたライブラリ",
 	"iconPicker.groupSearch": "検索",
 	"iconPicker.groupLibraries": "ライブラリ",
 	"iconPicker.moreToDownloadOne": "ダウンロードできるライブラリがあと1件あります",

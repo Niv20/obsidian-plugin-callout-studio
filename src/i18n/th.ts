@@ -540,6 +540,7 @@ export const th: Record<string, string> = {
 	"iconPicker.librariesAvailable": "คลังที่ใช้ได้",
 	"iconPicker.librariesToDownload": "คลังที่ดาวน์โหลดได้",
 	"iconPicker.groupCurrent": "ไอคอนปัจจุบัน",
+	"iconPicker.groupDeleted": "คลังที่ถูกลบ",
 	"iconPicker.groupSearch": "ค้นหา",
 	"iconPicker.groupLibraries": "คลัง",
 	"iconPicker.moreToDownloadOne": "ยังมีอีก 1 คลังที่ดาวน์โหลดได้",

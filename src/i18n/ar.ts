@@ -486,6 +486,7 @@ export const ar: Record<string, string> = {
 	"iconPicker.librariesAvailable": "المكتبات المتاحة",
 	"iconPicker.librariesToDownload": "مكتبات للتنزيل",
 	"iconPicker.groupCurrent": "الأيقونة الحالية",
+	"iconPicker.groupDeleted": "مكتبة محذوفة",
 	"iconPicker.groupSearch": "بحث",
 	"iconPicker.groupLibraries": "المكتبات",
 	"iconPicker.moreToDownloadOne": "مكتبة واحدة أخرى متاحة للتنزيل",
