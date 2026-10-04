@@ -140,7 +140,7 @@ describe("the shared import/export boxes on hover", () => {
 			for (const selector of rule.selector.split(/,\s*/)) {
 				assert.match(
 					selector,
-					/^\.cs-option-box(?:\[tabindex="0"\]:hover(?: \.cs-option-box-mark)?|\.is-choosable:hover| \.cs-import-action:hover|(?:\[tabindex="0"\]|\.is-choosable):hover:not\(:has\(\.cs-import-action:hover\)\) \.cs-import-action)$/,
+					/^\.cs-option-box(?:\[tabindex="0"\]:hover(?: \.cs-option-box-mark)?|\.is-choosable:hover| \.cs-import-action:hover|(?:\[tabindex="0"\]|\.is-choosable):hover \.cs-import-action:not\(:hover\))$/,
 					selector,
 				);
 			}
