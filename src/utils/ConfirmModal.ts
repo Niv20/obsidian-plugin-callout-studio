@@ -83,6 +83,7 @@ export class ConfirmModal extends Modal {
 			const lock = (locked: boolean) => {
 				confirmBtn.setAttribute("aria-disabled", String(locked));
 				confirmBtn.toggleClass("cs-is-locked", locked);
+				label.toggleClass("is-checked", !locked);
 			};
 			lock(true);
 			checkbox.addEventListener("change", () => {

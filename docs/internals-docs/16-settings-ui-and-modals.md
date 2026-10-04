@@ -1921,6 +1921,11 @@ scroller, so a long message pushes the box off screen. It is not
 so stops one bottom padding (16px) short of the end. **Reset everything** is
 the only caller that passes it (`confirm.acknowledge`).
 
+The existing checkbox change handler mirrors the checked state onto the label's
+`is-checked` class while updating the button lock. CSS reads that class for the
+red outline, so checking and unchecking stay in sync without a parent `:has()`
+selector.
+
 Its message is built from `settings/resetInventory.ts`, which reads the
 registry and returns two lists: what the reset deletes (custom callouts,
 pictures, commands, palettes, each with a count) and what it puts back to

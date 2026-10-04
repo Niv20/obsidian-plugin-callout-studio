@@ -7121,7 +7121,7 @@ body:not(.is-phone)
 
 /* No `transition` on the outline. The tick's own fill flips at once, so a
    fading outline read as a lag; both change on the same frame. */
-.cs-confirm-acknowledge:has(input:checked) {
+.cs-confirm-acknowledge.is-checked {
 	border-color: var(--color-red);
 }
 

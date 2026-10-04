@@ -53,14 +53,18 @@ describe("ConfirmModal acknowledgement", () => {
 			const box = label.querySelector("input");
 			assert.ok(box);
 			assert.equal(h.confirm.getAttribute("aria-disabled"), "true");
+			assert.equal(label.hasClass("is-checked"), false, "an unchecked box keeps its neutral outline");
 			Object.assign(box, { checked: true });
 			box.fire("change");
 			assert.notEqual(h.confirm.getAttribute("aria-disabled"), "true");
+			assert.equal(label.hasClass("is-checked"), true, "the checked box gets its red outline");
 			Object.assign(box, { checked: false });
 			box.fire("change");
 			assert.equal(h.confirm.getAttribute("aria-disabled"), "true");
+			assert.equal(label.hasClass("is-checked"), false, "unticking restores the neutral outline");
 			Object.assign(box, { checked: true });
 			box.fire("change");
+			assert.equal(label.hasClass("is-checked"), true);
 			h.confirm.fire("click");
 			assert.equal(await h.answer, true);
 		} finally { h.destroy(); }
