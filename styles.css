@@ -9041,7 +9041,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 .cs-recovery-controls-wrapped .cs-recovery-summary-counts {
 	flex-direction: row;
 	flex-wrap: wrap;
-	column-gap: var(--size-4-3);
+	gap: normal var(--size-4-3);
 }
 
 .cs-recovery-row .setting-item-control {
