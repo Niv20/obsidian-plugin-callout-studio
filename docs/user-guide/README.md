@@ -2,36 +2,26 @@
 
 There's a lot to explore in Callout Studio - from callout types and custom colors to icons, styling, and handy workflows. Dive into any topic that catches your eye, or start wherever you like.
 
-| Chapter                                                                    | What it covers                                                                     |
-| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| [01 - The three callout types](01-the-three-callout-types.md)              | Use one callout type as a block, heading, or inline callout.                       |
-| [02 - Create your first callout](02-create-your-first-callout.md)          | Build a callout in settings or create one while typing.                            |
-| [03 - Custom color palettes](03-custom-color-palettes.md)                  | Create solid, gradient, and transparent palettes and reuse them.                   |
-| [04 - Custom icons & emojis](04-custom-icons-and-emojis.md)                | Browse icon libraries, use emoji, upload graphics, or remove an icon.              |
-| [05 - Fallback styles & discovery](05-fallback-styles-and-discovery.md)    | Control unknown callouts and save types found in your vault.                       |
-| [06 - Editing, replacing & deleting](06-editing-replacing-and-deleting.md) | Safely edit, duplicate, replace, reset, or remove callouts.                        |
-| [07 - Global styling](07-global-styling.md)                                | Set shared borders, corners, spacing, alignment, and scale.                        |
-| [08 - The right-click menu](08-the-right-click-menu.md)                    | Use and customize context-menu actions for each callout format.                    |
-| [09 - Commands & hotkeys](09-commands-and-hotkeys.md)                      | Wrap and unwrap content, create commands, and assign shortcuts.                    |
-| [10 - Import, export & sharing](10-import-export-and-sharing.md)           | Migrate from other plugins, import a backup, or export CSS.                        |
-| [11 - Languages](11-languages.md)                                          | Follow Obsidian's language or choose another interface language.                   |
-| [12 - Find callouts](12-find-callouts.md)                                  | Find where callouts are used across your notes.                                    |
+| Chapter                                                                    | What it covers                                                                                                                  |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| [01 - The three callout types](01-the-three-callout-types.md)              | Use one callout type as a block, heading, or inline callout.                                                                    |
+| [02 - Create your first callout](02-create-your-first-callout.md)          | Build a callout in settings or create one while typing.                                                                         |
+| [03 - Custom color palettes](03-custom-color-palettes.md)                  | Create solid, gradient, and transparent palettes and reuse them.                                                                |
+| [04 - Custom icons & emojis](04-custom-icons-and-emojis.md)                | Browse icon libraries, use emoji, upload graphics, or remove an icon.                                                           |
+| [05 - Fallback styles & discovery](05-fallback-styles-and-discovery.md)    | Control unknown callouts and save types found in your vault.                                                                    |
+| [06 - Editing, replacing & deleting](06-editing-replacing-and-deleting.md) | Safely edit, duplicate, replace, reset, or remove callouts.                                                                     |
+| [07 - Global styling](07-global-styling.md)                                | Set shared borders, corners, spacing, alignment, and scale.                                                                     |
+| [08 - The right-click menu](08-the-right-click-menu.md)                    | Use and customize context-menu actions for each callout format.                                                                 |
+| [09 - Commands & hotkeys](09-commands-and-hotkeys.md)                      | Wrap and unwrap content, create commands, and assign shortcuts.                                                                 |
+| [10 - Import, export & sharing](10-import-export-and-sharing.md)           | Migrate from other plugins, import a backup, or export CSS.                                                                     |
+| [11 - Languages](11-languages.md)                                          | Follow Obsidian's language or choose another interface language.                                                                |
+| [12 - Find callouts](12-find-callouts.md)                                  | Find where callouts are used across your notes.                                                                                 |
 | [13 - Syncing & backups](13-syncing-and-backups.md)                        | Compare, restore and delete earlier versions, understand backup retention, recover paused saving, and use synced vaults safely. |
-| [14 - Danger zone](14-danger-zone.md)                                      | Convert heading and inline callouts to standard Markdown, or reset Callout Studio. |
-| [15 - Quick insert](15-quick-insert.md)                                    | Insert and edit block callouts from the ribbon.                                    |
-| [16 - Advanced heading callouts](16-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                |
-| [17 - Theme integration](17-theme-integration.md)                          | Understand which callouts your theme controls, and how the windows follow it.      |
-
-Some buttons and menu items end in dots, like *Import…*. The dots mean the next
-step asks you for one more detail, such as a source, a format, or a file, before
-anything happens. This guide writes the name without them: **Import**.
+| [14 - Danger zone](14-danger-zone.md)                                      | Convert heading and inline callouts to standard Markdown, or reset Callout Studio.                                              |
+| [15 - Quick insert](15-quick-insert.md)                                    | Insert and edit block callouts from the ribbon.                                                                                 |
+| [16 - Advanced heading callouts](16-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                                                             |
+| [17 - Theme integration](17-theme-integration.md)                          | Understand which callouts your theme controls, and how the windows follow it.                                                   |
 
 ---
-
-At the bottom of **Settings → Callout Studio**, the contact links have equal,
-roomy spacing to the divider lines above and below. A compact row below contains project links,
-licenses, and the current version, with a small gap beneath it.
-Contact links gain a standard underline on hover. Its thickness follows the
-current font and browser.
 
 To learn how the plugin works internally, including its privacy and permission model, see the [internals guide](../internals-docs/README.md).
