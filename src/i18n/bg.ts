@@ -472,7 +472,7 @@ export const bg: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Все още не е включен: {{names}}. Изберете източник по-горе, за да го изтеглите.",
 	"iconPicker.chooseSource": "Изберете източник",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Не е изтеглен",
 	"iconPicker.librariesAvailable": "Налични библиотеки",
 	"iconPicker.librariesToDownload": "Библиотеки за изтегляне",

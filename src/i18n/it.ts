@@ -497,7 +497,7 @@ export const it: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Non ancora incluso: {{names}}. Scegli una fonte sopra per scaricarlo.",
 	"iconPicker.chooseSource": "Scegli fonte",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Non scaricata",
 	"iconPicker.librariesAvailable": "Librerie disponibili",
 	"iconPicker.librariesToDownload": "Librerie da scaricare",

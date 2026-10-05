@@ -489,7 +489,7 @@ export const pl: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Jeszcze nie pobrano: {{names}}. Wybierz powyżej źródło, aby je pobrać.",
 	"iconPicker.chooseSource": "Wybierz źródło",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Nie pobrano",
 	"iconPicker.librariesAvailable": "Dostępne biblioteki",
 	"iconPicker.librariesToDownload": "Biblioteki do pobrania",

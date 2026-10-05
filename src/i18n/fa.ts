@@ -488,7 +488,7 @@ export const fa: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"هنوز دانلود نشده: {{names}}. یک منبع را در بالا انتخاب کنید تا دانلود شود.",
 	"iconPicker.chooseSource": "انتخاب منبع",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "دانلود نشده",
 	"iconPicker.librariesAvailable": "کتابخانه‌های موجود",
 	"iconPicker.librariesToDownload": "کتابخانه‌ها برای دانلود",

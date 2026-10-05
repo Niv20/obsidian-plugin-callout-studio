@@ -482,7 +482,7 @@ export const fi: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Ei vielä sisällytetty: {{names}}. Valitse lähde ylhäältä ladataksesi sen.",
 	"iconPicker.chooseSource": "Valitse lähde",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Ei ladattu",
 	"iconPicker.librariesAvailable": "Saatavilla olevat kirjastot",
 	"iconPicker.librariesToDownload": "Ladattavat kirjastot",

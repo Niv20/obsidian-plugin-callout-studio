@@ -477,7 +477,7 @@ export const nb: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Ikke inkludert ennå: {{names}}. Velg en kilde ovenfor for å laste den ned.",
 	"iconPicker.chooseSource": "Velg kilde",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Ikke lastet ned",
 	"iconPicker.librariesAvailable": "Tilgjengelige biblioteker",
 	"iconPicker.librariesToDownload": "Biblioteker som kan lastes ned",

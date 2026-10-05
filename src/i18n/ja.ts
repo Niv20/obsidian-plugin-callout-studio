@@ -490,7 +490,7 @@ export const ja: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"未取得: {{names}}。上からソースを選んでダウンロードしてください。",
 	"iconPicker.chooseSource": "ソースを選択",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "未ダウンロード",
 	"iconPicker.librariesAvailable": "利用可能なライブラリ",
 	"iconPicker.librariesToDownload": "ダウンロードするライブラリ",

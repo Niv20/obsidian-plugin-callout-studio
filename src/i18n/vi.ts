@@ -545,7 +545,7 @@ export const vi: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Chưa có: {{names}}. Chọn nguồn ở trên để tải xuống.",
 	"iconPicker.chooseSource": "Chọn nguồn",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Chưa tải xuống",
 	"iconPicker.librariesAvailable": "Thư viện có sẵn",
 	"iconPicker.librariesToDownload": "Thư viện để tải xuống",

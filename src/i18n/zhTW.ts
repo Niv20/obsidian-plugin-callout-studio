@@ -520,7 +520,7 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"尚未包含：{{names}}。請在上方選擇來源以下載。",
 	"iconPicker.chooseSource": "選擇來源",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "尚未下載",
 	"iconPicker.librariesAvailable": "可用的圖示庫",
 	"iconPicker.librariesToDownload": "可下載的圖示庫",

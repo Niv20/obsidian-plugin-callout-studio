@@ -55,7 +55,6 @@ export class ImagePanel {
 	private readonly toolbarEl: HTMLElement;
 	private readonly bodyEl: HTMLElement;
 	private grid: IconGrid | null = null;
-	private query = "";
 	private fileInput: HTMLInputElement | null = null;
 	/** The selected picture, if this source owns the current selection. */
 	private activeId: string | null = null;
@@ -64,6 +63,7 @@ export class ImagePanel {
 	constructor(
 		private readonly container: HTMLElement,
 		private readonly host: ImagePanelHost,
+		private query = "",
 	) {
 		const selected = host.selectedIcon();
 		this.activeId = selected?.type === "image" ? selected.value : null;
@@ -72,6 +72,11 @@ export class ImagePanel {
 		container.addClass("icon-picker-image-panel");
 		this.toolbarEl = container.createDiv("icon-picker-toolbar");
 		this.bodyEl = container.createDiv("icon-picker-body");
+	}
+
+	/** Retained when Manage icon libraries replaces this panel. */
+	get searchQuery(): string {
+		return this.query;
 	}
 
 	dispose(): void {

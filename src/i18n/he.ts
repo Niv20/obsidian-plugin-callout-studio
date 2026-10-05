@@ -576,7 +576,7 @@ export const he: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"עדיין לא נכללים: {{names}}. בחרו מקור מהרשימה למעלה כדי להוריד אותו.",
 	"iconPicker.chooseSource": "בחירת מקור",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "לא הורד",
 	"iconPicker.librariesAvailable": "ספריות זמינות",
 	"iconPicker.librariesToDownload": "ספריות להורדה",

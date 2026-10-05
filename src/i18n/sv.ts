@@ -539,7 +539,7 @@ export const sv: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Inte inkluderat ännu: {{names}}. Välj en källa ovan för att ladda ner den.",
 	"iconPicker.chooseSource": "Välj källa",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Inte nedladdat",
 	"iconPicker.librariesAvailable": "Tillgängliga bibliotek",
 	"iconPicker.librariesToDownload": "Bibliotek att ladda ner",

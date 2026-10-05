@@ -479,7 +479,7 @@ export const el: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Δεν έχει ληφθεί ακόμα: {{names}}. Επιλέξτε μια πηγή παραπάνω για να τη λάβετε.",
 	"iconPicker.chooseSource": "Επιλογή πηγής",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Δεν έχει ληφθεί",
 	"iconPicker.librariesAvailable": "Διαθέσιμες βιβλιοθήκες",
 	"iconPicker.librariesToDownload": "Βιβλιοθήκες προς λήψη",

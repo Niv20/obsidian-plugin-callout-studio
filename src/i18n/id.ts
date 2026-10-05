@@ -490,7 +490,7 @@ export const id: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Belum disertakan: {{names}}. Pilih sumber di atas untuk mengunduhnya.",
 	"iconPicker.chooseSource": "Pilih sumber",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Belum diunduh",
 	"iconPicker.librariesAvailable": "Pustaka tersedia",
 	"iconPicker.librariesToDownload": "Pustaka untuk diunduh",

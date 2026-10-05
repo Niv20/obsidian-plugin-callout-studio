@@ -481,7 +481,7 @@ export const ar: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"لم يتم تضمينها بعد: {{names}}. اختر مصدرًا أعلاه لتنزيله.",
 	"iconPicker.chooseSource": "اختر مصدرًا",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "لم يتم تنزيله",
 	"iconPicker.librariesAvailable": "المكتبات المتاحة",
 	"iconPicker.librariesToDownload": "مكتبات للتنزيل",

@@ -551,7 +551,7 @@ export const uk: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Ще не включено: {{names}}. Виберіть джерело вище, щоб завантажити.",
 	"iconPicker.chooseSource": "Вибрати джерело",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Не завантажено",
 	"iconPicker.librariesAvailable": "Доступні бібліотеки",
 	"iconPicker.librariesToDownload": "Бібліотеки для завантаження",

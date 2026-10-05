@@ -49,12 +49,13 @@ function harness(
 	prepare: (settings: PluginSettings) => void = () => {},
 	ready = new Set<string>(),
 	editing?: { id: string | null; name: string },
+	loadIndex: (id: IconSourceId) => IconIndex = () => emptyIndex,
 ) {
 	fakeDom.light();
 	const originals = ICON_SOURCE_IDS.map((id) => {
 		const pack = getSource(id);
 		const descriptor = Object.getOwnPropertyDescriptor(pack, "loadIndex")!;
-		pack.loadIndex = () => Promise.resolve(emptyIndex);
+		pack.loadIndex = () => Promise.resolve(loadIndex(id));
 		return { pack, descriptor };
 	});
 	const settings = structuredClone(DEFAULT_SETTINGS);
@@ -445,6 +446,66 @@ describe("Pick an icon — the panel after the Icon libraries window", () => {
 	// Material is hidden from the start in the two tests below: a pool that holds
 	// it loads Google's webfont, which a test has no network for.
 	const withoutMaterial = (settings: PluginSettings): void => { settings.iconLibraries.hidden = ["material"]; };
+
+	const searchableIndex: IconIndex = {
+		entries: ["star", "moon"].map((name) => ({ name, categories: [], keywords: [] })),
+		categories: [],
+	};
+	const changes: { name: string; downloaded: boolean; change: (settings: PluginSettings, files: Set<string>) => void }[] = [
+		{ name: "reordering", downloaded: false, change: (settings) => { settings.iconLibraries.order = ["emoji", "lucide"]; } },
+		{ name: "hiding", downloaded: false, change: (settings) => { settings.iconLibraries.hidden.push("emoji"); } },
+		{ name: "downloading", downloaded: false, change: (_settings, files) => { TABLER.forEach((file) => files.add(file)); } },
+		{ name: "deleting", downloaded: true, change: (_settings, files) => { TABLER.forEach((file) => files.delete(file)); } },
+	];
+	for (const { name, downloaded, change } of changes) {
+		it(`keeps the search and filtered results after ${name} a pooled library`, async () => {
+			const ready = new Set(downloaded ? TABLER : []);
+			const h = harness({ type: "lucide", value: "star" }, withoutMaterial, ready, undefined,
+				(id) => id === "image" ? emptyIndex : searchableIndex);
+			try {
+				h.modal.onOpen();
+				await setImmediate();
+				h.picker.selectSource("all");
+				await setImmediate();
+				const search = h.contentEl.querySelector(".icon-picker-search-input")!;
+				search.value = "star";
+				search.fire("input");
+				await withLibraryWindow(change, () => h.picker.openLibraries(), ready);
+				const refreshedSearch = h.contentEl.querySelector(".icon-picker-search-input")!;
+				assert.notEqual(refreshedSearch, search, "the changed pool required a new panel");
+				assert.equal(refreshedSearch.value, "star");
+				const cells = h.contentEl.querySelectorAll(".icon-picker-cell");
+				assert.ok(cells.length > 0);
+				assert.ok(cells.every((cell) => cell.getAttribute("aria-label")?.startsWith("star — ")));
+				const headings = h.contentEl.querySelectorAll(".icon-picker-group-text").map((el) => el.textContent);
+				const sources = h.picker.menuLibraries().libraries.filter((id) => id !== "image");
+				assert.deepEqual(headings, sources.map((id) => `${t(getSource(id).labelKey)} (1)`));
+			} finally { h.destroy(); }
+		});
+	}
+
+	for (const source of ["emoji", "image"] as const) {
+		it(`keeps the ${source} search when hiding its active panel returns to All sources`, async () => {
+			const h = harness({ type: "lucide", value: "star" }, withoutMaterial, new Set(), undefined,
+				(id) => id === "lucide" ? searchableIndex : emptyIndex);
+			try {
+				h.modal.onOpen();
+				await setImmediate();
+				h.picker.selectSource(source);
+				await setImmediate();
+				const search = h.contentEl.querySelector(".icon-picker-search-input")!;
+				search.value = "star";
+				search.fire("input");
+				await withLibraryWindow((settings) => { settings.iconLibraries.hidden.push(source); }, () => h.picker.openLibraries());
+				assert.equal(h.picker.activeSource, "all");
+				assert.equal(h.contentEl.querySelector(".icon-picker-search-input")?.value, "star");
+				assert.equal(h.contentEl.querySelectorAll(".icon-picker-cell").length, 1);
+				h.picker.selectSource("lucide");
+				await setImmediate();
+				assert.equal(h.contentEl.querySelector(".icon-picker-search-input")?.value, "", "choosing a source starts a fresh search");
+			} finally { h.destroy(); }
+		});
+	}
 
 	it("is rebuilt in All sources when the pool changed", async () => {
 		const h = harness({ type: "lucide", value: "star" }, withoutMaterial);

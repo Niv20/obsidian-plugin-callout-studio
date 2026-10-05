@@ -492,7 +492,7 @@ export const hu: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Még nem tartalmazza: {{names}}. Válasszon fent egy forrást a letöltéshez.",
 	"iconPicker.chooseSource": "Forrás kiválasztása",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Nincs letöltve",
 	"iconPicker.librariesAvailable": "Elérhető könyvtárak",
 	"iconPicker.librariesToDownload": "Letölthető könyvtárak",

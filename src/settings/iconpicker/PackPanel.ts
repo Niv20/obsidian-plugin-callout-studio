@@ -69,7 +69,6 @@ export class PackPanel {
 	private readonly bodyEl: HTMLElement;
 	private grid: IconGrid | null = null;
 	private index: IconIndex | null = null;
-	private query = "";
 	private category = "";
 	private variants: IconVariantState;
 	private searchInput: HTMLInputElement | null = null;
@@ -98,6 +97,7 @@ export class PackPanel {
 		private readonly container: HTMLElement,
 		private readonly pack: IconPack,
 		private readonly host: PackPanelHost,
+		private query = "",
 	) {
 		this.variants = { ...host.variantsFor(pack.id) };
 		this.category = host.lastCategoryFor(pack.id);
@@ -107,6 +107,11 @@ export class PackPanel {
 		container.addClass("icon-picker-pack-panel");
 		this.toolbarEl = container.createDiv("icon-picker-toolbar");
 		this.bodyEl = container.createDiv("icon-picker-body");
+	}
+
+	/** Retained when Manage icon libraries rebuilds this panel. */
+	get searchQuery(): string {
+		return this.query;
 	}
 
 	dispose(): void {

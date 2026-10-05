@@ -535,7 +535,7 @@ export const th: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"ยังไม่ได้รวม: {{names}} เลือกแหล่งข้อมูลด้านบนเพื่อดาวน์โหลด",
 	"iconPicker.chooseSource": "เลือกแหล่งข้อมูล",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "ยังไม่ได้ดาวน์โหลด",
 	"iconPicker.librariesAvailable": "คลังที่ใช้ได้",
 	"iconPicker.librariesToDownload": "คลังที่ดาวน์โหลดได้",

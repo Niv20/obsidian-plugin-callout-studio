@@ -543,7 +543,7 @@ export const ro: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Neincluși încă: {{names}}. Alege o sursă de mai sus pentru a o descărca.",
 	"iconPicker.chooseSource": "Alege sursa",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Nedescărcat",
 	"iconPicker.librariesAvailable": "Biblioteci disponibile",
 	"iconPicker.librariesToDownload": "Biblioteci de descărcat",

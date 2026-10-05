@@ -487,7 +487,7 @@ export const cs: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Zatím není součástí: {{names}}. Vyberte zdroj výše a stáhněte ho.",
 	"iconPicker.chooseSource": "Vybrat zdroj",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Nestaženo",
 	"iconPicker.librariesAvailable": "Dostupné knihovny",
 	"iconPicker.librariesToDownload": "Knihovny ke stažení",

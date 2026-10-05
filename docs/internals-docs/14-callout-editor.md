@@ -473,7 +473,11 @@ what it shows changed** (`panelContents()`: the pool's members in order, or
 how much of the active library is still to download). Rebuilding sends the grid
 back to the selected icon or to the top, so doing it after every change - which
 this once did - made the icon list jump whenever someone hid an unrelated
-library. On a phone the row drops its **Choose source** caption from view so
+library. A necessary rebuild carries the panel's `searchQuery` into the new
+`PackPanel` or `ImagePanel` constructor, so its input and filtered results keep
+the typed query, including when a removed active library gives way to All
+sources. An explicit source selection still starts with an empty query.
+On a phone the row drops its **Choose source** caption from view so
 the menu keeps room for the library's name beside **Manage libraries**.
 
 A library's panel (`PackPanel`, marked `.icon-picker-pack-panel`; the Custom
@@ -508,6 +512,8 @@ needs **no special case** to render it; it's just another source as far as
 
 The pool is built from `pickerSources()` - the libraries the picker offers,
 in the user's order - so its result groups come in that order too. A
+group heading uses `iconPicker.sourceGroup` to show the library name followed
+by its exact filtered result count in parentheses, in every locale. A
 downloadable source counts only when **every** file it draws from is present -
 not "any": Font Awesome pools names across three separate files
 (Solid/Regular/Brands), and a missing file would silently drop every name only

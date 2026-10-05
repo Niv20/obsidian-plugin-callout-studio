@@ -541,7 +541,7 @@ export const pt: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Ainda não incluído: {{names}}. Escolha uma fonte acima para o descarregar.",
 	"iconPicker.chooseSource": "Escolher fonte",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Não descarregado",
 	"iconPicker.librariesAvailable": "Bibliotecas disponíveis",
 	"iconPicker.librariesToDownload": "Bibliotecas para descarregar",

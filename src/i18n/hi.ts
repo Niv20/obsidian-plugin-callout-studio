@@ -490,7 +490,7 @@ export const hi: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"अभी तक शामिल नहीं: {{names}}। डाउनलोड करने के लिए ऊपर एक स्रोत चुनें।",
 	"iconPicker.chooseSource": "स्रोत चुनें",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "डाउनलोड नहीं किया गया",
 	"iconPicker.librariesAvailable": "उपलब्ध लाइब्रेरी",
 	"iconPicker.librariesToDownload": "डाउनलोड के लिए लाइब्रेरी",

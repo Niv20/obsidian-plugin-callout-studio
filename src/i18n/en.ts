@@ -995,7 +995,7 @@ export const en: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Not included yet: {{names}}. Pick a source above to download it.",
 	"iconPicker.chooseSource": "Choose source",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	// No longer drawn: the source menu lists only libraries on the device, so
 	// no row needs the badge. Kept because every locale carries it.
 	"iconPicker.notDownloaded": "Not downloaded",

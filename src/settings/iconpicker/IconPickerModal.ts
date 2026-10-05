@@ -57,6 +57,7 @@ import { t } from "../../i18n";
  * Both PackPanel and the writable ImagePanel implement this surface.
  */
 interface PickerPanel {
+	readonly searchQuery: string;
 	render(): Promise<void>;
 	dispose(): void;
 }
@@ -349,8 +350,9 @@ export class IconPicker extends Modal {
 		if (this.sourcePicker) showIconSource(this.sourcePicker, this.activeSource);
 		// Rebuilding the panel sends its grid back to the selected icon, or to
 		// the top: a jump nobody asked for when the change was about some other
-		// library. So only when what the panel shows has changed.
-		if (this.panelContents() !== shownBefore) await this.showPanel();
+		// library. So only when what the panel shows has changed, retaining the
+		// search even if the active library gave way to All sources.
+		if (this.panelContents() !== shownBefore) await this.showPanel(this.panel?.searchQuery);
 	}
 
 	/**
@@ -376,7 +378,7 @@ export class IconPicker extends Modal {
 		void this.showPanel();
 	}
 
-	private async showPanel(): Promise<void> {
+	private async showPanel(query = ""): Promise<void> {
 		this.panel?.dispose();
 		this.panelHostEl.empty();
 		const host = this.panelHostEl.createDiv("icon-picker-panel");
@@ -401,7 +403,7 @@ export class IconPicker extends Modal {
 					this.selectedIcon = null;
 					this.updatePreview();
 				},
-			});
+			}, query);
 			await this.panel.render();
 			return;
 		}
@@ -421,6 +423,7 @@ export class IconPicker extends Modal {
 					this.updatePreview();
 				},
 			},
+			query,
 		);
 		await this.panel.render();
 	}

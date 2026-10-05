@@ -6,10 +6,18 @@ import {
 } from "../src/settings/iconpicker/sourceMenuPresentation";
 import { readRepoFile } from "./support/sourceScan";
 import { installFakeDom } from "./support/fakeDom";
+import { en } from "../src/i18n/en";
+import { LOCALE_TABLES } from "./support/localeTables";
 
 installFakeDom();
 
 describe("icon source menu counts", () => {
+	it("puts pooled result counts in parentheses in every language", () => {
+		for (const [locale, table] of Object.entries({ en, ...LOCALE_TABLES })) {
+			assert.equal(table["iconPicker.sourceGroup"], "{{name}} ({{count}})", locale);
+		}
+	});
+
 	it("keeps small and user-owned collections exact", () => {
 		assert.equal(formatIconCount(42, "en-US", false), "42");
 		assert.equal(formatIconCount(3_870, "en-US", true), "3,870");

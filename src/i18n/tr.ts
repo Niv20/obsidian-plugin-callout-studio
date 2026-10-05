@@ -539,7 +539,7 @@ export const tr: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Henüz dahil edilmedi: {{names}}. İndirmek için yukarıdan bir kaynak seçin.",
 	"iconPicker.chooseSource": "Kaynak seç",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "İndirilmedi",
 	"iconPicker.librariesAvailable": "Kullanılabilir kitaplıklar",
 	"iconPicker.librariesToDownload": "İndirilecek kitaplıklar",

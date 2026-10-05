@@ -473,7 +473,7 @@ export const da: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Ikke inkluderet endnu: {{names}}. Vælg en kilde ovenfor for at downloade den.",
 	"iconPicker.chooseSource": "Vælg kilde",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Ikke downloadet",
 	"iconPicker.librariesAvailable": "Tilgængelige biblioteker",
 	"iconPicker.librariesToDownload": "Biblioteker til download",

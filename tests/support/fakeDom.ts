@@ -295,6 +295,7 @@ export interface ElOptions {
 	href?: string;
 	type?: string;
 	title?: string;
+	value?: string;
 }
 
 export class FakeElement {
@@ -888,6 +889,7 @@ function applyElOptions(el: FakeElement, options?: ElOptions | string): void {
 		el.classList.add(...classes.filter(Boolean));
 	}
 	if (options.text !== undefined) el.textContent = options.text;
+	if (options.value !== undefined) el.value = options.value;
 	if (options.href !== undefined) el.setAttribute("href", options.href);
 	if (options.type !== undefined) el.setAttribute("type", options.type);
 	if (options.title !== undefined) el.setAttribute("title", options.title);

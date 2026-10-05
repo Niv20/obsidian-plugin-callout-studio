@@ -541,7 +541,7 @@ export const ru: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Ещё не включено: {{names}}. Выберите источник выше, чтобы загрузить.",
 	"iconPicker.chooseSource": "Выбрать источник",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Не загружено",
 	"iconPicker.librariesAvailable": "Доступные библиотеки",
 	"iconPicker.librariesToDownload": "Библиотеки для загрузки",

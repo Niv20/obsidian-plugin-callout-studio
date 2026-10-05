@@ -29,6 +29,7 @@ Moving the pointer again highlights the row under it.
 - **Material Symbols** downloads only the specific SVG you select, keeping its stored footprint small.
 
 Search works offline. Depending on the selected source, the filters at the top can narrow icons by category, style, stroke weight, or emoji skin tone.
+In **All sources**, each library's result heading shows its matching icon count in parentheses, such as **Lucide (12)**.
 Across all libraries, filters expand to use the available row width, including when they wrap below the search field.
 For Tabler Icons, the search field is slightly narrower to leave more room for the style and category filters.
 For Material Symbols, search sits above the style, weight, and category filters so their choices stay readable.
@@ -40,6 +41,8 @@ sample hand beside each tone, so you can see the choice before selecting it.
 ## Manage icon libraries
 
 Click **Manage libraries** at the end of the source row to open **Manage icon libraries**. This is also where you download a library: the source menu lists only the libraries already on this device. The window works like **Customize menu items**: one list, divided by lines, under these headings.
+
+Your search text stays in place when you return, including after reordering, downloading, deleting, or hiding a library. The results update to reflect those changes. If removing the active library returns you to **All sources**, the same search continues there.
 
 - **Available libraries** are the ones the picker offers, in the order it offers them. Drag a row by its handle - or focus the handle and press the up and down arrow keys - to change that order. While you drag, a grey slot that follows the active palette shows where the row will land. The reset arrow sits on this heading.
 - **Libraries to download** are the ones not downloaded on this device yet. Their rows are dimmed and have no handle, because their order can't change anything until they're downloaded.

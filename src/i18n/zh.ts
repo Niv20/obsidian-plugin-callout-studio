@@ -532,7 +532,7 @@ export const zh: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"尚未包含：{{names}}。请在上方选择来源以下载。",
 	"iconPicker.chooseSource": "选择来源",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "尚未下载",
 	"iconPicker.librariesAvailable": "可用的图标库",
 	"iconPicker.librariesToDownload": "可下载的图标库",

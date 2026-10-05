@@ -499,7 +499,7 @@ export const nl: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Nog niet opgenomen: {{names}}. Kies hierboven een bron om te downloaden.",
 	"iconPicker.chooseSource": "Bron kiezen",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Niet gedownload",
 	"iconPicker.librariesAvailable": "Beschikbare bibliotheken",
 	"iconPicker.librariesToDownload": "Bibliotheken om te downloaden",

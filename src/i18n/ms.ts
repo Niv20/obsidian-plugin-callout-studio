@@ -485,7 +485,7 @@ export const ms: Record<string, string> = {
 	"iconPicker.sourcesNotDownloaded":
 		"Belum disertakan: {{names}}. Pilih sumber di atas untuk memuat turunnya.",
 	"iconPicker.chooseSource": "Pilih sumber",
-	"iconPicker.sourceGroup": "{{name}} · {{count}}",
+	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.notDownloaded": "Belum dimuat turun",
 	"iconPicker.librariesAvailable": "Pustaka tersedia",
 	"iconPicker.librariesToDownload": "Pustaka untuk dimuat turun",
