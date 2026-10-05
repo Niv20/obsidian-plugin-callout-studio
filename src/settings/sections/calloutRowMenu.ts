@@ -1,4 +1,4 @@
-import { Component, Menu, type App } from "obsidian";
+import { Component, Menu, Platform, type App } from "obsidian";
 import { prepareUsageMenu } from "../../usage/prepareUsageMenu";
 import { onMenuHide } from "../../ui/menuOnHide";
 import type { SettingsSectionContext } from "./types";
@@ -23,6 +23,7 @@ export async function openCalloutRowMenu(
 	lifetime.load();
 	let active = true;
 	let menu: Menu | undefined;
+	let presentingPhoneSheet = false;
 	const close = (): void => {
 		if (!active) return;
 		active = false;
@@ -32,6 +33,9 @@ export async function openCalloutRowMenu(
 		menu = undefined;
 		lifetime.unload();
 		closingMenu?.hide();
+	};
+	const closeForPositionChange = (): void => {
+		if (!presentingPhoneSheet) close();
 	};
 	// Settings retains its disposers until hide/redraw. Release this session's
 	// DOM/menu references as soon as it closes, even during a long settings visit.
@@ -54,11 +58,13 @@ export async function openCalloutRowMenu(
 			parent = parent.parentElement;
 		}
 		if (parent) return true;
+		if (presentingPhoneSheet) return false;
 		const rect = anchor.getBoundingClientRect();
 		return rect.left !== initialRect.left || rect.top !== initialRect.top ||
 			rect.width !== initialRect.width || rect.height !== initialRect.height;
 	};
 	const onScroll = (scrollEvent: Event): void => {
+		if (presentingPhoneSheet) return;
 		const target = scrollEvent.target === doc
 			? doc.scrollingElement ?? doc.documentElement : scrollEvent.target;
 		const position = scrollPositions.get(target as HTMLElement);
@@ -70,7 +76,7 @@ export async function openCalloutRowMenu(
 	// Capture sees non-bubbling ancestor scrolls. Menu/submenu and sibling
 	// scrollports are absent from the map, so their own scrolling stays usable.
 	lifetime.registerDomEvent(doc, "scroll", onScroll, { capture: true, passive: true });
-	lifetime.registerDomEvent(view, "resize", close);
+	lifetime.registerDomEvent(view, "resize", closeForPositionChange);
 	lifetime.registerDomEvent(view, "orientationchange", close);
 	lifetime.registerDomEvent(view, "blur", close);
 	lifetime.registerDomEvent(view, "pagehide", close);
@@ -80,7 +86,7 @@ export async function openCalloutRowMenu(
 			viewport.offsetLeft, viewport.offsetTop, viewport.scale];
 		const initialViewport = geometry();
 		const viewportChanged = (): void => {
-			if (geometry().some((value, i) => value !== initialViewport[i])) close();
+			if (geometry().some((value, i) => value !== initialViewport[i])) closeForPositionChange();
 		};
 		// registerDomEvent has no VisualViewport overload in the Obsidian types.
 		viewport.addEventListener("resize", viewportChanged, { passive: true });
@@ -106,16 +112,23 @@ export async function openCalloutRowMenu(
 		// Also cover a scroll/removal after scan readiness but before this await
 		// resumes. The lifetime stays armed throughout that microtask boundary.
 		if (!active || anchorChanged()) { close(); return; }
-		menu = new Menu();
+		const openingMenu = new Menu();
+		menu = openingMenu;
 		const hidden = (): void => { menu = undefined; close(); };
 		// Also covers a native dismissal before Menu's deferred component load.
-		onMenuHide(menu, hidden);
-		build(menu);
-		menu.showAtMouseEvent(event);
+		onMenuHide(openingMenu, hidden);
+		build(openingMenu);
+		if (!active) return;
+		// Phone menus are bottom sheets. Obsidian hides the keyboard while
+		// showing them, which can resize/pan the viewport, scroll ancestors and
+		// move the trigger. Only pending menus and desktop/tablet popups still
+		// depend on that position; structural/lifecycle checks remain armed.
+		presentingPhoneSheet = Platform.isPhone;
+		openingMenu.showAtMouseEvent(event);
 		// Showing an Obsidian Menu unloads its previous component lifetime, so
 		// register only AFTER show. hide() unloads immediately (also on phones),
 		// preserving the usage item's single, possibly animated onHide callback.
-		menu.register(hidden);
+		if (active) openingMenu.register(hidden);
 	} catch (error) {
 		close();
 		throw error;

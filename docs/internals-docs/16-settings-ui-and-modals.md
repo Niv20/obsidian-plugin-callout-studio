@@ -397,10 +397,22 @@ the menu. A scroll event queued before opening, the menu's own scroll area,
 submenus and unrelated scrollports do not close it. No wheel/touch gesture is
 cancelled, and dismissal never focuses or scrolls the trigger back into view.
 This uses actual scroll movement for mouse, touch, trackpad and keyboard alike,
-including horizontal/RTL scrolling and momentum. Window resize, orientation,
-blur/pagehide and visual-viewport resize/pan also close it. A temporary child-list
-observer detects a detached, reparented or moved trigger during incremental list
-refreshes. The trigger is rechecked immediately before showing a delayed menu.
+including horizontal/RTL scrolling and momentum. Window resize and
+visual-viewport resize/pan also cancel a pending opening or dismiss a desktop
+or tablet popup. A temporary child-list observer detects a detached, reparented
+or moved trigger during incremental list refreshes. The trigger is rechecked
+immediately before showing a delayed menu.
+
+Once `showAtMouseEvent` begins on `Platform.isPhone`, positional changes stop
+dismissing the menu: Obsidian presents a bottom sheet rather than an anchored
+popup. Its phone presentation also requests native keyboard dismissal, which
+can resize/pan the viewport, change ancestor scroll offsets and move the trigger.
+Treating those host-driven changes as cancellation made the sheet disappear
+during opening. The exception starts before the show call, covers subsequent
+layout settling, and applies only to phones, not tablets. Structural removal or
+reparenting of the trigger, orientation changes, blur/pagehide, Settings disposal,
+and a newer menu request still close the sheet. Pending phone menus retain all
+positional cancellation checks.
 
 Cleanup is idempotent and immediate on explicit dismissal. Obsidian's `Menu`
 unloads its old component lifetime while showing, so the unload cleanup is
@@ -410,7 +422,10 @@ replaces its callback rather than adding one. That callback covers dismissal
 before the menu's deferred component load; the unload hook handles normal
 closure immediately even when phone hide animations delay `onHide`. Closed
 sessions release their references from the Settings disposer and cannot close
-a later menu. No custom mobile presentation replaces Obsidian's menu.
+a later menu. A stable local menu reference and an active-session check also
+allow the host to dismiss synchronously during presentation without dereferencing
+the cleared session reference or registering cleanup on a closed menu. No custom
+mobile presentation replaces Obsidian's menu.
 
 ### Duplicating a saved custom callout
 

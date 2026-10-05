@@ -2,11 +2,13 @@
 
 Changes to a callout's color, icon, name, or ID take effect across the vault. Callout Studio updates the definition and, when necessary, rewrites matching note tokens so existing notes keep working.
 
-A callout's three-dot menu closes when you scroll the settings list, resize the
-window, or rotate your device. This works with a mouse, trackpad, keyboard, or
-touch on desktop, phone, and tablet. You can still scroll inside a long menu.
-Scrolling also cancels a menu that is still waiting to open; it will not appear
-after its row has moved. Open the three-dot menu again when you need it.
+On desktop and tablet, a callout's three-dot menu closes when you scroll the
+settings list or resize the window. On a phone, Obsidian opens the menu at the
+bottom of the screen; it stays open as the keyboard closes and the page adjusts.
+Rotating the device or leaving Settings closes the menu on every device. You
+can still scroll inside a long menu. Scrolling the settings list also cancels
+a menu that is still waiting to open on any device; it will not appear after
+its row has moved. Open the three-dot menu again when you need it.
 
 ## Edit a callout
 

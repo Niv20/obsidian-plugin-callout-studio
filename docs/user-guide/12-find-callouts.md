@@ -134,9 +134,11 @@ ready within that time, the menu opens with it; if scanning takes longer, the
 menu opens with **Find callouts**, and the number fades in when ready. Opening
 another callout's menu reuses the same index rather than scanning the vault again.
 Clicking elsewhere, scrolling the settings list, resizing the window, rotating
-the device, or closing Settings cancels a pending menu opening. The same list
-scroll and viewport changes close an already-open menu; scrolling inside the
-menu itself stays available.
+the device, or closing Settings cancels a pending menu opening. On desktop and
+tablet, list scrolling and viewport changes also close an already-open menu.
+On a phone, the menu at the bottom of the screen stays open while the keyboard
+closes and the page adjusts. Rotation and closing Settings still dismiss it.
+Scrolling inside the menu itself stays available on every device.
 The fade respects your system's reduced-motion preference. Incomplete scans are
 labelled rather than reported as zero. Actions that change notes check current
 contents separately.
