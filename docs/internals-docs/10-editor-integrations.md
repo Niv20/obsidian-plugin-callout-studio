@@ -582,9 +582,9 @@ that only make sense for some roles.
 The settings previews host a *real* embedded Obsidian editor, so they get
 Obsidian's real editor context menu - and none of its editing commands was ever
 stopped by `EditorState.readOnly` (see
-[Callout editor](14-callout-editor.md#why-read-only-needed-two-layers)). A user
-could right-click the splash screen and turn its sample into a bulleted list, an
-H1, a table or a code block.
+[Callout editor](14-callout-editor.md#why-read-only-needed-two-layers)). Without
+this protection, a user could right-click a settings preview and turn its sample
+into a bulleted list, an H1, a table or a code block.
 
 [`readOnlyPreview.ts`](../../src/editor/contextmenu/readOnlyPreview.ts) handles the
 menu half. `maybeAddItems` asks `isReadOnlyPreviewTarget(trigger.targetEl)`
@@ -621,8 +621,8 @@ Three details are load-bearing:
 read-only preview should still offer; Cut and Paste stay visible and are now
 inert, so they explain themselves with "The live preview can't be edited"
 rather than sitting greyed out. `selection` (Edit link / Edit tag) only moves
-the selection, and the link/open/info/view sections are what make the splash
-screen's **Learn more** link work.
+the selection, and the link/open/info/view sections remain available for links
+inside preview content.
 
 Everything keys off `.cs-live-preview-editable`, the class `LiveCalloutPreview`
 adds only on the embedded-editor path. Notes, and the preview's own static

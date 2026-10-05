@@ -54,7 +54,9 @@ Thank you all for helping make Callout Studio better!
 
 [Settings sync and recovery](docs/internals-docs/08-settings-sync-and-recovery.md): How Callout Studio keeps a local recovery copy of its settings in case sync replaces `data.json` while the plugin is closed, merges valid concurrent edits and recognized conflict copies, and preserves damaged or unsupported data for recovery. For the safest sync setup, install the same up-to-date build on every device.
 
-[Privacy & permissions](docs/internals-docs/25-privacy-and-permissions.md): A full explanation of every download and where data is stored. Callout Studio never sends your vault content anywhere and collects no telemetry or analytics. It only downloads icon artwork you choose and, when needed, a translation for the plugin interface.
+[Privacy & permissions](docs/internals-docs/25-privacy-and-permissions.md): A full explanation of every download and where data is stored. Callout Studio never sends your vault content anywhere and collects no telemetry or analytics of its own. It downloads icon artwork you choose and, when needed, a translation for the plugin interface.
+
+The tutorial welcome screen connects to YouTube/Google for thumbnails, public video-duration metadata and the first video whenever it opens, including its automatic appearance after installation or the first upgrade to the tutorial screen. It reads duration data from YouTube watch pages without executing their scripts, and keeps successful durations in memory for the session. It requests playback with sound immediately on opening and whenever you select a video. YouTube may collect viewing activity; the plugin sends no notes or settings to it. Each video's reading link opens its matching user-guide chapter on GitHub when you click it.
 
 [Convert to standard Markdown](docs/user-guide/14-danger-zone.md): A guide to converting heading and inline callouts. The action reads Markdown notes locally for a selectable preview and, after a separate irreversible-action confirmation, rewrites the callout syntax and updates links to changed headings. Back up your vault first.
 

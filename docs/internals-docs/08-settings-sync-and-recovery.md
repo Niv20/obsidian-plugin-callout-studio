@@ -202,7 +202,8 @@ Fresh-install confirmation never creates a settings file by itself. While the
 writer has neither a disk baseline nor recovered state, `runPass()` treats a
 payload that says nothing beyond the shipped defaults as a no-op
 (`isUntouchedSettings()` in `settingsGenesis.ts`). That comparison ignores
-onboarding markers (`welcomeSeen`, `competitorImportBannerHandled`), device UI
+onboarding markers (`welcomeSeen`, `tutorialWelcomeSeen`,
+`competitorImportBannerHandled`), device UI
 memory (`iconSources.lastCategory`, `iconSources.lastEmojiSkinTone`,
 `quickInsertSource`) and `iconSvgCache`. So the welcome, a theme's appearance
 sweep, fetched artwork or a dismissed import prompt cannot publish defaults over
@@ -212,6 +213,17 @@ created that file with no click at all. The prompt's dismissal is also kept in
 change still creates the file, through the ordinary freshness guard. A
 foreground check that finds no file on this untouched fresh installation does
 not invent prior-use evidence and freeze it indefinitely.
+
+The tutorial welcome has its own once-only marker, independent of the legacy
+first-install welcome. Healthy existing installations are eligible on their
+first upgrade to the tutorials; a completed fresh-install tutorial is not shown
+again on upgrade. Routing checks both local and synced `tutorialWelcomeSeen`,
+records completion locally before opening, and leaves the synced copy for a
+later deliberate settings save. It never thaws a writer or requests a save.
+Frozen recovery sessions and unsuccessful local marker persistence skip the
+automatic popup. A healthy late-file adoption can change a provisional fresh
+launch into an eligible upgrade without changing the settings file. Import
+prompt eligibility still follows the separate first-install markers.
 
 The provisional fresh-install freeze is silent (`freeze("missing", false)`): a
 background save that meets it before layout-ready is not a lost user change, so

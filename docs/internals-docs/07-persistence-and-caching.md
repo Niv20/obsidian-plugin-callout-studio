@@ -124,6 +124,7 @@ because their previews appear here. See
 ## The device-local store
 
 `DeviceLocalStore` v3 stores section folds, prior-install/welcome markers, the
+independent tutorial-welcome marker (`tutorialWelcomeSeen`), the
 one-time **Find callouts** offer (`occurrencesTabOffered`), the
 import prompt's dismissal (`importBannerHandled`, for a device that has no
 settings file to record it in), the device's name for backup files
@@ -131,6 +132,16 @@ settings file to record it in), the device's name for backup files
 (`iconCategories`, `emojiSkinTone`, `quickInsertSource`), and optional
 `pending | seen` markers for the one-time personal-CSS-retirement and
 autocomplete-migration notices in vault-scoped browser storage.
+
+`tutorialWelcomeSeen` is saved before the automatic tutorial popup, on either a
+fresh install or an existing installation's first upgrade to the tutorials.
+It never resets for a new plugin version and does not mark the installation
+initialized. Failed local persistence skips the popup. Routing also accepts
+the synced setting of the same name, remembers its `true` value locally, and
+keeps local completion available after an older settings file arrives. The
+synced copy rides on a later deliberate settings save; recording tutorial
+completion does not itself write `data.json`. Legacy `welcomeSeen` remains
+separate so tutorial rollout does not enroll existing users in the import prompt.
 
 `occurrencesTabOffered` records the initial offer, not whether the tab is open.
 It is saved before the tab is added on a confirmed first install; failed

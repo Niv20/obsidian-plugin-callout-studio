@@ -210,7 +210,9 @@ interface PluginSettings {
   iconLibraries: IconLibrarySettings;    // { order: string[]; hidden: string[] }
   headingCallouts: HeadingCalloutSettings;
   inlineCallouts: InlineCalloutSettings;
-  welcomeSeen?: boolean;
+  welcomeSeen?: boolean;             // legacy first-install onboarding
+  tutorialWelcomeSeen?: boolean;     // one-time tutorial welcome, including upgrades
+  competitorImportBannerHandled?: boolean;
   fallbackCalloutId: string;
   language: string;                  // "auto" or a locale code
   customPalettes: CustomPalette[];
@@ -220,6 +222,15 @@ interface PluginSettings {
   quickInsertSource: string;
 }
 ```
+
+`tutorialWelcomeSeen` is independent of the legacy `welcomeSeen` marker: seeing
+the old welcome does not suppress the new tutorials. It is a boolean, not a
+release version, so later upgrades do not reset it. Automatic routing records it
+in `DeviceLocalStore` before opening and holds the synced setting in memory for
+the next deliberate settings save; showing or closing the tutorials never
+requests a settings write. Either marker copy suppresses repeat openings, and
+routing mirrors an incoming synced `true` locally. `welcomeSeen` retains its
+first-install role for the import prompt and sidebar offer.
 
 `quickInsertSource` is the last Quick Insert source as older builds synced it.
 This build remembers the choice per device (`DeviceLocalStore.quickInsertSource`)

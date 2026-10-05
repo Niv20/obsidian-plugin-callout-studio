@@ -82,8 +82,7 @@ and is the only visible occurrences control. Obsidian's workspace preserves its
 later presence and position; startup does not recreate a closed tab. The command
 or a **Find callouts** action reopens the sidebar. The **Review conversion** tab uses
 its own composite icon and is created only on demand; restored conversion tabs
-are closed at startup. The welcome hero keeps
-the stock `paintbrush` icon. Editable standalone exports live in
+are closed at startup. Editable standalone exports live in
 [`quick-insert.svg`](../../assets/ui-icons/quick-insert.svg),
 [`statistics.svg`](../../assets/ui-icons/statistics.svg) and
 [`conversion.svg`](../../assets/ui-icons/conversion.svg); keep them aligned with

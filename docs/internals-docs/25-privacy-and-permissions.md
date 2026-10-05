@@ -1,6 +1,6 @@
 # Privacy & permissions
 
-Callout Studio never sends your vault content anywhere and collects no telemetry or analytics. This chapter lists every network request the plugin makes, along with what it stores on your device and why.
+Callout Studio never sends your vault content anywhere and collects no telemetry or analytics of its own. YouTube may collect viewing activity when you use the tutorial player. This chapter lists every network request the plugin makes, along with what it stores on your device and why.
 
 ## Permissions
 
@@ -10,7 +10,7 @@ Callout Studio asks for a small number of permissions, and all of them stay loca
 - **Vault file modification.** The plugin writes to notes only when you run **Replace in vault**, **Convert to plain text**, **Convert to standard Markdown**, or a wrap/unwrap command. It does not rewrite notes in the background.
 - **Clipboard access**, narrowly: the **Copy callout Markdown**, **Copy heading section** and **Cut heading section** actions write to your clipboard when you click them. The callout ID/alias input field can read a pasted block of comma- or space-separated text so you can paste several IDs at once. The Callout Manager importer reads your clipboard only when you press its **Paste** button, and puts what it read in its text box for you to see; you can also paste into that box yourself. The clipboard is never read at any other time.
 
-No vault content, clipboard data, or usage information is ever transmitted off your device.
+No vault content, clipboard data, settings, or note-usage index is transmitted off your device by the plugin.
 
 The standard Markdown conversion sidebar keeps a local, in-memory preview while
 open and refreshes it after note changes. Only explicit confirmation writes the
@@ -20,9 +20,9 @@ plugin unloads; it does not create a backup or recovery file on disk.
 
 ## What's fetched, and when
 
-Nothing is fetched just by opening a note, and nothing is fetched just by opening the icon picker. Searching and browsing every icon source works offline from the moment you install the plugin, because the names, keywords and categories for every icon ship with the plugin itself. The only thing ever downloaded is artwork, and only for icons you actually choose.
+Nothing is fetched just by opening a note, and nothing is fetched just by opening the icon picker. Searching and browsing every icon source works offline from the moment you install the plugin, because the names, keywords and categories for every icon ship with the plugin itself. Remote icon artwork is loaded only for sources or icons you choose. The tutorial screen loads YouTube thumbnails, video-duration metadata and its first embedded video whenever it opens, including the automatic opening described below.
 
-There is exactly one exception that isn't tied to pressing a button: downloading the interface's own translation, and only when your language isn't already saved on your device. See [Languages](../user-guide/11-languages.md) for how that works from the user's side.
+Two features can connect without an explicit action: downloading the interface's own translation when your language isn't already saved on your device, and loading the tutorial screen's thumbnails, duration metadata and first video when that screen opens automatically after installation or the first upgrade to the tutorials. See [Languages](../user-guide/11-languages.md) for translation behavior and [YouTube tutorials](#youtube-tutorials) below for the player.
 
 ## Downloadable icon libraries
 
@@ -49,9 +49,55 @@ Material Symbols does not use one file for the whole source because it offers mo
 
 If the preview font can't be reached, the grid falls back to showing icon names instead of pictures, and a **Try again** button lets you retry once you're back online. None of this happens unless you open the Material source yourself, or the **All sources** list while Material is part of it. Hiding Material in the Icon libraries window takes it out of both, so its font is never requested.
 
+## YouTube tutorials
+
+The welcome screen displays a local catalog of 17 tutorial topics, with
+translated titles and descriptions based on the tutorial scripts. All entries
+temporarily use the same YouTube sample URL until the published tutorial links
+are available. It never queries the YouTube Data API and requires no API key.
+Thumbnail URLs are derived from each video's validated
+YouTube ID and load from `i.ytimg.com`.
+
+- **Every welcome opening:** thumbnails load immediately, the first video is
+  selected and its `youtube-nocookie.com` iframe requests autoplay with sound. This
+  also happens on the automatic appearance after installation or the first
+  upgrade to the tutorial screen, before any click. Reopening it manually from
+  settings or its protocol link repeats the same behavior.
+- **Duration badges:** the plugin uses Obsidian's `requestUrl` to read public
+  `www.youtube.com/watch?v=<id>` pages and parse their embedded duration JSON.
+  The page's scripts are never executed or inserted into Obsidian. Each distinct
+  video ID is fetched once while pending, with at most three concurrent requests
+  per modal. Successful durations stay in memory until the plugin unloads and
+  remain available offline;
+  failures can retry when the window reopens. No watch-page HTML is saved in the
+  vault. This is a best-effort reading of public page metadata, rather than a
+  stable YouTube API: if YouTube changes it, restricts a video or cannot be
+  reached, the duration badge is omitted and the rest of the screen still works.
+- **Video selection:** selecting a list row loads that video and requests
+  autoplay with sound. The embedded player can connect to other YouTube/Google
+  services for playback. Your browser or Obsidian webview may require another
+  press of the player's play button, including for the initial automatic playback.
+- **Further reading:** the link below each video's description opens its matching
+  user-guide chapter on GitHub only when clicked. The guide URLs and link labels
+  are local catalog data; displaying them does not request the pages.
+
+The thumbnail, duration-metadata and playback requests expose ordinary connection information, including your IP
+address, to YouTube/Google, and the player may collect viewing activity under
+its own policies. The privacy-enhanced embed hostname does not mean the player
+makes no Google connections or guarantees no cookies. No note text, note paths,
+callout definitions or plugin settings are included in the requests. The plugin
+does not download or execute a YouTube API script in Obsidian's host page;
+YouTube runs its player inside the iframe.
+
+Closing the modal removes the iframe and stops playback. Opening or closing the
+screen never saves plugin settings. Offline, the local text and numbered tiles
+remain available; failed images use those tiles, and selecting a video again
+retries it. Callout Studio does not cache video files or thumbnail files in the
+vault. The webview may use its ordinary web cache and third-party storage.
+
 ## Translations
 
-Translations are the only files Callout Studio may request without a button press, and only when your language is not already saved on the device. The request runs after the plugin loads, so it does not delay startup. If it fails, the interface stays in English and retries at the next launch. Translation files come from the plugin's repository, are pinned to the installed release, and use the same checksum verification as icon packs. See [Languages](../user-guide/11-languages.md) for the related settings.
+Callout Studio may download its interface translation without an explicit action when your language is not already saved on the device. The request runs after the plugin loads, so it does not delay startup. If it fails, the interface stays in English and retries at the next launch. Translation files come from the plugin's repository, are pinned to the installed release, and use the same checksum verification as icon packs. See [Languages](../user-guide/11-languages.md) for the related settings.
 
 ## Your own pictures
 

@@ -450,7 +450,6 @@ touching disk.
 export const PREVIEW_PLACEHOLDER_ID = "new-callout-preview";
 export const STYLE_DEMO_ID = "global-style-demo";
 export const RESERVED_DEMO_IDS: ReadonlySet<string> = new Set([...]);
-export const WELCOME_DEMO_ID = "demo"; // NOT in the set - see below
 ```
 
 Two ids exist only to be previewed: the callout editor's placeholder for an
@@ -479,22 +478,6 @@ runs into spaces, so no name a user can type in the ID field normalizes onto
 one. That is what keeps `previewShadowedDef` null, which is what
 `isUnshadowedPreview` is built on. `tests/previewPlaceholderId.test.ts` pins
 every claim on this page.
-
-### The third demo id, and why it is not in the set
-
-The [welcome splash](16-settings-ui-and-modals.md#why-this-one-id-is-not-reserved)
-has a demo callout too, `WELCOME_DEMO_ID = "demo"`, and it is deliberately
-**not** reserved. The dash is the whole mechanism above, and `demo` does not
-have one: `sanitizeCalloutIdInput("Demo")` returns exactly `demo`, so a user can
-own this id. Reserving it would then apply all four rows of that table to
-*their* callout - dropped from the autocomplete, dropped from the export,
-rejected by their own re-import - silently, since nothing in the editor checks
-the set. A reserved id has to be one nobody can reach; this one is reachable, so
-it takes the `isDemo` half only and lives just as long as the modal does.
-
-That is also the one place `previewShadowedDef` earns its keep in production
-rather than in principle: if the user does own a `demo`, the splash shadows it
-and the slot hands the real row back on close.
 
 ---
 Next chapter: [06-css-generation.md](06-css-generation.md)

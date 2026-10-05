@@ -22,6 +22,56 @@ There's a lot to explore in Callout Studio - from callout types and custom color
 | [16 - Advanced heading callouts](16-advanced-heading-callouts.md)          | Use heading callouts in the Outline, links, and tables of contents.                                                             |
 | [17 - Theme integration](17-theme-integration.md)                          | Understand which callouts your theme controls, and how the windows follow it.                                                   |
 
+## Video tutorials
+
+The **Welcome to Callout Studio!** screen has a scrollable video list in a rounded grey panel on the left
+and a player on the right. The introduction appears in a grey box above
+**Video tutorials (17)**. Scrolling the list moves the introduction away while
+the heading stays visible at the top. Each entry has a title, description and thumbnail.
+The video's duration appears on its thumbnail once it loads; it stays hidden
+when duration data is unavailable. Durations already loaded during this session
+remain available offline. List rows fill the available width and grow when
+interface text is enlarged. Titles use one line and descriptions use up to
+three lines, with a space before the ellipsis for longer text. The ellipsis stays
+with the preceding text instead of starting a new line. The selected video uses a neutral
+highlight, and hovering any row gives it a distinct shade. Select a video
+to see its full description and watch it in the same window. A **For more about
+[video title], click here** line below the selected video's description links to
+its matching chapter in this guide on GitHub. The 17 entries follow the topics in
+this guide, with translated titles and descriptions based on the tutorial
+scripts. Their
+temporary URLs all play the same [YouTube video](https://youtu.be/xMHJGd3wwZk?si=P00-sZbJHBHELObF) until the published tutorial
+links are available. On a narrow screen, the player appears above the list.
+Close the window with its top-right **X**.
+Reopen it from the info icon in Callout Studio settings.
+
+The tutorials open automatically once: after a new installation, or after an
+existing installation first upgrades to the tutorial screen. Seeing the older
+welcome screen does not count as seeing these tutorials. Once shown, they do
+not reopen automatically on later upgrades. If settings need recovery or the
+device cannot remember that the tutorials were shown, the automatic opening is
+skipped; you can still open them from settings. Opening or closing the screen
+does not save or reset your settings, and upgrade visits do not enable the
+first-install import prompt.
+
+Every time the screen opens, including its automatic appearance, it selects the
+first video, loads the thumbnails and requests playback with sound immediately.
+Selecting a video also requests playback with sound. If your device blocks
+autoplay, press play inside the player.
+Videos and thumbnails need an internet connection; titles, descriptions and
+numbered fallback tiles remain
+available offline. Select a video again to retry it.
+
+Use an up-to-date version of Obsidian. If the player reports **Error 153**, update
+Obsidian; its [1.10.3 desktop release](https://obsidian.md/changelog/2025-11-11-desktop-v1.10.3/)
+included a fix for that YouTube embedding error. Playback also depends on your
+device's embedded browser, including on mobile.
+
+YouTube/Google receives the thumbnail and player requests and may collect
+viewing activity. Callout Studio sends no notes or settings. See
+[Privacy & permissions](../internals-docs/25-privacy-and-permissions.md#youtube-tutorials)
+for details.
+
 ---
 
 To learn how the plugin works internally, including its privacy and permission model, see the [internals guide](../internals-docs/README.md).

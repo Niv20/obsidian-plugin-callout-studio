@@ -1028,10 +1028,8 @@ that would double the inset.
 > keeps a future caller from shipping a headerless one. `ReplaceCalloutModal`
 > defaults its title from its `mode` for the same reason.
 >
-> **`WelcomeModal` is the one deliberate exception** - it's a splash screen,
-> opts out of the chrome entirely (`this.titleEl.remove()`), and carries its
-> own name as a hero heading in a dedicated left column instead of a
-> generic title bar.
+> `WelcomeModal` uses the same header band with its welcome message as the title.
+> It has no footer; the native top-right close control dismisses it.
 
 `applyModalChrome` is safe to call again on a reopened modal - Obsidian
 reuses `modalEl` across open/close cycles, so a stale footer from a previous
@@ -2813,104 +2811,117 @@ macOS, `Ctrl + Alt + Shift` spelled out with `+` elsewhere) - duplicated
 rather than simplified, specifically so the same shortcut can never read two
 different ways in two different windows of this plugin.
 
-### `WelcomeModal` - the one chrome opt-out
+### `WelcomeModal` - tutorial videos
 
-Covered above under Modal chrome. Automatic onboarding requires confirmed
-fresh-install eligibility and checks both `settings.welcomeSeen` and the
-device-local welcome marker. An absent `data.json` alone is insufficient; see
-the [startup decisions](08-settings-sync-and-recovery.md#launch-decision-table).
+[`WelcomeModal.ts`](../../src/settings/WelcomeModal.ts) uses `applyModalChrome`
+with the translated title **Welcome to Callout Studio!** The introductory text,
+**The plugin has a lot to offer, so take your time to watch what interests you.**,
+sits in a contrasting grey box above **Video tutorials (17)**. The sidebar is a
+rounded neutral panel painted with `--cs-surface-raised` and is the
+shared scrollport for the introduction, heading and list. The heading sticks at
+`top: 0` with the same opaque panel surface while the introduction scrolls
+away; the list has no independent scrollport. It has no footer buttons;
+Obsidian's native close control remains available. The sidebar is on the left
+in a constrained 360px grid track and the YouTube player is on the right.
+Narrow screens stack the player above the sidebar, with both using the
+available width; the sidebar's scrollport is capped at 360px tall.
+Each list button contains a title, description and thumbnail. A compact duration
+badge appears in the thumbnail's lower trailing corner after its metadata loads;
+the badge remains hidden when duration data is unavailable. Successful session
+cache entries remain available offline. Rows fill the list's available width
+and have a minimum 97px height. The text column has a minimum 75px height to
+match the thumbnail, with no fixed maximum; rows grow naturally when interface
+text is enlarged. Titles use one line with an ellipsis, while descriptions use
+a three-line CSS clamp and a `1.45` line height.
+[`welcomeDescriptionLayout.ts`](../../src/settings/welcomeDescriptionLayout.ts)
+observes description dimensions with `ResizeObserver` and measures a grapheme
+prefix followed by a non-breaking space and ellipsis to fit within that clamp.
+The space keeps the ellipsis attached to the preceding text, so it cannot wrap
+onto a line of its own. A hidden span retains each button's complete accessible
+description through `aria-describedby`; the shortened visible copy is
+`aria-hidden`, avoiding hover tooltips. Observer disconnection is registered
+with the modal's component lifetime. Selected rows use a neutral modal surface and
+border; hover changes the shade for all rows, including the current selection.
+Keyboard focus uses a visible neutral outline. Selecting a row loads that video into the same player area and
+shows its full description below the player. A localized **For more about
+[video title], click here** line opens the corresponding GitHub user-guide
+chapter; only **click here** is the link.
+
+The 17 separate entries in [`welcomeVideos.ts`](../../src/settings/welcomeVideos.ts)
+follow the tutorial scripts and the user guide's chapter order. Each entry's
+`guideUrl` links to its corresponding guide chapter on public GitHub. The
+reading sentence uses a localized template with
+`{{title}}` and `{{link}}` placeholders, letting translators place the linked
+**click here** naturally. Their finished
+English title and description keys live in [`en.ts`](../../src/i18n/en.ts).
+The list and player use `aria-labelledby` references to their visible headings,
+preserving accessible names without Obsidian's `aria-label` hover tooltips.
+All video URLs temporarily use the same selected video,
+[`xMHJGd3wwZk`](https://youtu.be/xMHJGd3wwZk?si=P00-sZbJHBHELObF).
+Replace each URL with its corresponding published tutorial link when available.
+[`youtubeVideo.ts`](../../src/settings/youtubeVideo.ts) validates supported
+YouTube watch, Shorts, live, embed and `youtu.be` URLs and extracts
+the video ID. That ID gives the thumbnail URL
+`https://i.ytimg.com/vi/<id>/hqdefault.jpg`; deriving this thumbnail requires no
+YouTube Data API key or metadata request. Titles and descriptions come from the
+local catalog, not a remote API.
+
+[`youtubeDuration.ts`](../../src/settings/youtubeDuration.ts) separately reads
+each distinct public watch page through Obsidian's `requestUrl` and parses only
+the `ytInitialPlayerResponse` JSON. It validates the response's video ID and
+positive duration without executing page scripts. Successful durations and
+in-flight requests are shared by ID for the plugin session; failed lookups are
+not cached. The modal groups badges by ID, starts at most three requests at once,
+and checks its opening's component lifetime before updating badges or starting
+another request. Closing does not abort an already-running `requestUrl`, but
+its result cannot update detached badges or a later opening. Durations use
+`m:ss` or `h:mm:ss`. This public-page metadata has no stable API contract;
+missing or changed data simply leaves the badge hidden.
+
+The tutorial welcome opens automatically once, on a confirmed fresh install or
+an existing installation's first upgrade to the tutorials. Routing checks the
+separate `tutorialWelcomeSeen` setting and device-local marker; the old
+`welcomeSeen` flag does not suppress this rollout. Completion is never keyed to
+a plugin version, so later upgrades do not reopen it. The local marker is saved
+before opening, with the synced copy held in memory for a later deliberate
+settings save. A synced `true` is also remembered locally. Frozen recovery
+sessions and failed local marker persistence skip the popup; see the
+[startup decisions](08-settings-sync-and-recovery.md#launch-decision-table).
+The legacy first-install markers continue to govern import-prompt eligibility,
+so showing tutorials on upgrade does not enroll an existing user in that prompt.
 The welcome screen can be reopened via the info icon in settings or the
-dev-convenience protocol handler `obsidian://callout-studio-welcome`
-registered in `main.ts`.
+`obsidian://callout-studio-welcome` protocol handler registered in `main.ts`.
+Manual reopening bypasses the automatic markers. Opening, selecting a video and
+closing do not save plugin settings or change callout definitions.
 
-The sample's **Learn more** link uses `USER_GUIDE_URL` in `WelcomeModal.ts`,
-passed through the existing `repoUrl` translation placeholder. It targets
-`docs/user-guide` on GitHub at revision `fa1c8e29aa1f9a40b7a90226d12197c6fe96f1f4`.
+Every opening loads thumbnails, selects the first catalog entry and requests
+autoplay with sound, including the automatic opening after installation or upgrade.
+Opening the modal again always starts from that first video. Local titles,
+descriptions, guide links and numbered thumbnail fallback tiles remain usable
+offline. Failed thumbnail images return
+to their local fallback, and selecting a video again retries its player.
 
-Only the automatic first-launch welcome (`new WelcomeModal(plugin, true)`) adds
-`welcome.syncNote` below the tagline: a user joining from another device should
-let sync finish, and their setup appears once it arrives. It is informational;
-the [genesis rule](08-settings-sync-and-recovery.md#a-devices-first-file-and-the-shipped-defaults)
-is what keeps this device's defaults from overwriting that setup.
+Opening or selection synchronously creates a `youtube-nocookie.com` iframe with
+`autoplay=1`, `mute=0` and the iframe's `allow` permission for autoplay. Both
+opening and selecting a list row request playback with sound. Fullscreen uses
+`allowfullscreen` for Safari/iOS compatibility, without a duplicate `fullscreen`
+directive in `allow` that triggers a Chromium precedence warning. It requests
+immediate playback without downloading a host-page YouTube API script.
+Autoplay is still controlled by the browser or Obsidian webview and cannot be
+guaranteed; if it is blocked, YouTube's play control remains available.
+Closing the modal removes the player and stops its
+playback. Third-party connections and privacy boundaries are documented in
+[Privacy & permissions](25-privacy-and-permissions.md#youtube-tutorials).
 
-#### It demonstrates itself with a demo callout of its own
-
-The right column is a real `LiveCalloutPreview` rendering `welcome.sample`,
-which shows all three render roles at once. It used to show them with the real
-built-ins `tip`, `warning` and `note`, and that was wrong twice over:
-
-- Those are exactly the ids a theme restyles **by name**, so on several popular
-  themes the heading and inline examples were unreadable.
-- For an *unmodified* built-in, `CSSInjector` deliberately hands the accent to
-  Obsidian's own `--callout-tip` variable rather than a hex (see
-  [CSS generation](06-css-generation.md)) - so the splash was advertising the
-  theme's colours rather than the plugin's.
-
-It now uses `WELCOME_DEMO_ID` (`demo`) and registers its own violet definition
-into the registry's transient preview slot via `beforeRender` -
-[`welcomeDemo.ts`](../../src/settings/welcomeDemo.ts).
-
-##### Why this one id is *not* reserved
-
-`demo` is deliberately **absent** from `RESERVED_DEMO_IDS`, and that is the
-single respect in which it differs from the other two demo ids. The splash
-sample is copy a user reads, and `> [!global-style-demo]` puts plumbing in the
-middle of the one screen whose whole job is to teach the syntax - so this id is
-spelled the way a person would write it.
-
-The price is exactly what reservation buys, and it is not worth paying here.
-`new-callout-preview` and `global-style-demo` are spelled with a dash, which
-`sanitizeCalloutIdInput` folds to a space, so **no user can mint them** and
-reserving them costs nothing. `demo` is an ordinary word the editor does
-produce (`"Demo"` → `demo`), so reserving it would quietly cripple a callout
-somebody legitimately named "Demo": filtered out of the autocomplete, dropped
-from their export, rejected by their own re-import - with nothing in the editor
-telling them the name was taken. A reserved id has to be one nobody can reach.
-
-What stands in for reservation is that the definition exists **only while the
-splash is open**, which is all the isolation it needs: `setPreviewDefinition`
-never persists and never notifies, `definitionsForLists()` hides it from every
-settings list, and if the user *does* own a real `demo` the preview slot
-shadows it and hands the real row back on close (`previewShadowedDef`). The one
-residue is cosmetic and transient - their own `[!demo]` callouts in a note
-behind the modal repaint violet until it closes. `tests/welcomeSample.test.ts`
-pins the non-reservation so a later tidy-up cannot undo the reasoning.
-
-Two halves are needed, and only together:
-
-1. **The id**, which removes the by-name attack - no theme has a rule for an id
-   it has never heard of.
-2. **A scoped hardening block in `styles.css`**, which handles what an id change
-   structurally cannot: a theme's *generic* selectors. `.callout { … !important }`
-   still reaches the block role, and plain heading rules still reach the heading
-   role - the injected `.cs-heading-callout` / `.cs-inline-callout` rules carry
-   no `!important` at all, on purpose, so a theme wins those without a fight.
-   The block restates the same values under `.cs-welcome-modal`, keyed on the
-   demo id, with repeated compounds for weight (the trick
-   `manager/theme/studioWeight.ts` uses). Among `!important` author declarations
-   the higher specificity wins, so it survives; and because it is scoped to the
-   modal and the id, it can reach nothing else - load-bearing here rather than
-   tidiness, since a user may own a real `demo`.
-
-   It restates, and does not invent. All three roles carry
-   `color-mix(in oklch, <accent> 12%, transparent)`, which is
-   `.cs-heading-callout`'s and `.cs-inline-callout`'s own default formula copied
-   verbatim: the hardening changes the *weight* of the plugin's answer, never
-   the answer. That is also why the inline example is a tint and not the solid
-   violet lozenge it was for one revision - a solid pill is a look the plugin
-   gives no other inline callout, so the splash was demonstrating something
-   users could not reproduce.
-
-`onDestroy` clears the slot and re-injects. That inject is not just tidying: on
-a fresh install this modal holds a preview definition during the very first
-launch, and `injectNow` skips the startup CSS snapshot for as long as one is
-live - so this is the inject that writes it.
-
-The demo never becomes a real callout. `isDemo` keeps it out of the settings
-lists and out of `data.json`, and the slot is cleared on close - see
-[Callout registry](05-callout-registry.md#reserved-demo-ids) for the permanent
-guarantees the other two demo ids get on top of that, and the section above for
-why this one does not take them.
+Use an up-to-date Obsidian host: its
+[1.10.3 desktop release](https://obsidian.md/changelog/2025-11-11-desktop-v1.10.3/)
+fixed YouTube embed **Error 153**. YouTube defines this error as missing referrer
+or equivalent client identification in its
+[player error reference](https://developers.google.com/youtube/iframe_api_reference#onError).
+The iframe's `referrerpolicy` cannot supply an HTTP referrer when an older host
+or mobile webview does not provide one. The modal uses portable DOM APIs, but
+that does not guarantee playback on every host; mobile playback still needs
+runtime verification. Update Obsidian if the player reports Error 153.
 
 ## Saving-status banner
 

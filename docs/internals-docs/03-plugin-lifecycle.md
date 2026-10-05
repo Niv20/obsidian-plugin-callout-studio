@@ -41,8 +41,15 @@ settings-display, theme-change, or modal-close hook runs callout discovery.
    Missing custom-command targets are paused, never deleted as part of startup.
 6. Begin existing icon/locale preparation. At layout-ready, release the startup
    migration notices and run `runLaunchSequence`. After confirming whether this
-   is a fresh install, it runs `initializeSidebarTabs` before showing the welcome
-   screen where appropriate. Sidebar initialization detaches any restored
+   is a fresh install, it runs `initializeSidebarTabs` before checking the
+   one-time tutorial welcome. The tutorials open automatically on a fresh install
+   or an existing installation's first upgrade to them, unless the separate
+   `tutorialWelcomeSeen` marker is already set. Later upgrades do not reset it.
+   Frozen recovery sessions and failed local marker writes skip the automatic
+   popup. Every opening loads thumbnails and video-duration metadata, selects
+   the first video and requests autoplay with sound, including the automatic popup.
+   Legacy `welcomeSeen` still governs first-install import-prompt eligibility.
+   Sidebar initialization detaches any restored
    **Review conversion** leaf on every launch. It offers **Find callouts** only
    once on a confirmed first install, recording `occurrencesTabOffered` in the
    device-local store before adding an inactive, unrevealed tab. Existing welcome
