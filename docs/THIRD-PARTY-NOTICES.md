@@ -45,7 +45,7 @@ privacy* section for the exact URLs.
 
 - **Homepage:** https://lucide.dev
 - **Licence:** ISC
-- **Included via:** Obsidian's built-in icon set, plus three bundled UI composites
+- **Included via:** Obsidian's built-in icon set, three bundled UI composites, and README artwork
 
 The Lucide icon library is provided by Obsidian. Callout Studio also bundles
 three derived UI icons: a paintbrush with a plain plus for quick insert,
@@ -54,6 +54,8 @@ paintbrush with a split badge for conversion.
 The small symbols sit at the lower right. Lucide's paintbrush, plus, search and
 split shapes are tailored and recomposed for small UI sizes. Editable SVGs are in
 [`assets/ui-icons/`](../assets/ui-icons/).
+The [README banner](../assets/readme/00-banner.svg) and its dynamic badges also
+use Lucide icons. The banner includes the ISC notice alongside its SVG geometry.
 
 ```
 ISC License

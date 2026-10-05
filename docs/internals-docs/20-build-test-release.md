@@ -210,6 +210,57 @@ their parent's padding box, preserving the native checkbox marker alignment.
 File-group headings in the find and conversion illustrations have transparent
 backgrounds. These framing overrides are confined to the documentation fixtures.
 
+### README illustrations
+
+`assets/readme/00-banner.svg` is the editable brand banner, maintained directly
+and independently of the fixture renders below. Its 670 × 214 viewBox contains
+the paintbrush logo and text at the center, with abstract block callouts on
+both edges: four body lines in the left block and three in the right, each
+below a title bar. There are three inline callouts on the left and two on the
+right. The
+speech-bubble inline sits below the left block, and the star inline extends
+slightly past the right edge. A single heading callout sits at the upper right
+with a thin outline and downward
+chevron. Edge callouts use distinct icons, gentle rotations, and gaps between
+their outlines. It retains outlined Lucide geometry with its ISC notice; it
+has no bitmap, active content, or external resources. The README embeds
+separate Shields.io badges for GitHub stars,
+Obsidian downloads, and the latest release, with custom Lucide logos. Their
+values update automatically (subject to caching); downloads come from the
+official `obsidianmd/obsidian-releases` community-plugin statistics, rather than
+the sum of GitHub release-file downloads. No counters are baked into the banner.
+
+`node scripts/render-readme-images.mjs` writes two self-contained SVGs in
+`assets/readme/`, embedded by the root README. It uses the same local Obsidian
+assets, offline fixture host, vector exporter, and browser overrides as the
+user-guide renderer. It leaves all store artwork unchanged.
+
+`01-settings.svg` extracts just the settings window from desktop store image
+01, removes the surrounding workspace and promotional heading, and preserves
+the partially clipped bottom row to show that the list continues. Its canvas is
+960 × 681 with transparent outer
+padding. Refresh the store source first with
+`node scripts/render-store-screenshots.mjs 01-settings` if its settings content
+changes.
+`02-syntax.svg` is 1080 × 704: a full-width dark syntax reference compares
+default and custom content for Heading, Inline, and Block using the exact
+`[!note]` snippets from the README. Below it, two adjacent dark panels show an
+actual Violet Idea heading, inline, and block callout beside their exact
+Markdown. The fixed reference rows and English example live in
+`scripts/readme/scene.mjs`; production Reading view
+processors, icon painting, and generated CSS render the preview. The panel
+headers, source highlighting, and spacing are illustration framing.
+Source groups retain at least one blank line between them, including after
+**inside a sentence.**, even when the preview fits that paragraph on one line.
+The inline source's first line ends with **right**, and the block body's first
+line ends with **Keep**, filling the available panel width before continuing.
+
+Both backgrounds are transparent outside the windows. The runner checks all
+three production render formats, exact reference snippets and Markdown
+correspondence, overflow, XML, local paint references, unique IDs, and absence of bitmap or active/external
+content. It blocks network requests. Review the SVGs visually at README width;
+temporary raster previews belong outside the asset directory.
+
 ## Repo-convention tests - the automated rules that hold the codebase together
 
 Several test files check the **repository itself**, not runtime behaviour -

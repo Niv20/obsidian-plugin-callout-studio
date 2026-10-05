@@ -103,22 +103,45 @@ export async function exportSvg(page, selector, options = {}) {
 			mask.setAttribute("width", n(width)); mask.setAttribute("height", n(height));
 			return serializer.serializeToString(mask);
 		}
-		function gradient(value, r) {
+		// Split CSS layers without breaking commas inside color/gradient functions.
+		function layers(value) {
+			const values = []; let start = 0, depth = 0;
+			for (let index = 0; index < value.length; index++) {
+				if (value[index] === "(") depth++;
+				else if (value[index] === ")") depth--;
+				else if (value[index] === "," && depth === 0) { values.push(value.slice(start, index).trim()); start = index + 1; }
+			}
+			values.push(value.slice(start).trim()); return values;
+		}
+		function backgrounds(style) {
+			const clips = layers(style.backgroundClip || style.webkitBackgroundClip || "border-box");
+			return layers(style.backgroundImage).map((image, index) => ({ image, clip: clips[index % clips.length] }));
+		}
+		function gradient(value, r, textSpace = false) {
 			if (!value.startsWith("linear-gradient(")) return null;
 			const colors = [...value.matchAll(/(?:rgba?\([^)]*\)|okl(?:ch|ab)\([^)]*\)|color\([^)]*\)|#[a-f\d]{3,8})\s*(\d+(?:\.\d+)?%)?/gi)];
 			if (colors.length < 2) return null;
 			const id = `gradient-${++serial}`, angle = /linear-gradient\(([-\d.]+)deg/.exec(value);
 			const degrees = angle ? Number(angle[1]) : value.includes("to right") ? 90 : 180;
 			const dx = Math.sin(degrees * Math.PI / 180), dy = -Math.cos(degrees * Math.PI / 180);
-			defs.push(`<linearGradient id="${id}" x1="${n((.5 - dx / 2) * 100)}%" y1="${n((.5 - dy / 2) * 100)}%" x2="${n((.5 + dx / 2) * 100)}%" y2="${n((.5 + dy / 2) * 100)}%">${colors.map((match, index) => `<stop offset="${match[1] || n(index / (colors.length - 1) * 100) + "%"}" stop-color="${escape(color(match[0].replace(/\s+[\d.]+%$/, "")))}"/>`).join("")}</linearGradient>`);
+			// Text children share the source element's sweep, including wrapped lines.
+			// User-space coordinates prevent it restarting on each exported text run.
+			const length = Math.abs(r.width * dx) + Math.abs(r.height * dy);
+			const coordinates = textSpace
+				? `gradientUnits="userSpaceOnUse" x1="${n(r.x + r.width / 2 - dx * length / 2)}" y1="${n(r.y + r.height / 2 - dy * length / 2)}" x2="${n(r.x + r.width / 2 + dx * length / 2)}" y2="${n(r.y + r.height / 2 + dy * length / 2)}"`
+				: `x1="${n((.5 - dx / 2) * 100)}%" y1="${n((.5 - dy / 2) * 100)}%" x2="${n((.5 + dx / 2) * 100)}%" y2="${n((.5 + dy / 2) * 100)}%"`;
+			defs.push(`<linearGradient id="${id}" ${coordinates}>${colors.map((match, index) => `<stop offset="${match[1] || n(index / (colors.length - 1) * 100) + "%"}" stop-color="${escape(color(match[0].replace(/\s+[\d.]+%$/, "")))}"/>`).join("")}</linearGradient>`);
 			return `url(#${id})`;
 		}
 		function paintBox(style, r) {
 			const radius = Math.min(px(style.borderTopLeftRadius), r.width / 2, r.height / 2);
 			const output = [];
-			if (visibleColor(style.backgroundColor)) output.push(rect(r, style.backgroundColor, radius));
-			const fill = gradient(style.backgroundImage, r);
-			if (fill) output.push(rect(r, fill, radius));
+			const background = backgrounds(style);
+			if (background.at(-1).clip !== "text" && visibleColor(style.backgroundColor)) output.push(rect(r, style.backgroundColor, radius));
+			for (const layer of background.reverse()) {
+				const fill = layer.clip !== "text" && gradient(layer.image, r);
+				if (fill) output.push(rect(r, fill, radius));
+			}
 			const borders = ["Top", "Right", "Bottom", "Left"].map(side => ({ side, width: px(style[`border${side}Width`]), color: style[`border${side}Color`], style: style[`border${side}Style`] }));
 			if (borders.every(edge => edge.width === borders[0].width && edge.color === borders[0].color) && borders[0].width && borders[0].style !== "none") {
 				const edge = borders[0], inset = edge.width / 2;
@@ -135,7 +158,21 @@ export async function exportSvg(page, selector, options = {}) {
 		}
 		const metrics = document.createElement("canvas").getContext("2d");
 		function font(style) { return `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`; }
-		function text(value, style, r, measuredWidth = r.width) {
+		const textSweeps = new WeakMap();
+		function textFill(element, style) {
+			const flat = style.webkitTextFillColor || style.color;
+			if (visibleColor(flat)) return flat;
+			for (let source = element; source; source = source.parentElement) {
+				if (!textSweeps.has(source)) {
+					const layer = backgrounds(getComputedStyle(source)).find(layer => layer.clip === "text" && layer.image.startsWith("linear-gradient("));
+					textSweeps.set(source, layer ? gradient(layer.image, box(source.getBoundingClientRect()), true) : null);
+				}
+				if (textSweeps.get(source)) return textSweeps.get(source);
+				if (source === root) break;
+			}
+			return flat;
+		}
+		function text(value, style, r, measuredWidth = r.width, fill = style.color) {
 			if (!value || !r.width || !r.height) return "";
 			if (style.textTransform === "uppercase") value = value.toLocaleUpperCase();
 			else if (style.textTransform === "lowercase") value = value.toLocaleLowerCase();
@@ -143,9 +180,9 @@ export async function exportSvg(page, selector, options = {}) {
 			const m = metrics.measureText(value), ascent = m.fontBoundingBoxAscent || px(style.fontSize) * .8, descent = m.fontBoundingBoxDescent || px(style.fontSize) * .2;
 			const baseline = r.y + (r.height - ascent - descent) / 2 + ascent;
 			const rtl = style.direction === "rtl", tracking = px(style.letterSpacing);
-			return `<text x="${n(r.x + (rtl ? measuredWidth : 0))}" y="${n(baseline)}" fill="${escape(color(style.color))}" font-family="${escape(style.fontFamily)}" font-size="${escape(style.fontSize)}" font-weight="${escape(style.fontWeight)}" font-style="${escape(style.fontStyle)}" direction="${rtl ? "rtl" : "ltr"}" unicode-bidi="embed" letter-spacing="${n(tracking)}" textLength="${n(measuredWidth)}" lengthAdjust="spacing" xml:space="preserve">${escape(value)}</text>`;
+			return `<text x="${n(r.x + (rtl ? measuredWidth : 0))}" y="${n(baseline)}" fill="${escape(color(fill))}" font-family="${escape(style.fontFamily)}" font-size="${escape(style.fontSize)}" font-weight="${escape(style.fontWeight)}" font-style="${escape(style.fontStyle)}" direction="${rtl ? "rtl" : "ltr"}" unicode-bidi="embed" letter-spacing="${n(tracking)}" textLength="${n(measuredWidth)}" lengthAdjust="spacing" xml:space="preserve">${escape(value)}</text>`;
 		}
-		function textNode(node, style) {
+		function textNode(node, style, element) {
 			const value = node.textContent, range = document.createRange(), runs = [];
 			let active = null;
 			for (const { segment, index } of new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(value)) {
@@ -162,7 +199,8 @@ export async function exportSvg(page, selector, options = {}) {
 				}
 				else { active = { value: segment, r }; runs.push(active); }
 			}
-			return runs.map(run => text(run.value, style, run.r)).join("");
+			const fill = textFill(element, style);
+			return runs.map(run => text(run.value, style, run.r, run.r.width, fill)).join("");
 		}
 		function pseudo(element, name, parentBox) {
 			const style = getComputedStyle(element, name);
@@ -237,7 +275,7 @@ export async function exportSvg(page, selector, options = {}) {
 			let children = "";
 			// Sticky toolbars and floating menus paint above their later siblings.
 			const childNodes = [...element.childNodes].map((node, index) => ({ node, index, z: node.nodeType === Node.ELEMENT_NODE ? paintOrder(node) : 0 })).sort((a, b) => a.z - b.z || a.index - b.index);
-			for (const { node: child } of childNodes) children += child.nodeType === Node.TEXT_NODE ? textNode(child, style) : child.nodeType === Node.ELEMENT_NODE ? walk(child) : "";
+			for (const { node: child } of childNodes) children += child.nodeType === Node.TEXT_NODE ? textNode(child, style, element) : child.nodeType === Node.ELEMENT_NODE ? walk(child) : "";
 			if (["hidden", "clip", "auto", "scroll"].some(value => style.overflowX === value || style.overflowY === value)) children = `<g clip-path="url(#${clip(r, px(style.borderTopLeftRadius))})">${children}</g>`;
 			result += children + (afterBehind ? "" : after);
 			return Number(style.opacity) < 1 ? `<g opacity="${style.opacity}">${result}</g>` : result;
