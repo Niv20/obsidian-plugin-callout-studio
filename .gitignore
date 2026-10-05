@@ -47,9 +47,15 @@ icon-fonts/
 # local agent state
 .serena/
 graphify-out/
+# `graphify hook install` writes these beside the tracked Husky pre-commit
+scripts/hooks/post-commit
+scripts/hooks/post-checkout
 
 # Codex runtime state and hooks are local-only.
 .codex/
+
+# Claude Code's skills link (→ .agents/skills) and hooks are local-only too.
+.claude/
 
 # .agents is local-only, except the skills below — the release process and
 # the deep-dive architecture skills split out of AGENTS.md — which belong
