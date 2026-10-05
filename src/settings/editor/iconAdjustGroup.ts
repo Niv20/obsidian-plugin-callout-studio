@@ -27,14 +27,14 @@ import {
 } from "../../utils/iconAdjust";
 import { setSliderDisplay } from "../styleControls";
 
-/** Compose a role-specific header from strings every locale already has. */
+/** Translate the complete header so each locale controls its word order. */
 function groupHeader(role: CalloutRenderRole): string {
 	const roleLabels: Record<CalloutRenderRole, string> = {
-		regular: t("settings.calloutTypeRegular"),
-		heading: t("settings.calloutTypeHeading"),
-		inline: t("settings.calloutTypeInline"),
+		regular: t("editor.blockIconAdjustments"),
+		heading: t("editor.headingIconAdjustments"),
+		inline: t("editor.inlineIconAdjustments"),
 	};
-	return `${t("editor.iconAdjustment")} — ${roleLabels[role]}`;
+	return roleLabels[role];
 }
 
 /**

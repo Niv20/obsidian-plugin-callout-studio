@@ -102,6 +102,8 @@ Uploaded files remain on your device and are stored with the plugin settings. Se
 
 After choosing an icon, adjust its size and horizontal or vertical offset separately for the Block, Heading, and Inline previews.
 
+The adjustment sections are labeled **Block icon adjustments**, **Heading icon adjustments**, and **Inline icon adjustments**, translated into your interface language.
+
 If you do not want an icon, hover over the icon tile and click the **X**. The title and content realign automatically.
 
 ---

@@ -8,6 +8,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { createdSliders, type SliderComponent } from "./support/obsidianStub";
 import { renderIconAdjustGroup } from "../src/settings/editor/iconAdjustGroup";
+import { t } from "../src/i18n";
 import {
 	DEFAULT_ICON_ADJUST,
 	type ResolvedIconAdjust,
@@ -109,9 +110,9 @@ describe("renderIconAdjustGroup — reset affordance", () => {
 		);
 		const button = resetButton(box);
 		assert.ok(button.hasClass("cs-hidden"));
-		assert.match(
+		assert.strictEqual(
 			button.getAttribute("aria-label") ?? "",
-			/Icon adjustment.*Heading callout/,
+			`${t("settings.resetAction")}: ${t("editor.headingIconAdjustments")}`,
 		);
 	});
 

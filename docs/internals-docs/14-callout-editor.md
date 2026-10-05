@@ -68,6 +68,11 @@ pristine shipped definition returned by `CalloutRegistry.getBuiltInDefault()`
 and is the target for the conditional return arrows on IDs, icon, color, and
 each render role's icon-adjustment card.
 
+`iconAdjustGroup.ts` translates each complete card header through
+`editor.blockIconAdjustments`, `editor.headingIconAdjustments`, or
+`editor.inlineIconAdjustments`. All 32 languages have these short headers,
+with word order controlled by each locale rather than a joined prefix and role.
+
 The IDs reset restores `[default.id, ...default.aliases]`. Only those shipped
 IDs are passed to `TagInput` as read-only: a custom alias saved during an
 earlier session must still have a remove action when the editor reopens. The
