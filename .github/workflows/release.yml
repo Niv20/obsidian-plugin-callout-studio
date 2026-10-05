@@ -101,9 +101,15 @@ jobs:
             # backups and sync copies by content, storage-location markers,
             # relative dates, automatic reason names and per-device reason
             # labels beside the backups, plus the translated interface copy.
+            # Raised by 8 KiB for the video welcome screen: the 17-entry
+            # tutorial catalog, localized copy, safe YouTube URL handling,
+            # same-view player and lifecycle cleanup replace the old sample.
+            # Raised by another 4 KiB for per-topic guide links and dynamic
+            # video durations: validated public metadata parsing, shared
+            # request/cache handling and lifetime-safe thumbnail badges.
             - name: Check bundle size
               run: |
-                  limit=2250752  # 2 MiB + 150 KiB
+                  limit=2263040  # 2 MiB + 162 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"
