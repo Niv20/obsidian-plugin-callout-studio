@@ -22,7 +22,7 @@ Write a custom title immediately after the closing bracket. Start every addition
 > Second paragraph.
 ```
 
-![Note and Tip block callouts, including a custom title and separate paragraphs](assets/formats-block.svg)
+![Note and Tip block callouts, including a custom title and separate paragraphs](../../assets/user-guide/formats-block.svg)
 
 ## Heading callout
 
@@ -50,7 +50,7 @@ Want an [!note]{inline callout}? Add [!type]{text} inside a sentence.
 
 The `{` must touch the closing `]`.
 
-![A Tip heading callout and Warning and Note inline callouts inside a note](assets/formats-heading-inline.svg)
+![A Tip heading callout and Warning and Note inline callouts inside a note](../../assets/user-guide/formats-heading-inline.svg)
 
 ## Picking from the autocomplete menu
 
@@ -60,7 +60,7 @@ Type `[!` in any of the three positions and a menu of your callouts opens. Choos
 - **Heading:** on a new line under the heading.
 - **Inline:** right after the pill, on the same line.
 
-![The autocomplete menu offering Note while its block-callout token is being typed](assets/formats-autocomplete.svg)
+![The autocomplete menu offering Note while its block-callout token is being typed](../../assets/user-guide/formats-autocomplete.svg)
 
 If you were only changing the type of a callout that already has a title, the cursor stays at the end of that line instead. This works the same for built-in callouts and for ones you created, whatever their ID.
 

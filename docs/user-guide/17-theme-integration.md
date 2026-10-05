@@ -10,7 +10,7 @@ Quick Insert gives the same rows their own source filter, labelled with the acti
 
 If the theme styles a callout, the theme stays in complete control. Callout Studio does not override the theme's intended color, icon, border, or layout.
 
-![Read-only callout rows detected from AnuPpuccin in dark Mocha mode.](assets/theme-callouts.svg)
+![Read-only callout rows detected from AnuPpuccin in dark Mocha mode.](../../assets/user-guide/theme-callouts.svg)
 
 *The theme's callout rows are detected from its stylesheet. This example uses AnuPpuccin in dark Mocha mode.*
 
@@ -22,7 +22,7 @@ In light mode with Obsidian's **Default** theme, Callout Studio's windows - its 
 
 If you choose a community theme under **Settings → Appearance → Themes**, the theme takes command instead: the windows follow its own button, text-box and border colors, just as they did before. Dark mode is not affected either way. Switching theme or color scheme updates open windows immediately; nothing needs to be reloaded.
 
-![The Callout Studio editor with AnuPpuccin's dark controls and live previews.](assets/theme-editor.svg)
+![The Callout Studio editor with AnuPpuccin's dark controls and live previews.](../../assets/user-guide/theme-editor.svg)
 
 *The editor follows AnuPpuccin's dark controls inside a window with a scrolling body.*
 
@@ -30,7 +30,7 @@ If you choose a community theme under **Settings → Appearance → Themes**, th
 
 Callouts you create in Callout Studio follow the layout your theme gives callouts in general. When a theme or one of its **Style Settings** options draws callouts with a neutral body and the color on a title bar (for example AnuPpuccin's **Sleek** callout style), your callout's background - solid or gradient - moves to that title bar too, and a transparent callout shows no background anywhere. Switching the option in Style Settings updates open notes immediately; nothing needs to be reloaded. See [Background styles](03-custom-color-palettes.md#background-styles).
 
-![A custom Project callout and a theme-owned Tip in AnuPpuccin's Sleek layout.](assets/theme-layout.svg)
+![A custom Project callout and a theme-owned Tip in AnuPpuccin's Sleek layout.](../../assets/user-guide/theme-layout.svg)
 
 *Sleek places the custom callout's background on its title bar and keeps a neutral body.*
 

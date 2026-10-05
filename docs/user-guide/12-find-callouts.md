@@ -32,7 +32,7 @@ is narrow. The header, pickers, and matching-result summary remain fixed while t
 file groups below scroll. Several inline callouts on one line count as separate
 occurrences. The former vault-wide statistics cards are no longer shown here.
 
-![The searchable type picker showing registered types and the unregistered idea type](assets/find-picker.svg)
+![The searchable type picker showing registered types and the unregistered idea type](../../assets/user-guide/find-picker.svg)
 
 *The type picker includes registered callouts and unregistered types found in notes. Here, a search for “de” shows choices from both groups.*
 
@@ -66,7 +66,7 @@ out of the picker.
 
 ## Navigate through occurrences
 
-![Find callouts filtered to project, with heading and block references grouped by note](assets/find-results.svg)
+![Find callouts filtered to project, with heading and block references grouped by note](../../assets/user-guide/find-results.svg)
 
 *Choose a type to see its source references, grouped by note. The results scroll below the fixed filters and summary.*
 

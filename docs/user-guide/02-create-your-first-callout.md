@@ -6,7 +6,7 @@ You can design a callout in the plugin settings or create one directly from auto
 
 Open **Settings → Callout Studio**, then click **Add new callout**.
 
-![My callout types with the Add new callout button in dark mode](assets/create-settings.svg)
+![My callout types with the Add new callout button in dark mode](../../assets/user-guide/create-settings.svg)
 
 *Dark-mode render of **My callout types**, with **Add new callout** beside the heading.*
 
@@ -20,7 +20,7 @@ Open **Settings → Callout Studio**, then click **Add new callout**.
 
 The saved callout is now available in all three formats.
 
-![Create callout editor for Project note with heading, inline, and block previews in dark mode](assets/create-editor.svg)
+![Create callout editor for Project note with heading, inline, and block previews in dark mode](../../assets/user-guide/create-editor.svg)
 
 *Dark-mode render of the editor for **Project note**, using `project note` as its ID and the same design in all three previews.*
 
@@ -31,7 +31,7 @@ labels remain available to screen readers.
 
 Type a block, heading, or inline token for a callout that does not exist yet. For example, typing `> [!project` offers **Create "project"** in autocomplete. Select it to open the editor with the name already filled in, ready for you to choose its color and icon.
 
-![Autocomplete offering to create an unknown project callout in dark mode](assets/create-autocomplete.svg)
+![Autocomplete offering to create an unknown project callout in dark mode](../../assets/user-guide/create-autocomplete.svg)
 
 *Dark-mode render of autocomplete for an unknown `project` type. Selecting **Create "project"** opens its editor.*
 

@@ -14,7 +14,7 @@ its row has moved. Open the three-dot menu again when you need it.
 
 Click the pencil beside a callout to open its editor. Save the new color, icon, name, IDs, or icon adjustments when you are finished.
 
-![Editing a customized built-in callout, with reset arrows beside its changed icon and color](assets/edit-callout.svg)
+![Editing a customized built-in callout, with reset arrows beside its changed icon and color](../../assets/user-guide/edit-callout.svg)
 
 When you customize one of Obsidian's thirteen built-in callouts, small return arrows appear beside changed IDs, icons, and colors. Each icon-adjustment card also gets its own return arrow when its sliders change; it resets the size and both offsets for that callout format without touching the other two formats. To undo every customization on that built-in type at once, open its three-dot menu and choose **Reset to default**.
 
@@ -39,7 +39,7 @@ Use **Replace in vault** when every use of one type should become another:
 3. Select the replacement callout. You can type to filter the list; pressing **Enter** selects the top match.
 4. Choose **Replace**.
 
-![Choosing Tip as the replacement callout in the Replace in vault window](assets/replace-callout.svg)
+![Choosing Tip as the replacement callout in the Replace in vault window](../../assets/user-guide/replace-callout.svg)
 
 **Replace** stays dimmed until you have chosen the callout to replace it with. Press it and a message says what to choose.
 

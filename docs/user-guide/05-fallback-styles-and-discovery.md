@@ -6,7 +6,7 @@ Callout Studio saves only the callout types you explicitly create, import, or di
 
 Open **Settings → Callout Studio → My callout types** and click **Scan for callouts**. Callout Studio scans your saved notes and adds types that are not already in the list. It does not alter notes, overwrite existing types, or change your custom styles.
 
-![Research and Meeting types saved through discovery, both marked as following the default fallback](assets/fallback-discovery.svg)
+![Research and Meeting types saved through discovery, both marked as following the default fallback](../../assets/user-guide/fallback-discovery.svg)
 
 To create just one unknown type directly, right-click it in the note and choose
 **Create new callout**. The editor keeps the ID from that token, ready for you to
@@ -31,7 +31,7 @@ To change it, find **Default fallback callout** in the settings and choose the s
 
 After choosing a different fallback, click **Reset to default** beside the picker to select **Note** again.
 
-![The default fallback picker open with the custom Project note type selected and its reset arrow visible](assets/fallback-picker.svg)
+![The default fallback picker open with the custom Project note type selected and its reset arrow visible](../../assets/user-guide/fallback-picker.svg)
 
 ## Apply or leave the fallback style
 

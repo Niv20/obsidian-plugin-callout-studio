@@ -11,13 +11,13 @@ On desktop, the search field is ready for typing when the window opens. On a pho
 
 Quick Insert creates **Block callouts only**. Use autocomplete or a custom command for Heading and Inline callouts.
 
-![Quick insert block callout window with search, source filter, and rendered callout previews](assets/quick-insert.svg)
+![Quick insert block callout window with search, source filter, and rendered callout previews](../../assets/user-guide/quick-insert.svg)
 
 *Search and choose from rendered block-callout previews. Each row offers an edit action and an insert action.*
 
 ## Filter by source
 
-![Quick insert filtered to My callouts, with the source choices open](assets/quick-insert-filter.svg)
+![Quick insert filtered to My callouts, with the source choices open](../../assets/user-guide/quick-insert-filter.svg)
 
 *Select **My callouts** to narrow the list to your own types. The source choice is remembered on this device.*
 

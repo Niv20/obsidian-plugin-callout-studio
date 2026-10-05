@@ -6,7 +6,7 @@ On desktop, the available search field is ready for typing when an icon source o
 
 **Confirm** stays dimmed while no icon is selected, which includes right after you switch to another source, because that clears the selection. Press it and a message asks you to select an icon.
 
-![Lucide icon picker searching for book, with Book open selected in dark mode](assets/icon-picker.svg)
+![Lucide icon picker searching for book, with Book open selected in dark mode](../../assets/user-guide/icon-picker.svg)
 
 ## Built-in sources
 
@@ -36,7 +36,7 @@ For Material Symbols, search sits above the style, weight, and category filters 
 The source and filters use matching selection fields and menus. The emoji skin tone menu shows a
 sample hand beside each tone, so you can see the choice before selecting it.
 
-![Emoji picker searching for hand with a raised hand and medium skin tone selected in dark mode](assets/icon-emoji.svg)
+![Emoji picker searching for hand with a raised hand and medium skin tone selected in dark mode](../../assets/user-guide/icon-emoji.svg)
 
 ## Manage icon libraries
 
@@ -48,7 +48,7 @@ Your search text stays in place when you return, including after reordering, dow
 - **Libraries to download** are the ones not downloaded on this device yet. Their rows are dimmed and have no handle, because their order can't change anything until they're downloaded.
 - **Hidden libraries** appears only while you have hidden one of the libraries that come with the plugin, and lists it so you can show it again.
 
-![Manage icon libraries showing available sources and libraries to download in a bounded dark-mode window](assets/icon-libraries.svg)
+![Manage icon libraries showing available sources and libraries to download in a bounded dark-mode window](../../assets/user-guide/icon-libraries.svg)
 
 The three headings are as large as **Built-in commands** in **Commands and shortcuts**.
 

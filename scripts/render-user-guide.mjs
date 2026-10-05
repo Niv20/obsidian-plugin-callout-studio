@@ -50,7 +50,7 @@ const { outputFiles } = await build({
 	alias: { obsidian: path.join(root, "scripts/user-guide/obsidian-runtime.ts") },
 });
 const browser = await chromium.launch({ headless: true, executablePath: process.env.BROWSER_EXECUTABLE });
-const output = path.join(root, "docs/user-guide/assets");
+const output = path.join(root, "assets/user-guide");
 mkdirSync(output, { recursive: true });
 const requested = process.argv.slice(2), failures = [];
 try {

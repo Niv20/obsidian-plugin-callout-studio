@@ -81,7 +81,7 @@ The callout's title stays, as a line of its own; only the `[!type]` marker is re
 
 Open **Settings → Callout Studio → Commands & hotkeys**, then click **Manage commands**.
 
-![The command manager, showing saved custom commands and built-in commands with shortcut labels and toggles](assets/command-manager.svg)
+![The command manager, showing saved custom commands and built-in commands with shortcut labels and toggles](../../assets/user-guide/command-manager.svg)
 
 From this window you can:
 
@@ -114,7 +114,7 @@ same thin border, and the list that opens beneath it has the same background as
 the field itself. All five fields share one compact,
 aligned width.
 
-![Creating a command that wraps selected text in a collapsed Warning block callout](assets/command-editor.svg)
+![Creating a command that wraps selected text in a collapsed Warning block callout](../../assets/user-guide/command-editor.svg)
 Long menus stay inside the window and scroll. All choices have the same
 comfortable spacing, and menus start and end at the first and last choice
 without empty strips.

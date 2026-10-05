@@ -16,7 +16,7 @@ When importing a Callout Studio backup, matching entries are updated and valid s
 
 ## Version history
 
-![Version history listing saved setups, including versions kept before an import and a reset](assets/version-history.svg)
+![Version history listing saved setups, including versions kept before an import and a reset](../../assets/user-guide/version-history.svg)
 
 ***Version history** combines earlier setups into one timeline. Each row compares that setup with the one currently displayed.*
 
@@ -72,7 +72,7 @@ Select the trash button, **Delete**, to permanently remove the available copies 
 
 ### View a version before restoring it
 
-![Version details comparing current callout colors and icons with an earlier setup](assets/version-details.svg)
+![Version details comparing current callout colors and icons with an earlier setup](../../assets/user-guide/version-details.svg)
 
 ***View details** shows the changes restoring a version would make, including side-by-side callout previews. The comparison scrolls within the window.*
 
@@ -135,7 +135,7 @@ The folder can sync if your provider includes it, and deleting the plugin folder
 
 ## Recover paused saving
 
-![Two separate settings views: Saving is paused with recovery actions above, and Version history below](assets/saving-paused.svg)
+![Two separate settings views: Saving is paused with recovery actions above, and Version history below](../../assets/user-guide/saving-paused.svg)
 
 *When the settings file is missing, the banner starts with **Check again** and keeps the recovery and version-history actions available.*
 

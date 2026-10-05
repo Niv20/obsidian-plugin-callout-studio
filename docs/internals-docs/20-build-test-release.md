@@ -189,7 +189,7 @@ passes its non-Latin labels through the locally installed `rsvg-convert` tool
 (or the executable named by `GUIDE_RSVG_CONVERT`) so Hebrew, Chinese, and other
 scripts remain readable when the SVG is viewed on a machine without those
 fonts. The committed assets in
-`docs/user-guide/assets/` contain no screenshots, embedded bitmap images,
+`assets/user-guide/` contain no screenshots, embedded bitmap images,
 `foreignObject`, scripts, or external resources. Markdown embeds them with
 relative image paths. Regenerate them after changing the illustrated components;
 check their vector output visually as well as checking the runner's assertions.

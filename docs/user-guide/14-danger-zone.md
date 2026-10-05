@@ -52,7 +52,7 @@ type count as heading text, not as an inline payload.
 
 ### Review the proposed changes
 
-![Review conversion sidebar with selected heading and inline changes and Before and After previews](assets/conversion-review.svg)
+![Review conversion sidebar with selected heading and inline changes and Before and After previews](../../assets/user-guide/conversion-review.svg)
 
 *Review each proposed replacement before converting. The selected-change summary stays visible while the file groups scroll below it.*
 
@@ -133,7 +133,7 @@ convert, or a conversion is already running.
 
 ### Apply the conversion
 
-![About conversion window with the plugin's Before and After examples and backup advice](assets/conversion-help.svg)
+![About conversion window with the plugin's Before and After examples and backup advice](../../assets/user-guide/conversion-help.svg)
 
 *The question-mark button opens the conversion rules and backup reminder without changing notes.*
 
@@ -158,7 +158,7 @@ recovery file.
 
 ## Reset everything
 
-![Reset everything confirmation listing the custom callouts and references affected, with an unticked acknowledgement](assets/reset-confirmation.svg)
+![Reset everything confirmation listing the custom callouts and references affected, with an unticked acknowledgement](../../assets/user-guide/reset-confirmation.svg)
 
 *The confirmation lists what your setup would lose. **Reset everything** stays locked until **I have read and understood** is ticked.*
 
