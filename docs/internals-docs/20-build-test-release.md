@@ -261,6 +261,104 @@ correspondence, overflow, XML, local paint references, unique IDs, and absence o
 content. It blocks network requests. Review the SVGs visually at README width;
 temporary raster previews belong outside the asset directory.
 
+### Store screenshots
+
+`node scripts/render-store-screenshots.mjs` generates four 1200 × 800 desktop
+SVGs in `assets/store-screenshots/desktop/svg/`. Pass scene names such as
+`01-settings` to regenerate selected images. `scripts/store-screenshots/`
+contains the scene data and purple promotional framing. Production settings,
+editors, pickers, and rendered callouts use the shared documentation host with
+synthetic data; the simplified surrounding Obsidian workspace and headings are
+editorial artwork. No real vault is opened or changed, and browser network
+requests are blocked and fail the run.
+
+The framing uses one short headline and gives the central UI most of the
+canvas. The abstract Obsidian workspace is centered behind it; its file list
+shows small downward chevrons matching the adjacent bars’ color and opacity
+on unindented folder rows and no icons on indented file rows. Neither window has a black drop shadow. There are no subtitles, outer corner brand labels,
+bottom taglines, or per-image navigation counters. The narrower settings scene
+enables Obsidian's native settings background so the real rounded row surfaces
+are visible. Its three synthetic custom callouts each show a primary ID and an
+alias: Idea (`idea`, `spark`), Meeting (`meeting`, `sync`), and Research
+(`research`, `study`); Meeting uses the Plum preset. The notes scene uses a
+moderately narrower reading area and longer English copy to fill its height,
+with **The Three Callout Types** rendered through Obsidian's native
+`inline-title` styling above `idea` as a real heading, inline, and block
+callout. The creation scene shows
+the same Idea IDs and uses a taller native modal to reveal more of **Live
+preview**. The icon picker is the fourth scene; the former color scene has been
+removed.
+
+`node scripts/render-store-icons-04b.mjs` generates the separate alternative
+`04B-icons.svg`. Its dedicated scene and composition modules leave the original
+`04-icons.svg` in place. The production icon picker is placed on the left and
+**Manage icon libraries** on the right, with equal displayed heights and a
+narrower management window. The offline fixture marks the downloadable packs
+as locally ready and displays all nine libraries in the requested order; it
+does not download pack files. The renderer asserts the order and that every
+management row fits without scrolling.
+
+The renderer reuses the installed Obsidian assets and vector exporter described
+above, including `PLAYWRIGHT_MODULE`, `BROWSER_EXECUTABLE`, `OBSIDIAN_ASAR`, and
+the extracted-asset overrides. Each SVG is self-contained vector artwork with
+no embedded bitmap, script, `foreignObject`, or external resource. Ordinary
+SVG text remains editable and uses local font fallbacks. The exporter maps
+CSS geometry and text to SVG elements. The runner checks XML, canvas size,
+unique IDs, finite geometry, and inactive local
+content; visual review still checks framing and legibility.
+
+`node scripts/render-store-mobile.mjs` generates the four 900 × 1600 portrait
+SVG drafts in `assets/store-screenshots/mobile/svg/`. It supports the same optional scene
+names and asset/browser overrides. It shares the synthetic scenes with desktop,
+but mounts them with `is-mobile is-phone`, a 430 × 684 logical viewport, and
+touch input so Obsidian and plugin phone layouts apply. Dialog widths, rounded
+corners, form stacking, and the icon grid come from production CSS. Only the
+host geometry is constrained. Desktop and 4B outputs are not regenerated.
+
+The portrait composition retains the purple background and English headlines,
+but has no simulated workspace, file bars, device bezel, or invented navigation.
+The headlines have 30 pixels of additional top inset. The note uses a fixed
+English sample with real heading, inline, and block callouts and their syntax,
+followed by longer explanations that continue past the screen's lower edge;
+the renderer verifies that the note overflows vertically. The creation form
+opens at the top to show its name and IDs before the color and icon controls;
+the live preview can continue below the viewport, above the fixed action
+footer. The icon grid is scrolled to a complete row below its
+native sticky search toolbar, with Lightbulb selected. Settings keep all thirteen
+built-ins in their scroller; the native narrow-row rules hide IDs and color
+swatches at this width. SVG validation also checks horizontal overflow and
+local paint references. This is an offline production-component illustration,
+not a capture of the full native mobile app.
+
+The requested desktop images 01–04 plus 04B and mobile images 01–04 also
+have lossless WebP exports in their respective `webp/` directories for web
+and GitHub display. Exports retain the native 1200 × 800 or 900 × 1600 canvas
+and are individually below 5 MB. Each decoded WebP was checked against the
+source raster for pixel equality; WebP was smaller than PNG in eight of the
+nine comparison exports and smaller across the set overall. The renderers write
+SVG artwork only; open the SVGs directly for review. Temporary raster previews
+for visual QA belong outside the deliverable directory.
+
+Desktop image 05 is an independent feature overview. Run
+`node scripts/render-store-bento.mjs` to regenerate its self-contained
+`desktop/svg/05-more.svg`. It reuses guide
+SVGs and five dedicated Find callouts, ribbon, autocomplete, right-click menu,
+and saved-palettes captures without
+regenerating the other desktop or mobile images. See
+[Store artwork: image 05](store-bento-artwork.md) for capture commands, source
+components, layout, and visual review instructions.
+
+`node scripts/render-store-bento-mobile.mjs` adapts that saved desktop SVG into
+the separate 900 × 1600 `mobile/svg/05-more.svg`.
+Six features fit in two 390-pixel columns with 50-pixel outer margins;
+version history is omitted. The single-line headline **And so much more...**
+leaves room for taller tiles with centered headings and larger, centered UI
+fragments. The UI fragments keep
+uniform proportions and their desktop appearance; this is portrait artwork,
+not a new phone UI capture. The renderer leaves images 01–04 unchanged.
+See the [portrait adaptation](store-bento-artwork.md#portrait-adaptation)
+for the layout, source dependencies, and validation.
+
 ## Repo-convention tests - the automated rules that hold the codebase together
 
 Several test files check the **repository itself**, not runtime behaviour -

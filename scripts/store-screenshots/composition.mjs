@@ -100,8 +100,3 @@ export function compose(name, source, metadata) {
 	}
 	return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title description"><title id="title">${escape(headline)} — Callout Studio</title><desc id="description">${escape(metadata.description)} Purple promotional frame with a simplified Obsidian workspace. Desktop store artwork, 1200 by 800 pixels.</desc>${body}</svg>\n`;
 }
-
-export function reviewHtml() {
-	const scenes = [...Object.entries(captions), ["04B-icons", ["Find the perfect icon. — Alternative 4B"]]];
-	return `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Callout Studio — Desktop artwork</title><style>*{box-sizing:border-box}body{margin:0;background:#111016;color:#f5f2ff;font:15px Arial,sans-serif;padding:40px}main{max-width:1200px;margin:auto}h1{font-size:28px;margin:0 0 12px}p{color:#bdb1ce;margin:0 0 36px}figure{margin:0 0 40px}img{display:block;width:100%;height:auto;border-radius:14px}figcaption{margin-top:12px;color:#bdb1ce}a{color:#c9acff}</style><main><h1>Callout Studio</h1><p>Four desktop SVGs and alternative 4B · 1200 × 800 · Review before PNG export</p>${scenes.map(([name, [title]]) => `<figure><a href="svg/${name}.svg"><img src="svg/${name}.svg" alt="${escape(title)}"></a><figcaption>${escape(title)} · <a href="svg/${name}.svg">Open SVG</a></figcaption></figure>`).join("")}</main></html>`;
-}
