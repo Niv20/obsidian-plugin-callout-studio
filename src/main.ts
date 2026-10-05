@@ -398,7 +398,7 @@ export default class CalloutStudioPlugin extends Plugin {
 	}
 
 	/**
-	 * Open the welcome/splash screen on demand, ignoring the `welcomeSeen`
+	 * Open the video welcome screen on demand, ignoring the `tutorialWelcomeSeen`
 	 * flag. Handy for testing — call it from the DevTools console:
 	 *   app.plugins.plugins["callout-studio"].openWelcome()
 	 */

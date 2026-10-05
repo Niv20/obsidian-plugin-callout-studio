@@ -35,6 +35,7 @@ import { loadSettingsInto } from "../src/manager/settingsBoot";
 import type { ExternalReloadHost } from "../src/manager/settingsAdopt";
 import { confirmFreshInstall } from "../src/manager/settingsLateArrival";
 import { maybeShowWelcomeOnLaunch } from "../src/settings/welcomeRouting";
+import { WelcomeModal } from "../src/settings/WelcomeModal";
 import type { CalloutDefinition } from "../src/types";
 import { installFakeDom } from "./support/fakeDom";
 
@@ -347,22 +348,24 @@ describe("a data.json that turns up after startup", () => {
 			: false;
 		assert.strictEqual(freshInstall, false, "greeted an existing vault");
 
-		// `main.ts` exposes `settings` off the registry, and the routing reads
-		// `welcomeSeen` from it. `WelcomeModal` is never constructed on this
-		// path — the function returns before it — so the rest of the host only
-		// has to satisfy the type.
+		// A healthy late-arriving file can receive the one-time tutorial offer,
+		// but seeing it must not write defaults or alter the adopted callouts.
 		const welcomeHost = {
 			...p.host,
 			get settings() {
 				return p.registry.settings;
 			},
 		};
-		await maybeShowWelcomeOnLaunch(
-			welcomeHost as unknown as Parameters<
-				typeof maybeShowWelcomeOnLaunch
-			>[0],
-			freshInstall,
-		);
+		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
+		let prompts = 0;
+		WelcomeModal.prototype.prompt = () => { prompts++; return Promise.resolve(); };
+		try {
+			await maybeShowWelcomeOnLaunch(
+				welcomeHost as unknown as Parameters<typeof maybeShowWelcomeOnLaunch>[0],
+				freshInstall,
+			);
+			assert.strictEqual(prompts, 1);
+		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
 
 		assert.strictEqual(disk.writes, 0, "welcome wrote over the real file");
 		assert.strictEqual(disk.content, fileBefore, "the file changed");

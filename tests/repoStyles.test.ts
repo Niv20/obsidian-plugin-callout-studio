@@ -263,6 +263,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-occurrences-result", // identity/query hook; shared cs-sidebar-result supplies the card
 		"cs-occurrences-location", // per-view hook; shared cs-sidebar-location supplies its typography
 		"cs-discover-callouts-btn", // stable action hook; neutral-button and heading rules supply its styling
+		"cs-live-preview-container", // GlobalStyleModal's gap demo finds this shared preview wrapper
 		"callout-studio-delete-modal",
 		"callout-studio-delete-modal-hint",
 		"callout-studio-delete-modal-warning",
@@ -275,8 +276,6 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-fold-trigger",
 		"cs-icon-source",
 		"cs-source-name",
-		"cs-welcome-hero",
-		"cs-welcome-panel",
 	]);
 
 	/**
@@ -296,6 +295,8 @@ describe("class names in styles.css and src/ agree", () => {
 	 *   cannot be static (`CSSInjector.ts:2172` onwards).
 	 * - `cs-fallback-icon` and `cs-fallback-icon-hidden` — native unknown-id
 	 *   artwork/hiding that applies only while the weak fallback icon wins.
+	 * - `cs-heading-title` and `cs-callout-name` — heading gradient text rules
+	 *   are generated per callout by CSSInjector.
 	 *
 	 * Kept apart from `EMITTED_WITHOUT_RULES` because the two say opposite
 	 * things: that list is debt, and this one is the design working. Merging
@@ -304,6 +305,7 @@ describe("class names in styles.css and src/ agree", () => {
 	 */
 	const STYLED_BY_GENERATED_CSS = new Set([
 		"cs-export-icon", "cs-unknown", "cs-fallback-icon", "cs-fallback-icon-hidden",
+		"cs-heading-title", "cs-callout-name",
 	]);
 
 	/**

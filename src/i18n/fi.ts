@@ -32,26 +32,51 @@ export const fi: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(palaa oletukseen)",
 	"replaceModal.titleDelete": "Poista callout",
 	"replaceModal.titleReplace": "Korvaa holvissa",
-
-	"welcome.tooltip": "Tietoja Callout Studiosta",
-	"welcome.title": "Tervetuloa Callout Studioon!",
-	"welcome.tagline":
-		"Täydellinen ratkaisusi Obsidian-callouttien luomiseen, tyylittelyyn ja hallintaan.",
 	"importBanner.message":
 		"Huomasimme, että käytät {{plugins}}. Haluaisitko tuoda callouttisi?",
 	"importBanner.action": "Tuo",
 	"importBanner.dismiss": "Hylkää",
-	"welcome.previewTitle": "Näe se toiminnassa",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studion avulla voit luoda callouteja mukautetulla kuvakkeella, väreillä ja nimellä.\n\n" +
-		"Voit käyttää tätä calloutia **kolmella** eri tavalla:\n\n" +
-		"## [!{{id}}] Callout otsikkona\n" +
-		"Muuttaaksesi minkä tahansa otsikon callout-tyyliseksi otsikoksi, lisää `[!type]` heti `#`-merkkien jälkeen.\n\n" +
-		"Haluatko tällaisen [!{{id}}]{upotetun calloutin}? Lisää vain `[!type]{text}` keskelle lausetta, kirjoituksen kulkua katkaisematta.\n\n" +
-		"> [!{{id}}] Lohko-callout\n" +
-		"> Klassinen callout toimii täsmälleen samalla syntaksilla, johon olet jo tottunut: `> [!type]`.\n\n" +
-		"Callout Studiolla on paljon muutakin tarjottavaa! [Lue lisää]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Katso Callout Studion opetusvideot",
+	"welcome.title": "Tervetuloa Callout Studioon!",
+	"welcome.intro": "Lisäosassa on paljon tarjottavaa, joten katso rauhassa se, mikä kiinnostaa sinua.",
+	"welcome.tutorialCount": "Opetusvideot ({{count}})",
+	"welcome.readMore": "Lisätietoja aiheesta {{title}}: {{link}}.",
+	"welcome.clickHere": "napsauta tästä",
+	"welcome.invalidVideo": "Tämä videolinkki ei ole käytettävissä. Valitse toinen opetusvideo.",
+	"welcome.video.threeTypes": "Kolme callout-tyyppiä",
+	"welcome.video.threeTypesDesc": "Opi lohko-, otsikko- ja tekstinsisäisten calloutien syntaksi sekä mukautetut otsikot ja sisäänrakennetut tyypit.",
+	"welcome.video.create": "Luo ensimmäinen calloutisi",
+	"welcome.video.createDesc": "Määritä nimi, tunnisteet, kuvake ja värit ja esikatsele sitten callout kaikissa kolmessa muodossa.",
+	"welcome.video.palettes": "Mukautetut väripaletit",
+	"welcome.video.palettesDesc": "Luo yksiväriset, liukuväri- tai läpinäkyvät paletit ja päivitä kaikki niitä käyttävät calloutit.",
+	"welcome.video.icons": "Mukautetut kuvakkeet ja emojit",
+	"welcome.video.iconsDesc": "Selaa kuvakekirjastoja, valitse emojeita tai lataa oma kuva calloutille.",
+	"welcome.video.fallback": "Varatyylit ja tunnistus",
+	"welcome.video.fallbackDesc": "Valitse, miltä tuntemattomat calloutit näyttävät, skannaa holvi tyyppien löytämiseksi ja mukauta löydetyt.",
+	"welcome.video.manage": "Muokkaus, korvaaminen ja poistaminen",
+	"welcome.video.manageDesc": "Muokkaa calloutia, korvaa sen käytöt koko holvissa tai poista sen tyyli ja säilytä tekstisi.",
+	"welcome.video.styles": "Yleistyylit",
+	"welcome.video.stylesDesc": "Säädä reunuksia, välejä, fonttikokoa ja muotoa lohko-, otsikko- ja tekstinsisäisille callouteille.",
+	"welcome.video.menus": "Hiiren oikean painikkeen valikko",
+	"welcome.video.menusDesc": "Työskentele callouteilla suoraan muistiinpanoissasi ja valitse, mitkä valikkotoiminnot näkyvät ja missä järjestyksessä.",
+	"welcome.video.hotkeys": "Komennot ja pikanäppäimet",
+	"welcome.video.hotkeysDesc": "Lisää, kääri ja pura calloutit komennoilla ja määritä sitten pikanäppäimet eniten käyttämillesi toiminnoille.",
+	"welcome.video.import": "Tuonti, vienti ja jakaminen",
+	"welcome.video.importDesc": "Siirrä asetuksesi holvien välillä, tuo muista callout-lisäosista ja vie tyylit CSS:nä.",
+	"welcome.video.languages": "Kielet",
+	"welcome.video.languagesDesc": "Valitse lisäosan käyttöliittymän kieli tai anna sen noudattaa Obsidianissa käyttämääsi kieltä.",
+	"welcome.video.find": "Calloutien etsiminen",
+	"welcome.video.findDesc": "Suodata calloutien käyttö tyypin ja muodon mukaan ja siirry niiden tarkkaan sijaintiin muistiinpanoissasi.",
+	"welcome.video.backups": "Synkronointi ja varmuuskopiot",
+	"welcome.video.backupsDesc": "Säilytä asetuksesi laitteiden välillä, vie varmuuskopio ja vertaile tai palauta aiempia versioita.",
+	"welcome.video.dangerZone": "Vaara-alue",
+	"welcome.video.dangerZoneDesc": "Tarkista otsikko- ja tekstinsisäisten calloutien muunnokset tavalliseksi Markdowniksi ja katso, mitä asetusten nollaus poistaa.",
+	"welcome.video.insert": "Pikalisäys",
+	"welcome.video.insertDesc": "Hae calloutien esikatseluja, suodata lähteen mukaan ja lisää tai muokkaa lohkocalloutia sivupalkista.",
+	"welcome.video.heading": "Edistyneet otsikkocalloutit",
+	"welcome.video.headingDesc": "Pidä otsikkocalloutit helposti selattavina rakenneluettelossa, otsikkolinkeissä ja sisällysluetteloissa.",
+	"welcome.video.themes": "Teemaintegraatio",
+	"welcome.video.themesDesc": "Selaa teemasi tarjoamia calloutteja ja ymmärrä, miten teeman tyylit toimivat omien suunnitelmiesi kanssa.",
 
 	"deleteModal.title": 'Poistetaanko callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1176,7 +1201,6 @@ export const fi: Record<string, string> = {
 	"recovery.stale": "Mitään ei palautettu: asetuksesi muuttuivat tai niitä ei voitu tarkistaa. Avaa tämä ikkuna uudelleen ja tarkista luettelo.",
 	"notice.recoveryCopyStale": "Asetuksesi tallennettiin, mutta tämän laitteen palautuskopiota ei voitu päivittää. Tarkista tämän laitteen käytettävissä oleva tallennustila. Callout Studio yrittää uudelleen seuraavan muutoksesi yhteydessä.",
 	"notice.blockedWhilePaused": "Tallennus on keskeytetty, joten tätä muutosta ei voida säilyttää juuri nyt. Ratkaise ensin Callout Studion asetuksissa näkyvä tallennusongelma.",
-	"welcome.syncNote": "Käytätkö jo Callout Studiota toisella laitteella? Anna synkronointipalvelusi valmistua ensin. Calloutisi ja asetuksesi ilmestyvät tänne, kun ne saapuvat.",
 	"settings.resetBackupFailed": "Mitään ei palautettu: nykyisestä kokonaisuudesta ei voitu ensin tallentaa varmuuskopiota. Tarkista käytettävissä oleva tallennustila ja yritä sitten uudelleen.",
 	"settings.resetNotSaved": "Palautus näkyy, mutta sitä ei vielä voitu tallentaa, joten asetustiedostossasi on yhä edellinen kokonaisuus. Tarkista tallennuksen tila Callout Studion asetuksista.",
 	"confirm.titleResetEverything": "Palauta kaikki",

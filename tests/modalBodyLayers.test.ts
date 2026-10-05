@@ -292,6 +292,8 @@ const STICKY_LAYERS: Record<string, string> = {
 		"the quick-insert window's search + source filter, inside .modal-content",
 	".cs-combobox-group-label":
 		"a dropdown's group heading, inside the .cs-combobox-menu scrollport and bounded by its group",
+	".cs-welcome-list-heading":
+		"the video tutorial list heading, inside .cs-welcome-sidebar alongside the scrolling introduction and list",
 ".callout-studio-settings .cs-sticky-heading.setting-item":
 		"the three callout-list section headings, inside .vertical-tab-content — " +
 		"the settings tab is its own scroller, and the plugin renders straight into it",

@@ -228,15 +228,15 @@ describe("the pick-a-callout surfaces do not all read the same list view", () =>
 	// `AutoComplete` used to be in that second group and is now half out of it:
 	// it goes through `suggestableCallouts`, which drops `RESERVED_DEMO_IDS` by
 	// name before filtering. A draft callout mid-edit still reaches the `[!`
-	// popover; the splash screen's and the style popups' demo ids no longer do.
+	// popover; the style popups' demo ids no longer do.
 	// That narrowing is `previewPlaceholderId.test.ts`'s subject — what stays
 	// pinned here is the shape below, which `CommandEditorModal` still has.
 	//
 	// It is benign today for a reason that is worth writing down rather than
 	// relying on: a preview only exists while a modal is open, and the raw-map
 	// caller is unreachable then — the command editor opens over the command
-	// builder, never over the callout editor or the splash. If that ever stops
-	// being true, this test is where it shows up.
+	// builder, never over the callout editor or the style popups. If that ever
+	// stops being true, this test is where it shows up.
 	const registry = loaded();
 	registry.setPreviewDefinition(def({ id: PREVIEW_PLACEHOLDER_ID }), true);
 

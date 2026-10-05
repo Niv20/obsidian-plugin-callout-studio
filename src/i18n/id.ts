@@ -35,26 +35,51 @@ export const id: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(kembali ke default)",
 	"replaceModal.titleDelete": "Hapus callout",
 	"replaceModal.titleReplace": "Ganti di vault",
-
-	"welcome.tooltip": "Tentang Callout Studio",
-	"welcome.title": "Selamat datang di Callout Studio!",
-	"welcome.tagline":
-		"Solusi lengkap Anda untuk membuat, menata gaya, dan mengelola callout Obsidian.",
 	"importBanner.message":
 		"Kami melihat Anda menggunakan {{plugins}}. Ingin mengimpor callout Anda?",
 	"importBanner.action": "Impor",
 	"importBanner.dismiss": "Abaikan",
-	"welcome.previewTitle": "Lihat dalam aksi",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio memungkinkan Anda membuat callout dengan ikon, warna, dan nama khusus.\n\n" +
-		"Anda dapat menggunakan callout ini dengan **tiga** cara berbeda:\n\n" +
-		"## [!{{id}}] Callout sebagai judul\n" +
-		"Untuk mengubah judul apa pun menjadi judul bergaya callout, tambahkan `[!type]` tepat setelah `#`.\n\n" +
-		"Ingin [!{{id}}]{callout inline} seperti ini? Cukup tambahkan `[!type]{text}` di tengah kalimat, tanpa mengganggu alur tulisan Anda.\n\n" +
-		"> [!{{id}}] Callout blok\n" +
-		"> Callout klasik tetap berfungsi dengan sintaks yang sama persis seperti yang sudah Anda kenal: `> [!type]`.\n\n" +
-		"Callout Studio masih punya banyak hal lain untuk ditawarkan! [Pelajari lebih lanjut]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Tonton tutorial Callout Studio",
+	"welcome.title": "Selamat datang di Callout Studio!",
+	"welcome.intro": "Plugin ini punya banyak fitur, jadi luangkan waktu untuk menonton yang Anda minati.",
+	"welcome.tutorialCount": "Tutorial video ({{count}})",
+	"welcome.readMore": "Untuk info lebih lanjut tentang {{title}}, {{link}}.",
+	"welcome.clickHere": "klik di sini",
+	"welcome.invalidVideo": "Tautan video ini tidak tersedia. Pilih tutorial lain.",
+	"welcome.video.threeTypes": "Tiga tipe callout",
+	"welcome.video.threeTypesDesc": "Pelajari sintaks callout blok, judul, dan inline, dengan judul kustom dan tipe bawaan.",
+	"welcome.video.create": "Buat callout pertama Anda",
+	"welcome.video.createDesc": "Tetapkan nama, ID, ikon, dan warna, lalu pratinjau callout Anda dalam ketiga format.",
+	"welcome.video.palettes": "Palet warna kustom",
+	"welcome.video.palettesDesc": "Buat palet solid, gradien, atau transparan, dan perbarui setiap callout yang menggunakannya.",
+	"welcome.video.icons": "Ikon dan emoji kustom",
+	"welcome.video.iconsDesc": "Jelajahi pustaka ikon, pilih emoji, atau unggah gambar Anda sendiri untuk callout.",
+	"welcome.video.fallback": "Gaya fallback dan penemuan",
+	"welcome.video.fallbackDesc": "Pilih tampilan callout yang tidak dikenal, pindai vault untuk menemukan tipe, dan sesuaikan yang ditemukan.",
+	"welcome.video.manage": "Mengedit, mengganti, dan menghapus",
+	"welcome.video.manageDesc": "Edit callout, ganti penggunaannya di seluruh vault, atau hapus gayanya sambil menyimpan teks Anda.",
+	"welcome.video.styles": "Gaya global",
+	"welcome.video.stylesDesc": "Atur border, spasi, ukuran font, dan bentuk untuk callout blok, judul, dan inline.",
+	"welcome.video.menus": "Menu klik kanan",
+	"welcome.video.menusDesc": "Kerjakan callout langsung di catatan Anda, dan pilih tindakan menu mana yang muncul serta urutannya.",
+	"welcome.video.hotkeys": "Perintah dan tombol pintas",
+	"welcome.video.hotkeysDesc": "Sisipkan, bungkus, dan lepas bungkus callout dengan perintah, lalu tetapkan pintasan untuk tindakan yang paling sering Anda pakai.",
+	"welcome.video.import": "Impor, ekspor, dan berbagi",
+	"welcome.video.importDesc": "Pindahkan pengaturan Anda antar vault, impor dari plugin callout lain, dan ekspor gaya sebagai CSS.",
+	"welcome.video.languages": "Bahasa",
+	"welcome.video.languagesDesc": "Pilih bahasa antarmuka plugin atau biarkan mengikuti bahasa yang Anda gunakan di Obsidian.",
+	"welcome.video.find": "Menemukan callout",
+	"welcome.video.findDesc": "Filter penggunaan callout menurut tipe dan format, lalu lompat ke lokasi persisnya di catatan Anda.",
+	"welcome.video.backups": "Sinkronisasi dan cadangan",
+	"welcome.video.backupsDesc": "Pertahankan pengaturan Anda di seluruh perangkat, ekspor cadangan, dan bandingkan atau pulihkan versi sebelumnya.",
+	"welcome.video.dangerZone": "Zona berbahaya",
+	"welcome.video.dangerZoneDesc": "Tinjau konversi callout judul dan inline ke Markdown standar, dan lihat apa yang dihapus saat pengaturan direset.",
+	"welcome.video.insert": "Sisip cepat",
+	"welcome.video.insertDesc": "Cari pratinjau callout, filter menurut sumber, dan sisipkan atau edit callout blok dari ribbon.",
+	"welcome.video.heading": "Callout judul tingkat lanjut",
+	"welcome.video.headingDesc": "Jaga callout judul tetap mudah dinavigasi di Outline, tautan judul, dan daftar isi.",
+	"welcome.video.themes": "Integrasi tema",
+	"welcome.video.themesDesc": "Jelajahi callout yang disediakan tema Anda dan pahami cara gaya tema bekerja bersama desain Anda sendiri.",
 
 	"deleteModal.title": 'Hapus callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1195,7 +1220,6 @@ export const id: Record<string, string> = {
 	"recovery.stale": "Tidak ada yang dipulihkan: pengaturan Anda berubah atau tidak dapat diperiksa. Buka jendela ini lagi dan tinjau daftarnya.",
 	"notice.recoveryCopyStale": "Pengaturan Anda telah disimpan, tetapi salinan pemulihan perangkat ini tidak dapat diperbarui. Periksa penyimpanan yang tersedia di perangkat ini. Callout Studio akan mencoba lagi pada perubahan berikutnya.",
 	"notice.blockedWhilePaused": "Penyimpanan dijeda, sehingga perubahan ini tidak dapat disimpan saat ini. Selesaikan dahulu masalah penyimpanan yang ditampilkan di pengaturan Callout Studio.",
-	"welcome.syncNote": "Sudah menggunakan Callout Studio di perangkat lain? Biarkan layanan sinkronisasi Anda selesai terlebih dahulu. Callout dan pengaturan Anda akan muncul di sini setelah tiba.",
 	"settings.resetBackupFailed": "Tidak ada yang direset: cadangan konfigurasi Anda saat ini tidak dapat disimpan terlebih dahulu. Periksa penyimpanan yang tersedia, lalu coba lagi.",
 	"settings.resetNotSaved": "Reset ditampilkan tetapi belum dapat disimpan, sehingga berkas pengaturan Anda masih menyimpan konfigurasi sebelumnya. Periksa status penyimpanan di pengaturan Callout Studio.",
 	"confirm.titleResetEverything": "Reset semuanya",

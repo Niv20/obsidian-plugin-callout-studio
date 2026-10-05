@@ -376,35 +376,53 @@ export const en: Record<string, string> = {
 	"replaceModal.searchPlaceholder": "Search callouts…",
 	"replaceModal.chooseFirst": "Choose a replacement callout, or “{{delete}}”, to continue.",
 	"replaceModal.chooseFirstReplace": "Choose the callout to replace it with first.",
-
-	// Welcome / splash screen (shown once on first load; reopen via header icon)
-	"welcome.tooltip": "About Callout Studio",
-	"welcome.title": "Welcome to Callout Studio!",
-	"welcome.tagline":
-		"Your complete solution for creating, styling and managing Obsidian callouts.",
-	"welcome.syncNote":
-		"Already use Callout Studio on another device? Let your sync service finish first. Your callouts and settings appear here once they arrive.",
 	"importBanner.message":
 		"We noticed you are using {{plugins}}. Would you like to import your callouts?",
 	"importBanner.action": "Import",
 	"importBanner.dismiss": "Dismiss",
-	"welcome.previewTitle": "See it in action",
-	"welcome.demoName": "Callout Studio",
-	// `{{id}}` is the demo callout the splash styles itself with, so the three
-	// examples cannot be hijacked by a theme that restyles `tip` or `warning`
-	// (see settings/welcomeDemo.ts). Two structural rules for anyone
-	// translating this: `{` must follow `]` with NO space or the payload is
-	// read as literal prose, and the sample must END outside a block callout
-	// (see EmbeddableMarkdownEditor.parkCursor).
-	"welcome.sample":
-		"Callout Studio lets you create callouts with a custom icon, colors, and name.\n\n" +
-		"You can use this callout in **three** different ways:\n\n" +
-		"## [!{{id}}] Heading Callout\n" +
-		"To turn any heading into a callout-style heading, add `[!type]` right after the `#`s.\n\n" +
-		"Want an [!{{id}}]{Inline Callout}? Just add `[!type]{text}` right in a sentence, without breaking your flow.\n\n" +
-		"> [!{{id}}] Block Callout\n" +
-		"> The classic callout works with the exact syntax you're already used to: `> [!type]`.\n\n" +
-		"There's a lot more Callout Studio has to offer! [Learn more]({{repoUrl}}).\n",
+
+	// Video welcome screen. Non-English locales fall back to these new keys.
+	"welcome.openTutorials": "Watch Callout Studio tutorials",
+	"welcome.title": "Welcome to Callout Studio!",
+	"welcome.intro": "The plugin has a lot to offer, so take your time to watch what interests you.",
+	"welcome.tutorialCount": "Video tutorials ({{count}})",
+	"welcome.readMore": "For more about {{title}}, {{link}}.",
+	"welcome.clickHere": "click here",
+	"welcome.invalidVideo": "This video link is unavailable. Choose another tutorial.",
+	"welcome.video.threeTypes": "The three callout types",
+	"welcome.video.threeTypesDesc": "Learn the syntax for block, heading, and inline callouts, with custom titles and built-in types.",
+	"welcome.video.create": "Create your first callout",
+	"welcome.video.createDesc": "Set a name, IDs, icon, and colors, then preview your callout in all three formats.",
+	"welcome.video.palettes": "Custom color palettes",
+	"welcome.video.palettesDesc": "Create solid, gradient, or transparent palettes, and update every callout that uses them.",
+	"welcome.video.icons": "Custom icons and emojis",
+	"welcome.video.iconsDesc": "Browse icon libraries, choose emojis, or upload your own artwork for a callout.",
+	"welcome.video.fallback": "Fallback styles and discovery",
+	"welcome.video.fallbackDesc": "Choose how unknown callouts look, scan your vault for types, and customize the ones you find.",
+	"welcome.video.manage": "Editing, replacing, and deleting",
+	"welcome.video.manageDesc": "Edit a callout, replace its uses across your vault, or remove its styling while keeping your text.",
+	"welcome.video.styles": "Global styling",
+	"welcome.video.stylesDesc": "Adjust borders, spacing, font size, and shape for block, heading, and inline callouts.",
+	"welcome.video.menus": "The right-click menu",
+	"welcome.video.menusDesc": "Work with callouts directly in your notes, and choose which menu actions appear and in what order.",
+	"welcome.video.hotkeys": "Commands and hotkeys",
+	"welcome.video.hotkeysDesc": "Insert, wrap, and unwrap callouts with commands, then assign shortcuts for the actions you use most.",
+	"welcome.video.import": "Import, export, and sharing",
+	"welcome.video.importDesc": "Move your setup between vaults, import from other callout plugins, and export styles as CSS.",
+	"welcome.video.languages": "Languages",
+	"welcome.video.languagesDesc": "Choose the plugin's interface language or let it follow the language you use in Obsidian.",
+	"welcome.video.find": "Find callouts",
+	"welcome.video.findDesc": "Filter callout uses by type and format, then jump to their exact location in your notes.",
+	"welcome.video.backups": "Syncing and backups",
+	"welcome.video.backupsDesc": "Keep your setup across devices, export a backup, and compare or restore earlier versions.",
+	"welcome.video.dangerZone": "Danger zone",
+	"welcome.video.dangerZoneDesc": "Review heading and inline conversions to standard Markdown, and see what resetting your setup removes.",
+	"welcome.video.insert": "Quick insert",
+	"welcome.video.insertDesc": "Search callout previews, filter by source, and insert or edit a block callout from the ribbon.",
+	"welcome.video.heading": "Advanced heading callouts",
+	"welcome.video.headingDesc": "Keep heading callouts easy to navigate in the Outline, heading links, and tables of contents.",
+	"welcome.video.themes": "Theme integration",
+	"welcome.video.themesDesc": "Browse callouts supplied by your theme and understand how theme styling works with your own designs.",
 
 	// Delete-callout modal (trash button on user rows)
 	"deleteModal.title": 'Delete callout "{{name}}"?',

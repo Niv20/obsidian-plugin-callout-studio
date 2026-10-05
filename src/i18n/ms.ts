@@ -34,26 +34,51 @@ export const ms: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(kembali ke lalai)",
 	"replaceModal.titleDelete": "Padam callout",
 	"replaceModal.titleReplace": "Ganti dalam vault",
-
-	"welcome.tooltip": "Tentang Callout Studio",
-	"welcome.title": "Selamat datang ke Callout Studio!",
-	"welcome.tagline":
-		"Penyelesaian lengkap anda untuk mencipta, menggayakan dan menguruskan callout Obsidian.",
 	"importBanner.message":
 		"Kami perasan anda menggunakan {{plugins}}. Adakah anda ingin mengimport callout anda?",
 	"importBanner.action": "Import",
 	"importBanner.dismiss": "Abaikan",
-	"welcome.previewTitle": "Lihat ia beraksi",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio membolehkan anda mencipta callout dengan ikon, warna dan nama tersendiri.\n\n" +
-		"Anda boleh menggunakan callout ini dengan **tiga** cara berbeza:\n\n" +
-		"## [!{{id}}] Callout sebagai tajuk\n" +
-		"Untuk menukar mana-mana tajuk kepada tajuk bergaya callout, tambah `[!type]` sejurus selepas `#`.\n\n" +
-		"Mahukan [!{{id}}]{callout dalam talian} seperti ini? Cuma tambah `[!type]{text}` di tengah-tengah ayat, tanpa mengganggu aliran penulisan anda.\n\n" +
-		"> [!{{id}}] Callout blok\n" +
-		"> Callout klasik berfungsi dengan sintaks yang sama seperti yang anda sudah biasa: `> [!type]`.\n\n" +
-		"Callout Studio ada lebih banyak lagi untuk ditawarkan! [Ketahui lebih lanjut]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Tonton tutorial Callout Studio",
+	"welcome.title": "Selamat datang ke Callout Studio!",
+	"welcome.intro": "Pemalam ini mempunyai banyak ciri, jadi luangkan masa untuk menonton apa yang menarik minat anda.",
+	"welcome.tutorialCount": "Tutorial video ({{count}})",
+	"welcome.readMore": "Untuk maklumat lanjut tentang {{title}}, {{link}}.",
+	"welcome.clickHere": "klik di sini",
+	"welcome.invalidVideo": "Pautan video ini tidak tersedia. Pilih tutorial lain.",
+	"welcome.video.threeTypes": "Tiga jenis callout",
+	"welcome.video.threeTypesDesc": "Pelajari sintaks callout blok, tajuk dan sebaris, dengan tajuk tersuai dan jenis terbina dalam.",
+	"welcome.video.create": "Cipta callout pertama anda",
+	"welcome.video.createDesc": "Tetapkan nama, ID, ikon dan warna, kemudian pratonton callout anda dalam ketiga-tiga format.",
+	"welcome.video.palettes": "Palet warna tersuai",
+	"welcome.video.palettesDesc": "Cipta palet pepejal, kecerunan atau lutsinar, dan kemas kini setiap callout yang menggunakannya.",
+	"welcome.video.icons": "Ikon dan emoji tersuai",
+	"welcome.video.iconsDesc": "Layari pustaka ikon, pilih emoji atau muat naik karya seni anda sendiri untuk callout.",
+	"welcome.video.fallback": "Gaya sandaran dan penemuan",
+	"welcome.video.fallbackDesc": "Pilih rupa callout yang tidak dikenali, imbas vault untuk mencari jenis dan sesuaikan yang ditemui.",
+	"welcome.video.manage": "Menyunting, menggantikan dan memadam",
+	"welcome.video.manageDesc": "Sunting callout, gantikan penggunaannya di seluruh vault atau alih keluar gayanya sambil mengekalkan teks anda.",
+	"welcome.video.styles": "Penggayaan global",
+	"welcome.video.stylesDesc": "Laraskan sempadan, jarak, saiz fon dan bentuk untuk callout blok, tajuk dan sebaris.",
+	"welcome.video.menus": "Menu klik kanan",
+	"welcome.video.menusDesc": "Bekerja dengan callout terus dalam nota anda dan pilih tindakan menu yang dipaparkan serta susunannya.",
+	"welcome.video.hotkeys": "Arahan dan kekunci pintas",
+	"welcome.video.hotkeysDesc": "Sisipkan, bungkus dan nyahbungkus callout dengan arahan, kemudian tetapkan pintasan untuk tindakan yang paling kerap anda guna.",
+	"welcome.video.import": "Import, eksport dan perkongsian",
+	"welcome.video.importDesc": "Alihkan persediaan anda antara vault, import daripada pemalam callout lain dan eksport gaya sebagai CSS.",
+	"welcome.video.languages": "Bahasa",
+	"welcome.video.languagesDesc": "Pilih bahasa antara muka pemalam atau biarkan ia mengikut bahasa yang anda gunakan dalam Obsidian.",
+	"welcome.video.find": "Cari callout",
+	"welcome.video.findDesc": "Tapis penggunaan callout mengikut jenis dan format, kemudian lompat ke lokasi tepatnya dalam nota anda.",
+	"welcome.video.backups": "Penyegerakan dan sandaran",
+	"welcome.video.backupsDesc": "Kekalkan persediaan anda merentas peranti, eksport sandaran, dan bandingkan atau pulihkan versi terdahulu.",
+	"welcome.video.dangerZone": "Zon bahaya",
+	"welcome.video.dangerZoneDesc": "Semak penukaran callout tajuk dan sebaris kepada Markdown piawai, dan lihat apa yang dialih keluar oleh set semula persediaan anda.",
+	"welcome.video.insert": "Sisip pantas",
+	"welcome.video.insertDesc": "Cari pratonton callout, tapis mengikut sumber, dan sisipkan atau sunting callout blok daripada reben.",
+	"welcome.video.heading": "Callout tajuk lanjutan",
+	"welcome.video.headingDesc": "Pastikan callout tajuk mudah dilayari dalam Outline, pautan tajuk dan jadual kandungan.",
+	"welcome.video.themes": "Integrasi tema",
+	"welcome.video.themesDesc": "Layari callout yang disediakan oleh tema anda dan fahami cara penggayaan tema berfungsi dengan reka bentuk anda sendiri.",
 
 	"deleteModal.title": 'Padam callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1185,8 +1210,6 @@ export const ms: Record<string, string> = {
 		"Tetapan anda telah disimpan, tetapi salinan pemulihan peranti ini tidak dapat dikemas kini. Semak storan yang tersedia pada peranti ini. Callout Studio akan cuba lagi pada perubahan seterusnya anda.",
 	"notice.blockedWhilePaused":
 		"Penyimpanan dijeda, jadi perubahan ini tidak dapat disimpan buat masa ini. Selesaikan dahulu masalah penyimpanan yang ditunjukkan dalam tetapan Callout Studio.",
-	"welcome.syncNote":
-		"Sudah menggunakan Callout Studio pada peranti lain? Biarkan perkhidmatan penyegerakan anda selesai dahulu. Callout dan tetapan anda akan muncul di sini sebaik sahaja ia tiba.",
 	"settings.resetBackupFailed":
 		"Tiada yang ditetapkan semula: sandaran persediaan semasa anda tidak dapat disimpan dahulu. Semak storan yang tersedia, kemudian cuba lagi.",
 	"settings.resetNotSaved":

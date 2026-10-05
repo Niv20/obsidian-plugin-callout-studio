@@ -6,7 +6,7 @@
  * makes them 1:1 with a note — and what gave them a real editor context menu,
  * Format / Paragraph / Insert included. Those items call the editor API
  * directly, so none of them was ever stopped by `EditorState.readOnly`: a user
- * could right-click the "read-only" splash screen and turn its sample into a
+ * could right-click a "read-only" settings preview and turn its sample into a
  * bulleted list, an H1, a table, a code block or a callout.
  *
  * `settings/previewReadOnly.ts` is the guarantee — its transaction filter drops
@@ -85,8 +85,8 @@ const MUST_GO = [
  * Select all are exactly what a read-only preview should still offer, and Cut
  * and Paste are now inert, so they explain themselves with the notice instead
  * of sitting greyed out. `selection` holds Edit link / Edit tag, which only
- * move the selection. The rest is lookup and link handling — which is what
- * makes the splash screen's "Learn more" link work.
+ * move the selection. The rest is lookup and link handling for any links in
+ * the preview sample.
  */
 const MUST_STAY = [
 	"title",
@@ -163,7 +163,7 @@ describe("stripEditingItems", () => {
 
 	it("keeps the clipboard section, so Copy survives", () => {
 		// Stated on its own because it is the one a tighter filter would take
-		// by accident, and losing it would make the splash screen's text
+		// by accident, and losing it would make the preview's text
 		// unselectable in practice.
 		const menu = fakeMenu(EDITOR_MENU_SECTIONS);
 		stripEditingItems(menu);

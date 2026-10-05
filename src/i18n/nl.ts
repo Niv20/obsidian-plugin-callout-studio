@@ -35,26 +35,51 @@ export const nl: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(valt terug op standaard)",
 	"replaceModal.titleDelete": "Callout verwijderen",
 	"replaceModal.titleReplace": "In vault vervangen",
-
-	"welcome.tooltip": "Over Callout Studio",
-	"welcome.title": "Welkom bij Callout Studio!",
-	"welcome.tagline":
-		"Uw complete oplossing voor het maken, stylen en beheren van Obsidian-callouts.",
 	"importBanner.message":
 		"We hebben gemerkt dat u {{plugins}} gebruikt. Wilt u uw callouts importeren?",
 	"importBanner.action": "Importeren",
 	"importBanner.dismiss": "Negeren",
-	"welcome.previewTitle": "Bekijk het in actie",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Met Callout Studio kunt u callouts maken met een eigen icoon, kleuren en naam.\n\n" +
-		"U kunt deze callout op **drie** verschillende manieren gebruiken:\n\n" +
-		"## [!{{id}}] Callout als kop\n" +
-		"Om een kop om te zetten in een kop in callout-stijl, voegt u `[!type]` direct na de `#`'s toe.\n\n" +
-		"Wilt u een [!{{id}}]{inline callout} zoals deze? Voeg gewoon `[!type]{text}` midden in een zin toe, zonder uw schrijfflow te onderbreken.\n\n" +
-		"> [!{{id}}] Blok-callout\n" +
-		"> De klassieke callout werkt met precies dezelfde syntaxis die u al gewend bent: `> [!type]`.\n\n" +
-		"Callout Studio heeft nog veel meer te bieden! [Meer informatie]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Bekijk de tutorials van Callout Studio",
+	"welcome.title": "Welkom bij Callout Studio!",
+	"welcome.intro": "De plugin biedt veel, dus neem de tijd om te bekijken wat je interesseert.",
+	"welcome.tutorialCount": "Videotutorials ({{count}})",
+	"welcome.readMore": "Meer over {{title}}: {{link}}.",
+	"welcome.clickHere": "klik hier",
+	"welcome.invalidVideo": "Deze videolink is niet beschikbaar. Kies een andere tutorial.",
+	"welcome.video.threeTypes": "De drie callout-typen",
+	"welcome.video.threeTypesDesc": "Leer de syntaxis voor blok-, kop- en inline-callouts, met eigen titels en ingebouwde typen.",
+	"welcome.video.create": "Maak je eerste callout",
+	"welcome.video.createDesc": "Stel een naam, id's, pictogram en kleuren in en bekijk daarna een voorbeeld van je callout in alle drie de indelingen.",
+	"welcome.video.palettes": "Eigen kleurenpaletten",
+	"welcome.video.palettesDesc": "Maak effen, verloop- of transparante paletten en werk elke callout bij die ze gebruikt.",
+	"welcome.video.icons": "Eigen pictogrammen en emoji",
+	"welcome.video.iconsDesc": "Blader door pictogrambibliotheken, kies emoji of upload je eigen afbeelding voor een callout.",
+	"welcome.video.fallback": "Fallback-stijlen en detectie",
+	"welcome.video.fallbackDesc": "Kies hoe onbekende callouts eruitzien, scan je kluis op typen en pas de gevonden typen aan.",
+	"welcome.video.manage": "Bewerken, vervangen en verwijderen",
+	"welcome.video.manageDesc": "Bewerk een callout, vervang het gebruik ervan in je hele kluis of verwijder de stijl en behoud je tekst.",
+	"welcome.video.styles": "Globale opmaak",
+	"welcome.video.stylesDesc": "Pas randen, spatiëring, lettergrootte en vorm aan voor blok-, kop- en inline-callouts.",
+	"welcome.video.menus": "Het rechtsklikmenu",
+	"welcome.video.menusDesc": "Werk direct in je notities met callouts en kies welke menuacties verschijnen en in welke volgorde.",
+	"welcome.video.hotkeys": "Opdrachten en sneltoetsen",
+	"welcome.video.hotkeysDesc": "Voeg callouts in, omhul ze en haal de omhulling weg met opdrachten en wijs daarna sneltoetsen toe aan je meest gebruikte acties.",
+	"welcome.video.import": "Importeren, exporteren en delen",
+	"welcome.video.importDesc": "Verplaats je instellingen tussen kluizen, importeer uit andere callout-plugins en exporteer stijlen als CSS.",
+	"welcome.video.languages": "Talen",
+	"welcome.video.languagesDesc": "Kies de interfacetaal van de plugin of laat hem de taal volgen die je in Obsidian gebruikt.",
+	"welcome.video.find": "Callouts zoeken",
+	"welcome.video.findDesc": "Filter het gebruik van callouts op type en indeling en spring naar de exacte plek in je notities.",
+	"welcome.video.backups": "Synchronisatie en back-ups",
+	"welcome.video.backupsDesc": "Bewaar je instellingen op al je apparaten, exporteer een back-up en vergelijk of herstel eerdere versies.",
+	"welcome.video.dangerZone": "Gevarenzone",
+	"welcome.video.dangerZoneDesc": "Bekijk de omzettingen van kop- en inline-callouts naar standaard Markdown en zie wat het resetten van je instellingen verwijdert.",
+	"welcome.video.insert": "Snel invoegen",
+	"welcome.video.insertDesc": "Zoek in callout-voorbeelden, filter op bron en voeg een blok-callout in of bewerk deze vanuit de zijbalk.",
+	"welcome.video.heading": "Geavanceerde kop-callouts",
+	"welcome.video.headingDesc": "Houd kop-callouts gemakkelijk te navigeren in de outline, koplinks en inhoudsopgaven.",
+	"welcome.video.themes": "Thema-integratie",
+	"welcome.video.themesDesc": "Blader door de callouts van je thema en begrijp hoe de thema-opmaak samenwerkt met je eigen ontwerpen.",
 
 	"deleteModal.title": 'Callout "{{name}}" verwijderen?',
 	"deleteModal.bodyInUse":
@@ -1213,8 +1238,6 @@ export const nl: Record<string, string> = {
 		"Je instellingen zijn opgeslagen, maar de herstelkopie van dit apparaat kon niet worden bijgewerkt. Controleer de beschikbare opslagruimte op dit apparaat. Callout Studio probeert het opnieuw bij je volgende wijziging.",
 	"notice.blockedWhilePaused":
 		"Opslaan is gepauzeerd, dus deze wijziging kan nu niet worden bewaard. Los eerst het opslagprobleem op dat in de Callout Studio-instellingen wordt getoond.",
-	"welcome.syncNote":
-		"Gebruik je Callout Studio al op een ander apparaat? Laat je synchronisatiedienst eerst afronden. Je callouts en instellingen verschijnen hier zodra ze aankomen.",
 	"settings.resetBackupFailed":
 		"Er is niets gereset: er kon geen back-up van je huidige configuratie worden opgeslagen. Controleer de beschikbare opslagruimte en probeer het opnieuw.",
 	"settings.resetNotSaved":

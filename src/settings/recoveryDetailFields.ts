@@ -16,7 +16,7 @@ export const FIELDS: Readonly<Record<string, string>> = {
 	iconLibraries: "iconLibraries", order: "libraryOrder", hidden: "hiddenLibraries",
 	fallbackCalloutId: "fallbackCalloutId", language: "language", customPalettes: "customPalettes",
 	userImages: "userImages", customCommands: "customCommands", disabledFixedCommands: "disabledFixedCommands",
-	quickInsertSource: "quickInsertSource", welcomeSeen: "welcomeSeen",
+	quickInsertSource: "quickInsertSource", welcomeSeen: "welcomeSeen", tutorialWelcomeSeen: "welcomeSeen",
 	competitorImportBannerHandled: "competitorImportBannerHandled", iconSvgCache: "iconSvgCache",
 	enabled: "enabled", items: "items", svg: "artwork", format: "format", width: "width", height: "height",
 	monochrome: "monochrome", rev: "rev", addedAt: "addedAt", pack: "pack", variant: "variant",

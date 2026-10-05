@@ -57,11 +57,11 @@ export function buildCalloutListsScaffold(
 			.setName(t("settings.title"))
 			.setHeading();
 		headerSetting.settingEl.addClass("cs-header-row");
-		// Info icon opposite the title — reopens the welcome/splash screen.
+		// Info icon opposite the title — reopens the welcome video tutorials.
 		headerSetting.addExtraButton((btn) =>
 			btn
 				.setIcon("info")
-				.setTooltip(t("welcome.tooltip"))
+				.setTooltip(t("welcome.openTutorials"))
 				.onClick(() => new WelcomeModal(ctx.plugin).open()),
 		);
 

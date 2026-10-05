@@ -17,6 +17,8 @@ interface DeviceLocalState {
 	initialized: boolean;
 	/** Prevent the automatic welcome from reopening before data.json exists. */
 	welcomeSeen: boolean;
+	/** The tutorial welcome was shown here, independently of the legacy welcome. */
+	tutorialWelcomeSeen?: true;
 	/** The initial Find callouts tab was offered here, independently of data.json. */
 	occurrencesTabOffered?: true;
 	/** Pending is affected-user evidence; display waits for a durable migration. */
@@ -81,6 +83,7 @@ export class DeviceLocalStore {
 				v: 3,
 				initialized: parsed.v === 1 || parsed.initialized === true,
 				welcomeSeen: parsed.v === 3 && parsed.welcomeSeen === true,
+				...(parsed.v === 3 && parsed.tutorialWelcomeSeen === true ? { tutorialWelcomeSeen: true as const } : {}),
 				...(parsed.occurrencesTabOffered === true ? { occurrencesTabOffered: true as const } : {}),
 				...(parsed.externalCssRetirement === "pending" || parsed.externalCssRetirement === "seen"
 					? { externalCssRetirement: parsed.externalCssRetirement } : {}),
@@ -154,6 +157,20 @@ export class DeviceLocalStore {
 	markWelcomeSeen(): void {
 		this.state.welcomeSeen = true;
 		this.persist();
+	}
+
+	get hasSeenTutorialWelcome(): boolean {
+		return this.state.tutorialWelcomeSeen === true;
+	}
+
+	/** Report whether this one-time greeting can be remembered across launches. */
+	markTutorialWelcomeSeen(): boolean {
+		const previous = this.state.tutorialWelcomeSeen;
+		this.state.tutorialWelcomeSeen = true;
+		if (this.persist()) return true;
+		// A skipped greeting must not become seen through an unrelated later write.
+		if (previous !== true) delete this.state.tutorialWelcomeSeen;
+		return false;
 	}
 
 	get hasOfferedOccurrencesTab(): boolean {

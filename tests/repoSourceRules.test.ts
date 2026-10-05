@@ -555,7 +555,7 @@ describe("the network surface is exactly what the README discloses", () => {
 	 * Every file allowed to reach the network, and what it is for.
 	 *
 	 * This is the *implementation* of the README's "Network usage and privacy"
-	 * section, and the list is shorter than it looks: two of the four are the
+	 * section, and the list is shorter than it looks: two of the callers are the
 	 * same feature. Note that the fetching for Material Symbols lives in
 	 * `icons/packs/`, not in `IconFetchManager` — the manager owns the queue and
 	 * the cache, and the pack owns the request.
@@ -568,13 +568,15 @@ describe("the network surface is exactly what the README discloses", () => {
 		"src/icons/packs/materialFont.ts":
 			"the Material Symbols webfont, for the picker grid",
 		"src/i18n/LocaleStore.ts":
-			"the user's UI language — the one background fetch, argued for in AGENTS.md",
+			"the user's UI language — its background refresh is disclosed",
+		"src/settings/youtubeDuration.ts":
+			"public YouTube watch-page duration metadata when the tutorial modal opens",
 	};
 
 	it("only the disclosed files call requestUrl", () => {
 		// `allSourceFiles`, not `files`: the i18n tree is excluded from the
 		// *text* rules above because it is 32 tables of translated prose, but
-		// `LocaleStore.ts` lives there and is one of the four callers. Scanning
+		// `LocaleStore.ts` lives there and is a disclosed caller. Scanning
 		// the narrowed list would have quietly dropped it from the allowlist.
 		const callers = allSourceFiles()
 			.filter((f) => /\brequestUrl\s*\(/.test(f.code))
@@ -583,7 +585,7 @@ describe("the network surface is exactly what the README discloses", () => {
 		assert.deepStrictEqual(
 			callers,
 			Object.keys(ALLOWED_REQUEST_URL).sort(),
-			"the set of files that reach the network changed. Every addition needs a line in the README's 'Network usage and privacy' section and an entry here — and per AGENTS.md, must be triggered by an explicit user action with an offline fallback.",
+			"the set of files that reach the network changed. Every addition needs README privacy disclosure and an entry here, with an offline fallback. Automatic translation and welcome requests are documented exceptions.",
 		);
 	});
 
@@ -615,9 +617,8 @@ describe("the network surface is exactly what the README discloses", () => {
 	});
 
 	it("nothing evaluates remote code", () => {
-		// The developer policy that has no exceptions. `<link>` to a webfont is
-		// the one remote *resource* the plugin loads, and a stylesheet cannot
-		// execute; a remote script or an eval could.
+		// Remote fonts, thumbnails and the cross-origin tutorial player never
+		// authorize evaluating downloaded JavaScript in the plugin itself.
 		const bad: string[] = [];
 		for (const f of allSourceFiles()) {
 			for (const m of f.code.matchAll(
@@ -629,7 +630,7 @@ describe("the network surface is exactly what the README discloses", () => {
 		assert.deepStrictEqual(bad, [], report("Remote/dynamic code execution:", bad));
 	});
 
-	it("every remote host in the source is one of the disclosed four", () => {
+	it("every remote host in the source is on the disclosed list", () => {
 		// The call sites are checked above; this checks where they point.
 		// Hosts that only ever appear in a link the *user* clicks (the repo,
 		// the docs) are here too, because an `<a href>` is not a request the
@@ -643,6 +644,10 @@ describe("the network surface is exactly what the README discloses", () => {
 			"raw.githubusercontent.com", // their fallback
 			"fonts.gstatic.com", // Material Symbols artwork and webfont
 			"fonts.googleapis.com", // the webfont's stylesheet
+			"www.youtube.com", // public watch-page duration metadata
+			"youtu.be", // catalog share URLs; parsed locally into video IDs
+			"i.ytimg.com", // welcome thumbnails on opening
+			"www.youtube-nocookie.com", // first tutorial on opening, then selected videos
 			"github.com", // user-clicked links only
 			"docs.obsidian.md",
 			"obsidian.md",

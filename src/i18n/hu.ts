@@ -36,26 +36,51 @@ export const hu: Record<string, string> = {
 		"(visszaesik az alapértelmezettre)",
 	"replaceModal.titleDelete": "Callout törlése",
 	"replaceModal.titleReplace": "Csere a tárban",
-
-	"welcome.tooltip": "A Callout Studio névjegye",
-	"welcome.title": "Üdvözöljük a Callout Studióban!",
-	"welcome.tagline":
-		"Az Ön teljes körű megoldása az Obsidian callout-ok létrehozására, stílusozására és kezelésére.",
 	"importBanner.message":
 		"Észrevettük, hogy Ön a következőt használja: {{plugins}}. Szeretné importálni a callout-jait?",
 	"importBanner.action": "Importálás",
 	"importBanner.dismiss": "Elutasítás",
-	"welcome.previewTitle": "Nézze meg működés közben",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"A Callout Studio segítségével egyéni ikonnal, színekkel és névvel hozhat létre callout-okat.\n\n" +
-		"Ezt a callout-ot **három** különböző módon használhatja:\n\n" +
-		"## [!{{id}}] Callout címsorként\n" +
-		"Ahhoz, hogy bármely címsort callout stílusú címsorrá alakítsa, adja hozzá a `[!type]`-ot közvetlenül a `#` jelek után.\n\n" +
-		"Szeretne egy ilyen [!{{id}}]{beágyazott callout-ot}? Egyszerűen illessze be a `[!type]{text}`-ot egy mondat közepére, anélkül, hogy megszakítaná az írás menetét.\n\n" +
-		"> [!{{id}}] Blokk callout\n" +
-		"> A klasszikus callout ugyanazzal a szintaxissal működik, amit már megszokott: `> [!type]`.\n\n" +
-		"A Callout Studio ennél sokkal többet is kínál! [Tudjon meg többet]({{repoUrl}}).\n",
+	"welcome.openTutorials": "A Callout Studio oktatóanyagainak megtekintése",
+	"welcome.title": "Üdvözöl a Callout Studio!",
+	"welcome.intro": "A bővítmény sokat kínál, ezért nyugodtan nézd meg azt, ami érdekel.",
+	"welcome.tutorialCount": "Oktatóvideók ({{count}})",
+	"welcome.readMore": "Ha többet szeretnél tudni erről: {{title}}, {{link}}.",
+	"welcome.clickHere": "kattints ide",
+	"welcome.invalidVideo": "Ez a videólink nem érhető el. Válassz másik oktatóanyagot.",
+	"welcome.video.threeTypes": "A három callout-típus",
+	"welcome.video.threeTypesDesc": "Ismerd meg a blokk-, címsor- és beágyazott calloutok szintaxisát egyéni címekkel és beépített típusokkal.",
+	"welcome.video.create": "Hozd létre az első calloutodat",
+	"welcome.video.createDesc": "Adj meg nevet, azonosítókat, ikont és színeket, majd nézd meg a calloutot mindhárom formátumban.",
+	"welcome.video.palettes": "Egyéni színpaletták",
+	"welcome.video.palettesDesc": "Hozz létre egyszínű, színátmenetes vagy átlátszó palettákat, és frissítsd az őket használó calloutokat.",
+	"welcome.video.icons": "Egyéni ikonok és emojik",
+	"welcome.video.iconsDesc": "Böngéssz az ikonkönyvtárakban, válassz emojit, vagy tölts fel saját képet a calloutnak.",
+	"welcome.video.fallback": "Tartalék stílusok és felderítés",
+	"welcome.video.fallbackDesc": "Válaszd ki, hogyan nézzenek ki az ismeretlen calloutok, vizsgáld át a tárolót típusok után, és szabd testre a talált típusokat.",
+	"welcome.video.manage": "Szerkesztés, csere és törlés",
+	"welcome.video.manageDesc": "Szerkessz egy calloutot, cseréld le a használatait az egész tárolóban, vagy távolítsd el a stílusát a szöveged megtartásával.",
+	"welcome.video.styles": "Globális stílus",
+	"welcome.video.stylesDesc": "Állítsd be a szegélyeket, a térközt, a betűméretet és az alakot a blokk-, címsor- és beágyazott calloutokhoz.",
+	"welcome.video.menus": "A jobb gombos menü",
+	"welcome.video.menusDesc": "Dolgozz a calloutokkal közvetlenül a jegyzeteidben, és válaszd ki, mely műveletek jelenjenek meg a menüben, milyen sorrendben.",
+	"welcome.video.hotkeys": "Parancsok és gyorsbillentyűk",
+	"welcome.video.hotkeysDesc": "Szúrj be, burkolj és bontsz ki calloutokat parancsokkal, majd rendelj gyorsbillentyűket a leggyakrabban használt műveletekhez.",
+	"welcome.video.import": "Importálás, exportálás és megosztás",
+	"welcome.video.importDesc": "Vidd át a beállításaidat tárolók között, importálj más callout-bővítményekből, és exportáld a stílusokat CSS-ként.",
+	"welcome.video.languages": "Nyelvek",
+	"welcome.video.languagesDesc": "Válaszd ki a bővítmény felületi nyelvét, vagy hagyd, hogy az Obsidianban használt nyelvet kövesse.",
+	"welcome.video.find": "Calloutok keresése",
+	"welcome.video.findDesc": "Szűrd a calloutok használatát típus és formátum szerint, majd ugorj a pontos helyükre a jegyzeteidben.",
+	"welcome.video.backups": "Szinkronizálás és biztonsági mentések",
+	"welcome.video.backupsDesc": "Tartsd meg a beállításaidat az eszközök között, exportálj biztonsági mentést, és hasonlítsd össze vagy állítsd vissza a korábbi verziókat.",
+	"welcome.video.dangerZone": "Veszélyzóna",
+	"welcome.video.dangerZoneDesc": "Tekintsd át a címsor- és beágyazott calloutok szabványos Markdownná alakítását, és nézd meg, mit töröl a beállítások visszaállítása.",
+	"welcome.video.insert": "Gyors beszúrás",
+	"welcome.video.insertDesc": "Keress calloutelőnézetek között, szűrj forrás szerint, és szúrj be vagy szerkessz blokk-calloutot az oldalsávról.",
+	"welcome.video.heading": "Speciális címsor-calloutok",
+	"welcome.video.headingDesc": "Tartsd a címsor-calloutokat könnyen böngészhetővé a vázlatban, a címsorhivatkozásokban és a tartalomjegyzékekben.",
+	"welcome.video.themes": "Témaintegráció",
+	"welcome.video.themesDesc": "Böngészd a témád által biztosított calloutokat, és értsd meg, hogyan működik a téma stílusa a saját terveiddel.",
 
 	"deleteModal.title": '"{{name}}" callout törlése?',
 	"deleteModal.bodyInUse":
@@ -1202,7 +1227,6 @@ export const hu: Record<string, string> = {
 	"recovery.stale": "Semmi nem lett visszaállítva: a beállításai megváltoztak, vagy nem voltak ellenőrizhetők. Nyissa meg újra ezt az ablakot, és nézze át a listát.",
 	"notice.recoveryCopyStale": "A beállításai mentésre kerültek, de ennek az eszköznek a helyreállítási másolatát nem sikerült frissíteni. Ellenőrizze a rendelkezésre álló tárhelyet ezen az eszközön. A Callout Studio a következő módosításnál újra megpróbálja.",
 	"notice.blockedWhilePaused": "A mentés szüneteltetve van, ezért ez a módosítás jelenleg nem tartható meg. Először oldja meg a Callout Studio beállításaiban megjelenő mentési problémát.",
-	"welcome.syncNote": "Már használja a Callout Studiót egy másik eszközön? Hagyja, hogy a szinkronizálási szolgáltatása előbb befejeződjön. A callout-jai és beállításai megjelennek itt, amint megérkeznek.",
 	"settings.resetBackupFailed": "Semmi nem lett visszaállítva: a jelenlegi konfigurációjáról nem sikerült előbb mentést készíteni. Ellenőrizze a rendelkezésre álló tárhelyet, majd próbálja újra.",
 	"settings.resetNotSaved": "A visszaállítás megjelenik, de még nem sikerült elmenteni, ezért a beállítási fájlja még mindig az előző konfigurációt tartalmazza. Ellenőrizze a mentés állapotát a Callout Studio beállításaiban.",
 	"confirm.titleResetEverything": "Minden visszaállítása",

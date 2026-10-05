@@ -35,26 +35,51 @@ export const ja: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "（デフォルトにフォールバック）",
 	"replaceModal.titleDelete": "calloutを削除",
 	"replaceModal.titleReplace": "vaultで置き換え",
-
-	"welcome.tooltip": "Callout Studioについて",
-	"welcome.title": "Callout Studioへようこそ！",
-	"welcome.tagline":
-		"Obsidianのcalloutを作成、スタイル設定、管理するための総合ソリューション。",
 	"importBanner.message":
 		"{{plugins}} をお使いのようです。calloutをインポートしますか?",
 	"importBanner.action": "インポート",
 	"importBanner.dismiss": "閉じる",
-	"welcome.previewTitle": "実際の動作を見る",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studioを使えば、アイコン・色・名前をカスタマイズしたcalloutを作成できます。\n\n" +
-		"このcalloutは**3つ**の異なる方法で使用できます。\n\n" +
-		"## [!{{id}}] 見出し callout\n" +
-		"見出しをcallout風にするには、`#`の直後に`[!type]`を追加します。\n\n" +
-		"この[!{{id}}]{インライン callout}のようにしたい場合は、文章の途中に`[!type]{text}`を追加するだけです。流れを止める必要はありません。\n\n" +
-		"> [!{{id}}] ブロック callout\n" +
-		"> 従来のcalloutも、これまでと同じ構文でそのまま使えます：`> [!type]`。\n\n" +
-		"Callout Studioにはまだまだ多くの機能があります！[詳しく見る]({{repoUrl}})。\n",
+	"welcome.openTutorials": "Callout Studioのチュートリアルを見る",
+	"welcome.title": "Callout Studioへようこそ!",
+	"welcome.intro": "このプラグインにはたくさんの機能があります。気になるものをゆっくりご覧ください。",
+	"welcome.tutorialCount": "動画チュートリアル({{count}})",
+	"welcome.readMore": "{{title}}の詳細は{{link}}。",
+	"welcome.clickHere": "こちらをクリック",
+	"welcome.invalidVideo": "この動画リンクは利用できません。別のチュートリアルを選んでください。",
+	"welcome.video.threeTypes": "3種類のcallout",
+	"welcome.video.threeTypesDesc": "ブロック、見出し、インラインのcalloutの構文を、カスタムタイトルや組み込みタイプとあわせて学びます。",
+	"welcome.video.create": "最初のcalloutを作成",
+	"welcome.video.createDesc": "名前、ID、アイコン、色を設定し、3つの形式すべてでcalloutをプレビューします。",
+	"welcome.video.palettes": "カスタムカラーパレット",
+	"welcome.video.palettesDesc": "単色、グラデーション、透明のパレットを作成し、それを使うすべてのcalloutを更新します。",
+	"welcome.video.icons": "カスタムアイコンと絵文字",
+	"welcome.video.iconsDesc": "アイコンライブラリを閲覧し、絵文字を選ぶか、calloutに独自の画像をアップロードします。",
+	"welcome.video.fallback": "フォールバックスタイルと検出",
+	"welcome.video.fallbackDesc": "未知のcalloutの見た目を選び、Vaultをスキャンしてタイプを見つけ、見つかったものをカスタマイズします。",
+	"welcome.video.manage": "編集、置換、削除",
+	"welcome.video.manageDesc": "calloutを編集し、Vault全体で使用箇所を置き換えるか、テキストを残したままスタイルを削除します。",
+	"welcome.video.styles": "グローバルスタイル",
+	"welcome.video.stylesDesc": "ブロック、見出し、インラインのcalloutの枠線、間隔、フォントサイズ、形を調整します。",
+	"welcome.video.menus": "右クリックメニュー",
+	"welcome.video.menusDesc": "ノート内で直接calloutを操作し、メニューに表示する操作とその順序を選びます。",
+	"welcome.video.hotkeys": "コマンドとホットキー",
+	"welcome.video.hotkeysDesc": "コマンドでcalloutを挿入、ラップ、アンラップし、よく使う操作にショートカットを割り当てます。",
+	"welcome.video.import": "インポート、エクスポート、共有",
+	"welcome.video.importDesc": "Vault間で設定を移したり、他のcalloutプラグインからインポートしたり、スタイルをCSSとしてエクスポートしたりします。",
+	"welcome.video.languages": "言語",
+	"welcome.video.languagesDesc": "プラグインの表示言語を選ぶか、Obsidianで使っている言語に合わせます。",
+	"welcome.video.find": "calloutを探す",
+	"welcome.video.findDesc": "calloutの使用箇所をタイプと形式で絞り込み、ノート内の正確な位置へ移動します。",
+	"welcome.video.backups": "同期とバックアップ",
+	"welcome.video.backupsDesc": "デバイス間で設定を保ち、バックアップをエクスポートし、以前のバージョンを比較または復元します。",
+	"welcome.video.dangerZone": "危険な操作",
+	"welcome.video.dangerZoneDesc": "見出しとインラインのcalloutを標準のMarkdownに変換する内容を確認し、設定のリセットで何が削除されるかを確認します。",
+	"welcome.video.insert": "クイック挿入",
+	"welcome.video.insertDesc": "calloutのプレビューを検索し、ソースで絞り込み、リボンからブロックcalloutを挿入または編集します。",
+	"welcome.video.heading": "高度な見出しcallout",
+	"welcome.video.headingDesc": "見出しcalloutを、アウトライン、見出しリンク、目次で簡単にたどれるようにします。",
+	"welcome.video.themes": "テーマ連携",
+	"welcome.video.themesDesc": "テーマが提供するcalloutを閲覧し、テーマのスタイルが独自のデザインとどう連携するかを理解します。",
 
 	"deleteModal.title": 'callout "{{name}}" を削除しますか？',
 	"deleteModal.bodyInUse":
@@ -1180,7 +1205,6 @@ export const ja: Record<string, string> = {
 	"recovery.stale": "何も復元されませんでした。設定が変更されたか、確認できませんでした。このウィンドウを再度開いて一覧を確認してください。",
 	"notice.recoveryCopyStale": "設定は保存されましたが、この端末の復元用コピーを更新できませんでした。この端末で利用可能なストレージを確認してください。Callout Studioは次回の変更時に再試行します。",
 	"notice.blockedWhilePaused": "保存が一時停止しているため、この変更は今は保持できません。まずCallout Studioの設定に表示されている保存の問題を解決してください。",
-	"welcome.syncNote": "他の端末ですでにCallout Studioを使っていますか？まず同期サービスを完了させてください。calloutと設定は到着次第ここに表示されます。",
 	"settings.resetBackupFailed": "何もリセットされませんでした。現在の設定一式のバックアップを先に保存できませんでした。利用可能なストレージを確認してから再試行してください。",
 	"settings.resetNotSaved": "リセットは表示されていますが、まだ保存できていないため、設定ファイルには依然として以前の設定一式が保持されています。Callout Studioの設定で保存状況を確認してください。",
 	"confirm.titleResetEverything": "すべてリセット",

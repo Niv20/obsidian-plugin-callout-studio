@@ -48,6 +48,9 @@ function launch(options: {
 	firstRunCompleted?: boolean;
 	welcomeSeen?: boolean;
 	localWelcomeSeen?: boolean;
+	tutorialWelcomeSeen?: boolean;
+	localTutorialWelcomeSeen?: boolean;
+	tutorialMarkFails?: boolean;
 	competitorImportBannerHandled?: boolean;
 	/** Dismissed on this device while it had no settings file to record it in. */
 	localBannerHandled?: boolean;
@@ -64,11 +67,13 @@ function launch(options: {
 		watchers: 0,
 		initialized: 0,
 		welcomeMarks: 0,
+		tutorialWelcomeMarks: 0,
 		sidebarOffers: 0,
 		sidebarMarks: 0,
 		conversionCleanups: 0,
 	};
 	let localWelcomeSeen = options.localWelcomeSeen ?? false;
+	let localTutorialWelcomeSeen = options.localTutorialWelcomeSeen ?? false;
 	let localBannerHandled = options.localBannerHandled ?? false;
 	let tabOffered = false;
 
@@ -97,6 +102,8 @@ function launch(options: {
 	if (options.frozen ?? true) settingsWriter.freeze();
 
 	registry.settings.welcomeSeen = options.welcomeSeen ?? false;
+	// Unrelated launch checks do not need a modal; routing cases opt in below.
+	registry.settings.tutorialWelcomeSeen = options.tutorialWelcomeSeen ?? true;
 	registry.settings.competitorImportBannerHandled =
 		options.competitorImportBannerHandled ?? false;
 
@@ -129,6 +136,13 @@ function launch(options: {
 				localWelcomeSeen = true;
 				seen.welcomeMarks++;
 			},
+			get hasSeenTutorialWelcome(): boolean { return localTutorialWelcomeSeen; },
+			markTutorialWelcomeSeen: (): boolean => {
+				seen.tutorialWelcomeMarks++;
+				if (options.tutorialMarkFails) return false;
+				localTutorialWelcomeSeen = true;
+				return true;
+			},
 			get hasHandledImportBanner(): boolean { return localBannerHandled; },
 			markImportBannerHandled: (): void => { localBannerHandled = true; },
 		},
@@ -154,7 +168,7 @@ function launch(options: {
 
 describe("the fresh-install freeze is settled at onLayoutReady", () => {
 	it("thaws a launch whose folder really is still empty", async () => {
-		// `welcomeSeen` is already up so the splash itself stays out of this
+		// The tutorial marker is already up so the welcome modal stays out of this
 		// file — what it would then do with the thawed writer is
 		// `syncMobileWipe.test.ts`'s subject. The thaw happens in
 		// `confirmFreshInstall`, before the greeting either way.
@@ -183,17 +197,19 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 		);
 	});
 
-	it("greets nobody on a launch that was not a fresh install", async () => {
-		const l = launch({ welcomeSeen: false });
+	it("does not offer tutorials while a previously used device's settings remain missing", async () => {
+		const l = launch({ welcomeSeen: false, tutorialWelcomeSeen: false });
 
 		await l.run(false);
 
 		assert.strictEqual(
 			l.seen.saves,
 			0,
-			"the welcome flag is the first write a fresh install makes",
+			"a tutorial offer must not write settings",
 		);
 		assert.strictEqual(l.plugin.settings.welcomeSeen, false);
+		assert.strictEqual(l.plugin.settings.tutorialWelcomeSeen, false);
+		assert.strictEqual(l.seen.tutorialWelcomeMarks, 0);
 		assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), false);
 		assert.strictEqual(l.seen.sidebarOffers, 0);
 		assert.strictEqual(l.seen.conversionCleanups, 1);
@@ -202,13 +218,15 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
 		WelcomeModal.prototype.prompt = () => Promise.resolve();
 		try {
-			const l = launch({ welcomeSeen: false });
+			const l = launch({ welcomeSeen: false, tutorialWelcomeSeen: false });
 			await l.run(true);
 			assert.strictEqual(l.plugin.settings.welcomeSeen, true);
+			assert.strictEqual(l.plugin.settings.tutorialWelcomeSeen, true);
 			assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), true);
 			assert.strictEqual(l.seen.saves, 0);
 			assert.strictEqual(l.seen.initialized, 0);
 			assert.strictEqual(l.seen.welcomeMarks, 1);
+			assert.strictEqual(l.seen.tutorialWelcomeMarks, 1);
 			assert.strictEqual(l.seen.sidebarOffers, 1);
 			assert.strictEqual(l.seen.sidebarMarks, 1);
 		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
@@ -263,7 +281,7 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 		WelcomeModal.prototype.prompt = () => Promise.resolve();
 		console.warn = () => undefined;
 		try {
-			const l = launch({ sidebarRejects: true });
+			const l = launch({ sidebarRejects: true, tutorialWelcomeSeen: false });
 			await l.run(true);
 			assert.strictEqual(l.seen.sidebarOffers, 1);
 			assert.strictEqual(l.seen.welcomeMarks, 1);
@@ -284,5 +302,80 @@ describe("launch never discovers callouts", () => {
 			assert.deepStrictEqual(h.seen.prunes, []);
 			assert.strictEqual(h.seen.watchers, 0);
 		}
+	});
+});
+
+describe("the tutorial welcome is offered only once", () => {
+	for (const welcomeSeen of [false, true]) {
+		it(`offers an upgrade once even when legacy welcomeSeen is ${welcomeSeen}`, async () => {
+			const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
+			const l = launch({ frozen: false, welcomeSeen, tutorialWelcomeSeen: false });
+			let prompts = 0;
+			WelcomeModal.prototype.prompt = () => {
+				prompts++;
+				assert.strictEqual(l.plugin.localState.hasSeenTutorialWelcome, true, "record before opening");
+				return Promise.resolve();
+			};
+			try {
+				await l.run(false);
+				await l.run(false);
+				assert.strictEqual(prompts, 1);
+				assert.strictEqual(l.seen.tutorialWelcomeMarks, 1);
+				assert.strictEqual(l.plugin.settings.tutorialWelcomeSeen, true);
+				assert.strictEqual(l.plugin.settings.welcomeSeen, welcomeSeen);
+				assert.strictEqual(l.seen.welcomeMarks, 0);
+				assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), welcomeSeen);
+				assert.strictEqual(l.seen.sidebarOffers, 0);
+				assert.strictEqual(l.seen.saves, 0);
+			} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
+		});
+	}
+
+	it("does not repeat after a fresh installation is later reloaded or upgraded", async () => {
+		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
+		let prompts = 0;
+		WelcomeModal.prototype.prompt = () => { prompts++; return Promise.resolve(); };
+		try {
+			const first = launch({ tutorialWelcomeSeen: false });
+			await first.run(true);
+			assert.strictEqual(prompts, 1);
+			// No authored settings file exists yet: only local memory survives.
+			const untouchedReload = launch({ tutorialWelcomeSeen: false,
+				localWelcomeSeen: true, localTutorialWelcomeSeen: first.plugin.localState.hasSeenTutorialWelcome });
+			await untouchedReload.run(true);
+			const upgraded = launch({ frozen: false, welcomeSeen: true, tutorialWelcomeSeen: false,
+				localTutorialWelcomeSeen: first.plugin.localState.hasSeenTutorialWelcome });
+			await upgraded.run(false);
+			assert.strictEqual(prompts, 1);
+			assert.strictEqual(upgraded.plugin.settings.tutorialWelcomeSeen, true);
+			assert.strictEqual(first.seen.saves + untouchedReload.seen.saves + upgraded.seen.saves, 0);
+		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
+	});
+
+	it("mirrors synced tutorial history locally so older settings cannot reopen it", async () => {
+		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
+		WelcomeModal.prototype.prompt = () => { assert.fail("already seen tutorials must stay closed"); };
+		try {
+			const l = launch({ frozen: false, tutorialWelcomeSeen: true });
+			await l.run(false);
+			assert.strictEqual(l.plugin.localState.hasSeenTutorialWelcome, true);
+			l.plugin.settings.tutorialWelcomeSeen = false;
+			await l.run(false);
+			assert.strictEqual(l.plugin.settings.tutorialWelcomeSeen, true);
+			assert.strictEqual(l.seen.tutorialWelcomeMarks, 1);
+			assert.strictEqual(l.seen.saves, 0);
+		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
+	});
+
+	it("skips the automatic offer if its marker cannot survive a restart", async () => {
+		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
+		WelcomeModal.prototype.prompt = () => { assert.fail("cannot promise a once-only offer without storage"); };
+		try {
+			const l = launch({ frozen: false, tutorialWelcomeSeen: false, tutorialMarkFails: true });
+			await l.run(false);
+			assert.strictEqual(l.seen.tutorialWelcomeMarks, 1);
+			assert.strictEqual(l.plugin.settings.tutorialWelcomeSeen, false);
+			assert.strictEqual(l.seen.saves, 0);
+		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
 	});
 });

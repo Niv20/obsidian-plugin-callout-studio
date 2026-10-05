@@ -35,26 +35,51 @@ export const cs: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(vrátí se na výchozí)",
 	"replaceModal.titleDelete": "Smazat callout",
 	"replaceModal.titleReplace": "Nahradit ve vaultu",
-
-	"welcome.tooltip": "O aplikaci Callout Studio",
-	"welcome.title": "Vítejte v Callout Studio!",
-	"welcome.tagline":
-		"Vaše komplexní řešení pro vytváření, stylování a správu calloutů v Obsidianu.",
 	"importBanner.message":
 		"Všimli jsme si, že používáte {{plugins}}. Chcete importovat své callouty?",
 	"importBanner.action": "Importovat",
 	"importBanner.dismiss": "Zavřít",
-	"welcome.previewTitle": "Podívejte se na to v akci",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio vám umožňuje vytvářet callouty s vlastní ikonou, barvami a názvem.\n\n" +
-		"Tento callout můžete použít **třemi** různými způsoby:\n\n" +
-		"## [!{{id}}] Callout jako nadpis\n" +
-		"Chcete-li proměnit jakýkoli nadpis v nadpis ve stylu callout, přidejte `[!type]` hned za `#`.\n\n" +
-		"Chcete [!{{id}}]{vložený callout}, jako je tento? Stačí přidat `[!type]{text}` doprostřed věty, aniž byste přerušili plynulost textu.\n\n" +
-		"> [!{{id}}] Blokový callout\n" +
-		"> Klasický callout funguje se stejnou syntaxí, na kterou jste už zvyklí: `> [!type]`.\n\n" +
-		"Callout Studio má mnohem víc co nabídnout! [Zjistit více]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Sledujte návody ke Callout Studio",
+	"welcome.title": "Vítejte v Callout Studio!",
+	"welcome.intro": "Plugin nabízí hodně, takže si v klidu pusťte to, co vás zajímá.",
+	"welcome.tutorialCount": "Videonávody ({{count}})",
+	"welcome.readMore": "Další informace o tématu {{title}}: {{link}}.",
+	"welcome.clickHere": "klikněte sem",
+	"welcome.invalidVideo": "Tento odkaz na video není dostupný. Vyberte jiný návod.",
+	"welcome.video.threeTypes": "Tři typy callout",
+	"welcome.video.threeTypesDesc": "Seznamte se se syntaxí blokových, nadpisových a vložených callout, s vlastními názvy a vestavěnými typy.",
+	"welcome.video.create": "Vytvořte svůj první callout",
+	"welcome.video.createDesc": "Nastavte název, ID, ikonu a barvy a pak si callout prohlédněte ve všech třech formátech.",
+	"welcome.video.palettes": "Vlastní barevné palety",
+	"welcome.video.palettesDesc": "Vytvářejte plné, přechodové nebo průhledné palety a aktualizujte každý callout, který je používá.",
+	"welcome.video.icons": "Vlastní ikony a emoji",
+	"welcome.video.iconsDesc": "Procházejte knihovny ikon, vybírejte emoji nebo nahrajte vlastní obrázek pro callout.",
+	"welcome.video.fallback": "Záložní styly a vyhledávání",
+	"welcome.video.fallbackDesc": "Zvolte, jak vypadají neznámé callout, prohledejte trezor kvůli typům a upravte ty, které najdete.",
+	"welcome.video.manage": "Úpravy, nahrazení a mazání",
+	"welcome.video.manageDesc": "Upravte callout, nahraďte jeho použití v celém trezoru nebo odstraňte jeho styl a ponechte svůj text.",
+	"welcome.video.styles": "Globální stylování",
+	"welcome.video.stylesDesc": "Upravte ohraničení, mezery, velikost písma a tvar blokových, nadpisových a vložených callout.",
+	"welcome.video.menus": "Nabídka po kliknutí pravým tlačítkem",
+	"welcome.video.menusDesc": "Pracujte s callout přímo v poznámkách a vyberte, které akce se v nabídce zobrazí a v jakém pořadí.",
+	"welcome.video.hotkeys": "Příkazy a klávesové zkratky",
+	"welcome.video.hotkeysDesc": "Vkládejte, obalujte a rozbalujte callout pomocí příkazů a pak přiřaďte zkratky akcím, které používáte nejčastěji.",
+	"welcome.video.import": "Import, export a sdílení",
+	"welcome.video.importDesc": "Přeneste své nastavení mezi trezory, importujte z jiných pluginů pro callout a exportujte styly jako CSS.",
+	"welcome.video.languages": "Jazyky",
+	"welcome.video.languagesDesc": "Vyberte jazyk rozhraní pluginu, nebo nechte plugin následovat jazyk, který používáte v Obsidianu.",
+	"welcome.video.find": "Hledání callout",
+	"welcome.video.findDesc": "Filtrujte použití callout podle typu a formátu a pak přejděte na jejich přesné místo v poznámkách.",
+	"welcome.video.backups": "Synchronizace a zálohy",
+	"welcome.video.backupsDesc": "Zachovejte své nastavení napříč zařízeními, exportujte zálohu a porovnávejte nebo obnovujte dřívější verze.",
+	"welcome.video.dangerZone": "Nebezpečná zóna",
+	"welcome.video.dangerZoneDesc": "Zkontrolujte převody nadpisových a vložených callout na standardní Markdown a zjistěte, co resetování nastavení odstraní.",
+	"welcome.video.insert": "Rychlé vložení",
+	"welcome.video.insertDesc": "Prohledávejte náhledy callout, filtrujte podle zdroje a vkládejte nebo upravujte blokový callout z postranního panelu.",
+	"welcome.video.heading": "Pokročilé nadpisové callout",
+	"welcome.video.headingDesc": "Zajistěte, aby se nadpisové callout dobře procházely v osnově, odkazech na nadpisy a obsazích.",
+	"welcome.video.themes": "Integrace s motivy",
+	"welcome.video.themesDesc": "Prohlédněte si callout dodávané vaším motivem a zjistěte, jak styl motivu spolupracuje s vašimi vlastními návrhy.",
 
 	"deleteModal.title": 'Smazat callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1189,7 +1214,6 @@ export const cs: Record<string, string> = {
 	"recovery.stale": "Nic nebylo obnoveno: vaše nastavení se změnilo nebo ho nešlo zkontrolovat. Otevřete toto okno znovu a projděte seznam.",
 	"notice.recoveryCopyStale": "Vaše nastavení bylo uloženo, ale záložní kopii pro obnovu na tomto zařízení se nepodařilo aktualizovat. Zkontrolujte dostupný úložný prostor na tomto zařízení. Callout Studio to zkusí znovu při vaší příští změně.",
 	"notice.blockedWhilePaused": "Ukládání je pozastaveno, takže tuto změnu nyní nelze zachovat. Nejprve vyřešte problém s ukládáním zobrazený v nastavení Callout Studia.",
-	"welcome.syncNote": "Už používáte Callout Studio na jiném zařízení? Nechte nejprve synchronizační službu doběhnout. Vaše callouty a nastavení se zde objeví, jakmile dorazí.",
 	"settings.resetBackupFailed": "Nic nebylo resetováno: nejprve se nepodařilo uložit zálohu vaší aktuální konfigurace. Zkontrolujte dostupný úložný prostor a poté to zkuste znovu.",
 	"settings.resetNotSaved": "Resetování je zobrazeno, ale ještě se nepodařilo ho uložit, takže váš soubor s nastavením stále obsahuje předchozí konfiguraci. Zkontrolujte stav ukládání v nastavení Callout Studia.",
 	"confirm.titleResetEverything": "Resetovat vše",

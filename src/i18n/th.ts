@@ -87,26 +87,51 @@ export const th: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(กลับไปใช้ค่าเริ่มต้น)",
 	"replaceModal.titleDelete": "ลบ callout",
 	"replaceModal.titleReplace": "แทนที่ใน vault",
-
-	"welcome.tooltip": "เกี่ยวกับ Callout Studio",
-	"welcome.title": "ยินดีต้อนรับสู่ Callout Studio!",
-	"welcome.tagline":
-		"โซลูชันครบวงจรของคุณสำหรับสร้าง จัดรูปแบบ และจัดการ callout ใน Obsidian",
 	"importBanner.message":
 		"เราสังเกตเห็นว่าคุณใช้ {{plugins}} คุณต้องการนำเข้า callout ของคุณหรือไม่?",
 	"importBanner.action": "นำเข้า",
 	"importBanner.dismiss": "ปิด",
-	"welcome.previewTitle": "ดูการทำงานจริง",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio ช่วยให้คุณสร้าง callout ที่มีไอคอน สี และชื่อที่กำหนดเองได้\n\n" +
-		"คุณสามารถใช้ callout นี้ได้ **สาม** รูปแบบที่แตกต่างกัน:\n\n" +
-		"## [!{{id}}] callout เป็นหัวข้อ\n" +
-		"หากต้องการเปลี่ยนหัวข้อใดๆ ให้เป็นหัวข้อสไตล์ callout ให้เพิ่ม `[!type]` ต่อจาก `#` ทันที\n\n" +
-		"ต้องการ [!{{id}}]{callout แบบอินไลน์} แบบนี้ไหม? แค่เพิ่ม `[!type]{text}` กลางประโยคได้เลย โดยไม่ต้องขัดจังหวะการเขียนของคุณ\n\n" +
-		"> [!{{id}}] callout แบบบล็อก\n" +
-		"> callout แบบคลาสสิกยังคงทำงานด้วยไวยากรณ์แบบเดียวกับที่คุณคุ้นเคยอยู่แล้ว: `> [!type]`\n\n" +
-		"Callout Studio ยังมีอะไรให้มากกว่านี้อีกมาก! [เรียนรู้เพิ่มเติม]({{repoUrl}})\n",
+	"welcome.openTutorials": "ดูบทเรียน Callout Studio",
+	"welcome.title": "ยินดีต้อนรับสู่ Callout Studio!",
+	"welcome.intro": "ปลั๊กอินนี้มีสิ่งให้ใช้มากมาย ดังนั้นลองใช้เวลาดูในส่วนที่คุณสนใจได้เลย",
+	"welcome.tutorialCount": "วิดีโอสอนใช้งาน ({{count}})",
+	"welcome.readMore": "หากต้องการทราบเพิ่มเติมเกี่ยวกับ {{title}} {{link}}",
+	"welcome.clickHere": "คลิกที่นี่",
+	"welcome.invalidVideo": "ลิงก์วิดีโอนี้ใช้งานไม่ได้ โปรดเลือกบทเรียนอื่น",
+	"welcome.video.threeTypes": "callout สามประเภท",
+	"welcome.video.threeTypesDesc": "เรียนรู้ไวยากรณ์ของ callout แบบบล็อก แบบหัวข้อ และแบบอินไลน์ พร้อมชื่อที่กำหนดเองและประเภทในตัว",
+	"welcome.video.create": "สร้าง callout แรกของคุณ",
+	"welcome.video.createDesc": "ตั้งชื่อ ID ไอคอน และสี แล้วดูตัวอย่าง callout ในทั้งสามรูปแบบ",
+	"welcome.video.palettes": "ชุดสีที่กำหนดเอง",
+	"welcome.video.palettesDesc": "สร้างชุดสีแบบทึบ ไล่เฉด หรือโปร่งใส และอัปเดตทุก callout ที่ใช้ชุดสีนั้น",
+	"welcome.video.icons": "ไอคอนและอีโมจิที่กำหนดเอง",
+	"welcome.video.iconsDesc": "เรียกดูคลังไอคอน เลือกอีโมจิ หรืออัปโหลดภาพของคุณเองสำหรับ callout",
+	"welcome.video.fallback": "สไตล์สำรองและการค้นหา",
+	"welcome.video.fallbackDesc": "เลือกว่า callout ที่ไม่รู้จักจะมีหน้าตาอย่างไร สแกนคลังเพื่อหาประเภท และปรับแต่งประเภทที่พบ",
+	"welcome.video.manage": "การแก้ไข การแทนที่ และการลบ",
+	"welcome.video.manageDesc": "แก้ไข callout แทนที่การใช้งานทั่วทั้งคลัง หรือเอาสไตล์ออกโดยยังคงข้อความของคุณไว้",
+	"welcome.video.styles": "การจัดสไตล์ส่วนกลาง",
+	"welcome.video.stylesDesc": "ปรับเส้นขอบ ระยะห่าง ขนาดตัวอักษร และรูปทรงของ callout แบบบล็อก แบบหัวข้อ และแบบอินไลน์",
+	"welcome.video.menus": "เมนูคลิกขวา",
+	"welcome.video.menusDesc": "ทำงานกับ callout ได้โดยตรงในโน้ตของคุณ และเลือกว่าจะให้การทำงานใดปรากฏในเมนูและเรียงลำดับอย่างไร",
+	"welcome.video.hotkeys": "คำสั่งและปุ่มลัด",
+	"welcome.video.hotkeysDesc": "แทรก ห่อ และเลิกห่อ callout ด้วยคำสั่ง แล้วกำหนดปุ่มลัดให้การทำงานที่คุณใช้บ่อยที่สุด",
+	"welcome.video.import": "นำเข้า ส่งออก และแชร์",
+	"welcome.video.importDesc": "ย้ายการตั้งค่าของคุณระหว่างคลัง นำเข้าจากปลั๊กอิน callout อื่น และส่งออกสไตล์เป็น CSS",
+	"welcome.video.languages": "ภาษา",
+	"welcome.video.languagesDesc": "เลือกภาษาของอินเทอร์เฟซปลั๊กอิน หรือให้ใช้ภาษาเดียวกับที่คุณใช้ใน Obsidian",
+	"welcome.video.find": "ค้นหา callout",
+	"welcome.video.findDesc": "กรองการใช้งาน callout ตามประเภทและรูปแบบ แล้วข้ามไปยังตำแหน่งที่แน่นอนในโน้ตของคุณ",
+	"welcome.video.backups": "การซิงก์และการสำรองข้อมูล",
+	"welcome.video.backupsDesc": "เก็บการตั้งค่าของคุณไว้ข้ามอุปกรณ์ ส่งออกข้อมูลสำรอง และเปรียบเทียบหรือกู้คืนเวอร์ชันก่อนหน้า",
+	"welcome.video.dangerZone": "พื้นที่อันตราย",
+	"welcome.video.dangerZoneDesc": "ตรวจสอบการแปลง callout แบบหัวข้อและแบบอินไลน์เป็น Markdown มาตรฐาน และดูว่าการรีเซ็ตการตั้งค่าจะลบอะไรบ้าง",
+	"welcome.video.insert": "แทรกด่วน",
+	"welcome.video.insertDesc": "ค้นหาตัวอย่าง callout กรองตามแหล่งที่มา และแทรกหรือแก้ไข callout แบบบล็อกจากริบบิน",
+	"welcome.video.heading": "callout แบบหัวข้อขั้นสูง",
+	"welcome.video.headingDesc": "ทำให้ callout แบบหัวข้อเลื่อนดูได้ง่ายในเค้าโครง ลิงก์หัวข้อ และสารบัญ",
+	"welcome.video.themes": "การผสานกับธีม",
+	"welcome.video.themesDesc": "เรียกดู callout ที่ธีมของคุณมีให้ และทำความเข้าใจว่าสไตล์ของธีมทำงานร่วมกับดีไซน์ของคุณเองอย่างไร",
 
 	"deleteModal.title": 'ลบ callout "{{name}}" หรือไม่?',
 	"deleteModal.bodyInUse":
@@ -1172,7 +1197,6 @@ export const th: Record<string, string> = {
 	"recovery.stale": "ไม่มีการกู้คืนใดๆ เนื่องจากการตั้งค่าของคุณเปลี่ยนไปหรือไม่สามารถตรวจสอบได้ เปิดหน้าต่างนี้อีกครั้งแล้วตรวจสอบรายการ",
 	"notice.recoveryCopyStale": "บันทึกการตั้งค่าของคุณแล้ว แต่ไม่สามารถอัปเดตสำเนากู้คืนของอุปกรณ์นี้ได้ ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่างบนอุปกรณ์นี้ Callout Studio จะลองใหม่อีกครั้งในการเปลี่ยนแปลงครั้งถัดไปของคุณ",
 	"notice.blockedWhilePaused": "การบันทึกถูกหยุดชั่วคราว จึงไม่สามารถเก็บการเปลี่ยนแปลงนี้ไว้ได้ในขณะนี้ ให้แก้ไขปัญหาการบันทึกที่แสดงในการตั้งค่าของ Callout Studio ก่อน",
-	"welcome.syncNote": "ใช้ Callout Studio บนอุปกรณ์อื่นอยู่แล้วหรือไม่ ให้รอบริการซิงค์ของคุณเสร็จสิ้นก่อน callout และการตั้งค่าของคุณจะปรากฏที่นี่เมื่อมาถึง",
 	"settings.resetBackupFailed": "ไม่มีการรีเซ็ตใดๆ เนื่องจากไม่สามารถบันทึกสำเนาสำรองของชุดตั้งค่าปัจจุบันได้ก่อน ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่างแล้วลองอีกครั้ง",
 	"settings.resetNotSaved": "การรีเซ็ตแสดงอยู่แต่ยังไม่สามารถบันทึกได้ ดังนั้นไฟล์การตั้งค่าของคุณจึงยังคงเป็นชุดตั้งค่าก่อนหน้า ตรวจสอบสถานะการบันทึกในการตั้งค่าของ Callout Studio",
 	"confirm.titleResetEverything": "รีเซ็ตทั้งหมด",

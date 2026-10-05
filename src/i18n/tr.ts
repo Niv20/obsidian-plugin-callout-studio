@@ -87,26 +87,51 @@ export const tr: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(varsayılana geri döner)",
 	"replaceModal.titleDelete": "Callout'u sil",
 	"replaceModal.titleReplace": "Vault'ta değiştir",
-
-	"welcome.tooltip": "Callout Studio hakkında",
-	"welcome.title": "Callout Studio'ya hoş geldiniz!",
-	"welcome.tagline":
-		"Obsidian callout'larını oluşturmak, biçimlendirmek ve yönetmek için eksiksiz çözümünüz.",
 	"importBanner.message":
 		"{{plugins}} kullandığınızı fark ettik. Callout'larınızı içe aktarmak ister misiniz?",
 	"importBanner.action": "İçe aktar",
 	"importBanner.dismiss": "Kapat",
-	"welcome.previewTitle": "Aksiyon halinde görün",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio, özel bir simge, renkler ve ad ile callout'lar oluşturmanızı sağlar.\n\n" +
-		"Bu callout'u **üç** farklı şekilde kullanabilirsiniz:\n\n" +
-		"## [!{{id}}] Başlık callout'u\n" +
-		"Herhangi bir başlığı callout stiline dönüştürmek için `#` işaretlerinin hemen ardından `[!type]` ekleyin.\n\n" +
-		"Bunun gibi bir [!{{id}}]{satır içi callout} mu istiyorsunuz? Akışınızı bozmadan bir cümlenin ortasına `[!type]{text}` eklemeniz yeterli.\n\n" +
-		"> [!{{id}}] Blok callout\n" +
-		"> Klasik callout zaten alışık olduğunuz aynı sözdizimiyle çalışır: `> [!type]`.\n\n" +
-		"Callout Studio'nun sunacağı çok daha fazlası var! [Daha fazla bilgi]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Callout Studio eğitimlerini izle",
+	"welcome.title": "Callout Studio’ya hoş geldiniz!",
+	"welcome.intro": "Eklentinin sunduğu çok şey var, bu yüzden ilginizi çekenleri acele etmeden izleyin.",
+	"welcome.tutorialCount": "Video eğitimler ({{count}})",
+	"welcome.readMore": "{{title}} hakkında daha fazla bilgi için {{link}}.",
+	"welcome.clickHere": "buraya tıklayın",
+	"welcome.invalidVideo": "Bu video bağlantısı kullanılamıyor. Başka bir eğitim seçin.",
+	"welcome.video.threeTypes": "Üç callout türü",
+	"welcome.video.threeTypesDesc": "Özel başlıklar ve yerleşik türlerle blok, başlık ve satır içi callout sözdizimini öğrenin.",
+	"welcome.video.create": "İlk callout’unuzu oluşturun",
+	"welcome.video.createDesc": "Bir ad, kimlikler, simge ve renkler belirleyin, ardından callout’unuzu üç biçimde de önizleyin.",
+	"welcome.video.palettes": "Özel renk paletleri",
+	"welcome.video.palettesDesc": "Düz, gradyan veya saydam paletler oluşturun ve bunları kullanan her callout’u güncelleyin.",
+	"welcome.video.icons": "Özel simgeler ve emojiler",
+	"welcome.video.iconsDesc": "Simge kütüphanelerine göz atın, emoji seçin veya bir callout için kendi görselinizi yükleyin.",
+	"welcome.video.fallback": "Geri dönüş stilleri ve keşif",
+	"welcome.video.fallbackDesc": "Bilinmeyen callout’ların nasıl görüneceğini seçin, türleri bulmak için kasanızı tarayın ve bulduklarınızı özelleştirin.",
+	"welcome.video.manage": "Düzenleme, değiştirme ve silme",
+	"welcome.video.manageDesc": "Bir callout’u düzenleyin, kasanız genelindeki kullanımlarını değiştirin veya metninizi koruyarak stilini kaldırın.",
+	"welcome.video.styles": "Genel biçimlendirme",
+	"welcome.video.stylesDesc": "Blok, başlık ve satır içi callout’lar için kenarlıkları, boşlukları, yazı tipi boyutunu ve şekli ayarlayın.",
+	"welcome.video.menus": "Sağ tık menüsü",
+	"welcome.video.menusDesc": "Callout’larla doğrudan notlarınızda çalışın ve menüde hangi eylemlerin hangi sırayla görüneceğini seçin.",
+	"welcome.video.hotkeys": "Komutlar ve kısayol tuşları",
+	"welcome.video.hotkeysDesc": "Komutlarla callout ekleyin, sarmalayın ve sarmalamayı kaldırın, ardından en çok kullandığınız eylemlere kısayollar atayın.",
+	"welcome.video.import": "İçe aktarma, dışa aktarma ve paylaşma",
+	"welcome.video.importDesc": "Kurulumunuzu kasalar arasında taşıyın, diğer callout eklentilerinden içe aktarın ve stilleri CSS olarak dışa aktarın.",
+	"welcome.video.languages": "Diller",
+	"welcome.video.languagesDesc": "Eklentinin arayüz dilini seçin veya Obsidian’da kullandığınız dili izlemesine izin verin.",
+	"welcome.video.find": "Callout’ları bulma",
+	"welcome.video.findDesc": "Callout kullanımlarını türe ve biçime göre filtreleyin, ardından notlarınızdaki tam konumlarına gidin.",
+	"welcome.video.backups": "Eşitleme ve yedekler",
+	"welcome.video.backupsDesc": "Kurulumunuzu cihazlar arasında koruyun, yedek dışa aktarın ve önceki sürümleri karşılaştırın veya geri yükleyin.",
+	"welcome.video.dangerZone": "Tehlikeli alan",
+	"welcome.video.dangerZoneDesc": "Başlık ve satır içi callout’ların standart Markdown’a dönüşümlerini inceleyin ve kurulumunuzu sıfırlamanın neleri sildiğini görün.",
+	"welcome.video.insert": "Hızlı ekleme",
+	"welcome.video.insertDesc": "Callout önizlemelerinde arama yapın, kaynağa göre filtreleyin ve şeritten bir blok callout ekleyin veya düzenleyin.",
+	"welcome.video.heading": "Gelişmiş başlık callout’ları",
+	"welcome.video.headingDesc": "Başlık callout’larının ana hatta, başlık bağlantılarında ve içindekiler tablolarında kolay gezilmesini sağlayın.",
+	"welcome.video.themes": "Tema entegrasyonu",
+	"welcome.video.themesDesc": "Temanızın sağladığı callout’lara göz atın ve tema stilinin kendi tasarımlarınızla nasıl birlikte çalıştığını anlayın.",
 
 	"deleteModal.title": '"{{name}}" callout\'unu sil?',
 	"deleteModal.bodyInUse":
@@ -1186,7 +1211,6 @@ export const tr: Record<string, string> = {
 	"recovery.stale": "Hiçbir şey geri yüklenmedi: ayarlarınız değişti veya kontrol edilemedi. Bu pencereyi tekrar açın ve listeyi gözden geçirin.",
 	"notice.recoveryCopyStale": "Ayarlarınız kaydedildi, ancak bu cihazın kurtarma kopyası güncellenemedi. Bu cihazdaki kullanılabilir depolamayı kontrol edin. Callout Studio, bir sonraki değişikliğinizde tekrar dener.",
 	"notice.blockedWhilePaused": "Kaydetme duraklatıldığından, bu değişiklik şu anda korunamıyor. Önce Callout Studio ayarlarında gösterilen kaydetme sorununu çözün.",
-	"welcome.syncNote": "Callout Studio'yu başka bir cihazda zaten mi kullanıyorsunuz? Önce senkronizasyon hizmetinizin tamamlanmasına izin verin. Callout'larınız ve ayarlarınız geldiğinde burada görünecek.",
 	"settings.resetBackupFailed": "Hiçbir şey sıfırlanmadı: mevcut kurulumunuzun bir yedeği önce kaydedilemedi. Kullanılabilir depolamayı kontrol edin, ardından tekrar deneyin.",
 	"settings.resetNotSaved": "Sıfırlama gösteriliyor ancak henüz kaydedilemedi, bu nedenle ayarlar dosyanız hâlâ önceki kurulumu tutuyor. Callout Studio ayarlarındaki kaydetme durumunu kontrol edin.",
 	"confirm.titleResetEverything": "Her şeyi sıfırla",

@@ -87,26 +87,51 @@ export const pt: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(volta ao padrão)",
 	"replaceModal.titleDelete": "Excluir callout",
 	"replaceModal.titleReplace": "Substituir no vault",
-
-	"welcome.tooltip": "Sobre o Callout Studio",
-	"welcome.title": "Bem-vindo ao Callout Studio!",
-	"welcome.tagline":
-		"Sua solução completa para criar, estilizar e gerenciar callouts do Obsidian.",
 	"importBanner.message":
 		"Percebemos que você está usando {{plugins}}. Gostaria de importar seus callouts?",
 	"importBanner.action": "Importar",
 	"importBanner.dismiss": "Dispensar",
-	"welcome.previewTitle": "Veja em ação",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"O Callout Studio permite criar callouts com ícone, cores e nome personalizados.\n\n" +
-		"Você pode usar este callout de **três** formas diferentes:\n\n" +
-		"## [!{{id}}] Callout como título\n" +
-		"Para transformar qualquer título em um título no estilo callout, adicione `[!type]` logo após os `#`.\n\n" +
-		"Quer um [!{{id}}]{callout inline} como este? Basta adicionar `[!type]{text}` no meio de uma frase, sem interromper seu fluxo.\n\n" +
-		"> [!{{id}}] Callout de bloco\n" +
-		"> O callout clássico funciona exatamente com a sintaxe que você já conhece: `> [!type]`.\n\n" +
-		"O Callout Studio tem muito mais a oferecer! [Saiba mais]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Assistir aos tutoriais do Callout Studio",
+	"welcome.title": "Boas-vindas ao Callout Studio!",
+	"welcome.intro": "O plugin tem muito a oferecer, então reserve um tempo para assistir ao que lhe interessa.",
+	"welcome.tutorialCount": "Tutoriais em vídeo ({{count}})",
+	"welcome.readMore": "Para saber mais sobre {{title}}, {{link}}.",
+	"welcome.clickHere": "clique aqui",
+	"welcome.invalidVideo": "Este link de vídeo não está disponível. Escolha outro tutorial.",
+	"welcome.video.threeTypes": "Os três tipos de callout",
+	"welcome.video.threeTypesDesc": "Aprenda a sintaxe dos callouts de bloco, de título e em linha, com títulos personalizados e tipos integrados.",
+	"welcome.video.create": "Crie seu primeiro callout",
+	"welcome.video.createDesc": "Defina um nome, identificadores, ícone e cores e, em seguida, visualize seu callout nos três formatos.",
+	"welcome.video.palettes": "Paletas de cores personalizadas",
+	"welcome.video.palettesDesc": "Crie paletas sólidas, em degradê ou transparentes e atualize todos os callouts que as usam.",
+	"welcome.video.icons": "Ícones e emojis personalizados",
+	"welcome.video.iconsDesc": "Explore bibliotecas de ícones, escolha emojis ou envie sua própria imagem para um callout.",
+	"welcome.video.fallback": "Estilos de fallback e descoberta",
+	"welcome.video.fallbackDesc": "Escolha a aparência dos callouts desconhecidos, analise seu cofre em busca de tipos e personalize os que encontrar.",
+	"welcome.video.manage": "Edição, substituição e exclusão",
+	"welcome.video.manageDesc": "Edite um callout, substitua seus usos em todo o cofre ou remova o estilo dele mantendo seu texto.",
+	"welcome.video.styles": "Estilo global",
+	"welcome.video.stylesDesc": "Ajuste bordas, espaçamento, tamanho da fonte e formato dos callouts de bloco, de título e em linha.",
+	"welcome.video.menus": "O menu de clique com o botão direito",
+	"welcome.video.menusDesc": "Trabalhe com callouts diretamente nas suas notas e escolha quais ações aparecem no menu e em que ordem.",
+	"welcome.video.hotkeys": "Comandos e teclas de atalho",
+	"welcome.video.hotkeysDesc": "Insira, envolva e desembrulhe callouts com comandos e depois atribua atalhos às ações que você mais usa.",
+	"welcome.video.import": "Importar, exportar e compartilhar",
+	"welcome.video.importDesc": "Mova sua configuração entre cofres, importe de outros plugins de callout e exporte estilos como CSS.",
+	"welcome.video.languages": "Idiomas",
+	"welcome.video.languagesDesc": "Escolha o idioma da interface do plugin ou deixe que ele siga o idioma que você usa no Obsidian.",
+	"welcome.video.find": "Encontrar callouts",
+	"welcome.video.findDesc": "Filtre os usos de callouts por tipo e formato e vá direto ao local exato nas suas notas.",
+	"welcome.video.backups": "Sincronização e backups",
+	"welcome.video.backupsDesc": "Mantenha sua configuração em todos os dispositivos, exporte um backup e compare ou restaure versões anteriores.",
+	"welcome.video.dangerZone": "Zona de perigo",
+	"welcome.video.dangerZoneDesc": "Revise as conversões de callouts de título e em linha para Markdown padrão e veja o que a redefinição da configuração remove.",
+	"welcome.video.insert": "Inserção rápida",
+	"welcome.video.insertDesc": "Pesquise pré-visualizações de callouts, filtre por origem e insira ou edite um callout de bloco pela faixa lateral.",
+	"welcome.video.heading": "Callouts de título avançados",
+	"welcome.video.headingDesc": "Mantenha os callouts de título fáceis de navegar no esboço, nos links de título e nos sumários.",
+	"welcome.video.themes": "Integração com temas",
+	"welcome.video.themesDesc": "Explore os callouts fornecidos pelo seu tema e entenda como o estilo do tema funciona com seus próprios designs.",
 
 	"deleteModal.title": 'Excluir callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1209,8 +1234,6 @@ export const pt: Record<string, string> = {
 		"Suas configurações foram salvas, mas a cópia de recuperação deste dispositivo não pôde ser atualizada. Verifique o armazenamento disponível neste dispositivo. O Callout Studio tentará novamente na próxima alteração.",
 	"notice.blockedWhilePaused":
 		"O salvamento está pausado, então esta alteração não pode ser mantida agora. Resolva primeiro o problema de salvamento mostrado nas configurações do Callout Studio.",
-	"welcome.syncNote":
-		"Já usa o Callout Studio em outro dispositivo? Deixe seu serviço de sincronização terminar primeiro. Seus callouts e configurações aparecerão aqui assim que chegarem.",
 	"settings.resetBackupFailed":
 		"Nada foi redefinido: não foi possível salvar um backup da sua configuração atual primeiro. Verifique o armazenamento disponível e tente novamente.",
 	"settings.resetNotSaved":

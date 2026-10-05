@@ -272,13 +272,6 @@ const modalFiles = tsFilesUnder(SRC)
 	}))
 	.filter((f) => /\bclass\s+\w+\s+extends\s+Modal\b/.test(f.text));
 
-/**
- * The one window that opts out, and the only one allowed to. It is a splash: it
- * removes the title band outright and carries its name as a hero heading in its
- * own left column instead.
- */
-const SPLASH = "settings/WelcomeModal.ts";
-
 describe("every Modal in the project wears the chrome", () => {
 	it("found the modals at all", () => {
 		// Guards the scan itself: a broken pattern would make every assertion
@@ -287,12 +280,10 @@ describe("every Modal in the project wears the chrome", () => {
 			modalFiles.length >= 15,
 			`only ${modalFiles.length} modal files found — has the scan drifted?`,
 		);
-		assert.ok(modalFiles.some((f) => f.name === SPLASH));
+		assert.ok(modalFiles.some((f) => f.name === "settings/WelcomeModal.ts"));
 	});
 
 	for (const file of modalFiles) {
-		if (file.name === SPLASH) continue;
-
 		it(`${file.name} calls applyModalChrome`, () => {
 			assert.match(file.text, /\bapplyModalChrome\s*\(/);
 		});
@@ -304,15 +295,6 @@ describe("every Modal in the project wears the chrome", () => {
 			assert.match(file.text, /\.setTitle\(|titleEl\.setText\(/);
 		});
 	}
-
-	it(`${SPLASH} opts out deliberately, and says so`, () => {
-		// Pinned from the other side: were the splash to start wearing the
-		// chrome, this rule would silently become one nothing exercises.
-		const splash = modalFiles.find((f) => f.name === SPLASH);
-		assert.ok(splash);
-		assert.doesNotMatch(splash.text, /\bapplyModalChrome\b/);
-		assert.match(splash.text, /titleEl\.remove\(\)/);
-	});
 });
 
 describe("the chrome is the ONLY way to hang it", () => {

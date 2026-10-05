@@ -35,26 +35,51 @@ export const hi: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(डिफ़ॉल्ट पर वापस)",
 	"replaceModal.titleDelete": "callout हटाएँ",
 	"replaceModal.titleReplace": "vault में बदलें",
-
-	"welcome.tooltip": "Callout Studio के बारे में",
-	"welcome.title": "Callout Studio में आपका स्वागत है!",
-	"welcome.tagline":
-		"Obsidian callouts बनाने, स्टाइल करने और प्रबंधित करने के लिए आपका संपूर्ण समाधान।",
 	"importBanner.message":
 		"हमने देखा कि आप {{plugins}} का उपयोग कर रहे हैं। क्या आप अपने callouts आयात करना चाहेंगे?",
 	"importBanner.action": "आयात करें",
 	"importBanner.dismiss": "खारिज करें",
-	"welcome.previewTitle": "इसे कार्य में देखें",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio से आप कस्टम आइकन, रंग और नाम के साथ callouts बना सकते हैं।\n\n" +
-		"आप इस callout को **तीन** अलग-अलग तरीकों से उपयोग कर सकते हैं:\n\n" +
-		"## [!{{id}}] हेडिंग callout\n" +
-		"किसी भी हेडिंग को callout-शैली की हेडिंग बनाने के लिए, `#` के ठीक बाद `[!type]` जोड़ें।\n\n" +
-		"क्या आप इस जैसा [!{{id}}]{इनलाइन callout} चाहते हैं? बस किसी वाक्य के बीच में `[!type]{text}` जोड़ें, अपने लेखन के प्रवाह को बिना तोड़े।\n\n" +
-		"> [!{{id}}] ब्लॉक callout\n" +
-		"> क्लासिक callout ठीक उसी सिंटैक्स के साथ काम करता है जिसके आप पहले से ही आदी हैं: `> [!type]`।\n\n" +
-		"Callout Studio के पास पेश करने के लिए और भी बहुत कुछ है! [और जानें]({{repoUrl}})।\n",
+	"welcome.openTutorials": "Callout Studio ट्यूटोरियल देखें",
+	"welcome.title": "Callout Studio में आपका स्वागत है!",
+	"welcome.intro": "इस प्लगइन में बहुत कुछ है, इसलिए जो आपको दिलचस्प लगे उसे आराम से देखें।",
+	"welcome.tutorialCount": "वीडियो ट्यूटोरियल ({{count}})",
+	"welcome.readMore": "{{title}} के बारे में और जानने के लिए, {{link}}।",
+	"welcome.clickHere": "यहाँ क्लिक करें",
+	"welcome.invalidVideo": "यह वीडियो लिंक उपलब्ध नहीं है। कोई दूसरा ट्यूटोरियल चुनें।",
+	"welcome.video.threeTypes": "तीन callout प्रकार",
+	"welcome.video.threeTypesDesc": "कस्टम शीर्षकों और अंतर्निहित प्रकारों के साथ ब्लॉक, हेडिंग और इनलाइन callout का सिंटैक्स सीखें।",
+	"welcome.video.create": "अपना पहला callout बनाएँ",
+	"welcome.video.createDesc": "नाम, आईडी, आइकन और रंग सेट करें, फिर अपने callout का तीनों प्रारूपों में पूर्वावलोकन देखें।",
+	"welcome.video.palettes": "कस्टम रंग पैलेट",
+	"welcome.video.palettesDesc": "ठोस, ग्रेडिएंट या पारदर्शी पैलेट बनाएँ और उन्हें उपयोग करने वाले हर callout को अपडेट करें।",
+	"welcome.video.icons": "कस्टम आइकन और इमोजी",
+	"welcome.video.iconsDesc": "आइकन लाइब्रेरी ब्राउज़ करें, इमोजी चुनें या callout के लिए अपनी कलाकृति अपलोड करें।",
+	"welcome.video.fallback": "फ़ॉलबैक शैलियाँ और खोज",
+	"welcome.video.fallbackDesc": "चुनें कि अज्ञात callout कैसे दिखें, प्रकार खोजने के लिए अपना वॉल्ट स्कैन करें और मिले हुए प्रकारों को अनुकूलित करें।",
+	"welcome.video.manage": "संपादन, बदलना और हटाना",
+	"welcome.video.manageDesc": "callout संपादित करें, पूरे वॉल्ट में उसके उपयोग बदलें, या अपना पाठ रखते हुए उसकी शैली हटाएँ।",
+	"welcome.video.styles": "वैश्विक स्टाइलिंग",
+	"welcome.video.stylesDesc": "ब्लॉक, हेडिंग और इनलाइन callout के लिए बॉर्डर, स्पेसिंग, फ़ॉन्ट आकार और आकृति समायोजित करें।",
+	"welcome.video.menus": "राइट-क्लिक मेनू",
+	"welcome.video.menusDesc": "अपने नोट्स में सीधे callout के साथ काम करें और चुनें कि मेनू में कौन-सी कार्रवाइयाँ किस क्रम में दिखें।",
+	"welcome.video.hotkeys": "कमांड और हॉटकी",
+	"welcome.video.hotkeysDesc": "कमांड से callout डालें, लपेटें और खोलें, फिर अपनी सबसे ज़्यादा इस्तेमाल होने वाली कार्रवाइयों के लिए शॉर्टकट सेट करें।",
+	"welcome.video.import": "आयात, निर्यात और साझा करना",
+	"welcome.video.importDesc": "अपना सेटअप वॉल्ट के बीच ले जाएँ, अन्य callout प्लगइन से आयात करें और शैलियाँ CSS के रूप में निर्यात करें।",
+	"welcome.video.languages": "भाषाएँ",
+	"welcome.video.languagesDesc": "प्लगइन की इंटरफ़ेस भाषा चुनें या उसे Obsidian में आपकी इस्तेमाल की गई भाषा का पालन करने दें।",
+	"welcome.video.find": "callout खोजें",
+	"welcome.video.findDesc": "callout के उपयोग को प्रकार और प्रारूप के आधार पर फ़िल्टर करें, फिर अपने नोट्स में उनकी सटीक जगह पर जाएँ।",
+	"welcome.video.backups": "सिंक और बैकअप",
+	"welcome.video.backupsDesc": "अपना सेटअप सभी डिवाइस पर बनाए रखें, बैकअप निर्यात करें और पिछले संस्करणों की तुलना करें या उन्हें पुनर्स्थापित करें।",
+	"welcome.video.dangerZone": "खतरनाक क्षेत्र",
+	"welcome.video.dangerZoneDesc": "हेडिंग और इनलाइन callout के मानक Markdown में रूपांतरण देखें और जानें कि सेटअप रीसेट करने पर क्या हटता है।",
+	"welcome.video.insert": "त्वरित सम्मिलन",
+	"welcome.video.insertDesc": "callout पूर्वावलोकन खोजें, स्रोत के अनुसार फ़िल्टर करें और रिबन से ब्लॉक callout डालें या संपादित करें।",
+	"welcome.video.heading": "उन्नत हेडिंग callout",
+	"welcome.video.headingDesc": "हेडिंग callout को आउटलाइन, हेडिंग लिंक और विषय-सूची में आसानी से नेविगेट करने योग्य रखें।",
+	"welcome.video.themes": "थीम एकीकरण",
+	"welcome.video.themesDesc": "अपनी थीम द्वारा दिए गए callout ब्राउज़ करें और समझें कि थीम की स्टाइलिंग आपके अपने डिज़ाइनों के साथ कैसे काम करती है।",
 
 	"deleteModal.title": 'callout "{{name}}" हटाएँ?',
 	"deleteModal.bodyInUse":
@@ -1180,7 +1205,6 @@ export const hi: Record<string, string> = {
 	"recovery.stale": "कुछ भी पुनर्स्थापित नहीं हुआ: आपकी सेटिंग बदल गई या जाँची नहीं जा सकीं। इस विंडो को फिर से खोलें और सूची देखें।",
 	"notice.recoveryCopyStale": "आपकी सेटिंग सेव हो गईं, लेकिन इस डिवाइस की रिकवरी कॉपी अपडेट नहीं हो सकी। इस डिवाइस पर उपलब्ध स्टोरेज जाँचें। आपके अगले बदलाव पर Callout Studio फिर कोशिश करेगा।",
 	"notice.blockedWhilePaused": "सेविंग रुकी हुई है, इसलिए यह बदलाव अभी सेव नहीं रखा जा सकता। पहले Callout Studio सेटिंग में दिखाई गई सेविंग की समस्या हल करें।",
-	"welcome.syncNote": "क्या आप पहले से किसी और डिवाइस पर Callout Studio इस्तेमाल करते हैं? पहले अपनी सिंक सेवा को पूरा होने दें। आपके callout और सेटिंग यहाँ आते ही दिखाई देंगी।",
 	"settings.resetBackupFailed": "कुछ भी रीसेट नहीं हुआ: आपके मौजूदा सेटअप का बैकअप पहले सेव नहीं किया जा सका। उपलब्ध स्टोरेज जाँचें, फिर कोशिश करें।",
 	"settings.resetNotSaved": "रीसेट दिख रहा है लेकिन अभी सेव नहीं हो सका, इसलिए आपकी सेटिंग फ़ाइल में अब भी पिछला सेटअप है। Callout Studio सेटिंग में सेविंग की स्थिति जाँचें।",
 	"confirm.titleResetEverything": "सब कुछ रीसेट करें",

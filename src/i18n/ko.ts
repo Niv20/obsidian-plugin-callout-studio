@@ -35,26 +35,51 @@ export const ko: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(기본값으로 폴백)",
 	"replaceModal.titleDelete": "callout 삭제",
 	"replaceModal.titleReplace": "볼트에서 교체",
-
-	"welcome.tooltip": "Callout Studio 소개",
-	"welcome.title": "Callout Studio에 오신 것을 환영합니다!",
-	"welcome.tagline":
-		"Obsidian callout을 만들고, 스타일을 지정하고, 관리하기 위한 완벽한 솔루션입니다.",
 	"importBanner.message":
 		"{{plugins}}을(를) 사용 중이신 것을 확인했습니다. callout을 가져오시겠습니까?",
 	"importBanner.action": "가져오기",
 	"importBanner.dismiss": "닫기",
-	"welcome.previewTitle": "실제 동작 보기",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio를 사용하면 아이콘, 색상, 이름을 원하는 대로 지정한 callout을 만들 수 있습니다.\n\n" +
-		"이 callout을 **세 가지** 다른 방식으로 사용할 수 있습니다:\n\n" +
-		"## [!{{id}}] 제목 callout\n" +
-		"제목을 callout 스타일로 바꾸려면 `#` 바로 뒤에 `[!type]`을 추가하세요.\n\n" +
-		"이처럼 [!{{id}}]{인라인 callout}을 원하시나요? 문장 중간에 `[!type]{text}`를 추가하기만 하면 흐름을 끊지 않고 삽입할 수 있습니다.\n\n" +
-		"> [!{{id}}] 블록 callout\n" +
-		"> 기존에 사용하던 것과 동일한 문법으로 클래식 callout도 그대로 사용할 수 있습니다: `> [!type]`.\n\n" +
-		"Callout Studio에는 훨씬 더 많은 기능이 있습니다! [자세히 보기]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Callout Studio 튜토리얼 보기",
+	"welcome.title": "Callout Studio에 오신 것을 환영합니다!",
+	"welcome.intro": "이 플러그인에는 다양한 기능이 있으니, 관심 있는 내용을 천천히 살펴보세요.",
+	"welcome.tutorialCount": "동영상 튜토리얼 ({{count}})",
+	"welcome.readMore": "{{title}}에 대해 더 알아보려면 {{link}}.",
+	"welcome.clickHere": "여기를 클릭하세요",
+	"welcome.invalidVideo": "이 동영상 링크를 사용할 수 없습니다. 다른 튜토리얼을 선택하세요.",
+	"welcome.video.threeTypes": "세 가지 callout 유형",
+	"welcome.video.threeTypesDesc": "사용자 지정 제목과 기본 제공 유형을 포함해 블록, 제목, 인라인 callout의 구문을 알아봅니다.",
+	"welcome.video.create": "첫 callout 만들기",
+	"welcome.video.createDesc": "이름, ID, 아이콘, 색상을 설정한 다음 세 가지 형식 모두에서 callout을 미리 봅니다.",
+	"welcome.video.palettes": "사용자 지정 색상 팔레트",
+	"welcome.video.palettesDesc": "단색, 그라데이션, 투명 팔레트를 만들고 이를 사용하는 모든 callout을 업데이트합니다.",
+	"welcome.video.icons": "사용자 지정 아이콘과 이모지",
+	"welcome.video.iconsDesc": "아이콘 라이브러리를 둘러보고, 이모지를 고르거나 callout에 사용할 이미지를 직접 업로드합니다.",
+	"welcome.video.fallback": "폴백 스타일과 탐색",
+	"welcome.video.fallbackDesc": "알 수 없는 callout의 모양을 선택하고, 보관함에서 유형을 검색해 찾은 유형을 사용자 지정합니다.",
+	"welcome.video.manage": "편집, 교체, 삭제",
+	"welcome.video.manageDesc": "callout을 편집하고, 보관함 전체에서 사용처를 교체하거나, 텍스트는 유지한 채 스타일만 제거합니다.",
+	"welcome.video.styles": "전역 스타일",
+	"welcome.video.stylesDesc": "블록, 제목, 인라인 callout의 테두리, 간격, 글꼴 크기, 모양을 조정합니다.",
+	"welcome.video.menus": "오른쪽 클릭 메뉴",
+	"welcome.video.menusDesc": "노트에서 바로 callout을 다루고, 메뉴에 표시할 동작과 순서를 선택합니다.",
+	"welcome.video.hotkeys": "명령 및 핫키",
+	"welcome.video.hotkeysDesc": "명령으로 callout을 삽입하고 감싸거나 풀고, 자주 쓰는 동작에 단축키를 지정합니다.",
+	"welcome.video.import": "가져오기, 내보내기, 공유",
+	"welcome.video.importDesc": "보관함 간에 설정을 옮기고, 다른 callout 플러그인에서 가져오고, 스타일을 CSS로 내보냅니다.",
+	"welcome.video.languages": "언어",
+	"welcome.video.languagesDesc": "플러그인 인터페이스 언어를 선택하거나 Obsidian에서 사용하는 언어를 따르게 합니다.",
+	"welcome.video.find": "callout 찾기",
+	"welcome.video.findDesc": "유형과 형식으로 callout 사용처를 필터링한 다음 노트 속 정확한 위치로 이동합니다.",
+	"welcome.video.backups": "동기화와 백업",
+	"welcome.video.backupsDesc": "여러 기기에서 설정을 유지하고, 백업을 내보내고, 이전 버전을 비교하거나 복원합니다.",
+	"welcome.video.dangerZone": "위험 구역",
+	"welcome.video.dangerZoneDesc": "제목 및 인라인 callout을 표준 Markdown으로 변환하는 내용을 검토하고 설정을 초기화하면 무엇이 삭제되는지 확인합니다.",
+	"welcome.video.insert": "빠른 삽입",
+	"welcome.video.insertDesc": "callout 미리보기를 검색하고, 출처별로 필터링하고, 리본에서 블록 callout을 삽입하거나 편집합니다.",
+	"welcome.video.heading": "고급 제목 callout",
+	"welcome.video.headingDesc": "제목 callout을 개요, 제목 링크, 목차에서 쉽게 탐색할 수 있게 유지합니다.",
+	"welcome.video.themes": "테마 통합",
+	"welcome.video.themesDesc": "테마가 제공하는 callout을 둘러보고 테마 스타일이 직접 만든 디자인과 어떻게 함께 동작하는지 이해합니다.",
 
 	"deleteModal.title": 'callout "{{name}}"을(를) 삭제하시겠습니까?',
 	"deleteModal.bodyInUse":
@@ -1184,8 +1209,6 @@ export const ko: Record<string, string> = {
 		"설정은 저장되었지만 이 기기의 복구 사본은 업데이트할 수 없었습니다. 이 기기의 사용 가능한 저장 공간을 확인하세요. Callout Studio가 다음 변경 시 다시 시도합니다.",
 	"notice.blockedWhilePaused":
 		"저장이 일시 중지되어 있어 지금은 이 변경 사항을 유지할 수 없습니다. Callout Studio 설정에 표시된 저장 문제를 먼저 해결하세요.",
-	"welcome.syncNote":
-		"이미 다른 기기에서 Callout Studio를 사용 중이신가요? 먼저 동기화 서비스가 끝나도록 두세요. 콜아웃과 설정은 도착하는 즉시 여기에 나타납니다.",
 	"settings.resetBackupFailed":
 		"아무것도 초기화되지 않았습니다. 현재 설정의 백업을 먼저 저장할 수 없었습니다. 사용 가능한 저장 공간을 확인한 후 다시 시도하세요.",
 	"settings.resetNotSaved":

@@ -87,26 +87,51 @@ export const uk: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(повернення до типового)",
 	"replaceModal.titleDelete": "Видалити callout",
 	"replaceModal.titleReplace": "Замінити у сховищі",
-
-	"welcome.tooltip": "Про Callout Studio",
-	"welcome.title": "Ласкаво просимо до Callout Studio!",
-	"welcome.tagline":
-		"Ваше повне рішення для створення, стилізації та керування callout в Obsidian.",
 	"importBanner.message":
 		"Ми помітили, що ви використовуєте {{plugins}}. Хочете імпортувати свої callout?",
 	"importBanner.action": "Імпортувати",
 	"importBanner.dismiss": "Відхилити",
-	"welcome.previewTitle": "Побачити в дії",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio дозволяє створювати callout із власною іконкою, кольорами та назвою.\n\n" +
-		"Цей callout можна використовувати **трьома** різними способами:\n\n" +
-		"## [!{{id}}] Callout як заголовок\n" +
-		"Щоб перетворити будь-який заголовок на заголовок у стилі callout, додайте `[!type]` одразу після `#`.\n\n" +
-		"Хочете [!{{id}}]{вбудований callout}, як цей? Просто додайте `[!type]{text}` прямо посеред речення, не перериваючи текст.\n\n" +
-		"> [!{{id}}] Блоковий callout\n" +
-		"> Класичний callout працює за тим самим синтаксисом, до якого ви вже звикли: `> [!type]`.\n\n" +
-		"Callout Studio має набагато більше можливостей! [Дізнатися більше]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Дивитися навчальні відео Callout Studio",
+	"welcome.title": "Ласкаво просимо до Callout Studio!",
+	"welcome.intro": "Плагін має багато можливостей, тож не поспішайте й дивіться те, що вас цікавить.",
+	"welcome.tutorialCount": "Відеоуроки ({{count}})",
+	"welcome.readMore": "Докладніше про «{{title}}»: {{link}}.",
+	"welcome.clickHere": "натисніть тут",
+	"welcome.invalidVideo": "Це посилання на відео недоступне. Виберіть інший урок.",
+	"welcome.video.threeTypes": "Три типи callout",
+	"welcome.video.threeTypesDesc": "Дізнайтеся синтаксис блокових, заголовкових і вбудованих callout із власними заголовками та вбудованими типами.",
+	"welcome.video.create": "Створіть свій перший callout",
+	"welcome.video.createDesc": "Задайте назву, ідентифікатори, значок і кольори, а потім перегляньте callout у всіх трьох форматах.",
+	"welcome.video.palettes": "Власні кольорові палітри",
+	"welcome.video.palettesDesc": "Створюйте суцільні, градієнтні або прозорі палітри й оновлюйте кожен callout, що їх використовує.",
+	"welcome.video.icons": "Власні значки та емодзі",
+	"welcome.video.iconsDesc": "Переглядайте бібліотеки значків, вибирайте емодзі або завантажте власне зображення для callout.",
+	"welcome.video.fallback": "Резервні стилі та виявлення",
+	"welcome.video.fallbackDesc": "Виберіть вигляд невідомих callout, проскануйте сховище на наявність типів і налаштуйте знайдені.",
+	"welcome.video.manage": "Редагування, заміна та видалення",
+	"welcome.video.manageDesc": "Відредагуйте callout, замініть його використання в усьому сховищі або приберіть його стиль, зберігши текст.",
+	"welcome.video.styles": "Глобальне оформлення",
+	"welcome.video.stylesDesc": "Налаштуйте межі, відступи, розмір шрифту та форму блокових, заголовкових і вбудованих callout.",
+	"welcome.video.menus": "Контекстне меню",
+	"welcome.video.menusDesc": "Працюйте з callout прямо в нотатках і вибирайте, які дії з’являються в меню та в якому порядку.",
+	"welcome.video.hotkeys": "Команди та гарячі клавіші",
+	"welcome.video.hotkeysDesc": "Вставляйте, обгортайте й розгортайте callout командами, а потім призначте комбінації клавіш для найчастіших дій.",
+	"welcome.video.import": "Імпорт, експорт і поширення",
+	"welcome.video.importDesc": "Переносьте налаштування між сховищами, імпортуйте з інших плагінів callout і експортуйте стилі як CSS.",
+	"welcome.video.languages": "Мови",
+	"welcome.video.languagesDesc": "Виберіть мову інтерфейсу плагіна або дозвольте йому йти за мовою, яку ви використовуєте в Obsidian.",
+	"welcome.video.find": "Пошук callout",
+	"welcome.video.findDesc": "Фільтруйте використання callout за типом і форматом, а потім переходьте до їхнього точного місця в нотатках.",
+	"welcome.video.backups": "Синхронізація та резервні копії",
+	"welcome.video.backupsDesc": "Зберігайте налаштування на всіх пристроях, експортуйте резервну копію, порівнюйте й відновлюйте попередні версії.",
+	"welcome.video.dangerZone": "Небезпечна зона",
+	"welcome.video.dangerZoneDesc": "Перегляньте перетворення заголовкових і вбудованих callout на стандартний Markdown і дізнайтеся, що видаляє скидання налаштувань.",
+	"welcome.video.insert": "Швидке вставлення",
+	"welcome.video.insertDesc": "Шукайте попередні перегляди callout, фільтруйте за джерелом і вставляйте чи редагуйте блоковий callout із бічної панелі.",
+	"welcome.video.heading": "Розширені заголовкові callout",
+	"welcome.video.headingDesc": "Зробіть заголовкові callout зручними для навігації в структурі, посиланнях на заголовки та змістах.",
+	"welcome.video.themes": "Інтеграція з темами",
+	"welcome.video.themesDesc": "Переглядайте callout, які надає ваша тема, і дізнайтеся, як оформлення теми поєднується з вашими власними дизайнами.",
 
 	"deleteModal.title": 'Видалити callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1201,7 +1226,6 @@ export const uk: Record<string, string> = {
 	"recovery.stale": "Нічого не відновлено: ваші налаштування змінилися або їх не вдалося перевірити. Відкрийте це вікно знову й перегляньте список.",
 	"notice.recoveryCopyStale": "Ваші налаштування збережено, але копію відновлення цього пристрою не вдалося оновити. Перевірте доступне місце для зберігання на цьому пристрої. Callout Studio спробує ще раз під час вашої наступної зміни.",
 	"notice.blockedWhilePaused": "Збереження призупинено, тому цю зміну наразі не можна зберегти. Спочатку вирішіть проблему зі збереженням, показану в налаштуваннях Callout Studio.",
-	"welcome.syncNote": "Уже користуєтеся Callout Studio на іншому пристрої? Спочатку дайте вашому сервісу синхронізації завершити роботу. Ваші callout і налаштування з'являться тут, щойно надійдуть.",
 	"settings.resetBackupFailed": "Нічого не скинуто: резервну копію вашої поточної конфігурації не вдалося зберегти заздалегідь. Перевірте доступне місце для зберігання, потім спробуйте ще раз.",
 	"settings.resetNotSaved": "Скидання показано, але його ще не вдалося зберегти, тому ваш файл налаштувань усе ще містить попередню конфігурацію. Перевірте стан збереження в налаштуваннях Callout Studio.",
 	"confirm.titleResetEverything": "Скинути все",

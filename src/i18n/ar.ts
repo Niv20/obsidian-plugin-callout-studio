@@ -36,26 +36,51 @@ export const ar: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(يعود إلى الافتراضي)",
 	"replaceModal.titleDelete": "حذف الـ callout",
 	"replaceModal.titleReplace": "استبدال في المخزن",
-
-	"welcome.tooltip": "حول Callout Studio",
-	"welcome.title": "مرحبًا بك في Callout Studio!",
-	"welcome.tagline":
-		"حلّك الشامل لإنشاء callouts في Obsidian وتصميمها وإدارتها.",
 	"importBanner.message":
 		"لاحظنا أنك تستخدم {{plugins}}. هل ترغب في استيراد callouts الخاصة بك؟",
 	"importBanner.action": "استيراد",
 	"importBanner.dismiss": "تجاهل",
-	"welcome.previewTitle": "شاهده أثناء العمل",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"يتيح لك Callout Studio إنشاء callouts بأيقونة وألوان واسم مخصصة.\n\n" +
-		"يمكنك استخدام هذا الـ callout بـ **ثلاث** طرق مختلفة:\n\n" +
-		"## [!{{id}}] Callout كعنوان\n" +
-		"لتحويل أي عنوان إلى عنوان بنمط callout، أضف `[!type]` مباشرة بعد علامات `#`.\n\n" +
-		"هل تريد [!{{id}}]{callout مضمّن}؟ فقط أضف `[!type]{text}` داخل الجملة، دون كسر تسلسل الكتابة.\n\n" +
-		"> [!{{id}}] Callout ككتلة\n" +
-		"> يعمل الـ callout الكلاسيكي بنفس الصيغة التي اعتدت عليها تمامًا: `> [!type]`.\n\n" +
-		"هناك الكثير مما يقدمه Callout Studio! [معرفة المزيد]({{repoUrl}}).\n",
+	"welcome.openTutorials": "شاهد دروس Callout Studio",
+	"welcome.title": "مرحبًا بك في Callout Studio!",
+	"welcome.intro": "يقدّم الإضافة الكثير، فخذ وقتك في مشاهدة ما يهمّك.",
+	"welcome.tutorialCount": "دروس الفيديو ({{count}})",
+	"welcome.readMore": "لمزيد من المعلومات حول {{title}}، {{link}}.",
+	"welcome.clickHere": "انقر هنا",
+	"welcome.invalidVideo": "رابط الفيديو هذا غير متاح. اختر درسًا آخر.",
+	"welcome.video.threeTypes": "أنواع callout الثلاثة",
+	"welcome.video.threeTypesDesc": "تعرّف على صيغة callout الكتلي والعنوان والمضمّن، مع العناوين المخصّصة والأنواع المدمجة.",
+	"welcome.video.create": "أنشئ أول callout لك",
+	"welcome.video.createDesc": "حدّد الاسم والمعرّفات والأيقونة والألوان، ثم عاين callout بالصيغ الثلاث.",
+	"welcome.video.palettes": "لوحات ألوان مخصّصة",
+	"welcome.video.palettesDesc": "أنشئ لوحات ألوان متجانسة أو متدرّجة أو شفافة، وحدّث كل callout يستخدمها.",
+	"welcome.video.icons": "أيقونات وإيموجي مخصّصة",
+	"welcome.video.iconsDesc": "تصفّح مكتبات الأيقونات، أو اختر إيموجي، أو ارفع عملك الفني الخاص إلى callout.",
+	"welcome.video.fallback": "الأنماط الاحتياطية والاكتشاف",
+	"welcome.video.fallbackDesc": "اختر مظهر callout غير المعروفة، وافحص مخزنك بحثًا عن الأنواع، وخصّص ما تجده.",
+	"welcome.video.manage": "التعديل والاستبدال والحذف",
+	"welcome.video.manageDesc": "عدّل callout، أو استبدل استخداماته في مخزنك كله، أو أزل تنسيقه مع الاحتفاظ بنصك.",
+	"welcome.video.styles": "التنسيق العام",
+	"welcome.video.stylesDesc": "اضبط الحدود والتباعد وحجم الخط والشكل لـ callout الكتلي والعنوان والمضمّن.",
+	"welcome.video.menus": "قائمة النقر بزر الماوس الأيمن",
+	"welcome.video.menusDesc": "تعامل مع callout مباشرةً في ملاحظاتك، واختر الإجراءات التي تظهر في القائمة وترتيبها.",
+	"welcome.video.hotkeys": "الأوامر والمفاتيح السريعة",
+	"welcome.video.hotkeysDesc": "أدرج callout وغلّفها وأزل تغليفها بالأوامر، ثم عيّن اختصارات للإجراءات التي تستخدمها أكثر.",
+	"welcome.video.import": "الاستيراد والتصدير والمشاركة",
+	"welcome.video.importDesc": "انقل إعداداتك بين المخازن، واستورد من إضافات callout الأخرى، وصدّر الأنماط بصيغة CSS.",
+	"welcome.video.languages": "اللغات",
+	"welcome.video.languagesDesc": "اختر لغة واجهة الإضافة أو اجعلها تتبع اللغة التي تستخدمها في Obsidian.",
+	"welcome.video.find": "العثور على callout",
+	"welcome.video.findDesc": "صفِّ استخدامات callout حسب النوع والصيغة، ثم انتقل إلى موضعها الدقيق في ملاحظاتك.",
+	"welcome.video.backups": "المزامنة والنسخ الاحتياطية",
+	"welcome.video.backupsDesc": "احتفظ بإعداداتك عبر الأجهزة، وصدّر نسخة احتياطية، وقارن النسخ السابقة أو استعدها.",
+	"welcome.video.dangerZone": "منطقة الخطر",
+	"welcome.video.dangerZoneDesc": "راجع تحويلات العناوين وcallout المضمّن إلى Markdown القياسي، وشاهد ما يزيله إعادة ضبط إعداداتك.",
+	"welcome.video.insert": "الإدراج السريع",
+	"welcome.video.insertDesc": "ابحث في معاينات callout، وصفِّ حسب المصدر، وأدرج أو عدّل callout كتليًا من الشريط الجانبي.",
+	"welcome.video.heading": "callout العناوين المتقدمة",
+	"welcome.video.headingDesc": "اجعل callout العناوين سهلة التنقل في المخطط التفصيلي وروابط العناوين وجداول المحتويات.",
+	"welcome.video.themes": "التكامل مع السمات",
+	"welcome.video.themesDesc": "تصفّح callout التي توفّرها سمتك وافهم كيف يعمل تنسيق السمة مع تصاميمك الخاصة.",
 
 	"deleteModal.title": 'حذف callout "{{name}}"؟',
 	"deleteModal.bodyInUse":
@@ -1175,7 +1200,6 @@ export const ar: Record<string, string> = {
 	"recovery.stale": "لم تُستعد أي إعدادات: تغيّرت إعداداتك أو تعذّر التحقق منها. افتح هذه النافذة مرة أخرى وراجع القائمة.",
 	"notice.recoveryCopyStale": "حُفظت إعداداتك، لكن تعذّر تحديث نسخة الاسترداد على هذا الجهاز. تحقق من المساحة المتاحة على هذا الجهاز. يعيد Callout Studio المحاولة مع تغييرك التالي.",
 	"notice.blockedWhilePaused": "الحفظ متوقف مؤقتًا، لذا لا يمكن الاحتفاظ بهذا التغيير الآن. حل مشكلة الحفظ الموضحة في إعدادات Callout Studio أولًا.",
-	"welcome.syncNote": "هل تستخدم Callout Studio بالفعل على جهاز آخر؟ دع خدمة المزامنة لديك تنتهي أولًا. تظهر callouts وإعداداتك هنا بمجرد وصولها.",
 	"settings.resetBackupFailed": "لم يُعاد تعيين شيء: تعذّر حفظ نسخة احتياطية من إعدادك الحالي أولًا. تحقق من المساحة المتاحة، ثم أعد المحاولة.",
 	"settings.resetNotSaved": "إعادة التعيين مُعروضة لكن تعذّر حفظها بعد، لذا لا يزال ملف إعداداتك يحمل الإعداد السابق. تحقق من حالة الحفظ في إعدادات Callout Studio.",
 	"confirm.titleResetEverything": "إعادة تعيين كل شيء",

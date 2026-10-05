@@ -87,26 +87,51 @@ export const ro: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(revine la implicit)",
 	"replaceModal.titleDelete": "Șterge callout",
 	"replaceModal.titleReplace": "Înlocuiți în vault",
-
-	"welcome.tooltip": "Despre Callout Studio",
-	"welcome.title": "Bine ați venit în Callout Studio!",
-	"welcome.tagline":
-		"Soluția dvs. completă pentru crearea, stilizarea și gestionarea callout-urilor din Obsidian.",
 	"importBanner.message":
 		"Am observat că folosiți {{plugins}}. Doriți să importați callout-urile dvs.?",
 	"importBanner.action": "Importă",
 	"importBanner.dismiss": "Respinge",
-	"welcome.previewTitle": "Vedeți-l în acțiune",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio vă permite să creați callouts cu o pictogramă, culori și un nume personalizate.\n\n" +
-		"Puteți folosi acest callout în **trei** moduri diferite:\n\n" +
-		"## [!{{id}}] Callout ca titlu\n" +
-		"Pentru a transforma orice titlu într-un titlu în stil callout, adăugați `[!type]` imediat după `#`-uri.\n\n" +
-		"Doriți un [!{{id}}]{callout inline} ca acesta? Adăugați pur și simplu `[!type]{text}` în mijlocul unei propoziții, fără a vă întrerupe scrisul.\n\n" +
-		"> [!{{id}}] Callout de bloc\n" +
-		"> Callout-ul clasic funcționează cu exact aceeași sintaxă cu care sunteți deja obișnuiți: `> [!type]`.\n\n" +
-		"Callout Studio are mult mai multe de oferit! [Aflați mai multe]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Urmărește tutorialele Callout Studio",
+	"welcome.title": "Bun venit în Callout Studio!",
+	"welcome.intro": "Pluginul are multe de oferit, așa că ia-ți timp să urmărești ce te interesează.",
+	"welcome.tutorialCount": "Tutoriale video ({{count}})",
+	"welcome.readMore": "Pentru mai multe despre {{title}}, {{link}}.",
+	"welcome.clickHere": "fă clic aici",
+	"welcome.invalidVideo": "Acest link video nu este disponibil. Alege alt tutorial.",
+	"welcome.video.threeTypes": "Cele trei tipuri de callout",
+	"welcome.video.threeTypesDesc": "Învață sintaxa pentru callout-uri bloc, de titlu și inline, cu titluri personalizate și tipuri încorporate.",
+	"welcome.video.create": "Creează primul tău callout",
+	"welcome.video.createDesc": "Setează un nume, ID-uri, pictogramă și culori, apoi previzualizează callout-ul în toate cele trei formate.",
+	"welcome.video.palettes": "Palete de culori personalizate",
+	"welcome.video.palettesDesc": "Creează palete uni, în degradé sau transparente și actualizează fiecare callout care le folosește.",
+	"welcome.video.icons": "Pictograme și emoji personalizate",
+	"welcome.video.iconsDesc": "Răsfoiește bibliotecile de pictograme, alege emoji sau încarcă propria imagine pentru un callout.",
+	"welcome.video.fallback": "Stiluri de rezervă și descoperire",
+	"welcome.video.fallbackDesc": "Alege cum arată callout-urile necunoscute, scanează seiful pentru tipuri și personalizează-le pe cele găsite.",
+	"welcome.video.manage": "Editare, înlocuire și ștergere",
+	"welcome.video.manageDesc": "Editează un callout, înlocuiește utilizările lui în tot seiful sau elimină stilul păstrându-ți textul.",
+	"welcome.video.styles": "Stil global",
+	"welcome.video.stylesDesc": "Ajustează marginile, spațierea, dimensiunea fontului și forma pentru callout-urile bloc, de titlu și inline.",
+	"welcome.video.menus": "Meniul clic dreapta",
+	"welcome.video.menusDesc": "Lucrează cu callout-urile direct în notele tale și alege ce acțiuni apar în meniu și în ce ordine.",
+	"welcome.video.hotkeys": "Comenzi și taste rapide",
+	"welcome.video.hotkeysDesc": "Inserează, învelește și desfă callout-uri cu comenzi, apoi atribuie scurtături acțiunilor pe care le folosești cel mai des.",
+	"welcome.video.import": "Import, export și partajare",
+	"welcome.video.importDesc": "Mută configurația între seifuri, importă din alte pluginuri de callout și exportă stilurile ca CSS.",
+	"welcome.video.languages": "Limbi",
+	"welcome.video.languagesDesc": "Alege limba interfeței pluginului sau lasă-l să urmeze limba pe care o folosești în Obsidian.",
+	"welcome.video.find": "Găsirea callout-urilor",
+	"welcome.video.findDesc": "Filtrează utilizările callout-urilor după tip și format, apoi sari la locul lor exact din note.",
+	"welcome.video.backups": "Sincronizare și copii de rezervă",
+	"welcome.video.backupsDesc": "Păstrează configurația pe toate dispozitivele, exportă o copie de rezervă și compară sau restaurează versiuni anterioare.",
+	"welcome.video.dangerZone": "Zonă de pericol",
+	"welcome.video.dangerZoneDesc": "Revizuiește conversiile callout-urilor de titlu și inline în Markdown standard și vezi ce elimină resetarea configurației.",
+	"welcome.video.insert": "Inserare rapidă",
+	"welcome.video.insertDesc": "Caută previzualizări de callout, filtrează după sursă și inserează sau editează un callout bloc din bara laterală.",
+	"welcome.video.heading": "Callout-uri de titlu avansate",
+	"welcome.video.headingDesc": "Păstrează callout-urile de titlu ușor de navigat în schiță, în linkurile către titluri și în cuprinsuri.",
+	"welcome.video.themes": "Integrarea cu teme",
+	"welcome.video.themesDesc": "Răsfoiește callout-urile oferite de tema ta și înțelege cum funcționează stilul temei împreună cu propriile tale design-uri.",
 
 	"deleteModal.title": 'Ștergeți callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1205,8 +1230,6 @@ export const ro: Record<string, string> = {
 		"Setările tale au fost salvate, dar copia de recuperare a acestui dispozitiv nu a putut fi actualizată. Verifică spațiul de stocare disponibil pe acest dispozitiv. Callout Studio va încerca din nou la următoarea ta modificare.",
 	"notice.blockedWhilePaused":
 		"Salvarea este întreruptă, așa că această modificare nu poate fi păstrată acum. Rezolvă mai întâi problema de salvare afișată în setările Callout Studio.",
-	"welcome.syncNote":
-		"Folosești deja Callout Studio pe alt dispozitiv? Lasă serviciul tău de sincronizare să se termine mai întâi. Callout-urile și setările tale vor apărea aici imediat ce ajung.",
 	"settings.resetBackupFailed":
 		"Nu a fost resetat nimic: nu s-a putut salva mai întâi un backup al configurației curente. Verifică spațiul de stocare disponibil, apoi încearcă din nou.",
 	"settings.resetNotSaved":

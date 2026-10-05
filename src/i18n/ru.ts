@@ -88,26 +88,51 @@ export const ru: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(возврат к умолчанию)",
 	"replaceModal.titleDelete": "Удалить callout",
 	"replaceModal.titleReplace": "Заменить в хранилище",
-
-	"welcome.tooltip": "О Callout Studio",
-	"welcome.title": "Добро пожаловать в Callout Studio!",
-	"welcome.tagline":
-		"Ваше полное решение для создания, оформления и управления callout в Obsidian.",
 	"importBanner.message":
 		"Мы заметили, что вы используете {{plugins}}. Хотите импортировать свои callout?",
 	"importBanner.action": "Импорт",
 	"importBanner.dismiss": "Отклонить",
-	"welcome.previewTitle": "Посмотреть в действии",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio позволяет создавать callout с собственной иконкой, цветами и названием.\n\n" +
-		"Этот callout можно использовать **тремя** разными способами:\n\n" +
-		"## [!{{id}}] Callout как заголовок\n" +
-		"Чтобы превратить любой заголовок в заголовок в стиле callout, добавьте `[!type]` сразу после `#`.\n\n" +
-		"Хотите [!{{id}}]{встроенный callout}, как этот? Просто добавьте `[!type]{text}` прямо в середину предложения, не прерывая свой текст.\n\n" +
-		"> [!{{id}}] Блочный callout\n" +
-		"> Классический callout работает по тому же самому синтаксису, к которому вы уже привыкли: `> [!type]`.\n\n" +
-		"Callout Studio может предложить намного больше! [Узнать больше]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Смотреть обучающие видео Callout Studio",
+	"welcome.title": "Добро пожаловать в Callout Studio!",
+	"welcome.intro": "У плагина много возможностей, поэтому не торопитесь и смотрите то, что вам интересно.",
+	"welcome.tutorialCount": "Видеоуроки ({{count}})",
+	"welcome.readMore": "Подробнее о теме «{{title}}»: {{link}}.",
+	"welcome.clickHere": "нажмите здесь",
+	"welcome.invalidVideo": "Эта ссылка на видео недоступна. Выберите другой урок.",
+	"welcome.video.threeTypes": "Три типа callout",
+	"welcome.video.threeTypesDesc": "Изучите синтаксис блочных, заголовочных и встроенных callout, с собственными заголовками и встроенными типами.",
+	"welcome.video.create": "Создайте свой первый callout",
+	"welcome.video.createDesc": "Задайте название, идентификаторы, значок и цвета, а затем посмотрите предварительный просмотр callout во всех трёх форматах.",
+	"welcome.video.palettes": "Собственные цветовые палитры",
+	"welcome.video.palettesDesc": "Создавайте сплошные, градиентные и прозрачные палитры и обновляйте все callout, которые их используют.",
+	"welcome.video.icons": "Собственные значки и эмодзи",
+	"welcome.video.iconsDesc": "Просматривайте библиотеки значков, выбирайте эмодзи или загрузите собственное изображение для callout.",
+	"welcome.video.fallback": "Резервные стили и обнаружение",
+	"welcome.video.fallbackDesc": "Выберите, как выглядят неизвестные callout, просканируйте хранилище в поисках типов и настройте найденные.",
+	"welcome.video.manage": "Редактирование, замена и удаление",
+	"welcome.video.manageDesc": "Отредактируйте callout, замените его использования во всём хранилище или уберите его оформление, сохранив текст.",
+	"welcome.video.styles": "Глобальное оформление",
+	"welcome.video.stylesDesc": "Настройте границы, отступы, размер шрифта и форму блочных, заголовочных и встроенных callout.",
+	"welcome.video.menus": "Контекстное меню",
+	"welcome.video.menusDesc": "Работайте с callout прямо в заметках и выбирайте, какие действия появляются в меню и в каком порядке.",
+	"welcome.video.hotkeys": "Команды и горячие клавиши",
+	"welcome.video.hotkeysDesc": "Вставляйте, оборачивайте и разворачивайте callout командами, а затем назначьте сочетания клавиш для самых частых действий.",
+	"welcome.video.import": "Импорт, экспорт и обмен",
+	"welcome.video.importDesc": "Переносите настройки между хранилищами, импортируйте из других плагинов callout и экспортируйте стили в CSS.",
+	"welcome.video.languages": "Языки",
+	"welcome.video.languagesDesc": "Выберите язык интерфейса плагина или позвольте ему следовать языку, который вы используете в Obsidian.",
+	"welcome.video.find": "Поиск callout",
+	"welcome.video.findDesc": "Фильтруйте использования callout по типу и формату, а затем переходите к их точному месту в заметках.",
+	"welcome.video.backups": "Синхронизация и резервные копии",
+	"welcome.video.backupsDesc": "Сохраняйте настройки на всех устройствах, экспортируйте резервную копию, сравнивайте и восстанавливайте прежние версии.",
+	"welcome.video.dangerZone": "Опасная зона",
+	"welcome.video.dangerZoneDesc": "Просмотрите преобразования заголовочных и встроенных callout в обычный Markdown и узнайте, что удаляет сброс настроек.",
+	"welcome.video.insert": "Быстрая вставка",
+	"welcome.video.insertDesc": "Ищите превью callout, фильтруйте по источнику и вставляйте или редактируйте блочный callout с боковой панели.",
+	"welcome.video.heading": "Расширенные заголовочные callout",
+	"welcome.video.headingDesc": "Сделайте заголовочные callout удобными для навигации в структуре, ссылках на заголовки и оглавлениях.",
+	"welcome.video.themes": "Интеграция с темами",
+	"welcome.video.themesDesc": "Просматривайте callout, которые предоставляет ваша тема, и узнайте, как оформление темы сочетается с вашими собственными дизайнами.",
 
 	"deleteModal.title": 'Удалить callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1196,8 +1221,6 @@ export const ru: Record<string, string> = {
 		"Ваши настройки сохранены, но копию восстановления на этом устройстве обновить не удалось. Проверьте свободное место на этом устройстве. Callout Studio повторит попытку при следующем вашем изменении.",
 	"notice.blockedWhilePaused":
 		"Сохранение приостановлено, поэтому это изменение сейчас нельзя сохранить. Сначала устраните проблему с сохранением, указанную в настройках Callout Studio.",
-	"welcome.syncNote":
-		"Уже используете Callout Studio на другом устройстве? Сначала дайте службе синхронизации завершить работу. Ваши callout и настройки появятся здесь, как только прибудут.",
 	"settings.resetBackupFailed":
 		"Ничего не было сброшено: не удалось сначала сохранить резервную копию текущей настройки. Проверьте свободное место, затем повторите попытку.",
 	"settings.resetNotSaved":

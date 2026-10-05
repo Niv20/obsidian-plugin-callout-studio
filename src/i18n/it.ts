@@ -35,26 +35,51 @@ export const it: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(torna al predefinito)",
 	"replaceModal.titleDelete": "Elimina callout",
 	"replaceModal.titleReplace": "Sostituisci nel vault",
-
-	"welcome.tooltip": "Informazioni su Callout Studio",
-	"welcome.title": "Benvenuto in Callout Studio!",
-	"welcome.tagline":
-		"La tua soluzione completa per creare, applicare stili e gestire i callout di Obsidian.",
 	"importBanner.message":
 		"Abbiamo notato che usi {{plugins}}. Vuoi importare i tuoi callout?",
 	"importBanner.action": "Importa",
 	"importBanner.dismiss": "Ignora",
-	"welcome.previewTitle": "Guardalo in azione",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio ti permette di creare callout con un'icona, colori e nome personalizzati.\n\n" +
-		"Puoi usare questo callout in **tre** modi diversi:\n\n" +
-		"## [!{{id}}] Callout come titolo\n" +
-		"Per trasformare qualsiasi titolo in un titolo in stile callout, aggiungi `[!type]` subito dopo i `#`.\n\n" +
-		"Vuoi un [!{{id}}]{callout inline} come questo? Basta aggiungere `[!type]{text}` in mezzo a una frase, senza interrompere il flusso.\n\n" +
-		"> [!{{id}}] Callout a blocco\n" +
-		"> Il callout classico funziona con la stessa identica sintassi a cui sei già abituato: `> [!type]`.\n\n" +
-		"Callout Studio ha molto altro da offrire! [Scopri di più]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Guarda i tutorial di Callout Studio",
+	"welcome.title": "Benvenuto in Callout Studio!",
+	"welcome.intro": "Il plugin offre molto, quindi prenditi il tempo per guardare ciò che ti interessa.",
+	"welcome.tutorialCount": "Tutorial video ({{count}})",
+	"welcome.readMore": "Per saperne di più su {{title}}, {{link}}.",
+	"welcome.clickHere": "fai clic qui",
+	"welcome.invalidVideo": "Questo link video non è disponibile. Scegli un altro tutorial.",
+	"welcome.video.threeTypes": "I tre tipi di callout",
+	"welcome.video.threeTypesDesc": "Scopri la sintassi dei callout a blocco, a intestazione e in linea, con titoli personalizzati e tipi integrati.",
+	"welcome.video.create": "Crea il tuo primo callout",
+	"welcome.video.createDesc": "Imposta nome, ID, icona e colori, poi visualizza l’anteprima del callout in tutti e tre i formati.",
+	"welcome.video.palettes": "Tavolozze di colori personalizzate",
+	"welcome.video.palettesDesc": "Crea tavolozze a tinta unita, sfumate o trasparenti e aggiorna ogni callout che le usa.",
+	"welcome.video.icons": "Icone ed emoji personalizzate",
+	"welcome.video.iconsDesc": "Sfoglia le librerie di icone, scegli emoji o carica la tua immagine per un callout.",
+	"welcome.video.fallback": "Stili di fallback e rilevamento",
+	"welcome.video.fallbackDesc": "Scegli l’aspetto dei callout sconosciuti, analizza il vault per trovare i tipi e personalizza quelli trovati.",
+	"welcome.video.manage": "Modifica, sostituzione ed eliminazione",
+	"welcome.video.manageDesc": "Modifica un callout, sostituisci i suoi usi in tutto il vault o rimuovi il suo stile mantenendo il tuo testo.",
+	"welcome.video.styles": "Stile globale",
+	"welcome.video.stylesDesc": "Regola bordi, spaziatura, dimensione del carattere e forma dei callout a blocco, a intestazione e in linea.",
+	"welcome.video.menus": "Il menu contestuale",
+	"welcome.video.menusDesc": "Lavora con i callout direttamente nelle tue note e scegli quali azioni compaiono nel menu e in quale ordine.",
+	"welcome.video.hotkeys": "Comandi e tasti di scelta rapida",
+	"welcome.video.hotkeysDesc": "Inserisci, racchiudi e scarta i callout con i comandi, poi assegna scorciatoie alle azioni che usi di più.",
+	"welcome.video.import": "Importazione, esportazione e condivisione",
+	"welcome.video.importDesc": "Sposta la tua configurazione tra vault, importa da altri plugin di callout ed esporta gli stili come CSS.",
+	"welcome.video.languages": "Lingue",
+	"welcome.video.languagesDesc": "Scegli la lingua dell’interfaccia del plugin oppure lascia che segua la lingua che usi in Obsidian.",
+	"welcome.video.find": "Trovare i callout",
+	"welcome.video.findDesc": "Filtra gli usi dei callout per tipo e formato, poi vai alla loro posizione esatta nelle note.",
+	"welcome.video.backups": "Sincronizzazione e backup",
+	"welcome.video.backupsDesc": "Mantieni la tua configurazione su tutti i dispositivi, esporta un backup e confronta o ripristina le versioni precedenti.",
+	"welcome.video.dangerZone": "Zona pericolosa",
+	"welcome.video.dangerZoneDesc": "Rivedi le conversioni dei callout a intestazione e in linea in Markdown standard e scopri cosa rimuove il ripristino della configurazione.",
+	"welcome.video.insert": "Inserimento rapido",
+	"welcome.video.insertDesc": "Cerca le anteprime dei callout, filtra per origine e inserisci o modifica un callout a blocco dalla barra laterale.",
+	"welcome.video.heading": "Callout a intestazione avanzati",
+	"welcome.video.headingDesc": "Mantieni i callout a intestazione facili da navigare nella struttura, nei link alle intestazioni e negli indici.",
+	"welcome.video.themes": "Integrazione con i temi",
+	"welcome.video.themesDesc": "Sfoglia i callout forniti dal tuo tema e capisci come lo stile del tema funziona insieme ai tuoi design.",
 
 	"deleteModal.title": 'Elimina callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1208,7 +1233,6 @@ export const it: Record<string, string> = {
 	"recovery.stale": "Non è stato ripristinato nulla: le tue impostazioni sono cambiate o non è stato possibile controllarle. Riapri questa finestra e rivedi l'elenco.",
 	"notice.recoveryCopyStale": "Le tue impostazioni sono state salvate, ma la copia di ripristino di questo dispositivo non ha potuto essere aggiornata. Controlla lo spazio di archiviazione disponibile su questo dispositivo. Callout Studio riproverà alla tua prossima modifica.",
 	"notice.blockedWhilePaused": "Il salvataggio è in pausa, quindi questa modifica non può essere mantenuta in questo momento. Risolvi prima il problema di salvataggio mostrato nelle impostazioni di Callout Studio.",
-	"welcome.syncNote": "Usi già Callout Studio su un altro dispositivo? Lascia che il tuo servizio di sincronizzazione finisca prima. I tuoi callout e impostazioni appariranno qui non appena arrivano.",
 	"settings.resetBackupFailed": "Nulla è stato reimpostato: non è stato possibile salvare prima un backup della tua configurazione attuale. Controlla lo spazio di archiviazione disponibile, poi riprova.",
 	"settings.resetNotSaved": "Il reset è mostrato ma non è ancora stato possibile salvarlo, quindi il tuo file delle impostazioni contiene ancora la configurazione precedente. Controlla lo stato del salvataggio nelle impostazioni di Callout Studio.",
 	"confirm.titleResetEverything": "Reimposta tutto",

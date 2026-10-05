@@ -33,26 +33,51 @@ export const nb: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(faller tilbake til standard)",
 	"replaceModal.titleDelete": "Slett callout",
 	"replaceModal.titleReplace": "Erstatt i vault",
-
-	"welcome.tooltip": "Om Callout Studio",
-	"welcome.title": "Velkommen til Callout Studio!",
-	"welcome.tagline":
-		"Din komplette løsning for å opprette, style og administrere Obsidian-callouts.",
 	"importBanner.message":
 		"Vi la merke til at du bruker {{plugins}}. Vil du importere callouts dine?",
 	"importBanner.action": "Importer",
 	"importBanner.dismiss": "Avvis",
-	"welcome.previewTitle": "Se det i aksjon",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Med Callout Studio kan du lage callouts med eget ikon, farger og navn.\n\n" +
-		"Du kan bruke denne callout-en på **tre** forskjellige måter:\n\n" +
-		"## [!{{id}}] Callout som overskrift\n" +
-		"For å gjøre en overskrift om til en overskrift i callout-stil, legg til `[!type]` rett etter `#`-tegnene.\n\n" +
-		"Vil du ha en [!{{id}}]{callout i teksten} som denne? Bare legg til `[!type]{text}` midt i en setning, uten å bryte skriveflyten.\n\n" +
-		"> [!{{id}}] Blokk-callout\n" +
-		"> Den klassiske callout-en fungerer med akkurat den samme syntaksen du allerede er vant til: `> [!type]`.\n\n" +
-		"Callout Studio har mye mer å tilby! [Les mer]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Se opplæringsvideoer for Callout Studio",
+	"welcome.title": "Velkommen til Callout Studio!",
+	"welcome.intro": "Pluginen har mye å by på, så ta deg tid til å se det som interesserer deg.",
+	"welcome.tutorialCount": "Opplæringsvideoer ({{count}})",
+	"welcome.readMore": "Les mer om {{title}}, {{link}}.",
+	"welcome.clickHere": "klikk her",
+	"welcome.invalidVideo": "Denne videolenken er ikke tilgjengelig. Velg en annen opplæringsvideo.",
+	"welcome.video.threeTypes": "De tre callout-typene",
+	"welcome.video.threeTypesDesc": "Lær syntaksen for blokk-, overskrifts- og innebygde callouts, med egne titler og innebygde typer.",
+	"welcome.video.create": "Lag din første callout",
+	"welcome.video.createDesc": "Angi navn, ID-er, ikon og farger, og forhåndsvis deretter callouten i alle tre formatene.",
+	"welcome.video.palettes": "Egne fargepaletter",
+	"welcome.video.palettesDesc": "Lag ensfargede, gradient- eller gjennomsiktige paletter, og oppdater alle callouts som bruker dem.",
+	"welcome.video.icons": "Egne ikoner og emojier",
+	"welcome.video.iconsDesc": "Bla gjennom ikonbibliotek, velg emojier eller last opp ditt eget bilde til en callout.",
+	"welcome.video.fallback": "Reservestiler og oppdagelse",
+	"welcome.video.fallbackDesc": "Velg hvordan ukjente callouts ser ut, skann hvelvet etter typer, og tilpass de du finner.",
+	"welcome.video.manage": "Redigering, erstatning og sletting",
+	"welcome.video.manageDesc": "Rediger en callout, erstatt bruken av den i hele hvelvet, eller fjern stilen og behold teksten din.",
+	"welcome.video.styles": "Global styling",
+	"welcome.video.stylesDesc": "Juster kantlinjer, avstand, skriftstørrelse og form for blokk-, overskrifts- og innebygde callouts.",
+	"welcome.video.menus": "Høyreklikkmenyen",
+	"welcome.video.menusDesc": "Jobb med callouts direkte i notatene dine, og velg hvilke menyhandlinger som vises og i hvilken rekkefølge.",
+	"welcome.video.hotkeys": "Kommandoer og hurtigtaster",
+	"welcome.video.hotkeysDesc": "Sett inn, omslutt og fjern omslag fra callouts med kommandoer, og tildel snarveier til handlingene du bruker mest.",
+	"welcome.video.import": "Import, eksport og deling",
+	"welcome.video.importDesc": "Flytt oppsettet ditt mellom hvelv, importer fra andre callout-plugins og eksporter stiler som CSS.",
+	"welcome.video.languages": "Språk",
+	"welcome.video.languagesDesc": "Velg pluginens grensesnittspråk, eller la den følge språket du bruker i Obsidian.",
+	"welcome.video.find": "Finn callouts",
+	"welcome.video.findDesc": "Filtrer bruken av callouts etter type og format, og hopp til den nøyaktige plasseringen i notatene dine.",
+	"welcome.video.backups": "Synkronisering og sikkerhetskopier",
+	"welcome.video.backupsDesc": "Behold oppsettet ditt på tvers av enheter, eksporter en sikkerhetskopi, og sammenlign eller gjenopprett tidligere versjoner.",
+	"welcome.video.dangerZone": "Faresone",
+	"welcome.video.dangerZoneDesc": "Gå gjennom konverteringer av overskrifts- og innebygde callouts til standard Markdown, og se hva tilbakestilling av oppsettet fjerner.",
+	"welcome.video.insert": "Hurtiginnsetting",
+	"welcome.video.insertDesc": "Søk i callout-forhåndsvisninger, filtrer etter kilde, og sett inn eller rediger en blokk-callout fra sidestolpen.",
+	"welcome.video.heading": "Avanserte overskrifts-callouts",
+	"welcome.video.headingDesc": "Gjør overskrifts-callouts enkle å navigere i disposisjonen, overskriftslenker og innholdsfortegnelser.",
+	"welcome.video.themes": "Temaintegrasjon",
+	"welcome.video.themesDesc": "Bla gjennom callouts som temaet ditt leverer, og forstå hvordan temastilen fungerer sammen med dine egne design.",
 
 	"deleteModal.title": 'Slett callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1174,8 +1199,6 @@ export const nb: Record<string, string> = {
 		"Innstillingene dine ble lagret, men denne enhetens gjenopprettingskopi kunne ikke oppdateres. Sjekk tilgjengelig lagringsplass på denne enheten. Callout Studio prøver igjen ved din neste endring.",
 	"notice.blockedWhilePaused":
 		"Lagring er satt på pause, så denne endringen kan ikke beholdes akkurat nå. Løs lagringsproblemet vist i Callout Studio-innstillingene først.",
-	"welcome.syncNote":
-		"Bruker du allerede Callout Studio på en annen enhet? La synkroniseringstjenesten din fullføre først. Calloutene og innstillingene dine vises her så snart de ankommer.",
 	"settings.resetBackupFailed":
 		"Ingenting ble tilbakestilt: en sikkerhetskopi av ditt nåværende oppsett kunne ikke lagres først. Sjekk tilgjengelig lagringsplass, og prøv igjen.",
 	"settings.resetNotSaved":

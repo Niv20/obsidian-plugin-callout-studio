@@ -20,6 +20,7 @@ import { canonical, content } from "./syncTree";
 /** Paths that change without anyone editing a setting. */
 const INCIDENTAL: readonly (readonly string[])[] = [
 	["settings", "welcomeSeen"],
+	["settings", "tutorialWelcomeSeen"],
 	["settings", "competitorImportBannerHandled"],
 	["settings", "iconSources", "lastCategory"],
 	["settings", "iconSources", "lastEmojiSkinTone"],

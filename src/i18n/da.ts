@@ -32,26 +32,51 @@ export const da: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(falder tilbage til standard)",
 	"replaceModal.titleDelete": "Slet callout",
 	"replaceModal.titleReplace": "Erstat i vault",
-
-	"welcome.tooltip": "Om Callout Studio",
-	"welcome.title": "Velkommen til Callout Studio!",
-	"welcome.tagline":
-		"Din komplette løsning til at oprette, style og administrere Obsidian-callouts.",
 	"importBanner.message":
 		"Vi har bemærket, at du bruger {{plugins}}. Vil du importere dine callouts?",
 	"importBanner.action": "Importer",
 	"importBanner.dismiss": "Afvis",
-	"welcome.previewTitle": "Se det i aktion",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Med Callout Studio kan du oprette callouts med eget ikon, farver og navn.\n\n" +
-		"Du kan bruge denne callout på **tre** forskellige måder:\n\n" +
-		"## [!{{id}}] Callout som overskrift\n" +
-		"For at gøre en overskrift til en overskrift i callout-stil, tilføj `[!type]` lige efter `#`-tegnene.\n\n" +
-		"Vil du have en [!{{id}}]{indlejret callout} som denne? Tilføj bare `[!type]{text}` midt i en sætning, uden at bryde dit flow.\n\n" +
-		"> [!{{id}}] Blok-callout\n" +
-		"> Den klassiske callout fungerer med præcis den samme syntaks, du allerede kender: `> [!type]`.\n\n" +
-		"Callout Studio har meget mere at byde på! [Læs mere]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Se tutorials til Callout Studio",
+	"welcome.title": "Velkommen til Callout Studio!",
+	"welcome.intro": "Pluginet kan rigtig meget, så tag dig god tid til at se det, der interesserer dig.",
+	"welcome.tutorialCount": "Videotutorials ({{count}})",
+	"welcome.readMore": "Læs mere om {{title}}, {{link}}.",
+	"welcome.clickHere": "klik her",
+	"welcome.invalidVideo": "Dette videolink er ikke tilgængeligt. Vælg en anden tutorial.",
+	"welcome.video.threeTypes": "De tre callout-typer",
+	"welcome.video.threeTypesDesc": "Lær syntaksen til blok-, overskrifts- og indlejrede callouts med egne titler og indbyggede typer.",
+	"welcome.video.create": "Opret din første callout",
+	"welcome.video.createDesc": "Angiv et navn, ID'er, ikon og farver, og få derefter vist din callout i alle tre formater.",
+	"welcome.video.palettes": "Egne farvepaletter",
+	"welcome.video.palettesDesc": "Opret ensfarvede, gradient- eller gennemsigtige paletter, og opdater alle callouts, der bruger dem.",
+	"welcome.video.icons": "Egne ikoner og emojis",
+	"welcome.video.iconsDesc": "Gennemse ikonbiblioteker, vælg emojis, eller upload dit eget billede til en callout.",
+	"welcome.video.fallback": "Reserveformater og opdagelse",
+	"welcome.video.fallbackDesc": "Vælg, hvordan ukendte callouts ser ud, scan din vault for typer, og tilpas dem, du finder.",
+	"welcome.video.manage": "Redigering, udskiftning og sletning",
+	"welcome.video.manageDesc": "Rediger en callout, erstat dens brug i hele din vault, eller fjern dens formatering, og behold din tekst.",
+	"welcome.video.styles": "Global formatering",
+	"welcome.video.stylesDesc": "Juster kanter, afstand, skriftstørrelse og form for blok-, overskrifts- og indlejrede callouts.",
+	"welcome.video.menus": "Højreklikmenuen",
+	"welcome.video.menusDesc": "Arbejd med callouts direkte i dine noter, og vælg hvilke menuhandlinger der vises, og i hvilken rækkefølge.",
+	"welcome.video.hotkeys": "Kommandoer og genvejstaster",
+	"welcome.video.hotkeysDesc": "Indsæt, omslut og fjern omslag fra callouts med kommandoer, og tildel derefter genveje til de handlinger, du bruger mest.",
+	"welcome.video.import": "Import, eksport og deling",
+	"welcome.video.importDesc": "Flyt din opsætning mellem vaults, importer fra andre callout-plugins, og eksporter formater som CSS.",
+	"welcome.video.languages": "Sprog",
+	"welcome.video.languagesDesc": "Vælg pluginets grænsefladesprog, eller lad det følge det sprog, du bruger i Obsidian.",
+	"welcome.video.find": "Find callouts",
+	"welcome.video.findDesc": "Filtrer brug af callouts efter type og format, og spring derefter til deres nøjagtige placering i dine noter.",
+	"welcome.video.backups": "Synkronisering og sikkerhedskopier",
+	"welcome.video.backupsDesc": "Behold din opsætning på tværs af enheder, eksporter en sikkerhedskopi, og sammenlign eller gendan tidligere versioner.",
+	"welcome.video.dangerZone": "Farezone",
+	"welcome.video.dangerZoneDesc": "Gennemgå konverteringer af overskrifts- og indlejrede callouts til standard-Markdown, og se, hvad nulstilling af din opsætning fjerner.",
+	"welcome.video.insert": "Hurtig indsættelse",
+	"welcome.video.insertDesc": "Søg i callout-forhåndsvisninger, filtrer efter kilde, og indsæt eller rediger en blok-callout fra bjælken.",
+	"welcome.video.heading": "Avancerede overskrifts-callouts",
+	"welcome.video.headingDesc": "Gør overskrifts-callouts lette at navigere i i oversigten, overskriftslinks og indholdsfortegnelser.",
+	"welcome.video.themes": "Temaintegration",
+	"welcome.video.themesDesc": "Gennemse callouts fra dit tema, og forstå, hvordan temaets formatering virker sammen med dine egne designs.",
 
 	"deleteModal.title": 'Slet callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1166,7 +1191,6 @@ export const da: Record<string, string> = {
 	"recovery.stale": "Intet blev gendannet: dine indstillinger har ændret sig, eller kunne ikke tjekkes. Åbn dette vindue igen, og gennemgå listen.",
 	"notice.recoveryCopyStale": "Dine indstillinger blev gemt, men denne enheds gendannelseskopi kunne ikke opdateres. Tjek ledig lagerplads på denne enhed. Callout Studio prøver igen ved din næste ændring.",
 	"notice.blockedWhilePaused": "Gemning er sat på pause, så denne ændring kan ikke gemmes lige nu. Løs det gemmeproblem, der vises i Callout Studios indstillinger, først.",
-	"welcome.syncNote": "Bruger du allerede Callout Studio på en anden enhed? Lad din synkroniseringstjeneste blive færdig først. Dine callouts og indstillinger vises her, når de ankommer.",
 	"settings.resetBackupFailed": "Intet blev nulstillet: en backup af din nuværende opsætning kunne ikke gemmes først. Tjek ledig lagerplads, og prøv så igen.",
 	"settings.resetNotSaved": "Nulstillingen vises, men kunne ikke gemmes endnu, så din indstillingsfil indeholder stadig den tidligere opsætning. Tjek gemmestatussen i Callout Studios indstillinger.",
 	"confirm.titleResetEverything": "Nulstil alt",

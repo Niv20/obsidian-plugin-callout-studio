@@ -202,6 +202,8 @@ export function mergeSavedSettings(
 		},
 		welcomeSeen:
 			booleanPreference(savedSettings.welcomeSeen, DEFAULT_SETTINGS.welcomeSeen ?? false),
+		tutorialWelcomeSeen:
+			booleanPreference(savedSettings.tutorialWelcomeSeen, DEFAULT_SETTINGS.tutorialWelcomeSeen ?? false),
 		competitorImportBannerHandled:
 			savedSettings.competitorImportBannerHandled === true,
 		fallbackCalloutId:

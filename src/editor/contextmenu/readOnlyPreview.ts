@@ -36,7 +36,7 @@
  *   be edited", which tells the user more than a greyed-out row would.
  * - `selection` — Edit link / Edit tag only move the selection.
  * - `title`, `open`, `info`, `info.copy`, `view`, `action` — lookup and link
- *   handling, which is what makes the splash screen's **Learn more** link work.
+ *   handling for any links in the preview sample.
  */
 import type { Menu } from "obsidian";
 

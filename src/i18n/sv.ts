@@ -88,26 +88,51 @@ export const sv: Record<string, string> = {
 		"(faller tillbaka till standard)",
 	"replaceModal.titleDelete": "Ta bort callout",
 	"replaceModal.titleReplace": "Ersätt i vault",
-
-	"welcome.tooltip": "Om Callout Studio",
-	"welcome.title": "Välkommen till Callout Studio!",
-	"welcome.tagline":
-		"Din kompletta lösning för att skapa, utforma och hantera Obsidian-callouts.",
 	"importBanner.message":
 		"Vi har märkt att du använder {{plugins}}. Vill du importera dina callouts?",
 	"importBanner.action": "Importera",
 	"importBanner.dismiss": "Avvisa",
-	"welcome.previewTitle": "Se det i action",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Med Callout Studio kan du skapa callouts med egen ikon, färger och namn.\n\n" +
-		"Du kan använda den här callouten på **tre** olika sätt:\n\n" +
-		"## [!{{id}}] Callout som rubrik\n" +
-		"För att göra en rubrik till en rubrik i callout-stil, lägg till `[!type]` direkt efter `#`-tecknen.\n\n" +
-		"Vill du ha en [!{{id}}]{infogad callout} som denna? Lägg bara till `[!type]{text}` mitt i en mening, utan att bryta ditt flyt.\n\n" +
-		"> [!{{id}}] Block-callout\n" +
-		"> Den klassiska callouten fungerar med exakt samma syntax som du redan är van vid: `> [!type]`.\n\n" +
-		"Callout Studio har mycket mer att erbjuda! [Läs mer]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Titta på handledningar för Callout Studio",
+	"welcome.title": "Välkommen till Callout Studio!",
+	"welcome.intro": "Tillägget har mycket att erbjuda, så ta god tid på dig att titta på det som intresserar dig.",
+	"welcome.tutorialCount": "Videohandledningar ({{count}})",
+	"welcome.readMore": "Läs mer om {{title}}, {{link}}.",
+	"welcome.clickHere": "klicka här",
+	"welcome.invalidVideo": "Den här videolänken är inte tillgänglig. Välj en annan handledning.",
+	"welcome.video.threeTypes": "De tre callout-typerna",
+	"welcome.video.threeTypesDesc": "Lär dig syntaxen för block-, rubrik- och infogade callouts, med egna titlar och inbyggda typer.",
+	"welcome.video.create": "Skapa din första callout",
+	"welcome.video.createDesc": "Ange namn, ID:n, ikon och färger och förhandsgranska sedan din callout i alla tre format.",
+	"welcome.video.palettes": "Egna färgpaletter",
+	"welcome.video.palettesDesc": "Skapa enfärgade, toningsbaserade eller genomskinliga paletter och uppdatera varje callout som använder dem.",
+	"welcome.video.icons": "Egna ikoner och emojis",
+	"welcome.video.iconsDesc": "Bläddra bland ikonbibliotek, välj emojis eller ladda upp din egen bild till en callout.",
+	"welcome.video.fallback": "Reservstilar och upptäckt",
+	"welcome.video.fallbackDesc": "Välj hur okända callouts ser ut, skanna ditt valv efter typer och anpassa de du hittar.",
+	"welcome.video.manage": "Redigera, ersätta och ta bort",
+	"welcome.video.manageDesc": "Redigera en callout, ersätt dess användning i hela valvet eller ta bort dess stil och behåll din text.",
+	"welcome.video.styles": "Global stilsättning",
+	"welcome.video.stylesDesc": "Justera kantlinjer, avstånd, teckenstorlek och form för block-, rubrik- och infogade callouts.",
+	"welcome.video.menus": "Högerklicksmenyn",
+	"welcome.video.menusDesc": "Arbeta med callouts direkt i dina anteckningar och välj vilka menyåtgärder som visas och i vilken ordning.",
+	"welcome.video.hotkeys": "Kommandon och kortkommandon",
+	"welcome.video.hotkeysDesc": "Infoga, omge och ta bort omgivning för callouts med kommandon och tilldela sedan genvägar till de åtgärder du använder mest.",
+	"welcome.video.import": "Import, export och delning",
+	"welcome.video.importDesc": "Flytta din uppsättning mellan valv, importera från andra callout-tillägg och exportera stilar som CSS.",
+	"welcome.video.languages": "Språk",
+	"welcome.video.languagesDesc": "Välj tilläggets gränssnittsspråk eller låt det följa det språk du använder i Obsidian.",
+	"welcome.video.find": "Hitta callouts",
+	"welcome.video.findDesc": "Filtrera användningen av callouts efter typ och format och hoppa sedan till deras exakta plats i dina anteckningar.",
+	"welcome.video.backups": "Synkronisering och säkerhetskopior",
+	"welcome.video.backupsDesc": "Behåll din uppsättning på alla enheter, exportera en säkerhetskopia och jämför eller återställ tidigare versioner.",
+	"welcome.video.dangerZone": "Riskområde",
+	"welcome.video.dangerZoneDesc": "Granska omvandlingar av rubrik- och infogade callouts till vanlig Markdown och se vad en återställning av uppsättningen tar bort.",
+	"welcome.video.insert": "Snabbinfogning",
+	"welcome.video.insertDesc": "Sök bland callout-förhandsvisningar, filtrera efter källa och infoga eller redigera en block-callout från sidofältet.",
+	"welcome.video.heading": "Avancerade rubrik-callouts",
+	"welcome.video.headingDesc": "Gör rubrik-callouts lätta att navigera i konturen, rubriklänkar och innehållsförteckningar.",
+	"welcome.video.themes": "Temaintegration",
+	"welcome.video.themesDesc": "Bläddra bland callouts som ditt tema tillhandahåller och förstå hur temats stil fungerar tillsammans med dina egna designer.",
 
 	"deleteModal.title": 'Ta bort callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1187,7 +1212,6 @@ export const sv: Record<string, string> = {
 	"recovery.stale": "Inget återställdes: dina inställningar ändrades eller kunde inte kontrolleras. Öppna det här fönstret igen och granska listan.",
 	"notice.recoveryCopyStale": "Dina inställningar sparades, men den här enhetens återställningskopia kunde inte uppdateras. Kontrollera tillgängligt lagringsutrymme på den här enheten. Callout Studio försöker igen vid din nästa ändring.",
 	"notice.blockedWhilePaused": "Sparandet är pausat, så den här ändringen kan inte behållas just nu. Lös sparandeproblemet som visas i Callout Studios inställningar först.",
-	"welcome.syncNote": "Använder du redan Callout Studio på en annan enhet? Låt din synktjänst bli klar först. Dina callouts och inställningar visas här när de anländer.",
 	"settings.resetBackupFailed": "Inget återställdes: en säkerhetskopia av din nuvarande uppsättning kunde inte sparas först. Kontrollera tillgängligt lagringsutrymme och försök igen.",
 	"settings.resetNotSaved": "Återställningen visas men kunde inte sparas ännu, så din inställningsfil innehåller fortfarande den föregående uppsättningen. Kontrollera sparandestatusen i Callout Studios inställningar.",
 	"confirm.titleResetEverything": "Återställ allt",

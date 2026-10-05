@@ -2889,8 +2889,7 @@ button.callout-studio-icon-picker-loading {
    past the 0.34 the same fold would give it — on a dark theme the exact-match
    shade read as too faint to tell a stacked window apart from a single one.
 
-   `WelcomeModal` opts out of the chrome entirely, so it is never marked and
-   never dims — it is a splash, and that is consistent with the rest of it. */
+   Every modal uses this shared backdrop treatment. */
 .is-mobile .cs-modal-container.cs-modal-stacked {
 	--cs-stacked-cover: rgba(220, 220, 220, 0.34);
 }
@@ -8465,9 +8464,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
    icon is filled with the accent color so it reads as a solid swatch rather
    than an outline, on all three surfaces (regular / heading / inline).
 
-   Scoped to this modal, not keyed on the id alone. The welcome splash reserves
-   the same id for its own demo (see settings/welcomeDemo.ts) but draws an
-   outline `sparkles`, which this rule would flood-fill into a blob. */
+   Scoped to this modal so other icon previews retain their original shape. */
 .cs-role-style-modal
 	.callout[data-callout="global-style-demo"]
 	> .callout-title
@@ -8484,211 +8481,298 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	fill: currentColor;
 }
 
-/* ══ Welcome / splash screen ══════════════════════════════════════ */
-
-/* Two columns: an intro + actions on the left, a self-describing live
-   preview on the right. Collapses to a single column on narrow screens. */
+/* ══ Video welcome screen ═════════════════════════════════════════ */
 .modal.cs-welcome-modal {
-	width: min(760px, 95vw);
-	max-width: min(760px, 95vw);
+	width: min(1160px, 94vw);
+	max-width: min(1160px, 94vw);
+	height: min(740px, 88vh);
 }
 
-/* Two-column body: explanation on the left, a live preview on the right. */
-.cs-split-panel {
+.cs-welcome-modal .modal-title {
+	font-size: var(--font-ui-large);
+	font-weight: var(--font-medium);
+	line-height: 1.5;
+}
+
+.cs-welcome-modal > .modal-content {
+	display: flex;
+	overflow: hidden;
+}
+
+.cs-welcome-layout {
 	display: grid;
-	grid-template-columns: 1fr 1.2fr;
+	grid-template-columns: 360px minmax(0, 1fr);
+	grid-template-rows: minmax(0, 1fr);
 	gap: 24px;
-	align-items: stretch;
+	width: 100%;
+	min-height: 0;
+	direction: ltr;
 }
 
-.cs-welcome-left {
+.cs-welcome-sidebar {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	text-align: left;
-	gap: 12px;
 	min-width: 0;
-}
-
-.cs-welcome-title {
-	margin: 8px 0 0;
-	font-size: 1.6em;
-	font-weight: 700;
-	color: var(--text-normal);
-}
-
-.cs-welcome-tagline {
-	margin: 0;
-	font-size: var(--font-ui-medium);
-	color: var(--text-muted);
-	line-height: 1.5;
-}
-
-/* Shown only on a launch that found no settings file: it may be a new device
-   whose synced settings have not arrived yet. */
-.cs-welcome-sync-note {
-	margin: var(--size-4-3) 0 0;
-	font-size: var(--font-ui-small);
-	color: var(--text-faint);
-	line-height: 1.5;
-}
-
-.cs-welcome-right {
-	min-width: 0;
-	display: flex;
-	flex-direction: column;
-}
-
-.cs-welcome-right .cs-live-preview-container {
-	flex: 1;
-}
-
-.cs-welcome-right .cs-live-preview-body {
-	min-height: 200px;
-	max-height: 340px;
+	min-height: 0;
+	box-sizing: border-box;
+	padding: 0 10px 10px;
+	border-radius: var(--radius-l);
+	background: var(--cs-surface-raised, var(--background-secondary));
+	overflow-x: hidden;
 	overflow-y: auto;
+	overscroll-behavior: contain;
+	scrollbar-gutter: stable;
 }
 
-/* ── The splash's demo callout, pinned against the active theme ──────
-
-   The splash demonstrates all three roles at once, and it used to do it with
-   the real built-ins `tip`, `warning` and `note` — exactly the ids a theme
-   restyles by name. Moving to the splash's own `demo` id
-   (settings/welcomeDemo.ts) settles that half: no theme has a rule for an id it
-   has never heard of.
-
-   It does not settle the other half. A theme's *generic* selectors still reach
-   the examples — `.callout { ... !important }` for the block role, and plain
-   heading rules for the heading role, which is the worse case: the injected
-   `.cs-heading-callout` / `.cs-inline-callout` rules carry no `!important` at
-   all, on purpose (see CSSInjector's note on keeping them user-overridable), so
-   a theme wins those without a fight. On several popular themes that made the
-   heading and inline examples unreadable.
-
-   Hence this block. It restates what the injected sheet already says, with
-   enough weight to survive a theme: among `!important` author declarations the
-   higher specificity wins, and repeating a compound buys that the same way
-   manager/theme/studioWeight.ts does. Scoped to `.cs-welcome-modal` and keyed
-   on the demo id, so it can reach nothing else — and that scope is load-bearing
-   here rather than tidiness, because `demo` is a name a user may legitimately
-   own (see WELCOME_DEMO_ID). Their `[!demo]` callouts keep their own colours
-   everywhere outside this modal. */
-
-.cs-welcome-modal {
-	--cs-welcome-demo-accent: #7c3aed;
+.cs-welcome-list-heading {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	flex-shrink: 0;
+	margin: 0 0 6px;
+	padding: 8px 3px;
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-semibold);
+	color: var(--text-muted);
+	background: var(--cs-surface-raised, var(--background-secondary));
 }
 
-.theme-dark .cs-welcome-modal {
-	--cs-welcome-demo-accent: #a78bfa;
-}
-
-/* ONE tint for all three roles, and it is `.cs-heading-callout`'s and
-   `.cs-inline-callout`'s own default formula copied verbatim from further up
-   this file — same 12%, same oklch space. That is what makes the comment above
-   ("restates what the injected sheet already says") true rather than
-   approximate: the hardening changes the *weight* of the plugin's answer, never
-   the answer. The three examples therefore sit on the same wash as each other
-   and as every real callout of this colour elsewhere in the vault.
-
-   Translucent rather than opaque for the reason the whole plugin is: an opaque
-   fill stops following the theme's surface and breaks nested callouts. It is
-   also why the inline pill is a tint and not the solid violet lozenge it was
-   for one revision — a solid pill is a look the plugin gives no other inline
-   callout, so the splash was demonstrating something users would never
-   reproduce. */
-.modal.cs-welcome-modal {
-	--cs-welcome-demo-tint: color-mix(
-		in oklch,
-		var(--cs-welcome-demo-accent) 12%,
-		transparent
+.cs-welcome-intro {
+	flex-shrink: 0;
+	margin: 12px 0;
+	padding: 12px;
+	border-radius: var(--radius-m);
+	font-size: var(--font-ui-small);
+	line-height: 1.5;
+	color: var(--text-muted);
+	background: color-mix(
+		in srgb,
+		var(--cs-surface, var(--background-primary)) 70%,
+		var(--cs-surface-raised, var(--background-secondary))
 	);
 }
 
-/* Block role. Three `.callout` units + the modal scope clears any realistic
-   theme rule.
-
-   `--callout-color` is deliberately NOT restated here. Its format is
-   version-dependent — a bare RGB triplet on ≤1.12, a full colour on 1.13+ (see
-   utils/calloutColorFormat) — so a hex hard-coded in a static sheet is wrong on
-   one of them, and CSSInjector already emits the right one at two selectors,
-   which no theme's generic `.callout` rule reaches. */
-.modal.cs-welcome-modal .callout.callout.callout[data-callout="demo"] {
-	--cs-accent: var(--cs-welcome-demo-accent) !important;
-	background-color: var(--cs-welcome-demo-tint) !important;
-	border-color: color-mix(
-		in oklch,
-		var(--cs-welcome-demo-accent) 35%,
-		transparent
-	) !important;
+.cs-welcome-list {
+	list-style: none;
+	flex-shrink: 0;
+	width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
+	padding: 3px;
+	margin: 0;
 }
 
-.modal.cs-welcome-modal
-	.callout.callout.callout[data-callout="demo"]
-	> .callout-title {
-	color: var(--cs-welcome-demo-accent) !important;
+.cs-welcome-list > li + li {
+	margin-top: 6px;
 }
 
-.modal.cs-welcome-modal
-	.callout.callout.callout[data-callout="demo"]
-	> .callout-content {
-	color: var(--text-normal) !important;
+.cs-welcome-modal button.cs-welcome-video {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
+	box-sizing: border-box;
+	height: auto;
+	min-height: 97px;
+	padding: 10px;
+	border: 1px solid transparent;
+	border-radius: var(--radius-m);
+	background: transparent;
+	box-shadow: none;
+	white-space: normal;
+	text-align: start;
+	color: var(--text-normal);
+	cursor: pointer;
 }
 
-/* Heading role. The one a theme reaches most easily, because it is wrapping a
-   real `<hN>` and themes style headings hard — colour, weight, size, sometimes
-   a background of their own. */
-.modal.cs-welcome-modal
-	.cs-heading-callout.cs-heading-callout[data-callout="demo"] {
-	--cs-accent: var(--cs-welcome-demo-accent) !important;
-	background-color: var(--cs-welcome-demo-tint) !important;
-	color: var(--cs-welcome-demo-accent) !important;
+.cs-welcome-modal button.cs-welcome-video[aria-current="true"] {
+	border-color: var(--cs-btn-border, var(--background-modifier-border));
+	background: var(--cs-surface, var(--background-primary));
 }
 
-.modal.cs-welcome-modal
-	.cs-heading-callout.cs-heading-callout[data-callout="demo"]
-	.cs-heading-title,
-.modal.cs-welcome-modal
-	.cs-heading-callout.cs-heading-callout[data-callout="demo"]
-	.cs-callout-name {
-	color: var(--cs-welcome-demo-accent) !important;
-	-webkit-text-fill-color: var(--cs-welcome-demo-accent) !important;
+.cs-welcome-modal button.cs-welcome-video:hover {
+	border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
+	background: color-mix(
+		in srgb,
+		var(--cs-surface, var(--background-primary)) 88%,
+		var(--text-normal)
+	);
 }
 
-/* Inline role. No border: the pill has never had one, and the splash's job is
-   to show what the user will get. `-webkit-text-fill-color` is restated
-   alongside `color` because that is the property the pill's gradient title
-   sweep uses, and it is the one a print sheet or a theme can set without
-   touching `color` at all. */
-.modal.cs-welcome-modal
-	.cs-inline-callout.cs-inline-callout[data-callout="demo"] {
-	--cs-accent: var(--cs-welcome-demo-accent) !important;
-	background-color: var(--cs-welcome-demo-tint) !important;
-	color: var(--cs-welcome-demo-accent) !important;
-	-webkit-text-fill-color: var(--cs-welcome-demo-accent) !important;
+.cs-welcome-modal button.cs-welcome-video:focus-visible {
+	outline: 2px solid var(--text-muted);
+	outline-offset: 1px;
 }
 
-/* Icons. `currentColor` is what the injector's mask fills with, so setting
-   `color` above is most of this — these pin the elements that carry their own.
-   All three roles now sit on the same tint, so all three icons are the accent. */
-.modal.cs-welcome-modal
-	.callout.callout.callout[data-callout="demo"]
-	> .callout-title
-	> .callout-icon,
-.modal.cs-welcome-modal
-	.cs-heading-callout.cs-heading-callout[data-callout="demo"]
-	.cs-callout-icon,
-.modal.cs-welcome-modal
-	.cs-inline-callout.cs-inline-callout[data-callout="demo"]
-	.cs-callout-icon {
-	color: var(--cs-welcome-demo-accent) !important;
+.cs-welcome-thumbnail {
+	position: relative;
+	display: grid;
+	place-items: center;
+	flex: 0 0 120px;
+	width: 120px;
+	height: 75px;
+	overflow: hidden;
+	border-radius: var(--radius-s);
+	background: var(--cs-surface-raised, var(--background-secondary));
 }
 
-@media (max-width: 640px) {
-	.cs-split-panel {
-		grid-template-columns: 1fr;
+.cs-welcome-number {
+	font-size: 24px;
+	font-weight: var(--font-semibold);
+	font-variant-numeric: tabular-nums;
+	color: var(--text-faint);
+}
+
+.cs-welcome-thumbnail img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	visibility: hidden;
+}
+
+.cs-welcome-thumbnail img.is-loaded {
+	visibility: visible;
+}
+
+.cs-welcome-duration {
+	position: absolute;
+	inset-block-end: 4px;
+	inset-inline-end: 4px;
+	z-index: 1;
+	padding: 2px 4px;
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.8);
+	color: #fff;
+	font-size: 11px;
+	font-weight: var(--font-semibold);
+	font-variant-numeric: tabular-nums;
+	line-height: 1.2;
+	pointer-events: none;
+}
+
+.cs-welcome-video-copy {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 5px;
+	min-width: 0;
+	min-height: 75px;
+	overflow: hidden;
+}
+
+.cs-welcome-video-title {
+	flex-shrink: 0;
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-semibold);
+	line-height: 1.4;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.cs-welcome-video-description {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	min-height: 0;
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-normal);
+	line-height: 1.45;
+	color: var(--text-muted);
+	overflow: hidden;
+	white-space: normal;
+	text-overflow: ellipsis;
+}
+
+.cs-welcome-viewer {
+	min-width: 0;
+	min-height: 0;
+	overflow-y: auto;
+}
+
+.cs-welcome-stage {
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	min-height: 200px;
+	overflow: hidden;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-l);
+	background: var(--cs-surface-raised, var(--background-secondary));
+}
+
+.cs-welcome-stage.is-idle {
+	display: grid;
+	aspect-ratio: auto;
+	min-height: 300px;
+}
+
+.cs-welcome-player {
+	display: block;
+	width: 100%;
+	height: 100%;
+	min-height: 200px;
+	border: 0;
+}
+
+.cs-welcome-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	min-height: 200px;
+	padding: 24px;
+	text-align: center;
+	color: var(--text-muted);
+}
+
+.cs-welcome-details h2 {
+	margin: 20px 0 8px;
+	font-size: var(--font-ui-large);
+	line-height: 1.4;
+}
+
+.cs-welcome-details p {
+	margin: 0;
+	font-size: var(--font-ui-small);
+	line-height: 1.6;
+	color: var(--text-muted);
+}
+
+.cs-welcome-details p + p {
+	margin-top: 8px;
+}
+
+@media (max-width: 780px) {
+	.modal.cs-welcome-modal {
+		height: 92vh;
+	}
+
+	.cs-welcome-modal > .modal-content {
+		overflow-y: auto;
+	}
+
+	.cs-welcome-layout {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.cs-welcome-viewer {
+		order: -1;
+		flex-shrink: 0;
+		overflow: visible;
+	}
+
+	.cs-welcome-sidebar {
+		flex: 0 0 auto;
+		max-height: 360px;
 	}
 }
-
 
 /* A language the user has picked but that could not be downloaded yet. Styled
    as a notice rather than an error: the plugin is fully usable in English, and

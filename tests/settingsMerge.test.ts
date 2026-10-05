@@ -70,6 +70,7 @@ const FIELD_KIND: Record<keyof PluginSettings, "value" | "list"> = {
 	headingCallouts: "value",
 	inlineCallouts: "value",
 	welcomeSeen: "value",
+	tutorialWelcomeSeen: "value",
 	competitorImportBannerHandled: "value",
 	fallbackCalloutId: "value",
 	language: "value",
@@ -177,6 +178,7 @@ const EXPECTED_LEAVES: string[] = [
 	"inlineCallouts.enabled",
 	"language",
 	"quickInsertSource",
+	"tutorialWelcomeSeen",
 	"welcomeSeen",
 ];
 

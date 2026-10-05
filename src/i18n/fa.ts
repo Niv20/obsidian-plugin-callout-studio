@@ -35,26 +35,51 @@ export const fa: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(به پیش‌فرض برمی‌گردد)",
 	"replaceModal.titleDelete": "حذف callout",
 	"replaceModal.titleReplace": "جایگزینی در vault",
-
-	"welcome.tooltip": "درباره‌ی Callout Studio",
-	"welcome.title": "به Callout Studio خوش آمدید!",
-	"welcome.tagline":
-		"راه‌حل کامل شما برای ساخت، طراحی و مدیریت callout‌های Obsidian.",
 	"importBanner.message":
 		"متوجه شدیم که از {{plugins}} استفاده می‌کنید. آیا مایلید callout‌های خود را وارد کنید؟",
 	"importBanner.action": "وارد کردن",
 	"importBanner.dismiss": "رد کردن",
-	"welcome.previewTitle": "آن را در عمل ببینید",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio به شما امکان می‌دهد callout‌هایی با آیکون، رنگ‌ها و نام دلخواه بسازید.\n\n" +
-		"می‌توانید از این callout به **سه** روش متفاوت استفاده کنید:\n\n" +
-		"## [!{{id}}] callout به‌عنوان تیتر\n" +
-		"برای تبدیل هر تیتر به تیتری با سبک callout، بلافاصله بعد از `#`ها عبارت `[!type]` را اضافه کنید.\n\n" +
-		"یک [!{{id}}]{callout درون‌خطی} مثل این می‌خواهید؟ فقط `[!type]{text}` را وسط یک جمله اضافه کنید، بدون آنکه روند نوشتن قطع شود.\n\n" +
-		"> [!{{id}}] callout بلوکی\n" +
-		"> callout کلاسیک دقیقاً با همان نحوی که به آن عادت دارید کار می‌کند: `> [!type]`.\n\n" +
-		"Callout Studio قابلیت‌های بیشتری هم دارد! [بیشتر بدانید]({{repoUrl}}).\n",
+	"welcome.openTutorials": "تماشای آموزش‌های Callout Studio",
+	"welcome.title": "به Callout Studio خوش آمدید!",
+	"welcome.intro": "این افزونه امکانات زیادی دارد، پس با خیال راحت آنچه را برایتان جالب است تماشا کنید.",
+	"welcome.tutorialCount": "آموزش‌های ویدیویی ({{count}})",
+	"welcome.readMore": "برای اطلاعات بیشتر درباره {{title}}، {{link}}.",
+	"welcome.clickHere": "اینجا کلیک کنید",
+	"welcome.invalidVideo": "این پیوند ویدیو در دسترس نیست. آموزش دیگری را انتخاب کنید.",
+	"welcome.video.threeTypes": "سه نوع callout",
+	"welcome.video.threeTypesDesc": "با ساختار callout بلوکی، سرتیتری و درون‌خطی، همراه با عنوان‌های سفارشی و نوع‌های داخلی آشنا شوید.",
+	"welcome.video.create": "اولین callout خود را بسازید",
+	"welcome.video.createDesc": "نام، شناسه‌ها، نماد و رنگ‌ها را تعیین کنید و سپس callout را در هر سه قالب پیش‌نمایش کنید.",
+	"welcome.video.palettes": "پالت‌های رنگ سفارشی",
+	"welcome.video.palettesDesc": "پالت‌های ساده، گرادیانی یا شفاف بسازید و هر callout را که از آن‌ها استفاده می‌کند به‌روزرسانی کنید.",
+	"welcome.video.icons": "نمادها و ایموجی‌های سفارشی",
+	"welcome.video.iconsDesc": "کتابخانه‌های نماد را مرور کنید، ایموجی انتخاب کنید یا تصویر خودتان را برای callout بارگذاری کنید.",
+	"welcome.video.fallback": "سبک‌های پشتیبان و کشف",
+	"welcome.video.fallbackDesc": "ظاهر callout‌های ناشناخته را انتخاب کنید، صندوقچه را برای یافتن نوع‌ها اسکن کنید و موارد پیداشده را سفارشی کنید.",
+	"welcome.video.manage": "ویرایش، جایگزینی و حذف",
+	"welcome.video.manageDesc": "یک callout را ویرایش کنید، کاربردهای آن را در کل صندوقچه جایگزین کنید یا سبکش را بردارید و متن خود را نگه دارید.",
+	"welcome.video.styles": "سبک‌دهی سراسری",
+	"welcome.video.stylesDesc": "حاشیه‌ها، فاصله‌ها، اندازه قلم و شکل callout‌های بلوکی، سرتیتری و درون‌خطی را تنظیم کنید.",
+	"welcome.video.menus": "منوی کلیک راست",
+	"welcome.video.menusDesc": "مستقیم در یادداشت‌هایتان با callout کار کنید و انتخاب کنید کدام کنش‌ها و با چه ترتیبی در منو بیایند.",
+	"welcome.video.hotkeys": "دستورها و کلیدهای میانبر",
+	"welcome.video.hotkeysDesc": "با دستورها callout درج، قاب‌گذاری و قاب‌برداری کنید و برای کنش‌های پرکاربردتان میانبر تعیین کنید.",
+	"welcome.video.import": "درون‌ریزی، برون‌بری و اشتراک‌گذاری",
+	"welcome.video.importDesc": "تنظیمات خود را میان صندوقچه‌ها منتقل کنید، از افزونه‌های دیگر callout درون‌ریزی کنید و سبک‌ها را به‌صورت CSS برون‌بری کنید.",
+	"welcome.video.languages": "زبان‌ها",
+	"welcome.video.languagesDesc": "زبان رابط افزونه را انتخاب کنید یا بگذارید از زبانی که در Obsidian استفاده می‌کنید پیروی کند.",
+	"welcome.video.find": "یافتن callout‌ها",
+	"welcome.video.findDesc": "کاربردهای callout را بر اساس نوع و قالب فیلتر کنید و به جای دقیق آن‌ها در یادداشت‌هایتان بروید.",
+	"welcome.video.backups": "همگام‌سازی و پشتیبان‌گیری",
+	"welcome.video.backupsDesc": "تنظیمات خود را میان دستگاه‌ها حفظ کنید، پشتیبان برون‌بری کنید و نسخه‌های قبلی را مقایسه یا بازیابی کنید.",
+	"welcome.video.dangerZone": "ناحیه خطر",
+	"welcome.video.dangerZoneDesc": "تبدیل callout‌های سرتیتری و درون‌خطی به Markdown استاندارد را بررسی کنید و ببینید بازنشانی تنظیمات چه چیزی را حذف می‌کند.",
+	"welcome.video.insert": "درج سریع",
+	"welcome.video.insertDesc": "پیش‌نمایش callout‌ها را جست‌وجو کنید، بر اساس منبع فیلتر کنید و از نوار کناری یک callout بلوکی درج یا ویرایش کنید.",
+	"welcome.video.heading": "callout‌های سرتیتری پیشرفته",
+	"welcome.video.headingDesc": "callout‌های سرتیتری را در طرح کلی، پیوندهای سرتیتر و فهرست مطالب به‌راحتی قابل پیمایش نگه دارید.",
+	"welcome.video.themes": "یکپارچگی با پوسته",
+	"welcome.video.themesDesc": "callout‌های ارائه‌شده توسط پوسته‌تان را مرور کنید و بفهمید سبک پوسته چگونه با طرح‌های خودتان کار می‌کند.",
 
 	"deleteModal.title": 'callout "{{name}}" حذف شود؟',
 	"deleteModal.bodyInUse":
@@ -1191,7 +1216,6 @@ export const fa: Record<string, string> = {
 	"recovery.stale": "چیزی بازیابی نشد: تنظیمات شما تغییر کرده یا قابل بررسی نبود. این پنجره را دوباره باز کنید و فهرست را بررسی کنید.",
 	"notice.recoveryCopyStale": "تنظیمات شما ذخیره شد، اما نسخهٔ بازیابی این دستگاه به‌روزرسانی نشد. فضای ذخیره‌سازی موجود روی این دستگاه را بررسی کنید. Callout Studio با تغییر بعدی شما دوباره تلاش می‌کند.",
 	"notice.blockedWhilePaused": "ذخیره‌سازی متوقف شده، بنابراین این تغییر اکنون قابل حفظ نیست. ابتدا مشکل ذخیره‌سازی نمایش‌داده‌شده در تنظیمات Callout Studio را برطرف کنید.",
-	"welcome.syncNote": "آیا از قبل از Callout Studio روی دستگاه دیگری استفاده می‌کنید؟ اجازه دهید سرویس همگام‌سازی شما ابتدا تمام شود. calloutها و تنظیمات شما به‌محض رسیدن اینجا نمایان می‌شوند.",
 	"settings.resetBackupFailed": "چیزی بازنشانی نشد: ابتدا نتوانست نسخهٔ پشتیبانی از پیکربندی فعلی شما ذخیره کند. فضای ذخیره‌سازی موجود را بررسی کنید، سپس دوباره تلاش کنید.",
 	"settings.resetNotSaved": "بازنشانی نمایش داده می‌شود، اما هنوز ذخیره نشده است، بنابراین فایل تنظیمات شما همچنان پیکربندی قبلی را نگه داشته است. وضعیت ذخیره‌سازی را در تنظیمات Callout Studio بررسی کنید.",
 	"confirm.titleResetEverything": "بازنشانی همه‌چیز",

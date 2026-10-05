@@ -35,26 +35,51 @@ export const fr: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(revient au défaut)",
 	"replaceModal.titleDelete": "Supprimer le callout",
 	"replaceModal.titleReplace": "Remplacer dans le vault",
-
-	"welcome.tooltip": "À propos de Callout Studio",
-	"welcome.title": "Bienvenue dans Callout Studio !",
-	"welcome.tagline":
-		"Votre solution complète pour créer, styliser et gérer les callouts d'Obsidian.",
 	"importBanner.message":
 		"Nous avons remarqué que vous utilisez {{plugins}}. Souhaitez-vous importer vos callouts ?",
 	"importBanner.action": "Importer",
 	"importBanner.dismiss": "Ignorer",
-	"welcome.previewTitle": "Voir en action",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio vous permet de créer des callouts avec une icône, des couleurs et un nom personnalisés.\n\n" +
-		"Vous pouvez utiliser ce callout de **trois** façons différentes :\n\n" +
-		"## [!{{id}}] Callout en titre\n" +
-		"Pour transformer n'importe quel titre en titre au style callout, ajoutez `[!type]` juste après les `#`.\n\n" +
-		"Vous voulez un [!{{id}}]{callout en ligne} comme celui-ci ? Ajoutez simplement `[!type]{text}` au milieu d'une phrase, sans interrompre votre rédaction.\n\n" +
-		"> [!{{id}}] Callout en bloc\n" +
-		"> Le callout classique fonctionne exactement avec la même syntaxe que vous connaissez déjà : `> [!type]`.\n\n" +
-		"Callout Studio a bien plus à offrir ! [En savoir plus]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Regarder les tutoriels de Callout Studio",
+	"welcome.title": "Bienvenue dans Callout Studio !",
+	"welcome.intro": "Le plugin offre beaucoup, alors prenez le temps de regarder ce qui vous intéresse.",
+	"welcome.tutorialCount": "Tutoriels vidéo ({{count}})",
+	"welcome.readMore": "Pour en savoir plus sur {{title}}, {{link}}.",
+	"welcome.clickHere": "cliquez ici",
+	"welcome.invalidVideo": "Ce lien vidéo n’est pas disponible. Choisissez un autre tutoriel.",
+	"welcome.video.threeTypes": "Les trois types de callout",
+	"welcome.video.threeTypesDesc": "Découvrez la syntaxe des callouts de bloc, de titre et en ligne, avec des titres personnalisés et des types intégrés.",
+	"welcome.video.create": "Créer votre premier callout",
+	"welcome.video.createDesc": "Définissez un nom, des identifiants, une icône et des couleurs, puis prévisualisez votre callout dans les trois formats.",
+	"welcome.video.palettes": "Palettes de couleurs personnalisées",
+	"welcome.video.palettesDesc": "Créez des palettes unies, en dégradé ou transparentes, et mettez à jour chaque callout qui les utilise.",
+	"welcome.video.icons": "Icônes et émojis personnalisés",
+	"welcome.video.iconsDesc": "Parcourez les bibliothèques d’icônes, choisissez des émojis ou importez votre propre image pour un callout.",
+	"welcome.video.fallback": "Styles de secours et détection",
+	"welcome.video.fallbackDesc": "Choisissez l’apparence des callouts inconnus, analysez votre coffre pour trouver des types et personnalisez ceux que vous trouvez.",
+	"welcome.video.manage": "Modifier, remplacer et supprimer",
+	"welcome.video.manageDesc": "Modifiez un callout, remplacez ses usages dans tout votre coffre ou retirez son style tout en gardant votre texte.",
+	"welcome.video.styles": "Style global",
+	"welcome.video.stylesDesc": "Ajustez les bordures, l’espacement, la taille de police et la forme des callouts de bloc, de titre et en ligne.",
+	"welcome.video.menus": "Le menu contextuel",
+	"welcome.video.menusDesc": "Travaillez avec les callouts directement dans vos notes et choisissez les actions du menu et leur ordre.",
+	"welcome.video.hotkeys": "Commandes et raccourcis clavier",
+	"welcome.video.hotkeysDesc": "Insérez, enveloppez et retirez l’enveloppe des callouts avec des commandes, puis attribuez des raccourcis aux actions que vous utilisez le plus.",
+	"welcome.video.import": "Importer, exporter et partager",
+	"welcome.video.importDesc": "Déplacez votre configuration entre coffres, importez depuis d’autres plugins de callouts et exportez les styles en CSS.",
+	"welcome.video.languages": "Langues",
+	"welcome.video.languagesDesc": "Choisissez la langue de l’interface du plugin ou laissez-le suivre la langue que vous utilisez dans Obsidian.",
+	"welcome.video.find": "Trouver des callouts",
+	"welcome.video.findDesc": "Filtrez les usages des callouts par type et par format, puis accédez à leur emplacement exact dans vos notes.",
+	"welcome.video.backups": "Synchronisation et sauvegardes",
+	"welcome.video.backupsDesc": "Conservez votre configuration sur tous vos appareils, exportez une sauvegarde et comparez ou restaurez des versions antérieures.",
+	"welcome.video.dangerZone": "Zone dangereuse",
+	"welcome.video.dangerZoneDesc": "Examinez les conversions des callouts de titre et en ligne en Markdown standard et voyez ce que supprime la réinitialisation de votre configuration.",
+	"welcome.video.insert": "Insertion rapide",
+	"welcome.video.insertDesc": "Recherchez des aperçus de callouts, filtrez par source et insérez ou modifiez un callout de bloc depuis le ruban.",
+	"welcome.video.heading": "Callouts de titre avancés",
+	"welcome.video.headingDesc": "Gardez les callouts de titre faciles à parcourir dans le plan, les liens vers les titres et les tables des matières.",
+	"welcome.video.themes": "Intégration des thèmes",
+	"welcome.video.themesDesc": "Parcourez les callouts fournis par votre thème et comprenez comment le style du thème fonctionne avec vos propres créations.",
 
 	"deleteModal.title": 'Supprimer le callout "{{name}}" ?',
 	"deleteModal.bodyInUse":
@@ -1211,7 +1236,6 @@ export const fr: Record<string, string> = {
 	"recovery.stale": "Rien n'a été restauré : vos paramètres ont changé ou n'ont pas pu être vérifiés. Rouvrez cette fenêtre et examinez la liste.",
 	"notice.recoveryCopyStale": "Vos paramètres ont été enregistrés, mais la copie de récupération de cet appareil n'a pas pu être mise à jour. Vérifiez l'espace de stockage disponible sur cet appareil. Callout Studio réessaiera lors de votre prochaine modification.",
 	"notice.blockedWhilePaused": "L'enregistrement est en pause, cette modification ne peut donc pas être conservée pour le moment. Résolvez d'abord le problème d'enregistrement affiché dans les paramètres de Callout Studio.",
-	"welcome.syncNote": "Vous utilisez déjà Callout Studio sur un autre appareil ? Laissez d'abord votre service de synchronisation se terminer. Vos callouts et paramètres apparaîtront ici dès leur arrivée.",
 	"settings.resetBackupFailed": "Rien n'a été réinitialisé : une sauvegarde de votre configuration actuelle n'a pas pu être enregistrée au préalable. Vérifiez l'espace de stockage disponible, puis réessayez.",
 	"settings.resetNotSaved": "La réinitialisation est affichée mais n'a pas encore pu être enregistrée, votre fichier de paramètres contient donc toujours la configuration précédente. Vérifiez l'état de l'enregistrement dans les paramètres de Callout Studio.",
 	"confirm.titleResetEverything": "Tout réinitialiser",

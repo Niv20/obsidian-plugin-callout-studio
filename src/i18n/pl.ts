@@ -35,26 +35,51 @@ export const pl: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(wraca do domyślnego)",
 	"replaceModal.titleDelete": "Usuń callout",
 	"replaceModal.titleReplace": "Zastąp w vault",
-
-	"welcome.tooltip": "O Callout Studio",
-	"welcome.title": "Witamy w Callout Studio!",
-	"welcome.tagline":
-		"Twoje kompletne rozwiązanie do tworzenia, stylizowania i zarządzania calloutami w Obsidianie.",
 	"importBanner.message":
 		"Zauważyliśmy, że używasz {{plugins}}. Czy chcesz zaimportować swoje callouty?",
 	"importBanner.action": "Importuj",
 	"importBanner.dismiss": "Odrzuć",
-	"welcome.previewTitle": "Zobacz w akcji",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio pozwala tworzyć callouty z własną ikoną, kolorami i nazwą.\n\n" +
-		"Ten callout możesz wykorzystać na **trzy** różne sposoby:\n\n" +
-		"## [!{{id}}] Callout jako nagłówek\n" +
-		"Aby zamienić dowolny nagłówek w nagłówek w stylu callout, dodaj `[!type]` zaraz po `#`.\n\n" +
-		"Chcesz [!{{id}}]{callout w tekście}, taki jak ten? Po prostu dodaj `[!type]{text}` w środku zdania, bez przerywania toku pisania.\n\n" +
-		"> [!{{id}}] Callout blokowy\n" +
-		"> Klasyczny callout działa dokładnie z taką samą składnią, do jakiej już się przyzwyczaiłeś: `> [!type]`.\n\n" +
-		"Callout Studio ma o wiele więcej do zaoferowania! [Dowiedz się więcej]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Obejrzyj samouczki Callout Studio",
+	"welcome.title": "Witaj w Callout Studio!",
+	"welcome.intro": "Wtyczka ma wiele do zaoferowania, więc obejrzyj w swoim tempie to, co Cię interesuje.",
+	"welcome.tutorialCount": "Samouczki wideo ({{count}})",
+	"welcome.readMore": "Więcej o {{title}}: {{link}}.",
+	"welcome.clickHere": "kliknij tutaj",
+	"welcome.invalidVideo": "Ten link do filmu jest niedostępny. Wybierz inny samouczek.",
+	"welcome.video.threeTypes": "Trzy typy callout",
+	"welcome.video.threeTypesDesc": "Poznaj składnię callout blokowych, nagłówkowych i śródliniowych, z własnymi tytułami i wbudowanymi typami.",
+	"welcome.video.create": "Utwórz swój pierwszy callout",
+	"welcome.video.createDesc": "Ustaw nazwę, identyfikatory, ikonę i kolory, a potem zobacz podgląd callout we wszystkich trzech formatach.",
+	"welcome.video.palettes": "Własne palety kolorów",
+	"welcome.video.palettesDesc": "Twórz palety jednolite, gradientowe lub przezroczyste i aktualizuj każdy callout, który z nich korzysta.",
+	"welcome.video.icons": "Własne ikony i emoji",
+	"welcome.video.iconsDesc": "Przeglądaj biblioteki ikon, wybieraj emoji lub prześlij własną grafikę dla callout.",
+	"welcome.video.fallback": "Style zapasowe i wykrywanie",
+	"welcome.video.fallbackDesc": "Wybierz, jak wyglądają nieznane callout, przeskanuj sejf w poszukiwaniu typów i dostosuj znalezione.",
+	"welcome.video.manage": "Edytowanie, zastępowanie i usuwanie",
+	"welcome.video.manageDesc": "Edytuj callout, zastąp jego użycia w całym sejfie albo usuń jego styl, zachowując tekst.",
+	"welcome.video.styles": "Style globalne",
+	"welcome.video.stylesDesc": "Dostosuj obramowania, odstępy, rozmiar czcionki i kształt callout blokowych, nagłówkowych i śródliniowych.",
+	"welcome.video.menus": "Menu prawego przycisku myszy",
+	"welcome.video.menusDesc": "Pracuj z callout bezpośrednio w notatkach i wybierz, które akcje pojawiają się w menu i w jakiej kolejności.",
+	"welcome.video.hotkeys": "Polecenia i skróty klawiszowe",
+	"welcome.video.hotkeysDesc": "Wstawiaj, otaczaj i rozpakowuj callout za pomocą poleceń, a potem przypisz skróty do najczęściej używanych akcji.",
+	"welcome.video.import": "Import, eksport i udostępnianie",
+	"welcome.video.importDesc": "Przenoś ustawienia między sejfami, importuj z innych wtyczek callout i eksportuj style jako CSS.",
+	"welcome.video.languages": "Języki",
+	"welcome.video.languagesDesc": "Wybierz język interfejsu wtyczki albo pozwól jej podążać za językiem używanym w Obsidianie.",
+	"welcome.video.find": "Wyszukiwanie callout",
+	"welcome.video.findDesc": "Filtruj użycia callout według typu i formatu, a potem przejdź do ich dokładnego miejsca w notatkach.",
+	"welcome.video.backups": "Synchronizacja i kopie zapasowe",
+	"welcome.video.backupsDesc": "Zachowaj ustawienia na wszystkich urządzeniach, wyeksportuj kopię zapasową oraz porównuj lub przywracaj wcześniejsze wersje.",
+	"welcome.video.dangerZone": "Strefa niebezpieczna",
+	"welcome.video.dangerZoneDesc": "Przejrzyj konwersje callout nagłówkowych i śródliniowych na standardowy Markdown i sprawdź, co usuwa zresetowanie ustawień.",
+	"welcome.video.insert": "Szybkie wstawianie",
+	"welcome.video.insertDesc": "Przeszukuj podglądy callout, filtruj według źródła i wstawiaj lub edytuj callout blokowy z paska bocznego.",
+	"welcome.video.heading": "Zaawansowane callout nagłówkowe",
+	"welcome.video.headingDesc": "Spraw, by callout nagłówkowe były łatwe w nawigacji w konspekcie, linkach do nagłówków i spisach treści.",
+	"welcome.video.themes": "Integracja z motywami",
+	"welcome.video.themesDesc": "Przeglądaj callout dostarczane przez motyw i zrozum, jak styl motywu współpracuje z Twoimi własnymi projektami.",
 
 	"deleteModal.title": 'Usuń callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1201,8 +1226,6 @@ export const pl: Record<string, string> = {
 		"Twoje ustawienia zostały zapisane, ale nie udało się zaktualizować kopii odzyskiwania na tym urządzeniu. Sprawdź dostępne miejsce na tym urządzeniu. Callout Studio spróbuje ponownie przy Twojej następnej zmianie.",
 	"notice.blockedWhilePaused":
 		"Zapisywanie jest wstrzymane, więc ta zmiana nie może zostać teraz zachowana. Najpierw rozwiąż problem z zapisem pokazany w ustawieniach Callout Studio.",
-	"welcome.syncNote":
-		"Używasz już Callout Studio na innym urządzeniu? Poczekaj najpierw, aż Twoja usługa synchronizacji zakończy pracę. Twoje callouty i ustawienia pojawią się tutaj, gdy tylko dotrą.",
 	"settings.resetBackupFailed":
 		"Nic nie zostało zresetowane: nie udało się najpierw zapisać kopii zapasowej bieżącej konfiguracji. Sprawdź dostępne miejsce, a następnie spróbuj ponownie.",
 	"settings.resetNotSaved":

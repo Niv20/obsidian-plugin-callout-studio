@@ -47,29 +47,51 @@ export const he: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(החלה של ברירת־מחדל)",
 	"replaceModal.titleDelete": "מחיקת תיבת־ההבלטה",
 	"replaceModal.titleReplace": "החלפה בכספת",
-
-	// פופאפ סריקה ראשונית (מוצג פעם אחת בהתקנה ראשונה ל-Vault גדול)
-
-	// Welcome / splash screen (shown once on first load; reopen via header icon)
-	"welcome.tooltip": "אודות Callout Studio",
-	"welcome.title": "ברוכים הבאים ל־Callout Studio!",
-	"welcome.tagline":
-		"הפתרון המלא שלכם ליצירה, לעיצוב ולניהול של תיבות־הבלטה ב־Obsidian.",
 	"importBanner.message":
 		"שמנו לב שאתם משתמשים ב־{{plugins}}. האם תרצו לייבא את תיבות־ההבלטה שלכם?",
 	"importBanner.action": "ייבוא",
 	"importBanner.dismiss": "ביטול",
-	"welcome.previewTitle": "לראות איך זה עובד",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio מאפשר לכם ליצור תיבות־הבלטה עם אייקון, צבעים ושם מותאמים אישית.\n\n" +
-		"אפשר להשתמש בתיבת־ההבלטה הזאת ב־**שלוש** דרכים שונות:\n\n" +
-		"## [!{{id}}] תיבת־הבלטה ככותרת\n" +
-		"כדי להפוך כל כותרת לכותרת בסגנון תיבת־הבלטה, הוסיפו `[!type]` מיד אחרי סימני ה־`#`.\n\n" +
-		"רוצים [!{{id}}]{תיבת־הבלטה מוטבעת} כמו זו? פשוט הוסיפו `[!type]{text}` באמצע משפט, בלי לשבור את הזרימה.\n\n" +
-		"> [!{{id}}] תיבת־הבלטה כבלוק\n" +
-		"> תיבת־ההבלטה הקלאסית פועלת לפי אותו תחביר בדיוק שאתם כבר מכירים: `> [!type]`.\n\n" +
-		"ל־Callout Studio יש עוד הרבה מה להציע! [למידע נוסף]({{repoUrl}}).\n",
+	"welcome.openTutorials": "צפייה במדריכי Callout Studio",
+	"welcome.title": "ברוכים הבאים ל־Callout Studio!",
+	"welcome.intro": "בתוסף יש הרבה מה להציע, ולכן אפשר לקחת את הזמן ולצפות במה שמעניין אתכם.",
+	"welcome.tutorialCount": "מדריכי וידאו ({{count}})",
+	"welcome.readMore": "למידע נוסף על {{title}}, {{link}}.",
+	"welcome.clickHere": "לחצו כאן",
+	"welcome.invalidVideo": "קישור הווידאו הזה אינו זמין. יש לבחור מדריך אחר.",
+	"welcome.video.threeTypes": "שלושת סוגי תיבות־ההבלטה",
+	"welcome.video.threeTypesDesc": "הכירו את התחביר של תיבות־הבלטה בלוקיות, ככותרת ומוטבעות, עם כותרות מותאמות וסוגים מובנים.",
+	"welcome.video.create": "יצירת תיבת־ההבלטה הראשונה שלכם",
+	"welcome.video.createDesc": "הגדירו שם, מזהים, אייקון וצבעים, ואז הציגו תצוגה מקדימה של תיבת־ההבלטה בשלושת הפורמטים.",
+	"welcome.video.palettes": "פלטות צבעים מותאמות אישית",
+	"welcome.video.palettesDesc": "צרו פלטות אחידות, בהדרגתיות או שקופות, ועדכנו כל תיבת־הבלטה שמשתמשת בהן.",
+	"welcome.video.icons": "אייקונים ואימוג׳ים מותאמים אישית",
+	"welcome.video.iconsDesc": "עיינו בספריות אייקונים, בחרו אימוג׳ים או העלו יצירה משלכם לתיבת־הבלטה.",
+	"welcome.video.fallback": "סגנונות ברירת מחדל וגילוי",
+	"welcome.video.fallbackDesc": "בחרו איך ייראו תיבות־הבלטה לא מוכרות, סרקו את הכספת לאיתור סוגים והתאימו אישית את אלה שנמצאו.",
+	"welcome.video.manage": "עריכה, החלפה ומחיקה",
+	"welcome.video.manageDesc": "ערכו תיבת־הבלטה, החליפו את השימושים בה בכל הכספת, או הסירו את העיצוב שלה תוך שמירה על הטקסט שלכם.",
+	"welcome.video.styles": "עיצוב גלובלי",
+	"welcome.video.stylesDesc": "כווננו מסגרות, ריווח, גודל גופן וצורה של תיבות־הבלטה בלוקיות, ככותרת ומוטבעות.",
+	"welcome.video.menus": "תפריט לחיצה ימנית",
+	"welcome.video.menusDesc": "עבדו עם תיבות־הבלטה ישירות בהערות, ובחרו אילו פעולות יופיעו בתפריט ובאיזה סדר.",
+	"welcome.video.hotkeys": "פקודות ומקשי קיצור",
+	"welcome.video.hotkeysDesc": "הוסיפו, עטפו וחלצו תיבות־הבלטה באמצעות פקודות, ואז הגדירו קיצורים לפעולות שבהן אתם משתמשים הכי הרבה.",
+	"welcome.video.import": "ייבוא, ייצוא ושיתוף",
+	"welcome.video.importDesc": "העבירו את ההגדרות בין כספות, ייבאו מתוספים אחרים של תיבות־הבלטה וייצאו סגנונות כ־CSS.",
+	"welcome.video.languages": "שפות",
+	"welcome.video.languagesDesc": "בחרו את שפת הממשק של התוסף, או אפשרו לו לעקוב אחרי השפה שבה אתם משתמשים ב־Obsidian.",
+	"welcome.video.find": "איתור תיבות־הבלטה",
+	"welcome.video.findDesc": "סננו שימושים בתיבות־הבלטה לפי סוג ופורמט, ואז קפצו למיקום המדויק שלהם בהערות.",
+	"welcome.video.backups": "סנכרון וגיבויים",
+	"welcome.video.backupsDesc": "שמרו את ההגדרות שלכם בין מכשירים, ייצאו גיבוי והשוו גרסאות קודמות או שחזרו אותן.",
+	"welcome.video.dangerZone": "אזור מסוכן",
+	"welcome.video.dangerZoneDesc": "בדקו המרות של כותרות ותיבות־הבלטה מוטבעות ל־Markdown רגיל, וראו מה נמחק באיפוס ההגדרות.",
+	"welcome.video.insert": "הוספה מהירה",
+	"welcome.video.insertDesc": "חפשו תצוגות מקדימות של תיבות־הבלטה, סננו לפי מקור, והוסיפו או ערכו תיבת־הבלטה בלוקית מסרגל הצד.",
+	"welcome.video.heading": "תיבות־הבלטה מתקדמות ככותרת",
+	"welcome.video.headingDesc": "שמרו על תיבות־הבלטה ככותרת קלות לניווט בתצוגת המתאר, בקישורים לכותרות ובתוכני עניינים.",
+	"welcome.video.themes": "שילוב עם ערכות נושא",
+	"welcome.video.themesDesc": "עיינו בתיבות־הבלטה שמגיעות עם ערכת הנושא שלכם והבינו איך העיצוב של הערכה פועל יחד עם העיצובים שלכם.",
 
 	// Delete-callout modal (trash button on user rows)
 	"deleteModal.title": 'למחוק את תיבת־ההבלטה "{{name}}"?',
@@ -1217,7 +1239,6 @@ export const he: Record<string, string> = {
 	"recovery.stale": "שום דבר לא שוחזר: ההגדרות שלכם השתנו או שלא ניתן היה לבדוק אותן. יש לפתוח את החלון הזה שוב ולבדוק את הרשימה.",
 	"notice.recoveryCopyStale": "ההגדרות שלכם נשמרו, אך לא ניתן היה לעדכן את עותק השחזור של המכשיר הזה. יש לבדוק את מקום האחסון הפנוי במכשיר הזה. Callout Studio ינסה שוב בשינוי הבא שלכם.",
 	"notice.blockedWhilePaused": "השמירה מושהית, ולכן לא ניתן לשמור את השינוי הזה כרגע. יש לפתור קודם את בעיית השמירה המוצגת בהגדרות Callout Studio.",
-	"welcome.syncNote": "כבר משתמשים ב-Callout Studio במכשיר אחר? יש לתת לשירות הסנכרון שלכם להסתיים קודם. תיבות־ההבלטה וההגדרות שלכם יופיעו כאן ברגע שיגיעו.",
 	"settings.resetBackupFailed": "שום דבר לא אופס: לא ניתן היה לשמור גיבוי של התצורה הנוכחית שלכם קודם. יש לבדוק את מקום האחסון הפנוי ולנסות שוב.",
 	"settings.resetNotSaved": "האיפוס מוצג אך טרם ניתן היה לשמור אותו, כך שקובץ ההגדרות שלכם עדיין מכיל את התצורה הקודמת. יש לבדוק את מצב השמירה בהגדרות Callout Studio.",
 	"confirm.titleResetEverything": "איפוס הכול",

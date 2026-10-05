@@ -87,26 +87,51 @@ export const vi: Record<string, string> = {
 	"replaceModal.deleteWithoutReplaceSuffix": "(quay lại mặc định)",
 	"replaceModal.titleDelete": "Xóa callout",
 	"replaceModal.titleReplace": "Thay thế trong vault",
-
-	"welcome.tooltip": "Giới thiệu về Callout Studio",
-	"welcome.title": "Chào mừng đến với Callout Studio!",
-	"welcome.tagline":
-		"Giải pháp toàn diện của bạn để tạo, tạo kiểu và quản lý callout trong Obsidian.",
 	"importBanner.message":
 		"Chúng tôi nhận thấy bạn đang dùng {{plugins}}. Bạn có muốn nhập callout của mình không?",
 	"importBanner.action": "Nhập",
 	"importBanner.dismiss": "Bỏ qua",
-	"welcome.previewTitle": "Xem nó hoạt động",
-	"welcome.demoName": "Callout Studio",
-	"welcome.sample":
-		"Callout Studio cho phép bạn tạo callout với biểu tượng, màu sắc và tên tùy chỉnh.\n\n" +
-		"Bạn có thể sử dụng callout này theo **ba** cách khác nhau:\n\n" +
-		"## [!{{id}}] Callout làm tiêu đề\n" +
-		"Để biến bất kỳ tiêu đề nào thành tiêu đề kiểu callout, hãy thêm `[!type]` ngay sau các dấu `#`.\n\n" +
-		"Muốn có một [!{{id}}]{callout nội dòng} như thế này? Chỉ cần thêm `[!type]{text}` vào giữa câu, mà không làm gián đoạn mạch viết của bạn.\n\n" +
-		"> [!{{id}}] Callout khối\n" +
-		"> Callout cổ điển vẫn hoạt động với đúng cú pháp mà bạn đã quen thuộc: `> [!type]`.\n\n" +
-		"Callout Studio còn có nhiều thứ hơn thế để mang lại! [Tìm hiểu thêm]({{repoUrl}}).\n",
+	"welcome.openTutorials": "Xem hướng dẫn về Callout Studio",
+	"welcome.title": "Chào mừng bạn đến với Callout Studio!",
+	"welcome.intro": "Plugin có rất nhiều tính năng, vì vậy hãy thong thả xem những nội dung bạn quan tâm.",
+	"welcome.tutorialCount": "Video hướng dẫn ({{count}})",
+	"welcome.readMore": "Để tìm hiểu thêm về {{title}}, {{link}}.",
+	"welcome.clickHere": "nhấp vào đây",
+	"welcome.invalidVideo": "Liên kết video này không khả dụng. Hãy chọn hướng dẫn khác.",
+	"welcome.video.threeTypes": "Ba loại callout",
+	"welcome.video.threeTypesDesc": "Tìm hiểu cú pháp của callout dạng khối, tiêu đề và nội tuyến, với tiêu đề tùy chỉnh và các loại tích hợp sẵn.",
+	"welcome.video.create": "Tạo callout đầu tiên của bạn",
+	"welcome.video.createDesc": "Đặt tên, ID, biểu tượng và màu sắc, sau đó xem trước callout ở cả ba định dạng.",
+	"welcome.video.palettes": "Bảng màu tùy chỉnh",
+	"welcome.video.palettesDesc": "Tạo bảng màu đặc, chuyển sắc hoặc trong suốt, và cập nhật mọi callout đang dùng chúng.",
+	"welcome.video.icons": "Biểu tượng và emoji tùy chỉnh",
+	"welcome.video.iconsDesc": "Duyệt thư viện biểu tượng, chọn emoji hoặc tải lên hình ảnh của riêng bạn cho callout.",
+	"welcome.video.fallback": "Kiểu dự phòng và khám phá",
+	"welcome.video.fallbackDesc": "Chọn giao diện cho các callout không xác định, quét vault để tìm các loại và tùy chỉnh những loại tìm thấy.",
+	"welcome.video.manage": "Chỉnh sửa, thay thế và xóa",
+	"welcome.video.manageDesc": "Chỉnh sửa callout, thay thế các lần dùng trong toàn bộ vault hoặc gỡ kiểu của nó mà vẫn giữ nguyên văn bản.",
+	"welcome.video.styles": "Kiểu dáng chung",
+	"welcome.video.stylesDesc": "Điều chỉnh viền, khoảng cách, cỡ chữ và hình dạng cho callout dạng khối, tiêu đề và nội tuyến.",
+	"welcome.video.menus": "Menu nhấp chuột phải",
+	"welcome.video.menusDesc": "Làm việc với callout ngay trong ghi chú và chọn hành động nào xuất hiện trong menu cùng thứ tự của chúng.",
+	"welcome.video.hotkeys": "Lệnh và phím nóng",
+	"welcome.video.hotkeysDesc": "Chèn, bao và gỡ bao callout bằng lệnh, sau đó gán phím tắt cho các hành động bạn dùng nhiều nhất.",
+	"welcome.video.import": "Nhập, xuất và chia sẻ",
+	"welcome.video.importDesc": "Chuyển thiết lập giữa các vault, nhập từ các plugin callout khác và xuất kiểu dưới dạng CSS.",
+	"welcome.video.languages": "Ngôn ngữ",
+	"welcome.video.languagesDesc": "Chọn ngôn ngữ giao diện của plugin hoặc để nó theo ngôn ngữ bạn dùng trong Obsidian.",
+	"welcome.video.find": "Tìm callout",
+	"welcome.video.findDesc": "Lọc các lần dùng callout theo loại và định dạng, rồi chuyển đến đúng vị trí trong ghi chú của bạn.",
+	"welcome.video.backups": "Đồng bộ và sao lưu",
+	"welcome.video.backupsDesc": "Giữ thiết lập của bạn trên mọi thiết bị, xuất bản sao lưu và so sánh hoặc khôi phục các phiên bản trước.",
+	"welcome.video.dangerZone": "Vùng nguy hiểm",
+	"welcome.video.dangerZoneDesc": "Xem lại việc chuyển callout tiêu đề và nội tuyến sang Markdown chuẩn, và xem việc đặt lại thiết lập sẽ xóa những gì.",
+	"welcome.video.insert": "Chèn nhanh",
+	"welcome.video.insertDesc": "Tìm kiếm bản xem trước callout, lọc theo nguồn và chèn hoặc chỉnh sửa callout dạng khối từ thanh ribbon.",
+	"welcome.video.heading": "Callout tiêu đề nâng cao",
+	"welcome.video.headingDesc": "Giúp callout tiêu đề dễ điều hướng trong dàn ý, liên kết tiêu đề và mục lục.",
+	"welcome.video.themes": "Tích hợp giao diện",
+	"welcome.video.themesDesc": "Duyệt các callout do giao diện của bạn cung cấp và hiểu cách kiểu của giao diện hoạt động cùng với thiết kế của riêng bạn.",
 
 	"deleteModal.title": 'Xóa callout "{{name}}"?',
 	"deleteModal.bodyInUse":
@@ -1198,7 +1223,6 @@ export const vi: Record<string, string> = {
 	"recovery.stale": "Không có gì được khôi phục: cài đặt của bạn đã thay đổi hoặc không thể kiểm tra được. Mở lại cửa sổ này và xem lại danh sách.",
 	"notice.recoveryCopyStale": "Cài đặt của bạn đã được lưu, nhưng bản sao khôi phục của thiết bị này không thể được cập nhật. Kiểm tra bộ nhớ khả dụng trên thiết bị này. Callout Studio sẽ thử lại vào lần thay đổi tiếp theo của bạn.",
 	"notice.blockedWhilePaused": "Việc lưu đang tạm dừng, nên thay đổi này không thể được giữ lại ngay bây giờ. Trước tiên hãy giải quyết vấn đề lưu được hiển thị trong cài đặt Callout Studio.",
-	"welcome.syncNote": "Đã sử dụng Callout Studio trên thiết bị khác? Hãy để dịch vụ đồng bộ hóa của bạn hoàn tất trước. Các callout và cài đặt của bạn sẽ xuất hiện ở đây khi chúng đến.",
 	"settings.resetBackupFailed": "Không có gì được đặt lại: không thể lưu bản sao lưu của thiết lập hiện tại của bạn trước. Kiểm tra bộ nhớ khả dụng, sau đó thử lại.",
 	"settings.resetNotSaved": "Việc đặt lại được hiển thị nhưng chưa thể lưu được, vì vậy tệp cài đặt của bạn vẫn giữ thiết lập trước đó. Kiểm tra trạng thái lưu trong cài đặt Callout Studio.",
 	"confirm.titleResetEverything": "Đặt lại tất cả",
