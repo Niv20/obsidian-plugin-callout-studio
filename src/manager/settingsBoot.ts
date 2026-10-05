@@ -5,7 +5,7 @@ import { isFromNewerBuild } from "./foreignFields";
 import type { PluginData } from "../types";
 import { recoverSettingsAtBoot, recoveryDisplay } from "./settingsRecovery";
 import { readSettledSettingsFile } from "./settingsSettledRead";
-import { offerFreshStart, warnSettingsUnreadable } from "./settingsNotices";
+import { warnSettingsUnreadable } from "./settingsNotices";
 import { watchForLateSettings } from "./settingsLateArrival";
 import { applySettingsRead } from "./settingsAdopt";
 import { hasSafeSettingsFileShape } from "./settingsFileShape";
@@ -81,7 +81,7 @@ export async function loadSettingsInto(
 		if (isFromNewerBuild(missingRecovery)) {
 			host.settingsWriter.freeze("newer-version");
 			reportSettingsSaveFailure(host.settingsWriter);
-		} else offerFreshStart(host.app, host.manifest.id, host.settingsWriter.status);
+		}
 
 		// Display the durable copy without making it the baseline for a file
 		// that is absent. Confirmed recreation preserves these definitions.

@@ -1150,6 +1150,10 @@ link to the settings, not a copy of the banner's explanation, and it hides
 itself when the writer thaws: a file that syncs back in, or a restore, used to
 leave it announcing a missing file that was there again. A change of reason
 alone does not hide it, since saving is still paused.
+`registerMissingSettingsNotice()` creates it after recovery and cached locale
+selection, rather than during settings loading. Its text and settings link
+follow later locale changes in place; dismissal is preserved and unload cleans
+up the notice and subscription.
 
 When a visible pause ends, `pausedIndicator.ts` adds a short notice that saving
 is back on, which is the only confirmation a successful restore, replacement,

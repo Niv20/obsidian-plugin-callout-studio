@@ -11,7 +11,7 @@
  * revised without the policy around it changing at all.
  */
 import { Notice } from "obsidian";
-import type { App } from "obsidian";
+import type { App, Plugin } from "obsidian";
 import { t } from "../i18n";
 import { settingsSaveMessage } from "./settingsSaveMessage";
 import { en } from "../i18n/en";
@@ -19,6 +19,17 @@ import { reportSettingsSaveFailure } from "./settingsSaveReporter";
 import type { SettingsWriter } from "./SettingsWriter";
 import type { SettingsSaveStatus } from "./settingsSaveStatus";
 import { ConfirmModal } from "../utils/ConfirmModal";
+
+/** Called after cached locale setup, once recovery has supplied the preference. */
+export function registerMissingSettingsNotice(
+	host: Pick<Plugin, "app" | "manifest" | "register"> & { settingsWriter: SettingsWriter },
+): () => void {
+	const writer = host.settingsWriter;
+	if (writer.isDestroyed || !writer.isVisiblyPaused || writer.status.frozenReason !== "missing") return () => {};
+	const notice = offerFreshStart(host.app, host.manifest.id, writer.status);
+	host.register(notice.dispose);
+	return notice.refresh;
+}
 
 /**
  * A `data.json` that exists but could not be parsed.
@@ -66,9 +77,9 @@ export function offerFreshStart(
 	app: App,
 	pluginId: string,
 	status?: Pick<SettingsSaveStatus, "frozenReason" | "subscribe">,
-): void {
+): { refresh: () => void; dispose: () => void } {
 	const frag = createFragment();
-	frag.appendChild(createEl("p", { text: t("saveStatus.missingNotice") }));
+	const text = frag.appendChild(createEl("p", { text: t("saveStatus.missingNotice") }));
 	const action = frag.appendChild(
 		createEl("a", {
 			text: t("saveStatus.openSettings"),
@@ -76,20 +87,30 @@ export function offerFreshStart(
 		}),
 	);
 	const notice = new Notice(frag, 0);
-	const unsubscribe = status?.subscribe(() => {
-		if (status.frozenReason !== null) return;
+	const dispose = () => {
 		unsubscribe?.();
 		notice.hide();
+	};
+	const unsubscribe = status?.subscribe(() => {
+		if (status.frozenReason !== null) return;
+		dispose();
 	});
 	action.addEventListener("click", (event) => {
 		event.preventDefault();
 		// The notice stands if the pane could not be opened: the session is
 		// still frozen, and this is still the only thing saying so.
 		if (openPluginSettings(app, pluginId)) {
-			unsubscribe?.();
-			notice.hide();
+			dispose();
 		}
 	});
+	return {
+		// Update the existing nodes: a dismissed notice must never be reopened.
+		refresh: () => {
+			text.textContent = t("saveStatus.missingNotice");
+			action.textContent = t("saveStatus.openSettings");
+		},
+		dispose,
+	};
 }
 
 /**

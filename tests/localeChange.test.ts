@@ -5,7 +5,7 @@
  * that first selects a language, the UI paints in English, the file downloads,
  * and the locale flips over some hundreds of milliseconds later. Most of the
  * plugin does not care — it calls `t()` as it draws, so the next paint is
- * already translated. Three surfaces do care, because each one *snapshots*
+ * already translated. Several surfaces do care, because each one *snapshots*
  * translated text at a moment that has already passed:
  *
  * - the **settings tab**, which is a DOM tree built once and left on screen;
@@ -15,6 +15,7 @@
  *   `addCommand` and never reads again — true of the built-in commands and of
  *   the user's own alike, since `describeCommand` renders those through `t()`
  *   too, which is why the manager's sweep is on the list.
+ * - the persistent **missing-settings notice**, including its settings link.
  *
  * `applyLocaleChange()` is the one place that re-renders all of them, and this
  * file is about it. Two things are easy to get wrong and both are covered:
@@ -78,6 +79,7 @@ interface Host {
 	renders: () => number;
 	/** How many times the user's own commands were swept. */
 	sweeps: () => number;
+	noticeRefreshes: () => number;
 	settings: PluginSettings;
 	/** Detach the settings tab, as Obsidian does when the pane is closed. */
 	closeSettings: () => void;
@@ -90,10 +92,12 @@ function host(): Host {
 	let displays = 0;
 	let renders = 0;
 	let sweeps = 0;
+	let noticeRefreshes = 0;
 	const settings = structuredClone(DEFAULT_SETTINGS);
 
 	const self = {
 		settings,
+		refreshMissingSettingsNotice: () => { noticeRefreshes++; },
 		settingsTab: {
 			containerEl: { isConnected: true },
 			display: () => {
@@ -134,6 +138,7 @@ function host(): Host {
 		displays: () => displays,
 		renders: () => renders,
 		sweeps: () => sweeps,
+		noticeRefreshes: () => noticeRefreshes,
 		settings,
 		closeSettings: () => {
 			self.settingsTab.containerEl.isConnected = false;
@@ -176,6 +181,7 @@ describe("applyLocaleChange re-renders what snapshots translated text", () => {
 		assert.strictEqual(h.displays(), 1, "the settings tab was not re-rendered");
 		assert.strictEqual(h.renders(), 1, "the preview modes were not rebuilt");
 		assert.strictEqual(h.sweeps(), 1, "the user's own commands were not swept");
+		assert.strictEqual(h.noticeRefreshes(), 1, "the missing-settings notice kept its old language");
 		assert.deepStrictEqual(
 			h.added.map((c) => c.name),
 			currentNames(),

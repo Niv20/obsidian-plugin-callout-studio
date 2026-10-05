@@ -145,6 +145,8 @@ While saving is paused, desktop shows **Saving paused** in the status bar, and m
 
 While saving is paused, the settings page can't be changed, so nothing you change there is lost when Obsidian closes. You can still look through your callouts, export your current setup, and browse, inspect and delete versions. Resume saving before restoring a version.
 
+The startup notice uses Callout Studio's selected language when its translation is available. If that translation loads later, the notice text and settings link update automatically without reopening a notice you dismissed.
+
 1. If your setup is still displayed, use **Export → Callout Studio backup** to keep a separate JSON copy.
 2. Check that the vault is downloaded, the sync service is running, and the device has storage space and permission to write. Let pending synchronization finish, then select **Check again**. This checks for returned settings; it does not create a missing file. When the file is missing, **Check again** is the highlighted button until a check comes back empty; the banner then gives more specific advice and highlights **Restore these settings** instead.
 3. Then choose the action the banner offers:

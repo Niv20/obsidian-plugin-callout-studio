@@ -25,6 +25,7 @@ import { DeviceLocalStore } from "./manager/DeviceLocalStore";
 import { reportLegacyDiscoveryMigration } from "./manager/legacyDiscoveryNotices";
 import { trackStartupMigrationNotices } from "./manager/startupMigrationNotices";
 import { loadSettingsSafely } from "./manager/settingsBoot";
+import { registerMissingSettingsNotice } from "./manager/settingsNotices";
 import { SettingsRecoveryService } from "./manager/settingsRecoveryService";
 import { registerPausedRecheck } from "./manager/pausedRecheck";
 import { registerPausedIndicator } from "./settings/pausedIndicator";
@@ -85,6 +86,7 @@ export default class CalloutStudioPlugin extends Plugin {
 	outlineDecorator!: OutlineDecorator;
 	icons!: IconService;
 	locales!: LocaleStore;
+	private refreshMissingSettingsNotice = () => {};
 	settingsTab!: CalloutStudioSettingsTab;
 	discovery!: ManualCalloutDiscovery;
 	settingsWriter!: SettingsWriter;
@@ -174,6 +176,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		await this.locales.prepare(this.settings.language);
 		if (this.settingsWriter.isDestroyed) return;
 		setLocale(this.settings.language);
+		this.refreshMissingSettingsNotice = registerMissingSettingsNotice(this);
 		reportLegacyDiscoveryMigration(legacyRecovery);
 
 		// Identical palettes were merged on load. Their callouts keep their
@@ -366,6 +369,7 @@ export default class CalloutStudioPlugin extends Plugin {
 	 * — from when it was added. Called when a language is picked or lands late.
 	 */
 	applyLocaleChange(): void {
+		this.refreshMissingSettingsNotice();
 		// Only repaint settings while they are on screen.
 		if (this.settingsTab?.containerEl.isConnected) this.settingsTab.display();
 		refreshFixedCommandNames(this, this.commandDeps());
