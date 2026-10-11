@@ -111,23 +111,22 @@ export const ro: Record<string, string> = {
 	"deleteModal.title": 'Ștergeți callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"Acest callout apare de {{count}} ori în {{files}} fișier(e).",
-	"deleteModal.bodyInUseExplain":
-		"Ștergerea va converti acele blocuri în text simplu — vor pierde stilul și antetul callout.",
-	"deleteModal.replaceHint":
-		"Îl puteți înlocui cu alt callout, păstrând conținutul vault-ului ca un callout stilizat.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" nu este folosit în nicio notă, dar este un callout personalizat pe care l-ați creat. Ștergerea îl va elimina din această listă.',
-	"deleteModal.replaceInstead": "Înlocuiți în schimb…",
-	"deleteModal.deleteInUse": "Șterge (convertește în text simplu)",
-	"deleteModal.deleteUnused": "Șterge callout",
+	"deleteModal.notesUntouched":
+		"Aceasta șterge doar definiția callout-ului. Notele dvs. nu sunt atinse, așa că callout-urile existente vor reveni pur și simplu la stilul implicit.",
+	"deleteModal.fallbackTarget":
+		"Este și callout-ul dvs. de rezervă implicit, așa că callout-urile fără un stil propriu vor trece la {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'Convertiți "{{name}}" în text simplu?',
+	"convertModal.explain":
+		"Fiecare devine text obișnuit: titlul și conținutul rămân, dispare doar formatarea de callout.",
+	"convertModal.typeStays": "Tipul de callout în sine rămâne în lista dvs.",
+	"convertModal.confirm": "Convertește",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'Ștergeți toate utilizările "{{name}}"?',
 	"deleteModal.keepsRowBuiltIn":
 		"Acesta este unul dintre callouts integrate ale Obsidian, așa că tipul în sine rămâne disponibil — se schimbă doar utilizările lui din notele dvs.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} definește acest tip de callout, așa că rămâne disponibil și își păstrează aspectul. Callout Studio modifică doar notele din vault-ul dvs. — nimic ce aparține temei dvs. nu este atins.",
-	"deleteModal.clearUsages": "Șterge utilizările (convertește în text simplu)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Tipurile mele de callout",
@@ -158,6 +157,8 @@ export const ro: Record<string, string> = {
 	"settings.moreRowActionsAria": "Mai multe acțiuni pentru {{name}}",
 	"settings.replaceAction": "Înlocuiți în vault…",
 	"settings.deleteAction": "Șterge",
+	"settings.convertUsesAction": "Convertește utilizările în text simplu",
+	"notice.calloutDeleted": "„{{name}}” a fost șters.",
 	"settings.duplicateAction": "Duplică",
 	"notice.calloutDuplicated": "Callout duplicat cu numele „{{name}}”.",
 	"notice.calloutDuplicateFailed": "Calloutul nu a putut fi duplicat. Verifică starea salvării și încearcă din nou.",
@@ -172,7 +173,6 @@ export const ro: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Tema dvs.",
 	"settings.themePreviewAria":
 		'Previzualizare "{{name}}" — vedeți cum îl desenează tema dvs.',
-	"settings.clearUsesAction": "Șterge utilizările din notele dvs.",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} restilizează fiecare callout integrat, așa că toate sunt afișate mai sus și Callout Studio le lasă în pace. Pentru a proiecta unul propriu, adăugați un callout cu un ID diferit.",
 	"settings.fallbackCallout": "Callout de rezervă implicit",

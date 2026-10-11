@@ -112,23 +112,22 @@ export const ru: Record<string, string> = {
 	"deleteModal.title": 'Удалить callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"Этот callout встречается {{count}} раз(а) в {{files}} файле(ах).",
-	"deleteModal.bodyInUseExplain":
-		"При удалении эти блоки будут преобразованы в обычный текст — они потеряют оформление и заголовок callout.",
-	"deleteModal.replaceHint":
-		"Вы можете заменить его другим callout, чтобы сохранить содержимое хранилища в виде оформленного callout.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" не используется ни в одной заметке, но это созданный вами пользовательский callout. Удаление уберёт его из списка.',
-	"deleteModal.replaceInstead": "Заменить вместо этого…",
-	"deleteModal.deleteInUse": "Удалить (преобразовать в обычный текст)",
-	"deleteModal.deleteUnused": "Удалить callout",
+	"deleteModal.notesUntouched":
+		"Удаляется только определение callout. Ваши заметки не затрагиваются, поэтому существующие callout просто вернутся к стилю по умолчанию.",
+	"deleteModal.fallbackTarget":
+		"Это также ваш резервный callout по умолчанию, поэтому callout без собственного стиля перейдут на {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'Преобразовать "{{name}}" в обычный текст?',
+	"convertModal.explain":
+		"Каждый станет обычным текстом: заголовок и содержимое останутся, исчезнет только оформление callout.",
+	"convertModal.typeStays": "Сам тип callout останется в вашем списке.",
+	"convertModal.confirm": "Преобразовать",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'Очистить все использования "{{name}}"?',
 	"deleteModal.keepsRowBuiltIn":
 		"Это один из встроенных callout Obsidian, поэтому сам тип остаётся доступным — изменятся только его вхождения в ваших заметках.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} определяет этот тип callout, поэтому он остаётся доступным и сохраняет свой вид. Callout Studio изменяет только заметки внутри вашего хранилища — ничего, принадлежащего вашей теме, не затрагивается.",
-	"deleteModal.clearUsages": "Очистить использования (преобразовать в обычный текст)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Мои типы callout",
@@ -159,6 +158,8 @@ export const ru: Record<string, string> = {
 	"settings.moreRowActionsAria": "Другие действия для {{name}}",
 	"settings.replaceAction": "Заменить в хранилище…",
 	"settings.deleteAction": "Удалить",
+	"settings.convertUsesAction": "Преобразовать использования в обычный текст",
+	"notice.calloutDeleted": "«{{name}}» удалён.",
 	"settings.duplicateAction": "Дублировать",
 	"notice.calloutDuplicated": "Callout дублирован под именем «{{name}}».",
 	"notice.calloutDuplicateFailed": "Не удалось дублировать callout. Проверьте состояние сохранения и попробуйте снова.",
@@ -173,7 +174,6 @@ export const ru: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Ваша тема",
 	"settings.themePreviewAria":
 		'Предпросмотр "{{name}}" — посмотрите, как его рисует ваша тема',
-	"settings.clearUsesAction": "Очистить использования в заметках",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} переоформляет каждый встроенный callout, поэтому все они перечислены выше, и Callout Studio их не трогает. Чтобы создать свой собственный, добавьте callout с другим ID.",
 	"settings.fallbackCallout": "Резервный callout по умолчанию",

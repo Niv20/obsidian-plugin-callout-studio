@@ -56,23 +56,22 @@ export const da: Record<string, string> = {
 	"deleteModal.title": 'Slet callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"Denne callout optræder {{count}} gang(e) i {{files}} fil(er).",
-	"deleteModal.bodyInUseExplain":
-		"Sletning konverterer disse blokke til almindelig tekst — de mister stil og callout-overskrift.",
-	"deleteModal.replaceHint":
-		"Du kan erstatte den med en anden callout, som bevarer vault-indholdet som en stilet callout.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" bruges ikke i nogen note, men er en brugerdefineret callout, du har oprettet. Sletning fjerner den fra denne liste.',
-	"deleteModal.replaceInstead": "Erstat i stedet…",
-	"deleteModal.deleteInUse": "Slet (konverter til almindelig tekst)",
-	"deleteModal.deleteUnused": "Slet callout",
+	"deleteModal.notesUntouched":
+		"Dette sletter kun callout-definitionen. Dine noter røres ikke, så eksisterende callouts falder blot tilbage til standardstilen.",
+	"deleteModal.fallbackTarget":
+		"Den er også din standard reserve-callout, så callouts uden deres egen stil skifter til {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'Konverter "{{name}}" til almindelig tekst?',
+	"convertModal.explain":
+		"Hver af dem bliver almindelig tekst: titlen og indholdet bliver, kun callout-formateringen forsvinder.",
+	"convertModal.typeStays": "Selve callout-typen bliver i din liste.",
+	"convertModal.confirm": "Konverter",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'Ryd alle forekomster af "{{name}}"?',
 	"deleteModal.keepsRowBuiltIn":
 		"Dette er en af Obsidians indbyggede callouts, så selve typen forbliver tilgængelig — kun dens forekomster i dine noter ændres.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} definerer denne callout-type, så den forbliver tilgængelig og beholder sit udseende. Callout Studio ændrer kun noter i din vault — intet, der tilhører dit tema, bliver rørt.",
-	"deleteModal.clearUsages": "Ryd forekomster (konverter til almindelig tekst)",
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Mine callout-typer",
 	"settings.builtInCallouts": "Indbyggede callouts",
@@ -99,6 +98,8 @@ export const da: Record<string, string> = {
 	"settings.moreRowActionsAria": "Flere handlinger for {{name}}",
 	"settings.replaceAction": "Erstat i vault…",
 	"settings.deleteAction": "Slet",
+	"settings.convertUsesAction": "Konverter forekomster til almindelig tekst",
+	"notice.calloutDeleted": 'Slettede "{{name}}".',
 	"settings.duplicateAction": "Dupliker",
 	"notice.calloutDuplicated": "Callout blev duplikeret som \"{{name}}\".",
 	"notice.calloutDuplicateFailed": "Callout kunne ikke duplikeres. Tjek lagringsstatus, og prøv igen.",
@@ -112,7 +113,6 @@ export const da: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Dit tema",
 	"settings.themePreviewAria":
 		'Forhåndsvis "{{name}}" — se hvordan dit tema tegner den',
-	"settings.clearUsesAction": "Ryd forekomster i dine noter",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} omstyler alle indbyggede callouts, så de er alle listet ovenfor, og Callout Studio lader dem være. Vil du designe din egen, så tilføj en callout med et andet ID.",
 	"settings.fallbackCallout": "Standard reserve-callout",

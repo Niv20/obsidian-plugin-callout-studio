@@ -23,10 +23,8 @@ import { setIcon, setTooltip } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
-import {
-	handleCalloutReplace,
-	handleClearCalloutUsages,
-} from "./calloutVaultActions";
+import { handleCalloutReplace } from "./calloutVaultActions";
+import { addConvertUsesItem } from "./rowOwnership";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
 import { openCalloutRowMenu } from "./calloutRowMenu";
 import { ThemeCalloutPreviewModal } from "../ThemeCalloutPreviewModal";
@@ -56,11 +54,11 @@ function addRowButton(
  * appearance is not the user's to change it invited a click that leads nowhere.
  * In the menu it sits directly above the two actions it qualifies.
  *
- * Note the wording of the second: *Clear uses in your notes*, never *Delete*.
- * Delete is what the same slot says on a row this plugin owns, and it is true
- * there. Here nothing is deleted — the theme keeps supplying the type — and the
- * menu has to be true before the user clicks, not only in the confirmation
- * afterwards.
+ * Note what is missing: *Delete*. It is on a row this plugin owns, and true
+ * there. Here nothing can be deleted — the theme keeps supplying the type — so
+ * the menu offers only *Convert uses to plain text*, which leaves the type
+ * alone, and has to be true before the user clicks, not only in the
+ * confirmation afterwards.
  */
 export async function openThemeRowMenu(
 	ctx: SettingsSectionContext,
@@ -81,15 +79,8 @@ export async function openThemeRowMenu(
 						void handleCalloutReplace(ctx, def);
 					}),
 			);
-			menu.addItem((item) =>
-				item
-					.setTitle(t("settings.clearUsesAction"))
-					.setIcon("eraser")
-					.onClick(() => {
-						void handleClearCalloutUsages(ctx, def);
-					}),
-			);
 		}
+		addConvertUsesItem(menu, ctx, def, usage);
 	});
 }
 

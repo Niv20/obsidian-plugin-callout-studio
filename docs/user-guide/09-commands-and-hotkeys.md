@@ -75,7 +75,7 @@ A heading callout (`## [!tip] Title`) only works outside block callouts. If you 
 
 Place the cursor inside a callout, or select part of it, and run **Callout Studio: Unwrap from callout**. It removes one callout layer while keeping the content. It always unwraps the innermost callout around the cursor, so nested blocks can be unwrapped one level at a time.
 
-The callout's title stays, as a line of its own; only the `[!type]` marker is removed. This is the same thing that happens to notes when you delete a callout type and convert its uses to plain text. If text sat right above the callout with no blank line between, a blank line is added so the two stay separate paragraphs. A callout indented under a list item stays inside that item.
+The callout's title stays, as a line of its own; only the `[!type]` marker is removed. This is the same thing that happens to notes when you choose **Convert uses to plain text** for a callout type. If text sat right above the callout with no blank line between, a blank line is added so the two stay separate paragraphs. A callout indented under a list item stays inside that item.
 
 ## Show, hide, and assign shortcuts
 

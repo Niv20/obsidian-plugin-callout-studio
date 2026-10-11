@@ -263,9 +263,6 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-occurrences-result", // identity/query hook; shared cs-sidebar-result supplies the card
 		"cs-occurrences-location", // per-view hook; shared cs-sidebar-location supplies its typography
 		"cs-discover-callouts-btn", // stable action hook; neutral-button and heading rules supply its styling
-		"callout-studio-delete-modal",
-		"callout-studio-delete-modal-hint",
-		"callout-studio-delete-modal-warning",
 
 		"callout-studio-more-btn",
 		"callout-studio-replace-modal",

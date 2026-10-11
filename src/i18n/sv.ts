@@ -112,23 +112,22 @@ export const sv: Record<string, string> = {
 	"deleteModal.title": 'Ta bort callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"Denna callout förekommer {{count}} gång(er) i {{files}} fil(er).",
-	"deleteModal.bodyInUseExplain":
-		"Borttagning konverterar dessa block till vanlig text — de förlorar sin stil och callout-rubrik.",
-	"deleteModal.replaceHint":
-		"Du kan ersätta den med en annan callout, vilket bevarar vault-innehållet som en stilad callout.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" används inte i någon anteckning, men är en anpassad callout du skapat. Borttagning tar bort den från den här listan.',
-	"deleteModal.replaceInstead": "Ersätt istället…",
-	"deleteModal.deleteInUse": "Ta bort (konvertera till vanlig text)",
-	"deleteModal.deleteUnused": "Ta bort callout",
+	"deleteModal.notesUntouched":
+		"Detta tar bara bort callout-definitionen. Dina anteckningar rörs inte, så befintliga callouts faller helt enkelt tillbaka på standardstilen.",
+	"deleteModal.fallbackTarget":
+		"Den är också din standard reservcallout, så callouts utan egen stil byter till {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'Konvertera "{{name}}" till vanlig text?',
+	"convertModal.explain":
+		"Var och en blir vanlig text: titeln och innehållet finns kvar, bara callout-formateringen försvinner.",
+	"convertModal.typeStays": "Själva callout-typen finns kvar i din lista.",
+	"convertModal.confirm": "Konvertera",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'Rensa alla användningar av "{{name}}"?',
 	"deleteModal.keepsRowBuiltIn":
 		"Detta är en av Obsidians inbyggda callouts, så själva typen förblir tillgänglig — bara dess användningar i dina anteckningar ändras.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} definierar denna callout-typ, så den förblir tillgänglig och behåller sitt utseende. Callout Studio ändrar bara anteckningar i ditt vault — inget som tillhör ditt tema rörs.",
-	"deleteModal.clearUsages": "Rensa användningar (konvertera till vanlig text)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Mina callout-typer",
@@ -159,6 +158,8 @@ export const sv: Record<string, string> = {
 	"settings.moreRowActionsAria": "Fler åtgärder för {{name}}",
 	"settings.replaceAction": "Ersätt i vault…",
 	"settings.deleteAction": "Ta bort",
+	"settings.convertUsesAction": "Konvertera användningar till vanlig text",
+	"notice.calloutDeleted": "”{{name}}” togs bort.",
 	"settings.duplicateAction": "Duplicera",
 	"notice.calloutDuplicated": "Callouten duplicerades som ”{{name}}”.",
 	"notice.calloutDuplicateFailed": "Det gick inte att duplicera callouten. Kontrollera sparstatusen och försök igen.",
@@ -172,7 +173,6 @@ export const sv: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Ditt tema",
 	"settings.themePreviewAria":
 		'Förhandsvisa "{{name}}" — se hur ditt tema ritar den',
-	"settings.clearUsesAction": "Rensa användningar i dina anteckningar",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} stylar om varje inbyggd callout, så de listas alla ovan och Callout Studio låter dem vara. Lägg till en callout med ett annat ID för att designa en egen.",
 

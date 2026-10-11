@@ -60,23 +60,22 @@ export const hu: Record<string, string> = {
 	"deleteModal.title": '"{{name}}" callout törlése?',
 	"deleteModal.bodyInUse":
 		"Ez a callout {{count}} alkalommal szerepel {{files}} fájlban.",
-	"deleteModal.bodyInUseExplain":
-		"A törlés ezeket a blokkokat egyszerű szöveggé alakítja – elveszítik a stílusukat és a callout fejlécét.",
-	"deleteModal.replaceHint":
-		"Helyettesítheti egy másik callout-tal, így a tár tartalma stílusos callout marad.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" nem szerepel egyetlen jegyzetben sem, de egy általad létrehozott egyéni callout. A törlés eltávolítja a listából.',
-	"deleteModal.replaceInstead": "Inkább cserélje le…",
-	"deleteModal.deleteInUse": "Törlés (egyszerű szöveggé alakítás)",
-	"deleteModal.deleteUnused": "Callout törlése",
+	"deleteModal.notesUntouched":
+		"Ez csak a callout definícióját törli. A jegyzetei érintetlenek maradnak, így a meglévő calloutok egyszerűen az alapértelmezett stílusra váltanak.",
+	"deleteModal.fallbackTarget":
+		"Ez az alapértelmezett tartalék calloutja is, ezért a saját stílus nélküli calloutok erre váltanak: {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": '"{{name}}" átalakítása egyszerű szöveggé?',
+	"convertModal.explain":
+		"Mindegyik közönséges szöveg lesz: a cím és a tartalom megmarad, csak a callout formázása tűnik el.",
+	"convertModal.typeStays": "Maga a callout típus a listájában marad.",
+	"convertModal.confirm": "Átalakítás",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'Törli "{{name}}" minden előfordulását?',
 	"deleteModal.keepsRowBuiltIn":
 		"Ez az Obsidian egyik beépített callout-ja, ezért maga a típus elérhető marad — csak a jegyzeteiben lévő előfordulásai változnak.",
 	"deleteModal.keepsRowTheme":
 		"A(z) {{theme}} határozza meg ezt a callout-típust, ezért elérhető marad, és megtartja a kinézetét. A Callout Studio csak a tárában lévő jegyzeteket módosítja — a témájához tartozó semmi nem változik.",
-	"deleteModal.clearUsages": "Előfordulások törlése (egyszerű szöveggé alakítás)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Callout-típusaim",
@@ -107,6 +106,8 @@ export const hu: Record<string, string> = {
 	"settings.moreRowActionsAria": "További műveletek a következőhöz: {{name}}",
 	"settings.replaceAction": "Csere a tárban…",
 	"settings.deleteAction": "Törlés",
+	"settings.convertUsesAction": "Előfordulások átalakítása egyszerű szöveggé",
+	"notice.calloutDeleted": "„{{name}}” törölve.",
 	"settings.duplicateAction": "Másolat készítése",
 	"notice.calloutDuplicated": "A callout másolata „{{name}}” néven készült.",
 	"notice.calloutDuplicateFailed": "A callout másolása nem sikerült. Ellenőrizd a mentés állapotát, majd próbáld újra.",
@@ -121,7 +122,6 @@ export const hu: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "A témája",
 	"settings.themePreviewAria":
 		'Előnézet: "{{name}}" — nézze meg, hogyan rajzolja meg a témája',
-	"settings.clearUsesAction": "Előfordulások törlése a jegyzeteiben",
 	"settings.builtInAllThemeStyled":
 		"A(z) {{theme}} minden beépített callout-ot átstílusoz, ezért mindegyik fent szerepel, és a Callout Studio nem nyúl hozzájuk. Ha saját tervezésűt szeretne, adjon hozzá egy callout-ot másik azonosítóval.",
 	"settings.fallbackCallout": "Alapértelmezett tartalék callout",

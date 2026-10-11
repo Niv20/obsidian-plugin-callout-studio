@@ -57,23 +57,22 @@ export const el: Record<string, string> = {
 	"deleteModal.title": 'Διαγραφή callout "{{name}}";',
 	"deleteModal.bodyInUse":
 		"Αυτό το callout εμφανίζεται {{count}} φορά/φορές σε {{files}} αρχείο/α.",
-	"deleteModal.bodyInUseExplain":
-		"Η διαγραφή θα μετατρέψει αυτά τα μπλοκ σε απλό κείμενο — θα χάσουν το στυλ και την επικεφαλίδα callout.",
-	"deleteModal.replaceHint":
-		"Μπορείτε να το αντικαταστήσετε με άλλο callout, διατηρώντας το περιεχόμενο του vault ως στυλιζαρισμένο callout.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" δεν χρησιμοποιείται σε καμία σημείωση, αλλά είναι ένα προσαρμοσμένο callout που δημιουργήσατε. Η διαγραφή θα το αφαιρέσει από αυτήν τη λίστα.',
-	"deleteModal.replaceInstead": "Αντικατάσταση αντ’ αυτού…",
-	"deleteModal.deleteInUse": "Διαγραφή (μετατροπή σε απλό κείμενο)",
-	"deleteModal.deleteUnused": "Διαγραφή callout",
+	"deleteModal.notesUntouched":
+		"Αυτό διαγράφει μόνο τον ορισμό του callout. Οι σημειώσεις σας δεν αγγίζονται, οπότε τα υπάρχοντα callouts απλώς επιστρέφουν στο προεπιλεγμένο στυλ.",
+	"deleteModal.fallbackTarget":
+		"Είναι επίσης το προεπιλεγμένο εφεδρικό callout σας, οπότε τα callouts χωρίς δικό τους στυλ θα αλλάξουν σε {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'Μετατροπή του "{{name}}" σε απλό κείμενο;',
+	"convertModal.explain":
+		"Το καθένα γίνεται απλό κείμενο: ο τίτλος και το περιεχόμενο μένουν, φεύγει μόνο η μορφοποίηση του callout.",
+	"convertModal.typeStays": "Ο ίδιος ο τύπος callout παραμένει στη λίστα σας.",
+	"convertModal.confirm": "Μετατροπή",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'Εκκαθάριση κάθε χρήσης του "{{name}}";',
 	"deleteModal.keepsRowBuiltIn":
 		"Αυτό είναι ένα από τα ενσωματωμένα callouts του Obsidian, οπότε ο τύπος παραμένει διαθέσιμος — αλλάζουν μόνο οι χρήσεις του στις σημειώσεις σας.",
 	"deleteModal.keepsRowTheme":
 		"Το {{theme}} ορίζει αυτόν τον τύπο callout, οπότε παραμένει διαθέσιμος και διατηρεί την εμφάνισή του. Το Callout Studio αλλάζει μόνο σημειώσεις μέσα στο vault σας — τίποτα που ανήκει στο θέμα σας δεν επηρεάζεται.",
-	"deleteModal.clearUsages": "Εκκαθάριση χρήσεων (μετατροπή σε απλό κείμενο)",
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Οι τύποι callout μου",
 	"settings.builtInCallouts": "Ενσωματωμένα callouts",
@@ -101,6 +100,8 @@ export const el: Record<string, string> = {
 	"settings.moreRowActionsAria": "Περισσότερες ενέργειες για {{name}}",
 	"settings.replaceAction": "Αντικατάσταση στο vault…",
 	"settings.deleteAction": "Διαγραφή",
+	"settings.convertUsesAction": "Μετατροπή χρήσεων σε απλό κείμενο",
+	"notice.calloutDeleted": "Το «{{name}}» διαγράφηκε.",
 	"settings.duplicateAction": "Δημιουργία αντιγράφου",
 	"notice.calloutDuplicated": "Το callout αντιγράφηκε ως «{{name}}».",
 	"notice.calloutDuplicateFailed": "Δεν ήταν δυνατή η αντιγραφή του callout. Έλεγξε την κατάσταση αποθήκευσης και δοκίμασε ξανά.",
@@ -114,7 +115,6 @@ export const el: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Το θέμα σας",
 	"settings.themePreviewAria":
 		'Προεπισκόπηση "{{name}}" — δείτε πώς το σχεδιάζει το θέμα σας',
-	"settings.clearUsesAction": "Εκκαθάριση χρήσεων στις σημειώσεις σας",
 	"settings.builtInAllThemeStyled":
 		"Το {{theme}} επαναμορφοποιεί κάθε ενσωματωμένο callout, οπότε όλα εμφανίζονται παραπάνω και το Callout Studio τα αφήνει ως έχουν. Για να σχεδιάσετε ένα δικό σας, προσθέστε ένα callout με διαφορετικό ID.",
 	"settings.fallbackCallout": "Προεπιλεγμένο εφεδρικό callout",

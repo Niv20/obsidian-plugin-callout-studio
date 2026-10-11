@@ -58,24 +58,23 @@ export const ms: Record<string, string> = {
 	"deleteModal.title": 'Padam callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"Callout ini muncul {{count}} kali dalam {{files}} fail.",
-	"deleteModal.bodyInUseExplain":
-		"Pemadaman akan menukar blok tersebut kepada teks biasa — mereka akan kehilangan gaya dan pengepala callout.",
-	"deleteModal.replaceHint":
-		"Anda boleh menggantikannya dengan callout lain, yang mengekalkan kandungan vault sebagai callout bergaya.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" tidak digunakan dalam mana-mana nota, tetapi merupakan callout tersuai yang anda cipta. Pemadaman akan membuangnya dari senarai ini.',
-	"deleteModal.replaceInstead": "Ganti sebaliknya…",
-	"deleteModal.deleteInUse": "Padam (tukar kepada teks biasa)",
-	"deleteModal.deleteUnused": "Padam callout",
+	"deleteModal.notesUntouched":
+		"Ini hanya memadam takrifan callout. Nota anda tidak disentuh, jadi callout sedia ada hanya akan kembali kepada gaya lalai.",
+	"deleteModal.fallbackTarget":
+		"Ia juga callout sandaran lalai anda, jadi callout tanpa gaya sendiri akan bertukar kepada {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'Tukar "{{name}}" kepada teks biasa?',
+	"convertModal.explain":
+		"Setiap satu menjadi teks biasa: tajuk dan kandungan kekal, hanya format callout yang hilang.",
+	"convertModal.typeStays": "Jenis callout itu sendiri kekal dalam senarai anda.",
+	"convertModal.confirm": "Tukar",
 
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'Kosongkan semua penggunaan "{{name}}"?',
 	"deleteModal.keepsRowBuiltIn":
 		"Ini adalah salah satu callout terbina dalam Obsidian, jadi jenis itu sendiri kekal tersedia — hanya penggunaannya dalam nota anda yang berubah.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} mentakrifkan jenis callout ini, jadi ia kekal tersedia dan mengekalkan rupanya. Callout Studio hanya mengubah nota dalam vault anda — tiada apa-apa milik tema anda yang disentuh.",
-	"deleteModal.clearUsages": "Kosongkan penggunaan (tukar kepada teks biasa)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Jenis callout saya",
@@ -103,6 +102,8 @@ export const ms: Record<string, string> = {
 	"settings.moreRowActionsAria": "Tindakan lain untuk {{name}}",
 	"settings.replaceAction": "Ganti dalam vault…",
 	"settings.deleteAction": "Padam",
+	"settings.convertUsesAction": "Tukar penggunaan kepada teks biasa",
+	"notice.calloutDeleted": "“{{name}}” dipadam.",
 	"settings.duplicateAction": "Pendua",
 	"notice.calloutDuplicated": "Callout diduplikasi sebagai “{{name}}”.",
 	"notice.calloutDuplicateFailed": "Callout tidak dapat diduplikasi. Semak status penyimpanan dan cuba lagi.",
@@ -117,7 +118,6 @@ export const ms: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Tema anda",
 	"settings.themePreviewAria":
 		'Pratonton "{{name}}" — lihat cara tema anda melukisnya',
-	"settings.clearUsesAction": "Kosongkan penggunaan dalam nota anda",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} menggayakan semula setiap callout terbina dalam, jadi semuanya disenaraikan di atas dan Callout Studio membiarkannya. Untuk mereka bentuk callout anda sendiri, tambah callout dengan ID yang berbeza.",
 

@@ -111,24 +111,23 @@ export const uk: Record<string, string> = {
 	"deleteModal.title": 'Видалити callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"Цей callout зустрічається {{count}} раз(ів) у {{files}} файлі(ах).",
-	"deleteModal.bodyInUseExplain":
-		"Видалення перетворить ці блоки на звичайний текст — вони втратять оформлення та заголовок callout.",
-	"deleteModal.replaceHint":
-		"Ви можете замінити його іншим callout, щоб зберегти вміст сховища у вигляді оформленого callout.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" не використовується в жодній нотатці, але це створений вами користувацький callout. Видалення приберe його зі списку.',
-	"deleteModal.replaceInstead": "Замінити натомість…",
-	"deleteModal.deleteInUse": "Видалити (перетворити на звичайний текст)",
-	"deleteModal.deleteUnused": "Видалити callout",
+	"deleteModal.notesUntouched":
+		"Видаляється лише визначення callout. Ваші нотатки не змінюються, тож наявні callout просто повернуться до стилю за замовчуванням.",
+	"deleteModal.fallbackTarget":
+		"Це також ваш резервний callout за замовчуванням, тож callout без власного стилю перейдуть на {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'Перетворити "{{name}}" на звичайний текст?',
+	"convertModal.explain":
+		"Кожен стане звичайним текстом: заголовок і вміст залишаться, зникне лише оформлення callout.",
+	"convertModal.typeStays": "Сам тип callout залишиться у вашому списку.",
+	"convertModal.confirm": "Перетворити",
 
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'Очистити всі використання "{{name}}"?',
 	"deleteModal.keepsRowBuiltIn":
 		"Це один із вбудованих callout Obsidian, тому сам тип залишається доступним — зміняться лише його використання у ваших нотатках.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} визначає цей тип callout, тому він залишається доступним і зберігає свій вигляд. Callout Studio змінює лише нотатки у вашому сховищі — нічого, що належить вашій темі, не зачіпається.",
-	"deleteModal.clearUsages": "Очистити використання (перетворити на звичайний текст)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Мої типи callout",
@@ -159,6 +158,8 @@ export const uk: Record<string, string> = {
 	"settings.moreRowActionsAria": "Інші дії для {{name}}",
 	"settings.replaceAction": "Замінити у сховищі…",
 	"settings.deleteAction": "Видалити",
+	"settings.convertUsesAction": "Перетворити використання на звичайний текст",
+	"notice.calloutDeleted": "«{{name}}» видалено.",
 	"settings.duplicateAction": "Дублювати",
 	"notice.calloutDuplicated": "Callout дубльовано під назвою «{{name}}».",
 	"notice.calloutDuplicateFailed": "Не вдалося дублювати callout. Перевірте стан збереження й повторіть спробу.",
@@ -175,7 +176,6 @@ export const uk: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Ваша тема",
 	"settings.themePreviewAria":
 		'Попередній перегляд "{{name}}" — подивитись, як його малює ваша тема',
-	"settings.clearUsesAction": "Очистити використання у ваших нотатках",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} перестилізовує кожен вбудований callout, тому всі вони перелічені вище, і Callout Studio їх не чіпає. Щоб створити власний дизайн, додайте callout з іншим ID.",
 

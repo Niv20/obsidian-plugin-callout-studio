@@ -1,6 +1,6 @@
 /**
  * settings/sections/rowOwnership.ts — which of the three groups a callout row
- * belongs in, and what its destructive action may honestly claim to do.
+ * belongs in, and which of Delete and Convert uses to plain text it offers.
  *
  * ## The group is the label
  *
@@ -88,15 +88,14 @@ export function partitionByStyleOwner(
 }
 
 /**
- * Whether Delete can really remove this callout, or only clear its usages.
+ * Whether Delete can really remove this callout.
  *
  * Three of the five sources cannot be removed at all, for the same underlying
  * reason: something outside this plugin keeps declaring the id, so the row
  * would come straight back. A built-in is one of Obsidian's thirteen and the
  * registry always seeds it; a callout the active theme names is re-minted by
- * the next theme sweep. What Delete can honestly do in those cases is what it
- * has always done for built-ins — turn the existing `[!id]` usages into plain
- * paragraphs and leave the type where it is.
+ * the next theme sweep. Those rows offer no Delete — only
+ * {@link addConvertUsesItem}, which every row has.
  */
 export function deleteRemovesRow(
 	ctx: SettingsSectionContext,
@@ -106,57 +105,50 @@ export function deleteRemovesRow(
 }
 
 /**
- * The `⋯` item that clears a theme callout's uses from the vault.
+ * The `⋯` item that turns a callout's uses in the vault into plain text, on
+ * every kind of row. Shown when the callout is written somewhere, or when the
+ * menu does not know yet; the action recounts before it asks.
  *
- * Split from {@link addDeleteItem} because the *word* has to differ here. On a
- * row the plugin owns, "Delete" is what happens; on a theme row nothing is
- * deleted — the type is the theme's and survives — and calling it Delete is
- * the single most misleading thing this menu could say. The confirmation goes
- * on to explain that nothing belonging to the theme was touched, but the menu
- * has to be true before the user clicks it.
+ * Its own item rather than a branch of Delete because the two do opposite
+ * things: Delete removes the type and leaves every note alone, this rewrites
+ * the notes and leaves the type alone. On a theme row or a built-in, where
+ * nothing can be deleted, it is the only one offered — and calling it Delete
+ * there would be the single most misleading thing the menu could say.
  */
-export function addClearUsesItem(
-	menu: Menu,
-	ctx: SettingsSectionContext,
-	def: CalloutDefinition,
-	usage: { fileCount: number; totalCount: number },
-): void {
-	if (usage.fileCount === 0) return;
-	menu.addItem((item) =>
-		item
-			.setTitle(t("settings.clearUsesAction"))
-			.setIcon("eraser")
-			.onClick(() => {
-				void handleClearCalloutUsages(ctx, def, usage);
-			}),
-	);
-}
-
-/**
- * Fill a row menu's destructive slot with whichever Delete is truthful here.
- *
- * Both branches are labelled *Delete*: which one it is is not something a user
- * should have to learn from a menu, it is something the confirmation spells out
- * at the moment it matters. A row whose definition survives shows the item only
- * when the callout is actually written somewhere — with nothing to clear there
- * is no operation left to offer at all.
- */
-export function addDeleteItem(
+export function addConvertUsesItem(
 	menu: Menu,
 	ctx: SettingsSectionContext,
 	def: CalloutDefinition,
 	usage?: { fileCount: number; totalCount: number },
 ): void {
-	const removes = deleteRemovesRow(ctx, def);
-	if (!removes && usage?.fileCount === 0) return;
+	if (usage?.fileCount === 0) return;
+	menu.addItem((item) =>
+		item
+			.setTitle(t("settings.convertUsesAction"))
+			.setIcon("eraser")
+			.onClick(() => {
+				void handleClearCalloutUsages(ctx, def);
+			}),
+	);
+}
+
+/**
+ * The `⋯` item that deletes the callout's definition, on a row whose
+ * definition can actually go. Shown whether or not the callout is in use:
+ * Delete never touches a note, so there is always something it can do.
+ */
+export function addDeleteItem(
+	menu: Menu,
+	ctx: SettingsSectionContext,
+	def: CalloutDefinition,
+): void {
+	if (!deleteRemovesRow(ctx, def)) return;
 	menu.addItem((item) =>
 		item
 			.setTitle(t("settings.deleteAction"))
 			.setIcon("trash-2")
 			.onClick(() => {
-				void (removes
-					? handleCalloutDelete(ctx, def)
-					: handleClearCalloutUsages(ctx, def));
+				void handleCalloutDelete(ctx, def);
 			}),
 	);
 }

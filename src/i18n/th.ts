@@ -111,23 +111,22 @@ export const th: Record<string, string> = {
 	"deleteModal.title": 'ลบ callout "{{name}}" หรือไม่?',
 	"deleteModal.bodyInUse":
 		"callout นี้ปรากฏ {{count}} ครั้งใน {{files}} ไฟล์",
-	"deleteModal.bodyInUseExplain":
-		"การลบจะแปลงบล็อกเหล่านั้นเป็นข้อความธรรมดา — จะสูญเสียสไตล์และหัว callout",
-	"deleteModal.replaceHint":
-		"คุณสามารถแทนที่ด้วย callout อื่นแทน ซึ่งจะรักษาเนื้อหาใน vault เป็น callout ที่มีสไตล์",
-	"deleteModal.bodyUnused":
-		'"{{name}}" ไม่ได้ใช้งานในโน้ตใด แต่เป็น callout แบบกำหนดเองที่คุณสร้าง การลบจะนำออกจากรายการนี้',
-	"deleteModal.replaceInstead": "แทนที่แทน…",
-	"deleteModal.deleteInUse": "ลบ (แปลงเป็นข้อความธรรมดา)",
-	"deleteModal.deleteUnused": "ลบ callout",
+	"deleteModal.notesUntouched":
+		"การดำเนินการนี้จะลบเฉพาะคำจำกัดความของ callout เท่านั้น โน้ตของคุณจะไม่ถูกแตะต้อง ดังนั้น callout ที่มีอยู่จะกลับไปใช้สไตล์เริ่มต้น",
+	"deleteModal.fallbackTarget":
+		"นี่ยังเป็น callout สำรองเริ่มต้นของคุณด้วย ดังนั้น callout ที่ไม่มีสไตล์ของตัวเองจะเปลี่ยนไปใช้ {{fallback}}",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'แปลง "{{name}}" เป็นข้อความธรรมดาหรือไม่?',
+	"convertModal.explain":
+		"แต่ละรายการจะกลายเป็นข้อความธรรมดา: หัวเรื่องและเนื้อหายังคงอยู่ มีเพียงรูปแบบ callout ที่หายไป",
+	"convertModal.typeStays": "ประเภท callout นี้ยังคงอยู่ในรายการของคุณ",
+	"convertModal.confirm": "แปลง",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'ล้างการใช้งานทั้งหมดของ "{{name}}" หรือไม่?',
 	"deleteModal.keepsRowBuiltIn":
 		"นี่คือหนึ่งใน callout ในตัวของ Obsidian ดังนั้นประเภทนี้จะยังคงใช้งานได้ — มีเพียงการใช้งานในโน้ตของคุณเท่านั้นที่จะเปลี่ยนแปลง",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} กำหนดประเภท callout นี้ไว้ จึงยังคงใช้งานได้และคงรูปลักษณ์เดิม Callout Studio จะเปลี่ยนเฉพาะโน้ตภายใน vault ของคุณเท่านั้น — ไม่แตะต้องสิ่งใดที่เป็นของธีมของคุณ",
-	"deleteModal.clearUsages": "ล้างการใช้งาน (แปลงเป็นข้อความธรรมดา)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "ประเภท callout ของฉัน",
@@ -158,6 +157,8 @@ export const th: Record<string, string> = {
 	"settings.moreRowActionsAria": "การดำเนินการเพิ่มเติมสำหรับ {{name}}",
 	"settings.replaceAction": "แทนที่ใน vault…",
 	"settings.deleteAction": "ลบ",
+	"settings.convertUsesAction": "แปลงการใช้งานเป็นข้อความธรรมดา",
+	"notice.calloutDeleted": "ลบ “{{name}}” แล้ว",
 	"settings.duplicateAction": "ทำสำเนา",
 	"notice.calloutDuplicated": "ทำสำเนา callout เป็น “{{name}}” แล้ว",
 	"notice.calloutDuplicateFailed": "ทำสำเนา callout ไม่ได้ โปรดตรวจสอบสถานะการบันทึกแล้วลองอีกครั้ง",
@@ -172,7 +173,6 @@ export const th: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "ธีมของคุณ",
 	"settings.themePreviewAria":
 		'ดูตัวอย่าง "{{name}}" — ดูว่าธีมของคุณวาดมันอย่างไร',
-	"settings.clearUsesAction": "ล้างการใช้งานในโน้ตของคุณ",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} ปรับสไตล์ callout ในตัวทุกรายการ ดังนั้นทั้งหมดจะแสดงอยู่ด้านบนและ Callout Studio จะไม่แตะต้อง หากต้องการออกแบบของคุณเอง ให้เพิ่ม callout ที่มี ID ต่างออกไป",
 	"settings.fallbackCallout": "Callout สำรองเริ่มต้น",

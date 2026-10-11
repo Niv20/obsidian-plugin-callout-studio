@@ -1,10 +1,11 @@
 /**
  * utils/noteRewriteUndo.ts — one step back for a vault-wide note rewrite.
  *
- * **Replace in vault** and **Delete** rewrite every note that uses a callout,
- * and had no undo: a wrong pick meant restoring notes from a backup, if there
- * was one. A rewrite now records each note's text before and after it, in
- * memory, for the most recent rewrite only and within a size budget. Undo puts
+ * **Replace in vault** and **Convert uses to plain text** rewrite every note
+ * that uses a callout, and had no undo: a wrong pick meant restoring notes
+ * from a backup, if there was one. A rewrite now records each note's text
+ * before and after it, in memory, for the most recent rewrite only and within
+ * a size budget. Undo puts
  * back each note that still holds exactly what the rewrite left. A note edited
  * since is left alone and counted, never overwritten, and nothing is written
  * to a note the rewrite did not change.
@@ -21,8 +22,6 @@ export class NoteRewriteJournal {
 	private size = 0;
 	/** Too much text to keep: this rewrite offers no undo, rather than a partial one. */
 	overflowed = false;
-	/** Anything besides the notes to put back, such as a deleted callout type. */
-	afterUndo: (() => void | Promise<void>) | null = null;
 
 	record(path: string, before: string, after: string): void {
 		if (this.overflowed) return;
@@ -68,6 +67,5 @@ export async function undoNoteRewrite(app: App, journal: NoteRewriteJournal): Pr
 		}
 		if (putBack) restored++; else skipped++;
 	}
-	await journal.afterUndo?.();
 	return { restored, skipped };
 }

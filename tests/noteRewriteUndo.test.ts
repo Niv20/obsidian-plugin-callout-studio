@@ -1,8 +1,8 @@
 /**
- * One step back for **Replace in vault** and **Delete**, which rewrite every
- * note using a callout and used to have no undo. Undo restores each note that
- * still holds what the rewrite left, skips one edited since, and after a
- * delete brings the callout type back with its notes.
+ * One step back for **Replace in vault** and **Convert uses to plain text**,
+ * which rewrite every note using a callout and used to have no undo. Undo
+ * restores each note that still holds what the rewrite left and skips one
+ * edited since. **Delete** rewrites no note; its Undo brings the type back.
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -11,15 +11,18 @@ import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { createIconResolver } from "../src/icons/resolver";
 import { packFor } from "../src/icons/registry";
-import { handleCalloutDelete, handleCalloutReplace } from "../src/settings/sections/calloutVaultActions";
+import {
+	handleCalloutDelete,
+	handleCalloutReplace,
+	handleClearCalloutUsages,
+} from "../src/settings/sections/calloutVaultActions";
 import type { SettingsSectionContext } from "../src/settings/sections/types";
-import { DeleteCalloutModal } from "../src/utils/DeleteCalloutModal";
 import { ReplaceCalloutModal } from "../src/utils/ReplaceCalloutModal";
 import { canUndo, keepForUndo, NoteRewriteJournal } from "../src/utils/noteRewriteUndo";
 import { en } from "../src/i18n/en";
 import { Notice } from "./support/obsidianStub";
 import { definition } from "./support/discoveryHarness";
-import { savingWriter } from "./support/importSafetyStubs";
+import { savingWriter, stubConfirm } from "./support/importSafetyStubs";
 import { fakeDom, FakeElement, type FakeDocumentFragment } from "./support/fakeDom";
 
 fakeDom.light();
@@ -42,6 +45,7 @@ function vault(notes: Record<string, string>) {
 	let saves = 0;
 	const ctx = { app, display: () => {}, plugin: {
 		registry, settingsWriter: savingWriter(), saveSettings: () => { saves++; return Promise.resolve(); },
+		refreshCallouts: () => {},
 	} } as unknown as SettingsSectionContext;
 	return { app, ctx, def, registry, contents, get saves() { return saves; } };
 }
@@ -90,18 +94,30 @@ describe("undoing a note rewrite", () => {
 		}
 	});
 
-	it("brings a deleted callout type back with its notes", async () => {
+	it("puts converted notes back, and never touched the type", async () => {
 		const h = vault({ "a.md": "> [!owned] Kept text" });
-		const prompt = Object.getOwnPropertyDescriptor(DeleteCalloutModal.prototype, "prompt")!;
-		DeleteCalloutModal.prototype.prompt = () => Promise.resolve("delete");
+		const confirm = stubConfirm(true);
 		try {
-			await handleCalloutDelete(h.ctx, h.def, { fileCount: 1, totalCount: 1 });
-			assert.equal(h.registry.has("owned"), false);
+			await handleClearCalloutUsages(h.ctx, h.def);
+			assert.equal(h.registry.has("owned"), true);
 			assert.equal(h.contents.get("a.md"), "Kept text");
 			await undo();
 			assert.equal(h.contents.get("a.md"), "> [!owned] Kept text");
 			assert.equal(h.registry.has("owned"), true);
-		} finally { Object.defineProperty(DeleteCalloutModal.prototype, "prompt", prompt); }
+		} finally { confirm.restore(); }
+	});
+
+	it("brings a deleted callout type back, its notes never having changed", async () => {
+		const h = vault({ "a.md": "> [!owned] Kept text" });
+		const confirm = stubConfirm(true);
+		try {
+			await handleCalloutDelete(h.ctx, h.def);
+			assert.equal(h.registry.has("owned"), false);
+			assert.equal(h.contents.get("a.md"), "> [!owned] Kept text");
+			await undo();
+			assert.equal(h.registry.has("owned"), true);
+			assert.equal(h.contents.get("a.md"), "> [!owned] Kept text");
+		} finally { confirm.restore(); }
 	});
 
 	it("undoes only the most recent rewrite, and never an empty one", () => {
@@ -126,14 +142,13 @@ describe("undoing a note rewrite", () => {
 		h.registry.addIconSvg(artwork);
 		const resolver = createIconResolver(h.registry);
 		assert.equal(resolver.resolveSvg(icon, "regular"), artwork.svg);
-		const prompt = Object.getOwnPropertyDescriptor(DeleteCalloutModal.prototype, "prompt")!;
-		DeleteCalloutModal.prototype.prompt = () => Promise.resolve("delete");
+		const confirm = stubConfirm(true);
 		try {
-			await handleCalloutDelete(h.ctx, def, { fileCount: 1, totalCount: 1 });
+			await handleCalloutDelete(h.ctx, def);
 			assert.equal(resolver.resolveSvg(icon, "regular"), null, "unused artwork is cleaned up on delete");
 			await undo();
 			assert.equal(h.registry.has("owned"), true);
 			assert.equal(resolver.resolveSvg(icon, "regular"), artwork.svg);
-		} finally { Object.defineProperty(DeleteCalloutModal.prototype, "prompt", prompt); }
+		} finally { confirm.restore(); }
 	});
 });

@@ -59,24 +59,22 @@ export const ja: Record<string, string> = {
 	"deleteModal.title": 'callout "{{name}}" を削除しますか？',
 	"deleteModal.bodyInUse":
 		"このcalloutは{{files}}個のファイルに{{count}}回出現しています。",
-	"deleteModal.bodyInUseExplain":
-		"削除すると、これらのブロックはプレーンテキストに変換されます。スタイルとcalloutヘッダーが失われます。",
-	"deleteModal.replaceHint":
-		"別のcalloutに置き換えることで、vault内のコンテンツをスタイル付きcalloutとして保持できます。",
-	"deleteModal.bodyUnused":
-		'"{{name}}"はどのノートでも使用されていませんが、カスタムcalloutです。削除するとこのリストから削除されます。',
-	"deleteModal.replaceInstead": "代わりに置き換える…",
-	"deleteModal.deleteInUse": "削除（プレーンテキストに変換）",
-	"deleteModal.deleteUnused": "calloutを削除",
+	"deleteModal.notesUntouched":
+		"calloutの定義だけを削除します。ノートには一切手を加えないため、既存のcalloutはデフォルトのスタイルに戻るだけです。",
+	"deleteModal.fallbackTarget":
+		"これはデフォルトフォールバックcalloutでもあるため、独自のスタイルを持たないcalloutは{{fallback}}に切り替わります。",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": '"{{name}}" をプレーンテキストに変換しますか？',
+	"convertModal.explain": "それぞれが通常のテキストになります。タイトルと内容は残り、calloutの書式だけが外れます。",
+	"convertModal.typeStays": "calloutのタイプ自体はリストに残ります。",
+	"convertModal.confirm": "変換",
 
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": '"{{name}}"のすべての使用をクリアしますか？',
 	"deleteModal.keepsRowBuiltIn":
 		"これはObsidianの組み込みcalloutの一つなので、タイプ自体は引き続き利用可能です。変更されるのはノート内での使用のみです。",
 	"deleteModal.keepsRowTheme":
 		"{{theme}}がこのcalloutタイプを定義しているため、引き続き利用可能で見た目もそのまま保たれます。Callout Studioはvault内のノートのみを変更し、テーマに属するものには一切変更を加えません。",
-	"deleteModal.clearUsages": "使用箇所をクリア（プレーンテキストに変換）",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "マイcalloutタイプ",
@@ -107,6 +105,8 @@ export const ja: Record<string, string> = {
 	"settings.moreRowActionsAria": "{{name}}のその他の操作",
 	"settings.replaceAction": "vaultで置き換え…",
 	"settings.deleteAction": "削除",
+	"settings.convertUsesAction": "使用箇所をプレーンテキストに変換",
+	"notice.calloutDeleted": "「{{name}}」を削除しました。",
 	"settings.duplicateAction": "複製",
 	"notice.calloutDuplicated": "コールアウトを「{{name}}」として複製しました。",
 	"notice.calloutDuplicateFailed": "コールアウトを複製できませんでした。保存状態を確認して、もう一度お試しください。",
@@ -122,7 +122,6 @@ export const ja: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "あなたのテーマ",
 	"settings.themePreviewAria":
 		'"{{name}}"をプレビュー — テーマでの描画を確認',
-	"settings.clearUsesAction": "ノート内の使用をクリア",
 	"settings.builtInAllThemeStyled":
 		"{{theme}}はすべての組み込みcalloutのスタイルを上書きしているため、それらはすべて上に一覧表示され、Callout Studioはそのままにします。独自にデザインするには、別のIDでcalloutを追加してください。",
 

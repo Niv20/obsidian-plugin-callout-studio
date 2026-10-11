@@ -111,24 +111,23 @@ export const vi: Record<string, string> = {
 	"deleteModal.title": 'Xóa callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"Callout này xuất hiện {{count}} lần trong {{files}} tệp.",
-	"deleteModal.bodyInUseExplain":
-		"Xóa sẽ chuyển đổi các khối đó thành văn bản thường — chúng sẽ mất kiểu và tiêu đề callout.",
-	"deleteModal.replaceHint":
-		"Bạn có thể thay thế nó bằng callout khác, giữ nguyên nội dung vault dưới dạng callout có kiểu.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" không được sử dụng trong bất kỳ ghi chú nào, nhưng là callout tùy chỉnh bạn đã tạo. Xóa sẽ loại bỏ nó khỏi danh sách này.',
-	"deleteModal.replaceInstead": "Thay thế thay vào đó…",
-	"deleteModal.deleteInUse": "Xóa (chuyển thành văn bản thường)",
-	"deleteModal.deleteUnused": "Xóa callout",
+	"deleteModal.notesUntouched":
+		"Thao tác này chỉ xóa định nghĩa callout. Ghi chú của bạn không bị động đến, nên các callout hiện có sẽ chỉ quay về kiểu mặc định.",
+	"deleteModal.fallbackTarget":
+		"Đây cũng là callout dự phòng mặc định của bạn, nên các callout không có kiểu riêng sẽ chuyển sang {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'Chuyển "{{name}}" thành văn bản thường?',
+	"convertModal.explain":
+		"Mỗi cái sẽ thành văn bản bình thường: tiêu đề và nội dung được giữ lại, chỉ định dạng callout bị bỏ đi.",
+	"convertModal.typeStays": "Bản thân loại callout vẫn nằm trong danh sách của bạn.",
+	"convertModal.confirm": "Chuyển đổi",
 
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'Xóa mọi lượt sử dụng "{{name}}"?',
 	"deleteModal.keepsRowBuiltIn":
 		"Đây là một trong các callout tích hợp của Obsidian, vì vậy bản thân loại này vẫn khả dụng — chỉ các lượt sử dụng trong ghi chú của bạn thay đổi.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} định nghĩa loại callout này, vì vậy nó vẫn khả dụng và giữ nguyên hình thức. Callout Studio chỉ thay đổi ghi chú trong vault của bạn — không có gì thuộc về giao diện của bạn bị ảnh hưởng.",
-	"deleteModal.clearUsages": "Xóa các lượt sử dụng (chuyển thành văn bản thường)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Các loại callout của tôi",
@@ -159,6 +158,8 @@ export const vi: Record<string, string> = {
 	"settings.moreRowActionsAria": "Thêm hành động cho {{name}}",
 	"settings.replaceAction": "Thay thế trong vault…",
 	"settings.deleteAction": "Xóa",
+	"settings.convertUsesAction": "Chuyển các lượt sử dụng thành văn bản thường",
+	"notice.calloutDeleted": "Đã xóa “{{name}}”.",
 	"settings.duplicateAction": "Nhân bản",
 	"notice.calloutDuplicated": "Đã nhân bản callout thành “{{name}}”.",
 	"notice.calloutDuplicateFailed": "Không thể nhân bản callout. Hãy kiểm tra trạng thái lưu rồi thử lại.",
@@ -174,7 +175,6 @@ export const vi: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Giao diện của bạn",
 	"settings.themePreviewAria":
 		'Xem trước "{{name}}" — xem giao diện của bạn vẽ nó như thế nào',
-	"settings.clearUsesAction": "Xóa các lượt sử dụng trong ghi chú của bạn",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} tạo kiểu lại cho mọi callout tích hợp, vì vậy tất cả đều được liệt kê ở trên và Callout Studio không can thiệp vào chúng. Để thiết kế callout của riêng bạn, hãy thêm một callout với ID khác.",
 

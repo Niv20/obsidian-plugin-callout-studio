@@ -59,24 +59,22 @@ export const ko: Record<string, string> = {
 	"deleteModal.title": 'callout "{{name}}"을(를) 삭제하시겠습니까?',
 	"deleteModal.bodyInUse":
 		"이 callout은 {{files}}개의 파일에서 {{count}}번 나타납니다.",
-	"deleteModal.bodyInUseExplain":
-		"삭제하면 해당 블록이 일반 텍스트로 변환됩니다. 스타일과 callout 헤더가 손실됩니다.",
-	"deleteModal.replaceHint":
-		"다른 callout으로 대체하면 볼트 내용을 스타일 있는 callout으로 유지할 수 있습니다.",
-	"deleteModal.bodyUnused":
-		'"{{name}}"은(는) 어떤 노트에서도 사용되지 않지만 사용자 정의 callout입니다. 삭제하면 이 목록에서 제거됩니다.',
-	"deleteModal.replaceInstead": "대신 교체…",
-	"deleteModal.deleteInUse": "삭제 (일반 텍스트로 변환)",
-	"deleteModal.deleteUnused": "callout 삭제",
+	"deleteModal.notesUntouched":
+		"callout 정의만 삭제합니다. 노트는 건드리지 않으므로 기존 callout은 기본 스타일로 돌아갈 뿐입니다.",
+	"deleteModal.fallbackTarget":
+		"이것은 기본 폴백 callout이기도 하므로, 자체 스타일이 없는 callout은 {{fallback}}(으)로 바뀝니다.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": '"{{name}}"을(를) 일반 텍스트로 변환하시겠습니까?',
+	"convertModal.explain": "각각 일반 텍스트가 됩니다. 제목과 내용은 그대로 남고 callout 서식만 사라집니다.",
+	"convertModal.typeStays": "callout 유형 자체는 목록에 남습니다.",
+	"convertModal.confirm": "변환",
 
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": '"{{name}}"의 모든 사용을 지우시겠습니까?',
 	"deleteModal.keepsRowBuiltIn":
 		"이것은 Obsidian의 기본 제공 callout 중 하나이므로 유형 자체는 계속 사용할 수 있습니다 — 노트에서의 사용만 변경됩니다.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}}이(가) 이 callout 유형을 정의하므로 계속 사용할 수 있으며 모양도 그대로 유지됩니다. Callout Studio는 볼트 내의 노트만 변경하며, 테마에 속한 것은 전혀 건드리지 않습니다.",
-	"deleteModal.clearUsages": "사용 지우기 (일반 텍스트로 변환)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "내 callout 유형",
@@ -107,6 +105,8 @@ export const ko: Record<string, string> = {
 	"settings.moreRowActionsAria": "{{name}}에 대한 추가 작업",
 	"settings.replaceAction": "볼트에서 교체…",
 	"settings.deleteAction": "삭제",
+	"settings.convertUsesAction": "사용을 일반 텍스트로 변환",
+	"notice.calloutDeleted": '"{{name}}"을(를) 삭제했습니다.',
 	"settings.duplicateAction": "복제",
 	"notice.calloutDuplicated": "콜아웃이 \"{{name}}\"(으)로 복제되었습니다.",
 	"notice.calloutDuplicateFailed": "콜아웃을 복제할 수 없습니다. 저장 상태를 확인한 후 다시 시도하세요.",
@@ -122,7 +122,6 @@ export const ko: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "사용자의 테마",
 	"settings.themePreviewAria":
 		'"{{name}}" 미리보기 — 테마가 이를 어떻게 그리는지 확인',
-	"settings.clearUsesAction": "노트에서 사용 지우기",
 	"settings.builtInAllThemeStyled":
 		"{{theme}}이(가) 모든 기본 제공 callout의 스타일을 다시 지정하므로, 모두 위에 표시되며 Callout Studio는 그대로 둡니다. 직접 디자인하려면 다른 ID로 callout을 추가하세요.",
 

@@ -60,23 +60,22 @@ export const es: Record<string, string> = {
 	"deleteModal.title": '¿Eliminar callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"Este callout aparece {{count}} vez/veces en {{files}} archivo(s).",
-	"deleteModal.bodyInUseExplain":
-		"Al eliminar se convertirán esos bloques a texto sin formato — perderán el estilo y el encabezado del callout.",
-	"deleteModal.replaceHint":
-		"Puede reemplazarlo por otro callout en su lugar, lo que mantiene el contenido del vault como un callout con estilo.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" no se usa en ninguna nota, pero es un callout personalizado que creó. Al eliminar se quitará de esta lista.',
-	"deleteModal.replaceInstead": "Reemplazar en su lugar…",
-	"deleteModal.deleteInUse": "Eliminar (convertir a texto sin formato)",
-	"deleteModal.deleteUnused": "Eliminar callout",
+	"deleteModal.notesUntouched":
+		"Esto elimina solo la definición del callout. Sus notas no se modifican, así que los callouts existentes simplemente volverán al estilo predeterminado.",
+	"deleteModal.fallbackTarget":
+		"También es su callout de reserva predeterminado, así que los callouts sin estilo propio pasarán a {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": '¿Convertir "{{name}}" a texto sin formato?',
+	"convertModal.explain":
+		"Cada uno se convierte en texto normal: el título y el contenido se mantienen, solo desaparece el formato de callout.",
+	"convertModal.typeStays": "El tipo de callout en sí permanece en su lista.",
+	"convertModal.confirm": "Convertir",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": '¿Vaciar todos los usos de "{{name}}"?',
 	"deleteModal.keepsRowBuiltIn":
 		"Este es uno de los callouts integrados de Obsidian, así que el tipo en sí sigue disponible — solo cambian sus usos en sus notas.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} define este tipo de callout, así que sigue disponible y conserva su aspecto. Callout Studio solo cambia notas dentro de su vault — nada perteneciente a su tema se ve afectado.",
-	"deleteModal.clearUsages": "Vaciar usos (convertir a texto sin formato)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Mis tipos de callout",
@@ -107,6 +106,8 @@ export const es: Record<string, string> = {
 	"settings.moreRowActionsAria": "Más acciones para {{name}}",
 	"settings.replaceAction": "Reemplazar en el vault…",
 	"settings.deleteAction": "Eliminar",
+	"settings.convertUsesAction": "Convertir usos a texto sin formato",
+	"notice.calloutDeleted": "Se eliminó «{{name}}».",
 	"settings.duplicateAction": "Duplicar",
 	"notice.calloutDuplicated": "Callout duplicado como «{{name}}».",
 	"notice.calloutDuplicateFailed": "No se pudo duplicar el callout. Comprueba el estado del guardado e inténtalo de nuevo.",
@@ -120,7 +121,6 @@ export const es: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Su tema",
 	"settings.themePreviewAria":
 		'Vista previa de "{{name}}" — vea cómo lo dibuja su tema',
-	"settings.clearUsesAction": "Vaciar usos en sus notas",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} redefine el estilo de todos los callouts integrados, así que todos aparecen arriba y Callout Studio los deja tal cual. Para diseñar uno propio, añada un callout con un ID diferente.",
 

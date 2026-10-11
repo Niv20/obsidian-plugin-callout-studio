@@ -56,24 +56,23 @@ export const fi: Record<string, string> = {
 	"deleteModal.title": 'Poistetaanko callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"Tämä callout esiintyy {{count}} kertaa {{files}} tiedostossa.",
-	"deleteModal.bodyInUseExplain":
-		"Poistaminen muuntaa nämä lohkot tavalliseksi tekstiksi — ne menettävät tyylinsä ja callout-otsikkonsa.",
-	"deleteModal.replaceHint":
-		"Voit korvata sen toisella calloutilla, jolloin holvin sisältö säilyy tyyliteltynä calloutina.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" ei ole käytössä missään muistiinpanossa, mutta se on luomasi mukautettu callout. Poistaminen poistaa sen tästä luettelosta.',
-	"deleteModal.replaceInstead": "Korvaa sen sijaan…",
-	"deleteModal.deleteInUse": "Poista (muunna tavalliseksi tekstiksi)",
-	"deleteModal.deleteUnused": "Poista callout",
+	"deleteModal.notesUntouched":
+		"Tämä poistaa vain calloutin määrityksen. Muistiinpanoihisi ei kosketa, joten olemassa olevat calloutit vain palaavat oletustyyliin.",
+	"deleteModal.fallbackTarget":
+		"Se on myös oletusvaracalloutisi, joten calloutit, joilla ei ole omaa tyyliä, vaihtuvat tyyliin {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'Muunnetaanko "{{name}}" tavalliseksi tekstiksi?',
+	"convertModal.explain":
+		"Jokaisesta tulee tavallista tekstiä: otsikko ja sisältö säilyvät, vain calloutin muotoilu poistuu.",
+	"convertModal.typeStays": "Itse callout-tyyppi pysyy luettelossasi.",
+	"convertModal.confirm": "Muunna",
 
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'Poistetaanko kaikki calloutin "{{name}}" käytöt?',
 	"deleteModal.keepsRowBuiltIn":
 		"Tämä on yksi Obsidianin sisäänrakennetuista callouteista, joten itse tyyppi pysyy käytettävissä — vain sen käytöt muistiinpanoissasi muuttuvat.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} määrittää tämän callout-tyypin, joten se pysyy käytettävissä ja säilyttää ulkoasunsa. Callout Studio muuttaa vain holvisi muistiinpanoja — mikään teemaasi kuuluva ei muutu.",
-	"deleteModal.clearUsages": "Poista käytöt (muunna tavalliseksi tekstiksi)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Omat callout-tyypit",
@@ -101,6 +100,8 @@ export const fi: Record<string, string> = {
 	"settings.moreRowActionsAria": "Lisää toimintoja kohteelle {{name}}",
 	"settings.replaceAction": "Korvaa holvissa…",
 	"settings.deleteAction": "Poista",
+	"settings.convertUsesAction": "Muunna käytöt tavalliseksi tekstiksi",
+	"notice.calloutDeleted": "”{{name}}” poistettiin.",
 	"settings.duplicateAction": "Monista",
 	"notice.calloutDuplicated": "Callout monistettiin nimellä ”{{name}}”.",
 	"notice.calloutDuplicateFailed": "Calloutin monistaminen epäonnistui. Tarkista tallennuksen tila ja yritä uudelleen.",
@@ -115,7 +116,6 @@ export const fi: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Teemasi",
 	"settings.themePreviewAria":
 		'Esikatsele "{{name}}" — näe, miten teemasi piirtää sen',
-	"settings.clearUsesAction": "Poista käytöt muistiinpanoistasi",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} muotoilee jokaisen sisäänrakennetun calloutin uudelleen, joten ne kaikki näkyvät yllä eikä Callout Studio koske niihin. Jos haluat suunnitella oman, lisää callout eri tunnuksella.",
 

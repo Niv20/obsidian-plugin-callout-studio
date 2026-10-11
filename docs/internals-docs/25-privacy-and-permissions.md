@@ -85,7 +85,7 @@ These pictures live in the plugin's own data file alongside the rest of your set
   device's backups was taken. These reasons supply the automatic names in
   **Version history**; the file syncs like the backups do.
 - **The most recent note rewrite**, kept only in memory for **Undo** after
-  replacing callouts or deleting a type and converting its notes. The journal
+  replacing callouts or converting a type's uses to plain text. The journal
   holds note paths and their before/after text within a size budget; it creates
   no file and sends no note content anywhere.
 - **Artwork for icons in use**, plus your uploaded pictures, inside the plugin's data file. This keeps callouts rendering on a device that synced settings without downloading the original source.

@@ -60,23 +60,22 @@ export const ar: Record<string, string> = {
 	"deleteModal.title": 'حذف callout "{{name}}"؟',
 	"deleteModal.bodyInUse":
 		"يظهر هذا الـ callout {{count}} مرة في {{files}} ملف.",
-	"deleteModal.bodyInUseExplain":
-		"سيؤدي الحذف إلى تحويل تلك الكتل إلى نص عادي — ستفقد تنسيقها وعنوان الـ callout.",
-	"deleteModal.replaceHint":
-		"يمكنك استبداله بـ callout آخر، مما يحافظ على محتوى المخزن كـ callout منسّق.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" غير مستخدم في أي ملاحظة، لكنه callout مخصص أنشأته. سيؤدي الحذف إلى إزالته من هذه القائمة.',
-	"deleteModal.replaceInstead": "الاستبدال بدلاً من ذلك…",
-	"deleteModal.deleteInUse": "حذف (تحويل إلى نص عادي)",
-	"deleteModal.deleteUnused": "حذف الـ callout",
+	"deleteModal.notesUntouched":
+		"يحذف هذا تعريف الـ callout فقط. لن تُمَسّ ملاحظاتك، لذا ستعود الـ callouts الموجودة ببساطة إلى النمط الافتراضي.",
+	"deleteModal.fallbackTarget":
+		"وهو أيضًا الـ callout الاحتياطي الافتراضي لديك، لذا ستنتقل الـ callouts التي ليس لها نمط خاص بها إلى {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'تحويل "{{name}}" إلى نص عادي؟',
+	"convertModal.explain":
+		"يصبح كل واحد منها نصًا عاديًا: يبقى العنوان والمحتوى، ويزول تنسيق الـ callout فقط.",
+	"convertModal.typeStays": "يبقى نوع الـ callout نفسه في قائمتك.",
+	"convertModal.confirm": "تحويل",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'مسح كل استخدامات "{{name}}"؟',
 	"deleteModal.keepsRowBuiltIn":
 		"هذا أحد الـ callouts المدمجة في Obsidian، لذا يبقى النوع نفسه متاحًا — فقط استخداماته في ملاحظاتك تتغيّر.",
 	"deleteModal.keepsRowTheme":
 		"تُعرّف {{theme}} نوع الـ callout هذا، لذا يبقى متاحًا ويحتفظ بمظهره. يغيّر Callout Studio الملاحظات داخل مخزنك فقط — لا شيء يخص سمتك يتم المساس به.",
-	"deleteModal.clearUsages": "مسح الاستخدامات (تحويل إلى نص عادي)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "أنواع الـ callout الخاصة بي",
@@ -106,6 +105,8 @@ export const ar: Record<string, string> = {
 	"settings.moreRowActionsAria": "المزيد من الإجراءات لـ {{name}}",
 	"settings.replaceAction": "استبدال في المخزن…",
 	"settings.deleteAction": "حذف",
+	"settings.convertUsesAction": "تحويل الاستخدامات إلى نص عادي",
+	"notice.calloutDeleted": 'تم حذف "{{name}}".',
 	"settings.duplicateAction": "تكرار",
 	"notice.calloutDuplicated": "تم تكرار التنبيه باسم \"{{name}}\".",
 	"notice.calloutDuplicateFailed": "تعذّر تكرار التنبيه. تحقّق من حالة الحفظ ثم حاول مرة أخرى.",
@@ -120,7 +121,6 @@ export const ar: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "سمتك",
 	"settings.themePreviewAria":
 		'معاينة "{{name}}" — شاهد كيف ترسمها سمتك',
-	"settings.clearUsesAction": "مسح الاستخدامات في ملاحظاتك",
 	"settings.builtInAllThemeStyled":
 		"تعيد {{theme}} تنسيق كل الـ callouts المدمجة، لذا تظهر كلها أعلاه ويتركها Callout Studio بلا تغيير. لتصميم واحد خاص بك، أضف callout بمعرّف مختلف.",
 	"settings.fallbackCallout": "Callout الاحتياطي الافتراضي",

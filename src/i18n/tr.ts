@@ -111,23 +111,22 @@ export const tr: Record<string, string> = {
 	"deleteModal.title": '"{{name}}" callout\'unu sil?',
 	"deleteModal.bodyInUse":
 		"Bu callout {{files}} dosyada {{count}} kez görünüyor.",
-	"deleteModal.bodyInUseExplain":
-		"Silmek, bu blokları düz metne dönüştürür — stil ve callout başlığını kaybeder.",
-	"deleteModal.replaceHint":
-		"Bunun yerine başka bir callout ile değiştirebilir, böylece vault içeriğini biçimli callout olarak koruyabilirsiniz.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" hiçbir notta kullanılmıyor, ancak oluşturduğunuz özel bir callout. Silmek onu bu listeden kaldırır.',
-	"deleteModal.replaceInstead": "Bunun yerine değiştir…",
-	"deleteModal.deleteInUse": "Sil (düz metne dönüştür)",
-	"deleteModal.deleteUnused": "Callout'u sil",
+	"deleteModal.notesUntouched":
+		"Bu yalnızca callout tanımını siler. Notlarınıza dokunulmaz, bu yüzden mevcut callout'lar yalnızca varsayılan stile döner.",
+	"deleteModal.fallbackTarget":
+		"Bu aynı zamanda varsayılan geri dönüş callout'unuz, bu yüzden kendi stili olmayan callout'lar {{fallback}} stiline geçecek.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": '"{{name}}" düz metne dönüştürülsün mü?',
+	"convertModal.explain":
+		"Her biri sıradan metne dönüşür: başlık ve içerik kalır, yalnızca callout biçimlendirmesi kalkar.",
+	"convertModal.typeStays": "Callout türünün kendisi listenizde kalır.",
+	"convertModal.confirm": "Dönüştür",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": '"{{name}}" için tüm kullanımları temizle?',
 	"deleteModal.keepsRowBuiltIn":
 		"Bu, Obsidian'ın yerleşik callout'larından biri, bu yüzden türün kendisi kullanılabilir kalır — yalnızca notlarınızdaki kullanımları değişir.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} bu callout türünü tanımlıyor, bu yüzden kullanılabilir kalır ve görünümünü korur. Callout Studio yalnızca kasanızdaki notları değiştirir — temanıza ait hiçbir şeye dokunulmaz.",
-	"deleteModal.clearUsages": "Kullanımları temizle (düz metne dönüştür)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Callout türlerim",
@@ -158,6 +157,8 @@ export const tr: Record<string, string> = {
 	"settings.moreRowActionsAria": "{{name}} için daha fazla eylem",
 	"settings.replaceAction": "Vault'ta değiştir…",
 	"settings.deleteAction": "Sil",
+	"settings.convertUsesAction": "Kullanımları düz metne dönüştür",
+	"notice.calloutDeleted": '"{{name}}" silindi.',
 	"settings.duplicateAction": "Çoğalt",
 	"notice.calloutDuplicated": "Callout \"{{name}}\" adıyla çoğaltıldı.",
 	"notice.calloutDuplicateFailed": "Callout çoğaltılamadı. Kaydetme durumunu kontrol edip tekrar deneyin.",
@@ -172,7 +173,6 @@ export const tr: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Temanız",
 	"settings.themePreviewAria":
 		'"{{name}}" önizlemesi — temanızın nasıl çizdiğini görün',
-	"settings.clearUsesAction": "Notlarınızdaki kullanımları temizle",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} tüm yerleşik callout'ları yeniden biçimlendiriyor, bu yüzden hepsi yukarıda listelenir ve Callout Studio bunlara dokunmaz. Kendi tasarımınızı yapmak için farklı bir ID ile bir callout ekleyin.",
 	"settings.fallbackCallout": "Varsayılan geri dönüş callout'u",

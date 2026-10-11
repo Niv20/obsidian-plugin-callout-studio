@@ -864,7 +864,7 @@ its dialog closes, because saving can pause while the dialog is open.
 | **Reset everything** | Before and after the confirmation | A verified vault backup; none, no reset | Only when `persists()` confirms the file holds the reset |
 | Callout Studio JSON import | On the Import button, and before applying | Summary confirmation for a clean file, then a verified vault backup | Only when `persists()` confirms it |
 | Foreign-plugin import | Before applying | A verified vault backup | Only when `persists()` confirms it |
-| Delete a custom callout | Before the dialog, and before converting notes | Notes are converted first, the row removed after | Unchanged |
+| Delete a custom callout | Before the dialog, after it, and before Undo restores it | Nothing: no note is touched, only the row is removed | Unchanged |
 | Callout editor Save | Already refused while frozen | See [Callout editor](14-callout-editor.md#save-pipeline) | Unchanged |
 
 **The settings page is read-only while paused.** `makePausedReadOnly()`
@@ -1333,7 +1333,7 @@ Related existing suites verify other layers:
 | Recovery without file surgery | [`settingsDiagnosis.test.ts`](../../tests/settingsDiagnosis.test.ts), [`settingsRecoveryService.test.ts`](../../tests/settingsRecoveryService.test.ts), [`settingsRecoveryModal.test.ts`](../../tests/settingsRecoveryModal.test.ts), [`setupVersions.test.ts`](../../tests/setupVersions.test.ts), [`versionLabels.test.ts`](../../tests/versionLabels.test.ts), [`settingsNewerFormat.test.ts`](../../tests/settingsNewerFormat.test.ts), [`pausedSaving.test.ts`](../../tests/pausedSaving.test.ts) |
 | Earlier-setup comparison | [`setupDetails.test.ts`](../../tests/setupDetails.test.ts), [`settingsRecoveryService.test.ts`](../../tests/settingsRecoveryService.test.ts), [`settingsRecoveryDetails.test.ts`](../../tests/settingsRecoveryDetails.test.ts), [`recoveryPreview.test.ts`](../../tests/recoveryPreview.test.ts) |
 | Paused page, unsaved changes, lifecycle, undo | [`pausedReadOnly.test.ts`](../../tests/pausedReadOnly.test.ts), [`unsavedChangesNotice.test.ts`](../../tests/unsavedChangesNotice.test.ts), [`writerLifecycle.test.ts`](../../tests/writerLifecycle.test.ts), [`noteRewriteUndo.test.ts`](../../tests/noteRewriteUndo.test.ts) |
-| Destructive actions | [`resetSafety.test.ts`](../../tests/resetSafety.test.ts), [`importSafety.test.ts`](../../tests/importSafety.test.ts), [`deleteWhilePaused.test.ts`](../../tests/deleteWhilePaused.test.ts), [`replaceCalloutModal.test.ts`](../../tests/replaceCalloutModal.test.ts) |
+| Destructive actions | [`resetSafety.test.ts`](../../tests/resetSafety.test.ts), [`importSafety.test.ts`](../../tests/importSafety.test.ts), [`deleteWhilePaused.test.ts`](../../tests/deleteWhilePaused.test.ts), [`calloutDeleteDefinitionOnly.test.ts`](../../tests/calloutDeleteDefinitionOnly.test.ts), [`replaceCalloutModal.test.ts`](../../tests/replaceCalloutModal.test.ts) |
 
 The replica harness (`tests/support/syncReplicaHarness.ts`) follows Obsidian's
 `loadData()`: `null` only for a missing file, `undefined` for any other failure.

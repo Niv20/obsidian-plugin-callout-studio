@@ -294,13 +294,19 @@ describe("deleting what cannot be deleted", () => {
 	});
 
 	it("never calls it Delete on a theme row", () => {
-		// The precise-wording requirement, checkable: the theme row's menu says
-		// *Clear uses in your notes*, because nothing is deleted — the theme
-		// keeps supplying the type. `settings.deleteAction` is the word for the
-		// rows where deleting is what happens.
+		// The precise-wording requirement, checkable: the theme row's menu offers
+		// *Convert uses to plain text*, because nothing can be deleted — the
+		// theme keeps supplying the type. `settings.deleteAction` is the word for
+		// the rows where deleting is what happens.
 		const source = readRepoFile("src/settings/sections/themeRowActions.ts");
-		assert.ok(source.includes("settings.clearUsesAction"));
+		assert.ok(source.includes("addConvertUsesItem"));
+		assert.ok(!source.includes("addDeleteItem"));
 		assert.ok(!source.includes("settings.deleteAction"));
+		assert.ok(
+			readRepoFile("src/settings/sections/rowOwnership.ts").includes(
+				'"settings.convertUsesAction"',
+			),
+		);
 	});
 });
 
@@ -403,7 +409,7 @@ describe("the ⋯ menu on a theme row", () => {
 		// callout is what the section below this one is for, and offering it
 		// from a theme row implied the new one would inherit something.
 		const src = readRepoFile("src/settings/sections/themeRowActions.ts");
-		for (const key of ["addUsageMenuItem", "settings.replaceAction", "settings.clearUsesAction"]) {
+		for (const key of ["addUsageMenuItem", "settings.replaceAction", "addConvertUsesItem"]) {
 			assert.ok(src.includes(key), `the menu lost ${key}`);
 		}
 		assert.ok(!src.includes("deriveCalloutAction"));

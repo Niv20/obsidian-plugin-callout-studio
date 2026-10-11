@@ -406,27 +406,27 @@ export const en: Record<string, string> = {
 		"> The classic callout works with the exact syntax you're already used to: `> [!type]`.\n\n" +
 		"There's a lot more Callout Studio has to offer! [Learn more]({{repoUrl}}).\n",
 
-	// Delete-callout modal (trash button on user rows)
+	// Delete-callout confirmation. Delete only ever removes the definition;
+	// turning the notes into plain text is the separate convert action below.
 	"deleteModal.title": 'Delete callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"This callout appears {{count}} time(s) across {{files}} file(s).",
-	"deleteModal.bodyInUseExplain":
-		"Deleting will convert those blocks to plain text — they will no longer be styled and will lose the callout header.",
-	"deleteModal.replaceHint":
-		"You can replace it with another callout instead, which keeps your vault content as a styled callout.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" is not used in any note, but it is a custom callout you customized. Deleting will remove it from this list.',
-	"deleteModal.replaceInstead": "Replace instead…",
-	"deleteModal.deleteInUse": "Delete (convert to plain text)",
-	"deleteModal.deleteUnused": "Delete callout",
+	"deleteModal.notesUntouched":
+		"This deletes only the callout definition. Your notes are not touched, so existing callouts will just fall back to the default style.",
+	"deleteModal.fallbackTarget":
+		"It is also your default fallback callout, so callouts without a style of their own will switch to {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'Convert "{{name}}" to plain text?',
+	"convertModal.explain":
+		"Each one becomes ordinary text: the title and content stay, only the callout formatting goes.",
+	"convertModal.typeStays": "The callout type itself stays in your list.",
+	"convertModal.confirm": "Convert",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'Clear every use of "{{name}}"?',
 	"deleteModal.keepsRowBuiltIn":
 		"This is one of Obsidian's built-in callouts, so the type itself stays available — only its uses in your notes change.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} defines this callout type, so it stays available and keeps its look. Callout Studio only changes notes inside your vault — nothing belonging to your theme is touched.",
-	"deleteModal.clearUsages": "Clear uses (convert to plain text)",
 
 	// Settings — Section headings
 	"settings.title": "Callout Studio",
@@ -472,6 +472,8 @@ export const en: Record<string, string> = {
 	"settings.moreRowActionsAria": "More actions for {{name}}",
 	"settings.replaceAction": "Replace in vault…",
 	"settings.deleteAction": "Delete",
+	"settings.convertUsesAction": "Convert uses to plain text",
+	"notice.calloutDeleted": 'Deleted "{{name}}".',
 	"settings.duplicateAction": "Duplicate",
 	"notice.calloutDuplicated": 'Duplicated callout as "{{name}}".',
 	"notice.calloutDuplicateFailed": "Could not duplicate the callout. Check the saving status and try again.",
@@ -485,7 +487,6 @@ export const en: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Your theme",
 	"settings.themePreviewAria":
 		'Preview "{{name}}" — see how your theme draws it',
-	"settings.clearUsesAction": "Clear uses in your notes",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} restyles every built-in callout, so they are all listed above and Callout Studio leaves them alone. To design one of your own, add a callout with a different ID.",
 

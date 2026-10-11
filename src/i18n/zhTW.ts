@@ -106,24 +106,20 @@ export const zhTW: Record<string, string> = {
 	"deleteModal.title": "刪除 callout「{{name}}」？",
 	"deleteModal.bodyInUse":
 		"此 callout 在 {{files}} 個檔案中出現了 {{count}} 次。",
-	"deleteModal.bodyInUseExplain":
-		"刪除後這些區塊將轉換為純文字——它們將失去樣式和 callout 標題。",
-	"deleteModal.replaceHint":
-		"您可以改用另一個 callout 替換，這樣 vault 內容仍保持為帶樣式的 callout。",
-	"deleteModal.bodyUnused":
-		"「{{name}}」未在任何筆記中使用，但它是您建立的自訂 callout。刪除將從清單中移除它。",
-	"deleteModal.replaceInstead": "改為替換…",
-	"deleteModal.deleteInUse": "刪除（轉為純文字）",
-	"deleteModal.deleteUnused": "刪除 callout",
+	"deleteModal.notesUntouched": "此操作只會刪除 callout 的定義。您的筆記不會被更動，現有的 callout 只會回退到預設樣式。",
+	"deleteModal.fallbackTarget": "它也是您的預設備用 callout，因此沒有自己樣式的 callout 將改用 {{fallback}}。",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": "將「{{name}}」轉為純文字？",
+	"convertModal.explain": "每一處都會變成一般文字：標題和內容保留，只移除 callout 格式。",
+	"convertModal.typeStays": "該 callout 類型本身仍保留在您的清單中。",
+	"convertModal.confirm": "轉換",
 
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": "清除所有「{{name}}」的使用？",
 	"deleteModal.keepsRowBuiltIn":
 		"這是 Obsidian 的內建 callout 之一，因此該類型本身仍可使用——只有它在您筆記中的使用會改變。",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} 定義了此 callout 類型，因此它仍可使用並保留其外觀。Callout Studio 只會變更您 vault 中的筆記——不會影響任何屬於您佈景主題的內容。",
-	"deleteModal.clearUsages": "清除使用（轉換為純文字）",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "我的 callout 類型",
@@ -150,6 +146,8 @@ export const zhTW: Record<string, string> = {
 	"settings.moreRowActionsAria": "{{name}} 的更多動作",
 	"settings.replaceAction": "在 vault 中替換…",
 	"settings.deleteAction": "刪除",
+	"settings.convertUsesAction": "將使用轉為純文字",
+	"notice.calloutDeleted": "已刪除「{{name}}」。",
 	"settings.duplicateAction": "複製",
 	"notice.calloutDuplicated": "已將 callout 複製為「{{name}}」。",
 	"notice.calloutDuplicateFailed": "無法複製 callout。請檢查儲存狀態後再試一次。",
@@ -164,7 +162,6 @@ export const zhTW: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "您的佈景主題",
 	"settings.themePreviewAria":
 		"預覽「{{name}}」— 查看您的佈景主題如何繪製它",
-	"settings.clearUsesAction": "清除筆記中的使用",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} 重新設定了每個內建 callout 的樣式，因此它們全部列在上方，Callout Studio 不會干預它們。若要設計您自己的樣式，請新增一個使用不同 ID 的 callout。",
 

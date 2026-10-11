@@ -1,17 +1,25 @@
+/**
+ * Convert uses to plain text asks for a complete conversion. A note that
+ * cannot be written stops it with a notice, the notes already converted stay
+ * converted, and running it again finishes the rest. The type is never
+ * touched — removing it is Delete's job, not this one's.
+ */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { handleCalloutDelete } from "../src/settings/sections/calloutVaultActions";
-import { DeleteCalloutModal } from "../src/utils/DeleteCalloutModal";
+import { handleClearCalloutUsages } from "../src/settings/sections/calloutVaultActions";
 import type { SettingsSectionContext } from "../src/settings/sections/types";
 import type { CalloutDefinition } from "../src/types";
-import { savingWriter } from "./support/importSafetyStubs";
+import { en } from "../src/i18n/en";
+import { savingWriter, stubConfirm } from "./support/importSafetyStubs";
 // The completion notice is a fragment with an Undo link.
 import "./support/fakeDom";
 
-describe("delete after complete conversion", () => {
-	it("keeps the definition on a failed write and completes an idempotent retry", async () => {
+describe("converting uses after a failed write", () => {
+	it("keeps what converted, reports the rest, and completes on a retry", async () => {
+		const notices: string[] = [];
+		(globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ = notices;
 		const registry = new CalloutRegistry(); registry.load(null);
 		const def: CalloutDefinition = {
 			id: "owned", displayName: "Owned", icon: { type: "emoji", value: "📝" },
@@ -34,19 +42,22 @@ describe("delete after complete conversion", () => {
 		const ctx = { app, display: () => {}, plugin: {
 			registry, settingsWriter: savingWriter(), saveSettings: async () => { saves++; },
 		} } as unknown as SettingsSectionContext;
-		const prompt = Object.getOwnPropertyDescriptor(DeleteCalloutModal.prototype, "prompt")!, warn = console.warn;
-		DeleteCalloutModal.prototype.prompt = async () => "delete"; console.warn = () => {};
+		const confirm = stubConfirm(true), warn = console.warn;
+		console.warn = () => {};
 		try {
-			await handleCalloutDelete(ctx, def, { fileCount: 2, totalCount: 2 });
-			assert.equal(registry.has("owned"), true); assert.equal(saves, 0);
+			await handleClearCalloutUsages(ctx, def);
+			assert.ok(notices.includes(en["notice.calloutDeleteIncomplete"]!));
 			assert.equal(contents.get("first.md"), "First");
 			assert.equal(contents.get("second.md"), "> [!owned] Second");
 			failing = false;
-			// Even a stale zero-usage menu must run the final conversion pass.
-			await handleCalloutDelete(ctx, def, { fileCount: 0, totalCount: 0 });
-			assert.equal(registry.has("owned"), false); assert.equal(saves, 1);
+			await handleClearCalloutUsages(ctx, def);
 			assert.equal(contents.get("first.md"), "First");
 			assert.equal(contents.get("second.md"), "Second");
-		} finally { Object.defineProperty(DeleteCalloutModal.prototype, "prompt", prompt); console.warn = warn; }
+			assert.equal(registry.has("owned"), true, "converting never removes the type");
+			assert.equal(saves, 0, "nothing about the type changed, so nothing is saved");
+		} finally {
+			confirm.restore(); console.warn = warn;
+			delete (globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__;
+		}
 	});
 });

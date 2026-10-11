@@ -109,24 +109,20 @@ export const zh: Record<string, string> = {
 	"deleteModal.title": '删除 callout "{{name}}"？',
 	"deleteModal.bodyInUse":
 		"此 callout 在 {{files}} 个文件中出现了 {{count}} 次。",
-	"deleteModal.bodyInUseExplain":
-		"删除后这些块将转换为纯文本——它们将失去样式和 callout 标题。",
-	"deleteModal.replaceHint":
-		"您可以用另一个 callout 替换它，这样库内容仍保持为带样式的 callout。",
-	"deleteModal.bodyUnused":
-		'"{{name}}" 未在任何笔记中使用，但它是您自定义的 callout。删除将从列表中移除它。',
-	"deleteModal.replaceInstead": "改为替换…",
-	"deleteModal.deleteInUse": "删除（转为纯文本）",
-	"deleteModal.deleteUnused": "删除 callout",
+	"deleteModal.notesUntouched": "此操作只删除 callout 的定义。您的笔记不会被改动，现有的 callout 只会回退到默认样式。",
+	"deleteModal.fallbackTarget": "它也是您的默认回退 callout，因此没有自己样式的 callout 将改用 {{fallback}}。",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": '将 "{{name}}" 转为纯文本？',
+	"convertModal.explain": "每一处都会变成普通文本：标题和内容保留，只去掉 callout 格式。",
+	"convertModal.typeStays": "该 callout 类型本身仍保留在您的列表中。",
+	"convertModal.confirm": "转换",
 
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": '清除所有 "{{name}}" 的使用？',
 	"deleteModal.keepsRowBuiltIn":
 		"这是 Obsidian 的内置 callout 之一，因此该类型本身仍可用——只有它在您笔记中的使用会改变。",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} 定义了此 callout 类型，因此它仍可用并保留其外观。Callout Studio 只更改您库中的笔记——不会触及任何属于您主题的内容。",
-	"deleteModal.clearUsages": "清除使用（转换为纯文本）",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "我的 callout 类型",
@@ -156,6 +152,8 @@ export const zh: Record<string, string> = {
 	"settings.moreRowActionsAria": "{{name}} 的更多操作",
 	"settings.replaceAction": "在库中替换…",
 	"settings.deleteAction": "删除",
+	"settings.convertUsesAction": "将使用转为纯文本",
+	"notice.calloutDeleted": "已删除“{{name}}”。",
 	"settings.duplicateAction": "复制",
 	"notice.calloutDuplicated": "已将 callout 复制为“{{name}}”。",
 	"notice.calloutDuplicateFailed": "无法复制 callout。请检查保存状态后重试。",
@@ -170,7 +168,6 @@ export const zh: Record<string, string> = {
 		"{{theme}} 提供或重新设置了这些 callout 的样式，因此 Callout Studio 完全按照主题绘制的样子保留它们，并仅将它们作为 Block callout 提供。这里会显示两种情况：主题添加的 callout 类型，以及主题替换了外观的内置 callout。主题添加的 callout 类型仅在该主题启用时列出。",
 	"settings.themeCalloutsDefaultTheme": "您的主题",
 	"settings.themePreviewAria": '预览 "{{name}}" — 查看您的主题如何绘制它',
-	"settings.clearUsesAction": "清除笔记中的使用",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} 重新设置了每个内置 callout 的样式，因此它们全部列在上方，Callout Studio 不会干预它们。要设计您自己的样式，请添加一个使用不同 ID 的 callout。",
 

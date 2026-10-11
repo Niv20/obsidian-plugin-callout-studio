@@ -59,23 +59,22 @@ export const hi: Record<string, string> = {
 	"deleteModal.title": 'callout "{{name}}" हटाएँ?',
 	"deleteModal.bodyInUse":
 		"यह callout {{files}} फ़ाइल(ों) में {{count}} बार दिखता है।",
-	"deleteModal.bodyInUseExplain":
-		"हटाने पर वे ब्लॉक सादे टेक्स्ट में बदल जाएँगे — उनकी स्टाइल और callout शीर्षक खो जाएगा।",
-	"deleteModal.replaceHint":
-		"आप इसे किसी दूसरे callout से बदल सकते हैं, जिससे vault की सामग्री स्टाइल वाले callout के रूप में बनी रहेगी।",
-	"deleteModal.bodyUnused":
-		'"{{name}}" किसी नोट में उपयोग नहीं हो रहा, लेकिन यह आपका कस्टम callout है। हटाने पर यह सूची से हट जाएगा।',
-	"deleteModal.replaceInstead": "इसके बजाय बदलें…",
-	"deleteModal.deleteInUse": "हटाएँ (सादे टेक्स्ट में बदलें)",
-	"deleteModal.deleteUnused": "callout हटाएँ",
+	"deleteModal.notesUntouched":
+		"इससे केवल callout की परिभाषा हटती है। आपके नोट्स में कोई बदलाव नहीं होता, इसलिए मौजूदा callout बस डिफ़ॉल्ट स्टाइल पर लौट आएँगे।",
+	"deleteModal.fallbackTarget":
+		"यह आपका डिफ़ॉल्ट फ़ॉलबैक callout भी है, इसलिए जिन callout की अपनी कोई स्टाइल नहीं है, वे {{fallback}} पर चले जाएँगे।",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": '"{{name}}" को सादे टेक्स्ट में बदलें?',
+	"convertModal.explain":
+		"हर एक सामान्य टेक्स्ट बन जाता है: शीर्षक और सामग्री बनी रहती है, केवल callout की फ़ॉर्मैटिंग हटती है।",
+	"convertModal.typeStays": "callout प्रकार स्वयं आपकी सूची में बना रहता है।",
+	"convertModal.confirm": "बदलें",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": '"{{name}}" के हर उपयोग को साफ़ करें?',
 	"deleteModal.keepsRowBuiltIn":
 		"यह Obsidian के बिल्ट-इन callout में से एक है, इसलिए यह प्रकार उपलब्ध बना रहता है — केवल आपके नोट्स में इसके उपयोग बदलते हैं।",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} इस callout प्रकार को परिभाषित करती है, इसलिए यह उपलब्ध रहता है और अपना रूप बनाए रखता है। Callout Studio केवल आपके vault के अंदर के नोट्स बदलता है — आपकी थीम से जुड़ी कोई चीज़ प्रभावित नहीं होती।",
-	"deleteModal.clearUsages": "उपयोग साफ़ करें (सादे टेक्स्ट में बदलें)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "मेरे callout प्रकार",
@@ -106,6 +105,8 @@ export const hi: Record<string, string> = {
 	"settings.moreRowActionsAria": "{{name}} के लिए और कार्य",
 	"settings.replaceAction": "vault में बदलें…",
 	"settings.deleteAction": "हटाएँ",
+	"settings.convertUsesAction": "उपयोगों को सादे टेक्स्ट में बदलें",
+	"notice.calloutDeleted": '"{{name}}" हटाया गया।',
 	"settings.duplicateAction": "डुप्लिकेट करें",
 	"notice.calloutDuplicated": "कॉलआउट को \"{{name}}\" नाम से डुप्लिकेट किया गया।",
 	"notice.calloutDuplicateFailed": "कॉलआउट डुप्लिकेट नहीं हो सका। सेव करने की स्थिति जाँचें और फिर कोशिश करें।",
@@ -120,7 +121,6 @@ export const hi: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "आपकी थीम",
 	"settings.themePreviewAria":
 		'"{{name}}" का पूर्वावलोकन करें — देखें कि आपकी थीम इसे कैसे बनाती है',
-	"settings.clearUsesAction": "अपने नोट्स में उपयोग साफ़ करें",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} हर बिल्ट-इन callout की स्टाइल बदल देती है, इसलिए वे सभी ऊपर सूचीबद्ध हैं और Callout Studio उन्हें नहीं छेड़ता। अपना खुद का डिज़ाइन बनाने के लिए, किसी दूसरे ID के साथ एक callout जोड़ें।",
 	"settings.fallbackCallout": "डिफ़ॉल्ट फ़ॉलबैक callout",

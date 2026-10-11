@@ -1959,13 +1959,29 @@ inventory means there is nothing to reset, and the button answers with a notice
 (`settings.resetNothing`) instead of opening the window. The inventory mirrors
 `CalloutRegistry.resetAll()`: a group added to one belongs in the other.
 
-### `DeleteCalloutModal` and the replace/delete pivot
+### Delete and Convert uses to plain text - two items, two plain dialogs
 
-Covered in depth in [Vault discovery § delete flow](11-vault-discovery.md#delete-flow).
-UI-wise: two body copy variants (in-use vs. unused), and an in-use callout's
-footer offers **three** buttons (Cancel, "Replace instead…", Delete) rather
-than the usual two - the replace pivot exists specifically because deleting
-an in-use callout is presented as a choice, not a single destructive action.
+Covered in depth in [Vault discovery § delete flow](11-vault-discovery.md#delete-flow)
+and [§ convert flow](11-vault-discovery.md#convert-flow).
+
+There used to be a `DeleteCalloutModal` with three outcomes: Cancel, "Replace
+instead…" and "Delete (convert to plain text)". It existed because Delete did
+two things at once, and the in-use dialog had to offer a way out of the
+destructive half.
+
+Splitting the action removed the reason for it:
+
+- **Delete** removes only the definition.
+- **Convert uses to plain text** only rewrites notes. It is its own `⋯` item
+  (`addConvertUsesItem` in `rowOwnership.ts`).
+- **Replace in vault…** was already in the same menu.
+
+Each is now a plain two-button `ConfirmModal`: Cancel plus a red **Delete** or
+**Convert**. The body is short sentences, one per line, joined with `\n`;
+`ConfirmModal` turns each into its own `<p>`.
+
+A callout nothing uses, unless it is the default fallback, is deleted with no
+dialog at all. The notice's **Undo** stands in for the question.
 
 ### `PaletteEditorModal` - simple vs. advanced, two background styles
 

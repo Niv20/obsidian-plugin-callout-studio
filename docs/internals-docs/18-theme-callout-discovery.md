@@ -811,10 +811,12 @@ content, while retaining the underlying line as a safe caret target; every
 ordinary preview remains unchanged. Its `⋯` menu
 ([`themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts)) carries
 usage information, and - only when the callout is actually written somewhere -
-*Replace in vault* and *Clear uses in your notes*. Never *Delete*, which would
+*Replace in vault* and *Convert uses to plain text*. Never *Delete*, which would
 be a lie since the theme keeps supplying the type; `deleteRemovesRow`
 ([`rowOwnership.ts`](../../src/settings/sections/rowOwnership.ts)) is the single
-predicate behind that wording, and it answers the same way for a built-in.
+predicate behind that, and it answers the same way for a built-in. The convert
+item is the shared `addConvertUsesItem`, and its confirmation names the theme as
+the reason the type stays.
 
 The use count lives in that menu rather than on the row, and the row carries no
 *Default fallback* tag either: both describe a callout the user cannot act on.
@@ -1264,7 +1266,7 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 | [`manager/theme/calloutListIcon.ts`](../../src/manager/theme/calloutListIcon.ts) | One answer for every small callout list |
 | [`manager/theme/studioWeight.ts`](../../src/manager/theme/studioWeight.ts) / [`StudioWeightCache.ts`](../../src/manager/theme/StudioWeightCache.ts) | How hard the plugin pushes on what it *does* own |
 | [`manager/theme/themeReport*.ts`](../../src/manager/theme/themeReport.ts) | The `themes:report` worksheet - not bundled into `main.js` |
-| [`settings/sections/rowOwnership.ts`](../../src/settings/sections/rowOwnership.ts) | Which of the three lists a row belongs in |
+| [`settings/sections/rowOwnership.ts`](../../src/settings/sections/rowOwnership.ts) | Which of the three lists a row belongs in, and whether its menu offers Delete or only Convert uses to plain text |
 | [`settings/sections/themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts), [`usage/usageMenuItem.ts`](../../src/usage/usageMenuItem.ts) | The theme row's controls and its shared occurrence-index menu |
 | [`settings/ThemeCalloutPreviewModal.ts`](../../src/settings/ThemeCalloutPreviewModal.ts) | The read-only window behind the eye icon |
 

@@ -36,7 +36,7 @@ Callouts you create in Callout Studio follow the layout your theme gives callout
 
 ## Read-only theme callouts
 
-Because the theme draws these callouts, their rows are read-only in Callout Studio. Click the eye icon to preview one; vault actions remain available from its three-dot menu, but you will not see Callout Studio's normal color picker or customization controls.
+Because the theme draws these callouts, their rows are read-only in Callout Studio. Click the eye icon to preview one; vault actions - **Replace in vault** and **Convert uses to plain text** - remain available from its three-dot menu, but you will not see Callout Studio's normal color picker or customization controls.
 
 If the theme restyles a custom callout you saved in Callout Studio, its menu also offers **Duplicate**. This copies your saved style under a new ID; its appearance may differ from the theme's styling of the original ID. Callouts supplied only by the theme cannot be duplicated.
 

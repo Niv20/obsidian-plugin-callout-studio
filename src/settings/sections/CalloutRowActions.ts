@@ -2,25 +2,23 @@
  * settings/sections/CalloutRowActions.ts — Row-level context menus in the settings list.
  *
  * Opens a dropdown Menu for a callout row when the user clicks the three-dot
- * button. User rows get Duplicate, Delete and Convert to fallback; built-in
- * rows get Reset to default. The flows that actually rewrite notes live next
- * door in `calloutVaultActions.ts` — this file decides which items a row is
- * offered. Menu counts come from the read-only occurrence index; operations
- * that rewrite notes still count current contents before confirmation.
+ * button. User rows get Duplicate, Convert uses to plain text, Delete and
+ * Convert to fallback; built-in rows get Reset to default and Convert uses to
+ * plain text, never Delete. The flows behind them live next door in
+ * `calloutVaultActions.ts` — this file decides which items a row is offered.
+ * Menu counts come from the read-only occurrence index; the actions still
+ * count current contents before they ask anything.
  */
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { countCalloutUsages } from "../../utils/vaultCalloutScanner";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
-import { addDeleteItem } from "./rowOwnership";
+import { addConvertUsesItem, addDeleteItem } from "./rowOwnership";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
 import { openCalloutRowMenu } from "./calloutRowMenu";
 import { addDuplicateItem } from "./duplicateCallout";
-import {
-	handleCalloutReplace,
-	handleClearCalloutUsages,
-} from "./calloutVaultActions";
+import { handleCalloutReplace } from "./calloutVaultActions";
 
 const convertRegistryCalloutToFallback = (
 	ctx: SettingsSectionContext,
@@ -59,16 +57,10 @@ export async function openBuiltInRowMenu(
 						void handleCalloutReplace(ctx, def);
 					}),
 			);
-
-			menu.addItem((item) =>
-				item
-					.setTitle(t("settings.deleteAction"))
-					.setIcon("trash-2")
-					.onClick(() => {
-						void handleClearCalloutUsages(ctx, def);
-					}),
-			);
 		}
+
+		// No Delete: Obsidian keeps declaring a built-in, so the type cannot go.
+		addConvertUsesItem(menu, ctx, def, usage);
 	});
 }
 
@@ -95,7 +87,8 @@ export async function openRowMenu(
 			);
 		}
 
-		addDeleteItem(menu, ctx, def, usage);
+		addConvertUsesItem(menu, ctx, def, usage);
+		addDeleteItem(menu, ctx, def);
 
 		const isFallbackTarget = def.id === ctx.plugin.settings.fallbackCalloutId;
 		const alreadyMirrors = def.source === "fallback" && def.customized !== true;

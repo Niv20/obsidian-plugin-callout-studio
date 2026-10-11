@@ -71,27 +71,27 @@ export const he: Record<string, string> = {
 		"> תיבת־ההבלטה הקלאסית פועלת לפי אותו תחביר בדיוק שאתם כבר מכירים: `> [!type]`.\n\n" +
 		"ל־Callout Studio יש עוד הרבה מה להציע! [למידע נוסף]({{repoUrl}}).\n",
 
-	// Delete-callout modal (trash button on user rows)
+	// Delete-callout confirmation. Delete only ever removes the definition;
+	// turning the notes into plain text is the separate convert action below.
 	"deleteModal.title": 'למחוק את תיבת־ההבלטה "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"תיבת־הבלטה זו מופיעה {{count}} פעמים ב־{{files}} קבצים.",
-	"deleteModal.bodyInUseExplain":
-		"המחיקה תהפוך את הבלוקים הללו לטקסט רגיל — הם יאבדו את העיצוב ואת הכותרת של תיבת־ההבלטה.",
-	"deleteModal.replaceHint":
-		"לחלופין, אפשר להחליפה בתיבת־הבלטה אחרת, וכך לשמור על התוכן בכספת בתור תיבת־הבלטה מעוצבת.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" אינה מופיעה באף פתק, אך היא תיבת־הבלטה מותאמת־אישית שיצרתם. מחיקתה תסיר אותה מהרשימה.',
-	"deleteModal.replaceInstead": "החלפה במקום…",
-	"deleteModal.deleteInUse": "מחיקה (המרה לטקסט רגיל)",
-	"deleteModal.deleteUnused": "מחיקת תיבת־ההבלטה",
+	"deleteModal.notesUntouched":
+		"פעולה זו מוחקת רק את ההגדרה של תיבת־ההבלטה. הפתקים שלכם לא משתנים, כך שתיבות־ההבלטה הקיימות פשוט יחזרו לעיצוב ברירת־המחדל.",
+	"deleteModal.fallbackTarget":
+		"זוהי גם תיבת־ההבלטה המשמשת כברירת־מחדל, כך שתיבות־הבלטה ללא עיצוב משלהן יעברו ל־{{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'להמיר את "{{name}}" לטקסט רגיל?',
+	"convertModal.explain":
+		"כל אחת מהן תהפוך לטקסט רגיל: הכותרת והתוכן נשארים, ורק העיצוב של תיבת־ההבלטה יורד.",
+	"convertModal.typeStays": "סוג תיבת־ההבלטה עצמו נשאר ברשימה שלכם.",
+	"convertModal.confirm": "המרה",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'לנקות את כל השימושים בתיבת־ההבלטה "{{name}}"?',
 	"deleteModal.keepsRowBuiltIn":
 		"זוהי אחת מתיבות־ההבלטה המובנות של Obsidian, כך שהסוג עצמו נשאר זמין — רק השימושים בפתקים שלכם משתנים.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} מגדירה את סוג תיבת־ההבלטה הזה, ולכן הוא נשאר זמין ושומר על המראה שלו. Callout Studio משנה רק פתקים בתוך הכספת שלכם — שום דבר ששייך לערכת הנושא שלכם לא נפגע.",
-	"deleteModal.clearUsages": "ניקוי שימושים (המרה לטקסט רגיל)",
 
 	// Settings — Section headings
 	"settings.title": "Callout Studio",
@@ -126,6 +126,8 @@ export const he: Record<string, string> = {
 	"settings.moreRowActionsAria": "פעולות נוספות עבור {{name}}",
 	"settings.replaceAction": "החלפה בכספת…",
 	"settings.deleteAction": "מחיקה",
+	"settings.convertUsesAction": "המרת השימושים לטקסט רגיל",
+	"notice.calloutDeleted": "„{{name}}” נמחקה.",
 	"settings.duplicateAction": "שכפול",
 	"notice.calloutDuplicated": "ה־callout שוכפל בשם „{{name}}”.",
 	"notice.calloutDuplicateFailed": "לא ניתן לשכפל את ה־callout. בדוק את מצב השמירה ונסה שוב.",
@@ -141,7 +143,6 @@ export const he: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "ערכת הנושא שלכם",
 	"settings.themePreviewAria":
 		'תצוגה מקדימה של "{{name}}" — לראות איך ערכת הנושא שלכם מציירת אותה',
-	"settings.clearUsesAction": "ניקוי שימושים בפתקים שלכם",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} משנה את העיצוב של כל תיבות־ההבלטה המובנות, כך שכולן מופיעות למעלה ו־Callout Studio לא נוגע בהן. כדי לעצב תיבת־הבלטה משלכם, הוסיפו תיבת־הבלטה עם מזהה אחר.",
 	"settings.fallbackCallout": "ברירת־מחדל לתיבות־הבלטה",

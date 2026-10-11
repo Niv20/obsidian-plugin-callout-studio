@@ -59,23 +59,22 @@ export const fa: Record<string, string> = {
 	"deleteModal.title": 'callout "{{name}}" حذف شود؟',
 	"deleteModal.bodyInUse":
 		"این callout {{count}} بار در {{files}} فایل ظاهر می‌شود.",
-	"deleteModal.bodyInUseExplain":
-		"حذف کردن آن بلوک‌ها را به متن ساده تبدیل می‌کند — سبک و سرتیتر callout را از دست می‌دهند.",
-	"deleteModal.replaceHint":
-		"می‌توانید آن را با callout دیگری جایگزین کنید تا محتوای vault به صورت callout با سبک باقی بماند.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" در هیچ یادداشتی استفاده نشده، اما یک callout سفارشی است که ایجاد کرده‌اید. حذف آن را از این لیست برمی‌دارد.',
-	"deleteModal.replaceInstead": "به جای آن جایگزین کن…",
-	"deleteModal.deleteInUse": "حذف (تبدیل به متن ساده)",
-	"deleteModal.deleteUnused": "حذف callout",
+	"deleteModal.notesUntouched":
+		"این کار فقط تعریف callout را حذف می‌کند. یادداشت‌های شما دست نمی‌خورند، بنابراین callout‌های موجود به‌سادگی به سبک پیش‌فرض برمی‌گردند.",
+	"deleteModal.fallbackTarget":
+		"این callout پشتیبان پیش‌فرض شما هم هست، بنابراین callout‌هایی که سبک خودشان را ندارند به {{fallback}} تغییر می‌کنند.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": '"{{name}}" به متن ساده تبدیل شود؟',
+	"convertModal.explain":
+		"هر کدام به متن معمولی تبدیل می‌شود: عنوان و محتوا می‌مانند و فقط قالب‌بندی callout حذف می‌شود.",
+	"convertModal.typeStays": "خودِ نوع callout در فهرست شما باقی می‌ماند.",
+	"convertModal.confirm": "تبدیل",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'همه استفاده‌های "{{name}}" پاک شود؟',
 	"deleteModal.keepsRowBuiltIn":
 		"این یکی از callout‌های داخلی Obsidian است، بنابراین خودِ این نوع همچنان در دسترس می‌ماند — فقط کاربردهای آن در یادداشت‌های شما تغییر می‌کند.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} این نوع callout را تعریف می‌کند، بنابراین همچنان در دسترس می‌ماند و ظاهر خود را حفظ می‌کند. Callout Studio فقط یادداشت‌های داخل vault شما را تغییر می‌دهد — چیزی متعلق به تم شما دست‌نخورده باقی می‌ماند.",
-	"deleteModal.clearUsages": "پاک کردن کاربردها (تبدیل به متن ساده)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "انواع callout من",
@@ -106,6 +105,8 @@ export const fa: Record<string, string> = {
 	"settings.moreRowActionsAria": "اقدامات بیشتر برای {{name}}",
 	"settings.replaceAction": "جایگزینی در vault…",
 	"settings.deleteAction": "حذف",
+	"settings.convertUsesAction": "تبدیل استفاده‌ها به متن ساده",
+	"notice.calloutDeleted": "«{{name}}» حذف شد.",
 	"settings.duplicateAction": "تکثیر",
 	"notice.calloutDuplicated": "callout با نام «{{name}}» تکثیر شد.",
 	"notice.calloutDuplicateFailed": "تکثیر callout ممکن نشد. وضعیت ذخیره‌سازی را بررسی کنید و دوباره امتحان کنید.",
@@ -119,7 +120,6 @@ export const fa: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "پوسته‌ی شما",
 	"settings.themePreviewAria":
 		'پیش‌نمایش "{{name}}" — ببینید پوسته‌تان چگونه آن را ترسیم می‌کند',
-	"settings.clearUsesAction": "پاک‌کردن استفاده‌ها در یادداشت‌هایتان",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} تمام callout های داخلی را دوباره استایل می‌دهد، بنابراین همه در بالا فهرست شده‌اند و Callout Studio آن‌ها را دست‌نخورده رها می‌کند. برای طراحی یکی از آنِ خودتان، callout ای با شناسه‌ی متفاوت اضافه کنید.",
 	"settings.fallbackCallout": "callout پشتیبان پیش‌فرض",

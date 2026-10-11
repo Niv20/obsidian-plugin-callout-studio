@@ -59,23 +59,22 @@ export const cs: Record<string, string> = {
 	"deleteModal.title": 'Smazat callout "{{name}}"?',
 	"deleteModal.bodyInUse":
 		"Tento callout se vyskytuje {{count}}krát v {{files}} souboru(ech).",
-	"deleteModal.bodyInUseExplain":
-		"Smazáním se tyto bloky převedou na prostý text — ztratí styl a nadpis callout.",
-	"deleteModal.replaceHint":
-		"Místo toho ho můžete nahradit jiným callout, čímž zachováte obsah vaultu jako stylizovaný callout.",
-	"deleteModal.bodyUnused":
-		'"{{name}}" se nepoužívá v žádné poznámce, ale je to vlastní callout, který jste vytvořili. Smazáním ho odstraníte z tohoto seznamu.',
-	"deleteModal.replaceInstead": "Raději nahradit…",
-	"deleteModal.deleteInUse": "Smazat (převést na prostý text)",
-	"deleteModal.deleteUnused": "Smazat callout",
+	"deleteModal.notesUntouched":
+		"Tím se smaže jen definice calloutu. Vašich poznámek se to nedotkne, takže stávající callouts jednoduše přejdou na výchozí styl.",
+	"deleteModal.fallbackTarget":
+		"Je to také váš výchozí záložní callout, takže callouts bez vlastního stylu přejdou na {{fallback}}.",
+	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
+	"convertModal.title": 'Převést "{{name}}" na prostý text?',
+	"convertModal.explain":
+		"Každý z nich se stane obyčejným textem: nadpis i obsah zůstanou, zmizí jen formátování calloutu.",
+	"convertModal.typeStays": "Samotný typ calloutu ve vašem seznamu zůstane.",
+	"convertModal.confirm": "Převést",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
-	"deleteModal.titleKeep": 'Vymazat všechna použití "{{name}}"?',
 	"deleteModal.keepsRowBuiltIn":
 		"Toto je jeden z vestavěných callouts Obsidianu, takže samotný typ zůstává dostupný — mění se jen jeho výskyty ve vašich poznámkách.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} definuje tento typ callout, takže zůstává dostupný a zachovává si svůj vzhled. Callout Studio mění pouze poznámky ve vašem vaultu — ničeho, co patří vašemu tématu, se nedotýká.",
-	"deleteModal.clearUsages": "Vymazat použití (převést na prostý text)",
 
 	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Moje typy callout",
@@ -106,6 +105,8 @@ export const cs: Record<string, string> = {
 	"settings.moreRowActionsAria": "Další akce pro {{name}}",
 	"settings.replaceAction": "Nahradit ve vaultu…",
 	"settings.deleteAction": "Smazat",
+	"settings.convertUsesAction": "Převést použití na prostý text",
+	"notice.calloutDeleted": "„{{name}}“ smazán.",
 	"settings.duplicateAction": "Duplikovat",
 	"notice.calloutDuplicated": "Callout byl duplikován jako „{{name}}“.",
 	"notice.calloutDuplicateFailed": "Callout se nepodařilo duplikovat. Zkontrolujte stav ukládání a zkuste to znovu.",
@@ -120,7 +121,6 @@ export const cs: Record<string, string> = {
 	"settings.themeCalloutsDefaultTheme": "Vaše téma",
 	"settings.themePreviewAria":
 		'Náhled "{{name}}" — jak jej vykresluje vaše téma',
-	"settings.clearUsesAction": "Vymazat použití ve vašich poznámkách",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} přestylovává všechny vestavěné callouts, takže jsou všechny uvedeny výše a Callout Studio je nechává být. Chcete-li navrhnout vlastní, přidejte callout s jiným ID.",
 	"settings.fallbackCallout": "Výchozí záložní callout",

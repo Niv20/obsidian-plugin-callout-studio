@@ -43,7 +43,6 @@ const ASKS_NEXT: readonly string[] = [
 	"settings.export", // opens "Export as": which format?
 	"import.upload", // opens the file picker
 	"import.replace", // the same button once a file is staged
-	"deleteModal.replaceInstead", // goes on to choose the replacement
 	"settings.replaceAction", // opens "Replace with:": which callout?
 	"portable.customize", // starts the inline editor: what text?
 	"portable.editCustom", // the same, for a replacement that is already custom
@@ -106,8 +105,8 @@ const STAYS_PLAIN: Readonly<Record<string, string>> = {
 	"portable.convertSelected": "only a confirmation follows",
 	"portable.finishConversion": "only a confirmation follows",
 	"settings.resetAllButton": "only a confirmation follows",
-	"settings.deleteAction": "only a confirmation follows",
-	"settings.clearUsesAction": "only a confirmation follows",
+	"settings.deleteAction": "a confirmation, or nothing, follows",
+	"settings.convertUsesAction": "only a confirmation follows",
 	"recovery.restore": "only a confirmation follows",
 	"saveStatus.restoreSettings": "only a confirmation follows",
 	"saveStatus.createSettingsFile": "only a confirmation follows",
@@ -143,9 +142,7 @@ const STAYS_PLAIN: Readonly<Record<string, string>> = {
 	"confirm.ok": "the dialog's own final step",
 	"iconLibraries.resetButton": "the dialog's own final step",
 	"portable.confirmAction": "the dialog's own final step",
-	"deleteModal.deleteInUse": "the dialog's own final step",
-	"deleteModal.clearUsages": "the dialog's own final step",
-	"deleteModal.deleteUnused": "the dialog's own final step",
+	"convertModal.confirm": "the dialog's own final step",
 
 	// Points at a row on the page; opens nothing.
 	"importBanner.action": "only highlights the Import row",

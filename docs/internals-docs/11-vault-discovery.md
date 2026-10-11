@@ -291,17 +291,18 @@ counts never authorize destructive operations. A statistics refresh never calls
 
 **Undo.** `rewriteVaultFiles` takes an optional `NoteRewriteJournal`
 (`utils/noteRewriteUndo.ts`), which records each note's text before and after,
-once its write has succeeded. **Replace in vault**, **Delete** and clearing a
-built-in's usages pass one and end with `noticeWithUndo`
+once its write has succeeded. **Replace in vault** and **Convert uses to plain
+text** pass one and end with `noticeWithUndo`
 (`settings/rewriteUndoNotice.ts`): a notice with an **Undo** link.
 
 - Only the most recent rewrite is kept, in memory. It is kept only whole: over
   about 64 MB of text it is dropped rather than kept in part.
 - Undo writes back a note only while it holds exactly what the rewrite left.
   Moved, deleted and edited notes are skipped and counted.
-- After a delete, `afterUndo` re-adds the callout type if its id is still free
-  and saving works. Missing cached artwork is restored with the type so Undo
-  also works offline; artwork already present is left unchanged.
+
+**Delete** rewrites no note, so it has no journal. Its notice comes from
+`noticeWithUndoAction` instead, the same fragment and link around a plain
+callback; see [the delete flow](#delete-flow).
 
 The portable Markdown conversion below has its own reviewed, confirmed
 irreversible flow and does not use the journal.
@@ -533,7 +534,8 @@ is unwrapped. Nested payload edits are composed into their parent's source span,
 so edits never overlap and generated display names are never scanned again.
 Frontmatter, fences, inline code and escaped tokens retain their source exclusions;
 payloads inside a surviving other-type pill remain literal payloads.
-A later manual scan can only rediscover an id if a note or the active theme still supplies it.
+A later manual scan can only rediscover an id if a note or the active theme
+still supplies it - which, after a [Delete](#delete-flow), a note usually does.
 
 The editor's id/title/fold rewrites use the same document filter, so examples in
 frontmatter or fenced code remain untouched. They request complete success from
@@ -543,26 +545,45 @@ explicit Save retry and keeps old ids as saved aliases until all files succeed.
 
 ## Delete flow
 
-The delete flow, end to end (`CalloutRowActions.ts: handleCalloutDelete`):
+Delete removes a definition and never touches a note. Turning the uses into
+plain text is the separate [convert flow](#convert-flow) below. The two used
+to run as one action, whose dialog had to offer three outcomes; split, each is
+a plain yes/no `ConfirmModal`.
+
+Which rows offer Delete is `deleteRemovesRow` (`rowOwnership.ts`): neither a
+built-in nor an id the active theme names, since something outside the plugin
+keeps declaring those and the row would come straight back. Built-ins get
+**Reset to default** instead (`handleBuiltInReset`, which warns before
+dropping custom aliases still in vault use).
+
+`handleCalloutDelete` (`settings/sections/calloutVaultActions.ts`), end to end:
 
 ```text
-1. count vault usages across every id form the row owns (vaultIdFormsFor)
-2. DeleteCalloutModal.prompt() → "cancel" | "delete" | "replace"
-     - in use:   warns about conversion to plain text, offers "Replace instead"
-     - unused:   simpler "this callout has no usages" copy
-3. "replace" → hands off to the Replace flow (below); return
-4. "delete" → convertCalloutsToPlainTextInVault(..., requireComplete = true)
-5. an incomplete conversion reports failure and returns, retaining the definition
-6. registry.remove(def.id)
+1. blockedWhilePaused → return                    ← nothing starts while paused
+2. countCalloutUsages over vaultIdFormsFor(def)   ← fresh, never the menu's count
+     an incomplete scan rejects; its notice is already up → return
+3. in use, or the default fallback callout → ConfirmModal (Cancel / Delete)
+     in use:    deleteModal.bodyInUse + deleteModal.notesUntouched
+     fallback:  deleteModal.fallbackTarget (alone when nothing uses it)
+   otherwise no dialog at all
+4. declined → return; blockedWhilePaused again → return
+5. snapshot registry.get(def.id): a clone, its cached artwork, wasFallback
+6. registry.remove(id)        ← resets fallbackCalloutId to "note" if it was it
 7. registry.cleanupUnusedIconSvgs()
-8. await plugin.saveSettings()                  ← awaited explicitly, see below
-9. ctx.display()                                 ← re-renders settings only
+8. await plugin.saveSettings()                    ← awaited explicitly, see below
+9. plugin.refreshCallouts()   ← notes keep [!id] and now look different
+10. ctx.display(); notice "Deleted …" with Undo (noticeWithUndoAction)
 ```
 
-Conversion is retried even when the earlier menu count was zero, because notes
-may arrive while confirmation is open. Successful file conversions are retained;
-the definition and its styling remain available until a complete retry succeeds.
-Clear-usages actions also request complete success and report unfinished work.
+- **Failed count.** A partial count is never taken for "unused", which here
+  would skip the question. `scanVaultFiles` reports the unreadable notes, and
+  the delete stops.
+- **Fallback callout.** `remove()` resets the fallback to Note and re-mirrors
+  every uncustomized `source: "fallback"` row onto it. That changes how unknown
+  callouts look across the vault, used or not, so it always asks.
+- **Snapshot.** The snapshot is taken from the registry rather than the menu's
+  `def`, which is the list as it was drawn. Undo has to put back what was
+  actually removed.
 
 > [!WARNING]
 > Step 8's `await` is not tidiness. `cleanupUnusedIconSvgs()` mutates
@@ -571,14 +592,50 @@ Clear-usages actions also request complete success and report unfinished work.
 > disk whenever some *unrelated* future mutation happened to trigger a save,
 > leaving orphaned icon SVGs in `data.json` in the meantime.
 
-A **built-in** callout follows a narrower path
-(`handleBuiltInCalloutDelete`) - it can only be "deleted" when it has vault
-usages (there's nothing to convert or replace otherwise, since a built-in
-always exists in the registry), and there's no `registry.remove()` step at
-all: built-ins can never actually be removed, only reset or converted away
-from in the vault. `handleBuiltInReset` additionally warns before dropping
-**custom aliases** a built-in has accumulated, if any of them are still in
-vault use - a plain reset would silently orphan those references.
+**Undo** (`restoreDeletedCallout`) runs once, from the notice:
+
+- It does nothing while saving is paused, or if the id has a row again, from a
+  new callout or a scan. That row is the user's now.
+- Inside one `registry.batch`, it re-adds the cached artwork that is missing,
+  then the definition. If `add` refuses, it drops the artwork again.
+- If the callout was the fallback and the fallback is still Note, it makes it
+  the fallback again and re-runs `restyleUncustomizedFallbackRows`.
+- It saves, refreshes, and redraws.
+
+Notes keep `[!id]` after a delete, so the id is ordinary vault content again.
+It draws in the fallback style, and the Find callouts view lists it under
+**Unregistered callouts**. A later **Scan for callouts** adds it back as an
+uncustomized fallback row, and re-importing it, for example from Callout
+Manager, creates it again. Both are deliberate: there is no list of deleted
+ids. Custom commands that target it are suspended, not deleted, and come back
+with it.
+
+## Convert flow
+
+`handleClearCalloutUsages` behind the `⋯` item **Convert uses to plain text**
+(`addConvertUsesItem`). Every row kind offers it: user, built-in and theme. It
+shows whenever the menu's count is not known to be zero.
+
+```text
+1. countCalloutUsages, fresh; incomplete scan or zero → return
+2. ConfirmModal (Cancel / Convert):
+     deleteModal.bodyInUse + convertModal.explain + who keeps the type
+3. convertCalloutsToPlainTextInVault(..., requireComplete = true, journal)
+4. incomplete → notice.calloutDeleteIncomplete; converted files stay converted
+5. noticeWithUndo(journal); ctx.display()
+```
+
+The definition is never touched, and nothing is saved. The last line of the
+dialog says who keeps the type, decided explicitly:
+
+- **A built-in:** `keepsRowBuiltIn`, because Obsidian keeps it.
+- **A theme's type:** `keepsRowTheme`, naming the theme. This applies only when
+  `registry.themeOwns(def)` and a theme name is known.
+- **Anything else:** `convertModal.typeStays`.
+
+A user's own callout must never read as the theme's or as a built-in merely
+because a community theme happens to be active. A retry after a failed pass
+finishes the remaining notes, since conversion is idempotent.
 
 ## Replace flow
 

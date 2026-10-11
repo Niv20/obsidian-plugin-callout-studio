@@ -212,7 +212,7 @@ from every line of its body, and replaces the whole block. Fails with a
 
 The header's title stays, as its own line at the container's depth. Only the
 `[!type]` token and its fold mark go, which matches what
-`calloutsToPlainText` leaves when a deleted type is converted to plain text.
+`calloutsToPlainText` leaves when **Convert uses to plain text** runs on a type.
 A header with no title is dropped. `removeQuoteLevel` takes off the first `>`
 but keeps whatever indents it, so a callout indented under a list item stays
 inside the item. When the line above the header is non-blank text of the same
@@ -574,8 +574,8 @@ that only make sense for some roles.
   a clipboard error or intervening change leaves the note untouched. These
   are single editor transactions - undo works
   through the editor's own history, no confirmation modal needed (unlike
-  deleting a callout *definition*, which is a destructive, harder-to-reverse
-  action guarded elsewhere - see [Vault discovery](11-vault-discovery.md#delete-flow)).
+  converting every use of a callout type to plain text, a vault-wide rewrite
+  guarded elsewhere - see [Vault discovery](11-vault-discovery.md#convert-flow)).
 
 ### The context menu inside a read-only preview
 
