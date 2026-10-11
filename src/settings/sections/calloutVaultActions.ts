@@ -39,19 +39,8 @@ import { refreshOccurrencesViewAppearance } from "../../usage/registerOccurrence
 import { blockedWhilePaused } from "../pausedGuard";
 import { noticeWithUndo, noticeWithUndoAction } from "../rewriteUndoNotice";
 import { NoteRewriteJournal } from "../../utils/noteRewriteUndo";
-import type { App } from "obsidian";
 import type { CalloutDefinition, IconSvgCacheEntry } from "../../types";
 import type { SettingsSectionContext } from "./types";
-
-const convertVaultCalloutsToPlainText = (
-	app: App,
-	def: CalloutDefinition,
-	ids: string[],
-	journal: NoteRewriteJournal,
-): Promise<{ files: number; blocks: number }> =>
-	// The display name is what a heading or inline usage falls back to: those
-	// carry no text besides the token, so it is all they have left.
-	convertCalloutsToPlainTextInVault(app, ids, def.displayName, true, journal);
 
 /**
  * Count the notes that use `def` right now, or null when some could not be
@@ -220,7 +209,7 @@ export async function handleClearCalloutUsages(
 	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
 	let result: { files: number; blocks: number };
 	const journal = new NoteRewriteJournal();
-	try { result = await convertVaultCalloutsToPlainText(ctx.app, def, allIds, journal); }
+	try { result = await convertCalloutsToPlainTextInVault(ctx.app, allIds, true, journal); }
 	catch (error) {
 		console.warn("[callout-studio] converting callout usages was incomplete", error);
 		new Notice(t("notice.calloutDeleteIncomplete"), 10000);

@@ -1,5 +1,6 @@
 import { markdownPrefix } from "../editor/markdownContainers";
-import { applyPortableEdits, preservePortableBlockMeaning, type PortableCalloutLineChange } from "./portableCallouts";
+import { applyLineEdits, preserveBlockMeaning } from "./calloutPlainTextLine";
+import type { PortableCalloutLineChange } from "./portableCallouts";
 import { createPortableCustomFields, composePortableCustomFields } from "./portableCalloutSegments";
 import { portableReplacementText, type PortableReplacements } from "./portableCalloutCustom";
 
@@ -50,7 +51,7 @@ export function selectedPortableContent(
 		} else {
 			chosen.sort((a, b) => a.from - b.from);
 			const edits = chosen.map(unit => unit.edits[0]!);
-			const defaults = preservePortableBlockMeaning(source, applyPortableEdits(source, [...edits]), markdownPrefix(source).from, false);
+			const defaults = preserveBlockMeaning(source, applyLineEdits(source, [...edits]), markdownPrefix(source).from, false);
 			const model = createPortableCustomFields(source, defaults, edits);
 			if (!model) throw new Error("Selected inline edits could not be composed safely");
 			const values = model.fields.map((field, index) => {

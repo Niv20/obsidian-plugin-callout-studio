@@ -4,9 +4,7 @@
  * These are the only code paths that rewrite the user's notes in bulk, and the
  * rules worth pinning down are the ones a careless edit silently breaks: which
  * titles may be touched, that a fold mark and a `|metadata` always survive, and
- * that a delete leaves no `[!id]` anywhere — a leftover is a live reference that
- * discovery re-creates a row for, which is what used to make a delete look like
- * it had only reset the callout.
+ * that converting a callout to plain text leaves no live `[!id]` behind.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
@@ -226,14 +224,14 @@ describe("replaceCalloutTitlesInVault", () => {
 describe("convertCalloutsToPlainTextInVault", () => {
 	const convert = (source: string) =>
 		rewrite(source, (app) =>
-			convertCalloutsToPlainTextInVault(app, ["zzz"], "Zzz").then(
+			convertCalloutsToPlainTextInVault(app, ["zzz"]).then(
 				(r) => r.blocks,
 			),
 		);
 	it("converts matching tokens inside a matching parent body and title", async () => {
 		const source = "> [!zzz] Parent [!zzz]\n> before [!zzz] after\n>> [!zzz] Nested";
 		const result = await convert(source);
-		assert.strictEqual(result.line, "Parent Zzz\nbefore Zzz after\n> Nested");
+		assert.strictEqual(result.line, "Parent zzz\nbefore zzz after\n> Nested");
 		assert.strictEqual(result.count, 4);
 	});
 
@@ -252,18 +250,18 @@ describe("convertCalloutsToPlainTextInVault", () => {
 		assert.strictEqual(result.count, 3);
 	});
 
-	it("converts nested matching payload tokens without rescanning escaped/code content", async () => {
+	it("leaves a pill with another pill inside its payload as written", async () => {
+		// Which braces belong to which pill is ambiguous there, and Review
+		// conversion leaves the same example alone.
 		const source = "[!zzz]{outer [!zzz]{inner} `[!zzz]` \\[!zzz]}";
-		const result = await convert(source);
-		assert.strictEqual(result.line, "Zzz: outer Zzz: inner `[!zzz]` \\[!zzz]");
-		assert.strictEqual(result.count, 2);
+		assert.deepStrictEqual(await convert(source), { line: source, count: 0 });
 		assert.strictEqual((await convert("[!other]{literal [!zzz]}")).line, "[!other]{literal [!zzz]}");
 	});
 
-	it("does not interpret newly inserted display names as further tokens", async () => {
-		const { app, content } = fakeApp({ "note.md": "> [!zzz] Parent\n> before [!zzz]" });
-		const result = await convertCalloutsToPlainTextInVault(app, ["zzz"], "Literal [!zzz]");
-		assert.strictEqual(content("note.md"), "Parent\nbefore Literal [!zzz]");
+	it("writes the id as literal text, never as Markdown", async () => {
+		const { app, content } = fakeApp({ "note.md": "> [!zzz] Parent\n>> [!my*type]\n> before [!my*type]" });
+		const result = await convertCalloutsToPlainTextInVault(app, ["my*type"]);
+		assert.strictEqual(content("note.md"), "> [!zzz] Parent\n>> my\\*type\n> before my\\*type");
 		assert.strictEqual(result.blocks, 2);
 	});
 
@@ -271,7 +269,7 @@ describe("convertCalloutsToPlainTextInVault", () => {
 		const { app, content } = fakeApp({
 			"note.md": "> [!zzz] Title\n> body line\n\nafter",
 		});
-		await convertCalloutsToPlainTextInVault(app, ["zzz"], "Zzz");
+		await convertCalloutsToPlainTextInVault(app, ["zzz"]);
 		assert.strictEqual(content("note.md"), "Title\nbody line\n\nafter");
 	});
 
@@ -285,13 +283,14 @@ describe("convertCalloutsToPlainTextInVault", () => {
 		);
 	});
 
-	it("falls back to the display name when a nested block had no title", async () => {
-		assert.strictEqual((await convert(">> [!zzz]")).line, ">> Zzz");
+	it("falls back to the id as written when a nested block had no title", async () => {
+		assert.strictEqual((await convert(">> [!zzz]")).line, ">> zzz");
+		assert.strictEqual((await convert(">> [!ZZZ|purple]")).line, ">> ZZZ");
 	});
 
 	it("swallows a nested block's fold mark with its token", async () => {
 		assert.strictEqual((await convert(">> [!zzz]- Title")).line, ">> Title");
-		assert.strictEqual((await convert(">> [!zzz]+")).line, ">> Zzz");
+		assert.strictEqual((await convert(">> [!zzz]+")).line, ">> zzz");
 	});
 
 	it("sees through |metadata at either depth", async () => {
@@ -314,12 +313,10 @@ describe("convertCalloutsToPlainTextInVault", () => {
 
 	it("still converts headings and pills", async () => {
 		assert.strictEqual((await convert("### [!zzz] Title")).line, "### Title");
-		assert.strictEqual((await convert("### [!zzz]")).line, "### Zzz");
-		assert.strictEqual((await convert("see [!zzz] here")).line, "see Zzz here");
-		assert.strictEqual(
-			(await convert("[!zzz]{be careful}")).line,
-			"Zzz: be careful",
-		);
+		assert.strictEqual((await convert("### [!zzz]")).line, "### zzz");
+		assert.strictEqual((await convert("see [!zzz] here")).line, "see zzz here");
+		// The pill showed its icon and this text, never the callout's name.
+		assert.strictEqual((await convert("[!zzz]{be careful}")).line, "be careful");
 	});
 
 	it("leaves no [!zzz] anywhere in a document that used every role", async () => {
@@ -336,7 +333,7 @@ describe("convertCalloutsToPlainTextInVault", () => {
 				"a [!zzz] pill",
 			].join("\n"),
 		});
-		await convertCalloutsToPlainTextInVault(app, ["zzz"], "Zzz");
+		await convertCalloutsToPlainTextInVault(app, ["zzz"]);
 		assert.ok(
 			!content("note.md").includes("[!zzz]"),
 			`leftover reference in:\n${content("note.md")}`,

@@ -69,7 +69,13 @@ While saving is paused, Delete is unavailable: the deletion couldn't be saved, s
 
 To remove a callout from your notes but keep its text, choose **Convert uses to plain text** from the three-dot menu. Every kind of callout offers it, as long as a note uses it.
 
-Callout Studio says how many times the callout appears and in how many files, and asks you to confirm. Each use then becomes ordinary text: the `[!type]` marker goes, and the callout's title stays as a line of its own above its content. If text sat right above a callout with no blank line between them, a blank line is added so the two stay separate paragraphs.
+Callout Studio says how many times the callout appears and in how many files, and asks you to confirm. Each use then becomes ordinary text:
+
+- **Block callout:** the `[!type]` marker goes, and the callout's title stays as a line of its own above its content. If text sat right above a callout with no blank line between them, a blank line is added so the two stay separate paragraphs.
+- **Heading callout:** `## [!type] Title` becomes `## Title`. A heading with no title of its own keeps the type as the note writes it: `## type`.
+- **Inline callout:** `[!type]{text}` keeps only its text. Without `{text}`, the type stays as the note writes it: `[!type]` becomes `type`.
+
+Heading and inline callouts follow the same rules as **Convert to standard Markdown** in the [Danger zone](14-danger-zone.md). An inline callout that can't be read safely, such as one with another inline callout inside its `{…}`, is left unchanged.
 
 The callout type itself stays in your list. To remove it as well, choose **Delete** afterwards: with no uses left, it's deleted right away.
 

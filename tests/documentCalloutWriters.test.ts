@@ -64,16 +64,16 @@ describe("document lexer and vault writers share strict exclusions", () => {
 
 	it("plain text conversion preserves excluded examples while removing each real reference", async () => {
 		const v = vault(source);
-		assert.deepEqual(await convertCalloutsToPlainTextInVault(v.app, ["old"], "Old name"), { files: 1, blocks: usageCount });
+		assert.deepEqual(await convertCalloutsToPlainTextInVault(v.app, ["old"]), { files: 1, blocks: usageCount });
 		for (const example of examples) assert.ok(v.read().includes(example), example);
 		assert.deepEqual(await countCalloutUsages(v.app, ["old"]), { fileCount: 0, totalCount: 0 });
-		assert.ok(v.read().includes("Text Old name: payload Old name"));
+		assert.ok(v.read().includes("Text payload old"));
 	});
 
 	it("plain text conversion keeps a callout apart from a paragraph right above it", async () => {
 		// Its title would otherwise become that paragraph's next line.
 		const v = vault("para\n> [!old]- Title\n> body");
-		await convertCalloutsToPlainTextInVault(v.app, ["old"], "Old name");
+		await convertCalloutsToPlainTextInVault(v.app, ["old"]);
 		assert.equal(v.read(), "para\n\nTitle\nbody");
 	});
 
@@ -86,7 +86,7 @@ describe("document lexer and vault writers share strict exclusions", () => {
 			["para\n> [!old]\n> body", "para\n\nbody"],
 		]) {
 			const v = vault(before!);
-			await convertCalloutsToPlainTextInVault(v.app, ["old"], "Old name");
+			await convertCalloutsToPlainTextInVault(v.app, ["old"]);
 			assert.equal(v.read(), after, before);
 		}
 	});

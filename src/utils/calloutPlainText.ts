@@ -1,56 +1,43 @@
-import {
-	scanLineForCalloutTokens, tokenEnd,
-	type LineCalloutToken,
-} from "../editor/calloutTokens";
-import { iterateDocumentCalloutLines } from "../editor/documentCallouts";
+/**
+ * utils/calloutPlainText.ts — Convert uses to plain text, for one callout type.
+ *
+ * The block callout is this file's own part: the outermost one is unwrapped,
+ * header, `>` prefixes and all, and keeps its title as a line of its own; a
+ * nested one keeps its parent's depth and loses only its `[!id]`. What heading
+ * and inline tokens become is convertCalloutLine's, the same code Review
+ * conversion runs, so the two never disagree about what a pill leaves behind.
+ */
+import { scanLineForCalloutTokens, type LineCalloutToken } from "../editor/calloutTokens";
+import { iterateDocumentCalloutLines, type DocumentCalloutLine } from "../editor/documentCallouts";
 import { splitFoldMark } from "../editor/calloutWriter";
 import { calloutIdentity } from "./calloutId";
+import { convertCalloutLine, plainTextLabel, type CalloutLineInput } from "./calloutPlainTextLine";
 
-interface Edit { from: number; to: number; text: string; count: number }
-
-function applyEdits(source: string, from: number, to: number, edits: Edit[]): string {
-	let result = source.slice(from, to);
-	for (const edit of [...edits].sort((a, b) => b.from - a.from)) {
-		result = result.slice(0, edit.from - from) + edit.text + result.slice(edit.to - from);
-	}
-	return result;
+/**
+ * A matching block header with its `[!id]` and fold mark gone. The outermost
+ * one leaves only its title; a nested one keeps the parent's `>`, and its type
+ * as written when it had no title. Native header scanning never looked inside
+ * the title, so what is left is scanned again, as prose.
+ */
+function withoutHeader({ lineText, visible, prefix, tokens }: DocumentCalloutLine, outer: boolean): CalloutLineInput {
+	const header = tokens[0]!;
+	const { foldMark, title } = splitFoldMark(lineText.slice(header.to), header.role);
+	const gap = title.length - title.replace(/^[ \t]+/, "").length;
+	const from = outer ? 0 : header.from, to = header.to + foldMark.length + gap;
+	const label = outer || title.trim() ? "" : plainTextLabel(header.rawId);
+	const line = lineText.slice(0, from) + label + lineText.slice(to);
+	const shown = visible.slice(0, from) + label + visible.slice(to);
+	return {
+		line, visible: shown,
+		tokens: scanLineForCalloutTokens(line, { visibleLine: shown, contentFrom: from, blockQuote: false }),
+		prefix: { from, quoteDepth: outer ? 0 : prefix.quoteDepth },
+	};
 }
 
-/** Build non-overlapping edits using only offsets/token exclusions in the source. */
-function rewriteLine(line: string, tokens: LineCalloutToken[], ids: ReadonlySet<string>, name: string, outer: boolean) {
-	const edits: Edit[] = [];
-	for (const token of [...tokens].sort((a, b) => b.from - a.from)) {
-		// Consume previously planned children into their original payload. No
-		// generated prose, escape or code span is scanned a second time.
-		const children = token.content
-			? edits.filter(edit => edit.from >= token.content!.from + 1 && edit.to <= token.content!.to - 1)
-			: [];
-		for (const child of children) edits.splice(edits.indexOf(child), 1);
-		// A payload inside a surviving pill remains literal payload, as it was
-		// before conversion; only an unwrapped parent exposes its inner tokens.
-		if (!ids.has(calloutIdentity(token.rawId))) continue;
-		const count = 1 + children.reduce((total, edit) => total + edit.count, 0);
-		if (token.role === "inline") {
-			const payload = token.content
-				? applyEdits(line, token.content.from + 1, token.content.to - 1, children).trim()
-				: "";
-			edits.push({ from: token.from, to: tokenEnd(token), text: payload ? `${name}: ${payload}` : name, count });
-		} else {
-			const { foldMark, title } = splitFoldMark(line.slice(token.to), token.role);
-			const gap = title.length - title.replace(/^[ \t]+/, "").length;
-			edits.push({
-				from: outer && token.role === "regular" ? 0 : token.from,
-				to: token.to + foldMark.length + gap,
-				text: outer || title.trim() ? "" : name, count,
-			});
-		}
-	}
-	return { line: applyEdits(line, 0, line.length, edits), count: edits.reduce((total, edit) => total + edit.count, 0) };
-}
-
-/** Convert matching source tokens while unwrapping each outer block only once. */
-export function calloutsToPlainText(content: string, ids: ReadonlySet<string>, displayName: string): { content: string; count: number } | null {
+/** Convert every use of `ids`, unwrapping each outermost block only once. */
+export function calloutsToPlainText(content: string, ids: ReadonlySet<string>): { content: string; count: number } | null {
 	const lines = Array.from(iterateDocumentCalloutLines(content));
+	const take = (token: LineCalloutToken): boolean => ids.has(calloutIdentity(token.rawId));
 	let unwrapping = false, count = 0;
 	/** Visible text outside any quote, which a title written after it would join. */
 	const isOpenProse = (index: number): boolean => {
@@ -58,27 +45,23 @@ export function calloutsToPlainText(content: string, ids: ReadonlySet<string>, d
 		return above !== undefined && !/^[ \t]*>/.test(above.lineText) &&
 			above.visible.replace(/\0/g, "").trim() !== "";
 	};
-	const converted = lines.map(({ lineText: line, tokens, visible, prefix }, index) => {
-		if (!/^[ \t]*>/.test(line)) unwrapping = false;
-		const header = tokens[0]?.role === "regular" ? tokens[0] : undefined;
-		const matchingHeader = header !== undefined && ids.has(calloutIdentity(header.rawId));
-		const outer = matchingHeader && prefix.listIndent === 0 && /^[ \t]*>[ \t]*$/.test(line.slice(0, header.from));
+	const converted = lines.map((source, index) => {
+		const { lineText, tokens, visible, prefix } = source;
+		if (!/^[ \t]*>/.test(lineText)) unwrapping = false;
+		const header = tokens[0]?.role === "regular" && take(tokens[0]) ? tokens[0] : undefined;
+		const outer = header !== undefined && prefix.listIndent === 0 && /^[ \t]*>[ \t]*$/.test(lineText.slice(0, header.from));
 		if (outer) unwrapping = true;
-		if (matchingHeader) {
-			// Native header scanning excludes its title. Once the header is
-			// removed, matching tokens there must be converted as source prose.
-			const masked = "x" + " ".repeat(header.to - 1) + line.slice(header.to);
-			tokens.push(...scanLineForCalloutTokens(masked, {
-				visibleLine: "x" + " ".repeat(header.to - 1) + visible.slice(header.to),
-				contentFrom: 0, blockQuote: false,
-			}));
-		}
-		const result = rewriteLine(line, tokens, ids, displayName.trim(), outer);
+		if (header) count++;
+		const result = convertCalloutLine({
+			...(header ? withoutHeader(source, outer) : { line: lineText, tokens, visible, prefix }),
+			take,
+		});
 		count += result.count;
+		const line = result.after;
 		// The callout was a block of its own. Right under a paragraph, its
 		// title would become that paragraph's next line without a blank one.
-		if (outer && result.line.trim() !== "" && isOpenProse(index - 1)) return `\n${result.line}`;
-		return unwrapping && !outer ? result.line.replace(/^([ \t]*)>[ \t]?/, "$1") : result.line;
+		if (outer && line.trim() !== "" && isOpenProse(index - 1)) return `\n${line}`;
+		return unwrapping && !outer ? line.replace(/^([ \t]*)>[ \t]?/, "$1") : line;
 	});
 	return count ? { content: converted.join("\n"), count } : null;
 }

@@ -310,7 +310,11 @@ irreversible flow and does not use the journal.
 ### Portable Markdown conversion
 
 `portableCallouts.ts` is the pure converter used by **Danger zone → Convert to
-standard Markdown**. It uses the shared source lexer and token grammar, with
+standard Markdown**. What each token becomes is `convertCalloutLine`
+(`calloutPlainTextLine.ts`), shared with
+[Convert uses to plain text](#convertcalloutstoplaintextinvault---role-specific-stripping);
+this file adds the export's own masks and reparse check. It uses the shared
+source lexer and token grammar, with
 additional conservative masks in `portableCalloutExclusions.ts` for math, HTML
 and links. These export-only masks do not change what the existing renderer or
 usage index recognizes. Protected source retains its bytes and original offsets.
@@ -507,8 +511,12 @@ separates read-only review from the irreversible final confirmation.
 
 ### `convertCalloutsToPlainTextInVault` - role-specific stripping
 
-Converts every occurrence of a set of ids into plain text, with different
-rules per role:
+Converts every occurrence of a set of ids into plain text. The block role is
+this flow's own. Heading and inline tokens go through `convertCalloutLine`
+(`calloutPlainTextLine.ts`), the same code the
+[portable conversion](#portable-markdown-conversion) runs, so the two never
+leave different text behind; `tests/calloutPlainTextParity.test.ts` holds them
+to it. Per role:
 
 - **Block (`regular`)**: only the **outermost** block (single `>`) is fully
   unwrapped (header keeps its title text, body lines lose their leading
@@ -519,21 +527,29 @@ rules per role:
   editor's unwrap command keeps titles and separates them the same way. A
   **nested** `>> [!id] Title` (a callout inside a parent callout)
   keeps its blockquote depth - that depth belongs to the parent - and loses
-  only the token: `>> Title`.
+  only the token: `>> Title`, or `>> id` when it had no title.
 - **Heading**: `### [!id] Title` → `### Title`; `### [!id]` (no title of its
-  own) → `### <displayName>` - the fallback exists because a title-less
-  heading callout carries no other text at all, and dropping the token
-  outright would leave the line empty.
-- **Inline**: `[!id]` → `<displayName>`; a content pill's payload survives,
-  reformatted as `<displayName>: <payload>` so the note still reads
-  sensibly once the plugin's own rendering is gone.
+  own) → `### id`, since a title-less heading callout carries no other text.
+- **Inline**: `[!id]` → `id`; `[!id]{text}` → `text`. The pill drew only its
+  icon and that text, never the callout's name, so no name is added.
 
-`calloutPlainText.ts` plans conversion from the original document lines. It
-processes matching nested blocks and body/title tokens even when an outer block
-is unwrapped. Nested payload edits are composed into their parent's source span,
-so edits never overlap and generated display names are never scanned again.
-Frontmatter, fences, inline code and escaped tokens retain their source exclusions;
-payloads inside a surviving other-type pill remain literal payloads.
+Where a token leaves its type, it is the type as the note writes it - trimmed,
+metadata removed, escaped by `plainTextLabel` so it stays literal - never the
+display name, so neither flow depends on the registry. The portable section's
+per-token rules apply here word for word: empty payloads disappear, payload
+spaces stay, newly exposed block markers are escaped, heading decorations go,
+and an ambiguous payload (another pill inside it, or `{` that never closes)
+stays byte-exact.
+
+`calloutPlainText.ts` plans conversion from the original document lines. A
+matching header is removed first and what is left of the line is scanned again
+as prose, since native header scanning never looks inside a title; its tokens
+then convert like body tokens. Matching nested blocks and body tokens convert
+even when an outer block is unwrapped, and generated labels are never scanned
+again. Frontmatter, fences, inline code and escaped tokens retain their source
+exclusions. The portable masks for math, HTML and links do not apply: they
+decide what the irreversible export may touch, while this flow takes the
+tokens `countCalloutUsages` counted for its dialog, short of the ambiguous ones.
 A later manual scan can only rediscover an id if a note or the active theme
 still supplies it - which, after a [Delete](#delete-flow), a note usually does.
 

@@ -215,17 +215,14 @@ export async function countCalloutUsagesMap(
  *   title text and the body lines lose their leading `> `. Only outermost blocks
  *   (single `>`) are unwrapped — a nested `>> [!id] Title` keeps its blockquote
  *   depth, which belongs to the parent callout, and loses just the token:
- *   `>> Title`.
- * - heading   `### [!id] Title` → `### Title`, or `### [!id]` → `### <name>`
- *   when the heading has no title of its own to fall back on.
- * - inline    `[!id]` → `<name>`.
+ *   `>> Title`, or `>> id` when it had no title.
+ * - heading   `### [!id] Title` → `### Title`, or `### [!id]` → `### id`.
+ * - inline    `[!id]{text}` → `text`, and `[!id]` → `id`.
  *
- * Either way no `[!id]` survives anywhere, which is what lets a delete stick: a
- * live reference left behind is one discovery re-creates a row for.
- *
- * `displayName` is that fallback name — a heading or a pill carries no text
- * besides the token, so dropping the token outright would delete the line's
- * only content.
+ * The id is written as the note spells it, never the display name, and the
+ * heading and inline rules are the ones Review conversion uses (see
+ * calloutPlainTextLine.ts). A token whose payload is ambiguous — another pill
+ * inside it, or braces that never close — is left as it is.
  *
  * Returns `{ files, blocks }`: how many files were modified and how many
  * usages were converted in total.
@@ -233,13 +230,12 @@ export async function countCalloutUsagesMap(
 export async function convertCalloutsToPlainTextInVault(
 	app: App,
 	ids: string[],
-	displayName: string,
 	requireComplete = false,
 	journal?: NoteRewriteJournal,
 ): Promise<{ files: number; blocks: number }> {
 	if (ids.length === 0) return { files: 0, blocks: 0 };
 	const idSet = new Set(ids.map((id) => calloutIdentity(id)));
-	const transform = (content: string) => calloutsToPlainText(content, idSet, displayName);
+	const transform = (content: string) => calloutsToPlainText(content, idSet);
 
 	const { files, count } = await rewriteVaultFiles(app, transform, requireComplete, journal);
 	return { files, blocks: count };
