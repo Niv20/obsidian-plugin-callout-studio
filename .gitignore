@@ -24,6 +24,9 @@ main.js
 # Local audit bundles; generated artifacts, never source.
 .test-audit
 
+# Portable tutorial scene packages and their generated verification frames.
+/dist/video-intros*/
+
 # obsidian
 data.json
 

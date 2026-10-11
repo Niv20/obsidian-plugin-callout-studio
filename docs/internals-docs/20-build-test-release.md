@@ -210,6 +210,72 @@ their parent's padding box, preserving the native checkbox marker alignment.
 File-group headings in the find and conversion illustrations have transparent
 backgrounds. These framing overrides are confined to the documentation fixtures.
 
+### Video intro scene packages
+
+`node scripts/render-video-intros.mjs` renders the 17 tutorial intros; optional
+two-digit IDs select a subset, for example
+`node scripts/render-video-intros.mjs 07 12`.
+`scripts/video-intros/catalog.mjs` owns their names and durations. In
+video order, the durations are 9, 6, 6, 6, 3, 7, 7, 7, 6, 6, 4, 6, 6, 3, 6, 6,
+and 8 seconds. Every scene is 740 × 650, has a transparent outer canvas and no
+opening title or audio, and holds its complete final state for the last second.
+The destination site owns title placement and the movement of the whole scene.
+
+The build-time scenes in `scripts/video-intros/scenes-*.mjs` mount production
+components in the same offline Obsidian host used above, operate their actual
+controls with synthetic data, and capture successive DOM states directly as
+transparent PNGs at 2× resolution (1480 × 1300, displayed at 740 × 650).
+Native browser rasterization preserves the exact text sizes, slider thumbs,
+borders and shadows. The installed Obsidian stylesheet, Lucide paths, local
+theme and fonts provide the host appearance. Native Obsidian shells, such as
+the command palette, menu and Outline, are supplied by the fixture; plugin
+renderers and action builders populate them. Reading-view fallback and real CodeMirror
+editors are used where the full Obsidian editor is unavailable. Any writes
+needed to exercise import or note-editing actions remain in memory; no user
+vault is changed. The source renderer blocks external requests and fails on
+browser errors or cursor positions outside the safe frame.
+
+Each `dist/video-intros/<scene>/source/` directory contains root-level
+`scene.json`, `Scene.tsx`, and `assets/` with the captured PNGs. Its sibling
+`provenance.json` records component paths, capture times, cursor waypoints and
+the installed Obsidian version; `build-*.png` files support visual review.
+Only the pure React player from `player-template.mjs` ships as executable scene
+code. It imports React and `@scene/sdk`, loads local artwork with `SceneImage`
+and `asset()`, and derives all motion and state from `frame / fps`. Build-time
+DOM services, timers, storage adapters and CodeMirror are not packaged.
+
+The default UI is light, except scene 17's actual dark theme. Run rendering
+with `INTRO_UI_MODE=dark` to rebake the same actions and timings in dark mode
+under `dist/video-intros-dark/`; no scene reauthoring is required. Both output
+trees are gitignored. `INTRO_OUTPUT_DIR` overrides the destination for either
+script. Use the same mode or output override when verifying the new packages.
+
+`scripts/verify-video-intros.mjs` creates each `intro.scene.zip` using the local
+Apple-Style-Generators project's actual `packageScene`, then checks its ZIP
+reader, manifest validator, compiler and scene SDK. It accepts the same optional
+IDs. `SCENE_GENERATOR_ROOT` selects that checkout, which must already have its
+development dependencies. Its TypeScript imports require the site's `tsx` loader:
+
+```bash
+SCENE_GENERATOR_ROOT=/path/to/Apple-Style-Generators \
+node --import /path/to/Apple-Style-Generators/node_modules/tsx/dist/loader.mjs \
+  scripts/verify-video-intros.mjs
+```
+
+The verifier uses the site's native Player
+wrapper because its SDK requires that runtime context; the exported scene has
+no Remotion import. It samples starts and transitions, compares 30/60 fps and
+out-of-order seeks, checks the final hold and transparent edge pixels, and
+saves light/dark-background and half-size renders for inspection. Per-scene
+`verification.json`, `qa/` images and the run's `verification-report.json` record
+the checks actually performed. Visual review remains necessary.
+
+Both scripts require the existing bundled Codex Node runtime's Playwright;
+verification also uses its `sharp`. Rendering accepts `PLAYWRIGHT_MODULE` and
+`BROWSER_EXECUTABLE` overrides. `OBSIDIAN_ASAR` selects the local archive used
+for CSS, icon and font data; `GUIDE_THEME_CSS` selects the theme as above. No
+new production dependency or installation is part of a scene package.
+
 ### README illustrations
 
 `assets/readme/00-banner.svg` is the editable brand banner, maintained directly
