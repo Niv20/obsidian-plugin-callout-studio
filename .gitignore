@@ -73,3 +73,6 @@ scripts/hooks/post-checkout
 
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store
+
+# Local build output
+dist/
