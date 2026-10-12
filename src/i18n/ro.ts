@@ -469,7 +469,6 @@ export const ro: Record<string, string> = {
 	"colorName.coral": "Coral",
 	"colorName.grape": "Strugure",
 	"colorName.plum": "Prună",
-	"colorName.bubblegum": "Gumă de mestecat",
 
 	"iconPicker.pickIcon": "Alegeți o pictogramă",
 	"iconPicker.confirm": "Confirmare",

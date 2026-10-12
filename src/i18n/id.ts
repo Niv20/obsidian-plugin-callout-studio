@@ -415,7 +415,6 @@ export const id: Record<string, string> = {
 	"colorName.coral": "Koral",
 	"colorName.grape": "Anggur",
 	"colorName.plum": "Prune",
-	"colorName.bubblegum": "Permen karet",
 
 	"iconPicker.pickIcon": "Pilih ikon",
 	"iconPicker.confirm": "Konfirmasi",

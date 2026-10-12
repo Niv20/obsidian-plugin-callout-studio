@@ -415,7 +415,6 @@ export const pl: Record<string, string> = {
 	"colorName.coral": "Koralowy",
 	"colorName.grape": "Winogronowy",
 	"colorName.plum": "Śliwkowy",
-	"colorName.bubblegum": "Guma balonowa",
 
 	"iconPicker.pickIcon": "Wybierz ikonę",
 	"iconPicker.confirm": "Potwierdź",

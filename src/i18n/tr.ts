@@ -465,7 +465,6 @@ export const tr: Record<string, string> = {
 	"colorName.coral": "Mercan",
 	"colorName.grape": "Üzüm",
 	"colorName.plum": "Erik",
-	"colorName.bubblegum": "Sakız",
 
 	"iconPicker.pickIcon": "Simge seç",
 	"iconPicker.confirm": "Onayla",

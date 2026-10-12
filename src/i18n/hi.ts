@@ -415,7 +415,6 @@ export const hi: Record<string, string> = {
 	"colorName.coral": "मूंगा",
 	"colorName.grape": "अंगूरी",
 	"colorName.plum": "आलूबुखारा",
-	"colorName.bubblegum": "बबलगम",
 
 	"iconPicker.pickIcon": "आइकन चुनें",
 	"iconPicker.confirm": "पुष्टि करें",

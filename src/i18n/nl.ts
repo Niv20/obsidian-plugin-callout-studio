@@ -423,7 +423,6 @@ export const nl: Record<string, string> = {
 	"colorName.coral": "Koraal",
 	"colorName.grape": "Druif",
 	"colorName.plum": "Pruim",
-	"colorName.bubblegum": "Kauwgom",
 
 	"iconPicker.pickIcon": "Een pictogram kiezen",
 	"iconPicker.confirm": "Bevestigen",

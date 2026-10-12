@@ -470,7 +470,6 @@ export const vi: Record<string, string> = {
 	"colorName.coral": "San hô",
 	"colorName.grape": "Nho",
 	"colorName.plum": "Mận",
-	"colorName.bubblegum": "Kẹo cao su",
 
 	"iconPicker.pickIcon": "Chọn biểu tượng",
 	"iconPicker.confirm": "Xác nhận",

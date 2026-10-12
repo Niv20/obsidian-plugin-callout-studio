@@ -403,7 +403,6 @@ export const el: Record<string, string> = {
 	"colorName.coral": "Κοραλί",
 	"colorName.grape": "Σταφύλι",
 	"colorName.plum": "Δαμάσκηνο",
-	"colorName.bubblegum": "Τσίχλα",
 
 	"iconPicker.pickIcon": "Επιλογή εικονιδίου",
 	"iconPicker.confirm": "Επιβεβαίωση",

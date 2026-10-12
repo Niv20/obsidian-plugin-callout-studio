@@ -945,7 +945,6 @@ export const en: Record<string, string> = {
 	"colorName.coral": "Coral",
 	"colorName.grape": "Grape",
 	"colorName.plum": "Plum",
-	"colorName.bubblegum": "Bubblegum",
 
 	// Icon Picker
 	"iconPicker.pickIcon": "Pick an icon",

@@ -58,7 +58,7 @@ import {
 } from "../utils/calloutId";
 import {
 	consolidatePalettesByColor,
-	getAllColorPalettes,
+	findPresetByPaletteId,
 	resolveCalloutManagerColor,
 	resolveCalloutManagerColors,
 } from "../utils/colorPalettes";
@@ -847,9 +847,7 @@ export class CalloutRegistry {
 	private isLivePaletteId(id: string): boolean {
 		return (
 			this.settings.customPalettes.some((p) => p.id === id) ||
-			getAllColorPalettes().some(
-				(p) => p.id === id || p.legacyIds?.includes(id),
-			)
+			findPresetByPaletteId(id) !== null
 		);
 	}
 

@@ -414,7 +414,6 @@ export const ja: Record<string, string> = {
 	"colorName.coral": "サンゴ色",
 	"colorName.grape": "グレープ",
 	"colorName.plum": "プラム",
-	"colorName.bubblegum": "バブルガム",
 
 	"iconPicker.pickIcon": "アイコンを選択",
 	"iconPicker.confirm": "確認",

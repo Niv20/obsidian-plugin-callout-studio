@@ -91,9 +91,9 @@ describe("metadataWordSelector — the word in either separator", () => {
 	}
 
 	it("folds an alias into the same :is()", () => {
-		const both = metadataWordSelector(["bubblegum", "pink"]);
-		assert.ok(selectorMatches(both, "x|pink"));
-		assert.ok(selectorMatches(both, "bubblegum wide"));
+		const both = metadataWordSelector(["gray", "grey"]);
+		assert.ok(selectorMatches(both, "x|grey"));
+		assert.ok(selectorMatches(both, "gray wide"));
 	});
 
 	it("is one class of specificity whichever form matches", () => {
@@ -114,24 +114,24 @@ describe("generateMetadataColorCSS — the rules", () => {
 		h.registry.settings.customPalettes = [palette("Comic Red")];
 		const css = internals(h).generateMetadataColorCSS();
 		const order = [...css.matchAll(/\/\* metadata colour: (\S+) \*\//g)].map((m) => m[1]);
-		assert.ok(order.indexOf("bubblegum") < order.indexOf("blue"));
+		assert.ok(order.indexOf("pink") < order.indexOf("blue"));
 		assert.strictEqual(order[order.length - 1], "comic-red");
 	});
 
 	it("carries the palette's own accent and background", () => {
 		const h = harness();
 		const css = internals(h).generateMetadataColorCSS();
-		const violet = parseRules(css).find(
+		const purple = parseRules(css).find(
 			(r) =>
 				r.at.length === 0 &&
 				r.selector.startsWith(":root .callout") &&
-				r.selector.includes('"violet"') &&
+				r.selector.includes('"purple"') &&
 				r.props.includes("--cs-accent"),
 		);
-		assert.ok(violet, "violet's light block rule");
-		assert.strictEqual(valueOf(violet, "--cs-accent"), "#7852ee !important");
-		assert.ok(violet.props.includes("--callout-color"));
-		assert.ok(violet.props.includes("background-color"));
+		assert.ok(purple, "purple's light block rule");
+		assert.strictEqual(valueOf(purple, "--cs-accent"), "#7852ee !important");
+		assert.ok(purple.props.includes("--callout-color"));
+		assert.ok(purple.props.includes("background-color"));
 	});
 
 	it("outweighs the callout's own light and dark rules", () => {

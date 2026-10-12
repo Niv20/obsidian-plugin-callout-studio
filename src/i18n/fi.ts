@@ -408,7 +408,6 @@ export const fi: Record<string, string> = {
 	"colorName.coral": "Koralli",
 	"colorName.grape": "Rypäle",
 	"colorName.plum": "Luumu",
-	"colorName.bubblegum": "Purukumi",
 
 	"iconPicker.pickIcon": "Valitse kuvake",
 	"iconPicker.confirm": "Vahvista",

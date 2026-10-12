@@ -503,7 +503,6 @@ export const he: Record<string, string> = {
 	"colorName.coral": "קורל",
 	"colorName.grape": "ענבים",
 	"colorName.plum": "שזיף",
-	"colorName.bubblegum": "מסטיק",
 
 	"iconPicker.pickIcon": "בחירת אייקון",
 	"iconPicker.confirm": "אישור",

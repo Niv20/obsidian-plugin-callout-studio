@@ -476,7 +476,6 @@ export const uk: Record<string, string> = {
 	"colorName.coral": "Кораловий",
 	"colorName.grape": "Виноградний",
 	"colorName.plum": "Сливовий",
-	"colorName.bubblegum": "Жувальна гумка",
 
 	"iconPicker.pickIcon": "Вибрати іконку",
 	"iconPicker.confirm": "Підтвердити",

@@ -444,7 +444,6 @@ export const zhTW: Record<string, string> = {
 	"colorName.coral": "珊瑚色",
 	"colorName.grape": "葡萄色",
 	"colorName.plum": "梅子色",
-	"colorName.bubblegum": "泡泡糖色",
 
 	"iconPicker.pickIcon": "選擇圖示",
 	"iconPicker.confirm": "確認",

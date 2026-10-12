@@ -466,7 +466,6 @@ export const pt: Record<string, string> = {
 	"colorName.coral": "Coral",
 	"colorName.grape": "Uva",
 	"colorName.plum": "Ameixa",
-	"colorName.bubblegum": "Chiclete",
 
 	"iconPicker.pickIcon": "Escolher um ícone",
 	"iconPicker.confirm": "Confirmar",

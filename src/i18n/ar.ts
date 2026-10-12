@@ -407,7 +407,6 @@ export const ar: Record<string, string> = {
 	"colorName.coral": "مرجاني",
 	"colorName.grape": "عنبي",
 	"colorName.plum": "برقوقي",
-	"colorName.bubblegum": "علكة",
 
 	"iconPicker.pickIcon": "اختيار أيقونة",
 	"iconPicker.confirm": "تأكيد",

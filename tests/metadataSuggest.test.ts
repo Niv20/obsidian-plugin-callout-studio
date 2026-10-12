@@ -123,11 +123,19 @@ describe("buildMetadataSuggestions — rows and their order", () => {
 	});
 
 	it("a typed alias finds its preset and needs no Use row", () => {
-		const got = rows("pink⎸");
+		const got = rows("grey⎸");
 		const first = got[0];
-		assert.ok(first?.kind === "color" && first.entry.key === "bubblegum");
-		assert.strictEqual(first.viaAlias, "pink");
-		assert.ok(!labels(got).includes("<use pink>"));
+		assert.ok(first?.kind === "color" && first.entry.key === "gray");
+		assert.strictEqual(first.viaAlias, "grey");
+		assert.ok(!labels(got).includes("<use grey>"));
+	});
+
+	it("Obsidian's own colour names are rows of their own, not aliases", () => {
+		for (const name of ["purple", "pink", "yellow"]) {
+			const first = rows(`${name}⎸`)[0];
+			assert.ok(first?.kind === "color" && first.entry.key === name, name);
+			assert.strictEqual(first.viaAlias, null, name);
+		}
 	});
 
 	it("a word nothing matches gets a Use row", () => {
@@ -137,8 +145,8 @@ describe("buildMetadataSuggestions — rows and their order", () => {
 	it("once a colour is named, the styling's words lead and colours replace it", () => {
 		const got = labels(rows("pink ⎸", { words: [word("wide")] }));
 		assert.deepStrictEqual(got.slice(0, 2), ["<done>", "theme:wide"]);
-		assert.ok(got.includes("violet>pink"));
-		assert.ok(!got.some((l) => l.startsWith("bubblegum")), "the colour already there is not offered");
+		assert.ok(got.includes("purple>pink"));
+		assert.ok(!got.some((l) => l.split(">")[0] === "pink"), "the colour already there is not offered");
 	});
 
 	it("offers no colour on a callout the theme owns", () => {
@@ -250,14 +258,14 @@ function pickIn(metadata: string, which: string, words: ThemeMetadataWord[] = []
 
 describe("applyMetadataPick — the text a pick leaves", () => {
 	it("a colour replaces the word under the cursor", () => {
-		assert.strictEqual(pickIn("wide vi⎸", "violet"), "wide violet⎸");
-		assert.strictEqual(pickIn("vi⎸ola wide", "violet"), "violet⎸ wide");
+		assert.strictEqual(pickIn("wide pu⎸", "purple"), "wide purple⎸");
+		assert.strictEqual(pickIn("pu⎸rp wide", "purple"), "purple⎸ wide");
 	});
 
 	it("a colour takes the old colour's place, and the typed word leaves", () => {
-		assert.strictEqual(pickIn("pink wide vi⎸", "violet>pink"), "violet⎸ wide");
-		assert.strictEqual(pickIn("vi⎸|pink", "violet>pink"), "violet⎸");
-		assert.strictEqual(pickIn("pink|⎸", "violet>pink"), "violet⎸");
+		assert.strictEqual(pickIn("pink wide pu⎸", "purple>pink"), "purple⎸ wide");
+		assert.strictEqual(pickIn("pu⎸|pink", "purple>pink"), "purple⎸");
+		assert.strictEqual(pickIn("pink|⎸", "purple>pink"), "purple⎸");
 	});
 
 	it("a spaced word turns a touching | into a space", () => {
@@ -389,14 +397,14 @@ describe("CalloutMetadataSuggest — when it opens", () => {
 describe("CalloutMetadataSuggest — Tab stays, Enter finishes", () => {
 	it("Tab writes the word, closes, and keeps the cursor in the brackets", () => {
 		const h = harness();
-		const ed = pickMeta(h, "> [!note|vi⎸]", "violet", "Tab");
-		assert.strictEqual(ed.valueWithCursor(), "> [!note|violet|]");
+		const ed = pickMeta(h, "> [!note|pu⎸]", "purple", "Tab");
+		assert.strictEqual(ed.valueWithCursor(), "> [!note|purple|]");
 		assert.strictEqual((h.meta as unknown as { closedCount: number }).closedCount, 1);
 	});
 
 	it("does not re-offer the word Tab just wrote, until something moves", () => {
 		const h = harness();
-		const ed = pickMeta(h, "> [!note|vi⎸]", "violet", "Tab");
+		const ed = pickMeta(h, "> [!note|pu⎸]", "purple", "Tab");
 		const cursor = ed.getCursor();
 		assert.strictEqual(h.meta.onTrigger(cursor, asEditor(ed), null), null);
 		ed.replaceRange(" ", cursor);
@@ -407,45 +415,45 @@ describe("CalloutMetadataSuggest — Tab stays, Enter finishes", () => {
 	it("Enter finishes a new block callout like Enter on a type", () => {
 		const h = harness();
 		assert.strictEqual(
-			pickMeta(h, "> [!note|vi⎸]", "violet", "Enter").valueWithCursor(),
-			"> [!note|violet] Note\n> |",
+			pickMeta(h, "> [!note|pu⎸]", "purple", "Enter").valueWithCursor(),
+			"> [!note|purple] Note\n> |",
 		);
 		// Unclosed: the bracket is closed on the way.
 		assert.strictEqual(
-			pickMeta(h, "> [!note|vi⎸", "violet", "Enter").valueWithCursor(),
-			"> [!note|violet] Note\n> |",
+			pickMeta(h, "> [!note|pu⎸", "purple", "Enter").valueWithCursor(),
+			"> [!note|purple] Note\n> |",
 		);
 	});
 
 	it("Enter keeps a title and a fold mark the user wrote", () => {
 		const h = harness();
 		assert.strictEqual(
-			pickMeta(h, "> [!note|vi⎸]- Page break", "violet", "Enter").valueWithCursor(),
-			"> [!note|violet]- Page break|",
+			pickMeta(h, "> [!note|pu⎸]- Page break", "purple", "Enter").valueWithCursor(),
+			"> [!note|purple]- Page break|",
 		);
 	});
 
 	it("Enter on a heading and an inline callout lands as their own Enter does", () => {
 		const h = harness();
 		assert.strictEqual(
-			pickMeta(h, "## [!note|vi⎸]", "violet", "Enter").valueWithCursor(),
-			"## [!note|violet]\n|",
+			pickMeta(h, "## [!note|pu⎸]", "purple", "Enter").valueWithCursor(),
+			"## [!note|purple]\n|",
 		);
 		assert.strictEqual(
-			pickMeta(h, "a [!note|vi⎸]b", "violet", "Enter").valueWithCursor(),
-			"a [!note|violet] |b",
+			pickMeta(h, "a [!note|pu⎸]b", "purple", "Enter").valueWithCursor(),
+			"a [!note|purple] |b",
 		);
 		assert.strictEqual(
-			pickMeta(h, "a [!note|vi⎸]{text} b", "violet", "Enter").valueWithCursor(),
-			"a [!note|violet]{text} |b",
+			pickMeta(h, "a [!note|pu⎸]{text} b", "purple", "Enter").valueWithCursor(),
+			"a [!note|purple]{text} |b",
 		);
 	});
 
 	it("Done finishes without writing a word", () => {
 		const h = harness();
 		assert.strictEqual(
-			pickMeta(h, "> [!note|violet ⎸]", "<done>", "Enter").valueWithCursor(),
-			"> [!note|violet] Note\n> |",
+			pickMeta(h, "> [!note|purple ⎸]", "<done>", "Enter").valueWithCursor(),
+			"> [!note|purple] Note\n> |",
 		);
 	});
 });
@@ -560,7 +568,7 @@ describe("CalloutMetadataSuggest — what a row looks like", () => {
 		const wide = got.find((r) => label(r) === "theme:wide");
 		h.meta.onSelectedChange(wide);
 		assert.strictEqual(footer.textContent, "Separate it with spaces, not |");
-		h.meta.onSelectedChange(got.find((r) => label(r) === "violet>pink"));
+		h.meta.onSelectedChange(got.find((r) => label(r) === "purple>pink"));
 		assert.strictEqual(footer.textContent, "Replaces pink");
 		h.meta.onSelectedChange(got.find((r) => r.kind === "finish"));
 		assert.strictEqual(footer.textContent, "");

@@ -414,7 +414,6 @@ export const fa: Record<string, string> = {
 	"colorName.coral": "مرجانی",
 	"colorName.grape": "انگوری",
 	"colorName.plum": "آلویی",
-	"colorName.bubblegum": "آدامس",
 
 	"iconPicker.pickIcon": "انتخاب آیکون",
 	"iconPicker.confirm": "تأیید",

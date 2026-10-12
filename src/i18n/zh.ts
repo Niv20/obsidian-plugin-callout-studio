@@ -456,7 +456,6 @@ export const zh: Record<string, string> = {
 	"colorName.coral": "珊瑚色",
 	"colorName.grape": "葡萄色",
 	"colorName.plum": "梅子色",
-	"colorName.bubblegum": "泡泡糖色",
 
 	"iconPicker.pickIcon": "选择图标",
 	"iconPicker.confirm": "确认",

@@ -418,7 +418,6 @@ export const es: Record<string, string> = {
 	"colorName.coral": "Coral",
 	"colorName.grape": "Uva",
 	"colorName.plum": "Ciruela",
-	"colorName.bubblegum": "Chicle",
 
 	"iconPicker.pickIcon": "Elegir un icono",
 	"iconPicker.confirm": "Confirmar",

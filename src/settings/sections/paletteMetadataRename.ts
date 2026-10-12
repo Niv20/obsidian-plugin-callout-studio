@@ -9,7 +9,7 @@
  * rewrite the notes that use it; this is the same offer for a palette, with
  * the same Undo. Declining is a real choice, not a failure: the old word
  * simply stops naming anything (or names what it would without the palette —
- * a palette called "Pink" was holding Bubblegum's alias).
+ * a palette called "Pink" was holding the Pink preset's word).
  *
  * Deleting a palette makes no such offer, by the rule every Delete here
  * follows: it removes a definition and never touches a note.

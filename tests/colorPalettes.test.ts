@@ -17,7 +17,10 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import {
+	findPresetByPaletteId,
 	getAllColorPalettes,
+	getExtraPalettes,
+	getObsidianPalettes,
 	resolveCalloutManagerColor,
 	resolveCalloutManagerColors,
 } from "../src/utils/colorPalettes";
@@ -116,5 +119,63 @@ describe("resolveCalloutManagerColors — two-tone imports", () => {
 			resolveCalloutManagerColors("#9e9e9e", "#9e9e9e", []).colors,
 			resolveCalloutManagerColor("#9e9e9e", []).colors,
 		);
+	});
+});
+
+describe("the preset list — groups, and every id ever saved", () => {
+	it("Obsidian's group is exactly the colours Obsidian's callouts use", () => {
+		assert.deepEqual(
+			getObsidianPalettes().map((p) => p.id),
+			["blue", "cyan", "green", "orange", "red", "purple", "gray"],
+		);
+		assert.deepEqual(
+			getExtraPalettes().map((p) => p.id),
+			["crimson", "coral", "amber", "yellow", "lime", "teal", "brown", "grape", "plum", "pink"],
+		);
+	});
+
+	it("carries Obsidian's own hexes for Purple and Yellow", () => {
+		// app.css: --color-purple #7852ee / #a882ff, --color-yellow #e0ac00 / #e0de71.
+		const purple = findPresetByPaletteId("purple");
+		assert.equal(purple?.colorLight, "#7852ee");
+		assert.equal(purple?.colorDark, "#a882ff");
+		const yellow = findPresetByPaletteId("yellow");
+		assert.equal(yellow?.colorLight, "#e0ac00");
+		assert.equal(yellow?.colorDark, "#e0de71");
+	});
+
+	// Every `paletteId` a released build could have written for a preset. A
+	// stored id is never rewritten, so each one must find its preset forever —
+	// dropping one turns that user's callouts into "Deleted color".
+	const SAVED_ONCE: Record<string, string> = {
+		// Role names, before the presets were named for their hue.
+		note: "blue", abstract: "cyan", tip: "teal", success: "green",
+		question: "orange", failure: "red", danger: "crimson", example: "purple",
+		quote: "gray",
+		// Hue names that later took Obsidian's own word for the colour.
+		violet: "purple", bubblegum: "pink",
+	};
+	for (const [saved, now] of Object.entries(SAVED_ONCE)) {
+		it(`a callout saved on "${saved}" resolves to ${now}`, () => {
+			assert.equal(findPresetByPaletteId(saved)?.id, now);
+		});
+	}
+
+	it("every current id resolves to itself", () => {
+		for (const preset of getAllColorPalettes()) {
+			assert.equal(findPresetByPaletteId(preset.id)?.id, preset.id);
+		}
+	});
+
+	it("no legacy id is a current id, and none answers for two presets", () => {
+		const current = new Set(getAllColorPalettes().map((p) => p.id));
+		const legacy = getAllColorPalettes().flatMap((p) => p.legacyIds ?? []);
+		for (const id of legacy) assert.ok(!current.has(id), `${id} is both`);
+		assert.equal(new Set(legacy).size, legacy.length);
+	});
+
+	it("knows nothing of a custom palette's id", () => {
+		assert.equal(findPresetByPaletteId("cp-abc"), null);
+		assert.equal(findPresetByPaletteId(""), null);
 	});
 });

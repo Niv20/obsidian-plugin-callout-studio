@@ -461,7 +461,6 @@ export const th: Record<string, string> = {
 	"colorName.coral": "สีปะการัง",
 	"colorName.grape": "สีองุ่น",
 	"colorName.plum": "สีพลัม",
-	"colorName.bubblegum": "หมากฝรั่ง",
 
 	"iconPicker.pickIcon": "เลือกไอคอน",
 	"iconPicker.confirm": "ยืนยัน",

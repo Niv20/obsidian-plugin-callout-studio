@@ -418,7 +418,6 @@ export const hu: Record<string, string> = {
 	"colorName.coral": "Korall",
 	"colorName.grape": "Szőlő",
 	"colorName.plum": "Szilva",
-	"colorName.bubblegum": "Rágógumi",
 
 	"iconPicker.pickIcon": "Ikon kiválasztása",
 	"iconPicker.confirm": "Megerősítés",

@@ -466,7 +466,6 @@ export const ru: Record<string, string> = {
 	"colorName.coral": "Коралловый",
 	"colorName.grape": "Виноградный",
 	"colorName.plum": "Сливовый",
-	"colorName.bubblegum": "Жвачка",
 
 	"iconPicker.pickIcon": "Выбрать иконку",
 	"iconPicker.confirm": "Подтвердить",

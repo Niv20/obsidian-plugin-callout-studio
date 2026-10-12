@@ -403,7 +403,6 @@ export const nb: Record<string, string> = {
 	"colorName.coral": "Korall",
 	"colorName.grape": "Drue",
 	"colorName.plum": "Plomme",
-	"colorName.bubblegum": "Tyggegummi",
 
 	"iconPicker.pickIcon": "Velg et ikon",
 	"iconPicker.confirm": "Bekreft",

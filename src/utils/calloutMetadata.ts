@@ -25,10 +25,9 @@
  * Three sources, all spelled as stable lowercase words that do not change
  * with the interface language (the *names* are translated; the words are not):
  *
- * 1. The built-in colours, by preset id — `blue`, `teal`, `bubblegum`, …
+ * 1. The built-in colours, by preset id — `blue`, `purple`, `pink`, …
  *    ({@link getObsidianPalettes}, {@link getExtraPalettes}).
- * 2. Four aliases for Obsidian's own colour names that have no preset of that
- *    name — see {@link METADATA_COLOR_ALIASES}.
+ * 2. Other spellings of a built-in's id — see {@link METADATA_COLOR_ALIASES}.
  * 3. The user's saved palettes, by {@link paletteMetadataKey} of their name.
  *
  * Every other word is left alone. It is not ours: it may be a theme's
@@ -96,16 +95,18 @@ export const foldMetadataCase = (word: string): string =>
 	word.replace(/[A-Z]/g, (c) => c.toLowerCase());
 
 /**
- * Obsidian's own colour names that have no Callout Studio preset of the same
- * name, mapped to the preset that stands in for them. `purple` is exact —
- * Violet carries Obsidian's purple hexes — and the other three are the
- * nearest preset. Accepted when typed; the autocomplete writes the preset's
- * own id, so a note written through the menu never depends on an alias.
+ * Other spellings of a built-in colour's id, mapped to that id. Accepted when
+ * typed; the autocomplete writes the preset's own id, so a note written
+ * through the menu never depends on an alias.
+ *
+ * Only a true spelling variant belongs here. Every one of Obsidian's own
+ * colour names is a preset id in its own right now (`purple` and `pink` were
+ * once aliases of Violet and Bubblegum, `yellow` of Amber), and a preset's
+ * former id is deliberately NOT carried over as an alias: the `|` dropdown
+ * shows aliases beside the word, and the old ids were never released as
+ * metadata words.
  */
 export const METADATA_COLOR_ALIASES: Readonly<Record<string, string>> = {
-	purple: "violet",
-	pink: "bubblegum",
-	yellow: "amber",
 	grey: "gray",
 };
 
@@ -146,9 +147,11 @@ export interface MetadataColorEntry {
  * A word belongs to exactly one entry. When two claim it, the stronger keeps
  * it and the weaker loses that word; an entry left with no word at all is
  * dropped, since nothing could reach it. In practice that means a palette the
- * user named "Pink" takes `pink` from Bubblegum's alias, and one named "Blue"
- * (possible under a non-English interface, where the preset is not called
- * that) takes `blue` from the preset. Between two saved palettes the later one
+ * user named "Pink" before the preset took that name keeps `pink`, and the
+ * Pink preset is left with no word at all — the user's own palette is what
+ * they meant. The same goes for one named "Blue" under a non-English
+ * interface, where the preset is not called that and the name was free to
+ * take. Between two saved palettes the later one
  * in the list wins — the palette editor refuses to create such a pair, so
  * only older or imported data ever has one.
  */

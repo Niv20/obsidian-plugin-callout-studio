@@ -397,7 +397,6 @@ export const bg: Record<string, string> = {
 	"colorName.coral": "Коралово",
 	"colorName.grape": "Гроздов",
 	"colorName.plum": "Сливов",
-	"colorName.bubblegum": "Дъвка",
 
 	"iconPicker.pickIcon": "Избор на икона",
 	"iconPicker.confirm": "Потвърждаване",

@@ -410,7 +410,6 @@ export const ms: Record<string, string> = {
 	"colorName.coral": "Karang",
 	"colorName.grape": "Anggur",
 	"colorName.plum": "Plum",
-	"colorName.bubblegum": "Gula-gula getah",
 
 	"iconPicker.pickIcon": "Pilih ikon",
 	"iconPicker.confirm": "Sahkan",

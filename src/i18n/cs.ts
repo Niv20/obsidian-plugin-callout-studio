@@ -413,7 +413,6 @@ export const cs: Record<string, string> = {
 	"colorName.coral": "Korálová",
 	"colorName.grape": "Hroznová",
 	"colorName.plum": "Švestková",
-	"colorName.bubblegum": "Žvýkačka",
 
 	"iconPicker.pickIcon": "Vybrat ikonu",
 	"iconPicker.confirm": "Potvrdit",

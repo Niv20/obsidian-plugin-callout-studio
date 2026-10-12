@@ -465,7 +465,6 @@ export const sv: Record<string, string> = {
 	"colorName.coral": "Korall",
 	"colorName.grape": "Druva",
 	"colorName.plum": "Plommon",
-	"colorName.bubblegum": "Tuggummi",
 
 	"iconPicker.pickIcon": "Välj en ikon",
 	"iconPicker.confirm": "Bekräfta",

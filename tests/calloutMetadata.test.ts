@@ -108,7 +108,7 @@ describe("paletteMetadataKey — the word that names a saved palette", () => {
 describe("metadataColorEntries — which words are colours, weakest first", () => {
 	it("extra presets, then Obsidian colours, then the user's palettes", () => {
 		const keys = metadataColorEntries([palette("Comic Red")]).map((e) => e.key);
-		assert.ok(keys.indexOf("bubblegum") < keys.indexOf("blue"));
+		assert.ok(keys.indexOf("pink") < keys.indexOf("blue"));
 		assert.ok(keys.indexOf("blue") < keys.indexOf("comic-red"));
 		assert.strictEqual(keys[keys.length - 1], "comic-red");
 	});
@@ -122,13 +122,36 @@ describe("metadataColorEntries — which words are colours, weakest first", () =
 		}
 	});
 
-	it("a palette named after an alias takes the word from the preset", () => {
+	it("names every one of Obsidian's colours by its own word, not an alias", () => {
+		// Obsidian's eight `--color-*` names plus the quote's gray. Each is a
+		// preset id in its own right; none may hide behind another word.
+		const keys = new Set(metadataColorEntries([]).map((e) => e.key));
+		for (const word of ["red", "orange", "yellow", "green", "cyan", "blue", "purple", "pink", "gray"]) {
+			assert.ok(keys.has(word), word);
+		}
+	});
+
+	it("the only alias left is a spelling variant", () => {
+		assert.deepStrictEqual({ ...METADATA_COLOR_ALIASES }, { grey: "gray" });
+	});
+
+	it("a preset's former id is not a colour word", () => {
+		// `violet` and `bubblegum` live on as legacyIds for saved callouts, but
+		// were never released as metadata — and the dropdown would print them
+		// beside the real word.
+		const entries = metadataColorEntries([]);
+		for (const old of ["violet", "bubblegum"]) {
+			assert.strictEqual(resolveMetadataColor(old, entries), null, old);
+		}
+	});
+
+	it("a palette saved under a preset's word keeps it, and the preset drops out", () => {
+		// A palette named "Pink" before the preset took that name.
 		const entries = metadataColorEntries([palette("Pink")]);
-		const bubblegum = entries.find((e) => e.key === "bubblegum");
-		assert.ok(bubblegum);
-		assert.ok(!bubblegum.aliases.includes("pink"));
-		assert.strictEqual(entries.filter((e) => entryWords(e).includes("pink")).length, 1);
-		assert.strictEqual(resolveMetadataColor("pink", entries)?.palette.name, "Pink");
+		const pinks = entries.filter((e) => entryWords(e).includes("pink"));
+		assert.strictEqual(pinks.length, 1);
+		assert.strictEqual(pinks[0]?.palette.group, "custom");
+		assert.ok(!entries.some((e) => e.palette.group === "preset" && e.palette.id === "pink"));
 	});
 
 	it("a palette named like a preset id replaces that preset", () => {
@@ -159,7 +182,7 @@ describe("resolveMetadataColor — one colour, by a fixed order", () => {
 
 	it("finds a colour in either separator and any case", () => {
 		for (const raw of ["pink", "wide pink", "wide|pink", "PINK", " Pink |x"]) {
-			assert.strictEqual(resolveMetadataColor(raw, entries)?.key, "bubblegum", raw);
+			assert.strictEqual(resolveMetadataColor(raw, entries)?.key, "pink", raw);
 		}
 	});
 
@@ -194,7 +217,7 @@ describe("definitionWithMetadataColor — what the PDF export bakes", () => {
 	const entries = metadataColorEntries([]);
 
 	it("bakes the named colour over the definition's own", () => {
-		const out = definitionWithMetadataColor(def, "violet", entries);
+		const out = definitionWithMetadataColor(def, "purple", entries);
 		assert.strictEqual(out.colorLight, "#7852ee");
 		assert.strictEqual(out.colorDark, "#a882ff");
 		assert.strictEqual(out.id, "mark");
