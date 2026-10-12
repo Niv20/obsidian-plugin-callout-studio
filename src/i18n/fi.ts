@@ -117,6 +117,7 @@ export const fi: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Calloutin monistaminen epäonnistui. Tarkista tallennuksen tila ja yritä uudelleen.",
 	"settings.resetAction": "Palauta oletukseksi",
 	"settings.makeFallbackAction": "Käytä oletusvaratyyliä",
+	"notice.fallbackStyleApplied": "”{{name}}” käyttää nyt oletusvaratyyliä.",
 	"settings.colorSwatchAria": "Aksentti: {{accent}} · Tausta: {{bg}}",
 
 	// Settings — callouts the active theme styles

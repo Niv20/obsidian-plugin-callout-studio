@@ -176,6 +176,7 @@ export const uk: Record<string, string> = {
 	"settings.resetAction": "Скинути до типового",
 	"settings.makeFallbackAction":
 		"Використовувати резервний стиль за замовчуванням",
+	"notice.fallbackStyleApplied": "«{{name}}» тепер використовує резервний стиль за замовчуванням.",
 
 	"settings.colorSwatchAria": "Акцент: {{accent}} · Фон: {{bg}}",
 

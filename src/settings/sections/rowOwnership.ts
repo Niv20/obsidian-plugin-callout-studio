@@ -1,6 +1,7 @@
 /**
  * settings/sections/rowOwnership.ts — which of the three groups a callout row
- * belongs in, and which of Delete and Convert uses to plain text it offers.
+ * belongs in, and which of Delete, Replace in vault and Convert uses to plain
+ * text it offers.
  *
  * ## The group is the label
  *
@@ -29,10 +30,13 @@ import { Menu } from "obsidian";
 import { t } from "../../i18n";
 import {
 	handleCalloutDelete,
+	handleCalloutReplace,
 	handleClearCalloutUsages,
 } from "./calloutVaultActions";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
+import { disableWhenUnused } from "../../usage/usageMenuItem";
+import { ROW_MENU_SECTION } from "./rowMenuSections";
 
 /** Which list a row is being drawn in. Decides the row's whole control set. */
 export type RowKind = "theme" | "user" | "builtin";
@@ -105,9 +109,34 @@ export function deleteRemovesRow(
 }
 
 /**
+ * The `⋯` item that rewrites every use of the callout as another type, on
+ * every kind of row. Shown, and greyed out, exactly as
+ * {@link addConvertUsesItem} is.
+ */
+export function addReplaceItem(
+	menu: Menu,
+	ctx: SettingsSectionContext,
+	def: CalloutDefinition,
+	usage?: { fileCount: number; totalCount: number },
+): void {
+	if (usage?.fileCount === 0) return;
+	menu.addItem((item) => {
+		item
+			.setTitle(t("settings.replaceAction"))
+			.setIcon("arrow-left-right")
+			.setSection(ROW_MENU_SECTION.notes)
+			.onClick(() => {
+				void handleCalloutReplace(ctx, def);
+			});
+		disableWhenUnused(menu, item);
+	});
+}
+
+/**
  * The `⋯` item that turns a callout's uses in the vault into plain text, on
  * every kind of row. Shown when the callout is written somewhere, or when the
- * menu does not know yet; the action recounts before it asks.
+ * menu does not know yet; the action recounts before it asks. A count that
+ * lands on 0 after the menu opened greys it out.
  *
  * Its own item rather than a branch of Delete because the two do opposite
  * things: Delete removes the type and leaves every note alone, this rewrites
@@ -122,20 +151,23 @@ export function addConvertUsesItem(
 	usage?: { fileCount: number; totalCount: number },
 ): void {
 	if (usage?.fileCount === 0) return;
-	menu.addItem((item) =>
+	menu.addItem((item) => {
 		item
 			.setTitle(t("settings.convertUsesAction"))
 			.setIcon("eraser")
+			.setSection(ROW_MENU_SECTION.notes)
 			.onClick(() => {
 				void handleClearCalloutUsages(ctx, def);
-			}),
-	);
+			});
+		disableWhenUnused(menu, item);
+	});
 }
 
 /**
  * The `⋯` item that deletes the callout's definition, on a row whose
  * definition can actually go. Shown whether or not the callout is in use:
- * Delete never touches a note, so there is always something it can do.
+ * Delete never touches a note, so there is always something it can do. Red
+ * and last, in a section of its own.
  */
 export function addDeleteItem(
 	menu: Menu,
@@ -147,6 +179,8 @@ export function addDeleteItem(
 		item
 			.setTitle(t("settings.deleteAction"))
 			.setIcon("trash-2")
+			.setSection(ROW_MENU_SECTION.danger)
+			.setWarning(true)
 			.onClick(() => {
 				void handleCalloutDelete(ctx, def);
 			}),

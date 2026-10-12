@@ -123,6 +123,7 @@ export const fr: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Impossible de dupliquer le callout. Vérifiez l’état de l’enregistrement et réessayez.",
 	"settings.resetAction": "Réinitialiser par défaut",
 	"settings.makeFallbackAction": "Utiliser le style de secours par défaut",
+	"notice.fallbackStyleApplied": "« {{name}} » utilise désormais le style de secours par défaut.",
 	"settings.colorSwatchAria": "Accent : {{accent}} · Arrière-plan : {{bg}}",
 
 	// Settings — callouts the active theme styles

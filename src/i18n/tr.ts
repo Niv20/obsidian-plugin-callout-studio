@@ -174,6 +174,7 @@ export const tr: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Callout çoğaltılamadı. Kaydetme durumunu kontrol edip tekrar deneyin.",
 	"settings.resetAction": "Varsayılana sıfırla",
 	"settings.makeFallbackAction": "Varsayılan geri dönüş stilini kullan",
+	"notice.fallbackStyleApplied": "\"{{name}}\" artık varsayılan geri dönüş stilini kullanıyor.",
 
 	"settings.colorSwatchAria": "Vurgu: {{accent}} · Arka plan: {{bg}}",
 	// Settings — callouts the active theme styles

@@ -261,6 +261,7 @@ class MenuItemStub {
 	click: (() => Promise<void>) | undefined;
 	setTitle(value: string): this { this.title = value; return this; }
 	setIcon(value: string): this { this.icon = value; return this; }
+	setSection(): this { return this; }
 	onClick(callback: () => Promise<void>): this { this.click = callback; return this; }
 }
 

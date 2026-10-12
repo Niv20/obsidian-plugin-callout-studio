@@ -174,6 +174,7 @@ export const pt: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Não foi possível duplicar o callout. Verifique o estado da gravação e tente novamente.",
 	"settings.resetAction": "Redefinir para padrão",
 	"settings.makeFallbackAction": "Usar estilo de fallback padrão",
+	"notice.fallbackStyleApplied": "\"{{name}}\" agora usa o estilo de fallback padrão.",
 	"settings.colorSwatchAria": "Destaque: {{accent}} · Fundo: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts do seu tema",

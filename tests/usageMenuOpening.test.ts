@@ -75,6 +75,7 @@ function harness() {
 function fakeMenu() {
 	const item = {
 		setTitle() { return this; }, setIcon() { return this; }, onClick() { return this; },
+		setSection() { return this; }, setDisabled() { return this; },
 	};
 	let hide = (): void => {};
 	return {

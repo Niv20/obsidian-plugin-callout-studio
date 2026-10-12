@@ -175,6 +175,7 @@ export const ru: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Не удалось дублировать callout. Проверьте состояние сохранения и попробуйте снова.",
 	"settings.resetAction": "Сбросить до умолчания",
 	"settings.makeFallbackAction": "Использовать резервный стиль по умолчанию",
+	"notice.fallbackStyleApplied": "«{{name}}» теперь использует резервный стиль по умолчанию.",
 
 	"settings.colorSwatchAria": "Акцент: {{accent}} · Фон: {{bg}}",
 	// Settings — callouts the active theme styles

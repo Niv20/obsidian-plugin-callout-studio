@@ -239,13 +239,6 @@ describe("the retired personal-CSS handoff", () => {
 			assert.ok(!/settings\.externalCss|notice\.externalCss(?:On|Off)/.test(file.text));
 		}
 	});
-
-	it("does not leave an empty divider on an unmodified, unused built-in", () => {
-		assert.match(
-			readRepoFile("src/settings/sections/CalloutRowActions.ts"),
-			/if \(modified \|\| usage\?\.fileCount !== 0\) menu\.addSeparator\(\)/,
-		);
-	});
 });
 
 describe("taking a theme callout over is gone", () => {
@@ -409,7 +402,7 @@ describe("the ⋯ menu on a theme row", () => {
 		// callout is what the section below this one is for, and offering it
 		// from a theme row implied the new one would inherit something.
 		const src = readRepoFile("src/settings/sections/themeRowActions.ts");
-		for (const key of ["addUsageMenuItem", "settings.replaceAction", "addConvertUsesItem"]) {
+		for (const key of ["addUsageMenuItem", "addReplaceItem", "addConvertUsesItem"]) {
 			assert.ok(src.includes(key), `the menu lost ${key}`);
 		}
 		assert.ok(!src.includes("deriveCalloutAction"));

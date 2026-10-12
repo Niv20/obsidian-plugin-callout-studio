@@ -122,6 +122,7 @@ export const ar: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "تعذّر تكرار التنبيه. تحقّق من حالة الحفظ ثم حاول مرة أخرى.",
 	"settings.resetAction": "إعادة التعيين إلى الافتراضي",
 	"settings.makeFallbackAction": "استخدام النمط الاحتياطي الافتراضي",
+	"notice.fallbackStyleApplied": "«{{name}}» يستخدم الآن النمط الاحتياطي الافتراضي.",
 
 	"settings.colorSwatchAria": "التمييز: {{accent}} · الخلفية: {{bg}}",
 	// Settings — callouts the active theme styles

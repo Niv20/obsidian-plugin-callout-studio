@@ -4,6 +4,7 @@ import { createDuplicateCalloutDefinition, displayNameIdentity } from "../../man
 import { stableKeyOrder } from "../../utils/stableJson";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
+import { ROW_MENU_SECTION } from "./rowMenuSections";
 
 export function addDuplicateItem(
 	menu: Menu,
@@ -14,6 +15,7 @@ export function addDuplicateItem(
 	menu.addItem((item) => item
 		.setTitle(t("settings.duplicateAction"))
 		.setIcon("copy")
+		.setSection(ROW_MENU_SECTION.callout)
 		.onClick(() => handleCalloutDuplicate(ctx, def.id)));
 }
 

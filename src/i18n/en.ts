@@ -491,6 +491,7 @@ export const en: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Could not duplicate the callout. Check the saving status and try again.",
 	"settings.resetAction": "Reset to default",
 	"settings.makeFallbackAction": "Use default fallback style",
+	"notice.fallbackStyleApplied": '"{{name}}" now uses the default fallback style.',
 	"settings.colorSwatchAria": "Accent: {{accent}} · Background: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts from your theme",

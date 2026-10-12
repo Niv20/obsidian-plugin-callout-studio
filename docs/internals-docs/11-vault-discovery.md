@@ -235,8 +235,11 @@ scan without requesting another. Once ready, the added count fades in over
 180 ms using a document-fragment title; the action label stays visible. Counts
 already ready at opening do not animate, unchanged titles are not replaced, and
 reduced-motion preferences disable the fade. Partial scans retain an explicit
-incomplete label and are not retried within the same opening. Menus unsubscribe
-when hidden.
+incomplete label and are not retried within the same opening. A ready count of
+zero greys the item out (`setDisabled`), along with the note-rewriting items
+that were added before the count was known; see
+[settings menu groups](16-settings-ui-and-modals.md#callout-row-menu-groups).
+Menus unsubscribe when hidden.
 Views unsubscribe from both index and registry changes when closed.
 The list starts with 100 results and adds 100 per **Show more** action. Per-file
 heading counts cover the complete filtered query, including unloaded cards.
@@ -702,7 +705,8 @@ with it.
 
 `handleClearCalloutUsages` behind the `⋯` item **Convert uses to plain text**
 (`addConvertUsesItem`). Every row kind offers it: user, built-in and theme. It
-shows whenever the menu's count is not known to be zero.
+shows whenever the menu's count is not known to be zero, and is greyed out if
+that count lands on zero after the menu opened.
 
 ```text
 1. countCalloutUsages, fresh; incomplete scan or zero → return

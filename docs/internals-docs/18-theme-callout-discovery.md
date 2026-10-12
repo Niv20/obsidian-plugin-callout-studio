@@ -871,8 +871,11 @@ preview visually collapses its terminal blank editor row so the box ends with
 content, while retaining the underlying line as a safe caret target; every
 ordinary preview remains unchanged. Its `⋯` menu
 ([`themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts)) carries
-usage information, and - only when the callout is actually written somewhere -
-*Replace in vault* and *Convert uses to plain text*. Never *Delete*, which would
+usage information, then - only when the callout is actually written somewhere -
+*Replace in vault* and *Convert uses to plain text*, then *Duplicate* for a saved
+custom definition, each group behind its own divider (see
+[Callout row menu groups](16-settings-ui-and-modals.md#callout-row-menu-groups)).
+Never *Delete*, which would
 be a lie since the theme keeps supplying the type; `deleteRemovesRow`
 ([`rowOwnership.ts`](../../src/settings/sections/rowOwnership.ts)) is the single
 predicate behind that, and it answers the same way for a built-in. The convert

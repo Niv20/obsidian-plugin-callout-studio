@@ -122,6 +122,7 @@ export const ko: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "콜아웃을 복제할 수 없습니다. 저장 상태를 확인한 후 다시 시도하세요.",
 	"settings.resetAction": "기본값으로 재설정",
 	"settings.makeFallbackAction": "기본 폴백 스타일 사용",
+	"notice.fallbackStyleApplied": "\"{{name}}\"이(가) 이제 기본 폴백 스타일을 사용합니다.",
 
 	"settings.colorSwatchAria": "강조색: {{accent}} · 배경: {{bg}}",
 

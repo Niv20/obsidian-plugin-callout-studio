@@ -123,6 +123,7 @@ export const de: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Callout konnte nicht dupliziert werden. Prüfe den Speicherstatus und versuche es erneut.",
 	"settings.resetAction": "Auf Standard zurücksetzen",
 	"settings.makeFallbackAction": "Standard-Fallback-Stil verwenden",
+	"notice.fallbackStyleApplied": "„{{name}}“ verwendet jetzt den Standard-Fallback-Stil.",
 	"settings.colorSwatchAria": "Akzent: {{accent}} · Hintergrund: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts aus Ihrem Theme",

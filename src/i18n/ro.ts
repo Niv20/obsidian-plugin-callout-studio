@@ -174,6 +174,7 @@ export const ro: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Calloutul nu a putut fi duplicat. Verifică starea salvării și încearcă din nou.",
 	"settings.resetAction": "Resetează la implicit",
 	"settings.makeFallbackAction": "Utilizați stilul de rezervă implicit",
+	"notice.fallbackStyleApplied": "„{{name}}” folosește acum stilul de rezervă implicit.",
 
 	"settings.colorSwatchAria": "Accent: {{accent}} · Fundal: {{bg}}",
 	// Settings — callouts the active theme styles

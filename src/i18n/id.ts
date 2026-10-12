@@ -122,6 +122,7 @@ export const id: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Callout tidak dapat diduplikasi. Periksa status penyimpanan, lalu coba lagi.",
 	"settings.resetAction": "Reset ke default",
 	"settings.makeFallbackAction": "Gunakan gaya fallback default",
+	"notice.fallbackStyleApplied": "\"{{name}}\" sekarang memakai gaya fallback default.",
 
 	"settings.colorSwatchAria": "Aksen: {{accent}} · Latar belakang: {{bg}}",
 	// Settings — callouts the active theme styles

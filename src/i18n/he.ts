@@ -143,6 +143,7 @@ export const he: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "לא ניתן לשכפל את ה־callout. בדוק את מצב השמירה ונסה שוב.",
 	"settings.resetAction": "איפוס לברירת־מחדל",
 	"settings.makeFallbackAction": "החלת עיצוב ברירת־המחדל",
+	"notice.fallbackStyleApplied": "„{{name}}” משתמש עכשיו בעיצוב ברירת־המחדל.",
 
 	// Settings — Fallback callout
 	"settings.colorSwatchAria": "הדגשה: {{accent}} · רקע: {{bg}}",

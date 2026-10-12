@@ -122,6 +122,7 @@ export const fa: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "تکثیر callout ممکن نشد. وضعیت ذخیره‌سازی را بررسی کنید و دوباره امتحان کنید.",
 	"settings.resetAction": "بازنشانی به پیش‌فرض",
 	"settings.makeFallbackAction": "استفاده از سبک پشتیبان پیش‌فرض",
+	"notice.fallbackStyleApplied": "«{{name}}» اکنون از سبک پشتیبان پیش‌فرض استفاده می‌کند.",
 
 	"settings.colorSwatchAria": "برجسته: {{accent}} · پس‌زمینه: {{bg}}",
 	"settings.themeCalloutsHeading": "Callout های پوسته‌ی شما",

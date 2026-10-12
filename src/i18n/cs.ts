@@ -122,6 +122,7 @@ export const cs: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Callout se nepodařilo duplikovat. Zkontrolujte stav ukládání a zkuste to znovu.",
 	"settings.resetAction": "Obnovit výchozí",
 	"settings.makeFallbackAction": "Použít výchozí záložní styl",
+	"notice.fallbackStyleApplied": "„{{name}}“ nyní používá výchozí záložní styl.",
 
 	"settings.colorSwatchAria": "Akcent: {{accent}} · Pozadí: {{bg}}",
 	// Settings — callouts the active theme styles

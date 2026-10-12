@@ -19,12 +19,11 @@
  * the shared index. A saved custom definition also offers Duplicate, which
  * copies its stored Studio style under a new identity without changing this row.
  */
-import { setIcon, setTooltip } from "obsidian";
+import { setIcon, setTooltip, type Menu } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
-import { handleCalloutReplace } from "./calloutVaultActions";
-import { addConvertUsesItem } from "./rowOwnership";
+import { addConvertUsesItem, addReplaceItem } from "./rowOwnership";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
 import { openCalloutRowMenu } from "./calloutRowMenu";
 import { ThemeCalloutPreviewModal } from "../ThemeCalloutPreviewModal";
@@ -65,23 +64,19 @@ export async function openThemeRowMenu(
 	event: MouseEvent,
 	def: CalloutDefinition,
 ): Promise<void> {
-	return openCalloutRowMenu(ctx, event, (menu) => {
-		const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
-		menu.addSeparator();
-		addDuplicateItem(menu, ctx, def);
+	return openCalloutRowMenu(ctx, event, (menu) => buildThemeRowMenu(menu, ctx, def));
+}
 
-		if (usage?.fileCount !== 0) {
-			menu.addItem((item) =>
-				item
-					.setTitle(t("settings.replaceAction"))
-					.setIcon("arrow-left-right")
-					.onClick(() => {
-						void handleCalloutReplace(ctx, def);
-					}),
-			);
-		}
-		addConvertUsesItem(menu, ctx, def, usage);
-	});
+/** Find callouts ‖ Replace · Convert ‖ Duplicate, for a saved definition. */
+export function buildThemeRowMenu(
+	menu: Menu,
+	ctx: SettingsSectionContext,
+	def: CalloutDefinition,
+): void {
+	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
+	addReplaceItem(menu, ctx, def, usage);
+	addConvertUsesItem(menu, ctx, def, usage);
+	addDuplicateItem(menu, ctx, def);
 }
 
 /**

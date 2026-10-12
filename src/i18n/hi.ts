@@ -122,6 +122,7 @@ export const hi: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "कॉलआउट डुप्लिकेट नहीं हो सका। सेव करने की स्थिति जाँचें और फिर कोशिश करें।",
 	"settings.resetAction": "डिफ़ॉल्ट पर रीसेट करें",
 	"settings.makeFallbackAction": "डिफ़ॉल्ट फ़ॉलबैक स्टाइल उपयोग करें",
+	"notice.fallbackStyleApplied": "\"{{name}}\" अब डिफ़ॉल्ट फ़ॉलबैक स्टाइल उपयोग करता है।",
 
 	"settings.colorSwatchAria": "एक्सेंट: {{accent}} · पृष्ठभूमि: {{bg}}",
 	// Settings — callouts the active theme styles

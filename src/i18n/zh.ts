@@ -169,6 +169,7 @@ export const zh: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "无法复制 callout。请检查保存状态后重试。",
 	"settings.resetAction": "重置为默认值",
 	"settings.makeFallbackAction": "使用默认回退样式",
+	"notice.fallbackStyleApplied": "“{{name}}”现在使用默认回退样式。",
 
 	"settings.colorSwatchAria": "强调色：{{accent}} · 背景：{{bg}}",
 

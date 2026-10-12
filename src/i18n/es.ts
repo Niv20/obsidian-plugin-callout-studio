@@ -123,6 +123,7 @@ export const es: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "No se pudo duplicar el callout. Comprueba el estado del guardado e inténtalo de nuevo.",
 	"settings.resetAction": "Restablecer a predeterminado",
 	"settings.makeFallbackAction": "Usar estilo de reserva predeterminado",
+	"notice.fallbackStyleApplied": "«{{name}}» ahora usa el estilo de reserva predeterminado.",
 	"settings.colorSwatchAria": "Acento: {{accent}} · Fondo: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts de su tema",

@@ -119,6 +119,7 @@ export const ms: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Callout tidak dapat diduplikasi. Semak status penyimpanan dan cuba lagi.",
 	"settings.resetAction": "Set semula ke lalai",
 	"settings.makeFallbackAction": "Gunakan gaya sandaran lalai",
+	"notice.fallbackStyleApplied": "\"{{name}}\" kini menggunakan gaya sandaran lalai.",
 	"settings.colorSwatchAria": "Aksen: {{accent}} · Latar belakang: {{bg}}",
 
 	// Settings — callouts the active theme styles

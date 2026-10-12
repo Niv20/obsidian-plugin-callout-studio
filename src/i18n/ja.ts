@@ -122,6 +122,7 @@ export const ja: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "コールアウトを複製できませんでした。保存状態を確認して、もう一度お試しください。",
 	"settings.resetAction": "デフォルトにリセット",
 	"settings.makeFallbackAction": "デフォルトフォールバックスタイルを使用",
+	"notice.fallbackStyleApplied": "「{{name}}」はデフォルトのフォールバックスタイルを使用するようになりました。",
 
 	"settings.colorSwatchAria": "アクセント: {{accent}} · 背景: {{bg}}",
 

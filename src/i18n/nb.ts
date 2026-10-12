@@ -117,6 +117,7 @@ export const nb: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Kunne ikke duplisere callouten. Sjekk lagringsstatusen og prøv igjen.",
 	"settings.resetAction": "Tilbakestill til standard",
 	"settings.makeFallbackAction": "Bruk standard reservestil",
+	"notice.fallbackStyleApplied": "«{{name}}» bruker nå standard reservestil.",
 	"settings.colorSwatchAria": "Aksent: {{accent}} · Bakgrunn: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts fra temaet ditt",

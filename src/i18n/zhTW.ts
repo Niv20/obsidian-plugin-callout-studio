@@ -163,6 +163,7 @@ export const zhTW: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "無法複製 callout。請檢查儲存狀態後再試一次。",
 	"settings.resetAction": "重置為預設值",
 	"settings.makeFallbackAction": "使用預設備用樣式",
+	"notice.fallbackStyleApplied": "「{{name}}」現在使用預設備用樣式。",
 	"settings.colorSwatchAria": "強調色：{{accent}} · 背景：{{bg}}",
 
 	// Settings — callouts the active theme styles

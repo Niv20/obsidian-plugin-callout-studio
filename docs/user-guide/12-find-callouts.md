@@ -167,7 +167,8 @@ out until the list catches up with your edit.
 
 A callout's three-dot menu shows **Find callouts** with its total across all three
 formats. Select it to open those results. Definition menus include the type's
-aliases, so their occurrences contribute to the total.
+aliases, so their occurrences contribute to the total. When no note uses the
+callout, **Find callouts (0)** is greyed out, since there is nothing to open.
 
 When the count is already current, the menu opens immediately with the number.
 Otherwise it waits up to 200 milliseconds for the shared scan. If the count is

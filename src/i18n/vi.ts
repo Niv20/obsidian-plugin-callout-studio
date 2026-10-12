@@ -175,6 +175,7 @@ export const vi: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Không thể nhân bản callout. Hãy kiểm tra trạng thái lưu rồi thử lại.",
 	"settings.resetAction": "Đặt lại về mặc định",
 	"settings.makeFallbackAction": "Sử dụng kiểu dự phòng mặc định",
+	"notice.fallbackStyleApplied": "\"{{name}}\" hiện dùng kiểu dự phòng mặc định.",
 
 	"settings.colorSwatchAria": "Điểm nhấn: {{accent}} · Nền: {{bg}}",
 

@@ -174,6 +174,7 @@ export const th: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "ทำสำเนา callout ไม่ได้ โปรดตรวจสอบสถานะการบันทึกแล้วลองอีกครั้ง",
 	"settings.resetAction": "รีเซ็ตเป็นค่าเริ่มต้น",
 	"settings.makeFallbackAction": "ใช้สไตล์สำรองเริ่มต้น",
+	"notice.fallbackStyleApplied": "\"{{name}}\" ใช้สไตล์สำรองเริ่มต้นแล้ว",
 
 	"settings.colorSwatchAria": "จุดเน้น: {{accent}} · พื้นหลัง: {{bg}}",
 	// Settings — callouts the active theme styles

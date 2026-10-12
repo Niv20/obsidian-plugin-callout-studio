@@ -2,6 +2,15 @@
 
 Changes to a callout's color, icon, name, or ID take effect across the vault. Callout Studio updates the definition and, when necessary, rewrites matching note tokens so existing notes keep working.
 
+A callout's three-dot menu groups its actions, with a line between groups:
+
+1. **Find callouts**, with the number of uses.
+2. **Replace in vault…** and **Convert uses to plain text**, which change your notes.
+3. **Duplicate**, **Reset to default** or **Use default fallback style**, which change the callout itself.
+4. **Delete**, in red.
+
+A row shows only the actions that apply to it, and a group with nothing in it leaves no line. When the count shows that no note uses the callout, **Find callouts (0)** is greyed out. If the count arrives after the menu opened and it is 0, **Replace in vault…** and **Convert uses to plain text** are greyed out too.
+
 On desktop and tablet, a callout's three-dot menu closes when you scroll the
 settings list or resize the window. On a phone, Obsidian opens the menu at the
 bottom of the screen; it stays open as the keyboard closes and the page adjusts.

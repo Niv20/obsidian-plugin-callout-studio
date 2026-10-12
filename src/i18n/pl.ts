@@ -122,6 +122,7 @@ export const pl: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Nie udało się zduplikować callouta. Sprawdź stan zapisu i spróbuj ponownie.",
 	"settings.resetAction": "Resetuj do domyślnego",
 	"settings.makeFallbackAction": "Użyj domyślnego stylu zapasowego",
+	"notice.fallbackStyleApplied": "„{{name}}” używa teraz domyślnego stylu zapasowego.",
 
 	"settings.colorSwatchAria": "Akcent: {{accent}} · Tło: {{bg}}",
 	// Settings — callouts the active theme styles

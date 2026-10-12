@@ -123,6 +123,7 @@ export const it: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Impossibile duplicare il callout. Controlla lo stato del salvataggio e riprova.",
 	"settings.resetAction": "Ripristina predefinito",
 	"settings.makeFallbackAction": "Usa stile di fallback predefinito",
+	"notice.fallbackStyleApplied": "«{{name}}» ora usa lo stile di fallback predefinito.",
 	"settings.colorSwatchAria": "Accento: {{accent}} · Sfondo: {{bg}}",
 
 	// Settings — callouts the active theme styles

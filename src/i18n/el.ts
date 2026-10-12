@@ -117,6 +117,7 @@ export const el: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Δεν ήταν δυνατή η αντιγραφή του callout. Έλεγξε την κατάσταση αποθήκευσης και δοκίμασε ξανά.",
 	"settings.resetAction": "Επαναφορά στις προεπιλογές",
 	"settings.makeFallbackAction": "Χρήση προεπιλεγμένου εφεδρικού στυλ",
+	"notice.fallbackStyleApplied": "Το «{{name}}» χρησιμοποιεί τώρα το προεπιλεγμένο εφεδρικό στυλ.",
 	"settings.colorSwatchAria": "Έμφαση: {{accent}} · Φόντο: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts από το θέμα σας",

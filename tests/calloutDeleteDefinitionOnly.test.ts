@@ -231,6 +231,8 @@ describe("which rows offer which action", () => {
 		const item = {
 			setTitle(title: string) { titles.push(title); return item; },
 			setIcon() { return item; },
+			setSection() { return item; },
+			setWarning() { return item; },
 			onClick() { return item; },
 		};
 		const menu = { addItem(build: (i: typeof item) => void) { build(item); return menu; } };

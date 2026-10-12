@@ -383,7 +383,45 @@ list of saved palettes and no additional orphan groups.
 The row's **Use default fallback style** action uses the Lucide `rotate-ccw`
 icon, matching the built-in **Reset to default** action. It calls
 `CalloutRegistry.convertToFallback()` to follow the current fallback and
-subsequent changes to its style.
+subsequent changes to its style. The action asks nothing first, so
+`settings/sections/fallbackStyleAction.ts` ends it with a notice carrying
+**Undo**, as Delete does. Undo restores a clone of the row taken before the
+conversion. Because `registry.update` merges, it clears by name every field the
+fallback brought that the old row lacked, such as a gradient or text colors.
+It does nothing while saving is paused, and nothing once the row has moved on:
+deleted, renamed, edited (`customized`), or made the fallback itself.
+
+### Callout row menu groups
+
+All three row menus are built by plain functions: `buildBuiltInRowMenu` and
+`buildUserRowMenu` in `CalloutRowActions.ts`, and `buildThemeRowMenu` in
+`themeRowActions.ts`. Every item carries one of the four sections in
+`rowMenuSections.ts`, in this order:
+
+| Section | Items |
+| --- | --- |
+| `find` | **Find callouts (N)**, alone: the one item that leaves Settings |
+| `notes` | **Replace in vault…**, **Convert uses to plain text** |
+| `callout` | **Duplicate**, **Reset to default**, **Use default fallback style** |
+| `danger` | **Delete**, with `setWarning(true)` |
+
+Obsidian's `Menu.sort()` (read from 1.14.4) draws a divider between two
+top-level sections and keeps no empty section, so a row that offers nothing in
+a group gets no stray line. It orders sections by the first item added to
+each, so the builders add items in drawing order. A plain `addSeparator()` and
+an item with no section both land in an unsectioned bucket that sorts below
+every section, with no divider before it. That is why these menus use no
+`addSeparator()` and why `tests/calloutRowMenuGroups.test.ts` fails on an item
+without a section.
+
+When a finished scan shows that no note uses the callout, the usage item is
+greyed out with `setDisabled(true)`, keeping its "(0)" readable. A partial scan
+never counts as unused. **Replace in vault…** and **Convert uses to plain text**
+are left out when the count is already known to be zero. When they were added
+while the count was still unknown, `disableWhenUnused` (`usageMenuItem.ts`)
+attaches them to the usage item's subscription, which greys them out if the
+count lands on zero and lights them again if a use appears. Nothing is ever
+removed or regrouped once the menu is shown.
 
 ### Callout row menu lifetime
 
@@ -1977,7 +2015,9 @@ Splitting the action removed the reason for it:
 - **Delete** removes only the definition.
 - **Convert uses to plain text** only rewrites notes. It is its own `⋯` item
   (`addConvertUsesItem` in `rowOwnership.ts`).
-- **Replace in vault…** was already in the same menu.
+- **Replace in vault…** was already in the same menu (`addReplaceItem`, next to
+  it in the `notes` group; see
+  [Callout row menu groups](#callout-row-menu-groups)).
 
 Each is now a plain two-button `ConfirmModal`: Cancel plus a red **Delete** or
 **Convert**. The body is short sentences, one per line, joined with `\n`;

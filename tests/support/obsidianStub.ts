@@ -165,8 +165,17 @@ export class Editor {}
 export class PluginSettingTab {}
 /** Menus retain one hide callback, as Obsidian does; later registrations replace it. */
 export const createdMenus: Menu[] = [];
+/** What a stub menu item was told, in the order the builder added it. */
+export interface MenuItemRecord {
+	title: string | DocumentFragment;
+	titles: Array<string | DocumentFragment>;
+	section?: string;
+	warning: boolean;
+	disabled: boolean;
+	click?: () => unknown;
+}
 export class Menu extends Component {
-	readonly items: Array<{ title: string | DocumentFragment; titles: Array<string | DocumentFragment> }> = [];
+	readonly items: MenuItemRecord[] = [];
 	shown = false;
 	hideCalls = 0;
 	delayHideCallback = false;
@@ -177,13 +186,19 @@ export class Menu extends Component {
 	addItem(callback: (item: {
 		setTitle(title: string | DocumentFragment): unknown;
 		setIcon(icon: string): unknown;
+		setSection(section: string): unknown;
+		setWarning(warning: boolean): unknown;
+		setDisabled(disabled: boolean): unknown;
 		onClick(callback: () => unknown): unknown;
 	}) => void): this {
-		const record = { title: "" as string | DocumentFragment, titles: [] as Array<string | DocumentFragment> };
+		const record: MenuItemRecord = { title: "", titles: [], warning: false, disabled: false };
 		const item = {
 			setTitle(title: string | DocumentFragment) { record.title = title; record.titles.push(title); return this; },
 			setIcon(_icon: string) { return this; },
-			onClick(_callback: () => unknown) { return this; },
+			setSection(section: string) { record.section = section; return this; },
+			setWarning(warning: boolean) { record.warning = warning; return this; },
+			setDisabled(disabled: boolean) { record.disabled = disabled; return this; },
+			onClick(callback: () => unknown) { record.click = callback; return this; },
 		};
 		callback(item);
 		this.items.push(record);

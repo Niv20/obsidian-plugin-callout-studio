@@ -116,6 +116,7 @@ export const bg: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Типът callout не можа да бъде дублиран. Проверете състоянието на запазването и опитайте отново.",
 	"settings.resetAction": "Нулиране до стандартното",
 	"settings.makeFallbackAction": "Използване на стандартния резервен стил",
+	"notice.fallbackStyleApplied": "„{{name}}“ вече използва стандартния резервен стил.",
 	"settings.colorSwatchAria": "Акцент: {{accent}} · Фон: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout-и от вашата тема",

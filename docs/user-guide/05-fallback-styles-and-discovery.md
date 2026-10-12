@@ -39,7 +39,7 @@ A callout you delete while notes still use it becomes an unknown callout like an
 
 ## Apply or leave the fallback style
 
-To make an existing saved callout follow the fallback, open its three-dot menu and choose **Use default fallback style**, marked with a circular arrow. Its icon and color immediately match the fallback.
+To make an existing saved callout follow the fallback, open its three-dot menu and choose **Use default fallback style**, marked with a circular arrow. Its icon and color immediately match the fallback. To get its own design back, choose **Undo** in the notice that appears. Undo does nothing if you have edited the callout since.
 
 To make it independent again, edit any part of its design. The **Default fallback** label disappears, and later fallback changes no longer change that callout.
 

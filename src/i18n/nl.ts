@@ -123,6 +123,7 @@ export const nl: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "De callout kon niet worden gedupliceerd. Controleer de opslagstatus en probeer het opnieuw.",
 	"settings.resetAction": "Terugzetten naar standaard",
 	"settings.makeFallbackAction": "Standaard fallback-stijl gebruiken",
+	"notice.fallbackStyleApplied": "\"{{name}}\" gebruikt nu de standaard fallback-stijl.",
 	"settings.colorSwatchAria": "Accent: {{accent}} · Achtergrond: {{bg}}",
 
 	// Settings — callouts the active theme styles

@@ -123,6 +123,7 @@ export const hu: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "A callout másolása nem sikerült. Ellenőrizd a mentés állapotát, majd próbáld újra.",
 	"settings.resetAction": "Visszaállítás alapértelmezettre",
 	"settings.makeFallbackAction": "Alapértelmezett tartalékstílus használata",
+	"notice.fallbackStyleApplied": "„{{name}}” mostantól az alapértelmezett tartalékstílust használja.",
 
 	"settings.colorSwatchAria": "Kiemelés: {{accent}} · Háttér: {{bg}}",
 	// Settings — callouts the active theme styles

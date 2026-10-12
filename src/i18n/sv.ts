@@ -175,6 +175,7 @@ export const sv: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Det gick inte att duplicera callouten. Kontrollera sparstatusen och försök igen.",
 	"settings.resetAction": "Återställ till standard",
 	"settings.makeFallbackAction": "Använd standard reservstil",
+	"notice.fallbackStyleApplied": "”{{name}}” använder nu standard reservstil.",
 	"settings.colorSwatchAria": "Accent: {{accent}} · Bakgrund: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts från ditt tema",

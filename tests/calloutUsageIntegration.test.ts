@@ -36,6 +36,8 @@ function fakeMenu() {
 	const item = {
 		setTitle(value: string | DocumentFragment) { title = value; return this; },
 		setIcon() { return this; },
+		setSection() { return this; },
+		setDisabled() { return this; },
 		onClick(callback: () => unknown) { click = callback; return this; },
 	};
 	const menu = {
