@@ -118,7 +118,11 @@ export function createCalloutReadingPostProcessor(
 		const headingEnabled = host.settings.headingCallouts.enabled;
 		const inlineEnabled = host.settings.inlineCallouts.enabled;
 		if (!headingEnabled && !inlineEnabled) return;
-		if ((el.textContent ?? "").indexOf("[!") === -1) return;
+		// Without a `[!` in the text only the reference pass can have work: an
+		// aliased heading reference (`[[#[!tip]|Tip]]`) shows just its alias,
+		// and its token lives in the link target.
+		const hasToken = (el.textContent ?? "").indexOf("[!") !== -1;
+		if (!hasToken && !headingEnabled) return;
 
 		// Lazy section source: fetched at most once per block, and only when
 		// a candidate match makes it necessary.
@@ -137,8 +141,9 @@ export function createCalloutReadingPostProcessor(
 		// Both heading passes answer to the one setting, so one branch carries
 		// them — a second `if (headingEnabled)` reads as a second condition.
 		if (headingEnabled) {
-			const headings =
-				el.querySelectorAll<HTMLElement>("h1,h2,h3,h4,h5,h6");
+			const headings = hasToken
+				? el.querySelectorAll<HTMLElement>("h1,h2,h3,h4,h5,h6")
+				: [];
 			// Source lines are only authoritative when el is a single
 			// reading-view block (one heading). A multi-heading el is the
 			// print/PDF-export path, where getSectionInfo is null anyway —
@@ -150,7 +155,7 @@ export function createCalloutReadingPostProcessor(
 			}
 			transformHeadingRefLinks(el, host);
 		}
-		if (inlineEnabled) {
+		if (inlineEnabled && hasToken) {
 			// Content pills first: they absorb whole runs of already-rendered
 			// nodes, and PILL_EXCLUDE_SELECTOR then keeps the plain-pill pass
 			// out of everything they swallowed.
@@ -327,10 +332,13 @@ function paintedDefinition(
  *    bare heading text (`[!id] Title`) — TOC code blocks render through
  *    MarkdownRenderer, which runs this post-processor in both preview modes.
  *
- * For non-truncated references the href/data-href is left untouched. Aliased
- * links never match (their display text carries no token). Links inside a
- * native callout's title are skipped for parity with Live Preview, which
- * leaves whole `> [!id]` lines to Obsidian.
+ * 3. Aliased links (`[[#[!id]|Name]]`) display only the alias, so their text
+ *    carries no token — the target does. They get the icon in front of the
+ *    alias (see decorateAliasedHeadingRef), like Live Preview.
+ *
+ * For non-truncated references the href/data-href is left untouched. Links
+ * inside a native callout's title are skipped for parity with Live Preview,
+ * which leaves whole `> [!id]` lines to Obsidian.
  */
 function transformHeadingRefLinks(
 	el: HTMLElement,
@@ -349,7 +357,10 @@ function transformHeadingRefLinks(
 		const textNode = anchor.firstChild;
 		if (!textNode || textNode.nodeType !== Node.TEXT_NODE) continue;
 		const token = parseHeadingRefDisplayText(textNode.nodeValue ?? "");
-		if (!token) continue;
+		if (!token) {
+			decorateAliasedHeadingRef(anchor, href, host);
+			continue;
+		}
 
 		// Navigation repair — always, independent of the cosmetic cleaning
 		// below. A truncated token means Obsidian cut the link at the first
@@ -418,6 +429,37 @@ function transformHeadingRefLinks(
 			}
 		}
 	}
+}
+
+/**
+ * Put the callout's icon in front of an aliased heading reference — the link a
+ * title-less heading gets from the link suggester (`[[#[!tip]|Tip]]`), or any
+ * alias the user wrote. The token is read off the target's last segment, which
+ * must open with it; the anchor's text is the alias and stays as written.
+ * Idempotent: once the icon leads the anchor, the caller no longer finds a
+ * leading text node and never comes back here.
+ */
+function decorateAliasedHeadingRef(
+	anchor: HTMLAnchorElement,
+	href: string,
+	host: ReadingRenderHost,
+): void {
+	const { refCleanTitles, refShowIcon } = host.settings.headingCallouts;
+	if (!refCleanTitles || !refShowIcon) return;
+	const target = parseHeadingRefDisplayText(
+		href.slice(href.lastIndexOf("#") + 1),
+	);
+	if (!target || target.prefix !== "" || target.truncated) return;
+	const resolved = resolveCalloutDef(host.registry, target.rawId);
+	if (!shouldRenderToken(resolved) || !resolved.def) return;
+	const iconEl = buildCalloutTokenDom({
+		rawId: target.rawId,
+		registry: host.registry,
+		variant: "ref",
+		showName: false,
+	});
+	iconEl.classList.add(CSS_REF_TOKEN_LINK);
+	anchor.insertBefore(iconEl, anchor.firstChild);
 }
 
 /**

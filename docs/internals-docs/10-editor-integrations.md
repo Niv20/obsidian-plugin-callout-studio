@@ -776,5 +776,28 @@ suggestions itself and doesn't need cleanup. It cleans the `[[#` heading-link
 popup the same way the Outline pane is cleaned - stripping the raw `[!id]`
 token from the displayed suggestion text.
 
+It also wraps `selectSuggestion`, for one case: a title-less heading
+(`## [!tip]`). Core would insert `[[#[!tip]]]`, whose `]]]` run its own parser
+cuts at the first `]]` (see
+[Title-less and aliased reference links](09-render-roles.md#title-less-and-aliased-reference-links)).
+So after core's insert, the wrapper adds the callout's display name as the
+alias: `[[#[!tip]|Tip]]`.
+
+- It reads the suggest's `context` before calling the original, because core's
+  link suggester closes itself, clearing it, before it inserts.
+- It finds the link by the context's start minus two (the `[[`), not by the
+  caret, which sits wherever the accepting key left it.
+- It requires the exact shape `findWikilinkCalloutRefs` calls a title-less
+  reference closing its link. A `#` pressed to continue into a sub-heading, or
+  an alias core kept from the text after the caret, never matches.
+- Tab selects the inserted name, as core does for an alias it inserts. Enter or
+  a click leaves the caret after the link. A `|` key press is left alone, since
+  the user is about to write an alias of their own.
+- It does nothing while title cleaning is off, for a theme-owned callout, or for
+  a name an alias cannot carry: one containing `|`, `[[`, `]]` or a newline, or
+  ending in `]`. That last one would rebuild the `]]]` run.
+
+Core and wrapper write in two transactions, but one Undo takes back both.
+
 ---
 Next chapter: [11-vault-discovery.md](11-vault-discovery.md)

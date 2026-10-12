@@ -397,3 +397,142 @@ describe("what it refuses to touch", () => {
 		unchanged(h, heading("[!quiet] My Title"));
 	});
 });
+
+/* -------------------------------------------------------------------------- */
+/* Picking a title-less heading                                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * A one-line editor with the slice of Obsidian's `Editor` the pick uses, and
+ * a stand-in for core's link suggester: like core, it reads its context,
+ * clears it, and replaces `[[query` with the link it builds — `[[#` plus the
+ * heading text — leaving the caret after the `]]`.
+ */
+function pickHarness(key = "Enter") {
+	const h = harness();
+	const state = {
+		line: "",
+		caret: { line: 0, ch: 0 },
+		selection: null as null | [number, number],
+	};
+	const editor = {
+		getLine: () => state.line,
+		getCursor: () => ({ ...state.caret }),
+		replaceRange(insert: string, at: { line: number; ch: number }) {
+			state.line = state.line.slice(0, at.ch) + insert + state.line.slice(at.ch);
+		},
+		setSelection(
+			anchor: { line: number; ch: number },
+			head: { line: number; ch: number } = anchor,
+		) {
+			state.selection = [anchor.ch, head.ch];
+		},
+	};
+	const suggest: {
+		context: unknown;
+		selectSuggestion: (value: unknown, evt: unknown) => unknown;
+	} = {
+		context: null,
+		selectSuggestion: (value) => {
+			suggest.context = null;
+			state.line = `x [[#${(value as { heading: string }).heading}]]`;
+			state.caret = { line: 0, ch: state.line.length };
+			return "picked";
+		},
+	};
+	h.suggests.push(suggest);
+	return {
+		...h,
+		state,
+		pick(heading: string): unknown {
+			// `x [[` then the query — core's context starts after the `[[`.
+			suggest.context = { editor, start: { line: 0, ch: 4 } };
+			return suggest.selectSuggestion({ type: "heading", heading }, { key });
+		},
+		suggest,
+	};
+}
+
+describe("picking a title-less heading", () => {
+	it("writes the display name into the link as its alias", () => {
+		// `[[#[!quiet]]]` ends in a `]]]` run Obsidian's own parser cuts short;
+		// with the alias, Obsidian parses, shows and follows the link itself.
+		const h = pickHarness();
+		addCallout(h.registry);
+		h.decorator.install([]);
+
+		assert.strictEqual(h.pick("[!quiet]"), "picked");
+		assert.strictEqual(h.state.line, "x [[#[!quiet]|Quiet]]");
+		assert.deepStrictEqual(h.state.selection, [21, 21], "caret after the link");
+	});
+
+	it("selects the name after a Tab, ready to overtype — as core does for an alias", () => {
+		const h = pickHarness("Tab");
+		addCallout(h.registry);
+		h.decorator.install([]);
+		h.pick("[!quiet]");
+
+		assert.strictEqual(h.state.line, "x [[#[!quiet]|Quiet]]");
+		assert.deepStrictEqual(h.state.selection, [14, 19]);
+	});
+
+	it("uses what the user wrote when the id is unknown", () => {
+		const h = pickHarness();
+		h.decorator.install([]);
+		h.pick("[!mystery]");
+
+		assert.strictEqual(h.state.line, "x [[#[!mystery]|mystery]]");
+	});
+
+	it("leaves a heading with a title of its own exactly as core inserted it", () => {
+		const h = pickHarness();
+		addCallout(h.registry);
+		h.decorator.install([]);
+		h.pick("[!quiet] My Title");
+
+		assert.strictEqual(h.state.line, "x [[#[!quiet] My Title]]");
+		assert.strictEqual(h.state.selection, null);
+	});
+
+	it("leaves the link alone while title cleaning is off", () => {
+		const h = pickHarness();
+		addCallout(h.registry);
+		h.registry.settings.headingCallouts.refCleanTitles = false;
+		h.decorator.install([]);
+		h.pick("[!quiet]");
+
+		assert.strictEqual(h.state.line, "x [[#[!quiet]]]");
+	});
+
+	it("leaves the link alone for a callout the theme owns", () => {
+		const h = pickHarness();
+		addCallout(h.registry);
+		h.registry.setThemeOwnedIds(new Set(["quiet"]));
+		h.decorator.install([]);
+		h.pick("[!quiet]");
+
+		assert.strictEqual(h.state.line, "x [[#[!quiet]]]");
+	});
+
+	it("leaves the link alone when the name would break the alias", () => {
+		// A trailing `]` rebuilds the `]]]` run; a `|` would split the link.
+		for (const displayName of ["Notes [1]", "A | B"]) {
+			const h = pickHarness();
+			addCallout(h.registry, { displayName });
+			h.decorator.install([]);
+			h.pick("[!quiet]");
+
+			assert.strictEqual(h.state.line, "x [[#[!quiet]]]", displayName);
+		}
+	});
+
+	it("puts selectSuggestion back on uninstall", () => {
+		const h = pickHarness();
+		const original = h.suggest.selectSuggestion;
+		h.decorator.install([]);
+		assert.notStrictEqual(h.suggest.selectSuggestion, original);
+
+		h.decorator.uninstall();
+		assert.strictEqual(h.suggest.selectSuggestion, original);
+	});
+});

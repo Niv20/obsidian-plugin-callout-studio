@@ -268,6 +268,51 @@ bypass the freeze entirely - deferring it (rather than ignoring the freeze)
 can **lose the reveal outright**, not just delay it, if core's own mousedown
 flag hasn't cleared by the time the safety-net timer fires.
 
+### Title-less and aliased reference links
+
+A link to a title-less heading, `[[#[!tip]]]`, ends in a `]]]` run that
+Obsidian's parser cuts at the first `]]`. Left alone, it reads three ways: the
+raw link while the caret is inside it, a half-parsed `#[!tip]` (core rendering
+the link it thinks ends one `]` early) while the caret sits just after it, and
+the rendered link elsewhere. So the link suggester never writes that shape
+any more: picking a title-less heading writes `[[#[!tip]|Tip]]`, the
+callout's display name as an alias (see
+[`LinkSuggestDecorator`](10-editor-integrations.md#linksuggestdecorator)).
+Obsidian parses, shows and follows that link natively, with the same two
+states as any link.
+
+An aliased link shows only its alias; Obsidian hides the target and the `|`.
+When the target's last segment opens with a callout token, Live Preview puts a
+zero-width `CalloutTokenWidget` ("ref" variant) at the alias start, and reading
+view's `decorateAliasedHeadingRef` prepends the same icon inside the anchor.
+That gives icon + text, matching a titled reference. Reading view has to run
+this pass even for a block whose text has no `[!`, since the token lives only
+in the anchor's `data-href`. A TOC-style alias that opens with a token of its
+own is drawn by its alias-side ref, so it never gets two icons. The ref icon's
+click handler matches its link by the link's whole range, not the token's,
+because the alias icon does not sit on the token.
+
+A `[[#[!tip]]]` written by hand, or by an older version, still gets the old
+treatment. Live Preview replaces the **whole link** with one
+`HeadingRefLinkWidget` (icon + display name). That replace
+opens at the link's `[[`, the same offset where core's own replace hides the
+brackets. Two replaced ranges that start together are tie-broken by
+precedence, and core's decorations come before a plugin's at the same level.
+
+Core winning that tie is not merely cosmetic. A full redraw of the line still
+draws the widget after core's hidden `[[`. A partial redraw starts at the end
+of core's hide and treats the widget as already drawn. That happens when only
+this plugin's set changed, such as the caret leaving the link with Enter right
+after a link-suggest pick. Nothing was drawn and the line went blank until the
+caret moved in and back out.
+
+So `buildDecorations` returns two sets. Whole-link replacements go in
+`wholeLinks`, which the plugin `provide`s at `Prec.highest`. Everything else
+stays in `decorations` at default precedence. The widget then always opens the
+link, and core's hides inside it are skipped. Only this one set is raised
+because precedence also decides how mark decorations nest. Raising the heading
+title mark, for example, would wrap it outside core's header spans.
+
 ### `refreshAllCalloutEditors()` - why registry edits need an explicit nudge
 
 Registry mutations (colour edits, renames, new definitions, settings toggles)

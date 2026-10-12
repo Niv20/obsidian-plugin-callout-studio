@@ -16,6 +16,9 @@
  *   in which case the raw text is revealed for editing. A pill carrying a
  *   `{…}` payload is replaced WHOLE, payload included, which is what keeps it a
  *   single indivisible element (see CalloutContentPillWidget).
+ * - Title-less reference link (`[[#[!id]]]`) → ONE replace widget over the
+ *   whole link, in its own set at the highest precedence (see
+ *   BuiltDecorations.wholeLinks for why it must outrank core).
  * - Native `> [!id]` headers, code, math and frontmatter are never touched.
  *
  * Active in Live Preview only (source mode shows raw markdown, matching how
@@ -23,12 +26,12 @@
  */
 import {
 	Decoration,
+	EditorView,
 	ViewPlugin,
 	type DecorationSet,
-	type EditorView,
 	type ViewUpdate,
 } from "@codemirror/view";
-import { RangeSetBuilder, type EditorSelection } from "@codemirror/state";
+import { Prec, RangeSetBuilder, type EditorSelection } from "@codemirror/state";
 import { syntaxTree } from "@codemirror/language";
 import { editorInfoField, editorLivePreviewField, livePreviewState } from "obsidian";
 import { notifySidebarEditorSelection } from "../../ui/sidebarSelection";
@@ -75,6 +78,27 @@ export interface LivePreviewHost {
 
 const NO_FOLDS: ReadonlySet<number> = new Set();
 
+/** One rebuild's output: two sets, because they need different precedence. */
+interface BuiltDecorations {
+	decorations: DecorationSet;
+	/**
+	 * Whole-link replacements of title-less references (`[[#[!id]]]`).
+	 *
+	 * Each one opens at the link's `[[`, the exact offset where core's own
+	 * replace hides those brackets. Two replaced ranges starting together are
+	 * tie-broken by precedence, and at default precedence core's set comes
+	 * first: its two-character hide wins and ours is treated as continuing
+	 * from before it. A full redraw of the line still draws our widget after
+	 * the hidden `[[`. A partial one — the caret leaving the link with Enter, so
+	 * only our set changed — starts at the end of core's hide and drops our
+	 * widget as "already drawn". The whole link was hidden, nothing replaced
+	 * it, and the line stayed blank until the caret went in and back out.
+	 * Prec.highest makes this set win the tie, so the widget always opens the
+	 * link and core's hides inside it are skipped.
+	 */
+	wholeLinks: DecorationSet;
+}
+
 /** Syntax-tree node names whose content must never be decorated. */
 const SKIP_NODE_RE = /codeblock|frontmatter|yaml|inline-code|math|comment/i;
 
@@ -86,7 +110,9 @@ function isSpaceAt(text: string, i: number): boolean {
 export function createCalloutViewPlugin(host: LivePreviewHost) {
 	const plugin = ViewPlugin.fromClass(
 		class {
-			decorations: DecorationSet;
+			decorations: DecorationSet = Decoration.none;
+			/** See BuiltDecorations.wholeLinks. */
+			wholeLinks: DecorationSet = Decoration.none;
 			/**
 			 * Raw-syntax reveal is frozen while the left mouse button is held
 			 * (Obsidian's livePreviewState.mousedown). Core defers its own
@@ -124,12 +150,7 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 			constructor(private readonly view: EditorView) {
 				this.selection = view.state.selection;
 				this.focused = view.hasFocus;
-				this.decorations = buildDecorations(
-					view,
-					host,
-					this.selection,
-					this.focused,
-				);
+				this.rebuild(view);
 				this.ownerDoc = view.dom.ownerDocument;
 				this.removeContextClickGuard = registerCalloutContextClickGuard(view.dom);
 				// Registry edits don't touch the document, so this view only
@@ -231,14 +252,20 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 					((update.selectionSet || update.focusChanged) &&
 						!mousedown)
 				) {
-					this.decorations = buildDecorations(
-						update.view,
-						host,
-						this.selection,
-						this.focused,
-					);
+					this.rebuild(update.view);
 				}
 				this.wasMousedown = mousedown;
+			}
+
+			private rebuild(view: EditorView): void {
+				const built = buildDecorations(
+					view,
+					host,
+					this.selection,
+					this.focused,
+				);
+				this.decorations = built.decorations;
+				this.wholeLinks = built.wholeLinks;
 			}
 
 			destroy(): void {
@@ -255,7 +282,15 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 				);
 			}
 		},
-		{ decorations: (v) => v.decorations },
+		{
+			decorations: (v) => v.decorations,
+			provide: (p) =>
+				Prec.highest(
+					EditorView.decorations.of(
+						(view) => view.plugin(p)?.wholeLinks ?? Decoration.none,
+					),
+				),
+		},
 	);
 	return plugin;
 }
@@ -267,17 +302,19 @@ function buildDecorations(
 	selection: EditorSelection,
 	/** Frozen snapshot of `view.hasFocus`, for the same reason. */
 	focused: boolean,
-): DecorationSet {
+): BuiltDecorations {
+	const none = { decorations: Decoration.none, wholeLinks: Decoration.none };
 	const headingEnabled = host.settings.headingCallouts.enabled;
 	const inlineEnabled = host.settings.inlineCallouts.enabled;
-	if (!headingEnabled && !inlineEnabled) return Decoration.none;
+	if (!headingEnabled && !inlineEnabled) return none;
 	// Live Preview only. The `false` default matters: nested sub-editors
 	// (e.g. table cells) may lack the field entirely, and field() would
 	// throw without it.
 	if (!view.state.field(editorLivePreviewField, false)) {
-		return Decoration.none;
+		return none;
 	}
 	const builder = new RangeSetBuilder<Decoration>();
+	const linkBuilder = new RangeSetBuilder<Decoration>();
 	const doc = view.state.doc;
 	const tree = syntaxTree(view.state);
 	// Owning file, for resolving links and embeds inside a content pill's
@@ -322,6 +359,7 @@ function buildDecorations(
 			if (line.text.indexOf("[!") !== -1) {
 				decorateLine(
 					builder,
+					linkBuilder,
 					view,
 					host,
 					tree,
@@ -340,11 +378,16 @@ function buildDecorations(
 			pos = line.to + 1;
 		}
 	}
-	return builder.finish();
+	return {
+		decorations: builder.finish(),
+		wholeLinks: linkBuilder.finish(),
+	};
 }
 
 function decorateLine(
 	builder: RangeSetBuilder<Decoration>,
+	/** BuiltDecorations.wholeLinks, filled in line order like `builder`. */
+	linkBuilder: RangeSetBuilder<Decoration>,
 	view: EditorView,
 	host: LivePreviewHost,
 	tree: ReturnType<typeof syntaxTree>,
@@ -568,8 +611,8 @@ function decorateLine(
 	}
 
 	// Index into `midLine` where the current link's ref entries begin; a
-	// whole-link replacement drops that link's earlier token entries, since
-	// overlapping replace decorations are illegal in one RangeSet.
+	// whole-link replacement drops that link's earlier token entries — it
+	// draws the whole link itself, nested `#[!a]#[!b]` tokens included.
 	let curLinkFrom = -1;
 	let curLinkStartIdx = 0;
 
@@ -578,10 +621,6 @@ function decorateLine(
 			curLinkFrom = ref.linkFrom;
 			curLinkStartIdx = midLine.length;
 		}
-		// Aliased links display only the alias — Obsidian hides the target,
-		// so target-side tokens stay skipped; alias-side tokens (TOC-plugin
-		// links) render like their target-side counterparts.
-		if (ref.hasAlias && !ref.inAlias) continue;
 		// Same hand-off as the token loop above: the link keeps its plain text.
 		if (!shouldRenderToken(resolveCalloutDef(host.registry, ref.rawId))) {
 			continue;
@@ -591,6 +630,43 @@ function decorateLine(
 		if (
 			selectionTouches(lineFrom + ref.linkFrom, lineFrom + ref.linkTo)
 		) {
+			continue;
+		}
+		// Aliased link: Obsidian displays only the alias, hiding the target and
+		// the `|`. A token opening the target's last segment still names the
+		// heading's callout, so its icon stands in front of the alias — the
+		// same icon + text a titled reference shows (it is also what a
+		// title-less heading's link carries; see LinkSuggestDecorator). An
+		// alias opening with a token of its own (TOC-plugin links) is drawn by
+		// its alias-side entry instead.
+		if (ref.hasAlias && !ref.inAlias) {
+			const aliasFrom = lineText.indexOf("|", ref.linkFrom + 2) + 1;
+			if (
+				refSettings.refShowIcon &&
+				aliasFrom < ref.linkTo - 2 &&
+				!lineText.slice(ref.to, aliasFrom).includes("#") &&
+				!refs.some((r) => r.linkFrom === ref.linkFrom && r.inAlias) &&
+				!excludedEditorRange(
+					view.state,
+					lineFrom + ref.from,
+					lineFrom + ref.to,
+				)
+			) {
+				midLine.push({
+					from: lineFrom + aliasFrom,
+					to: lineFrom + aliasFrom,
+					deco: Decoration.widget({
+						side: 1,
+						widget: new CalloutTokenWidget(
+							host.app,
+							ref.rawId,
+							host.registry,
+							"ref",
+							false,
+						),
+					}),
+				});
+			}
 			continue;
 		}
 		// Same-file reference (`[[#[!id] …]]`): the token opens the target, so
@@ -618,10 +694,13 @@ function decorateLine(
 			const inner = lineText.slice(ref.linkFrom + 2, ref.linkTo - 2);
 			const pipeIdx = inner.indexOf("|");
 			midLine.length = curLinkStartIdx;
-			midLine.push({
-				from: lineFrom + ref.linkFrom,
-				to: lineFrom + ref.linkTo,
-				deco: Decoration.replace({
+			// Its own set, not `midLine`: it opens where core hides the `[[`,
+			// and only precedence decides which of the two is drawn there (see
+			// BuiltDecorations.wholeLinks).
+			linkBuilder.add(
+				lineFrom + ref.linkFrom,
+				lineFrom + ref.linkTo,
+				Decoration.replace({
 					widget: new HeadingRefLinkWidget(
 						host.app,
 						ref.rawId,
@@ -631,7 +710,7 @@ function decorateLine(
 						refSettings.refShowIcon,
 					),
 				}),
-			});
+			);
 			continue;
 		}
 

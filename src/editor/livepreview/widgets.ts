@@ -163,11 +163,11 @@ export class CalloutTokenWidget extends WidgetType {
 		// Ref tokens (inside wikilinks): clicking the icon follows the link,
 		// like clicking the link itself (editing stays available through the
 		// title text around the icon, which reveals the raw link on click).
-		// The target is re-derived from the live document at click time —
-		// posAtDOM may resolve to either edge of the replaced range, so the
-		// ref is matched by token range (minus one: the range may include the
-		// leading same-file `#`). Stopped from bubbling: nothing may move the
-		// caret, we fully take over the click.
+		// The target is re-derived from the live document at click time, from
+		// whichever link holds the icon: posAtDOM may resolve to either edge
+		// of a replaced token, and an aliased link's icon is not on its token
+		// at all but in front of the alias. Stopped from bubbling: nothing may
+		// move the caret, we fully take over the click.
 		if (this.variant === "ref") {
 			el.addEventListener("mousedown", (evt) => {
 				if (evt.button !== 0) return; // left click only; right-click → context menu
@@ -177,7 +177,7 @@ export class CalloutTokenWidget extends WidgetType {
 				const line = view.state.doc.lineAt(pos);
 				const rel = pos - line.from;
 				const ref = findWikilinkCalloutRefs(line.text).find(
-					(r) => rel >= r.from - 1 && rel <= r.to,
+					(r) => rel > r.linkFrom && rel < r.linkTo,
 				);
 				if (!ref) return;
 				const inner = line.text.slice(ref.linkFrom + 2, ref.linkTo - 2);

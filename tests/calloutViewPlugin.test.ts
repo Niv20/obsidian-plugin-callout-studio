@@ -32,10 +32,10 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { EditorState, StateEffect } from "@codemirror/state";
+import { EditorState, RangeSet, StateEffect } from "@codemirror/state";
 import type { Extension, TransactionSpec } from "@codemirror/state";
-import { Decoration } from "@codemirror/view";
-import type { DecorationSet, EditorView } from "@codemirror/view";
+import { Decoration, EditorView } from "@codemirror/view";
+import type { DecorationSet } from "@codemirror/view";
 import { codeFolding, foldEffect } from "@codemirror/language";
 // Listed first: importing it installs the DOM globals before anything under
 // test loads (see tests/support/fakeDom.ts).
@@ -56,6 +56,7 @@ import {
 	CalloutContentPillWidget,
 	CalloutTokenWidget,
 	HeadingFoldArrowWidget,
+	HeadingRefLinkWidget,
 } from "../src/editor/livepreview/widgets";
 import {
 	CSS_HEADING_HIDE_MARKS,
@@ -71,6 +72,7 @@ type Host = Parameters<typeof createCalloutViewPlugin>[0];
 
 interface PluginInstance {
 	decorations: DecorationSet;
+	wholeLinks: DecorationSet;
 	update(update: unknown): void;
 	destroy(): void;
 }
@@ -129,6 +131,8 @@ class FakeView {
 interface Harness {
 	registry: Registry;
 	view: FakeView;
+	/** The ViewPlugin itself — the key `view.plugin()` is asked for. */
+	plugin: Extension;
 	instance: PluginInstance;
 	handleEvent(type: string, target: FakeElement, button?: number): boolean;
 	/** `[from, to, decoration]` for every decoration currently emitted. */
@@ -167,7 +171,7 @@ function harness(
 		extensions: options.extensions ?? [editorLivePreviewField, codeFolding()],
 	});
 	const view = new FakeView(state);
-	const plugin = createCalloutViewPlugin(host) as unknown as {
+	const plugin = createCalloutViewPlugin(host) as unknown as Extension & {
 		create(view: EditorView): PluginInstance;
 	};
 	const instance = plugin.create(view.asView);
@@ -187,6 +191,7 @@ function harness(
 	return {
 		registry,
 		view,
+		plugin,
 		instance,
 		handleEvent: (type, target, button = 2) => {
 			const event = new Event(type, { cancelable: true });
@@ -489,6 +494,127 @@ describe("inline pills", () => {
 			widgetOf(replaced[0]?.[2] as Decoration) instanceof
 				CalloutContentPillWidget,
 		);
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* Title-less reference links                                                  */
+/* -------------------------------------------------------------------------- */
+
+/** `[from, to, widget]` for every decoration in one set. */
+const ranges = (set: DecorationSet): Array<[number, number, unknown]> => {
+	const out: Array<[number, number, unknown]> = [];
+	set.between(0, Number.MAX_SAFE_INTEGER, (from, to, deco) => {
+		out.push([from, to, widgetOf(deco)]);
+	});
+	return out;
+};
+
+describe("title-less reference links", () => {
+	// `[[#[!tip]]]` spans 2..13. Core cuts the link at the first `]]`, so the
+	// plugin replaces the whole link with a widget of its own.
+	const doc = "x [[#[!tip]]] y";
+
+	it("replaces the whole link, in a set of its own", () => {
+		const h = harness(doc, { selection: doc.length });
+		const whole = ranges(h.instance.wholeLinks);
+
+		assert.strictEqual(whole.length, 1);
+		assert.deepStrictEqual(whole[0]?.slice(0, 2), [2, 13]);
+		assert.ok(whole[0]?.[2] instanceof HeadingRefLinkWidget);
+		assert.deepStrictEqual(h.decorations(), []);
+	});
+
+	it("reveals the raw link while the selection touches it", () => {
+		const h = harness(doc, { selection: 6 });
+		assert.deepStrictEqual(ranges(h.instance.wholeLinks), []);
+	});
+
+	it("outranks a replace core opens at the same offset", () => {
+		// Core hides the `[[` with a replace starting exactly where the widget
+		// does. Whichever set ranks first is drawn there; when it was core's,
+		// a partial redraw dropped the widget and left the link blank.
+		const h = harness(doc, { selection: doc.length });
+		const coreHide = Decoration.set(Decoration.replace({}).range(2, 4));
+		const state = EditorState.create({
+			doc,
+			extensions: [EditorView.decorations.of(coreHide), h.plugin],
+		});
+		const view = {
+			plugin: (key: unknown) => (key === h.plugin ? h.instance : null),
+		} as unknown as EditorView;
+		const sets = state
+			.facet(EditorView.decorations)
+			.map((source) => (typeof source === "function" ? source(view) : source));
+
+		const points: Array<[number, number, unknown]> = [];
+		RangeSet.spans(sets, 0, doc.length, {
+			span: () => {},
+			point: (from, to, deco) => {
+				points.push([from, to, widgetOf(deco)]);
+			},
+		});
+		assert.strictEqual(points.length, 1);
+		assert.deepStrictEqual(points[0]?.slice(0, 2), [2, 13]);
+		assert.ok(points[0]?.[2] instanceof HeadingRefLinkWidget);
+	});
+});
+
+describe("aliased reference links", () => {
+	// What a pick of a title-less heading inserts. Obsidian parses it cleanly
+	// and shows only the alias, hiding `[[`, the target and the `|` (2..12).
+	const doc = "x [[#[!tip]|Tip]] y";
+
+	it("puts the callout's icon in front of the alias", () => {
+		const h = harness(doc, { selection: doc.length });
+		const decos = h.decorations();
+
+		assert.strictEqual(decos.length, 1);
+		const [from, to, deco] = decos[0] as [number, number, Decoration];
+		assert.deepStrictEqual([from, to], [12, 12]);
+		assert.ok(widgetOf(deco) instanceof CalloutTokenWidget);
+		assert.deepStrictEqual(ranges(h.instance.wholeLinks), []);
+	});
+
+	it("does so for an alias the user wrote over a titled reference too", () => {
+		const titled = "[[#[!tip] Read me|Here]] y";
+		const h = harness(titled, { selection: titled.length });
+
+		assert.deepStrictEqual(
+			h.decorations().map(([from, to]) => [from, to]),
+			[[18, 18]],
+		);
+	});
+
+	it("draws nothing while the selection touches the link", () => {
+		const h = harness(doc, { selection: 17 });
+		assert.deepStrictEqual(h.decorations(), []);
+	});
+
+	it("draws nothing while reference icons are off", () => {
+		const h = harness(doc, {
+			selection: doc.length,
+			configure: (registry) => {
+				registry.settings.headingCallouts.refShowIcon = false;
+			},
+		});
+		assert.deepStrictEqual(h.decorations(), []);
+	});
+
+	it("leaves a link whose heading is not the callout one", () => {
+		// The last segment is a plain sub-heading below the callout heading.
+		const nested = "[[#[!tip] A#Sub|Here]] y";
+		const h = harness(nested, { selection: nested.length });
+		assert.deepStrictEqual(h.decorations(), []);
+	});
+
+	it("leaves a TOC-style alias to the token it carries itself", () => {
+		const toc = "[[#[!tip] A|[!tip] A]] y";
+		const h = harness(toc, { selection: toc.length });
+		const decos = h.decorations();
+
+		assert.strictEqual(decos.length, 1, "one icon, not two");
+		assert.strictEqual(decos[0]?.[0], 12, "on the alias's own token");
 	});
 });
 

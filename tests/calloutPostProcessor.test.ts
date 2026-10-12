@@ -580,6 +580,63 @@ describe("heading references — display cleaning", () => {
 	});
 });
 
+/** `[[#[!quiet]|Quiet]]` — what a pick of a title-less heading inserts. */
+const ALIASED_LINK =
+	`<p><a class="internal-link" data-href="#[!quiet]" href="#[!quiet]">` +
+	`Quiet</a></p>`;
+
+describe("heading references — aliased links", () => {
+	it("puts the icon in front of the alias, which stays as written", () => {
+		const h = withQuiet();
+		const anchor = one(h.render(ALIASED_LINK), "a");
+
+		assert.strictEqual(anchor.textContent, "Quiet");
+		const icon = one(anchor, `.${CSS_REF_TOKEN}`);
+		assert.ok(hasClass(icon, CSS_REF_TOKEN_LINK));
+		assert.strictEqual(anchor.firstChild, icon);
+		assert.strictEqual(anchor.getAttribute("data-href"), "#[!quiet]");
+	});
+
+	it("does so for any alias over a callout heading", () => {
+		const h = withQuiet();
+		const anchor = one(
+			h.render(
+				`<p><a class="internal-link" data-href="Note#[!quiet] My Title">Read this</a></p>`,
+			),
+			"a",
+		);
+
+		assert.strictEqual(anchor.textContent, "Read this");
+		assert.ok(anchor.querySelector(`.${CSS_REF_TOKEN}`));
+	});
+
+	it("draws one icon, however often it runs", () => {
+		const h = withQuiet();
+		const root = h.render(ALIASED_LINK);
+		h.run(root);
+
+		assert.strictEqual(root.querySelectorAll(`.${CSS_REF_TOKEN}`).length, 1);
+	});
+
+	it("draws none while reference icons or title cleaning are off", () => {
+		for (const key of ["refShowIcon", "refCleanTitles"] as const) {
+			const h = withQuiet();
+			h.settings.headingCallouts[key] = false;
+			const anchor = one(h.render(ALIASED_LINK), "a");
+
+			assert.strictEqual(anchor.querySelector(`.${CSS_REF_TOKEN}`), null, key);
+		}
+	});
+
+	it("draws none for a callout the theme owns", () => {
+		const h = withQuiet();
+		h.registry.setThemeOwnedIds(new Set(["quiet"]));
+		const anchor = one(h.render(ALIASED_LINK), "a");
+
+		assert.strictEqual(anchor.querySelector(`.${CSS_REF_TOKEN}`), null);
+	});
+});
+
 describe("heading references — what it leaves alone", () => {
 	it("a link inside a native callout's title, even for navigation", () => {
 		// Live Preview leaves whole `> [!id]` lines to Obsidian, so reading view
@@ -593,16 +650,16 @@ describe("heading references — what it leaves alone", () => {
 		assert.strictEqual(one(root, "a").textContent, "#[!quiet");
 	});
 
-	it("an aliased link, whose display text carries no token", () => {
+	it("an aliased link to a heading that is not a callout", () => {
 		const h = withQuiet();
 		const anchor = one(
 			h.render(
-				`<p><a class="internal-link" data-href="#[!quiet] My Title">Read this</a></p>`,
+				`<p><a class="internal-link" data-href="#[!quiet] A#Sub">Read this</a></p>`,
 			),
 			"a",
 		);
 
-		assert.strictEqual(anchor.textContent, "Read this");
+		assert.strictEqual(anchor.querySelector(`.${CSS_REF_TOKEN}`), null);
 	});
 
 	it("a link with no heading anchor at all", () => {

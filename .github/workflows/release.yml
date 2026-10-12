@@ -115,9 +115,15 @@ jobs:
             # metadata stylesheet, leaving a word to the user's own snippet,
             # and the palette-word and rename guards — 2.2 KB over the build
             # before them, which leaves the headroom about where it was.
+            # Raised by 4 KiB for links to a title-less heading callout: the
+            # link suggester writing the callout's name as the link's alias
+            # (`[[#[!tip]|Tip]]`, which Obsidian parses on its own), the
+            # callout's icon in front of an aliased link in both views, and
+            # the old `[[#[!tip]]]` widget drawn above Obsidian's link hiding
+            # so it can no longer go blank — 2.3 KB over the build before them.
             - name: Check bundle size
               run: |
-                  limit=2275328  # 2 MiB + 174 KiB
+                  limit=2279424  # 2 MiB + 178 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"
